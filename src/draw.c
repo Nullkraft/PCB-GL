@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: draw.c,v 1.15 2004-02-06 04:11:35 haceaton Exp $";
+static char *rcsid = "$Id: draw.c,v 1.16 2004-02-06 16:25:00 haceaton Exp $";
 
 /* drawing routines
  */
@@ -627,6 +627,8 @@ DrawLayer (LayerTypePtr Layer, int unused)
 	  );
 	}
     }
+  if (TEST_FLAG(CHECKPLANESFLAG, PCB))
+    return;
   LINE_LOOP (Layer, 
     {
       if (VLINE (line))
