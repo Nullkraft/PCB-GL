@@ -22,7 +22,7 @@
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: connector.inc,v 1.4 2004-02-19 03:10:36 danmc Exp $
+#   RCS: $Id: connector.inc,v 1.5 2005-01-30 01:09:40 danmc Exp $
 #
 # connector packages
 
@@ -559,10 +559,10 @@ Element(0x00 "$1" "$2" "$3" BASEX eval(BASEY+200) 3 100 0x00)
 	ElementLine(X2 Y1 X2 Y2 10)
 	ElementLine(X2 Y2 X1 Y2 10)
 	ElementLine(X1 Y2 X1 Y1 10)
-	PIN(eval(BASEX-200), eval(BASEY+200), 60, 20, 1)
-	PIN(eval(BASEX-200), eval(BASEY+100), 60, 20, 2)
-	PIN(eval(BASEX),     eval(BASEY),     100, 40, m1)
-	PIN(eval(BASEX),     eval(BASEY+400), 100, 40, m2)
+	PIN(eval(BASEX-200), eval(BASEY+200), 60, 35, 1)
+	PIN(eval(BASEX-200), eval(BASEY+100), 60, 35, 2)
+	PIN(eval(BASEX),     eval(BASEY),     100, 81, m1)
+	PIN(eval(BASEX),     eval(BASEY+400), 100, 81, m2)
 )')
 
 
