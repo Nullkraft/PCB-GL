@@ -1,4 +1,4 @@
-/* $Id: set.c,v 1.19 2004-08-30 02:52:06 danmc Exp $ */
+/* $Id: set.c,v 1.20 2004-09-08 04:05:08 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -64,7 +64,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: set.c,v 1.19 2004-08-30 02:52:06 danmc Exp $");
+RCSID("$Id: set.c,v 1.20 2004-09-08 04:05:08 danmc Exp $");
 
 
 
@@ -82,7 +82,7 @@ SetCursorStatusLine (void)
 
   if (Marked.status)
     sprintf (text,
-	     "%-i.%02d, %-i.%02d <%-li.%02d, %-li.%02d> (%-.2fmm, %-.2fmm)",
+	     "%-i.%02d, %-i.%02d <%-li.%02d, %-li.%02d> (%-.3fmm, %-.3fmm)",
 	     Crosshair.X / 100, abs(Crosshair.X % 100), Crosshair.Y / 100,
 	     abs(Crosshair.Y % 100), (Crosshair.X - Marked.X) / 100,
 	     abs(Crosshair.X - Marked.X) % 100, (Crosshair.Y - Marked.Y) / 100,
@@ -124,7 +124,7 @@ SetStatusLine (void)
 	     Settings.TextScale, Settings.BufferNumber + 1);
   else
     sprintf (text,
-	     "%c %s, grid=%4.2fmm:%i,%s%sline=%i.%02i, via=%i.%02i(%i.%02i),"
+	     "%c %s, grid=%5.3fmm:%i,%s%sline=%i.%02i, via=%i.%02i(%i.%02i),"
 	     " clearance=%i.%02i, text=%i%%, buffer=#%li, name: ",
 	     PCB->Changed ? '*' : ' ',
 	     Settings.ShowSolderSide ? "solder" : "component",
