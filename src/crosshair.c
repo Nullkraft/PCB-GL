@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: crosshair.c,v 1.1 2003-02-20 00:23:59 danmc Exp $";
+  "$Id: crosshair.c,v 1.2 2003-06-22 17:02:39 djdelorie Exp $";
 
 /* crosshair stuff
  */
@@ -51,6 +51,8 @@ static char *rcsid =
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+#define ABS(x) (((x)<0)?-(x):(x))
 
 /* ---------------------------------------------------------------------------
  * some local identifiers
@@ -823,6 +825,39 @@ FitCrosshairIntoGrid (Position X, Position Y)
     }
   else
     {
+      static int last_x = -1, last_y = -1, last_vert = -1;
+
+#define HIST 40
+      if (Marked.status && TEST_FLAG (ORTHOMOVEFLAG, PCB))
+	{
+	  int dx = Crosshair.X - Marked.X;
+	  int dy = Crosshair.Y - Marked.Y;
+	  if (last_x != Marked.X || last_y != Marked.Y)
+	    last_vert = -1;
+	  last_x = Marked.X;
+	  last_y = Marked.Y;
+	  if (ABS(dx) < HIST && ABS(dy) < HIST)
+	    ;
+	  else if (ABS(dx) > ABS(dy))
+	    last_vert = 0;
+	  else
+	    last_vert = 1;
+	  switch (last_vert)
+	    {
+	    case -1:
+	      if (ABS(dx) > ABS(dy))
+		Crosshair.Y = Marked.Y;
+	      else
+		Crosshair.X = Marked.X;
+	      break;
+	    case 0:
+	      Crosshair.Y = Marked.Y;
+	      break;
+	    case 1:
+	      Crosshair.X = Marked.X;
+	      break;
+	    }
+	}
 
       /* check if new position is inside the output window
        * This might not be true after the window has been resized.
