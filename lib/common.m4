@@ -23,7 +23,7 @@ divert(-1)
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: common.m4,v 1.9 2003-12-31 02:30:56 danmc Exp $
+#   RCS: $Id: common.m4,v 1.10 2003-12-31 19:26:32 danmc Exp $
 #
 # common defines for packages
 #
@@ -71,6 +71,7 @@ define(`args',`
 	ifelse($#, 0, , $#, 1,`define(`arg'cnt,`$1')',
 	`define(`arg'cnt,`$1') define(`cnt',incr(cnt)) args(shift($@))')')
 
+include(amp.inc)
 include(amphenol.inc)
 include(bga.inc)
 include(bourns.inc)
