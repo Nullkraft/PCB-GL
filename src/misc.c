@@ -1,3 +1,4 @@
+#define DEBUGDISP
 /*
  *                            COPYRIGHT
  *
@@ -24,7 +25,7 @@
  *
  */
 
-static char *rcsid = "$Id: misc.c,v 1.7 2004-01-08 05:00:27 haceaton Exp $";
+static char *rcsid = "$Id: misc.c,v 1.8 2004-01-14 02:23:43 haceaton Exp $";
 
 /* misc functions used by several modules
  */
@@ -518,12 +519,15 @@ CenterDisplay (Location X, Location Y, Boolean Delta)
   if (!Delta)
     {
       x = X - TO_PCB (Output.Width / 2);
-      y = Y - TO_PCB (Output.Height / 2);
+      if (SWAP_IDENT)
+        y = PCB->MaxHeight - Y - TO_PCB(Output.Height /2 );
+      else
+        y = Y - TO_PCB (Output.Height / 2);
     }
   else
     {
-      x = TO_PCB_X (X);
-      y = TO_PCB_Y (Y);
+      x = Xorig + TO_PCB(X);
+      y = Yorig + TO_PCB(Y);
     }
   Pan (x, y, True, True);
 }
