@@ -22,7 +22,7 @@
 ##  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 ##  Thomas.Nau@rz.uni-ulm.de
 ##
-##  RCS: $Id: Makefile.am,v 1.1 2003-02-20 00:22:42 danmc Exp $
+##  RCS: $Id: Makefile.am,v 1.2 2003-11-13 09:13:44 danmc Exp $
 ##
 
 info_TEXINFOS=	pcb.texi
@@ -37,6 +37,9 @@ EXTRA_DIST= \
 	${ps_docs} \
 	${pdf_docs} \
 	refcard.tex \
+	pad.obj \
+	pad.png \
+	pad.eps \
 	pcb.dvi \
 	refcard.dvi
 
@@ -48,6 +51,19 @@ DISTCLEANFILES= \
 	*.vrs \
 	refcard.log \
 	refcard.aux 
+
+BUILT_SOURCES=	\
+	pad.eps \
+	pad.png
+
+TGIF=		XENVIRONMENT=$(srcdir)/Xdefaults.tgif tgif
+TGIF_FLAGS=	-print -color
+
+.obj.eps:
+	${TGIF} ${TGIF_FLAGS} -eps $<
+
+.obj.png:
+	${TGIF} ${TGIF_FLAGS} -png $<
 
 .ps.pdf:
 	ps2pdf $<
