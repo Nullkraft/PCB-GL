@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: polygon.c,v 1.7 2004-01-30 14:09:17 haceaton Exp $";
+  "$Id: polygon.c,v 1.8 2004-02-05 06:20:41 haceaton Exp $";
 
 /* special polygon editing routines
  */
@@ -334,4 +334,5 @@ DoPIPFlags (PinTypePtr Pin, ElementTypePtr Element,
       SET_FLAG (LayerPIPFlag, Pin);
       return True;
     }
+  return False;
 }
