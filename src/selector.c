@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id";
+static char *rcsid = "$Id: selector.c,v 1.2 2004-04-29 23:50:22 danmc Exp $";
 
 /* selector routines */
 

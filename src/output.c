@@ -1,3 +1,5 @@
+/* $Id: output.c,v 1.13 2004-04-29 23:50:22 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *

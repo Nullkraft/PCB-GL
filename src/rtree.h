@@ -1,3 +1,5 @@
+/* $Id: rtree.h,v 1.5 2004-04-29 23:50:22 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
