@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: dialog.c,v 1.5 2004-03-07 03:38:13 haceaton Exp $";
+static char *rcsid = "$Id: dialog.c,v 1.6 2004-04-27 19:08:25 djdelorie Exp $";
 
 /* dialog routines
  */
@@ -405,6 +405,8 @@ GetUserInput (char *MessageText, char *OutputString)
 /* ---------------------------------------------------------------------------
  * pops up and 'About' dialog
  */
+
+/* ACTION(About,AboutDialog) */
 void
 AboutDialog (void)
 {

@@ -1,4 +1,4 @@
-/* $Id: gui.c,v 1.4 2004-01-05 01:40:24 haceaton Exp $ */
+/* $Id: gui.c,v 1.5 2004-04-27 19:08:25 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -37,6 +37,7 @@
 #include "dialog.h"
 #include "gui.h"
 #include "misc.h"
+#include "action.h"
 
 #include <X11/cursorfont.h>
 #include <X11/Xlib.h>
@@ -174,6 +175,16 @@ GetLocation (char *MessageText)
 	}
     }
 }
+
+/* ---------------------------------------------------------------------------*/
+
+void
+ActionGetLocation (Widget w, XEvent * e, String * argv, Cardinal * argc)
+{
+  GetLocation(argv[0]);
+}
+
+/* ACTION(GetXY,ActionGetLocation) */
 
 /* ---------------------------------------------------------------------------
  * sets the X cursor for the output window (uses cursorfont)

@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.17 2004-04-25 04:56:00 haceaton Exp $
+ *  RCS: $Id: global.h,v 1.18 2004-04-27 19:08:25 djdelorie Exp $
  */
 
 /* definition of types
@@ -491,7 +491,9 @@ typedef struct			/* some resources... */
     Groups,			/* string with layergroups */
     Routes,			/* string with route styles */
     FilePath, RatPath, RatCommand, FontPath, ElementPath, LibraryPath, Size,	/* geometry string for size */
-    Media;			/* type of output media */
+    Media,			/* type of output media */
+    MenuFile;			/* file containing menu definitions */
+  Boolean DumpMenuFile;		/* dump internal menu definitions */
   Location PinoutOffsetX,	/* offset of origin */
     PinoutOffsetY;
   Position PinoutTextOffsetX,	/* offset of text from pin center */

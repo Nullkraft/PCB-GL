@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: set.c,v 1.17 2004-03-17 04:59:45 haceaton Exp $";
+static char *rcsid = "$Id: set.c,v 1.18 2004-04-27 19:08:25 djdelorie Exp $";
 
 /* routines to update widgets and global settings
  * (except output window and dialogs)
@@ -343,7 +343,6 @@ UpdateSettingsOnScreen (void)
   SetStatusLine ();
   SetCursorStatusLine ();
   UpdateControlPanel ();
-  UpdateSizesMenu ();
 }
 
 void

@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: sizedialog.c,v 1.5 2004-02-13 22:31:15 haceaton Exp $";
+  "$Id: sizedialog.c,v 1.6 2004-04-27 19:08:25 djdelorie Exp $";
 
 /* size dialog routines
  */
@@ -475,7 +475,6 @@ StyleSizeDialog (int index)
       XtVaGetValues (inputfield, XtNstring, &string, NULL);
       SaveFree (PCB->RouteStyle[index].Name);
       PCB->RouteStyle[index].Name = StripWhiteSpaceAndDup (string);
-      UpdateSizesMenu ();
       SetChangedFlag (True);
     }
   EndDialog (popup);

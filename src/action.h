@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: action.h,v 1.4 2004-03-04 04:38:51 danmc Exp $
+ *  RCS: $Id: action.h,v 1.5 2004-04-27 19:08:25 djdelorie Exp $
  */
 
 /* prototypes for action routines
@@ -88,6 +88,8 @@ void	ActionToggleThermal(Widget, XEvent *, String *, Cardinal *);
 void	ActionButton3(Widget, XEvent *, String *, Cardinal *);
 void	ActionSetSame(Widget, XEvent *, String *, Cardinal *);
 void	ActionRipUp(Widget, XEvent *, String *, Cardinal *);
+void	ActionGetLocation(Widget, XEvent *, String *, Cardinal *);
+void	ActionAbout(Widget, XEvent *, String *, Cardinal *);
 void	AdjustAttachedObjects(void);
 void	CallActionProc(Widget, String, XEvent *, String *, Cardinal);
 void	warpNoWhere(void);

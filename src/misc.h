@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: misc.h,v 1.6 2004-03-01 05:10:05 haceaton Exp $
+ *  RCS: $Id: misc.h,v 1.7 2004-04-27 19:08:25 djdelorie Exp $
  */
 
 /* prototypes for misc routines
@@ -69,5 +69,7 @@ BoxTypePtr	GetArcEnds(ArcTypePtr);
 char		*UniqueElementName(DataTypePtr, char *);
 void		AttachForCopy(Location, Location);
 float		GetValue(String *, Boolean *, Cardinal);
+int		FileExists(const char *);
+char *		Concat (const char *, ...); /* end with NULL */
 
 #endif
