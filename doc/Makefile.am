@@ -23,7 +23,7 @@
 ##  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 ##  Thomas.Nau@rz.uni-ulm.de
 ##
-##  RCS: $Id: Makefile.am,v 1.9 2005-01-29 13:57:54 danmc Exp $
+##  RCS: $Id: Makefile.am,v 1.10 2005-03-12 02:06:03 danmc Exp $
 ##
 
 info_TEXINFOS=	pcb.texi
@@ -51,15 +51,20 @@ mostlyclean-aminfo:
 	pcb.pgs pcb.tmp pcb.toc pcb.tp pcb.tps pcb.vr pcb.vrs 
 
 EXTRA_DIST= \
+	ascii2texi.awk \
 	refcard.tex \
 	pad.obj \
 	pad.png \
 	pad.eps \
 	pcb.dvi \
 	refcard.dvi \
+	wire_size.tab \
 	wire_size.texi \
+	letter_size.tab \
 	letter_size.texi \
+	metric_size.tab \
 	metric_size.texi \
+	fractional_size.tab \
 	fractional_size.texi
 
 SUFFIXES=	.obj .tab
