@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: change.c,v 1.4 2003-12-30 02:18:51 haceaton Exp $";
+static char *rcsid = "$Id: change.c,v 1.5 2004-01-02 20:52:44 haceaton Exp $";
 
 /* functions used to change object properties
  *
@@ -1439,6 +1439,7 @@ void *
 QueryInputAndChangeObjectName (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
 {
   char *name = NULL;
+  char msg[513];
 
   switch (Type)
     {
@@ -1451,11 +1452,13 @@ QueryInputAndChangeObjectName (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
       break;
 
     case PIN_TYPE:
-      name = GetUserInput ("Pinname:", EMPTY (((PinTypePtr) Ptr2)->Name));
+      sprintf(msg,"%s Pin Name:", EMPTY (((PinTypePtr) Ptr2)->Number));
+      name = GetUserInput (msg, EMPTY (((PinTypePtr) Ptr2)->Name));
       break;
 
     case PAD_TYPE:
-      name = GetUserInput ("Padname:", EMPTY (((PadTypePtr) Ptr2)->Name));
+      sprintf(msg,"%s Pad Name:", EMPTY (((PadTypePtr) Ptr2)->Number));
+      name = GetUserInput (msg, EMPTY (((PadTypePtr) Ptr2)->Name));
       break;
 
     case TEXT_TYPE:
