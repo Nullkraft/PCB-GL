@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: menu.c,v 1.12 2004-01-15 20:16:06 haceaton Exp $";
+static char *rcsid = "$Id: menu.c,v 1.13 2004-01-17 23:07:46 haceaton Exp $";
 
 /* initializes menus and handles callbacks
  */
@@ -461,6 +461,8 @@ static PopupEntryType ConnectionMenuEntries[] = {
   {"eraseRats", "erase rats-nest", CB_Action,
    "DeleteRats,AllRats", NULL},
   {"line", NULL, NULL, NULL, NULL},
+  {"autoroute", "auto-route selected rats", CB_Action,
+   "AutoRoute,Selected", NULL},
   {"autoroute", "auto-route all rats", CB_Action,
    "AutoRoute,AllRats", NULL},
   {"ripup", "rip up all auto-routed tracks", CB_Action,
