@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.23 2004-09-24 02:55:26 djdelorie Exp $
+ *  RCS: $Id: global.h,v 1.24 2004-10-12 12:09:53 danmc Exp $
  */
 
 /* definition of types
@@ -680,6 +680,8 @@ typedef struct
 
 #if GCC_VERSION > 2007
 #define ATTRIBUTE_UNUSED __attribute__((unused)) 
+#else
+#define ATTRIBUTE_UNUSED
 #endif 
 
 #define RCSID(x) static char *rcsid  ATTRIBUTE_UNUSED = x
