@@ -30,7 +30,7 @@
  * silkscreen layer. Perhaps the design is not the best.
  */
 
-static char *rcsid = "$Id: print.c,v 1.13 2004-02-05 06:06:12 haceaton Exp $";
+static char *rcsid = "$Id: print.c,v 1.14 2004-02-05 06:21:34 haceaton Exp $";
 
 /* printing routines
  */
@@ -461,7 +461,7 @@ PrintLayergroups (void)
 		  }  /* end of entry loop */
 		ALLPIN_LOOP (PCB->Data, 
 		  {
-		    if (TEST_FLAG (PIPflag, pin))
+		    if (!TEST_FLAG(HOLEFLAG, pin) && TEST_FLAG (PIPflag, pin))
 		      {
 		        if (!polarity_called)
 			  {
@@ -474,7 +474,7 @@ PrintLayergroups (void)
 		);
 		VIA_LOOP (PCB->Data, 
 		  {
-		    if (TEST_FLAG (PIPflag, via))
+		    if (!TEST_FLAG(HOLEFLAG, via) && TEST_FLAG (PIPflag, via))
 		      {
 		        if (!polarity_called)
 			  {
