@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: misc.h,v 1.5 2004-02-28 23:44:19 haceaton Exp $
+ *  RCS: $Id: misc.h,v 1.6 2004-03-01 05:10:05 haceaton Exp $
  */
 
 /* prototypes for misc routines
@@ -40,8 +40,8 @@ void		Usage(void);
 void		SetLineBoundingBox(LineTypePtr);
 void		SetArcBoundingBox(ArcTypePtr);
 void		SetPointBoundingBox(PointTypePtr);
-void		SetPinBoundingBox(PinTypePtr);
-void		SetPadBoundingBox(PadTypePtr);
+void    	SetPinBoundingBox(PinTypePtr);
+void   		SetPadBoundingBox(PadTypePtr);
 void		SetPolygonBoundingBox(PolygonTypePtr);
 void		SetElementBoundingBox(DataTypePtr, ElementTypePtr, FontTypePtr);
 Boolean		IsDataEmpty(DataTypePtr);

@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: move.c,v 1.10 2004-02-28 23:44:19 haceaton Exp $";
+static char *rcsid = "$Id: move.c,v 1.11 2004-03-01 05:10:05 haceaton Exp $";
 
 /* functions used to move pins, elements ...
  */
@@ -108,7 +108,8 @@ MoveLineToLayer,
 void
 MoveElementLowLevel (DataTypePtr Data, ElementTypePtr Element, Location DX, Location DY)
 {
-  r_delete_entry(Data->element_tree, (BoxType *)Element);
+  if (Data)
+    r_delete_entry(Data->element_tree, (BoxType *)Element);
   ELEMENTLINE_LOOP (Element, 
     {
       MOVE_LINE_LOWLEVEL (line, DX, DY);
@@ -116,18 +117,22 @@ MoveElementLowLevel (DataTypePtr Data, ElementTypePtr Element, Location DX, Loca
   );
   PIN_LOOP (Element, 
     {
-      r_delete_entry (Data->pin_tree, (BoxType *)pin);
+      if (Data)
+        r_delete_entry (Data->pin_tree, (BoxType *)pin);
       MOVE_PIN_LOWLEVEL (pin, DX, DY);
       MOVE_BOX_LOWLEVEL ((BoxTypePtr)pin, DX, DY);
-      r_insert_entry (Data->pin_tree, (BoxType *)pin, 0);
+      if (Data)
+        r_insert_entry (Data->pin_tree, (BoxType *)pin, 0);
     }
   );
   PAD_LOOP (Element, 
     {
-      r_delete_entry (Data->pad_tree, (BoxType *)pad);
+      if (Data)
+        r_delete_entry (Data->pad_tree, (BoxType *)pad);
       MOVE_PAD_LOWLEVEL (pad, DX, DY);
       MOVE_BOX_LOWLEVEL ((BoxTypePtr)pad, DX, DY);
-      r_insert_entry (Data->pad_tree, (BoxType *)pad, 0);
+      if (Data)
+        r_insert_entry (Data->pad_tree, (BoxType *)pad, 0);
     }
   );
   ARC_LOOP (Element, 
@@ -142,7 +147,8 @@ MoveElementLowLevel (DataTypePtr Data, ElementTypePtr Element, Location DX, Loca
   );
   MOVE_BOX_LOWLEVEL (&Element->BoundingBox, DX, DY);
   MOVE (Element->MarkX, Element->MarkY, DX, DY);
-  r_insert_entry(Data->element_tree, (BoxType *)Element, 0);
+  if (Data)
+    r_insert_entry(Data->element_tree, (BoxType *)Element, 0);
 }
 
 /* ----------------------------------------------------------------------

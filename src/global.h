@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.10 2004-02-28 23:44:18 haceaton Exp $
+ *  RCS: $Id: global.h,v 1.11 2004-03-01 05:10:05 haceaton Exp $
  */
 
 /* definition of types
@@ -258,6 +258,7 @@ typedef struct
 	PadTypePtr	Pad;		/* pad description of SMD components */
 	LineTypePtr	Line;
 	ArcTypePtr	Arc;
+	BoxType         VBox;
 } ElementType, *ElementTypePtr, **ElementTypeHandle;
 
 /* ---------------------------------------------------------------------------

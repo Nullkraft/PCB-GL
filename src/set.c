@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: set.c,v 1.14 2004-02-28 23:44:19 haceaton Exp $";
+static char *rcsid = "$Id: set.c,v 1.15 2004-03-01 05:10:05 haceaton Exp $";
 
 /* routines to update widgets and global settings
  * (except output window and dialogs)
@@ -225,6 +225,8 @@ SetLineSize (BDimension Size)
   if (Size >= MIN_LINESIZE && Size <= MAX_LINESIZE)
     {
       Settings.LineThickness = Size;
+      if (TEST_FLAG (AUTODRCFLAG, PCB))
+        FitCrosshairIntoGrid (Crosshair.X, Crosshair.Y);
       SetStatusLine ();
     }
 }

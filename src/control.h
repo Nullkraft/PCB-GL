@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: control.h,v 1.1 2003-02-20 00:23:57 danmc Exp $
+ *  RCS: $Id: control.h,v 1.2 2004-03-01 05:10:05 haceaton Exp $
  */
 
 /* prototypes for dialog routines
@@ -38,5 +38,6 @@ void	InitControlPanel(Widget, Widget, Widget);
 void	UpdateControlPanel(void);
 void	UpdateModeSelection(void);
 int		ChangeGroupVisibility(Cardinal, Boolean, Boolean);
+Cardinal GetGroupOfLayer (Cardinal);
 
 #endif

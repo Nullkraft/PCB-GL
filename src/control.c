@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: control.c,v 1.2 2003-12-29 03:15:56 haceaton Exp $";
+  "$Id: control.c,v 1.3 2004-03-01 05:10:05 haceaton Exp $";
 
 /* control panel
  */
@@ -92,7 +92,6 @@ static void AddDrawingLayerSelection (Widget);
 static void AddOnOffSelection (Widget);
 static void UpdateDrawingLayerSelection (void);
 static void UpdateOnOffSelection (void);
-static Cardinal GetGroupOfLayer (Cardinal);
 static void PushOnTopOfLayerStack (int);
 static void CBPOPUP_SetDrawingLayer (Widget, XtPointer, XtPointer);
 static void CB_SetOnOff (Widget, XtPointer, XtPointer);
@@ -331,7 +330,7 @@ UpdateOnOffSelection (void)
  * lookup the group to which a layer belongs to
  * returns MAX_LAYER if no group is found
  */
-static Cardinal
+Cardinal
 GetGroupOfLayer (Cardinal Layer)
 {
   int group, i;
