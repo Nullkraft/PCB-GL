@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.26 2004-11-19 03:08:10 haceaton Exp $ */
+/* $Id: main.c,v 1.27 2004-11-20 22:20:50 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -80,7 +80,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: main.c,v 1.26 2004-11-19 03:08:10 haceaton Exp $");
+RCSID("$Id: main.c,v 1.27 2004-11-20 22:20:50 danmc Exp $");
 
 
 
@@ -336,7 +336,7 @@ static String Fallback[] = {
     "   <BtnDown>,<BtnUp>:	MenuPopdown() notify() unhighlight() \n"
     "   <BtnUp>: \n",
   "Pcb.masterForm*cursorPosition.justify:   left",
-  "Pcb.masterForm*cursorPosition.width:     300",
+  "Pcb.masterForm*cursorPosition.width:     400",
   "Pcb.masterForm*inputField*borderWidth:   0",
   "Pcb.masterForm*messageText.foreground:   red",
   "Pcb.masterForm*messageText.justify:      left",
