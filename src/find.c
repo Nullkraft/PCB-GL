@@ -25,7 +25,7 @@
  *
  */
 
-static char *rcsid = "$Id: find.c,v 1.12 2004-02-13 22:31:15 haceaton Exp $";
+static char *rcsid = "$Id: find.c,v 1.13 2004-02-14 16:12:48 haceaton Exp $";
 
 /*
  * short description:
@@ -2840,7 +2840,7 @@ IsArcInPolygon (ArcTypePtr Arc, PolygonTypePtr Polygon)
   BoxTypePtr Box;
 
   /* arcs with clearance never touch polys */
-  if (TEST_FLAG (CLEARLINEFLAG, Arc))
+  if (TEST_FLAG (CLEARPOLYFLAG, Polygon) && TEST_FLAG (CLEARLINEFLAG, Arc))
     return (False);
 
   Box =
@@ -2896,7 +2896,7 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
   Location minx, maxx, miny, maxy;
   
   /* lines with clearance never touch polygons */
-  if (TEST_FLAG (CLEARLINEFLAG, Line))
+  if (TEST_FLAG(CLEARPOLYFLAG, Polygon) && TEST_FLAG (CLEARLINEFLAG, Line))
     return (False);
   minx = MIN (Line->Point1.X, Line->Point2.X)
     - MAX (Line->Thickness + Bloat, 0);
