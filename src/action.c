@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.54 2005-01-13 22:08:17 danmc Exp $ */
+/* $Id: action.c,v 1.55 2005-01-21 22:15:07 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -85,7 +85,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: action.c,v 1.54 2005-01-13 22:08:17 danmc Exp $");
+RCSID("$Id: action.c,v 1.55 2005-01-21 22:15:07 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -2089,7 +2089,7 @@ warpNoWhere (void)
 
 /* ---------------------------------------------------------------------------
  * disperses all elements
- * syntax: DisperseElements()
+ * syntax: DisperseElements(All|Selected)
  */
 #define GAP 10000
 
@@ -2097,16 +2097,38 @@ void
 ActionDisperseElements (Widget W, XEvent * Event, String * Params, Cardinal * Num)
 {
   long minx, miny, maxx, maxy, dx, dy;
-  
+  int all = 0, bad = 0;
+
   minx = GAP;
   miny = GAP;
   maxx = GAP;
   maxy = GAP;
 
-  if (*Num != 0)
+  if (*Num != 1)
+    {
+      bad = 1;
+    }
+  else 
+    {
+      switch (GetFunctionID (*Params))
+	{
+	case F_All:
+	  all = 1;
+	  break;
+	  
+	case F_Selected:
+	  all = 0;
+	  break;
+	  
+	default:
+	  bad = 1;
+	}
+    }
+
+  if (bad) 
     {
       Message ("Usage:  \n"
-	       "DisperseElements()\n");
+	       "DisperseElements(Selected|All)\n");
       return ;
     }
 
@@ -2119,7 +2141,7 @@ ActionDisperseElements (Widget W, XEvent * Event, String * Params, Cardinal * Nu
      * going to be used either with a brand new design or a scratch
      * design holding some new components
      */
-    if (1 || TEST_FLAG (SELECTEDFLAG, element))
+    if (all || TEST_FLAG (SELECTEDFLAG, element))
       {
 
 	/* figure out how much to move the element */
