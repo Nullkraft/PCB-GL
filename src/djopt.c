@@ -1,4 +1,4 @@
-/* $Id: djopt.c,v 1.11 2004-03-17 04:59:44 haceaton Exp $ */
+/* $Id: djopt.c,v 1.12 2004-04-09 04:13:23 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -2681,14 +2681,7 @@ ActionDJopt (Widget w, XEvent * e, String * argv, Cardinal * argc)
   {
     line_s *ls2;
     int layern =
-      element->Flags & ONSOLDERFLAG ? solder_layer : component_layer;
-    line_s *ls = (line_s *) malloc (sizeof (line_s));
-    ls->next = lines;
-    lines = ls;
-    ls->s = find_corner (pad->Point1.X, pad->Point1.Y, layern);
-    ls->s->pad = pad;
-    ls->e = find_corner (pad->Point2.X, pad->Point2.Y, layern);
-    ls->e->pad = pad;
+      pad->Flags & ONSOLDERFLAG ? solder_layer : component_layer;
     ls->layer = layern;
     ls->line = (LineTypePtr) pad;
     add_line_to_corner (ls, ls->s);
