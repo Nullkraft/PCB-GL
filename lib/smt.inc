@@ -1,5 +1,5 @@
 # -*- m4 -*-
-#   $Id: smt.inc,v 1.13 2004-04-30 22:55:01 danmc Exp $
+#   $Id: smt.inc,v 1.14 2004-05-14 21:22:45 danmc Exp $
 #
 #   surface mounted components
 #
@@ -612,7 +612,7 @@ Element[0x00000000 "$1" "`$2'" "$3" 0 0 -2000 -6000 0 100 0x00000000]
 	ElementLine[ XMAX -YMAX  2500 -YMAX SILKW]
 
 	# punt on the arc on small parts as it can cover the pads
-	ifelse(eval((PADSEP-PADLENGTH)/1000 > 50), 1, `ElementArc[0 -YMAX 25 25 0 180 SILKW]', )
+	ifelse(eval((PADSEP-PADLENGTH)/1000 > 50), 1, `ElementArc[0 -YMAX 2500 2500 0 180 SILKW]', )
 	
 )')
 
