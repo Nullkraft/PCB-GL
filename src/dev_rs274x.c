@@ -36,7 +36,7 @@
  */
 
 static char *rcsid =
-  "$Id: dev_rs274x.c,v 1.22 2004-06-10 00:22:06 danmc Exp $";
+  "$Id: dev_rs274x.c,v 1.23 2004-08-27 22:01:58 danmc Exp $";
 
 /*
  * Gerber/RS-274X device driver
@@ -1095,7 +1095,7 @@ static void
 GBX_PrintFilledRectangle (Location X1, Location Y1, Location X2, Location Y2)
 {
   int j;
-  int X, Y;
+  long int X, Y;
 
 
   setAperture (&GBX_Apertures, 1000, 0, 0, ROUND);
