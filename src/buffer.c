@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: buffer.c,v 1.4 2004-01-05 01:40:24 haceaton Exp $";
+static char *rcsid = "$Id: buffer.c,v 1.5 2004-01-31 03:20:17 haceaton Exp $";
 
 /* functions used by paste- and move/copy buffer
  */
@@ -557,7 +557,9 @@ ConvertBufferToElement (BufferTypePtr Buffer)
 
   Element = CreateNewElement (PCB->Data, NULL, &PCB->Font, NOFLAG,
 			      NULL, NULL, NULL, PASTEBUFFER->X,
-			      PASTEBUFFER->Y, 0, 100, NOFLAG, False);
+			      PASTEBUFFER->Y, 0, 100,
+			      SWAP_IDENT ? ONSOLDERFLAG : NOFLAG,
+			      False);
   if (!Element)
     return (False);
   VIA_LOOP (Buffer->Data, 
