@@ -24,7 +24,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: rats.h,v 1.1 2003-02-20 00:24:29 danmc Exp $
+ *  RCS: $Id: rats.h,v 1.2 2005-03-12 02:17:13 danmc Exp $
  */
 
 /* prototypes for rats routines
@@ -34,6 +34,9 @@
 #define	__RATS_INCLUDED__
 
 #include "global.h"
+
+RatTypePtr AddNet(void);
+char *ConnectionName (int, void *, void *);
 
 Boolean AddAllRats(Boolean, void (*)());
 Boolean SeekPad(LibraryEntryTypePtr, ConnectionTypePtr, Boolean);

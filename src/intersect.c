@@ -1,4 +1,4 @@
-/* $Id: intersect.c,v 1.6 2005-01-03 12:56:59 danmc Exp $ */
+/* $Id: intersect.c,v 1.7 2005-03-12 02:17:12 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -38,20 +38,15 @@
 #include "config.h"
 #endif
 
-#include <assert.h>
-#include <stdlib.h>
-
 #include "global.h"
+
+#include <assert.h>
 
 #include "data.h"
 #include "intersect.h"
 #include "mymem.h"
 
-#ifdef HAVE_LIBDMALLOC
-#include <dmalloc.h>
-#endif
-
-RCSID("$Id: intersect.c,v 1.6 2005-01-03 12:56:59 danmc Exp $");
+RCSID("$Id: intersect.c,v 1.7 2005-03-12 02:17:12 danmc Exp $");
 
 
 /* ---------------------------------------------------------------------------
@@ -231,7 +226,7 @@ ComputeUnionArea (BoxListTypePtr boxlist)
   yCoords = createSortedYList (boxlist);
   /* now create empty segment tree */
   segtree = createSegmentTree (yCoords.p, yCoords.size);
-  free (yCoords.p);
+  g_free (yCoords.p);
   /* create sorted list of left and right X coordinates of rectangles */
   rectLeft = MyCalloc (boxlist->BoxN, sizeof (*rectLeft),
 		       "ComputeUnionArea(1)");
@@ -281,9 +276,9 @@ ComputeUnionArea (BoxListTypePtr boxlist)
 	  insertSegment (&segtree, 1, b->Y1, b->Y2);
 	}
     }
-  free (rectLeft);
-  free (rectRight);
-  free (segtree.nodes);
+  g_free (rectLeft);
+  g_free (rectRight);
+  g_free (segtree.nodes);
   return area * 0.0001;
 }
 static int

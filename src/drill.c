@@ -1,4 +1,4 @@
-/* $Id: drill.c,v 1.6 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: drill.c,v 1.7 2005-03-12 02:17:11 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -41,7 +41,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: drill.c,v 1.6 2004-08-30 02:52:04 danmc Exp $");
+RCSID("$Id: drill.c,v 1.7 2005-03-12 02:17:11 danmc Exp $");
 
 
 
@@ -121,7 +121,7 @@ DrillInfoTypePtr
 GetDrillInfo (DataTypePtr top)
 {
   DrillInfoTypePtr AllDrills;
-  DrillTypePtr Drill;
+  DrillTypePtr Drill = NULL;
   DrillType savedrill, swapdrill;
   Boolean DrillFound = False;
   Boolean NewDrill;

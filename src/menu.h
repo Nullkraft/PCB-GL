@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: menu.h,v 1.2 2004-04-27 19:08:25 djdelorie Exp $
+ *  RCS: $Id: menu.h,v 1.3 2005-03-12 02:17:12 danmc Exp $
  */
 
 /* prototypes for menu handling
@@ -33,6 +33,7 @@
 
 #include "global.h"
 
+#ifdef notdef
 /* ---------------------------------------------------------------------------
  * some menu types
  */
@@ -72,6 +73,7 @@ typedef struct
 	Widget			W;
 } CommandButtonType, *CommandButtonTypePtr;
 
+
 /* ---------------------------------------------------------------------------
  * some prototypes
  */
@@ -80,6 +82,7 @@ void	InitMenu(Widget, Widget, Widget);
 void	DumpMenu();
 void	RemoveCheckFromMenu(PopupMenuTypePtr);
 void	CheckEntry(PopupMenuTypePtr, String);
+#endif
 
 
 #endif

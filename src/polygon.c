@@ -1,4 +1,4 @@
-/* $Id: polygon.c,v 1.27 2005-01-03 12:57:00 danmc Exp $ */
+/* $Id: polygon.c,v 1.28 2005-03-12 02:17:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,11 +55,13 @@
 #include "set.h"
 #include "undo.h"
 
+#include "gui.h"
+
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: polygon.c,v 1.27 2005-01-03 12:57:00 danmc Exp $");
+RCSID ("$Id: polygon.c,v 1.28 2005-03-12 02:17:13 danmc Exp $");
 
 
 /* ---------------------------------------------------------------------------
@@ -204,7 +206,7 @@ ClosePolygon (void)
 	  if (!(dx == 0 || dy == 0 || dx == dy))
 	    {
 	      Message
-		("Cannot close polygon because 45 degree lines are requested.\n");
+		(_("Cannot close polygon because 45 degree lines are requested.\n"));
 	      return;
 	    }
 	}
@@ -212,7 +214,7 @@ ClosePolygon (void)
       Draw ();
     }
   else
-    Message ("a polygon has to have at least 3 points\n");
+    Message (_("A polygon has to have at least 3 points\n"));
 }
 
 /* ---------------------------------------------------------------------------
@@ -328,7 +330,7 @@ DoPIPFlags (PinTypePtr Pin, ElementTypePtr Element,
       if (TEST_FLAG (HOLEFLAG, Pin) && !TEST_FLAG (WARNFLAG, Pin))
 	{
 	  Message
-	    ("WARNING Unplated hole piercing or too close to polygon\n");
+	    (_("Warning! Unplated hole piercing or too close to polygon\n"));
 	  SET_FLAG (WARNFLAG, Pin);
 	}
       if (!TEST_FLAG (CLEARPOLYFLAG, Polygon))

@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: output.h,v 1.3 2005-01-03 12:57:00 danmc Exp $
+ *  RCS: $Id: output.h,v 1.4 2005-03-12 02:17:12 danmc Exp $
  */
 
 #ifndef __OUTPUT_INCLUDED__
@@ -30,14 +30,12 @@
 
 #include "global.h"
 
-void PortholeEvent(Widget, XtPointer, XEvent *, Boolean *);
-Boolean Pan(LocationType, LocationType, Boolean, Boolean);
-Boolean CoalignScreen(Position, Position, LocationType, LocationType);
-void OutputEvent(Widget, XtPointer, XEvent *, Boolean *);
-void GetSizeOfDrawingArea(void);
-void ScaleOutput(Dimension, Dimension);
-Widget InitOutputPanner(Widget, Widget, Widget);
-void SetOutputLabel(Widget, char *);
-void UpdateExposed(XEvent *);
-void CB_StopScroll (Widget, XtPointer, XEvent *, Boolean *);
+
+gboolean Pan(LocationType, LocationType, gboolean, gboolean);
+gboolean CoalignScreen(Position,
+				Position, LocationType, LocationType);
+
+void	DrawClipped(GdkRegion *myRegion);
+gboolean ActiveDrag (void);
+
 #endif

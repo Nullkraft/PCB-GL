@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: macro.h,v 1.16 2005-01-03 12:56:59 danmc Exp $
+ *  RCS: $Id: macro.h,v 1.17 2005-03-12 02:17:12 danmc Exp $
  */
 
 /* some commonly used macros not related to a special C-file
@@ -172,10 +172,10 @@
  */
 #define	SET_FLAG(f,p)		((p)->Flags |= (f))
 #define	CLEAR_FLAG(f,p)		((p)->Flags &= (~(f)))
-#define	TEST_FLAG(f,p)		((p)->Flags & (f) ? True : False)
+#define	TEST_FLAG(f,p)		((p)->Flags & (f) ? TRUE : FALSE)
 #define	TOGGLE_FLAG(f,p)	((p)->Flags ^= (f))
 #define	ASSIGN_FLAG(f,v,p)	((p)->Flags = ((p)->Flags & (~(f))) | ((v) ? (f) : 0))
-#define TEST_FLAGS(f,p)         (((p)->Flags & (f)) == (f) ? True : False)
+#define TEST_FLAGS(f,p)         (((p)->Flags & (f)) == (f) ? TRUE : FALSE)
 
 /* ---------------------------------------------------------------------------
  * access macros for elements name structure

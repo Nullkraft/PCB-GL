@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: error.h,v 1.1 2003-02-20 00:24:06 danmc Exp $
+ *  RCS: $Id: error.h,v 1.2 2005-03-12 02:17:11 danmc Exp $
  */
 
 /* prototypes for error and debug functions
@@ -31,7 +31,6 @@
 #ifndef	__ERROR_INCLUDED__
 #define	__ERROR_INCLUDED__
 
-#include <X11/Intrinsic.h>
 
 #define	STATUS_OK		0
 #define	STATUS_BREAK	1
@@ -43,9 +42,6 @@ void	OpenErrorMessage(char *);
 void	PopenErrorMessage(char *);
 void	OpendirErrorMessage(char *);
 void	ChdirErrorMessage(char *);
-void	RestoreStderr(void);
 void	CatchSignal(int);
-void	X11ErrorHandler(String);
-void	InitErrorLog(void);
 
 #endif

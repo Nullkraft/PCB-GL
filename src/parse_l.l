@@ -1,4 +1,4 @@
-/* $Id: parse_l.l,v 1.5 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: parse_l.l,v 1.6 2005-03-12 02:17:12 danmc Exp $ */
 
 %{
 /*
@@ -48,7 +48,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_l.l,v 1.5 2004-08-30 02:52:04 danmc Exp $");
+RCSID("$Id: parse_l.l,v 1.6 2005-03-12 02:17:12 danmc Exp $");
 
 
 #include "global.h"
@@ -224,7 +224,7 @@ static int Parse(char *Executable, char *Path, char *Filename, char *Parameter)
 		 * It's not necessary if the system supports the call of functions
 		 * on termination.
 		 */
-	watchCursor();
+	gui_watch_cursor();
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 	SaveTMPData();
@@ -236,7 +236,7 @@ static int Parse(char *Executable, char *Path, char *Filename, char *Parameter)
 	/* clean up parse buffer */
 	yy_delete_buffer(YY_CURRENT_BUFFER);
 
-	restoreCursor();
+	gui_restore_cursor();
 	return(pclose(yyin) ? 1 : returncode);
 }
 

@@ -1,4 +1,4 @@
-/* $Id: insert.c,v 1.12 2005-01-03 12:56:59 danmc Exp $ */
+/* $Id: insert.c,v 1.13 2005-03-12 02:17:12 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -41,7 +41,6 @@
 #include "crosshair.h"
 #include "data.h"
 #include "draw.h"
-#include "gui.h"
 #include "insert.h"
 #include "line.h"
 #include "misc.h"
@@ -53,11 +52,9 @@
 #include "set.h"
 #include "undo.h"
 
-#ifdef HAVE_LIBDMALLOC
-#include <dmalloc.h>
-#endif
+#include "gui.h"
 
-RCSID("$Id: insert.c,v 1.12 2005-01-03 12:56:59 danmc Exp $");
+RCSID("$Id: insert.c,v 1.13 2005-03-12 02:17:12 danmc Exp $");
 
 
 
@@ -241,7 +238,7 @@ AdjustInsertPoint (void)
   if (Crosshair.AttachedObject.State == STATE_FIRST)
     return NULL;
   Crosshair.AttachedObject.Ptr3 = &InsertedPoint;
-  if (ShiftPressed ())
+  if (gui_shift_is_pressed())
     {
       AttachedLineType myline;
       dx = Crosshair.X - line->Point1.X;

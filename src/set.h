@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: set.h,v 1.5 2005-01-03 12:57:00 danmc Exp $
+ *  RCS: $Id: set.h,v 1.6 2005-03-12 02:17:14 danmc Exp $
  */
 
 /* prototypes for update routines
@@ -33,15 +33,15 @@
 
 #include "global.h"
 
-void		SetCursorStatusLine(void);
-void		SetStatusLine(void);
+void		SetTextScale(Dimension);
+void		set_cursor_position_labels(void);
+void		set_status_line_label(void);
 void		SetGrid(float, Boolean);
 void		SetZoom(float);
 void		SetLineSize(BDimension);
 void		SetViaSize(BDimension, Boolean);
 void		SetViaDrillingHole(BDimension, Boolean);
 void		SetKeepawayWidth(BDimension);
-void		SetTextScale(Dimension);
 void		SetChangedFlag(Boolean);
 void		UpdateSettingsOnScreen(void);
 void		SetBufferNumber(int);
@@ -52,5 +52,6 @@ void		SetLocalRef(LocationType, LocationType, Boolean);
 void		RedrawZoom(Position, Position);
 void		SaveMode(void);
 void		RestoreMode(void);
+void		pcb_use_route_style(RouteStyleType *);
 
 #endif

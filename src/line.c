@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.5 2005-01-03 12:56:59 danmc Exp $ */
+/* $Id: line.c,v 1.6 2005-03-12 02:17:12 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -36,19 +36,15 @@
 
 #include "global.h"
 #include "data.h"
-#include "control.h"
 #include "crosshair.h"
 #include "find.h"
-#include "gui.h"
 #include "line.h"
 #include "misc.h"
 #include "rtree.h"
 
-#ifdef HAVE_LIBDMALLOC
-#include <dmalloc.h>
-#endif
+#include "gui.h"
 
-RCSID("$Id: line.c,v 1.5 2005-01-03 12:56:59 danmc Exp $");
+RCSID("$Id: line.c,v 1.6 2005-03-12 02:17:12 danmc Exp $");
 
 static float drc_lines (PointTypePtr end, Boolean way);
 
@@ -64,7 +60,7 @@ AdjustAttachedLine (void)
   if (line->State == STATE_FIRST)
     return;
   /* don't draw outline when ctrl key is pressed */
-  if (Settings.Mode == LINE_MODE && CtrlPressed ())
+  if (Settings.Mode == LINE_MODE && gui_control_is_pressed())
     {
       line->draw = False;
       return;
@@ -176,7 +172,7 @@ AdjustTwoLine (int way)
   if (Crosshair.AttachedLine.State == STATE_FIRST)
     return;
   /* don't draw outline when ctrl key is pressed */
-  if (CtrlPressed ())
+  if (gui_control_is_pressed())
     {
       line->draw = False;
       return;
@@ -190,7 +186,7 @@ AdjustTwoLine (int way)
       return;
     }
   /* swap the modes if shift is held down */
-  if (ShiftPressed ())
+  if (gui_shift_is_pressed())
     way = !way;
   dx = Crosshair.X - line->Point1.X;
   dy = Crosshair.Y - line->Point1.Y;
@@ -300,7 +296,7 @@ drc_lines (PointTypePtr end, Boolean way)
   s = 0.5;
   last = -1;
   line1.Flags = line2.Flags = NOFLAG;
-  line1.Thickness = Settings.LineThickness + 2 * (Settings.Bloat + 1);
+  line1.Thickness = Settings.LineThickness + 2 * (PCB->Bloat + 1);
   line2.Thickness = line1.Thickness;
   line1.Clearance = line2.Clearance = 0;
   line1.Point1.X = Crosshair.AttachedLine.Point1.X;
@@ -484,10 +480,10 @@ void
 EnforceLineDRC (void)
 {
   PointType r45, rs;
-  Boolean shift;
+  gboolean shift;
   float r1, r2;
 
-  if (CtrlPressed () || PCB->RatDraw || INDEXOFCURRENT >= MAX_LAYER)
+  if (gui_control_is_pressed() || PCB->RatDraw || INDEXOFCURRENT >= MAX_LAYER)
     return;
   rs.X = r45.X = Crosshair.X;
   rs.Y = r45.Y = Crosshair.Y;
@@ -495,7 +491,7 @@ EnforceLineDRC (void)
   r1 = drc_lines (&rs, False);
   /* then try starting at 45 */
   r2 = drc_lines (&r45, True);
-  shift = ShiftPressed ();
+  shift = gui_shift_is_pressed();
   if (XOR (r1 > r2, shift))
     {
       if (PCB->Clipping)

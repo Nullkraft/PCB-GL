@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: draw.h,v 1.4 2004-07-10 03:42:13 djdelorie Exp $
+ *  RCS: $Id: draw.h,v 1.5 2005-03-12 02:17:11 danmc Exp $
  */
 
 /* prototypes for drawing routines
@@ -33,10 +33,11 @@
 
 #include "global.h"
 
+gboolean	SwitchDrawingWindow(gfloat, GdkDrawable *, gboolean, gboolean);
+
 void	Draw(void);
 void	RedrawOutput(BoxTypePtr area);
 void	ClearAndRedrawOutput(void);
-Boolean	SwitchDrawingWindow(float, Window, Boolean, Boolean);
 void	ClearPin(PinTypePtr, int, int);
 void	DrawVia(PinTypePtr, int);
 void	DrawRat(RatTypePtr, int);
@@ -71,5 +72,7 @@ void	EraseElementName(ElementTypePtr);
 void	EraseObject(int, void *);
 void	LoadBackgroundImage (char *);
 void	UpdateAll(void);
+
+GdkDrawable *draw_get_current_drawable(void);
 
 #endif

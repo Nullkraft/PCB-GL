@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: file.h,v 1.1 2003-02-20 00:24:07 danmc Exp $
+ *  RCS: $Id: file.h,v 1.2 2005-03-12 02:17:11 danmc Exp $
  */
 
 /* prototypes for file routines
@@ -34,7 +34,7 @@
 #include <stdio.h>			/* needed to define 'FILE *' */
 #include "global.h"
 
-FILE		*CheckAndOpenFile(char *, Boolean, Boolean, Boolean *);
+FILE		*CheckAndOpenFile(char *, Boolean, Boolean, Boolean *, Boolean *);
 FILE		*OpenConnectionDataFile(void);
 int		SavePCB(char *);
 int		LoadPCB(char *);

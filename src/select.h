@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: select.h,v 1.3 2004-03-06 05:55:30 haceaton Exp $
+ *  RCS: $Id: select.h,v 1.4 2005-03-12 02:17:14 danmc Exp $
  */
 
 /* prototypes for select routines
@@ -37,6 +37,7 @@
 	(VIA_TYPE | LINE_TYPE | TEXT_TYPE | POLYGON_TYPE | ELEMENT_TYPE |	\
 	 PIN_TYPE | PAD_TYPE | ELEMENTNAME_TYPE | RATLINE_TYPE | ARC_TYPE)
 
+void		SelectPin (LibraryEntryTypePtr entry, Boolean toggle);
 Boolean		SelectObject(void);
 Boolean		SelectBlock(BoxTypePtr, Boolean);
 Boolean		SelectedOperation(ObjectFunctionTypePtr, Boolean, int);

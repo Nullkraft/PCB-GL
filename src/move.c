@@ -1,4 +1,4 @@
-/* $Id: move.c,v 1.24 2005-01-03 12:56:59 danmc Exp $ */
+/* $Id: move.c,v 1.25 2005-03-12 02:17:12 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -53,11 +53,13 @@
 #include "select.h"
 #include "undo.h"
 
+#include "gui.h"
+
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: move.c,v 1.24 2005-01-03 12:56:59 danmc Exp $");
+RCSID("$Id: move.c,v 1.25 2005-03-12 02:17:12 danmc Exp $");
 
 
 
@@ -470,7 +472,7 @@ MoveArcToLayer (LayerTypePtr Layer, ArcTypePtr Arc)
 
   if (TEST_FLAG (LOCKFLAG, Arc))
     {
-      Message ("Sorry that's locked\n");
+      Message (_("Sorry, the object is locked\n"));
       return NULL;
     }
   if (Dest == Layer && Layer->On)
@@ -554,7 +556,7 @@ MoveLineToLayer (LayerTypePtr Layer, LineTypePtr Line)
 
   if (TEST_FLAG (LOCKFLAG, Line))
     {
-      Message ("Sorry that's locked\n");
+      Message (_("Sorry, the object is locked\n"));
       return NULL;
     }
   if (Dest == Layer && Layer->On)
@@ -647,7 +649,7 @@ MoveTextToLayer (LayerTypePtr Layer, TextTypePtr Text)
 
   if (TEST_FLAG (LOCKFLAG, Text))
     {
-      Message ("Sorry that's locked\n");
+      Message (_("Sorry, the object is locked\n"));
       return NULL;
     }
   if (Dest != Layer)
@@ -692,7 +694,7 @@ MovePolygonToLayer (LayerTypePtr Layer, PolygonTypePtr Polygon)
 
   if (TEST_FLAG (LOCKFLAG, Polygon))
     {
-      Message ("Sorry that's locked\n");
+      Message (_("Sorry, the object is locked\n"));
       return NULL;
     }
   if (((long int) Dest == -1) || (Layer == Dest))

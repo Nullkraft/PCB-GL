@@ -1,4 +1,4 @@
-/* $Id: rotate.c,v 1.13 2005-02-02 01:59:29 danmc Exp $ */
+/* $Id: rotate.c,v 1.14 2005-03-12 02:17:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -52,11 +52,13 @@
 #include "set.h"
 #include "undo.h"
 
+#include "gui.h"
+
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: rotate.c,v 1.13 2005-02-02 01:59:29 danmc Exp $");
+RCSID("$Id: rotate.c,v 1.14 2005-03-12 02:17:13 danmc Exp $");
 
 
 
@@ -415,7 +417,7 @@ RotateScreenObject (LocationType X, LocationType Y, BYTE Steps)
     {
       if (TEST_FLAG (LOCKFLAG, (ArcTypePtr) ptr2))
 	{
-	  Message ("Sorry that object is locked\n");
+	  Message (_("Sorry, the object is locked\n"));
 	  return;
 	}
       Crosshair.AttachedObject.RubberbandN = 0;

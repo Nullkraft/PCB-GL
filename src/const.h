@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: const.h,v 1.12 2004-06-15 13:32:28 haceaton Exp $
+ *  RCS: $Id: const.h,v 1.13 2005-03-12 02:17:10 danmc Exp $
  */
 
 /* global source constants
@@ -192,29 +192,5 @@
                       | TEXT_TYPE | ELEMENTNAME_TYPE
 
 #define	ALL_TYPES		-1	/* all bits set */
-
-/* ---------------------------------------------------------------------------
- * define some standard layouts for childs of a form widget
- */
-#define	LAYOUT_TOP		XtNleft, XtChainLeft,	\
-				XtNright, XtChainLeft,	\
-				XtNtop, XtChainTop,	\
-				XtNbottom, XtChainTop
-#define	LAYOUT_BOTTOM		XtNleft, XtChainLeft,	\
-				XtNright, XtChainLeft,	\
-				XtNtop, XtChainBottom,	\
-				XtNbottom, XtChainBottom
-#define	LAYOUT_BOTTOM_RIGHT	XtNleft, XtChainLeft,	\
-				XtNright, XtChainRight,	\
-				XtNtop, XtChainBottom,	\
-				XtNbottom, XtChainBottom
-#define	LAYOUT_LEFT		XtNleft, XtChainLeft,	\
-				XtNright, XtChainLeft,	\
-				XtNtop, XtChainTop,	\
-				XtNbottom, XtChainBottom
-#define	LAYOUT_NORMAL		XtNleft, XtChainLeft,	\
-				XtNright, XtChainRight,	\
-				XtNtop, XtChainTop,	\
-				XtNbottom, XtChainBottom
 
 #endif
