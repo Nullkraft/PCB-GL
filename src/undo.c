@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: undo.c,v 1.1 2003-02-20 00:24:35 danmc Exp $";
+static char *rcsid = "$Id: undo.c,v 1.2 2003-12-25 17:22:19 haceaton Exp $";
 
 /* functions used to undo operations
  *
@@ -233,7 +233,7 @@ DrawRecoveredObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
       LayerTypePtr layer;
 
       layer =
-	&PCB->Data->Layer[GetLayerNumber (RemoveList, (LayerTypePtr) Ptr1)];
+	LAYER_PTR(GetLayerNumber (RemoveList, (LayerTypePtr) Ptr1));
       DrawObject (Type, (void *) layer, Ptr2, 0);
     }
   else
@@ -554,8 +554,8 @@ UndoMoveToLayer (UndoListTypePtr Entry)
         return(False);
       swap = GetLayerNumber (PCB->Data, (LayerTypePtr) ptr1);
       MoveObjectToLayer (type, ptr1, ptr2, ptr3,
-			 &PCB->Data->Layer[Entry->Data.
-					   MoveToLayer.OriginalLayer], True);
+			 LAYER_PTR(Entry->Data.
+					   MoveToLayer.OriginalLayer), True);
       Entry->Data.MoveToLayer.OriginalLayer = swap;
       return (True);
     }

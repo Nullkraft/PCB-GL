@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: rubberband.c,v 1.1 2003-02-20 00:24:31 danmc Exp $";
+static char *rcsid = "$Id: rubberband.c,v 1.2 2003-12-25 17:22:19 haceaton Exp $";
 
 /* functions used by 'rubberband moves'
  */
@@ -96,7 +96,7 @@ CheckPadForRubberbandConnection (PadTypePtr Pad)
 	continue;
 
       /* check all visible lines of the group member */
-      layer = &PCB->Data->Layer[number];
+      layer = LAYER_PTR(number);
       if (layer->On)
 	{
 	  LINE_LOOP (layer,
@@ -236,7 +236,7 @@ CheckLinePointForRubberbandConnection (LayerTypePtr Layer,
 	continue;
 
       /* check all visible lines of the group member */
-      layer = &PCB->Data->Layer[number];
+      layer = LAYER_PTR(number);
       if (layer->On)
 	{
 	  register float radius, dx, dy;
@@ -291,7 +291,7 @@ CheckPolygonForRubberbandConnection (LayerTypePtr Layer,
 	continue;
 
       /* check all visible lines of the group member */
-      layer = &PCB->Data->Layer[number];
+      layer = LAYER_PTR(number);
       if (layer->On)
 	{
 	  Dimension thick;

@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: polygon.c,v 1.1 2003-02-20 00:24:27 danmc Exp $";
+static char *rcsid = "$Id: polygon.c,v 1.2 2003-12-25 17:22:19 haceaton Exp $";
 
 /* special polygon editing routines
  */
@@ -262,7 +262,7 @@ UpdatePIPFlags (PinTypePtr Pin, ElementTypePtr Element,
     {
       Cardinal l;
       for (l = 0; l < MAX_LAYER; l++)
-	UpdatePIPFlags (Pin, Element, &PCB->Data->Layer[l], Polygon, AddUndo);
+	UpdatePIPFlags (Pin, Element, LAYER_PTR(l), Polygon, AddUndo);
     }
   else
     {

@@ -35,7 +35,7 @@
  *
  */
 
-static char *rcsid = "$Id: dev_rs274x.c,v 1.10 2003-11-20 18:55:41 haceaton Exp $";
+static char *rcsid = "$Id: dev_rs274x.c,v 1.11 2003-12-25 17:22:19 haceaton Exp $";
 
 /*
  * Gerber/RS-274X device driver
@@ -605,7 +605,7 @@ GBX_GroupID (int group)
       laynum = PCB->LayerGroups.Entries[group][entry];
       if (laynum < MAX_LAYER)
 	{
-	  Layer = &PCB->Data->Layer[laynum];
+	  Layer = LAYER_PTR(laynum);
 	  fprintf (GBX_Flags.FP, "%s (%i) ", UNKNOWN (Layer->Name), laynum);
 	}
     }

@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: macro.h,v 1.1 2003-02-20 00:24:17 danmc Exp $
+ *  RCS: $Id: macro.h,v 1.2 2003-12-25 17:22:19 haceaton Exp $
  */
 
 /* some commonly used macros not related to a special C-file
@@ -129,6 +129,7 @@
  * layer macros
  */
 #define	LAYER_ON_STACK(n)	(&PCB->Data->Layer[LayerStack[(n)]])
+#define LAYER_PTR(n)            (&PCB->Data->Layer[(n)])
 #define	CURRENT			(PCB->SilkActive ? &PCB->Data->Layer[MAX_LAYER + \
 				(Settings.ShowSolderSide ? SOLDER_LAYER : COMPONENT_LAYER)] \
 				: LAYER_ON_STACK(0))
@@ -155,7 +156,7 @@
  */
 #define	SET_FLAG(f,p)		((p)->Flags |= (f))
 #define	CLEAR_FLAG(f,p)		((p)->Flags &= (~(f)))
-#define	TEST_FLAG(f,p)		(((p)->Flags & (f)) ? True : False)
+#define	TEST_FLAG(f,p)		((p)->Flags & (f) ? True : False)
 #define	TOGGLE_FLAG(f,p)	((p)->Flags = TEST_FLAG((f),(p)) ? (p)->Flags & (~(f)) : (p)->Flags | (f))
 #define	ASSIGN_FLAG(f,v,p)	((p)->Flags = ((p)->Flags & (~(f))) | ((v) ? (f) : 0))
 

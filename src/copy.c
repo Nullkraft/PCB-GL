@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: copy.c,v 1.1 2003-02-20 00:23:57 danmc Exp $";
+static char *rcsid = "$Id: copy.c,v 1.2 2003-12-25 17:22:19 haceaton Exp $";
 
 /* functions used to copy pins, elements ...
  * it's necessary to copy data by calling create... since the base pointer
@@ -301,7 +301,7 @@ Boolean CopyPastebufferToLayout (Position X, Position Y)
   for (i = 0; i < MAX_LAYER + 2; i++)
     {
       LayerTypePtr sourcelayer = &PASTEBUFFER->Data->Layer[i],
-	destlayer = &PCB->Data->Layer[i];
+	destlayer = LAYER_PTR(i);
 
       if (destlayer->On)
 	{
