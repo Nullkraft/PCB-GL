@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: find.h,v 1.3 2004-02-05 06:06:12 haceaton Exp $
+ *  RCS: $Id: find.h,v 1.4 2004-02-06 21:59:10 haceaton Exp $
  */
 
 /* prototypes connection search routines
@@ -62,7 +62,7 @@ void	FreeLayoutLookupMemory(void);
 void	RatFindHook(int, void *, void *, void *, Boolean, Boolean);
 void	SaveFindFlag(int);
 void	RestoreFindFlag(void);
-Boolean	DRCAll(void);
+Cardinal DRCAll(void);
 Boolean lineClear(LineTypePtr, Cardinal);
 Boolean viaClear(PinTypePtr);
 Boolean IsLineInPolygon(LineTypePtr, PolygonTypePtr);
