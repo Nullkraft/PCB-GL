@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: const.h,v 1.11 2004-03-18 15:35:34 haceaton Exp $
+ *  RCS: $Id: const.h,v 1.12 2004-06-15 13:32:28 haceaton Exp $
  */
 
 /* global source constants
@@ -147,7 +147,7 @@
 /* ---------------------------------------------------------------------------
  * PCB flags
  */
-#define	PCB_FLAGS		0xffff	/* all used flags */
+#define	PCB_FLAGS		0x1ffff	/* all used flags */
 #define SHOWNUMBERFLAG          0x0001  /* pinout displays pin numbers instead of names */
 #define LOCALREFFLAG            0x0002  /* use local reference for moves */
 #define CHECKPLANESFLAG         0x0004  /* see if polygons have isolated regions */
@@ -165,6 +165,7 @@
 #define SHOWMASKFLAG            0x2000  /* show the solder mask layer */
 #define THINDRAWFLAG            0x4000  /* draw with thin lines */
 #define ORTHOMOVEFLAG           0x8000  /* move items orthogonally */
+#define LIVEROUTEFLAG           0x10000 /* draw autoroute paths real-time */
 
 /* ---------------------------------------------------------------------------
  * object types
