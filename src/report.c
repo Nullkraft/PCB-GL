@@ -26,7 +26,7 @@
  *
  */
 
-static char *rcsid = "$Id: report.c,v 1.2 2003-07-06 16:39:12 djdelorie Exp $";
+static char *rcsid = "$Id: report.c,v 1.3 2003-09-03 03:18:32 djdelorie Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -76,14 +76,6 @@ CB_OK (Widget W, XtPointer ClientData, XtPointer CallData)
   ReturnCode = (long int) ClientData;
 }
 
-static int
-DrillQSort(const void *va, const void *vb)
-{
-  DrillType *a = (DrillType *)va;
-  DrillType *b = (DrillType *)vb;
-  return a->DrillSize - b->DrillSize;
-}
-
 void
 ReportDrills (void)
 {
@@ -102,7 +94,6 @@ ReportDrills (void)
       total_drills += AllDrills->Drill[n].UnplatedCount;
     }
 
-  qsort (AllDrills->Drill, AllDrills->DrillN, sizeof (DrillType), DrillQSort);
   stringlist = malloc (512L + AllDrills->DrillN * 64L);
   sprintf (stringlist,
 	   "There are %d different drill sizes used in this layout, %d holes total\n\n"

@@ -26,7 +26,7 @@
  *
  */
 
-static char *rcsid = "$Id: drill.c,v 1.1 2003-02-20 00:24:06 danmc Exp $";
+static char *rcsid = "$Id: drill.c,v 1.2 2003-09-03 03:18:32 djdelorie Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -101,6 +101,14 @@ InitializeDrill (DrillTypePtr drill, PinTypePtr pin, ElementTypePtr element)
     drill->ViaCount = 1;
   if (TEST_FLAG (HOLEFLAG, pin))
     drill->UnplatedCount = 1;
+}
+
+static int
+DrillQSort(const void *va, const void *vb)
+{
+  DrillType *a = (DrillType *)va;
+  DrillType *b = (DrillType *)vb;
+  return a->DrillSize - b->DrillSize;
 }
 
 DrillInfoTypePtr GetDrillInfo (DataTypePtr top)
@@ -178,6 +186,7 @@ DrillInfoTypePtr GetDrillInfo (DataTypePtr top)
 	    FillDrill (Drill, NULL, via);}
 	    }
   );
+  qsort (AllDrills->Drill, AllDrills->DrillN, sizeof (DrillType), DrillQSort);
   return (AllDrills);
 }
 

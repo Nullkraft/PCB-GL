@@ -30,7 +30,7 @@
  * silkscreen layer. Perhaps the design is not the best.
  */
 
-static char *rcsid = "$Id: dev_ps.c,v 1.1 2003-02-20 00:24:01 danmc Exp $";
+static char *rcsid = "$Id: dev_ps.c,v 1.2 2003-09-03 03:18:32 djdelorie Exp $";
 
 /* PostScript device driver
  * code is shared for EPS and PS output
@@ -766,7 +766,9 @@ PS_PrintTextLowLevel (TextTypePtr Text)
 	      newline.Point1.Y = newline.Point1.Y * Text->Scale / 100;
 	      newline.Point2.X = (newline.Point2.X + x) * Text->Scale / 100;
 	      newline.Point2.Y = newline.Point2.Y * Text->Scale / 100;
-	      newline.Thickness = newline.Thickness * Text->Scale / 100;
+	      newline.Thickness = newline.Thickness * Text->Scale / 200;
+	      if (newline.Thickness < 8)
+		newline.Thickness = 8;
 
 	      RotateLineLowLevel (&newline, 0, 0, Text->Direction);
 
