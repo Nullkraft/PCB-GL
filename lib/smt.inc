@@ -1,5 +1,5 @@
 # -*- m4 -*-
-#   $Id: smt.inc,v 1.5 2003-12-31 02:29:56 danmc Exp $
+#   $Id: smt.inc,v 1.6 2003-12-31 02:57:01 danmc Exp $
 #
 #   surface mounted components
 #
@@ -444,6 +444,9 @@ define(`PKG_SMT_TRANSISTOR4',
 define(`PKG_SMT_TRANSISTOR5',
   `COMMON_SMT_TRANSISTOR_MIL(`$1', `$2', `$3',
 		  `eval(($4*1000)/254)', `eval(($5*1000)/254)', 50, `12345')')
+define(`PKG_SMT_TRANSISTOR5A',
+  `COMMON_SMT_TRANSISTOR_MIL(`$1', `$2', `$3',
+		  `eval(($4*1000)/254)', `eval(($5*1000)/254)', 50, `45123')')
 #
 #
 # general purpose transistor, 6 pins
