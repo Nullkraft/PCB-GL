@@ -26,7 +26,7 @@
  *
  */
 
-static char *rcsid = "$Id: report.c,v 1.15 2004-02-27 06:16:49 haceaton Exp $";
+static char *rcsid = "$Id: report.c,v 1.16 2004-03-03 01:49:19 haceaton Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -309,6 +309,7 @@ ReportDialog (void)
       {
 	ElementTypePtr element = (ElementTypePtr) ptr2;
 	sprintf (&report[0], "ELEMENT ID# %ld   Flags:0x%08lx\n"
+	         "BoundingBox (%d,%d) (%d,%d)\n"
 		 "Descriptive Name \"%s\"\n"
 		 "Name on board \"%s\"\n"
 		 "Part number name \"%s\"\n"
@@ -316,6 +317,8 @@ ReportDialog (void)
 		 "It is on the %s side of the board.\n"
 		 "%s",
 		 element->ID, element->Flags,
+		 element->BoundingBox.X1, element->BoundingBox.Y1,
+		 element->BoundingBox.X2, element->BoundingBox.Y2,
 		 EMPTY (element->Name[0].TextString),
 		 EMPTY (element->Name[1].TextString),
 		 EMPTY (element->Name[2].TextString), element->MarkX,

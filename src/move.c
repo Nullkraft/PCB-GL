@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: move.c,v 1.12 2004-03-01 16:59:42 haceaton Exp $";
+static char *rcsid = "$Id: move.c,v 1.13 2004-03-03 01:49:19 haceaton Exp $";
 
 /* functions used to move pins, elements ...
  */
@@ -113,6 +113,7 @@ MoveElementLowLevel (DataTypePtr Data, ElementTypePtr Element, Location DX, Loca
   ELEMENTLINE_LOOP (Element, 
     {
       MOVE_LINE_LOWLEVEL (line, DX, DY);
+      MOVE_BOX_LOWLEVEL ((BoxTypePtr)line, DX, DY);
     }
   );
   PIN_LOOP (Element, 

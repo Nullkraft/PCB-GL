@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: misc.c,v 1.17 2004-03-01 05:10:05 haceaton Exp $";
+static char *rcsid = "$Id: misc.c,v 1.18 2004-03-03 01:49:19 haceaton Exp $";
 
 /* misc functions used by several modules
  */
@@ -306,6 +306,7 @@ SetElementBoundingBox (DataTypePtr Data, ElementTypePtr Element, FontTypePtr Fon
   box->X2 = box->Y2 = 0;
   ELEMENTLINE_LOOP (Element, 
     {
+      SetLineBoundingBox (line);
       MAKEMIN (box->X1, line->Point1.X - (line->Thickness + 1) / 2);
       MAKEMIN (box->Y1, line->Point1.Y - (line->Thickness + 1) / 2);
       MAKEMIN (box->X1, line->Point2.X - (line->Thickness + 1) / 2);

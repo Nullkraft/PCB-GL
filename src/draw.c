@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: draw.c,v 1.24 2004-02-28 23:44:18 haceaton Exp $";
+static char *rcsid = "$Id: draw.c,v 1.25 2004-03-03 01:49:19 haceaton Exp $";
 
 /* drawing routines
  */
@@ -88,7 +88,6 @@ static void ClearOnlyPin (PinTypePtr, Boolean);
 static void ThermPin (LayerTypePtr, PinTypePtr);
 static void DrawPlainPin (PinTypePtr, Boolean);
 static void DrawPlainVia (PinTypePtr, Boolean);
-static void DrawPlainElementPinsAndPads (ElementTypePtr, Boolean);
 static void DrawPinOrViaNameLowLevel (PinTypePtr);
 static void DrawPadLowLevel (PadTypePtr);
 static void DrawPadNameLowLevel (PadTypePtr);
@@ -1905,26 +1904,6 @@ DrawElementPinsAndPads (ElementTypePtr Element, int unused)
   PIN_LOOP (Element, 
     {
       DrawPin (pin, unused);
-    }
-  );
-}
-
-/* ---------------------------------------------------------------------------
- * draw pins of an element without clearing around polygons
- */
-static void
-DrawPlainElementPinsAndPads (ElementTypePtr Element, Boolean holeToo)
-{
-  /* don't draw invisible pads, they're already handled */
-  PAD_LOOP (Element, 
-    {
-      if (FRONT (pad))
-	DrawPad (pad, 0);
-    }
-  );
-  PIN_LOOP (Element, 
-    {
-      DrawPlainPin (pin, holeToo);
     }
   );
 }
