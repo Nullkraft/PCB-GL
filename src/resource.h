@@ -1,4 +1,4 @@
-/* $Id: resource.h,v 1.2 2004-04-29 01:31:10 danmc Exp $ */
+/* $Id: resource.h,v 1.3 2004-05-14 02:29:34 danmc Exp $ */
 
 #ifndef __RESOURCE_INCLUDED_
 #define __RESOURCE_INCLUDED_ 1
@@ -26,7 +26,7 @@ typedef struct Resource {
   struct Resource *parent;
   void *user_ptr;
   int flags;
-  int c;
+  int c;              /* number of v[i] */
   ResourceVal *v;
 } Resource;
 
