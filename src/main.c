@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: main.c,v 1.9 2004-01-30 14:09:57 haceaton Exp $";
+static char *rcsid = "$Id: main.c,v 1.10 2004-02-05 22:02:54 haceaton Exp $";
 
 /* main program, initializes some stuff and handles user input
  */
@@ -818,7 +818,7 @@ static XtResource ToplevelResources[] = {
   {"swapStartDirection", "SwapStartDirection", XtRBoolean, sizeof (Boolean),
    XtOffsetOf (SettingType, SwapStartDirection), XtRString, "True"}
   ,
-  {"textScale", "TextScale", XtRDimension, sizeof (Dimension),
+  {"textScale", "TextScale", XtRInt, sizeof (BDimension),
    XtOffsetOf (SettingType, TextScale), XtRString, "100"}
   ,
   {"uniqueNames", "UniqueNames", XtRBoolean, sizeof (Boolean),
