@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: set.c,v 1.4 2004-01-05 01:40:24 haceaton Exp $";
+static char *rcsid = "$Id: set.c,v 1.5 2004-01-06 23:53:42 haceaton Exp $";
 
 /* routines to update widgets and global settings
  * (except output window and dialogs)
@@ -71,15 +71,15 @@ SetCursorStatusLine (void)
   if (Marked.status)
     sprintf (text,
 	     "%-i.%02d, %-i.%02d <%-i.%02d, %-i.%0d> (%-.2fmm, %-.2fmm)",
-	     Crosshair.X / 100, Crosshair.X % 100, Crosshair.Y / 100,
-	     Crosshair.Y % 100, (Crosshair.X - Marked.X) / 100,
-	     (Crosshair.X - Marked.X) % 100, (Crosshair.Y - Marked.Y) / 100,
-	     (Crosshair.Y - Marked.Y) % 100,
+	     Crosshair.X / 100, abs(Crosshair.X % 100), Crosshair.Y / 100,
+	     abs(Crosshair.Y % 100), (Crosshair.X - Marked.X) / 100,
+	     abs(Crosshair.X - Marked.X) % 100, (Crosshair.Y - Marked.Y) / 100,
+	     abs(Crosshair.Y - Marked.Y) % 100,
 	     COOR_TO_MM * (Crosshair.X - Marked.X),
 	     COOR_TO_MM * (Crosshair.Y - Marked.Y));
   else
-    sprintf (text, "%-i.%02d,%-i.%02d", Crosshair.X / 100, Crosshair.X % 100,
-	     Crosshair.Y / 100, Crosshair.Y % 100);
+    sprintf (text, "%-i.%02d,%-i.%02d", Crosshair.X / 100, abs(Crosshair.X % 100),
+	     Crosshair.Y / 100, abs(Crosshair.Y % 100));
   SetOutputLabel (Output.CursorPosition, text);
 }
 
