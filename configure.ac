@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.14 2004-02-04 03:59:41 djdelorie Exp $
+dnl $Id: configure.ac,v 1.15 2004-02-15 07:28:54 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/pinout.c)
@@ -35,6 +35,7 @@ AC_CHECK_LIB(xnet, gethostbyname)
 AC_CHECK_LIB(fl, yywrap)
 AC_CHECK_FUNCS(strerror)
 AC_CHECK_FUNCS(regcomp re_comp)
+AC_CHECK_FUNCS(logf expf)
 AC_PATH_XTRA
 AC_ARG_WITH([libstroke],
 [  --without-libstroke     disable libstroke support (default: enabled)],
