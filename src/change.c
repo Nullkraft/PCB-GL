@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: change.c,v 1.21 2004-05-29 00:13:33 danmc Exp $";
+  "$Id: change.c,v 1.22 2004-05-29 18:57:26 danmc Exp $";
 
 /* functions used to change object properties
  *
@@ -36,6 +36,7 @@ static char *rcsid =
 #endif
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "global.h"
 
