@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: polygon.c,v 1.20 2004-03-09 13:58:20 haceaton Exp $";
+  "$Id: polygon.c,v 1.21 2004-03-09 19:30:44 haceaton Exp $";
 
 /* special polygon editing routines
  */
@@ -427,6 +427,7 @@ plow_callback (const BoxType *b, void *cl)
 	   if ((TEST_FLAG (ONSOLDERFLAG, pad)) ==
 	      (plow->group == plow->solder ? True : False))
 	         {
+                    pad->Thickness += pad->Clearance;
 		    if (IsPadInPolygon (pad, plow->polygon))
 		      {
 		        pad->Thickness -= pad->Clearance;
