@@ -25,7 +25,7 @@
  *
  */
 
-static char *rcsid = "$Id: action.c,v 1.36 2004-03-10 22:55:55 haceaton Exp $";
+static char *rcsid = "$Id: action.c,v 1.37 2004-03-14 06:29:23 haceaton Exp $";
 
 /* action routines for output window
  */
@@ -2582,7 +2582,9 @@ void
 ActionAutoPlaceSelected (Widget W, XEvent * Event,
 			 String * Params, Cardinal * Num)
 {
-  if (*Num == 0)		/* no parameters */
+  if (*Num == 0 &&
+      ConfirmDialog ("Auto-placement can NOT be undone.\n"
+                     "Do you want to continue anyway?\n"))
     {
       HideCrosshair (True);
       watchCursor ();
