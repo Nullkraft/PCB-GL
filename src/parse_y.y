@@ -25,7 +25,7 @@
  *
  */
 
-static	char	*rcsid = "$Id: parse_y.y,v 1.10 2004-03-05 02:22:52 haceaton Exp $";
+static	char	*rcsid = "$Id: parse_y.y,v 1.11 2004-03-23 20:28:35 djdelorie Exp $";
 
 /* grammar to parse ASCII input of PCB description
  */
@@ -1047,3 +1047,7 @@ char *s;
 	return(0);
 }
 
+int yywrap()
+{
+  return 1;
+}
