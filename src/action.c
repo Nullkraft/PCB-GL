@@ -25,7 +25,7 @@
  *
  */
 
-static char *rcsid = "$Id: action.c,v 1.35 2004-03-09 13:59:52 haceaton Exp $";
+static char *rcsid = "$Id: action.c,v 1.36 2004-03-10 22:55:55 haceaton Exp $";
 
 /* action routines for output window
  */
@@ -676,6 +676,7 @@ AdjustAttachedBox (void)
 void
 AdjustAttachedObjects (void)
 {
+  PointTypePtr pnt;
   switch (Settings.Mode)
     {
       /* update at least an attached block (selection) */
@@ -707,9 +708,10 @@ AdjustAttachedObjects (void)
       break;
       /* point insertion mode */
     case INSERTPOINT_MODE:
-      InsertedPoint = *AdjustInsertPoint ();
+      pnt = AdjustInsertPoint ();
+      if (pnt)
+        InsertedPoint = *pnt;
       break;
-
     case ROTATE_MODE:
       modeCursor (ROTATE_MODE);
       break;
@@ -1427,7 +1429,7 @@ NotifyMode (void)
 
 		    }
 		  Crosshair.AttachedObject.State = STATE_SECOND;
-		  AdjustInsertPoint ();
+		  InsertedPoint = *AdjustInsertPoint ();
 		}
 	    }
 	  break;
