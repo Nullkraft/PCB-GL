@@ -30,7 +30,7 @@
  * silkscreen layer. Perhaps the design is not the best.
  */
 
-static char *rcsid = "$Id: dev_ps.c,v 1.11 2004-03-20 23:01:33 haceaton Exp $";
+static char *rcsid = "$Id: dev_ps.c,v 1.12 2004-05-14 21:23:00 danmc Exp $";
 
 /* PostScript device driver
  * code is shared for EPS and PS output
@@ -659,6 +659,7 @@ PS_Exit (void)
 static void
 EPS_Postamble (void)
 {
+  preamble = False;
   PS_EPS_Exit (True);
 }
 static void
