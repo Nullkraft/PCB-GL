@@ -25,7 +25,7 @@
  *
  */
 
-static char *rcsid = "$Id: action.c,v 1.45 2004-06-15 13:32:27 haceaton Exp $";
+static char *rcsid = "$Id: action.c,v 1.46 2004-08-25 01:59:05 danmc Exp $";
 
 /* action routines for output window
  */
@@ -2582,6 +2582,11 @@ ActionRemoveSelected (Widget W, XEvent * Event,
       if (RemoveSelected ())
 	SetChangedFlag (True);
       RestoreCrosshair (True);
+    }
+  else
+    {
+      Message ("Usage\n"
+	       "RemoveSelected()\n");
     }
 }
 
