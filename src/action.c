@@ -25,7 +25,7 @@
  *
  */
 
-static char *rcsid = "$Id: action.c,v 1.14 2004-01-15 20:16:06 haceaton Exp $";
+static char *rcsid = "$Id: action.c,v 1.15 2004-01-20 16:15:49 haceaton Exp $";
 
 /* action routines for output window
  */
@@ -2692,7 +2692,10 @@ ActionRipUp (Widget W, XEvent * Event, String * Params, Cardinal * Num)
 	    CopyObjectToBuffer (PASTEBUFFER->Data, PCB->Data, ELEMENT_TYPE,
                                  ptr1, ptr2, ptr3);
 	    SmashBufferElement (PASTEBUFFER);
+            PASTEBUFFER->X = 0;
+            PASTEBUFFER->Y = 0;
             SaveUndoSerialNumber ();
+	    EraseObject(ELEMENT_TYPE, ptr1);
             MoveObjectToRemoveUndoList(ELEMENT_TYPE, ptr1, ptr2, ptr3);
 	    RestoreUndoSerialNumber ();
 	    CopyPastebufferToLayout (0,0);
