@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: library.c,v 1.3 2003-12-30 02:18:51 haceaton Exp $";
+  "$Id: library.c,v 1.4 2004-03-05 13:29:15 haceaton Exp $";
 
 /* library-element select box
  * some of the actions are local to this module
@@ -107,9 +107,7 @@ UpdateCircuitSelector (LibraryMenuTypePtr Menu)
   FreeSelectorEntries (&CircuitSelector);
   ENTRY_LOOP (Menu, 
     {
-      AddEntryToSelector (MyStrdup
-			  (entry->ListEntry,
-			   "UpdateCircuitSelector()"),
+      AddEntryToSelector (entry->ListEntry,
 			  (XtPointer) entry, &CircuitSelector);
     }
   );
