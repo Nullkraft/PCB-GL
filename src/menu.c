@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: menu.c,v 1.31 2004-06-24 15:05:47 djdelorie Exp $";
+static char *rcsid = "$Id: menu.c,v 1.32 2004-06-25 22:58:21 djdelorie Exp $";
 
 /* initializes menus and handles callbacks
  */
@@ -96,9 +96,11 @@ static PopupEntryType pMenuEntries[] = {
   {"remove", "Remove Selected", CB_Action,
    "RemoveSelected", NULL},
   {"copy", "Copy Selection to Buffer", CB_Action,
+   "GetXY,Press a button at the element's location\n"
    "PasteBuffer,Clear\n" "PasteBuffer,AddSelected\n" "Mode,PasteBuffer",
    NULL},
   {"cut", "Cut Selection to Buffer", CB_Action,
+   "GetXY,Press a button at the element's location\n"
    "PasteBuffer,Clear\n"
    "PasteBuffer,AddSelected\n" "RemoveSelected\n" "Mode,PasteBuffer",
    NULL},
