@@ -25,7 +25,7 @@
  *
  */
 
-static char *rcsid = "$Id: action.c,v 1.1 2003-02-20 00:23:47 danmc Exp $";
+static char *rcsid = "$Id: action.c,v 1.2 2003-06-05 10:48:29 danmc Exp $";
 
 /* action routines for output window
  */
@@ -1949,8 +1949,14 @@ ActionSetValue (Widget W, XEvent * Event, String * Params, Cardinal * Num)
       /* if the first character is a sign we have to add the
        * value to the current one
        */
-      r = !isdigit (**(Params + 1));
-      value = atof (*(Params + 1));
+       if (**(Params + 1) == '=')
+       {
+         r = 0;
+         value = atof (*(Params + 1) + 1);
+       } else  {
+         r = !isdigit (**(Params + 1));
+         value = atof (*(Params + 1));
+       }
       switch (GetFunctionID (*Params))
 	{
 	case F_ViaDrillingHole:
