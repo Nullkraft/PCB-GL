@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: misc.c,v 1.4 2003-12-30 02:18:51 haceaton Exp $";
+static char *rcsid = "$Id: misc.c,v 1.5 2003-12-31 03:41:40 haceaton Exp $";
 
 /* misc functions used by several modules
  */
@@ -301,6 +301,24 @@ SetElementBoundingBox (ElementTypePtr Element, FontTypePtr Font)
 	}
     }
   );
+
+  /* mark pins with component orientation */
+  if ((maxx - minx) > (maxy - miny))
+    {
+      PIN_LOOP (Element, 
+	{
+	  SET_FLAG (EDGE2FLAG, pin);
+	}
+      );
+    }
+  else
+    {
+      PIN_LOOP (Element, 
+	{
+	  CLEAR_FLAG (EDGE2FLAG, pin);
+	}
+      );
+    }
 
   Element->BoundingBox.X1 = minx;
   Element->BoundingBox.Y1 = miny;
