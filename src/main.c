@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: main.c,v 1.8 2004-01-19 19:16:18 haceaton Exp $";
+static char *rcsid = "$Id: main.c,v 1.9 2004-01-30 14:09:57 haceaton Exp $";
 
 /* main program, initializes some stuff and handles user input
  */
@@ -1329,6 +1329,7 @@ main (int argc, char *argv[])
   switch (--argc)
     {
     case 0:			/* only program name */
+      SetZoom(PCB->Zoom);
       break;
 
     case 1:			/* load an initial layout;
