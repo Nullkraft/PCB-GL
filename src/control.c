@@ -1,4 +1,4 @@
-/* $Id: control.c,v 1.5 2004-11-08 05:36:59 danmc Exp $ */
+/* $Id: control.c,v 1.6 2005-01-13 22:13:28 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: control.c,v 1.5 2004-11-08 05:36:59 danmc Exp $");
+RCSID("$Id: control.c,v 1.6 2005-01-13 22:13:28 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * include bitmap data
@@ -78,7 +78,7 @@ typedef struct			/* description for a single mode button */
   char *Name,			/* the widgets name and label */
    *Label;
   int Mode;			/* mode ID */
-  char *Bitmap;			/* background bitmap data */
+  unsigned char *Bitmap;			/* background bitmap data */
   unsigned int Width,		/* bitmap size */
     Height;
   Widget W;
@@ -656,7 +656,7 @@ InitModeButtons (Widget Parent, Widget Top, Widget Left)
 
       /* create background pixmap */
       bitmap = XCreateBitmapFromData (Dpy, XtWindow (Parent),
-				      ModeButtons[i].Bitmap,
+				      (char *) ModeButtons[i].Bitmap,
 				      ModeButtons[i].Width,
 				      ModeButtons[i].Height);
 

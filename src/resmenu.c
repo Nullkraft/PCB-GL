@@ -1,4 +1,4 @@
-/* $Id: resmenu.c,v 1.15 2004-10-27 14:36:34 djdelorie Exp $ */
+/* $Id: resmenu.c,v 1.16 2005-01-13 22:13:28 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -29,7 +29,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: resmenu.c,v 1.15 2004-10-27 14:36:34 djdelorie Exp $");
+RCSID("$Id: resmenu.c,v 1.16 2005-01-13 22:13:28 danmc Exp $");
 
 static Arg args[100];
 static int n;
@@ -155,6 +155,8 @@ invoke_action (Widget w, char *rstr)
 	  }
       }
   }
+
+  return 0;
 }
 
 static void
@@ -359,7 +361,7 @@ ActionCheckWhen (Widget w, XEvent * e, String * argv, Cardinal * argc)
   if (check_pixmap == BadAlloc)
     check_pixmap = XCreateBitmapFromData (XtDisplay(XtParent(w)),
 					  RootWindowOfScreen (XtScreen (XtParent(w))),
-					  check_icon_bits, check_icon_width,
+					  (char *) check_icon_bits, check_icon_width,
 					  check_icon_height);
 
   if (v)
