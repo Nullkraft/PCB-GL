@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: change.h,v 1.2 2004-01-05 01:40:24 haceaton Exp $
+ *  RCS: $Id: change.h,v 1.3 2004-05-29 00:13:33 danmc Exp $
  */
 
 /* prototypes to change object properties
@@ -72,20 +72,32 @@ Boolean	ChangeSelected2ndSize(int, Location, Boolean);
 Boolean	ChangeSelectedMaskSize(int, Location, Boolean);
 Boolean	ChangeSelectedJoin(int); 
 Boolean	ChangeSelectedSquare(int); 
+Boolean	SetSelectedSquare(int); 
+Boolean	ClrSelectedSquare(int); 
 Boolean	ChangeSelectedThermals(int); 
+Boolean	SetSelectedThermals(int); 
+Boolean	ClrSelectedThermals(int); 
 Boolean ChangeSelectedHole(void);
 Boolean ChangeSelectedOctagon(int);
+Boolean SetSelectedOctagon(int);
+Boolean ClrSelectedOctagon(int);
 Boolean ChangeSelectedElementSide(void);
 Boolean ChangeElementSide(ElementTypePtr, Location);
 Boolean ChangeHole(PinTypePtr);
 Boolean	ChangeObjectSize(int, void *, void *, void *, Location, Boolean);
 Boolean	ChangeObjectThermal(int, void *, void *, void *);
+Boolean	SetObjectThermal(int, void *, void *, void *);
+Boolean	ClrObjectThermal(int, void *, void *, void *);
 Boolean	ChangeObjectClearSize(int, void *, void *, void *, Location, Boolean);
 Boolean	ChangeObject2ndSize(int, void *, void *, void *, Location, Boolean);
 Boolean	ChangeObjectMaskSize(int, void *, void *, void *, Location, Boolean);
 Boolean	ChangeObjectJoin(int, void *, void *, void *);
 Boolean	ChangeObjectSquare(int, void *, void *, void *);
+Boolean	SetObjectSquare(int, void *, void *, void *);
+Boolean	ClrObjectSquare(int, void *, void *, void *);
 Boolean	ChangeObjectOctagon(int, void *, void *, void *);
+Boolean	SetObjectOctagon(int, void *, void *, void *);
+Boolean	ClrObjectOctagon(int, void *, void *, void *);
 void	*ChangeObjectName(int, void *, void *, void *, char *);
 void	*QueryInputAndChangeObjectName(int, void *, void *, void *);
 void	ChangePCBSize(BDimension, BDimension);

@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: action.h,v 1.5 2004-04-27 19:08:25 djdelorie Exp $
+ *  RCS: $Id: action.h,v 1.6 2004-05-29 00:13:33 danmc Exp $
  */
 
 /* prototypes for action routines
@@ -93,5 +93,8 @@ void	ActionAbout(Widget, XEvent *, String *, Cardinal *);
 void	AdjustAttachedObjects(void);
 void	CallActionProc(Widget, String, XEvent *, String *, Cardinal);
 void	warpNoWhere(void);
+void	ActionSetFlag(Widget, XEvent *, String *, Cardinal *);
+void	ActionClrFlag(Widget, XEvent *, String *, Cardinal *);
+void	ActionChangeFlag(Widget, XEvent *, String *, Cardinal *);
 
 #endif

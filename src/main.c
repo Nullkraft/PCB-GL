@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: main.c,v 1.15 2004-04-30 01:49:21 danmc Exp $";
+static char *rcsid = "$Id: main.c,v 1.16 2004-05-29 00:13:33 danmc Exp $";
 
 /* main program, initializes some stuff and handles user input
  */
@@ -977,7 +977,10 @@ static XtActionsRec Actions[] = {
   {"ToggleVisibility", ActionToggleVisibility},
   {"MoveObject", ActionMoveObject},
   {"djopt", ActionDJopt},
-  {"GetLoc", ActionGetLocation}
+  {"GetLoc", ActionGetLocation},
+  {"SetFlag", ActionSetFlag},
+  {"ClrFlag", ActionClrFlag},
+  {"ChangeFlag", ActionChangeFlag}
 };
 
 /* ---------------------------------------------------------------------------
