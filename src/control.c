@@ -1,4 +1,4 @@
-/* $Id: control.c,v 1.4 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: control.c,v 1.5 2004-11-08 05:36:59 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: control.c,v 1.4 2004-08-30 02:52:04 danmc Exp $");
+RCSID("$Id: control.c,v 1.5 2004-11-08 05:36:59 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * include bitmap data
@@ -632,6 +632,12 @@ InitModeButtons (Widget Parent, Widget Top, Widget Left)
 {
   Widget masterform;
   int i;
+  static char *translations =
+    "<EnterWindow>: highlight(Always) \n"
+    "<LeaveWindow>: unhighlight() \n"
+    "<Btn1Down>,<Btn1Up>: toggle() notify() \n";
+  
+  XtTranslations translationtable;
 
 #if 0
   masterform = XtVaCreateManagedWidget ("toolMasterForm", formWidgetClass,
@@ -641,6 +647,9 @@ InitModeButtons (Widget Parent, Widget Top, Widget Left)
 #else
   masterform = Parent;
 #endif
+
+  translationtable = XtParseTranslationTable (translations);
+
   for (i = 0; i < ENTRIES (ModeButtons); i++)
     {
       Pixmap bitmap;
@@ -661,6 +670,8 @@ InitModeButtons (Widget Parent, Widget Top, Widget Left)
 						    XtNbitmap, bitmap,
 						    XtNfromHoriz, Left,
 						    XtNfromVert, Top,
+						    XtNtranslations,
+						    translationtable,
 						    LAYOUT_TOP, NULL);
       else
 	ModeButtons[i].W = XtVaCreateManagedWidget (ModeButtons[i].Name,
