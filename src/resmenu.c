@@ -1,4 +1,4 @@
-/* $Id: resmenu.c,v 1.12 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: resmenu.c,v 1.13 2004-10-17 05:40:44 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -29,7 +29,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: resmenu.c,v 1.12 2004-08-30 02:52:04 danmc Exp $");
+RCSID("$Id: resmenu.c,v 1.13 2004-10-17 05:40:44 djdelorie Exp $");
 
 static Arg args[100];
 static int n;
@@ -466,12 +466,53 @@ append (char *str, char *add)
 
 static char *accel = 0;
 
+static int
+accel_cmp (const void *va, const void *vb)
+{
+  char *a = *(char **)va;
+  char *b = *(char **)vb;
+
+  /* This is odd, but we want #override first and Mod<Key> before
+     <Key>.  */
+  if (*a == '#' || *b == '#')
+    return strcmp (a, b);
+  return strcmp (b, a);
+}
+
 void
 MenuSetAccelerators (Widget w)
 {
+  int na, i;
+  char **alist, *cp;
+  char *tmpa;
+
   XtAccelerators a;
   if (!accel)
     return;
+
+  tmpa = MyStrdup (accel, "MenuSetAccelerators");
+  for (na=1, cp = accel; *cp; cp ++)
+    if (*cp == '\n')
+      na ++;
+  alist = (char **) malloc (na * sizeof (char *));
+  alist[0] = tmpa;
+  for (na=1, cp = tmpa; *cp; cp ++)
+    if (*cp == '\n')
+      {
+	*cp = 0;
+	alist[na] = cp+1;
+	na++;
+      }
+  qsort (alist, na, sizeof(alist[0]), accel_cmp);
+  accel[0] = 0;
+  for (i=0; i<na; i++)
+    {
+      if (i)
+	strcat(accel, "\n");
+      strcat(accel, alist[i]);
+    }
+  free(tmpa);
+  free(alist);
 
   a = XtParseAcceleratorTable(accel);
   n = 0;
