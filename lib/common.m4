@@ -23,7 +23,7 @@ divert(-1)
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: common.m4,v 1.2 2003-05-20 11:50:58 danmc Exp $
+#   RCS: $Id: common.m4,v 1.3 2003-08-30 00:12:45 danmc Exp $
 #
 # common defines for packages
 #
@@ -81,6 +81,7 @@ include(pci.inc)
 include(plcc.inc)
 include(qfp.inc)
 include(qfp2.inc)
+include(qfpdj.inc)
 include(resistor_adjust.inc)
 include(rules.inc)
 include(smt.inc)
