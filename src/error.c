@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: error.c,v 1.2 2003-03-05 02:17:49 danmc Exp $";
+static char *rcsid = "$Id: error.c,v 1.3 2003-06-13 23:14:24 danmc Exp $";
 
 /* error and debug funtions
  * getpid() needs a cast to (int) to get rid of compiler warnings
@@ -65,10 +65,10 @@ static char *rcsid = "$Id: error.c,v 1.2 2003-03-05 02:17:49 danmc Exp $";
 /* ----------------------------------------------------------------------
  * some external identifiers
  */
-extern int errno,		/* system error code */
-  sys_nerr;			/* number of messages available from array */
+extern int errno;		/* system error code */
 
 #if !defined(HAVE_STRERROR)
+extern int  sys_nerr;		/* number of messages available from array */
 #define USE_SYS_ERRLIST
 #endif
 
