@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: create.c,v 1.13 2004-03-20 23:01:33 haceaton Exp $";
+  "$Id: create.c,v 1.14 2004-03-26 20:44:14 haceaton Exp $";
 
 /* functions used to create vias, pins ...
  */
@@ -678,6 +678,11 @@ CreateNewPad (ElementTypePtr Element,
   PadTypePtr pad = GetPadMemory (Element);
 
   /* copy values */
+  if (X1 != X2 && Y1 != Y2)
+   {
+     Message ("Diagonal pads are forbidden!\n");
+     return NULL;
+   }
   pad->Point1.X = MIN (X1, X2);	/* works since either X1 == X2 or Y1 == Y2 */
   pad->Point1.Y = MIN (Y1, Y2);
   pad->Point2.X = MAX (X1, X2);
