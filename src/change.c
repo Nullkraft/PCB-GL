@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: change.c,v 1.9 2004-02-13 00:51:46 haceaton Exp $";
+static char *rcsid = "$Id: change.c,v 1.10 2004-02-13 01:06:13 haceaton Exp $";
 
 /* functions used to change object properties
  *
@@ -1535,6 +1535,8 @@ ChangePadMaskSize (ElementTypePtr Element, PadTypePtr Pad)
   BDimension value = (Absolute) ? Absolute : Pad->Mask + Delta;
 
   value = MAX (value, 0);
+  if (value == Pad->Mask && Absolute == 0)
+    value = Pad->Thickness;
   if (value != Pad->Mask)
     {
       AddObjectToMaskSizeUndoList (PAD_TYPE, Element, Pad, Pad);
@@ -1556,6 +1558,8 @@ ChangePinMaskSize (ElementTypePtr Element, PinTypePtr Pin)
   BDimension value = (Absolute) ? Absolute : Pin->Mask + Delta;
 
   value = MAX (value, 0);
+  if (value == Pin->Mask && Absolute == 0)
+    value = Pin->Thickness;
   if (value != Pin->Mask)
     {
       AddObjectToMaskSizeUndoList (PIN_TYPE, Element, Pin, Pin);
