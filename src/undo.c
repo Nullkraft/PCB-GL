@@ -23,7 +23,7 @@
  *  Thomas.Nau@rz.uni-ulm.de
  *
  */
-static char *rcsid = "$Id: undo.c,v 1.10 2004-03-17 04:59:45 haceaton Exp $";
+static char *rcsid = "$Id: undo.c,v 1.11 2004-07-02 02:02:53 haceaton Exp $";
 
 /* functions used to undo operations
  *
@@ -373,10 +373,13 @@ UndoChangeMaskSize (UndoListTypePtr Entry)
     {
       if (TEST_FLAG (LOCKFLAG, (PinTypePtr) ptr2))
 	return (False);
-      swap = ((PinTypePtr) ptr2)->Mask;
+      swap = (type == PAD_TYPE ? ((PadTypePtr) ptr2)->Mask : ((PinTypePtr) ptr2)->Mask);
       if (andDraw)
 	EraseObject (type, ptr2);
-      ((PinTypePtr) ptr2)->Mask = Entry->Data.Size;
+      if (type == PAD_TYPE)
+        ((PadTypePtr) ptr2)->Mask = Entry->Data.Size;
+      else
+        ((PinTypePtr) ptr2)->Mask = Entry->Data.Size;
       Entry->Data.Size = swap;
       if (andDraw)
 	DrawObject (type, ptr1, ptr2, 0);
