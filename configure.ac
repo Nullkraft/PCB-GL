@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.6 2003-09-03 02:06:50 danmc Exp $
+dnl $Id: configure.ac,v 1.7 2003-09-30 23:38:55 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/pinout.c)
@@ -175,6 +175,7 @@ AC_OUTPUT(
 	README_FILES/Makefile
 	doc/Makefile
 	example/Makefile
+	example/libraries/Makefile
 	lib/CreateLibraryContents.sh
 	lib/CreateLibrary.sh
 	lib/Makefile
