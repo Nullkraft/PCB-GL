@@ -1,3 +1,9 @@
+/* $Id: resmenu.c,v 1.3 2004-04-29 02:41:17 danmc Exp $ */
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <X11/Intrinsic.h>
