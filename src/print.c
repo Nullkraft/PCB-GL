@@ -30,7 +30,7 @@
  * silkscreen layer. Perhaps the design is not the best.
  */
 
-static char *rcsid = "$Id: print.c,v 1.25 2004-04-29 02:34:14 danmc Exp $";
+static char *rcsid = "$Id: print.c,v 1.26 2004-07-17 03:14:32 haceaton Exp $";
 
 /* printing routines
  */
@@ -894,6 +894,8 @@ DoSilkPrint (Cardinal i, LayerTypePtr layer, Boolean clip)
   END_LOOP;
   ALLPAD_LOOP (PCB->Data);
   {
+    if ((TEST_FLAG (ONSOLDERFLAG, element) == 0) != (i == 0))
+	continue;
     info.pad = pad;
     if (setjmp (info.env) == 0)
       {
