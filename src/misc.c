@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: misc.c,v 1.10 2004-01-14 03:10:26 haceaton Exp $";
+static char *rcsid = "$Id: misc.c,v 1.11 2004-01-15 16:17:48 haceaton Exp $";
 
 /* misc functions used by several modules
  */
@@ -177,7 +177,7 @@ GetValue (String * Params, Boolean * absolute, Cardinal Num)
   if (**Params == '=')
     {
       *absolute = 1;
-      value = atof ((*Params)+1);
+      value = atof (*Params);
     }
   else
     {
@@ -1288,7 +1288,8 @@ AttachForCopy (Location PlaceX, Location PlaceY)
   my = GRIDFIT_Y (my, PCB->Grid) - my;
   Crosshair.AttachedObject.X = PlaceX - mx;
   Crosshair.AttachedObject.Y = PlaceY - my;
-  SetLocalRef (PlaceX - mx, PlaceY - my, True);
+  if (!Marked.status || TEST_FLAG(LOCALREFFLAG, PCB))
+    SetLocalRef (PlaceX - mx, PlaceY - my, True);
   Crosshair.AttachedObject.State = STATE_SECOND;
 
   /* get boundingbox of object and set cursor range */

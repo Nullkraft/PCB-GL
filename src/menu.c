@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: menu.c,v 1.10 2004-01-05 01:40:24 haceaton Exp $";
+static char *rcsid = "$Id: menu.c,v 1.11 2004-01-15 16:17:48 haceaton Exp $";
 
 /* initializes menus and handles callbacks
  */
@@ -302,6 +302,8 @@ static PopupEntryType SettingsMenuEntries[] = {
    "Display,ToggleUniqueNames", NULL},
   {"toggleSnapPin", "crosshair snaps to pins and pads", CB_Action,
    "Display,ToggleSnapPin", NULL},
+  {"toggleLocalRef", "auto-zero delta measurements", CB_Action,
+   "Display,ToggleLocalRef", NULL},
   {"toggleClearLine", "new lines, arcs clear polygons", CB_Action,
    "Display,ToggleClearLine", NULL},
   {"toggleThindraw", "thin draw", CB_Action,
@@ -807,6 +809,8 @@ CBPOPUP_Settings (Widget W, XtPointer ClientData, XtPointer CallData)
     CheckEntry (&SettingsMenu, "toggleUniqueName");
   if (TEST_FLAG (SNAPPINFLAG, PCB))
     CheckEntry (&SettingsMenu, "toggleSnapPin");
+  if (TEST_FLAG (LOCALREFFLAG, PCB))
+    CheckEntry (&SettingsMenu, "toggleLocalRef");
   if (TEST_FLAG (CLEARNEWFLAG, PCB))
     CheckEntry (&SettingsMenu, "toggleClearLine");
   if (TEST_FLAG (THINDRAWFLAG, PCB))

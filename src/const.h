@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: const.h,v 1.5 2004-01-05 01:40:24 haceaton Exp $
+ *  RCS: $Id: const.h,v 1.6 2004-01-15 16:17:48 haceaton Exp $
  */
 
 /* global source constants
@@ -144,8 +144,9 @@
 /* ---------------------------------------------------------------------------
  * PCB flags
  */
-#define	PCB_FLAGS		0x3f71	/* all used flags */
+#define	PCB_FLAGS		0xff73	/* all used flags */
 #define SHOWNUMBERFLAG          0x0001  /* pinout displays pin numbers instead of names */
+#define LOCALREFFLAG            0x0002  /* use local reference for moves */
 #define RUBBERBANDFLAG		0x0010	/* do all move, mirror, rotate with */
 					/* rubberband connections */
 #define	DESCRIPTIONFLAG		0x0020	/* display description of elements */
