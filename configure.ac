@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.9 2003-11-08 03:06:44 danmc Exp $
+dnl $Id: configure.ac,v 1.10 2003-11-08 03:31:03 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/pinout.c)
@@ -198,6 +198,7 @@ AC_OUTPUT(
 	newlib/tests/Makefile
 	newlib/toko/Makefile
 	src/Makefile
+	src/script/Makefile
 	src/icons/Makefile
 	tools/Makefile
 	tutorial/Makefile
