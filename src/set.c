@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: set.c,v 1.15 2004-03-01 05:10:05 haceaton Exp $";
+static char *rcsid = "$Id: set.c,v 1.16 2004-03-14 06:29:50 haceaton Exp $";
 
 /* routines to update widgets and global settings
  * (except output window and dialogs)
@@ -425,7 +425,7 @@ SetMode (int Mode)
         SetLocalRef(0, 0, False);
       Crosshair.AttachedBox.State = STATE_FIRST;
       Crosshair.AttachedLine.State = STATE_FIRST;
-      if (TEST_FLAG (AUTODRCFLAG, PCB))
+      if (Mode == LINE_MODE && TEST_FLAG (AUTODRCFLAG, PCB))
         {
 	  SaveUndoSerialNumber ();
 	  ResetFoundPinsViasAndPads (True);
