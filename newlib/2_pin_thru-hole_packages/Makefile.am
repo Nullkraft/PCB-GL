@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1 2003-02-20 00:23:35 danmc Exp $
+## $Id: Makefile.am,v 1.2 2003-08-16 19:37:46 danmc Exp $
 ##
 
 pcblibsubdir= @PCBTREEDIR@/2_pin_thru-hole_packages
@@ -9,7 +9,6 @@ COMPONENTS= \
 	CK05_type_Capacitor \
 	CK06_type_capacitor \
 	IRU1015-33CT_3.3V_reg_TO220 \
-	Makefile.am \
 	RN55_type_0.1W_Resistor \
 	T1.75_LED 
 
