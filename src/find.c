@@ -25,7 +25,7 @@
  *
  */
 
-static char *rcsid = "$Id: find.c,v 1.29 2004-06-09 23:09:21 danmc Exp $";
+static char *rcsid = "$Id: find.c,v 1.30 2004-07-31 03:29:14 danmc Exp $";
 
 /*
  * short description:
@@ -408,7 +408,11 @@ PadPadIntersect (PadTypePtr p1, PadTypePtr p2)
   return LinePadIntersect ((LineTypePtr) p1, p2);
 }
 
-static inline Boolean
+#ifndef __GNUC__
+#define __inline__ /* not inline on non-gcc platforms */
+#endif /* __GNUC__ */ 
+
+static __inline__ Boolean
 PV_TOUCH_PV (PinTypePtr PV1, PinTypePtr PV2)
 {
   float t1, t2;
