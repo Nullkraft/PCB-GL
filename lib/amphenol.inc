@@ -1,6 +1,6 @@
 # -*- m4 -*-
 #
-# $Id: amphenol.inc,v 1.1 2003-12-30 04:08:43 danmc Exp $
+# $Id: amphenol.inc,v 1.2 2003-12-30 22:59:02 danmc Exp $
 #                            COPYRIGHT
 #
 #   PCB, interactive printed circuit board design
@@ -57,4 +57,11 @@ Element(0x00 "$1" "$2" "$3" eval(XMIN+20) eval(YMAX+20) 0 100 0x00)
 	ElementLine(XMAX YMAX XMIN YMAX 10)
 	Mark(CENTER CENTER)
 )')
+
+# XXX once we get some sort of annotation layer in PCB, the right
+# angle connectors should have an annotation showing where the connector
+# really goes to.  Same for a keep out layer.
+define(`PKG_AMPHENOL_ARFX1230',`PKG_AMPHENOL_ARFX1229')
+define(`PKG_AMPHENOL_ARFX1231',`PKG_AMPHENOL_ARFX1229')
+define(`PKG_AMPHENOL_ARFX1232',`PKG_AMPHENOL_ARFX1229')
 
