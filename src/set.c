@@ -1,4 +1,4 @@
-/* $Id: set.c,v 1.21 2004-11-19 03:08:10 haceaton Exp $ */
+/* $Id: set.c,v 1.22 2004-11-20 22:25:54 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -64,7 +64,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: set.c,v 1.21 2004-11-19 03:08:10 haceaton Exp $");
+RCSID("$Id: set.c,v 1.22 2004-11-20 22:25:54 danmc Exp $");
 
 
 
@@ -90,8 +90,11 @@ SetCursorStatusLine (void)
 	     COOR_TO_MM * (Crosshair.X - Marked.X),
 	     COOR_TO_MM * (Crosshair.Y - Marked.Y));
   else
-    sprintf (text, "%-i.%02d,%-i.%02d", Crosshair.X / 100, abs(Crosshair.X % 100),
-	     Crosshair.Y / 100, abs(Crosshair.Y % 100));
+    sprintf (text, "%-i.%02d,%-i.%02d (%-.3fmm, %-.3fmm)",
+	     Crosshair.X / 100, abs(Crosshair.X % 100),
+	     Crosshair.Y / 100, abs(Crosshair.Y % 100),
+	     COOR_TO_MM*Crosshair.X,
+	     COOR_TO_MM*Crosshair.Y);
   SetOutputLabel (Output.CursorPosition, text);
 }
 
