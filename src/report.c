@@ -26,7 +26,7 @@
  *
  */
 
-static char *rcsid = "$Id: report.c,v 1.3 2003-09-03 03:18:32 djdelorie Exp $";
+static char *rcsid = "$Id: report.c,v 1.4 2003-10-11 04:43:52 danmc Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -279,6 +279,7 @@ ReportDialog (void)
 		 "SecondPoint(X,Y) = (%d, %d)  ID = %d\n"
 		 "Width = %d mils. Clearance width in polygons = %d mils.\n"
 		 "Solder mask width = %d mils\n"
+		 "Name = \"%s\"\n"
 		 "It is owned by SMD element %s\n"
 		 "As pin number %s and is on the %s\n"
 		 "side of the board.\n"
@@ -286,6 +287,7 @@ ReportDialog (void)
 		 Pad->Flags, Pad->Point1.X,
 		 Pad->Point1.Y, Pad->Point1.ID, Pad->Point2.X, Pad->Point2.Y,
 		 Pad->Point2.ID, Pad->Thickness, Pad->Clearance, Pad->Mask,
+		 EMPTY (Pad->Name),
 		 EMPTY (element->Name[1].TextString), EMPTY (Pad->Number),
 		 TEST_FLAG (ONSOLDERFLAG,
 			    Pad) ? "solder (bottom)" : "component",
