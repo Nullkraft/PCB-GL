@@ -1,4 +1,4 @@
-/* $Id: vendor.c,v 1.5 2004-12-12 00:12:47 danmc Exp $ */
+/* $Id: vendor.c,v 1.6 2004-12-31 05:11:49 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -730,13 +730,12 @@ rematch( const char *re, const char *s)
     }
   
   result = regexec (&compiled, s, 1, &match, 0);
+  regfree (&compiled);
 
   if (result == 0)
     return (True);
   else
     return (False);
-
-  regfree (&compiled);
 
 #elif defined(HAVE_RE_COMP)
   int m;
