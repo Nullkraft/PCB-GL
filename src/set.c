@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: set.c,v 1.9 2004-01-19 19:16:18 haceaton Exp $";
+static char *rcsid = "$Id: set.c,v 1.10 2004-02-06 20:57:13 haceaton Exp $";
 
 /* routines to update widgets and global settings
  * (except output window and dialogs)
@@ -466,16 +466,20 @@ SetLocalRef (Location X, Location Y, Boolean Showing)
 
   if (Showing)
     {
+      HideCrosshair (True);
       if (count == 0)
         old = Marked;
       Marked.X = X;
       Marked.Y = Y;
       Marked.status = True;
       count++;
+      RestoreCrosshair (False);
     }
   else if (count > 0)
     {
+      HideCrosshair (False);
       count = 0;
       Marked = old;
+      RestoreCrosshair (False);
     }
 }
