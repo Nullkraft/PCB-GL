@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.9 2004-04-29 23:05:45 danmc Exp $
+## $Id: Makefile.am,v 1.10 2004-06-20 21:33:50 djdelorie Exp $
 ##
 
 SUBDIRS=	icons script
@@ -168,8 +168,8 @@ AM_YFLAGS=	-d
 
 all-local: pcbtest.sh .test/Pcb
 
-actionlist.c : ${pcb_bin_SOURCES} ${srcdir}/gather-actions
-	perl ${srcdir}/gather-actions ${pcb_bin_SOURCES}
+@MAINTAINER_MODE_TRUE@actionlist.c : ${pcb_bin_SOURCES} ${srcdir}/gather-actions
+@MAINTAINER_MODE_TRUE@	perl ${srcdir}/gather-actions ${pcb_bin_SOURCES}
 
 pcb-menu.h : pcb-menu.res
 	echo '/* AUTOMATICALLY GENERATED FROM pcb-menu.res DO NOT EDIT */' > pcb-menu.h
