@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.21 2004-10-21 22:04:17 danmc Exp $
+dnl $Id: configure.ac,v 1.22 2004-11-01 11:57:45 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/pinout.c)
@@ -142,6 +142,24 @@ fi
 [
 	AC_MSG_RESULT([no])
 	DMALLOC_LIBS=""
+])
+
+# ------------- ElectricFence -------------------
+dnl ElectricFence checks
+AC_MSG_CHECKING([if ElectricFence debugging should be enabled])
+AC_ARG_ENABLE([efence],
+[  --enable-efence         Link with ElectricFence for malloc debugging [default=no]],
+[
+if test "X$enable_efence" != "Xno" ; then
+	AC_MSG_RESULT([yes])
+	AC_CHECK_LIB(efence,main,,
+		AC_ERROR([You have requested ElectricFence debugging but -lefence could not be found]), $X_LIBS)
+else
+	AC_MSG_RESULT([no])
+fi
+],
+[
+AC_MSG_RESULT([no])
 ])
 
 # XXX fix this!!!
