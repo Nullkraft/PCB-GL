@@ -1,5 +1,5 @@
 divert(-1)
-# $Id: amphenol.m4,v 1.1 2003-12-30 04:08:43 danmc Exp $
+# $Id: amphenol.m4,v 1.2 2003-12-30 04:37:48 danmc Exp $
 #                            COPYRIGHT
 #
 #   PCB, interactive printed circuit board design
@@ -23,7 +23,7 @@ divert(-1)
 # Amphenol Connectors
 
 # SMA
-define(`Description_AMPHENOL_ARFX1229', `Amphenol ARFX1229 SMA Connector')
-define(`PinList_AMPHENOL_ARFX1229', ``SIG',`GND',`GND',`GND',`GND'')
+define(`Description_amphenol_ARFX1229', `Amphenol ARFX1229 SMA Connector')
+define(`PinList_amphenol_ARFX1229', ``SIG',`GND',`GND',`GND',`GND'')
 
 divert(0)dnl
