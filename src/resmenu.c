@@ -1,11 +1,13 @@
-/* $Id: resmenu.c,v 1.3 2004-04-29 02:41:17 danmc Exp $ */
+/* $Id: resmenu.c,v 1.4 2004-05-01 04:29:41 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 
 #include <stdlib.h>
+#ifdef HAVE_STRING_H
 #include <string.h>
+#endif
 #include <X11/Intrinsic.h>
 
 #include "global.h"
