@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: main.c,v 1.6 2004-01-15 14:21:29 haceaton Exp $";
+static char *rcsid = "$Id: main.c,v 1.7 2004-01-17 23:06:19 haceaton Exp $";
 
 /* main program, initializes some stuff and handles user input
  */
@@ -1002,10 +1002,10 @@ InitShell (int *Argc, char **Argv)
 			     NULL, 0);
   if (Settings.LineThickness > MAX_LINESIZE
       || Settings.LineThickness < MIN_LINESIZE)
-    Settings.LineThickness = 10;
+    Settings.LineThickness = 1000;
   if (Settings.ViaThickness > MAX_PINORVIASIZE ||
       Settings.ViaThickness < MIN_PINORVIASIZE)
-    Settings.ViaThickness = 40;
+    Settings.ViaThickness = 4000;
   if (Settings.ViaDrillingHole <= 0)
     Settings.ViaDrillingHole =
       DEFAULT_DRILLINGHOLE * Settings.ViaThickness / 100;
