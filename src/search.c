@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: search.c,v 1.1 2003-02-20 00:24:32 danmc Exp $";
+static char *rcsid = "$Id: search.c,v 1.2 2003-12-22 05:16:47 haceaton Exp $";
 
 /* search routines
  * some of the functions use dummy parameters
@@ -591,10 +591,9 @@ IsArcInRectangle (Position X1, Position Y1,
 		  Position X2, Position Y2, ArcTypePtr Arc)
 {
   LineType line;
-  Dimension thick = Arc->Thickness / 2 + 1;
 
   /* construct a set of dummy lines and check each of them */
-  line.Thickness = thick;
+  line.Thickness = 0;
   line.Flags = NOFLAG;
 
   /* upper-left to upper-right corner */
