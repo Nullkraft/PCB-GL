@@ -1,4 +1,4 @@
-/* $Id: djopt.c,v 1.12 2004-04-09 04:13:23 haceaton Exp $ */
+/* $Id: djopt.c,v 1.13 2004-04-11 15:12:10 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -2679,7 +2679,7 @@ ActionDJopt (Widget w, XEvent * e, String * argv, Cardinal * argc)
   END_LOOP;
   PAD_LOOP (element);
   {
-    line_s *ls2;
+    line_s *ls;
     int layern =
       pad->Flags & ONSOLDERFLAG ? solder_layer : component_layer;
     ls->layer = layern;

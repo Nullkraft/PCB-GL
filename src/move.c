@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: move.c,v 1.17 2004-04-09 00:25:48 haceaton Exp $";
+static char *rcsid = "$Id: move.c,v 1.18 2004-04-11 15:12:10 haceaton Exp $";
 
 /* functions used to move pins, elements ...
  */
@@ -356,13 +356,16 @@ MoveLinePoint (LayerTypePtr Layer, LineTypePtr Line, PointTypePtr Point)
 	{
 	  EraseLine (Line);
 	  MOVE (Point->X, Point->Y, DeltaX, DeltaY) DrawLine (Layer, Line, 0);
-	  DrawLine (Layer, Line, 0);
-	  Draw ();
 	}
       else
 	MOVE (Point->X, Point->Y, DeltaX, DeltaY);
       SetLineBoundingBox (Line);
       r_insert_entry (Layer->line_tree, &Line->BoundingBox, 0);
+      if (Layer->On)
+        {
+	  DrawLine (Layer, Line, 0);
+	  Draw ();
+	}
       return (Line);
     }
   else				/* must be a rat */
