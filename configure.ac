@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.8 2003-11-08 00:05:33 danmc Exp $
+dnl $Id: configure.ac,v 1.9 2003-11-08 03:06:44 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/pinout.c)
@@ -42,6 +42,7 @@ AC_CHECK_LIB(SM, main, , , $X_LIBS)
 AC_CHECK_LIB(Xext, main, , , $X_LIBS)
 AC_CHECK_LIB(Xt, XtOpenDisplay, , , $X_LIBS)
 AC_CHECK_LIB(Xmu, main, , , $X_LIBS)
+AC_CHECK_LIB(Xpm, main, , , $X_LIBS)
 
 AC_ARG_WITH([xaw],
 [  --with-xaw=Xaw         Use the specified Athena Widgets type.
