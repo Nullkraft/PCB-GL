@@ -1,4 +1,4 @@
-/* $Id: resmenu.c,v 1.13 2004-10-17 05:40:44 djdelorie Exp $ */
+/* $Id: resmenu.c,v 1.14 2004-10-27 14:23:57 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -29,7 +29,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: resmenu.c,v 1.13 2004-10-17 05:40:44 djdelorie Exp $");
+RCSID("$Id: resmenu.c,v 1.14 2004-10-27 14:23:57 djdelorie Exp $");
 
 static Arg args[100];
 static int n;
@@ -158,6 +158,16 @@ invoke_action (Widget w, char *rstr)
 }
 
 /* ************************************************************ */
+
+/* ACTION(ExecuteAction,ActionExecuteAction) */
+
+void
+ActionExecuteAction(Widget W, XEvent *Event, String *Params, Cardinal *num)
+{
+  int i;
+  for (i=0; i<*num; i++)
+    invoke_action (W, Params[i]);
+}
 
 /* ACTION(ExecuteFile,ActionExecuteFile) */
 

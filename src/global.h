@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.26 2004-10-12 13:16:12 djdelorie Exp $
+ *  RCS: $Id: global.h,v 1.27 2004-10-27 14:23:56 djdelorie Exp $
  */
 
 /* definition of types
@@ -494,7 +494,8 @@ typedef struct			/* some resources... */
     Media,			/* type of output media */
     MenuFile,			/* file containing menu definitions */
     BackgroundImage,		/* PPM file for board background */
-    ScriptFilename;             /* PCB Actions script to execute on startup */
+    ScriptFilename,             /* PCB Actions script to execute on startup */
+    ActionString;               /* PCB Actions string to execute on startup */
   Boolean DumpMenuFile;		/* dump internal menu definitions */
   Location PinoutOffsetX,	/* offset of origin */
     PinoutOffsetY;

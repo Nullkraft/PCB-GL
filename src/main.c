@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.24 2004-09-24 02:55:26 djdelorie Exp $ */
+/* $Id: main.c,v 1.25 2004-10-27 14:23:57 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -80,7 +80,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: main.c,v 1.24 2004-09-24 02:55:26 djdelorie Exp $");
+RCSID("$Id: main.c,v 1.25 2004-10-27 14:23:57 djdelorie Exp $");
 
 
 
@@ -555,6 +555,9 @@ static String Fallback[] = {
  * resources to query
  */
 static XtResource ToplevelResources[] = {
+  {"actionString", "ActionString", XtRString, sizeof (String),
+   XtOffsetOf (SettingType, ActionString), XtRString, NULL}
+  ,
   {"alignmentDistance", "AlignmentDistance", XtRInt, sizeof (int),
    XtOffsetOf (SettingType, AlignmentDistance), XtRString, "20000"}
   ,
@@ -901,6 +904,7 @@ static XtResource ToplevelResources[] = {
  * additional command line arguments
  */
 static XrmOptionDescRec CommandLineOptions[] = {
+  {"-action", "actionString", XrmoptionSepArg, (caddr_t) NULL},
   {"-alldirections", "allDirectionLines", XrmoptionNoArg, (caddr_t) "True"},
   {"+alldirections", "allDirectionLines", XrmoptionNoArg, (caddr_t) "False"},
   {"-rubberband", "rubberBandMode", XrmoptionNoArg, (caddr_t) "False"},
@@ -1449,6 +1453,16 @@ main (int argc, char *argv[])
 		Settings.ScriptFilename);
 	Param[0] = Settings.ScriptFilename;
 	ActionExecuteFile(Output.Output, NULL, Param, &nparam);
+  }
+  if (Settings.ActionString != NULL)
+  {
+	String Param[1];
+	Cardinal nparam=1;
+
+	Message("Executing startup action %s\n", 
+		Settings.ActionString);
+	Param[0] = Settings.ActionString;
+	ActionExecuteAction(Output.Output, NULL, Param, &nparam);
   }
 
   XtAppMainLoop (Context);
