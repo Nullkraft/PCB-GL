@@ -1,6 +1,6 @@
 # -*- m4 -*-
 #
-# $Id: bourns.inc,v 1.1 2003-12-30 22:58:41 danmc Exp $
+# $Id: bourns.inc,v 1.2 2004-04-28 21:53:32 danmc Exp $
 #                            COPYRIGHT
 #
 #   PCB, interactive printed circuit board design
@@ -136,4 +136,5 @@ define(`PKG_BOURNS_3224W',  `PKG_BOURNS_GENERIC_POT(`$1',`$2',`$3',
 define(`PKG_BOURNS_3224X',  `PKG_BOURNS_GENERIC_POT(`$1',`$2',`$3',
 	`132', `190', `200', `190', `510', `254', `480')')
 
-# EXTRACT_BEGIN
+# EXTRACT_END
+

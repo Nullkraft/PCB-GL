@@ -1,6 +1,6 @@
 # -*- m4 -*-
 #
-# $Id: amp.inc,v 1.1 2003-12-31 19:26:32 danmc Exp $
+# $Id: amp.inc,v 1.2 2004-04-28 21:53:32 danmc Exp $
 #                            COPYRIGHT
 #
 #   PCB, interactive printed circuit board design
@@ -189,4 +189,5 @@ define(`PKG_AMP_MICTOR_767054_5',  `COMMON_AMP_MICTOR_767054(`$1',`$2',`$3',190)
 define(`PKG_AMP_MICTOR_767054_6',  `COMMON_AMP_MICTOR_767054(`$1',`$2',`$3',228)')
 define(`PKG_AMP_MICTOR_767054_7',  `COMMON_AMP_MICTOR_767054(`$1',`$2',`$3',266)')
 
-# EXTRACT_BEGIN
+# EXTRACT_END
+

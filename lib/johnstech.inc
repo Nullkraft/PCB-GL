@@ -1,5 +1,5 @@
 # -*- m4 -*-
-# $Id: johnstech.inc,v 1.4 2004-04-28 21:34:46 danmc Exp $
+# $Id: johnstech.inc,v 1.5 2004-04-28 21:53:32 danmc Exp $
 #                            COPYRIGHT
 #
 #   PCB, interactive printed circuit board design
@@ -322,4 +322,5 @@ define(`PKG_JOHNSTECH_QFN56_8',  `PKG_JOHNSTECH_QFN_50S(`$1',`$2',`$3', `56', `8
 define(`PKG_JOHNSTECH_QFN68_10',  `PKG_JOHNSTECH_QFN_50(`$1',`$2',`$3', `68', `10', `770')')
 #define(`PKG_JOHNSTECH_TQFN68_10', `PKG_JOHNSTECH_QFN_50(`$1',`$2',`$3', `68', `10', `770')')
 
-# EXTRACT_BEGIN
+# EXTRACT_END
+

@@ -1,6 +1,6 @@
 # -*- m4 -*-
 #
-# $Id: minicircuits.inc,v 1.1 2003-12-31 01:04:43 danmc Exp $
+# $Id: minicircuits.inc,v 1.2 2004-04-28 21:53:32 danmc Exp $
 #                            COPYRIGHT
 #
 #   PCB, interactive printed circuit board design
@@ -52,4 +52,5 @@ define(`PKG_MINICIRCUITS_CD637',  `COMMON_SMT_DIL_MIL(`$1',`$2',`$3',6,65000,100
 #
 define(`PKG_MINICIRCUITS_KK81',  `COMMON_SMT_DIL_MIL(`$1',`$2',`$3',6,50000,126000,100000,480000,"reverse")')
 
-# EXTRACT_BEGIN
+# EXTRACT_END
+
