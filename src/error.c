@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: error.c,v 1.4 2003-12-29 03:15:56 haceaton Exp $";
+static char *rcsid = "$Id: error.c,v 1.5 2004-02-03 05:30:39 haceaton Exp $";
 
 /* error and debug funtions
  * getpid() needs a cast to (int) to get rid of compiler warnings
@@ -91,11 +91,13 @@ static Window LogWindow;	/* the logging window */
 void
 Message (char *Format, ...)
 {
+  static int line = 1;
   va_list args;
   char s[1024];
   XEvent event;
+  sprintf(s,"%d: ",line++);
   va_start (args, Format);
-  vsprintf (s, Format, args);
+  vsprintf (s + strlen(s), Format, args);
   va_end (args);
 
   if (Settings.UseLogWindow)
