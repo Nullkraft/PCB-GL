@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.5 2003-09-03 01:49:04 danmc Exp $
+dnl $Id: configure.ac,v 1.6 2003-09-03 02:06:50 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/pinout.c)
@@ -57,6 +57,8 @@ with_xaw=Xaw
 ])
 
 AC_CHECK_LIB($with_xaw, XawInitializeWidgetSet, , , $X_LIBS)
+LIBXAW=$with_xaw
+XAWINC=$with_xaw
 
 dnl Determine the Xfuncproto control definitions:
 FC_CHECK_X_PROTO_DEFINE(FUNCPROTO)
