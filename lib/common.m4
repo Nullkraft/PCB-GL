@@ -23,7 +23,7 @@ divert(-1)
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: common.m4,v 1.1 2003-02-20 00:23:22 danmc Exp $
+#   RCS: $Id: common.m4,v 1.2 2003-05-20 11:50:58 danmc Exp $
 #
 # common defines for packages
 #
@@ -71,6 +71,7 @@ define(`args',`
 	ifelse($#, 0, , $#, 1,`define(`arg'cnt,`$1')',
 	`define(`arg'cnt,`$1') define(`cnt',incr(cnt)) args(shift($@))')')
 
+include(bga.inc)
 include(connector.inc)
 include(dil.inc)
 include(geda.inc)
@@ -78,11 +79,12 @@ include(genericsmt.inc)
 include(misc.inc)
 include(pci.inc)
 include(plcc.inc)
-include(rules.inc)
-include(to.inc)
 include(qfp.inc)
 include(qfp2.inc)
+include(resistor_adjust.inc)
+include(rules.inc)
 include(smt.inc)
+include(to.inc)
 include(zif.inc)
 
 # if any of these files exist, then include them.  
