@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: draw.c,v 1.21 2004-02-15 18:04:03 haceaton Exp $";
+static char *rcsid = "$Id: draw.c,v 1.22 2004-02-17 06:27:13 haceaton Exp $";
 
 /* drawing routines
  */
@@ -560,7 +560,8 @@ DrawMask (BoxType *screen)
 }
 
 static int
-clear_callback (int type, void *ptr1, void *ptr2, void *ptr3)
+clear_callback (int type, void *ptr1, void *ptr2, void *ptr3,
+                LayerTypePtr lay, PolygonTypePtr poly)
 {
   LineTypePtr l = (LineTypePtr) ptr2;
   ArcTypePtr a = (ArcTypePtr) ptr2;

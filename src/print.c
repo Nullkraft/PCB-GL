@@ -30,7 +30,7 @@
  * silkscreen layer. Perhaps the design is not the best.
  */
 
-static char *rcsid = "$Id: print.c,v 1.19 2004-02-15 18:04:03 haceaton Exp $";
+static char *rcsid = "$Id: print.c,v 1.20 2004-02-17 06:27:14 haceaton Exp $";
 
 /* printing routines
  */
@@ -220,7 +220,8 @@ FPrintAlignment (void)
  * callback functions for polygon clearances
  */
 static int 
-any_callback(int type, void *ptr1, void *ptr2, void *ptr3)
+any_callback(int type, void *ptr1, void *ptr2, void *ptr3, 
+             LayerTypePtr lay, PolygonTypePtr poly)
 {
   if (!polarity_called)
     {

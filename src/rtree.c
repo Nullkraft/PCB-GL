@@ -1,4 +1,4 @@
-/* $Id: rtree.c,v 1.4 2004-02-17 03:31:49 haceaton Exp $ */
+/* $Id: rtree.c,v 1.5 2004-02-17 06:27:15 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -53,7 +53,7 @@
 #include <dmalloc.h>
 #endif
 
-#undef SLOW_ASSERTS
+#define SLOW_ASSERTS
 /* All rectangles are closed. i.e. they contain both corner points.
  * Often the auto router will "open" the rectangle on an edge
  * using the search callback functions.
