@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1 2003-02-20 00:23:42 danmc Exp $
+## $Id: Makefile.am,v 1.2 2003-06-22 04:34:16 djdelorie Exp $
 ##
 
 SUBDIRS=	icons
@@ -45,6 +45,8 @@ pcb_bin_SOURCES = \
 	dev_rs274x.h \
 	dialog.c \
 	dialog.h \
+	djopt.c \
+	djopt.h \
 	draw.c \
 	draw.h \
 	drill.c \

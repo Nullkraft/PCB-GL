@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: main.c,v 1.1 2003-02-20 00:24:18 danmc Exp $";
+static char *rcsid = "$Id: main.c,v 1.2 2003-06-22 04:34:16 djdelorie Exp $";
 
 /* main program, initializes some stuff and handles user input
  */
@@ -60,6 +60,7 @@ static char *rcsid = "$Id: main.c,v 1.1 2003-02-20 00:24:18 danmc Exp $";
 #include "output.h"
 #include "remove.h"
 #include "set.h"
+#include "djopt.h"
 
 #include <X11/cursorfont.h>
 #include <X11/Shell.h>
@@ -952,7 +953,8 @@ static XtActionsRec Actions[] = {
   {"Polygon", ActionPolygon},
   {"EditLayerGroups", ActionEditLayerGroups},
   {"MoveToCurrentLayer", ActionMoveToCurrentLayer},
-  {"SwitchDrawingLayer", ActionSwitchDrawingLayer}
+  {"SwitchDrawingLayer", ActionSwitchDrawingLayer},
+  { "djopt", ActionDJopt }
 };
 
 /* ---------------------------------------------------------------------------

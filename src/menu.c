@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: menu.c,v 1.3 2003-06-05 10:48:30 danmc Exp $";
+static char *rcsid = "$Id: menu.c,v 1.4 2003-06-22 04:34:16 djdelorie Exp $";
 
 /* initializes menus and handles callbacks
  */
@@ -456,6 +456,23 @@ static PopupEntryType ConnectionMenuEntries[] = {
    "AutoRoute,AllRats", NULL},
   {"ripup", "rip up all auto-routed tracks", CB_Action,
    "RipUp,All", NULL},
+  {"line", NULL, NULL, NULL, NULL},
+  { "djopt-auto", "Auto-Optimize", CB_Action,
+    "djopt,auto\n" "Display,ClearAndRedraw", NULL },
+  { "djopt-bump", "Debumpify", CB_Action,
+    "djopt,debumpify\n" "Display,ClearAndRedraw", NULL },
+  { "djopt-unjaggy", "Unjaggy", CB_Action,
+    "djopt,unjaggy\n" "Display,ClearAndRedraw", NULL },
+  { "djopt-vianudge", "Vianudge", CB_Action,
+    "djopt,vianudge\n" "Display,ClearAndRedraw", NULL },
+  { "djopt-viatrim", "Viatrim", CB_Action,
+    "djopt,viatrim\n" "Display,ClearAndRedraw", NULL },
+  { "djopt-orthopull", "Orthopull", CB_Action,
+    "djopt,orthopull\n" "Display,ClearAndRedraw", NULL },
+  { "djopt-simple", "SimpleOpts", CB_Action,
+    "djopt,simple\n" "Display,ClearAndRedraw", NULL },
+  { "djopt-miter", "Miter", CB_Action,
+    "djopt,miter\n" "Display,ClearAndRedraw", NULL },
   {"line", NULL, NULL, NULL, NULL},
   {"drc", "design rule checker", CB_Action, "DRC", NULL},
   {NULL, NULL, NULL, NULL, NULL}
