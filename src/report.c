@@ -26,7 +26,7 @@
  *
  */
 
-static char *rcsid = "$Id: report.c,v 1.11 2004-02-14 02:48:05 haceaton Exp $";
+static char *rcsid = "$Id: report.c,v 1.12 2004-02-15 07:00:47 danmc Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -106,7 +106,7 @@ ReportDrills (void)
     {
       sprintf (thestring,
 	       "  %5d                 %5d          %5d            %5d           %5d\n",
-	       AllDrills->Drill[n].DrillSize, AllDrills->Drill[n].PinCount,
+	       AllDrills->Drill[n].DrillSize/100, AllDrills->Drill[n].PinCount,
 	       AllDrills->Drill[n].ViaCount, AllDrills->Drill[n].ElementN,
 	       AllDrills->Drill[n].UnplatedCount);
       while (*thestring != '\0')
