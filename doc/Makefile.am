@@ -1,3 +1,4 @@
+## -*- makefile -*-
 ##
 ##                            COPYRIGHT
 ##
@@ -22,11 +23,13 @@
 ##  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 ##  Thomas.Nau@rz.uni-ulm.de
 ##
-##  RCS: $Id: Makefile.am,v 1.3 2004-02-04 03:59:43 djdelorie Exp $
+##  RCS: $Id: Makefile.am,v 1.4 2004-08-24 21:44:25 danmc Exp $
 ##
 
 info_TEXINFOS=	pcb.texi
 pkgdata_DATA=	${html_docs} ${ps_docs} ${pdf_docs}
+
+man_MANS=	pcb.1
 
 html_docs=	${info_TEXINFOS:.texi=.html}
 ps_docs=	${info_TEXINFOS:.texi=.ps} refcard.ps
