@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: find.h,v 1.6 2004-03-01 05:10:05 haceaton Exp $
+ *  RCS: $Id: find.h,v 1.7 2004-03-09 13:58:20 haceaton Exp $
  */
 
 /* prototypes connection search routines
@@ -69,5 +69,6 @@ Cardinal DRCAll(void);
 Boolean lineClear(LineTypePtr, Cardinal);
 Boolean IsLineInPolygon(LineTypePtr, PolygonTypePtr);
 Boolean IsArcInPolygon(ArcTypePtr, PolygonTypePtr);
+Boolean IsPadInPolygon(PadTypePtr, PolygonTypePtr);
 
 #endif
