@@ -26,7 +26,7 @@
  *
  */
 
-static char *rcsid = "$Id: report.c,v 1.4 2003-10-11 04:43:52 danmc Exp $";
+static char *rcsid = "$Id: report.c,v 1.5 2003-10-13 03:37:09 danmc Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -157,7 +157,7 @@ ReportDialog (void)
 		   "Name = \"%s\""
                    "%s", via->ID, via->Flags, via->X,
 		   via->Y, via->Thickness, via->DrillingHole,
-		   via->Clearance, via->Thickness + via->Mask,
+		   via->Clearance, via->Mask,
 		   EMPTY (via->Name), TEST_FLAG(LOCKFLAG, via) ?
                    "It is LOCKED\n" : "");
 	break;
@@ -191,7 +191,7 @@ ReportDialog (void)
                    "%s",
 		   Pin->ID, Pin->Flags, Pin->X, Pin->Y, Pin->Thickness,
 		   Pin->DrillingHole, Pin->Clearance,
-		   Pin->Thickness + Pin->Mask, EMPTY (Pin->Name),
+		   Pin->Mask, EMPTY (Pin->Name),
 		   EMPTY (element->Name[1].TextString), EMPTY (Pin->Number),
                    TEST_FLAG(LOCKFLAG, Pin) ? "It is LOCKED\n" : "");
 	break;
