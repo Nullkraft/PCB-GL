@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: menu.c,v 1.24 2004-03-04 04:27:30 danmc Exp $";
+static char *rcsid = "$Id: menu.c,v 1.25 2004-03-07 03:31:59 haceaton Exp $";
 
 /* initializes menus and handles callbacks
  */
@@ -780,7 +780,7 @@ CBPOPUP_Display (Widget W, XtPointer ClientData, XtPointer CallData)
     CheckEntry (&DisplayMenu, "showMask");
   if (Settings.ShowSolderSide)
     CheckEntry (&DisplayMenu, "solderSide");
-  zoom = (int)(PCB->Zoom + 0.5);
+  zoom = (int)(PCB->Zoom + SGN(PCB->Zoom) * 0.5);
   if (abs(PCB->Zoom - zoom) > 0.1)
     zoom = -8; /* not close enough to integer value */
   switch (zoom)

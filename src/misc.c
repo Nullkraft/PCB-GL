@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: misc.c,v 1.18 2004-03-03 01:49:19 haceaton Exp $";
+static char *rcsid = "$Id: misc.c,v 1.19 2004-03-07 03:31:59 haceaton Exp $";
 
 /* misc functions used by several modules
  */
@@ -178,7 +178,7 @@ GetValue (String * Params, Boolean * absolute, Cardinal Num)
   if (**Params == '=')
     {
       *absolute = 1;
-      value = atof (*Params);
+      value = atof (*Params + 1);
     }
   else
     {
@@ -260,6 +260,8 @@ SetLineBoundingBox (LineTypePtr Line)
   Line->BoundingBox.X2 = MAX(Line->Point1.X, Line->Point2.X) + width;
   Line->BoundingBox.Y1 = MIN(Line->Point1.Y, Line->Point2.Y) - width;
   Line->BoundingBox.Y2 = MAX(Line->Point1.Y, Line->Point2.Y) + width;
+  SetPointBoundingBox (&Line->Point1);
+  SetPointBoundingBox (&Line->Point2);
 }
 
 /* ---------------------------------------------------------------------------
