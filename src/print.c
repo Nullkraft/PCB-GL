@@ -1,4 +1,4 @@
-/* $Id: print.c,v 1.27 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: print.c,v 1.28 2004-10-06 20:04:00 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -68,7 +68,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: print.c,v 1.27 2004-08-30 02:52:04 danmc Exp $");
+RCSID("$Id: print.c,v 1.28 2004-10-06 20:04:00 djdelorie Exp $");
 
 
 
@@ -1557,7 +1557,9 @@ PrintBOM (void)
       sumy += (double) pin->Y;
       pin_cnt++;
 
-      if (strcmp(pin->Number, "1") == 0)
+      if (pin->Number == 0)
+	/* Skip unnumbered pins */ ;
+      else if (strcmp(pin->Number, "1") == 0)
 	{
 	  pin1x = (double) pin->X;
 	  pin1y = (double) pin->Y;
