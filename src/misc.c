@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: misc.c,v 1.26 2004-07-10 03:42:13 djdelorie Exp $";
+static char *rcsid = "$Id: misc.c,v 1.27 2004-08-25 01:03:21 danmc Exp $";
 
 /* misc functions used by several modules
  */
@@ -128,6 +128,12 @@ Copyright (void)
 void
 Usage (void)
 {
+  /*
+   * since we're going to exit, we want to make sure this message goes
+   * to the original stderr 
+   */
+  RestoreStderr ();
+
   fprintf (stderr,
 	   "\nUSAGE: %s [standard X options] [standard options] [layout]\n"
 	   "or   : %s [standard X options] <exactly one special option>\n\n"
