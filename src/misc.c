@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: misc.c,v 1.28 2004-08-25 01:07:04 danmc Exp $";
+static char *rcsid = "$Id: misc.c,v 1.29 2004-08-27 00:58:29 danmc Exp $";
 
 /* misc functions used by several modules
  */
@@ -177,6 +177,8 @@ Usage (void)
 	   "  +s:                       negation of '-s'\n"
 	   "  -save:                    always save data before it is lost\n"
 	   "  +save:                    override data if required by command\n"
+	   "  -script <file>:           the name of a PCB actions script to\n"
+	   "                            execute on startup\n"
 	   "  -sfile <command>:         command to copy stdin to layout file,\n"
 	   "                            %%f is set to the filename\n"
 	   "  -size <width>x<height>    size of a layout\n"

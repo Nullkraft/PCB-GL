@@ -1,4 +1,4 @@
-/* $Id: resmenu.c,v 1.9 2004-08-26 01:58:21 danmc Exp $ */
+/* $Id: resmenu.c,v 1.10 2004-08-27 00:58:29 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -153,6 +153,64 @@ invoke_action (Widget w, char *rstr)
 	  }
       }
   }
+}
+
+/* ************************************************************ */
+
+/* ACTION(ExecuteFile,ActionExecuteFile) */
+
+void
+ActionExecuteFile(Widget W, XEvent *Event, String *Params, Cardinal *num)
+{
+  FILE *fp;
+  char *fname;
+  char line[256];
+  int n=0;
+  char *sp;
+
+  if (*num != 1)
+  {
+	Message("Usage:  ExecuteFile(filename)");
+	return ;
+  }
+
+  fname = Params[0];
+
+  if ( (fp = fopen(fname, "r")) == NULL )
+    {
+      fprintf(stderr, "Could not open actions file \"%s\".\n", fname);
+      return ;
+    }
+
+  while ( fgets(line, sizeof(line), fp) != NULL )
+    {
+      n++;
+      sp = line;
+      
+      /* eat the trailing newline */
+      while (*sp && *sp != '\r' && *sp != '\n')
+	sp ++;
+      *sp = '\0';
+  
+      /* eat leading spaces and tabs */
+      sp = line;
+      while (*sp && (*sp == ' ' || *sp == '\t'))
+	sp ++;
+  
+      /* 
+       * if we have anything left and its not a comment line
+       * then execute it
+       */
+
+      if (*sp && *sp != '#') 
+	{
+	  Message("%s : line %-3d : \"%s\"\n", fname, n, sp);
+	  /* printf ("%s : line %-3d : \"%s\"\n", fname, n, sp); */
+	  invoke_action(W, sp);
+	}
+    }
+  
+  fclose(fp);
 }
 
 /* ************************************************************ */
