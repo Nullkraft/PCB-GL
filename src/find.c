@@ -1,4 +1,4 @@
-/* $Id: find.c,v 1.31 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: find.c,v 1.32 2004-08-30 11:26:23 danmc Exp $ */
 
 /*
  *
@@ -98,7 +98,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: find.c,v 1.31 2004-08-30 02:52:04 danmc Exp $");
+RCSID("$Id: find.c,v 1.32 2004-08-30 11:26:23 danmc Exp $");
 
 
 
@@ -2200,7 +2200,6 @@ LookupLOConnectionsToPad (PadTypePtr Pad, Cardinal LayerGroup)
       /* handle normal layers */
       if (layer < MAX_LAYER)
 	{
-	  PolygonTypePtr polygon;
 	  info.layer = layer;
 	  /* add lines */
 	  if (setjmp (info.env) == 0)
