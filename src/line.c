@@ -23,7 +23,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: line.c,v 1.2 2004-03-08 01:52:00 haceaton Exp $
+ *  RCS: $Id: line.c,v 1.3 2004-03-18 15:33:48 haceaton Exp $
  */
 
 #define NUDGE (TO_PCB (6))
@@ -415,7 +415,7 @@ drc_lines (PointTypePtr end, Boolean way)
 		    r_search (PCB->Data->pad_tree, &line2.BoundingBox, NULL,
 			      drcPad_callback, &info);
 		}
-	      GROUP_LOOP (group, 
+	      GROUP_LOOP (group); 
 		{
 		  info.line = &line1;
 		  r_search (layer->line_tree, &line1.BoundingBox, NULL,
@@ -431,7 +431,7 @@ drc_lines (PointTypePtr end, Boolean way)
 				NULL, drcArc_callback, &info);
 		    }
 		}
-	      );
+	      END_LOOP;
 	      /* no intersector! */
 	      blocker = False;
 	      f2 += s2;
