@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1 2003-02-20 00:23:20 danmc Exp $
+## $Id: Makefile.am,v 1.2 2003-05-22 21:51:12 danmc Exp $
 ##
 
 PCBLIBDIR=		@PCBLIBDIR@
@@ -92,6 +92,7 @@ INC_FILES= \
 	qfp2.inc \
 	qfpdj.inc \
 	resistor_adjust.inc \
+	rules.inc \
 	smt.inc \
 	to.inc \
 	zif.inc 
