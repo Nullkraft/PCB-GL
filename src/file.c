@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: file.c,v 1.8 2004-01-19 19:16:17 haceaton Exp $";
+static char *rcsid = "$Id: file.c,v 1.9 2004-02-06 20:40:53 haceaton Exp $";
 
 /* file save, load, merge ... routines
  * getpid() needs a cast to (int) to get rid of compiler warnings
@@ -201,6 +201,8 @@ LoadPCB (char *Filename)
       PCB = newPCB;
       InitNetlistWindow (Output.Toplevel);
       ResetStackAndVisibility ();
+	/* set the zoom first before the Xorig, Yorig */
+      SetZoom (PCB->Zoom);
 
       /* update cursor location */
       Crosshair.X = MAX (0, MIN (PCB->CursorX, (Location) PCB->MaxWidth));
@@ -208,7 +210,6 @@ LoadPCB (char *Filename)
 
       Xorig = Crosshair.X - TO_PCB (Output.Width / 2);
       Yorig = Crosshair.Y - TO_PCB (Output.Height / 2);
-      SetZoom (PCB->Zoom);
       RedrawZoom (Output.Width / 2, Output.Height / 2);
 
       /* update cursor confinement and output area (scrollbars) */
