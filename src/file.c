@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: file.c,v 1.3 2003-12-29 03:15:56 haceaton Exp $";
+static char *rcsid = "$Id: file.c,v 1.4 2003-12-29 14:10:01 haceaton Exp $";
 
 /* file save, load, merge ... routines
  * getpid() needs a cast to (int) to get rid of compiler warnings
@@ -570,9 +570,9 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
 		           (int) point->Y);
 	        }
 	     );
+             fputs ("\t)\n", FP);
 	  }
       );
-
       fputs (")\n", FP);
     }
 }
