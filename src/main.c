@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: main.c,v 1.12 2004-02-15 18:04:03 haceaton Exp $";
+static char *rcsid = "$Id: main.c,v 1.13 2004-03-04 04:38:51 danmc Exp $";
 
 /* main program, initializes some stuff and handles user input
  */
@@ -959,6 +959,7 @@ static XtActionsRec Actions[] = {
   {"EditLayerGroups", ActionEditLayerGroups},
   {"MoveToCurrentLayer", ActionMoveToCurrentLayer},
   {"SwitchDrawingLayer", ActionSwitchDrawingLayer},
+  {"ToggleVisibility", ActionToggleVisibility},
   {"MoveObject", ActionMoveObject},
   {"djopt", ActionDJopt}
 };

@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: action.h,v 1.3 2004-01-15 20:16:06 haceaton Exp $
+ *  RCS: $Id: action.h,v 1.4 2004-03-04 04:38:51 danmc Exp $
  */
 
 /* prototypes for action routines
@@ -78,6 +78,7 @@ void	ActionUndo(Widget, XEvent *, String *, Cardinal *);
 void	ActionRedo(Widget, XEvent *, String *, Cardinal *);
 void	ActionPolygon(Widget, XEvent *, String *, Cardinal *);
 void	ActionSwitchDrawingLayer(Widget, XEvent *, String *, Cardinal *);
+void	ActionToggleVisibility(Widget, XEvent *, String *, Cardinal *);
 void	ActionEditLayerGroups(Widget, XEvent *, String *, Cardinal *);
 void	ActionMoveToCurrentLayer(Widget, XEvent *, String *, Cardinal *);
 void	ActionDRCheck(Widget, XEvent *, String *, Cardinal *);
