@@ -1,5 +1,5 @@
 # -*- m4 -*-
-#   $Id: geda.inc,v 1.14 2004-07-29 01:50:52 danmc Exp $
+#   $Id: geda.inc,v 1.15 2005-01-27 01:45:36 danmc Exp $
 #
 #   gEDA compatible footprint names
 #
@@ -533,8 +533,8 @@ define(`PKG_OSC14',  `PKG_OSC(`$1', `$2', `$3')');
 ##  LED, size in mm (pin 1 is +, 2 is -)
 #   LED3, LED5
 #
-define(`PKG_LED3',  `PKG_LEDX(`$1', `$2', `$3', 60)');
-define(`PKG_LED5',  `PKG_LEDX(`$1', `$2', `$3', 100)');
+define(`PKG_LED3',  `PKG_LED(`$1', `$2', `$3', 118)');
+define(`PKG_LED5',  `PKG_LED(`$1', `$2', `$3', 236)');
 
 #
 ## Transistor
