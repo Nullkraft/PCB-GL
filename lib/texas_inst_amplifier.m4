@@ -23,7 +23,7 @@ divert(-1)
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: texas_inst_amplifier.m4,v 1.1 2003-02-20 00:23:34 danmc Exp $
+#   RCS: $Id: texas_inst_amplifier.m4,v 1.2 2003-08-05 09:38:19 danmc Exp $
 #
 define(`Description_TL070_dil', `Single low noise JFET input operational amplifier')
 define(`Param1_TL070_dil', 8)
@@ -68,8 +68,7 @@ define(`PinList_TL082_dil',  ``Out1',`In1-',`In1+',`Vcc-',`In2+',`In2-',`Out2',`
 define(`Description_TL083_dil', `Dual JFET input operational amplifiers')
 define(`Param1_TL083_dil', 14)
 define(`Param2_TL083_dil', 300)
-define(`PinList_TL083_dil',  ``#1 In-',`#1 In+',`#1 OfsN2',`Vcc-',`#2 OfsN2',`#2 In+', \
-	`#2 In-',`#2 OfsN1',`Vcc+',`#2 Out',`NC',`#1 Out',`Vcc+',`#1 OfsN1'')
+define(`PinList_TL083_dil',  ``1 In-',`1 In+',`1 OfsN2',`Vcc-',`2 OfsN2',`2 In+', `2 In-', `2 OfsN1',`Vcc+',`2 Out',`NC',`1 Out',`Vcc+',`1 OfsN1'')
 
 define(`Description_TL084_dil', `Quad JFET input operational amplifiers')
 define(`Param1_TL084_dil', 14)
@@ -114,7 +113,7 @@ define(`PinList_uA741C_dil',  ``OfsN1',`In-',`In+',`Vcc-',`OfsN2',`Out',`Vcc+',`
 define(`Description_uA747C_dil', `Dual general purpose operational amplifiers')
 define(`Param1_uA747C_dil', 14)
 define(`Param2_uA747C_dil', 300)
-define(`PinList_uA747C_dil',  ``#1 In-',`#1 In+',`#1 OfsN2',`Vcc-',`#2 OfsN2',`#2 In+',`#2 In-',`#2 OfsN1',`#2 Vcc+',`#2 Out',`NC',`#1 Out',`#1 Vcc+',`#1 OfsN1'')
+define(`PinList_uA747C_dil',  ``1 In-',`1 In+',`1 OfsN2',`Vcc-',`2 OfsN2',`2 In+',`2 In-',`2 OfsN1',`2 Vcc+',`2 Out',`NC',`1 Out',`1 Vcc+',`1 OfsN1'')
 
 define(`Description_uA748C_dil', `Single general purpose operational amplifier')
 define(`Param1_uA748C_dil', 8)
