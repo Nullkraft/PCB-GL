@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.3 2003-03-05 01:58:59 danmc Exp $
+dnl $Id: configure.ac,v 1.4 2003-03-05 02:11:34 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/pinout.c)
@@ -30,6 +30,7 @@ dnl Checks for libraries.
 AC_CHECK_LIB(m, sqrt)
 AC_CHECK_LIB(xnet, gethostbyname)
 AC_CHECK_LIB(fl, yywrap)
+AC_CHECK_FUNCS(strerror)
 AC_PATH_XTRA
 AC_ARG_WITH([libstroke],
 [  --without-libstroke     disable libstroke support (default: enabled)],
@@ -93,7 +94,6 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 dnl Checks for data types
 
 dnl Checks for library functions.
-AC_CHECK_FUNCS(strerror)
 
 # ------------- dmalloc -------------------
 dnl dmalloc checks
