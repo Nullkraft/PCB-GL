@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: buffer.c,v 1.9 2004-02-15 18:04:03 haceaton Exp $";
+static char *rcsid = "$Id: buffer.c,v 1.10 2004-02-17 16:12:51 haceaton Exp $";
 
 /* functions used by paste- and move/copy buffer
  */
@@ -233,7 +233,7 @@ MoveViaToBuffer (PinTypePtr Via)
 {
   PinTypePtr via;
 
-  r_delete_entry(Source->via_tree, (BoxType *)via);
+  r_delete_entry(Source->via_tree, (BoxType *)Via);
   via = GetViaMemory (Dest);
   *via = *Via;
   *Via = Source->Via[--Source->ViaN];
