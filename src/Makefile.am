@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.12 2004-10-29 13:05:54 danmc Exp $
+## $Id: Makefile.am,v 1.13 2005-01-21 22:18:03 danmc Exp $
 ##
 
 SUBDIRS=	icons script
@@ -218,6 +218,7 @@ Pcb:	$(srcdir)/Pcb.ad.in Makefile
 		-e "s;^\(Pcb.libraryPath\).*$$;\1: .:`pwd`/../lib;" \
 		-e 's;^\(Pcb.libraryTree\).*$$;\1: $(top_srcdir)/newlib;' \
 		-e 's;^\(Pcb.libraryFilename\).*$$;\1: ${LIBRARYFILENAME};' \
+		-e 's;^\(Pcb.menuFile\).*$$;\1: $(srcdir)/pcb-menu.res;' \
 			Pcb > $@
 
 
