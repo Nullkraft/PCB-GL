@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: file.c,v 1.11 2004-02-15 18:04:03 haceaton Exp $";
+static char *rcsid = "$Id: file.c,v 1.12 2004-03-05 02:22:52 haceaton Exp $";
 
 /* file save, load, merge ... routines
  * getpid() needs a cast to (int) to get rid of compiler warnings
@@ -293,6 +293,7 @@ WritePCBDataHeader (FILE * FP)
   fprintf (FP, "Cursor[%i %i %f]\n", (int) TO_PCB_X (Output.Width / 2),
 	   (int) TO_PCB_Y (Output.Height / 2), PCB->Zoom);
   fprintf (FP, "Thermal[%f]\n", PCB->ThermScale);
+  fprintf (FP, "DRC[%i %i %i]\n", Settings.Bloat, Settings.Shrink, Settings.minWid);
   fprintf (FP, "Flags(0x%016x)\n", (int) PCB->Flags);
   fputs ("Groups(\"", FP);
   for (group = 0; group < MAX_LAYER; group++)

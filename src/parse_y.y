@@ -25,7 +25,7 @@
  *
  */
 
-static	char	*rcsid = "$Id: parse_y.y,v 1.9 2004-02-27 06:16:49 haceaton Exp $";
+static	char	*rcsid = "$Id: parse_y.y,v 1.10 2004-03-05 02:22:52 haceaton Exp $";
 
 /* grammar to parse ASCII input of PCB description
  */
@@ -75,7 +75,7 @@ extern	char			*yyfilename;	/* in this file */
 %token	T_PCB T_LAYER T_VIA T_RAT T_LINE T_ARC T_RECTANGLE T_TEXT T_ELEMENTLINE
 %token	T_ELEMENT T_PIN T_PAD T_GRID T_FLAGS T_SYMBOL T_SYMBOLLINE T_CURSOR
 %token	T_ELEMENTARC T_MARK T_GROUPS T_STYLES T_POLYGON T_NETLIST T_NET T_CONN
-%token	T_THERMAL
+%token	T_THERMAL T_DRC
 
 %type	<number>	symbolid
 
@@ -109,6 +109,7 @@ parsepcb
 		  pcbgrid
 		  pcbcursor
 		  pcbthermal 
+		  pcbdrc
 		  pcbflags
 		  pcbgroups
 		  pcbstyles
@@ -262,6 +263,16 @@ pcbthermal
 		| T_THERMAL '[' FLOAT ']'
 			{
 				yyPCB->ThermScale = $3;
+			}
+		;
+
+pcbdrc
+                :
+		| T_DRC '[' NUMBER NUMBER NUMBER ']'
+		        {
+				Settings.Bloat = $3;
+				Settings.Shrink = $4;
+				Settings.minWid = $5;
 			}
 		;
 
