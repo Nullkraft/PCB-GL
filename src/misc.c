@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: misc.c,v 1.9 2004-01-14 02:24:58 haceaton Exp $";
+static char *rcsid = "$Id: misc.c,v 1.10 2004-01-14 03:10:26 haceaton Exp $";
 
 /* misc functions used by several modules
  */
@@ -181,14 +181,17 @@ GetValue (String * Params, Boolean * absolute, Cardinal Num)
     }
   else
     {
-      *absolute = isdigit (**Params);
+      if (isdigit (**Params))
+        *absolute = True;
+      else
+        *absolute = False;
       value = atof (*Params);
     }
   if (Num == 3)
     {
-      if (strncmp (*(Params + 1), "mm", 2) == 0)
+      if (strncasecmp (*(Params + 1), "mm", 2) == 0)
 	value *= MM_TO_COOR;
-      else if (strncmp (*(Params + 1), "mil", 3) == 0)
+      else if (strncasecmp (*(Params + 1), "mil", 3) == 0)
 	value *= 100;
     }
   return value;

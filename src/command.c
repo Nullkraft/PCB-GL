@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: command.c,v 1.2 2003-12-29 03:15:56 haceaton Exp $";
+  "$Id: command.c,v 1.3 2004-01-14 03:10:26 haceaton Exp $";
 
 /* executes commands from user
  */
@@ -118,7 +118,7 @@ CommandQuit (void)
 	       "quits without saving or warning for its need\n");
       return (1);
     }
-  if (strcmp (argv[0], "q!") == 0)
+  if (strcasecmp (argv[0], "q!") == 0)
     QuitApplication ();
   if (!PCB->Changed || ConfirmDialog ("OK to lose data ?"))
     QuitApplication ();
@@ -373,7 +373,7 @@ ExecuteUserCommand (char *CommandLine)
     {
       /* scan command list */
       for (i = 0; i < ENTRIES (Command); i++)
-	if (!strcmp (Command[i].Text, argv[0]))
+	if (!strcasecmp (Command[i].Text, argv[0]))
 	  break;
       if (i == ENTRIES (Command))
 	/* it wasn't listed, it must have been an action command */
