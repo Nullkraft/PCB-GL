@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: main.c,v 1.18 2004-07-10 03:42:13 djdelorie Exp $";
+static char *rcsid = "$Id: main.c,v 1.19 2004-08-25 01:07:04 danmc Exp $";
 
 /* main program, initializes some stuff and handles user input
  */
@@ -1331,11 +1331,14 @@ main (int argc, char *argv[])
   /* take care of special options */
   if (argc == 2)
     {
-      if (!strcmp ("-help", argv[1]))
+      if (!strcmp ("-help", argv[1]) ||
+	  !strcmp ("--help", argv[1]) )
 	Usage ();
-      if (!strcmp ("-copyright", argv[1]))
+      if (!strcmp ("-copyright", argv[1]) ||
+	  !strcmp ("--copyright", argv[1]) )
 	Copyright ();
-      if (!strcmp ("-version", argv[1]))
+      if (!strcmp ("-version", argv[1]) ||
+	  !strcmp ("--version", argv[1]) )
 	{
 	  puts (VERSION);
 	  exit (0);

@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: misc.c,v 1.27 2004-08-25 01:03:21 danmc Exp $";
+static char *rcsid = "$Id: misc.c,v 1.28 2004-08-25 01:07:04 danmc Exp $";
 
 /* misc functions used by several modules
  */
@@ -183,8 +183,11 @@ Usage (void)
 	   "  -v <value>:               sets the volume of the X speaker\n"
 	   "special options are:\n"
 	   "  -copyright:               prints copyright information\n"
+	   "  --copyright:              prints copyright information\n"
 	   "  -help:                    prints this message\n"
-	   "  -version:                 prints the current version number\n",
+	   "  --help:                   prints this message\n"
+	   "  -version:                 prints the current version number\n"
+	   "  --version:                prints the current version number\n",
 	   Progname, Progname);
   exit (1);
 }
