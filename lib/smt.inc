@@ -1,5 +1,5 @@
 # -*- m4 -*-
-#   $Id: smt.inc,v 1.7 2003-12-31 03:33:40 danmc Exp $
+#   $Id: smt.inc,v 1.8 2004-01-01 07:43:55 danmc Exp $
 #
 #   surface mounted components
 #
@@ -103,7 +103,7 @@ define(`COMMON_SMT_3PAD_MIL',
 	define(`SKIP_SILK', `$11')
 
 		
-Element(0x00 "$1" "$2" "$3" eval(XMIN+20) eval(YMAX+20) 0 100 0x00)
+Element(0x00 "`$1'" "`$2'" "`$3'" eval(XMIN+20) eval(YMAX+20) 0 100 0x00)
 (
 	ifelse(0, eval(PADW>PADL),
 	# Pads which have the perpendicular pad dimension less
