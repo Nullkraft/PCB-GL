@@ -1,5 +1,5 @@
 # -*- m4 -*-
-# $Id: johnstech.inc,v 1.3 2004-03-19 00:08:07 danmc Exp $
+# $Id: johnstech.inc,v 1.4 2004-04-28 21:34:46 danmc Exp $
 #                            COPYRIGHT
 #
 #   PCB, interactive printed circuit board design
@@ -82,7 +82,7 @@ define(`PKG_GENERIC_JOHNSTECH7248_QFN',
 	define(`SILKX', `eval((LRWIDTH/2 + SILKEXT )/10)')
 	define(`SILKY', `eval((TBWIDTH/2 + SILKEXT )/10)')
 	# refdes text size (mil/100)
-	define(`TEXTSIZE', 10000)
+	define(`TEXTSIZE', 100)
 	# x,y coordinates for refdes label (mil/100)
 	define(`TEXTX', -SILKX)
 	define(`TEXTY', `eval(-SILKY - 1000 - TEXTSIZE/2)')

@@ -1,5 +1,5 @@
 # -*- m4 -*-
-#   $Id: smt.inc,v 1.11 2004-04-28 02:09:33 danmc Exp $
+#   $Id: smt.inc,v 1.12 2004-04-28 21:34:46 danmc Exp $
 #
 #   surface mounted components
 #
@@ -573,7 +573,7 @@ define(`COMMON_SMT_DIL_MIL',
 	)	
 # element_flags, description, pcb-name, value, mark_x, mark_y,
 # text_x, text_y, text_direction, text_scale, text_flags
-Element[0x00000000 "$1" "`$2'" "$3" 0 0 -2000 -6000 0 10000  0x00000000]
+Element[0x00000000 "$1" "`$2'" "$3" 0 0 -2000 -6000 0 100 0x00000000]
 (
 # 
 # Pad[x1, y1, x2, y2, thickness, clearance, mask, name , pad number, flags]
