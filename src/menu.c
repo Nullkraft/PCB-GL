@@ -1,4 +1,4 @@
-/* $Id: menu.c,v 1.33 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: menu.c,v 1.34 2004-09-21 02:31:51 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -68,7 +68,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: menu.c,v 1.33 2004-08-30 02:52:04 danmc Exp $");
+RCSID("$Id: menu.c,v 1.34 2004-09-21 02:31:51 haceaton Exp $");
 
 
 
@@ -102,11 +102,9 @@ static PopupEntryType pMenuEntries[] = {
   {"remove", "Remove Selected", CB_Action,
    "RemoveSelected", NULL},
   {"copy", "Copy Selection to Buffer", CB_Action,
-   "GetXY,Press a button at the element's location\n"
    "PasteBuffer,Clear\n" "PasteBuffer,AddSelected\n" "Mode,PasteBuffer",
    NULL},
   {"cut", "Cut Selection to Buffer", CB_Action,
-   "GetXY,Press a button at the element's location\n"
    "PasteBuffer,Clear\n"
    "PasteBuffer,AddSelected\n" "RemoveSelected\n" "Mode,PasteBuffer",
    NULL},
