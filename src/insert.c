@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: insert.c,v 1.4 2004-01-05 01:40:24 haceaton Exp $";
+static char *rcsid = "$Id: insert.c,v 1.5 2004-02-13 22:31:15 haceaton Exp $";
 
 /* functions used to insert points into objects
  */
@@ -91,13 +91,13 @@ InsertPointIntoRat (RatTypePtr Rat)
 
   new = CreateDrawnLineOnLayer (CURRENT, Rat->Point1.X, Rat->Point1.Y,
 				InsertX, InsertY, Settings.LineThickness,
-				Settings.Keepaway, Rat->Flags & ~RATFLAG);
+				2*Settings.Keepaway, Rat->Flags & ~RATFLAG);
   AddObjectToCreateUndoList (LINE_TYPE, CURRENT, new, new);
   EraseRat (Rat);
   DrawLine (CURRENT, new, 0);
   new = CreateDrawnLineOnLayer (CURRENT, Rat->Point2.X, Rat->Point2.Y,
 				InsertX, InsertY, Settings.LineThickness,
-				Settings.Keepaway, Rat->Flags & ~RATFLAG);
+				2*Settings.Keepaway, Rat->Flags & ~RATFLAG);
   AddObjectToCreateUndoList (LINE_TYPE, CURRENT, new, new);
   DrawLine (CURRENT, new, 0);
   MoveObjectToRemoveUndoList (RATLINE_TYPE, Rat, Rat, Rat);

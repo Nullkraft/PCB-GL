@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: set.c,v 1.10 2004-02-06 20:57:13 haceaton Exp $";
+static char *rcsid = "$Id: set.c,v 1.11 2004-02-13 22:31:15 haceaton Exp $";
 
 /* routines to update widgets and global settings
  * (except output window and dialogs)
@@ -98,7 +98,7 @@ SetStatusLine (void)
   if (PCB->Grid == (int) PCB->Grid)
     sprintf (text,
 	     "%c %s, grid=%i.%02i:%i,%s%sline=%i.%02i, via=%i.%02i(%i.%02i),"
-	     "keepaway=%i.%i, text=%i%%, buffer=#%-i, name: ",
+	     "clearance=%i.%i, text=%i%%, buffer=#%-i, name: ",
 	     PCB->Changed ? '*' : ' ',
 	     Settings.ShowSolderSide ? "solder" : "component",
 	     (int) PCB->Grid / 100, (int) (PCB->Grid) % 100,
@@ -116,7 +116,7 @@ SetStatusLine (void)
   else
     sprintf (text,
 	     "%c %s, grid=%4.2fmm:%i,%s%sline=%i.%02i, via=%i.%02i(%i.%02i),"
-	     "keepaway=%i.%02i, text=%i%%, buffer=#%-i, name: ",
+	     "clearance=%i.%02i, text=%i%%, buffer=#%-i, name: ",
 	     PCB->Changed ? '*' : ' ',
 	     Settings.ShowSolderSide ? "solder" : "component",
 	     PCB->Grid * COOR_TO_MM, (int) Settings.GridFactor,

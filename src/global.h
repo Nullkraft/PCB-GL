@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.4 2004-02-06 20:30:29 haceaton Exp $
+ *  RCS: $Id: global.h,v 1.5 2004-02-13 22:31:15 haceaton Exp $
  */
 
 /* definition of types
@@ -497,7 +497,8 @@ typedef struct			/* some resources... */
 			TextScale,		/* text scaling in % */
 			AlignmentDistance,
 			Bloat,			/* drc sizes */
-			Shrink;
+			Shrink,
+                        minWid;
 	float		Grid,			/* grid 0.001'' */
 			Zoom,			/* number of shift operations for zooming */
 			PinoutZoom;		/* same for pinout windows */
