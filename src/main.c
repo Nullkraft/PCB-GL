@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.30 2005-01-17 03:46:52 danmc Exp $ */
+/* $Id: main.c,v 1.31 2005-01-17 04:08:07 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -80,7 +80,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: main.c,v 1.30 2005-01-17 03:46:52 danmc Exp $");
+RCSID("$Id: main.c,v 1.31 2005-01-17 04:08:07 danmc Exp $");
 
 
 
@@ -1102,7 +1102,7 @@ InitStatusLine (Widget Parent, Widget Top, Widget Left)
 					       XtNresize, True,
 					       XtNfromVert, Top,
 					       XtNfromHoriz, Left,
-					       LAYOUT_TOP, NULL);
+					       LAYOUT_BOTTOM, NULL);
 }
 
 /* ---------------------------------------------------------------------------
