@@ -1,5 +1,5 @@
 \input texinfo    @c -*-texinfo-*-
-@comment RCS: $Id: pcb.texi,v 1.22 2004-10-23 03:39:28 danmc Exp $
+@comment RCS: $Id: pcb.texi,v 1.23 2004-10-27 14:10:00 djdelorie Exp $
 @comment %**start of header
 @setfilename pcb.info
 @settitle Pcb
@@ -5458,6 +5458,16 @@ automatically:
     @@sizes
     @{"Adjust active sizes ..." AdjustStyle(0)@}
     @}
+@end example
+
+In addition to all that, any unquoted pound sign (@code{#}) begins a
+comment.  Commented text continues until the end of the containing
+line.  Comments may begin at the beginning of a line, or after other
+text on the line:
+
+@example
+# This is a comment
+MainMenu = @{ # This is also a comment
 @end example
 
 @node Menu Definitions, Menu Files and Defaults, Resource Syntax, Custom Menus
