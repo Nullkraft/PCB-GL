@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.22 2004-08-30 02:52:04 danmc Exp $
+ *  RCS: $Id: global.h,v 1.23 2004-09-24 02:55:26 djdelorie Exp $
  */
 
 /* definition of types
@@ -522,6 +522,7 @@ typedef struct			/* some resources... */
   /* produced when searching of */
   /* connections is done */
   XFontStruct *PinoutFont[MAX_ZOOM + 1];	/* font ID used for pin names */
+  int HistorySize;
 } SettingType, *SettingTypePtr;
 
 /* ----------------------------------------------------------------------

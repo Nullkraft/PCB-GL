@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.23 2004-08-30 11:54:59 danmc Exp $ */
+/* $Id: main.c,v 1.24 2004-09-24 02:55:26 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -80,7 +80,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: main.c,v 1.23 2004-08-30 11:54:59 danmc Exp $");
+RCSID("$Id: main.c,v 1.24 2004-09-24 02:55:26 djdelorie Exp $");
 
 
 
@@ -620,6 +620,9 @@ static XtResource ToplevelResources[] = {
    XtOffsetOf (SettingType, Grid), XtRString, "5000"},
   {"gridColor", XtCColor, XtRPixel, sizeof (Pixel),
    XtOffsetOf (SettingType, GridColor), XtRString, XtDefaultForeground}
+  ,
+  {"historySize", "HistorySize", XtRInt, sizeof (int),
+   XtOffsetOf (SettingType, HistorySize), XtRString, "100"}
   ,
   {"invisibleObjectsColor", XtCColor, XtRPixel, sizeof (Pixel),
    XtOffsetOf (SettingType, InvisibleObjectsColor),
