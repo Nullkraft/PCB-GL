@@ -1,5 +1,5 @@
 # -*- m4 -*-
-#   $Id: geda.inc,v 1.8 2003-12-31 02:57:01 danmc Exp $
+#   $Id: geda.inc,v 1.9 2004-03-03 02:51:00 danmc Exp $
 #
 #   gEDA compatible footprint names
 #
@@ -542,7 +542,7 @@ define(`PKG_HEADER30_2', `PKG_CONNECTOR(`$1', `$2', `$3', 15, 2)');
 define(`PKG_HEADER34_2', `PKG_CONNECTOR(`$1', `$2', `$3', 17, 2)');
 define(`PKG_HEADER40_2', `PKG_CONNECTOR(`$1', `$2', `$3', 20, 2)');
 define(`PKG_HEADER50_2', `PKG_CONNECTOR(`$1', `$2', `$3', 25, 2)');
-define(`PKG_HEADER60_2', `PKG_CONNECTOR(`$1', `$2', `$3', 25, 2)');
+define(`PKG_HEADER60_2', `PKG_CONNECTOR(`$1', `$2', `$3', 30, 2)');
 define(`PKG_HEADER64_2', `PKG_CONNECTOR(`$1', `$2', `$3', 32, 2)');
 
 #
