@@ -25,7 +25,7 @@
  *
  */
 
-static char *rcsid = "$Id: find.c,v 1.4 2003-12-29 03:15:56 haceaton Exp $";
+static char *rcsid = "$Id: find.c,v 1.5 2003-12-29 14:24:51 haceaton Exp $";
 
 /*
  * short description:
@@ -2934,7 +2934,7 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
       P1->BoundingBox.Y2 >= P2->BoundingBox.Y1)
     {
       LineType line;
-
+#if 0
       POLYGONPOINT_LOOP (P1, 
 	  {
 	    if (IsPointInPolygon (point->X, point->Y, 0, P2))
@@ -2948,6 +2948,7 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
 	      return (True);
 	  }
       );
+#endif
 
       /* check all lines of P1 agains P2;
        * POLYGONPOINT_LOOP decrements the pointer !!!
@@ -2955,7 +2956,7 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
 
 
       line.Point1.X = P1->Points[0].X;
-      line.Point1.Y = P1->Points[1].Y;
+      line.Point1.Y = P1->Points[0].Y;
       line.Thickness = 0;
       line.Flags = NOFLAG;
 
