@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.22 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: main.c,v 1.23 2004-08-30 11:54:59 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -60,6 +60,7 @@
 #include "mymem.h"
 #include "output.h"
 #include "remove.h"
+#include "resmenu.h"
 #include "set.h"
 #include "djopt.h"
 #include "resource.h"
@@ -79,7 +80,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: main.c,v 1.22 2004-08-30 02:52:04 danmc Exp $");
+RCSID("$Id: main.c,v 1.23 2004-08-30 11:54:59 danmc Exp $");
 
 
 

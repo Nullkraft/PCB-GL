@@ -1,9 +1,11 @@
-/* $Id: resmenu.h,v 1.3 2004-06-24 15:05:47 djdelorie Exp $ */
+/* $Id: resmenu.h,v 1.4 2004-08-30 11:54:58 danmc Exp $ */
 
 #ifndef __RESMENU_INCLUDED_
 #define __RESMENU_INCLUDED_ 1
 
 #include <stdio.h>
+
+#include "resource.h"
 
 #ifdef __cplusplus
 extern "C" {
