@@ -1,5 +1,5 @@
 # -*- m4 -*-
-#   $Id: geda.inc,v 1.10 2004-03-10 01:17:00 danmc Exp $
+#   $Id: geda.inc,v 1.11 2004-04-28 02:42:45 danmc Exp $
 #
 #   gEDA compatible footprint names
 #
@@ -38,19 +38,17 @@ define(`PKG_DIP64',  `PKG_N(`$1', `$2', `$3',  64,  900)');
 
 #
 ##  Shrink dual in-line package, wide (400 mil)
-# BUG: reduce pad size for SDIP
-# BUG: SDIP 70 mil pitch 64 pins
 #
-define(`PKG_SDIP18',  `PKG_N(`$1', `$2', `$3', 18,  300)');
-define(`PKG_SDIP22',  `PKG_N(`$1', `$2', `$3', 22,  300)');
-define(`PKG_SDIP24',  `PKG_N(`$1', `$2', `$3', 24,  300)');
+define(`PKG_SDIP18',  `PKG_NS(`$1', `$2', `$3', 18,  300)');
+define(`PKG_SDIP22',  `PKG_NS(`$1', `$2', `$3', 22,  300)');
+define(`PKG_SDIP24',  `PKG_NS(`$1', `$2', `$3', 24,  300)');
 #
 ##  Shrink dual in-line package, wide (400 mil)
-define(`PKG_SDIP30',  `PKG_N(`$1', `$2', `$3', 30,  400)');
-define(`PKG_SDIP32',  `PKG_N(`$1', `$2', `$3', 32,  400)');
+define(`PKG_SDIP30',  `PKG_NS(`$1', `$2', `$3', 30,  400)');
+define(`PKG_SDIP32',  `PKG_NS(`$1', `$2', `$3', 32,  400)');
 #
 ##  Shrink dual in-line package, wide (600 mil)
-define(`PKG_SDIP42',  `PKG_N(`$1', `$2', `$3', 42,  600)');
+define(`PKG_SDIP42',  `PKG_NS(`$1', `$2', `$3', 42,  600)');
 
 #
 ##  Single in line package
