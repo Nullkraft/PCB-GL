@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: draw.c,v 1.34 2004-07-10 03:42:13 djdelorie Exp $";
+static char *rcsid = "$Id: draw.c,v 1.35 2004-08-27 22:04:11 danmc Exp $";
 
 /* drawing routines
  */
@@ -36,6 +36,7 @@ static char *rcsid = "$Id: draw.c,v 1.34 2004-07-10 03:42:13 djdelorie Exp $";
 #include "config.h"
 #endif
 
+#include <ctype.h>
 #include <math.h>
 #include "global.h"
 #include "clip.h"
