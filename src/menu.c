@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: menu.c,v 1.7 2003-12-29 03:15:56 haceaton Exp $";
+static char *rcsid = "$Id: menu.c,v 1.8 2003-12-30 02:18:51 haceaton Exp $";
 
 /* initializes menus and handles callbacks
  */
@@ -530,17 +530,15 @@ FillSizesMenu (void)
   int i;
 
   STYLE_LOOP (PCB, 
-      {
-	{
-	  sprintf (name[n], "size%d", n + 1);
-	  sprintf (label[n], "use '%s' routing style", style->Name);
-	  sprintf (action[n], "RouteStyle,%d", n + 1);
-	  SizesMenuEntries[n].Name = name[n];
-	  SizesMenuEntries[n].Label = label[n];
-	  SizesMenuEntries[n].Callback = CB_Action;
-	  SizesMenuEntries[n].ClientData = (XtPointer) action[n];
-	}
-      }
+    {
+      sprintf (name[n], "size%d", n + 1);
+      sprintf (label[n], "use '%s' routing style", style->Name);
+      sprintf (action[n], "RouteStyle,%d", n + 1);
+      SizesMenuEntries[n].Name = name[n];
+      SizesMenuEntries[n].Label = label[n];
+      SizesMenuEntries[n].Callback = CB_Action;
+      SizesMenuEntries[n].ClientData = (XtPointer) action[n];
+    }
   );
   for (i = NUM_STYLES; i < 2 * NUM_STYLES; i++)
     {
@@ -731,18 +729,16 @@ CBPOPUP_Sizes (Widget W, XtPointer ClientData, XtPointer CallData)
 
   RemoveCheckFromMenu (&SizesMenu);
   STYLE_LOOP (PCB, 
-      {
+    {
+      if (style->Thick == Settings.LineThickness &&
+	  style->Diameter == Settings.ViaThickness &&
+	  style->Hole == Settings.ViaDrillingHole)
 	{
-	  if (style->Thick == Settings.LineThickness &&
-	      style->Diameter == Settings.ViaThickness &&
-	      style->Hole == Settings.ViaDrillingHole)
-	    {
-	      sprintf (menuname, "size%d", n + 1);
-	      CheckEntry (&SizesMenu, menuname);
-	      break;
-	    }
+	  sprintf (menuname, "size%d", n + 1);
+	  CheckEntry (&SizesMenu, menuname);
+	  break;
 	}
-      }
+    }
   );
 }
 

@@ -24,7 +24,7 @@
  *
  */
 #define DEBUG_ID 1
-static char *rcsid = "$Id: undo.c,v 1.4 2003-12-29 03:15:56 haceaton Exp $";
+static char *rcsid = "$Id: undo.c,v 1.5 2003-12-30 02:18:51 haceaton Exp $";
 
 /* functions used to undo operations
  *
@@ -662,13 +662,13 @@ UndoInsertPoint (UndoListTypePtr Entry)
 	Entry->Kind = POLYGON_TYPE;
 	Entry->Type = UNDO_REMOVE_POINT;
 	POLYGONPOINT_LOOP (polygon, 
-	    {
-	      if (pnt == point)
-		{
-		  Entry->Data.RemovedPoint.Index = n;
-		  break;
-		}
-	    }
+	  {
+	    if (pnt == point)
+	      {
+		Entry->Data.RemovedPoint.Index = n;
+		break;
+	      }
+	  }
 	);
 	DestroyObject (PCB->Data, POLYGONPOINT_TYPE, layer, polygon, pnt);
 	if (andDraw && layer->On)

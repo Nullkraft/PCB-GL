@@ -26,7 +26,7 @@
  *
  */
 
-static char *rcsid = "$Id: drill.c,v 1.3 2003-12-29 03:15:56 haceaton Exp $";
+static char *rcsid = "$Id: drill.c,v 1.4 2003-12-30 02:18:51 haceaton Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -122,88 +122,88 @@ GetDrillInfo (DataTypePtr top)
 
   AllDrills = MyCalloc (1, sizeof (DrillInfoType), "GetAllDrillInfo()");
   ALLPIN_LOOP (top, 
-      {
-	if (!DrillFound)
-	  {
-	    DrillFound = True;
-	    Drill = GetDrillInfoDrillMemory (AllDrills);
-	    InitializeDrill (Drill, pin, element);
-	  }
-	else
-	  {
-	    if (Drill->DrillSize == pin->DrillingHole)
-              FillDrill (Drill, element, pin);
-	    else
-	     {
-	       NewDrill = False;
-	       DRILL_LOOP (AllDrills, 
-	         {
-	           if (drill->DrillSize == pin->DrillingHole)
-		     {
-		       Drill = drill;
-		       FillDrill (Drill, element, pin);
-		       break;
-		     }
-		   else if (drill->DrillSize > pin->DrillingHole)
-	             {
-		       if (!NewDrill)
-		         {
-		           NewDrill = True;
-			   InitializeDrill (&swapdrill, pin, element);
-			   Drill = GetDrillInfoDrillMemory (AllDrills);
-			   Drill->DrillSize = pin->DrillingHole + 1;
-			   Drill = drill;
-			 }
-		       savedrill = *drill;
-		       *drill = swapdrill;
-		       swapdrill = savedrill;
-		     }
-		 }
-	        );
-	        if (AllDrills->Drill[AllDrills->DrillN - 1].DrillSize <
-		      pin->DrillingHole)
-	          {
-	            Drill = GetDrillInfoDrillMemory (AllDrills);
-	            InitializeDrill (Drill, pin, element);
-	          }
-	     }
-         }
+    {
+      if (!DrillFound)
+	{
+	  DrillFound = True;
+	  Drill = GetDrillInfoDrillMemory (AllDrills);
+	  InitializeDrill (Drill, pin, element);
+	}
+      else
+	{
+	  if (Drill->DrillSize == pin->DrillingHole)
+	    FillDrill (Drill, element, pin);
+	  else
+	    {
+	      NewDrill = False;
+	      DRILL_LOOP (AllDrills, 
+		{
+		  if (drill->DrillSize == pin->DrillingHole)
+		    {
+		      Drill = drill;
+		      FillDrill (Drill, element, pin);
+		      break;
+		    }
+		  else if (drill->DrillSize > pin->DrillingHole)
+		    {
+		      if (!NewDrill)
+			{
+			  NewDrill = True;
+			  InitializeDrill (&swapdrill, pin, element);
+			  Drill = GetDrillInfoDrillMemory (AllDrills);
+			  Drill->DrillSize = pin->DrillingHole + 1;
+			  Drill = drill;
+			}
+		      savedrill = *drill;
+		      *drill = swapdrill;
+		      swapdrill = savedrill;
+		    }
+		}
+	      );
+	      if (AllDrills->Drill[AllDrills->DrillN - 1].DrillSize <
+		  pin->DrillingHole)
+		{
+		  Drill = GetDrillInfoDrillMemory (AllDrills);
+		  InitializeDrill (Drill, pin, element);
+		}
+	    }
+	}
     }
   );
   VIA_LOOP (top, 
-      {
-	  if (!DrillFound)
+    {
+      if (!DrillFound)
+	{
+	  DrillFound = True;
+	  Drill = GetDrillInfoDrillMemory (AllDrills);
+	  Drill->DrillSize = via->DrillingHole;
+	  FillDrill (Drill, NULL, via);
+	}
+      else
+	{
+	  if (Drill->DrillSize != via->DrillingHole)
 	    {
-	      DrillFound = True;
-	      Drill = GetDrillInfoDrillMemory (AllDrills);
-	      Drill->DrillSize = via->DrillingHole;
-	      FillDrill (Drill, NULL, via);
-	    }
-	  else
-	    {
-	      if (Drill->DrillSize != via->DrillingHole)
+	      DRILL_LOOP (AllDrills, 
 		{
-		  DRILL_LOOP (AllDrills, 
-		      {
-			if (drill->DrillSize == via->DrillingHole)
-			  {
-			    Drill = drill;
-			    FillDrill (Drill, NULL, via);
-			    break;
-			  }
-		      }
-		  );
-		  if (Drill->DrillSize != via->DrillingHole)
+		  if (drill->DrillSize == via->DrillingHole)
 		    {
-		      Drill = GetDrillInfoDrillMemory (AllDrills);
-		      Drill->DrillSize = via->DrillingHole;
+		      Drill = drill;
 		      FillDrill (Drill, NULL, via);
+		      break;
 		    }
 		}
-	      else
-		FillDrill (Drill, NULL, via);
+	      );
+	      if (Drill->DrillSize != via->DrillingHole)
+		{
+		  Drill = GetDrillInfoDrillMemory (AllDrills);
+		  Drill->DrillSize = via->DrillingHole;
+		  FillDrill (Drill, NULL, via);
+		}
 	    }
-      }
+	  else
+	    FillDrill (Drill, NULL, via);
+	}
+    }
   );
   qsort (AllDrills->Drill, AllDrills->DrillN, sizeof (DrillType), DrillQSort);
   return (AllDrills);
@@ -216,7 +216,7 @@ FreeDrillInfo (DrillInfoTypePtr Drills)
     {
       MyFree ((char **) &drill->Element);
       MyFree ((char **) &drill->Pin);
-    } 
+    }
   );
   MyFree ((char **) &Drills->Drill);
   SaveFree (Drills);

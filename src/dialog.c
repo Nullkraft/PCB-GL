@@ -24,8 +24,7 @@
  *
  */
 
-static char *rcsid =
-  "$Id: dialog.c,v 1.2 2003-12-29 03:15:56 haceaton Exp $";
+static char *rcsid = "$Id: dialog.c,v 1.3 2003-12-30 02:18:51 haceaton Exp $";
 
 /* dialog routines
  */

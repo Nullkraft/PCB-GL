@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: set.c,v 1.2 2003-12-29 03:15:56 haceaton Exp $";
+static char *rcsid = "$Id: set.c,v 1.3 2003-12-30 02:18:51 haceaton Exp $";
 
 /* routines to update widgets and global settings
  * (except output window and dialogs)
@@ -415,15 +415,15 @@ SetRouteStyle (char *name)
   char *arg, num[10];
 
   STYLE_LOOP (PCB, 
-      {
-	if (name && strcmp (name, style->Name) == 0)
-	  {
-	    arg = &num[0];
-	    sprintf (num, "%d", n + 1);
-	    CallActionProc (Output.Output, "RouteStyle", NULL, &arg, 1);
-	    break;
-	  }
-      }
+    {
+      if (name && strcmp (name, style->Name) == 0)
+	{
+	  arg = &num[0];
+	  sprintf (num, "%d", n + 1);
+	  CallActionProc (Output.Output, "RouteStyle", NULL, &arg, 1);
+	  break;
+	}
+    }
   );
 }
 
