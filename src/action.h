@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: action.h,v 1.6 2004-05-29 00:13:33 danmc Exp $
+ *  RCS: $Id: action.h,v 1.7 2005-01-13 22:08:17 danmc Exp $
  */
 
 /* prototypes for action routines
@@ -48,6 +48,7 @@ void	ActionFinishInputDialog(Widget, XEvent *, String *, Cardinal *);
 void	ActionQuit(Widget, XEvent *, String *, Cardinal *);
 void	ActionConnection(Widget, XEvent *, String *, Cardinal *);
 void	ActionCommand(Widget, XEvent *, String *, Cardinal *);
+void	ActionDisperseElements(Widget, XEvent *, String *, Cardinal *);
 void	ActionDisplay(Widget, XEvent *, String *, Cardinal *);
 void	ActionMode(Widget, XEvent *, String *, Cardinal *);
 void	ActionMoveToSilk(Widget, XEvent *, String *, Cardinal *);

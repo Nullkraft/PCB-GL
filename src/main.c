@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.27 2004-11-20 22:20:50 danmc Exp $ */
+/* $Id: main.c,v 1.28 2005-01-13 22:08:17 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -80,7 +80,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: main.c,v 1.27 2004-11-20 22:20:50 danmc Exp $");
+RCSID("$Id: main.c,v 1.28 2005-01-13 22:08:17 danmc Exp $");
 
 
 
@@ -965,6 +965,7 @@ static XtActionsRec Actions[] = {
   {"Quit", ActionQuit},
   {"Connection", ActionConnection},
   {"Command", ActionCommand},
+  {"DisperseElements", ActionDisperseElements},
   {"Display", ActionDisplay},
   {"Report", ActionReport},
   {"ListAct", ActionListAct},

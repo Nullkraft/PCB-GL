@@ -1,5 +1,5 @@
 \input texinfo    @c -*-texinfo-*-
-@comment RCS: $Id: pcb.texi,v 1.26 2004-11-01 11:52:53 danmc Exp $
+@comment RCS: $Id: pcb.texi,v 1.27 2005-01-13 22:08:13 danmc Exp $
 @comment %**start of header
 @setfilename pcb.info
 @settitle Pcb
@@ -3509,6 +3509,19 @@ None<Key>e:   DeleteRats(AllRats)
 Disables automatic drill size mapping to the loaded vendor drill table.
 @example
 DisableVendor()
+@end example
+
+@findex DisperseElements()
+@cindex dispersing elements
+@cindex distributing elements
+@cindex elements, dispersing
+@cindex elements, distributing
+@item DisperseElements()
+Disperses all elements in the layout.  This action should be used at the
+start of a design to spread out all footprints before any placement or
+routing is done.
+@example
+DisperseElements()
 @end example
 
 
