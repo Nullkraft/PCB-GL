@@ -22,7 +22,7 @@
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: misc.inc,v 1.1 2003-02-20 00:23:31 danmc Exp $
+#   RCS: $Id: misc.inc,v 1.2 2004-02-20 03:11:24 danmc Exp $
 #
 # misc packages
 #
@@ -317,8 +317,8 @@ Element(0x00 "$1" "$2" "$3" X1 eval(Y2+20) 0 100 0x00)
 (
 	PIN(X1, Y, 60, 20, 1)
 	PIN(X2, Y, 60, 20, 2)
-	ElementLine (X1 Y1 X2 Y1 10)
-	ElementLine (X1 Y2 X2 Y2 10)
+	ElementLine(X1 Y1 X2 Y1 10)
+	ElementLine(X1 Y2 X2 Y2 10)
 	ElementArc(X1 Y 50 50 270 180 10)
 	ElementArc(X2 Y 50 50 90 180 10)
 	Mark (X1 Y)
