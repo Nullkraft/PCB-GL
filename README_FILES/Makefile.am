@@ -1,12 +1,9 @@
-## $Id: Makefile.am,v 1.1 2003-02-20 00:22:41 danmc Exp $
+## $Id: Makefile.am,v 1.2 2005-01-06 23:27:11 danmc Exp $
 ##
 
 EXTRA_DIST= \
 	CHANGES \
 	INSTALL \
-	LICENSE \
-	MAILING \
-	README \
 	Tools \
 	Whats_new_in_2.0 
 
