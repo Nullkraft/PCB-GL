@@ -1,6 +1,6 @@
 # -*- m4 -*-
 #
-# $Id: panasonic.inc,v 1.1 2003-12-31 02:30:56 danmc Exp $
+# $Id: panasonic.inc,v 1.2 2003-12-31 03:03:50 danmc Exp $
 #                            COPYRIGHT
 #
 #   PCB, interactive printed circuit board design
@@ -22,7 +22,7 @@
 # 
 # 
 #
-#  Panasonit Specific Footprints
+#  Panasonic Specific Footprints
 
 
 # EXTRACT_BEGIN
