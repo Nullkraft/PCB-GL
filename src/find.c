@@ -25,7 +25,7 @@
  *
  */
 
-static char *rcsid = "$Id: find.c,v 1.15 2004-02-17 06:27:13 haceaton Exp $";
+static char *rcsid = "$Id: find.c,v 1.16 2004-02-25 19:33:12 haceaton Exp $";
 
 /*
  * short description:
@@ -1769,12 +1769,6 @@ LineLineIntersect (LineTypePtr Line1, LineTypePtr Line2)
 {
   register float dx, dy, dx1, dy1, s, r;
 
-  if (MAX (Line1->Point1.Y, Line1->Point2.Y) + Line1->Thickness +
-      Line2->Thickness < MIN (Line2->Point1.Y, Line2->Point2.Y)
-      || MIN (Line1->Point1.Y,
-	      Line1->Point2.Y) - Line1->Thickness - Line2->Thickness >
-      MAX (Line2->Point1.Y, Line2->Point2.Y))
-    return False;
   /* setup some constants */
   dx = (float) (Line1->Point2.X - Line1->Point1.X);
   dy = (float) (Line1->Point2.Y - Line1->Point1.Y);
