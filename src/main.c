@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.33 2005-01-27 01:49:32 danmc Exp $ */
+/* $Id: main.c,v 1.34 2005-02-23 14:05:19 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -80,7 +80,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: main.c,v 1.33 2005-01-27 01:49:32 danmc Exp $");
+RCSID("$Id: main.c,v 1.34 2005-02-23 14:05:19 djdelorie Exp $");
 
 
 
@@ -604,6 +604,9 @@ static XtResource ToplevelResources[] = {
   ,
   {"elementPath", "ElementPath", XtRString, sizeof (String),
    XtOffsetOf (SettingType, ElementPath), XtRString, PCBLIBDIR}
+  ,
+  {"fabAuthor", "FabAuthor", XtRString, sizeof (String),
+   XtOffsetOf (SettingType, FabAuthor), XtRString, ""}
   ,
   {"fileCommand", "FileCommand", XtRString, sizeof (String),
    XtOffsetOf (SettingType, FileCommand), XtRString, "cat %f"}
