@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: draw.h,v 1.2 2004-01-19 19:16:17 haceaton Exp $
+ *  RCS: $Id: draw.h,v 1.3 2004-03-07 18:24:51 haceaton Exp $
  */
 
 /* prototypes for drawing routines
@@ -34,7 +34,7 @@
 #include "global.h"
 
 void	Draw(void);
-void	RedrawOutput(void);
+void	RedrawOutput(BoxTypePtr area);
 void	ClearAndRedrawOutput(void);
 Boolean	SwitchDrawingWindow(float, Window, Boolean, Boolean);
 void	ClearPin(PinTypePtr, int, int);
