@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.30 2005-03-12 02:17:12 danmc Exp $
+ *  RCS: $Id: global.h,v 1.31 2005-03-13 14:59:48 danmc Exp $
  */
 
 /* definition of types
@@ -511,7 +511,7 @@ typedef struct			/* some resources... */
 				small_layer_enable_label_markup,
 				gui_compact_horizontal,
 				use_command_window,
-				debug;
+				verbose;
 
 	GdkColor	BlackColor,
 				WhiteColor,

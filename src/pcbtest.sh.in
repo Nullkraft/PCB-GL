@@ -23,7 +23,7 @@
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: pcbtest.sh.in,v 1.6 2005-03-12 02:17:13 danmc Exp $
+#   RCS: $Id: pcbtest.sh.in,v 1.7 2005-03-13 14:59:49 danmc Exp $
 #
 #
 #
@@ -33,6 +33,9 @@
 
 # If the first argument is "-gdb" then run PCB inside the gdb
 # debugger.  
+
+TEST_PATHS="--lib-path ../lib --lib-newlib ../newlib --element-path ../lib"
+TEST_CMDS="--lib-command-dir ../lib"
 
 unset XUSERFILESEARCHPATH
 
@@ -44,6 +47,6 @@ if [ "X$1" = "X-gdb" ]; then
 	exec gdb -x $tmpf ./pcb-bin
 	rm -f $tmpf
 else
-	exec ./pcb-bin --libpath ../lib --libtree ../newlib "$@"
+	exec ./pcb-bin $TEST_PATHS $TEST_CMDS "$@"
 fi
 

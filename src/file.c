@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.21 2005-03-12 02:17:11 danmc Exp $ */
+/* $Id: file.c,v 1.22 2005-03-13 14:59:48 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -72,7 +72,7 @@
 #include "gui.h"
 
 
-RCSID("$Id: file.c,v 1.21 2005-03-12 02:17:11 danmc Exp $");
+RCSID("$Id: file.c,v 1.22 2005-03-13 14:59:48 danmc Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -894,9 +894,6 @@ ReadLibraryContents (void)
   command = EvaluateFilename (Settings.LibraryContentsCommand,
 			      Settings.LibraryPath, Settings.LibraryFilename,
 			      NULL);
-
-  if (Settings.debug)
-    printf("ReadLibraryContents: %s\n", command);
 
   /* open a pipe to the output of the command */
   if (command && *command && (resultFP = popen (command, "r")) == NULL)
