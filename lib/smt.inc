@@ -1,5 +1,5 @@
-#
-#   $Id: smt.inc,v 1.1 2003-02-20 00:23:34 danmc Exp $
+# -*- m4 -*-
+#   $Id: smt.inc,v 1.2 2003-12-20 03:31:36 danmc Exp $
 #
 #   surface mounted components
 #
