@@ -1,4 +1,4 @@
-/* $Id: autoroute.c,v 1.6 2004-01-05 01:40:24 haceaton Exp $ */
+/* $Id: autoroute.c,v 1.7 2004-01-19 22:17:30 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -2782,12 +2782,12 @@ InitAutoRouteParameters (int pass,
   /* routing style */
   AutoRouteParameters.augStyle = augStyle;
   /* costs */
-  AutoRouteParameters.ViaCost = 50;
+  AutoRouteParameters.ViaCost = 25000;
   AutoRouteParameters.LastConflictPenalty = 2 << MIN (15, pass * 2);
   AutoRouteParameters.ConflictPenalty = 4 *
     AutoRouteParameters.LastConflictPenalty;
   AutoRouteParameters.JogPenalty = 0;
-  AutoRouteParameters.DirectionPenaltyNumerator = 1;
+  AutoRouteParameters.DirectionPenaltyNumerator = 2;
   AutoRouteParameters.DirectionPenaltyDenominator = 1;
   /* other */
   AutoRouteParameters.use_vias = True;
