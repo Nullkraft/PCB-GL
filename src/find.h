@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: find.h,v 1.7 2004-03-09 13:58:20 haceaton Exp $
+ *  RCS: $Id: find.h,v 1.8 2005-01-03 12:56:59 danmc Exp $
  */
 
 /* prototypes connection search routines
@@ -52,7 +52,7 @@ Boolean ArcPadIntersect(ArcTypePtr, PadTypePtr);
 Boolean	IsPolygonInPolygon(PolygonTypePtr, PolygonTypePtr);
 void	LookupElementConnections(ElementTypePtr, FILE *);
 void	LookupConnectionsToAllElements(FILE *);
-void	LookupConnection(Location, Location, Boolean, BDimension);
+void	LookupConnection(LocationType, LocationType, Boolean, BDimension);
 void	LookupUnusedPins(FILE *);
 void	ResetFoundLinesAndPolygons(Boolean);
 void	ResetFoundPinsViasAndPads(Boolean);

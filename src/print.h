@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: print.h,v 1.2 2004-01-05 01:40:24 haceaton Exp $
+ *  RCS: $Id: print.h,v 1.3 2005-01-03 12:57:00 danmc Exp $
  */
 
 /* prototypes for printing routines
@@ -37,6 +37,6 @@
 
 int	Print(char *, float, Boolean, Boolean, Boolean,
 		Boolean, Boolean, Boolean, Boolean, Boolean,
-		PrintDeviceTypePtr, MediaTypePtr, Location, Location, Boolean);
+		PrintDeviceTypePtr, MediaTypePtr, LocationType, LocationType, Boolean);
 
 #endif

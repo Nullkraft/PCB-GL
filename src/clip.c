@@ -1,4 +1,4 @@
-/* $Id: clip.c,v 1.2 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: clip.c,v 1.3 2005-01-03 12:56:59 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -49,9 +49,9 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: clip.c,v 1.2 2004-08-30 02:52:04 danmc Exp $");
+RCSID("$Id: clip.c,v 1.3 2005-01-03 12:56:59 danmc Exp $");
 
-Location dxo, dyo;
+LocationType dxo, dyo;
 Boolean SwapOutput;
 float Local_Zoom;
 /* Clip the line to the clipBox
@@ -188,13 +188,13 @@ void XDrawCArc (Display *dpy, Drawable d, GC gc, int x, int y,
       start += 360*64;
       end += 360*64;
     }
-  if ((x + (Location)width) < clipBox.X1)
+  if ((x + (LocationType)width) < clipBox.X1)
     return;
-  if ((x - (Location)width) > clipBox.X2)
+  if ((x - (LocationType)width) > clipBox.X2)
     return;
-  if ((y + (Location)height) < clipBox.Y1)
+  if ((y + (LocationType)height) < clipBox.Y1)
     return;
-  if ((y - (Location)height) > clipBox.Y2)
+  if ((y - (LocationType)height) > clipBox.Y2)
     return; /* nothing to draw */
     /* clip left edge */
   if (abs(2*(clipBox.X1 - x)) < width)

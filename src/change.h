@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: change.h,v 1.5 2004-11-07 14:46:34 haceaton Exp $
+ *  RCS: $Id: change.h,v 1.6 2005-01-03 12:56:59 danmc Exp $
  */
 
 /* prototypes to change object properties
@@ -66,10 +66,10 @@
 
 Boolean	ChangeLayoutName(char *);
 Boolean	ChangeLayerName(LayerTypePtr, char *);
-Boolean	ChangeSelectedSize(int, Location, Boolean);
-Boolean	ChangeSelectedClearSize(int, Location, Boolean);
-Boolean	ChangeSelected2ndSize(int, Location, Boolean);
-Boolean	ChangeSelectedMaskSize(int, Location, Boolean);
+Boolean	ChangeSelectedSize(int, LocationType, Boolean);
+Boolean	ChangeSelectedClearSize(int, LocationType, Boolean);
+Boolean	ChangeSelected2ndSize(int, LocationType, Boolean);
+Boolean	ChangeSelectedMaskSize(int, LocationType, Boolean);
 Boolean	ChangeSelectedJoin(int); 
 Boolean	ChangeSelectedSquare(int); 
 Boolean	SetSelectedSquare(int); 
@@ -82,15 +82,15 @@ Boolean ChangeSelectedOctagon(int);
 Boolean SetSelectedOctagon(int);
 Boolean ClrSelectedOctagon(int);
 Boolean ChangeSelectedElementSide(void);
-Boolean ChangeElementSide(ElementTypePtr, Location);
+Boolean ChangeElementSide(ElementTypePtr, LocationType);
 Boolean ChangeHole(PinTypePtr);
-Boolean	ChangeObjectSize(int, void *, void *, void *, Location, Boolean);
+Boolean	ChangeObjectSize(int, void *, void *, void *, LocationType, Boolean);
 Boolean	ChangeObjectThermal(int, void *, void *, void *);
 Boolean	SetObjectThermal(int, void *, void *, void *);
 Boolean	ClrObjectThermal(int, void *, void *, void *);
-Boolean	ChangeObjectClearSize(int, void *, void *, void *, Location, Boolean);
-Boolean	ChangeObject2ndSize(int, void *, void *, void *, Location, Boolean, Boolean);
-Boolean	ChangeObjectMaskSize(int, void *, void *, void *, Location, Boolean);
+Boolean	ChangeObjectClearSize(int, void *, void *, void *, LocationType, Boolean);
+Boolean	ChangeObject2ndSize(int, void *, void *, void *, LocationType, Boolean, Boolean);
+Boolean	ChangeObjectMaskSize(int, void *, void *, void *, LocationType, Boolean);
 Boolean	ChangeObjectJoin(int, void *, void *, void *);
 Boolean	ChangeObjectSquare(int, void *, void *, void *);
 Boolean	SetObjectSquare(int, void *, void *, void *);

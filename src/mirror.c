@@ -1,4 +1,4 @@
-/* $Id: mirror.c,v 1.7 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: mirror.c,v 1.8 2005-01-03 12:56:59 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -53,7 +53,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: mirror.c,v 1.7 2004-08-30 02:52:04 danmc Exp $");
+RCSID("$Id: mirror.c,v 1.8 2005-01-03 12:56:59 danmc Exp $");
 
 
 
@@ -64,7 +64,7 @@ RCSID("$Id: mirror.c,v 1.7 2004-08-30 02:52:04 danmc Exp $");
  */
 void
 MirrorElementCoordinates (DataTypePtr Data, ElementTypePtr Element,
-			  Location yoff)
+			  LocationType yoff)
 {
   ELEMENTLINE_LOOP (Element);
   {

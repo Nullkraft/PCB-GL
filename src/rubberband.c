@@ -1,4 +1,4 @@
-/* $Id: rubberband.c,v 1.11 2004-08-30 02:52:06 danmc Exp $ */
+/* $Id: rubberband.c,v 1.12 2005-01-03 12:57:00 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: rubberband.c,v 1.11 2004-08-30 02:52:06 danmc Exp $");
+RCSID("$Id: rubberband.c,v 1.12 2005-01-03 12:57:00 danmc Exp $");
 
 
 /* ---------------------------------------------------------------------------
@@ -76,7 +76,7 @@ static int rubber_callback (const BoxType * b, void *cl);
 struct rubber_info
 {
   int radius;
-  Location X, Y;
+  LocationType X, Y;
   LineTypePtr line;
   BoxType box;
   LayerTypePtr layer;

@@ -1,4 +1,4 @@
-/* $Id: printdialog.c,v 1.4 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: printdialog.c,v 1.5 2005-01-03 12:57:00 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: printdialog.c,v 1.4 2004-08-30 02:52:04 danmc Exp $");
+RCSID("$Id: printdialog.c,v 1.5 2005-01-03 12:57:00 danmc Exp $");
 
 
 /* ---------------------------------------------------------------------------
@@ -524,5 +524,5 @@ PrintDialog (void)
     Print (PCB->PrintFilename, Scale,
 	   mirrorflag, RotateFlag, colorflag, invertflag,
 	   OutlineFlag, AlignmentFlag, drillhelperflag, DOSFilenames,
-	   DeviceSelection, media, (Location)offsetx * 100, (Location)offsety * 100, silkscreentextflag);
+	   DeviceSelection, media, (LocationType)offsetx * 100, (LocationType)offsety * 100, silkscreentextflag);
 }

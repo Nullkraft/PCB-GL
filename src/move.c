@@ -1,4 +1,4 @@
-/* $Id: move.c,v 1.23 2004-09-21 04:37:55 haceaton Exp $ */
+/* $Id: move.c,v 1.24 2005-01-03 12:56:59 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: move.c,v 1.23 2004-09-21 04:37:55 haceaton Exp $");
+RCSID("$Id: move.c,v 1.24 2005-01-03 12:56:59 danmc Exp $");
 
 
 
@@ -83,7 +83,7 @@ static void *MovePolygonToLayer (LayerTypePtr, PolygonTypePtr);
 /* ---------------------------------------------------------------------------
  * some local identifiers
  */
-static Location DeltaX,		/* used by local routines as offset */
+static LocationType DeltaX,		/* used by local routines as offset */
   DeltaY;
 static LayerTypePtr Dest;
 static Boolean MoreToCome;
@@ -112,8 +112,8 @@ MoveLineToLayer,
  * moves a element by +-X and +-Y
  */
 void
-MoveElementLowLevel (DataTypePtr Data, ElementTypePtr Element, Location DX,
-		     Location DY)
+MoveElementLowLevel (DataTypePtr Data, ElementTypePtr Element, LocationType DX,
+		     LocationType DY)
 {
   if (Data)
     r_delete_entry (Data->element_tree, (BoxType *) Element);
@@ -320,7 +320,7 @@ MoveText (LayerTypePtr Layer, TextTypePtr Text)
  * low level routine to move a polygon
  */
 void
-MovePolygonLowLevel (PolygonTypePtr Polygon, Location DeltaX, Location DeltaY)
+MovePolygonLowLevel (PolygonTypePtr Polygon, LocationType DeltaX, LocationType DeltaY)
 {
   POLYGONPOINT_LOOP (Polygon);
   {
@@ -521,7 +521,7 @@ MoveRatToLayer (RatTypePtr Rat)
 
 struct via_info
 {
-  Location X, Y;
+  LocationType X, Y;
   jmp_buf env;
 };
 
@@ -742,7 +742,7 @@ MovePolygonToLayer (LayerTypePtr Layer, PolygonTypePtr Polygon)
  */
 void *
 MoveObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
-	    Location DX, Location DY)
+	    LocationType DX, LocationType DY)
 {
   void *result;
   /* setup offset */
@@ -759,7 +759,7 @@ MoveObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
  */
 void *
 MoveObjectAndRubberband (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
-			 Location DX, Location DY)
+			 LocationType DX, LocationType DY)
 {
   RubberbandTypePtr ptr;
   void *ptr2;

@@ -1,4 +1,4 @@
-/* $Id: pinout.c,v 1.9 2004-09-21 04:37:55 haceaton Exp $ */
+/* $Id: pinout.c,v 1.10 2005-01-03 12:57:00 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -59,7 +59,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: pinout.c,v 1.9 2004-09-21 04:37:55 haceaton Exp $");
+RCSID("$Id: pinout.c,v 1.10 2005-01-03 12:57:00 danmc Exp $");
 
 
 
@@ -77,7 +77,7 @@ typedef struct			/* information of one window */
     Shrink;			/* shrink button */
   float Zoom,			/* zoom factor of window */
     scale;			/* scale factor of zoom */
-  Location MaxX,		/* size of used drawing area independend */
+  LocationType MaxX,		/* size of used drawing area independend */
     MaxY;			/* from zoom setting */
 }
 PinoutType, *PinoutTypePtr;

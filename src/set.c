@@ -1,4 +1,4 @@
-/* $Id: set.c,v 1.22 2004-11-20 22:25:54 danmc Exp $ */
+/* $Id: set.c,v 1.23 2005-01-03 12:57:00 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -64,7 +64,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: set.c,v 1.22 2004-11-20 22:25:54 danmc Exp $");
+RCSID("$Id: set.c,v 1.23 2005-01-03 12:57:00 danmc Exp $");
 
 
 
@@ -480,7 +480,7 @@ SetRouteStyle (char *name)
 }
 
 void
-SetLocalRef (Location X, Location Y, Boolean Showing)
+SetLocalRef (LocationType X, LocationType Y, Boolean Showing)
 {
   static MarkType old;
   static int count = 0;

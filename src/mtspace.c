@@ -1,4 +1,4 @@
-/* $Id: mtspace.c,v 1.10 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: mtspace.c,v 1.11 2005-01-03 12:57:00 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -53,7 +53,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: mtspace.c,v 1.10 2004-08-30 02:52:04 danmc Exp $");
+RCSID("$Id: mtspace.c,v 1.11 2005-01-03 12:57:00 danmc Exp $");
 
 
 /* define this for more thorough self-checking of data structures */
@@ -183,7 +183,7 @@ check_one (const BoxType * box, void *cl)
   mtspacebox_t *adj = (mtspacebox_t *) box, *nb;
   direction_t d;
   BoxType a, b, c;
-  Location x1, x2;
+  LocationType x1, x2;
   int i;
   float new_area, area_a, area_b;
   assert (__mtspace_box_is_good (cc->mtsb));

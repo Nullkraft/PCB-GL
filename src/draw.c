@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.40 2004-11-19 03:08:10 haceaton Exp $ */
+/* $Id: draw.c,v 1.41 2005-01-03 12:56:59 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -60,7 +60,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: draw.c,v 1.40 2004-11-19 03:08:10 haceaton Exp $");
+RCSID("$Id: draw.c,v 1.41 2005-01-03 12:56:59 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -88,7 +88,7 @@ static void Redraw (Boolean, BoxTypePtr);
 static void DrawEverything (BoxTypePtr);
 static void DrawTop (BoxType *);
 static void DrawLayer (LayerTypePtr, BoxType *);
-static void DrawSpecialPolygon (Drawable, GC, Location, Location, BDimension);
+static void DrawSpecialPolygon (Drawable, GC, LocationType, LocationType, BDimension);
 static void DrawPinOrViaLowLevel (PinTypePtr, Boolean);
 static void ClearOnlyPin (PinTypePtr, Boolean);
 static void ThermPin (LayerTypePtr, PinTypePtr);
@@ -107,7 +107,7 @@ static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
 static void AddPart (void *, Boolean);
 static void SetPVColor (PinTypePtr, int);
 static void DrawGrid (void);
-static void DrawEMark (Location, Location, Boolean);
+static void DrawEMark (LocationType, LocationType, Boolean);
 static void ClearLine (LineTypePtr);
 static void ClearArc (ArcTypePtr);
 static void ClearPad (PadTypePtr, Boolean);
@@ -686,7 +686,7 @@ DrawEverything (BoxTypePtr drawn_area)
 }
 
 static void
-DrawEMark (Location X, Location Y, Boolean invisible)
+DrawEMark (LocationType X, LocationType Y, Boolean invisible)
 {
   if (!PCB->InvisibleObjectsOn && invisible)
     return;
@@ -959,7 +959,7 @@ DrawLayer (LayerTypePtr Layer, BoxType * screen)
  */
 static void
 DrawSpecialPolygon (Drawable d, GC DrawGC,
-		    Location X, Location Y, BDimension Thickness)
+		    LocationType X, LocationType Y, BDimension Thickness)
 {
   static FloatPolyType p[8] = { {0.5, -TAN_22_5_DEGREE_2},
   {TAN_22_5_DEGREE_2, -0.5},
@@ -1660,7 +1660,7 @@ DrawLineLowLevel (LineTypePtr Line, Boolean HaveGathered)
 static void
 DrawTextLowLevel (TextTypePtr Text)
 {
-  Location x = 0;
+  LocationType x = 0;
   unsigned char *string = (unsigned char *) Text->TextString;
   Cardinal n;
   FontTypePtr font = &PCB->Font;
@@ -1718,7 +1718,7 @@ DrawTextLowLevel (TextTypePtr Text)
 	{
 	  /* the default symbol is a filled box */
 	  BoxType defaultsymbol = PCB->Font.DefaultSymbol;
-	  Location size = (defaultsymbol.X2 - defaultsymbol.X1) * 6 / 5;
+	  LocationType size = (defaultsymbol.X2 - defaultsymbol.X1) * 6 / 5;
 
 	  defaultsymbol.X1 = (defaultsymbol.X1 + x) * Text->Scale / 100;
 	  defaultsymbol.Y1 = defaultsymbol.Y1 * Text->Scale / 100;
@@ -2380,7 +2380,7 @@ EraseElementName (ElementTypePtr Element)
 static void
 DrawGrid ()
 {
-  Location minx, miny, maxx, maxy, temp;
+  LocationType minx, miny, maxx, maxy, temp;
   float x, y, delta;
 
   delta = GetGridFactor () * PCB->Grid;

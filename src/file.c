@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.19 2004-11-19 03:08:10 haceaton Exp $ */
+/* $Id: file.c,v 1.20 2005-01-03 12:56:59 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -75,7 +75,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: file.c,v 1.19 2004-11-19 03:08:10 haceaton Exp $");
+RCSID("$Id: file.c,v 1.20 2005-01-03 12:56:59 danmc Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -206,8 +206,8 @@ LoadPCB (char *Filename)
       SetZoom (PCB->Zoom);
 
       /* update cursor location */
-      Crosshair.X = MAX (0, MIN (PCB->CursorX, (Location) PCB->MaxWidth));
-      Crosshair.Y = MAX (0, MIN (PCB->CursorY, (Location) PCB->MaxHeight));
+      Crosshair.X = MAX (0, MIN (PCB->CursorX, (LocationType) PCB->MaxWidth));
+      Crosshair.Y = MAX (0, MIN (PCB->CursorY, (LocationType) PCB->MaxHeight));
 
       Xorig = Crosshair.X - TO_PCB (Output.Width / 2);
       Yorig = Crosshair.Y - TO_PCB (Output.Height / 2);

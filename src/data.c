@@ -1,4 +1,4 @@
-/* $Id: data.c,v 1.7 2004-09-24 02:55:26 djdelorie Exp $ */
+/* $Id: data.c,v 1.8 2005-01-03 12:56:59 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -40,7 +40,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: data.c,v 1.7 2004-09-24 02:55:26 djdelorie Exp $");
+RCSID("$Id: data.c,v 1.8 2005-01-03 12:56:59 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some shared identifiers
@@ -65,13 +65,13 @@ Region UpRegion;		/* the region of updated drawing */
 Region FullRegion;		/* the full screen clip region */
 Boolean Bumped = False;		/* whether the undo serial number has changed */
 Window LogWindID;
-Location Xorig, Yorig;		/* origin offset for drawing directly in pixmap */
+LocationType Xorig, Yorig;		/* origin offset for drawing directly in pixmap */
 Boolean render;			/* wether or not to re-render the pixmap */
 Pixmap *Stipples, XC_clock_source, XC_clock_mask;
 Pixmap XC_hand_source, XC_hand_mask;
 Pixmap XC_lock_source, XC_lock_mask;
 int addedLines;
-Location vxl, vxh, vyl, vyh;	/* visible pcb coordinates */
+LocationType vxl, vxh, vyl, vyh;	/* visible pcb coordinates */
 BoxType theScreen;		/* box of screen in pcb coordinates */
 BoxType clipBox;		/* box for clipping of drawing */
 

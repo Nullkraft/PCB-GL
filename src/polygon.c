@@ -1,4 +1,4 @@
-/* $Id: polygon.c,v 1.26 2004-09-21 01:46:25 haceaton Exp $ */
+/* $Id: polygon.c,v 1.27 2005-01-03 12:57:00 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -59,7 +59,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: polygon.c,v 1.26 2004-09-21 01:46:25 haceaton Exp $");
+RCSID ("$Id: polygon.c,v 1.27 2005-01-03 12:57:00 danmc Exp $");
 
 
 /* ---------------------------------------------------------------------------
@@ -115,7 +115,7 @@ RemoveExcessPolygonPoints (LayerTypePtr Layer, PolygonTypePtr Polygon)
  * coordinates
  */
 Cardinal
-GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, Location X, Location Y)
+GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, LocationType X, LocationType Y)
 {
   float mindistance = MAX_COORD, length, distance, temp;
   PointTypePtr ptr1 = &Polygon->Points[Polygon->PointN - 1],

@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: set.h,v 1.4 2004-01-19 19:16:18 haceaton Exp $
+ *  RCS: $Id: set.h,v 1.5 2005-01-03 12:57:00 danmc Exp $
  */
 
 /* prototypes for update routines
@@ -48,7 +48,7 @@ void		SetBufferNumber(int);
 void		SetMode(int);
 void		SetCrosshairRangeToBuffer(void);
 void		SetRouteStyle(char *);
-void		SetLocalRef(Location, Location, Boolean);
+void		SetLocalRef(LocationType, LocationType, Boolean);
 void		RedrawZoom(Position, Position);
 void		SaveMode(void);
 void		RestoreMode(void);

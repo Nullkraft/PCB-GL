@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: macro.h,v 1.15 2004-11-19 03:08:10 haceaton Exp $
+ *  RCS: $Id: macro.h,v 1.16 2005-01-03 12:56:59 danmc Exp $
  */
 
 /* some commonly used macros not related to a special C-file
@@ -72,7 +72,7 @@
 #define	TO_SCREEN_SIGN_Y(y)	(SWAP_IDENT ? SWAP_SIGN_Y(y) : (y))
 
 #ifndef	TO_PCB
-#define	TO_PCB(x)		((Location)((x)/Zoom_Multiplier))
+#define	TO_PCB(x)		((LocationType)((x)/Zoom_Multiplier))
 #endif
 #define	TO_PCB_X(x)		TO_PCB(x) + Xorig
 #define	TO_PCB_Y(y)		(SWAP_IDENT ? \

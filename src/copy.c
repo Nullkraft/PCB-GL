@@ -1,4 +1,4 @@
-/* $Id: copy.c,v 1.9 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: copy.c,v 1.10 2005-01-03 12:56:59 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -56,7 +56,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: copy.c,v 1.9 2004-08-30 02:52:04 danmc Exp $");
+RCSID("$Id: copy.c,v 1.10 2005-01-03 12:56:59 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -71,7 +71,7 @@ static void *CopyElement (ElementTypePtr);
 /* ---------------------------------------------------------------------------
  * some local identifiers
  */
-static Location DeltaX, DeltaY;	/* movement vector */
+static LocationType DeltaX, DeltaY;	/* movement vector */
 static ObjectFunctionType CopyFunctions = {
   CopyLine,
   CopyText,
@@ -306,7 +306,7 @@ CopyElement (ElementTypePtr Element)
  * are handled by the routine.
  */
 Boolean
-CopyPastebufferToLayout (Location X, Location Y)
+CopyPastebufferToLayout (LocationType X, LocationType Y)
 {
   Cardinal i;
   Boolean changed = False;
@@ -388,7 +388,7 @@ CopyPastebufferToLayout (Location X, Location Y)
  */
 void *
 CopyObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
-	    Location DX, Location DY)
+	    LocationType DX, LocationType DY)
 {
   void *ptr;
 
