@@ -1,4 +1,4 @@
-/* $Id: resmenu.c,v 1.4 2004-05-01 04:29:41 danmc Exp $ */
+/* $Id: resmenu.c,v 1.5 2004-05-02 03:40:49 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -82,7 +82,7 @@ invoke_action (Widget w, char *rstr)
   if (str)
     free(str);
 
-  sp = str = MyStrdup(rstr, __FUNCTION__);
+  sp = str = MyStrdup(rstr, "invoke_action");
   while (*sp && (*sp == ' ' || *sp == '\t'))
     sp ++;
   aname = sp;

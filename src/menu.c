@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: menu.c,v 1.28 2004-04-27 19:08:25 djdelorie Exp $";
+static char *rcsid = "$Id: menu.c,v 1.29 2004-05-02 03:40:49 djdelorie Exp $";
 
 /* initializes menus and handles callbacks
  */
@@ -182,11 +182,11 @@ SizesMenuInclude(Resource *menu)
       Resource *sub = resource_create(menu);
       resource_add_val (sub, 0, PCB->RouteStyle[i].Name, 0);
       sprintf(tmp, "SizesLabel(%d,use)", i);
-      resource_add_val (sub, 0, MyStrdup(tmp, __FUNCTION__), 0);
+      resource_add_val (sub, 0, MyStrdup(tmp, "SizesMenuInclude"), 0);
       sprintf(tmp, "RouteStyle(%d)", i+1);
-      resource_add_val (sub, 0, MyStrdup(tmp, __FUNCTION__), 0);
+      resource_add_val (sub, 0, MyStrdup(tmp, "SizesMenuInclude"), 0);
       sprintf(tmp, "CheckWhen(style,%d)", i+1);
-      resource_add_val (sub, 0, MyStrdup(tmp, __FUNCTION__), 0);
+      resource_add_val (sub, 0, MyStrdup(tmp, "SizesMenuInclude"), 0);
       resource_add_val (menu, 0, 0, sub);
     }
   for (i = 0; i <  NUM_STYLES; i++)
@@ -194,9 +194,9 @@ SizesMenuInclude(Resource *menu)
       Resource *sub = resource_create(menu);
       resource_add_val (sub, 0, PCB->RouteStyle[i].Name, 0);
       sprintf(tmp, "SizesLabel(%d,set)", i);
-      resource_add_val (sub, 0, MyStrdup(tmp, __FUNCTION__), 0);
+      resource_add_val (sub, 0, MyStrdup(tmp, "SizesMenuInclude"), 0);
       sprintf(tmp, "AdjustStyle(%d)", i+1);
-      resource_add_val (sub, 0, MyStrdup(tmp, __FUNCTION__), 0);
+      resource_add_val (sub, 0, MyStrdup(tmp, "SizesMenuInclude"), 0);
       resource_add_val (menu, 0, 0, sub);
     }
 }
