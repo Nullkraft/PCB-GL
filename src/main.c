@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.32 2005-01-21 22:25:27 danmc Exp $ */
+/* $Id: main.c,v 1.33 2005-01-27 01:49:32 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -80,7 +80,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: main.c,v 1.32 2005-01-21 22:25:27 danmc Exp $");
+RCSID("$Id: main.c,v 1.33 2005-01-27 01:49:32 danmc Exp $");
 
 
 
@@ -239,7 +239,7 @@ static String Fallback[] = {
   "Pcb*Command.highlightThickness:        1",
   "Pcb*defaultButton.borderWidth:         2",
   "Pcb*defaultButton.highlightThickness:  2",
-  "!pcb*font:                              -*-courier-bold-r-*-*-14-*-*-*-*-*-*-*",
+  "!Pcb*font:                              -*-courier-bold-r-*-*-14-*-*-*-*-*-*-*",
   "Pcb*Label.borderWidth:                 0",
   "Pcb*Label.justify:                     center",
   "Pcb*MenuButton.resizable:              off",
