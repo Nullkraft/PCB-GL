@@ -1,4 +1,4 @@
-/* $Id: res_parse.y,v 1.4 2004-05-14 21:22:37 danmc Exp $ */
+/* $Id: res_parse.y,v 1.5 2004-07-31 03:26:39 danmc Exp $ */
 
 %{
 
@@ -196,12 +196,12 @@ dump_res(Resource *n, int l)
     {
       if (n->v[i].subres)
 	{
-	  printf("%*cn[%s] = {\n", l, ' ', n->v[i].name?:"");
+	  printf("%*cn[%s] = {\n", l, ' ', n->v[i].name? n->v[i].name :"");
 	  dump_res(n->v[i].subres, l+3);
 	  printf("%*c}\n", l, ' ');
 	}
       else
-	printf("%*cn[%s] = v[%s]\n", l, ' ', n->v[i].name?:"", n->v[i].value?:"");
+	printf("%*cn[%s] = v[%s]\n", l, ' ', n->v[i].name? n->v[i].name :"", n->v[i].value? n->v[i].value :"");
     }
 }
 
