@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: main.c,v 1.16 2004-05-29 00:13:33 danmc Exp $";
+static char *rcsid = "$Id: main.c,v 1.17 2004-06-24 15:05:47 djdelorie Exp $";
 
 /* main program, initializes some stuff and handles user input
  */
@@ -1256,6 +1256,8 @@ InitWidgets (void)
    */
   XtAugmentTranslations (Output.Toplevel,
 			 XtParseTranslationTable (DefaultTranslations));
+
+  MenuSetAccelerators (Output.Output);
 
   /* realize the tree, get the IDs of the output window
    * and initialize some identifiers in draw.c
