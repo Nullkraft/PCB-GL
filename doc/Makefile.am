@@ -22,7 +22,7 @@
 ##  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 ##  Thomas.Nau@rz.uni-ulm.de
 ##
-##  RCS: $Id: Makefile.am,v 1.2 2003-11-13 09:13:44 danmc Exp $
+##  RCS: $Id: Makefile.am,v 1.3 2004-02-04 03:59:43 djdelorie Exp $
 ##
 
 info_TEXINFOS=	pcb.texi
@@ -56,14 +56,14 @@ BUILT_SOURCES=	\
 	pad.eps \
 	pad.png
 
-TGIF=		XENVIRONMENT=$(srcdir)/Xdefaults.tgif tgif
+TGIF_X=		XENVIRONMENT=$(srcdir)/Xdefaults.tgif ${TGIF}
 TGIF_FLAGS=	-print -color
 
 .obj.eps:
-	${TGIF} ${TGIF_FLAGS} -eps $<
+	${TGIF_X} ${TGIF_FLAGS} -eps $<
 
 .obj.png:
-	${TGIF} ${TGIF_FLAGS} -png $<
+	${TGIF_X} ${TGIF_FLAGS} -png $<
 
 .ps.pdf:
 	ps2pdf $<

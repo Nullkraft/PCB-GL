@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.4 2004-01-28 04:47:04 haceaton Exp $
+## $Id: Makefile.am,v 1.5 2004-02-04 03:59:54 djdelorie Exp $
 ##
 
 SUBDIRS=	icons script
@@ -12,6 +12,8 @@ pcblib_DATA=	\
 pkgdata_DATA=	Pcb
 
 bin_PROGRAMS=	pcb-bin
+
+AM_CFLAGS = -DNDEBUG
 
 pcb_bin_SOURCES = \
 	action.c \
