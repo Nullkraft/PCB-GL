@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: draw.c,v 1.13 2004-01-19 19:16:17 haceaton Exp $";
+static char *rcsid = "$Id: draw.c,v 1.14 2004-02-04 00:53:52 djdelorie Exp $";
 
 /* drawing routines
  */
@@ -273,7 +273,7 @@ Redraw (Boolean ClearWindow)
       XFillRectangle (Dpy, DrawingWindow, Output.bgGC, 0, 0,
 		      TO_DRAWABS_X (PCB->MaxWidth),
 		      TO_DRAWABS_Y (PCB->MaxHeight));
-      XSetForeground (Dpy, Output.bgGC, ~0);
+      XSetForeground (Dpy, Output.bgGC, Settings.bgColor);
       XSetForeground (Dpy, Output.fgGC, Settings.OffLimitColor);
       XFillRectangle (Dpy, DrawingWindow, Output.fgGC,
 		      TO_DRAWABS_X (PCB->MaxWidth), 0, MAX_COORD / 100,
