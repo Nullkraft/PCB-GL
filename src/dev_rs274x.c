@@ -35,7 +35,7 @@
  *
  */
 
-static char *rcsid = "$Id: dev_rs274x.c,v 1.3 2003-07-07 00:22:36 djdelorie Exp $";
+static char *rcsid = "$Id: dev_rs274x.c,v 1.4 2003-07-20 02:39:06 djdelorie Exp $";
 
 /*
  * Gerber/RS-274X device driver
@@ -430,10 +430,14 @@ GBX_Invert (int mode)
     {
     case 0:
       /* indicate a positive image */
-      fprintf (GBX_Flags.FP, "%%IPPOS*%%\015\012");
+      if (GBX_Flags.InvertFlag)
+	fprintf (GBX_Flags.FP, "%%IPNEG*%%\015\012");
+      else
+	fprintf (GBX_Flags.FP, "%%IPPOS*%%\015\012");
       /* print the aperture list at the top */
       fprintf (GBX_Flags.FP, "%s", appList.Data);
-      fprintf (GBX_Flags.FP, "%%LNGROUP_%d*%%\015\012%%LPD*%%\015\012", theGroup);
+      fprintf (GBX_Flags.FP, "%%LNGROUP_%d*%%\015\012%%%s*%%\015\012", theGroup,
+	       GBX_Flags.InvertFlag ? "LPC" : "LPD");
       /* indicate straight lines */
       fprintf (GBX_Flags.FP, "G01X0Y0D02*\015\012");
       lastX = 0;
@@ -441,20 +445,26 @@ GBX_Invert (int mode)
       break;
     case 1:
       /* indicate negative image */
-      fprintf (GBX_Flags.FP, "%%IPNEG*%%\015\012");
+      if (GBX_Flags.InvertFlag)
+	fprintf (GBX_Flags.FP, "%%IPPOS*%%\015\012");
+      else
+	fprintf (GBX_Flags.FP, "%%IPNEG*%%\015\012");
       /* print the aperture list at the top */
       fprintf (GBX_Flags.FP, "%s", appList.Data);
-      fprintf (GBX_Flags.FP, "%%LNGROUP_%d*%%\015\012%%LPD*%%\015\012", theGroup);
+      fprintf (GBX_Flags.FP, "%%LNGROUP_%d*%%\015\012%%%s*%%\015\012", theGroup,
+	       GBX_Flags.InvertFlag ? "LPD" : "LPC");
       /* indicate straight lines */
       fprintf (GBX_Flags.FP, "G01X0Y0D02*\015\012");
       lastX = 0;
       lastY = 0;
       break;
     case 2:
-      fprintf (GBX_Flags.FP, "%%LNCUTS*%%\015\012%%LPC*%%\015\012");
+      fprintf (GBX_Flags.FP, "%%LNCUTS*%%\015\012%%%s*%%\015\012",
+	       GBX_Flags.InvertFlag ? "LPD" : "LPC");
       break;
     case 3:
-      fprintf (GBX_Flags.FP, "%%LNTRACKS*%%\015\012%%LPD*%%\015\012");
+      fprintf (GBX_Flags.FP, "%%LNTRACKS*%%\015\012%%%s*%%\015\012",
+	       GBX_Flags.InvertFlag ? "LPC" : "LPD");
       break;
     }
 }

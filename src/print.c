@@ -30,7 +30,7 @@
  * silkscreen layer. Perhaps the design is not the best.
  */
 
-static char *rcsid = "$Id: print.c,v 1.1 2003-02-20 00:24:28 danmc Exp $";
+static char *rcsid = "$Id: print.c,v 1.2 2003-07-20 02:39:06 djdelorie Exp $";
 
 /* printing routines
  */
@@ -619,8 +619,8 @@ PrintMask (void)
 			  description[i]))
 	return (1);
 
-      /* solder masks are negative */
-      Device->Polarity (1);
+      /* solder reliefs are positive, use invert if you need to */
+      Device->Polarity (0);
       SetPrintColor (PCB->PinColor);
       if (GlobalAlignmentFlag)
 	FPrintAlignment ();
