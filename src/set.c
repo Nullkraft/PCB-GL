@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: set.c,v 1.13 2004-02-15 07:46:31 danmc Exp $";
+static char *rcsid = "$Id: set.c,v 1.14 2004-02-28 23:44:19 haceaton Exp $";
 
 /* routines to update widgets and global settings
  * (except output window and dialogs)
@@ -49,13 +49,15 @@ static char *rcsid = "$Id: set.c,v 1.13 2004-02-15 07:46:31 danmc Exp $";
 #include "crosshair.h"
 #include "control.h"
 #include "data.h"
-#include "error.h"
 #include "draw.h"
+#include "error.h"
+#include "find.h"
 #include "gui.h"
 #include "menu.h"
 #include "misc.h"
 #include "output.h"
 #include "set.h"
+#include "undo.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
@@ -421,6 +423,14 @@ SetMode (int Mode)
         SetLocalRef(0, 0, False);
       Crosshair.AttachedBox.State = STATE_FIRST;
       Crosshair.AttachedLine.State = STATE_FIRST;
+      if (TEST_FLAG (AUTODRCFLAG, PCB))
+        {
+	  SaveUndoSerialNumber ();
+	  ResetFoundPinsViasAndPads (True);
+	  RestoreUndoSerialNumber ();
+	  ResetFoundLinesAndPolygons (True);
+	  IncrementUndoSerialNumber();
+	}
     }
 
   Settings.Mode = Mode;

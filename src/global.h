@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.9 2004-02-27 22:20:23 haceaton Exp $
+ *  RCS: $Id: global.h,v 1.10 2004-02-28 23:44:18 haceaton Exp $
  */
 
 /* definition of types
@@ -172,7 +172,7 @@ typedef struct
 {
   struct rtree_node *root;
   int size;			/* number of entries in tree */
-  BoxType **managed;		/* a list of managed boxes for disposal */
+  const BoxType **managed;	/* a list of managed boxes for disposal */
   size_t m_size;		/* the size of the manage memory */
   unsigned m_count;		/* how many managed pointers */
 } rtree_t;

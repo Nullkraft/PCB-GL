@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: remove.c,v 1.7 2004-02-27 22:20:23 haceaton Exp $";
+static char *rcsid = "$Id: remove.c,v 1.8 2004-02-28 23:44:19 haceaton Exp $";
 
 /* functions used to remove vias, pins ...
  */
@@ -251,7 +251,12 @@ DestroyElement (ElementTypePtr Element)
 static void *
 DestroyRat (RatTypePtr Rat)
 {
+  if (DestroyTarget->rat_tree)
+    r_delete_entry (DestroyTarget->rat_tree, &Rat->BoundingBox);
   *Rat = DestroyTarget->Rat[--DestroyTarget->RatN];
+  r_substitute (DestroyTarget->rat_tree,
+                &DestroyTarget->Rat[DestroyTarget->RatN].BoundingBox,
+		&Rat->BoundingBox);
   memset (&DestroyTarget->Rat[DestroyTarget->RatN], 0, sizeof (RatType));
   return (NULL);
 }
