@@ -1,8 +1,8 @@
-dnl $Id: configure.ac,v 1.12 2003-12-01 00:28:09 danmc Exp $
+dnl $Id: configure.ac,v 1.13 2004-01-05 01:40:24 haceaton Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/pinout.c)
-AM_INIT_AUTOMAKE(pcb, 1.99o)
+AM_INIT_AUTOMAKE(pcb, 1.99p)
 AM_CONFIG_HEADER(config.h)
 
 dnl Checks for programs.

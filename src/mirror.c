@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: mirror.c,v 1.3 2003-12-30 02:18:51 haceaton Exp $";
+static char *rcsid = "$Id: mirror.c,v 1.4 2004-01-05 01:40:24 haceaton Exp $";
 
 /* functions used to change the mirror flag of an object
  *
@@ -57,7 +57,7 @@ static char *rcsid = "$Id: mirror.c,v 1.3 2003-12-30 02:18:51 haceaton Exp $";
  * an additional offset is passed
  */
 void
-MirrorElementCoordinates (ElementTypePtr Element, Position yoff)
+MirrorElementCoordinates (ElementTypePtr Element, Location yoff)
 {
   ELEMENTLINE_LOOP (Element, 
     {

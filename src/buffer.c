@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: buffer.c,v 1.3 2003-12-30 02:18:51 haceaton Exp $";
+static char *rcsid = "$Id: buffer.c,v 1.4 2004-01-05 01:40:24 haceaton Exp $";
 
 /* functions used by paste- and move/copy buffer
  */
@@ -371,7 +371,7 @@ ClearBuffer (BufferTypePtr Buffer)
  * returns True if any objects have been removed
  */
 void
-AddSelectedToBuffer (BufferTypePtr Buffer, Position X, Position Y,
+AddSelectedToBuffer (BufferTypePtr Buffer, Location X, Location Y,
 		     Boolean LeaveSelected)
 {
   /* switch crosshair off because adding objects to the pastebuffer

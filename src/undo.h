@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: undo.h,v 1.1 2003-02-20 00:24:36 danmc Exp $
+ *  RCS: $Id: undo.h,v 1.2 2004-01-05 01:40:24 haceaton Exp $
  */
 
 /* prototypes for undo routines
@@ -48,12 +48,12 @@ void	MoveObjectToRemoveUndoList(int, void *, void *, void *);
 void	AddObjectToRemovePointUndoList(int, void *, void *, Cardinal);
 void	AddObjectToInsertPointUndoList(int, void *, void *, void *);
 void	AddObjectToMoveUndoList(int, void *, void *, void *,
-			Position, Position);
+			Location, Location);
 void	AddObjectToChangeNameUndoList(int, void *,void *, void *, char *);
 void	AddObjectToRotateUndoList(int, void *, void *,void *,
-			Position, Position, BYTE);
+			Location, Location, BYTE);
 void	AddObjectToCreateUndoList(int, void *, void *,void *);
-void	AddObjectToMirrorUndoList(int, void *, void *,void *, Position);
+void	AddObjectToMirrorUndoList(int, void *, void *,void *, Location);
 void	AddObjectToMoveToLayerUndoList(int, void *, void *, void *);
 void	AddObjectToFlagUndoList(int, void *, void *, void *);
 void	AddObjectToSizeUndoList(int, void *, void *, void *);

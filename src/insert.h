@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: insert.h,v 1.1 2003-02-20 00:24:14 danmc Exp $
+ *  RCS: $Id: insert.h,v 1.2 2004-01-05 01:40:24 haceaton Exp $
  */
 
 /* prototypes for inserting points into objects
@@ -38,6 +38,6 @@
 /* ---------------------------------------------------------------------------
  * prototypes
  */
-void	*InsertPointIntoObject(int, void *, void *, Cardinal *, Position, Position, Boolean);
+void	*InsertPointIntoObject(int, void *, void *, Cardinal *, Location, Location, Boolean);
 
 #endif

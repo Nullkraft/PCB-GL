@@ -30,7 +30,7 @@
  * silkscreen layer. Perhaps the design is not the best.
  */
 
-static char *rcsid = "$Id: print.c,v 1.8 2003-12-30 02:18:51 haceaton Exp $";
+static char *rcsid = "$Id: print.c,v 1.9 2004-01-05 01:40:24 haceaton Exp $";
 
 /* printing routines
  */
@@ -1082,7 +1082,7 @@ Print (char *Command, float Scale,
        Boolean OutlineFlag, Boolean AlignmentFlag,
        Boolean DrillHelperFlag, Boolean DOSFlag,
        PrintDeviceTypePtr PrintDevice, MediaTypePtr Media,
-       Position OffsetX, Position OffsetY, Boolean SilkscreenTextFlag)
+       Location OffsetX, Location OffsetY, Boolean SilkscreenTextFlag)
 {
   /* it's not OK to override all files -> user interaction
    * is required if a file exists

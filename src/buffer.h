@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: buffer.h,v 1.1 2003-02-20 00:23:53 danmc Exp $
+ *  RCS: $Id: buffer.h,v 1.2 2004-01-05 01:40:24 haceaton Exp $
  */
 
 /* prototypes for buffer handling routines
@@ -38,7 +38,7 @@
  */
 void	SetBufferBoundingBox(BufferTypePtr);
 void	ClearBuffer(BufferTypePtr);
-void	AddSelectedToBuffer(BufferTypePtr, Position, Position, Boolean);
+void	AddSelectedToBuffer(BufferTypePtr, Location, Location, Boolean);
 Boolean	LoadElementToBuffer(BufferTypePtr, char *, Boolean);
 Boolean	ConvertBufferToElement(BufferTypePtr);
 Boolean	SmashBufferElement(BufferTypePtr);

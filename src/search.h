@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: search.h,v 1.2 2003-12-28 17:16:28 haceaton Exp $
+ *  RCS: $Id: search.h,v 1.3 2004-01-05 01:40:24 haceaton Exp $
  */
 
 /* prototypes for search routines
@@ -74,16 +74,16 @@
 Boolean	IsPointOnLine(float, float, float, LineTypePtr);
 Boolean	IsPointOnPin(float, float, float, PinTypePtr);
 Boolean IsPointOnArc(float, float, float, ArcTypePtr);
-Boolean	IsPointOnLineEnd(Position, Position, RatTypePtr);
-Boolean	IsLineInRectangle(Position, Position, Position, Position, LineTypePtr);
-Boolean IsArcInRectangle(Position, Position, Position, Position, ArcTypePtr);
+Boolean	IsPointOnLineEnd(Location, Location, RatTypePtr);
+Boolean	IsLineInRectangle(Location, Location, Location, Location, LineTypePtr);
+Boolean IsArcInRectangle(Location, Location, Location, Location, ArcTypePtr);
 Boolean	IsPointInPolygon(float, float, float, PolygonTypePtr);
-Boolean IsPointInSquarePad(Position, Position, Cardinal, PadTypePtr);
-Boolean	IsRectangleInPolygon(Position, Position, Position, Position,
+Boolean IsPointInSquarePad(Location, Location, Cardinal, PadTypePtr);
+Boolean	IsRectangleInPolygon(Location, Location, Location, Location,
 			PolygonTypePtr);
-int		SearchObjectByPosition(int, void **, void **, void **,
-			Position, Position, Dimension);
-int		SearchScreen(Position, Position, int, void **, void **, void **);
+int		SearchObjectByLocation(int, void **, void **, void **,
+			Location, Location, BDimension);
+int		SearchScreen(Location, Location, int, void **, void **, void **);
 int		SearchObjectByID(DataTypePtr, void **, void **, void **, int, int);
 ElementTypePtr SearchElementByName(DataTypePtr, char *);
 

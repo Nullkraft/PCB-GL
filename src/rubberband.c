@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: rubberband.c,v 1.4 2003-12-30 02:18:51 haceaton Exp $";
+  "$Id: rubberband.c,v 1.5 2004-01-05 01:40:24 haceaton Exp $";
 
 /* functions used by 'rubberband moves'
  */
@@ -75,8 +75,8 @@ static void CheckLinePointForRat (LayerTypePtr, PointTypePtr);
 static void
 CheckPadForRubberbandConnection (PadTypePtr Pad)
 {
-  Dimension half = Pad->Thickness / 2;
-  Position minx = MIN (Pad->Point1.X, Pad->Point2.X) - half,
+  BDimension half = Pad->Thickness / 2;
+  Location minx = MIN (Pad->Point1.X, Pad->Point2.X) - half,
     miny = MIN (Pad->Point1.Y, Pad->Point2.Y) - half,
     maxx = MAX (Pad->Point1.X, Pad->Point2.X) + half,
     maxy = MAX (Pad->Point1.Y, Pad->Point2.Y) + half;
@@ -303,7 +303,7 @@ CheckPolygonForRubberbandConnection (LayerTypePtr Layer,
       layer = LAYER_PTR (number);
       if (layer->On)
 	{
-	  Dimension thick;
+	  BDimension thick;
 
 	  /* the following code just stupidly compares the endpoints
 	   * of the lines

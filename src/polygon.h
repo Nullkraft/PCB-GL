@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: polygon.h,v 1.1 2003-02-20 00:24:27 danmc Exp $
+ *  RCS: $Id: polygon.h,v 1.2 2004-01-05 01:40:24 haceaton Exp $
  */
 
 /* prototypes for polygon editing routines
@@ -34,7 +34,7 @@
 #include "global.h"
 
 Cardinal	GetLowestDistancePolygonPoint(PolygonTypePtr,
-					Position, Position);
+					Location, Location);
 Boolean		RemoveExcessPolygonPoints(LayerTypePtr, PolygonTypePtr);
 void			GoToPreviousPoint(void);
 void			ClosePolygon(void);

@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: insert.c,v 1.3 2003-12-29 03:15:56 haceaton Exp $";
+static char *rcsid = "$Id: insert.c,v 1.4 2004-01-05 01:40:24 haceaton Exp $";
 
 /* functions used to insert points into objects
  */
@@ -62,7 +62,7 @@ static void *InsertPointIntoRat (RatTypePtr);
 /* ---------------------------------------------------------------------------
  * some local identifiers
  */
-static Position InsertX,	/* used by local routines as offset */
+static Location InsertX,	/* used by local routines as offset */
   InsertY;
 static Cardinal InsertAt;
 static Boolean Forcible;
@@ -185,7 +185,7 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  */
 void *
 InsertPointIntoObject (int Type, void *Ptr1, void *Ptr2, Cardinal * Ptr3,
-		       Position DX, Position DY, Boolean Force)
+		       Location DX, Location DY, Boolean Force)
 {
   void *ptr;
 

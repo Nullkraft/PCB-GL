@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: polygon.c,v 1.5 2003-12-30 02:18:51 haceaton Exp $";
+  "$Id: polygon.c,v 1.6 2004-01-05 01:40:24 haceaton Exp $";
 
 /* special polygon editing routines
  */
@@ -109,7 +109,7 @@ RemoveExcessPolygonPoints (LayerTypePtr Layer, PolygonTypePtr Polygon)
  * coordinates
  */
 Cardinal
-GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, Position X, Position Y)
+GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, Location X, Location Y)
 {
   float mindistance = MAX_COORD, length, distance;
   PointTypePtr ptr1 = &Polygon->Points[Polygon->PointN - 1],
@@ -189,7 +189,7 @@ ClosePolygon (void)
        */
       if (!TEST_FLAG (ALLDIRECTIONFLAG, PCB))
 	{
-	  Dimension dx, dy;
+	  BDimension dx, dy;
 
 	  dx = abs (Crosshair.AttachedPolygon.Points[n - 1].X -
 		    Crosshair.AttachedPolygon.Points[0].X);

@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: output.h,v 1.1 2003-02-20 00:24:26 danmc Exp $
+ *  RCS: $Id: output.h,v 1.2 2004-01-05 01:40:24 haceaton Exp $
  */
 
 #ifndef __OUTPUT_INCLUDED__
@@ -31,8 +31,8 @@
 #include "global.h"
 
 void PortholeEvent(Widget, XtPointer, XEvent *, Boolean *);
-Boolean Pan(Position, Position, Boolean, Boolean);
-Boolean CoalignScreen(Position, Position, Position, Position);
+Boolean Pan(Location, Location, Boolean, Boolean);
+Boolean CoalignScreen(Position, Position, Location, Location);
 void OutputEvent(Widget, XtPointer, XEvent *, Boolean *);
 void GetSizeOfDrawingArea(void);
 void ScaleOutput(Dimension, Dimension);

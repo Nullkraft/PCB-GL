@@ -1,4 +1,4 @@
-/* $Id: gui.c,v 1.3 2004-01-02 05:02:14 danmc Exp $ */
+/* $Id: gui.c,v 1.4 2004-01-05 01:40:24 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -112,7 +112,7 @@ CtrlPressed (void)
  * cursor key events are handled
  */
 Boolean
-GetPosition (char *MessageText)
+GetLocation (char *MessageText)
 {
   XEvent event;
   XAnyEvent *any = (XAnyEvent *) & event;

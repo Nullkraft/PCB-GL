@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: macro.h,v 1.2 2003-12-25 17:22:19 haceaton Exp $
+ *  RCS: $Id: macro.h,v 1.3 2004-01-05 01:40:24 haceaton Exp $
  */
 
 /* some commonly used macros not related to a special C-file
@@ -51,17 +51,18 @@
 #define	SWAP_DELTA(d)		(-(d))
 #define	SWAP_X(x)		(SWAP_SIGN_X(x))
 #define	SWAP_Y(y)		(PCB->MaxHeight +SWAP_SIGN_Y(y))
+#define SATURATE(x)             ((x) > 32767 ? 32767 : ((x) < -32767 ? -32767 : (x)))
 
 #ifndef	TO_SCREEN
-#define	TO_SCREEN(x)		((PCB->Zoom < 0) ? (x) << -PCB->Zoom : (x) >> PCB->Zoom)
+#define	TO_SCREEN(x)		((Position)SATURATE((x)/Zoom_divisor[PCB->Zoom + 6]))
 #endif
 
-#define	TO_SCREEN_X(x)		(TO_SCREEN(SWAP_IDENT ? SWAP_X(x) : (x)) + Xorig)
-#define	TO_SCREEN_Y(y)		(TO_SCREEN(SWAP_IDENT ? SWAP_Y(y) : (y)) + Yorig)
-#define	TO_DRAW_X(x)		(TO_SCREEN(SWAP_IDENT ? SWAP_X(x) : (x)) + XORIG)
-#define	TO_DRAWABS_X(x)		(TO_SCREEN((x)) + XORIG)
-#define	TO_DRAW_Y(y)		(TO_SCREEN(SWAP_IDENT ? SWAP_Y(y) : (y)) + YORIG)
-#define	TO_DRAWABS_Y(y)		(TO_SCREEN((y)) + YORIG)
+#define	TO_SCREEN_X(x)		(TO_SCREEN((SWAP_IDENT ? SWAP_X(x) : (x)) - Xorig))
+#define	TO_SCREEN_Y(y)		(TO_SCREEN((SWAP_IDENT ? SWAP_Y(y) : (y)) - Yorig))
+#define	TO_DRAW_X(x)		(TO_SCREEN((SWAP_IDENT ? SWAP_X(x) : (x)) - XORIG))
+#define	TO_DRAWABS_X(x)		(TO_SCREEN((x) - XORIG))
+#define	TO_DRAW_Y(y)		(TO_SCREEN((SWAP_IDENT ? SWAP_Y(y) : (y)) - YORIG))
+#define	TO_DRAWABS_Y(y)		(TO_SCREEN((y) - YORIG))
 #define	TO_MASK_X(x)		TO_SCREEN_X((x))
 #define	TO_MASK_Y(y)		TO_SCREEN_Y((y))
 #define	TO_SCREEN_ANGLE(a)	(SWAP_IDENT ? SWAP_ANGLE((a)) : (a))
@@ -70,11 +71,11 @@
 #define	TO_SCREEN_SIGN_Y(y)	(SWAP_IDENT ? SWAP_SIGN_Y(y) : (y))
 
 #ifndef	TO_PCB
-#define	TO_PCB(x)		((PCB->Zoom < 0) ? ((x)+ (1<<(-1-PCB->Zoom))) >> -PCB->Zoom : (x) << PCB->Zoom)
+#define	TO_PCB(x)		((Location)((x)*Zoom_divisor[PCB->Zoom + 6]))
 #endif
-#define	TO_PCB_X(x)		TO_PCB(x - Xorig)
+#define	TO_PCB_X(x)		TO_PCB(x) + Xorig
 #define	TO_PCB_Y(y)		(SWAP_IDENT ? \
-				PCB->MaxHeight -TO_PCB(y - Yorig) : TO_PCB(y - Yorig))
+				PCB->MaxHeight -TO_PCB(y) + Yorig : TO_PCB(y) + Yorig)
 
 /* ---------------------------------------------------------------------------
  * misc macros, some might already be defined by <limits.h>
@@ -122,8 +123,8 @@
 	(p)->BoundingBox.X2 >= vxl && \
 	(p)->BoundingBox.Y1 <= vyh && \
 	(p)->BoundingBox.Y2 >= vyl)
-#define VVIA(v) 	((v)->X >= vxl && (v)->X <= vxh && \
-			(v)->Y >= vyl && (v)->Y <= vyh)
+#define VVIA(v) 	((v)->X+(v)->Thickness >= vxl && (v)->X - (v)->Thickness <= vxh && \
+			(v)->Y+(v)->Thickness >= vyl && (v)->Y - (v)->Thickness  <= vyh)
 
 /* ---------------------------------------------------------------------------
  * layer macros

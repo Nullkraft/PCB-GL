@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: action.h,v 1.1 2003-02-20 00:23:47 danmc Exp $
+ *  RCS: $Id: action.h,v 1.2 2004-01-05 01:40:24 haceaton Exp $
  */
 
 /* prototypes for action routines
@@ -32,6 +32,8 @@
 #define	__ACTION_INCLUDED__
 
 #include "global.h"
+
+#define CLONE_TYPES LINE_TYPE | ARC_TYPE | VIA_TYPE | POLYGON_TYPE
 
 void	ActionMovePointer(Widget, XEvent *, String *, Cardinal *);
 void	ActionAtomic(Widget, XEvent *, String *, Cardinal *);

@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: set.h,v 1.1 2003-02-20 00:23:55 danmc Exp $
+ *  RCS: $Id: set.h,v 1.2 2004-01-05 01:40:24 haceaton Exp $
  */
 
 /* prototypes for update routines
@@ -37,10 +37,10 @@ void		SetCursorStatusLine(void);
 void		SetStatusLine(void);
 void		SetGrid(float, Boolean);
 void		SetZoom(int);
-void		SetLineSize(Dimension);
-void		SetViaSize(Dimension, Boolean);
-void		SetViaDrillingHole(Dimension, Boolean);
-void		SetKeepawayWidth(Dimension);
+void		SetLineSize(BDimension);
+void		SetViaSize(BDimension, Boolean);
+void		SetViaDrillingHole(BDimension, Boolean);
+void		SetKeepawayWidth(BDimension);
 void		SetTextScale(Dimension);
 void		SetChangedFlag(Boolean);
 void		UpdateSettingsOnScreen(void);
@@ -48,6 +48,7 @@ void		SetBufferNumber(int);
 void		SetMode(int);
 void		SetCrosshairRangeToBuffer(void);
 void		SetRouteStyle(char *);
-void		SetLocalRef(Position, Position, Boolean);
+void		SetLocalRef(Location, Location, Boolean);
+void		RedrawZoom(Position, Position);
 
 #endif

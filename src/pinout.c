@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: pinout.c,v 1.3 2003-12-30 02:18:51 haceaton Exp $";
+static char *rcsid = "$Id: pinout.c,v 1.4 2004-01-05 01:40:24 haceaton Exp $";
 
 /* pinout routines */
 
@@ -69,7 +69,7 @@ typedef struct			/* information of one window */
     Enlarge,			/* enlarge button */
     Shrink;			/* shrink button */
   int Zoom;			/* zoom factor of window */
-  Position MaxX,		/* size of used drawing area independend */
+  Location MaxX,		/* size of used drawing area independend */
     MaxY;			/* from zoom setting */
 }
 PinoutType, *PinoutTypePtr;

@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: misc.h,v 1.2 2003-05-26 23:45:46 danmc Exp $
+ *  RCS: $Id: misc.h,v 1.3 2004-01-05 01:40:24 haceaton Exp $
  */
 
 /* prototypes for misc routines
@@ -41,11 +41,11 @@ void		SetPolygonBoundingBox(PolygonTypePtr);
 void		SetElementBoundingBox(ElementTypePtr, FontTypePtr);
 Boolean		IsDataEmpty(DataTypePtr);
 BoxTypePtr	GetDataBoundingBox(DataTypePtr);
-void		CenterDisplay(Position, Position, Boolean);
+void		CenterDisplay(Location, Location, Boolean);
 void		SetFontInfo(FontTypePtr);
 void		UpdateSettingsOnScreen(void);
 int		ParseGroupString(char *, LayerGroupTypePtr);
-int		ParseRouteString(char *, RouteStyleTypePtr);
+int		ParseRouteString(char *, RouteStyleTypePtr, int);
 void		QuitApplication(void);
 char		*EvaluateFilename(char *, char *, char *, char *);
 char		*ExpandFilename(char *, char *);
@@ -63,6 +63,7 @@ int		GetGridFactor(void);
 void		SetArcBoundingBox(ArcTypePtr);
 BoxTypePtr	GetArcEnds(ArcTypePtr);
 char		*UniqueElementName(DataTypePtr, char *);
-void		AttachForCopy(Position, Position);
+void		AttachForCopy(Location, Location);
+float		GetValue(String *, Boolean *, Cardinal);
 
 #endif

@@ -1,5 +1,3 @@
-/* $Id: netlist.h,v 1.2 2004-01-02 05:00:13 danmc Exp $ */
-
 /*
  *                            COPYRIGHT
  *  This particular file, netlist.h was written by and is

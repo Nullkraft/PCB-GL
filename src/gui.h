@@ -1,4 +1,4 @@
-/* $Id: gui.h,v 1.2 2004-01-02 05:00:13 danmc Exp $ */
+/* $Id: gui.h,v 1.3 2004-01-05 01:40:24 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -30,7 +30,7 @@
 void InitGui(void);
 Boolean ShiftPressed(void);
 Boolean CtrlPressed(void);
-Boolean GetPosition(char *);
+Boolean GetLocation(char *);
 void handCursor(void);
 void watchCursor(void);
 void modeCursor(int mode);
