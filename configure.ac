@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.2 2003-02-21 02:14:29 danmc Exp $
+dnl $Id: configure.ac,v 1.3 2003-03-05 01:58:59 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/pinout.c)
@@ -93,6 +93,7 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 dnl Checks for data types
 
 dnl Checks for library functions.
+AC_CHECK_FUNCS(strerror)
 
 # ------------- dmalloc -------------------
 dnl dmalloc checks
