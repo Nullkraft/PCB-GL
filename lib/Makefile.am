@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.3 2003-08-30 00:11:14 danmc Exp $
+## $Id: Makefile.am,v 1.4 2003-10-03 00:02:03 danmc Exp $
 ##
 
 PCBLIBDIR=		@PCBLIBDIR@
@@ -86,6 +86,7 @@ INC_FILES= \
 	misc.inc \
 	pci.inc \
 	plcc.inc \
+	qfn.inc \
 	qfp.inc \
 	qfp2.inc \
 	qfpdj.inc \
