@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: menu.c,v 1.26 2004-03-17 04:59:44 haceaton Exp $";
+static char *rcsid = "$Id: menu.c,v 1.27 2004-03-28 17:45:16 haceaton Exp $";
 
 /* initializes menus and handles callbacks
  */
@@ -315,6 +315,8 @@ static PopupEntryType SettingsMenuEntries[] = {
    "Display,ToggleLocalRef", NULL},
   {"toggleClearLine", "new lines, arcs clear polygons", CB_Action,
    "Display,ToggleClearLine", NULL},
+  {"toggleLiveRoute", "show autoroute", CB_Action,
+   "Display,ToggleLiveRoute", NULL},
   {"toggleThindraw", "thin draw", CB_Action,
    "Display,ToggleThindraw", NULL},
   {"toggleCheckPlanes", "check polygons", CB_Action,
@@ -846,6 +848,8 @@ CBPOPUP_Settings (Widget W, XtPointer ClientData, XtPointer CallData)
     CheckEntry (&SettingsMenu, "toggleOrthoMove");
   if (TEST_FLAG (SHOWDRCFLAG, PCB))
     CheckEntry (&SettingsMenu, "toggleShowDRC");
+  if (Settings.liveRouting)
+    CheckEntry (&SettingsMenu, "toggleLiveRoute");
   if (TEST_FLAG (AUTODRCFLAG, PCB))
     CheckEntry (&SettingsMenu, "toggleAutoDRC");
 }
