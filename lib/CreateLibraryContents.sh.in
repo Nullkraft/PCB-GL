@@ -23,13 +23,17 @@
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: CreateLibraryContents.sh.in,v 1.1 2003-02-20 00:23:19 danmc Exp $
+#   RCS: $Id: CreateLibraryContents.sh.in,v 1.2 2003-08-30 00:12:07 danmc Exp $
 #
 # create all objects as defined in passed list_files
 #
 # usage: CreateLibraryContents.sh common_macro_file file...
 
 M4=@GNUM4@
+
+##
+# Check for input flags
+##
 
 while test -n "$1" ; do
 case "$1"
@@ -55,20 +59,42 @@ done
 #
 SPACE="[	 ]"
 
+##
+# Make sure we've been given a common file plus at least 1 list file
+# as arguments
+##
+
 if [ $# -lt 2 ]; then
 	echo "usage: $0 common_macro_file file..." >&2; exit 1
 fi
 CommonFile=$1
 shift
 
+##
+# Make sure the common file exists
+##
+
 if [ ! -r $CommonFile ]; then
 	echo "$0: file '$CommonFile' isn't readable or doesn't exit" >&2; exit 1
 fi
 
+##
+# Process the list files
+##
+
 while [ $# -ne 0 ]; do
 # strip the extension '.list'
 #
-	ListFile="$srcdir/$1"
+
+    ##
+    # Turn something like foo.list in to
+    # /path/to/foo.m4
+    ##
+	if [ -f $srcdir/$1 ]; then
+		ListFile="$srcdir/$1"
+	else
+		ListFile="$1"
+	fi
 	PlainFile=`dirname $ListFile`/`basename $ListFile .list`
 	M4File=$PlainFile.m4
 
@@ -79,7 +105,12 @@ while [ $# -ne 0 ]; do
 		echo "$0: file '$M4File' isn't readable or doesn't exit" >&2; exit 1
 	fi
 
+	## 
+	# for foo.list spit out "TYPE=~foo".  This defines the library
+	# in the PCB library window
+	##
 	echo "TYPE=~`basename $PlainFile | sed -e 's/_/ /g'`"
+
 	sed -e 's/'"$SPACE"'*#.*$//' \
 		-e 's/'"$SPACE"'*:'"$SPACE"'*/:/g' \
 		-e '/^'"$SPACE"'*$/d' $ListFile |
