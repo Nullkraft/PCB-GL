@@ -1,5 +1,5 @@
 #
-#   $Id: geda.inc,v 1.3 2003-08-30 00:17:07 danmc Exp $
+#   $Id: geda.inc,v 1.4 2003-08-31 23:10:08 danmc Exp $
 #
 #   gEDA compatible footprint names
 #
@@ -243,7 +243,7 @@ define(`PKG_QFP160_28', `PKG_QFP_65(`$1',`$2',`$3',`160',`28')');
 define(`PKG_QFP240_32', `PKG_QFP_50(`$1',`$2',`$3',`240',`32')');
 define(`PKG_QFP304_40', `PKG_QFP_50(`$1',`$2',`$3',`304',`40')');
 #
-##  Square Quad-side flat pack
+##  Rectangular Quad-side flat pack
 
 define(`PKG_QFP64_R',   `PKG_QFP_100(`$1',`$2',`$3', `64',`0')');
 define(`PKG_QFP80_R',   `PKG_QFP_80L(`$1',`$2',`$3', `80',`0')');
