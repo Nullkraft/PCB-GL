@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: macro.h,v 1.13 2004-04-30 01:49:21 danmc Exp $
+ *  RCS: $Id: macro.h,v 1.14 2004-05-05 03:47:00 danmc Exp $
  */
 
 /* some commonly used macros not related to a special C-file
@@ -167,7 +167,7 @@
 #define	PASTEBUFFER		(&Buffers[Settings.BufferNumber])
 
 /* ---------------------------------------------------------------------------
- * some routines for flag setting, clearing, changeing and testing
+ * some routines for flag setting, clearing, changing and testing
  */
 #define	SET_FLAG(f,p)		((p)->Flags |= (f))
 #define	CLEAR_FLAG(f,p)		((p)->Flags &= (~(f)))
