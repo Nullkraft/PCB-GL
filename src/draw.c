@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: draw.c,v 1.8 2004-01-01 13:30:33 haceaton Exp $";
+static char *rcsid = "$Id: draw.c,v 1.9 2004-01-02 05:46:43 haceaton Exp $";
 
 /* drawing routines
  */
@@ -1105,6 +1105,9 @@ DrawVText (int x, int y, int w, int h, int de, char *str)
   Visual *v;
   char *mem;
   int i, j;
+
+  if (strlen(str) == 0)
+    return;
 
   pm = XCreatePixmap (Dpy, DrawingWindow, w, h, 1);
   gc = XCreateGC (Dpy, pm, 0, 0);
