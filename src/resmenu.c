@@ -1,4 +1,4 @@
-/* $Id: resmenu.c,v 1.5 2004-05-02 03:40:49 djdelorie Exp $ */
+/* $Id: resmenu.c,v 1.6 2004-05-02 04:26:34 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -373,13 +373,15 @@ MenuCreateFromResource(Widget menu, Resource *res, Widget top, Widget left, int 
 	  if (res->v[i].subres->flags & FLAG_S)
 	    {
 	      static int menu_id=1;
-	      char menu_name[20];
+	      char menu_name[20], *mn;
 	      int nn = n;
+
 	      sprintf(menu_name, "menu%d", menu_id++);
-	      sub = XtCreateManagedWidget(menu_name, simpleMenuWidgetClass,
+	      mn = strdup(menu_name);
+	      sub = XtCreateManagedWidget(mn, simpleMenuWidgetClass,
 					  menu, args+nn, n-nn);
 	      n = nn;
-	      arg(XtNmenuName, strdup(menu_name));
+	      arg(XtNmenuName, mn);
 	      btn = XtCreateManagedWidget(v, menuButtonWidgetClass,
 					  menu, args, n);
 	      MenuCreateFromResource(sub, res->v[i].subres, 0, 0, 0);
