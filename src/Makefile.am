@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.3 2003-11-08 03:31:03 danmc Exp $
+## $Id: Makefile.am,v 1.4 2004-01-28 04:47:04 haceaton Exp $
 ##
 
 SUBDIRS=	icons script
@@ -67,8 +67,8 @@ pcb_bin_SOURCES = \
 	insert.h \
 	intersect.c \
 	intersect.h \
-	kdtree.c \
-	kdtree.h \
+	rtree.c \
+	rtree.h \
 	lgdialog.c \
 	lgdialog.h \
 	library.c \
