@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: buffer.c,v 1.7 2004-02-13 05:54:57 haceaton Exp $";
+static char *rcsid = "$Id: buffer.c,v 1.8 2004-02-14 15:46:52 haceaton Exp $";
 
 /* functions used by paste- and move/copy buffer
  */
@@ -590,16 +590,10 @@ ConvertBufferToElement (BufferTypePtr Buffer)
   group = GetLayerGroupNumberByNumber (MAX_LAYER +
 				       (SWAP_IDENT ? SOLDER_LAYER :
 					COMPONENT_LAYER));
-  for (i = 0; i < PCB->LayerGroups.Number[group]; i++)
+  GROUP_LOOP (group,
     {
-      LayerTypePtr padlayer;
       char num[8];
-      Cardinal number = PCB->LayerGroups.Entries[group][i];
-
-      if (number >= MAX_LAYER)
-	continue;
-      padlayer = &Buffer->Data->Layer[number];
-      LINE_LOOP (padlayer, 
+      LINE_LOOP (layer, 
 	{
 	  if (line->Point1.X == line->Point2.X
 	      || line->Point1.Y == line->Point2.Y)
@@ -616,21 +610,16 @@ ConvertBufferToElement (BufferTypePtr Buffer)
 	}
       );
     }
+  );
   /* now get the opposite side pads */
   group = GetLayerGroupNumberByNumber (MAX_LAYER +
 				       (SWAP_IDENT ? COMPONENT_LAYER :
 					SOLDER_LAYER));
-  for (i = 0; i < PCB->LayerGroups.Number[group]; i++)
+  GROUP_LOOP (group,
     {
       Boolean warned = False;
-      LayerTypePtr padlayer;
       char num[8];
-      Cardinal number = PCB->LayerGroups.Entries[group][i];
-
-      if (number >= MAX_LAYER)
-	continue;
-      padlayer = &Buffer->Data->Layer[number];
-      LINE_LOOP (padlayer, 
+      LINE_LOOP (layer, 
 	{
 	  if (line->Point1.X == line->Point2.X
 	      || line->Point1.Y == line->Point2.Y)
@@ -651,9 +640,10 @@ ConvertBufferToElement (BufferTypePtr Buffer)
 		}
 	      hasParts = True;
 	    }
-	}
+	 }
       );
     }
+  );
   /* now add the silkscreen. NOTE: elements must have pads or pins too */
   LINE_LOOP (&Buffer->Data->SILKLAYER, 
     {

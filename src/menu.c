@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: menu.c,v 1.19 2004-02-14 02:21:09 haceaton Exp $";
+static char *rcsid = "$Id: menu.c,v 1.20 2004-02-14 15:46:52 haceaton Exp $";
 
 /* initializes menus and handles callbacks
  */
@@ -861,7 +861,7 @@ CBPOPUP_Buffer (Widget W, XtPointer ClientData, XtPointer CallData)
   char name[10];
 
   RemoveCheckFromMenu (&BufferMenu);
-  sprintf (name, "buffer%i", Settings.BufferNumber + 1);
+  sprintf (name, "buffer%i", (int)(Settings.BufferNumber + 1));
   CheckEntry (&BufferMenu, name);
 }
 
