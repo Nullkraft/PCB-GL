@@ -35,7 +35,7 @@
  *
  */
 
-static char *rcsid = "$Id: dev_rs274x.c,v 1.8 2003-11-19 21:58:45 haceaton Exp $";
+static char *rcsid = "$Id: dev_rs274x.c,v 1.9 2003-11-20 15:43:35 haceaton Exp $";
 
 /*
  * Gerber/RS-274X device driver
@@ -57,7 +57,6 @@ static char *rcsid = "$Id: dev_rs274x.c,v 1.8 2003-11-19 21:58:45 haceaton Exp $
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#include <varargs.h>
 
 #include "global.h"
 
