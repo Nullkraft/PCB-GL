@@ -25,7 +25,7 @@
  *
  */
 
-static char *rcsid = "$Id: action.c,v 1.7 2004-01-05 01:40:24 haceaton Exp $";
+static char *rcsid = "$Id: action.c,v 1.8 2004-01-06 01:04:31 haceaton Exp $";
 
 /* action routines for output window
  */
@@ -2163,7 +2163,7 @@ void
 ActionDisplay (Widget W, XEvent * Event, String * Params, Cardinal * Num)
 {
   int id;
-  int saved = 0;
+  static int saved = 0;
 
   if (*Num == 1)
     {
