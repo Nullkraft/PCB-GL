@@ -1,4 +1,4 @@
-/* $Id: print.c,v 1.31 2005-01-03 12:57:00 danmc Exp $ */
+/* $Id: print.c,v 1.32 2005-01-18 23:13:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -68,7 +68,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: print.c,v 1.31 2005-01-03 12:57:00 danmc Exp $");
+RCSID("$Id: print.c,v 1.32 2005-01-18 23:13:13 danmc Exp $");
 
 
 
@@ -1378,6 +1378,16 @@ PrintFab (void)
 	ds++;
       if (drill->UnplatedCount)
 	ds++;
+    }
+
+  /*
+   * When we only have a few drill sizes we need to make sure the
+   * drill table header doesn't fall on top of the board info
+   * section.
+   */
+  if (AllDrills->DrillN < 4 ) 
+    {
+      yoff -= (4 - AllDrills->DrillN) * TEXT_LINE;
     }
 
   for (n = AllDrills->DrillN - 1; n >= 0; n--)
