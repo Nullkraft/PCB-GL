@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: globalconst.h,v 1.4 2004-03-03 01:49:18 haceaton Exp $
+ *  RCS: $Id: globalconst.h,v 1.5 2004-05-29 02:26:25 danmc Exp $
  */
 
 /* global constants
@@ -55,7 +55,7 @@
  * frame between the groundplane and the copper
  */
 #define	GROUNDPLANEFRAME	15	/* unit == mil */
-#define MASKFRAME               0       /* unit == mil */
+#define MASKFRAME               3       /* unit == mil */
 
 /* ---------------------------------------------------------------------------
  * some limit specifications
