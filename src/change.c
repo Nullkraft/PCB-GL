@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: change.c,v 1.10 2004-02-13 01:06:13 haceaton Exp $";
+static char *rcsid = "$Id: change.c,v 1.11 2004-02-13 01:11:30 haceaton Exp $";
 
 /* functions used to change object properties
  *
@@ -295,10 +295,13 @@ ChangeViaSize (PinTypePtr Via)
       value >= Via->DrillingHole + MIN_PINORVIACOPPER &&
       value != Via->Thickness)
     {
-      AddObjectToMaskSizeUndoList (VIA_TYPE, Via, Via, Via);
       AddObjectToSizeUndoList (VIA_TYPE, Via, Via, Via);
       EraseVia (Via);
-      Via->Mask += value - Via->Thickness;
+      if (Via->Mask)
+        {
+          AddObjectToMaskSizeUndoList (VIA_TYPE, Via, Via, Via);
+          Via->Mask += value - Via->Thickness;
+	}
       Via->Thickness = value;
       DrawVia (Via, 0);
       return (Via);
