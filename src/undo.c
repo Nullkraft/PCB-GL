@@ -23,8 +23,7 @@
  *  Thomas.Nau@rz.uni-ulm.de
  *
  */
-#define DEBUG_ID 1
-static char *rcsid = "$Id: undo.c,v 1.7 2004-02-06 20:30:30 haceaton Exp $";
+static char *rcsid = "$Id: undo.c,v 1.8 2004-02-15 18:04:04 haceaton Exp $";
 
 /* functions used to undo operations
  *
@@ -470,7 +469,7 @@ UndoMirror (UndoListTypePtr Entry)
 	return (False);
       if (andDraw)
 	EraseElement (element);
-      MirrorElementCoordinates (element, Entry->Data.Move.DY);
+      MirrorElementCoordinates (PCB->Data, element, Entry->Data.Move.DY);
       if (andDraw)
 	DrawElement (element, 0);
       return (True);

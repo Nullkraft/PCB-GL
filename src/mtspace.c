@@ -1,4 +1,4 @@
-/* $Id: mtspace.c,v 1.6 2004-01-28 04:47:04 haceaton Exp $ */
+/* $Id: mtspace.c,v 1.7 2004-02-15 18:04:03 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -303,7 +303,8 @@ mtspace_coalesce (mtspace_t * mtspace, struct coalesce_closure *cc)
 	{
 	  /* search region is one larger than mtsb on all sides */
 	  BoxType region = bloat_box (&cc->mtsb->box, 1);
-	  int r = r_search (mtspace->rtree, &region, NULL, check_one, cc);
+	  int r;
+	  r = r_search (mtspace->rtree, &region, NULL, check_one, cc);
 //	  assert (r == 0);	/* otherwise we would have called 'longjmp' */
 	  /* ----- didn't find anything to coalesce ----- */
 #ifndef NDEBUG

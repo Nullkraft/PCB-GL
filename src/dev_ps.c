@@ -30,7 +30,7 @@
  * silkscreen layer. Perhaps the design is not the best.
  */
 
-static char *rcsid = "$Id: dev_ps.c,v 1.6 2004-02-15 07:12:44 danmc Exp $";
+static char *rcsid = "$Id: dev_ps.c,v 1.7 2004-02-15 18:04:03 haceaton Exp $";
 
 /* PostScript device driver
  * code is shared for EPS and PS output
@@ -696,7 +696,7 @@ static void
 PS_PrintArc (ArcTypePtr arc, Boolean Clear)
 {
   if (Clear)
-    fprintf (PS_Flags.FP, "%d %d %d %d %d %d %d CA\n",
+    fprintf (PS_Flags.FP, "%d %d %d %d %d %ld %ld CA\n",
 	     (int) arc->X,
 	     (int) arc->Y,
 	     (int) arc->Width,
@@ -706,7 +706,7 @@ PS_PrintArc (ArcTypePtr arc, Boolean Clear)
 	      0) ? arc->StartAngle + arc->Delta : arc->StartAngle,
 	     (arc->Delta < 0) ? -arc->Delta : arc->Delta);
   else
-    fprintf (PS_Flags.FP, "%d %d %d %d %d %d %d A\n", (int) arc->X,
+    fprintf (PS_Flags.FP, "%d %d %d %d %d %ld %ld A\n", (int) arc->X,
 	     (int) arc->Y, (int) arc->Width, (int) arc->Height,
 	     (int) arc->Thickness,
 	     (arc->Delta <
@@ -847,7 +847,7 @@ PS_PrintElementPackage (ElementTypePtr Element)
   );
   ARC_LOOP (Element, 
     {
-      fprintf (PS_Flags.FP, "%d %d %d %d %d %d %d A\n",
+      fprintf (PS_Flags.FP, "%d %d %d %d %d %ld %ld A\n",
 	       (int) arc->X,
 	       (int) arc->Y,
 	       (int) arc->Width,

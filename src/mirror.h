@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: mirror.h,v 1.2 2004-01-05 01:40:24 haceaton Exp $
+ *  RCS: $Id: mirror.h,v 1.3 2004-02-15 18:04:04 haceaton Exp $
  */
 
 /* prototypes to change objects mirror flag
@@ -41,7 +41,7 @@
 #define	MIRROR_TYPES	(TEXT_TYPE | ELEMENTNAME_TYPE)
 
 
-void	MirrorElementCoordinates(ElementTypePtr, Location);
+void	MirrorElementCoordinates(DataTypePtr, ElementTypePtr, Location);
 
 #endif
 

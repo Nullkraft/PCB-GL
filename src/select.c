@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: select.c,v 1.6 2004-02-13 00:51:46 haceaton Exp $";
+static char *rcsid = "$Id: select.c,v 1.7 2004-02-15 18:04:04 haceaton Exp $";
 
 /* select routines
  */
@@ -84,16 +84,12 @@ SelectObject (void)
 
     case LINE_TYPE:
       {
-	LineType swap, *line = (LineTypePtr) ptr2;
+	LineType *line = (LineTypePtr) ptr2;
 
 	layer = (LayerTypePtr) ptr1;
 	AddObjectToFlagUndoList (LINE_TYPE, ptr1, ptr2, ptr2);
 	TOGGLE_FLAG (SELECTEDFLAG, line);
 	DrawLine (layer, line, 0);
-	/* move the line to the top of the data base */
-	swap = layer->Line[0];
-	layer->Line[0] = *line;
-	*line = swap;
 	break;
       }
 

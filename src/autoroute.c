@@ -1,4 +1,4 @@
-/* $Id: autoroute.c,v 1.11 2004-02-02 01:03:34 haceaton Exp $ */
+/* $Id: autoroute.c,v 1.12 2004-02-15 18:04:03 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -51,9 +51,8 @@
 #include "config.h"
 #endif
 
-/* #include <assert.h>
-*/
-#define assert(x) 
+#include <assert.h>
+#include <math.h>
 #include <stdlib.h>
 #include <setjmp.h>
 
@@ -1706,6 +1705,7 @@ fio_reg_in_sea (const BoxType * region, void *cl)
       default:
         assert(0);
     }
+    return 0;
 }
 
 static routebox_t *
@@ -3063,7 +3063,7 @@ RouteAll (routedata_t * rd)
 			    p->type = VIA; p->parent.via = pp->parent.via;}
 			    }
 			    else
-			    assert (0);}
+			    assert (0);} /* this assert can happen? */
 		 ));
     return changed;
   }

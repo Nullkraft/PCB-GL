@@ -25,7 +25,7 @@
  *
  */
 
-static char *rcsid = "$Id: action.c,v 1.23 2004-02-14 06:40:08 haceaton Exp $";
+static char *rcsid = "$Id: action.c,v 1.24 2004-02-15 18:04:03 haceaton Exp $";
 
 /* action routines for output window
  */
@@ -387,39 +387,15 @@ FinishStroke (void)
 	case 987412:
 	case 8741236:
 	case 874123:
-	  if ((type = SearchObjectByLocation (ROTATE_TYPES,
-					      &ptr1, &ptr2, &ptr3,
-					      StrokeBox.X1, StrokeBox.Y1,
-					      SLOP)) != NO_TYPE)
-	    {
-	      Crosshair.AttachedObject.RubberbandN = 0;
-	      if (TEST_FLAG (RUBBERBANDFLAG, PCB))
-		LookupRubberbandLines (type, ptr1, ptr2, ptr3);
-	      if (type == ELEMENT_TYPE)
-		LookupRatLines (type, ptr1, ptr2, ptr3);
-	      RotateObject (type, ptr1, ptr2, ptr3, StrokeBox.X1,
-			    StrokeBox.Y1, SWAP_IDENT ? 1 : 3);
-	      SetChangedFlag (True);
-	    }
+	  RotateScreenObject(StrokeBox.X1, StrokeBox.Y1,
+	                     SWAP_IDENT ? 1: 3);
 	  break;
 	case 7896321:
 	case 786321:
 	case 789632:
 	case 896321:
-	  if ((type = SearchObjectByLocation (ROTATE_TYPES,
-					      &ptr1, &ptr2, &ptr3,
-					      StrokeBox.X1, StrokeBox.Y1,
-					      SLOP)) != NO_TYPE)
-	    {
-	      Crosshair.AttachedObject.RubberbandN = 0;
-	      if (TEST_FLAG (RUBBERBANDFLAG, PCB))
-		LookupRubberbandLines (type, ptr1, ptr2, ptr3);
-	      if (type == ELEMENT_TYPE)
-		LookupRatLines (type, ptr1, ptr2, ptr3);
-	      RotateObject (type, ptr1, ptr2, ptr3, StrokeBox.X1,
-			    StrokeBox.Y1, SWAP_IDENT ? 3 : 1);
-	      SetChangedFlag (True);
-	    }
+	  RotateScreenObject(StrokeBox.X1, StrokeBox.Y1,
+	                     SWAP_IDENT ? 3: 1);
 	  break;
 	case 258:
 	  SetMode (LINE_MODE);
@@ -1572,28 +1548,8 @@ NotifyMode (void)
       break;
 
     case ROTATE_MODE:
-      Crosshair.AttachedObject.RubberbandN = 0;
-      if ((type =
-	   SearchScreen (Note.X, Note.Y, ROTATE_TYPES, &ptr1, &ptr2,
-			 &ptr3)) != NO_TYPE)
-	{
-	  if (TEST_FLAG (LOCKFLAG, (ArcTypePtr) ptr2))
-	    {
-	      Message ("Sorry that object is locked\n");
-	      break;
-	    }
-	  if (TEST_FLAG (RUBBERBANDFLAG, PCB))
-	    LookupRubberbandLines (type, ptr1, ptr2, ptr3);
-	  if (type == ELEMENT_TYPE)
-	    LookupRatLines (type, ptr1, ptr2, ptr3);
-	  if (ShiftPressed ())
-	    RotateObject (type, ptr1, ptr2, ptr3, Note.X,
-			  Note.Y, SWAP_IDENT ? 1 : 3);
-	  else
-	    RotateObject (type, ptr1, ptr2, ptr3, Note.X,
-			  Note.Y, SWAP_IDENT ? 3 : 1);
-	  SetChangedFlag (True);
-	}
+      RotateScreenObject(Note.X, Note.Y, ShiftPressed() ? (SWAP_IDENT ?
+      			1 : 3) : (SWAP_IDENT ? 3 : 1));
       break;
 
       /* both are almost the same */
@@ -3380,12 +3336,12 @@ ActionSelect (Widget W, XEvent * Event, String * Params, Cardinal * Num)
 {
   if (*Num == 1)
     {
-      int type;
 
       HideCrosshair (True);
       switch (GetFunctionID (*Params))
 	{
 #ifdef HAS_REGEX
+        int type;
 	  /* select objects by their names */
 	case F_ElementByName:
 	  type = ELEMENT_TYPE;

@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: file.c,v 1.10 2004-02-15 07:12:44 danmc Exp $";
+static char *rcsid = "$Id: file.c,v 1.11 2004-02-15 18:04:03 haceaton Exp $";
 
 /* file save, load, merge ... routines
  * getpid() needs a cast to (int) to get rid of compiler warnings
@@ -192,7 +192,6 @@ int
 LoadPCB (char *Filename)
 {
   PCBTypePtr newPCB = CreateNewPCB (False);
-  int save;
 
   /* new data isn't added to the undo list */
   if (!ParsePCB (newPCB, Filename))

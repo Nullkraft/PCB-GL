@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: move.h,v 1.2 2004-01-05 01:40:24 haceaton Exp $
+ *  RCS: $Id: move.h,v 1.3 2004-02-15 18:04:04 haceaton Exp $
  */
 
 /* prototypes for move routines
@@ -73,7 +73,7 @@
  * prototypes
  */
 void	MovePolygonLowLevel(PolygonTypePtr, Location, Location);
-void	MoveElementLowLevel(ElementTypePtr, Location, Location);
+void	MoveElementLowLevel(DataTypePtr, ElementTypePtr, Location, Location);
 void	*MoveObject(int, void *, void *, void *, Location, Location);
 void	*MoveObjectToLayer(int, void *, void *, void *, LayerTypePtr, Boolean);
 void	*MoveObjectAndRubberband(int, void *, void *, void *,

@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: rotate.h,v 1.2 2004-01-05 01:40:24 haceaton Exp $
+ *  RCS: $Id: rotate.h,v 1.3 2004-02-15 18:04:04 haceaton Exp $
  */
 
 /* prototypes for transform routines
@@ -65,7 +65,8 @@ void	RotateArcLowLevel(ArcTypePtr, Location, Location, BYTE);
 void	RotateBoxLowLevel(BoxTypePtr, Location, Location, BYTE);
 void	RotateTextLowLevel(TextTypePtr, Location, Location, BYTE);
 void	RotatePolygonLowLevel(PolygonTypePtr, Location, Location, BYTE);
-void	RotateElementLowLevel(ElementTypePtr, Location, Location, BYTE);
+void	RotateElementLowLevel(DataTypePtr, ElementTypePtr, Location, Location, BYTE);
 void	*RotateObject(int, void *, void *, void *, Location, Location, BYTE);
+void    RotateScreenObject(Location, Location, BYTE);
 
 #endif

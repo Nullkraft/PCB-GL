@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: main.c,v 1.11 2004-02-13 22:31:15 haceaton Exp $";
+static char *rcsid = "$Id: main.c,v 1.12 2004-02-15 18:04:03 haceaton Exp $";
 
 /* main program, initializes some stuff and handles user input
  */
@@ -1327,7 +1327,7 @@ main (int argc, char *argv[])
   UpRegion = XCreateRegion ();
   FullRegion = XCreateRegion ();
   Big.x = Big.y = 0;
-  Big.width = Big.height = MAX_COORD;
+  Big.width = Big.height = TO_SCREEN(MAX_COORD);
   XUnionRectWithRegion (&Big, FullRegion, FullRegion);
   InitErrorLog ();
   switch (--argc)

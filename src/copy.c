@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: copy.c,v 1.5 2004-01-05 01:40:24 haceaton Exp $";
+static char *rcsid = "$Id: copy.c,v 1.6 2004-02-15 18:04:03 haceaton Exp $";
 
 /* functions used to copy pins, elements ...
  * it's necessary to copy data by calling create... since the base pointer
@@ -163,7 +163,7 @@ CopyElementLowLevel (DataTypePtr Data, ElementTypePtr Dest,
   Dest->MarkX = Src->MarkX;
   Dest->MarkY = Src->MarkY;
 
-  SetElementBoundingBox (Dest, &PCB->Font);
+  SetElementBoundingBox (Data, Dest, &PCB->Font);
   return (Dest);
 }
 
@@ -280,7 +280,7 @@ CopyElement (ElementTypePtr Element)
 						TEST_FLAG (UNIQUENAMEFLAG,
 							   PCB));
 
-  MoveElementLowLevel (element, DeltaX, DeltaY);
+  MoveElementLowLevel (PCB->Data, element, DeltaX, DeltaY);
   if (PCB->ElementOn && (FRONT (element) || PCB->InvisibleObjectsOn))
     {
       DrawElementName (element, 0);

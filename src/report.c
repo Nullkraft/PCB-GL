@@ -26,7 +26,7 @@
  *
  */
 
-static char *rcsid = "$Id: report.c,v 1.12 2004-02-15 07:00:47 danmc Exp $";
+static char *rcsid = "$Id: report.c,v 1.13 2004-02-15 18:04:04 haceaton Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -122,9 +122,6 @@ ReportDrills (void)
   EndDialog (popup);
   SaveFree (stringlist);
 }
-
-
-
 
 void
 ReportDialog (void)
