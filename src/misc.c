@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: misc.c,v 1.1 2003-02-20 00:24:22 danmc Exp $";
+static char *rcsid = "$Id: misc.c,v 1.2 2003-05-26 23:45:46 danmc Exp $";
 
 /* misc functions used by several modules
  */
@@ -984,19 +984,20 @@ ResetStackAndVisibility (void)
 }
 
 /* ----------------------------------------------------------------------
- * returns pointer to current working directory
+ * returns pointer to current working directory.  If 'path' is not
+ * NULL, then the current working directory is copied to the array
+ * pointed to by 'path'
  */
 char *
-GetWorkingDirectory (void)
+GetWorkingDirectory (char *path)
 {
-  static char path[MAXPATHLEN + 1];
-
 #if defined(SYSV) || defined(linux) || defined(__NetBSD__)
-  return (getcwd (path, MAXPATHLEN));
+  return getcwd(path, MAXPATHLEN);
 #else
   /* seems that some BSD releases lack of a prototype for getwd() */
-  return ((char *) getwd (path));
+  return getwd (path);
 #endif
+
 }
 
 /* ---------------------------------------------------------------------------

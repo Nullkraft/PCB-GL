@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: misc.h,v 1.1 2003-02-20 00:24:22 danmc Exp $
+ *  RCS: $Id: misc.h,v 1.2 2003-05-26 23:45:46 danmc Exp $
  */
 
 /* prototypes for misc routines
@@ -57,7 +57,7 @@ int		GetLayerGroupNumberByPointer(LayerTypePtr);
 int		GetLayerGroupNumberByNumber(Cardinal);
 BoxTypePtr	GetObjectBoundingBox(int, void *, void *, void *);
 void		ResetStackAndVisibility(void);
-char		*GetWorkingDirectory(void);
+char		*GetWorkingDirectory(char *);
 void		CreateQuotedString(DynamicStringTypePtr, char *);
 int		GetGridFactor(void);
 void		SetArcBoundingBox(ArcTypePtr);
