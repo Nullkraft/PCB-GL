@@ -30,7 +30,7 @@
  * silkscreen layer. Perhaps the design is not the best.
  */
 
-static char *rcsid = "$Id: dev_ps.c,v 1.7 2004-02-15 18:04:03 haceaton Exp $";
+static char *rcsid = "$Id: dev_ps.c,v 1.8 2004-03-04 23:41:02 haceaton Exp $";
 
 /* PostScript device driver
  * code is shared for EPS and PS output
@@ -504,7 +504,7 @@ PS_EPS_Init (PrintInitTypePtr Flags, char *Description, Boolean CreateEPS)
   else
     {
       PS_Flags.OffsetY = PS_Flags.SelectedMedia->Height - PS_Flags.OffsetY;
-      PS_Flags.OffsetY -= (Dimension) (PS_Flags.RotateFlag ? dx : dy);
+      PS_Flags.OffsetY -= (BDimension) (PS_Flags.RotateFlag ? dx : dy);
       fputs ("%!PS-Adobe-3.0\n", PS_Flags.FP);
     }
   fprintf (PS_Flags.FP, "%%%%Title: %s, %s\n", UNKNOWN (PCB->Name),

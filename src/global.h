@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.11 2004-03-01 05:10:05 haceaton Exp $
+ *  RCS: $Id: global.h,v 1.12 2004-03-04 23:41:02 haceaton Exp $
  */
 
 /* definition of types
@@ -624,7 +624,7 @@ typedef struct				/* needs and abilities of a driver */
 	Boolean		MirrorFlag,	/* several flags */
 			RotateFlag,
 			InvertFlag;
-	Dimension	OffsetX,	/* offset from lower/left corner */
+	BDimension	OffsetX,	/* offset from lower/left corner */
 			OffsetY;
 	float		Scale;		/* scaleing */
 	BoxType		BoundingBox;	/* bounding box of output */
