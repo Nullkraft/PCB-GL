@@ -22,7 +22,7 @@
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: misc.inc,v 1.2 2004-02-20 03:11:24 danmc Exp $
+#   RCS: $Id: misc.inc,v 1.3 2005-01-14 00:31:52 danmc Exp $
 #
 # misc packages
 #
@@ -313,7 +313,7 @@ define(`PKG_CRYSTAL',
 	define(`Y', `100')
 	define(`Y1', `eval(Y -50)')
 	define(`Y2', `eval(Y +50)')
-Element(0x00 "$1" "$2" "$3" X1 eval(Y2+20) 0 100 0x00)
+Element(0x00 "$1" "`$2'" "$3" X1 eval(Y2+20) 0 100 0x00)
 (
 	PIN(X1, Y, 60, 20, 1)
 	PIN(X2, Y, 60, 20, 2)
