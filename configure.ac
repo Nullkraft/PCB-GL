@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.10 2003-11-08 03:31:03 danmc Exp $
+dnl $Id: configure.ac,v 1.11 2003-11-08 05:12:12 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/pinout.c)
@@ -13,7 +13,7 @@ AC_PROG_YACC
 AC_PROG_INSTALL
 AC_CHECK_PROGS(M4, gm4 m4)
 
-AC_PATH_PROG(WISH, wish wish83 wish8.3 wish80 wish8.0 cygwish83 cygwish80,[none])
+AC_PATH_PROGS(WISH, wish wish83 wish8.3 wish80 wish8.0 cygwish83 cygwish80,[none])
 if test "X$WISH" = "Xnone" ; then
 	AC_ERROR([Did not find the wish executible.  You need to make sure
 	that tcl is installed on your system and that wish is in your path])
