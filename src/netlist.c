@@ -1,4 +1,4 @@
-/* $Id: netlist.c,v 1.7 2004-01-05 01:40:24 haceaton Exp $ */
+/* $Id: netlist.c,v 1.8 2004-03-14 06:26:49 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -141,9 +141,7 @@ UpdateConnectionSelector (LibraryMenuTypePtr Menu)
   FreeSelectorEntries (&ConnectionSelector);
   ENTRY_LOOP (Menu, 
     {
-      AddEntryToSelector (MyStrdup
-			  (entry->ListEntry,
-			   "UpdateCircuitSelector()"),
+      AddEntryToSelector (entry->ListEntry,
 			  (XtPointer) entry, &ConnectionSelector);
     }
   );
