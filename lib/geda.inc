@@ -1,5 +1,5 @@
 # -*- m4 -*-
-#   $Id: geda.inc,v 1.16 2005-01-30 00:34:39 danmc Exp $
+#   $Id: geda.inc,v 1.17 2005-01-30 19:01:09 danmc Exp $
 #
 #   gEDA compatible footprint names
 #
@@ -39,6 +39,7 @@ define(`PKG_DIP32',  `PKG_N(`$1', `$2', `$3',  32,  600)');
 define(`PKG_DIP36',  `PKG_N(`$1', `$2', `$3',  36,  600)');
 define(`PKG_DIP40',  `PKG_N(`$1', `$2', `$3',  40,  600)');
 define(`PKG_DIP42',  `PKG_N(`$1', `$2', `$3',  42,  600)');
+define(`PKG_DIP44',  `PKG_N(`$1', `$2', `$3',  44,  600)');
 define(`PKG_DIP48',  `PKG_N(`$1', `$2', `$3',  48,  600)');
 ##  Dual in-line package, wide (900 mil)
 define(`PKG_DIP64',  `PKG_N(`$1', `$2', `$3',  64,  900)');
