@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1 2003-02-20 00:24:36 danmc Exp $
+## $Id: Makefile.am,v 1.2 2004-02-09 04:07:56 danmc Exp $
 ##
 
 ## XXX the tools should probably be cleaned up a bit and installed
@@ -15,5 +15,6 @@ TOOLS= \
 	pcb2ncap.tgz \
 	tgo2pcb.tcl \
 	MergePCBPS \
+	Merge_dimPCBPS \
 	PCB2HPGL 
 
