@@ -25,7 +25,7 @@
  *
  */
 
-static char *rcsid = "$Id: action.c,v 1.18 2004-02-06 21:59:04 haceaton Exp $";
+static char *rcsid = "$Id: action.c,v 1.19 2004-02-13 00:13:58 haceaton Exp $";
 
 /* action routines for output window
  */
@@ -2921,6 +2921,7 @@ ActionChangeSize (Widget W, XEvent * Event, String * Params, Cardinal * Num)
 	  break;
 
 	case F_SelectedNames:
+	  value /= 45;
 	  if (ChangeSelectedSize (ELEMENTNAME_TYPE, value, r))
 	    SetChangedFlag (True);
 	  break;

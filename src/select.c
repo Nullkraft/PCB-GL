@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: select.c,v 1.4 2003-12-30 02:18:51 haceaton Exp $";
+static char *rcsid = "$Id: select.c,v 1.5 2004-02-13 00:13:58 haceaton Exp $";
 
 /* select routines
  */
@@ -567,7 +567,7 @@ SelectedOperation (ObjectFunctionTypePtr F, Boolean Reset, int type)
     }
   );
 
-  /* elements; both text objects share one selection flag */
+  /* elements silkscreen */
   if (type & ELEMENT_TYPE && PCB->ElementOn)
     ELEMENT_LOOP (PCB->Data, 
     {
@@ -582,8 +582,12 @@ SelectedOperation (ObjectFunctionTypePtr F, Boolean Reset, int type)
 	  F->Element (element);
 	  changed = True;
 	}
-      if (F->ElementName &&
-	  TEST_FLAG (SELECTEDFLAG, &ELEMENT_TEXT (PCB, element)))
+    }
+  );
+  else if (type & ELEMENTNAME_TYPE && PCB->ElementOn && F->ElementName)
+    ELEMENT_LOOP (PCB->Data, 
+    { 
+      if (TEST_FLAG (SELECTEDFLAG, &ELEMENT_TEXT (PCB, element)))
 	{
 	  if (Reset)
 	    {
