@@ -23,7 +23,7 @@
 ##  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 ##  Thomas.Nau@rz.uni-ulm.de
 ##
-##  RCS: $Id: Makefile.am,v 1.4 2004-08-24 21:44:25 danmc Exp $
+##  RCS: $Id: Makefile.am,v 1.5 2004-08-27 01:53:53 danmc Exp $
 ##
 
 info_TEXINFOS=	pcb.texi
@@ -36,6 +36,7 @@ ps_docs=	${info_TEXINFOS:.texi=.ps} refcard.ps
 pdf_docs=	${info_TEXINFOS:.texi=.pdf} refcard.pdf
 
 EXTRA_DIST= \
+	${man_MANS} \
 	${html_docs} \
 	${ps_docs} \
 	${pdf_docs} \
