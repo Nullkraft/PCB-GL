@@ -1,4 +1,4 @@
-/* $Id: res_lex.l,v 1.4 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: res_lex.l,v 1.5 2004-08-30 11:21:05 danmc Exp $ */
 
 %{
 
@@ -18,11 +18,12 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: res_lex.l,v 1.4 2004-08-30 02:52:04 danmc Exp $");
+RCSID("$Id: res_lex.l,v 1.5 2004-08-30 11:21:05 danmc Exp $");
 
 #define YY_INPUT(buf,result,max_size) { result = res_parse_getchars(buf, max_size); }
 
 extern int res_lineno;
+extern int res_parse_getchars(char *buf, int max_size);
 
 %}
 
