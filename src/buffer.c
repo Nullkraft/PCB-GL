@@ -1,3 +1,5 @@
+/* $Id: buffer.c,v 1.17 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -23,9 +25,6 @@
  *  Thomas.Nau@rz.uni-ulm.de
  *
  */
-
-static char *rcsid =
-  "$Id: buffer.c,v 1.16 2004-04-19 21:20:12 haceaton Exp $";
 
 /* functions used by paste- and move/copy buffer
  */
@@ -61,6 +60,8 @@ static char *rcsid =
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: buffer.c,v 1.17 2004-08-30 02:52:04 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes

@@ -1,3 +1,5 @@
+/* $Id: drill.c,v 1.6 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -26,7 +28,6 @@
  *
  */
 
-static char *rcsid = "$Id: drill.c,v 1.5 2004-03-17 04:59:44 haceaton Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -39,6 +40,11 @@ static char *rcsid = "$Id: drill.c,v 1.5 2004-03-17 04:59:44 haceaton Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: drill.c,v 1.6 2004-08-30 02:52:04 danmc Exp $");
+
+
+
 
 /*
  * some local prototypes

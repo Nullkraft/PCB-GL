@@ -1,3 +1,5 @@
+/* $Id: file.c,v 1.18 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -23,8 +25,6 @@
  *  Thomas.Nau@rz.uni-ulm.de
  *
  */
-
-static char *rcsid = "$Id: file.c,v 1.17 2004-08-25 02:27:20 danmc Exp $";
 
 /* file save, load, merge ... routines
  * getpid() needs a cast to (int) to get rid of compiler warnings
@@ -74,6 +74,8 @@ static char *rcsid = "$Id: file.c,v 1.17 2004-08-25 02:27:20 danmc Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: file.c,v 1.18 2004-08-30 02:52:04 danmc Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------

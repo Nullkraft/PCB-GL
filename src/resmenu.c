@@ -1,4 +1,4 @@
-/* $Id: resmenu.c,v 1.11 2004-08-27 21:57:14 danmc Exp $ */
+/* $Id: resmenu.c,v 1.12 2004-08-30 02:52:04 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -24,6 +24,12 @@
 #include <X11/Xaw/SimpleMenu.h>
 #include <X11/Xaw/SmeBSB.h>
 #include <X11/Xaw/SmeLine.h>
+
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID("$Id: resmenu.c,v 1.12 2004-08-30 02:52:04 danmc Exp $");
 
 static Arg args[100];
 static int n;

@@ -1,3 +1,5 @@
+/* $Id: control.c,v 1.4 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -23,9 +25,6 @@
  *  Thomas.Nau@rz.uni-ulm.de
  *
  */
-
-static char *rcsid =
-  "$Id: control.c,v 1.3 2004-03-01 05:10:05 haceaton Exp $";
 
 /* control panel
  */
@@ -58,6 +57,8 @@ static char *rcsid =
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: control.c,v 1.4 2004-08-30 02:52:04 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * include bitmap data

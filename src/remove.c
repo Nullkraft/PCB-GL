@@ -1,3 +1,5 @@
+/* $Id: remove.c,v 1.13 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,8 +26,6 @@
  *
  */
 
-static char *rcsid =
-  "$Id: remove.c,v 1.12 2004-04-18 14:12:07 haceaton Exp $";
 
 /* functions used to remove vias, pins ...
  */
@@ -56,6 +56,9 @@ static char *rcsid =
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: remove.c,v 1.13 2004-08-30 02:52:04 danmc Exp $");
+
 
 /* ---------------------------------------------------------------------------
  * some local prototypes

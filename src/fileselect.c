@@ -1,3 +1,5 @@
+/* $Id: fileselect.c,v 1.4 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,8 +26,6 @@
  *
  */
 
-static char *rcsid =
-  "$Id: fileselect.c,v 1.3 2003-12-29 03:15:56 haceaton Exp $";
 
 /* file select box
  * some of the actions are local to this module
@@ -71,6 +71,9 @@ static char *rcsid =
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: fileselect.c,v 1.4 2004-08-30 02:52:04 danmc Exp $");
+
 
 /* ---------------------------------------------------------------------------
  * some local prototypes

@@ -1,3 +1,5 @@
+/* $Id: polygon.c,v 1.25 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,8 +26,6 @@
  *
  */
 
-static char *rcsid =
-  "$Id: polygon.c,v 1.24 2004-04-18 14:12:07 haceaton Exp $";
 
 /* special polygon editing routines
  */
@@ -58,6 +58,9 @@ static char *rcsid =
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: polygon.c,v 1.25 2004-08-30 02:52:04 danmc Exp $");
+
 
 /* ---------------------------------------------------------------------------
  * local prototypes

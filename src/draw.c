@@ -1,3 +1,5 @@
+/* $Id: draw.c,v 1.37 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,7 +26,6 @@
  *
  */
 
-static char *rcsid = "$Id: draw.c,v 1.36 2004-08-29 01:46:43 danmc Exp $";
 
 /* drawing routines
  */
@@ -56,6 +57,8 @@ static char *rcsid = "$Id: draw.c,v 1.36 2004-08-29 01:46:43 danmc Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: draw.c,v 1.37 2004-08-30 02:52:04 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types

@@ -1,3 +1,5 @@
+/* $Id: change.c,v 1.23 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -23,9 +25,6 @@
  *  Thomas.Nau@rz.uni-ulm.de
  *
  */
-
-static char *rcsid =
-  "$Id: change.c,v 1.22 2004-05-29 18:57:26 danmc Exp $";
 
 /* functions used to change object properties
  *
@@ -62,6 +61,8 @@ static char *rcsid =
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: change.c,v 1.23 2004-08-30 02:52:04 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes

@@ -1,4 +1,4 @@
-/* $Id: djopt.c,v 1.18 2004-06-05 02:21:00 djdelorie Exp $ */
+/* $Id: djopt.c,v 1.19 2004-08-30 02:52:04 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -47,6 +47,12 @@
 #include "move.h"
 #include "draw.h"
 #include "undo.h"
+
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+     
+RCSID("$Id: djopt.c,v 1.19 2004-08-30 02:52:04 danmc Exp $");
 
 #ifndef HAVE_RINT
 #define rint(x)  (ceil((x) - 0.5))

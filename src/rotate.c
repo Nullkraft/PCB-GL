@@ -1,3 +1,5 @@
+/* $Id: rotate.c,v 1.11 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,7 +26,6 @@
  *
  */
 
-static char *rcsid = "$Id: rotate.c,v 1.10 2004-04-18 14:12:07 haceaton Exp $";
 
 /* functions used to rotate pins, elements ...
  */
@@ -54,6 +55,11 @@ static char *rcsid = "$Id: rotate.c,v 1.10 2004-04-18 14:12:07 haceaton Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: rotate.c,v 1.11 2004-08-30 02:52:04 danmc Exp $");
+
+
+
 
 /* ---------------------------------------------------------------------------
  * some local prototypes

@@ -1,3 +1,5 @@
+/* $Id: move.c,v 1.22 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,7 +26,6 @@
  *
  */
 
-static char *rcsid = "$Id: move.c,v 1.21 2004-04-19 21:20:12 haceaton Exp $";
 
 /* functions used to move pins, elements ...
  */
@@ -55,6 +56,11 @@ static char *rcsid = "$Id: move.c,v 1.21 2004-04-19 21:20:12 haceaton Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: move.c,v 1.22 2004-08-30 02:52:04 danmc Exp $");
+
+
+
 
 /* ---------------------------------------------------------------------------
  * some local prototypes

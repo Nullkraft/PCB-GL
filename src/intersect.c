@@ -1,4 +1,4 @@
-/* $Id: intersect.c,v 1.4 2004-03-14 06:30:53 haceaton Exp $ */
+/* $Id: intersect.c,v 1.5 2004-08-30 02:52:04 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -50,6 +50,9 @@
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: intersect.c,v 1.5 2004-08-30 02:52:04 danmc Exp $");
+
 
 /* ---------------------------------------------------------------------------
  * some local prototypes

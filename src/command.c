@@ -1,3 +1,5 @@
+/* $Id: command.c,v 1.4 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -23,9 +25,6 @@
  *  Thomas.Nau@rz.uni-ulm.de
  *
  */
-
-static char *rcsid =
-  "$Id: command.c,v 1.3 2004-01-14 03:10:26 haceaton Exp $";
 
 /* executes commands from user
  */
@@ -58,6 +57,8 @@ static char *rcsid =
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: command.c,v 1.4 2004-08-30 02:52:04 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types

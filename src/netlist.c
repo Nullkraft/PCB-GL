@@ -1,4 +1,4 @@
-/* $Id: netlist.c,v 1.9 2004-03-17 04:59:44 haceaton Exp $ */
+/* $Id: netlist.c,v 1.10 2004-08-30 02:52:04 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -68,6 +68,9 @@
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: netlist.c,v 1.10 2004-08-30 02:52:04 danmc Exp $");
+
 
 /* ---------------------------------------------------------------------------
  * some local prototypes

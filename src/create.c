@@ -1,3 +1,5 @@
+/* $Id: create.c,v 1.15 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -23,9 +25,6 @@
  *  Thomas.Nau@rz.uni-ulm.de
  *
  */
-
-static char *rcsid =
-  "$Id: create.c,v 1.14 2004-03-26 20:44:14 haceaton Exp $";
 
 /* functions used to create vias, pins ...
  */
@@ -57,6 +56,8 @@ static char *rcsid =
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: create.c,v 1.15 2004-08-30 02:52:04 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local identifiers

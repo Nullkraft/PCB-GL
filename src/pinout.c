@@ -1,3 +1,5 @@
+/* $Id: pinout.c,v 1.8 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,7 +26,6 @@
  *
  */
 
-static char *rcsid = "$Id: pinout.c,v 1.7 2004-03-17 04:59:44 haceaton Exp $";
 
 /* pinout routines */
 
@@ -57,6 +58,11 @@ static char *rcsid = "$Id: pinout.c,v 1.7 2004-03-17 04:59:44 haceaton Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: pinout.c,v 1.8 2004-08-30 02:52:04 danmc Exp $");
+
+
+
 
 /* ---------------------------------------------------------------------------
  * some local types

@@ -1,3 +1,5 @@
+/* $Id: data.c,v 1.6 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,8 +26,6 @@
  *
  */
 
-static char *rcsid = "$Id: data.c,v 1.5 2004-02-27 06:16:49 haceaton Exp $";
-
 /* just defines common identifiers
  */
 #ifdef HAVE_CONFIG_H
@@ -39,6 +39,8 @@ static char *rcsid = "$Id: data.c,v 1.5 2004-02-27 06:16:49 haceaton Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: data.c,v 1.6 2004-08-30 02:52:04 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some shared identifiers

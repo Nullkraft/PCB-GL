@@ -1,3 +1,5 @@
+/* $Id: parse_l.l,v 1.5 2004-08-30 02:52:04 danmc Exp $ */
+
 %{
 /*
  *                            COPYRIGHT
@@ -25,10 +27,12 @@
  *
  */
 
-static	char	*rcsid = "$Id: parse_l.l,v 1.4 2004-03-05 02:22:52 haceaton Exp $";
-
 /* lexical definitions to parse ASCII input of PCB and Element description
  */
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,9 +42,14 @@ static	char	*rcsid = "$Id: parse_l.l,v 1.4 2004-03-05 02:22:52 haceaton Exp $";
 #include <unistd.h>
 #endif
 
-#ifdef DMALLOC
+#include "global.h"
+
+#ifdef HAVE_LIBDMALLOC
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
+
+RCSID("$Id: parse_l.l,v 1.5 2004-08-30 02:52:04 danmc Exp $");
+
 
 #include "global.h"
 #include "crosshair.h"

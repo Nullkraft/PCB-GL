@@ -1,4 +1,4 @@
-/* $Id: heap.c,v 1.3 2004-02-02 01:03:34 haceaton Exp $ */
+/* $Id: heap.c,v 1.4 2004-08-30 02:52:04 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -48,6 +48,9 @@
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: heap.c,v 1.4 2004-08-30 02:52:04 danmc Exp $");
+
 
 /* define this for more thorough self-checking of data structures */
 #undef SLOW_ASSERTIONS

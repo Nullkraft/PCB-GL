@@ -1,3 +1,5 @@
+/* $Id: action.c,v 1.48 2004-08-30 02:52:03 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,8 +26,6 @@
  *  haceaton@aplcomm.jhuapl.edu
  *
  */
-
-static char *rcsid = "$Id: action.c,v 1.47 2004-08-27 22:01:43 danmc Exp $";
 
 /* action routines for output window
  */
@@ -84,6 +84,8 @@ static char *rcsid = "$Id: action.c,v 1.47 2004-08-27 22:01:43 danmc Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: action.c,v 1.48 2004-08-30 02:52:03 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types

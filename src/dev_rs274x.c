@@ -1,3 +1,5 @@
+/* $Id: dev_rs274x.c,v 1.24 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -35,8 +37,6 @@
  *
  */
 
-static char *rcsid =
-  "$Id: dev_rs274x.c,v 1.23 2004-08-27 22:01:58 danmc Exp $";
 
 /*
  * Gerber/RS-274X device driver
@@ -73,9 +73,7 @@ static char *rcsid =
 #include <dmalloc.h>
 #endif
 
-#ifdef HAVE_LIBDMALLOC
-#include <dmalloc.h>
-#endif
+RCSID("$Id: dev_rs274x.c,v 1.24 2004-08-30 02:52:04 danmc Exp $");
 
 /*----------------------------------------------------------------------------*/
 /* Private data structures                                                    */

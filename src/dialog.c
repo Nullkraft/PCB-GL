@@ -1,3 +1,5 @@
+/* $Id: dialog.c,v 1.7 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,7 +26,6 @@
  *
  */
 
-static char *rcsid = "$Id: dialog.c,v 1.6 2004-04-27 19:08:25 djdelorie Exp $";
 
 /* dialog routines
  */
@@ -54,6 +55,11 @@ static char *rcsid = "$Id: dialog.c,v 1.6 2004-04-27 19:08:25 djdelorie Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: dialog.c,v 1.7 2004-08-30 02:52:04 danmc Exp $");
+
+
+
 
 /* ---------------------------------------------------------------------------
  * include the icon data

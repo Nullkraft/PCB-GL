@@ -1,3 +1,5 @@
+/* $Id: mymem.c,v 1.10 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,7 +26,6 @@
  *
  */
 
-static char *rcsid = "$Id: mymem.c,v 1.9 2004-03-20 23:01:33 haceaton Exp $";
 
 /* memory management functions
  */
@@ -40,9 +41,6 @@ static char *rcsid = "$Id: mymem.c,v 1.9 2004-03-20 23:01:33 haceaton Exp $";
 #include <memory.h>
 #include <ctype.h>
 #include <sys/types.h>
-#ifdef DMALLOC
-# include <dmalloc.h>		/* see http://dmalloc.com */
-#endif
 
 #include "data.h"
 #include "global.h"
@@ -55,6 +53,8 @@ static char *rcsid = "$Id: mymem.c,v 1.9 2004-03-20 23:01:33 haceaton Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: mymem.c,v 1.10 2004-08-30 02:52:04 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * local prototypes

@@ -1,4 +1,4 @@
-/* $Id: output.c,v 1.14 2004-08-27 21:57:14 danmc Exp $ */
+/* $Id: output.c,v 1.15 2004-08-30 02:52:04 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -54,6 +54,9 @@
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: output.c,v 1.15 2004-08-30 02:52:04 danmc Exp $");
+
 
 /* ----------------------------------------------------------------------
  * Function prototype declarations

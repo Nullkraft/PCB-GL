@@ -1,3 +1,5 @@
+/* $Id: report.c,v 1.19 2004-08-30 02:52:04 danmc Exp $ */
+
 #include "rtree.h"
 /*
  *                            COPYRIGHT
@@ -27,8 +29,6 @@
  *
  */
 
-static char *rcsid =
-  "$Id: report.c,v 1.18 2004-03-20 23:02:40 haceaton Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -57,6 +57,9 @@ static char *rcsid =
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: report.c,v 1.19 2004-08-30 02:52:04 danmc Exp $");
+
 
 static long int ReturnCode;	/* filled in by dialog */
 

@@ -1,3 +1,5 @@
+/* $Id: sizedialog.c,v 1.8 2004-08-30 02:52:06 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,8 +26,6 @@
  *
  */
 
-static char *rcsid =
-  "$Id: sizedialog.c,v 1.7 2004-04-30 01:49:21 danmc Exp $";
 
 /* size dialog routines
  */
@@ -60,6 +60,9 @@ static char *rcsid =
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: sizedialog.c,v 1.8 2004-08-30 02:52:06 danmc Exp $");
+
 
 /* ---------------------------------------------------------------------------
  * define resource for X11R4 (names have changed from R4 to R5)

@@ -1,3 +1,5 @@
+/* $Id: search.c,v 1.16 2004-08-30 02:52:06 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,8 +26,6 @@
  *
  */
 
-static char *rcsid =
-  "$Id: search.c,v 1.15 2004-03-20 23:01:33 haceaton Exp $";
 
 /* search routines
  * some of the functions use dummy parameters
@@ -51,6 +51,9 @@ static char *rcsid =
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: search.c,v 1.16 2004-08-30 02:52:06 danmc Exp $");
+
 
 /* ---------------------------------------------------------------------------
  * some local identifiers

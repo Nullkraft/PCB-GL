@@ -1,3 +1,5 @@
+/* $Id: undo.c,v 1.12 2004-08-30 02:52:06 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -23,7 +25,6 @@
  *  Thomas.Nau@rz.uni-ulm.de
  *
  */
-static char *rcsid = "$Id: undo.c,v 1.11 2004-07-02 02:02:53 haceaton Exp $";
 
 /* functions used to undo operations
  *
@@ -70,6 +71,8 @@ static char *rcsid = "$Id: undo.c,v 1.11 2004-07-02 02:02:53 haceaton Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: undo.c,v 1.12 2004-08-30 02:52:06 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local data types

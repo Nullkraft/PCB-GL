@@ -1,3 +1,5 @@
+/* $Id: copy.c,v 1.9 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -23,8 +25,6 @@
  *  Thomas.Nau@rz.uni-ulm.de
  *
  */
-
-static char *rcsid = "$Id: copy.c,v 1.8 2004-04-18 14:12:07 haceaton Exp $";
 
 /* functions used to copy pins, elements ...
  * it's necessary to copy data by calling create... since the base pointer
@@ -55,6 +55,8 @@ static char *rcsid = "$Id: copy.c,v 1.8 2004-04-18 14:12:07 haceaton Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: copy.c,v 1.9 2004-08-30 02:52:04 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes

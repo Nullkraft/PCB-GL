@@ -1,3 +1,5 @@
+/* $Id: rubberband.c,v 1.11 2004-08-30 02:52:06 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,8 +26,6 @@
  *
  */
 
-static char *rcsid =
-  "$Id: rubberband.c,v 1.10 2004-07-08 01:32:39 danmc Exp $";
 
 /* functions used by 'rubberband moves'
  */
@@ -57,6 +57,9 @@ static char *rcsid =
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: rubberband.c,v 1.11 2004-08-30 02:52:06 danmc Exp $");
+
 
 /* ---------------------------------------------------------------------------
  * some local prototypes

@@ -1,3 +1,5 @@
+/* $Id: log.c,v 1.3 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,7 +26,6 @@
  *
  */
 
-static char *rcsid = "$Id: log.c,v 1.2 2003-12-29 03:15:56 haceaton Exp $";
 
 /* logging routines
  */
@@ -54,6 +55,11 @@ static char *rcsid = "$Id: log.c,v 1.2 2003-12-29 03:15:56 haceaton Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: log.c,v 1.3 2004-08-30 02:52:04 danmc Exp $");
+
+
+
 
 /* ---------------------------------------------------------------------------
  * some local identifiers

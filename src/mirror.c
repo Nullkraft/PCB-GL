@@ -1,3 +1,5 @@
+/* $Id: mirror.c,v 1.7 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,7 +26,6 @@
  *
  */
 
-static char *rcsid = "$Id: mirror.c,v 1.6 2004-03-17 04:59:44 haceaton Exp $";
 
 /* functions used to change the mirror flag of an object
  *
@@ -51,6 +52,11 @@ static char *rcsid = "$Id: mirror.c,v 1.6 2004-03-17 04:59:44 haceaton Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: mirror.c,v 1.7 2004-08-30 02:52:04 danmc Exp $");
+
+
+
 
 /* ---------------------------------------------------------------------------
  * mirrors the coordinates of an element

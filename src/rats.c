@@ -1,4 +1,4 @@
-/* $Id: rats.c,v 1.14 2004-04-29 23:50:22 danmc Exp $ */
+/* $Id: rats.c,v 1.15 2004-08-30 02:52:04 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -59,6 +59,9 @@
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: rats.c,v 1.15 2004-08-30 02:52:04 danmc Exp $");
+
 
 #define TRIEDFIRST 0x1
 #define BESTFOUND 0x2

@@ -1,3 +1,5 @@
+/* $Id: error.c,v 1.7 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,7 +26,6 @@
  *
  */
 
-static char *rcsid = "$Id: error.c,v 1.6 2004-03-10 00:10:13 haceaton Exp $";
 
 /* error and debug funtions
  * getpid() needs a cast to (int) to get rid of compiler warnings
@@ -61,6 +62,11 @@ static char *rcsid = "$Id: error.c,v 1.6 2004-03-10 00:10:13 haceaton Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: error.c,v 1.7 2004-08-30 02:52:04 danmc Exp $");
+
+
+
 
 /* ----------------------------------------------------------------------
  * some external identifiers

@@ -1,3 +1,5 @@
+/* $Id: line.c,v 1.4 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -23,7 +25,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: line.c,v 1.3 2004-03-18 15:33:48 haceaton Exp $
  */
 
 #define NUDGE (TO_PCB (6))
@@ -42,6 +43,12 @@
 #include "line.h"
 #include "misc.h"
 #include "rtree.h"
+
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID("$Id: line.c,v 1.4 2004-08-30 02:52:04 danmc Exp $");
 
 static float drc_lines (PointTypePtr end, Boolean way);
 

@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.21 2004-08-27 00:58:28 danmc Exp $
+ *  RCS: $Id: global.h,v 1.22 2004-08-30 02:52:04 danmc Exp $
  */
 
 /* definition of types
@@ -667,4 +667,21 @@ typedef struct
 #define UNDO_CHANGECLEARSIZE		0x1000	/* change clearance size */
 #define UNDO_CHANGEMASKSIZE		0x2000	/* change mask size */
 
-#endif
+
+/* ---------------------------------------------------------------------------
+ * add a macro for wrapping RCS ID's in so that ident will still work
+ * but we won't get as many compiler warnings
+ */
+
+#ifndef GCC_VERSION
+#define GCC_VERSION (__GNUC__ * 1000 + __GNUC_MINOR__)
+#endif /* GCC_VERSION */
+
+#if GCC_VERSION > 2007
+#define ATTRIBUTE_UNUSED __attribute__((unused)) 
+#endif 
+
+#define RCSID(x) static char *rcsid  ATTRIBUTE_UNUSED = x
+
+#endif /* __GLOBAL_INCLUDED__  */
+

@@ -1,4 +1,4 @@
-/* $Id: vector.c,v 1.3 2004-01-02 05:02:14 danmc Exp $ */
+/* $Id: vector.c,v 1.4 2004-08-30 02:52:06 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -44,14 +44,14 @@
 #include <string.h>
 #endif
 
+#include "global.h"
 #include "vector.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
 
-#define MAX(x, y) (((x)>(y)) ? (x) : (y))
-#define MIN(x, y) (((x)<(y)) ? (x) : (y))
+RCSID("$Id: vector.c,v 1.4 2004-08-30 02:52:06 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes

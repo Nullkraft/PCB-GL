@@ -1,3 +1,5 @@
+/* $Id: selector.c,v 1.3 2004-08-30 02:52:06 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,7 +26,6 @@
  *
  */
 
-static char *rcsid = "$Id: selector.c,v 1.2 2004-04-29 23:50:22 danmc Exp $";
 
 /* selector routines */
 
@@ -54,6 +55,11 @@ static char *rcsid = "$Id: selector.c,v 1.2 2004-04-29 23:50:22 danmc Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: selector.c,v 1.3 2004-08-30 02:52:06 danmc Exp $");
+
+
+
 
 /* ---------------------------------------------------------------------------
  * some local prototypes

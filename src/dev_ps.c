@@ -1,3 +1,5 @@
+/* $Id: dev_ps.c,v 1.13 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -30,8 +32,6 @@
  * silkscreen layer. Perhaps the design is not the best.
  */
 
-static char *rcsid = "$Id: dev_ps.c,v 1.12 2004-05-14 21:23:00 danmc Exp $";
-
 /* PostScript device driver
  * code is shared for EPS and PS output
  */
@@ -58,6 +58,8 @@ static char *rcsid = "$Id: dev_ps.c,v 1.12 2004-05-14 21:23:00 danmc Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: dev_ps.c,v 1.13 2004-08-30 02:52:04 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some defines

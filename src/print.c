@@ -1,3 +1,5 @@
+/* $Id: print.c,v 1.27 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -30,7 +32,6 @@
  * silkscreen layer. Perhaps the design is not the best.
  */
 
-static char *rcsid = "$Id: print.c,v 1.26 2004-07-17 03:14:32 haceaton Exp $";
 
 /* printing routines
  */
@@ -66,6 +67,11 @@ static char *rcsid = "$Id: print.c,v 1.26 2004-07-17 03:14:32 haceaton Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: print.c,v 1.27 2004-08-30 02:52:04 danmc Exp $");
+
+
+
 
 /* ---------------------------------------------------------------------------
  * some local identifiers

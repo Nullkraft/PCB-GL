@@ -1,4 +1,4 @@
-/* $Id: autoroute.c,v 1.22 2004-06-15 13:32:28 haceaton Exp $ */
+/* $Id: autoroute.c,v 1.23 2004-08-30 02:52:04 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -74,6 +74,9 @@
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: autoroute.c,v 1.23 2004-08-30 02:52:04 danmc Exp $");
+
 /* #defines to enable some debugging output */
 #define ROUTE_VERBOSE
 

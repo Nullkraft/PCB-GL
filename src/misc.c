@@ -1,3 +1,5 @@
+/* $Id: misc.c,v 1.30 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,7 +26,6 @@
  *
  */
 
-static char *rcsid = "$Id: misc.c,v 1.29 2004-08-27 00:58:29 danmc Exp $";
 
 /* misc functions used by several modules
  */
@@ -74,6 +75,11 @@ static char *rcsid = "$Id: misc.c,v 1.29 2004-08-27 00:58:29 danmc Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: misc.c,v 1.30 2004-08-30 02:52:04 danmc Exp $");
+
+
+
 
 /*	forward declarations	*/
 static char *BumpName (char *);

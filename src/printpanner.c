@@ -1,3 +1,5 @@
+/* $Id: printpanner.c,v 1.6 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,8 +26,6 @@
  *
  */
 
-static char *rcsid =
-  "$Id: printpanner.c,v 1.5 2004-03-20 23:01:33 haceaton Exp $";
 
 /* print dialog panner routines
  * only available for X11R5 and later
@@ -51,6 +51,9 @@ static char *rcsid =
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: printpanner.c,v 1.6 2004-08-30 02:52:04 danmc Exp $");
+
 
 /* ---------------------------------------------------------------------------
  * some local identifiers

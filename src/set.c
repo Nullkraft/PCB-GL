@@ -1,3 +1,5 @@
+/* $Id: set.c,v 1.19 2004-08-30 02:52:06 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,7 +26,6 @@
  *
  */
 
-static char *rcsid = "$Id: set.c,v 1.18 2004-04-27 19:08:25 djdelorie Exp $";
 
 /* routines to update widgets and global settings
  * (except output window and dialogs)
@@ -62,6 +63,11 @@ static char *rcsid = "$Id: set.c,v 1.18 2004-04-27 19:08:25 djdelorie Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: set.c,v 1.19 2004-08-30 02:52:06 danmc Exp $");
+
+
+
 
 static int mode_position = 0;
 static int mode_stack[MAX_MODESTACK_DEPTH];

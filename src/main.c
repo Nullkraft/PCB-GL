@@ -1,3 +1,5 @@
+/* $Id: main.c,v 1.22 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,7 +26,6 @@
  *
  */
 
-static char *rcsid = "$Id: main.c,v 1.21 2004-08-27 21:57:05 danmc Exp $";
 
 /* main program, initializes some stuff and handles user input
  */
@@ -77,6 +78,11 @@ static char *rcsid = "$Id: main.c,v 1.21 2004-08-27 21:57:05 danmc Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: main.c,v 1.22 2004-08-30 02:52:04 danmc Exp $");
+
+
+
 
 /* ---------------------------------------------------------------------------
  * icon data as created by 'bitmap'

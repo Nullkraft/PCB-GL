@@ -1,3 +1,5 @@
+/* $Id: printdialog.c,v 1.4 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,8 +26,6 @@
  *
  */
 
-static char *rcsid =
-  "$Id: printdialog.c,v 1.3 2004-03-04 23:41:02 haceaton Exp $";
 
 /* print dialog routines
  */
@@ -60,6 +60,9 @@ static char *rcsid =
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: printdialog.c,v 1.4 2004-08-30 02:52:04 danmc Exp $");
+
 
 /* ---------------------------------------------------------------------------
  * define resource for X11R4 (names have changed from R4 to R5)

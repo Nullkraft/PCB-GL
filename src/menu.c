@@ -1,3 +1,5 @@
+/* $Id: menu.c,v 1.33 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,7 +26,6 @@
  *
  */
 
-static char *rcsid = "$Id: menu.c,v 1.32 2004-06-25 22:58:21 djdelorie Exp $";
 
 /* initializes menus and handles callbacks
  */
@@ -66,6 +67,11 @@ static char *rcsid = "$Id: menu.c,v 1.32 2004-06-25 22:58:21 djdelorie Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: menu.c,v 1.33 2004-08-30 02:52:04 danmc Exp $");
+
+
+
 
 #include "pcb-menu.h"
 

@@ -1,4 +1,4 @@
-/* $Id: res_lex.l,v 1.3 2004-04-29 02:21:29 danmc Exp $ */
+/* $Id: res_lex.l,v 1.4 2004-08-30 02:52:04 danmc Exp $ */
 
 %{
 
@@ -10,8 +10,15 @@
 #include <string.h>
 #endif
 
+#include "global.h"
 #include "resource.h"
 #include "res_parse.h"
+
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID("$Id: res_lex.l,v 1.4 2004-08-30 02:52:04 danmc Exp $");
 
 #define YY_INPUT(buf,result,max_size) { result = res_parse_getchars(buf, max_size); }
 

@@ -1,3 +1,5 @@
+/* $Id: select.c,v 1.11 2004-08-30 02:52:06 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,7 +26,6 @@
  *
  */
 
-static char *rcsid = "$Id: select.c,v 1.10 2004-03-17 04:59:45 haceaton Exp $";
 
 /* select routines
  */
@@ -54,6 +55,11 @@ static char *rcsid = "$Id: select.c,v 1.10 2004-03-17 04:59:45 haceaton Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: select.c,v 1.11 2004-08-30 02:52:06 danmc Exp $");
+
+
+
 
 /* ---------------------------------------------------------------------------
  * toggles the selection of any kind of object

@@ -1,4 +1,5 @@
-/* $Id: rtree.c,v 1.17 2004-08-27 22:04:18 danmc Exp $ */
+/* $Id: rtree.c,v 1.18 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -55,6 +56,9 @@
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: rtree.c,v 1.18 2004-08-30 02:52:04 danmc Exp $");
+
 
 #define SLOW_ASSERTS
 /* All rectangles are closed. i.e. they contain both corner points.

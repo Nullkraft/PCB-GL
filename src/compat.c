@@ -1,4 +1,4 @@
-/* $Id: compat.c,v 1.1 2004-02-15 07:46:31 danmc Exp $ */
+/* $Id: compat.c,v 1.2 2004-08-30 02:52:04 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -28,6 +28,13 @@
 
 #include <math.h>
 #include "compat.h"
+#include "global.h"
+
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID("$Id: compat.c,v 1.2 2004-08-30 02:52:04 danmc Exp $");
 
 #ifndef HAVE_EXPF
 float expf(float x)

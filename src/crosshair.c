@@ -1,3 +1,5 @@
+/* $Id: crosshair.c,v 1.13 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,9 +26,6 @@
  *
  */
 
-static char *rcsid =
-  "$Id: crosshair.c,v 1.12 2004-03-17 04:59:44 haceaton Exp $";
-
 /* crosshair stuff
  */
 
@@ -52,6 +51,8 @@ static char *rcsid =
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: crosshair.c,v 1.13 2004-08-30 02:52:04 danmc Exp $");
 
 #define ABS(x) (((x)<0)?-(x):(x))
 

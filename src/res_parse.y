@@ -1,8 +1,10 @@
-/* $Id: res_parse.y,v 1.5 2004-07-31 03:26:39 danmc Exp $ */
+/* $Id: res_parse.y,v 1.6 2004-08-30 02:52:04 danmc Exp $ */
 
 %{
 
+#ifdef HAVE_CONFIG_H
 #include "config.h"
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,8 +18,15 @@
 
   /* #define YYSTYPE void * */
 
+#include "global.h"
 #include "resource.h"
 #include "res_parse.h"
+
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID("$Id: res_parse.y,v 1.6 2004-08-30 02:52:04 danmc Exp $");
 
 static Resource *parsed_res;
 static Resource *current_res;

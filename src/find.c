@@ -1,3 +1,5 @@
+/* $Id: find.c,v 1.31 2004-08-30 02:52:04 danmc Exp $ */
+
 /*
  *
  *                            COPYRIGHT
@@ -25,7 +27,6 @@
  *
  */
 
-static char *rcsid = "$Id: find.c,v 1.30 2004-07-31 03:29:14 danmc Exp $";
 
 /*
  * short description:
@@ -96,6 +97,11 @@ static char *rcsid = "$Id: find.c,v 1.30 2004-07-31 03:29:14 danmc Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: find.c,v 1.31 2004-08-30 02:52:04 danmc Exp $");
+
+
+
 
 /* ---------------------------------------------------------------------------
  * some local macros

@@ -1,4 +1,4 @@
-/* $Id: gui.c,v 1.5 2004-04-27 19:08:25 djdelorie Exp $ */
+/* $Id: gui.c,v 1.6 2004-08-30 02:52:04 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -45,6 +45,9 @@
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+RCSID("$Id: gui.c,v 1.6 2004-08-30 02:52:04 danmc Exp $");
+
 
 #define DEFAULT_CURSORSHAPE	XC_crosshair
 #define XC_Clockwise		257
