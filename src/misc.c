@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: misc.c,v 1.22 2004-04-27 19:08:25 djdelorie Exp $";
+static char *rcsid = "$Id: misc.c,v 1.23 2004-04-28 22:42:22 danmc Exp $";
 
 /* misc functions used by several modules
  */
@@ -1445,12 +1445,12 @@ Concat (const char *first, ...)
 {
   char *rv;
   int len;
+  va_list a;
 
   len = strlen(first);
   rv = (char *) malloc (len + 1);
   strcpy (rv, first);
 
-  va_list a;
   va_start (a, first);
   while (1)
     {
