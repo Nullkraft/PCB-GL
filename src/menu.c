@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: menu.c,v 1.17 2004-02-05 22:04:21 haceaton Exp $";
+static char *rcsid = "$Id: menu.c,v 1.18 2004-02-13 05:54:57 haceaton Exp $";
 
 /* initializes menus and handles callbacks
  */
@@ -421,6 +421,9 @@ static PopupEntryType BufferMenuEntries[] = {
    NULL},
   {"rotate", "rotate buffer 90 deg CW", CB_Action,
    "Mode,PasteBuffer\n" "PasteBuffer,Rotate,3",
+   NULL},
+  {"mirror", "Mirror Buffer (up/down)", CB_Action,
+   "Mode,PasteBuffer\n" "PasteBuffer,Mirror",
    NULL},
   {"line", NULL, NULL, NULL, NULL},
   {"clear", "clear buffer", CB_Action, "PasteBuffer,Clear", NULL},

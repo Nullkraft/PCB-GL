@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: buffer.h,v 1.2 2004-01-05 01:40:24 haceaton Exp $
+ *  RCS: $Id: buffer.h,v 1.3 2004-02-13 05:54:57 haceaton Exp $
  */
 
 /* prototypes for buffer handling routines
@@ -46,6 +46,7 @@ Boolean	LoadLayoutToBuffer(BufferTypePtr, char *);
 void	RotateBuffer(BufferTypePtr, BYTE);
 void	SelectPasteBuffer(int);
 void	SwapBuffers(void);
+void	MirrorBuffer(BufferTypePtr);
 void	InitBuffers(void);
 void	*MoveObjectToBuffer(DataTypePtr, DataTypePtr, int,
 			void *, void *, void *);
