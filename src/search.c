@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: search.c,v 1.6 2004-01-05 01:40:24 haceaton Exp $";
+static char *rcsid = "$Id: search.c,v 1.7 2004-02-13 21:11:39 haceaton Exp $";
 
 /* search routines
  * some of the functions use dummy parameters
@@ -968,6 +968,12 @@ SearchObjectByLocation (int Type,
       HigherAvail = ELEMENT_TYPE;
     }
 
+  if (Type & RATLINE_TYPE && PCB->RatOn &&
+      SearchRatLineByLocation ((RatTypePtr *) Result1,
+			       (RatTypePtr *) Result2,
+			       (RatTypePtr *) Result3))
+    return (RATLINE_TYPE);
+
   for (i = -1; i < MAX_LAYER + 1; i++)
     {
       if (i < 0)
@@ -1053,12 +1059,6 @@ SearchObjectByLocation (int Type,
       *Result3 = r3;
       return (ELEMENTNAME_TYPE);
     }
-
-  if (Type & RATLINE_TYPE &&
-      SearchRatLineByLocation ((RatTypePtr *) Result1,
-			       (RatTypePtr *) Result2,
-			       (RatTypePtr *) Result3))
-    return (RATLINE_TYPE);
 
   if (HigherAvail & ELEMENT_TYPE)
     {
