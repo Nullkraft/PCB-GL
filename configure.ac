@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.11 2003-11-08 05:12:12 danmc Exp $
+dnl $Id: configure.ac,v 1.12 2003-12-01 00:28:09 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/pinout.c)
@@ -88,8 +88,9 @@ xlib_rpath=`echo $xlib_path | sed 's/-L/-R/g'`
 pcb_save_LIBS=$LIBS
 LIBS="$LIBS $X_LIBS"
 rpath=""
-for fl in "-R" "-R " "-rpath "; do
+for fl in "-R" "-R " "-rpath " "-Wl,-R" ; do
     xlib_rpath=`echo $xlib_path | sed "s/-L/$fl/g"`
+    LIBS="$pcb_save_LIBS $X_LIBS $xlib_rpath"
     AC_MSG_CHECKING([if the compiler accepts ${fl}path for runtime libraries])
     AC_LINK_IFELSE([AC_LANG_PROGRAM()],
 	AC_MSG_RESULT([yes])
