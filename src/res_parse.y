@@ -1,8 +1,15 @@
-/* $Id: res_parse.y,v 1.3 2004-04-29 02:21:29 danmc Exp $ */
+/* $Id: res_parse.y,v 1.4 2004-05-14 21:22:37 danmc Exp $ */
 
 %{
+
+#include "config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
 
 #define YYDEBUG 0
 #define YYERROR_VERBOSE 1
