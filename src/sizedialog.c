@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: sizedialog.c,v 1.1 2003-02-20 00:24:34 danmc Exp $";
+static char *rcsid = "$Id: sizedialog.c,v 1.2 2003-07-01 16:27:13 djdelorie Exp $";
 
 /* size dialog routines
  */
@@ -271,6 +271,10 @@ SizeDialog (void)
       Sliders[WIDTH_SLIDER].Min = box->X2;
       Sliders[HEIGHT_SLIDER].Min = box->Y2;
     }
+  if (Sliders[WIDTH_SLIDER].Min > Sliders[WIDTH_SLIDER].Value)
+    Sliders[WIDTH_SLIDER].Min = Sliders[WIDTH_SLIDER].Value;
+  if (Sliders[HEIGHT_SLIDER].Min > Sliders[HEIGHT_SLIDER].Value)
+    Sliders[HEIGHT_SLIDER].Min = Sliders[HEIGHT_SLIDER].Value;
 
   /* create a popup shell */
   popup = XtVaCreatePopupShell ("Sizes", transientShellWidgetClass,
