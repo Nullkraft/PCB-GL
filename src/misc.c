@@ -1,4 +1,3 @@
-#define DEBUGDISP
 /*
  *                            COPYRIGHT
  *
@@ -25,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: misc.c,v 1.8 2004-01-14 02:23:43 haceaton Exp $";
+static char *rcsid = "$Id: misc.c,v 1.9 2004-01-14 02:24:58 haceaton Exp $";
 
 /* misc functions used by several modules
  */
