@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: file.c,v 1.14 2004-03-20 17:01:38 haceaton Exp $";
+static char *rcsid = "$Id: file.c,v 1.15 2004-04-18 14:12:07 haceaton Exp $";
 
 /* file save, load, merge ... routines
  * getpid() needs a cast to (int) to get rid of compiler warnings
@@ -226,7 +226,7 @@ LoadPCB (char *Filename)
       SetChangedFlag (False);
       PCB->Filename = MyStrdup (Filename, "LoadPCB()");
       /* just in case a bad file saved file is loaded */
-      UpdatePIPFlags (NULL, NULL, NULL, NULL, False);
+      UpdatePIPFlags (NULL, NULL, NULL, False);
       UpdateSettingsOnScreen ();
       return (0);
     }

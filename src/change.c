@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: change.c,v 1.19 2004-03-20 23:01:33 haceaton Exp $";
+  "$Id: change.c,v 1.20 2004-04-18 14:12:07 haceaton Exp $";
 
 /* functions used to change object properties
  *
@@ -1090,7 +1090,7 @@ ChangePolyClear (LayerTypePtr Layer, PolygonTypePtr Polygon)
     return (NULL);
   AddObjectToFlagUndoList (POLYGON_TYPE, Layer, Polygon, Polygon);
   TOGGLE_FLAG (CLEARPOLYFLAG, Polygon);
-  UpdatePIPFlags (NULL, NULL, Layer, Polygon, True);
+  UpdatePIPFlags (NULL, NULL, Layer, True);
   DrawPolygon (Layer, Polygon, 0);
   return (Polygon);
 }
@@ -1111,7 +1111,7 @@ ChangeSelectedElementSide (void)
     if (TEST_FLAG (SELECTEDFLAG, element))
       {
 	change |= ChangeElementSide (element, 0);
-	UpdatePIPFlags (NULL, element, NULL, NULL, True);
+	UpdatePIPFlags (NULL, element, NULL, True);
       }
   }
   END_LOOP;

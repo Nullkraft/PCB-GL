@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: insert.c,v 1.9 2004-04-09 00:25:48 haceaton Exp $";
+static char *rcsid = "$Id: insert.c,v 1.10 2004-04-18 14:12:07 haceaton Exp $";
 
 /* functions used to insert points into objects
  */
@@ -192,7 +192,7 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
   if (Forcible || !RemoveExcessPolygonPoints (Layer, Polygon))
     {
       SetPolygonBoundingBox (Polygon);
-      UpdatePIPFlags (NULL, NULL, Layer, Polygon, True);
+      UpdatePIPFlags (NULL, NULL, Layer, True);
       DrawPolygon (Layer, Polygon, 0);
       Draw ();
     }

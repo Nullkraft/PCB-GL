@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: rotate.c,v 1.9 2004-03-20 23:01:33 haceaton Exp $";
+static char *rcsid = "$Id: rotate.c,v 1.10 2004-04-18 14:12:07 haceaton Exp $";
 
 /* functions used to rotate pins, elements ...
  */
@@ -231,7 +231,7 @@ RotateElementLowLevel (DataTypePtr Data, ElementTypePtr Element,
 	r_delete_entry (PCB->Data->pin_tree, (BoxType *) pin);
       ROTATE_PIN_LOWLEVEL (pin, X, Y, Number);
       if (PCB->Data == Data)
-	UpdatePIPFlags (pin, Element, NULL, NULL, True);
+	UpdatePIPFlags (pin, Element, NULL, True);
     }
   END_LOOP;
   PAD_LOOP (Element);

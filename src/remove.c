@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: remove.c,v 1.11 2004-03-20 23:01:33 haceaton Exp $";
+  "$Id: remove.c,v 1.12 2004-04-18 14:12:07 haceaton Exp $";
 
 /* functions used to remove vias, pins ...
  */
@@ -192,7 +192,7 @@ DestroyPolygonPoint (LayerTypePtr Layer,
     }
   Polygon->PointN--;
   SetPolygonBoundingBox (Polygon);
-  UpdatePIPFlags (NULL, NULL, Layer, NULL, True);
+  UpdatePIPFlags (NULL, NULL, Layer, True);
   return (Polygon);
 }
 
@@ -420,7 +420,7 @@ RemovePolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 	Draw ();
     }
   MoveObjectToRemoveUndoList (POLYGON_TYPE, Layer, Polygon, Polygon);
-  UpdatePIPFlags (NULL, NULL, Layer, NULL, True);
+  UpdatePIPFlags (NULL, NULL, Layer, True);
   return (NULL);
 }
 
@@ -458,7 +458,7 @@ RemovePolygonPoint (LayerTypePtr Layer,
   Polygon->PointN--;
   SetPolygonBoundingBox (Polygon);
   RemoveExcessPolygonPoints (Layer, Polygon);
-  UpdatePIPFlags (NULL, NULL, Layer, NULL, True);
+  UpdatePIPFlags (NULL, NULL, Layer, True);
   /* redraw polygon if necessary */
   if (Layer->On)
     {
