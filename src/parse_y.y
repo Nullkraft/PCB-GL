@@ -1,4 +1,4 @@
-/* $Id: parse_y.y,v 1.13 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: parse_y.y,v 1.14 2004-08-30 11:29:16 danmc Exp $ */
 
 %{
 /*
@@ -48,7 +48,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_y.y,v 1.13 2004-08-30 02:52:04 danmc Exp $");
+RCSID("$Id: parse_y.y,v 1.14 2004-08-30 11:29:16 danmc Exp $");
 
 static	LayerTypePtr	Layer;
 static	PolygonTypePtr	Polygon;
@@ -64,6 +64,8 @@ extern	ElementTypePtr	yyElement;
 extern	FontTypePtr		yyFont;
 extern	int				yylineno;		/* linenumber */
 extern	char			*yyfilename;	/* in this file */
+
+int yyerror(char *s);
 
 %}
 
