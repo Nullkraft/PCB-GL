@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: action.h,v 1.7 2005-01-13 22:08:17 danmc Exp $
+ *  RCS: $Id: action.h,v 1.8 2005-02-10 00:19:35 danmc Exp $
  */
 
 /* prototypes for action routines
@@ -44,6 +44,12 @@ void	EventMoveCrosshair(XMotionEvent *);
 void	ActionMarkCrosshair(Widget, XEvent *, String *, Cardinal *);
 void	ActionToggleHideName(Widget, XEvent *, String *, Cardinal *);
 void	ActionSetValue(Widget, XEvent *, String *, Cardinal *);
+void	ActionSetThermal(Widget, XEvent *, String *, Cardinal *);
+void	ActionClearThermal(Widget, XEvent *, String *, Cardinal *);
+void	ActionSetSquare(Widget, XEvent *, String *, Cardinal *);
+void	ActionClearSquare(Widget, XEvent *, String *, Cardinal *);
+void	ActionSetOctagon(Widget, XEvent *, String *, Cardinal *);
+void	ActionClearOctagon(Widget, XEvent *, String *, Cardinal *);
 void	ActionFinishInputDialog(Widget, XEvent *, String *, Cardinal *);
 void	ActionQuit(Widget, XEvent *, String *, Cardinal *);
 void	ActionConnection(Widget, XEvent *, String *, Cardinal *);
