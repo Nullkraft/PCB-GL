@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.2 2004-02-09 04:07:56 danmc Exp $
+## $Id: Makefile.am,v 1.3 2004-02-15 07:44:08 danmc Exp $
 ##
 
 ## XXX the tools should probably be cleaned up a bit and installed
@@ -9,6 +9,10 @@ tools_DATA=	${TOOLS}
 
 EXTRA_DIST= ${TOOLS}
 
+bin_SCRIPTS= \
+	MergePCBPS \
+	Merge_dimPCBPS 
+	
 TOOLS= \
 	apctools.zip \
 	gerbertotk.c \
