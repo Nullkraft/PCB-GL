@@ -1,3 +1,5 @@
+/* $Id: res_lex.l,v 1.2 2004-04-28 22:42:42 danmc Exp $ */
+
 %{
 
 #include "res_parse.h"

@@ -1,3 +1,5 @@
+/* $Id: res_parse.y,v 1.2 2004-04-28 22:42:42 danmc Exp $ */
+
 %{
 #include <stdio.h>
 
