@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.49 2004-09-21 01:48:09 haceaton Exp $ */
+/* $Id: action.c,v 1.50 2004-10-17 05:16:52 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -85,7 +85,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: action.c,v 1.49 2004-09-21 01:48:09 haceaton Exp $");
+RCSID("$Id: action.c,v 1.50 2004-10-17 05:16:52 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -3680,6 +3680,17 @@ ActionSelect (Widget W, XEvent * Event, String * Params, Cardinal * Num)
 	}
       RestoreCrosshair (True);
     }
+}
+
+/* FLAG(have_regex,FlagHaveRegex,0) */
+int 
+FlagHaveRegex (int parm)
+{
+#if defined(HAVE_REGCOMP) || defined(HAVE_RE_COMP)
+  return 1;
+#else
+  return 0;
+#endif
 }
 
 /* ---------------------------------------------------------------------------
