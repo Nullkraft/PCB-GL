@@ -1,4 +1,4 @@
-/* $Id: rotate.c,v 1.12 2005-01-03 12:57:00 danmc Exp $ */
+/* $Id: rotate.c,v 1.13 2005-02-02 01:59:29 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -56,7 +56,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: rotate.c,v 1.12 2005-01-03 12:57:00 danmc Exp $");
+RCSID("$Id: rotate.c,v 1.13 2005-02-02 01:59:29 danmc Exp $");
 
 
 
@@ -220,7 +220,7 @@ RotateElementLowLevel (DataTypePtr Data, ElementTypePtr Element,
    */
   ELEMENTTEXT_LOOP (Element);
     {
-      if (Data->name_tree[n])
+      if (Data && Data->name_tree[n])
         r_delete_entry (Data->name_tree[n], (BoxType *) text);
       RotateTextLowLevel (text, X, Y, Number);
     }
