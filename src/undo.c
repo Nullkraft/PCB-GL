@@ -23,7 +23,7 @@
  *  Thomas.Nau@rz.uni-ulm.de
  *
  */
-static char *rcsid = "$Id: undo.c,v 1.9 2004-02-28 23:44:19 haceaton Exp $";
+static char *rcsid = "$Id: undo.c,v 1.10 2004-03-17 04:59:45 haceaton Exp $";
 
 /* functions used to undo operations
  *
@@ -661,7 +661,7 @@ UndoInsertPoint (UndoListTypePtr Entry)
 	Entry->ID = polygon->ID;
 	Entry->Kind = POLYGON_TYPE;
 	Entry->Type = UNDO_REMOVE_POINT;
-	POLYGONPOINT_LOOP (polygon, 
+	POLYGONPOINT_LOOP (polygon);
 	  {
 	    if (pnt == point)
 	      {
@@ -669,7 +669,7 @@ UndoInsertPoint (UndoListTypePtr Entry)
 		break;
 	      }
 	  }
-	);
+	END_LOOP;
 	DestroyObject (PCB->Data, POLYGONPOINT_TYPE, layer, polygon, pnt);
 	if (andDraw && layer->On)
 	  DrawPolygon (layer, polygon, 0);

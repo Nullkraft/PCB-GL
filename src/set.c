@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: set.c,v 1.16 2004-03-14 06:29:50 haceaton Exp $";
+static char *rcsid = "$Id: set.c,v 1.17 2004-03-17 04:59:45 haceaton Exp $";
 
 /* routines to update widgets and global settings
  * (except output window and dialogs)
@@ -458,7 +458,7 @@ SetRouteStyle (char *name)
 {
   char *arg, num[10];
 
-  STYLE_LOOP (PCB, 
+  STYLE_LOOP (PCB);
     {
       if (name && strcmp (name, style->Name) == 0)
 	{
@@ -468,7 +468,7 @@ SetRouteStyle (char *name)
 	  break;
 	}
     }
-  );
+  END_LOOP;
 }
 
 void

@@ -1,4 +1,4 @@
-/* $Id: rtree.c,v 1.11 2004-03-17 00:29:06 danmc Exp $ */
+/* $Id: rtree.c,v 1.12 2004-03-17 04:59:44 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -482,10 +482,10 @@ __r_search (struct rtree_node *node, const BoxType *query,
   assert (__r_node_is_good (node));
 #endif
   /* check this box. If it's not touched we're done here */
-  if (node->box.X1 > query->X2 ||
-      node->box.X2 < query->X1 || 
-      node->box.Y1 > query->Y2 || 
-      node->box.Y2 < query->Y1)
+  if (node->box.X1 >= query->X2 ||
+      node->box.X2 <= query->X1 || 
+      node->box.Y1 >= query->Y2 || 
+      node->box.Y2 <= query->Y1)
     return 0;
   seen = 0;
   /* maybe something is here, check them */

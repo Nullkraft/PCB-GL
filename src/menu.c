@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: menu.c,v 1.25 2004-03-07 03:31:59 haceaton Exp $";
+static char *rcsid = "$Id: menu.c,v 1.26 2004-03-17 04:59:44 haceaton Exp $";
 
 /* initializes menus and handles callbacks
  */
@@ -550,7 +550,7 @@ FillSizesMenu (void)
   static char action[NUM_STYLES * 2 + 1][16];
   int i;
 
-  STYLE_LOOP (PCB, 
+  STYLE_LOOP (PCB); 
     {
       sprintf (name[n], "size%d", n + 1);
       sprintf (label[n], "use '%s' routing style", style->Name);
@@ -560,7 +560,7 @@ FillSizesMenu (void)
       SizesMenuEntries[n].Callback = CB_Action;
       SizesMenuEntries[n].ClientData = (XtPointer) action[n];
     }
-  );
+  END_LOOP;
   for (i = NUM_STYLES; i < 2 * NUM_STYLES; i++)
     {
       sprintf (name[i], "size%d", i + 1);
@@ -749,7 +749,7 @@ CBPOPUP_Sizes (Widget W, XtPointer ClientData, XtPointer CallData)
   char menuname[5];
 
   RemoveCheckFromMenu (&SizesMenu);
-  STYLE_LOOP (PCB, 
+  STYLE_LOOP (PCB);
     {
       if (style->Thick == Settings.LineThickness &&
 	  style->Diameter == Settings.ViaThickness &&
@@ -760,7 +760,7 @@ CBPOPUP_Sizes (Widget W, XtPointer ClientData, XtPointer CallData)
 	  break;
 	}
     }
-  );
+  END_LOOP;
 }
 
 /* ---------------------------------------------------------------------- 

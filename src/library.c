@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: library.c,v 1.4 2004-03-05 13:29:15 haceaton Exp $";
+  "$Id: library.c,v 1.5 2004-03-17 04:59:44 haceaton Exp $";
 
 /* library-element select box
  * some of the actions are local to this module
@@ -90,11 +90,11 @@ CreateTypeSelector (Widget Parent, Widget Top, Widget Left)
 
   /* create the selector, add all entries and sort them */
   selector = CreateSelector (Parent, Top, Left, &TypeSelector, 1);
-  MENU_LOOP (&Library, 
-    {
-      AddEntryToSelector (menu->Name, (XtPointer) menu, &TypeSelector);
-    }
-  );
+  MENU_LOOP (&Library);
+  {
+    AddEntryToSelector (menu->Name, (XtPointer) menu, &TypeSelector);
+  }
+  END_LOOP;
   return (selector);
 }
 
@@ -105,12 +105,12 @@ static void
 UpdateCircuitSelector (LibraryMenuTypePtr Menu)
 {
   FreeSelectorEntries (&CircuitSelector);
-  ENTRY_LOOP (Menu, 
-    {
-      AddEntryToSelector (entry->ListEntry,
-			  (XtPointer) entry, &CircuitSelector);
-    }
-  );
+  ENTRY_LOOP (Menu);
+  {
+    AddEntryToSelector (entry->ListEntry,
+			(XtPointer) entry, &CircuitSelector);
+  }
+  END_LOOP;
   UpdateSelector (&CircuitSelector);
 
   /* update label */
