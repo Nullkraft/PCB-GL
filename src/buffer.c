@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: buffer.c,v 1.5 2004-01-31 03:20:17 haceaton Exp $";
+static char *rcsid = "$Id: buffer.c,v 1.6 2004-02-13 05:36:07 haceaton Exp $";
 
 /* functions used by paste- and move/copy buffer
  */
@@ -827,6 +827,7 @@ SwapBuffer (BufferTypePtr Buffer)
       arc->Y = SWAP_Y (arc->Y);
       arc->StartAngle = SWAP_ANGLE (arc->StartAngle);
       arc->Delta = SWAP_DELTA (arc->Delta);
+      SetArcBoundingBox(arc);
     }
   );
   ALLPOLYGON_LOOP (Buffer->Data, 
