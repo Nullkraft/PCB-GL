@@ -1,4 +1,4 @@
-/* $Id: create.c,v 1.18 2005-01-03 12:56:59 danmc Exp $ */
+/* $Id: create.c,v 1.19 2005-01-17 03:54:43 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: create.c,v 1.18 2005-01-03 12:56:59 danmc Exp $");
+RCSID("$Id: create.c,v 1.19 2005-01-17 03:54:43 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local identifiers
@@ -205,8 +205,9 @@ CreateNewVia (DataTypePtr Data,
   if (Via->Thickness < Via->DrillingHole + MIN_PINORVIACOPPER)
     {
       Via->Thickness = Via->DrillingHole + MIN_PINORVIACOPPER;
-      Message ("Increased via thickness to %.2f mils to allow enough copper.\n",
-	       0.01*Via->Thickness);
+      Message ("Increased via thickness to %.2f mils to allow enough copper"
+	       " at (%.2f,%.2f).\n",
+	       0.01*Via->Thickness, 0.01*Via->X, 0.01*Via->Y);
     }
   Via->Name = MyStrdup (Name, "CreateNewVia()");
   Via->Flags = Flags & ~WARNFLAG;
