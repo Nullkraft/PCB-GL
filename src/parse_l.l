@@ -25,7 +25,7 @@
  *
  */
 
-static	char	*rcsid = "$Id: parse_l.l,v 1.1 2003-02-20 00:24:26 danmc Exp $";
+static	char	*rcsid = "$Id: parse_l.l,v 1.2 2003-05-21 00:39:14 danmc Exp $";
 
 /* lexical definitions to parse ASCII input of PCB and Element description
  */
@@ -83,6 +83,8 @@ DECIMAL			-?[1-9][0-9]*|0
 FLOATING                -?[0-9]*"."[0-9]*
 CARDINAL		[1-9][0-9]*|0
 STRINGCHAR		([^"\n\r\\]|\\\\|\\\")
+
+%option yylineno
 
 %%
 
@@ -221,7 +223,7 @@ static int Parse(char *Executable, char *Path, char *Filename, char *Parameter)
 	returncode = yyparse();
 #endif
 	/* clean up parse buffer */
-	yy_delete_buffer(yy_current_buffer);
+	yy_delete_buffer(YY_CURRENT_BUFFER);
 
 	restoreCursor();
 	return(pclose(yyin) ? 1 : returncode);
