@@ -1,10 +1,10 @@
 # -*- m4 -*-
 #
-# $Id: amphenol.inc,v 1.3 2004-01-01 07:42:04 danmc Exp $
+# $Id: amphenol.inc,v 1.4 2004-01-01 07:42:28 danmc Exp $
 #                            COPYRIGHT
 #
 #   PCB, interactive printed circuit board design
-#   Copyright (C) 2003 Dan McMahill
+#   Copyright (C) 2003, 2004 Dan McMahill
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
