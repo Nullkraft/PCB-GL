@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: create.c,v 1.10 2004-03-07 03:38:13 haceaton Exp $";
+static char *rcsid = "$Id: create.c,v 1.11 2004-03-09 13:59:52 haceaton Exp $";
 
 /* functions used to create vias, pins ...
  */
@@ -177,10 +177,8 @@ CreateNewVia (DataTypePtr Data,
 
   VIA_LOOP (Data, 
     {
-      if ((float) (via->X - X) * (float) (via->X - X) +
-	  (float) (via->Y - Y) * (float) (via->Y - Y) <=
-	  ((float) (via->Thickness / 2 + Thickness / 2) *
-	   (float) (via->Thickness / 2 + Thickness / 2)))
+      if (SQUARE (via->X - X) + SQUARE (via->Y - Y) <=
+	  SQUARE (via->Thickness / 2 + Thickness / 2))
 	return (NULL);		/* don't allow via stacking */
     }
   );

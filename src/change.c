@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: change.c,v 1.16 2004-03-07 03:38:13 haceaton Exp $";
+  "$Id: change.c,v 1.17 2004-03-09 13:59:53 haceaton Exp $";
 
 /* functions used to change object properties
  *
@@ -1627,7 +1627,10 @@ ChangeViaMaskSize (PinTypePtr Via)
     {
       AddObjectToMaskSizeUndoList (VIA_TYPE, Via, Via, Via);
       EraseVia (Via);
+      r_delete_entry (PCB->Data->via_tree, &Via->BoundingBox);
       Via->Mask = value;
+      SetPinBoundingBox (Via);
+      r_insert_entry (PCB->Data->via_tree, &Via->BoundingBox, 0);
       DrawVia (Via, 0);
       return (Via);
     }
