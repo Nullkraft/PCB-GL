@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: misc.c,v 1.13 2004-02-27 04:41:24 haceaton Exp $";
+static char *rcsid = "$Id: misc.c,v 1.14 2004-02-27 06:16:49 haceaton Exp $";
 
 /* misc functions used by several modules
  */
@@ -217,9 +217,10 @@ SetPinBoundingBox (PinTypePtr Pin)
   BDimension width;
 
    /* the bounding box covers the extent of influence
-    * so if must include the clearance value too
+    * so it must include the clearance values too
     */
   width = (Pin->Clearance +1)/2 + (Pin->Thickness +1)/2;
+  width = MAX (width, Pin->Mask);
   Pin->BoundingBox.X1 = Pin->X - width;
   Pin->BoundingBox.Y1 = Pin->Y - width;
   Pin->BoundingBox.X2 = Pin->X + width;

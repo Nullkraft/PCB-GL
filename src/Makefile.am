@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.6 2004-02-15 07:46:31 danmc Exp $
+## $Id: Makefile.am,v 1.7 2004-02-27 06:16:48 haceaton Exp $
 ##
 
 SUBDIRS=	icons script
@@ -27,6 +27,8 @@ pcb_bin_SOURCES = \
 	buffer.h \
 	change.c \
 	change.h \
+	clip.c \
+	clip.h \
 	command.c \
 	command.h \
 	compat.c \
@@ -78,6 +80,8 @@ pcb_bin_SOURCES = \
 	lgdialog.h \
 	library.c \
 	library.h \
+	line.c \
+	line.h \
 	log.c \
 	log.h \
 	macro.h \

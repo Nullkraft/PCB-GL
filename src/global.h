@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.7 2004-02-15 18:04:04 haceaton Exp $
+ *  RCS: $Id: global.h,v 1.8 2004-02-27 06:16:49 haceaton Exp $
  */
 
 /* definition of types
@@ -206,13 +206,14 @@ typedef struct				/* a SMD pad */
 	LINESTRUCT
 	BDimension	Mask;
 	char		*Name, *Number;			/* 'Line' */
+	struct ElementType     *Element;
 	void		*Spare;
 } PadType, *PadTypePtr;
 
 typedef struct
 {
 	BoxType		BoundingBox;
-	long int		ID,
+	long int	ID,
 			Flags;
 	BDimension	Thickness,
 			Clearance,
@@ -221,6 +222,7 @@ typedef struct
 	Location	X,			/* center and diameter */
 			Y;
 	char		*Name, *Number;
+	struct ElementType     *Element;
 	void		*Spare;
 } PinType, *PinTypePtr, **PinTypeHandle;
 
@@ -565,6 +567,7 @@ typedef struct			/* some resources... */
 			AllDirectionLines,	/* enable lines to all directions */
 			RubberBandMode,		/* move, rotate use rubberband connections */
 			SwapStartDirection,	/* change starting direction after each click */
+			ShowDRC,		/* show drc region on crosshair */
 			ResetAfterElement,	/* reset connections after */
 						/* each element */
 			RingBellWhenFinished;	/* flag if a signal should be */

@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: create.c,v 1.6 2004-02-15 18:04:03 haceaton Exp $";
+static char *rcsid = "$Id: create.c,v 1.7 2004-02-27 06:16:49 haceaton Exp $";
 
 /* functions used to create vias, pins ...
  */
@@ -406,6 +406,7 @@ CreateNewRat (DataTypePtr Data, Location X1, Location Y1,
   Line->Point2.ID = ID++;
   Line->group1 = group1;
   Line->group2 = group2;
+  SetLineBoundingBox(Line);
   return (Line);
 }
 
@@ -656,6 +657,7 @@ CreateNewPin (ElementTypePtr Element,
   pin->Number = MyStrdup (Number, "CreateNewPin()");
   pin->Flags = Flags & ~WARNFLAG;
   pin->ID = ID++;
+  pin->Element = Element;
   return (pin);
 }
 
@@ -682,6 +684,7 @@ CreateNewPad (ElementTypePtr Element,
   pad->Number = MyStrdup (Number, "CreateNewPad()");
   pad->Flags = Flags & ~WARNFLAG;
   pad->ID = ID++;
+  pad->Element = Element;
   return (pad);
 }
 
