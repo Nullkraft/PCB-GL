@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.37 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: draw.c,v 1.38 2004-09-21 02:16:30 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: draw.c,v 1.37 2004-08-30 02:52:04 danmc Exp $");
+RCSID("$Id: draw.c,v 1.38 2004-09-21 02:16:30 haceaton Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -579,6 +579,7 @@ EMark_callback (const BoxType * b, void *cl)
   ElementTypePtr element = (ElementTypePtr) b;
 
   DrawEMark (element->MarkX, element->MarkY, !FRONT (element));
+  return 1;
 }
 
 static int
