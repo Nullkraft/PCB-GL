@@ -26,7 +26,7 @@
  */
 
 static char *rcsid =
-  "$Id: action.c,v 1.40 2004-04-18 14:12:06 haceaton Exp $";
+  "$Id: action.c,v 1.41 2004-04-30 01:49:21 danmc Exp $";
 
 /* action routines for output window
  */
@@ -1543,10 +1543,11 @@ ActionDRCheck (Widget W, XEvent * Event, String * Params, Cardinal * Num)
   if (*Num == 0)
     {
       Message ("Rules are minspace %d.%02d, minoverlap %d.%d "
-	       "minwidth %d.%02d\n",
+	       "minwidth %d.%02d, minsilk %d.%02d\n",
 	       (Settings.Bloat + 1) / 100, (Settings.Bloat + 1) % 100,
 	       Settings.Shrink / 100, Settings.Shrink % 100,
-	       Settings.minWid / 100, Settings.minWid % 100);
+	       Settings.minWid / 100, Settings.minWid % 100,
+	       Settings.minSlk / 100, Settings.minSlk % 100);
       HideCrosshair (True);
       watchCursor ();
       count = DRCAll ();

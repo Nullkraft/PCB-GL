@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: macro.h,v 1.12 2004-03-17 04:59:44 haceaton Exp $
+ *  RCS: $Id: macro.h,v 1.13 2004-04-30 01:49:21 danmc Exp $
  */
 
 /* some commonly used macros not related to a special C-file
@@ -416,6 +416,30 @@
 	Cardinal		l;			\
 	LayerTypePtr	layer = (top)->Layer;		\
 	for (l = 0; l < MAX_LAYER; l++, layer++)	\
+	{ \
+		POLYGON_LOOP(layer)
+
+#define	SILKLINE_LOOP(top) do	{		\
+	Cardinal		l;			\
+	LayerTypePtr	layer = (top)->Layer;		\
+	layer += MAX_LAYER;				\
+	for (l = 0; l < 2; l++, layer++)		\
+	{ \
+		LINE_LOOP(layer)
+
+#define SILKARC_LOOP(top) do	{		\
+	Cardinal		l;			\
+	LayerTypePtr	layer = (top)->Layer;		\
+	layer += MAX_LAYER;				\
+	for (l = 0; l < 2; l++, layer++)		\
+	{ \
+		ARC_LOOP(layer)
+
+#define	SILKPOLYGON_LOOP(top) do	{		\
+	Cardinal		l;			\
+	LayerTypePtr	layer = (top)->Layer;		\
+	layer += MAX_LAYER;				\
+	for (l = 0; l < 2; l++, layer++)		\
 	{ \
 		POLYGON_LOOP(layer)
 

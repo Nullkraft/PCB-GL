@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: main.c,v 1.14 2004-04-27 19:08:25 djdelorie Exp $";
+static char *rcsid = "$Id: main.c,v 1.15 2004-04-30 01:49:21 danmc Exp $";
 
 /* main program, initializes some stuff and handles user input
  */
@@ -225,6 +225,7 @@ static String Fallback[] = {
   "Pcb.Bloat:		    699",
   "Pcb.Shrink:		    500",
   "Pcb.minWid:		    800",
+  "Pcb.minSlk:		    800",
   "Pcb*beNiceToColormap:			false",
   "Pcb*background:			gray90",
   "Pcb.masterForm*background:	gray90",
@@ -561,6 +562,9 @@ static XtResource ToplevelResources[] = {
   ,
   {"minWid", "minWid", XtRInt, sizeof (int),
    XtOffsetOf (SettingType, minWid), XtRString, "800"}
+  ,
+  {"minSlk", "minSlk", XtRInt, sizeof (int),
+   XtOffsetOf (SettingType, minSlk), XtRString, "800"}
   ,
   {"charactersPerLine", "CharactersPerLine", XtRInt, sizeof (int),
    XtOffsetOf (SettingType, CharPerLine), XtRString, "80"},
