@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: menu.c,v 1.23 2004-02-28 23:44:19 haceaton Exp $";
+static char *rcsid = "$Id: menu.c,v 1.24 2004-03-04 04:27:30 danmc Exp $";
 
 /* initializes menus and handles callbacks
  */
@@ -337,7 +337,7 @@ static PopupEntryType SelectionMenuEntries[] = {
   {"unselect", "unselect all objects", CB_Action, "Unselect,All", NULL},
   {"unselectconnection", "unselect all connected objects", CB_Action,
    "Unselect,Connection", NULL},
-#ifdef HAS_REGEX
+#if defined(HAVE_REGCOMP) || defined(HAVE_RE_COMP)
   {"line", NULL, NULL, NULL, NULL},
   {"header", "select by name", NULL, NULL, NULL},
   {"allByName", "all objects", CB_Action, "Select,ObjectByName", NULL},
