@@ -1,4 +1,4 @@
-/* $Id: rats.c,v 1.15 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: rats.c,v 1.16 2004-10-08 16:56:21 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -60,7 +60,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: rats.c,v 1.15 2004-08-30 02:52:04 danmc Exp $");
+RCSID("$Id: rats.c,v 1.16 2004-10-08 16:56:21 djdelorie Exp $");
 
 
 #define TRIEDFIRST 0x1
@@ -153,6 +153,7 @@ FindPad (char *ElementName, char *PinNum, ConnectionType * conn, Boolean Same)
 	{
 	  for (i = 0; i < element->PinN; i++)
 	    if (!TEST_FLAG (HOLEFLAG, &element->Pin[i]) &&
+		element->Pin[i].Number &&
 		strcmp (PinNum, element->Pin[i].Number) == 0 &&
 		(!Same || !TEST_FLAG (DRCFLAG, &element->Pin[i])))
 	      {
