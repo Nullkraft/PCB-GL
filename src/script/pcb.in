@@ -23,7 +23,7 @@
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: pcb.in,v 1.2 2004-05-14 02:59:16 danmc Exp $
+#   RCS: $Id: pcb.in,v 1.3 2004-05-29 00:15:14 danmc Exp $
 #
 #
 #
@@ -35,7 +35,20 @@
 
 # execute pcb
 
+# If the first argument is "-gdb" then run PCB inside the gdb
+# debugger.  
+
+
 XAPPLRESDIR=@PKGDATADIR@/
 export XAPPLRESDIR
 unset XUSERFILESEARCHPATH
-exec @BINDIR@/pcb-bin $@
+if [ "X$1" = "X-gdb" ]; then
+	shift
+	tmpf=/tmp/pcbtest.gdb.$$
+	echo "set args $@"  > $tmpf
+	exec gdb -x $tmpf @BINDIR@/pcb-bin
+	rm -f $tmpf
+else
+	exec @BINDIR@/pcb-bin $@
+fi
+
