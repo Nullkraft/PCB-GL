@@ -30,7 +30,7 @@
  * silkscreen layer. Perhaps the design is not the best.
  */
 
-static char *rcsid = "$Id: print.c,v 1.14 2004-02-05 06:21:34 haceaton Exp $";
+static char *rcsid = "$Id: print.c,v 1.15 2004-02-06 04:11:35 haceaton Exp $";
 
 /* printing routines
  */
@@ -588,7 +588,7 @@ twice_break:
 	  {
 	    if (!TEST_FLAG (HOLEFLAG, pin))
 	      {
-		if (TEST_FLAG (Tflag, pin))
+		if (TEST_FLAGS (Tflag | PIPflag, pin))
 		  SET_FLAG (USETHERMALFLAG, pin);
 		else
 		  CLEAR_FLAG (USETHERMALFLAG, pin);
@@ -601,7 +601,7 @@ twice_break:
 	  {
 	    if (!TEST_FLAG (HOLEFLAG, via))
 	      {
-		if (TEST_FLAG (Tflag, via))
+		if (TEST_FLAGS (Tflag | PIPflag, via))
 		  SET_FLAG (USETHERMALFLAG, via);
 		else
 		  CLEAR_FLAG (USETHERMALFLAG, via);
