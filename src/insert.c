@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: insert.c,v 1.1 2003-02-20 00:24:14 danmc Exp $";
+static char *rcsid = "$Id: insert.c,v 1.2 2003-12-28 17:16:28 haceaton Exp $";
 
 /* functions used to insert points into objects
  */
@@ -157,7 +157,7 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 	line.Point1 = Polygon->Points[InsertAt - 1];
       line.Point2 = Polygon->Points[InsertAt];
       if (IsPointOnLine ((float) InsertX, (float) InsertY, 0.0, &line))
-	return (Polygon);
+	return (NULL);
     }
   /*
    * second, shift the points up to make room for the new point
@@ -173,11 +173,11 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
   if (Forcible || !RemoveExcessPolygonPoints (Layer, Polygon))
     {
       SetPolygonBoundingBox (Polygon);
+      UpdatePIPFlags (NULL, NULL, Layer, Polygon, True);
       DrawPolygon (Layer, Polygon, 0);
       Draw ();
-      UpdatePIPFlags (NULL, NULL, Layer, Polygon, True);
     }
-  return (Polygon);
+  return (&Polygon->Points[InsertAt]);
 }
 
 /* ---------------------------------------------------------------------------

@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: search.h,v 1.1 2003-02-20 00:24:32 danmc Exp $
+ *  RCS: $Id: search.h,v 1.2 2003-12-28 17:16:28 haceaton Exp $
  */
 
 /* prototypes for search routines
@@ -84,7 +84,7 @@ Boolean	IsRectangleInPolygon(Position, Position, Position, Position,
 int		SearchObjectByPosition(int, void **, void **, void **,
 			Position, Position, Dimension);
 int		SearchScreen(Position, Position, int, void **, void **, void **);
-int		SearchObjectByID(DataTypePtr, void **, void **, void **, int);
+int		SearchObjectByID(DataTypePtr, void **, void **, void **, int, int);
 ElementTypePtr SearchElementByName(DataTypePtr, char *);
 
 #endif

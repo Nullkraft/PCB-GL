@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: remove.c,v 1.2 2003-12-25 16:27:13 haceaton Exp $";
+static char *rcsid = "$Id: remove.c,v 1.3 2003-12-28 17:16:28 haceaton Exp $";
 
 /* functions used to remove vias, pins ...
  */
@@ -170,7 +170,17 @@ static void *
 DestroyPolygonPoint (LayerTypePtr Layer,
 		     PolygonTypePtr Polygon, PointTypePtr Point)
 {
-  return (RemovePolygonPoint (Layer, Polygon, Point));
+  PointTypePtr ptr;
+
+  for (ptr = Point + 1; ptr != &Polygon->Points[Polygon->PointN]; ptr++)
+    {
+      *Point = *ptr;
+      Point = ptr;
+    }
+  Polygon->PointN--;
+  SetPolygonBoundingBox (Polygon);
+  UpdatePIPFlags (NULL, NULL, Layer, NULL, True);
+  return (Polygon);
 }
 
 /* ---------------------------------------------------------------------------
