@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.38 2004-09-21 02:16:30 haceaton Exp $ */
+/* $Id: draw.c,v 1.39 2004-09-21 04:37:55 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -33,6 +33,8 @@
 /* ---------------------------------------------------------------------------
  * define TO_SCREEN before macro.h is included from global.h
  */
+#define TO_SCREEN(c)  ((Position)((c)*Local_Zoom)) 
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -58,7 +60,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: draw.c,v 1.38 2004-09-21 02:16:30 haceaton Exp $");
+RCSID("$Id: draw.c,v 1.39 2004-09-21 04:37:55 haceaton Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types

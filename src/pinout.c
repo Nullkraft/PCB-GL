@@ -1,4 +1,4 @@
-/* $Id: pinout.c,v 1.8 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: pinout.c,v 1.9 2004-09-21 04:37:55 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -59,7 +59,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: pinout.c,v 1.8 2004-08-30 02:52:04 danmc Exp $");
+RCSID("$Id: pinout.c,v 1.9 2004-09-21 04:37:55 haceaton Exp $");
 
 
 
@@ -121,7 +121,7 @@ PinoutWindow (Widget Parent, ElementTypePtr Element)
    * move element to a 5% offset from zero position
    * set all package lines/arcs to zero with
    */
-  CopyElementLowLevel (PCB->Data, &pinout->Element, Element, False);
+  CopyElementLowLevel (NULL, &pinout->Element, Element, False);
   minx = miny = 32767;
   PIN_LOOP (&pinout->Element);
   {

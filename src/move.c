@@ -1,4 +1,4 @@
-/* $Id: move.c,v 1.22 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: move.c,v 1.23 2004-09-21 04:37:55 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: move.c,v 1.22 2004-08-30 02:52:04 danmc Exp $");
+RCSID("$Id: move.c,v 1.23 2004-09-21 04:37:55 haceaton Exp $");
 
 
 
@@ -147,10 +147,10 @@ MoveElementLowLevel (DataTypePtr Data, ElementTypePtr Element, Location DX,
   END_LOOP;
   ELEMENTTEXT_LOOP (Element);
   {
-    if (Data->name_tree[n])
+    if (Data && Data->name_tree[n])
       r_delete_entry (PCB->Data->name_tree[n], (BoxType *)text);
     MOVE_TEXT_LOWLEVEL (text, DX, DY);
-    if (Data->name_tree[n])
+    if (Data && Data->name_tree[n])
       r_insert_entry (PCB->Data->name_tree[n], (BoxType *)text, 0);
   }
   END_LOOP;
