@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.17 2004-06-01 23:18:25 danmc Exp $
+dnl $Id: configure.ac,v 1.18 2004-06-04 23:00:57 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/pinout.c)
@@ -128,8 +128,10 @@ AC_ARG_ENABLE([dmalloc],
 [
 if test "X$enable_dmalloc" != "Xno" ; then
 	AC_MSG_RESULT([yes])
-	AC_CHECK_HEADER(dmalloc.h)
-	AC_CHECK_LIB(dmalloc)
+	AC_CHECK_HEADER(dmalloc.h,,
+		AC_ERROR([You have requested dmalloc debugging but dmalloc.h could not be found]))
+	AC_CHECK_LIB(dmalloc,main,,
+		AC_ERROR([You have requested dmalloc debugging but -ldmalloc could not be found]), $X_LIBS)
 	DMALLOC_LIBS="-ldmalloc"
 else
 	AC_MSG_RESULT([no])
