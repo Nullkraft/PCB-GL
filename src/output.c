@@ -1,4 +1,4 @@
-/* $Id: output.c,v 1.13 2004-04-29 23:50:22 danmc Exp $ */
+/* $Id: output.c,v 1.14 2004-08-27 21:57:14 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -44,6 +44,7 @@
 #include "gui.h"
 #include "output.h"
 #include "misc.h"
+#include "set.h"
 
 #include <X11/Xaw/Form.h>
 #include <X11/Xaw/Panner.h>

@@ -1,4 +1,4 @@
-/* $Id: resmenu.c,v 1.10 2004-08-27 00:58:29 danmc Exp $ */
+/* $Id: resmenu.c,v 1.11 2004-08-27 21:57:14 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -15,6 +15,7 @@
 #include "resource.h"
 #include "action.h"
 #include "check_icon.data"
+#include "error.h"
 #include "mymem.h"
 
 #include <X11/cursorfont.h>
@@ -23,10 +24,6 @@
 #include <X11/Xaw/SimpleMenu.h>
 #include <X11/Xaw/SmeBSB.h>
 #include <X11/Xaw/SmeLine.h>
-
-static Display *display=0;
-static int screen;
-static Colormap cmap;
 
 static Arg args[100];
 static int n;
@@ -119,7 +116,6 @@ invoke_action (Widget w, char *rstr)
      */
     if (*sp == ')' && !maybe_empty)
       {
-	int i;
 	*sp = 0;
 	XtCallActionProc(w, aname, 0, list, num);
 	break;
