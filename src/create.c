@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: create.c,v 1.4 2004-01-05 01:40:24 haceaton Exp $";
+static char *rcsid = "$Id: create.c,v 1.5 2004-02-15 07:12:44 danmc Exp $";
 
 /* functions used to create vias, pins ...
  */
@@ -155,6 +155,7 @@ CreateNewPCB (Boolean SetDefaultNames)
   ptr->MaxWidth = Settings.MaxWidth;
   ptr->MaxHeight = Settings.MaxHeight;
   ptr->ID = ID++;
+  ptr->ThermScale = 0.5;
   return (ptr);
 }
 

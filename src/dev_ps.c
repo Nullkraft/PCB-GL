@@ -30,7 +30,7 @@
  * silkscreen layer. Perhaps the design is not the best.
  */
 
-static char *rcsid = "$Id: dev_ps.c,v 1.5 2004-01-05 01:40:24 haceaton Exp $";
+static char *rcsid = "$Id: dev_ps.c,v 1.6 2004-02-15 07:12:44 danmc Exp $";
 
 /* PostScript device driver
  * code is shared for EPS and PS output
@@ -938,7 +938,7 @@ PS_PrintPinOrVia (PinTypePtr Ptr, int mode)
       if (TEST_FLAG (USETHERMALFLAG, Ptr))
 	{
 	  int size2 = (size + Ptr->Clearance) / 2;
-	  int finger = (Ptr->Thickness - Ptr->DrillingHole) / 2;
+	  int finger = (Ptr->Thickness - Ptr->DrillingHole) * PCB->ThermScale;
 
 	  if (!TEST_FLAG (SQUAREFLAG, Ptr))
 	    size2 = (7 * size2) / 10;

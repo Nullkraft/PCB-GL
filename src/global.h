@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.5 2004-02-13 22:31:15 haceaton Exp $
+ *  RCS: $Id: global.h,v 1.6 2004-02-15 07:12:44 danmc Exp $
  */
 
 /* definition of types
@@ -379,7 +379,8 @@ typedef struct		/* holds information about board layout */
 			MaxWidth,		/* allowed size */
 			MaxHeight;
 	float		Grid,			/* used grid with offsets */
-			Zoom;			/* zoom factor */
+			Zoom,			/* zoom factor */
+			ThermScale;		/* scale factor used with thermals */
 	FontType	Font;
 	LayerGroupType	LayerGroups;
 	RouteStyleType	RouteStyle[NUM_STYLES];

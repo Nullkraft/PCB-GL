@@ -25,7 +25,7 @@
  *
  */
 
-static	char	*rcsid = "$Id: parse_l.l,v 1.2 2003-05-21 00:39:14 danmc Exp $";
+static	char	*rcsid = "$Id: parse_l.l,v 1.3 2004-02-15 07:12:45 danmc Exp $";
 
 /* lexical definitions to parse ASCII input of PCB and Element description
  */
@@ -91,6 +91,7 @@ STRINGCHAR		([^"\n\r\\]|\\\\|\\\")
 PCB			{ return(T_PCB); }
 Grid		{ return(T_GRID); }
 Cursor		{ return(T_CURSOR); }
+Thermal		{ return(T_THERMAL); }
 Flags		{ return(T_FLAGS); }
 Layer		{ return(T_LAYER); }
 Pin			{ return(T_PIN); }

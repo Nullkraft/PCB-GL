@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: draw.c,v 1.18 2004-02-14 18:03:33 haceaton Exp $";
+static char *rcsid = "$Id: draw.c,v 1.19 2004-02-15 07:12:44 danmc Exp $";
 
 /* drawing routines
  */
@@ -936,7 +936,7 @@ ThermPin (LayerTypePtr layer, PinTypePtr Pin)
   else
     XSetForeground (Dpy, Output.fgGC, layer->Color);
 
-  finger = (Pin->Thickness - Pin->DrillingHole) / 2;
+  finger = (Pin->Thickness - Pin->DrillingHole) * PCB->ThermScale;
   XSetLineAttributes (Dpy, Output.fgGC,
 		      TEST_FLAG (THINDRAWFLAG, PCB) ? 1 : TO_SCREEN (finger),
 		      LineSolid, CapRound, JoinRound);
