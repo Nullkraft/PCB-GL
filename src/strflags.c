@@ -1,4 +1,4 @@
-/* $Id: strflags.c,v 1.2 2005-03-21 02:57:39 djdelorie Exp $ */
+/* $Id: strflags.c,v 1.3 2005-03-28 01:22:00 djdelorie Exp $ */
 /*
  *                            COPYRIGHT
  *
@@ -77,7 +77,7 @@ static struct {
   { FOUNDFLAG, N("found"), ALL_TYPES },
   { HOLEFLAG, N("hole"), PIN_TYPES },
   { RATFLAG, N("rat"), RATLINE_TYPE },
-  { PININPOLYFLAG, N("pininpoly"), PIN_TYPES },
+  { PININPOLYFLAG, N("pininpoly"), PIN_TYPES | PAD_TYPE },
   { CLEARPOLYFLAG, N("clearpoly"), POLYGON_TYPE },
   { HIDENAMEFLAG, N("hidename"), ELEMENT_TYPE },
   { DISPLAYNAMEFLAG, N("showname"), ELEMENT_TYPE },
@@ -85,11 +85,11 @@ static struct {
   { SELECTEDFLAG, N("selected"), ALL_TYPES },
   { ONSOLDERFLAG, N("onsolder"), ELEMENT_TYPE },
   { AUTOFLAG, N("auto"), ALL_TYPES },
-  { SQUAREFLAG, N("square"), PIN_TYPES },
+  { SQUAREFLAG, N("square"), PIN_TYPES | PAD_TYPE },
   { RUBBERENDFLAG, N("rubberend"), LINE_TYPE },
   { WARNFLAG, N("warn"), PIN_TYPES | PAD_TYPE },
-  { USETHERMALFLAG, N("usetherm"), PIN_TYPES },
-  { OCTAGONFLAG, N("octagon"), PIN_TYPES },
+  { USETHERMALFLAG, N("usetherm"), PIN_TYPES | PAD_TYPE },
+  { OCTAGONFLAG, N("octagon"), PIN_TYPES | PAD_TYPE },
   { DRCFLAG, N("drc"), ALL_TYPES },
   { LOCKFLAG, N("lock"), ALL_TYPES },
   { EDGE2FLAG, N("edge2"), ALL_TYPES }
