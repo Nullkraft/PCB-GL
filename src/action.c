@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.48 2004-08-30 02:52:03 danmc Exp $ */
+/* $Id: action.c,v 1.49 2004-09-21 01:48:09 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -85,7 +85,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: action.c,v 1.48 2004-08-30 02:52:03 danmc Exp $");
+RCSID("$Id: action.c,v 1.49 2004-09-21 01:48:09 haceaton Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -525,7 +525,7 @@ CB_Click (XtPointer unused, XtIntervalId * time)
 	  HideCrosshair (True);
 	  SaveMode ();
 	  saved_mode = True;
-	  SetMode (MOVE_MODE);
+	  SetMode (CtrlPressed() ? COPY_MODE : MOVE_MODE);
 	  Crosshair.AttachedObject.Ptr1 = Note.ptr1;
 	  Crosshair.AttachedObject.Ptr2 = Note.ptr2;
 	  Crosshair.AttachedObject.Ptr3 = Note.ptr3;
