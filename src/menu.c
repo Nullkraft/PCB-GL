@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: menu.c,v 1.8 2003-12-30 02:18:51 haceaton Exp $";
+static char *rcsid = "$Id: menu.c,v 1.9 2003-12-31 05:01:27 haceaton Exp $";
 
 /* initializes menus and handles callbacks
  */
@@ -238,9 +238,9 @@ static PopupEntryType DisplayMenuEntries[] = {
   {"line", NULL, NULL, NULL, NULL},
   {"header", "grid setting", NULL, NULL, NULL},
   {"grid01", " 1 mil", CB_Action, "SetValue,Grid,1", NULL},
-  {"grid.1mm", "0.1 mm", CB_Action, "SetValue,Grid,MM_TO_MIL/10.0", NULL},
+  {"grid.1mm", "0.1 mm", CB_Action, "SetValue,Grid,3.937007874", NULL},
   {"grid10", "10 mil", CB_Action, "SetValue,Grid,10", NULL},
-  {"grid1mm", "1.0 mm", CB_Action, "SetValue,Grid,MM_TO_MIL", NULL},
+  {"grid1mm", "1.0 mm", CB_Action, "SetValue,Grid,39.37007874", NULL},
   {"grid25", "25 mil", CB_Action, "SetValue,Grid,25", NULL},
   {"grid50", "50 mil", CB_Action, "SetValue,Grid,50", NULL},
   {"grid100", "100 mil", CB_Action, "SetValue,Grid,100", NULL},
