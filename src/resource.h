@@ -1,3 +1,5 @@
+/* $Id: resource.h,v 1.2 2004-04-29 01:31:10 danmc Exp $ */
+
 #ifndef __RESOURCE_INCLUDED_
 #define __RESOURCE_INCLUDED_ 1
 
