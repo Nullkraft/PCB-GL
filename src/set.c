@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: set.c,v 1.5 2004-01-06 23:53:42 haceaton Exp $";
+static char *rcsid = "$Id: set.c,v 1.6 2004-01-15 14:21:29 haceaton Exp $";
 
 /* routines to update widgets and global settings
  * (except output window and dialogs)
@@ -59,6 +59,9 @@ static char *rcsid = "$Id: set.c,v 1.5 2004-01-06 23:53:42 haceaton Exp $";
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+static int mode_position = 0;
+static int mode_stack[MAX_MODESTACK_DEPTH];
 
 /* ---------------------------------------------------------------------------
  * output of cursor position
@@ -338,6 +341,26 @@ UpdateSettingsOnScreen (void)
   UpdateControlPanel ();
   UpdateSizesMenu ();
 }
+
+void
+SaveMode (void)
+{
+  mode_stack[mode_position] = Settings.Mode;
+  if (mode_position < MAX_MODESTACK_DEPTH -1)
+    mode_position++;
+}
+
+void
+RestoreMode (void)
+{
+  if (mode_position == 0)
+    {
+      Message("hace: underflow of restore mode\n");
+      return;
+    }
+  SetMode(mode_stack[--mode_position]);
+}
+
 
 /* ---------------------------------------------------------------------------
  * set a new mode and update X cursor

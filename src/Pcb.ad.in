@@ -19,7 +19,7 @@
 !  along with this program; if not, write to the Free Software
 !  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 !
-!  RCS: $Id: Pcb.ad.in,v 1.9 2004-01-14 03:10:26 haceaton Exp $
+!  RCS: $Id: Pcb.ad.in,v 1.10 2004-01-15 14:21:29 haceaton Exp $
 !
 
 !---------------------------------------------------------------------------
@@ -538,9 +538,9 @@ Pcb.masterForm*output.baseTranslations:   #override \
   <Key>F11:  Mode(Arrow) \n\
   \
   <Key>[:	Mode(Save) \
-		Mode(Move) \
+		Mode(Arrow) \
 		Mode(Notify) \n\
-  <Key>]:	Mode(Notify) \
+  <Key>]:	Mode(Release) \
 		Mode(Restore) \n\
   \
   Shift Ctrl<Btn1Down>: Mode(Save) \
