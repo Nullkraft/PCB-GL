@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: draw.c,v 1.10 2004-01-05 01:40:24 haceaton Exp $";
+static char *rcsid = "$Id: draw.c,v 1.11 2004-01-10 19:38:24 haceaton Exp $";
 
 /* drawing routines
  */
@@ -2343,6 +2343,7 @@ EraseObject (int type, void *ptr)
       EraseElement ((ElementTypePtr) ptr);
       break;
     case LINE_TYPE:
+    case ELEMENTLINE_TYPE:
     case RATLINE_TYPE:
       EraseLine ((LineTypePtr) ptr);
       break;
@@ -2350,6 +2351,7 @@ EraseObject (int type, void *ptr)
       ErasePad ((PadTypePtr) ptr);
       break;
     case ARC_TYPE:
+    case ELEMENTARC_TYPE:
       EraseArc ((ArcTypePtr) ptr);
       break;
     default:

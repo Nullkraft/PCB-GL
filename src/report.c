@@ -26,7 +26,7 @@
  *
  */
 
-static char *rcsid = "$Id: report.c,v 1.8 2004-01-05 01:40:24 haceaton Exp $";
+static char *rcsid = "$Id: report.c,v 1.9 2004-01-10 19:38:24 haceaton Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -339,7 +339,7 @@ ReportDialog (void)
 		 "The bounding box is (%d,%d) (%d, %d)\n"
 		 "It %s\n"
 		 "%s", text->ID, text->Flags,
-		 text->X, text->Y, text->Scale / 100.,
+		 text->X, text->Y, 0.45 * text->Scale,
 		 text->TextString, text->Direction,
 		 text->BoundingBox.X1, text->BoundingBox.Y1,
 		 text->BoundingBox.X2, text->BoundingBox.Y2,
