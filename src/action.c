@@ -25,7 +25,7 @@
  *
  */
 
-static char *rcsid = "$Id: action.c,v 1.2 2003-06-05 10:48:29 danmc Exp $";
+static char *rcsid = "$Id: action.c,v 1.3 2003-06-22 16:51:59 djdelorie Exp $";
 
 /* action routines for output window
  */
@@ -178,6 +178,7 @@ typedef enum
   F_ToggleRubberBandMode,
   F_ToggleStartDirection,
   F_ToggleSnapPin,
+  F_ToggleThindraw,
   F_ToggleUniqueNames,
   F_Via,
   F_ViaByName,
@@ -317,6 +318,7 @@ static FunctionType Functions[] = {
   {"ToggleRubberBandMode", F_ToggleRubberBandMode},
   {"ToggleStartDirection", F_ToggleStartDirection},
   {"ToggleSnapPin", F_ToggleSnapPin},
+  {"ToggleThindraw", F_ToggleThindraw},
   {"ToggleUniqueNames", F_ToggleUniqueNames},
   {"Value", F_Value},
   {"Via", F_Via},
@@ -2146,6 +2148,7 @@ warpNoWhere (void)
  *         Display(CycleClip|Toggle45Degree|ToggleStartDirection)
  *         Display(ToggleGrid|ToggleRubberBandMode|ToggleUniqueNames)
  *         Display(ToggleMask|ToggleName|ToggleClearLine|ToggleSnapPin)
+ *         Display(ToggleThindraw)
  *         Display(Pinout|PinOrPadName)
  *	   Display(Save|Restore)
  *	   Display(Scroll, Direction)
@@ -2247,6 +2250,11 @@ ActionDisplay (Widget W, XEvent * Event, String * Params, Cardinal * Num)
 	case F_ToggleSnapPin:
 	  TOGGLE_FLAG (SNAPPINFLAG, PCB);
 	  SetStatusLine ();
+	  break;
+
+	case F_ToggleThindraw:
+	  TOGGLE_FLAG (THINDRAWFLAG, PCB);
+	  ClearAndRedrawOutput ();
 	  break;
 
         case F_ToggleName:

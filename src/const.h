@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: const.h,v 1.1 2003-02-20 00:23:56 danmc Exp $
+ *  RCS: $Id: const.h,v 1.2 2003-06-22 16:51:59 djdelorie Exp $
  */
 
 /* global source constants
@@ -153,6 +153,7 @@
 #define CLEARNEWFLAG		0x0800  /* new lines/arc clear polygons */
 #define SNAPPINFLAG             0x1000  /* crosshair snaps to pins and pads */
 #define SHOWMASKFLAG            0x2000  /* show the solder mask layer */
+#define THINDRAWFLAG            0x4000  /* draw with thin lines */
 
 /* ---------------------------------------------------------------------------
  * object types

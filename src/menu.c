@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: menu.c,v 1.4 2003-06-22 04:34:16 djdelorie Exp $";
+static char *rcsid = "$Id: menu.c,v 1.5 2003-06-22 16:51:59 djdelorie Exp $";
 
 /* initializes menus and handles callbacks
  */
@@ -303,6 +303,8 @@ static PopupEntryType SettingsMenuEntries[] = {
    "Display,ToggleSnapPin", NULL},
   {"toggleClearLine", "new lines, arcs clear polygons", CB_Action,
    "Display,ToggleClearLine", NULL},
+  {"toggleThindraw", "thin draw", CB_Action,
+   "Display,ToggleThindraw", NULL},
   {NULL, NULL, NULL, NULL, NULL}
 };
 static PopupMenuType SettingsMenu =
@@ -802,6 +804,8 @@ CBPOPUP_Settings (Widget W, XtPointer ClientData, XtPointer CallData)
     CheckEntry (&SettingsMenu, "toggleSnapPin");
   if (TEST_FLAG (CLEARNEWFLAG, PCB))
     CheckEntry (&SettingsMenu, "toggleClearLine");
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    CheckEntry (&SettingsMenu, "toggleThindraw");
 }
 
 
