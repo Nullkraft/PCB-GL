@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: menu.c,v 1.11 2004-01-15 16:17:48 haceaton Exp $";
+static char *rcsid = "$Id: menu.c,v 1.12 2004-01-15 20:16:06 haceaton Exp $";
 
 /* initializes menus and handles callbacks
  */
@@ -113,6 +113,8 @@ static PopupEntryType pMenuEntries[] = {
    NULL},
   {"convert", "Convert Selection to Element", CB_Action,
    "Select,Convert", NULL},
+  {"bash", "break element to pieces", CB_Action,
+   "RipUp,Element", NULL},
   {"autoplace", "Auto-place Selected", CB_Action,
    "AutoPlaceSelected", NULL},
   {"autoroute", "Auto-route Selected Rats", CB_Action,
