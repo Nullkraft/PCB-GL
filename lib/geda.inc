@@ -1,5 +1,5 @@
 # -*- m4 -*-
-#   $Id: geda.inc,v 1.9 2004-03-03 02:51:00 danmc Exp $
+#   $Id: geda.inc,v 1.10 2004-03-10 01:17:00 danmc Exp $
 #
 #   gEDA compatible footprint names
 #
@@ -311,7 +311,7 @@ define(`PKG_LQFP64_14',  `PKG_LQFP_80(`$1',`$2',`$3', `64',`14')');
 define(`PKG_LQFP72_10',  `PKG_LQFP_50(`$1',`$2',`$3', `72',`10')');
 define(`PKG_LQFP80_12',  `PKG_LQFP_50(`$1',`$2',`$3', `80',`12')');
 define(`PKG_LQFP80_14',  `PKG_LQFP_65(`$1',`$2',`$3', `80',`14')');
-define(`PKG_LQFP100_10', `PKG_LQFP_40(`$1',`$2',`$3', `72',`10')');
+define(`PKG_LQFP100_10', `PKG_LQFP_40(`$1',`$2',`$3',`100',`10')');
 define(`PKG_LQFP100_14', `PKG_LQFP_50(`$1',`$2',`$3',`100',`14')');
 define(`PKG_LQFP112_20', `PKG_LQFP_65(`$1',`$2',`$3',`112',`20')');
 define(`PKG_LQFP120_16', `PKG_LQFP_50(`$1',`$2',`$3',`120',`16')');
