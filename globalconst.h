@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: globalconst.h,v 1.2 2004-01-05 01:40:24 haceaton Exp $
+ *  RCS: $Id: globalconst.h,v 1.3 2004-01-18 01:05:49 haceaton Exp $
  */
 
 /* global constants
@@ -76,8 +76,8 @@
 #define	MIN_GRID		1	/* grid in 1/100000'' */
 #define	MAX_GRID		20000
 #define	CHUNK			100	/* step size for size sliders */
-#define	MIN_ZOOM		-6	/* min zoom (shift operations) */
-#define	MAX_ZOOM		6	/* max zoom (shift operations) */
+#define	MIN_ZOOM		-12	/* min zoom */
+#define	MAX_ZOOM		12	/* max zoom */
 #define	MAX_FONTPOSITION	127	/* upper limit of characters in my font */
 
 #define	MAX_COORD		3000000	/* coordinate limits */

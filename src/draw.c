@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: draw.c,v 1.11 2004-01-10 19:38:24 haceaton Exp $";
+static char *rcsid = "$Id: draw.c,v 1.12 2004-01-18 01:05:49 haceaton Exp $";
 
 /* drawing routines
  */
@@ -37,7 +37,7 @@ static char *rcsid = "$Id: draw.c,v 1.11 2004-01-10 19:38:24 haceaton Exp $";
 #endif
 
 #define	SWAP_IDENT		SwapOutput
-#define TO_SCREEN(a)	((Position)SATURATE((a)/Zoom_divisor[ZoomValue + 6]))
+#define TO_SCREEN(a)	((Position)SATURATE((a)/Zoom_divisor[ZoomValue + 12]))
 #define XORIG dxo
 #define YORIG dyo
 

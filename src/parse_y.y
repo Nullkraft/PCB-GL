@@ -25,7 +25,7 @@
  *
  */
 
-static	char	*rcsid = "$Id: parse_y.y,v 1.3 2004-01-10 01:23:18 danmc Exp $";
+static	char	*rcsid = "$Id: parse_y.y,v 1.4 2004-01-18 01:05:49 haceaton Exp $";
 
 /* grammar to parse ASCII input of PCB description
  */
@@ -237,7 +237,7 @@ pcbcursor
 			{
 				yyPCB->CursorX = $3*100;
 				yyPCB->CursorY = $4*100;
-				yyPCB->Zoom = $5;
+				yyPCB->Zoom = $5*2;
 			}
 		| T_CURSOR '[' NUMBER NUMBER NUMBER ']'
 			{
