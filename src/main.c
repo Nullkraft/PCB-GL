@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: main.c,v 1.20 2004-08-27 00:58:29 danmc Exp $";
+static char *rcsid = "$Id: main.c,v 1.21 2004-08-27 21:57:05 danmc Exp $";
 
 /* main program, initializes some stuff and handles user input
  */
@@ -1316,7 +1316,6 @@ main (int argc, char *argv[])
 {
   Cardinal i;
   XRectangle Big;
-  char *script_file = NULL;
 
   /* init application:
    * - make program name available for error handlers
