@@ -1,3 +1,5 @@
+/* $Id: djopt.c,v 1.8 2004-01-02 05:02:14 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *

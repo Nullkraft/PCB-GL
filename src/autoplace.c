@@ -1,3 +1,5 @@
+/* $Id: autoplace.c,v 1.4 2004-01-02 05:02:13 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *

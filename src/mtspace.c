@@ -1,3 +1,5 @@
+/* $Id: mtspace.c,v 1.3 2004-01-02 05:02:14 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *

@@ -1,3 +1,5 @@
+/* $Id: rats.c,v 1.4 2004-01-02 05:02:14 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *

@@ -1,3 +1,5 @@
+/* $Id: netlist.c,v 1.6 2004-01-02 05:02:14 danmc Exp $ */
+
 /*
  *                            COPYRIGHT
  *
