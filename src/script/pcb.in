@@ -23,7 +23,7 @@
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: pcb.in,v 1.1 2003-11-08 03:31:03 danmc Exp $
+#   RCS: $Id: pcb.in,v 1.2 2004-05-14 02:59:16 danmc Exp $
 #
 #
 #
@@ -37,4 +37,5 @@
 
 XAPPLRESDIR=@PKGDATADIR@/
 export XAPPLRESDIR
+unset XUSERFILESEARCHPATH
 exec @BINDIR@/pcb-bin $@
