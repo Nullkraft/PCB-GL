@@ -22,7 +22,7 @@
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: to.inc,v 1.1 2003-02-20 00:23:35 danmc Exp $
+#   RCS: $Id: to.inc,v 1.2 2003-12-31 02:37:56 danmc Exp $
 #
 # TO packages
 
@@ -391,7 +391,7 @@ define(`PKG_BASE_SOT',
 
 )')
 
-define(`PKG_SOT23',`
+define(`PKG_SOT23_CEL',`
 	define(`WX', 40)
 	define(`WY', 32)
 	define(`DX', 95)
@@ -401,7 +401,7 @@ define(`PKG_SOT23',`
 	PKG_BASE_SOT(`$1',`$2',`$3')
 ')
 
-define(`PKG_SOT323',`
+define(`PKG_SOT323_CEL',`
 	define(`WX', 32)
 	define(`WY', 24)
 	define(`DX', 67)
