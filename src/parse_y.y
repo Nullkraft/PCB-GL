@@ -25,7 +25,7 @@
  *
  */
 
-static	char	*rcsid = "$Id: parse_y.y,v 1.5 2004-01-19 19:16:18 haceaton Exp $";
+static	char	*rcsid = "$Id: parse_y.y,v 1.6 2004-02-01 16:28:47 haceaton Exp $";
 
 /* grammar to parse ASCII input of PCB description
  */
@@ -507,7 +507,7 @@ arc_1.7_format
 			/* x, y, width, height, thickness, clearance, startangle, delta, flags */
 		: T_ARC '(' NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER ')'
 			{
-				CreateNewArcOnLayer(Layer, $3*100, $4*100, $5*100, $9*100, $10*100, $7, $8, $11 & OBJ_FLAGS);
+				CreateNewArcOnLayer(Layer, $3*100, $4*100, $5*100, $9, $10, $7*100, $8*100, $11 & OBJ_FLAGS);
 			}
 		;
 
@@ -515,8 +515,8 @@ arc_oldformat
 			/* x, y, width, height, thickness, startangle, delta, flags */
 		: T_ARC '(' NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER ')'
 			{
-				CreateNewArcOnLayer(Layer, $3*100, $4*100, $5*100, $8*100, $9*100,
-					$7, 200*GROUNDPLANEFRAME, $10 & OBJ_FLAGS);
+				CreateNewArcOnLayer(Layer, $3*100, $4*100, $5*100, $8, $9,
+					$7*100, 200*GROUNDPLANEFRAME, $10 & OBJ_FLAGS);
 			}
 		;
 
