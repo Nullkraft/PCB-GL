@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: move.c,v 1.16 2004-03-20 23:01:33 haceaton Exp $";
+static char *rcsid = "$Id: move.c,v 1.17 2004-04-09 00:25:48 haceaton Exp $";
 
 /* functions used to move pins, elements ...
  */
@@ -356,6 +356,7 @@ MoveLinePoint (LayerTypePtr Layer, LineTypePtr Line, PointTypePtr Point)
 	{
 	  EraseLine (Line);
 	  MOVE (Point->X, Point->Y, DeltaX, DeltaY) DrawLine (Layer, Line, 0);
+	  DrawLine (Layer, Line, 0);
 	  Draw ();
 	}
       else
@@ -370,8 +371,8 @@ MoveLinePoint (LayerTypePtr Layer, LineTypePtr Line, PointTypePtr Point)
       if (PCB->RatOn)
 	{
 	  EraseRat ((RatTypePtr) Line);
-	  MOVE (Point->X, Point->Y, DeltaX, DeltaY)
-	    DrawRat ((RatTypePtr) Line, 0);
+	  MOVE (Point->X, Point->Y, DeltaX, DeltaY);
+	  DrawRat ((RatTypePtr) Line, 0);
 	  Draw ();
 	}
       else
