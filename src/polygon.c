@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: polygon.c,v 1.11 2004-02-13 22:31:15 haceaton Exp $";
+  "$Id: polygon.c,v 1.12 2004-02-14 02:32:49 haceaton Exp $";
 
 /* special polygon editing routines
  */
@@ -44,6 +44,7 @@ static char *rcsid =
 #include "data.h"
 #include "draw.h"
 #include "error.h"
+#include "find.h"
 #include "misc.h"
 #include "move.h"
 #include "polygon.h"
@@ -487,4 +488,5 @@ twice_break:
              }
           ); // end of ALLPAD_LOOP
         } /* end of group test */
+  return 0;
 }
