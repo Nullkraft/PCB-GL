@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: change.h,v 1.3 2004-05-29 00:13:33 danmc Exp $
+ *  RCS: $Id: change.h,v 1.4 2004-10-29 06:07:01 danmc Exp $
  */
 
 /* prototypes to change object properties
@@ -89,7 +89,7 @@ Boolean	ChangeObjectThermal(int, void *, void *, void *);
 Boolean	SetObjectThermal(int, void *, void *, void *);
 Boolean	ClrObjectThermal(int, void *, void *, void *);
 Boolean	ChangeObjectClearSize(int, void *, void *, void *, Location, Boolean);
-Boolean	ChangeObject2ndSize(int, void *, void *, void *, Location, Boolean);
+Boolean	ChangeObject2ndSize(int, void *, void *, void *, Location, Boolean, Boolean);
 Boolean	ChangeObjectMaskSize(int, void *, void *, void *, Location, Boolean);
 Boolean	ChangeObjectJoin(int, void *, void *, void *);
 Boolean	ChangeObjectSquare(int, void *, void *, void *);

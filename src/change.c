@@ -1,4 +1,4 @@
-/* $Id: change.c,v 1.24 2004-10-21 22:49:56 haceaton Exp $ */
+/* $Id: change.c,v 1.25 2004-10-29 06:07:01 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -62,7 +62,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: change.c,v 1.24 2004-10-21 22:49:56 haceaton Exp $");
+RCSID ("$Id: change.c,v 1.25 2004-10-29 06:07:01 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -1897,7 +1897,7 @@ ClrObjectThermal (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
  */
 Boolean
 ChangeObject2ndSize (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
-		     Location Difference, Boolean fixIt)
+		     Location Difference, Boolean fixIt, Boolean incundo)
 {
   Boolean change;
 
@@ -1910,7 +1910,8 @@ ChangeObject2ndSize (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
   if (change)
     {
       Draw ();
-      IncrementUndoSerialNumber ();
+      if (incundo)
+	IncrementUndoSerialNumber ();
     }
   return (change);
 }

@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.10 2004-06-20 21:33:50 djdelorie Exp $
+## $Id: Makefile.am,v 1.11 2004-10-29 06:07:00 danmc Exp $
 ##
 
 SUBDIRS=	icons script
@@ -147,7 +147,8 @@ pcb_bin_SOURCES = \
 	undo.c \
 	undo.h \
 	vector.c \
-	vector.h 
+	vector.h \
+	vendor.c
 
 # for globalconst.h
 INCLUDES=	-I$(top_srcdir) -I$(srcdir)/icons

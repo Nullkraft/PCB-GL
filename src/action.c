@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.50 2004-10-17 05:16:52 djdelorie Exp $ */
+/* $Id: action.c,v 1.51 2004-10-29 06:07:00 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -85,7 +85,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: action.c,v 1.50 2004-10-17 05:16:52 djdelorie Exp $");
+RCSID("$Id: action.c,v 1.51 2004-10-29 06:07:00 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -2965,7 +2965,7 @@ ActionChange2ndSize (Widget W, XEvent * Event,
 	    if ((type =
 		 SearchScreen (Crosshair.X, Crosshair.Y, CHANGE2NDSIZE_TYPES,
 			       &ptr1, &ptr2, &ptr3)) != NO_TYPE)
-	      if (ChangeObject2ndSize (type, ptr1, ptr2, ptr3, value, r))
+	      if (ChangeObject2ndSize (type, ptr1, ptr2, ptr3, value, r, True))
 		SetChangedFlag (True);
 	    break;
 	  }
