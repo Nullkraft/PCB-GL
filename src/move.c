@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: move.c,v 1.6 2004-02-13 21:11:39 haceaton Exp $";
+static char *rcsid = "$Id: move.c,v 1.7 2004-02-14 02:22:09 haceaton Exp $";
 
 /* functions used to move pins, elements ...
  */
@@ -41,6 +41,7 @@ static char *rcsid = "$Id: move.c,v 1.6 2004-02-13 21:11:39 haceaton Exp $";
 #include "crosshair.h"
 #include "data.h"
 #include "draw.h"
+#include "error.h"
 #include "misc.h"
 #include "move.h"
 #include "mymem.h"
