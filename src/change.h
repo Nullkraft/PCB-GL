@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: change.h,v 1.4 2004-10-29 06:07:01 danmc Exp $
+ *  RCS: $Id: change.h,v 1.5 2004-11-07 14:46:34 haceaton Exp $
  */
 
 /* prototypes to change object properties
@@ -37,7 +37,7 @@
  * some defines
  */
 #define	CHANGENAME_TYPES        \
-	(VIA_TYPE | PIN_TYPE | PAD_TYPE | TEXT_TYPE | ELEMENT_TYPE | LINE_TYPE)
+	(VIA_TYPE | PIN_TYPE | PAD_TYPE | TEXT_TYPE | ELEMENT_TYPE | ELEMENTNAME_TYPE | LINE_TYPE)
 
 #define	CHANGESIZE_TYPES        \
 	(POLYGON_TYPE | VIA_TYPE | PIN_TYPE | PAD_TYPE | LINE_TYPE | \

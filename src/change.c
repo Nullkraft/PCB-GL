@@ -1,4 +1,4 @@
-/* $Id: change.c,v 1.25 2004-10-29 06:07:01 danmc Exp $ */
+/* $Id: change.c,v 1.26 2004-11-07 14:46:34 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -62,7 +62,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: change.c,v 1.25 2004-10-29 06:07:01 danmc Exp $");
+RCSID ("$Id: change.c,v 1.26 2004-11-07 14:46:34 haceaton Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -2085,6 +2085,13 @@ QueryInputAndChangeObjectName (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
   char *name = NULL;
   char msg[513];
 
+  /* if passed an element name, make it an element reference instead */
+  if (Type == ELEMENTNAME_TYPE)
+    {
+      Type = ELEMENT_TYPE;
+      Ptr2 = Ptr1;
+      Ptr3 = Ptr1;
+    }
   switch (Type)
     {
     case LINE_TYPE:
