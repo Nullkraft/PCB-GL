@@ -1,4 +1,4 @@
-/* $Id: vendor.c,v 1.4 2004-11-19 03:08:10 haceaton Exp $ */
+/* $Id: vendor.c,v 1.5 2004-12-12 00:12:47 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -537,7 +537,7 @@ static void add_to_drills(char *sval)
 				 n_vendor_drills*sizeof(int))) == NULL )
     {
       fprintf (stderr, "realloc() failed to allocate %ld bytes\n", 
-	       n_vendor_drills*sizeof(int));
+	       (unsigned long) n_vendor_drills*sizeof(int));
       return ; 
     }
   
