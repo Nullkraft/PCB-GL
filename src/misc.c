@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.31 2004-09-21 03:51:04 haceaton Exp $ */
+/* $Id: misc.c,v 1.32 2004-11-19 03:08:10 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -76,7 +76,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: misc.c,v 1.31 2004-09-21 03:51:04 haceaton Exp $");
+RCSID ("$Id: misc.c,v 1.32 2004-11-19 03:08:10 haceaton Exp $");
 
 
 
@@ -1483,7 +1483,7 @@ UniqueElementName (DataTypePtr Data, char *Name)
       ELEMENT_LOOP (Data);
       {
 	if (NAMEONPCB_NAME (element) &&
-	    strcmp (NAMEONPCB_NAME (element), Name) == 0)
+	    NSTRCMP (NAMEONPCB_NAME (element), Name) == 0)
 	  {
 	    Name = BumpName (Name);
 	    unique = False;

@@ -1,4 +1,4 @@
-/* $Id: set.c,v 1.20 2004-09-08 04:05:08 danmc Exp $ */
+/* $Id: set.c,v 1.21 2004-11-19 03:08:10 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -64,7 +64,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: set.c,v 1.20 2004-09-08 04:05:08 danmc Exp $");
+RCSID("$Id: set.c,v 1.21 2004-11-19 03:08:10 haceaton Exp $");
 
 
 
@@ -465,7 +465,7 @@ SetRouteStyle (char *name)
 
   STYLE_LOOP (PCB);
     {
-      if (name && strcmp (name, style->Name) == 0)
+      if (name && NSTRCMP (name, style->Name) == 0)
 	{
 	  arg = &num[0];
 	  sprintf (num, "%d", n + 1);

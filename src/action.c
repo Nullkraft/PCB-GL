@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.51 2004-10-29 06:07:00 danmc Exp $ */
+/* $Id: action.c,v 1.52 2004-11-19 03:08:06 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -85,7 +85,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: action.c,v 1.51 2004-10-29 06:07:00 danmc Exp $");
+RCSID("$Id: action.c,v 1.52 2004-11-19 03:08:06 haceaton Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -1933,7 +1933,7 @@ ActionFinishInputDialog (Widget W, XEvent * Event,
 			 String * Params, Cardinal * Num)
 {
   if (*Num == 1)
-    FinishInputDialog (!strcmp ("OK", *Params));
+    FinishInputDialog (!NSTRCMP ("OK", *Params));
   else
     Message ("Usage:  \n" "FinishInput(OK|Cancel)\n");
 
@@ -4657,9 +4657,9 @@ ActionChangeFlag (Widget W, XEvent * Event, String * Params, Cardinal * Num)
       return;
     }
 
-  if (strcmp (Params[2], "0") == 0)
+  if (NSTRCMP (Params[2], "0") == 0)
     val = 0;
-  else if (strcmp (Params[2], "1") == 0)
+  else if (NSTRCMP (Params[2], "1") == 0)
     val = 1;
   else
     {
@@ -4684,19 +4684,19 @@ ChangeFlag (Widget W, XEvent * Event,
   what = Params[0];
   flag_name = Params[1];
 
-  if (strcmp (flag_name, "square") == 0)
+  if (NSTRCMP (flag_name, "square") == 0)
     {
       flag = SQUAREFLAG;
       set_object = value ? SetObjectSquare : ClrObjectSquare;
       set_selected = value ? SetSelectedSquare : ClrSelectedSquare;
     }
-  else if (strcmp (flag_name, "octagon") == 0)
+  else if (NSTRCMP (flag_name, "octagon") == 0)
     {
       flag = OCTAGONFLAG;
       set_object = value ? SetObjectOctagon : ClrObjectOctagon;
       set_selected = value ? SetSelectedOctagon : ClrSelectedOctagon;
     }
-  else if (strcmp (flag_name, "thermal") == 0)
+  else if (NSTRCMP (flag_name, "thermal") == 0)
     {
       flag = L0THERMFLAG;
       set_object = value ? SetObjectThermal : ClrObjectThermal;

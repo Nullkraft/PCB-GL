@@ -1,4 +1,4 @@
-/* $Id: selector.c,v 1.3 2004-08-30 02:52:06 danmc Exp $ */
+/* $Id: selector.c,v 1.4 2004-11-19 03:08:10 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -56,7 +56,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: selector.c,v 1.3 2004-08-30 02:52:06 danmc Exp $");
+RCSID("$Id: selector.c,v 1.4 2004-11-19 03:08:10 haceaton Exp $");
 
 
 
@@ -76,7 +76,7 @@ CompareFunction (const void *P1, const void *P2)
   SelectorEntryTypePtr p1 = (SelectorEntryTypePtr) P1,
     p2 = (SelectorEntryTypePtr) P2;
 
-  return (strcmp (p1->Text, p2->Text));
+  return (NSTRCMP (p1->Text, p2->Text));
 }
 
 /* ---------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-/* $Id: autoplace.c,v 1.10 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: autoplace.c,v 1.11 2004-11-19 03:08:08 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -66,7 +66,7 @@
 #include <dmalloc.h>		/* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: autoplace.c,v 1.10 2004-08-30 02:52:04 danmc Exp $");
+RCSID("$Id: autoplace.c,v 1.11 2004-11-19 03:08:08 haceaton Exp $");
 
 #define EXPANDRECTXY(r1, x1, y1, x2, y2) { \
   r1->X1=MIN(r1->X1, x1); r1->Y1=MIN(r1->Y1, y1); \
@@ -553,7 +553,7 @@ ComputeCost (NetListTypePtr Nets, double T0, double T)
 	factor = 1;
 	if (element->Name[0].TextString &&
 	    boxp->element->Name[0].TextString &&
-	    0 == strcmp (element->Name[0].TextString,
+	    0 == NSTRCMP (element->Name[0].TextString,
 			 boxp->element->Name[0].TextString))
 	  {
 	    delta4 += CostParameter.matching_neighbor_bonus;

@@ -1,4 +1,4 @@
-/* $Id: search.c,v 1.16 2004-08-30 02:52:06 danmc Exp $ */
+/* $Id: search.c,v 1.17 2004-11-19 03:08:10 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -52,7 +52,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: search.c,v 1.16 2004-08-30 02:52:06 danmc Exp $");
+RCSID("$Id: search.c,v 1.17 2004-11-19 03:08:10 haceaton Exp $");
 
 
 /* ---------------------------------------------------------------------------
@@ -1413,7 +1413,7 @@ SearchElementByName (DataTypePtr Base, char *Name)
   ELEMENT_LOOP (Base);
   {
     if (element->Name[1].TextString &&
-	strcmp (element->Name[1].TextString, Name) == 0)
+	NSTRCMP (element->Name[1].TextString, Name) == 0)
       {
 	result = element;
 	return (result);

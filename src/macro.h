@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: macro.h,v 1.14 2004-05-05 03:47:00 danmc Exp $
+ *  RCS: $Id: macro.h,v 1.15 2004-11-19 03:08:10 haceaton Exp $
  */
 
 /* some commonly used macros not related to a special C-file
@@ -94,6 +94,7 @@
 
 #define	ENTRIES(x)		(sizeof((x))/sizeof((x)[0]))
 #define	UNKNOWN(a)		((a) && *(a) ? (a) : "(unknown)")
+#define NSTRCMP(a, b)		((a) ? ((b) ? strcmp((a),(b)) : 1) : -1)
 #define	EMPTY(a)		((a) ? (a) : "")
 #define XOR(a,b)		(((a) && !(b)) || (!(a) && (b)))
 #define SQUARE(x)		((float) (x) * (float) (x))

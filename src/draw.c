@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.39 2004-09-21 04:37:55 haceaton Exp $ */
+/* $Id: draw.c,v 1.40 2004-11-19 03:08:10 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -60,7 +60,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: draw.c,v 1.39 2004-09-21 04:37:55 haceaton Exp $");
+RCSID("$Id: draw.c,v 1.40 2004-11-19 03:08:10 haceaton Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -378,7 +378,7 @@ LoadBackgroundImage (char *filename)
   FILE *f = fopen(filename, "rb");
   if (!f)
     {
-      if (strcmp (filename, "pcb-background.ppm"))
+      if (NSTRCMP (filename, "pcb-background.ppm"))
 	perror(filename);
       return;
     }

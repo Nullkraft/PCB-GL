@@ -1,4 +1,4 @@
-/* $Id: rats.c,v 1.16 2004-10-08 16:56:21 djdelorie Exp $ */
+/* $Id: rats.c,v 1.17 2004-11-19 03:08:10 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -60,7 +60,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: rats.c,v 1.16 2004-10-08 16:56:21 djdelorie Exp $");
+RCSID("$Id: rats.c,v 1.17 2004-11-19 03:08:10 haceaton Exp $");
 
 
 #define TRIEDFIRST 0x1
@@ -126,7 +126,7 @@ FindPad (char *ElementName, char *PinNum, ConnectionType * conn, Boolean Same)
   if ((element = SearchElementByName (PCB->Data, ElementName)) != NULL)
     {
       for (i = 0; i < element->PadN; i++)
-	if (strcmp (PinNum, element->Pad[i].Number) == 0 && (!Same
+	if (NSTRCMP (PinNum, element->Pad[i].Number) == 0 && (!Same
 							     ||
 							     !TEST_FLAG
 							     (DRCFLAG,
@@ -154,7 +154,7 @@ FindPad (char *ElementName, char *PinNum, ConnectionType * conn, Boolean Same)
 	  for (i = 0; i < element->PinN; i++)
 	    if (!TEST_FLAG (HOLEFLAG, &element->Pin[i]) &&
 		element->Pin[i].Number &&
-		strcmp (PinNum, element->Pin[i].Number) == 0 &&
+		NSTRCMP (PinNum, element->Pin[i].Number) == 0 &&
 		(!Same || !TEST_FLAG (DRCFLAG, &element->Pin[i])))
 	      {
 		conn->type = PIN_TYPE;
@@ -260,7 +260,7 @@ ProcNetlist (LibraryTypePtr net_menu)
 	  {
 	    STYLE_LOOP (PCB);
 	    {
-	      if (style->Name && !strcmp (style->Name, menu->Style))
+	      if (style->Name && !NSTRCMP (style->Name, menu->Style))
 		{
 		  net->Style = style;
 		  break;

@@ -1,4 +1,4 @@
-/* $Id: dev_rs274x.c,v 1.24 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: dev_rs274x.c,v 1.25 2004-11-19 03:08:10 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -73,7 +73,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: dev_rs274x.c,v 1.24 2004-08-30 02:52:04 danmc Exp $");
+RCSID("$Id: dev_rs274x.c,v 1.25 2004-11-19 03:08:10 haceaton Exp $");
 
 /*----------------------------------------------------------------------------*/
 /* Private data structures                                                    */
@@ -472,7 +472,7 @@ GBX_Preamble (PrintInitTypePtr Flags, char *Description)
   /* save passed-in data */
   GBX_Flags = *Flags;
 
-  if (strcmp (Description, "drill information") == 0)
+  if (NSTRCMP (Description, "drill information") == 0)
     {
       DrillInfoTypePtr usedDrills;
       int index = 1;
