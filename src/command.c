@@ -24,7 +24,8 @@
  *
  */
 
-static char *rcsid = "$Id: command.c,v 1.1 2003-02-20 00:23:56 danmc Exp $";
+static char *rcsid =
+  "$Id: command.c,v 1.2 2003-12-29 03:15:56 haceaton Exp $";
 
 /* executes commands from user
  */

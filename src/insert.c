@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: insert.c,v 1.2 2003-12-28 17:16:28 haceaton Exp $";
+static char *rcsid = "$Id: insert.c,v 1.3 2003-12-29 03:15:56 haceaton Exp $";
 
 /* functions used to insert points into objects
  */
@@ -148,7 +148,7 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
   if (!Forcible)
     {
       /*
-         * first make sure adding the point is sensible
+       * first make sure adding the point is sensible
        */
       line.Thickness = 0;
       if (InsertAt == 0)

@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: printdialog.c,v 1.1 2003-02-20 00:24:28 danmc Exp $";
+  "$Id: printdialog.c,v 1.2 2003-12-29 03:15:56 haceaton Exp $";
 
 /* print dialog routines
  */
@@ -89,7 +89,7 @@ static Widget Popup,		/* the popup shells */
   FilenameLabelW,		/* a label */
   FilenameW;			/* input line */
 static float Scale = 1.0;	/* initial scaling factor */
-static long int ReturnCode;		/* returncode of buttons */
+static long int ReturnCode;	/* returncode of buttons */
 static Boolean RotateFlag = False,	/* initial rotation flag */
   OutlineFlag = False,		/* don't draw board outline.. */
   AlignmentFlag = False, DOSFilenames = False;

@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: printpanner.c,v 1.1 2003-02-20 00:24:29 danmc Exp $";
+  "$Id: printpanner.c,v 1.2 2003-12-29 03:15:56 haceaton Exp $";
 
 /* print dialog panner routines
  * only available for X11R5 and later
@@ -107,7 +107,8 @@ static Widget Panner,		/* the panner widget */
 /* ---------------------------------------------------------------------------
  * returns pointer to current media selection
  */
-MediaTypePtr PrintPannerGetMedia (void)
+MediaTypePtr
+PrintPannerGetMedia (void)
 {
   return (MediaSelection);
 }
@@ -178,7 +179,8 @@ CB_Report (Widget W, XtPointer ClientData, XtPointer CallData)
 /* ---------------------------------------------------------------------------
  * creates a print command dialog
  */
-Widget PrintPannerCreate (Widget Parent, Widget Top, Widget Left)
+Widget
+PrintPannerCreate (Widget Parent, Widget Top, Widget Left)
 {
   Widget masterform, label, menu;
   BoxTypePtr box;

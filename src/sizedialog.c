@@ -24,7 +24,8 @@
  *
  */
 
-static char *rcsid = "$Id: sizedialog.c,v 1.2 2003-07-01 16:27:13 djdelorie Exp $";
+static char *rcsid =
+  "$Id: sizedialog.c,v 1.3 2003-12-29 03:15:56 haceaton Exp $";
 
 /* size dialog routines
  */
@@ -98,7 +99,7 @@ SliderType, *SliderTypePtr;
 /* ---------------------------------------------------------------------------
  * some local identifiers
  */
-static long int ReturnCode;		/* returncode of buttons */
+static long int ReturnCode;	/* returncode of buttons */
 static SliderType Sliders[] = {
   {"linewidth", MIN_LINESIZE, MAX_LINESIZE, CHUNK, 0, NULL, NULL},
   {"via hole", MIN_PINORVIAHOLE, 0, CHUNK, 0, NULL, NULL},

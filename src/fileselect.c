@@ -24,7 +24,8 @@
  *
  */
 
-static char *rcsid = "$Id: fileselect.c,v 1.2 2003-05-26 23:45:46 danmc Exp $";
+static char *rcsid =
+  "$Id: fileselect.c,v 1.3 2003-12-29 03:15:56 haceaton Exp $";
 
 /* file select box
  * some of the actions are local to this module
@@ -92,7 +93,7 @@ static Widget CreateMenuFromPath (Widget, Widget, Widget, char *);
 static Widget InputW,		/* input field */
   CurrentW;			/* label (current directory) */
 static long int ReturnCode;	/* returncode of buttons */
-static char CurrentDir[MAXPATHLEN + 1]; /* current directory */
+static char CurrentDir[MAXPATHLEN + 1];	/* current directory */
 static Boolean LockCallback;	/* used by CB_Text() */
 static SelectorType DirectorySelector =
   { "directoryList", NULL, NULL, CB_Directory,
@@ -281,7 +282,7 @@ FillListsFromCommand (char *Command)
     }
 
   /* update label */
-  strncpy(CurrentDir, Command, sizeof(CurrentDir)-1);
+  strncpy (CurrentDir, Command, sizeof (CurrentDir) - 1);
   XtVaSetValues (CurrentW, XtNlabel, Command, NULL);
   return (0);
 }
@@ -382,7 +383,7 @@ CreateMenuFromPath (Widget Parent, Widget Top, Widget Left, char *Path)
       /* copy first path element to CurrentDir */
       if (first)
 	{
-	  strncpy(CurrentDir, path, sizeof(CurrentDir)-1);
+	  strncpy (CurrentDir, path, sizeof (CurrentDir) - 1);
 	  first = False;
 	}
       entry = XtVaCreateManagedWidget ("directory", smeBSBObjectClass,

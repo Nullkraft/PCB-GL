@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: log.c,v 1.1 2003-02-20 00:24:16 danmc Exp $";
+static char *rcsid = "$Id: log.c,v 1.2 2003-12-29 03:15:56 haceaton Exp $";
 
 /* logging routines
  */
@@ -78,7 +78,8 @@ static void AppendToLog (char *, int);
 /* ---------------------------------------------------------------------------
  * creates a new window to display logging messages
  */
-Widget InitLogWindow (Widget Parent, int Filedes)
+Widget
+InitLogWindow (Widget Parent, int Filedes)
 {
   static char *windowName = NULL;
 
