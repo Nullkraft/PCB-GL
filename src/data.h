@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: data.h,v 1.2 2004-01-05 01:40:24 haceaton Exp $
+ *  RCS: $Id: data.h,v 1.3 2004-01-19 19:16:17 haceaton Exp $
  */
 
 /* common identifiers
@@ -64,5 +64,5 @@ extern	Window		LogWindID;
 extern	Location	Xorig, Yorig;
 extern	Boolean		render;
 extern	Location	vxl, vxh, vyl, vyh;
-extern	float		Zoom_divisor[13];
+extern	float		Zoom_Multiplier;
 #endif

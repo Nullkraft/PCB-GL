@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: const.h,v 1.6 2004-01-15 16:17:48 haceaton Exp $
+ *  RCS: $Id: const.h,v 1.7 2004-01-19 19:16:17 haceaton Exp $
  */
 
 /* global source constants
@@ -66,6 +66,7 @@
 #define MM_TO_MIL               39.37007874
 #define COOR_TO_MM		0.000254000
 #define MM_TO_COOR		3937.007874
+#define LN_2_OVER_2		0.346573590
 
 /* ---------------------------------------------------------------------------
  * modes

@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: draw.h,v 1.1 2003-02-20 00:24:06 danmc Exp $
+ *  RCS: $Id: draw.h,v 1.2 2004-01-19 19:16:17 haceaton Exp $
  */
 
 /* prototypes for drawing routines
@@ -36,7 +36,7 @@
 void	Draw(void);
 void	RedrawOutput(void);
 void	ClearAndRedrawOutput(void);
-Boolean	SwitchDrawingWindow(int, Window, Boolean, Boolean);
+Boolean	SwitchDrawingWindow(float, Window, Boolean, Boolean);
 void	ClearPin(PinTypePtr, int, int);
 void	DrawVia(PinTypePtr, int);
 void	DrawRat(RatTypePtr, int);

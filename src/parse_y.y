@@ -25,7 +25,7 @@
  *
  */
 
-static	char	*rcsid = "$Id: parse_y.y,v 1.4 2004-01-18 01:05:49 haceaton Exp $";
+static	char	*rcsid = "$Id: parse_y.y,v 1.5 2004-01-19 19:16:18 haceaton Exp $";
 
 /* grammar to parse ASCII input of PCB description
  */
@@ -62,7 +62,7 @@ extern	char			*yyfilename;	/* in this file */
 
 %union									/* define YYSTACK type */
 {
-	unsigned	number;
+	int		number;
 	float		floating;
 	char		*string;
 }
@@ -240,6 +240,12 @@ pcbcursor
 				yyPCB->Zoom = $5*2;
 			}
 		| T_CURSOR '[' NUMBER NUMBER NUMBER ']'
+			{
+				yyPCB->CursorX = $3;
+				yyPCB->CursorY = $4;
+				yyPCB->Zoom = $5;
+			}
+		| T_CURSOR '[' NUMBER NUMBER FLOAT ']'
 			{
 				yyPCB->CursorX = $3;
 				yyPCB->CursorY = $4;

@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: data.c,v 1.3 2004-01-18 01:05:49 haceaton Exp $";
+static char *rcsid = "$Id: data.c,v 1.4 2004-01-19 19:16:17 haceaton Exp $";
 
 /* just defines common identifiers
  */
@@ -71,8 +71,12 @@ Pixmap XC_lock_source, XC_lock_mask;
 int addedLines;
 Location vxl, vxh, vyl, vyh;	/* approximate visible pcb coordinates */
 
-float Zoom_divisor[25] =
-  { 1.5625, 2.2097, 3.125, 4.4194, 6.25, 8.8388, 12.5, 17.6777, 25, 35.3553, 50, 70.7106, 100, 141.421, 200, 282.848, 400, 565.685, 800, 1131.37, 1600, 2262.74, 3200, 4525.48, 6400 };
+float Zoom_Multiplier = 0.01;
+/*  { 1.5625, 2.2097, 3.125, 4.4194, 6.25, 8.8388,
+      12.5, 17.6777, 25, 35.3553, 50, 70.7106, 100,
+      141.421, 200, 282.848, 400, 565.685, 800, 1131.37,
+      1600, 2262.74, 3200, 4525.48, 6400 };
+*/
 
 /* ---------------------------------------------------------------------------
  * set all keys which generate a new line not 'no operation'.

@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: main.c,v 1.7 2004-01-17 23:06:19 haceaton Exp $";
+static char *rcsid = "$Id: main.c,v 1.8 2004-01-19 19:16:18 haceaton Exp $";
 
 /* main program, initializes some stuff and handles user input
  */
@@ -759,7 +759,7 @@ static XtResource ToplevelResources[] = {
   {"pinoutTextOffsetY", "PinoutTextOffsetY", XtRPosition, sizeof (Position),
    XtOffsetOf (SettingType, PinoutTextOffsetY), XtRString, "0"}
   ,
-  {"pinoutZoom", "PinoutZoom", XtRInt, sizeof (int),
+  {"pinoutZoom", "PinoutZoom", XtRFloat, sizeof (float),
    XtOffsetOf (SettingType, PinoutZoom), XtRString, "2"},
   {"printFile", "PrintFile", XtRString, sizeof (String),
    XtOffsetOf (SettingType, PrintFile), XtRString, "%f.output"}
@@ -859,7 +859,7 @@ static XtResource ToplevelResources[] = {
   {"warnColor", XtCColor, XtRPixel, sizeof (Pixel),
    XtOffsetOf (SettingType, WarnColor), XtRString, XtDefaultForeground}
   ,
-  {"zoom", "Zoom", XtRInt, sizeof (int),
+  {"zoom", "Zoom", XtRFloat, sizeof (float),
    XtOffsetOf (SettingType, Zoom), XtRString, "3"}
 };
 
