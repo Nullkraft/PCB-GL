@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: polygon.c,v 1.22 2004-03-17 04:59:44 haceaton Exp $";
+  "$Id: polygon.c,v 1.23 2004-03-18 15:35:34 haceaton Exp $";
 
 /* special polygon editing routines
  */
@@ -324,7 +324,7 @@ DoPIPFlags (PinTypePtr Pin, ElementTypePtr Element,
   float wide;
 
   if (TEST_FLAG (SQUAREFLAG, Pin))
-    wide = (Pin->Thickness + Pin->Clearance) * SQRT2OVER2;
+    wide = (Pin->Thickness + Pin->Clearance) * M_SQRT1_2;
   else
     wide = (Pin->Thickness + Pin->Clearance) * 0.5;
   if (IsPointInPolygon (Pin->X, Pin->Y, wide, Polygon))
