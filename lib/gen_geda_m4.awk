@@ -1,6 +1,6 @@
 #!/usr/bin/awk -f
 #
-# $Id: gen_geda_m4.awk,v 1.1 2003-08-30 00:11:14 danmc Exp $
+# $Id: gen_geda_m4.awk,v 1.2 2003-08-30 00:26:16 danmc Exp $
 #
 # Script to regenerate geda.m4 from geda.inc
 #
@@ -10,18 +10,10 @@
 #
 
 BEGIN {
-}
-
-/^[ \t]*\#[ \t]*\$Id: gen_geda_m4.awk,v 1.1 2003-08-30 00:11:14 danmc Exp $]*\$/ {
-	id = substr($0, index($0, "Id:"));
-	ind = index(id, "Exp $");
-	id = substr(id, 1, ind+3);
 	printf("divert(-1)\n");
 	printf("#\n");
 	printf("# NOTE: Auto-generated. Do not change.\n");
-	printf("# Generated from:\n");
-	printf("#  %s\n", id);
-	next;
+	printf("#");
 }
 
 /^\#\#/ {
