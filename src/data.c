@@ -1,4 +1,4 @@
-/* $Id: data.c,v 1.8 2005-01-03 12:56:59 danmc Exp $ */
+/* $Id: data.c,v 1.9 2005-02-02 22:37:06 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -40,7 +40,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: data.c,v 1.8 2005-01-03 12:56:59 danmc Exp $");
+RCSID("$Id: data.c,v 1.9 2005-02-02 22:37:06 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some shared identifiers
@@ -90,8 +90,6 @@ String InputTranslations =
   "<Key>Linefeed: no-op()\n "
   "<Key>Return:   FinishInputDialog(OK)\n "
   "<Key>Escape:   FinishInputDialog(Cancel)\n "
-  "<Key>Up:       CommandHistory(prev)\n "
-  "<Key>Down:     CommandHistory(next)\n "
   "Ctrl<Key>j:    no-op()\n "
   "Ctrl<Key>m:    no-op()\n " "Ctrl<Key>o:    no-op()\n ";
 

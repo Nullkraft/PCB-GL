@@ -1,4 +1,4 @@
-/* $Id: dialog.c,v 1.11 2004-11-19 03:08:10 haceaton Exp $ */
+/* $Id: dialog.c,v 1.12 2005-02-02 22:37:06 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -56,7 +56,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: dialog.c,v 1.11 2004-11-19 03:08:10 haceaton Exp $");
+RCSID("$Id: dialog.c,v 1.12 2005-02-02 22:37:06 danmc Exp $");
 
 
 
@@ -451,6 +451,13 @@ GetUserInput (char *MessageText, char *OutputString)
   XtSetKeyboardFocus (Output.Toplevel, inputfield);
   XtOverrideTranslations (inputfield,
 			  XtParseTranslationTable (InputTranslations));
+
+  /* also add translations for command history */
+  XtOverrideTranslations (inputfield,
+			  XtParseTranslationTable (
+			      "<Key>Up:       CommandHistory(prev)\n "
+			      "<Key>Down:     CommandHistory(next)\n " ) );
+
   XtInstallAccelerators (inputfield, Output.MasterForm);
   XtAddGrab (inputfield, True, False);
   XtRealizeWidget (inputfield);
