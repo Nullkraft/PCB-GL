@@ -19,7 +19,7 @@
 !  along with this program; if not, write to the Free Software
 !  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 !
-!  RCS: $Id: Pcb.ad.in,v 1.14 2004-03-08 02:29:02 haceaton Exp $
+!  RCS: $Id: Pcb.ad.in,v 1.15 2004-03-22 13:12:36 haceaton Exp $
 !
 
 !---------------------------------------------------------------------------
@@ -441,9 +441,9 @@ Pcb.masterForm*output.baseTranslations:   #override \
   <Key>h:          ToggleHideName(Object) \n\
   <Key>j:		ChangeJoin(Object) \n\
   Shift<Key>j:		ChangeJoin(SelectedObjects) \n\
+  Shift Ctrl<Key>k:	ChangeClearSize(SelectedObjects, -2, mil) \n\
   Shift<Key>k:		ChangeClearSize(Object, -2, mil) \n\
   Ctrl<Key>k:		ChangeClearSize(SelectedObjects, +2, mil) \n\
-  Shift Ctrl<Key>k:	ChangeClearSize(SelectedObjects, -2, mil) \n\
   <Key>k:		ChangeClearSize(Object, +2, mil) \n\
   Shift<Key>l:        SetValue(LineSize, -5, mil) \n\
   <Key>l:          SetValue(LineSize, +5, mil) \n\
@@ -501,7 +501,6 @@ Pcb.masterForm*output.baseTranslations:   #override \
   @btnmod@<Key>z:       Undo() \n\
   <Key>z:          SetValue(Zoom, -1) \
                    Display(Center) \n\
-  <Key>.:          Display(Toggle45Degree) \n\
   <Key>/:          Display(CycleClip) \n\
   \
   @btnmod@<Key>Up:      Display(Scroll, 8) \
