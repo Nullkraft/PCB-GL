@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: file.c,v 1.16 2004-04-30 01:49:21 danmc Exp $";
+static char *rcsid = "$Id: file.c,v 1.17 2004-08-25 02:27:20 danmc Exp $";
 
 /* file save, load, merge ... routines
  * getpid() needs a cast to (int) to get rid of compiler warnings
@@ -815,7 +815,7 @@ ParseLibraryTree (void)
 	{
 	  chdir (path);
 	  /* find directories
-	   * ignore entries beginning with "." and also CVS
+	   * ignore entries beginning with "." and CVS
 	   * directories
 	   */
 	  if (!stat (direntry->d_name, &buffer)
@@ -831,8 +831,11 @@ ParseLibraryTree (void)
 		{
 		  if (!stat (e2->d_name, &buffer) && S_ISREG (buffer.st_mode)
 		      && e2->d_name[0] != '.'
-		      && strcmp (e2->d_name, "CVS") != 0)
-		    {
+		      && strcmp (e2->d_name, "CVS") != 0
+		      && strcmp (e2->d_name, "Makefile") != 0
+		      && strcmp (e2->d_name, "Makefile.am") != 0
+		      && strcmp (e2->d_name, "Makefile.in") != 0 )
+		{
 		      long len = strlen (path) + strlen (e2->d_name) +
 			strlen (direntry->d_name) + 3;
 #if 0
