@@ -1,4 +1,4 @@
-/* $Id: rtree.c,v 1.16 2004-04-25 04:56:00 haceaton Exp $ */
+/* $Id: rtree.c,v 1.17 2004-08-27 22:04:18 danmc Exp $ */
 /*
  *                            COPYRIGHT
  *
@@ -507,8 +507,6 @@ __r_destroy_tree (struct rtree_node *node)
 void
 r_destroy_tree (rtree_t ** rtree)
 {
-  unsigned i;
-  const BoxType **b;
 
   __r_destroy_tree ((*rtree)->root);
   free (*rtree);

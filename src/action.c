@@ -25,7 +25,7 @@
  *
  */
 
-static char *rcsid = "$Id: action.c,v 1.46 2004-08-25 01:59:05 danmc Exp $";
+static char *rcsid = "$Id: action.c,v 1.47 2004-08-27 22:01:43 danmc Exp $";
 
 /* action routines for output window
  */
@@ -4662,10 +4662,7 @@ static void
 ChangeFlag (Widget W, XEvent * Event,
 	    String * Params, int value, char *cmd_name)
 {
-  Boolean r;			/* True if flag is to be set rather
-				   than cleared */
   int flag;
-  int i;
   char *what;
   char *flag_name;
   Boolean (*set_object) (int, void *, void *, void *);
