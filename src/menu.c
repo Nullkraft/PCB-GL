@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: menu.c,v 1.21 2004-02-25 20:56:29 haceaton Exp $";
+static char *rcsid = "$Id: menu.c,v 1.22 2004-02-27 22:20:23 haceaton Exp $";
 
 /* initializes menus and handles callbacks
  */
@@ -497,7 +497,8 @@ static PopupEntryType ConnectionMenuEntries[] = {
   {"djopt-miter", "Miter", CB_Action,
    "djopt,miter\n" "Display,ClearAndRedraw", NULL},
   {"line", NULL, NULL, NULL, NULL},
-  {"drc", "design rule checker", CB_Action, "DRC", NULL},
+  {"drc", "design rule checker", CB_Action, "SetValue,Zoom,=-2\n"
+   "DRC", NULL},
   {NULL, NULL, NULL, NULL, NULL}
 };
 
