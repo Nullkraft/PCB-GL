@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: set.c,v 1.12 2004-02-14 02:38:49 haceaton Exp $";
+static char *rcsid = "$Id: set.c,v 1.13 2004-02-15 07:46:31 danmc Exp $";
 
 /* routines to update widgets and global settings
  * (except output window and dialogs)
@@ -45,6 +45,7 @@ static char *rcsid = "$Id: set.c,v 1.12 2004-02-14 02:38:49 haceaton Exp $";
 
 #include "action.h"
 #include "buffer.h"
+#include "compat.h"
 #include "crosshair.h"
 #include "control.h"
 #include "data.h"

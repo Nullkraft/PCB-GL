@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: draw.c,v 1.19 2004-02-15 07:12:44 danmc Exp $";
+static char *rcsid = "$Id: draw.c,v 1.20 2004-02-15 07:46:31 danmc Exp $";
 
 /* drawing routines
  */
@@ -44,6 +44,7 @@ static char *rcsid = "$Id: draw.c,v 1.19 2004-02-15 07:12:44 danmc Exp $";
 #include <math.h>
 #include "global.h"
 
+#include "compat.h"
 #include "crosshair.h"
 #include "data.h"
 #include "draw.h"

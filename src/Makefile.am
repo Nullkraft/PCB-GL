@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.5 2004-02-04 03:59:54 djdelorie Exp $
+## $Id: Makefile.am,v 1.6 2004-02-15 07:46:31 danmc Exp $
 ##
 
 SUBDIRS=	icons script
@@ -29,6 +29,9 @@ pcb_bin_SOURCES = \
 	change.h \
 	command.c \
 	command.h \
+	compat.c \
+	compat.h \
+	compat.h \
 	const.h \
 	control.c \
 	control.h \
