@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.14 2005-03-12 02:17:08 danmc Exp $
+## $Id: Makefile.am,v 1.15 2005-03-21 02:46:22 djdelorie Exp $
 ##
 
 SUBDIRS=	icons script
@@ -126,6 +126,7 @@ pcb_bin_SOURCES = \
 	select.h \
 	set.c \
 	set.h \
+	strflags.c \
 	undo.c \
 	undo.h \
 	vector.c \
