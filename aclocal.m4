@@ -11,7 +11,7 @@
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
 
-dnl $Id: aclocal.m4,v 1.1 2003-06-13 23:52:41 danmc Exp $
+dnl $Id: aclocal.m4,v 1.2 2003-09-03 02:08:05 danmc Exp $
 dnl
 dnl the FC_* macros were copied from the freeciv program.  The use here
 dnl is to figure out if we need -DNARROWPROTO and the correct setting
@@ -229,14 +229,14 @@ else
   fc_x_compile="#define FUNCPROTO $fc_x_proto_FUNCPROTO"
 fi
 fc_x_save_CFLAGS="$CFLAGS"
-CFLAGS="$CFLAGS $X_CFLAGS $X_LIBS $X_PRE_LIBS -lXaw -lXt -lX11 $X_EXTRA_LIBS"
+CFLAGS="$CFLAGS $X_CFLAGS $X_LIBS $X_PRE_LIBS -l$LIBXAW -lXt -lX11 $X_EXTRA_LIBS"
 AC_TRY_RUN([
 $fc_x_works
 $fc_x_compile
 #include <X11/Xfuncproto.h>
 #include <X11/Intrinsic.h>
 #include <X11/StringDefs.h>
-#include <X11/Xaw/Scrollbar.h>
+#include <X11/$XAWINC/Scrollbar.h>
 #define TOP_VAL 0.125
 #define SHOWN_VAL 0.25
 int main (int argc, char ** argv)
