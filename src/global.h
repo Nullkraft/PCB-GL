@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.12 2004-03-04 23:41:02 haceaton Exp $
+ *  RCS: $Id: global.h,v 1.13 2004-03-07 03:38:13 haceaton Exp $
  */
 
 /* definition of types
@@ -299,7 +299,7 @@ typedef struct			/* holds all objects */
 			*element_tree,
                         *pin_tree,
                         *pad_tree,
-			*name_tree,		/* for element names */
+			*name_tree[3],		/* for element names */
 			*rat_tree;
 	LayerType	Layer[MAX_LAYER + 2];	/* add 2 silkscreen layers */
 } DataType, *DataTypePtr;

@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: printpanner.c,v 1.3 2004-03-04 23:41:02 haceaton Exp $";
+  "$Id: printpanner.c,v 1.4 2004-03-07 03:38:13 haceaton Exp $";
 
 /* print dialog panner routines
  * only available for X11R5 and later
@@ -260,7 +260,6 @@ InitDefaultMedia (void)
 {
   int i, x, y;
   unsigned int width, height;
-  char *p1, *p2;
 
   /* check if the passed string is equal to a known media type
    * first entry is user defined, last one holds a zero pointer only

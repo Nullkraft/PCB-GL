@@ -25,7 +25,7 @@
  *
  */
 
-static char *rcsid = "$Id: action.c,v 1.32 2004-03-04 04:38:50 danmc Exp $";
+static char *rcsid = "$Id: action.c,v 1.33 2004-03-07 03:38:13 haceaton Exp $";
 
 /* action routines for output window
  */
@@ -1968,9 +1968,15 @@ ActionDisplay (Widget W, XEvent * Event, String * Params, Cardinal * Num)
 
 	  /* redraw layout without clearing the background */
 	case F_Redraw:
-	  RedrawOutput ();
-	  break;
-
+	  {
+	    BoxType area;
+	    area.X1 = 0;
+	    area.Y1 = 0;
+	    area.X2 = Output.Width;
+	    area.Y2 = Output.Height;
+	    RedrawOutput (&area);
+	    break;
+	  }
 	  /* center cursor and move X pointer too */
 	case F_Center:
 	  CenterDisplay (Crosshair.X, Crosshair.Y, False);
@@ -3682,7 +3688,10 @@ ActionUndo (Widget W, XEvent * Event, String * Params, Cardinal * Num)
 	{
 	  if (Crosshair.AttachedLine.State == STATE_SECOND)
 	    {
+	      if (TEST_FLAG (AUTODRCFLAG, PCB))
+	        Undo (True); /* undo the connection find */
 	      Crosshair.AttachedLine.State = STATE_FIRST;
+	      SetLocalRef (0, 0, False);
 	      RestoreCrosshair (True);
 	      return;
 	    }

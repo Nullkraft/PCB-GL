@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: select.c,v 1.8 2004-03-04 04:27:30 danmc Exp $";
+static char *rcsid = "$Id: select.c,v 1.9 2004-03-07 03:38:13 haceaton Exp $";
 
 /* select routines
  */
@@ -103,29 +103,23 @@ SelectObject (void)
 
     case ARC_TYPE:
       {
-	ArcType swap, *arc = (ArcTypePtr) ptr2;
+	ArcType *arc = (ArcTypePtr) ptr2;
 
 	layer = (LayerTypePtr) ptr1;
 	AddObjectToFlagUndoList (ARC_TYPE, ptr1, ptr2, ptr2);
 	TOGGLE_FLAG (SELECTEDFLAG, arc);
 	DrawArc (layer, arc, 0);
-	swap = layer->Arc[0];
-	layer->Arc[0] = *arc;
-	*arc = swap;
 	break;
       }
 
     case TEXT_TYPE:
       {
-	TextType swap, *text = (TextTypePtr) ptr2;
+	TextType *text = (TextTypePtr) ptr2;
 
 	layer = (LayerTypePtr) ptr1;
 	AddObjectToFlagUndoList (TEXT_TYPE, ptr1, ptr2, ptr2);
 	TOGGLE_FLAG (SELECTEDFLAG, text);
 	DrawText (layer, text, 0);
-	swap = layer->Text[0];
-	layer->Text[0] = *text;
-	*text = swap;
 	break;
       }
 
