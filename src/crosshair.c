@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: crosshair.c,v 1.6 2004-01-05 01:40:24 haceaton Exp $";
+  "$Id: crosshair.c,v 1.7 2004-02-14 06:40:08 haceaton Exp $";
 
 /* crosshair stuff
  */
@@ -145,25 +145,25 @@ XORDrawAttachedArc (BDimension thick)
   arc.Y = Crosshair.AttachedBox.Point1.Y;
   if (XOR (Crosshair.AttachedBox.otherway, abs (wy) > abs (wx)))
     {
-      arc.X = Crosshair.AttachedBox.Point1.X + abs (wy) * SGN (wx);
+      arc.X = Crosshair.AttachedBox.Point1.X + abs (wy) * SGNZ (wx);
       sa = (wx >= 0) ? 0 : 180;
 #ifdef ARC45
       if (abs (wy) >= 2 * abs (wx))
-	dir = (SGN (wx) == SGN (wy)) ? 45 : -45;
+	dir = (SGNZ (wx) == SGNZ (wy)) ? 45 : -45;
       else
 #endif
-	dir = (SGN (wx) == SGN (wy)) ? 90 : -90;
+	dir = (SGNZ (wx) == SGNZ (wy)) ? 90 : -90;
     }
   else
     {
-      arc.Y = Crosshair.AttachedBox.Point1.Y + abs (wx) * SGN (wy);
+      arc.Y = Crosshair.AttachedBox.Point1.Y + abs (wx) * SGNZ (wy);
       sa = (wy >= 0) ? -90 : 90;
 #ifdef ARC45
       if (abs (wx) >= 2 * abs (wy))
-	dir = (SGN (wx) == SGN (wy)) ? -45 : 45;
+	dir = (SGNZ (wx) == SGNZ (wy)) ? -45 : 45;
       else
 #endif
-	dir = (SGN (wx) == SGN (wy)) ? -90 : 90;
+	dir = (SGNZ (wx) == SGNZ (wy)) ? -90 : 90;
       wy = wx;
     }
   wy = abs (wy);

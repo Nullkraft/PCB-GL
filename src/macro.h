@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: macro.h,v 1.7 2004-02-06 04:11:34 haceaton Exp $
+ *  RCS: $Id: macro.h,v 1.8 2004-02-14 06:40:08 haceaton Exp $
  */
 
 /* some commonly used macros not related to a special C-file
@@ -87,6 +87,7 @@
 #ifndef SGN
 #define SGN(a)			((a) >0 ? 1 : ((a) == 0 ? 0 : -1))
 #endif
+#define SGNZ(a)                 ((a) >=0 ? 1 : -1)
 
 #define	ENTRIES(x)		(sizeof((x))/sizeof((x)[0]))
 #define	UNKNOWN(a)		((a) && *(a) ? (a) : "(unknown)")
