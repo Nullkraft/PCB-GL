@@ -1,4 +1,4 @@
-/* $Id: resmenu.c,v 1.16 2005-01-13 22:13:28 danmc Exp $ */
+/* $Id: resmenu.c,v 1.17 2005-01-25 18:07:54 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -11,6 +11,7 @@
 #include <X11/Intrinsic.h>
 
 #include "global.h"
+#include "data.h"
 
 #include "resource.h"
 #include "action.h"
@@ -29,7 +30,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: resmenu.c,v 1.16 2005-01-13 22:13:28 danmc Exp $");
+RCSID("$Id: resmenu.c,v 1.17 2005-01-25 18:07:54 djdelorie Exp $");
 
 static Arg args[100];
 static int n;
@@ -701,4 +702,20 @@ MenuCreateFromResource(Widget menu, Resource *res, Widget top, Widget left, int 
     }
 
   return left;
+}
+
+Widget
+MenuCreatePopup (Widget parent, Resource *res)
+{
+  Widget sub;
+
+  n = 0;
+  arg(XtNmenuName, "pmenu");
+  sub = XtCreatePopupShell("pmenu", simpleMenuWidgetClass,
+			   parent, args, n);
+  MenuCreateFromResource(sub, res, 0, 0, 0);
+  XtAddCallback(sub, XtNpopupCallback,
+		(XtCallbackProc)MenuPopupCallback, (XtPointer)res);
+
+  return sub;
 }
