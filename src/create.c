@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: create.c,v 1.12 2004-03-17 04:59:44 haceaton Exp $";
+  "$Id: create.c,v 1.13 2004-03-20 23:01:33 haceaton Exp $";
 
 /* functions used to create vias, pins ...
  */
@@ -553,6 +553,9 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
 		    Direction, NameOnPCB, TextScale, TextFlags);
   AddTextToElement (&VALUE_TEXT (Element), PCBFont, TextX, TextY,
 		    Direction, Value, TextScale, TextFlags);
+  DESCRIPTION_TEXT (Element).Element = Element;
+  NAMEONPCB_TEXT (Element).Element = Element;
+  VALUE_TEXT (Element).Element = Element;
   Element->Flags = Flags;
   Element->ID = ID++;
   return (Element);

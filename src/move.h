@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: move.h,v 1.4 2004-03-07 03:38:13 haceaton Exp $
+ *  RCS: $Id: move.h,v 1.5 2004-03-20 23:01:33 haceaton Exp $
  */
 
 /* prototypes for move routines
@@ -62,6 +62,9 @@
 		MOVE((a)->X,(a)->Y,(dx),(dy)) \
 		MOVE_BOX_LOWLEVEL(&((a)->BoundingBox),(dx),(dy));		\
 	}
+/* Rather than mode the line bounding box, we set it so the point bounding
+ * boxes are updated too.
+ */
 #define	MOVE_LINE_LOWLEVEL(l,dx,dy)							\
 	{									\
 		MOVE((l)->Point1.X,(l)->Point1.Y,(dx),(dy))			\

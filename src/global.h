@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.14 2004-03-17 04:59:44 haceaton Exp $
+ *  RCS: $Id: global.h,v 1.15 2004-03-20 23:01:33 haceaton Exp $
  */
 
 /* definition of types
@@ -137,6 +137,7 @@ typedef struct
     Y;
   BYTE Direction;
   char *TextString;		/* string */
+  void *Element;
 } TextType, *TextTypePtr;
 
 typedef struct			/* holds information about a polygon */

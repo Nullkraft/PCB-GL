@@ -24,7 +24,7 @@
  *
  */
 
-static char *rcsid = "$Id: misc.c,v 1.20 2004-03-17 04:59:44 haceaton Exp $";
+static char *rcsid = "$Id: misc.c,v 1.21 2004-03-20 23:01:33 haceaton Exp $";
 
 /* misc functions used by several modules
  */
@@ -296,7 +296,13 @@ SetElementBoundingBox (DataTypePtr Data, ElementTypePtr Element,
   /* first update the text objects */
   ELEMENTTEXT_LOOP (Element);
   {
+    if (Data && Data->name_tree[n])
+      r_delete_entry (Data->name_tree[n], (BoxType *) text);
     SetTextBoundingBox (Font, text);
+    if (Data && !Data->name_tree[n])
+      Data->name_tree[n] = r_create_tree (NULL, 0, 0);
+    if (Data)
+      r_insert_entry (Data->name_tree[n], (BoxType *) text, 0);
   }
   END_LOOP;
 

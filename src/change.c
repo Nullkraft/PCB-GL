@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: change.c,v 1.18 2004-03-17 04:59:44 haceaton Exp $";
+  "$Id: change.c,v 1.19 2004-03-20 23:01:33 haceaton Exp $";
 
 /* functions used to change object properties
  *
@@ -752,8 +752,10 @@ ChangeElementNameSize (ElementTypePtr Element)
       ELEMENTTEXT_LOOP (Element);
       {
 	AddObjectToSizeUndoList (ELEMENTNAME_TYPE, Element, text, text);
+	r_delete_entry (PCB->Data->name_tree[n], (BoxType *) text);
 	text->Scale = value;
 	SetTextBoundingBox (&PCB->Font, text);
+	r_insert_entry (PCB->Data->name_tree[n], (BoxType *) text, 0);
       }
       END_LOOP;
       DrawElementName (Element, 0);
