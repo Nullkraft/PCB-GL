@@ -1,4 +1,4 @@
-/* $Id: dialog.c,v 1.9 2004-10-25 10:55:24 danmc Exp $ */
+/* $Id: dialog.c,v 1.10 2004-10-26 01:38:39 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -56,7 +56,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: dialog.c,v 1.9 2004-10-25 10:55:24 danmc Exp $");
+RCSID("$Id: dialog.c,v 1.10 2004-10-26 01:38:39 danmc Exp $");
 
 
 
@@ -374,7 +374,7 @@ history_get(int index)
   if (!history_buffer)
     history_init();
   if (!history_buffer)
-    return;
+    return NULL;
 
   i = (index + history_size) % history_size;
   return history_buffer+i;
@@ -489,7 +489,7 @@ ActionCommandHistory (Widget W, XEvent *Event, String *Params, Cardinal *num)
 {
   char *string;
   HistoryElement *he;
-  int i, offs = 0;
+  int offs = 0;
 
   if (!Settings.HistorySize || !Params[0])
     {
