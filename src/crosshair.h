@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: crosshair.h,v 1.3 2004-03-01 16:19:34 haceaton Exp $
+ *  RCS: $Id: crosshair.h,v 1.4 2004-03-08 01:52:00 haceaton Exp $
  */
 
 /* prototypes for crosshair routines
@@ -57,6 +57,6 @@ void	SetCrosshairRange(Location, Location, Location, Location);
 void	InitCrosshair(void);
 void	DestroyCrosshair(void);
 void	DrawMark(Boolean);
-void    FitCrosshairIntoGrid(Location, Location);
+void    FitCrosshairIntoGrid (Location, Location);
 
 #endif

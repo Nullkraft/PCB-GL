@@ -23,7 +23,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: line.h,v 1.1 2004-02-27 06:16:49 haceaton Exp $
+ *  RCS: $Id: line.h,v 1.2 2004-03-08 01:52:00 haceaton Exp $
  */
 
 /* prototypes for inserting points into objects
@@ -40,4 +40,5 @@
 void AdjustAttachedLine (void);
 void AdjustTwoLine (int);
 void FortyFiveLine (AttachedLineTypePtr);
+void EnforceLineDRC (void);
 #endif

@@ -25,7 +25,7 @@
  */
 
 static char *rcsid =
-  "$Id: crosshair.c,v 1.9 2004-03-01 16:19:33 haceaton Exp $";
+  "$Id: crosshair.c,v 1.10 2004-03-08 01:52:00 haceaton Exp $";
 
 /* crosshair stuff
  */
@@ -43,6 +43,7 @@ static char *rcsid =
 #include "data.h"
 #include "draw.h"
 #include "error.h"
+#include "line.h"
 #include "gui.h"
 #include "misc.h"
 #include "mymem.h"
@@ -991,6 +992,9 @@ FitCrosshairIntoGrid (Location X, Location Y)
       Crosshair.X = x0;
       Crosshair.Y = y0;
     }
+  if (Settings.Mode == LINE_MODE && Crosshair.AttachedLine.State != STATE_FIRST
+     && TEST_FLAG (AUTODRCFLAG, PCB))
+    EnforceLineDRC();
 }
 
 /* ---------------------------------------------------------------------------
