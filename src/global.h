@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.3 2004-01-19 19:16:17 haceaton Exp $
+ *  RCS: $Id: global.h,v 1.4 2004-02-06 20:30:29 haceaton Exp $
  */
 
 /* definition of types
@@ -133,7 +133,7 @@ typedef struct
 {
 	long int		ID,
 			Flags;
-	Dimension	Scale;		/* text scaling in percent */
+	BDimension	Scale;		/* text scaling in percent */
 	Location	X,		/* origin */
 			Y;
 	BoxType		BoundingBox;

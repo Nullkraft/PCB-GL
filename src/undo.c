@@ -24,7 +24,7 @@
  *
  */
 #define DEBUG_ID 1
-static char *rcsid = "$Id: undo.c,v 1.6 2004-01-05 01:40:24 haceaton Exp $";
+static char *rcsid = "$Id: undo.c,v 1.7 2004-02-06 20:30:30 haceaton Exp $";
 
 /* functions used to undo operations
  *
@@ -404,6 +404,7 @@ UndoChangeSize (UndoListTypePtr Entry)
     {
       if (TEST_FLAG (LOCKFLAG, (PinTypePtr) ptr2))
 	return (False);
+        /* Wow! can any object be treated as a pin type for size change?? */
       swap = ((PinTypePtr) ptr2)->Thickness;
       if (andDraw)
 	EraseObject (type, ptr2);
