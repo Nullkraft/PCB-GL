@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: select.h,v 1.1 2003-02-20 00:24:33 danmc Exp $
+ *  RCS: $Id: select.h,v 1.2 2004-03-04 22:12:18 danmc Exp $
  */
 
 /* prototypes for select routines
@@ -44,7 +44,7 @@ void		*ObjectOperation(ObjectFunctionTypePtr, int,
 				void *, void *, void *);
 Boolean		SelectConnection(Boolean);
 
-#ifdef HAS_REGEX
+#if defined(HAS_REGCOMP) || defined(HAS_RE_COMP)
 Boolean		SelectObjectByName(int, char *);
 #endif
 
