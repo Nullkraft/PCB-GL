@@ -25,7 +25,7 @@
  *
  */
 
-static char *rcsid = "$Id: find.c,v 1.27 2004-04-30 01:49:21 danmc Exp $";
+static char *rcsid = "$Id: find.c,v 1.28 2004-06-09 04:12:42 danmc Exp $";
 
 /*
  * short description:
@@ -3630,6 +3630,7 @@ DRCAll (void)
 
   IsBad = False;
   drcerr_count = 0;
+  SaveStackAndVisibility ();
   ResetStackAndVisibility ();
   UpdateControlPanel ();
   InitConnectionLookup ();
@@ -3888,6 +3889,10 @@ DRCAll (void)
     {
       IncrementUndoSerialNumber ();
     }
+
+
+  RestoreStackAndVisibility ();
+  UpdateControlPanel ();
 
   return (drcerr_count);
 }
