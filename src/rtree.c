@@ -1,4 +1,4 @@
-/* $Id: rtree.c,v 1.14 2004-03-20 23:02:40 haceaton Exp $ */
+/* $Id: rtree.c,v 1.15 2004-04-19 21:20:59 haceaton Exp $ */
 /*
  *                            COPYRIGHT
  *
@@ -417,11 +417,11 @@ sort_node (struct rtree_node *node)
 static void
 move_to_manage (rtree_t * seed, const BoxType * b)
 {
-  if (sizeof (*b) * (1 + seed->m_count) > seed->m_size)
+  if (sizeof (b) * (1 + seed->m_count) > seed->m_size)
     {
       seed->managed = realloc (seed->managed,
-			       seed->m_size + 1024 * sizeof (*b));
-      seed->m_size += 1024 * sizeof (*b);
+			       seed->m_size + 1024 * sizeof (b));
+      seed->m_size += 1024 * sizeof (b);
     }
   seed->managed[seed->m_count++] = b;
 }
