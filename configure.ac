@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.25 2005-03-12 02:17:04 danmc Exp $
+dnl $Id: configure.ac,v 1.26 2005-05-26 03:25:29 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -15,6 +15,10 @@ AM_PROG_LEX
 AC_PROG_YACC
 AC_PROG_INSTALL
 AC_CHECK_PROGS(M4, gm4 m4)
+if test "X$M4" = "Xnone" ; then
+	AC_ERROR([Did not find a m4 executible.  You need to make sure
+	that m4 is installed on your system and that m4 is in your path])
+fi
 
 AC_PATH_PROGS(WISH, wish wish83 wish8.3 wish80 wish8.0 cygwish83 cygwish80,[none])
 if test "X$WISH" = "Xnone" ; then
