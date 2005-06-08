@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: globalconst.h,v 1.6 2005-03-12 02:17:04 danmc Exp $
+ *  RCS: $Id: globalconst.h,v 1.7 2005-06-08 22:02:34 danmc Exp $
  */
 
 /* global constants
@@ -85,7 +85,7 @@
 #define	MAX_FONTPOSITION	127	/* upper limit of characters in my font */
 
 #define	MAX_COORD		3000000	/* coordinate limits */
-#define	MIN_SIZE		120000	/* lowest width and height */
+#define	MIN_SIZE		60000	/* lowest width and height */
 #define	MAX_BUFFER		5	/* number of pastebuffers */
 					/* additional changes in menu.c are */
 					/* also required to select more buffers */
