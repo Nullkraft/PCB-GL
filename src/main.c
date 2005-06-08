@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.36 2005-03-13 14:59:49 danmc Exp $ */
+/* $Id: main.c,v 1.37 2005-06-08 01:34:25 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -50,7 +50,7 @@
 #include "set.h"
 #include "action.h"
 
-RCSID("$Id: main.c,v 1.36 2005-03-13 14:59:49 danmc Exp $");
+RCSID("$Id: main.c,v 1.37 2005-06-08 01:34:25 danmc Exp $");
 
 
 
@@ -621,8 +621,8 @@ main (int argc, char *argv[])
 			PCB->Filename = MyStrdup (command_line_pcb, "main()");
 		}
 
-//	XXX
-//	LoadBackgroundImage (Settings.BackgroundImage);
+/*	FIX_ME
+	LoadBackgroundImage (Settings.BackgroundImage); */
 
 	/* Register a function to be called when the program terminates.
 	 * This makes sure that data is saved even if LEX/YACC routines

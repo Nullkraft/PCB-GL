@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.31 2005-03-13 14:59:48 danmc Exp $
+ *  RCS: $Id: global.h,v 1.32 2005-06-08 01:34:25 danmc Exp $
  */
 
 /* definition of types
@@ -63,7 +63,7 @@ typedef int		BDimension;		/* big dimension */
 typedef unsigned int	Cardinal;
 typedef unsigned char	BYTE;
 typedef gboolean		Boolean;
-//typedef unsigned int	Pixel;
+/*typedef unsigned int	Pixel;*/
 typedef char 			*String;
 typedef int				Position;
 typedef int				Dimension;
@@ -365,7 +365,7 @@ typedef struct
 {
   Cardinal MenuN, MenuMax;
   LibraryMenuTypePtr Menu;
-//Window Wind;
+/*Window Wind;*/
 	GtkWidget	*Wind;		/* wrong */
 } LibraryType, *LibraryTypePtr;
 
