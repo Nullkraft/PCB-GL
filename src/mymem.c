@@ -1,4 +1,4 @@
-/* $Id: mymem.c,v 1.11 2005-03-12 02:17:12 danmc Exp $ */
+/* $Id: mymem.c,v 1.12 2005-06-11 04:37:36 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -49,7 +49,7 @@ B *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: mymem.c,v 1.11 2005-03-12 02:17:12 danmc Exp $");
+RCSID("$Id: mymem.c,v 1.12 2005-06-11 04:37:36 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * local prototypes
@@ -841,7 +841,8 @@ FreeDataMemory (DataTypePtr Data)
 	    MyFree (&text->TextString);
 	  }
 	  END_LOOP;
-	  MyFree (&layer->Name);
+	  if (layer->Name)
+	    MyFree (&layer->Name);
 	  LINE_LOOP (layer);
 	  {
 	    if (line->Number)

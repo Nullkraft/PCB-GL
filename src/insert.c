@@ -1,4 +1,4 @@
-/* $Id: insert.c,v 1.13 2005-03-12 02:17:12 danmc Exp $ */
+/* $Id: insert.c,v 1.14 2005-06-11 04:37:36 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -54,7 +54,7 @@
 
 #include "gui.h"
 
-RCSID("$Id: insert.c,v 1.13 2005-03-12 02:17:12 danmc Exp $");
+RCSID("$Id: insert.c,v 1.14 2005-06-11 04:37:36 djdelorie Exp $");
 
 
 
@@ -98,7 +98,7 @@ InsertPointIntoRat (RatTypePtr Rat)
 
   new = CreateDrawnLineOnLayer (CURRENT, Rat->Point1.X, Rat->Point1.Y,
 				InsertX, InsertY, Settings.LineThickness,
-				2*Settings.Keepaway, Rat->Flags & ~RATFLAG);
+				2*Settings.Keepaway, Rat->Flags);
   if (!new)
     return new;
   AddObjectToCreateUndoList (LINE_TYPE, CURRENT, new, new);
@@ -106,7 +106,7 @@ InsertPointIntoRat (RatTypePtr Rat)
   DrawLine (CURRENT, new, 0);
   new = CreateDrawnLineOnLayer (CURRENT, Rat->Point2.X, Rat->Point2.Y,
 				InsertX, InsertY, Settings.LineThickness,
-				2*Settings.Keepaway, Rat->Flags & ~RATFLAG);
+				2*Settings.Keepaway, Rat->Flags);
   if (new)
     {
       AddObjectToCreateUndoList (LINE_TYPE, CURRENT, new, new);

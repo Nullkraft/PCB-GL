@@ -1,4 +1,4 @@
-/* $Id: rotate.c,v 1.14 2005-03-12 02:17:13 danmc Exp $ */
+/* $Id: rotate.c,v 1.15 2005-06-11 04:37:36 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: rotate.c,v 1.14 2005-03-12 02:17:13 danmc Exp $");
+RCSID("$Id: rotate.c,v 1.15 2005-06-11 04:37:36 djdelorie Exp $");
 
 
 
@@ -372,7 +372,7 @@ RotateObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
   while (Crosshair.AttachedObject.RubberbandN)
     {
       changed = True;
-      ptr->Line->Flags &= ~RUBBERENDFLAG;
+      CLEAR_FLAG (RUBBERENDFLAG, ptr->Line);
       AddObjectToRotateUndoList (LINEPOINT_TYPE, ptr->Layer, ptr->Line,
 				 ptr->MovedPoint, CenterX, CenterY, Steps);
       EraseLine (ptr->Line);

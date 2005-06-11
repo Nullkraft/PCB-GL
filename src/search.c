@@ -1,4 +1,4 @@
-/* $Id: search.c,v 1.18 2005-01-03 12:57:00 danmc Exp $ */
+/* $Id: search.c,v 1.19 2005-06-11 04:37:36 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -52,7 +52,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: search.c,v 1.18 2005-01-03 12:57:00 danmc Exp $");
+RCSID("$Id: search.c,v 1.19 2005-06-11 04:37:36 djdelorie Exp $");
 
 
 /* ---------------------------------------------------------------------------
@@ -705,7 +705,7 @@ IsLineInRectangle (LocationType X1, LocationType Y1,
     return (True);
   /* construct a set of dummy lines and check each of them */
   line.Thickness = 0;
-  line.Flags = NOFLAG;
+  line.Flags = NoFlags();
 
   /* upper-left to upper-right corner */
   line.Point1.Y = line.Point2.Y = Y1;
@@ -749,7 +749,7 @@ IsArcInRectangle (LocationType X1, LocationType Y1,
 
   /* construct a set of dummy lines and check each of them */
   line.Thickness = 0;
-  line.Flags = NOFLAG;
+  line.Flags = NoFlags();
 
   /* upper-left to upper-right corner */
   line.Point1.Y = line.Point2.Y = Y1;
@@ -807,7 +807,7 @@ IsPointInBox (LocationType X, LocationType Y, BoxTypePtr box, Cardinal Radius)
   if (POINT_IN_BOX (X, Y, box))
     return (True);
   line.Thickness = 0;
-  line.Flags = NOFLAG;
+  line.Flags = NoFlags();
 
   line.Point1.X = box->X1;
   line.Point1.Y = box->Y1;
@@ -880,7 +880,7 @@ IsPointInPolygon (float X, float Y, float Radius, PolygonTypePtr Polygon)
 
 	  line.Point1 = Polygon->Points[0];
 	  line.Thickness = 0;
-	  line.Flags = NOFLAG;
+	  line.Flags = NoFlags();
 
 	  /* POLYGONPOINT_LOOP decrements pointers !!! */
 	  POLYGONPOINT_LOOP (Polygon);

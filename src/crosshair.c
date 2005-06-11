@@ -1,4 +1,4 @@
-/* $Id: crosshair.c,v 1.16 2005-03-12 02:17:10 danmc Exp $ */
+/* $Id: crosshair.c,v 1.17 2005-06-11 04:37:36 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -50,7 +50,7 @@
 
 #include "gui.h"
 
-RCSID ("$Id: crosshair.c,v 1.16 2005-03-12 02:17:10 danmc Exp $");
+RCSID ("$Id: crosshair.c,v 1.17 2005-06-11 04:37:36 djdelorie Exp $");
 
 #if !defined(ABS)
 #define ABS(x) (((x)<0)?-(x):(x))
@@ -619,7 +619,7 @@ XORDrawMoveOrCopyObject (void)
     {
       PointTypePtr point1, point2;
 
-      if (ptr->Line->Flags & RUBBERENDFLAG)
+      if (TEST_FLAG (RUBBERENDFLAG, ptr->Line))
 	{
 	  /* 'point1' is always the fix-point */
 	  if (ptr->MovedPoint == &ptr->Line->Point1)

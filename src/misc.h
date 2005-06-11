@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: misc.h,v 1.11 2005-03-13 14:59:49 danmc Exp $
+ *  RCS: $Id: misc.h,v 1.12 2005-06-11 04:37:36 djdelorie Exp $
  */
 
 /* prototypes for misc routines
@@ -76,5 +76,12 @@ void		AttachForCopy(LocationType, LocationType);
 float		GetValue(char *, char *, Boolean *);
 int		FileExists(const char *);
 char *		Concat (const char *, ...); /* end with NULL */
+
+/* For passing modified flags to other functions. */
+FlagType	MakeFlags(unsigned int);
+FlagType	OldFlags(unsigned int);
+FlagType	AddFlags(FlagType, unsigned int);
+FlagType	MaskFlags(FlagType, unsigned int);
+#define		NoFlags() MakeFlags(0)
 
 #endif

@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: data.h,v 1.6 2005-03-12 02:17:10 danmc Exp $
+ *  RCS: $Id: data.h,v 1.7 2005-06-11 04:37:36 djdelorie Exp $
  */
 
 /* common identifiers
@@ -77,5 +77,7 @@ extern	gint		LayerStack[MAX_LAYER];
 extern	gboolean	RedrawOnEnter;
 extern	gboolean	render;
 extern	gboolean	Bumped;
+
+extern	FlagType	no_flags;
 
 #endif

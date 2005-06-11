@@ -1,4 +1,4 @@
-/* $Id: rats.c,v 1.18 2005-03-12 02:17:13 danmc Exp $ */
+/* $Id: rats.c,v 1.19 2005-06-11 04:37:36 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -62,7 +62,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: rats.c,v 1.18 2005-03-12 02:17:13 danmc Exp $");
+RCSID("$Id: rats.c,v 1.19 2005-06-11 04:37:36 djdelorie Exp $");
 
 
 #define TRIEDFIRST 0x1
@@ -612,7 +612,7 @@ DrawShortestRats (NetListTypePtr Netl, void (*funcp) ())
 				    firstpoint->X, firstpoint->Y,
 				    secondpoint->X, secondpoint->Y,
 				    firstpoint->group, secondpoint->group,
-				    Settings.RatThickness, NOFLAG)) != NULL)
+				    Settings.RatThickness, NoFlags())) != NULL)
 	    {
 	      AddObjectToCreateUndoList (RATLINE_TYPE, line, line, line);
 	      DrawRat (line, 0);
@@ -881,7 +881,7 @@ ratIt:
 			Crosshair.AttachedLine.Point1.Y,
 			Crosshair.AttachedLine.Point2.X,
 			Crosshair.AttachedLine.Point2.Y,
-			group1, group2, Settings.RatThickness, NOFLAG));
+			group1, group2, Settings.RatThickness, NoFlags()));
 }
 
 

@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: undo.h,v 1.3 2005-01-03 12:57:00 danmc Exp $
+ *  RCS: $Id: undo.h,v 1.4 2005-06-11 04:37:36 djdelorie Exp $
  */
 
 /* prototypes for undo routines
@@ -33,7 +33,7 @@
 
 #include "global.h"
 
-#define DRAW_FLAGS	(RATFLAG | SELECTEDFLAG | SQUAREFLAG | ALLTHERMFLAGS \
+#define DRAW_FLAGS	(RATFLAG | SELECTEDFLAG | SQUAREFLAG \
 			| HIDENAMEFLAG | HOLEFLAG | OCTAGONFLAG | FOUNDFLAG | CLEARLINEFLAG)
 
 											/* different layers */
