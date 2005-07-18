@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: const.h,v 1.15 2005-06-11 04:37:36 djdelorie Exp $
+ *  RCS: $Id: const.h,v 1.16 2005-07-18 20:50:10 danmc Exp $
  */
 
 /* global source constants
@@ -32,6 +32,7 @@
 #define	__CONST_INCLUDED__
 
 #include <limits.h>
+#include <math.h>
 
 #include "globalconst.h"
 

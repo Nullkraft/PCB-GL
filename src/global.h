@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.33 2005-06-11 04:37:36 djdelorie Exp $
+ *  RCS: $Id: global.h,v 1.34 2005-07-18 20:50:10 danmc Exp $
  */
 
 /* definition of types
@@ -37,10 +37,10 @@
 #ifndef	__GLOBAL_INCLUDED__
 #define	__GLOBAL_INCLUDED__
 
+#include <gtk/gtk.h>
+
 #include "const.h"
 #include "macro.h"
-
-#include <gtk/gtk.h>
 
 #if !GTK_CHECK_VERSION(2,4,0)
 #error ******** Gtk 2.4 is required to compile this PCB package. *********
