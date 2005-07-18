@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.27 2005-06-08 11:33:48 danmc Exp $
+dnl $Id: configure.ac,v 1.28 2005-07-18 22:19:06 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -11,6 +11,7 @@ dnl Checks for programs.
 AC_PROG_CC
 AC_PROG_CC_STDC
 AC_PROG_CPP
+AC_PROG_AWK
 AM_PROG_LEX
 AC_PROG_YACC
 AC_PROG_INSTALL
@@ -215,8 +216,7 @@ fi
 
 dnl Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS(string.h)
-AC_CHECK_HEADERS(regex.h)
+AC_CHECK_HEADERS(string.h sys/types.h regex.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 

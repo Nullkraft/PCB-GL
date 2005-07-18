@@ -1,4 +1,4 @@
-/* $Id: vendor.c,v 1.7 2005-03-12 02:17:14 danmc Exp $ */
+/* $Id: vendor.c,v 1.8 2005-07-18 22:19:06 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -36,6 +36,10 @@
 
 #ifdef HAVE_STRING_H
 #include <string.h>
+#endif
+
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
 #endif
 
 #ifdef HAVE_REGEX_H
