@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.34 2005-07-18 20:50:10 danmc Exp $
+ *  RCS: $Id: global.h,v 1.35 2005-07-18 21:01:55 danmc Exp $
  */
 
 /* definition of types
@@ -522,6 +522,7 @@ typedef struct			/* some resources... */
 				grid_units_mm,
 				small_layer_enable_label_markup,
 				gui_compact_horizontal,
+				gui_title_window,
 				use_command_window,
 				verbose;
 
