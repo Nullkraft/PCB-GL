@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.24 2005-06-11 04:37:36 djdelorie Exp $ */
+/* $Id: file.c,v 1.25 2005-07-18 21:00:03 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -73,7 +73,7 @@
 #include "gui.h"
 
 
-RCSID("$Id: file.c,v 1.24 2005-06-11 04:37:36 djdelorie Exp $");
+RCSID("$Id: file.c,v 1.25 2005-07-18 21:00:03 danmc Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -213,6 +213,7 @@ int
 LoadPCB (char *Filename)
 {
   PCBTypePtr newPCB = CreateNewPCB (False);
+  gboolean	units_mm;
 
   /* new data isn't added to the undo list */
   if (!ParsePCB (newPCB, Filename))
@@ -252,8 +253,11 @@ LoadPCB (char *Filename)
       UpdatePIPFlags (NULL, NULL, NULL, False);
       UpdateSettingsOnScreen ();
 
-      if (PCB->Grid != (gint) PCB->Grid)
-		Settings.grid_units_mm = TRUE;
+      units_mm = (PCB->Grid != (gint) PCB->Grid) ? TRUE : FALSE;
+
+      if (units_mm != Settings.grid_units_mm)
+        gui_config_handle_units_changed();
+      Settings.grid_units_mm = units_mm;
 
       gui_sync_with_new_layout();
 	
