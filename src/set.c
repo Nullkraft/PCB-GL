@@ -1,4 +1,4 @@
-/* $Id: set.c,v 1.25 2005-03-12 02:17:14 danmc Exp $ */
+/* $Id: set.c,v 1.26 2005-07-18 21:14:24 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -52,7 +52,6 @@
 #include "draw.h"
 #include "error.h"
 #include "find.h"
-#include "menu.h"
 #include "misc.h"
 #include "output.h"
 #include "set.h"
@@ -61,7 +60,7 @@
 #include "gui.h"
 
 
-RCSID("$Id: set.c,v 1.25 2005-03-12 02:17:14 danmc Exp $");
+RCSID("$Id: set.c,v 1.26 2005-07-18 21:14:24 danmc Exp $");
 
 
 
