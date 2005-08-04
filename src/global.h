@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.35 2005-07-18 21:01:55 danmc Exp $
+ *  RCS: $Id: global.h,v 1.36 2005-08-04 03:23:56 danmc Exp $
  */
 
 /* definition of types
@@ -513,7 +513,7 @@ typedef struct
 
 /* ---------------------------------------------------------------------------
  * our resources
- * most of them is used as default when a new design is started
+ * most of them are used as default when a new design is started
  */
 typedef struct			/* some resources... */
 {
@@ -632,9 +632,11 @@ typedef struct			/* some resources... */
 				OrthogonalMoves,	/* */
 				ResetAfterElement,	/* reset connections after each element */
 				liveRouting,		/* autorouter shows tracks in progress */
-				RingBellWhenFinished; /* flag if a signal should be */
+				RingBellWhenFinished, /* flag if a signal should be */
 									/* produced when searching of */
 									/* connections is done */
+  AutoPlace; /* flag which says we should force placement of the
+		windows on startup */
 	gint		HistorySize,
 				n_mode_button_columns,
 				selected_print_device,
@@ -648,7 +650,9 @@ typedef struct			/* some resources... */
 				library_window_height,
 				netlist_window_height,
 				w_display,		/* Not a setting... */
-				h_display;
+				h_display,
+				init_done  /* flag which says it is ok to run gtk_main() */
+				;
 	}
 	SettingType, *SettingTypePtr;
 

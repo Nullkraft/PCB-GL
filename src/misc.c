@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.36 2005-06-11 04:37:36 djdelorie Exp $ */
+/* $Id: misc.c,v 1.37 2005-08-04 03:23:56 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -73,7 +73,7 @@
 #include "gui.h"
 
 
-RCSID ("$Id: misc.c,v 1.36 2005-06-11 04:37:36 djdelorie Exp $");
+RCSID ("$Id: misc.c,v 1.37 2005-08-04 03:23:56 danmc Exp $");
 
 
 
@@ -826,7 +826,17 @@ QuitApplication (void)
   /* save data if necessary */
   if (PCB->Changed && Settings.SaveInTMP)
     EmergencySave ();
-  gtk_main_quit();
+
+  /*
+   * if Settings.init_done is not > 0 then we haven't even called
+   * gtk_main() yet so gtk_main_quit() will give an error.  In
+   * this case just set the flat to -1 and we will exit instead
+   * of calling gtk_main()
+   */
+  if( Settings.init_done > 0 )
+  	gtk_main_quit();
+  else
+	Settings.init_done = -1;
 }
 
 /* ---------------------------------------------------------------------------
