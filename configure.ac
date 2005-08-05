@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.28 2005-07-18 22:19:06 danmc Exp $
+dnl $Id: configure.ac,v 1.29 2005-08-05 22:31:38 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -190,14 +190,14 @@ if test "X$gui_gtk" = "Xyes" ; then
 		AC_MSG_ERROR([Cannot find pkg-config, make sure it is installed and in your PATH])
 	fi
 
-	PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.2.0, , 
-		[AC_MSG_ERROR([Cannot find gtk+ >= 2.2.0, install it and rerun ./configure])]
+	PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.4.0, , 
+		[AC_MSG_ERROR([Cannot find gtk+ >= 2.4.0, install it and rerun ./configure])]
 	)
 	GTK_VERSION=`$PKG_CONFIG gtk+-2.0 --modversion`
 
 	# Search for glib
-	PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.2.0, , 
-		[AC_MSG_ERROR([Cannot find glib >= 2.2.0, install it and rerun ./configure.])]
+	PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.4.0, , 
+		[AC_MSG_ERROR([Cannot find glib >= 2.4.0, install it and rerun ./configure.])]
 	)
 	GLIB_VERSION=`$PKG_CONFIG glib-2.0 --modversion`
 fi
