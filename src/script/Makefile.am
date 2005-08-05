@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.2 2005-08-04 03:23:56 danmc Exp $
+## $Id: Makefile.am,v 1.3 2005-08-05 22:31:32 danmc Exp $
 ##
 
 ## Note:  We put this script in a different directory from the Pcb
@@ -7,7 +7,7 @@
 
 bin_SCRIPTS=	pcb pcb-print
 
-EXTRA_DIST= pcb.in 
+EXTRA_DIST= pcb.in pcb-print
 
 DISTCLEANFILES= pcb
 
