@@ -1,4 +1,4 @@
-/* $Id: rats.c,v 1.19 2005-06-11 04:37:36 djdelorie Exp $ */
+/* $Id: rats.c,v 1.20 2005-12-02 23:29:54 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -62,7 +62,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: rats.c,v 1.19 2005-06-11 04:37:36 djdelorie Exp $");
+RCSID("$Id: rats.c,v 1.20 2005-12-02 23:29:54 danmc Exp $");
 
 
 #define TRIEDFIRST 0x1
@@ -254,7 +254,7 @@ ProcNetlist (LibraryTypePtr net_menu)
       ENDALL_LOOP;
       MENU_LOOP (net_menu);
       {
-	if (menu->Name[0] == '*')
+	if (menu->Name[0] == '*' || menu->flag == 0)
 	  {
 	    badnet = True;
 	    continue;

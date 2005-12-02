@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.36 2005-08-04 03:23:56 danmc Exp $
+ *  RCS: $Id: global.h,v 1.37 2005-12-02 23:29:54 danmc Exp $
  */
 
 /* definition of types
@@ -371,6 +371,7 @@ typedef struct
   Cardinal EntryN,		/* number of objects */
     EntryMax;			/* number of reserved memory locations */
   LibraryEntryTypePtr Entry;	/* the entries */
+  int flag;			/* used by the netlist window to enable/disable nets */
 } LibraryMenuType, *LibraryMenuTypePtr;
 
 typedef struct

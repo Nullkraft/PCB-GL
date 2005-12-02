@@ -1,4 +1,4 @@
-/* $Id: create.c,v 1.22 2005-06-11 04:37:36 djdelorie Exp $ */
+/* $Id: create.c,v 1.23 2005-12-02 23:29:54 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -59,7 +59,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: create.c,v 1.22 2005-06-11 04:37:36 djdelorie Exp $");
+RCSID("$Id: create.c,v 1.23 2005-12-02 23:29:54 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local identifiers
@@ -882,6 +882,7 @@ CreateNewNet (LibraryTypePtr lib, char *name, char *style)
   sprintf (temp, "  %s", name);
   menu = GetLibraryMenuMemory (lib);
   menu->Name = MyStrdup (temp, "CreateNewNet()");
+  menu->flag = 1; /* net is enabled by default */
   if (NSTRCMP ("(unknown)", style) == 0)
     menu->Style = NULL;
   else
