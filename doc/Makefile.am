@@ -23,7 +23,7 @@
 ##  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 ##  Thomas.Nau@rz.uni-ulm.de
 ##
-##  RCS: $Id: Makefile.am,v 1.10 2005-03-12 02:06:03 danmc Exp $
+##  RCS: $Id: Makefile.am,v 1.11 2005-12-09 13:20:03 danmc Exp $
 ##
 
 info_TEXINFOS=	pcb.texi
@@ -42,7 +42,7 @@ ps_docs=	${info_TEXINFOS:.texi=.ps} refcard.ps
 pdf_docs=	${info_TEXINFOS:.texi=.pdf} refcard.pdf
 
 # put the html manual into 1 file instead of multiple files
-#AM_MAKEINFOHTMLFLAGS=	--no-split
+AM_MAKEINFOHTMLFLAGS=	--no-split
 
 # use this to avoid having the clean target delete pcb.{dvi,html,pdf,ps}
 # which unfortunately deletes files which are part of the distfile
