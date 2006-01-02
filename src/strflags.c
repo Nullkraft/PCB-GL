@@ -1,4 +1,4 @@
-/* $Id: strflags.c,v 1.4 2005-06-11 04:37:36 djdelorie Exp $ */
+/* $Id: strflags.c,v 1.5 2006-01-02 15:51:48 haceaton Exp $ */
 /*
  *                            COPYRIGHT
  *
@@ -88,7 +88,7 @@ static struct {
   { CLEARPOLYFLAG, N("clearpoly"), POLYGON_TYPE },
   { HIDENAMEFLAG, N("hidename"), ELEMENT_TYPE },
   { DISPLAYNAMEFLAG, N("showname"), ELEMENT_TYPE },
-  { CLEARLINEFLAG, N("clearline"), LINE_TYPE },
+  { CLEARLINEFLAG, N("clearline"), LINE_TYPE | ARC_TYPE },
   { SELECTEDFLAG, N("selected"), ALL_TYPES },
   { ONSOLDERFLAG, N("onsolder"), ELEMENT_TYPE },
   { AUTOFLAG, N("auto"), ALL_TYPES },
