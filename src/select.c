@@ -1,4 +1,4 @@
-/* $Id: select.c,v 1.12 2005-03-12 02:17:14 danmc Exp $ */
+/* $Id: select.c,v 1.13 2006-01-16 01:35:02 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -56,7 +56,7 @@
 #endif
 #endif
 
-RCSID("$Id: select.c,v 1.12 2005-03-12 02:17:14 danmc Exp $");
+RCSID ("$Id: select.c,v 1.13 2006-01-16 01:35:02 haceaton Exp $");
 
 
 
@@ -182,15 +182,13 @@ SelectObject (void)
 
     case POLYGON_TYPE:
       {
-	PolygonType swap, *poly = (PolygonTypePtr) ptr2;
+	PolygonType *poly = (PolygonTypePtr) ptr2;
 
 	layer = (LayerTypePtr) ptr1;
 	AddObjectToFlagUndoList (POLYGON_TYPE, ptr1, ptr2, ptr2);
 	TOGGLE_FLAG (SELECTEDFLAG, poly);
 	DrawPolygon (layer, poly, 0);
-	swap = layer->Polygon[0];
-	layer->Polygon[0] = *poly;
-	*poly = swap;
+	/* changing memory order no longer effects draw order */
 	break;
       }
 
