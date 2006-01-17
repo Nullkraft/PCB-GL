@@ -1,5 +1,5 @@
 \input texinfo    @c -*-texinfo-*-
-@comment RCS: $Id: pcb.texi,v 1.32 2005-12-06 01:01:52 danmc Exp $
+@comment RCS: $Id: pcb.texi,v 1.33 2006-01-17 02:47:54 danmc Exp $
 @comment %**start of header
 @setfilename pcb.info
 @settitle Pcb
@@ -3426,6 +3426,18 @@ Default:
 @example
 !Ctrl<Key>o: ChangeOctagon(Object)
 @end example
+
+@findex ChangePinName()
+@cindex changing pin/pad names
+@cindex pin/pad names, changing
+@item ChangePinName(ElementName, PinNumber, PinName)
+Changes the name for a specified pin or pad number on a specified element.
+This action is typically used to forward annotate pin/pad names from a schematic
+to the layout.
+@example
+ChangePinName(U1, 14, VDD)
+@end example
+
 
 @findex ChangeSize()
 @cindex change sizes
