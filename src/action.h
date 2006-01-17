@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: action.h,v 1.10 2005-08-04 03:23:56 danmc Exp $
+ *  RCS: $Id: action.h,v 1.11 2006-01-17 02:47:25 danmc Exp $
  */
 
 /* prototypes for action routines
@@ -66,6 +66,7 @@ void	ActionChangeSize(char *, char *, char *);
 void	ActionChange2ndSize(char *, char *, char *);
 void	ActionChangeClearSize(char *, char *, char *);
 void	ActionChangeName(char *);
+void	ActionChangePinName (char *, char *, char *);
 void	ActionChangeJoin(char *);
 void	ActionChangeSquare(char *);
 void	ActionChangeOctagon(char *);

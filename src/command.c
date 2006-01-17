@@ -1,4 +1,4 @@
-/* $Id: command.c,v 1.6 2005-08-04 03:23:56 danmc Exp $ */
+/* $Id: command.c,v 1.7 2006-01-17 02:47:25 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,7 @@
 
 #include "gui.h"
 
-RCSID("$Id: command.c,v 1.6 2005-08-04 03:23:56 danmc Exp $");
+RCSID("$Id: command.c,v 1.7 2006-01-17 02:47:25 danmc Exp $");
 
 typedef int (*FunctionTypePtr) (void);
 
@@ -123,6 +123,7 @@ static ActionType	action[] =
 	{"ChangeClearSize",		ActionChangeClearSize, FALSE},
 	{"ChangeDrillSize",		ActionChange2ndSize, FALSE},
 	{"ChangeName",			ActionChangeName, FALSE},
+	{"ChangePinName",		ActionChangePinName, FALSE},
 	{"ChangeSquare",		ActionChangeSquare, FALSE},
 	{"ChangeOctagon",		ActionChangeOctagon, FALSE},
 	{"ChangeJoin",			ActionChangeJoin, FALSE},
