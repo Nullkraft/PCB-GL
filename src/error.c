@@ -1,4 +1,4 @@
-/* $Id: error.c,v 1.8 2005-03-12 02:17:11 danmc Exp $ */
+/* $Id: error.c,v 1.9 2006-01-29 22:33:12 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 
 #include "misc.h"
 
-RCSID("$Id: error.c,v 1.8 2005-03-12 02:17:11 danmc Exp $");
+RCSID("$Id: error.c,v 1.9 2006-01-29 22:33:12 danmc Exp $");
 
 
 
@@ -66,7 +66,6 @@ RCSID("$Id: error.c,v 1.8 2005-03-12 02:17:11 danmc Exp $");
 /* ----------------------------------------------------------------------
  * some external identifiers
  */
-extern int errno;		/* system error code */
 
 #if !defined(HAVE_STRERROR)
 extern int sys_nerr;		/* number of messages available from array */
@@ -74,7 +73,7 @@ extern int sys_nerr;		/* number of messages available from array */
 #endif
 
 /* the list is already defined for some OS */
-#if !defined(__NetBSD__) && !defined(__FreeBSD__) && !defined(__linux__)
+#if !defined(__NetBSD__) && !defined(__FreeBSD__) && !defined(__linux__) && !defined(__DragonFly__)
 #ifdef USE_SYS_ERRLIST
 extern char *sys_errlist[];	/* array of error messages */
 #endif
