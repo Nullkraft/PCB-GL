@@ -1,4 +1,4 @@
-/* $Id: create.c,v 1.24 2006-01-16 01:35:00 haceaton Exp $ */
+/* $Id: create.c,v 1.25 2006-03-03 21:33:44 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -59,7 +59,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: create.c,v 1.24 2006-01-16 01:35:00 haceaton Exp $");
+RCSID ("$Id: create.c,v 1.25 2006-03-03 21:33:44 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local identifiers
@@ -182,6 +182,8 @@ CreateNewPCB (Boolean SetDefaultNames)
   ptr->Shrink = Settings.Shrink;
   ptr->minWid = Settings.minWid;
   ptr->minSlk = Settings.minSlk;
+  ptr->minDrill = Settings.minDrill;
+  ptr->minRing = Settings.minRing;
 
   return (ptr);
 }

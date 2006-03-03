@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.25 2005-07-18 21:00:03 danmc Exp $ */
+/* $Id: file.c,v 1.26 2006-03-03 21:33:44 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -73,7 +73,7 @@
 #include "gui.h"
 
 
-RCSID("$Id: file.c,v 1.25 2005-07-18 21:00:03 danmc Exp $");
+RCSID("$Id: file.c,v 1.26 2006-03-03 21:33:44 danmc Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -328,8 +328,8 @@ WritePCBDataHeader (FILE * FP)
   fprintf (FP, "Cursor[%i %i %f]\n", (int) TO_PCB_X (Output.Width / 2),
 	   (int) TO_PCB_Y (Output.Height / 2), PCB->Zoom);
   fprintf (FP, "Thermal[%f]\n", PCB->ThermScale);
-  fprintf (FP, "DRC[%i %i %i %i]\n", PCB->Bloat, PCB->Shrink,
-	   PCB->minWid, PCB->minSlk);
+  fprintf (FP, "DRC[%i %i %i %i %i %i]\n", PCB->Bloat, PCB->Shrink,
+	   PCB->minWid, PCB->minSlk, PCB->minDrill, PCB->minRing);
   /* FIXME: This shouldn't know about .f, but we don't have a string
      converter for it yet.  */
   fprintf (FP, "Flags(0x%016x)\n", (int) PCB->Flags.f);

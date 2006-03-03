@@ -1,4 +1,4 @@
-/* $Id: parse_y.y,v 1.18 2006-01-16 01:35:02 haceaton Exp $ */
+/* $Id: parse_y.y,v 1.19 2006-03-03 21:33:44 danmc Exp $ */
 
 %{
 /*
@@ -50,7 +50,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_y.y,v 1.18 2006-01-16 01:35:02 haceaton Exp $");
+RCSID("$Id: parse_y.y,v 1.19 2006-03-03 21:33:44 danmc Exp $");
 
 static	LayerTypePtr	Layer;
 static	PolygonTypePtr	Polygon;
@@ -283,6 +283,7 @@ pcbthermal
 pcbdrc
 		: pcbdrc1
 		| pcbdrc2
+		| pcbdrc3
 		;
 
 pcbdrc1
@@ -303,6 +304,19 @@ pcbdrc2
 				yyPCB->Shrink = $4;
 				yyPCB->minWid = $5;
 				yyPCB->minSlk = $6;
+			}
+		;
+
+pcbdrc3
+                :
+		| T_DRC '[' NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER ']'
+		        {
+				yyPCB->Bloat = $3;
+				yyPCB->Shrink = $4;
+				yyPCB->minWid = $5;
+				yyPCB->minSlk = $6;
+				yyPCB->minDrill = $7;
+				yyPCB->minRing = $8;
 			}
 		;
 

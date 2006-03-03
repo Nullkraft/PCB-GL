@@ -1,4 +1,4 @@
-/* $Id: vendor.c,v 1.8 2005-07-18 22:19:06 danmc Exp $ */
+/* $Id: vendor.c,v 1.9 2006-03-03 21:33:44 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -334,6 +334,22 @@ ActionLoadVendor(gchar *filename)
       PCB->minSlk = floor (sf * atof(sval) + 0.5);
       Message (_("Set DRC minimum silk width to %.2f mils\n"), 
 	       0.01*PCB->minSlk);
+    }
+
+  sval = resource_value(drcres, "min_drill");
+  if (sval != NULL)
+    {
+      PCB->minDrill = floor (sf * atof(sval) + 0.5);
+      Message (_("Set DRC minimum drill diameter to %.2f mils\n"), 
+	       0.01*PCB->minDrill);
+    }
+
+  sval = resource_value(drcres, "min_ring");
+  if (sval != NULL)
+    {
+      PCB->minRing = floor (sf * atof(sval) + 0.5);
+      Message (_("Set DRC minimum annular ring on drill holes to %.2f mils\n"), 
+	       0.01*PCB->minRing);
     }
 
   Message (_("Loaded %d vendor drills from %s\n"), n_vendor_drills, fname);

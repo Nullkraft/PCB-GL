@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.60 2006-01-18 04:11:58 danmc Exp $ */
+/* $Id: action.c,v 1.61 2006-03-03 21:33:44 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -71,7 +71,7 @@
 #include "gui.h"
 
 
-RCSID("$Id: action.c,v 1.60 2006-01-18 04:11:58 danmc Exp $");
+RCSID("$Id: action.c,v 1.61 2006-03-03 21:33:44 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -1532,11 +1532,14 @@ ActionDRCheck (void)
   Cardinal count;
 
       Message (_("Rules are minspace %d.%02d, minoverlap %d.%d "
-	       "minwidth %d.%02d, minsilk %d.%02d\n"),
+	       "minwidth %d.%02d, minsilk %d.%02d\n"
+	       "min drill %d.%02d, min annular ring %d.%02d\n"),
 	       (PCB->Bloat + 1) / 100, (PCB->Bloat + 1) % 100,
 	       PCB->Shrink / 100, PCB->Shrink % 100,
 	       PCB->minWid / 100, PCB->minWid % 100,
-	       PCB->minSlk / 100, PCB->minSlk % 100);
+	       PCB->minSlk / 100, PCB->minSlk % 100,
+	       PCB->minDrill / 100, PCB->minDrill % 100,
+	       PCB->minRing / 100, PCB->minRing % 100);
       HideCrosshair (True);
       gui_watch_cursor ();
       count = DRCAll ();

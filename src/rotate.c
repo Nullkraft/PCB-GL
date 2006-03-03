@@ -1,4 +1,4 @@
-/* $Id: rotate.c,v 1.15 2005-06-11 04:37:36 djdelorie Exp $ */
+/* $Id: rotate.c,v 1.16 2006-03-03 21:33:44 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: rotate.c,v 1.15 2005-06-11 04:37:36 djdelorie Exp $");
+RCSID("$Id: rotate.c,v 1.16 2006-03-03 21:33:44 danmc Exp $");
 
 
 
@@ -236,7 +236,7 @@ RotateElementLowLevel (DataTypePtr Data, ElementTypePtr Element,
     {
       /* pre-delete the pins from the pin-tree before their coordinates change */
       if (Data)
-	r_delete_entry (PCB->Data->pin_tree, (BoxType *) pin);
+	r_delete_entry (Data->pin_tree, (BoxType *) pin);
       ROTATE_PIN_LOWLEVEL (pin, X, Y, Number);
       if (PCB->Data == Data)
 	UpdatePIPFlags (pin, Element, NULL, True);
@@ -246,7 +246,7 @@ RotateElementLowLevel (DataTypePtr Data, ElementTypePtr Element,
     {
       /* pre-delete the pads before their coordinates change */
       if (Data)
-	r_delete_entry (PCB->Data->pad_tree, (BoxType *) pad);
+	r_delete_entry (Data->pad_tree, (BoxType *) pad);
       ROTATE_PAD_LOWLEVEL (pad, X, Y, Number);
     }
   END_LOOP;
