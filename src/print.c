@@ -1,4 +1,4 @@
-/* $Id: print.c,v 1.37 2006-01-16 01:35:02 haceaton Exp $ */
+/* $Id: print.c,v 1.38 2006-03-06 00:35:24 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -65,7 +65,7 @@
 #include "gui.h"
 
 
-RCSID ("$Id: print.c,v 1.37 2006-01-16 01:35:02 haceaton Exp $");
+RCSID ("$Id: print.c,v 1.38 2006-03-06 00:35:24 djdelorie Exp $");
 
 
 
@@ -1376,9 +1376,25 @@ fab_author (void)
 	fab_author = Settings.FabAuthor;
       else
 	{
+	  int len;
+	  unsigned char *comma, *gecos;
+
 	  /* ID the user. */
 	  pwentry = getpwuid (getuid ());
-	  fab_author = pwentry->pw_gecos;
+	  gecos = pwentry->pw_gecos;
+	  comma = strchr (gecos,',');
+	  if (comma)
+	    len = comma-gecos;
+	  else
+	    len = strlen(gecos);
+	  fab_author = malloc (len+1);
+	  if (!fab_author)
+	    {
+	      perror("pcb: out of memory.\n");
+	      exit(-1);
+	    }
+	  memcpy (fab_author, gecos, len);
+	  fab_author[len] = 0;
 	}
     }
   return fab_author;
