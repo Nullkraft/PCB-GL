@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: change.h,v 1.6 2005-01-03 12:56:59 danmc Exp $
+ *  RCS: $Id: change.h,v 1.7 2006-03-11 16:30:32 djdelorie Exp $
  */
 
 /* prototypes to change object properties
@@ -71,6 +71,8 @@ Boolean	ChangeSelectedClearSize(int, LocationType, Boolean);
 Boolean	ChangeSelected2ndSize(int, LocationType, Boolean);
 Boolean	ChangeSelectedMaskSize(int, LocationType, Boolean);
 Boolean	ChangeSelectedJoin(int); 
+Boolean	SetSelectedJoin(int); 
+Boolean	ClrSelectedJoin(int); 
 Boolean	ChangeSelectedSquare(int); 
 Boolean	SetSelectedSquare(int); 
 Boolean	ClrSelectedSquare(int); 
@@ -92,6 +94,8 @@ Boolean	ChangeObjectClearSize(int, void *, void *, void *, LocationType, Boolean
 Boolean	ChangeObject2ndSize(int, void *, void *, void *, LocationType, Boolean, Boolean);
 Boolean	ChangeObjectMaskSize(int, void *, void *, void *, LocationType, Boolean);
 Boolean	ChangeObjectJoin(int, void *, void *, void *);
+Boolean	SetObjectJoin(int, void *, void *, void *);
+Boolean	ClrObjectJoin(int, void *, void *, void *);
 Boolean	ChangeObjectSquare(int, void *, void *, void *);
 Boolean	SetObjectSquare(int, void *, void *, void *);
 Boolean	ClrObjectSquare(int, void *, void *, void *);

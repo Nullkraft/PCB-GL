@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.61 2006-03-03 21:33:44 danmc Exp $ */
+/* $Id: action.c,v 1.62 2006-03-11 16:30:32 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -71,7 +71,7 @@
 #include "gui.h"
 
 
-RCSID("$Id: action.c,v 1.61 2006-03-03 21:33:44 danmc Exp $");
+RCSID("$Id: action.c,v 1.62 2006-03-11 16:30:32 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -4828,6 +4828,13 @@ ChangeFlag (char *what, char *flag_name, int value, char *cmd_name)
     {
       set_object = value ? SetObjectThermal : ClrObjectThermal;
       set_selected = value ? SetSelectedThermals : ClrSelectedThermals;
+    }
+  else if (NSTRCMP (flag_name, "join") == 0)
+    {
+      /* Note: these are backwards, because the flag is "clear" but
+	 the command is "join".  */
+      set_object = value ? ClrObjectJoin : SetObjectJoin;
+      set_selected = value ? ClrSelectedJoin : SetSelectedJoin;
     }
   else
     {
