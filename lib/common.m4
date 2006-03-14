@@ -23,7 +23,7 @@ divert(-1)
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: common.m4,v 1.11 2004-04-28 21:34:58 danmc Exp $
+#   RCS: $Id: common.m4,v 1.12 2006-03-14 02:33:54 danmc Exp $
 #
 # common defines for packages
 #
@@ -36,6 +36,13 @@ divert(-1)
 define(`CreateObject',
 	`ifdef(`PinList_$1', `DefinePinList(PinList_$1)')'
 	`PKG_$3(`Description_$1', ,``$2'', Param1_$1, Param2_$1)'
+)
+
+# this one is used to show the correct value for the footprint attribute
+# in a gschem (www.geda.seul.org) schematic.  See QueryLibrary.sh
+define(`QueryObject',
+	`ifdef(`PinList_$1', `DefinePinList(PinList_$1)')'
+`$3 ifdef(`Param1_$1', `Param1_$1') ifdef(`Param2_$1', `Param2_$1')'
 )
 
 # -------------------------------------------------------------------
@@ -79,7 +86,6 @@ include(connector.inc)
 include(cts.inc)
 include(dil.inc)
 include(geda.inc)
-include(genericsmt.inc)
 include(johnstech.inc)
 include(minicircuits.inc)
 include(misc.inc)
