@@ -1,4 +1,4 @@
-/* $Id: parse_y.y,v 1.21 2006-03-11 21:28:22 djdelorie Exp $ */
+/* $Id: parse_y.y,v 1.22 2006-03-16 05:05:26 djdelorie Exp $ */
 
 %{
 /*
@@ -50,7 +50,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_y.y,v 1.21 2006-03-11 21:28:22 djdelorie Exp $");
+RCSID("$Id: parse_y.y,v 1.22 2006-03-16 05:05:26 djdelorie Exp $");
 
 static	LayerTypePtr	Layer;
 static	PolygonTypePtr	Polygon;
@@ -1188,6 +1188,68 @@ element_hi_format
 				SetElementBoundingBox(yyData, yyElement, yyFont);
 			}
 		;
+
+/* %start-doc pcbfile elementline
+
+@syntax
+ElementLine [X1 Y1 X2 Y2 Thickness]
+ElementLine (X1 Y1 X2 Y2 Thickness)
+@end syntax
+
+@table @var
+@item X1 Y1 X2 Y2
+Coordinates of the endpoints of the line.  These are relative to the
+Element's mark point for new element formats, or absolute for older
+formats.
+@item Thickness
+The width of the silk for this line.
+@end table
+
+%end-doc */
+
+/* %start-doc pcbfile elementarc
+
+@syntax
+ElementArc [X Y Width Height StartAngle DeltaAngle Thickness]
+ElementArc (X Y Width Height StartAngle DeltaAngle Thickness)
+@end syntax
+
+@table @var
+@item X Y
+Coordinates of the center of the arc.  These are relative to the
+Element's mark point for new element formats, or absolute for older
+formats.
+@item Width Height
+The width and height, from the center to the edge.  The bounds of the
+circle of which this arc is a segment, is thus @math{2*Width} by
+@math{2*Height}.
+@item StartAngle
+The angle of one end of the arc, in degrees.  In PCB, an angle of zero
+points left (negative X direction), and 90 degrees points down
+(positive Y direction).
+@item DeltaAngle
+The sweep of the arc.  This may be negative.  Positive angles sweep
+counterclockwise.
+@item Thickness
+The width of the silk line which forms the arc.
+@end table
+
+%end-doc */
+
+/* %start-doc pcbfile mark
+
+@syntax
+Mark [X Y]
+Mark (X Y)
+@end syntax
+
+@table @var
+@item X Y
+Coordinates of the Mark, for older element formats that don't have
+the mark as part of the Element line.
+@end table
+
+%end-doc */
 
 elementdefinitions
 		: elementdefinition
