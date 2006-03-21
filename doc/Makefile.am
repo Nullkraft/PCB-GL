@@ -23,7 +23,7 @@
 ##  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 ##  Thomas.Nau@rz.uni-ulm.de
 ##
-##  RCS: $Id: Makefile.am,v 1.12 2006-03-11 21:29:01 djdelorie Exp $
+##  RCS: $Id: Makefile.am,v 1.13 2006-03-21 02:14:59 danmc Exp $
 ##
 
 info_TEXINFOS=	pcb.texi
@@ -53,10 +53,12 @@ mostlyclean-aminfo:
 
 EXTRA_DIST= \
 	ascii2texi.awk \
+	extract-docs \
 	refcard.tex \
-	pad.obj \
-	pad.png \
 	pad.eps \
+	pad.obj \
+	pad.pdf \
+	pad.png \
 	pcb.dvi \
 	pcb.css \
 	refcard.dvi \
@@ -108,7 +110,7 @@ pcbfile.texi : extracted-docs
 
 .PHONY : extracted-docs
 extracted-docs :
-	perl extract-docs $(srcdir)
+	perl $(srcdir)/extract-docs $(srcdir)
 
 $(srcdir)/pad.eps: $(srcdir)/pad.obj
 	${TGIF_X} ${TGIF_FLAGS} -eps $(srcdir)/pad.obj
