@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: undo.h,v 1.4 2005-06-11 04:37:36 djdelorie Exp $
+ *  RCS: $Id: undo.h,v 1.5 2006-03-21 17:34:59 djdelorie Exp $
  */
 
 /* prototypes for undo routines
@@ -60,6 +60,7 @@ void	AddObjectToSizeUndoList(int, void *, void *, void *);
 void	AddObjectTo2ndSizeUndoList(int, void *, void *, void *);
 void	AddObjectToClearSizeUndoList(int, void *, void *, void *);
 void	AddObjectToMaskSizeUndoList(int, void *, void *, void *);
+void	AddObjectToChangeAnglesUndoList(int, void *, void *, void *);
 void	LockUndo(void);
 void	UnlockUndo(void);
 Boolean	Undoing(void);

@@ -1,4 +1,4 @@
-/* $Id: polygon.c,v 1.31 2006-01-16 01:35:02 haceaton Exp $ */
+/* $Id: polygon.c,v 1.32 2006-03-21 17:34:59 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,13 +55,11 @@
 #include "set.h"
 #include "undo.h"
 
-#include "gui.h"
-
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: polygon.c,v 1.31 2006-01-16 01:35:02 haceaton Exp $");
+RCSID ("$Id: polygon.c,v 1.32 2006-03-21 17:34:59 djdelorie Exp $");
 
 
 /* ---------------------------------------------------------------------------

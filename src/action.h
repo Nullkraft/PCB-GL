@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: action.h,v 1.11 2006-01-17 02:47:25 danmc Exp $
+ *  RCS: $Id: action.h,v 1.12 2006-03-21 17:34:58 djdelorie Exp $
  */
 
 /* prototypes for action routines
@@ -35,80 +35,20 @@
 
 #define CLONE_TYPES LINE_TYPE | ARC_TYPE | VIA_TYPE | POLYGON_TYPE
 
-void	ActionMoveObject(char *, char *, char *);
 void	ActionMovePointer(char *, char *);
-void	ActionAtomic(String);
 void	ActionAdjustStyle(char *);
-void	ActionRouteStyle(char *);
 void	EventMoveCrosshair(int, int);
-void	ActionMarkCrosshair(char *);
-void	ActionToggleHideName(char *);
-void	ActionSetValue(char *, char *, char *);
-void	ActionSetThermal(char *);
-void	ActionClearThermal(char *);
-void	ActionSetSquare(char *);
-void	ActionClearSquare(char *);
-void	ActionSetOctagon(char *);
-void	ActionClearOctagon(char *);
-void	ActionQuit(void);
-void	ActionConnection(char *);
-void	ActionCommand(char *);
-void	ActionDisperseElements(char *);
-void	ActionDisplay(char *, char *);
-void	ActionMode(char *);
-void	ActionRemoveSelected(void);
-void	ActionDeleteRats(char *);
-void	ActionAddRats(char *);
-void	ActionAutoPlaceSelected(void);
-void	ActionAutoRoute(char *);
-void	ActionReport(char *);
-void	ActionChangeSize(char *, char *, char *);
-void	ActionChange2ndSize(char *, char *, char *);
-void	ActionChangeClearSize(char *, char *, char *);
-void	ActionChangeName(char *);
-void	ActionChangePinName (char *, char *, char *);
-void	ActionChangeJoin(char *);
-void	ActionChangeSquare(char *);
-void	ActionChangeOctagon(char *);
-void	ActionChangeHole(char *);
-void	ActionSelect(char *);
-void	ActionUnselect(char *);
-void    ActionNew(void);
-void	ActionSave(char *);
-void	ActionLoad(char *);
-void	ActionPrintDialog(void);
-void    ActionPrint (gchar **, gint);
-void	ActionSwapSides(void);
-void	ActionBell(char *);
-void	ActionPasteBuffer(char *, char *);
-void	ActionUndo(char *);
-void	ActionRedo(void);
-void	ActionPolygon(char *);
-void	ActionSwitchDrawingLayer(char *);
-void	ActionToggleVisibility(char *);
-void	ActionMoveToCurrentLayer(char *);
-void	ActionDRCheck(void);
-void	ActionFlip(char *);
-void	ActionToggleThermal(char *);
 
 #if 0
 void	ActionListAct(Widget, XEvent *, String *, Cardinal *);
 void	ActionButton3(Widget, XEvent *, String *, Cardinal *);
 #endif
 
-void	ActionSetSame(void);
-void	ActionRipUp(char *);
 void	AdjustAttachedObjects(void);
 
 void	warpNoWhere(void);
-void	ActionSetFlag(char *, char *);
-void	ActionClrFlag(char *, char *);
-void	ActionChangeFlag(char *, char *, int);
-
-void	ActionExecuteFile(gchar *);
-void	ActionExecuteAction(gchar **, gint);
 
 /* In gui-misc.c */
-gboolean	ActionGetLocation(gchar *);
-void	ActionGetXY(gchar *);
+Boolean	ActionGetLocation(char *);
+void	ActionGetXY(char *);
 #endif

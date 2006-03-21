@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: set.h,v 1.6 2005-03-12 02:17:14 danmc Exp $
+ *  RCS: $Id: set.h,v 1.7 2006-03-21 17:34:59 djdelorie Exp $
  */
 
 /* prototypes for update routines
@@ -34,8 +34,6 @@
 #include "global.h"
 
 void		SetTextScale(Dimension);
-void		set_cursor_position_labels(void);
-void		set_status_line_label(void);
 void		SetGrid(float, Boolean);
 void		SetZoom(float);
 void		SetLineSize(BDimension);

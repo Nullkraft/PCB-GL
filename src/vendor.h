@@ -1,4 +1,4 @@
-/* $Id: vendor.h,v 1.2 2005-03-12 02:17:14 danmc Exp $ */
+/* $Id: vendor.h,v 1.3 2006-03-21 17:34:59 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -24,13 +24,6 @@
 
 #ifndef __VENDOR_H__
 #define __VENDOR_H__
-
-void	ActionLoadVendor(gchar *);
-void	ActionUnloadVendor(void);
-void	ActionApplyVendor(void);
-void	ActionEnableVendor(void);
-void	ActionDisableVendor(void);
-void	ActionToggleVendor(void);
 
 int vendorDrillMap(int);
 Boolean vendorIsElementMappable(ElementTypePtr);

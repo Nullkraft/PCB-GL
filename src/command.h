@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: command.h,v 1.2 2005-03-12 02:17:10 danmc Exp $
+ *  RCS: $Id: command.h,v 1.3 2006-03-21 17:34:58 djdelorie Exp $
  */
 
 /* prototypes for command execution
@@ -33,7 +33,7 @@
 
 #include "global.h"
 
-void	ExecuteUserCommand(gchar *);
-void	CallActionProc(gchar *action, gchar **arg, gint argc);
+void	ExecuteUserCommand(char *);
+void	CallActionProc(char *action, char **arg, int argc);
 
 #endif

@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: output.h,v 1.4 2005-03-12 02:17:12 danmc Exp $
+ *  RCS: $Id: output.h,v 1.5 2006-03-21 17:34:59 djdelorie Exp $
  */
 
 #ifndef __OUTPUT_INCLUDED__
@@ -31,11 +31,11 @@
 #include "global.h"
 
 
-gboolean Pan(LocationType, LocationType, gboolean, gboolean);
-gboolean CoalignScreen(Position,
+Boolean Pan(LocationType, LocationType, Boolean, Boolean);
+Boolean CoalignScreen(Position,
 				Position, LocationType, LocationType);
 
-void	DrawClipped(GdkRegion *myRegion);
-gboolean ActiveDrag (void);
+/*void	DrawClipped(GdkRegion *myRegion);*/
+Boolean ActiveDrag (void);
 
 #endif

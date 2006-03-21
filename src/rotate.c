@@ -1,4 +1,4 @@
-/* $Id: rotate.c,v 1.16 2006-03-03 21:33:44 danmc Exp $ */
+/* $Id: rotate.c,v 1.17 2006-03-21 17:34:59 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -52,13 +52,11 @@
 #include "set.h"
 #include "undo.h"
 
-#include "gui.h"
-
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: rotate.c,v 1.16 2006-03-03 21:33:44 danmc Exp $");
+RCSID("$Id: rotate.c,v 1.17 2006-03-21 17:34:59 djdelorie Exp $");
 
 
 

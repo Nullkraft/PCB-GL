@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: mymem.h,v 1.2 2004-02-15 18:04:04 haceaton Exp $
+ *  RCS: $Id: mymem.h,v 1.3 2006-03-21 17:34:59 djdelorie Exp $
  */
 
 /* prototypes for memory routines
@@ -112,5 +112,7 @@ char				*StripWhiteSpaceAndDup(char *);
 #ifdef NEED_STRDUP
 char				*strdup(const char *);
 #endif
+
+#define malloc(x) calloc(1,(x))
 
 #endif

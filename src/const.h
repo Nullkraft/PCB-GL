@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: const.h,v 1.17 2006-03-11 21:28:21 djdelorie Exp $
+ *  RCS: $Id: const.h,v 1.18 2006-03-21 17:34:58 djdelorie Exp $
  */
 
 /* global source constants
@@ -137,7 +137,7 @@ connecting to them.
 @item 0x0040 selected
 Set when the object is selected.
 @item 0x0080 onsolder
-For elements, indicates that the element is on the solder side.
+For elements and pads, indicates that they are on the solder side.
 @item 0x0080 auto
 For lines and vias, indicates that these were created by the
 autorouter.

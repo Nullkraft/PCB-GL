@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: report.h,v 1.2 2004-02-14 02:48:05 haceaton Exp $
+ *  RCS: $Id: report.h,v 1.3 2006-03-21 17:34:59 djdelorie Exp $
  */
 
 #ifndef __REPORT_INCLUDED__
@@ -34,9 +34,5 @@
 	(VIA_TYPE | LINE_TYPE | TEXT_TYPE | POLYGON_TYPE | ELEMENT_TYPE | \
 	 RATLINE_TYPE | PIN_TYPE | PAD_TYPE | ELEMENTNAME_TYPE | ARC_TYPE \
 	 | POLYGONPOINT_TYPE | LINEPOINT_TYPE)
-
-void ReportDialog(void);
-void ReportDrills(void);
-void ReportFoundPins(void);
 
 #endif

@@ -1,4 +1,4 @@
-/* $Id: parse_y.y,v 1.22 2006-03-16 05:05:26 djdelorie Exp $ */
+/* $Id: parse_y.y,v 1.23 2006-03-21 17:34:59 djdelorie Exp $ */
 
 %{
 /*
@@ -50,7 +50,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_y.y,v 1.22 2006-03-16 05:05:26 djdelorie Exp $");
+RCSID("$Id: parse_y.y,v 1.23 2006-03-21 17:34:59 djdelorie Exp $");
 
 static	LayerTypePtr	Layer;
 static	PolygonTypePtr	Polygon;
@@ -397,7 +397,7 @@ Minimum width of the annular ring around pins and vias.
 %end-doc */
 
 pcbdrc
-		: 
+		:
 		| pcbdrc1
 		| pcbdrc2
 		| pcbdrc3
@@ -787,12 +787,12 @@ layerdefinition
 		  	{
 					/* ignore junk */
 				if (Polygon->PointN >= 3)
-				{
-					SetPolygonBoundingBox(Polygon);
-					if (!Layer->polygon_tree)
-					  Layer->polygon_tree = r_create_tree (NULL, 0, 0);
-					r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
-				}
+				  {
+				    SetPolygonBoundingBox (Polygon);
+				    if (!Layer->polygon_tree)
+				      Layer->polygon_tree = r_create_tree (NULL, 0, 0);
+				    r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
+				  }
 				else
 				{
 					Message("WARNING parsing file '%s'\n"

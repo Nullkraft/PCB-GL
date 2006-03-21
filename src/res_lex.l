@@ -1,4 +1,4 @@
-/* $Id: res_lex.l,v 1.6 2004-10-27 14:11:58 djdelorie Exp $ */
+/* $Id: res_lex.l,v 1.7 2006-03-21 17:34:59 djdelorie Exp $ */
 
 %{
 
@@ -18,7 +18,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: res_lex.l,v 1.6 2004-10-27 14:11:58 djdelorie Exp $");
+RCSID("$Id: res_lex.l,v 1.7 2006-03-21 17:34:59 djdelorie Exp $");
 
 #define YY_INPUT(buf,result,max_size) { result = res_parse_getchars(buf, max_size); }
 
@@ -49,7 +49,7 @@ COMMENT		#[^\n]*
 {COMMENT}\n	{ res_lineno++; }
 [ \t\r\n]	{ if (yytext[0] == '\n') res_lineno++; }
 
-{INCSTR}	{ reslval.sval = strdup(yytext+1);
+{INCSTR}	{ reslval.sval = strdup(yytext);
 		  	  return INCLUDE; }
 
 {PARENSTR}	{ reslval.sval = strdup(yytext);

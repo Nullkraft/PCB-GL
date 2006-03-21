@@ -1,4 +1,4 @@
-/* $Id: strflags.c,v 1.5 2006-01-02 15:51:48 haceaton Exp $ */
+/* $Id: strflags.c,v 1.6 2006-03-21 17:34:59 djdelorie Exp $ */
 /*
  *                            COPYRIGHT
  *
@@ -90,10 +90,10 @@ static struct {
   { DISPLAYNAMEFLAG, N("showname"), ELEMENT_TYPE },
   { CLEARLINEFLAG, N("clearline"), LINE_TYPE | ARC_TYPE },
   { SELECTEDFLAG, N("selected"), ALL_TYPES },
-  { ONSOLDERFLAG, N("onsolder"), ELEMENT_TYPE },
+  { ONSOLDERFLAG, N("onsolder"), ELEMENT_TYPE | PAD_TYPE },
   { AUTOFLAG, N("auto"), ALL_TYPES },
   { SQUAREFLAG, N("square"), PIN_TYPES | PAD_TYPE },
-  { RUBBERENDFLAG, N("rubberend"), LINE_TYPE },
+  { RUBBERENDFLAG, N("rubberend"), LINE_TYPE | ARC_TYPE },
   { WARNFLAG, N("warn"), PIN_TYPES | PAD_TYPE },
   { USETHERMALFLAG, N("usetherm"), PIN_TYPES | PAD_TYPE },
   { OCTAGONFLAG, N("octagon"), PIN_TYPES | PAD_TYPE },

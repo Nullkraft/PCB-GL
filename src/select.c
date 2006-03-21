@@ -1,4 +1,4 @@
-/* $Id: select.c,v 1.13 2006-01-16 01:35:02 haceaton Exp $ */
+/* $Id: select.c,v 1.14 2006-03-21 17:34:59 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -45,8 +45,6 @@
 #include "rats.h"
 #include "misc.h"
 
-#include "gui.h"
-
 #include <sys/types.h>
 #ifdef HAVE_REGEX_H
 #include <regex.h>
@@ -56,7 +54,7 @@
 #endif
 #endif
 
-RCSID ("$Id: select.c,v 1.13 2006-01-16 01:35:02 haceaton Exp $");
+RCSID("$Id: select.c,v 1.14 2006-03-21 17:34:59 djdelorie Exp $");
 
 
 

@@ -1,4 +1,4 @@
-/* $Id: autoplace.c,v 1.13 2005-03-12 02:17:09 danmc Exp $ */
+/* $Id: autoplace.c,v 1.14 2006-03-21 17:34:58 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -62,9 +62,7 @@
 #include "remove.h"
 #include "rotate.h"
 
-#include "gui.h"
-
-RCSID("$Id: autoplace.c,v 1.13 2005-03-12 02:17:09 danmc Exp $");
+RCSID("$Id: autoplace.c,v 1.14 2006-03-21 17:34:58 djdelorie Exp $");
 
 #define EXPANDRECTXY(r1, x1, y1, x2, y2) { \
   r1->X1=MIN(r1->X1, x1); r1->Y1=MIN(r1->Y1, y1); \
@@ -528,7 +526,7 @@ ComputeCost (NetListTypePtr Nets, double T0, double T)
 	boxpp = (struct ebox **)
 	  GetPointerMemory (TEST_FLAG (ONSOLDERFLAG, element) ?
 			    &seboxes : &ceboxes);
-	*boxpp = g_malloc (sizeof (**boxpp));
+	*boxpp = malloc (sizeof (**boxpp));
 	(*boxpp)->box = element->VBox;
 	(*boxpp)->element = element;
       }
