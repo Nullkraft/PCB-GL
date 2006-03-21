@@ -21,7 +21,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: bom.c,v 1.1 2006-03-21 17:35:00 djdelorie Exp $");
+RCSID("$Id: bom.c,v 1.2 2006-03-21 22:40:31 danmc Exp $");
 
 static HID_Attribute bom_options[] = {
   {"bomfile", "BOM output file",
@@ -261,7 +261,7 @@ PrintBOM (void)
   fp = fopen(xy_filename, "w");
   if (!fp)
     {
-      gui->logv("Cannot open file %s for writing\n", xy_filename);
+      gui->log("Cannot open file %s for writing\n", xy_filename);
       return 1;
     }
 
