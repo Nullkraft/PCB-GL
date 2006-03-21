@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.63 2006-03-21 17:34:58 djdelorie Exp $ */
+/* $Id: action.c,v 1.64 2006-03-21 23:45:00 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -69,7 +69,7 @@
 #include "undo.h"
 
 
-RCSID("$Id: action.c,v 1.63 2006-03-21 17:34:58 djdelorie Exp $");
+RCSID("$Id: action.c,v 1.64 2006-03-21 23:45:00 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -4191,7 +4191,6 @@ ActionNew (int argc, char **argv, int x, int y)
 	  ResetStackAndVisibility ();
 	  CreateDefaultFont ();
 	  SetCrosshairRange (0, 0, PCB->MaxWidth, PCB->MaxHeight);
-	  UpdateSettingsOnScreen ();
 	  CenterDisplay (PCB->MaxWidth / 2, PCB->MaxHeight / 2, False);
 	  ClearAndRedrawOutput ();
 

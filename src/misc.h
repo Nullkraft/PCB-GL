@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: misc.h,v 1.13 2006-03-21 17:34:58 djdelorie Exp $
+ *  RCS: $Id: misc.h,v 1.14 2006-03-21 23:45:01 djdelorie Exp $
  */
 
 /* prototypes for misc routines
@@ -46,7 +46,6 @@ Boolean		IsDataEmpty(DataTypePtr);
 BoxTypePtr	GetDataBoundingBox(DataTypePtr);
 void		CenterDisplay(LocationType, LocationType, Boolean);
 void		SetFontInfo(FontTypePtr);
-void		UpdateSettingsOnScreen(void);
 int		ParseGroupString(char *, LayerGroupTypePtr);
 int		ParseRouteString(char *, RouteStyleTypePtr, int);
 char		*build_route_string(RouteStyleType *);

@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.27 2006-03-21 17:34:58 djdelorie Exp $ */
+/* $Id: file.c,v 1.28 2006-03-21 23:45:01 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -71,7 +71,7 @@
 #include "strflags.h"
 
 
-RCSID("$Id: file.c,v 1.27 2006-03-21 17:34:58 djdelorie Exp $");
+RCSID("$Id: file.c,v 1.28 2006-03-21 23:45:01 djdelorie Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -325,7 +325,6 @@ LoadPCB (char *Filename)
       PCB->Filename = MyStrdup (Filename, "LoadPCB()");
       /* just in case a bad file saved file is loaded */
       UpdatePIPFlags (NULL, NULL, NULL, False);
-      UpdateSettingsOnScreen ();
 
       units_mm = (PCB->Grid != (int) PCB->Grid) ? True : False;
 

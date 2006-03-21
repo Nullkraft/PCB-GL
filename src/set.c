@@ -1,4 +1,4 @@
-/* $Id: set.c,v 1.27 2006-03-21 17:34:59 djdelorie Exp $ */
+/* $Id: set.c,v 1.28 2006-03-21 23:45:01 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include "undo.h"
 
 
-RCSID("$Id: set.c,v 1.27 2006-03-21 17:34:59 djdelorie Exp $");
+RCSID("$Id: set.c,v 1.28 2006-03-21 23:45:01 djdelorie Exp $");
 
 
 
@@ -256,13 +256,7 @@ SetBufferNumber (int Number)
 }
 
 /* ---------------------------------------------------------------------------
- * updates all widgets like status, cursor position ... on screen
  */
-void
-UpdateSettingsOnScreen (void)
-{
-  hid_action("LayersChanged");
-}
 
 void
 SaveMode (void)

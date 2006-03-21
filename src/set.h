@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: set.h,v 1.7 2006-03-21 17:34:59 djdelorie Exp $
+ *  RCS: $Id: set.h,v 1.8 2006-03-21 23:45:01 djdelorie Exp $
  */
 
 /* prototypes for update routines
@@ -41,7 +41,6 @@ void		SetViaSize(BDimension, Boolean);
 void		SetViaDrillingHole(BDimension, Boolean);
 void		SetKeepawayWidth(BDimension);
 void		SetChangedFlag(Boolean);
-void		UpdateSettingsOnScreen(void);
 void		SetBufferNumber(int);
 void		SetMode(int);
 void		SetCrosshairRangeToBuffer(void);

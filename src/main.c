@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.39 2006-03-21 17:34:58 djdelorie Exp $ */
+/* $Id: main.c,v 1.40 2006-03-21 23:45:01 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,7 @@
 /* This next one is so we can print the help messages. */
 #include "hid/hidint.h"
 
-RCSID("$Id: main.c,v 1.39 2006-03-21 17:34:58 djdelorie Exp $");
+RCSID("$Id: main.c,v 1.40 2006-03-21 23:45:01 djdelorie Exp $");
 
 
 
@@ -709,26 +709,11 @@ main (int argc, char *argv[])
   ResetStackAndVisibility ();
 
   CreateDefaultFont ();
-  InitCrosshair ();
+  if (gui->gui)
+    InitCrosshair ();
   InitHandler ();
   InitBuffers ();
   SetMode (ARROW_MODE);
-
-  /* update zoom and grid... */
-  UpdateSettingsOnScreen ();
-
-#ifdef FIXME
-  gdk_window_get_geometry(NULL, NULL, NULL, &Settings.w_display,
-			  &Settings.h_display, NULL);
-#endif
-
-#ifdef FIXME
-  FullRegion = gdk_region_new();
-
-  Big.x = Big.y = 0;
-  Big.width = Big.height = TO_SCREEN(MAX_COORD);
-  gdk_region_union_with_rect(FullRegion, &Big);
-#endif
 
   if (command_line_pcb)
     {
