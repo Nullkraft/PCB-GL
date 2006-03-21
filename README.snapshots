@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# $Id: README.snapshots,v 1.4 2004-09-24 02:02:41 danmc Exp $
+# $Id: README.snapshots,v 1.5 2006-03-21 13:59:08 danmc Exp $
 #
 
 This documents what is done to create a pcb release.  The releases now
@@ -63,9 +63,24 @@ To make a pcb release do the following:
 		cvs ci
 		cvs tag -R -r pcb-20040530 pcb-20040530-RELEASE
 		cvs update -PdA -r pcb-20040530-RELEASE
-		./autogen.sh && gmake distcheck
+		./autogen.sh --enable-maintainer-mode && gmake clean && gmake && gmake distcheck
+	
+	7. Create checksums
 
-	7. Return to your regularly scheduled trunk development
+		digest sha1 pcb-20040530.tar.gz > pcb-20040530.SHA1
+		digest md5 pcb-20040530.tar.gz > pcb-20040530.MD5
+
+	8. Upload the .tar.gz, .MD5, and .SHA1 files to
+	   ftp://upload.sourceforge.net/incoming/
+
+	9. Create a new file release for pcb with a release name of
+	   "pcb-20040530" (for pcb-20040530).
+
+		For file types:
+			.tar.gz      -  any / source .gz
+			.{SHA1,MD5}  -  Platform Independent / Other Source File
+
+	10. Return to your regularly scheduled trunk development
 		cvs update -PdA
 
 =) 	if this is a patch release, then simply make desired changes to the branch, and
