@@ -1,4 +1,4 @@
-/* $Id: png.c,v 1.1 2006-03-21 17:35:00 djdelorie Exp $ */
+/* $Id: png.c,v 1.2 2006-03-22 11:33:50 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -51,7 +51,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: png.c,v 1.1 2006-03-21 17:35:00 djdelorie Exp $");
+RCSID("$Id: png.c,v 1.2 2006-03-22 11:33:50 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PNG function %s.\n", __FUNCTION__); abort()
 
@@ -93,7 +93,7 @@ static int lastcolor = -1;
 static int print_group[MAX_LAYER];
 static int print_layer[MAX_LAYER];
 
-static char *filetypes[] = {
+static const char *filetypes[] = {
   "GIF", 
 #define FMT_gif 0
 
