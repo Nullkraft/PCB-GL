@@ -1,4 +1,4 @@
-/* $Id */
+/* $Id: bom.c,v 1.3 2006-03-22 11:31:33 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -8,6 +8,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "global.h"
 #include "data.h"
@@ -21,7 +22,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: bom.c,v 1.2 2006-03-21 22:40:31 danmc Exp $");
+RCSID("$Id: bom.c,v 1.3 2006-03-22 11:31:33 danmc Exp $");
 
 static HID_Attribute bom_options[] = {
   {"bomfile", "BOM output file",
