@@ -1,4 +1,4 @@
-/* $Id: flags.c,v 1.2 2006-03-22 13:04:55 danmc Exp $ */
+/* $Id: flags.c,v 1.3 2006-03-22 13:07:21 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -36,6 +36,12 @@
 
 #include "global.h"
 #include "data.h"
+
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID("$Id: flags.c,v 1.3 2006-03-22 13:07:21 danmc Exp $");
 
 static int
 FlagCurrentStyle()
