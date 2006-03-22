@@ -1,4 +1,4 @@
-/* $Id: print.c,v 1.39 2006-03-21 17:34:59 djdelorie Exp $ */
+/* $Id: print.c,v 1.40 2006-03-22 13:08:47 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -50,6 +50,7 @@
 
 
 #include "data.h"
+#include "draw.h"
 #include "drill.h"
 #include "file.h"
 #include "find.h"
@@ -63,7 +64,7 @@
 #include "hid.h"
 
 
-RCSID("$Id: print.c,v 1.39 2006-03-21 17:34:59 djdelorie Exp $");
+RCSID("$Id: print.c,v 1.40 2006-03-22 13:08:47 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * prints a FAB drawing.
