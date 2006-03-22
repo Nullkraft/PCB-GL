@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.1 2006-03-21 17:35:00 djdelorie Exp $ */
+/* $Id: gui-top-window.c,v 1.2 2006-03-22 17:10:46 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -85,7 +85,9 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: gui-top-window.c,v 1.1 2006-03-21 17:35:00 djdelorie Exp $");
+RCSID("$Id: gui-top-window.c,v 1.2 2006-03-22 17:10:46 danmc Exp $");
+
+extern HID ghid_hid;
 
 GhidGui	_ghidgui,
 		*ghidgui = NULL;
@@ -3588,7 +3590,7 @@ ghid_make_gc(void)
 		fprintf (stderr, "gui-top-window.c: ghid_make_gc():  malloc failed\n");
 		exit (1);
 		}
-	rv->me_pointer = &ghidgui;
+	rv->me_pointer = &ghid_hid;
 	return rv;
 	}
 
