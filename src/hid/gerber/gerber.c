@@ -1,4 +1,4 @@
-/* $Id: gerber.c,v 1.2 2006-03-22 11:44:43 danmc Exp $ */
+/* $Id: gerber.c,v 1.3 2006-03-22 12:40:49 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -27,7 +27,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: gerber.c,v 1.2 2006-03-22 11:44:43 danmc Exp $");
+RCSID("$Id: gerber.c,v 1.3 2006-03-22 12:40:49 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented Gerber function %s.\n", __FUNCTION__); abort()
 
@@ -714,7 +714,6 @@ gerber_draw_arc (hidGC gc, int cx, int cy, int width, int height,
 		int start_angle, int delta_angle)
 {
   Boolean m = False;
-  int size;
   float arcStartX, arcStopX, arcStartY, arcStopY;
 
   if (gc->width == 1)
