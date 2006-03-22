@@ -1,4 +1,4 @@
-/* $Id: gui-misc.c,v 1.1 2006-03-21 17:35:00 djdelorie Exp $ */
+/* $Id: gui-misc.c,v 1.2 2006-03-22 11:48:07 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -38,6 +38,11 @@
 #include "gui.h"
 #include <gdk/gdkkeysyms.h>
 
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID("$Id: gui-misc.c,v 1.2 2006-03-22 11:48:07 danmc Exp $");
 
 #define DEFAULT_CURSORSHAPE	GDK_CROSSHAIR
 
@@ -60,7 +65,7 @@ static GdkCursorType oldCursor;
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: gui-misc.c,v 1.1 2006-03-21 17:35:00 djdelorie Exp $");
+RCSID("$Id: gui-misc.c,v 1.2 2006-03-22 11:48:07 danmc Exp $");
 
 void
 ghid_status_line_set_text(gchar *text)
