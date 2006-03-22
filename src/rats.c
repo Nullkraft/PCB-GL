@@ -1,4 +1,4 @@
-/* $Id: rats.c,v 1.22 2006-03-21 17:34:59 djdelorie Exp $ */
+/* $Id: rats.c,v 1.23 2006-03-22 17:18:11 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -60,7 +60,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: rats.c,v 1.22 2006-03-21 17:34:59 djdelorie Exp $");
+RCSID("$Id: rats.c,v 1.23 2006-03-22 17:18:11 danmc Exp $");
 
 
 #define TRIEDFIRST 0x1
@@ -902,8 +902,10 @@ AddNet (void)
   entry->ListEntry = MyStrdup (name1, "AddNet");
   entry = GetLibraryEntryMemory (menu);
   entry->ListEntry = MyStrdup (name2, "AddNet");
+#ifdef FIXME
 ratIt:
-  hid_action("NetlistChanged");
+#endif
+hid_action("NetlistChanged");
   return (CreateNewRat (PCB->Data, Crosshair.AttachedLine.Point1.X,
 			Crosshair.AttachedLine.Point1.Y,
 			Crosshair.AttachedLine.Point2.X,

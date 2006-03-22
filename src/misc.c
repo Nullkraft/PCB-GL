@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.39 2006-03-22 13:44:47 danmc Exp $ */
+/* $Id: misc.c,v 1.40 2006-03-22 17:18:11 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -73,7 +73,7 @@
 #include "action.h"
 
 
-RCSID ("$Id: misc.c,v 1.39 2006-03-22 13:44:47 danmc Exp $");
+RCSID ("$Id: misc.c,v 1.40 2006-03-22 17:18:11 danmc Exp $");
 
 
 
@@ -650,6 +650,8 @@ build_route_string(RouteStyleType *rs)
 		free(t);
 		}
 	return str;
+#else
+	return "Please_fix_build_route_string";
 #endif
 	}
 

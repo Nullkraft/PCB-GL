@@ -1,4 +1,4 @@
-/* $Id: crosshair.c,v 1.19 2006-03-21 17:34:58 djdelorie Exp $ */
+/* $Id: crosshair.c,v 1.20 2006-03-22 17:18:11 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -48,7 +48,7 @@
 #include "mymem.h"
 #include "search.h"
 
-RCSID ("$Id: crosshair.c,v 1.19 2006-03-21 17:34:58 djdelorie Exp $");
+RCSID ("$Id: crosshair.c,v 1.20 2006-03-22 17:18:11 danmc Exp $");
 
 #if !defined(ABS)
 #define ABS(x) (((x)<0)?-(x):(x))
@@ -63,8 +63,6 @@ typedef struct {
  */
 static Boolean	CrosshairStack[MAX_CROSSHAIRSTACK_DEPTH];
 static int		CrosshairStackLocation = 0;
-static point *Points = NULL;	/* data of tmp polygon */
-static int	MaxPoints = 0;	/* number of points */
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -169,7 +167,6 @@ XORDrawAttachedLine (LocationType x1, LocationType y1, LocationType x2,
 {
   LocationType dx, dy, ox, oy;
   float h;
-  BDimension wid = thick / 2;
 
   dx = x2 - x1;
   dy = y2 - y1;

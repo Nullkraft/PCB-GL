@@ -1,4 +1,4 @@
-/* $Id: command.c,v 1.8 2006-03-21 17:34:58 djdelorie Exp $ */
+/* $Id: command.c,v 1.9 2006-03-22 17:18:11 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -53,7 +53,7 @@
 #include "set.h"
 #include "vendor.h"
 
-RCSID("$Id: command.c,v 1.8 2006-03-21 17:34:58 djdelorie Exp $");
+RCSID("$Id: command.c,v 1.9 2006-03-22 17:18:11 danmc Exp $");
 
 /* ----------------------------------------------------------------------
  * print a help message for commands
@@ -87,7 +87,9 @@ static int
 CommandLoadLayout (int argc, char **argv, int x, int y)
 {
   char			*filename, *name = NULL;
+#ifdef FIXME
   static char	*current_layout_dir = NULL;
+#endif
 
   switch (argc)
     {
@@ -125,7 +127,9 @@ static int
 CommandLoadElementToBuffer (int argc, char **argv, int x, int y)
 {
   char *filename;
+#ifdef FIXME
   static char	*current_element_dir = NULL;
+#endif
 
   switch (argc)
     {
@@ -162,7 +166,9 @@ static int
 CommandLoadLayoutToBuffer (int argc, char **argv, int x, int y)
 {
   char			*filename;
+#ifdef FIXME
   static char	*current_layout_dir = NULL;
+#endif
 
   switch (argc)
     {
@@ -218,7 +224,9 @@ static int
 CommandLoadNetlist (int argc, char **argv, int x, int y)
 {
   char *filename, *name = NULL;
+#ifdef FIXME
   static char	*current_netlist_dir = NULL;
+#endif
 
   switch (argc)
     {
@@ -255,8 +263,10 @@ CommandLoadNetlist (int argc, char **argv, int x, int y)
 static int
 CommandSaveLayout (int argc, char **argv, int x, int y)
 {
+#ifdef FIXME
   char *filename;
   static char	*current_save_path = NULL;
+#endif
 
   switch (argc)
     {

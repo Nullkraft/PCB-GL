@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: polygon.h,v 1.7 2005-01-03 12:57:00 danmc Exp $
+ *  RCS: $Id: polygon.h,v 1.8 2006-03-22 17:18:11 danmc Exp $
  */
 
 /* prototypes for polygon editing routines
@@ -41,7 +41,7 @@ void			ClosePolygon(void);
 void			CopyAttachedPolygonToLayer(void);
 void			UpdatePIPFlags(PinTypePtr, ElementTypePtr,
 				       LayerTypePtr, Boolean);
-int PolygonPlows (int group, BoxType *range,
+int PolygonPlows (int group, const BoxType *range,
                   int (*callback)(int, void *, void *, void *,
                   LayerTypePtr, PolygonTypePtr));
 

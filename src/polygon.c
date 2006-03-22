@@ -1,4 +1,4 @@
-/* $Id: polygon.c,v 1.32 2006-03-21 17:34:59 djdelorie Exp $ */
+/* $Id: polygon.c,v 1.33 2006-03-22 17:18:11 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -59,7 +59,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: polygon.c,v 1.32 2006-03-21 17:34:59 djdelorie Exp $");
+RCSID ("$Id: polygon.c,v 1.33 2006-03-22 17:18:11 danmc Exp $");
 
 
 /* ---------------------------------------------------------------------------
@@ -366,7 +366,7 @@ struct plow_info
   LayerTypePtr layer;
   Cardinal group, component, solder;
   PolygonTypePtr polygon;
-  BoxTypePtr range;
+  const BoxType *range;
   int (*callback) (int, void *, void *, void *, LayerTypePtr, PolygonTypePtr);
   jmp_buf env, env0;
 };
@@ -514,7 +514,7 @@ poly_plows_callback (const BoxType * b, void *cl)
  * returns non-zero, stop the search.
  */
 int
-PolygonPlows (int group, BoxTypePtr range,
+PolygonPlows (int group, const BoxType *range,
 	      int (*any_call) (int type, void *ptr1, void *ptr2, void *ptr3,
 			       LayerTypePtr lay, PolygonTypePtr poly))
 {
