@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: rubberband.h,v 1.1 2003-02-20 00:24:31 danmc Exp $
+ *  RCS: $Id: rubberband.h,v 1.2 2006-03-22 23:17:21 danmc Exp $
  */
 
 /* prototypes for rubberband routines
@@ -33,7 +33,7 @@
 
 #include "global.h"
 
-void	LookupRubberbandLines(int, void *, void *, void *);
-void	LookupRatLines(int, void *, void *, void *);
+void LookupRubberbandLines (int, void *, void *, void *);
+void LookupRatLines (int, void *, void *, void *);
 
 #endif

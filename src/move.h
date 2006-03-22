@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: move.h,v 1.6 2005-01-03 12:57:00 danmc Exp $
+ *  RCS: $Id: move.h,v 1.7 2006-03-22 23:17:20 danmc Exp $
  */
 
 /* prototypes for move routines
@@ -89,15 +89,16 @@
 /* ---------------------------------------------------------------------------
  * prototypes
  */
-void	MovePolygonLowLevel(PolygonTypePtr, LocationType, LocationType);
-void	MoveElementLowLevel(DataTypePtr, ElementTypePtr, LocationType, LocationType);
-void	*MoveObject(int, void *, void *, void *, LocationType, LocationType);
-void	*MoveObjectToLayer(int, void *, void *, void *, LayerTypePtr, Boolean);
-void	*MoveObjectAndRubberband(int, void *, void *, void *,
-			LocationType, LocationType);
-void	*MoveLineToLayerLowLevel(LayerTypePtr, LineTypePtr, LayerTypePtr);
-void	*MoveTextToLayerLowLevel(LayerTypePtr, TextTypePtr, LayerTypePtr);
-void	*MovePolygonToLayerLowLevel(LayerTypePtr, PolygonTypePtr, LayerTypePtr);
-Boolean	MoveSelectedObjectsToLayer(LayerTypePtr);
+void MovePolygonLowLevel (PolygonTypePtr, LocationType, LocationType);
+void MoveElementLowLevel (DataTypePtr, ElementTypePtr, LocationType,
+			  LocationType);
+void *MoveObject (int, void *, void *, void *, LocationType, LocationType);
+void *MoveObjectToLayer (int, void *, void *, void *, LayerTypePtr, Boolean);
+void *MoveObjectAndRubberband (int, void *, void *, void *,
+			       LocationType, LocationType);
+void *MoveLineToLayerLowLevel (LayerTypePtr, LineTypePtr, LayerTypePtr);
+void *MoveTextToLayerLowLevel (LayerTypePtr, TextTypePtr, LayerTypePtr);
+void *MovePolygonToLayerLowLevel (LayerTypePtr, PolygonTypePtr, LayerTypePtr);
+Boolean MoveSelectedObjectsToLayer (LayerTypePtr);
 
 #endif

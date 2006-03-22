@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: macro.h,v 1.19 2006-03-21 17:34:58 djdelorie Exp $
+ *  RCS: $Id: macro.h,v 1.20 2006-03-22 23:17:20 danmc Exp $
  */
 
 /* some commonly used macros not related to a special C-file
@@ -221,7 +221,7 @@
 #define TEST_ANY_THERMS(P)	(((P)->Flags.t[0] | (P)->Flags.t[1]) ? 1 : 0)
 #define TEST_ANY_PIPS(P)	(((P)->Flags.p[0] | (P)->Flags.p[1]) ? 1 : 0)
 #else
-extern int mem_any_set(unsigned char *, int);
+extern int mem_any_set (unsigned char *, int);
 #define TEST_ANY_THERMS(P)	mem_any_set((P)->Flags.t, sizeof((P)->Flags.t))
 #define TEST_ANY_PIPS(P)	mem_any_set((P)->Flags.p, sizeof((P)->Flags.p))
 #endif

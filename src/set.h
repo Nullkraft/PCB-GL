@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: set.h,v 1.8 2006-03-21 23:45:01 djdelorie Exp $
+ *  RCS: $Id: set.h,v 1.9 2006-03-22 23:17:21 danmc Exp $
  */
 
 /* prototypes for update routines
@@ -33,22 +33,22 @@
 
 #include "global.h"
 
-void		SetTextScale(Dimension);
-void		SetGrid(float, Boolean);
-void		SetZoom(float);
-void		SetLineSize(BDimension);
-void		SetViaSize(BDimension, Boolean);
-void		SetViaDrillingHole(BDimension, Boolean);
-void		SetKeepawayWidth(BDimension);
-void		SetChangedFlag(Boolean);
-void		SetBufferNumber(int);
-void		SetMode(int);
-void		SetCrosshairRangeToBuffer(void);
-void		SetRouteStyle(char *);
-void		SetLocalRef(LocationType, LocationType, Boolean);
-void		RedrawZoom(Position, Position);
-void		SaveMode(void);
-void		RestoreMode(void);
-void		pcb_use_route_style(RouteStyleType *);
+void SetTextScale (Dimension);
+void SetGrid (float, Boolean);
+void SetZoom (float);
+void SetLineSize (BDimension);
+void SetViaSize (BDimension, Boolean);
+void SetViaDrillingHole (BDimension, Boolean);
+void SetKeepawayWidth (BDimension);
+void SetChangedFlag (Boolean);
+void SetBufferNumber (int);
+void SetMode (int);
+void SetCrosshairRangeToBuffer (void);
+void SetRouteStyle (char *);
+void SetLocalRef (LocationType, LocationType, Boolean);
+void RedrawZoom (Position, Position);
+void SaveMode (void);
+void RestoreMode (void);
+void pcb_use_route_style (RouteStyleType *);
 
 #endif

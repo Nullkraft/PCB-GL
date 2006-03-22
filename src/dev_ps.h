@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: dev_ps.h,v 1.1 2003-02-20 00:24:01 danmc Exp $
+ *  RCS: $Id: dev_ps.h,v 1.2 2006-03-22 23:17:20 danmc Exp $
  */
 
 /* prototypes for printing routines
@@ -33,7 +33,7 @@
 
 #include "global.h"
 
-PrintDeviceTypePtr	PS_Query(void);
-PrintDeviceTypePtr	EPS_Query(void);
+PrintDeviceTypePtr PS_Query (void);
+PrintDeviceTypePtr EPS_Query (void);
 
 #endif

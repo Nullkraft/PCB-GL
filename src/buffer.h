@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: buffer.h,v 1.4 2005-01-03 12:56:59 danmc Exp $
+ *  RCS: $Id: buffer.h,v 1.5 2006-03-22 23:17:20 danmc Exp $
  */
 
 /* prototypes for buffer handling routines
@@ -36,21 +36,21 @@
 /* ---------------------------------------------------------------------------
  * prototypes
  */
-void	SetBufferBoundingBox(BufferTypePtr);
-void	ClearBuffer(BufferTypePtr);
-void	AddSelectedToBuffer(BufferTypePtr, LocationType, LocationType, Boolean);
-Boolean	LoadElementToBuffer(BufferTypePtr, char *, Boolean);
-Boolean	ConvertBufferToElement(BufferTypePtr);
-Boolean	SmashBufferElement(BufferTypePtr);
-Boolean	LoadLayoutToBuffer(BufferTypePtr, char *);
-void	RotateBuffer(BufferTypePtr, BYTE);
-void	SelectPasteBuffer(int);
-void	SwapBuffers(void);
-void	MirrorBuffer(BufferTypePtr);
-void	InitBuffers(void);
-void	*MoveObjectToBuffer(DataTypePtr, DataTypePtr, int,
-			void *, void *, void *);
-void	*CopyObjectToBuffer(DataTypePtr, DataTypePtr, int,
-			void *, void *, void *);
+void SetBufferBoundingBox (BufferTypePtr);
+void ClearBuffer (BufferTypePtr);
+void AddSelectedToBuffer (BufferTypePtr, LocationType, LocationType, Boolean);
+Boolean LoadElementToBuffer (BufferTypePtr, char *, Boolean);
+Boolean ConvertBufferToElement (BufferTypePtr);
+Boolean SmashBufferElement (BufferTypePtr);
+Boolean LoadLayoutToBuffer (BufferTypePtr, char *);
+void RotateBuffer (BufferTypePtr, BYTE);
+void SelectPasteBuffer (int);
+void SwapBuffers (void);
+void MirrorBuffer (BufferTypePtr);
+void InitBuffers (void);
+void *MoveObjectToBuffer (DataTypePtr, DataTypePtr, int,
+			  void *, void *, void *);
+void *CopyObjectToBuffer (DataTypePtr, DataTypePtr, int,
+			  void *, void *, void *);
 
 #endif

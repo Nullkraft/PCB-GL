@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: create.h,v 1.5 2006-03-21 17:34:58 djdelorie Exp $
+ *  RCS: $Id: create.h,v 1.6 2006-03-22 23:17:20 danmc Exp $
  */
 
 /* prototypes for create routines
@@ -33,50 +33,54 @@
 
 #include "global.h"
 
-DataTypePtr		CreateNewBuffer(void);
-void			pcb_colors_from_settings(PCBTypePtr);
-PCBTypePtr		CreateNewPCB(Boolean);
-PinTypePtr		CreateNewVia(DataTypePtr, LocationType, LocationType, BDimension,
-				BDimension, BDimension, BDimension, char *, FlagType);
-LineTypePtr		CreateDrawnLineOnLayer(LayerTypePtr, LocationType,
-				LocationType, LocationType, LocationType, BDimension,
-				BDimension, FlagType);
-LineTypePtr		CreateNewLineOnLayer(LayerTypePtr, LocationType,
-				LocationType, LocationType, LocationType, BDimension,
-				BDimension, FlagType);
-RatTypePtr		CreateNewRat(DataTypePtr, LocationType,
-				LocationType, LocationType, LocationType, Cardinal,
-				Cardinal, BDimension, FlagType);
-ArcTypePtr		CreateNewArcOnLayer(LayerTypePtr, LocationType,
-				LocationType, BDimension, int,
-				int, BDimension, BDimension, FlagType);
-PolygonTypePtr		CreateNewPolygonFromRectangle(LayerTypePtr,
-				LocationType, LocationType, LocationType, LocationType, FlagType);
-TextTypePtr		CreateNewText(LayerTypePtr, FontTypePtr, LocationType,
-				LocationType, BYTE, int, char *, FlagType);
-PolygonTypePtr		CreateNewPolygon(LayerTypePtr, FlagType);
-PointTypePtr		CreateNewPointInPolygon(PolygonTypePtr,
-				LocationType, LocationType);
-ElementTypePtr		CreateNewElement(DataTypePtr, ElementTypePtr,
-				FontTypePtr, FlagType, char *, char *, char *,
-				LocationType, LocationType, BYTE, int, FlagType, Boolean);
-LineTypePtr		CreateNewLineInElement(ElementTypePtr, LocationType,
-				LocationType, LocationType, LocationType, BDimension);
-ArcTypePtr		CreateNewArcInElement(ElementTypePtr, LocationType,
-				LocationType, BDimension, BDimension,
-				int, int, BDimension);
-PinTypePtr		CreateNewPin(ElementTypePtr, LocationType, LocationType,
-				BDimension, BDimension, BDimension, BDimension,
-				char *, char *, FlagType);
-PadTypePtr		CreateNewPad(ElementTypePtr, LocationType, LocationType,
-				LocationType, LocationType, BDimension, BDimension,
-				BDimension, char *, char *, FlagType);
-LineTypePtr		CreateNewLineInSymbol(SymbolTypePtr, LocationType,
-				LocationType, LocationType, LocationType, BDimension);
-void			CreateDefaultFont(void);
-RubberbandTypePtr	CreateNewRubberbandEntry(LayerTypePtr,
-				LineTypePtr, PointTypePtr);
-LibraryMenuTypePtr	CreateNewNet(LibraryTypePtr, char *, char *);
-LibraryEntryTypePtr	CreateNewConnection(LibraryMenuTypePtr, char *);
+DataTypePtr CreateNewBuffer (void);
+void pcb_colors_from_settings (PCBTypePtr);
+PCBTypePtr CreateNewPCB (Boolean);
+PinTypePtr CreateNewVia (DataTypePtr, LocationType, LocationType, BDimension,
+			 BDimension, BDimension, BDimension, char *,
+			 FlagType);
+LineTypePtr CreateDrawnLineOnLayer (LayerTypePtr, LocationType, LocationType,
+				    LocationType, LocationType, BDimension,
+				    BDimension, FlagType);
+LineTypePtr CreateNewLineOnLayer (LayerTypePtr, LocationType, LocationType,
+				  LocationType, LocationType, BDimension,
+				  BDimension, FlagType);
+RatTypePtr CreateNewRat (DataTypePtr, LocationType, LocationType,
+			 LocationType, LocationType, Cardinal, Cardinal,
+			 BDimension, FlagType);
+ArcTypePtr CreateNewArcOnLayer (LayerTypePtr, LocationType, LocationType,
+				BDimension, int, int, BDimension, BDimension,
+				FlagType);
+PolygonTypePtr CreateNewPolygonFromRectangle (LayerTypePtr, LocationType,
+					      LocationType, LocationType,
+					      LocationType, FlagType);
+TextTypePtr CreateNewText (LayerTypePtr, FontTypePtr, LocationType,
+			   LocationType, BYTE, int, char *, FlagType);
+PolygonTypePtr CreateNewPolygon (LayerTypePtr, FlagType);
+PointTypePtr CreateNewPointInPolygon (PolygonTypePtr,
+				      LocationType, LocationType);
+ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
+				 FontTypePtr, FlagType, char *, char *,
+				 char *, LocationType, LocationType, BYTE,
+				 int, FlagType, Boolean);
+LineTypePtr CreateNewLineInElement (ElementTypePtr, LocationType,
+				    LocationType, LocationType, LocationType,
+				    BDimension);
+ArcTypePtr CreateNewArcInElement (ElementTypePtr, LocationType, LocationType,
+				  BDimension, BDimension, int, int,
+				  BDimension);
+PinTypePtr CreateNewPin (ElementTypePtr, LocationType, LocationType,
+			 BDimension, BDimension, BDimension, BDimension,
+			 char *, char *, FlagType);
+PadTypePtr CreateNewPad (ElementTypePtr, LocationType, LocationType,
+			 LocationType, LocationType, BDimension, BDimension,
+			 BDimension, char *, char *, FlagType);
+LineTypePtr CreateNewLineInSymbol (SymbolTypePtr, LocationType, LocationType,
+				   LocationType, LocationType, BDimension);
+void CreateDefaultFont (void);
+RubberbandTypePtr CreateNewRubberbandEntry (LayerTypePtr,
+					    LineTypePtr, PointTypePtr);
+LibraryMenuTypePtr CreateNewNet (LibraryTypePtr, char *, char *);
+LibraryEntryTypePtr CreateNewConnection (LibraryMenuTypePtr, char *);
 
 #endif

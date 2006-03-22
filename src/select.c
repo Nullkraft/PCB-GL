@@ -1,4 +1,4 @@
-/* $Id: select.c,v 1.14 2006-03-21 17:34:59 djdelorie Exp $ */
+/* $Id: select.c,v 1.15 2006-03-22 23:17:21 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -54,7 +54,7 @@
 #endif
 #endif
 
-RCSID("$Id: select.c,v 1.14 2006-03-21 17:34:59 djdelorie Exp $");
+RCSID ("$Id: select.c,v 1.15 2006-03-22 23:17:21 danmc Exp $");
 
 
 

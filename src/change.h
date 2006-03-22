@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: change.h,v 1.7 2006-03-11 16:30:32 djdelorie Exp $
+ *  RCS: $Id: change.h,v 1.8 2006-03-22 23:17:20 danmc Exp $
  */
 
 /* prototypes to change object properties
@@ -64,47 +64,49 @@
 #define CHANGEMASKSIZE_TYPES    \
         (PIN_TYPE | VIA_TYPE | PAD_TYPE)
 
-Boolean	ChangeLayoutName(char *);
-Boolean	ChangeLayerName(LayerTypePtr, char *);
-Boolean	ChangeSelectedSize(int, LocationType, Boolean);
-Boolean	ChangeSelectedClearSize(int, LocationType, Boolean);
-Boolean	ChangeSelected2ndSize(int, LocationType, Boolean);
-Boolean	ChangeSelectedMaskSize(int, LocationType, Boolean);
-Boolean	ChangeSelectedJoin(int); 
-Boolean	SetSelectedJoin(int); 
-Boolean	ClrSelectedJoin(int); 
-Boolean	ChangeSelectedSquare(int); 
-Boolean	SetSelectedSquare(int); 
-Boolean	ClrSelectedSquare(int); 
-Boolean	ChangeSelectedThermals(int); 
-Boolean	SetSelectedThermals(int); 
-Boolean	ClrSelectedThermals(int); 
-Boolean ChangeSelectedHole(void);
-Boolean ChangeSelectedOctagon(int);
-Boolean SetSelectedOctagon(int);
-Boolean ClrSelectedOctagon(int);
-Boolean ChangeSelectedElementSide(void);
-Boolean ChangeElementSide(ElementTypePtr, LocationType);
-Boolean ChangeHole(PinTypePtr);
-Boolean	ChangeObjectSize(int, void *, void *, void *, LocationType, Boolean);
-Boolean	ChangeObjectThermal(int, void *, void *, void *);
-Boolean	SetObjectThermal(int, void *, void *, void *);
-Boolean	ClrObjectThermal(int, void *, void *, void *);
-Boolean	ChangeObjectClearSize(int, void *, void *, void *, LocationType, Boolean);
-Boolean	ChangeObject2ndSize(int, void *, void *, void *, LocationType, Boolean, Boolean);
-Boolean	ChangeObjectMaskSize(int, void *, void *, void *, LocationType, Boolean);
-Boolean	ChangeObjectJoin(int, void *, void *, void *);
-Boolean	SetObjectJoin(int, void *, void *, void *);
-Boolean	ClrObjectJoin(int, void *, void *, void *);
-Boolean	ChangeObjectSquare(int, void *, void *, void *);
-Boolean	SetObjectSquare(int, void *, void *, void *);
-Boolean	ClrObjectSquare(int, void *, void *, void *);
-Boolean	ChangeObjectOctagon(int, void *, void *, void *);
-Boolean	SetObjectOctagon(int, void *, void *, void *);
-Boolean	ClrObjectOctagon(int, void *, void *, void *);
-void	*ChangeObjectName(int, void *, void *, void *, char *);
-void	*QueryInputAndChangeObjectName(int, void *, void *, void *);
-void	ChangePCBSize(BDimension, BDimension);
+Boolean ChangeLayoutName (char *);
+Boolean ChangeLayerName (LayerTypePtr, char *);
+Boolean ChangeSelectedSize (int, LocationType, Boolean);
+Boolean ChangeSelectedClearSize (int, LocationType, Boolean);
+Boolean ChangeSelected2ndSize (int, LocationType, Boolean);
+Boolean ChangeSelectedMaskSize (int, LocationType, Boolean);
+Boolean ChangeSelectedJoin (int);
+Boolean SetSelectedJoin (int);
+Boolean ClrSelectedJoin (int);
+Boolean ChangeSelectedSquare (int);
+Boolean SetSelectedSquare (int);
+Boolean ClrSelectedSquare (int);
+Boolean ChangeSelectedThermals (int);
+Boolean SetSelectedThermals (int);
+Boolean ClrSelectedThermals (int);
+Boolean ChangeSelectedHole (void);
+Boolean ChangeSelectedOctagon (int);
+Boolean SetSelectedOctagon (int);
+Boolean ClrSelectedOctagon (int);
+Boolean ChangeSelectedElementSide (void);
+Boolean ChangeElementSide (ElementTypePtr, LocationType);
+Boolean ChangeHole (PinTypePtr);
+Boolean ChangeObjectSize (int, void *, void *, void *, LocationType, Boolean);
+Boolean ChangeObjectThermal (int, void *, void *, void *);
+Boolean SetObjectThermal (int, void *, void *, void *);
+Boolean ClrObjectThermal (int, void *, void *, void *);
+Boolean ChangeObjectClearSize (int, void *, void *, void *, LocationType,
+			       Boolean);
+Boolean ChangeObject2ndSize (int, void *, void *, void *, LocationType,
+			     Boolean, Boolean);
+Boolean ChangeObjectMaskSize (int, void *, void *, void *, LocationType,
+			      Boolean);
+Boolean ChangeObjectJoin (int, void *, void *, void *);
+Boolean SetObjectJoin (int, void *, void *, void *);
+Boolean ClrObjectJoin (int, void *, void *, void *);
+Boolean ChangeObjectSquare (int, void *, void *, void *);
+Boolean SetObjectSquare (int, void *, void *, void *);
+Boolean ClrObjectSquare (int, void *, void *, void *);
+Boolean ChangeObjectOctagon (int, void *, void *, void *);
+Boolean SetObjectOctagon (int, void *, void *, void *);
+Boolean ClrObjectOctagon (int, void *, void *, void *);
+void *ChangeObjectName (int, void *, void *, void *, char *);
+void *QueryInputAndChangeObjectName (int, void *, void *, void *);
+void ChangePCBSize (BDimension, BDimension);
 
 #endif
-

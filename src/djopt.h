@@ -1,4 +1,4 @@
-/* $Id: djopt.h,v 1.6 2006-03-21 17:34:58 djdelorie Exp $ */
+/* $Id: djopt.h,v 1.7 2006-03-22 23:17:20 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -31,6 +31,6 @@
 
 #include "global.h"
 
-void	ActionDJopt(char *);
-void	djopt_set_auto_only(void);
+void ActionDJopt (char *);
+void djopt_set_auto_only (void);
 #endif

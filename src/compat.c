@@ -1,4 +1,4 @@
-/* $Id: compat.c,v 1.2 2004-08-30 02:52:04 danmc Exp $ */
+/* $Id: compat.c,v 1.3 2006-03-22 23:17:20 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -34,20 +34,20 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: compat.c,v 1.2 2004-08-30 02:52:04 danmc Exp $");
+RCSID ("$Id: compat.c,v 1.3 2006-03-22 23:17:20 danmc Exp $");
 
 #ifndef HAVE_EXPF
-float expf(float x)
+float
+expf (float x)
 {
-	return (float) exp((double) x);
+  return (float) exp ((double) x);
 }
 #endif
 
 #ifndef HAVE_LOGF
-float logf(float x)
+float
+logf (float x)
 {
-	return (float) log((double) x);
+  return (float) log ((double) x);
 }
 #endif
-
-

@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: error.h,v 1.2 2005-03-12 02:17:11 danmc Exp $
+ *  RCS: $Id: error.h,v 1.3 2006-03-22 23:17:20 danmc Exp $
  */
 
 /* prototypes for error and debug functions
@@ -36,12 +36,12 @@
 #define	STATUS_BREAK	1
 #define	STATUS_ERROR	-1
 
-void	Message(char *Format, ...);
-void	MyFatal(char *Format, ...);
-void	OpenErrorMessage(char *);
-void	PopenErrorMessage(char *);
-void	OpendirErrorMessage(char *);
-void	ChdirErrorMessage(char *);
-void	CatchSignal(int);
+void Message (char *Format, ...);
+void MyFatal (char *Format, ...);
+void OpenErrorMessage (char *);
+void PopenErrorMessage (char *);
+void OpendirErrorMessage (char *);
+void ChdirErrorMessage (char *);
+void CatchSignal (int);
 
 #endif

@@ -1,4 +1,4 @@
-/* $Id: polygon.c,v 1.33 2006-03-22 17:18:11 danmc Exp $ */
+/* $Id: polygon.c,v 1.34 2006-03-22 23:17:20 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -59,7 +59,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: polygon.c,v 1.33 2006-03-22 17:18:11 danmc Exp $");
+RCSID ("$Id: polygon.c,v 1.34 2006-03-22 23:17:20 danmc Exp $");
 
 
 /* ---------------------------------------------------------------------------
@@ -514,7 +514,7 @@ poly_plows_callback (const BoxType * b, void *cl)
  * returns non-zero, stop the search.
  */
 int
-PolygonPlows (int group, const BoxType *range,
+PolygonPlows (int group, const BoxType * range,
 	      int (*any_call) (int type, void *ptr1, void *ptr2, void *ptr3,
 			       LayerTypePtr lay, PolygonTypePtr poly))
 {

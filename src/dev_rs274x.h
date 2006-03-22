@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: dev_rs274x.h,v 1.1 2003-02-20 00:24:02 danmc Exp $
+ *  RCS: $Id: dev_rs274x.h,v 1.2 2006-03-22 23:17:20 danmc Exp $
  */
 
 /*
@@ -40,6 +40,6 @@
 
 #include "global.h"
 
-PrintDeviceTypePtr	GBX_Queryh(void);
+PrintDeviceTypePtr GBX_Queryh (void);
 
 #endif

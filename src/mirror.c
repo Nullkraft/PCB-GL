@@ -1,4 +1,4 @@
-/* $Id: mirror.c,v 1.8 2005-01-03 12:56:59 danmc Exp $ */
+/* $Id: mirror.c,v 1.9 2006-03-22 23:17:20 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -53,7 +53,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: mirror.c,v 1.8 2005-01-03 12:56:59 danmc Exp $");
+RCSID ("$Id: mirror.c,v 1.9 2006-03-22 23:17:20 danmc Exp $");
 
 
 

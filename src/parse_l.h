@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: parse_l.h,v 1.1 2003-02-20 00:24:26 danmc Exp $
+ *  RCS: $Id: parse_l.h,v 1.2 2006-03-22 23:17:20 danmc Exp $
  */
 
 /* just defines common parser identifiers
@@ -33,9 +33,9 @@
 
 #include "global.h"
 
-int		ParsePCB(PCBTypePtr, char *);
-int		ParseElementFile(DataTypePtr, char *);
-int		ParseLibraryEntry(DataTypePtr, char *);
-int		ParseFont(FontTypePtr, char *);
+int ParsePCB (PCBTypePtr, char *);
+int ParseElementFile (DataTypePtr, char *);
+int ParseLibraryEntry (DataTypePtr, char *);
+int ParseFont (FontTypePtr, char *);
 
 #endif

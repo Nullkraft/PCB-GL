@@ -1,4 +1,4 @@
-/* $Id: vector.c,v 1.6 2006-03-21 17:34:59 djdelorie Exp $ */
+/* $Id: vector.c,v 1.7 2006-03-22 23:17:21 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -48,7 +48,7 @@
 #include "vector.h"
 
 
-RCSID("$Id: vector.c,v 1.6 2006-03-21 17:34:59 djdelorie Exp $");
+RCSID ("$Id: vector.c,v 1.7 2006-03-22 23:17:21 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -88,7 +88,7 @@ vector_create ()
 {
   vector_t *vector;
   /* okay, create empty vector */
-  vector = calloc(1, sizeof (*vector));
+  vector = calloc (1, sizeof (*vector));
   assert (vector);
   assert (__vector_is_good (vector));
   return vector;

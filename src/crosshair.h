@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: crosshair.h,v 1.5 2005-01-03 12:56:59 danmc Exp $
+ *  RCS: $Id: crosshair.h,v 1.6 2006-03-22 23:17:20 danmc Exp $
  */
 
 /* prototypes for crosshair routines
@@ -42,21 +42,22 @@
 /* ---------------------------------------------------------------------------
  * all possible states of an attached object
  */
-#define	STATE_FIRST		0			/* initial state */
+#define	STATE_FIRST		0	/* initial state */
 #define	STATE_SECOND	1
 #define	STATE_THIRD		2
 
 
-void	CrosshairOn(Boolean);
-void	CrosshairOff(Boolean);
-void	HideCrosshair(Boolean);
-void	RestoreCrosshair(Boolean);
-void	MoveCrosshairRelative(LocationType, LocationType);
-Boolean	MoveCrosshairAbsolute(LocationType, LocationType);
-void	SetCrosshairRange(LocationType, LocationType, LocationType, LocationType);
-void	InitCrosshair(void);
-void	DestroyCrosshair(void);
-void	DrawMark(Boolean);
-void    FitCrosshairIntoGrid (LocationType, LocationType);
+void CrosshairOn (Boolean);
+void CrosshairOff (Boolean);
+void HideCrosshair (Boolean);
+void RestoreCrosshair (Boolean);
+void MoveCrosshairRelative (LocationType, LocationType);
+Boolean MoveCrosshairAbsolute (LocationType, LocationType);
+void SetCrosshairRange (LocationType, LocationType, LocationType,
+			LocationType);
+void InitCrosshair (void);
+void DestroyCrosshair (void);
+void DrawMark (Boolean);
+void FitCrosshairIntoGrid (LocationType, LocationType);
 
 #endif

@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: undo.h,v 1.5 2006-03-21 17:34:59 djdelorie Exp $
+ *  RCS: $Id: undo.h,v 1.6 2006-03-22 23:17:21 danmc Exp $
  */
 
 /* prototypes for undo routines
@@ -38,31 +38,31 @@
 
 											/* different layers */
 
-int	Undo(Boolean);
-int	Redo(Boolean);
-void	IncrementUndoSerialNumber(void);
-void	SaveUndoSerialNumber(void);
-void	RestoreUndoSerialNumber(void);
-void	ClearUndoList(Boolean);
-void	MoveObjectToRemoveUndoList(int, void *, void *, void *);
-void	AddObjectToRemovePointUndoList(int, void *, void *, Cardinal);
-void	AddObjectToInsertPointUndoList(int, void *, void *, void *);
-void	AddObjectToMoveUndoList(int, void *, void *, void *,
-			LocationType, LocationType);
-void	AddObjectToChangeNameUndoList(int, void *,void *, void *, char *);
-void	AddObjectToRotateUndoList(int, void *, void *,void *,
-			LocationType, LocationType, BYTE);
-void	AddObjectToCreateUndoList(int, void *, void *,void *);
-void	AddObjectToMirrorUndoList(int, void *, void *,void *, LocationType);
-void	AddObjectToMoveToLayerUndoList(int, void *, void *, void *);
-void	AddObjectToFlagUndoList(int, void *, void *, void *);
-void	AddObjectToSizeUndoList(int, void *, void *, void *);
-void	AddObjectTo2ndSizeUndoList(int, void *, void *, void *);
-void	AddObjectToClearSizeUndoList(int, void *, void *, void *);
-void	AddObjectToMaskSizeUndoList(int, void *, void *, void *);
-void	AddObjectToChangeAnglesUndoList(int, void *, void *, void *);
-void	LockUndo(void);
-void	UnlockUndo(void);
-Boolean	Undoing(void);
- 
+int Undo (Boolean);
+int Redo (Boolean);
+void IncrementUndoSerialNumber (void);
+void SaveUndoSerialNumber (void);
+void RestoreUndoSerialNumber (void);
+void ClearUndoList (Boolean);
+void MoveObjectToRemoveUndoList (int, void *, void *, void *);
+void AddObjectToRemovePointUndoList (int, void *, void *, Cardinal);
+void AddObjectToInsertPointUndoList (int, void *, void *, void *);
+void AddObjectToMoveUndoList (int, void *, void *, void *,
+			      LocationType, LocationType);
+void AddObjectToChangeNameUndoList (int, void *, void *, void *, char *);
+void AddObjectToRotateUndoList (int, void *, void *, void *,
+				LocationType, LocationType, BYTE);
+void AddObjectToCreateUndoList (int, void *, void *, void *);
+void AddObjectToMirrorUndoList (int, void *, void *, void *, LocationType);
+void AddObjectToMoveToLayerUndoList (int, void *, void *, void *);
+void AddObjectToFlagUndoList (int, void *, void *, void *);
+void AddObjectToSizeUndoList (int, void *, void *, void *);
+void AddObjectTo2ndSizeUndoList (int, void *, void *, void *);
+void AddObjectToClearSizeUndoList (int, void *, void *, void *);
+void AddObjectToMaskSizeUndoList (int, void *, void *, void *);
+void AddObjectToChangeAnglesUndoList (int, void *, void *, void *);
+void LockUndo (void);
+void UnlockUndo (void);
+Boolean Undoing (void);
+
 #endif

@@ -1,4 +1,4 @@
-/* $Id: vendor.h,v 1.3 2006-03-21 17:34:59 djdelorie Exp $ */
+/* $Id: vendor.h,v 1.4 2006-03-22 23:17:21 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -25,8 +25,7 @@
 #ifndef __VENDOR_H__
 #define __VENDOR_H__
 
-int vendorDrillMap(int);
-Boolean vendorIsElementMappable(ElementTypePtr);
+int vendorDrillMap (int);
+Boolean vendorIsElementMappable (ElementTypePtr);
 
 #endif /* __VENDOR_H__ */
-

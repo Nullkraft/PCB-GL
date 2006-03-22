@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: search.h,v 1.6 2005-01-03 12:57:00 danmc Exp $
+ *  RCS: $Id: search.h,v 1.7 2006-03-22 23:17:21 danmc Exp $
  */
 
 /* prototypes for search routines
@@ -71,21 +71,23 @@
 /* ---------------------------------------------------------------------------
  * prototypes
  */
-Boolean	IsPointOnLine(float, float, float, LineTypePtr);
-Boolean	IsPointOnPin(float, float, float, PinTypePtr);
-Boolean IsPointOnArc(float, float, float, ArcTypePtr);
-Boolean	IsPointOnLineEnd(LocationType, LocationType, RatTypePtr);
-Boolean	IsLineInRectangle(LocationType, LocationType, LocationType, LocationType, LineTypePtr);
-Boolean IsArcInRectangle(LocationType, LocationType, LocationType, LocationType, ArcTypePtr);
-Boolean	IsPointInPolygon(float, float, float, PolygonTypePtr);
-Boolean IsPointInSquarePad(LocationType, LocationType, Cardinal, PadTypePtr);
-Boolean IsPointInBox(LocationType, LocationType, BoxTypePtr, Cardinal);
-Boolean	IsRectangleInPolygon(LocationType, LocationType, LocationType, LocationType,
-			PolygonTypePtr);
-int		SearchObjectByLocation(int, void **, void **, void **,
-			LocationType, LocationType, BDimension);
-int		SearchScreen(LocationType, LocationType, int, void **, void **, void **);
-int		SearchObjectByID(DataTypePtr, void **, void **, void **, int, int);
-ElementTypePtr SearchElementByName(DataTypePtr, char *);
+Boolean IsPointOnLine (float, float, float, LineTypePtr);
+Boolean IsPointOnPin (float, float, float, PinTypePtr);
+Boolean IsPointOnArc (float, float, float, ArcTypePtr);
+Boolean IsPointOnLineEnd (LocationType, LocationType, RatTypePtr);
+Boolean IsLineInRectangle (LocationType, LocationType, LocationType,
+			   LocationType, LineTypePtr);
+Boolean IsArcInRectangle (LocationType, LocationType, LocationType,
+			  LocationType, ArcTypePtr);
+Boolean IsPointInPolygon (float, float, float, PolygonTypePtr);
+Boolean IsPointInSquarePad (LocationType, LocationType, Cardinal, PadTypePtr);
+Boolean IsPointInBox (LocationType, LocationType, BoxTypePtr, Cardinal);
+Boolean IsRectangleInPolygon (LocationType, LocationType, LocationType,
+			      LocationType, PolygonTypePtr);
+int SearchObjectByLocation (int, void **, void **, void **, LocationType,
+			    LocationType, BDimension);
+int SearchScreen (LocationType, LocationType, int, void **, void **, void **);
+int SearchObjectByID (DataTypePtr, void **, void **, void **, int, int);
+ElementTypePtr SearchElementByName (DataTypePtr, char *);
 
 #endif

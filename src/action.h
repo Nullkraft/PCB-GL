@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: action.h,v 1.12 2006-03-21 17:34:58 djdelorie Exp $
+ *  RCS: $Id: action.h,v 1.13 2006-03-22 23:17:20 danmc Exp $
  */
 
 /* prototypes for action routines
@@ -35,20 +35,20 @@
 
 #define CLONE_TYPES LINE_TYPE | ARC_TYPE | VIA_TYPE | POLYGON_TYPE
 
-void	ActionMovePointer(char *, char *);
-void	ActionAdjustStyle(char *);
-void	EventMoveCrosshair(int, int);
+void ActionMovePointer (char *, char *);
+void ActionAdjustStyle (char *);
+void EventMoveCrosshair (int, int);
 
 #if 0
-void	ActionListAct(Widget, XEvent *, String *, Cardinal *);
-void	ActionButton3(Widget, XEvent *, String *, Cardinal *);
+void ActionListAct (Widget, XEvent *, String *, Cardinal *);
+void ActionButton3 (Widget, XEvent *, String *, Cardinal *);
 #endif
 
-void	AdjustAttachedObjects(void);
+void AdjustAttachedObjects (void);
 
-void	warpNoWhere(void);
+void warpNoWhere (void);
 
 /* In gui-misc.c */
-Boolean	ActionGetLocation(char *);
-void	ActionGetXY(char *);
+Boolean ActionGetLocation (char *);
+void ActionGetXY (char *);
 #endif

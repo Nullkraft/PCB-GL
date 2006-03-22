@@ -1,4 +1,4 @@
-/* $Id: compat.h,v 1.1 2004-02-15 07:46:31 danmc Exp $ */
+/* $Id: compat.h,v 1.2 2006-03-22 23:17:20 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -32,12 +32,11 @@
 #include <math.h>
 
 #ifndef HAVE_EXPF
-float expf(float);
+float expf (float);
 #endif
 
 #ifndef HAVE_LOGF
-float logf(float);
+float logf (float);
 #endif
 
 #endif /* __COMPAT_H__ */
-

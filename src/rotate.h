@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: rotate.h,v 1.4 2005-01-03 12:57:00 danmc Exp $
+ *  RCS: $Id: rotate.h,v 1.5 2006-03-22 23:17:20 danmc Exp $
  */
 
 /* prototypes for transform routines
@@ -60,13 +60,15 @@
 #define	ROTATE_TYPES	(ELEMENT_TYPE | TEXT_TYPE | ELEMENTNAME_TYPE | ARC_TYPE)
 
 
-void	RotateLineLowLevel(LineTypePtr, LocationType, LocationType, BYTE);
-void	RotateArcLowLevel(ArcTypePtr, LocationType, LocationType, BYTE);
-void	RotateBoxLowLevel(BoxTypePtr, LocationType, LocationType, BYTE);
-void	RotateTextLowLevel(TextTypePtr, LocationType, LocationType, BYTE);
-void	RotatePolygonLowLevel(PolygonTypePtr, LocationType, LocationType, BYTE);
-void	RotateElementLowLevel(DataTypePtr, ElementTypePtr, LocationType, LocationType, BYTE);
-void	*RotateObject(int, void *, void *, void *, LocationType, LocationType, BYTE);
-void    RotateScreenObject(LocationType, LocationType, BYTE);
+void RotateLineLowLevel (LineTypePtr, LocationType, LocationType, BYTE);
+void RotateArcLowLevel (ArcTypePtr, LocationType, LocationType, BYTE);
+void RotateBoxLowLevel (BoxTypePtr, LocationType, LocationType, BYTE);
+void RotateTextLowLevel (TextTypePtr, LocationType, LocationType, BYTE);
+void RotatePolygonLowLevel (PolygonTypePtr, LocationType, LocationType, BYTE);
+void RotateElementLowLevel (DataTypePtr, ElementTypePtr, LocationType,
+			    LocationType, BYTE);
+void *RotateObject (int, void *, void *, void *, LocationType, LocationType,
+		    BYTE);
+void RotateScreenObject (LocationType, LocationType, BYTE);
 
 #endif

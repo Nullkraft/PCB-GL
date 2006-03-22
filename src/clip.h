@@ -23,7 +23,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: clip.h,v 1.3 2005-03-12 02:17:10 danmc Exp $
+ *  RCS: $Id: clip.h,v 1.4 2006-03-22 23:17:20 danmc Exp $
  */
 
 /* prototypes for inserting points into objects
@@ -39,7 +39,7 @@
  */
 void XDrawCLine (GdkDrawable *, GdkGC *, int, int, int, int);
 void XDrawCArc (GdkDrawable *, GdkGC *, int, int, unsigned int, unsigned int,
-                int, int);
+		int, int);
 void DrawCPolygon (GdkDrawable *, PolygonTypePtr);
 extern LocationType dxo, dyo;
 extern Boolean SwapOutput;

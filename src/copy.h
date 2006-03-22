@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: copy.h,v 1.3 2005-01-03 12:56:59 danmc Exp $
+ *  RCS: $Id: copy.h,v 1.4 2006-03-22 23:17:20 danmc Exp $
  */
 
 /* prototypes for copy routines
@@ -41,10 +41,10 @@
 	ELEMENT_TYPE | ELEMENTNAME_TYPE | POLYGON_TYPE | ARC_TYPE)
 
 
-PolygonTypePtr	CopyPolygonLowLevel(PolygonTypePtr, PolygonTypePtr);
-ElementTypePtr	CopyElementLowLevel(DataTypePtr, ElementTypePtr,
-			ElementTypePtr, Boolean);
-Boolean		CopyPastebufferToLayout(LocationType, LocationType);
-void		*CopyObject(int, void *, void *, void *, LocationType, LocationType);
+PolygonTypePtr CopyPolygonLowLevel (PolygonTypePtr, PolygonTypePtr);
+ElementTypePtr CopyElementLowLevel (DataTypePtr, ElementTypePtr,
+				    ElementTypePtr, Boolean);
+Boolean CopyPastebufferToLayout (LocationType, LocationType);
+void *CopyObject (int, void *, void *, void *, LocationType, LocationType);
 
 #endif

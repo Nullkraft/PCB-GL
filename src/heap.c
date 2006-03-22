@@ -1,4 +1,4 @@
-/* $Id: heap.c,v 1.6 2006-03-21 17:34:58 djdelorie Exp $ */
+/* $Id: heap.c,v 1.7 2006-03-22 23:17:20 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -48,7 +48,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: heap.c,v 1.6 2006-03-21 17:34:58 djdelorie Exp $");
+RCSID ("$Id: heap.c,v 1.7 2006-03-22 23:17:20 danmc Exp $");
 
 
 /* define this for more thorough self-checking of data structures */
@@ -120,7 +120,7 @@ heap_create ()
     MIN_COST = -1e23;
   assert (MIN_COST < 0);
   /* okay, create empty heap */
-  heap = calloc(1, sizeof (*heap));
+  heap = calloc (1, sizeof (*heap));
   assert (heap);
   assert (__heap_is_good (heap));
   return heap;
