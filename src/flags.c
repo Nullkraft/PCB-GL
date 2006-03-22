@@ -1,4 +1,4 @@
-/* $Id: flags.c,v 1.1 2006-03-21 17:34:58 djdelorie Exp $ */
+/* $Id: flags.c,v 1.2 2006-03-22 13:04:55 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -86,7 +86,7 @@ FlagSETTINGS(int ofs)
   return *(Boolean *)((char *)(&Settings) + ofs);
 }
 
-static int;
+static int
 FlagMode(int x)
 {
   if (x == -1)
