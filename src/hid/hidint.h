@@ -1,3 +1,5 @@
+/* $Id: hidint.h,v 1.2 2006-03-22 11:45:15 danmc Exp $ */
+
 /* HID internal interfaces.  These may ONLY be called from the HID
    modules, not from the common PCB code.  */
 
