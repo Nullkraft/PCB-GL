@@ -1,3 +1,9 @@
+/* $Id: hidnogui.c,v 1.2 2006-03-22 11:43:51 danmc Exp $ */
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -5,6 +11,12 @@
 
 #include "global.h"
 #include "hid.h"
+
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID("$Id: hidnogui.c,v 1.2 2006-03-22 11:43:51 danmc Exp $");
 
 /* This is the "gui" that is installed at startup, and is used when
    there is no other real GUI to use.  For the most part, it just
