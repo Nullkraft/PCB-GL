@@ -1,4 +1,4 @@
-/* $Id: vendor.c,v 1.10 2006-03-21 17:34:59 djdelorie Exp $ */
+/* $Id: vendor.c,v 1.11 2006-03-22 13:28:47 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -252,7 +252,6 @@ Loads the specified vendor resource file.
 int
 ActionLoadVendorFrom(int argc, char **argv, int x, int y)
 {
-  char *filename;
   int i;
   char *fname = NULL, *name = NULL;
   char *sval;
