@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.38 2006-03-21 17:34:58 djdelorie Exp $ */
+/* $Id: misc.c,v 1.39 2006-03-22 13:44:47 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -69,10 +69,11 @@
 #include "rubberband.h"
 #include "search.h"
 #include "set.h"
+#include "undo.h"
 #include "action.h"
 
 
-RCSID ("$Id: misc.c,v 1.38 2006-03-21 17:34:58 djdelorie Exp $");
+RCSID ("$Id: misc.c,v 1.39 2006-03-22 13:44:47 danmc Exp $");
 
 
 
