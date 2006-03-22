@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.28 2006-03-21 23:45:01 djdelorie Exp $ */
+/* $Id: file.c,v 1.29 2006-03-22 13:47:10 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -71,7 +71,7 @@
 #include "strflags.h"
 
 
-RCSID("$Id: file.c,v 1.28 2006-03-21 23:45:01 djdelorie Exp $");
+RCSID("$Id: file.c,v 1.29 2006-03-22 13:47:10 danmc Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -393,7 +393,7 @@ WritePCBInfoHeader (FILE * FP)
 static void
 WritePCBDataHeader (FILE * FP)
 {
-  Cardinal group, entry;
+  Cardinal group;
 
   fputs ("\nPCB[", FP);
   PrintQuotedString (FP, EMPTY (PCB->Name));
