@@ -1,3 +1,9 @@
+/* $Id: library.c,v 1.3 2006-03-22 11:50:55 danmc Exp $ */
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -29,6 +35,12 @@
 #include "hid.h"
 #include "../hidint.h"
 #include "lesstif.h"
+
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID("$Id: library.c,v 1.3 2006-03-22 11:50:55 danmc Exp $");
 
 static Arg args[30];
 static int n;
