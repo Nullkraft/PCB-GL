@@ -1,4 +1,4 @@
-/* $Id: png.c,v 1.2 2006-03-22 11:33:50 danmc Exp $ */
+/* $Id: png.c,v 1.3 2006-03-22 22:49:30 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -51,7 +51,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: png.c,v 1.2 2006-03-22 11:33:50 danmc Exp $");
+RCSID("$Id: png.c,v 1.3 2006-03-22 22:49:30 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PNG function %s.\n", __FUNCTION__); abort()
 
@@ -145,7 +145,7 @@ HID_Attribute png_attribute_list[] = {
 };
 #define NUM_OPTIONS (sizeof(png_attribute_list)/sizeof(png_attribute_list[0]))
 
-REGISTER_ATTRIBUTES(png_attribute_list)
+REGISTER_ATTRIBUTES(png_attribute_list);
 
 static HID_Attr_Val png_values[NUM_OPTIONS];
 

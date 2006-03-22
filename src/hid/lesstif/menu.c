@@ -1,4 +1,4 @@
-/* $Id: menu.c,v 1.2 2006-03-22 11:50:55 danmc Exp $ */
+/* $Id: menu.c,v 1.3 2006-03-22 22:49:30 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -39,7 +39,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: menu.c,v 1.2 2006-03-22 11:50:55 danmc Exp $");
+RCSID("$Id: menu.c,v 1.3 2006-03-22 22:49:30 danmc Exp $");
 
 #ifndef R_OK
 /* Common value for systems that don't define it.  */
@@ -550,7 +550,7 @@ HID_Action lesstif_menu_action_list[] = {
   { "SelectLayer", 0, 0, SelectLayer }
 };
 
-REGISTER_ACTIONS(lesstif_menu_action_list)
+REGISTER_ACTIONS(lesstif_menu_action_list);
 
 static void
 do_color(char *value, char *which)

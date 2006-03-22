@@ -1,4 +1,4 @@
-/* $Id: flags.c,v 1.3 2006-03-22 13:07:21 danmc Exp $ */
+/* $Id: flags.c,v 1.4 2006-03-22 22:49:29 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -41,7 +41,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: flags.c,v 1.3 2006-03-22 13:07:21 danmc Exp $");
+RCSID("$Id: flags.c,v 1.4 2006-03-22 22:49:29 danmc Exp $");
 
 static int
 FlagCurrentStyle()
@@ -163,4 +163,4 @@ HID_Flag flags_flag_list[] = {
   { "resetafterelement", FlagSETTINGS, OffsetOf(SettingType,ResetAfterElement)},
   { "ringbellwhenfinished", FlagSETTINGS, OffsetOf(SettingType,RingBellWhenFinished)},
 };
-REGISTER_FLAGS(flags_flag_list)
+REGISTER_FLAGS(flags_flag_list);

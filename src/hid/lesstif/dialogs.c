@@ -1,4 +1,4 @@
-/* $Id: dialogs.c,v 1.2 2006-03-22 11:50:55 danmc Exp $ */
+/* $Id: dialogs.c,v 1.3 2006-03-22 22:49:30 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -38,7 +38,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: dialogs.c,v 1.2 2006-03-22 11:50:55 danmc Exp $");
+RCSID("$Id: dialogs.c,v 1.3 2006-03-22 22:49:30 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
 
@@ -1152,5 +1152,5 @@ HID_Action lesstif_dialog_action_list[] = {
   { "AdjustSizes", 0, 0, AdjustSizes },
   { "EditLayerGroups", 0, 0, EditLayerGroups },
 };
-REGISTER_ACTIONS(lesstif_dialog_action_list)
+REGISTER_ACTIONS(lesstif_dialog_action_list);
 

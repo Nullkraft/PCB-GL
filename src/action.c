@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.65 2006-03-22 17:18:11 danmc Exp $ */
+/* $Id: action.c,v 1.66 2006-03-22 22:49:29 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -69,7 +69,7 @@
 #include "undo.h"
 
 
-RCSID("$Id: action.c,v 1.65 2006-03-22 17:18:11 danmc Exp $");
+RCSID("$Id: action.c,v 1.66 2006-03-22 22:49:29 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -5037,4 +5037,4 @@ HID_Action action_action_list[] = {
   { "MoveToCurrentLayer", 0, 0, ActionMoveToCurrentLayer },
   { "New", 0, 0, ActionNew },
 };
-REGISTER_ACTIONS(action_action_list)
+REGISTER_ACTIONS(action_action_list);

@@ -1,4 +1,4 @@
-/* $Id: netlist.c,v 1.2 2006-03-22 11:50:55 danmc Exp $ */
+/* $Id: netlist.c,v 1.3 2006-03-22 22:49:30 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -37,7 +37,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: netlist.c,v 1.2 2006-03-22 11:50:55 danmc Exp $");
+RCSID("$Id: netlist.c,v 1.3 2006-03-22 22:49:30 danmc Exp $");
 
 static Arg args[30];
 static int n;
@@ -166,4 +166,4 @@ HID_Action lesstif_netlist_action_list[] = {
   { "NetlistChanged", 0, 0, NetlistChanged },
   { "NetlistShow", 0, 0, NetlistShow },
 };
-REGISTER_ACTIONS(lesstif_netlist_action_list)
+REGISTER_ACTIONS(lesstif_netlist_action_list);

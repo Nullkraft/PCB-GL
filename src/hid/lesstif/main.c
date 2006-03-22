@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.2 2006-03-22 11:50:55 danmc Exp $ */
+/* $Id: main.c,v 1.3 2006-03-22 22:49:30 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -40,7 +40,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: main.c,v 1.2 2006-03-22 11:50:55 danmc Exp $");
+RCSID("$Id: main.c,v 1.3 2006-03-22 22:49:30 danmc Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -149,7 +149,7 @@ HID_Attribute lesstif_attribute_list[] = {
 #define HA_colormap 0
 };
 
-REGISTER_ATTRIBUTES(lesstif_attribute_list)
+REGISTER_ATTRIBUTES(lesstif_attribute_list);
 
 static void lesstif_use_mask (int use_it);
 static void zoom_to (double factor, int x, int y);
@@ -541,7 +541,7 @@ HID_Action lesstif_main_action_list[] = {
   { "Benchmark", 0, 0, Benchmark },
 };
 
-REGISTER_ACTIONS(lesstif_main_action_list)
+REGISTER_ACTIONS(lesstif_main_action_list);
 
 /* ---------------------------------------------------------------------- */
 

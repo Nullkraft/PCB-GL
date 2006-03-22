@@ -1,4 +1,4 @@
-/* $Id: command.c,v 1.9 2006-03-22 17:18:11 danmc Exp $ */
+/* $Id: command.c,v 1.10 2006-03-22 22:49:29 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -53,7 +53,7 @@
 #include "set.h"
 #include "vendor.h"
 
-RCSID("$Id: command.c,v 1.9 2006-03-22 17:18:11 danmc Exp $");
+RCSID("$Id: command.c,v 1.10 2006-03-22 22:49:29 danmc Exp $");
 
 /* ----------------------------------------------------------------------
  * print a help message for commands
@@ -323,4 +323,4 @@ HID_Action command_action_list[] = {
   { "w",  0, 0, CommandSaveLayout },
   { "wq", 0, 0, CommandSaveLayoutAndQuit },
 };
-REGISTER_ACTIONS(command_action_list)
+REGISTER_ACTIONS(command_action_list);

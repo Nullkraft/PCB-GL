@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.1 2006-03-21 17:35:00 djdelorie Exp $ */
+/* $Id: gtkhid-main.c,v 1.2 2006-03-22 22:49:30 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #endif
 
 
-RCSID("$Id: gtkhid-main.c,v 1.1 2006-03-21 17:35:00 djdelorie Exp $");
+RCSID("$Id: gtkhid-main.c,v 1.2 2006-03-22 22:49:30 danmc Exp $");
 
 
 extern HID ghid_hid;
@@ -1279,7 +1279,7 @@ HID_Action ghid_main_action_list[] = {
   { "Command", 0, 0, Command },
   { "Benchmark", 0, 0, Benchmark },
 };
-REGISTER_ACTIONS(ghid_main_action_list)
+REGISTER_ACTIONS(ghid_main_action_list);
 
 #include "dolists.h"
 

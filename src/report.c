@@ -1,4 +1,4 @@
-/* $Id: report.c,v 1.24 2006-03-22 13:27:29 danmc Exp $ */
+/* $Id: report.c,v 1.25 2006-03-22 22:49:29 danmc Exp $ */
 
 #include "rtree.h"
 /*
@@ -44,7 +44,7 @@
 #include "mymem.h"
 #include "strflags.h"
 
-RCSID("$Id: report.c,v 1.24 2006-03-22 13:27:29 danmc Exp $");
+RCSID("$Id: report.c,v 1.25 2006-03-22 22:49:29 danmc Exp $");
 
 
 
@@ -527,5 +527,5 @@ HID_Action report_action_list[] = {
   { "ReportObject", 1, "Click on an object", ReportDialog },
   { "Report", 0, 0, Report }
 };
-REGISTER_ACTIONS(report_action_list)
+REGISTER_ACTIONS(report_action_list);
 
