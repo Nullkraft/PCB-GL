@@ -1,3 +1,9 @@
+/* $Id: ps.c,v 1.2 2006-03-22 11:39:24 danmc Exp $ */
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -11,6 +17,12 @@
 #include "hid.h"
 #include "../hidint.h"
 #include "../ps/ps.h"
+
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID("$Id: ps.c,v 1.2 2006-03-22 11:39:24 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
@@ -33,7 +45,7 @@ static int print_group[MAX_LAYER];
 static int print_layer[MAX_LAYER];
 
 
-static char *medias[] = {"A3", "A4", "A5",
+static const char *medias[] = {"A3", "A4", "A5",
 			 "Letter", "11x17", "Ledger",
 			 "Legal", "Executive", "C-Size", "D-size",
 			 0};
