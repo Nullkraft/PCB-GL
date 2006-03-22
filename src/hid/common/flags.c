@@ -1,4 +1,4 @@
-/* $Id: flags.c,v 1.2 2006-03-22 11:43:51 danmc Exp $ */
+/* $Id: flags.c,v 1.3 2006-03-22 13:33:19 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -19,7 +19,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: flags.c,v 1.2 2006-03-22 11:43:51 danmc Exp $");
+RCSID("$Id: flags.c,v 1.3 2006-03-22 13:33:19 danmc Exp $");
 
 typedef struct HID_FlagNode {
   struct HID_FlagNode *next;
@@ -99,7 +99,6 @@ hid_get_flag(const char *name)
   static char *buf = 0;
   static int nbuf = 0;
   const char *cp;
-  int v;
   HID_Flag *f;
   
   cp = strchr(name, ',');
