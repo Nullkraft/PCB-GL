@@ -1,4 +1,4 @@
-/* $Id: puller.c,v 1.1 2006-03-21 17:34:59 djdelorie Exp $ */
+/* $Id: puller.c,v 1.2 2006-03-22 13:13:10 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -37,13 +37,17 @@
 #include <limits.h>
 
 
-#include "data.h"
 #include "create.h"
-#include "remove.h"
-#include "move.h"
+#include "data.h"
 #include "draw.h"
-#include "undo.h"
+#include "misc.h"
+#include "move.h"
+#include "remove.h"
+#include "rtree.h"
 #include "strflags.h"
+#include "undo.h"
+
+RCSID("$Id: puller.c,v 1.2 2006-03-22 13:13:10 danmc Exp $");
 
 #define sqr(x) (1.0*(x)*(x))
 
