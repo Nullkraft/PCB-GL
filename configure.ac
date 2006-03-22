@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.33 2006-03-21 23:26:15 danmc Exp $
+dnl $Id: configure.ac,v 1.34 2006-03-22 00:19:58 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -110,8 +110,6 @@ AC_SUBST(GNUM4)
 AC_DEFINE_UNQUOTED(GNUM4,"$M4",[m4 program used by pcb])
 AC_CHECK_PROGS(LATEX, latex)
 AC_CHECK_PROGS(DVIPS, dvips)
-AC_CHECK_PROGS(TGIF, tgif, notfound)
-AM_CONDITIONAL(MISSING_TGIF, test x$TGIF = xnotfound)
 AC_CHECK_PROGS(PS2PDF, ps2pdf)
 
 dnl Checks for libraries.
