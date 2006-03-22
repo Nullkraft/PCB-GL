@@ -1,4 +1,4 @@
-/* foo */
+/* $Id: lesstif.h,v 1.2 2006-03-22 11:51:35 danmc Exp $ */
 
 #define app_context lesstif_app_context
 #define appwidget lesstif_appwidget
