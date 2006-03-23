@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.19 2006-03-23 01:46:47 danmc Exp $
+## $Id: Makefile.am,v 1.20 2006-03-23 05:17:16 djdelorie Exp $
 ##
 
 SUBDIRS=	icons script
@@ -139,7 +139,8 @@ BUILT_SOURCES = \
 	hid/ps/ps_lists.h \
 	parse_y.h \
 	pcb-menu.h \
-	res_parse.h
+	res_parse.h \
+	hid/common/hidlist.h
 
 pcb_bin_LDADD = @HIDLIBS@
 pcb_bin_DEPENDENCIES = @HIDLIBS@
@@ -184,10 +185,6 @@ hid/common/hidlist.h : Makefile
 	for e in ${HIDLIST}; do \
 	  echo "HID_DEF($${e})" >> $@; \
 	done
-
-# Make needs to know this before automake builds the .deps file,
-# otherwise it won't exist the first time through.
-hid/common/hidinit.o : hid/common/hidlist.h
 
 libgtk_a_CPPFLAGS = -I./hid/gtk
 libgtk_a_SOURCES = \
