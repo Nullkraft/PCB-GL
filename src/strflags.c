@@ -1,4 +1,4 @@
-/* $Id: strflags.c,v 1.7 2006-03-22 23:17:21 danmc Exp $ */
+/* $Id: strflags.c,v 1.8 2006-03-23 05:15:21 danmc Exp $ */
 /*
  *                            COPYRIGHT
  *
@@ -236,7 +236,7 @@ parse_layer_list (const char *bp, void (*error) (const char *))
 	  l = 0;
 	}
 
-      else if (isdigit (*bp))
+      else if (isdigit ((int) *bp))
 	l = l * 10 + (*bp - '0');
 
       else if (error)
