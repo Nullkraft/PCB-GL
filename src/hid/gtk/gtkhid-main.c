@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.4 2006-03-23 00:23:45 danmc Exp $ */
+/* $Id: gtkhid-main.c,v 1.5 2006-03-23 04:55:53 billw2 Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.4 2006-03-23 00:23:45 danmc Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.5 2006-03-23 04:55:53 billw2 Exp $");
 
 
 extern HID ghid_hid;
@@ -376,7 +376,8 @@ set_special_grid_color (void)
   gport->grid_color.green ^= gport->bg_color.green;
   gport->grid_color.blue ^= gport->bg_color.blue;
   gdk_color_alloc (gport->colormap, &gport->grid_color);
-  gdk_gc_set_foreground (gport->grid_gc, &gport->grid_color);
+  if (gport->grid_gc)
+    gdk_gc_set_foreground (gport->grid_gc, &gport->grid_color);
 }
 
 void
