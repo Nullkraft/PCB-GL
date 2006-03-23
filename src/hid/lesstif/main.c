@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.8 2006-03-23 05:46:27 danmc Exp $ */
+/* $Id: main.c,v 1.9 2006-03-23 05:53:26 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -42,7 +42,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.8 2006-03-23 05:46:27 danmc Exp $");
+RCSID ("$Id: main.c,v 1.9 2006-03-23 05:53:26 danmc Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -432,7 +432,7 @@ command_parse (char *s)
 
   for (cp = s; *cp; cp++)
     {
-      if (isspace (*cp))
+      if (isspace ((int) *cp))
 	ws = 1;
       else
 	{
@@ -446,7 +446,7 @@ command_parse (char *s)
   ws = 1;
   for (cp = s; *cp; cp++)
     {
-      if (isspace (*cp))
+      if (isspace ((int) *cp))
 	{
 	  ws = 1;
 	  *cp = 0;

@@ -1,4 +1,4 @@
-/* $Id: menu.c,v 1.5 2006-03-23 02:51:19 djdelorie Exp $ */
+/* $Id: menu.c,v 1.6 2006-03-23 05:53:26 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -39,7 +39,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: menu.c,v 1.5 2006-03-23 02:51:19 djdelorie Exp $");
+RCSID ("$Id: menu.c,v 1.6 2006-03-23 05:53:26 danmc Exp $");
 
 #ifndef R_OK
 /* Common value for systems that don't define it.  */
@@ -368,7 +368,7 @@ ToggleView (int argc, char **argv, int x, int y)
 
   if (argc == 0)
     return 1;
-  if (isdigit (argv[0][0]))
+  if (isdigit ((int) argv[0][0]))
     {
       l = atoi (argv[0]) - 1;
       layer_button_callback (0, l, 0);
@@ -833,7 +833,7 @@ note_accelerator (char *acc, Resource * node)
 
   memset (a, 0, sizeof (*a));
 
-  while (isalpha (acc[0]))
+  while (isalpha ((int) acc[0]))
     {
       if (strncmp (acc, "Shift", 5) == 0)
 	{
