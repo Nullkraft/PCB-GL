@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.5 2006-03-23 00:23:45 danmc Exp $ */
+/* $Id: main.c,v 1.6 2006-03-23 00:32:45 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -40,7 +40,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.5 2006-03-23 00:23:45 danmc Exp $");
+RCSID ("$Id: main.c,v 1.6 2006-03-23 00:32:45 djdelorie Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -1941,7 +1941,7 @@ idle_proc ()
 void
 lesstif_need_idle_proc ()
 {
-  if (idle_proc_set)
+  if (idle_proc_set || window == 0)
     return;
   XtAppAddWorkProc (app_context, idle_proc, 0);
   idle_proc_set = 1;
