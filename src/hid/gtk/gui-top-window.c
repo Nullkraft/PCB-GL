@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.5 2006-03-23 00:23:45 danmc Exp $ */
+/* $Id: gui-top-window.c,v 1.6 2006-03-23 05:11:17 billw2 Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -85,7 +85,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.5 2006-03-23 00:23:45 danmc Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.6 2006-03-23 05:11:17 billw2 Exp $");
 
 extern HID ghid_hid;
 
@@ -963,21 +963,21 @@ static void
 reset_scanned_pads_cb (GtkAction * action, GHidPort * port)
 {
   hid_actionl ("Connection", "ResetPinsViasAndPads", 0);
-  hid_actionl ("Display", "Redraw", "", 0);
+  ghid_invalidate_all();
 }
 
 static void
 reset_scanned_lines_cb (GtkAction * action, GHidPort * port)
 {
   hid_actionl ("Connection", "ResetLinesAndPolygons", 0);
-  hid_actionl ("Display", "Redraw", "", 0);
+  ghid_invalidate_all();
 }
 
 static void
 reset_all_connections_cb (GtkAction * action, GHidPort * port)
 {
   hid_actionl ("Connection", "Reset", 0);
-  hid_actionl ("Display", "Redraw", "", 0);
+  ghid_invalidate_all();
 }
 
 static void
@@ -1037,7 +1037,7 @@ optimize_routes_cb (GtkAction * action, GHidPort * port)
   else if (!strcmp (saction, "Miter"))
     hid_actionl ("DJopt", "miter", 0);
 
-  hid_actionl ("Display", "ClearAndRedraw", "", 0);
+  ghid_invalidate_all();
 }
 
 static void

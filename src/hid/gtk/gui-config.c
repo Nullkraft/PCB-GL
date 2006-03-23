@@ -1,4 +1,4 @@
-/* $Id: gui-config.c,v 1.2 2006-03-22 23:05:41 danmc Exp $ */
+/* $Id: gui-config.c,v 1.3 2006-03-23 05:11:17 billw2 Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -53,7 +53,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-config.c,v 1.2 2006-03-22 23:05:41 danmc Exp $");
+RCSID ("$Id: gui-config.c,v 1.3 2006-03-23 05:11:17 billw2 Exp $");
 
 enum ConfigType
 {
@@ -1525,7 +1525,7 @@ config_layers_apply (void)
 	  return;
 	}
       PCB->LayerGroups = layer_groups;
-      hid_actionl ("Display", "ClearAndRedraw", 0);
+      ghid_invalidate_all();
       groups_modified = FALSE;
     }
   if (use_as_default)
@@ -1751,7 +1751,7 @@ config_color_defaults_cb (gpointer data)
   gtk_widget_destroy (config_colors_vbox);
   config_colors_tab_create (config_colors_tab_vbox);
 
-  hid_actionl ("Display", "ClearAndRedraw", 0);
+  ghid_invalidate_all();
 }
 
 static void
@@ -1779,7 +1779,7 @@ config_color_load_cb (gpointer data)
   gtk_widget_destroy (config_colors_vbox);
   config_colors_tab_create (config_colors_tab_vbox);
 
-  hid_actionl ("Display", "ClearAndRedraw", 0);
+  ghid_invalidate_all();
 }
 
 static void
@@ -1830,10 +1830,7 @@ config_color_set_cb (GtkWidget * button, ConfigColor * cc)
   gtk_widget_set_sensitive (config_color_warn_label, TRUE);
 
   ghid_layer_buttons_color_update ();
-
-  /* This doesn't redaw display until mouse enters output window?
-   */
-  hid_actionl ("Display", "ClearAndRedraw", 0);
+  ghid_invalidate_all();
 }
 
 static void
