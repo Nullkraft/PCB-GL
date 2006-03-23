@@ -1,4 +1,4 @@
-/* $Id: dialogs.c,v 1.5 2006-03-23 00:23:45 danmc Exp $ */
+/* $Id: dialogs.c,v 1.6 2006-03-23 02:51:19 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -29,6 +29,8 @@
 #include "compat.h"
 #include "global.h"
 #include "data.h"
+#include "crosshair.h"
+#include "misc.h"
 
 #include "hid.h"
 #include "../hidint.h"
@@ -38,7 +40,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: dialogs.c,v 1.5 2006-03-23 00:23:45 danmc Exp $");
+RCSID ("$Id: dialogs.c,v 1.6 2006-03-23 02:51:19 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
 
@@ -415,7 +417,7 @@ ConfirmAction (int argc, char **argv, int x, int y)
 				   argc > 1 ? argv[1] : 0,
 				   argc > 2 ? argv[2] : 0,
 				   0);
-  return 0;
+  return rv;
 }
 
 /* ------------------------------------------------------------ */
@@ -676,6 +678,8 @@ lesstif_attribute_dialog (HID_Attribute * attrs,
 	case HID_Real:
 	  cp = XmTextGetString (wl[i]);
 	  sscanf (cp, "%lg", &results[i].real_value);
+	  break;
+	default:
 	  break;
 	}
     }
@@ -1064,7 +1068,7 @@ lesstif_update_layer_groups ()
 
   for (i = 0; i < MAX_LAYER + 2; i++)
     {
-      char *name;
+      char *name = "unknown";
       n = 0;
       if (i < MAX_LAYER)
 	name = PCB->Data->Layer[i].Name;

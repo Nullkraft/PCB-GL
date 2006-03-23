@@ -1,4 +1,4 @@
-/* $Id: gerber.c,v 1.4 2006-03-22 23:03:33 danmc Exp $ */
+/* $Id: gerber.c,v 1.5 2006-03-23 02:51:19 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -27,7 +27,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gerber.c,v 1.4 2006-03-22 23:03:33 danmc Exp $");
+RCSID ("$Id: gerber.c,v 1.5 2006-03-23 02:51:19 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented Gerber function %s.\n", __FUNCTION__); abort()
 
@@ -162,6 +162,9 @@ findApertureCode (int width, ApertureShape shape)
 	  sprintf (appMacro, "%%ADD%dR,%.4fX%.4fX%.4fX%.4f*%%\015\012",
 		   ap->dCode, gap / 100000.0, gap / 100000.0,
 		   width / 100000.0, width / 100000.0);
+	  break;
+#else
+	default:
 	  break;
 #endif
 	}
