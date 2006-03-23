@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.30 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: file.c,v 1.31 2006-03-23 04:54:22 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -71,7 +71,7 @@
 #include "strflags.h"
 
 
-RCSID ("$Id: file.c,v 1.30 2006-03-22 23:17:20 danmc Exp $");
+RCSID ("$Id: file.c,v 1.31 2006-03-23 04:54:22 danmc Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -110,15 +110,15 @@ string_cmp (const char *a, const char *b)
 {
   while (*a && *b)
     {
-      if (isdigit (*a) && isdigit (*b))
+      if (isdigit ((int) *a) && isdigit ((int) *b))
 	{
 	  int ia = atoi (a);
 	  int ib = atoi (b);
 	  if (ia != ib)
 	    return ia - ib;
-	  while (isdigit (*a))
+	  while (isdigit ((int) *a))
 	    a++;
-	  while (isdigit (*b))
+	  while (isdigit ((int) *b))
 	    b++;
 	}
       else if (tolower (*a) != tolower (*b))
