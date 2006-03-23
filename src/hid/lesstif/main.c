@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.7 2006-03-23 02:51:19 djdelorie Exp $ */
+/* $Id: main.c,v 1.8 2006-03-23 05:46:27 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -42,7 +42,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.7 2006-03-23 02:51:19 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.8 2006-03-23 05:46:27 danmc Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -1358,13 +1358,6 @@ lesstif_parse_arguments (int *argc, char ***argv)
   XtGetApplicationResources (appwidget, new_values, new_resources,
 			     rmax, 0, 0);
 
-  /* redefine colormap, if requested via "-install" */
-  if (use_private_colormap)
-    {
-      colormap = XCopyColormapAndFree (display, colormap);
-      XtVaSetValues (appwidget, XtNcolormap, colormap, NULL);
-    }
-
   rcount = 0;
   for (ha = hid_attr_nodes; ha; ha = ha->next)
     for (i = 0; i < ha->n; i++)
@@ -1406,6 +1399,13 @@ lesstif_parse_arguments (int *argc, char ***argv)
 	    break;
 	  }
       }
+
+  /* redefine colormap, if requested via "-install" */
+  if (use_private_colormap)
+    {
+      colormap = XCopyColormapAndFree (display, colormap);
+      XtVaSetValues (appwidget, XtNcolormap, colormap, NULL);
+    }
 }
 
 static void
