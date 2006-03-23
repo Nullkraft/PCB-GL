@@ -1,4 +1,4 @@
-/* $Id: mymem.c,v 1.15 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: mymem.c,v 1.16 2006-03-23 02:47:46 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -49,7 +49,7 @@ B *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: mymem.c,v 1.15 2006-03-22 23:17:20 danmc Exp $");
+RCSID ("$Id: mymem.c,v 1.16 2006-03-23 02:47:46 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * local prototypes
@@ -614,7 +614,7 @@ GetDrillInfoDrillMemory (DrillInfoTypePtr DrillInfo)
  * allocates memory with error handling
  */
 void *
-MyCalloc (size_t Number, size_t Size, char *Text)
+MyCalloc (size_t Number, size_t Size, const char *Text)
 {
   void *p;
 
@@ -643,7 +643,7 @@ MyCalloc (size_t Number, size_t Size, char *Text)
  * handling of NULL pointers in realoc()
  */
 void *
-MyRealloc (void *Ptr, size_t Size, char *Text)
+MyRealloc (void *Ptr, size_t Size, const char *Text)
 {
   void *p;
 
@@ -664,7 +664,7 @@ MyRealloc (void *Ptr, size_t Size, char *Text)
  * allocates memory for a new string, does some error processing
  */
 char *
-MyStrdup (char *S, char *Text)
+MyStrdup (char *S, const char *Text)
 {
   char *p = NULL;
 

@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: mymem.h,v 1.4 2006-03-22 23:17:20 danmc Exp $
+ *  RCS: $Id: mymem.h,v 1.5 2006-03-23 02:47:46 djdelorie Exp $
  */
 
 /* prototypes for memory routines
@@ -89,9 +89,9 @@ ElementTypeHandle GetDrillElementMemory (DrillTypePtr);
 PinTypeHandle GetDrillPinMemory (DrillTypePtr);
 DrillTypePtr GetDrillInfoDrillMemory (DrillInfoTypePtr);
 void **GetPointerMemory (PointerListTypePtr);
-void *MyCalloc (size_t, size_t, char *);
-void *MyRealloc (void *, size_t, char *);
-char *MyStrdup (char *s, char *);
+void *MyCalloc (size_t, size_t, const char *);
+void *MyRealloc (void *, size_t, const char *);
+char *MyStrdup (char *s, const char *);
 void MyFree (char **);
 void FreePolygonMemory (PolygonTypePtr);
 void FreeElementMemory (ElementTypePtr);
