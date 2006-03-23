@@ -1,4 +1,4 @@
-/* $Id: mtspace.c,v 1.14 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: mtspace.c,v 1.15 2006-03-23 04:27:22 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -50,7 +50,7 @@
 #include "vector.h"
 
 
-RCSID ("$Id: mtspace.c,v 1.14 2006-03-22 23:17:20 danmc Exp $");
+RCSID ("$Id: mtspace.c,v 1.15 2006-03-23 04:27:22 djdelorie Exp $");
 
 
 /* define this for more thorough self-checking of data structures */
@@ -123,6 +123,7 @@ mtspace_create (const BoxType * bounds, BDimension keepaway)
 {
   BoxType smaller_bounds;
   mtspacebox_t *mtsb;
+  mtspacebox_t **pmtsb = &mtsb;
   mtspace_t *mtspace;
 
   assert (bounds);
@@ -133,7 +134,7 @@ mtspace_create (const BoxType * bounds, BDimension keepaway)
   mtsb->keepaway = keepaway;
   /* create mtspace data structure */
   mtspace = malloc (sizeof (*mtspace));
-  mtspace->rtree = r_create_tree ((const BoxType **) &mtsb, 1, 1);
+  mtspace->rtree = r_create_tree ((const BoxType **) pmtsb, 1, 1);
   mtspace->bounds = smaller_bounds;
   /* done! */
   assert (__mtspace_is_good (mtspace));
