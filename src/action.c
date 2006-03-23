@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.68 2006-03-23 00:23:44 danmc Exp $ */
+/* $Id: action.c,v 1.69 2006-03-23 02:19:16 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -69,7 +69,7 @@
 #include "undo.h"
 
 
-RCSID ("$Id: action.c,v 1.68 2006-03-23 00:23:44 danmc Exp $");
+RCSID ("$Id: action.c,v 1.69 2006-03-23 02:19:16 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -4803,7 +4803,7 @@ ActionChangeFlag (int argc, char **argv, int x, int y)
 {
   char *function = ARG (0);
   char *flag = ARG (1);
-  int value = ARG (2);
+  int value = atoi (ARG (2));
   if (value != 0 && value != 1)
     {
       Message (_("ChangeFlag():  Value %d is not valid\n"), value);
