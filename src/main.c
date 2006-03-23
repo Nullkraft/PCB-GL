@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.44 2006-03-23 00:23:44 danmc Exp $ */
+/* $Id: main.c,v 1.45 2006-03-23 04:21:16 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,7 @@
 /* This next one is so we can print the help messages. */
 #include "hid/hidint.h"
 
-RCSID ("$Id: main.c,v 1.44 2006-03-23 00:23:44 danmc Exp $");
+RCSID ("$Id: main.c,v 1.45 2006-03-23 04:21:16 danmc Exp $");
 
 
 
@@ -524,9 +524,9 @@ HID_Attribute main_attribute_list[] = {
 	"element-command", 0),
   SSET (PrintFile, "%f.output", "print-file", 0),
   SSET (LibraryCommandDir, PCBLIBDIR, "lib-command-dir", 0),
-  SSET (LibraryCommand, PCBLIBDIR "/QueryLibrary.sh '%p' '%f' %a",
+  SSET (LibraryCommand, "QueryLibrary.sh '%p' '%f' %a",
 	"lib-command", 0),
-  SSET (LibraryContentsCommand, PCBLIBDIR "/ListLibraryContents.sh '%p' '%f'",
+  SSET (LibraryContentsCommand, "ListLibraryContents.sh '%p' '%f'",
 	"lib-contents-command", 0),
   SSET (LibraryTree, PCBTREEDIR, "lib-newlib", 0),
   SSET (SaveCommand, "cat - > '%f'", "save-command", 0),
