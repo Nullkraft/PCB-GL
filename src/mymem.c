@@ -1,4 +1,4 @@
-/* $Id: mymem.c,v 1.16 2006-03-23 02:47:46 djdelorie Exp $ */
+/* $Id: mymem.c,v 1.17 2006-03-23 04:56:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -49,7 +49,7 @@ B *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: mymem.c,v 1.16 2006-03-23 02:47:46 djdelorie Exp $");
+RCSID ("$Id: mymem.c,v 1.17 2006-03-23 04:56:13 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * local prototypes
@@ -1006,11 +1006,11 @@ StripWhiteSpaceAndDup (char *S)
     return (NULL);
 
   /* strip leading blanks */
-  for (p1 = S; *p1 && isspace (*p1); p1++);
+  for (p1 = S; *p1 && isspace ((int) *p1); p1++);
 
   /* strip trailing blanksand get string length */
   length = strlen (p1);
-  for (p2 = p1 + length - 1; length && isspace (*p2); p2--, length--);
+  for (p2 = p1 + length - 1; length && isspace ((int) *p2); p2--, length--);
 
   /* string is not empty -> allocate memory */
   if (length)
