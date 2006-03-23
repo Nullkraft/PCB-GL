@@ -1,4 +1,4 @@
-/* $Id: puller.c,v 1.5 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: puller.c,v 1.6 2006-03-23 00:23:44 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -47,7 +47,7 @@
 #include "strflags.h"
 #include "undo.h"
 
-RCSID ("$Id: puller.c,v 1.5 2006-03-22 23:17:20 danmc Exp $");
+RCSID ("$Id: puller.c,v 1.6 2006-03-23 00:23:44 danmc Exp $");
 
 #define sqr(x) (1.0*(x)*(x))
 
@@ -328,4 +328,4 @@ HID_Action puller_action_list[] = {
   {"Puller", 1, "Click on a line-arc intersection or line segment", Puller}
 };
 
-REGISTER_ACTIONS (puller_action_list);
+REGISTER_ACTIONS (puller_action_list)

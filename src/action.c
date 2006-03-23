@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.67 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: action.c,v 1.68 2006-03-23 00:23:44 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -69,7 +69,7 @@
 #include "undo.h"
 
 
-RCSID ("$Id: action.c,v 1.67 2006-03-22 23:17:20 danmc Exp $");
+RCSID ("$Id: action.c,v 1.68 2006-03-23 00:23:44 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -5075,4 +5075,4 @@ HID_Action action_action_list[] = {
   ,
 };
 
-REGISTER_ACTIONS (action_action_list);
+REGISTER_ACTIONS (action_action_list)

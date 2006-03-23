@@ -1,4 +1,4 @@
-/* $Id: ps.c,v 1.4 2006-03-22 23:14:58 danmc Exp $ */
+/* $Id: ps.c,v 1.5 2006-03-23 00:23:45 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -22,7 +22,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: ps.c,v 1.4 2006-03-22 23:14:58 danmc Exp $");
+RCSID ("$Id: ps.c,v 1.5 2006-03-23 00:23:45 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
@@ -112,7 +112,7 @@ HID_Attribute ps_attribute_list[] = {
 
 #define NUM_OPTIONS (sizeof(ps_attribute_list)/sizeof(ps_attribute_list[0]))
 
-REGISTER_ATTRIBUTES (ps_attribute_list);
+REGISTER_ATTRIBUTES (ps_attribute_list)
 
 static HID_Attr_Val ps_values[NUM_OPTIONS];
 

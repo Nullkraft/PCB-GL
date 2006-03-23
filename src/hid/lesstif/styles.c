@@ -1,4 +1,4 @@
-/* $Id: styles.c,v 1.4 2006-03-22 23:14:31 danmc Exp $ */
+/* $Id: styles.c,v 1.5 2006-03-23 00:23:45 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -39,7 +39,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: styles.c,v 1.4 2006-03-22 23:14:31 danmc Exp $");
+RCSID ("$Id: styles.c,v 1.5 2006-03-23 00:23:45 danmc Exp $");
 
 /* There are three places where styles are kept:
 
@@ -481,4 +481,4 @@ HID_Action lesstif_styles_action_list[] = {
   {"RouteStylesChanged", 0, 0, RouteStylesChanged},
 };
 
-REGISTER_ACTIONS (lesstif_styles_action_list);
+REGISTER_ACTIONS (lesstif_styles_action_list)

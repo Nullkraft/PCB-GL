@@ -1,4 +1,4 @@
-/* $Id: vendor.c,v 1.13 2006-03-22 23:17:21 danmc Exp $ */
+/* $Id: vendor.c,v 1.14 2006-03-23 00:23:44 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -902,7 +902,7 @@ HID_Action vendor_action_list[] = {
   ,
 };
 
-REGISTER_ACTIONS (vendor_action_list);
+REGISTER_ACTIONS (vendor_action_list)
 
 static int
 vendor_get_enabled (int unused)
@@ -915,4 +915,4 @@ HID_Flag vendor_flag_list[] = {
   ,
 };
 
-REGISTER_FLAGS (vendor_flag_list);
+REGISTER_FLAGS (vendor_flag_list)

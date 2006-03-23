@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.43 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: main.c,v 1.44 2006-03-23 00:23:44 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,7 @@
 /* This next one is so we can print the help messages. */
 #include "hid/hidint.h"
 
-RCSID ("$Id: main.c,v 1.43 2006-03-22 23:17:20 danmc Exp $");
+RCSID ("$Id: main.c,v 1.44 2006-03-23 00:23:44 danmc Exp $");
 
 
 
@@ -565,7 +565,7 @@ HID_Attribute main_attribute_list[] = {
   BSET (RingBellWhenFinished, 0, "ring-bell-finished", 0),
 };
 
-REGISTER_ATTRIBUTES (main_attribute_list);
+REGISTER_ATTRIBUTES (main_attribute_list)
 
 /* ---------------------------------------------------------------------- 
  * post-process settings.

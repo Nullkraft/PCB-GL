@@ -1,4 +1,4 @@
-/* $Id: flags.c,v 1.5 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: flags.c,v 1.6 2006-03-23 00:23:44 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -41,7 +41,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: flags.c,v 1.5 2006-03-22 23:17:20 danmc Exp $");
+RCSID ("$Id: flags.c,v 1.6 2006-03-23 00:23:44 danmc Exp $");
 
 static int
 FlagCurrentStyle ()
@@ -224,4 +224,4 @@ HID_Flag flags_flag_list[] = {
   ,
 };
 
-REGISTER_FLAGS (flags_flag_list);
+REGISTER_FLAGS (flags_flag_list)

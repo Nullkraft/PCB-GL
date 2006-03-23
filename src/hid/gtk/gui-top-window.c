@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.4 2006-03-22 23:05:41 danmc Exp $ */
+/* $Id: gui-top-window.c,v 1.5 2006-03-23 00:23:45 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -85,7 +85,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.4 2006-03-22 23:05:41 danmc Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.5 2006-03-23 00:23:45 danmc Exp $");
 
 extern HID ghid_hid;
 
@@ -3615,4 +3615,4 @@ HID_Action gtk_topwindow_action_list[] = {
   ,
 };
 
-REGISTER_ACTIONS (gtk_topwindow_action_list);
+REGISTER_ACTIONS (gtk_topwindow_action_list)

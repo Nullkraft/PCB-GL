@@ -1,4 +1,4 @@
-/* $Id: djopt.c,v 1.28 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: djopt.c,v 1.29 2006-03-23 00:23:44 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -45,7 +45,7 @@
 #include "strflags.h"
 
 
-RCSID ("$Id: djopt.c,v 1.28 2006-03-22 23:17:20 danmc Exp $");
+RCSID ("$Id: djopt.c,v 1.29 2006-03-23 00:23:44 danmc Exp $");
 
 #ifndef HAVE_RINT
 #define rint(x)  (ceil((x) - 0.5))
@@ -129,7 +129,7 @@ HID_Flag djopt_flag_list[] = {
   {"optautoonly", djopt_get_auto_only, 0}
 };
 
-REGISTER_FLAGS (djopt_flag_list);
+REGISTER_FLAGS (djopt_flag_list)
 
 #define line_is_pad(l) ((l)->line == (LineType *)(l)->s->pad)
 
@@ -2927,4 +2927,4 @@ HID_Action djopt_action_list[] = {
   {"OptAutoOnly", 0, 0, djopt_set_auto_only}
 };
 
-REGISTER_ACTIONS (djopt_action_list);
+REGISTER_ACTIONS (djopt_action_list)

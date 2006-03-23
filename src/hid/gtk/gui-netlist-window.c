@@ -1,4 +1,4 @@
-/* $Id: gui-netlist-window.c,v 1.3 2006-03-22 23:05:41 danmc Exp $ */
+/* $Id: gui-netlist-window.c,v 1.4 2006-03-23 00:23:45 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-netlist-window.c,v 1.3 2006-03-22 23:05:41 danmc Exp $");
+RCSID ("$Id: gui-netlist-window.c,v 1.4 2006-03-23 00:23:45 danmc Exp $");
 
 static GtkWidget *netlist_window;
 
@@ -811,4 +811,4 @@ HID_Action ghid_netlist_action_list[] = {
   ,
 };
 
-REGISTER_ACTIONS (ghid_netlist_action_list);
+REGISTER_ACTIONS (ghid_netlist_action_list)
