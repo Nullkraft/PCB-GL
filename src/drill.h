@@ -1,4 +1,4 @@
-/* $Id: drill.h,v 1.5 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: drill.h,v 1.6 2006-03-23 04:28:14 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -30,3 +30,4 @@
 
 DrillInfoTypePtr GetDrillInfo (DataTypePtr);
 void FreeDrillInfo (DrillInfoTypePtr);
+void RoundDrillInfo (DrillInfoTypePtr, int);

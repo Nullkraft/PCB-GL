@@ -1,4 +1,4 @@
-/* $Id: print.c,v 1.41 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: print.c,v 1.42 2006-03-23 04:28:14 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -64,7 +64,7 @@
 #include "hid.h"
 
 
-RCSID ("$Id: print.c,v 1.41 2006-03-22 23:17:20 danmc Exp $");
+RCSID ("$Id: print.c,v 1.42 2006-03-23 04:28:14 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * prints a FAB drawing.
@@ -189,6 +189,7 @@ PrintFab (void)
   char utcTime[64];
   tmp_pin.Flags = NoFlags ();
   AllDrills = GetDrillInfo (PCB->Data);
+  RoundDrillInfo (AllDrills, 100);
   yoff = -TEXT_LINE;
   for (n = AllDrills->DrillN - 1; n >= 0; n--)
     {
