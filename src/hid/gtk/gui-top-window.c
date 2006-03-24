@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.6 2006-03-23 05:11:17 billw2 Exp $ */
+/* $Id: gui-top-window.c,v 1.7 2006-03-24 21:21:21 billw2 Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -85,7 +85,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.6 2006-03-23 05:11:17 billw2 Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.7 2006-03-24 21:21:21 billw2 Exp $");
 
 extern HID ghid_hid;
 
@@ -2530,7 +2530,7 @@ layer_enable_button_cb (GtkWidget * widget, gpointer data)
       break;
     }
   if (redraw)
-    UpdateAll ();
+    ghid_invalidate_all();
 }
 
 static void
@@ -3586,12 +3586,8 @@ ghid_make_gc (void)
   hidGC rv;
 
   rv = g_new0 (hid_gc_struct, 1);
-  if (rv == NULL)
-    {
-      fprintf (stderr, "gui-top-window.c: ghid_make_gc():  malloc failed\n");
-      exit (1);
-    }
   rv->me_pointer = &ghid_hid;
+  rv->colorname = Settings.BackgroundColor;
   return rv;
 }
 
