@@ -1,4 +1,4 @@
-/* $Id: menu.c,v 1.6 2006-03-23 05:53:26 danmc Exp $ */
+/* $Id: menu.c,v 1.7 2006-03-24 22:47:13 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -39,7 +39,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: menu.c,v 1.6 2006-03-23 05:53:26 danmc Exp $");
+RCSID ("$Id: menu.c,v 1.7 2006-03-24 22:47:13 djdelorie Exp $");
 
 #ifndef R_OK
 /* Common value for systems that don't define it.  */
@@ -1152,20 +1152,25 @@ lesstif_menu (Widget parent, char *name, Arg * margs, int mn)
   Widget mb = XmCreateMenuBar (parent, name, margs, mn);
   char *filename;
   Resource *r;
+  char *home_pcbmenu;
 
   display = XtDisplay (mb);
   int screen = DefaultScreen (display);
   cmap = DefaultColormap (display, screen);
 
+  home_pcbmenu = Concat (getenv ("HOME"), "/.pcb/pcb-menu.res", NULL);
+
   if (access ("pcb-menu.res", R_OK) == 0)
     filename = "pcb-menu.res";
+  else if (access (home_pcbmenu, R_OK) == 0)
+    filename = home_pcbmenu;
   else if (access (pcbmenu_path, R_OK) == 0)
     filename = pcbmenu_path;
   else
     filename = 0;
 
   if (filename)
-    r = resource_parse ("pcb-menu.res", 0);
+    r = resource_parse (filename, 0);
   else
     r = resource_parse (0, pcb_menu_default);
 
