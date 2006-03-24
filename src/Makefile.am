@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.20 2006-03-23 05:17:16 djdelorie Exp $
+## $Id: Makefile.am,v 1.21 2006-03-24 00:21:55 danmc Exp $
 ##
 
 SUBDIRS=	icons script
@@ -219,6 +219,7 @@ liblesstif_a_SOURCES = \
 	dolists.h \
 	hid/hidint.h \
 	hid/lesstif/dialogs.c \
+	hid/lesstif/lesstif.h \
 	hid/lesstif/library.c \
 	hid/lesstif/main.c \
 	hid/lesstif/menu.c \
