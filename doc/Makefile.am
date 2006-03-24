@@ -23,7 +23,7 @@
 ##  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 ##  Thomas.Nau@rz.uni-ulm.de
 ##
-##  RCS: $Id: Makefile.am,v 1.16 2006-03-24 00:28:57 danmc Exp $
+##  RCS: $Id: Makefile.am,v 1.17 2006-03-24 02:24:54 danmc Exp $
 ##
 
 info_TEXINFOS=	pcb.texi
@@ -76,7 +76,7 @@ tab_files=	\
 	letter_size.tab \
 	metric_size.tab \
 	wire_size.tab
-tab_texi=	${tab_files:.texi=.tab}
+tab_texi=	${tab_files:.tab=.texi}
 
 # PCB Drawings
 pcb_files=	\
