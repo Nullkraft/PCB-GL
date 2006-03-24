@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# $Id: README.snapshots,v 1.5 2006-03-21 13:59:08 danmc Exp $
+# $Id: README.snapshots,v 1.6 2006-03-24 22:21:30 danmc Exp $
 #
 
 This documents what is done to create a pcb release.  The releases now
@@ -9,6 +9,12 @@ in the branch and then tagging the release branch sources.  The motivation
 for a branch rather than a tag is to make it easier to deal with setting
 the snapshot version number in the documentation, distfile, and the
 about dialog box.  
+
+NOTE:  Use the DISTCHECK_CONFIGURE_FLAGS to be able to run the distcheck
+target with lesstif as the built gui with
+DISTCHECK_CONFIGURE_FLAGS="--with-gui=lesstif" if you want to also verify
+that distcheck works with the lesstif HID.
+
 
 After following the steps below,
 upload the 'pcb-$VERSION.tar.gz' file to the sourceforge file release system
