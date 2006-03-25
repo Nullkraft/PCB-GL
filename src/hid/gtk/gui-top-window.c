@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.8 2006-03-25 04:53:06 danmc Exp $ */
+/* $Id: gui-top-window.c,v 1.9 2006-03-25 15:45:07 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -85,7 +85,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.8 2006-03-25 04:53:06 danmc Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.9 2006-03-25 15:45:07 danmc Exp $");
 
 extern HID ghid_hid;
 
@@ -3545,7 +3545,7 @@ ghid_create_listener (void)
 {
   guint tag;
   GIOChannel *channel;
-  int fd = 1;
+  int fd = fileno (stdin);
 
   channel = g_io_channel_unix_new (fd);
   tag = g_io_add_watch (channel, G_IO_IN, ghid_listener_cb, NULL);
