@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.69 2006-03-23 02:19:16 danmc Exp $ */
+/* $Id: action.c,v 1.70 2006-03-25 22:32:14 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -69,7 +69,7 @@
 #include "undo.h"
 
 
-RCSID ("$Id: action.c,v 1.69 2006-03-23 02:19:16 danmc Exp $");
+RCSID ("$Id: action.c,v 1.70 2006-03-25 22:32:14 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -133,6 +133,7 @@ typedef enum
   F_Rectangle,
   F_Redraw,
   F_Release,
+  F_Revert,
   F_Remove,
   F_RemoveSelected,
   F_Report,
@@ -290,6 +291,7 @@ static FunctionType Functions[] = {
   {"ResetLinesAndPolygons", F_ResetLinesAndPolygons},
   {"ResetPinsViasAndPads", F_ResetPinsViasAndPads},
   {"Restore", F_Restore},
+  {"Revert", F_Revert},
   {"Rotate", F_Rotate},
   {"Save", F_Save},
   {"Scroll", F_Scroll},
@@ -4020,13 +4022,14 @@ ActionSaveTo (int argc, char **argv, int x, int y)
 
 /* ---------------------------------------------------------------------------
  * load data
- * syntax: Load(ElementToBuffer|Layout|LayoutToBuffer|Netlist)
+ * syntax: Load(ElementToBuffer|Layout|LayoutToBuffer|Netlist|Revert)
  */
 static int
 ActionLoadFrom (int argc, char **argv, int x, int y)
 {
   char *function;
   char *name;
+  char fname[256];
 
   if (argc < 2)
     {
@@ -4066,6 +4069,12 @@ ActionLoadFrom (int argc, char **argv, int x, int y)
       if (!ReadNetlist (PCB->Netlistname))
 	hid_action ("NetlistChanged");
     }
+   else if (strcasecmp (function, "Revert") == 0 && PCB->Filename && (!PCB->Changed || gui->confirm_dialog(_("OK to override changes?"), 0)))
+		{
+		strcpy(fname,PCB->Filename);  /*Calling LoadPCB(PCB->Filename) changes the content of PCB->Filename.*/
+		LoadPCB(fname);
+		}
+
   RestoreCrosshair (True);
   return 0;
 }
