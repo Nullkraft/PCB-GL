@@ -1,4 +1,4 @@
-/* $Id: drill.c,v 1.9 2006-03-23 04:28:13 djdelorie Exp $ */
+/* $Id: drill.c,v 1.10 2006-03-25 15:13:16 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -41,7 +41,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: drill.c,v 1.9 2006-03-23 04:28:13 djdelorie Exp $");
+RCSID ("$Id: drill.c,v 1.10 2006-03-25 15:13:16 danmc Exp $");
 
 
 
@@ -220,9 +220,9 @@ GetDrillInfo (DataTypePtr top)
 void
 RoundDrillInfo (DrillInfoTypePtr d, int roundto)
 {
-  int i = 0;
+  unsigned int i = 0;
 
-  while (i<d->DrillN-1)
+  while ( (d->DrillN > 0) && (i < d->DrillN - 1))
     {
       int diam1 = ROUND (d->Drill[i].DrillSize, roundto);
       int diam2 = ROUND (d->Drill[i+1].DrillSize, roundto);
