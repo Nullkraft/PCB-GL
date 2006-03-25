@@ -1,4 +1,4 @@
-/* $Id: gui-netlist-window.c,v 1.6 2006-03-25 21:51:21 billw2 Exp $ */
+/* $Id: gui-netlist-window.c,v 1.7 2006-03-25 23:04:34 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-netlist-window.c,v 1.6 2006-03-25 21:51:21 billw2 Exp $");
+RCSID ("$Id: gui-netlist-window.c,v 1.7 2006-03-25 23:04:34 danmc Exp $");
 
 static GtkWidget	*netlist_window;
 static GtkWidget	*disable_all_button;
@@ -799,10 +799,11 @@ ghid_netlist_window_update (gboolean init_nodes)
 static gint
 NetlistChanged (int argc, char **argv, int x, int y)
 {
-	loading_new_netlist = TRUE;
+  loading_new_netlist = TRUE;
   ghid_netlist_window_update (TRUE);
-	gtk_toggle_button_set_active(disable_all_button, FALSE);
-	loading_new_netlist = FALSE;
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (disable_all_button),
+				FALSE);
+  loading_new_netlist = FALSE;
   return 0;
 }
 
