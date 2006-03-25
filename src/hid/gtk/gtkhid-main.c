@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.5 2006-03-23 04:55:53 billw2 Exp $ */
+/* $Id: gtkhid-main.c,v 1.6 2006-03-25 20:59:25 billw2 Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.5 2006-03-23 04:55:53 billw2 Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.6 2006-03-25 20:59:25 billw2 Exp $");
 
 
 extern HID ghid_hid;
@@ -599,6 +599,11 @@ ghid_draw_arc (hidGC gc, int cx, int cy,
   USE_GC (gc);
   vrx = DRAW_Z (xradius);
   vry = DRAW_Z (yradius);
+	if (Settings.ShowSolderSide)
+		{
+		start_angle =-start_angle + 180;;
+		delta_angle = -delta_angle;;
+		}
   gdk_draw_arc (gport->drawable, gport->u_gc, 0,
 		DRAW_X (cx) - vrx, DRAW_Y (cy) - vry,
 		vrx * 2, vry * 2, (start_angle + 180) * 64, delta_angle * 64);
