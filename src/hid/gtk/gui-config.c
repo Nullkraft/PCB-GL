@@ -1,4 +1,4 @@
-/* $Id: gui-config.c,v 1.3 2006-03-23 05:11:17 billw2 Exp $ */
+/* $Id: gui-config.c,v 1.4 2006-03-25 04:48:56 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -53,7 +53,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-config.c,v 1.3 2006-03-23 05:11:17 billw2 Exp $");
+RCSID ("$Id: gui-config.c,v 1.4 2006-03-25 04:48:56 danmc Exp $");
 
 enum ConfigType
 {
@@ -611,7 +611,8 @@ parse_optionv (gint * argc, gchar *** argv, gboolean from_cmd_line)
 		}
 	      (*argc)--;
 	      (*argv)++;
-	      break;
+	      ha = 0;
+	      goto got_match;
 	    }
 	  if (a < ha->attributes + ha->n)
 	    matched = TRUE;
@@ -627,6 +628,7 @@ parse_optionv (gint * argc, gchar *** argv, gboolean from_cmd_line)
 //                              ghid_log("unrecognized option: %s\n", (*argv)[0]);
 	    fprintf (stderr, "unrecognized option: %s\n", (*argv)[0]);
 	}
+    got_match:;
     }
   (*argc)++;
   (*argv)--;
