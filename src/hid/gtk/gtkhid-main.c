@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.6 2006-03-25 20:59:25 billw2 Exp $ */
+/* $Id: gtkhid-main.c,v 1.7 2006-03-25 21:51:21 billw2 Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.6 2006-03-25 20:59:25 billw2 Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.7 2006-03-25 21:51:21 billw2 Exp $");
 
 
 extern HID ghid_hid;
@@ -1092,7 +1092,7 @@ Load (int argc, char **argv, int x, int y)
 #endif
     }
 
-  if (name)
+  if (name && Settings.verbose)
     {
       fprintf (stderr, "%s:  Calling LoadFrom(%s, %s)\n", __FUNCTION__,
 	       function, name);
@@ -1116,7 +1116,7 @@ LoadVendor (int argc, char **argv, int x, int y)
 				       &current_vendor_dir,
 				       Settings.FilePath);
 
-  if (name)
+  if (name && Settings.verbose)
     {
       fprintf (stderr, "%s:  Calling LoadVendorFrom(%s)\n", __FUNCTION__,
 	       name);
@@ -1158,7 +1158,8 @@ Save (int argc, char **argv, int x, int y)
 	  fclose (exist);
 	  if (ghid_dialog_confirm (_("File exists!  Ok to overwrite?")))
 	    {
-	      fprintf (stderr, "Overwriting %s\n", name);
+				if (Settings.verbose)
+		      fprintf (stderr, "Overwriting %s\n", name);
 	    }
 	  else
 	    {
@@ -1168,7 +1169,8 @@ Save (int argc, char **argv, int x, int y)
 	}
     }
 
-  fprintf (stderr, "%s:  Calling SaveTo(%s, %s)\n", __FUNCTION__, function,
+	if (Settings.verbose)
+	  fprintf (stderr, "%s:  Calling SaveTo(%s, %s)\n", __FUNCTION__, function,
 	   name);
   hid_actionl ("SaveTo", function, name, 0);
   g_free (name);
