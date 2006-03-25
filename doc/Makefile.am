@@ -23,7 +23,7 @@
 ##  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 ##  Thomas.Nau@rz.uni-ulm.de
 ##
-##  RCS: $Id: Makefile.am,v 1.18 2006-03-24 22:27:23 danmc Exp $
+##  RCS: $Id: Makefile.am,v 1.19 2006-03-25 00:54:57 danmc Exp $
 ##
 
 info_TEXINFOS=	pcb.texi
@@ -106,7 +106,7 @@ ${inline_texi} : extracted-docs
 .PHONY : extracted-docs
 extracted-docs :
 	@MAINTAINER_MODE_TRUE@perl $(srcdir)/extract-docs $(srcdir)
-	@MAINTAINER_MODE_FALSE@@echo "Skipping documentation extraction since you are not in maintainer-mode"
+	@@MAINTAINER_MODE_FALSE@echo "Skipping documentation extraction since you are not in maintainer-mode"
 
 SUFFIXES = .dvi .eps .gif .pcb .pdf .png .ps .tab .tex
 
