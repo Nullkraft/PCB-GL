@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.7 2006-03-25 21:51:21 billw2 Exp $ */
+/* $Id: gtkhid-main.c,v 1.8 2006-03-26 14:45:34 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.7 2006-03-25 21:51:21 billw2 Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.8 2006-03-26 14:45:34 danmc Exp $");
 
 
 extern HID ghid_hid;
@@ -1139,8 +1139,6 @@ Save (int argc, char **argv, int x, int y)
 
   function = argc ? argv[0] : "Layout";
 
-  printf ("save: filename is `%s'\n", PCB->Filename);
-
   if (strcasecmp (function, "Layout") == 0)
     if (PCB->Filename)
       return hid_actionl ("SaveTo", "Layout", PCB->Filename, 0);
@@ -1172,7 +1170,17 @@ Save (int argc, char **argv, int x, int y)
 	if (Settings.verbose)
 	  fprintf (stderr, "%s:  Calling SaveTo(%s, %s)\n", __FUNCTION__, function,
 	   name);
-  hid_actionl ("SaveTo", function, name, 0);
+  
+  /* 
+   * if we got this far and the function is Layout, then
+   * we really needed it to be a LayoutAs.  Otherwise 
+   * ActionSaveTo() will ignore the new file name we
+   * just obtained.
+   */
+  if (strcasecmp (function, "Layout") == 0)
+    hid_actionl ("SaveTo", "LayoutAs", name, 0);
+  else
+    hid_actionl ("SaveTo", function, name, 0);
   g_free (name);
 
   return 0;
