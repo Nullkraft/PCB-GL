@@ -1,4 +1,4 @@
-/* $Id: gui-output-events.c,v 1.3 2006-03-23 04:55:53 billw2 Exp $ */
+/* $Id: gui-output-events.c,v 1.4 2006-03-26 01:35:16 billw2 Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -49,7 +49,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-output-events.c,v 1.3 2006-03-23 04:55:53 billw2 Exp $");
+RCSID ("$Id: gui-output-events.c,v 1.4 2006-03-26 01:35:16 billw2 Exp $");
 
 static gint x_pan_speed, y_pan_speed;
 
@@ -101,12 +101,12 @@ ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative)
   if (x1 < h_adj->lower)
     x1 = h_adj->lower;
   if (x1 > h_adj->upper - h_adj->page_size)
-    x1 = x0;
+    x1 = h_adj->upper - h_adj->page_size;
 
   if (y1 < v_adj->lower)
-    y1 = y0;
+    y1 = v_adj->lower;
   if (y1 > v_adj->upper - v_adj->page_size)
-    y1 = y0;
+    y1 = v_adj->upper - v_adj->page_size;
 
   if (x0 != x1 && y0 != y1)
     ghidgui->combine_adjustments = TRUE;
