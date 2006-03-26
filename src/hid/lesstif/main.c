@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.9 2006-03-23 05:53:26 danmc Exp $ */
+/* $Id: main.c,v 1.10 2006-03-26 06:07:01 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -9,6 +9,7 @@
 #include <time.h>
 #include <string.h>
 #include <math.h>
+#include <unistd.h>
 
 #include <X11/Intrinsic.h>
 #include <X11/X.h>
@@ -42,7 +43,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.9 2006-03-23 05:53:26 danmc Exp $");
+RCSID ("$Id: main.c,v 1.10 2006-03-26 06:07:01 danmc Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -158,10 +159,16 @@ static int n;
 
 
 static int use_private_colormap = 0;
+static int stdin_listen = 0;
 HID_Attribute lesstif_attribute_list[] = {
   {"install", "Install private colormap",
    HID_Boolean, 0, 0, {0, 0, 0}, 0, &use_private_colormap},
 #define HA_colormap 0
+
+  {"listen", "Listen on standard input for actions",
+   HID_Boolean, 0, 0, {0, 0, 0}, 0, &stdin_listen},
+#define HA_listen 1
+
 };
 
 REGISTER_ATTRIBUTES (lesstif_attribute_list)
@@ -1205,6 +1212,24 @@ mainwind_delete_cb ()
 }
 
 static void
+lesstif_listener_cb (XtPointer client_data, int *fid, XtInputId *id)
+{
+  char buf[BUFSIZ];
+  int nbytes;
+  int i;
+
+  if ((nbytes = read (*fid, buf, BUFSIZ)) == -1)
+    perror ("lesstif_listener_cb");
+
+  if (nbytes)
+    {
+      buf[nbytes] = '\0';
+      hid_parse_actions (buf, NULL);
+    }
+}
+
+
+static void
 lesstif_parse_arguments (int *argc, char ***argv)
 {
   Atom close_atom;
@@ -1405,6 +1430,14 @@ lesstif_parse_arguments (int *argc, char ***argv)
     {
       colormap = XCopyColormapAndFree (display, colormap);
       XtVaSetValues (appwidget, XtNcolormap, colormap, NULL);
+    }
+
+  /* listen on standard input for actions */
+  if (stdin_listen)
+    {
+      printf ("Listening on stdin for actions!!\n");
+      XtAppAddInput (app_context, fileno (stdin), XtInputReadMask,
+		     lesstif_listener_cb, NULL);
     }
 }
 
