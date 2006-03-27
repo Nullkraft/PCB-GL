@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.43 2006-03-27 13:28:33 danmc Exp $ */
+/* $Id: misc.c,v 1.44 2006-03-27 22:16:19 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -73,7 +73,7 @@
 #include "action.h"
 
 
-RCSID ("$Id: misc.c,v 1.43 2006-03-27 13:28:33 danmc Exp $");
+RCSID ("$Id: misc.c,v 1.44 2006-03-27 22:16:19 danmc Exp $");
 
 
 
@@ -823,7 +823,7 @@ QuitApplication (void)
   /*
    * if Settings.init_done is not > 0 then we haven't even called
    * gtk_main() yet so gtk_main_quit() will give an error.  In
-   * this case just set the flat to -1 and we will exit instead
+   * this case just set the flag to -1 and we will exit instead
    * of calling gtk_main()
    */
   if (Settings.init_done > 0)
