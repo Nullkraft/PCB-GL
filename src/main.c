@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.46 2006-03-25 03:17:36 danmc Exp $ */
+/* $Id: main.c,v 1.47 2006-03-27 22:15:18 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,7 @@
 /* This next one is so we can print the help messages. */
 #include "hid/hidint.h"
 
-RCSID ("$Id: main.c,v 1.46 2006-03-25 03:17:36 danmc Exp $");
+RCSID ("$Id: main.c,v 1.47 2006-03-27 22:15:18 danmc Exp $");
 
 
 
@@ -578,15 +578,13 @@ settings_post_process ()
   if (Settings.LibraryCommand[0] != '/' && Settings.LibraryCommand[0] != '.')
     {
       Settings.LibraryCommand
-	= strdup (Concat (Settings.LibraryCommandDir, "/",
-			  Settings.LibraryCommand, 0));
+	= Concat (Settings.LibraryCommandDir, "/", Settings.LibraryCommand, 0);
     }
   if (Settings.LibraryContentsCommand[0] != '/'
       && Settings.LibraryContentsCommand[0] != '.')
     {
       Settings.LibraryContentsCommand
-	= strdup (Concat (Settings.LibraryCommandDir, "/",
-			  Settings.LibraryContentsCommand, 0));
+	= Concat (Settings.LibraryCommandDir, "/", Settings.LibraryContentsCommand, 0);
     }
 
   if (Settings.LineThickness > MAX_LINESIZE
