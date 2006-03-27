@@ -1,4 +1,4 @@
-/* $Id: select.c,v 1.15 2006-03-22 23:17:21 danmc Exp $ */
+/* $Id: select.c,v 1.16 2006-03-27 22:52:34 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -54,7 +54,7 @@
 #endif
 #endif
 
-RCSID ("$Id: select.c,v 1.15 2006-03-22 23:17:21 danmc Exp $");
+RCSID ("$Id: select.c,v 1.16 2006-03-27 22:52:34 danmc Exp $");
 
 
 
@@ -638,6 +638,7 @@ SelectedOperation (ObjectFunctionTypePtr F, Boolean Reset, int type)
       }
   }
   END_LOOP;
+
   if (type & PIN_TYPE && PCB->PinOn && F->Pin)
     ELEMENT_LOOP (PCB->Data);
   {
@@ -655,8 +656,13 @@ SelectedOperation (ObjectFunctionTypePtr F, Boolean Reset, int type)
 	}
     }
     END_LOOP;
-    if (F->Pad)
-      PAD_LOOP (element);
+  }
+  END_LOOP;
+  
+  if (type & PAD_TYPE && PCB->PinOn && F->Pad)
+    ELEMENT_LOOP (PCB->Data);
+  {
+    PAD_LOOP (element);
     {
       if (TEST_FLAG (SELECTEDFLAG, pad))
 	{
