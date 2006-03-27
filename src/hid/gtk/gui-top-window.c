@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.10 2006-03-25 22:32:15 djdelorie Exp $ */
+/* $Id: gui-top-window.c,v 1.11 2006-03-27 03:18:51 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -85,7 +85,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.10 2006-03-25 22:32:15 djdelorie Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.11 2006-03-27 03:18:51 danmc Exp $");
 
 extern HID ghid_hid;
 
@@ -2550,7 +2550,8 @@ layer_button_set_color (LayerButtonSet * lb, gchar * color_string)
 
   if (!lb->layer_enable_ebox)
     return;
-
+  
+  color.red = color.green = color.blue = 0;
   ghid_map_color_string (color_string, &color);
   gtk_widget_modify_bg (lb->layer_enable_ebox, GTK_STATE_ACTIVE, &color);
   gtk_widget_modify_bg (lb->layer_enable_ebox, GTK_STATE_PRELIGHT, &color);

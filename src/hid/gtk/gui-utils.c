@@ -1,4 +1,4 @@
-/* $Id: gui-utils.c,v 1.2 2006-03-22 23:05:41 danmc Exp $ */
+/* $Id: gui-utils.c,v 1.3 2006-03-27 03:18:51 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -39,7 +39,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-utils.c,v 1.2 2006-03-22 23:05:41 danmc Exp $");
+RCSID ("$Id: gui-utils.c,v 1.3 2006-03-27 03:18:51 danmc Exp $");
 
 /* Not a gui function, but no better place to put it...
  */
@@ -258,7 +258,7 @@ ghid_get_color_name (GdkColor * color)
 void
 ghid_map_color_string (char *color_string, GdkColor * color)
 {
-  static GdkColormap *colormap;
+  static GdkColormap *colormap = NULL;
   GHidPort *out = &ghid_port;
 
   if (!color || !out->top_window)
