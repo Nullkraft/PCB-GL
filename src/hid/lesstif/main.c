@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.10 2006-03-26 06:07:01 danmc Exp $ */
+/* $Id: main.c,v 1.11 2006-03-27 04:16:04 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -43,7 +43,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.10 2006-03-26 06:07:01 danmc Exp $");
+RCSID ("$Id: main.c,v 1.11 2006-03-27 04:16:04 djdelorie Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -560,22 +560,14 @@ Benchmark (int argc, char **argv, int x, int y)
 }
 
 HID_Action lesstif_main_action_list[] = {
-  {"PCBChanged", 0, 0, PCBChanged}
-  ,
-  {"SetUnits", 0, 0, SetUnits}
-  ,
-  {"Zoom", 0, 0, ZoomAction}
-  ,
-  {"Thindraw", 0, 0, ThinDraw}
-  ,
-  {"ThindrawPoly", 0, 0, ThinDrawPoly}
-  ,
-  {"SwapSides", 0, 0, SwapSides}
-  ,
-  {"Command", 0, 0, Command}
-  ,
-  {"Benchmark", 0, 0, Benchmark}
-  ,
+  {"PCBChanged", 0, PCBChanged},
+  {"SetUnits", 0, SetUnits},
+  {"Zoom", 0, ZoomAction},
+  {"Thindraw", 0, ThinDraw},
+  {"ThindrawPoly", 0, ThinDrawPoly},
+  {"SwapSides", 0, SwapSides},
+  {"Command", 0, Command},
+  {"Benchmark", 0, Benchmark}
 };
 
 REGISTER_ACTIONS (lesstif_main_action_list)

@@ -1,4 +1,4 @@
-/* $Id: netlist.c,v 1.6 2006-03-23 02:51:19 djdelorie Exp $ */
+/* $Id: netlist.c,v 1.7 2006-03-27 04:16:04 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -37,7 +37,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: netlist.c,v 1.6 2006-03-23 02:51:19 djdelorie Exp $");
+RCSID ("$Id: netlist.c,v 1.7 2006-03-27 04:16:04 djdelorie Exp $");
 
 static Arg args[30];
 static int n;
@@ -165,8 +165,8 @@ lesstif_show_netlist ()
 }
 
 HID_Action lesstif_netlist_action_list[] = {
-  {"NetlistChanged", 0, 0, NetlistChanged},
-  {"NetlistShow", 0, 0, NetlistShow},
+  {"NetlistChanged", 0, NetlistChanged},
+  {"NetlistShow", 0, NetlistShow}
 };
 
 REGISTER_ACTIONS (lesstif_netlist_action_list)

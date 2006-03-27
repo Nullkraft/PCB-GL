@@ -1,4 +1,4 @@
-/* $Id: command.c,v 1.12 2006-03-23 00:23:44 danmc Exp $ */
+/* $Id: command.c,v 1.13 2006-03-27 04:16:03 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -53,7 +53,7 @@
 #include "set.h"
 #include "vendor.h"
 
-RCSID ("$Id: command.c,v 1.12 2006-03-23 00:23:44 danmc Exp $");
+RCSID ("$Id: command.c,v 1.13 2006-03-27 04:16:03 djdelorie Exp $");
 
 /* ----------------------------------------------------------------------
  * print a help message for commands
@@ -316,26 +316,16 @@ CommandSaveLayoutAndQuit (int argc, char **argv, int x, int y)
 /* --------------------------------------------------------------------------- */
 
 HID_Action command_action_list[] = {
-  {"h", 0, 0, CommandHelp}
-  ,
-  {"l", 0, 0, CommandLoadLayout}
-  ,
-  {"le", 0, 0, CommandLoadElementToBuffer}
-  ,
-  {"m", 0, 0, CommandLoadLayoutToBuffer}
-  ,
-  {"q", 0, 0, CommandQuit}
-  ,
-  {"q!", 0, 0, CommandReallyQuit}
-  ,
-  {"rn", 0, 0, CommandLoadNetlist}
-  ,
-  {"s", 0, 0, CommandSaveLayout}
-  ,
-  {"w", 0, 0, CommandSaveLayout}
-  ,
-  {"wq", 0, 0, CommandSaveLayoutAndQuit}
-  ,
+  {"h", 0, CommandHelp},
+  {"l", 0, CommandLoadLayout},
+  {"le", 0, CommandLoadElementToBuffer},
+  {"m", 0, CommandLoadLayoutToBuffer},
+  {"q", 0, CommandQuit},
+  {"q!", 0, CommandReallyQuit},
+  {"rn", 0, CommandLoadNetlist},
+  {"s", 0, CommandSaveLayout},
+  {"w", 0, CommandSaveLayout},
+  {"wq", 0, CommandSaveLayoutAndQuit},
 };
 
 REGISTER_ACTIONS (command_action_list)

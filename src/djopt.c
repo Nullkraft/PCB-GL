@@ -1,4 +1,4 @@
-/* $Id: djopt.c,v 1.29 2006-03-23 00:23:44 danmc Exp $ */
+/* $Id: djopt.c,v 1.30 2006-03-27 04:16:03 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -45,7 +45,7 @@
 #include "strflags.h"
 
 
-RCSID ("$Id: djopt.c,v 1.29 2006-03-23 00:23:44 danmc Exp $");
+RCSID ("$Id: djopt.c,v 1.30 2006-03-27 04:16:03 djdelorie Exp $");
 
 #ifndef HAVE_RINT
 #define rint(x)  (ceil((x) - 0.5))
@@ -2919,12 +2919,12 @@ ActionDJopt (int argc, char **argv, int x, int y)
 }
 
 HID_Action djopt_action_list[] = {
-  {"djopt", 0, 0, ActionDJopt,
+  {"djopt", 0, ActionDJopt,
    "Perform various optimizations on the current board",
    "djopt(debumpify|unjaggy|simple|vianudge|viatrim|orthopull)\n"
    "djopt(auto) - all of the above\n" "djopt(miter)"}
   ,
-  {"OptAutoOnly", 0, 0, djopt_set_auto_only}
+  {"OptAutoOnly", 0, djopt_set_auto_only}
 };
 
 REGISTER_ACTIONS (djopt_action_list)

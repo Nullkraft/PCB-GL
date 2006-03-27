@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.11 2006-03-27 03:18:51 danmc Exp $ */
+/* $Id: gui-top-window.c,v 1.12 2006-03-27 04:16:03 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -85,7 +85,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.11 2006-03-27 03:18:51 danmc Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.12 2006-03-27 04:16:03 djdelorie Exp $");
 
 extern HID ghid_hid;
 
@@ -3681,8 +3681,7 @@ LayersChanged (int argc, char **argv, int px, int py)
 }
 
 HID_Action gtk_topwindow_action_list[] = {
-  {"LayersChanged", 0, 0, LayersChanged}
-  ,
+  {"LayersChanged", 0, LayersChanged}
 };
 
 REGISTER_ACTIONS (gtk_topwindow_action_list)

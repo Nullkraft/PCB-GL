@@ -1,4 +1,4 @@
-/* $Id: dialogs.c,v 1.7 2006-03-26 06:45:55 danmc Exp $ */
+/* $Id: dialogs.c,v 1.8 2006-03-27 04:16:04 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -40,7 +40,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: dialogs.c,v 1.7 2006-03-26 06:45:55 danmc Exp $");
+RCSID ("$Id: dialogs.c,v 1.8 2006-03-27 04:16:04 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
 
@@ -1167,28 +1167,17 @@ EditLayerGroups (int argc, char **argv, int x, int y)
 /* ------------------------------------------------------------ */
 
 HID_Action lesstif_dialog_action_list[] = {
-  {"Load", 0, 0, Load}
-  ,
-  {"LoadVendor", 0, 0, LoadVendor}
-  ,
-  {"Save", 0, 0, Save}
-  ,
-  {"DoWindows", 0, 0, DoWindows}
-  ,
-  {"PromptFor", 0, 0, PromptFor}
-  ,
-  {"Confirm", 0, 0, ConfirmAction}
-  ,
-  {"About", 0, 0, About}
-  ,
-  {"Print", 0, 0, Print}
-  ,
-  {"Export", 0, 0, Export}
-  ,
-  {"AdjustSizes", 0, 0, AdjustSizes}
-  ,
-  {"EditLayerGroups", 0, 0, EditLayerGroups}
-  ,
+  {"Load", 0, Load},
+  {"LoadVendor", 0, LoadVendor},
+  {"Save", 0, Save},
+  {"DoWindows", 0, DoWindows},
+  {"PromptFor", 0, PromptFor},
+  {"Confirm", 0, ConfirmAction},
+  {"About", 0, About},
+  {"Print", 0, Print},
+  {"Export", 0, Export},
+  {"AdjustSizes", 0, AdjustSizes},
+  {"EditLayerGroups", 0, EditLayerGroups},
 };
 
 REGISTER_ACTIONS (lesstif_dialog_action_list)

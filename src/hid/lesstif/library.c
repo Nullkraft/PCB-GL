@@ -1,4 +1,4 @@
-/* $Id: library.c,v 1.6 2006-03-23 00:23:45 danmc Exp $ */
+/* $Id: library.c,v 1.7 2006-03-27 04:16:04 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -40,7 +40,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: library.c,v 1.6 2006-03-23 00:23:45 danmc Exp $");
+RCSID ("$Id: library.c,v 1.7 2006-03-27 04:16:04 djdelorie Exp $");
 
 static Arg args[30];
 static int n;
@@ -174,8 +174,8 @@ lesstif_show_library ()
 }
 
 HID_Action lesstif_library_action_list[] = {
-  {"LibraryChanged", 0, 0, LibraryChanged},
-  {"LibraryShow", 0, 0, LibraryShow},
+  {"LibraryChanged", 0, LibraryChanged},
+  {"LibraryShow", 0, LibraryShow},
 };
 
 REGISTER_ACTIONS (lesstif_library_action_list)

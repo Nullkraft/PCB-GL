@@ -1,4 +1,4 @@
-/* $Id: gui-netlist-window.c,v 1.8 2006-03-26 01:35:16 billw2 Exp $ */
+/* $Id: gui-netlist-window.c,v 1.9 2006-03-27 04:16:03 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-netlist-window.c,v 1.8 2006-03-26 01:35:16 billw2 Exp $");
+RCSID ("$Id: gui-netlist-window.c,v 1.9 2006-03-27 04:16:03 djdelorie Exp $");
 
 static GtkWidget	*netlist_window;
 static GtkWidget	*disable_all_button;
@@ -825,9 +825,8 @@ NetlistShow (int argc, char **argv, int x, int y)
 }
 
 HID_Action ghid_netlist_action_list[] = {
-  {"NetlistChanged", 0, 0, NetlistChanged}
-  ,
-  {"NetlistShow", 0, 0, NetlistShow}
+  {"NetlistChanged", 0, NetlistChanged},
+  {"NetlistShow", 0, NetlistShow}
   ,
 };
 

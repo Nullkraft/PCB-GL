@@ -1,4 +1,4 @@
-/* $Id: styles.c,v 1.6 2006-03-23 02:51:19 djdelorie Exp $ */
+/* $Id: styles.c,v 1.7 2006-03-27 04:16:04 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -39,7 +39,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: styles.c,v 1.6 2006-03-23 02:51:19 djdelorie Exp $");
+RCSID ("$Id: styles.c,v 1.7 2006-03-27 04:16:04 djdelorie Exp $");
 
 /* There are three places where styles are kept:
 
@@ -471,8 +471,8 @@ lesstif_insert_style_buttons (Widget menu)
 }
 
 HID_Action lesstif_styles_action_list[] = {
-  {"AdjustStyle", 0, 0, AdjustStyle},
-  {"RouteStylesChanged", 0, 0, RouteStylesChanged},
+  {"AdjustStyle", 0, AdjustStyle},
+  {"RouteStylesChanged", 0, RouteStylesChanged}
 };
 
 REGISTER_ACTIONS (lesstif_styles_action_list)

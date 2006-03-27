@@ -1,4 +1,4 @@
-/* $Id: netlist.c,v 1.15 2006-03-23 00:23:44 danmc Exp $ */
+/* $Id: netlist.c,v 1.16 2006-03-27 04:16:03 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -65,7 +65,7 @@
 #define USE_RE
 #endif
 
-RCSID ("$Id: netlist.c,v 1.15 2006-03-23 00:23:44 danmc Exp $");
+RCSID ("$Id: netlist.c,v 1.16 2006-03-27 04:16:03 djdelorie Exp $");
 
 /*
   int    PCB->NetlistLib.MenuN
@@ -278,10 +278,8 @@ Netlist (int argc, char **argv, int x, int y)
 }
 
 HID_Action netlist_action_list[] = {
-  {"net", 0, 0, Netlist}
-  ,
-  {"netlist", 0, 0, Netlist}
-  ,
+  {"net", 0, Netlist},
+  {"netlist", 0, Netlist}
 };
 
 REGISTER_ACTIONS (netlist_action_list)

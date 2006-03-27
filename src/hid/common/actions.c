@@ -1,4 +1,4 @@
-/* $Id: actions.c,v 1.4 2006-03-23 04:57:03 danmc Exp $ */
+/* $Id: actions.c,v 1.5 2006-03-27 04:16:03 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -19,7 +19,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: actions.c,v 1.4 2006-03-23 04:57:03 danmc Exp $");
+RCSID ("$Id: actions.c,v 1.5 2006-03-27 04:16:03 djdelorie Exp $");
 
 typedef struct HID_ActionNode
 {
@@ -171,7 +171,7 @@ hid_actionv (const char *name, int argc, char **argv)
   a = hid_find_action (name);
   if (!a)
     return 1;
-  if (a->needs_coords)
+  if (a->need_coord_msg)
     gui->get_coords (a->need_coord_msg, &x, &y);
   return a->trigger_cb (argc, argv, x, y);
 }
