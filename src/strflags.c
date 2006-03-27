@@ -1,4 +1,4 @@
-/* $Id: strflags.c,v 1.8 2006-03-23 05:15:21 danmc Exp $ */
+/* $Id: strflags.c,v 1.9 2006-03-27 22:16:26 danmc Exp $ */
 /*
  *                            COPYRIGHT
  *
@@ -175,7 +175,7 @@ grow_layer_list (int num)
 {
   if (layers == 0)
     {
-      layers = (char *) calloc (num, 1);
+      layers = (char *) calloc (num > 0 ? num : 1, 1);
       max_layers = num;
     }
   else if (num > max_layers)
