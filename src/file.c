@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.31 2006-03-23 04:54:22 danmc Exp $ */
+/* $Id: file.c,v 1.32 2006-03-27 22:13:44 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -71,7 +71,7 @@
 #include "strflags.h"
 
 
-RCSID ("$Id: file.c,v 1.31 2006-03-23 04:54:22 danmc Exp $");
+RCSID ("$Id: file.c,v 1.32 2006-03-27 22:13:44 danmc Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -922,8 +922,17 @@ ParseLibraryTree (void)
 		      && NSTRCMP (e2->d_name, "Makefile.am") != 0
 		      && NSTRCMP (e2->d_name, "Makefile.in") != 0)
 		    {
+
+		      /* 
+		       * Besides the length for the 3 strings listed, 
+		       * we have two "/" added in below, and also we 
+		       * have 2 '\0' characters since
+		       * entry->AllocatedMemory actually will contain
+		       * 2 null terminated strings.  Thats why we 
+		       * add 4
+		       */
 		      long len = strlen (path) + strlen (e2->d_name) +
-			strlen (direntry->d_name) + 3;
+			strlen (direntry->d_name) + 4;
 #if 0
 		      if (NSTRCMP
 			  (e2->d_name + strlen (e2->d_name) - 4, ".lel") != 0)
