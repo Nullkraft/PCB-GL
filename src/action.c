@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.71 2006-03-27 04:16:03 djdelorie Exp $ */
+/* $Id: action.c,v 1.72 2006-03-27 23:05:10 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -69,7 +69,7 @@
 #include "undo.h"
 
 
-RCSID ("$Id: action.c,v 1.71 2006-03-27 04:16:03 djdelorie Exp $");
+RCSID ("$Id: action.c,v 1.72 2006-03-27 23:05:10 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -2965,6 +2965,11 @@ ActionChangeSize (int argc, char **argv, int x, int y)
 
 	case F_SelectedPads:
 	  if (ChangeSelectedSize (PAD_TYPE, value, r))
+	    SetChangedFlag (True);
+	  break;
+
+	case F_SelectedArcs:
+	  if (ChangeSelectedSize (ARC_TYPE, value, r))
 	    SetChangedFlag (True);
 	  break;
 

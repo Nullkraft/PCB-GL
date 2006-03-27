@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.12 2006-03-27 04:16:03 djdelorie Exp $ */
+/* $Id: gui-top-window.c,v 1.13 2006-03-27 23:05:10 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -85,7 +85,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.12 2006-03-27 04:16:03 djdelorie Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.13 2006-03-27 23:05:10 danmc Exp $");
 
 extern HID ghid_hid;
 
@@ -770,6 +770,7 @@ selected_lines_size_change_cb (GtkAction * action, GHidPort * port)
   ghid_size_increment_get_value (gtk_action_get_name (action), &value,
 				 &units);
   hid_actionl ("ChangeSize", "SelectedLines", value, units, 0);
+  hid_actionl ("ChangeSize", "SelectedArcs", value, units, 0);
 }
 
 static void
