@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: mymem.h,v 1.5 2006-03-23 02:47:46 djdelorie Exp $
+ *  RCS: $Id: mymem.h,v 1.6 2006-03-28 04:37:37 danmc Exp $
  */
 
 /* prototypes for memory routines
@@ -30,6 +30,10 @@
 
 #ifndef	__MYMEM_INCLUDED__
 #define	__MYMEM_INCLUDED__
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include <stdlib.h>
 #include "global.h"
@@ -113,6 +117,8 @@ char *StripWhiteSpaceAndDup (char *);
 char *strdup (const char *);
 #endif
 
+#ifndef HAVE_LIBDMALLOC
 #define malloc(x) calloc(1,(x))
+#endif
 
 #endif
