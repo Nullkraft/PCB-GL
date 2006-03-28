@@ -1,4 +1,4 @@
-/* $Id: dialogs.c,v 1.9 2006-03-28 03:42:29 djdelorie Exp $ */
+/* $Id: dialogs.c,v 1.10 2006-03-28 23:25:53 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -40,7 +40,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: dialogs.c,v 1.9 2006-03-28 03:42:29 djdelorie Exp $");
+RCSID ("$Id: dialogs.c,v 1.10 2006-03-28 23:25:53 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
 
@@ -739,7 +739,7 @@ About (int argc, char **argv, int x, int y)
     {
       static char *msg = "This is " PACKAGE " " VERSION "\n"
 	"http://pcb.sourceforge.net";
-      n = 0;
+      Cardinal n = 0;
       XmString xs = XmStringCreateLocalized (msg);
       stdarg (XmNmessageString, xs);
       stdarg (XmNtitle, "About PCB");
@@ -788,6 +788,7 @@ Export (int argc, char **argv, int x, int y)
   HID_Attr_Val *vals;
   int n, i;
   Widget prev = 0;
+  Widget w;
 
   hids = hid_enumerate ();
 
@@ -812,7 +813,7 @@ Export (int argc, char **argv, int x, int y)
 		}
 	      stdarg (XmNrightAttachment, XmATTACH_FORM);
 	      stdarg (XmNleftAttachment, XmATTACH_FORM);
-	      Widget w =
+	      w =
 		XmCreatePushButton (selector, (char *) hids[i]->name, args,
 				    n);
 	      XtManageChild (w);

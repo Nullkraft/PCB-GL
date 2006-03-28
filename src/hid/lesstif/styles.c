@@ -1,4 +1,4 @@
-/* $Id: styles.c,v 1.7 2006-03-27 04:16:04 djdelorie Exp $ */
+/* $Id: styles.c,v 1.8 2006-03-28 23:25:53 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -39,7 +39,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: styles.c,v 1.7 2006-03-27 04:16:04 djdelorie Exp $");
+RCSID ("$Id: styles.c,v 1.8 2006-03-28 23:25:53 danmc Exp $");
 
 /* There are three places where styles are kept:
 
@@ -457,11 +457,12 @@ lesstif_insert_style_buttons (Widget menu)
 
   for (i = 0; i < NUM_STYLES; i++)
     {
+      Widget btn;
       n = 0;
       stdarg (XmNindicatorType, XmONE_OF_MANY);
       stdarg (XmNlabelString,
 	      XmStringCreateLocalized (PCB->RouteStyle[i].Name));
-      Widget btn = XmCreateToggleButton (menu, "style", args, n);
+      btn = XmCreateToggleButton (menu, "style", args, n);
       XtManageChild (btn);
       XtAddCallback (btn, XmNvalueChangedCallback,
 		     (XtCallbackProc) style_selected, (XtPointer) i);

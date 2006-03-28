@@ -1,4 +1,4 @@
-/* $Id: menu.c,v 1.8 2006-03-27 04:16:04 djdelorie Exp $ */
+/* $Id: menu.c,v 1.9 2006-03-28 23:25:53 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -39,7 +39,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: menu.c,v 1.8 2006-03-27 04:16:04 djdelorie Exp $");
+RCSID ("$Id: menu.c,v 1.9 2006-03-28 23:25:53 danmc Exp $");
 
 #ifndef R_OK
 /* Common value for systems that don't define it.  */
@@ -418,6 +418,7 @@ insert_layerview_buttons (Widget menu)
   for (i = 0; i < LB_NUM; i++)
     {
       char *name = "Label";
+      Widget btn;
       switch (i)
 	{
 	case LB_SILK:
@@ -457,7 +458,7 @@ insert_layerview_buttons (Widget menu)
 	  note_accelerator (av, ar);
 	  stdarg (XmNmnemonic, i + '1');
 	}
-      Widget btn = XmCreateToggleButton (menu, name, args, n);
+      btn = XmCreateToggleButton (menu, name, args, n);
       XtManageChild (btn);
       XtAddCallback (btn, XmNvalueChangedCallback,
 		     (XtCallbackProc) layer_button_callback, (XtPointer) i);
@@ -484,6 +485,7 @@ insert_layerpick_buttons (Widget menu)
   for (i = 0; i < LB_NUMPICK; i++)
     {
       char *name = "Label";
+      Widget btn;
       switch (i)
 	{
 	case LB_SILK:
@@ -523,7 +525,7 @@ insert_layerpick_buttons (Widget menu)
 	  stdarg (XmNmnemonic, i + '1');
 	}
       stdarg (XmNindicatorType, XmONE_OF_MANY);
-      Widget btn = XmCreateToggleButton (menu, name, args, n);
+      btn = XmCreateToggleButton (menu, name, args, n);
       XtManageChild (btn);
       XtAddCallback (btn, XmNvalueChangedCallback,
 		     (XtCallbackProc) layerpick_button_callback,
@@ -1153,9 +1155,10 @@ lesstif_menu (Widget parent, char *name, Arg * margs, int mn)
   char *filename;
   Resource *r;
   char *home_pcbmenu;
+  int screen;
 
   display = XtDisplay (mb);
-  int screen = DefaultScreen (display);
+  screen = DefaultScreen (display);
   cmap = DefaultColormap (display, screen);
 
   home_pcbmenu = Concat (getenv ("HOME"), "/.pcb/pcb-menu.res", NULL);
