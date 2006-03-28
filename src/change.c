@@ -1,4 +1,4 @@
-/* $Id: change.c,v 1.33 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: change.c,v 1.34 2006-03-28 04:29:19 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -56,8 +56,11 @@
 #include "set.h"
 #include "undo.h"
 
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
 
-RCSID ("$Id: change.c,v 1.33 2006-03-22 23:17:20 danmc Exp $");
+RCSID ("$Id: change.c,v 1.34 2006-03-28 04:29:19 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes

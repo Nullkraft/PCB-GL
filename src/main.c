@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.48 2006-03-28 03:42:29 djdelorie Exp $ */
+/* $Id: main.c,v 1.49 2006-03-28 04:29:19 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,11 @@
 /* This next one is so we can print the help messages. */
 #include "hid/hidint.h"
 
-RCSID ("$Id: main.c,v 1.48 2006-03-28 03:42:29 djdelorie Exp $");
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID ("$Id: main.c,v 1.49 2006-03-28 04:29:19 danmc Exp $");
 
 
 

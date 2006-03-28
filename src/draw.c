@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.48 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: draw.c,v 1.49 2006-03-28 04:29:19 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,8 +58,11 @@
 #include "select.h"
 #include "print.h"
 
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
 
-RCSID ("$Id: draw.c,v 1.48 2006-03-22 23:17:20 danmc Exp $");
+RCSID ("$Id: draw.c,v 1.49 2006-03-28 04:29:19 danmc Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1

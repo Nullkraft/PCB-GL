@@ -1,4 +1,4 @@
-/* $Id: vendor.c,v 1.15 2006-03-27 04:16:03 djdelorie Exp $ */
+/* $Id: vendor.c,v 1.16 2006-03-28 04:29:20 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -59,6 +59,12 @@
 #include "set.h"
 #include "undo.h"
 #include "vendor.h"
+
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID ("$Id: vendor.c,v 1.16 2006-03-28 04:29:20 danmc Exp $");
 
 static void add_to_drills (char *);
 static void apply_vendor_map (void);

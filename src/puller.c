@@ -1,4 +1,4 @@
-/* $Id: puller.c,v 1.7 2006-03-27 04:16:03 djdelorie Exp $ */
+/* $Id: puller.c,v 1.8 2006-03-28 04:29:20 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -47,7 +47,11 @@
 #include "strflags.h"
 #include "undo.h"
 
-RCSID ("$Id: puller.c,v 1.7 2006-03-27 04:16:03 djdelorie Exp $");
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID ("$Id: puller.c,v 1.8 2006-03-28 04:29:20 danmc Exp $");
 
 #define sqr(x) (1.0*(x)*(x))
 

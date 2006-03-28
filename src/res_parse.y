@@ -1,4 +1,4 @@
-/* $Id: res_parse.y,v 1.10 2006-03-21 17:34:59 djdelorie Exp $ */
+/* $Id: res_parse.y,v 1.11 2006-03-28 04:29:20 danmc Exp $ */
 
 %{
 
@@ -22,8 +22,12 @@
 #include "resource.h"
 #include "res_parse.h"
 
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
 
-RCSID("$Id: res_parse.y,v 1.10 2006-03-21 17:34:59 djdelorie Exp $");
+
+RCSID("$Id: res_parse.y,v 1.11 2006-03-28 04:29:20 danmc Exp $");
 
 static Resource *parsed_res;
 static Resource *current_res;

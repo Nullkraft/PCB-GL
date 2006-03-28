@@ -1,4 +1,4 @@
-/* $Id: output.c,v 1.19 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: output.c,v 1.20 2006-03-28 04:29:20 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -43,6 +43,11 @@
 #include "misc.h"
 #include "set.h"
 
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID ("$Id: output.c,v 1.20 2006-03-28 04:29:20 danmc Exp $");
 
 #ifdef FIXME
 

@@ -1,4 +1,4 @@
-/* $Id: rtree.c,v 1.23 2006-03-22 23:17:21 danmc Exp $ */
+/* $Id: rtree.c,v 1.24 2006-03-28 04:29:20 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,8 +55,11 @@
 
 #include "rtree.h"
 
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
 
-RCSID ("$Id: rtree.c,v 1.23 2006-03-22 23:17:21 danmc Exp $");
+RCSID ("$Id: rtree.c,v 1.24 2006-03-28 04:29:20 danmc Exp $");
 
 
 #undef SLOW_ASSERTS

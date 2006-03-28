@@ -1,4 +1,4 @@
-/* $Id: select.c,v 1.16 2006-03-27 22:52:34 danmc Exp $ */
+/* $Id: select.c,v 1.17 2006-03-28 04:29:20 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -54,7 +54,11 @@
 #endif
 #endif
 
-RCSID ("$Id: select.c,v 1.16 2006-03-27 22:52:34 danmc Exp $");
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID ("$Id: select.c,v 1.17 2006-03-28 04:29:20 danmc Exp $");
 
 
 

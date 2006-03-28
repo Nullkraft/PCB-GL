@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.9 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: line.c,v 1.10 2006-03-28 04:29:19 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -27,6 +27,10 @@
  *
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #define NUDGE (TO_PCB (6))
 
 #include <math.h>
@@ -42,7 +46,11 @@
 #include "misc.h"
 #include "rtree.h"
 
-RCSID ("$Id: line.c,v 1.9 2006-03-22 23:17:20 danmc Exp $");
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID ("$Id: line.c,v 1.10 2006-03-28 04:29:19 danmc Exp $");
 
 static float drc_lines (PointTypePtr end, Boolean way);
 

@@ -1,4 +1,4 @@
-/* $Id: report.c,v 1.28 2006-03-27 04:16:03 djdelorie Exp $ */
+/* $Id: report.c,v 1.29 2006-03-28 04:29:20 danmc Exp $ */
 
 #include "rtree.h"
 /*
@@ -44,7 +44,11 @@
 #include "mymem.h"
 #include "strflags.h"
 
-RCSID ("$Id: report.c,v 1.28 2006-03-27 04:16:03 djdelorie Exp $");
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID ("$Id: report.c,v 1.29 2006-03-28 04:29:20 danmc Exp $");
 
 
 

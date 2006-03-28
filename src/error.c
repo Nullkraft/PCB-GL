@@ -1,4 +1,4 @@
-/* $Id: error.c,v 1.11 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: error.c,v 1.12 2006-03-28 04:29:19 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,11 @@
 
 #include "misc.h"
 
-RCSID ("$Id: error.c,v 1.11 2006-03-22 23:17:20 danmc Exp $");
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID ("$Id: error.c,v 1.12 2006-03-28 04:29:19 danmc Exp $");
 
 
 #define utf8_dup_string(a,b) *(a) = strdup(b)

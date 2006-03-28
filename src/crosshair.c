@@ -1,4 +1,4 @@
-/* $Id: crosshair.c,v 1.21 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: crosshair.c,v 1.22 2006-03-28 04:29:19 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -48,7 +48,11 @@
 #include "mymem.h"
 #include "search.h"
 
-RCSID ("$Id: crosshair.c,v 1.21 2006-03-22 23:17:20 danmc Exp $");
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID ("$Id: crosshair.c,v 1.22 2006-03-28 04:29:19 danmc Exp $");
 
 #if !defined(ABS)
 #define ABS(x) (((x)<0)?-(x):(x))

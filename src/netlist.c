@@ -1,4 +1,4 @@
-/* $Id: netlist.c,v 1.16 2006-03-27 04:16:03 djdelorie Exp $ */
+/* $Id: netlist.c,v 1.17 2006-03-28 04:29:20 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -65,7 +65,11 @@
 #define USE_RE
 #endif
 
-RCSID ("$Id: netlist.c,v 1.16 2006-03-27 04:16:03 djdelorie Exp $");
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID ("$Id: netlist.c,v 1.17 2006-03-28 04:29:20 danmc Exp $");
 
 /*
   int    PCB->NetlistLib.MenuN

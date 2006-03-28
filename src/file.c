@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.32 2006-03-27 22:13:44 danmc Exp $ */
+/* $Id: file.c,v 1.33 2006-03-28 04:29:19 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -70,8 +70,11 @@
 #include "set.h"
 #include "strflags.h"
 
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
 
-RCSID ("$Id: file.c,v 1.32 2006-03-27 22:13:44 danmc Exp $");
+RCSID ("$Id: file.c,v 1.33 2006-03-28 04:29:19 danmc Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------

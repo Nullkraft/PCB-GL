@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.24 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: buffer.c,v 1.25 2006-03-28 04:29:19 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -56,7 +56,11 @@
 #include "select.h"
 #include "set.h"
 
-RCSID ("$Id: buffer.c,v 1.24 2006-03-22 23:17:20 danmc Exp $");
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID ("$Id: buffer.c,v 1.25 2006-03-28 04:29:19 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes

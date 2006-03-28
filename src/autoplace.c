@@ -1,4 +1,4 @@
-/* $Id: autoplace.c,v 1.15 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: autoplace.c,v 1.16 2006-03-28 04:29:19 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -62,7 +62,11 @@
 #include "remove.h"
 #include "rotate.h"
 
-RCSID ("$Id: autoplace.c,v 1.15 2006-03-22 23:17:20 danmc Exp $");
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID ("$Id: autoplace.c,v 1.16 2006-03-28 04:29:19 danmc Exp $");
 
 #define EXPANDRECTXY(r1, x1, y1, x2, y2) { \
   r1->X1=MIN(r1->X1, x1); r1->Y1=MIN(r1->Y1, y1); \

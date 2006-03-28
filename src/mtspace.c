@@ -1,4 +1,4 @@
-/* $Id: mtspace.c,v 1.15 2006-03-23 04:27:22 djdelorie Exp $ */
+/* $Id: mtspace.c,v 1.16 2006-03-28 04:29:20 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -49,8 +49,11 @@
 #include "mtspace.h"
 #include "vector.h"
 
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
 
-RCSID ("$Id: mtspace.c,v 1.15 2006-03-23 04:27:22 djdelorie Exp $");
+RCSID ("$Id: mtspace.c,v 1.16 2006-03-28 04:29:20 danmc Exp $");
 
 
 /* define this for more thorough self-checking of data structures */

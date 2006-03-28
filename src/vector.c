@@ -1,4 +1,4 @@
-/* $Id: vector.c,v 1.7 2006-03-22 23:17:21 danmc Exp $ */
+/* $Id: vector.c,v 1.8 2006-03-28 04:29:20 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -47,8 +47,11 @@
 #include "global.h"
 #include "vector.h"
 
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
 
-RCSID ("$Id: vector.c,v 1.7 2006-03-22 23:17:21 danmc Exp $");
+RCSID ("$Id: vector.c,v 1.8 2006-03-28 04:29:20 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
