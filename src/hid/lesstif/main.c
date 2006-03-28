@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.11 2006-03-27 04:16:04 djdelorie Exp $ */
+/* $Id: main.c,v 1.12 2006-03-28 02:57:48 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -43,7 +43,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.11 2006-03-27 04:16:04 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.12 2006-03-28 02:57:48 danmc Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -1428,7 +1428,7 @@ lesstif_parse_arguments (int *argc, char ***argv)
   if (stdin_listen)
     {
       printf ("Listening on stdin for actions!!\n");
-      XtAppAddInput (app_context, fileno (stdin), XtInputReadMask,
+      XtAppAddInput (app_context, fileno (stdin), (XtPointer) XtInputReadMask,
 		     lesstif_listener_cb, NULL);
     }
 }
