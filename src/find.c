@@ -1,4 +1,4 @@
-/* $Id: find.c,v 1.41 2006-03-28 03:42:29 djdelorie Exp $ */
+/* $Id: find.c,v 1.42 2006-03-28 23:25:14 danmc Exp $ */
 
 /*
  *
@@ -95,7 +95,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: find.c,v 1.41 2006-03-28 03:42:29 djdelorie Exp $");
+RCSID ("$Id: find.c,v 1.42 2006-03-28 23:25:14 danmc Exp $");
 
 
 
@@ -2660,7 +2660,10 @@ PrintPadConnections (Cardinal Layer, FILE * FP, Boolean IsFirst)
   if (IsFirst)
     {
       ptr = PADLIST_ENTRY (Layer, 0);
-      PrintConnectionListEntry (UNKNOWN (ptr->Name), NULL, True, FP);
+      if (ptr != NULL )
+	PrintConnectionListEntry (UNKNOWN (ptr->Name), NULL, True, FP);
+      else
+	printf ("Skipping NULL ptr in 1st part of PrintPadConnections\n");
     }
 
   /* we maybe have to start with i=1 if we are handling the
@@ -2669,7 +2672,10 @@ PrintPadConnections (Cardinal Layer, FILE * FP, Boolean IsFirst)
   for (i = IsFirst ? 1 : 0; i < PadList[Layer].Number; i++)
     {
       ptr = PADLIST_ENTRY (Layer, i);
-      PrintConnectionListEntry (EMPTY (ptr->Name), ptr->Element, False, FP);
+      if (ptr != NULL )
+         PrintConnectionListEntry (EMPTY (ptr->Name), ptr->Element, False, FP);
+      else
+	      printf ("Skipping NULL ptr in 2nd part of PrintPadConnections\n");
     }
 }
 
