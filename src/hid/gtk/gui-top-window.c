@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.13 2006-03-27 23:05:10 danmc Exp $ */
+/* $Id: gui-top-window.c,v 1.14 2006-03-28 03:00:26 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,6 @@
 #include "copy.h"
 #include "create.h"
 #include "crosshair.h"
-#include "djopt.h"
 #include "draw.h"
 #include "error.h"
 #include "file.h"
@@ -85,7 +84,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.13 2006-03-27 23:05:10 danmc Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.14 2006-03-28 03:00:26 danmc Exp $");
 
 extern HID ghid_hid;
 
@@ -1052,7 +1051,7 @@ static void
 toggle_only_auto_routed_cb (GtkAction * action, GHidPort * port)
 {
   /* Transient setting, not saved in Settings. Not a PCB flag */
-  djopt_set_auto_only ();
+  hid_action ("OptAutoOnly");
 }
 
 static void
