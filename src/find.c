@@ -1,4 +1,4 @@
-/* $Id: find.c,v 1.40 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: find.c,v 1.41 2006-03-28 03:42:29 djdelorie Exp $ */
 
 /*
  *
@@ -95,7 +95,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: find.c,v 1.40 2006-03-22 23:17:20 danmc Exp $");
+RCSID ("$Id: find.c,v 1.41 2006-03-28 03:42:29 djdelorie Exp $");
 
 
 
@@ -3213,7 +3213,7 @@ LookupConnection (LocationType X, LocationType Y, Boolean AndDraw,
   else
     {
       name = ConnectionName (type, ptr1, ptr2);
-      hid_actionl ("NetlistShow", name, 0);
+      hid_actionl ("NetlistShow", name, NULL);
     }
 
   TheFlag = which_flag;

@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.72 2006-03-27 23:05:10 danmc Exp $ */
+/* $Id: action.c,v 1.73 2006-03-28 03:42:29 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -69,7 +69,7 @@
 #include "undo.h"
 
 
-RCSID ("$Id: action.c,v 1.72 2006-03-27 23:05:10 danmc Exp $");
+RCSID ("$Id: action.c,v 1.73 2006-03-28 03:42:29 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -989,7 +989,7 @@ NotifyMode (void)
 	     */
 	    DrawElement (element, 0);
 	    Draw ();
-	    hid_actionl ("Report", "Object", 0);
+	    hid_actionl ("Report", "Object", NULL);
 	  }
 	else if (type != NO_TYPE)
 	  {
@@ -1003,7 +1003,7 @@ NotifyMode (void)
 		DrawObject (type, ptr1, ptr2, 0);
 		Draw ();
 	      }
-	    hid_actionl ("Report", "Object", 0);
+	    hid_actionl ("Report", "Object", NULL);
 	  }
 	break;
       }

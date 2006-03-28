@@ -1,4 +1,4 @@
-/* $Id: netlist.c,v 1.7 2006-03-27 04:16:04 djdelorie Exp $ */
+/* $Id: netlist.c,v 1.8 2006-03-28 03:42:29 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -37,7 +37,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: netlist.c,v 1.7 2006-03-27 04:16:04 djdelorie Exp $");
+RCSID ("$Id: netlist.c,v 1.8 2006-03-28 03:42:29 djdelorie Exp $");
 
 static Arg args[30];
 static int n;
@@ -75,8 +75,8 @@ static void
 netlist_browse (Widget w, void *v, XmListCallbackStruct * cbs)
 {
   char *name = PCB->NetlistLib.Menu[cbs->item_position - 1].Name + 2;
-  hid_actionl ("unselect", "all", 0);
-  hid_actionl ("netlist", "select", name, 0);
+  hid_actionl ("unselect", "all", NULL);
+  hid_actionl ("netlist", "select", name, NULL);
   pick_net (cbs->item_position - 1);
 }
 
@@ -84,8 +84,8 @@ static void
 netlist_select (Widget w, void *v, XmListCallbackStruct * cbs)
 {
   char *name = PCB->NetlistLib.Menu[cbs->item_position - 1].Name + 2;
-  hid_actionl ("connection", "reset", 0);
-  hid_actionl ("netlist", "find", name, 0);
+  hid_actionl ("connection", "reset", NULL);
+  hid_actionl ("netlist", "find", name, NULL);
 }
 
 static int

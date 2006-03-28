@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.10 2006-03-27 04:16:03 djdelorie Exp $ */
+/* $Id: gtkhid-main.c,v 1.11 2006-03-28 03:42:29 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.10 2006-03-27 04:16:03 djdelorie Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.11 2006-03-28 03:42:29 djdelorie Exp $");
 
 
 extern HID ghid_hid;
@@ -1097,7 +1097,7 @@ Load (int argc, char **argv, int x, int y)
 			if (Settings.verbose)
       	fprintf (stderr, "%s:  Calling LoadFrom(%s, %s)\n", __FUNCTION__,
 	       	function, name);
-      hid_actionl ("LoadFrom", function, name, 0);
+      hid_actionl ("LoadFrom", function, name, NULL);
       g_free (name);
     }
 
@@ -1119,10 +1119,10 @@ LoadVendor (int argc, char **argv, int x, int y)
 
   if (name)
     {
-			if (Settings.verbose)
+      if (Settings.verbose)
       	fprintf (stderr, "%s:  Calling LoadVendorFrom(%s)\n", __FUNCTION__,
 	       	name);
-      hid_actionl ("LoadVendorFrom", name, 0);
+      hid_actionl ("LoadVendorFrom", name, NULL);
       g_free (name);
     }
 
@@ -1143,7 +1143,7 @@ Save (int argc, char **argv, int x, int y)
 
   if (strcasecmp (function, "Layout") == 0)
     if (PCB->Filename)
-      return hid_actionl ("SaveTo", "Layout", PCB->Filename, 0);
+      return hid_actionl ("SaveTo", "Layout", PCB->Filename, NULL);
 
   name = ghid_dialog_file_select_save (_("Save layout as"),
 				       &current_dir,
@@ -1180,9 +1180,9 @@ Save (int argc, char **argv, int x, int y)
    * just obtained.
    */
   if (strcasecmp (function, "Layout") == 0)
-    hid_actionl ("SaveTo", "LayoutAs", name, 0);
+    hid_actionl ("SaveTo", "LayoutAs", name, NULL);
   else
-    hid_actionl ("SaveTo", function, name, 0);
+    hid_actionl ("SaveTo", function, name, NULL);
   g_free (name);
 
   return 0;

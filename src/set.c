@@ -1,4 +1,4 @@
-/* $Id: set.c,v 1.29 2006-03-22 23:17:21 danmc Exp $ */
+/* $Id: set.c,v 1.30 2006-03-28 03:42:29 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include "undo.h"
 
 
-RCSID ("$Id: set.c,v 1.29 2006-03-22 23:17:21 danmc Exp $");
+RCSID ("$Id: set.c,v 1.30 2006-03-28 03:42:29 djdelorie Exp $");
 
 
 
@@ -382,7 +382,7 @@ SetRouteStyle (char *name)
     if (name && NSTRCMP (name, style->Name) == 0)
       {
 	sprintf (num, "%d", n + 1);
-	hid_actionl ("RouteStyle", num, 0);
+	hid_actionl ("RouteStyle", num, NULL);
 	break;
       }
   }

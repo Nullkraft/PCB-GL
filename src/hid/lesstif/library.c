@@ -1,4 +1,4 @@
-/* $Id: library.c,v 1.7 2006-03-27 04:16:04 djdelorie Exp $ */
+/* $Id: library.c,v 1.8 2006-03-28 03:42:29 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -40,7 +40,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: library.c,v 1.7 2006-03-27 04:16:04 djdelorie Exp $");
+RCSID ("$Id: library.c,v 1.8 2006-03-28 03:42:29 djdelorie Exp $");
 
 static Arg args[30];
 static int n;
@@ -93,8 +93,8 @@ libnode_select (Widget w, void *v, XmListCallbackStruct * cbs)
 	SetMode (PASTEBUFFER_MODE);
       return;
     }
-  args = Concat ("'", EMPTY (e->Template), "' '",
-		 EMPTY (e->Value), "' '", EMPTY (e->Package), "'", 0);
+  args = Concat("'", EMPTY (e->Template), "' '",
+		EMPTY (e->Value), "' '", EMPTY (e->Package), "'", NULL);
   if (LoadElementToBuffer (PASTEBUFFER, args, False))
     SetMode (PASTEBUFFER_MODE);
 }

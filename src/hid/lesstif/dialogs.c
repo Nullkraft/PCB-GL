@@ -1,4 +1,4 @@
-/* $Id: dialogs.c,v 1.8 2006-03-27 04:16:04 djdelorie Exp $ */
+/* $Id: dialogs.c,v 1.9 2006-03-28 03:42:29 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -40,7 +40,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: dialogs.c,v 1.8 2006-03-27 04:16:04 djdelorie Exp $");
+RCSID ("$Id: dialogs.c,v 1.9 2006-03-28 03:42:29 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
 
@@ -140,7 +140,7 @@ Load (int argc, char **argv, int x, int y)
 
   XmStringGetLtoR (xmname, XmFONTLIST_DEFAULT_TAG, &name);
 
-  hid_actionl ("LoadFrom", function, name, 0);
+  hid_actionl ("LoadFrom", function, name, NULL);
 
   XtFree (name);
 
@@ -179,7 +179,7 @@ LoadVendor (int argc, char **argv, int x, int y)
 
   XmStringGetLtoR (xmname, XmFONTLIST_DEFAULT_TAG, &name);
 
-  hid_actionl ("LoadVendorFrom", name, 0);
+  hid_actionl ("LoadVendorFrom", name, NULL);
 
   XtFree (name);
 
@@ -200,7 +200,7 @@ Save (int argc, char **argv, int x, int y)
   
   if (strcasecmp (function, "Layout") == 0)
     if (PCB->Filename)
-      return hid_actionl ("SaveTo", "Layout", PCB->Filename, 0);
+      return hid_actionl ("SaveTo", "Layout", PCB->Filename, NULL);
 
   setup_fsb_dialog ();
 
@@ -228,7 +228,7 @@ Save (int argc, char **argv, int x, int y)
   XmStringGetLtoR (xmname, XmFONTLIST_DEFAULT_TAG, &name);
 
   if (strcasecmp (function, "PasteBuffer") == 0)
-    hid_actionl ("PasteBuffer", "Save", name, 0);
+    hid_actionl ("PasteBuffer", "Save", name, NULL);
   else
     {
       /* 
@@ -238,9 +238,9 @@ Save (int argc, char **argv, int x, int y)
        * just obtained.
        */
       if (strcasecmp (function, "Layout") == 0)
-	hid_actionl ("SaveTo", "LayoutAs", name, 0);
+	hid_actionl ("SaveTo", "LayoutAs", name, NULL);
       else
-	hid_actionl ("SaveTo", function, name, 0);
+	hid_actionl ("SaveTo", function, name, NULL);
     }
   XtFree (name);
 

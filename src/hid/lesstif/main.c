@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.12 2006-03-28 02:57:48 danmc Exp $ */
+/* $Id: main.c,v 1.13 2006-03-28 03:42:29 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -43,7 +43,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.12 2006-03-28 02:57:48 danmc Exp $");
+RCSID ("$Id: main.c,v 1.13 2006-03-28 03:42:29 djdelorie Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -750,7 +750,7 @@ work_area_input (Widget w, XtPointer v, XEvent * e, Boolean * ctd)
       switch (e->xbutton.button)
 	{
 	case 1:
-	  hid_actionl ("Mode", "Notify", 0);
+	  hid_actionl ("Mode", "Notify", NULL);
 	  break;
 	case 2:
 	  break;
@@ -775,7 +775,7 @@ work_area_input (Widget w, XtPointer v, XEvent * e, Boolean * ctd)
       switch (e->xbutton.button)
 	{
 	case 1:
-	  hid_actionl ("Mode", "Release", 0);
+	  hid_actionl ("Mode", "Release", NULL);
 	  break;
 	case 2:
 	  break;
