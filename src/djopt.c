@@ -1,4 +1,4 @@
-/* $Id: djopt.c,v 1.30 2006-03-27 04:16:03 djdelorie Exp $ */
+/* $Id: djopt.c,v 1.31 2006-03-28 02:59:52 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -45,7 +45,7 @@
 #include "strflags.h"
 
 
-RCSID ("$Id: djopt.c,v 1.30 2006-03-27 04:16:03 djdelorie Exp $");
+RCSID ("$Id: djopt.c,v 1.31 2006-03-28 02:59:52 danmc Exp $");
 
 #ifndef HAVE_RINT
 #define rint(x)  (ceil((x) - 0.5))
@@ -113,10 +113,11 @@ static char layer_type[MAX_LAYER];
 
 static int autorouted_only = 1;
 
-void
-djopt_set_auto_only (void)
+int
+djopt_set_auto_only (int argc, char **argv, int x, int y)
 {
   autorouted_only = autorouted_only ? 0 : 1;
+  return 0;
 }
 
 static int
@@ -2924,7 +2925,7 @@ HID_Action djopt_action_list[] = {
    "djopt(debumpify|unjaggy|simple|vianudge|viatrim|orthopull)\n"
    "djopt(auto) - all of the above\n" "djopt(miter)"}
   ,
-  {"OptAutoOnly", 0, djopt_set_auto_only}
+  {"OptAutoOnly", 0, djopt_set_auto_only, 0}
 };
 
 REGISTER_ACTIONS (djopt_action_list)
