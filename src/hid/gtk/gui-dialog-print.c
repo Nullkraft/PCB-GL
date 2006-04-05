@@ -1,4 +1,4 @@
-/* $Id: gui-dialog-print.c,v 1.2 2006-03-22 23:05:41 danmc Exp $ */
+/* $Id: gui-dialog-print.c,v 1.3 2006-04-05 04:22:15 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -42,7 +42,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-dialog-print.c,v 1.2 2006-03-22 23:05:41 danmc Exp $");
+RCSID ("$Id: gui-dialog-print.c,v 1.3 2006-04-05 04:22:15 danmc Exp $");
 
 static GtkWidget *export_dialog = NULL;
 
@@ -313,9 +313,9 @@ ghid_dialog_print (HID * printer)
 static void
 exporter_clicked_cb (GtkButton * button, HID * exporter)
 {
-  if (export_dialog != NULL)
-    gtk_widget_destroy (export_dialog);
-  export_dialog = NULL;
+  /* signal the initial export select dialog that it should close */
+  gtk_dialog_response (GTK_DIALOG (export_dialog), GTK_RESPONSE_CANCEL);
+
   ghid_dialog_print (exporter);
 }
 
@@ -372,6 +372,7 @@ ghid_dialog_export (void)
 
   gtk_widget_show_all (export_dialog);
   gtk_dialog_run (GTK_DIALOG (export_dialog));
+
   if (export_dialog != NULL)
     gtk_widget_destroy (export_dialog);
   export_dialog = NULL;
