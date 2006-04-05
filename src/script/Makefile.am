@@ -1,13 +1,14 @@
-## $Id: Makefile.am,v 1.3 2005-08-05 22:31:32 danmc Exp $
+## -*- Makefile -*-
+## $Id: Makefile.am,v 1.4 2006-04-05 03:09:43 danmc Exp $
 ##
 
 ## Note:  We put this script in a different directory from the Pcb
 ## app-defaults file because certain platforms like cygwin don't have 
 ## case sensitive file systems.
 
-bin_SCRIPTS=	pcb pcb-print
+bin_SCRIPTS=	pcb
 
-EXTRA_DIST= pcb.in pcb-print
+EXTRA_DIST= pcb.in
 
 DISTCLEANFILES= pcb
 
