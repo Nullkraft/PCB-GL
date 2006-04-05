@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.45 2006-03-28 04:29:20 danmc Exp $ */
+/* $Id: misc.c,v 1.46 2006-04-05 03:03:37 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -76,7 +76,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: misc.c,v 1.45 2006-03-28 04:29:20 danmc Exp $");
+RCSID ("$Id: misc.c,v 1.46 2006-04-05 03:03:37 haceaton Exp $");
 
 
 
@@ -158,7 +158,8 @@ SetPinBoundingBox (PinTypePtr Pin)
   /* the bounding box covers the extent of influence
    * so it must include the clearance values too
    */
-  width = (Pin->Clearance + 1) / 2 + (Pin->Thickness + 1) / 2;
+  width = (Pin->Clearance + Pin->Thickness + 1 +
+  (Pin->Thickness - Pin->DrillingHole)*PCB->ThermScale)/2;
   width = MAX (width, (Pin->Mask + 1) / 2);
   Pin->BoundingBox.X1 = Pin->X - width;
   Pin->BoundingBox.Y1 = Pin->Y - width;
