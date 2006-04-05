@@ -1,4 +1,4 @@
-/* $Id: mymem.c,v 1.17 2006-03-23 04:56:13 danmc Exp $ */
+/* $Id: mymem.c,v 1.18 2006-04-05 23:03:09 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -49,7 +49,7 @@ B *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: mymem.c,v 1.17 2006-03-23 04:56:13 danmc Exp $");
+RCSID ("$Id: mymem.c,v 1.18 2006-04-05 23:03:09 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * local prototypes
@@ -628,7 +628,28 @@ MyCalloc (size_t Number, size_t Size, const char *Text)
     Number = 1;
   if (Size == 0)
     Size = 1;
+
   if ((p = calloc (Number, Size)) == NULL)
+    MyFatal ("out of memory during malloc() in '%s'()\n",
+	     (Text ? Text : "(unknown)"));
+#ifdef MEM_DEBUG
+  fprintf (stderr, "returned 0x%x\n", p);
+#endif
+  return (p);
+}
+
+void *
+MyMalloc (size_t Size, const char *Text)
+{
+  void *p;
+
+#ifdef MEM_DEBUG
+  fprintf (stderr, "MyMalloc %d by %d from %s ", Number, Size, Text);
+#endif
+  /* avoid malloc of 0 bytes */
+  if (Size == 0)
+    Size = 1;
+  if ((p = malloc (Size)) == NULL)
     MyFatal ("out of memory during malloc() in '%s'()\n",
 	     (Text ? Text : "(unknown)"));
 #ifdef MEM_DEBUG
