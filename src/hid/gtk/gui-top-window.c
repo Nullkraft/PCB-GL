@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.15 2006-03-28 03:42:29 djdelorie Exp $ */
+/* $Id: gui-top-window.c,v 1.16 2006-04-05 21:32:16 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -84,7 +84,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.15 2006-03-28 03:42:29 djdelorie Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.16 2006-04-05 21:32:16 danmc Exp $");
 
 extern HID ghid_hid;
 
@@ -3088,6 +3088,12 @@ mode_button_toggled_cb (GtkWidget * widget, ModeButton * mb)
   if (active)
     SetMode (mb->mode);
   ghid_mode_cursor (mb->mode);
+  
+  if (ghidgui->settings_mode != mb->mode)
+    {
+      ghid_mode_buttons_update ();
+    }
+  ghidgui->settings_mode = mb->mode;
 }
 
 void
