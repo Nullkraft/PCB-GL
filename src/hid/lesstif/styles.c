@@ -1,4 +1,4 @@
-/* $Id: styles.c,v 1.8 2006-03-28 23:25:53 danmc Exp $ */
+/* $Id: styles.c,v 1.9 2006-04-05 02:36:02 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -39,7 +39,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: styles.c,v 1.8 2006-03-28 23:25:53 danmc Exp $");
+RCSID ("$Id: styles.c,v 1.9 2006-04-05 02:36:02 danmc Exp $");
 
 /* There are three places where styles are kept:
 
@@ -212,7 +212,7 @@ units_cb ()
 }
 
 static Widget
-style_value (i)
+style_value (int i)
 {
   Widget w, l;
   n = 0;
