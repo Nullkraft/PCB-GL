@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.11 2006-03-28 03:42:29 djdelorie Exp $ */
+/* $Id: gtkhid-main.c,v 1.12 2006-04-05 03:21:19 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.11 2006-03-28 03:42:29 djdelorie Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.12 2006-04-05 03:21:19 djdelorie Exp $");
 
 
 extern HID ghid_hid;
@@ -41,6 +41,18 @@ extern HID ghid_hid;
 static int cur_mask = -1;
 static int mask_seq = 0;
 
+
+static const char zoom_syntax[] =
+"Zoom(gtk)";
+
+static const char zoom_help[] =
+"this is the gtk zoom";
+
+/* %start-doc actions Zoom
+
+This is for the gtk zoom.
+
+%end-doc */
 
 /* FIXME */
 static int
@@ -1318,7 +1330,8 @@ HID_Action ghid_main_action_list[] = {
   {"Print", 0, Print},
   {"Save", 0, Save},
   {"SwapSides", 0, SwapSides},
-  {"Zoom", "Click on zoom focus", Zoom},
+  {"Zoom", "Click on zoom focus", Zoom,
+   zoom_help, zoom_syntax},
   {"Command", 0, Command},
   {"Benchmark", 0, Benchmark},
 };

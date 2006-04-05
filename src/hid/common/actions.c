@@ -1,4 +1,4 @@
-/* $Id: actions.c,v 1.5 2006-03-27 04:16:03 djdelorie Exp $ */
+/* $Id: actions.c,v 1.6 2006-04-05 03:21:19 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -19,7 +19,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: actions.c,v 1.5 2006-03-27 04:16:03 djdelorie Exp $");
+RCSID ("$Id: actions.c,v 1.6 2006-04-05 03:21:19 djdelorie Exp $");
 
 typedef struct HID_ActionNode
 {
@@ -130,6 +130,46 @@ print_actions ()
 	      bb = eb + 1;
 	    }
 	}
+    }
+}
+
+static void
+dump_string (char prefix, const char *str)
+{
+  int eol = 1;
+  while (*str)
+    {
+      if (eol)
+	{
+	  putchar (prefix);
+	  eol = 0;
+	}
+      putchar (*str);
+      if (*str == '\n')
+	eol = 1;
+      str ++;
+    }
+  if (!eol)
+    putchar ('\n');
+}
+
+void
+dump_actions ()
+{
+  int i;
+  /* Forces them to be sorted in all_actions */
+  hid_find_action (hid_action_nodes->actions[0].name);
+  for (i = 0; i < n_actions; i++)
+    {
+      const char *desc = all_actions[i].description;
+      const char *synt = all_actions[i].syntax;
+
+      desc = desc ? desc : "";
+      synt = synt ? synt : "";
+
+      printf ("A%s\n", all_actions[i].name);
+      dump_string ('D', desc);
+      dump_string ('S', synt);
     }
 }
 

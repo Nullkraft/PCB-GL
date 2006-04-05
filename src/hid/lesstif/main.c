@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.14 2006-03-28 23:25:53 danmc Exp $ */
+/* $Id: main.c,v 1.15 2006-04-05 03:21:20 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -43,7 +43,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.14 2006-03-28 23:25:53 danmc Exp $");
+RCSID ("$Id: main.c,v 1.15 2006-04-05 03:21:20 djdelorie Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -316,6 +316,18 @@ SetUnits (int argc, char **argv, int x, int y)
   return 0;
 }
 
+static const char zoom_syntax[] =
+"Zoom(lesstif)";
+
+static const char zoom_help[] =
+"this is the lesstif zoom";
+
+/* %start-doc actions Zoom
+
+This is for the lesstif zoom.
+
+%end-doc */
+
 static int
 ZoomAction (int argc, char **argv, int x, int y)
 {
@@ -562,7 +574,8 @@ Benchmark (int argc, char **argv, int x, int y)
 HID_Action lesstif_main_action_list[] = {
   {"PCBChanged", 0, PCBChanged},
   {"SetUnits", 0, SetUnits},
-  {"Zoom", 0, ZoomAction},
+  {"Zoom", 0, ZoomAction,
+   zoom_help, zoom_syntax},
   {"Thindraw", 0, ThinDraw},
   {"ThindrawPoly", 0, ThinDrawPoly},
   {"SwapSides", 0, SwapSides},
