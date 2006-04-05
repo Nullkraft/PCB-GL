@@ -23,7 +23,7 @@
 ##  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 ##  Thomas.Nau@rz.uni-ulm.de
 ##
-##  RCS: $Id: Makefile.am,v 1.19 2006-03-25 00:54:57 danmc Exp $
+##  RCS: $Id: Makefile.am,v 1.20 2006-04-05 03:17:03 djdelorie Exp $
 ##
 
 info_TEXINFOS=	pcb.texi
@@ -77,6 +77,7 @@ MAINTAINERCLEANFILES= \
 BUILT_SOURCES=	@MAINTAINER_MODE_TRUE@ ${tab_texi} ${pcb_output} ${inline_texi}
 
 inline_texi=	\
+	actions.texi \
 	pcbfile.texi
 
 ASCII2TEXI=	${AWK} -f $(srcdir)/ascii2texi.awk ncol=3
@@ -111,13 +112,13 @@ extracted-docs :
 SUFFIXES = .dvi .eps .gif .pcb .pdf .png .ps .tab .tex
 
 .pcb.eps :
-	../src/pcb-bin -x eps --font-path $(top_srcdir)/src --eps-file $@ $<
+	../src/pcb-bin -x eps --only-visible --font-path $(top_srcdir)/src --eps-file $@ $<
 
 .pcb.gif :
-	../src/pcb-bin -x png --format GIF  --font-path $(top_srcdir)/src --outfile $@ $<
+	../src/pcb-bin -x png --only-visible --format GIF --font-path $(top_srcdir)/src --outfile $@ $<
 
 .pcb.png :
-	../src/pcb-bin -x png  --font-path $(top_srcdir)/src --outfile $@ $<
+	../src/pcb-bin -x png --only-visible --font-path $(top_srcdir)/src --outfile $@ $<
 
 .eps.pdf :
 if MISSING_PS2PDF
@@ -126,7 +127,7 @@ if MISSING_PS2PDF
 	@echo "$@ is out of date and needs to rebuilt."
 	@echo "Changes to $< will be ignored"
 else
-	${PS2PDF} $< $@
+	${PS2PDF} -r72 `sed -n '/BoundingBox:/ s/.* \([0-9][0-9]*\) \([0-9][0-9]*\)/-g\1x\2/ p' $<` $< $@
 endif
 
 .tab.texi:
