@@ -1,4 +1,4 @@
-/* $Id: find.c,v 1.43 2006-04-05 03:05:28 haceaton Exp $ */
+/* $Id: find.c,v 1.44 2006-04-06 02:34:50 danmc Exp $ */
 
 /*
  *
@@ -95,7 +95,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: find.c,v 1.43 2006-04-05 03:05:28 haceaton Exp $");
+RCSID ("$Id: find.c,v 1.44 2006-04-06 02:34:50 danmc Exp $");
 
 
 
@@ -500,12 +500,12 @@ InitComponentLookup (void)
       PadList[i].Data =
 	(void **) MyCalloc (NumberOfPads[i], sizeof (PadTypePtr),
 			    "InitComponentLookup()");
-    }
 
-  /* clear some struct members */
-  PadList[i].Location = 0;
-  PadList[i].DrawLocation = 0;
-  PadList[i].Number = 0;
+      /* clear some struct members */
+      PadList[i].Location = 0;
+      PadList[i].DrawLocation = 0;
+      PadList[i].Number = 0;
+    }
 }
 
 /* ---------------------------------------------------------------------------
