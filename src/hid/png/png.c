@@ -1,4 +1,4 @@
-/* $Id: png.c,v 1.7 2006-04-05 02:38:12 danmc Exp $ */
+/* $Id: png.c,v 1.8 2006-04-06 00:58:48 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -51,7 +51,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: png.c,v 1.7 2006-04-05 02:38:12 danmc Exp $");
+RCSID ("$Id: png.c,v 1.8 2006-04-06 00:58:48 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PNG function %s.\n", __FUNCTION__); abort()
 
@@ -165,7 +165,7 @@ png_get_export_options (int *n)
 {
   static char *last_made_filename = 0;
   char *buf = 0;
-  char *fmt;
+  const char *fmt;
 
   if (PCB && PCB->Filename
       && png_attribute_list[HA_pngfile].default_val.str_value ==
@@ -305,7 +305,7 @@ png_do_export (HID_Attr_Val * options)
   BoxType *bbox;
   int w, h;
   int xmax, ymax, dpi;
-  char *fmt;
+  const char *fmt;
 
   if (!options)
     {
