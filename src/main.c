@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.50 2006-04-05 03:21:18 djdelorie Exp $ */
+/* $Id: main.c,v 1.51 2006-04-06 02:33:55 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -59,7 +59,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.50 2006-04-05 03:21:18 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.51 2006-04-06 02:33:55 danmc Exp $");
 
 
 
@@ -717,6 +717,7 @@ main (int argc, char *argv[])
 
   if (do_dump_actions)
     {
+      extern void dump_actions (void);
       dump_actions ();
       exit (0);
     }
