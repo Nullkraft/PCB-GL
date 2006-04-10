@@ -1,4 +1,4 @@
-/* $Id: find.c,v 1.44 2006-04-06 02:34:50 danmc Exp $ */
+/* $Id: find.c,v 1.45 2006-04-10 22:32:06 haceaton Exp $ */
 
 /*
  *
@@ -95,7 +95,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: find.c,v 1.44 2006-04-06 02:34:50 danmc Exp $");
+RCSID ("$Id: find.c,v 1.45 2006-04-10 22:32:06 haceaton Exp $");
 
 
 
@@ -644,7 +644,6 @@ LOCtoPVrat_callback (const BoxType * b, void *cl)
 static Boolean
 LookupLOConnectionsToPVList (Boolean AndRats)
 {
-  PinType pv;
   Cardinal layer;
   struct pv_info info;
 
@@ -684,7 +683,7 @@ LookupLOConnectionsToPVList (Boolean AndRats)
 	  /* check all polygons */
 	  for (i = 0; i < PCB->Data->Layer[layer].PolygonN; i++, polygon++)
 	    {
-	      float wide = 0.5 * pv.Thickness + fBloat;
+	      float wide = 0.5 * info.pv.Thickness + fBloat;
 	      wide = MAX (wide, 0);
 	      if (((TEST_THERM (layer, &info.pv)
 		    && TEST_PIP (layer, &info.pv))
@@ -696,7 +695,7 @@ LookupLOConnectionsToPVList (Boolean AndRats)
 					   polygon)
 		      && ADD_POLYGON_TO_LIST (layer, polygon))
 		    return True;
-		  if (TEST_FLAG (SQUAREFLAG, &pv))
+		  if (TEST_FLAG (SQUAREFLAG, &info.pv))
 		    {
 		      LocationType x1 =
 			info.pv.X - (info.pv.Thickness + 1) / 2;
