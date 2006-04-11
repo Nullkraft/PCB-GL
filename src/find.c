@@ -1,4 +1,4 @@
-/* $Id: find.c,v 1.47 2006-04-11 01:48:48 haceaton Exp $ */
+/* $Id: find.c,v 1.48 2006-04-11 02:01:43 haceaton Exp $ */
 
 /*
  *
@@ -95,9 +95,9 @@
 #include <dmalloc.h>
 #endif
 
-#define DEBUG 1
+#undef DEBUG
 
-RCSID ("$Id: find.c,v 1.47 2006-04-11 01:48:48 haceaton Exp $");
+RCSID ("$Id: find.c,v 1.48 2006-04-11 02:01:43 haceaton Exp $");
 
 
 
