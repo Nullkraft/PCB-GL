@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.77 2006-04-11 16:59:28 danmc Exp $ */
+/* $Id: action.c,v 1.78 2006-04-11 22:12:39 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -72,7 +72,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.77 2006-04-11 16:59:28 danmc Exp $");
+RCSID ("$Id: action.c,v 1.78 2006-04-11 22:12:39 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -1565,7 +1565,7 @@ WarpPointer (Boolean ignore)
 /* --------------------------------------------------------------------------- */
 
 static const char atomic_syntax[] =
-" Atomic(Save|Restore|Close|Block)";
+"Atomic(Save|Restore|Close|Block)";
 
 static const char atomic_help[] =
 "Save or restore the undo serial number.";
