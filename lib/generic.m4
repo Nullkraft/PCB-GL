@@ -23,7 +23,7 @@ divert(-1)
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: generic.m4,v 1.1 2003-02-20 00:23:29 danmc Exp $
+#   RCS: $Id: generic.m4,v 1.2 2006-04-11 21:52:59 danmc Exp $
 #
 define(`Description_generic8_dil', ``generic'')
 define(`Param1_generic8_dil', 8)
@@ -458,5 +458,12 @@ define(`Param2_smd_diode_805', 50)
 define(`Description_smd_diode_1206', ``chip_diode'')
 define(`Param1_smd_diode_1206', 120)
 define(`Param2_smd_diode_1206', 60)
+
+define(`Description_sot_23', ``SOT-23 package'')
+define(`Description_sot_323', ``SOT-323 package'')
+define(`Description_sot_nec19', ``NEC SOT-NE19 package'')
+
+define(`Description_crystal_300', `crystal 300mil')  
+define(`Param1_crystal_300', 300)
 
 divert(0)

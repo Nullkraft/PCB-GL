@@ -23,9 +23,9 @@ divert(-1)
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: crystal.m4,v 1.1 2003-02-20 00:23:26 danmc Exp $
+#   RCS: $Id: crystal.m4,v 1.2 2006-04-11 21:52:59 danmc Exp $
 #
-define(`Description_crystal_300', ``crystal 300mil'')
+define(`Description_crystal_300', `crystal 300mil')
 define(`Param1_crystal_300', 300)
 
 divert(0)

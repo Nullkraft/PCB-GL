@@ -23,7 +23,7 @@ divert(-1)
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 #
-#   RCS: $Id: texas_inst_voltage_reg.m4,v 1.2 2003-08-06 12:10:40 danmc Exp $
+#   RCS: $Id: texas_inst_voltage_reg.m4,v 1.3 2006-04-11 21:52:59 danmc Exp $
 #
 #
 define(`Description_uA7905C',`-5V 1.5A voltage regulator')
@@ -37,6 +37,9 @@ define(`PinList_uA7906C',``Com',`In',`Out',`In'')
 
 define(`Description_uA7908C',`-8V 1.5A voltage regulator')
 define(`PinList_uA7908C',``Com',`In',`Out',`In'')
+
+define(`Description_uA7910C',`-10V 1.5A voltage regulator')
+define(`PinList_uA7910C',``Com',`In',`Out',`In'')
 
 define(`Description_uA7912C',`-12V 1.5A voltage regulator')
 define(`PinList_uA7912C',``Com',`In',`Out',`In'')

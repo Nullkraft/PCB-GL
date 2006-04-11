@@ -23,7 +23,7 @@ divert(-1)
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: transistor.m4,v 1.1 2003-02-20 00:23:35 danmc Exp $
+#   RCS: $Id: transistor.m4,v 1.2 2006-04-11 21:52:59 danmc Exp $
 #
 # most data by Volker Bosch (bosch@iema.e-technik.uni-stuttgart.de
 #
@@ -44,6 +44,9 @@ define(`PinList_BC160', ``E',`B',`C'')
 
 define(`Description_BC237', `bipolar-N transistor')
 define(`PinList_BC237', ``E',`B',`C'')
+
+define(`Description_BC307', `PNP general purpose transistor')
+define(`PinList_BC307', ``E',`B',`C'')
 
 define(`Description_BC327', `bipolar-P transistor')
 define(`PinList_BC327', ``E',`B',`C'')
