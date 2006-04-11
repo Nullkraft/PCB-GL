@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.41 2006-04-05 02:37:25 danmc Exp $
+dnl $Id: configure.ac,v 1.42 2006-04-11 16:54:26 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -71,6 +71,13 @@ $v
 ])
 			;;
 	esac
+
+	AC_PATH_PROG(PERL, perl, notfound)
+	if test "X$PERL" = "Xnotfound"; then
+			AC_MSG_ERROR([You have requested a maintainer-mode build and a build
+of the documentation.  For this to work, you must have perl installed.
+])
+	fi
 fi
 
 # ------------- HID config -------------------
