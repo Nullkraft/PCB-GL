@@ -1,4 +1,4 @@
-/* $Id: report.c,v 1.29 2006-03-28 04:29:20 danmc Exp $ */
+/* $Id: report.c,v 1.30 2006-04-11 20:54:35 djdelorie Exp $ */
 
 #include "rtree.h"
 /*
@@ -48,7 +48,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: report.c,v 1.29 2006-03-28 04:29:20 danmc Exp $");
+RCSID ("$Id: report.c,v 1.30 2006-04-11 20:54:35 djdelorie Exp $");
 
 
 
@@ -84,7 +84,7 @@ ReportDrills (int argc, char **argv, int x, int y)
   for (n = 0; n < AllDrills->DrillN; n++)
     {
       sprintf (thestring,
-	       "\t%d\t\t\t%d\t\t%d\t\t%d\t\t\t%d\n",
+	       "\t%d\t\t\t%d\t\t%d\t\t%d\t\t%d\n",
 	       AllDrills->Drill[n].DrillSize / 100,
 	       AllDrills->Drill[n].PinCount, AllDrills->Drill[n].ViaCount,
 	       AllDrills->Drill[n].ElementN,

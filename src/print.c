@@ -1,4 +1,4 @@
-/* $Id: print.c,v 1.43 2006-03-28 04:29:20 danmc Exp $ */
+/* $Id: print.c,v 1.44 2006-04-11 20:54:35 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -67,7 +67,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: print.c,v 1.43 2006-03-28 04:29:20 danmc Exp $");
+RCSID ("$Id: print.c,v 1.44 2006-04-11 20:54:35 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * prints a FAB drawing.
@@ -232,7 +232,8 @@ PrintFab (void)
 	{
 	  drill_sym (plated_sym, 100 * TEXT_SIZE, yoff + 100 * TEXT_SIZE / 4);
 	  text_at (135000, yoff, 200, "YES");
-	  text_at (98000, yoff, 200, "%d", drill->PinCount + drill->ViaCount);
+	  text_at (98000, yoff, 200, "%d",
+		   drill->PinCount + drill->ViaCount - drill->UnplatedCount);
 
 	  if (unplated_sym != -1)
 	    yoff -= TEXT_LINE;
