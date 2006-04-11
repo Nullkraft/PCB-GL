@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.40 2006-03-22 23:17:20 danmc Exp $
+ *  RCS: $Id: global.h,v 1.41 2006-04-11 23:24:08 danmc Exp $
  */
 
 /* definition of types
@@ -382,12 +382,9 @@ typedef struct
 
 typedef struct
 {
-  Cardinal MenuN, MenuMax;
-  LibraryMenuTypePtr Menu;
-/*Window Wind;*/
-#if 0
-  GtkWidget *Wind;		/* wrong */
-#endif
+  Cardinal MenuN;               /* number of objects */
+  Cardinal MenuMax;             /* number of reserved memory locations */
+  LibraryMenuTypePtr Menu;      /* the entries */
 } LibraryType, *LibraryTypePtr;
 
 
