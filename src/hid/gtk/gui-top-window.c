@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.18 2006-04-06 00:54:46 billw2 Exp $ */
+/* $Id: gui-top-window.c,v 1.19 2006-04-11 16:55:09 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -84,7 +84,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.18 2006-04-06 00:54:46 billw2 Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.19 2006-04-11 16:55:09 danmc Exp $");
 
 extern HID ghid_hid;
 
@@ -917,25 +917,25 @@ mirror_buffer_left_right_cb (GtkAction * action, GHidPort * port)
 static void
 clear_buffer_cb (GtkAction * action, GHidPort * port)
 {
-  hid_actionl ("PasteBuffer", "Clear", "", NULL);
+  hid_actionl ("PasteBuffer", "Clear", NULL);
 }
 
 static void
 convert_buffer_to_element_cb (GtkAction * action, GHidPort * port)
 {
-  hid_actionl ("PasteBuffer", "Convert", "", NULL);
+  hid_actionl ("PasteBuffer", "Convert", NULL);
 }
 
 static void
 break_buffer_elements_cb (GtkAction * action, GHidPort * port)
 {
-  hid_actionl ("PasteBuffer", "Restore", "", NULL);
+  hid_actionl ("PasteBuffer", "Restore", NULL);
 }
 
 static void
 save_buffer_elements_cb (GtkAction * action, GHidPort * port)
 {
-  hid_actionl ("PasteBuffer", "Save", "", NULL);
+  hid_actionl ("PasteBuffer", "Save", NULL);
 }
 
 static void
