@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.13 2006-04-11 16:58:24 danmc Exp $ */
+/* $Id: gtkhid-main.c,v 1.14 2006-04-12 22:55:15 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.13 2006-04-11 16:58:24 danmc Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.14 2006-04-12 22:55:15 danmc Exp $");
 
 
 extern HID ghid_hid;
@@ -1314,7 +1314,30 @@ Benchmark (int argc, char **argv, int x, int y)
   return 0;
 }
 
+/* ------------------------------------------------------------ */
+static const char about_syntax[] =
+"About()";
+
+static const char about_help[] =
+"Tell the user about this version of PCB.";
+
+/* %start-doc actions About
+
+This just pops up a dialog telling the user which version of
+@code{pcb} they're running.
+
+%end-doc */
+
+
+static int
+About (int argc, char **argv, int x, int y)
+{
+  ghid_dialog_about ();
+}
+
 HID_Action ghid_main_action_list[] = {
+  {"About", 0, About,
+   about_help, about_syntax},
   {"Export", 0, Export},
   {"Load", 0, Load},
   {"LoadVendor", 0, LoadVendor},
