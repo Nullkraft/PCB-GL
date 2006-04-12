@@ -23,7 +23,7 @@
 ##  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 ##  Thomas.Nau@rz.uni-ulm.de
 ##
-##  RCS: $Id: Makefile.am,v 1.21 2006-04-11 16:54:27 danmc Exp $
+##  RCS: $Id: Makefile.am,v 1.22 2006-04-12 12:23:39 danmc Exp $
 ##
 
 info_TEXINFOS=	pcb.texi
@@ -92,7 +92,8 @@ tab_texi=	${tab_files:.tab=.texi}
 
 # PCB Drawings
 pcb_files=	\
-	pad.pcb
+	pad.pcb \
+	thermal.pcb
 
 pcb_output=	\
 	${pcb_files:.pcb=.eps} \
