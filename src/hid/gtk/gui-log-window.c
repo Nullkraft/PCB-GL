@@ -1,4 +1,4 @@
-/* $Id: gui-log-window.c,v 1.2 2006-03-22 23:05:41 danmc Exp $ */
+/* $Id: gui-log-window.c,v 1.3 2006-04-12 22:55:25 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -39,7 +39,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-log-window.c,v 1.2 2006-03-22 23:05:41 danmc Exp $");
+RCSID ("$Id: gui-log-window.c,v 1.3 2006-04-12 22:55:25 danmc Exp $");
 
 static GtkWidget *log_window, *log_text;
 
@@ -129,7 +129,7 @@ ghid_log_append_string (gchar * s)
 }
 
 void
-ghid_log (char *fmt, ...)
+ghid_log (const char *fmt, ...)
 {
   va_list ap;
   va_start (ap, fmt);
@@ -141,7 +141,7 @@ static char *msg_buffer = 0;
 static int msg_buffer_size = 0;
 
 void
-ghid_logv (char *fmt, va_list args)
+ghid_logv (const char *fmt, va_list args)
 {
   int i;
 

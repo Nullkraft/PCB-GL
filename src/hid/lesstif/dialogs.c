@@ -1,4 +1,4 @@
-/* $Id: dialogs.c,v 1.12 2006-04-05 21:30:27 danmc Exp $ */
+/* $Id: dialogs.c,v 1.13 2006-04-12 22:55:25 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -40,7 +40,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: dialogs.c,v 1.12 2006-04-05 21:30:27 danmc Exp $");
+RCSID ("$Id: dialogs.c,v 1.13 2006-04-12 22:55:25 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
 
@@ -264,7 +264,7 @@ log_clear (Widget w, void *up, void *cbp)
 }
 
 void
-lesstif_logv (char *fmt, va_list ap)
+lesstif_logv (const char *fmt, va_list ap)
 {
   int i;
   char *bp;
@@ -337,7 +337,7 @@ lesstif_logv (char *fmt, va_list ap)
 }
 
 void
-lesstif_log (char *fmt, ...)
+lesstif_log (const char *fmt, ...)
 {
   va_list ap;
   va_start (ap, fmt);

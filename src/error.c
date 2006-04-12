@@ -1,4 +1,4 @@
-/* $Id: error.c,v 1.12 2006-03-28 04:29:19 danmc Exp $ */
+/* $Id: error.c,v 1.13 2006-04-12 22:55:24 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: error.c,v 1.12 2006-03-28 04:29:19 danmc Exp $");
+RCSID ("$Id: error.c,v 1.13 2006-04-12 22:55:24 danmc Exp $");
 
 
 #define utf8_dup_string(a,b) *(a) = strdup(b)
@@ -87,7 +87,7 @@ extern char *sys_errlist[];	/* array of error messages */
  * output of message in a dialog window or log window
  */
 void
-Message (char *Format, ...)
+Message (const char *Format, ...)
 {
   va_list args;
   va_start (args, Format);
