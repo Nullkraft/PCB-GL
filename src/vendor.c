@@ -1,4 +1,4 @@
-/* $Id: vendor.c,v 1.17 2006-04-05 03:21:18 djdelorie Exp $ */
+/* $Id: vendor.c,v 1.18 2006-04-12 22:51:02 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -64,7 +64,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: vendor.c,v 1.17 2006-04-05 03:21:18 djdelorie Exp $");
+RCSID ("$Id: vendor.c,v 1.18 2006-04-12 22:51:02 danmc Exp $");
 
 static void add_to_drills (char *);
 static void apply_vendor_map (void);
@@ -260,7 +260,8 @@ static const char load_vendor_help[] =
 
 @table @var
 @item filename
-Name of the vendor resource file
+Name of the vendor resource file.  If not specified, the user will
+be prompted to enter one.
 @end table
 
 %end-doc */
@@ -278,8 +279,9 @@ ActionLoadVendorFrom (int argc, char **argv, int x, int y)
 
   if (!fname || !*fname)
     {
-      Message ("Usage:  LoadVendor([filename])\n");
-      return 1;
+      fname = gui->prompt_for (_("Enter vendor resource file name:"), "");
+      if (fname == NULL)
+	AFAIL (load_vendor);
     }
 
   /* Unload any vendor table we may have had */
