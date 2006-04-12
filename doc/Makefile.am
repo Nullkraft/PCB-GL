@@ -23,7 +23,7 @@
 ##  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 ##  Thomas.Nau@rz.uni-ulm.de
 ##
-##  RCS: $Id: Makefile.am,v 1.22 2006-04-12 12:23:39 danmc Exp $
+##  RCS: $Id: Makefile.am,v 1.23 2006-04-12 12:44:14 danmc Exp $
 ##
 
 info_TEXINFOS=	pcb.texi
@@ -128,7 +128,7 @@ if MISSING_PS2PDF
 	@echo "$@ is out of date and needs to rebuilt."
 	@echo "Changes to $< will be ignored"
 else
-	${PS2PDF} -r72 `sed -n '/BoundingBox:/ s/.* \([0-9][0-9]*\) \([0-9][0-9]*\)/-g\1x\2/ p' $<` $< $@
+	${PS2PDF} `${AWK} 'BEGIN{s=8}; /BoundingBox/ {printf("-r%d -g%dx%d", s*72, s*$$4, s*$$5);}' $<` $< $@
 endif
 
 .tab.texi:
