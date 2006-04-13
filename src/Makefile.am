@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.23 2006-04-13 13:15:11 danmc Exp $
+## $Id: Makefile.am,v 1.24 2006-04-13 13:54:32 danmc Exp $
 ##
 
 SUBDIRS=	icons script
@@ -224,7 +224,8 @@ pcb_icon.o : pcb_icon.ico $(srcdir)/hid/gtk/pcb.rc
 pcb_icon.ico: $(top_srcdir)/win32/pcb_icon.ico
 	cp $(top_srcdir)/win32/pcb_icon.ico $@
 
-pcb_bin_LDADD+=	pcb_icon.o
+pcb_bin_LDADD+=			pcb_icon.o
+pcb_bin_DEPENDENCIES+=	pcb_icon.o
 
 endif
 
