@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.19 2006-04-11 16:55:09 danmc Exp $ */
+/* $Id: gui-top-window.c,v 1.20 2006-04-13 23:47:56 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -84,7 +84,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.19 2006-04-11 16:55:09 danmc Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.20 2006-04-13 23:47:56 danmc Exp $");
 
 extern HID ghid_hid;
 
@@ -3584,6 +3584,24 @@ ghid_parse_arguments (int *argc, char ***argv)
 {
   GtkWidget *window;
   gint i;
+
+  /* on windows we need to figure out the installation directory */
+#ifdef WIN32
+  char * tmps;
+  char * libdir;
+  tmps = g_win32_get_package_installation_directory(PACKAGE "-" VERSION, NULL);
+#define REST_OF_PATH G_DIR_SEPARATOR_S "share" G_DIR_SEPARATOR_S PACKAGE  G_DIR_SEPARATOR_S "newlib"
+  libdir = (char *) malloc(strlen(tmps) +
+                          strlen(REST_OF_PATH) +
+                          1);
+  sprintf(libdir, "%s%s", tmps, REST_OF_PATH);
+  free(tmps);
+  
+  Settings.LibraryTree = libdir;
+
+#undef REST_OF_PATH
+
+#endif 
 
 #if defined (DEBUG)
   for (i = 0; i < *argc; i++)
