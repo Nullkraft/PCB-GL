@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.22 2006-04-13 03:45:12 danmc Exp $
+## $Id: Makefile.am,v 1.23 2006-04-13 13:15:11 danmc Exp $
 ##
 
 SUBDIRS=	icons script
@@ -162,6 +162,7 @@ EXTRA_DIST= \
 	$(srcdir)/hid/gtk/gui-icons-misc.data \
 	$(srcdir)/hid/gtk/gui-icons-mode-buttons.data \
 	$(srcdir)/hid/gtk/hid.conf \
+	$(srcdir)/hid/gtk/pcb.rc \
 	$(srcdir)/hid/lesstif/hid.conf \
 	$(srcdir)/hid/lpr/hid.conf \
 	$(srcdir)/hid/png/hid.conf \
