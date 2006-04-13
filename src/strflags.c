@@ -1,4 +1,4 @@
-/* $Id: strflags.c,v 1.10 2006-03-28 04:29:20 danmc Exp $ */
+/* $Id: strflags.c,v 1.11 2006-04-13 23:46:35 danmc Exp $ */
 /*
  *                            COPYRIGHT
  *
@@ -46,6 +46,7 @@
 
 #include "globalconst.h"
 #include "global.h"
+#include "compat.h"
 #include "const.h"
 #include "strflags.h"
 
@@ -53,7 +54,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: strflags.c,v 1.10 2006-03-28 04:29:20 danmc Exp $");
+RCSID ("$Id: strflags.c,v 1.11 2006-04-13 23:46:35 danmc Exp $");
 
 /* Because all the macros expect it, that's why.  */
 typedef struct

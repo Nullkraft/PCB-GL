@@ -1,4 +1,4 @@
-/* $Id: autoplace.c,v 1.16 2006-03-28 04:29:19 danmc Exp $ */
+/* $Id: autoplace.c,v 1.17 2006-04-13 23:45:39 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -48,6 +48,7 @@
 
 #include "autoplace.h"
 #include "box.h"
+#include "compat.h"
 #include "data.h"
 #include "draw.h"
 #include "error.h"
@@ -66,7 +67,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: autoplace.c,v 1.16 2006-03-28 04:29:19 danmc Exp $");
+RCSID ("$Id: autoplace.c,v 1.17 2006-04-13 23:45:39 danmc Exp $");
 
 #define EXPANDRECTXY(r1, x1, y1, x2, y2) { \
   r1->X1=MIN(r1->X1, x1); r1->Y1=MIN(r1->Y1, y1); \
