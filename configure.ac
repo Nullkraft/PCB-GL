@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.44 2006-04-13 12:55:37 danmc Exp $
+dnl $Id: configure.ac,v 1.45 2006-04-13 13:01:39 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -216,7 +216,7 @@ AC_CHECK_FUNCS(strerror)
 AC_CHECK_FUNCS(regcomp re_comp)
 AC_CHECK_FUNCS(logf expf rint)
 AC_CHECK_FUNCS(vsnprintf)
-AC_CHECK_FUNCS(getpwuid gethostname)
+AC_CHECK_FUNCS(getpwuid gethostname getcwd)
 AC_CHECK_FUNCS(random)
 AC_HEADER_STDC
 AC_CHECK_HEADERS(string.h sys/types.h regex.h pwd.h)
