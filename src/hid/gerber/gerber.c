@@ -1,4 +1,4 @@
-/* $Id: gerber.c,v 1.6 2006-03-23 04:28:15 djdelorie Exp $ */
+/* $Id: gerber.c,v 1.7 2006-04-13 03:33:58 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -11,7 +11,11 @@
 #include <sys/types.h>
 #include <string.h>
 #include <assert.h>
+
+#ifdef HAVE_PWD_H
 #include <pwd.h>
+#endif
+
 #include <time.h>
 
 #include "config.h"
@@ -27,7 +31,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gerber.c,v 1.6 2006-03-23 04:28:15 djdelorie Exp $");
+RCSID ("$Id: gerber.c,v 1.7 2006-04-13 03:33:58 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented Gerber function %s.\n", __FUNCTION__); abort()
 
@@ -452,7 +456,9 @@ gerber_set_layer (const char *name, int group)
     {
       time_t currenttime;
       char utcTime[64];
+#ifdef HAVE_GETPWUID
       struct passwd *pwentry;
+#endif
       char *spat;
       int i;
 
@@ -532,15 +538,18 @@ gerber_set_layer (const char *name, int group)
       currenttime = time (NULL);
       strftime (utcTime, sizeof utcTime, "%c UTC", gmtime (&currenttime));
 
-      /* ID the user. */
-      pwentry = getpwuid (getuid ());
-
       /* Print a cute file header at the beginning of each file. */
       fprintf (f, "G04 Title: %s, %s *\015\012", UNKNOWN (PCB->Name),
 	       UNKNOWN (name));
       fprintf (f, "G04 Creator: %s " VERSION " *\015\012", Progname);
       fprintf (f, "G04 CreationDate: %s *\015\012", utcTime);
+
+#ifdef HAVE_GETPWUID
+      /* ID the user. */
+      pwentry = getpwuid (getuid ());
       fprintf (f, "G04 For: %s *\015\012", pwentry->pw_name);
+#endif
+
       fprintf (f, "G04 Format: Gerber/RS-274X *\015\012");
       fprintf (f, "G04 PCB-Dimensions: %d %d *\015\012",
 	       PCB->MaxWidth, PCB->MaxHeight);

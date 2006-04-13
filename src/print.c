@@ -1,4 +1,4 @@
-/* $Id: print.c,v 1.44 2006-04-11 20:54:35 djdelorie Exp $ */
+/* $Id: print.c,v 1.45 2006-04-13 03:33:57 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -45,7 +45,6 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#include <pwd.h>
 #include <setjmp.h>
 
 
@@ -67,7 +66,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: print.c,v 1.44 2006-04-11 20:54:35 djdelorie Exp $");
+RCSID ("$Id: print.c,v 1.45 2006-04-13 03:33:57 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * prints a FAB drawing.

@@ -1,4 +1,4 @@
-/* $Id: compat.h,v 1.2 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: compat.h,v 1.3 2006-04-13 03:33:57 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -37,6 +37,10 @@ float expf (float);
 
 #ifndef HAVE_LOGF
 float logf (float);
+#endif
+
+#ifndef HAVE_RANDOM
+long random (void);
 #endif
 
 #endif /* __COMPAT_H__ */

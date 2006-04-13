@@ -1,10 +1,10 @@
-/* $Id: compat.c,v 1.3 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: compat.c,v 1.4 2006-04-13 03:33:57 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
  *
  *  PCB, interactive printed circuit board design
- *  Copyright (C) 2004 Dan McMahill
+ *  Copyright (C) 2004, 2006 Dan McMahill
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: compat.c,v 1.3 2006-03-22 23:17:20 danmc Exp $");
+RCSID ("$Id: compat.c,v 1.4 2006-04-13 03:33:57 danmc Exp $");
 
 #ifndef HAVE_EXPF
 float
@@ -49,5 +49,14 @@ float
 logf (float x)
 {
   return (float) log ((double) x);
+}
+#endif
+
+#ifndef HAVE_RANDOM
+long
+random (void)
+{
+  /* FIXME */
+  return 12345;
 }
 #endif

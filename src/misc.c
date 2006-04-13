@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.46 2006-04-05 03:03:37 haceaton Exp $ */
+/* $Id: misc.c,v 1.47 2006-04-13 03:33:57 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -49,7 +49,9 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#ifdef HAVE_PWD_H
 #include <pwd.h>
+#endif
 
 #include "global.h"
 
@@ -76,7 +78,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: misc.c,v 1.46 2006-04-05 03:03:37 haceaton Exp $");
+RCSID ("$Id: misc.c,v 1.47 2006-04-13 03:33:57 danmc Exp $");
 
 
 
@@ -1824,6 +1826,7 @@ LayerGroupsToString (LayerGroupTypePtr lg)
 char *
 pcb_author (void)
 {
+#ifdef HAVE_GETPWUID
   static struct passwd *pwentry;
   static char *fab_author = 0;
 
@@ -1855,4 +1858,7 @@ pcb_author (void)
 	}
     }
   return fab_author;
+#else
+  return "Unknown";
+#endif
 }
