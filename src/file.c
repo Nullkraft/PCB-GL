@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.34 2006-04-13 03:33:57 danmc Exp $ */
+/* $Id: file.c,v 1.35 2006-04-13 13:04:55 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -85,7 +85,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: file.c,v 1.34 2006-04-13 03:33:57 danmc Exp $");
+RCSID ("$Id: file.c,v 1.35 2006-04-13 13:04:55 danmc Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -412,7 +412,7 @@ WritePCBInfoHeader (FILE * FP)
 	       hostentry ? hostentry->h_name : hostname);
     }
 #else
-  fprintf (FP, "# host:    Unknown\n",
+  fprintf (FP, "# host:    Unknown\n");
 #endif
 }
 

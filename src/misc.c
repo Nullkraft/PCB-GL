@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.47 2006-04-13 03:33:57 danmc Exp $ */
+/* $Id: misc.c,v 1.48 2006-04-13 13:04:55 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -78,7 +78,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: misc.c,v 1.47 2006-04-13 03:33:57 danmc Exp $");
+RCSID ("$Id: misc.c,v 1.48 2006-04-13 13:04:55 danmc Exp $");
 
 
 
@@ -1404,7 +1404,7 @@ RestoreStackAndVisibility (void)
 char *
 GetWorkingDirectory (char *path)
 {
-#if defined(SYSV) || defined(linux) || defined(__NetBSD__)
+#ifdef HAVE_GETCWD
   return getcwd (path, MAXPATHLEN);
 #else
   /* seems that some BSD releases lack of a prototype for getwd() */

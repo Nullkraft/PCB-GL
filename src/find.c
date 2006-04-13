@@ -1,4 +1,4 @@
-/* $Id: find.c,v 1.48 2006-04-11 02:01:43 haceaton Exp $ */
+/* $Id: find.c,v 1.49 2006-04-13 13:04:55 danmc Exp $ */
 
 /*
  *
@@ -73,7 +73,10 @@
 #endif
 #include <math.h>
 #include <setjmp.h>
+
+#ifdef HAVE_SYS_TIMES_H
 #include <sys/times.h>
+#endif
 
 #include "global.h"
 
@@ -97,7 +100,7 @@
 
 #undef DEBUG
 
-RCSID ("$Id: find.c,v 1.48 2006-04-11 02:01:43 haceaton Exp $");
+RCSID ("$Id: find.c,v 1.49 2006-04-13 13:04:55 danmc Exp $");
 
 
 

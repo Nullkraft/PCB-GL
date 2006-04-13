@@ -1,4 +1,4 @@
-/* $Id: error.c,v 1.13 2006-04-12 22:55:24 danmc Exp $ */
+/* $Id: error.c,v 1.14 2006-04-13 13:04:55 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: error.c,v 1.13 2006-04-12 22:55:24 danmc Exp $");
+RCSID ("$Id: error.c,v 1.14 2006-04-13 13:04:55 danmc Exp $");
 
 
 #define utf8_dup_string(a,b) *(a) = strdup(b)
@@ -205,15 +205,19 @@ CatchSignal (int Signal)
 
   switch (Signal)
     {
+#ifdef SIGHUP
     case SIGHUP:
       s = "SIGHUP";
       break;
+#endif
     case SIGINT:
       s = "SIGINT";
       break;
+#ifdef SIGQUIT
     case SIGQUIT:
       s = "SIGQUIT";
       break;
+#endif
     case SIGABRT:
       s = "SIGABRT";
       break;

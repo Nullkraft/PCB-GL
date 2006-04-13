@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# $Id: build_pcb,v 1.1 2006-04-12 22:58:06 danmc Exp $
+# $Id: build_pcb,v 1.2 2006-04-13 13:04:55 danmc Exp $
 #
 
 # Run this under cygwin to build pcb and create a windows installer for
@@ -57,7 +57,7 @@ export WISH
 
 if test "$do_config" = "yes" ; then
 echo "Configuring for cygwin"
-env CFLAGS="-mms-bitfields -mwindows -mno-cygwin" CPPFLAGS="-mms-bitfields -mwindows -mno-cygwin" ./configure \
+./configure \
 	--prefix=${pcb_inst} \
 	--disable-nls \
 	--with-exporters="bom gerber ps" \

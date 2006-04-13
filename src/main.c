@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.51 2006-04-06 02:33:55 danmc Exp $ */
+/* $Id: main.c,v 1.52 2006-04-13 13:04:55 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -59,7 +59,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.51 2006-04-06 02:33:55 danmc Exp $");
+RCSID ("$Id: main.c,v 1.52 2006-04-13 13:04:55 danmc Exp $");
 
 
 
@@ -88,7 +88,9 @@ InitHandler (void)
   /* calling external program by popen() may cause a PIPE signal,
    * so we ignore it
    */
+#ifdef SIGPIPE
   signal (SIGPIPE, SIG_IGN);
+#endif
 }
 
 
