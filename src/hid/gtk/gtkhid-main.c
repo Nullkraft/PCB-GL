@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.14 2006-04-12 22:55:15 danmc Exp $ */
+/* $Id: gtkhid-main.c,v 1.15 2006-04-13 23:46:59 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.14 2006-04-12 22:55:15 danmc Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.15 2006-04-13 23:46:59 danmc Exp $");
 
 
 extern HID ghid_hid;
@@ -1333,6 +1333,7 @@ static int
 About (int argc, char **argv, int x, int y)
 {
   ghid_dialog_about ();
+  return 0;
 }
 
 HID_Action ghid_main_action_list[] = {
