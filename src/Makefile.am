@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.21 2006-03-24 00:21:55 danmc Exp $
+## $Id: Makefile.am,v 1.22 2006-04-13 03:45:12 danmc Exp $
 ##
 
 SUBDIRS=	icons script
@@ -213,6 +213,20 @@ hid/gtk/gtk_lists.h : ${libgtk_a_SOURCES} Makefile
 	true > $@
 	(for f in ${libgtk_a_SOURCES} ; do cat $(srcdir)/$$f ; done) | grep "^REGISTER" > $@.tmp
 	mv $@.tmp $@
+
+# If we are building on win32, then compile in some icons for the
+# desktop and application toolbar
+if WIN32
+pcb_icon.o : pcb_icon.ico $(srcdir)/hid/gtk/pcb.rc
+	windres $(srcdir)/hid/gtk/pcb.rc $@
+
+pcb_icon.ico: $(top_srcdir)/win32/pcb_icon.ico
+	cp $(top_srcdir)/win32/pcb_icon.ico $@
+
+pcb_bin_LDADD+=	pcb_icon.o
+
+endif
+
 
 liblesstif_a_CPPFLAGS = -I./hid/lesstif
 liblesstif_a_SOURCES = \
