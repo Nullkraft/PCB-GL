@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.42 2006-04-12 22:51:02 danmc Exp $
+ *  RCS: $Id: global.h,v 1.43 2006-04-14 21:33:49 djdelorie Exp $
  */
 
 /* definition of types
@@ -715,6 +715,6 @@ typedef struct
  * a syntax error and fail
  */
 #define AUSAGE(x) Message ("Usage:\n%s\n", (x##_syntax))
-#define AFAIL(x) Message ("Syntax error.  Usage:\n%s\n", (x##_syntax)); return 1
+#define AFAIL(x) { Message ("Syntax error.  Usage:\n%s\n", (x##_syntax)); return 1; }
 
 #endif /* __GLOBAL_INCLUDED__  */
