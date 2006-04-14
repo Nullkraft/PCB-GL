@@ -1,4 +1,4 @@
-/* $Id: gui.h,v 1.5 2006-04-12 22:55:25 danmc Exp $ */
+/* $Id: gui.h,v 1.6 2006-04-14 23:48:36 billw2 Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -133,6 +133,8 @@ typedef struct
 
   GtkWidget *h_range, *v_range;
   GtkObject *h_adjustment, *v_adjustment;
+
+  GdkPixbuf *bg_pixbuf;
 
   gchar *name_label_string;
 
