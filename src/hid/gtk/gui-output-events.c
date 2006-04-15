@@ -1,4 +1,4 @@
-/* $Id: gui-output-events.c,v 1.6 2006-04-05 21:32:16 danmc Exp $ */
+/* $Id: gui-output-events.c,v 1.7 2006-04-15 00:09:44 billw2 Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -49,7 +49,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-output-events.c,v 1.6 2006-04-05 21:32:16 danmc Exp $");
+RCSID ("$Id: gui-output-events.c,v 1.7 2006-04-15 00:09:44 billw2 Exp $");
 
 static gint x_pan_speed, y_pan_speed;
 
@@ -200,7 +200,7 @@ ghid_get_coords (const char *msg, int *x, int *y)
 {
   if (!ghid_port.has_entered)
     ghid_get_user_xy (msg);
-  *x = gport->view_x;
+  *x = SIDE_X(gport->view_x);
   *y = gport->view_y;
 }
 
