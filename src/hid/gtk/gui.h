@@ -1,4 +1,4 @@
-/* $Id: gui.h,v 1.6 2006-04-14 23:48:36 billw2 Exp $ */
+/* $Id: gui.h,v 1.7 2006-04-16 03:36:56 billw2 Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -279,7 +279,6 @@ void ghid_layer_buttons_update (void);
 void ghid_layer_button_select (gint layer);
 void ghid_layer_buttons_color_update (void);
 
-void ghid_handle_user_command (void);
 
 /* gui-misc.c function prototypes
 */
@@ -462,7 +461,7 @@ void ghid_set_status_line_label (void);
 
 
 /* gui-netlist-window.c */
-void ghid_netlist_window_show (GHidPort * out);
+void ghid_netlist_window_show (GHidPort * out, gboolean raise);
 void ghid_netlist_window_update (gboolean init_nodes);
 void ghid_netlist_nodes_update (LibraryMenuType * net);
 
@@ -471,19 +470,20 @@ void ghid_netlist_highlight_node (gchar * name);
 
 
 /* gui-command-window.c */
-void ghid_command_window_show (void);
+void ghid_handle_user_command (gboolean raise);
+void ghid_command_window_show (gboolean raise);
 gchar *ghid_command_entry_get (gchar * prompt, gchar * command);
 void ghid_command_use_command_window_sync (void);
 
 /* gui-keyref-window.c */
-void ghid_keyref_window_show (void);
+void ghid_keyref_window_show (gboolean raise);
 
 /* gui-library-window.c */
-void ghid_library_window_show (GHidPort * out);
+void ghid_library_window_show (GHidPort * out, gboolean raise);
 
 
 /* gui-log-window.c */
-void ghid_log_window_show (void);
+void ghid_log_window_show (gboolean raise);
 void ghid_log (const char *fmt, ...);
 void ghid_logv (const char *fmt, va_list args);
 

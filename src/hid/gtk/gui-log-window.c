@@ -1,4 +1,4 @@
-/* $Id: gui-log-window.c,v 1.3 2006-04-12 22:55:25 danmc Exp $ */
+/* $Id: gui-log-window.c,v 1.4 2006-04-16 03:36:56 billw2 Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -39,7 +39,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-log-window.c,v 1.3 2006-04-12 22:55:25 danmc Exp $");
+RCSID ("$Id: gui-log-window.c,v 1.4 2006-04-16 03:36:56 billw2 Exp $");
 
 static GtkWidget *log_window, *log_text;
 
@@ -70,16 +70,14 @@ log_destroy_cb (GtkWidget * widget, gpointer data)
 }
 
 void
-ghid_log_window_show (void)
+ghid_log_window_show (gboolean raise)
 {
   GtkWidget *vbox, *hbox, *button;
 
   if (log_window)
     {
-      /*
-       * gtk_window_present() grabs focus which we don't want
-       */
-      gdk_window_raise (log_window->window);
+      if (raise)
+        gtk_window_present(GTK_WINDOW(log_window));
       return;
     }
 
@@ -124,7 +122,7 @@ ghid_log_window_show (void)
 static void
 ghid_log_append_string (gchar * s)
 {
-  ghid_log_window_show ();
+  ghid_log_window_show (FALSE);
   ghid_text_view_append (log_text, s);
 }
 

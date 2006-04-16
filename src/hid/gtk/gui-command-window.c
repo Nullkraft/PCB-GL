@@ -1,4 +1,4 @@
-/* $Id: gui-command-window.c,v 1.2 2006-03-22 23:05:41 danmc Exp $ */
+/* $Id: gui-command-window.c,v 1.3 2006-04-16 03:36:56 billw2 Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -42,7 +42,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-command-window.c,v 1.2 2006-03-22 23:05:41 danmc Exp $");
+RCSID ("$Id: gui-command-window.c,v 1.3 2006-04-16 03:36:56 billw2 Exp $");
 
 static GtkWidget *command_window;
 static GtkWidget *combo_vbox;
@@ -301,14 +301,15 @@ ghid_command_use_command_window_sync (void)
      |  ActionCommand() to show the command window.
    */
 void
-ghid_command_window_show (void)
+ghid_command_window_show (gboolean raise)
 {
   GtkWidget *vbox, *vbox1, *hbox, *button, *expander, *text;
   gint i;
 
   if (command_window)
     {
-      gdk_window_raise (command_window->window);
+      if (raise)
+        gtk_window_present (GTK_WINDOW(command_window));
       return;
     }
   command_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -452,13 +453,13 @@ ghid_command_entry_get (gchar * prompt, gchar * command)
 
 
 void
-ghid_handle_user_command (void)
+ghid_handle_user_command (gboolean raise)
 {
   char *command;
   static char *previous = NULL;
 
   if (ghidgui->use_command_window)
-    ghid_command_window_show ();
+    ghid_command_window_show (raise);
   else
     {
       HideCrosshair (True);

@@ -1,4 +1,4 @@
-/* $Id: gui-keyref-window.c,v 1.2 2006-03-22 23:05:41 danmc Exp $ */
+/* $Id: gui-keyref-window.c,v 1.3 2006-04-16 03:36:56 billw2 Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -38,7 +38,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-keyref-window.c,v 1.2 2006-03-22 23:05:41 danmc Exp $");
+RCSID ("$Id: gui-keyref-window.c,v 1.3 2006-04-16 03:36:56 billw2 Exp $");
 
 static GtkWidget *keyref_window;
 
@@ -335,16 +335,15 @@ keyref_destroy_cb (GtkWidget * widget, gpointer data)
 }
 
 void
-ghid_keyref_window_show (void)
+ghid_keyref_window_show (gboolean raise)
 {
   GtkWidget *vbox, *hbox, *button, *text;
   gint i;
 
   if (keyref_window)
     {
-      /* gtk_window_present() grabs focus which we don't want
-       */
-      gdk_window_raise (keyref_window->window);
+      if (raise)
+			  gtk_window_present(GTK_WINDOW(keyref_window));
       return;
     }
   keyref_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
