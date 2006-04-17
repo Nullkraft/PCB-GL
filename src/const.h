@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: const.h,v 1.19 2006-03-22 23:17:20 danmc Exp $
+ *  RCS: $Id: const.h,v 1.20 2006-04-17 05:04:30 djdelorie Exp $
  */
 
 /* global source constants
@@ -98,7 +98,7 @@
  */
 
 /* %start-doc pcbfile ~objectflags
-@node Object Flags, PCBFlags, File Syntax, File Formats
+@node Object Flags
 @section Object Flags
 
 Note that object flags can be given numerically (like @code{0x0147})
@@ -199,7 +199,7 @@ pinout text should be vertical.
  */
 
 /* %start-doc pcbfile ~pcbflags
-@node PCBFlags, , Object Flags,  File Formats
+@node PCBFlags
 @section PCBFlags
 @table @code
 @item 0x00001

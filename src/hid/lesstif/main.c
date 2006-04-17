@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.17 2006-04-14 01:16:27 djdelorie Exp $ */
+/* $Id: main.c,v 1.18 2006-04-17 05:04:30 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -43,7 +43,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.17 2006-04-14 01:16:27 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.18 2006-04-17 05:04:30 djdelorie Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -578,7 +578,8 @@ Benchmark (int argc, char **argv, int x, int y)
 }
 
 HID_Action lesstif_main_action_list[] = {
-  {"PCBChanged", 0, PCBChanged},
+  {"PCBChanged", 0, PCBChanged,
+   pcbchanged_help, pcbchanged_syntax},
   {"SetUnits", 0, SetUnits},
   {"Zoom", 0, ZoomAction,
    zoom_help, zoom_syntax},
