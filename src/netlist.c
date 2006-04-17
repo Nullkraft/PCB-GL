@@ -1,4 +1,4 @@
-/* $Id: netlist.c,v 1.18 2006-04-12 04:24:04 djdelorie Exp $ */
+/* $Id: netlist.c,v 1.19 2006-04-17 01:04:39 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -38,6 +38,7 @@
 #include <string.h>
 #endif
 #include <ctype.h>
+#include <sys/types.h>
 #ifdef HAVE_REGEX_H
 #include <regex.h>
 #endif
@@ -69,7 +70,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: netlist.c,v 1.18 2006-04-12 04:24:04 djdelorie Exp $");
+RCSID ("$Id: netlist.c,v 1.19 2006-04-17 01:04:39 djdelorie Exp $");
 
 /*
   int    PCB->NetlistLib.MenuN
