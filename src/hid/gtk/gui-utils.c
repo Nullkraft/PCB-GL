@@ -1,4 +1,4 @@
-/* $Id: gui-utils.c,v 1.3 2006-03-27 03:18:51 danmc Exp $ */
+/* $Id: gui-utils.c,v 1.4 2006-04-17 01:49:48 billw2 Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -39,7 +39,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-utils.c,v 1.3 2006-03-27 03:18:51 danmc Exp $");
+RCSID ("$Id: gui-utils.c,v 1.4 2006-04-17 01:49:48 billw2 Exp $");
 
 /* Not a gui function, but no better place to put it...
  */
@@ -510,7 +510,7 @@ ghid_scrolled_vbox (GtkWidget * box, GtkWidget ** scr,
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled),
 				  h_policy, v_policy);
   gtk_box_pack_start (GTK_BOX (box), scrolled, TRUE, TRUE, 0);
-  vbox = gtk_vbox_new (FALSE, 2);
+  vbox = gtk_vbox_new (FALSE, 0);
   gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (scrolled),
 					 vbox);
   if (scr)
