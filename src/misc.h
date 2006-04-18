@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: misc.h,v 1.15 2006-03-22 23:17:20 danmc Exp $
+ *  RCS: $Id: misc.h,v 1.16 2006-04-18 16:20:48 billw2 Exp $
  */
 
 /* prototypes for misc routines
@@ -48,7 +48,6 @@ void CenterDisplay (LocationType, LocationType, Boolean);
 void SetFontInfo (FontTypePtr);
 int ParseGroupString (char *, LayerGroupTypePtr);
 int ParseRouteString (char *, RouteStyleTypePtr, int);
-char *build_route_string (RouteStyleType *);
 void QuitApplication (void);
 char *EvaluateFilename (char *, char *, char *, char *);
 char *ExpandFilename (char *, char *);
