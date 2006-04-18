@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.24 2006-04-17 01:49:47 billw2 Exp $ */
+/* $Id: gui-top-window.c,v 1.25 2006-04-18 16:16:59 billw2 Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -84,7 +84,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.24 2006-04-17 01:49:47 billw2 Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.25 2006-04-18 16:16:59 billw2 Exp $");
 
 extern HID ghid_hid;
 
@@ -2912,6 +2912,7 @@ route_style_select_button_cb (GtkToggleButton * button, gpointer data)
       SetKeepawayWidth (rst->Keepaway);
     }
   gtk_widget_set_sensitive (route_style_edit_button, TRUE);
+  ghid_set_status_line_label();
 }
 
 static void

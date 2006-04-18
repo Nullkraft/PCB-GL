@@ -1,4 +1,4 @@
-/* $Id: gui-dialog-size.c,v 1.2 2006-03-22 23:05:41 danmc Exp $ */
+/* $Id: gui-dialog-size.c,v 1.3 2006-04-18 16:16:59 billw2 Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -50,7 +50,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-dialog-size.c,v 1.2 2006-03-22 23:05:41 danmc Exp $");
+RCSID ("$Id: gui-dialog-size.c,v 1.3 2006-04-18 16:16:59 billw2 Exp $");
 
 #define STEP0_SIZE          (Settings.grid_units_mm ? 0.05 : 1.0)
 #define STEP1_SIZE          (Settings.grid_units_mm ? 0.25 : 5.0)
@@ -68,6 +68,25 @@ typedef struct
 SizesDialog;
 
 static SizesDialog route_sizes;
+
+static gchar *
+make_route_string(RouteStyleType * rs)
+{
+  gchar *str, *s, *t, *colon;
+  gint i;
+
+  str = g_strdup("");
+  for (i = 0; i < NUM_STYLES; ++i, ++rs)
+    {
+      s = g_strdup_printf ("%s,%d,%d,%d,%d", rs->Name,
+               rs->Thick, rs->Diameter, rs->Hole, rs->Keepaway);
+      colon = (i == NUM_STYLES - 1) ? NULL : ":";
+      t = str;
+      str = g_strconcat (str, s, colon, NULL);
+      g_free (t);
+	}
+  return str;
+}
 
 static void
 via_hole_cb (GtkWidget * widget, SizesDialog * sd)
@@ -308,7 +327,7 @@ ghid_route_style_dialog (gint index, RouteStyleType * temp_rst)
 
 	  Settings.RouteStyle[index] = *rst;
 	  ghidgui->config_modified = TRUE;
-	  s = build_route_string (&Settings.RouteStyle[0]);
+	  s = make_route_string (&Settings.RouteStyle[0]);
 	  g_free (Settings.Routes);
 	  Settings.Routes = s;
 	}
