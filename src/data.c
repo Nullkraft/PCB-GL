@@ -1,4 +1,4 @@
-/* $Id: data.c,v 1.12 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: data.c,v 1.13 2006-04-18 16:54:55 billw2 Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -42,7 +42,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: data.c,v 1.12 2006-03-22 23:17:20 danmc Exp $");
+RCSID ("$Id: data.c,v 1.13 2006-04-18 16:54:55 billw2 Exp $");
 
 /* ---------------------------------------------------------------------------
  * some shared identifiers
@@ -63,11 +63,6 @@ Boolean Bumped;			/* if the undo serial number has changed */
 Boolean render;			/* wether or not to re-render the pixmap */
 
 LocationType Xorig, Yorig;	/* origin offset for drawing in pixmap */
-#ifdef FIXME
-GdkPixmap **Stipples,
-  *XC_clock_source, *XC_clock_mask,
-  *XC_hand_source, *XC_hand_mask, *XC_lock_source, *XC_lock_mask;
-#endif
 
 int addedLines;
 
