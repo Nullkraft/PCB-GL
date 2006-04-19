@@ -1,4 +1,4 @@
-/* $Id: strflags.h,v 1.3 2006-03-22 23:17:21 danmc Exp $ */
+/* $Id: strflags.h,v 1.4 2006-04-19 22:36:47 danmc Exp $ */
 /*
  *                            COPYRIGHT
  *
@@ -36,7 +36,7 @@
    flags.  Errors cause error() to be called with a suitable message;
    if error is NULL, errors are ignored.  */
 FlagType string_to_flags (const char *flagstring,
-			  void (*error) (const char *msg));
+			  int (*error) (const char *msg));
 
 /* Given a set of flags for a given object type, return a string which
    can be output to a file.  The returned pointer must not be

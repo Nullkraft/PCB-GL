@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.49 2006-04-18 16:20:46 billw2 Exp $ */
+/* $Id: misc.c,v 1.50 2006-04-19 22:36:47 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -78,7 +78,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: misc.c,v 1.49 2006-04-18 16:20:46 billw2 Exp $");
+RCSID ("$Id: misc.c,v 1.50 2006-04-19 22:36:47 danmc Exp $");
 
 
 
@@ -1813,7 +1813,7 @@ pcb_author (void)
       else
 	{
 	  int len;
-	  unsigned char *comma, *gecos;
+	  char *comma, *gecos;
 
 	  /* ID the user. */
 	  pwentry = getpwuid (getuid ());

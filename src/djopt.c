@@ -1,4 +1,4 @@
-/* $Id: djopt.c,v 1.33 2006-04-05 03:21:18 djdelorie Exp $ */
+/* $Id: djopt.c,v 1.34 2006-04-19 22:36:46 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -48,7 +48,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: djopt.c,v 1.33 2006-04-05 03:21:18 djdelorie Exp $");
+RCSID ("$Id: djopt.c,v 1.34 2006-04-19 22:36:46 danmc Exp $");
 
 #ifndef HAVE_RINT
 #define rint(x)  (ceil((x) - 0.5))
@@ -142,7 +142,7 @@ djopt_set_auto_only (int argc, char **argv, int x, int y)
 }
 
 static int
-djopt_get_auto_only ()
+djopt_get_auto_only (int dummy)
 {
   return autorouted_only;
 }

@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.35 2006-04-13 13:04:55 danmc Exp $ */
+/* $Id: file.c,v 1.36 2006-04-19 22:36:47 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -33,6 +33,10 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
+#endif
+
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>
 #endif
 
 #include "global.h"
@@ -85,7 +89,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: file.c,v 1.35 2006-04-13 13:04:55 danmc Exp $");
+RCSID ("$Id: file.c,v 1.36 2006-04-19 22:36:47 danmc Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------

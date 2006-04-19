@@ -1,4 +1,4 @@
-/* $Id: parse_y.y,v 1.24 2006-04-17 05:04:30 djdelorie Exp $ */
+/* $Id: parse_y.y,v 1.25 2006-04-19 22:36:47 danmc Exp $ */
 
 %{
 /*
@@ -50,7 +50,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_y.y,v 1.24 2006-04-17 05:04:30 djdelorie Exp $");
+RCSID("$Id: parse_y.y,v 1.25 2006-04-19 22:36:47 danmc Exp $");
 
 static	LayerTypePtr	Layer;
 static	PolygonTypePtr	Polygon;
@@ -67,7 +67,7 @@ extern	FontTypePtr		yyFont;
 extern	int				yylineno;		/* linenumber */
 extern	char			*yyfilename;	/* in this file */
 
-int yyerror(char *s);
+int yyerror(const char *s);
 int yylex();
 
 %}
@@ -1731,7 +1731,7 @@ conn
  * error routine called by parser library
  */
 int yyerror(s)
-char *s;
+const char *s;
 {
 	Message("ERROR parsing file '%s'\n"
 		"    line:        %i\n"

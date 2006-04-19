@@ -1,4 +1,4 @@
-/* $Id: flags.c,v 1.6 2006-03-23 00:23:44 danmc Exp $ */
+/* $Id: flags.c,v 1.7 2006-04-19 22:36:47 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -41,10 +41,10 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: flags.c,v 1.6 2006-03-23 00:23:44 danmc Exp $");
+RCSID ("$Id: flags.c,v 1.7 2006-04-19 22:36:47 danmc Exp $");
 
 static int
-FlagCurrentStyle ()
+FlagCurrentStyle (int dummy)
 {
   STYLE_LOOP (PCB);
   {
@@ -59,19 +59,19 @@ FlagCurrentStyle ()
 }
 
 static int
-FlagGrid ()
+FlagGrid (int dummy)
 {
   return PCB->Grid > 1.0;
 }
 
 static int
-FlagGridSize ()
+FlagGridSize (int dummy)
 {
   return (int) (PCB->Grid + 0.5);
 }
 
 static int
-FlagElementName ()
+FlagElementName (int dummy)
 {
   if (TEST_FLAG (NAMEONPCBFLAG, PCB))
     return 2;

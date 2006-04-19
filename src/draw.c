@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.50 2006-04-18 16:49:12 billw2 Exp $ */
+/* $Id: draw.c,v 1.51 2006-04-19 22:36:46 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -62,7 +62,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.50 2006-04-18 16:49:12 billw2 Exp $");
+RCSID ("$Id: draw.c,v 1.51 2006-04-19 22:36:46 danmc Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -840,7 +840,7 @@ DrawLayerGroup (int group, const BoxType * screen)
   int need_mask = 0;
   LayerTypePtr Layer;
   int n_entries = PCB->LayerGroups.Number[group];
-  int *layers = PCB->LayerGroups.Entries[group];
+  Cardinal *layers = PCB->LayerGroups.Entries[group];
 
   for (i = n_entries - 1; i >= 0; i--)
     if (layers[i] < MAX_LAYER)

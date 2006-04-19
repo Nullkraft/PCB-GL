@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.18 2006-04-17 05:04:30 djdelorie Exp $ */
+/* $Id: main.c,v 1.19 2006-04-19 22:36:47 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -11,22 +11,7 @@
 #include <math.h>
 #include <unistd.h>
 
-#include <X11/Intrinsic.h>
-#include <X11/X.h>
-#include <X11/Xlib.h>
-#include <X11/keysym.h>
-#include <X11/cursorfont.h>
-
-#include <Xm/Xm.h>
-#include <Xm/Protocols.h>
-#include <Xm/MainW.h>
-#include <Xm/Frame.h>
-#include <Xm/Form.h>
-#include <Xm/DrawingA.h>
-#include <Xm/Label.h>
-#include <Xm/ScrollBar.h>
-#include <Xm/Text.h>
-#include <Xm/TextF.h>
+#include "xincludes.h"
 
 #include "global.h"
 #include "data.h"
@@ -43,7 +28,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.18 2006-04-17 05:04:30 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.19 2006-04-19 22:36:47 danmc Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -1847,7 +1832,7 @@ static int idle_proc_set = 0;
 static int need_redraw = 0;
 
 static Boolean
-idle_proc ()
+idle_proc (XtPointer dummy)
 {
   if (need_redraw)
     {

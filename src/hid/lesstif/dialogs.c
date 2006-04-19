@@ -1,4 +1,4 @@
-/* $Id: dialogs.c,v 1.13 2006-04-12 22:55:25 danmc Exp $ */
+/* $Id: dialogs.c,v 1.14 2006-04-19 22:36:47 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -9,22 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <X11/Intrinsic.h>
-#include <X11/X.h>
-#include <X11/Xlib.h>
-
-#include <Xm/Xm.h>
-#include <Xm/FileSB.h>
-#include <Xm/RowColumn.h>
-#include <Xm/Form.h>
-#include <Xm/PushB.h>
-#include <Xm/ToggleB.h>
-#include <Xm/Text.h>
-#include <Xm/TextF.h>
-#include <Xm/Label.h>
-#include <Xm/MessageB.h>
-#include <Xm/Scale.h>
-#include <Xm/Separator.h>
+#include "xincludes.h"
 
 #include "compat.h"
 #include "global.h"
@@ -40,7 +25,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: dialogs.c,v 1.13 2006-04-12 22:55:25 danmc Exp $");
+RCSID ("$Id: dialogs.c,v 1.14 2006-04-19 22:36:47 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
 
