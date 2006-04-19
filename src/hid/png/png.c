@@ -1,4 +1,4 @@
-/* $Id: png.c,v 1.9 2006-04-16 01:28:16 danmc Exp $ */
+/* $Id: png.c,v 1.10 2006-04-19 22:34:22 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -51,7 +51,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: png.c,v 1.9 2006-04-16 01:28:16 danmc Exp $");
+RCSID ("$Id: png.c,v 1.10 2006-04-19 22:34:22 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PNG function %s.\n", __FUNCTION__); abort()
 
@@ -449,11 +449,32 @@ png_do_export (HID_Attr_Val * options)
   fmt = filetypes[options[HA_filetype].int_value];
   
   if (strcmp (fmt, FMT_gif) == 0)
+#ifdef HAVE_GDIMAGEGIF
     gdImageGif (im, f);
+#else
+    {
+      gdImageDestroy (im);
+      return;
+    }
+#endif
   else if (strcmp (fmt, FMT_jpg) == 0)
+#ifdef HAVE_GDIMAGEJPEG
     gdImageJpeg (im, f, -1);
+#else
+    {
+      gdImageDestroy (im);
+      return;
+    }
+#endif
   else if (strcmp (fmt, FMT_png) == 0)
+#ifdef HAVE_GDIMAGEPNG
     gdImagePng (im, f);
+#else
+    {
+      gdImageDestroy (im);
+      return;
+    }
+#endif
   else
     fprintf (stderr, "Error:  Invalid graphic file format."
 	     "  This is a bug.  Please report it.\n");
