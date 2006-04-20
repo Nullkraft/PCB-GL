@@ -1,4 +1,4 @@
-/* $Id: find.c,v 1.49 2006-04-13 13:04:55 danmc Exp $ */
+/* $Id: find.c,v 1.50 2006-04-20 00:39:01 danmc Exp $ */
 
 /*
  *
@@ -100,7 +100,7 @@
 
 #undef DEBUG
 
-RCSID ("$Id: find.c,v 1.49 2006-04-13 13:04:55 danmc Exp $");
+RCSID ("$Id: find.c,v 1.50 2006-04-20 00:39:01 danmc Exp $");
 
 
 
@@ -453,11 +453,7 @@ PadPadIntersect (PadTypePtr p1, PadTypePtr p2)
   return LinePadIntersect ((LineTypePtr) p1, p2);
 }
 
-#ifndef __GNUC__
-#define __inline__		/* not inline on non-gcc platforms */
-#endif /* __GNUC__ */
-
-static __inline__ Boolean
+static inline Boolean
 PV_TOUCH_PV (PinTypePtr PV1, PinTypePtr PV2)
 {
   float t1, t2;
