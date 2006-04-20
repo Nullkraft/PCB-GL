@@ -1,4 +1,4 @@
-/* $Id: netlist.c,v 1.9 2006-04-19 22:36:47 danmc Exp $ */
+/* $Id: netlist.c,v 1.10 2006-04-20 03:23:07 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -23,7 +23,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: netlist.c,v 1.9 2006-04-19 22:36:47 danmc Exp $");
+RCSID ("$Id: netlist.c,v 1.10 2006-04-20 03:23:07 djdelorie Exp $");
 
 static Arg args[30];
 static int n;
@@ -135,6 +135,16 @@ NetlistChanged (int argc, char **argv, int x, int y)
   return 0;
 }
 
+static const char netlistshow_syntax[] =
+"NetlistShow()";
+
+static const char netlistshow_help[] =
+"Displays the netlist window.";
+
+/* %start-doc actions NetlistShow
+
+%end-doc */
+
 static int
 NetlistShow (int argc, char **argv, int x, int y)
 {
@@ -151,8 +161,10 @@ lesstif_show_netlist ()
 }
 
 HID_Action lesstif_netlist_action_list[] = {
-  {"NetlistChanged", 0, NetlistChanged},
-  {"NetlistShow", 0, NetlistShow}
+  {"NetlistChanged", 0, NetlistChanged,
+   netlistchanged_help, netlistchanged_syntax},
+  {"NetlistShow", 0, NetlistShow,
+   netlistshow_help, netlistshow_syntax}
 };
 
 REGISTER_ACTIONS (lesstif_netlist_action_list)

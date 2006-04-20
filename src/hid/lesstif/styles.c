@@ -1,4 +1,4 @@
-/* $Id: styles.c,v 1.10 2006-04-19 22:36:47 danmc Exp $ */
+/* $Id: styles.c,v 1.11 2006-04-20 03:23:07 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -25,7 +25,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: styles.c,v 1.10 2006-04-19 22:36:47 danmc Exp $");
+RCSID ("$Id: styles.c,v 1.11 2006-04-20 03:23:07 djdelorie Exp $");
 
 /* There are three places where styles are kept:
 
@@ -336,6 +336,16 @@ style_button (int i)
   return pb;
 }
 
+static const char adjuststyle_syntax[] =
+"AdjustStyle()";
+
+static const char adjuststyle_help[] =
+"Displays the route style adjustment window.";
+
+/* %start-doc actions AdjustStyle
+
+%end-doc */
+
 static int
 AdjustStyle (int argc, char **argv, int x, int y)
 {
@@ -458,8 +468,10 @@ lesstif_insert_style_buttons (Widget menu)
 }
 
 HID_Action lesstif_styles_action_list[] = {
-  {"AdjustStyle", 0, AdjustStyle},
-  {"RouteStylesChanged", 0, RouteStylesChanged}
+  {"AdjustStyle", 0, AdjustStyle,
+   adjuststyle_help, adjuststyle_syntax},
+  {"RouteStylesChanged", 0, RouteStylesChanged,
+   routestyleschanged_help, routestyleschanged_syntax}
 };
 
 REGISTER_ACTIONS (lesstif_styles_action_list)

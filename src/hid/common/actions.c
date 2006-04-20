@@ -1,4 +1,4 @@
-/* $Id: actions.c,v 1.7 2006-04-17 05:04:30 djdelorie Exp $ */
+/* $Id: actions.c,v 1.8 2006-04-20 03:23:07 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -19,7 +19,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: actions.c,v 1.7 2006-04-17 05:04:30 djdelorie Exp $");
+RCSID ("$Id: actions.c,v 1.8 2006-04-20 03:23:07 djdelorie Exp $");
 
 typedef struct HID_ActionNode
 {
@@ -374,12 +374,14 @@ static const char netlistchanged_help[] =
 
 %end-doc */
 
-static const char layergroupschanged_syntax[] = 
-  "LayerGroupsChanged()";
-static const char layergroupschanged_help[] = 
-  "Tells the GUI that the layer groups have changed.";
+static const char layerschanged_syntax[] = 
+  "LayersChanged()";
+static const char layerschanged_help[] = 
+  "Tells the GUI that the layers have changed.";
 
-/* %start-doc actions LayerGroupsChanged
+/* %start-doc actions LayersChanged
+
+This includes layer names, colors, stacking order, visibility, etc.
 
 @hidaction
 
