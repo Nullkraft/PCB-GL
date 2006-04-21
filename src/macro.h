@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: macro.h,v 1.20 2006-03-22 23:17:20 danmc Exp $
+ *  RCS: $Id: macro.h,v 1.21 2006-04-21 21:04:09 danmc Exp $
  */
 
 /* some commonly used macros not related to a special C-file
@@ -79,8 +79,9 @@
 #define	TO_PCB_X(x)		TO_PCB(x) + Xorig
 #define	TO_PCB_Y(y)		(SWAP_IDENT ? \
 				PCB->MaxHeight - TO_PCB(y) - Yorig : TO_PCB(y) + Yorig)
-
+#ifdef __GNUC__
 #pragma GCC poison TO_SCREEN TO_SCREEN_X TO_SCREEN_Y
+#endif
 
 /* ---------------------------------------------------------------------------
  * misc macros, some might already be defined by <limits.h>
