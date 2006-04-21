@@ -1,4 +1,4 @@
-/* $Id: gui-config.c,v 1.6 2006-04-18 16:16:59 billw2 Exp $ */
+/* $Id: gui-config.c,v 1.7 2006-04-21 21:05:00 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -47,13 +47,14 @@
 #include "draw.h"
 #include "set.h"
 
+#if 0
 #include <locale.h>
-
+#endif
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-config.c,v 1.6 2006-04-18 16:16:59 billw2 Exp $");
+RCSID ("$Id: gui-config.c,v 1.7 2006-04-21 21:05:00 danmc Exp $");
 
 enum ConfigType
 {
