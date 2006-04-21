@@ -1,4 +1,4 @@
-/* $Id: gui-utils.c,v 1.4 2006-04-17 01:49:48 billw2 Exp $ */
+/* $Id: gui-utils.c,v 1.5 2006-04-21 21:03:06 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -39,7 +39,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-utils.c,v 1.4 2006-04-17 01:49:48 billw2 Exp $");
+RCSID ("$Id: gui-utils.c,v 1.5 2006-04-21 21:03:06 danmc Exp $");
 
 /* Not a gui function, but no better place to put it...
  */
@@ -167,7 +167,7 @@ ghid_button_state (GdkModifierType * state)
   else if (button3)
     bs = BUTTON3_PRESSED;
   else
-    bs = NONE_PRESSED;
+    bs = NO_BUTTON_PRESSED;
 
   return bs;
 }
