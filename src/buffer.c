@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.25 2006-03-28 04:29:19 danmc Exp $ */
+/* $Id: buffer.c,v 1.26 2006-04-23 20:41:14 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -60,7 +60,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: buffer.c,v 1.25 2006-03-28 04:29:19 danmc Exp $");
+RCSID ("$Id: buffer.c,v 1.26 2006-04-23 20:41:14 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -619,10 +619,15 @@ SmashBufferElement (BufferTypePtr Buffer)
   END_LOOP;
   PIN_LOOP (element);
   {
+    FlagType f = NoFlags ();
+    AddFlags(f, VIAFLAG);
+    if (TEST_FLAG (HOLEFLAG, pin))
+      AddFlags (f, HOLEFLAG);
+
     CreateNewVia (Buffer->Data, pin->X, pin->Y,
 		  pin->Thickness, pin->Clearance, pin->Mask,
 		  pin->DrillingHole, pin->Number,
-		  AddFlags (pin->Flags, HOLEFLAG));
+		  f);
   }
   END_LOOP;
   group =
