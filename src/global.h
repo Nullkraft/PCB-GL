@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.44 2006-04-24 05:05:04 djdelorie Exp $
+ *  RCS: $Id: global.h,v 1.45 2006-04-24 05:10:10 djdelorie Exp $
  */
 
 /* definition of types
@@ -92,9 +92,9 @@ typedef struct
  * not need to know what kind of actual object they're working on.
  */
 
-/* Any object that uses the "object flags" defined in const.h MUST be
-   defined using this as the first fields, either directly or through
-   ANYLINEFIELDS.  */
+/* Any object that uses the "object flags" defined in const.h, or
+   exists as an object on the pcb, MUST be defined using this as the
+   first fields, either directly or through ANYLINEFIELDS.  */
 #define ANYOBJECTFIELDS			\
 	BoxType		BoundingBox;	\
 	long int	ID;		\
