@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.48 2006-04-19 22:36:46 danmc Exp $
+dnl $Id: configure.ac,v 1.49 2006-04-25 22:40:37 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -181,6 +181,19 @@ for e in `echo $with_exporters | sed 's/,/ /g'`; do
       * ) AC_MSG_ERROR([$e is not a valid exporter]) ;;
     esac
 done
+
+if test "X$enable_jpeg" = "Xno" -a "X$enable_gif" = "Xno" -a "X$enable_png" = "Xno" ; then
+	case " ${HIDLIST} " in
+		*\ png\ *)
+			AC_MSG_ERROR([you have requested the png HID but turned off all output
+formats!  If you do not want gif/jpeg/png output, use --with-exporters to list
+which exporters you want and do not list png there.])
+			;;
+
+		*)
+			;;
+	esac
+fi
 
 for e in $HIDLIST; do
     HIDLIBS="$HIDLIBS lib$e.a"
