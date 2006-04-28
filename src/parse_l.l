@@ -1,11 +1,11 @@
-/* $Id: parse_l.l,v 1.8 2006-03-21 17:34:59 djdelorie Exp $ */
+/* $Id: parse_l.l,v 1.9 2006-04-28 03:09:14 djdelorie Exp $ */
 
 %{
 /*
  *                            COPYRIGHT
  *
  *  PCB, interactive printed circuit board design
- *  Copyright (C) 1994,1995,1996 Thomas Nau
+ *  Copyright (C) 1994,1995,1996,2006 Thomas Nau
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_l.l,v 1.8 2006-03-21 17:34:59 djdelorie Exp $");
+RCSID("$Id: parse_l.l,v 1.9 2006-04-28 03:09:14 djdelorie Exp $");
 
 
 #include "global.h"
@@ -138,7 +138,7 @@ Connect		{ return(T_CONN); }
 						return(NUMBER);
 					}
 {FLOATING}			{
-						sscanf((char *) yytext, "%f", &yylval.floating);
+						yylval.floating = c_strtod (yytext);
 						return(FLOAT);
 					}
 \"{STRINGCHAR}*\"	{

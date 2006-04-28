@@ -2,7 +2,7 @@
  *                            COPYRIGHT
  *
  *  PCB, interactive printed circuit board design
- *  Copyright (C) 1994,1995,1996 Thomas Nau
+ *  Copyright (C) 1994,1995,1996,2006 Thomas Nau
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: misc.h,v 1.16 2006-04-18 16:20:48 billw2 Exp $
+ *  RCS: $Id: misc.h,v 1.17 2006-04-28 03:09:14 djdelorie Exp $
  */
 
 /* prototypes for misc routines
@@ -93,5 +93,9 @@ int MoveLayerToGroup (int layer, int group);
 char *LayerGroupsToString (LayerGroupTypePtr);
 /* Make the current layer groups the default.  */
 void MakeLayerGroupsDefault ();
+
+/* These act like you'd expect, except always in the C locale.  */
+extern double c_strtod(const char *s);
+extern const char *c_dtostr(double d);
 
 #endif
