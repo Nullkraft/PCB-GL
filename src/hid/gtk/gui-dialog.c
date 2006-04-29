@@ -1,4 +1,4 @@
-/* $Id: gui-dialog.c,v 1.3 2006-04-05 21:30:26 danmc Exp $ */
+/* $Id: gui-dialog.c,v 1.4 2006-04-29 18:43:56 billw2 Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -42,7 +42,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-dialog.c,v 1.3 2006-04-05 21:30:26 danmc Exp $");
+RCSID ("$Id: gui-dialog.c,v 1.4 2006-04-29 18:43:56 billw2 Exp $");
 
 gchar *
 ghid_dialog_input (gchar * prompt, gchar * initial)
@@ -195,7 +195,7 @@ ghid_dialog_file_select_open (gchar * title, gchar ** path, gchar * shortcuts)
 					GTK_WINDOW (out->top_window),
 					GTK_FILE_CHOOSER_ACTION_OPEN,
 					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					GTK_STOCK_OPEN, GTK_RESPONSE_OK,
+					GTK_STOCK_OK, GTK_RESPONSE_OK,
 					NULL);
 
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
@@ -246,7 +246,7 @@ ghid_dialog_file_select_save (gchar * title, gchar ** path, gchar * file,
 					GTK_WINDOW (out->top_window),
 					GTK_FILE_CHOOSER_ACTION_SAVE,
 					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					GTK_STOCK_OPEN, GTK_RESPONSE_OK,
+					GTK_STOCK_OK, GTK_RESPONSE_OK,
 					NULL);
 
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);

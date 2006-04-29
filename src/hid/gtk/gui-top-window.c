@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.26 2006-04-24 22:02:10 danmc Exp $ */
+/* $Id: gui-top-window.c,v 1.27 2006-04-29 18:43:56 billw2 Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -84,7 +84,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.26 2006-04-24 22:02:10 danmc Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.27 2006-04-29 18:43:56 billw2 Exp $");
 
 extern HID ghid_hid;
 
@@ -230,17 +230,20 @@ static void
 save_layout_cb (GtkAction * action, GHidPort * port)
 {
   hid_actionl ("Save", "Layout", NULL);
+  ghid_set_status_line_label ();
 }
 
 static void
 save_layout_as_cb (GtkAction * action, GHidPort * port)
 {
   hid_actionl ("Save", "LayoutAs", NULL);
+  ghid_set_status_line_label ();
 }
 
 static void revert_cb(GtkAction *action, GHidPort *port)
 	{
 	hid_actionl ("LoadFrom", "Revert", "none", 0);
+	ghid_set_status_line_label ();
 	}
 
 
