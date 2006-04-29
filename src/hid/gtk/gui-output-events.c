@@ -1,4 +1,4 @@
-/* $Id: gui-output-events.c,v 1.7 2006-04-15 00:09:44 billw2 Exp $ */
+/* $Id: gui-output-events.c,v 1.8 2006-04-29 17:05:36 billw2 Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -49,7 +49,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-output-events.c,v 1.7 2006-04-15 00:09:44 billw2 Exp $");
+RCSID ("$Id: gui-output-events.c,v 1.8 2006-04-29 17:05:36 billw2 Exp $");
 
 static gint x_pan_speed, y_pan_speed;
 
@@ -852,6 +852,7 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
     case GDK_Insert:
       if (mk == NONE_PRESSED)
 	hid_actionl ("Mode", "InsertPoint", NULL);
+      break;
 
     case GDK_1:
     case GDK_2:

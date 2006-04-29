@@ -1,4 +1,4 @@
-/* $Id: gui-utils.c,v 1.5 2006-04-21 21:03:06 danmc Exp $ */
+/* $Id: gui-utils.c,v 1.6 2006-04-29 17:05:36 billw2 Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -39,7 +39,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-utils.c,v 1.5 2006-04-21 21:03:06 danmc Exp $");
+RCSID ("$Id: gui-utils.c,v 1.6 2006-04-29 17:05:36 billw2 Exp $");
 
 /* Not a gui function, but no better place to put it...
  */
@@ -376,7 +376,7 @@ ghid_spin_button (GtkWidget * box, GtkWidget ** spin_button, gfloat value,
   if (spin_button)
     *spin_button = spin_but;
   if (width > 0)
-    gtk_widget_set_size_request (spin_but, width, 0);
+    gtk_widget_set_size_request (spin_but, width, -1);
   spin = GTK_SPIN_BUTTON (spin_but);
   gtk_spin_button_set_numeric (spin, TRUE);
   if (data == NULL)
@@ -423,7 +423,7 @@ ghid_table_spin_button (GtkWidget * table, gint row, gint column,
   if (spin_button)
     *spin_button = spin_but;
   if (width > 0)
-    gtk_widget_set_size_request (spin_but, width, 0);
+    gtk_widget_set_size_request (spin_but, width, -1);
   spin = GTK_SPIN_BUTTON (spin_but);
   gtk_spin_button_set_numeric (spin, TRUE);
   if (data == NULL)
