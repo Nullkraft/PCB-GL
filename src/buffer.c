@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.26 2006-04-23 20:41:14 danmc Exp $ */
+/* $Id: buffer.c,v 1.27 2006-04-30 04:28:55 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -60,7 +60,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: buffer.c,v 1.26 2006-04-23 20:41:14 danmc Exp $");
+RCSID ("$Id: buffer.c,v 1.27 2006-04-30 04:28:55 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -916,7 +916,7 @@ MirrorBuffer (BufferTypePtr Buffer)
     }
   for (i = 0; i < MAX_LAYER + 2; i++)
     {
-      LayerTypePtr layer = LAYER_PTR (i);
+      LayerTypePtr layer = Buffer->Data->Layer + i;
       if (layer->TextN)
 	{
 	  Message (_("You can't mirror a buffer that has text!\n"));
