@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.27 2006-04-29 18:43:56 billw2 Exp $ */
+/* $Id: gui-top-window.c,v 1.28 2006-05-15 04:48:17 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -84,7 +84,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.27 2006-04-29 18:43:56 billw2 Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.28 2006-05-15 04:48:17 djdelorie Exp $");
 
 extern HID ghid_hid;
 
@@ -824,7 +824,7 @@ selected_vias_drill_change_cb (GtkAction * action, GHidPort * port)
 
   ghid_size_increment_get_value (gtk_action_get_name (action), &value,
 				 &units);
-  hid_actionl ("Change2ndSize", "SelectedVias", value, units, NULL);
+  hid_actionl ("ChangeDrillSize", "SelectedVias", value, units, NULL);
 }
 
 static void
@@ -834,7 +834,7 @@ selected_pins_drill_change_cb (GtkAction * action, GHidPort * port)
 
   ghid_size_increment_get_value (gtk_action_get_name (action), &value,
 				 &units);
-  hid_actionl ("Change2ndSize", "SelectedPins", value, units, NULL);
+  hid_actionl ("ChangeDrillSize", "SelectedPins", value, units, NULL);
 }
 
 static void
