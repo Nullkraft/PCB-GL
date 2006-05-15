@@ -1,4 +1,4 @@
-/* $Id: batch.c,v 1.1 2006-05-15 00:54:31 djdelorie Exp $ */
+/* $Id: batch.c,v 1.2 2006-05-15 01:08:36 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -8,8 +8,6 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 
 #include "global.h"
 #include "hid.h"
@@ -19,7 +17,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: batch.c,v 1.1 2006-05-15 00:54:31 djdelorie Exp $");
+RCSID ("$Id: batch.c,v 1.2 2006-05-15 01:08:36 djdelorie Exp $");
 
 /* This is a text-line "batch" HID, which exists for scripting and
    non-GUI needs.  */
@@ -156,15 +154,13 @@ command_parse (char *s)
 static void
 batch_do_export (HID_Attr_Val * options)
 {
-  struct stat st;
   int interactive;
   char line[1000];
 
-  fstat (fileno (stdin), &st);
-  if (S_ISREG(st.st_mode))
-    interactive = 0;
-  else
+  if (isatty (0))
     interactive = 1;
+  else
+    interactive = 0;
 
   if (interactive)
     {
