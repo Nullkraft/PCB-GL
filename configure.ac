@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.50 2006-04-27 02:34:51 danmc Exp $
+dnl $Id: configure.ac,v 1.51 2006-05-16 22:15:34 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -141,7 +141,7 @@ done
 
 AC_MSG_CHECKING([for which gui to use])
 AC_ARG_WITH([gui],
-[  --with-gui=	          Specify the GUI to use: gtk lesstif [[default=gtk]]],
+[  --with-gui=	          Specify the GUI to use: batch gtk lesstif [[default=gtk]]],
 [],
 [with_gui=gtk]
 )
