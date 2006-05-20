@@ -1,4 +1,4 @@
-/* $Id: ps.c,v 1.6 2006-04-19 22:33:07 djdelorie Exp $ */
+/* $Id: ps.c,v 1.7 2006-05-20 20:04:45 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -22,7 +22,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: ps.c,v 1.6 2006-04-19 22:33:07 djdelorie Exp $");
+RCSID ("$Id: ps.c,v 1.7 2006-05-20 20:04:45 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
@@ -361,7 +361,7 @@ ps_set_layer (const char *name, int group)
   if (strcmp (name, "invisible") == 0)
     return 0;
 
-  is_drill = (SL_TYPE (idx) == SL_DRILL);
+  is_drill = (SL_TYPE (idx) == SL_PDRILL || SL_TYPE (idx) == SL_UDRILL);
   is_mask = (SL_TYPE (idx) == SL_MASK);
   is_assy = (SL_TYPE (idx) == SL_ASSY);
 #if 0

@@ -1,4 +1,4 @@
-/* $Id: extents.c,v 1.3 2006-03-22 23:03:14 danmc Exp $ */
+/* $Id: extents.c,v 1.4 2006-05-20 20:04:45 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -19,7 +19,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: extents.c,v 1.3 2006-03-22 23:03:14 danmc Exp $");
+RCSID ("$Id: extents.c,v 1.4 2006-05-20 20:04:45 djdelorie Exp $");
 
 #ifndef MAXINT
 #define MAXINT (((unsigned int)(~0))>>1)
@@ -52,7 +52,8 @@ extents_set_layer (const char *name, int group)
 	case SL_ASSY:
 	  return 0;
 	case SL_SILK:
-	case SL_DRILL:
+	case SL_PDRILL:
+	case SL_UDRILL:
 	  return 1;
 	}
     }

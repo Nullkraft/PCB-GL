@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.22 2006-04-24 22:02:03 danmc Exp $ */
+/* $Id: main.c,v 1.23 2006-05-20 20:04:45 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.22 2006-04-24 22:02:03 danmc Exp $");
+RCSID ("$Id: main.c,v 1.23 2006-05-20 20:04:45 djdelorie Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -2424,7 +2424,8 @@ lesstif_set_layer (const char *name, int group)
 	  return 0;
 	case SL_ASSY:
 	  return 0;
-	case SL_DRILL:
+	case SL_UDRILL:
+	case SL_PDRILL:
 	  return 1;
 	}
     }

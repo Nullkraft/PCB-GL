@@ -1,4 +1,4 @@
-/* $Id: png.c,v 1.10 2006-04-19 22:34:22 danmc Exp $ */
+/* $Id: png.c,v 1.11 2006-05-20 20:04:45 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -51,7 +51,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: png.c,v 1.10 2006-04-19 22:34:22 danmc Exp $");
+RCSID ("$Id: png.c,v 1.11 2006-05-20 20:04:45 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PNG function %s.\n", __FUNCTION__); abort()
 
@@ -516,7 +516,7 @@ png_set_layer (const char *name, int group)
   if (strcmp (name, "invisible") == 0)
     return 0;
 
-  is_drill = (SL_TYPE (idx) == SL_DRILL);
+  is_drill = (SL_TYPE (idx) == SL_PDRILL || SL_TYPE (idx) == SL_UDRILL);
   is_mask = (SL_TYPE (idx) == SL_MASK);
 
   if (is_mask)

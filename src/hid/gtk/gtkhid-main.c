@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.18 2006-04-29 18:43:56 billw2 Exp $ */
+/* $Id: gtkhid-main.c,v 1.19 2006-05-20 20:04:45 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.18 2006-04-29 18:43:56 billw2 Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.19 2006-05-20 20:04:45 djdelorie Exp $");
 
 
 extern HID ghid_hid;
@@ -340,7 +340,8 @@ ghid_set_layer (const char *name, int group)
 	  return 0;
 	case SL_ASSY:
 	  return 0;
-	case SL_DRILL:
+	case SL_PDRILL:
+	case SL_UDRILL:
 	  return 1;
 	}
     }
