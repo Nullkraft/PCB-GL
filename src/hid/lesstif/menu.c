@@ -1,4 +1,4 @@
-/* $Id: menu.c,v 1.11 2006-04-20 03:23:07 djdelorie Exp $ */
+/* $Id: menu.c,v 1.12 2006-05-21 04:36:31 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: menu.c,v 1.11 2006-04-20 03:23:07 djdelorie Exp $");
+RCSID ("$Id: menu.c,v 1.12 2006-05-21 04:36:31 djdelorie Exp $");
 
 #ifndef R_OK
 /* Common value for systems that don't define it.  */
@@ -741,13 +741,13 @@ radio_callback (Widget toggle, ToggleItem * me,
 int
 lesstif_button_event (Widget w, XEvent * e)
 {
+  have_xy = 1;
+  action_x = e->xbutton.x;
+  action_y = e->xbutton.y;
   if (!need_xy)
     return 0;
   if (w != work_area)
     return 1;
-  have_xy = 1;
-  action_x = e->xbutton.x;
-  action_y = e->xbutton.y;
   return 0;
 }
 

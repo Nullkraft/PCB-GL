@@ -1,4 +1,4 @@
-/* $Id: report.c,v 1.31 2006-04-15 04:00:25 djdelorie Exp $ */
+/* $Id: report.c,v 1.32 2006-05-21 04:36:30 djdelorie Exp $ */
 
 #include "rtree.h"
 /*
@@ -48,7 +48,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: report.c,v 1.31 2006-04-15 04:00:25 djdelorie Exp $");
+RCSID ("$Id: report.c,v 1.32 2006-05-21 04:36:30 djdelorie Exp $");
 
 
 
@@ -120,7 +120,11 @@ ReportDialog (int argc, char **argv, int x, int y)
   int type;
   char report[2048];
 
-  switch (type = SearchScreen (x, y, REPORT_TYPES, &ptr1, &ptr2, &ptr3))
+  type = SearchScreen (x, y, REPORT_TYPES, &ptr1, &ptr2, &ptr3);
+  if (type == NO_TYPE)
+    type = SearchScreen (x, y, REPORT_TYPES | LOCKED_TYPE, &ptr1, &ptr2, &ptr3);
+
+  switch (type)
     {
     case VIA_TYPE:
       {
