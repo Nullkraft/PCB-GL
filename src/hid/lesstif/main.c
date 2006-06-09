@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.24 2006-05-29 04:03:39 djdelorie Exp $ */
+/* $Id: main.c,v 1.25 2006-06-09 03:31:33 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.24 2006-05-29 04:03:39 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.25 2006-06-09 03:31:33 djdelorie Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -1084,6 +1084,10 @@ Pan (int mode, int x, int y)
     {
       opx = x * PCB->MaxWidth / view_width;
       opy = y * PCB->MaxHeight / view_height;
+      if (flip_x)
+	opx = PCB->MaxWidth - opx;
+      if (flip_y)
+	opy = PCB->MaxHeight - opy;
       view_left_x = opx - view_width / 2 * view_zoom;
       view_top_y = opy - view_height / 2 * view_zoom;
       lesstif_pan_fixup ();
@@ -1097,8 +1101,14 @@ Pan (int mode, int x, int y)
     }
   else
     {
-      view_left_x = opx - (x - ox) * view_zoom;
-      view_top_y = opy - (y - oy) * view_zoom;
+      if (flip_x)
+	view_left_x = opx + (x - ox) * view_zoom;
+      else
+	view_left_x = opx - (x - ox) * view_zoom;
+      if (flip_y)
+	view_top_y = opy + (y - oy) * view_zoom;
+      else
+	view_top_y = opy - (y - oy) * view_zoom;
       lesstif_pan_fixup ();
     }
 }
