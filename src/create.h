@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: create.h,v 1.6 2006-03-22 23:17:20 danmc Exp $
+ *  RCS: $Id: create.h,v 1.7 2006-06-10 03:07:38 djdelorie Exp $
  */
 
 /* prototypes for create routines
@@ -36,6 +36,9 @@
 DataTypePtr CreateNewBuffer (void);
 void pcb_colors_from_settings (PCBTypePtr);
 PCBTypePtr CreateNewPCB (Boolean);
+/* Called after PCB->Data->LayerN is set.  Returns zero if no errors,
+   else nonzero.  */
+int CreateNewPCBPost (PCBTypePtr, int /* set defaults */);
 PinTypePtr CreateNewVia (DataTypePtr, LocationType, LocationType, BDimension,
 			 BDimension, BDimension, BDimension, char *,
 			 FlagType);

@@ -1,4 +1,4 @@
-/* $Id: search.c,v 1.24 2006-05-20 17:41:48 djdelorie Exp $ */
+/* $Id: search.c,v 1.25 2006-06-10 03:07:41 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -52,7 +52,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: search.c,v 1.24 2006-05-20 17:41:48 djdelorie Exp $");
+RCSID ("$Id: search.c,v 1.25 2006-06-10 03:07:41 djdelorie Exp $");
 
 
 /* ---------------------------------------------------------------------------
@@ -1138,11 +1138,11 @@ SearchObjectByLocation (int Type,
       HigherAvail = ELEMENT_TYPE;
     }
 
-  for (i = -1; i < MAX_LAYER + 1; i++)
+  for (i = -1; i < max_layer + 1; i++)
     {
       if (i < 0)
 	SearchLayer = &PCB->Data->SILKLAYER;
-      else if (i < MAX_LAYER)
+      else if (i < max_layer)
 	SearchLayer = LAYER_ON_STACK (i);
       else
 	SearchLayer = &PCB->Data->BACKSILKLAYER;

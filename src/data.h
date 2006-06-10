@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: data.h,v 1.9 2006-03-22 23:17:20 danmc Exp $
+ *  RCS: $Id: data.h,v 1.10 2006-06-10 03:07:38 djdelorie Exp $
  */
 
 /* common identifiers
@@ -54,6 +54,8 @@ extern MarkType Marked;
 extern OutputType Output;
 
 extern PCBTypePtr PCB;
+
+#define max_layer (PCB->Data->LayerN)
 
 extern SettingType Settings;
 

@@ -1,4 +1,4 @@
-/* $Id: autoplace.c,v 1.17 2006-04-13 23:45:39 danmc Exp $ */
+/* $Id: autoplace.c,v 1.18 2006-06-10 03:07:38 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -67,7 +67,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: autoplace.c,v 1.17 2006-04-13 23:45:39 danmc Exp $");
+RCSID ("$Id: autoplace.c,v 1.18 2006-06-10 03:07:38 djdelorie Exp $");
 
 #define EXPANDRECTXY(r1, x1, y1, x2, y2) { \
   r1->X1=MIN(r1->X1, x1); r1->Y1=MIN(r1->Y1, y1); \
@@ -158,8 +158,8 @@ UpdateXY (NetListTypePtr Nets)
   Cardinal SLayer, CLayer;
   Cardinal i, j;
   /* find layer groups of the component side and solder side */
-  SLayer = GetLayerGroupNumberByNumber (MAX_LAYER + SOLDER_LAYER);
-  CLayer = GetLayerGroupNumberByNumber (MAX_LAYER + COMPONENT_LAYER);
+  SLayer = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
+  CLayer = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
   /* update all nets */
   for (i = 0; i < Nets->NetN; i++)
     {
@@ -214,7 +214,7 @@ static void
 showboxes (BoxListTypePtr blist)
 {
   Cardinal i;
-  LayerTypePtr SLayer = &(PCB->Data->Layer[MAX_LAYER + SOLDER_LAYER]);
+  LayerTypePtr SLayer = &(PCB->Data->Layer[max_layer + SOLDER_LAYER]);
   for (i = 0; i < blist->BoxN; i++)
     {
       CreateNewLineOnLayer (SLayer, blist->Box[i].X1, blist->Box[i].Y1,

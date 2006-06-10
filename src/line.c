@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.10 2006-03-28 04:29:19 danmc Exp $ */
+/* $Id: line.c,v 1.11 2006-06-10 03:07:41 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -50,7 +50,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: line.c,v 1.10 2006-03-28 04:29:19 danmc Exp $");
+RCSID ("$Id: line.c,v 1.11 2006-06-10 03:07:41 djdelorie Exp $");
 
 static float drc_lines (PointTypePtr end, Boolean way);
 
@@ -320,13 +320,13 @@ drc_lines (PointTypePtr end, Boolean way)
       length = abs (dy);
     }
   group = GetGroupOfLayer (INDEXOFCURRENT);
-  comp = MAX_LAYER + 10;	/* this out-of-range group might save a call */
-  if (GetLayerGroupNumberByNumber (MAX_LAYER + SOLDER_LAYER) == group)
+  comp = max_layer + 10;	/* this out-of-range group might save a call */
+  if (GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER) == group)
     info.solder = True;
   else
     {
       info.solder = False;
-      comp = GetLayerGroupNumberByNumber (MAX_LAYER + COMPONENT_LAYER);
+      comp = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
     }
   temp = length;
   /* assume the worst */
@@ -490,7 +490,7 @@ EnforceLineDRC (void)
   float r1, r2;
 
   if (gui->control_is_pressed () || PCB->RatDraw
-      || INDEXOFCURRENT >= MAX_LAYER)
+      || INDEXOFCURRENT >= max_layer)
     return;
   rs.X = r45.X = Crosshair.X;
   rs.Y = r45.Y = Crosshair.Y;

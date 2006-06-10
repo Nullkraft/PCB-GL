@@ -1,4 +1,4 @@
-/* $Id: crosshair.c,v 1.23 2006-05-14 23:22:23 djdelorie Exp $ */
+/* $Id: crosshair.c,v 1.24 2006-06-10 03:07:38 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -52,7 +52,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: crosshair.c,v 1.23 2006-05-14 23:22:23 djdelorie Exp $");
+RCSID ("$Id: crosshair.c,v 1.24 2006-06-10 03:07:38 djdelorie Exp $");
 
 #if !defined(ABS)
 #define ABS(x) (((x)<0)?-(x):(x))
@@ -292,7 +292,7 @@ XORDrawBuffer (BufferTypePtr Buffer)
   y = Crosshair.Y - Buffer->Y;
 
   /* draw all visible layers */
-  for (i = 0; i < MAX_LAYER + 2; i++)
+  for (i = 0; i < max_layer + 2; i++)
     if (PCB->Data->Layer[i].On)
       {
 	LayerTypePtr layer = &Buffer->Data->Layer[i];

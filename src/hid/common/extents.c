@@ -1,4 +1,4 @@
-/* $Id: extents.c,v 1.4 2006-05-20 20:04:45 djdelorie Exp $ */
+/* $Id: extents.c,v 1.5 2006-06-10 03:07:42 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -19,7 +19,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: extents.c,v 1.4 2006-05-20 20:04:45 djdelorie Exp $");
+RCSID ("$Id: extents.c,v 1.5 2006-06-10 03:07:42 djdelorie Exp $");
 
 #ifndef MAXINT
 #define MAXINT (((unsigned int)(~0))>>1)
@@ -37,11 +37,11 @@ static int
 extents_set_layer (const char *name, int group)
 {
   int idx = group;
-  if (idx >= 0 && idx < MAX_LAYER)
+  if (idx >= 0 && idx < max_layer)
     {
       idx = PCB->LayerGroups.Entries[idx][0];
     }
-  if (idx >= 0 && idx < MAX_LAYER + 2)
+  if (idx >= 0 && idx < max_layer + 2)
     return 1;
   if (idx < 0)
     {

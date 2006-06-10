@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.37 2006-04-28 03:09:14 djdelorie Exp $ */
+/* $Id: file.c,v 1.38 2006-06-10 03:07:41 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -89,7 +89,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: file.c,v 1.37 2006-04-28 03:09:14 djdelorie Exp $");
+RCSID ("$Id: file.c,v 1.38 2006-06-10 03:07:41 djdelorie Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -712,7 +712,7 @@ WriteBuffer (FILE * FP)
 
   WriteViaData (FP, PASTEBUFFER->Data);
   WriteElementData (FP, PASTEBUFFER->Data);
-  for (i = 0; i < MAX_LAYER + 2; i++)
+  for (i = 0; i < max_layer + 2; i++)
     WriteLayerData (FP, i, &(PASTEBUFFER->Data->Layer[i]));
   return (STATUS_OK);
 }
@@ -731,7 +731,7 @@ WritePCB (FILE * FP)
   WriteViaData (FP, PCB->Data);
   WriteElementData (FP, PCB->Data);
   WritePCBRatData (FP);
-  for (i = 0; i < MAX_LAYER + 2; i++)
+  for (i = 0; i < max_layer + 2; i++)
     WriteLayerData (FP, i, &(PCB->Data->Layer[i]));
   WritePCBNetlistData (FP);
 

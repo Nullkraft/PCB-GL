@@ -1,4 +1,4 @@
-/* $Id: rats.c,v 1.24 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: rats.c,v 1.25 2006-06-10 03:07:41 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -60,7 +60,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: rats.c,v 1.24 2006-03-22 23:17:20 danmc Exp $");
+RCSID ("$Id: rats.c,v 1.25 2006-06-10 03:07:41 djdelorie Exp $");
 
 
 #define TRIEDFIRST 0x1
@@ -232,8 +232,8 @@ ProcNetlist (LibraryTypePtr net_menu)
   badnet = False;
 
   /* find layer groups of the component side and solder side */
-  SLayer = GetLayerGroupNumberByNumber (MAX_LAYER + SOLDER_LAYER);
-  CLayer = GetLayerGroupNumberByNumber (MAX_LAYER + COMPONENT_LAYER);
+  SLayer = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
+  CLayer = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
 
   Wantlist = MyCalloc (1, sizeof (NetListType), "ProcNetlist()");
   if (Wantlist)
@@ -839,8 +839,8 @@ AddNet (void)
 
   /* will work for pins to since the FLAG is common */
   group1 = (TEST_FLAG (ONSOLDERFLAG, (PadTypePtr) ptr2) ?
-	    GetLayerGroupNumberByNumber (MAX_LAYER + SOLDER_LAYER) :
-	    GetLayerGroupNumberByNumber (MAX_LAYER + COMPONENT_LAYER));
+	    GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER) :
+	    GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER));
   strcpy (name1, ConnectionName (found, ptr1, ptr2));
   found = SearchObjectByLocation (PAD_TYPE | PIN_TYPE, &ptr1, &ptr2, &ptr3,
 				  Crosshair.AttachedLine.Point2.X,
@@ -857,8 +857,8 @@ AddNet (void)
       return (NULL);
     }
   group2 = (TEST_FLAG (ONSOLDERFLAG, (PadTypePtr) ptr2) ?
-	    GetLayerGroupNumberByNumber (MAX_LAYER + SOLDER_LAYER) :
-	    GetLayerGroupNumberByNumber (MAX_LAYER + COMPONENT_LAYER));
+	    GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER) :
+	    GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER));
   name2 = ConnectionName (found, ptr1, ptr2);
 #ifdef FIXME
   menu = gui_get_net_from_node_name (name1, False);

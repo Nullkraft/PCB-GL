@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: move.h,v 1.7 2006-03-22 23:17:20 danmc Exp $
+ *  RCS: $Id: move.h,v 1.8 2006-06-10 03:07:41 djdelorie Exp $
  */
 
 /* prototypes for move routines
@@ -100,5 +100,10 @@ void *MoveLineToLayerLowLevel (LayerTypePtr, LineTypePtr, LayerTypePtr);
 void *MoveTextToLayerLowLevel (LayerTypePtr, TextTypePtr, LayerTypePtr);
 void *MovePolygonToLayerLowLevel (LayerTypePtr, PolygonTypePtr, LayerTypePtr);
 Boolean MoveSelectedObjectsToLayer (LayerTypePtr);
+
+/* index is 0..MAX_LAYER-1.  If old_index is -1, a new layer is
+   inserted at that index.  If new_index is -1, the specified layer is
+   deleted.  Returns non-zero on error, zero if OK.  */
+int MoveLayer(int old_index, int new_index);
 
 #endif

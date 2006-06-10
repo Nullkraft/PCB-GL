@@ -1,4 +1,4 @@
-/* $Id: copy.c,v 1.14 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: copy.c,v 1.15 2006-06-10 03:07:38 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: copy.c,v 1.14 2006-03-22 23:17:20 danmc Exp $");
+RCSID ("$Id: copy.c,v 1.15 2006-06-10 03:07:38 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -320,7 +320,7 @@ CopyPastebufferToLayout (LocationType X, LocationType Y)
   DeltaX = X - PASTEBUFFER->X, DeltaY = Y - PASTEBUFFER->Y;
 
   /* paste all layers */
-  for (i = 0; i < MAX_LAYER + 2; i++)
+  for (i = 0; i < max_layer + 2; i++)
     {
       LayerTypePtr sourcelayer = &PASTEBUFFER->Data->Layer[i],
 	destlayer = LAYER_PTR (i);

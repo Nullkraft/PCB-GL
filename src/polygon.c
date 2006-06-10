@@ -1,4 +1,4 @@
-/* $Id: polygon.c,v 1.34 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: polygon.c,v 1.35 2006-06-10 03:07:41 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -59,7 +59,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: polygon.c,v 1.34 2006-03-22 23:17:20 danmc Exp $");
+RCSID ("$Id: polygon.c,v 1.35 2006-06-10 03:07:41 djdelorie Exp $");
 
 
 /* ---------------------------------------------------------------------------
@@ -300,7 +300,7 @@ UpdatePIPFlags (PinTypePtr Pin, ElementTypePtr Element,
   else if (Layer == NULL)
     {
       Cardinal l;
-      for (l = 0; l < MAX_LAYER; l++)
+      for (l = 0; l < max_layer; l++)
 	UpdatePIPFlags (Pin, Element, LAYER_PTR (l), AddUndo);
     }
   else
@@ -521,8 +521,8 @@ PolygonPlows (int group, const BoxType * range,
   struct plow_info info;
 
   info.group = group;
-  info.component = GetLayerGroupNumberByNumber (MAX_LAYER + COMPONENT_LAYER);
-  info.solder = GetLayerGroupNumberByNumber (MAX_LAYER + SOLDER_LAYER);
+  info.component = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+  info.solder = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
   info.callback = any_call;
   info.range = range;
   GROUP_LOOP (group);

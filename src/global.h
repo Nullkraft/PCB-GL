@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.45 2006-04-24 05:10:10 djdelorie Exp $
+ *  RCS: $Id: global.h,v 1.46 2006-06-10 03:07:41 djdelorie Exp $
  */
 
 /* definition of types
@@ -321,6 +321,7 @@ typedef struct			/* holds all objects */
     ElementMax,			/* max number from malloc() */
     RatN,			/* and rat-lines */
     RatMax;
+  int LayerN;			/* number of layers in this board */
   PinTypePtr Via;		/* pointer to object data */
   ElementTypePtr Element;
   RatTypePtr Rat;
@@ -696,6 +697,7 @@ typedef struct
 #define UNDO_CHANGECLEARSIZE		0x1000	/* change clearance size */
 #define UNDO_CHANGEMASKSIZE		0x2000	/* change mask size */
 #define UNDO_CHANGEANGLES		0x4000	/* change arc angles */
+#define UNDO_LAYERCHANGE		0x8000	/* layer new/delete/move */
 
 
 /* ---------------------------------------------------------------------------

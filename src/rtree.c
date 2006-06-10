@@ -1,4 +1,4 @@
-/* $Id: rtree.c,v 1.24 2006-03-28 04:29:20 danmc Exp $ */
+/* $Id: rtree.c,v 1.25 2006-06-10 03:07:41 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -59,7 +59,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: rtree.c,v 1.24 2006-03-28 04:29:20 danmc Exp $");
+RCSID ("$Id: rtree.c,v 1.25 2006-06-10 03:07:41 djdelorie Exp $");
 
 
 #undef SLOW_ASSERTS
@@ -248,7 +248,7 @@ __r_dump_tree (struct rtree_node *node, int depth)
 				  GDK_LINE_SOLID, GDK_CAP_ROUND,
 				  GDK_JOIN_ROUND);
 
-      if (depth < MAX_LAYER + 1)
+      if (depth < max_layer + 1)
 	gdk_gc_set_foreground (Output.fgGC, (LAYER_PTR (depth)->Color));
       else
 	gdk_gc_set_foreground (Output.fgGC, PCB->WarnColor);
