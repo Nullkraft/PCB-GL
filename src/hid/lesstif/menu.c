@@ -1,4 +1,4 @@
-/* $Id: menu.c,v 1.13 2006-06-10 03:07:43 djdelorie Exp $ */
+/* $Id: menu.c,v 1.14 2006-06-11 02:24:16 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: menu.c,v 1.13 2006-06-10 03:07:43 djdelorie Exp $");
+RCSID ("$Id: menu.c,v 1.14 2006-06-11 02:24:16 djdelorie Exp $");
 
 #ifndef R_OK
 /* Common value for systems that don't define it.  */
@@ -827,6 +827,15 @@ lesstif_call_action (const char *aname, int argc, char **argv)
       lesstif_get_xy (msg);
     }
   lesstif_coords_to_pcb (action_x, action_y, &px, &py);
+
+  if (Settings.verbose)
+    {
+      int i;
+      printf ("Action: \033[34m%s(", aname);
+      for (i = 0; i < argc; i++)
+	printf ("%s%s", i ? "," : "", argv[i]);
+      printf (")\033[0m\n");
+    }
   return a->trigger_cb (argc, argv, px, py);
 }
 
