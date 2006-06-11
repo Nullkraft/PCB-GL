@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.84 2006-06-10 03:07:38 djdelorie Exp $ */
+/* $Id: action.c,v 1.85 2006-06-11 02:27:58 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -72,7 +72,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.84 2006-06-10 03:07:38 djdelorie Exp $");
+RCSID ("$Id: action.c,v 1.85 2006-06-11 02:27:58 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -5141,35 +5141,6 @@ ActionNew (int argc, char **argv, int x, int y)
       hid_action ("PCBChanged");
     }
   RestoreCrosshair (True);
-  return 1;
-}
-
-/* ---------------------------------------------------------------------------
- * swap visible sides
- */
-static int
-ActionSwapSides (int argc, char **argv, int x, int y)
-{
-#ifdef FIXME
-  LocationType x, y;
-
-  x = TO_SCREEN_X (Crosshair.X);
-  y = TO_SCREEN_Y (Crosshair.Y);
-  SwapBuffers ();
-  Settings.ShowSolderSide = !Settings.ShowSolderSide;
-  /* set silk colors as needed */
-#ifdef FIXME
-  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
-  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
-#endif
-  /* change the display */
-  if (CoalignScreen (x, y, Crosshair.X, Crosshair.Y))
-    warpNoWhere ();
-
-  /* update object position and cursor location */
-  AdjustAttachedObjects ();
-  ClearAndRedrawOutput ();
-#endif
   return 1;
 }
 
