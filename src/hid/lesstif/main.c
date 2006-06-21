@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.27 2006-06-11 02:25:51 djdelorie Exp $ */
+/* $Id: main.c,v 1.28 2006-06-21 02:51:58 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.27 2006-06-11 02:25:51 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.28 2006-06-21 02:51:58 djdelorie Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -1052,6 +1052,11 @@ zoom_to (double new_zoom, int x, int y)
 
   xfrac = (double) x / (double) view_width;
   yfrac = (double) y / (double) view_height;
+
+  if (flip_x)
+    xfrac = 1-xfrac;
+  if (flip_y)
+    yfrac = 1-yfrac;
 
   max_zoom = PCB->MaxWidth / view_width;
   if (max_zoom < PCB->MaxHeight / view_height)
