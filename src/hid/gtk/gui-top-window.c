@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.29 2006-06-10 03:07:43 djdelorie Exp $ */
+/* $Id: gui-top-window.c,v 1.30 2006-07-04 12:42:04 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -84,7 +84,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.29 2006-06-10 03:07:43 djdelorie Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.30 2006-07-04 12:42:04 danmc Exp $");
 
 extern HID ghid_hid;
 
@@ -3710,7 +3710,7 @@ HID_Attribute ghid_attribute_list[] = {
    HID_Boolean, 0, 0, {0, 0, 0}, 0, &stdin_listen},
 #define HA_listen 0
 
-  {"bg-image", "Bacground Image",
+  {"bg-image", "Background Image",
    HID_String, 0, 0, {0, 0, 0}, 0, &bg_image_file},
 #define HA_bg_image 1
 

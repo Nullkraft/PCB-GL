@@ -1,4 +1,4 @@
-/* $Id: ps.c,v 1.8 2006-06-10 03:07:44 djdelorie Exp $ */
+/* $Id: ps.c,v 1.9 2006-07-04 12:42:10 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -22,7 +22,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: ps.c,v 1.8 2006-06-10 03:07:44 djdelorie Exp $");
+RCSID ("$Id: ps.c,v 1.9 2006-07-04 12:42:10 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
@@ -123,22 +123,8 @@ static HID_Attr_Val ps_values[NUM_OPTIONS];
 static HID_Attribute *
 ps_get_export_options (int *n)
 {
-  char *buf = 0;
-
-  if (PCB && PCB->Filename)
-    {
-      buf = (char *) malloc (strlen (PCB->Filename) + 4);
-      if (buf)
-	{
-	  strcpy (buf, PCB->Filename);
-	  if (strcmp (buf + strlen (buf) - 4, ".pcb") == 0)
-	    buf[strlen (buf) - 4] = 0;
-	  strcat (buf, ".ps");
-	  if (ps_attribute_list[HA_psfile].default_val.str_value)
-	    free (ps_attribute_list[HA_psfile].default_val.str_value);
-	  ps_attribute_list[HA_psfile].default_val.str_value = buf;
-	}
-    }
+  static char *last_made_filename = 0;
+  if (PCB) derive_default_filename(PCB->Filename, &ps_attribute_list[HA_psfile], ".ps", &last_made_filename);
 
   if (n)
     *n = NUM_OPTIONS;

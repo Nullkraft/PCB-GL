@@ -1,4 +1,4 @@
-/* $Id: gerber.c,v 1.13 2006-06-10 03:07:42 djdelorie Exp $ */
+/* $Id: gerber.c,v 1.14 2006-07-04 12:42:03 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -32,7 +32,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gerber.c,v 1.13 2006-06-10 03:07:42 djdelorie Exp $");
+RCSID ("$Id: gerber.c,v 1.14 2006-07-04 12:42:03 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented Gerber function %s.\n", __FUNCTION__); abort()
 
@@ -255,21 +255,8 @@ static HID_Attr_Val gerber_values[NUM_OPTIONS];
 static HID_Attribute *
 gerber_get_export_options (int *n)
 {
-  char *buf = 0;
-
-  if (PCB && PCB->Filename)
-    {
-      buf = (char *) malloc (strlen (PCB->Filename) + 4);
-      if (buf)
-	{
-	  strcpy (buf, PCB->Filename);
-	  if (strcmp (buf + strlen (buf) - 4, ".pcb") == 0)
-	    buf[strlen (buf) - 4] = 0;
-	  if (gerber_options[HA_gerberfile].default_val.str_value)
-	    free (gerber_options[HA_gerberfile].default_val.str_value);
-	  gerber_options[HA_gerberfile].default_val.str_value = buf;
-	}
-    }
+  static char *last_made_filename = 0;
+  if (PCB) derive_default_filename(PCB->Filename, &gerber_options[HA_gerberfile], "", &last_made_filename);
 
   if (n)
     *n = NUM_OPTIONS;

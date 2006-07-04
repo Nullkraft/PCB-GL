@@ -1,4 +1,4 @@
-/* $Id: hidint.h,v 1.3 2006-03-22 23:15:31 danmc Exp $ */
+/* $Id: hidint.h,v 1.4 2006-07-04 12:42:00 danmc Exp $ */
 
 /* HID internal interfaces.  These may ONLY be called from the HID
    modules, not from the common PCB code.  */
@@ -62,3 +62,5 @@ void hid_restore_layer_ons (int *save_array);
 BoxType *hid_get_extents (void *item);
 
 #endif
+
+void derive_default_filename(const char *pcbfile, HID_Attribute *filename_attrib, const char *suffix, char **memory);

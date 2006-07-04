@@ -1,4 +1,4 @@
-/* $Id: hidinit.c,v 1.3 2006-03-22 23:03:14 danmc Exp $ */
+/* $Id: hidinit.c,v 1.4 2006-07-04 12:42:02 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -17,7 +17,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: hidinit.c,v 1.3 2006-03-22 23:03:14 danmc Exp $");
+RCSID ("$Id: hidinit.c,v 1.4 2006-07-04 12:42:02 danmc Exp $");
 
 #define HID_DEF(x) extern void hid_ ## x ## _init(void);
 #include "hid/common/hidlist.h"
@@ -327,4 +327,24 @@ hid_cache_color (int set, const char *name, hidval * val, void **vcache)
   memcpy (&(e->val), val, sizeof (hidval));
 
   return 1;
+}
+
+/* otherwise homeless function, refactored out of the five export HIDs */
+void derive_default_filename(const char *pcbfile, HID_Attribute *filename_attrib, const char *suffix, char **memory)
+{
+	char *buf;
+	if (!pcbfile || (memory && filename_attrib->default_val.str_value != *memory)) return;
+	buf = malloc (strlen (pcbfile) + strlen(suffix) + 1);
+	if (memory) *memory = buf;
+	if (buf) {
+		size_t bl;
+		strcpy (buf, pcbfile);
+		bl = strlen(buf);
+		if (bl > 4 && strcmp (buf + bl - 4, ".pcb") == 0)
+			buf[bl - 4] = 0;
+		strcat(buf, suffix);
+		if (filename_attrib->default_val.str_value)
+			free(filename_attrib->default_val.str_value);
+		filename_attrib->default_val.str_value = buf;
+	}
 }

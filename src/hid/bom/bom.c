@@ -1,4 +1,4 @@
-/* $Id: bom.c,v 1.4 2006-03-22 23:02:10 danmc Exp $ */
+/* $Id: bom.c,v 1.5 2006-07-04 12:42:01 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -22,7 +22,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: bom.c,v 1.4 2006-03-22 23:02:10 danmc Exp $");
+RCSID ("$Id: bom.c,v 1.5 2006-07-04 12:42:01 danmc Exp $");
 
 static HID_Attribute bom_options[] = {
   {"bomfile", "BOM output file",
@@ -58,34 +58,12 @@ typedef struct _BomList
 static HID_Attribute *
 bom_get_export_options (int *n)
 {
-  char *buf = 0;
-
-  if (PCB)
-    {
-      buf = (char *) malloc (strlen (PCB->Filename) + 4);
-      if (buf)
-	{
-	  strcpy (buf, PCB->Filename);
-	  if (strcmp (buf + strlen (buf) - 4, ".pcb") == 0)
-	    buf[strlen (buf) - 4] = 0;
-	  strcat (buf, ".bom");
-	  if (bom_options[HA_bomfile].default_val.str_value)
-	    free (bom_options[HA_bomfile].default_val.str_value);
-	  bom_options[HA_bomfile].default_val.str_value = buf;
-	}
-
-      buf = (char *) malloc (strlen (PCB->Filename) + 4);
-      if (buf)
-	{
-	  strcpy (buf, PCB->Filename);
-	  if (strcmp (buf + strlen (buf) - 4, ".pcb") == 0)
-	    buf[strlen (buf) - 4] = 0;
-	  strcat (buf, ".xy");
-	  if (bom_options[HA_xyfile].default_val.str_value)
-	    free (bom_options[HA_xyfile].default_val.str_value);
-	  bom_options[HA_xyfile].default_val.str_value = buf;
-	}
-    }
+   static char *last_bom_filename = 0;
+   static char *last_xy_filename = 0;
+  if (PCB) {
+	derive_default_filename(PCB->Filename, &bom_options[HA_bomfile], ".bom", &last_bom_filename);
+	derive_default_filename(PCB->Filename, &bom_options[HA_xyfile ], ".xy" , &last_xy_filename );
+  }
 
   if (n)
     *n = NUM_OPTIONS;
@@ -545,7 +523,7 @@ HID bom_hid = {
   0,				/* bom_prompt_for */
   0,				/* bom_attribute_dialog */
   0,				/* bom_show_item */
-  0,				/* bom_bee */
+  0,				/* bom_beep */
 };
 
 void
