@@ -1,4 +1,4 @@
-/* $Id: find.c,v 1.51 2006-06-10 03:07:41 djdelorie Exp $ */
+/* $Id: find.c,v 1.52 2006-07-04 12:16:34 danmc Exp $ */
 
 /*
  *
@@ -100,7 +100,7 @@
 
 #undef DEBUG
 
-RCSID ("$Id: find.c,v 1.51 2006-06-10 03:07:41 djdelorie Exp $");
+RCSID ("$Id: find.c,v 1.52 2006-07-04 12:16:34 danmc Exp $");
 
 
 
@@ -489,19 +489,19 @@ FreeLayoutLookupMemory (void)
 
   for (i = 0; i < max_layer; i++)
     {
-      MyFree ((char **) &LineList[i].Data);
-      MyFree ((char **) &ArcList[i].Data);
-      MyFree ((char **) &PolygonList[i].Data);
+      MYFREE (LineList[i].Data);
+      MYFREE (ArcList[i].Data);
+      MYFREE (PolygonList[i].Data);
     }
-  MyFree ((char **) &PVList.Data);
-  MyFree ((char **) &RatList.Data);
+  MYFREE (PVList.Data);
+  MYFREE (RatList.Data);
 }
 
 void
 FreeComponentLookupMemory (void)
 {
-  MyFree ((char **) &PadList[0].Data);
-  MyFree ((char **) &PadList[1].Data);
+  MYFREE (PadList[0].Data);
+  MYFREE (PadList[1].Data);
 }
 
 /* ---------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-/* $Id: rats.c,v 1.25 2006-06-10 03:07:41 djdelorie Exp $ */
+/* $Id: rats.c,v 1.26 2006-07-04 12:16:35 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -60,7 +60,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: rats.c,v 1.25 2006-06-10 03:07:41 djdelorie Exp $");
+RCSID ("$Id: rats.c,v 1.26 2006-07-04 12:16:35 danmc Exp $");
 
 
 #define TRIEDFIRST 0x1
@@ -228,7 +228,7 @@ ProcNetlist (LibraryTypePtr net_menu)
     return (NULL);
   FreeNetListMemory (Wantlist);
   SaveFree (Wantlist);
-  /*  MyFree ((char **) &Wantlist); *//* awkward */
+  /*  MYFREE (Wantlist); *//* awkward */
   badnet = False;
 
   /* find layer groups of the component side and solder side */

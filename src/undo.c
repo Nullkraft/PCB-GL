@@ -1,4 +1,4 @@
-/* $Id: undo.c,v 1.19 2006-06-10 03:07:41 djdelorie Exp $ */
+/* $Id: undo.c,v 1.20 2006-07-04 12:16:35 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -73,7 +73,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: undo.c,v 1.19 2006-06-10 03:07:41 djdelorie Exp $");
+RCSID ("$Id: undo.c,v 1.20 2006-07-04 12:16:35 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local data types
@@ -1002,7 +1002,7 @@ ClearUndoList (Boolean Force)
 	  if (undo->Type == UNDO_CHANGENAME)
 	    SaveFree (undo->Data.ChangeName.Name);
 	}
-      MyFree ((void *) &UndoList);
+      MYFREE (UndoList);
       FreeDataMemory (RemoveList);
 
       /* reset some counters */

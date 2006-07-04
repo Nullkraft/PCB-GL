@@ -1,4 +1,4 @@
-/* $Id: remove.c,v 1.14 2006-01-16 01:35:02 haceaton Exp $ */
+/* $Id: remove.c,v 1.15 2006-07-04 12:16:35 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: remove.c,v 1.14 2006-01-16 01:35:02 haceaton Exp $");
+RCSID ("$Id: remove.c,v 1.15 2006-07-04 12:16:35 danmc Exp $");
 
 
 /* ---------------------------------------------------------------------------
@@ -128,7 +128,7 @@ static void *
 DestroyVia (PinTypePtr Via)
 {
   r_delete_entry (DestroyTarget->via_tree, (BoxTypePtr) Via);
-  MyFree (&Via->Name);
+  MYFREE (Via->Name);
   *Via = DestroyTarget->Via[--DestroyTarget->ViaN];
   r_substitute (DestroyTarget->via_tree, (BoxTypePtr)
 		(BoxType *) & DestroyTarget->Via[DestroyTarget->ViaN],
@@ -144,7 +144,7 @@ static void *
 DestroyLine (LayerTypePtr Layer, LineTypePtr Line)
 {
   r_delete_entry (Layer->line_tree, (BoxTypePtr) Line);
-  MyFree (&Line->Number);
+  MYFREE (Line->Number);
   *Line = Layer->Line[--Layer->LineN];
   /* tricky - line pointers are moved around */
   r_substitute (Layer->line_tree, (BoxType *) & Layer->Line[Layer->LineN],
@@ -211,7 +211,7 @@ DestroyPolygonPoint (LayerTypePtr Layer,
 static void *
 DestroyText (LayerTypePtr Layer, TextTypePtr Text)
 {
-  MyFree (&Text->TextString);
+  MYFREE (Text->TextString);
   r_delete_entry (Layer->text_tree, (BoxTypePtr) Text);
   *Text = Layer->Text[--Layer->TextN];
   r_substitute (Layer->text_tree, (BoxType *) & Layer->Text[Layer->TextN],

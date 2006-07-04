@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: mymem.h,v 1.7 2006-04-05 23:03:09 danmc Exp $
+ *  RCS: $Id: mymem.h,v 1.8 2006-07-04 12:16:34 danmc Exp $
  */
 
 /* prototypes for memory routines
@@ -97,7 +97,8 @@ void *MyCalloc (size_t, size_t, const char *);
 void *MyMalloc (size_t, const char *);
 void *MyRealloc (void *, size_t, const char *);
 char *MyStrdup (char *s, const char *);
-void MyFree (char **);
+/* void MyFree (void **); */
+#define MYFREE(x) do { SaveFree(x); (x)=NULL; } while (0)
 void FreePolygonMemory (PolygonTypePtr);
 void FreeElementMemory (ElementTypePtr);
 void FreePCBMemory (PCBTypePtr);

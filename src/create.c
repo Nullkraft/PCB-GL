@@ -1,4 +1,4 @@
-/* $Id: create.c,v 1.28 2006-06-10 03:07:38 djdelorie Exp $ */
+/* $Id: create.c,v 1.29 2006-07-04 12:16:33 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: create.c,v 1.28 2006-06-10 03:07:38 djdelorie Exp $");
+RCSID ("$Id: create.c,v 1.29 2006-07-04 12:16:33 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local identifiers
@@ -837,7 +837,7 @@ AddTextToElement (TextTypePtr Text, FontTypePtr PCBFont,
 		  LocationType X, LocationType Y,
 		  BYTE Direction, char *TextString, int Scale, FlagType Flags)
 {
-  MyFree (&Text->TextString);
+  MYFREE (Text->TextString);
   Text->X = X;
   Text->Y = Y;
   Text->Direction = Direction;

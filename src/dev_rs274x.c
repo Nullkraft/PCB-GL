@@ -1,4 +1,4 @@
-/* $Id: dev_rs274x.c,v 1.29 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: dev_rs274x.c,v 1.30 2006-07-04 12:16:33 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -75,7 +75,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: dev_rs274x.c,v 1.29 2006-03-22 23:17:20 danmc Exp $");
+RCSID ("$Id: dev_rs274x.c,v 1.30 2006-07-04 12:16:33 danmc Exp $");
 
 /*----------------------------------------------------------------------------*/
 /* Private data structures                                                    */
@@ -455,7 +455,7 @@ GBX_Exit ()
      Sure, none of the other Dynamic strings ever do,
      even so .....
    */
-  MyFree ((char **) &appList.Data);
+  MYFREE (appList.Data);
   appList.MaxLength = 0;
 }
 

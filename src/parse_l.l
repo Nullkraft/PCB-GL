@@ -1,4 +1,4 @@
-/* $Id: parse_l.l,v 1.9 2006-04-28 03:09:14 djdelorie Exp $ */
+/* $Id: parse_l.l,v 1.10 2006-07-04 12:16:34 danmc Exp $ */
 
 %{
 /*
@@ -48,7 +48,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_l.l,v 1.9 2006-04-28 03:09:14 djdelorie Exp $");
+RCSID("$Id: parse_l.l,v 1.10 2006-07-04 12:16:34 danmc Exp $");
 
 
 #include "global.h"
@@ -199,7 +199,7 @@ static int Parse(char *Executable, char *Path, char *Filename, char *Parameter)
 
 		/* release old command and create new from template */
 	if (command)
-	  MyFree(&command);
+	  MYFREE (command);
 	command = EvaluateFilename(Executable, Path, Filename, Parameter);
 
 		/* open pipe to stdout of command */

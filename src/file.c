@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.38 2006-06-10 03:07:41 djdelorie Exp $ */
+/* $Id: file.c,v 1.39 2006-07-04 12:16:34 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -89,7 +89,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: file.c,v 1.38 2006-06-10 03:07:41 djdelorie Exp $");
+RCSID ("$Id: file.c,v 1.39 2006-07-04 12:16:34 danmc Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -1009,7 +1009,7 @@ ReadLibraryContents (void)
   LibraryMenuTypePtr menu = NULL;
   LibraryEntryTypePtr entry;
 
-  MyFree (&command);
+  MYFREE (command);
   command = EvaluateFilename (Settings.LibraryContentsCommand,
 			      Settings.LibraryPath, Settings.LibraryFilename,
 			      NULL);
@@ -1110,7 +1110,7 @@ ReadNetlist (char *filename)
 
   if (!filename)
     return (1);			/* nothing to do */
-  MyFree (&command);
+  MYFREE (command);
   command = EvaluateFilename (Settings.RatCommand,
 			      Settings.RatPath, filename, NULL);
 
