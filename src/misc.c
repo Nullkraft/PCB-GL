@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.53 2006-07-07 02:15:54 djdelorie Exp $ */
+/* $Id: misc.c,v 1.54 2006-07-07 04:01:52 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -78,7 +78,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: misc.c,v 1.53 2006-07-07 02:15:54 djdelorie Exp $");
+RCSID ("$Id: misc.c,v 1.54 2006-07-07 04:01:52 djdelorie Exp $");
 
 
 
@@ -1864,13 +1864,14 @@ c_dtostr(double d)
       *bufp++ = '-';
       d = -d;
     }
+  d += 0.0000005; /* rounding */
   i = floor(d);
   d -= i;
   sprintf(bufp, "%d", i);
   bufp += strlen(bufp);
   *bufp++ = '.';
 
-  f = floor(d*1000000.0 + 0.5);
+  f = floor(d*1000000.0);
   sprintf(bufp, "%06d", f);
   return buf;
 }
