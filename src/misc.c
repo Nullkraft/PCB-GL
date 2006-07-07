@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.52 2006-06-10 03:07:41 djdelorie Exp $ */
+/* $Id: misc.c,v 1.53 2006-07-07 02:15:54 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -78,7 +78,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: misc.c,v 1.52 2006-06-10 03:07:41 djdelorie Exp $");
+RCSID ("$Id: misc.c,v 1.53 2006-07-07 02:15:54 djdelorie Exp $");
 
 
 
@@ -791,7 +791,7 @@ ParseGroupString (char *s, LayerGroupTypePtr LayerGroup, int LayerN)
       Entries[COMPONENT_LAYER][LayerGroup->Number[COMPONENT_LAYER]++] =
       LayerN + COMPONENT_LAYER;
 
-  for (layer=0; layer<MAX_LAYER && group < LayerN; layer++)
+  for (layer=0; layer<LayerN && group < LayerN; layer++)
     if (groupnum[layer] == -1)
       {
 	LayerGroup->Entries[group][0] = layer;
@@ -1778,10 +1778,14 @@ LayerGroupsToString (LayerGroupTypePtr lg)
   static char buf[(MAX_LAYER + 2) * 5 + 1];
 #endif
   char *cp = buf;
+  char sep = 0;
   int group, entry;
   for (group = 0; group < max_layer; group++)
     if (PCB->LayerGroups.Number[group])
       {
+	if (sep)
+	  *cp++ = ':';
+	sep = 1;
 	for (entry = 0; entry < PCB->LayerGroups.Number[group]; entry++)
 	  {
 	    int layer = PCB->LayerGroups.Entries[group][entry];
@@ -1802,8 +1806,6 @@ LayerGroupsToString (LayerGroupTypePtr lg)
 	    if (entry != PCB->LayerGroups.Number[group] - 1)
 	      *cp++ = ',';
 	  }
-	if (group != max_layer - 1)
-	  *cp++ = ':';
       }
   *cp++ = 0;
   return buf;
