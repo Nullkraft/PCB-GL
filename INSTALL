@@ -1,4 +1,4 @@
-$Id: INSTALL,v 1.5 2006-07-08 19:17:37 danmc Exp $
+$Id: INSTALL,v 1.6 2006-07-08 19:23:56 danmc Exp $
 
 PCB uses a standard GNU autoconf/automake based build
 system which should make compilation go smoothly on most unix-like
@@ -107,6 +107,26 @@ To install PCB after it has been built run:
   make install
 
 from the top level directory.
+
+-------- Summary of dependencies --------------------
+
+- GNU m4.  In particular your m4 must support -F for frozen files.
+
+- wish (part of tcl/tk).  If not installed, set WISH=/bin/false in
+  your configure environment and you just won't get the graphical
+  QFP footprint builder
+
+- gtk if you are using the gtk frontend
+
+- motif or lesstif if you are using the lesstif frontend
+
+- gdlib if you are using the png HID
+
+- GNU make for building
+
+- flex
+
+- bison
 
 -------- Standard GNU INSTALL Instructions Follow --------------------
 
