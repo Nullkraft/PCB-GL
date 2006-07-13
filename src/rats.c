@@ -1,4 +1,4 @@
-/* $Id: rats.c,v 1.26 2006-07-04 12:16:35 danmc Exp $ */
+/* $Id: rats.c,v 1.27 2006-07-13 12:05:41 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -60,7 +60,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: rats.c,v 1.26 2006-07-04 12:16:35 danmc Exp $");
+RCSID ("$Id: rats.c,v 1.27 2006-07-13 12:05:41 haceaton Exp $");
 
 
 #define TRIEDFIRST 0x1
@@ -485,9 +485,12 @@ GatherSubnets (NetListTypePtr Netl, Boolean NoWarn, Boolean AndRats)
 	}
       /* now add other possible attachment points to the subnet */
       /* e.g. line end-points and vias */
+      /* don't add non-manhattan lines, the auto-router can't route to them */
       ALLLINE_LOOP (PCB->Data);
       {
-	if (TEST_FLAG (DRCFLAG, line))
+	if (TEST_FLAG (DRCFLAG, line)
+	    && ((line->Point1.X == line->Point2.X)
+		|| (line->Point1.Y == line->Point2.Y)))
 	  {
 	    conn = GetConnectionMemory (a);
 	    conn->X = line->Point1.X;
