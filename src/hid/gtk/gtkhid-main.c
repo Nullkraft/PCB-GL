@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.20 2006-06-10 03:07:43 djdelorie Exp $ */
+/* $Id: gtkhid-main.c,v 1.21 2006-07-14 19:52:00 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.20 2006-06-10 03:07:43 djdelorie Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.21 2006-07-14 19:52:00 djdelorie Exp $");
 
 
 extern HID ghid_hid;
@@ -682,6 +682,9 @@ ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
   y1 = DRAW_Y (y1);
   x2 = DRAW_X (x2);
   y2 = DRAW_Y (y2);
+
+  if (x1 > x2) { gint xt = x1; x1 = x2; x2 = xt; }
+  if (y1 > y2) { gint yt = y1; y1 = y2; y2 = yt; }
 
   USE_GC (gc);
   gdk_draw_rectangle (gport->drawable, gport->u_gc, FALSE,

@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.28 2006-06-21 02:51:58 djdelorie Exp $ */
+/* $Id: main.c,v 1.29 2006-07-14 19:52:00 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.28 2006-06-21 02:51:58 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.29 2006-07-14 19:52:00 djdelorie Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -2899,6 +2899,8 @@ lesstif_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
     return;
   if (y1 > view_height + vw && y2 > view_height + vw)
     return;
+  if (x1 > x2) { int xt = x1; x1 = x2; x2 = xt; }
+  if (y1 > y2) { int yt = y1; y1 = y2; y2 = yt; }
   set_gc (gc);
   XDrawRectangle (display, pixmap, my_gc, x1, y1, x2 - x1 + 1, y2 - y1 + 1);
   if (use_mask)
