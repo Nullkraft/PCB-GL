@@ -1,4 +1,4 @@
-/* $Id: djopt.c,v 1.38 2006-06-26 03:22:53 djdelorie Exp $ */
+/* $Id: djopt.c,v 1.39 2006-07-14 19:47:34 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -43,12 +43,13 @@
 #include "draw.h"
 #include "undo.h"
 #include "strflags.h"
+#include "find.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: djopt.c,v 1.38 2006-06-26 03:22:53 djdelorie Exp $");
+RCSID ("$Id: djopt.c,v 1.39 2006-07-14 19:47:34 djdelorie Exp $");
 
 #ifndef HAVE_RINT
 #define rint(x)  (ceil((x) - 0.5))
@@ -2485,13 +2486,13 @@ choose_example_line (corner_s * c1, corner_s * c2)
   for (ci = 0; ci < 2; ci++)
     for (li = 0; li < c[ci]->n_lines; li++)
       {
-	dprintf ("  try[%d,%d] \033[36m<%d,%d-%d,%d t%d c%d f%ld>\033[0m\n",
+	dprintf ("  try[%d,%d] \033[36m<%d,%d-%d,%d t%d c%d f%s>\033[0m\n",
 		 ci, li,
 		 c[ci]->lines[li]->s->x, c[ci]->lines[li]->s->y,
 		 c[ci]->lines[li]->e->x, c[ci]->lines[li]->e->y,
 		 c[ci]->lines[li]->line->Thickness,
 		 c[ci]->lines[li]->line->Clearance,
-		 c[ci]->lines[li]->line->Flags);
+		 flags_to_string(c[ci]->lines[li]->line->Flags, LINE_TYPE));
 	/* Pads are disqualified, as we want to mimic a trace line. */
 	if (c[ci]->lines[li]->line == (LineTypePtr) c[ci]->pad)
 	  {

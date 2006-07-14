@@ -1,4 +1,4 @@
-/* $Id: mymem.c,v 1.19 2006-07-04 12:16:34 danmc Exp $ */
+/* $Id: mymem.c,v 1.20 2006-07-14 19:47:34 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -18,7 +18,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
-B *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  *  Contact addresses for paper mail and Email:
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
@@ -49,7 +49,7 @@ B *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: mymem.c,v 1.19 2006-07-04 12:16:34 danmc Exp $");
+RCSID ("$Id: mymem.c,v 1.20 2006-07-14 19:47:34 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * local prototypes

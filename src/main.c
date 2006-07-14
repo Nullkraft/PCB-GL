@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.54 2006-06-10 03:07:41 djdelorie Exp $ */
+/* $Id: main.c,v 1.55 2006-07-14 19:47:34 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -59,7 +59,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.54 2006-06-10 03:07:41 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.55 2006-07-14 19:47:34 djdelorie Exp $");
 
 
 
@@ -393,7 +393,7 @@ HID_Attribute main_attribute_list[] = {
   COLOR (PinNameColor, "#ff0000", "pin-name-color",
 	 "color for pin names and numbers"),
   COLOR (ElementColor, "#000000", "element-color", "color for elements"),
-  COLOR (RatColor, "#b8860b", "rat-color", "color for "),
+  COLOR (RatColor, "#b8860b", "rat-color", "color for ratlines"),
   COLOR (InvisibleObjectsColor, "#cccccc", "invisible-objects-color",
 	 "color for invisible objects"),
   COLOR (InvisibleMarkColor, "#cccccc", "invisible-mark-color",
@@ -523,7 +523,6 @@ REGISTER_ATTRIBUTES (main_attribute_list)
 static void
 settings_post_process ()
 {
-  int i;
   if (Settings.LibraryCommand[0] != '/' && Settings.LibraryCommand[0] != '.')
     {
       Settings.LibraryCommand

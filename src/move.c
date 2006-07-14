@@ -1,4 +1,4 @@
-/* $Id: move.c,v 1.30 2006-06-10 03:07:41 djdelorie Exp $ */
+/* $Id: move.c,v 1.31 2006-07-14 19:47:34 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: move.c,v 1.30 2006-06-10 03:07:41 djdelorie Exp $");
+RCSID ("$Id: move.c,v 1.31 2006-07-14 19:47:34 djdelorie Exp $");
 
 
 
@@ -967,7 +967,6 @@ MoveLayerAction (int argc, char **argv, int x, int y)
 {
   int old_index, new_index;
   int new_top = -1;
-  int rv;
 
   if (argc != 2)
     {
@@ -1018,6 +1017,8 @@ MoveLayerAction (int argc, char **argv, int x, int y)
 
   if (new_top != -1)
     ChangeGroupVisibility (new_index, 1, 1);
+
+  return 0;
 }
 
 HID_Action move_action_list[] = {
