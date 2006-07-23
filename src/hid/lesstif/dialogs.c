@@ -1,4 +1,4 @@
-/* $Id: dialogs.c,v 1.16 2006-06-10 03:07:43 djdelorie Exp $ */
+/* $Id: dialogs.c,v 1.17 2006-07-23 21:01:29 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -25,7 +25,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: dialogs.c,v 1.16 2006-06-10 03:07:43 djdelorie Exp $");
+RCSID ("$Id: dialogs.c,v 1.17 2006-07-23 21:01:29 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
 
@@ -34,6 +34,9 @@ static int n;
 #define stdarg(t,v) XtSetArg(args[n], t, v); n++
 
 static int ok;
+
+#define COMPONENT_SIDE_NAME "(top)"
+#define SOLDER_SIDE_NAME "(bottom)"
 
 /* ------------------------------------------------------------ */
 
@@ -1272,9 +1275,9 @@ lgbutton_expose (Widget w, XtPointer u, XmDrawingAreaCallbackStruct *cbs)
       const char *name;
 
       if (i == max_layer)
-	name = "solder";
+	name = SOLDER_SIDE_NAME;
       else if (i == max_layer + 1)
-	name = "component";
+	name = COMPONENT_SIDE_NAME;
       else
 	name = PCB->Data->Layer[i].Name;
       XTextExtents (lgr.font, name, strlen(name), &dir, &lg_fa, &lg_fd, &size);
@@ -1359,9 +1362,9 @@ lesstif_update_layer_groups ()
       const char *name;
 
       if (i == max_layer)
-	name = "solder";
+	name = SOLDER_SIDE_NAME;
       else if (i == max_layer + 1)
-	name = "component";
+	name = COMPONENT_SIDE_NAME;
       else
 	name = PCB->Data->Layer[i].Name;
       XTextExtents (lgr.font, name, strlen(name), &dir, &lg_fa, &lg_fd, &size);
@@ -1385,9 +1388,9 @@ lesstif_update_layer_groups ()
       if (i < max_layer)
 	name = PCB->Data->Layer[i].Name;
       else if (i == max_layer)
-	name = "solder";
+	name = SOLDER_SIDE_NAME;
       else if (i == max_layer + 1)
-	name = "component";
+	name = COMPONENT_SIDE_NAME;
       stdarg (XmNlabelString, XmStringCreateLocalized (name));
       XtSetValues (lglabels[i], args, n);
       for (j = 0; j < max_layer; j++)
