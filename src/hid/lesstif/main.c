@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.29 2006-07-14 19:52:00 djdelorie Exp $ */
+/* $Id: main.c,v 1.30 2006-07-24 06:42:54 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.29 2006-07-14 19:52:00 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.30 2006-07-24 06:42:54 djdelorie Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -3106,8 +3106,6 @@ lesstif_stop_timer (hidval hv)
   XtRemoveTimeOut (ts->id);
   free (ts);
 }
-
-extern void lesstif_log (const char *fmt, ...);
 
 extern void lesstif_logv (const char *fmt, va_list ap);
 

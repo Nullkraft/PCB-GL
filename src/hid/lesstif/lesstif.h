@@ -1,4 +1,4 @@
-/* $Id: lesstif.h,v 1.4 2006-03-23 02:51:19 djdelorie Exp $ */
+/* $Id: lesstif.h,v 1.5 2006-07-24 06:42:54 djdelorie Exp $ */
 
 #define app_context lesstif_app_context
 #define appwidget lesstif_appwidget
@@ -50,6 +50,7 @@ extern void lesstif_insert_style_buttons (Widget menu);
 extern void lesstif_styles_update_values ();
 extern void lesstif_update_status_line ();
 extern char *lesstif_prompt_for (char *, char *);
+extern void lesstif_log (const char *fmt, ...);
 
 #define need_idle_proc lesstif_need_idle_proc
 #define show_crosshair lesstif_show_crosshair
