@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.39 2006-07-04 12:16:34 danmc Exp $ */
+/* $Id: file.c,v 1.40 2006-07-26 18:13:15 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -89,7 +89,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: file.c,v 1.39 2006-07-04 12:16:34 danmc Exp $");
+RCSID ("$Id: file.c,v 1.40 2006-07-26 18:13:15 djdelorie Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -1165,6 +1165,7 @@ ReadNetlist (char *filename)
 	    {
 	      menu = GetLibraryMenuMemory (&PCB->NetlistLib);
 	      menu->Name = MyStrdup (temp, "ReadNetlist()");
+	      menu->flag = 1;
 	      kind++;
 	    }
 	  else
