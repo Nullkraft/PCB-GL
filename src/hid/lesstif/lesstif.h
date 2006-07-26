@@ -1,4 +1,4 @@
-/* $Id: lesstif.h,v 1.5 2006-07-24 06:42:54 djdelorie Exp $ */
+/* $Id: lesstif.h,v 1.6 2006-07-26 04:58:32 djdelorie Exp $ */
 
 #define app_context lesstif_app_context
 #define appwidget lesstif_appwidget
@@ -21,6 +21,11 @@ extern int screen;
 
 Widget mainwind, work_area, command, hscroll, vscroll;
 Widget m_click;
+
+#define M_Shift 1
+#define M_Ctrl 2
+#define M_Alt 4
+#define M_Multi 8
 
 extern Widget lesstif_menu (Widget, char *, Arg *, int);
 extern int lesstif_key_event (XKeyEvent *);
@@ -51,6 +56,9 @@ extern void lesstif_styles_update_values ();
 extern void lesstif_update_status_line ();
 extern char *lesstif_prompt_for (char *, char *);
 extern void lesstif_log (const char *fmt, ...);
+#ifdef __RESOURCE_INCLUDED
+extern void lesstif_note_mouse_resource(Resource *res);
+#endif
 
 #define need_idle_proc lesstif_need_idle_proc
 #define show_crosshair lesstif_show_crosshair
