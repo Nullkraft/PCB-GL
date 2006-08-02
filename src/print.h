@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: print.h,v 1.5 2006-03-22 23:17:20 danmc Exp $
+ *  RCS: $Id: print.h,v 1.6 2006-08-02 15:47:51 djdelorie Exp $
  */
 
 /* prototypes for printing routines
@@ -35,6 +35,7 @@
 
 #include "global.h"
 
-void PrintFab ();
+int PrintFab_overhang(void);
+void PrintFab (void);
 
 #endif
