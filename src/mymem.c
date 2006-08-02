@@ -1,4 +1,4 @@
-/* $Id: mymem.c,v 1.20 2006-07-14 19:47:34 djdelorie Exp $ */
+/* $Id: mymem.c,v 1.21 2006-08-02 15:55:18 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -49,7 +49,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: mymem.c,v 1.20 2006-07-14 19:47:34 djdelorie Exp $");
+RCSID ("$Id: mymem.c,v 1.21 2006-08-02 15:55:18 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * local prototypes
@@ -1029,7 +1029,7 @@ StripWhiteSpaceAndDup (char *S)
   /* strip leading blanks */
   for (p1 = S; *p1 && isspace ((int) *p1); p1++);
 
-  /* strip trailing blanksand get string length */
+  /* strip trailing blanks and get string length */
   length = strlen (p1);
   for (p2 = p1 + length - 1; length && isspace ((int) *p2); p2--, length--);
 

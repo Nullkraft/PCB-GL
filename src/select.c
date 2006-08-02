@@ -1,4 +1,4 @@
-/* $Id: select.c,v 1.18 2006-04-11 16:59:28 danmc Exp $ */
+/* $Id: select.c,v 1.19 2006-08-02 15:55:18 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: select.c,v 1.18 2006-04-11 16:59:28 danmc Exp $");
+RCSID ("$Id: select.c,v 1.19 2006-08-02 15:55:18 djdelorie Exp $");
 
 
 
@@ -531,7 +531,7 @@ ObjectOperation (ObjectFunctionTypePtr F,
 
 /* ----------------------------------------------------------------------
  * performs several operations on selected objects which are also visible
- * The lowlevel procdures are passed together with additional information
+ * The lowlevel procedures are passed together with additional information
  * resets the selected flag if requested
  * returns True if anything has changed
  */

@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.21 2006-07-14 19:52:00 djdelorie Exp $ */
+/* $Id: gtkhid-main.c,v 1.22 2006-08-02 15:55:18 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.21 2006-07-14 19:52:00 djdelorie Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.22 2006-08-02 15:55:18 djdelorie Exp $");
 
 
 extern HID ghid_hid;
@@ -123,7 +123,7 @@ draw_grid ()
     {
       npoints = n + 10;
       points =
-	MyRealloc (points, npoints * sizeof (GdkPoint), "lesstif_draw_grid");
+	MyRealloc (points, npoints * sizeof (GdkPoint), "gtk_draw_grid");
     }
   n = 0;
   for (x = x1; x <= x2; x += PCB->Grid)

@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.54 2006-06-10 03:07:41 djdelorie Exp $ */
+/* $Id: draw.c,v 1.55 2006-08-02 15:55:18 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -62,7 +62,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.54 2006-06-10 03:07:41 djdelorie Exp $");
+RCSID ("$Id: draw.c,v 1.55 2006-08-02 15:55:18 djdelorie Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -1245,7 +1245,7 @@ DrawHole (PinTypePtr Ptr)
 }
 
 /*******************************************************************
- * draw clearance in pixmask arround pins and vias that pierce polygons
+ * draw clearance in pixmask around pins and vias that pierce polygons
  */
 static void
 ClearOnlyPin (PinTypePtr Pin, Boolean mask)

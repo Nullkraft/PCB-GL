@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.11 2006-06-10 03:07:41 djdelorie Exp $ */
+/* $Id: line.c,v 1.12 2006-08-02 15:55:18 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -50,7 +50,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: line.c,v 1.11 2006-06-10 03:07:41 djdelorie Exp $");
+RCSID ("$Id: line.c,v 1.12 2006-08-02 15:55:18 djdelorie Exp $");
 
 static float drc_lines (PointTypePtr end, Boolean way);
 
@@ -461,7 +461,7 @@ drc_lines (PointTypePtr end, Boolean way)
 	    }
 	  else
 	    {
-	      /* bumpped into something, back off */
+	      /* bumped into something, back off */
 	      f2 -= s2;
 	    }
 	  s2 *= 0.5;

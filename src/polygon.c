@@ -1,4 +1,4 @@
-/* $Id: polygon.c,v 1.35 2006-06-10 03:07:41 djdelorie Exp $ */
+/* $Id: polygon.c,v 1.36 2006-08-02 15:55:18 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -59,7 +59,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: polygon.c,v 1.35 2006-06-10 03:07:41 djdelorie Exp $");
+RCSID ("$Id: polygon.c,v 1.36 2006-08-02 15:55:18 djdelorie Exp $");
 
 
 /* ---------------------------------------------------------------------------
@@ -267,7 +267,7 @@ CopyAttachedPolygonToLayer (void)
 
 /* ---------------------------------------------------------------------------
  *  Updates the pin-in-polygon flags
- *  if called with Element == NULL, seach all pins
+ *  if called with Element == NULL, search all pins
  *  if called with Pin == NULL, search all pins on element
  *  if called with Layer == NULL, search all layers
  */

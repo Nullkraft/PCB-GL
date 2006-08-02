@@ -1,4 +1,4 @@
-/* $Id: search.c,v 1.25 2006-06-10 03:07:41 djdelorie Exp $ */
+/* $Id: search.c,v 1.26 2006-08-02 15:55:18 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -52,7 +52,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: search.c,v 1.25 2006-06-10 03:07:41 djdelorie Exp $");
+RCSID ("$Id: search.c,v 1.26 2006-08-02 15:55:18 djdelorie Exp $");
 
 
 /* ---------------------------------------------------------------------------
@@ -897,7 +897,7 @@ IsPointInBox (LocationType X, LocationType Y, BoxTypePtr box, Cardinal Radius)
  *   This code is from Wm. Randolph Franklin, wrf@ecse.rpi.edu, a
  *   professor at RPI.
  *
- * extentions:
+ * extensions:
  * check if the distance between the polygon lines and the point is less
  * or equal to the radius.
  */
@@ -933,7 +933,7 @@ IsPointInPolygon (float X, float Y, float Radius, PolygonTypePtr Polygon)
       /* check the distance between the lines of the
        * polygon and the point itself
        *
-       * check is done by contructing a dummy line
+       * check is done by constructing a dummy line
        */
       if (!inside)
 	{

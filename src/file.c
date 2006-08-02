@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.40 2006-07-26 18:13:15 djdelorie Exp $ */
+/* $Id: file.c,v 1.41 2006-08-02 15:55:18 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -89,7 +89,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: file.c,v 1.40 2006-07-26 18:13:15 djdelorie Exp $");
+RCSID ("$Id: file.c,v 1.41 2006-08-02 15:55:18 djdelorie Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -802,7 +802,7 @@ WritePipe (char *Filename, Boolean thePcb)
 /* ---------------------------------------------------------------------------
  * saves the layout in a temporary file
  * this is used for fatal errors and does not call the program specified
- * in 'saveCommand' for savety reasons
+ * in 'saveCommand' for safety reasons
  */
 void
 SaveInTMP (void)
@@ -820,7 +820,7 @@ SaveInTMP (void)
 
 /* ---------------------------------------------------------------------------
  * front-end for 'SaveInTMP()'
- * justs makes sure that the routine is only called once
+ * just makes sure that the routine is only called once
  */
 void
 EmergencySave (void)
@@ -1021,7 +1021,7 @@ ReadLibraryContents (void)
       return (1);
     }
 
-  /* the library contents are seperated by colons;
+  /* the library contents are separated by colons;
    * template : package : name : description
    */
   while (resultFP && fgets (inputline, MAX_LIBRARY_LINE_LENGTH, resultFP))

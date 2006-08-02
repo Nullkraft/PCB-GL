@@ -1,4 +1,4 @@
-/* $Id: mtspace.h,v 1.5 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: mtspace.h,v 1.6 2006-08-02 15:55:18 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -46,7 +46,7 @@ typedef struct mtspace mtspace_t;
 typedef enum
 { FIXED, ODD, EVEN } mtspace_type_t;
 
-/* create an "empty space" representation with a shrunken boundry */
+/* create an "empty space" representation with a shrunken boundary */
 mtspace_t *mtspace_create (const BoxType * bounds, BDimension keepaway);
 /* destroy an "empty space" representation. */
 void mtspace_destroy (mtspace_t ** mtspacep);

@@ -1,4 +1,4 @@
-/* $Id: parse_l.l,v 1.10 2006-07-04 12:16:34 danmc Exp $ */
+/* $Id: parse_l.l,v 1.11 2006-08-02 15:55:18 djdelorie Exp $ */
 
 %{
 /*
@@ -48,7 +48,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_l.l,v 1.10 2006-07-04 12:16:34 danmc Exp $");
+RCSID("$Id: parse_l.l,v 1.11 2006-08-02 15:55:18 djdelorie Exp $");
 
 
 #include "global.h"
@@ -220,7 +220,7 @@ static int Parse(char *Executable, char *Path, char *Filename, char *Parameter)
 	yylineno = 1;
 	yyfilename = Filename;
 
-		/* We need to save the data temorarily because lex-yacc are able
+		/* We need to save the data temporarily because lex-yacc are able
 		 * to break the application if the input file has an illegal format.
 		 * It's not necessary if the system supports the call of functions
 		 * on termination.

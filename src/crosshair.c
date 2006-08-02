@@ -1,4 +1,4 @@
-/* $Id: crosshair.c,v 1.25 2006-07-14 19:52:00 djdelorie Exp $ */
+/* $Id: crosshair.c,v 1.26 2006-08-02 15:55:17 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -52,7 +52,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: crosshair.c,v 1.25 2006-07-14 19:52:00 djdelorie Exp $");
+RCSID ("$Id: crosshair.c,v 1.26 2006-08-02 15:55:17 djdelorie Exp $");
 
 #if !defined(ABS)
 #define ABS(x) (((x)<0)?-(x):(x))
@@ -375,7 +375,7 @@ XORDrawInsertPointObject (void)
 }
 
 /* ---------------------------------------------------------------------------
- * draws the attched object while in MOVE_MODE or COPY_MODE
+ * draws the attached object while in MOVE_MODE or COPY_MODE
  */
 static void
 XORDrawMoveOrCopyObject (void)
@@ -749,7 +749,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
   x0 = 0;
   x2 = TO_PCB_X (Output.Width - 1);
 
-  /* check position agains window size and against valid
+  /* check position against window size and against valid
    * coordinates determined by the size of an attached
    * object or buffer
    an   */

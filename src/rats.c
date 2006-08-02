@@ -1,4 +1,4 @@
-/* $Id: rats.c,v 1.27 2006-07-13 12:05:41 haceaton Exp $ */
+/* $Id: rats.c,v 1.28 2006-08-02 15:55:18 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -60,7 +60,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: rats.c,v 1.27 2006-07-13 12:05:41 haceaton Exp $");
+RCSID ("$Id: rats.c,v 1.28 2006-08-02 15:55:18 djdelorie Exp $");
 
 
 #define TRIEDFIRST 0x1
@@ -175,7 +175,7 @@ FindPad (char *ElementName, char *PinNum, ConnectionType * conn, Boolean Same)
 }
 
 /*--------------------------------------------------------------------------
- * parse a netlist menu entry and locate the cooresponding pad
+ * parse a netlist menu entry and locate the corresponding pad
  * returns True if found, and fills in Connection information
  */
 Boolean

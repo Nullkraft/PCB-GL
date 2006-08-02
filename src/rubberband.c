@@ -1,4 +1,4 @@
-/* $Id: rubberband.c,v 1.14 2006-06-10 03:07:41 djdelorie Exp $ */
+/* $Id: rubberband.c,v 1.15 2006-08-02 15:55:18 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: rubberband.c,v 1.14 2006-06-10 03:07:41 djdelorie Exp $");
+RCSID ("$Id: rubberband.c,v 1.15 2006-08-02 15:55:18 djdelorie Exp $");
 
 
 /* ---------------------------------------------------------------------------
@@ -338,7 +338,7 @@ CheckLinePointForRat (LayerTypePtr Layer, PointTypePtr Point)
  *
  * Square pins are handled as if they were round. Speed
  * and readability is more important then the few %
- * of faiures that are immediately recognized
+ * of failures that are immediately recognized
  */
 static void
 CheckPinForRubberbandConnection (PinTypePtr Pin)
@@ -469,7 +469,7 @@ LookupRubberbandLines (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
 
 	/* square pins are handled as if they are round. Speed
 	 * and readability is more important then the few %
-	 * of faiures that are immediately recognized
+	 * of failures that are immediately recognized
 	 */
 	PIN_LOOP (element);
 	{

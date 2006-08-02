@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.28 2006-06-10 03:07:38 djdelorie Exp $ */
+/* $Id: buffer.c,v 1.29 2006-08-02 15:55:17 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -60,7 +60,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: buffer.c,v 1.28 2006-06-10 03:07:38 djdelorie Exp $");
+RCSID ("$Id: buffer.c,v 1.29 2006-08-02 15:55:17 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -575,7 +575,7 @@ LoadElementToBuffer (BufferTypePtr Buffer, char *Name, Boolean FromFile)
 	  return (True);
 	}
     }
-  /* release memory which might have been aquired */
+  /* release memory which might have been acquired */
   ClearBuffer (Buffer);
   return (False);
 }

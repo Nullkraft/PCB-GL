@@ -1,4 +1,4 @@
-/* $Id: error.c,v 1.14 2006-04-13 13:04:55 danmc Exp $ */
+/* $Id: error.c,v 1.15 2006-08-02 15:55:18 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -27,7 +27,7 @@
  */
 
 
-/* error and debug funtions
+/* error and debug functions
  * getpid() needs a cast to (int) to get rid of compiler warnings
  * on several architectures
  */
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: error.c,v 1.14 2006-04-13 13:04:55 danmc Exp $");
+RCSID ("$Id: error.c,v 1.15 2006-08-02 15:55:18 djdelorie Exp $");
 
 
 #define utf8_dup_string(a,b) *(a) = strdup(b)

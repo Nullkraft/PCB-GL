@@ -1,4 +1,4 @@
-/* $Id: puller.c,v 1.9 2006-04-15 03:32:06 djdelorie Exp $ */
+/* $Id: puller.c,v 1.10 2006-08-02 15:55:18 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -51,7 +51,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: puller.c,v 1.9 2006-04-15 03:32:06 djdelorie Exp $");
+RCSID ("$Id: puller.c,v 1.10 2006-08-02 15:55:18 djdelorie Exp $");
 
 #define sqr(x) (1.0*(x)*(x))
 
@@ -231,7 +231,7 @@ static const char puller_help[] =
 
 The @code{Puller()} action is a special-purpose optimization.  When
 invoked while the crosshair is over the junction of an arc and a line,
-it will adjust the arc's angle and the connecting line's enpoint such
+it will adjust the arc's angle and the connecting line's endpoint such
 that the line intersects the arc at a tangent.  In the example below,
 the left side is ``before'' with the black target marking where to put
 the crosshair:

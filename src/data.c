@@ -1,4 +1,4 @@
-/* $Id: data.c,v 1.13 2006-04-18 16:54:55 billw2 Exp $ */
+/* $Id: data.c,v 1.14 2006-08-02 15:55:17 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -42,7 +42,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: data.c,v 1.13 2006-04-18 16:54:55 billw2 Exp $");
+RCSID ("$Id: data.c,v 1.14 2006-08-02 15:55:17 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some shared identifiers
@@ -60,7 +60,7 @@ int LayerStack[MAX_LAYER];	/* determines the layer draw order */
 BufferType Buffers[MAX_BUFFER];	/* my buffers */
 LibraryType Library;		/* the library */
 Boolean Bumped;			/* if the undo serial number has changed */
-Boolean render;			/* wether or not to re-render the pixmap */
+Boolean render;			/* whether or not to re-render the pixmap */
 
 LocationType Xorig, Yorig;	/* origin offset for drawing in pixmap */
 

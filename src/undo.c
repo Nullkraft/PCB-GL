@@ -1,4 +1,4 @@
-/* $Id: undo.c,v 1.20 2006-07-04 12:16:35 danmc Exp $ */
+/* $Id: undo.c,v 1.21 2006-08-02 15:55:18 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -39,7 +39,7 @@
  * E.g.: removing all selected objects is one operation with exactly one
  * serial number even if the remove function is called several times.
  *
- * a lock flag ensures that no infinite loops occure
+ * a lock flag ensures that no infinite loops occur
  */
 
 #ifdef HAVE_CONFIG_H
@@ -73,7 +73,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: undo.c,v 1.20 2006-07-04 12:16:35 danmc Exp $");
+RCSID ("$Id: undo.c,v 1.21 2006-08-02 15:55:18 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local data types
@@ -99,7 +99,7 @@ typedef struct			/* information about removed polygon points */
 }
 RemovedPointType, *RemovedPointTypePtr;
 
-typedef struct			/* informstion about rotation */
+typedef struct			/* information about rotation */
 {
   LocationType CenterX,		/* center of rotation */
     CenterY;

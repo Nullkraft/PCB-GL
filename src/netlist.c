@@ -1,4 +1,4 @@
-/* $Id: netlist.c,v 1.19 2006-04-17 01:04:39 djdelorie Exp $ */
+/* $Id: netlist.c,v 1.20 2006-08-02 15:55:18 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -70,7 +70,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: netlist.c,v 1.19 2006-04-17 01:04:39 djdelorie Exp $");
+RCSID ("$Id: netlist.c,v 1.20 2006-08-02 15:55:18 djdelorie Exp $");
 
 /*
   int    PCB->NetlistLib.MenuN
@@ -160,7 +160,7 @@ a pin matching @var{pin} apply.
 @table @code
 
 @item find
-Nets which apply are marked @emph{found} and are drawin in the
+Nets which apply are marked @emph{found} and are drawn in the
 @code{connected-color} color.
 
 @item select

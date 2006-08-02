@@ -1,4 +1,4 @@
-/* $Id: djopt.c,v 1.39 2006-07-14 19:47:34 djdelorie Exp $ */
+/* $Id: djopt.c,v 1.40 2006-08-02 15:55:17 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -49,7 +49,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: djopt.c,v 1.39 2006-07-14 19:47:34 djdelorie Exp $");
+RCSID ("$Id: djopt.c,v 1.40 2006-08-02 15:55:17 djdelorie Exp $");
 
 #ifndef HAVE_RINT
 #define rint(x)  (ceil((x) - 0.5))
@@ -763,7 +763,7 @@ remove_line (line_s * l)
 
   if (l->line)
     {
-      /* compenstate for having line pointers rearranged */
+      /* compensate for having line pointers rearranged */
       from = &(layer->Line[layer->LineN - 1]);
       to = l->line;
       RemoveLine (layer, l->line);
@@ -2917,7 +2917,7 @@ different layer eliminates one or both vias.
 
 @item orthopull
 Looks for chains of traces all going in one direction, with more
-traces orthagonal on one side than on the other.  Moves the chain in
+traces orthogonal on one side than on the other.  Moves the chain in
 that direction, causing a net reduction in trace length, possibly
 eliminating traces and/or corners.
 
