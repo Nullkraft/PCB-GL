@@ -1,4 +1,4 @@
-/* $Id: move.c,v 1.31 2006-07-14 19:47:34 djdelorie Exp $ */
+/* $Id: move.c,v 1.32 2006-08-03 05:18:34 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: move.c,v 1.31 2006-07-14 19:47:34 djdelorie Exp $");
+RCSID ("$Id: move.c,v 1.32 2006-08-03 05:18:34 djdelorie Exp $");
 
 
 
@@ -896,6 +896,8 @@ MoveLayer (int old_index, int new_index)
       memmove (&PCB->Data->Layer[old_index],
 	       &PCB->Data->Layer[old_index+1],
 	       (max_layer-old_index+2-1) * sizeof(LayerType));
+      memset (&PCB->Data->Layer[max_layer+1], 0,
+	      sizeof(LayerType));
       memmove (&groups[old_index],
 	       &groups[old_index+1],
 	       (max_layer-old_index+2-1) * sizeof(int));
