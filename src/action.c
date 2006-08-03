@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.87 2006-08-02 15:55:17 djdelorie Exp $ */
+/* $Id: action.c,v 1.88 2006-08-03 05:19:27 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -72,7 +72,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.87 2006-08-02 15:55:17 djdelorie Exp $");
+RCSID ("$Id: action.c,v 1.88 2006-08-03 05:19:27 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -5098,24 +5098,29 @@ ActionPrint (char **Params, int num)
 /* --------------------------------------------------------------------------- */
 
 static const char new_syntax[] =
-"New()";
+"New([name])";
 
 static const char new_help[] =
 "Starts a new layout.";
 
 /* %start-doc actions New
 
+If a name is not given, one is prompted for.
+
 %end-doc */
 
 static int
 ActionNew (int argc, char **argv, int x, int y)
 {
-  char *name;
+  char *name = ARG(0);
 
   HideCrosshair (True);
   if (!PCB->Changed || gui->confirm_dialog (_("OK to clear layout data?"), 0))
     {
-      name = gui->prompt_for (_("Enter the layout name:"), "");
+      if (name)
+	name = MyStrdup(name, "ActionNew");
+      else
+	name = gui->prompt_for (_("Enter the layout name:"), "");
       if (!name)
 	return 1;
 
@@ -5139,6 +5144,7 @@ ActionNew (int argc, char **argv, int x, int y)
       ClearAndRedrawOutput ();
 
       hid_action ("PCBChanged");
+      return 0;
     }
   RestoreCrosshair (True);
   return 1;
