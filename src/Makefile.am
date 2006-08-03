@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.27 2006-07-10 11:38:27 danmc Exp $
+## $Id: Makefile.am,v 1.28 2006-08-03 05:25:19 djdelorie Exp $
 ##
 
 SUBDIRS=	icons script
@@ -62,6 +62,7 @@ PCB_SRCS = \
 	find.c \
 	find.h \
 	flags.c \
+	fontmode.c \
 	global.h \
 	heap.c \
 	heap.h \
