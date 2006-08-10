@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.28 2006-08-03 05:25:19 djdelorie Exp $
+## $Id: Makefile.am,v 1.29 2006-08-10 16:27:15 danmc Exp $
 ##
 
 SUBDIRS=	icons script
@@ -304,6 +304,7 @@ liblpr_a_SOURCES = \
 	hid/lpr/lpr.c
 
 DISTCLEANFILES= pcbtest.sh Pcb .test/Pcb pcb-menu.h \
+	hid/batch/batch_lists.h \
 	hid/common/hidlist.h \
 	hid/gtk/gtk_lists.h \
 	hid/lesstif/lesstif_lists.h \
