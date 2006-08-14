@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.52 2006-08-02 18:32:22 danmc Exp $
+dnl $Id: configure.ac,v 1.53 2006-08-14 13:23:53 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -283,13 +283,17 @@ for e in $HIDLIST; do
 	fi
 
 	PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.4.0, , 
-		[AC_MSG_ERROR([Cannot find gtk+ >= 2.4.0, install it and rerun ./configure])]
+		[AC_MSG_ERROR([Cannot find gtk+ >= 2.4.0, install it and rerun ./configure
+Please review the following errors:
+$GTK_PKG_ERRORS])]
 	)
 	GTK_VERSION=`$PKG_CONFIG gtk+-2.0 --modversion`
 
 	# Search for glib
 	PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.4.0, , 
-		[AC_MSG_ERROR([Cannot find glib >= 2.4.0, install it and rerun ./configure.])]
+		[AC_MSG_ERROR([Cannot find glib >= 2.4.0, install it and rerun ./configure.
+Please review the following errors:
+$GLIB_PKG_ERRORS])]
 	)
 	GLIB_VERSION=`$PKG_CONFIG glib-2.0 --modversion`
 	;;
