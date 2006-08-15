@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.53 2006-08-14 13:23:53 danmc Exp $
+dnl $Id: configure.ac,v 1.54 2006-08-15 03:36:41 djdelorie Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -248,6 +248,7 @@ AC_CHECK_HEADERS(string.h sys/types.h regex.h pwd.h)
 AC_CHECK_HEADERS(sys/socket.h netinet/in.h netdb.h sys/param.h sys/times.h)
 
 AC_PATH_XTRA
+CPPFLAGS="$CFLAGS $X_CFLAGS"
 
 for e in $HIDLIST; do
     case $e in
