@@ -1,4 +1,4 @@
-/* $Id: ps.c,v 1.10 2006-08-02 15:47:51 djdelorie Exp $ */
+/* $Id: ps.c,v 1.11 2006-08-15 03:01:12 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -17,12 +17,13 @@
 #include "hid.h"
 #include "../hidint.h"
 #include "../ps/ps.h"
+#include "../../print.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: ps.c,v 1.10 2006-08-02 15:47:51 djdelorie Exp $");
+RCSID ("$Id: ps.c,v 1.11 2006-08-15 03:01:12 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
