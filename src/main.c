@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.55 2006-07-14 19:47:34 djdelorie Exp $ */
+/* $Id: main.c,v 1.56 2006-08-21 23:18:48 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -59,7 +59,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.55 2006-07-14 19:47:34 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.56 2006-08-21 23:18:48 djdelorie Exp $");
 
 
 
@@ -415,6 +415,14 @@ HID_Attribute main_attribute_list[] = {
   LAYERCOLOR (6, "#8b7355"),
   LAYERCOLOR (7, "#00868b"),
   LAYERCOLOR (8, "#228b22"),
+  LAYERCOLOR (9, "#8b2323"),
+  LAYERCOLOR (10, "#3a5fcd"),
+  LAYERCOLOR (11, "#104e8b"),
+  LAYERCOLOR (12, "#cd3700"),
+  LAYERCOLOR (13, "#548b54"),
+  LAYERCOLOR (14, "#8b7355"),
+  LAYERCOLOR (15, "#00868b"),
+  LAYERCOLOR (16, "#228b22"),
   LAYERSELCOLOR (1),
   LAYERSELCOLOR (2),
   LAYERSELCOLOR (3),
@@ -423,6 +431,14 @@ HID_Attribute main_attribute_list[] = {
   LAYERSELCOLOR (6),
   LAYERSELCOLOR (7),
   LAYERSELCOLOR (8),
+  LAYERSELCOLOR (9),
+  LAYERSELCOLOR (10),
+  LAYERSELCOLOR (11),
+  LAYERSELCOLOR (12),
+  LAYERSELCOLOR (13),
+  LAYERSELCOLOR (14),
+  LAYERSELCOLOR (15),
+  LAYERSELCOLOR (16),
   COLOR (WarnColor, "#ff8000", "warn-color", "color for warnings"),
   COLOR (MaskColor, "#ff0000", "mask-color", "color for solder mask"),
 
