@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.42 2006-08-03 05:24:28 djdelorie Exp $ */
+/* $Id: file.c,v 1.43 2006-08-21 23:18:20 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -89,7 +89,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: file.c,v 1.42 2006-08-03 05:24:28 djdelorie Exp $");
+RCSID ("$Id: file.c,v 1.43 2006-08-21 23:18:20 djdelorie Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -311,6 +311,7 @@ LoadPCB (char *Filename)
       RemovePCB (PCB);
       PCB = newPCB;
 
+      CreateNewPCBPost(PCB, 0);
       ResetStackAndVisibility ();
 #if FIXME
       /* set the zoom first before the Xorig, Yorig */
