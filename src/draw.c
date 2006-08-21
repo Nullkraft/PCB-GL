@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.55 2006-08-02 15:55:18 djdelorie Exp $ */
+/* $Id: draw.c,v 1.56 2006-08-21 00:23:48 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -62,7 +62,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.55 2006-08-02 15:55:18 djdelorie Exp $");
+RCSID ("$Id: draw.c,v 1.56 2006-08-21 00:23:48 djdelorie Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -438,6 +438,7 @@ PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
   gui->set_draw_faded (Output.fgGC, 1);
   SWAP_IDENT = swap_ident;
   DrawLayerGroup (side_group, drawn_area);
+  r_search (PCB->Data->via_tree, drawn_area, NULL, lowvia_callback, NULL);
   DrawTop (drawn_area);
   gui->set_draw_faded (Output.fgGC, 0);
 
