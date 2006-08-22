@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.56 2006-08-21 00:23:48 djdelorie Exp $ */
+/* $Id: draw.c,v 1.57 2006-08-22 14:27:36 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -62,7 +62,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.56 2006-08-21 00:23:48 djdelorie Exp $");
+RCSID ("$Id: draw.c,v 1.57 2006-08-22 14:27:36 djdelorie Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -1257,6 +1257,8 @@ ClearOnlyPin (PinTypePtr Pin, Boolean mask)
   if (!mask && TEST_FLAG (HOLEFLAG, Pin))
     return;
   if (half == 0)
+    return;
+  if (!mask && Pin->Clearance <= 0)
     return;
 
   /* Clear the area around the pin */
