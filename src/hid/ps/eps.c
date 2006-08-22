@@ -1,4 +1,4 @@
-/* $Id: eps.c,v 1.10 2006-07-04 12:42:09 danmc Exp $ */
+/* $Id: eps.c,v 1.11 2006-08-22 22:46:37 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -22,7 +22,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: eps.c,v 1.10 2006-07-04 12:42:09 danmc Exp $");
+RCSID ("$Id: eps.c,v 1.11 2006-08-22 22:46:37 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented EPS function %s.\n", __FUNCTION__); abort()
 static HID eps_hid;
@@ -329,6 +329,8 @@ eps_set_layer (const char *name, int group)
 	case SL (SILK, BOTTOM):
 	  if (SL_MYSIDE (idx))
 	    return PCB->ElementOn;
+	  else
+	    return 0;
 	}
     }
   else
