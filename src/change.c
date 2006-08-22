@@ -1,4 +1,4 @@
-/* $Id: change.c,v 1.34 2006-03-28 04:29:19 danmc Exp $ */
+/* $Id: change.c,v 1.35 2006-08-22 14:29:33 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -60,7 +60,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: change.c,v 1.34 2006-03-28 04:29:19 danmc Exp $");
+RCSID ("$Id: change.c,v 1.35 2006-08-22 14:29:33 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -560,7 +560,13 @@ ChangeViaClearSize (PinTypePtr Via)
 
   if (TEST_FLAG (LOCKFLAG, Via))
     return (NULL);
-  value = MIN (MAX_LINESIZE, MAX (value, PCB->Bloat * 2 + 2));
+  value = MIN (MAX_LINESIZE, value);
+  if (value < 0)
+    value = 0;
+  if (Delta < 0 && value < PCB->Bloat * 2)
+    value = 0;
+  if ((Delta > 0 || Absolute) && value < PCB->Bloat * 2)
+    value = PCB->Bloat * 2 + 2;
   AddObjectToClearSizeUndoList (VIA_TYPE, Via, Via, Via);
   EraseVia (Via);
   r_delete_entry (PCB->Data->via_tree, (BoxType *) Via);
