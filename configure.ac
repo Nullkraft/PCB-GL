@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.55 2006-08-23 01:30:29 danmc Exp $
+dnl $Id: configure.ac,v 1.56 2006-08-23 22:19:32 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -39,8 +39,26 @@ AC_PROG_CC_STDC
 AM_PROG_CC_C_O
 AC_PROG_CPP
 AC_PROG_AWK
+
 AM_PROG_LEX
+AC_PATH_PROG(LEX_PATH, $LEX, [notfound])
+if test "$LEX_PATH" = "notfound" ; then
+	AC_MSG_ERROR([Couldn't find a usable lex program.
+Please install flex which is available from
+ftp://ftp.gnu.org/pub/non-gnu/flex/
+])
+fi
+
+
 AC_PROG_YACC
+AC_PATH_PROG(YACC_PATH, $YACC, [notfound])
+if test "$YACC_PATH" = "notfound" ; then
+	AC_MSG_ERROR([Couldn't find a usable yacc program.
+Please install bison which is available from
+ftp://ftp.gnu.org/pub/gnu/bison/
+])
+fi
+
 AC_PROG_INSTALL
 AC_PROG_RANLIB
 
