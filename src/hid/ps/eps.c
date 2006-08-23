@@ -1,4 +1,4 @@
-/* $Id: eps.c,v 1.12 2006-08-23 00:28:32 djdelorie Exp $ */
+/* $Id: eps.c,v 1.13 2006-08-23 00:48:04 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -22,7 +22,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: eps.c,v 1.12 2006-08-23 00:28:32 djdelorie Exp $");
+RCSID ("$Id: eps.c,v 1.13 2006-08-23 00:48:04 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented EPS function %s.\n", __FUNCTION__); abort()
 static HID eps_hid;
@@ -212,6 +212,12 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   fprintf (f, "0.00001 dup neg scale\n");
   fprintf (f, "%g dup scale\n", options[HA_scale].real_value);
   fprintf (f, "%d %d translate\n", -bounds->X1, -bounds->Y2);
+  if (options[HA_as_shown].int_value
+      && Settings.ShowSolderSide)
+    {
+      fprintf (f, "-1 1 scale %d 0 translate\n",
+	       bounds->X1 - bounds->X2);
+    }
   linewidth = -1;
   lastcap = -1;
   lastcolor = -1;
