@@ -1,4 +1,4 @@
-/* $Id: netlist.c,v 1.20 2006-08-02 15:55:18 djdelorie Exp $ */
+/* $Id: netlist.c,v 1.21 2006-08-24 02:31:09 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -70,7 +70,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: netlist.c,v 1.20 2006-08-02 15:55:18 djdelorie Exp $");
+RCSID ("$Id: netlist.c,v 1.21 2006-08-24 02:31:09 djdelorie Exp $");
 
 /*
   int    PCB->NetlistLib.MenuN
@@ -126,14 +126,16 @@ netlist_select (LibraryMenuType * net, LibraryEntryType * pin)
 static void
 netlist_rats (LibraryMenuType * net, LibraryEntryType * pin)
 {
-  net->Name[0] = '*';
+  net->Name[0] = ' ';
+  net->flag = 1;
   hid_action ("NetlistChanged");
 }
 
 static void
 netlist_norats (LibraryMenuType * net, LibraryEntryType * pin)
 {
-  net->Name[0] = ' ';
+  net->Name[0] = '*';
+  net->flag = 0;
   hid_action ("NetlistChanged");
 }
 
