@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.33 2006-08-22 14:33:02 djdelorie Exp $ */
+/* $Id: main.c,v 1.34 2006-08-27 04:14:35 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -29,7 +29,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.33 2006-08-22 14:33:02 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.34 2006-08-27 04:14:35 djdelorie Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -3028,12 +3028,13 @@ lesstif_draw_arc (hidGC gc, int cx, int cy, int width, int height,
   if ((pinout || thindraw) && gc->erase)
     return;
 #if 0
-  printf ("draw_arc %d,%d %dx%d", cx, cy, width, height);
+  printf ("draw_arc %d,%d %dx%d s %d d %d", cx, cy, width, height, start_angle, delta_angle);
 #endif
   width = Vz (width);
   height = Vz (height);
   cx = Vx (cx) - width;
   cy = Vy (cy) - height;
+  start_angle = (start_angle + 360 + 180) % 360 - 180;
   if (flip_x)
     {
       start_angle = 180 - start_angle;
