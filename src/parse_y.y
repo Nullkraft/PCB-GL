@@ -1,4 +1,4 @@
-/* $Id: parse_y.y,v 1.28 2006-08-30 02:42:13 djdelorie Exp $ */
+/* $Id: parse_y.y,v 1.29 2006-08-30 03:14:39 djdelorie Exp $ */
 
 %{
 /*
@@ -50,7 +50,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_y.y,v 1.28 2006-08-30 02:42:13 djdelorie Exp $");
+RCSID("$Id: parse_y.y,v 1.29 2006-08-30 03:14:39 djdelorie Exp $");
 
 static	LayerTypePtr	Layer;
 static	PolygonTypePtr	Polygon;
@@ -1760,6 +1760,8 @@ The name of the attribute
 @item Value
 The value of the attribute.  Values are always stored as strings, even
 if the value is interpreted as, for example, a number.
+
+@end table
 
 %end-doc */
 
