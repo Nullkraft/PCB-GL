@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: create.h,v 1.7 2006-06-10 03:07:38 djdelorie Exp $
+ *  RCS: $Id: create.h,v 1.8 2006-08-30 02:42:13 djdelorie Exp $
  */
 
 /* prototypes for create routines
@@ -85,5 +85,7 @@ RubberbandTypePtr CreateNewRubberbandEntry (LayerTypePtr,
 					    LineTypePtr, PointTypePtr);
 LibraryMenuTypePtr CreateNewNet (LibraryTypePtr, char *, char *);
 LibraryEntryTypePtr CreateNewConnection (LibraryMenuTypePtr, char *);
+
+AttributeTypePtr CreateNewAttribute (AttributeListTypePtr list, char *name, char *value);
 
 #endif

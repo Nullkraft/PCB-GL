@@ -1,4 +1,4 @@
-/* $Id: create.c,v 1.30 2006-08-02 15:55:17 djdelorie Exp $ */
+/* $Id: create.c,v 1.31 2006-08-30 02:42:13 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: create.c,v 1.30 2006-08-02 15:55:17 djdelorie Exp $");
+RCSID ("$Id: create.c,v 1.31 2006-08-30 02:42:13 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local identifiers
@@ -942,4 +942,23 @@ CreateNewConnection (LibraryMenuTypePtr net, char *conn)
 
   entry->ListEntry = MyStrdup (conn, "CreateNewConnection()");
   return (entry);
+}
+
+/* ---------------------------------------------------------------------------
+ * Add an attribute to a list.
+ */
+AttributeTypePtr
+CreateNewAttribute (AttributeListTypePtr list, char *name, char *value)
+{
+  if (list->Number >= list->Max)
+    {
+      list->Max += 10;
+      list->List = MyRealloc (list->List,
+			      list->Max * sizeof (AttributeType),
+			      "CreateNewAttribute");
+    }
+  list->List[list->Number].name = MyStrdup (name, "CreateNewAttribute");
+  list->List[list->Number].value = MyStrdup (value, "CreateNewAttribute");
+  list->Number ++;
+  return & list->List[list->Number-1];
 }

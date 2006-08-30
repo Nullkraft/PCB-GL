@@ -1,4 +1,4 @@
-/* $Id: parse_l.l,v 1.11 2006-08-02 15:55:18 djdelorie Exp $ */
+/* $Id: parse_l.l,v 1.12 2006-08-30 02:42:13 djdelorie Exp $ */
 
 %{
 /*
@@ -48,7 +48,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_l.l,v 1.11 2006-08-02 15:55:18 djdelorie Exp $");
+RCSID("$Id: parse_l.l,v 1.12 2006-08-30 02:42:13 djdelorie Exp $");
 
 
 #include "global.h"
@@ -124,6 +124,7 @@ Arc		{ return(T_ARC); }
 NetList		{ return(T_NETLIST); }
 Net		{ return(T_NET); }
 Connect		{ return(T_CONN); }
+Attribute	{ return(T_ATTRIBUTE); }
 
 \'.\'				{
 						yylval.number = (unsigned) *(yytext+1);
