@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.57 2006-08-22 14:27:36 djdelorie Exp $ */
+/* $Id: draw.c,v 1.58 2006-08-30 01:37:25 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -62,7 +62,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.57 2006-08-22 14:27:36 djdelorie Exp $");
+RCSID ("$Id: draw.c,v 1.58 2006-08-30 01:37:25 djdelorie Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -1909,7 +1909,7 @@ DrawArcLowLevel (ArcTypePtr Arc)
       AddPart (Arc);
       return;
     }
-  /* angles have to be converted to X11 notation */
+
   if (TEST_FLAG (THINDRAWFLAG, PCB))
     gui->set_line_width (Output.fgGC, 1);
   else
