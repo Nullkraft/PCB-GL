@@ -1,4 +1,4 @@
-/* $Id: copy.c,v 1.16 2006-08-04 12:40:22 danmc Exp $ */
+/* $Id: copy.c,v 1.17 2006-08-30 03:02:28 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: copy.c,v 1.16 2006-08-04 12:40:22 danmc Exp $");
+RCSID ("$Id: copy.c,v 1.17 2006-08-30 03:02:28 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -115,6 +115,7 @@ ElementTypePtr
 CopyElementLowLevel (DataTypePtr Data, ElementTypePtr Dest,
 		     ElementTypePtr Src, Boolean uniqueName)
 {
+  int i;
   /* release old memory if necessary */
   if (Dest)
     FreeElementMemory (Dest);
@@ -163,6 +164,11 @@ CopyElementLowLevel (DataTypePtr Data, ElementTypePtr Dest,
 			   arc->Thickness);
   }
   END_LOOP;
+
+  for (i=0; i<Src->Attributes.Number; i++)
+    CreateNewAttribute (& Dest->Attributes,
+			Src->Attributes.List[i].name,
+			Src->Attributes.List[i].value);
 
   Dest->MarkX = Src->MarkX;
   Dest->MarkY = Src->MarkY;
