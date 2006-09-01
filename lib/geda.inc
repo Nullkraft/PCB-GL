@@ -1,5 +1,5 @@
 # -*- m4 -*-
-#   $Id: geda.inc,v 1.23 2006-08-14 12:53:30 danmc Exp $
+#   $Id: geda.inc,v 1.24 2006-09-01 12:24:44 danmc Exp $
 #
 #   gEDA compatible footprint names
 #
@@ -1082,7 +1082,3 @@ define(`PKG_SC70_6',   `PKG_SMT_TRANSISTOR6( `$1', `$2', `$3', 13, 18)');
 ## Pressure transducer
 define(`PKG_MPAK',     `COMMON_SMT_TRANSISTORX_MIL(`$1', `$2', `$3', 150, 437, 20, `12345')');
 
-#
-## Virtual component, no footprint
-#
-define(`PKG_DUMMY');
