@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# $Id: m4lib_to_newlib.sh.in,v 1.3 2006-09-01 21:58:27 danmc Exp $
+# $Id: m4lib_to_newlib.sh.in,v 1.4 2006-09-04 12:17:04 danmc Exp $
 #
 
 # This script is used to extract all elements from an "oldlib" (M4)
@@ -8,7 +8,7 @@
 
 outd=/tmp/newlib
 contents=pcblib.contents
-AWK=gawk
+AWK=@AWK@
 
 usage() {
 cat << EOF
@@ -250,7 +250,7 @@ first == 1 {
 	close( laytmpl );
 	close( layout );
 
-	cmd = "cd ../src && env LD_LIBRARY_PATH=/usr/X11R6/lib:/usr/pkg/lib ./pcb-bin -x png --outfile " pngfile " --xy-max 200 --only-visible " layout " 2>&1 > /dev/null" ;
+	cmd = "cd ../src && ./pcb-bin -x png --outfile " pngfile " --xy-max 200 --only-visible " layout " 2>&1 > /dev/null" ;
 	rc = system( cmd );
 	if( rc != 0) {
 		printf("<TR><TD>~%s</TD>\n", lib) >> broken;

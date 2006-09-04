@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.56 2006-08-23 22:19:32 danmc Exp $
+dnl $Id: configure.ac,v 1.57 2006-09-04 12:17:04 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -550,6 +550,7 @@ if test -d $srcdir/lib; then
    AC_CONFIG_FILES(lib/ListLibraryContents.sh)
    AC_CONFIG_FILES(lib/Makefile)
    AC_CONFIG_FILES(lib/QueryLibrary.sh)
+   AC_CONFIG_FILES(lib/m4lib_to_newlib.sh)
    AC_CONFIG_FILES(lib/qfp-ui)
 fi
 if test -d $srcdir/newlib; then
