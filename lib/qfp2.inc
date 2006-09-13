@@ -22,7 +22,7 @@
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: qfp2.inc,v 1.1 2003-02-20 00:23:33 danmc Exp $
+#   RCS: $Id: qfp2.inc,v 1.2 2006-09-13 03:30:19 danmc Exp $
 #
 #  QFP packages
 #
@@ -47,7 +47,7 @@ define(`PKG_QFP2',
 	define(`WIDTH', `eval((QUARTER-1) *25 +2*50)')
 	define(`CENTER', `eval(WIDTH / 2)')
 	define(`NUMPINS', `$4')
-Element(0x00 "$1" "$2" "$3" 100 CENTER 0 100 0x00)
+Element(0x00 "$1" "`$2'" "$3" 100 CENTER 0 100 0x00)
 (
 
 	# left row

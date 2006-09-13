@@ -24,7 +24,7 @@
 #   Improvments by D.J. Barrow dj_barrow@ariasoft.ie
 #   Further improved by W. Kazubski <wk@ire.pw.edu.pl>
 # 
-#   RCS: $Id: qfpdj.inc,v 1.2 2003-08-30 00:17:07 danmc Exp $
+#   RCS: $Id: qfpdj.inc,v 1.3 2006-09-13 03:30:19 danmc Exp $
 #
 #  QFP packages
 #
@@ -59,7 +59,7 @@ define(`PKG_GENERIC_QFP',
 	define(`EDGECUT',`ifelse(1,eval(PIN1INMIDDLE),`0',`28')')
 	define(`STARTPIN',`ifelse(1,eval(PIN1INMIDDLE),`eval(((QUARTER+1)/2)+1)',`1')')
 	define(`CIRCLECENTRE',`ifelse(1,eval(PIN1INMIDDLE),`eval(WIDTH/2)',35)')
-Element(0x00 "$1" "$2" "$3" 100 CENTER 0 100 0x00)
+Element(0x00 "$1" "`$2'" "$3" 100 CENTER 0 100 0x00)
 (
 
 	# left row

@@ -1,6 +1,6 @@
 # -*- m4 -*-
 #
-# $Id: amp.inc,v 1.2 2004-04-28 21:53:32 danmc Exp $
+# $Id: amp.inc,v 1.3 2006-09-13 03:30:19 danmc Exp $
 #                            COPYRIGHT
 #
 #   PCB, interactive printed circuit board design
@@ -82,7 +82,7 @@ define(`COMMON_AMP_MICTOR_MIL',
 	,
 		`define(`CURPIN', `1')'
 	)	
-Element(0x00 "$1" "$2" "$3" -20 -60 0 100 0x00)
+Element(0x00 "$1" "`$2'" "$3" -20 -60 0 100 0x00)
 (
 	define(`SEG', `1')
 	define(`YOFS', eval((1-NSEG)*25000/2))

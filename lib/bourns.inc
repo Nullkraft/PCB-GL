@@ -1,6 +1,6 @@
 # -*- m4 -*-
 #
-# $Id: bourns.inc,v 1.3 2005-07-27 16:28:20 danmc Exp $
+# $Id: bourns.inc,v 1.4 2006-09-13 03:30:19 danmc Exp $
 #                            COPYRIGHT
 #
 #   PCB, interactive printed circuit board design
@@ -75,7 +75,7 @@ define(`PKG_BOURNS_GENERIC_POT',
 	define(`TEXTX', -SILKX)
 	define(`TEXTY', `eval(-SILKY - 10 - TEXTSIZE/2)')
 
-Element(0x00 "$1" "$2" "$3" TEXTX TEXTY 0 TEXTSIZE 0x00)
+Element(0x00 "$1" "`$2'" "$3" TEXTX TEXTY 0 TEXTSIZE 0x00)
 (
 
 # pin 1

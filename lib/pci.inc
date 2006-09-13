@@ -1,4 +1,4 @@
-# $Id: pci.inc,v 1.2 2006-03-14 02:33:05 danmc Exp $
+# $Id: pci.inc,v 1.3 2006-09-13 03:30:19 danmc Exp $
 #
 # Definitions for PCI boards
 # by D.J. Barrow dj_barrow@ariasoft.ie
@@ -46,7 +46,7 @@ define(`PKG_PCIPINARRAY',
     	define(`LMAXY',`eval(MAXY+ARCRADIUS)')
 	define(`BOARDTOP',`eval(LMAXY-arg1)')
 	define(`SCREWBORDER',275)
-Element(0x00  "$1" "$2" "$3" CENTERX 10 1 30 0x00)
+Element(0x00  "$1" "`$2'" "$3" CENTERX 10 1 30 0x00)
 (
 	Mark(CENTERX 135)
 	define(`ADDSIDE',0)

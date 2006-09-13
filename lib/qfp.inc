@@ -22,7 +22,7 @@
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: qfp.inc,v 1.1 2003-02-20 00:23:33 danmc Exp $
+#   RCS: $Id: qfp.inc,v 1.2 2006-09-13 03:30:19 danmc Exp $
 #
 #  QFP packages
 #
@@ -47,7 +47,7 @@ define(`PKG_OLD_QFP',
 	define(`WIDTH', `eval((QUARTER-1) *31 +2*42)')
 	define(`CENTER', `eval(WIDTH / 2)')
 	define(`NUMPINS', `$4')
-Element(0x00 "$1" "$2" "$3" 100 CENTER 0 100 0x00)
+Element(0x00 "$1" "`$2'" "$3" 100 CENTER 0 100 0x00)
 (
 
 	# left row
@@ -131,7 +131,7 @@ define(`PKG_GEN_QFP',
 	define(`PX', `eval((PITCH*(XPADS-1)+127)/254)')
 	define(`PY', `eval((PITCH*(YPADS-1)+127)/254)')
 	define(`PHW', `eval(PAD_WIDTH/2)')
-Element(0x00 "$1" "$2" "$3" 100 0 0 100 0x00)
+Element(0x00 "$1" "`$2'" "$3" 100 0 0 100 0x00)
 (
 	define(`count', 1)
 
@@ -252,6 +252,6 @@ define(`PKG_208_LQFP',
 # Search path for this puppy comes from QueryLibrary.sh, which
 # I (LRD) patched to merge M4PATH into PATH
 define(`PKG_MENU_QFP',
-	`esyscmd(qfp-ui "$1" "$2" "$3")'
+	`esyscmd(qfp-ui "$1" "`$2'" "$3")'
 )
 

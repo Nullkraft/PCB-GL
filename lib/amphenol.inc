@@ -1,6 +1,6 @@
 # -*- m4 -*-
 #
-# $Id: amphenol.inc,v 1.4 2004-01-01 07:42:28 danmc Exp $
+# $Id: amphenol.inc,v 1.5 2006-09-13 03:30:19 danmc Exp $
 #                            COPYRIGHT
 #
 #   PCB, interactive printed circuit board design
@@ -40,7 +40,7 @@ define(`PKG_AMPHENOL_ARFX1229',
 	define(`XMAX', `eval(PAD_SPACE+SILK)')
 	define(`YMIN', `eval(-1*SILK)')
 	define(`YMAX', `eval(PAD_SPACE+SILK)')
-Element(0x00 "$1" "$2" "$3" eval(XMIN+20) eval(YMAX+20) 0 100 0x00)
+Element(0x00 "$1" "`$2'" "$3" eval(XMIN+20) eval(YMAX+20) 0 100 0x00)
 (
 
 	Pin(CENTER     CENTER     CPAD_SIZE  CHOLE_SIZE  "1" 0x01)

@@ -22,7 +22,7 @@
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: plcc.inc,v 1.3 2005-01-26 01:35:52 danmc Exp $
+#   RCS: $Id: plcc.inc,v 1.4 2006-09-13 03:30:19 danmc Exp $
 #
 # PLCC packages
 #
@@ -58,7 +58,7 @@ define(`PKG_PLCC',
 	define(`CENTER', `eval(WIDTH / 2)')
 	define(`PUSHOUT', 20)    # was 15
 	define(`PUSHIN', 40)     # was 50
-Element(0x00 "$1" "$2" "$3" 100 CENTER 0 100 0x00)
+Element(0x00 "$1" "`$2'" "$3" 100 CENTER 0 100 0x00)
 (
 	# top left half
 define(`X', CENTER)
@@ -174,7 +174,7 @@ define(`PKG_PLCC_SOCKET',
 	define(`NUMPINS', `$4')
 	define(`PADSIZE', `62')
 	define(`DRILL', `35')
-Element(0x00 "$1" "$2" "$3" eval(BORDER+200) CENTER 0 100 0x00)
+Element(0x00 "$1" "`$2'" "$3" eval(BORDER+200) CENTER 0 100 0x00)
 
 # PLCC - 44 is a  special case, pad 1 in inner row
 
