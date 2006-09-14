@@ -1,4 +1,4 @@
-/* $Id: gerber.c,v 1.14 2006-07-04 12:42:03 danmc Exp $ */
+/* $Id: gerber.c,v 1.15 2006-09-14 03:02:21 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -32,7 +32,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gerber.c,v 1.14 2006-07-04 12:42:03 danmc Exp $");
+RCSID ("$Id: gerber.c,v 1.15 2006-09-14 03:02:21 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented Gerber function %s.\n", __FUNCTION__); abort()
 
@@ -521,6 +521,12 @@ gerber_set_layer (const char *name, int group)
       sprintf (filesuff, spat, group);
       strcat (filesuff, sext);
       f = fopen (filename, "w");
+      if (f == NULL) 
+	{
+	  Message ( "Error:  Could not open %s for writing.\n", filename);
+	  return 1;
+	}
+
       was_drill = is_drill;
 
 #if 0
