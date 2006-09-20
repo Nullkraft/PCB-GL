@@ -1,4 +1,4 @@
-/* $Id: hidint.h,v 1.4 2006-07-04 12:42:00 danmc Exp $ */
+/* $Id: hidint.h,v 1.5 2006-09-20 04:26:32 djdelorie Exp $ */
 
 /* HID internal interfaces.  These may ONLY be called from the HID
    modules, not from the common PCB code.  */
@@ -54,6 +54,9 @@ void hid_parse_command_line (int *argc, char ***argv);
 void hid_save_and_show_layer_ons (int *save_array);
 /* Use this to restore them.  */
 void hid_restore_layer_ons (int *save_array);
+
+/* Returns a filename base that can be used to output the layer.  */
+const char *layer_type_to_file_name (int idx);
 
 #ifdef __GLOBAL_INCLUDED__
 

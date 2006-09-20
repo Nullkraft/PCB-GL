@@ -1,4 +1,4 @@
-/* $Id: gerber.c,v 1.15 2006-09-14 03:02:21 danmc Exp $ */
+/* $Id: gerber.c,v 1.16 2006-09-20 04:26:32 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -32,7 +32,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gerber.c,v 1.15 2006-09-14 03:02:21 danmc Exp $");
+RCSID ("$Id: gerber.c,v 1.16 2006-09-20 04:26:32 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented Gerber function %s.\n", __FUNCTION__); abort()
 
@@ -450,7 +450,7 @@ gerber_set_layer (const char *name, int group)
 #ifdef HAVE_GETPWUID
       struct passwd *pwentry;
 #endif
-      char *spat, *sext=".gbr";
+      char *sext=".gbr";
       int i;
 
       lastgroup = group;
@@ -474,51 +474,14 @@ gerber_set_layer (const char *name, int group)
       pagecount++;
       switch (idx)
 	{
-	case SL (SILK, TOP):
-	  spat = "frontsilk";
-	  break;
-	case SL (SILK, BOTTOM):
-	  spat = "backsilk";
-	  break;
-	case SL (MASK, TOP):
-	  spat = "frontmask";
-	  break;
-	case SL (MASK, BOTTOM):
-	  spat = "backmask";
-	  break;
-	case SL (PASTE, TOP):
-	  spat = "frontpaste";
-	  break;
-	case SL (PASTE, BOTTOM):
-	  spat = "backpaste";
-	  break;
 	case SL (PDRILL, 0):
-	  spat = "plated-drill";
 	  sext = ".cnc";
 	  break;
 	case SL (UDRILL, 0):
-	  spat = "unplated-drill";
 	  sext = ".cnc";
 	  break;
-	case SL (FAB, 0):
-	  spat = "fab";
-	  break;
-	case SL (ASSY, TOP):
-	  spat = "frontassembly";
-	  break;
-	case SL (ASSY, BOTTOM):
-	  spat = "backassembly";
-	  break;
-	default:
-	  if (group == GetLayerGroupNumberByNumber(MAX_LAYER+COMPONENT_LAYER))
-	    spat = "front";
-	  else if (group == GetLayerGroupNumberByNumber(MAX_LAYER+SOLDER_LAYER))
-	    spat = "back";
-	  else
-	    spat = "group%d";
-	  break;
 	}
-      sprintf (filesuff, spat, group);
+      strcpy (filesuff, layer_type_to_file_name (idx));
       strcat (filesuff, sext);
       f = fopen (filename, "w");
       if (f == NULL) 
