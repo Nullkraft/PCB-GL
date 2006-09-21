@@ -1,4 +1,4 @@
-/* $Id: mymem.c,v 1.21 2006-08-02 15:55:18 djdelorie Exp $ */
+/* $Id: mymem.c,v 1.22 2006-09-21 21:31:31 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -49,7 +49,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: mymem.c,v 1.21 2006-08-02 15:55:18 djdelorie Exp $");
+RCSID ("$Id: mymem.c,v 1.22 2006-09-21 21:31:31 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * local prototypes
@@ -671,6 +671,8 @@ MyRealloc (void *Ptr, size_t Size, const char *Text)
 #ifdef MEM_DEBUG
   fprintf (stderr, "0x%x Realloc to %d from %s ", Ptr, Size, Text);
 #endif
+  if (Size == 0)
+    Size = 1;
   p = Ptr ? realloc (Ptr, Size) : malloc (Size);
   if (!p)
     MyFatal ("out of memory during realloc() in '%s'()\n",
