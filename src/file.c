@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.44 2006-08-30 02:42:13 djdelorie Exp $ */
+/* $Id: file.c,v 1.45 2006-09-22 23:06:56 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -89,7 +89,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: file.c,v 1.44 2006-08-30 02:42:13 djdelorie Exp $");
+RCSID ("$Id: file.c,v 1.45 2006-09-22 23:06:56 danmc Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -445,7 +445,6 @@ static void
 WritePCBDataHeader (FILE * FP)
 {
   Cardinal group;
-  int p;
 
   fputs ("\nPCB[", FP);
   PrintQuotedString (FP, EMPTY (PCB->Name));

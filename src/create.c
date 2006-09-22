@@ -1,4 +1,4 @@
-/* $Id: create.c,v 1.31 2006-08-30 02:42:13 djdelorie Exp $ */
+/* $Id: create.c,v 1.32 2006-09-22 23:06:56 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: create.c,v 1.31 2006-08-30 02:42:13 djdelorie Exp $");
+RCSID ("$Id: create.c,v 1.32 2006-09-22 23:06:56 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local identifiers
@@ -131,7 +131,6 @@ PCBTypePtr
 CreateNewPCB (Boolean SetDefaultNames)
 {
   PCBTypePtr ptr;
-  int i;
 
   /* allocate memory, switch all layers on and copy resources */
   ptr = MyCalloc (1, sizeof (PCBType), "CreateNewPCB()");
