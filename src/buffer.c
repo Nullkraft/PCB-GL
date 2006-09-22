@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.30 2006-09-22 03:14:22 djdelorie Exp $ */
+/* $Id: buffer.c,v 1.31 2006-09-22 05:04:32 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -60,7 +60,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: buffer.c,v 1.30 2006-09-22 03:14:22 djdelorie Exp $");
+RCSID ("$Id: buffer.c,v 1.31 2006-09-22 05:04:32 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -662,7 +662,7 @@ polygon_is_rectangle (PolygonTypePtr poly)
   PointType temp[4];
   if (poly->PointN != 4)
     return 0;
-  best = 1;
+  best = 0;
   for (i=1; i<4; i++)
     if (poly->Points[i].X < poly->Points[best].X
 	|| poly->Points[i].Y < poly->Points[best].Y)
