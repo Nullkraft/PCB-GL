@@ -1,4 +1,4 @@
-/* $Id: fontmode.c,v 1.1 2006-08-03 05:25:19 djdelorie Exp $ */
+/* $Id: fontmode.c,v 1.2 2006-09-22 23:07:30 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -51,7 +51,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: fontmode.c,v 1.1 2006-08-03 05:25:19 djdelorie Exp $");
+RCSID ("$Id: fontmode.c,v 1.2 2006-09-22 23:07:30 danmc Exp $");
 
 /* FIXME - we currently hardcode the grid and PCB size.  What we
    should do in the future is scan the font for its extents, and size
@@ -232,6 +232,8 @@ FontSave (int argc, char **argv, int Ux, int Uy)
     }
 
   SetFontInfo (font);
+  
+  return 0;
 }
 
 HID_Action fontmode_action_list[] = {
