@@ -1,4 +1,4 @@
-/* $Id: rats.c,v 1.28 2006-08-02 15:55:18 djdelorie Exp $ */
+/* $Id: rats.c,v 1.29 2006-09-24 22:44:12 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -60,7 +60,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: rats.c,v 1.28 2006-08-02 15:55:18 djdelorie Exp $");
+RCSID ("$Id: rats.c,v 1.29 2006-09-24 22:44:12 danmc Exp $");
 
 
 #define TRIEDFIRST 0x1
@@ -703,13 +703,21 @@ AddAllRats (Boolean SelectedOnly, void (*funcp) ())
   RestoreFindFlag ();
   if (funcp)
     return (True);
+
   if (Warned || changed)
     Draw ();
+
   if (Warned)
     Settings.RatWarn = True;
+
   if (changed)
     {
       IncrementUndoSerialNumber ();
+      if (PCB->Data->RatN > 0) 
+	{
+	  Message ("%d rat line%s remaining\n", PCB->Data->RatN,
+		   PCB->Data->RatN > 1 ? "s" : "");
+	}
       return (True);
     }
   if (!SelectedOnly && !Warned)
