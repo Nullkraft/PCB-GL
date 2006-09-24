@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.30 2006-07-04 12:42:04 danmc Exp $ */
+/* $Id: gui-top-window.c,v 1.31 2006-09-24 21:23:49 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -84,7 +84,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.30 2006-07-04 12:42:04 danmc Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.31 2006-09-24 21:23:49 djdelorie Exp $");
 
 extern HID ghid_hid;
 
@@ -3775,6 +3775,7 @@ ghid_parse_arguments (int *argc, char ***argv)
 
   gport = &ghid_port;
   gport->zoom = 300.0;
+  pixel_slop = 300;
 
   ghid_config_files_read (argc, argv);
 
