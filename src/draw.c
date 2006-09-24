@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.59 2006-09-13 03:32:31 djdelorie Exp $ */
+/* $Id: draw.c,v 1.60 2006-09-24 22:09:56 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -62,7 +62,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.59 2006-09-13 03:32:31 djdelorie Exp $");
+RCSID ("$Id: draw.c,v 1.60 2006-09-24 22:09:56 djdelorie Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -2123,6 +2123,8 @@ DrawRat (RatTypePtr Line, int unused)
       else
 	gui->set_color (Output.fgGC, PCB->RatColor);
     }
+  if (Settings.RatThickness < 20)
+    Line->Thickness = pixel_slop * Settings.RatThickness;
   DrawLineLowLevel ((LineTypePtr) Line, False);
 }
 
