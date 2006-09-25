@@ -1,4 +1,4 @@
-/* $Id: mymem.c,v 1.22 2006-09-21 21:31:31 djdelorie Exp $ */
+/* $Id: mymem.c,v 1.23 2006-09-25 22:55:42 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -49,7 +49,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: mymem.c,v 1.22 2006-09-21 21:31:31 djdelorie Exp $");
+RCSID ("$Id: mymem.c,v 1.23 2006-09-25 22:55:42 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * local prototypes
@@ -993,7 +993,7 @@ DSAddCharacter (DynamicStringTypePtr Ptr, char Char)
  * add a string to a dynamic string
  */
 void
-DSAddString (DynamicStringTypePtr Ptr, char *S)
+DSAddString (DynamicStringTypePtr Ptr, const char *S)
 {
   size_t position = Ptr->Data ? strlen (Ptr->Data) : 0;
 

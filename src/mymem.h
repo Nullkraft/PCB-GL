@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: mymem.h,v 1.8 2006-07-04 12:16:34 danmc Exp $
+ *  RCS: $Id: mymem.h,v 1.9 2006-09-25 22:55:42 danmc Exp $
  */
 
 /* prototypes for memory routines
@@ -111,7 +111,7 @@ void FreeLibraryMemory (LibraryTypePtr);
 void FreePointerListMemory (PointerListTypePtr);
 void SaveFree (void *);
 void DSAddCharacter (DynamicStringTypePtr, char);
-void DSAddString (DynamicStringTypePtr, char *);
+void DSAddString (DynamicStringTypePtr, const char *);
 void DSClearString (DynamicStringTypePtr);
 char *StripWhiteSpaceAndDup (char *);
 
