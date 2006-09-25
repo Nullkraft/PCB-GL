@@ -1,4 +1,4 @@
-/* $Id: dialogs.c,v 1.17 2006-07-23 21:01:29 djdelorie Exp $ */
+/* $Id: dialogs.c,v 1.18 2006-09-25 23:02:36 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -25,7 +25,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: dialogs.c,v 1.17 2006-07-23 21:01:29 djdelorie Exp $");
+RCSID ("$Id: dialogs.c,v 1.18 2006-09-25 23:02:36 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
 
@@ -849,13 +849,8 @@ About (int argc, char **argv, int x, int y)
   static Widget about = 0;
   if (!about)
     {
-      static char *msg = "This is " PACKAGE " " VERSION "\n"
-	"http://pcb.sourceforge.net\n\n"
-	"Also see:\n\n"
-	"   gEDA homepage:  http://www.geda.seul.org\n"
-	"   gEDA Wiki:      http://geda.seul.org/dokuwiki/doku.php?id=geda\n";
       Cardinal n = 0;
-      XmString xs = XmStringCreateLocalized (msg);
+      XmString xs = XmStringCreateLocalized (GetInfoString ());
       stdarg (XmNmessageString, xs);
       stdarg (XmNtitle, "About PCB");
       about = XmCreateInformationDialog (mainwind, "about", args, n);
