@@ -1,4 +1,4 @@
-/* $Id: flags.c,v 1.6 2006-09-20 04:26:32 djdelorie Exp $ */
+/* $Id: flags.c,v 1.7 2006-09-25 02:15:48 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -19,7 +19,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: flags.c,v 1.6 2006-09-20 04:26:32 djdelorie Exp $");
+RCSID ("$Id: flags.c,v 1.7 2006-09-25 02:15:48 djdelorie Exp $");
 
 typedef struct HID_FlagNode
 {
@@ -184,6 +184,10 @@ layer_type_to_file_name (int idx)
 	return "front";
       else if (group == GetLayerGroupNumberByNumber(max_layer+SOLDER_LAYER))
 	return "back";
+      else if (PCB->LayerGroups.Number[group] == 1
+	       && (strcasecmp (PCB->Data->Layer[idx].Name, "route") == 0
+		   || strcasecmp (PCB->Data->Layer[idx].Name, "outline") == 0))
+	return "outline";
       else
 	{
 	  static char buf[20];
