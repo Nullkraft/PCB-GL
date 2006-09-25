@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.55 2006-08-02 15:55:18 djdelorie Exp $ */
+/* $Id: misc.c,v 1.56 2006-09-25 22:55:16 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -78,7 +78,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: misc.c,v 1.55 2006-08-02 15:55:18 djdelorie Exp $");
+RCSID ("$Id: misc.c,v 1.56 2006-09-25 22:55:16 danmc Exp $");
 
 
 
@@ -1939,4 +1939,89 @@ c_strtod(const char *s)
     }
 
   return rv * sign;
+}
+
+
+/* ---------------------------------------------------------------------------
+ * Returns a string that has a bunch of information about the program.
+ * Can be used for things like "about" dialog boxes.
+ */
+
+char *
+GetInfoString (void)
+{
+  HID **hids;
+  int i;
+  static DynamicStringType info;
+  static int first_time = 1;
+
+#define TAB "    "
+
+  if (first_time)
+    {
+      first_time = 0;
+      DSAddString (&info, "This is PCB, an interactive\n");
+      DSAddString (&info, "printed circuit board editor\n");
+      DSAddString (&info, "version ");
+      DSAddString (&info, VERSION);
+      DSAddString (&info, "\n\n");
+      DSAddString (&info, "Compiled on " __DATE__ " at " __TIME__);
+      DSAddString (&info, "\n\n" "by harry eaton\n\n");
+      DSAddString (&info, "Copyright (C) Thomas Nau 1994, 1995, 1996, 1997\n");
+      DSAddString (&info, "Copyright (C) harry eaton 1998-2006\n");
+      DSAddString (&info, "Copyright (C) C. Scott Ananian 2001\n");
+      DSAddString (&info, "Copyright (C) DJ Delorie 2003, 2004, 2005, 2006\n");
+      DSAddString (&info, "Copyright (C) Dan McMahill 2003, 2004, 2005, 2006\n\n");
+      DSAddString (&info, "It is licensed under the terms of the GNU\n");
+      DSAddString (&info, "General Public License version 2\n");
+      DSAddString (&info, "See the LICENSE file for more information\n\n");
+      DSAddString (&info, "For more information see:\n\n");
+      DSAddString (&info, "PCB homepage: http://pcb.sf.net\n");
+      DSAddString (&info, "gEDA homepage: http://www.geda.seul.org\n");
+      DSAddString (&info, "gEDA Wiki: http://geda.seul.org/dokuwiki/doku.php?id=geda\n\n");
+
+      DSAddString (&info, "----- Compile Time Options -----\n");
+      hids = hid_enumerate ();
+      DSAddString (&info, "GUI:\n");
+      for (i = 0; hids[i]; i++)
+	{
+	  if (hids[i]->gui)
+	    {
+	      DSAddString (&info, TAB );
+	      DSAddString (&info, hids[i]->name);
+	      DSAddString (&info, " : ");
+	      DSAddString (&info, hids[i]->description);
+	      DSAddString (&info, "\n");
+	    }
+	}
+
+      DSAddString (&info, "Exporters:\n");
+      for (i = 0; hids[i]; i++)
+	{
+	  if (hids[i]->exporter)
+	    {
+	      DSAddString (&info, TAB );
+	      DSAddString (&info, hids[i]->name);
+	      DSAddString (&info, " : ");
+	      DSAddString (&info, hids[i]->description);
+	      DSAddString (&info, "\n");
+	    }
+	}
+
+      DSAddString (&info, "Printers:\n");
+      for (i = 0; hids[i]; i++)
+	{
+	  if (hids[i]->printer)
+	    {
+	      DSAddString (&info, TAB );
+	      DSAddString (&info, hids[i]->name);
+	      DSAddString (&info, " : ");
+	      DSAddString (&info, hids[i]->description);
+	      DSAddString (&info, "\n");
+	    }
+	}
+    }
+#undef TAB
+
+  return info.Data;
 }

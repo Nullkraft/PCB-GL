@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: misc.h,v 1.18 2006-06-10 03:07:41 djdelorie Exp $
+ *  RCS: $Id: misc.h,v 1.19 2006-09-25 22:55:16 danmc Exp $
  */
 
 /* prototypes for misc routines
@@ -97,5 +97,8 @@ void MakeLayerGroupsDefault ();
 /* These act like you'd expect, except always in the C locale.  */
 extern double c_strtod(const char *s);
 extern const char *c_dtostr(double d);
+
+/* Returns a string with info about this copy of pcb. */
+char * GetInfoString (void);
 
 #endif
