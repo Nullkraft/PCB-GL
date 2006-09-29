@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.58 2006-09-26 11:25:22 danmc Exp $
+dnl $Id: configure.ac,v 1.59 2006-09-29 05:24:38 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -12,9 +12,8 @@ AC_CANONICAL_HOST
 AC_MSG_CHECKING(for windows)
 case $host in
 	*-*-cygwin* )
-		WIN32=yes
-		CFLAGS="$CFLAGS ${CYGWIN_CFLAGS:--mms-bitfields -mno-cygwin -mwindows}"
-		CPPFLAGS="$CPPFLAGS ${CYGWIN_CPPFLAGS:--mms-bitfields -mno-cygwin -mwindows}"
+		CFLAGS="$CFLAGS ${CYGWIN_CFLAGS}"
+		CPPFLAGS="$CPPFLAGS ${CYGWIN_CPPFLAGS}"
 		;;
 
 	*-*-mingw* )
