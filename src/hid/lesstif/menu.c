@@ -1,4 +1,4 @@
-/* $Id: menu.c,v 1.16 2006-07-26 04:58:32 djdelorie Exp $ */
+/* $Id: menu.c,v 1.17 2006-10-01 02:44:13 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: menu.c,v 1.16 2006-07-26 04:58:32 djdelorie Exp $");
+RCSID ("$Id: menu.c,v 1.17 2006-10-01 02:44:13 djdelorie Exp $");
 
 #ifndef R_OK
 /* Common value for systems that don't define it.  */
@@ -956,7 +956,7 @@ find_or_create_acc (char mods, char key, KeySym sym,
   acc_table_t *a;
 
   if (*table)
-    for (i=*n_ents; i>=0; i--)
+    for (i=(*n_ents)-1; i>=0; i--)
       {
 	a = & (*table)[i];
 	if (a->mods == mods
@@ -973,7 +973,7 @@ find_or_create_acc (char mods, char key, KeySym sym,
   else
     *table = (acc_table_t *) malloc (max * sizeof (acc_table_t));
 
-  a = & ((*table)[*n_ents-1]);
+  a = & ((*table)[(*n_ents)-1]);
   memset (a, 0, sizeof(acc_table_t));
 
   a->mods = mods;
