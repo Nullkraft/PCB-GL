@@ -1,4 +1,4 @@
-/* $Id: png.c,v 1.13 2006-07-04 12:42:07 danmc Exp $ */
+/* $Id: png.c,v 1.14 2006-10-02 02:06:33 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -51,7 +51,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: png.c,v 1.13 2006-07-04 12:42:07 danmc Exp $");
+RCSID ("$Id: png.c,v 1.14 2006-10-02 02:06:33 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PNG function %s.\n", __FUNCTION__); abort()
 
@@ -891,6 +891,7 @@ png_set_crosshair (int x, int y)
 }
 
 HID png_hid = {
+  sizeof (HID),
   "png",
   "GIF/JPEG/PNG export.",
   0,				/* gui */

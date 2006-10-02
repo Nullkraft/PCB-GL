@@ -1,4 +1,4 @@
-/* $Id: gerber.c,v 1.17 2006-09-25 02:13:48 djdelorie Exp $ */
+/* $Id: gerber.c,v 1.18 2006-10-02 02:06:32 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -32,7 +32,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gerber.c,v 1.17 2006-09-25 02:13:48 djdelorie Exp $");
+RCSID ("$Id: gerber.c,v 1.18 2006-10-02 02:06:32 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented Gerber function %s.\n", __FUNCTION__); abort()
 
@@ -935,6 +935,7 @@ gerber_set_crosshair (int x, int y)
 }
 
 static HID gerber_hid = {
+  sizeof (HID),
   "gerber",
   "RS-274X (Gerber) export.",
   0, 0, 1, 1, 0,

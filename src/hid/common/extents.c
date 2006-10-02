@@ -1,4 +1,4 @@
-/* $Id: extents.c,v 1.5 2006-06-10 03:07:42 djdelorie Exp $ */
+/* $Id: extents.c,v 1.6 2006-10-02 02:06:32 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -19,7 +19,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: extents.c,v 1.5 2006-06-10 03:07:42 djdelorie Exp $");
+RCSID ("$Id: extents.c,v 1.6 2006-10-02 02:06:32 djdelorie Exp $");
 
 #ifndef MAXINT
 #define MAXINT (((unsigned int)(~0))>>1)
@@ -170,6 +170,7 @@ extents_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
 }
 
 static HID extents_hid = {
+  sizeof (HID),
   "extents-extents",
   "used to calculate extents",
   0,				/* gui */

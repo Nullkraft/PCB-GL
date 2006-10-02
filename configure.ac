@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.61 2006-10-01 01:17:28 danmc Exp $
+dnl $Id: configure.ac,v 1.62 2006-10-02 02:06:31 djdelorie Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -510,6 +510,11 @@ fi
 FONTFILENAME=${FONTFILENAME:-"default_font"}
 AC_SUBST(FONTFILENAME)
 AC_DEFINE_UNQUOTED(FONTFILENAME,"$FONTFILENAME",[File for default font])
+
+# standard autoconf variables
+CPPFLAGS="$CPPFLAGS -DPREFIXDIR=\\\"\${prefix}\\\""
+CPPFLAGS="$CPPFLAGS -DEXECPREFIXDIR=\\\"\${exec_prefix}\\\""
+CPPFLAGS="$CPPFLAGS -DHOST=\\\"\${host}\\\""
 
 # directory for old-style library and for fonts
 PCBLIBDIR=${datadir}/pcb

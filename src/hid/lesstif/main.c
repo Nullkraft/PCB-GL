@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.35 2006-09-24 22:01:06 djdelorie Exp $ */
+/* $Id: main.c,v 1.36 2006-10-02 02:06:32 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -29,7 +29,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.35 2006-09-24 22:01:06 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.36 2006-10-02 02:06:32 djdelorie Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -3490,6 +3490,7 @@ lesstif_beep (void)
 }
 
 HID lesstif_gui = {
+  sizeof (HID),
   "lesstif",
   "LessTif - a Motif clone for X/Unix",
   1,				/* gui */

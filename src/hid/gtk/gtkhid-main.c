@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.22 2006-08-02 15:55:18 djdelorie Exp $ */
+/* $Id: gtkhid-main.c,v 1.23 2006-10-02 02:06:32 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.22 2006-08-02 15:55:18 djdelorie Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.23 2006-10-02 02:06:32 djdelorie Exp $");
 
 
 extern HID ghid_hid;
@@ -927,6 +927,7 @@ ghid_beep ()
 /* ---------------------------------------------------------------------- */
 
 HID ghid_hid = {
+  sizeof (HID),
   "gtk",
   "Gtk - The Gimp Toolkit",
   1,				/* gui */
@@ -978,6 +979,7 @@ HID ghid_hid = {
 };
 
 HID ghid_extents = {
+  sizeof (HID),
   "ghid_extents",
   "used to calculate extents",
   1,				/* gui */

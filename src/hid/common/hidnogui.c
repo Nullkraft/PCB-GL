@@ -1,4 +1,4 @@
-/* $Id: hidnogui.c,v 1.5 2006-04-12 22:55:25 danmc Exp $ */
+/* $Id: hidnogui.c,v 1.6 2006-10-02 02:06:32 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -16,7 +16,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: hidnogui.c,v 1.5 2006-04-12 22:55:25 danmc Exp $");
+RCSID ("$Id: hidnogui.c,v 1.6 2006-10-02 02:06:32 djdelorie Exp $");
 
 /* This is the "gui" that is installed at startup, and is used when
    there is no other real GUI to use.  For the most part, it just
@@ -277,6 +277,7 @@ nogui_beep (void)
 }
 
 HID hid_nogui = {
+  sizeof (HID),
   "nogui",
   "Default GUI when no other GUI is present.  Does nothing.",
   0, 0, 0, 0, 0,

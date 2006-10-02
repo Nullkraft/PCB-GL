@@ -1,4 +1,4 @@
-/* $Id: bom.c,v 1.5 2006-07-04 12:42:01 danmc Exp $ */
+/* $Id: bom.c,v 1.6 2006-10-02 02:06:32 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -22,7 +22,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: bom.c,v 1.5 2006-07-04 12:42:01 danmc Exp $");
+RCSID ("$Id: bom.c,v 1.6 2006-10-02 02:06:32 djdelorie Exp $");
 
 static HID_Attribute bom_options[] = {
   {"bomfile", "BOM output file",
@@ -484,6 +484,7 @@ bom_parse_arguments (int *argc, char ***argv)
 }
 
 HID bom_hid = {
+  sizeof (HID),
   "bom",
   "Exports a Bill of Materials",
   0, 0, 1, 0, 0,

@@ -1,4 +1,4 @@
-/* $Id: batch.c,v 1.2 2006-05-15 01:08:36 djdelorie Exp $ */
+/* $Id: batch.c,v 1.3 2006-10-02 02:06:32 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -17,7 +17,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: batch.c,v 1.2 2006-05-15 01:08:36 djdelorie Exp $");
+RCSID ("$Id: batch.c,v 1.3 2006-10-02 02:06:32 djdelorie Exp $");
 
 /* This is a text-line "batch" HID, which exists for scripting and
    non-GUI needs.  */
@@ -392,6 +392,7 @@ batch_beep (void)
 }
 
 HID batch_gui = {
+  sizeof (HID),
   "batch",
   "Batch-mode GUI for non-interactive use.",
   1, 0, 0, 0, 0,
