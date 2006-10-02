@@ -1,4 +1,4 @@
-/* $Id: hidinit.c,v 1.7 2006-10-02 02:18:54 djdelorie Exp $ */
+/* $Id: hidinit.c,v 1.8 2006-10-02 03:15:13 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -23,7 +23,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: hidinit.c,v 1.7 2006-10-02 02:18:54 djdelorie Exp $");
+RCSID ("$Id: hidinit.c,v 1.8 2006-10-02 03:15:13 djdelorie Exp $");
 
 #define HID_DEF(x) extern void hid_ ## x ## _init(void);
 #include "hid/common/hidlist.h"
@@ -44,7 +44,6 @@ hid_load_dir (char *dirname)
   DIR *dir;
   struct dirent *de;
 
-  printf("dir [%s]\n", dirname);
   dir = opendir (dirname);
   if (!dir)
     {
