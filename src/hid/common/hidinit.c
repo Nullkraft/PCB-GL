@@ -1,4 +1,4 @@
-/* $Id: hidinit.c,v 1.6 2006-10-02 02:06:32 djdelorie Exp $ */
+/* $Id: hidinit.c,v 1.7 2006-10-02 02:18:54 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -23,7 +23,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: hidinit.c,v 1.6 2006-10-02 02:06:32 djdelorie Exp $");
+RCSID ("$Id: hidinit.c,v 1.7 2006-10-02 02:18:54 djdelorie Exp $");
 
 #define HID_DEF(x) extern void hid_ ## x ## _init(void);
 #include "hid/common/hidlist.h"
@@ -83,7 +83,7 @@ hid_load_dir (char *dirname)
 	      symv = (void (*)()) sym;
 	      symv();
 	    }
-	  else if ((sym = dlsym (so, "init")) != NULL)
+	  else if ((sym = dlsym (so, "pcb_plugin_init")) != NULL)
 	    {
 	      symv = (void (*)()) sym;
 	      symv();
