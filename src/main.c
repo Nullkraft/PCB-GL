@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.56 2006-08-21 23:18:48 djdelorie Exp $ */
+/* $Id: main.c,v 1.57 2006-10-02 04:51:35 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -59,7 +59,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.56 2006-08-21 23:18:48 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.57 2006-10-02 04:51:35 djdelorie Exp $");
 
 
 
@@ -610,6 +610,8 @@ main (int argc, char *argv[])
 #include "core_lists.h"
   setbuf (stdout, 0);
   hid_init ();
+
+  hid_load_settings ();
 
   program_name = argv[0];
   program_basename = strrchr (program_name, '/');

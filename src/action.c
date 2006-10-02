@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.93 2006-09-21 04:19:49 djdelorie Exp $ */
+/* $Id: action.c,v 1.94 2006-10-02 04:51:35 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -73,7 +73,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.93 2006-09-21 04:19:49 djdelorie Exp $");
+RCSID ("$Id: action.c,v 1.94 2006-10-02 04:51:35 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -5360,6 +5360,31 @@ ActionSaveTo (int argc, char **argv, int x, int y)
 
 /* --------------------------------------------------------------------------- */
 
+static const char savesettings_syntax[] =
+"SaveSettings()\n"
+"SaveSettings(local)";
+
+static const char savesettings_help[] =
+"Saves settings.";
+
+/* %start-doc actions SaveSettings
+
+If you pass no arguments, the settings are stored in
+@code{$HOME/.pcb/settings}.  If you pass the word @code{local} they're
+saved in @code{./pcb.settings}.
+
+%end-doc */
+
+static int
+ActionSaveSettings (int argc, char **argv, int x, int y)
+{
+  int locally = argc > 0 ? (strncasecmp (argv[0], "local", 5) == 0) : 0;
+  hid_save_settings (locally);
+  return 0;
+}
+
+/* --------------------------------------------------------------------------- */
+
 static const char loadfrom_syntax[] =
 "LoadFrom(Layout|LayoutToBuffer|ElementToBuffer|Netlist|Revert,filename)";
 
@@ -6645,6 +6670,8 @@ HID_Action action_action_list[] = {
    select_help, select_syntax},
   {"Unselect", 0, ActionUnselect,
    unselect_help, unselect_syntax},
+  {"SaveSettings", 0, ActionSaveSettings,
+   savesettings_help, savesettings_syntax},
   {"SaveTo", 0, ActionSaveTo,
    saveto_help, saveto_syntax},
   {"SetSquare", 0, ActionSetSquare,
