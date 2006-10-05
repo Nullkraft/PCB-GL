@@ -1,4 +1,4 @@
-/* $Id: hidinit.c,v 1.9 2006-10-02 04:51:36 djdelorie Exp $ */
+/* $Id: hidinit.c,v 1.10 2006-10-05 18:56:59 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -23,7 +23,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: hidinit.c,v 1.9 2006-10-02 04:51:36 djdelorie Exp $");
+RCSID ("$Id: hidinit.c,v 1.10 2006-10-05 18:56:59 djdelorie Exp $");
 
 #define HID_DEF(x) extern void hid_ ## x ## _init(void);
 #include "hid/common/hidlist.h"
@@ -35,6 +35,7 @@ int hid_num_hids = 0;
 extern HID hid_nogui;
 
 HID *gui = &hid_nogui;
+HID *exporter = NULL;
 
 int pixel_slop = 1;
 

@@ -1,4 +1,4 @@
-/* $Id: dialogs.c,v 1.18 2006-09-25 23:02:36 danmc Exp $ */
+/* $Id: dialogs.c,v 1.19 2006-10-05 18:56:59 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -25,7 +25,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: dialogs.c,v 1.18 2006-09-25 23:02:36 danmc Exp $");
+RCSID ("$Id: dialogs.c,v 1.19 2006-10-05 18:56:59 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
 
@@ -968,6 +968,8 @@ Export (int argc, char **argv, int x, int y)
     return 1;
   printer = hids[i - 1];
 
+  exporter = printer;
+
   opts = printer->get_export_options (&n);
   vals = (HID_Attr_Val *) calloc (n, sizeof (HID_Attr_Val));
   if (lesstif_attribute_dialog (opts, n, vals))
@@ -977,6 +979,7 @@ Export (int argc, char **argv, int x, int y)
     }
   printer->do_export (vals);
   free (vals);
+  exporter = NULL;
   return 0;
 }
 

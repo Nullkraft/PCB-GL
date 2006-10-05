@@ -1,4 +1,4 @@
-/* $Id: gui-dialog-print.c,v 1.3 2006-04-05 04:22:15 danmc Exp $ */
+/* $Id: gui-dialog-print.c,v 1.4 2006-10-05 18:56:59 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -42,7 +42,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-dialog-print.c,v 1.3 2006-04-05 04:22:15 danmc Exp $");
+RCSID ("$Id: gui-dialog-print.c,v 1.4 2006-10-05 18:56:59 djdelorie Exp $");
 
 static GtkWidget *export_dialog = NULL;
 
@@ -326,7 +326,6 @@ ghid_dialog_export (void)
   GHidPort *out = &ghid_port;
   int i;
   HID **hids;
-  HID *exporter = NULL;
   GtkTooltips *tips;
 
   tips = gtk_tooltips_new ();
@@ -376,4 +375,6 @@ ghid_dialog_export (void)
   if (export_dialog != NULL)
     gtk_widget_destroy (export_dialog);
   export_dialog = NULL;
+
+  exporter = NULL;
 }
