@@ -1,4 +1,4 @@
-/* $Id: gui-dialog-print.c,v 1.4 2006-10-05 18:56:59 djdelorie Exp $ */
+/* $Id: gui-dialog-print.c,v 1.5 2006-10-06 18:34:15 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -42,7 +42,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-dialog-print.c,v 1.4 2006-10-05 18:56:59 djdelorie Exp $");
+RCSID ("$Id: gui-dialog-print.c,v 1.5 2006-10-06 18:34:15 djdelorie Exp $");
 
 static GtkWidget *export_dialog = NULL;
 
@@ -109,6 +109,7 @@ ghid_dialog_print (HID * printer)
       return;
     }
 
+  exporter = printer;
   tips = gtk_tooltips_new ();
 
   if (!PCB->PrintFilename)
