@@ -1,4 +1,4 @@
-/* $Id: hidinit.c,v 1.10 2006-10-05 18:56:59 djdelorie Exp $ */
+/* $Id: hidinit.c,v 1.11 2006-10-07 00:50:04 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -16,6 +16,7 @@
 #include "hid.h"
 #include "../hidint.h"
 
+#include "error.h"
 #include "global.h"
 #include "misc.h"
 
@@ -23,7 +24,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: hidinit.c,v 1.10 2006-10-05 18:56:59 djdelorie Exp $");
+RCSID ("$Id: hidinit.c,v 1.11 2006-10-07 00:50:04 danmc Exp $");
 
 #define HID_DEF(x) extern void hid_ ## x ## _init(void);
 #include "hid/common/hidlist.h"
@@ -462,7 +463,6 @@ hid_set_attribute (char *name, char *value)
       if (strcmp (name, ha->attributes[i].name) == 0)
 	{
 	  HID_Attribute *a = ha->attributes + i;
-	  char *ep;
 	  switch (ha->attributes[i].type)
 	    {
 	    case HID_Label:
@@ -549,7 +549,7 @@ hid_load_settings_1 (char *fname)
 void
 hid_load_settings ()
 {
-  char *home, *fname;
+  char *home;
   HID_AttrNode *ha;
   int i;
 
