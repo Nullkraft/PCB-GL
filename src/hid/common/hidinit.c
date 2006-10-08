@@ -1,4 +1,4 @@
-/* $Id: hidinit.c,v 1.11 2006-10-07 00:50:04 danmc Exp $ */
+/* $Id: hidinit.c,v 1.12 2006-10-08 14:31:27 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -24,7 +24,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: hidinit.c,v 1.11 2006-10-07 00:50:04 danmc Exp $");
+RCSID ("$Id: hidinit.c,v 1.12 2006-10-08 14:31:27 djdelorie Exp $");
 
 #define HID_DEF(x) extern void hid_ ## x ## _init(void);
 #include "hid/common/hidlist.h"
@@ -72,7 +72,7 @@ hid_load_dir (char *dirname)
 	  && (st.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))
 	  && S_ISREG (st.st_mode))
 	{
-	  if ((so = dlopen (path, RTLD_NOW)) == NULL)
+	  if ((so = dlopen (path, RTLD_NOW | RTLD_GLOBAL)) == NULL)
 	    {
 	      fprintf(stderr, "dl_error: %s\n", dlerror ());
 	      continue;
