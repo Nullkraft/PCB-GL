@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.29 2006-08-10 16:27:15 danmc Exp $
+## $Id: Makefile.am,v 1.30 2006-10-09 00:35:25 danmc Exp $
 ##
 
 SUBDIRS=	icons script
@@ -94,6 +94,8 @@ PCB_SRCS = \
 	parse_y.y \
 	polygon.c \
 	polygon.h \
+	polygon1.c \
+	polyarea.h \
 	puller.c \
 	print.c \
 	print.h \
@@ -120,6 +122,8 @@ PCB_SRCS = \
 	set.h \
 	strflags.c \
 	strflags.h \
+	thermal.c \
+	thermal.h \
 	undo.c \
 	undo.h \
 	vector.c \

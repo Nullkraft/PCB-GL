@@ -1,4 +1,4 @@
-/* $Id: extents.c,v 1.6 2006-10-02 02:06:32 djdelorie Exp $ */
+/* $Id: extents.c,v 1.7 2006-10-09 00:35:26 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -19,7 +19,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: extents.c,v 1.6 2006-10-02 02:06:32 djdelorie Exp $");
+RCSID ("$Id: extents.c,v 1.7 2006-10-09 00:35:26 danmc Exp $");
 
 #ifndef MAXINT
 #define MAXINT (((unsigned int)(~0))>>1)
@@ -178,6 +178,7 @@ static HID extents_hid = {
   0,				/* exporter */
   1,				/* poly before */
   0,				/* poly after */
+  0,				/* poly dicer */
 
   0 /* extents_get_export_options */ ,
   0 /* extents_do_export */ ,

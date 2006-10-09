@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: misc.h,v 1.19 2006-09-25 22:55:16 danmc Exp $
+ *  RCS: $Id: misc.h,v 1.20 2006-10-09 00:35:25 danmc Exp $
  */
 
 /* prototypes for misc routines
@@ -35,6 +35,7 @@
 #include "global.h"
 #include "mymem.h"
 
+void r_delete_element (DataTypePtr, ElementTypePtr);
 void SetLineBoundingBox (LineTypePtr);
 void SetArcBoundingBox (ArcTypePtr);
 void SetPointBoundingBox (PointTypePtr);

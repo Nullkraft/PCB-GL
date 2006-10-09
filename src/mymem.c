@@ -1,4 +1,4 @@
-/* $Id: mymem.c,v 1.23 2006-09-25 22:55:42 danmc Exp $ */
+/* $Id: mymem.c,v 1.24 2006-10-09 00:35:25 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -49,7 +49,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: mymem.c,v 1.23 2006-09-25 22:55:42 danmc Exp $");
+RCSID ("$Id: mymem.c,v 1.24 2006-10-09 00:35:25 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * local prototypes
@@ -725,6 +725,8 @@ FreePolygonMemory (PolygonTypePtr Polygon)
   if (Polygon)
     {
       MYFREE (Polygon->Points);
+      if (Polygon->Clipped)
+	poly_Free (&Polygon->Clipped);
       memset (Polygon, 0, sizeof (PolygonType));
     }
 }
@@ -972,7 +974,8 @@ DSRealloc (DynamicStringTypePtr Ptr, size_t Length)
     {
       Ptr->MaxLength = Length + 512;
       Ptr->Data = MyRealloc (Ptr->Data, Ptr->MaxLength, "ReallocDS()");
-      if (input_null) Ptr->Data[0] = '\0';
+      if (input_null)
+	Ptr->Data[0] = '\0';
     }
 }
 

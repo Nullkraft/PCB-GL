@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: mymem.h,v 1.9 2006-09-25 22:55:42 danmc Exp $
+ *  RCS: $Id: mymem.h,v 1.10 2006-10-09 00:35:25 danmc Exp $
  */
 
 /* prototypes for memory routines

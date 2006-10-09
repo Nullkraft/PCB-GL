@@ -1,4 +1,4 @@
-/* $Id: puller.c,v 1.10 2006-08-02 15:55:18 djdelorie Exp $ */
+/* $Id: puller.c,v 1.11 2006-10-09 00:35:25 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -51,7 +51,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: puller.c,v 1.10 2006-08-02 15:55:18 djdelorie Exp $");
+RCSID ("$Id: puller.c,v 1.11 2006-10-09 00:35:25 danmc Exp $");
 
 #define sqr(x) (1.0*(x)*(x))
 
@@ -221,11 +221,9 @@ find_pair (int Px, int Py)
 }
 
 
-static const char puller_syntax[] =
-"Puller()";
+static const char puller_syntax[] = "Puller()";
 
-static const char puller_help[] =
-"Pull an arc-line junction tight.";
+static const char puller_help[] = "Pull an arc-line junction tight.";
 
 /* %start-doc actions Puller
 

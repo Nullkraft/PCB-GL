@@ -1,4 +1,4 @@
-/* $Id: insert.c,v 1.18 2006-03-28 04:29:19 danmc Exp $ */
+/* $Id: insert.c,v 1.19 2006-10-09 00:35:25 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -56,7 +56,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: insert.c,v 1.18 2006-03-28 04:29:19 danmc Exp $");
+RCSID ("$Id: insert.c,v 1.19 2006-10-09 00:35:25 danmc Exp $");
 
 
 
@@ -196,7 +196,7 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 				  &Polygon->Points[InsertAt]);
   SetPolygonBoundingBox (Polygon);
   r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
-  UpdatePIPFlags (NULL, NULL, Layer, True);
+  InitClip (PCB->Data, Layer, Polygon);
   if (Forcible || !RemoveExcessPolygonPoints (Layer, Polygon))
     {
       DrawPolygon (Layer, Polygon, 0);

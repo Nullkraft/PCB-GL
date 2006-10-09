@@ -1,4 +1,4 @@
-/* $Id: parse_l.l,v 1.12 2006-08-30 02:42:13 djdelorie Exp $ */
+/* $Id: parse_l.l,v 1.13 2006-10-09 00:35:25 danmc Exp $ */
 
 %{
 /*
@@ -48,7 +48,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_l.l,v 1.12 2006-08-30 02:42:13 djdelorie Exp $");
+RCSID("$Id: parse_l.l,v 1.13 2006-10-09 00:35:25 danmc Exp $");
 
 
 #include "global.h"

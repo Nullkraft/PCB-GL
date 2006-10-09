@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: change.h,v 1.8 2006-03-22 23:17:20 danmc Exp $
+ *  RCS: $Id: change.h,v 1.9 2006-10-09 00:35:25 danmc Exp $
  */
 
 /* prototypes to change object properties
@@ -76,9 +76,7 @@ Boolean ClrSelectedJoin (int);
 Boolean ChangeSelectedSquare (int);
 Boolean SetSelectedSquare (int);
 Boolean ClrSelectedSquare (int);
-Boolean ChangeSelectedThermals (int);
-Boolean SetSelectedThermals (int);
-Boolean ClrSelectedThermals (int);
+Boolean ChangeSelectedThermals (int, int);
 Boolean ChangeSelectedHole (void);
 Boolean ChangeSelectedOctagon (int);
 Boolean SetSelectedOctagon (int);
@@ -87,9 +85,7 @@ Boolean ChangeSelectedElementSide (void);
 Boolean ChangeElementSide (ElementTypePtr, LocationType);
 Boolean ChangeHole (PinTypePtr);
 Boolean ChangeObjectSize (int, void *, void *, void *, LocationType, Boolean);
-Boolean ChangeObjectThermal (int, void *, void *, void *);
-Boolean SetObjectThermal (int, void *, void *, void *);
-Boolean ClrObjectThermal (int, void *, void *, void *);
+Boolean ChangeObjectThermal (int, void *, void *, void *, int);
 Boolean ChangeObjectClearSize (int, void *, void *, void *, LocationType,
 			       Boolean);
 Boolean ChangeObject2ndSize (int, void *, void *, void *, LocationType,

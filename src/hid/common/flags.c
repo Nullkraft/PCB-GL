@@ -1,4 +1,4 @@
-/* $Id: flags.c,v 1.7 2006-09-25 02:15:48 djdelorie Exp $ */
+/* $Id: flags.c,v 1.8 2006-10-09 00:35:26 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -19,7 +19,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: flags.c,v 1.7 2006-09-25 02:15:48 djdelorie Exp $");
+RCSID ("$Id: flags.c,v 1.8 2006-10-09 00:35:26 danmc Exp $");
 
 typedef struct HID_FlagNode
 {

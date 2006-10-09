@@ -22,7 +22,7 @@
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: plcc.inc,v 1.4 2006-09-13 03:30:19 danmc Exp $
+#   RCS: $Id: plcc.inc,v 1.5 2006-10-09 00:35:24 danmc Exp $
 #
 # PLCC packages
 #

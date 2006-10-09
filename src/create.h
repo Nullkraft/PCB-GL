@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: create.h,v 1.8 2006-08-30 02:42:13 djdelorie Exp $
+ *  RCS: $Id: create.h,v 1.9 2006-10-09 00:35:25 danmc Exp $
  */
 
 /* prototypes for create routines

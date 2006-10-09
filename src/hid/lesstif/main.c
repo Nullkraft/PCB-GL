@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.36 2006-10-02 02:06:32 djdelorie Exp $ */
+/* $Id: main.c,v 1.37 2006-10-09 00:35:27 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -29,7 +29,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.36 2006-10-02 02:06:32 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.37 2006-10-09 00:35:27 danmc Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -3498,6 +3498,7 @@ HID lesstif_gui = {
   0,				/* exporter */
   1,				/* poly before */
   0,				/* poly after */
+  0,				/* poly dicer */
 
   lesstif_get_export_options,
   lesstif_do_export,

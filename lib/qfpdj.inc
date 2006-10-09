@@ -24,7 +24,7 @@
 #   Improvments by D.J. Barrow dj_barrow@ariasoft.ie
 #   Further improved by W. Kazubski <wk@ire.pw.edu.pl>
 # 
-#   RCS: $Id: qfpdj.inc,v 1.3 2006-09-13 03:30:19 danmc Exp $
+#   RCS: $Id: qfpdj.inc,v 1.4 2006-10-09 00:35:24 danmc Exp $
 #
 #  QFP packages
 #

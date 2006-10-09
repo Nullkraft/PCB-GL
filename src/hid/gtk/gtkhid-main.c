@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.23 2006-10-02 02:06:32 djdelorie Exp $ */
+/* $Id: gtkhid-main.c,v 1.24 2006-10-09 00:35:27 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.23 2006-10-02 02:06:32 djdelorie Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.24 2006-10-09 00:35:27 danmc Exp $");
 
 
 extern HID ghid_hid;
@@ -935,6 +935,7 @@ HID ghid_hid = {
   0,				/* exporter */
   0,				/* poly before */
   1,				/* poly after */
+  0,				/* poly dicer */
 
   ghid_get_export_options,
   ghid_do_export,
@@ -987,6 +988,7 @@ HID ghid_extents = {
   0,				/* exporter */
   0,				/* poly before */
   1,				/* poly after */
+  0,				/* poly dicer */
 
   0 /* ghid_get_export_options */ ,
   0 /* ghid_do_export */ ,

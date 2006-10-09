@@ -1,5 +1,5 @@
 # -*- m4 -*-
-#   $Id: geda.inc,v 1.25 2006-09-01 22:02:50 danmc Exp $
+#   $Id: geda.inc,v 1.26 2006-10-09 00:35:24 danmc Exp $
 #
 #   gEDA compatible footprint names
 #

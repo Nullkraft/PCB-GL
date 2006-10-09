@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.62 2006-10-02 02:06:31 djdelorie Exp $
+dnl $Id: configure.ac,v 1.63 2006-10-09 00:35:24 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)

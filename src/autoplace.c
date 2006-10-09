@@ -1,4 +1,4 @@
-/* $Id: autoplace.c,v 1.19 2006-07-14 19:47:34 djdelorie Exp $ */
+/* $Id: autoplace.c,v 1.20 2006-10-09 00:35:25 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -67,7 +67,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: autoplace.c,v 1.19 2006-07-14 19:47:34 djdelorie Exp $");
+RCSID ("$Id: autoplace.c,v 1.20 2006-10-09 00:35:25 danmc Exp $");
 
 #define EXPANDRECTXY(r1, x1, y1, x2, y2) { \
   r1->X1=MIN(r1->X1, x1); r1->Y1=MIN(r1->Y1, y1); \
@@ -619,7 +619,7 @@ ComputeCost (NetListTypePtr Nets, double T0, double T)
 PerturbationType
 createPerturbation (PointerListTypePtr selected, double T)
 {
-  PerturbationType pt={0};
+  PerturbationType pt = { 0 };
   /* pick element to perturb */
   pt.element = (ElementTypePtr) selected->Ptr[random () % selected->PtrN];
   /* exchange, flip/rotate or shift? */

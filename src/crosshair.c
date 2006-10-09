@@ -1,4 +1,4 @@
-/* $Id: crosshair.c,v 1.26 2006-08-02 15:55:17 djdelorie Exp $ */
+/* $Id: crosshair.c,v 1.27 2006-10-09 00:35:25 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -52,7 +52,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: crosshair.c,v 1.26 2006-08-02 15:55:17 djdelorie Exp $");
+RCSID ("$Id: crosshair.c,v 1.27 2006-10-09 00:35:25 danmc Exp $");
 
 #if !defined(ABS)
 #define ABS(x) (((x)<0)?-(x):(x))
@@ -322,8 +322,7 @@ XORDrawBuffer (BufferTypePtr Buffer)
 	{
 	  BoxTypePtr box = &text->BoundingBox;
 	  gui->draw_rect (Crosshair.GC,
-			  x + box->X1, y + box->Y1,
-			  x + box->X2, y + box->Y2);
+			  x + box->X1, y + box->Y1, x + box->X2, y + box->Y2);
 	}
 	END_LOOP;
 	/* the tmp polygon has n+1 points because the first

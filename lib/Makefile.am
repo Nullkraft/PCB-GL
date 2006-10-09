@@ -1,5 +1,5 @@
 ## -*- makefile -*-
-## $Id: Makefile.am,v 1.13 2006-09-04 12:17:04 danmc Exp $
+## $Id: Makefile.am,v 1.14 2006-10-09 00:35:24 danmc Exp $
 ##
 
 PCBLIBDIR=		@PCBLIBDIR@

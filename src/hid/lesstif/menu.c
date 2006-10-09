@@ -1,4 +1,4 @@
-/* $Id: menu.c,v 1.17 2006-10-01 02:44:13 djdelorie Exp $ */
+/* $Id: menu.c,v 1.18 2006-10-09 00:35:27 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: menu.c,v 1.17 2006-10-01 02:44:13 djdelorie Exp $");
+RCSID ("$Id: menu.c,v 1.18 2006-10-09 00:35:27 danmc Exp $");
 
 #ifndef R_OK
 /* Common value for systems that don't define it.  */

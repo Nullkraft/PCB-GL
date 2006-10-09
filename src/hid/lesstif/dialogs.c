@@ -1,4 +1,4 @@
-/* $Id: dialogs.c,v 1.19 2006-10-05 18:56:59 djdelorie Exp $ */
+/* $Id: dialogs.c,v 1.20 2006-10-09 00:35:27 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -25,7 +25,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: dialogs.c,v 1.19 2006-10-05 18:56:59 djdelorie Exp $");
+RCSID ("$Id: dialogs.c,v 1.20 2006-10-09 00:35:27 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
 

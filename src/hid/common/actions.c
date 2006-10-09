@@ -1,4 +1,4 @@
-/* $Id: actions.c,v 1.9 2006-09-13 02:59:40 djdelorie Exp $ */
+/* $Id: actions.c,v 1.10 2006-10-09 00:35:26 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -19,7 +19,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: actions.c,v 1.9 2006-09-13 02:59:40 djdelorie Exp $");
+RCSID ("$Id: actions.c,v 1.10 2006-10-09 00:35:26 danmc Exp $");
 
 typedef struct HID_ActionNode
 {

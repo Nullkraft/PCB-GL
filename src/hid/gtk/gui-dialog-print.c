@@ -1,4 +1,4 @@
-/* $Id: gui-dialog-print.c,v 1.5 2006-10-06 18:34:15 djdelorie Exp $ */
+/* $Id: gui-dialog-print.c,v 1.6 2006-10-09 00:35:27 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -42,7 +42,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-dialog-print.c,v 1.5 2006-10-06 18:34:15 djdelorie Exp $");
+RCSID ("$Id: gui-dialog-print.c,v 1.6 2006-10-09 00:35:27 danmc Exp $");
 
 static GtkWidget *export_dialog = NULL;
 

@@ -1,4 +1,4 @@
-# $Id: pci.inc,v 1.3 2006-09-13 03:30:19 danmc Exp $
+# $Id: pci.inc,v 1.4 2006-10-09 00:35:24 danmc Exp $
 #
 # Definitions for PCI boards
 # by D.J. Barrow dj_barrow@ariasoft.ie

@@ -1,4 +1,4 @@
-/* $Id: line.c,v 1.12 2006-08-02 15:55:18 djdelorie Exp $ */
+/* $Id: line.c,v 1.13 2006-10-09 00:35:25 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -50,7 +50,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: line.c,v 1.12 2006-08-02 15:55:18 djdelorie Exp $");
+RCSID ("$Id: line.c,v 1.13 2006-10-09 00:35:25 danmc Exp $");
 
 static float drc_lines (PointTypePtr end, Boolean way);
 
@@ -424,7 +424,7 @@ drc_lines (PointTypePtr end, Boolean way)
 		    r_search (PCB->Data->pad_tree, &line2.BoundingBox, NULL,
 			      drcPad_callback, &info);
 		}
-	      GROUP_LOOP (group);
+	      GROUP_LOOP (PCB->Data, group);
 	      {
 		info.line = &line1;
 		r_search (layer->line_tree, &line1.BoundingBox, NULL,

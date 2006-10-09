@@ -1,4 +1,4 @@
-/* $Id: gerber.c,v 1.18 2006-10-02 02:06:32 djdelorie Exp $ */
+/* $Id: gerber.c,v 1.19 2006-10-09 00:35:26 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -32,7 +32,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gerber.c,v 1.18 2006-10-02 02:06:32 djdelorie Exp $");
+RCSID ("$Id: gerber.c,v 1.19 2006-10-09 00:35:26 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented Gerber function %s.\n", __FUNCTION__); abort()
 
@@ -685,7 +685,7 @@ use_gc (hidGC gc, int radius)
       if (f)
 	fprintf (f, "G54D%d*", ap);
     }
-
+#if 0
   if (lastcolor != gc->color)
     {
       c = gc->color;
@@ -708,6 +708,7 @@ use_gc (hidGC gc, int radius)
 	    }
 	}
     }
+#endif
 }
 
 static void
@@ -938,7 +939,7 @@ static HID gerber_hid = {
   sizeof (HID),
   "gerber",
   "RS-274X (Gerber) export.",
-  0, 0, 1, 1, 0,
+  0, 0, 1, 0, 0, 1,
   gerber_get_export_options,
   gerber_do_export,
   gerber_parse_arguments,

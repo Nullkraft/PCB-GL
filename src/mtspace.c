@@ -1,4 +1,4 @@
-/* $Id: mtspace.c,v 1.17 2006-07-20 02:51:59 haceaton Exp $ */
+/* $Id: mtspace.c,v 1.18 2006-10-09 00:35:25 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -53,7 +53,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: mtspace.c,v 1.17 2006-07-20 02:51:59 haceaton Exp $");
+RCSID ("$Id: mtspace.c,v 1.18 2006-10-09 00:35:25 danmc Exp $");
 
 
 /* define this for more thorough self-checking of data structures */
@@ -163,18 +163,6 @@ struct coalesce_closure
   Boolean is_add;
   jmp_buf env;
 };
-
-#if 0
-/* not used */
-static int
-boxtype (mtspacebox_t * mtsb)
-{
-  assert (__mtspace_box_is_good (mtsb));
-  return
-    ((mtsb->fixed_count > 0) ? 1 : 0) |
-    ((mtsb->even_count > 0) ? 2 : 0) | ((mtsb->odd_count > 0) ? 4 : 0);
-}
-#endif
 
 /* look at last element in add_vec to see if it can be coalesced with
  * adjacent rectangles.  If it can, add the adjacent rectangle to the
@@ -429,7 +417,6 @@ mtspace_mutate (mtspace_t * mtspace,
     (&bloated, which == FIXED ? 1 : 0, which == EVEN ? 1 : 0,
      which == ODD ? 1 : 0);
   cc.mtsb->keepaway = keepaway;
-  assert (boxtype (cc.mtsb) != 0);
   /* take a chunk out of anything which intersects our clipped bloated box */
   mtspace_remove_chunk (mtspace, &cc);
   free (cc.mtsb);
@@ -511,7 +498,6 @@ query_one (const BoxType * box, void *cl)
       else
 	{
 	  /* no conflict! */
-	  assert (boxtype (mtsb) == 0);
 	  vector_append (qc->free_space_vec, shrunk);
 	}
       return 1;

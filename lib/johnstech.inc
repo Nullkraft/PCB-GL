@@ -1,5 +1,5 @@
 # -*- m4 -*-
-# $Id: johnstech.inc,v 1.6 2006-09-13 03:30:19 danmc Exp $
+# $Id: johnstech.inc,v 1.7 2006-10-09 00:35:24 danmc Exp $
 #                            COPYRIGHT
 #
 #   PCB, interactive printed circuit board design

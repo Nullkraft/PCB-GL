@@ -1,4 +1,4 @@
-/* $Id: gui-dialog.c,v 1.5 2006-09-25 22:55:17 danmc Exp $ */
+/* $Id: gui-dialog.c,v 1.6 2006-10-09 00:35:27 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -42,7 +42,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-dialog.c,v 1.5 2006-09-25 22:55:17 danmc Exp $");
+RCSID ("$Id: gui-dialog.c,v 1.6 2006-10-09 00:35:27 danmc Exp $");
 
 gchar *
 ghid_dialog_input (gchar * prompt, gchar * initial)

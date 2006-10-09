@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.31 2006-09-24 21:23:49 djdelorie Exp $ */
+/* $Id: gui-top-window.c,v 1.32 2006-10-09 00:35:27 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -84,7 +84,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.31 2006-09-24 21:23:49 djdelorie Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.32 2006-10-09 00:35:27 danmc Exp $");
 
 extern HID ghid_hid;
 

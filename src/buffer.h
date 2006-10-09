@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: buffer.h,v 1.5 2006-03-22 23:17:20 danmc Exp $
+ *  RCS: $Id: buffer.h,v 1.6 2006-10-09 00:35:25 danmc Exp $
  */
 
 /* prototypes for buffer handling routines
@@ -48,8 +48,7 @@ void SelectPasteBuffer (int);
 void SwapBuffers (void);
 void MirrorBuffer (BufferTypePtr);
 void InitBuffers (void);
-void *MoveObjectToBuffer (DataTypePtr, DataTypePtr, int,
-			  void *, void *, void *);
+void *MoveObjectToBuffer (DataTypePtr, DataTypePtr, int, void *, void *, void *); 
 void *CopyObjectToBuffer (DataTypePtr, DataTypePtr, int,
 			  void *, void *, void *);
 

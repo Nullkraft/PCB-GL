@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: const.h,v 1.21 2006-05-20 17:41:48 djdelorie Exp $
+ *  RCS: $Id: const.h,v 1.22 2006-10-09 00:35:25 danmc Exp $
  */
 
 /* global source constants
@@ -193,6 +193,7 @@ pinout text should be vertical.
 #define LOCKFLAG                0x2000	/* object locked in place */
 #define EDGE2FLAG               0x4000	/* Padr.Point2 is closer to outside edge */
 					/* also pinout text for pins is vertical */
+#define VISITFLAG		0x8000  /* marker to avoid re-visiting an object */
 
 /* ---------------------------------------------------------------------------
  * PCB flags

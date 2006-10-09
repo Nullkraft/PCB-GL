@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: polygon.h,v 1.9 2006-03-22 23:17:20 danmc Exp $
+ *  RCS: $Id: polygon.h,v 1.10 2006-10-09 00:35:25 danmc Exp $
  */
 
 /* prototypes for polygon editing routines
@@ -39,9 +39,26 @@ Boolean RemoveExcessPolygonPoints (LayerTypePtr, PolygonTypePtr);
 void GoToPreviousPoint (void);
 void ClosePolygon (void);
 void CopyAttachedPolygonToLayer (void);
-void UpdatePIPFlags (PinTypePtr, ElementTypePtr, LayerTypePtr, Boolean);
-int PolygonPlows (int group, const BoxType * range,
-		  int (*callback) (int, void *, void *, void *,
-				   LayerTypePtr, PolygonTypePtr));
+int PolygonHoles (int group, const BoxType * range,
+		  int (*callback) (PLINE *, LayerTypePtr, PolygonTypePtr));
+int PlowsPolygon (DataType *, int, void *, void *,
+		  int (*callback) (DataTypePtr, LayerTypePtr, PolygonTypePtr, int, void *, void *));
+POLYAREA * ContourToPoly (PLINE *);
+POLYAREA * RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2);
+POLYAREA * CirclePoly(LocationType x, LocationType y, BDimension radius);
+POLYAREA * OctagonPoly(LocationType x, LocationType y, BDimension radius);
+POLYAREA * LinePoly(LineType *l, BDimension thick);
+POLYAREA * ArcPoly(ArcType *l, BDimension thick);
+POLYAREA * PinPoly(PinType *l, BDimension thick);
+void half_circle (PLINE *, LocationType, LocationType, Vector);
+int InitClip(DataType *d, LayerType *l, PolygonType *p);
+void RestoreToPolygon(DataType *, int, void *, void *);
+void ClearFromPolygon(DataType *, int, void *, void *);
 
+Boolean IsPointInPolygon (LocationType, LocationType, BDimension, PolygonTypePtr);
+Boolean IsRectangleInPolygon (LocationType, LocationType, LocationType,
+			      LocationType, PolygonTypePtr);
+Boolean isects (POLYAREA *, PolygonTypePtr, Boolean);
+Boolean MorphPolygon (LayerTypePtr, PolygonTypePtr);
+void NoHolesPolygonDicer (PLINE *p, void (*emit) (PolygonTypePtr));
 #endif

@@ -1,4 +1,4 @@
-/* $Id: ps.c,v 1.13 2006-10-02 02:06:33 djdelorie Exp $ */
+/* $Id: ps.c,v 1.14 2006-10-09 00:35:27 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -23,7 +23,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: ps.c,v 1.13 2006-10-02 02:06:33 djdelorie Exp $");
+RCSID ("$Id: ps.c,v 1.14 2006-10-09 00:35:27 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
@@ -744,7 +744,7 @@ HID ps_hid = {
   sizeof (HID),
   "ps",
   "Postscript export.",
-  0, 0, 1, 1, 0,
+  0, 0, 1, 1, 0, 0,
   ps_get_export_options,
   ps_do_export,
   ps_parse_arguments,

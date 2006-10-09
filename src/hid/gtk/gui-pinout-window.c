@@ -1,4 +1,4 @@
-/* $Id: gui-pinout-window.c,v 1.2 2006-03-22 23:05:41 danmc Exp $ */
+/* $Id: gui-pinout-window.c,v 1.3 2006-10-09 00:35:27 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -48,7 +48,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-pinout-window.c,v 1.2 2006-03-22 23:05:41 danmc Exp $");
+RCSID ("$Id: gui-pinout-window.c,v 1.3 2006-10-09 00:35:27 danmc Exp $");
 
 
 static gboolean
@@ -89,7 +89,7 @@ pinout_new (ElementType * element)
      |  move element to a 5% offset from zero position
      |  set all package lines/arcs to zero with
    */
-  CopyElementLowLevel (NULL, &pinout->element, element, FALSE);
+  CopyElementLowLevel (NULL, &pinout->element, element, FALSE, 0, 0);
   PIN_LOOP (&pinout->element);
   {
     tx = abs (pinout->element.Pin[0].X - pin->X);

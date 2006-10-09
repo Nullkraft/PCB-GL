@@ -1,4 +1,4 @@
-/* $Id: compat.c,v 1.5 2006-04-13 23:46:23 danmc Exp $ */
+/* $Id: compat.c,v 1.6 2006-10-09 00:35:25 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -34,7 +34,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: compat.c,v 1.5 2006-04-13 23:46:23 danmc Exp $");
+RCSID ("$Id: compat.c,v 1.6 2006-10-09 00:35:25 danmc Exp $");
 
 #ifndef HAVE_EXPF
 float
@@ -56,6 +56,6 @@ logf (float x)
 long
 random (void)
 {
-  return (long) rand();
+  return (long) rand ();
 }
 #endif
