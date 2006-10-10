@@ -1,4 +1,4 @@
-/* $Id: menu.c,v 1.18 2006-10-09 00:35:27 danmc Exp $ */
+/* $Id: menu.c,v 1.19 2006-10-10 10:51:22 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -18,8 +18,8 @@
 
 #include "hid.h"
 #include "../hidint.h"
-#include "lesstif.h"
 #include "resource.h"
+#include "lesstif.h"
 #include "mymem.h"
 
 #include "pcb-menu.h"
@@ -28,7 +28,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: menu.c,v 1.18 2006-10-09 00:35:27 danmc Exp $");
+RCSID ("$Id: menu.c,v 1.19 2006-10-10 10:51:22 danmc Exp $");
 
 #ifndef R_OK
 /* Common value for systems that don't define it.  */
@@ -167,7 +167,6 @@ static LayerButtons *layer_button_list = 0;
 static int num_layer_buttons = 0;
 static int fg_colors[LB_NUM];
 static int bg_color;
-static int got_colors = 0;
 
 extern Widget lesstif_m_layer;
 
