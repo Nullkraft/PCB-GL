@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.62 2006-10-09 00:35:25 danmc Exp $ */
+/* $Id: draw.c,v 1.63 2006-10-10 04:35:48 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -62,7 +62,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.62 2006-10-09 00:35:25 danmc Exp $");
+RCSID ("$Id: draw.c,v 1.63 2006-10-10 04:35:48 haceaton Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -2136,7 +2136,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
   if (gui->poly_dicer)
     {
       if (Polygon->Clipped)
-	NoHolesPolygonDicer (Polygon->Clipped->contours, DrawPolygonLowLevel);
+	NoHolesPolygonDicer (Polygon, DrawPolygonLowLevel);
     }
   else
     {

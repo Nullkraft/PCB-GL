@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: polygon.h,v 1.10 2006-10-09 00:35:25 danmc Exp $
+ *  RCS: $Id: polygon.h,v 1.11 2006-10-10 04:35:48 haceaton Exp $
  */
 
 /* prototypes for polygon editing routines
@@ -60,5 +60,5 @@ Boolean IsRectangleInPolygon (LocationType, LocationType, LocationType,
 			      LocationType, PolygonTypePtr);
 Boolean isects (POLYAREA *, PolygonTypePtr, Boolean);
 Boolean MorphPolygon (LayerTypePtr, PolygonTypePtr);
-void NoHolesPolygonDicer (PLINE *p, void (*emit) (PolygonTypePtr));
+void NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr));
 #endif
