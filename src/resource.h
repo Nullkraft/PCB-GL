@@ -1,7 +1,7 @@
-/* $Id: resource.h,v 1.4 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: resource.h,v 1.5 2006-10-10 10:48:22 danmc Exp $ */
 
-#ifndef __RESOURCE_INCLUDED_
-#define __RESOURCE_INCLUDED_ 1
+#ifndef __RESOURCE_INCLUDED__
+#define __RESOURCE_INCLUDED__ 1
 
 #include <stdio.h>
 
