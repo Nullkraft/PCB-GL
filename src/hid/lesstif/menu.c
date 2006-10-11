@@ -1,4 +1,4 @@
-/* $Id: menu.c,v 1.19 2006-10-10 10:51:22 danmc Exp $ */
+/* $Id: menu.c,v 1.20 2006-10-11 01:17:36 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: menu.c,v 1.19 2006-10-10 10:51:22 danmc Exp $");
+RCSID ("$Id: menu.c,v 1.20 2006-10-11 01:17:36 danmc Exp $");
 
 #ifndef R_OK
 /* Common value for systems that don't define it.  */
@@ -1037,7 +1037,7 @@ note_accelerator (char *acc, Resource * node)
     }
   else if (multi_key)
     {
-      acc_table_t *ap = &acc_table;
+      acc_table_t **ap = &acc_table;
       int *np = &acc_num;
 
       mods |= M_Multi;

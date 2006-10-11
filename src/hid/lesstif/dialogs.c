@@ -1,4 +1,4 @@
-/* $Id: dialogs.c,v 1.21 2006-10-10 10:51:48 danmc Exp $ */
+/* $Id: dialogs.c,v 1.22 2006-10-11 01:17:36 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -25,7 +25,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: dialogs.c,v 1.21 2006-10-10 10:51:48 danmc Exp $");
+RCSID ("$Id: dialogs.c,v 1.22 2006-10-11 01:17:36 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
 
@@ -1470,7 +1470,7 @@ EditLayerGroups (int argc, char **argv, int x, int y)
 
       XtGetSubresources (layer_groups_form, &lgr,
 			 "layergroups", "LayerGroups",
-			 &lg_resources, XtNumber(lg_resources), 0, 0);
+			 lg_resources, XtNumber(lg_resources), 0, 0);
 #if 0
       stdarg (XmNfractionBase, max_layer * (MAX_LAYER + 2));
       lg_buttonform = XmCreateForm (layer_groups_form, "lgbutton", args, n);
