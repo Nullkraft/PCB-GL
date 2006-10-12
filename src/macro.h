@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: macro.h,v 1.23 2006-10-09 00:35:25 danmc Exp $
+ *  RCS: $Id: macro.h,v 1.24 2006-10-12 02:46:31 haceaton Exp $
  */
 
 /* some commonly used macros not related to a special C-file
@@ -540,11 +540,11 @@ extern int mem_any_set (unsigned char *, int);
 
 #define GROUP_LOOP(data, group) do { 	\
 	Cardinal entry; \
-        for (entry = 0; entry < PCB->LayerGroups.Number[(group)]; entry++) \
+        for (entry = 0; entry < ((PCBTypePtr)(data->pcb))->LayerGroups.Number[(group)]; entry++) \
         { \
 		LayerTypePtr layer;		\
 		Cardinal number; 		\
-		number = PCB->LayerGroups.Entries[(group)][entry]; \
+		number = ((PCBTypePtr)(data->pcb))->LayerGroups.Entries[(group)][entry]; \
 		if (number >= max_layer)	\
 		  continue;			\
 		layer = &data->Layer[number];
