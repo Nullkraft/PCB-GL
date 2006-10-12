@@ -1,4 +1,4 @@
-/* $Id: polygon.c,v 1.38 2006-10-10 04:35:48 haceaton Exp $ */
+/* $Id: polygon.c,v 1.39 2006-10-12 02:41:31 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: polygon.c,v 1.38 2006-10-10 04:35:48 haceaton Exp $");
+RCSID ("$Id: polygon.c,v 1.39 2006-10-12 02:41:31 haceaton Exp $");
 
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
@@ -95,6 +95,20 @@ biggest (POLYAREA * p)
   n = p;
   do
     {
+      if (n->contours->area < PCB->IsleArea)
+        {
+	  n->b->f = n->f;
+	  n->f->b = n->b;
+	  poly_DelContour(&n->contours);
+	  if (n == p)
+	    p = n->f;
+	  n = n->f;
+	  if (!n->contours)
+	    {
+	      free(n);
+	      return NULL;
+	    }
+	 }
       if (n->contours->area > big)
         {
           top = n;
@@ -1049,6 +1063,8 @@ static int
 subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
                int type, void *ptr1, void *ptr2)
 {
+  if (!Polygon->Clipped)
+    return 0;
   switch (type)
     {
     case PIN_TYPE:
@@ -1360,7 +1376,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
       VNODE *v;
       PolygonTypePtr new;
 
-      if (p->contours->area > M_PI * PCB->Bloat * 0.5 * PCB->Bloat)
+      if (p->contours->area > PCB->IsleArea)
         {
           new = CreateNewPolygon (layer, flags);
           if (!new)

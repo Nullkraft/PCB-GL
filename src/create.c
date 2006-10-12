@@ -1,4 +1,4 @@
-/* $Id: create.c,v 1.33 2006-10-09 00:35:25 danmc Exp $ */
+/* $Id: create.c,v 1.34 2006-10-12 02:41:31 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: create.c,v 1.33 2006-10-09 00:35:25 danmc Exp $");
+RCSID ("$Id: create.c,v 1.34 2006-10-12 02:41:31 haceaton Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local identifiers
@@ -140,6 +140,7 @@ CreateNewPCB (Boolean SetDefaultNames)
   ptr->Data->pcb = (void *)ptr;
 
   ptr->ThermStyle = 4;
+  ptr->IsleArea = 2.e8;
   ptr->SilkActive = False;
   ptr->RatDraw = False;
   SET_FLAG (NAMEONPCBFLAG, ptr);

@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.49 2006-10-09 00:35:25 danmc Exp $
+ *  RCS: $Id: global.h,v 1.50 2006-10-12 02:41:31 haceaton Exp $
  */
 
 /* definition of types
@@ -449,6 +449,7 @@ typedef struct
 
   double Grid,			/* used grid with offsets */
     Zoom,			/* zoom factor */
+    IsleArea,			/* minimum poly island to retain */
     ThermScale;			/* scale factor used with thermals */
   FontType Font;
   LayerGroupType LayerGroups;

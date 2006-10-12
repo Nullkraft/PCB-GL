@@ -1,4 +1,4 @@
-/* $Id: heap.h,v 1.7 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: heap.h,v 1.8 2006-10-12 02:41:31 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -40,7 +40,7 @@
 #include "global.h"
 
 /* type of heap costs.  *must be integer!* */
-typedef float cost_t;
+typedef double cost_t;
 /* what a heap looks like */
 typedef struct heap_struct heap_t;
 
