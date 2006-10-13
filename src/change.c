@@ -1,4 +1,4 @@
-/* $Id: change.c,v 1.36 2006-10-09 00:35:25 danmc Exp $ */
+/* $Id: change.c,v 1.37 2006-10-13 03:04:05 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -64,7 +64,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: change.c,v 1.36 2006-10-09 00:35:25 danmc Exp $");
+RCSID ("$Id: change.c,v 1.37 2006-10-13 03:04:05 haceaton Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -1085,9 +1085,9 @@ SetLineJoin (LayerTypePtr Layer, LineTypePtr Line)
   if (TEST_FLAG (LOCKFLAG, Line))
     return (NULL);
   EraseLine (Line);
-  RestoreToPolygon (PCB->Data, LINE_TYPE, Layer, Line);
   AddObjectToFlagUndoList (LINE_TYPE, Layer, Line, Line);
   SET_FLAG (CLEARLINEFLAG, Line);
+  ClearFromPolygon (PCB->Data, LINE_TYPE, Layer, Line);
   DrawLine (Layer, Line, 0);
   return (Line);
 }
@@ -1102,8 +1102,8 @@ ClrLineJoin (LayerTypePtr Layer, LineTypePtr Line)
     return (NULL);
   EraseLine (Line);
   AddObjectToFlagUndoList (LINE_TYPE, Layer, Line, Line);
+  RestoreToPolygon (PCB->Data, LINE_TYPE, Layer, Line);
   CLEAR_FLAG (CLEARLINEFLAG, Line);
-  ClearFromPolygon (PCB->Data, LINE_TYPE, Layer, Line);
   DrawLine (Layer, Line, 0);
   return (Line);
 }
