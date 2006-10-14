@@ -1,4 +1,4 @@
-/* $Id: polygon.c,v 1.39 2006-10-12 02:41:31 haceaton Exp $ */
+/* $Id: polygon.c,v 1.40 2006-10-14 00:31:17 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: polygon.c,v 1.39 2006-10-12 02:41:31 haceaton Exp $");
+RCSID ("$Id: polygon.c,v 1.40 2006-10-14 00:31:17 haceaton Exp $");
 
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
@@ -95,6 +95,7 @@ biggest (POLYAREA * p)
   n = p;
   do
     {
+#if 0
       if (n->contours->area < PCB->IsleArea)
         {
 	  n->b->f = n->f;
@@ -109,6 +110,7 @@ biggest (POLYAREA * p)
 	      return NULL;
 	    }
 	 }
+#endif
       if (n->contours->area > big)
         {
           top = n;
@@ -1210,15 +1212,18 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
 void
 RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
 {
-  PlowsPolygon (Data, type, ptr1, ptr2, add_plow);
+  if (type == POLYGON_TYPE)
+    InitClip (PCB->Data, (LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
+  else
+    PlowsPolygon (Data, type, ptr1, ptr2, add_plow);
 }
 
 void
 ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
 {
-  if (type != POLYGON_TYPE)
-    // InitClip (PCB->Data, (LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
-    //else
+  if (type == POLYGON_TYPE)
+    InitClip (PCB->Data, (LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
+  else
     PlowsPolygon (Data, type, ptr1, ptr2, subtract_plow);
 }
 
