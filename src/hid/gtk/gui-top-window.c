@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.32 2006-10-09 00:35:27 danmc Exp $ */
+/* $Id: gui-top-window.c,v 1.33 2006-10-15 00:45:09 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -84,7 +84,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.32 2006-10-09 00:35:27 danmc Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.33 2006-10-15 00:45:09 djdelorie Exp $");
 
 extern HID ghid_hid;
 
@@ -2483,6 +2483,8 @@ layer_enable_button_cb (GtkWidget * widget, gpointer data)
     {
     case LAYER_BUTTON_SILK:
       PCB->ElementOn = !PCB->ElementOn;
+      PCB->Data->SILKLAYER.On = PCB->ElementOn;
+      PCB->Data->BACKSILKLAYER.On = PCB->ElementOn;
       redraw = 1;
       break;
 

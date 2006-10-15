@@ -1,4 +1,4 @@
-/* $Id: menu.c,v 1.20 2006-10-11 01:17:36 danmc Exp $ */
+/* $Id: menu.c,v 1.21 2006-10-15 00:45:09 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: menu.c,v 1.20 2006-10-11 01:17:36 danmc Exp $");
+RCSID ("$Id: menu.c,v 1.21 2006-10-15 00:45:09 djdelorie Exp $");
 
 #ifndef R_OK
 /* Common value for systems that don't define it.  */
@@ -339,6 +339,8 @@ layer_button_callback (Widget w, int layer, XmPushButtonCallbackStruct * pbcs)
     {
     case LB_SILK:
       set = PCB->ElementOn = !PCB->ElementOn;
+      PCB->Data->SILKLAYER.On = set;
+      PCB->Data->BACKSILKLAYER.On = set;
       break;
     case LB_RATS:
       set = PCB->RatOn = !PCB->RatOn;
