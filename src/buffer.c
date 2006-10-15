@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.32 2006-10-09 00:35:25 danmc Exp $ */
+/* $Id: buffer.c,v 1.33 2006-10-15 06:20:43 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: buffer.c,v 1.32 2006-10-09 00:35:25 danmc Exp $");
+RCSID ("$Id: buffer.c,v 1.33 2006-10-15 06:20:43 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -669,6 +669,9 @@ ConvertBufferToElement (BufferTypePtr Buffer)
   Cardinal group;
   Cardinal pin_n = 1;
   Boolean hasParts = False;
+
+  if (Buffer->Data->pcb == 0)
+    Buffer->Data->pcb = PCB;
 
   Element = CreateNewElement (PCB->Data, NULL, &PCB->Font, NoFlags (),
 			      NULL, NULL, NULL, PASTEBUFFER->X,
