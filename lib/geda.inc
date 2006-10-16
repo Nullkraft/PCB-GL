@@ -1,5 +1,5 @@
 # -*- m4 -*-
-#   $Id: geda.inc,v 1.26 2006-10-09 00:35:24 danmc Exp $
+#   $Id: geda.inc,v 1.27 2006-10-16 23:41:24 danmc Exp $
 #
 #   gEDA compatible footprint names
 #
@@ -316,6 +316,12 @@ define(`PKG_PLCC84X',  `PKG_PLCC_SOCKET(`$1', `$2', `$3', 84, 150)');
 
 ##  Square Quad Flat Nolead (QFN) package
 #
+
+# 3x3 mm
+define(`PKG_QFN16_3',     `PKG_QFN_50(`$1',`$2',`$3', `16', `3', `0')')
+define(`PKG_TQFN16_3',    `PKG_QFN_50(`$1',`$2',`$3', `16', `3', `0')')
+define(`PKG_QFN16_3_EP',  `PKG_QFN_50(`$1',`$2',`$3', `16', `3', `150')')
+define(`PKG_TQFN16_3_EP', `PKG_QFN_50(`$1',`$2',`$3', `16', `3', `150')')
 
 # 4x4 mm
 define(`PKG_QFN12_4',     `PKG_QFN_80(`$1',`$2',`$3', `12', `4', `0')')
