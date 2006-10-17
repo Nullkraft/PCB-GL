@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.65 2006-10-17 02:21:21 danmc Exp $
+dnl $Id: configure.ac,v 1.66 2006-10-17 02:28:30 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -261,6 +261,7 @@ AM_CONDITIONAL(MISSING_PS2PDF, test x$PS2PDF = xnotfound)
 
 dnl Checks for libraries.
 AC_CHECK_LIB(m, sqrt)
+AC_CHECK_LIB(dl, dlopen)
 AC_CHECK_LIB(xnet, gethostbyname)
 AC_CHECK_LIB(fl, yywrap)
 AC_CHECK_FUNCS(strerror)
