@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.64 2006-10-09 00:41:08 danmc Exp $
+dnl $Id: configure.ac,v 1.65 2006-10-17 02:21:21 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -134,9 +134,14 @@ of the documentation.  For this to work, you must have perl installed.
 	fi
 fi
 
+AC_MSG_CHECKING([If the compiler accepts -rdynamic])
 old_LDFLAGS="$LDFLAGS"
 LDFLAGS="$LDFLAGS -rdynamic"
-AC_LINK_IFELSE([int main(){}],[],[LDFLAGS="$old_LDFLAGS"])
+AC_LINK_IFELSE([int main(){}],
+	[AC_MSG_RESULT([yes])],
+	[LDFLAGS="$old_LDFLAGS"
+	AC_MSG_RESULT([no])
+	])
 
 # ------------- HID config -------------------
 
