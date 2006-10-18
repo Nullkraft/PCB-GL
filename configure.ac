@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.66 2006-10-17 02:28:30 danmc Exp $
+dnl $Id: configure.ac,v 1.67 2006-10-18 05:59:57 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -134,6 +134,10 @@ of the documentation.  For this to work, you must have perl installed.
 	fi
 fi
 
+# FIXME:  for now, only try to add -rdynamic if we're using gcc.  We really
+# need to figure out what the correct test is here.  In the mean time, this
+# should let things build with SunPRO again.
+if test "x$GCC" = "xyes"; then
 AC_MSG_CHECKING([If the compiler accepts -rdynamic])
 old_LDFLAGS="$LDFLAGS"
 LDFLAGS="$LDFLAGS -rdynamic"
@@ -142,6 +146,7 @@ AC_LINK_IFELSE([int main(){}],
 	[LDFLAGS="$old_LDFLAGS"
 	AC_MSG_RESULT([no])
 	])
+fi
 
 # ------------- HID config -------------------
 
