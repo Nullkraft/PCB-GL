@@ -1,4 +1,4 @@
-/* $Id: print.c,v 1.48 2006-10-09 00:35:25 danmc Exp $ */
+/* $Id: print.c,v 1.49 2006-10-19 22:42:45 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -66,7 +66,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: print.c,v 1.48 2006-10-09 00:35:25 danmc Exp $");
+RCSID ("$Id: print.c,v 1.49 2006-10-19 22:42:45 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * prints a FAB drawing.
@@ -287,7 +287,11 @@ PrintFab (void)
 	   AllDrills->DrillN, total_drills);
   /* Create a portable timestamp. */
   currenttime = time (NULL);
-  strftime (utcTime, sizeof utcTime, "%c UTC", gmtime (&currenttime));
+  {
+    /* avoid gcc complaints */
+    const char *fmt = "%c UTC";
+    strftime (utcTime, sizeof utcTime, fmt, gmtime (&currenttime));
+  }
   yoff = -TEXT_LINE;
   for (i = 0; i < max_layer; i++)
     {
