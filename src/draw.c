@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.63 2006-10-10 04:35:48 haceaton Exp $ */
+/* $Id: draw.c,v 1.64 2006-10-19 22:42:35 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -62,7 +62,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.63 2006-10-10 04:35:48 haceaton Exp $");
+RCSID ("$Id: draw.c,v 1.64 2006-10-19 22:42:35 danmc Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -2075,7 +2075,7 @@ DrawRegularText (LayerTypePtr Layer, TextTypePtr Text, int unused)
 static int
 cp_callback (const BoxType * b, void *cl)
 {
-  ClearPin ((PinTypePtr) b, (int) cl, 0);
+  ClearPin ((PinTypePtr) b, (int) (size_t) cl, 0);
   return 1;
 }
 
