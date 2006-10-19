@@ -1,4 +1,4 @@
-/* $Id: dialogs.c,v 1.22 2006-10-11 01:17:36 danmc Exp $ */
+/* $Id: dialogs.c,v 1.23 2006-10-19 22:43:02 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -25,7 +25,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: dialogs.c,v 1.22 2006-10-11 01:17:36 danmc Exp $");
+RCSID ("$Id: dialogs.c,v 1.23 2006-10-19 22:43:02 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
 
@@ -43,7 +43,7 @@ static int ok;
 static void
 dialog_callback (Widget w, void *v, void *cbs)
 {
-  ok = (int) v;
+  ok = (int) (size_t) v;
 }
 
 static int
@@ -955,7 +955,7 @@ Export (int argc, char **argv, int x, int y)
 	      XtManageChild (w);
 	      XtAddCallback (w, XmNactivateCallback,
 			     (XtCallbackProc) dialog_callback,
-			     (XtPointer) (i + 1));
+			     (XtPointer) ((size_t) i + 1));
 	      prev = w;
 	    }
 	}

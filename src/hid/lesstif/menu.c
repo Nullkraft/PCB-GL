@@ -1,4 +1,4 @@
-/* $Id: menu.c,v 1.21 2006-10-15 00:45:09 djdelorie Exp $ */
+/* $Id: menu.c,v 1.22 2006-10-19 22:43:02 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: menu.c,v 1.21 2006-10-15 00:45:09 djdelorie Exp $");
+RCSID ("$Id: menu.c,v 1.22 2006-10-19 22:43:02 danmc Exp $");
 
 #ifndef R_OK
 /* Common value for systems that don't define it.  */
@@ -569,7 +569,7 @@ insert_layerview_buttons (Widget menu)
       btn = XmCreateToggleButton (menu, name, args, n);
       XtManageChild (btn);
       XtAddCallback (btn, XmNvalueChangedCallback,
-		     (XtCallbackProc) layer_button_callback, (XtPointer) i);
+		     (XtCallbackProc) layer_button_callback, (XtPointer) (size_t) i);
       lb->w[i] = btn;
     }
   lb->is_pick = 0;
@@ -637,7 +637,7 @@ insert_layerpick_buttons (Widget menu)
       XtManageChild (btn);
       XtAddCallback (btn, XmNvalueChangedCallback,
 		     (XtCallbackProc) layerpick_button_callback,
-		     (XtPointer) i);
+		     (XtPointer) (size_t) i);
       lb->w[i] = btn;
     }
   lb->is_pick = 1;
