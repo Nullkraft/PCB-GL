@@ -1,4 +1,4 @@
-/* $Id: hidinit.c,v 1.13 2006-10-09 00:35:26 danmc Exp $ */
+/* $Id: hidinit.c,v 1.14 2006-10-19 22:42:49 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -24,7 +24,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: hidinit.c,v 1.13 2006-10-09 00:35:26 danmc Exp $");
+RCSID ("$Id: hidinit.c,v 1.14 2006-10-19 22:42:49 danmc Exp $");
 
 #define HID_DEF(x) extern void hid_ ## x ## _init(void);
 #include "hid/common/hidlist.h"
@@ -443,6 +443,9 @@ hid_save_settings (int locally)
 	      fprintf (f, "%s = %s\n",
 		       a->name,
 		       a->enumerations[a->value ? *(int *)a->value : a->default_val.int_value]);
+	      break;
+	    case HID_Mixed:
+	      abort ();
 	      break;
 	    }
 	}
