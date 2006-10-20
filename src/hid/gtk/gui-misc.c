@@ -1,4 +1,4 @@
-/* $Id: gui-misc.c,v 1.5 2006-03-28 03:42:29 djdelorie Exp $ */
+/* $Id: gui-misc.c,v 1.6 2006-10-20 00:11:04 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -42,7 +42,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-misc.c,v 1.5 2006-03-28 03:42:29 djdelorie Exp $");
+RCSID ("$Id: gui-misc.c,v 1.6 2006-10-20 00:11:04 danmc Exp $");
 
 #define DEFAULT_CURSORSHAPE	GDK_CROSSHAIR
 
@@ -296,7 +296,7 @@ loop_key_press_cb (GtkWidget * drawing_area, GdkEventKey * kev,
 
   if (ghid_is_modifier_key_sym (ksym))
     return TRUE;
-  mk = ghid_modifier_keys_state (&kev->state);
+  mk = ghid_modifier_keys_state ((GdkModifierType *) &kev->state);
 
   /* Duplicate the cursor key actions in gui-output-events.c
    */

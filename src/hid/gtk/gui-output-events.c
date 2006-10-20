@@ -1,4 +1,4 @@
-/* $Id: gui-output-events.c,v 1.10 2006-10-09 00:35:27 danmc Exp $ */
+/* $Id: gui-output-events.c,v 1.11 2006-10-20 00:11:04 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -49,7 +49,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-output-events.c,v 1.10 2006-10-09 00:35:27 danmc Exp $");
+RCSID ("$Id: gui-output-events.c,v 1.11 2006-10-20 00:11:04 danmc Exp $");
 
 static gint x_pan_speed, y_pan_speed;
 
@@ -399,7 +399,7 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
   if (ghid_is_modifier_key_sym (ksym))
     ghid_note_event_location (NULL);
 
-  mk = ghid_modifier_keys_state (&kev->state);
+  mk = ghid_modifier_keys_state ((GdkModifierType *) &kev->state);
 
   ghid_show_crosshair (FALSE);
 
@@ -970,7 +970,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
   y_press = ev->y;
 
   ghid_note_event_location (ev);
-  mk = ghid_modifier_keys_state (&ev->state);
+  mk = ghid_modifier_keys_state ((GdkModifierType *) &ev->state);
   ghid_show_crosshair (FALSE);
   HideCrosshair (TRUE);
   drag = have_crosshair_attachments ();
@@ -1068,7 +1068,7 @@ ghid_port_button_release_cb (GtkWidget * drawing_area,
   gboolean drag;
 
   ghid_note_event_location (ev);
-  mk = ghid_modifier_keys_state (&ev->state);
+  mk = ghid_modifier_keys_state ((GdkModifierType *) &ev->state);
 
   drag = have_crosshair_attachments ();
   if (drag)
@@ -1201,7 +1201,7 @@ gint
 ghid_port_window_motion_cb (GtkWidget * widget,
 			    GdkEventButton * ev, GHidPort * out)
 {
-  ModifierKeysState mk = ghid_modifier_keys_state (&ev->state);
+  ModifierKeysState mk = ghid_modifier_keys_state ((GdkModifierType *) &ev->state);
   gdouble dx, dy;
   static gint x_prev, y_prev;
   gboolean moved;
@@ -1327,7 +1327,7 @@ gint
 ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
 				  GdkEventScroll * ev, GHidPort * out)
 {
-  ModifierKeysState mk = ghid_modifier_keys_state (&ev->state);
+  ModifierKeysState mk = ghid_modifier_keys_state ((GdkModifierType *) &ev->state);
   gdouble dx = 0.0, dy = 0.0, zoom_factor;
 
   if (mk == NONE_PRESSED)
