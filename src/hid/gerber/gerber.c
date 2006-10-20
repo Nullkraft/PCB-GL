@@ -1,4 +1,4 @@
-/* $Id: gerber.c,v 1.20 2006-10-19 22:42:46 danmc Exp $ */
+/* $Id: gerber.c,v 1.21 2006-10-20 23:19:51 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -32,7 +32,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gerber.c,v 1.20 2006-10-19 22:42:46 danmc Exp $");
+RCSID ("$Id: gerber.c,v 1.21 2006-10-20 23:19:51 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented Gerber function %s.\n", __FUNCTION__); abort()
 
@@ -554,7 +554,7 @@ gerber_set_layer (const char *name, int group)
       layername[strlen(layername) - strlen(sext)] = 0;
       for (cp=layername; *cp; cp++)
 	{
-	  if (isalnum(*cp))
+	  if (isalnum((int) *cp))
 	    *cp = toupper(*cp);
 	  else
 	    *cp = '_';
