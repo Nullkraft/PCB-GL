@@ -1,4 +1,4 @@
-/* $Id: parse_l.l,v 1.13 2006-10-09 00:35:25 danmc Exp $ */
+/* $Id: parse_l.l,v 1.14 2006-10-21 14:38:30 haceaton Exp $ */
 
 %{
 /*
@@ -48,7 +48,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_l.l,v 1.13 2006-10-09 00:35:25 danmc Exp $");
+RCSID("$Id: parse_l.l,v 1.14 2006-10-21 14:38:30 haceaton Exp $");
 
 
 #include "global.h"
@@ -101,6 +101,7 @@ PCB			{ return(T_PCB); }
 Grid		{ return(T_GRID); }
 Cursor		{ return(T_CURSOR); }
 Thermal		{ return(T_THERMAL); }
+PolyArea	{ return(T_AREA); }
 DRC		{ return(T_DRC); }
 Flags		{ return(T_FLAGS); }
 Layer		{ return(T_LAYER); }

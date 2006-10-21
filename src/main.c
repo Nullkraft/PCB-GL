@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.59 2006-10-09 00:35:25 danmc Exp $ */
+/* $Id: main.c,v 1.60 2006-10-21 14:38:30 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -59,7 +59,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.59 2006-10-09 00:35:25 danmc Exp $");
+RCSID ("$Id: main.c,v 1.60 2006-10-21 14:38:30 haceaton Exp $");
 
 
 
@@ -206,13 +206,13 @@ usage_hid (HID * h)
       return;
     }
   fprintf (stderr, "\n%s options:\n", h->name);
-	exporter = h;
+  exporter = h;
   e = h->get_export_options (&n);
   if (!e)
     return;
   for (i = 0; i < n; i++)
     usage_attr (e + i);
-	exporter = NULL;
+  exporter = NULL;
 }
 
 static void
@@ -471,6 +471,7 @@ HID_Attribute main_attribute_list[] = {
   RSET (line_increment_mil, 5.0, "line-increment-mil", 0),
   RSET (clear_increment_mm, 0.05, "clear-increment-mm", 0),
   RSET (clear_increment_mil, 2.0, "clear-increment-mil", 0),
+  RSET (IsleArea, 200000000, "minimum polygon area", 0),
 
   ISET (BackupInterval, 60, "backup-interval", 0),
 

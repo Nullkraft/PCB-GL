@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.50 2006-10-12 02:41:31 haceaton Exp $
+ *  RCS: $Id: global.h,v 1.51 2006-10-21 14:38:30 haceaton Exp $
  */
 
 /* definition of types
@@ -566,6 +566,7 @@ typedef struct			/* some resources... */
     AlignmentDistance, Bloat,	/* default drc sizes */
     Shrink, minWid, minSlk, minDrill, minRing;
   double Grid,			/* grid 0.001'' */
+    IsleArea,    		/* polygon min area */
     grid_increment_mm,		/* key g and <shift>g value for mil units */
     grid_increment_mil,		/* key g and <shift>g value for mil units */
     size_increment_mm,		/* key s and <shift>s value for mil units */
