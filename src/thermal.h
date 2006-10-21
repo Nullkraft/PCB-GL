@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: thermal.h,v 1.2 2006-10-09 00:35:25 danmc Exp $
+ *  RCS: $Id: thermal.h,v 1.3 2006-10-21 02:34:42 haceaton Exp $
  */
 
 /* prototypes for thermal routines
@@ -41,6 +41,6 @@
 #include "global.h"
 #include "mymem.h"
 
-POLYAREA * ThermPoly (PinTypePtr, Cardinal);
+POLYAREA * ThermPoly (PCBTypePtr, PinTypePtr, Cardinal);
 
 #endif

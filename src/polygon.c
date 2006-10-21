@@ -1,4 +1,4 @@
-/* $Id: polygon.c,v 1.41 2006-10-17 12:06:54 haceaton Exp $ */
+/* $Id: polygon.c,v 1.42 2006-10-21 02:34:41 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: polygon.c,v 1.41 2006-10-17 12:06:54 haceaton Exp $");
+RCSID ("$Id: polygon.c,v 1.42 2006-10-21 02:34:41 haceaton Exp $");
 
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
@@ -498,7 +498,7 @@ SubtractPin (DataType * d, PinType * pin, LayerType * l, PolygonType * p)
     return 0;
   i = GetLayerNumber (d, l);
   if (TEST_THERM (i, pin))
-    np = ThermPoly (pin, i);
+    np = ThermPoly ((PCBTypePtr)(d->pcb), pin, i);
   else
     np = PinPoly (pin, pin->Thickness + pin->Clearance);
   if (!np)
