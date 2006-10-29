@@ -1,4 +1,4 @@
-/* $Id: parse_y.y,v 1.31 2006-10-21 14:31:51 haceaton Exp $ */
+/* $Id: parse_y.y,v 1.32 2006-10-29 13:35:56 haceaton Exp $ */
 
 %{
 /*
@@ -52,7 +52,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_y.y,v 1.31 2006-10-21 14:31:51 haceaton Exp $");
+RCSID("$Id: parse_y.y,v 1.32 2006-10-29 13:35:56 haceaton Exp $");
 
 static	LayerTypePtr	Layer;
 static	PolygonTypePtr	Polygon;
@@ -151,8 +151,8 @@ parsepcb
 		  pcbname 
 		  pcbgrid
 		  pcbcursor
-		  pcbthermal 
 		  polyarea
+		  pcbthermal 
 		  pcbdrc
 		  pcbflags
 		  pcbgroups
