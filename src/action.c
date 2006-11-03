@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.97 2006-10-25 21:53:25 haceaton Exp $ */
+/* $Id: action.c,v 1.98 2006-11-03 02:26:32 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -74,7 +74,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.97 2006-10-25 21:53:25 haceaton Exp $");
+RCSID ("$Id: action.c,v 1.98 2006-11-03 02:26:32 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -3103,7 +3103,7 @@ ActionRenumber (int argc, char **argv, int x, int y)
     }
 
   fprintf (out, "*COMMENT* PCB Annotation File\n");
-  fprintf (out, "*VERSION* 20060814\n");
+  fprintf (out, "*FILEVERSION* 20061031\n");
 
   /*
    * Make a first pass through all of the elements and sort them out
