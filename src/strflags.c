@@ -1,4 +1,4 @@
-/* $Id: strflags.c,v 1.13 2006-10-09 00:35:25 danmc Exp $ */
+/* $Id: strflags.c,v 1.14 2006-11-05 01:27:13 danmc Exp $ */
 /*
  *                            COPYRIGHT
  *
@@ -54,7 +54,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: strflags.c,v 1.13 2006-10-09 00:35:25 danmc Exp $");
+RCSID ("$Id: strflags.c,v 1.14 2006-11-05 01:27:13 danmc Exp $");
 
 /* Because all the macros expect it, that's why.  */
 typedef struct
@@ -130,7 +130,9 @@ static struct
   {
   LOCKFLAG, N ("lock"), ALL_TYPES},
   {
-  EDGE2FLAG, N ("edge2"), ALL_TYPES}
+    EDGE2FLAG, N ("edge2"), ALL_TYPES},
+  {
+    NOPASTEFLAG, N ("nopaste"), PAD_TYPE}
 };
 
 #undef N

@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.64 2006-10-19 22:42:35 danmc Exp $ */
+/* $Id: draw.c,v 1.65 2006-11-05 01:27:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -62,7 +62,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.64 2006-10-19 22:42:35 danmc Exp $");
+RCSID ("$Id: draw.c,v 1.65 2006-11-05 01:27:13 danmc Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -624,7 +624,8 @@ DrawEverything (BoxTypePtr drawn_area)
 	    if ((TEST_FLAG (ONSOLDERFLAG, pad) && side == SOLDER_LAYER)
 		|| (!TEST_FLAG (ONSOLDERFLAG, pad)
 		    && side == COMPONENT_LAYER))
-	      DrawPadLowLevel (pad);
+	      if (!TEST_FLAG (NOPASTEFLAG, pad))
+		DrawPadLowLevel (pad);
 	  }
 	  ENDALL_LOOP;
 	}

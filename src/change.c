@@ -1,4 +1,4 @@
-/* $Id: change.c,v 1.39 2006-10-14 04:17:23 haceaton Exp $ */
+/* $Id: change.c,v 1.40 2006-11-05 01:27:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -64,7 +64,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: change.c,v 1.39 2006-10-14 04:17:23 haceaton Exp $");
+RCSID ("$Id: change.c,v 1.40 2006-11-05 01:27:13 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -1490,6 +1490,22 @@ ChangeHole (PinTypePtr Via)
 }
 
 /* ---------------------------------------------------------------------------
+ * changes the nopaste flag of a pad
+ */
+Boolean
+ChangePaste (PadTypePtr Pad)
+{
+  if (TEST_FLAG (LOCKFLAG, Pad))
+    return (False);
+  ErasePad (Pad);
+  AddObjectToFlagUndoList (PAD_TYPE, Pad, Pad, Pad);
+  TOGGLE_FLAG (NOPASTEFLAG, Pad);
+  DrawPad (Pad, 0);
+  Draw ();
+  return (True);
+}
+
+/* ---------------------------------------------------------------------------
  * changes the CLEARPOLY flag of a polygon
  */
 static void *
@@ -1796,6 +1812,29 @@ ChangeSelectedHole (void)
       change |= ChangeHole (via);
   }
   END_LOOP;
+  if (change)
+    {
+      Draw ();
+      IncrementUndoSerialNumber ();
+    }
+  return (change);
+}
+
+/* ----------------------------------------------------------------------
+ * changes the no paste-flag of all selected and visible pads
+ * returns True if anything has changed
+ */
+Boolean
+ChangeSelectedPaste (void)
+{
+  Boolean change = False;
+
+  ALLPAD_LOOP (PCB->Data);
+  {
+    if (TEST_FLAG (SELECTEDFLAG, pad))
+      change |= ChangePaste (pad);
+  }
+  ENDALL_LOOP;
   if (change)
     {
       Draw ();
