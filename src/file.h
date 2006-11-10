@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: file.h,v 1.3 2006-03-22 23:17:20 danmc Exp $
+ *  RCS: $Id: file.h,v 1.4 2006-11-10 21:56:53 danmc Exp $
  */
 
 /* prototypes for file routines
@@ -44,6 +44,16 @@ void EmergencySave (void);
 int ReadLibraryContents (void);
 int ReadNetlist (char *);
 int SaveBufferElements (char *);
+
+/* 
+ * Whenever the pcb file format is modified, this version number
+ * should be updated to the date when the new code is committed.
+ * It will be written out to the file and also used by pcb to give
+ * guidance to the user as to what the minimum version of pcb required
+ * is.
+ */
+#define PCB_FILE_VERSION 20061106
+
 
 #ifndef HAS_ATEXIT
 #ifdef HAS_ON_EXIT
