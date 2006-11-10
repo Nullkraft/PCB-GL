@@ -1,4 +1,4 @@
-/* $Id: ps.c,v 1.16 2006-11-09 05:13:24 danmc Exp $ */
+/* $Id: ps.c,v 1.17 2006-11-10 21:57:45 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -23,7 +23,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: ps.c,v 1.16 2006-11-09 05:13:24 danmc Exp $");
+RCSID ("$Id: ps.c,v 1.17 2006-11-10 21:57:45 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
@@ -59,6 +59,7 @@ static const char *medias[] = {
   "Legal", "Executive", 
   "A-Size", "B-size",
   "C-Size", "D-size", "E-size",
+  "US-Business_Card", "Intl-Business_Card",
   0
 };
 
@@ -137,7 +138,9 @@ static MediaType media_data[] = {
   {"B-size", 1100000, 1700000, MARGINX, MARGINY},
   {"C-size", 1700000, 2200000, MARGINX, MARGINY},
   {"D-size", 2200000, 3400000, MARGINX, MARGINY},
-  {"E-size", 3400000, 4400000, MARGINX, MARGINY}
+  {"E-size", 3400000, 4400000, MARGINX, MARGINY},
+  {"US-Business_Card", 350000, 200000, 0, 0},
+  {"Intl-Business_Card", 337500, 212500, 0, 0}
 };
 
 #undef MARGINX
