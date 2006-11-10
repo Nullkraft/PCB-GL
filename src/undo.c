@@ -1,4 +1,4 @@
-/* $Id: undo.c,v 1.23 2006-10-09 00:35:25 danmc Exp $ */
+/* $Id: undo.c,v 1.24 2006-11-10 18:28:11 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -74,7 +74,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: undo.c,v 1.23 2006-10-09 00:35:25 danmc Exp $");
+RCSID ("$Id: undo.c,v 1.24 2006-11-10 18:28:11 haceaton Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local data types
@@ -1129,6 +1129,7 @@ ClearUndoList (Boolean Force)
 	}
       MYFREE (UndoList);
       FreeDataMemory (RemoveList);
+      RemoveList->pcb = PCB;
 
       /* reset some counters */
       UndoN = UndoMax = RedoN = 0;

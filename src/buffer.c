@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.33 2006-10-15 06:20:43 djdelorie Exp $ */
+/* $Id: buffer.c,v 1.34 2006-11-10 18:28:11 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: buffer.c,v 1.33 2006-10-15 06:20:43 djdelorie Exp $");
+RCSID ("$Id: buffer.c,v 1.34 2006-11-10 18:28:11 haceaton Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -460,6 +460,7 @@ ClearBuffer (BufferTypePtr Buffer)
 {
   if (Buffer)
     FreeDataMemory (Buffer->Data);
+  Buffer->Data->pcb = PCB;
 }
 
 /* ----------------------------------------------------------------------
