@@ -1,4 +1,4 @@
-/* $Id: parse_y.y,v 1.33 2006-11-10 21:56:53 danmc Exp $ */
+/* $Id: parse_y.y,v 1.34 2006-11-11 14:45:29 danmc Exp $ */
 /*
  * ************************** README *******************
  *
@@ -61,7 +61,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_y.y,v 1.33 2006-11-10 21:56:53 danmc Exp $");
+RCSID("$Id: parse_y.y,v 1.34 2006-11-11 14:45:29 danmc Exp $");
 
 static	LayerTypePtr	Layer;
 static	PolygonTypePtr	Polygon;
@@ -238,15 +238,15 @@ parsefont
 			}
 		;
 
-/* %start-doc pcbfile FILEVERSION
+/* %start-doc pcbfile FileVersion
 
 @syntax
-FILEVERSION [Version]
+FileVersion[Version]
 @end syntax
 
 @table @var
 @item Version
-File format version.  This version string represents the date when the pcb file
+File format version.  This version number represents the date when the pcb file
 format was last changed.
 @end table
 
