@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.34 2006-11-10 18:28:11 haceaton Exp $ */
+/* $Id: buffer.c,v 1.35 2006-11-13 21:50:56 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: buffer.c,v 1.34 2006-11-10 18:28:11 haceaton Exp $");
+RCSID ("$Id: buffer.c,v 1.35 2006-11-13 21:50:56 haceaton Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -669,7 +669,7 @@ ConvertBufferToElement (BufferTypePtr Buffer)
   ElementTypePtr Element;
   Cardinal group;
   Cardinal pin_n = 1;
-  Boolean hasParts = False;
+  Boolean hasParts = False, crooked = False;
 
   if (Buffer->Data->pcb == 0)
     Buffer->Data->pcb = PCB;
@@ -726,6 +726,8 @@ ConvertBufferToElement (BufferTypePtr Buffer)
 			MakeFlags (SWAP_IDENT ? ONSOLDERFLAG : NOFLAG));
 	  hasParts = True;
 	}
+      else
+        crooked = True;
     }
     END_LOOP;
     POLYGON_LOOP (layer);
@@ -733,7 +735,10 @@ ConvertBufferToElement (BufferTypePtr Buffer)
       int x1, y1, x2, y2, w, h, t;
 
       if (! polygon_is_rectangle (polygon))
-	continue;
+        {
+          crooked = True;
+	  continue;
+        }
 
       w = polygon->Points[2].X - polygon->Points[0].X;
       h = polygon->Points[1].Y - polygon->Points[0].Y;
@@ -786,6 +791,8 @@ ConvertBufferToElement (BufferTypePtr Buffer)
 	    }
 	  hasParts = True;
 	}
+      else
+        crooked = True;
     }
     END_LOOP;
   }
@@ -815,6 +822,9 @@ ConvertBufferToElement (BufferTypePtr Buffer)
 		 "Elements must have some pads or pins.\n"));
       return (False);
     }
+  if (crooked)
+     Message (_("There were lines or polygons that can't be made into pins!\n"
+                "So they were not included in the element\n"));
   Element->MarkX = Buffer->X;
   Element->MarkY = Buffer->Y;
   if (SWAP_IDENT)
