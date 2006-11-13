@@ -1,4 +1,4 @@
-/* $Id: polygon.c,v 1.44 2006-11-06 04:13:29 haceaton Exp $ */
+/* $Id: polygon.c,v 1.45 2006-11-13 21:48:13 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: polygon.c,v 1.44 2006-11-06 04:13:29 haceaton Exp $");
+RCSID ("$Id: polygon.c,v 1.45 2006-11-13 21:48:13 haceaton Exp $");
 
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
@@ -663,7 +663,8 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
   struct cpInfo info;
   Cardinal group;
 
-  if (!TEST_FLAG (CLEARPOLYFLAG, polygon))
+  if (!TEST_FLAG (CLEARPOLYFLAG, polygon)
+      || GetLayerNumber (Data, Layer) >= max_layer)
     return 0;
   group = Group (Data, GetLayerNumber (Data, Layer));
   info.solder = (group == Group (Data, Data->LayerN + SOLDER_LAYER));
@@ -1194,6 +1195,9 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
     case ARC_TYPE:
       /* the cast works equally well for lines and arcs */
       if (!TEST_FLAG (CLEARLINEFLAG, (LineTypePtr) ptr2))
+        return 0;
+      /* silk doesn't plow */
+      if (GetLayerNumber (Data, ptr1) >= max_layer)
         return 0;
       GROUP_LOOP (Data, GetLayerGroupNumberByNumber (GetLayerNumber (Data,
                                                                      ((LayerTypePtr) ptr1))));
