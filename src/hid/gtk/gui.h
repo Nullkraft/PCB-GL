@@ -1,4 +1,4 @@
-/* $Id: gui.h,v 1.9 2006-06-10 03:07:43 djdelorie Exp $ */
+/* $Id: gui.h,v 1.10 2006-11-14 05:29:42 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -89,7 +89,7 @@
 #define	DRAW_Y(y)	(gint)(((y) - gport->view_y0) / gport->zoom)
 #define	DRAW_Z(z)	(gint)((z) / gport->zoom)
 
-#define	VIEW_X(x)	(gint)((x) * gport->zoom + gport->view_x0)
+#define	VIEW_X(x)	SIDE_X((gint)((x) * gport->zoom + gport->view_x0))
 #define	VIEW_Y(y)	(gint)((y) * gport->zoom + gport->view_y0)
 #define	VIEW_Z(z)	(gint)((z) * gport->zoom)
 
