@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: polygon.h,v 1.11 2006-10-10 04:35:48 haceaton Exp $
+ *  RCS: $Id: polygon.h,v 1.12 2006-11-14 13:56:35 haceaton Exp $
  */
 
 /* prototypes for polygon editing routines
@@ -39,7 +39,7 @@ Boolean RemoveExcessPolygonPoints (LayerTypePtr, PolygonTypePtr);
 void GoToPreviousPoint (void);
 void ClosePolygon (void);
 void CopyAttachedPolygonToLayer (void);
-int PolygonHoles (int group, const BoxType * range,
+int PolygonHoles (const BoxType * range, LayerTypePtr, PolygonTypePtr,
 		  int (*callback) (PLINE *, LayerTypePtr, PolygonTypePtr));
 int PlowsPolygon (DataType *, int, void *, void *,
 		  int (*callback) (DataTypePtr, LayerTypePtr, PolygonTypePtr, int, void *, void *));
@@ -60,5 +60,5 @@ Boolean IsRectangleInPolygon (LocationType, LocationType, LocationType,
 			      LocationType, PolygonTypePtr);
 Boolean isects (POLYAREA *, PolygonTypePtr, Boolean);
 Boolean MorphPolygon (LayerTypePtr, PolygonTypePtr);
-void NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr));
+void NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr), const BoxType *clip);
 #endif
