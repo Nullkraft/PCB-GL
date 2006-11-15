@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.66 2006-11-14 13:56:36 haceaton Exp $ */
+/* $Id: draw.c,v 1.67 2006-11-15 02:57:23 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.66 2006-11-14 13:56:36 haceaton Exp $");
+RCSID ("$Id: draw.c,v 1.67 2006-11-15 02:57:23 haceaton Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -909,16 +909,6 @@ DrawLayerGroup (int group, const BoxType * screen)
           /* draw the layer text on screen */
           r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
 
-        }
-    }
-
-
-  for (i = n_entries - 1; i >= 0; i--)
-    {
-      layernum = layers[i];
-      Layer = PCB->Data->Layer + layers[i];
-      if (layernum < max_layer && Layer->On)
-        {
         }
     }
   return rv;
@@ -2007,7 +1997,8 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
       gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
       //  gui->fill_circle (Output.fgGC, x[i], y[i], 30);
     }
-  gui->draw_line (Output.fgGC, x[pl->Count - 1], y[pl->Count - 1], x[0], y[0]);
+  gui->draw_line (Output.fgGC, x[pl->Count - 1], y[pl->Count - 1], x[0],
+                  y[0]);
   free (x);
   free (y);
   return 0;
