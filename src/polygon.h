@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: polygon.h,v 1.12 2006-11-14 13:56:35 haceaton Exp $
+ *  RCS: $Id: polygon.h,v 1.13 2006-11-16 03:01:21 haceaton Exp $
  */
 
 /* prototypes for polygon editing routines
@@ -49,8 +49,8 @@ POLYAREA * CirclePoly(LocationType x, LocationType y, BDimension radius);
 POLYAREA * OctagonPoly(LocationType x, LocationType y, BDimension radius);
 POLYAREA * LinePoly(LineType *l, BDimension thick);
 POLYAREA * ArcPoly(ArcType *l, BDimension thick);
-POLYAREA * PinPoly(PinType *l, BDimension thick);
-void half_circle (PLINE *, LocationType, LocationType, Vector);
+POLYAREA * PinPoly(PinType *l, BDimension thick, BDimension clear);
+void frac_circle (PLINE *, LocationType, LocationType, Vector, int);
 int InitClip(DataType *d, LayerType *l, PolygonType *p);
 void RestoreToPolygon(DataType *, int, void *, void *);
 void ClearFromPolygon(DataType *, int, void *, void *);
