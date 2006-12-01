@@ -1,4 +1,4 @@
-/* $Id: ps.c,v 1.17 2006-11-10 21:57:45 danmc Exp $ */
+/* $Id: ps.c,v 1.18 2006-12-01 03:36:57 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -23,7 +23,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: ps.c,v 1.17 2006-11-10 21:57:45 danmc Exp $");
+RCSID ("$Id: ps.c,v 1.18 2006-12-01 03:36:57 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
@@ -242,7 +242,7 @@ static int media;
 
 static double fill_zoom;
 
-static void
+void
 ps_start_file (FILE *f)
 {
   fprintf (f, "%%!PS-Adobe-3.0\n\n");
