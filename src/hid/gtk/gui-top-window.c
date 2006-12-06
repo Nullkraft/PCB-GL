@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.34 2006-10-19 22:42:56 danmc Exp $ */
+/* $Id: gui-top-window.c,v 1.35 2006-12-06 18:01:27 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -84,7 +84,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.34 2006-10-19 22:42:56 danmc Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.35 2006-12-06 18:01:27 danmc Exp $");
 
 extern HID ghid_hid;
 
@@ -3240,8 +3240,14 @@ static GtkWidget *ghid_left_sensitive_box;
 static gint
 delete_chart_cb (GtkWidget * widget, GdkEvent * event, GHidPort * port)
 {
-  /* Return FALSE to emit the "destroy" signal */
-  return FALSE;
+  ghid_config_files_write ();
+  hid_action ("Quit");
+
+  /*
+   * Return TRUE to keep our app running.  A FALSE here would let the
+   * delete signal continue on and kill our program.
+   */
+  return TRUE;
 }
 
 static void
