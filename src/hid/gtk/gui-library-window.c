@@ -1,4 +1,4 @@
-/* $Id: gui-library-window.c,v 1.3 2006-04-16 03:36:56 billw2 Exp $ */
+/* $Id: gui-library-window.c,v 1.4 2006-12-06 15:10:17 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -42,7 +42,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-library-window.c,v 1.3 2006-04-16 03:36:56 billw2 Exp $");
+RCSID ("$Id: gui-library-window.c,v 1.4 2006-12-06 15:10:17 danmc Exp $");
 
 static GtkWidget *library_window;
 static GtkTreeModel *entry_model;
@@ -334,17 +334,9 @@ ghid_library_window_show (GHidPort * out, gboolean raise)
 		    G_CALLBACK (library_close_cb), NULL);
   gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
 
+  gtk_widget_realize (library_window);
   if (Settings.AutoPlace)
     gtk_widget_set_uposition (GTK_WIDGET (library_window), 10, 10);
-
-  gtk_widget_show_all (library_window);
-
-  /* 
-   * If focus were grabbed, output drawing area would loose it which we
-   * don't want.
-   */
-  gtk_widget_realize (library_window);
-  gdk_window_set_accept_focus (library_window->window, FALSE);
 
   gtk_widget_show_all (library_window);
 }

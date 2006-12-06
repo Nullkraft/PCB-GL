@@ -1,4 +1,4 @@
-/* $Id: gui-netlist-window.c,v 1.11 2006-04-16 03:36:56 billw2 Exp $ */
+/* $Id: gui-netlist-window.c,v 1.12 2006-12-06 15:10:17 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-netlist-window.c,v 1.11 2006-04-16 03:36:56 billw2 Exp $");
+RCSID ("$Id: gui-netlist-window.c,v 1.12 2006-12-06 15:10:17 danmc Exp $");
 
 static GtkWidget	*netlist_window;
 static GtkWidget	*disable_all_button;
@@ -636,11 +636,7 @@ ghid_netlist_window_show (GHidPort * out, gboolean raise)
   gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
 
 
-  /* If focus were grabbed, output drawing area would loose it which we
-     |  don't want.
-   */
   gtk_widget_realize (netlist_window);
-  gdk_window_set_accept_focus (netlist_window->window, FALSE);
   if (Settings.AutoPlace)
     gtk_widget_set_uposition (GTK_WIDGET (netlist_window), 10, 10);
 
