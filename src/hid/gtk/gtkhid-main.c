@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.27 2006-12-07 17:42:03 danmc Exp $ */
+/* $Id: gtkhid-main.c,v 1.28 2006-12-07 22:33:54 uid62541 Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.27 2006-12-07 17:42:03 danmc Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.28 2006-12-07 22:33:54 uid62541 Exp $");
 
 
 extern HID ghid_hid;
@@ -908,7 +908,7 @@ ghid_watch (GIOChannel *source, GIOCondition condition, gpointer data)
     pcb_condition |= PCB_WATCH_HANGUP;
 
   x.ptr = (void *) watch;
-  *watch->func (x, watch->fd, pcb_condition, watch->user_data);
+  watch->func (x, watch->fd, pcb_condition, watch->user_data);
   ghid_mode_cursor (Settings.Mode);
 
   return TRUE;  /* Leave watch on */
