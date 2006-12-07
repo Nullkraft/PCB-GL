@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.67 2006-10-18 05:59:57 danmc Exp $
+dnl $Id: configure.ac,v 1.68 2006-12-07 13:10:32 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -185,6 +185,40 @@ esac
 if test x"$with_gui" = x"none" -o x"$with_gui" = x"no"
 then
     HIDLIST=
+fi
+
+AC_MSG_CHECKING([for whether to use DBUS])
+AC_ARG_ENABLE([dbus],
+[  --enable-dbus           Enable DBUS IPC],
+[],[enable_dbus=no])
+
+AC_MSG_RESULT([$enable_dbus])
+AM_CONDITIONAL(WITH_DBUS, test x$enable_dbus = xyes)
+
+if test "x$enable_dbus" = "xyes"; then
+	case " $with_gui " in
+		*\ gtk\ *) ;;
+		*\ lesstif\ *) ;;
+		* ) AC_MSG_ERROR([DBUS enabled but only works with a mainloop capable GUI HID.
+Either do not use --enable-dbus or enable the gtk or lesstif GUI HID.])
+	esac
+	
+	# Check for pkg-config
+	AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+	if test "$PKG_CONFIG" = "no"; then
+		AC_MSG_ERROR([Cannot find pkg-config, make sure it is installed and in your PATH])
+	fi
+
+	PKG_CHECK_MODULES(DBUS, dbus-1 >= 0.61, , 
+		[AC_MSG_ERROR([Cannot find dbus-1 >= 0.61, install it and rerun ./configure
+Please review the following errors:
+$DBUS_PKG_ERRORS])]
+	)
+	DBUS_VERSION=`$PKG_CONFIG dbus-1 --modversion`
+	
+	AC_DEFINE([HAVE_DBUS], 1,
+		[Define to 1 if DBUS IPC is to be compiled in])
+
 fi
 
 AC_MSG_CHECKING([for which printer to use])
@@ -505,8 +539,8 @@ fi
 AC_MSG_RESULT([no])
 ])
 
-CFLAGS="$CFLAGS $X_CFLAGS $GTK_CFLAGS"
-LIBS="$LIBS $XM_LIBS $X_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_LIBS"
+CFLAGS="$CFLAGS $X_CFLAGS $DBUS_CFLAGS $GTK_CFLAGS"
+LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_LIBS"
 
 
 # if we have gcc then add -Wall

@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.60 2006-10-21 14:38:30 haceaton Exp $ */
+/* $Id: main.c,v 1.61 2006-12-07 13:10:35 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,11 +55,15 @@
 /* This next one is so we can print the help messages. */
 #include "hid/hidint.h"
 
+#ifdef HAVE_DBUS
+#include "dbus.h"
+#endif
+
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.60 2006-10-21 14:38:30 haceaton Exp $");
+RCSID ("$Id: main.c,v 1.61 2006-12-07 13:10:35 danmc Exp $");
 
 
 
@@ -767,7 +771,13 @@ main (int argc, char *argv[])
   if (Settings.init_done == 0)
     {
       Settings.init_done = 1;
+#if HAVE_DBUS
+      pcb_dbus_setup();
+#endif
       gui->do_export (0);
+#if HAVE_DBUS
+      pcb_dbus_finish();
+#endif
     }
 
   return (0);
