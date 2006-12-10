@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.58 2006-12-03 17:32:00 haceaton Exp $ */
+/* $Id: misc.c,v 1.59 2006-12-10 14:48:18 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -79,7 +79,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: misc.c,v 1.58 2006-12-03 17:32:00 haceaton Exp $");
+RCSID ("$Id: misc.c,v 1.59 2006-12-10 14:48:18 haceaton Exp $");
 
 
 
@@ -935,7 +935,7 @@ GetLayerNumber (DataTypePtr Data, LayerTypePtr Layer)
 {
   int i;
 
-  for (i = 0; i < Data->LayerN + 2; i++)
+  for (i = 0; i < MAX_LAYER + 2; i++)
     if (Layer == &Data->Layer[i])
       break;
   return (i);
