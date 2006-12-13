@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.35 2006-11-13 21:50:56 haceaton Exp $ */
+/* $Id: buffer.c,v 1.36 2006-12-13 22:42:55 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: buffer.c,v 1.35 2006-11-13 21:50:56 haceaton Exp $");
+RCSID ("$Id: buffer.c,v 1.36 2006-12-13 22:42:55 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -458,9 +458,11 @@ SetBufferBoundingBox (BufferTypePtr Buffer)
 void
 ClearBuffer (BufferTypePtr Buffer)
 {
-  if (Buffer)
-    FreeDataMemory (Buffer->Data);
-  Buffer->Data->pcb = PCB;
+  if (Buffer && Buffer->Data)
+    {
+      FreeDataMemory (Buffer->Data);
+      Buffer->Data->pcb = PCB;
+    }
 }
 
 /* ----------------------------------------------------------------------

@@ -1,4 +1,4 @@
-/* $Id: undo.c,v 1.24 2006-11-10 18:28:11 haceaton Exp $ */
+/* $Id: undo.c,v 1.25 2006-12-13 22:42:55 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -74,7 +74,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: undo.c,v 1.24 2006-11-10 18:28:11 haceaton Exp $");
+RCSID ("$Id: undo.c,v 1.25 2006-12-13 22:42:55 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local data types
@@ -161,8 +161,8 @@ UndoListType, *UndoListTypePtr;
 /* ---------------------------------------------------------------------------
  * some local variables
  */
-static DataTypePtr RemoveList;	/* list of removed objects */
-static UndoListTypePtr UndoList;	/* list of operations */
+static DataTypePtr RemoveList = NULL;	/* list of removed objects */
+static UndoListTypePtr UndoList = NULL;	/* list of operations */
 static int Serial = 1,		/* serial number */
   SavedSerial;
 static size_t UndoN, RedoN,	/* number of entries */
@@ -1128,8 +1128,11 @@ ClearUndoList (Boolean Force)
 	    SaveFree (undo->Data.ChangeName.Name);
 	}
       MYFREE (UndoList);
-      FreeDataMemory (RemoveList);
-      RemoveList->pcb = PCB;
+      if (RemoveList)
+	{
+          FreeDataMemory (RemoveList);
+          RemoveList->pcb = PCB;
+        }
 
       /* reset some counters */
       UndoN = UndoMax = RedoN = 0;
