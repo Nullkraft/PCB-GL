@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.68 2006-12-07 13:10:32 danmc Exp $
+dnl $Id: configure.ac,v 1.69 2006-12-13 02:32:52 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -313,8 +313,12 @@ AC_CHECK_FUNCS(random)
 # normally used for all file i/o
 AC_CHECK_FUNCS(popen)
 
+# for lrealpath.c
+AC_CHECK_FUNCS(realpath canonicalize_file_name)
+libiberty_NEED_DECLARATION(canonicalize_file_name)
+
 AC_HEADER_STDC
-AC_CHECK_HEADERS(string.h sys/types.h regex.h pwd.h)
+AC_CHECK_HEADERS(limits.h string.h sys/types.h regex.h pwd.h)
 AC_CHECK_HEADERS(sys/socket.h netinet/in.h netdb.h sys/param.h sys/times.h)
 
 
