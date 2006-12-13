@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.31 2006-12-07 13:10:35 danmc Exp $
+## $Id: Makefile.am,v 1.32 2006-12-13 02:33:09 danmc Exp $
 ##
 
 SUBDIRS=	icons script
@@ -138,11 +138,13 @@ PCB_SRCS = \
 	hid/hidint.h 
 pcb_bin_SOURCES = ${PCB_SRCS} core_lists.h
 
-EXTRA_pcb_bin_SOURCES = \
+EXTRA_pcb_bin_SOURCES = ${DBUS_SRCS}
+DBUS_SRCS= \
 	dbus-pcbmain.c \
 	dbus-pcbmain.h \
 	dbus.h \
-	dbus.c
+	dbus.c \
+	lrealpath.c 
 
 BUILT_SOURCES = \
 	core_lists.h \
@@ -240,7 +242,7 @@ dbus-introspect.h : dbus.xml Makefile
 	mv $@.tmp $@
 	
 
-PCB_SRCS+=	dbus-pcbmain.c dbus-pcbmain.h dbus.c dbus.h
+PCB_SRCS+=	${DBUS_SRCS}
 BUILT_SOURCES+=	dbus-introspect.h
 
 endif
