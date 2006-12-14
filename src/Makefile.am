@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.32 2006-12-13 02:33:09 danmc Exp $
+## $Id: Makefile.am,v 1.33 2006-12-14 00:37:48 danmc Exp $
 ##
 
 SUBDIRS=	icons script
@@ -144,7 +144,8 @@ DBUS_SRCS= \
 	dbus-pcbmain.h \
 	dbus.h \
 	dbus.c \
-	lrealpath.c 
+	lrealpath.c \
+	lrealpath.h
 
 BUILT_SOURCES = \
 	core_lists.h \
