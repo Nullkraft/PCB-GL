@@ -1,4 +1,4 @@
-/* $Id: gui.h,v 1.10 2006-11-14 05:29:42 haceaton Exp $ */
+/* $Id: gui.h,v 1.11 2006-12-14 06:28:37 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -326,9 +326,9 @@ gboolean ghid_port_button_release_cb (GtkWidget * drawing_area,
 
 
 gint ghid_port_window_enter_cb (GtkWidget * widget,
-				GdkEventButton * ev, GHidPort * out);
-gint ghid_port_window_leave_cb (GtkWidget * widget,
-				GdkEventButton * ev, GHidPort * out);
+			   GdkEventCrossing * ev, GHidPort * out);
+gint ghid_port_window_leave_cb (GtkWidget * widget, 
+                           GdkEventCrossing * ev, GHidPort * out);
 gint ghid_port_window_motion_cb (GtkWidget * widget,
 				 GdkEventButton * ev, GHidPort * out);
 gint ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
