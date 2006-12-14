@@ -1,4 +1,4 @@
-/* $Id: gui-config.c,v 1.8 2006-06-10 03:07:43 djdelorie Exp $ */
+/* $Id: gui-config.c,v 1.9 2006-12-14 01:53:54 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 extern int	MoveLayerAction(int argc, char **argv, int x, int y);
 
 
-RCSID ("$Id: gui-config.c,v 1.8 2006-06-10 03:07:43 djdelorie Exp $");
+RCSID ("$Id: gui-config.c,v 1.9 2006-12-14 01:53:54 haceaton Exp $");
 
 enum ConfigType
 {
@@ -989,6 +989,7 @@ config_sizes_apply (void)
       Settings.Shrink = PCB->Shrink;
       Settings.minWid = PCB->minWid;
       Settings.minSlk = PCB->minSlk;
+      Settings.IsleArea = PCB->IsleArea;
       Settings.minDrill = PCB->minDrill;
       Settings.minRing = PCB->minRing;
       ghidgui->config_modified = TRUE;
