@@ -1,4 +1,4 @@
-/* $Id: parse_y.y,v 1.34 2006-11-11 14:45:29 danmc Exp $ */
+/* $Id: parse_y.y,v 1.35 2006-12-15 06:15:33 djdelorie Exp $ */
 /*
  * ************************** README *******************
  *
@@ -61,7 +61,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_y.y,v 1.34 2006-11-11 14:45:29 danmc Exp $");
+RCSID("$Id: parse_y.y,v 1.35 2006-12-15 06:15:33 djdelorie Exp $");
 
 static	LayerTypePtr	Layer;
 static	PolygonTypePtr	Polygon;
@@ -1396,6 +1396,7 @@ elementdefinition
 				yyElement->MarkX = $3*100;
 				yyElement->MarkY = $4*100;
 			}
+		| { attr_list = & yyElement->Attributes; } attributes
 		;
 
 relementdefs
