@@ -1,4 +1,4 @@
-/* $Id: png.c,v 1.15 2006-10-09 00:35:27 danmc Exp $ */
+/* $Id: png.c,v 1.16 2006-12-17 05:28:38 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -51,7 +51,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: png.c,v 1.15 2006-10-09 00:35:27 danmc Exp $");
+RCSID ("$Id: png.c,v 1.16 2006-12-17 05:28:38 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PNG function %s.\n", __FUNCTION__); abort()
 
@@ -936,7 +936,8 @@ HID png_hid = {
   0 /* png_prompt_for */ ,
   0 /* png_attribute_dialog */ ,
   0 /* png_show_item */ ,
-  0				/* png_beep */
+  0 /* png_beep */ ,
+  0 /* png_progress */
 };
 
 #include "dolists.h"

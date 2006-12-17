@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.41 2006-12-17 04:41:54 djdelorie Exp $ */
+/* $Id: main.c,v 1.42 2006-12-17 05:28:37 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -33,7 +33,7 @@
 
 #include <sys/poll.h>
 
-RCSID ("$Id: main.c,v 1.41 2006-12-17 04:41:54 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.42 2006-12-17 05:28:37 djdelorie Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -3668,6 +3668,11 @@ lesstif_beep (void)
   fflush (stdout);
 }
 
+static void
+lesstif_progress (int so_far, int total, const char *message)
+{
+}
+
 HID lesstif_gui = {
   sizeof (HID),
   "lesstif",
@@ -3722,7 +3727,8 @@ HID lesstif_gui = {
   lesstif_prompt_for,
   lesstif_attribute_dialog,
   lesstif_show_item,
-  lesstif_beep
+  lesstif_beep,
+  lesstif_progress
 };
 
 #include "dolists.h"

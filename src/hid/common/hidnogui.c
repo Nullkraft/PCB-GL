@@ -1,4 +1,4 @@
-/* $Id: hidnogui.c,v 1.8 2006-12-07 13:10:36 danmc Exp $ */
+/* $Id: hidnogui.c,v 1.9 2006-12-17 05:28:37 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -16,7 +16,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: hidnogui.c,v 1.8 2006-12-07 13:10:36 danmc Exp $");
+RCSID ("$Id: hidnogui.c,v 1.9 2006-12-17 05:28:37 djdelorie Exp $");
 
 /* This is the "gui" that is installed at startup, and is used when
    there is no other real GUI to use.  For the most part, it just
@@ -307,6 +307,11 @@ nogui_beep (void)
   fflush (stdout);
 }
 
+static void
+nogui_progress (int so_far, int total, const char *message)
+{
+}
+
 HID hid_nogui = {
   sizeof (HID),
   "nogui",
@@ -352,7 +357,8 @@ HID hid_nogui = {
   nogui_prompt_for,
   nogui_attribute_dialog,
   nogui_show_item,
-  nogui_beep
+  nogui_beep,
+  nogui_progress
 };
 
 #define AD(x) if (!d->x) d->x = s->x
@@ -400,4 +406,5 @@ apply_default_hid (HID * d, HID * s)
   AD (attribute_dialog);
   AD (show_item);
   AD (beep);
+  AD (progress);
 }
