@@ -1,4 +1,4 @@
-/* $Id: hidnogui.c,v 1.10 2006-12-18 05:43:31 djdelorie Exp $ */
+/* $Id: hidnogui.c,v 1.11 2006-12-18 05:48:48 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -16,7 +16,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: hidnogui.c,v 1.10 2006-12-18 05:43:31 djdelorie Exp $");
+RCSID ("$Id: hidnogui.c,v 1.11 2006-12-18 05:48:48 djdelorie Exp $");
 
 /* This is the "gui" that is installed at startup, and is used when
    there is no other real GUI to use.  For the most part, it just
@@ -310,6 +310,7 @@ nogui_beep (void)
 static int
 nogui_progress (int so_far, int total, const char *message)
 {
+  return 0;
 }
 
 HID hid_nogui = {
