@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.29 2006-12-17 05:28:37 djdelorie Exp $ */
+/* $Id: gtkhid-main.c,v 1.30 2006-12-18 05:43:30 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.29 2006-12-17 05:28:37 djdelorie Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.30 2006-12-18 05:43:30 djdelorie Exp $");
 
 
 extern HID ghid_hid;
@@ -1066,7 +1066,7 @@ ghid_beep ()
   gdk_beep ();
 }
 
-static void
+static int
 ghid_progress (int so_far, int total, const char *message)
 {
 }
