@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.44 2006-12-18 05:48:48 djdelorie Exp $ */
+/* $Id: main.c,v 1.45 2006-12-22 02:46:13 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -33,7 +33,7 @@
 
 #include <sys/poll.h>
 
-RCSID ("$Id: main.c,v 1.44 2006-12-18 05:48:48 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.45 2006-12-22 02:46:13 djdelorie Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -1697,11 +1697,11 @@ lesstif_do_export (HID_Attr_Val * options)
   XtGetValues (appwidget, args, n);
 
   if (width < 1)
-    width = 400;
+    width = 640;
   if (width > XDisplayWidth (display, screen))
     width = XDisplayWidth (display, screen);
   if (height < 1)
-    height = 300;
+    height = 480;
   if (height > XDisplayHeight (display, screen))
     height = XDisplayHeight (display, screen);
 
