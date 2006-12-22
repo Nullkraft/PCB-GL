@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: search.h,v 1.9 2006-10-09 00:35:25 danmc Exp $
+ *  RCS: $Id: search.h,v 1.10 2006-12-22 04:59:11 haceaton Exp $
  */
 
 /* prototypes for search routines
@@ -33,7 +33,7 @@
 
 #include "global.h"
 
-#define SLOP 10
+#define SLOP 5
 /* ---------------------------------------------------------------------------
  * some useful macros
  */

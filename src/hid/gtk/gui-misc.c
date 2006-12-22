@@ -1,4 +1,4 @@
-/* $Id: gui-misc.c,v 1.6 2006-10-20 00:11:04 danmc Exp $ */
+/* $Id: gui-misc.c,v 1.7 2006-12-22 04:59:11 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -42,7 +42,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-misc.c,v 1.6 2006-10-20 00:11:04 danmc Exp $");
+RCSID ("$Id: gui-misc.c,v 1.7 2006-12-22 04:59:11 haceaton Exp $");
 
 #define DEFAULT_CURSORSHAPE	GDK_CROSSHAIR
 
@@ -170,6 +170,12 @@ gport_set_cursor (GdkCursorType shape)
       return (old_shape);
     }
   return (DEFAULT_CURSORSHAPE);
+}
+
+void
+ghid_point_cursor (void)
+{
+  oldCursor = gport_set_cursor (GDK_DRAPED_BOX);
 }
 
 void

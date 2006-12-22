@@ -1,4 +1,4 @@
-/* $Id: crosshair.c,v 1.27 2006-10-09 00:35:25 danmc Exp $ */
+/* $Id: crosshair.c,v 1.28 2006-12-22 04:59:11 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -52,7 +52,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: crosshair.c,v 1.27 2006-10-09 00:35:25 danmc Exp $");
+RCSID ("$Id: crosshair.c,v 1.28 2006-12-22 04:59:11 haceaton Exp $");
 
 #if !defined(ABS)
 #define ABS(x) (((x)<0)?-(x):(x))
@@ -894,6 +894,16 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
     {
       Crosshair.X = x0;
       Crosshair.Y = y0;
+    }
+  if (Settings.Mode == ARROW_MODE)
+    {
+	ans =
+	  SearchScreen (Crosshair.X, Crosshair.Y, LINEPOINT_TYPE,
+			&ptr1, &ptr2, &ptr3);
+	if (ans == NO_TYPE)
+	  hid_action("PointCursor");
+	else
+	  hid_actionl("PointCursor","True", NULL);
     }
   if (Settings.Mode == LINE_MODE
       && Crosshair.AttachedLine.State != STATE_FIRST

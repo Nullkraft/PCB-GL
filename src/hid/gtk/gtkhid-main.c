@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.31 2006-12-18 05:48:48 djdelorie Exp $ */
+/* $Id: gtkhid-main.c,v 1.32 2006-12-22 04:59:11 haceaton Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.31 2006-12-18 05:48:48 djdelorie Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.32 2006-12-22 04:59:11 haceaton Exp $");
 
 
 extern HID ghid_hid;
@@ -1192,6 +1192,18 @@ HID ghid_extents = {
 
 /* ---------------------------------------------------------------------- */
 
+static int PointCursor (int argc, char **argv, int x, int y)
+{
+  if (!ghidgui)
+    return 0;
+
+  if (argc > 0)
+    ghid_point_cursor ();
+  else
+    ghid_mode_cursor (Settings.Mode);
+  return 0;
+}
+
 static int
 RouteStylesChanged (int argc, char **argv, int x, int y)
 {
@@ -1537,6 +1549,7 @@ HID_Action ghid_main_action_list[] = {
    zoom_help, zoom_syntax},
   {"Command", 0, Command},
   {"Benchmark", 0, Benchmark},
+  {"PointCursor", 0, PointCursor},
 };
 
 REGISTER_ACTIONS (ghid_main_action_list)

@@ -1,4 +1,4 @@
-/* $Id: gui.h,v 1.11 2006-12-14 06:28:37 danmc Exp $ */
+/* $Id: gui.h,v 1.12 2006-12-22 04:59:11 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -292,6 +292,7 @@ void ghid_cursor_position_label_set_text (gchar * text);
 void ghid_cursor_position_relative_label_set_text (gchar * text);
 
 void ghid_hand_cursor (void);
+void ghid_point_cursor (void);
 void ghid_watch_cursor (void);
 void ghid_mode_cursor (gint mode);
 void ghid_corner_cursor (void);
