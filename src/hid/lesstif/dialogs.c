@@ -1,4 +1,4 @@
-/* $Id: dialogs.c,v 1.24 2006-12-22 04:47:58 djdelorie Exp $ */
+/* $Id: dialogs.c,v 1.25 2006-12-23 17:30:03 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -25,7 +25,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: dialogs.c,v 1.24 2006-12-22 04:47:58 djdelorie Exp $");
+RCSID ("$Id: dialogs.c,v 1.25 2006-12-23 17:30:03 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
 
@@ -746,7 +746,7 @@ lesstif_attribute_dialog (HID_Attribute * attrs,
 		Widget btn;
 		XmString label;
 		n = 0;
-		label = XmStringCreateLocalized (attrs[i].enumerations[sn]);
+		label = XmStringCreateLocalized ((char *)attrs[i].enumerations[sn]);
 		stdarg (XmNuserData, & attrs[i].enumerations[sn]);
 		stdarg (XmNlabelString, label);
 		btn = XmCreatePushButton (submenu, "menubutton", args, n);
