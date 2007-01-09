@@ -1,4 +1,4 @@
-/* $Id: gerber.c,v 1.21 2006-10-20 23:19:51 danmc Exp $ */
+/* $Id: gerber.c,v 1.22 2007-01-09 14:16:26 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -32,7 +32,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gerber.c,v 1.21 2006-10-20 23:19:51 danmc Exp $");
+RCSID ("$Id: gerber.c,v 1.22 2007-01-09 14:16:26 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented Gerber function %s.\n", __FUNCTION__); abort()
 
@@ -57,6 +57,7 @@ static int verbose;
 static int is_mask, was_drill;
 static int is_drill;
 static int current_mask;
+static int flash_drills;
 
 enum ApertureShape
 {
@@ -417,6 +418,11 @@ gerber_set_layer (const char *name, int group)
     return 0;
   if (SL_TYPE (idx) == SL_ASSY)
     return 0;
+
+  flash_drills = 0;
+  if (strcmp (name, "outline") == 0
+      || strcmp (name, "route") == 0)
+    flash_drills = 1;
 
   if (is_drill && n_pending_drills)
     {
@@ -838,7 +844,7 @@ gerber_fill_circle (hidGC gc, int cx, int cy, int radius)
       n_pending_drills++;
       return;
     }
-  else if (gc->drill)
+  else if (gc->drill && !flash_drills)
     return;
   if (cx != lastX)
     {
