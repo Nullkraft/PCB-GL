@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.69 2006-12-13 02:32:52 danmc Exp $
+dnl $Id: configure.ac,v 1.70 2007-01-15 13:24:20 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -483,6 +483,7 @@ JPEG export with --disable-jpeg])
 		AC_MSG_RESULT([yes])
 		with_png=yes
 		])
+	AM_CONDITIONAL(PNG, test x$with_png = xyes)
 	if test "X$with_png" = "Xyes" ; then
 		AC_CHECK_FUNCS(gdImagePng)
 		if test "$ac_cv_func_gdImagePng" != "yes"; then
