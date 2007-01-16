@@ -1,4 +1,4 @@
-/* $Id: parse_l.l,v 1.15 2006-11-10 21:56:53 danmc Exp $ */
+/* $Id: parse_l.l,v 1.16 2007-01-16 18:13:17 djdelorie Exp $ */
 
 %{
 /*
@@ -48,7 +48,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_l.l,v 1.15 2006-11-10 21:56:53 danmc Exp $");
+RCSID("$Id: parse_l.l,v 1.16 2007-01-16 18:13:17 djdelorie Exp $");
 
 
 #include "global.h"
@@ -194,23 +194,37 @@ Attribute	{ return(T_ATTRIBUTE); }
 static int Parse(char *Executable, char *Path, char *Filename, char *Parameter)
 {
 	static	char	*command = NULL;
-			int		returncode;
+	int		returncode;
+	int		used_popen = 0;
 
 #ifdef FLEX_SCANNER
 	static	Boolean	firsttime = True;
 #endif
 
-		/* release old command and create new from template */
-	if (command)
-	  MYFREE (command);
-	command = EvaluateFilename(Executable, Path, Filename, Parameter);
+	if (EMPTY_STRING_P (Executable))
+	  {
+	    yyin = fopen (Filename, "r");
+	    if (!yyin)
+	      {
+		Message("Can't open %s for reading\n", Filename);
+		return(1);
+	      }
+	  }
+	else
+	  {
+	    used_popen = 1;
+	    /* release old command and create new from template */
+	    if (command)
+	      MYFREE (command);
+	    command = EvaluateFilename(Executable, Path, Filename, Parameter);
 
-		/* open pipe to stdout of command */
-	if (*command == '\0' || (yyin = popen(command, "r")) == NULL)
-	{
+	    /* open pipe to stdout of command */
+	    if (*command == '\0' || (yyin = popen(command, "r")) == NULL)
+	      {
 		PopenErrorMessage(command);
 		return(1);
-	}
+	      }
+	  }
 
 #ifdef FLEX_SCANNER
 		/* reset parser if not called the first time */
@@ -240,7 +254,9 @@ static int Parse(char *Executable, char *Path, char *Filename, char *Parameter)
 	/* clean up parse buffer */
 	yy_delete_buffer(YY_CURRENT_BUFFER);
 
-	return(pclose(yyin) ? 1 : returncode);
+	if (used_popen)
+	  return(pclose(yyin) ? 1 : returncode);
+	return(fclose(yyin) ? 1 : returncode);
 }
 
 /* ---------------------------------------------------------------------------
@@ -252,7 +268,7 @@ int ParseElementFile(DataTypePtr Ptr, char *Filename)
 	yyData = Ptr;
 	yyFont = &PCB->Font;
 	yyElement = NULL;
-	return(Parse(Settings.ElementCommand,Settings.ElementPath,Filename,NULL));
+	return(Parse(NULL,NULL,Filename,NULL));
 }
 
 /* ---------------------------------------------------------------------------

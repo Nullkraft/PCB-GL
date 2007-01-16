@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: macro.h,v 1.24 2006-10-12 02:46:31 haceaton Exp $
+ *  RCS: $Id: macro.h,v 1.25 2007-01-16 18:13:17 djdelorie Exp $
  */
 
 /* some commonly used macros not related to a special C-file
@@ -101,6 +101,7 @@
 #define	UNKNOWN(a)		((a) && *(a) ? (a) : "(unknown)")
 #define NSTRCMP(a, b)		((a) ? ((b) ? strcmp((a),(b)) : 1) : -1)
 #define	EMPTY(a)		((a) ? (a) : "")
+#define	EMPTY_STRING_P(a)	((a) ? (a)[0]==0 : 1)
 #define XOR(a,b)		(((a) && !(b)) || (!(a) && (b)))
 #define SQUARE(x)		((float) (x) * (float) (x))
 #define TO_RADIANS(degrees)	(M180 * (degrees))

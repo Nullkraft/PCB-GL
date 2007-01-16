@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.61 2006-12-07 13:10:35 danmc Exp $ */
+/* $Id: main.c,v 1.62 2007-01-16 18:13:17 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -63,7 +63,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.61 2006-12-07 13:10:35 danmc Exp $");
+RCSID ("$Id: main.c,v 1.62 2007-01-16 18:13:17 djdelorie Exp $");
 
 
 
@@ -490,7 +490,7 @@ HID_Attribute main_attribute_list[] = {
 
   SSET (FontCommand, "M4PATH='%p';export M4PATH;echo 'include(%f)' | " GNUM4,
 	"font-command", 0),
-  SSET (FileCommand, "cat '%f'", "file-command", "Command to read a file."),
+  SSET (FileCommand, "", "file-command", "Command to read a file."),
   SSET (ElementCommand,
 	"M4PATH='%p';export M4PATH;echo 'include(%f)' | " GNUM4,
 	"element-command", 0),
@@ -502,7 +502,7 @@ HID_Attribute main_attribute_list[] = {
 	"lib-contents-command", 0),
   SSET (LibraryTree, PCBTREEDIR, "lib-newlib",
 	"Top level directory for the newlib style library"),
-  SSET (SaveCommand, "cat - > '%f'", "save-command", 0),
+  SSET (SaveCommand, "", "save-command", 0),
   SSET (LibraryFilename, LIBRARYFILENAME, "lib-name", 0),
   SSET (FontFile, "default_font", "default-font",
 	"File name of default font."),
@@ -511,7 +511,7 @@ HID_Attribute main_attribute_list[] = {
 	":Fat,4000,6000,3500,1000:Skinny,600,2402,1181,600", "route-styles",
 	0),
   SSET (FilePath, "", "file-path", 0),
-  SSET (RatCommand, "cat %f", "rat-command", 0),
+  SSET (RatCommand, "", "rat-command", 0),
   SSET (FontPath, ".:" PCBLIBDIR, "font-path", 0),
   SSET (ElementPath, ".:" PCBLIBDIR, "element-path", 0),
   SSET (LibraryPath, ".:" PCBLIBDIR, "lib-path", 0),
