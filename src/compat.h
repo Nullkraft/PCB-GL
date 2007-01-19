@@ -1,4 +1,4 @@
-/* $Id: compat.h,v 1.3 2006-04-13 03:33:57 danmc Exp $ */
+/* $Id: compat.h,v 1.4 2007-01-19 22:33:31 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -43,4 +43,19 @@ float logf (float);
 long random (void);
 #endif
 
+#if !defined(HAVE_DLFCN_H) && defined(WIN32)
+void * dlopen (const char *, int);
+void dlclose (void *);
+char * dlerror (void);
+
+void * dlsym(void *, const char *);
+
+#define RTLD_NOW 2
+#define RTLD_LOCAL 0
+#define RTLD_GLOBAL 4
+
+#endif
+
+
 #endif /* __COMPAT_H__ */
+

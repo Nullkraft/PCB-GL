@@ -1,4 +1,4 @@
-/* $Id: compat.c,v 1.6 2006-10-09 00:35:25 danmc Exp $ */
+/* $Id: compat.c,v 1.7 2007-01-19 22:33:31 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -34,7 +34,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: compat.c,v 1.6 2006-10-09 00:35:25 danmc Exp $");
+RCSID ("$Id: compat.c,v 1.7 2007-01-19 22:33:31 danmc Exp $");
 
 #ifndef HAVE_EXPF
 float
@@ -59,3 +59,56 @@ random (void)
   return (long) rand ();
 }
 #endif
+
+#if !defined(HAVE_DLFCN_H) && defined(WIN32)
+#include <windows.h>
+
+void *
+dlopen (const char * f, int ATTRIBUTE_UNUSED flag)
+{
+  return LoadLibrary (f);
+}
+
+void
+dlclose (void * h)
+{
+  FreeLibrary ((HINSTANCE) h);
+}
+
+char *
+dlerror ()
+{
+  static LPVOID lpMsgBuf = NULL;
+  DWORD dw;
+
+  /* free the error message buffer */
+  if (lpMsgBuf)
+    LocalFree (lpMsgBuf);
+
+  /* get the error code */
+  dw = GetLastError();
+
+  /* get the corresponding error message */
+  FormatMessage (
+		FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		FORMAT_MESSAGE_FROM_SYSTEM |
+		FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL,
+		dw,
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(LPTSTR) &lpMsgBuf,
+		0, NULL);
+
+  return (char *) lpMsgBuf;
+}
+
+void *
+dlsym (void *handle, const char *symbol)
+{
+  return (void *) GetProcAddress((HMODULE) handle, symbol);
+}
+
+
+#endif
+
+
