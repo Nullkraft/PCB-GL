@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.62 2007-01-16 18:13:17 djdelorie Exp $ */
+/* $Id: main.c,v 1.63 2007-01-20 13:04:31 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -63,7 +63,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.62 2007-01-16 18:13:17 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.63 2007-01-20 13:04:31 danmc Exp $");
 
 
 
@@ -500,7 +500,7 @@ HID_Attribute main_attribute_list[] = {
 	"lib-command", 0),
   SSET (LibraryContentsCommand, "ListLibraryContents.sh '%p' '%f'",
 	"lib-contents-command", 0),
-  SSET (LibraryTree, PCBTREEDIR, "lib-newlib",
+  SSET (LibraryTree, PCBTREEPATH, "lib-newlib",
 	"Top level directory for the newlib style library"),
   SSET (SaveCommand, "", "save-command", 0),
   SSET (LibraryFilename, LIBRARYFILENAME, "lib-name", 0),

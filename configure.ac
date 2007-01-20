@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.72 2007-01-19 22:31:14 danmc Exp $
+dnl $Id: configure.ac,v 1.73 2007-01-20 13:04:31 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -585,11 +585,14 @@ AC_DEFINE_UNQUOTED(LIBRARYFILENAME,"$LIBRARYFILENAME",[library file name])
 
 
 # directory for new library
-PCBTREEDIR=${datadir}/pcb/newlib:${PCBLIBDIR}/pcblib-newlib
+PCBTREEDIR=${datadir}/pcb/newlib
+PCBTREEPATH=${PCBTREEDIR}:${PCBLIBDIR}/pcblib-newlib
 PCBTREEDIR=${PCBTREEDIR:-"$PCBTREEDIR"}
 AC_SUBST(PCBTREEDIR)
+AC_SUBST(PCBTREEPATH)
 #AC_DEFINE_UNQUOTED(PCBTREEDIR,"$PCBLIB",[top directory for new style pcb library])
 CPPFLAGS="$CPPFLAGS -DPCBTREEDIR=\\\"$PCBTREEDIR\\\""
+CPPFLAGS="$CPPFLAGS -DPCBTREEPATH=\\\"$PCBTREEPATH\\\""
 
 BTNMOD=${BTNMOD:-"Mod1"}
 AC_SUBST(BTNMOD)
