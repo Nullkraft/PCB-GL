@@ -1,5 +1,5 @@
 ## -*- makefile -*-
-## $Id: Makefile.am,v 1.16 2007-01-16 23:29:11 danmc Exp $
+## $Id: Makefile.am,v 1.17 2007-01-22 01:27:54 danmc Exp $
 ##
 
 PCBLIBDIR=		@PCBLIBDIR@
@@ -52,10 +52,10 @@ ${NEWLIB}.stamp : m4lib_to_newlib.sh ${LIBCONTENTS} footprint.pcb
 
 
 install-data-local: ${NEWLIB}.stamp
-	tar cf - ${NEWLIB} | (cd $(DESTDIR)/$(PCBLIBDIR) && tar -xf -)
+	tar cf - ${NEWLIB} | (cd $(DESTDIR)$(PCBLIBDIR) && tar -xf -)
 
 uninstall-local:
-	rm -fr $(DESTDIR)/$(PCBLIBDIR)/${NEWLIB}
+	rm -fr $(DESTDIR)$(PCBLIBDIR)/${NEWLIB}
 
 EXTRA_DIST=	${NEWLIB} footprint.pcb
 
