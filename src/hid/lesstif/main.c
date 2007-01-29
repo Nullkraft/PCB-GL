@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.46 2006-12-22 04:59:11 haceaton Exp $ */
+/* $Id: main.c,v 1.47 2007-01-29 04:30:10 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -33,7 +33,7 @@
 
 #include <sys/poll.h>
 
-RCSID ("$Id: main.c,v 1.46 2006-12-22 04:59:11 haceaton Exp $");
+RCSID ("$Id: main.c,v 1.47 2007-01-29 04:30:10 djdelorie Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -3346,6 +3346,7 @@ lesstif_set_crosshair (int x, int y)
 {
   if (crosshair_x != x || crosshair_y != y)
     {
+      lesstif_show_crosshair(0);
       crosshair_x = x;
       crosshair_y = y;
       need_idle_proc ();
