@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.69 2007-01-09 14:16:26 djdelorie Exp $ */
+/* $Id: draw.c,v 1.70 2007-02-01 21:10:43 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.69 2007-01-09 14:16:26 djdelorie Exp $");
+RCSID ("$Id: draw.c,v 1.70 2007-02-01 21:10:43 djdelorie Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -518,7 +518,7 @@ DrawEverything (BoxTypePtr drawn_area)
 	  if (!gui->gui)
 	    {
 	      /* draw holes */
-	      plated = 0;
+	      plated = -1;
 	      r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback,
 			&plated);
 	      r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback,
