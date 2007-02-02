@@ -24,7 +24,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: rats.h,v 1.3 2006-03-22 23:17:20 danmc Exp $
+ *  RCS: $Id: rats.h,v 1.4 2007-02-02 04:49:17 djdelorie Exp $
  */
 
 /* prototypes for rats routines
@@ -34,6 +34,9 @@
 #define	__RATS_INCLUDED__
 
 #include "global.h"
+
+/* This one is actually in netlist.h, but it's used by rats.c */
+LibraryMenuTypePtr netnode_to_netname (char *nodename);
 
 RatTypePtr AddNet (void);
 char *ConnectionName (int, void *, void *);

@@ -1,4 +1,4 @@
-/* $Id: netlist.c,v 1.22 2006-10-09 00:35:25 danmc Exp $ */
+/* $Id: netlist.c,v 1.23 2007-02-02 04:49:17 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -70,7 +70,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: netlist.c,v 1.22 2006-10-09 00:35:25 danmc Exp $");
+RCSID ("$Id: netlist.c,v 1.23 2007-02-02 04:49:17 djdelorie Exp $");
 
 /*
   int    PCB->NetlistLib.MenuN
@@ -84,6 +84,25 @@ RCSID ("$Id: netlist.c,v 1.22 2006-10-09 00:35:25 danmc Exp $");
 */
 
 typedef void (*NFunc) (LibraryMenuType *, LibraryEntryType *);
+
+LibraryMenuTypePtr
+netnode_to_netname (char *nodename)
+{
+  int i, j;
+  /*printf("nodename [%s]\n", nodename);*/
+  for (i=0; i<PCB->NetlistLib.MenuN; i++)
+    {
+      for (j=0; j<PCB->NetlistLib.Menu[i].EntryN; j++)
+	{
+	  if (strcmp (PCB->NetlistLib.Menu[i].Entry[j].ListEntry, nodename) == 0)
+	    {
+	      /*printf(" in [%s]\n", PCB->NetlistLib.Menu[i].Name);*/
+	      return & (PCB->NetlistLib.Menu[i]);
+	    }
+	}
+    }
+  return 0;
+}
 
 static int
 pin_name_to_xy (LibraryEntryType * pin, int *x, int *y)
