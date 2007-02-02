@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.63 2007-01-20 13:04:31 danmc Exp $ */
+/* $Id: main.c,v 1.64 2007-02-02 05:20:55 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -63,7 +63,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.63 2007-01-20 13:04:31 danmc Exp $");
+RCSID ("$Id: main.c,v 1.64 2007-02-02 05:20:55 djdelorie Exp $");
 
 
 
@@ -527,6 +527,7 @@ HID_Attribute main_attribute_list[] = {
   ISET (PinoutTextOffsetX, 800, "pinout-text-offset-x", 0),
   ISET (PinoutTextOffsetY, -100, "pinout-text-offset-y", 0),
 
+  BSET (DrawGrid, 0, "draw-grid", "default to drawing the grid at startup"),
   BSET (ClearLine, 1, "clear-line", 0),
   BSET (UniqueNames, 1, "unique-names", 0),
   BSET (SnapPin, 1, "snap-pin", 0),
