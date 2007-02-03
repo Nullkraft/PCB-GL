@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: globalconst.h,v 1.9 2006-06-10 03:07:37 djdelorie Exp $
+ *  RCS: $Id: globalconst.h,v 1.10 2007-02-03 01:05:33 danmc Exp $
  */
 
 /* global constants
@@ -38,8 +38,8 @@
 /* ---------------------------------------------------------------------------
  * some file-, directory- and environment names
  */
-#define	EMERGENCY_NAME		"/tmp/PCB.%i.save"	/* %i --> pid */
-#define	BACKUP_NAME		"/tmp/PCB.%i.backup"	/* %i --> pid */
+#define	EMERGENCY_NAME		"PCB.%.8i.save"	        /* %i --> pid */
+#define	BACKUP_NAME		"PCB.%.8i.backup"	/* %i --> pid */
 
 /* ---------------------------------------------------------------------------
  * some default values
