@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.64 2007-02-02 05:20:55 djdelorie Exp $ */
+/* $Id: main.c,v 1.65 2007-02-03 04:12:41 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -63,7 +63,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.64 2007-02-02 05:20:55 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.65 2007-02-03 04:12:41 danmc Exp $");
 
 
 
@@ -71,8 +71,6 @@ RCSID ("$Id: main.c,v 1.64 2007-02-02 05:20:55 djdelorie Exp $");
 #ifdef HAVE_LIBSTROKE
 extern void stroke_init (void);
 #endif
-
-
 
 /* ----------------------------------------------------------------------
  * initialize signal and error handlers
@@ -775,6 +773,9 @@ main (int argc, char *argv[])
 #if HAVE_DBUS
       pcb_dbus_setup();
 #endif
+
+      EnableAutosave ();
+
       gui->do_export (0);
 #if HAVE_DBUS
       pcb_dbus_finish();
@@ -783,3 +784,4 @@ main (int argc, char *argv[])
 
   return (0);
 }
+

@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: file.h,v 1.4 2006-11-10 21:56:53 danmc Exp $
+ *  RCS: $Id: file.h,v 1.5 2007-02-03 04:12:41 danmc Exp $
  */
 
 /* prototypes for file routines
@@ -38,6 +38,7 @@ FILE *CheckAndOpenFile (char *, Boolean, Boolean, Boolean *, Boolean *);
 FILE *OpenConnectionDataFile (void);
 int SavePCB (char *);
 int LoadPCB (char *);
+void EnableAutosave (void);
 void Backup (void);
 void SaveInTMP (void);
 void EmergencySave (void);
