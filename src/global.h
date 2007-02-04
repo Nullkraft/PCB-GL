@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.51 2006-10-21 14:38:30 haceaton Exp $
+ *  RCS: $Id: global.h,v 1.52 2007-02-04 01:32:42 danmc Exp $
  */
 
 /* definition of types
@@ -744,5 +744,16 @@ typedef struct
  */
 #define AUSAGE(x) Message ("Usage:\n%s\n", (x##_syntax))
 #define AFAIL(x) { Message ("Syntax error.  Usage:\n%s\n", (x##_syntax)); return 1; }
+
+/* ---------------------------------------------------------------------------
+ * Variables with absolute paths to various directories.  These are deduced
+ * at runtime to allow pcb to be relocatable
+ */
+extern char *bindir;
+extern char *pcblibdir;
+extern char *pcblibpath;
+extern char *pcbtreedir;
+extern char *pcbtreepath;
+extern char *exec_prefix;
 
 #endif /* __GLOBAL_INCLUDED__  */

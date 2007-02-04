@@ -1,4 +1,4 @@
-/* $Id: gui-config.c,v 1.10 2007-02-03 04:12:41 danmc Exp $ */
+/* $Id: gui-config.c,v 1.11 2007-02-04 01:32:42 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 extern int	MoveLayerAction(int argc, char **argv, int x, int y);
 
 
-RCSID ("$Id: gui-config.c,v 1.10 2007-02-03 04:12:41 danmc Exp $");
+RCSID ("$Id: gui-config.c,v 1.11 2007-02-04 01:32:42 danmc Exp $");
 
 enum ConfigType
 {
@@ -669,7 +669,7 @@ load_rc_files (void)
   load_rc_file ("/etc/pcbrc");
   load_rc_file ("/usr/local/etc/pcbrc");
 
-  path = g_build_filename (PCBLIBDIR, "pcbrc", NULL);
+  path = g_build_filename (pcblibdir, "pcbrc", NULL);
   load_rc_file (path);
   g_free (path);
 

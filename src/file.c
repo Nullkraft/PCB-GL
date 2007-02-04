@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.52 2007-02-03 04:12:41 danmc Exp $ */
+/* $Id: file.c,v 1.53 2007-02-04 01:32:42 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -97,7 +97,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: file.c,v 1.52 2007-02-03 04:12:41 danmc Exp $");
+RCSID ("$Id: file.c,v 1.53 2007-02-04 01:32:42 danmc Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -1103,9 +1103,9 @@ ParseLibraryTree (void)
 		      entry->AllocatedMemory = MyCalloc (1, len,
 							 "ParseLibraryTree()");
 		      strcat (entry->AllocatedMemory, path);
-		      strcat (entry->AllocatedMemory, "/");
+		      strcat (entry->AllocatedMemory, PCB_DIR_SEPARATOR_S);
 		      strcat (entry->AllocatedMemory, direntry->d_name);
-		      strcat (entry->AllocatedMemory, "/");
+		      strcat (entry->AllocatedMemory, PCB_DIR_SEPARATOR_S);
 		      entry->ListEntry = entry->AllocatedMemory
 			+ strlen (entry->AllocatedMemory);
 		      strcat (entry->AllocatedMemory, e2->d_name);
