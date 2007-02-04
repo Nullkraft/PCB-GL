@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.66 2007-02-04 01:32:42 danmc Exp $ */
+/* $Id: main.c,v 1.67 2007-02-04 23:20:19 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -64,7 +64,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.66 2007-02-04 01:32:42 danmc Exp $");
+RCSID ("$Id: main.c,v 1.67 2007-02-04 23:20:19 danmc Exp $");
 
 
 #define PCBLIBPATH ".:" PCBLIBDIR
@@ -489,7 +489,7 @@ HID_Attribute main_attribute_list[] = {
   LAYERNAME (7, "signal3"),
   LAYERNAME (8, "signal4"),
 
-  SSET (FontCommand, "M4PATH='%p';export M4PATH;echo 'include(%f)' | " GNUM4,
+  SSET (FontCommand, "",
 	"font-command", 0),
   SSET (FileCommand, "", "file-command", "Command to read a file."),
   SSET (ElementCommand,
@@ -661,7 +661,7 @@ InitPaths (char *argv0)
       fprintf (stderr, "InitPaths():  malloc failed\n");
       exit (1);
     }
-  sprintf (pcblibpath, ".:%s", pcblibdir);
+  sprintf (pcblibpath, ".%s%s", PCB_PATH_DELIMETER, pcblibdir);
 
   /* and the newlib search path */
   l = strlen (pcblibdir) + 1 + strlen (pcbtreedir) 
@@ -671,7 +671,9 @@ InitPaths (char *argv0)
       fprintf (stderr, "InitPaths():  malloc failed\n");
       exit (1);
     }
-  sprintf (pcbtreepath, "%s:%s/pcblib-newlib", pcbtreedir, pcblibdir);
+  sprintf (pcbtreepath, "%s%s%s%spcblib-newlib", pcbtreedir, 
+	PCB_PATH_DELIMETER, pcblibdir,
+	PCB_DIR_SEPARATOR_S);
   
 #ifdef DEBUG
   printf ("bindir      = %s\n", bindir);

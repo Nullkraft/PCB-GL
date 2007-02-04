@@ -1,4 +1,4 @@
-dnl $Id: acinclude.m4,v 1.6 2007-02-03 05:55:08 danmc Exp $
+dnl $Id: acinclude.m4,v 1.7 2007-02-04 23:20:13 danmc Exp $
 dnl
 dnl the FC_* macros were copied from the freeciv program.  The use here
 dnl is to figure out if we need -DNARROWPROTO and the correct setting
@@ -340,7 +340,7 @@ esac
 # squeze repeated slashes
 case ifelse($2,,"[$]$1",$2) in
 # if the path contains any backslashes, turn slashes into backslashes
- *\\*) $1=`echo "[$]$1" | sed 's,\(.\)[[\\/]][[\\/]]*,\1\\\\,g'` ;;
+ *\\*) $1=`echo "[$]$1" | sed 's,\(.\)[[\\/]][[\\/]]*,\1\\\\\\\\,g'` ;;
 # if the path contains slashes, also turn backslashes into slashes
  *) $1=`echo "[$]$1" | sed 's,\(.\)[[\\/]][[\\/]]*,\1/,g'` ;;
 esac])

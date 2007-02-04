@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.53 2007-02-04 01:32:42 danmc Exp $ */
+/* $Id: file.c,v 1.54 2007-02-04 23:20:19 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -97,7 +97,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: file.c,v 1.53 2007-02-04 01:32:42 danmc Exp $");
+RCSID ("$Id: file.c,v 1.54 2007-02-04 23:20:19 danmc Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -1025,7 +1025,7 @@ ParseLibraryTree (void)
 
   /* Additional loop to allow for multiple 'newlib' style library directories */
   libpaths = MyStrdup (Settings.LibraryTree, "ParseLibraryTree");
-  for (p = strtok (libpaths, ":"); p && *p; p = strtok (NULL, ":"))
+  for (p = strtok (libpaths, PCB_PATH_DELIMETER); p && *p; p = strtok (NULL, PCB_PATH_DELIMETER))
     {
       strncpy (path, p, sizeof (path) - 1);
 
