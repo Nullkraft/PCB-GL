@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.1 2003-02-20 00:23:35 danmc Exp $
+## $Id: Makefile.am,v 1.2 2007-02-04 02:29:14 danmc Exp $
 ##
 ## Top level 'newlib' automake file
 
@@ -8,13 +8,10 @@ SUBDIRS=\
 	burr-brown \
 	connectors \
 	crystal \
-	cypress \
 	electro-optics \
-	generic_SMD_packages \
 	headers \
 	msp430 \
 	not_vetted_ingo \
 	sockets \
-	tests \
-	toko 
+	tests
 

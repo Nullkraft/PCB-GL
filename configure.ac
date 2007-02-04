@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.75 2007-02-04 01:32:40 danmc Exp $
+dnl $Id: configure.ac,v 1.76 2007-02-04 02:29:14 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -659,15 +659,12 @@ if test -d $srcdir/newlib; then
    AC_CONFIG_FILES(newlib/burr-brown/Makefile)
    AC_CONFIG_FILES(newlib/connectors/Makefile)
    AC_CONFIG_FILES(newlib/crystal/Makefile)
-   AC_CONFIG_FILES(newlib/cypress/Makefile)
    AC_CONFIG_FILES(newlib/electro-optics/Makefile)
-   AC_CONFIG_FILES(newlib/generic_SMD_packages/Makefile)
    AC_CONFIG_FILES(newlib/headers/Makefile)
    AC_CONFIG_FILES(newlib/msp430/Makefile)
    AC_CONFIG_FILES(newlib/not_vetted_ingo/Makefile)
    AC_CONFIG_FILES(newlib/sockets/Makefile)
    AC_CONFIG_FILES(newlib/tests/Makefile)
-   AC_CONFIG_FILES(newlib/toko/Makefile)
 fi
 AC_CONFIG_FILES(src/Makefile)
 AC_CONFIG_FILES(src/icons/Makefile)
