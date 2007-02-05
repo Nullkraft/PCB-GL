@@ -1,4 +1,4 @@
-/* $Id: parse_l.l,v 1.18 2007-02-05 01:11:05 danmc Exp $ */
+/* $Id: parse_l.l,v 1.19 2007-02-05 02:42:34 danmc Exp $ */
 
 %{
 /*
@@ -48,7 +48,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_l.l,v 1.18 2007-02-05 01:11:05 danmc Exp $");
+RCSID("$Id: parse_l.l,v 1.19 2007-02-05 02:42:34 danmc Exp $");
 
 
 #include "global.h"
@@ -216,7 +216,7 @@ static int Parse(char *Executable, char *Path, char *Filename, char *Parameter)
                 exit (1);
               }
 
-	    if ( Path != NULL )
+	    if ( Path != NULL && *Path != '\0')
               sprintf (tmps, "%s%s%s", Path, PCB_DIR_SEPARATOR_S, Filename);
             else
               sprintf (tmps, "%s", Filename);
