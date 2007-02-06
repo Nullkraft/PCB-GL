@@ -1,4 +1,4 @@
-;; $Id: pcb.nsi.in,v 1.4 2007-02-06 19:29:13 danmc Exp $
+;; $Id: pcb.nsi.in,v 1.5 2007-02-06 19:38:42 danmc Exp $
 ;;
 ;; Installer script file for PCB for windows.  See http://nsis.sourceforge.net
 ;; for details on NSIS.
@@ -47,7 +47,11 @@
 ;Pages
 
   !insertmacro MUI_PAGE_LICENSE "@pcb_srcdir@\COPYING"
-;  !insertmacro MUI_PAGE_LICENSE "@pcb_srcdir@\COPYING.win32"
+  !insertmacro MUI_PAGE_LICENSE "@gd_win32_runtime@\gd-license.txt"
+  !insertmacro MUI_PAGE_LICENSE "@gd_win32_runtime@\libfreetype-license.txt"
+  !insertmacro MUI_PAGE_LICENSE "@gd_win32_runtime@\libjpeg-license.txt"
+  !insertmacro MUI_PAGE_LICENSE "@gd_win32_runtime@\libpng-license.txt"
+  !insertmacro MUI_PAGE_LICENSE "@gd_win32_runtime@\zlib-license.txt"
 ;  !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY
   
