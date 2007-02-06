@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# $Id: build_pcb,v 1.11 2007-02-06 19:40:56 danmc Exp $
+# $Id: build_pcb,v 1.12 2007-02-06 19:46:46 danmc Exp $
 #
 
 # error out on failed commands whose return code wasn't explicitly
@@ -60,7 +60,7 @@ while test $# -ne 0 ; do
 			shift
 			;;
 
-		--enable-maintainer-mode3)
+		--enable-maintainer-mode)
 			config_args="${config_args} --enable-maintainer-mode"
 			shift
 			;;
