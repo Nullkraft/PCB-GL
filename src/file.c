@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.54 2007-02-04 23:20:19 danmc Exp $ */
+/* $Id: file.c,v 1.55 2007-02-06 05:40:39 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -97,7 +97,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: file.c,v 1.54 2007-02-04 23:20:19 danmc Exp $");
+RCSID ("$Id: file.c,v 1.55 2007-02-06 05:40:39 danmc Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -899,7 +899,7 @@ EmergencySave (void)
  * Callback for the autosave
  */
 
-static hidval backup_timer = (hidval) NULL;
+static hidval backup_timer;
 
 /*  
  * If the backup interval is > 0 then set another timer.  Otherwise
@@ -919,6 +919,10 @@ backup_cb (hidval data)
 void
 EnableAutosave (void)
 {
+  hidval x;
+
+  x.ptr = NULL;
+
   /* If we already have a timer going, then cancel it out */
   if (backup_timer.ptr != NULL && gui->stop_timer)
     gui->stop_timer (backup_timer);
@@ -928,7 +932,7 @@ EnableAutosave (void)
   if (Settings.BackupInterval > 0 && gui->add_timer)
     backup_timer = gui->add_timer (backup_cb, 
 				   1000 * Settings.BackupInterval, 
-				   (hidval) NULL);
+				   x);
 }
 
 /* ---------------------------------------------------------------------------
