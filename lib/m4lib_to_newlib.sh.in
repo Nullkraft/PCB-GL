@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# $Id: m4lib_to_newlib.sh.in,v 1.6 2007-01-15 13:25:26 danmc Exp $
+# $Id: m4lib_to_newlib.sh.in,v 1.7 2007-02-06 01:45:29 danmc Exp $
 #
 
 # This script is used to extract all elements from an "oldlib" (M4)
@@ -255,7 +255,7 @@ first == 1 {
 		close( laytmpl );
 		close( layout );
 
-		cmd = "cd ../src && ./pcb-bin -x png --outfile " pngfile " --xy-max 200 --only-visible " layout " 2>&1 > /dev/null" ;
+		cmd = "cd ../src && ./pcb -x png --outfile " pngfile " --xy-max 200 --only-visible " layout " 2>&1 > /dev/null" ;
 		rc = system( cmd );
 		if( rc != 0) {
 			printf("<TR><TD>~%s</TD>\n", lib) >> broken;
