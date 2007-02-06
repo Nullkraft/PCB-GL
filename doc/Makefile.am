@@ -23,7 +23,7 @@
 ##  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 ##  Thomas.Nau@rz.uni-ulm.de
 ##
-##  RCS: $Id: Makefile.am,v 1.24 2006-04-15 03:33:16 djdelorie Exp $
+##  RCS: $Id: Makefile.am,v 1.25 2007-02-06 21:08:13 danmc Exp $
 ##
 
 info_TEXINFOS=	pcb.texi
@@ -114,13 +114,13 @@ extracted-docs :
 SUFFIXES = .dvi .eps .gif .pcb .pdf .png .ps .tab .tex
 
 .pcb.eps :
-	../src/pcb-bin -x eps --only-visible --font-path $(top_srcdir)/src --eps-file $@ $<
+	../src/pcb -x eps --only-visible --font-path $(top_srcdir)/src --eps-file $@ $<
 
 .pcb.gif :
-	../src/pcb-bin -x png --only-visible --format GIF --font-path $(top_srcdir)/src --outfile $@ $<
+	../src/pcb -x png --only-visible --format GIF --font-path $(top_srcdir)/src --outfile $@ $<
 
 .pcb.png :
-	../src/pcb-bin -x png --only-visible --font-path $(top_srcdir)/src --outfile $@ $<
+	../src/pcb -x png --only-visible --font-path $(top_srcdir)/src --outfile $@ $<
 
 .eps.pdf :
 if MISSING_PS2PDF
