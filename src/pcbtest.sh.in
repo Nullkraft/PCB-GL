@@ -23,7 +23,7 @@
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: pcbtest.sh.in,v 1.15 2007-02-04 01:32:42 danmc Exp $
+#   RCS: $Id: pcbtest.sh.in,v 1.16 2007-02-08 06:44:29 haceaton Exp $
 #
 #
 #
@@ -44,6 +44,6 @@ if [ "X$1" = "X-gdb" ]; then
 	exec gdb -x $tmpf ./pcb
 	rm -f $tmpf
 else
-	exec ./pcb-bin $TEST_PATHS $TEST_CMDS "$@"
+	exec ./pcb $TEST_PATHS $TEST_CMDS "$@"
 fi
 
