@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.78 2007-02-06 19:25:32 danmc Exp $
+dnl $Id: configure.ac,v 1.79 2007-02-08 04:22:33 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -527,6 +527,8 @@ done
 
 
 AM_CONDITIONAL(PNG, test x$with_png = xyes)
+AM_CONDITIONAL(GIF, test x$with_gif = xyes)
+
 
 # ------------- dmalloc -------------------
 dnl dmalloc checks
