@@ -1,8 +1,8 @@
-dnl $Id: configure.ac,v 1.80 2007-02-08 22:52:26 danmc Exp $
+dnl $Id: configure.ac,v 1.81 2007-02-09 00:17:59 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
-AM_INIT_AUTOMAKE(pcb, 1.99u)
+AM_INIT_AUTOMAKE(pcb, 1.99v)
 AM_CONFIG_HEADER(config.h)
 
 AM_MAINTAINER_MODE
