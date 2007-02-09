@@ -1,4 +1,4 @@
-/* $Id: create.c,v 1.35 2006-10-17 12:06:54 haceaton Exp $ */
+/* $Id: create.c,v 1.36 2007-02-09 03:49:34 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: create.c,v 1.35 2006-10-17 12:06:54 haceaton Exp $");
+RCSID ("$Id: create.c,v 1.36 2007-02-09 03:49:34 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local identifiers
@@ -204,7 +204,7 @@ CreateNewPCBPost (PCBTypePtr pcb, int use_defaults)
       if (ParseGroupString (Settings.Groups, &pcb->LayerGroups, DEF_LAYER))
 	return 1;
 
-      for (i = 0; i < max_layer; i++)
+      for (i = 0; i < MAX_LAYER; i++)
 	pcb->Data->Layer[i].Name = MyStrdup (Settings.DefaultLayerName[i],
 					     "CreateNewPCB()");
       pcb->Data->Layer[max_layer + COMPONENT_LAYER].Name =
