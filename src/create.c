@@ -1,4 +1,4 @@
-/* $Id: create.c,v 1.36 2007-02-09 03:49:34 danmc Exp $ */
+/* $Id: create.c,v 1.37 2007-02-09 04:33:05 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: create.c,v 1.36 2007-02-09 03:49:34 danmc Exp $");
+RCSID ("$Id: create.c,v 1.37 2007-02-09 04:33:05 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local identifiers
@@ -133,6 +133,7 @@ PCBTypePtr
 CreateNewPCB (Boolean SetDefaultNames)
 {
   PCBTypePtr ptr;
+  int i;
 
   /* allocate memory, switch all layers on and copy resources */
   ptr = MyCalloc (1, sizeof (PCBType), "CreateNewPCB()");
@@ -189,6 +190,10 @@ CreateNewPCB (Boolean SetDefaultNames)
   ptr->minDrill = Settings.minDrill;
   ptr->minRing = Settings.minRing;
 
+  for (i = 0; i < MAX_LAYER; i++)
+    ptr->Data->Layer[i].Name = MyStrdup (Settings.DefaultLayerName[i],
+					 "CreateNewPCB()");
+
   return (ptr);
 }
 
@@ -204,9 +209,6 @@ CreateNewPCBPost (PCBTypePtr pcb, int use_defaults)
       if (ParseGroupString (Settings.Groups, &pcb->LayerGroups, DEF_LAYER))
 	return 1;
 
-      for (i = 0; i < MAX_LAYER; i++)
-	pcb->Data->Layer[i].Name = MyStrdup (Settings.DefaultLayerName[i],
-					     "CreateNewPCB()");
       pcb->Data->Layer[max_layer + COMPONENT_LAYER].Name =
 	MyStrdup ("silk", "CreateNewPCB()");
       pcb->Data->Layer[max_layer + SOLDER_LAYER].Name =
