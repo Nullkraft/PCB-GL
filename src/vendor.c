@@ -1,4 +1,4 @@
-/* $Id: vendor.c,v 1.19 2006-10-09 00:35:25 danmc Exp $ */
+/* $Id: vendor.c,v 1.20 2007-02-10 16:57:32 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -64,7 +64,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: vendor.c,v 1.19 2006-10-09 00:35:25 danmc Exp $");
+RCSID ("$Id: vendor.c,v 1.20 2007-02-10 16:57:32 djdelorie Exp $");
 
 static void add_to_drills (char *);
 static void apply_vendor_map (void);
@@ -119,6 +119,7 @@ sizes for your vendor.
 int
 ActionApplyVendor (int argc, char **argv, int x, int y)
 {
+  hid_action ("Busy");
   apply_vendor_map ();
   return 0;
 }
