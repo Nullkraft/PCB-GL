@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.101 2007-02-10 16:49:02 djdelorie Exp $ */
+/* $Id: action.c,v 1.102 2007-02-10 21:59:24 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -74,7 +74,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.101 2007-02-10 16:49:02 djdelorie Exp $");
+RCSID ("$Id: action.c,v 1.102 2007-02-10 21:59:24 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -6578,6 +6578,16 @@ ActionExecuteFile (int argc, char **argv, int x, int y)
 
 /* --------------------------------------------------------------------------- */
 
+static int
+ActionPSCalib (int argc, char **argv, int x, int y)
+{
+  HID *ps = hid_find_exporter ("ps");
+  ps->calibrate (0.0,0.0);
+  return 0;
+}
+
+/* --------------------------------------------------------------------------- */
+
 HID_Action action_action_list[] = {
   {"AddRats", 0, ActionAddRats,
    addrats_help, addrats_syntax}
@@ -6743,6 +6753,8 @@ HID_Action action_action_list[] = {
   ,
   {"New", 0, ActionNew,
    new_help, new_syntax}
+  ,
+  {"pscalib", 0, ActionPSCalib}
   ,
 };
 

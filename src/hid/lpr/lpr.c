@@ -1,4 +1,4 @@
-/* $Id: lpr.c,v 1.10 2006-12-17 05:28:37 djdelorie Exp $ */
+/* $Id: lpr.c,v 1.11 2007-02-10 21:59:25 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -22,7 +22,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: lpr.c,v 1.10 2006-12-17 05:28:37 djdelorie Exp $");
+RCSID ("$Id: lpr.c,v 1.11 2007-02-10 21:59:25 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
@@ -110,7 +110,7 @@ lpr_parse_arguments (int *argc, char ***argv)
 static void
 lpr_calibrate (double xval, double yval)
 {
-  CRASH;
+  ps_calibrate_1 (xval, yval, 1);
 }
 
 HID lpr_hid = {
