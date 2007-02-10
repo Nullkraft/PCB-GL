@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.55 2007-02-06 05:40:39 danmc Exp $ */
+/* $Id: file.c,v 1.56 2007-02-10 19:21:38 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -97,7 +97,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: file.c,v 1.55 2007-02-06 05:40:39 danmc Exp $");
+RCSID ("$Id: file.c,v 1.56 2007-02-10 19:21:38 djdelorie Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -583,12 +583,17 @@ WritePCBNetlistData (FILE * FP)
       for (n = 0; n < PCB->NetlistLib.MenuN; n++)
 	{
 	  LibraryMenuTypePtr menu = &PCB->NetlistLib.Menu[n];
-	  fprintf (FP, "\tNet(\"%s\" \"%s\")\n\t(\n", &menu->Name[2],
-		   UNKNOWN (menu->Style));
+	  fprintf (FP, "\tNet(");
+	  PrintQuotedString(FP, &menu->Name[2]);
+	  fprintf (FP, " ");
+	  PrintQuotedString(FP, UNKNOWN (menu->Style));
+	  fprintf (FP, ")\n\t(\n");
 	  for (p = 0; p < menu->EntryN; p++)
 	    {
 	      LibraryEntryTypePtr entry = &menu->Entry[p];
-	      fprintf (FP, "\t\tConnect(\"%s\")\n", entry->ListEntry);
+	      fprintf (FP, "\t\tConnect(");
+	      PrintQuotedString (FP, entry->ListEntry);
+	      fprintf (FP, ")\n");
 	    }
 	  fprintf (FP, "\t)\n");
 	}

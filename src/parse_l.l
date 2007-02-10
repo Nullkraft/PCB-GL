@@ -1,4 +1,4 @@
-/* $Id: parse_l.l,v 1.19 2007-02-05 02:42:34 danmc Exp $ */
+/* $Id: parse_l.l,v 1.20 2007-02-10 19:21:38 djdelorie Exp $ */
 
 %{
 /*
@@ -48,7 +48,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_l.l,v 1.19 2007-02-05 02:42:34 danmc Exp $");
+RCSID("$Id: parse_l.l,v 1.20 2007-02-10 19:21:38 djdelorie Exp $");
 
 
 #include "global.h"
@@ -91,7 +91,7 @@ HEX				0x[0-9a-fA-F]+
 DECIMAL			-?[1-9][0-9]*|0
 FLOATING                -?[0-9]*"."[0-9]*
 CARDINAL		[1-9][0-9]*|0
-STRINGCHAR		([^"\n\r\\]|\\\\|\\\")
+STRINGCHAR		([^"\n\r\\]|\\.)
 
 %option yylineno
 
