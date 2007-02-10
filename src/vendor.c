@@ -1,4 +1,4 @@
-/* $Id: vendor.c,v 1.20 2007-02-10 16:57:32 djdelorie Exp $ */
+/* $Id: vendor.c,v 1.21 2007-02-10 21:59:05 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -64,7 +64,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: vendor.c,v 1.20 2007-02-10 16:57:32 djdelorie Exp $");
+RCSID ("$Id: vendor.c,v 1.21 2007-02-10 21:59:05 djdelorie Exp $");
 
 static void add_to_drills (char *);
 static void apply_vendor_map (void);
@@ -74,6 +74,9 @@ static Boolean rematch (const char *, const char *);
 /* list of vendor drills and a count of them */
 static int *vendor_drills = NULL;
 static int n_vendor_drills = 0;
+
+static int cached_drill = -1;
+static int cached_map = -1;
 
 /* lists of elements to ignore */
 static char **ignore_refdes = NULL;
@@ -227,6 +230,7 @@ static const char unload_vendor_help[] =
 int
 ActionUnloadVendor (int argc, char **argv, int x, int y)
 {
+  cached_drill = -1;
 
   /* Unload any vendor table we may have had */
   n_vendor_drills = 0;
@@ -269,6 +273,8 @@ ActionLoadVendorFrom (int argc, char **argv, int x, int y)
   char *sval;
   Resource *res, *drcres, *drlres;
   int type;
+
+  cached_drill = -1;
 
   fname = argc ? argv[0] : 0;
 
@@ -600,16 +606,26 @@ apply_vendor_map (void)
 int
 vendorDrillMap (int in)
 {
-  int i;
+  int i, min, max;
+
+  if (in == cached_drill)
+    return cached_map;
+  cached_drill = in;
 
   /* skip the mapping if we don't have a vendor drill table */
   if ((n_vendor_drills == 0) || (vendor_drills == NULL)
       || (vendorMapEnable == False))
-    return in;
+    {
+      cached_map = in;
+      return in;
+    }
 
   /* are we smaller than the smallest drill? */
   if (in <= vendor_drills[0])
-    return vendor_drills[0];
+    {
+      cached_map = vendor_drills[0];
+      return vendor_drills[0];
+    }
 
   /* are we larger than the largest drill? */
   if (in > vendor_drills[n_vendor_drills - 1])
@@ -617,26 +633,42 @@ vendorDrillMap (int in)
       Message (_("Vendor drill list does not contain a drill >= %6.2f mil\n"
 		 "Using %6.2f mil instead.\n"),
 	       0.01 * in, 0.01 * vendor_drills[n_vendor_drills - 1]);
+      cached_map = vendor_drills[n_vendor_drills - 1];
       return vendor_drills[n_vendor_drills - 1];
     }
 
   /* figure out which 2 drills are closest in size */
-  i = 0;
-  while (in > vendor_drills[i])
-    i++;
+  min = 0;
+  max = n_vendor_drills - 1;
+  while (max - min > 1)
+    {
+      i = (max+min) / 2;
+      if (in > vendor_drills[i])
+	min = i;
+      else
+	max = i;
+    }
+  i = max;
 
   /* now round per the rounding mode */
   if (rounding_method == CLOSEST)
     {
       /* find the closest drill size */
       if ((in - vendor_drills[i - 1]) > (vendor_drills[i] - in))
-	return vendor_drills[i];
+	{
+	  cached_map = vendor_drills[i];
+	  return vendor_drills[i];
+	}
       else
-	return vendor_drills[i - 1];
+	{
+	  cached_map = vendor_drills[i - 1];
+	  return vendor_drills[i - 1];
+	}
     }
   else
     {
       /* always round up */
+      cached_map = vendor_drills[i];
       return vendor_drills[i];
     }
 
