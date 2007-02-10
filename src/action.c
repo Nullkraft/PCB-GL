@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.100 2007-01-27 02:16:27 djdelorie Exp $ */
+/* $Id: action.c,v 1.101 2007-02-10 16:49:02 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -74,7 +74,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.100 2007-01-27 02:16:27 djdelorie Exp $");
+RCSID ("$Id: action.c,v 1.101 2007-02-10 16:49:02 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -3623,6 +3623,7 @@ connecting them are minimized.  Note that you cannot undo this.
 static int
 ActionAutoPlaceSelected (int argc, char **argv, int x, int y)
 {
+  hid_action("Busy");
   if (gui->confirm_dialog (_("Auto-placement can NOT be undone.\n"
 			     "Do you want to continue anyway?\n"), 0))
     {
@@ -3667,6 +3668,7 @@ static int
 ActionAutoRoute (int argc, char **argv, int x, int y)
 {
   char *function = ARG (0);
+  hid_action("Busy");
   if (function)			/* one parameter */
     {
       HideCrosshair (True);

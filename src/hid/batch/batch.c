@@ -1,4 +1,4 @@
-/* $Id: batch.c,v 1.5 2006-12-17 05:28:37 djdelorie Exp $ */
+/* $Id: batch.c,v 1.6 2007-02-10 16:49:03 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -17,7 +17,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: batch.c,v 1.5 2006-12-17 05:28:37 djdelorie Exp $");
+RCSID ("$Id: batch.c,v 1.6 2007-02-10 16:49:03 djdelorie Exp $");
 
 /* This is a text-line "batch" HID, which exists for scripting and
    non-GUI needs.  */
@@ -103,6 +103,7 @@ HID_Action batch_action_list[] = {
   {"NetlistChanged", 0, nop },
   {"LayersChanged", 0, nop },
   {"LibraryChanged", 0, nop },
+  {"Busy", 0, nop },
   {"Help", 0, help },
   {"Info", 0, info }
 };

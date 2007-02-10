@@ -1,4 +1,4 @@
-/* $Id: djopt.c,v 1.42 2007-01-15 06:13:29 djdelorie Exp $ */
+/* $Id: djopt.c,v 1.43 2007-02-10 16:49:02 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -49,7 +49,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: djopt.c,v 1.42 2007-01-15 06:13:29 djdelorie Exp $");
+RCSID ("$Id: djopt.c,v 1.43 2007-02-10 16:49:02 djdelorie Exp $");
 
 #ifndef HAVE_RINT
 #define rint(x)  (ceil((x) - 0.5))
@@ -2949,6 +2949,8 @@ ActionDJopt (int argc, char **argv, int x, int y)
   SwitchDrawingWindow (PCB->Zoom, Output.drawing_area->window,
 		       Settings.ShowSolderSide, False);
 #endif
+
+  hid_action("Busy");
 
   lines = 0;
   corners = 0;

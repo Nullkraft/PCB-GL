@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.34 2007-02-02 04:09:07 djdelorie Exp $ */
+/* $Id: gtkhid-main.c,v 1.35 2007-02-10 16:49:04 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.34 2007-02-02 04:09:07 djdelorie Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.35 2007-02-10 16:49:04 djdelorie Exp $");
 
 
 extern HID ghid_hid;
@@ -1532,6 +1532,13 @@ About (int argc, char **argv, int x, int y)
   return 0;
 }
 
+static int
+Busy (int argc, char **argv, int x, int y)
+{
+  ghid_watch_cursor ();
+  return 0;
+}
+
 HID_Action ghid_main_action_list[] = {
   {"About", 0, About,
    about_help, about_syntax},
@@ -1550,6 +1557,7 @@ HID_Action ghid_main_action_list[] = {
   {"Command", 0, Command},
   {"Benchmark", 0, Benchmark},
   {"PointCursor", 0, PointCursor},
+  {"Busy", 0, Busy},
 };
 
 REGISTER_ACTIONS (ghid_main_action_list)
