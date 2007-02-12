@@ -1,4 +1,4 @@
-/* $Id: ps.c,v 1.23 2007-02-10 21:59:25 djdelorie Exp $ */
+/* $Id: ps.c,v 1.24 2007-02-12 03:27:32 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -23,7 +23,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: ps.c,v 1.23 2007-02-10 21:59:25 djdelorie Exp $");
+RCSID ("$Id: ps.c,v 1.24 2007-02-12 03:27:32 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
@@ -538,14 +538,16 @@ ps_set_layer (const char *name, int group)
       fprintf (f, "(, scale = 1:%.3f) show\n", scale_value);
 
       fprintf (f, "72 72 scale %g %g translate\n", 0.5*media_width, 0.5*media_height);
-      fprintf (f, "%g %g scale %% calibration\n", calibration_x, calibration_y);
 
       boffset = 0.5*media_height;
       if (PCB->MaxWidth > PCB->MaxHeight)
 	{
 	  fprintf (f, "90 rotate\n");
 	  boffset = 0.5*media_width;
+	  fprintf (f, "%g %g scale %% calibration\n", calibration_y, calibration_x);
 	}
+      else
+	fprintf (f, "%g %g scale %% calibration\n", calibration_x, calibration_y);
 
       if (mirror_this)
 	fprintf (f, "1 -1 scale\n");
@@ -964,7 +966,8 @@ ps_calibrate_1 (double xval, double yval, int use_command)
       ps_calib_attribute_list[0].default_val.str_value = strdup("lpr");
     }
 
-  gui->attribute_dialog (ps_calib_attribute_list, 1, vals);
+  if (gui->attribute_dialog (ps_calib_attribute_list, 1, vals))
+    return;
 
   if (use_command || strchr (vals[0].str_value, '|'))
     {
