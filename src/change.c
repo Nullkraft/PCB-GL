@@ -1,4 +1,4 @@
-/* $Id: change.c,v 1.40 2006-11-05 01:27:13 danmc Exp $ */
+/* $Id: change.c,v 1.41 2007-02-13 04:44:07 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -64,7 +64,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: change.c,v 1.40 2006-11-05 01:27:13 danmc Exp $");
+RCSID ("$Id: change.c,v 1.41 2007-02-13 04:44:07 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -814,7 +814,7 @@ ChangeTextSize (LayerTypePtr Layer, TextTypePtr Text)
       value != Text->Scale)
     {
       AddObjectToSizeUndoList (TEXT_TYPE, Layer, Text, Text);
-      EraseText (Text);
+      EraseText (Layer, Text);
       r_delete_entry (Layer->text_tree, (BoxTypePtr) Text);
       Text->Scale = value;
       SetTextBoundingBox (&PCB->Font, Text);
@@ -1018,7 +1018,7 @@ ChangeTextName (LayerTypePtr Layer, TextTypePtr Text)
 
   if (TEST_FLAG (LOCKFLAG, Text))
     return (NULL);
-  EraseText (Text);
+  EraseText (Layer, Text);
   Text->TextString = NewName;
 
   /* calculate size of the bounding box */

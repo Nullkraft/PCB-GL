@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: draw.h,v 1.7 2006-03-22 23:17:20 danmc Exp $
+ *  RCS: $Id: draw.h,v 1.8 2007-02-13 04:44:07 djdelorie Exp $
  */
 
 /* prototypes for drawing routines
@@ -49,7 +49,7 @@ void DrawPadName (PadTypePtr, int);
 void DrawLine (LayerTypePtr, LineTypePtr, int);
 void DrawArc (LayerTypePtr, ArcTypePtr, int);
 void DrawText (LayerTypePtr, TextTypePtr, int);
-void DrawTextLowLevel (TextTypePtr);
+void DrawTextLowLevel (TextTypePtr, int);
 void DrawPolygon (LayerTypePtr, PolygonTypePtr, int);
 void DrawElement (ElementTypePtr, int);
 void DrawElementName (ElementTypePtr, int);
@@ -65,12 +65,12 @@ void ErasePin (PinTypePtr);
 void ErasePinName (PinTypePtr);
 void EraseLine (LineTypePtr);
 void EraseArc (ArcTypePtr);
-void EraseText (TextTypePtr);
+void EraseText (LayerTypePtr, TextTypePtr);
 void ErasePolygon (PolygonTypePtr);
 void EraseElement (ElementTypePtr);
 void EraseElementPinsAndPads (ElementTypePtr);
 void EraseElementName (ElementTypePtr);
-void EraseObject (int, void *);
+void EraseObject (int, void *, void *);
 void LoadBackgroundImage (char *);
 void UpdateAll (void);
 

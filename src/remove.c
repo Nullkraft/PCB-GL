@@ -1,4 +1,4 @@
-/* $Id: remove.c,v 1.17 2006-11-08 13:23:44 haceaton Exp $ */
+/* $Id: remove.c,v 1.18 2007-02-13 04:44:07 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: remove.c,v 1.17 2006-11-08 13:23:44 haceaton Exp $");
+RCSID ("$Id: remove.c,v 1.18 2007-02-13 04:44:07 djdelorie Exp $");
 
 
 /* ---------------------------------------------------------------------------
@@ -435,7 +435,7 @@ RemoveText (LayerTypePtr Layer, TextTypePtr Text)
   /* erase from screen */
   if (Layer->On)
     {
-      EraseText (Text);
+      EraseText (Layer, Text);
       if (!Bulk)
         Draw ();
     }

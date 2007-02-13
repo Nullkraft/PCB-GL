@@ -1,4 +1,4 @@
-/* $Id: move.c,v 1.36 2007-01-09 00:30:35 haceaton Exp $ */
+/* $Id: move.c,v 1.37 2007-02-13 04:44:07 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: move.c,v 1.36 2007-01-09 00:30:35 haceaton Exp $");
+RCSID ("$Id: move.c,v 1.37 2007-02-13 04:44:07 djdelorie Exp $");
 
 
 
@@ -317,7 +317,7 @@ MoveText (LayerTypePtr Layer, TextTypePtr Text)
   r_delete_entry (Layer->text_tree, (BoxTypePtr) Text);
   if (Layer->On)
     {
-      EraseText (Text);
+      EraseText (Layer, Text);
       MOVE_TEXT_LOWLEVEL (Text, DeltaX, DeltaY);
       DrawText (Layer, Text, 0);
       Draw ();
@@ -672,7 +672,7 @@ MoveTextToLayer (LayerTypePtr Layer, TextTypePtr Text)
     {
       AddObjectToMoveToLayerUndoList (TEXT_TYPE, Layer, Text, Text);
       if (Layer->On)
-	EraseText (Text);
+	EraseText (Layer, Text);
       new = MoveTextToLayerLowLevel (Layer, Text, Dest);
       if (Dest->On)
 	DrawText (Dest, new, 0);

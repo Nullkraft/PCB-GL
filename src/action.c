@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.102 2007-02-10 21:59:24 djdelorie Exp $ */
+/* $Id: action.c,v 1.103 2007-02-13 04:44:07 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -74,7 +74,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.102 2007-02-10 21:59:24 djdelorie Exp $");
+RCSID ("$Id: action.c,v 1.103 2007-02-13 04:44:07 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -3478,7 +3478,7 @@ ActionRipUp (int argc, char **argv, int x, int y)
 		PASTEBUFFER->X = 0;
 		PASTEBUFFER->Y = 0;
 		SaveUndoSerialNumber ();
-		EraseObject (ELEMENT_TYPE, ptr1);
+		EraseObject (ELEMENT_TYPE, ptr1, ptr1);
 		MoveObjectToRemoveUndoList (ELEMENT_TYPE, ptr1, ptr2, ptr3);
 		RestoreUndoSerialNumber ();
 		CopyPastebufferToLayout (0, 0);
