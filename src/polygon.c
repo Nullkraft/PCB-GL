@@ -1,4 +1,4 @@
-/* $Id: polygon.c,v 1.48 2006-12-03 17:32:00 haceaton Exp $ */
+/* $Id: polygon.c,v 1.49 2007-02-15 05:12:50 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: polygon.c,v 1.48 2006-12-03 17:32:00 haceaton Exp $");
+RCSID ("$Id: polygon.c,v 1.49 2007-02-15 05:12:50 djdelorie Exp $");
 
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
@@ -431,7 +431,7 @@ LinePoly (LineType * l, BDimension thick)
 static int
 Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
 {
-  POLYAREA *merged = NULL, *np = np1;;
+  POLYAREA *merged = NULL, *np = np1;
   int x;
   assert (np);
   assert (p);
@@ -705,7 +705,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
 static int
 Unsubtract (POLYAREA * np1, PolygonType * p)
 {
-  POLYAREA *merged = NULL, *np = np1;;
+  POLYAREA *merged = NULL, *np = np1;
   int x;
   assert (np);
   assert (p && p->Clipped);

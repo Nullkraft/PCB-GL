@@ -1,4 +1,4 @@
-/* $Id: parse_l.l,v 1.20 2007-02-10 19:21:38 djdelorie Exp $ */
+/* $Id: parse_l.l,v 1.21 2007-02-15 05:12:50 djdelorie Exp $ */
 
 %{
 /*
@@ -48,7 +48,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_l.l,v 1.20 2007-02-10 19:21:38 djdelorie Exp $");
+RCSID("$Id: parse_l.l,v 1.21 2007-02-15 05:12:50 djdelorie Exp $");
 
 
 #include "global.h"
@@ -321,10 +321,10 @@ int ParsePCB(PCBTypePtr Ptr, char *Filename)
 int ParseFont(FontTypePtr Ptr, char *Filename)
 {
 	int r = 0;
+	char *path, *p;
 	yyPCB = NULL;
 	yyFont = Ptr;
 	yyElement = NULL;
-	char *path, *p;
 
 	path = strdup (Settings.FontPath);
 

@@ -1,4 +1,4 @@
-/* $Id: ps.c,v 1.24 2007-02-12 03:27:32 djdelorie Exp $ */
+/* $Id: ps.c,v 1.25 2007-02-15 05:12:50 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -23,7 +23,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: ps.c,v 1.24 2007-02-12 03:27:32 djdelorie Exp $");
+RCSID ("$Id: ps.c,v 1.25 2007-02-15 05:12:50 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
@@ -497,8 +497,8 @@ ps_set_layer (const char *name, int group)
   if (group < 0 || group != lastgroup)
     {
       double boffset;
-      lastgroup = group;
       int mirror_this = 0;
+      lastgroup = group;
 
       if (f && pagecount)
 	{
