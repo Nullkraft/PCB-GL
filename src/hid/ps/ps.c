@@ -1,4 +1,4 @@
-/* $Id: ps.c,v 1.25 2007-02-15 05:12:50 djdelorie Exp $ */
+/* $Id: ps.c,v 1.26 2007-02-23 03:05:45 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -23,7 +23,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: ps.c,v 1.25 2007-02-15 05:12:50 djdelorie Exp $");
+RCSID ("$Id: ps.c,v 1.26 2007-02-23 03:05:45 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
@@ -530,12 +530,19 @@ ps_set_layer (const char *name, int group)
 
       fprintf (f, "/Helvetica findfont 10 scalefont setfont\n");
       fprintf (f, "30 30 moveto (%s) show\n", PCB->Filename);
-      fprintf (f, "30 41 moveto (%s, %s) show\n",
-	       PCB->Name, layer_type_to_file_name (idx));
+      if (PCB->Name)
+	fprintf (f, "30 41 moveto (%s, %s) show\n",
+		 PCB->Name, layer_type_to_file_name (idx));
+      else
+	fprintf (f, "30 41 moveto (%s) show\n",
+		 layer_type_to_file_name (idx));
       if (mirror_this)
 	fprintf (f, "( \\(mirrored\\)) show\n");
 
-      fprintf (f, "(, scale = 1:%.3f) show\n", scale_value);
+      if (fillpage)
+	fprintf (f, "(, not to scale) show\n", scale_value);
+      else
+	fprintf (f, "(, scale = 1:%.3f) show\n", scale_value);
 
       fprintf (f, "72 72 scale %g %g translate\n", 0.5*media_width, 0.5*media_height);
 
