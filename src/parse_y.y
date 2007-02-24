@@ -1,4 +1,4 @@
-/* $Id: parse_y.y,v 1.35 2006-12-15 06:15:33 djdelorie Exp $ */
+/* $Id: parse_y.y,v 1.36 2007-02-24 06:08:56 djdelorie Exp $ */
 /*
  * ************************** README *******************
  *
@@ -61,7 +61,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_y.y,v 1.35 2006-12-15 06:15:33 djdelorie Exp $");
+RCSID("$Id: parse_y.y,v 1.36 2007-02-24 06:08:56 djdelorie Exp $");
 
 static	LayerTypePtr	Layer;
 static	PolygonTypePtr	Polygon;
@@ -190,6 +190,14 @@ parsepcb
 			      InitClip (yyData, &yyData->Layer[i], &yyData->Layer[i].Polygon[j]);
 			}
 			   
+		| { PreLoadElementPCB ();
+		    layer_group_string = NULL; }
+		  element
+		  { LayerFlag[0] = True;
+		    LayerFlag[1] = True;
+		    yyData->LayerN = 2;
+		    PostLoadElementPCB ();
+		  }
 		;
 
 parsedata

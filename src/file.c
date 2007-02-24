@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.56 2007-02-10 19:21:38 djdelorie Exp $ */
+/* $Id: file.c,v 1.57 2007-02-24 06:08:56 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -97,7 +97,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: file.c,v 1.56 2007-02-10 19:21:38 djdelorie Exp $");
+RCSID ("$Id: file.c,v 1.57 2007-02-24 06:08:56 djdelorie Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -373,6 +373,42 @@ LoadPCB (char *Filename)
   /* release unused memory */
   RemovePCB (newPCB);
   return (1);
+}
+
+/* ---------------------------------------------------------------------------
+ * functions for loading elements-as-pcb
+ */
+
+extern	PCBTypePtr		yyPCB;
+extern	DataTypePtr		yyData;
+extern	FontTypePtr		yyFont;
+
+void
+PreLoadElementPCB ()
+{
+  int i;
+
+  yyFont = &yyPCB->Font;
+  yyData = yyPCB->Data;
+  yyData->pcb = (void *)yyPCB;
+  yyData->LayerN = 0;
+}
+
+void
+PostLoadElementPCB ()
+{
+  PCBTypePtr pcb_save = PCB;
+  ElementTypePtr e;
+
+  CreateNewPCBPost (yyPCB, 0);
+  ParseGroupString("1,c:2,s", &yyPCB->LayerGroups, yyData->LayerN);
+  e = yyPCB->Data->Element; /* we know there's only one */
+  PCB = yyPCB;
+  MoveElementLowLevel (yyPCB->Data,
+		       e, -e->BoundingBox.X1, -e->BoundingBox.Y1);
+  PCB = pcb_save;
+  yyPCB->MaxWidth = e->BoundingBox.X2;
+  yyPCB->MaxHeight = e->BoundingBox.Y2;
 }
 
 /* ---------------------------------------------------------------------------
