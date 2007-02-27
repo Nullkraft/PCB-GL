@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.57 2007-02-24 06:08:56 djdelorie Exp $ */
+/* $Id: file.c,v 1.58 2007-02-27 19:33:45 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -97,7 +97,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: file.c,v 1.57 2007-02-24 06:08:56 djdelorie Exp $");
+RCSID ("$Id: file.c,v 1.58 2007-02-27 19:33:45 djdelorie Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -388,6 +388,9 @@ PreLoadElementPCB ()
 {
   int i;
 
+  if (!yyPCB)
+    return;
+
   yyFont = &yyPCB->Font;
   yyData = yyPCB->Data;
   yyData->pcb = (void *)yyPCB;
@@ -399,6 +402,9 @@ PostLoadElementPCB ()
 {
   PCBTypePtr pcb_save = PCB;
   ElementTypePtr e;
+
+  if (!yyPCB)
+    return;
 
   CreateNewPCBPost (yyPCB, 0);
   ParseGroupString("1,c:2,s", &yyPCB->LayerGroups, yyData->LayerN);
