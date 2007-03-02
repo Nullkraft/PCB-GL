@@ -1,4 +1,4 @@
-;; $Id: pcb.nsi.in,v 1.5 2007-02-06 19:38:42 danmc Exp $
+;; $Id: pcb.nsi.in,v 1.6 2007-03-02 22:38:09 danmc Exp $
 ;;
 ;; Installer script file for PCB for windows.  See http://nsis.sourceforge.net
 ;; for details on NSIS.
@@ -132,8 +132,10 @@ Section "Uninstall"
   
   !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
     
-  Delete "$SMPROGRAMS\$MUI_TEMP\Readme.lnk"
+  Delete "$SMPROGRAMS\$MUI_TEMP\HTML Manual.lnk"
   Delete "$SMPROGRAMS\$MUI_TEMP\PCB.lnk"
+  Delete "$SMPROGRAMS\$MUI_TEMP\PDF Manual.lnk"
+  Delete "$SMPROGRAMS\$MUI_TEMP\Readme.lnk"
   Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
   
   ;Delete empty start menu parent diretories
