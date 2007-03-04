@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.35 2007-02-12 04:22:01 danmc Exp $
+## $Id: Makefile.am,v 1.36 2007-03-04 03:17:59 djdelorie Exp $
 ##
 
 SUBDIRS=	icons
@@ -86,8 +86,6 @@ PCB_SRCS = \
 	mymem.c \
 	mymem.h \
 	netlist.c \
-	output.c \
-	output.h \
 	parse_l.h \
 	parse_l.l \
 	parse_y.h \
@@ -238,7 +236,6 @@ dbus-introspect.h : dbus.xml Makefile
 	sed 's/\\/\\\\/g; s/"/\\"/g; s/^/"/; s/$$/"/' < $(srcdir)/dbus.xml >> $@.tmp
 	echo ";" >> $@.tmp
 	mv $@.tmp $@
-	
 
 PCB_SRCS+=	${DBUS_SRCS}
 BUILT_SOURCES+=	dbus-introspect.h

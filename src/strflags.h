@@ -1,4 +1,4 @@
-/* $Id: strflags.h,v 1.4 2006-04-19 22:36:47 danmc Exp $ */
+/* $Id: strflags.h,v 1.5 2007-03-04 03:18:00 djdelorie Exp $ */
 /*
  *                            COPYRIGHT
  *
@@ -42,5 +42,10 @@ FlagType string_to_flags (const char *flagstring,
    can be output to a file.  The returned pointer must not be
    freed.  */
 char *flags_to_string (FlagType flags, int object_type);
+
+/* Same as above, but for pcb flags.  */
+FlagType string_to_pcbflags (const char *flagstring,
+			  int (*error) (const char *msg));
+char *pcbflags_to_string (FlagType flags);
 
 #endif

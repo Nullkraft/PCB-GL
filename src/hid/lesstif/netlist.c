@@ -1,4 +1,4 @@
-/* $Id: netlist.c,v 1.12 2007-01-29 04:30:10 djdelorie Exp $ */
+/* $Id: netlist.c,v 1.13 2007-03-04 03:18:01 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -30,7 +30,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: netlist.c,v 1.12 2007-01-29 04:30:10 djdelorie Exp $");
+RCSID ("$Id: netlist.c,v 1.13 2007-03-04 03:18:01 djdelorie Exp $");
 
 static Arg args[30];
 static int n;
@@ -258,7 +258,7 @@ netnode_browse (Widget w, XtPointer v, XmListCallbackStruct * cbs)
 	    {
 	      int x = (pad->Point1.X + pad->Point2.X) / 2;
 	      int y = (pad->Point1.Y + pad->Point2.Y) / 2;
-	      gui->set_crosshair (x, y);
+	      gui->set_crosshair (x, y, HID_SC_PAN_VIEWPORT);
 	      free (ename);
 	      return;
 	    }

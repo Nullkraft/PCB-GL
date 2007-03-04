@@ -1,4 +1,4 @@
-/* $Id: djopt.c,v 1.43 2007-02-10 16:49:02 djdelorie Exp $ */
+/* $Id: djopt.c,v 1.44 2007-03-04 03:17:59 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -49,7 +49,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: djopt.c,v 1.43 2007-02-10 16:49:02 djdelorie Exp $");
+RCSID ("$Id: djopt.c,v 1.44 2007-03-04 03:17:59 djdelorie Exp $");
 
 #ifndef HAVE_RINT
 #define rint(x)  (ceil((x) - 0.5))
@@ -949,9 +949,7 @@ move_corner (corner_s * c, int x, int y)
 	    break;
 	  }
       }
-#ifdef FIXME
-  gdk_display_sync (gdk_drawable_get_display (Output.drawing_area->window));
-#endif
+  gui->progress (0, 0, 0);
   check (c, 0);
 }
 

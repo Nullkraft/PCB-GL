@@ -1,4 +1,4 @@
-/* $Id: batch.c,v 1.6 2007-02-10 16:49:03 djdelorie Exp $ */
+/* $Id: batch.c,v 1.7 2007-03-04 03:18:00 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -17,7 +17,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: batch.c,v 1.6 2007-02-10 16:49:03 djdelorie Exp $");
+RCSID ("$Id: batch.c,v 1.7 2007-03-04 03:18:00 djdelorie Exp $");
 
 /* This is a text-line "batch" HID, which exists for scripting and
    non-GUI needs.  */
@@ -311,7 +311,7 @@ batch_get_coords (const char *msg, int *x, int *y)
 }
 
 static void
-batch_set_crosshair (int x, int y)
+batch_set_crosshair (int x, int y, int action)
 {
 }
 

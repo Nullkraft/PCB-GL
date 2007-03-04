@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: misc.h,v 1.20 2006-10-09 00:35:25 danmc Exp $
+ *  RCS: $Id: misc.h,v 1.21 2007-03-04 03:17:59 djdelorie Exp $
  */
 
 /* prototypes for misc routines
@@ -60,6 +60,7 @@ int GetLayerGroupNumberByPointer (LayerTypePtr);
 int GetLayerGroupNumberByNumber (Cardinal);
 int GetGroupOfLayer (int);
 int ChangeGroupVisibility (int, Boolean, Boolean);
+void LayerStringToLayerStack (char *);
 
 
 BoxTypePtr GetObjectBoundingBox (int, void *, void *, void *);

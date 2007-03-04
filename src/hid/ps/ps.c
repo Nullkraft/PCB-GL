@@ -1,4 +1,4 @@
-/* $Id: ps.c,v 1.28 2007-02-27 06:32:18 djdelorie Exp $ */
+/* $Id: ps.c,v 1.29 2007-03-04 03:18:02 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -24,7 +24,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: ps.c,v 1.28 2007-02-27 06:32:18 djdelorie Exp $");
+RCSID ("$Id: ps.c,v 1.29 2007-03-04 03:18:02 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
@@ -1024,7 +1024,7 @@ ps_calibrate (double xval, double yval)
 }
 
 static void
-ps_set_crosshair (int x, int y)
+ps_set_crosshair (int x, int y, int action)
 {
 }
 

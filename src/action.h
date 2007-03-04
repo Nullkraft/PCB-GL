@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: action.h,v 1.13 2006-03-22 23:17:20 danmc Exp $
+ *  RCS: $Id: action.h,v 1.14 2007-03-04 03:17:59 djdelorie Exp $
  */
 
 /* prototypes for action routines
@@ -38,11 +38,6 @@
 void ActionMovePointer (char *, char *);
 void ActionAdjustStyle (char *);
 void EventMoveCrosshair (int, int);
-
-#if 0
-void ActionListAct (Widget, XEvent *, String *, Cardinal *);
-void ActionButton3 (Widget, XEvent *, String *, Cardinal *);
-#endif
 
 void AdjustAttachedObjects (void);
 

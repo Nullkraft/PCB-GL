@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.35 2007-02-10 16:49:04 djdelorie Exp $ */
+/* $Id: gtkhid-main.c,v 1.36 2007-03-04 03:18:01 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,7 +28,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.35 2007-02-10 16:49:04 djdelorie Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.36 2007-03-04 03:18:01 djdelorie Exp $");
 
 
 extern HID ghid_hid;
@@ -830,7 +830,7 @@ ghid_control_is_pressed ()
 }
 
 void
-ghid_set_crosshair (int x, int y)
+ghid_set_crosshair (int x, int y, int action)
 {
   ghid_set_cursor_position_labels ();
   gport->x_crosshair = x;

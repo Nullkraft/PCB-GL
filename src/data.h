@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: data.h,v 1.10 2006-06-10 03:07:38 djdelorie Exp $
+ *  RCS: $Id: data.h,v 1.11 2007-03-04 03:17:59 djdelorie Exp $
  */
 
 /* common identifiers
@@ -32,15 +32,6 @@
 #define	__DATA_INCLUDED__
 
 #include "global.h"
-
-#if 0
-extern GdkPixmap **Stipples;
-extern GdkPixmap *XC_hand_source, *XC_hand_mask;
-extern GdkPixmap *XC_lock_source, *XC_lock_mask;
-extern GdkPixmap *XC_clock_source, *XC_clock_mask;
-
-extern GdkRegion *FullRegion;
-#endif
 
 /* ---------------------------------------------------------------------------
  * some shared identifiers

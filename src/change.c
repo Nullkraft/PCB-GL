@@ -1,4 +1,4 @@
-/* $Id: change.c,v 1.41 2007-02-13 04:44:07 djdelorie Exp $ */
+/* $Id: change.c,v 1.42 2007-03-04 03:17:59 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -64,7 +64,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: change.c,v 1.41 2007-02-13 04:44:07 djdelorie Exp $");
+RCSID ("$Id: change.c,v 1.42 2007-03-04 03:17:59 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -2229,9 +2229,6 @@ ChangePCBSize (BDimension Width, BDimension Height)
   else
     SetCrosshairRange (0, 0, (LocationType) Width, (LocationType) Height);
   hid_action ("PCBChanged");
-#if 0
-  UpdateAll ();
-#endif
 }
 
 /* ---------------------------------------------------------------------------

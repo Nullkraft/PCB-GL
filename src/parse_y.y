@@ -1,4 +1,4 @@
-/* $Id: parse_y.y,v 1.36 2007-02-24 06:08:56 djdelorie Exp $ */
+/* $Id: parse_y.y,v 1.37 2007-03-04 03:17:59 djdelorie Exp $ */
 /*
  * ************************** README *******************
  *
@@ -61,7 +61,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_y.y,v 1.36 2007-02-24 06:08:56 djdelorie Exp $");
+RCSID("$Id: parse_y.y,v 1.37 2007-03-04 03:17:59 djdelorie Exp $");
 
 static	LayerTypePtr	Layer;
 static	PolygonTypePtr	Polygon;
@@ -559,6 +559,10 @@ pcbflags
 		: T_FLAGS '(' NUMBER ')'
 			{
 				yyPCB->Flags = MakeFlags ($3 & PCB_FLAGS);
+			}
+		| T_FLAGS '(' STRING ')'
+			{
+			  yyPCB->Flags = string_to_pcbflags ($3, yyerror);
 			}
 		|
 		;

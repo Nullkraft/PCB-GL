@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.58 2007-02-27 19:33:45 djdelorie Exp $ */
+/* $Id: file.c,v 1.59 2007-03-04 03:17:59 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -97,7 +97,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: file.c,v 1.58 2007-02-27 19:33:45 djdelorie Exp $");
+RCSID ("$Id: file.c,v 1.59 2007-03-04 03:17:59 djdelorie Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -321,10 +321,6 @@ LoadPCB (char *Filename)
 
       CreateNewPCBPost (PCB, 0);
       ResetStackAndVisibility ();
-#if FIXME
-      /* set the zoom first before the Xorig, Yorig */
-      SetZoom (PCB->Zoom);
-#endif
 
       /* update cursor location */
       Crosshair.X = MAX (0, MIN (PCB->CursorX, (LocationType) PCB->MaxWidth));
@@ -333,9 +329,6 @@ LoadPCB (char *Filename)
 
       Xorig = Crosshair.X - TO_PCB (Output.Width / 2);
       Yorig = Crosshair.Y - TO_PCB (Output.Height / 2);
-#if FIXME
-      RedrawZoom (Output.Width / 2, Output.Height / 2);
-#endif
 
       /* update cursor confinement and output area (scrollbars) */
       ChangePCBSize (PCB->MaxWidth, PCB->MaxHeight);
@@ -356,10 +349,6 @@ LoadPCB (char *Filename)
 
       units_mm = (PCB->Grid != (int) PCB->Grid) ? True : False;
 
-#ifdef FIXME
-      if (units_mm != Settings.grid_units_mm)
-	gui_config_handle_units_changed ();
-#endif
       Settings.grid_units_mm = units_mm;
 
       sort_netlist ();
@@ -512,9 +501,7 @@ WritePCBDataHeader (FILE * FP)
   fprintf (FP, "Thermal[%s]\n", c_dtostr (PCB->ThermScale));
   fprintf (FP, "DRC[%i %i %i %i %i %i]\n", PCB->Bloat, PCB->Shrink,
 	   PCB->minWid, PCB->minSlk, PCB->minDrill, PCB->minRing);
-  /* FIXME: This shouldn't know about .f, but we don't have a string
-     converter for it yet.  */
-  fprintf (FP, "Flags(0x%016x)\n", (int) PCB->Flags.f);
+  fprintf (FP, "Flags(%s)\n", pcbflags_to_string(PCB->Flags));
   fprintf (FP, "Groups(\"%s\")\n", LayerGroupsToString (&PCB->LayerGroups));
   fputs ("Styles[\"", FP);
   for (group = 0; group < NUM_STYLES - 1; group++)

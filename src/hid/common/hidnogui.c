@@ -1,4 +1,4 @@
-/* $Id: hidnogui.c,v 1.11 2006-12-18 05:48:48 djdelorie Exp $ */
+/* $Id: hidnogui.c,v 1.12 2007-03-04 03:18:00 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -16,7 +16,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: hidnogui.c,v 1.11 2006-12-18 05:48:48 djdelorie Exp $");
+RCSID ("$Id: hidnogui.c,v 1.12 2007-03-04 03:18:00 djdelorie Exp $");
 
 /* This is the "gui" that is installed at startup, and is used when
    there is no other real GUI to use.  For the most part, it just
@@ -191,7 +191,7 @@ nogui_get_coords (const char *msg, int *x, int *y)
 }
 
 static void
-nogui_set_crosshair (int x, int y)
+nogui_set_crosshair (int x, int y, int action)
 {
 }
 

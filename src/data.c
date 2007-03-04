@@ -1,4 +1,4 @@
-/* $Id: data.c,v 1.14 2006-08-02 15:55:17 djdelorie Exp $ */
+/* $Id: data.c,v 1.15 2007-03-04 03:17:59 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -33,16 +33,12 @@
 #endif
 
 #include "data.h"
-#ifdef FIXME
-#include "dev_ps.h"
-#include "dev_rs274x.h"
-#endif
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: data.c,v 1.14 2006-08-02 15:55:17 djdelorie Exp $");
+RCSID ("$Id: data.c,v 1.15 2007-03-04 03:17:59 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some shared identifiers
@@ -80,16 +76,3 @@ double Zoom_Multiplier = 0.01;
 */
 
 
-/* ---------------------------------------------------------------------------
- * all known printing devices
- */
-#ifdef FIXME
-DeviceInfoType PrintingDevice[] = {
-  {PS_Query, NULL},
-  {EPS_Query, NULL},
-/*	{GB_Query,   NULL }, */
-  {GBX_Queryh, NULL},
-/*	{GBX_Query,  NULL }, */
-  {NULL, NULL}
-};
-#endif

@@ -1,4 +1,4 @@
-/* $Id: png.c,v 1.16 2006-12-17 05:28:38 djdelorie Exp $ */
+/* $Id: png.c,v 1.17 2007-03-04 03:18:01 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -51,7 +51,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: png.c,v 1.16 2006-12-17 05:28:38 djdelorie Exp $");
+RCSID ("$Id: png.c,v 1.17 2007-03-04 03:18:01 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PNG function %s.\n", __FUNCTION__); abort()
 
@@ -886,7 +886,7 @@ png_calibrate (double xval, double yval)
 }
 
 static void
-png_set_crosshair (int x, int y)
+png_set_crosshair (int x, int y, int a)
 {
 }
 
