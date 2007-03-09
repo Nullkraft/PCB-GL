@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.36 2007-03-04 03:17:59 djdelorie Exp $
+## $Id: Makefile.am,v 1.37 2007-03-09 06:03:12 djdelorie Exp $
 ##
 
 SUBDIRS=	icons
@@ -33,6 +33,8 @@ PCB_SRCS = \
 	buffer.h \
 	change.c \
 	change.h \
+	clip.c \
+	clip.h \
 	command.c \
 	command.h \
 	compat.c \

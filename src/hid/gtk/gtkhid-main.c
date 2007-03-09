@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.36 2007-03-04 03:18:01 djdelorie Exp $ */
+/* $Id: gtkhid-main.c,v 1.37 2007-03-09 06:03:12 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -18,6 +18,7 @@
 #include "crosshair.h"
 #include "mymem.h"
 #include "draw.h"
+#include "clip.h"
 
 #include "hid.h"
 #include "../hidint.h"
@@ -28,7 +29,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.36 2007-03-04 03:18:01 djdelorie Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.37 2007-03-09 06:03:12 djdelorie Exp $");
 
 
 extern HID ghid_hid;
@@ -610,27 +611,19 @@ use_gc (hidGC gc)
 void
 ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
 {
-  gint lw, w, h;
+  double dx1, dy1, dx2, dy2;
 
-  lw = gc->width;
-  w = gport->width * gport->zoom;
-  h = gport->height * gport->zoom;
+  dx1 = DRAW_X ((double)x1);
+  dy1 = DRAW_Y ((double)y1);
+  dx2 = DRAW_X ((double)x2);
+  dy2 = DRAW_Y ((double)y2);
 
-  if ((SIDE_X (x1) < gport->view_x0 - lw
-       && SIDE_X (x2) < gport->view_x0 - lw)
-      || (SIDE_X (x1) > gport->view_x0 + w + lw
-	  && SIDE_X (x2) > gport->view_x0 + w + lw)
-      || (y1 < gport->view_y0 - lw && y2 < gport->view_y0 - lw)
-      || (y1 > gport->view_y0 + h + lw && y2 > gport->view_y0 + h + lw))
+  if (! ClipLine (0, 0, gport->width, gport->height,
+		  &dx1, &dy1, &dx2, &dy2, gc->width / gport->zoom))
     return;
 
-  x1 = DRAW_X (x1);
-  y1 = DRAW_Y (y1);
-  x2 = DRAW_X (x2);
-  y2 = DRAW_Y (y2);
-
   USE_GC (gc);
-  gdk_draw_line (gport->drawable, gport->u_gc, x1, y1, x2, y2);
+  gdk_draw_line (gport->drawable, gport->u_gc, dx1, dy1, dx2, dy2);
 }
 
 void

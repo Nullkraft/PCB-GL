@@ -23,7 +23,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: clip.h,v 1.4 2006-03-22 23:17:20 danmc Exp $
+ *  RCS: $Id: clip.h,v 1.5 2007-03-09 06:03:12 djdelorie Exp $
  */
 
 /* prototypes for inserting points into objects
@@ -37,11 +37,12 @@
 /* ---------------------------------------------------------------------------
  * prototypes
  */
-void XDrawCLine (GdkDrawable *, GdkGC *, int, int, int, int);
-void XDrawCArc (GdkDrawable *, GdkGC *, int, int, unsigned int, unsigned int,
-		int, int);
-void DrawCPolygon (GdkDrawable *, PolygonTypePtr);
-extern LocationType dxo, dyo;
-extern Boolean SwapOutput;
-extern float Local_Zoom;
+
+/* Clip X,Y to the given bounding box, plus a margin.  Returns TRUE if
+   there is something left to be drawn.  */
+Boolean ClipLine (double minx, double miny, double maxx, double maxy,
+		  double *x1, double *y1,
+		  double *x2, double *y2,
+		  double margin);
+
 #endif
