@@ -1,4 +1,4 @@
-/* $Id: rats.c,v 1.32 2007-03-10 00:14:38 haceaton Exp $ */
+/* $Id: rats.c,v 1.33 2007-03-10 03:06:20 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: rats.c,v 1.32 2007-03-10 00:14:38 haceaton Exp $");
+RCSID ("$Id: rats.c,v 1.33 2007-03-10 03:06:20 haceaton Exp $");
 
 
 #define TRIEDFIRST 0x1
@@ -578,11 +578,10 @@ DrawShortestRats (NetListTypePtr Netl, void (*funcp) ())
   Cardinal n, m, j;
   NetTypePtr next, subnet, theSubnet = NULL;
 
-  firstpoint = secondpoint = NULL;
   while (Netl->NetN > 1)
     {
+      firstpoint = secondpoint = NULL;
       subnet = &Netl->Net[0];
-      distance = 10000 * SQUARE (MAX_COORD);
       for (j = 1; j < Netl->NetN; j++)
 	{
 	  next = &Netl->Net[j];
@@ -593,7 +592,7 @@ DrawShortestRats (NetListTypePtr Netl, void (*funcp) ())
 		{
 		  conn2 = &next->Connection[m];
 		  if ((temp = SQUARE (conn1->X - conn2->X) +
-		       SQUARE (conn1->Y - conn2->Y)) < distance)
+		       SQUARE (conn1->Y - conn2->Y)) < distance || !firstpoint)
 		    {
 		      distance = temp;
 		      firstpoint = conn1;
