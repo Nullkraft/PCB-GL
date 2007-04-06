@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.104 2007-03-04 03:17:59 djdelorie Exp $ */
+/* $Id: action.c,v 1.105 2007-04-06 01:43:01 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -74,7 +74,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.104 2007-03-04 03:17:59 djdelorie Exp $");
+RCSID ("$Id: action.c,v 1.105 2007-04-06 01:43:01 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -733,16 +733,16 @@ GetFunctionID (String Ident)
       hash_initted = 1;
       if (HSIZE < ENTRIES (Functions) * 2)
 	{
-	  fprintf(stderr, "Error: function hash size too small (%d vs %d at %s:%d)\n",
-		  HSIZE, ENTRIES (Functions)*2, __FILE__, __LINE__);
+	  fprintf(stderr, "Error: function hash size too small (%d vs %ld at %s:%d)\n",
+		  HSIZE, ENTRIES (Functions)*2, __FILE__,  __LINE__);
 	  exit(1);
 	}
       if (ENTRIES (Functions) > 254)
 	{
 	  /* Change 'char' to 'int' and remove this when we get to 256
 	     strings to hash. */
-	  fprintf(stderr, "Error: function hash type too small (%d vs %d at %s:%d)\n",
-		  256, ENTRIES (Functions), __FILE__, __LINE__);
+	  fprintf(stderr, "Error: function hash type too small (%d vs %ld at %s:%d)\n",
+		  256, ENTRIES (Functions), __FILE__,  __LINE__);
 	  exit(1);
 	  
 	}
