@@ -1,4 +1,4 @@
-/* $Id: rats.c,v 1.33 2007-03-10 03:06:20 haceaton Exp $ */
+/* $Id: rats.c,v 1.34 2007-04-06 01:44:47 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: rats.c,v 1.33 2007-03-10 03:06:20 haceaton Exp $");
+RCSID ("$Id: rats.c,v 1.34 2007-04-06 01:44:47 danmc Exp $");
 
 
 #define TRIEDFIRST 0x1
@@ -578,6 +578,7 @@ DrawShortestRats (NetListTypePtr Netl, void (*funcp) ())
   Cardinal n, m, j;
   NetTypePtr next, subnet, theSubnet = NULL;
 
+  distance = 0.0;
   while (Netl->NetN > 1)
     {
       firstpoint = secondpoint = NULL;
