@@ -1,4 +1,4 @@
-/* $Id: find.c,v 1.61 2007-03-04 03:46:55 danmc Exp $ */
+/* $Id: find.c,v 1.62 2007-04-06 01:44:03 danmc Exp $ */
 
 /*
  *
@@ -101,7 +101,7 @@
 
 #undef DEBUG
 
-RCSID ("$Id: find.c,v 1.61 2007-03-04 03:46:55 danmc Exp $");
+RCSID ("$Id: find.c,v 1.62 2007-04-06 01:44:03 danmc Exp $");
 
 
 
@@ -472,7 +472,7 @@ PadPadIntersect (PadTypePtr p1, PadTypePtr p2)
       else
 	{
 	  /* the shortest line is between two corners */
-	  double x1, x2, y1, y2, d;
+	  double x1, x2, y1, y2;
 	  
 	  if (b2.X2 < b1.X1)
 	    {

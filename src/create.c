@@ -1,4 +1,4 @@
-/* $Id: create.c,v 1.37 2007-02-09 04:33:05 djdelorie Exp $ */
+/* $Id: create.c,v 1.38 2007-04-06 01:43:08 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: create.c,v 1.37 2007-02-09 04:33:05 djdelorie Exp $");
+RCSID ("$Id: create.c,v 1.38 2007-04-06 01:43:08 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local identifiers
@@ -205,7 +205,6 @@ CreateNewPCBPost (PCBTypePtr pcb, int use_defaults)
 
   if (use_defaults)
     {
-      int i;
       if (ParseGroupString (Settings.Groups, &pcb->LayerGroups, DEF_LAYER))
 	return 1;
 
