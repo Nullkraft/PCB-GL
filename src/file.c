@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.59 2007-03-04 03:17:59 djdelorie Exp $ */
+/* $Id: file.c,v 1.60 2007-04-06 01:43:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -84,8 +84,9 @@
 #include "error.h"
 #include "file.h"
 #include "hid.h"
-#include "mymem.h"
 #include "misc.h"
+#include "move.h"
+#include "mymem.h"
 #include "parse_l.h"
 #include "polygon.h"
 #include "rats.h"
@@ -97,7 +98,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: file.c,v 1.59 2007-03-04 03:17:59 djdelorie Exp $");
+RCSID ("$Id: file.c,v 1.60 2007-04-06 01:43:13 danmc Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -375,7 +376,6 @@ extern	FontTypePtr		yyFont;
 void
 PreLoadElementPCB ()
 {
-  int i;
 
   if (!yyPCB)
     return;
