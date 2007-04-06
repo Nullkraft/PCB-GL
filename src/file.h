@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: file.h,v 1.5 2007-02-03 04:12:41 danmc Exp $
+ *  RCS: $Id: file.h,v 1.6 2007-04-06 01:43:16 danmc Exp $
  */
 
 /* prototypes for file routines
@@ -45,6 +45,8 @@ void EmergencySave (void);
 int ReadLibraryContents (void);
 int ReadNetlist (char *);
 int SaveBufferElements (char *);
+void PreLoadElementPCB (void);
+void PostLoadElementPCB (void);
 
 /* 
  * Whenever the pcb file format is modified, this version number
