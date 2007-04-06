@@ -1,4 +1,4 @@
-/* $Id: flags.c,v 1.8 2007-03-04 03:17:59 djdelorie Exp $ */
+/* $Id: flags.c,v 1.9 2007-04-06 03:45:27 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -41,7 +41,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: flags.c,v 1.8 2007-03-04 03:17:59 djdelorie Exp $");
+RCSID ("$Id: flags.c,v 1.9 2007-04-06 03:45:27 danmc Exp $");
 
 static int
 FlagCurrentStyle (int dummy)
@@ -162,7 +162,7 @@ HID_Flag flags_flag_list[] = {
   {"rubberbandmode", FlagSETTINGS, OffsetOf (SettingType, RubberBandMode)},
   {"swapstartdirection", FlagSETTINGS,
 	OffsetOf (SettingType, SwapStartDirection)},
-  {"showdrc", FlagSETTINGS, OffsetOf (SettingType, ShowDRC)},
+  {"showdrcmode", FlagSETTINGS, OffsetOf (SettingType, ShowDRC)},
   {"resetafterelement", FlagSETTINGS,
 	OffsetOf (SettingType, ResetAfterElement)},
   {"ringbellwhenfinished", FlagSETTINGS,
@@ -170,3 +170,4 @@ HID_Flag flags_flag_list[] = {
 };
 
 REGISTER_FLAGS (flags_flag_list)
+
