@@ -1,4 +1,4 @@
-/* $Id: gui-misc.c,v 1.7 2006-12-22 04:59:11 haceaton Exp $ */
+/* $Id: gui-misc.c,v 1.8 2007-04-07 17:06:14 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -42,7 +42,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-misc.c,v 1.7 2006-12-22 04:59:11 haceaton Exp $");
+RCSID ("$Id: gui-misc.c,v 1.8 2007-04-07 17:06:14 danmc Exp $");
 
 #define DEFAULT_CURSORSHAPE	GDK_CROSSHAIR
 
@@ -72,7 +72,7 @@ ghid_status_line_set_text (gchar * text)
 void
 ghid_cursor_position_label_set_text (gchar * text)
 {
-  ghid_label_set_markup (ghidgui->cursor_position_absolute_label, text);
+  ghid_label_set_markup (ghidgui->cursor_position_absolute_label, text);  
 }
 
 void
