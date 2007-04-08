@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: file.h,v 1.6 2007-04-06 01:43:16 danmc Exp $
+ *  RCS: $Id: file.h,v 1.7 2007-04-08 01:44:31 danmc Exp $
  */
 
 /* prototypes for file routines
@@ -55,7 +55,7 @@ void PostLoadElementPCB (void);
  * guidance to the user as to what the minimum version of pcb required
  * is.
  */
-#define PCB_FILE_VERSION 20061106
+#define PCB_FILE_VERSION 20070407
 
 
 #ifndef HAS_ATEXIT

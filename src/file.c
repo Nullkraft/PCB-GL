@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.60 2007-04-06 01:43:13 danmc Exp $ */
+/* $Id: file.c,v 1.61 2007-04-08 01:44:31 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -98,7 +98,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: file.c,v 1.60 2007-04-06 01:43:13 danmc Exp $");
+RCSID ("$Id: file.c,v 1.61 2007-04-08 01:44:31 danmc Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -483,11 +483,19 @@ WritePCBDataHeader (FILE * FP)
 {
   Cardinal group;
 
-  /* next time the file format changes, these two lines should be enabled */
-#if 0
+  /*
+   * ************************** README *******************
+   * ************************** README *******************
+   *
+   * If the file format is modified in any way, update
+   * PCB_FILE_VERSION in file.h
+   *  
+   * ************************** README *******************
+   * ************************** README *******************
+   */
+
   fprintf (FP, "\n# To read pcb files, the pcb version (or the cvs source date) must be >= the file version\n");
   fprintf (FP, "FileVersion[%i]\n", PCB_FILE_VERSION);
-#endif
 
   fputs ("\nPCB[", FP);
   PrintQuotedString (FP, EMPTY (PCB->Name));
