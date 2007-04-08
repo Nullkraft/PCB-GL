@@ -1,4 +1,4 @@
-/* $Id: gui-config.c,v 1.11 2007-02-04 01:32:42 danmc Exp $ */
+/* $Id: gui-config.c,v 1.12 2007-04-08 02:28:03 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 extern int	MoveLayerAction(int argc, char **argv, int x, int y);
 
 
-RCSID ("$Id: gui-config.c,v 1.11 2007-02-04 01:32:42 danmc Exp $");
+RCSID ("$Id: gui-config.c,v 1.12 2007-04-08 02:28:03 danmc Exp $");
 
 enum ConfigType
 {
@@ -259,6 +259,7 @@ ghid_config_init (void)
   ghidgui->small_label_markup = TRUE;
   ghidgui->auto_pan_on = TRUE;
   ghidgui->auto_pan_speed = 3;
+  ghidgui->history_size = 5;
   dup_string (&color_file, "");
 
   for (ha = hid_attr_nodes; ha; ha = ha->next)
