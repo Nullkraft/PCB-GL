@@ -1,4 +1,4 @@
-/* $Id: command.c,v 1.17 2006-10-09 00:35:25 danmc Exp $ */
+/* $Id: command.c,v 1.18 2007-04-12 03:01:25 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: command.c,v 1.17 2006-10-09 00:35:25 danmc Exp $");
+RCSID ("$Id: command.c,v 1.18 2007-04-12 03:01:25 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------- */
 
@@ -337,6 +337,13 @@ CommandSaveLayout (int argc, char **argv, int x, int y)
 {
   switch (argc)
     {
+    case 0:
+      if (PCB->Filename)
+	SavePCB (PCB->Filename);
+      else
+	Message ("No filename to save to yet\n");
+      break;
+
     case 1:
       SavePCB (argv[0]);
       break;
