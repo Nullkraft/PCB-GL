@@ -1,4 +1,4 @@
-/* $Id: gui-pinout-window.c,v 1.4 2006-12-06 15:10:17 danmc Exp $ */
+/* $Id: gui-pinout-window.c,v 1.5 2007-04-19 03:07:19 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -42,13 +42,12 @@
 #include "mymem.h"
 #include "move.h"
 #include "rotate.h"
-#include "output.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-pinout-window.c,v 1.4 2006-12-06 15:10:17 danmc Exp $");
+RCSID ("$Id: gui-pinout-window.c,v 1.5 2007-04-19 03:07:19 danmc Exp $");
 
 
 static gboolean

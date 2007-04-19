@@ -1,4 +1,4 @@
-/* $Id: change.c,v 1.42 2007-03-04 03:17:59 djdelorie Exp $ */
+/* $Id: change.c,v 1.43 2007-04-19 03:07:18 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -49,7 +49,6 @@
 #include "mymem.h"
 #include "misc.h"
 #include "mirror.h"
-#include "output.h"
 #include "polygon.h"
 #include "rats.h"
 #include "remove.h"
@@ -64,7 +63,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: change.c,v 1.42 2007-03-04 03:17:59 djdelorie Exp $");
+RCSID ("$Id: change.c,v 1.43 2007-04-19 03:07:18 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes

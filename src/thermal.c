@@ -1,4 +1,4 @@
-/* $Id: thermal.c,v 1.4 2006-11-16 03:01:21 haceaton Exp $ */
+/* $Id: thermal.c,v 1.5 2007-04-19 03:07:18 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -66,7 +66,6 @@
 #include "error.h"
 #include "misc.h"
 #include "move.h"
-#include "output.h"
 #include "polygon.h"
 #include "rtree.h"
 #include "thermal.h"
@@ -76,7 +75,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: thermal.c,v 1.4 2006-11-16 03:01:21 haceaton Exp $");
+RCSID ("$Id: thermal.c,v 1.5 2007-04-19 03:07:18 danmc Exp $");
 
 static PCBTypePtr pcb;
 

@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.105 2007-04-06 01:43:01 danmc Exp $ */
+/* $Id: action.c,v 1.106 2007-04-19 03:07:18 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,6 @@
 #include "mymem.h"
 #include "misc.h"
 #include "move.h"
-#include "output.h"
 #include "polygon.h"
 /*#include "print.h"*/
 #include "rats.h"
@@ -74,7 +73,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.105 2007-04-06 01:43:01 danmc Exp $");
+RCSID ("$Id: action.c,v 1.106 2007-04-19 03:07:18 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types

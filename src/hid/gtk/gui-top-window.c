@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.36 2007-04-07 17:06:14 danmc Exp $ */
+/* $Id: gui-top-window.c,v 1.37 2007-04-19 03:07:19 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -64,7 +64,6 @@
 #include "mymem.h"
 #include "misc.h"
 #include "move.h"
-#include "output.h"
 #include "polygon.h"
 #include "rats.h"
 #include "remove.h"
@@ -84,7 +83,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.36 2007-04-07 17:06:14 danmc Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.37 2007-04-19 03:07:19 danmc Exp $");
 
 extern HID ghid_hid;
 

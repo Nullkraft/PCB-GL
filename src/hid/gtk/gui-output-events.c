@@ -1,4 +1,4 @@
-/* $Id: gui-output-events.c,v 1.13 2007-04-11 02:13:58 danmc Exp $ */
+/* $Id: gui-output-events.c,v 1.14 2007-04-19 03:07:19 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -41,7 +41,6 @@
 #include "crosshair.h"
 #include "draw.h"
 #include "error.h"
-#include "output.h"
 #include "misc.h"
 #include "set.h"
 
@@ -49,7 +48,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-output-events.c,v 1.13 2007-04-11 02:13:58 danmc Exp $");
+RCSID ("$Id: gui-output-events.c,v 1.14 2007-04-19 03:07:19 danmc Exp $");
 
 static gint x_pan_speed, y_pan_speed;
 
