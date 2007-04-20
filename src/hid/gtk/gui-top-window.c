@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.38 2007-04-20 11:31:15 danmc Exp $ */
+/* $Id: gui-top-window.c,v 1.39 2007-04-20 22:39:35 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -117,7 +117,7 @@ TODO:
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.38 2007-04-20 11:31:15 danmc Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.39 2007-04-20 22:39:35 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * local types
@@ -732,7 +732,6 @@ ghid_set_menu_toggle_button (GtkActionGroup * ag, gchar * name,
 void
 ghid_sync_with_new_layout (void)
 {
-  GtkAction *action;
   gboolean old_holdoff;
 
   /* Just want to update the state of the menus without calling the

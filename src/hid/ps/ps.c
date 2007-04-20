@@ -1,4 +1,4 @@
-/* $Id: ps.c,v 1.30 2007-04-20 11:31:16 danmc Exp $ */
+/* $Id: ps.c,v 1.31 2007-04-20 22:39:35 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -24,7 +24,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: ps.c,v 1.30 2007-04-20 11:31:16 danmc Exp $");
+RCSID ("$Id: ps.c,v 1.31 2007-04-20 22:39:35 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
@@ -864,7 +864,7 @@ HID_Attribute ps_calib_attribute_list[] = {
    HID_String, 0, 0, {0, 0, 0}, 0, 0},
 };
 
-static const char const *calib_lines[] = {
+static const char * const calib_lines[] = {
   "%!PS-Adobe\n",
   "\n",
   "72 72 scale\n",
