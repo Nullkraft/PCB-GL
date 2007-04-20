@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: draw.h,v 1.8 2007-02-13 04:44:07 djdelorie Exp $
+ *  RCS: $Id: draw.h,v 1.9 2007-04-20 11:31:13 danmc Exp $
  */
 
 /* prototypes for drawing routines

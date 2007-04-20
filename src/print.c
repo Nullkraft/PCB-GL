@@ -1,4 +1,4 @@
-/* $Id: print.c,v 1.50 2007-02-13 04:44:07 djdelorie Exp $ */
+/* $Id: print.c,v 1.51 2007-04-20 11:31:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -66,7 +66,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: print.c,v 1.50 2007-02-13 04:44:07 djdelorie Exp $");
+RCSID ("$Id: print.c,v 1.51 2007-04-20 11:31:13 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * prints a FAB drawing.

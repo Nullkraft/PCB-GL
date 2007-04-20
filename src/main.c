@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.70 2007-03-04 03:17:59 djdelorie Exp $ */
+/* $Id: main.c,v 1.71 2007-04-20 11:31:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -65,7 +65,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.70 2007-03-04 03:17:59 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.71 2007-04-20 11:31:13 danmc Exp $");
 
 
 #define PCBLIBPATH ".:" PCBLIBDIR

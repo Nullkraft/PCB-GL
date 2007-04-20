@@ -1,4 +1,4 @@
-/* $Id: flags.c,v 1.9 2007-04-06 03:45:27 danmc Exp $ */
+/* $Id: flags.c,v 1.10 2007-04-20 11:31:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -41,7 +41,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: flags.c,v 1.9 2007-04-06 03:45:27 danmc Exp $");
+RCSID ("$Id: flags.c,v 1.10 2007-04-20 11:31:13 danmc Exp $");
 
 static int
 FlagCurrentStyle (int dummy)

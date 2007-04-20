@@ -1,4 +1,4 @@
-/* $Id: clip.c,v 1.6 2007-03-09 06:03:12 djdelorie Exp $ */
+/* $Id: clip.c,v 1.7 2007-04-20 11:31:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -45,7 +45,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: clip.c,v 1.6 2007-03-09 06:03:12 djdelorie Exp $");
+RCSID ("$Id: clip.c,v 1.7 2007-04-20 11:31:13 danmc Exp $");
 
 /* Clip the line to the clipBox
  * return True if something to be drawn

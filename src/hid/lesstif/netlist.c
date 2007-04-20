@@ -1,4 +1,4 @@
-/* $Id: netlist.c,v 1.13 2007-03-04 03:18:01 djdelorie Exp $ */
+/* $Id: netlist.c,v 1.14 2007-04-20 11:31:15 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -30,7 +30,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: netlist.c,v 1.13 2007-03-04 03:18:01 djdelorie Exp $");
+RCSID ("$Id: netlist.c,v 1.14 2007-04-20 11:31:15 danmc Exp $");
 
 static Arg args[30];
 static int n;

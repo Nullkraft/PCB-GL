@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.53 2007-03-09 06:03:12 djdelorie Exp $ */
+/* $Id: main.c,v 1.54 2007-04-20 11:31:15 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -35,7 +35,7 @@
 
 #include <sys/poll.h>
 
-RCSID ("$Id: main.c,v 1.53 2007-03-09 06:03:12 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.54 2007-04-20 11:31:15 danmc Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"

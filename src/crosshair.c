@@ -1,4 +1,4 @@
-/* $Id: crosshair.c,v 1.30 2007-03-04 03:17:59 djdelorie Exp $ */
+/* $Id: crosshair.c,v 1.31 2007-04-20 11:31:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -52,7 +52,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: crosshair.c,v 1.30 2007-03-04 03:17:59 djdelorie Exp $");
+RCSID ("$Id: crosshair.c,v 1.31 2007-04-20 11:31:13 danmc Exp $");
 
 #if !defined(ABS)
 #define ABS(x) (((x)<0)?-(x):(x))

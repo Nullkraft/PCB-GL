@@ -1,4 +1,4 @@
-/* $Id: gui-config.c,v 1.12 2007-04-08 02:28:03 danmc Exp $ */
+/* $Id: gui-config.c,v 1.13 2007-04-20 11:31:15 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 extern int	MoveLayerAction(int argc, char **argv, int x, int y);
 
 
-RCSID ("$Id: gui-config.c,v 1.12 2007-04-08 02:28:03 danmc Exp $");
+RCSID ("$Id: gui-config.c,v 1.13 2007-04-20 11:31:15 danmc Exp $");
 
 enum ConfigType
 {
@@ -1152,9 +1152,7 @@ increment_spin_button_cb (GtkSpinButton * spin, gdouble * dst)
   value = gtk_spin_button_get_value (spin);
   *dst = value;			/* Not using PCB units */
 
-  if (dst == &Settings.size_increment_mm
-      || dst == &Settings.size_increment_mil)
-    ghid_change_selected_update_menu_actions ();
+
   ghidgui->config_modified = TRUE;
 }
 

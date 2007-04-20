@@ -1,4 +1,4 @@
-/* $Id: report.c,v 1.37 2007-03-04 03:18:00 djdelorie Exp $ */
+/* $Id: report.c,v 1.38 2007-04-20 11:31:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -53,7 +53,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: report.c,v 1.37 2007-03-04 03:18:00 djdelorie Exp $");
+RCSID ("$Id: report.c,v 1.38 2007-04-20 11:31:13 danmc Exp $");
 
 
 #define UNIT1(value) (Settings.grid_units_mm ? ((value) / 100000.0 * 25.4) : ((value) / 100.0))

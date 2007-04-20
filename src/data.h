@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: data.h,v 1.11 2007-03-04 03:17:59 djdelorie Exp $
+ *  RCS: $Id: data.h,v 1.12 2007-04-20 11:31:13 danmc Exp $
  */
 
 /* common identifiers

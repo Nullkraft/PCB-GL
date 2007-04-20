@@ -1,4 +1,4 @@
-/* $Id: undo.c,v 1.26 2007-02-13 04:44:07 djdelorie Exp $ */
+/* $Id: undo.c,v 1.27 2007-04-20 11:31:14 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -74,7 +74,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: undo.c,v 1.26 2007-02-13 04:44:07 djdelorie Exp $");
+RCSID ("$Id: undo.c,v 1.27 2007-04-20 11:31:14 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local data types

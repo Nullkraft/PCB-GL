@@ -1,4 +1,4 @@
-/* $Id: set.c,v 1.34 2007-04-19 03:07:18 danmc Exp $ */
+/* $Id: set.c,v 1.35 2007-04-20 11:31:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -60,10 +60,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: set.c,v 1.34 2007-04-19 03:07:18 danmc Exp $");
-
-
-
+RCSID ("$Id: set.c,v 1.35 2007-04-20 11:31:13 danmc Exp $");
 
 static int mode_position = 0;
 static int mode_stack[MAX_MODESTACK_DEPTH];

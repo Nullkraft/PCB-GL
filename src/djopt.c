@@ -1,4 +1,4 @@
-/* $Id: djopt.c,v 1.44 2007-03-04 03:17:59 djdelorie Exp $ */
+/* $Id: djopt.c,v 1.45 2007-04-20 11:31:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -49,7 +49,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: djopt.c,v 1.44 2007-03-04 03:17:59 djdelorie Exp $");
+RCSID ("$Id: djopt.c,v 1.45 2007-04-20 11:31:13 danmc Exp $");
 
 #ifndef HAVE_RINT
 #define rint(x)  (ceil((x) - 0.5))

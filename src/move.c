@@ -1,4 +1,4 @@
-/* $Id: move.c,v 1.38 2007-04-06 01:44:08 danmc Exp $ */
+/* $Id: move.c,v 1.39 2007-04-20 11:31:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: move.c,v 1.38 2007-04-06 01:44:08 danmc Exp $");
+RCSID ("$Id: move.c,v 1.39 2007-04-20 11:31:13 danmc Exp $");
 
 
 

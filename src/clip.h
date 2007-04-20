@@ -23,7 +23,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: clip.h,v 1.5 2007-03-09 06:03:12 djdelorie Exp $
+ *  RCS: $Id: clip.h,v 1.6 2007-04-20 11:31:13 danmc Exp $
  */
 
 /* prototypes for inserting points into objects

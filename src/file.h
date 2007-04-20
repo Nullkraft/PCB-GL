@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: file.h,v 1.7 2007-04-08 01:44:31 danmc Exp $
+ *  RCS: $Id: file.h,v 1.8 2007-04-20 11:31:13 danmc Exp $
  */
 
 /* prototypes for file routines

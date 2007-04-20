@@ -1,4 +1,4 @@
-/* $Id: thermal.c,v 1.5 2007-04-19 03:07:18 danmc Exp $ */
+/* $Id: thermal.c,v 1.6 2007-04-20 11:31:14 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -75,7 +75,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: thermal.c,v 1.5 2007-04-19 03:07:18 danmc Exp $");
+RCSID ("$Id: thermal.c,v 1.6 2007-04-20 11:31:14 danmc Exp $");
 
 static PCBTypePtr pcb;
 

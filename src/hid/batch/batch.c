@@ -1,4 +1,4 @@
-/* $Id: batch.c,v 1.7 2007-03-04 03:18:00 djdelorie Exp $ */
+/* $Id: batch.c,v 1.8 2007-04-20 11:31:14 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -17,7 +17,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: batch.c,v 1.7 2007-03-04 03:18:00 djdelorie Exp $");
+RCSID ("$Id: batch.c,v 1.8 2007-04-20 11:31:14 danmc Exp $");
 
 /* This is a text-line "batch" HID, which exists for scripting and
    non-GUI needs.  */

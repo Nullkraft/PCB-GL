@@ -1,4 +1,4 @@
-/* $Id: gui-pinout-window.c,v 1.5 2007-04-19 03:07:19 danmc Exp $ */
+/* $Id: gui-pinout-window.c,v 1.6 2007-04-20 11:31:15 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -47,7 +47,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-pinout-window.c,v 1.5 2007-04-19 03:07:19 danmc Exp $");
+RCSID ("$Id: gui-pinout-window.c,v 1.6 2007-04-20 11:31:15 danmc Exp $");
 
 
 static gboolean

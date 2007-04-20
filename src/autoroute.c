@@ -1,4 +1,4 @@
-/* $Id: autoroute.c,v 1.42 2007-03-04 03:17:59 djdelorie Exp $ */
+/* $Id: autoroute.c,v 1.43 2007-04-20 11:31:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -79,7 +79,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: autoroute.c,v 1.42 2007-03-04 03:17:59 djdelorie Exp $");
+RCSID ("$Id: autoroute.c,v 1.43 2007-04-20 11:31:13 danmc Exp $");
 
 /* #defines to enable some debugging output */
 /*

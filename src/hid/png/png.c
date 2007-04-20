@@ -1,4 +1,4 @@
-/* $Id: png.c,v 1.17 2007-03-04 03:18:01 djdelorie Exp $ */
+/* $Id: png.c,v 1.18 2007-04-20 11:31:16 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -51,7 +51,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: png.c,v 1.17 2007-03-04 03:18:01 djdelorie Exp $");
+RCSID ("$Id: png.c,v 1.18 2007-04-20 11:31:16 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PNG function %s.\n", __FUNCTION__); abort()
 

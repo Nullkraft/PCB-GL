@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.72 2007-03-04 03:17:59 djdelorie Exp $ */
+/* $Id: draw.c,v 1.73 2007-04-20 11:31:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.72 2007-03-04 03:17:59 djdelorie Exp $");
+RCSID ("$Id: draw.c,v 1.73 2007-04-20 11:31:13 danmc Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1

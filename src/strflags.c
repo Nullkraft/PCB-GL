@@ -1,4 +1,4 @@
-/* $Id: strflags.c,v 1.15 2007-03-04 03:18:00 djdelorie Exp $ */
+/* $Id: strflags.c,v 1.16 2007-04-20 11:31:13 danmc Exp $ */
 /*
  *                            COPYRIGHT
  *
@@ -54,7 +54,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: strflags.c,v 1.15 2007-03-04 03:18:00 djdelorie Exp $");
+RCSID ("$Id: strflags.c,v 1.16 2007-04-20 11:31:13 danmc Exp $");
 
 /* Because all the macros expect it, that's why.  */
 typedef struct

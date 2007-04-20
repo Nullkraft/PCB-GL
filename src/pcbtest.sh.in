@@ -23,7 +23,7 @@
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: pcbtest.sh.in,v 1.16 2007-02-08 06:44:29 haceaton Exp $
+#   RCS: $Id: pcbtest.sh.in,v 1.17 2007-04-20 11:31:13 danmc Exp $
 #
 #
 #
@@ -33,6 +33,9 @@
 
 # If the first argument is "-gdb" then run PCB inside the gdb
 # debugger.  
+#
+# Use  --g-fatal-warnings with the gtk HID to cause gtk-WARNING's to
+# abort.
 
 TEST_PATHS="--lib-path ../lib --lib-newlib @TOPSRCDIR@/newlib:../lib/pcblib-newlib --element-path ../lib --font-path @TOPSRCDIR@/src"
 TEST_CMDS="--lib-command-dir ../lib"

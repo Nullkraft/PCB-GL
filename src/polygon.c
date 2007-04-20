@@ -1,4 +1,4 @@
-/* $Id: polygon.c,v 1.49 2007-02-15 05:12:50 djdelorie Exp $ */
+/* $Id: polygon.c,v 1.50 2007-04-20 11:31:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: polygon.c,v 1.49 2007-02-15 05:12:50 djdelorie Exp $");
+RCSID ("$Id: polygon.c,v 1.50 2007-04-20 11:31:13 danmc Exp $");
 
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 

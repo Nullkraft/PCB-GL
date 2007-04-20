@@ -1,4 +1,4 @@
-/* $Id: gui-misc.c,v 1.9 2007-04-08 02:19:58 danmc Exp $ */
+/* $Id: gui-misc.c,v 1.10 2007-04-20 11:31:15 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -42,7 +42,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-misc.c,v 1.9 2007-04-08 02:19:58 danmc Exp $");
+RCSID ("$Id: gui-misc.c,v 1.10 2007-04-20 11:31:15 danmc Exp $");
 
 #define DEFAULT_CURSORSHAPE	GDK_CROSSHAIR
 

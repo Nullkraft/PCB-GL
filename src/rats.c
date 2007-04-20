@@ -1,4 +1,4 @@
-/* $Id: rats.c,v 1.34 2007-04-06 01:44:47 danmc Exp $ */
+/* $Id: rats.c,v 1.35 2007-04-20 11:31:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: rats.c,v 1.34 2007-04-06 01:44:47 danmc Exp $");
+RCSID ("$Id: rats.c,v 1.35 2007-04-20 11:31:13 danmc Exp $");
 
 
 #define TRIEDFIRST 0x1

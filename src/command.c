@@ -1,4 +1,4 @@
-/* $Id: command.c,v 1.18 2007-04-12 03:01:25 djdelorie Exp $ */
+/* $Id: command.c,v 1.19 2007-04-20 11:31:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: command.c,v 1.18 2007-04-12 03:01:25 djdelorie Exp $");
+RCSID ("$Id: command.c,v 1.19 2007-04-20 11:31:13 danmc Exp $");
 
 /* ---------------------------------------------------------------------- */
 

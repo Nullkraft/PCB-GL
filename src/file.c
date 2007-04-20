@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.61 2007-04-08 01:44:31 danmc Exp $ */
+/* $Id: file.c,v 1.62 2007-04-20 11:31:13 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -98,7 +98,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: file.c,v 1.61 2007-04-08 01:44:31 danmc Exp $");
+RCSID ("$Id: file.c,v 1.62 2007-04-20 11:31:13 danmc Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------

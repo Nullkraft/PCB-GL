@@ -1,3 +1,3 @@
-/* $Id: nelma.h,v 1.1 2007-04-11 11:12:34 danmc Exp $ */
+/* $Id: nelma.h,v 1.2 2007-04-20 11:31:15 danmc Exp $ */
 
 extern HID      nelma_hid;

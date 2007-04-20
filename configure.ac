@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.82 2007-04-11 11:12:32 danmc Exp $
+dnl $Id: configure.ac,v 1.83 2007-04-20 11:31:12 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -381,6 +381,14 @@ Please review the following errors:
 $GTK_PKG_ERRORS])]
 	)
 	GTK_VERSION=`$PKG_CONFIG gtk+-2.0 --modversion`
+	
+	# if we are building for gtk >= 2.8.0, we can use gdk_display_warp_pointer()
+	# otherwise we need XWarpPointer and we'll pull in the required headers with
+	# gdk/gdkx.h and we'll need to link with X11
+	if ! $PKG_CONFIG gtk+-2.0 --atleast-version=2.8.0 ; then
+		CPPFLAGS="$CFLAGS $GTK_CFLAGS"
+		AC_CHECK_HEADERS([gdk/gdkx.h])
+	fi
 
 	# Search for glib
 	PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.4.0, , 

@@ -1,4 +1,4 @@
-/* $Id: hidinit.c,v 1.18 2007-03-04 03:18:00 djdelorie Exp $ */
+/* $Id: hidinit.c,v 1.19 2007-04-20 11:31:14 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -35,7 +35,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: hidinit.c,v 1.18 2007-03-04 03:18:00 djdelorie Exp $");
+RCSID ("$Id: hidinit.c,v 1.19 2007-04-20 11:31:14 danmc Exp $");
 
 #define HID_DEF(x) extern void hid_ ## x ## _init(void);
 #include "hid/common/hidlist.h"

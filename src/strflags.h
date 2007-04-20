@@ -1,4 +1,4 @@
-/* $Id: strflags.h,v 1.5 2007-03-04 03:18:00 djdelorie Exp $ */
+/* $Id: strflags.h,v 1.6 2007-04-20 11:31:13 danmc Exp $ */
 /*
  *                            COPYRIGHT
  *
