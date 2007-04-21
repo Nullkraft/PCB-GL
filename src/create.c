@@ -1,4 +1,4 @@
-/* $Id: create.c,v 1.40 2007-04-21 17:03:22 djdelorie Exp $ */
+/* $Id: create.c,v 1.41 2007-04-21 21:21:55 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: create.c,v 1.40 2007-04-21 17:03:22 djdelorie Exp $");
+RCSID ("$Id: create.c,v 1.41 2007-04-21 21:21:55 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local identifiers
@@ -491,7 +491,9 @@ CreateNewRat (DataTypePtr Data, LocationType X1, LocationType Y1,
 ArcTypePtr
 CreateNewArcOnLayer (LayerTypePtr Layer,
 		     LocationType X1, LocationType Y1,
-		     BDimension width, int sa,
+		     BDimension width,
+		     BDimension height,
+		     int sa,
 		     int dir, BDimension Thickness,
 		     BDimension Clearance, FlagType Flags)
 {
@@ -515,7 +517,8 @@ CreateNewArcOnLayer (LayerTypePtr Layer,
   Arc->Clearance = Clearance;
   Arc->X = X1;
   Arc->Y = Y1;
-  Arc->Width = Arc->Height = width;
+  Arc->Width = width;
+  Arc->Height = height;
   Arc->StartAngle = sa;
   Arc->Delta = dir;
   SetArcBoundingBox (Arc);

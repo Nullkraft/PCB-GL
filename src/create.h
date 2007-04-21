@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: create.h,v 1.9 2006-10-09 00:35:25 danmc Exp $
+ *  RCS: $Id: create.h,v 1.10 2007-04-21 21:21:55 djdelorie Exp $
  */
 
 /* prototypes for create routines
@@ -52,7 +52,7 @@ RatTypePtr CreateNewRat (DataTypePtr, LocationType, LocationType,
 			 LocationType, LocationType, Cardinal, Cardinal,
 			 BDimension, FlagType);
 ArcTypePtr CreateNewArcOnLayer (LayerTypePtr, LocationType, LocationType,
-				BDimension, int, int, BDimension, BDimension,
+				BDimension, BDimension, int, int, BDimension, BDimension,
 				FlagType);
 PolygonTypePtr CreateNewPolygonFromRectangle (LayerTypePtr, LocationType,
 					      LocationType, LocationType,

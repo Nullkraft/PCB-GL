@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.107 2007-04-20 11:31:13 danmc Exp $ */
+/* $Id: action.c,v 1.108 2007-04-21 21:21:55 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -73,7 +73,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.107 2007-04-20 11:31:13 danmc Exp $");
+RCSID ("$Id: action.c,v 1.108 2007-04-21 21:21:55 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -1066,7 +1066,9 @@ NotifyMode (void)
 							      Crosshair.
 							      AttachedBox.
 							      Point2.Y,
-							      abs (wy), sa,
+							      abs (wy),
+							      abs (wy),
+							      sa,
 							      dir,
 							      Settings.
 							      LineThickness,

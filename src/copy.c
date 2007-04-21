@@ -1,4 +1,4 @@
-/* $Id: copy.c,v 1.18 2006-10-09 00:35:25 danmc Exp $ */
+/* $Id: copy.c,v 1.19 2007-04-21 21:21:55 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: copy.c,v 1.18 2006-10-09 00:35:25 danmc Exp $");
+RCSID ("$Id: copy.c,v 1.19 2007-04-21 21:21:55 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -229,7 +229,7 @@ CopyArc (LayerTypePtr Layer, ArcTypePtr Arc)
   ArcTypePtr arc;
 
   arc = CreateNewArcOnLayer (Layer, Arc->X + DeltaX,
-			     Arc->Y + DeltaY, Arc->Width, Arc->StartAngle,
+			     Arc->Y + DeltaY, Arc->Width, Arc->Height, Arc->StartAngle,
 			     Arc->Delta, Arc->Thickness, Arc->Clearance,
 			     MaskFlags (Arc->Flags, FOUNDFLAG));
   if (!arc)

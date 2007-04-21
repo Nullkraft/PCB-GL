@@ -1,4 +1,4 @@
-/* $Id: parse_y.y,v 1.39 2007-04-20 11:31:13 danmc Exp $ */
+/* $Id: parse_y.y,v 1.40 2007-04-21 21:21:55 djdelorie Exp $ */
 /*
  * ************************** README *******************
  *
@@ -61,7 +61,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_y.y,v 1.39 2007-04-20 11:31:13 danmc Exp $");
+RCSID("$Id: parse_y.y,v 1.40 2007-04-21 21:21:55 djdelorie Exp $");
 
 static	LayerTypePtr	Layer;
 static	PolygonTypePtr	Polygon;
@@ -1008,7 +1008,7 @@ arc_hi_format
 			/* x, y, width, height, thickness, clearance, startangle, delta, flags */
 		: T_ARC '[' NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER flags ']'
 			{
-				CreateNewArcOnLayer(Layer, $3, $4, $5, $9, $10, $7, $8, $11);
+			  CreateNewArcOnLayer(Layer, $3, $4, $5, $6, $9, $10, $7, $8, $11);
 			}
 		;
 
@@ -1016,7 +1016,7 @@ arc_1.7_format
 			/* x, y, width, height, thickness, clearance, startangle, delta, flags */
 		: T_ARC '(' NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER ')'
 			{
-				CreateNewArcOnLayer(Layer, $3*100, $4*100, $5*100, $9, $10,
+				CreateNewArcOnLayer(Layer, $3*100, $4*100, $4*100, $5*100, $9, $10,
 						    $7*100, $8*100, OldFlags($11));
 			}
 		;
@@ -1025,7 +1025,7 @@ arc_oldformat
 			/* x, y, width, height, thickness, startangle, delta, flags */
 		: T_ARC '(' NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER ')'
 			{
-				CreateNewArcOnLayer(Layer, $3*100, $4*100, $5*100, $8, $9,
+				CreateNewArcOnLayer(Layer, $3*100, $4*100, $5*100, $5*100, $8, $9,
 					$7*100, 200*GROUNDPLANEFRAME, OldFlags($10));
 			}
 		;
