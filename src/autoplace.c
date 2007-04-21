@@ -1,4 +1,4 @@
-/* $Id: autoplace.c,v 1.20 2006-10-09 00:35:25 danmc Exp $ */
+/* $Id: autoplace.c,v 1.21 2007-04-21 03:17:09 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -67,7 +67,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: autoplace.c,v 1.20 2006-10-09 00:35:25 danmc Exp $");
+RCSID ("$Id: autoplace.c,v 1.21 2007-04-21 03:17:09 danmc Exp $");
 
 #define EXPANDRECTXY(r1, x1, y1, x2, y2) { \
   r1->X1=MIN(r1->X1, x1); r1->Y1=MIN(r1->Y1, y1); \
@@ -529,6 +529,12 @@ ComputeCost (NetListTypePtr Nets, double T0, double T)
 	GetPointerMemory (TEST_FLAG (ONSOLDERFLAG, element) ?
 			  &seboxes : &ceboxes);
       *boxpp = malloc (sizeof (**boxpp));
+      if (*boxpp == NULL ) 
+	{
+	  fprintf (stderr, "malloc() failed in %s\n", __FUNCTION__);
+	  exit (1);
+	}
+
       (*boxpp)->box = element->VBox;
       (*boxpp)->element = element;
     }
