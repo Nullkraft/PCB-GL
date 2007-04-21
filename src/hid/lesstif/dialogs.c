@@ -1,4 +1,4 @@
-/* $Id: dialogs.c,v 1.27 2007-04-20 11:31:15 danmc Exp $ */
+/* $Id: dialogs.c,v 1.28 2007-04-21 18:02:50 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -25,7 +25,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: dialogs.c,v 1.27 2007-04-20 11:31:15 danmc Exp $");
+RCSID ("$Id: dialogs.c,v 1.28 2007-04-21 18:02:50 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
 
@@ -65,7 +65,7 @@ wait_for_dialog (Widget w)
 
 static Widget fsb = 0;
 static XmString xms_pcb, xms_net, xms_vend, xms_all, xms_load, xms_loadv,
-  xms_save;
+  xms_save, xms_fp;
 
 static void
 setup_fsb_dialog ()
@@ -74,6 +74,7 @@ setup_fsb_dialog ()
     return;
 
   xms_pcb = XmStringCreateLocalized ("*.pcb");
+  xms_fp = XmStringCreateLocalized ("*.fp");
   xms_net = XmStringCreateLocalized ("*.net");
   xms_vend = XmStringCreateLocalized ("*.vend");
   xms_all = XmStringCreateLocalized ("*");
@@ -123,6 +124,8 @@ Load (int argc, char **argv, int x, int y)
 
   if (strcasecmp (function, "Netlist") == 0)
     pattern = xms_net;
+  else if (strcasecmp (function, "ElementToBuffer") == 0)
+    pattern = xms_fp;
   else
     pattern = xms_pcb;
 
