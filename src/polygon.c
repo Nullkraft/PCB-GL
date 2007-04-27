@@ -1,4 +1,4 @@
-/* $Id: polygon.c,v 1.50 2007-04-20 11:31:13 danmc Exp $ */
+/* $Id: polygon.c,v 1.51 2007-04-27 04:17:51 haceaton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: polygon.c,v 1.50 2007-04-20 11:31:13 danmc Exp $");
+RCSID ("$Id: polygon.c,v 1.51 2007-04-27 04:17:51 haceaton Exp $");
 
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
@@ -679,7 +679,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
     region = clip_box (here, &polygon->BoundingBox);
   else
     region = polygon->BoundingBox;
-  shrink_box (&region, -expand);
+  region = bloat_box (&region, expand);
 
   if (setjmp (info.env) == 0)
     {
@@ -798,7 +798,7 @@ UnsubtractPad (PadType * pad, LayerType * l, PolygonType * p)
     }
   if (!Unsubtract (np, p))
     return 0;
-  clearPoly (PCB->Data, l, p, (const BoxType *) pad, 50);
+  clearPoly (PCB->Data, l, p, (const BoxType *) pad, 100);
   return 1;
 }
 
