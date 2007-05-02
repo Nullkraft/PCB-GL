@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.62 2007-04-20 11:31:13 danmc Exp $ */
+/* $Id: misc.c,v 1.63 2007-05-02 02:50:30 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -78,7 +78,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: misc.c,v 1.62 2007-04-20 11:31:13 danmc Exp $");
+RCSID ("$Id: misc.c,v 1.63 2007-05-02 02:50:30 danmc Exp $");
 
 
 /*	forward declarations	*/
@@ -811,9 +811,15 @@ error:
 void
 QuitApplication (void)
 {
-  /* save data if necessary */
+  /*
+   * save data if necessary.  It not needed, then don't trigger EmergencySave
+   * via our atexit() registering of EmergencySave().  We presumeably wanted to
+   * exit here and thus it is not an emergency.
+   */
   if (PCB->Changed && Settings.SaveInTMP)
     EmergencySave ();
+  else
+    DisableEmergencySave ();
 
   /*
    * if Settings.init_done is not > 0 then we haven't even called

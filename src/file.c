@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.62 2007-04-20 11:31:13 danmc Exp $ */
+/* $Id: file.c,v 1.63 2007-05-02 02:50:30 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -98,7 +98,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: file.c,v 1.62 2007-04-20 11:31:13 danmc Exp $");
+RCSID ("$Id: file.c,v 1.63 2007-05-02 02:50:30 danmc Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -925,16 +925,22 @@ SaveInTMP (void)
  * front-end for 'SaveInTMP()'
  * just makes sure that the routine is only called once
  */
+static Boolean dont_save_any_more = False;
 void
 EmergencySave (void)
 {
-  static Boolean already_called = False;
 
-  if (!already_called)
+  if (!dont_save_any_more)
     {
       SaveInTMP ();
-      already_called = True;
+      dont_save_any_more = True;
     }
+}
+
+ void 
+DisableEmergencySave (void)
+{
+  dont_save_any_more = True;
 }
 
 /* ----------------------------------------------------------------------

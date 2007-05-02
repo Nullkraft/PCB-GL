@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: file.h,v 1.8 2007-04-20 11:31:13 danmc Exp $
+ *  RCS: $Id: file.h,v 1.9 2007-05-02 02:50:30 danmc Exp $
  */
 
 /* prototypes for file routines
@@ -42,6 +42,7 @@ void EnableAutosave (void);
 void Backup (void);
 void SaveInTMP (void);
 void EmergencySave (void);
+void DisableEmergencySave (void);
 int ReadLibraryContents (void);
 int ReadNetlist (char *);
 int SaveBufferElements (char *);
