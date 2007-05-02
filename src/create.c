@@ -1,4 +1,4 @@
-/* $Id: create.c,v 1.41 2007-04-21 21:21:55 djdelorie Exp $ */
+/* $Id: create.c,v 1.42 2007-05-02 03:17:58 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: create.c,v 1.41 2007-04-21 21:21:55 djdelorie Exp $");
+RCSID ("$Id: create.c,v 1.42 2007-05-02 03:17:58 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local identifiers
@@ -230,8 +230,12 @@ CreateNewVia (DataTypePtr Data,
   VIA_LOOP (Data);
   {
     if (SQUARE (via->X - X) + SQUARE (via->Y - Y) <=
-	SQUARE (via->Thickness / 2 + Thickness / 2))
+	SQUARE (via->Thickness / 2 + Thickness / 2)) 
+    {
+      Message ("Dropping via at (%d, %d) because it would overlap with the via"
+	"at (%d, %d)\n", X/100, Y/100, via->X/100, via->Y/100);
       return (NULL);		/* don't allow via stacking */
+    }
   }
   END_LOOP;
 
