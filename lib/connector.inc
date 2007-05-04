@@ -22,7 +22,7 @@
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: connector.inc,v 1.8 2006-10-09 00:35:24 danmc Exp $
+#   RCS: $Id: connector.inc,v 1.9 2007-05-04 02:21:09 danmc Exp $
 #
 # connector packages
 
@@ -321,8 +321,8 @@ define(`PKG_DIN41_651LAY',
 Element(0x00 "$1" "`$2'" "$3" 400 250 3 200 0x00)
 (
 	forloop(`i', 1, eval($4 / 2),
-		`PIN(100,  eval(100*i +400), 60, 28, eval(2*i-1))
-		PIN(200, eval(100*i +400), 60, 28, eval(2*i))
+		`PIN(100,  eval(100*i +400), 60, 40, eval(2*i-1))
+		PIN(200, eval(100*i +400), 60, 40, eval(2*i))
 	')
 
 	# Befestigungsbohrung
@@ -360,8 +360,8 @@ define(`PKG_DIN41_651STAND',
 Element(0x00 "$1" "`$2'" "$3" 50 100 3 200 0x00)
 (
 	forloop(`i', 1, eval($4 / 2),
-		`PIN(200,  eval(100*i +400), 60, 28, eval(2*i-1))
-		PIN(300, eval(100*i +400), 60, 28, eval(2*i))
+		`PIN(200,  eval(100*i +400), 60, 40, eval(2*i-1))
+		PIN(300, eval(100*i +400), 60, 40, eval(2*i))
 	')
 	# aeusserer Rahmen
 	ElementLine(90 70 410 70 20)
