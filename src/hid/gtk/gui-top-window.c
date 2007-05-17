@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.40 2007-05-01 03:29:33 danmc Exp $ */
+/* $Id: gui-top-window.c,v 1.41 2007-05-17 04:39:20 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -122,7 +122,7 @@ a zoom in/out.
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.40 2007-05-01 03:29:33 danmc Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.41 2007-05-17 04:39:20 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * local types
@@ -3630,7 +3630,7 @@ ghid_load_menus (void)
 {
   char *filename;
   Resource *r = 0, *bir;
-  char *home_pcbmenu;
+  char *home_pcbmenu, *home;
   Resource *mr;
   int i;
 
@@ -3639,7 +3639,13 @@ ghid_load_menus (void)
       ghid_hotkey_actions[i] = NULL;
     }
 
-  home_pcbmenu = Concat (getenv ("HOME"), "/.pcb/gpcb-menu.res", NULL);
+  home = getenv ("HOME");
+  if (home == NULL)
+    {
+      Message ("Warning:  could not determine home directory (from HOME)\n");
+      home = "";
+    }
+  home_pcbmenu = Concat (home, "/.pcb/gpcb-menu.res", NULL);
 
   if (access ("gpcb-menu.res", R_OK) == 0)
     filename = "gpcb-menu.res";
@@ -3649,6 +3655,8 @@ ghid_load_menus (void)
     filename = pcbmenu_path;
   else
     filename = 0;
+
+  free (home_pcbmenu);
 
   bir = resource_parse (0, gpcb_menu_default);
   if (!bir)
