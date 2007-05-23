@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.41 2007-05-17 04:39:20 danmc Exp $ */
+/* $Id: gui-top-window.c,v 1.42 2007-05-23 01:21:51 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -122,7 +122,7 @@ a zoom in/out.
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.41 2007-05-17 04:39:20 danmc Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.42 2007-05-23 01:21:51 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * local types
@@ -974,7 +974,7 @@ ghid_make_programmed_menu_actions ()
   gchar * text;
   
   Resource *ar;
-  char av[30];
+  char av[64];
 
   for (i = 0; i < N_LAYER_BUTTONS; i++)
     {
