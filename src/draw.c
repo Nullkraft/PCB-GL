@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.73 2007-04-20 11:31:13 danmc Exp $ */
+/* $Id: draw.c,v 1.74 2007-05-25 17:43:31 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.73 2007-04-20 11:31:13 danmc Exp $");
+RCSID ("$Id: draw.c,v 1.74 2007-05-25 17:43:31 petercjclifton Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -421,8 +421,9 @@ DrawEverything (BoxTypePtr drawn_area)
   if (!TEST_FLAG (CHECKPLANESFLAG, PCB)
       && gui->set_layer ("invisible", SL (INVISIBLE, 0)))
     {
-      r_search (PCB->Data->pad_tree, drawn_area, NULL, backPad_callback,
-		NULL);
+      if (PCB->PinOn)
+        r_search (PCB->Data->pad_tree, drawn_area, NULL, backPad_callback,
+                  NULL);
       if (PCB->ElementOn)
 	{
 	  r_search (PCB->Data->element_tree, drawn_area, NULL, backE_callback,
