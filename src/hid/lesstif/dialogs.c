@@ -1,4 +1,4 @@
-/* $Id: dialogs.c,v 1.28 2007-04-21 18:02:50 djdelorie Exp $ */
+/* $Id: dialogs.c,v 1.29 2007-06-13 01:50:00 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -25,7 +25,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: dialogs.c,v 1.28 2007-04-21 18:02:50 djdelorie Exp $");
+RCSID ("$Id: dialogs.c,v 1.29 2007-06-13 01:50:00 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
 
@@ -211,7 +211,8 @@ LoadVendor (int argc, char **argv, int x, int y)
 static const char save_syntax[] =
 "Save()\n"
 "Save(Layout|LayoutAs)\n"
-"Save(AllConnections|AllUnusedPins|ElementConnections)";
+"Save(AllConnections|AllUnusedPins|ElementConnections)\n"
+"Save(PasteBuffer)";
 
 static const char save_help[] =
 "Save layout data to a user-selected file.";
