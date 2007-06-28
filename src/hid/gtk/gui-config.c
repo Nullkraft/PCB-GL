@@ -1,4 +1,4 @@
-/* $Id: gui-config.c,v 1.13 2007-04-20 11:31:15 danmc Exp $ */
+/* $Id: gui-config.c,v 1.14 2007-06-28 22:15:29 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 extern int	MoveLayerAction(int argc, char **argv, int x, int y);
 
 
-RCSID ("$Id: gui-config.c,v 1.13 2007-04-20 11:31:15 danmc Exp $");
+RCSID ("$Id: gui-config.c,v 1.14 2007-06-28 22:15:29 danmc Exp $");
 
 enum ConfigType
 {
@@ -437,6 +437,8 @@ config_file_read (void)
       g_free (option);
       g_free (arg);
     }
+
+  fclose (f);
 }
 
 static void
