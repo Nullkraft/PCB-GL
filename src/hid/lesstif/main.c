@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.55 2007-04-20 22:39:35 danmc Exp $ */
+/* $Id: main.c,v 1.56 2007-08-01 02:16:04 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -35,7 +35,7 @@
 
 #include <sys/poll.h>
 
-RCSID ("$Id: main.c,v 1.55 2007-04-20 22:39:35 danmc Exp $");
+RCSID ("$Id: main.c,v 1.56 2007-08-01 02:16:04 djdelorie Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -553,6 +553,20 @@ SwapSides (int argc, char **argv, int x, int y)
       /* SwapSides will swap this */
       Settings.ShowSolderSide = (flip_x == flip_y);
     }
+
+  n = 0;
+  if (flip_x)
+    stdarg (XmNprocessingDirection, XmMAX_ON_LEFT);
+  else
+    stdarg (XmNprocessingDirection, XmMAX_ON_RIGHT);
+  XtSetValues (hscroll, args, n);
+
+  n = 0;
+  if (flip_y)
+    stdarg (XmNprocessingDirection, XmMAX_ON_TOP);
+  else
+    stdarg (XmNprocessingDirection, XmMAX_ON_BOTTOM);
+  XtSetValues (vscroll, args, n);
 
   Settings.ShowSolderSide = !Settings.ShowSolderSide;
   if (Settings.ShowSolderSide)
