@@ -1,4 +1,4 @@
-/* $Id: gerber.c,v 1.27 2007-04-22 03:33:07 djdelorie Exp $ */
+/* $Id: gerber.c,v 1.28 2007-08-01 02:11:49 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -33,7 +33,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gerber.c,v 1.27 2007-04-22 03:33:07 djdelorie Exp $");
+RCSID ("$Id: gerber.c,v 1.28 2007-08-01 02:11:49 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented Gerber function %s.\n", __FUNCTION__); abort()
 
@@ -329,6 +329,11 @@ gerber_do_export (HID_Attr_Val * options)
   static int saved_layer_stack[MAX_LAYER];
   BoxType region;
   int save_ons[MAX_LAYER + 2];
+  FlagType save_thindraw;
+
+  save_thindraw = PCB->Flags;
+  CLEAR_FLAG(THINDRAWFLAG, PCB);
+  CLEAR_FLAG(THINDRAWPOLYFLAG, PCB);
 
   if (!options)
     {
@@ -395,6 +400,7 @@ gerber_do_export (HID_Attr_Val * options)
 
   maybe_close_f ();
   hid_restore_layer_ons (save_ons);
+  PCB->Flags = save_thindraw;
 }
 
 extern void hid_parse_command_line (int *argc, char ***argv);

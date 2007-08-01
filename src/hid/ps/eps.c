@@ -1,4 +1,4 @@
-/* $Id: eps.c,v 1.17 2007-04-20 11:31:16 danmc Exp $ */
+/* $Id: eps.c,v 1.18 2007-08-01 02:11:49 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -22,7 +22,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: eps.c,v 1.17 2007-04-20 11:31:16 danmc Exp $");
+RCSID ("$Id: eps.c,v 1.18 2007-08-01 02:11:49 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented EPS function %s.\n", __FUNCTION__); abort()
 static HID eps_hid;
@@ -123,6 +123,11 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   int i;
   static int saved_layer_stack[MAX_LAYER];
   BoxType region;
+  FlagType save_thindraw;
+
+  save_thindraw = PCB->Flags;
+  CLEAR_FLAG(THINDRAWFLAG, PCB);
+  CLEAR_FLAG(THINDRAWPOLYFLAG, PCB);
 
   f = the_file;
 
@@ -249,6 +254,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   fprintf (f, "%%%%EOF\n");
 
   memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
+  PCB->Flags = save_thindraw;
 }
 
 static void
