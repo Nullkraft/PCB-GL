@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.64 2007-05-16 22:19:08 danmc Exp $ */
+/* $Id: file.c,v 1.65 2007-08-01 02:52:06 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -98,7 +98,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: file.c,v 1.64 2007-05-16 22:19:08 danmc Exp $");
+RCSID ("$Id: file.c,v 1.65 2007-08-01 02:52:06 djdelorie Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -304,6 +304,22 @@ SavePCB (char *Filename)
 }
 
 /* ---------------------------------------------------------------------------
+ * set the route style to the first one, if the current one doesn't
+ * happen to match any.  This way, "revert" won't change the route
+ * style.
+ */
+static void
+set_some_route_style ()
+{
+  if (hid_get_flag ("style"))
+    return;
+  SetLineSize (PCB->RouteStyle[0].Thick);
+  SetViaSize (PCB->RouteStyle[0].Diameter, True);
+  SetViaDrillingHole (PCB->RouteStyle[0].Hole, True);
+  SetKeepawayWidth (PCB->RouteStyle[0].Keepaway);
+}
+
+/* ---------------------------------------------------------------------------
  * load PCB
  * parse the file with enabled 'PCB mode' (see parser)
  * if successful, update some other stuff
@@ -353,6 +369,8 @@ LoadPCB (char *Filename)
       Settings.grid_units_mm = units_mm;
 
       sort_netlist ();
+
+      set_some_route_style ();
 
       hid_action ("PCBChanged");
 
