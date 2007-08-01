@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.64 2007-08-01 02:45:05 djdelorie Exp $ */
+/* $Id: misc.c,v 1.65 2007-08-01 02:49:53 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -78,7 +78,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: misc.c,v 1.64 2007-08-01 02:45:05 djdelorie Exp $");
+RCSID ("$Id: misc.c,v 1.65 2007-08-01 02:49:53 djdelorie Exp $");
 
 
 /*	forward declarations	*/
@@ -1356,6 +1356,7 @@ SetArcBoundingBox (ArcTypePtr Arc)
 void
 ResetStackAndVisibility (void)
 {
+  int comp_group;
   Cardinal i;
 
   for (i = 0; i < max_layer + 2; i++)
