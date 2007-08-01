@@ -1,4 +1,4 @@
-/* $Id: menu.c,v 1.25 2007-05-17 04:39:20 danmc Exp $ */
+/* $Id: menu.c,v 1.26 2007-08-01 01:29:34 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -29,7 +29,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: menu.c,v 1.25 2007-05-17 04:39:20 danmc Exp $");
+RCSID ("$Id: menu.c,v 1.26 2007-08-01 01:29:34 djdelorie Exp $");
 
 #ifndef R_OK
 /* Common value for systems that don't define it.  */
@@ -1472,8 +1472,6 @@ lesstif_menu (Widget parent, char *name, Arg * margs, int mn)
   else
     filename = 0;
 
-  free (home_pcbmenu);
-
   bir = resource_parse (0, pcb_menu_default);
   if (!bir)
     {
@@ -1486,6 +1484,8 @@ lesstif_menu (Widget parent, char *name, Arg * margs, int mn)
 
   if (!r)
     r = bir;
+
+  free (home_pcbmenu);
 
   mr = resource_subres (r, "MainMenu");
   if (!mr)
