@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.63 2007-05-02 02:50:30 danmc Exp $ */
+/* $Id: misc.c,v 1.64 2007-08-01 02:45:05 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -78,7 +78,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: misc.c,v 1.63 2007-05-02 02:50:30 danmc Exp $");
+RCSID ("$Id: misc.c,v 1.64 2007-08-01 02:45:05 djdelorie Exp $");
 
 
 /*	forward declarations	*/
@@ -1369,6 +1369,10 @@ ResetStackAndVisibility (void)
   PCB->PinOn = True;
   PCB->ViaOn = True;
   PCB->RatOn = True;
+
+  /* Bring the component group to the front and make it active.  */
+  comp_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+  ChangeGroupVisibility (PCB->LayerGroups.Entries[comp_group][0], 1, 1);
 }
 
 /* ---------------------------------------------------------------------------
