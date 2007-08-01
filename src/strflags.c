@@ -1,4 +1,4 @@
-/* $Id: strflags.c,v 1.16 2007-04-20 11:31:13 danmc Exp $ */
+/* $Id: strflags.c,v 1.17 2007-08-01 02:59:16 djdelorie Exp $ */
 /*
  *                            COPYRIGHT
  *
@@ -54,7 +54,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: strflags.c,v 1.16 2007-04-20 11:31:13 danmc Exp $");
+RCSID ("$Id: strflags.c,v 1.17 2007-08-01 02:59:16 djdelorie Exp $");
 
 /* Because all the macros expect it, that's why.  */
 typedef struct
@@ -562,7 +562,7 @@ char *
 pcbflags_to_string (FlagType flags)
 {
   return common_flags_to_string (flags,
-				 1,
+				 ALL_TYPES,
 				 pcb_flagbits,
 				 ENTRIES (pcb_flagbits));
 }
