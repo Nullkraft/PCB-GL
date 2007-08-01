@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.56 2007-08-01 02:16:04 djdelorie Exp $ */
+/* $Id: main.c,v 1.57 2007-08-01 02:38:17 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -35,7 +35,7 @@
 
 #include <sys/poll.h>
 
-RCSID ("$Id: main.c,v 1.56 2007-08-01 02:16:04 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.57 2007-08-01 02:38:17 djdelorie Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -523,6 +523,7 @@ side'' of the board.
 static int
 SwapSides (int argc, char **argv, int x, int y)
 {
+  int old_shown_side = Settings.ShowSolderSide;
   int comp_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
   int solder_group = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
   int active_group = GetLayerGroupNumberByNumber (LayerStack[0]);
@@ -569,24 +570,35 @@ SwapSides (int argc, char **argv, int x, int y)
   XtSetValues (vscroll, args, n);
 
   Settings.ShowSolderSide = !Settings.ShowSolderSide;
-  if (Settings.ShowSolderSide)
+
+  /* The idea is that if we're looking at the front side and the front
+     layer is active (or visa versa), switching sides should switch
+     layers too.  We used to only do this if the other layer wasn't
+     shown, but we now do it always.  Change it back if users get
+     confused.  */
+  if (Settings.ShowSolderSide != old_shown_side)
     {
-      if (active_group == comp_group && comp_showing && !solder_showing)
+      if (Settings.ShowSolderSide)
 	{
-	  ChangeGroupVisibility (PCB->LayerGroups.Entries[comp_group][0], 0,
-				 0);
-	  ChangeGroupVisibility (PCB->LayerGroups.Entries[solder_group][0], 1,
-				 1);
+	  if (active_group == comp_group)
+	    {
+	      if (comp_showing && !solder_showing)
+		ChangeGroupVisibility (PCB->LayerGroups.Entries[comp_group][0], 0,
+				       0);
+	      ChangeGroupVisibility (PCB->LayerGroups.Entries[solder_group][0], 1,
+				     1);
+	    }
 	}
-    }
-  else
-    {
-      if (active_group == solder_group && solder_showing && !comp_showing)
+      else
 	{
-	  ChangeGroupVisibility (PCB->LayerGroups.Entries[solder_group][0], 0,
-				 0);
-	  ChangeGroupVisibility (PCB->LayerGroups.Entries[comp_group][0], 1,
-				 1);
+	  if (active_group == solder_group)
+	    {
+	      if (solder_showing && !comp_showing)
+		ChangeGroupVisibility (PCB->LayerGroups.Entries[solder_group][0], 0,
+				       0);
+	      ChangeGroupVisibility (PCB->LayerGroups.Entries[comp_group][0], 1,
+				     1);
+	    }
 	}
     }
   lesstif_invalidate_all ();
