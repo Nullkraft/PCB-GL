@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.57 2007-08-01 02:38:17 djdelorie Exp $ */
+/* $Id: main.c,v 1.58 2007-08-01 03:03:09 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -35,7 +35,7 @@
 
 #include <sys/poll.h>
 
-RCSID ("$Id: main.c,v 1.57 2007-08-01 02:38:17 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.58 2007-08-01 03:03:09 djdelorie Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -642,6 +642,8 @@ command_parse (char *s)
 	  ws = 0;
 	}
     }
+  if (n == 0)
+    return;
   argv[n] = 0;
   lesstif_call_action (argv[0], n - 1, argv + 1);
 }
