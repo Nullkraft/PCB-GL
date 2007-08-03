@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.43 2007-08-02 19:28:31 djdelorie Exp $ */
+/* $Id: gui-top-window.c,v 1.44 2007-08-03 17:41:33 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -122,7 +122,7 @@ a zoom in/out.
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.43 2007-08-02 19:28:31 djdelorie Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.44 2007-08-03 17:41:33 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * local types
@@ -2683,7 +2683,7 @@ ghid_do_export (HID_Attr_Val * options)
 gint
 LayersChanged (int argc, char **argv, int px, int py)
 {
-  if (!ghidgui->ui_manager)
+  if (!ghidgui || !ghidgui->ui_manager)
     return 0;
 
   ghid_config_groups_changed();
