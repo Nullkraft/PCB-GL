@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.76 2007-05-29 11:18:59 petercjclifton Exp $ */
+/* $Id: draw.c,v 1.77 2007-08-04 21:20:18 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.76 2007-05-29 11:18:59 petercjclifton Exp $");
+RCSID ("$Id: draw.c,v 1.77 2007-08-04 21:20:18 djdelorie Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -1455,8 +1455,8 @@ ClearPad (PadTypePtr Pad, Boolean mask)
       if (TEST_FLAG (SQUAREFLAG, Pad))
         {
           int l, r, t, b;
-          l = Pad->Point1.X - w;
-          b = Pad->Point1.Y - w;
+          l = Pad->Point1.X - w/2;
+          b = Pad->Point1.Y - w/2;
           r = l + w * 2;
           t = b + w * 2;
           gui->fill_rect (Output.pmGC, l, b, r, t);
