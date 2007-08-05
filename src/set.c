@@ -1,4 +1,4 @@
-/* $Id: set.c,v 1.35 2007-04-20 11:31:13 danmc Exp $ */
+/* $Id: set.c,v 1.36 2007-08-05 02:36:36 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -60,7 +60,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: set.c,v 1.35 2007-04-20 11:31:13 danmc Exp $");
+RCSID ("$Id: set.c,v 1.36 2007-08-05 02:36:36 djdelorie Exp $");
 
 static int mode_position = 0;
 static int mode_stack[MAX_MODESTACK_DEPTH];
@@ -143,7 +143,7 @@ pcb_use_route_style (RouteStyleType * rst)
 void
 SetKeepawayWidth (BDimension Width)
 {
-  if (Width <= MAX_LINESIZE && Width >= MIN_LINESIZE)
+  if (Width <= MAX_LINESIZE)
     {
       Settings.Keepaway = Width;
     }
