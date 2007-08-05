@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.72 2007-05-17 04:39:19 danmc Exp $ */
+/* $Id: main.c,v 1.73 2007-08-05 23:40:26 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -65,7 +65,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.72 2007-05-17 04:39:19 danmc Exp $");
+RCSID ("$Id: main.c,v 1.73 2007-08-05 23:40:26 djdelorie Exp $");
 
 
 #define PCBLIBPATH ".:" PCBLIBDIR
@@ -533,6 +533,7 @@ HID_Attribute main_attribute_list[] = {
 
   BSET (DrawGrid, 0, "draw-grid", "default to drawing the grid at startup"),
   BSET (ClearLine, 1, "clear-line", 0),
+  BSET (FullPoly, 0, "full-poly", 0),
   BSET (UniqueNames, 1, "unique-names", 0),
   BSET (SnapPin, 1, "snap-pin", 0),
   BSET (SaveLastCommand, 0, "save-last-command", 0),

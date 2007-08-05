@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.54 2007-04-20 11:31:13 danmc Exp $
+ *  RCS: $Id: global.h,v 1.55 2007-08-05 23:40:26 djdelorie Exp $
  */
 
 /* definition of types
@@ -591,7 +591,8 @@ typedef struct			/* some resources... */
     PinoutTextOffsetY;
   RouteStyleType RouteStyle[NUM_STYLES];	/* default routing styles */
   LayerGroupType LayerGroups;	/* default layer groups */
-  Boolean ClearLine, UniqueNames,	/* force unique names */
+  Boolean ClearLine, FullPoly,
+    UniqueNames,		/* force unique names */
     SnapPin,			/* snap to pins and pads */
     ShowSolderSide,		/* mirror output */
     SaveLastCommand,		/* save the last command entered by user */

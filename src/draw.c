@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.77 2007-08-04 21:20:18 djdelorie Exp $ */
+/* $Id: draw.c,v 1.78 2007-08-05 23:40:26 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.77 2007-08-04 21:20:18 djdelorie Exp $");
+RCSID ("$Id: draw.c,v 1.78 2007-08-05 23:40:26 djdelorie Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -2009,7 +2009,20 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 	PolygonHoles (clip_box, Layer, Polygon, thin_callback);
     }
   else if (Polygon->Clipped)
-    NoHolesPolygonDicer (Polygon, DrawPolygonLowLevel, clip_box);
+    {
+      NoHolesPolygonDicer (Polygon, DrawPolygonLowLevel, clip_box);
+      /* draw other parts of the polygon if fullpoly flag is set */
+      if (TEST_FLAG (FULLPOLYFLAG, Polygon))
+	{
+	  POLYAREA *pg;
+	  for (pg = Polygon->Clipped->f; pg != Polygon->Clipped; pg = pg->f)
+	    {
+	      PolygonType poly;
+	      poly.Clipped = pg;
+	      NoHolesPolygonDicer (&poly, DrawPolygonLowLevel, clip_box);
+	    }
+	}
+    }
   /* if the gui has the dicer flag set then it won't draw missing poly outlines */
   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && Polygon->Clipped && !Gathering
       && !gui->poly_dicer)

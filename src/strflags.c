@@ -1,4 +1,4 @@
-/* $Id: strflags.c,v 1.17 2007-08-01 02:59:16 djdelorie Exp $ */
+/* $Id: strflags.c,v 1.18 2007-08-05 23:40:26 djdelorie Exp $ */
 /*
  *                            COPYRIGHT
  *
@@ -54,7 +54,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: strflags.c,v 1.17 2007-08-01 02:59:16 djdelorie Exp $");
+RCSID ("$Id: strflags.c,v 1.18 2007-08-05 23:40:26 djdelorie Exp $");
 
 /* Because all the macros expect it, that's why.  */
 typedef struct
@@ -110,6 +110,7 @@ static FlagBitsType object_flagbits[] = {
   { DRCFLAG, N ("drc"), ALL_TYPES },
   { LOCKFLAG, N ("lock"), ALL_TYPES },
   { EDGE2FLAG, N ("edge2"), ALL_TYPES },
+  { FULLPOLYFLAG, N ("fullpoly"), POLYGON_TYPE},
   { NOPASTEFLAG, N ("nopaste"), PAD_TYPE }
 };
 

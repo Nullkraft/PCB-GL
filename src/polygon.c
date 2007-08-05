@@ -1,4 +1,4 @@
-/* $Id: polygon.c,v 1.52 2007-04-28 14:32:54 haceaton Exp $ */
+/* $Id: polygon.c,v 1.53 2007-08-05 23:40:26 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: polygon.c,v 1.52 2007-04-28 14:32:54 haceaton Exp $");
+RCSID ("$Id: polygon.c,v 1.53 2007-08-05 23:40:26 djdelorie Exp $");
 
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
@@ -987,6 +987,8 @@ CopyAttachedPolygonToLayer (void)
   *polygon = Crosshair.AttachedPolygon;
   polygon->ID = saveID;
   SET_FLAG (CLEARPOLYFLAG, polygon);
+  if (TEST_FLAG (NEWFULLPOLYFLAG, PCB))
+    SET_FLAG (FULLPOLYFLAG, polygon);
   memset (&Crosshair.AttachedPolygon, 0, sizeof (PolygonType));
   SetPolygonBoundingBox (polygon);
   if (!CURRENT->polygon_tree)
