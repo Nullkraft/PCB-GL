@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.55 2007-08-05 23:40:26 djdelorie Exp $
+ *  RCS: $Id: global.h,v 1.56 2007-08-06 04:31:00 djdelorie Exp $
  */
 
 /* definition of types
@@ -326,7 +326,7 @@ typedef struct			/* holds all objects */
   RatTypePtr Rat;
   rtree_t *via_tree, *element_tree, *pin_tree, *pad_tree, *name_tree[3],	/* for element names */
    *rat_tree;
-  void *pcb;
+  struct PCBType *pcb;
   LayerType Layer[MAX_LAYER + 2];	/* add 2 silkscreen layers */
 } DataType, *DataTypePtr;
 
@@ -407,7 +407,7 @@ typedef struct
      |  to the saved layout values when a layout is loaded.
      |  This struct is also used for the remove list and for buffer handling
    */
-typedef struct
+typedef struct PCBType
 {
   long ID;			/* see macro.h */
   FlagType Flags;
