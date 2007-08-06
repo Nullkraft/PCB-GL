@@ -1,4 +1,4 @@
-/* $Id: polygon.c,v 1.53 2007-08-05 23:40:26 djdelorie Exp $ */
+/* $Id: polygon.c,v 1.54 2007-08-06 00:37:37 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: polygon.c,v 1.53 2007-08-05 23:40:26 djdelorie Exp $");
+RCSID ("$Id: polygon.c,v 1.54 2007-08-06 00:37:37 djdelorie Exp $");
 
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
@@ -692,12 +692,10 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
                     &info);
         r +=
           r_search (layer->arc_tree, &region, NULL, arc_sub_callback, &info);
-        if (info.solder
-            || group == Group (Data, Data->LayerN + COMPONENT_LAYER))
-          r +=
-            r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
       }
       END_LOOP;
+      if (info.solder || group == Group (Data, Data->LayerN + COMPONENT_LAYER))
+	r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
     }
   return r;
 }
