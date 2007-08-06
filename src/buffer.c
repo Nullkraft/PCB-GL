@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.39 2007-04-21 21:21:55 djdelorie Exp $ */
+/* $Id: buffer.c,v 1.40 2007-08-06 04:30:37 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -62,7 +62,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: buffer.c,v 1.39 2007-04-21 21:21:55 djdelorie Exp $");
+RCSID ("$Id: buffer.c,v 1.40 2007-08-06 04:30:37 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -849,11 +849,13 @@ LoadLayoutToBuffer (BufferTypePtr Buffer, char *Filename)
       Buffer->X = newPCB->CursorX;
       Buffer->Y = newPCB->CursorY;
       RemovePCB (newPCB);
+      Buffer->Data->pcb = PCB;
       return (True);
     }
 
   /* release unused memory */
   RemovePCB (newPCB);
+      Buffer->Data->pcb = PCB;
   return (False);
 }
 
