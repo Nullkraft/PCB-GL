@@ -1,4 +1,4 @@
-/* $Id: menu.c,v 1.26 2007-08-01 01:29:34 djdelorie Exp $ */
+/* $Id: menu.c,v 1.27 2007-08-06 01:35:33 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -29,7 +29,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: menu.c,v 1.26 2007-08-01 01:29:34 djdelorie Exp $");
+RCSID ("$Id: menu.c,v 1.27 2007-08-06 01:35:33 djdelorie Exp $");
 
 #ifndef R_OK
 /* Common value for systems that don't define it.  */
@@ -810,7 +810,11 @@ int
 lesstif_call_action (const char *aname, int argc, char **argv)
 {
   int px, py;
-  HID_Action *a = hid_find_action (aname);
+  HID_Action *a;
+
+  if (!aname)
+    return 1;
+  a = hid_find_action (aname);
   if (!a)
     {
       int i;

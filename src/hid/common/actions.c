@@ -1,4 +1,4 @@
-/* $Id: actions.c,v 1.10 2006-10-09 00:35:26 danmc Exp $ */
+/* $Id: actions.c,v 1.11 2007-08-06 01:35:33 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -19,7 +19,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: actions.c,v 1.10 2006-10-09 00:35:26 danmc Exp $");
+RCSID ("$Id: actions.c,v 1.11 2007-08-06 01:35:33 djdelorie Exp $");
 
 typedef struct HID_ActionNode
 {
@@ -64,6 +64,9 @@ hid_find_action (const char *name)
 {
   HID_ActionNode *ha;
   int i, n, lower, upper;
+
+  if (name == NULL)
+    return 0;
 
   if (all_actions == 0)
     {
@@ -200,7 +203,7 @@ hid_actionv (const char *name, int argc, char **argv)
   int x = 0, y = 0, i;
   HID_Action *a;
 
-  if (Settings.verbose)
+  if (Settings.verbose && name)
     {
       printf ("Action: \033[34m%s(", name);
       for (i = 0; i < argc; i++)
