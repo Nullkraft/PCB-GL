@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.79 2007-08-06 02:18:30 djdelorie Exp $ */
+/* $Id: draw.c,v 1.80 2007-08-19 18:25:51 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.79 2007-08-06 02:18:30 djdelorie Exp $");
+RCSID ("$Id: draw.c,v 1.80 2007-08-19 18:25:51 danmc Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -607,6 +607,18 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
   gui->draw_line (Output.fgGC, X + mark_size, Y, X, Y - mark_size);
   gui->draw_line (Output.fgGC, X - mark_size, Y, X, Y + mark_size);
   gui->draw_line (Output.fgGC, X + mark_size, Y, X, Y + mark_size);
+
+  /*
+   * If an element is locked, place a "L" on top of the "diamond".
+   * This provides a nice visual indication that it is locked that
+   * works even for color blind users.
+   */
+  if (TEST_FLAG (LOCKFLAG, e) )
+    {
+      gui->draw_line (Output.fgGC, X, Y, X + 2 * mark_size, Y);
+      gui->draw_line (Output.fgGC, X, Y, X, Y - 4* mark_size);
+    }
+  
 }
 
 static int
