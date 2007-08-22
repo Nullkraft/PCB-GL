@@ -1,4 +1,4 @@
-/* $Id: gui.h,v 1.14 2007-05-01 03:29:33 danmc Exp $ */
+/* $Id: gui.h,v 1.15 2007-08-22 02:43:45 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -383,6 +383,8 @@ void ghid_dialog_about (void);
 void ghid_dialog_print (HID * printer);
 void ghid_dialog_export (void);
 
+
+int ghid_attribute_dialog (HID_Attribute *, int, HID_Attr_Val *);
 
 /* gui-route-style function prototypes.
 */
