@@ -1,4 +1,4 @@
-/* $Id: batch.c,v 1.8 2007-04-20 11:31:14 danmc Exp $ */
+/* $Id: batch.c,v 1.9 2007-08-22 03:23:46 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -17,7 +17,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: batch.c,v 1.8 2007-04-20 11:31:14 danmc Exp $");
+RCSID ("$Id: batch.c,v 1.9 2007-08-22 03:23:46 danmc Exp $");
 
 /* This is a text-line "batch" HID, which exists for scripting and
    non-GUI needs.  */
@@ -376,7 +376,8 @@ batch_prompt_for (char *msg, char *default_string)
 
 static int
 batch_attribute_dialog (HID_Attribute * attrs,
-			int n_attrs, HID_Attr_Val * results)
+			int n_attrs, HID_Attr_Val * results,
+			const char *)
 {
 }
 

@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.58 2007-08-01 03:03:09 djdelorie Exp $ */
+/* $Id: main.c,v 1.59 2007-08-22 03:23:46 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -35,7 +35,7 @@
 
 #include <sys/poll.h>
 
-RCSID ("$Id: main.c,v 1.58 2007-08-01 03:03:09 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.59 2007-08-22 03:23:46 danmc Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -3515,7 +3515,8 @@ extern void lesstif_report_dialog (char *title, char *msg);
 
 extern int
 lesstif_attribute_dialog (HID_Attribute * attrs,
-			  int n_attrs, HID_Attr_Val * results);
+			  int n_attrs, HID_Attr_Val * results,
+			  const char * title);
 
 static void
 pinout_callback (Widget da, PinoutData * pd,

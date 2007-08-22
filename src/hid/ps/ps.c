@@ -1,4 +1,4 @@
-/* $Id: ps.c,v 1.35 2007-08-22 02:42:48 danmc Exp $ */
+/* $Id: ps.c,v 1.36 2007-08-22 03:23:46 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -24,7 +24,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: ps.c,v 1.35 2007-08-22 02:42:48 danmc Exp $");
+RCSID ("$Id: ps.c,v 1.36 2007-08-22 03:23:46 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
@@ -1011,7 +1011,7 @@ ps_calibrate_1 (double xval, double yval, int use_command)
       ps_calib_attribute_list[0].default_val.str_value = strdup ("lpr");
     }
 
-  if (gui->attribute_dialog (ps_calib_attribute_list, 1, vals))
+  if (gui->attribute_dialog (ps_calib_attribute_list, 1, vals, "Print Calibration Page"))
     return;
 
   if (use_command || strchr (vals[0].str_value, '|'))

@@ -1,4 +1,4 @@
-/* $Id: hidnogui.c,v 1.13 2007-04-20 11:31:14 danmc Exp $ */
+/* $Id: hidnogui.c,v 1.14 2007-08-22 03:23:46 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -16,7 +16,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: hidnogui.c,v 1.13 2007-04-20 11:31:14 danmc Exp $");
+RCSID ("$Id: hidnogui.c,v 1.14 2007-08-22 03:23:46 danmc Exp $");
 
 /* This is the "gui" that is installed at startup, and is used when
    there is no other real GUI to use.  For the most part, it just
@@ -289,7 +289,8 @@ nogui_prompt_for (char *msg, char *default_string)
 
 static int
 nogui_attribute_dialog (HID_Attribute * attrs,
-			int n_attrs, HID_Attr_Val * results)
+			int n_attrs, HID_Attr_Val * results,
+			const char * title)
 {
   CRASH;
 }
