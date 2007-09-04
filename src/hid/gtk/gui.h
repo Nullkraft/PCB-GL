@@ -1,4 +1,4 @@
-/* $Id: gui.h,v 1.17 2007-09-04 00:08:40 danmc Exp $ */
+/* $Id: gui.h,v 1.18 2007-09-04 00:40:22 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -382,9 +382,8 @@ char * ghid_fileselect (const char *, const char *, char *, char *, const char *
 
 
 /* gui-dialog-print.c */
-void ghid_dialog_print (HID * printer);
 void ghid_dialog_export (void);
-
+void ghid_dialog_print (HID *);
 
 int ghid_attribute_dialog (HID_Attribute *, int, HID_Attr_Val *, const char *, const char *);
 
