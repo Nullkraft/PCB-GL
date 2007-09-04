@@ -1,4 +1,4 @@
-/* $Id: gui.h,v 1.16 2007-08-22 03:23:46 danmc Exp $ */
+/* $Id: gui.h,v 1.17 2007-09-04 00:08:40 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -378,13 +378,15 @@ gint ghid_dialog_confirm_all (gchar * message);
 gchar *ghid_dialog_input (gchar * prompt, gchar * initial);
 void ghid_dialog_about (void);
 
+char * ghid_fileselect (const char *, const char *, char *, char *, const char *, int);
+
 
 /* gui-dialog-print.c */
 void ghid_dialog_print (HID * printer);
 void ghid_dialog_export (void);
 
 
-int ghid_attribute_dialog (HID_Attribute *, int, HID_Attr_Val *, const char *);
+int ghid_attribute_dialog (HID_Attribute *, int, HID_Attr_Val *, const char *, const char *);
 
 /* gui-route-style function prototypes.
 */

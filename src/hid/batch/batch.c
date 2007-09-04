@@ -1,4 +1,4 @@
-/* $Id: batch.c,v 1.9 2007-08-22 03:23:46 danmc Exp $ */
+/* $Id: batch.c,v 1.10 2007-09-04 00:08:39 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -17,7 +17,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: batch.c,v 1.9 2007-08-22 03:23:46 danmc Exp $");
+RCSID ("$Id: batch.c,v 1.10 2007-09-04 00:08:39 danmc Exp $");
 
 /* This is a text-line "batch" HID, which exists for scripting and
    non-GUI needs.  */
@@ -374,6 +374,22 @@ batch_prompt_for (char *msg, char *default_string)
   return buf;
 }
 
+static char *
+batch_fileselect (const char *title, const char *descr,
+		  char *default_file, char *default_ext,
+		  const char *history_tag, int flags)
+{
+  static char buf[1024];
+  if (default_file)
+    printf ("%s [%s] : ", title, default_file);
+  else
+    printf ("%s : ", title);
+  fgets (buf, 1024, stdin);
+  if (buf[0] == 0 && default_file)
+    strcpy (buf, default_file);
+  return buf;
+}
+
 static int
 batch_attribute_dialog (HID_Attribute * attrs,
 			int n_attrs, HID_Attr_Val * results,
@@ -437,6 +453,7 @@ HID batch_gui = {
   batch_confirm_dialog,
   batch_report_dialog,
   batch_prompt_for,
+  batch_fileselect,
   batch_attribute_dialog,
   batch_show_item,
   batch_beep,

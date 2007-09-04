@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.59 2007-08-22 03:23:46 danmc Exp $ */
+/* $Id: main.c,v 1.60 2007-09-04 00:08:40 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -35,7 +35,7 @@
 
 #include <sys/poll.h>
 
-RCSID ("$Id: main.c,v 1.59 2007-08-22 03:23:46 danmc Exp $");
+RCSID ("$Id: main.c,v 1.60 2007-09-04 00:08:40 danmc Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -3516,7 +3516,7 @@ extern void lesstif_report_dialog (char *title, char *msg);
 extern int
 lesstif_attribute_dialog (HID_Attribute * attrs,
 			  int n_attrs, HID_Attr_Val * results,
-			  const char * title);
+			  const char * title, const char * descr);
 
 static void
 pinout_callback (Widget da, PinoutData * pd,
@@ -3733,6 +3733,7 @@ HID lesstif_gui = {
   lesstif_confirm_dialog,
   lesstif_report_dialog,
   lesstif_prompt_for,
+  lesstif_fileselect,
   lesstif_attribute_dialog,
   lesstif_show_item,
   lesstif_beep,

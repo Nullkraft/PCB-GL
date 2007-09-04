@@ -78,7 +78,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: nelma.c,v 1.2 2007-04-20 11:31:15 danmc Exp $");
+RCSID("$Id: nelma.c,v 1.3 2007-09-04 00:08:40 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PNG function %s.\n", __FUNCTION__); abort()
 
@@ -1086,6 +1086,7 @@ HID             nelma_hid = {
 	0 /* nelma_confirm_dialog */ ,
 	0 /* nelma_report_dialog */ ,
 	0 /* nelma_prompt_for */ ,
+	0 /* nelma_fileselect */ ,
 	0 /* nelma_attribute_dialog */ ,
 	0 /* nelma_show_item */ ,
 	0 /* nelma_beep */ ,

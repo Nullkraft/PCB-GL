@@ -1,4 +1,4 @@
-/* $Id: lesstif.h,v 1.7 2006-10-10 10:49:12 danmc Exp $ */
+/* $Id: lesstif.h,v 1.8 2007-09-04 00:08:40 danmc Exp $ */
 
 #define app_context lesstif_app_context
 #define appwidget lesstif_appwidget
@@ -56,6 +56,9 @@ extern void lesstif_styles_update_values ();
 extern void lesstif_update_layer_groups ();
 extern void lesstif_update_status_line ();
 extern char *lesstif_prompt_for (char *, char *);
+extern char *lesstif_fileselect (const char *, const char *,
+				 char *, char *,
+				 const char *, int);
 extern void lesstif_log (const char *fmt, ...);
 #ifdef __RESOURCE_INCLUDED__
 extern void lesstif_note_mouse_resource(Resource *res);
