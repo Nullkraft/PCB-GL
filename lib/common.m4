@@ -23,7 +23,7 @@ divert(-1)
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: common.m4,v 1.12 2006-03-14 02:33:54 danmc Exp $
+#   RCS: $Id: common.m4,v 1.13 2007-09-05 10:39:04 danmc Exp $
 #
 # common defines for packages
 #
@@ -82,6 +82,7 @@ include(amp.inc)
 include(amphenol.inc)
 include(bga.inc)
 include(bourns.inc)
+include(candk.inc)
 include(connector.inc)
 include(cts.inc)
 include(dil.inc)
@@ -89,6 +90,8 @@ include(geda.inc)
 include(johnstech.inc)
 include(minicircuits.inc)
 include(misc.inc)
+include(nichicon.inc)
+include(optek.inc)
 include(panasonic.inc)
 include(pci.inc)
 include(plcc.inc)
