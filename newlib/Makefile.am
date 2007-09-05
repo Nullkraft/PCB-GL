@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.2 2007-02-04 02:29:14 danmc Exp $
+## $Id: Makefile.am,v 1.3 2007-09-05 10:40:41 danmc Exp $
 ##
 ## Top level 'newlib' automake file
 
@@ -10,6 +10,7 @@ SUBDIRS=\
 	crystal \
 	electro-optics \
 	headers \
+	keystone \
 	msp430 \
 	not_vetted_ingo \
 	sockets \
