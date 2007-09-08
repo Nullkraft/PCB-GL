@@ -1,4 +1,4 @@
-/* $Id: find.c,v 1.63 2007-04-20 11:31:13 danmc Exp $ */
+/* $Id: find.c,v 1.64 2007-09-08 23:09:35 bjj Exp $ */
 
 /*
  *
@@ -101,7 +101,7 @@
 
 #undef DEBUG
 
-RCSID ("$Id: find.c,v 1.63 2007-04-20 11:31:13 danmc Exp $");
+RCSID ("$Id: find.c,v 1.64 2007-09-08 23:09:35 bjj Exp $");
 
 
 
@@ -1260,13 +1260,13 @@ LookupPVConnectionsToLOList (Boolean AndRats)
       while (RatList.Location < RatList.Number)
         {
           info.rat = *(RATLIST_ENTRY (RatList.Location));
-          r_search (PCB->Data->via_tree, (BoxType *) & info.rat.Point1, NULL,
+          r_search_pt (PCB->Data->via_tree, & info.rat.Point1, 1, NULL,
                     pv_rat_callback, &info);
-          r_search (PCB->Data->via_tree, (BoxType *) & info.rat.Point2, NULL,
+          r_search_pt (PCB->Data->via_tree, & info.rat.Point2, 1, NULL,
                     pv_rat_callback, &info);
-          r_search (PCB->Data->pin_tree, (BoxType *) & info.rat.Point1, NULL,
+          r_search_pt (PCB->Data->pin_tree, & info.rat.Point1, 1, NULL,
                     pv_rat_callback, &info);
-          r_search (PCB->Data->pin_tree, (BoxType *) & info.rat.Point2, NULL,
+          r_search_pt (PCB->Data->pin_tree, & info.rat.Point2, 1, NULL,
                     pv_rat_callback, &info);
 
           RatList.Location++;
@@ -1984,8 +1984,8 @@ LookupLOConnectionsToLine (LineTypePtr Line, Cardinal LayerGroup,
   info.line = *Line;
   info.layer = LayerGroup;
   EXPAND_BOUNDS (&info.line)
-    /* add the new rat lines */
-    if (setjmp (info.env) == 0)
+  /* add the new rat lines */
+  if (setjmp (info.env) == 0)
     r_search (PCB->Data->rat_tree, &info.line.BoundingBox, NULL,
               LOCtoLineRat_callback, &info);
   else
@@ -2220,12 +2220,12 @@ LookupLOConnectionsToRatEnd (PointTypePtr Point, Cardinal LayerGroup)
         {
           info.layer = layer;
           if (setjmp (info.env) == 0)
-            r_search (LAYER_PTR (layer)->line_tree, (BoxType *) Point, NULL,
+            r_search_pt (LAYER_PTR (layer)->line_tree, Point, 1, NULL,
                       LOCtoRat_callback, &info);
           else
             return True;
           if (setjmp (info.env) == 0)
-            r_search (LAYER_PTR (layer)->polygon_tree, (BoxType *) Point,
+            r_search_pt (LAYER_PTR (layer)->polygon_tree, Point, 1,
                       NULL, PolygonToRat_callback, &info);
         }
       else
@@ -2233,7 +2233,7 @@ LookupLOConnectionsToRatEnd (PointTypePtr Point, Cardinal LayerGroup)
           /* handle special 'pad' layers */
           info.layer = layer - max_layer;
           if (setjmp (info.env) == 0)
-            r_search (PCB->Data->pad_tree, (BoxType *) Point, NULL,
+            r_search_pt (PCB->Data->pad_tree, Point, 1, NULL,
                       LOCtoPad_callback, &info);
           else
             return True;

@@ -1,4 +1,4 @@
-/* $Id: rtree.h,v 1.6 2006-03-22 23:17:21 danmc Exp $ */
+/* $Id: rtree.h,v 1.7 2007-09-08 23:09:35 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -70,6 +70,22 @@ int r_search (rtree_t * rtree, const BoxType * starting_region,
 	      int (*region_in_search) (const BoxType * region, void *cl),
 	      int (*rectangle_in_region) (const BoxType * box, void *cl),
 	      void *closure);
+static inline int r_search_pt (rtree_t * rtree, const PointType * pt,
+	      int radius,
+	      int (*region_in_search) (const BoxType * region, void *cl),
+	      int (*rectangle_in_region) (const BoxType * box, void *cl),
+	      void *closure)
+{
+  BoxType box;
+
+  box.X1 = pt->X - radius;
+  box.X2 = pt->X + radius;
+  box.Y1 = pt->Y - radius;
+  box.Y2 = pt->Y + radius;
+
+  return r_search(rtree, &box, region_in_search, rectangle_in_region, closure);
+}
+
 /* -- special-purpose searches build upon r_search -- */
 /* return 0 if there are any rectangles in the given region. */
 int r_region_is_empty (rtree_t * rtree, const BoxType * region);
