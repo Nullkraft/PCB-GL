@@ -1,4 +1,4 @@
-/* $Id: search.c,v 1.32 2007-09-08 22:38:11 bjj Exp $ */
+/* $Id: search.c,v 1.33 2007-09-08 22:48:31 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -53,7 +53,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: search.c,v 1.32 2007-09-08 22:38:11 bjj Exp $");
+RCSID ("$Id: search.c,v 1.33 2007-09-08 22:48:31 bjj Exp $");
 
 
 /* ---------------------------------------------------------------------------
@@ -1059,6 +1059,10 @@ SearchObjectByLocation (int Type,
   if (TEST_FLAG (ONLYNAMESFLAG, PCB))
     {
       Type &= (ELEMENTNAME_TYPE | TEXT_TYPE);
+    }
+  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+    {
+      Type &= ~POLYGON_TYPE;
     }
 
   if (Type & RATLINE_TYPE && PCB->RatOn &&
