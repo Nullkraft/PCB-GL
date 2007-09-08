@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.112 2007-09-04 00:08:39 danmc Exp $ */
+/* $Id: action.c,v 1.113 2007-09-08 23:28:29 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -74,7 +74,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.112 2007-09-04 00:08:39 danmc Exp $");
+RCSID ("$Id: action.c,v 1.113 2007-09-08 23:28:29 bjj Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -3596,6 +3596,8 @@ ActionAddRats (int argc, char **argv, int x, int y)
 
   if (function)
     {
+      if (Settings.RatWarn)
+	ClearWarnings ();
       HideCrosshair (True);
       switch (GetFunctionID (function))
 	{
@@ -3712,6 +3714,8 @@ ActionDeleteRats (int argc, char **argv, int x, int y)
   char *function = ARG (0);
   if (function)
     {
+      if (Settings.RatWarn)
+	ClearWarnings ();
       HideCrosshair (True);
       switch (GetFunctionID (function))
 	{
