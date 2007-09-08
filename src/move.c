@@ -1,4 +1,4 @@
-/* $Id: move.c,v 1.39 2007-04-20 11:31:13 danmc Exp $ */
+/* $Id: move.c,v 1.40 2007-09-08 22:27:18 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: move.c,v 1.39 2007-04-20 11:31:13 danmc Exp $");
+RCSID ("$Id: move.c,v 1.40 2007-09-08 22:27:18 bjj Exp $");
 
 
 
@@ -586,7 +586,8 @@ MoveLineToLayer (LayerTypePtr Layer, LineTypePtr Line)
     EraseLine (Line);
   RestoreToPolygon (PCB->Data, LINE_TYPE, Layer, Line);
   new = MoveLineToLayerLowLevel (Layer, Line, Dest);
-  ClearFromPolygon (PCB->Data, LINE_TYPE, Dest, Line);
+  Line = NULL;
+  ClearFromPolygon (PCB->Data, LINE_TYPE, Dest, new);
   if (Dest->On)
     DrawLine (Dest, new, 0);
   Draw ();
