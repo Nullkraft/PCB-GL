@@ -1,4 +1,4 @@
-/* $Id: search.c,v 1.31 2007-04-21 19:00:46 djdelorie Exp $ */
+/* $Id: search.c,v 1.32 2007-09-08 22:38:11 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -53,7 +53,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: search.c,v 1.31 2007-04-21 19:00:46 djdelorie Exp $");
+RCSID ("$Id: search.c,v 1.32 2007-09-08 22:38:11 bjj Exp $");
 
 
 /* ---------------------------------------------------------------------------
@@ -614,8 +614,8 @@ element_callback (const BoxType * box, void *cl)
 	{
 	  i->area = newarea;
 	  *i->ptr1 = *i->ptr2 = *i->ptr3 = element;
+	  return 1;
 	}
-      return 1;
     }
   return 0;
 }
