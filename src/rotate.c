@@ -1,4 +1,4 @@
-/* $Id: rotate.c,v 1.21 2007-04-20 11:31:13 danmc Exp $ */
+/* $Id: rotate.c,v 1.22 2007-09-08 23:25:34 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -56,7 +56,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: rotate.c,v 1.21 2007-04-20 11:31:13 danmc Exp $");
+RCSID ("$Id: rotate.c,v 1.22 2007-09-08 23:25:34 bjj Exp $");
 
 
 
@@ -271,7 +271,10 @@ RotateLinePoint (LayerTypePtr Layer, LineTypePtr Line, PointTypePtr Point)
 {
   EraseLine (Line);
   if (Layer)
-    r_delete_entry (Layer->line_tree, (BoxTypePtr) Line);
+    {
+      RestoreToPolygon (PCB->Data, LINE_TYPE, Layer, Line);
+      r_delete_entry (Layer->line_tree, (BoxTypePtr) Line);
+    }
   else
     r_delete_entry (PCB->Data->rat_tree, (BoxTypePtr) Line);
   RotatePointLowLevel (Point, CenterX, CenterY, Number);
@@ -279,6 +282,7 @@ RotateLinePoint (LayerTypePtr Layer, LineTypePtr Line, PointTypePtr Point)
   if (Layer)
     {
       r_insert_entry (Layer->line_tree, (BoxTypePtr) Line, 0);
+      ClearFromPolygon (PCB->Data, LINE_TYPE, Layer, Line);
       DrawLine (Layer, Line, 0);
     }
   else
@@ -381,7 +385,10 @@ RotateObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
 				 ptr->MovedPoint, CenterX, CenterY, Steps);
       EraseLine (ptr->Line);
       if (ptr->Layer)
-	r_delete_entry (ptr->Layer->line_tree, (BoxType *) ptr->Line);
+	{
+	  RestoreToPolygon (PCB->Data, LINE_TYPE, ptr->Layer, ptr->Line);
+	  r_delete_entry (ptr->Layer->line_tree, (BoxType *) ptr->Line);
+	}
       else
 	r_delete_entry (PCB->Data->rat_tree, (BoxType *) ptr->Line);
       RotatePointLowLevel (ptr->MovedPoint, CenterX, CenterY, Steps);
@@ -389,6 +396,7 @@ RotateObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
       if (ptr->Layer)
 	{
 	  r_insert_entry (ptr->Layer->line_tree, (BoxType *) ptr->Line, 0);
+	  ClearFromPolygon (PCB->Data, LINE_TYPE, ptr->Layer, ptr->Line);
 	  DrawLine (ptr->Layer, ptr->Line, 0);
 	}
       else
