@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.60 2007-09-04 00:08:40 danmc Exp $ */
+/* $Id: main.c,v 1.61 2007-09-11 16:54:38 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -35,7 +35,7 @@
 
 #include <sys/poll.h>
 
-RCSID ("$Id: main.c,v 1.60 2007-09-04 00:08:40 danmc Exp $");
+RCSID ("$Id: main.c,v 1.61 2007-09-11 16:54:38 djdelorie Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -3342,6 +3342,7 @@ lesstif_set_crosshair (int x, int y, int action)
 	view_left_x = x - pos_x * view_zoom;
       if (flip_y)
 	view_top_y = y - (view_height-pos_y) * view_zoom;
+      else
 	view_top_y = y - pos_y * view_zoom;
       lesstif_pan_fixup();
       action = HID_SC_WARP_POINTER;
