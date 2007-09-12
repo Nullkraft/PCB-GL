@@ -1,4 +1,4 @@
-/* $Id: gui-output-events.c,v 1.17 2007-05-01 03:29:33 danmc Exp $ */
+/* $Id: gui-output-events.c,v 1.18 2007-09-12 21:53:19 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -48,7 +48,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-output-events.c,v 1.17 2007-05-01 03:29:33 danmc Exp $");
+RCSID ("$Id: gui-output-events.c,v 1.18 2007-09-12 21:53:19 danmc Exp $");
 
 static gint x_pan_speed, y_pan_speed;
 
@@ -404,7 +404,6 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
   gint  ksym = kev->keyval;
   gboolean handled;
   extern  void ghid_hotkey_cb (int);
-  extern char *ghid_hotkey_actions[];
 
   if (ghid_is_modifier_key_sym (ksym))
     ghid_note_event_location (NULL);
