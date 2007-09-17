@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.45 2007-08-17 03:51:25 danmc Exp $ */
+/* $Id: gui-top-window.c,v 1.46 2007-09-17 11:43:29 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -122,7 +122,7 @@ a zoom in/out.
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.45 2007-08-17 03:51:25 danmc Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.46 2007-09-17 11:43:29 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * local types
@@ -3698,8 +3698,6 @@ ghid_load_menus (void)
   else
     filename = 0;
 
-  free (home_pcbmenu);
-
   bir = resource_parse (0, gpcb_menu_default);
   if (!bir)
     {
@@ -3709,6 +3707,8 @@ ghid_load_menus (void)
 
   if (filename)
     r = resource_parse (filename, 0);
+
+  free (home_pcbmenu);
 
   if (!r)
     r = bir;
