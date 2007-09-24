@@ -1,4 +1,4 @@
-/* $Id: autoroute.c,v 1.43 2007-04-20 11:31:13 danmc Exp $ */
+/* $Id: autoroute.c,v 1.44 2007-09-24 04:02:55 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -79,7 +79,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: autoroute.c,v 1.43 2007-04-20 11:31:13 danmc Exp $");
+RCSID ("$Id: autoroute.c,v 1.44 2007-09-24 04:02:55 bjj Exp $");
 
 /* #defines to enable some debugging output */
 /*
@@ -4263,6 +4263,11 @@ AutoRoute (Boolean selected)
                                       line->Point2.Y, line->group2);
           if (!a || !b)
             {
+#ifdef DEBUG_STALE_RATS
+	      AddObjectToFlagUndoList (RATLINE_TYPE, line, line, line);
+	      ASSIGN_FLAG (SELECTEDFLAG, True, line);
+	      DrawRat (line, 0);
+#endif /* DEBUG_STALE_RATS */
               Message ("The rats nest is stale! Aborting autoroute...\n");
               goto donerouting;
             }
