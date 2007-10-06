@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.45 2007-09-12 21:53:27 danmc Exp $ */
+/* $Id: gtkhid-main.c,v 1.46 2007-10-06 12:56:16 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -37,7 +37,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.45 2007-09-12 21:53:27 danmc Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.46 2007-10-06 12:56:16 danmc Exp $");
 
 
 extern HID ghid_hid;
@@ -1160,6 +1160,7 @@ ghid_control_is_pressed ()
 void
 ghid_set_crosshair (int x, int y, int action)
 {
+  int need_pan_fixup = FALSE;
 
   if (gport->x_crosshair != x || gport->y_crosshair != y)
     {
@@ -1172,13 +1173,23 @@ ghid_set_crosshair (int x, int y, int action)
        *
        * need_idle_proc ();
        */
-      if ( (x < gport->view_x0) ||
-	   (x > gport->view_x0 + gport->view_width) ||
-	   (y < gport->view_y0) ||
-	   (y > gport->view_y0 + gport->view_height) )
+
+      if ( (SIDE_X (x) < gport->view_x0) ||
+	   (SIDE_X (x) > gport->view_x0 + gport->view_width))
 	{
-	  gport->view_x0 = x - gport->view_width / 2;
-	  gport->view_y0 = y - gport->view_height / 2;
+	  gport->view_x0 = SIDE_X (x) - gport->view_width / 2;
+	  need_pan_fixup = TRUE;
+	}
+ 
+      if ( (SIDE_Y (y) < gport->view_y0) ||
+	   (SIDE_Y (y) > gport->view_y0 + gport->view_height))
+	{
+	  gport->view_y0 = SIDE_Y (y) - gport->view_height / 2;
+	  need_pan_fixup = TRUE;
+	}
+ 
+      if ( need_pan_fixup == TRUE )
+	{
 	  ghid_pan_fixup ();
 	}
     }
