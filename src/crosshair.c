@@ -1,4 +1,4 @@
-/* $Id: crosshair.c,v 1.32 2007-04-21 19:00:46 djdelorie Exp $ */
+/* $Id: crosshair.c,v 1.33 2007-10-21 02:02:16 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -52,7 +52,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: crosshair.c,v 1.32 2007-04-21 19:00:46 djdelorie Exp $");
+RCSID ("$Id: crosshair.c,v 1.33 2007-10-21 02:02:16 bjj Exp $");
 
 #if !defined(ABS)
 #define ABS(x) (((x)<0)?-(x):(x))
@@ -537,7 +537,11 @@ XORDrawMoveOrCopyObject (void)
     {
       PointTypePtr point1, point2;
 
-      if (TEST_FLAG (RUBBERENDFLAG, ptr->Line))
+      if (TEST_FLAG (VIAFLAG, ptr->Line))
+	{
+	  /* this is a rat going to a polygon.  do not draw for rubberband */;
+	}
+      else if (TEST_FLAG (RUBBERENDFLAG, ptr->Line))
 	{
 	  /* 'point1' is always the fix-point */
 	  if (ptr->MovedPoint == &ptr->Line->Point1)
