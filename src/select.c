@@ -1,4 +1,4 @@
-/* $Id: select.c,v 1.22 2007-09-08 22:54:18 bjj Exp $ */
+/* $Id: select.c,v 1.23 2007-11-02 02:56:56 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: select.c,v 1.22 2007-09-08 22:54:18 bjj Exp $");
+RCSID ("$Id: select.c,v 1.23 2007-11-02 02:56:56 danmc Exp $");
 
 
 
@@ -876,7 +876,6 @@ SelectObjectByName (int Type, char *Pattern, Boolean Flag)
 
   int result;
   regex_t compiled;
-  regmatch_t match;
 
   /* compile the regular expression */
   result = regcomp (&compiled, Pattern, REG_EXTENDED | REG_ICASE);

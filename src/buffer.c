@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.41 2007-09-08 23:34:30 bjj Exp $ */
+/* $Id: buffer.c,v 1.42 2007-11-02 02:56:56 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -62,7 +62,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: buffer.c,v 1.41 2007-09-08 23:34:30 bjj Exp $");
+RCSID ("$Id: buffer.c,v 1.42 2007-11-02 02:56:56 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -969,7 +969,7 @@ FreeRotateElementLowLevel (DataTypePtr Data, ElementTypePtr Element,
     RestoreToPolygon (Data, PAD_TYPE, Element, pad);
     free_rotate (&pad->Point1.X, &pad->Point1.Y, X, Y, cosa, sina);
     free_rotate (&pad->Point2.X, &pad->Point2.Y, X, Y, cosa, sina);
-    SetLineBoundingBox (pad);
+    SetLineBoundingBox ((LineType *) pad);
   }
   END_LOOP;
   ARC_LOOP (Element);

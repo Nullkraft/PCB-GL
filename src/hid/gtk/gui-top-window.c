@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.47 2007-11-02 01:25:12 danmc Exp $ */
+/* $Id: gui-top-window.c,v 1.48 2007-11-02 02:56:56 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -122,7 +122,7 @@ a zoom in/out.
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.47 2007-11-02 01:25:12 danmc Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.48 2007-11-02 02:56:56 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * local types
@@ -1194,7 +1194,6 @@ ghid_window_set_name_label (gchar * name)
 static void
 grid_units_button_cb (GtkWidget * widget, gpointer data)
 {
-  GtkAction *action;
 
   /* Do handling common to when units are changed from the menu.
    */

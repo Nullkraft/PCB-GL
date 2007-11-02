@@ -1,4 +1,4 @@
-/* $Id: gui-output-events.c,v 1.19 2007-10-04 23:49:35 petercjclifton Exp $ */
+/* $Id: gui-output-events.c,v 1.20 2007-11-02 02:56:56 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -48,7 +48,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-output-events.c,v 1.19 2007-10-04 23:49:35 petercjclifton Exp $");
+RCSID ("$Id: gui-output-events.c,v 1.20 2007-11-02 02:56:56 danmc Exp $");
 
 static gint x_pan_speed, y_pan_speed;
 
@@ -533,7 +533,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
   gboolean drag, start_pan = FALSE;
 
   /* Reject double and triple click events */
-  if (ev->type != GDK_BUTTON_PRESS) return;
+  if (ev->type != GDK_BUTTON_PRESS) return TRUE;
 
   x_press = ev->x;
   y_press = ev->y;
