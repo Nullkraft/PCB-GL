@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: search.h,v 1.10 2006-12-22 04:59:11 haceaton Exp $
+ *  RCS: $Id: search.h,v 1.11 2007-11-02 03:55:37 djdelorie Exp $
  */
 
 /* prototypes for search routines
@@ -77,9 +77,10 @@ Boolean IsPointOnArc (float, float, float, ArcTypePtr);
 Boolean IsPointOnLineEnd (LocationType, LocationType, RatTypePtr);
 Boolean IsLineInRectangle (LocationType, LocationType, LocationType,
 			   LocationType, LineTypePtr);
+Boolean IsLineInQuadrangle (PointType p[4], LineTypePtr Line);
 Boolean IsArcInRectangle (LocationType, LocationType, LocationType,
 			  LocationType, ArcTypePtr);
-Boolean IsPointInSquarePad (LocationType, LocationType, Cardinal, PadTypePtr);
+Boolean IsPointInPad (LocationType, LocationType, Cardinal, PadTypePtr);
 Boolean IsPointInBox (LocationType, LocationType, BoxTypePtr, Cardinal);
 int SearchObjectByLocation (int, void **, void **, void **, LocationType,
 			    LocationType, BDimension);
