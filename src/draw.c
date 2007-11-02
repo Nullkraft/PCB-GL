@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.81 2007-10-21 02:02:16 bjj Exp $ */
+/* $Id: draw.c,v 1.82 2007-11-02 03:12:46 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.81 2007-10-21 02:02:16 bjj Exp $");
+RCSID ("$Id: draw.c,v 1.82 2007-11-02 03:12:46 djdelorie Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -458,16 +458,16 @@ DrawEverything (BoxTypePtr drawn_area)
 			    pad_callback, NULL);
 		}
 	      SWAP_IDENT = save_swap;
-	    }
 
-	  if (!gui->gui)
-	    {
-	      /* draw holes */
-	      plated = -1;
-	      r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback,
-			&plated);
-	      r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback,
-			&plated);
+	      if (!gui->gui)
+		{
+		  /* draw holes */
+		  plated = -1;
+		  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback,
+			    &plated);
+		  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback,
+			    &plated);
+		}
 	    }
 	}
     }
@@ -795,6 +795,22 @@ DrawMask (BoxType * screen)
 	}
       gui->use_mask (HID_MASK_OFF);
     }
+
+#if 0
+  /* Some fabs want the board outline on the solder mask layer.  If
+     you need this, change the '0' above to '1', and the code below
+     will copy the outline layer to the mask layers.  */
+  if (!gui->gui)
+    {
+      int i;
+      for (i=PCB->Data->LayerN; i>=0; i--)
+	{
+	  LayerTypePtr Layer = PCB->Data->Layer + i;
+	  if (strcmp (Layer->Name, "outline") ==0)
+	    DrawLayer (Layer, screen);
+	}
+    }
+#endif
 }
 
 static int
