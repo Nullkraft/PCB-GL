@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.46 2007-09-17 11:43:29 danmc Exp $ */
+/* $Id: gui-top-window.c,v 1.47 2007-11-02 01:25:12 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -122,7 +122,7 @@ a zoom in/out.
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.46 2007-09-17 11:43:29 danmc Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.47 2007-11-02 01:25:12 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * local types
@@ -408,7 +408,6 @@ get_grid_value_index (gboolean allow_fail)
   gdouble *value;
   gint i;
 
-  printf ("get_grid_value_index()\n");
   value = Settings.grid_units_mm ? &grid_mm_values[0] : &grid_mil_values[0];
   for (i = 0; i < N_GRID_SETTINGS; ++i, ++value)
     if (PCB->Grid < *value + 1.0 && PCB->Grid > *value - 1.0)
@@ -649,7 +648,6 @@ handle_grid_units_change (gboolean active)
   gchar *grid;
   gint i;
 
-  printf ("handle_grid_units_change()\n");
   i = get_grid_value_index (FALSE);
   Settings.grid_units_mm = active;
   PCB->Grid = Settings.grid_units_mm ? grid_mm_values[i] : grid_mil_values[i];
@@ -1202,10 +1200,6 @@ grid_units_button_cb (GtkWidget * widget, gpointer data)
    */
   handle_grid_units_change (!Settings.grid_units_mm);
 
-  action = gtk_action_group_get_action (ghidgui->main_actions,
-					"ToggleGridUnitsMm");
-  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
-				Settings.grid_units_mm);
 }
 
 /*
