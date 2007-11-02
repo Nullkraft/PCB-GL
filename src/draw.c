@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.82 2007-11-02 03:12:46 djdelorie Exp $ */
+/* $Id: draw.c,v 1.83 2007-11-02 04:21:13 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.82 2007-11-02 03:12:46 djdelorie Exp $");
+RCSID ("$Id: draw.c,v 1.83 2007-11-02 04:21:13 djdelorie Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -1359,7 +1359,8 @@ DrawPadLowLevel (hidGC gc, PadTypePtr Pad, Boolean clear, Boolean mask)
 	}
       gui->set_line_cap (gc, Round_Cap);
       gui->set_line_width (gc, 1);
-      if (TEST_FLAG (SQUAREFLAG, Pad))
+      if (TEST_FLAG (SQUAREFLAG, Pad)
+	  && (x1 == x2 || y1 == y2))
 	{
 	  x1 -= t;
 	  y1 -= t;
@@ -1369,6 +1370,23 @@ DrawPadLowLevel (hidGC gc, PadTypePtr Pad, Boolean clear, Boolean mask)
 	  gui->draw_line (gc, x1, y2, x2, y2);
 	  gui->draw_line (gc, x2, y2, x2, y1);
 	  gui->draw_line (gc, x2, y1, x1, y1);
+	}
+      else if (TEST_FLAG (SQUAREFLAG, Pad))
+	{
+	  /* slanted square pad */
+	  float tx, ty, theta;
+
+	  theta = atan2 (y2-y1, x2-x1);
+
+	  /* T is a vector half a thickness long, in the direction of
+	     one of the corners.  */
+	  tx = t * cos (theta + M_PI/4) * sqrt(2.0);
+	  ty = t * sin (theta + M_PI/4) * sqrt(2.0);
+
+	  gui->draw_line (gc, x1-tx, y1-ty, x2+ty, y2-tx);
+	  gui->draw_line (gc, x2+ty, y2-tx, x2+tx, y2+ty);
+	  gui->draw_line (gc, x2+tx, y2+ty, x1-ty, y1+tx);
+	  gui->draw_line (gc, x1-ty, y1+tx, x1-tx, y1-ty);
 	}
       else if (x1 == x2 && y1 == y2)
 	{
@@ -1381,12 +1399,35 @@ DrawPadLowLevel (hidGC gc, PadTypePtr Pad, Boolean clear, Boolean mask)
 	  gui->draw_arc (gc, x1, y1, w / 2, w / 2, 0, -180);
 	  gui->draw_arc (gc, x2, y2, w / 2, w / 2, 180, -180);
 	}
-      else
+      else if (y1 == y2)
 	{
 	  gui->draw_line (gc, x1, y1 - t, x2, y2 - t);
 	  gui->draw_line (gc, x1, y1 + t2, x2, y2 + t2);
 	  gui->draw_arc (gc, x1, y1, w / 2, w / 2, 90, -180);
 	  gui->draw_arc (gc, x2, y2, w / 2, w / 2, 270, -180);
+	}
+      else
+	{
+	  /* Slanted round-end pads.  */
+	  LocationType dx, dy, ox, oy;
+	  float h;
+
+	  dx = x2 - x1;
+	  dy = y2 - y1;
+	  h = t / sqrt (SQUARE (dx) + SQUARE (dy));
+	  ox = dy * h + 0.5 * SGN (dy);
+	  oy = -(dx * h + 0.5 * SGN (dx));
+
+	  gui->draw_line (gc, x1 + ox, y1 + oy, x2 + ox, y2 + oy);
+
+	  if (abs (ox) >= pixel_slop || abs (oy) >= pixel_slop)
+	    {
+	      LocationType angle = atan2 ((float) dx, (float) dy) * 57.295779;
+	      gui->draw_line (gc, x1 - ox, y1 - oy, x2 - ox, y2 - oy);
+	      gui->draw_arc (gc,
+			     x1, y1, t, t, angle - 180, 180);
+	      gui->draw_arc (gc, x2, y2, t, t, angle, 180);
+	    }
 	}
     }
   else if (Pad->Point1.X == Pad->Point2.X
