@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: change.h,v 1.10 2006-11-05 01:27:13 danmc Exp $
+ *  RCS: $Id: change.h,v 1.11 2007-11-04 22:01:26 bjj Exp $
  */
 
 /* prototypes to change object properties
@@ -56,7 +56,7 @@
 	(ELEMENT_TYPE | PIN_TYPE | VIA_TYPE)
 
 #define CHANGEJOIN_TYPES	\
-	(ARC_TYPE | LINE_TYPE)
+	(ARC_TYPE | LINE_TYPE | TEXT_TYPE)
 
 #define CHANGETHERMAL_TYPES	\
 	(PIN_TYPE | VIA_TYPE)

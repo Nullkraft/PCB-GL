@@ -1,4 +1,4 @@
-/* $Id: rotate.c,v 1.22 2007-09-08 23:25:34 bjj Exp $ */
+/* $Id: rotate.c,v 1.23 2007-11-04 22:01:26 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -56,7 +56,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: rotate.c,v 1.22 2007-09-08 23:25:34 bjj Exp $");
+RCSID ("$Id: rotate.c,v 1.23 2007-11-04 22:01:26 bjj Exp $");
 
 
 
@@ -179,9 +179,11 @@ static void *
 RotateText (LayerTypePtr Layer, TextTypePtr Text)
 {
   EraseText (Layer, Text);
+  RestoreToPolygon (PCB->Data, TEXT_TYPE, Layer, Text);
   r_delete_entry (Layer->text_tree, (BoxTypePtr) Text);
   RotateTextLowLevel (Text, CenterX, CenterY, Number);
   r_insert_entry (Layer->text_tree, (BoxTypePtr) Text, 0);
+  ClearFromPolygon (PCB->Data, TEXT_TYPE, Layer, Text);
   DrawText (Layer, Text, 0);
   Draw ();
   return (Text);
