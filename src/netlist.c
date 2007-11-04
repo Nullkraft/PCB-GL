@@ -1,4 +1,4 @@
-/* $Id: netlist.c,v 1.23 2007-02-02 04:49:17 djdelorie Exp $ */
+/* $Id: netlist.c,v 1.24 2007-11-04 03:22:07 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -70,7 +70,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: netlist.c,v 1.23 2007-02-02 04:49:17 djdelorie Exp $");
+RCSID ("$Id: netlist.c,v 1.24 2007-11-04 03:22:07 bjj Exp $");
 
 /*
   int    PCB->NetlistLib.MenuN
@@ -99,6 +99,26 @@ netnode_to_netname (char *nodename)
 	      /*printf(" in [%s]\n", PCB->NetlistLib.Menu[i].Name);*/
 	      return & (PCB->NetlistLib.Menu[i]);
 	    }
+	}
+    }
+  return 0;
+}
+
+LibraryMenuTypePtr
+netname_to_netname (char *netname)
+{
+  int i;
+
+  if ((netname[0] == '*' || netname[0] == ' ') && netname[1] == ' ')
+    {
+      /* Looks like we were passed an internal netname, skip the prefix */
+      netname += 2;
+    }
+  for (i=0; i<PCB->NetlistLib.MenuN; i++)
+    {
+      if (strcmp (PCB->NetlistLib.Menu[i].Name + 2, netname) == 0)
+	{
+	  return & (PCB->NetlistLib.Menu[i]);
 	}
     }
   return 0;

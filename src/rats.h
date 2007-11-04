@@ -24,7 +24,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: rats.h,v 1.4 2007-02-02 04:49:17 djdelorie Exp $
+ *  RCS: $Id: rats.h,v 1.5 2007-11-04 03:22:07 bjj Exp $
  */
 
 /* prototypes for rats routines
@@ -37,6 +37,7 @@
 
 /* This one is actually in netlist.h, but it's used by rats.c */
 LibraryMenuTypePtr netnode_to_netname (char *nodename);
+LibraryMenuTypePtr netname_to_netname (char *netname);
 
 RatTypePtr AddNet (void);
 char *ConnectionName (int, void *, void *);
