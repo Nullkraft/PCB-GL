@@ -1,4 +1,4 @@
-/* $Id: crosshair.c,v 1.33 2007-10-21 02:02:16 bjj Exp $ */
+/* $Id: crosshair.c,v 1.34 2007-11-12 19:29:27 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -52,7 +52,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: crosshair.c,v 1.33 2007-10-21 02:02:16 bjj Exp $");
+RCSID ("$Id: crosshair.c,v 1.34 2007-11-12 19:29:27 djdelorie Exp $");
 
 #if !defined(ABS)
 #define ABS(x) (((x)<0)?-(x):(x))
@@ -846,8 +846,9 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
 	  py = pad->Point2.Y;
 	}
 
-      if (SQUARE (x0 - Crosshair.X) + SQUARE (y0 - Crosshair.Y) >
-	  SQUARE (px - Crosshair.X) + SQUARE (py - Crosshair.Y))
+      if (!gui->shift_is_pressed()
+	  || (SQUARE (x0 - Crosshair.X) + SQUARE (y0 - Crosshair.Y) >
+	      SQUARE (px - Crosshair.X) + SQUARE (py - Crosshair.Y)))
 	{
 	  x0 = px;
 	  y0 = py;
@@ -857,9 +858,10 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
   else if (ans & (PIN_TYPE | VIA_TYPE))
     {
       PinTypePtr pin = (PinTypePtr) ptr2;
-      if (SQUARE (x0 - Crosshair.X) +
-	  SQUARE (y0 - Crosshair.Y) >
-	  SQUARE (pin->X - Crosshair.X) + SQUARE (pin->Y - Crosshair.Y))
+      if (!gui->shift_is_pressed()
+	  || (SQUARE (x0 - Crosshair.X) +
+	      SQUARE (y0 - Crosshair.Y) >
+	      SQUARE (pin->X - Crosshair.X) + SQUARE (pin->Y - Crosshair.Y)))
 	{
 	  x0 = pin->X;
 	  y0 = pin->Y;
