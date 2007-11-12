@@ -1,4 +1,4 @@
-/* $Id: hidnogui.c,v 1.15 2007-09-04 00:08:39 danmc Exp $ */
+/* $Id: hidnogui.c,v 1.16 2007-11-12 19:27:53 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -16,7 +16,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: hidnogui.c,v 1.15 2007-09-04 00:08:39 danmc Exp $");
+RCSID ("$Id: hidnogui.c,v 1.16 2007-11-12 19:27:53 djdelorie Exp $");
 
 /* This is the "gui" that is installed at startup, and is used when
    there is no other real GUI to use.  For the most part, it just
@@ -173,7 +173,7 @@ nogui_calibrate (double xval, double yval)
 static int
 nogui_shift_is_pressed (void)
 {
-  CRASH;
+  /* This is called from FitCrosshairIntoGrid() when the board is loaded.  */
   return 0;
 }
 
