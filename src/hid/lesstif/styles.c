@@ -1,4 +1,4 @@
-/* $Id: styles.c,v 1.12 2006-10-19 22:43:02 danmc Exp $ */
+/* $Id: styles.c,v 1.13 2007-11-22 05:50:11 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -25,7 +25,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: styles.c,v 1.12 2006-10-19 22:43:02 danmc Exp $");
+RCSID ("$Id: styles.c,v 1.13 2007-11-22 05:50:11 djdelorie Exp $");
 
 /* There are three places where styles are kept:
 
@@ -128,7 +128,10 @@ void
 lesstif_styles_update_values ()
 {
   if (!style_dialog)
-    return;
+    {
+      lesstif_update_status_line ();
+      return;
+    }
   use_mm = Settings.grid_units_mm;
   update_values ();
 }
@@ -284,6 +287,8 @@ style_selected (Widget w, int i, XmToggleButtonCallbackStruct * cbs)
 	  XmToggleButtonSetState (style_pb[j], 1, 0);
       update_values ();
     }
+  else
+    lesstif_update_status_line ();
   for (n = 0; n < num_style_buttons; n++)
     {
       for (j = 0; j < NUM_STYLES; j++)
