@@ -1,4 +1,4 @@
-/* $Id: gui-config.c,v 1.14 2007-06-28 22:15:29 danmc Exp $ */
+/* $Id: gui-config.c,v 1.15 2007-11-23 20:53:58 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 extern int	MoveLayerAction(int argc, char **argv, int x, int y);
 
 
-RCSID ("$Id: gui-config.c,v 1.14 2007-06-28 22:15:29 danmc Exp $");
+RCSID ("$Id: gui-config.c,v 1.15 2007-11-23 20:53:58 bjj Exp $");
 
 enum ConfigType
 {
@@ -2136,6 +2136,7 @@ config_destroy_cb (gpointer data)
   config_sizes_vbox = NULL;
   config_increments_vbox = NULL;
   config_groups_vbox = config_groups_table = NULL;
+  gtk_widget_destroy (config_window);
   config_window = NULL;
 }
 
