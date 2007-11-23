@@ -1,4 +1,4 @@
-/* $Id: autoroute.c,v 1.44 2007-09-24 04:02:55 bjj Exp $ */
+/* $Id: autoroute.c,v 1.45 2007-11-23 20:39:47 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -79,7 +79,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: autoroute.c,v 1.44 2007-09-24 04:02:55 bjj Exp $");
+RCSID ("$Id: autoroute.c,v 1.45 2007-11-23 20:39:47 bjj Exp $");
 
 /* #defines to enable some debugging output */
 /*
@@ -123,6 +123,9 @@ static hidGC ar_gc = 0;
 #define LIST_LOOP(init, which, x) do {\
      routebox_t *__next_one__ = (init);\
    x = NULL;\
+   if (!__next_one__)\
+     assert(__next_one__);\
+   else\
    while (!x  || __next_one__ != (init)) {\
      x = __next_one__;\
      /* save next one first in case the command modifies or frees it */\
