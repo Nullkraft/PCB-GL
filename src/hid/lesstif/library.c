@@ -1,4 +1,4 @@
-/* $Id: library.c,v 1.10 2006-04-20 03:23:07 djdelorie Exp $ */
+/* $Id: library.c,v 1.11 2007-11-24 22:12:49 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -26,7 +26,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: library.c,v 1.10 2006-04-20 03:23:07 djdelorie Exp $");
+RCSID ("$Id: library.c,v 1.11 2007-11-24 22:12:49 djdelorie Exp $");
 
 static Arg args[30];
 static int n;
@@ -165,8 +165,12 @@ LibraryShow (int argc, char **argv, int x, int y)
 void
 lesstif_show_library ()
 {
-  LibraryChanged (0, 0, 0, 0);
-  XtManageChild (library_dialog);
+  if (mainwind)
+    {
+      if (!library_dialog)
+	LibraryChanged (0, 0, 0, 0);
+      XtManageChild (library_dialog);
+    }
 }
 
 HID_Action lesstif_library_action_list[] = {
