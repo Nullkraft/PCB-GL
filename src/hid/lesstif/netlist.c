@@ -1,4 +1,4 @@
-/* $Id: netlist.c,v 1.15 2007-11-04 03:22:07 bjj Exp $ */
+/* $Id: netlist.c,v 1.16 2007-11-24 22:19:12 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -30,7 +30,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: netlist.c,v 1.15 2007-11-04 03:22:07 bjj Exp $");
+RCSID ("$Id: netlist.c,v 1.16 2007-11-24 22:19:12 djdelorie Exp $");
 
 static Arg args[30];
 static int n;
@@ -242,7 +242,8 @@ netnode_browse (Widget w, XtPointer v, XmListCallbackStruct * cbs)
 
   ELEMENT_LOOP (PCB->Data);
   {
-    if (strcmp (element->Name[NAMEONPCB_INDEX].TextString, ename) == 0)
+    char *es = element->Name[NAMEONPCB_INDEX].TextString;
+    if (es && strcmp (es, ename) == 0)
       {
 	PIN_LOOP (element);
 	{
