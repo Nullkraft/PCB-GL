@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.83 2007-11-02 04:21:13 djdelorie Exp $ */
+/* $Id: draw.c,v 1.84 2007-11-25 02:40:10 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.83 2007-11-02 04:21:13 djdelorie Exp $");
+RCSID ("$Id: draw.c,v 1.84 2007-11-25 02:40:10 djdelorie Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -90,7 +90,6 @@ static const BoxType *clip_box = NULL;
 static void Redraw (Boolean, BoxTypePtr);
 static void DrawEverything (BoxTypePtr);
 static void DrawTop (const BoxType *);
-static void DrawLayer (LayerTypePtr, BoxType *);
 static int DrawLayerGroup (int, const BoxType *);
 static void DrawPinOrViaLowLevel (PinTypePtr, Boolean);
 static void ClearOnlyPin (PinTypePtr, Boolean);
@@ -838,7 +837,7 @@ text_callback (const BoxType * b, void *cl)
 /* ---------------------------------------------------------------------------
  * draws one non-copper layer
  */
-static void
+void
 DrawLayer (LayerTypePtr Layer, BoxType * screen)
 {
   struct pin_info info;
