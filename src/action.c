@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.118 2007-11-24 01:06:05 bjj Exp $ */
+/* $Id: action.c,v 1.119 2007-11-30 06:33:41 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -74,7 +74,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.118 2007-11-24 01:06:05 bjj Exp $");
+RCSID ("$Id: action.c,v 1.119 2007-11-30 06:33:41 bjj Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -2216,7 +2216,7 @@ ActionConnection (int argc, char **argv, int x, int y)
 	case F_Find:
 	  {
 	    gui->get_coords ("Click on a connection", &x, &y);
-	    LookupConnection (x, y, True, PCB->Grid, FOUNDFLAG);
+	    LookupConnection (x, y, True, 1, FOUNDFLAG);
 	    break;
 	  }
 
@@ -4075,7 +4075,7 @@ ActionChangeClearSize (int argc, char **argv, int x, int y)
 	    int type;
 	    void *ptr1, *ptr2, *ptr3;
 
-	    gui->get_coords ("Select and Object", &x, &y);
+	    gui->get_coords ("Select an Object", &x, &y);
 	    if ((type =
 		 SearchScreen (x, y,
 			       CHANGECLEARSIZE_TYPES, &ptr1, &ptr2,
