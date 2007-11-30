@@ -1,4 +1,4 @@
-/* $Id: dialogs.c,v 1.32 2007-10-23 03:04:00 djdelorie Exp $ */
+/* $Id: dialogs.c,v 1.33 2007-11-30 15:40:25 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -25,7 +25,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: dialogs.c,v 1.32 2007-10-23 03:04:00 djdelorie Exp $");
+RCSID ("$Id: dialogs.c,v 1.33 2007-11-30 15:40:25 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
 
@@ -981,9 +981,9 @@ printer_calibrate_attrs[] = {
   {"Enter Values here:", "",
    HID_Label, 0, 0, {0, 0, 0}, 0, 0},
   {"x-calibration", "X scale for calibrating your printer",
-   HID_Real, 0.5, 2, {0, 0, 1.00}, 0, 0},
+   HID_Real, 0.5, 25, {0, 0, 1.00}, 0, 0},
   {"y-calibration", "Y scale for calibrating your printer",
-   HID_Real, 0.5, 2, {0, 0, 1.00}, 0, 0}
+   HID_Real, 0.5, 25, {0, 0, 1.00}, 0, 0}
 };
 static HID_Attr_Val printer_calibrate_values[3];
 

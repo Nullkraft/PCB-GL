@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.46 2007-10-06 12:56:16 danmc Exp $ */
+/* $Id: gtkhid-main.c,v 1.47 2007-11-30 15:40:25 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -37,7 +37,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.46 2007-10-06 12:56:16 danmc Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.47 2007-11-30 15:40:25 djdelorie Exp $");
 
 
 extern HID ghid_hid;
@@ -2084,9 +2084,9 @@ printer_calibrate_attrs[] = {
   {"Enter Values here:", "",
    HID_Label, 0, 0, {0, 0, 0}, 0, 0},
   {"x-calibration", "X scale for calibrating your printer",
-   HID_Real, 0.5, 2, {0, 0, 1.00}, 0, 0},
+   HID_Real, 0.5, 25, {0, 0, 1.00}, 0, 0},
   {"y-calibration", "Y scale for calibrating your printer",
-   HID_Real, 0.5, 2, {0, 0, 1.00}, 0, 0}
+   HID_Real, 0.5, 25, {0, 0, 1.00}, 0, 0}
 };
 static HID_Attr_Val printer_calibrate_values[3];
 
