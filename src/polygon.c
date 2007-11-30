@@ -1,4 +1,4 @@
-/* $Id: polygon.c,v 1.57 2007-11-04 22:01:26 bjj Exp $ */
+/* $Id: polygon.c,v 1.58 2007-11-30 05:54:10 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: polygon.c,v 1.57 2007-11-04 22:01:26 bjj Exp $");
+RCSID ("$Id: polygon.c,v 1.58 2007-11-30 05:54:10 bjj Exp $");
 
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
@@ -81,7 +81,7 @@ biggest (POLYAREA * p)
 {
   POLYAREA *n, *top = NULL;
   PLINE *pl;
-  double big = 0;
+  double big = -1;
   if (!p)
     return NULL;
   n = p;
