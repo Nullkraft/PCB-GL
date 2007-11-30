@@ -1,4 +1,4 @@
-/* $Id: menu.c,v 1.27 2007-08-06 01:35:33 djdelorie Exp $ */
+/* $Id: menu.c,v 1.28 2007-11-30 06:22:04 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -29,7 +29,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: menu.c,v 1.27 2007-08-06 01:35:33 djdelorie Exp $");
+RCSID ("$Id: menu.c,v 1.28 2007-11-30 06:22:04 djdelorie Exp $");
 
 #ifndef R_OK
 /* Common value for systems that don't define it.  */
@@ -44,6 +44,7 @@ static int n;
 #define stdarg(t,v) XtSetArg(args[n], t, v), n++
 
 static void note_accelerator (char *acc, Resource * node);
+static void note_widget_flag (Widget w, char *type, char *name);
 
 static const char getxy_syntax[] =
 "GetXY()";
@@ -572,6 +573,9 @@ insert_layerview_buttons (Widget menu)
       XtAddCallback (btn, XmNvalueChangedCallback,
 		     (XtCallbackProc) layer_button_callback, (XtPointer) (size_t) i);
       lb->w[i] = btn;
+
+      if (i == LB_MASK)
+	note_widget_flag (btn, XmNset, "showmask");
     }
   lb->is_pick = 0;
   LayersChanged (0, 0, 0, 0);
