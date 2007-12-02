@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.121 2007-12-02 04:24:06 bjj Exp $ */
+/* $Id: action.c,v 1.122 2007-12-02 08:44:52 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -74,7 +74,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.121 2007-12-02 04:24:06 bjj Exp $");
+RCSID ("$Id: action.c,v 1.122 2007-12-02 08:44:52 bjj Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -1225,9 +1225,9 @@ NotifyMode (void)
 	      && (Crosshair.AttachedLine.Point2.X != Note.X
 		  || Crosshair.AttachedLine.Point2.Y != Note.Y))
 	    {
-	      /* We will paint only the second line segment.
+	      /* We will only need to paint the second line segment.
 	         Since we only check for vias on the first segment,
-	         swap them so we only paint the first segment. */
+	         swap them so the non-empty segment is the first segment. */
 	      Crosshair.AttachedLine.Point2.X = Note.X;
 	      Crosshair.AttachedLine.Point2.Y = Note.Y;
 	    }
@@ -5991,6 +5991,12 @@ ActionUndo (int argc, char **argv, int x, int y)
 					  Crosshair.AttachedLine.Point2.X,
 					  Crosshair.AttachedLine.Point2.Y, 0);
 		  ptr2 = (LineTypePtr) ptrtmp;
+	          if (TEST_FLAG (AUTODRCFLAG, PCB))
+		    {
+		      /* undo loses FOUNDFLAG */
+		      SET_FLAG(FOUNDFLAG, ptr2);
+		      DrawLine (CURRENT, ptr2, 0);
+		    }
 		  Crosshair.AttachedLine.Point1.X =
 		    Crosshair.AttachedLine.Point2.X = ptr2->Point2.X;
 		  Crosshair.AttachedLine.Point1.Y =
