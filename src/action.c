@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.120 2007-12-02 04:10:44 bjj Exp $ */
+/* $Id: action.c,v 1.121 2007-12-02 04:24:06 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -74,7 +74,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.120 2007-12-02 04:10:44 bjj Exp $");
+RCSID ("$Id: action.c,v 1.121 2007-12-02 04:24:06 bjj Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -1443,9 +1443,12 @@ NotifyMode (void)
 		e = (ElementTypePtr) ptr1;
 		if (e)
 		  {
+		    int i;
+
 		    memcpy (estr, e->Name,
 			    MAX_ELEMENTNAMES * sizeof (TextType));
-		    memset (e->Name, 0, MAX_ELEMENTNAMES * sizeof (TextType));
+		    for (i = 0; i < MAX_ELEMENTNAMES; ++i)
+		      estr[i].TextString = strdup(estr[i].TextString);
 		    RemoveElement (e);
 		  }
 	      }
