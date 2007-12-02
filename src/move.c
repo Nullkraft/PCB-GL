@@ -1,4 +1,4 @@
-/* $Id: move.c,v 1.41 2007-11-04 22:01:26 bjj Exp $ */
+/* $Id: move.c,v 1.42 2007-12-02 04:44:51 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: move.c,v 1.41 2007-11-04 22:01:26 bjj Exp $");
+RCSID ("$Id: move.c,v 1.42 2007-12-02 04:44:51 bjj Exp $");
 
 
 
@@ -601,7 +601,9 @@ MoveLineToLayer (LayerTypePtr Layer, LineTypePtr Line)
   Draw ();
   if (!PCB->ViaOn || MoreToCome ||
       GetLayerGroupNumberByPointer (Layer) ==
-      GetLayerGroupNumberByPointer (Dest))
+      GetLayerGroupNumberByPointer (Dest) ||
+      TEST_SILK_LAYER(Layer) ||
+      TEST_SILK_LAYER(Dest))
     return (new);
   /* consider via at Point1 */
   sb.X1 = new->Point1.X - new->Thickness / 2;

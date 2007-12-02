@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: macro.h,v 1.27 2007-04-20 11:31:13 danmc Exp $
+ *  RCS: $Id: macro.h,v 1.28 2007-12-02 04:44:51 bjj Exp $
  */
 
 /* some commonly used macros not related to a special C-file
@@ -171,6 +171,9 @@
 				(Settings.ShowSolderSide ? SOLDER_LAYER : COMPONENT_LAYER)]
 #define BACKSILKLAYER		Layer[max_layer + \
 				(Settings.ShowSolderSide ? COMPONENT_LAYER : SOLDER_LAYER)]
+
+#define TEST_SILK_LAYER(layer)	(GetLayerNumber (PCB->Data, layer) >= max_layer)
+
 
 /* ---------------------------------------------------------------------------
  * returns the object ID
