@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.67 2007-11-14 04:17:43 djdelorie Exp $ */
+/* $Id: misc.c,v 1.68 2007-12-02 09:35:40 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -78,7 +78,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: misc.c,v 1.67 2007-11-14 04:17:43 djdelorie Exp $");
+RCSID ("$Id: misc.c,v 1.68 2007-12-02 09:35:40 bjj Exp $");
 
 
 /*	forward declarations	*/
@@ -444,7 +444,7 @@ IsDataEmpty (DataTypePtr Data)
 
   hasNoObjects = (Data->ViaN == 0);
   hasNoObjects &= (Data->ElementN == 0);
-  for (i = 0; i < Data->LayerN + 2; i++)
+  for (i = 0; i < max_layer + 2; i++)
     hasNoObjects = hasNoObjects &&
       Data->Layer[i].LineN == 0 &&
       Data->Layer[i].ArcN == 0 &&
