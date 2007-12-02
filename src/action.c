@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.119 2007-11-30 06:33:41 bjj Exp $ */
+/* $Id: action.c,v 1.120 2007-12-02 04:10:44 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -74,7 +74,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.119 2007-11-30 06:33:41 bjj Exp $");
+RCSID ("$Id: action.c,v 1.120 2007-12-02 04:10:44 bjj Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -1011,9 +1011,9 @@ NotifyMode (void)
 				 0, Settings.ViaDrillingHole, NULL,
 				 NoFlags ())) != NULL)
 	  {
+	    AddObjectToCreateUndoList (VIA_TYPE, via, via, via);
 	    if (gui->shift_is_pressed ())
 	      ChangeObjectThermal (VIA_TYPE, via, via, via, PCB->ThermStyle);
-	    AddObjectToCreateUndoList (VIA_TYPE, via, via, via);
 	    IncrementUndoSerialNumber ();
 	    DrawVia (via, 0);
 	    Draw ();
