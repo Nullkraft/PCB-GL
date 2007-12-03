@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.122 2007-12-02 08:44:52 bjj Exp $ */
+/* $Id: action.c,v 1.123 2007-12-03 07:58:17 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -74,7 +74,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.122 2007-12-02 08:44:52 bjj Exp $");
+RCSID ("$Id: action.c,v 1.123 2007-12-03 07:58:17 bjj Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -1370,21 +1370,24 @@ NotifyMode (void)
 
 	if ((string = gui->prompt_for (_("Enter text:"), "")) != NULL)
 	  {
-	    TextTypePtr text;
-	    int flag = NOFLAG;
-
-	    if (GetLayerGroupNumberByNumber (INDEXOFCURRENT) ==
-		GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER))
-	      flag = ONSOLDERFLAG;
-	    if ((text = CreateNewText (CURRENT, &PCB->Font, Note.X,
-				       Note.Y, 0, Settings.TextScale,
-				       string, MakeFlags (flag))) != NULL)
+	    if (strlen(string) > 0)
 	      {
-		AddObjectToCreateUndoList (TEXT_TYPE, CURRENT, text, text);
-		IncrementUndoSerialNumber ();
-		DrawText (CURRENT, text, 0);
-		Draw ();
-	      }
+		TextTypePtr text;
+		int flag = NOFLAG;
+
+		if (GetLayerGroupNumberByNumber (INDEXOFCURRENT) ==
+		    GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER))
+		  flag = ONSOLDERFLAG;
+		if ((text = CreateNewText (CURRENT, &PCB->Font, Note.X,
+					   Note.Y, 0, Settings.TextScale,
+					   string, MakeFlags (flag))) != NULL)
+		  {
+		    AddObjectToCreateUndoList (TEXT_TYPE, CURRENT, text, text);
+		    IncrementUndoSerialNumber ();
+		    DrawText (CURRENT, text, 0);
+		    Draw ();
+		  }
+		}
 
 	    /* free memory allocated by gui->prompt_for() */
 	    free (string);
