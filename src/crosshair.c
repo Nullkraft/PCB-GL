@@ -1,4 +1,4 @@
-/* $Id: crosshair.c,v 1.34 2007-11-12 19:29:27 djdelorie Exp $ */
+/* $Id: crosshair.c,v 1.35 2007-12-03 08:39:16 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -52,7 +52,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: crosshair.c,v 1.34 2007-11-12 19:29:27 djdelorie Exp $");
+RCSID ("$Id: crosshair.c,v 1.35 2007-12-03 08:39:16 bjj Exp $");
 
 #if !defined(ABS)
 #define ABS(x) (((x)<0)?-(x):(x))
@@ -778,6 +778,24 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
     }
   else
     ans = NO_TYPE;
+
+  /* avoid self-snapping */
+  if (Settings.Mode == MOVE_MODE)
+    {
+      switch (Crosshair.AttachedObject.Type)
+	{
+	case ELEMENT_TYPE:
+	  if ((ans & (PAD_TYPE | PIN_TYPE)) &&
+	      ptr1 == Crosshair.AttachedObject.Ptr1)
+	    ans = NO_TYPE;
+	  break;
+	case VIA_TYPE:
+	  /* just avoid snapping to any other vias */
+	  if (ans & PIN_TYPES)
+	    ans = NO_TYPE;
+	  break;
+	}
+    }
 
   if (PCB->RatDraw)
     {
