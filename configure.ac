@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.88 2007-11-19 01:18:10 danmc Exp $
+dnl $Id: configure.ac,v 1.89 2007-12-09 06:37:14 djdelorie Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -547,6 +547,22 @@ done
 AM_CONDITIONAL(PNG, test x$with_png = xyes)
 AM_CONDITIONAL(GIF, test x$with_gif = xyes)
 
+
+# ------------- Xrender -------------------
+have_xrender=no
+AC_CHECK_LIB(Xrender,XRenderQueryExtension,have_xrender=yes,have_xrender=no,$X_LIBS)
+
+AC_ARG_ENABLE([xrender],
+[  --disable-xrender        Compile and link with Xrender [default=yes]])
+case "$have_xrender:$enable_xrender" in
+   no:* ) ;;
+   *:no ) ;;
+   * )
+     X_LIBS="-lXrender $X_LIBS"
+     AC_DEFINE([HAVE_XRENDER], 1,
+		[Define to 1 if Xrender is available])
+     ;;
+esac
 
 # ------------- dmalloc -------------------
 dnl dmalloc checks
