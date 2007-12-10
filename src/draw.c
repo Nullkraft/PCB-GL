@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.86 2007-12-10 01:47:24 bjj Exp $ */
+/* $Id: draw.c,v 1.87 2007-12-10 03:29:55 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.86 2007-12-10 01:47:24 bjj Exp $");
+RCSID ("$Id: draw.c,v 1.87 2007-12-10 03:29:55 bjj Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -806,7 +806,7 @@ DrawMask (BoxType * screen)
       for (i=PCB->Data->LayerN; i>=0; i--)
 	{
 	  LayerTypePtr Layer = PCB->Data->Layer + i;
-	  if (strcmp (Layer->Name, "outline") ==0)
+	  if (strcasecmp (Layer->Name, "outline") == 0)
 	    DrawLayer (Layer, screen);
 	}
     }
