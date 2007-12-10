@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.85 2007-12-10 01:18:15 bjj Exp $ */
+/* $Id: draw.c,v 1.86 2007-12-10 01:47:24 bjj Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.85 2007-12-10 01:18:15 bjj Exp $");
+RCSID ("$Id: draw.c,v 1.86 2007-12-10 01:47:24 bjj Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -816,9 +816,18 @@ DrawMask (BoxType * screen)
 static void
 DrawRats (BoxTypePtr drawn_area)
 {
-  gui->use_mask (HID_MASK_CLEAR);
+  /*
+   * XXX lesstif allows positive AND negative drawing in HID_MASK_CLEAR.
+   * XXX gtk only allows negative drawing.
+   * XXX using the mask here is to get rat transparency
+   */
+  int can_mask = strcmp(gui->name, "lesstif") == 0;
+
+  if (can_mask)
+    gui->use_mask (HID_MASK_CLEAR);
   r_search (PCB->Data->rat_tree, drawn_area, NULL, rat_callback, NULL);
-  gui->use_mask (HID_MASK_OFF);
+  if (can_mask)
+    gui->use_mask (HID_MASK_OFF);
 }
 
 static int
