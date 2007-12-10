@@ -1,4 +1,4 @@
-/* $Id: xincludes.h,v 1.1 2006-04-19 22:36:47 danmc Exp $ */
+/* $Id: xincludes.h,v 1.2 2007-12-10 01:18:15 bjj Exp $ */
 
 /*
  * Some of the X headers are not very friendly in terms of namespace.
@@ -35,6 +35,10 @@
 #include <Xm/TextF.h>
 #include <Xm/ToggleB.h>
 #include <Xm/Xm.h>
+
+#ifdef HAVE_XRENDER
+#include <X11/extensions/Xrender.h>
+#endif /* HAVE_XRENDER */
 
 #undef Mask
 
