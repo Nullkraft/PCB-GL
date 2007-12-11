@@ -1,4 +1,4 @@
-/* $Id: gui-output-events.c,v 1.22 2007-12-11 01:40:43 petercjclifton Exp $ */
+/* $Id: gui-output-events.c,v 1.23 2007-12-11 01:48:33 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -48,7 +48,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-output-events.c,v 1.22 2007-12-11 01:40:43 petercjclifton Exp $");
+RCSID ("$Id: gui-output-events.c,v 1.23 2007-12-11 01:48:33 petercjclifton Exp $");
 
 static gint x_pan_speed, y_pan_speed;
 
