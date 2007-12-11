@@ -1,4 +1,4 @@
-/* $Id: gui-output-events.c,v 1.21 2007-12-10 04:09:33 djdelorie Exp $ */
+/* $Id: gui-output-events.c,v 1.22 2007-12-11 01:40:43 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -48,7 +48,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-output-events.c,v 1.21 2007-12-10 04:09:33 djdelorie Exp $");
+RCSID ("$Id: gui-output-events.c,v 1.22 2007-12-11 01:40:43 petercjclifton Exp $");
 
 static gint x_pan_speed, y_pan_speed;
 
@@ -772,7 +772,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
 {
   ModifierKeysState mk = ghid_modifier_keys_state ((GdkModifierType *) &ev->state);
   gdouble dx, dy;
-  static gint x_prev, y_prev;
+  static gint x_prev = -1, y_prev = -1;
   gboolean moved;
 
   if ((ev->state & GDK_BUTTON3_MASK) == GDK_BUTTON3_MASK

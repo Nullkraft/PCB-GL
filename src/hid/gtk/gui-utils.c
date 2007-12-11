@@ -1,4 +1,4 @@
-/* $Id: gui-utils.c,v 1.6 2006-04-29 17:05:36 billw2 Exp $ */
+/* $Id: gui-utils.c,v 1.7 2007-12-11 01:40:43 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -39,7 +39,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-utils.c,v 1.6 2006-04-29 17:05:36 billw2 Exp $");
+RCSID ("$Id: gui-utils.c,v 1.7 2007-12-11 01:40:43 petercjclifton Exp $");
 
 /* Not a gui function, but no better place to put it...
  */
@@ -82,39 +82,17 @@ ghid_is_modifier_key_sym (gint ksym)
   return FALSE;
 }
 
-#if 0
-gboolean
-ghid_control_is_pressed (void)
-{
-  GdkModifierType mask;
-  GHidPort *out = &ghid_port;
-
-  gdk_window_get_pointer (out->drawing_area->window, NULL, NULL, &mask);
-  return (mask & GDK_CONTROL_MASK) ? TRUE : FALSE;
-}
-
-gboolean
-ghid_shift_is_pressed (void)
-{
-  GdkModifierType mask;
-  GHidPort *out = &ghid_port;
-
-  gdk_window_get_pointer (out->drawing_area->window, NULL, NULL, &mask);
-  return (mask & GDK_SHIFT_MASK) ? TRUE : FALSE;
-}
-#endif
 
 ModifierKeysState
 ghid_modifier_keys_state (GdkModifierType * state)
 {
   GdkModifierType mask;
   ModifierKeysState mk;
-  gint x, y;
   gboolean shift, control, mod1;
   GHidPort *out = &ghid_port;
 
   if (!state)
-    gdk_window_get_pointer (out->drawing_area->window, &x, &y, &mask);
+    gdk_window_get_pointer (out->drawing_area->window, NULL, NULL, &mask);
   else
     mask = *state;
 
@@ -147,12 +125,11 @@ ghid_button_state (GdkModifierType * state)
 {
   GdkModifierType mask;
   ButtonState bs;
-  gint x, y;
   gboolean button1, button2, button3;
   GHidPort *out = &ghid_port;
 
   if (!state)
-    gdk_window_get_pointer (out->drawing_area->window, &x, &y, &mask);
+    gdk_window_get_pointer (out->drawing_area->window, NULL, NULL, &mask);
   else
     mask = *state;
 
