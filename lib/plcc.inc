@@ -22,7 +22,7 @@
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: plcc.inc,v 1.6 2007-12-13 05:29:21 danmc Exp $
+#   RCS: $Id: plcc.inc,v 1.7 2007-12-13 17:17:46 danmc Exp $
 #
 # PLCC packages
 #
@@ -184,8 +184,8 @@ define(`X',eval(CENTER+50))
 define(`Y',eval(BORDER+100))
 define(`count',1)
 
-ifelse(eval(NUMPINS=44),1,`define(`ltr',3)',`define(`ltr',2)')
-ifelse(eval(NUMPINS=32),1,`define(`QUARTER',9)')
+ifelse(eval(NUMPINS == 44),1,`define(`ltr',3)',`define(`ltr',2)')
+ifelse(eval(NUMPINS == 32),1,`define(`QUARTER',9)')
 
 # top left row
 forloop(`i', 1, ltr,
@@ -236,7 +236,7 @@ forloop(`i', 1, eval(ltr-1),
 )
 PIN(X, Y, PADSIZE, DRILL, count)
 
-ifelse(eval(NUMPINS=32),1,`define(`HEIGHT',eval(WIDTH+100))',`define(`HEIGHT',WIDTH)')
+ifelse(eval(NUMPINS == 32),1,`define(`HEIGHT',eval(WIDTH+100))',`define(`HEIGHT',WIDTH)')
 	ElementLine(0 0 WIDTH 0 20)
 	ElementLine(WIDTH 0 WIDTH HEIGHT 20)
 	ElementLine(WIDTH HEIGHT 0 HEIGHT 20)
