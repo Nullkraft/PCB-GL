@@ -22,7 +22,7 @@
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: plcc.inc,v 1.5 2006-10-09 00:35:24 danmc Exp $
+#   RCS: $Id: plcc.inc,v 1.6 2007-12-13 05:29:21 danmc Exp $
 #
 # PLCC packages
 #
@@ -50,10 +50,10 @@
 #
 define(`PKG_PLCC',
 	`define(`NUMPINS', `$4')
-	ifelse(eval(NUMPINS = 32),1,`define(`QUARTER',7)',`define(`QUARTER', `eval($4 /4)')')
+	ifelse(eval(NUMPINS == 32),1,`define(`QUARTER',7)',`define(`QUARTER', `eval($4 /4)')')
 	define(`OFFSET', `eval((QUARTER +1) /2)')
 	define(`WIDTH', `eval((QUARTER-1) *50 +2*75)')
-	ifelse(eval(NUMPINS = 32),1,`define(`SIDE',`eval((NUMPINS-2*QUARTER)/2)')', `define(`SIDE',QUARTER)')
+	ifelse(eval(NUMPINS == 32),1,`define(`SIDE',`eval((NUMPINS-2*QUARTER)/2)')', `define(`SIDE',QUARTER)')
 	define(`HEIGHT', `eval((SIDE-1)* 50 + 2*75)')
 	define(`CENTER', `eval(WIDTH / 2)')
 	define(`PUSHOUT', 20)    # was 15
@@ -178,7 +178,7 @@ Element(0x00 "$1" "`$2'" "$3" eval(BORDER+200) CENTER 0 100 0x00)
 
 # PLCC - 44 is a  special case, pad 1 in inner row
 
-ifelse(eval(NUMPINS = 44 || NUMPINS = 28 || NUMPINS = 32), 1, `(
+ifelse(eval(NUMPINS == 44 || NUMPINS == 28 || NUMPINS == 32), 1, `(
 
 define(`X',eval(CENTER+50))
 define(`Y',eval(BORDER+100))
