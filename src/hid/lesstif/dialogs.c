@@ -1,4 +1,4 @@
-/* $Id: dialogs.c,v 1.33 2007-11-30 15:40:25 djdelorie Exp $ */
+/* $Id: dialogs.c,v 1.34 2007-12-19 02:06:54 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -25,7 +25,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: dialogs.c,v 1.33 2007-11-30 15:40:25 djdelorie Exp $");
+RCSID ("$Id: dialogs.c,v 1.34 2007-12-19 02:06:54 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
 
@@ -536,7 +536,7 @@ lesstif_fileselect (const char *title, const char *descr,
 		    const char *history_tag, int flags)
 {
 
-  return lesstif_prompt_for (title, default_file);
+  return lesstif_prompt_for ((char *)title, default_file);
 }
 
 /* ------------------------------------------------------------ */
@@ -581,7 +581,7 @@ lesstif_prompt_for (char *msg, char *default_string)
   if (!msg)
     msg = "Enter text:";
   n = 0;
-  xs = XmStringCreateLocalized (msg);
+  xs = XmStringCreateLocalized ((char *)msg);
   stdarg (XmNlabelString, xs);
   XtSetValues (prompt_label, args, n);
   XmTextSetString (prompt_text, default_string);
@@ -663,7 +663,7 @@ lesstif_attribute_dialog (HID_Attribute * attrs,
 
   wl = (Widget *) malloc (n_attrs * sizeof (Widget));
 
-  topform = create_form_ok_dialog (title, 1);
+  topform = create_form_ok_dialog ((char *)title, 1);
   dialog = XtParent (topform);
 
   n = 0;
