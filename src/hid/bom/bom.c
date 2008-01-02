@@ -1,4 +1,4 @@
-/* $Id: bom.c,v 1.12 2007-09-04 00:08:39 danmc Exp $ */
+/* $Id: bom.c,v 1.13 2008-01-02 23:45:12 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -22,7 +22,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: bom.c,v 1.12 2007-09-04 00:08:39 danmc Exp $");
+RCSID ("$Id: bom.c,v 1.13 2008-01-02 23:45:12 danmc Exp $");
 
 static HID_Attribute bom_options[] = {
   {"bomfile", "BOM output file",
@@ -450,6 +450,7 @@ PrintBOM (void)
 	descr = CleanBOMString (UNKNOWN (DESCRIPTION_NAME (element)));
 	value = CleanBOMString (UNKNOWN (VALUE_NAME (element)));
 
+ 	y = PCB->MaxHeight - y;
  	if (xy_dim_type) {
  	  /* dimensions in mm */
  	  user_x = 0.000254 * x;
