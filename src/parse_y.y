@@ -1,4 +1,4 @@
-/* $Id: parse_y.y,v 1.41 2007-11-14 04:17:43 djdelorie Exp $ */
+/* $Id: parse_y.y,v 1.42 2008-01-03 05:01:59 bjj Exp $ */
 /*
  * ************************** README *******************
  *
@@ -61,7 +61,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_y.y,v 1.41 2007-11-14 04:17:43 djdelorie Exp $");
+RCSID("$Id: parse_y.y,v 1.42 2008-01-03 05:01:59 bjj Exp $");
 
 static	LayerTypePtr	Layer;
 static	PolygonTypePtr	Polygon;
@@ -173,6 +173,7 @@ parsepcb
 		  pcbnetlist
 			{
 			  int i, j;
+			  PCBTypePtr pcb_save = PCB;
 
 			  if (layer_group_string == NULL)
 			    layer_group_string = Settings.Groups;
@@ -185,9 +186,11 @@ parsepcb
 			/* initialize the polygon clipping now since
 			 * we didn't know the layer grouping before.
 			 */
+			PCB = yyPCB;
 			for (i = 0; i < yyData->LayerN+2; i++)
 			  for (j = 0; j < yyData->Layer[i].PolygonN; j++)
 			      InitClip (yyData, &yyData->Layer[i], &yyData->Layer[i].Polygon[j]);
+			PCB = pcb_save;
 			}
 			   
 		| { PreLoadElementPCB ();
