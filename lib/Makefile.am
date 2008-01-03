@@ -1,5 +1,5 @@
 ## -*- makefile -*-
-## $Id: Makefile.am,v 1.20 2007-09-05 10:39:04 danmc Exp $
+## $Id: Makefile.am,v 1.21 2008-01-03 23:51:09 danmc Exp $
 ##
 
 PCBLIBDIR=		@PCBLIBDIR@
@@ -62,7 +62,7 @@ uninstall-local:
 	chmod -R a+w $(DESTDIR)$(PCBLIBDIR)/${NEWLIB}
 	rm -fr $(DESTDIR)$(PCBLIBDIR)/${NEWLIB}
 
-EXTRA_DIST=	${NEWLIB} footprint.pcb ${NEWLIB}.stamp
+EXTRA_DIST=	${NEWLIB} footprint.pcb ${NEWLIB}.stamp png_diff.sh
 
 if MAINTAINER_MODE
 DISTCLEANFILES=	${NEWLIB}.stamp
