@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.89 2007-12-09 06:37:14 djdelorie Exp $
+dnl $Id: configure.ac,v 1.90 2008-01-04 19:58:09 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src/draw.c)
@@ -136,6 +136,14 @@ $v
 
 ])
    fi
+
+   AC_CHECK_PROGS(TEXI2DVI, texi2dvi, no)
+   if test "X$TEXI2DVI" = "Xno"; then
+      AC_MSG_ERROR([You have requested a maintainer-mode build and a build
+of the documentation.  For this to work, you must have the texi2dvi program
+installed.])
+   fi
+
 
 	AC_PATH_PROG(PERL, perl, notfound)
 	if test "X$PERL" = "Xnotfound"; then
