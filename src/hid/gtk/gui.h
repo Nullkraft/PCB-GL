@@ -1,4 +1,4 @@
-/* $Id: gui.h,v 1.18 2007-09-04 00:40:22 danmc Exp $ */
+/* $Id: gui.h,v 1.19 2008-01-04 19:38:56 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -373,7 +373,7 @@ gchar *ghid_dialog_file_select_open (gchar * title, gchar ** path,
 gchar *ghid_dialog_file_select_save (gchar * title, gchar ** path,
 				     gchar * file, gchar * shortcuts);
 void ghid_dialog_message (gchar * message);
-gboolean ghid_dialog_confirm (gchar * message);
+gboolean ghid_dialog_confirm (gchar * message, ...);
 gint ghid_dialog_confirm_all (gchar * message);
 gchar *ghid_dialog_input (gchar * prompt, gchar * initial);
 void ghid_dialog_about (void);

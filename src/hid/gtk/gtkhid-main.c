@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.47 2007-11-30 15:40:25 djdelorie Exp $ */
+/* $Id: gtkhid-main.c,v 1.48 2008-01-04 19:38:56 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -37,7 +37,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.47 2007-11-30 15:40:25 djdelorie Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.48 2008-01-04 19:38:56 danmc Exp $");
 
 
 extern HID ghid_hid;
@@ -1480,9 +1480,25 @@ int
 ghid_confirm_dialog (char *msg, ...)
 {
   int rv;
+  va_list ap;
+  char *cancelmsg, *okmsg;
 
-  /* FIXME -- deal with the ... part! */
-  rv = ghid_dialog_confirm (msg);
+  va_start (ap, msg);
+  cancelmsg = va_arg (ap, char *);
+  okmsg = va_arg (ap, char *);
+  va_end (ap);
+
+  if (!cancelmsg)
+    {
+      cancelmsg = _("_Cancel");
+      okmsg = _("_OK");
+    }
+  if (!okmsg)
+    {
+      okmsg = _("_OK");
+    }
+
+  rv = ghid_dialog_confirm (msg, cancelmsg, okmsg);
 
   return rv;
 }
