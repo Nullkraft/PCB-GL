@@ -1,4 +1,4 @@
-/* $Id: buffer.c,v 1.44 2007-12-02 03:57:24 bjj Exp $ */
+/* $Id: buffer.c,v 1.45 2008-01-04 20:37:18 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -62,7 +62,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: buffer.c,v 1.44 2007-12-02 03:57:24 bjj Exp $");
+RCSID ("$Id: buffer.c,v 1.45 2008-01-04 20:37:18 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local prototypes
@@ -822,6 +822,7 @@ ConvertBufferToElement (BufferTypePtr Buffer)
     CreateNewLineInElement (Element, line->Point1.X,
 			    line->Point1.Y, line->Point2.X,
 			    line->Point2.Y, line->Thickness);
+    hasParts = True;
   }
   END_LOOP;
   ARC_LOOP (&Buffer->Data->SILKLAYER);
@@ -829,13 +830,14 @@ ConvertBufferToElement (BufferTypePtr Buffer)
     CreateNewArcInElement (Element, arc->X, arc->Y, arc->Width,
 			   arc->Height, arc->StartAngle, arc->Delta,
 			   arc->Thickness);
+    hasParts = True;
   }
   END_LOOP;
   if (!hasParts)
     {
       DestroyObject (PCB->Data, ELEMENT_TYPE, Element, Element, Element);
       Message (_("There was nothing to convert!\n"
-		 "Elements must have some pads or pins.\n"));
+		 "Elements must have some silk, pads or pins.\n"));
       return (False);
     }
   if (crooked)
