@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.123 2007-12-03 07:58:17 bjj Exp $ */
+/* $Id: action.c,v 1.124 2008-01-04 01:11:57 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -74,7 +74,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.123 2007-12-03 07:58:17 bjj Exp $");
+RCSID ("$Id: action.c,v 1.124 2008-01-04 01:11:57 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -720,7 +720,7 @@ hashfunc(String s)
   while (*s)
     {
       i ^= i >> 16;
-      i = (i * 13) ^ (unsigned char)tolower(*s);
+      i = (i * 13) ^ (unsigned char)tolower((int) *s);
       s ++;
     }
   i = (unsigned int)i % HSIZE;

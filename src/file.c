@@ -1,4 +1,4 @@
-/* $Id: file.c,v 1.66 2007-09-04 00:08:39 danmc Exp $ */
+/* $Id: file.c,v 1.67 2008-01-04 01:11:57 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -98,7 +98,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: file.c,v 1.66 2007-09-04 00:08:39 danmc Exp $");
+RCSID ("$Id: file.c,v 1.67 2008-01-04 01:11:57 danmc Exp $");
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
 /* ---------------------------------------------------------------------------
@@ -148,8 +148,8 @@ string_cmp (const char *a, const char *b)
 	  while (isdigit ((int) *b))
 	    b++;
 	}
-      else if (tolower (*a) != tolower (*b))
-	return tolower (*a) - tolower (*b);
+      else if (tolower ((int) *a) != tolower ((int) *b))
+	return tolower ((int) *a) - tolower ((int) *b);
       a++;
       b++;
     }

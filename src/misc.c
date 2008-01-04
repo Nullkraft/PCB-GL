@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.68 2007-12-02 09:35:40 bjj Exp $ */
+/* $Id: misc.c,v 1.69 2008-01-04 01:11:57 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -78,7 +78,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: misc.c,v 1.68 2007-12-02 09:35:40 bjj Exp $");
+RCSID ("$Id: misc.c,v 1.69 2008-01-04 01:11:57 danmc Exp $");
 
 
 /*	forward declarations	*/
@@ -1074,7 +1074,7 @@ LayerStringToLayerStack (char *s)
 	PCB->ViaOn = True;
       else if (strcasecmp (args[i], "elements") == 0)
 	PCB->ElementOn = True;
-      else if (isdigit (args[i][0]))
+      else if (isdigit ((int) args[i][0]))
 	{
 	  lno = atoi (args[i]);
 	  ChangeGroupVisibility (lno, True, True);
