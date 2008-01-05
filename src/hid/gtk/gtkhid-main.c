@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.51 2008-01-05 21:07:29 danmc Exp $ */
+/* $Id: gtkhid-main.c,v 1.52 2008-01-05 22:38:32 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -37,7 +37,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.51 2008-01-05 21:07:29 danmc Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.52 2008-01-05 22:38:32 danmc Exp $");
 
 
 extern HID ghid_hid;
@@ -1156,8 +1156,6 @@ ghid_control_is_pressed ()
 void
 ghid_set_crosshair (int x, int y, int action)
 {
-  int need_pan_fixup = FALSE;
-
   if (gport->x_crosshair != x || gport->y_crosshair != y)
     {
       ghid_set_cursor_position_labels ();
