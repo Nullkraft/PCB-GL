@@ -1,4 +1,4 @@
-/* $Id: gui-dialog.c,v 1.8 2008-01-04 19:38:56 danmc Exp $ */
+/* $Id: gui-dialog.c,v 1.9 2008-01-05 21:07:29 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -42,7 +42,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-dialog.c,v 1.8 2008-01-04 19:38:56 danmc Exp $");
+RCSID ("$Id: gui-dialog.c,v 1.9 2008-01-05 21:07:29 danmc Exp $");
 
 gchar *
 ghid_dialog_input (gchar * prompt, gchar * initial)
@@ -149,25 +149,18 @@ ghid_dialog_message (gchar * message)
 }
 
 gboolean
-ghid_dialog_confirm (gchar * message, ...)
+ghid_dialog_confirm (gchar * message, gchar * cancelmsg, gchar * okmsg)
 {
   GtkWidget *dialog;
   gboolean confirm = FALSE;
   GHidPort *out = &ghid_port;
   va_list ap;
-  char *cancelmsg, *okmsg;
 
-  va_start (ap, message);
-  cancelmsg = va_arg (ap, char *);
-  okmsg = va_arg (ap, char *);
-  va_end (ap);
-
-  if (!cancelmsg)
+  if (cancelmsg == NULL)
     {
       cancelmsg = _("_Cancel");
-      okmsg = _("_OK");
     }
-  if (!okmsg)
+  if (okmsg == NULL)
     {
       okmsg = _("_OK");
     }
