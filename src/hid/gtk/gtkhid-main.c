@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.48 2008-01-04 19:38:56 danmc Exp $ */
+/* $Id: gtkhid-main.c,v 1.49 2008-01-05 01:14:54 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -37,7 +37,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.48 2008-01-04 19:38:56 danmc Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.49 2008-01-05 01:14:54 danmc Exp $");
 
 
 extern HID ghid_hid;
@@ -1167,6 +1167,7 @@ ghid_set_crosshair (int x, int y, int action)
       ghid_set_cursor_position_labels ();
       gport->x_crosshair = x;
       gport->y_crosshair = y;
+
       /*
        * FIXME - does this trigger the idle_proc stuff?  It is in the
        * lesstif HID.  Maybe something is needed here?
@@ -1174,24 +1175,6 @@ ghid_set_crosshair (int x, int y, int action)
        * need_idle_proc ();
        */
 
-      if ( (SIDE_X (x) < gport->view_x0) ||
-	   (SIDE_X (x) > gport->view_x0 + gport->view_width))
-	{
-	  gport->view_x0 = SIDE_X (x) - gport->view_width / 2;
-	  need_pan_fixup = TRUE;
-	}
- 
-      if ( (SIDE_Y (y) < gport->view_y0) ||
-	   (SIDE_Y (y) > gport->view_y0 + gport->view_height))
-	{
-	  gport->view_y0 = SIDE_Y (y) - gport->view_height / 2;
-	  need_pan_fixup = TRUE;
-	}
- 
-      if ( need_pan_fixup == TRUE )
-	{
-	  ghid_pan_fixup ();
-	}
     }
 
   /*
