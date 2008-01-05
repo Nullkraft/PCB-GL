@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.49 2008-01-05 01:14:54 danmc Exp $ */
+/* $Id: gtkhid-main.c,v 1.50 2008-01-05 19:46:43 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -37,7 +37,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.49 2008-01-05 01:14:54 danmc Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.50 2008-01-05 19:46:43 danmc Exp $");
 
 
 extern HID ghid_hid;
@@ -159,12 +159,8 @@ ghid_pan_fixup ()
        return;
      }
 
-   /* FIXME -- do I need to have something like this?  These two lines
-   came from the lesstif HID:
-
-   set_scroll (hscroll, view_left_x, view_width, PCB->MaxWidth);
-   set_scroll (vscroll, view_top_y, view_height, PCB->MaxHeight);
-   */
+   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
+   gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view_y0);
 
    ghid_invalidate_all ();
 
