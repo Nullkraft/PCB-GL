@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.125 2008-01-05 20:53:20 danmc Exp $ */
+/* $Id: action.c,v 1.126 2008-01-05 22:52:31 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -74,7 +74,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.125 2008-01-05 20:53:20 danmc Exp $");
+RCSID ("$Id: action.c,v 1.126 2008-01-05 22:52:31 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -5627,7 +5627,7 @@ ActionLoadFrom (int argc, char **argv, int x, int y)
 	SaveFree (PCB->Netlistname);
       PCB->Netlistname = StripWhiteSpaceAndDup (name);
       FreeLibraryMemory (&PCB->NetlistLib);
-      if (!ReadNetlist (PCB->Netlistname))
+      if (!ImportNetlist (PCB->Netlistname))
 	hid_action ("NetlistChanged");
     }
   else if (strcasecmp (function, "Revert") == 0 && PCB->Filename

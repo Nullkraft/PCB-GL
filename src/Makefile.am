@@ -1,5 +1,5 @@
 ## -*- makefile -*-
-## $Id: Makefile.am,v 1.39 2007-04-20 11:31:13 danmc Exp $
+## $Id: Makefile.am,v 1.40 2008-01-05 22:52:31 danmc Exp $
 ##
 
 SUBDIRS=	icons
@@ -57,6 +57,8 @@ PCB_SRCS = \
 	draw.h \
 	drill.c \
 	drill.h \
+	edif.y \
+	edif_parse.h \
 	error.c \
 	error.h \
 	file.c \

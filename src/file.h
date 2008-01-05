@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: file.h,v 1.9 2007-05-02 02:50:30 danmc Exp $
+ *  RCS: $Id: file.h,v 1.10 2008-01-05 22:52:31 danmc Exp $
  */
 
 /* prototypes for file routines
@@ -44,7 +44,7 @@ void SaveInTMP (void);
 void EmergencySave (void);
 void DisableEmergencySave (void);
 int ReadLibraryContents (void);
-int ReadNetlist (char *);
+int ImportNetlist (char *);
 int SaveBufferElements (char *);
 void PreLoadElementPCB (void);
 void PostLoadElementPCB (void);
