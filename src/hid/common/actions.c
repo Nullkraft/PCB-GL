@@ -1,4 +1,4 @@
-/* $Id: actions.c,v 1.11 2007-08-06 01:35:33 djdelorie Exp $ */
+/* $Id: actions.c,v 1.12 2008-01-05 05:37:08 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -19,7 +19,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: actions.c,v 1.11 2007-08-06 01:35:33 djdelorie Exp $");
+RCSID ("$Id: actions.c,v 1.12 2008-01-05 05:37:08 djdelorie Exp $");
 
 typedef struct HID_ActionNode
 {
@@ -225,7 +225,7 @@ hid_parse_actions (const char *rstr,
 {
   char **list = NULL;
   int max = 0;
-  int num = 0;
+  int num;
   char *str = NULL;
   char *sp, *aname, *sp2;
   int maybe_empty = 0;
@@ -239,6 +239,7 @@ hid_parse_actions (const char *rstr,
   sp = str = strdup (rstr);
 
 another:
+  num = 0;
   /* eat leading spaces and tabs */
   while (*sp && isspace ((int) *sp))
     sp++;
