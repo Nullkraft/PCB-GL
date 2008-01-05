@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.124 2008-01-04 01:11:57 danmc Exp $ */
+/* $Id: action.c,v 1.125 2008-01-05 20:53:20 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -74,7 +74,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.124 2008-01-04 01:11:57 danmc Exp $");
+RCSID ("$Id: action.c,v 1.125 2008-01-05 20:53:20 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -2108,8 +2108,21 @@ ActionSetValue (int argc, char **argv, int x, int y)
 	  if (!r)
 	    {
 	      if ((value == (int) value && PCB->Grid == (int) PCB->Grid)
-		  || (value != (int) value && PCB->Grid != (int) PCB->Grid))
-		SetGrid (value + PCB->Grid, False);
+		  || (value != (int) value && PCB->Grid != (int) PCB->Grid)
+                  || PCB->Grid ==1)
+                {
+                  /* 
+		   * On the way down short against the minimum 
+		   * PCB drawing unit 
+		   */
+                  if ((value + PCB->Grid) < 1)
+                     SetGrid (1, False);
+                  else if (PCB->Grid == 1)
+                    SetGrid ( value, False);
+                  else
+                    SetGrid (value + PCB->Grid, False);
+                }
+
 	      else
 		Message (_
 			 ("Don't combine metric/English grids like that!\n"));
