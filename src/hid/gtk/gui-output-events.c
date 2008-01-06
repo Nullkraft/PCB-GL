@@ -1,4 +1,4 @@
-/* $Id: gui-output-events.c,v 1.23 2007-12-11 01:48:33 petercjclifton Exp $ */
+/* $Id: gui-output-events.c,v 1.24 2008-01-06 21:52:25 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -48,7 +48,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-output-events.c,v 1.23 2007-12-11 01:48:33 petercjclifton Exp $");
+RCSID ("$Id: gui-output-events.c,v 1.24 2008-01-06 21:52:25 danmc Exp $");
 
 static gint x_pan_speed, y_pan_speed;
 
@@ -140,12 +140,16 @@ ghid_port_ranges_scale (gboolean emit_changed)
 
   adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->h_range));
   adj->page_size = gport->view_width;
+  adj->page_increment = adj->page_size/10.0;
+  adj->step_increment = adj->page_size/100.0;
   adj->upper = PCB->MaxWidth;
   if (emit_changed)
     gtk_signal_emit_by_name (GTK_OBJECT (adj), "changed");
 
   adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->v_range));
   adj->page_size = gport->view_height;
+  adj->page_increment = adj->page_size/10.0;
+  adj->step_increment = adj->page_size/100.0;
   adj->upper = PCB->MaxHeight;
   if (emit_changed)
     gtk_signal_emit_by_name (GTK_OBJECT (adj), "changed");
