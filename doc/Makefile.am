@@ -23,7 +23,7 @@
 ##  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 ##  Thomas.Nau@rz.uni-ulm.de
 ##
-##  RCS: $Id: Makefile.am,v 1.25 2007-02-06 21:08:13 danmc Exp $
+##  RCS: $Id: Makefile.am,v 1.26 2008-01-06 21:14:25 danmc Exp $
 ##
 
 info_TEXINFOS=	pcb.texi
@@ -48,6 +48,16 @@ dist_man_MANS=	pcb.1
 html_docs=	${info_TEXINFOS:.texi=.html}
 ps_docs=	${info_TEXINFOS:.texi=.ps} refcard.ps
 pdf_docs=	${info_TEXINFOS:.texi=.pdf} refcard.pdf
+
+# these dependencies prevent a parallel make job
+# from trying to invoke latex and pdflatex at the same
+# time on the same input file.  That causes clashes in 
+# the .aux files which are used by both latex and
+# pdflatex.
+if MAINTAINER_MODE
+refcard.pdf: refcard.ps
+pcb.pdf: pcb.ps
+endif
 
 # put the html manual into 1 file instead of multiple files?
 AM_MAKEINFOHTMLFLAGS=	--css-include=$(srcdir)/pcb.css --no-split
