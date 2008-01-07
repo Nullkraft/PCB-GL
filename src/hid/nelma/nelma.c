@@ -78,7 +78,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: nelma.c,v 1.3 2007-09-04 00:08:40 danmc Exp $");
+RCSID("$Id: nelma.c,v 1.4 2008-01-07 03:07:38 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PNG function %s.\n", __FUNCTION__); abort()
 
@@ -424,7 +424,7 @@ static void
 nelma_write_object(FILE * out, LibraryEntryTypePtr pin)
 {
 	int             i, idx;
-	int             x, y;
+	int             x = 0, y = 0;
 
 	char           *f;
 	const char     *ext;

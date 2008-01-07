@@ -1,4 +1,4 @@
-/* $Id: autoroute.c,v 1.45 2007-11-23 20:39:47 bjj Exp $ */
+/* $Id: autoroute.c,v 1.46 2008-01-07 03:07:38 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -79,7 +79,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: autoroute.c,v 1.45 2007-11-23 20:39:47 bjj Exp $");
+RCSID ("$Id: autoroute.c,v 1.46 2008-01-07 03:07:38 danmc Exp $");
 
 /* #defines to enable some debugging output */
 /*
@@ -2277,6 +2277,8 @@ ExpandAllEdges (edge_t * e, vector_t * result_vec,
           costpoint.Y = e->cost_point.Y;
           break;
         default:
+	  costpoint.X = 0;
+	  costpoint.Y = 0;
           assert (0);
         }
       cost = cost_penalty_in_box *
@@ -3096,6 +3098,9 @@ RouteOne (routedata_t * rd, routebox_t * from, routebox_t * to, int max_edges)
       result.found_route = False;
       result.net_completely_routed = True;
       result.best_route_cost = 0;
+      /* result.route_had_conflicts is in fact undefined here but
+       * we are returning anyway.  Is this a bug?  FIXME.
+       */
       return result;
     }
   result.net_completely_routed = False;

@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.69 2008-01-04 01:11:57 danmc Exp $ */
+/* $Id: misc.c,v 1.70 2008-01-07 03:07:38 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -78,7 +78,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: misc.c,v 1.69 2008-01-04 01:11:57 danmc Exp $");
+RCSID ("$Id: misc.c,v 1.70 2008-01-07 03:07:38 danmc Exp $");
 
 
 /*	forward declarations	*/
@@ -1633,15 +1633,10 @@ void
 AttachForCopy (LocationType PlaceX, LocationType PlaceY)
 {
   BoxTypePtr box;
-  LocationType mx, my;
+  LocationType mx = 0, my = 0;
 
   Crosshair.AttachedObject.RubberbandN = 0;
-  if (TEST_FLAG (SNAPPINFLAG, PCB))
-    {
-      mx = 0;
-      my = 0;
-    }
-  else
+  if (! TEST_FLAG (SNAPPINFLAG, PCB))
     {
       /* dither the grab point so that the mark, center, etc
        * will end up on a grid coordinate
