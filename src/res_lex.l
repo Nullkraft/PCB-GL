@@ -1,4 +1,4 @@
-/* $Id: res_lex.l,v 1.7 2006-03-21 17:34:59 djdelorie Exp $ */
+/* $Id: res_lex.l,v 1.8 2008-01-07 03:44:18 danmc Exp $ */
 
 %{
 
@@ -18,9 +18,13 @@
 #include <dmalloc.h>
 #endif
 
-RCSID("$Id: res_lex.l,v 1.7 2006-03-21 17:34:59 djdelorie Exp $");
+RCSID("$Id: res_lex.l,v 1.8 2008-01-07 03:44:18 danmc Exp $");
 
 #define YY_INPUT(buf,result,max_size) { result = res_parse_getchars(buf, max_size); }
+ 
+#ifdef FLEX_SCANNER
+#define yyunput ATTRIBUTE_UNUSED yyunput
+#endif
 
 extern int res_lineno;
 extern int res_parse_getchars(char *buf, int max_size);

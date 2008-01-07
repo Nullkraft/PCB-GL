@@ -1,4 +1,4 @@
-/* $Id: parse_l.l,v 1.22 2007-04-20 11:31:13 danmc Exp $ */
+/* $Id: parse_l.l,v 1.23 2008-01-07 03:44:18 danmc Exp $ */
 
 %{
 /*
@@ -48,7 +48,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_l.l,v 1.22 2007-04-20 11:31:13 danmc Exp $");
+RCSID("$Id: parse_l.l,v 1.23 2008-01-07 03:44:18 danmc Exp $");
 
 
 #include "global.h"
@@ -67,6 +67,7 @@ RCSID("$Id: parse_l.l,v 1.22 2007-04-20 11:31:13 danmc Exp $");
  */
 #ifdef FLEX_SCANNER
 int				yylineno;		/* linenumber */
+#define yyunput ATTRIBUTE_UNUSED yyunput
 #endif
 
 char			*yyfilename;	/* in this file */
