@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.92 2008-01-06 05:39:59 danmc Exp $
+dnl $Id: configure.ac,v 1.93 2008-01-08 14:47:57 petercjclifton Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT([pcb], [1.99w])
@@ -230,7 +230,11 @@ Either do not use --enable-dbus or enable the gtk or lesstif GUI HID.])
 		AC_MSG_ERROR([Cannot find pkg-config, make sure it is installed and in your PATH])
 	fi
 
-	PKG_CHECK_MODULES(DBUS, dbus-1 >= 0.61, , 
+	PKG_CHECK_MODULES(DBUS, dbus-1 >= 0.61,
+		[saved_LIBS="$LIBS"
+		 LIBS="$LIBS $DBUS_LIBS"
+		 AC_CHECK_FUNCS(dbus_watch_get_unix_fd)
+		 LIBS="$saved_LIBS" ],
 		[AC_MSG_ERROR([Cannot find dbus-1 >= 0.61, install it and rerun ./configure
 Please review the following errors:
 $DBUS_PKG_ERRORS])]
