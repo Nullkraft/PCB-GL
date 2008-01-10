@@ -1,5 +1,5 @@
 ## -*- makefile -*-
-## $Id: Makefile.am,v 1.7 2008-01-10 17:10:13 danmc Exp $
+## $Id: Makefile.am,v 1.8 2008-01-10 18:11:14 petercjclifton Exp $
 ##
 ## Top level automake file for PCB
 
@@ -11,5 +11,5 @@ EXTRA_DIST=	config.rpath m4/ChangeLog autogen.sh globalconst.h README.cvs README
 DISTCLEANFILES=	configure.lineno
 
 ACLOCAL_AMFLAGS = -I m4
-DISTCHECK_CONFIGURE_FLAGS = --disable-update-mime-database
+DISTCHECK_CONFIGURE_FLAGS = --disable-update-mime-database --disable-update-desktop-database
 
