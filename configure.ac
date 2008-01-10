@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.94 2008-01-10 04:06:33 danmc Exp $
+dnl $Id: configure.ac,v 1.95 2008-01-10 04:32:59 petercjclifton Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT([pcb], [1.99w])
@@ -51,6 +51,9 @@ dnl Checks for programs.
 AC_PROG_CC
 
 # i18n
+GETTEXT_PACKAGE=$PACKAGE
+AC_SUBST(GETTEXT_PACKAGE)
+
 AM_GNU_GETTEXT_VERSION([0.14])
 AM_GNU_GETTEXT
 IT_PROG_INTLTOOL([0.35.0])
