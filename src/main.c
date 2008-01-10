@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.73 2007-08-05 23:40:26 djdelorie Exp $ */
+/* $Id: main.c,v 1.74 2008-01-10 23:17:08 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,11 +61,15 @@
 #include "dbus.h"
 #endif
 
+#if ENABLE_NLS
+#include <libintl.h>
+#endif
+
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.73 2007-08-05 23:40:26 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.74 2008-01-10 23:17:08 petercjclifton Exp $");
 
 
 #define PCBLIBPATH ".:" PCBLIBDIR
@@ -823,6 +827,9 @@ main (int argc, char *argv[])
 #include "core_lists.h"
   setbuf (stdout, 0);
   InitPaths (argv[0]);
+
+  bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
+  bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 
   hid_init ();
 

@@ -1,5 +1,5 @@
 ## -*- makefile -*-
-## $Id: Makefile.am,v 1.42 2008-01-10 05:35:21 petercjclifton Exp $
+## $Id: Makefile.am,v 1.43 2008-01-10 23:17:08 petercjclifton Exp $
 ##
 
 SUBDIRS=	icons
@@ -174,6 +174,8 @@ core_lists.h : ${PCB_SRCS} Makefile
 
 # for globalconst.h
 INCLUDES=	-I$(top_srcdir) -I$(srcdir)/icons
+
+DEFS= 	-DLOCALEDIR=\"$(localedir)\" @DEFS@
 
 EXTRA_DIST= \
 	check_icon.data \

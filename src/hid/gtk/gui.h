@@ -1,4 +1,4 @@
-/* $Id: gui.h,v 1.22 2008-01-10 05:35:21 petercjclifton Exp $ */
+/* $Id: gui.h,v 1.23 2008-01-10 23:17:08 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -40,7 +40,7 @@
 #if defined (ENABLE_NLS)
 #include <libintl.h>
 #   undef _
-#   define _(String) dgettext(PACKAGE,String)
+#   define _(String) dgettext(GETTEXT_PACKAGE,String)
 #   if defined(gettext_noop)
 #       define N_(String) gettext_noop(String)
 #   else

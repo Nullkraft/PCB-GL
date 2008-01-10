@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.96 2008-01-10 17:10:13 danmc Exp $
+dnl $Id: configure.ac,v 1.97 2008-01-10 23:17:07 petercjclifton Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT([pcb], [1.99w])
@@ -52,6 +52,8 @@ AC_PROG_CC
 
 # i18n
 GETTEXT_PACKAGE=$PACKAGE
+AH_TEMPLATE([GETTEXT_PACKAGE], [Name of this program's gettext domain])
+AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE], ["$GETTEXT_PACKAGE"])
 AC_SUBST(GETTEXT_PACKAGE)
 
 AM_GNU_GETTEXT_VERSION([0.14])
