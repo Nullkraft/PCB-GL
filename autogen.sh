@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# $Id: autogen.sh,v 1.4 2006-03-24 00:32:12 danmc Exp $
+# $Id: autogen.sh,v 1.5 2008-01-10 04:06:33 danmc Exp $
 #
 # Run the various GNU autotools to bootstrap the build
 # system.  Should only need to be done once.
@@ -8,6 +8,12 @@
 # for now avoid using bash as not everyone has that installed
 CONFIG_SHELL=/bin/sh
 export CONFIG_SHELL
+
+echo "Running autopoint..."
+autopoint --force || exit 1
+
+echo "Running intltoolize..."
+echo "no" | intltoolize --force --copy --automake || exit 1
 
 echo "Running aclocal..."
 aclocal $ACLOCAL_FLAGS || exit 1
