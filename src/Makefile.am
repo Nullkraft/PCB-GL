@@ -1,5 +1,5 @@
 ## -*- makefile -*-
-## $Id: Makefile.am,v 1.41 2008-01-08 00:50:27 petercjclifton Exp $
+## $Id: Makefile.am,v 1.42 2008-01-10 05:35:21 petercjclifton Exp $
 ##
 
 SUBDIRS=	icons
@@ -230,6 +230,7 @@ LIBGTK_SRCS = \
 	hid/gtk/gui-dialog.c \
 	hid/gtk/gui-keyref-window.c \
 	hid/gtk/gui-library-window.c \
+	hid/gtk/gui-library-window.h \
 	hid/gtk/gui-log-window.c \
 	hid/gtk/gui-misc.c \
 	hid/gtk/gui-netlist-window.c \

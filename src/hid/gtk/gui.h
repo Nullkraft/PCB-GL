@@ -1,4 +1,4 @@
-/* $Id: gui.h,v 1.21 2008-01-08 00:50:27 petercjclifton Exp $ */
+/* $Id: gui.h,v 1.22 2008-01-10 05:35:21 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -178,6 +178,7 @@ typedef struct
     log_window_height,
     keyref_window_width,
     keyref_window_height,
+    library_window_width,
     library_window_height,
     netlist_window_height, history_size, settings_mode, auto_pan_speed;
 }
