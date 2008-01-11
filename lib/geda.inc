@@ -1,5 +1,5 @@
 # -*- m4 -*-
-#   $Id: geda.inc,v 1.33 2008-01-04 00:00:52 danmc Exp $
+#   $Id: geda.inc,v 1.34 2008-01-11 01:22:08 danmc Exp $
 #
 #   gEDA compatible footprint names
 #
@@ -263,7 +263,7 @@ define(`PKG_SSOP64W',  `PKG_SSO(  `$1', `$2', `$3', 64, 545, 3150)');
 ##  Mini small outline package, .65mm
 define(`PKG_MSOP8',    `PKG_SSO(   `$1', `$2', `$3', 8, 199, 2559)');
 ##  Mini small outline package, .5mm
-define(`PKG_MSOP10',   `PKG_TSOP(  `$1', `$2', `$3', 8, 199, 1969)');
+define(`PKG_MSOP10',   `PKG_TSOP(  `$1', `$2', `$3', 10, 199, 1969)');
 
 ##  Quarter size small outline package
 define(`PKG_QSOP16',   `PKG_SSO(   `$1', `$2', `$3', 16, 244, 2500)');
