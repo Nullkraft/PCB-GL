@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.97 2008-01-10 23:17:07 petercjclifton Exp $
+dnl $Id: configure.ac,v 1.98 2008-01-13 05:55:27 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT([pcb], [1.99w])
@@ -430,7 +430,7 @@ AC_CHECK_FUNCS(realpath canonicalize_file_name)
 libiberty_NEED_DECLARATION(canonicalize_file_name)
 
 AC_HEADER_STDC
-AC_CHECK_HEADERS(limits.h string.h sys/types.h regex.h pwd.h)
+AC_CHECK_HEADERS(limits.h locale.h string.h sys/types.h regex.h pwd.h)
 AC_CHECK_HEADERS(sys/socket.h netinet/in.h netdb.h sys/param.h sys/times.h)
 AC_CHECK_HEADERS(dlfcn.h)
 

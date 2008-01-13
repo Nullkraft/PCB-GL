@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.52 2008-01-07 00:22:55 danmc Exp $ */
+/* $Id: gui-top-window.c,v 1.53 2008-01-13 05:55:27 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -78,6 +78,10 @@ a zoom in/out.
 
 #include <unistd.h>
 
+#ifdef HAVE_LOCALE_H
+#include <locale.h>
+#endif
+
 #include "gtkhid.h"
 #include "gui.h"
 #include "hid.h"
@@ -122,7 +126,7 @@ a zoom in/out.
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.52 2008-01-07 00:22:55 danmc Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.53 2008-01-13 05:55:27 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * local types
