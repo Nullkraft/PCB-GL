@@ -1,9 +1,9 @@
 ## -*- makefile -*-
-## $Id: Makefile.am,v 1.10 2008-01-10 19:05:10 petercjclifton Exp $
+## $Id: Makefile.am,v 1.11 2008-01-14 22:19:00 danmc Exp $
 ##
 ## Top level automake file for PCB
 
-DIRS=		win32 src data lib newlib example tools tutorial README_FILES intl po
+DIRS=		win32 intl src data lib newlib example tools tutorial README_FILES po
 SUBDIRS=	${DIRS} @DOC@
 DIST_SUBDIRS=	${DIRS} doc
 
