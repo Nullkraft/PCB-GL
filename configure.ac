@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.98 2008-01-13 05:55:27 danmc Exp $
+dnl $Id: configure.ac,v 1.99 2008-01-14 16:55:36 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT([pcb], [1.99w])
@@ -698,7 +698,7 @@ AC_MSG_RESULT([no])
 ])
 
 CFLAGS="$CFLAGS $X_CFLAGS $DBUS_CFLAGS $GTK_CFLAGS"
-LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_LIBS"
+LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_LIBS $INTLLIBS"
 
 
 # if we have gcc then add -Wall
