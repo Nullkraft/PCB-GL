@@ -1,4 +1,4 @@
-/* $Id: menu.c,v 1.28 2007-11-30 06:22:04 djdelorie Exp $ */
+//* $Id: menu.c,v 1.29 2008-01-15 17:18:31 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -29,7 +29,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: menu.c,v 1.28 2007-11-30 06:22:04 djdelorie Exp $");
+RCSID ("$Id: menu.c,v 1.29 2008-01-15 17:18:31 danmc Exp $");
 
 #ifndef R_OK
 /* Common value for systems that don't define it.  */
@@ -943,7 +943,7 @@ DumpKeys2 ()
 	       acc_table[i].mods & M_Alt ? "Alt-" : "",
 	       acc_table[i].mods & M_Ctrl ? "Ctrl-" : "",
 	       acc_table[i].mods & M_Shift ? "Shift-" : "");
-      ch[0] = toupper (acc_table[i].key_char);
+      ch[0] = toupper ((int)  acc_table[i].key_char);
       printf ("%16s%s\t", mod,
 	      acc_table[i].key_char ? ch : XKeysymToString (acc_table[i].
 							    u.a.key));
