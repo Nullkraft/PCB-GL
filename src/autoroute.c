@@ -1,4 +1,4 @@
-/* $Id: autoroute.c,v 1.46 2008-01-07 03:07:38 danmc Exp $ */
+/* $Id: autoroute.c,v 1.47 2008-01-15 17:18:38 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -79,7 +79,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: autoroute.c,v 1.46 2008-01-07 03:07:38 danmc Exp $");
+RCSID ("$Id: autoroute.c,v 1.47 2008-01-15 17:18:38 danmc Exp $");
 
 /* #defines to enable some debugging output */
 /*
@@ -3098,9 +3098,8 @@ RouteOne (routedata_t * rd, routebox_t * from, routebox_t * to, int max_edges)
       result.found_route = False;
       result.net_completely_routed = True;
       result.best_route_cost = 0;
-      /* result.route_had_conflicts is in fact undefined here but
-       * we are returning anyway.  Is this a bug?  FIXME.
-       */
+      result.route_had_conflicts = 0;
+
       return result;
     }
   result.net_completely_routed = False;
