@@ -1,5 +1,5 @@
 ## -*- makefile -*-
-## $Id: Makefile.am,v 1.11 2008-01-14 22:19:00 danmc Exp $
+## $Id: Makefile.am,v 1.12 2008-01-15 02:10:47 danmc Exp $
 ##
 ## Top level automake file for PCB
 
@@ -9,7 +9,7 @@ DIST_SUBDIRS=	${DIRS} doc
 
 INTLTOOL_FILES = intltool-extract.in intltool-merge.in  intltool-update.in
 
-EXTRA_DIST=	config.rpath m4/ChangeLog autogen.sh globalconst.h README.cvs README.win32 icon-theme-installer $(INTLTOOL_FILES)
+EXTRA_DIST=	config.rpath globalconst.h README.cvs README.win32 icon-theme-installer $(INTLTOOL_FILES)
 
 DISTCLEANFILES= configure.lineno intltool-extract intltool-merge intltool-update po/.intltool-merge-cache
 
