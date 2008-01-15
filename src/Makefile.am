@@ -1,5 +1,5 @@
 ## -*- makefile -*-
-## $Id: Makefile.am,v 1.43 2008-01-10 23:17:08 petercjclifton Exp $
+## $Id: Makefile.am,v 1.44 2008-01-15 22:45:44 danmc Exp $
 ##
 
 SUBDIRS=	icons
@@ -269,8 +269,8 @@ if WIN32
 pcb_icon.o : pcb_icon.ico $(srcdir)/hid/gtk/pcb.rc
 	windres $(srcdir)/hid/gtk/pcb.rc $@
 
-pcb_icon.ico: $(top_srcdir)/win32/pcb_icon.ico
-	cp $(top_srcdir)/win32/pcb_icon.ico $@
+pcb_icon.ico: $(top_srcdir)/data/pcb_icon.ico
+	cp $(top_srcdir)/data/pcb_icon.ico $@
 
 pcb_LDADD+=			pcb_icon.o
 pcb_DEPENDENCIES+=	pcb_icon.o

@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.99 2008-01-14 16:55:36 danmc Exp $
+dnl $Id: configure.ac,v 1.100 2008-01-15 22:45:44 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT([pcb], [1.99w])
@@ -89,15 +89,11 @@ AC_PROG_INSTALL
 AC_PROG_RANLIB
 
 #
-# Used for building the win32 icons.
+# Used for building the icons
 #
-AC_PATH_PROG(TGIF, tgif, notfound)
-AM_CONDITIONAL(MISSING_TGIF, test x$TGIF = xnotfound)
 AC_PATH_PROG(XPMTOPPM, xpmtoppm, notfound)
 AC_PATH_PROG(PPMTOWINICON, ppmtowinicon, notfound)
-AM_CONDITIONAL(MISSING_XPMTOPPM, test x$PPMTOWINICON = xnotfound -o x$XPMTOPPM = xnotfound)
 AC_PATH_PROG(CONVERT, convert, notfound)
-AM_CONDITIONAL(MISSING_CONVERT, test x$CONVERT = xnotfound)
 
 docs_yesno=yes
 
