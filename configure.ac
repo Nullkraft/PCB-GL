@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.100 2008-01-15 22:45:44 danmc Exp $
+dnl $Id: configure.ac,v 1.101 2008-01-16 03:20:46 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT([pcb], [1.99w])
@@ -306,6 +306,9 @@ AC_SUBST(HIDLIBS)
 #
 # desktop integration
 #
+
+AC_PATH_PROG(SETENV, env, [])
+AC_PATH_PROG(GTK_UPDATE_ICON_CACHE_BIN, gtk-update-icon-path, [true])
 
 # Change default location for XDG files (MIME and Icons)
 AC_ARG_WITH(xdgdatadir, [  --with-xdgdatadir=path  Change where the theme icons 

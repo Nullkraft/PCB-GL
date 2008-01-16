@@ -1,5 +1,5 @@
 ## -*- makefile -*-
-## $Id: Makefile.am,v 1.12 2008-01-15 02:10:47 danmc Exp $
+## $Id: Makefile.am,v 1.13 2008-01-16 03:20:46 danmc Exp $
 ##
 ## Top level automake file for PCB
 
@@ -16,5 +16,5 @@ DISTCLEANFILES= configure.lineno intltool-extract intltool-merge intltool-update
 MAINTAINERCLEANFILES= $(INTLTOOL_FILES)
 
 ACLOCAL_AMFLAGS = -I m4
-DISTCHECK_CONFIGURE_FLAGS = --disable-update-mime-database --disable-update-desktop-database
+DISTCHECK_CONFIGURE_FLAGS = --disable-update-mime-database --disable-update-desktop-database GTK_UPDATE_ICON_THEME_BIN=true
 
