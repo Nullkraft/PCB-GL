@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# $Id: autogen.sh,v 1.7 2008-01-15 22:17:55 danmc Exp $
+# $Id: autogen.sh,v 1.8 2008-01-16 11:58:28 danmc Exp $
 #
 # Run the various GNU autotools to bootstrap the build
 # system.  Should only need to be done once.
@@ -46,8 +46,8 @@ echo "    $it_ver"
 
 case $it_maj in
 	0)
-		if test $it_min -lt 36 ; then
-			echo "You must have intltool >= 0.36.0 but you seem to have $it_ver"
+		if test $it_min -lt 35 ; then
+			echo "You must have intltool >= 0.35.0 but you seem to have $it_ver"
 			exit 1
 		fi
 		;;
