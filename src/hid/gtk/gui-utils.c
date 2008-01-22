@@ -1,4 +1,4 @@
-/* $Id: gui-utils.c,v 1.7 2007-12-11 01:40:43 petercjclifton Exp $ */
+/* $Id: gui-utils.c,v 1.8 2008-01-22 23:34:03 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -39,7 +39,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-utils.c,v 1.7 2007-12-11 01:40:43 petercjclifton Exp $");
+RCSID ("$Id: gui-utils.c,v 1.8 2008-01-22 23:34:03 danmc Exp $");
 
 /* Not a gui function, but no better place to put it...
  */
@@ -676,12 +676,10 @@ ghid_dialog_report (gchar * title, gchar * message)
 
 
 void
-ghid_label_set_markup (GtkWidget * label, gchar * text)
+ghid_label_set_markup (GtkWidget * label, const gchar * text)
 {
-  if (label && text)
-    gtk_label_set_markup (GTK_LABEL (label), text);
-  else if (label)
-    gtk_label_set_text (GTK_LABEL (label), "");
+  if (label)
+    gtk_label_set_text (GTK_LABEL (label), text ? text : "");
 }
 
 

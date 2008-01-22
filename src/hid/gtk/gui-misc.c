@@ -1,4 +1,4 @@
-/* $Id: gui-misc.c,v 1.11 2008-01-07 04:13:37 danmc Exp $ */
+/* $Id: gui-misc.c,v 1.12 2008-01-22 23:34:03 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -42,7 +42,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-misc.c,v 1.11 2008-01-07 04:13:37 danmc Exp $");
+RCSID ("$Id: gui-misc.c,v 1.12 2008-01-22 23:34:03 danmc Exp $");
 
 #define DEFAULT_CURSORSHAPE	GDK_CROSSHAIR
 
@@ -61,7 +61,7 @@ GdkPixmap *XC_clock_source, *XC_clock_mask,
 static GdkCursorType oldCursor;
 
 void
-ghid_status_line_set_text (gchar * text)
+ghid_status_line_set_text (const gchar * text)
 {
   if (ghidgui->command_entry_status_line_active)
     return;
@@ -391,7 +391,7 @@ loop_button_press_cb (GtkWidget * drawing_area, GdkEventButton * ev,
      |  the mouse pointer coordinates at the time of the mouse button event.
    */
 static gboolean
-run_get_location_loop (gchar * message)
+run_get_location_loop (const gchar * message)
 {
   GMainLoop *loop;
   gulong button_handler, key_handler;
@@ -456,7 +456,7 @@ run_get_location_loop (gchar * message)
 void
 ghid_get_user_xy (const char *msg)
 {
-  run_get_location_loop ((gchar *) msg);
+  run_get_location_loop (msg);
 }
 
   /* XXX The abort dialog isn't implemented yet in the Gtk port
