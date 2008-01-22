@@ -1,4 +1,4 @@
-/* $Id: find.c,v 1.67 2008-01-04 19:38:56 danmc Exp $ */
+/* $Id: find.c,v 1.68 2008-01-22 03:17:23 danmc Exp $ */
 
 /*
  *
@@ -101,7 +101,7 @@
 
 #undef DEBUG
 
-RCSID ("$Id: find.c,v 1.67 2008-01-04 19:38:56 danmc Exp $");
+RCSID ("$Id: find.c,v 1.68 2008-01-22 03:17:23 danmc Exp $");
 
 
 
@@ -4067,6 +4067,7 @@ DRCAll (void)
 
   RestoreStackAndVisibility ();
   hid_action ("LayersChanged");
+  gui->invalidate_all ();
 
   if (nopastecnt > 0) 
     {
