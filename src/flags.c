@@ -1,4 +1,4 @@
-/* $Id: flags.c,v 1.12 2007-08-06 01:45:35 djdelorie Exp $ */
+/* $Id: flags.c,v 1.13 2008-01-28 21:37:56 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -41,7 +41,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: flags.c,v 1.12 2007-08-06 01:45:35 djdelorie Exp $");
+RCSID ("$Id: flags.c,v 1.13 2008-01-28 21:37:56 danmc Exp $");
 
 static int
 FlagCurrentStyle (int dummy)
@@ -68,6 +68,12 @@ static int
 FlagGridSize (int dummy)
 {
   return (int) (PCB->Grid + 0.5);
+}
+
+static int
+FlagBuffer (int dummy)
+{
+  return (int) (Settings.BufferNumber + 1);
 }
 
 static int
@@ -180,6 +186,9 @@ HID_Flag flags_flag_list[] = {
 	OffsetOf (SettingType, ResetAfterElement)},
   {"ringbellwhenfinished", FlagSETTINGS,
 	OffsetOf (SettingType, RingBellWhenFinished)},
+
+  {"buffer", FlagBuffer, 0},
+
 };
 
 REGISTER_FLAGS (flags_flag_list)
