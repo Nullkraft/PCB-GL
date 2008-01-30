@@ -1,10 +1,10 @@
 ## -*- Makefile -*-
 ##
-## $Id: Makefile.am,v 1.3 2008-01-16 02:57:21 danmc Exp $
+## $Id: Makefile.am,v 1.4 2008-01-30 23:27:06 danmc Exp $
 ##
 
 
-EXTRA_DIST= build_pcb pcb.nsi.in Readme.txt
+EXTRA_DIST= build_pcb extract_gtk_win32 pcb.nsi.in Readme.txt
 
 pkgdatadir=     ${datadir}/${PACKAGE}-${VERSION}
 
