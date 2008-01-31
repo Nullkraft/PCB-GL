@@ -1,4 +1,4 @@
-/* $Id: gui-top-window.c,v 1.53 2008-01-13 05:55:27 danmc Exp $ */
+/* $Id: gui-top-window.c,v 1.54 2008-01-31 01:23:09 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -126,7 +126,7 @@ a zoom in/out.
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-top-window.c,v 1.53 2008-01-13 05:55:27 danmc Exp $");
+RCSID ("$Id: gui-top-window.c,v 1.54 2008-01-31 01:23:09 danmc Exp $");
 
 /* ---------------------------------------------------------------------------
  * local types
@@ -2730,8 +2730,11 @@ ghid_do_export (HID_Attr_Val * options)
   if (stdin_listen)
     ghid_create_listener ();
 
+  ghid_notify_gui_is_up ();
+
   gtk_main ();
   ghid_config_files_write ();
+
 }
 
 gint
