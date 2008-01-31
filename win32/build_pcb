@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# $Id: build_pcb,v 1.13 2008-01-30 23:56:45 danmc Exp $
+# $Id: build_pcb,v 1.14 2008-01-31 07:11:21 danmc Exp $
 #
 
 # error out on failed commands whose return code wasn't explicitly
@@ -244,7 +244,12 @@ fi
 
 # If the win32 pkg-config is used, then you end up with spurious CR's
 # in the generated Makefile's and we need to get rid of them.
-dos2unix src/Makefile
+
+for f in `find . -name Makefile -print`; do
+	mv $f $f.bak
+	cat $f.bak | tr '\r' ' ' > $f
+	rm $f.bak
+done
 
 fi
 
