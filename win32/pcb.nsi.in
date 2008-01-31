@@ -1,4 +1,4 @@
-;; $Id: pcb.nsi.in,v 1.9 2008-01-30 23:56:45 danmc Exp $
+;; $Id: pcb.nsi.in,v 1.10 2008-01-31 22:16:54 danmc Exp $
 ;;
 ;; Installer script file for PCB for windows.  See http://nsis.sourceforge.net
 ;; for details on NSIS.
@@ -103,7 +103,7 @@ Section "Dummy Section" SecDummy
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\HTML Manual.lnk" "$INSTDIR\share\pcb\pcb.html"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\PDF Manual.lnk" "$INSTDIR\share\pcb\pcb.pdf"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Readme.lnk" "$INSTDIR\share\pcb-@pcb_version@\Readme.txt"
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\PCB.lnk" "$INSTDIR\bin\pcb.exe" "" "$INSTDIR\bin\pcb" 0 "" "" "PCB Printed Circuit Board Layout Editor"
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\PCB.lnk" "$INSTDIR\bin\pcb.exe" "" "$INSTDIR\bin\pcb.exe" 0 "" "" "PCB Printed Circuit Board Layout Editor"
 
 ;; CreateShortCut  link.lnk target.file [parameters [icon.file [icon_index_number [start_options [keyboard_shortcut [description]]]]]]
 
