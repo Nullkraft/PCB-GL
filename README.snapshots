@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# $Id: README.snapshots,v 1.15 2008-02-01 12:06:00 danmc Exp $
+# $Id: README.snapshots,v 1.16 2008-02-01 22:57:13 danmc Exp $
 #
 
 This documents what is done to create a pcb release.  The releases now
@@ -80,6 +80,8 @@ To make a pcb release do the following:
 		openssl sha1 pcb-20080202.tar.gz > pcb-20080202.cksum
 		openssl md5 pcb-20080202.tar.gz >> pcb-20080202.cksum
 		openssl rmd160 pcb-20080202.tar.gz >> pcb-20080202.cksum
+		echo "File size (bytes):" >> pcb-20080202.cksum
+		wc -c pcb-20080202.tar.gz >> pcb-20080202.cksum
 
 	8. Upload the .tar.gz, .cksum files to
 	   ftp://upload.sourceforge.net/incoming/
