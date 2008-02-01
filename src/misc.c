@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.70 2008-01-07 03:07:38 danmc Exp $ */
+/* $Id: misc.c,v 1.71 2008-02-01 12:05:54 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -78,7 +78,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: misc.c,v 1.70 2008-01-07 03:07:38 danmc Exp $");
+RCSID ("$Id: misc.c,v 1.71 2008-02-01 12:05:54 danmc Exp $");
 
 
 /*	forward declarations	*/
@@ -2027,12 +2027,12 @@ GetInfoString (void)
       DSAddString (&info, "\n\n" "by harry eaton\n\n");
       DSAddString (&info,
                    "Copyright (C) Thomas Nau 1994, 1995, 1996, 1997\n");
-      DSAddString (&info, "Copyright (C) harry eaton 1998-2006\n");
+      DSAddString (&info, "Copyright (C) harry eaton 1998-2007\n");
       DSAddString (&info, "Copyright (C) C. Scott Ananian 2001\n");
       DSAddString (&info,
-                   "Copyright (C) DJ Delorie 2003, 2004, 2005, 2006\n");
+                   "Copyright (C) DJ Delorie 2003, 2004, 2005, 2006, 2007, 2008\n");
       DSAddString (&info,
-                   "Copyright (C) Dan McMahill 2003, 2004, 2005, 2006, 2007\n\n");
+                   "Copyright (C) Dan McMahill 2003, 2004, 2005, 2006, 2007, 2008\n\n");
       DSAddString (&info, "It is licensed under the terms of the GNU\n");
       DSAddString (&info, "General Public License version 2\n");
       DSAddString (&info, "See the LICENSE file for more information\n\n");
