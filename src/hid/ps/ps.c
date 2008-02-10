@@ -1,4 +1,4 @@
-/* $Id: ps.c,v 1.41 2008-01-04 19:53:25 danmc Exp $ */
+/* $Id: ps.c,v 1.42 2008-02-10 00:48:23 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -25,7 +25,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: ps.c,v 1.41 2008-01-04 19:53:25 danmc Exp $");
+RCSID ("$Id: ps.c,v 1.42 2008-02-10 00:48:23 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
@@ -177,7 +177,7 @@ HID_Attribute ps_attribute_list[] = {
    HID_Boolean, 0, 0, {0, 0, 0}, 0, 0},
 #define HA_color 7
   {"ps-bloat", "Amount to add to trace/pad/pin edges (1 = 1/100 mil)",
-   HID_Integer, 0, 10000, {0, 0, 0}, 0, 0},
+   HID_Integer, -10000, 10000, {0, 0, 0}, 0, 0},
 #define HA_psbloat 8
   {"ps-invert", "Draw images as white-on-black",
    HID_Boolean, 0, 0, {0, 0, 0}, 0, 0},
