@@ -1,4 +1,4 @@
-/* $Id: gerber.c,v 1.30 2008-01-04 01:11:57 danmc Exp $ */
+/* $Id: gerber.c,v 1.31 2008-03-15 04:48:48 danmc Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -33,7 +33,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gerber.c,v 1.30 2008-01-04 01:11:57 danmc Exp $");
+RCSID ("$Id: gerber.c,v 1.31 2008-03-15 04:48:48 danmc Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented Gerber function %s.\n", __FUNCTION__); abort()
 
@@ -549,7 +549,7 @@ gerber_set_layer (const char *name, int group)
 	  return 1;
 	}
 
-      fprintf (f, "G04 start of page %d for group %d idx %d\015\012",
+      fprintf (f, "G04 start of page %d for group %d idx %d *\015\012",
 	       pagecount, group, idx);
 
       /* Create a portable timestamp. */
