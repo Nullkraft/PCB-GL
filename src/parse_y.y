@@ -1,4 +1,4 @@
-/* $Id: parse_y.y,v 1.42 2008-01-03 05:01:59 bjj Exp $ */
+/* $Id: parse_y.y,v 1.43 2008-03-16 14:33:59 danmc Exp $ */
 /*
  * ************************** README *******************
  *
@@ -61,7 +61,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_y.y,v 1.42 2008-01-03 05:01:59 bjj Exp $");
+RCSID("$Id: parse_y.y,v 1.43 2008-03-16 14:33:59 danmc Exp $");
 
 static	LayerTypePtr	Layer;
 static	PolygonTypePtr	Polygon;
@@ -520,6 +520,7 @@ pcbdrc1
 				yyPCB->Bloat = $3;
 				yyPCB->Shrink = $4;
 				yyPCB->minWid = $5;
+				yyPCB->minRing = $5;
 			}
 		;
 
@@ -530,6 +531,7 @@ pcbdrc2
 				yyPCB->Shrink = $4;
 				yyPCB->minWid = $5;
 				yyPCB->minSlk = $6;
+				yyPCB->minRing = $5;
 			}
 		;
 
