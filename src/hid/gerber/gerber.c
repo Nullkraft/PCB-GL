@@ -1,4 +1,4 @@
-/* $Id: gerber.c,v 1.31 2008-03-15 04:48:48 danmc Exp $ */
+/* $Id: gerber.c,v 1.32 2008-03-24 05:17:08 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -33,7 +33,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gerber.c,v 1.31 2008-03-15 04:48:48 danmc Exp $");
+RCSID ("$Id: gerber.c,v 1.32 2008-03-24 05:17:08 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented Gerber function %s.\n", __FUNCTION__); abort()
 
@@ -916,6 +916,8 @@ gerber_draw_arc (hidGC gc, int cx, int cy, int width, int height,
 static void
 gerber_fill_circle (hidGC gc, int cx, int cy, int radius)
 {
+  if (radius <= 0)
+    return;
   if (is_drill)
     radius = ROUND(radius*2)/2;
   use_gc (gc, radius);
