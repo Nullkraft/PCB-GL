@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.71 2008-02-01 12:05:54 danmc Exp $ */
+/* $Id: misc.c,v 1.72 2008-03-30 23:33:28 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -78,7 +78,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: misc.c,v 1.71 2008-02-01 12:05:54 danmc Exp $");
+RCSID ("$Id: misc.c,v 1.72 2008-03-30 23:33:28 djdelorie Exp $");
 
 
 /*	forward declarations	*/
@@ -1021,6 +1021,7 @@ ChangeGroupVisibility (int Layer, Boolean On, Boolean ChangeStackOrder)
 void
 LayerStringToLayerStack (char *s)
 {
+  static int listed_layers = 0;
   int l = strlen (s);
   char **args;
   int i, argn, lno;
@@ -1081,12 +1082,25 @@ LayerStringToLayerStack (char *s)
 	}
       else
 	{
+	  int found = 0;
 	  for (lno = 0; lno < max_layer; lno++)
 	    if (strcasecmp (args[i], PCB->Data->Layer[lno].Name) == 0)
 	      {
 		ChangeGroupVisibility (lno, True, True);
+		found = 1;
 		break;
 	      }
+	  if (!found)
+	    {
+	      fprintf(stderr, "Warning: layer \"%s\" not known\n", args[i]);
+	      if (!listed_layers)
+		{
+		  fprintf (stderr, "Named layers in this board are:\n");
+		  listed_layers = 1;
+		  for (lno=0; lno < max_layer; lno ++)
+		    fprintf(stderr, "\t%s\n", PCB->Data->Layer[lno].Name);
+		}
+	    }
 	}
     }
 }
