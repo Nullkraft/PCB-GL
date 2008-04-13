@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.127 2008-04-13 14:15:37 petercjclifton Exp $ */
+/* $Id: action.c,v 1.128 2008-04-13 16:27:35 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -74,7 +74,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.127 2008-04-13 14:15:37 petercjclifton Exp $");
+RCSID ("$Id: action.c,v 1.128 2008-04-13 16:27:35 petercjclifton Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -5666,8 +5666,12 @@ ActionNew (int argc, char **argv, int x, int y)
 	name = MyStrdup (name, "ActionNew");
       else
 	name = gui->prompt_for (_("Enter the layout name:"), "");
+
       if (!name)
-	return 1;
+	{
+	  RestoreCrosshair(True);
+	  return 1;
+	}
 
       /* do emergency saving
        * clear the old struct and allocate memory for the new one
@@ -5689,6 +5693,7 @@ ActionNew (int argc, char **argv, int x, int y)
       ClearAndRedrawOutput ();
 
       hid_action ("PCBChanged");
+      RestoreCrosshair(True);
       return 0;
     }
   RestoreCrosshair (True);
