@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.72 2008-03-30 23:33:28 djdelorie Exp $ */
+/* $Id: misc.c,v 1.73 2008-04-13 16:17:01 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -78,7 +78,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: misc.c,v 1.72 2008-03-30 23:33:28 djdelorie Exp $");
+RCSID ("$Id: misc.c,v 1.73 2008-04-13 16:17:01 petercjclifton Exp $");
 
 
 /*	forward declarations	*/
@@ -550,9 +550,16 @@ CenterDisplay (LocationType X, LocationType Y, Boolean Delta)
   int save_grid = PCB->Grid;
   PCB->Grid = 1;
   if (Delta)
-    MoveCrosshairRelative (X, Y);
+    {
+      MoveCrosshairRelative (X, Y);
+    }
   else
-    MoveCrosshairAbsolute (X, Y);
+    {
+      if (MoveCrosshairAbsolute (X, Y))
+        {
+          RestoreCrosshair(False);
+        }
+    }
   gui->set_crosshair (Crosshair.X, Crosshair.Y, HID_SC_WARP_POINTER);
   PCB->Grid = save_grid;
 }
