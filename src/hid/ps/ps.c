@@ -1,4 +1,4 @@
-/* $Id: ps.c,v 1.43 2008-03-31 17:54:42 djdelorie Exp $ */
+/* $Id: ps.c,v 1.44 2008-04-13 14:15:40 petercjclifton Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -25,7 +25,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: ps.c,v 1.43 2008-03-31 17:54:42 djdelorie Exp $");
+RCSID ("$Id: ps.c,v 1.44 2008-04-13 14:15:40 petercjclifton Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
@@ -1171,6 +1171,7 @@ HID ps_hid = {
   0 /* ps_log */ ,
   0 /* ps_logv */ ,
   0 /* ps_confirm_dialog */ ,
+  0 /* ps_close_confirm_dialog */ ,
   0 /* ps_report_dialog */ ,
   0 /* ps_prompt_for */ ,
   0 /* ps_fileselect */ ,

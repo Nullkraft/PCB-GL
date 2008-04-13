@@ -1,4 +1,4 @@
-/* $Id: batch.c,v 1.10 2007-09-04 00:08:39 danmc Exp $ */
+/* $Id: batch.c,v 1.11 2008-04-13 14:15:38 petercjclifton Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -17,7 +17,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: batch.c,v 1.10 2007-09-04 00:08:39 danmc Exp $");
+RCSID ("$Id: batch.c,v 1.11 2008-04-13 14:15:38 petercjclifton Exp $");
 
 /* This is a text-line "batch" HID, which exists for scripting and
    non-GUI needs.  */
@@ -354,6 +354,12 @@ batch_confirm_dialog (char *msg, ...)
   return rv;
 }
 
+static int
+batch_close_confirm_dialog ()
+{
+  return batch_confirm_dialog (_("OK to lose data ?"), NULL);
+}
+
 static void
 batch_report_dialog (char *title, char *msg)
 {
@@ -451,6 +457,7 @@ HID batch_gui = {
   batch_log,
   batch_logv,
   batch_confirm_dialog,
+  batch_close_confirm_dialog,
   batch_report_dialog,
   batch_prompt_for,
   batch_fileselect,

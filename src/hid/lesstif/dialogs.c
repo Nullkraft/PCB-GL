@@ -1,4 +1,4 @@
-/* $Id: dialogs.c,v 1.34 2007-12-19 02:06:54 djdelorie Exp $ */
+/* $Id: dialogs.c,v 1.35 2008-04-13 14:15:39 petercjclifton Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -25,7 +25,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: dialogs.c,v 1.34 2007-12-19 02:06:54 djdelorie Exp $");
+RCSID ("$Id: dialogs.c,v 1.35 2008-04-13 14:15:39 petercjclifton Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
 
@@ -488,6 +488,14 @@ ConfirmAction (int argc, char **argv, int x, int y)
 				   argc > 2 ? argv[2] : 0,
 				   0);
   return rv;
+}
+
+/* ------------------------------------------------------------ */
+
+int
+lesstif_close_confirm_dialog ()
+{
+  return lesstif_confirm_dialog ("OK to lose data ?", NULL);
 }
 
 /* ------------------------------------------------------------ */

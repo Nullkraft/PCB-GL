@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.54 2008-01-31 01:23:09 danmc Exp $ */
+/* $Id: gtkhid-main.c,v 1.55 2008-04-13 14:15:38 petercjclifton Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -37,7 +37,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.54 2008-01-31 01:23:09 danmc Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.55 2008-04-13 14:15:38 petercjclifton Exp $");
 
 
 extern HID ghid_hid;
@@ -1445,6 +1445,32 @@ ghid_confirm_dialog (char *msg, ...)
   return rv;
 }
 
+int
+ghid_close_confirm_dialog ()
+{
+  switch (ghid_dialog_close_confirm ())
+    {
+    case GUI_DIALOG_CLOSE_CONFIRM_SAVE:
+      {
+        if (hid_actionl ("Save", NULL))
+          { /* Save failed */
+            return 0; /* Cancel */
+          } else {
+            return 1; /* Close */
+          }
+      }
+    case GUI_DIALOG_CLOSE_CONFIRM_NOSAVE:
+      {
+        return 1; /* Close */
+      }
+    case GUI_DIALOG_CLOSE_CONFIRM_CANCEL:
+    default:
+      {
+        return 0; /* Cancel */
+      }
+    }
+}
+
 void
 ghid_report_dialog (char *title, char *msg)
 {
@@ -1544,6 +1570,7 @@ HID ghid_hid = {
   ghid_log,
   ghid_logv,
   ghid_confirm_dialog,
+  ghid_close_confirm_dialog,
   ghid_report_dialog,
   ghid_prompt_for,
   ghid_fileselect,
@@ -1603,6 +1630,7 @@ HID ghid_extents = {
   0 /* ghid_log */ ,
   0 /* ghid_logv */ ,
   0 /* ghid_confirm_dialog */ ,
+  0 /* ghid_close_confirm_dialog */ ,
   0 /* ghid_report_dialog */ ,
   0 /* ghid_prompt_for */ ,
   0 /* ghid_attribute_dialog */ ,
@@ -1876,6 +1904,10 @@ Save (int argc, char **argv, int x, int y)
 	    hid_actionl ("SaveTo", function, name, NULL);
 	}
       g_free (name);
+    }
+  else
+    {
+      return 1;
     }
 
   return 0;

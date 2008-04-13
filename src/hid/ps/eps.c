@@ -1,4 +1,4 @@
-/* $Id: eps.c,v 1.18 2007-08-01 02:11:49 djdelorie Exp $ */
+/* $Id: eps.c,v 1.19 2008-04-13 14:15:40 petercjclifton Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -22,7 +22,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: eps.c,v 1.18 2007-08-01 02:11:49 djdelorie Exp $");
+RCSID ("$Id: eps.c,v 1.19 2008-04-13 14:15:40 petercjclifton Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented EPS function %s.\n", __FUNCTION__); abort()
 static HID eps_hid;
@@ -647,6 +647,7 @@ static HID eps_hid = {
   0 /* eps_log */ ,
   0 /* eps_logv */ ,
   0 /* eps_confirm_dialog */ ,
+  0 /* eps_close_confirm_dialog */ ,
   0 /* eps_report_dialog */ ,
   0 /* eps_prompt_for */ ,
   0 /* eps_attribute_dialog */ ,

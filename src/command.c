@@ -1,4 +1,4 @@
-/* $Id: command.c,v 1.19 2007-04-20 11:31:13 danmc Exp $ */
+/* $Id: command.c,v 1.20 2008-04-13 14:15:37 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: command.c,v 1.19 2007-04-20 11:31:13 danmc Exp $");
+RCSID ("$Id: command.c,v 1.20 2008-04-13 14:15:37 petercjclifton Exp $");
 
 /* ---------------------------------------------------------------------- */
 
@@ -225,7 +225,8 @@ static const char q_help[] = "Quits the application after confirming.";
 
 /* %start-doc actions q
 
-Note that this command doesn't save your layout.
+If you have unsaved changes, you will be prompted to confirm (or
+save) before quitting.
 
 @colonaction
 
@@ -234,7 +235,7 @@ Note that this command doesn't save your layout.
 static int
 CommandQuit (int argc, char **argv, int x, int y)
 {
-  if (!PCB->Changed || gui->confirm_dialog ("OK to lose data ?", 0))
+  if (!PCB->Changed || gui->close_confirm_dialog () == HID_CLOSE_CONFIRM_OK)
     QuitApplication ();
   return 0;
 }

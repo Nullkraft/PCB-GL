@@ -1,4 +1,4 @@
-/* $Id: gerber.c,v 1.32 2008-03-24 05:17:08 djdelorie Exp $ */
+/* $Id: gerber.c,v 1.33 2008-04-13 14:15:38 petercjclifton Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -33,7 +33,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gerber.c,v 1.32 2008-03-24 05:17:08 djdelorie Exp $");
+RCSID ("$Id: gerber.c,v 1.33 2008-04-13 14:15:38 petercjclifton Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented Gerber function %s.\n", __FUNCTION__); abort()
 
@@ -1075,6 +1075,7 @@ static HID gerber_hid = {
   0 /* gerber_log */ ,
   0 /* gerber_logv */ ,
   0 /* gerber_confirm_dialog */ ,
+  0 /* gerber_close_confirm_dialog */ ,
   0 /* gerber_report_dialog */ ,
   0 /* gerber_prompt_for */ ,
   0 /* gerber_fileselect */ ,

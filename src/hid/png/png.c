@@ -1,4 +1,4 @@
-/* $Id: png.c,v 1.24 2008-04-02 16:06:46 djdelorie Exp $ */
+/* $Id: png.c,v 1.25 2008-04-13 14:15:39 petercjclifton Exp $ */
 /*Sept 2007: patch to enable slanted squared lines*/
 /*
  *                            COPYRIGHT
@@ -51,7 +51,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: png.c,v 1.24 2008-04-02 16:06:46 djdelorie Exp $");
+RCSID ("$Id: png.c,v 1.25 2008-04-13 14:15:39 petercjclifton Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PNG function %s.\n", __FUNCTION__); abort()
 
@@ -987,6 +987,7 @@ HID png_hid = {
   0 /* png_log */ ,
   0 /* png_logv */ ,
   0 /* png_confirm_dialog */ ,
+  0 /* png_close_confirm_dialog */ ,
   0 /* png_report_dialog */ ,
   0 /* png_prompt_for */ ,
   0 /* png_fileselect */ ,

@@ -1,4 +1,4 @@
-/* $Id: gui.h,v 1.24 2008-01-22 23:34:03 danmc Exp $ */
+/* $Id: gui.h,v 1.25 2008-04-13 14:15:38 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -361,6 +361,10 @@ gchar *ghid_dialog_file_select_save (gchar * title, gchar ** path,
 				     gchar * file, gchar * shortcuts);
 void ghid_dialog_message (gchar * message);
 gboolean ghid_dialog_confirm (gchar * message, gchar *cancelmsg, gchar *okmsg);
+int ghid_dialog_close_confirm (void);
+#define GUI_DIALOG_CLOSE_CONFIRM_CANCEL 0
+#define GUI_DIALOG_CLOSE_CONFIRM_NOSAVE 1
+#define GUI_DIALOG_CLOSE_CONFIRM_SAVE   2
 gint ghid_dialog_confirm_all (gchar * message);
 gchar *ghid_dialog_input (gchar * prompt, gchar * initial);
 void ghid_dialog_about (void);
