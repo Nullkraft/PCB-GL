@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.102 2008-02-01 12:08:38 danmc Exp $
+dnl $Id: configure.ac,v 1.103 2008-04-28 17:10:13 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT([pcb], [1.99x])
@@ -702,11 +702,26 @@ LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_LIBS $INTLLI
 
 # if we have gcc then add -Wall
 if test "x$GCC" = "xyes"; then
-	if test -z "`echo "$CFLAGS" | grep "\-Wall" 2> /dev/null`" ; then
-		CFLAGS="$CFLAGS -Wall"
-	fi
+	# see about adding some extra checks if the compiler takes them
+	for flag in -Wall -Wdeclaration-after-statement ; do
+		case " ${CFLAGS} " in
+			*\ ${flag}\ *)
+				# flag is already present
+				;;
+			*)
+				AC_MSG_CHECKING([if the compiler accepts ${flag}])
+				ac_save_CFLAGS="$CFLAGS"
+				CFLAGS="$CFLAGS ${flag}"
+				AC_COMPILE_IFELSE([AC_LANG_PROGRAM()],
+					[AC_MSG_RESULT([yes])],
+					[AC_MSG_RESULT([no])
+					 CFLAGS="$ac_save_CFLAGS"
+					]
+				)
+				;;
+		esac
+	done
 fi
-
 
 # font filename
 FONTFILENAME=${FONTFILENAME:-"default_font"}
