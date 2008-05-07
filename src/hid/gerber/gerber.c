@@ -1,4 +1,4 @@
-/* $Id: gerber.c,v 1.33 2008-04-13 14:15:38 petercjclifton Exp $ */
+/* $Id: gerber.c,v 1.34 2008-05-07 16:09:02 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -33,7 +33,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gerber.c,v 1.33 2008-04-13 14:15:38 petercjclifton Exp $");
+RCSID ("$Id: gerber.c,v 1.34 2008-05-07 16:09:02 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented Gerber function %s.\n", __FUNCTION__); abort()
 
@@ -538,7 +538,9 @@ gerber_set_layer (const char *name, int group)
 
       if (is_drill)
 	{
-	  fprintf (f, "M48\015\012" "INCH,TZ\015\012");
+	  /* We omit the ,TZ here because we are not omitting trailing zeros.  Our format is
+	     always six-digit 0.1 mil resolution (i.e. 001100 = 0.11")*/
+	  fprintf (f, "M48\015\012" "INCH\015\012");
 	  for (i = 0; i < GBX_MAXAPERTURECOUNT; i++)
 	    if (curapp->aperture_used[i])
 	      fprintf (f, "T%02dC%.3f\015\012",
