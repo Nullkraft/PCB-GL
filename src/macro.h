@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: macro.h,v 1.28 2007-12-02 04:44:51 bjj Exp $
+ *  RCS: $Id: macro.h,v 1.29 2008-05-28 20:15:13 djdelorie Exp $
  */
 
 /* some commonly used macros not related to a special C-file
@@ -369,6 +369,13 @@ extern int mem_any_set (unsigned char *, int);
 	for (n = (element)->LineN-1; n != -1; n--)	\
 	{						\
 		line = &(element)->Line[n]
+
+#define	ELEMENTARC_LOOP(element)	do { 	\
+	Cardinal	n;				\
+	ArcTypePtr	arc;				\
+	for (n = (element)->ArcN-1; n != -1; n--)	\
+	{						\
+		arc = &(element)->Arc[n]
 
 #define	LINE_LOOP(layer) do {			\
 	Cardinal		n;			\
