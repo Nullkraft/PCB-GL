@@ -1,4 +1,4 @@
-/* $Id: print.c,v 1.51 2007-04-20 11:31:13 danmc Exp $ */
+/* $Id: print.c,v 1.52 2008-06-02 03:33:36 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -66,7 +66,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: print.c,v 1.51 2007-04-20 11:31:13 danmc Exp $");
+RCSID ("$Id: print.c,v 1.52 2008-06-02 03:33:36 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * prints a FAB drawing.
@@ -296,7 +296,7 @@ PrintFab (void)
   for (i = 0; i < max_layer; i++)
     {
       LayerType *l = LAYER_PTR (i);
-      if (l->Name && l->LineN)
+      if (l->Name && (l->LineN || l->ArcN))
 	{
 	  if (strcasecmp ("route", l->Name) == 0)
 	    break;
