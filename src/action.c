@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.128 2008-04-13 16:27:35 petercjclifton Exp $ */
+/* $Id: action.c,v 1.129 2008-07-05 19:17:25 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -74,7 +74,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.128 2008-04-13 16:27:35 petercjclifton Exp $");
+RCSID ("$Id: action.c,v 1.129 2008-07-05 19:17:25 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -5455,6 +5455,12 @@ ActionSaveTo (int argc, char **argv, int x, int y)
   function = argv[0];
   name = argv[1];
 
+  if (strcasecmp (function, "Layout") == 0)
+    {
+      SavePCB (PCB->Filename);
+      return 0;
+    }
+
   if (argc != 2)
     AFAIL (saveto);
 
@@ -5463,11 +5469,6 @@ ActionSaveTo (int argc, char **argv, int x, int y)
       MYFREE (PCB->Filename);
       PCB->Filename = MyStrdup (name, __FUNCTION__);
       function = "Layout";
-    }
-  if (strcasecmp (function, "Layout") == 0)
-    {
-      SavePCB (PCB->Filename);
-      return 0;
     }
 
   if (strcasecmp (function, "AllConnections") == 0)
