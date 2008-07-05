@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.129 2008-07-05 19:17:25 djdelorie Exp $ */
+/* $Id: action.c,v 1.130 2008-07-05 19:19:38 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -74,7 +74,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.129 2008-07-05 19:17:25 djdelorie Exp $");
+RCSID ("$Id: action.c,v 1.130 2008-07-05 19:19:38 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -5468,7 +5468,8 @@ ActionSaveTo (int argc, char **argv, int x, int y)
     {
       MYFREE (PCB->Filename);
       PCB->Filename = MyStrdup (name, __FUNCTION__);
-      function = "Layout";
+      SavePCB (PCB->Filename);
+      return 0;
     }
 
   if (strcasecmp (function, "AllConnections") == 0)
