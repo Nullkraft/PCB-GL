@@ -1,4 +1,4 @@
-/* $Id: png.c,v 1.26 2008-07-08 18:26:56 djdelorie Exp $ */
+/* $Id: png.c,v 1.27 2008-07-10 02:50:45 bjj Exp $ */
 /*Sept 2007: patch to enable slanted squared lines*/
 /*
  *                            COPYRIGHT
@@ -51,7 +51,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: png.c,v 1.26 2008-07-08 18:26:56 djdelorie Exp $");
+RCSID ("$Id: png.c,v 1.27 2008-07-10 02:50:45 bjj Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PNG function %s.\n", __FUNCTION__); abort()
 
@@ -303,7 +303,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
 	    for (i = comp_layer; i <= solder_layer; i++)
 	      ben_groups[n++] = i;
 	  else
-	    for (i = comp_layer; i <= solder_layer; i--)
+	    for (i = comp_layer; i >= solder_layer; i--)
 	      ben_groups[n++] = i;
 	  ben_ngroups = n;
 	}
