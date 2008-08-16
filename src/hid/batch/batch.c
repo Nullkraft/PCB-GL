@@ -1,4 +1,4 @@
-/* $Id: batch.c,v 1.11 2008-04-13 14:15:38 petercjclifton Exp $ */
+/* $Id: batch.c,v 1.12 2008-08-16 21:03:47 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -17,7 +17,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: batch.c,v 1.11 2008-04-13 14:15:38 petercjclifton Exp $");
+RCSID ("$Id: batch.c,v 1.12 2008-08-16 21:03:47 djdelorie Exp $");
 
 /* This is a text-line "batch" HID, which exists for scripting and
    non-GUI needs.  */
@@ -399,7 +399,7 @@ batch_fileselect (const char *title, const char *descr,
 static int
 batch_attribute_dialog (HID_Attribute * attrs,
 			int n_attrs, HID_Attr_Val * results,
-			const char *)
+			const char *descr)
 {
 }
 
