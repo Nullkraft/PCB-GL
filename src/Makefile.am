@@ -1,5 +1,5 @@
 ## -*- makefile -*-
-## $Id: Makefile.am,v 1.46 2008-02-27 15:26:50 danmc Exp $
+## $Id: Makefile.am,v 1.47 2008-08-19 22:26:44 danmc Exp $
 ##
 
 SUBDIRS=	icons
@@ -21,7 +21,11 @@ pcblib_DATA=	\
 
 bin_PROGRAMS=	pcb
 
+if DEBUG_BUILD
+# don't disable assert()
+else
 AM_CFLAGS = -DNDEBUG
+endif
 
 PCB_SRCS = \
 	action.c \
