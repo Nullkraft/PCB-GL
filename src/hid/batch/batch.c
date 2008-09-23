@@ -1,4 +1,4 @@
-/* $Id: batch.c,v 1.12 2008-08-16 21:03:47 djdelorie Exp $ */
+/* $Id: batch.c,v 1.13 2008-09-23 22:57:42 petercjclifton Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -17,7 +17,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: batch.c,v 1.12 2008-08-16 21:03:47 djdelorie Exp $");
+RCSID ("$Id: batch.c,v 1.13 2008-09-23 22:57:42 petercjclifton Exp $");
 
 /* This is a text-line "batch" HID, which exists for scripting and
    non-GUI needs.  */
@@ -329,6 +329,33 @@ batch_stop_timer (hidval timer)
 {
 }
 
+hidval
+batch_watch_file (int fd, unsigned int condition, void (*func) (hidval watch, int fd, unsigned int condition, hidval user_data),
+    hidval user_data)
+{
+  hidval ret;
+  ret.ptr = NULL;
+  return ret;
+}
+
+void
+batch_unwatch_file (hidval data)
+{
+}
+
+static hidval
+batch_add_block_hook (void (*func) (hidval data), hidval user_data )
+{
+  hidval ret;
+  ret.ptr = NULL;
+  return ret;
+}
+
+static void
+batch_stop_block_hook (hidval mlpoll)
+{
+}
+
 static void
 batch_log (const char *fmt, ...)
 {
@@ -454,6 +481,10 @@ HID batch_gui = {
   batch_set_crosshair,
   batch_add_timer,
   batch_stop_timer,
+  batch_watch_file,
+  batch_unwatch_file,
+  batch_add_block_hook,
+  batch_stop_block_hook,
   batch_log,
   batch_logv,
   batch_confirm_dialog,
