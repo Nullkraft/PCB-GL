@@ -1,4 +1,4 @@
-/* $Id: hidinit.c,v 1.19 2007-04-20 11:31:14 danmc Exp $ */
+/* $Id: hidinit.c,v 1.20 2008-09-23 23:00:20 petercjclifton Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -35,7 +35,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: hidinit.c,v 1.19 2007-04-20 11:31:14 danmc Exp $");
+RCSID ("$Id: hidinit.c,v 1.20 2008-09-23 23:00:20 petercjclifton Exp $");
 
 #define HID_DEF(x) extern void hid_ ## x ## _init(void);
 #include "hid/common/hidlist.h"
@@ -659,6 +659,7 @@ hid_cache_color (int set, const char *name, hidval * val, void **vcache)
     if (strcmp (e->name, name) == 0)
       {
 	copy_color (set, &(e->val), val);
+	cache->lru = e;
 	return 1;
       }
   if (!set)
@@ -669,6 +670,7 @@ hid_cache_color (int set, const char *name, hidval * val, void **vcache)
   cache->colors[hash] = e;
   e->name = strdup (name);
   memcpy (&(e->val), val, sizeof (hidval));
+  cache->lru = e;
 
   return 1;
 }
