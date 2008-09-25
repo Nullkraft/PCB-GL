@@ -60,5 +60,5 @@ Boolean IsRectangleInPolygon (LocationType, LocationType, LocationType,
 			      LocationType, PolygonTypePtr);
 Boolean isects (POLYAREA *, PolygonTypePtr, Boolean);
 Boolean MorphPolygon (LayerTypePtr, PolygonTypePtr);
-void NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr), const BoxType *clip);
+void NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *), void *user_data, const BoxType *clip);
 #endif
