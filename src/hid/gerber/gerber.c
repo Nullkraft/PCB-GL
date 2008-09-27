@@ -462,10 +462,17 @@ gerber_set_layer (const char *name, int group)
 	      int ap = findApertureCode (pending_drills[i].diam, ROUND);
 	      fprintf (f, "T%02d\015\012", ap);
 	    }
+#ifdef EDG_ARE_BROKEN
+	  fprintf (f, "X%06ldY%06ld\015\012",
+		   100 * gerberX (PCB, pending_drills[i].x), 100 * gerberY (PCB,
+								pending_drills
+								[i].y));
+#else
 	  fprintf (f, "X%06ldY%06ld\015\012",
 		   gerberX (PCB, pending_drills[i].x), gerberY (PCB,
 								pending_drills
 								[i].y));
+#endif
 	}
       free (pending_drills);
       n_pending_drills = max_pending_drills = 0;
