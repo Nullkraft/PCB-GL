@@ -1,0 +1,18 @@
+Bottom: 3b9219b27e4c69494f953a11c74f05af0ff28106
+Top:    3b9219b27e4c69494f953a11c74f05af0ff28106
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-09-29 18:58:32 +0100
+
+Attempt to make PCB faster when working with polygons.
+
+Currently, moving / altering objects can take far longer than the
+time taken to clear _all_ polygons at startup. Incremental updates
+seem to get bogged down. Can we instead:
+
+Re-clear polygons from scratch for certain updates?
+Use any more efficient algorithms for update?
+
+
+---
+
+
