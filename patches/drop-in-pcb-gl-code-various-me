@@ -1,5 +1,5 @@
 Bottom: 0a743e83e6716949a0e465eb78f545037787074a
-Top:    b35c5345d988f433eec8fb8e50d196d6f0f7c9c2
+Top:    22eb8feda6e89fa38358a6b7b875d27af8a4f5e0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-09-29 21:56:26 +0100
 
@@ -65,7 +65,7 @@ index a922d63..af275eb 100644
  }
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 568d46e..bf9957c 100644
+index 568d46e..6accef8 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -32,26 +32,83 @@
@@ -366,9 +366,7 @@ index 568d46e..bf9957c 100644
 +        interp_type = GDK_INTERP_NEAREST;
 +      else
 +        interp_type = GDK_INTERP_BILINEAR;
- 
--  gdk_draw_rectangle (gport->drawable, gport->bg_gc, 1,
--		      eleft, etop, eright - eleft + 1, ebottom - etop + 1);
++
 +      gdk_pixbuf_scale(ghidgui->bg_pixbuf, pixbuf,
 +                       0, 0, vw, vh,
 +                       (double) -x,
@@ -377,13 +375,15 @@ index 568d46e..bf9957c 100644
 +                       (double) h / h_src,
 +                       interp_type);
  
--  ghid_draw_bg_image();
+-  gdk_draw_rectangle (gport->drawable, gport->bg_gc, 1,
+-		      eleft, etop, eright - eleft + 1, ebottom - etop + 1);
 +      x_cached = x;
 +      y_cached = y;
 +      vw_scaled = vw;
 +      vh_scaled = vh;
 +    }
-+
+ 
+-  ghid_draw_bg_image();
 +  if (pixbuf != NULL)
 +    gdk_draw_pixbuf(gport->drawable, gport->bg_gc, pixbuf,
 +                    0, 0, 0, 0, vw, vh, GDK_RGB_DITHER_NORMAL, 0, 0);
@@ -749,7 +749,7 @@ index 568d46e..bf9957c 100644
  }
  
  void
-@@ -843,56 +909,153 @@ ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2)
+@@ -843,56 +909,157 @@ ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2)
    printf ("ghid_set_line_cap_angle() -- not implemented\n");
  }
  
@@ -803,6 +803,7 @@ index 568d46e..bf9957c 100644
  {
 +#define TRIANGLES_PER_CAP 15
 +#define MIN_TRIANGLES_PER_CAP 3
++#define MAX_TRIANGLES_PER_CAP 1000
    double dx1, dy1, dx2, dy2;
 +  double width, angle;
 +  float deltax, deltay, length;
@@ -816,9 +817,9 @@ index 568d46e..bf9957c 100644
 -  dy2 = Vy ((double)y2);
 -
 +#if 0
++  if (! ClipLine (0, 0, gport->width, gport->height,
    if (! ClipLine (0, 0, gport->width, gport->height,
 -		  &dx1, &dy1, &dx2, &dy2, gc->width / gport->zoom))
-+  if (! ClipLine (0, 0, gport->width, gport->height,
 +                  &dx1, &dy1, &dx2, &dy2, gc->width / gport->zoom))
      return;
 +#endif
@@ -862,6 +863,9 @@ index 568d46e..bf9957c 100644
 +
 +  if (slices < MIN_TRIANGLES_PER_CAP)
 +    slices = MIN_TRIANGLES_PER_CAP;
++
++  if (slices > MAX_TRIANGLES_PER_CAP)
++    slices = MAX_TRIANGLES_PER_CAP;
 +
 +//  slices = TRIANGLES_PER_CAP;
 +
@@ -934,7 +938,7 @@ index 568d46e..bf9957c 100644
    w = gport->width * gport->zoom;
    h = gport->height * gport->zoom;
    radius = (xradius > yradius) ? xradius : yradius;
-@@ -901,12 +1064,11 @@ ghid_draw_arc (hidGC gc, int cx, int cy,
+@@ -901,12 +1068,11 @@ ghid_draw_arc (hidGC gc, int cx, int cy,
        || SIDE_Y (cy) < gport->view_y0 - radius 
        || SIDE_Y (cy) > gport->view_y0 + h + radius)
      return;
@@ -948,7 +952,7 @@ index 568d46e..bf9957c 100644
    /* make sure we fall in the -180 to +180 range */
    start_angle = (start_angle + 360 + 180) % 360 - 180;
    if (ghid_flip_x)
-@@ -917,12 +1079,50 @@ ghid_draw_arc (hidGC gc, int cx, int cy,
+@@ -917,12 +1083,50 @@ ghid_draw_arc (hidGC gc, int cx, int cy,
    if (ghid_flip_y)
      {
        start_angle = - start_angle;
@@ -1003,7 +1007,7 @@ index 568d46e..bf9957c 100644
  }
  
  void
-@@ -949,19 +1149,26 @@ ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
+@@ -949,19 +1153,27 @@ ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
    x2 = Vx (x2);
    y2 = Vy (y2);
  
@@ -1029,6 +1033,7 @@ index 568d46e..bf9957c 100644
 -  gint w, h, vr;
 +#define TRIANGLES_PER_CIRCLE 30
 +#define MIN_TRIANGLES_PER_CIRCLE 6
++#define MAX_TRIANGLES_PER_CIRCLE 2000
 +  gint w, h, vx, vy, vr;
 +  float last_x, last_y;
 +  int slices;
@@ -1036,7 +1041,7 @@ index 568d46e..bf9957c 100644
  
    w = gport->width * gport->zoom;
    h = gport->height * gport->zoom;
-@@ -972,38 +1179,187 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
+@@ -972,38 +1184,190 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
      return;
  
    USE_GC (gc);
@@ -1051,6 +1056,9 @@ index 568d46e..bf9957c 100644
 +
 +  if (slices < MIN_TRIANGLES_PER_CIRCLE)
 +    slices = MIN_TRIANGLES_PER_CIRCLE;
++
++  if (slices > MAX_TRIANGLES_PER_CIRCLE)
++    slices = MAX_TRIANGLES_PER_CIRCLE;
 +
 +//  slices = TRIANGLES_PER_CIRCLE;
 +
@@ -1239,7 +1247,7 @@ index 568d46e..bf9957c 100644
  
    lw = gc->width;
    w = gport->width * gport->zoom;
-@@ -1023,21 +1379,14 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
+@@ -1023,21 +1387,14 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
    y1 = Vy (y1);
    x2 = Vx (x2);
    y2 = Vy (y2);
@@ -1268,7 +1276,7 @@ index 568d46e..bf9957c 100644
  }
  
  void
-@@ -1084,8 +1433,6 @@ ghid_calibrate (double xval, double yval)
+@@ -1084,8 +1441,6 @@ ghid_calibrate (double xval, double yval)
    printf ("ghid_calibrate() -- not implemented\n");
  }
  
@@ -1277,7 +1285,7 @@ index 568d46e..bf9957c 100644
  void
  ghid_notify_gui_is_up ()
  {
-@@ -1527,7 +1874,7 @@ HID ghid_hid = {
+@@ -1527,7 +1882,7 @@ HID ghid_hid = {
    1,				/* gui */
    0,				/* printer */
    0,				/* exporter */
@@ -1286,7 +1294,7 @@ index 568d46e..bf9957c 100644
    1,				/* poly after */
    0,				/* poly dicer */
  
-@@ -2160,11 +2507,14 @@ Benchmark (int argc, char **argv, int x, int y)
+@@ -2160,11 +2515,14 @@ Benchmark (int argc, char **argv, int x, int y)
    region.X2 = PCB->MaxWidth;
    region.Y2 = PCB->MaxHeight;
  
