@@ -1205,7 +1205,7 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
   }
 }
 
-#define MAX_COMBINED_MALLOCS 1500
+#define MAX_COMBINED_MALLOCS 2500
 static void *combined_to_free [MAX_COMBINED_MALLOCS];
 static int combined_num_to_free = 0;
 
@@ -1230,7 +1230,7 @@ myFreeCombined ()
 static void
 myCombine ( GLdouble coords[3], void *vertex_data[4], GLfloat weight[4], void **dataOut )
 {
-#define MAX_COMBINED_VERTICES 1500
+#define MAX_COMBINED_VERTICES 2500
   static GLdouble combined_vertices [3 * MAX_COMBINED_VERTICES];
   static int num_combined_vertices = 0;
 
