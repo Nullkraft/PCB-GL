@@ -35,6 +35,10 @@
 
 #include <gtk/gtk.h>
 
+#include <gtk/gtkgl.h>
+#include <GL/glu.h>
+//#include <GL/glut.h>
+
 /* Internationalization support.
 */
 #if defined (ENABLE_NLS)
@@ -130,7 +134,7 @@ typedef struct hid_gc_struct
   gint cap, join;
   gchar xor;
   gchar erase;
-  gint mask_seq;
+//  gint mask_seq;
 }
 hid_gc_struct;
 
@@ -197,7 +201,11 @@ typedef struct
   GdkDrawable *drawable;	/* Current drawable for drawing routines */
   gint width, height;
 
-  GdkGC *bg_gc, *offlimits_gc, *mask_gc, *u_gc, *grid_gc;
+  GdkGLConfig *glconfig;
+
+  gint trans_lines;
+
+//  GdkGC *bg_gc, *offlimits_gc, *mask_gc, *u_gc, *grid_gc;
 
   GdkColor bg_color, offlimits_color, grid_color;
 
@@ -510,6 +518,8 @@ void ghid_logv (const char *fmt, va_list args);
 void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
 
 /* gtkhid-main.c */
+void ghid_init_triangle_array ();
+void ghid_flush_triangles ();
 void ghid_invalidate_all ();
 void ghid_get_coords (const char *msg, int *x, int *y);
 gint PCBChanged (int argc, char **argv, int x, int y);
