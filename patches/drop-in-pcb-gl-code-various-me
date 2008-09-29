@@ -1,5 +1,5 @@
 Bottom: 0a743e83e6716949a0e465eb78f545037787074a
-Top:    0d82bd60b15b64c84da9811ff9293280a6eca31a
+Top:    b35c5345d988f433eec8fb8e50d196d6f0f7c9c2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-09-29 21:56:26 +0100
 
@@ -65,7 +65,7 @@ index a922d63..af275eb 100644
  }
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 568d46e..616dfba 100644
+index 568d46e..bf9957c 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -32,26 +32,83 @@
@@ -1069,7 +1069,7 @@ index 568d46e..616dfba 100644
 +  }
 +}
 +
-+#define MAX_COMBINED_MALLOCS 1500
++#define MAX_COMBINED_MALLOCS 2500
 +static void *combined_to_free [MAX_COMBINED_MALLOCS];
 +static int combined_num_to_free = 0;
 +
@@ -1094,7 +1094,7 @@ index 568d46e..616dfba 100644
 +static void
 +myCombine ( GLdouble coords[3], void *vertex_data[4], GLfloat weight[4], void **dataOut )
 +{
-+#define MAX_COMBINED_VERTICES 1500
++#define MAX_COMBINED_VERTICES 2500
 +  static GLdouble combined_vertices [3 * MAX_COMBINED_VERTICES];
 +  static int num_combined_vertices = 0;
 +
