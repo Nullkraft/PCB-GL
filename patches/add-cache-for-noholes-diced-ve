@@ -1,0 +1,364 @@
+Bottom: c3e2f0e51146241301e85d0b70f1ec94f75cc848
+Top:    4663cbc61f9d33b1ea8cc17176d22534efd905dc
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-09-25 20:07:15 +0100
+
+Add cache for "noholes", diced versions of polygons
+
+
+
+---
+
+diff --git a/src/create.c b/src/create.c
+index 37e952f..70715bc 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -600,6 +600,7 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
+   polygon->Flags = Flags;
+   polygon->ID = ID++;
+   polygon->Clipped = NULL;
++  polygon->NoHoles = NULL;
+   return (polygon);
+ }
+ 
+diff --git a/src/draw.c b/src/draw.c
+index c1d2784..f87b09c 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -2113,8 +2113,16 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+       if (!Gathering)
+ 	PolygonHoles (clip_box, Layer, Polygon, thin_callback);
+     }
+-  else if (Polygon->Clipped)
+-    {
++  else if (Polygon->NoHoles)//(Polygon->Clipped)
++    {
++      PolygonType poly;
++      poly.Clipped = Polygon->NoHoles;
++      do {
++        DrawPolygonLowLevel (&poly);
++//        printf ("Drawing no-holes portion of polygon\n");
++        poly.Clipped = poly.Clipped->f;
++      } while (poly.Clipped != Polygon->NoHoles);
++#if 0
+       NoHolesPolygonDicer (Polygon, DrawPolygonLowLevel, clip_box);
+       /* draw other parts of the polygon if fullpoly flag is set */
+       if (TEST_FLAG (FULLPOLYFLAG, Polygon))
+@@ -2127,6 +2135,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+ 	      NoHolesPolygonDicer (&poly, DrawPolygonLowLevel, clip_box);
+ 	    }
+ 	}
++#endif
+     }
+   /* if the gui has the dicer flag set then it won't draw missing poly outlines */
+   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && Polygon->Clipped && !Gathering
+@@ -2149,10 +2158,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+ 	    }
+ 	  gui->set_line_width (Output.fgGC, 1);
+ 	  for (i = 0; i < n - 1; i++)
+-	    {
+-	      gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
+-	      /* gui->fill_circle (Output.bgGC, x[i], y[i], 10); */
+-	    }
++	    gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
+ 	  gui->draw_line (Output.fgGC, x[n - 1], y[n - 1], x[0], y[0]);
+ 	  free (x);
+ 	  free (y);
+@@ -2160,6 +2166,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+     }
+ }
+ 
++
+ /* ---------------------------------------------------------------------------
+  * draws an element
+  */
+diff --git a/src/global.h b/src/global.h
+index cc39bbc..9438dd9 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -204,6 +204,7 @@ typedef struct			/* holds information about a polygon */
+   Cardinal PointN,		/* number of points in polygon */
+     PointMax;			/* max number from malloc() */
+   POLYAREA *Clipped;		/* the clipped region of this polygon */
++  POLYAREA *NoHoles;		/* the polygon broken into hole-less regions */
+   PointTypePtr Points;		/* data */
+ } PolygonType, *PolygonTypePtr;
+ 
+diff --git a/src/polygon.c b/src/polygon.c
+index 50912b2..38e69aa 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -109,7 +109,7 @@ biggest (POLYAREA * p)
+           big = n->contours->area;
+         }
+     }
+-  while ((n = n->f) != p);
++  while ((n = n->f) != p); /* TODO: Decipher this line ... is it pointless? Is it just "n=p"? */
+   assert (top);
+   if (top == p)
+     return p;
+@@ -170,6 +170,54 @@ original_poly (PolygonType * p)
+   return biggest (np);
+ }
+ 
++static void
++add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
++{
++  PolygonType *poly = user_data;
++  PLINE *pline;//, last;
++  POLYAREA *new_area;
++
++  new_area = malloc (sizeof (POLYAREA) * 1);
++
++  /* Allocate a new PLINE, COPY the PLINE from the passed polygon */
++  poly_CopyContour (&pline, noholes_poly->Clipped->contours);
++  new_area->contours = pline;
++
++  /* Link the new POLYAREA into the NoHoles circularaly linked list */
++
++  if (poly->NoHoles)
++    {
++      new_area->f = poly->NoHoles;
++      new_area->b = poly->NoHoles->b;
++      poly->NoHoles->b->f = new_area;
++      poly->NoHoles->b = new_area;
++    }
++  else
++    {
++      new_area->f = new_area;
++      new_area->b = new_area;
++    }
++
++  poly->NoHoles = new_area;
++
++}
++
++static void
++compute_noholes (PolygonType *poly)
++{
++  /* TODO: IS THIS RIGHT? */
++  if (poly->NoHoles)
++    {
++      poly_Free (&poly->NoHoles);
++//      printf ("Just leaked in compute_noholes\n");
++    }
++  poly->NoHoles = NULL;
++  if (poly->Clipped)
++    NoHolesPolygonDicer (poly, add_noholes_polyarea, poly, NULL);
++  else
++    printf ("Compute_noholes caught poly->Clipped = NULL\n");
++}
++
+ static int
+ ClipOriginal (PolygonType * poly)
+ {
+@@ -183,10 +231,13 @@ ClipOriginal (PolygonType * poly)
+       fprintf (stderr, "Error while clipping PBO_ISECT: %d\n", r);
+       poly_Free (&result);
+       poly->Clipped = NULL;
++      if (poly->NoHoles) printf ("Just leaked in ClipOriginal\n");
++      poly->NoHoles = NULL;
+       return 0;
+     }
+   poly->Clipped = biggest (result);
+   assert (!poly->Clipped || poly_Valid (poly->Clipped));
++//  compute_noholes (poly);
+   return 1;
+ }
+ 
+@@ -556,10 +607,13 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
+       fprintf (stderr, "Error while clipping PBO_SUB: %d\n", x);
+       poly_Free (&merged);
+       p->Clipped = NULL;
++      if (p->NoHoles) printf ("Just leaked in Subtract\n");
++      p->NoHoles = NULL;
+       return -1;
+     }
+   p->Clipped = biggest (merged);
+   assert (!p->Clipped || poly_Valid (p->Clipped));
++//  compute_noholes (p);
+   if (!p->Clipped)
+     Message ("Polygon cleared out of existence near (%d, %d)\n",
+              (p->BoundingBox.X1 + p->BoundingBox.X2) / 2,
+@@ -825,6 +879,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
+       if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
+ 	r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
+     }
++  compute_noholes (polygon);
+   return r;
+ }
+ 
+@@ -841,10 +896,13 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
+       fprintf (stderr, "Error while clipping PBO_UNITE: %d\n", x);
+       poly_Free (&merged);
+       p->Clipped = NULL;
++      if (p->NoHoles) printf ("Just leaked in Unsubtract\n");
++      p->NoHoles = NULL;
+       return 0;
+     }
+   p->Clipped = biggest (merged);
+   assert (!p->Clipped || poly_Valid (p->Clipped));
++//  compute_noholes (p);
+   return ClipOriginal (p);
+ }
+ 
+@@ -948,11 +1006,19 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
+   if (p->Clipped)
+     poly_Free (&p->Clipped);
+   p->Clipped = original_poly (p);
++  if (p->NoHoles)
++    {
++      poly_Free (&p->NoHoles);
++//      printf ("Just leaked in InitClip\n");
++    }
++  p->NoHoles = NULL;
+   if (!p->Clipped)
+     return 0;
+   assert (poly_Valid (p->Clipped));
+   if (TEST_FLAG (CLEARPOLYFLAG, p))
+     clearPoly (Data, layer, p, NULL, 0);
++  else
++    compute_noholes (p);
+   return 1;
+ }
+ 
+@@ -1206,18 +1272,23 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
+     case PIN_TYPE:
+     case VIA_TYPE:
+       SubtractPin (Data, (PinTypePtr) ptr2, Layer, Polygon);
++      compute_noholes (Polygon);
+       return 1;
+     case LINE_TYPE:
+       SubtractLine ((LineTypePtr) ptr2, Polygon);
++      compute_noholes (Polygon);
+       return 1;
+     case ARC_TYPE:
+       SubtractArc ((ArcTypePtr) ptr2, Polygon);
++      compute_noholes (Polygon);
+       return 1;
+     case PAD_TYPE:
+       SubtractPad ((PadTypePtr) ptr2, Polygon);
++      compute_noholes (Polygon);
+       return 1;
+     case TEXT_TYPE:
+       SubtractText ((TextTypePtr) ptr2, Polygon);
++      compute_noholes (Polygon);
+       return 1;
+     }
+   return 0;
+@@ -1414,7 +1485,7 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
+ }
+ 
+ static void
+-r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
++r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *user_data)
+ {
+   POLYAREA *pa;
+ 
+@@ -1422,6 +1493,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
+   pa->b = pa->f = pa;
+   pa->contours = p;
+   if (!p->next)                 /* no holes */
++//  if (1)
+     {
+       PolygonType poly;
+       PointType pts[4];
+@@ -1432,6 +1504,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
+       poly.BoundingBox.Y2 = p->ymax;
+       poly.PointN = poly.PointMax = 4;
+       poly.Clipped = pa;
++      poly.NoHoles = NULL;
+       poly.Points = pts;
+       pts[0].X = pts[0].X2 = p->xmin;
+       pts[0].Y = pts[0].Y2 = p->ymin;
+@@ -1442,7 +1515,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
+       pts[3].X = pts[3].X2 = p->xmin;
+       pts[3].Y = pts[3].Y2 = p->ymax;
+       poly.Flags = MakeFlags (CLEARPOLYFLAG);
+-      emit (&poly);
++      emit (&poly, user_data);
+       poly_Free (&pa);
+       return;
+     }
+@@ -1462,7 +1535,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
+           do
+             {
+               PLINE *pl = x->contours;
+-              r_NoHolesPolygonDicer (pl, emit);
++              r_NoHolesPolygonDicer (pl, emit, user_data);
+               y = x->f;
+               /* the pline was already freed by its use int he recursive dicer */
+               free (x);
+@@ -1476,7 +1549,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
+           do
+             {
+               PLINE *pl = x->contours;
+-              r_NoHolesPolygonDicer (pl, emit);
++              r_NoHolesPolygonDicer (pl, emit, user_data);
+               y = x->f;
+               free (x);
+             }
+@@ -1486,8 +1559,8 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
+ }
+ 
+ void
+-NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr),
+-                     const BoxType * clip)
++NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
++                     void *user_data, const BoxType * clip)
+ {
+   POLYAREA *save, *ans;
+ 
+@@ -1512,7 +1585,7 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr),
+   do
+     {
+       POLYAREA *prev;
+-      r_NoHolesPolygonDicer (save->contours, emit);
++      r_NoHolesPolygonDicer (save->contours, emit, user_data);
+       /* go to next poly (could be one because of clip) */
+       prev = save;
+       save = prev->f;
+@@ -1545,6 +1618,8 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+    * we do this dirty work.
+    */
+   poly->Clipped = NULL;
++  if (poly->NoHoles) printf ("Just leaked in MorpyPolygon\n");
++  poly->NoHoles = NULL;
+   flags = poly->Flags;
+   RemovePolygon (layer, poly);
+   inhibit = True;
+@@ -1571,6 +1646,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+           new->Clipped = p;
+           p = p->f;             /* go to next pline */
+           new->Clipped->b = new->Clipped->f = new->Clipped;     /* unlink from others */
++//          compute_noholes (new);
+           r_insert_entry (layer->polygon_tree, (BoxType *) new, 0);
+           DrawPolygon (layer, new, 0);
+         }
+diff --git a/src/polygon.h b/src/polygon.h
+index a7b9da7..dca6fc8 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -60,5 +60,5 @@ Boolean IsRectangleInPolygon (LocationType, LocationType, LocationType,
+ 			      LocationType, PolygonTypePtr);
+ Boolean isects (POLYAREA *, PolygonTypePtr, Boolean);
+ Boolean MorphPolygon (LayerTypePtr, PolygonTypePtr);
+-void NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr), const BoxType *clip);
++void NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *), void *user_data, const BoxType *clip);
+ #endif
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 32ffb31..0dd65cc 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2106,6 +2106,12 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
+       poly_InclVertex ((*dst)->head.prev, newnode);
+     }
+   (*dst)->tree = make_edge_tree (*dst);
++
++  {
++    static int count = 0;
++    count ++;
++//    printf ("Counting poly_CopyContour %i\n", count);
++  }
+   return TRUE;
+ }
