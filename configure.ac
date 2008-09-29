@@ -494,6 +494,16 @@ Please review the following errors:
 $GLIB_PKG_ERRORS])]
 	)
 	GLIB_VERSION=`$PKG_CONFIG glib-2.0 --modversion`
+
+
+# Check for GtkGLExt
+PKG_CHECK_MODULES(GTKGLEXT, gtkglext-1.0 >= 1.0.0, , [AC_MSG_ERROR([
+*** Required version of gtkglext is not installed - please install first ***
+Please review the following errors:
+$GTKGLEXT_PKG_ERRORS])]
+)
+
+GTKGLEXT_VER=`$PKG_CONFIG gtkglext-1.0 --modversion`
 	;;
 
       nelma|png )
@@ -708,8 +718,8 @@ AM_CONDITIONAL(DEBUG_BUILD, test x$enable_debug = xyes)
 
 # ------------- Complete set of CFLAGS and LIBS -------------------
 
-CFLAGS="$CFLAGS $X_CFLAGS $DBUS_CFLAGS $GTK_CFLAGS"
-LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_LIBS $INTLLIBS"
+CFLAGS="$CFLAGS $X_CFLAGS $DBUS_CFLAGS $GTK_CFLAGS $GTKGLEXT_CFLAGS"
+LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GTK_LIBS $GTKGLEXT_LIBS $DMALLOC_LIBS $GD_LIBS $INTLLIBS -lglut"
 
 
 # if we have gcc then add -Wall
