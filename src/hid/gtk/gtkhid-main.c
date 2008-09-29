@@ -938,6 +938,7 @@ ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
 {
 #define TRIANGLES_PER_CAP 15
 #define MIN_TRIANGLES_PER_CAP 3
+#define MAX_TRIANGLES_PER_CAP 1000
   double dx1, dy1, dx2, dy2;
   double width, angle;
   float deltax, deltay, length;
@@ -990,6 +991,9 @@ ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
 
   if (slices < MIN_TRIANGLES_PER_CAP)
     slices = MIN_TRIANGLES_PER_CAP;
+
+  if (slices > MAX_TRIANGLES_PER_CAP)
+    slices = MAX_TRIANGLES_PER_CAP;
 
 //  slices = TRIANGLES_PER_CAP;
 
@@ -1165,6 +1169,7 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
 {
 #define TRIANGLES_PER_CIRCLE 30
 #define MIN_TRIANGLES_PER_CIRCLE 6
+#define MAX_TRIANGLES_PER_CIRCLE 2000
   gint w, h, vx, vy, vr;
   float last_x, last_y;
   int slices;
@@ -1187,6 +1192,9 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
 
   if (slices < MIN_TRIANGLES_PER_CIRCLE)
     slices = MIN_TRIANGLES_PER_CIRCLE;
+
+  if (slices > MAX_TRIANGLES_PER_CIRCLE)
+    slices = MAX_TRIANGLES_PER_CIRCLE;
 
 //  slices = TRIANGLES_PER_CIRCLE;
 
