@@ -1,7 +1,7 @@
-Bottom: 95e94e1553582f07e3d85803937894cf2d45f1c1
-Top:    b2b9689c25487322b85e05295af90cb078314c91
+Bottom: 4b6adce26ba8f646a5c258134794671aa8803aba
+Top:    f7d8f225ae41ce41ac640edda9eea2ae4afc609d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-09-30 22:48:54 +0100
+Date:   2008-09-30 22:52:44 +0100
 
 Don't bother unsubtracting complex polygons when doing incremental updates
 
@@ -13,10 +13,11 @@ be filed in.
 
 
 
+
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 3982708..c193530 100644
+index 50912b2..d67b918 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -65,6 +65,8 @@ RCSID ("$Id$");
@@ -28,7 +29,7 @@ index 3982708..c193530 100644
  /* ---------------------------------------------------------------------------
   * local prototypes
   */
-@@ -641,6 +643,13 @@ PinPoly (PinType * pin, BDimension thick, BDimension clear)
+@@ -590,6 +592,13 @@ PinPoly (PinType * pin, BDimension thick, BDimension clear)
    return CirclePoly (pin->X, pin->Y, size);
  }
  
@@ -42,7 +43,7 @@ index 3982708..c193530 100644
  /* remove the pin clearance from the polygon */
  static int
  SubtractPin (DataType * d, PinType * pin, LayerType * l, PolygonType * p)
-@@ -908,46 +917,51 @@ UnsubtractPin (PinType * pin, LayerType * l, PolygonType * p)
+@@ -854,46 +863,51 @@ UnsubtractPin (PinType * pin, LayerType * l, PolygonType * p)
    POLYAREA *np;
  
    /* overlap a bit to prevent gaps from rounding errors */
@@ -104,7 +105,7 @@ index 3982708..c193530 100644
    return 1;
  }
  
-@@ -955,40 +969,34 @@ static int
+@@ -901,40 +915,34 @@ static int
  UnsubtractText (TextType * text, LayerType * l, PolygonType * p)
  {
    POLYAREA *np;
@@ -157,10 +158,10 @@ index 3982708..c193530 100644
  }
  
 diff --git a/src/polygon.h b/src/polygon.h
-index 64eeea1..2c78e94 100644
+index a7b9da7..721ba95 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
-@@ -51,6 +51,7 @@ POLYAREA * OctagonPoly(LocationType x, LocationType y, BDimension radius);
+@@ -50,6 +50,7 @@ POLYAREA * OctagonPoly(LocationType x, LocationType y, BDimension radius);
  POLYAREA * LinePoly(LineType *l, BDimension thick);
  POLYAREA * ArcPoly(ArcType *l, BDimension thick);
  POLYAREA * PinPoly(PinType *l, BDimension thick, BDimension clear);
