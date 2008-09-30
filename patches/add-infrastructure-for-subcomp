@@ -1,7 +1,7 @@
-Bottom: 4086707d3e73c099cd2e6784e443561f1665df40
-Top:    ef9d89d58fd0ff7b17b1e1dd18d089e232140fed
+Bottom: 47e31672902fb1a2b2abc567d5f0303e33fad30c
+Top:    b953f06b41142035b21a5bfee74202b3e997429b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-09-30 22:44:47 +0100
+Date:   2008-09-30 23:55:56 +0100
 
 Add infrastructure for subcompositing various bits of our drawing
 
@@ -10,7 +10,7 @@ Add infrastructure for subcompositing various bits of our drawing
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index cdfa86f..77d00ba 100644
+index d5396e8..130fa7f 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -355,7 +355,7 @@ static int
@@ -193,7 +193,7 @@ index cdfa86f..77d00ba 100644
  	}
      }
    if (n_entries > 1)
-@@ -2185,6 +2233,8 @@ DrawElement (ElementTypePtr Element, int unused)
+@@ -2195,6 +2243,8 @@ DrawElement (ElementTypePtr Element, int unused)
    DrawElementPinsAndPads (Element, unused);
  }
  
@@ -202,7 +202,7 @@ index cdfa86f..77d00ba 100644
  /* ---------------------------------------------------------------------------
   * draws the name of an element
   */
-@@ -2193,6 +2243,15 @@ DrawElementName (ElementTypePtr Element, int unused)
+@@ -2203,6 +2253,15 @@ DrawElementName (ElementTypePtr Element, int unused)
  {
    if (TEST_FLAG (HIDENAMEFLAG, Element))
      return;
@@ -218,7 +218,7 @@ index cdfa86f..77d00ba 100644
    if (doing_pinout || doing_assy)
      gui->set_color (Output.fgGC, PCB->ElementColor);
    else if (TEST_FLAG (SELECTEDFLAG, &ELEMENT_TEXT (PCB, Element)))
-@@ -2201,15 +2260,33 @@ DrawElementName (ElementTypePtr Element, int unused)
+@@ -2211,15 +2270,33 @@ DrawElementName (ElementTypePtr Element, int unused)
      gui->set_color (Output.fgGC, PCB->ElementColor);
    else
      gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
@@ -252,7 +252,7 @@ index cdfa86f..77d00ba 100644
    /* set color and draw lines, arcs, text and pins */
    if (doing_pinout || doing_assy)
      gui->set_color (Output.fgGC, PCB->ElementColor);
-@@ -2219,7 +2296,14 @@ DrawElementPackage (ElementTypePtr Element, int unused)
+@@ -2229,7 +2306,14 @@ DrawElementPackage (ElementTypePtr Element, int unused)
      gui->set_color (Output.fgGC, PCB->ElementColor);
    else
      gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);

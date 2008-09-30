@@ -1,7 +1,7 @@
-Bottom: 2e5c6d08f758563dbf86d399d67725f5090eb11e
-Top:    2c284508f29327e4ae8ddda6370266af85d799b2
+Bottom: 9ecbf6a181160c2a02394ac76d6fecfa3ca994ee
+Top:    8ab77fc6d0f9c46453f250baff3d0953b57e4741
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-09-30 22:48:23 +0100
+Date:   2008-09-30 23:55:55 +0100
 
 Remove cruft from cache
 
@@ -10,10 +10,10 @@ Remove cruft from cache
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 38e69aa..5111071 100644
+index 87350df..f27faed 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -174,7 +174,7 @@ static void
+@@ -176,7 +176,7 @@ static void
  add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
  {
    PolygonType *poly = user_data;
@@ -22,7 +22,7 @@ index 38e69aa..5111071 100644
    POLYAREA *new_area;
  
    new_area = malloc (sizeof (POLYAREA) * 1);
-@@ -209,7 +209,6 @@ compute_noholes (PolygonType *poly)
+@@ -211,7 +211,6 @@ compute_noholes (PolygonType *poly)
    if (poly->NoHoles)
      {
        poly_Free (&poly->NoHoles);
@@ -30,7 +30,7 @@ index 38e69aa..5111071 100644
      }
    poly->NoHoles = NULL;
    if (poly->Clipped)
-@@ -237,7 +236,6 @@ ClipOriginal (PolygonType * poly)
+@@ -239,7 +238,6 @@ ClipOriginal (PolygonType * poly)
      }
    poly->Clipped = biggest (result);
    assert (!poly->Clipped || poly_Valid (poly->Clipped));
@@ -38,7 +38,7 @@ index 38e69aa..5111071 100644
    return 1;
  }
  
-@@ -613,7 +611,6 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
+@@ -615,7 +613,6 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
      }
    p->Clipped = biggest (merged);
    assert (!p->Clipped || poly_Valid (p->Clipped));
@@ -46,7 +46,7 @@ index 38e69aa..5111071 100644
    if (!p->Clipped)
      Message ("Polygon cleared out of existence near (%d, %d)\n",
               (p->BoundingBox.X1 + p->BoundingBox.X2) / 2,
-@@ -902,7 +899,6 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
+@@ -912,7 +909,6 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
      }
    p->Clipped = biggest (merged);
    assert (!p->Clipped || poly_Valid (p->Clipped));
@@ -54,7 +54,7 @@ index 38e69aa..5111071 100644
    return ClipOriginal (p);
  }
  
-@@ -1009,7 +1005,6 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
+@@ -1018,7 +1014,6 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
    if (p->NoHoles)
      {
        poly_Free (&p->NoHoles);
@@ -62,7 +62,7 @@ index 38e69aa..5111071 100644
      }
    p->NoHoles = NULL;
    if (!p->Clipped)
-@@ -1493,7 +1488,6 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *u
+@@ -1502,7 +1497,6 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *u
    pa->b = pa->f = pa;
    pa->contours = p;
    if (!p->next)                 /* no holes */
@@ -70,7 +70,7 @@ index 38e69aa..5111071 100644
      {
        PolygonType poly;
        PointType pts[4];
-@@ -1646,7 +1640,6 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+@@ -1655,7 +1649,6 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
            new->Clipped = p;
            p = p->f;             /* go to next pline */
            new->Clipped->b = new->Clipped->f = new->Clipped;     /* unlink from others */

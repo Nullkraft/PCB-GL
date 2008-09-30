@@ -1,7 +1,7 @@
-Bottom: 4727068c8abe6e357984448042a6a49e1f446d0c
-Top:    2e5c6d08f758563dbf86d399d67725f5090eb11e
+Bottom: feb3c3c33d881d54ae3db318358a77730bad3420
+Top:    9ecbf6a181160c2a02394ac76d6fecfa3ca994ee
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-09-30 22:48:21 +0100
+Date:   2008-09-30 23:55:55 +0100
 
 Add cache for "noholes", diced versions of polygons
 
@@ -99,10 +99,10 @@ index 57eca2d..ffa4dad 100644
      }
  }
 diff --git a/src/polygon.c b/src/polygon.c
-index 50912b2..38e69aa 100644
+index 3086be6..87350df 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -109,7 +109,7 @@ biggest (POLYAREA * p)
+@@ -111,7 +111,7 @@ biggest (POLYAREA * p)
            big = n->contours->area;
          }
      }
@@ -111,7 +111,7 @@ index 50912b2..38e69aa 100644
    assert (top);
    if (top == p)
      return p;
-@@ -170,6 +170,54 @@ original_poly (PolygonType * p)
+@@ -172,6 +172,54 @@ original_poly (PolygonType * p)
    return biggest (np);
  }
  
@@ -166,7 +166,7 @@ index 50912b2..38e69aa 100644
  static int
  ClipOriginal (PolygonType * poly)
  {
-@@ -183,10 +231,13 @@ ClipOriginal (PolygonType * poly)
+@@ -185,10 +233,13 @@ ClipOriginal (PolygonType * poly)
        fprintf (stderr, "Error while clipping PBO_ISECT: %d\n", r);
        poly_Free (&result);
        poly->Clipped = NULL;
@@ -180,7 +180,7 @@ index 50912b2..38e69aa 100644
    return 1;
  }
  
-@@ -556,10 +607,13 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
+@@ -558,10 +609,13 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
        fprintf (stderr, "Error while clipping PBO_SUB: %d\n", x);
        poly_Free (&merged);
        p->Clipped = NULL;
@@ -194,7 +194,7 @@ index 50912b2..38e69aa 100644
    if (!p->Clipped)
      Message ("Polygon cleared out of existence near (%d, %d)\n",
               (p->BoundingBox.X1 + p->BoundingBox.X2) / 2,
-@@ -825,6 +879,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
+@@ -835,6 +889,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
        if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
  	r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
      }
@@ -202,7 +202,7 @@ index 50912b2..38e69aa 100644
    return r;
  }
  
-@@ -841,10 +896,13 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
+@@ -851,10 +906,13 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
        fprintf (stderr, "Error while clipping PBO_UNITE: %d\n", x);
        poly_Free (&merged);
        p->Clipped = NULL;
@@ -216,7 +216,7 @@ index 50912b2..38e69aa 100644
    return ClipOriginal (p);
  }
  
-@@ -948,11 +1006,19 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
+@@ -957,11 +1015,19 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
    if (p->Clipped)
      poly_Free (&p->Clipped);
    p->Clipped = original_poly (p);
@@ -236,7 +236,7 @@ index 50912b2..38e69aa 100644
    return 1;
  }
  
-@@ -1206,18 +1272,23 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
+@@ -1215,18 +1281,23 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
      case PIN_TYPE:
      case VIA_TYPE:
        SubtractPin (Data, (PinTypePtr) ptr2, Layer, Polygon);
@@ -260,7 +260,7 @@ index 50912b2..38e69aa 100644
        return 1;
      }
    return 0;
-@@ -1414,7 +1485,7 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
+@@ -1423,7 +1494,7 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
  }
  
  static void
@@ -269,7 +269,7 @@ index 50912b2..38e69aa 100644
  {
    POLYAREA *pa;
  
-@@ -1422,6 +1493,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
+@@ -1431,6 +1502,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
    pa->b = pa->f = pa;
    pa->contours = p;
    if (!p->next)                 /* no holes */
@@ -277,7 +277,7 @@ index 50912b2..38e69aa 100644
      {
        PolygonType poly;
        PointType pts[4];
-@@ -1432,6 +1504,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
+@@ -1441,6 +1513,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
        poly.BoundingBox.Y2 = p->ymax;
        poly.PointN = poly.PointMax = 4;
        poly.Clipped = pa;
@@ -285,7 +285,7 @@ index 50912b2..38e69aa 100644
        poly.Points = pts;
        pts[0].X = pts[0].X2 = p->xmin;
        pts[0].Y = pts[0].Y2 = p->ymin;
-@@ -1442,7 +1515,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
+@@ -1451,7 +1524,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
        pts[3].X = pts[3].X2 = p->xmin;
        pts[3].Y = pts[3].Y2 = p->ymax;
        poly.Flags = MakeFlags (CLEARPOLYFLAG);
@@ -294,7 +294,7 @@ index 50912b2..38e69aa 100644
        poly_Free (&pa);
        return;
      }
-@@ -1462,7 +1535,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
+@@ -1471,7 +1544,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
            do
              {
                PLINE *pl = x->contours;
@@ -303,7 +303,7 @@ index 50912b2..38e69aa 100644
                y = x->f;
                /* the pline was already freed by its use int he recursive dicer */
                free (x);
-@@ -1476,7 +1549,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
+@@ -1485,7 +1558,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
            do
              {
                PLINE *pl = x->contours;
@@ -312,7 +312,7 @@ index 50912b2..38e69aa 100644
                y = x->f;
                free (x);
              }
-@@ -1486,8 +1559,8 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
+@@ -1495,8 +1568,8 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
  }
  
  void
@@ -323,7 +323,7 @@ index 50912b2..38e69aa 100644
  {
    POLYAREA *save, *ans;
  
-@@ -1512,7 +1585,7 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr),
+@@ -1521,7 +1594,7 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr),
    do
      {
        POLYAREA *prev;
@@ -332,7 +332,7 @@ index 50912b2..38e69aa 100644
        /* go to next poly (could be one because of clip) */
        prev = save;
        save = prev->f;
-@@ -1545,6 +1618,8 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+@@ -1554,6 +1627,8 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
     * we do this dirty work.
     */
    poly->Clipped = NULL;
@@ -341,7 +341,7 @@ index 50912b2..38e69aa 100644
    flags = poly->Flags;
    RemovePolygon (layer, poly);
    inhibit = True;
-@@ -1571,6 +1646,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+@@ -1580,6 +1655,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
            new->Clipped = p;
            p = p->f;             /* go to next pline */
            new->Clipped->b = new->Clipped->f = new->Clipped;     /* unlink from others */
@@ -350,10 +350,10 @@ index 50912b2..38e69aa 100644
            DrawPolygon (layer, new, 0);
          }
 diff --git a/src/polygon.h b/src/polygon.h
-index a7b9da7..dca6fc8 100644
+index 721ba95..bccc7b0 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
-@@ -60,5 +60,5 @@ Boolean IsRectangleInPolygon (LocationType, LocationType, LocationType,
+@@ -61,5 +61,5 @@ Boolean IsRectangleInPolygon (LocationType, LocationType, LocationType,
  			      LocationType, PolygonTypePtr);
  Boolean isects (POLYAREA *, PolygonTypePtr, Boolean);
  Boolean MorphPolygon (LayerTypePtr, PolygonTypePtr);

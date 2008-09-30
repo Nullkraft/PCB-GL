@@ -1,7 +1,7 @@
-Bottom: 2c284508f29327e4ae8ddda6370266af85d799b2
-Top:    95e94e1553582f07e3d85803937894cf2d45f1c1
+Bottom: 8ab77fc6d0f9c46453f250baff3d0953b57e4741
+Top:    47e31672902fb1a2b2abc567d5f0303e33fad30c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-09-30 22:48:25 +0100
+Date:   2008-09-30 23:55:56 +0100
 
 Attempt to make PCB faster when working with polygons.
 
@@ -79,10 +79,10 @@ index 9438dd9..7763c80 100644
  } PolygonType, *PolygonTypePtr;
  
 diff --git a/src/polygon.c b/src/polygon.c
-index 5111071..3982708 100644
+index f27faed..ecf11f4 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -75,6 +75,53 @@ static double circleVerticies[] = {
+@@ -77,6 +77,53 @@ static double circleVerticies[] = {
    0.98480775301221, 0.17364817766693,
  };
  
@@ -136,7 +136,7 @@ index 5111071..3982708 100644
  
  static POLYAREA *
  biggest (POLYAREA * p)
-@@ -170,53 +217,6 @@ original_poly (PolygonType * p)
+@@ -172,53 +219,6 @@ original_poly (PolygonType * p)
    return biggest (np);
  }
  
@@ -190,7 +190,7 @@ index 5111071..3982708 100644
  static int
  ClipOriginal (PolygonType * poly)
  {
-@@ -876,7 +876,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
+@@ -886,7 +886,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
        if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
  	r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
      }
@@ -199,7 +199,7 @@ index 5111071..3982708 100644
    return r;
  }
  
-@@ -1013,7 +1013,7 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
+@@ -1022,7 +1022,7 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
    if (TEST_FLAG (CLEARPOLYFLAG, p))
      clearPoly (Data, layer, p, NULL, 0);
    else
@@ -208,7 +208,7 @@ index 5111071..3982708 100644
    return 1;
  }
  
-@@ -1267,23 +1267,23 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
+@@ -1276,23 +1276,23 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
      case PIN_TYPE:
      case VIA_TYPE:
        SubtractPin (Data, (PinTypePtr) ptr2, Layer, Polygon);
@@ -238,7 +238,7 @@ index 5111071..3982708 100644
      }
    return 0;
 diff --git a/src/polygon.h b/src/polygon.h
-index dca6fc8..64eeea1 100644
+index bccc7b0..2c78e94 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
 @@ -43,6 +43,7 @@ int PolygonHoles (const BoxType * range, LayerTypePtr, PolygonTypePtr,
