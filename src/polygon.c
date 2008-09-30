@@ -65,6 +65,8 @@ RCSID ("$Id$");
 
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
+#define UNSUBTRACT_BLOAT 50
+
 /* ---------------------------------------------------------------------------
  * local prototypes
  */
@@ -643,6 +645,13 @@ PinPoly (PinType * pin, BDimension thick, BDimension clear)
   return CirclePoly (pin->X, pin->Y, size);
 }
 
+POLYAREA *
+BoxPolyBloated (BoxType *box, BDimension bloat)
+{
+  return RectPoly (box->X1 - bloat, box->X2 + bloat,
+                   box->Y1 - bloat, box->Y2 + bloat);
+}
+
 /* remove the pin clearance from the polygon */
 static int
 SubtractPin (DataType * d, PinType * pin, LayerType * l, PolygonType * p)
@@ -910,12 +919,9 @@ static int
 UnsubtractPin (PinType * pin, LayerType * l, PolygonType * p)
 {
   POLYAREA *np;
-  BoxType *bound;
 
   /* overlap a bit to prevent gaps from rounding errors */
-//  np = PinPoly (pin, pin->Thickness, pin->Clearance * 1.1);
-  bound = &pin->BoundingBox;
-  np = RectPoly (bound->X1, bound->X2, bound->Y1, bound->Y2);
+  np = BoxPolyBloated (&pin->BoundingBox, UNSUBTRACT_BLOAT);
 
   if (!np)
     return 0;
@@ -929,14 +935,13 @@ UnsubtractPin (PinType * pin, LayerType * l, PolygonType * p)
 static int
 UnsubtractArc (ArcType * arc, LayerType * l, PolygonType * p)
 {
-  POLYAREA *np = NULL;
-  BoxType *bound;
+  POLYAREA *np;
 
   if (!TEST_FLAG (CLEARLINEFLAG, arc))
     return 0;
 
-  bound = &arc->BoundingBox;
-  np = RectPoly (bound->X1, bound->X2, bound->Y1, bound->Y2);
+  /* overlap a bit to prevent gaps from rounding errors */
+  np = BoxPolyBloated (&arc->BoundingBox, UNSUBTRACT_BLOAT);
 
   if (!np)
     return 0;
@@ -949,16 +954,14 @@ UnsubtractArc (ArcType * arc, LayerType * l, PolygonType * p)
 static int
 UnsubtractLine (LineType * line, LayerType * l, PolygonType * p)
 {
-  POLYAREA *np = NULL;
-  BoxType *bound;
+  POLYAREA *np;
 
   if (!TEST_FLAG (CLEARLINEFLAG, line))
     return 0;
 
-  bound = &line->BoundingBox;
-  np = RectPoly (bound->X1, bound->X2, bound->Y1, bound->Y2);
-
   /* overlap a bit to prevent notches from rounding errors */
+  np = BoxPolyBloated (&line->BoundingBox, UNSUBTRACT_BLOAT);
+
   if (!np)
     return 0;
   if (!Unsubtract (np, p))
@@ -971,13 +974,12 @@ static int
 UnsubtractText (TextType * text, LayerType * l, PolygonType * p)
 {
   POLYAREA *np;
-  BoxType *bound;
 
   if (!TEST_FLAG (CLEARLINEFLAG, text))
     return 0;
 
-  bound = &text->BoundingBox;
-  np = RectPoly (bound->X1, bound->X2, bound->Y1, bound->Y2);
+  /* overlap a bit to prevent notches from rounding errors */
+  np = BoxPolyBloated (&text->BoundingBox, UNSUBTRACT_BLOAT);
 
   if (!np)
     return -1;
@@ -990,11 +992,10 @@ UnsubtractText (TextType * text, LayerType * l, PolygonType * p)
 static int
 UnsubtractPad (PadType * pad, LayerType * l, PolygonType * p)
 {
-  POLYAREA *np = NULL;
-  BoxType *bound;
+  POLYAREA *np;
 
-  bound = &pad->BoundingBox;
-  np = RectPoly (bound->X1, bound->X2, bound->Y1, bound->Y2);
+  /* overlap a bit to prevent notches from rounding errors */
+  np = BoxPolyBloated (&pad->BoundingBox, UNSUBTRACT_BLOAT);
 
   if (!np)
     return 0;
