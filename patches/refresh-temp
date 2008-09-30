@@ -1,0 +1,22 @@
+Bottom: 4663cbc61f9d33b1ea8cc17176d22534efd905dc
+Top:    3b84b969a7fce3782e7100385b8ba26665af72a1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-09-30 01:10:47 +0100
+
+Refresh of add-cache-for-noholes-diced-ve
+
+---
+
+diff --git a/src/mymem.c b/src/mymem.c
+index 57eca2d..0352536 100644
+--- a/src/mymem.c
++++ b/src/mymem.c
+@@ -727,6 +727,8 @@ FreePolygonMemory (PolygonTypePtr Polygon)
+       MYFREE (Polygon->Points);
+       if (Polygon->Clipped)
+ 	poly_Free (&Polygon->Clipped);
++      if (poly->NoHoles)
++	poly_Free (&Polygon->NoHoles);
+       memset (Polygon, 0, sizeof (PolygonType));
+     }
+ }
