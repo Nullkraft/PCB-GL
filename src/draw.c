@@ -2123,8 +2123,16 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
       if (!Gathering)
 	PolygonHoles (clip_box, Layer, Polygon, thin_callback);
     }
-  else if (Polygon->Clipped)
+  else if (Polygon->NoHoles)//(Polygon->Clipped)
     {
+      PolygonType poly;
+      poly.Clipped = Polygon->NoHoles;
+      do {
+        DrawPolygonLowLevel (&poly);
+//        printf ("Drawing no-holes portion of polygon\n");
+        poly.Clipped = poly.Clipped->f;
+      } while (poly.Clipped != Polygon->NoHoles);
+#if 0
       NoHolesPolygonDicer (Polygon, DrawPolygonLowLevel, clip_box);
       /* draw other parts of the polygon if fullpoly flag is set */
       if (TEST_FLAG (FULLPOLYFLAG, Polygon))
@@ -2137,6 +2145,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 	      NoHolesPolygonDicer (&poly, DrawPolygonLowLevel, clip_box);
 	    }
 	}
+#endif
     }
   /* if the gui has the dicer flag set then it won't draw missing poly outlines */
   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && Polygon->Clipped && !Gathering
@@ -2159,16 +2168,14 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 	    }
 	  gui->set_line_width (Output.fgGC, 1);
 	  for (i = 0; i < n - 1; i++)
-	    {
-	      gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
-	      /* gui->fill_circle (Output.bgGC, x[i], y[i], 10); */
-	    }
+	    gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
 	  gui->draw_line (Output.fgGC, x[n - 1], y[n - 1], x[0], y[0]);
 	  free (x);
 	  free (y);
 	}
     }
 }
+
 
 /* ---------------------------------------------------------------------------
  * draws an element
