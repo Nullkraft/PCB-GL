@@ -1,0 +1,15 @@
+Bottom: 52b488346b288a22057f96531909388113625ca0
+Top:    52b488346b288a22057f96531909388113625ca0
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-09-30 19:53:51 +0100
+
+Fix bounding boxes for rotated square ended pads.
+
+Bounding box compution only worked for round ended pads before.
+In addition, the "move" code previously called SetLineBoundingBox
+for pads, which computes the wrong result.
+
+
+---
+
+
