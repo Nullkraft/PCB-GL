@@ -1,7 +1,7 @@
-Bottom: 90d30b54147e52caf317298a21836c8d15dbaf65
-Top:    6f0598d6a8329d17ff114af51cf8beeee0b32237
+Bottom: 4727068c8abe6e357984448042a6a49e1f446d0c
+Top:    2e5c6d08f758563dbf86d399d67725f5090eb11e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-09-30 22:45:15 +0100
+Date:   2008-09-30 22:48:21 +0100
 
 Add cache for "noholes", diced versions of polygons
 
@@ -23,7 +23,7 @@ index 37e952f..70715bc 100644
  }
  
 diff --git a/src/draw.c b/src/draw.c
-index 96ab0b8..f93412b 100644
+index 50e6fef..2403c62 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -2123,8 +2123,16 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
