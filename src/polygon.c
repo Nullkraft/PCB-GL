@@ -905,7 +905,7 @@ UnsubtractText (TextType * text, LayerType * l, PolygonType * p)
 
   if (!TEST_FLAG (CLEARLINEFLAG, text))
     return 0;
-  if (!(np = RoundRect (b->X1, b->X2, b->Y1, b->Y2, PCB->Bloat + 100)))
+  if (!(np = RoundRect (b->X1, b->X2, b->Y1, b->Y2, 100)))
     return -1;
   if (!Unsubtract (np, p))
     return 0;
