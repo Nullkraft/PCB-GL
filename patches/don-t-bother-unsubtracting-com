@@ -1,7 +1,7 @@
-Bottom: 2bfc16d7f034fb79a94919033bf60a9518f2a780
-Top:    a33956f72815f822a487d4412909a2b79217b7a7
+Bottom: 07a4763b6d84d836644a3ef32a1de83564a34785
+Top:    bd6f3378e7320c43d00ea0aaf80dd3c8c63ad20f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-09-30 23:20:35 +0100
+Date:   2008-09-30 23:32:08 +0100
 
 Don't bother unsubtracting complex polygons when doing incremental updates
 
@@ -10,6 +10,7 @@ bounding box of the update region, there is no point wasting CPU cycles
 intersecting a more complex polygon than necessary. Just take the UNION
 of the polygon being unsubtracted, and the bounding box of the hole to
 be filed in.
+
 
 
 
