@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: move.h,v 1.8 2006-06-10 03:07:41 djdelorie Exp $
+ *  RCS: $Id: move.h,v 1.9 2008-09-30 22:37:26 petercjclifton Exp $
  */
 
 /* prototypes for move routines
@@ -72,7 +72,11 @@
 		SetLineBoundingBox ((l)); \
 	}
 #define	MOVE_PAD_LOWLEVEL(p,dx,dy)	\
-	MOVE_LINE_LOWLEVEL((LineTypePtr)(p),(dx),(dy))
+	{									\
+		MOVE((p)->Point1.X,(p)->Point1.Y,(dx),(dy))			\
+		MOVE((p)->Point2.X,(p)->Point2.Y,(dx),(dy))			\
+		SetPadBoundingBox ((p)); \
+	}
 #define	MOVE_TEXT_LOWLEVEL(t,dx,dy)								\
 	{															\
 		MOVE_BOX_LOWLEVEL(&((t)->BoundingBox),(dx),(dy));		\
