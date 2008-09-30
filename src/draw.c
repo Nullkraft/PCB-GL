@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.88 2008-09-30 22:38:17 petercjclifton Exp $ */
+/* $Id: draw.c,v 1.89 2008-09-30 22:39:08 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.88 2008-09-30 22:38:17 petercjclifton Exp $");
+RCSID ("$Id: draw.c,v 1.89 2008-09-30 22:39:08 petercjclifton Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -2596,4 +2596,6 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
   Output.fgGC = savefg;
   Output.bgGC = savebg;
   Output.pmGC = savepm;
+
+  Gathering = True;
 }
