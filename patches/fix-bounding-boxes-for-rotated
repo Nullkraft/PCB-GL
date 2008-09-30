@@ -1,13 +1,14 @@
-Bottom: 52b488346b288a22057f96531909388113625ca0
-Top:    8aa807451bb5ebdb5430f04ac877aee91ba0d96a
+Bottom: 2f70c8b131dad53212d3bfc722c503a571831b4b
+Top:    9cd6e354ee1a78b6fb489dd2fa6efb86074a70da
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-09-30 19:53:51 +0100
+Date:   2008-09-30 22:44:45 +0100
 
 Fix bounding boxes for rotated square ended pads.
 
 Bounding box compution only worked for round ended pads before.
 In addition, the "move" code previously called SetLineBoundingBox
 for pads, which computes the wrong result.
+
 
 
 ---
