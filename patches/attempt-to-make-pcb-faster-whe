@@ -1,7 +1,7 @@
-Bottom: 8c457458cdaaa68cc8b0e89ff7fe184574a9c2a2
-Top:    4086707d3e73c099cd2e6784e443561f1665df40
+Bottom: fe04a62b2dd8f8c7a04ab66f83fb49cdf51b74d3
+Top:    e752d767f69ce707cafea56f11ac50c6b785796b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-09-30 22:44:46 +0100
+Date:   2008-09-30 22:45:18 +0100
 
 Attempt to make PCB faster when working with polygons.
 
@@ -31,10 +31,10 @@ index 70715bc..d8aaca6 100644
  }
  
 diff --git a/src/draw.c b/src/draw.c
-index f87b09c..cdfa86f 100644
+index f93412b..9288499 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2113,15 +2113,22 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2123,15 +2123,22 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
        if (!Gathering)
  	PolygonHoles (clip_box, Layer, Polygon, thin_callback);
      }
