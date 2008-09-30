@@ -1,7 +1,7 @@
-Bottom: f7ac833393efb34184f8ec2f6235df597ea882f8
-Top:    69f85640719a428336a4481e544b3fb75102f238
+Bottom: a0aaf7fc92e777350a93ef963a7603848faadf32
+Top:    52b488346b288a22057f96531909388113625ca0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-09-30 02:20:03 +0100
+Date:   2008-09-30 14:09:41 +0100
 
 Don't bother unsubtracting complex polygons when doing incremental updates
 
@@ -12,10 +12,11 @@ of the polygon being unsubtracted, and the bounding box of the hole to
 be filed in.
 
 
+
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 9c65716..5bed963 100644
+index 3982708..b20c350 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -65,6 +65,8 @@ RCSID ("$Id$");
@@ -27,7 +28,7 @@ index 9c65716..5bed963 100644
  /* ---------------------------------------------------------------------------
   * local prototypes
   */
-@@ -643,6 +645,13 @@ PinPoly (PinType * pin, BDimension thick, BDimension clear)
+@@ -641,6 +643,13 @@ PinPoly (PinType * pin, BDimension thick, BDimension clear)
    return CirclePoly (pin->X, pin->Y, size);
  }
  
@@ -41,7 +42,7 @@ index 9c65716..5bed963 100644
  /* remove the pin clearance from the polygon */
  static int
  SubtractPin (DataType * d, PinType * pin, LayerType * l, PolygonType * p)
-@@ -912,7 +921,7 @@ UnsubtractPin (PinType * pin, LayerType * l, PolygonType * p)
+@@ -908,7 +917,7 @@ UnsubtractPin (PinType * pin, LayerType * l, PolygonType * p)
    POLYAREA *np;
  
    /* overlap a bit to prevent gaps from rounding errors */
@@ -50,7 +51,7 @@ index 9c65716..5bed963 100644
  
    if (!np)
      return 0;
-@@ -926,12 +935,15 @@ UnsubtractPin (PinType * pin, LayerType * l, PolygonType * p)
+@@ -922,12 +931,15 @@ UnsubtractPin (PinType * pin, LayerType * l, PolygonType * p)
  static int
  UnsubtractArc (ArcType * arc, LayerType * l, PolygonType * p)
  {
@@ -69,7 +70,7 @@ index 9c65716..5bed963 100644
      return 0;
    if (!Unsubtract (np, p))
      return 0;
-@@ -942,12 +954,15 @@ UnsubtractArc (ArcType * arc, LayerType * l, PolygonType * p)
+@@ -938,12 +950,15 @@ UnsubtractArc (ArcType * arc, LayerType * l, PolygonType * p)
  static int
  UnsubtractLine (LineType * line, LayerType * l, PolygonType * p)
  {
@@ -87,7 +88,7 @@ index 9c65716..5bed963 100644
      return 0;
    if (!Unsubtract (np, p))
      return 0;
-@@ -959,11 +974,14 @@ static int
+@@ -955,11 +970,14 @@ static int
  UnsubtractText (TextType * text, LayerType * l, PolygonType * p)
  {
    POLYAREA *np;
@@ -104,7 +105,7 @@ index 9c65716..5bed963 100644
      return -1;
    if (!Unsubtract (np, p))
      return 0;
-@@ -974,20 +992,11 @@ UnsubtractText (TextType * text, LayerType * l, PolygonType * p)
+@@ -970,20 +988,11 @@ UnsubtractText (TextType * text, LayerType * l, PolygonType * p)
  static int
  UnsubtractPad (PadType * pad, LayerType * l, PolygonType * p)
  {
