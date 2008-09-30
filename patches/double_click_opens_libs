@@ -1,5 +1,5 @@
 Bottom: 2f70c8b131dad53212d3bfc722c503a571831b4b
-Top:    0470bce436c7b350b0fc943f0ffcbb6dcbeda850
+Top:    15175504b5fb703216a0ac4ac7cdd205dd69982f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-09-30 23:27:03 +0100
 
@@ -11,7 +11,7 @@ Usability improvement.
 ---
 
 diff --git a/src/hid/gtk/gui-library-window.c b/src/hid/gtk/gui-library-window.c
-index 9e9cae1..c1f2ce7 100644
+index 9e9cae1..4396d13 100644
 --- a/src/hid/gtk/gui-library-window.c
 +++ b/src/hid/gtk/gui-library-window.c
 @@ -265,6 +265,38 @@ lib_model_filter_visible_func (GtkTreeModel * model,
@@ -61,7 +61,7 @@ index 9e9cae1..c1f2ce7 100644
 +  g_signal_connect (libtreeview,
 +                    "row-activated",
 +                    G_CALLBACK (tree_row_activated),
-+                    compselect);
++                    NULL);
 +
    /* connect callback to selection */
    selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (libtreeview));
