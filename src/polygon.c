@@ -1,4 +1,4 @@
-/* $Id: polygon.c,v 1.60 2008-09-11 20:32:39 djdelorie Exp $ */
+/* $Id: polygon.c,v 1.61 2008-09-30 22:39:34 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -61,7 +61,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: polygon.c,v 1.60 2008-09-11 20:32:39 djdelorie Exp $");
+RCSID ("$Id: polygon.c,v 1.61 2008-09-30 22:39:34 petercjclifton Exp $");
 
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
@@ -647,7 +647,8 @@ SubtractText (TextType * text, PolygonType * p)
 
   if (!TEST_FLAG (CLEARLINEFLAG, text))
     return 0;
-  if (!(np = RoundRect (b->X1, b->X2, b->Y1, b->Y2, PCB->Bloat)))
+  if (!(np = RoundRect (b->X1 + PCB->Bloat, b->X2 - PCB->Bloat,
+                        b->Y1 + PCB->Bloat, b->Y2 - PCB->Bloat, PCB->Bloat)))
     return -1;
   return Subtract (np, p, True);
 }
@@ -905,7 +906,7 @@ UnsubtractText (TextType * text, LayerType * l, PolygonType * p)
 
   if (!TEST_FLAG (CLEARLINEFLAG, text))
     return 0;
-  if (!(np = RoundRect (b->X1, b->X2, b->Y1, b->Y2, PCB->Bloat + 100)))
+  if (!(np = RoundRect (b->X1, b->X2, b->Y1, b->Y2, 100)))
     return -1;
   if (!Unsubtract (np, p))
     return 0;

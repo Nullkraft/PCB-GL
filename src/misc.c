@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.74 2008-09-30 22:37:26 petercjclifton Exp $ */
+/* $Id: misc.c,v 1.75 2008-09-30 22:39:34 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -78,7 +78,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: misc.c,v 1.74 2008-09-30 22:37:26 petercjclifton Exp $");
+RCSID ("$Id: misc.c,v 1.75 2008-09-30 22:39:34 petercjclifton Exp $");
 
 
 /*	forward declarations	*/
@@ -465,6 +465,14 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
       RotateBoxLowLevel (&Text->BoundingBox,
                          Text->X, Text->Y, Text->Direction);
     }
+
+  /* the bounding box covers the extent of influence
+   * so it must include the clearance values too
+   */
+  Text->BoundingBox.X1 -= PCB->Bloat;
+  Text->BoundingBox.Y1 -= PCB->Bloat;
+  Text->BoundingBox.X2 += PCB->Bloat;
+  Text->BoundingBox.Y2 += PCB->Bloat;
 }
 
 /* ---------------------------------------------------------------------------
