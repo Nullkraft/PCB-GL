@@ -351,6 +351,9 @@ LoadPCB (char *Filename)
   PCBTypePtr newPCB = CreateNewPCB (False);
   Boolean units_mm;
 
+  /* Hack, load the mapping file */
+  RefdesMapInit ();
+
   /* new data isn't added to the undo list */
   if (!ParsePCB (newPCB, Filename))
     {
