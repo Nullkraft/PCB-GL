@@ -1,7 +1,7 @@
-Bottom: 933efac75b2970b378a9362565c1c9539ee70d35
-Top:    4b6adce26ba8f646a5c258134794671aa8803aba
+Bottom: a5108382f0ce5e38577dc3776c08068858d5d0f3
+Top:    c975f671f68c473264495feba7488359f3a3133a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-09-30 22:45:36 +0100
+Date:   2008-09-30 23:31:58 +0100
 
 Ensure "Gathering" mode is set after painting the screen.
 
@@ -11,6 +11,7 @@ Draw() call then calls the HID to invalidate the bounds gathered.
 
 Setting "Gathering = True" after an expose event callback ensures
 subsequent drawing is batched up for the next screen update.
+
 
 
 ---
