@@ -1,5 +1,5 @@
 Bottom: 4b6adce26ba8f646a5c258134794671aa8803aba
-Top:    f7d8f225ae41ce41ac640edda9eea2ae4afc609d
+Top:    94ac9194d21b2a3a8ea6b3ab15468b3c8632302a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-09-30 22:52:44 +0100
 
@@ -16,6 +16,25 @@ be filed in.
 
 ---
 
+diff --git a/src/misc.c b/src/misc.c
+index 2153a1a..df34363 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -465,6 +465,14 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
+       RotateBoxLowLevel (&Text->BoundingBox,
+                          Text->X, Text->Y, Text->Direction);
+     }
++
++  /* the bounding box covers the extent of influence
++   * so it must include the clearance values too
++   */
++  Text->BoundingBox.X1 -= PCB->Bloat;
++  Text->BoundingBox.Y1 -= PCB->Bloat;
++  Text->BoundingBox.X2 += PCB->Bloat;
++  Text->BoundingBox.Y2 += PCB->Bloat;
+ }
+ 
+ /* ---------------------------------------------------------------------------
 diff --git a/src/polygon.c b/src/polygon.c
 index 50912b2..d67b918 100644
 --- a/src/polygon.c
