@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.87 2007-12-10 03:29:55 bjj Exp $ */
+/* $Id: draw.c,v 1.88 2008-09-30 22:38:17 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.87 2007-12-10 03:29:55 bjj Exp $");
+RCSID ("$Id: draw.c,v 1.88 2008-09-30 22:38:17 petercjclifton Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -1475,6 +1475,16 @@ DrawPadLowLevel (hidGC gc, PadTypePtr Pad, Boolean clear, Boolean mask)
                       Pad->Point1.X, Pad->Point1.Y,
                       Pad->Point2.X, Pad->Point2.Y);
     }
+#if 0
+  { /* Draw bounding box for test */
+    BoxType *box = &Pad->BoundingBox;
+    gui->set_line_width (gc, 1);
+    gui->draw_line (gc, box->X1, box->Y1, box->X1, box->Y2);
+    gui->draw_line (gc, box->X1, box->Y2, box->X2, box->Y2);
+    gui->draw_line (gc, box->X2, box->Y2, box->X2, box->Y1);
+    gui->draw_line (gc, box->X2, box->Y1, box->X1, box->Y1);
+  }
+#endif
 }
 
 /* ---------------------------------------------------------------------------
