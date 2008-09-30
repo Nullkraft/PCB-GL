@@ -1,4 +1,4 @@
-/* $Id: gui-library-window.c,v 1.5 2008-01-10 05:35:21 petercjclifton Exp $ */
+/* $Id: gui-library-window.c,v 1.6 2008-09-30 22:36:26 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -67,7 +67,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-library-window.c,v 1.5 2008-01-10 05:35:21 petercjclifton Exp $");
+RCSID ("$Id: gui-library-window.c,v 1.6 2008-09-30 22:36:26 petercjclifton Exp $");
 
 static GtkWidget *library_window;
 
@@ -262,6 +262,38 @@ lib_model_filter_visible_func (GtkTreeModel * model,
     }
 
   return ret;
+}
+
+
+/*! \brief Handles activation (e.g. double-clicking) of a component row
+ *  \par Function Description
+ *  Component row activated handler:
+ *  As a convenince to the user, expand / contract any node with children.
+ *
+ *  \param [in] tree_view The component treeview.
+ *  \param [in] path      The GtkTreePath to the activated row.
+ *  \param [in] column    The GtkTreeViewColumn in which the activation occurre
+ *  \param [in] user_data The component selection dialog.
+ */
+static void
+tree_row_activated (GtkTreeView       *tree_view,
+                    GtkTreePath       *path,
+                    GtkTreeViewColumn *column,
+                    gpointer           user_data)
+{
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+
+  model = gtk_tree_view_get_model (tree_view);
+  gtk_tree_model_get_iter (model, &iter, path);
+
+  if (!gtk_tree_model_iter_has_child (model, &iter))
+    return;
+
+  if (gtk_tree_view_row_expanded (tree_view, path))
+    gtk_tree_view_collapse_row (tree_view, path);
+  else
+    gtk_tree_view_expand_row (tree_view, path, FALSE);
 }
 
 
@@ -560,6 +592,12 @@ create_lib_treeview (GhidLibraryWindow * library_window)
 					  "model", model,
 					  "rules-hint", TRUE,
 					  "headers-visible", FALSE, NULL));
+
+  g_signal_connect (libtreeview,
+                    "row-activated",
+                    G_CALLBACK (tree_row_activated),
+                    NULL);
+
   /* connect callback to selection */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (libtreeview));
   gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
