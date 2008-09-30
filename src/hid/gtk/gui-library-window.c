@@ -596,7 +596,7 @@ create_lib_treeview (GhidLibraryWindow * library_window)
   g_signal_connect (libtreeview,
                     "row-activated",
                     G_CALLBACK (tree_row_activated),
-                    compselect);
+                    NULL);
 
   /* connect callback to selection */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (libtreeview));
