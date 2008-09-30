@@ -1,0 +1,23 @@
+Bottom: 9c4b4f44aa55a7dce69459ea945cbc67ee125aff
+Top:    2bfc16d7f034fb79a94919033bf60a9518f2a780
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-09-30 23:17:39 +0100
+
+Refresh of fix_text_bounds
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 70adef3..a7f4636 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -647,7 +647,8 @@ SubtractText (TextType * text, PolygonType * p)
+ 
+   if (!TEST_FLAG (CLEARLINEFLAG, text))
+     return 0;
+-  if (!(np = RoundRect (b->X1, b->X2, b->Y1, b->Y2, PCB->Bloat)))
++  if (!(np = RoundRect (b->X1 + PCB->Bloat, b->X2 - PCB->Bloat,
++                        b->Y1 + PCB->Bloat, b->Y2 - PCB->Bloat, PCB->Bloat)))
+     return -1;
+   return Subtract (np, p, True);
+ }
