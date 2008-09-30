@@ -1,0 +1,29 @@
+Bottom: 8aa807451bb5ebdb5430f04ac877aee91ba0d96a
+Top:    36f7dd8eac4775cafe95f1141884a0bc18e5d9aa
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-09-30 19:54:37 +0100
+
+Refresh of draw-pad-bounding-box-to-check
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index f710567..b09af83 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1523,6 +1523,15 @@ DrawPadLowLevel (hidGC gc, PadTypePtr Pad, Boolean clear, Boolean mask)
+                       Pad->Point1.X, Pad->Point1.Y,
+                       Pad->Point2.X, Pad->Point2.Y);
+     }
++  /* Draw bounding box for test */
++  {
++    BoxType *box = &Pad->BoundingBox;
++    gui->set_line_width (gc, 1);
++    gui->draw_line (gc, box->X1, box->Y1, box->X1, box->Y2);
++    gui->draw_line (gc, box->X1, box->Y2, box->X2, box->Y2);
++    gui->draw_line (gc, box->X2, box->Y2, box->X2, box->Y1);
++    gui->draw_line (gc, box->X2, box->Y1, box->X1, box->Y1);
++  }
+ }
+ 
+ /* ---------------------------------------------------------------------------
