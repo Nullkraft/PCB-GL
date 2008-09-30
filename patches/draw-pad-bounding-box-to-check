@@ -1,7 +1,7 @@
-Bottom: 8aa807451bb5ebdb5430f04ac877aee91ba0d96a
-Top:    9b1dafcb79431e0d4a5e4b7c0df3c9b42b6a6a61
+Bottom: 9cd6e354ee1a78b6fb489dd2fa6efb86074a70da
+Top:    933efac75b2970b378a9362565c1c9539ee70d35
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-09-30 22:44:51 +0100
+Date:   2008-09-30 22:45:02 +0100
 
 Add debugging code to visually check a pad's bounding box
 
@@ -13,10 +13,10 @@ Disabled with #if 0 block.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index f710567..38daf9a 100644
+index c1d2784..96ab0b8 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -1523,6 +1523,16 @@ DrawPadLowLevel (hidGC gc, PadTypePtr Pad, Boolean clear, Boolean mask)
+@@ -1475,6 +1475,16 @@ DrawPadLowLevel (hidGC gc, PadTypePtr Pad, Boolean clear, Boolean mask)
                        Pad->Point1.X, Pad->Point1.Y,
                        Pad->Point2.X, Pad->Point2.Y);
      }
