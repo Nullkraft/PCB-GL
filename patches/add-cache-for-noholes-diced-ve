@@ -1,7 +1,7 @@
-Bottom: b30bd7296321e5f2176e8acf48fde2be6f026931
-Top:    a8503101d4ed4b9e2eaca67384dcd930f22cfb26
+Bottom: 90d30b54147e52caf317298a21836c8d15dbaf65
+Top:    6f0598d6a8329d17ff114af51cf8beeee0b32237
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-09-30 22:44:46 +0100
+Date:   2008-09-30 22:45:15 +0100
 
 Add cache for "noholes", diced versions of polygons
 
@@ -23,10 +23,10 @@ index 37e952f..70715bc 100644
  }
  
 diff --git a/src/draw.c b/src/draw.c
-index c1d2784..f87b09c 100644
+index 96ab0b8..f93412b 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2113,8 +2113,16 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2123,8 +2123,16 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
        if (!Gathering)
  	PolygonHoles (clip_box, Layer, Polygon, thin_callback);
      }
@@ -45,7 +45,7 @@ index c1d2784..f87b09c 100644
        NoHolesPolygonDicer (Polygon, DrawPolygonLowLevel, clip_box);
        /* draw other parts of the polygon if fullpoly flag is set */
        if (TEST_FLAG (FULLPOLYFLAG, Polygon))
-@@ -2127,6 +2135,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2137,6 +2145,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  	      NoHolesPolygonDicer (&poly, DrawPolygonLowLevel, clip_box);
  	    }
  	}
@@ -53,7 +53,7 @@ index c1d2784..f87b09c 100644
      }
    /* if the gui has the dicer flag set then it won't draw missing poly outlines */
    if (TEST_FLAG (CHECKPLANESFLAG, PCB) && Polygon->Clipped && !Gathering
-@@ -2149,10 +2158,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2159,10 +2168,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  	    }
  	  gui->set_line_width (Output.fgGC, 1);
  	  for (i = 0; i < n - 1; i++)
@@ -65,7 +65,7 @@ index c1d2784..f87b09c 100644
  	  gui->draw_line (Output.fgGC, x[n - 1], y[n - 1], x[0], y[0]);
  	  free (x);
  	  free (y);
-@@ -2160,6 +2166,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2170,6 +2176,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
      }
  }
  
