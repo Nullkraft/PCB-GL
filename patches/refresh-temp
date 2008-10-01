@@ -1,0 +1,27 @@
+Bottom: f0c0f12a4410847cd8fbf2d45d4c7c51835c8c75
+Top:    b875a3c98cd31de0c7e98d4402ec0421a7d08382
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-01 23:25:59 +0100
+
+Refresh of remove-shortcut-to-the-djopt-t
+
+---
+
+diff --git a/src/gpcb-menu.res b/src/gpcb-menu.res
+index b09d948..93b6073 100644
+--- a/src/gpcb-menu.res
++++ b/src/gpcb-menu.res
+@@ -310,13 +310,11 @@ MainMenu =
+    {"Rip up all auto-routed tracks" RipUp(All)}
+    -
+    {"Optimize routed tracks"
+-    {"Auto-Optimize" djopt(auto)  a={"Shift-=" "Shift<Key>="}}
+     {"Debumpify" djopt(debumpify) }
+     {"Unjaggy" djopt(unjaggy) }
+     {"Vianudge" djopt(vianudge) }
+     {"Viatrim" djopt(viatrim) }
+     {"Ortho pull" djopt(orthopull) }
+-    {"Simple optimization" djopt(simple)  a={"=" "<Key>="}}
+     {"Miter" djopt(miter) }
+     {"Puller" a={"Y" "<Key>y"} Puller() }
+     {"Global Puller"
