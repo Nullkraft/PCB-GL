@@ -176,7 +176,7 @@ static void
 add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
 {
   PolygonType *poly = user_data;
-  PLINE *pline;//, last;
+  PLINE *pline;
   POLYAREA *new_area;
 
   new_area = malloc (sizeof (POLYAREA) * 1);
@@ -211,7 +211,6 @@ compute_noholes (PolygonType *poly)
   if (poly->NoHoles)
     {
       poly_Free (&poly->NoHoles);
-//      printf ("Just leaked in compute_noholes\n");
     }
   poly->NoHoles = NULL;
   if (poly->Clipped)
@@ -239,7 +238,6 @@ ClipOriginal (PolygonType * poly)
     }
   poly->Clipped = biggest (result);
   assert (!poly->Clipped || poly_Valid (poly->Clipped));
-//  compute_noholes (poly);
   return 1;
 }
 
@@ -615,7 +613,6 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
     }
   p->Clipped = biggest (merged);
   assert (!p->Clipped || poly_Valid (p->Clipped));
-//  compute_noholes (p);
   if (!p->Clipped)
     Message ("Polygon cleared out of existence near (%d, %d)\n",
              (p->BoundingBox.X1 + p->BoundingBox.X2) / 2,
@@ -912,7 +909,6 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
     }
   p->Clipped = biggest (merged);
   assert (!p->Clipped || poly_Valid (p->Clipped));
-//  compute_noholes (p);
   return ClipOriginal (p);
 }
 
@@ -1018,7 +1014,6 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
   if (p->NoHoles)
     {
       poly_Free (&p->NoHoles);
-//      printf ("Just leaked in InitClip\n");
     }
   p->NoHoles = NULL;
   if (!p->Clipped)
@@ -1502,7 +1497,6 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *u
   pa->b = pa->f = pa;
   pa->contours = p;
   if (!p->next)                 /* no holes */
-//  if (1)
     {
       PolygonType poly;
       PointType pts[4];
@@ -1655,7 +1649,6 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
           new->Clipped = p;
           p = p->f;             /* go to next pline */
           new->Clipped->b = new->Clipped->f = new->Clipped;     /* unlink from others */
-//          compute_noholes (new);
           r_insert_entry (layer->polygon_tree, (BoxType *) new, 0);
           DrawPolygon (layer, new, 0);
         }
