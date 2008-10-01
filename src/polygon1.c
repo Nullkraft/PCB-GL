@@ -2106,6 +2106,12 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
       poly_InclVertex ((*dst)->head.prev, newnode);
     }
   (*dst)->tree = make_edge_tree (*dst);
+
+  {
+    static int count = 0;
+    count ++;
+//    printf ("Counting poly_CopyContour %i\n", count);
+  }
   return TRUE;
 }
 
