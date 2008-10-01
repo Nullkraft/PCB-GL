@@ -77,6 +77,53 @@ static double circleVerticies[] = {
   0.98480775301221, 0.17364817766693,
 };
 
+static void
+add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
+{
+  PolygonType *poly = user_data;
+  PLINE *pline;//, last;
+  POLYAREA *new_area;
+
+  new_area = malloc (sizeof (POLYAREA) * 1);
+
+  /* Allocate a new PLINE, COPY the PLINE from the passed polygon */
+  poly_CopyContour (&pline, noholes_poly->Clipped->contours);
+  new_area->contours = pline;
+
+  /* Link the new POLYAREA into the NoHoles circularaly linked list */
+
+  if (poly->NoHoles)
+    {
+      new_area->f = poly->NoHoles;
+      new_area->b = poly->NoHoles->b;
+      poly->NoHoles->b->f = new_area;
+      poly->NoHoles->b = new_area;
+    }
+  else
+    {
+      new_area->f = new_area;
+      new_area->b = new_area;
+    }
+
+  poly->NoHoles = new_area;
+
+}
+
+void
+ComputeNoHoles (PolygonType *poly)
+{
+  /* TODO: IS THIS RIGHT? */
+  if (poly->NoHoles)
+    {
+      poly_Free (&poly->NoHoles);
+    }
+  poly->NoHoles = NULL;
+  if (poly->Clipped)
+    NoHolesPolygonDicer (poly, add_noholes_polyarea, poly, NULL);
+  else
+    printf ("Compute_noholes caught poly->Clipped = NULL\n");
+  poly->NoHolesValid = 1;
+}
 
 static POLYAREA *
 biggest (POLYAREA * p)
@@ -170,53 +217,6 @@ original_poly (PolygonType * p)
   poly_InclContour (np, contour);
   assert (poly_Valid (np));
   return biggest (np);
-}
-
-static void
-add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
-{
-  PolygonType *poly = user_data;
-  PLINE *pline;
-  POLYAREA *new_area;
-
-  new_area = malloc (sizeof (POLYAREA) * 1);
-
-  /* Allocate a new PLINE, COPY the PLINE from the passed polygon */
-  poly_CopyContour (&pline, noholes_poly->Clipped->contours);
-  new_area->contours = pline;
-
-  /* Link the new POLYAREA into the NoHoles circularaly linked list */
-
-  if (poly->NoHoles)
-    {
-      new_area->f = poly->NoHoles;
-      new_area->b = poly->NoHoles->b;
-      poly->NoHoles->b->f = new_area;
-      poly->NoHoles->b = new_area;
-    }
-  else
-    {
-      new_area->f = new_area;
-      new_area->b = new_area;
-    }
-
-  poly->NoHoles = new_area;
-
-}
-
-static void
-compute_noholes (PolygonType *poly)
-{
-  /* TODO: IS THIS RIGHT? */
-  if (poly->NoHoles)
-    {
-      poly_Free (&poly->NoHoles);
-    }
-  poly->NoHoles = NULL;
-  if (poly->Clipped)
-    NoHolesPolygonDicer (poly, add_noholes_polyarea, poly, NULL);
-  else
-    printf ("Compute_noholes caught poly->Clipped = NULL\n");
 }
 
 static int
@@ -886,7 +886,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
       if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
 	r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
     }
-  compute_noholes (polygon);
+  polygon->NoHolesValid = 0;
   return r;
 }
 
@@ -1022,7 +1022,7 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
   if (TEST_FLAG (CLEARPOLYFLAG, p))
     clearPoly (Data, layer, p, NULL, 0);
   else
-    compute_noholes (p);
+    p->NoHolesValid = 0;
   return 1;
 }
 
@@ -1276,23 +1276,23 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
     case PIN_TYPE:
     case VIA_TYPE:
       SubtractPin (Data, (PinTypePtr) ptr2, Layer, Polygon);
-      compute_noholes (Polygon);
+      Polygon->NoHolesValid = 0;
       return 1;
     case LINE_TYPE:
       SubtractLine ((LineTypePtr) ptr2, Polygon);
-      compute_noholes (Polygon);
+      Polygon->NoHolesValid = 0;
       return 1;
     case ARC_TYPE:
       SubtractArc ((ArcTypePtr) ptr2, Polygon);
-      compute_noholes (Polygon);
+      Polygon->NoHolesValid = 0;
       return 1;
     case PAD_TYPE:
       SubtractPad ((PadTypePtr) ptr2, Polygon);
-      compute_noholes (Polygon);
+      Polygon->NoHolesValid = 0;
       return 1;
     case TEXT_TYPE:
       SubtractText ((TextTypePtr) ptr2, Polygon);
-      compute_noholes (Polygon);
+      Polygon->NoHolesValid = 0;
       return 1;
     }
   return 0;
