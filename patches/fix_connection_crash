@@ -1,0 +1,15 @@
+Bottom: 280bc557cae344fe051542f3a0f57662066717ff
+Top:    280bc557cae344fe051542f3a0f57662066717ff
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-01 04:11:13 +0100
+
+GTK HID: Fix crash when highlighting connectivity caused by net tree.
+
+Seems I caused a crash in the connectivity highlighting code which
+assumes the net model of in the netlist window is a list. Adapted
+the code to hunt out the right net / node with a tree model.
+
+
+---
+
+
