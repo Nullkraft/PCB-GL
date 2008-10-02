@@ -938,6 +938,26 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
         }
     }
 
+  if (TEST_FLAG (SNAPPINFLAG, PCB))
+    ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
+                                POLYGONPOINT_TYPE, &ptr1, &ptr2, &ptr3);
+  else
+    ans = NO_TYPE;
+
+  if (ans)
+    {
+      PointTypePtr pnt = (PointTypePtr) ptr3;
+      sq_dist = SQUARE (pnt->X - Crosshair.X) + SQUARE (pnt->Y - Crosshair.Y);
+      if ((nearest == -1 || sq_dist < nearest) &&
+          (!gui->shift_is_pressed() ||
+           SQUARE (x0 - Crosshair.X) + SQUARE (y0 - Crosshair.Y) > sq_dist))
+        {
+          x0 = pnt->X;
+          y0 = pnt->Y;
+          nearest = sq_dist;
+        }
+    }
+
 
   if (PCB->RatDraw || TEST_FLAG (SNAPPINFLAG, PCB))
     ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
