@@ -1,0 +1,47 @@
+Bottom: 3c3484855ca1f046a84583dd349ab20638ff401e
+Top:    5d05a8a0c003e73c429d7cd493565a0f6a140a3c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-02 18:06:10 +0100
+
+Refresh of improve-grid-snapping-heuristi
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index a922d63..9003be7 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -892,7 +892,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+ 
+   if (TEST_FLAG (SNAPPINFLAG, PCB))
+     ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
+-                                VIA_TYPE | LINEPOINT_TYPE, &ptr1, &ptr2, &ptr3);
++                                VIA_TYPE, &ptr1, &ptr2, &ptr3);
+   else
+     ans = NO_TYPE;
+ 
+@@ -904,7 +904,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+           ans = NO_TYPE;
+     }
+ 
+-  if (ans & VIA_TYPE)
++  if (ans)
+     {
+       PinTypePtr pin = (PinTypePtr) ptr2;
+       sq_dist = SQUARE (pin->X - Crosshair.X) + SQUARE (pin->Y - Crosshair.Y);
+@@ -917,7 +917,14 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+           nearest = sq_dist;
+         }
+     }
+-  else if (ans & LINEPOINT_TYPE)
++
++  if (TEST_FLAG (SNAPPINFLAG, PCB))
++    ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
++                                LINEPOINT_TYPE, &ptr1, &ptr2, &ptr3);
++  else
++    ans = NO_TYPE;
++
++  if (ans)
+     {
+       PointTypePtr pnt = (PointTypePtr) ptr3;
+       sq_dist = SQUARE (pnt->X - Crosshair.X) + SQUARE (pnt->Y - Crosshair.Y);
