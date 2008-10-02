@@ -1,5 +1,5 @@
 Bottom: 593e4ae36deb0ebace0ea80f92360ff1a6ea8413
-Top:    b4e4c7c2b7ccb8301d75d32311d57ff70f0305cb
+Top:    15a72b3511c6740442392fee4526e852e22d0d72
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-01 04:14:46 +0100
 
@@ -11,41 +11,48 @@ Add cache for "noholes", diced versions of polygons
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 37e952f..70715bc 100644
+index 37e952f..d8aaca6 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -600,6 +600,7 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
+@@ -600,6 +600,8 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
    polygon->Flags = Flags;
    polygon->ID = ID++;
    polygon->Clipped = NULL;
 +  polygon->NoHoles = NULL;
++  polygon->NoHolesValid = 0;
    return (polygon);
  }
  
 diff --git a/src/draw.c b/src/draw.c
-index 50e6fef..2403c62 100644
+index 50e6fef..d5396e8 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2123,8 +2123,16 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2123,8 +2123,23 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
        if (!Gathering)
  	PolygonHoles (clip_box, Layer, Polygon, thin_callback);
      }
 -  else if (Polygon->Clipped)
--    {
-+  else if (Polygon->NoHoles)//(Polygon->Clipped)
-+    {
-+      PolygonType poly;
-+      poly.Clipped = Polygon->NoHoles;
-+      do {
-+        DrawPolygonLowLevel (&poly);
-+//        printf ("Drawing no-holes portion of polygon\n");
-+        poly.Clipped = poly.Clipped->f;
-+      } while (poly.Clipped != Polygon->NoHoles);
++  else //if (Polygon->NoHoles)//(Polygon->Clipped)
+     {
++      if (!Polygon->NoHolesValid)
++        {
++          ComputeNoHoles (Polygon);
++        }
++
++      if (Polygon->NoHoles)
++        {
++          PolygonType poly;
++          poly.Clipped = Polygon->NoHoles;
++          do {
++            DrawPolygonLowLevel (&poly);
++            poly.Clipped = poly.Clipped->f;
++          } while (poly.Clipped != Polygon->NoHoles);
++        }
 +#if 0
        NoHolesPolygonDicer (Polygon, DrawPolygonLowLevel, clip_box);
        /* draw other parts of the polygon if fullpoly flag is set */
        if (TEST_FLAG (FULLPOLYFLAG, Polygon))
-@@ -2137,6 +2145,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2137,6 +2152,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  	      NoHolesPolygonDicer (&poly, DrawPolygonLowLevel, clip_box);
  	    }
  	}
@@ -53,7 +60,7 @@ index 50e6fef..2403c62 100644
      }
    /* if the gui has the dicer flag set then it won't draw missing poly outlines */
    if (TEST_FLAG (CHECKPLANESFLAG, PCB) && Polygon->Clipped && !Gathering
-@@ -2159,10 +2168,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2159,10 +2175,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  	    }
  	  gui->set_line_width (Output.fgGC, 1);
  	  for (i = 0; i < n - 1; i++)
@@ -65,7 +72,7 @@ index 50e6fef..2403c62 100644
  	  gui->draw_line (Output.fgGC, x[n - 1], y[n - 1], x[0], y[0]);
  	  free (x);
  	  free (y);
-@@ -2170,6 +2176,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2170,6 +2183,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
      }
  }
  
@@ -74,14 +81,15 @@ index 50e6fef..2403c62 100644
   * draws an element
   */
 diff --git a/src/global.h b/src/global.h
-index cc39bbc..9438dd9 100644
+index cc39bbc..7763c80 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -204,6 +204,7 @@ typedef struct			/* holds information about a polygon */
+@@ -204,6 +204,8 @@ typedef struct			/* holds information about a polygon */
    Cardinal PointN,		/* number of points in polygon */
      PointMax;			/* max number from malloc() */
    POLYAREA *Clipped;		/* the clipped region of this polygon */
 +  POLYAREA *NoHoles;		/* the polygon broken into hole-less regions */
++  int NoHolesValid;		/* Is the NoHoles polygon up to date? */
    PointTypePtr Points;		/* data */
  } PolygonType, *PolygonTypePtr;
  
@@ -99,27 +107,18 @@ index 57eca2d..ffa4dad 100644
      }
  }
 diff --git a/src/polygon.c b/src/polygon.c
-index 3086be6..f27faed 100644
+index 3086be6..ecf11f4 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -111,7 +111,7 @@ biggest (POLYAREA * p)
-           big = n->contours->area;
-         }
-     }
--  while ((n = n->f) != p);
-+  while ((n = n->f) != p); /* TODO: Decipher this line ... is it pointless? Is it just "n=p"? */
-   assert (top);
-   if (top == p)
-     return p;
-@@ -172,6 +172,53 @@ original_poly (PolygonType * p)
-   return biggest (np);
- }
+@@ -77,6 +77,53 @@ static double circleVerticies[] = {
+   0.98480775301221, 0.17364817766693,
+ };
  
 +static void
 +add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
 +{
 +  PolygonType *poly = user_data;
-+  PLINE *pline;
++  PLINE *pline;//, last;
 +  POLYAREA *new_area;
 +
 +  new_area = malloc (sizeof (POLYAREA) * 1);
@@ -147,8 +146,8 @@ index 3086be6..f27faed 100644
 +
 +}
 +
-+static void
-+compute_noholes (PolygonType *poly)
++void
++ComputeNoHoles (PolygonType *poly)
 +{
 +  /* TODO: IS THIS RIGHT? */
 +  if (poly->NoHoles)
@@ -160,11 +159,20 @@ index 3086be6..f27faed 100644
 +    NoHolesPolygonDicer (poly, add_noholes_polyarea, poly, NULL);
 +  else
 +    printf ("Compute_noholes caught poly->Clipped = NULL\n");
++  poly->NoHolesValid = 1;
 +}
-+
- static int
- ClipOriginal (PolygonType * poly)
- {
+ 
+ static POLYAREA *
+ biggest (POLYAREA * p)
+@@ -111,7 +158,7 @@ biggest (POLYAREA * p)
+           big = n->contours->area;
+         }
+     }
+-  while ((n = n->f) != p);
++  while ((n = n->f) != p); /* TODO: Decipher this line ... is it pointless? Is it just "n=p"? */
+   assert (top);
+   if (top == p)
+     return p;
 @@ -185,6 +232,8 @@ ClipOriginal (PolygonType * poly)
        fprintf (stderr, "Error while clipping PBO_ISECT: %d\n", r);
        poly_Free (&result);
@@ -187,7 +195,7 @@ index 3086be6..f27faed 100644
        if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
  	r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
      }
-+  compute_noholes (polygon);
++  polygon->NoHolesValid = 0;
    return r;
  }
  
@@ -215,7 +223,7 @@ index 3086be6..f27faed 100644
    if (TEST_FLAG (CLEARPOLYFLAG, p))
      clearPoly (Data, layer, p, NULL, 0);
 +  else
-+    compute_noholes (p);
++    p->NoHolesValid = 0;
    return 1;
  }
  
@@ -223,23 +231,23 @@ index 3086be6..f27faed 100644
      case PIN_TYPE:
      case VIA_TYPE:
        SubtractPin (Data, (PinTypePtr) ptr2, Layer, Polygon);
-+      compute_noholes (Polygon);
++      Polygon->NoHolesValid = 0;
        return 1;
      case LINE_TYPE:
        SubtractLine ((LineTypePtr) ptr2, Polygon);
-+      compute_noholes (Polygon);
++      Polygon->NoHolesValid = 0;
        return 1;
      case ARC_TYPE:
        SubtractArc ((ArcTypePtr) ptr2, Polygon);
-+      compute_noholes (Polygon);
++      Polygon->NoHolesValid = 0;
        return 1;
      case PAD_TYPE:
        SubtractPad ((PadTypePtr) ptr2, Polygon);
-+      compute_noholes (Polygon);
++      Polygon->NoHolesValid = 0;
        return 1;
      case TEXT_TYPE:
        SubtractText ((TextTypePtr) ptr2, Polygon);
-+      compute_noholes (Polygon);
++      Polygon->NoHolesValid = 0;
        return 1;
      }
    return 0;
@@ -317,10 +325,18 @@ index 3086be6..f27faed 100644
    RemovePolygon (layer, poly);
    inhibit = True;
 diff --git a/src/polygon.h b/src/polygon.h
-index 721ba95..bccc7b0 100644
+index 721ba95..2c78e94 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
-@@ -61,5 +61,5 @@ Boolean IsRectangleInPolygon (LocationType, LocationType, LocationType,
+@@ -43,6 +43,7 @@ int PolygonHoles (const BoxType * range, LayerTypePtr, PolygonTypePtr,
+ 		  int (*callback) (PLINE *, LayerTypePtr, PolygonTypePtr));
+ int PlowsPolygon (DataType *, int, void *, void *,
+ 		  int (*callback) (DataTypePtr, LayerTypePtr, PolygonTypePtr, int, void *, void *));
++void ComputeNoHoles (PolygonType *poly);
+ POLYAREA * ContourToPoly (PLINE *);
+ POLYAREA * RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2);
+ POLYAREA * CirclePoly(LocationType x, LocationType y, BDimension radius);
+@@ -61,5 +62,5 @@ Boolean IsRectangleInPolygon (LocationType, LocationType, LocationType,
  			      LocationType, PolygonTypePtr);
  Boolean isects (POLYAREA *, PolygonTypePtr, Boolean);
  Boolean MorphPolygon (LayerTypePtr, PolygonTypePtr);
