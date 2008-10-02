@@ -1749,7 +1749,6 @@ ChangeSelectedJoin (int types)
   change = SelectedOperation (&ChangeJoinFunctions, False, types);
   if (change)
     {
-      printf ("Hello\n");
       Draw ();
       IncrementUndoSerialNumber ();
     }
