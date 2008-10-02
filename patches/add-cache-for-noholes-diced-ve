@@ -1,5 +1,5 @@
 Bottom: 6421409fd4f206fbbf9b7fa6cc0b27b100b069f9
-Top:    c1ade9e6d0deca37a327a1ab0a144efbd4dc4756
+Top:    5da455bcd16fe1296eddea31579ca0ebb3e3929c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-02 16:09:40 +0100
 
@@ -25,7 +25,7 @@ index 5df8ceb..bbfd52f 100644
  }
  
 diff --git a/src/draw.c b/src/draw.c
-index 0f08ea6..1a192b2 100644
+index 0f08ea6..5e96145 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -2173,8 +2173,21 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
@@ -51,6 +51,15 @@ index 0f08ea6..1a192b2 100644
        if (TEST_FLAG (FULLPOLYFLAG, Polygon))
  	{
  	  POLYAREA *pg;
+@@ -2182,7 +2195,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+ 	    {
+ 	      PolygonType poly;
+ 	      poly.Clipped = pg;
+-	      NoHolesPolygonDicer (&poly, DrawPolygonLowLevel, clip_box);
++	      NoHolesPolygonDicer (&poly, DrawPolygonLowLevel, NULL, clip_box);
+ 	    }
+ 	}
+     }
 diff --git a/src/global.h b/src/global.h
 index cc39bbc..7763c80 100644
 --- a/src/global.h
