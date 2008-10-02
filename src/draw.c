@@ -100,7 +100,7 @@ static void DrawPadLowLevel (hidGC, PadTypePtr, Boolean, Boolean);
 static void DrawPadNameLowLevel (PadTypePtr);
 static void DrawLineLowLevel (LineTypePtr, Boolean);
 static void DrawRegularText (LayerTypePtr, TextTypePtr, int);
-static void DrawPolygonLowLevel (PolygonTypePtr);
+static void DrawPolygonLowLevel (PolygonTypePtr, void *);
 static void DrawArcLowLevel (ArcTypePtr);
 static void DrawElementPackageLowLevel (ElementTypePtr Element, int);
 static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
@@ -1731,7 +1731,7 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
  * lowlevel drawing routine for polygons
  */
 static void
-DrawPolygonLowLevel (PolygonTypePtr Polygon)
+DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
 {
   int *x, *y, n, i = 0;
   PLINE *pl;
@@ -2110,7 +2110,7 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
   else
     gui->set_color (Output.fgGC, Layer->Color);
   layernum = GetLayerNumber (PCB->Data, Layer);
-  DrawPolygonLowLevel (Polygon);
+  DrawPolygonLowLevel (Polygon, NULL);
   if (TEST_FLAG (CLEARPOLYFLAG, Polygon))
     {
       r_search (PCB->Data->pin_tree, &Polygon->BoundingBox, NULL,
@@ -2167,7 +2167,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
   if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
       && !gui->poly_dicer)
     {
-      DrawPolygonLowLevel (Polygon);
+      DrawPolygonLowLevel (Polygon, NULL);
       if (!Gathering)
 	PolygonHoles (clip_box, Layer, Polygon, thin_callback);
     }
@@ -2182,7 +2182,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
           PolygonType poly = *Polygon;
           poly.Clipped = Polygon->NoHoles;
           do {
-            DrawPolygonLowLevel (&poly);
+            DrawPolygonLowLevel (&poly, NULL);
             poly.Clipped = poly.Clipped->f;
           } while (poly.Clipped != Polygon->NoHoles);
         }
@@ -2516,7 +2516,7 @@ ErasePolygon (PolygonTypePtr Polygon)
 {
   Erasing++;
   gui->set_color (Output.fgGC, Settings.BackgroundColor);
-  DrawPolygonLowLevel (Polygon);
+  DrawPolygonLowLevel (Polygon, NULL);
   Erasing--;
 }
 
