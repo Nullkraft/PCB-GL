@@ -2173,8 +2173,21 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
     }
   else if (Polygon->Clipped)
     {
-      NoHolesPolygonDicer (Polygon, DrawPolygonLowLevel, clip_box);
+      if (!Polygon->NoHolesValid)
+        {
+          ComputeNoHoles (Polygon);
+        }
+      if (Polygon->NoHoles)
+        {
+          PolygonType poly = *Polygon;
+          poly.Clipped = Polygon->NoHoles;
+          do {
+            DrawPolygonLowLevel (&poly);
+            poly.Clipped = poly.Clipped->f;
+          } while (poly.Clipped != Polygon->NoHoles);
+        }
       /* draw other parts of the polygon if fullpoly flag is set */
+      /* NB: No "NoHoles" cache for these */
       if (TEST_FLAG (FULLPOLYFLAG, Polygon))
 	{
 	  POLYAREA *pg;
