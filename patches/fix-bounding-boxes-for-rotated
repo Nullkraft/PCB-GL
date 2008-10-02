@@ -1,7 +1,7 @@
-Bottom: f83aa3230d621577f8cd17e8b7cedf8f0fe29939
-Top:    dde66ef51a5d9faae03beeb8f9c8ac449010daf7
+Bottom: 9418ef9fedfe2d2ebd24943e011b751ef0bacb89
+Top:    9418ef9fedfe2d2ebd24943e011b751ef0bacb89
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-09-30 23:49:05 +0100
+Date:   2008-10-02 16:07:30 +0100
 
 Fix bounding boxes for rotated square ended pads.
 
@@ -13,79 +13,4 @@ for pads, which computes the wrong result.
 
 ---
 
-diff --git a/src/misc.c b/src/misc.c
-index 65dfc04..2153a1a 100644
---- a/src/misc.c
-+++ b/src/misc.c
-@@ -173,16 +173,50 @@ void
- SetPadBoundingBox (PadTypePtr Pad)
- {
-   BDimension width;
-+  BDimension deltax;
-+  BDimension deltay;
- 
-   /* the bounding box covers the extent of influence
-    * so it must include the clearance values too
-    */
-   width = (Pad->Thickness + Pad->Clearance + 1) / 2;
-   width = MAX (width, (Pad->Mask + 1) / 2);
--  Pad->BoundingBox.X1 = MIN (Pad->Point1.X, Pad->Point2.X) - width;
--  Pad->BoundingBox.X2 = MAX (Pad->Point1.X, Pad->Point2.X) + width;
--  Pad->BoundingBox.Y1 = MIN (Pad->Point1.Y, Pad->Point2.Y) - width;
--  Pad->BoundingBox.Y2 = MAX (Pad->Point1.Y, Pad->Point2.Y) + width;
-+  deltax = Pad->Point2.X - Pad->Point1.X;
-+  deltay = Pad->Point2.Y - Pad->Point1.Y;
-+
-+  if (TEST_FLAG (SQUAREFLAG, Pad) && deltax != 0 && deltay != 0)
-+    {
-+      /* slanted square pad */
-+      float tx, ty, theta;
-+      BDimension btx, bty;
-+
-+      theta = atan2 (deltay, deltax);
-+
-+      /* T is a vector half a thickness long, in the direction of
-+          one of the corners.  */
-+      tx = width * cos (theta + M_PI/4) * sqrt(2.0);
-+      ty = width * sin (theta + M_PI/4) * sqrt(2.0);
-+
-+      /* cast back to this integer type */
-+      btx = tx;
-+      bty = ty;
-+
-+      Pad->BoundingBox.X1 = MIN (MIN (Pad->Point1.X - btx, Pad->Point1.X - bty),
-+                                 MIN (Pad->Point2.X + btx, Pad->Point2.X + bty));
-+      Pad->BoundingBox.X2 = MAX (MAX (Pad->Point1.X - btx, Pad->Point1.X - bty),
-+                                 MAX (Pad->Point2.X + btx, Pad->Point2.X + bty));
-+      Pad->BoundingBox.Y1 = MIN (MIN (Pad->Point1.Y + btx, Pad->Point1.Y - bty),
-+                                 MIN (Pad->Point2.Y - btx, Pad->Point2.Y + bty));
-+      Pad->BoundingBox.Y2 = MAX (MAX (Pad->Point1.Y + btx, Pad->Point1.Y - bty),
-+                                 MAX (Pad->Point2.Y - btx, Pad->Point2.Y + bty));
-+    }
-+  else
-+    {
-+      Pad->BoundingBox.X1 = MIN (Pad->Point1.X, Pad->Point2.X) - width;
-+      Pad->BoundingBox.X2 = MAX (Pad->Point1.X, Pad->Point2.X) + width;
-+      Pad->BoundingBox.Y1 = MIN (Pad->Point1.Y, Pad->Point2.Y) - width;
-+      Pad->BoundingBox.Y2 = MAX (Pad->Point1.Y, Pad->Point2.Y) + width;
-+    }
- }
- 
- /* ---------------------------------------------------------------------------
-diff --git a/src/move.h b/src/move.h
-index b6b7231..f060ff5 100644
---- a/src/move.h
-+++ b/src/move.h
-@@ -72,7 +72,11 @@
- 		SetLineBoundingBox ((l)); \
- 	}
- #define	MOVE_PAD_LOWLEVEL(p,dx,dy)	\
--	MOVE_LINE_LOWLEVEL((LineTypePtr)(p),(dx),(dy))
-+	{									\
-+		MOVE((p)->Point1.X,(p)->Point1.Y,(dx),(dy))			\
-+		MOVE((p)->Point2.X,(p)->Point2.Y,(dx),(dy))			\
-+		SetPadBoundingBox ((p)); \
-+	}
- #define	MOVE_TEXT_LOWLEVEL(t,dx,dy)								\
- 	{															\
- 		MOVE_BOX_LOWLEVEL(&((t)->BoundingBox),(dx),(dy));		\
+
