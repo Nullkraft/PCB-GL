@@ -1,0 +1,22 @@
+Bottom: c1ade9e6d0deca37a327a1ab0a144efbd4dc4756
+Top:    5da455bcd16fe1296eddea31579ca0ebb3e3929c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-02 16:45:07 +0100
+
+Refresh of add-cache-for-noholes-diced-ve
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 1a192b2..5e96145 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -2195,7 +2195,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+ 	    {
+ 	      PolygonType poly;
+ 	      poly.Clipped = pg;
+-	      NoHolesPolygonDicer (&poly, DrawPolygonLowLevel, clip_box);
++	      NoHolesPolygonDicer (&poly, DrawPolygonLowLevel, NULL, clip_box);
+ 	    }
+ 	}
+     }
