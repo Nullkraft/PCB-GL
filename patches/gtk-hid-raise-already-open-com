@@ -1,7 +1,7 @@
-Bottom: 2f40d922e9bfecfaf0cfeb588f3c77c9b4deed14
-Top:    a7f8cbe4a0c625153e7d2ce125d67e7e96527528
+Bottom: 9418ef9fedfe2d2ebd24943e011b751ef0bacb89
+Top:    a55beef151ff1afe46ddb45fb4beaae38f67b6d8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-02 18:07:10 +0100
+Date:   2008-10-02 18:32:34 +0100
 
 GTK HID: Raise already open command window to top with ":" key
 
@@ -9,13 +9,14 @@ Previously, ":" only opened the window, but would not raise it
 if already open.
 
 
+
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 6accef8..2f1a878 100644
+index 568d46e..09d8025 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -2113,7 +2113,7 @@ LibraryChanged (int argc, char **argv, int x, int y)
+@@ -1758,7 +1758,7 @@ LibraryChanged (int argc, char **argv, int x, int y)
  static int
  Command (int argc, char **argv, int x, int y)
  {
