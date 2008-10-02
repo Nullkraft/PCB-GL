@@ -1,7 +1,7 @@
-Bottom: 28c750282c121a5bb63a7d76023b91b29c37b064
-Top:    4dd4af0102889c58ef11a199ecde0aaa51ea7ac9
+Bottom: 9418ef9fedfe2d2ebd24943e011b751ef0bacb89
+Top:    9418ef9fedfe2d2ebd24943e011b751ef0bacb89
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-09-30 23:49:08 +0100
+Date:   2008-10-02 16:07:32 +0100
 
 Ensure "Gathering" mode is set after painting the screen.
 
@@ -16,14 +16,4 @@ subsequent drawing is batched up for the next screen update.
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index 96ab0b8..50e6fef 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -2596,4 +2596,6 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
-   Output.fgGC = savefg;
-   Output.bgGC = savebg;
-   Output.pmGC = savepm;
-+
-+  Gathering = True;
- }
+
