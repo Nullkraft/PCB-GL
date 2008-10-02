@@ -892,7 +892,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
 
   if (TEST_FLAG (SNAPPINFLAG, PCB))
     ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
-                                VIA_TYPE | LINEPOINT_TYPE, &ptr1, &ptr2, &ptr3);
+                                VIA_TYPE, &ptr1, &ptr2, &ptr3);
   else
     ans = NO_TYPE;
 
@@ -904,7 +904,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
           ans = NO_TYPE;
     }
 
-  if (ans & VIA_TYPE)
+  if (ans)
     {
       PinTypePtr pin = (PinTypePtr) ptr2;
       sq_dist = SQUARE (pin->X - Crosshair.X) + SQUARE (pin->Y - Crosshair.Y);
@@ -917,7 +917,14 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
           nearest = sq_dist;
         }
     }
-  else if (ans & LINEPOINT_TYPE)
+
+  if (TEST_FLAG (SNAPPINFLAG, PCB))
+    ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
+                                LINEPOINT_TYPE, &ptr1, &ptr2, &ptr3);
+  else
+    ans = NO_TYPE;
+
+  if (ans)
     {
       PointTypePtr pnt = (PointTypePtr) ptr3;
       sq_dist = SQUARE (pnt->X - Crosshair.X) + SQUARE (pnt->Y - Crosshair.Y);
