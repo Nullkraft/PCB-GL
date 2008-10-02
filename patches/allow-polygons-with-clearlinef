@@ -1,5 +1,5 @@
 Bottom: c1ade9e6d0deca37a327a1ab0a144efbd4dc4756
-Top:    93a8442b5d1434b3f2afc21e71210a42ff69d406
+Top:    b7f7c90d6559f232e9859c1fe10a1f4d424ea3bd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-02 16:36:21 +0100
 
@@ -33,7 +33,7 @@ index 8acbfce..a88d11f 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index 0599ee4..92ba535 100644
+index 0599ee4..e0ef99b 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -123,6 +123,9 @@ static void *ChangeTextJoin (LayerTypePtr, TextTypePtr);
@@ -141,14 +141,6 @@ index 0599ee4..92ba535 100644
   * changes the square flag of all pins on an element
   */
  static void *
-@@ -1699,6 +1749,7 @@ ChangeSelectedJoin (int types)
-   change = SelectedOperation (&ChangeJoinFunctions, False, types);
-   if (change)
-     {
-+      printf ("Hello\n");
-       Draw ();
-       IncrementUndoSerialNumber ();
-     }
 diff --git a/src/change.h b/src/change.h
 index 7f43fba..1be41aa 100644
 --- a/src/change.h
