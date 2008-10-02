@@ -81,7 +81,7 @@ static void
 add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
 {
   PolygonType *poly = user_data;
-  PLINE *pline;//, last;
+  PLINE *pline;
   POLYAREA *new_area;
 
   new_area = malloc (sizeof (POLYAREA) * 1);
@@ -91,7 +91,6 @@ add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
   new_area->contours = pline;
 
   /* Link the new POLYAREA into the NoHoles circularaly linked list */
-
   if (poly->NoHoles)
     {
       new_area->f = poly->NoHoles;
@@ -106,17 +105,13 @@ add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
     }
 
   poly->NoHoles = new_area;
-
 }
 
 void
 ComputeNoHoles (PolygonType *poly)
 {
-  /* TODO: IS THIS RIGHT? */
   if (poly->NoHoles)
-    {
-      poly_Free (&poly->NoHoles);
-    }
+    poly_Free (&poly->NoHoles);
   poly->NoHoles = NULL;
   if (poly->Clipped)
     NoHolesPolygonDicer (poly, add_noholes_polyarea, poly, NULL);
@@ -158,7 +153,7 @@ biggest (POLYAREA * p)
           big = n->contours->area;
         }
     }
-  while ((n = n->f) != p); /* TODO: Decipher this line ... is it pointless? Is it just "n=p"? */
+  while ((n = n->f) != p);
   assert (top);
   if (top == p)
     return p;
@@ -1012,9 +1007,7 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
     poly_Free (&p->Clipped);
   p->Clipped = original_poly (p);
   if (p->NoHoles)
-    {
-      poly_Free (&p->NoHoles);
-    }
+    poly_Free (&p->NoHoles);
   p->NoHoles = NULL;
   if (!p->Clipped)
     return 0;
