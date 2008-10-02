@@ -1,5 +1,5 @@
 Bottom: 96be31f76cc86e19e3d0bbe5775dbc2383b8da00
-Top:    3c3484855ca1f046a84583dd349ab20638ff401e
+Top:    5d05a8a0c003e73c429d7cd493565a0f6a140a3c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-02 16:09:35 +0100
 
@@ -11,7 +11,7 @@ Improve grid snapping heuristics
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 6578a87..a922d63 100644
+index 6578a87..9003be7 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -782,6 +782,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
@@ -64,7 +64,7 @@ index 6578a87..a922d63 100644
    if (PCB->RatDraw)
      {
        x0 = -600;
-@@ -875,82 +841,133 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+@@ -875,82 +841,140 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
  	}
  
      }
@@ -139,7 +139,7 @@ index 6578a87..a922d63 100644
 -	}
 +  if (TEST_FLAG (SNAPPINFLAG, PCB))
 +    ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
-+                                VIA_TYPE | LINEPOINT_TYPE, &ptr1, &ptr2, &ptr3);
++                                VIA_TYPE, &ptr1, &ptr2, &ptr3);
 +  else
 +    ans = NO_TYPE;
 +
@@ -152,7 +152,7 @@ index 6578a87..a922d63 100644
      }
  
 -  else if (ans & (PIN_TYPE | VIA_TYPE))
-+  if (ans & VIA_TYPE)
++  if (ans)
      {
        PinTypePtr pin = (PinTypePtr) ptr2;
 -      if (!gui->shift_is_pressed()
@@ -173,7 +173,15 @@ index 6578a87..a922d63 100644
 +          nearest = sq_dist;
 +        }
      }
-   else if (ans & LINEPOINT_TYPE)
+-  else if (ans & LINEPOINT_TYPE)
++
++  if (TEST_FLAG (SNAPPINFLAG, PCB))
++    ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
++                                LINEPOINT_TYPE, &ptr1, &ptr2, &ptr3);
++  else
++    ans = NO_TYPE;
++
++  if (ans)
      {
        PointTypePtr pnt = (PointTypePtr) ptr3;
 -      if (((x0 - Crosshair.X) * (x0 - Crosshair.X) +
