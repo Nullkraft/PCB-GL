@@ -1,7 +1,7 @@
-Bottom: dde66ef51a5d9faae03beeb8f9c8ac449010daf7
-Top:    28c750282c121a5bb63a7d76023b91b29c37b064
+Bottom: 9418ef9fedfe2d2ebd24943e011b751ef0bacb89
+Top:    9418ef9fedfe2d2ebd24943e011b751ef0bacb89
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-09-30 23:49:07 +0100
+Date:   2008-10-02 16:07:31 +0100
 
 Add debugging code to visually check a pad's bounding box
 
@@ -12,24 +12,4 @@ Disabled with #if 0 block.
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index c1d2784..96ab0b8 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -1475,6 +1475,16 @@ DrawPadLowLevel (hidGC gc, PadTypePtr Pad, Boolean clear, Boolean mask)
-                       Pad->Point1.X, Pad->Point1.Y,
-                       Pad->Point2.X, Pad->Point2.Y);
-     }
-+#if 0
-+  { /* Draw bounding box for test */
-+    BoxType *box = &Pad->BoundingBox;
-+    gui->set_line_width (gc, 1);
-+    gui->draw_line (gc, box->X1, box->Y1, box->X1, box->Y2);
-+    gui->draw_line (gc, box->X1, box->Y2, box->X2, box->Y2);
-+    gui->draw_line (gc, box->X2, box->Y2, box->X2, box->Y1);
-+    gui->draw_line (gc, box->X2, box->Y1, box->X1, box->Y1);
-+  }
-+#endif
- }
- 
- /* ---------------------------------------------------------------------------
+
