@@ -1,7 +1,7 @@
-Bottom: b7f7c90d6559f232e9859c1fe10a1f4d424ea3bd
-Top:    cc4ebe0896d906a2f14de404c719641a71744ed6
+Bottom: de28060ff450567195cf904da5639ad511d91c7a
+Top:    5634691a88a19120ba9dc0ad87a0e55b761812b6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-02 16:38:21 +0100
+Date:   2008-10-02 16:45:11 +0100
 
 Keep all pieces of a divided polygon.
 
@@ -11,7 +11,7 @@ Keep all pieces of a divided polygon.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 24ccfff..9df2740 100644
+index 519c8c9..2f1ec07 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -1733,7 +1733,8 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)

@@ -1,12 +1,13 @@
-Bottom: c1ade9e6d0deca37a327a1ab0a144efbd4dc4756
-Top:    b7f7c90d6559f232e9859c1fe10a1f4d424ea3bd
+Bottom: 5da455bcd16fe1296eddea31579ca0ebb3e3929c
+Top:    de28060ff450567195cf904da5639ad511d91c7a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-02 16:36:21 +0100
+Date:   2008-10-02 16:45:11 +0100
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
 Gives the possibility to mask out regions which are to be free of
 polygon fill.
+
 
 
 
@@ -155,7 +156,7 @@ index 7f43fba..1be41aa 100644
  #define CHANGETHERMAL_TYPES	\
  	(PIN_TYPE | VIA_TYPE)
 diff --git a/src/draw.c b/src/draw.c
-index 1a192b2..24ccfff 100644
+index 5e96145..519c8c9 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -1752,8 +1752,9 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
