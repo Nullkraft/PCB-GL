@@ -1,7 +1,7 @@
-Bottom: 3afad5cda665a12a94d040f09bc595021f41825a
-Top:    53337333b3835e9c63ccd6322770c45c66af4068
+Bottom: b7f7c90d6559f232e9859c1fe10a1f4d424ea3bd
+Top:    cc4ebe0896d906a2f14de404c719641a71744ed6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-02 16:09:44 +0100
+Date:   2008-10-02 16:38:21 +0100
 
 Keep all pieces of a divided polygon.
 
@@ -11,7 +11,7 @@ Keep all pieces of a divided polygon.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index e0b9660..549d623 100644
+index 24ccfff..9df2740 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -1733,7 +1733,8 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
@@ -85,7 +85,7 @@ index e0b9660..549d623 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -2183,10 +2190,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2182,10 +2189,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
          {
            PolygonType poly = *Polygon;
            poly.Clipped = Polygon->NoHoles;
@@ -95,10 +95,10 @@ index e0b9660..549d623 100644
 -          } while (poly.Clipped != Polygon->NoHoles);
 +          DrawPolygonLowLevel (&poly);
          }
- #if 0
-       NoHolesPolygonDicer (Polygon, DrawPolygonLowLevel, clip_box);
-@@ -2204,6 +2208,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
- #endif
+       /* draw other parts of the polygon if fullpoly flag is set */
+       /* NB: No "NoHoles" cache for these */
+@@ -2201,6 +2205,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+ 	}
      }
    /* if the gui has the dicer flag set then it won't draw missing poly outlines */
 +#if 0
@@ -112,7 +112,7 @@ index e0b9660..549d623 100644
 +#endif
  }
  
- 
+ /* ---------------------------------------------------------------------------
 diff --git a/src/find.c b/src/find.c
 index 31b0fb3..9878dea 100644
 --- a/src/find.c
@@ -304,10 +304,10 @@ index 31b0fb3..9878dea 100644
            (polygon->Clipped->contours->xmin +
             polygon->Clipped->contours->xmax) / 2;
 diff --git a/src/polygon.c b/src/polygon.c
-index 0d3c895..419f443 100644
+index c33c735..ddceb3c 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -126,7 +126,7 @@ ComputeNoHoles (PolygonType *poly)
+@@ -121,7 +121,7 @@ ComputeNoHoles (PolygonType *poly)
  }
  
  static POLYAREA *
@@ -316,7 +316,7 @@ index 0d3c895..419f443 100644
  {
    POLYAREA *n, *top = NULL;
    PLINE *pl;
-@@ -216,7 +216,7 @@ original_poly (PolygonType * p)
+@@ -211,7 +211,7 @@ original_poly (PolygonType * p)
      return NULL;
    poly_InclContour (np, contour);
    assert (poly_Valid (np));
@@ -325,7 +325,7 @@ index 0d3c895..419f443 100644
  }
  
  static int
-@@ -236,7 +236,7 @@ ClipOriginal (PolygonType * poly)
+@@ -231,7 +231,7 @@ ClipOriginal (PolygonType * poly)
        poly->NoHoles = NULL;
        return 0;
      }
@@ -334,7 +334,7 @@ index 0d3c895..419f443 100644
    assert (!poly->Clipped || poly_Valid (poly->Clipped));
    return 1;
  }
-@@ -611,7 +611,7 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
+@@ -606,7 +606,7 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
        p->NoHoles = NULL;
        return -1;
      }
@@ -343,7 +343,7 @@ index 0d3c895..419f443 100644
    assert (!p->Clipped || poly_Valid (p->Clipped));
    if (!p->Clipped)
      Message ("Polygon cleared out of existence near (%d, %d)\n",
-@@ -941,7 +941,7 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
+@@ -936,7 +936,7 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
        p->NoHoles = NULL;
        return 0;
      }
@@ -352,7 +352,7 @@ index 0d3c895..419f443 100644
    assert (!p->Clipped || poly_Valid (p->Clipped));
    return ClipOriginal (p);
  }
-@@ -1528,7 +1528,7 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
+@@ -1521,7 +1521,7 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
    Vector v;
    v[0] = X;
    v[1] = Y;
@@ -361,7 +361,7 @@ index 0d3c895..419f443 100644
      return True;
    if (r < 1)
      return False;
-@@ -1627,9 +1627,10 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
+@@ -1620,9 +1620,10 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
  {
    POLYAREA *save, *ans;
  
