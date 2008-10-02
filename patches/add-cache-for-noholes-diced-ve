@@ -1,9 +1,10 @@
-Bottom: 593e4ae36deb0ebace0ea80f92360ff1a6ea8413
-Top:    15a72b3511c6740442392fee4526e852e22d0d72
+Bottom: c3ca333dd418fc9dd674dd3aa1e0b9044192ddb7
+Top:    3d306786f6e4dfebfeacfa64fe6778edd9626d29
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-01 04:14:46 +0100
+Date:   2008-10-02 04:26:50 +0100
 
 Add cache for "noholes", diced versions of polygons
+
 
 
 
@@ -11,10 +12,10 @@ Add cache for "noholes", diced versions of polygons
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 37e952f..d8aaca6 100644
+index 5df8ceb..bbfd52f 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -600,6 +600,8 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
+@@ -603,6 +603,8 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
    polygon->Flags = Flags;
    polygon->ID = ID++;
    polygon->Clipped = NULL;
@@ -24,10 +25,10 @@ index 37e952f..d8aaca6 100644
  }
  
 diff --git a/src/draw.c b/src/draw.c
-index 50e6fef..d5396e8 100644
+index 0f08ea6..38daf9a 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2123,8 +2123,23 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2171,8 +2171,23 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
        if (!Gathering)
  	PolygonHoles (clip_box, Layer, Polygon, thin_callback);
      }
@@ -52,7 +53,7 @@ index 50e6fef..d5396e8 100644
        NoHolesPolygonDicer (Polygon, DrawPolygonLowLevel, clip_box);
        /* draw other parts of the polygon if fullpoly flag is set */
        if (TEST_FLAG (FULLPOLYFLAG, Polygon))
-@@ -2137,6 +2152,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2185,6 +2200,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  	      NoHolesPolygonDicer (&poly, DrawPolygonLowLevel, clip_box);
  	    }
  	}
@@ -60,7 +61,7 @@ index 50e6fef..d5396e8 100644
      }
    /* if the gui has the dicer flag set then it won't draw missing poly outlines */
    if (TEST_FLAG (CHECKPLANESFLAG, PCB) && Polygon->Clipped && !Gathering
-@@ -2159,10 +2175,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2207,10 +2223,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  	    }
  	  gui->set_line_width (Output.fgGC, 1);
  	  for (i = 0; i < n - 1; i++)
@@ -72,7 +73,7 @@ index 50e6fef..d5396e8 100644
  	  gui->draw_line (Output.fgGC, x[n - 1], y[n - 1], x[0], y[0]);
  	  free (x);
  	  free (y);
-@@ -2170,6 +2183,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2218,6 +2231,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
      }
  }
  

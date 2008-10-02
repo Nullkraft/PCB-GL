@@ -1,7 +1,7 @@
-Bottom: f920a5f3782057f605ae422b04fb954e6fcfedb4
-Top:    2494e97f0b6ab05590fb3e775dc697343e4a33f7
+Bottom: 7790915972abfa3d2fe6156b419f05ebbef60a48
+Top:    f905ffd5cd1b871329fd7377a9944697254930e6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-02 04:26:19 +0100
+Date:   2008-10-02 04:26:49 +0100
 
 Add a hacky name-mangling thingy for loading boards
 
@@ -599,7 +599,7 @@ index 809edc3..ae1a737 100644
 +@set EDITION 1.99x
 +@set VERSION 1.99x
 diff --git a/src/create.c b/src/create.c
-index d8aaca6..bbfd52f 100644
+index 37e952f..5df8ceb 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -37,6 +37,7 @@
@@ -619,7 +619,7 @@ index d8aaca6..bbfd52f 100644
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
  #endif
-@@ -621,6 +624,57 @@ CreateNewPointInPolygon (PolygonTypePtr Polygon, LocationType X,
+@@ -619,6 +622,57 @@ CreateNewPointInPolygon (PolygonTypePtr Polygon, LocationType X,
    return (point);
  }
  
@@ -677,7 +677,7 @@ index d8aaca6..bbfd52f 100644
  /* ---------------------------------------------------------------------------
   * creates an new element
   * memory is allocated if needed
-@@ -633,6 +687,19 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
+@@ -631,6 +685,19 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
  		  LocationType TextX, LocationType TextY, BYTE Direction,
  		  int TextScale, FlagType TextFlags, Boolean uniqueName)
  {
