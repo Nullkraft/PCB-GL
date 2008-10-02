@@ -121,7 +121,7 @@ ComputeNoHoles (PolygonType *poly)
 }
 
 static POLYAREA *
-biggest (POLYAREA * p)
+biggest_fubar (POLYAREA * p)
 {
   POLYAREA *n, *top = NULL;
   PLINE *pl;
@@ -211,7 +211,7 @@ original_poly (PolygonType * p)
     return NULL;
   poly_InclContour (np, contour);
   assert (poly_Valid (np));
-  return biggest (np);
+  return np; //biggest (np);
 }
 
 static int
@@ -231,7 +231,7 @@ ClipOriginal (PolygonType * poly)
       poly->NoHoles = NULL;
       return 0;
     }
-  poly->Clipped = biggest (result);
+  poly->Clipped = result; //biggest (result);
   assert (!poly->Clipped || poly_Valid (poly->Clipped));
   return 1;
 }
@@ -606,7 +606,7 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
       p->NoHoles = NULL;
       return -1;
     }
-  p->Clipped = biggest (merged);
+  p->Clipped = merged; //biggest (merged);
   assert (!p->Clipped || poly_Valid (p->Clipped));
   if (!p->Clipped)
     Message ("Polygon cleared out of existence near (%d, %d)\n",
@@ -936,7 +936,7 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
       p->NoHoles = NULL;
       return 0;
     }
-  p->Clipped = biggest (merged);
+  p->Clipped = merged; //biggest (merged);
   assert (!p->Clipped || poly_Valid (p->Clipped));
   return ClipOriginal (p);
 }
@@ -1521,7 +1521,7 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
   Vector v;
   v[0] = X;
   v[1] = Y;
-  if (poly_CheckInside (p->Clipped, v))
+  if (poly_M_CheckInside (p->Clipped, v))
     return True;
   if (r < 1)
     return False;
@@ -1620,9 +1620,10 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
 {
   POLYAREA *save, *ans;
 
-  ans = save = poly_Create ();
-  /* copy the main poly only */
-  poly_Copy1 (save, p->Clipped);
+  /* Copy all of the original polgon */
+  poly_M_Copy0 (&save, p->Clipped);
+  ans = save;
+
   /* clip to the bounding box */
   if (clip)
     {
