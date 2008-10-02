@@ -1,5 +1,5 @@
 Bottom: 2f40d922e9bfecfaf0cfeb588f3c77c9b4deed14
-Top:    2f40d922e9bfecfaf0cfeb588f3c77c9b4deed14
+Top:    a7f8cbe4a0c625153e7d2ce125d67e7e96527528
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-02 18:07:10 +0100
 
@@ -11,4 +11,15 @@ if already open.
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 6accef8..2f1a878 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -2113,7 +2113,7 @@ LibraryChanged (int argc, char **argv, int x, int y)
+ static int
+ Command (int argc, char **argv, int x, int y)
+ {
+-  ghid_handle_user_command (FALSE);
++  ghid_handle_user_command (TRUE);
+   return 0;
+ }
