@@ -1,7 +1,7 @@
-Bottom: a7f8cbe4a0c625153e7d2ce125d67e7e96527528
-Top:    57fd944e3e75b632856604129d5c5cfa6fee56b1
+Bottom: bd9239ad86767c4f5034411393f911ca7a5625e2
+Top:    ec1474ad5e935cab621035f9be8df078c7d3cb10
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-02 18:32:52 +0100
+Date:   2008-10-02 19:42:47 +0100
 
 Keep all pieces of a divided polygon.
 
@@ -301,7 +301,7 @@ index 31b0fb3..daf8ae2 100644
            (polygon->Clipped->contours->xmin +
             polygon->Clipped->contours->xmax) / 2;
 diff --git a/src/polygon.c b/src/polygon.c
-index c33c735..ddceb3c 100644
+index 54f8f9f..b6c5699 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -121,7 +121,7 @@ ComputeNoHoles (PolygonType *poly)
@@ -313,7 +313,7 @@ index c33c735..ddceb3c 100644
  {
    POLYAREA *n, *top = NULL;
    PLINE *pl;
-@@ -211,7 +211,7 @@ original_poly (PolygonType * p)
+@@ -221,7 +221,7 @@ original_poly (PolygonType * p)
      return NULL;
    poly_InclContour (np, contour);
    assert (poly_Valid (np));
@@ -322,7 +322,7 @@ index c33c735..ddceb3c 100644
  }
  
  static int
-@@ -231,7 +231,7 @@ ClipOriginal (PolygonType * poly)
+@@ -241,7 +241,7 @@ ClipOriginal (PolygonType * poly)
        poly->NoHoles = NULL;
        return 0;
      }
@@ -331,7 +331,7 @@ index c33c735..ddceb3c 100644
    assert (!poly->Clipped || poly_Valid (poly->Clipped));
    return 1;
  }
-@@ -606,7 +606,7 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
+@@ -616,7 +616,7 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
        p->NoHoles = NULL;
        return -1;
      }
@@ -340,7 +340,7 @@ index c33c735..ddceb3c 100644
    assert (!p->Clipped || poly_Valid (p->Clipped));
    if (!p->Clipped)
      Message ("Polygon cleared out of existence near (%d, %d)\n",
-@@ -936,7 +936,7 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
+@@ -946,7 +946,7 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
        p->NoHoles = NULL;
        return 0;
      }
@@ -349,7 +349,7 @@ index c33c735..ddceb3c 100644
    assert (!p->Clipped || poly_Valid (p->Clipped));
    return ClipOriginal (p);
  }
-@@ -1521,7 +1521,7 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
+@@ -1531,7 +1531,7 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
    Vector v;
    v[0] = X;
    v[1] = Y;
@@ -358,7 +358,7 @@ index c33c735..ddceb3c 100644
      return True;
    if (r < 1)
      return False;
-@@ -1620,9 +1620,10 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
+@@ -1630,9 +1630,10 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
  {
    POLYAREA *save, *ans;
  
