@@ -1,5 +1,5 @@
 Bottom: 6421409fd4f206fbbf9b7fa6cc0b27b100b069f9
-Top:    5da455bcd16fe1296eddea31579ca0ebb3e3929c
+Top:    243b8b5f390f6285bba1c996b9b3720b8d9a619f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-02 16:09:40 +0100
 
@@ -25,10 +25,44 @@ index 5df8ceb..bbfd52f 100644
  }
  
 diff --git a/src/draw.c b/src/draw.c
-index 0f08ea6..5e96145 100644
+index 0f08ea6..13fef6e 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2173,8 +2173,21 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -100,7 +100,7 @@ static void DrawPadLowLevel (hidGC, PadTypePtr, Boolean, Boolean);
+ static void DrawPadNameLowLevel (PadTypePtr);
+ static void DrawLineLowLevel (LineTypePtr, Boolean);
+ static void DrawRegularText (LayerTypePtr, TextTypePtr, int);
+-static void DrawPolygonLowLevel (PolygonTypePtr);
++static void DrawPolygonLowLevel (PolygonTypePtr, void *);
+ static void DrawArcLowLevel (ArcTypePtr);
+ static void DrawElementPackageLowLevel (ElementTypePtr Element, int);
+ static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
+@@ -1731,7 +1731,7 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
+  * lowlevel drawing routine for polygons
+  */
+ static void
+-DrawPolygonLowLevel (PolygonTypePtr Polygon)
++DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
+ {
+   int *x, *y, n, i = 0;
+   PLINE *pl;
+@@ -2110,7 +2110,7 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+   else
+     gui->set_color (Output.fgGC, Layer->Color);
+   layernum = GetLayerNumber (PCB->Data, Layer);
+-  DrawPolygonLowLevel (Polygon);
++  DrawPolygonLowLevel (Polygon, NULL);
+   if (TEST_FLAG (CLEARPOLYFLAG, Polygon))
+     {
+       r_search (PCB->Data->pin_tree, &Polygon->BoundingBox, NULL,
+@@ -2167,14 +2167,27 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+   if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+       && !gui->poly_dicer)
+     {
+-      DrawPolygonLowLevel (Polygon);
++      DrawPolygonLowLevel (Polygon, NULL);
+       if (!Gathering)
+ 	PolygonHoles (clip_box, Layer, Polygon, thin_callback);
      }
    else if (Polygon->Clipped)
      {
@@ -42,7 +76,7 @@ index 0f08ea6..5e96145 100644
 +          PolygonType poly = *Polygon;
 +          poly.Clipped = Polygon->NoHoles;
 +          do {
-+            DrawPolygonLowLevel (&poly);
++            DrawPolygonLowLevel (&poly, NULL);
 +            poly.Clipped = poly.Clipped->f;
 +          } while (poly.Clipped != Polygon->NoHoles);
 +        }
@@ -60,6 +94,15 @@ index 0f08ea6..5e96145 100644
  	    }
  	}
      }
+@@ -2503,7 +2516,7 @@ ErasePolygon (PolygonTypePtr Polygon)
+ {
+   Erasing++;
+   gui->set_color (Output.fgGC, Settings.BackgroundColor);
+-  DrawPolygonLowLevel (Polygon);
++  DrawPolygonLowLevel (Polygon, NULL);
+   Erasing--;
+ }
+ 
 diff --git a/src/global.h b/src/global.h
 index cc39bbc..7763c80 100644
 --- a/src/global.h
