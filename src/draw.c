@@ -2195,7 +2195,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 	    {
 	      PolygonType poly;
 	      poly.Clipped = pg;
-	      NoHolesPolygonDicer (&poly, DrawPolygonLowLevel, clip_box);
+	      NoHolesPolygonDicer (&poly, DrawPolygonLowLevel, NULL, clip_box);
 	    }
 	}
     }
