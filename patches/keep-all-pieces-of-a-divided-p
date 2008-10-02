@@ -1,5 +1,5 @@
 Bottom: de28060ff450567195cf904da5639ad511d91c7a
-Top:    5634691a88a19120ba9dc0ad87a0e55b761812b6
+Top:    e3e02282b753d2857d3847355a9435bc76129a87
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-02 16:45:11 +0100
 
@@ -114,7 +114,7 @@ index 519c8c9..2f1ec07 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/find.c b/src/find.c
-index 31b0fb3..9878dea 100644
+index 31b0fb3..daf8ae2 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -2470,23 +2470,29 @@ Boolean
@@ -163,7 +163,7 @@ index 31b0fb3..9878dea 100644
  
    /* lines with clearance never touch polygons */
    if (TEST_FLAG (CLEARPOLYFLAG, Polygon) && TEST_FLAG (CLEARLINEFLAG, Line))
-@@ -2520,15 +2527,25 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
+@@ -2520,15 +2527,20 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
         y2 = MAX (Line->Point1.Y, Line->Point2.Y) + wid;
         return IsRectangleInPolygon (x1, y1, x2, y2, Polygon);
       }
@@ -172,7 +172,6 @@ index 31b0fb3..9878dea 100644
 -      && Box->Y1 <= Polygon->Clipped->contours->ymax + Bloat
 -      && Box->Y2 >= Polygon->Clipped->contours->ymin - Bloat)
 +  pg = Polygon->Clipped;
-+  printf ("IsLineInPolygon hello world\n");
 +  do
      {
 -      if (!(lp = LinePoly (Line, Line->Thickness + Bloat)))
@@ -183,12 +182,8 @@ index 31b0fb3..9878dea 100644
 +          && Box->Y1 <= pg->contours->ymax + Bloat
 +          && Box->Y2 >= pg->contours->ymin - Bloat)
 +        {
-+          printf ("got this far\n");
 +          if (!(lp = LinePoly (Line, Line->Thickness + Bloat)))
-+            {
-+              printf ("Error in ISLineInPolygon\n");
-+              return FALSE;           /* error */
-+            }
++            return FALSE;           /* error */
 +          return isects (lp, Polygon, True);
 +        }
      }
@@ -196,7 +191,7 @@ index 31b0fb3..9878dea 100644
    return False;
  }
  
-@@ -2552,53 +2569,66 @@ IsPadInPolygon (PadTypePtr pad, PolygonTypePtr polygon)
+@@ -2552,53 +2564,66 @@ IsPadInPolygon (PadTypePtr pad, PolygonTypePtr polygon)
  Boolean
  IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
  {
@@ -295,7 +290,7 @@ index 31b0fb3..9878dea 100644
    return (False);
  }
  
-@@ -4065,6 +4095,7 @@ GotoError (void)
+@@ -4065,6 +4090,7 @@ GotoError (void)
      case POLYGON_TYPE:
        {
          PolygonTypePtr polygon = (PolygonTypePtr) thing_ptr3;
