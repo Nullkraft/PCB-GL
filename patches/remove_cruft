@@ -1,7 +1,7 @@
-Bottom: a431c0b4bcd7cb9cfee7468d133d2f859f18afef
+Bottom: b4e4c7c2b7ccb8301d75d32311d57ff70f0305cb
 Top:    b4e4c7c2b7ccb8301d75d32311d57ff70f0305cb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-01 04:14:46 +0100
+Date:   2008-10-02 04:23:31 +0100
 
 Remove cruft from cache
 
@@ -9,88 +9,4 @@ Remove cruft from cache
 
 ---
 
-diff --git a/src/polygon.c b/src/polygon.c
-index 87350df..f27faed 100644
---- a/src/polygon.c
-+++ b/src/polygon.c
-@@ -176,7 +176,7 @@ static void
- add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
- {
-   PolygonType *poly = user_data;
--  PLINE *pline;//, last;
-+  PLINE *pline;
-   POLYAREA *new_area;
- 
-   new_area = malloc (sizeof (POLYAREA) * 1);
-@@ -211,7 +211,6 @@ compute_noholes (PolygonType *poly)
-   if (poly->NoHoles)
-     {
-       poly_Free (&poly->NoHoles);
--//      printf ("Just leaked in compute_noholes\n");
-     }
-   poly->NoHoles = NULL;
-   if (poly->Clipped)
-@@ -239,7 +238,6 @@ ClipOriginal (PolygonType * poly)
-     }
-   poly->Clipped = biggest (result);
-   assert (!poly->Clipped || poly_Valid (poly->Clipped));
--//  compute_noholes (poly);
-   return 1;
- }
- 
-@@ -615,7 +613,6 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
-     }
-   p->Clipped = biggest (merged);
-   assert (!p->Clipped || poly_Valid (p->Clipped));
--//  compute_noholes (p);
-   if (!p->Clipped)
-     Message ("Polygon cleared out of existence near (%d, %d)\n",
-              (p->BoundingBox.X1 + p->BoundingBox.X2) / 2,
-@@ -912,7 +909,6 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
-     }
-   p->Clipped = biggest (merged);
-   assert (!p->Clipped || poly_Valid (p->Clipped));
--//  compute_noholes (p);
-   return ClipOriginal (p);
- }
- 
-@@ -1018,7 +1014,6 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
-   if (p->NoHoles)
-     {
-       poly_Free (&p->NoHoles);
--//      printf ("Just leaked in InitClip\n");
-     }
-   p->NoHoles = NULL;
-   if (!p->Clipped)
-@@ -1502,7 +1497,6 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *u
-   pa->b = pa->f = pa;
-   pa->contours = p;
-   if (!p->next)                 /* no holes */
--//  if (1)
-     {
-       PolygonType poly;
-       PointType pts[4];
-@@ -1655,7 +1649,6 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
-           new->Clipped = p;
-           p = p->f;             /* go to next pline */
-           new->Clipped->b = new->Clipped->f = new->Clipped;     /* unlink from others */
--//          compute_noholes (new);
-           r_insert_entry (layer->polygon_tree, (BoxType *) new, 0);
-           DrawPolygon (layer, new, 0);
-         }
-diff --git a/src/polygon1.c b/src/polygon1.c
-index 0dd65cc..32ffb31 100644
---- a/src/polygon1.c
-+++ b/src/polygon1.c
-@@ -2106,12 +2106,6 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
-       poly_InclVertex ((*dst)->head.prev, newnode);
-     }
-   (*dst)->tree = make_edge_tree (*dst);
--
--  {
--    static int count = 0;
--    count ++;
--//    printf ("Counting poly_CopyContour %i\n", count);
--  }
-   return TRUE;
- }
+
