@@ -2123,15 +2123,22 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
       if (!Gathering)
 	PolygonHoles (clip_box, Layer, Polygon, thin_callback);
     }
-  else if (Polygon->NoHoles)//(Polygon->Clipped)
+  else //if (Polygon->NoHoles)//(Polygon->Clipped)
     {
-      PolygonType poly;
-      poly.Clipped = Polygon->NoHoles;
-      do {
-        DrawPolygonLowLevel (&poly);
-//        printf ("Drawing no-holes portion of polygon\n");
-        poly.Clipped = poly.Clipped->f;
-      } while (poly.Clipped != Polygon->NoHoles);
+      if (!Polygon->NoHolesValid)
+        {
+          ComputeNoHoles (Polygon);
+        }
+
+      if (Polygon->NoHoles)
+        {
+          PolygonType poly;
+          poly.Clipped = Polygon->NoHoles;
+          do {
+            DrawPolygonLowLevel (&poly);
+            poly.Clipped = poly.Clipped->f;
+          } while (poly.Clipped != Polygon->NoHoles);
+        }
 #if 0
       NoHolesPolygonDicer (Polygon, DrawPolygonLowLevel, clip_box);
       /* draw other parts of the polygon if fullpoly flag is set */
