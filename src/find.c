@@ -2528,7 +2528,6 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
        return IsRectangleInPolygon (x1, y1, x2, y2, Polygon);
      }
   pg = Polygon->Clipped;
-  printf ("IsLineInPolygon hello world\n");
   do
     {
       if (Box->X1 <= pg->contours->xmax + Bloat
@@ -2536,12 +2535,8 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
           && Box->Y1 <= pg->contours->ymax + Bloat
           && Box->Y2 >= pg->contours->ymin - Bloat)
         {
-          printf ("got this far\n");
           if (!(lp = LinePoly (Line, Line->Thickness + Bloat)))
-            {
-              printf ("Error in ISLineInPolygon\n");
-              return FALSE;           /* error */
-            }
+            return FALSE;           /* error */
           return isects (lp, Polygon, True);
         }
     }
