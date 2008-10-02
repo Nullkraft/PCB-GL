@@ -1,43 +1,12 @@
-Bottom: 2f70c8b131dad53212d3bfc722c503a571831b4b
-Top:    8f430001e07398f973e28ec99c8df88a836247de
+Bottom: 9418ef9fedfe2d2ebd24943e011b751ef0bacb89
+Top:    9418ef9fedfe2d2ebd24943e011b751ef0bacb89
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-09-30 23:42:12 +0100
+Date:   2008-10-02 16:06:26 +0100
 
 DJ's break element to pieces fix for pads on both sides
 
 
+
 ---
 
-diff --git a/src/buffer.c b/src/buffer.c
-index a1950bd..89c8a3a 100644
---- a/src/buffer.c
-+++ b/src/buffer.c
-@@ -591,7 +591,7 @@ SmashBufferElement (BufferTypePtr Buffer)
- {
-   ElementTypePtr element;
-   Cardinal group;
--  LayerTypePtr layer;
-+  LayerTypePtr clayer, slayer;
- 
-   if (Buffer->Data->ElementN != 1)
-     {
-@@ -634,11 +634,17 @@ SmashBufferElement (BufferTypePtr Buffer)
-     GetLayerGroupNumberByNumber (max_layer +
- 				 (SWAP_IDENT ? SOLDER_LAYER :
- 				  COMPONENT_LAYER));
--  layer = &Buffer->Data->Layer[PCB->LayerGroups.Entries[group][0]];
-+  clayer = &Buffer->Data->Layer[PCB->LayerGroups.Entries[group][0]];
-+  group =
-+    GetLayerGroupNumberByNumber (max_layer +
-+                                (SWAP_IDENT ? COMPONENT_LAYER :
-+                                 SOLDER_LAYER));
-+  slayer = &Buffer->Data->Layer[PCB->LayerGroups.Entries[group][0]];
-   PAD_LOOP (element);
-   {
-     LineTypePtr line;
--    line = CreateNewLineOnLayer (layer, pad->Point1.X, pad->Point1.Y,
-+    line = CreateNewLineOnLayer (TEST_FLAG (ONSOLDERFLAG, pad) ? slayer : clayer,
-+                                pad->Point1.X, pad->Point1.Y,
- 				 pad->Point2.X, pad->Point2.Y,
- 				 pad->Thickness, pad->Clearance, NoFlags ());
-     if (line)
+
