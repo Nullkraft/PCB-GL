@@ -1,12 +1,13 @@
-Bottom: b875a3c98cd31de0c7e98d4402ec0421a7d08382
+Bottom: 3d306786f6e4dfebfeacfa64fe6778edd9626d29
 Top:    cf463a2dd760d1357ad681b9a377775310932213
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-02 04:18:38 +0100
+Date:   2008-10-02 04:20:15 +0100
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
 Gives the possibility to mask out regions which are to be free of
 polygon fill.
+
 
 
 ---
@@ -187,7 +188,7 @@ index 38daf9a..e0b9660 100644
            do {
              DrawPolygonLowLevel (&poly);
 diff --git a/src/move.c b/src/move.c
-index 2e9eb1f..aebfc30 100644
+index 003c2e0..aebfc30 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -355,10 +355,12 @@ MovePolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
@@ -218,15 +219,6 @@ index 2e9eb1f..aebfc30 100644
    if (Layer->On)
      {
        DrawPolygon (Layer, Polygon, 0);
-@@ -1027,7 +1031,7 @@ MoveLayer (int old_index, int new_index)
- 
-   move_all_thermals(old_index, new_index);
- 
--  for (g = 0; g < MAX_LAYER + 1; g++)
-+  for (g = 0; g < MAX_LAYER; g++)
-     PCB->LayerGroups.Number[g] = 0;
-   for (l = 0; l < max_layer + 2; l++)
-     {
 diff --git a/src/polygon.c b/src/polygon.c
 index ecf11f4..0d3c895 100644
 --- a/src/polygon.c
