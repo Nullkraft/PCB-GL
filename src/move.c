@@ -1,4 +1,4 @@
-/* $Id: move.c,v 1.42 2007-12-02 04:44:51 bjj Exp $ */
+/* $Id: move.c,v 1.43 2008-10-02 15:13:18 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: move.c,v 1.42 2007-12-02 04:44:51 bjj Exp $");
+RCSID ("$Id: move.c,v 1.43 2008-10-02 15:13:18 petercjclifton Exp $");
 
 
 
@@ -1027,7 +1027,7 @@ MoveLayer (int old_index, int new_index)
 
   move_all_thermals(old_index, new_index);
 
-  for (g = 0; g < MAX_LAYER + 1; g++)
+  for (g = 0; g < MAX_LAYER; g++)
     PCB->LayerGroups.Number[g] = 0;
   for (l = 0; l < max_layer + 2; l++)
     {
