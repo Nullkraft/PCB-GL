@@ -1,0 +1,40 @@
+Bottom: 81fb165371eb02f74791aeb66755c82b023c5c58
+Top:    d87f4ede1f6b4783bc6bec565d90e7cfdd3ca523
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-02 19:42:41 +0100
+
+Refresh of improve-grid-snapping-heuristi
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 9003be7..68cae6a 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -938,6 +938,26 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+         }
+     }
+ 
++  if (TEST_FLAG (SNAPPINFLAG, PCB))
++    ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
++                                POLYGONPOINT_TYPE, &ptr1, &ptr2, &ptr3);
++  else
++    ans = NO_TYPE;
++
++  if (ans)
++    {
++      PointTypePtr pnt = (PointTypePtr) ptr3;
++      sq_dist = SQUARE (pnt->X - Crosshair.X) + SQUARE (pnt->Y - Crosshair.Y);
++      if ((nearest == -1 || sq_dist < nearest) &&
++          (!gui->shift_is_pressed() ||
++           SQUARE (x0 - Crosshair.X) + SQUARE (y0 - Crosshair.Y) > sq_dist))
++        {
++          x0 = pnt->X;
++          y0 = pnt->Y;
++          nearest = sq_dist;
++        }
++    }
++
+ 
+   if (PCB->RatDraw || TEST_FLAG (SNAPPINFLAG, PCB))
+     ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
