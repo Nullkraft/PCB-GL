@@ -1372,7 +1372,6 @@ ArcArcIntersect (ArcTypePtr Arc1, ArcTypePtr Arc2)
 static Boolean
 IsRatPointOnLine (PointTypePtr Point, LineTypePtr Line)
 {
-  printf ("IsRatPointOnLine (%i,%i)\n", Point->X, Point->Y);
   if ((Point->X == Line->Point1.X && Point->Y == Line->Point1.Y) ||
       (Point->X == Line->Point2.X && Point->Y == Line->Point2.Y) ||
       (Point->X == (Line->Point1.X + Line->Point2.X) / 2 &&
