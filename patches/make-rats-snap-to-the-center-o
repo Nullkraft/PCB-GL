@@ -1,5 +1,5 @@
 Bottom: bd9239ad86767c4f5034411393f911ca7a5625e2
-Top:    8339e8b074b7cec0a615f3a288826d91c489625e
+Top:    b18ff0542719b3c4900b3df9454ecb64b180e252
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-02 21:21:58 +0100
 
@@ -9,7 +9,7 @@ Make rats snap to the center of pads, not the edges
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 31b0fb3..514cfdd 100644
+index 31b0fb3..edf2f7e 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -244,7 +244,7 @@ static Boolean LookupLOConnectionsToPad (PadTypePtr, Cardinal);
@@ -21,7 +21,7 @@ index 31b0fb3..514cfdd 100644
  static Boolean ArcArcIntersect (ArcTypePtr, ArcTypePtr);
  static Boolean PrepareNextLoop (FILE *);
  static Boolean PrintElementConnections (ElementTypePtr, FILE *, Boolean);
-@@ -1370,11 +1370,13 @@ ArcArcIntersect (ArcTypePtr Arc1, ArcTypePtr Arc2)
+@@ -1370,11 +1370,12 @@ ArcArcIntersect (ArcTypePtr Arc1, ArcTypePtr Arc2)
   * Tests if point is same as line end point
   */
  static Boolean
@@ -31,7 +31,6 @@ index 31b0fb3..514cfdd 100644
 -  if ((Point->X == Line->Point1.X
 -       && Point->Y == Line->Point1.Y)
 -      || (Point->X == Line->Point2.X && Point->Y == Line->Point2.Y))
-+  printf ("IsRatPointOnLine (%i,%i)\n", Point->X, Point->Y);
 +  if ((Point->X == Line->Point1.X && Point->Y == Line->Point1.Y) ||
 +      (Point->X == Line->Point2.X && Point->Y == Line->Point2.Y) ||
 +      (Point->X == (Line->Point1.X + Line->Point2.X) / 2 &&
@@ -39,7 +38,7 @@ index 31b0fb3..514cfdd 100644
      return (True);
    return (False);
  }
-@@ -1859,13 +1861,13 @@ LOCtoLineRat_callback (const BoxType * b, void *cl)
+@@ -1859,13 +1860,13 @@ LOCtoLineRat_callback (const BoxType * b, void *cl)
    if (!TEST_FLAG (TheFlag, rat))
      {
        if ((rat->group1 == i->layer)
@@ -55,7 +54,7 @@ index 31b0fb3..514cfdd 100644
          {
            if (ADD_RAT_TO_LIST (rat))
              longjmp (i->env, 1);
-@@ -2103,10 +2105,10 @@ LOCtoPad_callback (const BoxType * b, void *cl)
+@@ -2103,10 +2104,10 @@ LOCtoPad_callback (const BoxType * b, void *cl)
    struct rat_info *i = (struct rat_info *) cl;
  
    if (!TEST_FLAG (TheFlag, pad) && i->layer ==
@@ -70,7 +69,7 @@ index 31b0fb3..514cfdd 100644
      longjmp (i->env, 1);
    return 0;
  }
-@@ -2217,19 +2219,15 @@ LOCtoPadRat_callback (const BoxType * b, void *cl)
+@@ -2217,19 +2218,15 @@ LOCtoPadRat_callback (const BoxType * b, void *cl)
    if (!TEST_FLAG (TheFlag, rat))
      {
        if (rat->group1 == i->layer &&
