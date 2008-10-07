@@ -2468,23 +2468,29 @@ Boolean
 IsArcInPolygon (ArcTypePtr Arc, PolygonTypePtr Polygon)
 {
   BoxTypePtr Box = (BoxType *) Arc;
+  POLYAREA *pg;
 
   /* arcs with clearance never touch polys */
   if (TEST_FLAG (CLEARPOLYFLAG, Polygon) && TEST_FLAG (CLEARLINEFLAG, Arc))
     return False;
   if (!Polygon->Clipped)
     return False;
-  if (Box->X1 <= Polygon->Clipped->contours->xmax + Bloat
-      && Box->X2 >= Polygon->Clipped->contours->xmin - Bloat
-      && Box->Y1 <= Polygon->Clipped->contours->ymax + Bloat
-      && Box->Y2 >= Polygon->Clipped->contours->ymin - Bloat)
+  pg = Polygon->Clipped;
+  do
     {
-      POLYAREA *ap;
+      if (Box->X1 <= pg->contours->xmax + Bloat
+          && Box->X2 >= pg->contours->xmin - Bloat
+          && Box->Y1 <= pg->contours->ymax + Bloat
+          && Box->Y2 >= pg->contours->ymin - Bloat)
+        {
+          POLYAREA *ap;
 
-      if (!(ap = ArcPoly (Arc, Arc->Thickness + Bloat)))
-        return False;           /* error */
-      return isects (ap, Polygon, True);
+          if (!(ap = ArcPoly (Arc, Arc->Thickness + Bloat)))
+            return False;           /* error */
+          return isects (ap, Polygon, True);
+        }
     }
+  while ((pg = pg->f) != Polygon->Clipped);
   return False;
 }
 
@@ -2501,6 +2507,7 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
 {
   BoxTypePtr Box = (BoxType *) Line;
   POLYAREA *lp;
+  POLYAREA *pg;
 
   /* lines with clearance never touch polygons */
   if (TEST_FLAG (CLEARPOLYFLAG, Polygon) && TEST_FLAG (CLEARLINEFLAG, Line))
@@ -2518,15 +2525,20 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
        y2 = MAX (Line->Point1.Y, Line->Point2.Y) + wid;
        return IsRectangleInPolygon (x1, y1, x2, y2, Polygon);
      }
-  if (Box->X1 <= Polygon->Clipped->contours->xmax + Bloat
-      && Box->X2 >= Polygon->Clipped->contours->xmin - Bloat
-      && Box->Y1 <= Polygon->Clipped->contours->ymax + Bloat
-      && Box->Y2 >= Polygon->Clipped->contours->ymin - Bloat)
+  pg = Polygon->Clipped;
+  do
     {
-      if (!(lp = LinePoly (Line, Line->Thickness + Bloat)))
-        return FALSE;           /* error */
-      return isects (lp, Polygon, True);
+      if (Box->X1 <= pg->contours->xmax + Bloat
+          && Box->X2 >= pg->contours->xmin - Bloat
+          && Box->Y1 <= pg->contours->ymax + Bloat
+          && Box->Y2 >= pg->contours->ymin - Bloat)
+        {
+          if (!(lp = LinePoly (Line, Line->Thickness + Bloat)))
+            return FALSE;           /* error */
+          return isects (lp, Polygon, True);
+        }
     }
+  while ((pg = pg->f) != Polygon->Clipped);
   return False;
 }
 
@@ -2550,53 +2562,66 @@ IsPadInPolygon (PadTypePtr pad, PolygonTypePtr polygon)
 Boolean
 IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
 {
+  POLYAREA *pg1;
+  POLYAREA *pg2;
+
   if (!P1->Clipped || !P2->Clipped)
     return False;
   assert (P1->Clipped->contours);
   assert (P2->Clipped->contours);
   /* first check if both bounding boxes intersect */
-  if (P1->Clipped->contours->xmin - Bloat <= P2->Clipped->contours->xmax &&
-      P1->Clipped->contours->xmax + Bloat >= P2->Clipped->contours->xmin &&
-      P1->Clipped->contours->ymin - Bloat <= P2->Clipped->contours->ymax &&
-      P1->Clipped->contours->ymax + Bloat >= P2->Clipped->contours->ymin)
+  pg2 = P2->Clipped;
+  do
     {
-      PLINE *c;
-
-      /* first check un-bloated case */
-      if (isects (P1->Clipped, P2, False))
-        return TRUE;
-      if (Bloat > 0)
+      pg1 = P1->Clipped;
+      do
         {
-          /* now the difficult case of bloated */
-          for (c = P1->Clipped->contours; c; c = c->next)
+          if (pg1->contours->xmin - Bloat <= pg2->contours->xmax &&
+              pg1->contours->xmax + Bloat >= pg2->contours->xmin &&
+              pg1->contours->ymin - Bloat <= pg2->contours->ymax &&
+              pg1->contours->ymax + Bloat >= pg2->contours->ymin)
             {
-              LineType line;
-              VNODE *v = &c->head;
-              if (c->xmin - Bloat <= P2->Clipped->contours->xmax &&
-                  c->xmax + Bloat >= P2->Clipped->contours->xmin &&
-                  c->ymin - Bloat <= P2->Clipped->contours->ymax &&
-                  c->ymax + Bloat >= P2->Clipped->contours->ymin)
-                {
+              PLINE *c;
 
-                  line.Point1.X = v->point[0];
-                  line.Point1.Y = v->point[1];
-                  line.Thickness = 2 * Bloat;
-                  line.Clearance = 0;
-                  line.Flags = NoFlags ();
-                  for (v = v->next; v != &c->head; v = v->next)
+              /* first check un-bloated case */
+              if (isects (pg1, P2, False))
+                return TRUE;
+              if (Bloat > 0)
+                {
+                  /* now the difficult case of bloated */
+                  for (c = pg1->contours; c; c = c->next)
                     {
-                      line.Point2.X = v->point[0];
-                      line.Point2.Y = v->point[1];
-                      SetLineBoundingBox (&line);
-                      if (IsLineInPolygon (&line, P2))
-                        return (True);
-                      line.Point1.X = line.Point2.X;
-                      line.Point1.Y = line.Point2.Y;
+                      LineType line;
+                      VNODE *v = &c->head;
+                      if (c->xmin - Bloat <= pg2->contours->xmax &&
+                          c->xmax + Bloat >= pg2->contours->xmin &&
+                          c->ymin - Bloat <= pg2->contours->ymax &&
+                          c->ymax + Bloat >= pg2->contours->ymin)
+                        {
+
+                          line.Point1.X = v->point[0];
+                          line.Point1.Y = v->point[1];
+                          line.Thickness = 2 * Bloat;
+                          line.Clearance = 0;
+                          line.Flags = NoFlags ();
+                          for (v = v->next; v != &c->head; v = v->next)
+                            {
+                              line.Point2.X = v->point[0];
+                              line.Point2.Y = v->point[1];
+                              SetLineBoundingBox (&line);
+                              if (IsLineInPolygon (&line, P2))
+                                return (True);
+                              line.Point1.X = line.Point2.X;
+                              line.Point1.Y = line.Point2.Y;
+                            }
+                        }
                     }
                 }
             }
         }
+      while ((pg1 = pg1->f) != P1->Clipped);
     }
+  while ((pg2 = pg2->f) != P2->Clipped);
   return (False);
 }
 
@@ -4063,6 +4088,7 @@ GotoError (void)
     case POLYGON_TYPE:
       {
         PolygonTypePtr polygon = (PolygonTypePtr) thing_ptr3;
+        /* TODO: Do somethhing with all pieces of a clipped polygon? */
         X =
           (polygon->Clipped->contours->xmin +
            polygon->Clipped->contours->xmax) / 2;
