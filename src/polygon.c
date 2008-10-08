@@ -1540,6 +1540,18 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
   return isects (c, p, True);
 }
 
+
+Boolean
+IsPointInPolygonIgnoreHoles (LocationType X, LocationType Y, PolygonTypePtr p)
+{
+  POLYAREA *c;
+  Vector v;
+  v[0] = X;
+  v[1] = Y;
+  if (poly_InsideContour (p->Clipped->contours, v))
+    return True;
+}
+
 Boolean
 IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
                       LocationType Y2, PolygonTypePtr p)
