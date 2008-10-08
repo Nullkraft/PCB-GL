@@ -1542,8 +1542,7 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
 
 
 Boolean
-IsPointInPolygonIgnoreHoles (LocationType X, LocationType Y,
-                             PolygonTypePtr p)
+IsPointInPolygonIgnoreHoles (LocationType X, LocationType Y, PolygonTypePtr p)
 {
   POLYAREA *c;
   Vector v;
