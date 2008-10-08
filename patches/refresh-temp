@@ -1,0 +1,103 @@
+Bottom: b9baf5878a4f6c16227d23cac5225b3b98941a98
+Top:    69fc012ccf6c6c08c411b2fae9bf1e8ad0bb9907
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-08 16:27:43 +0100
+
+Refresh of make-rats-to-polygons-work-for
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 54f8f9f..9534c81 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -1540,6 +1540,19 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
+   return isects (c, p, True);
+ }
+ 
++
++Boolean
++IsPointInPolygonIgnoreHoles (LocationType X, LocationType Y,
++                             PolygonTypePtr p)
++{
++  POLYAREA *c;
++  Vector v;
++  v[0] = X;
++  v[1] = Y;
++  if (poly_InsideContour (p->Clipped->contours, v))
++    return True;
++}
++
+ Boolean
+ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
+                       LocationType Y2, PolygonTypePtr p)
+diff --git a/src/polygon.h b/src/polygon.h
+index 2c78e94..8f444fd 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -58,6 +58,7 @@ void RestoreToPolygon(DataType *, int, void *, void *);
+ void ClearFromPolygon(DataType *, int, void *, void *);
+ 
+ Boolean IsPointInPolygon (LocationType, LocationType, BDimension, PolygonTypePtr);
++Boolean IsPointInPolygonIgnoreHoles (LocationType, LocationType, PolygonTypePtr);
+ Boolean IsRectangleInPolygon (LocationType, LocationType, LocationType,
+ 			      LocationType, PolygonTypePtr);
+ Boolean isects (POLYAREA *, PolygonTypePtr, Boolean);
+diff --git a/src/rats.c b/src/rats.c
+index 5ac15ed..27ff95b 100644
+--- a/src/rats.c
++++ b/src/rats.c
+@@ -504,24 +504,11 @@ GatherSubnets (NetListTypePtr Netl, Boolean NoWarn, Boolean AndRats)
+ 	  }
+       }
+       ENDALL_LOOP;
+-      /* add rectangular polygons so the auto-router can see them as targets */
+-      /* NB: code in DrawShortestRats below relies on only rectangular polys */
++      /* add polygons so the auto-router can see them as targets */
+       ALLPOLYGON_LOOP (PCB->Data);
+       {
+ 	if (TEST_FLAG (DRCFLAG, polygon) && polygon->PointN == 4)
+ 	  {
+-	    if (polygon->Points[0].X != polygon->Points[1].X &&
+-		polygon->Points[0].Y != polygon->Points[1].Y)
+-	      continue;
+-	    if (polygon->Points[1].X != polygon->Points[2].X &&
+-		polygon->Points[1].Y != polygon->Points[2].Y)
+-	      continue;
+-	    if (polygon->Points[2].X != polygon->Points[3].X &&
+-		polygon->Points[2].Y != polygon->Points[3].Y)
+-	      continue;
+-	    if (polygon->Points[0].X != polygon->Points[3].X &&
+-		polygon->Points[0].Y != polygon->Points[3].Y)
+-	      continue;
+ 	    conn = GetConnectionMemory (a);
+ 	    /* make point on a vertex */
+ 	    conn->X = polygon->Clipped->contours->head.point[0];
+@@ -603,10 +590,9 @@ DrawShortestRats (NetListTypePtr Netl, void (*funcp) ())
+ 		   */
+ 		  if (conn1->type == POLYGON_TYPE &&
+ 		      (polygon = (PolygonTypePtr)conn1->ptr2) &&
+-		      IsPointInBox (conn2->X, conn2->Y, (BoxTypePtr)polygon, 0)
+-		      && !(distance == 0 &&
+-			   firstpoint && firstpoint->type == VIA_TYPE))
+-		      // IsPointInPolygon (conn2->X, conn2->Y, 0, polygon))
++		      !(distance == 0 &&
++		        firstpoint && firstpoint->type == VIA_TYPE) &&
++		      IsPointInPolygonIgnoreHoles (conn2->X, conn2->Y, polygon))
+ 		    {
+ 		      distance = 0;
+ 		      firstpoint = conn2;
+@@ -615,10 +601,9 @@ DrawShortestRats (NetListTypePtr Netl, void (*funcp) ())
+ 		    }
+ 		  else if (conn2->type == POLYGON_TYPE &&
+ 		      (polygon = (PolygonTypePtr)conn2->ptr2) &&
+-		      IsPointInBox (conn1->X, conn1->Y, (BoxTypePtr)polygon, 0)
+-		      && !(distance == 0 &&
+-			   firstpoint && firstpoint->type == VIA_TYPE))
+-		      // IsPointInPolygon (conn1->X, conn1->Y, 0, polygon))
++		      !(distance == 0 &&
++		        firstpoint && firstpoint->type == VIA_TYPE) &&
++		      IsPointInPolygonIgnoreHoles (conn1->X, conn1->Y, polygon))
+ 		    {
+ 		      distance = 0;
+ 		      firstpoint = conn1;
