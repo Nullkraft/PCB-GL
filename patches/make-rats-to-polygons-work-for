@@ -1,5 +1,5 @@
 Bottom: b9baf5878a4f6c16227d23cac5225b3b98941a98
-Top:    69fc012ccf6c6c08c411b2fae9bf1e8ad0bb9907
+Top:    c398cdf8e841f093b4a077dfb3bf327022cd6faa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-08 16:27:34 +0100
 
@@ -9,17 +9,16 @@ Make rats to polygons work for arbitrary clipped shapes
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 54f8f9f..9534c81 100644
+index 54f8f9f..ca7691f 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -1540,6 +1540,19 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
+@@ -1540,6 +1540,18 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
    return isects (c, p, True);
  }
  
 +
 +Boolean
-+IsPointInPolygonIgnoreHoles (LocationType X, LocationType Y,
-+                             PolygonTypePtr p)
++IsPointInPolygonIgnoreHoles (LocationType X, LocationType Y, PolygonTypePtr p)
 +{
 +  POLYAREA *c;
 +  Vector v;
