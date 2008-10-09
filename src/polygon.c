@@ -1544,12 +1544,10 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
 Boolean
 IsPointInPolygonIgnoreHoles (LocationType X, LocationType Y, PolygonTypePtr p)
 {
-  POLYAREA *c;
   Vector v;
   v[0] = X;
   v[1] = Y;
-  if (poly_InsideContour (p->Clipped->contours, v))
-    return True;
+  return poly_InsideContour (p->Clipped->contours, v);
 }
 
 Boolean
