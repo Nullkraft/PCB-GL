@@ -1,0 +1,27 @@
+Bottom: c398cdf8e841f093b4a077dfb3bf327022cd6faa
+Top:    908b6ffc8164e3feeeac383a1a6644d7b9cf9ccb
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-09 03:08:37 +0100
+
+Refresh of make-rats-to-polygons-work-for
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index ca7691f..5c2d1f9 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -1544,12 +1544,10 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
+ Boolean
+ IsPointInPolygonIgnoreHoles (LocationType X, LocationType Y, PolygonTypePtr p)
+ {
+-  POLYAREA *c;
+   Vector v;
+   v[0] = X;
+   v[1] = Y;
+-  if (poly_InsideContour (p->Clipped->contours, v))
+-    return True;
++  return poly_InsideContour (p->Clipped->contours, v);
+ }
+ 
+ Boolean
