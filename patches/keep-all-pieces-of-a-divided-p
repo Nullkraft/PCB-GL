@@ -1,7 +1,7 @@
-Bottom: 8339e8b074b7cec0a615f3a288826d91c489625e
-Top:    96246814bcf531884eb9627a8c0ff55b3e749f05
+Bottom: c398cdf8e841f093b4a077dfb3bf327022cd6faa
+Top:    6f667b3cab7efdf33f7c5a99555ff836785c8aa5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-07 16:08:39 +0100
+Date:   2008-10-09 02:16:12 +0100
 
 Keep all pieces of a divided polygon.
 
@@ -116,10 +116,10 @@ index 0388f55..deefd5f 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/find.c b/src/find.c
-index 514cfdd..f0ff99b 100644
+index edf2f7e..5707d9f 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -2468,23 +2468,29 @@ Boolean
+@@ -2467,23 +2467,29 @@ Boolean
  IsArcInPolygon (ArcTypePtr Arc, PolygonTypePtr Polygon)
  {
    BoxTypePtr Box = (BoxType *) Arc;
@@ -157,7 +157,7 @@ index 514cfdd..f0ff99b 100644
    return False;
  }
  
-@@ -2501,6 +2507,7 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
+@@ -2500,6 +2506,7 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
  {
    BoxTypePtr Box = (BoxType *) Line;
    POLYAREA *lp;
@@ -165,7 +165,7 @@ index 514cfdd..f0ff99b 100644
  
    /* lines with clearance never touch polygons */
    if (TEST_FLAG (CLEARPOLYFLAG, Polygon) && TEST_FLAG (CLEARLINEFLAG, Line))
-@@ -2518,15 +2525,20 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
+@@ -2517,15 +2524,20 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
         y2 = MAX (Line->Point1.Y, Line->Point2.Y) + wid;
         return IsRectangleInPolygon (x1, y1, x2, y2, Polygon);
       }
@@ -193,7 +193,7 @@ index 514cfdd..f0ff99b 100644
    return False;
  }
  
-@@ -2550,53 +2562,66 @@ IsPadInPolygon (PadTypePtr pad, PolygonTypePtr polygon)
+@@ -2549,53 +2561,66 @@ IsPadInPolygon (PadTypePtr pad, PolygonTypePtr polygon)
  Boolean
  IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
  {
@@ -292,7 +292,7 @@ index 514cfdd..f0ff99b 100644
    return (False);
  }
  
-@@ -4063,6 +4088,7 @@ GotoError (void)
+@@ -4062,6 +4087,7 @@ GotoError (void)
      case POLYGON_TYPE:
        {
          PolygonTypePtr polygon = (PolygonTypePtr) thing_ptr3;
@@ -301,7 +301,7 @@ index 514cfdd..f0ff99b 100644
            (polygon->Clipped->contours->xmin +
             polygon->Clipped->contours->xmax) / 2;
 diff --git a/src/polygon.c b/src/polygon.c
-index 54f8f9f..b6c5699 100644
+index ca7691f..ee5880c 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -121,7 +121,7 @@ ComputeNoHoles (PolygonType *poly)
@@ -358,7 +358,7 @@ index 54f8f9f..b6c5699 100644
      return True;
    if (r < 1)
      return False;
-@@ -1630,9 +1630,10 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
+@@ -1642,9 +1642,10 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
  {
    POLYAREA *save, *ans;
  
