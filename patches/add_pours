@@ -1,0 +1,24 @@
+Bottom: 6f667b3cab7efdf33f7c5a99555ff836785c8aa5
+Top:    6f667b3cab7efdf33f7c5a99555ff836785c8aa5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-09 03:03:03 +0100
+
+Add support for a "poured" object.
+
+This takes half of the existing polygon functionality, and splits it
+such that the user defines a poured region (similar to drawing a polygon
+previously), and after clipping, this produces zero or more polygon
+objects which are drawn and connectivity checked with the existing
+polygon code.
+
+Selecting a "polygon" will cause the parent "pour" to be looked up, and
+all child polygons selected. Manipulations will always occur on the
+"pour", with "polygons" being updated after clipping.
+
+It remains to be seen whether "pour" will have its own file-format entry,
+or if it will take over the meaning of the existing "polygon" entry.
+
+
+---
+
+
