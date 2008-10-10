@@ -198,12 +198,25 @@ typedef struct
   void *Element;
 } TextType, *TextTypePtr;
 
+typedef struct			/* holds information about a polygon piece */
+{
+  ANYOBJECTFIELDS;
+  PLINE *contours;
+//  POLYAREA *NoHoles;
+//  POlyAREA *NoHolesValid;
+} PolygonPieceType, *PolygonPieceTypePtr;
+
+
 typedef struct			/* holds information about a polygon */
 {
   ANYOBJECTFIELDS;
   Cardinal PointN,		/* number of points in polygon */
     PointMax;			/* max number from malloc() */
-  POLYAREA *Clipped;		/* the clipped region of this polygon */
+  PolygonPieceTypePtr Pieces;
+//  rtree_t *pieces_tree;		/* r_tree for pieces */
+  Cardinal PiecesN;		/* number of pieces */
+  Cardinal PiecesMax;		/* max number from malloc() */
+//  POLYAREA *Clipped;		/* the clipped region of this polygon */
   POLYAREA *NoHoles;		/* the polygon broken into hole-less regions */
   int NoHolesValid;		/* Is the NoHoles polygon up to date? */
   PointTypePtr Points;		/* data */
