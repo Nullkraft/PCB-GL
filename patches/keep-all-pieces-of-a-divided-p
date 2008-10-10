@@ -1,7 +1,7 @@
-Bottom: c398cdf8e841f093b4a077dfb3bf327022cd6faa
-Top:    6f667b3cab7efdf33f7c5a99555ff836785c8aa5
+Bottom: 908b6ffc8164e3feeeac383a1a6644d7b9cf9ccb
+Top:    f22565275260c42d273d71cac7aafe787657b348
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-09 02:16:12 +0100
+Date:   2008-10-10 10:26:39 +0100
 
 Keep all pieces of a divided polygon.
 
@@ -301,7 +301,7 @@ index edf2f7e..5707d9f 100644
            (polygon->Clipped->contours->xmin +
             polygon->Clipped->contours->xmax) / 2;
 diff --git a/src/polygon.c b/src/polygon.c
-index ca7691f..ee5880c 100644
+index 5c2d1f9..fea5e89 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -121,7 +121,7 @@ ComputeNoHoles (PolygonType *poly)
@@ -358,7 +358,7 @@ index ca7691f..ee5880c 100644
      return True;
    if (r < 1)
      return False;
-@@ -1642,9 +1642,10 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
+@@ -1640,9 +1640,10 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
  {
    POLYAREA *save, *ans;
  
