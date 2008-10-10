@@ -540,6 +540,7 @@ void
 InitLayoutLookup (void)
 {
   Cardinal i;
+  int polycount;
 
   /* initialize line arc and polygon data */
   for (i = 0; i < max_layer; i++)
@@ -564,12 +565,18 @@ InitLayoutLookup (void)
 
 
       /* allocate memory for polygon list */
-      if (layer->PolygonN)
+      polycount = 0;
+      POUR_LOOP (layer);
+      {
+        polycount += pour->PolygonN;
+      }
+      END_LOOP;
+      if (polycount)
         {
-          PolygonList[i].Data = (void **) MyCalloc (layer->PolygonN,
+          PolygonList[i].Data = (void **) MyCalloc (polycount,
                                                     sizeof (PolygonTypePtr),
                                                     "InitLayoutLookup()");
-          PolygonList[i].Size = layer->PolygonN;
+          PolygonList[i].Size = polycount;
         }
 
       /* clear some struct members */
@@ -1777,15 +1784,13 @@ LookupLOConnectionsToArc (ArcTypePtr Arc, Cardinal LayerGroup)
   /* loop over all layers of the group */
   for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
     {
-      Cardinal layer, i;
+      Cardinal layer;
 
       layer = PCB->LayerGroups.Entries[LayerGroup][entry];
 
       /* handle normal layers */
       if (layer < max_layer)
         {
-          PolygonTypePtr polygon;
-
           info.layer = layer;
           /* add arcs */
           if (setjmp (info.env) == 0)
@@ -1801,12 +1806,18 @@ LookupLOConnectionsToArc (ArcTypePtr Arc, Cardinal LayerGroup)
             return True;
 
           /* now check all polygons */
-          i = 0;
-          polygon = PCB->Data->Layer[layer].Polygon;
-          for (; i < PCB->Data->Layer[layer].PolygonN; i++, polygon++)
-            if (!TEST_FLAG (TheFlag, polygon) && IsArcInPolygon (Arc, polygon)
-                && ADD_POLYGON_TO_LIST (layer, polygon))
-              return True;
+          POUR_LOOP (LAYER_PTR (layer));
+          {
+            POURPOLYGON_LOOP (pour);
+            {
+              if (!TEST_FLAG (TheFlag, polygon) &&
+                  IsArcInPolygon (Arc, polygon) &&
+                  ADD_POLYGON_TO_LIST (layer, polygon))
+                return True;
+            }
+            END_LOOP;
+          }
+          END_LOOP;
         }
       else
         {
@@ -1922,8 +1933,6 @@ LookupLOConnectionsToLine (LineTypePtr Line, Cardinal LayerGroup,
       /* handle normal layers */
       if (layer < max_layer)
         {
-          PolygonTypePtr polygon;
-
           info.layer = layer;
           /* add lines */
           if (setjmp (info.env) == 0)
@@ -1940,13 +1949,18 @@ LookupLOConnectionsToLine (LineTypePtr Line, Cardinal LayerGroup,
           /* now check all polygons */
           if (PolysTo)
             {
-              Cardinal i = 0;
-              polygon = PCB->Data->Layer[layer].Polygon;
-              for (; i < PCB->Data->Layer[layer].PolygonN; i++, polygon++)
-                if (!TEST_FLAG
-                    (TheFlag, polygon) && IsLineInPolygon (Line, polygon)
-                    && ADD_POLYGON_TO_LIST (layer, polygon))
-                  return True;
+              POUR_LOOP (LAYER_PTR (layer));
+              {
+                POURPOLYGON_LOOP (pour);
+                {
+                  if (!TEST_FLAG (TheFlag, polygon) &&
+                      IsLineInPolygon (Line, polygon) &&
+                      ADD_POLYGON_TO_LIST (layer, polygon))
+                    return True;
+                }
+                END_LOOP;
+              }
+              END_LOOP;
             }
         }
       else
@@ -2004,7 +2018,6 @@ static Boolean
 LOTouchesLine (LineTypePtr Line, Cardinal LayerGroup)
 {
   Cardinal entry;
-  Cardinal i;
   struct lo_info info;
 
 
@@ -2021,8 +2034,6 @@ LOTouchesLine (LineTypePtr Line, Cardinal LayerGroup)
       /* handle normal layers */
       if (layer < max_layer)
         {
-          PolygonTypePtr polygon;
-
           /* find the first line that touches coordinates */
 
           if (setjmp (info.env) == 0)
@@ -2037,12 +2048,17 @@ LOTouchesLine (LineTypePtr Line, Cardinal LayerGroup)
             return (True);
 
           /* now check all polygons */
-          i = 0;
-          polygon = PCB->Data->Layer[layer].Polygon;
-          for (; i < PCB->Data->Layer[layer].PolygonN; i++, polygon++)
-            if (!TEST_FLAG (TheFlag, polygon)
-                && IsLineInPolygon (Line, polygon))
-              return (True);
+          POUR_LOOP (LAYER_PTR (layer));
+          {
+            POURPOLYGON_LOOP (pour);
+            {
+              if (!TEST_FLAG (TheFlag, polygon) &&
+                  IsLineInPolygon (Line, polygon))
+                return (True);
+            }
+            END_LOOP;
+          }
+          END_LOOP;
         }
       else
         {
@@ -2406,23 +2422,27 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
 /* loop over all layers of the group */
   for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
     {
-      Cardinal layer, i;
+      Cardinal layer;
 
       layer = PCB->LayerGroups.Entries[LayerGroup][entry];
 
       /* handle normal layers */
       if (layer < max_layer)
         {
-          PolygonTypePtr polygon;
-
           /* check all polygons */
 
-          polygon = PCB->Data->Layer[layer].Polygon;
-          for (i = 0; i < PCB->Data->Layer[layer].PolygonN; i++, polygon++)
-            if (!TEST_FLAG (TheFlag, polygon)
-                && IsPolygonInPolygon (polygon, Polygon)
-                && ADD_POLYGON_TO_LIST (layer, polygon))
-              return True;
+          POUR_LOOP (LAYER_PTR (layer));
+          {
+            POURPOLYGON_LOOP (pour);
+            {
+              if (!TEST_FLAG (TheFlag, polygon) &&
+                  IsPolygonInPolygon (polygon, Polygon) &&
+                  ADD_POLYGON_TO_LIST (layer, polygon))
+                return True;
+            }
+            END_LOOP;
+          }
+          END_LOOP;
 
           info.layer = layer;
           /* check all lines */
@@ -3387,17 +3407,21 @@ ResetFoundLinesAndPolygons (Boolean AndDraw)
       }
   }
   ENDALL_LOOP;
-  COPPERPOLYGON_LOOP (PCB->Data);
+  COPPERPOUR_LOOP (PCB->Data);
   {
-    if (TEST_FLAG (TheFlag, polygon))
-      {
-        if (AndDraw)
-          AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
-        CLEAR_FLAG (TheFlag, polygon);
-        if (AndDraw)
-          DrawPolygon (layer, polygon, 0);
-        change = True;
-      }
+    POURPOLYGON_LOOP (pour);
+    {
+      if (TEST_FLAG (TheFlag, polygon))
+        {
+          if (AndDraw)
+            AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
+          CLEAR_FLAG (TheFlag, polygon);
+          if (AndDraw)
+            DrawPolygon (layer, polygon, 0);
+          change = True;
+        }
+    }
+    END_LOOP;
   }
   ENDALL_LOOP;
   if (change)

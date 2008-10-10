@@ -1707,10 +1707,13 @@ gp_text_cb (const BoxType *b, void *cb)
 static int
 gp_poly_cb (const BoxType *b, void *cb)
 {
+#warning FIXME Later
+#if 0
   int i;
   const PolygonTypePtr p = (PolygonTypePtr) b;
   for (i=0; i<p->PointN; i++)
     gp_point (p->Points[i].X, p->Points[i].Y, 0, 0);
+#endif
   return 0;
 }
 

@@ -42,6 +42,7 @@
 
 
 PolygonTypePtr CopyPolygonLowLevel (PolygonTypePtr, PolygonTypePtr);
+PourTypePtr CopyPourLowLevel (PourTypePtr, PourTypePtr);
 ElementTypePtr CopyElementLowLevel (DataTypePtr, ElementTypePtr,
 				    ElementTypePtr, Boolean, LocationType, LocationType);
 Boolean CopyPastebufferToLayout (LocationType, LocationType);
