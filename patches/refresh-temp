@@ -1,0 +1,22 @@
+Bottom: 69a81b4fe00e23592c55d723aa066c114bd79d31
+Top:    986e06d8cfd74bba64998499bae9b76c01e2a0e1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-10 11:11:17 +0100
+
+Refresh of add_pours
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 6a98d3a..6a482c0 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -104,6 +104,8 @@ PCB_SRCS = \
+ 	polygon.h \
+ 	polygon1.c \
+ 	polyarea.h \
++	pour.c \
++	pour.h \
+ 	puller.c \
+ 	print.c \
+ 	print.h \
