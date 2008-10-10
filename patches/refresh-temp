@@ -1,0 +1,131 @@
+Bottom: 98b6b610fdd5b7371afd0bb0864cd7078ed826bc
+Top:    2bbb96edef4ec81f28b7d695ffcb2f3af27cd631
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-10 11:34:46 +0100
+
+Refresh of make-pieces-of-a-clipped-polyg
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 6a482c0..6a98d3a 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -104,8 +104,6 @@ PCB_SRCS = \
+ 	polygon.h \
+ 	polygon1.c \
+ 	polyarea.h \
+-	pour.c \
+-	pour.h \
+ 	puller.c \
+ 	print.c \
+ 	print.h \
+diff --git a/src/create.c b/src/create.c
+index d5ea0c9..bbfd52f 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -605,7 +605,6 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
+   polygon->Clipped = NULL;
+   polygon->NoHoles = NULL;
+   polygon->NoHolesValid = 0;
+-  polygon->Parent = NULL;
+   return (polygon);
+ }
+ 
+diff --git a/src/global.h b/src/global.h
+index d1e7368..aa4ecf8 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -218,8 +218,7 @@ typedef struct			/* holds information about a polygon */
+   POLYAREA *NoHoles;		/* the polygon broken into hole-less regions */
+   int NoHolesValid;		/* Is the NoHoles polygon up to date? */
+   PointTypePtr Points;		/* data */
+-  PolygonTypePtr *Parent;	/* The parent polygon which defined us */
+-};
++} PolygonType, *PolygonTypePtr;
+ 
+ typedef struct			/* holds information about arcs */
+ {
+diff --git a/src/macro.h b/src/macro.h
+index 5bae417..819d202 100644
+--- a/src/macro.h
++++ b/src/macro.h
+@@ -391,13 +391,6 @@ extern int mem_any_set (unsigned char *, int);
+ 	{						\
+ 		text = &(layer)->Text[n]
+ 
+-#define	POUR_LOOP(layer) do {			\
+-	Cardinal		n;			\
+-	PolygonTypePtr	pour;			\
+-	for (n = (layer)->PourN-1; n != -1; n--)	\
+-	{						\
+-		pour = &(layer)->Pour[n]
+-
+ #define	POLYGON_LOOP(layer) do {			\
+ 	Cardinal		n;			\
+ 	PolygonTypePtr	polygon;			\
+diff --git a/src/mymem.c b/src/mymem.c
+index fba0715..ffa4dad 100644
+--- a/src/mymem.c
++++ b/src/mymem.c
+@@ -399,35 +399,6 @@ GetTextMemory (LayerTypePtr Layer)
+ }
+ 
+ /* ---------------------------------------------------------------------------
+- * get next slot for a pour polygon object, allocates memory if necessary
+- */
+-PolygonTypePtr
+-GetPourMemory (LayerTypePtr Layer)
+-{
+-  PolygonTypePtr pour = Layer->Pour;
+-
+-  /* realloc new memory if necessary and clear it */
+-  if (Layer->PourN >= Layer->PourMax)
+-    {
+-      Layer->PourMax += STEP_POUR;
+-//      if (Layer->polygon_tree)
+-//	r_destroy_tree (&Layer->polygon_tree);
+-      pour = MyRealloc (pour, Layer->PourMax * sizeof (PolygonType),
+-			   "GetPourMemory()");
+-      Layer->Pour = pour;
+-      memset (pour + Layer->PourN, 0,
+-	      STEP_POUR * sizeof (PolygonType));
+-//      Layer->polygon_tree = r_create_tree (NULL, 0, 0);
+-//      POLYGON_LOOP (Layer);
+-//      {
+-//	r_insert_entry (Layer->polygon_tree, (BoxType *) polygon, 0);
+-//      }
+-//      END_LOOP;
+-    }
+-  return (pour + Layer->PourN++);
+-}
+-
+-/* ---------------------------------------------------------------------------
+  * get next slot for a polygon object, allocates memory if necessary
+  */
+ PolygonTypePtr
+@@ -932,12 +903,6 @@ FreeDataMemory (DataTypePtr Data)
+ 	  }
+ 	  END_LOOP;
+ 	  MYFREE (layer->Polygon);
+-	  POUR_LOOP (layer);
+-	  {
+-	    FreePolygonMemory (pour);
+-	  }
+-	  END_LOOP;
+-	  MYFREE (layer->Pour);
+ 	  if (layer->line_tree)
+ 	    r_destroy_tree (&layer->line_tree);
+ 	  if (layer->arc_tree)
+diff --git a/src/mymem.h b/src/mymem.h
+index bbcaec4..b9d4de1 100644
+--- a/src/mymem.h
++++ b/src/mymem.h
+@@ -56,7 +56,6 @@
+ #define	STEP_SELECTORENTRY	128
+ #define	STEP_REMOVELIST		500
+ #define	STEP_UNDOLIST		500
+-#define	STEP_POUR		10
+ #define	STEP_POLYGON		10
+ #define	STEP_POLYGONPOINT	10
+ #define	STEP_LIBRARYMENU	10
