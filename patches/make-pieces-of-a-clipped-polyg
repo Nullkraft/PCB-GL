@@ -1,5 +1,5 @@
 Bottom: f22565275260c42d273d71cac7aafe787657b348
-Top:    b45b8946a1a9fded2f3d67999ec6cec39d3e9a25
+Top:    98b6b610fdd5b7371afd0bb0864cd7078ed826bc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-10 11:17:57 +0100
 
@@ -34,14 +34,13 @@ index bbfd52f..d5ea0c9 100644
  }
  
 diff --git a/src/global.h b/src/global.h
-index 7763c80..6c2e373 100644
+index 7763c80..d1e7368 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -198,16 +198,45 @@ typedef struct
+@@ -198,16 +198,28 @@ typedef struct
    void *Element;
  } TextType, *TextTypePtr;
  
-+<<<<<<< current:src/global.h
 +typedef struct			/* holds information about a polygon piece */
 +{
 +  ANYOBJECTFIELDS;
@@ -52,25 +51,11 @@ index 7763c80..6c2e373 100644
 +
 +
  typedef struct			/* holds information about a polygon */
-+=======
-+typedef struct polygon_st PolygonType, *PolygonTypePtr;
-+
-+#if 0
-+typedef struct			/* holds information about a poured area */
  {
    ANYOBJECTFIELDS;
 -  Cardinal PointN,		/* number of points in polygon */
-+  Cardinal PointN,		/* number of points in pour outline */
-     PointMax;			/* max number from malloc() */
+-    PointMax;			/* max number from malloc() */
 -  POLYAREA *Clipped;		/* the clipped region of this polygon */
-+  PolygonTypePtr polygons;	/* the resulting polygons */
-+} PourType, *PourTypePtr;
-+#endif
-+
-+struct polygon_st		/* holds information about a polygon */
-+>>>>>>> patched:src/global.h
-+{
-+  ANYOBJECTFIELDS;
 +  PolygonPieceTypePtr Pieces;
 +//  rtree_t *pieces_tree;		/* r_tree for pieces */
 +  Cardinal PiecesN;		/* number of pieces */
@@ -80,28 +65,11 @@ index 7763c80..6c2e373 100644
    int NoHolesValid;		/* Is the NoHoles polygon up to date? */
    PointTypePtr Points;		/* data */
 -} PolygonType, *PolygonTypePtr;
-+//  PourTypePtr Pour;		/* The pour which resulted in this polygon */
 +  PolygonTypePtr *Parent;	/* The parent polygon which defined us */
 +};
  
  typedef struct			/* holds information about arcs */
  {
-@@ -232,12 +261,14 @@ typedef struct			/* holds information about one layer */
-   Cardinal LineN,		/* number of lines */
-     TextN,			/* labels */
-     PolygonN,			/* polygons */
-+    PourN,			/* poured areas */
-     ArcN,			/* and arcs */
-     LineMax,			/* max number from malloc() */
--    TextMax, PolygonMax, ArcMax;
-+    TextMax, PolygonMax, PourMax, ArcMax;
-   LineTypePtr Line;		/* pointer to additional structures */
-   TextTypePtr Text;
-   PolygonTypePtr Polygon;
-+  PolygonTypePtr Pour;
-   ArcTypePtr Arc;
-   rtree_t *line_tree, *text_tree, *polygon_tree, *arc_tree;
-   Boolean On;			/* visible flag */
 diff --git a/src/macro.h b/src/macro.h
 index 819d202..5bae417 100644
 --- a/src/macro.h
