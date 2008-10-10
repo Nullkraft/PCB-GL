@@ -667,6 +667,8 @@ AddPolygon (PointerListType layergroupboxes[], Cardinal layer,
 			     polygon->BoundingBox.X2,
 			     polygon->BoundingBox.Y2,
 			     layergroup, polygon);
+#warning FIXME LATER
+#if 0
   if (polygon->PointN == 4 &&
       (polygon->Points[0].X == polygon->Points[1].X ||
        polygon->Points[0].Y == polygon->Points[1].Y) &&
@@ -677,6 +679,7 @@ AddPolygon (PointerListType layergroupboxes[], Cardinal layer,
       (polygon->Points[3].X == polygon->Points[0].X ||
        polygon->Points[3].Y == polygon->Points[0].Y))
     is_not_rectangle = 0;
+#endif
   rb->flags.nonstraight = is_not_rectangle;
   rb->layer = layer;
   if (TEST_FLAG (CLEARPOLYFLAG, polygon))

@@ -120,6 +120,7 @@ ComputeNoHoles (PolygonType *poly)
   poly->NoHolesValid = 1;
 }
 
+#if 0
 static POLYAREA *
 biggest (POLYAREA * p)
 {
@@ -165,6 +166,7 @@ biggest (POLYAREA * p)
   assert (p->b);
   return p;
 }
+#endif
 
 POLYAREA *
 ContourToPoly (PLINE * contour)
@@ -182,6 +184,9 @@ ContourToPoly (PLINE * contour)
 static POLYAREA *
 original_poly (PolygonType * p)
 {
+  return NULL;
+#warning FIXME Later
+#if 0
   PLINE *contour = NULL;
   POLYAREA *np = NULL;
   Vector v;
@@ -222,6 +227,7 @@ original_poly (PolygonType * p)
   poly_InclContour (np, contour);
   assert (poly_Valid (np));
   return biggest (np);
+#endif
 }
 
 static int
@@ -241,7 +247,8 @@ ClipOriginal (PolygonType * poly)
       poly->NoHoles = NULL;
       return 0;
     }
-  poly->Clipped = biggest (result);
+#warning FIXME Later
+//  poly->Clipped = biggest (result);
   assert (!poly->Clipped || poly_Valid (poly->Clipped));
   return 1;
 }
@@ -616,7 +623,9 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
       p->NoHoles = NULL;
       return -1;
     }
-  p->Clipped = biggest (merged);
+#warning FIXME Later
+//  p->Clipped = biggest (merged);
+  p->Clipped = merged;
   assert (!p->Clipped || poly_Valid (p->Clipped));
   if (!p->Clipped)
     Message ("Polygon cleared out of existence near (%d, %d)\n",
@@ -946,7 +955,9 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
       p->NoHoles = NULL;
       return 0;
     }
-  p->Clipped = biggest (merged);
+#warning FIXME Later
+//  p->Clipped = biggest (merged);
+  p->Clipped = merged;
   assert (!p->Clipped || poly_Valid (p->Clipped));
   return ClipOriginal (p);
 }
@@ -1081,205 +1092,6 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
   else
     p->NoHolesValid = 0;
   return 1;
-}
-
-/* --------------------------------------------------------------------------
- * remove redundant polygon points. Any point that lies on the straight
- * line between the points on either side of it is redundant.
- * returns true if any points are removed
- */
-Boolean
-RemoveExcessPolygonPoints (LayerTypePtr Layer, PolygonTypePtr Polygon)
-{
-  PointTypePtr pt1, pt2, pt3;
-  Cardinal n;
-  LineType line;
-  Boolean changed = False;
-
-  if (Undoing ())
-    return (False);
-  /* there are always at least three points in a polygon */
-  pt1 = &Polygon->Points[Polygon->PointN - 1];
-  pt2 = &Polygon->Points[0];
-  pt3 = &Polygon->Points[1];
-  for (n = 0; n < Polygon->PointN; n++, pt1++, pt2++, pt3++)
-    {
-      /* wrap around polygon */
-      if (n == 1)
-        pt1 = &Polygon->Points[0];
-      if (n == Polygon->PointN - 1)
-        pt3 = &Polygon->Points[0];
-      line.Point1 = *pt1;
-      line.Point2 = *pt3;
-      line.Thickness = 0;
-      if (IsPointOnLine ((float) pt2->X, (float) pt2->Y, 0.0, &line))
-        {
-          RemoveObject (POLYGONPOINT_TYPE, (void *) Layer, (void *) Polygon,
-                        (void *) pt2);
-          changed = True;
-        }
-    }
-  return (changed);
-}
-
-/* ---------------------------------------------------------------------------
- * returns the index of the polygon point which is the end
- * point of the segment with the lowest distance to the passed
- * coordinates
- */
-Cardinal
-GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, LocationType X,
-                               LocationType Y)
-{
-  double mindistance = (double) MAX_COORD * MAX_COORD;
-  PointTypePtr ptr1 = &Polygon->Points[Polygon->PointN - 1],
-    ptr2 = &Polygon->Points[0];
-  Cardinal n, result = 0;
-
-  /* we calculate the distance to each segment and choose the
-   * shortest distance. If the closest approach between the
-   * given point and the projected line (i.e. the segment extended)
-   * is not on the segment, then the distance is the distance
-   * to the segment end point.
-   */
-
-  for (n = 0; n < Polygon->PointN; n++, ptr2++)
-    {
-      register double u, dx, dy;
-      dx = ptr2->X - ptr1->X;
-      dy = ptr2->Y - ptr1->Y;
-      if (dx != 0.0 || dy != 0.0)
-        {
-          /* projected intersection is at P1 + u(P2 - P1) */
-          u = ((X - ptr1->X) * dx + (Y - ptr1->Y) * dy) / (dx * dx + dy * dy);
-
-          if (u < 0.0)
-            {                   /* ptr1 is closest point */
-              u = SQUARE (X - ptr1->X) + SQUARE (Y - ptr1->Y);
-            }
-          else if (u > 1.0)
-            {                   /* ptr2 is closest point */
-              u = SQUARE (X - ptr2->X) + SQUARE (Y - ptr2->Y);
-            }
-          else
-            {                   /* projected intersection is closest point */
-              u = SQUARE (X - ptr1->X * (1.0 - u) - u * ptr2->X) +
-                SQUARE (Y - ptr1->Y * (1.0 - u) - u * ptr2->Y);
-            }
-          if (u < mindistance)
-            {
-              mindistance = u;
-              result = n;
-            }
-        }
-      ptr1 = ptr2;
-    }
-  return (result);
-}
-
-/* ---------------------------------------------------------------------------
- * go back to the  previous point of the polygon
- */
-void
-GoToPreviousPoint (void)
-{
-  switch (Crosshair.AttachedPolygon.PointN)
-    {
-      /* do nothing if mode has just been entered */
-    case 0:
-      break;
-
-      /* reset number of points and 'LINE_MODE' state */
-    case 1:
-      Crosshair.AttachedPolygon.PointN = 0;
-      Crosshair.AttachedLine.State = STATE_FIRST;
-      addedLines = 0;
-      break;
-
-      /* back-up one point */
-    default:
-      {
-        PointTypePtr points = Crosshair.AttachedPolygon.Points;
-        Cardinal n = Crosshair.AttachedPolygon.PointN - 2;
-
-        Crosshair.AttachedPolygon.PointN--;
-        Crosshair.AttachedLine.Point1.X = points[n].X;
-        Crosshair.AttachedLine.Point1.Y = points[n].Y;
-        break;
-      }
-    }
-}
-
-/* ---------------------------------------------------------------------------
- * close polygon if possible
- */
-void
-ClosePolygon (void)
-{
-  Cardinal n = Crosshair.AttachedPolygon.PointN;
-
-  /* check number of points */
-  if (n >= 3)
-    {
-      /* if 45 degree lines are what we want do a quick check
-       * if closing the polygon makes sense
-       */
-      if (!TEST_FLAG (ALLDIRECTIONFLAG, PCB))
-        {
-          BDimension dx, dy;
-
-          dx = abs (Crosshair.AttachedPolygon.Points[n - 1].X -
-                    Crosshair.AttachedPolygon.Points[0].X);
-          dy = abs (Crosshair.AttachedPolygon.Points[n - 1].Y -
-                    Crosshair.AttachedPolygon.Points[0].Y);
-          if (!(dx == 0 || dy == 0 || dx == dy))
-            {
-              Message
-                (_
-                 ("Cannot close polygon because 45 degree lines are requested.\n"));
-              return;
-            }
-        }
-      CopyAttachedPolygonToLayer ();
-      Draw ();
-    }
-  else
-    Message (_("A polygon has to have at least 3 points\n"));
-}
-
-/* ---------------------------------------------------------------------------
- * moves the data of the attached (new) polygon to the current layer
- */
-void
-CopyAttachedPolygonToLayer (void)
-{
-  PolygonTypePtr polygon;
-  int saveID;
-
-  /* move data to layer and clear attached struct */
-  polygon = CreateNewPolygon (CURRENT, NoFlags ());
-  saveID = polygon->ID;
-  *polygon = Crosshair.AttachedPolygon;
-  polygon->ID = saveID;
-  SET_FLAG (CLEARPOLYFLAG, polygon);
-  if (TEST_FLAG (NEWFULLPOLYFLAG, PCB))
-    SET_FLAG (FULLPOLYFLAG, polygon);
-  memset (&Crosshair.AttachedPolygon, 0, sizeof (PolygonType));
-  SetPolygonBoundingBox (polygon);
-  if (!CURRENT->polygon_tree)
-    CURRENT->polygon_tree = r_create_tree (NULL, 0, 0);
-  r_insert_entry (CURRENT->polygon_tree, (BoxType *) polygon, 0);
-  InitClip (PCB->Data, CURRENT, polygon);
-  DrawPolygon (CURRENT, polygon, 0);
-  SetChangedFlag (True);
-
-  /* reset state of attached line */
-  Crosshair.AttachedLine.State = STATE_FIRST;
-  addedLines = 0;
-
-  /* add to undo list */
-  AddObjectToCreateUndoList (POLYGON_TYPE, CURRENT, polygon, polygon);
-  IncrementUndoSerialNumber ();
 }
 
 /* find polygon holes in range, then call the callback function for
@@ -1572,15 +1384,17 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *u
   if (!p->next)                 /* no holes */
     {
       PolygonType poly;
-      PointType pts[4];
+//      PointType pts[4];
 
       poly.BoundingBox.X1 = p->xmin;
       poly.BoundingBox.X2 = p->xmax;
       poly.BoundingBox.Y1 = p->ymin;
       poly.BoundingBox.Y2 = p->ymax;
-      poly.PointN = poly.PointMax = 4;
       poly.Clipped = pa;
       poly.NoHoles = NULL;
+#warning FIXME Later
+#if 0
+      poly.PointN = poly.PointMax = 4;
       poly.Points = pts;
       pts[0].X = pts[0].X2 = p->xmin;
       pts[0].Y = pts[0].Y2 = p->ymin;
@@ -1590,6 +1404,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *u
       pts[2].Y = pts[2].Y2 = p->ymax;
       pts[3].X = pts[3].X2 = p->xmin;
       pts[3].Y = pts[3].Y2 = p->ymax;
+#endif
       poly.Flags = MakeFlags (CLEARPOLYFLAG);
       emit (&poly, user_data);
       poly_Free (&pa);
@@ -1675,6 +1490,9 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
 Boolean
 MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
 {
+  return 0;
+#warning FIXME Later
+#if 0
   POLYAREA *p, *start;
   Boolean many = False;
   FlagType flags;
@@ -1738,4 +1556,5 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
   inhibit = False;
   IncrementUndoSerialNumber ();
   return many;
+#endif
 }

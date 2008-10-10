@@ -65,6 +65,7 @@
 #include "misc.h"
 #include "move.h"
 #include "polygon.h"
+#include "pour.h"
 #include "remove.h"
 #include "rtree.h"
 #include "rotate.h"
@@ -245,12 +246,33 @@ SetPolygonBoundingBox (PolygonTypePtr Polygon)
 {
   Polygon->BoundingBox.X1 = Polygon->BoundingBox.Y1 = MAX_COORD;
   Polygon->BoundingBox.X2 = Polygon->BoundingBox.Y2 = 0;
+#define FIXME Later
+#if 0
   POLYGONPOINT_LOOP (Polygon);
   {
     MAKEMIN (Polygon->BoundingBox.X1, point->X);
     MAKEMIN (Polygon->BoundingBox.Y1, point->Y);
     MAKEMAX (Polygon->BoundingBox.X2, point->X);
     MAKEMAX (Polygon->BoundingBox.Y2, point->Y);
+  }
+  END_LOOP;
+#endif
+}
+
+/* ---------------------------------------------------------------------------
+ * sets the bounding box of a pour
+ */
+void
+SetPourBoundingBox (PourTypePtr Pour)
+{
+  Pour->BoundingBox.X1 = Pour->BoundingBox.Y1 = MAX_COORD;
+  Pour->BoundingBox.X2 = Pour->BoundingBox.Y2 = 0;
+  POURPOINT_LOOP (Pour);
+  {
+    MAKEMIN (Pour->BoundingBox.X1, point->X);
+    MAKEMIN (Pour->BoundingBox.Y1, point->Y);
+    MAKEMAX (Pour->BoundingBox.X2, point->X);
+    MAKEMAX (Pour->BoundingBox.Y2, point->Y);
   }
   END_LOOP;
 }
@@ -1578,14 +1600,14 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
       new_da = 360;
       new_sa = 0;
     }
-  RestoreToPolygon (PCB->Data, ARC_TYPE, Layer, a);
+  RestoreToPour (PCB->Data, ARC_TYPE, Layer, a);
   r_delete_entry (Layer->arc_tree, (BoxTypePtr) a);
   AddObjectToChangeAnglesUndoList (ARC_TYPE, a, a, a);
   a->StartAngle = new_sa;
   a->Delta = new_da;
   SetArcBoundingBox (a);
   r_insert_entry (Layer->arc_tree, (BoxTypePtr) a, 0);
-  ClearFromPolygon (PCB->Data, ARC_TYPE, Layer, a);
+  ClearFromPour (PCB->Data, ARC_TYPE, Layer, a);
 }
 
 static char *

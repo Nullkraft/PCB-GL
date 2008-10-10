@@ -267,7 +267,7 @@ have_crosshair_attachments (void)
     case VIA_MODE:
       result = TRUE;
       break;
-    case POLYGON_MODE:
+    case POUR_MODE:
       if (Crosshair.AttachedLine.State != STATE_FIRST)
 	result = TRUE;
       break;
@@ -571,7 +571,7 @@ in_draw_state (void)
 	  && Crosshair.AttachedBox.State != STATE_FIRST)
       || (Settings.Mode == RECTANGLE_MODE
 	  && Crosshair.AttachedBox.State != STATE_FIRST)
-      || (Settings.Mode == POLYGON_MODE
+      || (Settings.Mode == POUR_MODE
 	  && Crosshair.AttachedLine.State != STATE_FIRST))
     return TRUE;
   return FALSE;
@@ -633,8 +633,9 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
 	    hid_actionl ("Mode", "Arc", NULL);
 	  else if (Settings.Mode == RECTANGLE_MODE)
 	    hid_actionl ("Mode", "Rectangle", NULL);
-	  else if (Settings.Mode == POLYGON_MODE)
-	    hid_actionl ("Mode", "Polygon", NULL);
+	  else if (Settings.Mode == POUR_MODE)
+	    hid_actionl ("Mode", "Pour", NULL);
+//	    hid_actionl ("Mode", "Polygon", NULL);
 
 	  hid_actionl ("Mode", "Notify", NULL);
 	  draw_state_reset = TRUE;
