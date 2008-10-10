@@ -210,6 +210,8 @@ typedef struct			/* holds information about a polygon piece */
 typedef struct			/* holds information about a polygon */
 {
   ANYOBJECTFIELDS;
+  Cardinal PointN,		/* number of points in polygon */
+    PointMax;			/* max number from malloc() */
   PolygonPieceTypePtr Pieces;
 //  rtree_t *pieces_tree;		/* r_tree for pieces */
   Cardinal PiecesN;		/* number of pieces */
