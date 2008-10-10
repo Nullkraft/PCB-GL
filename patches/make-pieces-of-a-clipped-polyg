@@ -1,5 +1,5 @@
 Bottom: f22565275260c42d273d71cac7aafe787657b348
-Top:    2bbb96edef4ec81f28b7d695ffcb2f3af27cd631
+Top:    c10c0053a50379dfd422fc81b76dc77b81ce4f29
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-10 11:17:57 +0100
 
@@ -9,10 +9,10 @@ Make pieces of a clipped polygon a distinct object type
 ---
 
 diff --git a/src/global.h b/src/global.h
-index 7763c80..aa4ecf8 100644
+index 7763c80..5e6b6c8 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -198,12 +198,23 @@ typedef struct
+@@ -198,12 +198,25 @@ typedef struct
    void *Element;
  } TextType, *TextTypePtr;
  
@@ -28,8 +28,8 @@ index 7763c80..aa4ecf8 100644
  typedef struct			/* holds information about a polygon */
  {
    ANYOBJECTFIELDS;
--  Cardinal PointN,		/* number of points in polygon */
--    PointMax;			/* max number from malloc() */
+   Cardinal PointN,		/* number of points in polygon */
+     PointMax;			/* max number from malloc() */
 -  POLYAREA *Clipped;		/* the clipped region of this polygon */
 +  PolygonPieceTypePtr Pieces;
 +//  rtree_t *pieces_tree;		/* r_tree for pieces */
