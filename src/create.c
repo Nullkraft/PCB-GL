@@ -602,7 +602,10 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
   /* copy values */
   polygon->Flags = Flags;
   polygon->ID = ID++;
-  polygon->Clipped = NULL;
+  polygon->Pieces = NULL;
+  polygon->PiecesN = 0;
+  polygon->PiecesMax = 0;
+//  polygon->Clipped = NULL;
   polygon->NoHoles = NULL;
   polygon->NoHolesValid = 0;
   return (polygon);
