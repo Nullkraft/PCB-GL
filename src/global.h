@@ -198,7 +198,6 @@ typedef struct
   void *Element;
 } TextType, *TextTypePtr;
 
-<<<<<<< current:src/global.h
 typedef struct			/* holds information about a polygon piece */
 {
   ANYOBJECTFIELDS;
@@ -209,21 +208,6 @@ typedef struct			/* holds information about a polygon piece */
 
 
 typedef struct			/* holds information about a polygon */
-=======
-typedef struct polygon_st PolygonType, *PolygonTypePtr;
-
-#if 0
-typedef struct			/* holds information about a poured area */
-{
-  ANYOBJECTFIELDS;
-  Cardinal PointN,		/* number of points in pour outline */
-    PointMax;			/* max number from malloc() */
-  PolygonTypePtr polygons;	/* the resulting polygons */
-} PourType, *PourTypePtr;
-#endif
-
-struct polygon_st		/* holds information about a polygon */
->>>>>>> patched:src/global.h
 {
   ANYOBJECTFIELDS;
   PolygonPieceTypePtr Pieces;
@@ -234,7 +218,6 @@ struct polygon_st		/* holds information about a polygon */
   POLYAREA *NoHoles;		/* the polygon broken into hole-less regions */
   int NoHolesValid;		/* Is the NoHoles polygon up to date? */
   PointTypePtr Points;		/* data */
-//  PourTypePtr Pour;		/* The pour which resulted in this polygon */
   PolygonTypePtr *Parent;	/* The parent polygon which defined us */
 };
 
@@ -261,14 +244,12 @@ typedef struct			/* holds information about one layer */
   Cardinal LineN,		/* number of lines */
     TextN,			/* labels */
     PolygonN,			/* polygons */
-    PourN,			/* poured areas */
     ArcN,			/* and arcs */
     LineMax,			/* max number from malloc() */
-    TextMax, PolygonMax, PourMax, ArcMax;
+    TextMax, PolygonMax, ArcMax;
   LineTypePtr Line;		/* pointer to additional structures */
   TextTypePtr Text;
   PolygonTypePtr Polygon;
-  PolygonTypePtr Pour;
   ArcTypePtr Arc;
   rtree_t *line_tree, *text_tree, *polygon_tree, *arc_tree;
   Boolean On;			/* visible flag */
