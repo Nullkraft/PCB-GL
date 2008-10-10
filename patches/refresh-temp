@@ -1,0 +1,22 @@
+Bottom: 908b6ffc8164e3feeeac383a1a6644d7b9cf9ccb
+Top:    14c9888f54ed51a0e8bb37591bf61cd67a8c7c5c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-10 11:47:14 +0100
+
+Refresh of make-rats-to-polygons-work-for
+
+---
+
+diff --git a/src/rats.c b/src/rats.c
+index 27ff95b..f381c1c 100644
+--- a/src/rats.c
++++ b/src/rats.c
+@@ -507,7 +507,7 @@ GatherSubnets (NetListTypePtr Netl, Boolean NoWarn, Boolean AndRats)
+       /* add polygons so the auto-router can see them as targets */
+       ALLPOLYGON_LOOP (PCB->Data);
+       {
+-	if (TEST_FLAG (DRCFLAG, polygon) && polygon->PointN == 4)
++	if (TEST_FLAG (DRCFLAG, polygon))
+ 	  {
+ 	    conn = GetConnectionMemory (a);
+ 	    /* make point on a vertex */
