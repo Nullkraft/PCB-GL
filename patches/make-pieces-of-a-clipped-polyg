@@ -1,9 +1,10 @@
-Bottom: f22565275260c42d273d71cac7aafe787657b348
+Bottom: 60ba20fca570cdb9268a763c55d02b24c4d72e0b
 Top:    8505488243f1095f2a5ca8377c021f9e85e4c44b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-10 11:17:57 +0100
+Date:   2008-10-10 11:47:17 +0100
 
 Make pieces of a clipped polygon a distinct object type
+
 
 
 ---
@@ -108,16 +109,3 @@ index b9d4de1..6fe104d 100644
  ElementTypePtr GetElementMemory (DataTypePtr);
  BoxTypePtr GetBoxMemory (BoxListTypePtr);
  ConnectionTypePtr GetConnectionMemory (NetTypePtr);
-diff --git a/src/rats.c b/src/rats.c
-index 27ff95b..f381c1c 100644
---- a/src/rats.c
-+++ b/src/rats.c
-@@ -507,7 +507,7 @@ GatherSubnets (NetListTypePtr Netl, Boolean NoWarn, Boolean AndRats)
-       /* add polygons so the auto-router can see them as targets */
-       ALLPOLYGON_LOOP (PCB->Data);
-       {
--	if (TEST_FLAG (DRCFLAG, polygon) && polygon->PointN == 4)
-+	if (TEST_FLAG (DRCFLAG, polygon))
- 	  {
- 	    conn = GetConnectionMemory (a);
- 	    /* make point on a vertex */
