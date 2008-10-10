@@ -90,7 +90,7 @@ static Boolean SearchElementNameByLocation (int, ElementTypePtr *,
 					    Boolean);
 static Boolean SearchLinePointByLocation (int, LayerTypePtr *, LineTypePtr *,
 					  PointTypePtr *);
-static Boolean SearchPointByLocation (int, LayerTypePtr *, PolygonTypePtr *,
+static Boolean SearchPourPointByLocation (int, LayerTypePtr *, PourTypePtr *,
 				      PointTypePtr *);
 static Boolean SearchElementByLocation (int, ElementTypePtr *,
 					ElementTypePtr *, ElementTypePtr *,
@@ -104,6 +104,7 @@ struct ans_info
   void **ptr1, **ptr2, **ptr3;
   Boolean BackToo;
   float area;
+  BoxType *search_box;
   jmp_buf env;
   int locked;			/* This will be zero or LOCKFLAG */
 };
@@ -431,6 +432,15 @@ polygon_callback (const BoxType * box, void *cl)
   return 0;
 }
 
+static int
+pour_polygon_callback (const BoxType * box, void *cl)
+{
+  PourTypePtr pour = (PourTypePtr) box;
+  struct ans_info *i = (struct ans_info *) cl;
+
+  return r_search (pour->polygon_tree, &SearchBox, NULL, polygon_callback, i);
+}
+
 
 /* ---------------------------------------------------------------------------
  * searches a polygon on the SearchLayer 
@@ -448,7 +458,7 @@ SearchPolygonByLocation (int locked, LayerTypePtr * Layer,
 
   if (setjmp (info.env) == 0)
     {
-      r_search (SearchLayer->polygon_tree, &SearchBox, NULL, polygon_callback,
+      r_search (SearchLayer->pour_tree, &SearchBox, NULL, pour_polygon_callback,
 		&info);
       return False;
     }
@@ -512,27 +522,27 @@ SearchLinePointByLocation (int locked, LayerTypePtr * Layer,
 }
 
 /* ---------------------------------------------------------------------------
- * searches a polygon-point on all layers that are switched on
+ * searches a pour-point on all layers that are switched on
  * in layerstack order
  */
 static Boolean
-SearchPointByLocation (int locked, LayerTypePtr * Layer,
-		       PolygonTypePtr * Polygon, PointTypePtr * Point)
+SearchPourPointByLocation (int locked, LayerTypePtr * Layer,
+		       PourTypePtr * Pour, PointTypePtr * Point)
 {
   float d, least;
   Boolean found = False;
 
-  least = SQUARE (SearchRadius + MAX_POLYGON_POINT_DISTANCE);
+  least = SQUARE (SearchRadius + MAX_POUR_POINT_DISTANCE);
   *Layer = SearchLayer;
-  POLYGON_LOOP (*Layer);
+  POUR_LOOP (*Layer);
   {
-    POLYGONPOINT_LOOP (polygon);
+    POURPOINT_LOOP (pour);
     {
       d = SQUARE (point->X - PosX) + SQUARE (point->Y - PosY);
       if (d < least)
 	{
 	  least = d;
-	  *Polygon = polygon;
+	  *Pour = pour;
 	  *Point = point;
 	  found = True;
 	}
@@ -1243,11 +1253,11 @@ SearchObjectByLocation (int Type,
       if (SearchLayer->On)
 	{
 	  if ((HigherAvail & (PIN_TYPE | PAD_TYPE)) == 0 &&
-	      Type & POLYGONPOINT_TYPE &&
-	      SearchPointByLocation (locked,
-				     (LayerTypePtr *) Result1,
-				     (PolygonTypePtr *) Result2,
-				     (PointTypePtr *) Result3))
+	      Type & POURPOINT_TYPE &&
+	      SearchPourPointByLocation (locked,
+					 (LayerTypePtr *) Result1,
+					 (PourTypePtr *) Result2,
+					 (PointTypePtr *) Result3))
 	    return (POLYGONPOINT_TYPE);
 
 	  if ((HigherAvail & (PIN_TYPE | PAD_TYPE)) == 0 &&
@@ -1429,7 +1439,8 @@ SearchObjectByID (DataTypePtr Base,
       }
       ENDALL_LOOP;
     }
-
+#warning FIXME Later
+#if 0
   if (type == POLYGON_TYPE || type == POLYGONPOINT_TYPE)
     {
       ALLPOLYGON_LOOP (Base);
@@ -1455,6 +1466,33 @@ SearchObjectByID (DataTypePtr Base,
       }
       ENDALL_LOOP;
     }
+#endif
+  if (type == POUR_TYPE || type == POURPOINT_TYPE)
+    {
+      ALLPOUR_LOOP (Base);
+      {
+	if (pour->ID == ID)
+	  {
+	    *Result1 = (void *) layer;
+	    *Result2 = *Result3 = (void *) pour;
+	    return (POUR_TYPE);
+	  }
+	if (type == POURPOINT_TYPE)
+	  POURPOINT_LOOP (pour);
+	{
+	  if (point->ID == ID)
+	    {
+	      *Result1 = (void *) layer;
+	      *Result2 = (void *) pour;
+	      *Result3 = (void *) point;
+	      return (POURPOINT_TYPE);
+	    }
+	}
+	END_LOOP;
+      }
+      ENDALL_LOOP;
+    }
+
   if (type == VIA_TYPE)
     {
       VIA_LOOP (Base);
