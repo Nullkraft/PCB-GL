@@ -1,5 +1,5 @@
 Bottom: f22565275260c42d273d71cac7aafe787657b348
-Top:    f22565275260c42d273d71cac7aafe787657b348
+Top:    2bbb96edef4ec81f28b7d695ffcb2f3af27cd631
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-10 11:17:57 +0100
 
@@ -8,4 +8,34 @@ Make pieces of a clipped polygon a distinct object type
 
 ---
 
-
+diff --git a/src/global.h b/src/global.h
+index 7763c80..aa4ecf8 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -198,12 +198,23 @@ typedef struct
+   void *Element;
+ } TextType, *TextTypePtr;
+ 
++typedef struct			/* holds information about a polygon piece */
++{
++  ANYOBJECTFIELDS;
++  PLINE *contours;
++//  POLYAREA *NoHoles;
++//  POlyAREA *NoHolesValid;
++} PolygonPieceType, *PolygonPieceTypePtr;
++
++
+ typedef struct			/* holds information about a polygon */
+ {
+   ANYOBJECTFIELDS;
+-  Cardinal PointN,		/* number of points in polygon */
+-    PointMax;			/* max number from malloc() */
+-  POLYAREA *Clipped;		/* the clipped region of this polygon */
++  PolygonPieceTypePtr Pieces;
++//  rtree_t *pieces_tree;		/* r_tree for pieces */
++  Cardinal PiecesN;		/* number of pieces */
++  Cardinal PiecesMax;		/* max number from malloc() */
++//  POLYAREA *Clipped;		/* the clipped region of this polygon */
+   POLYAREA *NoHoles;		/* the polygon broken into hole-less regions */
+   int NoHolesValid;		/* Is the NoHoles polygon up to date? */
+   PointTypePtr Points;		/* data */
