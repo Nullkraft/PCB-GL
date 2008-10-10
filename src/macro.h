@@ -391,13 +391,6 @@ extern int mem_any_set (unsigned char *, int);
 	{						\
 		text = &(layer)->Text[n]
 
-#define	POUR_LOOP(layer) do {			\
-	Cardinal		n;			\
-	PolygonTypePtr	pour;			\
-	for (n = (layer)->PourN-1; n != -1; n--)	\
-	{						\
-		pour = &(layer)->Pour[n]
-
 #define	POLYGON_LOOP(layer) do {			\
 	Cardinal		n;			\
 	PolygonTypePtr	polygon;			\

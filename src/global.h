@@ -218,8 +218,7 @@ typedef struct			/* holds information about a polygon */
   POLYAREA *NoHoles;		/* the polygon broken into hole-less regions */
   int NoHolesValid;		/* Is the NoHoles polygon up to date? */
   PointTypePtr Points;		/* data */
-  PolygonTypePtr *Parent;	/* The parent polygon which defined us */
-};
+} PolygonType, *PolygonTypePtr;
 
 typedef struct			/* holds information about arcs */
 {
