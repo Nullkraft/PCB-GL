@@ -85,15 +85,16 @@
 
 #define	MOVE_TYPES	\
 	(VIA_TYPE | LINE_TYPE | TEXT_TYPE | ELEMENT_TYPE | ELEMENTNAME_TYPE |	\
-	POLYGON_TYPE | POLYGONPOINT_TYPE | LINEPOINT_TYPE | ARC_TYPE)
+	POUR_TYPE | POURPOINT_TYPE | LINEPOINT_TYPE | ARC_TYPE)
 #define	MOVETOLAYER_TYPES	\
-	(LINE_TYPE | TEXT_TYPE | POLYGON_TYPE | RATLINE_TYPE | ARC_TYPE)
+	(LINE_TYPE | TEXT_TYPE | POUR_TYPE | RATLINE_TYPE | ARC_TYPE)
 
 
 /* ---------------------------------------------------------------------------
  * prototypes
  */
 void MovePolygonLowLevel (PolygonTypePtr, LocationType, LocationType);
+void MovePourLowLevel (PourTypePtr, LocationType, LocationType);
 void MoveElementLowLevel (DataTypePtr, ElementTypePtr, LocationType,
 			  LocationType);
 void *MoveObject (int, void *, void *, void *, LocationType, LocationType);

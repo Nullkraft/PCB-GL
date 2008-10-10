@@ -65,6 +65,7 @@
 #include "misc.h"
 #include "move.h"
 #include "polygon.h"
+#include "pour.h"
 #include "remove.h"
 #include "rtree.h"
 #include "rotate.h"
@@ -238,19 +239,32 @@ SetLineBoundingBox (LineTypePtr Line)
 }
 
 /* ---------------------------------------------------------------------------
- * sets the bounding box of a polygons
+ * sets the bounding box of a polygon
  */
 void
 SetPolygonBoundingBox (PolygonTypePtr Polygon)
 {
-  Polygon->BoundingBox.X1 = Polygon->BoundingBox.Y1 = MAX_COORD;
-  Polygon->BoundingBox.X2 = Polygon->BoundingBox.Y2 = 0;
-  POLYGONPOINT_LOOP (Polygon);
+  PLINE *outer = Polygon->Clipped->contours;
+  Polygon->BoundingBox.X1 = outer->xmin;
+  Polygon->BoundingBox.Y1 = outer->ymin;
+  Polygon->BoundingBox.X2 = outer->xmax;
+  Polygon->BoundingBox.Y2 = outer->ymax;
+}
+
+/* ---------------------------------------------------------------------------
+ * sets the bounding box of a pour
+ */
+void
+SetPourBoundingBox (PourTypePtr Pour)
+{
+  Pour->BoundingBox.X1 = Pour->BoundingBox.Y1 = MAX_COORD;
+  Pour->BoundingBox.X2 = Pour->BoundingBox.Y2 = 0;
+  POURPOINT_LOOP (Pour);
   {
-    MAKEMIN (Polygon->BoundingBox.X1, point->X);
-    MAKEMIN (Polygon->BoundingBox.Y1, point->Y);
-    MAKEMAX (Polygon->BoundingBox.X2, point->X);
-    MAKEMAX (Polygon->BoundingBox.Y2, point->Y);
+    MAKEMIN (Pour->BoundingBox.X1, point->X);
+    MAKEMIN (Pour->BoundingBox.Y1, point->Y);
+    MAKEMAX (Pour->BoundingBox.X2, point->X);
+    MAKEMAX (Pour->BoundingBox.Y2, point->Y);
   }
   END_LOOP;
 }
@@ -490,7 +504,9 @@ IsDataEmpty (DataTypePtr Data)
     hasNoObjects = hasNoObjects &&
       Data->Layer[i].LineN == 0 &&
       Data->Layer[i].ArcN == 0 &&
-      Data->Layer[i].TextN == 0 && Data->Layer[i].PolygonN == 0;
+      Data->Layer[i].TextN == 0 &&
+      Data->Layer[i].PourN == 0;
+
   return (hasNoObjects);
 }
 
@@ -569,13 +585,17 @@ GetDataBoundingBox (DataTypePtr Data)
     box.Y2 = MAX (box.Y2, text->BoundingBox.Y2);
   }
   ENDALL_LOOP;
-  ALLPOLYGON_LOOP (Data);
-  {
-    box.X1 = MIN (box.X1, polygon->BoundingBox.X1);
-    box.Y1 = MIN (box.Y1, polygon->BoundingBox.Y1);
-    box.X2 = MAX (box.X2, polygon->BoundingBox.X2);
-    box.Y2 = MAX (box.Y2, polygon->BoundingBox.Y2);
-  }
+  ALLPOUR_LOOP (Data);
+    {
+      POURPOLYGON_LOOP (pour);
+      {
+        box.X1 = MIN (box.X1, polygon->BoundingBox.X1);
+        box.Y1 = MIN (box.Y1, polygon->BoundingBox.Y1);
+        box.X2 = MAX (box.X2, polygon->BoundingBox.X2);
+        box.Y2 = MAX (box.Y2, polygon->BoundingBox.Y2);
+      }
+      END_LOOP;
+    }
   ENDALL_LOOP;
   return (IsDataEmpty (Data) ? NULL : &box);
 }
@@ -1251,6 +1271,10 @@ GetObjectBoundingBox (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
       box = ((PolygonTypePtr) Ptr2)->BoundingBox;
       break;
 
+    case POUR_TYPE:
+      box = ((PolygonTypePtr) Ptr2)->BoundingBox;
+      break;
+
     case ELEMENT_TYPE:
       box = ((ElementTypePtr) Ptr1)->BoundingBox;
       {
@@ -1301,7 +1325,7 @@ GetObjectBoundingBox (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
         break;
       }
 
-    case POLYGONPOINT_TYPE:
+    case POURPOINT_TYPE:
       {
         PointTypePtr point = (PointTypePtr) Ptr3;
 
@@ -1578,14 +1602,14 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
       new_da = 360;
       new_sa = 0;
     }
-  RestoreToPolygon (PCB->Data, ARC_TYPE, Layer, a);
+  RestoreToPours (PCB->Data, ARC_TYPE, Layer, a);
   r_delete_entry (Layer->arc_tree, (BoxTypePtr) a);
   AddObjectToChangeAnglesUndoList (ARC_TYPE, a, a, a);
   a->StartAngle = new_sa;
   a->Delta = new_da;
   SetArcBoundingBox (a);
   r_insert_entry (Layer->arc_tree, (BoxTypePtr) a, 0);
-  ClearFromPolygon (PCB->Data, ARC_TYPE, Layer, a);
+  ClearFromPours (PCB->Data, ARC_TYPE, Layer, a);
 }
 
 static char *
@@ -1671,12 +1695,17 @@ GetGridLockCoordinates (int type, void *ptr1,
       *y = ((ElementTypePtr) ptr2)->MarkY;
       break;
     case POLYGON_TYPE:
+#warning FIXME Later
+      *x = 1000;
+      *y = 1000;
+#if 0
       *x = ((PolygonTypePtr) ptr2)->Points[0].X;
       *y = ((PolygonTypePtr) ptr2)->Points[0].Y;
+#endif
       break;
 
     case LINEPOINT_TYPE:
-    case POLYGONPOINT_TYPE:
+    case POURPOINT_TYPE:
       *x = ((PointTypePtr) ptr3)->X;
       *y = ((PointTypePtr) ptr3)->Y;
       break;

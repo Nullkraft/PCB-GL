@@ -44,6 +44,7 @@
 #include "error.h"
 #include "misc.h"
 #include "polygon.h"
+#include "pour.h"
 #include "rotate.h"
 #include "rtree.h"
 #include "rubberband.h"
@@ -79,6 +80,7 @@ static BYTE Number;		/* number of rotations */
 static ObjectFunctionType RotateFunctions = {
   NULL,
   RotateText,
+  NULL,
   NULL,
   NULL,
   RotateElement,
@@ -164,12 +166,30 @@ void
 RotatePolygonLowLevel (PolygonTypePtr Polygon,
 		       LocationType X, LocationType Y, BYTE Number)
 {
+#warning FIXME Later
+#if 0
   POLYGONPOINT_LOOP (Polygon);
   {
     ROTATE (point->X, point->Y, X, Y, Number);
   }
   END_LOOP;
   RotateBoxLowLevel (&Polygon->BoundingBox, X, Y, Number);
+#endif
+}
+
+/* ---------------------------------------------------------------------------
+ * rotates a pour in 90 degree steps
+ */
+void
+RotatePourLowLevel (PourTypePtr Pour,
+		       LocationType X, LocationType Y, BYTE Number)
+{
+  POURPOINT_LOOP (Pour);
+  {
+    ROTATE (point->X, point->Y, X, Y, Number);
+  }
+  END_LOOP;
+  RotateBoxLowLevel (&Pour->BoundingBox, X, Y, Number);
 }
 
 /* ---------------------------------------------------------------------------
@@ -179,11 +199,11 @@ static void *
 RotateText (LayerTypePtr Layer, TextTypePtr Text)
 {
   EraseText (Layer, Text);
-  RestoreToPolygon (PCB->Data, TEXT_TYPE, Layer, Text);
+  RestoreToPours (PCB->Data, TEXT_TYPE, Layer, Text);
   r_delete_entry (Layer->text_tree, (BoxTypePtr) Text);
   RotateTextLowLevel (Text, CenterX, CenterY, Number);
   r_insert_entry (Layer->text_tree, (BoxTypePtr) Text, 0);
-  ClearFromPolygon (PCB->Data, TEXT_TYPE, Layer, Text);
+  ClearFromPours (PCB->Data, TEXT_TYPE, Layer, Text);
   DrawText (Layer, Text, 0);
   Draw ();
   return (Text);
@@ -241,7 +261,7 @@ RotateElementLowLevel (DataTypePtr Data, ElementTypePtr Element,
     /* pre-delete the pins from the pin-tree before their coordinates change */
     if (Data)
       r_delete_entry (Data->pin_tree, (BoxType *) pin);
-    RestoreToPolygon (Data, PIN_TYPE, Element, pin);
+    RestoreToPours (Data, PIN_TYPE, Element, pin);
     ROTATE_PIN_LOWLEVEL (pin, X, Y, Number);
   }
   END_LOOP;
@@ -250,7 +270,7 @@ RotateElementLowLevel (DataTypePtr Data, ElementTypePtr Element,
     /* pre-delete the pads before their coordinates change */
     if (Data)
       r_delete_entry (Data->pad_tree, (BoxType *) pad);
-    RestoreToPolygon (Data, PAD_TYPE, Element, pad);
+    RestoreToPours (Data, PAD_TYPE, Element, pad);
     ROTATE_PAD_LOWLEVEL (pad, X, Y, Number);
   }
   END_LOOP;
@@ -262,7 +282,7 @@ RotateElementLowLevel (DataTypePtr Data, ElementTypePtr Element,
   ROTATE (Element->MarkX, Element->MarkY, X, Y, Number);
   /* SetElementBoundingBox reenters the rtree data */
   SetElementBoundingBox (Data, Element, &PCB->Font);
-  ClearFromPolygon (Data, ELEMENT_TYPE, Element, Element);
+  ClearFromPours (Data, ELEMENT_TYPE, Element, Element);
 }
 
 /* ---------------------------------------------------------------------------
@@ -274,7 +294,7 @@ RotateLinePoint (LayerTypePtr Layer, LineTypePtr Line, PointTypePtr Point)
   EraseLine (Line);
   if (Layer)
     {
-      RestoreToPolygon (PCB->Data, LINE_TYPE, Layer, Line);
+      RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
       r_delete_entry (Layer->line_tree, (BoxTypePtr) Line);
     }
   else
@@ -284,7 +304,7 @@ RotateLinePoint (LayerTypePtr Layer, LineTypePtr Line, PointTypePtr Point)
   if (Layer)
     {
       r_insert_entry (Layer->line_tree, (BoxTypePtr) Line, 0);
-      ClearFromPolygon (PCB->Data, LINE_TYPE, Layer, Line);
+      ClearFromPours (PCB->Data, LINE_TYPE, Layer, Line);
       DrawLine (Layer, Line, 0);
     }
   else
@@ -388,7 +408,7 @@ RotateObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
       EraseLine (ptr->Line);
       if (ptr->Layer)
 	{
-	  RestoreToPolygon (PCB->Data, LINE_TYPE, ptr->Layer, ptr->Line);
+	  RestoreToPours (PCB->Data, LINE_TYPE, ptr->Layer, ptr->Line);
 	  r_delete_entry (ptr->Layer->line_tree, (BoxType *) ptr->Line);
 	}
       else
@@ -398,7 +418,7 @@ RotateObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
       if (ptr->Layer)
 	{
 	  r_insert_entry (ptr->Layer->line_tree, (BoxType *) ptr->Line, 0);
-	  ClearFromPolygon (PCB->Data, LINE_TYPE, ptr->Layer, ptr->Line);
+	  ClearFromPours (PCB->Data, LINE_TYPE, ptr->Layer, ptr->Line);
 	  DrawLine (ptr->Layer, ptr->Line, 0);
 	}
       else
