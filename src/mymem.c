@@ -399,6 +399,35 @@ GetTextMemory (LayerTypePtr Layer)
 }
 
 /* ---------------------------------------------------------------------------
+ * get next slot for a pour polygon object, allocates memory if necessary
+ */
+PolygonTypePtr
+GetPourMemory (LayerTypePtr Layer)
+{
+  PolygonTypePtr pour = Layer->Pour;
+
+  /* realloc new memory if necessary and clear it */
+  if (Layer->PourN >= Layer->PourMax)
+    {
+      Layer->PourMax += STEP_POUR;
+//      if (Layer->polygon_tree)
+//	r_destroy_tree (&Layer->polygon_tree);
+      pour = MyRealloc (pour, Layer->PourMax * sizeof (PolygonType),
+			   "GetPourMemory()");
+      Layer->Pour = pour;
+      memset (pour + Layer->PourN, 0,
+	      STEP_POUR * sizeof (PolygonType));
+//      Layer->polygon_tree = r_create_tree (NULL, 0, 0);
+//      POLYGON_LOOP (Layer);
+//      {
+//	r_insert_entry (Layer->polygon_tree, (BoxType *) polygon, 0);
+//      }
+//      END_LOOP;
+    }
+  return (pour + Layer->PourN++);
+}
+
+/* ---------------------------------------------------------------------------
  * get next slot for a polygon object, allocates memory if necessary
  */
 PolygonTypePtr
@@ -903,6 +932,12 @@ FreeDataMemory (DataTypePtr Data)
 	  }
 	  END_LOOP;
 	  MYFREE (layer->Polygon);
+	  POUR_LOOP (layer);
+	  {
+	    FreePolygonMemory (pour);
+	  }
+	  END_LOOP;
+	  MYFREE (layer->Pour);
 	  if (layer->line_tree)
 	    r_destroy_tree (&layer->line_tree);
 	  if (layer->arc_tree)
