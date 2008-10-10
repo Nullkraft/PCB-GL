@@ -1,0 +1,22 @@
+Bottom: 2bbb96edef4ec81f28b7d695ffcb2f3af27cd631
+Top:    c10c0053a50379dfd422fc81b76dc77b81ce4f29
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-10 11:37:45 +0100
+
+Refresh of make-pieces-of-a-clipped-polyg
+
+---
+
+diff --git a/src/global.h b/src/global.h
+index aa4ecf8..5e6b6c8 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -210,6 +210,8 @@ typedef struct			/* holds information about a polygon piece */
+ typedef struct			/* holds information about a polygon */
+ {
+   ANYOBJECTFIELDS;
++  Cardinal PointN,		/* number of points in polygon */
++    PointMax;			/* max number from malloc() */
+   PolygonPieceTypePtr Pieces;
+ //  rtree_t *pieces_tree;		/* r_tree for pieces */
+   Cardinal PiecesN;		/* number of pieces */
