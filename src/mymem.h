@@ -82,7 +82,9 @@ ArcTypePtr GetArcMemory (LayerTypePtr);
 RatTypePtr GetRatMemory (DataTypePtr);
 TextTypePtr GetTextMemory (LayerTypePtr);
 PolygonTypePtr GetPolygonMemory (LayerTypePtr);
+PourTypePtr GetPourMemory (LayerTypePtr);
 PointTypePtr GetPointMemoryInPolygon (PolygonTypePtr);
+PointTypePtr GetPointMemoryInPour (PourTypePtr);
 ElementTypePtr GetElementMemory (DataTypePtr);
 BoxTypePtr GetBoxMemory (BoxListTypePtr);
 ConnectionTypePtr GetConnectionMemory (NetTypePtr);
@@ -101,6 +103,7 @@ char *MyStrdup (char *s, const char *);
 /* void MyFree (void **); */
 #define MYFREE(x) do { SaveFree(x); (x)=NULL; } while (0)
 void FreePolygonMemory (PolygonTypePtr);
+void FreePourMemory (PourTypePtr);
 void FreeElementMemory (ElementTypePtr);
 void FreePCBMemory (PCBTypePtr);
 void FreeBoxListMemory (BoxListTypePtr);

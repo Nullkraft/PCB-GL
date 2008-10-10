@@ -33,11 +33,15 @@
 
 #include "global.h"
 
-Cardinal GetLowestDistancePourPoint (PolygonTypePtr,
+Cardinal GetLowestDistancePourPoint (PourTypePtr,
 					LocationType, LocationType);
-Boolean RemoveExcessPourPoints (LayerTypePtr, PolygonTypePtr);
+Boolean RemoveExcessPourPoints (LayerTypePtr, PourTypePtr);
 void GoToPreviousPourPoint (void);
 void ClosePour (void);
 void CopyAttachedPourToLayer (void);
-//int InitClip(DataType *d, LayerType *l, PolygonType *p);
-#endif
+
+int InitPourClip(DataType *d, LayerType *l, PourType *p);
+void RestoreToPour(DataType *, int, void *, void *);
+void ClearFromPour(DataType *, int, void *, void *);
+
+#endif /* __POUR_INCLUDED__ */

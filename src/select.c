@@ -513,8 +513,19 @@ ObjectOperation (ObjectFunctionTypePtr F,
       break;
 
     case POLYGONPOINT_TYPE:
-      if (F->Point)
-	return (F->Point ((LayerTypePtr) Ptr1, (PolygonTypePtr) Ptr2,
+      if (F->PolygonPoint)
+	return (F->PolygonPoint ((LayerTypePtr) Ptr1, (PolygonTypePtr) Ptr2,
+			  (PointTypePtr) Ptr3));
+      break;
+
+    case POUR_TYPE:
+      if (F->Pour)
+	return (F->Pour ((LayerTypePtr) Ptr1, (PourTypePtr) Ptr2));
+      break;
+
+    case POURPOINT_TYPE:
+      if (F->PourPoint)
+	return (F->PourPoint ((LayerTypePtr) Ptr1, (PourTypePtr) Ptr2,
 			  (PointTypePtr) Ptr3));
       break;
 

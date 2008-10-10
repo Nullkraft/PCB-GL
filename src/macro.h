@@ -391,13 +391,6 @@ extern int mem_any_set (unsigned char *, int);
 	{						\
 		text = &(layer)->Text[n]
 
-#define	POUR_LOOP(layer) do {			\
-	Cardinal		n;			\
-	PolygonTypePtr	pour;			\
-	for (n = (layer)->PourN-1; n != -1; n--)	\
-	{						\
-		pour = &(layer)->Pour[n]
-
 #define	POLYGON_LOOP(layer) do {			\
 	Cardinal		n;			\
 	PolygonTypePtr	polygon;			\
@@ -411,6 +404,20 @@ extern int mem_any_set (unsigned char *, int);
 	for (n = (polygon)->PointN-1; n != -1; n--)	\
 	{						\
 		point = &(polygon)->Points[n]
+
+#define	POUR_LOOP(layer) do {			\
+	Cardinal		n;			\
+	PourTypePtr	pour;			\
+	for (n = (layer)->PourN-1; n != -1; n--)	\
+	{						\
+		pour = &(layer)->Pour[n]
+
+#define	POURPOINT_LOOP(pour) do	{	\
+	Cardinal			n;		\
+	PointTypePtr	point;				\
+	for (n = (pour)->PointN-1; n != -1; n--)	\
+	{						\
+		point = &(pour)->Points[n]
 
 #define ENDALL_LOOP }} while (0);  }} while (0)
 
@@ -442,6 +449,13 @@ extern int mem_any_set (unsigned char *, int);
 	for (l = 0; l < max_layer + 2; l++, layer++)	\
 	{ \
 		POLYGON_LOOP(layer)
+
+#define	ALLPOUR_LOOP(top)	do {		\
+	Cardinal		l;			\
+	LayerTypePtr	layer = (top)->Layer;		\
+	for (l = 0; l < max_layer + 2; l++, layer++)	\
+	{ \
+		POUR_LOOP(layer)
 
 #define	COPPERLINE_LOOP(top) do	{		\
 	Cardinal		l;			\

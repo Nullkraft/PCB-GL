@@ -94,6 +94,7 @@
  * prototypes
  */
 void MovePolygonLowLevel (PolygonTypePtr, LocationType, LocationType);
+void MovePourLowLevel (PourTypePtr, LocationType, LocationType);
 void MoveElementLowLevel (DataTypePtr, ElementTypePtr, LocationType,
 			  LocationType);
 void *MoveObject (int, void *, void *, void *, LocationType, LocationType);

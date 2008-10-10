@@ -401,28 +401,28 @@ GetTextMemory (LayerTypePtr Layer)
 /* ---------------------------------------------------------------------------
  * get next slot for a pour polygon object, allocates memory if necessary
  */
-PolygonTypePtr
+PourTypePtr
 GetPourMemory (LayerTypePtr Layer)
 {
-  PolygonTypePtr pour = Layer->Pour;
+  PourTypePtr pour = Layer->Pour;
 
   /* realloc new memory if necessary and clear it */
   if (Layer->PourN >= Layer->PourMax)
     {
       Layer->PourMax += STEP_POUR;
-//      if (Layer->polygon_tree)
-//	r_destroy_tree (&Layer->polygon_tree);
-      pour = MyRealloc (pour, Layer->PourMax * sizeof (PolygonType),
+      if (Layer->pour_tree)
+	r_destroy_tree (&Layer->pour_tree);
+      pour = MyRealloc (pour, Layer->PourMax * sizeof (PourType),
 			   "GetPourMemory()");
       Layer->Pour = pour;
       memset (pour + Layer->PourN, 0,
-	      STEP_POUR * sizeof (PolygonType));
-//      Layer->polygon_tree = r_create_tree (NULL, 0, 0);
-//      POLYGON_LOOP (Layer);
-//      {
-//	r_insert_entry (Layer->polygon_tree, (BoxType *) polygon, 0);
-//      }
-//      END_LOOP;
+	      STEP_POUR * sizeof (PourType));
+      Layer->pour_tree = r_create_tree (NULL, 0, 0);
+      POUR_LOOP (Layer);
+      {
+	r_insert_entry (Layer->pour_tree, (BoxType *) pour, 0);
+      }
+      END_LOOP;
     }
   return (pour + Layer->PourN++);
 }
@@ -463,6 +463,9 @@ GetPolygonMemory (LayerTypePtr Layer)
 PointTypePtr
 GetPointMemoryInPolygon (PolygonTypePtr Polygon)
 {
+  return NULL;
+#warning FIXME Later
+#if 0
   PointTypePtr points = Polygon->Points;
 
   /* realloc new memory if necessary and clear it */
@@ -476,6 +479,29 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
 	      STEP_POLYGONPOINT * sizeof (PointType));
     }
   return (points + Polygon->PointN++);
+#endif
+}
+
+/* ---------------------------------------------------------------------------
+ * gets the next slot for a point in a pour struct, allocates memory
+ * if necessary
+ */
+PointTypePtr
+GetPointMemoryInPour (PourTypePtr Pour)
+{
+  PointTypePtr points = Pour->Points;
+
+  /* realloc new memory if necessary and clear it */
+  if (Pour->PointN >= Pour->PointMax)
+    {
+      Pour->PointMax += STEP_POLYGONPOINT;
+      points = MyRealloc (points, Pour->PointMax * sizeof (PointType),
+			  "GetPointMemoryInPour()");
+      Pour->Points = points;
+      memset (points + Pour->PointN, 0,
+	      STEP_POLYGONPOINT * sizeof (PointType));
+    }
+  return (points + Pour->PointN++);
 }
 
 /* ---------------------------------------------------------------------------
@@ -763,6 +789,26 @@ FreePolygonMemory (PolygonTypePtr Polygon)
 }
 
 /* ---------------------------------------------------------------------------
+ * frees memory used by a pour
+ */
+void
+FreePourMemory (PourTypePtr Pour)
+{
+  if (Pour)
+    {
+      MYFREE (Pour->Points);
+#define FIXME Later
+#if 0
+      if (Pour->Clipped)
+	poly_Free (&Pour->Clipped);
+      if (Pour->NoHoles)
+	poly_Free (&Pour->NoHoles);
+#endif
+      memset (Pour, 0, sizeof (PourType));
+    }
+}
+
+/* ---------------------------------------------------------------------------
  * frees memory used by a box list
  */
 void
@@ -934,7 +980,7 @@ FreeDataMemory (DataTypePtr Data)
 	  MYFREE (layer->Polygon);
 	  POUR_LOOP (layer);
 	  {
-	    FreePolygonMemory (pour);
+	    FreePourMemory (pour);
 	  }
 	  END_LOOP;
 	  MYFREE (layer->Pour);
@@ -946,6 +992,8 @@ FreeDataMemory (DataTypePtr Data)
 	    r_destroy_tree (&layer->text_tree);
 	  if (layer->polygon_tree)
 	    r_destroy_tree (&layer->polygon_tree);
+	  if (layer->pour_tree)
+	    r_destroy_tree (&layer->pour_tree);
 	}
 
       if (Data->element_tree)

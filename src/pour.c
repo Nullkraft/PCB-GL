@@ -72,32 +72,6 @@ RCSID ("$Id$");
  * local prototypes
  */
 
-#define CIRC_SEGS 36
-static double circleVerticies[] = {
-  1.0, 0.0,
-  0.98480775301221, 0.17364817766693,
-};
-
-#if 0
-int
-InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
-{
-  if (p->Clipped)
-    poly_Free (&p->Clipped);
-  p->Clipped = original_poly (p);
-  if (p->NoHoles)
-    poly_Free (&p->NoHoles);
-  p->NoHoles = NULL;
-  if (!p->Clipped)
-    return 0;
-  assert (poly_Valid (p->Clipped));
-  if (TEST_FLAG (CLEARPOLYFLAG, p))
-    clearPoly (Data, layer, p, NULL, 0);
-  else
-    p->NoHolesValid = 0;
-  return 1;
-}
-#endif
 
 /* --------------------------------------------------------------------------
  * remove redundant polygon points. Any point that lies on the straight
@@ -105,9 +79,37 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
  * returns true if any points are removed
  */
 Boolean
-RemoveExcessPourPoints (LayerTypePtr Layer, PolygonTypePtr Polygon)
+RemoveExcessPourPoints (LayerTypePtr Layer, PourTypePtr Pour)
 {
-  return RemoveExcessPolygonPoints (Layer, Polygon);
+  PointTypePtr pt1, pt2, pt3;
+  Cardinal n;
+  LineType line;
+  Boolean changed = False;
+
+  if (Undoing ())
+    return (False);
+  /* there are always at least three points in a pour */
+  pt1 = &Pour->Points[Pour->PointN - 1];
+  pt2 = &Pour->Points[0];
+  pt3 = &Pour->Points[1];
+  for (n = 0; n < Pour->PointN; n++, pt1++, pt2++, pt3++)
+    {
+      /* wrap around pour */
+      if (n == 1)
+        pt1 = &Pour->Points[0];
+      if (n == Pour->PointN - 1)
+        pt3 = &Pour->Points[0];
+      line.Point1 = *pt1;
+      line.Point2 = *pt3;
+      line.Thickness = 0;
+      if (IsPointOnLine ((float) pt2->X, (float) pt2->Y, 0.0, &line))
+        {
+          RemoveObject (POURPOINT_TYPE, (void *) Layer, (void *) Pour,
+                        (void *) pt2);
+          changed = True;
+        }
+    }
+  return (changed);
 }
 
 /* ---------------------------------------------------------------------------
@@ -116,10 +118,10 @@ RemoveExcessPourPoints (LayerTypePtr Layer, PolygonTypePtr Polygon)
  * coordinates
  */
 Cardinal
-GetLowestDistancePourPoint (PolygonTypePtr Polygon, LocationType X,
+GetLowestDistancePourPoint (PourTypePtr Pour, LocationType X,
                             LocationType Y)
 {
-  return GetLowestDistancePourPoint (Polygon, X, Y);
+  return GetLowestDistancePourPoint (Pour, X, Y);
 }
 
 /* ---------------------------------------------------------------------------
@@ -128,7 +130,7 @@ GetLowestDistancePourPoint (PolygonTypePtr Polygon, LocationType X,
 void
 GoToPreviousPourPoint (void)
 {
-  switch (Crosshair.AttachedPolygon.PointN)
+  switch (Crosshair.AttachedPour.PointN)
     {
       /* do nothing if mode has just been entered */
     case 0:
@@ -136,7 +138,7 @@ GoToPreviousPourPoint (void)
 
       /* reset number of points and 'LINE_MODE' state */
     case 1:
-      Crosshair.AttachedPolygon.PointN = 0;
+      Crosshair.AttachedPour.PointN = 0;
       Crosshair.AttachedLine.State = STATE_FIRST;
       addedLines = 0;
       break;
@@ -144,10 +146,10 @@ GoToPreviousPourPoint (void)
       /* back-up one point */
     default:
       {
-        PointTypePtr points = Crosshair.AttachedPolygon.Points;
-        Cardinal n = Crosshair.AttachedPolygon.PointN - 2;
+        PointTypePtr points = Crosshair.AttachedPour.Points;
+        Cardinal n = Crosshair.AttachedPour.PointN - 2;
 
-        Crosshair.AttachedPolygon.PointN--;
+        Crosshair.AttachedPour.PointN--;
         Crosshair.AttachedLine.Point1.X = points[n].X;
         Crosshair.AttachedLine.Point1.Y = points[n].Y;
         break;
@@ -161,7 +163,7 @@ GoToPreviousPourPoint (void)
 void
 ClosePour (void)
 {
-  Cardinal n = Crosshair.AttachedPolygon.PointN;
+  Cardinal n = Crosshair.AttachedPour.PointN;
 
   /* check number of points */
   if (n >= 3)
@@ -173,10 +175,10 @@ ClosePour (void)
         {
           BDimension dx, dy;
 
-          dx = abs (Crosshair.AttachedPolygon.Points[n - 1].X -
-                    Crosshair.AttachedPolygon.Points[0].X);
-          dy = abs (Crosshair.AttachedPolygon.Points[n - 1].Y -
-                    Crosshair.AttachedPolygon.Points[0].Y);
+          dx = abs (Crosshair.AttachedPour.Points[n - 1].X -
+                    Crosshair.AttachedPour.Points[0].X);
+          dy = abs (Crosshair.AttachedPour.Points[n - 1].Y -
+                    Crosshair.AttachedPour.Points[0].Y);
           if (!(dx == 0 || dy == 0 || dx == dy))
             {
               Message
@@ -185,7 +187,7 @@ ClosePour (void)
               return;
             }
         }
-      CopyAttachedPolygonToLayer ();
+      CopyAttachedPourToLayer ();
       Draw ();
     }
   else
@@ -198,24 +200,25 @@ ClosePour (void)
 void
 CopyAttachedPourToLayer (void)
 {
-  PolygonTypePtr polygon;
+  PourTypePtr pour;
   int saveID;
 
   /* move data to layer and clear attached struct */
-  polygon = CreateNewPolygon (CURRENT, NoFlags ());
-  saveID = polygon->ID;
-  *polygon = Crosshair.AttachedPolygon;
-  polygon->ID = saveID;
-  SET_FLAG (CLEARPOLYFLAG, polygon);
+  pour = CreateNewPour (CURRENT, NoFlags ());
+  saveID = pour->ID;
+  *pour = Crosshair.AttachedPour;
+  pour->ID = saveID;
+  SET_FLAG (CLEARPOLYFLAG, pour);
   if (TEST_FLAG (NEWFULLPOLYFLAG, PCB))
-    SET_FLAG (FULLPOLYFLAG, polygon);
-  memset (&Crosshair.AttachedPolygon, 0, sizeof (PolygonType));
-  SetPolygonBoundingBox (polygon);
-  if (!CURRENT->polygon_tree)
-    CURRENT->polygon_tree = r_create_tree (NULL, 0, 0);
-  r_insert_entry (CURRENT->polygon_tree, (BoxType *) polygon, 0);
-  InitClip (PCB->Data, CURRENT, polygon);
-  DrawPolygon (CURRENT, polygon, 0);
+    SET_FLAG (FULLPOLYFLAG, pour);
+  memset (&Crosshair.AttachedPour, 0, sizeof (PourType));
+  SetPourBoundingBox (pour);
+  if (!CURRENT->pour_tree)
+    CURRENT->pour_tree = r_create_tree (NULL, 0, 0);
+  r_insert_entry (CURRENT->pour_tree, (BoxType *) pour, 0);
+//  InitClip (PCB->Data, CURRENT, pour);
+//  DrawPolygon (CURRENT, polygon, 0);
+  DrawPour (CURRENT, pour, 0);
   SetChangedFlag (True);
 
   /* reset state of attached line */
@@ -223,7 +226,101 @@ CopyAttachedPourToLayer (void)
   addedLines = 0;
 
   /* add to undo list */
-  AddObjectToCreateUndoList (POLYGON_TYPE, CURRENT, polygon, polygon);
+  AddObjectToCreateUndoList (POUR_TYPE, CURRENT, pour, pour);
   IncrementUndoSerialNumber ();
+}
+
+static POLYAREA *
+original_pour (PourType * p)
+{
+  PLINE *contour = NULL;
+  POLYAREA *np = NULL;
+  Vector v;
+
+  /* first make initial polygon contour */
+  POLYGONPOINT_LOOP (p);
+  {
+    v[0] = point->X;
+    v[1] = point->Y;
+    if (contour == NULL)
+      {
+        if ((contour = poly_NewContour (v)) == NULL)
+          return NULL;
+      }
+    else
+      poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+  }
+  END_LOOP;
+  if (contour == NULL)
+    {
+      printf ("How did that escape - did the loop iterate zero times??\n");
+      POLYGONPOINT_LOOP (p);
+        {
+          printf ("Hello\n");
+        }
+      END_LOOP;
+      return NULL;
+    }
+  poly_PreContour (contour, TRUE);
+  /* make sure it is a positive contour */
+  if ((contour->Flags.orient) != PLF_DIR)
+    poly_InvContour (contour);
+  assert ((contour->Flags.orient) == PLF_DIR);
+  if ((np = poly_Create ()) == NULL)
+    return NULL;
+  poly_InclContour (np, contour);
+  assert (poly_Valid (np));
+#warning FIXME Later
+//  return biggest (np);
+  return np;
+}
+
+int
+InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * p)
+{
+  POLYAREA *clipped, *pg;
+
+  printf ("InitPourClip\n");
+  /* Free any children? */
+  if (p->PolygonN)
+    {
+      printf ("We already had children. Killing them now.\n");
+      /* TODO: Free existing children, remove them from whatever r_tree etc.. */
+    }
+
+  clipped = original_pour (p);
+  if (!clipped)
+    {
+      printf ("Clipping returned NULL - can that be good?\n");
+      return 0;
+    }
+  assert (poly_Valid (clipped));
+  if (TEST_FLAG (CLEARPOLYFLAG, p))
+    {
+      /* Clip the pour against anything we can find in this layer */
+      /* TODO: Clear up API so the resulting areas are in "clipped" */
+      // e.g.: clearPour (Data, layer, p, NULL, 0);
+    }
+  pg = clipped;
+  do
+    {
+      /* TODO: For each piece of the clipped up polygon, create a new child */
+    }
+  while ((pg = pg->f) != clipped);
+
+  poly_Free (&clipped);
+  return 1;
+}
+
+void
+RestoreToPour (DataType * Data, int type, void *ptr1, void *ptr2)
+{
+  printf ("FIXME Later\n");
+}
+
+void
+ClearFromPour (DataType * Data, int type, void *ptr1, void *ptr2)
+{
+  printf ("FIXME Later\n");
 }
 
