@@ -812,6 +812,8 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
 	  PrintQuotedString (FP, EMPTY (text->TextString));
 	  fprintf (FP, " %s]\n", F2S (text, TEXT_TYPE));
 	}
+#warning FIXME Later
+#if 0
       for (n = 0; n < layer->PolygonN; n++)
 	{
 	  PolygonTypePtr polygon = &layer->Polygon[n];
@@ -820,6 +822,21 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
 	  for (p = 0; p < polygon->PointN; p++)
 	    {
 	      PointTypePtr point = &polygon->Points[p];
+	      if (i++ % 5 == 0)
+		fputs ("\n\t\t", FP);
+	      fprintf (FP, "[%i %i] ", (int) point->X, (int) point->Y);
+	    }
+	  fputs ("\n\t)\n", FP);
+	}
+#endif
+      for (n = 0; n < layer->PourN; n++)
+	{
+	  PourTypePtr pour = &layer->Pour[n];
+	  int p, i = 0;
+	  fprintf (FP, "\tPolygon(%s)\n\t(", F2S (pour, POUR_TYPE));
+	  for (p = 0; p < pour->PointN; p++)
+	    {
+	      PointTypePtr point = &pour->Points[p];
 	      if (i++ % 5 == 0)
 		fputs ("\n\t\t", FP);
 	      fprintf (FP, "[%i %i] ", (int) point->X, (int) point->Y);

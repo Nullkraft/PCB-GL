@@ -33,12 +33,6 @@
 
 #include "global.h"
 
-Cardinal GetLowestDistancePolygonPoint (PolygonTypePtr,
-					LocationType, LocationType);
-Boolean RemoveExcessPolygonPoints (LayerTypePtr, PolygonTypePtr);
-void GoToPreviousPoint (void);
-void ClosePolygon (void);
-void CopyAttachedPolygonToLayer (void);
 int PolygonHoles (const BoxType * range, LayerTypePtr, PolygonTypePtr,
 		  int (*callback) (PLINE *, LayerTypePtr, PolygonTypePtr));
 int PlowsPolygon (DataType *, int, void *, void *,
