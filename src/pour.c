@@ -27,7 +27,7 @@
  */
 
 
-/* special polygon editing routines
+/* special pour editing routines
  */
 
 #ifdef HAVE_CONFIG_H
