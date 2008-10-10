@@ -605,6 +605,7 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
   polygon->Clipped = NULL;
   polygon->NoHoles = NULL;
   polygon->NoHolesValid = 0;
+  polygon->Parent = NULL;
   return (polygon);
 }
 
