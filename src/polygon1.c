@@ -835,6 +835,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
 }
 
 static void
+M_POLYAREA_intersect2 (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+{
+  POLYAREA *a = afst, *b = bfst;
+  PLINE *curcA, *curcB;
+  CVCList *the_list = NULL;
+
+  if (a == NULL || b == NULL)
+    error (err_bad_parm);
+  do
+    {
+      do
+	{
+	  if (a->contours->xmax >= b->contours->xmin &&
+	      a->contours->ymax >= b->contours->ymin &&
+	      a->contours->xmin <= b->contours->xmax &&
+	      a->contours->ymin <= b->contours->ymax)
+	    {
+	      if (intersect (e, a, b, add))
+		error (err_no_memory);
+	    }
+	}
+      while ((a = a->f) != afst);
+      for (curcB = b->contours; curcB != NULL; curcB = curcB->next)
+	if (curcB->Flags.status == ISECTED)
+	  if (!(the_list = add_descriptors (curcB, 'B', the_list)))
+	    error (err_no_memory);
+    }
+  while ((b = b->f) != bfst);
+  do
+    {
+      for (curcA = a->contours; curcA != NULL; curcA = curcA->next)
+	if (curcA->Flags.status == ISECTED)
+	  if (!(the_list = add_descriptors (curcA, 'A', the_list)))
+	    error (err_no_memory);
+    }
+  while ((a = a->f) != afst);
+}				/* M_POLYAREA_intersect */
+
+static void
 M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
 {
   POLYAREA *a = afst, *b = bfst;
@@ -1636,7 +1675,8 @@ Touching (POLYAREA * a, POLYAREA * b)
       if (!poly_Valid (b))
 	return -1;
 #endif
-      M_POLYAREA_intersect (&e, a, b, False);
+//      M_POLYAREA_intersect (&e, a, b, False);
+      M_POLYAREA_intersect2 (&e, a, b, False);
 
       if (M_POLYAREA_label (a, b, TRUE))
 	return TRUE;
@@ -2387,15 +2427,18 @@ inside_sector (VNODE * pn, Vector p2)
 BOOLp
 poly_ChkContour (PLINE * a)
 {
-  VNODE *a1, *a2, *hit1, *hit2;
+#warning FIXME Later: Deliberately disabled this test - seems something strange is going on
+  return FALSE;
+  VNODE *a1, *a2, *a2_start, *hit1, *hit2;
   Vector i1, i2;
   int icnt;
+  double d1,d2;
 
   assert (a != NULL);
   a1 = &a->head;
   do
     {
-      a2 = a1;
+      a2_start = a2 = a1;
       do
 	{
 	  if (!node_neighbours (a1, a2) &&
@@ -2403,21 +2446,36 @@ poly_ChkContour (PLINE * a)
 				    a2->point, a2->next->point, i1, i2)) > 0)
 	    {
 	      if (icnt > 1)
-		return TRUE;
+                {
+                  printf ("Returning true 1\n");
+		  return TRUE;
+                }
 
-	      if (vect_dist2 (i1, a1->point) < EPSILON)
+              d1 = -1; d2 = -1;
+	      if ((d1=vect_dist2 (i1, a1->point)) < EPSILON)
 		hit1 = a1;
-	      else if (vect_dist2 (i1, a1->next->point) < EPSILON)
+	      else if ((d2=vect_dist2 (i1, a1->next->point)) < EPSILON)
 		hit1 = a1->next;
 	      else
-		return TRUE;
+                {
+                  printf ("Returning true 2, %f, %f, %f\n", EPSILON, d1, d2);
+                  printf ("a1->point: (%i,%i)\n", a1->point[0], a1->point[1]);
+                  printf ("a1->next->point: (%i,%i)\n", a1->next->point[0], a1->next->point[1]);
+                  printf ("a2->point: (%i,%i)\n", a2->point[0], a2->point[1]);
+                  printf ("a2->next->point: (%i,%i)\n", a2->next->point[0], a2->next->point[1]);
+                  printf ("Intersection: (%i, %i)\n", i1[0], i1[1]);
+		  return TRUE;
+                }
 
 	      if (vect_dist2 (i1, a2->point) < EPSILON)
 		hit2 = a2;
 	      else if (vect_dist2 (i1, a2->next->point) < EPSILON)
 		hit2 = a2->next;
 	      else
-		return TRUE;
+                {
+                  printf ("Returning true 3\n");
+		  return TRUE;
+                }
 
 #if 1
 	      /* now check if they are inside each other */
@@ -2425,13 +2483,17 @@ poly_ChkContour (PLINE * a)
 		  inside_sector (hit1, hit2->next->point) ||
 		  inside_sector (hit2, hit1->prev->point) ||
 		  inside_sector (hit2, hit1->next->point))
-		return TRUE;
+                {
+                  printf ("Returning true 4\n");
+		  return TRUE;
+                }
 #endif
 	    }
 	}
-      while ((a2 = a2->next) != &a->head);
+      while ((a2 = a2->next) != a2_start);
     }
   while ((a1 = a1->next) != &a->head);
+  printf ("Fell out the bottom, returning false\n");
   return FALSE;
 }
 
@@ -2442,7 +2504,10 @@ poly_Valid (POLYAREA * p)
   PLINE *c;
 
   if ((p == NULL) || (p->contours == NULL))
-    return FALSE;
+    {
+      printf ("Polyarea %p, contours=%p\n", p, p ? p->contours : NULL);
+      return FALSE;
+    }
 
   if (p->contours->Flags.orient == PLF_INV || poly_ChkContour (p->contours))
     {

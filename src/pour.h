@@ -25,28 +25,23 @@
  *  RCS: $Id$
  */
 
-/* prototypes for select routines
+/* prototypes for pour editing routines
  */
 
-#ifndef	__SELECT_INCLUDED__
-#define	__SELECT_INCLUDED__
+#ifndef	__POUR_INCLUDED__
+#define	__POUR_INCLUDED__
 
 #include "global.h"
 
-#warning FIXME Later: Do we want pours / polygons selectable?
-#define SELECT_TYPES	\
-	(VIA_TYPE | LINE_TYPE | TEXT_TYPE | POLYGON_TYPE | POUR_TYPE | ELEMENT_TYPE |	\
-	 PIN_TYPE | PAD_TYPE | ELEMENTNAME_TYPE | RATLINE_TYPE | ARC_TYPE)
+Cardinal GetLowestDistancePourPoint (PourTypePtr,
+					LocationType, LocationType);
+Boolean RemoveExcessPourPoints (LayerTypePtr, PourTypePtr);
+void GoToPreviousPourPoint (void);
+void ClosePour (void);
+void CopyAttachedPourToLayer (void);
 
-void SelectPin (LibraryEntryTypePtr entry, Boolean toggle);
-Boolean SelectObject (void);
-Boolean SelectBlock (BoxTypePtr, Boolean);
-Boolean SelectedOperation (ObjectFunctionTypePtr, Boolean, int);
-void *ObjectOperation (ObjectFunctionTypePtr, int, void *, void *, void *);
-Boolean SelectConnection (Boolean);
+int InitPourClip(DataType *d, LayerType *l, PourType *p);
+void RestoreToPours(DataType *, int, void *, void *);
+void ClearFromPours(DataType *, int, void *, void *);
 
-#if defined(HAVE_REGCOMP) || defined(HAVE_RE_COMP)
-Boolean SelectObjectByName (int, char *, Boolean);
-#endif
-
-#endif
+#endif /* __POUR_INCLUDED__ */
