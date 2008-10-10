@@ -507,18 +507,22 @@ GatherSubnets (NetListTypePtr Netl, Boolean NoWarn, Boolean AndRats)
       /* add polygons so the auto-router can see them as targets */
       ALLPOLYGON_LOOP (PCB->Data);
       {
-	if (TEST_FLAG (DRCFLAG, polygon))
-	  {
-	    conn = GetConnectionMemory (a);
-	    /* make point on a vertex */
-	    conn->X = polygon->Clipped->contours->head.point[0];
-	    conn->Y = polygon->Clipped->contours->head.point[1];
-	    conn->type = POLYGON_TYPE;
-	    conn->ptr1 = layer;
-	    conn->ptr2 = polygon;
-	    conn->group = GetLayerGroupNumberByPointer (layer);
-	    conn->menu = NULL;	/* agnostic view of where it belongs */
-	  }
+        POLYGONPIECE_LOOP (polygon);
+        {
+          if (TEST_FLAG (DRCFLAG, piece))
+            {
+              conn = GetConnectionMemory (a);
+              /* make point on a vertex */
+              conn->X = piece->contours->head.point[0];
+              conn->Y = piece->contours->head.point[1];
+              conn->type = POLYGONPIECE_TYPE;
+              conn->ptr1 = layer;
+              conn->ptr2 = polygon;
+              conn->group = GetLayerGroupNumberByPointer (layer);
+              conn->menu = NULL;	/* agnostic view of where it belongs */
+            }
+        }
+        END_LOOP;
       }
       ENDALL_LOOP;
       VIA_LOOP (PCB->Data);
@@ -554,7 +558,7 @@ DrawShortestRats (NetListTypePtr Netl, void (*funcp) ())
   RatTypePtr line;
   register float distance, temp;
   register ConnectionTypePtr conn1, conn2, firstpoint, secondpoint;
-  PolygonTypePtr polygon;
+  PolygonPieceTypePtr piece;
   Boolean changed = False;
   Cardinal n, m, j;
   NetTypePtr next, subnet, theSubnet = NULL;
@@ -588,22 +592,22 @@ DrawShortestRats (NetListTypePtr Netl, void (*funcp) ())
 		   * not a daisy chain).  Further prefer to pick an existing
 		   * via in the Net to make that connection.
 		   */
-		  if (conn1->type == POLYGON_TYPE &&
-		      (polygon = (PolygonTypePtr)conn1->ptr2) &&
+		  if (conn1->type == POLYGONPIECE_TYPE &&
+		      (piece = (PolygonPieceTypePtr)conn1->ptr2) &&
 		      !(distance == 0 &&
 		        firstpoint && firstpoint->type == VIA_TYPE) &&
-		      IsPointInPolygonIgnoreHoles (conn2->X, conn2->Y, polygon))
+		      IsPointInPolygonPieceIgnoreHoles (conn2->X, conn2->Y, piece))
 		    {
 		      distance = 0;
 		      firstpoint = conn2;
 		      secondpoint = conn1;
 		      theSubnet = next;
 		    }
-		  else if (conn2->type == POLYGON_TYPE &&
-		      (polygon = (PolygonTypePtr)conn2->ptr2) &&
+		  else if (conn2->type == POLYGONPIECE_TYPE &&
+		      (piece = (PolygonPieceTypePtr)conn2->ptr2) &&
 		      !(distance == 0 &&
 		        firstpoint && firstpoint->type == VIA_TYPE) &&
-		      IsPointInPolygonIgnoreHoles (conn1->X, conn1->Y, polygon))
+		      IsPointInPolygonPieceIgnoreHoles (conn1->X, conn1->Y, piece))
 		    {
 		      distance = 0;
 		      firstpoint = conn1;

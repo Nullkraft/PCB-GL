@@ -450,6 +450,28 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
 }
 
 /* ---------------------------------------------------------------------------
+ * gets the next slot for a piece in a polygon struct, allocates memory
+ * if necessary
+ */
+PolygonPieceTypePtr
+GetPolygonPieceMemoryInPolygon (PolygonTypePtr Polygon)
+{
+  PolygonPieceTypePtr piece = Polygon->Piece;
+
+  /* realloc new memory if necessary and clear it */
+  if (Polygon->PieceN >= Polygon->PieceMax)
+    {
+      Polygon->PieceMax += STEP_POLYGONPIECE;
+      piece = MyRealloc (piece, Polygon->PieceMax * sizeof (PolygonPieceType),
+			  "GetPolygonPieceMemoryInPolygon()");
+      Polygon->Piece = piece;
+      memset (piece + Polygon->PieceN, 0,
+	      STEP_POLYGONPIECE * sizeof (PolygonPieceType));
+    }
+  return (piece + Polygon->PieceN++);
+}
+
+/* ---------------------------------------------------------------------------
  * get next slot for an element, allocates memory if necessary
  */
 ElementTypePtr
@@ -725,8 +747,10 @@ FreePolygonMemory (PolygonTypePtr Polygon)
   if (Polygon)
     {
       MYFREE (Polygon->Points);
-      if (Polygon->Clipped)
-	poly_Free (&Polygon->Clipped);
+#warning NEED TO DO MORE ABOUT FREEING THOSE??
+      MYFREE (Polygon->Piece);
+//      if (Polygon->Clipped)
+//	poly_Free (&Polygon->Clipped);
       if (Polygon->NoHoles)
 	poly_Free (&Polygon->NoHoles);
       memset (Polygon, 0, sizeof (PolygonType));
