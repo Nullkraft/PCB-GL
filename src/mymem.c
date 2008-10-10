@@ -450,6 +450,28 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
 }
 
 /* ---------------------------------------------------------------------------
+ * gets the next slot for a piece in a polygon struct, allocates memory
+ * if necessary
+ */
+PointTypePtr
+GetPolygonPieceMemoryInPolygon (PolygonTypePtr Polygon)
+{
+  PolygonPieceTypePtr pieces = Polygon->Pieces;
+
+  /* realloc new memory if necessary and clear it */
+  if (Polygon->PiecesN >= Polygon->PiecesMax)
+    {
+      Polygon->PiecesMax += STEP_POLYGONPIECES;
+      pieces = MyRealloc (pieces, Polygon->PiecesMax * sizeof (PolygonPiecesType),
+			  "GetPolygonPiecesMemoryInPolygon()");
+      Polygon->Pieces = pieces;
+      memset (pieces + Polygon->PiecesN, 0,
+	      STEP_POLYGONPIECES * sizeof (PiecesType));
+    }
+  return (pieces + Polygon->PiecesN++);
+}
+
+/* ---------------------------------------------------------------------------
  * get next slot for an element, allocates memory if necessary
  */
 ElementTypePtr

@@ -507,7 +507,7 @@ GatherSubnets (NetListTypePtr Netl, Boolean NoWarn, Boolean AndRats)
       /* add polygons so the auto-router can see them as targets */
       ALLPOLYGON_LOOP (PCB->Data);
       {
-	if (TEST_FLAG (DRCFLAG, polygon) && polygon->PointN == 4)
+	if (TEST_FLAG (DRCFLAG, polygon))
 	  {
 	    conn = GetConnectionMemory (a);
 	    /* make point on a vertex */
