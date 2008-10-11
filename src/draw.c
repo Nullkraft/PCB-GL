@@ -2716,6 +2716,9 @@ EraseObject (int type, void *lptr, void *ptr)
     case POLYGON_TYPE:
       ErasePolygon ((PolygonTypePtr) ptr);
       break;
+    case POUR_TYPE:
+      ErasePour ((PourTypePtr) ptr);
+      break;
     case ELEMENT_TYPE:
       EraseElement ((ElementTypePtr) ptr);
       break;
@@ -2762,6 +2765,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
     case POLYGON_TYPE:
       if (((LayerTypePtr) ptr1)->On)
 	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2, 0);
+      break;
+    case POUR_TYPE:
+      if (((LayerTypePtr) ptr1)->On)
+	DrawPour ((LayerTypePtr) ptr1, (PourTypePtr) ptr2, 0);
       break;
     case ELEMENT_TYPE:
       if (PCB->ElementOn &&

@@ -123,13 +123,9 @@ static void *ClrArcJoin (LayerTypePtr, ArcTypePtr);
 static void *ChangeTextJoin (LayerTypePtr, TextTypePtr);
 static void *SetTextJoin (LayerTypePtr, TextTypePtr);
 static void *ClrTextJoin (LayerTypePtr, TextTypePtr);
-static void *ChangePolyClear (LayerTypePtr, PolygonTypePtr);
 static void *ChangePourClear (LayerTypePtr, PourTypePtr);
-static void *ChangePolyJoin (LayerTypePtr, PolygonTypePtr);
 static void *ChangePourJoin (LayerTypePtr, PourTypePtr);
-static void *SetPolyJoin (LayerTypePtr, PolygonTypePtr);
 static void *SetPourJoin (LayerTypePtr, PourTypePtr);
-static void *ClrPolyJoin (LayerTypePtr, PolygonTypePtr);
 static void *ClrPourJoin (LayerTypePtr, PourTypePtr);
 
 /* ---------------------------------------------------------------------------
@@ -141,7 +137,7 @@ static char *NewName;		/* new name */
 static ObjectFunctionType ChangeSizeFunctions = {
   ChangeLineSize,
   ChangeTextSize,
-  ChangePolyClear,
+  NULL,
   ChangePourClear,
   ChangeViaSize,
   ChangeElementSize,		/* changes silk screen line width */
@@ -231,7 +227,7 @@ static ObjectFunctionType ChangeSquareFunctions = {
 static ObjectFunctionType ChangeJoinFunctions = {
   ChangeLineJoin,
   ChangeTextJoin,
-  ChangePolyJoin,
+  NULL,
   ChangePourJoin,
   NULL,
   NULL,
@@ -295,7 +291,7 @@ static ObjectFunctionType SetSquareFunctions = {
 static ObjectFunctionType SetJoinFunctions = {
   SetLineJoin,
   SetTextJoin,
-  SetPolyJoin,
+  NULL,
   SetPourJoin,
   NULL,
   NULL,
@@ -340,7 +336,7 @@ static ObjectFunctionType ClrSquareFunctions = {
 static ObjectFunctionType ClrJoinFunctions = {
   ClrLineJoin,
   ClrTextJoin,
-  ClrPolyJoin,
+  NULL,
   ClrPourJoin,
   NULL,
   NULL,
@@ -1214,31 +1210,6 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
 }
 
 /* ---------------------------------------------------------------------------
- * changes the clearance flag of a polygon
- */
-static void *
-ChangePolyJoin (LayerTypePtr Layer, PolygonTypePtr poly)
-{
-  if (TEST_FLAG (LOCKFLAG, poly))
-    return (NULL);
-  ErasePolygon (poly);
-  if (TEST_FLAG(CLEARLINEFLAG, poly))
-  {
-  AddObjectToClearPolyUndoList (POLYGON_TYPE, Layer, poly, poly, False);
-  RestoreToPours (PCB->Data, POLYGON_TYPE, Layer, poly);
-  }
-  AddObjectToFlagUndoList (LINE_TYPE, Layer, poly, poly);
-  TOGGLE_FLAG (CLEARLINEFLAG, poly);
-  if (TEST_FLAG(CLEARLINEFLAG, poly))
-  {
-  AddObjectToClearPolyUndoList (POLYGON_TYPE, Layer, poly, poly, True);
-  ClearFromPours (PCB->Data, POLYGON_TYPE, Layer, poly);
-  }
-  DrawPolygon (Layer, poly, 0);
-  return (poly);
-}
-
-/* ---------------------------------------------------------------------------
  * changes the clearance flag of a pour
  */
 static void *
@@ -1249,15 +1220,15 @@ ChangePourJoin (LayerTypePtr Layer, PourTypePtr pour)
   ErasePour (pour);
   if (TEST_FLAG(CLEARLINEFLAG, pour))
   {
-  AddObjectToClearPourUndoList (POLYGON_TYPE, Layer, pour, pour, False);
-  RestoreToPours (PCB->Data, POLYGON_TYPE, Layer, pour);
+  AddObjectToClearPourUndoList (POUR_TYPE, Layer, pour, pour, False);
+  RestoreToPours (PCB->Data, POUR_TYPE, Layer, pour);
   }
   AddObjectToFlagUndoList (LINE_TYPE, Layer, pour, pour);
   TOGGLE_FLAG (CLEARLINEFLAG, pour);
   if (TEST_FLAG(CLEARLINEFLAG, pour))
   {
-  AddObjectToClearPourUndoList (POLYGON_TYPE, Layer, pour, pour, True);
-  ClearFromPours (PCB->Data, POLYGON_TYPE, Layer, pour);
+  AddObjectToClearPourUndoList (POUR_TYPE, Layer, pour, pour, True);
+  ClearFromPours (PCB->Data, POUR_TYPE, Layer, pour);
   }
   DrawPour (Layer, pour, 0);
   return (pour);
@@ -1272,17 +1243,6 @@ SetTextJoin (LayerTypePtr Layer, TextTypePtr Text)
   if (TEST_FLAG (LOCKFLAG, Text) || TEST_FLAG (CLEARLINEFLAG, Text))
     return (NULL);
   return ChangeTextJoin (Layer, Text);
-}
-
-/* ---------------------------------------------------------------------------
- * sets the clearance flag of a polygon
- */
-static void *
-SetPolyJoin (LayerTypePtr Layer, PolygonTypePtr poly)
-{
-  if (TEST_FLAG (LOCKFLAG, poly) || TEST_FLAG (CLEARLINEFLAG, poly))
-    return (NULL);
-  return ChangePolyJoin (Layer, poly);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1305,17 +1265,6 @@ ClrTextJoin (LayerTypePtr Layer, TextTypePtr Text)
   if (TEST_FLAG (LOCKFLAG, Text) || !TEST_FLAG (CLEARLINEFLAG, Text))
     return (NULL);
   return ChangeTextJoin (Layer, Text);
-}
-
-/* ---------------------------------------------------------------------------
- * clears the clearance flag of a polygon
- */
-static void *
-ClrPolyJoin (LayerTypePtr Layer, PolygonTypePtr poly)
-{
-  if (TEST_FLAG (LOCKFLAG, poly) || !TEST_FLAG (CLEARLINEFLAG, poly))
-    return (NULL);
-  return ChangePolyJoin (Layer, poly);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1676,22 +1625,6 @@ ChangePaste (PadTypePtr Pad)
 }
 
 /* ---------------------------------------------------------------------------
- * changes the CLEARPOLY flag of a polygon
- */
-static void *
-ChangePolyClear (LayerTypePtr Layer, PolygonTypePtr Polygon)
-{
-  if (TEST_FLAG (LOCKFLAG, Polygon))
-    return (NULL);
-  AddObjectToClearPolyUndoList (POLYGON_TYPE, Layer, Polygon, Polygon, True);
-  AddObjectToFlagUndoList (POLYGON_TYPE, Layer, Polygon, Polygon);
-  TOGGLE_FLAG (CLEARPOLYFLAG, Polygon);
-  InitClip (PCB->Data, Layer, Polygon);
-  DrawPolygon (Layer, Polygon, 0);
-  return (Polygon);
-}
-
-/* ---------------------------------------------------------------------------
  * changes the CLEARPOLY flag of a pour
  */
 static void *
@@ -1699,8 +1632,8 @@ ChangePourClear (LayerTypePtr Layer, PourTypePtr Pour)
 {
   if (TEST_FLAG (LOCKFLAG, Pour))
     return (NULL);
-  AddObjectToClearPourUndoList (POLYGON_TYPE, Layer, Pour, Pour, True);
-  AddObjectToFlagUndoList (POLYGON_TYPE, Layer, Pour, Pour);
+  AddObjectToClearPourUndoList (POUR_TYPE, Layer, Pour, Pour, True);
+  AddObjectToFlagUndoList (POUR_TYPE, Layer, Pour, Pour);
   TOGGLE_FLAG (CLEARPOLYFLAG, Pour);
   InitPourClip (PCB->Data, Layer, Pour);
   DrawPour (Layer, Pour, 0);

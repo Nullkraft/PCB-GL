@@ -93,7 +93,6 @@
 /* ---------------------------------------------------------------------------
  * prototypes
  */
-void MovePolygonLowLevel (PolygonTypePtr, LocationType, LocationType);
 void MovePourLowLevel (PourTypePtr, LocationType, LocationType);
 void MoveElementLowLevel (DataTypePtr, ElementTypePtr, LocationType,
 			  LocationType);
@@ -103,7 +102,6 @@ void *MoveObjectAndRubberband (int, void *, void *, void *,
 			       LocationType, LocationType);
 void *MoveLineToLayerLowLevel (LayerTypePtr, LineTypePtr, LayerTypePtr);
 void *MoveTextToLayerLowLevel (LayerTypePtr, TextTypePtr, LayerTypePtr);
-void *MovePolygonToLayerLowLevel (LayerTypePtr, PolygonTypePtr, LayerTypePtr);
 Boolean MoveSelectedObjectsToLayer (LayerTypePtr);
 
 /* index is 0..MAX_LAYER-1.  If old_index is -1, a new layer is

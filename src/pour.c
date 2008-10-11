@@ -611,14 +611,12 @@ Group (DataTypePtr Data, Cardinal layer)
 /* NB: For convenience, we're passing the defined POLYAREA in here */
 static int
 ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
-           POLYAREA *clipped, const BoxType * here, BDimension expand)
+           POLYAREA **pg, const BoxType * here, BDimension expand)
 {
-  POLYAREA *tmp, *pg;
   int r = 0;
   BoxType region;
   struct cpInfo info;
   Cardinal group;
-  int count_all, count_added;
 
   if (!TEST_FLAG (CLEARPOLYFLAG, pour)
       || GetLayerNumber (Data, Layer) >= max_layer)
@@ -629,7 +627,7 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
   info.other = here;
   info.layer = Layer;
   info.pour = pour;
-  info.pg = clipped;
+  info.pg = *pg;
   if (here)
     region = clip_box (here, &pour->BoundingBox);
   else
@@ -653,42 +651,8 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
         r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
     }
 
-  /* TODO: Check r to work of it we need to do this? */
+  *pg = info.pg;
 
-  count_all = count_added = 0;
-  /* For each piece of the clipped up polygon, create a new child */
-  pg = info.pg;
-  do
-    {
-      PolygonType *poly;
-
-      tmp = pg->f;
-      pg->f = pg;
-      pg->b = pg;
-      count_all++;
-//      if (pg->contours->area > PCB->IsleArea)
-      if (1) // Breaks incremental updates otherwise
-        {
-          count_added++;
-          poly = CreateNewPolygonInPour (pour, pour->Flags);
-          poly->Clipped = pg;
-          CLEAR_FLAG (SELECTEDFLAG, poly);
-
-          SetPolygonBoundingBox (poly);
-
-          if (pour->polygon_tree == NULL)
-            pour->polygon_tree = r_create_tree (NULL, 0, 0);
-          r_insert_entry (pour->polygon_tree, (BoxType *) poly, 0);
-        }
-      else
-        {
-          printf ("Too small\n");
-          poly_Free (&pg);
-        }
-    }
-  while ((pg = tmp) != info.pg);
-
-//  printf ("ClearPour counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
   return r;
 }
 
@@ -826,11 +790,6 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
           if (pour->polygon_tree == NULL)
             pour->polygon_tree = r_create_tree (NULL, 0, 0);
           r_insert_entry (pour->polygon_tree, (BoxType *) poly, 0);
-          printf ("Inserted poly, bounding box (%i,%i)-(%i,%u)\n",
-                  ((BoxType *) poly)->X1,
-                  ((BoxType *) poly)->Y1,
-                  ((BoxType *) poly)->X2,
-                  ((BoxType *) poly)->Y2);
         }
       else
         {
@@ -838,8 +797,6 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
         }
     }
   while ((pg = tmp) != start_pg);
-
-//  printf ("ClearPoly counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
 
   return 0;
 }
@@ -946,8 +903,8 @@ static int
 add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
           int type, void *ptr1, void *ptr2)
 {
-  POLYAREA *np = NULL, *pg = NULL; //, *start_pg, *tmp;
-  int count;
+  POLYAREA *np = NULL, *pg = NULL, *tmp, *start_pg;
+  int count, count_all, count_added;
 
   switch (type)
     {
@@ -1049,18 +1006,16 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
   printf ("After unsubtract, counted %i polygon pieces\n", count);
 #endif
 
-#warning FIXME Later: ClearPour does the adding of Polygon objects for us
-  ClearPour (PCB->Data, Layer, pour, pg, (const BoxType *) ptr2, 2 * UNSUBTRACT_BLOAT);
+  ClearPour (PCB->Data, Layer, pour, &pg, (const BoxType *) ptr2, 2 * UNSUBTRACT_BLOAT);
 
-#if 0
   if (pg == NULL)
     {
       printf ("Poly killed to death somehow\n");
       return -1;
     }
 
-
   /* For each piece of the clipped up polygon, create a new child */
+  count_all = count_added = 0;
   start_pg = pg;
   do
     {
@@ -1069,20 +1024,30 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
       tmp = pg->f;
       pg->f = pg;
       pg->b = pg;
+      count_all++;
+//      if (pg->contours->area > PCB->IsleArea)
+      if (1) // Breaks incremental updates otherwise
+        {
+          count_added++;
+          poly = CreateNewPolygonInPour (pour, pour->Flags);
+          poly->Clipped = pg;
+          CLEAR_FLAG (SELECTEDFLAG, poly);
 
-      poly = CreateNewPolygonInPour (pour, pour->Flags);
-      poly->Clipped = pg;
-      CLEAR_FLAG (SELECTEDFLAG, poly);
+          SetPolygonBoundingBox (poly);
 
-      SetPolygonBoundingBox (poly);
-
-      if (pour->polygon_tree == NULL)
-        pour->polygon_tree = r_create_tree (NULL, 0, 0);
-      r_insert_entry (pour->polygon_tree, (BoxType *) poly, 0);
-      printf ("Inserting one polygon into the layer's tree\n");
+          if (pour->polygon_tree == NULL)
+            pour->polygon_tree = r_create_tree (NULL, 0, 0);
+          r_insert_entry (pour->polygon_tree, (BoxType *) poly, 0);
+        }
+      else
+        {
+          printf ("Too small\n");
+          poly_Free (&pg);
+        }
     }
   while ((pg = tmp) != start_pg);
-#endif
+
+//  printf ("ClearPour counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
 
   return 0;
 }
@@ -1092,7 +1057,8 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
 int
 InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
 {
-  POLYAREA *clipped;
+  POLYAREA *pg, *tmp, *start_pg;
+  int count_all, count_added;
 
 //  printf ("InitPourClip\n");
 
@@ -1113,8 +1079,8 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
 //        DestroyPolygonInPour (pour, delete_children[ --number_deleted ]);
     }
 
-  clipped = original_pour_poly (pour);
-  if (!clipped)
+  pg = original_pour_poly (pour);
+  if (!pg)
     {
       printf ("Clipping returned NULL - can that be good?\n");
       return 0;
@@ -1124,18 +1090,42 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
     {
       /* Clip the pour against anything we can find in this layer */
       /* TODO: Clear up API so the resulting areas are in "clipped" */
-      ClearPour (Data, layer, pour, clipped, NULL, 0);
+      ClearPour (Data, layer, pour, &pg, NULL, 0);
     }
-#if 0
-  pg = clipped;
+
+  count_all = count_added = 0;
+  /* For each piece of the clipped up polygon, create a new child */
+  start_pg = pg;
   do
     {
-      /* TODO: For each piece of the clipped up polygon, create a new child */
-    }
-  while ((pg = pg->f) != clipped);
+      PolygonType *poly;
 
-  poly_Free (&clipped);
-#endif
+      tmp = pg->f;
+      pg->f = pg;
+      pg->b = pg;
+
+      count_all++;
+//      if (pg->contours->area > PCB->IsleArea)
+      if (1) // Breaks incremental updates otherwise
+        {
+          count_added++;
+          poly = CreateNewPolygonInPour (pour, pour->Flags);
+          poly->Clipped = pg;
+          CLEAR_FLAG (SELECTEDFLAG, poly);
+
+          SetPolygonBoundingBox (poly);
+
+          if (pour->polygon_tree == NULL)
+            pour->polygon_tree = r_create_tree (NULL, 0, 0);
+          r_insert_entry (pour->polygon_tree, (BoxType *) poly, 0);
+        }
+      else
+        {
+          poly_Free (&pg);
+        }
+    }
+  while ((pg = tmp) != start_pg);
+
   return 1;
 }
 

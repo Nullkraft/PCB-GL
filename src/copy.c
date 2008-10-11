@@ -66,7 +66,6 @@ static void *CopyVia (PinTypePtr);
 static void *CopyLine (LayerTypePtr, LineTypePtr);
 static void *CopyArc (LayerTypePtr, ArcTypePtr);
 static void *CopyText (LayerTypePtr, TextTypePtr);
-//static void *CopyPolygon (LayerTypePtr, PolygonTypePtr);
 static void *CopyPour (LayerTypePtr, PourTypePtr);
 static void *CopyElement (ElementTypePtr);
 
@@ -77,8 +76,7 @@ static LocationType DeltaX, DeltaY;	/* movement vector */
 static ObjectFunctionType CopyFunctions = {
   CopyLine,
   CopyText,
-#warning FIXME Later
-  NULL, //CopyPolygon,
+  NULL,
   CopyPour,
   CopyVia,
   CopyElement,
@@ -90,28 +88,6 @@ static ObjectFunctionType CopyFunctions = {
   CopyArc,
   NULL
 };
-
-#warning FIXME Later
-#if 0
-/* ---------------------------------------------------------------------------
- * copies data from one polygon to another
- * 'Dest' has to exist
- */
-PolygonTypePtr
-CopyPolygonLowLevel (PolygonTypePtr Dest, PolygonTypePtr Src)
-{
-  /* copy all data */
-  POLYGONPOINT_LOOP (Src);
-  {
-    CreateNewPointInPolygon (Dest, point->X, point->Y);
-  }
-  END_LOOP;
-  SetPolygonBoundingBox (Dest);
-  Dest->Flags = Src->Flags;
-  CLEAR_FLAG (FOUNDFLAG, Dest);
-  return (Dest);
-}
-#endif
 
 /* ---------------------------------------------------------------------------
  * copies data from one pour to another
@@ -281,29 +257,6 @@ CopyText (LayerTypePtr Layer, TextTypePtr Text)
   return (text);
 }
 
-#warning FIXME Later
-#if 0
-/* ---------------------------------------------------------------------------
- * copies a polygon 
- */
-static void *
-CopyPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
-{
-  PolygonTypePtr polygon;
-
-  polygon = CreateNewPolygon (Layer, NoFlags ());
-  CopyPolygonLowLevel (polygon, Polygon);
-  MovePolygonLowLevel (polygon, DeltaX, DeltaY);
-  if (!Layer->polygon_tree)
-    Layer->polygon_tree = r_create_tree (NULL, 0, 0);
-  r_insert_entry (Layer->polygon_tree, (BoxTypePtr) polygon, 0);
-  InitClip (PCB->Data, Layer, polygon);
-  DrawPolygon (Layer, polygon, 0);
-  AddObjectToCreateUndoList (POLYGON_TYPE, Layer, polygon, polygon);
-  return (polygon);
-}
-#endif
-
 /* ---------------------------------------------------------------------------
  * copies a pour
  */
@@ -393,14 +346,6 @@ CopyPastebufferToLayout (LocationType X, LocationType Y)
 	    CopyText (destlayer, text);
 	  }
 	  END_LOOP;
-#warning FIXME Later
-#if 0
-	  POLYGON_LOOP (sourcelayer);
-	  {
-	    CopyPolygon (destlayer, polygon);
-	  }
-	  END_LOOP;
-#endif
 	  POUR_LOOP (sourcelayer);
 	  {
 	    CopyPour (destlayer, pour);

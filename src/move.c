@@ -73,7 +73,6 @@ static void *MoveVia (PinTypePtr);
 static void *MoveLine (LayerTypePtr, LineTypePtr);
 static void *MoveArc (LayerTypePtr, ArcTypePtr);
 static void *MoveText (LayerTypePtr, TextTypePtr);
-//static void *MovePolygon (LayerTypePtr, PolygonTypePtr);
 static void *MovePour (LayerTypePtr, PourTypePtr);
 static void *MoveLinePoint (LayerTypePtr, LineTypePtr, PointTypePtr);
 static void *MovePourPoint (LayerTypePtr, PourTypePtr, PointTypePtr);
@@ -81,7 +80,6 @@ static void *MoveLineToLayer (LayerTypePtr, LineTypePtr);
 static void *MoveArcToLayer (LayerTypePtr, ArcTypePtr);
 static void *MoveRatToLayer (RatTypePtr);
 static void *MoveTextToLayer (LayerTypePtr, TextTypePtr);
-//static void *MovePolygonToLayer (LayerTypePtr, PolygonTypePtr);
 static void *MovePourToLayer (LayerTypePtr, PourTypePtr);
 
 /* ---------------------------------------------------------------------------
@@ -94,7 +92,7 @@ static Boolean MoreToCome;
 static ObjectFunctionType MoveFunctions = {
   MoveLine,
   MoveText,
-  NULL, // MovePolygon,
+  NULL,
   MovePour,
   MoveVia,
   MoveElement,
@@ -110,7 +108,7 @@ static ObjectFunctionType MoveFunctions = {
 {
 MoveLineToLayer,
     MoveTextToLayer,
-    NULL, //MovePolygonToLayer,
+    NULL,
     MovePourToLayer,
     NULL,
     NULL,
@@ -344,24 +342,6 @@ MoveText (LayerTypePtr Layer, TextTypePtr Text)
 }
 
 /* ---------------------------------------------------------------------------
- * low level routine to move a polygon
- */
-void
-MovePolygonLowLevel (PolygonTypePtr Polygon, LocationType DeltaX,
-		     LocationType DeltaY)
-{
-#warning FIXME Later
-#if 0
-  POLYGONPOINT_LOOP (Polygon);
-  {
-    MOVE (point->X, point->Y, DeltaX, DeltaY);
-  }
-  END_LOOP;
-  MOVE_BOX_LOWLEVEL (&Polygon->BoundingBox, DeltaX, DeltaY);
-#endif
-}
-
-/* ---------------------------------------------------------------------------
  * low level routine to move a pour
  */
 void
@@ -376,33 +356,6 @@ MovePourLowLevel (PourTypePtr Pour, LocationType DeltaX,
   MOVE_BOX_LOWLEVEL (&Pour->BoundingBox, DeltaX, DeltaY);
 }
 
-#warning FIXME Later
-#if 0
-/* ---------------------------------------------------------------------------
- * moves a polygon
- */
-static void *
-MovePolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
-{
-  if (Layer->On)
-    {
-      ErasePolygon (Polygon);
-    }
-  RestoreToPours (PCB->Data, POLYGON_TYPE, Layer, Polygon);
-  r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
-  MovePolygonLowLevel (Polygon, DeltaX, DeltaY);
-  r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
-  InitClip (PCB->Data, Layer, Polygon);
-  ClearFromPours (PCB->Data, POLYGON_TYPE, Layer, Polygon);
-  if (Layer->On)
-    {
-      DrawPolygon (Layer, Polygon, 0);
-      Draw ();
-    }
-  return (Polygon);
-}
-#endif
-
 /* ---------------------------------------------------------------------------
  * moves a pour
  */
@@ -413,12 +366,12 @@ MovePour (LayerTypePtr Layer, PourTypePtr Pour)
     {
       ErasePour (Pour);
     }
-//  RestoreToPours (PCB->Data, POLYGON_TYPE, Layer, Pour);
+  RestoreToPours (PCB->Data, POLYGON_TYPE, Layer, Pour);
   r_delete_entry (Layer->pour_tree, (BoxType *) Pour);
   MovePourLowLevel (Pour, DeltaX, DeltaY);
   r_insert_entry (Layer->pour_tree, (BoxType *) Pour, 0);
   InitPourClip (PCB->Data, Layer, Pour);
-//  ClearFromPours (PCB->Data, POLYGON_TYPE, Layer, Polygon);
+  ClearFromPours (PCB->Data, POLYGON_TYPE, Layer, Pour);
   if (Layer->On)
     {
       DrawPour (Layer, Pour, 0);
@@ -477,14 +430,14 @@ MovePourPoint (LayerTypePtr Layer, PourTypePtr Pour, PointTypePtr Point)
     {
       ErasePour (Pour);
     }
-//  RestoreToPours (PCB->Data, POLYGON_TYPE, Layer, Polygon);
+  RestoreToPours (PCB->Data, POLYGON_TYPE, Layer, Pour);
   r_delete_entry (Layer->pour_tree, (BoxType *) Pour);
   MOVE (Point->X, Point->Y, DeltaX, DeltaY);
   SetPourBoundingBox (Pour);
   r_insert_entry (Layer->pour_tree, (BoxType *) Pour, 0);
   RemoveExcessPourPoints (Layer, Pour);
   InitPourClip (PCB->Data, Layer, Pour);
-//  ClearFromPours (PCB->Data, POLYGON_TYPE, Layer, Polygon);
+  ClearFromPours (PCB->Data, POLYGON_TYPE, Layer, Pour);
   if (Layer->On)
     {
       DrawPour (Layer, Pour, 0);
@@ -757,32 +710,6 @@ MoveTextToLayer (LayerTypePtr Layer, TextTypePtr Text)
   return (Text);
 }
 
-#warning FIXME Later
-#if 0
-/* ---------------------------------------------------------------------------
- * moves a polygon between layers; lowlevel routines
- */
-void *
-MovePolygonToLayerLowLevel (LayerTypePtr Source, PolygonTypePtr Polygon,
-			    LayerTypePtr Destination)
-{
-  PolygonTypePtr new = GetPolygonMemory (Destination);
-
-  r_delete_entry (Source->polygon_tree, (BoxType *) Polygon);
-  /* copy the data and remove it from the former layer */
-  *new = *Polygon;
-  *Polygon = Source->Polygon[--Source->PolygonN];
-  r_substitute (Source->polygon_tree,
-		(BoxType *) & Source->Polygon[Source->PolygonN],
-		(BoxType *) Polygon);
-  memset (&Source->Polygon[Source->PolygonN], 0, sizeof (PolygonType));
-  if (!Destination->polygon_tree)
-    Destination->polygon_tree = r_create_tree (NULL, 0, 0);
-  r_insert_entry (Destination->polygon_tree, (BoxType *) new, 0);
-  return (new);
-}
-#endif
-
 /* ---------------------------------------------------------------------------
  * moves a pour between layers; lowlevel routines
  */
@@ -830,46 +757,6 @@ mptl_pin_callback (const BoxType *b, void *cl)
   CLEAR_THERM (d->snum, pin);
   return 1;
 }
-
-#warning FIXME Later
-#if 0
-/* ---------------------------------------------------------------------------
- * moves a polygon between layers
- */
-static void *
-MovePolygonToLayer (LayerTypePtr Layer, PolygonTypePtr Polygon)
-{
-  PolygonTypePtr new;
-  struct mptlc d;
-
-  if (TEST_FLAG (LOCKFLAG, Polygon))
-    {
-      Message (_("Sorry, the object is locked\n"));
-      return NULL;
-    }
-  if (((long int) Dest == -1) || (Layer == Dest))
-    return (Polygon);
-  AddObjectToMoveToLayerUndoList (POLYGON_TYPE, Layer, Polygon, Polygon);
-  if (Layer->On)
-    ErasePolygon (Polygon);
-  /* Move all of the thermals with the polygon */
-  d.snum = GetLayerNumber (PCB->Data, Layer);
-  d.dnum = GetLayerNumber (PCB->Data, Dest);
-  d.polygon = Polygon;
-  d.type = PIN_TYPE;
-  r_search (PCB->Data->pin_tree, &Polygon->BoundingBox, NULL, mptl_pin_callback, &d);
-  d.type = VIA_TYPE;
-  r_search (PCB->Data->via_tree, &Polygon->BoundingBox, NULL, mptl_pin_callback, &d);
-  new = MovePolygonToLayerLowLevel (Layer, Polygon, Dest);
-  InitClip (PCB->Data, Dest, new);
-  if (Dest->On)
-    {
-      DrawPolygon (Dest, new, 0);
-      Draw ();
-    }
-  return (new);
-}
-#endif
 
 /* ---------------------------------------------------------------------------
  * moves a pour between layers

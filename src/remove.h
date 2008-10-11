@@ -42,7 +42,6 @@
 
 void *RemoveLine (LayerTypePtr, LineTypePtr);
 void *RemoveArc (LayerTypePtr, ArcTypePtr);
-void *RemovePolygon (LayerTypePtr, PolygonTypePtr);
 void *RemovePour (LayerTypePtr, PourTypePtr);
 void *RemoveText (LayerTypePtr, TextTypePtr);
 void *RemoveElement (ElementTypePtr);

@@ -73,7 +73,6 @@ static void *AddLineToBuffer (LayerTypePtr, LineTypePtr);
 static void *AddArcToBuffer (LayerTypePtr, ArcTypePtr);
 static void *AddRatToBuffer (RatTypePtr);
 static void *AddTextToBuffer (LayerTypePtr, TextTypePtr);
-//static void *AddPolygonToBuffer (LayerTypePtr, PolygonTypePtr);
 static void *AddPourToBuffer (LayerTypePtr, PourTypePtr);
 static void *AddElementToBuffer (ElementTypePtr);
 static void *MoveViaToBuffer (PinTypePtr);
@@ -81,7 +80,6 @@ static void *MoveLineToBuffer (LayerTypePtr, LineTypePtr);
 static void *MoveArcToBuffer (LayerTypePtr, ArcTypePtr);
 static void *MoveRatToBuffer (RatTypePtr);
 static void *MoveTextToBuffer (LayerTypePtr, TextTypePtr);
-//static void *MovePolygonToBuffer (LayerTypePtr, PolygonTypePtr);
 static void *MovePourToBuffer (LayerTypePtr, PourTypePtr);
 static void *MoveElementToBuffer (ElementTypePtr);
 static void SwapBuffer (BufferTypePtr);
@@ -94,8 +92,7 @@ static DataTypePtr Dest, Source;
 static ObjectFunctionType AddBufferFunctions = {
   AddLineToBuffer,
   AddTextToBuffer,
-#warning FIXME Later
-  NULL, //AddPolygonToBuffer,
+  NULL,
   AddPourToBuffer,
   AddViaToBuffer,
   AddElementToBuffer,
@@ -111,7 +108,7 @@ static ObjectFunctionType AddBufferFunctions = {
 {
 MoveLineToBuffer,
     MoveTextToBuffer,
-    NULL, // MovePolygonToBuffer,
+    NULL,
     MovePourToBuffer,
     MoveViaToBuffer,
     MoveElementToBuffer,
@@ -194,24 +191,6 @@ AddTextToBuffer (LayerTypePtr Layer, TextTypePtr Text)
 			 Text->Direction, Text->Scale, Text->TextString,
 			 MaskFlags (Text->Flags, ExtraFlag)));
 }
-
-#warning FIXME Later
-#if 0
-/* ---------------------------------------------------------------------------
- * copies a polygon to buffer
- */
-static void *
-AddPolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
-{
-  LayerTypePtr layer = &Dest->Layer[GetLayerNumber (Source, Layer)];
-  PolygonTypePtr polygon;
-
-  polygon = GetPolygonMemory (layer);
-  CopyPolygonLowLevel (polygon, Polygon);
-  CLEAR_FLAG (FOUNDFLAG | ExtraFlag, polygon);
-  return (polygon);
-}
-#endif
 
 /* ---------------------------------------------------------------------------
  * copies a pour to buffer
@@ -384,36 +363,6 @@ MoveTextToBuffer (LayerTypePtr Layer, TextTypePtr Text)
   ClearFromPours (Dest, TEXT_TYPE, lay, text);
   return (text);
 }
-
-#warning FIXME Later
-#if 0
-/* ---------------------------------------------------------------------------
- * moves a polygon to buffer. Doesn't allocate memory for the points
- */
-static void *
-MovePolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
-{
-  LayerTypePtr lay;
-  PolygonTypePtr polygon;
-
-  RestoreToPours (Source, POLYGON_TYPE, Layer, Polygon);
-  r_delete_entry (Layer->polygon_tree, (BoxTypePtr) Polygon);
-  lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
-  polygon = GetPolygonMemory (lay);
-  *polygon = *Polygon;
-  CLEAR_FLAG (FOUNDFLAG, polygon);
-  *Polygon = Layer->Polygon[--Layer->PolygonN];
-  r_substitute (Layer->polygon_tree,
-		(BoxTypePtr) & Layer->Polygon[Layer->PolygonN],
-		(BoxTypePtr) Polygon);
-  memset (&Layer->Polygon[Layer->PolygonN], 0, sizeof (PolygonType));
-  if (!lay->polygon_tree)
-    lay->polygon_tree = r_create_tree (NULL, 0, 0);
-  r_insert_entry (lay->polygon_tree, (BoxTypePtr) polygon, 0);
-  ClearFromPours (Source, POLYGON_TYPE, Layer, Polygon);
-  return (polygon);
-}
-#endif
 
 /* ---------------------------------------------------------------------------
  * moves a pour to buffer. Doesn't allocate memory for the points

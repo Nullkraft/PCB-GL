@@ -160,24 +160,6 @@ RotateTextLowLevel (TextTypePtr Text, LocationType X, LocationType Y,
 }
 
 /* ---------------------------------------------------------------------------
- * rotates a polygon in 90 degree steps
- */
-void
-RotatePolygonLowLevel (PolygonTypePtr Polygon,
-		       LocationType X, LocationType Y, BYTE Number)
-{
-#warning FIXME Later
-#if 0
-  POLYGONPOINT_LOOP (Polygon);
-  {
-    ROTATE (point->X, point->Y, X, Y, Number);
-  }
-  END_LOOP;
-  RotateBoxLowLevel (&Polygon->BoundingBox, X, Y, Number);
-#endif
-}
-
-/* ---------------------------------------------------------------------------
  * rotates a pour in 90 degree steps
  */
 void
