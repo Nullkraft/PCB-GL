@@ -308,9 +308,9 @@ New polygons are full ones.
 #define POUR_TYPE 		0x20000
 
 #define PIN_TYPES     (VIA_TYPE | PIN_TYPE)
-#define LOCK_TYPES    (VIA_TYPE | LINE_TYPE | ARC_TYPE | POLYGON_TYPE | \
-                       POUR_TYPE | ELEMENT_TYPE | \
-                       TEXT_TYPE | ELEMENTNAME_TYPE | LOCKED_TYPE)
+#define LOCK_TYPES    (VIA_TYPE | LINE_TYPE | ARC_TYPE | POUR_TYPE | \
+                       ELEMENT_TYPE | TEXT_TYPE | ELEMENTNAME_TYPE | \
+                       LOCKED_TYPE)
 
 #define	ALL_TYPES		(~0)	/* all bits set */
 

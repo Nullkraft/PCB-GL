@@ -182,6 +182,7 @@ SelectObject (void)
 	break;
       }
 
+#if 0
     case POLYGON_TYPE:
       {
 	PolygonType *poly = (PolygonTypePtr) ptr2;
@@ -190,6 +191,19 @@ SelectObject (void)
 	AddObjectToFlagUndoList (POLYGON_TYPE, ptr1, ptr2, ptr2);
 	TOGGLE_FLAG (SELECTEDFLAG, poly);
 	DrawPolygon (layer, poly, 0);
+	/* changing memory order no longer effects draw order */
+	break;
+      }
+#endif
+
+    case POUR_TYPE:
+      {
+	PourType *pour = (PolygonTypePtr) ptr2;
+
+	layer = (LayerTypePtr) ptr1;
+	AddObjectToFlagUndoList (POUR_TYPE, ptr1, ptr2, ptr2);
+	TOGGLE_FLAG (SELECTEDFLAG, pour);
+	DrawPour (layer, pour, 0);
 	/* changing memory order no longer effects draw order */
 	break;
       }
@@ -525,12 +539,6 @@ ObjectOperation (ObjectFunctionTypePtr F,
 	return (F->Polygon ((LayerTypePtr) Ptr1, (PolygonTypePtr) Ptr2));
       break;
 
-    case POLYGONPOINT_TYPE:
-      if (F->PolygonPoint)
-	return (F->PolygonPoint ((LayerTypePtr) Ptr1, (PolygonTypePtr) Ptr2,
-			  (PointTypePtr) Ptr3));
-      break;
-
     case POUR_TYPE:
       if (F->Pour)
 	return (F->Pour ((LayerTypePtr) Ptr1, (PourTypePtr) Ptr2));
@@ -637,6 +645,7 @@ SelectedOperation (ObjectFunctionTypePtr F, Boolean Reset, int type)
   }
   ENDALL_LOOP;
 
+#if 0
   /* check polygons */
   if (type & POLYGON_TYPE && F->Polygon)
     VISIBLEPOUR_LOOP (PCB->Data);
@@ -657,6 +666,7 @@ SelectedOperation (ObjectFunctionTypePtr F, Boolean Reset, int type)
       END_LOOP;
     }
   ENDALL_LOOP;
+#endif
 
   /* check pours */
   if (type & POUR_TYPE && F->Pour)
@@ -834,6 +844,7 @@ SelectConnection (Boolean Flag)
       }
   }
   ENDALL_LOOP;
+#if 0
   VISIBLEPOUR_LOOP (PCB->Data);
   {
     POURPOLYGON_LOOP (pour);
@@ -849,6 +860,7 @@ SelectConnection (Boolean Flag)
     END_LOOP;
   }
   ENDALL_LOOP;
+#endif
 
   if (PCB->PinOn && PCB->ElementOn)
     {

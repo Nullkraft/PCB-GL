@@ -150,7 +150,6 @@ static ObjectFunctionType ChangeSizeFunctions = {
   ChangePadSize,
   NULL,
   NULL,
-  NULL,
   ChangeArcSize,
   NULL
 };
@@ -163,7 +162,6 @@ static ObjectFunctionType Change2ndSizeFunctions = {
   ChangeElement2ndSize,
   NULL,
   ChangePin2ndSize,
-  NULL,
   NULL,
   NULL,
   NULL,
@@ -183,7 +181,6 @@ static ObjectFunctionType ChangeThermalFunctions = {
   NULL,
   NULL,
   NULL,
-  NULL,
   NULL
 };
 static ObjectFunctionType ChangeClearSizeFunctions = {
@@ -196,7 +193,6 @@ static ObjectFunctionType ChangeClearSizeFunctions = {
   NULL,
   ChangePinClearSize,
   ChangePadClearSize,
-  NULL,
   NULL,
   NULL,
   ChangeArcClearSize,
@@ -215,7 +211,6 @@ static ObjectFunctionType ChangeNameFunctions = {
   NULL,
   NULL,
   NULL,
-  NULL,
   NULL
 };
 static ObjectFunctionType ChangeSquareFunctions = {
@@ -231,7 +226,6 @@ static ObjectFunctionType ChangeSquareFunctions = {
   NULL,
   NULL,
   NULL,
-  NULL,
   NULL
 };
 static ObjectFunctionType ChangeJoinFunctions = {
@@ -239,7 +233,6 @@ static ObjectFunctionType ChangeJoinFunctions = {
   ChangeTextJoin,
   ChangePolyJoin,
   ChangePourJoin,
-  NULL,
   NULL,
   NULL,
   NULL,
@@ -263,7 +256,6 @@ static ObjectFunctionType ChangeOctagonFunctions = {
   NULL,
   NULL,
   NULL,
-  NULL,
   NULL
 };
 static ObjectFunctionType ChangeMaskSizeFunctions = {
@@ -283,7 +275,6 @@ static ObjectFunctionType ChangeMaskSizeFunctions = {
   NULL,
   NULL,
   NULL,
-  NULL,
   NULL
 };
 static ObjectFunctionType SetSquareFunctions = {
@@ -299,7 +290,6 @@ static ObjectFunctionType SetSquareFunctions = {
   NULL,
   NULL,
   NULL,
-  NULL,
   NULL
 };
 static ObjectFunctionType SetJoinFunctions = {
@@ -307,7 +297,6 @@ static ObjectFunctionType SetJoinFunctions = {
   SetTextJoin,
   SetPolyJoin,
   SetPourJoin,
-  NULL,
   NULL,
   NULL,
   NULL,
@@ -331,7 +320,6 @@ static ObjectFunctionType SetOctagonFunctions = {
   NULL,
   NULL,
   NULL,
-  NULL,
   NULL
 };
 static ObjectFunctionType ClrSquareFunctions = {
@@ -347,7 +335,6 @@ static ObjectFunctionType ClrSquareFunctions = {
   NULL,
   NULL,
   NULL,
-  NULL,
   NULL
 };
 static ObjectFunctionType ClrJoinFunctions = {
@@ -355,7 +342,6 @@ static ObjectFunctionType ClrJoinFunctions = {
   ClrTextJoin,
   ClrPolyJoin,
   ClrPourJoin,
-  NULL,
   NULL,
   NULL,
   NULL,
@@ -375,7 +361,6 @@ static ObjectFunctionType ClrOctagonFunctions = {
   ClrElementOctagon,
   NULL,
   ClrPinOctagon,
-  NULL,
   NULL,
   NULL,
   NULL,

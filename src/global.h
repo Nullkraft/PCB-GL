@@ -665,7 +665,7 @@ typedef struct
   void *(*Pin) (ElementTypePtr, PinTypePtr);
   void *(*Pad) (ElementTypePtr, PadTypePtr);
   void *(*LinePoint) (LayerTypePtr, LineTypePtr, PointTypePtr);
-  void *(*PolygonPoint) (LayerTypePtr, PolygonTypePtr, PointTypePtr);
+//  void *(*PolygonPoint) (LayerTypePtr, PolygonTypePtr, PointTypePtr);
   void *(*PourPoint) (LayerTypePtr, PourTypePtr, PointTypePtr);
   void *(*Arc) (LayerTypePtr, ArcTypePtr);
   void *(*Rat) (RatTypePtr);

@@ -87,7 +87,6 @@ static ObjectFunctionType CopyFunctions = {
   NULL,
   NULL,
   NULL,
-  NULL,
   CopyArc,
   NULL
 };

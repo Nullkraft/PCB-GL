@@ -89,7 +89,6 @@ static ObjectFunctionType RotateFunctions = {
   NULL,
   RotateLinePoint,
   NULL,
-  NULL,
   RotateArc,
   NULL
 };

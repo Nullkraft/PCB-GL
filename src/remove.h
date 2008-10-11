@@ -38,7 +38,7 @@
  */
 #define REMOVE_TYPES            \
 	(VIA_TYPE | LINEPOINT_TYPE | LINE_TYPE | TEXT_TYPE | ELEMENT_TYPE |	\
-	POLYGONPOINT_TYPE | POLYGON_TYPE | RATLINE_TYPE | ARC_TYPE)
+	POURPOINT_TYPE | POUR_TYPE | RATLINE_TYPE | ARC_TYPE)
 
 void *RemoveLine (LayerTypePtr, LineTypePtr);
 void *RemoveArc (LayerTypePtr, ArcTypePtr);

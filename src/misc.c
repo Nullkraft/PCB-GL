@@ -1271,6 +1271,10 @@ GetObjectBoundingBox (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
       box = ((PolygonTypePtr) Ptr2)->BoundingBox;
       break;
 
+    case POUR_TYPE:
+      box = ((PolygonTypePtr) Ptr2)->BoundingBox;
+      break;
+
     case ELEMENT_TYPE:
       box = ((ElementTypePtr) Ptr1)->BoundingBox;
       {
@@ -1321,7 +1325,7 @@ GetObjectBoundingBox (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
         break;
       }
 
-    case POLYGONPOINT_TYPE:
+    case POURPOINT_TYPE:
       {
         PointTypePtr point = (PointTypePtr) Ptr3;
 
@@ -1701,7 +1705,7 @@ GetGridLockCoordinates (int type, void *ptr1,
       break;
 
     case LINEPOINT_TYPE:
-    case POLYGONPOINT_TYPE:
+    case POURPOINT_TYPE:
       *x = ((PointTypePtr) ptr3)->X;
       *y = ((PointTypePtr) ptr3)->Y;
       break;

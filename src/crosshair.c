@@ -504,44 +504,6 @@ XORDrawMoveOrCopyObject (void)
 	break;
       }
 
-#warning FIXME Later
-#if 0
-    case POLYGONPOINT_TYPE:
-      {
-	PolygonTypePtr polygon;
-	PointTypePtr point, previous, following;
-
-	polygon = (PolygonTypePtr) Crosshair.AttachedObject.Ptr2;
-	point = (PointTypePtr) Crosshair.AttachedObject.Ptr3;
-
-	/* get previous and following point */
-	if (point == polygon->Points)
-	  {
-	    previous = &polygon->Points[polygon->PointN - 1];
-	    following = point + 1;
-	  }
-	else if (point == &polygon->Points[polygon->PointN - 1])
-	  {
-	    previous = point - 1;
-	    following = &polygon->Points[0];
-	  }
-	else
-	  {
-	    previous = point - 1;
-	    following = point + 1;
-	  }
-
-	/* draw the two segments */
-	gui->draw_line (Crosshair.GC,
-			previous->X,
-			previous->Y, point->X + dx, point->Y + dy);
-	gui->draw_line (Crosshair.GC,
-			point->X + dx,
-			point->Y + dy, following->X, following->Y);
-	break;
-      }
-#endif
-
     case POURPOINT_TYPE:
       {
 	PourTypePtr pour;
@@ -1013,7 +975,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
 
   if (TEST_FLAG (SNAPPINFLAG, PCB))
     ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
-                                POLYGONPOINT_TYPE, &ptr1, &ptr2, &ptr3);
+                                POURPOINT_TYPE, &ptr1, &ptr2, &ptr3);
   else
     ans = NO_TYPE;
 

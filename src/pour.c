@@ -654,7 +654,6 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
     }
 
   /* TODO: Check r to work of it we need to do this? */
-  printf ("ClearPour found r=%i\n", r);
 
   count_all = count_added = 0;
   /* For each piece of the clipped up polygon, create a new child */
@@ -673,6 +672,7 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
           count_added++;
           poly = CreateNewPolygonInPour (pour, pour->Flags);
           poly->Clipped = pg;
+          CLEAR_FLAG (SELECTEDFLAG, poly);
 
           SetPolygonBoundingBox (poly);
 
@@ -688,7 +688,7 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
     }
   while ((pg = tmp) != info.pg);
 
-  printf ("ClearPour counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
+//  printf ("ClearPour counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
   return r;
 }
 
@@ -768,7 +768,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
       }
   }
   END_LOOP;
-  printf ("Subtract counted %i touching children, now removed\n", count);
+//  printf ("Subtract counted %i touching children, now removed\n", count);
 
   if (pg == NULL)
     {
@@ -790,6 +790,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
       return -1;
     }
 
+#if 0
   count = 0;
   { POLYAREA *pg_start;
   pg_start = pg;
@@ -798,6 +799,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
   } while ((pg = pg->f) != pg_start);
   }
   printf ("After subtract, counted %i polygon pieces\n", count);
+#endif
 
   count_all = count_added = 0;
   /* For each piece of the clipped up polygon, create a new child */
@@ -817,6 +819,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
           count_added++;
           poly = CreateNewPolygonInPour (pour, pour->Flags);
           poly->Clipped = pg;
+          CLEAR_FLAG (SELECTEDFLAG, poly);
 
           SetPolygonBoundingBox (poly);
 
@@ -836,7 +839,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
     }
   while ((pg = tmp) != start_pg);
 
-  printf ("ClearPoly counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
+//  printf ("ClearPoly counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
 
   return 0;
 }
@@ -904,7 +907,7 @@ original_pour_poly (PourType * p)
   Vector v;
 
   /* first make initial polygon contour */
-  POLYGONPOINT_LOOP (p);
+  POURPOINT_LOOP (p);
   {
     v[0] = point->X;
     v[1] = point->Y;
@@ -920,7 +923,7 @@ original_pour_poly (PourType * p)
   if (contour == NULL)
     {
       printf ("How did that escape - did the loop iterate zero times??\n");
-      POLYGONPOINT_LOOP (p);
+      POURPOINT_LOOP (p);
         {
           printf ("Hello\n");
         }
@@ -1015,7 +1018,7 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
       }
   }
   END_LOOP;
-  printf ("Unsubtract counted %i touching children, now removed\n", count);
+//  printf ("Unsubtract counted %i touching children, now removed\n", count);
 
   if (pg == NULL)
     {
@@ -1035,6 +1038,7 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
   /* NB: np and old *pg are freed inside intersect_poly() */
   intersect_poly (np, &pg);
 
+#if 0
   count = 0;
   { POLYAREA *pg_start;
   pg_start = pg;
@@ -1043,6 +1047,7 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
   } while ((pg = pg->f) != pg_start);
   }
   printf ("After unsubtract, counted %i polygon pieces\n", count);
+#endif
 
 #warning FIXME Later: ClearPour does the adding of Polygon objects for us
   ClearPour (PCB->Data, Layer, pour, pg, (const BoxType *) ptr2, 2 * UNSUBTRACT_BLOAT);
@@ -1067,6 +1072,7 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
 
       poly = CreateNewPolygonInPour (pour, pour->Flags);
       poly->Clipped = pg;
+      CLEAR_FLAG (SELECTEDFLAG, poly);
 
       SetPolygonBoundingBox (poly);
 
@@ -1088,12 +1094,12 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
 {
   POLYAREA *clipped;
 
-  printf ("InitPourClip\n");
+//  printf ("InitPourClip\n");
 
   /* Free any children we might have */
   if (pour->PolygonN)
     {
-      printf ("We already had children. Killing them now.\n");
+//      printf ("We already had children. Killing them now.\n");
 //      delete_children = calloc (pour->PolygonN, sizeof (PolygonType *));
       POURPOLYGON_LOOP (pour);
       {
@@ -1253,7 +1259,8 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
 {
   if (type == POUR_TYPE)
     {
-      printf ("Calling InitPourClip from RestoreToPour\n");
+#warning FIXME Later: Why do we need to do this?
+//      printf ("Calling InitPourClip from RestoreToPour\n");
       InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
     }
   PlowPours (Data, type, ptr1, ptr2, add_plow);
@@ -1264,7 +1271,8 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
 {
   if (type == POUR_TYPE)
     {
-      printf ("Calling InitPourClip from ClearFromPour\n");
+#warning FIXME Later: Why do we need to do this?
+//      printf ("Calling InitPourClip from ClearFromPour\n");
       InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
     }
   PlowPours (Data, type, ptr1, ptr2, subtract_plow);

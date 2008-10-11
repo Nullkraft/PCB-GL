@@ -104,7 +104,6 @@ static ObjectFunctionType AddBufferFunctions = {
   NULL,
   NULL,
   NULL,
-  NULL,
   AddArcToBuffer,
   AddRatToBuffer
 }, MoveBufferFunctions =
@@ -116,7 +115,6 @@ MoveLineToBuffer,
     MovePourToBuffer,
     MoveViaToBuffer,
     MoveElementToBuffer,
-    NULL,
     NULL,
     NULL,
     NULL,

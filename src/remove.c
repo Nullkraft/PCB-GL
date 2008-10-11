@@ -94,7 +94,6 @@ static ObjectFunctionType RemoveFunctions = {
   NULL,
   NULL,
   RemoveLinePoint,
-  NULL,
   RemovePourPoint,
   RemoveArc,
   RemoveRat
@@ -110,7 +109,6 @@ static ObjectFunctionType DestroyFunctions = {
   NULL,
   NULL,
   NULL,
-  NULL, //DestroyPolygonPoint,
   DestroyPourPoint,
   DestroyArc,
   DestroyRat
@@ -526,7 +524,7 @@ RemovePourPoint (LayerTypePtr Layer,
   if (Layer->On)
     ErasePour (Pour);
   /* insert the pour-point into the undo list */
-  POLYGONPOINT_LOOP (Pour);
+  POURPOINT_LOOP (Pour);
   {
     if (point == Point)
       {
@@ -536,7 +534,7 @@ RemovePourPoint (LayerTypePtr Layer,
   }
   END_LOOP;
 
-  AddObjectToRemovePointUndoList (POLYGONPOINT_TYPE, Layer, Pour, index);
+  AddObjectToRemovePointUndoList (POURPOINT_TYPE, Layer, Pour, index);
   r_delete_entry (Layer->pour_tree, (BoxType *) Pour);
 
   /* remove point from list, keep point order */

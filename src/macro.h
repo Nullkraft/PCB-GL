@@ -400,12 +400,14 @@ extern int mem_any_set (unsigned char *, int);
 		polygon = &(layer)->Polygon[n]
 #endif
 
+#if 0
 #define	POLYGONPOINT_LOOP(polygon) do	{	\
 	Cardinal			n;		\
 	PointTypePtr	point;				\
 	for (n = (polygon)->PointN-1; n != -1; n--)	\
 	{						\
 		point = &(polygon)->Points[n]
+#endif
 
 #define	POUR_LOOP(layer) do {			\
 	Cardinal		n;			\

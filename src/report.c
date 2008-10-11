@@ -496,14 +496,14 @@ ReportDialog (int argc, char **argv, int x, int y)
 	break;
       }
     case LINEPOINT_TYPE:
-    case POLYGONPOINT_TYPE:
+    case POURPOINT_TYPE:
       {
 	PointTypePtr point = (PointTypePtr) ptr2;
 	sprintf (&report[0], "POINT ID# %ld. Points don't have flags.\n"
 		 "Located at (X,Y) = (%d,%d)\n"
 		 "It belongs to a %s on layer %d\n", point->ID,
 		 point->X, point->Y,
-		 (type == LINEPOINT_TYPE) ? "line" : "polygon",
+		 (type == LINEPOINT_TYPE) ? "line" : "pour",
 		 GetLayerNumber (PCB->Data, (LayerTypePtr) ptr1));
 	break;
       }

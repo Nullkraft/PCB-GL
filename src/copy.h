@@ -38,7 +38,7 @@
  */
 #define	COPY_TYPES              \
 	(VIA_TYPE | LINE_TYPE | TEXT_TYPE | \
-	ELEMENT_TYPE | ELEMENTNAME_TYPE | POLYGON_TYPE | ARC_TYPE)
+	ELEMENT_TYPE | ELEMENTNAME_TYPE | POUR_TYPE | ARC_TYPE)
 
 
 PolygonTypePtr CopyPolygonLowLevel (PolygonTypePtr, PolygonTypePtr);

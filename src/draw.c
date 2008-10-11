@@ -703,16 +703,12 @@ pour_callback (const BoxType * b, void *cl)
   struct pin_info *i = (struct pin_info *) cl;
   PourType *pour = (PourType *)b;
 
-//  DrawPlainPour (i->Layer, pour);
   DrawPour (i->Layer, pour, 0);
 
-//  printf ("Pour has %i polygons :\n", pour->PolygonN);
-  /* draw all polygons in this pour */
   if (pour->PolygonN)
     {
       r_search (pour->polygon_tree, i->clip, NULL, poly_callback, i);
     }
-//  printf ("-----------\n");
 
   return 1;
 }
@@ -1828,10 +1824,9 @@ DrawPourLowLevel (PourTypePtr Pour, void *data)
       gui->set_line_width (Output.fgGC, 2);
 //      gui->set_line_width (Output.fgGC, 1);
       for (i = 0; i < n - 1; i++)
-	{
-	  gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
-	  gui->fill_circle (Output.fgGC, x[i], y[i], 30);
-	}
+        {
+          gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
+        }
       gui->draw_line (Output.fgGC, x[n - 1], y[n - 1], x[0], y[0]);
     }
   else
