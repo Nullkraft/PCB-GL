@@ -2251,6 +2251,10 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
 static void
 DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 {
+  // Re-use HOLEFLAG to cut out islands
+  if (TEST_FLAG (HOLEFLAG, Polygon))
+    return;
+
   if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Polygon))
     {
       if (TEST_FLAG (SELECTEDFLAG, Polygon))
