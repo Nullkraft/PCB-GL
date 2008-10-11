@@ -1,0 +1,146 @@
+Bottom: eb29ea5cb168241e14ffca932a2bd4f5be26b986
+Top:    0ea0dad5c2a8ff898bd9dc44144f1a1d343f0b6a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-11 16:56:31 +0100
+
+Refresh of add_pours
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 6b2dc76..0193d6e 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -1615,7 +1615,7 @@ NotifyMode (void)
+ 	      else
+ 		{
+ 		  /* get starting point of nearest segment */
+-		  if (Crosshair.AttachedObject.Type == POLYGON_TYPE)
++		  if (Crosshair.AttachedObject.Type == POUR_TYPE)
+ 		    {
+ 		      fake.pour = (PourTypePtr) Crosshair.AttachedObject.Ptr2;
+ 		      polyIndex =
+diff --git a/src/const.h b/src/const.h
+index c2fa83b..3e8202b 100644
+--- a/src/const.h
++++ b/src/const.h
+@@ -297,7 +297,8 @@ New polygons are full ones.
+ #define	PIN_TYPE		0x00100	/* objects that are part */
+ #define	PAD_TYPE		0x00200	/* 'pin' of SMD element */
+ #define	ELEMENTNAME_TYPE	0x00400	/* of others */
+-#define	POLYGONPOINT_TYPE	0x00800
++//#define	POLYGONPOINT_TYPE	0x00800
++#define POURPOINT_TYPE 		0x00800
+ #define	LINEPOINT_TYPE		0x01000
+ #define ELEMENTLINE_TYPE        0x02000
+ #define ARC_TYPE                0x04000
+@@ -305,7 +306,6 @@ New polygons are full ones.
+ 
+ #define LOCKED_TYPE 		0x10000	/* used to tell search to include locked items. */
+ #define POUR_TYPE 		0x20000
+-#define POURPOINT_TYPE 		0x40000
+ 
+ #define PIN_TYPES     (VIA_TYPE | PIN_TYPE)
+ #define LOCK_TYPES    (VIA_TYPE | LINE_TYPE | ARC_TYPE | POLYGON_TYPE | \
+diff --git a/src/mymem.h b/src/mymem.h
+index bdae9a2..d902609 100644
+--- a/src/mymem.h
++++ b/src/mymem.h
+@@ -57,7 +57,7 @@
+ #define	STEP_REMOVELIST		500
+ #define	STEP_UNDOLIST		500
+ #define	STEP_POUR		10
+-#define	STEP_POLYGON		50
++#define	STEP_POLYGON		100
+ #define	STEP_POLYGONPOINT	10
+ #define	STEP_LIBRARYMENU	10
+ #define	STEP_LIBRARYENTRY	20
+diff --git a/src/pour.c b/src/pour.c
+index 1e8b982..e66455f 100644
+--- a/src/pour.c
++++ b/src/pour.c
+@@ -121,7 +121,50 @@ Cardinal
+ GetLowestDistancePourPoint (PourTypePtr Pour, LocationType X,
+                             LocationType Y)
+ {
+-  return GetLowestDistancePourPoint (Pour, X, Y);
++  double mindistance = (double) MAX_COORD * MAX_COORD;
++  PointTypePtr ptr1 = &Pour->Points[Pour->PointN - 1],
++               ptr2 = &Pour->Points[0];
++  Cardinal n, result = 0;
++
++  /* we calculate the distance to each segment and choose the
++   * shortest distance. If the closest approach between the
++   * given point and the projected line (i.e. the segment extended)
++   * is not on the segment, then the distance is the distance
++   * to the segment end point.
++   */
++
++  for (n = 0; n < Pour->PointN; n++, ptr2++)
++    {
++      register double u, dx, dy;
++      dx = ptr2->X - ptr1->X;
++      dy = ptr2->Y - ptr1->Y;
++      if (dx != 0.0 || dy != 0.0)
++        {
++          /* projected intersection is at P1 + u(P2 - P1) */
++          u = ((X - ptr1->X) * dx + (Y - ptr1->Y) * dy) / (dx * dx + dy * dy);
++
++          if (u < 0.0)
++            {                   /* ptr1 is closest point */
++              u = SQUARE (X - ptr1->X) + SQUARE (Y - ptr1->Y);
++            }
++          else if (u > 1.0)
++            {                   /* ptr2 is closest point */
++              u = SQUARE (X - ptr2->X) + SQUARE (Y - ptr2->Y);
++            }
++          else
++            {                   /* projected intersection is closest point */
++              u = SQUARE (X - ptr1->X * (1.0 - u) - u * ptr2->X) +
++                SQUARE (Y - ptr1->Y * (1.0 - u) - u * ptr2->Y);
++            }
++          if (u < mindistance)
++            {
++              mindistance = u;
++              result = n;
++            }
++        }
++      ptr1 = ptr2;
++    }
++  return (result);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -972,7 +1015,7 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+       }
+   }
+   END_LOOP;
+-  printf ("Unsubtract counted %i touching children, now removed\n");
++  printf ("Unsubtract counted %i touching children, now removed\n", count);
+ 
+   if (pg == NULL)
+     {
+@@ -1044,8 +1087,6 @@ int
+ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
+ {
+   POLYAREA *clipped;
+-  PolygonType **delete_children;
+-  int number_deleted = 0;
+ 
+   printf ("InitPourClip\n");
+ 
+diff --git a/src/select.h b/src/select.h
+index 373510e..b5c9542 100644
+--- a/src/select.h
++++ b/src/select.h
+@@ -35,8 +35,9 @@
+ 
+ #warning FIXME Later: Do we want pours / polygons selectable?
+ #define SELECT_TYPES	\
+-	(VIA_TYPE | LINE_TYPE | TEXT_TYPE | POLYGON_TYPE | POUR_TYPE | ELEMENT_TYPE |	\
++	(VIA_TYPE | LINE_TYPE | TEXT_TYPE | POUR_TYPE | ELEMENT_TYPE |	\
+ 	 PIN_TYPE | PAD_TYPE | ELEMENTNAME_TYPE | RATLINE_TYPE | ARC_TYPE)
++//	(VIA_TYPE | LINE_TYPE | TEXT_TYPE | POLYGON_TYPE | POUR_TYPE | ELEMENT_TYPE |	
+ 
+ void SelectPin (LibraryEntryTypePtr entry, Boolean toggle);
+ Boolean SelectObject (void);
