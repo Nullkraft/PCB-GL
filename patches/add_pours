@@ -1,5 +1,5 @@
 Bottom: 14c9888f54ed51a0e8bb37591bf61cd67a8c7c5c
-Top:    f683ac5bfc57bf24c7837b4b92655d800937c6ba
+Top:    eb29ea5cb168241e14ffca932a2bd4f5be26b986
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-10 13:51:23 +0100
 
@@ -3943,17 +3943,19 @@ index ffa4dad..a4ddd8d 100644
  
        if (Data->element_tree)
 diff --git a/src/mymem.h b/src/mymem.h
-index b9d4de1..2732539 100644
+index b9d4de1..bdae9a2 100644
 --- a/src/mymem.h
 +++ b/src/mymem.h
-@@ -56,6 +56,7 @@
+@@ -56,7 +56,8 @@
  #define	STEP_SELECTORENTRY	128
  #define	STEP_REMOVELIST		500
  #define	STEP_UNDOLIST		500
+-#define	STEP_POLYGON		10
 +#define	STEP_POUR		10
- #define	STEP_POLYGON		10
++#define	STEP_POLYGON		50
  #define	STEP_POLYGONPOINT	10
  #define	STEP_LIBRARYMENU	10
+ #define	STEP_LIBRARYENTRY	20
 @@ -80,8 +81,10 @@ LineTypePtr GetLineMemory (LayerTypePtr);
  ArcTypePtr GetArcMemory (LayerTypePtr);
  RatTypePtr GetRatMemory (DataTypePtr);
