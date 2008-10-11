@@ -673,6 +673,7 @@ struct pin_info
 {
   Boolean arg;
   LayerTypePtr Layer;
+  const BoxType * clip;
 };
 
 static int
@@ -690,7 +691,9 @@ poly_callback (const BoxType * b, void *cl)
 {
   struct pin_info *i = (struct pin_info *) cl;
 
+//  printf ("Got one poly callback, %p\n", b);
   DrawPlainPolygon (i->Layer, (PolygonTypePtr) b);
+
   return 1;
 }
 
@@ -698,9 +701,19 @@ static int
 pour_callback (const BoxType * b, void *cl)
 {
   struct pin_info *i = (struct pin_info *) cl;
+  PourType *pour = (PourType *)b;
 
-//  DrawPlainPour (i->Layer, (PourTypePtr) b);
-  DrawPour (i->Layer, (PourTypePtr)b, 0);
+//  DrawPlainPour (i->Layer, pour);
+  DrawPour (i->Layer, pour, 0);
+
+//  printf ("Pour has %i polygons :\n", pour->PolygonN);
+  /* draw all polygons in this pour */
+  if (pour->PolygonN)
+    {
+      r_search (pour->polygon_tree, i->clip, NULL, poly_callback, i);
+    }
+//  printf ("-----------\n");
+
   return 1;
 }
 
@@ -794,6 +807,7 @@ DrawMask (BoxType * screen)
   OutputType *out = &Output;
 
   info.arg = True;
+  info.clip = screen;
 
   if (thin)
     gui->set_color (Output.pmGC, PCB->MaskColor);
@@ -900,9 +914,8 @@ DrawLayer (LayerTypePtr Layer, BoxType * screen)
   /* print the non-clearing polys */
   info.Layer = Layer;
   info.arg = False;
+  info.clip = screen;
   clip_box = screen;
-  r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
-
   r_search (Layer->pour_tree, screen, NULL, pour_callback, &info);
 
   /* draw all visible lines this layer */
@@ -957,21 +970,12 @@ DrawLayerGroup (int group, const BoxType * screen)
           gui->use_mask (HID_MASK_BEFORE);
 #endif
 
-	  /* draw all polygons on this layer */
-	  if (Layer->polygon_tree)
-	    {
-	      info.Layer = Layer;
-	      info.arg = True;
-	      r_search (Layer->polygon_tree, screen, NULL, poly_callback,
-			&info);
-	      info.arg = False;
-	    }
-
 	  /* draw all pours on this layer */
 	  if (Layer->PourN)
 	    {
 	      info.Layer = Layer;
 	      info.arg = True;
+        info.clip = screen;
 	      r_search (Layer->pour_tree, screen, NULL, pour_callback, &info);
 	      info.arg = False;
 	    }

@@ -718,6 +718,16 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
   return 0;
 }
 
+static int
+LOCtoPVpourPoly_callback (const BoxType * b, void *cl)
+{
+  PourTypePtr pour = (PourTypePtr) b;
+  struct pv_info *i = (struct pv_info *) cl;
+
+  return r_search (pour->polygon_tree, (BoxType *) &i->pv,
+                   NULL, LOCtoPVpoly_callback, i);
+}
+
 /* ---------------------------------------------------------------------------
  * checks if a PV is connected to LOs, if it is, the LO is added to
  * the appropriate list and the 'used' flag is set
@@ -760,8 +770,8 @@ LookupLOConnectionsToPVList (Boolean AndRats)
             return True;
           /* check all polygons */
           if (setjmp (info.env) == 0)
-            r_search (LAYER_PTR (layer)->polygon_tree, (BoxType *) & info.pv,
-                      NULL, LOCtoPVpoly_callback, &info);
+            r_search (LAYER_PTR (layer)->pour_tree, (BoxType *) & info.pv,
+                      NULL, LOCtoPVpourPoly_callback, &info);
           else
             return True;
         }
@@ -2114,6 +2124,16 @@ PolygonToRat_callback (const BoxType * b, void *cl)
 }
 
 static int
+PourPolygonToRat_callback (const BoxType * b, void *cl)
+{
+  PourTypePtr pour = (PourTypePtr) b;
+  struct rat_info *i = (struct rat_info *) cl;
+
+  return r_search_pt (pour->polygon_tree, i->Point, 1,
+                      NULL, PolygonToRat_callback, i);
+}
+
+static int
 LOCtoPad_callback (const BoxType * b, void *cl)
 {
   PadTypePtr pad = (PadTypePtr) b;
@@ -2162,8 +2182,8 @@ LookupLOConnectionsToRatEnd (PointTypePtr Point, Cardinal LayerGroup)
           else
             return True;
           if (setjmp (info.env) == 0)
-            r_search_pt (LAYER_PTR (layer)->polygon_tree, Point, 1,
-                      NULL, PolygonToRat_callback, &info);
+            r_search_pt (LAYER_PTR (layer)->pour_tree, Point, 1,
+                      NULL, PourPolygonToRat_callback, &info);
         }
       else
         {
@@ -2223,6 +2243,16 @@ LOCtoPadPoly_callback (const BoxType * b, void *cl)
         longjmp (i->env, 1);
     }
   return 0;
+}
+
+static int
+LOCtoPadPourPoly_callback (const BoxType * b, void *cl)
+{
+  PourTypePtr pour = (PourTypePtr) b;
+  struct lo_info *i = (struct lo_info *) cl;
+
+  return r_search (pour->polygon_tree, &i->pad.BoundingBox,
+                   NULL, LOCtoPadPoly_callback, i);
 }
 
 static int
@@ -2311,8 +2341,8 @@ LookupLOConnectionsToPad (PadTypePtr Pad, Cardinal LayerGroup)
             return True;
           /* add polygons */
           if (setjmp (info.env) == 0)
-            r_search (LAYER_PTR (layer)->polygon_tree, &info.pad.BoundingBox,
-                      NULL, LOCtoPadPoly_callback, &info);
+            r_search (LAYER_PTR (layer)->pour_tree, &info.pad.BoundingBox,
+                      NULL, LOCtoPadPourPoly_callback, &info);
           else
             return True;
         }

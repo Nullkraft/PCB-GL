@@ -739,7 +739,7 @@ struct plow_info
 };
 
 static int
-plow_callback (const BoxType * b, void *cl)
+plow_callback_2 (const BoxType * b, void *cl)
 {
   struct plow_info *plow = (struct plow_info *) cl;
   PolygonTypePtr polygon = (PolygonTypePtr) b;
@@ -748,6 +748,16 @@ plow_callback (const BoxType * b, void *cl)
     return plow->callback (plow->data, plow->layer, polygon, plow->type,
                            plow->ptr1, plow->ptr2);
   return 0;
+}
+
+static int
+plow_callback (const BoxType * b, void *cl)
+{
+  struct plow_info *plow = (struct plow_info *) cl;
+  PourTypePtr pour = (PourTypePtr) b;
+  BoxType *sb = &((PinTypePtr) plow->ptr2)->BoundingBox;
+
+  return r_search (pour->polygon_tree, sb, NULL, plow_callback_2, plow);
 }
 
 int
@@ -774,7 +784,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
           LAYER_LOOP (Data, max_layer);
           {
             info.layer = layer;
-            r += r_search (layer->polygon_tree, &sb, NULL, plow_callback, &info);
+            r += r_search (layer->pour_tree, &sb, NULL, plow_callback, &info);
           }
           END_LOOP;
         }
@@ -784,7 +794,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
                                                                          ((LayerTypePtr) ptr1))));
           {
             info.layer = layer;
-            r += r_search (layer->polygon_tree, &sb, NULL, plow_callback, &info);
+            r += r_search (layer->pour_tree, &sb, NULL, plow_callback, &info);
           }
           END_LOOP;
         }
@@ -803,7 +813,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
                                                                      ((LayerTypePtr) ptr1))));
       {
         info.layer = layer;
-        r += r_search (layer->polygon_tree, &sb, NULL, plow_callback, &info);
+        r += r_search (layer->pour_tree, &sb, NULL, plow_callback, &info);
       }
       END_LOOP;
       break;
@@ -817,7 +827,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
         {
           info.layer = layer;
           r +=
-            r_search (layer->polygon_tree, &sb, NULL, plow_callback, &info);
+            r_search (layer->pour_tree, &sb, NULL, plow_callback, &info);
         }
         END_LOOP;
       }
@@ -841,29 +851,6 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
   return r;
 }
 
-#if 0
-void
-RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
-{
-  if (type == POLYGON_TYPE)
-    {
-      printf ("Calling InitClip from RestoreToPolygon\n");
-      InitClip (PCB->Data, (LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
-    }
-//  PlowsPolygon (Data, type, ptr1, ptr2, add_plow);
-}
-
-void
-ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
-{
-  if (type == POLYGON_TYPE)
-    {
-      printf ("Calling InitClip from ClearFromPolygon\n");
-      InitClip (PCB->Data, (LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
-    }
-//  PlowsPolygon (Data, type, ptr1, ptr2, subtract_plow);
-}
-#endif
 
 Boolean
 isects (POLYAREA * a, PolygonTypePtr p, Boolean fr)

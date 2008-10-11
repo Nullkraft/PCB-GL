@@ -200,6 +200,12 @@ typedef struct
 
 typedef struct polygon_st PolygonType, *PolygonTypePtr;
 
+typedef struct
+{
+  struct rtree_node *root;
+  int size;			/* number of entries in tree */
+} rtree_t;
+
 typedef struct			/* holds information about a poured area */
 {
   ANYOBJECTFIELDS;
@@ -212,7 +218,7 @@ typedef struct			/* holds information about a poured area */
   Cardinal PolygonMax;		/* max number from malloc() */
   PolygonTypePtr Polygons;	/* pour polygons */
 
-  /* r_tree? */
+  rtree_t *polygon_tree;	/* r-tree of child polygons */
 
 } PourType, *PourTypePtr;
 
@@ -243,12 +249,6 @@ typedef struct			/* holds information about arcs */
     Delta;
 } ArcType, *ArcTypePtr;
 
-typedef struct
-{
-  struct rtree_node *root;
-  int size;			/* number of entries in tree */
-} rtree_t;
-
 typedef struct			/* holds information about one layer */
 {
   char *Name;			/* layer name */
@@ -267,7 +267,7 @@ typedef struct			/* holds information about one layer */
 //  PolygonTypePtr Polygon;
   PourTypePtr Pour;
   ArcTypePtr Arc;
-  rtree_t *line_tree, *text_tree, *polygon_tree, *pour_tree, *arc_tree;
+  rtree_t *line_tree, *text_tree, *pour_tree, *arc_tree;
   Boolean On;			/* visible flag */
   char *Color,			/* color */
    *SelectedColor;

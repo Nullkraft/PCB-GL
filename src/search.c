@@ -104,6 +104,7 @@ struct ans_info
   void **ptr1, **ptr2, **ptr3;
   Boolean BackToo;
   float area;
+  BoxType *search_box;
   jmp_buf env;
   int locked;			/* This will be zero or LOCKFLAG */
 };
@@ -431,6 +432,15 @@ polygon_callback (const BoxType * box, void *cl)
   return 0;
 }
 
+static int
+pour_polygon_callback (const BoxType * box, void *cl)
+{
+  PourTypePtr pour = (PourTypePtr) box;
+  struct ans_info *i = (struct ans_info *) cl;
+
+  return r_search (pour->polygon_tree, &SearchBox, NULL, polygon_callback, i);
+}
+
 
 /* ---------------------------------------------------------------------------
  * searches a polygon on the SearchLayer 
@@ -448,7 +458,7 @@ SearchPolygonByLocation (int locked, LayerTypePtr * Layer,
 
   if (setjmp (info.env) == 0)
     {
-      r_search (SearchLayer->polygon_tree, &SearchBox, NULL, polygon_callback,
+      r_search (SearchLayer->pour_tree, &SearchBox, NULL, pour_polygon_callback,
 		&info);
       return False;
     }

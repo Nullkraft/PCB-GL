@@ -439,23 +439,19 @@ GetPolygonMemoryInPour (PourTypePtr Pour)
   if (Pour->PolygonN >= Pour->PolygonMax)
     {
       Pour->PolygonMax += STEP_POLYGON;
-#warning FIXME Later: r-tree polygons in a pour
-//      if (Pour->polygon_tree)
-//	r_destroy_tree (&Layer->polygon_tree);
+      if (Pour->polygon_tree)
+        r_destroy_tree (&Pour->polygon_tree);
       polygon = MyRealloc (polygon, Pour->PolygonMax * sizeof (PolygonType),
-			   "GetPolygonMemoryInPour()");
+                           "GetPolygonMemoryInPour()");
       Pour->Polygons = polygon;
       memset (polygon + Pour->PolygonN, 0,
-	      STEP_POLYGON * sizeof (PolygonType));
-#warning FIXME Later: r-tree polygons in a pour
-#if 0
+              STEP_POLYGON * sizeof (PolygonType));
       Pour->polygon_tree = r_create_tree (NULL, 0, 0);
       POURPOLYGON_LOOP (Pour);
       {
-	r_insert_entry (Pour->polygon_tree, (BoxType *) polygon, 0);
+        r_insert_entry (Pour->polygon_tree, (BoxType *) polygon, 0);
       }
       END_LOOP;
-#endif
     }
   return (polygon + Pour->PolygonN++);
 }
@@ -790,7 +786,6 @@ FreePolygonMemory (PolygonTypePtr Polygon)
 	poly_Free (&Polygon->NoHoles);
       memset (Polygon, 0, sizeof (PolygonType));
     }
-#warning FIXME Later: Need to ensure the pour structures are fixed up
 }
 
 /* ---------------------------------------------------------------------------
@@ -998,8 +993,8 @@ FreeDataMemory (DataTypePtr Data)
 	    r_destroy_tree (&layer->arc_tree);
 	  if (layer->text_tree)
 	    r_destroy_tree (&layer->text_tree);
-	  if (layer->polygon_tree)
-	    r_destroy_tree (&layer->polygon_tree);
+//	  if (layer->polygon_tree)
+//	    r_destroy_tree (&layer->polygon_tree);
 	  if (layer->pour_tree)
 	    r_destroy_tree (&layer->pour_tree);
 	}

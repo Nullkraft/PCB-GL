@@ -66,7 +66,7 @@ RCSID ("$Id$");
 
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
-#define UNSUBTRACT_BLOAT 10
+#define UNSUBTRACT_BLOAT 100
 
 /* ---------------------------------------------------------------------------
  * local prototypes
@@ -238,13 +238,22 @@ CopyAttachedPourToLayer (void)
  * destroys a polygon from a pour
  */
 static void *
-DestroyPolygonInPour (LayerTypePtr layer, PourTypePtr pour, PolygonTypePtr polygon)
+DestroyPolygonInPour (PourTypePtr pour, PolygonTypePtr polygon)
 {
-  r_delete_entry (layer->polygon_tree, (BoxTypePtr) polygon);
+  int r;
+
+  printf ("Destroying poly, bounding box (%i,%i)-(%i,%u)\n",
+          ((BoxType *) polygon)->X1,
+          ((BoxType *) polygon)->Y1,
+          ((BoxType *) polygon)->X2,
+          ((BoxType *) polygon)->Y2);
+
+  r = r_delete_entry (pour->polygon_tree, (BoxTypePtr) polygon);
+  printf ("Returned %i from r_delete_entry\n", r);
 
   FreePolygonMemory (polygon);
   *polygon = pour->Polygons[ --pour->PolygonN ];
-  r_substitute (layer->polygon_tree,
+  r_substitute (pour->polygon_tree,
                 (BoxType *) & pour->Polygons[ pour->PolygonN ],
                 (BoxType *) polygon);
   memset (&pour->Polygons[ pour->PolygonN ], 0, sizeof (PolygonType));
@@ -444,6 +453,7 @@ struct cpInfo
   PourType *pour;
   Boolean solder;
   POLYAREA *pg;
+  BoxType *region;
   jmp_buf env;
 };
 
@@ -592,6 +602,17 @@ poly_sub_callback (const BoxType * b, void *cl)
 }
 
 static int
+pour_sub_callback (const BoxType * b, void *cl)
+{
+  PourTypePtr pour = (PourTypePtr) b;
+  struct cpInfo *info = (struct cpInfo *) cl;
+  BoxType *region = info->region;
+
+  return r_search (pour->polygon_tree, region, NULL, poly_sub_callback, info);
+
+}
+
+static int
 Group (DataTypePtr Data, Cardinal layer)
 {
   Cardinal i, j;
@@ -612,6 +633,7 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
   BoxType region;
   struct cpInfo info;
   Cardinal group;
+  int count_all, count_added;
 
   if (!TEST_FLAG (CLEARPOLYFLAG, pour)
       || GetLayerNumber (Data, Layer) >= max_layer)
@@ -628,6 +650,7 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
   else
     region = pour->BoundingBox;
   region = bloat_box (&region, expand);
+  info.region = &region;
 
   if (setjmp (info.env) == 0)
     {
@@ -635,10 +658,10 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
       r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
       GROUP_LOOP (Data, group);
       {
-        r += r_search (layer->line_tree,    &region, NULL, line_sub_callback, &info);
-        r += r_search (layer->arc_tree,     &region, NULL, arc_sub_callback,  &info);
-        r += r_search (layer->text_tree,    &region, NULL, text_sub_callback, &info);
-        r += r_search (layer->polygon_tree, &region, NULL, poly_sub_callback, &info);
+        r += r_search (layer->line_tree, &region, NULL, line_sub_callback, &info);
+        r += r_search (layer->arc_tree,  &region, NULL, arc_sub_callback,  &info);
+        r += r_search (layer->text_tree, &region, NULL, text_sub_callback, &info);
+        r += r_search (layer->pour_tree, &region, NULL, pour_sub_callback, &info);
       }
       END_LOOP;
       if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
@@ -646,7 +669,9 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
     }
 
   /* TODO: Check r to work of it we need to do this? */
+  printf ("ClearPour found r=%i\n", r);
 
+  count_all = count_added = 0;
   /* For each piece of the clipped up polygon, create a new child */
   pg = info.pg;
   do
@@ -656,19 +681,27 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
       tmp = pg->f;
       pg->f = pg;
       pg->b = pg;
+      count_all++;
+      if (pg->contours->area > PCB->IsleArea)
+        {
+          count_added++;
+          poly = CreateNewPolygonInPour (pour, pour->Flags);
+          poly->Clipped = pg;
 
-      poly = CreateNewPolygonInPour (pour, pour->Flags);
-      poly->Clipped = pg;
+          SetPolygonBoundingBox (poly);
 
-      SetPolygonBoundingBox (poly);
-
-      if (Layer->polygon_tree == NULL)
-        Layer->polygon_tree = r_create_tree (NULL, 0, 0);
-      r_insert_entry (Layer->polygon_tree, (BoxType *) poly, 0);
-      printf ("Inserting one polygon into the layer's tree\n");
+          if (pour->polygon_tree == NULL)
+            pour->polygon_tree = r_create_tree (NULL, 0, 0);
+          r_insert_entry (pour->polygon_tree, (BoxType *) poly, 0);
+        }
+      else
+        {
+          poly_Free (&pg);
+        }
     }
   while ((pg = tmp) != info.pg);
 
+  printf ("ClearPoly counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
   return r;
 }
 
@@ -679,6 +712,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
   POLYAREA *np = NULL, *pg = NULL, *start_pg, *tmp;
   PolygonType **delete_children;
   int number_deleted = 0;
+  int count, count_all, count_added;
 
   switch (type)
     {
@@ -713,12 +747,14 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
 
   /* Make pg contain the polygons we're going to fiddle with */
 
+  count = 0;
   delete_children = calloc (pour->PolygonN, sizeof (PolygonType *));
   POURPOLYGON_LOOP (pour);
   {
     /* Gather up children which are touched by np */
     if (isects (np, polygon, False))
       {
+        count++;
         /* Steal their clipped contours, then delete them */
         /* Add contour to local list to fiddle about with */
         delete_children[ number_deleted++ ] = polygon;
@@ -745,8 +781,9 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
       }
   }
   END_LOOP;
-  for (; number_deleted ;)
-    DestroyPolygonInPour (Layer, pour, delete_children[ --number_deleted ]);
+  printf ("Subtract counted %i tocuhing childen, removing %i children\n", count, number_deleted);
+  while (number_deleted)
+    DestroyPolygonInPour (pour, delete_children[ --number_deleted ]);
   free (delete_children);
 
   if (pg == NULL)
@@ -769,7 +806,16 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
       return -1;
     }
 
+  count = 0;
+  { POLYAREA *pg_start;
+  pg_start = pg;
+  do {
+    count++;
+  } while ((pg = pg->f) != pg_start);
+  }
+  printf ("After subtract, counted %i polygon pieces\n", count);
 
+  count_all = count_added = 0;
   /* For each piece of the clipped up polygon, create a new child */
   start_pg = pg;
   do
@@ -780,21 +826,33 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
       pg->f = pg;
       pg->b = pg;
 
-      poly = CreateNewPolygonInPour (pour, pour->Flags);
-      poly->Clipped = pg;
+      count_all++;
+      if (pg->contours->area > PCB->IsleArea)
+        {
+          count_added++;
+          poly = CreateNewPolygonInPour (pour, pour->Flags);
+          poly->Clipped = pg;
 
-      SetPolygonBoundingBox (poly);
+          SetPolygonBoundingBox (poly);
 
-      if (Layer->polygon_tree == NULL)
-        Layer->polygon_tree = r_create_tree (NULL, 0, 0);
-      r_insert_entry (Layer->polygon_tree, (BoxType *) poly, 0);
-      printf ("Inserting one polygon into the layer's tree\n");
+          if (pour->polygon_tree == NULL)
+            pour->polygon_tree = r_create_tree (NULL, 0, 0);
+          r_insert_entry (pour->polygon_tree, (BoxType *) poly, 0);
+          printf ("Inserted poly, bounding box (%i,%i)-(%i,%u)\n",
+                  ((BoxType *) poly)->X1,
+                  ((BoxType *) poly)->Y1,
+                  ((BoxType *) poly)->X2,
+                  ((BoxType *) poly)->Y2);
+        }
+      else
+        {
+          poly_Free (&pg);
+        }
     }
   while ((pg = tmp) != start_pg);
 
+  printf ("ClearPoly counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
 
-
-  /* TODO: Need to put the modified polygons in pg into children */
   return 0;
 }
 
@@ -903,6 +961,7 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
   POLYAREA *np = NULL, *pg = NULL; //, *start_pg, *tmp;
   PolygonType **delete_children;
   int number_deleted = 0;
+  int count;
 
   switch (type)
     {
@@ -937,12 +996,14 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
 
   /* Make pg contain the polygons we're going to fiddle with */
 
+  count = 0;
   delete_children = calloc (pour->PolygonN, sizeof (PolygonType *));
   POURPOLYGON_LOOP (pour);
   {
     /* Gather up children which are touched by np */
     if (isects (np, polygon, False))
       {
+        count++;
         /* Steal their clipped contours, then delete them */
         /* Add contour to local list to fiddle about with */
         delete_children[ number_deleted++ ] = polygon;
@@ -969,8 +1030,9 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
       }
   }
   END_LOOP;
-  for (; number_deleted ;)
-    DestroyPolygonInPour (Layer, pour, delete_children[ --number_deleted ]);
+  printf ("Unsubtract counted %i tocuhing childen, removing %i children\n", count, number_deleted);
+  while (number_deleted)
+    DestroyPolygonInPour (pour, delete_children[ --number_deleted ]);
   free (delete_children);
 
   if (pg == NULL)
@@ -990,6 +1052,15 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
   np = original_pour_poly (pour);
   /* NB: np and old *pg are freed inside intersect_poly() */
   intersect_poly (np, &pg);
+
+  count = 0;
+  { POLYAREA *pg_start;
+  pg_start = pg;
+  do {
+    count++;
+  } while ((pg = pg->f) != pg_start);
+  }
+  printf ("After unsubtract, counted %i polygon pieces\n", count);
 
 #warning FIXME Later: ClearPour does the adding of Polygon objects for us
   ClearPour (PCB->Data, Layer, pour, pg, (const BoxType *) ptr2, 2 * UNSUBTRACT_BLOAT);
@@ -1017,9 +1088,9 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
 
       SetPolygonBoundingBox (poly);
 
-      if (Layer->polygon_tree == NULL)
-        Layer->polygon_tree = r_create_tree (NULL, 0, 0);
-      r_insert_entry (Layer->polygon_tree, (BoxType *) poly, 0);
+      if (pour->polygon_tree == NULL)
+        pour->polygon_tree = r_create_tree (NULL, 0, 0);
+      r_insert_entry (pour->polygon_tree, (BoxType *) poly, 0);
       printf ("Inserting one polygon into the layer's tree\n");
     }
   while ((pg = tmp) != start_pg);
@@ -1049,8 +1120,8 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
         delete_children[ number_deleted++ ] = polygon;
       }
       END_LOOP;
-      for (; number_deleted ;)
-        DestroyPolygonInPour (layer, pour, delete_children[ --number_deleted ]);
+      while (number_deleted)
+        DestroyPolygonInPour (pour, delete_children[ --number_deleted ]);
     }
 
   clipped = original_pour_poly (pour);
@@ -1111,7 +1182,7 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
   int r = 0;
   struct plow_info info;
 
-  printf ("Hello world, this is PlowPours\n");
+//  printf ("Hello world, this is PlowPours\n");
 
   info.type = type;
   info.ptr1 = ptr1;
