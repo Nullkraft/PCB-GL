@@ -1,5 +1,5 @@
 Bottom: 6ea4bc3f83688bf5e95d1de3dc08f1a96c146eeb
-Top:    80017d87adf9ab75038e931f58431368de9254e9
+Top:    1133f60b9e9b12c62d4ac643d5b415a2b2da8084
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-11 19:54:20 +0100
 
@@ -11,11 +11,156 @@ Add feature to remove islanded areas
 
 ---
 
+diff --git a/src/change.c b/src/change.c
+index 669a100..f3a6af5 100644
+--- a/src/change.c
++++ b/src/change.c
+@@ -1107,10 +1107,12 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
+   AddObjectToFlagUndoList (LINE_TYPE, Layer, Line, Line);
+   TOGGLE_FLAG (CLEARLINEFLAG, Line);
+   if (TEST_FLAG(CLEARLINEFLAG, Line))
+-  {
+-  AddObjectToClearPourUndoList (LINE_TYPE, Layer, Line, Line, True);
+-  ClearFromPours (PCB->Data, LINE_TYPE, Layer, Line);
+-  }
++    {
++      AddObjectToClearPourUndoList (LINE_TYPE, Layer, Line, Line, True);
++      ClearFromPours (PCB->Data, LINE_TYPE, Layer, Line);
++    }
++  else
++    MarkPourIslands (PCB->Data, LINE_TYPE, Layer, Line);
+   DrawLine (Layer, Line, 0);
+   return (Line);
+ }
+@@ -1155,9 +1157,11 @@ ChangeArcJoin (LayerTypePtr Layer, ArcTypePtr Arc)
+   TOGGLE_FLAG (CLEARLINEFLAG, Arc);
+   if (TEST_FLAG (CLEARLINEFLAG, Arc))
+     {
+-      ClearFromPours (PCB->Data, ARC_TYPE, Layer, Arc);
+       AddObjectToClearPourUndoList (ARC_TYPE, Layer, Arc, Arc, True);
++      ClearFromPours (PCB->Data, ARC_TYPE, Layer, Arc);
+     }
++  else
++    MarkPourIslands (PCB->Data, ARC_TYPE, Layer, Arc);
+   DrawArc (Layer, Arc, 0);
+   return (Arc);
+ }
+@@ -1201,10 +1205,12 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
+   AddObjectToFlagUndoList (LINE_TYPE, Layer, Text, Text);
+   TOGGLE_FLAG (CLEARLINEFLAG, Text);
+   if (TEST_FLAG(CLEARLINEFLAG, Text))
+-  {
+-  AddObjectToClearPourUndoList (TEXT_TYPE, Layer, Text, Text, True);
+-  ClearFromPours (PCB->Data, TEXT_TYPE, Layer, Text);
+-  }
++    {
++      AddObjectToClearPourUndoList (TEXT_TYPE, Layer, Text, Text, True);
++      ClearFromPours (PCB->Data, TEXT_TYPE, Layer, Text);
++    }
++  else
++    MarkPourIslands (PCB->Data, TEXT_TYPE, Layer, Text);
+   DrawText (Layer, Text, 0);
+   return (Text);
+ }
+@@ -1226,10 +1232,12 @@ ChangePourJoin (LayerTypePtr Layer, PourTypePtr pour)
+   AddObjectToFlagUndoList (LINE_TYPE, Layer, pour, pour);
+   TOGGLE_FLAG (CLEARLINEFLAG, pour);
+   if (TEST_FLAG(CLEARLINEFLAG, pour))
+-  {
+-  AddObjectToClearPourUndoList (POUR_TYPE, Layer, pour, pour, True);
+-  ClearFromPours (PCB->Data, POUR_TYPE, Layer, pour);
+-  }
++    {
++      AddObjectToClearPourUndoList (POUR_TYPE, Layer, pour, pour, True);
++      ClearFromPours (PCB->Data, POUR_TYPE, Layer, pour);
++    }
++  else
++    MarkPourIslands (PCB->Data, POUR_TYPE, Layer, pour);
+   DrawPour (Layer, pour, 0);
+   return (pour);
+ }
+@@ -1602,6 +1610,8 @@ ChangeHole (PinTypePtr Via)
+     {
+       AddObjectTo2ndSizeUndoList (VIA_TYPE, Via, Via, Via);
+       Via->DrillingHole = Via->Thickness - MIN_PINORVIACOPPER;
++#warning FIXME Later: Come back to check this
++      MarkPourIslands (PCB->Data, VIA_TYPE, Via, Via);
+     }
+   DrawVia (Via, 0);
+   Draw ();
+diff --git a/src/draw.c b/src/draw.c
+index 56089a2..a1b51c4 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -2251,6 +2251,10 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
+ static void
+ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+ {
++  // Re-use HOLEFLAG to cut out islands
++  if (TEST_FLAG (HOLEFLAG, Polygon))
++    return;
++
+   if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Polygon))
+     {
+       if (TEST_FLAG (SELECTEDFLAG, Polygon))
 diff --git a/src/find.c b/src/find.c
-index 76cdf21..792d7ea 100644
+index 76cdf21..fab6f01 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -3749,6 +3749,57 @@ doIsBad:
+@@ -2427,6 +2427,29 @@ LOCtoPolyRat_callback (const BoxType * b, void *cl)
+   return 0;
+ }
+ 
++static int
++LOCtoPolyPolygon_callback (const BoxType * b, void *cl)
++{
++  PolygonTypePtr polygon = (PolygonTypePtr) b;
++  struct lo_info *i = (struct lo_info *) cl;
++
++  if (!TEST_FLAG (TheFlag, polygon) &&
++      IsPolygonInPolygon (polygon, &i->polygon) &&
++      ADD_POLYGON_TO_LIST (i->layer, polygon))
++    longjmp (i->env, 1);
++
++  return 0;
++}
++
++static int
++LOCtoPolyPourPolygon_callback (const BoxType * b, void *cl)
++{
++  PourTypePtr pour = (PourTypePtr) b;
++  struct pv_info *i = (struct pv_info *) cl;
++
++  return r_search (pour->polygon_tree, (BoxType *) &i->pv,
++                   NULL, LOCtoPolyPolygon_callback, i);
++}
+ 
+ /* ---------------------------------------------------------------------------
+  * looks up LOs that are connected to the given polygon
+@@ -2460,7 +2483,14 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
+       if (layer < max_layer)
+         {
+           /* check all polygons */
++          if (setjmp (info.env) == 0)
++            r_search (LAYER_PTR (layer)->pour_tree,
++                      (BoxType *) & info.polygon, NULL,
++                      LOCtoPolyPourPolygon_callback, &info);
++          else
++            return True;
+ 
++#if 0
+           POUR_LOOP (LAYER_PTR (layer));
+           {
+             POURPOLYGON_LOOP (pour);
+@@ -2473,6 +2503,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
+             END_LOOP;
+           }
+           END_LOOP;
++#endif
+ 
+           info.layer = layer;
+           /* check all lines */
+@@ -3749,6 +3780,57 @@ doIsBad:
  }
  
  /*-----------------------------------------------------------------------------
@@ -25,7 +170,6 @@ index 76cdf21..792d7ea 100644
 +int
 +IsPolygonAnIsland (LayerType *layer, PolygonType *polygon)
 +{
-+  int is_island = 0;
 +  int connected_count = 0;
 +  int i;
 +
@@ -42,8 +186,9 @@ index 76cdf21..792d7ea 100644
 +
 +  User = False;
 +
-+//  DRCFind (PIN_TYPE, (void *) element, (void *) pin, (void *) pin);
-+
++  /* This is really Slow.. need to add a flag where we can
++   * make this quit as soon as it finds _some_ connectivity
++   */
 +  ListStart (POLYGON_TYPE, layer, polygon, polygon);
 +  DoIt (True, False);
 +
@@ -64,9 +209,9 @@ index 76cdf21..792d7ea 100644
 +
 +  RestoreStackAndVisibility ();
 +  hid_action ("LayersChanged");
-+  gui->invalidate_all ();
++//  gui->invalidate_all ();
 +
-+  return connected_count;
++  return (connected_count == 0);
 +}
 +
 +/*-----------------------------------------------------------------------------
@@ -86,28 +231,191 @@ index aae9d89..ade7f5e 100644
  Boolean lineClear (LineTypePtr, Cardinal);
  Boolean IsLineInPolygon (LineTypePtr, PolygonTypePtr);
 diff --git a/src/pour.c b/src/pour.c
-index d71d9f4..5824f49 100644
+index d71d9f4..ee1efa5 100644
 --- a/src/pour.c
 +++ b/src/pour.c
-@@ -1126,6 +1126,13 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
+@@ -657,7 +657,29 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
+ }
+ 
+ static int
+-subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
++check_polygon_island_cb (const BoxType * b, void *cl)
++{
++  PolygonTypePtr polygon = (PolygonTypePtr) b;
++  struct cpInfo *info = (struct cpInfo *) cl;
++
++  ASSIGN_FLAG (HOLEFLAG, IsPolygonAnIsland (info->layer, polygon), polygon);
++  return 1;
++}
++
++static int
++mark_islands (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
++              int type, void *ptr1, void *ptr2)
++{
++  struct cpInfo info;
++  info.region = &((PinTypePtr) ptr2)->BoundingBox;
++  info.layer = layer;
++
++  return r_search (pour->polygon_tree, info.region, NULL,
++                   check_polygon_island_cb, &info);
++}
++
++static int
++subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+               int type, void *ptr1, void *ptr2)
+ {
+   POLYAREA *np = NULL, *pg = NULL, *start_pg, *tmp;
+@@ -667,7 +689,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+     {
+     case PIN_TYPE:
+     case VIA_TYPE:
+-      np = get_subtract_pin_poly (Data, (PinTypePtr) ptr2, Layer, pour);
++      np = get_subtract_pin_poly (Data, (PinTypePtr) ptr2, layer, pour);
+       break;
+     case LINE_TYPE:
+       np = get_subtract_line_poly ((LineTypePtr) ptr2, pour);
+@@ -798,6 +820,8 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
      }
    while ((pg = tmp) != start_pg);
  
-+  POURPOLYGON_LOOP (pour);
-+  {
-+    printf ("Checking if child is island: %s\n",
-+            IsPolygonAnIsland (layer, polygon) ? "Yes" : "No");
-+  }
-+  END_LOOP;
++  mark_islands (Data, layer, pour, type, ptr1, ptr2);
++
+   return 0;
+ }
+ 
+@@ -900,7 +924,7 @@ original_pour_poly (PourType * p)
+ }
+ 
+ static int
+-add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
++add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+           int type, void *ptr1, void *ptr2)
+ {
+   POLYAREA *np = NULL, *pg = NULL, *tmp, *start_pg;
+@@ -910,22 +934,22 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+     {
+     case PIN_TYPE:
+     case VIA_TYPE:
+-      np = get_unsubtract_pin_poly ((PinTypePtr) ptr2, Layer, pour);
++      np = get_unsubtract_pin_poly ((PinTypePtr) ptr2, layer, pour);
+       break;
+     case LINE_TYPE:
+-      np = get_unsubtract_line_poly ((LineTypePtr) ptr2, Layer, pour);
++      np = get_unsubtract_line_poly ((LineTypePtr) ptr2, layer, pour);
+       break;
+     case ARC_TYPE:
+-      np = get_unsubtract_arc_poly ((ArcTypePtr) ptr2, Layer, pour);
++      np = get_unsubtract_arc_poly ((ArcTypePtr) ptr2, layer, pour);
+       break;
+     case PAD_TYPE:
+-      np = get_unsubtract_pad_poly ((PadTypePtr) ptr2, Layer, pour);
++      np = get_unsubtract_pad_poly ((PadTypePtr) ptr2, layer, pour);
+       break;
+     case POLYGON_TYPE:
+-      np = get_unsubtract_polygon_poly ((PolygonTypePtr) ptr2, Layer, pour);
++      np = get_unsubtract_polygon_poly ((PolygonTypePtr) ptr2, layer, pour);
+       break;
+     case TEXT_TYPE:
+-      np = get_unsubtract_text_poly ((TextTypePtr) ptr2, Layer, pour);
++      np = get_unsubtract_text_poly ((TextTypePtr) ptr2, layer, pour);
+       break;
+     }
+ 
+@@ -1006,7 +1030,7 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+   printf ("After unsubtract, counted %i polygon pieces\n", count);
+ #endif
+ 
+-  ClearPour (PCB->Data, Layer, pour, &pg, (const BoxType *) ptr2, 2 * UNSUBTRACT_BLOAT);
++  ClearPour (PCB->Data, layer, pour, &pg, (const BoxType *) ptr2, 2 * UNSUBTRACT_BLOAT);
+ 
+   if (pg == NULL)
+     {
+@@ -1047,6 +1071,8 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+     }
+   while ((pg = tmp) != start_pg);
+ 
++  mark_islands (Data, layer, pour, type, ptr1, ptr2);
++
+ //  printf ("ClearPour counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
+ 
+   return 0;
+@@ -1126,6 +1152,8 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
+     }
+   while ((pg = tmp) != start_pg);
+ 
++  mark_islands (Data, layer, pour, 0, NULL, NULL);
 +
    return 1;
  }
  
-@@ -1267,4 +1274,3 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1155,7 +1183,8 @@ int
+ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+            int (*call_back) (DataTypePtr data, LayerTypePtr lay,
+                              PourTypePtr poly, int type,
+-                             void *ptr1, void *ptr2))
++                             void *ptr1, void *ptr2),
++           int ignore_clearflags)
+ {
+   BoxType sb = ((PinTypePtr) ptr2)->BoundingBox;
+   int r = 0;
+@@ -1198,7 +1227,8 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+     case TEXT_TYPE:
+     case POLYGON_TYPE:
+       /* the cast works equally well for lines and arcs */
+-      if (!TEST_FLAG (CLEARLINEFLAG, (LineTypePtr) ptr2))
++      if (!ignore_clearflags &&
++          !TEST_FLAG (CLEARLINEFLAG, (LineTypePtr) ptr2))
+         return 0;
+       /* silk doesn't plow */
+       if (GetLayerNumber (Data, ptr1) >= max_layer)
+@@ -1230,12 +1260,12 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+       {
+         PIN_LOOP ((ElementType *) ptr1);
+         {
+-          PlowPours (Data, PIN_TYPE, ptr1, pin, call_back);
++          PlowPours (Data, PIN_TYPE, ptr1, pin, call_back, ignore_clearflags);
+         }
+         END_LOOP;
+         PAD_LOOP ((ElementType *) ptr1);
+         {
+-          PlowPours (Data, PAD_TYPE, ptr1, pad, call_back);
++          PlowPours (Data, PAD_TYPE, ptr1, pad, call_back, ignore_clearflags);
+         }
+         END_LOOP;
+       }
+@@ -1253,7 +1283,7 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
+ //      printf ("Calling InitPourClip from RestoreToPour\n");
+       InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
      }
-   PlowPours (Data, type, ptr1, ptr2, subtract_plow);
+-  PlowPours (Data, type, ptr1, ptr2, add_plow);
++  PlowPours (Data, type, ptr1, ptr2, add_plow, False);
  }
--
+ 
+ void
+@@ -1265,6 +1295,11 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
+ //      printf ("Calling InitPourClip from ClearFromPour\n");
+       InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
+     }
+-  PlowPours (Data, type, ptr1, ptr2, subtract_plow);
++  PlowPours (Data, type, ptr1, ptr2, subtract_plow, False);
+ }
+ 
++void
++MarkPourIslands (DataType * Data, int type, void *ptr1, void *ptr2)
++{
++  PlowPours (Data, type, ptr1, ptr2, mark_islands, True);
++}
+diff --git a/src/pour.h b/src/pour.h
+index f04e342..559f20e 100644
+--- a/src/pour.h
++++ b/src/pour.h
+@@ -43,5 +43,6 @@ void CopyAttachedPourToLayer (void);
+ int InitPourClip(DataType *d, LayerType *l, PourType *p);
+ void RestoreToPours(DataType *, int, void *, void *);
+ void ClearFromPours(DataType *, int, void *, void *);
++void MarkPourIslands(DataType *, int, void *, void *);
+ 
+ #endif /* __POUR_INCLUDED__ */
 diff --git a/src/search.c b/src/search.c
 index cfe648a..fe75969 100644
 --- a/src/search.c
