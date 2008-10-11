@@ -431,29 +431,33 @@ GetPourMemory (LayerTypePtr Layer)
  * get next slot for a polygon object, allocates memory if necessary
  */
 PolygonTypePtr
-GetPolygonMemory (LayerTypePtr Layer)
+GetPolygonMemoryInPour (PourTypePtr Pour)
 {
-  PolygonTypePtr polygon = Layer->Polygon;
+  PolygonTypePtr polygon = Pour->Polygons;
 
   /* realloc new memory if necessary and clear it */
-  if (Layer->PolygonN >= Layer->PolygonMax)
+  if (Pour->PolygonN >= Pour->PolygonMax)
     {
-      Layer->PolygonMax += STEP_POLYGON;
-      if (Layer->polygon_tree)
-	r_destroy_tree (&Layer->polygon_tree);
-      polygon = MyRealloc (polygon, Layer->PolygonMax * sizeof (PolygonType),
-			   "GetPolygonMemory()");
-      Layer->Polygon = polygon;
-      memset (polygon + Layer->PolygonN, 0,
+      Pour->PolygonMax += STEP_POLYGON;
+#warning FIXME Later: r-tree polygons in a pour
+//      if (Pour->polygon_tree)
+//	r_destroy_tree (&Layer->polygon_tree);
+      polygon = MyRealloc (polygon, Pour->PolygonMax * sizeof (PolygonType),
+			   "GetPolygonMemoryInPour()");
+      Pour->Polygons = polygon;
+      memset (polygon + Pour->PolygonN, 0,
 	      STEP_POLYGON * sizeof (PolygonType));
-      Layer->polygon_tree = r_create_tree (NULL, 0, 0);
-      POLYGON_LOOP (Layer);
+#warning FIXME Later: r-tree polygons in a pour
+#if 0
+      Pour->polygon_tree = r_create_tree (NULL, 0, 0);
+      POURPOLYGON_LOOP (Pour);
       {
-	r_insert_entry (Layer->polygon_tree, (BoxType *) polygon, 0);
+	r_insert_entry (Pour->polygon_tree, (BoxType *) polygon, 0);
       }
       END_LOOP;
+#endif
     }
-  return (polygon + Layer->PolygonN++);
+  return (polygon + Pour->PolygonN++);
 }
 
 /* ---------------------------------------------------------------------------
@@ -779,13 +783,14 @@ FreePolygonMemory (PolygonTypePtr Polygon)
 {
   if (Polygon)
     {
-      MYFREE (Polygon->Points);
+//      MYFREE (Polygon->Points);
       if (Polygon->Clipped)
 	poly_Free (&Polygon->Clipped);
       if (Polygon->NoHoles)
 	poly_Free (&Polygon->NoHoles);
       memset (Polygon, 0, sizeof (PolygonType));
     }
+#warning FIXME Later: Need to ensure the pour structures are fixed up
 }
 
 /* ---------------------------------------------------------------------------
@@ -972,12 +977,15 @@ FreeDataMemory (DataTypePtr Data)
 	  MYFREE (layer->Line);
 	  MYFREE (layer->Arc);
 	  MYFREE (layer->Text);
+#warning FIXME Later
+#if 0
 	  POLYGON_LOOP (layer);
 	  {
 	    FreePolygonMemory (polygon);
 	  }
 	  END_LOOP;
-	  MYFREE (layer->Polygon);
+#endif
+//	  MYFREE (layer->Polygon);
 	  POUR_LOOP (layer);
 	  {
 	    FreePourMemory (pour);

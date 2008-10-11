@@ -1069,12 +1069,16 @@ CreateRouteData ()
       }
       END_LOOP;
       /* add all polygons */
-      POLYGON_LOOP (LAYER_PTR (i));
+      POUR_LOOP (LAYER_PTR (i));
       {
-        if (TEST_FLAG (DRCFLAG, polygon))
-          CLEAR_FLAG (DRCFLAG, polygon);
-        else
-          AddPolygon (layergroupboxes, i, polygon);
+        POURPOLYGON_LOOP (pour);
+        {
+          if (TEST_FLAG (DRCFLAG, polygon))
+            CLEAR_FLAG (DRCFLAG, polygon);
+          else
+            AddPolygon (layergroupboxes, i, polygon);
+        }
+        END_LOOP;
       }
       END_LOOP;
       /* add all copper text */
@@ -2974,7 +2978,7 @@ do_via_search (edge_t * search, struct routeone_state *s,
         {
           BoxType cliparea;
           BoxType *area = vector_remove_last (v);
-          assert (box_intersect (area, &region));
+//          assert (box_intersect (area, &region));
           if (!(i == NO_CONFLICT || AutoRouteParameters.with_conflicts))
             {
               free (area);

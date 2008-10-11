@@ -594,9 +594,9 @@ CreateNewText (LayerTypePtr Layer, FontTypePtr PCBFont,
  * creates a new polygon on a layer
  */
 PolygonTypePtr
-CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
+CreateNewPolygonInPour (PourType *pour, FlagType Flags)
 {
-  PolygonTypePtr polygon = GetPolygonMemory (Layer);
+  PolygonTypePtr polygon = GetPolygonMemoryInPour (pour);
 
   /* copy values */
   polygon->Flags = Flags;
@@ -604,7 +604,7 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
   polygon->Clipped = NULL;
   polygon->NoHoles = NULL;
   polygon->NoHolesValid = 0;
-  polygon->ParentPour = NULL;
+  polygon->ParentPour = pour;
   return (polygon);
 }
 
@@ -619,6 +619,14 @@ CreateNewPour (LayerTypePtr Layer, FlagType Flags)
   /* copy values */
   pour->Flags = Flags;
   pour->ID = ID++;
+
+  pour->PointN = 0;
+  pour->PointMax = 0;
+  pour->Points = NULL;
+  pour->PolygonN = 0;
+  pour->PolygonMax = 0;
+  pour->Polygons = NULL;
+
   return (pour);
 }
 

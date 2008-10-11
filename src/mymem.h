@@ -81,7 +81,7 @@ LineTypePtr GetLineMemory (LayerTypePtr);
 ArcTypePtr GetArcMemory (LayerTypePtr);
 RatTypePtr GetRatMemory (DataTypePtr);
 TextTypePtr GetTextMemory (LayerTypePtr);
-PolygonTypePtr GetPolygonMemory (LayerTypePtr);
+PolygonTypePtr GetPolygonMemoryInPour (PourTypePtr);
 PourTypePtr GetPourMemory (LayerTypePtr);
 PointTypePtr GetPointMemoryInPolygon (PolygonTypePtr);
 PointTypePtr GetPointMemoryInPour (PourTypePtr);

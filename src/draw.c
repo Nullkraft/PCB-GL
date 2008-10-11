@@ -958,7 +958,7 @@ DrawLayerGroup (int group, const BoxType * screen)
 #endif
 
 	  /* draw all polygons on this layer */
-	  if (Layer->PolygonN)
+	  if (Layer->polygon_tree)
 	    {
 	      info.Layer = Layer;
 	      info.arg = True;

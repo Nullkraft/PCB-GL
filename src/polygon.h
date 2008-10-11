@@ -38,15 +38,20 @@ int PolygonHoles (const BoxType * range, LayerTypePtr, PolygonTypePtr,
 int PlowsPolygon (DataType *, int, void *, void *,
 		  int (*callback) (DataTypePtr, LayerTypePtr, PolygonTypePtr, int, void *, void *));
 void ComputeNoHoles (PolygonType *poly);
+
 POLYAREA * ContourToPoly (PLINE *);
 POLYAREA * RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2);
-POLYAREA * CirclePoly(LocationType x, LocationType y, BDimension radius);
 POLYAREA * OctagonPoly(LocationType x, LocationType y, BDimension radius);
-POLYAREA * LinePoly(LineType *l, BDimension thick);
+void frac_circle (PLINE *, LocationType, LocationType, Vector, int);
+POLYAREA * CirclePoly(LocationType x, LocationType y, BDimension radius);
+POLYAREA * RoundRect (LocationType x1, LocationType x2, LocationType y1, LocationType y2, BDimension t);
 POLYAREA * ArcPoly(ArcType *l, BDimension thick);
+POLYAREA * LinePoly(LineType *l, BDimension thick);
+POLYAREA * SquarePadPoly (PadType * pad, BDimension clear);
+
 POLYAREA * PinPoly(PinType *l, BDimension thick, BDimension clear);
 POLYAREA * BoxPolyBloated (BoxType *box, BDimension radius);
-void frac_circle (PLINE *, LocationType, LocationType, Vector, int);
+
 int InitClip(DataType *d, LayerType *l, PolygonType *p);
 void RestoreToPolygon(DataType *, int, void *, void *);
 void ClearFromPolygon(DataType *, int, void *, void *);

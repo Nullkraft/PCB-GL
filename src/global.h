@@ -210,7 +210,7 @@ typedef struct			/* holds information about a poured area */
 
   Cardinal PolygonN;		/* number of polygons this pour has */
   Cardinal PolygonMax;		/* max number from malloc() */
-  PolygonTypePtr polygons;	/* pour polygons */
+  PolygonTypePtr Polygons;	/* pour polygons */
 
   /* r_tree? */
 
@@ -222,7 +222,7 @@ struct polygon_st		/* holds information about a polygon */
 
 //  Cardinal PointN,		/* number of points in polygon */
 //  Cardinal PointMax;		/* max number from malloc() */
-  PointTypePtr Points;		/* data */
+//  PointTypePtr Points;		/* data */
 
   POLYAREA *Clipped;		/* the clipped region of this polygon */
 
@@ -254,14 +254,17 @@ typedef struct			/* holds information about one layer */
   char *Name;			/* layer name */
   Cardinal LineN,		/* number of lines */
     TextN,			/* labels */
-    PolygonN,			/* polygons */
+//    PolygonN,			/* polygons */
     PourN,			/* poured areas */
     ArcN,			/* and arcs */
     LineMax,			/* max number from malloc() */
-    TextMax, PolygonMax, PourMax, ArcMax;
+    TextMax,
+//    PolygonMax,
+    PourMax,
+    ArcMax;
   LineTypePtr Line;		/* pointer to additional structures */
   TextTypePtr Text;
-  PolygonTypePtr Polygon;
+//  PolygonTypePtr Polygon;
   PourTypePtr Pour;
   ArcTypePtr Arc;
   rtree_t *line_tree, *text_tree, *polygon_tree, *pour_tree, *arc_tree;

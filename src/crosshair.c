@@ -370,9 +370,11 @@ XORDrawBuffer (BufferTypePtr Buffer)
 	/* the tmp polygon has n+1 points because the first
 	 * and the last one are set to the same coordinates
 	 */
-	POLYGON_LOOP (layer);
+	POUR_LOOP (layer);
 	{
-	  XORPolygon (polygon, x, y);
+	  XORPour (pour, x, y);
+#warning FIXME Later
+//	  XORPolygon (polygon, x, y);
 	}
 	END_LOOP;
       }

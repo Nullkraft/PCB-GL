@@ -59,7 +59,7 @@ PourTypePtr CreateNewPourFromRectangle (LayerTypePtr, LocationType,
 					      LocationType, FlagType);
 TextTypePtr CreateNewText (LayerTypePtr, FontTypePtr, LocationType,
 			   LocationType, BYTE, int, char *, FlagType);
-PolygonTypePtr CreateNewPolygon (LayerTypePtr, FlagType);
+PolygonTypePtr CreateNewPolygonInPour (PourType *pour, FlagType);
 PourTypePtr CreateNewPour (LayerTypePtr, FlagType);
 PointTypePtr CreateNewPointInPour (PourTypePtr,
 				      LocationType, LocationType);

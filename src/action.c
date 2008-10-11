@@ -4431,6 +4431,9 @@ off are automatically deleted.
 static int
 ActionMorphPolygon (int argc, char **argv, int x, int y)
 {
+#warning FIXME Later
+  Message ("Morph polygon not implemented. Pours are nice though!\n");
+#if 0
   char *function = ARG (0);
   if (function)
     {
@@ -4466,6 +4469,7 @@ ActionMorphPolygon (int argc, char **argv, int x, int y)
 	}
     }
   return 0;
+#endif
 }
 
 /* --------------------------------------------------------------------------- */

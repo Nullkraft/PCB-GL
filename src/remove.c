@@ -70,12 +70,12 @@ static void *DestroyRat (RatTypePtr);
 static void *DestroyLine (LayerTypePtr, LineTypePtr);
 static void *DestroyArc (LayerTypePtr, ArcTypePtr);
 static void *DestroyText (LayerTypePtr, TextTypePtr);
-static void *DestroyPolygon (LayerTypePtr, PolygonTypePtr);
+//static void *DestroyPolygon (LayerTypePtr, PolygonTypePtr);
 static void *DestroyPour (LayerTypePtr, PourTypePtr);
 static void *DestroyElement (ElementTypePtr);
 static void *RemoveVia (PinTypePtr);
 static void *RemoveRat (RatTypePtr);
-static void *DestroyPolygonPoint (LayerTypePtr, PolygonTypePtr, PointTypePtr);
+//static void *DestroyPolygonPoint (LayerTypePtr, PolygonTypePtr, PointTypePtr);
 static void *DestroyPourPoint (LayerTypePtr, PourTypePtr, PointTypePtr);
 static void *RemovePourPoint (LayerTypePtr, PourTypePtr, PointTypePtr);
 static void *RemoveLinePoint (LayerTypePtr, LineTypePtr, PointTypePtr);
@@ -102,7 +102,7 @@ static ObjectFunctionType RemoveFunctions = {
 static ObjectFunctionType DestroyFunctions = {
   DestroyLine,
   DestroyText,
-  DestroyPolygon,
+  NULL, //DestroyPolygon,
   DestroyPour,
   DestroyVia,
   DestroyElement,
@@ -110,7 +110,7 @@ static ObjectFunctionType DestroyFunctions = {
   NULL,
   NULL,
   NULL,
-  DestroyPolygonPoint,
+  NULL, //DestroyPolygonPoint,
   DestroyPourPoint,
   DestroyArc,
   DestroyRat
@@ -176,22 +176,6 @@ DestroyArc (LayerTypePtr Layer, ArcTypePtr Arc)
 }
 
 /* ---------------------------------------------------------------------------
- * destroys a polygon from a layer
- */
-static void *
-DestroyPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
-{
-  r_delete_entry (Layer->polygon_tree, (BoxTypePtr) Polygon);
-  FreePolygonMemory (Polygon);
-  *Polygon = Layer->Polygon[--Layer->PolygonN];
-  r_substitute (Layer->polygon_tree,
-                (BoxType *) & Layer->Polygon[Layer->PolygonN],
-                (BoxType *) Polygon);
-  memset (&Layer->Polygon[Layer->PolygonN], 0, sizeof (PolygonType));
-  return (NULL);
-}
-
-/* ---------------------------------------------------------------------------
  * destroys a pour from a layer
  */
 static void *
@@ -208,6 +192,8 @@ DestroyPour (LayerTypePtr Layer, PourTypePtr Pour)
   return (NULL);
 }
 
+#warning FIXME Later
+#if 0
 /* ---------------------------------------------------------------------------
  * removes a polygon-point from a polygon and destroys the data
  */
@@ -215,8 +201,6 @@ static void *
 DestroyPolygonPoint (LayerTypePtr Layer,
                      PolygonTypePtr Polygon, PointTypePtr Point)
 {
-#warning FIXME Later
-#if 0
   PointTypePtr ptr;
 
   if (Polygon->PointN <= 3)
@@ -231,9 +215,9 @@ DestroyPolygonPoint (LayerTypePtr Layer,
   SetPolygonBoundingBox (Polygon);
   r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
   InitClip (PCB->Data, Layer, Polygon);
-#endif
   return (Polygon);
 }
+#endif
 
 /* ---------------------------------------------------------------------------
  * removes a polygon-point from a polygon and destroys the data

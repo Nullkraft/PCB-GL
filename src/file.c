@@ -778,7 +778,7 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
 {
   int n;
   /* write information about non empty layers */
-  if (layer->LineN || layer->ArcN || layer->TextN || layer->PolygonN ||
+  if (layer->LineN || layer->ArcN || layer->TextN || layer->PourN ||
       (layer->Name && *layer->Name))
     {
       fprintf (FP, "Layer(%i ", (int) Number + 1);
