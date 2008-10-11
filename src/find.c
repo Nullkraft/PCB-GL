@@ -2427,6 +2427,29 @@ LOCtoPolyRat_callback (const BoxType * b, void *cl)
   return 0;
 }
 
+static int
+LOCtoPolyPolygon_callback (const BoxType * b, void *cl)
+{
+  PolygonTypePtr polygon = (PolygonTypePtr) b;
+  struct lo_info *i = (struct lo_info *) cl;
+
+  if (!TEST_FLAG (TheFlag, polygon) &&
+      IsPolygonInPolygon (polygon, &i->polygon) &&
+      ADD_POLYGON_TO_LIST (i->layer, polygon))
+    longjmp (i->env, 1);
+
+  return 0;
+}
+
+static int
+LOCtoPolyPourPolygon_callback (const BoxType * b, void *cl)
+{
+  PourTypePtr pour = (PourTypePtr) b;
+  struct pv_info *i = (struct pv_info *) cl;
+
+  return r_search (pour->polygon_tree, (BoxType *) &i->pv,
+                   NULL, LOCtoPolyPolygon_callback, i);
+}
 
 /* ---------------------------------------------------------------------------
  * looks up LOs that are connected to the given polygon
@@ -2460,7 +2483,14 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
       if (layer < max_layer)
         {
           /* check all polygons */
+          if (setjmp (info.env) == 0)
+            r_search (LAYER_PTR (layer)->pour_tree,
+                      (BoxType *) & info.polygon, NULL,
+                      LOCtoPolyPourPolygon_callback, &info);
+          else
+            return True;
 
+#if 0
           POUR_LOOP (LAYER_PTR (layer));
           {
             POURPOLYGON_LOOP (pour);
@@ -2473,6 +2503,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
             END_LOOP;
           }
           END_LOOP;
+#endif
 
           info.layer = layer;
           /* check all lines */
@@ -3755,7 +3786,6 @@ doIsBad:
 int
 IsPolygonAnIsland (LayerType *layer, PolygonType *polygon)
 {
-  int is_island = 0;
   int connected_count = 0;
   int i;
 
@@ -3772,8 +3802,9 @@ IsPolygonAnIsland (LayerType *layer, PolygonType *polygon)
 
   User = False;
 
-//  DRCFind (PIN_TYPE, (void *) element, (void *) pin, (void *) pin);
-
+  /* This is really Slow.. need to add a flag where we can
+   * make this quit as soon as it finds _some_ connectivity
+   */
   ListStart (POLYGON_TYPE, layer, polygon, polygon);
   DoIt (True, False);
 
@@ -3794,9 +3825,9 @@ IsPolygonAnIsland (LayerType *layer, PolygonType *polygon)
 
   RestoreStackAndVisibility ();
   hid_action ("LayersChanged");
-  gui->invalidate_all ();
+//  gui->invalidate_all ();
 
-  return connected_count;
+  return (connected_count == 0);
 }
 
 /*-----------------------------------------------------------------------------
