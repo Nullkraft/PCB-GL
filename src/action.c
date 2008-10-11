@@ -365,7 +365,6 @@ static FunctionType Functions[] = {
   {"PinOrPadName", F_PinOrPadName},
   {"Pinout", F_Pinout},
   {"Pour", F_Pour},
-//  {"Polygon", F_Polygon},
   {"PreviousPoint", F_PreviousPoint},
   {"RatsNest", F_RatsNest},
   {"Rectangle", F_Rectangle},

@@ -1694,16 +1694,6 @@ GetGridLockCoordinates (int type, void *ptr1,
       *x = ((ElementTypePtr) ptr2)->MarkX;
       *y = ((ElementTypePtr) ptr2)->MarkY;
       break;
-    case POLYGON_TYPE:
-#warning FIXME Later
-      *x = 1000;
-      *y = 1000;
-#if 0
-      *x = ((PolygonTypePtr) ptr2)->Points[0].X;
-      *y = ((PolygonTypePtr) ptr2)->Points[0].Y;
-#endif
-      break;
-
     case LINEPOINT_TYPE:
     case POURPOINT_TYPE:
       *x = ((PointTypePtr) ptr3)->X;

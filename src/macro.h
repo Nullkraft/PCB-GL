@@ -391,24 +391,6 @@ extern int mem_any_set (unsigned char *, int);
 	{						\
 		text = &(layer)->Text[n]
 
-#if 0
-#define	POLYGON_LOOP(layer) do {			\
-	Cardinal		n;			\
-	PolygonTypePtr	polygon;			\
-	for (n = (layer)->PolygonN-1; n != -1; n--)	\
-	{						\
-		polygon = &(layer)->Polygon[n]
-#endif
-
-#if 0
-#define	POLYGONPOINT_LOOP(polygon) do	{	\
-	Cardinal			n;		\
-	PointTypePtr	point;				\
-	for (n = (polygon)->PointN-1; n != -1; n--)	\
-	{						\
-		point = &(polygon)->Points[n]
-#endif
-
 #define	POUR_LOOP(layer) do {			\
 	Cardinal		n;			\
 	PourTypePtr	pour;			\
@@ -454,15 +436,6 @@ extern int mem_any_set (unsigned char *, int);
 	{ \
 		ARC_LOOP(layer)
 
-#if 0
-#define	ALLPOLYGON_LOOP(top)	do {		\
-	Cardinal		l;			\
-	LayerTypePtr	layer = (top)->Layer;		\
-	for (l = 0; l < max_layer + 2; l++, layer++)	\
-	{ \
-		POLYGON_LOOP(layer)
-#endif
-
 #define	ALLPOUR_LOOP(top)	do {		\
 	Cardinal		l;			\
 	LayerTypePtr	layer = (top)->Layer;		\
@@ -483,15 +456,6 @@ extern int mem_any_set (unsigned char *, int);
 	for (l =0; l < max_layer; l++, layer++)		\
 	{ \
 		ARC_LOOP(layer)
-
-#if 0
-#define	COPPERPOLYGON_LOOP(top) do	{		\
-	Cardinal		l;			\
-	LayerTypePtr	layer = (top)->Layer;		\
-	for (l = 0; l < max_layer; l++, layer++)	\
-	{ \
-		POLYGON_LOOP(layer)
-#endif
 
 #define	COPPERPOUR_LOOP(top) do	{		\
 	Cardinal		l;			\
@@ -515,16 +479,6 @@ extern int mem_any_set (unsigned char *, int);
 	for (l = 0; l < 2; l++, layer++)		\
 	{ \
 		ARC_LOOP(layer)
-
-#if 0
-#define	SILKPOLYGON_LOOP(top) do	{		\
-	Cardinal		l;			\
-	LayerTypePtr	layer = (top)->Layer;		\
-	layer += max_layer;				\
-	for (l = 0; l < 2; l++, layer++)		\
-	{ \
-		POLYGON_LOOP(layer)
-#endif
 
 #define	SILKPOUR_LOOP(top) do	{		\
 	Cardinal		l;			\
@@ -564,16 +518,6 @@ extern int mem_any_set (unsigned char *, int);
 	{ \
                 TEXT_LOOP(layer);                                      \
                   if (TEXT_IS_VISIBLE((board), layer, text))
-
-#if 0
-#define	VISIBLEPOLYGON_LOOP(top) do	{	\
-	Cardinal		l;			\
-	LayerTypePtr	layer = (top)->Layer;		\
-	for (l = 0; l < max_layer + 2; l++, layer++)	\
-	{ \
-		if (layer->On)				\
-			POLYGON_LOOP(layer)
-#endif
 
 #define	VISIBLEPOUR_LOOP(top) do	{	\
 	Cardinal		l;			\

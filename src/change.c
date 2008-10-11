@@ -371,14 +371,14 @@ static ObjectFunctionType ClrOctagonFunctions = {
 static void *
 ChangeViaThermal (PinTypePtr Via)
 {
-  AddObjectToClearPolyUndoList (VIA_TYPE, Via, Via, Via, False);
+  AddObjectToClearPourUndoList (VIA_TYPE, Via, Via, Via, False);
   RestoreToPours (PCB->Data, VIA_TYPE, CURRENT, Via);
   AddObjectToFlagUndoList (VIA_TYPE, Via, Via, Via);
   if (!Delta)			/* remove the thermals */
     CLEAR_THERM (INDEXOFCURRENT, Via);
   else
     ASSIGN_THERM (INDEXOFCURRENT, Delta, Via);
-  AddObjectToClearPolyUndoList (VIA_TYPE, Via, Via, Via, True);
+  AddObjectToClearPourUndoList (VIA_TYPE, Via, Via, Via, True);
   ClearFromPours (PCB->Data, VIA_TYPE, CURRENT, Via);
   DrawVia (Via, 0);
   return Via;
@@ -391,14 +391,14 @@ ChangeViaThermal (PinTypePtr Via)
 static void *
 ChangePinThermal (ElementTypePtr element, PinTypePtr Pin)
 {
-  AddObjectToClearPolyUndoList (PIN_TYPE, element, Pin, Pin, False);
+  AddObjectToClearPourUndoList (PIN_TYPE, element, Pin, Pin, False);
   RestoreToPours (PCB->Data, VIA_TYPE, CURRENT, Pin);
   AddObjectToFlagUndoList (PIN_TYPE, element, Pin, Pin);
   if (!Delta)			/* remove the thermals */
     CLEAR_THERM (INDEXOFCURRENT, Pin);
   else
     ASSIGN_THERM (INDEXOFCURRENT, Delta, Pin);
-  AddObjectToClearPolyUndoList (PIN_TYPE, element, Pin, Pin, True);
+  AddObjectToClearPourUndoList (PIN_TYPE, element, Pin, Pin, True);
   ClearFromPours (PCB->Data, VIA_TYPE, CURRENT, Pin);
   DrawPin (Pin, 0);
   return Pin;
@@ -1101,14 +1101,14 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
   EraseLine (Line);
   if (TEST_FLAG(CLEARLINEFLAG, Line))
   {
-  AddObjectToClearPolyUndoList (LINE_TYPE, Layer, Line, Line, False);
+  AddObjectToClearPourUndoList (LINE_TYPE, Layer, Line, Line, False);
   RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
   }
   AddObjectToFlagUndoList (LINE_TYPE, Layer, Line, Line);
   TOGGLE_FLAG (CLEARLINEFLAG, Line);
   if (TEST_FLAG(CLEARLINEFLAG, Line))
   {
-  AddObjectToClearPolyUndoList (LINE_TYPE, Layer, Line, Line, True);
+  AddObjectToClearPourUndoList (LINE_TYPE, Layer, Line, Line, True);
   ClearFromPours (PCB->Data, LINE_TYPE, Layer, Line);
   }
   DrawLine (Layer, Line, 0);
@@ -1147,17 +1147,17 @@ ChangeArcJoin (LayerTypePtr Layer, ArcTypePtr Arc)
     return (NULL);
   EraseArc (Arc);
   if (TEST_FLAG (CLEARLINEFLAG, Arc))
-  {
-    RestoreToPours (PCB->Data, ARC_TYPE, Layer, Arc);
-    AddObjectToClearPolyUndoList (ARC_TYPE, Layer, Arc, Arc, False);
+    {
+      RestoreToPours (PCB->Data, ARC_TYPE, Layer, Arc);
+      AddObjectToClearPourUndoList (ARC_TYPE, Layer, Arc, Arc, False);
     }
   AddObjectToFlagUndoList (ARC_TYPE, Layer, Arc, Arc);
   TOGGLE_FLAG (CLEARLINEFLAG, Arc);
   if (TEST_FLAG (CLEARLINEFLAG, Arc))
-  {
-    ClearFromPours (PCB->Data, ARC_TYPE, Layer, Arc);
-  AddObjectToClearPolyUndoList (ARC_TYPE, Layer, Arc, Arc, True);
-  }
+    {
+      ClearFromPours (PCB->Data, ARC_TYPE, Layer, Arc);
+      AddObjectToClearPourUndoList (ARC_TYPE, Layer, Arc, Arc, True);
+    }
   DrawArc (Layer, Arc, 0);
   return (Arc);
 }
@@ -1195,14 +1195,14 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
   EraseText (Layer, Text);
   if (TEST_FLAG(CLEARLINEFLAG, Text))
   {
-  AddObjectToClearPolyUndoList (TEXT_TYPE, Layer, Text, Text, False);
+  AddObjectToClearPourUndoList (TEXT_TYPE, Layer, Text, Text, False);
   RestoreToPours (PCB->Data, TEXT_TYPE, Layer, Text);
   }
   AddObjectToFlagUndoList (LINE_TYPE, Layer, Text, Text);
   TOGGLE_FLAG (CLEARLINEFLAG, Text);
   if (TEST_FLAG(CLEARLINEFLAG, Text))
   {
-  AddObjectToClearPolyUndoList (TEXT_TYPE, Layer, Text, Text, True);
+  AddObjectToClearPourUndoList (TEXT_TYPE, Layer, Text, Text, True);
   ClearFromPours (PCB->Data, TEXT_TYPE, Layer, Text);
   }
   DrawText (Layer, Text, 0);
@@ -1413,11 +1413,11 @@ ChangePadSquare (ElementTypePtr Element, PadTypePtr Pad)
   if (TEST_FLAG (LOCKFLAG, Pad))
     return (NULL);
   ErasePad (Pad);
-  AddObjectToClearPolyUndoList (PAD_TYPE, Element, Pad, Pad, False);
+  AddObjectToClearPourUndoList (PAD_TYPE, Element, Pad, Pad, False);
   RestoreToPours (PCB->Data, PAD_TYPE, Element, Pad);
   AddObjectToFlagUndoList (PAD_TYPE, Element, Pad, Pad);
   TOGGLE_FLAG (SQUAREFLAG, Pad);
-  AddObjectToClearPolyUndoList (PAD_TYPE, Element, Pad, Pad, True);
+  AddObjectToClearPourUndoList (PAD_TYPE, Element, Pad, Pad, True);
   ClearFromPours (PCB->Data, PAD_TYPE, Element, Pad);
   DrawPad (Pad, 0);
   return (Pad);
@@ -1460,11 +1460,11 @@ ChangePinSquare (ElementTypePtr Element, PinTypePtr Pin)
   if (TEST_FLAG (LOCKFLAG, Pin))
     return (NULL);
   ErasePin (Pin);
-  AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, False);
+  AddObjectToClearPourUndoList (PIN_TYPE, Element, Pin, Pin, False);
   RestoreToPours (PCB->Data, PIN_TYPE, Element, Pin);
   AddObjectToFlagUndoList (PIN_TYPE, Element, Pin, Pin);
   TOGGLE_FLAG (SQUAREFLAG, Pin);
-  AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, True);
+  AddObjectToClearPourUndoList (PIN_TYPE, Element, Pin, Pin, True);
   ClearFromPours (PCB->Data, PIN_TYPE, Element, Pin);
   DrawPin (Pin, 0);
   return (Pin);
@@ -1503,11 +1503,11 @@ ChangeViaOctagon (PinTypePtr Via)
   if (TEST_FLAG (LOCKFLAG, Via))
     return (NULL);
   EraseVia (Via);
-  AddObjectToClearPolyUndoList (VIA_TYPE, Via, Via, Via, False);
+  AddObjectToClearPourUndoList (VIA_TYPE, Via, Via, Via, False);
   RestoreToPours (PCB->Data, VIA_TYPE, Via, Via);
   AddObjectToFlagUndoList (VIA_TYPE, Via, Via, Via);
   TOGGLE_FLAG (OCTAGONFLAG, Via);
-  AddObjectToClearPolyUndoList (VIA_TYPE, Via, Via, Via, True);
+  AddObjectToClearPourUndoList (VIA_TYPE, Via, Via, Via, True);
   ClearFromPours (PCB->Data, VIA_TYPE, Via, Via);
   DrawVia (Via, 0);
   return (Via);
@@ -1546,11 +1546,11 @@ ChangePinOctagon (ElementTypePtr Element, PinTypePtr Pin)
   if (TEST_FLAG (LOCKFLAG, Pin))
     return (NULL);
   ErasePin (Pin);
-  AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, False);
+  AddObjectToClearPourUndoList (PIN_TYPE, Element, Pin, Pin, False);
   RestoreToPours (PCB->Data, PIN_TYPE, Element, Pin);
   AddObjectToFlagUndoList (PIN_TYPE, Element, Pin, Pin);
   TOGGLE_FLAG (OCTAGONFLAG, Pin);
-  AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, True);
+  AddObjectToClearPourUndoList (PIN_TYPE, Element, Pin, Pin, True);
   ClearFromPours (PCB->Data, PIN_TYPE, Element, Pin);
   DrawPin (Pin, 0);
   return (Pin);
