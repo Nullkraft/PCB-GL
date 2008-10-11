@@ -1071,7 +1071,8 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
     }
   while ((pg = tmp) != start_pg);
 
-  mark_islands (Data, layer, pour, type, ptr1, ptr2);
+  printf ("skipping mark_islands in add_plow / RestoreToPours\n");
+//  mark_islands (Data, layer, pour, type, ptr1, ptr2);
 
 //  printf ("ClearPour counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
 

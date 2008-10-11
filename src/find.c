@@ -3770,45 +3770,53 @@ int
 IsPolygonAnIsland (LayerType *layer, PolygonType *polygon)
 {
   int connected_count = 0;
+  int any_more;
   int i;
 
-  /* Not sure how much of this is necessary */
-  SaveStackAndVisibility ();
-  ResetStackAndVisibility ();
-  hid_action ("LayersChanged");
   InitConnectionLookup ();
-  /* Not sure how much of this is necessary */
 
   TheFlag = FOUNDFLAG | DRCFLAG | SELECTEDFLAG;
 
-  ResetConnections (True);
+  ResetConnections (False);
+
+  /* Need to ensure we don't set the SELECTED flag as we find
+   * things, otherwise we don't get our quick escape due to the
+   * "drc" magic.
+   */
+  TheFlag = FOUNDFLAG | DRCFLAG;
 
   User = False;
 
-  /* This is really Slow.. need to add a flag where we can
-   * make this quit as soon as it finds _some_ connectivity
-   */
+  /* Let the search stop if we find something we haven't yet seen */
+  drc = True;
+
   ListStart (POLYGON_TYPE, layer, polygon, polygon);
-  DoIt (True, False);
 
-  for (i = 0; i < max_layer; i++)
+  do
     {
-      connected_count += LineList[ i ].Number;
+      any_more = DoIt (False, False);
+
+      /* Check if we got any useful hits */
+      connected_count = 0;
+      for (i = 0; i < max_layer; i++)
+        {
+          connected_count += LineList[ i ].Number;
+          /* No need to search all layers when one will do */
+          if (connected_count)
+            break;
+        }
+      connected_count += PadList[ COMPONENT_LAYER ].Number;
+      connected_count += PadList[ SOLDER_LAYER ].Number;
+      connected_count += PVList.Number;
+      if (connected_count)
+        break;
+
     }
-  connected_count += PadList[ COMPONENT_LAYER ].Number;
-  connected_count += PadList[ SOLDER_LAYER ].Number;
-  connected_count += PVList.Number;
+  while (any_more);
 
-  /* ok now the connected objects have the FOUND, DRC and SELECTED flags set */
-  DumpList ();
-
+  drc = False;
   ResetConnections (False);
-
   FreeConnectionLookupMemory ();
-
-  RestoreStackAndVisibility ();
-  hid_action ("LayersChanged");
-//  gui->invalidate_all ();
 
   return (connected_count == 0);
 }
