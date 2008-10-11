@@ -121,7 +121,50 @@ Cardinal
 GetLowestDistancePourPoint (PourTypePtr Pour, LocationType X,
                             LocationType Y)
 {
-  return GetLowestDistancePourPoint (Pour, X, Y);
+  double mindistance = (double) MAX_COORD * MAX_COORD;
+  PointTypePtr ptr1 = &Pour->Points[Pour->PointN - 1],
+               ptr2 = &Pour->Points[0];
+  Cardinal n, result = 0;
+
+  /* we calculate the distance to each segment and choose the
+   * shortest distance. If the closest approach between the
+   * given point and the projected line (i.e. the segment extended)
+   * is not on the segment, then the distance is the distance
+   * to the segment end point.
+   */
+
+  for (n = 0; n < Pour->PointN; n++, ptr2++)
+    {
+      register double u, dx, dy;
+      dx = ptr2->X - ptr1->X;
+      dy = ptr2->Y - ptr1->Y;
+      if (dx != 0.0 || dy != 0.0)
+        {
+          /* projected intersection is at P1 + u(P2 - P1) */
+          u = ((X - ptr1->X) * dx + (Y - ptr1->Y) * dy) / (dx * dx + dy * dy);
+
+          if (u < 0.0)
+            {                   /* ptr1 is closest point */
+              u = SQUARE (X - ptr1->X) + SQUARE (Y - ptr1->Y);
+            }
+          else if (u > 1.0)
+            {                   /* ptr2 is closest point */
+              u = SQUARE (X - ptr2->X) + SQUARE (Y - ptr2->Y);
+            }
+          else
+            {                   /* projected intersection is closest point */
+              u = SQUARE (X - ptr1->X * (1.0 - u) - u * ptr2->X) +
+                SQUARE (Y - ptr1->Y * (1.0 - u) - u * ptr2->Y);
+            }
+          if (u < mindistance)
+            {
+              mindistance = u;
+              result = n;
+            }
+        }
+      ptr1 = ptr2;
+    }
+  return (result);
 }
 
 /* ---------------------------------------------------------------------------
@@ -972,7 +1015,7 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
       }
   }
   END_LOOP;
-  printf ("Unsubtract counted %i touching children, now removed\n");
+  printf ("Unsubtract counted %i touching children, now removed\n", count);
 
   if (pg == NULL)
     {
@@ -1044,8 +1087,6 @@ int
 InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
 {
   POLYAREA *clipped;
-  PolygonType **delete_children;
-  int number_deleted = 0;
 
   printf ("InitPourClip\n");
 

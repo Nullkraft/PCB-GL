@@ -297,7 +297,8 @@ New polygons are full ones.
 #define	PIN_TYPE		0x00100	/* objects that are part */
 #define	PAD_TYPE		0x00200	/* 'pin' of SMD element */
 #define	ELEMENTNAME_TYPE	0x00400	/* of others */
-#define	POLYGONPOINT_TYPE	0x00800
+//#define	POLYGONPOINT_TYPE	0x00800
+#define POURPOINT_TYPE 		0x00800
 #define	LINEPOINT_TYPE		0x01000
 #define ELEMENTLINE_TYPE        0x02000
 #define ARC_TYPE                0x04000
@@ -305,7 +306,6 @@ New polygons are full ones.
 
 #define LOCKED_TYPE 		0x10000	/* used to tell search to include locked items. */
 #define POUR_TYPE 		0x20000
-#define POURPOINT_TYPE 		0x40000
 
 #define PIN_TYPES     (VIA_TYPE | PIN_TYPE)
 #define LOCK_TYPES    (VIA_TYPE | LINE_TYPE | ARC_TYPE | POLYGON_TYPE | \

@@ -1615,7 +1615,7 @@ NotifyMode (void)
 	      else
 		{
 		  /* get starting point of nearest segment */
-		  if (Crosshair.AttachedObject.Type == POLYGON_TYPE)
+		  if (Crosshair.AttachedObject.Type == POUR_TYPE)
 		    {
 		      fake.pour = (PourTypePtr) Crosshair.AttachedObject.Ptr2;
 		      polyIndex =
