@@ -1,0 +1,782 @@
+Bottom: fae668b99a9acf4cc478a2c5ed12cc0bf6fe5d26
+Top:    e0102042fdff58820b3328afd6d8e8e56cb45f50
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-11 16:06:58 +0100
+
+Refresh of add_pours
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index c796c29..e58015c 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -673,6 +673,7 @@ struct pin_info
+ {
+   Boolean arg;
+   LayerTypePtr Layer;
++  const BoxType * clip;
+ };
+ 
+ static int
+@@ -690,7 +691,9 @@ poly_callback (const BoxType * b, void *cl)
+ {
+   struct pin_info *i = (struct pin_info *) cl;
+ 
++//  printf ("Got one poly callback, %p\n", b);
+   DrawPlainPolygon (i->Layer, (PolygonTypePtr) b);
++
+   return 1;
+ }
+ 
+@@ -698,9 +701,19 @@ static int
+ pour_callback (const BoxType * b, void *cl)
+ {
+   struct pin_info *i = (struct pin_info *) cl;
++  PourType *pour = (PourType *)b;
++
++//  DrawPlainPour (i->Layer, pour);
++  DrawPour (i->Layer, pour, 0);
++
++//  printf ("Pour has %i polygons :\n", pour->PolygonN);
++  /* draw all polygons in this pour */
++  if (pour->PolygonN)
++    {
++      r_search (pour->polygon_tree, i->clip, NULL, poly_callback, i);
++    }
++//  printf ("-----------\n");
+ 
+-//  DrawPlainPour (i->Layer, (PourTypePtr) b);
+-  DrawPour (i->Layer, (PourTypePtr)b, 0);
+   return 1;
+ }
+ 
+@@ -794,6 +807,7 @@ DrawMask (BoxType * screen)
+   OutputType *out = &Output;
+ 
+   info.arg = True;
++  info.clip = screen;
+ 
+   if (thin)
+     gui->set_color (Output.pmGC, PCB->MaskColor);
+@@ -900,9 +914,8 @@ DrawLayer (LayerTypePtr Layer, BoxType * screen)
+   /* print the non-clearing polys */
+   info.Layer = Layer;
+   info.arg = False;
++  info.clip = screen;
+   clip_box = screen;
+-  r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
+-
+   r_search (Layer->pour_tree, screen, NULL, pour_callback, &info);
+ 
+   /* draw all visible lines this layer */
+@@ -957,21 +970,12 @@ DrawLayerGroup (int group, const BoxType * screen)
+           gui->use_mask (HID_MASK_BEFORE);
+ #endif
+ 
+-	  /* draw all polygons on this layer */
+-	  if (Layer->polygon_tree)
+-	    {
+-	      info.Layer = Layer;
+-	      info.arg = True;
+-	      r_search (Layer->polygon_tree, screen, NULL, poly_callback,
+-			&info);
+-	      info.arg = False;
+-	    }
+-
+ 	  /* draw all pours on this layer */
+ 	  if (Layer->PourN)
+ 	    {
+ 	      info.Layer = Layer;
+ 	      info.arg = True;
++        info.clip = screen;
+ 	      r_search (Layer->pour_tree, screen, NULL, pour_callback, &info);
+ 	      info.arg = False;
+ 	    }
+diff --git a/src/find.c b/src/find.c
+index ee40a96..76cdf21 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -718,6 +718,16 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
+   return 0;
+ }
+ 
++static int
++LOCtoPVpourPoly_callback (const BoxType * b, void *cl)
++{
++  PourTypePtr pour = (PourTypePtr) b;
++  struct pv_info *i = (struct pv_info *) cl;
++
++  return r_search (pour->polygon_tree, (BoxType *) &i->pv,
++                   NULL, LOCtoPVpoly_callback, i);
++}
++
+ /* ---------------------------------------------------------------------------
+  * checks if a PV is connected to LOs, if it is, the LO is added to
+  * the appropriate list and the 'used' flag is set
+@@ -760,8 +770,8 @@ LookupLOConnectionsToPVList (Boolean AndRats)
+             return True;
+           /* check all polygons */
+           if (setjmp (info.env) == 0)
+-            r_search (LAYER_PTR (layer)->polygon_tree, (BoxType *) & info.pv,
+-                      NULL, LOCtoPVpoly_callback, &info);
++            r_search (LAYER_PTR (layer)->pour_tree, (BoxType *) & info.pv,
++                      NULL, LOCtoPVpourPoly_callback, &info);
+           else
+             return True;
+         }
+@@ -2114,6 +2124,16 @@ PolygonToRat_callback (const BoxType * b, void *cl)
+ }
+ 
+ static int
++PourPolygonToRat_callback (const BoxType * b, void *cl)
++{
++  PourTypePtr pour = (PourTypePtr) b;
++  struct rat_info *i = (struct rat_info *) cl;
++
++  return r_search_pt (pour->polygon_tree, i->Point, 1,
++                      NULL, PolygonToRat_callback, i);
++}
++
++static int
+ LOCtoPad_callback (const BoxType * b, void *cl)
+ {
+   PadTypePtr pad = (PadTypePtr) b;
+@@ -2162,8 +2182,8 @@ LookupLOConnectionsToRatEnd (PointTypePtr Point, Cardinal LayerGroup)
+           else
+             return True;
+           if (setjmp (info.env) == 0)
+-            r_search_pt (LAYER_PTR (layer)->polygon_tree, Point, 1,
+-                      NULL, PolygonToRat_callback, &info);
++            r_search_pt (LAYER_PTR (layer)->pour_tree, Point, 1,
++                      NULL, PourPolygonToRat_callback, &info);
+         }
+       else
+         {
+@@ -2226,6 +2246,16 @@ LOCtoPadPoly_callback (const BoxType * b, void *cl)
+ }
+ 
+ static int
++LOCtoPadPourPoly_callback (const BoxType * b, void *cl)
++{
++  PourTypePtr pour = (PourTypePtr) b;
++  struct lo_info *i = (struct lo_info *) cl;
++
++  return r_search (pour->polygon_tree, &i->pad.BoundingBox,
++                   NULL, LOCtoPadPoly_callback, i);
++}
++
++static int
+ LOCtoPadRat_callback (const BoxType * b, void *cl)
+ {
+   RatTypePtr rat = (RatTypePtr) b;
+@@ -2311,8 +2341,8 @@ LookupLOConnectionsToPad (PadTypePtr Pad, Cardinal LayerGroup)
+             return True;
+           /* add polygons */
+           if (setjmp (info.env) == 0)
+-            r_search (LAYER_PTR (layer)->polygon_tree, &info.pad.BoundingBox,
+-                      NULL, LOCtoPadPoly_callback, &info);
++            r_search (LAYER_PTR (layer)->pour_tree, &info.pad.BoundingBox,
++                      NULL, LOCtoPadPourPoly_callback, &info);
+           else
+             return True;
+         }
+diff --git a/src/global.h b/src/global.h
+index 29e1ae9..8090cef 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -200,6 +200,12 @@ typedef struct
+ 
+ typedef struct polygon_st PolygonType, *PolygonTypePtr;
+ 
++typedef struct
++{
++  struct rtree_node *root;
++  int size;			/* number of entries in tree */
++} rtree_t;
++
+ typedef struct			/* holds information about a poured area */
+ {
+   ANYOBJECTFIELDS;
+@@ -212,7 +218,7 @@ typedef struct			/* holds information about a poured area */
+   Cardinal PolygonMax;		/* max number from malloc() */
+   PolygonTypePtr Polygons;	/* pour polygons */
+ 
+-  /* r_tree? */
++  rtree_t *polygon_tree;	/* r-tree of child polygons */
+ 
+ } PourType, *PourTypePtr;
+ 
+@@ -243,12 +249,6 @@ typedef struct			/* holds information about arcs */
+     Delta;
+ } ArcType, *ArcTypePtr;
+ 
+-typedef struct
+-{
+-  struct rtree_node *root;
+-  int size;			/* number of entries in tree */
+-} rtree_t;
+-
+ typedef struct			/* holds information about one layer */
+ {
+   char *Name;			/* layer name */
+@@ -267,7 +267,7 @@ typedef struct			/* holds information about one layer */
+ //  PolygonTypePtr Polygon;
+   PourTypePtr Pour;
+   ArcTypePtr Arc;
+-  rtree_t *line_tree, *text_tree, *polygon_tree, *pour_tree, *arc_tree;
++  rtree_t *line_tree, *text_tree, *pour_tree, *arc_tree;
+   Boolean On;			/* visible flag */
+   char *Color,			/* color */
+    *SelectedColor;
+diff --git a/src/mymem.c b/src/mymem.c
+index 6c81603..a4ddd8d 100644
+--- a/src/mymem.c
++++ b/src/mymem.c
+@@ -439,23 +439,19 @@ GetPolygonMemoryInPour (PourTypePtr Pour)
+   if (Pour->PolygonN >= Pour->PolygonMax)
+     {
+       Pour->PolygonMax += STEP_POLYGON;
+-#warning FIXME Later: r-tree polygons in a pour
+-//      if (Pour->polygon_tree)
+-//	r_destroy_tree (&Layer->polygon_tree);
++      if (Pour->polygon_tree)
++        r_destroy_tree (&Pour->polygon_tree);
+       polygon = MyRealloc (polygon, Pour->PolygonMax * sizeof (PolygonType),
+-			   "GetPolygonMemoryInPour()");
++                           "GetPolygonMemoryInPour()");
+       Pour->Polygons = polygon;
+       memset (polygon + Pour->PolygonN, 0,
+-	      STEP_POLYGON * sizeof (PolygonType));
+-#warning FIXME Later: r-tree polygons in a pour
+-#if 0
++              STEP_POLYGON * sizeof (PolygonType));
+       Pour->polygon_tree = r_create_tree (NULL, 0, 0);
+       POURPOLYGON_LOOP (Pour);
+       {
+-	r_insert_entry (Pour->polygon_tree, (BoxType *) polygon, 0);
++        r_insert_entry (Pour->polygon_tree, (BoxType *) polygon, 0);
+       }
+       END_LOOP;
+-#endif
+     }
+   return (polygon + Pour->PolygonN++);
+ }
+@@ -790,7 +786,6 @@ FreePolygonMemory (PolygonTypePtr Polygon)
+ 	poly_Free (&Polygon->NoHoles);
+       memset (Polygon, 0, sizeof (PolygonType));
+     }
+-#warning FIXME Later: Need to ensure the pour structures are fixed up
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -998,8 +993,8 @@ FreeDataMemory (DataTypePtr Data)
+ 	    r_destroy_tree (&layer->arc_tree);
+ 	  if (layer->text_tree)
+ 	    r_destroy_tree (&layer->text_tree);
+-	  if (layer->polygon_tree)
+-	    r_destroy_tree (&layer->polygon_tree);
++//	  if (layer->polygon_tree)
++//	    r_destroy_tree (&layer->polygon_tree);
+ 	  if (layer->pour_tree)
+ 	    r_destroy_tree (&layer->pour_tree);
+ 	}
+diff --git a/src/polygon.c b/src/polygon.c
+index 72ba2f9..0f95bbb 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -739,7 +739,7 @@ struct plow_info
+ };
+ 
+ static int
+-plow_callback (const BoxType * b, void *cl)
++plow_callback_2 (const BoxType * b, void *cl)
+ {
+   struct plow_info *plow = (struct plow_info *) cl;
+   PolygonTypePtr polygon = (PolygonTypePtr) b;
+@@ -750,6 +750,16 @@ plow_callback (const BoxType * b, void *cl)
+   return 0;
+ }
+ 
++static int
++plow_callback (const BoxType * b, void *cl)
++{
++  struct plow_info *plow = (struct plow_info *) cl;
++  PourTypePtr pour = (PourTypePtr) b;
++  BoxType *sb = &((PinTypePtr) plow->ptr2)->BoundingBox;
++
++  return r_search (pour->polygon_tree, sb, NULL, plow_callback_2, plow);
++}
++
+ int
+ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+               int (*call_back) (DataTypePtr data, LayerTypePtr lay,
+@@ -774,7 +784,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+           LAYER_LOOP (Data, max_layer);
+           {
+             info.layer = layer;
+-            r += r_search (layer->polygon_tree, &sb, NULL, plow_callback, &info);
++            r += r_search (layer->pour_tree, &sb, NULL, plow_callback, &info);
+           }
+           END_LOOP;
+         }
+@@ -784,7 +794,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+                                                                          ((LayerTypePtr) ptr1))));
+           {
+             info.layer = layer;
+-            r += r_search (layer->polygon_tree, &sb, NULL, plow_callback, &info);
++            r += r_search (layer->pour_tree, &sb, NULL, plow_callback, &info);
+           }
+           END_LOOP;
+         }
+@@ -803,7 +813,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+                                                                      ((LayerTypePtr) ptr1))));
+       {
+         info.layer = layer;
+-        r += r_search (layer->polygon_tree, &sb, NULL, plow_callback, &info);
++        r += r_search (layer->pour_tree, &sb, NULL, plow_callback, &info);
+       }
+       END_LOOP;
+       break;
+@@ -817,7 +827,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+         {
+           info.layer = layer;
+           r +=
+-            r_search (layer->polygon_tree, &sb, NULL, plow_callback, &info);
++            r_search (layer->pour_tree, &sb, NULL, plow_callback, &info);
+         }
+         END_LOOP;
+       }
+@@ -841,29 +851,6 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+   return r;
+ }
+ 
+-#if 0
+-void
+-RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+-{
+-  if (type == POLYGON_TYPE)
+-    {
+-      printf ("Calling InitClip from RestoreToPolygon\n");
+-      InitClip (PCB->Data, (LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
+-    }
+-//  PlowsPolygon (Data, type, ptr1, ptr2, add_plow);
+-}
+-
+-void
+-ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+-{
+-  if (type == POLYGON_TYPE)
+-    {
+-      printf ("Calling InitClip from ClearFromPolygon\n");
+-      InitClip (PCB->Data, (LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
+-    }
+-//  PlowsPolygon (Data, type, ptr1, ptr2, subtract_plow);
+-}
+-#endif
+ 
+ Boolean
+ isects (POLYAREA * a, PolygonTypePtr p, Boolean fr)
+diff --git a/src/pour.c b/src/pour.c
+index 45e6a01..8e93096 100644
+--- a/src/pour.c
++++ b/src/pour.c
+@@ -66,7 +66,7 @@ RCSID ("$Id$");
+ 
+ #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
+ 
+-#define UNSUBTRACT_BLOAT 10
++#define UNSUBTRACT_BLOAT 100
+ 
+ /* ---------------------------------------------------------------------------
+  * local prototypes
+@@ -238,13 +238,22 @@ CopyAttachedPourToLayer (void)
+  * destroys a polygon from a pour
+  */
+ static void *
+-DestroyPolygonInPour (LayerTypePtr layer, PourTypePtr pour, PolygonTypePtr polygon)
++DestroyPolygonInPour (PourTypePtr pour, PolygonTypePtr polygon)
+ {
+-  r_delete_entry (layer->polygon_tree, (BoxTypePtr) polygon);
++  int r;
++
++  printf ("Destroying poly, bounding box (%i,%i)-(%i,%u)\n",
++          ((BoxType *) polygon)->X1,
++          ((BoxType *) polygon)->Y1,
++          ((BoxType *) polygon)->X2,
++          ((BoxType *) polygon)->Y2);
++
++  r = r_delete_entry (pour->polygon_tree, (BoxTypePtr) polygon);
++  printf ("Returned %i from r_delete_entry\n", r);
+ 
+   FreePolygonMemory (polygon);
+   *polygon = pour->Polygons[ --pour->PolygonN ];
+-  r_substitute (layer->polygon_tree,
++  r_substitute (pour->polygon_tree,
+                 (BoxType *) & pour->Polygons[ pour->PolygonN ],
+                 (BoxType *) polygon);
+   memset (&pour->Polygons[ pour->PolygonN ], 0, sizeof (PolygonType));
+@@ -444,6 +453,7 @@ struct cpInfo
+   PourType *pour;
+   Boolean solder;
+   POLYAREA *pg;
++  BoxType *region;
+   jmp_buf env;
+ };
+ 
+@@ -592,6 +602,17 @@ poly_sub_callback (const BoxType * b, void *cl)
+ }
+ 
+ static int
++pour_sub_callback (const BoxType * b, void *cl)
++{
++  PourTypePtr pour = (PourTypePtr) b;
++  struct cpInfo *info = (struct cpInfo *) cl;
++  BoxType *region = info->region;
++
++  return r_search (pour->polygon_tree, region, NULL, poly_sub_callback, info);
++
++}
++
++static int
+ Group (DataTypePtr Data, Cardinal layer)
+ {
+   Cardinal i, j;
+@@ -612,6 +633,7 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
+   BoxType region;
+   struct cpInfo info;
+   Cardinal group;
++  int count_all, count_added;
+ 
+   if (!TEST_FLAG (CLEARPOLYFLAG, pour)
+       || GetLayerNumber (Data, Layer) >= max_layer)
+@@ -628,6 +650,7 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
+   else
+     region = pour->BoundingBox;
+   region = bloat_box (&region, expand);
++  info.region = &region;
+ 
+   if (setjmp (info.env) == 0)
+     {
+@@ -635,10 +658,10 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
+       r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
+       GROUP_LOOP (Data, group);
+       {
+-        r += r_search (layer->line_tree,    &region, NULL, line_sub_callback, &info);
+-        r += r_search (layer->arc_tree,     &region, NULL, arc_sub_callback,  &info);
+-        r += r_search (layer->text_tree,    &region, NULL, text_sub_callback, &info);
+-        r += r_search (layer->polygon_tree, &region, NULL, poly_sub_callback, &info);
++        r += r_search (layer->line_tree, &region, NULL, line_sub_callback, &info);
++        r += r_search (layer->arc_tree,  &region, NULL, arc_sub_callback,  &info);
++        r += r_search (layer->text_tree, &region, NULL, text_sub_callback, &info);
++        r += r_search (layer->pour_tree, &region, NULL, pour_sub_callback, &info);
+       }
+       END_LOOP;
+       if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
+@@ -646,7 +669,9 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
+     }
+ 
+   /* TODO: Check r to work of it we need to do this? */
++  printf ("ClearPour found r=%i\n", r);
+ 
++  count_all = count_added = 0;
+   /* For each piece of the clipped up polygon, create a new child */
+   pg = info.pg;
+   do
+@@ -656,19 +681,27 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
+       tmp = pg->f;
+       pg->f = pg;
+       pg->b = pg;
++      count_all++;
++      if (pg->contours->area > PCB->IsleArea)
++        {
++          count_added++;
++          poly = CreateNewPolygonInPour (pour, pour->Flags);
++          poly->Clipped = pg;
+ 
+-      poly = CreateNewPolygonInPour (pour, pour->Flags);
+-      poly->Clipped = pg;
++          SetPolygonBoundingBox (poly);
+ 
+-      SetPolygonBoundingBox (poly);
+-
+-      if (Layer->polygon_tree == NULL)
+-        Layer->polygon_tree = r_create_tree (NULL, 0, 0);
+-      r_insert_entry (Layer->polygon_tree, (BoxType *) poly, 0);
+-      printf ("Inserting one polygon into the layer's tree\n");
++          if (pour->polygon_tree == NULL)
++            pour->polygon_tree = r_create_tree (NULL, 0, 0);
++          r_insert_entry (pour->polygon_tree, (BoxType *) poly, 0);
++        }
++      else
++        {
++          poly_Free (&pg);
++        }
+     }
+   while ((pg = tmp) != info.pg);
+ 
++  printf ("ClearPoly counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
+   return r;
+ }
+ 
+@@ -679,6 +712,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+   POLYAREA *np = NULL, *pg = NULL, *start_pg, *tmp;
+   PolygonType **delete_children;
+   int number_deleted = 0;
++  int count, count_all, count_added;
+ 
+   switch (type)
+     {
+@@ -713,12 +747,14 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+ 
+   /* Make pg contain the polygons we're going to fiddle with */
+ 
++  count = 0;
+   delete_children = calloc (pour->PolygonN, sizeof (PolygonType *));
+   POURPOLYGON_LOOP (pour);
+   {
+     /* Gather up children which are touched by np */
+     if (isects (np, polygon, False))
+       {
++        count++;
+         /* Steal their clipped contours, then delete them */
+         /* Add contour to local list to fiddle about with */
+         delete_children[ number_deleted++ ] = polygon;
+@@ -745,8 +781,9 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+       }
+   }
+   END_LOOP;
+-  for (; number_deleted ;)
+-    DestroyPolygonInPour (Layer, pour, delete_children[ --number_deleted ]);
++  printf ("Subtract counted %i tocuhing childen, removing %i children\n", count, number_deleted);
++  while (number_deleted)
++    DestroyPolygonInPour (pour, delete_children[ --number_deleted ]);
+   free (delete_children);
+ 
+   if (pg == NULL)
+@@ -769,7 +806,16 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+       return -1;
+     }
+ 
++  count = 0;
++  { POLYAREA *pg_start;
++  pg_start = pg;
++  do {
++    count++;
++  } while ((pg = pg->f) != pg_start);
++  }
++  printf ("After subtract, counted %i polygon pieces\n", count);
+ 
++  count_all = count_added = 0;
+   /* For each piece of the clipped up polygon, create a new child */
+   start_pg = pg;
+   do
+@@ -780,21 +826,33 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+       pg->f = pg;
+       pg->b = pg;
+ 
+-      poly = CreateNewPolygonInPour (pour, pour->Flags);
+-      poly->Clipped = pg;
+-
+-      SetPolygonBoundingBox (poly);
+-
+-      if (Layer->polygon_tree == NULL)
+-        Layer->polygon_tree = r_create_tree (NULL, 0, 0);
+-      r_insert_entry (Layer->polygon_tree, (BoxType *) poly, 0);
+-      printf ("Inserting one polygon into the layer's tree\n");
++      count_all++;
++      if (pg->contours->area > PCB->IsleArea)
++        {
++          count_added++;
++          poly = CreateNewPolygonInPour (pour, pour->Flags);
++          poly->Clipped = pg;
++
++          SetPolygonBoundingBox (poly);
++
++          if (pour->polygon_tree == NULL)
++            pour->polygon_tree = r_create_tree (NULL, 0, 0);
++          r_insert_entry (pour->polygon_tree, (BoxType *) poly, 0);
++          printf ("Inserted poly, bounding box (%i,%i)-(%i,%u)\n",
++                  ((BoxType *) poly)->X1,
++                  ((BoxType *) poly)->Y1,
++                  ((BoxType *) poly)->X2,
++                  ((BoxType *) poly)->Y2);
++        }
++      else
++        {
++          poly_Free (&pg);
++        }
+     }
+   while ((pg = tmp) != start_pg);
+ 
++  printf ("ClearPoly counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
+ 
+-
+-  /* TODO: Need to put the modified polygons in pg into children */
+   return 0;
+ }
+ 
+@@ -903,6 +961,7 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+   POLYAREA *np = NULL, *pg = NULL; //, *start_pg, *tmp;
+   PolygonType **delete_children;
+   int number_deleted = 0;
++  int count;
+ 
+   switch (type)
+     {
+@@ -937,12 +996,14 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+ 
+   /* Make pg contain the polygons we're going to fiddle with */
+ 
++  count = 0;
+   delete_children = calloc (pour->PolygonN, sizeof (PolygonType *));
+   POURPOLYGON_LOOP (pour);
+   {
+     /* Gather up children which are touched by np */
+     if (isects (np, polygon, False))
+       {
++        count++;
+         /* Steal their clipped contours, then delete them */
+         /* Add contour to local list to fiddle about with */
+         delete_children[ number_deleted++ ] = polygon;
+@@ -969,8 +1030,9 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+       }
+   }
+   END_LOOP;
+-  for (; number_deleted ;)
+-    DestroyPolygonInPour (Layer, pour, delete_children[ --number_deleted ]);
++  printf ("Unsubtract counted %i tocuhing childen, removing %i children\n", count, number_deleted);
++  while (number_deleted)
++    DestroyPolygonInPour (pour, delete_children[ --number_deleted ]);
+   free (delete_children);
+ 
+   if (pg == NULL)
+@@ -991,6 +1053,15 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+   /* NB: np and old *pg are freed inside intersect_poly() */
+   intersect_poly (np, &pg);
+ 
++  count = 0;
++  { POLYAREA *pg_start;
++  pg_start = pg;
++  do {
++    count++;
++  } while ((pg = pg->f) != pg_start);
++  }
++  printf ("After unsubtract, counted %i polygon pieces\n", count);
++
+ #warning FIXME Later: ClearPour does the adding of Polygon objects for us
+   ClearPour (PCB->Data, Layer, pour, pg, (const BoxType *) ptr2, 2 * UNSUBTRACT_BLOAT);
+ 
+@@ -1017,9 +1088,9 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+ 
+       SetPolygonBoundingBox (poly);
+ 
+-      if (Layer->polygon_tree == NULL)
+-        Layer->polygon_tree = r_create_tree (NULL, 0, 0);
+-      r_insert_entry (Layer->polygon_tree, (BoxType *) poly, 0);
++      if (pour->polygon_tree == NULL)
++        pour->polygon_tree = r_create_tree (NULL, 0, 0);
++      r_insert_entry (pour->polygon_tree, (BoxType *) poly, 0);
+       printf ("Inserting one polygon into the layer's tree\n");
+     }
+   while ((pg = tmp) != start_pg);
+@@ -1049,8 +1120,8 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
+         delete_children[ number_deleted++ ] = polygon;
+       }
+       END_LOOP;
+-      for (; number_deleted ;)
+-        DestroyPolygonInPour (layer, pour, delete_children[ --number_deleted ]);
++      while (number_deleted)
++        DestroyPolygonInPour (pour, delete_children[ --number_deleted ]);
+     }
+ 
+   clipped = original_pour_poly (pour);
+@@ -1111,7 +1182,7 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+   int r = 0;
+   struct plow_info info;
+ 
+-  printf ("Hello world, this is PlowPours\n");
++//  printf ("Hello world, this is PlowPours\n");
+ 
+   info.type = type;
+   info.ptr1 = ptr1;
+diff --git a/src/puller.c b/src/puller.c
+index b219df5..db123b1 100644
+--- a/src/puller.c
++++ b/src/puller.c
+@@ -1704,16 +1704,27 @@ gp_text_cb (const BoxType *b, void *cb)
+   return 0;
+ }
+ 
++#warning FIXME Later: Really want to geometry of the clipped polygons
++#if 0
+ static int
+ gp_poly_cb (const BoxType *b, void *cb)
+ {
+-#warning FIXME Later
+-#if 0
+   int i;
+   const PolygonTypePtr p = (PolygonTypePtr) b;
+   for (i=0; i<p->PointN; i++)
+     gp_point (p->Points[i].X, p->Points[i].Y, 0, 0);
++  return 0;
++}
+ #endif
++
++#warning FIXME Later: Really want to geometry of the clipped polygons
++static int
++gp_pour_cb (const BoxType *b, void *cb)
++{
++  int i;
++  const PourTypePtr p = (PourTypePtr) b;
++  for (i=0; i<p->PointN; i++)
++    gp_point (p->Points[i].X, p->Points[i].Y, 0, 0);
+   return 0;
+ }
+ 
+@@ -2241,7 +2252,7 @@ maybe_pull_1 (LineTypePtr line)
+   r_search(CURRENT->line_tree, &box, NULL, gp_line_cb, 0);
+   r_search(CURRENT->arc_tree, &box, NULL, gp_arc_cb, 0);
+   r_search(CURRENT->text_tree, &box, NULL, gp_text_cb, 0);
+-  r_search(CURRENT->polygon_tree, &box, NULL, gp_poly_cb, 0);
++  r_search(CURRENT->pour_tree, &box, NULL, gp_pour_cb, 0);
+   r_search(PCB->Data->pin_tree, &box, NULL, gp_pin_cb, 0);
+   r_search(PCB->Data->via_tree, &box, NULL, gp_pin_cb, 0);
+   r_search(PCB->Data->pad_tree, &box, NULL, gp_pad_cb, 0);
+diff --git a/src/search.c b/src/search.c
+index 56e23c5..84afeb6 100644
+--- a/src/search.c
++++ b/src/search.c
+@@ -104,6 +104,7 @@ struct ans_info
+   void **ptr1, **ptr2, **ptr3;
+   Boolean BackToo;
+   float area;
++  BoxType *search_box;
+   jmp_buf env;
+   int locked;			/* This will be zero or LOCKFLAG */
+ };
+@@ -431,6 +432,15 @@ polygon_callback (const BoxType * box, void *cl)
+   return 0;
+ }
+ 
++static int
++pour_polygon_callback (const BoxType * box, void *cl)
++{
++  PourTypePtr pour = (PourTypePtr) box;
++  struct ans_info *i = (struct ans_info *) cl;
++
++  return r_search (pour->polygon_tree, &SearchBox, NULL, polygon_callback, i);
++}
++
+ 
+ /* ---------------------------------------------------------------------------
+  * searches a polygon on the SearchLayer 
+@@ -448,7 +458,7 @@ SearchPolygonByLocation (int locked, LayerTypePtr * Layer,
+ 
+   if (setjmp (info.env) == 0)
+     {
+-      r_search (SearchLayer->polygon_tree, &SearchBox, NULL, polygon_callback,
++      r_search (SearchLayer->pour_tree, &SearchBox, NULL, pour_polygon_callback,
+ 		&info);
+       return False;
+     }
