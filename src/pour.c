@@ -1126,6 +1126,13 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
     }
   while ((pg = tmp) != start_pg);
 
+  POURPOLYGON_LOOP (pour);
+  {
+    printf ("Checking if child is island: %s\n",
+            IsPolygonAnIsland (layer, polygon) ? "Yes" : "No");
+  }
+  END_LOOP;
+
   return 1;
 }
 
@@ -1267,4 +1274,3 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
     }
   PlowPours (Data, type, ptr1, ptr2, subtract_plow);
 }
-
