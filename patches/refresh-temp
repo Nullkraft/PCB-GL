@@ -1,0 +1,142 @@
+Bottom: 6ea4bc3f83688bf5e95d1de3dc08f1a96c146eeb
+Top:    80017d87adf9ab75038e931f58431368de9254e9
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-11 21:05:57 +0100
+
+Refresh of off-to-find-burried-treasure-o
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 76cdf21..792d7ea 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -3749,6 +3749,57 @@ doIsBad:
+ }
+ 
+ /*-----------------------------------------------------------------------------
++ * Check for islanding of a polygon
++ * by determining if any non-polygon objects are connected to it.
++ */
++int
++IsPolygonAnIsland (LayerType *layer, PolygonType *polygon)
++{
++  int is_island = 0;
++  int connected_count = 0;
++  int i;
++
++  /* Not sure how much of this is necessary */
++  SaveStackAndVisibility ();
++  ResetStackAndVisibility ();
++  hid_action ("LayersChanged");
++  InitConnectionLookup ();
++  /* Not sure how much of this is necessary */
++
++  TheFlag = FOUNDFLAG | DRCFLAG | SELECTEDFLAG;
++
++  ResetConnections (True);
++
++  User = False;
++
++//  DRCFind (PIN_TYPE, (void *) element, (void *) pin, (void *) pin);
++
++  ListStart (POLYGON_TYPE, layer, polygon, polygon);
++  DoIt (True, False);
++
++  for (i = 0; i < max_layer; i++)
++    {
++      connected_count += LineList[ i ].Number;
++    }
++  connected_count += PadList[ COMPONENT_LAYER ].Number;
++  connected_count += PadList[ SOLDER_LAYER ].Number;
++  connected_count += PVList.Number;
++
++  /* ok now the connected objects have the FOUND, DRC and SELECTED flags set */
++  DumpList ();
++
++  ResetConnections (False);
++
++  FreeConnectionLookupMemory ();
++
++  RestoreStackAndVisibility ();
++  hid_action ("LayersChanged");
++  gui->invalidate_all ();
++
++  return connected_count;
++}
++
++/*-----------------------------------------------------------------------------
+  * Check for DRC violations
+  * see if the connectivity changes when everything is bloated, or shrunk
+  */
+diff --git a/src/find.h b/src/find.h
+index aae9d89..ade7f5e 100644
+--- a/src/find.h
++++ b/src/find.h
+@@ -65,6 +65,7 @@ void FreeLayoutLookupMemory (void);
+ void RatFindHook (int, void *, void *, void *, Boolean, Boolean);
+ void SaveFindFlag (int);
+ void RestoreFindFlag (void);
++int IsPolygonAnIsland (LayerTypePtr, PolygonTypePtr);
+ int DRCAll (void);
+ Boolean lineClear (LineTypePtr, Cardinal);
+ Boolean IsLineInPolygon (LineTypePtr, PolygonTypePtr);
+diff --git a/src/pour.c b/src/pour.c
+index d71d9f4..5824f49 100644
+--- a/src/pour.c
++++ b/src/pour.c
+@@ -1126,6 +1126,13 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
+     }
+   while ((pg = tmp) != start_pg);
+ 
++  POURPOLYGON_LOOP (pour);
++  {
++    printf ("Checking if child is island: %s\n",
++            IsPolygonAnIsland (layer, polygon) ? "Yes" : "No");
++  }
++  END_LOOP;
++
+   return 1;
+ }
+ 
+@@ -1267,4 +1274,3 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
+     }
+   PlowPours (Data, type, ptr1, ptr2, subtract_plow);
+ }
+-
+diff --git a/src/search.c b/src/search.c
+index cfe648a..fe75969 100644
+--- a/src/search.c
++++ b/src/search.c
+@@ -466,7 +466,7 @@ SearchPolygonByLocation (int locked, LayerTypePtr * Layer,
+   return (True);
+ }
+ 
+-#warning FIXME Later: For now, can only select a pour if you're hitting its child polygons
++#warning FIXME Later: For now, can only select a pour if youre hitting its child polygons
+ #if 0
+ static int
+ pour_callback (const BoxType * box, void *cl)
+@@ -500,7 +500,7 @@ SearchPourByLocation (int locked, LayerTypePtr * Layer,
+   info.ptr3 = (void **) Dummy;
+   info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
+ 
+-#warning FIXME Later: For now, can only select a pour if you're hitting its child polygons
++#warning FIXME Later: For now, can only select a pour if youre hitting its child polygons
+   if (setjmp (info.env) == 0)
+     {
+       r_search (SearchLayer->pour_tree, &SearchBox, NULL, pour_polygon_callback, &info);
+diff --git a/src/undo.c b/src/undo.c
+index 5bcc2d9..a767867 100644
+--- a/src/undo.c
++++ b/src/undo.c
+@@ -1156,8 +1156,8 @@ AddObjectToClearPourUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
+   if (!Locked)
+     {
+       undo = GetUndoSlot (UNDO_CLEAR, OBJECT_ID (Ptr3), Type);
+-      undo->Data.ClearPoly.Clear = clear;
+-      undo->Data.ClearPoly.Layer = (LayerTypePtr) Ptr1;
++      undo->Data.ClearPour.Clear = clear;
++      undo->Data.ClearPour.Layer = (LayerTypePtr) Ptr1;
+     }
+ }
