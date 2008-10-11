@@ -3763,6 +3763,57 @@ doIsBad:
 }
 
 /*-----------------------------------------------------------------------------
+ * Check for islanding of a polygon
+ * by determining if any non-polygon objects are connected to it.
+ */
+int
+IsPolygonAnIsland (LayerType *layer, PolygonType *polygon)
+{
+  int connected_count = 0;
+  int i;
+
+  /* Not sure how much of this is necessary */
+  SaveStackAndVisibility ();
+  ResetStackAndVisibility ();
+  hid_action ("LayersChanged");
+  InitConnectionLookup ();
+  /* Not sure how much of this is necessary */
+
+  TheFlag = FOUNDFLAG | DRCFLAG | SELECTEDFLAG;
+
+  ResetConnections (True);
+
+  User = False;
+
+  /* This is really Slow.. need to add a flag where we can
+   * make this quit as soon as it finds _some_ connectivity
+   */
+  ListStart (POLYGON_TYPE, layer, polygon, polygon);
+  DoIt (True, False);
+
+  for (i = 0; i < max_layer; i++)
+    {
+      connected_count += LineList[ i ].Number;
+    }
+  connected_count += PadList[ COMPONENT_LAYER ].Number;
+  connected_count += PadList[ SOLDER_LAYER ].Number;
+  connected_count += PVList.Number;
+
+  /* ok now the connected objects have the FOUND, DRC and SELECTED flags set */
+  DumpList ();
+
+  ResetConnections (False);
+
+  FreeConnectionLookupMemory ();
+
+  RestoreStackAndVisibility ();
+  hid_action ("LayersChanged");
+//  gui->invalidate_all ();
+
+  return (connected_count == 0);
+}
+
+/*-----------------------------------------------------------------------------
  * Check for DRC violations
  * see if the connectivity changes when everything is bloated, or shrunk
  */
