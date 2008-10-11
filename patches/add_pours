@@ -1,7 +1,7 @@
-Bottom: 14c9888f54ed51a0e8bb37591bf61cd67a8c7c5c
+Bottom: 0f7d171552e396659ad723e523be80ff00951c2a
 Top:    6ea4bc3f83688bf5e95d1de3dc08f1a96c146eeb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-10 13:51:23 +0100
+Date:   2008-10-11 19:51:10 +0100
 
 Add support for a "poured" object.
 
@@ -17,6 +17,7 @@ all child polygons selected. Manipulations will always occur on the
 
 It remains to be seen whether "pour" will have its own file-format entry,
 or if it will take over the meaning of the existing "polygon" entry.
+
 
 
 
@@ -319,7 +320,7 @@ index 8ce4a15..bd09d18 100644
  void ActionMovePointer (char *, char *);
  void ActionAdjustStyle (char *);
 diff --git a/src/autoroute.c b/src/autoroute.c
-index 61ac386..585c3de 100644
+index db19e4d..585c3de 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -667,6 +667,8 @@ AddPolygon (PointerListType layergroupboxes[], Cardinal layer,
@@ -361,15 +362,6 @@ index 61ac386..585c3de 100644
        }
        END_LOOP;
        /* add all copper text */
-@@ -2971,7 +2978,7 @@ do_via_search (edge_t * search, struct routeone_state *s,
-         {
-           BoxType cliparea;
-           BoxType *area = vector_remove_last (v);
--          assert (box_intersect (area, &region));
-+//          assert (box_intersect (area, &region));
-           if (!(i == NO_CONFLICT || AutoRouteParameters.with_conflicts))
-             {
-               free (area);
 diff --git a/src/buffer.c b/src/buffer.c
 index a88d11f..fe1ee5e 100644
 --- a/src/buffer.c
@@ -3675,19 +3667,6 @@ index f060ff5..886bf64 100644
  Boolean MoveSelectedObjectsToLayer (LayerTypePtr);
  
  /* index is 0..MAX_LAYER-1.  If old_index is -1, a new layer is
-diff --git a/src/mtspace.c b/src/mtspace.c
-index ee098de..fe5e374 100644
---- a/src/mtspace.c
-+++ b/src/mtspace.c
-@@ -380,7 +380,7 @@ mtspace_query_rect (mtspace_t * mtspace, const BoxType * region,
-   assert (free_space_vec && vector_is_empty (free_space_vec));
-   assert (lo_conflict_space_vec && vector_is_empty (lo_conflict_space_vec));
-   assert (hi_conflict_space_vec && vector_is_empty (hi_conflict_space_vec));
--  assert (untested && no_fix && no_hi && hi_candidate);
-+//  assert (untested && no_fix && no_hi && hi_candidate);
-   /* search out to anything that might matter */
-   if (region)
-     {
 diff --git a/src/mymem.c b/src/mymem.c
 index ffa4dad..a4ddd8d 100644
 --- a/src/mymem.c
@@ -6969,19 +6948,6 @@ index f032fcb..8ad4f60 100644
  void RotateElementLowLevel (DataTypePtr, ElementTypePtr, LocationType,
  			    LocationType, BYTE);
  void *RotateObject (int, void *, void *, void *, LocationType, LocationType,
-diff --git a/src/rtree.c b/src/rtree.c
-index fec72bc..c2220a3 100644
---- a/src/rtree.c
-+++ b/src/rtree.c
-@@ -520,7 +520,7 @@ __r_search (struct rtree_node *node, const BoxType * query, r_arg * arg)
-   /** assert that starting_region is well formed */
-   assert (query->X1 <= query->X2 && query->Y1 <= query->Y2);
-   assert (node->box.X1 < query->X2 && node->box.X2 > query->X1 &&
--          node->box.Y1 < query->Y2 && node->box.Y2 > query->X1);
-+          node->box.Y1 < query->Y2 && node->box.Y2 > query->Y1);
- #ifdef SLOW_ASSERTS
-   /** assert that node is well formed */
-   assert (__r_node_is_good (node));
 diff --git a/src/search.c b/src/search.c
 index 0d75500..cfe648a 100644
 --- a/src/search.c
