@@ -1,0 +1,387 @@
+Bottom: e0102042fdff58820b3328afd6d8e8e56cb45f50
+Top:    f683ac5bfc57bf24c7837b4b92655d800937c6ba
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-11 16:38:35 +0100
+
+Refresh of add_pours
+
+---
+
+diff --git a/src/pour.c b/src/pour.c
+index 8e93096..1e8b982 100644
+--- a/src/pour.c
++++ b/src/pour.c
+@@ -240,16 +240,7 @@ CopyAttachedPourToLayer (void)
+ static void *
+ DestroyPolygonInPour (PourTypePtr pour, PolygonTypePtr polygon)
+ {
+-  int r;
+-
+-  printf ("Destroying poly, bounding box (%i,%i)-(%i,%u)\n",
+-          ((BoxType *) polygon)->X1,
+-          ((BoxType *) polygon)->Y1,
+-          ((BoxType *) polygon)->X2,
+-          ((BoxType *) polygon)->Y2);
+-
+-  r = r_delete_entry (pour->polygon_tree, (BoxTypePtr) polygon);
+-  printf ("Returned %i from r_delete_entry\n", r);
++  r_delete_entry (pour->polygon_tree, (BoxTypePtr) polygon);
+ 
+   FreePolygonMemory (polygon);
+   *polygon = pour->Polygons[ --pour->PolygonN ];
+@@ -300,7 +291,7 @@ unite_poly (POLYAREA * np, POLYAREA ** pg)
+   int x;
+   assert (np);
+   assert (pg);
+-  assert (*pg);
++//  assert (*pg);
+   x = poly_Boolean_free (*pg, np, &merged, PBO_UNITE);
+   if (x != err_ok)
+     {
+@@ -334,7 +325,6 @@ intersect_poly (POLYAREA * np, POLYAREA ** pg)
+ }
+ 
+ 
+-/* remove the pin clearance from the polygon */
+ static POLYAREA *
+ get_subtract_pin_poly (DataType * d, PinType * pin, LayerType * l, PourType *pour)
+ {
+@@ -346,17 +336,9 @@ get_subtract_pin_poly (DataType * d, PinType * pin, LayerType * l, PourType *pou
+ 
+   i = GetLayerNumber (d, l);
+   if (TEST_THERM (i, pin))
+-    {
+-      np = ThermPoly ((PCBTypePtr) (d->pcb), pin, i);
+-      if (!np)
+-        printf ("Got np=NULL from ThermPoly, is this bad?\n");
+-    }
++    np = ThermPoly ((PCBTypePtr) (d->pcb), pin, i);
+   else
+-    {
+-      np = PinPoly (pin, pin->Thickness, pin->Clearance);
+-      if (!np)
+-        printf ("Got np=NULL from PinPoly, is this bad?\n");
+-    }
++    np = PinPoly (pin, pin->Thickness, pin->Clearance);
+ 
+   return np;
+ }
+@@ -364,48 +346,31 @@ get_subtract_pin_poly (DataType * d, PinType * pin, LayerType * l, PourType *pou
+ static POLYAREA *
+ get_subtract_line_poly (LineType *line, PourType *pour)
+ {
+-  POLYAREA *np;
+-
+   if (!TEST_FLAG (CLEARLINEFLAG, line))
+     return NULL;
+ 
+-  np = LinePoly (line, line->Thickness + line->Clearance);
+-  if (np == NULL)
+-    printf ("Got np=NULL from LinePoly, is this bad?\n");
+-
+-  return np;
++  return LinePoly (line, line->Thickness + line->Clearance);
+ }
+ 
+ static POLYAREA *
+ get_subtract_arc_poly (ArcType * arc, PourType * pour)
+ {
+-  POLYAREA *np;
+-
+   if (!TEST_FLAG (CLEARLINEFLAG, arc))
+     return NULL;
+ 
+-  np = ArcPoly (arc, arc->Thickness + arc->Clearance);
+-  if (np == NULL)
+-    printf ("Got np=NULL from ArcPoly, is this bad?\n");
+-
+-  return np;
++  return ArcPoly (arc, arc->Thickness + arc->Clearance);
+ }
+ 
+ static POLYAREA *
+ get_subtract_text_poly (TextType * text, PourType * pour)
+ {
+-  POLYAREA *np;
+   const BoxType *b = &text->BoundingBox;
+ 
+   if (!TEST_FLAG (CLEARLINEFLAG, text))
+     return NULL;
+ 
+-  np = RoundRect (b->X1 + PCB->Bloat, b->X2 - PCB->Bloat,
+-                        b->Y1 + PCB->Bloat, b->Y2 - PCB->Bloat, PCB->Bloat);
+-  if (np == NULL)
+-    printf ("Got np=NULL from RoundRect, is this bad?\n");
+-
+-  return np;
++  return RoundRect (b->X1 + PCB->Bloat, b->X2 - PCB->Bloat,
++                    b->Y1 + PCB->Bloat, b->Y2 - PCB->Bloat, PCB->Bloat);
+ }
+ 
+ static POLYAREA *
+@@ -414,17 +379,9 @@ get_subtract_pad_poly (PadType * pad, PourType * pour)
+   POLYAREA *np;
+ 
+   if (TEST_FLAG (SQUAREFLAG, pad))
+-    {
+-      np = SquarePadPoly (pad, pad->Thickness + pad->Clearance);
+-      if (np == NULL)
+-        printf ("Got np==NULL from SquarePadPoly, is this bad?\n");
+-    }
++    np = SquarePadPoly (pad, pad->Thickness + pad->Clearance);
+   else
+-    {
+-      np = LinePoly ((LineType *) pad, pad->Thickness + pad->Clearance);
+-      if (np == NULL)
+-        printf ("Got np=NULL from LinePoly, is this bad?\n");
+-    }
++    np = LinePoly ((LineType *) pad, pad->Thickness + pad->Clearance);
+ 
+   return np;
+ }
+@@ -439,8 +396,6 @@ get_subtract_polygon_poly (PolygonType * polygon, PourType * pour)
+     return NULL;
+ 
+   poly_Copy0 (&np, polygon->Clipped);
+-  if (np == NULL)
+-    printf ("Got np=NULL from poly_Copy0, is this bad?\n");
+ 
+   return np;
+ }
+@@ -470,11 +425,8 @@ pin_sub_callback (const BoxType * b, void *cl)
+ 
+   np = get_subtract_pin_poly (info->data, pin, info->layer, info->pour);
+   if (np == NULL)
+-    {
+-      printf ("Got np=NULL from get_subtract_pin_poly, is this bad?\n");
+-//      longjmp (info->env, 1);
+-      return 0;
+-    }
++    return 0;
++
+   if (subtract_poly (np, &info->pg) < 0)
+     longjmp (info->env, 1);
+   return 1;
+@@ -495,10 +447,8 @@ arc_sub_callback (const BoxType * b, void *cl)
+ 
+   np = get_subtract_arc_poly (arc, info->pour);
+   if (np == NULL)
+-    {
+-      printf ("Got np=NULL from get_subtract_arc_poly, is this bad?\n");
+-      longjmp (info->env, 1);
+-    }
++    return 0;
++
+   if (subtract_poly (np, &info->pg) < 0)
+     longjmp (info->env, 1);
+   return 1;
+@@ -519,10 +469,8 @@ pad_sub_callback (const BoxType * b, void *cl)
+ 
+   np = get_subtract_pad_poly (pad, info->pour);
+   if (np == NULL)
+-    {
+-      printf ("Got np=NULL from get_subtract_pad_poly, is this bad?\n");
+-      longjmp (info->env, 1);
+-    }
++    return 0;
++
+   if (subtract_poly (np, &info->pg) < 0)
+     longjmp (info->env, 1);
+   return 1;
+@@ -543,10 +491,8 @@ line_sub_callback (const BoxType * b, void *cl)
+ 
+   np = get_subtract_line_poly (line, info->pour);
+   if (np == NULL)
+-    {
+-      printf ("Got np=NULL from get_subtract_line_poly, is this bad?\n");
+-      longjmp (info->env, 1);
+-    }
++    return 0;
++
+   if (subtract_poly (np, &info->pg) < 0)
+     longjmp (info->env, 1);
+   return 1;
+@@ -568,10 +514,8 @@ text_sub_callback (const BoxType * b, void *cl)
+ 
+   np = get_subtract_text_poly (text, info->pour);
+   if (np == NULL)
+-    {
+-      printf ("Got np=NULL from get_subtract_text_poly, is this bad?\n");
+-      longjmp (info->env, 1);
+-    }
++    return 0;
++
+   if (subtract_poly (np, &info->pg) < 0)
+     longjmp (info->env, 1);
+   return 1;
+@@ -592,10 +536,8 @@ poly_sub_callback (const BoxType * b, void *cl)
+ 
+   np = get_subtract_polygon_poly (poly, info->pour);
+   if (np == NULL)
+-    {
+-      printf ("Got np=NULL from LinePoly, is this bad?\n");
+-      longjmp (info->env, 1);
+-    }
++    return 0;
++
+   if (subtract_poly (np, &info->pg) < 0)
+     longjmp (info->env, 1);
+   return 1;
+@@ -682,7 +624,8 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
+       pg->f = pg;
+       pg->b = pg;
+       count_all++;
+-      if (pg->contours->area > PCB->IsleArea)
++//      if (pg->contours->area > PCB->IsleArea)
++      if (1) // Breaks incremental updates otherwise
+         {
+           count_added++;
+           poly = CreateNewPolygonInPour (pour, pour->Flags);
+@@ -696,12 +639,13 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
+         }
+       else
+         {
++          printf ("Too small\n");
+           poly_Free (&pg);
+         }
+     }
+   while ((pg = tmp) != info.pg);
+ 
+-  printf ("ClearPoly counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
++  printf ("ClearPour counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
+   return r;
+ }
+ 
+@@ -710,8 +654,6 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+               int type, void *ptr1, void *ptr2)
+ {
+   POLYAREA *np = NULL, *pg = NULL, *start_pg, *tmp;
+-  PolygonType **delete_children;
+-  int number_deleted = 0;
+   int count, count_all, count_added;
+ 
+   switch (type)
+@@ -748,7 +690,6 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+   /* Make pg contain the polygons we're going to fiddle with */
+ 
+   count = 0;
+-  delete_children = calloc (pour->PolygonN, sizeof (PolygonType *));
+   POURPOLYGON_LOOP (pour);
+   {
+     /* Gather up children which are touched by np */
+@@ -757,7 +698,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+         count++;
+         /* Steal their clipped contours, then delete them */
+         /* Add contour to local list to fiddle about with */
+-        delete_children[ number_deleted++ ] = polygon;
++
+         assert (poly_Valid (polygon->Clipped));
+         if (polygon->Clipped == NULL)
+           {
+@@ -778,13 +719,13 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+             pg->b = polygon->Clipped;
+             polygon->Clipped = NULL;
+           }
++        /* POURPOLYGON_LOOP iterates backwards, so it's OK
++         * to delete the current element we're sitting on */
++        DestroyPolygonInPour (pour, polygon);
+       }
+   }
+   END_LOOP;
+-  printf ("Subtract counted %i tocuhing childen, removing %i children\n", count, number_deleted);
+-  while (number_deleted)
+-    DestroyPolygonInPour (pour, delete_children[ --number_deleted ]);
+-  free (delete_children);
++  printf ("Subtract counted %i touching children, now removed\n", count);
+ 
+   if (pg == NULL)
+     {
+@@ -827,7 +768,8 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+       pg->b = pg;
+ 
+       count_all++;
+-      if (pg->contours->area > PCB->IsleArea)
++//      if (pg->contours->area > PCB->IsleArea)
++      if (1) // Breaks incremental updates otherwise
+         {
+           count_added++;
+           poly = CreateNewPolygonInPour (pour, pour->Flags);
+@@ -959,8 +901,6 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+           int type, void *ptr1, void *ptr2)
+ {
+   POLYAREA *np = NULL, *pg = NULL; //, *start_pg, *tmp;
+-  PolygonType **delete_children;
+-  int number_deleted = 0;
+   int count;
+ 
+   switch (type)
+@@ -997,7 +937,6 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+   /* Make pg contain the polygons we're going to fiddle with */
+ 
+   count = 0;
+-  delete_children = calloc (pour->PolygonN, sizeof (PolygonType *));
+   POURPOLYGON_LOOP (pour);
+   {
+     /* Gather up children which are touched by np */
+@@ -1006,7 +945,7 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+         count++;
+         /* Steal their clipped contours, then delete them */
+         /* Add contour to local list to fiddle about with */
+-        delete_children[ number_deleted++ ] = polygon;
++
+         assert (poly_Valid (polygon->Clipped));
+         if (polygon->Clipped == NULL)
+           {
+@@ -1027,22 +966,22 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+             pg->b = polygon->Clipped;
+             polygon->Clipped = NULL;
+           }
++        /* POURPOLYGON_LOOP iterates backwards, so it's OK
++         * to delete the current element we're sitting on */
++        DestroyPolygonInPour (pour, polygon);
+       }
+   }
+   END_LOOP;
+-  printf ("Unsubtract counted %i tocuhing childen, removing %i children\n", count, number_deleted);
+-  while (number_deleted)
+-    DestroyPolygonInPour (pour, delete_children[ --number_deleted ]);
+-  free (delete_children);
++  printf ("Unsubtract counted %i touching children, now removed\n");
+ 
+   if (pg == NULL)
+     {
+-      printf ("Hmm, got pg == NULL in subtract_plow\n");
+-      poly_Free (&np);
+-      return -1;
++      printf ("Hmm, got pg == NULL in add_plow\n");
++//      poly_Free (&np);
++//      return -1;
+     }
+ 
+-  assert (poly_Valid (pg));
++//  assert (poly_Valid (pg));
+ 
+   /* Perform the union operation */
+ 
+@@ -1114,14 +1053,17 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
+   if (pour->PolygonN)
+     {
+       printf ("We already had children. Killing them now.\n");
+-      delete_children = calloc (pour->PolygonN, sizeof (PolygonType *));
++//      delete_children = calloc (pour->PolygonN, sizeof (PolygonType *));
+       POURPOLYGON_LOOP (pour);
+       {
+-        delete_children[ number_deleted++ ] = polygon;
++//        delete_children[ number_deleted++ ] = polygon;
++        /* POURPOLYGON_LOOP iterates backwards, so it's OK
++         * to delete the current element we're sitting on */
++        DestroyPolygonInPour (pour, polygon);
+       }
+       END_LOOP;
+-      while (number_deleted)
+-        DestroyPolygonInPour (pour, delete_children[ --number_deleted ]);
++//      while (number_deleted)
++//        DestroyPolygonInPour (pour, delete_children[ --number_deleted ]);
+     }
+ 
+   clipped = original_pour_poly (pour);
