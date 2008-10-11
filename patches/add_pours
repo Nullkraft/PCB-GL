@@ -1,5 +1,5 @@
 Bottom: 14c9888f54ed51a0e8bb37591bf61cd67a8c7c5c
-Top:    eb29ea5cb168241e14ffca932a2bd4f5be26b986
+Top:    0ea0dad5c2a8ff898bd9dc44144f1a1d343f0b6a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-10 13:51:23 +0100
 
@@ -50,7 +50,7 @@ index 6a98d3a..6a482c0 100644
  	print.c \
  	print.h \
 diff --git a/src/action.c b/src/action.c
-index af7ba6b..6b2dc76 100644
+index af7ba6b..0193d6e 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -57,6 +57,7 @@
@@ -165,9 +165,12 @@ index af7ba6b..6b2dc76 100644
  
  	    /* copy the coordinates */
  	    Crosshair.AttachedLine.Point1.X = Crosshair.AttachedLine.Point2.X;
-@@ -1615,15 +1617,13 @@ NotifyMode (void)
+@@ -1613,17 +1615,15 @@ NotifyMode (void)
+ 	      else
+ 		{
  		  /* get starting point of nearest segment */
- 		  if (Crosshair.AttachedObject.Type == POLYGON_TYPE)
+-		  if (Crosshair.AttachedObject.Type == POLYGON_TYPE)
++		  if (Crosshair.AttachedObject.Type == POUR_TYPE)
  		    {
 -		      fake.poly =
 -			(PolygonTypePtr) Crosshair.AttachedObject.Ptr2;
@@ -1545,7 +1548,7 @@ index e0ef99b..17f8693 100644
   * changes the side of all selected and visible elements 
   * returns True if anything has changed
 diff --git a/src/const.h b/src/const.h
-index 3647c3b..c2fa83b 100644
+index 3647c3b..3e8202b 100644
 --- a/src/const.h
 +++ b/src/const.h
 @@ -78,7 +78,8 @@
@@ -1558,12 +1561,20 @@ index 3647c3b..c2fa83b 100644
  #define	PASTEBUFFER_MODE	5	/* paste objects from buffer */
  #define	TEXT_MODE		6	/* create text objects */
  #define	ROTATE_MODE		102	/* rotate objects */
-@@ -303,10 +304,13 @@ New polygons are full ones.
+@@ -296,17 +297,20 @@ New polygons are full ones.
+ #define	PIN_TYPE		0x00100	/* objects that are part */
+ #define	PAD_TYPE		0x00200	/* 'pin' of SMD element */
+ #define	ELEMENTNAME_TYPE	0x00400	/* of others */
+-#define	POLYGONPOINT_TYPE	0x00800
++//#define	POLYGONPOINT_TYPE	0x00800
++#define POURPOINT_TYPE 		0x00800
+ #define	LINEPOINT_TYPE		0x01000
+ #define ELEMENTLINE_TYPE        0x02000
+ #define ARC_TYPE                0x04000
  #define ELEMENTARC_TYPE		0x08000
  
  #define LOCKED_TYPE 		0x10000	/* used to tell search to include locked items. */
 +#define POUR_TYPE 		0x20000
-+#define POURPOINT_TYPE 		0x40000
  
  #define PIN_TYPES     (VIA_TYPE | PIN_TYPE)
 -#define LOCK_TYPES    (VIA_TYPE | LINE_TYPE | ARC_TYPE | POLYGON_TYPE | ELEMENT_TYPE \
@@ -3943,7 +3954,7 @@ index ffa4dad..a4ddd8d 100644
  
        if (Data->element_tree)
 diff --git a/src/mymem.h b/src/mymem.h
-index b9d4de1..bdae9a2 100644
+index b9d4de1..d902609 100644
 --- a/src/mymem.h
 +++ b/src/mymem.h
 @@ -56,7 +56,8 @@
@@ -3952,7 +3963,7 @@ index b9d4de1..bdae9a2 100644
  #define	STEP_UNDOLIST		500
 -#define	STEP_POLYGON		10
 +#define	STEP_POUR		10
-+#define	STEP_POLYGON		50
++#define	STEP_POLYGON		100
  #define	STEP_POLYGONPOINT	10
  #define	STEP_LIBRARYMENU	10
  #define	STEP_LIBRARYENTRY	20
@@ -5211,10 +5222,10 @@ index 32ffb31..606eb9a 100644
      {
 diff --git a/src/pour.c b/src/pour.c
 new file mode 100644
-index 0000000..1e8b982
+index 0000000..e66455f
 --- /dev/null
 +++ b/src/pour.c
-@@ -0,0 +1,1231 @@
+@@ -0,0 +1,1272 @@
 +/* $Id$ */
 +
 +/*
@@ -5338,7 +5349,50 @@ index 0000000..1e8b982
 +GetLowestDistancePourPoint (PourTypePtr Pour, LocationType X,
 +                            LocationType Y)
 +{
-+  return GetLowestDistancePourPoint (Pour, X, Y);
++  double mindistance = (double) MAX_COORD * MAX_COORD;
++  PointTypePtr ptr1 = &Pour->Points[Pour->PointN - 1],
++               ptr2 = &Pour->Points[0];
++  Cardinal n, result = 0;
++
++  /* we calculate the distance to each segment and choose the
++   * shortest distance. If the closest approach between the
++   * given point and the projected line (i.e. the segment extended)
++   * is not on the segment, then the distance is the distance
++   * to the segment end point.
++   */
++
++  for (n = 0; n < Pour->PointN; n++, ptr2++)
++    {
++      register double u, dx, dy;
++      dx = ptr2->X - ptr1->X;
++      dy = ptr2->Y - ptr1->Y;
++      if (dx != 0.0 || dy != 0.0)
++        {
++          /* projected intersection is at P1 + u(P2 - P1) */
++          u = ((X - ptr1->X) * dx + (Y - ptr1->Y) * dy) / (dx * dx + dy * dy);
++
++          if (u < 0.0)
++            {                   /* ptr1 is closest point */
++              u = SQUARE (X - ptr1->X) + SQUARE (Y - ptr1->Y);
++            }
++          else if (u > 1.0)
++            {                   /* ptr2 is closest point */
++              u = SQUARE (X - ptr2->X) + SQUARE (Y - ptr2->Y);
++            }
++          else
++            {                   /* projected intersection is closest point */
++              u = SQUARE (X - ptr1->X * (1.0 - u) - u * ptr2->X) +
++                SQUARE (Y - ptr1->Y * (1.0 - u) - u * ptr2->Y);
++            }
++          if (u < mindistance)
++            {
++              mindistance = u;
++              result = n;
++            }
++        }
++      ptr1 = ptr2;
++    }
++  return (result);
 +}
 +
 +/* ---------------------------------------------------------------------------
@@ -6189,7 +6243,7 @@ index 0000000..1e8b982
 +      }
 +  }
 +  END_LOOP;
-+  printf ("Unsubtract counted %i touching children, now removed\n");
++  printf ("Unsubtract counted %i touching children, now removed\n", count);
 +
 +  if (pg == NULL)
 +    {
@@ -6261,8 +6315,6 @@ index 0000000..1e8b982
 +InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
 +{
 +  POLYAREA *clipped;
-+  PolygonType **delete_children;
-+  int number_deleted = 0;
 +
 +  printf ("InitPourClip\n");
 +
@@ -7310,20 +7362,22 @@ index 7b96fec..49d7535 100644
    ENDALL_LOOP;
  
 diff --git a/src/select.h b/src/select.h
-index 7a48dae..373510e 100644
+index 7a48dae..b5c9542 100644
 --- a/src/select.h
 +++ b/src/select.h
-@@ -33,8 +33,9 @@
+@@ -33,9 +33,11 @@
  
  #include "global.h"
  
 +#warning FIXME Later: Do we want pours / polygons selectable?
  #define SELECT_TYPES	\
 -	(VIA_TYPE | LINE_TYPE | TEXT_TYPE | POLYGON_TYPE | ELEMENT_TYPE |	\
-+	(VIA_TYPE | LINE_TYPE | TEXT_TYPE | POLYGON_TYPE | POUR_TYPE | ELEMENT_TYPE |	\
++	(VIA_TYPE | LINE_TYPE | TEXT_TYPE | POUR_TYPE | ELEMENT_TYPE |	\
  	 PIN_TYPE | PAD_TYPE | ELEMENTNAME_TYPE | RATLINE_TYPE | ARC_TYPE)
++//	(VIA_TYPE | LINE_TYPE | TEXT_TYPE | POLYGON_TYPE | POUR_TYPE | ELEMENT_TYPE |	
  
  void SelectPin (LibraryEntryTypePtr entry, Boolean toggle);
+ Boolean SelectObject (void);
 diff --git a/src/set.c b/src/set.c
 index 912db04..e9ced1d 100644
 --- a/src/set.c
