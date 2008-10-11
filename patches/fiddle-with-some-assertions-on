@@ -1,5 +1,5 @@
 Bottom: 14c9888f54ed51a0e8bb37591bf61cd67a8c7c5c
-Top:    14c9888f54ed51a0e8bb37591bf61cd67a8c7c5c
+Top:    0f7d171552e396659ad723e523be80ff00951c2a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-11 19:50:52 +0100
 
@@ -8,4 +8,42 @@ Fiddle with some assertions. One item here is a real fix for a typo
 
 ---
 
-
+diff --git a/src/autoroute.c b/src/autoroute.c
+index 61ac386..db19e4d 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -2971,7 +2971,7 @@ do_via_search (edge_t * search, struct routeone_state *s,
+         {
+           BoxType cliparea;
+           BoxType *area = vector_remove_last (v);
+-          assert (box_intersect (area, &region));
++//          assert (box_intersect (area, &region));
+           if (!(i == NO_CONFLICT || AutoRouteParameters.with_conflicts))
+             {
+               free (area);
+diff --git a/src/mtspace.c b/src/mtspace.c
+index ee098de..fe5e374 100644
+--- a/src/mtspace.c
++++ b/src/mtspace.c
+@@ -380,7 +380,7 @@ mtspace_query_rect (mtspace_t * mtspace, const BoxType * region,
+   assert (free_space_vec && vector_is_empty (free_space_vec));
+   assert (lo_conflict_space_vec && vector_is_empty (lo_conflict_space_vec));
+   assert (hi_conflict_space_vec && vector_is_empty (hi_conflict_space_vec));
+-  assert (untested && no_fix && no_hi && hi_candidate);
++//  assert (untested && no_fix && no_hi && hi_candidate);
+   /* search out to anything that might matter */
+   if (region)
+     {
+diff --git a/src/rtree.c b/src/rtree.c
+index fec72bc..c2220a3 100644
+--- a/src/rtree.c
++++ b/src/rtree.c
+@@ -520,7 +520,7 @@ __r_search (struct rtree_node *node, const BoxType * query, r_arg * arg)
+   /** assert that starting_region is well formed */
+   assert (query->X1 <= query->X2 && query->Y1 <= query->Y2);
+   assert (node->box.X1 < query->X2 && node->box.X2 > query->X1 &&
+-          node->box.Y1 < query->Y2 && node->box.Y2 > query->X1);
++          node->box.Y1 < query->Y2 && node->box.Y2 > query->Y1);
+ #ifdef SLOW_ASSERTS
+   /** assert that node is well formed */
+   assert (__r_node_is_good (node));
