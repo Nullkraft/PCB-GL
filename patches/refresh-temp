@@ -1,0 +1,104 @@
+Bottom: 0f2fb22c8aaf0886d35270ff121d0c8bbf2ace9a
+Top:    ccdc8ea57cb30ccd2959b7567f6d1a0c9ff7c779
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-11 23:55:30 +0100
+
+Refresh of off-to-find-burried-treasure-o
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index ae5590a..bfff1c3 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -3770,46 +3770,54 @@ int
+ IsPolygonAnIsland (LayerType *layer, PolygonType *polygon)
+ {
+   int connected_count = 0;
++  int any_more;
+   int i;
+ 
+-  /* Not sure how much of this is necessary */
+-  SaveStackAndVisibility ();
+-  ResetStackAndVisibility ();
+-  hid_action ("LayersChanged");
+   InitConnectionLookup ();
+-  /* Not sure how much of this is necessary */
+ 
+   TheFlag = FOUNDFLAG | DRCFLAG | SELECTEDFLAG;
+ 
+-  ResetConnections (True);
++  ResetConnections (False);
++
++  /* Need to ensure we don't set the SELECTED flag as we find
++   * things, otherwise we don't get our quick escape due to the
++   * "drc" magic.
++   */
++  TheFlag = FOUNDFLAG | DRCFLAG;
+ 
+   User = False;
+ 
+-  /* This is really Slow.. need to add a flag where we can
+-   * make this quit as soon as it finds _some_ connectivity
+-   */
++  /* Let the search stop if we find something we haven't yet seen */
++  drc = True;
++
+   ListStart (POLYGON_TYPE, layer, polygon, polygon);
+-  DoIt (True, False);
+ 
+-  for (i = 0; i < max_layer; i++)
++  do
+     {
+-      connected_count += LineList[ i ].Number;
+-    }
+-  connected_count += PadList[ COMPONENT_LAYER ].Number;
+-  connected_count += PadList[ SOLDER_LAYER ].Number;
+-  connected_count += PVList.Number;
++      any_more = DoIt (False, False);
+ 
+-  /* ok now the connected objects have the FOUND, DRC and SELECTED flags set */
+-  DumpList ();
++      /* Check if we got any useful hits */
++      connected_count = 0;
++      for (i = 0; i < max_layer; i++)
++        {
++          connected_count += LineList[ i ].Number;
++          /* No need to search all layers when one will do */
++          if (connected_count)
++            break;
++        }
++      connected_count += PadList[ COMPONENT_LAYER ].Number;
++      connected_count += PadList[ SOLDER_LAYER ].Number;
++      connected_count += PVList.Number;
++      if (connected_count)
++        break;
+ 
+-  ResetConnections (False);
++    }
++  while (any_more);
+ 
++  drc = False;
++  ResetConnections (False);
+   FreeConnectionLookupMemory ();
+ 
+-  RestoreStackAndVisibility ();
+-  hid_action ("LayersChanged");
+-//  gui->invalidate_all ();
+-
+   return (connected_count == 0);
+ }
+ 
+diff --git a/src/pour.c b/src/pour.c
+index ee1efa5..2327ef7 100644
+--- a/src/pour.c
++++ b/src/pour.c
+@@ -1071,7 +1071,8 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+     }
+   while ((pg = tmp) != start_pg);
+ 
+-  mark_islands (Data, layer, pour, type, ptr1, ptr2);
++  printf ("skipping mark_islands in add_plow / RestoreToPours\n");
++//  mark_islands (Data, layer, pour, type, ptr1, ptr2);
+ 
+ //  printf ("ClearPour counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
