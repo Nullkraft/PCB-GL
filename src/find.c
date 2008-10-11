@@ -3763,6 +3763,65 @@ doIsBad:
 }
 
 /*-----------------------------------------------------------------------------
+ * Check for islanding of a polygon
+ * by determining if any non-polygon objects are connected to it.
+ */
+int
+IsPolygonAnIsland (LayerType *layer, PolygonType *polygon)
+{
+  int connected_count = 0;
+  int any_more;
+  int i;
+
+  InitConnectionLookup ();
+
+  TheFlag = FOUNDFLAG | DRCFLAG | SELECTEDFLAG;
+
+  ResetConnections (False);
+
+  /* Need to ensure we don't set the SELECTED flag as we find
+   * things, otherwise we don't get our quick escape due to the
+   * "drc" magic.
+   */
+  TheFlag = FOUNDFLAG | DRCFLAG;
+
+  User = False;
+
+  /* Let the search stop if we find something we haven't yet seen */
+  drc = True;
+
+  ListStart (POLYGON_TYPE, layer, polygon, polygon);
+
+  do
+    {
+      any_more = DoIt (False, False);
+
+      /* Check if we got any useful hits */
+      connected_count = 0;
+      for (i = 0; i < max_layer; i++)
+        {
+          connected_count += LineList[ i ].Number;
+          /* No need to search all layers when one will do */
+          if (connected_count)
+            break;
+        }
+      connected_count += PadList[ COMPONENT_LAYER ].Number;
+      connected_count += PadList[ SOLDER_LAYER ].Number;
+      connected_count += PVList.Number;
+      if (connected_count)
+        break;
+
+    }
+  while (any_more);
+
+  drc = False;
+  ResetConnections (False);
+  FreeConnectionLookupMemory ();
+
+  return (connected_count == 0);
+}
+
+/*-----------------------------------------------------------------------------
  * Check for DRC violations
  * see if the connectivity changes when everything is bloated, or shrunk
  */

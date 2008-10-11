@@ -657,7 +657,29 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
 }
 
 static int
-subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+check_polygon_island_cb (const BoxType * b, void *cl)
+{
+  PolygonTypePtr polygon = (PolygonTypePtr) b;
+  struct cpInfo *info = (struct cpInfo *) cl;
+
+  ASSIGN_FLAG (HOLEFLAG, IsPolygonAnIsland (info->layer, polygon), polygon);
+  return 1;
+}
+
+static int
+mark_islands (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+              int type, void *ptr1, void *ptr2)
+{
+  struct cpInfo info;
+  info.region = &((PinTypePtr) ptr2)->BoundingBox;
+  info.layer = layer;
+
+  return r_search (pour->polygon_tree, info.region, NULL,
+                   check_polygon_island_cb, &info);
+}
+
+static int
+subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
               int type, void *ptr1, void *ptr2)
 {
   POLYAREA *np = NULL, *pg = NULL, *start_pg, *tmp;
@@ -667,7 +689,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
     {
     case PIN_TYPE:
     case VIA_TYPE:
-      np = get_subtract_pin_poly (Data, (PinTypePtr) ptr2, Layer, pour);
+      np = get_subtract_pin_poly (Data, (PinTypePtr) ptr2, layer, pour);
       break;
     case LINE_TYPE:
       np = get_subtract_line_poly ((LineTypePtr) ptr2, pour);
@@ -798,6 +820,8 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
     }
   while ((pg = tmp) != start_pg);
 
+  mark_islands (Data, layer, pour, type, ptr1, ptr2);
+
   return 0;
 }
 
@@ -900,7 +924,7 @@ original_pour_poly (PourType * p)
 }
 
 static int
-add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
           int type, void *ptr1, void *ptr2)
 {
   POLYAREA *np = NULL, *pg = NULL, *tmp, *start_pg;
@@ -910,22 +934,22 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
     {
     case PIN_TYPE:
     case VIA_TYPE:
-      np = get_unsubtract_pin_poly ((PinTypePtr) ptr2, Layer, pour);
+      np = get_unsubtract_pin_poly ((PinTypePtr) ptr2, layer, pour);
       break;
     case LINE_TYPE:
-      np = get_unsubtract_line_poly ((LineTypePtr) ptr2, Layer, pour);
+      np = get_unsubtract_line_poly ((LineTypePtr) ptr2, layer, pour);
       break;
     case ARC_TYPE:
-      np = get_unsubtract_arc_poly ((ArcTypePtr) ptr2, Layer, pour);
+      np = get_unsubtract_arc_poly ((ArcTypePtr) ptr2, layer, pour);
       break;
     case PAD_TYPE:
-      np = get_unsubtract_pad_poly ((PadTypePtr) ptr2, Layer, pour);
+      np = get_unsubtract_pad_poly ((PadTypePtr) ptr2, layer, pour);
       break;
     case POLYGON_TYPE:
-      np = get_unsubtract_polygon_poly ((PolygonTypePtr) ptr2, Layer, pour);
+      np = get_unsubtract_polygon_poly ((PolygonTypePtr) ptr2, layer, pour);
       break;
     case TEXT_TYPE:
-      np = get_unsubtract_text_poly ((TextTypePtr) ptr2, Layer, pour);
+      np = get_unsubtract_text_poly ((TextTypePtr) ptr2, layer, pour);
       break;
     }
 
@@ -1006,7 +1030,7 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
   printf ("After unsubtract, counted %i polygon pieces\n", count);
 #endif
 
-  ClearPour (PCB->Data, Layer, pour, &pg, (const BoxType *) ptr2, 2 * UNSUBTRACT_BLOAT);
+  ClearPour (PCB->Data, layer, pour, &pg, (const BoxType *) ptr2, 2 * UNSUBTRACT_BLOAT);
 
   if (pg == NULL)
     {
@@ -1046,6 +1070,9 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
         }
     }
   while ((pg = tmp) != start_pg);
+
+  printf ("skipping mark_islands in add_plow / RestoreToPours\n");
+//  mark_islands (Data, layer, pour, type, ptr1, ptr2);
 
 //  printf ("ClearPour counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
 
@@ -1126,6 +1153,8 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
     }
   while ((pg = tmp) != start_pg);
 
+  mark_islands (Data, layer, pour, 0, NULL, NULL);
+
   return 1;
 }
 
@@ -1155,7 +1184,8 @@ int
 PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
            int (*call_back) (DataTypePtr data, LayerTypePtr lay,
                              PourTypePtr poly, int type,
-                             void *ptr1, void *ptr2))
+                             void *ptr1, void *ptr2),
+           int ignore_clearflags)
 {
   BoxType sb = ((PinTypePtr) ptr2)->BoundingBox;
   int r = 0;
@@ -1198,7 +1228,8 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
     case TEXT_TYPE:
     case POLYGON_TYPE:
       /* the cast works equally well for lines and arcs */
-      if (!TEST_FLAG (CLEARLINEFLAG, (LineTypePtr) ptr2))
+      if (!ignore_clearflags &&
+          !TEST_FLAG (CLEARLINEFLAG, (LineTypePtr) ptr2))
         return 0;
       /* silk doesn't plow */
       if (GetLayerNumber (Data, ptr1) >= max_layer)
@@ -1230,12 +1261,12 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
       {
         PIN_LOOP ((ElementType *) ptr1);
         {
-          PlowPours (Data, PIN_TYPE, ptr1, pin, call_back);
+          PlowPours (Data, PIN_TYPE, ptr1, pin, call_back, ignore_clearflags);
         }
         END_LOOP;
         PAD_LOOP ((ElementType *) ptr1);
         {
-          PlowPours (Data, PAD_TYPE, ptr1, pad, call_back);
+          PlowPours (Data, PAD_TYPE, ptr1, pad, call_back, ignore_clearflags);
         }
         END_LOOP;
       }
@@ -1253,7 +1284,7 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
 //      printf ("Calling InitPourClip from RestoreToPour\n");
       InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
     }
-  PlowPours (Data, type, ptr1, ptr2, add_plow);
+  PlowPours (Data, type, ptr1, ptr2, add_plow, False);
 }
 
 void
@@ -1265,6 +1296,11 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
 //      printf ("Calling InitPourClip from ClearFromPour\n");
       InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
     }
-  PlowPours (Data, type, ptr1, ptr2, subtract_plow);
+  PlowPours (Data, type, ptr1, ptr2, subtract_plow, False);
 }
 
+void
+MarkPourIslands (DataType * Data, int type, void *ptr1, void *ptr2)
+{
+  PlowPours (Data, type, ptr1, ptr2, mark_islands, True);
+}
