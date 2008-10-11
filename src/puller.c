@@ -1704,11 +1704,25 @@ gp_text_cb (const BoxType *b, void *cb)
   return 0;
 }
 
+#warning FIXME Later: Really want to geometry of the clipped polygons
+#if 0
 static int
 gp_poly_cb (const BoxType *b, void *cb)
 {
   int i;
   const PolygonTypePtr p = (PolygonTypePtr) b;
+  for (i=0; i<p->PointN; i++)
+    gp_point (p->Points[i].X, p->Points[i].Y, 0, 0);
+  return 0;
+}
+#endif
+
+#warning FIXME Later: Really want to geometry of the clipped polygons
+static int
+gp_pour_cb (const BoxType *b, void *cb)
+{
+  int i;
+  const PourTypePtr p = (PourTypePtr) b;
   for (i=0; i<p->PointN; i++)
     gp_point (p->Points[i].X, p->Points[i].Y, 0, 0);
   return 0;
@@ -2238,7 +2252,7 @@ maybe_pull_1 (LineTypePtr line)
   r_search(CURRENT->line_tree, &box, NULL, gp_line_cb, 0);
   r_search(CURRENT->arc_tree, &box, NULL, gp_arc_cb, 0);
   r_search(CURRENT->text_tree, &box, NULL, gp_text_cb, 0);
-  r_search(CURRENT->polygon_tree, &box, NULL, gp_poly_cb, 0);
+  r_search(CURRENT->pour_tree, &box, NULL, gp_pour_cb, 0);
   r_search(PCB->Data->pin_tree, &box, NULL, gp_pin_cb, 0);
   r_search(PCB->Data->via_tree, &box, NULL, gp_pin_cb, 0);
   r_search(PCB->Data->pad_tree, &box, NULL, gp_pad_cb, 0);
