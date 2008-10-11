@@ -1,5 +1,5 @@
 Bottom: 14c9888f54ed51a0e8bb37591bf61cd67a8c7c5c
-Top:    76975c09108fe8dc2effeef9de9dea44b0b19a5e
+Top:    6ea4bc3f83688bf5e95d1de3dc08f1a96c146eeb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-10 13:51:23 +0100
 
@@ -50,7 +50,7 @@ index 6a98d3a..6a482c0 100644
  	print.c \
  	print.h \
 diff --git a/src/action.c b/src/action.c
-index af7ba6b..0193d6e 100644
+index af7ba6b..0a1b874 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -57,6 +57,7 @@
@@ -79,17 +79,16 @@ index af7ba6b..0193d6e 100644
    LineType line;
  }
  fake;
-@@ -363,7 +364,8 @@ static FunctionType Functions[] = {
+@@ -363,7 +364,7 @@ static FunctionType Functions[] = {
    {"PinByName", F_PinByName},
    {"PinOrPadName", F_PinOrPadName},
    {"Pinout", F_Pinout},
 -  {"Polygon", F_Polygon},
 +  {"Pour", F_Pour},
-+//  {"Polygon", F_Polygon},
    {"PreviousPoint", F_PreviousPoint},
    {"RatsNest", F_RatsNest},
    {"Rectangle", F_Rectangle},
-@@ -824,8 +826,8 @@ AdjustAttachedObjects (void)
+@@ -824,8 +825,8 @@ AdjustAttachedObjects (void)
        AdjustAttachedBox ();
        break;
  
@@ -100,7 +99,7 @@ index af7ba6b..0193d6e 100644
        AdjustAttachedLine ();
        break;
        /* line creation mode */
-@@ -1334,12 +1336,12 @@ NotifyMode (void)
+@@ -1334,12 +1335,12 @@ NotifyMode (void)
  	  Crosshair.AttachedBox.Point1.X != Crosshair.AttachedBox.Point2.X &&
  	  Crosshair.AttachedBox.Point1.Y != Crosshair.AttachedBox.Point2.Y)
  	{
@@ -115,7 +114,7 @@ index af7ba6b..0193d6e 100644
  							Crosshair.
  							AttachedBox.Point1.X,
  							Crosshair.
-@@ -1352,10 +1354,10 @@ NotifyMode (void)
+@@ -1352,10 +1353,10 @@ NotifyMode (void)
  							(flags))) !=
  	      NULL)
  	    {
@@ -129,7 +128,7 @@ index af7ba6b..0193d6e 100644
  	      Draw ();
  	    }
  
-@@ -1395,10 +1397,10 @@ NotifyMode (void)
+@@ -1395,10 +1396,10 @@ NotifyMode (void)
  	break;
        }
  
@@ -143,7 +142,7 @@ index af7ba6b..0193d6e 100644
  
  	/* do update of position; use the 'LINE_MODE' mechanism */
  	NotifyLine ();
-@@ -1408,7 +1410,7 @@ NotifyMode (void)
+@@ -1408,7 +1409,7 @@ NotifyMode (void)
  	    points->X == Crosshair.AttachedLine.Point2.X &&
  	    points->Y == Crosshair.AttachedLine.Point2.Y)
  	  {
@@ -152,7 +151,7 @@ index af7ba6b..0193d6e 100644
  	    Draw ();
  	    break;
  	  }
-@@ -1420,9 +1422,9 @@ NotifyMode (void)
+@@ -1420,9 +1421,9 @@ NotifyMode (void)
  	    points[n - 1].X != Crosshair.AttachedLine.Point2.X ||
  	    points[n - 1].Y != Crosshair.AttachedLine.Point2.Y)
  	  {
@@ -165,7 +164,7 @@ index af7ba6b..0193d6e 100644
  
  	    /* copy the coordinates */
  	    Crosshair.AttachedLine.Point1.X = Crosshair.AttachedLine.Point2.X;
-@@ -1613,17 +1615,15 @@ NotifyMode (void)
+@@ -1613,17 +1614,15 @@ NotifyMode (void)
  	      else
  		{
  		  /* get starting point of nearest segment */
@@ -189,7 +188,7 @@ index af7ba6b..0193d6e 100644
  		      Crosshair.AttachedObject.Ptr2 = &fake.line;
  
  		    }
-@@ -1635,9 +1635,9 @@ NotifyMode (void)
+@@ -1635,9 +1634,9 @@ NotifyMode (void)
  
  	  /* second notify, insert new point into object */
  	case STATE_SECOND:
@@ -202,7 +201,7 @@ index af7ba6b..0193d6e 100644
  				   &polyIndex,
  				   InsertedPoint.X, InsertedPoint.Y, False);
  	  else
-@@ -2970,13 +2970,13 @@ ActionMode (int argc, char **argv, int x, int y)
+@@ -2970,13 +2969,13 @@ ActionMode (int argc, char **argv, int x, int y)
  		  }
  		break;
  	  
@@ -218,7 +217,7 @@ index af7ba6b..0193d6e 100644
  		  }
  		break;
  
-@@ -3005,8 +3005,8 @@ ActionMode (int argc, char **argv, int x, int y)
+@@ -3005,8 +3004,8 @@ ActionMode (int argc, char **argv, int x, int y)
  	case F_PasteBuffer:
  	  SetMode (PASTEBUFFER_MODE);
  	  break;
@@ -229,7 +228,7 @@ index af7ba6b..0193d6e 100644
  	  break;
  #ifndef HAVE_LIBSTROKE
  	case F_Release:
-@@ -3050,9 +3050,9 @@ ActionMode (int argc, char **argv, int x, int y)
+@@ -3050,9 +3049,9 @@ ActionMode (int argc, char **argv, int x, int y)
  	  else if (Settings.Mode == RECTANGLE_MODE
  		   && Crosshair.AttachedBox.State != STATE_FIRST)
  	    SetMode (RECTANGLE_MODE);
@@ -241,7 +240,7 @@ index af7ba6b..0193d6e 100644
  	  else
  	    {
  	      SaveMode ();
-@@ -4431,6 +4431,9 @@ off are automatically deleted.
+@@ -4431,6 +4430,9 @@ off are automatically deleted.
  static int
  ActionMorphPolygon (int argc, char **argv, int x, int y)
  {
@@ -251,7 +250,7 @@ index af7ba6b..0193d6e 100644
    char *function = ARG (0);
    if (function)
      {
-@@ -4466,6 +4469,7 @@ ActionMorphPolygon (int argc, char **argv, int x, int y)
+@@ -4466,6 +4468,7 @@ ActionMorphPolygon (int argc, char **argv, int x, int y)
  	}
      }
    return 0;
@@ -259,7 +258,7 @@ index af7ba6b..0193d6e 100644
  }
  
  /* --------------------------------------------------------------------------- */
-@@ -6033,9 +6037,9 @@ ActionUndo (int argc, char **argv, int x, int y)
+@@ -6033,9 +6036,9 @@ ActionUndo (int argc, char **argv, int x, int y)
        /* undo the last operation */
  
        HideCrosshair (True);
@@ -271,7 +270,7 @@ index af7ba6b..0193d6e 100644
  	  RestoreCrosshair (True);
  	  return 0;
  	}
-@@ -6195,8 +6199,8 @@ three "undone" lines.
+@@ -6195,8 +6198,8 @@ three "undone" lines.
  static int
  ActionRedo (int argc, char **argv, int x, int y)
  {
@@ -282,7 +281,7 @@ index af7ba6b..0193d6e 100644
        Crosshair.AttachedLine.State == STATE_SECOND)
      return 1;
    HideCrosshair (True);
-@@ -6246,19 +6250,19 @@ static int
+@@ -6246,19 +6249,19 @@ static int
  ActionPolygon (int argc, char **argv, int x, int y)
  {
    char *function = ARG (0);
@@ -804,7 +803,7 @@ index a88d11f..fe1ee5e 100644
    {
      r_delete_entry (layer->text_tree, (BoxTypePtr) text);
 diff --git a/src/change.c b/src/change.c
-index e0ef99b..d799921 100644
+index e0ef99b..669a100 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -50,6 +50,7 @@
@@ -958,36 +957,42 @@ index e0ef99b..d799921 100644
    ClrViaOctagon,
    ClrElementOctagon,
    NULL,
-@@ -356,14 +372,14 @@ static void *
+@@ -355,15 +371,15 @@ static ObjectFunctionType ClrOctagonFunctions = {
+ static void *
  ChangeViaThermal (PinTypePtr Via)
  {
-   AddObjectToClearPolyUndoList (VIA_TYPE, Via, Via, Via, False);
+-  AddObjectToClearPolyUndoList (VIA_TYPE, Via, Via, Via, False);
 -  RestoreToPolygon (PCB->Data, VIA_TYPE, CURRENT, Via);
++  AddObjectToClearPourUndoList (VIA_TYPE, Via, Via, Via, False);
 +  RestoreToPours (PCB->Data, VIA_TYPE, CURRENT, Via);
    AddObjectToFlagUndoList (VIA_TYPE, Via, Via, Via);
    if (!Delta)			/* remove the thermals */
      CLEAR_THERM (INDEXOFCURRENT, Via);
    else
      ASSIGN_THERM (INDEXOFCURRENT, Delta, Via);
-   AddObjectToClearPolyUndoList (VIA_TYPE, Via, Via, Via, True);
+-  AddObjectToClearPolyUndoList (VIA_TYPE, Via, Via, Via, True);
 -  ClearFromPolygon (PCB->Data, VIA_TYPE, CURRENT, Via);
++  AddObjectToClearPourUndoList (VIA_TYPE, Via, Via, Via, True);
 +  ClearFromPours (PCB->Data, VIA_TYPE, CURRENT, Via);
    DrawVia (Via, 0);
    return Via;
  }
-@@ -376,14 +392,14 @@ static void *
+@@ -375,15 +391,15 @@ ChangeViaThermal (PinTypePtr Via)
+ static void *
  ChangePinThermal (ElementTypePtr element, PinTypePtr Pin)
  {
-   AddObjectToClearPolyUndoList (PIN_TYPE, element, Pin, Pin, False);
+-  AddObjectToClearPolyUndoList (PIN_TYPE, element, Pin, Pin, False);
 -  RestoreToPolygon (PCB->Data, VIA_TYPE, CURRENT, Pin);
++  AddObjectToClearPourUndoList (PIN_TYPE, element, Pin, Pin, False);
 +  RestoreToPours (PCB->Data, VIA_TYPE, CURRENT, Pin);
    AddObjectToFlagUndoList (PIN_TYPE, element, Pin, Pin);
    if (!Delta)			/* remove the thermals */
      CLEAR_THERM (INDEXOFCURRENT, Pin);
    else
      ASSIGN_THERM (INDEXOFCURRENT, Delta, Pin);
-   AddObjectToClearPolyUndoList (PIN_TYPE, element, Pin, Pin, True);
+-  AddObjectToClearPolyUndoList (PIN_TYPE, element, Pin, Pin, True);
 -  ClearFromPolygon (PCB->Data, VIA_TYPE, CURRENT, Pin);
++  AddObjectToClearPourUndoList (PIN_TYPE, element, Pin, Pin, True);
 +  ClearFromPours (PCB->Data, VIA_TYPE, CURRENT, Pin);
    DrawPin (Pin, 0);
    return Pin;
@@ -1224,53 +1229,67 @@ index e0ef99b..d799921 100644
    DrawText (Layer, Text, 0);
    return (old);
  }
-@@ -1086,14 +1102,14 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
+@@ -1085,15 +1101,15 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
+   EraseLine (Line);
    if (TEST_FLAG(CLEARLINEFLAG, Line))
    {
-   AddObjectToClearPolyUndoList (LINE_TYPE, Layer, Line, Line, False);
+-  AddObjectToClearPolyUndoList (LINE_TYPE, Layer, Line, Line, False);
 -  RestoreToPolygon (PCB->Data, LINE_TYPE, Layer, Line);
++  AddObjectToClearPourUndoList (LINE_TYPE, Layer, Line, Line, False);
 +  RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
    }
    AddObjectToFlagUndoList (LINE_TYPE, Layer, Line, Line);
    TOGGLE_FLAG (CLEARLINEFLAG, Line);
    if (TEST_FLAG(CLEARLINEFLAG, Line))
    {
-   AddObjectToClearPolyUndoList (LINE_TYPE, Layer, Line, Line, True);
+-  AddObjectToClearPolyUndoList (LINE_TYPE, Layer, Line, Line, True);
 -  ClearFromPolygon (PCB->Data, LINE_TYPE, Layer, Line);
++  AddObjectToClearPourUndoList (LINE_TYPE, Layer, Line, Line, True);
 +  ClearFromPours (PCB->Data, LINE_TYPE, Layer, Line);
    }
    DrawLine (Layer, Line, 0);
    return (Line);
-@@ -1132,14 +1148,14 @@ ChangeArcJoin (LayerTypePtr Layer, ArcTypePtr Arc)
+@@ -1131,17 +1147,17 @@ ChangeArcJoin (LayerTypePtr Layer, ArcTypePtr Arc)
+     return (NULL);
    EraseArc (Arc);
    if (TEST_FLAG (CLEARLINEFLAG, Arc))
-   {
+-  {
 -    RestoreToPolygon (PCB->Data, ARC_TYPE, Layer, Arc);
-+    RestoreToPours (PCB->Data, ARC_TYPE, Layer, Arc);
-     AddObjectToClearPolyUndoList (ARC_TYPE, Layer, Arc, Arc, False);
+-    AddObjectToClearPolyUndoList (ARC_TYPE, Layer, Arc, Arc, False);
++    {
++      RestoreToPours (PCB->Data, ARC_TYPE, Layer, Arc);
++      AddObjectToClearPourUndoList (ARC_TYPE, Layer, Arc, Arc, False);
      }
    AddObjectToFlagUndoList (ARC_TYPE, Layer, Arc, Arc);
    TOGGLE_FLAG (CLEARLINEFLAG, Arc);
    if (TEST_FLAG (CLEARLINEFLAG, Arc))
-   {
+-  {
 -    ClearFromPolygon (PCB->Data, ARC_TYPE, Layer, Arc);
-+    ClearFromPours (PCB->Data, ARC_TYPE, Layer, Arc);
-   AddObjectToClearPolyUndoList (ARC_TYPE, Layer, Arc, Arc, True);
-   }
+-  AddObjectToClearPolyUndoList (ARC_TYPE, Layer, Arc, Arc, True);
+-  }
++    {
++      ClearFromPours (PCB->Data, ARC_TYPE, Layer, Arc);
++      AddObjectToClearPourUndoList (ARC_TYPE, Layer, Arc, Arc, True);
++    }
    DrawArc (Layer, Arc, 0);
-@@ -1180,42 +1196,42 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
+   return (Arc);
+ }
+@@ -1179,43 +1195,43 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
+   EraseText (Layer, Text);
    if (TEST_FLAG(CLEARLINEFLAG, Text))
    {
-   AddObjectToClearPolyUndoList (TEXT_TYPE, Layer, Text, Text, False);
+-  AddObjectToClearPolyUndoList (TEXT_TYPE, Layer, Text, Text, False);
 -  RestoreToPolygon (PCB->Data, TEXT_TYPE, Layer, Text);
++  AddObjectToClearPourUndoList (TEXT_TYPE, Layer, Text, Text, False);
 +  RestoreToPours (PCB->Data, TEXT_TYPE, Layer, Text);
    }
    AddObjectToFlagUndoList (LINE_TYPE, Layer, Text, Text);
    TOGGLE_FLAG (CLEARLINEFLAG, Text);
    if (TEST_FLAG(CLEARLINEFLAG, Text))
    {
-   AddObjectToClearPolyUndoList (TEXT_TYPE, Layer, Text, Text, True);
+-  AddObjectToClearPolyUndoList (TEXT_TYPE, Layer, Text, Text, True);
 -  ClearFromPolygon (PCB->Data, TEXT_TYPE, Layer, Text);
++  AddObjectToClearPourUndoList (TEXT_TYPE, Layer, Text, Text, True);
 +  ClearFromPours (PCB->Data, TEXT_TYPE, Layer, Text);
    }
    DrawText (Layer, Text, 0);
@@ -1355,58 +1374,70 @@ index e0ef99b..d799921 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1398,11 +1414,11 @@ ChangePadSquare (ElementTypePtr Element, PadTypePtr Pad)
+@@ -1397,12 +1413,12 @@ ChangePadSquare (ElementTypePtr Element, PadTypePtr Pad)
+   if (TEST_FLAG (LOCKFLAG, Pad))
      return (NULL);
    ErasePad (Pad);
-   AddObjectToClearPolyUndoList (PAD_TYPE, Element, Pad, Pad, False);
+-  AddObjectToClearPolyUndoList (PAD_TYPE, Element, Pad, Pad, False);
 -  RestoreToPolygon (PCB->Data, PAD_TYPE, Element, Pad);
++  AddObjectToClearPourUndoList (PAD_TYPE, Element, Pad, Pad, False);
 +  RestoreToPours (PCB->Data, PAD_TYPE, Element, Pad);
    AddObjectToFlagUndoList (PAD_TYPE, Element, Pad, Pad);
    TOGGLE_FLAG (SQUAREFLAG, Pad);
-   AddObjectToClearPolyUndoList (PAD_TYPE, Element, Pad, Pad, True);
+-  AddObjectToClearPolyUndoList (PAD_TYPE, Element, Pad, Pad, True);
 -  ClearFromPolygon (PCB->Data, PAD_TYPE, Element, Pad);
++  AddObjectToClearPourUndoList (PAD_TYPE, Element, Pad, Pad, True);
 +  ClearFromPours (PCB->Data, PAD_TYPE, Element, Pad);
    DrawPad (Pad, 0);
    return (Pad);
  }
-@@ -1445,11 +1461,11 @@ ChangePinSquare (ElementTypePtr Element, PinTypePtr Pin)
+@@ -1444,12 +1460,12 @@ ChangePinSquare (ElementTypePtr Element, PinTypePtr Pin)
+   if (TEST_FLAG (LOCKFLAG, Pin))
      return (NULL);
    ErasePin (Pin);
-   AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, False);
+-  AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, False);
 -  RestoreToPolygon (PCB->Data, PIN_TYPE, Element, Pin);
++  AddObjectToClearPourUndoList (PIN_TYPE, Element, Pin, Pin, False);
 +  RestoreToPours (PCB->Data, PIN_TYPE, Element, Pin);
    AddObjectToFlagUndoList (PIN_TYPE, Element, Pin, Pin);
    TOGGLE_FLAG (SQUAREFLAG, Pin);
-   AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, True);
+-  AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, True);
 -  ClearFromPolygon (PCB->Data, PIN_TYPE, Element, Pin);
++  AddObjectToClearPourUndoList (PIN_TYPE, Element, Pin, Pin, True);
 +  ClearFromPours (PCB->Data, PIN_TYPE, Element, Pin);
    DrawPin (Pin, 0);
    return (Pin);
  }
-@@ -1488,11 +1504,11 @@ ChangeViaOctagon (PinTypePtr Via)
+@@ -1487,12 +1503,12 @@ ChangeViaOctagon (PinTypePtr Via)
+   if (TEST_FLAG (LOCKFLAG, Via))
      return (NULL);
    EraseVia (Via);
-   AddObjectToClearPolyUndoList (VIA_TYPE, Via, Via, Via, False);
+-  AddObjectToClearPolyUndoList (VIA_TYPE, Via, Via, Via, False);
 -  RestoreToPolygon (PCB->Data, VIA_TYPE, Via, Via);
++  AddObjectToClearPourUndoList (VIA_TYPE, Via, Via, Via, False);
 +  RestoreToPours (PCB->Data, VIA_TYPE, Via, Via);
    AddObjectToFlagUndoList (VIA_TYPE, Via, Via, Via);
    TOGGLE_FLAG (OCTAGONFLAG, Via);
-   AddObjectToClearPolyUndoList (VIA_TYPE, Via, Via, Via, True);
+-  AddObjectToClearPolyUndoList (VIA_TYPE, Via, Via, Via, True);
 -  ClearFromPolygon (PCB->Data, VIA_TYPE, Via, Via);
++  AddObjectToClearPourUndoList (VIA_TYPE, Via, Via, Via, True);
 +  ClearFromPours (PCB->Data, VIA_TYPE, Via, Via);
    DrawVia (Via, 0);
    return (Via);
  }
-@@ -1531,11 +1547,11 @@ ChangePinOctagon (ElementTypePtr Element, PinTypePtr Pin)
+@@ -1530,12 +1546,12 @@ ChangePinOctagon (ElementTypePtr Element, PinTypePtr Pin)
+   if (TEST_FLAG (LOCKFLAG, Pin))
      return (NULL);
    ErasePin (Pin);
-   AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, False);
+-  AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, False);
 -  RestoreToPolygon (PCB->Data, PIN_TYPE, Element, Pin);
++  AddObjectToClearPourUndoList (PIN_TYPE, Element, Pin, Pin, False);
 +  RestoreToPours (PCB->Data, PIN_TYPE, Element, Pin);
    AddObjectToFlagUndoList (PIN_TYPE, Element, Pin, Pin);
    TOGGLE_FLAG (OCTAGONFLAG, Pin);
-   AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, True);
+-  AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, True);
 -  ClearFromPolygon (PCB->Data, PIN_TYPE, Element, Pin);
++  AddObjectToClearPourUndoList (PIN_TYPE, Element, Pin, Pin, True);
 +  ClearFromPours (PCB->Data, PIN_TYPE, Element, Pin);
    DrawPin (Pin, 0);
    return (Pin);
@@ -2166,7 +2197,7 @@ index 47c4c7f..a0f423c 100644
  void EraseElementPinsAndPads (ElementTypePtr);
  void EraseElementName (ElementTypePtr);
 diff --git a/src/file.c b/src/file.c
-index 653e1db..57d8b48 100644
+index 653e1db..724904c 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -778,7 +778,7 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
@@ -2178,37 +2209,26 @@ index 653e1db..57d8b48 100644
        (layer->Name && *layer->Name))
      {
        fprintf (FP, "Layer(%i ", (int) Number + 1);
-@@ -812,6 +812,8 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
+@@ -812,14 +812,14 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
  	  PrintQuotedString (FP, EMPTY (text->TextString));
  	  fprintf (FP, " %s]\n", F2S (text, TEXT_TYPE));
  	}
-+#warning FIXME Later
-+#if 0
-       for (n = 0; n < layer->PolygonN; n++)
- 	{
- 	  PolygonTypePtr polygon = &layer->Polygon[n];
-@@ -826,6 +828,21 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
- 	    }
- 	  fputs ("\n\t)\n", FP);
- 	}
-+#endif
+-      for (n = 0; n < layer->PolygonN; n++)
 +      for (n = 0; n < layer->PourN; n++)
-+	{
+ 	{
+-	  PolygonTypePtr polygon = &layer->Polygon[n];
 +	  PourTypePtr pour = &layer->Pour[n];
-+	  int p, i = 0;
+ 	  int p, i = 0;
+-	  fprintf (FP, "\tPolygon(%s)\n\t(", F2S (polygon, POLYGON_TYPE));
+-	  for (p = 0; p < polygon->PointN; p++)
 +	  fprintf (FP, "\tPolygon(%s)\n\t(", F2S (pour, POUR_TYPE));
 +	  for (p = 0; p < pour->PointN; p++)
-+	    {
+ 	    {
+-	      PointTypePtr point = &polygon->Points[p];
 +	      PointTypePtr point = &pour->Points[p];
-+	      if (i++ % 5 == 0)
-+		fputs ("\n\t\t", FP);
-+	      fprintf (FP, "[%i %i] ", (int) point->X, (int) point->Y);
-+	    }
-+	  fputs ("\n\t)\n", FP);
-+	}
-       fputs (")\n", FP);
-     }
- }
+ 	      if (i++ % 5 == 0)
+ 		fputs ("\n\t\t", FP);
+ 	      fprintf (FP, "[%i %i] ", (int) point->X, (int) point->Y);
 diff --git a/src/find.c b/src/find.c
 index edf2f7e..76cdf21 100644
 --- a/src/find.c
@@ -2922,43 +2942,32 @@ index bbe99d5..451d37e 100644
  /* ---------------------------------------------------------------------------
   * prototypes
 diff --git a/src/macro.h b/src/macro.h
-index 819d202..c9322ec 100644
+index 819d202..f9200b0 100644
 --- a/src/macro.h
 +++ b/src/macro.h
-@@ -391,19 +391,44 @@ extern int mem_any_set (unsigned char *, int);
+@@ -391,19 +391,26 @@ extern int mem_any_set (unsigned char *, int);
  	{						\
  		text = &(layer)->Text[n]
  
-+#if 0
- #define	POLYGON_LOOP(layer) do {			\
- 	Cardinal		n;			\
- 	PolygonTypePtr	polygon;			\
- 	for (n = (layer)->PolygonN-1; n != -1; n--)	\
- 	{						\
- 		polygon = &(layer)->Polygon[n]
-+#endif
- 
-+#if 0
- #define	POLYGONPOINT_LOOP(polygon) do	{	\
- 	Cardinal			n;		\
- 	PointTypePtr	point;				\
- 	for (n = (polygon)->PointN-1; n != -1; n--)	\
- 	{						\
- 		point = &(polygon)->Points[n]
-+#endif
-+
+-#define	POLYGON_LOOP(layer) do {			\
 +#define	POUR_LOOP(layer) do {			\
-+	Cardinal		n;			\
+ 	Cardinal		n;			\
+-	PolygonTypePtr	polygon;			\
+-	for (n = (layer)->PolygonN-1; n != -1; n--)	\
 +	PourTypePtr	pour;			\
 +	for (n = (layer)->PourN-1; n != -1; n--)	\
-+	{						\
+ 	{						\
+-		polygon = &(layer)->Polygon[n]
 +		pour = &(layer)->Pour[n]
-+
+ 
+-#define	POLYGONPOINT_LOOP(polygon) do	{	\
 +#define	POURPOINT_LOOP(pour) do	{	\
-+	Cardinal			n;		\
-+	PointTypePtr	point;				\
+ 	Cardinal			n;		\
+ 	PointTypePtr	point;				\
+-	for (n = (polygon)->PointN-1; n != -1; n--)	\
 +	for (n = (pour)->PointN-1; n != -1; n--)	\
-+	{						\
+ 	{						\
+-		point = &(polygon)->Points[n]
 +		point = &(pour)->Points[n]
 +
 +#define	POURPOLYGON_LOOP(pour) do	{	\
@@ -2970,94 +2979,64 @@ index 819d202..c9322ec 100644
  
  #define ENDALL_LOOP }} while (0);  }} while (0)
  
-@@ -429,12 +454,21 @@ extern int mem_any_set (unsigned char *, int);
+@@ -429,12 +436,12 @@ extern int mem_any_set (unsigned char *, int);
  	{ \
  		ARC_LOOP(layer)
  
-+#if 0
- #define	ALLPOLYGON_LOOP(top)	do {		\
+-#define	ALLPOLYGON_LOOP(top)	do {		\
++#define	ALLPOUR_LOOP(top)	do {		\
  	Cardinal		l;			\
  	LayerTypePtr	layer = (top)->Layer;		\
  	for (l = 0; l < max_layer + 2; l++, layer++)	\
  	{ \
- 		POLYGON_LOOP(layer)
-+#endif
-+
-+#define	ALLPOUR_LOOP(top)	do {		\
-+	Cardinal		l;			\
-+	LayerTypePtr	layer = (top)->Layer;		\
-+	for (l = 0; l < max_layer + 2; l++, layer++)	\
-+	{ \
+-		POLYGON_LOOP(layer)
 +		POUR_LOOP(layer)
  
  #define	COPPERLINE_LOOP(top) do	{		\
  	Cardinal		l;			\
-@@ -450,12 +484,21 @@ extern int mem_any_set (unsigned char *, int);
+@@ -450,12 +457,12 @@ extern int mem_any_set (unsigned char *, int);
  	{ \
  		ARC_LOOP(layer)
  
-+#if 0
- #define	COPPERPOLYGON_LOOP(top) do	{		\
+-#define	COPPERPOLYGON_LOOP(top) do	{		\
++#define	COPPERPOUR_LOOP(top) do	{		\
  	Cardinal		l;			\
  	LayerTypePtr	layer = (top)->Layer;		\
  	for (l = 0; l < max_layer; l++, layer++)	\
  	{ \
- 		POLYGON_LOOP(layer)
-+#endif
-+
-+#define	COPPERPOUR_LOOP(top) do	{		\
-+	Cardinal		l;			\
-+	LayerTypePtr	layer = (top)->Layer;		\
-+	for (l = 0; l < max_layer; l++, layer++)	\
-+	{ \
+-		POLYGON_LOOP(layer)
 +		POUR_LOOP(layer)
  
  #define	SILKLINE_LOOP(top) do	{		\
  	Cardinal		l;			\
-@@ -473,6 +516,7 @@ extern int mem_any_set (unsigned char *, int);
+@@ -473,13 +480,13 @@ extern int mem_any_set (unsigned char *, int);
  	{ \
  		ARC_LOOP(layer)
  
-+#if 0
- #define	SILKPOLYGON_LOOP(top) do	{		\
+-#define	SILKPOLYGON_LOOP(top) do	{		\
++#define	SILKPOUR_LOOP(top) do	{		\
  	Cardinal		l;			\
  	LayerTypePtr	layer = (top)->Layer;		\
-@@ -480,6 +524,15 @@ extern int mem_any_set (unsigned char *, int);
+ 	layer += max_layer;				\
  	for (l = 0; l < 2; l++, layer++)		\
  	{ \
- 		POLYGON_LOOP(layer)
-+#endif
-+
-+#define	SILKPOUR_LOOP(top) do	{		\
-+	Cardinal		l;			\
-+	LayerTypePtr	layer = (top)->Layer;		\
-+	layer += max_layer;				\
-+	for (l = 0; l < 2; l++, layer++)		\
-+	{ \
+-		POLYGON_LOOP(layer)
 +		POUR_LOOP(layer)
  
  #define	ALLTEXT_LOOP(top)	do {		\
  	Cardinal		l;			\
-@@ -512,6 +565,7 @@ extern int mem_any_set (unsigned char *, int);
+@@ -512,13 +519,13 @@ extern int mem_any_set (unsigned char *, int);
                  TEXT_LOOP(layer);                                      \
                    if (TEXT_IS_VISIBLE((board), layer, text))
  
-+#if 0
- #define	VISIBLEPOLYGON_LOOP(top) do	{	\
+-#define	VISIBLEPOLYGON_LOOP(top) do	{	\
++#define	VISIBLEPOUR_LOOP(top) do	{	\
  	Cardinal		l;			\
  	LayerTypePtr	layer = (top)->Layer;		\
-@@ -519,6 +573,15 @@ extern int mem_any_set (unsigned char *, int);
+ 	for (l = 0; l < max_layer + 2; l++, layer++)	\
  	{ \
  		if (layer->On)				\
- 			POLYGON_LOOP(layer)
-+#endif
-+
-+#define	VISIBLEPOUR_LOOP(top) do	{	\
-+	Cardinal		l;			\
-+	LayerTypePtr	layer = (top)->Layer;		\
-+	for (l = 0; l < max_layer + 2; l++, layer++)	\
-+	{ \
-+		if (layer->On)				\
+-			POLYGON_LOOP(layer)
 +			POUR_LOOP(layer)
  
  #define POINTER_LOOP(top) do	{	\
@@ -3099,7 +3078,7 @@ index 7ef7d41..1b76e88 100644
 +  ClearFromPours (Data, ELEMENT_TYPE, Element, Element);
  }
 diff --git a/src/misc.c b/src/misc.c
-index df34363..dd83d6f 100644
+index df34363..c01f3b3 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -65,6 +65,7 @@
@@ -3224,19 +3203,15 @@ index df34363..dd83d6f 100644
  }
  
  static char *
-@@ -1671,12 +1695,17 @@ GetGridLockCoordinates (int type, void *ptr1,
+@@ -1670,13 +1694,8 @@ GetGridLockCoordinates (int type, void *ptr1,
+       *x = ((ElementTypePtr) ptr2)->MarkX;
        *y = ((ElementTypePtr) ptr2)->MarkY;
        break;
-     case POLYGON_TYPE:
-+#warning FIXME Later
-+      *x = 1000;
-+      *y = 1000;
-+#if 0
-       *x = ((PolygonTypePtr) ptr2)->Points[0].X;
-       *y = ((PolygonTypePtr) ptr2)->Points[0].Y;
-+#endif
-       break;
- 
+-    case POLYGON_TYPE:
+-      *x = ((PolygonTypePtr) ptr2)->Points[0].X;
+-      *y = ((PolygonTypePtr) ptr2)->Points[0].Y;
+-      break;
+-
      case LINEPOINT_TYPE:
 -    case POLYGONPOINT_TYPE:
 +    case POURPOINT_TYPE:
@@ -5018,7 +4993,7 @@ index 8f444fd..e203d07 100644
  void RestoreToPolygon(DataType *, int, void *, void *);
  void ClearFromPolygon(DataType *, int, void *, void *);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 32ffb31..606eb9a 100644
+index 32ffb31..b2a6bd6 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -835,6 +835,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
@@ -5098,15 +5073,12 @@ index 32ffb31..606eb9a 100644
        do
  	{
  	  if (!node_neighbours (a1, a2) &&
-@@ -2403,21 +2446,36 @@ poly_ChkContour (PLINE * a)
+@@ -2403,21 +2446,22 @@ poly_ChkContour (PLINE * a)
  				    a2->point, a2->next->point, i1, i2)) > 0)
  	    {
  	      if (icnt > 1)
 -		return TRUE;
-+                {
-+                  printf ("Returning true 1\n");
 +		  return TRUE;
-+                }
  
 -	      if (vect_dist2 (i1, a1->point) < EPSILON)
 +              d1 = -1; d2 = -1;
@@ -5117,15 +5089,7 @@ index 32ffb31..606eb9a 100644
  		hit1 = a1->next;
  	      else
 -		return TRUE;
-+                {
-+                  printf ("Returning true 2, %f, %f, %f\n", EPSILON, d1, d2);
-+                  printf ("a1->point: (%i,%i)\n", a1->point[0], a1->point[1]);
-+                  printf ("a1->next->point: (%i,%i)\n", a1->next->point[0], a1->next->point[1]);
-+                  printf ("a2->point: (%i,%i)\n", a2->point[0], a2->point[1]);
-+                  printf ("a2->next->point: (%i,%i)\n", a2->next->point[0], a2->next->point[1]);
-+                  printf ("Intersection: (%i, %i)\n", i1[0], i1[1]);
 +		  return TRUE;
-+                }
  
  	      if (vect_dist2 (i1, a2->point) < EPSILON)
  		hit2 = a2;
@@ -5133,22 +5097,16 @@ index 32ffb31..606eb9a 100644
  		hit2 = a2->next;
  	      else
 -		return TRUE;
-+                {
-+                  printf ("Returning true 3\n");
 +		  return TRUE;
-+                }
  
  #if 1
  	      /* now check if they are inside each other */
-@@ -2425,13 +2483,17 @@ poly_ChkContour (PLINE * a)
+@@ -2425,11 +2469,11 @@ poly_ChkContour (PLINE * a)
  		  inside_sector (hit1, hit2->next->point) ||
  		  inside_sector (hit2, hit1->prev->point) ||
  		  inside_sector (hit2, hit1->next->point))
 -		return TRUE;
-+                {
-+                  printf ("Returning true 4\n");
 +		  return TRUE;
-+                }
  #endif
  	    }
  	}
@@ -5156,22 +5114,7 @@ index 32ffb31..606eb9a 100644
 +      while ((a2 = a2->next) != a2_start);
      }
    while ((a1 = a1->next) != &a->head);
-+  printf ("Fell out the bottom, returning false\n");
    return FALSE;
- }
- 
-@@ -2442,7 +2504,10 @@ poly_Valid (POLYAREA * p)
-   PLINE *c;
- 
-   if ((p == NULL) || (p->contours == NULL))
--    return FALSE;
-+    {
-+      printf ("Polyarea %p, contours=%p\n", p, p ? p->contours : NULL);
-+      return FALSE;
-+    }
- 
-   if (p->contours->Flags.orient == PLF_INV || poly_ChkContour (p->contours))
-     {
 diff --git a/src/pour.c b/src/pour.c
 new file mode 100644
 index 0000000..d71d9f4
@@ -7541,7 +7484,7 @@ index 12fbc62..fb18b2d 100644
  };
  
 diff --git a/src/undo.c b/src/undo.c
-index 998fc2c..1d28386 100644
+index 998fc2c..5bcc2d9 100644
 --- a/src/undo.c
 +++ b/src/undo.c
 @@ -62,6 +62,7 @@
@@ -7552,18 +7495,58 @@ index 998fc2c..1d28386 100644
  #include "remove.h"
  #include "rotate.h"
  #include "rtree.h"
-@@ -320,9 +321,9 @@ UndoClearPoly (UndoListTypePtr Entry)
+@@ -126,7 +127,7 @@ typedef struct			/* information about poly clear/restore */
+   Boolean Clear;		/* true was clear, false was restore */
+   LayerTypePtr Layer;
+ }
+-ClearPolyType, *ClearPolyTypePtr;
++ClearPourType, *ClearPourTypePtr;
+ 
+ typedef struct			/* information about netlist lib changes */
+ {
+@@ -151,7 +152,7 @@ typedef struct			/* holds information about an operation */
+     FlagType Flags;
+     BDimension Size;
+     LayerChangeType LayerChange;
+-    ClearPolyType ClearPoly;
++    ClearPourType ClearPour;
+     NetlistChangeType NetlistChange;
+   }
+   Data;
+@@ -192,7 +193,7 @@ static Boolean UndoChange2ndSize (UndoListTypePtr);
+ static Boolean UndoChangeAngles (UndoListTypePtr);
+ static Boolean UndoChangeClearSize (UndoListTypePtr);
+ static Boolean UndoChangeMaskSize (UndoListTypePtr);
+-static Boolean UndoClearPoly (UndoListTypePtr);
++static Boolean UndoClearPour (UndoListTypePtr);
+ static int PerformUndo (UndoListTypePtr);
+ 
+ /* ---------------------------------------------------------------------------
+@@ -310,7 +311,7 @@ UndoRotate (UndoListTypePtr Entry)
+  * returns True if anything has been recovered
+  */
+ static Boolean
+-UndoClearPoly (UndoListTypePtr Entry)
++UndoClearPour (UndoListTypePtr Entry)
+ {
+   void *ptr1, *ptr2, *ptr3;
+   int type;
+@@ -319,11 +320,11 @@ UndoClearPoly (UndoListTypePtr Entry)
+     SearchObjectByID (PCB->Data, &ptr1, &ptr2, &ptr3, Entry->ID, Entry->Kind);
    if (type != NO_TYPE)
      {
-       if (Entry->Data.ClearPoly.Clear)
+-      if (Entry->Data.ClearPoly.Clear)
 -	RestoreToPolygon (PCB->Data, type, Entry->Data.ClearPoly.Layer, ptr3);
-+	RestoreToPours (PCB->Data, type, Entry->Data.ClearPoly.Layer, ptr3);
++      if (Entry->Data.ClearPour.Clear)
++	RestoreToPours (PCB->Data, type, Entry->Data.ClearPour.Layer, ptr3);
        else
 -	ClearFromPolygon (PCB->Data, type, Entry->Data.ClearPoly.Layer, ptr3);
-+	ClearFromPours (PCB->Data, type, Entry->Data.ClearPoly.Layer, ptr3);
-       Entry->Data.ClearPoly.Clear = !Entry->Data.ClearPoly.Clear;
+-      Entry->Data.ClearPoly.Clear = !Entry->Data.ClearPoly.Clear;
++	ClearFromPours (PCB->Data, type, Entry->Data.ClearPour.Layer, ptr3);
++      Entry->Data.ClearPour.Clear = !Entry->Data.ClearPour.Clear;
        return True;
      }
+   return False;
 @@ -436,11 +437,11 @@ UndoChangeClearSize (UndoListTypePtr Entry)
        if (TEST_FLAG (LOCKFLAG, (LineTypePtr) ptr2))
  	return (False);
@@ -7699,24 +7682,25 @@ index 998fc2c..1d28386 100644
  	return (True);
        }
  
-@@ -1161,6 +1162,16 @@ AddObjectToClearPolyUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
- }
+@@ -975,7 +976,7 @@ PerformUndo (UndoListTypePtr ptr)
+       break;
  
- /* ---------------------------------------------------------------------------
-+ * adds an object to the list of clearpoly objects
-+ */
-+void
-+AddObjectToClearPourUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
-+			      Boolean clear)
-+{
-+  printf ("FIXME Later\n");
-+}
-+
-+/* ---------------------------------------------------------------------------
-  * adds an object to the list of mirrored objects
+     case UNDO_CLEAR:
+-      if (UndoClearPoly (ptr))
++      if (UndoClearPour (ptr))
+ 	return (UNDO_CLEAR);
+       break;
+ 
+@@ -1147,7 +1148,7 @@ ClearUndoList (Boolean Force)
+  * adds an object to the list of clearpoly objects
   */
  void
-@@ -1222,23 +1233,23 @@ AddObjectToRemovePointUndoList (int Type,
+-AddObjectToClearPolyUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
++AddObjectToClearPourUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
+ 			      Boolean clear)
+ {
+   UndoListTypePtr undo;
+@@ -1222,23 +1223,23 @@ AddObjectToRemovePointUndoList (int Type,
  				void *Ptr1, void *Ptr2, Cardinal index)
  {
    UndoListTypePtr undo;
@@ -7747,7 +7731,7 @@ index 998fc2c..1d28386 100644
  	    undo->Data.RemovedPoint.Index = index;
  	  }
  	  break;
-@@ -1317,7 +1328,7 @@ AddObjectToCreateUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
+@@ -1317,7 +1318,7 @@ AddObjectToCreateUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
  
    if (!Locked)
      undo = GetUndoSlot (UNDO_CREATE, OBJECT_ID (Ptr3), Type);
@@ -7757,13 +7741,14 @@ index 998fc2c..1d28386 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/undo.h b/src/undo.h
-index a138927..1ff1ca7 100644
+index a138927..e5da981 100644
 --- a/src/undo.h
 +++ b/src/undo.h
-@@ -62,6 +62,7 @@ void AddObjectToClearSizeUndoList (int, void *, void *, void *);
+@@ -61,7 +61,7 @@ void AddObjectTo2ndSizeUndoList (int, void *, void *, void *);
+ void AddObjectToClearSizeUndoList (int, void *, void *, void *);
  void AddObjectToMaskSizeUndoList (int, void *, void *, void *);
  void AddObjectToChangeAnglesUndoList (int, void *, void *, void *);
- void AddObjectToClearPolyUndoList (int, void *, void *, void *, Boolean);
+-void AddObjectToClearPolyUndoList (int, void *, void *, void *, Boolean);
 +void AddObjectToClearPourUndoList (int, void *, void *, void *, Boolean);
  void AddLayerChangeToUndoList (int, int);
  void AddNetlistLibToUndoList (LibraryTypePtr);
