@@ -1,5 +1,5 @@
 Bottom: 3c07d5a64790a40eae02571765a750e173942e12
-Top:    029aab8265edba179f2df780c71a8189e74f6919
+Top:    6a5659332b19848554ac15f70b2ef2e4b2dd4a47
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-12 22:24:58 +0100
 
@@ -20,7 +20,7 @@ intersecting contour belongs to the polygon with fewer vertices.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 98e20bb..8fb26e3 100644
+index 98e20bb..252150f 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -660,12 +660,6 @@ seg_in_seg (const BoxType * b, void *cl)
@@ -64,7 +64,7 @@ index 98e20bb..8fb26e3 100644
  
    if (add)
      info.touch = NULL;
-@@ -764,71 +745,89 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -764,71 +745,87 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
      info.touch = jb;
    setjmp (info.env);		/* we loop back here whenever a vertex is inserted */
    {
@@ -203,10 +203,8 @@ index 98e20bb..8fb26e3 100644
 +              /* NB: If this actually hits anything, we are teleported back to the beginning */
 +              info.tree = (rtree_t *) rtree_over->tree;
 +              if (info.tree)
-+                if (G_UNLIKELY (r_search (info.tree, &info.s->box,
-+                                          seg_in_region,
-+                                          seg_in_seg,
-+                                          &info)))
++                if (r_search (info.tree, &info.s->box,
++                              seg_in_region, seg_in_seg, &info))
 +                  return err_no_memory;	/* error */
 +          }
 +        while ((av = av->next) != &looping_over->head);
