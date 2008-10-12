@@ -61,6 +61,33 @@
 
 RCSID ("$Id$");
 
+/* G_LIKELY and G_UNLIKLEY macros taken from GLib 2.16.3, LGPL */
+/*
+ * The G_LIKELY and G_UNLIKELY macros let the programmer give hints to 
+ * the compiler about the expected result of an expression. Some compilers
+ * can use this information for optimizations.
+ *
+ * The _G_BOOLEAN_EXPR macro is intended to trigger a gcc warning when
+ * putting assignments in g_return_if_fail ().  
+ */
+#if defined(__GNUC__) && (__GNUC__ > 2) && defined(__OPTIMIZE__)
+#define _G_BOOLEAN_EXPR(expr)                   \
+ __extension__ ({                               \
+   int _g_boolean_var_;                         \
+   if (expr)                                    \
+      _g_boolean_var_ = 1;                      \
+   else                                         \
+      _g_boolean_var_ = 0;                      \
+   _g_boolean_var_;                             \
+})
+#define G_LIKELY(expr) (__builtin_expect (_G_BOOLEAN_EXPR(expr), 1))
+#define G_UNLIKELY(expr) (__builtin_expect (_G_BOOLEAN_EXPR(expr), 0))
+#else
+#define G_LIKELY(expr) (expr)
+#define G_UNLIKELY(expr) (expr)
+#warning NOT OPTIMISING
+#endif
+
 
 #define SLOW_ASSERTS
 /* All rectangles are closed on the bottom left and open on the
@@ -868,27 +895,32 @@ split_node (struct rtree_node *node)
   split_node (node->parent);
 }
 
-static inline bigun
-penalty (struct rtree_node *node, const BoxType * query)
+static inline int
+contained (struct rtree_node *node, const BoxType * query)
 {
   if (node->box.X1 > query->X1 || node->box.X2 < query->X2 ||
       node->box.Y1 > query->Y1 || node->box.Y2 < query->Y2)
-    {
-      long long score;
-      /* We're not already contained at this node, so compute
-       * the area penalty for inserting here and return.
-       * The penalty is the increase in area necessary
-       * to include the query->
-       */
-      score = (MAX (node->box.X2, query->X2) - MIN (node->box.X1, query->X1));
-      score *=
-        (MAX (node->box.Y2, query->Y2) - MIN (node->box.Y1, query->Y1));
-      score -=
-        ((long long) node->box.X2 -
-         node->box.X1) * ((long long) node->box.Y2 - node->box.Y1);
-      return score;
-    }
-  return 0;
+    return 0;
+  return 1;
+}
+
+
+static inline bigun
+penalty (struct rtree_node *node, const BoxType * query)
+{
+  long long score;
+  /* We're not already contained at this node, so compute
+   * the area penalty for inserting here and return.
+   * The penalty is the increase in area necessary
+   * to include the query->
+   */
+  score = (MAX (node->box.X2, query->X2) - MIN (node->box.X1, query->X1));
+  score *=
+    (MAX (node->box.Y2, query->Y2) - MIN (node->box.Y1, query->Y1));
+  score -=
+    ((long long) node->box.X2 -
+     node->box.X1) * ((long long) node->box.Y2 - node->box.Y1);
+  return score;
 }
 
 static void
@@ -908,7 +940,8 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
     {
       register int i;
 
-      if (manage)
+#warning UNLIKELY BASED ON QTY OF CALLERS PASSING manage=0 IN PCB, NOT PROFILING
+      if (G_UNLIKELY (manage))
         {
           register int flag = 1;
 
@@ -961,7 +994,24 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
           MAKEMIN (node->box.Y1, query->Y1);
           MAKEMAX (node->box.Y2, query->Y2);
         }
+
       /* this node encloses it, but it's not a leaf, so descend the tree */
+
+      /* First check if any children actually encloses it */
+      assert (node->u.kids[0]);
+      for (i = 0; i < M_SIZE; i++)
+        {
+          if (!node->u.kids[i])
+            break;
+          if (contained (node->u.kids[i], query))
+            {
+              __r_insert_node (node->u.kids[i], query, manage, False);
+              sort_node (node);
+              return;
+            }
+        }
+
+      /* Ok, so we're still here - look for the best child to push it into */
       assert (node->u.kids[0]);
       if ((best_score = penalty (node->u.kids[0], query)) == 0)
         {
