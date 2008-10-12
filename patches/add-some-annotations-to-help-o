@@ -1,7 +1,7 @@
-Bottom: 1e270056ada75278f3114af5e4b87b6cd7323666
-Top:    c65c11a3924d7c5384b83c0cf8ad47e6003d95f9
+Bottom: 8e86802d77111b609cf8e3cb057b4193821ec934
+Top:    aa9abcb77edec2b4118aaf9bb1757e071afe14ca
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-12 23:15:16 +0100
+Date:   2008-10-12 23:48:46 +0100
 
 Add some annotations to help optimise branch prediction.
 
@@ -9,6 +9,7 @@ Macros G_LIKELY and G_UNLIKELY were taken from GLib (LGPL 2), and
 renamed without the G_ prefix.
 
 This hasn't had much discernable effect
+
 
 
 
@@ -116,7 +117,7 @@ index 252150f..5c20ef3 100644
    while ((a = a->f) != afst);
  }				/* M_POLYAREA_intersect */
 diff --git a/src/rtree.c b/src/rtree.c
-index 662c581..36333d0 100644
+index fc2d17b..c444e61 100644
 --- a/src/rtree.c
 +++ b/src/rtree.c
 @@ -913,7 +913,7 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
@@ -128,7 +129,7 @@ index 662c581..36333d0 100644
          {
            register int flag = 1;
  
-@@ -1019,7 +1019,7 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
+@@ -994,7 +994,7 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
            new_node->u.rects[0].bptr = query;
            new_node->u.rects[0].bounds = *query;
            new_node->box = *query;
