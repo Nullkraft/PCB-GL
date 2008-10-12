@@ -1,0 +1,30 @@
+Bottom: 1b0e8567fa204441ff42f2664fbebaa8a3da617d
+Top:    93e1b60793cf994b867800f919b6209c4b6d6935
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-13 00:30:57 +0100
+
+Refresh of add_pours
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 76cdf21..41f0e72 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -2459,6 +2459,8 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
+       /* handle normal layers */
+       if (layer < max_layer)
+         {
++          info.layer = layer;
++
+           /* check all polygons */
+ 
+           POUR_LOOP (LAYER_PTR (layer));
+@@ -2474,7 +2476,6 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
+           }
+           END_LOOP;
+ 
+-          info.layer = layer;
+           /* check all lines */
+           if (setjmp (info.env) == 0)
+             r_search (LAYER_PTR (layer)->line_tree,
