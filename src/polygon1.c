@@ -57,6 +57,34 @@
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 #endif
 
+
+/* G_LIKELY and G_UNLIKLEY macros taken from GLib 2.16.3, LGPL */
+/*
+ * The G_LIKELY and G_UNLIKELY macros let the programmer give hints to 
+ * the compiler about the expected result of an expression. Some compilers
+ * can use this information for optimizations.
+ *
+ * The _G_BOOLEAN_EXPR macro is intended to trigger a gcc warning when
+ * putting assignments in g_return_if_fail ().  
+ */
+#if defined(__GNUC__) && (__GNUC__ > 2) && defined(__OPTIMIZE__)
+#define _G_BOOLEAN_EXPR(expr)                   \
+ __extension__ ({                               \
+   int _g_boolean_var_;                         \
+   if (expr)                                    \
+      _g_boolean_var_ = 1;                      \
+   else                                         \
+      _g_boolean_var_ = 0;                      \
+   _g_boolean_var_;                             \
+})
+#define G_LIKELY(expr) (__builtin_expect (_G_BOOLEAN_EXPR(expr), 1))
+#define G_UNLIKELY(expr) (__builtin_expect (_G_BOOLEAN_EXPR(expr), 0))
+#else
+#define G_LIKELY(expr) (expr)
+#define G_UNLIKELY(expr) (expr)
+#endif
+
+
 /*********************************************************************/
 /*              L o n g   V e c t o r   S t u f f                    */
 /*********************************************************************/
@@ -840,33 +868,49 @@ M_POLYAREA_intersect2 (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
   PLINE *curcA, *curcB;
   CVCList *the_list = NULL;
 
-  if (a == NULL || b == NULL)
+  if (G_UNLIKELY (a == NULL || b == NULL))
     error (err_bad_parm);
   do
     {
+      /* Loop over b's linked list of POLYAREAs */
+
       do
 	{
+          /* Loop over a's linked list of POLYAREAS */
+
+          /* Do the coarse bounding boxes intersect? */
 	  if (a->contours->xmax >= b->contours->xmin &&
 	      a->contours->ymax >= b->contours->ymin &&
 	      a->contours->xmin <= b->contours->xmax &&
 	      a->contours->ymin <= b->contours->ymax)
 	    {
-	      if (intersect (e, a, b, add))
+              /* If so, check the POLYAREA intersection for real */
+	      if (G_UNLIKELY (intersect (e, a, b, add)))
 		error (err_no_memory);
 	    }
 	}
       while ((a = a->f) != afst);
+
+      /* Loop over the contours of the current "b" POLYAREA,
+       * finding those marked as ISECTED, and add descriptors
+       */
       for (curcB = b->contours; curcB != NULL; curcB = curcB->next)
 	if (curcB->Flags.status == ISECTED)
-	  if (!(the_list = add_descriptors (curcB, 'B', the_list)))
+	  if (G_UNLIKELY (!(the_list = add_descriptors (curcB, 'B', the_list))))
 	    error (err_no_memory);
     }
   while ((b = b->f) != bfst);
+
   do
     {
+      /* Loop over a's linked list of POLYAREAS */
+
+      /* Loop over the contours of the current "b" POLYAREA,
+       * finding those marked as ISECTED, and add descriptors
+       */
       for (curcA = a->contours; curcA != NULL; curcA = curcA->next)
 	if (curcA->Flags.status == ISECTED)
-	  if (!(the_list = add_descriptors (curcA, 'A', the_list)))
+	  if (G_UNLIKELY (!(the_list = add_descriptors (curcA, 'A', the_list))))
 	    error (err_no_memory);
     }
   while ((a = a->f) != afst);
