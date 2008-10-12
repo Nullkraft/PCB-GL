@@ -1,0 +1,237 @@
+Bottom: ce40de69ded7d2ed2fd575fb332a3ca853016c2b
+Top:    6f32214c152ec7da8c2c29329c2b545ef6862e5d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-12 17:26:34 +0100
+
+Refresh of try-something-with-the-rtrees
+
+---
+
+diff --git a/src/heap.c b/src/heap.c
+index 39dcbe4..f5142d0 100644
+--- a/src/heap.c
++++ b/src/heap.c
+@@ -165,7 +165,8 @@ heap_insert (heap_t * heap, cost_t cost, void *data)
+     {
+       heap->max *= 2;
+       if (heap->max == 0)
+-	heap->max = 32;		/* default initial heap size */
++	heap->max = 256;		/* default initial heap size */
++//	heap->max = 32;		/* default initial heap size */
+       heap->element =
+ 	realloc (heap->element, heap->max * sizeof (*heap->element));
+     }
+diff --git a/src/pour.c b/src/pour.c
+index 03c3911..3e272ac 100644
+--- a/src/pour.c
++++ b/src/pour.c
+@@ -294,7 +294,40 @@ DestroyPolygonInPour (PourTypePtr pour, PolygonTypePtr polygon)
+   return (NULL);
+ }
+ 
+-static int
++/*static*/ int
++subtract_wonkyline_poly (POLYAREA * np1, POLYAREA **pg)
++{
++  POLYAREA *merged = NULL, *np = np1;
++  int x;
++
++  assert (np);
++  assert (pg);
++  assert (*pg);
++
++  if (pg == NULL)
++    {
++      printf ("Hmm, got pg == NULL in subtract_poly\n");
++      poly_Free (&np);
++      return -1;
++    }
++
++  assert (poly_Valid (*pg));
++  assert (poly_Valid (np));
++  x = poly_Boolean_free (*pg, np, &merged, PBO_SUB);
++  if (x != err_ok)
++    {
++      fprintf (stderr, "Error while clipping PBO_SUB: %d\n", x);
++      poly_Free (&merged);
++      return -1;
++    }
++
++  assert (!merged || poly_Valid (merged));
++
++  *pg = merged;
++  return 1;
++}
++
++/*static*/ int
+ subtract_poly (POLYAREA * np1, POLYAREA **pg)
+ {
+   POLYAREA *merged = NULL, *np = np1;
+@@ -536,8 +569,17 @@ line_sub_callback (const BoxType * b, void *cl)
+   if (np == NULL)
+     return 0;
+ 
+-  if (subtract_poly (np, &info->pg) < 0)
+-    longjmp (info->env, 1);
++  if (line->Point1.X == line->Point2.X ||
++      line->Point1.Y == line->Point2.Y)
++    {
++      if (subtract_poly (np, &info->pg) < 0)
++        longjmp (info->env, 1);
++    }
++  else
++    {
++      if (subtract_wonkyline_poly (np, &info->pg) < 0)
++        longjmp (info->env, 1);
++    }
+   return 1;
+ }
+ 
+@@ -637,11 +679,21 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
+ 
+   if (setjmp (info.env) == 0)
+     {
+-      r  = r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
++#warning I KNOW THIS IS THE SLOW PATH, profile it first so I can stop part way
++#if 1
++      GROUP_LOOP (Data, group);
++      {
++        r = r_search (layer->line_tree, &region, NULL, line_sub_callback, &info);
++      }
++      END_LOOP;
++#endif
++
++//      r = 0;
++      r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
+       r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
+       GROUP_LOOP (Data, group);
+       {
+-        r += r_search (layer->line_tree, &region, NULL, line_sub_callback, &info);
++//        r += r_search (layer->line_tree, &region, NULL, line_sub_callback, &info);
+         r += r_search (layer->arc_tree,  &region, NULL, arc_sub_callback,  &info);
+         r += r_search (layer->text_tree, &region, NULL, text_sub_callback, &info);
+         r += r_search (layer->pour_tree, &region, NULL, pour_sub_callback, &info);
+diff --git a/src/rtree.c b/src/rtree.c
+index c2220a3..36a9795 100644
+--- a/src/rtree.c
++++ b/src/rtree.c
+@@ -61,6 +61,33 @@
+ 
+ RCSID ("$Id$");
+ 
++/* G_LIKELY and G_UNLIKLEY macros taken from GLib 2.16.3, LGPL */
++/*
++ * The G_LIKELY and G_UNLIKELY macros let the programmer give hints to 
++ * the compiler about the expected result of an expression. Some compilers
++ * can use this information for optimizations.
++ *
++ * The _G_BOOLEAN_EXPR macro is intended to trigger a gcc warning when
++ * putting assignments in g_return_if_fail ().  
++ */
++#if defined(__GNUC__) && (__GNUC__ > 2) && defined(__OPTIMIZE__)
++#define _G_BOOLEAN_EXPR(expr)                   \
++ __extension__ ({                               \
++   int _g_boolean_var_;                         \
++   if (expr)                                    \
++      _g_boolean_var_ = 1;                      \
++   else                                         \
++      _g_boolean_var_ = 0;                      \
++   _g_boolean_var_;                             \
++})
++#define G_LIKELY(expr) (__builtin_expect (_G_BOOLEAN_EXPR(expr), 1))
++#define G_UNLIKELY(expr) (__builtin_expect (_G_BOOLEAN_EXPR(expr), 0))
++#else
++#define G_LIKELY(expr) (expr)
++#define G_UNLIKELY(expr) (expr)
++#warning NOT OPTIMISING
++#endif
++
+ 
+ #define SLOW_ASSERTS
+ /* All rectangles are closed on the bottom left and open on the
+@@ -868,27 +895,32 @@ split_node (struct rtree_node *node)
+   split_node (node->parent);
+ }
+ 
+-static inline bigun
+-penalty (struct rtree_node *node, const BoxType * query)
++static inline int
++contained (struct rtree_node *node, const BoxType * query)
+ {
+   if (node->box.X1 > query->X1 || node->box.X2 < query->X2 ||
+       node->box.Y1 > query->Y1 || node->box.Y2 < query->Y2)
+-    {
+-      long long score;
+-      /* We're not already contained at this node, so compute
+-       * the area penalty for inserting here and return.
+-       * The penalty is the increase in area necessary
+-       * to include the query->
+-       */
+-      score = (MAX (node->box.X2, query->X2) - MIN (node->box.X1, query->X1));
+-      score *=
+-        (MAX (node->box.Y2, query->Y2) - MIN (node->box.Y1, query->Y1));
+-      score -=
+-        ((long long) node->box.X2 -
+-         node->box.X1) * ((long long) node->box.Y2 - node->box.Y1);
+-      return score;
+-    }
+-  return 0;
++    return 0;
++  return 1;
++}
++
++
++static inline bigun
++penalty (struct rtree_node *node, const BoxType * query)
++{
++  long long score;
++  /* We're not already contained at this node, so compute
++   * the area penalty for inserting here and return.
++   * The penalty is the increase in area necessary
++   * to include the query->
++   */
++  score = (MAX (node->box.X2, query->X2) - MIN (node->box.X1, query->X1));
++  score *=
++    (MAX (node->box.Y2, query->Y2) - MIN (node->box.Y1, query->Y1));
++  score -=
++    ((long long) node->box.X2 -
++     node->box.X1) * ((long long) node->box.Y2 - node->box.Y1);
++  return score;
+ }
+ 
+ static void
+@@ -908,7 +940,8 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
+     {
+       register int i;
+ 
+-      if (manage)
++#warning UNLIKELY BASED ON QTY OF CALLERS PASSING manage=0 IN PCB, NOT PROFILING
++      if (G_UNLIKELY (manage))
+         {
+           register int flag = 1;
+ 
+@@ -961,7 +994,24 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
+           MAKEMIN (node->box.Y1, query->Y1);
+           MAKEMAX (node->box.Y2, query->Y2);
+         }
++
+       /* this node encloses it, but it's not a leaf, so descend the tree */
++
++      /* First check if any children actually encloses it */
++      assert (node->u.kids[0]);
++      for (i = 0; i < M_SIZE; i++)
++        {
++          if (!node->u.kids[i])
++            break;
++          if (contained (node->u.kids[i], query))
++            {
++              __r_insert_node (node->u.kids[i], query, manage, False);
++              sort_node (node);
++              return;
++            }
++        }
++
++      /* Ok, so we're still here - look for the best child to push it into */
+       assert (node->u.kids[0]);
+       if ((best_score = penalty (node->u.kids[0], query)) == 0)
+         {
