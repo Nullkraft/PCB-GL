@@ -1156,8 +1156,8 @@ AddObjectToClearPourUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
   if (!Locked)
     {
       undo = GetUndoSlot (UNDO_CLEAR, OBJECT_ID (Ptr3), Type);
-      undo->Data.ClearPoly.Clear = clear;
-      undo->Data.ClearPoly.Layer = (LayerTypePtr) Ptr1;
+      undo->Data.ClearPour.Clear = clear;
+      undo->Data.ClearPour.Layer = (LayerTypePtr) Ptr1;
     }
 }
 
