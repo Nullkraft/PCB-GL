@@ -1,0 +1,14 @@
+Bottom: d4e6a547957aa257a74e0a3531c5a68f364a5645
+Top:    d4e6a547957aa257a74e0a3531c5a68f364a5645
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-12 17:36:16 +0100
+
+GTK HID: Don't use GObject's "constructed" member
+
+This member, although convenient, was added in GLib 2.12.
+PCB only checks for GLib >2.4.
+
+
+---
+
+
