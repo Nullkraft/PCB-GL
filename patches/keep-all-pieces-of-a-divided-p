@@ -1,7 +1,7 @@
-Bottom: 8a663ad426ea58df81a88381b20c2edeed2cac7c
-Top:    8a663ad426ea58df81a88381b20c2edeed2cac7c
+Bottom: 14c9888f54ed51a0e8bb37591bf61cd67a8c7c5c
+Top:    60ba20fca570cdb9268a763c55d02b24c4d72e0b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-12 22:16:18 +0100
+Date:   2008-10-10 11:47:16 +0100
 
 Keep all pieces of a divided polygon.
 
@@ -11,7 +11,425 @@ Keep all pieces of a divided polygon.
 
 
 
-
 ---
 
-
+diff --git a/src/draw.c b/src/draw.c
+index 0388f55..deefd5f 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1733,7 +1733,8 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
+ static void
+ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
+ {
+-  int *x, *y, n, i = 0;
++  int *x, *y, n, i;
++  POLYAREA *pg;
+   PLINE *pl;
+   VNODE *v;
+   if (!Polygon->Clipped)
+@@ -1743,31 +1744,37 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
+       AddPart (Polygon);
+       return;
+     }
+-  pl = Polygon->Clipped->contours;
+-  n = pl->Count;
+-  x = (int *) malloc (n * sizeof (int));
+-  y = (int *) malloc (n * sizeof (int));
+-  for (v = &pl->head; i < n; v = v->next)
++  pg = Polygon->Clipped;
++  do
+     {
+-      x[i] = v->point[0];
+-      y[i++] = v->point[1];
+-    }
+-  if (TEST_FLAG (THINDRAWFLAG, PCB) ||
+-      TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
+-      TEST_FLAG (CLEARLINEFLAG, Polygon))
+-    {
+-      gui->set_line_width (Output.fgGC, 1);
+-      for (i = 0; i < n - 1; i++)
+-	{
+-	  gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
+-	  //  gui->fill_circle (Output.fgGC, x[i], y[i], 30);
+-	}
+-      gui->draw_line (Output.fgGC, x[n - 1], y[n - 1], x[0], y[0]);
++      i = 0;
++      pl = pg->contours;
++      n = pl->Count;
++      x = (int *) malloc (n * sizeof (int));
++      y = (int *) malloc (n * sizeof (int));
++      for (v = &pl->head; i < n; v = v->next)
++        {
++          x[i] = v->point[0];
++          y[i++] = v->point[1];
++        }
++      if (TEST_FLAG (THINDRAWFLAG, PCB) ||
++          TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
++          TEST_FLAG (CLEARLINEFLAG, Polygon))
++        {
++          gui->set_line_width (Output.fgGC, 1);
++          for (i = 0; i < n - 1; i++)
++            {
++              gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
++              //  gui->fill_circle (Output.fgGC, x[i], y[i], 30);
++            }
++          gui->draw_line (Output.fgGC, x[n - 1], y[n - 1], x[0], y[0]);
++        }
++      else
++        gui->fill_polygon (Output.fgGC, n, x, y);
++      free (x);
++      free (y);
+     }
+-  else
+-    gui->fill_polygon (Output.fgGC, n, x, y);
+-  free (x);
+-  free (y);
++  while ((pg = pg->f) != Polygon->Clipped);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -2182,10 +2189,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+         {
+           PolygonType poly = *Polygon;
+           poly.Clipped = Polygon->NoHoles;
+-          do {
+-            DrawPolygonLowLevel (&poly, NULL);
+-            poly.Clipped = poly.Clipped->f;
+-          } while (poly.Clipped != Polygon->NoHoles);
++          DrawPolygonLowLevel (&poly, NULL);
+         }
+       /* draw other parts of the polygon if fullpoly flag is set */
+       /* NB: No "NoHoles" cache for these */
+@@ -2201,6 +2205,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+ 	}
+     }
+   /* if the gui has the dicer flag set then it won't draw missing poly outlines */
++#if 0
+   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && Polygon->Clipped && !Gathering
+       && !gui->poly_dicer)
+     {
+@@ -2230,6 +2235,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+ 	  free (y);
+ 	}
+     }
++#endif
+ }
+ 
+ /* ---------------------------------------------------------------------------
+diff --git a/src/find.c b/src/find.c
+index edf2f7e..5707d9f 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -2467,23 +2467,29 @@ Boolean
+ IsArcInPolygon (ArcTypePtr Arc, PolygonTypePtr Polygon)
+ {
+   BoxTypePtr Box = (BoxType *) Arc;
++  POLYAREA *pg;
+ 
+   /* arcs with clearance never touch polys */
+   if (TEST_FLAG (CLEARPOLYFLAG, Polygon) && TEST_FLAG (CLEARLINEFLAG, Arc))
+     return False;
+   if (!Polygon->Clipped)
+     return False;
+-  if (Box->X1 <= Polygon->Clipped->contours->xmax + Bloat
+-      && Box->X2 >= Polygon->Clipped->contours->xmin - Bloat
+-      && Box->Y1 <= Polygon->Clipped->contours->ymax + Bloat
+-      && Box->Y2 >= Polygon->Clipped->contours->ymin - Bloat)
++  pg = Polygon->Clipped;
++  do
+     {
+-      POLYAREA *ap;
++      if (Box->X1 <= pg->contours->xmax + Bloat
++          && Box->X2 >= pg->contours->xmin - Bloat
++          && Box->Y1 <= pg->contours->ymax + Bloat
++          && Box->Y2 >= pg->contours->ymin - Bloat)
++        {
++          POLYAREA *ap;
+ 
+-      if (!(ap = ArcPoly (Arc, Arc->Thickness + Bloat)))
+-        return False;           /* error */
+-      return isects (ap, Polygon, True);
++          if (!(ap = ArcPoly (Arc, Arc->Thickness + Bloat)))
++            return False;           /* error */
++          return isects (ap, Polygon, True);
++        }
+     }
++  while ((pg = pg->f) != Polygon->Clipped);
+   return False;
+ }
+ 
+@@ -2500,6 +2506,7 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
+ {
+   BoxTypePtr Box = (BoxType *) Line;
+   POLYAREA *lp;
++  POLYAREA *pg;
+ 
+   /* lines with clearance never touch polygons */
+   if (TEST_FLAG (CLEARPOLYFLAG, Polygon) && TEST_FLAG (CLEARLINEFLAG, Line))
+@@ -2517,15 +2524,20 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
+        y2 = MAX (Line->Point1.Y, Line->Point2.Y) + wid;
+        return IsRectangleInPolygon (x1, y1, x2, y2, Polygon);
+      }
+-  if (Box->X1 <= Polygon->Clipped->contours->xmax + Bloat
+-      && Box->X2 >= Polygon->Clipped->contours->xmin - Bloat
+-      && Box->Y1 <= Polygon->Clipped->contours->ymax + Bloat
+-      && Box->Y2 >= Polygon->Clipped->contours->ymin - Bloat)
++  pg = Polygon->Clipped;
++  do
+     {
+-      if (!(lp = LinePoly (Line, Line->Thickness + Bloat)))
+-        return FALSE;           /* error */
+-      return isects (lp, Polygon, True);
++      if (Box->X1 <= pg->contours->xmax + Bloat
++          && Box->X2 >= pg->contours->xmin - Bloat
++          && Box->Y1 <= pg->contours->ymax + Bloat
++          && Box->Y2 >= pg->contours->ymin - Bloat)
++        {
++          if (!(lp = LinePoly (Line, Line->Thickness + Bloat)))
++            return FALSE;           /* error */
++          return isects (lp, Polygon, True);
++        }
+     }
++  while ((pg = pg->f) != Polygon->Clipped);
+   return False;
+ }
+ 
+@@ -2549,53 +2561,66 @@ IsPadInPolygon (PadTypePtr pad, PolygonTypePtr polygon)
+ Boolean
+ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
+ {
++  POLYAREA *pg1;
++  POLYAREA *pg2;
++
+   if (!P1->Clipped || !P2->Clipped)
+     return False;
+   assert (P1->Clipped->contours);
+   assert (P2->Clipped->contours);
+   /* first check if both bounding boxes intersect */
+-  if (P1->Clipped->contours->xmin - Bloat <= P2->Clipped->contours->xmax &&
+-      P1->Clipped->contours->xmax + Bloat >= P2->Clipped->contours->xmin &&
+-      P1->Clipped->contours->ymin - Bloat <= P2->Clipped->contours->ymax &&
+-      P1->Clipped->contours->ymax + Bloat >= P2->Clipped->contours->ymin)
++  pg2 = P2->Clipped;
++  do
+     {
+-      PLINE *c;
+-
+-      /* first check un-bloated case */
+-      if (isects (P1->Clipped, P2, False))
+-        return TRUE;
+-      if (Bloat > 0)
++      pg1 = P1->Clipped;
++      do
+         {
+-          /* now the difficult case of bloated */
+-          for (c = P1->Clipped->contours; c; c = c->next)
++          if (pg1->contours->xmin - Bloat <= pg2->contours->xmax &&
++              pg1->contours->xmax + Bloat >= pg2->contours->xmin &&
++              pg1->contours->ymin - Bloat <= pg2->contours->ymax &&
++              pg1->contours->ymax + Bloat >= pg2->contours->ymin)
+             {
+-              LineType line;
+-              VNODE *v = &c->head;
+-              if (c->xmin - Bloat <= P2->Clipped->contours->xmax &&
+-                  c->xmax + Bloat >= P2->Clipped->contours->xmin &&
+-                  c->ymin - Bloat <= P2->Clipped->contours->ymax &&
+-                  c->ymax + Bloat >= P2->Clipped->contours->ymin)
+-                {
++              PLINE *c;
+ 
+-                  line.Point1.X = v->point[0];
+-                  line.Point1.Y = v->point[1];
+-                  line.Thickness = 2 * Bloat;
+-                  line.Clearance = 0;
+-                  line.Flags = NoFlags ();
+-                  for (v = v->next; v != &c->head; v = v->next)
++              /* first check un-bloated case */
++              if (isects (pg1, P2, False))
++                return TRUE;
++              if (Bloat > 0)
++                {
++                  /* now the difficult case of bloated */
++                  for (c = pg1->contours; c; c = c->next)
+                     {
+-                      line.Point2.X = v->point[0];
+-                      line.Point2.Y = v->point[1];
+-                      SetLineBoundingBox (&line);
+-                      if (IsLineInPolygon (&line, P2))
+-                        return (True);
+-                      line.Point1.X = line.Point2.X;
+-                      line.Point1.Y = line.Point2.Y;
++                      LineType line;
++                      VNODE *v = &c->head;
++                      if (c->xmin - Bloat <= pg2->contours->xmax &&
++                          c->xmax + Bloat >= pg2->contours->xmin &&
++                          c->ymin - Bloat <= pg2->contours->ymax &&
++                          c->ymax + Bloat >= pg2->contours->ymin)
++                        {
++
++                          line.Point1.X = v->point[0];
++                          line.Point1.Y = v->point[1];
++                          line.Thickness = 2 * Bloat;
++                          line.Clearance = 0;
++                          line.Flags = NoFlags ();
++                          for (v = v->next; v != &c->head; v = v->next)
++                            {
++                              line.Point2.X = v->point[0];
++                              line.Point2.Y = v->point[1];
++                              SetLineBoundingBox (&line);
++                              if (IsLineInPolygon (&line, P2))
++                                return (True);
++                              line.Point1.X = line.Point2.X;
++                              line.Point1.Y = line.Point2.Y;
++                            }
++                        }
+                     }
+                 }
+             }
+         }
++      while ((pg1 = pg1->f) != P1->Clipped);
+     }
++  while ((pg2 = pg2->f) != P2->Clipped);
+   return (False);
+ }
+ 
+@@ -4062,6 +4087,7 @@ GotoError (void)
+     case POLYGON_TYPE:
+       {
+         PolygonTypePtr polygon = (PolygonTypePtr) thing_ptr3;
++        /* TODO: Do somethhing with all pieces of a clipped polygon? */
+         X =
+           (polygon->Clipped->contours->xmin +
+            polygon->Clipped->contours->xmax) / 2;
+diff --git a/src/polygon.c b/src/polygon.c
+index 5c2d1f9..fea5e89 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -121,7 +121,7 @@ ComputeNoHoles (PolygonType *poly)
+ }
+ 
+ static POLYAREA *
+-biggest (POLYAREA * p)
++biggest_fubar (POLYAREA * p)
+ {
+   POLYAREA *n, *top = NULL;
+   PLINE *pl;
+@@ -221,7 +221,7 @@ original_poly (PolygonType * p)
+     return NULL;
+   poly_InclContour (np, contour);
+   assert (poly_Valid (np));
+-  return biggest (np);
++  return np; //biggest (np);
+ }
+ 
+ static int
+@@ -241,7 +241,7 @@ ClipOriginal (PolygonType * poly)
+       poly->NoHoles = NULL;
+       return 0;
+     }
+-  poly->Clipped = biggest (result);
++  poly->Clipped = result; //biggest (result);
+   assert (!poly->Clipped || poly_Valid (poly->Clipped));
+   return 1;
+ }
+@@ -616,7 +616,7 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
+       p->NoHoles = NULL;
+       return -1;
+     }
+-  p->Clipped = biggest (merged);
++  p->Clipped = merged; //biggest (merged);
+   assert (!p->Clipped || poly_Valid (p->Clipped));
+   if (!p->Clipped)
+     Message ("Polygon cleared out of existence near (%d, %d)\n",
+@@ -946,7 +946,7 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
+       p->NoHoles = NULL;
+       return 0;
+     }
+-  p->Clipped = biggest (merged);
++  p->Clipped = merged; //biggest (merged);
+   assert (!p->Clipped || poly_Valid (p->Clipped));
+   return ClipOriginal (p);
+ }
+@@ -1531,7 +1531,7 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
+   Vector v;
+   v[0] = X;
+   v[1] = Y;
+-  if (poly_CheckInside (p->Clipped, v))
++  if (poly_M_CheckInside (p->Clipped, v))
+     return True;
+   if (r < 1)
+     return False;
+@@ -1640,9 +1640,10 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
+ {
+   POLYAREA *save, *ans;
+ 
+-  ans = save = poly_Create ();
+-  /* copy the main poly only */
+-  poly_Copy1 (save, p->Clipped);
++  /* Copy all of the original polgon */
++  poly_M_Copy0 (&save, p->Clipped);
++  ans = save;
++
+   /* clip to the bounding box */
+   if (clip)
+     {
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 32ffb31..82adaf5 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -835,6 +835,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+ }
+ 
+ static void
++M_POLYAREA_intersect2 (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
++{
++  POLYAREA *a = afst, *b = bfst;
++  PLINE *curcA, *curcB;
++  CVCList *the_list = NULL;
++
++  if (a == NULL || b == NULL)
++    error (err_bad_parm);
++  do
++    {
++      do
++	{
++	  if (a->contours->xmax >= b->contours->xmin &&
++	      a->contours->ymax >= b->contours->ymin &&
++	      a->contours->xmin <= b->contours->xmax &&
++	      a->contours->ymin <= b->contours->ymax)
++	    {
++	      if (intersect (e, a, b, add))
++		error (err_no_memory);
++	    }
++	}
++      while ((a = a->f) != afst);
++      for (curcB = b->contours; curcB != NULL; curcB = curcB->next)
++	if (curcB->Flags.status == ISECTED)
++	  if (!(the_list = add_descriptors (curcB, 'B', the_list)))
++	    error (err_no_memory);
++    }
++  while ((b = b->f) != bfst);
++  do
++    {
++      for (curcA = a->contours; curcA != NULL; curcA = curcA->next)
++	if (curcA->Flags.status == ISECTED)
++	  if (!(the_list = add_descriptors (curcA, 'A', the_list)))
++	    error (err_no_memory);
++    }
++  while ((a = a->f) != afst);
++}				/* M_POLYAREA_intersect */
++
++static void
+ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+ {
+   POLYAREA *a = afst, *b = bfst;
+@@ -1636,7 +1675,8 @@ Touching (POLYAREA * a, POLYAREA * b)
+       if (!poly_Valid (b))
+ 	return -1;
+ #endif
+-      M_POLYAREA_intersect (&e, a, b, False);
++//      M_POLYAREA_intersect (&e, a, b, False);
++      M_POLYAREA_intersect2 (&e, a, b, False);
+ 
+       if (M_POLYAREA_label (a, b, TRUE))
+ 	return TRUE;
