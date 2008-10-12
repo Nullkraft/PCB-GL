@@ -816,10 +816,8 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
               /* NB: If this actually hits anything, we are teleported back to the beginning */
               info.tree = (rtree_t *) rtree_over->tree;
               if (info.tree)
-                if (G_UNLIKELY (r_search (info.tree, &info.s->box,
-                                          seg_in_region,
-                                          seg_in_seg,
-                                          &info)))
+                if (r_search (info.tree, &info.s->box,
+                              seg_in_region, seg_in_seg, &info))
                   return err_no_memory;	/* error */
           }
         while ((av = av->next) != &looping_over->head);
