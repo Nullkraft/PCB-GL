@@ -1,7 +1,7 @@
-Bottom: aa9abcb77edec2b4118aaf9bb1757e071afe14ca
-Top:    da0a4fa320547a947d6a1668a1dd3d8a12ca42e8
+Bottom: e5031bb9cd2210e15fb749154d575bef2fc9d3ae
+Top:    71fa914feca064b015646b3d98e550a7d9bb7602
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-12 23:48:47 +0100
+Date:   2008-10-13 00:31:29 +0100
 
 Fiddle with the order objects are clipped from pours
 
@@ -9,6 +9,7 @@ Seems to save a little bit of time clipping polygons at startup. It seems
 that clipping simpler, but common objects first, such as lines, means
 those clips go faster. We then clip the more complex items which introduce
 more complexity to the polygons.
+
 
 
 
