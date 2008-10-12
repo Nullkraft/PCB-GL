@@ -1,7 +1,7 @@
 Bottom: df7200845506d8b64934397a1a337c72e520ccf9
 Top:    23eeb085c7b4206f569eb71e421427183467da60
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-12 17:50:50 +0100
+Date:   2008-10-12 23:15:08 +0100
 
 Check all r-tree node children for fit before working out penalties
 
@@ -11,6 +11,7 @@ Working out the penalty involves multiplications which produce a
 Make a pass at testing all children for the fast case of the child
 node containing the desired box, before working out size penalties
 to expanding each child.
+
 
 
 

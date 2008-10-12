@@ -1,24 +1,13 @@
-Bottom: 9418ef9fedfe2d2ebd24943e011b751ef0bacb89
+Bottom: 96be31f76cc86e19e3d0bbe5775dbc2383b8da00
 Top:    96be31f76cc86e19e3d0bbe5775dbc2383b8da00
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-02 18:32:44 +0100
+Date:   2008-10-12 23:15:08 +0100
 
 Fix array index out of bounds over layer groups
 
 
 
+
 ---
 
-diff --git a/src/move.c b/src/move.c
-index 2e9eb1f..003c2e0 100644
---- a/src/move.c
-+++ b/src/move.c
-@@ -1027,7 +1027,7 @@ MoveLayer (int old_index, int new_index)
- 
-   move_all_thermals(old_index, new_index);
- 
--  for (g = 0; g < MAX_LAYER + 1; g++)
-+  for (g = 0; g < MAX_LAYER; g++)
-     PCB->LayerGroups.Number[g] = 0;
-   for (l = 0; l < max_layer + 2; l++)
-     {
+
