@@ -1,0 +1,132 @@
+Bottom: 1e270056ada75278f3114af5e4b87b6cd7323666
+Top:    c65c11a3924d7c5384b83c0cf8ad47e6003d95f9
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-12 22:59:36 +0100
+
+Refresh of add-some-annotations-to-help-o
+
+---
+
+diff --git a/src/global.h b/src/global.h
+index 08ae40f..3f4a5dc 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -86,6 +86,38 @@ typedef struct
+ #define __FUNCTION__ __FUNCTION2(__FILE__,__LINE__)
+ #endif
+ 
++
++/* ---------------------------------------------------------------------------
++ * Macros to annotate branch-prediction information.
++ * Taken from GLib 2.16.3 (LGPL 2).G_ / g_ prefixes have
++ * been removed to avoid namespace clashes.
++ */
++
++/* The LIKELY and UNLIKELY macros let the programmer give hints to
++ * the compiler about the expected result of an expression. Some compilers
++ * can use this information for optimizations.
++ *
++ * The _BOOLEAN_EXPR macro is intended to trigger a gcc warning when
++ * putting assignments inside the test.
++ */
++#if defined(__GNUC__) && (__GNUC__ > 2) && defined(__OPTIMIZE__)
++#define _BOOLEAN_EXPR(expr)                   \
++ __extension__ ({                             \
++   int _boolean_var_;                         \
++   if (expr)                                  \
++      _boolean_var_ = 1;                      \
++   else                                       \
++      _boolean_var_ = 0;                      \
++   _boolean_var_;                             \
++})
++#define LIKELY(expr) (__builtin_expect (_BOOLEAN_EXPR(expr), 1))
++#define UNLIKELY(expr) (__builtin_expect (_BOOLEAN_EXPR(expr), 0))
++#else
++#define LIKELY(expr) (expr)
++#define UNLIKELY(expr) (expr)
++#endif
++
++
+ /* ---------------------------------------------------------------------------
+  * Do not change the following definitions even if they're not very
+  * nice.  It allows us to have functions act on these "base types" and
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 252150f..5c20ef3 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -93,6 +93,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
+ 
+ #define error(code)  longjmp(*(e), code)
+ 
++#warning TODO: Unlikely
+ #define MemGet(ptr, type) \
+ if (((ptr) = malloc(sizeof(type))) == NULL) \
+     error(err_no_memory);
+@@ -816,8 +817,8 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+               /* NB: If this actually hits anything, we are teleported back to the beginning */
+               info.tree = (rtree_t *) rtree_over->tree;
+               if (info.tree)
+-                if (r_search (info.tree, &info.s->box,
+-                              seg_in_region, seg_in_seg, &info))
++                if (UNLIKELY (r_search (info.tree, &info.s->box,
++                                        seg_in_region, seg_in_seg, &info)))
+                   return err_no_memory;	/* error */
+           }
+         while ((av = av->next) != &looping_over->head);
+@@ -849,23 +850,29 @@ M_POLYAREA_intersect2 (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+ 	      a->contours->xmin <= b->contours->xmax &&
+ 	      a->contours->ymin <= b->contours->ymax)
+ 	    {
+-	      if (intersect (e, a, b, add))
++	      if (UNLIKELY (intersect (e, a, b, add)))
+ 		error (err_no_memory);
+ 	    }
+ 	}
+       while ((a = a->f) != afst);
+       for (curcB = b->contours; curcB != NULL; curcB = curcB->next)
+ 	if (curcB->Flags.status == ISECTED)
+-	  if (!(the_list = add_descriptors (curcB, 'B', the_list)))
+-	    error (err_no_memory);
++          {
++            the_list = add_descriptors (curcB, 'B', the_list);
++            if (UNLIKELY (the_list == NULL))
++              error (err_no_memory);
++          }
+     }
+   while ((b = b->f) != bfst);
+   do
+     {
+       for (curcA = a->contours; curcA != NULL; curcA = curcA->next)
+ 	if (curcA->Flags.status == ISECTED)
+-	  if (!(the_list = add_descriptors (curcA, 'A', the_list)))
+-	    error (err_no_memory);
++          {
++            the_list = add_descriptors (curcA, 'A', the_list);
++            if (UNLIKELY (the_list == NULL))
++              error (err_no_memory);
++          }
+     }
+   while ((a = a->f) != afst);
+ }				/* M_POLYAREA_intersect */
+diff --git a/src/rtree.c b/src/rtree.c
+index 662c581..36333d0 100644
+--- a/src/rtree.c
++++ b/src/rtree.c
+@@ -913,7 +913,7 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
+     {
+       register int i;
+ 
+-      if (manage)
++      if (UNLIKELY (manage))
+         {
+           register int flag = 1;
+ 
+@@ -1019,7 +1019,7 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
+           new_node->u.rects[0].bptr = query;
+           new_node->u.rects[0].bounds = *query;
+           new_node->box = *query;
+-          if (manage)
++          if (UNLIKELY (manage))
+             new_node->flags.manage = 1;
+           sort_node (node);
+           return;
