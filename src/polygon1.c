@@ -747,11 +747,11 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
   {
     pa = a->contours;
     pb = b->contours;
-    while (pa)     /* Loop over the contours of POLYAREA a */
+    while (pa)     /* Loop over the contours of POLYAREA "a" */
       {
         int found_overlapping_a_b_contour = FALSE;
 
-        while (pb) /* Loop over the contours of POLYAREA b */
+        while (pb) /* Loop over the contours of POLYAREA "b" */
           {
             /* Are there overlapping bounds? */
             if (pb->xmin <= pa->xmax && pb->xmax >= pa->xmin &&
