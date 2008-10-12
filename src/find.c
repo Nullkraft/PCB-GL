@@ -2536,7 +2536,6 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
             }
         }
     }
-
   return (False);
 }
 
