@@ -1,0 +1,27 @@
+Bottom: 1234e38e444d18ca938c515ca2fabbb79ce48f98
+Top:    05927a3788cc785eca63cb3ec6aec003bbdec684
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-12 22:13:55 +0100
+
+Refresh of rework-iteration-over-contours
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index b2a542d..1b4f7fb 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -747,11 +747,11 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+   {
+     pa = a->contours;
+     pb = b->contours;
+-    while (pa)     /* Loop over the contours of POLYAREA a */
++    while (pa)     /* Loop over the contours of POLYAREA "a" */
+       {
+         int found_overlapping_a_b_contour = FALSE;
+ 
+-        while (pb) /* Loop over the contours of POLYAREA b */
++        while (pb) /* Loop over the contours of POLYAREA "b" */
+           {
+             /* Are there overlapping bounds? */
+             if (pb->xmin <= pa->xmax && pb->xmax >= pa->xmin &&
