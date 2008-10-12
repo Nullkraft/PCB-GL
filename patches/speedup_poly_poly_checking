@@ -1,5 +1,5 @@
 Bottom: 93e1b60793cf994b867800f919b6209c4b6d6935
-Top:    f17e1ab02156d687f8752883ecdc495f911c72ea
+Top:    5246ff2ab676533a9e769ce2a2e025dae9a2d5b6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-13 00:30:59 +0100
 
@@ -14,7 +14,7 @@ Use the r_trees to avoid needing to check so many polygons all the time
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 41f0e72..3fcfe9d 100644
+index 41f0e72..2ff7d64 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -33,8 +33,6 @@
@@ -57,7 +57,7 @@ index 41f0e72..3fcfe9d 100644
 +  PourTypePtr pour = (PourTypePtr) b;
 +  struct lo_info *i = (struct lo_info *) cl;
 +
-+  return r_search (pour->polygon_tree, (BoxType *) &i->polygon,
++  return r_search (pour->polygon_tree, (BoxType *) &i->line,
 +                   NULL, LOCtoLinePolygon_callback, i);
 +}
 +
