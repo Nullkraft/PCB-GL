@@ -1,9 +1,10 @@
-Bottom: 14c9888f54ed51a0e8bb37591bf61cd67a8c7c5c
-Top:    0f7d171552e396659ad723e523be80ff00951c2a
+Bottom: e256e5d60e45dd2fce7cdbf62533d5520eed5207
+Top:    c3b565b5a3e97f2a2532700325e1854c9e1b6ea4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-11 19:50:52 +0100
+Date:   2008-10-12 17:52:15 +0100
 
 Fiddle with some assertions. One item here is a real fix for a typo
+
 
 
 ---
@@ -35,7 +36,7 @@ index ee098de..fe5e374 100644
    if (region)
      {
 diff --git a/src/rtree.c b/src/rtree.c
-index fec72bc..c2220a3 100644
+index d887c76..662c581 100644
 --- a/src/rtree.c
 +++ b/src/rtree.c
 @@ -520,7 +520,7 @@ __r_search (struct rtree_node *node, const BoxType * query, r_arg * arg)
