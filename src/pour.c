@@ -671,7 +671,14 @@ mark_islands (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
               int type, void *ptr1, void *ptr2)
 {
   struct cpInfo info;
-  info.region = &((PinTypePtr) ptr2)->BoundingBox;
+  BoxType region = ((PinTypePtr) ptr2)->BoundingBox;
+
+  region.X1 -= UNSUBTRACT_BLOAT;
+  region.Y1 -= UNSUBTRACT_BLOAT;
+  region.X2 += UNSUBTRACT_BLOAT;
+  region.Y2 += UNSUBTRACT_BLOAT;
+
+  info.region = &region;
   info.layer = layer;
 
   return r_search (pour->polygon_tree, info.region, NULL,
