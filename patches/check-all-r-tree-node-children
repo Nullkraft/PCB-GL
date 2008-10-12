@@ -1,7 +1,7 @@
-Bottom: 54a6a18124ccc9d0c34aac21e0abc9ad3916b36a
-Top:    d4e6a547957aa257a74e0a3531c5a68f364a5645
+Bottom: 242499603d1d248b78b067bdcad7a6dd8fca53c3
+Top:    87517b9b23ce6ca6bf81fa1c5921db4c28daa4dc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-12 17:31:44 +0100
+Date:   2008-10-12 17:46:32 +0100
 
 Check all r-tree node children for fit before working out penalties
 
@@ -13,10 +13,11 @@ node containing the desired box, before working out size penalties
 to expanding each child.
 
 
+
 ---
 
 diff --git a/src/rtree.c b/src/rtree.c
-index c2220a3..662c581 100644
+index fec72bc..d887c76 100644
 --- a/src/rtree.c
 +++ b/src/rtree.c
 @@ -868,27 +868,32 @@ split_node (struct rtree_node *node)
