@@ -1814,6 +1814,7 @@ LookupLOConnectionsToArc (ArcTypePtr Arc, Cardinal LayerGroup)
             return True;
 
           /* now check all polygons */
+          printf ("Slow pour path for arcs\n");
           POUR_LOOP (LAYER_PTR (layer));
           {
             POURPOLYGON_LOOP (pour);
@@ -1957,6 +1958,7 @@ LookupLOConnectionsToLine (LineTypePtr Line, Cardinal LayerGroup,
           /* now check all polygons */
           if (PolysTo)
             {
+              printf ("Slow pour path for lines\n");
               POUR_LOOP (LAYER_PTR (layer));
               {
                 POURPOLYGON_LOOP (pour);
@@ -2056,6 +2058,7 @@ LOTouchesLine (LineTypePtr Line, Cardinal LayerGroup)
             return (True);
 
           /* now check all polygons */
+          printf ("Slow pour path for lines (LOTouchesLine)\n");
           POUR_LOOP (LAYER_PTR (layer));
           {
             POURPOLYGON_LOOP (pour);
@@ -2443,9 +2446,9 @@ static int
 LOCtoPolyPourPolygon_callback (const BoxType * b, void *cl)
 {
   PourTypePtr pour = (PourTypePtr) b;
-  struct pv_info *i = (struct pv_info *) cl;
+  struct lo_info *i = (struct pv_info *) cl;
 
-  return r_search (pour->polygon_tree, (BoxType *) &i->pv,
+  return r_search (pour->polygon_tree, (BoxType *) &i->polygon,
                    NULL, LOCtoPolyPolygon_callback, i);
 }
 
@@ -2459,8 +2462,10 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
   Cardinal entry;
   struct lo_info info;
 
-  if (!Polygon->Clipped)
+  if (!Polygon->Clipped){
+    printf ("Returning because polygon wasn't clipped in LookupLOConnectionsToPolygon\n");
     return False;
+  }
   info.polygon = *Polygon;
   EXPAND_BOUNDS (&info.polygon);
   info.layer = LayerGroup;
@@ -3775,20 +3780,26 @@ IsPolygonAnIsland (LayerType *layer, PolygonType *polygon)
 
   InitConnectionLookup ();
 
-  TheFlag = FOUNDFLAG | DRCFLAG | SELECTEDFLAG;
-
-  ResetConnections (False);
-
   /* Need to ensure we don't set the SELECTED flag as we find
    * things, otherwise we don't get our quick escape due to the
    * "drc" magic.
+   *
+   * (The connection scanning code doesn't stop on objects which are
+   *  SELECTED, even if "drc" is true).
+   *
+   * Ideally we'd clear the SELECTED flag on all objects before we
+   * start, ensuring we exit when we first find connectivity, but
+   * that causes all manner of breakage. I upsets other logic in
+   * PCB if we change the selection during certain operations we're
+   * called during.
    */
   TheFlag = FOUNDFLAG | DRCFLAG;
 
-  User = False;
+  ResetConnections (False);
 
   /* Let the search stop if we find something we haven't yet seen */
   drc = True;
+  User = False;
 
   ListStart (POLYGON_TYPE, layer, polygon, polygon);
 
@@ -3810,7 +3821,6 @@ IsPolygonAnIsland (LayerType *layer, PolygonType *polygon)
       connected_count += PVList.Number;
       if (connected_count)
         break;
-
     }
   while (any_more);
 

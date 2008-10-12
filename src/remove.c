@@ -308,6 +308,7 @@ DestroyRat (RatTypePtr Rat)
 static void *
 RemoveVia (PinTypePtr Via)
 {
+  printf ("Remove Via!\n");
   /* erase from screen and memory */
   if (PCB->ViaOn)
     {
@@ -536,6 +537,7 @@ RemoveElement (ElementTypePtr Element)
 Boolean
 RemoveSelected (void)
 {
+  printf ("RemoveSelected\n");
   Bulk = True;
   if (SelectedOperation (&RemoveFunctions, False, ALL_TYPES))
     {

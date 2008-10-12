@@ -66,7 +66,7 @@ RCSID ("$Id$");
 
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
-#define UNSUBTRACT_BLOAT 100
+#define UNSUBTRACT_BLOAT 10
 
 /* ---------------------------------------------------------------------------
  * local prototypes
@@ -703,6 +703,10 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
     case POLYGON_TYPE:
       np = get_subtract_polygon_poly ((PolygonTypePtr) ptr2, pour);
       break;
+    case POUR_TYPE:
+#warning FIXME Later: Need to produce a function for this
+      np = NULL;
+      break;
     case TEXT_TYPE:
       np = get_subtract_text_poly ((TextTypePtr) ptr2, pour);
       break;
@@ -948,6 +952,10 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
     case POLYGON_TYPE:
       np = get_unsubtract_polygon_poly ((PolygonTypePtr) ptr2, layer, pour);
       break;
+    case POUR_TYPE:
+#warning FIXME Later: Need to produce a function for this
+      np = NULL;
+      break;
     case TEXT_TYPE:
       np = get_unsubtract_text_poly ((TextTypePtr) ptr2, layer, pour);
       break;
@@ -1071,8 +1079,7 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
     }
   while ((pg = tmp) != start_pg);
 
-  printf ("skipping mark_islands in add_plow / RestoreToPours\n");
-//  mark_islands (Data, layer, pour, type, ptr1, ptr2);
+  mark_islands (Data, layer, pour, type, ptr1, ptr2);
 
 //  printf ("ClearPour counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
 
@@ -1153,7 +1160,11 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
     }
   while ((pg = tmp) != start_pg);
 
-  mark_islands (Data, layer, pour, 0, NULL, NULL);
+  POURPOLYGON_LOOP (pour);
+  {
+    ASSIGN_FLAG (HOLEFLAG, IsPolygonAnIsland (layer, polygon), polygon);
+  }
+  END_LOOP;
 
   return 1;
 }
@@ -1227,6 +1238,7 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
     case ARC_TYPE:
     case TEXT_TYPE:
     case POLYGON_TYPE:
+    case POUR_TYPE:
       /* the cast works equally well for lines and arcs */
       if (!ignore_clearflags &&
           !TEST_FLAG (CLEARLINEFLAG, (LineTypePtr) ptr2))
@@ -1278,6 +1290,8 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
 void
 RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
 {
+  if (!Data->ClipPours)
+    return;
   if (type == POUR_TYPE)
     {
 #warning FIXME Later: Why do we need to do this?
@@ -1290,6 +1304,9 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
 void
 ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
 {
+  printf ("ClearFrom pours, Data is %p, Data->ClipPours=%i\n", Data, Data->ClipPours);
+  if (!Data->ClipPours)
+    return;
   if (type == POUR_TYPE)
     {
 #warning FIXME Later: Why do we need to do this?
@@ -1299,8 +1316,11 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
   PlowPours (Data, type, ptr1, ptr2, subtract_plow, False);
 }
 
+#warning FIXME Later: We could perhaps reduce un-necessary computation by using this function
 void
 MarkPourIslands (DataType * Data, int type, void *ptr1, void *ptr2)
 {
+  if (!Data->ClipPours)
+    return;
   PlowPours (Data, type, ptr1, ptr2, mark_islands, True);
 }
