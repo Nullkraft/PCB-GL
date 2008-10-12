@@ -1,0 +1,21 @@
+Bottom: c6ab44d1715fd3e705c8fc20641cb4e49a6a5c94
+Top:    c6ab44d1715fd3e705c8fc20641cb4e49a6a5c94
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-12 22:07:40 +0100
+
+Rework iteration over contours in "intersect" to improve performance
+
+We don't need to be using an r_tree search to determine if a contour's
+bounding box hits anything in another contour. Just compare the bounding
+boxes directly, then continue to the more expensive testing.
+
+Rather than counting the vertices of each POLYAREA then swapping to
+ensure we loop over the the small one, wait until we've worked out
+which contours we're comparing. Rather than swapping, we just choose
+which to loop over. This saves us time in the case where the larger
+intersecting contour belongs to the polygon with fewer vertices.
+
+
+---
+
+
