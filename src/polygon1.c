@@ -2426,12 +2426,13 @@ inside_sector (VNODE * pn, Vector p2)
 BOOLp
 poly_ChkContour (PLINE * a)
 {
-#warning FIXME Later: Deliberately disabled this test - seems something strange is going on
-  return FALSE;
   VNODE *a1, *a2, *a2_start, *hit1, *hit2;
   Vector i1, i2;
   int icnt;
   double d1,d2;
+
+#warning FIXME Later: Deliberately disabled this test - seems something strange is going on
+  return FALSE;
 
   assert (a != NULL);
   a1 = &a->head;
