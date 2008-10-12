@@ -1,5 +1,5 @@
 Bottom: e1303b40048521d58c709edc34515d62f57484ac
-Top:    1b0e8567fa204441ff42f2664fbebaa8a3da617d
+Top:    93e1b60793cf994b867800f919b6209c4b6d6935
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-12 23:48:44 +0100
 
@@ -2224,7 +2224,7 @@ index 653e1db..724904c 100644
  		fputs ("\n\t\t", FP);
  	      fprintf (FP, "[%i %i] ", (int) point->X, (int) point->Y);
 diff --git a/src/find.c b/src/find.c
-index edf2f7e..76cdf21 100644
+index edf2f7e..41f0e72 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -540,6 +540,7 @@ void
@@ -2459,7 +2459,7 @@ index edf2f7e..76cdf21 100644
            else
              return True;
          }
-@@ -2406,23 +2452,27 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
+@@ -2406,25 +2452,30 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
  /* loop over all layers of the group */
    for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
      {
@@ -2472,7 +2472,8 @@ index edf2f7e..76cdf21 100644
        if (layer < max_layer)
          {
 -          PolygonTypePtr polygon;
--
++          info.layer = layer;
+ 
            /* check all polygons */
  
 -          polygon = PCB->Data->Layer[layer].Polygon;
@@ -2494,9 +2495,11 @@ index edf2f7e..76cdf21 100644
 +          }
 +          END_LOOP;
  
-           info.layer = layer;
+-          info.layer = layer;
            /* check all lines */
-@@ -3387,17 +3437,21 @@ ResetFoundLinesAndPolygons (Boolean AndDraw)
+           if (setjmp (info.env) == 0)
+             r_search (LAYER_PTR (layer)->line_tree,
+@@ -3387,17 +3438,21 @@ ResetFoundLinesAndPolygons (Boolean AndDraw)
        }
    }
    ENDALL_LOOP;
