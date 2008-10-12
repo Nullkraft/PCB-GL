@@ -1,16 +1,17 @@
-Bottom: 7a08fa4b1bd515cd5c79b8ba955d925b7c103065
-Top:    bd9239ad86767c4f5034411393f911ca7a5625e2
+Bottom: ed2f197e5bc822012a75f9622b9efefb871ca122
+Top:    e256e5d60e45dd2fce7cdbf62533d5520eed5207
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-02 19:42:47 +0100
+Date:   2008-10-12 17:52:04 +0100
 
 Workaround crash where contour is passed as NULL to poly_PreContour
+
 
 
 
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index c33c735..54f8f9f 100644
+index c697f3e..5c2d1f9 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -202,6 +202,16 @@ original_poly (PolygonType * p)
