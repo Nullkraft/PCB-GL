@@ -557,6 +557,12 @@ cntrbox_adjust (PLINE * c, Vector p)
 
 /* some structures for handling segment intersections using the rtrees */
 
+typedef struct contour
+{
+  BoxType box;
+  PLINE *p;
+} contour;
+
 typedef struct seg
 {
   BoxType box;
@@ -688,11 +694,13 @@ seg_in_seg (const BoxType * b, void *cl)
   return 0;
 }
 
+#if 0
 static int
 curtail (const BoxType * b, void *cl)
 {
   longjmp (*(jmp_buf *) cl, 1);
 }
+#endif
 
 static void *
 make_edge_tree (PLINE * pb)
@@ -766,25 +774,12 @@ get_seg (const BoxType * b, void *cl)
 static int
 intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
 {
-  POLYAREA *t;
   PLINE *pa, *pb;		/* pline iterators */
+  PLINE *rtree_over;
+  PLINE *looping_over;
   VNODE *av;			/* node iterators */
   struct info info;
   BoxType box;
-  int ca = 0, cb = 0;
-
-  /* count the vertices in a and b */
-  for (pa = a->contours; pa; pa = pa->next)
-    ca += pa->Count;
-  for (pb = b->contours; pb; pb = pb->next)
-    cb += pb->Count;
-  /* search the tree with the larger number of verticies */
-  if (ca > cb)
-    {
-      t = b;
-      b = a;
-      a = t;
-    }
 
   if (add)
     info.touch = NULL;
@@ -792,84 +787,93 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
     info.touch = jb;
   setjmp (info.env);		/* we loop back here whenever a vertex is inserted */
   {
-    for (pa = a->contours; pa; pa = pa->next)
+    /* Loop over the contours of POLYAREA a */
+    pa = a->contours;
+    pb = b->contours;
+    while (pa)
       {
-        /* Loop over the contours of POLYAREA a */
+        int found_overlapping_a_b_contour = FALSE;
 
-	jmp_buf env;
-	/* skip the whole contour if it's bounding box doesn't intersect */
-	if (setjmp (env) == 0)
-	  {
-	    /* expand the box to include the max point */
-	    BoxType sb;
-	    sb.X1 = pa->xmin;
-	    sb.X2 = pa->xmax + 1;
-	    sb.Y1 = pa->ymin;
-	    sb.Y2 = pa->ymax + 1;
+        /* Loop over the contours of POLYAREA b */
+        while (pb)
+          {
+            /* Are there overlapping bounds? */
+            if (pb->xmin <= pa->xmax && pb->xmax >= pa->xmin &&
+                pb->ymin <= pa->ymax && pb->ymax >= pa->ymin)
+              {
+                found_overlapping_a_b_contour = TRUE;
+                break;
+              }
+            pb = pb->next;
+          }
 
-	    for (pb = b->contours; pb; pb = pb->next)
-	      {
-                /* Loop over the contours of POLYAREA b */
-		/*
-		   if (sb.X1 > pb->xmax || sb.X2 < pb->xmin || sb.Y1 > pb->ymax || sb.Y2 < pb->ymin)
-		   continue;
-		 */
-		info.tree = (rtree_t *) pb->tree;
-#warning NOT SURE IF THIS IS A CANDIDATE FOR G_LIKELY OR NOT?
-		if (info.tree)
-		  r_search (info.tree, &sb, NULL, curtail, &env);
-                else
-                  printf ("No tree in intersect\n");
-	      }
-	    continue;
-	  }
-	else			/* something intersects so check the edges of the contour */
-	  {
-	    av = &pa->head;
-	    do
-	      {
-                /* Loop over the nodes in the 'a' contour polyline */
+        /* If we didn't find anything intersting, move onto the next "a" contour */
+        if (!found_overlapping_a_b_contour)
+          {
+            pa = pa->next;
+            pb = b->contours;
+            continue;
+          }
 
-		/* check this edge for any insertions */
-		double dx;
-		info.v = av;
-		/* compute the slant for region trimming */
-		dx = av->next->point[0] - av->point[0];
-#warning Is this a candidate for G_UNLIKELY?
-		if (dx == 0)
-		  info.m = 0;
-		else
-		  {
-		    info.m = (av->next->point[1] - av->point[1]) / dx;
-		    info.b = av->point[1] - info.m * av->point[0];
-		  }
-		box.X2 = (box.X1 = av->point[0]) + 1;
-		box.Y2 = (box.Y1 = av->point[1]) + 1;
-		/* fill in the segment in info corresponding to this node */
-		if (setjmp (info.sego) == 0)
-		  {
-		    r_search ((rtree_t *) (pa->tree), &box, NULL, get_seg,
-			      &info);
-		    assert (0);
-		  }
-		for (pb = b->contours; pb; pb = pb->next)
-		  {
-		    if (pb->xmin > info.s->box.X2 || pb->xmax < info.s->box.X1
-			|| pb->ymin > info.s->box.Y2
-			|| pb->ymax < info.s->box.Y1)
-		      continue;
-		    info.tree = (rtree_t *) pb->tree;
-#warning CANDIDATE FOR G_LIKELY?
-		    if (info.tree)
-                      if (G_UNLIKELY (r_search (info.tree, &info.s->box,
-                                                seg_in_region,
-                                                seg_in_seg,
-                                                &info)))
-		        return err_no_memory;	/* error */
-		  }
-	      }
-	    while ((av = av->next) != &pa->head);
-	  }
+        /* something intersects so check the edges of the contour */
+
+        /* Pick which contour has the fewer points, and do the loop
+         * over that. The r_tree makes hit-testing against a contour
+         * faster, so we want to do that on the bigger contour.
+         */
+
+        if (pa->Count < pb->Count)
+          {
+            rtree_over   = pb;
+            looping_over = pa;
+          }
+        else
+          {
+            rtree_over   = pa;
+            looping_over = pb;
+          }
+
+        /* Loop over the nodes in the "a" contour polyline */
+        av = &looping_over->head;
+        do
+          {
+            /* check this edge for any insertions */
+            double dx;
+            info.v = av;
+            /* compute the slant for region trimming */
+            dx = av->next->point[0] - av->point[0];
+            if (dx == 0)
+              info.m = 0;
+            else
+              {
+                info.m = (av->next->point[1] - av->point[1]) / dx;
+                info.b = av->point[1] - info.m * av->point[0];
+              }
+            box.X2 = (box.X1 = av->point[0]) + 1;
+            box.Y2 = (box.Y1 = av->point[1]) + 1;
+
+            /* fill in the segment in info corresponding to this node */
+            if (setjmp (info.sego) == 0)
+              {
+                r_search ((rtree_t *) (looping_over->tree), &box, NULL, get_seg, &info);
+                assert (0);
+              }
+
+              /* NB: If this actually hits anything, we are teleported back to the beginning */
+              info.tree = (rtree_t *) rtree_over->tree;
+              if (info.tree)
+                if (G_UNLIKELY (r_search (info.tree, &info.s->box,
+                                          seg_in_region,
+                                          seg_in_seg,
+                                          &info)))
+                  return err_no_memory;	/* error */
+          }
+        while ((av = av->next) != &looping_over->head);
+
+        /* Continue the with the _same_ "a" contour,
+         * testing it against the next "b" contour.
+         */
+        pb = pb->next;
       }
   }				/* end of setjmp loop */
   return 0;
@@ -1940,7 +1944,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
       poly_Free (&b);
       assert (poly_Valid (*aminusb));
     }
-  /* delete holes if any left */
+  /* delete holes if any left *poly_DelContour */
   while ((p = holes) != NULL)
     {
       holes = p->next;
@@ -2484,12 +2488,13 @@ inside_sector (VNODE * pn, Vector p2)
 BOOLp
 poly_ChkContour (PLINE * a)
 {
-#warning FIXME Later: Deliberately disabled this test - seems something strange is going on
-  return FALSE;
   VNODE *a1, *a2, *a2_start, *hit1, *hit2;
   Vector i1, i2;
   int icnt;
   double d1,d2;
+
+#warning FIXME Later: Deliberately disabled this test - seems something strange is going on
+  return FALSE;
 
   assert (a != NULL);
   a1 = &a->head;
