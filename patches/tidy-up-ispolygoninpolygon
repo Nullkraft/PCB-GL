@@ -1,5 +1,5 @@
 Bottom: 05927a3788cc785eca63cb3ec6aec003bbdec684
-Top:    a9d0484e022f2843c87f9d32f29128777f4be0d7
+Top:    e0866230453bfc82b705950349844a4715d15c7c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-12 22:17:15 +0100
 
@@ -11,10 +11,10 @@ No functional changes
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 6dae758..84c50a0 100644
+index 6dae758..563819e 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -2638,45 +2638,46 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
+@@ -2638,49 +2638,51 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
      return False;
    assert (P1->Clipped->contours);
    assert (P2->Clipped->contours);
@@ -96,3 +96,7 @@ index 6dae758..84c50a0 100644
                  }
              }
          }
+     }
++
+   return (False);
+ }
