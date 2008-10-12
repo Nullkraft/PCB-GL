@@ -1,0 +1,381 @@
+Bottom: 6770363bc507ce43276535166d7c4f74276a3a68
+Top:    74adb7cec1589d0bb6a48e628d9b4c1fbf735bdf
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-12 22:01:04 +0100
+
+Refresh of try-something-with-the-rtrees
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 6dae758..4e8d4f0 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -2478,10 +2478,9 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
+   Cardinal entry;
+   struct lo_info info;
+ 
+-  if (!Polygon->Clipped){
+-    printf ("Returning because polygon wasn't clipped in LookupLOConnectionsToPolygon\n");
++  if (!Polygon->Clipped)
+     return False;
+-  }
++
+   info.polygon = *Polygon;
+   EXPAND_BOUNDS (&info.polygon);
+   info.layer = LayerGroup;
+@@ -2638,49 +2637,51 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
+     return False;
+   assert (P1->Clipped->contours);
+   assert (P2->Clipped->contours);
+-  /* first check if both bounding boxes intersect */
+-  if (P1->Clipped->contours->xmin - Bloat <= P2->Clipped->contours->xmax &&
+-      P1->Clipped->contours->xmax + Bloat >= P2->Clipped->contours->xmin &&
+-      P1->Clipped->contours->ymin - Bloat <= P2->Clipped->contours->ymax &&
+-      P1->Clipped->contours->ymax + Bloat >= P2->Clipped->contours->ymin)
+-    {
+-      PLINE *c;
+ 
+-      /* first check un-bloated case */
+-      if (isects (P1->Clipped, P2, False))
+-        return TRUE;
+-      if (Bloat > 0)
++  /* first check if both bounding boxes intersect. If not, return quickly */
++  if (P1->Clipped->contours->xmin - Bloat > P2->Clipped->contours->xmax ||
++      P1->Clipped->contours->xmax + Bloat < P2->Clipped->contours->xmin ||
++      P1->Clipped->contours->ymin - Bloat > P2->Clipped->contours->ymax ||
++      P1->Clipped->contours->ymax + Bloat < P2->Clipped->contours->ymin)
++    return False;
++
++  /* first check un-bloated case */
++  if (isects (P1->Clipped, P2, False))
++    return TRUE;
++
++  /* now the difficult case of bloated */
++  if (Bloat > 0)
++  {
++    PLINE *c;
++      for (c = P1->Clipped->contours; c; c = c->next)
+         {
+-          /* now the difficult case of bloated */
+-          for (c = P1->Clipped->contours; c; c = c->next)
++          LineType line;
++          VNODE *v = &c->head;
++          if (c->xmin - Bloat <= P2->Clipped->contours->xmax &&
++              c->xmax + Bloat >= P2->Clipped->contours->xmin &&
++              c->ymin - Bloat <= P2->Clipped->contours->ymax &&
++              c->ymax + Bloat >= P2->Clipped->contours->ymin)
+             {
+-              LineType line;
+-              VNODE *v = &c->head;
+-              if (c->xmin - Bloat <= P2->Clipped->contours->xmax &&
+-                  c->xmax + Bloat >= P2->Clipped->contours->xmin &&
+-                  c->ymin - Bloat <= P2->Clipped->contours->ymax &&
+-                  c->ymax + Bloat >= P2->Clipped->contours->ymin)
+-                {
+ 
+-                  line.Point1.X = v->point[0];
+-                  line.Point1.Y = v->point[1];
+-                  line.Thickness = 2 * Bloat;
+-                  line.Clearance = 0;
+-                  line.Flags = NoFlags ();
+-                  for (v = v->next; v != &c->head; v = v->next)
+-                    {
+-                      line.Point2.X = v->point[0];
+-                      line.Point2.Y = v->point[1];
+-                      SetLineBoundingBox (&line);
+-                      if (IsLineInPolygon (&line, P2))
+-                        return (True);
+-                      line.Point1.X = line.Point2.X;
+-                      line.Point1.Y = line.Point2.Y;
+-                    }
++              line.Point1.X = v->point[0];
++              line.Point1.Y = v->point[1];
++              line.Thickness = 2 * Bloat;
++              line.Clearance = 0;
++              line.Flags = NoFlags ();
++              for (v = v->next; v != &c->head; v = v->next)
++                {
++                  line.Point2.X = v->point[0];
++                  line.Point2.Y = v->point[1];
++                  SetLineBoundingBox (&line);
++                  if (IsLineInPolygon (&line, P2))
++                    return (True);
++                  line.Point1.X = line.Point2.X;
++                  line.Point1.Y = line.Point2.Y;
+                 }
+             }
+         }
+     }
++
+   return (False);
+ }
+ 
+diff --git a/src/polyarea.h b/src/polyarea.h
+index 42acc1a..819b074 100644
+--- a/src/polyarea.h
++++ b/src/polyarea.h
+@@ -128,6 +128,7 @@ struct POLYAREA
+ {
+     POLYAREA *f, *b;
+     PLINE *contours;
++    void *contour_tree;
+ };
+ 
+ BOOLp poly_M_Copy0(POLYAREA ** dst, const POLYAREA * srcfst);
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 49c2432..82359c8 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -557,6 +557,12 @@ cntrbox_adjust (PLINE * c, Vector p)
+ 
+ /* some structures for handling segment intersections using the rtrees */
+ 
++typedef struct contour
++{
++  BoxType box;
++  PLINE *p;
++} contour;
++
+ typedef struct seg
+ {
+   BoxType box;
+@@ -688,11 +694,13 @@ seg_in_seg (const BoxType * b, void *cl)
+   return 0;
+ }
+ 
++#if 0
+ static int
+ curtail (const BoxType * b, void *cl)
+ {
+   longjmp (*(jmp_buf *) cl, 1);
+ }
++#endif
+ 
+ static void *
+ make_edge_tree (PLINE * pb)
+@@ -766,25 +774,12 @@ get_seg (const BoxType * b, void *cl)
+ static int
+ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+ {
+-  POLYAREA *t;
+   PLINE *pa, *pb;		/* pline iterators */
++  PLINE *rtree_over;
++  PLINE *looping_over;
+   VNODE *av;			/* node iterators */
+   struct info info;
+   BoxType box;
+-  int ca = 0, cb = 0;
+-
+-  /* count the vertices in a and b */
+-  for (pa = a->contours; pa; pa = pa->next)
+-    ca += pa->Count;
+-  for (pb = b->contours; pb; pb = pb->next)
+-    cb += pb->Count;
+-  /* search the tree with the larger number of verticies */
+-  if (ca > cb)
+-    {
+-      t = b;
+-      b = a;
+-      a = t;
+-    }
+ 
+   if (add)
+     info.touch = NULL;
+@@ -792,84 +787,93 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+     info.touch = jb;
+   setjmp (info.env);		/* we loop back here whenever a vertex is inserted */
+   {
+-    for (pa = a->contours; pa; pa = pa->next)
++    /* Loop over the contours of POLYAREA a */
++    pa = a->contours;
++    pb = b->contours;
++    while (pa)
+       {
+-        /* Loop over the contours of POLYAREA a */
+-
+-	jmp_buf env;
+-	/* skip the whole contour if it's bounding box doesn't intersect */
+-	if (setjmp (env) == 0)
+-	  {
+-	    /* expand the box to include the max point */
+-	    BoxType sb;
+-	    sb.X1 = pa->xmin;
+-	    sb.X2 = pa->xmax + 1;
+-	    sb.Y1 = pa->ymin;
+-	    sb.Y2 = pa->ymax + 1;
+-
+-	    for (pb = b->contours; pb; pb = pb->next)
+-	      {
+-                /* Loop over the contours of POLYAREA b */
+-		/*
+-		   if (sb.X1 > pb->xmax || sb.X2 < pb->xmin || sb.Y1 > pb->ymax || sb.Y2 < pb->ymin)
+-		   continue;
+-		 */
+-		info.tree = (rtree_t *) pb->tree;
+-#warning NOT SURE IF THIS IS A CANDIDATE FOR G_LIKELY OR NOT?
+-		if (info.tree)
+-		  r_search (info.tree, &sb, NULL, curtail, &env);
+-                else
+-                  printf ("No tree in intersect\n");
+-	      }
+-	    continue;
+-	  }
+-	else			/* something intersects so check the edges of the contour */
+-	  {
+-	    av = &pa->head;
+-	    do
+-	      {
+-                /* Loop over the nodes in the 'a' contour polyline */
+-
+-		/* check this edge for any insertions */
+-		double dx;
+-		info.v = av;
+-		/* compute the slant for region trimming */
+-		dx = av->next->point[0] - av->point[0];
+-#warning Is this a candidate for G_UNLIKELY?
+-		if (dx == 0)
+-		  info.m = 0;
+-		else
+-		  {
+-		    info.m = (av->next->point[1] - av->point[1]) / dx;
+-		    info.b = av->point[1] - info.m * av->point[0];
+-		  }
+-		box.X2 = (box.X1 = av->point[0]) + 1;
+-		box.Y2 = (box.Y1 = av->point[1]) + 1;
+-		/* fill in the segment in info corresponding to this node */
+-		if (setjmp (info.sego) == 0)
+-		  {
+-		    r_search ((rtree_t *) (pa->tree), &box, NULL, get_seg,
+-			      &info);
+-		    assert (0);
+-		  }
+-		for (pb = b->contours; pb; pb = pb->next)
+-		  {
+-		    if (pb->xmin > info.s->box.X2 || pb->xmax < info.s->box.X1
+-			|| pb->ymin > info.s->box.Y2
+-			|| pb->ymax < info.s->box.Y1)
+-		      continue;
+-		    info.tree = (rtree_t *) pb->tree;
+-#warning CANDIDATE FOR G_LIKELY?
+-		    if (info.tree)
+-                      if (G_UNLIKELY (r_search (info.tree, &info.s->box,
+-                                                seg_in_region,
+-                                                seg_in_seg,
+-                                                &info)))
+-		        return err_no_memory;	/* error */
+-		  }
+-	      }
+-	    while ((av = av->next) != &pa->head);
+-	  }
++        int found_overlapping_a_b_contour = FALSE;
++
++        /* Loop over the contours of POLYAREA b */
++        while (pb)
++          {
++            /* Are there overlapping bounds? */
++            if (pb->xmin <= pa->xmax && pb->xmax >= pa->xmin &&
++                pb->ymin <= pa->ymax && pb->ymax >= pa->ymin)
++              {
++                found_overlapping_a_b_contour = TRUE;
++                break;
++              }
++            pb = pb->next;
++          }
++
++        /* If we didn't find anything intersting, move onto the next "a" contour */
++        if (!found_overlapping_a_b_contour)
++          {
++            pa = pa->next;
++            pb = b->contours;
++            continue;
++          }
++
++        /* something intersects so check the edges of the contour */
++
++        /* Pick which contour has the fewer points, and do the loop
++         * over that. The r_tree makes hit-testing against a contour
++         * faster, so we want to do that on the bigger contour.
++         */
++
++        if (pa->Count < pb->Count)
++          {
++            rtree_over   = pb;
++            looping_over = pa;
++          }
++        else
++          {
++            rtree_over   = pa;
++            looping_over = pb;
++          }
++
++        /* Loop over the nodes in the "a" contour polyline */
++        av = &looping_over->head;
++        do
++          {
++            /* check this edge for any insertions */
++            double dx;
++            info.v = av;
++            /* compute the slant for region trimming */
++            dx = av->next->point[0] - av->point[0];
++            if (dx == 0)
++              info.m = 0;
++            else
++              {
++                info.m = (av->next->point[1] - av->point[1]) / dx;
++                info.b = av->point[1] - info.m * av->point[0];
++              }
++            box.X2 = (box.X1 = av->point[0]) + 1;
++            box.Y2 = (box.Y1 = av->point[1]) + 1;
++
++            /* fill in the segment in info corresponding to this node */
++            if (setjmp (info.sego) == 0)
++              {
++                r_search ((rtree_t *) (looping_over->tree), &box, NULL, get_seg, &info);
++                assert (0);
++              }
++
++              /* NB: If this actually hits anything, we are teleported back to the beginning */
++              info.tree = (rtree_t *) rtree_over->tree;
++              if (info.tree)
++                if (G_UNLIKELY (r_search (info.tree, &info.s->box,
++                                          seg_in_region,
++                                          seg_in_seg,
++                                          &info)))
++                  return err_no_memory;	/* error */
++          }
++        while ((av = av->next) != &looping_over->head);
++
++        /* Continue the with the _same_ "a" contour,
++         * testing it against the next "b" contour.
++         */
++        pb = pb->next;
+       }
+   }				/* end of setjmp loop */
+   return 0;
+@@ -1940,7 +1944,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
+       poly_Free (&b);
+       assert (poly_Valid (*aminusb));
+     }
+-  /* delete holes if any left */
++  /* delete holes if any left *poly_DelContour */
+   while ((p = holes) != NULL)
+     {
+       holes = p->next;
+@@ -2484,13 +2488,14 @@ inside_sector (VNODE * pn, Vector p2)
+ BOOLp
+ poly_ChkContour (PLINE * a)
+ {
+-#warning FIXME Later: Deliberately disabled this test - seems something strange is going on
+-  return FALSE;
+   VNODE *a1, *a2, *a2_start, *hit1, *hit2;
+   Vector i1, i2;
+   int icnt;
+   double d1,d2;
+ 
++#warning FIXME Later: Deliberately disabled this test - seems something strange is going on
++  return FALSE;
++
+   assert (a != NULL);
+   a1 = &a->head;
+   do
