@@ -2682,6 +2682,7 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
             }
         }
     }
+
   return (False);
 }
 
