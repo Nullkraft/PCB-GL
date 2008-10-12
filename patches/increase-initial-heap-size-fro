@@ -1,0 +1,15 @@
+Bottom: ce40de69ded7d2ed2fd575fb332a3ca853016c2b
+Top:    ce40de69ded7d2ed2fd575fb332a3ca853016c2b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-12 17:27:44 +0100
+
+Increase initial heap size from 32 to 512
+
+In complex boards with lots of polygons, we were realloc'ing up
+to this kind of number anyway, in x2 size steps. Save all the
+memcpy'ing by making the heap larger to start with.
+
+
+---
+
+
