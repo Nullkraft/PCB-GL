@@ -1,0 +1,339 @@
+Bottom: ccdc8ea57cb30ccd2959b7567f6d1a0c9ff7c779
+Top:    8b702d0213170c25b0b1366789f40fc99a13ad77
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-12 02:49:45 +0100
+
+Refresh of off-to-find-burried-treasure-o
+
+---
+
+diff --git a/src/buffer.c b/src/buffer.c
+index fe1ee5e..6faaf40 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -128,6 +128,7 @@ static int ExtraFlag = 0;
+ static void *
+ AddViaToBuffer (PinTypePtr Via)
+ {
++  printf ("AddViaToBuffer\n");
+   return (CreateNewVia (Dest, Via->X, Via->Y, Via->Thickness, Via->Clearance,
+ 			Via->Mask, Via->DrillingHole, Via->Name,
+ 			MaskFlags (Via->Flags, FOUNDFLAG | ExtraFlag)));
+@@ -246,6 +247,7 @@ static void *
+ MoveViaToBuffer (PinTypePtr Via)
+ {
+   PinTypePtr via;
++  printf ("MoveViaToBuffer\n");
+ 
+   RestoreToPours (Source, VIA_TYPE, Via, Via);
+   r_delete_entry (Source->via_tree, (BoxType *) Via);
+@@ -373,7 +375,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
+   LayerTypePtr lay;
+   PourTypePtr pour;
+ 
+-  RestoreToPours (Source, POLYGON_TYPE, Layer, Pour);
++  RestoreToPours (Source, POUR_TYPE, Layer, Pour);
+   r_delete_entry (Layer->pour_tree, (BoxTypePtr) Pour);
+   lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
+   pour = GetPourMemory (lay);
+@@ -387,7 +389,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
+   if (!lay->pour_tree)
+     lay->pour_tree = r_create_tree (NULL, 0, 0);
+   r_insert_entry (lay->pour_tree, (BoxTypePtr) pour, 0);
+-  ClearFromPours (Source, POLYGON_TYPE, Layer, Pour);
++  ClearFromPours (Dest, POUR_TYPE, lay, Pour);
+   return (pour);
+ }
+ 
+@@ -1375,6 +1377,7 @@ void *
+ CopyObjectToBuffer (DataTypePtr Destination, DataTypePtr Src,
+ 		    int Type, void *Ptr1, void *Ptr2, void *Ptr3)
+ {
++  printf ("Hello, COPY OBJECT TO BUFFER\n");
+   /* setup local identifiers used by Add operations */
+   Dest = Destination;
+   Source = Src;
+diff --git a/src/create.c b/src/create.c
+index e6a0abd..969376f 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -142,6 +142,7 @@ CreateNewPCB (Boolean SetDefaultNames)
+   ptr = MyCalloc (1, sizeof (PCBType), "CreateNewPCB()");
+   ptr->Data = CreateNewBuffer ();
+   ptr->Data->pcb = (void *) ptr;
++  ptr->Data->ClipPours = 1;
+ 
+   ptr->ThermStyle = 4;
+   ptr->IsleArea = 2.e8;
+diff --git a/src/find.c b/src/find.c
+index bfff1c3..52d065b 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -1814,6 +1814,7 @@ LookupLOConnectionsToArc (ArcTypePtr Arc, Cardinal LayerGroup)
+             return True;
+ 
+           /* now check all polygons */
++          printf ("Slow pour path for arcs\n");
+           POUR_LOOP (LAYER_PTR (layer));
+           {
+             POURPOLYGON_LOOP (pour);
+@@ -1957,6 +1958,7 @@ LookupLOConnectionsToLine (LineTypePtr Line, Cardinal LayerGroup,
+           /* now check all polygons */
+           if (PolysTo)
+             {
++              printf ("Slow pour path for lines\n");
+               POUR_LOOP (LAYER_PTR (layer));
+               {
+                 POURPOLYGON_LOOP (pour);
+@@ -2056,6 +2058,7 @@ LOTouchesLine (LineTypePtr Line, Cardinal LayerGroup)
+             return (True);
+ 
+           /* now check all polygons */
++          printf ("Slow pour path for lines (LOTouchesLine)\n");
+           POUR_LOOP (LAYER_PTR (layer));
+           {
+             POURPOLYGON_LOOP (pour);
+@@ -2443,9 +2446,9 @@ static int
+ LOCtoPolyPourPolygon_callback (const BoxType * b, void *cl)
+ {
+   PourTypePtr pour = (PourTypePtr) b;
+-  struct pv_info *i = (struct pv_info *) cl;
++  struct lo_info *i = (struct pv_info *) cl;
+ 
+-  return r_search (pour->polygon_tree, (BoxType *) &i->pv,
++  return r_search (pour->polygon_tree, (BoxType *) &i->polygon,
+                    NULL, LOCtoPolyPolygon_callback, i);
+ }
+ 
+@@ -2459,8 +2462,10 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
+   Cardinal entry;
+   struct lo_info info;
+ 
+-  if (!Polygon->Clipped)
++  if (!Polygon->Clipped){
++    printf ("Returning because polygon wasn't clipped in LookupLOConnectionsToPolygon\n");
+     return False;
++  }
+   info.polygon = *Polygon;
+   EXPAND_BOUNDS (&info.polygon);
+   info.layer = LayerGroup;
+@@ -3775,20 +3780,26 @@ IsPolygonAnIsland (LayerType *layer, PolygonType *polygon)
+ 
+   InitConnectionLookup ();
+ 
+-  TheFlag = FOUNDFLAG | DRCFLAG | SELECTEDFLAG;
+-
+-  ResetConnections (False);
+-
+   /* Need to ensure we don't set the SELECTED flag as we find
+    * things, otherwise we don't get our quick escape due to the
+    * "drc" magic.
++   *
++   * (The connection scanning code doesn't stop on objects which are
++   *  SELECTED, even if "drc" is true).
++   *
++   * Ideally we'd clear the SELECTED flag on all objects before we
++   * start, ensuring we exit when we first find connectivity, but
++   * that causes all manner of breakage. I upsets other logic in
++   * PCB if we change the selection during certain operations we're
++   * called during.
+    */
+   TheFlag = FOUNDFLAG | DRCFLAG;
+ 
+-  User = False;
++  ResetConnections (False);
+ 
+   /* Let the search stop if we find something we haven't yet seen */
+   drc = True;
++  User = False;
+ 
+   ListStart (POLYGON_TYPE, layer, polygon, polygon);
+ 
+@@ -3810,7 +3821,6 @@ IsPolygonAnIsland (LayerType *layer, PolygonType *polygon)
+       connected_count += PVList.Number;
+       if (connected_count)
+         break;
+-
+     }
+   while (any_more);
+ 
+diff --git a/src/global.h b/src/global.h
+index 91851b8..08ae40f 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -358,6 +358,7 @@ typedef struct			/* holds all objects */
+    *rat_tree;
+   struct PCBType *pcb;
+   LayerType Layer[MAX_LAYER + 2];	/* add 2 silkscreen layers */
++  int ClipPours;
+ } DataType, *DataTypePtr;
+ 
+ typedef struct			/* holds drill information */
+diff --git a/src/move.c b/src/move.c
+index 699a8a3..f61a404 100644
+--- a/src/move.c
++++ b/src/move.c
+@@ -366,12 +366,12 @@ MovePour (LayerTypePtr Layer, PourTypePtr Pour)
+     {
+       ErasePour (Pour);
+     }
+-  RestoreToPours (PCB->Data, POLYGON_TYPE, Layer, Pour);
++  RestoreToPours (PCB->Data, POUR_TYPE, Layer, Pour);
+   r_delete_entry (Layer->pour_tree, (BoxType *) Pour);
+   MovePourLowLevel (Pour, DeltaX, DeltaY);
+   r_insert_entry (Layer->pour_tree, (BoxType *) Pour, 0);
+   InitPourClip (PCB->Data, Layer, Pour);
+-  ClearFromPours (PCB->Data, POLYGON_TYPE, Layer, Pour);
++  ClearFromPours (PCB->Data, POUR_TYPE, Layer, Pour);
+   if (Layer->On)
+     {
+       DrawPour (Layer, Pour, 0);
+@@ -395,7 +395,10 @@ MoveLinePoint (LayerTypePtr Layer, LineTypePtr Line, PointTypePtr Point)
+       MOVE (Point->X, Point->Y, DeltaX, DeltaY);
+       SetLineBoundingBox (Line);
+       r_insert_entry (Layer->line_tree, &Line->BoundingBox, 0);
+-      ClearFromPours (PCB->Data, LINE_TYPE, Layer, Line);
++      if (!TEST_FLAG (CLEARLINEFLAG, Line))
++        ClearFromPours (PCB->Data, LINE_TYPE, Layer, Line);
++      else
++        MarkPourIslands (PCB->Data, LINE_TYPE, Layer, Line);
+       if (Layer->On)
+ 	{
+ 	  DrawLine (Layer, Line, 0);
+@@ -430,14 +433,17 @@ MovePourPoint (LayerTypePtr Layer, PourTypePtr Pour, PointTypePtr Point)
+     {
+       ErasePour (Pour);
+     }
+-  RestoreToPours (PCB->Data, POLYGON_TYPE, Layer, Pour);
++  RestoreToPours (PCB->Data, POUR_TYPE, Layer, Pour);
+   r_delete_entry (Layer->pour_tree, (BoxType *) Pour);
+   MOVE (Point->X, Point->Y, DeltaX, DeltaY);
+   SetPourBoundingBox (Pour);
+   r_insert_entry (Layer->pour_tree, (BoxType *) Pour, 0);
+   RemoveExcessPourPoints (Layer, Pour);
+   InitPourClip (PCB->Data, Layer, Pour);
+-  ClearFromPours (PCB->Data, POLYGON_TYPE, Layer, Pour);
++  if (!TEST_FLAG (CLEARPOLYFLAG, Pour))
++    ClearFromPours (PCB->Data, POUR_TYPE, Layer, Pour);
++  else
++    MarkPourIslands (PCB->Data, POUR_TYPE, Layer, Pour);
+   if (Layer->On)
+     {
+       DrawPour (Layer, Pour, 0);
+diff --git a/src/pour.c b/src/pour.c
+index 2327ef7..461187c 100644
+--- a/src/pour.c
++++ b/src/pour.c
+@@ -66,7 +66,7 @@ RCSID ("$Id$");
+ 
+ #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
+ 
+-#define UNSUBTRACT_BLOAT 100
++#define UNSUBTRACT_BLOAT 10
+ 
+ /* ---------------------------------------------------------------------------
+  * local prototypes
+@@ -703,6 +703,10 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+     case POLYGON_TYPE:
+       np = get_subtract_polygon_poly ((PolygonTypePtr) ptr2, pour);
+       break;
++    case POUR_TYPE:
++#warning FIXME Later: Need to produce a function for this
++      np = NULL;
++      break;
+     case TEXT_TYPE:
+       np = get_subtract_text_poly ((TextTypePtr) ptr2, pour);
+       break;
+@@ -948,6 +952,10 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+     case POLYGON_TYPE:
+       np = get_unsubtract_polygon_poly ((PolygonTypePtr) ptr2, layer, pour);
+       break;
++    case POUR_TYPE:
++#warning FIXME Later: Need to produce a function for this
++      np = NULL;
++      break;
+     case TEXT_TYPE:
+       np = get_unsubtract_text_poly ((TextTypePtr) ptr2, layer, pour);
+       break;
+@@ -1071,8 +1079,7 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+     }
+   while ((pg = tmp) != start_pg);
+ 
+-  printf ("skipping mark_islands in add_plow / RestoreToPours\n");
+-//  mark_islands (Data, layer, pour, type, ptr1, ptr2);
++  mark_islands (Data, layer, pour, type, ptr1, ptr2);
+ 
+ //  printf ("ClearPour counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
+ 
+@@ -1153,7 +1160,11 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
+     }
+   while ((pg = tmp) != start_pg);
+ 
+-  mark_islands (Data, layer, pour, 0, NULL, NULL);
++  POURPOLYGON_LOOP (pour);
++  {
++    ASSIGN_FLAG (HOLEFLAG, IsPolygonAnIsland (layer, polygon), polygon);
++  }
++  END_LOOP;
+ 
+   return 1;
+ }
+@@ -1227,6 +1238,7 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+     case ARC_TYPE:
+     case TEXT_TYPE:
+     case POLYGON_TYPE:
++    case POUR_TYPE:
+       /* the cast works equally well for lines and arcs */
+       if (!ignore_clearflags &&
+           !TEST_FLAG (CLEARLINEFLAG, (LineTypePtr) ptr2))
+@@ -1278,6 +1290,8 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+ void
+ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
+ {
++  if (!Data->ClipPours)
++    return;
+   if (type == POUR_TYPE)
+     {
+ #warning FIXME Later: Why do we need to do this?
+@@ -1290,6 +1304,9 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
+ void
+ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
+ {
++  printf ("ClearFrom pours, Data is %p, Data->ClipPours=%i\n", Data, Data->ClipPours);
++  if (!Data->ClipPours)
++    return;
+   if (type == POUR_TYPE)
+     {
+ #warning FIXME Later: Why do we need to do this?
+@@ -1299,8 +1316,11 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
+   PlowPours (Data, type, ptr1, ptr2, subtract_plow, False);
+ }
+ 
++#warning FIXME Later: We could perhaps reduce un-necessary computation by using this function
+ void
+ MarkPourIslands (DataType * Data, int type, void *ptr1, void *ptr2)
+ {
++  if (!Data->ClipPours)
++    return;
+   PlowPours (Data, type, ptr1, ptr2, mark_islands, True);
+ }
+diff --git a/src/remove.c b/src/remove.c
+index c2eb9ec..1376674 100644
+--- a/src/remove.c
++++ b/src/remove.c
+@@ -308,6 +308,7 @@ DestroyRat (RatTypePtr Rat)
+ static void *
+ RemoveVia (PinTypePtr Via)
+ {
++  printf ("Remove Via!\n");
+   /* erase from screen and memory */
+   if (PCB->ViaOn)
+     {
+@@ -536,6 +537,7 @@ RemoveElement (ElementTypePtr Element)
+ Boolean
+ RemoveSelected (void)
+ {
++  printf ("RemoveSelected\n");
+   Bulk = True;
+   if (SelectedOperation (&RemoveFunctions, False, ALL_TYPES))
+     {
