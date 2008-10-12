@@ -1,0 +1,57 @@
+Bottom: 8b702d0213170c25b0b1366789f40fc99a13ad77
+Top:    88aa03d047f97c4f1f80c1d84ea5c81cb40e7981
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-12 02:51:33 +0100
+
+Refresh of off-to-find-burried-treasure-o
+
+---
+
+diff --git a/src/buffer.c b/src/buffer.c
+index 6faaf40..ec35974 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -128,7 +128,6 @@ static int ExtraFlag = 0;
+ static void *
+ AddViaToBuffer (PinTypePtr Via)
+ {
+-  printf ("AddViaToBuffer\n");
+   return (CreateNewVia (Dest, Via->X, Via->Y, Via->Thickness, Via->Clearance,
+ 			Via->Mask, Via->DrillingHole, Via->Name,
+ 			MaskFlags (Via->Flags, FOUNDFLAG | ExtraFlag)));
+@@ -247,7 +246,6 @@ static void *
+ MoveViaToBuffer (PinTypePtr Via)
+ {
+   PinTypePtr via;
+-  printf ("MoveViaToBuffer\n");
+ 
+   RestoreToPours (Source, VIA_TYPE, Via, Via);
+   r_delete_entry (Source->via_tree, (BoxType *) Via);
+@@ -1377,7 +1375,6 @@ void *
+ CopyObjectToBuffer (DataTypePtr Destination, DataTypePtr Src,
+ 		    int Type, void *Ptr1, void *Ptr2, void *Ptr3)
+ {
+-  printf ("Hello, COPY OBJECT TO BUFFER\n");
+   /* setup local identifiers used by Add operations */
+   Dest = Destination;
+   Source = Src;
+diff --git a/src/remove.c b/src/remove.c
+index 1376674..c2eb9ec 100644
+--- a/src/remove.c
++++ b/src/remove.c
+@@ -308,7 +308,6 @@ DestroyRat (RatTypePtr Rat)
+ static void *
+ RemoveVia (PinTypePtr Via)
+ {
+-  printf ("Remove Via!\n");
+   /* erase from screen and memory */
+   if (PCB->ViaOn)
+     {
+@@ -537,7 +536,6 @@ RemoveElement (ElementTypePtr Element)
+ Boolean
+ RemoveSelected (void)
+ {
+-  printf ("RemoveSelected\n");
+   Bulk = True;
+   if (SelectedOperation (&RemoveFunctions, False, ALL_TYPES))
+     {
