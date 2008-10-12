@@ -1,0 +1,22 @@
+Bottom: 7b6f5422c8cc5ef49ea7778aca6573c64f44be6b
+Top:    5bab8d79712a183301b7d26f7df7b05ba153da6f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-12 14:45:28 +0100
+
+Refresh of add-profiling-to-file-load
+
+---
+
+diff --git a/src/file.c b/src/file.c
+index aad0837..35f00c6 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -389,7 +389,7 @@ LoadPCB (char *Filename)
+ 
+   end = clock();
+   elapsed = ((double) (end - start)) / CLOCKS_PER_SEC;
+-  printf ("Loading file %s took %d\n", Filename, elapsed);
++  printf ("Loading file %s took %f\n", Filename, elapsed);
+ 
+       /* clear 'changed flag' */
+       SetChangedFlag (False);
