@@ -1,18 +1,19 @@
-Bottom: b18ff0542719b3c4900b3df9454ecb64b180e252
-Top:    b9baf5878a4f6c16227d23cac5225b3b98941a98
+Bottom: 9418ef9fedfe2d2ebd24943e011b751ef0bacb89
+Top:    e28edccfaea3722086f96d52cda36ef00331952e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-08 15:53:55 +0100
+Date:   2008-10-12 17:46:56 +0100
 
 Fix IsPointInBox to work with wide as well as tall boxes
+
 
 
 ---
 
 diff --git a/src/search.c b/src/search.c
-index 4304ec3..0d75500 100644
+index 5d271f4..53c4eb2 100644
 --- a/src/search.c
 +++ b/src/search.c
-@@ -1005,15 +1005,50 @@ IsPointInPad (LocationType X, LocationType Y, BDimension Radius,
+@@ -990,15 +990,50 @@ IsPointInPad (LocationType X, LocationType Y, BDimension Radius,
  Boolean
  IsPointInBox (LocationType X, LocationType Y, BoxTypePtr box, BDimension Radius)
  {
@@ -71,4 +72,4 @@ index 4304ec3..0d75500 100644
 +  return range < Radius;
  }
  
- int ClosestArcPoint (float X, float Y, ArcTypePtr Arc)
+ Boolean
