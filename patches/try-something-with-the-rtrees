@@ -1,7 +1,7 @@
-Bottom: e0866230453bfc82b705950349844a4715d15c7c
+Bottom: d4df4dd3c8a0a5cf06a33eb5931803718061345a
 Top:    8a663ad426ea58df81a88381b20c2edeed2cac7c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-12 22:19:59 +0100
+Date:   2008-10-12 22:22:57 +0100
 
 Try something with the rtrees
 
@@ -11,25 +11,9 @@ Try something with the rtrees
 
 
 
+
 ---
 
-diff --git a/src/find.c b/src/find.c
-index 563819e..4e8d4f0 100644
---- a/src/find.c
-+++ b/src/find.c
-@@ -2478,10 +2478,9 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
-   Cardinal entry;
-   struct lo_info info;
- 
--  if (!Polygon->Clipped){
--    printf ("Returning because polygon wasn't clipped in LookupLOConnectionsToPolygon\n");
-+  if (!Polygon->Clipped)
-     return False;
--  }
-+
-   info.polygon = *Polygon;
-   EXPAND_BOUNDS (&info.polygon);
-   info.layer = LayerGroup;
 diff --git a/src/polyarea.h b/src/polyarea.h
 index 42acc1a..819b074 100644
 --- a/src/polyarea.h
