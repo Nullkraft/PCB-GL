@@ -529,12 +529,6 @@ cntrbox_adjust (PLINE * c, Vector p)
 
 /* some structures for handling segment intersections using the rtrees */
 
-typedef struct contour
-{
-  BoxType box;
-  PLINE *p;
-} contour;
-
 typedef struct seg
 {
   BoxType box;
@@ -1888,7 +1882,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
       poly_Free (&b);
       assert (poly_Valid (*aminusb));
     }
-  /* delete holes if any left *poly_DelContour */
+  /* delete holes if any left */
   while ((p = holes) != NULL)
     {
       holes = p->next;
