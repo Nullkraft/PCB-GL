@@ -983,31 +983,6 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
             }
         }
 
-      /* Ok, so we're still here - look for the best child to push it into */
-      assert (node->u.kids[0]);
-      if ((best_score = penalty (node->u.kids[0], query)) == 0)
-        {
-          __r_insert_node (node->u.kids[0], query, manage, False);
-          sort_node (node);
-          return;
-        }
-      best_node = node->u.kids[0];
-      for (i = 1; i < M_SIZE; i++)
-        {
-          if (!node->u.kids[i])
-            break;
-          if ((score = penalty (node->u.kids[i], query)) == 0)
-            {
-              __r_insert_node (node->u.kids[i], query, manage, False);
-              sort_node (node);
-              return;
-            }
-          else if (score < best_score)
-            {
-              best_score = score;
-              best_node = node->u.kids[i];
-            }
-        }
       /* see if there is room for a new leaf node */
       if (node->u.kids[0]->flags.is_leaf && i < M_SIZE)
         {
@@ -1025,7 +1000,20 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
           return;
         }
 
-      /* didn't find an enclosure, so use the best one */
+      /* Ok, so we're still here - look for the best child to push it into */
+      best_score = penalty (node->u.kids[0], query);
+      best_node = node->u.kids[0];
+      for (i = 1; i < M_SIZE; i++)
+        {
+          if (!node->u.kids[i])
+            break;
+          score = penalty (node->u.kids[i], query);
+          if (score < best_score)
+            {
+              best_score = score;
+              best_node = node->u.kids[i];
+            }
+        }
       __r_insert_node (best_node, query, manage, True);
       sort_node (node);
       return;
