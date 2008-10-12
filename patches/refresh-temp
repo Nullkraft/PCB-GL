@@ -1,0 +1,26 @@
+Bottom: 9ab4161638f91bc43a2fe080f4ccfbbfe1234e88
+Top:    1a1e424819141d62d1fc347c4bf1f3e88413ae1c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-12 22:22:11 +0100
+
+Refresh of off-to-find-burried-treasure-o
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 6dae758..7545211 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -2478,10 +2478,9 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
+   Cardinal entry;
+   struct lo_info info;
+ 
+-  if (!Polygon->Clipped){
+-    printf ("Returning because polygon wasn't clipped in LookupLOConnectionsToPolygon\n");
++  if (!Polygon->Clipped)
+     return False;
+-  }
++
+   info.polygon = *Polygon;
+   EXPAND_BOUNDS (&info.polygon);
+   info.layer = LayerGroup;
