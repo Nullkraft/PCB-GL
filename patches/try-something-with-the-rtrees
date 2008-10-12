@@ -1,5 +1,5 @@
 Bottom: e0866230453bfc82b705950349844a4715d15c7c
-Top:    6f22d8801eb0c12043db0aa33a7b3c58a73fcd12
+Top:    8a663ad426ea58df81a88381b20c2edeed2cac7c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-12 22:19:59 +0100
 
@@ -14,7 +14,7 @@ Try something with the rtrees
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 563819e..fb06e23 100644
+index 563819e..4e8d4f0 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -2478,10 +2478,9 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
@@ -30,14 +30,6 @@ index 563819e..fb06e23 100644
    info.polygon = *Polygon;
    EXPAND_BOUNDS (&info.polygon);
    info.layer = LayerGroup;
-@@ -2537,6 +2536,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
-             }
-         }
-     }
-+
-   return (False);
- }
- 
 diff --git a/src/polyarea.h b/src/polyarea.h
 index 42acc1a..819b074 100644
 --- a/src/polyarea.h
