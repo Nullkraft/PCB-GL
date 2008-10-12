@@ -2289,7 +2289,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType * cl
           noholes_piece = Polygon->NoHoles;
           do
             {
-              POLYAREA *tmp_b, *tmp_f, *clipped_result;
+              POLYAREA *tmp_b, *tmp_f;
 
               tmp_b = noholes_piece->b;
               tmp_f = noholes_piece->f;
