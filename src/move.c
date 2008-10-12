@@ -395,7 +395,7 @@ MoveLinePoint (LayerTypePtr Layer, LineTypePtr Line, PointTypePtr Point)
       MOVE (Point->X, Point->Y, DeltaX, DeltaY);
       SetLineBoundingBox (Line);
       r_insert_entry (Layer->line_tree, &Line->BoundingBox, 0);
-      if (!TEST_FLAG (CLEARLINEFLAG, Line))
+      if (TEST_FLAG (CLEARLINEFLAG, Line))
         ClearFromPours (PCB->Data, LINE_TYPE, Layer, Line);
       else
         MarkPourIslands (PCB->Data, LINE_TYPE, Layer, Line);
