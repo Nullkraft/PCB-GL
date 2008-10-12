@@ -2499,6 +2499,8 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
       /* handle normal layers */
       if (layer < max_layer)
         {
+          info.layer = layer;
+
           /* check all polygons */
           if (setjmp (info.env) == 0)
             r_search (LAYER_PTR (layer)->pour_tree,
@@ -2507,7 +2509,6 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
           else
             return True;
 
-          info.layer = layer;
           /* check all lines */
           if (setjmp (info.env) == 0)
             r_search (LAYER_PTR (layer)->line_tree,
