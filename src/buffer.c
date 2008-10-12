@@ -128,7 +128,6 @@ static int ExtraFlag = 0;
 static void *
 AddViaToBuffer (PinTypePtr Via)
 {
-  printf ("AddViaToBuffer\n");
   return (CreateNewVia (Dest, Via->X, Via->Y, Via->Thickness, Via->Clearance,
 			Via->Mask, Via->DrillingHole, Via->Name,
 			MaskFlags (Via->Flags, FOUNDFLAG | ExtraFlag)));
@@ -247,7 +246,6 @@ static void *
 MoveViaToBuffer (PinTypePtr Via)
 {
   PinTypePtr via;
-  printf ("MoveViaToBuffer\n");
 
   RestoreToPours (Source, VIA_TYPE, Via, Via);
   r_delete_entry (Source->via_tree, (BoxType *) Via);
@@ -1377,7 +1375,6 @@ void *
 CopyObjectToBuffer (DataTypePtr Destination, DataTypePtr Src,
 		    int Type, void *Ptr1, void *Ptr2, void *Ptr3)
 {
-  printf ("Hello, COPY OBJECT TO BUFFER\n");
   /* setup local identifiers used by Add operations */
   Dest = Destination;
   Source = Src;
