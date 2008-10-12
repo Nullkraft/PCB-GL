@@ -61,33 +61,6 @@
 
 RCSID ("$Id$");
 
-/* G_LIKELY and G_UNLIKLEY macros taken from GLib 2.16.3, LGPL */
-/*
- * The G_LIKELY and G_UNLIKELY macros let the programmer give hints to 
- * the compiler about the expected result of an expression. Some compilers
- * can use this information for optimizations.
- *
- * The _G_BOOLEAN_EXPR macro is intended to trigger a gcc warning when
- * putting assignments in g_return_if_fail ().  
- */
-#if defined(__GNUC__) && (__GNUC__ > 2) && defined(__OPTIMIZE__)
-#define _G_BOOLEAN_EXPR(expr)                   \
- __extension__ ({                               \
-   int _g_boolean_var_;                         \
-   if (expr)                                    \
-      _g_boolean_var_ = 1;                      \
-   else                                         \
-      _g_boolean_var_ = 0;                      \
-   _g_boolean_var_;                             \
-})
-#define G_LIKELY(expr) (__builtin_expect (_G_BOOLEAN_EXPR(expr), 1))
-#define G_UNLIKELY(expr) (__builtin_expect (_G_BOOLEAN_EXPR(expr), 0))
-#else
-#define G_LIKELY(expr) (expr)
-#define G_UNLIKELY(expr) (expr)
-#warning NOT OPTIMISING
-#endif
-
 
 #define SLOW_ASSERTS
 /* All rectangles are closed on the bottom left and open on the
@@ -940,8 +913,7 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
     {
       register int i;
 
-#warning UNLIKELY BASED ON QTY OF CALLERS PASSING manage=0 IN PCB, NOT PROFILING
-      if (G_UNLIKELY (manage))
+      if (manage)
         {
           register int flag = 1;
 
