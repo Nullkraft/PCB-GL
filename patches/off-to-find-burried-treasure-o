@@ -1,5 +1,5 @@
 Bottom: e0a3112296a18bf6dcb20eefafb6be27d922978d
-Top:    9ab4161638f91bc43a2fe080f4ccfbbfe1234e88
+Top:    1a1e424819141d62d1fc347c4bf1f3e88413ae1c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-12 17:52:39 +0100
 
@@ -131,22 +131,18 @@ index 56089a2..a1b51c4 100644
      {
        if (TEST_FLAG (SELECTEDFLAG, Polygon))
 diff --git a/src/find.c b/src/find.c
-index e8d08c5..6dae758 100644
+index e8d08c5..7545211 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -2478,8 +2478,10 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
-   Cardinal entry;
-   struct lo_info info;
+@@ -2480,6 +2480,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
  
--  if (!Polygon->Clipped)
-+  if (!Polygon->Clipped){
-+    printf ("Returning because polygon wasn't clipped in LookupLOConnectionsToPolygon\n");
+   if (!Polygon->Clipped)
      return False;
-+  }
++
    info.polygon = *Polygon;
    EXPAND_BOUNDS (&info.polygon);
    info.layer = LayerGroup;
-@@ -3782,6 +3784,70 @@ doIsBad:
+@@ -3782,6 +3783,70 @@ doIsBad:
  }
  
  /*-----------------------------------------------------------------------------
