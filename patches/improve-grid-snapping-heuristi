@@ -1,9 +1,10 @@
-Bottom: 623a475191efa43ebea39d2b09a61e581a20047d
-Top:    d87f4ede1f6b4783bc6bec565d90e7cfdd3ca523
+Bottom: 0b360a74e4095c916e8af88a62a44b5781f33ade
+Top:    f8993d71bf300b3987f22361848e23fbd91cec7e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-02 18:32:49 +0100
+Date:   2008-10-12 17:51:00 +0100
 
 Improve grid snapping heuristics
+
 
 
 
@@ -279,7 +280,7 @@ index 6578a87..68cae6a 100644
        && Crosshair.AttachedLine.State != STATE_FIRST
        && TEST_FLAG (AUTODRCFLAG, PCB))
 diff --git a/src/search.c b/src/search.c
-index 5d271f4..4304ec3 100644
+index 53c4eb2..0d75500 100644
 --- a/src/search.c
 +++ b/src/search.c
 @@ -322,6 +322,7 @@ struct arc_info
@@ -353,8 +354,8 @@ index 5d271f4..4304ec3 100644
    return False;
  }
  
-@@ -1001,6 +1016,11 @@ IsPointInBox (LocationType X, LocationType Y, BoxTypePtr box, BDimension Radius)
-   return IsPointInPad (X, Y, Radius, &pad);
+@@ -1036,6 +1051,11 @@ IsPointInBox (LocationType X, LocationType Y, BoxTypePtr box, BDimension Radius)
+   return range < Radius;
  }
  
 +int ClosestArcPoint (float X, float Y, ArcTypePtr Arc)
@@ -365,7 +366,7 @@ index 5d271f4..4304ec3 100644
  Boolean
  IsPointOnArc (float X, float Y, float Radius, ArcTypePtr Arc)
  {
-@@ -1548,3 +1568,17 @@ SearchScreen (LocationType X, LocationType Y, int Type, void **Result1,
+@@ -1583,3 +1603,17 @@ SearchScreen (LocationType X, LocationType Y, int Type, void **Result1,
  				X, Y, SLOP * pixel_slop);
    return (ans);
  }
