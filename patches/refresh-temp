@@ -1,0 +1,20 @@
+Bottom: a9d0484e022f2843c87f9d32f29128777f4be0d7
+Top:    e0866230453bfc82b705950349844a4715d15c7c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-12 22:19:57 +0100
+
+Refresh of tidy-up-ispolygoninpolygon
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 84c50a0..563819e 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -2682,6 +2682,7 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
+             }
+         }
+     }
++
+   return (False);
+ }
