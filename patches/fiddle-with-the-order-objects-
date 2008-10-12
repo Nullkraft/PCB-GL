@@ -1,5 +1,5 @@
 Bottom: c65c11a3924d7c5384b83c0cf8ad47e6003d95f9
-Top:    c65c11a3924d7c5384b83c0cf8ad47e6003d95f9
+Top:    0a9a212f785df1ac214a211c8c7546bfa3ba4f5a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-12 23:00:10 +0100
 
@@ -8,4 +8,28 @@ Fiddle with the order objects are clipped from pours
 
 ---
 
-
+diff --git a/src/pour.c b/src/pour.c
+index 03c3911..491c44c 100644
+--- a/src/pour.c
++++ b/src/pour.c
+@@ -637,16 +637,17 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
+ 
+   if (setjmp (info.env) == 0)
+     {
+-      r  = r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
+-      r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
++      r = 0;
+       GROUP_LOOP (Data, group);
+       {
++        r += r_search (layer->pour_tree, &region, NULL, pour_sub_callback, &info);
+         r += r_search (layer->line_tree, &region, NULL, line_sub_callback, &info);
+         r += r_search (layer->arc_tree,  &region, NULL, arc_sub_callback,  &info);
+         r += r_search (layer->text_tree, &region, NULL, text_sub_callback, &info);
+-        r += r_search (layer->pour_tree, &region, NULL, pour_sub_callback, &info);
+       }
+       END_LOOP;
++      r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
++      r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
+       if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
+         r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
+     }
