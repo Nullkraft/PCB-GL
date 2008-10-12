@@ -1,5 +1,5 @@
 Bottom: d4df4dd3c8a0a5cf06a33eb5931803718061345a
-Top:    8a663ad426ea58df81a88381b20c2edeed2cac7c
+Top:    0b01d29061edd83e718d0288f53d5ecc75644441
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-12 22:22:57 +0100
 
@@ -27,32 +27,10 @@ index 42acc1a..819b074 100644
  
  BOOLp poly_M_Copy0(POLYAREA ** dst, const POLYAREA * srcfst);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 1b4f7fb..870500f 100644
+index 1b4f7fb..8fb26e3 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -529,6 +529,12 @@ cntrbox_adjust (PLINE * c, Vector p)
- 
- /* some structures for handling segment intersections using the rtrees */
- 
-+typedef struct contour
-+{
-+  BoxType box;
-+  PLINE *p;
-+} contour;
-+
- typedef struct seg
- {
-   BoxType box;
-@@ -1882,7 +1888,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
-       poly_Free (&b);
-       assert (poly_Valid (*aminusb));
-     }
--  /* delete holes if any left */
-+  /* delete holes if any left *poly_DelContour */
-   while ((p = holes) != NULL)
-     {
-       holes = p->next;
-@@ -2426,13 +2432,14 @@ inside_sector (VNODE * pn, Vector p2)
+@@ -2426,13 +2426,14 @@ inside_sector (VNODE * pn, Vector p2)
  BOOLp
  poly_ChkContour (PLINE * a)
  {
