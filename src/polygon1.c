@@ -529,6 +529,12 @@ cntrbox_adjust (PLINE * c, Vector p)
 
 /* some structures for handling segment intersections using the rtrees */
 
+typedef struct contour
+{
+  BoxType box;
+  PLINE *p;
+} contour;
+
 typedef struct seg
 {
   BoxType box;
@@ -1882,7 +1888,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
       poly_Free (&b);
       assert (poly_Valid (*aminusb));
     }
-  /* delete holes if any left */
+  /* delete holes if any left *poly_DelContour */
   while ((p = holes) != NULL)
     {
       holes = p->next;
@@ -2426,12 +2432,13 @@ inside_sector (VNODE * pn, Vector p2)
 BOOLp
 poly_ChkContour (PLINE * a)
 {
-#warning FIXME Later: Deliberately disabled this test - seems something strange is going on
-  return FALSE;
   VNODE *a1, *a2, *a2_start, *hit1, *hit2;
   Vector i1, i2;
   int icnt;
   double d1,d2;
+
+#warning FIXME Later: Deliberately disabled this test - seems something strange is going on
+  return FALSE;
 
   assert (a != NULL);
   a1 = &a->head;
