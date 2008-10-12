@@ -50,7 +50,7 @@ POLYAREA * LinePoly(LineType *l, BDimension thick);
 POLYAREA * SquarePadPoly (PadType * pad, BDimension clear);
 
 POLYAREA * PinPoly(PinType *l, BDimension thick, BDimension clear);
-POLYAREA * BoxPolyBloated (BoxType *box, BDimension radius);
+POLYAREA * BoxPolyBloated (const BoxType *box, BDimension radius);
 
 int InitClip(DataType *d, LayerType *l, PolygonType *p);
 void RestoreToPolygon(DataType *, int, void *, void *);
