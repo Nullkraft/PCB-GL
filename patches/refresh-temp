@@ -1,0 +1,26 @@
+Bottom: 029aab8265edba179f2df780c71a8189e74f6919
+Top:    6a5659332b19848554ac15f70b2ef2e4b2dd4a47
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-12 22:32:43 +0100
+
+Refresh of rework-iteration-over-contours
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 8fb26e3..252150f 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -816,10 +816,8 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+               /* NB: If this actually hits anything, we are teleported back to the beginning */
+               info.tree = (rtree_t *) rtree_over->tree;
+               if (info.tree)
+-                if (G_UNLIKELY (r_search (info.tree, &info.s->box,
+-                                          seg_in_region,
+-                                          seg_in_seg,
+-                                          &info)))
++                if (r_search (info.tree, &info.s->box,
++                              seg_in_region, seg_in_seg, &info))
+                   return err_no_memory;	/* error */
+           }
+         while ((av = av->next) != &looping_over->head);
