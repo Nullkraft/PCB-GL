@@ -1915,7 +1915,7 @@ LOCtoLinePourPolygon_callback (const BoxType * b, void *cl)
   PourTypePtr pour = (PourTypePtr) b;
   struct lo_info *i = (struct lo_info *) cl;
 
-  return r_search (pour->polygon_tree, (BoxType *) &i->polygon,
+  return r_search (pour->polygon_tree, (BoxType *) &i->line,
                    NULL, LOCtoLinePolygon_callback, i);
 }
 
