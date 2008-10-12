@@ -294,7 +294,40 @@ DestroyPolygonInPour (PourTypePtr pour, PolygonTypePtr polygon)
   return (NULL);
 }
 
-static int
+/*static*/ int
+subtract_wonkyline_poly (POLYAREA * np1, POLYAREA **pg)
+{
+  POLYAREA *merged = NULL, *np = np1;
+  int x;
+
+  assert (np);
+  assert (pg);
+  assert (*pg);
+
+  if (pg == NULL)
+    {
+      printf ("Hmm, got pg == NULL in subtract_poly\n");
+      poly_Free (&np);
+      return -1;
+    }
+
+  assert (poly_Valid (*pg));
+  assert (poly_Valid (np));
+  x = poly_Boolean_free (*pg, np, &merged, PBO_SUB);
+  if (x != err_ok)
+    {
+      fprintf (stderr, "Error while clipping PBO_SUB: %d\n", x);
+      poly_Free (&merged);
+      return -1;
+    }
+
+  assert (!merged || poly_Valid (merged));
+
+  *pg = merged;
+  return 1;
+}
+
+/*static*/ int
 subtract_poly (POLYAREA * np1, POLYAREA **pg)
 {
   POLYAREA *merged = NULL, *np = np1;
@@ -536,8 +569,17 @@ line_sub_callback (const BoxType * b, void *cl)
   if (np == NULL)
     return 0;
 
-  if (subtract_poly (np, &info->pg) < 0)
-    longjmp (info->env, 1);
+  if (line->Point1.X == line->Point2.X ||
+      line->Point1.Y == line->Point2.Y)
+    {
+      if (subtract_poly (np, &info->pg) < 0)
+        longjmp (info->env, 1);
+    }
+  else
+    {
+      if (subtract_wonkyline_poly (np, &info->pg) < 0)
+        longjmp (info->env, 1);
+    }
   return 1;
 }
 
@@ -637,11 +679,21 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
 
   if (setjmp (info.env) == 0)
     {
-      r  = r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
+#warning I KNOW THIS IS THE SLOW PATH, profile it first so I can stop part way
+#if 1
+      GROUP_LOOP (Data, group);
+      {
+        r = r_search (layer->line_tree, &region, NULL, line_sub_callback, &info);
+      }
+      END_LOOP;
+#endif
+
+//      r = 0;
+      r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
       r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
       GROUP_LOOP (Data, group);
       {
-        r += r_search (layer->line_tree, &region, NULL, line_sub_callback, &info);
+//        r += r_search (layer->line_tree, &region, NULL, line_sub_callback, &info);
         r += r_search (layer->arc_tree,  &region, NULL, arc_sub_callback,  &info);
         r += r_search (layer->text_tree, &region, NULL, text_sub_callback, &info);
         r += r_search (layer->pour_tree, &region, NULL, pour_sub_callback, &info);
