@@ -1814,6 +1814,7 @@ LookupLOConnectionsToArc (ArcTypePtr Arc, Cardinal LayerGroup)
             return True;
 
           /* now check all polygons */
+          printf ("Slow pour path for arcs\n");
           POUR_LOOP (LAYER_PTR (layer));
           {
             POURPOLYGON_LOOP (pour);
@@ -1957,6 +1958,7 @@ LookupLOConnectionsToLine (LineTypePtr Line, Cardinal LayerGroup,
           /* now check all polygons */
           if (PolysTo)
             {
+              printf ("Slow pour path for lines\n");
               POUR_LOOP (LAYER_PTR (layer));
               {
                 POURPOLYGON_LOOP (pour);
@@ -2056,6 +2058,7 @@ LOTouchesLine (LineTypePtr Line, Cardinal LayerGroup)
             return (True);
 
           /* now check all polygons */
+          printf ("Slow pour path for lines (LOTouchesLine)\n");
           POUR_LOOP (LAYER_PTR (layer));
           {
             POURPOLYGON_LOOP (pour);
@@ -2443,9 +2446,9 @@ static int
 LOCtoPolyPourPolygon_callback (const BoxType * b, void *cl)
 {
   PourTypePtr pour = (PourTypePtr) b;
-  struct pv_info *i = (struct pv_info *) cl;
+  struct lo_info *i = (struct pv_info *) cl;
 
-  return r_search (pour->polygon_tree, (BoxType *) &i->pv,
+  return r_search (pour->polygon_tree, (BoxType *) &i->polygon,
                    NULL, LOCtoPolyPolygon_callback, i);
 }
 
