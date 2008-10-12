@@ -1,5 +1,5 @@
 Bottom: 0306c4a8f653d9713685909e385da5b3df2339dd
-Top:    8b702d0213170c25b0b1366789f40fc99a13ad77
+Top:    88aa03d047f97c4f1f80c1d84ea5c81cb40e7981
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-12 02:50:22 +0100
 
@@ -14,26 +14,10 @@ Add feature to remove islanded areas
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index fe1ee5e..6faaf40 100644
+index fe1ee5e..ec35974 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
-@@ -128,6 +128,7 @@ static int ExtraFlag = 0;
- static void *
- AddViaToBuffer (PinTypePtr Via)
- {
-+  printf ("AddViaToBuffer\n");
-   return (CreateNewVia (Dest, Via->X, Via->Y, Via->Thickness, Via->Clearance,
- 			Via->Mask, Via->DrillingHole, Via->Name,
- 			MaskFlags (Via->Flags, FOUNDFLAG | ExtraFlag)));
-@@ -246,6 +247,7 @@ static void *
- MoveViaToBuffer (PinTypePtr Via)
- {
-   PinTypePtr via;
-+  printf ("MoveViaToBuffer\n");
- 
-   RestoreToPours (Source, VIA_TYPE, Via, Via);
-   r_delete_entry (Source->via_tree, (BoxType *) Via);
-@@ -373,7 +375,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
+@@ -373,7 +373,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
    LayerTypePtr lay;
    PourTypePtr pour;
  
@@ -42,7 +26,7 @@ index fe1ee5e..6faaf40 100644
    r_delete_entry (Layer->pour_tree, (BoxTypePtr) Pour);
    lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
    pour = GetPourMemory (lay);
-@@ -387,7 +389,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
+@@ -387,7 +387,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
    if (!lay->pour_tree)
      lay->pour_tree = r_create_tree (NULL, 0, 0);
    r_insert_entry (lay->pour_tree, (BoxTypePtr) pour, 0);
@@ -51,14 +35,6 @@ index fe1ee5e..6faaf40 100644
    return (pour);
  }
  
-@@ -1375,6 +1377,7 @@ void *
- CopyObjectToBuffer (DataTypePtr Destination, DataTypePtr Src,
- 		    int Type, void *Ptr1, void *Ptr2, void *Ptr3)
- {
-+  printf ("Hello, COPY OBJECT TO BUFFER\n");
-   /* setup local identifiers used by Add operations */
-   Dest = Destination;
-   Source = Src;
 diff --git a/src/change.c b/src/change.c
 index 669a100..f3a6af5 100644
 --- a/src/change.c
@@ -559,26 +535,6 @@ index f04e342..559f20e 100644
 +void MarkPourIslands(DataType *, int, void *, void *);
  
  #endif /* __POUR_INCLUDED__ */
-diff --git a/src/remove.c b/src/remove.c
-index c2eb9ec..1376674 100644
---- a/src/remove.c
-+++ b/src/remove.c
-@@ -308,6 +308,7 @@ DestroyRat (RatTypePtr Rat)
- static void *
- RemoveVia (PinTypePtr Via)
- {
-+  printf ("Remove Via!\n");
-   /* erase from screen and memory */
-   if (PCB->ViaOn)
-     {
-@@ -536,6 +537,7 @@ RemoveElement (ElementTypePtr Element)
- Boolean
- RemoveSelected (void)
- {
-+  printf ("RemoveSelected\n");
-   Bulk = True;
-   if (SelectedOperation (&RemoveFunctions, False, ALL_TYPES))
-     {
 diff --git a/src/search.c b/src/search.c
 index cfe648a..fe75969 100644
 --- a/src/search.c
