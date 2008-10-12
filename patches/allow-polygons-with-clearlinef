@@ -1,12 +1,13 @@
-Bottom: 2d4bafae8906a67da5182abc8cfa6cf989d80b62
-Top:    7a08fa4b1bd515cd5c79b8ba955d925b7c103065
+Bottom: f284acbb60966b1dd1d397bd02d5ed7a5e4cda56
+Top:    ed2f197e5bc822012a75f9622b9efefb871ca122
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-02 19:42:47 +0100
+Date:   2008-10-12 17:51:53 +0100
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
 Gives the possibility to mask out regions which are to be free of
 polygon fill.
+
 
 
 
@@ -204,7 +205,7 @@ index 003c2e0..aebfc30 100644
      {
        DrawPolygon (Layer, Polygon, 0);
 diff --git a/src/polygon.c b/src/polygon.c
-index e577a93..c33c735 100644
+index 8844adc..c697f3e 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -728,6 +728,20 @@ SubtractPad (PadType * pad, PolygonType * p)
