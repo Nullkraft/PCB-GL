@@ -2478,10 +2478,9 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
   Cardinal entry;
   struct lo_info info;
 
-  if (!Polygon->Clipped){
-    printf ("Returning because polygon wasn't clipped in LookupLOConnectionsToPolygon\n");
+  if (!Polygon->Clipped)
     return False;
-  }
+
   info.polygon = *Polygon;
   EXPAND_BOUNDS (&info.polygon);
   info.layer = LayerGroup;
@@ -2682,6 +2681,7 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
             }
         }
     }
+
   return (False);
 }
 
