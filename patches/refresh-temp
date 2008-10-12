@@ -1,0 +1,30 @@
+Bottom: 36f67b87b71b17e67e91647e33c42ddcc1cb8619
+Top:    d687af75d81d14595902dd73acd10039952371e9
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-12 22:24:53 +0100
+
+Refresh of add_pours
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index b2a6bd6..98e20bb 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2427,13 +2427,14 @@ inside_sector (VNODE * pn, Vector p2)
+ BOOLp
+ poly_ChkContour (PLINE * a)
+ {
+-#warning FIXME Later: Deliberately disabled this test - seems something strange is going on
+-  return FALSE;
+   VNODE *a1, *a2, *a2_start, *hit1, *hit2;
+   Vector i1, i2;
+   int icnt;
+   double d1,d2;
+ 
++#warning FIXME Later: Deliberately disabled this test - seems something strange is going on
++  return FALSE;
++
+   assert (a != NULL);
+   a1 = &a->head;
+   do
