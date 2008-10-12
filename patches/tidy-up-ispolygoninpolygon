@@ -1,20 +1,21 @@
-Bottom: 05927a3788cc785eca63cb3ec6aec003bbdec684
-Top:    e0866230453bfc82b705950349844a4715d15c7c
+Bottom: a12386e0e940c401408c07e3b737dcca107836e7
+Top:    d4df4dd3c8a0a5cf06a33eb5931803718061345a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-12 22:17:15 +0100
+Date:   2008-10-12 22:22:40 +0100
 
 Tidy up IsPolygonInPolygon
 
 No functional changes
 
 
+
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 6dae758..563819e 100644
+index 7545211..4e8d4f0 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -2638,49 +2638,51 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
+@@ -2637,49 +2637,51 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
      return False;
    assert (P1->Clipped->contours);
    assert (P2->Clipped->contours);
