@@ -389,7 +389,7 @@ LoadPCB (char *Filename)
 
   end = clock();
   elapsed = ((double) (end - start)) / CLOCKS_PER_SEC;
-  printf ("Loading file %s took %d\n", Filename, elapsed);
+  printf ("Loading file %s took %f\n", Filename, elapsed);
 
       /* clear 'changed flag' */
       SetChangedFlag (False);
