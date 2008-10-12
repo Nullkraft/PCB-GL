@@ -868,27 +868,32 @@ split_node (struct rtree_node *node)
   split_node (node->parent);
 }
 
-static inline bigun
-penalty (struct rtree_node *node, const BoxType * query)
+static inline int
+contained (struct rtree_node *node, const BoxType * query)
 {
   if (node->box.X1 > query->X1 || node->box.X2 < query->X2 ||
       node->box.Y1 > query->Y1 || node->box.Y2 < query->Y2)
-    {
-      long long score;
-      /* We're not already contained at this node, so compute
-       * the area penalty for inserting here and return.
-       * The penalty is the increase in area necessary
-       * to include the query->
-       */
-      score = (MAX (node->box.X2, query->X2) - MIN (node->box.X1, query->X1));
-      score *=
-        (MAX (node->box.Y2, query->Y2) - MIN (node->box.Y1, query->Y1));
-      score -=
-        ((long long) node->box.X2 -
-         node->box.X1) * ((long long) node->box.Y2 - node->box.Y1);
-      return score;
-    }
-  return 0;
+    return 0;
+  return 1;
+}
+
+
+static inline bigun
+penalty (struct rtree_node *node, const BoxType * query)
+{
+  long long score;
+
+  /* Compute the area penalty for inserting here and return.
+   * The penalty is the increase in area necessary
+   * to include the query->
+   */
+  score = (MAX (node->box.X2, query->X2) - MIN (node->box.X1, query->X1));
+  score *=
+    (MAX (node->box.Y2, query->Y2) - MIN (node->box.Y1, query->Y1));
+  score -=
+    ((long long) node->box.X2 -
+     node->box.X1) * ((long long) node->box.Y2 - node->box.Y1);
+  return score;
 }
 
 static void
@@ -961,7 +966,24 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
           MAKEMIN (node->box.Y1, query->Y1);
           MAKEMAX (node->box.Y2, query->Y2);
         }
+
       /* this node encloses it, but it's not a leaf, so descend the tree */
+
+      /* First check if any children actually encloses it */
+      assert (node->u.kids[0]);
+      for (i = 0; i < M_SIZE; i++)
+        {
+          if (!node->u.kids[i])
+            break;
+          if (contained (node->u.kids[i], query))
+            {
+              __r_insert_node (node->u.kids[i], query, manage, False);
+              sort_node (node);
+              return;
+            }
+        }
+
+      /* Ok, so we're still here - look for the best child to push it into */
       assert (node->u.kids[0]);
       if ((best_score = penalty (node->u.kids[0], query)) == 0)
         {
