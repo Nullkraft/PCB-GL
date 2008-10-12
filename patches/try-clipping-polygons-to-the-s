@@ -1,5 +1,5 @@
 Bottom: 9c346b48a16c31317a1cbf6c48fc270d0aa20c03
-Top:    bb08ae265f24eda36f93836ca23a715bf4c5f66b
+Top:    2e49cffa99107cc5dddda5b57cf335911350a8cb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-12 03:29:21 +0100
 
@@ -9,7 +9,7 @@ Try clipping polygons to the screen using our own algebra, not GL
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index a1b51c4..29e4cec 100644
+index a1b51c4..ae6d6f0 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -104,7 +104,7 @@ static void DrawPolygonLowLevel (PolygonTypePtr, void *);
@@ -128,7 +128,7 @@ index a1b51c4..29e4cec 100644
 +          noholes_piece = Polygon->NoHoles;
 +          do
 +            {
-+              POLYAREA *tmp_b, *tmp_f, *clipped_result;
++              POLYAREA *tmp_b, *tmp_f;
 +
 +              tmp_b = noholes_piece->b;
 +              tmp_f = noholes_piece->f;
