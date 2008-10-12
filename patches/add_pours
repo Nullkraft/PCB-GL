@@ -1,5 +1,5 @@
 Bottom: c3b565b5a3e97f2a2532700325e1854c9e1b6ea4
-Top:    36f67b87b71b17e67e91647e33c42ddcc1cb8619
+Top:    d687af75d81d14595902dd73acd10039952371e9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-12 17:52:25 +0100
 
@@ -4972,7 +4972,7 @@ index 8f444fd..e203d07 100644
  void RestoreToPolygon(DataType *, int, void *, void *);
  void ClearFromPolygon(DataType *, int, void *, void *);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 32ffb31..b2a6bd6 100644
+index 32ffb31..98e20bb 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -835,6 +835,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
@@ -5031,17 +5031,18 @@ index 32ffb31..b2a6bd6 100644
  
        if (M_POLYAREA_label (a, b, TRUE))
  	return TRUE;
-@@ -2387,15 +2427,18 @@ inside_sector (VNODE * pn, Vector p2)
+@@ -2387,15 +2427,19 @@ inside_sector (VNODE * pn, Vector p2)
  BOOLp
  poly_ChkContour (PLINE * a)
  {
 -  VNODE *a1, *a2, *hit1, *hit2;
-+#warning FIXME Later: Deliberately disabled this test - seems something strange is going on
-+  return FALSE;
 +  VNODE *a1, *a2, *a2_start, *hit1, *hit2;
    Vector i1, i2;
    int icnt;
 +  double d1,d2;
++
++#warning FIXME Later: Deliberately disabled this test - seems something strange is going on
++  return FALSE;
  
    assert (a != NULL);
    a1 = &a->head;
@@ -5052,7 +5053,7 @@ index 32ffb31..b2a6bd6 100644
        do
  	{
  	  if (!node_neighbours (a1, a2) &&
-@@ -2403,21 +2446,22 @@ poly_ChkContour (PLINE * a)
+@@ -2403,21 +2447,22 @@ poly_ChkContour (PLINE * a)
  				    a2->point, a2->next->point, i1, i2)) > 0)
  	    {
  	      if (icnt > 1)
@@ -5080,7 +5081,7 @@ index 32ffb31..b2a6bd6 100644
  
  #if 1
  	      /* now check if they are inside each other */
-@@ -2425,11 +2469,11 @@ poly_ChkContour (PLINE * a)
+@@ -2425,11 +2470,11 @@ poly_ChkContour (PLINE * a)
  		  inside_sector (hit1, hit2->next->point) ||
  		  inside_sector (hit2, hit1->prev->point) ||
  		  inside_sector (hit2, hit1->next->point))
