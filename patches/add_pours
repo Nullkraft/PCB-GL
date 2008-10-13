@@ -1,7 +1,7 @@
-Bottom: 15f4fa7ff6dc8d725b1fb00169e8f02a0510700e
-Top:    8588ed367361fdcbf9fefffd8f18f901fe242aeb
+Bottom: 0bfb771ca74ae89ca11bdb512b55697ae98a435e
+Top:    3c4767f5ae6a299f2b02afb04be45719e13eb61a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-13 20:29:31 +0100
+Date:   2008-10-13 20:31:33 +0100
 
 Add support for a "poured" object.
 
@@ -2693,7 +2693,7 @@ index b09d948..ae6b1e4 100644
         {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
         {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index e506876..54c010f 100644
+index e88bb9c..e95186b 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -362,7 +362,7 @@ gerber_do_export (HID_Attr_Val * options)
