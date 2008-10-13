@@ -353,10 +353,10 @@ LoadPCB (char *Filename)
   clock_t start, end;
   double elapsed;
 
-  start = clock();
-
   /* Hack, load the mapping file */
   RefdesMapInit ();
+
+  start = clock();
 
   /* new data isn't added to the undo list */
   if (!ParsePCB (newPCB, Filename))
