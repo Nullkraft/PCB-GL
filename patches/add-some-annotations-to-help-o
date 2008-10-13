@@ -1,7 +1,7 @@
-Bottom: 012da94bb09de6538dd2d29ed840ca189cbcbc40
-Top:    024f5617208c7f220bd3b6a09136ea2e4341099c
+Bottom: 6c98e47f480832bcf8a43459044cf65fda1a9ed8
+Top:    c4a553b13dc1442bee4f9a97d0caceaa1dc5bbbc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-13 19:11:14 +0100
+Date:   2008-10-13 20:27:26 +0100
 
 Add some annotations to help optimise branch prediction.
 
@@ -117,10 +117,10 @@ index 252150f..5c20ef3 100644
    while ((a = a->f) != afst);
  }				/* M_POLYAREA_intersect */
 diff --git a/src/rtree.c b/src/rtree.c
-index fc2d17b..c444e61 100644
+index 19741e4..3b30a56 100644
 --- a/src/rtree.c
 +++ b/src/rtree.c
-@@ -913,7 +913,7 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
+@@ -911,7 +911,7 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
      {
        register int i;
  
@@ -129,7 +129,7 @@ index fc2d17b..c444e61 100644
          {
            register int flag = 1;
  
-@@ -994,7 +994,7 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
+@@ -992,7 +992,7 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
            new_node->u.rects[0].bptr = query;
            new_node->u.rects[0].bounds = *query;
            new_node->box = *query;

@@ -1,7 +1,7 @@
-Bottom: 79e684d789af9d0dafc1f9a8d1581b664bb0becf
-Top:    0391c1972f6b64cc3cd36240420c93576d402463
+Bottom: b6b6af350ef5ddee4831d021d6244cd17ef7e4bd
+Top:    5c80b93e5f906e7ac862f3fb26b09bf54954da8b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-13 02:10:01 +0100
+Date:   2008-10-13 20:27:24 +0100
 
 Fiddle with some assertions. One item here is a real fix for a typo
 
@@ -38,10 +38,10 @@ index ee098de..fe5e374 100644
    if (region)
      {
 diff --git a/src/rtree.c b/src/rtree.c
-index 1f20585..fc2d17b 100644
+index af6c8cc..19741e4 100644
 --- a/src/rtree.c
 +++ b/src/rtree.c
-@@ -520,7 +520,7 @@ __r_search (struct rtree_node *node, const BoxType * query, r_arg * arg)
+@@ -519,7 +519,7 @@ __r_search (struct rtree_node *node, const BoxType * query, r_arg * arg)
    /** assert that starting_region is well formed */
    assert (query->X1 <= query->X2 && query->Y1 <= query->Y2);
    assert (node->box.X1 < query->X2 && node->box.X2 > query->X1 &&
