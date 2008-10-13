@@ -1,7 +1,7 @@
-Bottom: d76cd819bdf5df0291bf0c64a687c65afa50633d
-Top:    2031b3f08de1c4128cb10032820232efdf65a84c
+Bottom: a84f14d941a2e2cec0949ed35eaf1d7afcc79907
+Top:    7bd655ee910ea2976572bd832786c4426dedfc83
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-13 20:31:31 +0100
+Date:   2008-10-13 20:31:47 +0100
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -159,7 +159,7 @@ index 7f43fba..1be41aa 100644
  #define CHANGETHERMAL_TYPES	\
  	(PIN_TYPE | VIA_TYPE)
 diff --git a/src/draw.c b/src/draw.c
-index 13fef6e..0388f55 100644
+index 232b439..525e0f4 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -1752,8 +1752,9 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)

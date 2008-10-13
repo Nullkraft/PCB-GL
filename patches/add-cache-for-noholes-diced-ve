@@ -1,7 +1,7 @@
-Bottom: 91b5cd2c014f527104c4eb3c4a79130cd3e36753
-Top:    d76cd819bdf5df0291bf0c64a687c65afa50633d
+Bottom: 4898129eb8102d3a295584847a84cbf4f97324ca
+Top:    a84f14d941a2e2cec0949ed35eaf1d7afcc79907
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-13 20:31:31 +0100
+Date:   2008-10-13 20:31:46 +0100
 
 Add cache for "noholes", diced versions of polygons
 
@@ -29,7 +29,7 @@ index 37e952f..d8aaca6 100644
  }
  
 diff --git a/src/draw.c b/src/draw.c
-index 0f08ea6..13fef6e 100644
+index 434ea98..232b439 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -100,7 +100,7 @@ static void DrawPadLowLevel (hidGC, PadTypePtr, Boolean, Boolean);
@@ -98,7 +98,7 @@ index 0f08ea6..13fef6e 100644
  	    }
  	}
      }
-@@ -2503,7 +2516,7 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2476,7 +2489,7 @@ ErasePolygon (PolygonTypePtr Polygon)
  {
    Erasing++;
    gui->set_color (Output.fgGC, Settings.BackgroundColor);

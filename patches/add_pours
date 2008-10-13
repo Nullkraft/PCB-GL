@@ -1,7 +1,7 @@
-Bottom: 0bfb771ca74ae89ca11bdb512b55697ae98a435e
-Top:    3c4767f5ae6a299f2b02afb04be45719e13eb61a
+Bottom: 01236fbc681986dff7b50f9bfd5d5d66db644412
+Top:    e058ef33789e58eddd95eece9576d12310e7207f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-13 20:31:33 +0100
+Date:   2008-10-13 20:31:49 +0100
 
 Add support for a "poured" object.
 
@@ -55,7 +55,7 @@ index 6a98d3a..6a482c0 100644
  	print.c \
  	print.h \
 diff --git a/src/action.c b/src/action.c
-index af7ba6b..0a1b874 100644
+index 04376ac..93c78d4 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -57,6 +57,7 @@
@@ -245,7 +245,7 @@ index af7ba6b..0a1b874 100644
  	  else
  	    {
  	      SaveMode ();
-@@ -4431,6 +4430,9 @@ off are automatically deleted.
+@@ -4424,6 +4423,9 @@ off are automatically deleted.
  static int
  ActionMorphPolygon (int argc, char **argv, int x, int y)
  {
@@ -255,7 +255,7 @@ index af7ba6b..0a1b874 100644
    char *function = ARG (0);
    if (function)
      {
-@@ -4466,6 +4468,7 @@ ActionMorphPolygon (int argc, char **argv, int x, int y)
+@@ -4459,6 +4461,7 @@ ActionMorphPolygon (int argc, char **argv, int x, int y)
  	}
      }
    return 0;
@@ -263,7 +263,7 @@ index af7ba6b..0a1b874 100644
  }
  
  /* --------------------------------------------------------------------------- */
-@@ -6033,9 +6036,9 @@ ActionUndo (int argc, char **argv, int x, int y)
+@@ -5953,9 +5956,9 @@ ActionUndo (int argc, char **argv, int x, int y)
        /* undo the last operation */
  
        HideCrosshair (True);
@@ -275,7 +275,7 @@ index af7ba6b..0a1b874 100644
  	  RestoreCrosshair (True);
  	  return 0;
  	}
-@@ -6195,8 +6198,8 @@ three "undone" lines.
+@@ -6115,8 +6118,8 @@ three "undone" lines.
  static int
  ActionRedo (int argc, char **argv, int x, int y)
  {
@@ -286,7 +286,7 @@ index af7ba6b..0a1b874 100644
        Crosshair.AttachedLine.State == STATE_SECOND)
      return 1;
    HideCrosshair (True);
-@@ -6246,19 +6249,19 @@ static int
+@@ -6166,19 +6169,19 @@ static int
  ActionPolygon (int argc, char **argv, int x, int y)
  {
    char *function = ARG (0);
@@ -1503,7 +1503,7 @@ index 1be41aa..65a500f 100644
  #define CHANGETHERMAL_TYPES	\
  	(PIN_TYPE | VIA_TYPE)
 diff --git a/src/const.h b/src/const.h
-index 3647c3b..1223ab2 100644
+index d680770..03ad9e9 100644
 --- a/src/const.h
 +++ b/src/const.h
 @@ -78,7 +78,8 @@
@@ -1516,7 +1516,7 @@ index 3647c3b..1223ab2 100644
  #define	PASTEBUFFER_MODE	5	/* paste objects from buffer */
  #define	TEXT_MODE		6	/* create text objects */
  #define	ROTATE_MODE		102	/* rotate objects */
-@@ -296,17 +297,20 @@ New polygons are full ones.
+@@ -293,17 +294,20 @@ New polygons are full ones.
  #define	PIN_TYPE		0x00100	/* objects that are part */
  #define	PAD_TYPE		0x00200	/* 'pin' of SMD element */
  #define	ELEMENTNAME_TYPE	0x00400	/* of others */
@@ -1957,7 +1957,7 @@ index b650291..0b2968b 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index 0388f55..56089a2 100644
+index 525e0f4..92a2e21 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -101,6 +101,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
@@ -2132,7 +2132,7 @@ index 0388f55..56089a2 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -2522,6 +2618,18 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2495,6 +2591,18 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2151,7 +2151,7 @@ index 0388f55..56089a2 100644
   * erases an element
   */
  void
-@@ -2608,6 +2716,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -2581,6 +2689,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2161,7 +2161,7 @@ index 0388f55..56089a2 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -2655,6 +2766,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
+@@ -2628,6 +2739,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2, 0);
        break;
@@ -7426,7 +7426,7 @@ index 912db04..e9ced1d 100644
  	  Mode == THERMAL_MODE)
  	{
 diff --git a/src/strflags.c b/src/strflags.c
-index 12fbc62..fb18b2d 100644
+index 599912f..c2f87c3 100644
 --- a/src/strflags.c
 +++ b/src/strflags.c
 @@ -95,7 +95,7 @@ static FlagBitsType object_flagbits[] = {
@@ -7437,8 +7437,8 @@ index 12fbc62..fb18b2d 100644
 +  { CLEARPOLYFLAG, N ("clearpoly"), POUR_TYPE },
    { HIDENAMEFLAG, N ("hidename"), ELEMENT_TYPE },
    { DISPLAYNAMEFLAG, N ("showname"), ELEMENT_TYPE },
-   { STRIPHIERFLAG, N ("striphierarchy"), ELEMENT_TYPE },
-@@ -111,7 +111,7 @@ static FlagBitsType object_flagbits[] = {
+   { CLEARLINEFLAG, N ("clearline"), LINE_TYPE | ARC_TYPE | TEXT_TYPE },
+@@ -110,7 +110,7 @@ static FlagBitsType object_flagbits[] = {
    { DRCFLAG, N ("drc"), ALL_TYPES },
    { LOCKFLAG, N ("lock"), ALL_TYPES },
    { EDGE2FLAG, N ("edge2"), ALL_TYPES },
