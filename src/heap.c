@@ -1,4 +1,4 @@
-/* $Id: heap.c,v 1.7 2006-03-22 23:17:20 danmc Exp $ */
+/* $Id: heap.c,v 1.8 2008-10-13 19:20:06 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -48,7 +48,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: heap.c,v 1.7 2006-03-22 23:17:20 danmc Exp $");
+RCSID ("$Id: heap.c,v 1.8 2008-10-13 19:20:06 petercjclifton Exp $");
 
 
 /* define this for more thorough self-checking of data structures */
@@ -165,7 +165,7 @@ heap_insert (heap_t * heap, cost_t cost, void *data)
     {
       heap->max *= 2;
       if (heap->max == 0)
-	heap->max = 32;		/* default initial heap size */
+	heap->max = 256;		/* default initial heap size */
       heap->element =
 	realloc (heap->element, heap->max * sizeof (*heap->element));
     }
