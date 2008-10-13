@@ -1,7 +1,7 @@
-Bottom: 59a073aad8245ac4de12cf2eb9672dea2f0de015
-Top:    b73fe1d90e996793766b5cd0f7575f25f91ff74d
+Bottom: 2bb7996e1cc018adf555112af700629f07085d2c
+Top:    cf134ce2c8bd6b5475845175c94cad6e0e4fbf73
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-13 02:10:02 +0100
+Date:   2008-10-13 05:23:49 +0100
 
 Add magic flag to stop pour clipping for off-screen buffers
 
@@ -37,10 +37,10 @@ index 91851b8..08ae40f 100644
  
  typedef struct			/* holds drill information */
 diff --git a/src/pour.c b/src/pour.c
-index d71d9f4..1a4bce3 100644
+index b27b0fd..17116ff 100644
 --- a/src/pour.c
 +++ b/src/pour.c
-@@ -1247,6 +1247,8 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1237,6 +1237,8 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
  void
  RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
  {
@@ -49,7 +49,7 @@ index d71d9f4..1a4bce3 100644
    if (type == POUR_TYPE)
      {
  #warning FIXME Later: Why do we need to do this?
-@@ -1259,6 +1261,8 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1249,6 +1251,8 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
  void
  ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
  {
