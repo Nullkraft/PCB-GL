@@ -1,7 +1,7 @@
-Bottom: 578e6501753605592c0e0d75a0c7b92664dd03f1
-Top:    28a3f3e623ee22bd69b4c6b2871a7e76c2e80dcb
+Bottom: c6df965c9d8ea55eff9fbc5fad885727490c2268
+Top:    fc7e2894d3e80d8f8a6b170d510fea9eb002c9be
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-13 07:53:05 +0100
+Date:   2008-10-13 19:11:15 +0100
 
 Try clipping polygons to the screen using our own algebra, not GL
 
@@ -208,7 +208,7 @@ index e203d07..889a0ed 100644
  int InitClip(DataType *d, LayerType *l, PolygonType *p);
  void RestoreToPolygon(DataType *, int, void *, void *);
 diff --git a/src/pour.c b/src/pour.c
-index 5fe398e..1936f04 100644
+index 1bdb1f9..6875ef4 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -347,7 +347,7 @@ unite_poly (POLYAREA * np, POLYAREA ** pg)
