@@ -79,7 +79,6 @@ RCSID ("$Id$");
 #define SORT_NONLEAF
 
 #define DELETE_BY_POINTER
-typedef long long bigun;
 
 typedef struct
 {
