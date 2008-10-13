@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.56 2008-04-13 15:29:20 petercjclifton Exp $ */
+/* $Id: gtkhid-main.c,v 1.57 2008-10-13 19:19:37 petercjclifton Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -37,7 +37,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.56 2008-04-13 15:29:20 petercjclifton Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.57 2008-10-13 19:19:37 petercjclifton Exp $");
 
 
 extern HID ghid_hid;
@@ -1758,7 +1758,7 @@ LibraryChanged (int argc, char **argv, int x, int y)
 static int
 Command (int argc, char **argv, int x, int y)
 {
-  ghid_handle_user_command (FALSE);
+  ghid_handle_user_command (TRUE);
   return 0;
 }
 
