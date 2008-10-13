@@ -218,6 +218,7 @@ __r_tree_is_good (struct rtree_node *node)
   return 1;
 }
 #endif
+#undef NDEBUG
 #ifndef NDEBUG
 /* print out the tree */
 void
@@ -323,6 +324,7 @@ __r_dump_tree (struct rtree_node *node, int depth)
     printf ("average box area is %g\n", area / count);
 }
 #endif
+#define NDEBUG
 
 /* Sort the children or entries of a node
  * according to the largest side.

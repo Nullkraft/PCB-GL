@@ -696,6 +696,7 @@ make_edge_tree (PLINE * pb)
       r_insert_entry (ans, (const BoxType *) s, 1);
     }
   while ((bv = bv->next) != &pb->head);
+  __r_dump_tree (ans->root, 0);
   return (void *) ans;
 }
 
