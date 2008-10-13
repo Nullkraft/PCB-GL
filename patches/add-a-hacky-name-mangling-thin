@@ -1,0 +1,729 @@
+Bottom: 73f68b621077f2c5ad97db94044d65d4f12ccd58
+Top:    d5b96b24684665d8aa43fa8368851e5df23424f4
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-13 20:35:28 +0100
+
+Add a hacky name-mangling thingy for loading boards
+
+
+
+
+
+
+
+---
+
+diff --git a/doc/actions.texi b/doc/actions.texi
+index cf1c3c5..b22d862 100644
+--- a/doc/actions.texi
++++ b/doc/actions.texi
+@@ -169,6 +169,7 @@ Style = 5 has horizontal and vertical fingers with rounded edges.
+ 
+ * SetValue Action:: Change various board-wide values and sizes.
+ * ToggleHideName Action:: Toggles the visibility of element names.
++* ToggleStripHierarchy Action:: Toggles the visibility of element names.
+ * ToggleVendor Action:: Toggles the state of automatic drill size mapping.
+ * Undo Action:: Undo recent changes.
+ * UnloadVendor Action:: Unloads the current vendor drill mapping table.
+@@ -185,7 +186,7 @@ AddRats(AllRats|SelectedRats|Close)@end format
+ @end cartouche
+ 
+ Add one or more rat lines to the board.
+-@c ./../src/action.c 3185
++@c ./../src/action.c 3192
+ 
+ @table @code
+ 
+@@ -269,7 +270,7 @@ AutoPlaceSelected()@end format
+ @end cartouche
+ 
+ Auto-place selected components.
+-@c ./../src/action.c 3332
++@c ./../src/action.c 3339
+ 
+ Attempts to re-arrange the selected components such that the nets
+ connecting them are minimized.  Note that you cannot undo this.
+@@ -284,7 +285,7 @@ AutoRoute(AllRats|SelectedRats)@end format
+ @end cartouche
+ 
+ Auto-route some or all rat lines.
+-@c ./../src/action.c 3355
++@c ./../src/action.c 3362
+ 
+ @table @code
+ 
+@@ -318,7 +319,7 @@ ChangeClearSize(Selected|SelectedObjects, delta)@end format
+ @end cartouche
+ 
+ Changes the clearance size of objects.
+-@c ./../src/action.c 3573
++@c ./../src/action.c 3580
+ 
+ If the solder mask is currently showing, this action changes the
+ solder mask clearance.  If the mask is not showing, this action
+@@ -335,7 +336,7 @@ ChangeDrillSize(SelectedPins|SelectedVias|Selected|SelectedObjects, delta)@end f
+ @end cartouche
+ 
+ Changes the drilling hole size of objects.
+-@c ./../src/action.c 3515
++@c ./../src/action.c 3522
+ 
+ 
+ @node ChangeFlag Action
+@@ -352,7 +353,7 @@ flag = square | octagon | thermal | join
+ @end cartouche
+ 
+ Sets or clears flags on objects.
+-@c ./../src/action.c 5550
++@c ./../src/action.c 5628
+ 
+ Toggles the given flag on the indicated object(s).  The flag may be
+ one of the flags listed above (square, octagon, thermal, join).  The
+@@ -369,7 +370,7 @@ ChangeHole(ToggleObject|Object|SelectedVias|Selected)@end format
+ @end cartouche
+ 
+ Changes the hole flag of objects.
+-@c ./../src/action.c 4376
++@c ./../src/action.c 4452
+ 
+ The "hole flag" of a via determines whether the via is a
+ plated-through hole (not set), or an unplated hole (set).
+@@ -384,7 +385,7 @@ ChangeJoin(ToggleObject|SelectedLines|SelectedArcs|Selected)@end format
+ @end cartouche
+ 
+ Changes the join (clearance through polygons) of objects.
+-@c ./../src/action.c 3990
++@c ./../src/action.c 4066
+ 
+ The join flag determines whether a line or arc, drawn to intersect a
+ polygon, electrically connects to the polygon or not.  When joined,
+@@ -403,7 +404,7 @@ ChangeName(Object)
+ @end cartouche
+ 
+ Sets the name of objects.
+-@c ./../src/action.c 3793
++@c ./../src/action.c 3800
+ 
+ @table @code
+ 
+@@ -429,7 +430,7 @@ ChangeOctagon(SelectedElements|SelectedPins|SelectedVias)@end format
+ @end cartouche
+ 
+ Changes the octagon-flag of pins and vias.
+-@c ./../src/action.c 4202
++@c ./../src/action.c 4278
+ 
+ @pinshapes
+ 
+@@ -443,7 +444,7 @@ ChangePaste(ToggleObject|Object|SelectedPads|Selected)@end format
+ @end cartouche
+ 
+ Changes the no paste flag of objects.
+-@c ./../src/action.c 4418
++@c ./../src/action.c 4494
+ 
+ The "no paste flag" of a pad determines whether the solderpaste
+  stencil will have an opening for the pad (no set) or if there wil be
+@@ -460,7 +461,7 @@ ChangePinName(ElementName,PinNumber,PinName)@end format
+ @end cartouche
+ 
+ Sets the name of a specific pin on a specific element.
+-@c ./../src/action.c 3717
++@c ./../src/action.c 3724
+ 
+ This can be especially useful for annotating pin names from a
+ schematic to the layout without requiring knowledge of the pcb file
+@@ -484,7 +485,7 @@ ChangeSize(SelectedElements, delta)@end format
+ @end cartouche
+ 
+ Changes the size of objects.
+-@c ./../src/action.c 3426
++@c ./../src/action.c 3433
+ 
+ For lines and arcs, this changes the width.  For pins and vias, this
+ changes the overall diameter of the copper annulus.  For pads, this
+@@ -504,7 +505,7 @@ ChangeSquare(Selected|SelectedObjects)@end format
+ @end cartouche
+ 
+ Changes the square flag of pins and pads.
+-@c ./../src/action.c 4043
++@c ./../src/action.c 4119
+ 
+ Note that @code{Pins} means both pins and pads.
+ 
+@@ -521,7 +522,7 @@ ClearOctagon(SelectedElements|SelectedPins|SelectedVias)@end format
+ @end cartouche
+ 
+ Clears the octagon-flag of pins and vias.
+-@c ./../src/action.c 4318
++@c ./../src/action.c 4394
+ 
+ @pinshapes
+ 
+@@ -535,7 +536,7 @@ ClearSquare(ToggleObject|SelectedElements|SelectedPins)@end format
+ @end cartouche
+ 
+ Clears the square-flag of pins and pads.
+-@c ./../src/action.c 4149
++@c ./../src/action.c 4225
+ 
+ Note that @code{Pins} means pins and pads.
+ 
+@@ -555,7 +556,7 @@ flag = square | octagon | thermal | join@end format
+ @end cartouche
+ 
+ Clears flags on objects.
+-@c ./../src/action.c 5533
++@c ./../src/action.c 5611
+ 
+ Turns the given flag off, regardless of its previous setting.  See
+ @code{ChangeFlag}.
+@@ -610,7 +611,7 @@ Delete(AllRats|SelectedRats)  ;@end format
+ @end cartouche
+ 
+ Delete stuff.
+-@c ./../src/action.c 3249
++@c ./../src/action.c 3256
+ 
+ 
+ @node DeleteRats Action
+@@ -622,7 +623,7 @@ DeleteRats(AllRats|Selected|SelectedRats)@end format
+ @end cartouche
+ 
+ Delete rat lines.
+-@c ./../src/action.c 3298
++@c ./../src/action.c 3305
+ 
+ 
+ @node DisableVendor Action
+@@ -913,7 +914,7 @@ ExecuteFile(filename)@end format
+ @end cartouche
+ 
+ Run actions from the given file.
+-@c ./../src/action.c 5664
++@c ./../src/action.c 5742
+ 
+ Lines starting with @code{#} are ignored.
+ 
+@@ -1033,7 +1034,7 @@ LoadFrom(Layout|LayoutToBuffer|ElementToBuffer|Netlist|Revert,filename)@end form
+ @end cartouche
+ 
+ Load layout data from a file.
+-@c ./../src/action.c 4828
++@c ./../src/action.c 4906
+ 
+ This action assumes you know what the filename is.  The various GUIs
+ should have a similar @code{Load} action where the filename is
+@@ -1113,7 +1114,7 @@ MarkCrosshair()
+ @end cartouche
+ 
+ Set/Reset the Crosshair mark
+-@c ./../src/action.c 3388
++@c ./../src/action.c 3395
+ 
+ The ``mark'' is a small X-shaped target on the display which is
+ treated like a second origin (the normal origin is the upper let
+@@ -1153,7 +1154,7 @@ MinMaskGap(delta)
+ @end cartouche
+ 
+ Ensures the mask is a minimum distance from pins and pads.
+-@c ./../src/action.c 3641
++@c ./../src/action.c 3648
+ 
+ Checks all specified pins and/or pads, and increases the mask if
+ needed to ensure a minimum distance between the pin or pad edge and
+@@ -1232,7 +1233,7 @@ MorphPolygon(Object|Selected)@end format
+ @end cartouche
+ 
+ Converts dead polygon islands into separate polygons.
+-@c ./../src/action.c 3875
++@c ./../src/action.c 3882
+ 
+ If a polygon is divided into unconnected "islands", you can use
+ this command to convert the otherwise disappeared islands into
+@@ -1300,7 +1301,7 @@ MoveObject(X,Y,dim)@end format
+ @end cartouche
+ 
+ Moves the object under the crosshair.
+-@c ./../src/action.c 5365
++@c ./../src/action.c 5443
+ 
+ The @code{X} and @code{Y} are treated like @code{delta} is for many
+ other objects.  For each, if it's prefixed by @code{+} or @code{-},
+@@ -1318,7 +1319,7 @@ MoveToCurrentLayer(Object|SelectedObjects)@end format
+ @end cartouche
+ 
+ Moves objects to the current layer.
+-@c ./../src/action.c 5407
++@c ./../src/action.c 5485
+ 
+ Note that moving an element from a component layer to a solder layer,
+ or from solder to component, won't automatically flip it.  Use the
+@@ -1374,7 +1375,7 @@ New([name])@end format
+ @end cartouche
+ 
+ Starts a new layout.
+-@c ./../src/action.c 4891
++@c ./../src/action.c 4969
+ 
+ If a name is not given, one is prompted for.
+ 
+@@ -1411,7 +1412,7 @@ PasteBuffer(ToLayout, X, Y, units)@end format
+ @end cartouche
+ 
+ Various operations on the paste buffer.
+-@c ./../src/action.c 4955
++@c ./../src/action.c 5033
+ 
+ There are a number of paste buffers; the actual limit is a
+ compile-time constant @code{MAX_BUFFER} in @file{globalconst.h}.  It
+@@ -1470,7 +1471,7 @@ Polygon(Close|PreviousPoint)@end format
+ @end cartouche
+ 
+ Some polygon related stuff.
+-@c ./../src/action.c 5301
++@c ./../src/action.c 5379
+ 
+ Polygons need a special action routine to make life easier.
+ 
+@@ -1569,7 +1570,7 @@ Redo()@end format
+ @end cartouche
+ 
+ Redo recent``undo''operations.
+-@c ./../src/action.c 5267
++@c ./../src/action.c 5345
+ 
+ This routine allows you to recover from the last undo command.  You
+ might want to do this if you thought that undo was going to revert
+@@ -1618,7 +1619,7 @@ Report(Object|DrillReport|FoundPins|NetLength)@end format
+ @end cartouche
+ 
+ Produce various report.
+-@c ./../src/report.c 639
++@c ./../src/report.c 651
+ 
+ @table @code
+ 
+@@ -1664,7 +1665,7 @@ RipUp(All|Selected|Element)@end format
+ @end cartouche
+ 
+ Ripup auto-routed tracks, or convert an element to parts.
+-@c ./../src/action.c 3081
++@c ./../src/action.c 3088
+ 
+ @table @code
+ 
+@@ -1713,7 +1714,7 @@ RouteStyle(1|2|3|4)@end format
+ @end cartouche
+ 
+ Copies the indicated routing style into the current sizes.
+-@c ./../src/action.c 5333
++@c ./../src/action.c 5411
+ 
+ 
+ @node s Action
+@@ -1745,7 +1746,7 @@ SaveSettings()
+ @end cartouche
+ 
+ Saves settings.
+-@c ./../src/action.c 4812
++@c ./../src/action.c 4890
+ 
+ If you pass no arguments, the settings are stored in
+ @code{$HOME/.pcb/settings}.  If you pass the word @code{local} they're
+@@ -1763,7 +1764,7 @@ SaveTo(PasteBuffer,filename)@end format
+ @end cartouche
+ 
+ Saves data to a file.
+-@c ./../src/action.c 4724
++@c ./../src/action.c 4800
+ 
+ @table @code
+ 
+@@ -1803,7 +1804,7 @@ Select(TextByName|ViaByName, Name)
+ @end cartouche
+ 
+ Toggles or sets the selection
+-@c ./../src/action.c 4460
++@c ./../src/action.c 4536
+ 
+ @table @code
+ 
+@@ -1852,7 +1853,7 @@ flag = square | octagon | thermal | join@end format
+ @end cartouche
+ 
+ Sets flags on objects.
+-@c ./../src/action.c 5516
++@c ./../src/action.c 5594
+ 
+ Turns the given flag on, regardless of its previous setting.  See
+ @code{ChangeFlag}.
+@@ -1871,7 +1872,7 @@ SetOctagon(Object|ToggleObject|SelectedElements|Selected)@end format
+ @end cartouche
+ 
+ Sets the octagon-flag of objects.
+-@c ./../src/action.c 4260
++@c ./../src/action.c 4336
+ 
+ @pinshapes
+ 
+@@ -1885,7 +1886,7 @@ SetSame()@end format
+ @end cartouche
+ 
+ Sets current layer and sizes to match indicated item.
+-@c ./../src/action.c 5448
++@c ./../src/action.c 5526
+ 
+ When invoked over any line, arc, polygon, or via, this changes the
+ current layer to be the layer that item is on, and changes the current
+@@ -1901,7 +1902,7 @@ SetSquare(ToggleObject|SelectedElements|SelectedPins)@end format
+ @end cartouche
+ 
+ sets the square-flag of objects.
+-@c ./../src/action.c 4096
++@c ./../src/action.c 4172
+ 
+ Note that @code{Pins} means pins and pads.
+ 
+@@ -1983,12 +1984,24 @@ ToggleHideName(Object|SelectedElements)@end format
+ @end cartouche
+ 
+ Toggles the visibility of element names.
+-@c ./../src/action.c 3923
++@c ./../src/action.c 3930
+ 
+ If names are hidden you won't see them on the screen and they will not
+ appear on the silk layer when you print the layout.
+ 
+ 
++@node ToggleStripHierarchy Action
++@subsection ToggleStripHierarchy
++@c key ToggleStripHierarchy in hid 
++@cartouche
++@format
++ToggleStripHierarchy(Object|SelectedElements)@end format
++@end cartouche
++
++Toggles the visibility of element names.
++@c ./../src/action.c 3997
++
++
+ @node ToggleVendor Action
+ @subsection ToggleVendor
+ @c key ToggleVendor in hid 
+@@ -2021,7 +2034,7 @@ Undo()
+ @end cartouche
+ 
+ Undo recent changes.
+-@c ./../src/action.c 5106
++@c ./../src/action.c 5184
+ 
+ The unlimited undo feature of @code{Pcb} allows you to recover from
+ most operations that materially affect you work.  Calling
+@@ -2065,7 +2078,7 @@ Unselect(TextByName|ViaByName)
+ @end cartouche
+ 
+ unselects the object at the pointer location or the specified objects
+-@c ./../src/action.c 4610
++@c ./../src/action.c 4686
+ 
+ @table @code
+ 
+@@ -2252,7 +2265,7 @@ About()@end format
+ @end cartouche
+ 
+ Tell the user about this version of PCB.
+-@c ./../src/hid/gtk/gtkhid-main.c 1615
++@c ./../src/hid/gtk/gtkhid-main.c 1962
+ 
+ This just pops up a dialog telling the user which version of
+ @code{pcb} they're running.
+@@ -2268,7 +2281,7 @@ AdjustStyle()
+ @end cartouche
+ 
+ Open the window which allows editing of the route styles
+-@c ./../src/hid/gtk/gui-top-window.c 3802
++@c ./../src/hid/gtk/gui-top-window.c 3819
+ 
+ Opens the window which allows editing of the route styles.
+ 
+@@ -2283,7 +2296,7 @@ Center()
+ @end cartouche
+ 
+ Moves the pointer to the center of the window.
+-@c ./../src/hid/gtk/gtkhid-main.c 2073
++@c ./../src/hid/gtk/gtkhid-main.c 2423
+ 
+ Move the pointer to the center of the window, but only if it's
+ currently within the window already.
+@@ -2298,7 +2311,7 @@ Cursor(Type,DeltaUp,DeltaRight,Units)@end format
+ @end cartouche
+ 
+ Move the cursor.
+-@c ./../src/hid/gtk/gtkhid-main.c 2172
++@c ./../src/hid/gtk/gtkhid-main.c 2522
+ 
+ This action moves the mouse cursor.  Unlike other actions which take
+ coordinates, this action's coordinates are always relative to the
+@@ -2342,7 +2355,7 @@ DoWindows(Layout|Library|Log|Netlist|Preferences)@end format
+ @end cartouche
+ 
+ Open various GUI windows.
+-@c ./../src/hid/gtk/gtkhid-main.c 2230
++@c ./../src/hid/gtk/gtkhid-main.c 2580
+ 
+ @table @code
+ 
+@@ -2380,7 +2393,7 @@ EditLayerGroups()
+ @end cartouche
+ 
+ Open the preferences window which allows editing of the layer groups
+-@c ./../src/hid/gtk/gui-top-window.c 3825
++@c ./../src/hid/gtk/gui-top-window.c 3842
+ 
+ Opens the preferences window which is where the layer groups
+ are edited.  This action is primarily provides to provide menu
+@@ -2396,7 +2409,7 @@ GetXY()@end format
+ @end cartouche
+ 
+ Get a coordinate.
+-@c ./../src/hid/gtk/gtkhid-main.c 1630
++@c ./../src/hid/gtk/gtkhid-main.c 1977
+ 
+ Prompts the user for a coordinate, if one is not already selected.
+ 
+@@ -2412,7 +2425,7 @@ Popup(MenuName, [Button])@end format
+ Bring up the popup menu specified by @code{MenuName}.
+ If called by a mouse event then the mouse button number
+ must be specified as the optional second argument.
+-@c ./../src/hid/gtk/gtkhid-main.c 2297
++@c ./../src/hid/gtk/gtkhid-main.c 2647
+ 
+ This just pops up the specified menu.  The menu must have been defined
+ as a named subresource of the Popups resource in the menu resource
+@@ -2429,7 +2442,7 @@ Print()@end format
+ @end cartouche
+ 
+ Print the layout.
+-@c ./../src/hid/gtk/gtkhid-main.c 1948
++@c ./../src/hid/gtk/gtkhid-main.c 2295
+ 
+ This will find the default printing HID, prompt the user for its
+ options, and print the layout.
+@@ -2444,7 +2457,7 @@ PrintCalibrate()@end format
+ @end cartouche
+ 
+ Calibrate the printer.
+-@c ./../src/hid/gtk/gtkhid-main.c 1999
++@c ./../src/hid/gtk/gtkhid-main.c 2346
+ 
+ This will print a calibration page, which you would measure and type
+ the measurements in, so that future printouts will be more precise.
+@@ -2462,7 +2475,7 @@ Save(PasteBuffer)@end format
+ @end cartouche
+ 
+ Save layout and/or element data to a user-selected file.
+-@c ./../src/hid/gtk/gtkhid-main.c 1774
++@c ./../src/hid/gtk/gtkhid-main.c 2121
+ 
+ This action is a GUI front-end to the core's @code{SaveTo} action
+ (@pxref{SaveTo Action}).  If you happen to pass a filename, like
+@@ -2480,7 +2493,7 @@ SelectLayer(1..MAXLAYER|Silk|Rats)@end format
+ @end cartouche
+ 
+ Select which layer is the current layer.
+-@c ./../src/hid/gtk/gui-top-window.c 2839
++@c ./../src/hid/gtk/gui-top-window.c 2856
+ 
+ The specified layer becomes the currently active layer.  It is made
+ visible if it is not already visible
+@@ -2495,7 +2508,7 @@ SetUnits(mm|mil)@end format
+ @end cartouche
+ 
+ Set the default measurement units.
+-@c ./../src/hid/gtk/gtkhid-main.c 2269
++@c ./../src/hid/gtk/gtkhid-main.c 2619
+ 
+ @table @code
+ 
+@@ -2517,7 +2530,7 @@ SwapSides(|v|h|r)@end format
+ @end cartouche
+ 
+ Swaps the side of the board you're looking at.
+-@c ./../src/hid/gtk/gtkhid-main.c 1856
++@c ./../src/hid/gtk/gtkhid-main.c 2203
+ 
+ This action changes the way you view the board.
+ 
+@@ -2560,7 +2573,7 @@ ToggleView(Silk|Rats|Pins|Vias|Mask|BackSide)@end format
+ @end cartouche
+ 
+ Toggle the visibility of the specified layer or layer group.
+-@c ./../src/hid/gtk/gui-top-window.c 2763
++@c ./../src/hid/gtk/gui-top-window.c 2780
+ 
+ If you pass an integer, that layer is specified by index (the first
+ layer is @code{1}, etc).  If you pass a layer name, that layer is
+@@ -2582,7 +2595,7 @@ Zoom(factor)@end format
+ @end cartouche
+ 
+ Various zoom factor changes.
+-@c ./../src/hid/gtk/gtkhid-main.c 176
++@c ./../src/hid/gtk/gtkhid-main.c 233
+ Changes the zoom (magnification) of the view of the board.  If no
+ arguments are passed, the view is scaled such that the board just fits
+ inside the visible window (i.e. ``view all'').  Otherwise,
+diff --git a/doc/pcbfile.texi b/doc/pcbfile.texi
+index 7dd6be8..7ec8517 100644
+--- a/doc/pcbfile.texi
++++ b/doc/pcbfile.texi
+@@ -881,9 +881,11 @@ Marker used internally to avoid revisiting an object.
+ @item 0x10000 nopaste
+ For pads, set to prevent a solderpaste stencil opening for the
+ pad.  Primarily used for pads used as fiducials.
++@item 0x20000 striphierarchy
++Strip hierarchy when displaying this element's refdes.
+ @end table
+ @c pcbfile ~pcbflags
+-@c ./../src/const.h 139
++@c ./../src/const.h 140
+ @node PCBFlags
+ @section PCBFlags
+ @table @code
+diff --git a/doc/version.texi b/doc/version.texi
+index 809edc3..ae1a737 100644
+--- a/doc/version.texi
++++ b/doc/version.texi
+@@ -1,4 +1,4 @@
+-@set UPDATED 11 December 2007
++@set UPDATED 28 December 2007
+ @set UPDATED-MONTH December 2007
+-@set EDITION 1.99w
+-@set VERSION 1.99w
++@set EDITION 1.99x
++@set VERSION 1.99x
+diff --git a/src/create.c b/src/create.c
+index 16a096d..969376f 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -37,6 +37,7 @@
+ #include <memory.h>
+ #include <setjmp.h>
+ #include <stdlib.h>
++#include <stdio.h>
+ 
+ #include "global.h"
+ 
+@@ -54,6 +55,8 @@
+ #include "undo.h"
+ #include "vendor.h"
+ 
++#include <glib.h>
++
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+ #endif
+@@ -644,6 +647,57 @@ CreateNewPointInPour (PourTypePtr Pour, LocationType X,
+   return (point);
+ }
+ 
++static char *refdes_map_file = "refdes.map";
++static GHashTable *refdes_map_table = NULL;
++
++void RefdesMapInit (void)
++{
++  FILE *mapfile;
++  char *from = NULL;
++  char *to = NULL;
++
++  refdes_map_table = g_hash_table_new_full (g_str_hash, g_str_equal,
++                                            g_free, g_free);
++
++  if (refdes_map_file == NULL)
++    return;
++
++  printf ("Refdes map file %s\n", refdes_map_file);
++
++  mapfile = fopen (refdes_map_file, "rb");
++
++  if (mapfile == NULL) {
++    fprintf(stderr, "Could not open [%s]\n", refdes_map_file);
++    return;
++  }
++
++  while (!feof(mapfile) && !ferror(mapfile)) {
++    free (from);
++    free (to);
++
++    from = NULL;
++    to = NULL;
++
++    fscanf (mapfile, "%ms %ms\n", &from, &to);
++
++    if (from == NULL || to == NULL)
++      continue;
++
++    g_hash_table_insert (refdes_map_table, g_strdup (from), g_strdup (to));
++
++    printf ("Stashing rename command: %s to %s\n", from, to);
++  }
++
++  free (to);
++  free (from);
++}
++
++
++char *RefdesMapMap (char *from)
++{
++  return g_hash_table_lookup (refdes_map_table, from);
++}
++
+ /* ---------------------------------------------------------------------------
+  * creates an new element
+  * memory is allocated if needed
+@@ -656,6 +710,19 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
+ 		  LocationType TextX, LocationType TextY, BYTE Direction,
+ 		  int TextScale, FlagType TextFlags, Boolean uniqueName)
+ {
++
++  /* HACK: Mapping between refdes */
++  if (NameOnPCB != NULL) {
++    char *to;
++    to = RefdesMapMap (NameOnPCB);
++    if (to != NULL) {
++//      free (NameOnPCB);
++      printf ("Mapping name from %s to %s\n", NameOnPCB, to);
++      NameOnPCB = malloc (sizeof (char) * (strlen (to) + 1));
++      strcpy (NameOnPCB, to);
++    }
++  }
++
+   if (!Element)
+     Element = GetElementMemory (Data);
+ 
+diff --git a/src/create.h b/src/create.h
+index 4c9fae6..644b53e 100644
+--- a/src/create.h
++++ b/src/create.h
+@@ -63,6 +63,7 @@ PolygonTypePtr CreateNewPolygonInPour (PourType *pour, FlagType);
+ PourTypePtr CreateNewPour (LayerTypePtr, FlagType);
+ PointTypePtr CreateNewPointInPour (PourTypePtr,
+ 				      LocationType, LocationType);
++void RefdesMapInit (void);
+ ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
+ 				 FontTypePtr, FlagType, char *, char *,
+ 				 char *, LocationType, LocationType, BYTE,
+diff --git a/src/file.c b/src/file.c
+index 35bfb57..35f00c6 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -353,6 +353,9 @@ LoadPCB (char *Filename)
+   clock_t start, end;
+   double elapsed;
+ 
++  /* Hack, load the mapping file */
++  RefdesMapInit ();
++
+   start = clock();
+ 
+   /* new data isn't added to the undo list */
