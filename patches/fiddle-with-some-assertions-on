@@ -1,7 +1,7 @@
-Bottom: 8dc208ed4a61ff300f9e051411158edeb9300b4a
+Bottom: 257d051ecdcab6b99068c51a22bff5d7094ff34f
 Top:    10f6d05b3b3232ede00cfce13cc327ac5f20b286
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-13 20:42:45 +0100
+Date:   2008-10-13 20:46:58 +0100
 
 Fiddle with some assertions. One item here is a real fix for a typo
 
@@ -37,16 +37,3 @@ index ee098de..fe5e374 100644
    /* search out to anything that might matter */
    if (region)
      {
-diff --git a/src/rtree.c b/src/rtree.c
-index af6c8cc..19741e4 100644
---- a/src/rtree.c
-+++ b/src/rtree.c
-@@ -519,7 +519,7 @@ __r_search (struct rtree_node *node, const BoxType * query, r_arg * arg)
-   /** assert that starting_region is well formed */
-   assert (query->X1 <= query->X2 && query->Y1 <= query->Y2);
-   assert (node->box.X1 < query->X2 && node->box.X2 > query->X1 &&
--          node->box.Y1 < query->Y2 && node->box.Y2 > query->X1);
-+          node->box.Y1 < query->Y2 && node->box.Y2 > query->Y1);
- #ifdef SLOW_ASSERTS
-   /** assert that node is well formed */
-   assert (__r_node_is_good (node));
