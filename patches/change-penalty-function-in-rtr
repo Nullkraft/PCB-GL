@@ -1,5 +1,5 @@
 Bottom: d14d4f3b6207ff8c5335aea6113220627db80a7a
-Top:    762ddecbef8d1c5e22a9625dc464886ed3f7c1c5
+Top:    99ddaea865f548cfe3fa2bf3086138ac132f896d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-13 19:11:15 +0100
 
@@ -13,10 +13,18 @@ Exact integer result doesn't matter.
 ---
 
 diff --git a/src/rtree.c b/src/rtree.c
-index c444e61..59793f8 100644
+index c444e61..3b30a56 100644
 --- a/src/rtree.c
 +++ b/src/rtree.c
-@@ -878,21 +878,20 @@ contained (struct rtree_node *node, const BoxType * query)
+@@ -79,7 +79,6 @@ RCSID ("$Id$");
+ #define SORT_NONLEAF
+ 
+ #define DELETE_BY_POINTER
+-typedef long long bigun;
+ 
+ typedef struct
+ {
+@@ -878,21 +877,20 @@ contained (struct rtree_node *node, const BoxType * query)
  }
  
  
@@ -44,7 +52,7 @@ index c444e61..59793f8 100644
    return score;
  }
  
-@@ -957,7 +956,7 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
+@@ -957,7 +955,7 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
      {
        int i;
        struct rtree_node *best_node;
