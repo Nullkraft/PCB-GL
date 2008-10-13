@@ -1,5 +1,5 @@
 Bottom: 535300d76531b976ddd1051069627fe3329a4e4b
-Top:    84a295eebf6ed576a13cf5de2813ba8d0c86a68d
+Top:    b3822f07ed276a52b5c5bc866eaba06753f41f41
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-13 20:30:22 +0100
 
@@ -713,16 +713,16 @@ index 4c9fae6..644b53e 100644
  				 FontTypePtr, FlagType, char *, char *,
  				 char *, LocationType, LocationType, BYTE,
 diff --git a/src/file.c b/src/file.c
-index 35bfb57..e8f4d98 100644
+index 35bfb57..35f00c6 100644
 --- a/src/file.c
 +++ b/src/file.c
-@@ -355,6 +355,9 @@ LoadPCB (char *Filename)
- 
-   start = clock();
+@@ -353,6 +353,9 @@ LoadPCB (char *Filename)
+   clock_t start, end;
+   double elapsed;
  
 +  /* Hack, load the mapping file */
 +  RefdesMapInit ();
 +
+   start = clock();
+ 
    /* new data isn't added to the undo list */
-   if (!ParsePCB (newPCB, Filename))
-     {
