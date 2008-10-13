@@ -1,7 +1,7 @@
-Bottom: 73272993a4d9308e2654aae3a06c059ca96df419
-Top:    72f4b95a97a66a10f4b88d41cc5c6598bdfd9cdf
+Bottom: ca1007198b46d14b8669fbe258967e13f0a59788
+Top:    7005365ad401ed84f156d8f28b8e9680da104850
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-13 07:50:28 +0100
+Date:   2008-10-13 07:53:33 +0100
 
 Try adding polygon objects after each clipping stage. rtree->faster??
 
@@ -11,7 +11,7 @@ Try adding polygon objects after each clipping stage. rtree->faster??
 ---
 
 diff --git a/src/pour.c b/src/pour.c
-index f2f8519..196439d 100644
+index 9a5f18a..944d49b 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -72,6 +72,8 @@ RCSID ("$Id$");
