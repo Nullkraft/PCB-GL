@@ -1,0 +1,40 @@
+Bottom: e1877d0c7710e4f0abae6179ab31b2f076f54161
+Top:    bcf597e476c2da392135fec2d19c2f987f3cf3ff
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-13 23:37:26 +0100
+
+Refresh of add-configure-checks-for-gtkgl
+
+---
+
+diff --git a/configure.ac b/configure.ac
+index a227c51..a7f7034 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -496,14 +496,22 @@ $GLIB_PKG_ERRORS])]
+ 	GLIB_VERSION=`$PKG_CONFIG glib-2.0 --modversion`
+ 
+ 
+-# Check for GtkGLExt
+-PKG_CHECK_MODULES(GTKGLEXT, gtkglext-1.0 >= 1.0.0, , [AC_MSG_ERROR([
++	# Check for GtkGLExt
++	PKG_CHECK_MODULES(GTKGLEXT, gtkglext-1.0 >= 1.0.0, , [AC_MSG_ERROR([
+ *** Required version of gtkglext is not installed - please install first ***
+ Please review the following errors:
+ $GTKGLEXT_PKG_ERRORS])]
+-)
++	)
+ 
+-GTKGLEXT_VER=`$PKG_CONFIG gtkglext-1.0 --modversion`
++	GTKGLEXT_VER=`$PKG_CONFIG gtkglext-1.0 --modversion`
++
++	AC_CHECK_HEADERS(GL/glut.h)
++	case $ac_cv_header_GL_glut_h in
++	  no )
++	    AC_MSG_ERROR([You don't seem to have the GL glut library headers installed.])
++	    ;;
++	  * ) ;;
++	esac
+ 	;;
+ 
+       nelma|png )
