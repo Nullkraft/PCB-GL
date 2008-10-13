@@ -3,7 +3,9 @@ Top:    8dc208ed4a61ff300f9e051411158edeb9300b4a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-13 20:44:33 +0100
 
-rtree.c: Fix typo in assertion test causing it to check incorrectly
+rtree.c: Fix typo in assertion test
+
+Caused false assertion failures when running a debugging build.
 
 
 ---
