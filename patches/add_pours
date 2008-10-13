@@ -1,7 +1,7 @@
-Bottom: aba4c74f158547315b791bdea41fbbcdcdc0f606
-Top:    38e7dd8abc57027800eeb0567881887ccb516c5f
+Bottom: 15f4fa7ff6dc8d725b1fb00169e8f02a0510700e
+Top:    8588ed367361fdcbf9fefffd8f18f901fe242aeb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-13 20:28:54 +0100
+Date:   2008-10-13 20:29:31 +0100
 
 Add support for a "poured" object.
 
@@ -1675,10 +1675,10 @@ index 472fc75..8d027d0 100644
  				    ElementTypePtr, Boolean, LocationType, LocationType);
  Boolean CopyPastebufferToLayout (LocationType, LocationType);
 diff --git a/src/create.c b/src/create.c
-index bbfd52f..e6a0abd 100644
+index d8aaca6..01cfb06 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -535,29 +535,28 @@ CreateNewArcOnLayer (LayerTypePtr Layer,
+@@ -532,29 +532,28 @@ CreateNewArcOnLayer (LayerTypePtr Layer,
    return (Arc);
  }
  
@@ -1724,7 +1724,7 @@ index bbfd52f..e6a0abd 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -595,9 +594,9 @@ CreateNewText (LayerTypePtr Layer, FontTypePtr PCBFont,
+@@ -592,9 +591,9 @@ CreateNewText (LayerTypePtr Layer, FontTypePtr PCBFont,
   * creates a new polygon on a layer
   */
  PolygonTypePtr
@@ -1736,7 +1736,7 @@ index bbfd52f..e6a0abd 100644
  
    /* copy values */
    polygon->Flags = Flags;
-@@ -605,17 +604,40 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
+@@ -602,17 +601,40 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
    polygon->Clipped = NULL;
    polygon->NoHoles = NULL;
    polygon->NoHolesValid = 0;
@@ -1781,7 +1781,7 @@ index bbfd52f..e6a0abd 100644
    /* copy values */
    point->X = X;
 diff --git a/src/create.h b/src/create.h
-index 98bb525..644b53e 100644
+index a994c84..4c9fae6 100644
 --- a/src/create.h
 +++ b/src/create.h
 @@ -54,13 +54,14 @@ RatTypePtr CreateNewRat (DataTypePtr, LocationType, LocationType,
@@ -1800,8 +1800,8 @@ index 98bb525..644b53e 100644
 +PourTypePtr CreateNewPour (LayerTypePtr, FlagType);
 +PointTypePtr CreateNewPointInPour (PourTypePtr,
  				      LocationType, LocationType);
- void RefdesMapInit (void);
  ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
+ 				 FontTypePtr, FlagType, char *, char *,
 diff --git a/src/crosshair.c b/src/crosshair.c
 index b650291..0b2968b 100644
 --- a/src/crosshair.c
@@ -2193,10 +2193,10 @@ index 47c4c7f..a0f423c 100644
  void EraseElementPinsAndPads (ElementTypePtr);
  void EraseElementName (ElementTypePtr);
 diff --git a/src/file.c b/src/file.c
-index 653e1db..724904c 100644
+index b6c67b9..738188a 100644
 --- a/src/file.c
 +++ b/src/file.c
-@@ -778,7 +778,7 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
+@@ -775,7 +775,7 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
  {
    int n;
    /* write information about non empty layers */
@@ -2205,7 +2205,7 @@ index 653e1db..724904c 100644
        (layer->Name && *layer->Name))
      {
        fprintf (FP, "Layer(%i ", (int) Number + 1);
-@@ -812,14 +812,14 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
+@@ -809,14 +809,14 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
  	  PrintQuotedString (FP, EMPTY (text->TextString));
  	  fprintf (FP, " %s]\n", F2S (text, TEXT_TYPE));
  	}

@@ -1,7 +1,7 @@
-Bottom: cfa5e6317eee8d5a1d1d6fca1a6334315d26b2ab
-Top:    2c9e5b397cea6c8e45f0aea00fbc2719648db6c6
+Bottom: df1e7b2e04a3014c23a791a3e0f9f57fccfdeddb
+Top:    aa2da7f1e3683ea22c4e7ecb2c2f1cca1b8c953c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-13 20:28:53 +0100
+Date:   2008-10-13 20:29:29 +0100
 
 Add cache for "noholes", diced versions of polygons
 
@@ -16,10 +16,10 @@ Add cache for "noholes", diced versions of polygons
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 5df8ceb..bbfd52f 100644
+index 37e952f..d8aaca6 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -603,6 +603,8 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
+@@ -600,6 +600,8 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
    polygon->Flags = Flags;
    polygon->ID = ID++;
    polygon->Clipped = NULL;
