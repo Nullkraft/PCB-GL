@@ -1,0 +1,42 @@
+Bottom: 10f6d05b3b3232ede00cfce13cc327ac5f20b286
+Top:    554b0e528deaadf831bb127ef1d4e7331177e812
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-13 20:56:26 +0100
+
+Refresh of fiddle-with-some-assertions-on
+
+---
+
+diff --git a/src/autoroute.c b/src/autoroute.c
+index db19e4d..5c689e4 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -2971,7 +2971,6 @@ do_via_search (edge_t * search, struct routeone_state *s,
+         {
+           BoxType cliparea;
+           BoxType *area = vector_remove_last (v);
+-//          assert (box_intersect (area, &region));
+           if (!(i == NO_CONFLICT || AutoRouteParameters.with_conflicts))
+             {
+               free (area);
+diff --git a/src/mtspace.c b/src/mtspace.c
+index fe5e374..b94f9cd 100644
+--- a/src/mtspace.c
++++ b/src/mtspace.c
+@@ -380,7 +380,6 @@ mtspace_query_rect (mtspace_t * mtspace, const BoxType * region,
+   assert (free_space_vec && vector_is_empty (free_space_vec));
+   assert (lo_conflict_space_vec && vector_is_empty (lo_conflict_space_vec));
+   assert (hi_conflict_space_vec && vector_is_empty (hi_conflict_space_vec));
+-//  assert (untested && no_fix && no_hi && hi_candidate);
+   /* search out to anything that might matter */
+   if (region)
+     {
+@@ -393,6 +392,8 @@ mtspace_query_rect (mtspace_t * mtspace, const BoxType * region,
+       work->no_hi = vector_create ();
+       work->keepaway = keepaway;
+       work->radius = radius;
++      assert (work->untested && work->no_fix &&
++              work->no_hi && work->hi_candidate);
+       cbox = (BoxType *) malloc (sizeof (BoxType));
+       *cbox = bloat_box (region, keepaway + radius);
+       vector_append (work->untested, cbox);
