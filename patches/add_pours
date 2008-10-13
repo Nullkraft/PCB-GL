@@ -1,5 +1,5 @@
 Bottom: 0391c1972f6b64cc3cd36240420c93576d402463
-Top:    f28fe7298d17137b2fb95ee351e7c53fb5c49603
+Top:    98709cc60948db1dfe1a808ae9578bf9dae534a8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-13 02:10:02 +0100
 
@@ -5103,10 +5103,10 @@ index 32ffb31..98e20bb 100644
    return FALSE;
 diff --git a/src/pour.c b/src/pour.c
 new file mode 100644
-index 0000000..d71d9f4
+index 0000000..b27b0fd
 --- /dev/null
 +++ b/src/pour.c
-@@ -0,0 +1,1270 @@
+@@ -0,0 +1,1260 @@
 +/* $Id$ */
 +
 +/*
@@ -6169,23 +6169,16 @@ index 0000000..d71d9f4
 +  POLYAREA *pg, *tmp, *start_pg;
 +  int count_all, count_added;
 +
-+//  printf ("InitPourClip\n");
-+
 +  /* Free any children we might have */
 +  if (pour->PolygonN)
 +    {
-+//      printf ("We already had children. Killing them now.\n");
-+//      delete_children = calloc (pour->PolygonN, sizeof (PolygonType *));
 +      POURPOLYGON_LOOP (pour);
 +      {
-+//        delete_children[ number_deleted++ ] = polygon;
 +        /* POURPOLYGON_LOOP iterates backwards, so it's OK
 +         * to delete the current element we're sitting on */
 +        DestroyPolygonInPour (pour, polygon);
 +      }
 +      END_LOOP;
-+//      while (number_deleted)
-+//        DestroyPolygonInPour (pour, delete_children[ --number_deleted ]);
 +    }
 +
 +  pg = original_pour_poly (pour);
@@ -6198,8 +6191,7 @@ index 0000000..d71d9f4
 +  if (TEST_FLAG (CLEARPOLYFLAG, pour))
 +    {
 +      /* Clip the pour against anything we can find in this layer */
-+      /* TODO: Clear up API so the resulting areas are in "clipped" */
-+      ClearPour (Data, layer, pour, &pg, NULL, 0);
++      ClearPour (Data, layer, pour, &pg, NULL, UNSUBTRACT_BLOAT);
 +    }
 +
 +  count_all = count_added = 0;
@@ -6269,8 +6261,6 @@ index 0000000..d71d9f4
 +  BoxType sb = ((PinTypePtr) ptr2)->BoundingBox;
 +  int r = 0;
 +  struct plow_info info;
-+
-+//  printf ("Hello world, this is PlowPours\n");
 +
 +  info.type = type;
 +  info.ptr1 = ptr1;
