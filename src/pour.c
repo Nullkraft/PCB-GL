@@ -1060,23 +1060,16 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
   POLYAREA *pg, *tmp, *start_pg;
   int count_all, count_added;
 
-//  printf ("InitPourClip\n");
-
   /* Free any children we might have */
   if (pour->PolygonN)
     {
-//      printf ("We already had children. Killing them now.\n");
-//      delete_children = calloc (pour->PolygonN, sizeof (PolygonType *));
       POURPOLYGON_LOOP (pour);
       {
-//        delete_children[ number_deleted++ ] = polygon;
         /* POURPOLYGON_LOOP iterates backwards, so it's OK
          * to delete the current element we're sitting on */
         DestroyPolygonInPour (pour, polygon);
       }
       END_LOOP;
-//      while (number_deleted)
-//        DestroyPolygonInPour (pour, delete_children[ --number_deleted ]);
     }
 
   pg = original_pour_poly (pour);
@@ -1089,8 +1082,7 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
   if (TEST_FLAG (CLEARPOLYFLAG, pour))
     {
       /* Clip the pour against anything we can find in this layer */
-      /* TODO: Clear up API so the resulting areas are in "clipped" */
-      ClearPour (Data, layer, pour, &pg, NULL, 0);
+      ClearPour (Data, layer, pour, &pg, NULL, UNSUBTRACT_BLOAT);
     }
 
   count_all = count_added = 0;
@@ -1160,8 +1152,6 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
   BoxType sb = ((PinTypePtr) ptr2)->BoundingBox;
   int r = 0;
   struct plow_info info;
-
-//  printf ("Hello world, this is PlowPours\n");
 
   info.type = type;
   info.ptr1 = ptr1;
