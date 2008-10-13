@@ -1,7 +1,7 @@
-Bottom: 5c80b93e5f906e7ac862f3fb26b09bf54954da8b
-Top:    93380ed7dce7669a0ac79b70d6a7e812a68207df
+Bottom: 75b228dc1bf49fb124fa00e4ae878ca73b193579
+Top:    c9ca5cece7fd6d394979b8ce55b2312e04fef68a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-13 20:27:24 +0100
+Date:   2008-10-13 20:28:22 +0100
 
 Add support for a "poured" object.
 
@@ -2680,10 +2680,10 @@ index 7763c80..91851b8 100644
    void *(*Rat) (RatTypePtr);
  } ObjectFunctionType, *ObjectFunctionTypePtr;
 diff --git a/src/gpcb-menu.res b/src/gpcb-menu.res
-index 93b6073..f28bf79 100644
+index b09d948..ae6b1e4 100644
 --- a/src/gpcb-menu.res
 +++ b/src/gpcb-menu.res
-@@ -490,7 +490,7 @@ PopupMenus =
+@@ -492,7 +492,7 @@ PopupMenus =
         {"Arc" checked=arcmode,1 Mode(Arc) a={"F3" "<Key>F3"}}
         {"Text" checked=textmode,1 Mode(Text) a={"F4" "<Key>F4"}}
         {"Rectangle" checked=rectanglemode,1 Mode(Rectangle) a={"F5" "<Key>F5"}}
