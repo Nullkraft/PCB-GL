@@ -1,7 +1,7 @@
-Bottom: e1303b40048521d58c709edc34515d62f57484ac
-Top:    93e1b60793cf994b867800f919b6209c4b6d6935
+Bottom: 0391c1972f6b64cc3cd36240420c93576d402463
+Top:    f28fe7298d17137b2fb95ee351e7c53fb5c49603
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-12 23:48:44 +0100
+Date:   2008-10-13 02:10:02 +0100
 
 Add support for a "poured" object.
 
@@ -17,6 +17,7 @@ all child polygons selected. Manipulations will always occur on the
 
 It remains to be seen whether "pour" will have its own file-format entry,
 or if it will take over the meaning of the existing "polygon" entry.
+
 
 
 
@@ -1801,7 +1802,7 @@ index 98bb525..644b53e 100644
  void RefdesMapInit (void);
  ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 962253d..a0d94dd 100644
+index b650291..0b2968b 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -76,6 +76,7 @@ static int CrosshairStackLocation = 0;
@@ -1937,7 +1938,7 @@ index 962253d..a0d94dd 100644
  	}
        break;
  
-@@ -939,7 +975,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+@@ -985,7 +1021,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
  
    if (TEST_FLAG (SNAPPINFLAG, PCB))
      ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
@@ -1946,7 +1947,7 @@ index 962253d..a0d94dd 100644
    else
      ans = NO_TYPE;
  
-@@ -1111,6 +1147,6 @@ void
+@@ -1157,6 +1193,6 @@ void
  DestroyCrosshair (void)
  {
    CrosshairOff (True);
