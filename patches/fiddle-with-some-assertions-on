@@ -3,10 +3,10 @@ Top:    554b0e528deaadf831bb127ef1d4e7331177e812
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-13 20:46:58 +0100
 
-Fiddle with some assertions. One item here is a real fix for a typo
+Fix two assertion test to allow compiling a debug build.
 
-
-
+Due to code-restructures, a couple of assert tests (not normally
+compiled) had bit-rotted. Remove one, rejig the other.
 
 
 ---
