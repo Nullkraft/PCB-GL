@@ -1,4 +1,4 @@
-/* $Id: rtree.c,v 1.33 2008-10-13 19:22:02 petercjclifton Exp $ */
+/* $Id: rtree.c,v 1.34 2008-10-13 19:46:39 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -59,7 +59,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: rtree.c,v 1.33 2008-10-13 19:22:02 petercjclifton Exp $");
+RCSID ("$Id: rtree.c,v 1.34 2008-10-13 19:46:39 petercjclifton Exp $");
 
 
 #define SLOW_ASSERTS
@@ -519,7 +519,7 @@ __r_search (struct rtree_node *node, const BoxType * query, r_arg * arg)
   /** assert that starting_region is well formed */
   assert (query->X1 <= query->X2 && query->Y1 <= query->Y2);
   assert (node->box.X1 < query->X2 && node->box.X2 > query->X1 &&
-          node->box.Y1 < query->Y2 && node->box.Y2 > query->X1);
+          node->box.Y1 < query->Y2 && node->box.Y2 > query->Y1);
 #ifdef SLOW_ASSERTS
   /** assert that node is well formed */
   assert (__r_node_is_good (node));
