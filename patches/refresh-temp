@@ -1,0 +1,21 @@
+Bottom: c6df965c9d8ea55eff9fbc5fad885727490c2268
+Top:    e8b2a2be868812e2cd8b51356f787cf11301d066
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-13 19:20:24 +0100
+
+Refresh of look-at-balancing-of-node-rtre
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 8361a03..6fa3151 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -696,7 +696,7 @@ make_edge_tree (PLINE * pb)
+       r_insert_entry (ans, (const BoxType *) s, 1);
+     }
+   while ((bv = bv->next) != &pb->head);
+-  __r_dump_tree (ans->root, 0);
++//  __r_dump_tree (ans->root, 0);
+   return (void *) ans;
+ }
