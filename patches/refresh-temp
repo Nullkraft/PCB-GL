@@ -1,0 +1,41 @@
+Bottom: f20bec5344a05ac5eb874799207dffb644550776
+Top:    fc7e2894d3e80d8f8a6b170d510fea9eb002c9be
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-13 19:11:04 +0100
+
+Refresh of look-at-balancing-of-node-rtre
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 5c20ef3..8361a03 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -696,6 +696,7 @@ make_edge_tree (PLINE * pb)
+       r_insert_entry (ans, (const BoxType *) s, 1);
+     }
+   while ((bv = bv->next) != &pb->head);
++  __r_dump_tree (ans->root, 0);
+   return (void *) ans;
+ }
+ 
+diff --git a/src/rtree.c b/src/rtree.c
+index 59793f8..dec7465 100644
+--- a/src/rtree.c
++++ b/src/rtree.c
+@@ -218,6 +218,7 @@ __r_tree_is_good (struct rtree_node *node)
+   return 1;
+ }
+ #endif
++#undef NDEBUG
+ #ifndef NDEBUG
+ /* print out the tree */
+ void
+@@ -323,6 +324,7 @@ __r_dump_tree (struct rtree_node *node, int depth)
+     printf ("average box area is %g\n", area / count);
+ }
+ #endif
++#define NDEBUG
+ 
+ /* Sort the children or entries of a node
+  * according to the largest side.
