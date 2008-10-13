@@ -1,5 +1,5 @@
 Bottom: ca1007198b46d14b8669fbe258967e13f0a59788
-Top:    98fa8540e599f17651a25c97403500f4f77a5f63
+Top:    30fc01a2d89f2e52c05610db8f94e1b1a67473bc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-13 07:55:14 +0100
 
@@ -9,7 +9,7 @@ Use r-trees to find and remove touched polygons
 ---
 
 diff --git a/src/pour.c b/src/pour.c
-index 9a5f18a..bee0e79 100644
+index 9a5f18a..6875ef4 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -686,12 +686,64 @@ mark_islands (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
@@ -78,7 +78,7 @@ index 9a5f18a..bee0e79 100644
  
    switch (type)
      {
-@@ -730,47 +782,48 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -730,43 +782,44 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
  
    /* Make pg contain the polygons we're going to fiddle with */
  
@@ -159,11 +159,6 @@ index 9a5f18a..bee0e79 100644
  
    if (pg == NULL)
      {
--      printf ("Hmm, got pg == NULL in subtract_plow\n");
-+//      printf ("Hmm, got pg == NULL in subtract_plow\n");
-       poly_Free (&np);
-       return -1;
-     }
 @@ -940,7 +993,9 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
            int type, void *ptr1, void *ptr2)
  {
