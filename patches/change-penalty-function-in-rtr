@@ -1,7 +1,7 @@
-Bottom: d14d4f3b6207ff8c5335aea6113220627db80a7a
-Top:    99ddaea865f548cfe3fa2bf3086138ac132f896d
+Bottom: 9c90818d400a26a5af531a976b532aec7617c548
+Top:    c0ff75de42e22a28228eb7cc711a404767a4d99b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-13 19:11:15 +0100
+Date:   2008-10-13 20:14:45 +0100
 
 Change penalty function in rtree.c to use doubles, not long long.
 
@@ -10,10 +10,11 @@ Exact integer result doesn't matter.
 
 
 
+
 ---
 
 diff --git a/src/rtree.c b/src/rtree.c
-index c444e61..3b30a56 100644
+index 1f20585..af6c8cc 100644
 --- a/src/rtree.c
 +++ b/src/rtree.c
 @@ -79,7 +79,6 @@ RCSID ("$Id$");
