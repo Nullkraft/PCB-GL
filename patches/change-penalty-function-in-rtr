@@ -5,10 +5,8 @@ Date:   2008-10-13 20:14:45 +0100
 
 Change penalty function in rtree.c to use doubles, not long long.
 
-FPU is faster?
-Exact integer result doesn't matter.
-
-
+Since the exact integer result doesn't matter, this is ok. Seems
+to be marginally faster on Core Duo machine.
 
 
 ---
