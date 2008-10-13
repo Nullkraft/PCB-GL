@@ -1,18 +1,19 @@
-Bottom: c01b1deeea92ff5a35d9eaee9378d5a1ce0d75d2
-Top:    607e3b961864a22d45a01fced21ad70373b88a0a
+Bottom: 6f247b1b9b2d24d176cf29b585afa3d1d6b0d3eb
+Top:    f47e549a6b0b0606d1c9aea6b0495428c69f99cc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-13 01:00:45 +0100
+Date:   2008-10-13 02:09:53 +0100
 
 Only snap to pads on the active layer
+
 
 
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index a0d94dd..0b2968b 100644
+index 68cae6a..52f7620 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -881,20 +881,53 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+@@ -846,20 +846,53 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
  
    if (PCB->RatDraw || TEST_FLAG (SNAPPINFLAG, PCB))
      ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
@@ -72,7 +73,7 @@ index a0d94dd..0b2968b 100644
      {
        PadTypePtr pad = (PadTypePtr) ptr2;
        LocationType px, py;
-@@ -911,7 +944,20 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+@@ -876,7 +909,20 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
            nearest = sq_dist;
          }
      }
