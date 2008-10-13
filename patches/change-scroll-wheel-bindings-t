@@ -1,7 +1,7 @@
-Bottom: cfa5e6317eee8d5a1d1d6fca1a6334315d26b2ab
-Top:    fe04bb2ccd7bc78282926617af35db1a0ec2ad69
+Bottom: d5b96b24684665d8aa43fa8368851e5df23424f4
+Top:    ef8450256dd64e20836addfeb35e82071d4d7a2b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-13 20:27:21 +0100
+Date:   2008-10-13 20:28:57 +0100
 
 Change scroll-wheel bindings to match more GTK applications
 
@@ -13,10 +13,10 @@ Change scroll-wheel bindings to match more GTK applications
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index aff3e1d..f033f0f 100644
+index 90da219..0878b0d 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1202,18 +1202,18 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+@@ -1203,18 +1203,18 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  
    state = (GdkModifierType) (ev->state);
    mk = ghid_modifier_keys_state (&state);
