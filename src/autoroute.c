@@ -1,4 +1,4 @@
-/* $Id: autoroute.c,v 1.47 2008-01-15 17:18:38 danmc Exp $ */
+/* $Id: autoroute.c,v 1.48 2008-10-13 19:59:33 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -79,7 +79,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: autoroute.c,v 1.47 2008-01-15 17:18:38 danmc Exp $");
+RCSID ("$Id: autoroute.c,v 1.48 2008-10-13 19:59:33 petercjclifton Exp $");
 
 /* #defines to enable some debugging output */
 /*
@@ -2971,7 +2971,6 @@ do_via_search (edge_t * search, struct routeone_state *s,
         {
           BoxType cliparea;
           BoxType *area = vector_remove_last (v);
-          assert (box_intersect (area, &region));
           if (!(i == NO_CONFLICT || AutoRouteParameters.with_conflicts))
             {
               free (area);
