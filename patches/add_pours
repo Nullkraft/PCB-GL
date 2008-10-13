@@ -1,7 +1,7 @@
-Bottom: 01236fbc681986dff7b50f9bfd5d5d66db644412
-Top:    e058ef33789e58eddd95eece9576d12310e7207f
+Bottom: 65ea770fb488d33a1522159718ae1c6fa193a544
+Top:    cddfe87617c06b2b0aa7cf4f2cb72df0b5dec341
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-13 20:42:49 +0100
+Date:   2008-10-13 20:59:59 +0100
 
 Add support for a "poured" object.
 
@@ -324,7 +324,7 @@ index 8ce4a15..bd09d18 100644
  void ActionMovePointer (char *, char *);
  void ActionAdjustStyle (char *);
 diff --git a/src/autoroute.c b/src/autoroute.c
-index db19e4d..585c3de 100644
+index 5c689e4..07c73c9 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -667,6 +667,8 @@ AddPolygon (PointerListType layergroupboxes[], Cardinal layer,

@@ -1,31 +1,31 @@
 Version: 1
-Previous: 19901d819926014b66a128758031f70751a3173a
-Head: 0e1455667878ad82846fad7b747293df3690c118
+Previous: 1556cbef54a5068393d0b89a0349d3fbaaa5dfcd
+Head: 9fd656495f02a995eb340686fef3197103125a58
 Applied:
+  make-rats-to-polygons-work-for: ea9d8865ac29f642e837010efa047f8ff2476c93
+  improve-grid-snapping-heuristi: f43a6ae42883564adedd393605bc4e630a25f755
+  make-rats-snap-to-the-center-o: ac198ddf4cef4e51dae9112ed28b12f552863797
+  only-snap-to-pads-on-the-activ: a40161c74263cb02f6316e1dc7f90bd7c6b9a41e
+  add-infrastructure-for-subcomp: ffc5b5de38400e557d04f7b801cc002e8ed15e2f
+  add-configure-checks-for-gtkgl: dbd7eba61ff039939eb9d40eaef081386228dc09
+  drop-in-pcb-gl-code-various-me: 01f0ab634f8f48293314be81ac98ee34c6899bc6
+  cure-cross-hair-lagging-on-scr: ff4eb0c709298189b24fa6987de307b73bddbf1e
+  add-cache-for-noholes-diced-ve: 408b99a5544ec4d903a163020bbff1a1045afd98
+  allow-polygons-with-clearlinef: d2ec41958626aac5253750cfc275588e15c29149
+  workaround-crash-where-contour: 9116f1c18401c2d04a35d6968b76eac0f0219bfc
+  add_pours: 0701c92ad9cd12d5d753f79a9acbb530c1534fa0
+  speedup_poly_poly_checking: 60b178eafeb1945543041fe5e072cb1b3f911abe
+  add-magic-flag-to-stop-pour-cl: 2b603414a28d41a6e0da0718f699f5cb064e0592
+  off-to-find-burried-treasure-o: 55dbff5ecb31abc9310dfd926a8604444ae5f4bf
+  add-profiling-to-file-load: eeb89f08ca3bb6d3dab3d89f250f3637cdbd7972
+  rework-iteration-over-contours: 5dc45400712971af55605183962030d707b23fe7
+  tidy-up-ispolygoninpolygon: 8d0432868fddb69774ea2258f949d2df25ec5b93
+  try-something-with-the-rtrees: a49163114f000e5679efa4e164afcfc30b931ce7
+  add-some-annotations-to-help-o: eed6fd8dffeccde7f55084d25ac7ac8af40bcd1b
+  fiddle-with-the-order-objects-: f48b1eab4fb5bd6200fc26d76ce50ece818b9097
+  use-r-trees-to-find-and-remove: 3504bd4c78437cf8806c52f69ceb36af1749fd3b
+  try-clipping-polygons-to-the-s: dc09f4b3b26f946ddf00ccaec65c3a6538d3030b
+  try-adding-polygon-objects-aft: afbb8b15986c08eeb089abc5831a41e7a6bd9b20
+  use-rtree-of-countours-when-co: 9fd656495f02a995eb340686fef3197103125a58
 Unapplied:
-  make-rats-to-polygons-work-for: c1e6a297a21a6fd565a4fe8f59e05f68ed34afda
-  improve-grid-snapping-heuristi: 5426e2106c0befaed97d5bd6399e73ba920c55b6
-  make-rats-snap-to-the-center-o: 79860575f872c093266be66f1f598df8fc9fda84
-  only-snap-to-pads-on-the-activ: e613183a6a08779a69ab3eaeccca0f597e1e52cc
-  add-infrastructure-for-subcomp: 08530faaf1af1515ee0cb3135a13e32d1c24eaec
-  add-configure-checks-for-gtkgl: eaa2ea9d3b66907f4b60162ced83ae1a4ef90c92
-  drop-in-pcb-gl-code-various-me: 0a2ae2ce66188808620ab6299b3698400053e4f1
-  cure-cross-hair-lagging-on-scr: cd7c88a967a6151f5d0846f3c4fdb7a90a76d3da
-  add-cache-for-noholes-diced-ve: 9816af65ff82bae80be1df34b47a6ba16b9aec6a
-  allow-polygons-with-clearlinef: b5d827162cd973bd5e1cc099eb8ab48c995dcd0a
-  workaround-crash-where-contour: 1a7a92dbc1d8ff435eb2e4ecc001176283a76e5d
-  add_pours: 0fd73a5cc53079b25106e46a81a60062c38a50b9
-  speedup_poly_poly_checking: d4f3389914f1cd0212523fce874d7f895c1d2cf7
-  add-magic-flag-to-stop-pour-cl: a3963d7ab0f4442ef21942d0e4ac4d4c658fd1cb
-  off-to-find-burried-treasure-o: 909ad3f9799ddf636dca676c6f56f019edac5f82
-  add-profiling-to-file-load: e5117eb56f900a69ccece2ca2bec9ec189eedf44
-  rework-iteration-over-contours: b3fc71b2eee69bd5c5f0904b5f184aa4fe6697e0
-  tidy-up-ispolygoninpolygon: fc90cf73645b5c292488f0ca759ebe726109e84d
-  try-something-with-the-rtrees: a7ff4fd802312d869ebe9b880e3bfd14df5a3800
-  add-some-annotations-to-help-o: 13d21c877f21f2129dbea0f5b87844f9aef55724
-  fiddle-with-the-order-objects-: d77b86a0a108d35489794177e82541837495e3db
-  use-r-trees-to-find-and-remove: 445739ffde1532a457f70a5f07b9230b75a8be7e
-  try-clipping-polygons-to-the-s: e4a2412f91b15a0d9030970b221dcc8a918c1a6f
-  try-adding-polygon-objects-aft: ea00a0684750aea28950fa839b60e9f0613ab499
-  use-rtree-of-countours-when-co: 66cc96930122f13fb13fc3d70864faa035bd2541
 Hidden:
