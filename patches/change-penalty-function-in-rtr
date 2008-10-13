@@ -1,0 +1,14 @@
+Bottom: 30fc01a2d89f2e52c05610db8f94e1b1a67473bc
+Top:    30fc01a2d89f2e52c05610db8f94e1b1a67473bc
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-13 17:58:45 +0100
+
+Change penalty function in rtree.c to use doubles, not long long.
+
+FPU is faster?
+Exact integer result doesn't matter.
+
+
+---
+
+
