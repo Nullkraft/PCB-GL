@@ -823,7 +823,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
 
   if (pg == NULL)
     {
-//      printf ("Hmm, got pg == NULL in subtract_plow\n");
+      printf ("Hmm, got pg == NULL in subtract_plow\n");
       poly_Free (&np);
       return -1;
     }
