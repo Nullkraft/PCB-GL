@@ -315,7 +315,7 @@ ReportDialog (int argc, char **argv, int x, int y)
 	if (gui->shift_is_pressed ())
 	  {
 	    LayerTypePtr layer = (LayerTypePtr) ptr1;
-	    __r_dump_tree (layer->polygon_tree->root, 0);
+//	    __r_dump_tree (layer->polygon_tree->root, 0);
 	    return;
 	  }
 #endif

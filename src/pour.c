@@ -311,8 +311,6 @@ subtract_poly (POLYAREA * np1, POLYAREA **pg)
       return -1;
     }
 
-  printf ("np1->contour_tree=%p *pg->contour_tree=%p\n",
-          np1->contour_tree, (*pg)->contour_tree);
   assert (poly_Valid (*pg));
   assert (poly_Valid (np));
   x = poly_Boolean_free (*pg, np, &merged, PBO_SUB);
@@ -320,10 +318,9 @@ subtract_poly (POLYAREA * np1, POLYAREA **pg)
     {
       fprintf (stderr, "Error while clipping PBO_SUB: %d\n", x);
       poly_Free (&merged);
+      *pg = NULL;
       return -1;
     }
-  printf ("merged->contour_tree=%p\n",
-          merged->contour_tree);
 
   assert (!merged || poly_Valid (merged));
 
@@ -344,10 +341,9 @@ unite_poly (POLYAREA * np, POLYAREA ** pg)
     {
       fprintf (stderr, "Error while clipping PBO_UNITE: %d\n", x);
       poly_Free (&merged);
+      *pg = NULL;
       return 0;
     }
-  printf ("unite merged->contour_tree=%p\n",
-          merged->contour_tree);
   assert (!merged || poly_Valid (merged));
   *pg = merged;
   return 1;
@@ -366,10 +362,9 @@ intersect_poly (POLYAREA * np, POLYAREA ** pg)
     {
       fprintf (stderr, "Error while clipping PBO_ISECT: %d\n", x);
       poly_Free (&merged);
+      *pg = NULL;
       return 0;
     }
-  printf ("intersect merged->contour_tree=%p\n",
-          merged->contour_tree);
   assert (!merged || poly_Valid (merged));
   *pg = merged;
   return 1;
@@ -1184,11 +1179,17 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
       printf ("Clipping returned NULL - can that be good?\n");
       return 0;
     }
-  assert (poly_Valid (clipped));
+//  assert (poly_Valid (clipped));
   if (TEST_FLAG (CLEARPOLYFLAG, pour))
     {
       /* Clip the pour against anything we can find in this layer */
       ClearPour (Data, layer, pour, &pg, NULL, UNSUBTRACT_BLOAT);
+    }
+
+  if (pg == NULL)
+    {
+      printf ("Got pg == NULL for some reason\n");
+      return;
     }
 
   count_all = count_added = 0;

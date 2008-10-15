@@ -38,7 +38,7 @@
       all cases where original (Klamer Schutte) code is present
       are marked
 */
-
+#define NDEBUG
 #include	<assert.h>
 #include	<stdlib.h>
 #include	<stdio.h>
@@ -810,18 +810,12 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
 {
   POLYAREA *t;
   PLINE *pa, *pb;
-  int ca = 0, cb = 0;
   contour_info c_info;
-
-  /* count the contours in a and b */
-#warning Can we steal this info from the r-tree structure, rather than iterating?
-  for (pa = a->contours; pa; pa = pa->next, ca++);
-  for (pb = b->contours; pb; pb = pb->next, cb++);
 
   /* Search the r-tree of the object with most contours
    * We loop over the contours of "a". Swap if necessary.
    */
-  if (ca > cb)
+  if (((rtree_t *)a->contour_tree)->size > ((rtree_t *)b->contour_tree)->size)
     {
       t = b;
       b = a;
@@ -869,8 +863,10 @@ M_POLYAREA_intersect2 (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
   PLINE *curcA, *curcB;
   CVCList *the_list = NULL;
 
-  if (a == NULL || b == NULL)
+  if (a == NULL || b == NULL) {
+    printf ("a or b is null in M_POLYAREA_intersect2\n");
     error (err_bad_parm);
+  }
   do
     {
       do
@@ -914,8 +910,10 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
   PLINE *curcA, *curcB;
   CVCList *the_list = NULL;
 
-  if (a == NULL || b == NULL)
+  if (a == NULL || b == NULL) {
+    printf ("a or b is null in M_POLYAREA_intersect\n");
     error (err_bad_parm);
+  }
   do
     {
       do
@@ -1206,8 +1204,10 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
 
   if (*src == NULL)
     return;			/* empty hole list */
-  if (dest == NULL)
+  if (dest == NULL) {
+    printf ("dest is null un InsertHoles\n");
     error (err_bad_parm);	/* empty contour list */
+  }
 
 #warning IF Passed a PourType, we would get this r-tree for free??
   /* make an rtree of contours */
@@ -1235,6 +1235,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
 #endif
 #endif
 	  poly_DelContour (&curh);
+    printf ("Badparm hi there\n");
 	  error (err_bad_parm);
 	}
       /* Now search the heap for the container. If there was only one item
@@ -1273,6 +1274,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
 #endif
 	  curh->next = NULL;
 	  poly_DelContour (&curh);
+    printf ("Howdy\n");
 	  error (err_bad_parm);
 	}
       else
@@ -1547,7 +1549,7 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
 	 S_Rule s_rule, J_Rule j_rule)
 {
   VNODE *cur, *other;
-  DIRECTION dir;
+  DIRECTION dir = FORW; /* Not sure, but stops valgrind complaining */
 
   cur = &a->head;
   do
@@ -1707,13 +1709,19 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
 	parent = NULL;
       for (cur = &a->contours; *cur != NULL; cur = next)
 	{
+          POLYAREA *tmp;
+          tmp = *cur;
 	  next = &((*cur)->next);
 #warning PERHAPS WE NEED TO REMOVE THE CONTOUR FROM THE RTREE BECORE CALLING THIS?
 	  /* if we disappear a contour, don't advance twice */
 	  if (cntr_Collect
 	      (e, cur, contours, holes, action,
 	       *cur == parent ? NULL : parent))
-	    next = cur;
+            {
+              next = cur;
+#warning SHOULD BE IN cntr_Collect??
+              r_delete_entry ((rtree_t *)a->contour_tree, (BoxType *)tmp);
+            }
 	}
     }
   while ((a = a->f) != afst);
@@ -2219,6 +2227,7 @@ poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
     *dst = calloc (1, sizeof (POLYAREA));
   if (*dst == NULL)
     return FALSE;
+  (*dst)->contour_tree = r_create_tree (NULL, 0, 0);
 
   return poly_Copy1 (*dst, src);
 }
@@ -2230,7 +2239,6 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
 
   *last = NULL;
   dst->f = dst->b = dst;
-  dst->contour_tree = r_create_tree (NULL, 0, 0);
 
   for (cur = src->contours; cur != NULL; cur = cur->next)
     {
@@ -2447,7 +2455,6 @@ poly_Clear (POLYAREA * P)
       P->contours = p->next;
       poly_DelContour (&p);
     }
-  printf ("Destroying %p contour rtree %p\n", P, P->contour_tree);
   r_destroy_tree ((rtree_t **)&P->contour_tree);
 }
 
@@ -2455,7 +2462,6 @@ void
 poly_Free (POLYAREA ** p)
 {
   POLYAREA *cur;
-printf ("Going to free %p and its linked friends\n", *p);
   if (*p == NULL)
     return;
   for (cur = (*p)->f; cur != *p; cur = (*p)->f)

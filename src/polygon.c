@@ -83,10 +83,12 @@ add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
   POLYAREA *new_area;
 
   new_area = malloc (sizeof (POLYAREA) * 1);
+  new_area->contour_tree = r_create_tree (NULL, 0, 0);
 
   /* Allocate a new PLINE, COPY the PLINE from the passed polygon */
   poly_CopyContour (&pline, noholes_poly->Clipped->contours);
   new_area->contours = pline;
+  r_insert_entry (new_area->contour_tree, (BoxType *)pline, 0);
 
   /* Link the new POLYAREA into the NoHoles circularaly linked list */
   if (poly->NoHoles)
@@ -955,6 +957,11 @@ r_NoHolesPolygonDicer (POLYAREA * pa, void (*emit) (PolygonTypePtr, void *), voi
       POLYAREA *poly2, *left, *right;
 
       /* make a rectangle of the left region slicing through the middle of the first hole */
+      if (p->next->xmin == p->next->xmax)
+        printf ("Problem..\n");
+      if (p->next->xmin > p->next->xmax)
+        printf ("Problem2\n");
+      printf ("p->xmin=%i, p->next->xmin=%i p->next->max=%i\n", p->xmin, p->next->xmin, p->next->xmax);
       poly2 =
         RectPoly (p->xmin, (p->next->xmin + p->next->xmax) / 2, p->ymin,
                   p->ymax);
@@ -965,7 +972,7 @@ r_NoHolesPolygonDicer (POLYAREA * pa, void (*emit) (PolygonTypePtr, void *), voi
           cur = left;
           do
             {
-              next = left->f;
+              next = cur->f;
 //              PLINE *pl = x->contours;
               r_NoHolesPolygonDicer (cur, emit, user_data);
 //              y = x->f;
