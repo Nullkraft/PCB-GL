@@ -1,13 +1,14 @@
-Bottom: f4df5cd7096c28bb6e2005b9b32605ef5eef99cc
-Top:    ee39cdc34754d4c106ba59a43d2b1deec9bd02ac
+Bottom: b07d6d4e92a96fef9d52a389c9485bbe3ec1b013
+Top:    eaf20b7cfdc6eb74ff5b96d635cbb7b23616ca39
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-15 05:01:28 +0100
+Date:   2008-10-15 07:54:07 +0100
 
 Try optimising polygon operations by keeping an rtree with their contours
 
 InsertHoles() already creates an rtree of contours to do its internal
 processing, and it is possible that intersect() could be sped up by
 its existance as well.
+
 
 
 
@@ -27,7 +28,7 @@ index 42acc1a..819b074 100644
  
  BOOLp poly_M_Copy0(POLYAREA ** dst, const POLYAREA * srcfst);
 diff --git a/src/polygon.c b/src/polygon.c
-index 1cdc05e..7673788 100644
+index 0f95bbb..28adb08 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -905,14 +905,23 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
@@ -345,7 +346,7 @@ index 62e0705..a7977a5 100644
      return;
    for (cur = (*p)->f; cur != *p; cur = (*p)->f)
 diff --git a/src/pour.c b/src/pour.c
-index 6875ef4..273fce6 100644
+index 1bdb1f9..8cda8f0 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -311,6 +311,8 @@ subtract_poly (POLYAREA * np1, POLYAREA **pg)
