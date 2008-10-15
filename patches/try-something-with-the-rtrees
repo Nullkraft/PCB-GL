@@ -1,5 +1,5 @@
 Bottom: b07d6d4e92a96fef9d52a389c9485bbe3ec1b013
-Top:    eaf20b7cfdc6eb74ff5b96d635cbb7b23616ca39
+Top:    3c225ba09afc7892212755fe59eaa3c81def128d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-15 07:54:07 +0100
 
@@ -28,10 +28,23 @@ index 42acc1a..819b074 100644
  
  BOOLp poly_M_Copy0(POLYAREA ** dst, const POLYAREA * srcfst);
 diff --git a/src/polygon.c b/src/polygon.c
-index 0f95bbb..28adb08 100644
+index 0f95bbb..e36d7be 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -905,14 +905,23 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
+@@ -83,10 +83,12 @@ add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
+   POLYAREA *new_area;
+ 
+   new_area = malloc (sizeof (POLYAREA) * 1);
++  new_area->contour_tree = r_create_tree (NULL, 0, 0);
+ 
+   /* Allocate a new PLINE, COPY the PLINE from the passed polygon */
+   poly_CopyContour (&pline, noholes_poly->Clipped->contours);
+   new_area->contours = pline;
++  r_insert_entry (new_area->contour_tree, (BoxType *)pline, 0);
+ 
+   /* Link the new POLYAREA into the NoHoles circularaly linked list */
+   if (poly->NoHoles)
+@@ -905,14 +907,23 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
  }
  
  static void
@@ -58,7 +71,18 @@ index 0f95bbb..28adb08 100644
      {
        PolygonType poly;
  //      PointType pts[4];
-@@ -952,30 +961,33 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *u
+@@ -946,36 +957,44 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *u
+       POLYAREA *poly2, *left, *right;
+ 
+       /* make a rectangle of the left region slicing through the middle of the first hole */
++      if (p->next->xmin == p->next->xmax)
++        printf ("Problem..\n");
++      if (p->next->xmin > p->next->xmax)
++        printf ("Problem2\n");
++      printf ("p->xmin=%i, p->next->xmin=%i p->next->max=%i\n", p->xmin, p->next->xmin, p->next->xmax);
+       poly2 =
+         RectPoly (p->xmin, (p->next->xmin + p->next->xmax) / 2, p->ymin,
+                   p->ymax);
        poly_AndSubtract_free (pa, poly2, &left, &right);
        if (left)
          {
@@ -71,7 +95,7 @@ index 0f95bbb..28adb08 100644
 -              PLINE *pl = x->contours;
 -              r_NoHolesPolygonDicer (pl, emit, user_data);
 -              y = x->f;
-+              next = left->f;
++              next = cur->f;
 +//              PLINE *pl = x->contours;
 +              r_NoHolesPolygonDicer (cur, emit, user_data);
 +//              y = x->f;
@@ -106,7 +130,7 @@ index 0f95bbb..28adb08 100644
          }
      }
  }
-@@ -1006,13 +1018,15 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
+@@ -1006,13 +1025,15 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
    /* now dice it up */
    do
      {
@@ -128,19 +152,29 @@ index 0f95bbb..28adb08 100644
    while (save != ans);
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 62e0705..a7977a5 100644
+index 62e0705..30d6e12 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -812,41 +812,23 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -38,7 +38,7 @@
+       all cases where original (Klamer Schutte) code is present
+       are marked
+ */
+-
++#define NDEBUG
+ #include	<assert.h>
+ #include	<stdlib.h>
+ #include	<stdio.h>
+@@ -810,43 +810,19 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+ {
+   POLYAREA *t;
    PLINE *pa, *pb;
-   int ca = 0, cb = 0;
+-  int ca = 0, cb = 0;
    contour_info c_info;
 -  rtree_t *b_contour_tree = NULL;
- 
-   /* count the contours in a and b */
-+#warning Can we steal this info from the r-tree structure, rather than iterating?
-   for (pa = a->contours; pa; pa = pa->next, ca++);
-   for (pb = b->contours; pb; pb = pb->next, cb++);
+-
+-  /* count the contours in a and b */
+-  for (pa = a->contours; pa; pa = pa->next, ca++);
+-  for (pb = b->contours; pb; pb = pb->next, cb++);
  
 -  /* Make the contour r-tree from the one with fewest contours */
 -  /* Inserting entries is more expensive than searching
@@ -149,7 +183,7 @@ index 62e0705..a7977a5 100644
 +  /* Search the r-tree of the object with most contours
 +   * We loop over the contours of "a". Swap if necessary.
 +   */
-+  if (ca > cb)
++  if (((rtree_t *)a->contour_tree)->size > ((rtree_t *)b->contour_tree)->size)
      {
        t = b;
        b = a;
@@ -178,7 +212,7 @@ index 62e0705..a7977a5 100644
  
    for (pa = a->contours; pa; pa = pa->next)     /* Loop over the contours of POLYAREA "a" */
      {
-@@ -864,8 +846,6 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -864,8 +840,6 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
              {
                /* The intersection test short-circuited back here,
                 * we need to clean up, then longjmp to jb */
@@ -187,7 +221,7 @@ index 62e0705..a7977a5 100644
                longjmp (*jb, retval);
              }
            c_info.getout = &out;
-@@ -876,7 +856,7 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -876,7 +850,7 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
        sb.X2 = pa->xmax + 1;
        sb.Y2 = pa->ymax + 1;
  
@@ -196,7 +230,31 @@ index 62e0705..a7977a5 100644
      }
  
    return 0;
-@@ -1151,6 +1131,7 @@ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
+@@ -889,8 +863,10 @@ M_POLYAREA_intersect2 (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+   PLINE *curcA, *curcB;
+   CVCList *the_list = NULL;
+ 
+-  if (a == NULL || b == NULL)
++  if (a == NULL || b == NULL) {
++    printf ("a or b is null in M_POLYAREA_intersect2\n");
+     error (err_bad_parm);
++  }
+   do
+     {
+       do
+@@ -934,8 +910,10 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+   PLINE *curcA, *curcB;
+   CVCList *the_list = NULL;
+ 
+-  if (a == NULL || b == NULL)
++  if (a == NULL || b == NULL) {
++    printf ("a or b is null in M_POLYAREA_intersect\n");
+     error (err_bad_parm);
++  }
+   do
+     {
+       do
+@@ -1151,6 +1129,7 @@ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
  
  /****************************************************************/
  
@@ -204,7 +262,7 @@ index 62e0705..a7977a5 100644
  /* routines for temporary storing resulting contours */
  static void
  InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
-@@ -1171,6 +1152,8 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
+@@ -1171,6 +1150,8 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
        newp->f->b = newp->b->f = newp;
      }
    newp->contours = c;
@@ -213,7 +271,7 @@ index 62e0705..a7977a5 100644
    c->next = NULL;
  }				/* InsCntr */
  
-@@ -1191,11 +1174,13 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+@@ -1191,11 +1172,13 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
  	{
  	  cntr->next = parent->next;
  	  parent->next = cntr;
@@ -227,15 +285,37 @@ index 62e0705..a7977a5 100644
  	}
      }
  }				/* PutContour */
-@@ -1224,6 +1209,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
-   if (dest == NULL)
+@@ -1221,9 +1204,12 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+ 
+   if (*src == NULL)
+     return;			/* empty hole list */
+-  if (dest == NULL)
++  if (dest == NULL) {
++    printf ("dest is null un InsertHoles\n");
      error (err_bad_parm);	/* empty contour list */
++  }
  
 +#warning IF Passed a PourType, we would get this r-tree for free??
    /* make an rtree of contours */
    tree = r_create_tree (NULL, 0, 0);
    curc = dest;
-@@ -1295,6 +1281,21 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1249,6 +1235,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+ #endif
+ #endif
+ 	  poly_DelContour (&curh);
++    printf ("Badparm hi there\n");
+ 	  error (err_bad_parm);
+ 	}
+       /* Now search the heap for the container. If there was only one item
+@@ -1287,6 +1274,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+ #endif
+ 	  curh->next = NULL;
+ 	  poly_DelContour (&curh);
++    printf ("Howdy\n");
+ 	  error (err_bad_parm);
+ 	}
+       else
+@@ -1295,6 +1283,21 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
  	  tmp = container->next;
  	  container->next = curh;
  	  curh->next = tmp;
@@ -257,7 +337,16 @@ index 62e0705..a7977a5 100644
  	}
      }
    r_destroy_tree (&tree);
-@@ -1594,6 +1595,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+@@ -1546,7 +1549,7 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
+ 	 S_Rule s_rule, J_Rule j_rule)
+ {
+   VNODE *cur, *other;
+-  DIRECTION dir;
++  DIRECTION dir = FORW; /* Not sure, but stops valgrind complaining */
+ 
+   cur = &a->head;
+   do
+@@ -1594,6 +1597,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
  	    {
  	      tmprev = *A;
  	      /* disappear this contour */
@@ -265,7 +354,7 @@ index 62e0705..a7977a5 100644
  	      *A = tmprev->next;
  	      tmprev->next = NULL;
  	      PutContour (e, tmprev, contours, holes, NULL);
-@@ -1605,6 +1607,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+@@ -1605,6 +1609,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
  	    {
  	      tmprev = *A;
  	      /* disappear this contour */
@@ -273,7 +362,7 @@ index 62e0705..a7977a5 100644
  	      *A = tmprev->next;
  	      tmprev->next = NULL;
  	      poly_InvContour (tmprev);
-@@ -1618,6 +1621,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+@@ -1618,6 +1623,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
  	    {
  	      tmprev = *A;
  	      /* disappear this contour */
@@ -281,21 +370,36 @@ index 62e0705..a7977a5 100644
  	      *A = tmprev->next;
  	      tmprev->next = NULL;
  	      PutContour (e, tmprev, contours, holes, parent);
-@@ -1704,6 +1708,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+@@ -1703,12 +1709,19 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+ 	parent = NULL;
        for (cur = &a->contours; *cur != NULL; cur = next)
  	{
++          POLYAREA *tmp;
++          tmp = *cur;
  	  next = &((*cur)->next);
 +#warning PERHAPS WE NEED TO REMOVE THE CONTOUR FROM THE RTREE BECORE CALLING THIS?
  	  /* if we disappear a contour, don't advance twice */
  	  if (cntr_Collect
  	      (e, cur, contours, holes, action,
-@@ -2225,11 +2230,13 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
+ 	       *cur == parent ? NULL : parent))
+-	    next = cur;
++            {
++              next = cur;
++#warning SHOULD BE IN cntr_Collect??
++              r_delete_entry ((rtree_t *)a->contour_tree, (BoxType *)tmp);
++            }
+ 	}
+     }
+   while ((a = a->f) != afst);
+@@ -2214,6 +2227,7 @@ poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
+     *dst = calloc (1, sizeof (POLYAREA));
+   if (*dst == NULL)
+     return FALSE;
++  (*dst)->contour_tree = r_create_tree (NULL, 0, 0);
  
-   *last = NULL;
-   dst->f = dst->b = dst;
-+  dst->contour_tree = r_create_tree (NULL, 0, 0);
- 
-   for (cur = src->contours; cur != NULL; cur = cur->next)
+   return poly_Copy1 (*dst, src);
+ }
+@@ -2230,6 +2244,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
      {
        if (!poly_CopyContour (last, cur))
  	return FALSE;
@@ -303,7 +407,7 @@ index 62e0705..a7977a5 100644
        last = &(*last)->next;
      }
    return TRUE;
-@@ -2279,6 +2286,7 @@ poly_InclContour (POLYAREA * p, PLINE * c)
+@@ -2279,6 +2294,7 @@ poly_InclContour (POLYAREA * p, PLINE * c)
        if (p->contours != NULL)
  	return FALSE;
        p->contours = c;
@@ -311,7 +415,7 @@ index 62e0705..a7977a5 100644
      }
    else
      {
-@@ -2288,6 +2296,7 @@ poly_InclContour (POLYAREA * p, PLINE * c)
+@@ -2288,6 +2304,7 @@ poly_InclContour (POLYAREA * p, PLINE * c)
        tmp = p->contours->next;
        p->contours->next = c;
        c->next = tmp;
@@ -319,7 +423,7 @@ index 62e0705..a7977a5 100644
      }
    return TRUE;
  }
-@@ -2413,6 +2422,8 @@ poly_Init (POLYAREA * p)
+@@ -2413,6 +2430,8 @@ poly_Init (POLYAREA * p)
  {
    p->f = p->b = p;
    p->contours = NULL;
@@ -328,11 +432,10 @@ index 62e0705..a7977a5 100644
  }
  
  POLYAREA *
-@@ -2436,13 +2447,15 @@ poly_Clear (POLYAREA * P)
+@@ -2436,13 +2455,13 @@ poly_Clear (POLYAREA * P)
        P->contours = p->next;
        poly_DelContour (&p);
      }
-+  printf ("Destroying %p contour rtree %p\n", P, P->contour_tree);
 +  r_destroy_tree ((rtree_t **)&P->contour_tree);
  }
  
@@ -341,47 +444,68 @@ index 62e0705..a7977a5 100644
  {
    POLYAREA *cur;
 -
-+printf ("Going to free %p and its linked friends\n", *p);
    if (*p == NULL)
      return;
    for (cur = (*p)->f; cur != *p; cur = (*p)->f)
 diff --git a/src/pour.c b/src/pour.c
-index 1bdb1f9..8cda8f0 100644
+index 1bdb1f9..bf56de4 100644
 --- a/src/pour.c
 +++ b/src/pour.c
-@@ -311,6 +311,8 @@ subtract_poly (POLYAREA * np1, POLYAREA **pg)
+@@ -318,6 +318,7 @@ subtract_poly (POLYAREA * np1, POLYAREA **pg)
+     {
+       fprintf (stderr, "Error while clipping PBO_SUB: %d\n", x);
+       poly_Free (&merged);
++      *pg = NULL;
        return -1;
      }
  
-+  printf ("np1->contour_tree=%p *pg->contour_tree=%p\n",
-+          np1->contour_tree, (*pg)->contour_tree);
-   assert (poly_Valid (*pg));
-   assert (poly_Valid (np));
-   x = poly_Boolean_free (*pg, np, &merged, PBO_SUB);
-@@ -320,6 +322,8 @@ subtract_poly (POLYAREA * np1, POLYAREA **pg)
+@@ -340,6 +341,7 @@ unite_poly (POLYAREA * np, POLYAREA ** pg)
+     {
+       fprintf (stderr, "Error while clipping PBO_UNITE: %d\n", x);
        poly_Free (&merged);
-       return -1;
-     }
-+  printf ("merged->contour_tree=%p\n",
-+          merged->contour_tree);
- 
-   assert (!merged || poly_Valid (merged));
- 
-@@ -342,6 +346,8 @@ unite_poly (POLYAREA * np, POLYAREA ** pg)
-       poly_Free (&merged);
++      *pg = NULL;
        return 0;
      }
-+  printf ("unite merged->contour_tree=%p\n",
-+          merged->contour_tree);
    assert (!merged || poly_Valid (merged));
-   *pg = merged;
-   return 1;
-@@ -362,6 +368,8 @@ intersect_poly (POLYAREA * np, POLYAREA ** pg)
+@@ -360,6 +362,7 @@ intersect_poly (POLYAREA * np, POLYAREA ** pg)
+     {
+       fprintf (stderr, "Error while clipping PBO_ISECT: %d\n", x);
        poly_Free (&merged);
++      *pg = NULL;
        return 0;
      }
-+  printf ("intersect merged->contour_tree=%p\n",
-+          merged->contour_tree);
    assert (!merged || poly_Valid (merged));
-   *pg = merged;
-   return 1;
+@@ -1176,13 +1179,19 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
+       printf ("Clipping returned NULL - can that be good?\n");
+       return 0;
+     }
+-  assert (poly_Valid (clipped));
++//  assert (poly_Valid (clipped));
+   if (TEST_FLAG (CLEARPOLYFLAG, pour))
+     {
+       /* Clip the pour against anything we can find in this layer */
+       ClearPour (Data, layer, pour, &pg, NULL, UNSUBTRACT_BLOAT);
+     }
+ 
++  if (pg == NULL)
++    {
++      printf ("Got pg == NULL for some reason\n");
++      return;
++    }
++
+   count_all = count_added = 0;
+   /* For each piece of the clipped up polygon, create a new child */
+   start_pg = pg;
+diff --git a/src/report.c b/src/report.c
+index af1b67d..7c9011b 100644
+--- a/src/report.c
++++ b/src/report.c
+@@ -315,7 +315,7 @@ ReportDialog (int argc, char **argv, int x, int y)
+ 	if (gui->shift_is_pressed ())
+ 	  {
+ 	    LayerTypePtr layer = (LayerTypePtr) ptr1;
+-	    __r_dump_tree (layer->polygon_tree->root, 0);
++//	    __r_dump_tree (layer->polygon_tree->root, 0);
+ 	    return;
+ 	  }
+ #endif
