@@ -905,14 +905,23 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
 }
 
 static void
-r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *user_data)
+r_NoHolesPolygonDicer (POLYAREA * pa, void (*emit) (PolygonTypePtr, void *), void *user_data)
 {
+  PLINE *p = pa->contours;
+#if 0
   POLYAREA *pa;
 
   pa = (POLYAREA *) malloc (sizeof (*pa));
+#endif
+#warning DO WE NEED TO SAVE THIS POINTER?
   pa->b = pa->f = pa;
-  pa->contours = p;
-  if (!p->next)                 /* no holes */
+#if 0
+  pa->contours = inp->contours;
+  pa->contour_tree = r_create_tree (NULL, 0, 0);
+#endif
+
+
+  if (!pa->contours->next)                 /* no holes */
     {
       PolygonType poly;
 //      PointType pts[4];
@@ -952,30 +961,33 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *u
       poly_AndSubtract_free (pa, poly2, &left, &right);
       if (left)
         {
-          POLYAREA *x, *y;
-          x = left;
+          POLYAREA *cur, *next;
+          cur = left;
           do
             {
-              PLINE *pl = x->contours;
-              r_NoHolesPolygonDicer (pl, emit, user_data);
-              y = x->f;
+              next = left->f;
+//              PLINE *pl = x->contours;
+              r_NoHolesPolygonDicer (cur, emit, user_data);
+//              y = x->f;
               /* the pline was already freed by its use int he recursive dicer */
-              free (x);
+//              free (x);
             }
-          while ((x = y) != left);
+          while ((cur = next) != left);
+//          while ((x = y) != left);
         }
       if (right)
         {
-          POLYAREA *x, *y;
-          x = right;
+          POLYAREA *cur, *next;
+          cur = right;
           do
             {
-              PLINE *pl = x->contours;
-              r_NoHolesPolygonDicer (pl, emit, user_data);
-              y = x->f;
-              free (x);
+              next = cur->f;
+//              PLINE *pl = x->contours;
+              r_NoHolesPolygonDicer (cur, emit, user_data);
+//              y = x->f;
+//              free (x);
             }
-          while ((x = y) != right);
+          while ((cur = next) != right);
         }
     }
 }
@@ -1006,13 +1018,15 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
   /* now dice it up */
   do
     {
-      POLYAREA *prev;
-      r_NoHolesPolygonDicer (save->contours, emit, user_data);
+      POLYAREA *next;
+      next = save->f;
+
+      r_NoHolesPolygonDicer (save, emit, user_data);
       /* go to next poly (could be one because of clip) */
-      prev = save;
-      save = prev->f;
+
+      save = next;
       /* free the previouse POLYAREA. Note the contour was consumed in the dicer */
-      free (prev);
+//      free (prev);
     }
   while (save != ans);
 }
