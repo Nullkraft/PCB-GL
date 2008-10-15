@@ -311,6 +311,8 @@ subtract_poly (POLYAREA * np1, POLYAREA **pg)
       return -1;
     }
 
+  printf ("np1->contour_tree=%p *pg->contour_tree=%p\n",
+          np1->contour_tree, (*pg)->contour_tree);
   assert (poly_Valid (*pg));
   assert (poly_Valid (np));
   x = poly_Boolean_free (*pg, np, &merged, PBO_SUB);
@@ -320,6 +322,8 @@ subtract_poly (POLYAREA * np1, POLYAREA **pg)
       poly_Free (&merged);
       return -1;
     }
+  printf ("merged->contour_tree=%p\n",
+          merged->contour_tree);
 
   assert (!merged || poly_Valid (merged));
 
@@ -342,6 +346,8 @@ unite_poly (POLYAREA * np, POLYAREA ** pg)
       poly_Free (&merged);
       return 0;
     }
+  printf ("unite merged->contour_tree=%p\n",
+          merged->contour_tree);
   assert (!merged || poly_Valid (merged));
   *pg = merged;
   return 1;
@@ -362,6 +368,8 @@ intersect_poly (POLYAREA * np, POLYAREA ** pg)
       poly_Free (&merged);
       return 0;
     }
+  printf ("intersect merged->contour_tree=%p\n",
+          merged->contour_tree);
   assert (!merged || poly_Valid (merged));
   *pg = merged;
   return 1;
