@@ -1,5 +1,5 @@
 Bottom: b07d6d4e92a96fef9d52a389c9485bbe3ec1b013
-Top:    444c9f0b79aaef1537abf7c0b1975e8580a3ae0d
+Top:    e4f92e524cc9274163c0eab2c1002a677db178c4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2008-10-15 07:54:07 +0100
 
@@ -187,7 +187,7 @@ index 0f95bbb..f38a610 100644
    while (save != ans);
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 62e0705..247ebbf 100644
+index 62e0705..8ade932 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -38,13 +38,15 @@
@@ -473,8 +473,12 @@ index 62e0705..247ebbf 100644
  {
    PLINE *tmprev;
  
-@@ -1596,7 +1614,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
- 	      /* disappear this contour */
+@@ -1593,10 +1611,10 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+ 	  if ((*A)->Flags.status == INSIDE)
+ 	    {
+ 	      tmprev = *A;
+-	      /* disappear this contour */
++	      /* disappear this contour (rtree entry remove int PutContour) */
  	      *A = tmprev->next;
  	      tmprev->next = NULL;
 -	      PutContour (e, tmprev, contours, holes, NULL);
@@ -482,7 +486,12 @@ index 62e0705..247ebbf 100644
  	      return TRUE;
  	    }
  	  break;
-@@ -1608,7 +1626,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+@@ -1604,11 +1622,11 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+ 	  if ((*A)->Flags.status == INSIDE)
+ 	    {
+ 	      tmprev = *A;
+-	      /* disappear this contour */
++	      /* disappear this contour (rtree entry remove int PutContour) */
  	      *A = tmprev->next;
  	      tmprev->next = NULL;
  	      poly_InvContour (tmprev);
@@ -491,8 +500,12 @@ index 62e0705..247ebbf 100644
  	      return TRUE;
  	    }
  	  break;
-@@ -1620,7 +1638,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
- 	      /* disappear this contour */
+@@ -1617,10 +1635,10 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+ 	  if ((*A)->Flags.status == OUTSIDE)
+ 	    {
+ 	      tmprev = *A;
+-	      /* disappear this contour */
++	      /* disappear this contour (rtree entry remove int PutContour) */
  	      *A = tmprev->next;
  	      tmprev->next = NULL;
 -	      PutContour (e, tmprev, contours, holes, parent);
@@ -505,7 +518,7 @@ index 62e0705..247ebbf 100644
  		tmp->next = NULL;
  		tmp->Flags.status = UNKNWN;
 -		PutContour (e, tmp, contours, holes, NULL);
-+		PutContour (e, tmp, contours, holes, b, NULL, NULL);
++		PutContour (e, tmp, contours, holes, NULL, NULL, NULL); /* b */
  		break;
  	      case PBO_UNITE:
  		break;		/* nothing to do - already included */
@@ -514,7 +527,7 @@ index 62e0705..247ebbf 100644
  		tmp->next = NULL;
  		tmp->Flags.status = UNKNWN;
 -		PutContour (e, tmp, contours, holes, NULL);
-+		PutContour (e, tmp, contours, holes, b, NULL, NULL);
++		PutContour (e, tmp, contours, holes, NULL, NULL, NULL); /* b */
  		break;
  	      case PBO_ISECT:
  	      case PBO_SUB:
@@ -528,7 +541,7 @@ index 62e0705..247ebbf 100644
  
    assert (a != NULL);
    while ((a = a->f) != afst);
-@@ -1698,18 +1717,34 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+@@ -1698,18 +1717,37 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
    do
      {
        if (maybe && a->contours->Flags.status != ISECTED)
@@ -558,23 +571,26 @@ index 62e0705..247ebbf 100644
 +          if (cntr_Collect (e, cur, contours, holes, action, a, NULL, NULL))
 +            {
 +              parent = *contours;
-+            } else {
-+              parent = a;
-+              cur = next;
++              next = cur;
 +            }
++          else
++            parent = a;
++          cur = next;
 +        }
 +      for ( ; *cur != NULL; cur = next)
 +        {
 +          next = &((*cur)->next);
 +          /* if we disappear a contour, don't advance twice */
++          if (*cur == parent_contour)
++            printf ("WTF??\n");
 +          if (cntr_Collect (e, cur, contours, holes, action, a, parent,
-+                            parent_contour))
-+              next = cur;
++                            (*cur == parent_contour) ? NULL : parent_contour))
++            next = cur;
 +        }
      }
    while ((a = a->f) != afst);
  }
-@@ -2131,7 +2166,7 @@ poly_InvContour (PLINE * c)
+@@ -2131,7 +2169,7 @@ poly_InvContour (PLINE * c)
    c->Flags.orient ^= 1;
    if (c->tree)
      {
@@ -583,7 +599,7 @@ index 62e0705..247ebbf 100644
        assert (r == c->Count);
      }
  }
-@@ -2214,6 +2249,7 @@ poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
+@@ -2214,6 +2252,7 @@ poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
      *dst = calloc (1, sizeof (POLYAREA));
    if (*dst == NULL)
      return FALSE;
@@ -591,7 +607,7 @@ index 62e0705..247ebbf 100644
  
    return poly_Copy1 (*dst, src);
  }
-@@ -2230,6 +2266,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
+@@ -2230,6 +2269,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
      {
        if (!poly_CopyContour (last, cur))
  	return FALSE;
@@ -599,7 +615,7 @@ index 62e0705..247ebbf 100644
        last = &(*last)->next;
      }
    return TRUE;
-@@ -2279,6 +2316,7 @@ poly_InclContour (POLYAREA * p, PLINE * c)
+@@ -2279,6 +2319,7 @@ poly_InclContour (POLYAREA * p, PLINE * c)
        if (p->contours != NULL)
  	return FALSE;
        p->contours = c;
@@ -607,7 +623,7 @@ index 62e0705..247ebbf 100644
      }
    else
      {
-@@ -2288,6 +2326,7 @@ poly_InclContour (POLYAREA * p, PLINE * c)
+@@ -2288,6 +2329,7 @@ poly_InclContour (POLYAREA * p, PLINE * c)
        tmp = p->contours->next;
        p->contours->next = c;
        c->next = tmp;
@@ -615,7 +631,7 @@ index 62e0705..247ebbf 100644
      }
    return TRUE;
  }
-@@ -2359,7 +2398,7 @@ poly_InsideContour (PLINE * c, Vector p)
+@@ -2359,7 +2401,7 @@ poly_InsideContour (PLINE * c, Vector p)
    ray.X2 = 0x7fffffff;
    ray.Y2 = p[1] + 1;
    if (setjmp (info.env) == 0)
@@ -624,7 +640,7 @@ index 62e0705..247ebbf 100644
    return info.f;
  }
  
-@@ -2413,6 +2452,7 @@ poly_Init (POLYAREA * p)
+@@ -2413,6 +2455,7 @@ poly_Init (POLYAREA * p)
  {
    p->f = p->b = p;
    p->contours = NULL;
@@ -632,7 +648,7 @@ index 62e0705..247ebbf 100644
  }
  
  POLYAREA *
-@@ -2436,13 +2476,13 @@ poly_Clear (POLYAREA * P)
+@@ -2436,13 +2479,13 @@ poly_Clear (POLYAREA * P)
        P->contours = p->next;
        poly_DelContour (&p);
      }
