@@ -1611,7 +1611,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
 	  if ((*A)->Flags.status == INSIDE)
 	    {
 	      tmprev = *A;
-	      /* disappear this contour */
+	      /* disappear this contour (rtree entry remove int PutContour) */
 	      *A = tmprev->next;
 	      tmprev->next = NULL;
 	      PutContour (e, tmprev, contours, holes, owner, NULL, NULL);
@@ -1622,7 +1622,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
 	  if ((*A)->Flags.status == INSIDE)
 	    {
 	      tmprev = *A;
-	      /* disappear this contour */
+	      /* disappear this contour (rtree entry remove int PutContour) */
 	      *A = tmprev->next;
 	      tmprev->next = NULL;
 	      poly_InvContour (tmprev);
@@ -1635,7 +1635,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
 	  if ((*A)->Flags.status == OUTSIDE)
 	    {
 	      tmprev = *A;
-	      /* disappear this contour */
+	      /* disappear this contour (rtree entry remove int PutContour) */
 	      *A = tmprev->next;
 	      tmprev->next = NULL;
 	      PutContour (e, tmprev, contours, holes, owner, parent, parent_contour);
@@ -1675,7 +1675,7 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
 		next = cur;
 		tmp->next = NULL;
 		tmp->Flags.status = UNKNWN;
-		PutContour (e, tmp, contours, holes, b, NULL, NULL);
+		PutContour (e, tmp, contours, holes, NULL, NULL, NULL); /* b */
 		break;
 	      case PBO_UNITE:
 		break;		/* nothing to do - already included */
@@ -1691,7 +1691,7 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
 		next = cur;
 		tmp->next = NULL;
 		tmp->Flags.status = UNKNWN;
-		PutContour (e, tmp, contours, holes, b, NULL, NULL);
+		PutContour (e, tmp, contours, holes, NULL, NULL, NULL); /* b */
 		break;
 	      case PBO_ISECT:
 	      case PBO_SUB:
@@ -1732,18 +1732,21 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
           if (cntr_Collect (e, cur, contours, holes, action, a, NULL, NULL))
             {
               parent = *contours;
-            } else {
-              parent = a;
-              cur = next;
+              next = cur;
             }
+          else
+            parent = a;
+          cur = next;
         }
       for ( ; *cur != NULL; cur = next)
         {
           next = &((*cur)->next);
           /* if we disappear a contour, don't advance twice */
+          if (*cur == parent_contour)
+            printf ("WTF??\n");
           if (cntr_Collect (e, cur, contours, holes, action, a, parent,
-                            parent_contour))
-              next = cur;
+                            (*cur == parent_contour) ? NULL : parent_contour))
+            next = cur;
         }
     }
   while ((a = a->f) != afst);
