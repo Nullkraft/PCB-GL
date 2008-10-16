@@ -957,11 +957,6 @@ r_NoHolesPolygonDicer (POLYAREA * pa, void (*emit) (PolygonTypePtr, void *), voi
       POLYAREA *poly2, *left, *right;
 
       /* make a rectangle of the left region slicing through the middle of the first hole */
-      if (p->next->xmin == p->next->xmax)
-        printf ("Problem..\n");
-      if (p->next->xmin > p->next->xmax)
-        printf ("Problem2\n");
-      printf ("p->xmin=%i, p->next->xmin=%i p->next->max=%i\n", p->xmin, p->next->xmin, p->next->xmax);
       poly2 =
         RectPoly (p->xmin, (p->next->xmin + p->next->xmax) / 2, p->ymin,
                   p->ymax);

@@ -809,7 +809,7 @@ static int
 intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
 {
   POLYAREA *t;
-  PLINE *pa;
+  PLINE *pa, *pb;
   contour_info c_info;
 
   /* Search the r-tree of the object with most contours
@@ -1157,28 +1157,34 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
 
 static void
 PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
-	    PLINE * parent)
+	    POLYAREA * parent, PLINE * parent_contour)
 {
   assert (cntr != NULL);
   assert (cntr->Count > 2);
   cntr->next = NULL;
+
   if (cntr->Flags.orient == PLF_DIR)
     InsCntr (e, cntr, contours);
   /* put hole into temporary list */
   else
     {
+#warning THIS SPEEDUP SHORTCUT IS HARD TO FIGURE OUT WITH r_trees
+#if 0
       /* if we know this belongs inside the parent, put it there now */
-      if (parent)
+      if (parent_contour)
 	{
-	  cntr->next = parent->next;
-	  parent->next = cntr;
-#warning RTREE Entries for this/these contour(s)?
+	  cntr->next = parent_contour->next;
+	  parent_contour->next = cntr;
+#warning FIXME HARDER, the r_tree entry needs to go wherever the parent contour got / will get attached.
+          r_insert_entry ((rtree_t *)parent, (BoxType *)cntr, 0);
 	}
       else
+#endif
 	{
 	  cntr->next = *holes;
 	  *holes = cntr;	/* let cntr be 1st hole in list */
-#warning RTREE Entries for this / these hole(s)?
+          /* We don't insert the holes into an r-tree,
+           * they just form a linked list */
 	}
     }
 }				/* PutContour */
@@ -1532,7 +1538,7 @@ Collect1 (jmp_buf * e, VNODE *cur, DIRECTION dir, POLYAREA **contours, PLINE ** 
 	    DEBUGP ("adding contour with %d verticies and direction %c\n",
 		    p->Count, p->Flags.orient ? 'F' : 'B');
 #endif
-	    PutContour (e, p, contours, holes, NULL);
+	    PutContour (e, p, contours, holes, NULL, NULL);
 	  }
 	else
 	  {
@@ -1566,7 +1572,7 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
 
 static int
 cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
-	      int action, PLINE * parent)
+	      int action, POLYAREA * parent, PLINE *parent_contour)
 {
   PLINE *tmprev;
 
@@ -1600,7 +1606,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
 #warning Remove from RTREE?
 	      *A = tmprev->next;
 	      tmprev->next = NULL;
-	      PutContour (e, tmprev, contours, holes, NULL);
+	      PutContour (e, tmprev, contours, holes, NULL, NULL);
 	      return TRUE;
 	    }
 	  break;
@@ -1613,7 +1619,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
 	      *A = tmprev->next;
 	      tmprev->next = NULL;
 	      poly_InvContour (tmprev);
-	      PutContour (e, tmprev, contours, holes, NULL);
+	      PutContour (e, tmprev, contours, holes, NULL, NULL);
 	      return TRUE;
 	    }
 	  break;
@@ -1626,7 +1632,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
 #warning Remove from RTREE?
 	      *A = tmprev->next;
 	      tmprev->next = NULL;
-	      PutContour (e, tmprev, contours, holes, parent);
+	      PutContour (e, tmprev, contours, holes, parent, parent_contour);
 	      return TRUE;
 	    }
 	  break;
@@ -1663,7 +1669,7 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
 		next = cur;
 		tmp->next = NULL;
 		tmp->Flags.status = UNKNWN;
-		PutContour (e, tmp, contours, holes, NULL);
+		PutContour (e, tmp, contours, holes, NULL, NULL);
 		break;
 	      case PBO_UNITE:
 		break;		/* nothing to do - already included */
@@ -1679,7 +1685,7 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
 		next = cur;
 		tmp->next = NULL;
 		tmp->Flags.status = UNKNWN;
-		PutContour (e, tmp, contours, holes, NULL);
+		PutContour (e, tmp, contours, holes, NULL, NULL);
 		break;
 	      case PBO_ISECT:
 	      case PBO_SUB:
@@ -1696,7 +1702,8 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
 		    PLINE ** holes, int action, BOOLp maybe)
 {
   POLYAREA *a = afst;
-  PLINE **cur, **next, *parent;
+  POLYAREA *parent;
+  PLINE **cur, **next, *parent_contours;
 
   assert (a != NULL);
   while ((a = a->f) != afst);
@@ -1704,9 +1711,15 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
   do
     {
       if (maybe && a->contours->Flags.status != ISECTED)
-	parent = a->contours;
+        {
+          parent = a;
+          parent_contours = a->contours;
+        }
       else
-	parent = NULL;
+        {
+          parent = NULL;
+          parent_contours = NULL;
+        }
       for (cur = &a->contours; *cur != NULL; cur = next)
 	{
           PLINE *tmp;
@@ -1715,16 +1728,14 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
 #warning PERHAPS WE NEED TO REMOVE THE CONTOUR FROM THE RTREE BECORE CALLING THIS?
 	  /* if we disappear a contour, don't advance twice */
 	  if (cntr_Collect
-	      (e, cur, contours, holes, action,
-	       *cur == parent ? NULL : parent))
+	      (e, cur, contours, holes, action, parent,
+	       *cur == parent_contours ? NULL : parent_contours))
             {
               next = cur;
 #warning SHOULD BE IN cntr_Collect??
-              if (tmp != parent)
               r_delete_entry ((rtree_t *)a->contour_tree, (BoxType *)tmp);
-//              if (tmp = parent)
-//                r_insert_entry ((rtree_t *)a->contour_tree, (BoxType )tmp);
             }
+
 	}
     }
   while ((a = a->f) != afst);
@@ -2434,7 +2445,6 @@ poly_Init (POLYAREA * p)
   p->f = p->b = p;
   p->contours = NULL;
   p->contour_tree = r_create_tree (NULL, 0, 0);
-//  printf ("Created contour tree %p\n", p->contour_tree);
 }
 
 POLYAREA *
