@@ -1,0 +1,24 @@
+Bottom: e4f92e524cc9274163c0eab2c1002a677db178c4
+Top:    88fb64b3d54f0795e396b140457b42cdbd4f50e7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-17 11:26:07 +0100
+
+Refresh of fix-null-pointer-problem-not-s
+
+---
+
+diff --git a/src/pour.c b/src/pour.c
+index bf56de4..6365ce9 100644
+--- a/src/pour.c
++++ b/src/pour.c
+@@ -1188,8 +1188,8 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
+ 
+   if (pg == NULL)
+     {
+-      printf ("Got pg == NULL for some reason\n");
+-      return;
++      printf ("No pieces of polygon left after clipping\n");
++      return 1;
+     }
+ 
+   count_all = count_added = 0;
