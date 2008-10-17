@@ -1188,8 +1188,8 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
 
   if (pg == NULL)
     {
-      printf ("Got pg == NULL for some reason\n");
-      return;
+      printf ("No pieces of polygon left after clipping\n");
+      return 1;
     }
 
   count_all = count_added = 0;
