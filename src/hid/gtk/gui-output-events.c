@@ -1,4 +1,4 @@
-/* $Id: gui-output-events.c,v 1.26 2008-04-13 16:06:39 petercjclifton Exp $ */
+/* $Id: gui-output-events.c,v 1.27 2008-10-21 01:51:23 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -48,7 +48,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-output-events.c,v 1.26 2008-04-13 16:06:39 petercjclifton Exp $");
+RCSID ("$Id: gui-output-events.c,v 1.27 2008-10-21 01:51:23 petercjclifton Exp $");
 
 static gint x_pan_speed, y_pan_speed;
 
@@ -508,10 +508,6 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
     default:
       handled = FALSE;
     }
-
-
-  if (handled == FALSE)
-    gui->log ("keysym %d (0x%x) has not been defined\n", ksym, ksym);
 
   return handled;
 }
