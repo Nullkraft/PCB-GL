@@ -1,7 +1,7 @@
-Bottom: eaf20b7cfdc6eb74ff5b96d635cbb7b23616ca39
-Top:    ee39cdc34754d4c106ba59a43d2b1deec9bd02ac
+Bottom: 4c4121d90f65e8d18772b7b9c06d003c29ac0573
+Top:    39854363d58df4e30acb266d9bdb35dc64bf970c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-15 07:54:07 +0100
+Date:   2008-10-22 00:31:56 +0100
 
 Try clipping polygons to the screen using our own algebra, not GL
 
@@ -182,10 +182,10 @@ index 189554d..13630b1 100644
  }
  
 diff --git a/src/polygon.c b/src/polygon.c
-index 28adb08..7673788 100644
+index f38a610..661658f 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -662,7 +662,7 @@ PinPoly (PinType * pin, BDimension thick, BDimension clear)
+@@ -664,7 +664,7 @@ PinPoly (PinType * pin, BDimension thick, BDimension clear)
  }
  
  POLYAREA *
@@ -208,10 +208,10 @@ index e203d07..889a0ed 100644
  int InitClip(DataType *d, LayerType *l, PolygonType *p);
  void RestoreToPolygon(DataType *, int, void *, void *);
 diff --git a/src/pour.c b/src/pour.c
-index 8cda8f0..273fce6 100644
+index bf56de4..9476fa4 100644
 --- a/src/pour.c
 +++ b/src/pour.c
-@@ -353,7 +353,7 @@ unite_poly (POLYAREA * np, POLYAREA ** pg)
+@@ -349,7 +349,7 @@ unite_poly (POLYAREA * np, POLYAREA ** pg)
    return 1;
  }
  
