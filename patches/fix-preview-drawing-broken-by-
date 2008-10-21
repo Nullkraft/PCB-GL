@@ -1,0 +1,16 @@
+Bottom: 554b0e528deaadf831bb127ef1d4e7331177e812
+Top:    554b0e528deaadf831bb127ef1d4e7331177e812
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2008-10-22 00:26:53 +0100
+
+Fix preview drawing broken by resetting "Gathering" mode after painting.
+
+Seems that the pinout preview widget relied on the bug fixed in commit
+0647d028e6c755715d2fcdbd0b4f2be73d36ae7f. In the expose handler of the
+preview, We should be calling the hid_expose_callback() function rather
+than DrawElement() directly.
+
+
+---
+
+
