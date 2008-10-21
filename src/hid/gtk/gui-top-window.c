@@ -121,6 +121,7 @@ a zoom in/out.
 
 #include "gui-icons-mode-buttons.data"
 #include "gui-icons-misc.data"
+#include "snavi.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
@@ -2746,6 +2747,12 @@ ghid_do_export (HID_Attr_Val * options)
 
   if (stdin_listen)
     ghid_create_listener ();
+
+  ghidgui->snavi = setup_snavi (ndof_pan_cb,
+                                ndof_roll_cb,
+                                ndof_done_cb,
+                                ndof_button_cb,
+                                NULL);
 
   ghid_notify_gui_is_up ();
 
