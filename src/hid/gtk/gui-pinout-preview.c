@@ -155,6 +155,7 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
 static gboolean
 ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
 {
+  extern HID ghid_hid;
   GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
   GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
   GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
@@ -223,7 +224,7 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
 
   /* call the drawing routine */
   ghid_init_triangle_array ();
-  DrawElement (&pinout->element, 0);
+  hid_expose_callback (&ghid_hid, NULL, &pinout->element);
   ghid_flush_triangles ();
 
   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
