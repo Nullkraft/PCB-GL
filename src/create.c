@@ -1,4 +1,4 @@
-/* $Id: create.c,v 1.42 2007-05-02 03:17:58 danmc Exp $ */
+/* $Id: create.c,v 1.43 2008-11-11 04:37:49 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -58,7 +58,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: create.c,v 1.42 2007-05-02 03:17:58 danmc Exp $");
+RCSID ("$Id: create.c,v 1.43 2008-11-11 04:37:49 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local identifiers
@@ -320,7 +320,9 @@ line_callback (const BoxType * b, void *cl)
       longjmp (i->env, 1);
     }
   /* remove unnecessary line points */
-  if (line->Thickness == i->Thickness)
+  if (line->Thickness == i->Thickness
+      /* don't merge lines if the clear flags differ  */
+      && TEST_FLAG (CLEARLINEFLAG, line) == TEST_FLAG (CLEARNEWFLAG, PCB))
     {
       if (line->Point1.X == i->X1 && line->Point1.Y == i->Y1)
 	{
