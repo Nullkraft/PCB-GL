@@ -1,4 +1,4 @@
-/* $Id: ps.c,v 1.44 2008-04-13 14:15:40 petercjclifton Exp $ */
+/* $Id: ps.c,v 1.45 2008-11-23 02:32:53 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -25,7 +25,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: ps.c,v 1.44 2008-04-13 14:15:40 petercjclifton Exp $");
+RCSID ("$Id: ps.c,v 1.45 2008-11-23 02:32:53 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
@@ -273,16 +273,27 @@ ps_start_file (FILE *f)
 }
 
 static FILE *
-psopen (const char *base, const char *suff)
+psopen (const char *base, const char *which)
 {
   FILE *f;
-  char *buf;
+  char *buf, *suff, *buf2;
+
   if (!multi_file)
+    return fopen (base, "w");
+
+  buf = malloc (strlen (base) + strlen (which) + 5);
+
+  suff = strrchr (base, '.');
+  if (suff)
     {
-      return fopen (base, "w");
+      strcpy (buf, base);
+      buf2 = strrchr (buf, '.');
+      sprintf(buf2, ".%s.%s", which, suff+1);
     }
-  buf = malloc (strlen (base) + strlen (suff) + 5);
-  sprintf(buf, "%s.%s.ps", base, suff);
+  else
+    {
+      sprintf(buf, "%s.%s.ps", base, which);
+    }
   printf("PS: open %s\n", buf);
   f = fopen(buf, "w");
   free (buf);
