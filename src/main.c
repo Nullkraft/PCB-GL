@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.74 2008-01-10 23:17:08 petercjclifton Exp $ */
+/* $Id: main.c,v 1.75 2008-11-25 13:50:55 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -69,7 +69,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.74 2008-01-10 23:17:08 petercjclifton Exp $");
+RCSID ("$Id: main.c,v 1.75 2008-11-25 13:50:55 danmc Exp $");
 
 
 #define PCBLIBPATH ".:" PCBLIBDIR
@@ -611,6 +611,7 @@ char *pcblibdir = NULL;
 char *pcblibpath = NULL;
 char *pcbtreedir = NULL;
 char *pcbtreepath = NULL;
+char *homedir = NULL;
 
 static void
 InitPaths (char *argv0)
@@ -795,6 +796,27 @@ InitPaths (char *argv0)
 	  main_attribute_list[i].default_val.str_value = pcbtreepath;
 	}
 
+    }
+
+    {
+      char *tmps;
+
+      tmps = getenv ("HOME");
+
+      if (tmps == NULL) {
+          tmps = getenv ("USERPROFILE");
+      }
+
+      if (tmps != NULL) {
+          homedir = strdup (tmps);
+      } else {
+          homedir = NULL;
+      }
+
+      if (tmps != NULL) {
+          free (tmps);
+          tmps = NULL;
+      }
     }
 }
 

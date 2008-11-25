@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: global.h,v 1.56 2007-08-06 04:31:00 djdelorie Exp $
+ *  RCS: $Id: global.h,v 1.57 2008-11-25 13:50:55 danmc Exp $
  */
 
 /* definition of types
@@ -747,5 +747,6 @@ extern char *pcblibpath;
 extern char *pcbtreedir;
 extern char *pcbtreepath;
 extern char *exec_prefix;
+extern char *homedir;
 
 #endif /* __GLOBAL_INCLUDED__  */
