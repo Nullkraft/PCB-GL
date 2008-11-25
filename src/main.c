@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.75 2008-11-25 13:50:55 danmc Exp $ */
+/* $Id: main.c,v 1.76 2008-11-25 14:50:35 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -69,7 +69,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.75 2008-11-25 13:50:55 danmc Exp $");
+RCSID ("$Id: main.c,v 1.76 2008-11-25 14:50:35 danmc Exp $");
 
 
 #define PCBLIBPATH ".:" PCBLIBDIR
@@ -813,10 +813,6 @@ InitPaths (char *argv0)
           homedir = NULL;
       }
 
-      if (tmps != NULL) {
-          free (tmps);
-          tmps = NULL;
-      }
     }
 }
 
