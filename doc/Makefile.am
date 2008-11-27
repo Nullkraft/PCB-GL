@@ -23,7 +23,7 @@
 ##  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 ##  Thomas.Nau@rz.uni-ulm.de
 ##
-##  RCS: $Id: Makefile.am,v 1.26 2008-01-06 21:14:25 danmc Exp $
+##  RCS: $Id: Makefile.am,v 1.27 2008-11-27 23:33:59 danmc Exp $
 ##
 
 info_TEXINFOS=	pcb.texi
@@ -41,7 +41,9 @@ info_TEXINFOS=	pcb.texi
 # which can have all sorts of issues.
 pcb_TEXINFOS=	@MAINTAINER_MODE_TRUE@ ${inline_texi} ${pcb_output} ${tab_texi}
 
-dist_pkgdata_DATA=	${html_docs} ${ps_docs} ${pdf_docs} ${pcb_output}
+dist_html_DATA=	${html_docs} ${pcb_output_inst}
+dist_ps_DATA=	${ps_docs}
+dist_pdf_DATA=	${pdf_docs}
 
 dist_man_MANS=	pcb.1
 
@@ -77,6 +79,7 @@ EXTRA_DIST= \
 	refcard.dvi \
 	${inline_texi} \
 	${pcb_files} \
+	${pcb_output_noinst} \
 	${tab_files} \
 	${tab_texi}
 
@@ -106,11 +109,15 @@ pcb_files=	\
 	puller.pcb \
 	thermal.pcb
 
-pcb_output=	\
+pcb_output_noinst=	\
 	${pcb_files:.pcb=.eps} \
+	${pcb_files:.pcb=.pdf}
+
+pcb_output_inst=	\
 	${pcb_files:.pcb=.gif} \
-	${pcb_files:.pcb=.pdf} \
 	${pcb_files:.pcb=.png}
+
+pcb_output=	${pcb_output_inst} ${pcb_output_noinst}
 
 ${inline_texi} : extracted-docs
 
