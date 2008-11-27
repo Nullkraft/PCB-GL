@@ -23,7 +23,7 @@
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: pcbtest.sh.in,v 1.18 2008-02-26 13:16:06 danmc Exp $
+#   RCS: $Id: pcbtest.sh.in,v 1.19 2008-11-27 16:11:28 danmc Exp $
 #
 #
 #
@@ -42,10 +42,18 @@ TEST_CMDS="--lib-command-dir @TOP_BUILDDIR@/lib"
 
 if [ "X$1" = "X-gdb" ]; then
 	shift
-	tmpf=/tmp/pcbtest.gdb.$$
+	tmpd=/tmp/pcbtest.$$
+	tmpf=${tmpd}/pcbtest.gdb
+	mkdir -p -m 0700 ${tmpd}
+	rc=$?
+	if test $rc -ne 0 ; then
+		echo "$0:  Could not create ${tmpd} with mode = 0700"
+	 	echo "   mkdir returned $rc"
+		exit 1
+	fi
 	echo set args $TEST_PATHS $TEST_CMDS "$@"  > $tmpf
 	exec gdb -x $tmpf ./pcb
-	rm -f $tmpf
+	rm -fr $tmpd
 else
 	exec ./pcb $TEST_PATHS $TEST_CMDS "$@"
 fi
