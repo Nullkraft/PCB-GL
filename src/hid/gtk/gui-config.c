@@ -1,4 +1,4 @@
-/* $Id: gui-config.c,v 1.18 2008-11-28 13:53:49 danmc Exp $ */
+/* $Id: gui-config.c,v 1.19 2008-11-28 14:01:17 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 extern int	MoveLayerAction(int argc, char **argv, int x, int y);
 
 
-RCSID ("$Id: gui-config.c,v 1.18 2008-11-28 13:53:49 danmc Exp $");
+RCSID ("$Id: gui-config.c,v 1.19 2008-11-28 14:01:17 danmc Exp $");
 
 enum ConfigType
 {
@@ -1310,9 +1310,15 @@ config_library_tab_create (GtkWidget * tab_vbox)
   gtk_label_set_use_markup (GTK_LABEL (label), TRUE);
   gtk_label_set_markup (GTK_LABEL (label),
 			_
-			("<small>Enter a colon separated list of custom top level\n"
+			("<small>Enter a \""
+			 PCB_PATH_DELIMETER 
+			 "\" separated list of custom top level\n"
 			 "element directories.  For example:\n"
-			 "\t<b>~/gaf/pcb-elements:packages:/usr/local/pcb-elements</b>\n"
+			 "\t<b>~/gaf/pcb-elements"
+			 PCB_PATH_DELIMETER
+			 "packages"
+			 PCB_PATH_DELIMETER
+			 "/usr/local/pcb-elements</b>\n"
 			 "Elements should be organized into subdirectories below each\n"
 			 "top level directory.  Restart program for changes to take effect."
 			 "</small>"));
