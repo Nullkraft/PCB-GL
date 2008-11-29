@@ -1,4 +1,4 @@
-/* $Id: gui-output-events.c,v 1.28 2008-11-29 12:52:26 danmc Exp $ */
+/* $Id: gui-output-events.c,v 1.29 2008-11-29 13:20:36 danmc Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -48,7 +48,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-output-events.c,v 1.28 2008-11-29 12:52:26 danmc Exp $");
+RCSID ("$Id: gui-output-events.c,v 1.29 2008-11-29 13:20:36 danmc Exp $");
 
 static gint x_pan_speed, y_pan_speed;
 
@@ -995,6 +995,11 @@ ghid_port_window_leave_cb (GtkWidget * widget,
 	  ghid_get_coords (NULL, &x, &y);
 	  x -= x0;
 	  y -= y0;
+
+	  if (ghid_flip_x )
+	      x = -x;
+	  if (ghid_flip_y )
+	      y = -y;
 
 	  dx = w - x;
 	  dy = h - y;
