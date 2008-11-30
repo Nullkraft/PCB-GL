@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# $Id: build_pcb,v 1.19 2008-11-30 04:44:15 danmc Exp $
+# $Id: build_pcb,v 1.20 2008-11-30 13:50:42 danmc Exp $
 #
 
 # error out on failed commands whose return code wasn't explicitly
@@ -32,6 +32,9 @@ Supported options:
 
   --force-autogen - Force running ./autogen.sh.  Normally this is
                     only done if the configure script is not present.
+
+  --nsis-only     - Only run NSIS to create the installer.  This is
+                    shorthand for all of the following --skip-* options.
 
   --skip-build    - Skip the "make" step of the process.
 
@@ -86,6 +89,14 @@ while test $# -ne 0 ; do
 
 		--force-autogen)
 			do_autogen=yes
+			shift
+			;;
+
+		--nsis-only)
+			do_build=no
+			do_clean=no
+			do_config=no
+			do_install=no
 			shift
 			;;
 
