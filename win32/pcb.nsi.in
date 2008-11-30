@@ -1,4 +1,4 @@
-;; $Id: pcb.nsi.in,v 1.12 2008-11-30 02:37:58 danmc Exp $
+;; $Id: pcb.nsi.in,v 1.13 2008-11-30 13:55:54 danmc Exp $
 ;;
 ;; Installer script file for PCB for windows.  See http://nsis.sourceforge.net
 ;; for details on NSIS.
@@ -31,6 +31,11 @@
   ;Name and file
   Name "PCB-@pcb_version@"
   OutFile "pcbinst-@pcb_version@.exe"
+
+
+  ;See http://nsis.sourceforge.net/Shortcuts_removal_fails_on_Windows_Vista
+  ;for more details.
+  RequestExecutionLevel admin
 
   ;Default installation folder
   InstallDir "$PROGRAMFILES\PCB-@pcb_version@"
@@ -145,6 +150,7 @@ SectionEnd
 ;Uninstaller Section
 
 Section "Uninstall"
+  SetShellVarContext all
 
   ;ADD YOUR OWN FILES HERE...
 
