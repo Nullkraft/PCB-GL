@@ -1,4 +1,4 @@
-/* $Id: misc.c,v 1.75 2008-09-30 22:39:34 petercjclifton Exp $ */
+/* $Id: misc.c,v 1.76 2008-12-03 21:15:11 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -78,7 +78,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: misc.c,v 1.75 2008-09-30 22:39:34 petercjclifton Exp $");
+RCSID ("$Id: misc.c,v 1.76 2008-12-03 21:15:11 djdelorie Exp $");
 
 
 /*	forward declarations	*/
@@ -1818,7 +1818,7 @@ OldFlags (unsigned int flags)
     {
       /* use the closest thing to the old thermal style */
       if (flags & f)
-        rv.t[i / 2] = (1 << (4 * (i % 2)));
+	rv.t[i / 2] |= (1 << (4 * (i % 2)));
       f <<= 1;
     }
   return rv;
