@@ -1,5 +1,5 @@
 ## -*- makefile -*-
-## $Id: Makefile.am,v 1.47 2008-08-19 22:26:44 danmc Exp $
+## $Id: Makefile.am,v 1.48 2008-12-03 23:49:15 danmc Exp $
 ##
 
 SUBDIRS=	icons
@@ -271,7 +271,7 @@ endif
 # desktop and application toolbar
 if WIN32
 pcb_icon.o : pcb_icon.ico $(srcdir)/hid/gtk/pcb.rc
-	windres $(srcdir)/hid/gtk/pcb.rc $@
+	$(WINDRES) $(srcdir)/hid/gtk/pcb.rc $@
 
 pcb_icon.ico: $(top_srcdir)/data/pcb_icon.ico
 	cp $(top_srcdir)/data/pcb_icon.ico $@

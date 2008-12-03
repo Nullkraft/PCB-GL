@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.105 2008-11-28 03:51:59 danmc Exp $
+dnl $Id: configure.ac,v 1.106 2008-12-03 23:49:14 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT([pcb], [1.99y])
@@ -49,6 +49,13 @@ AC_DEFINE_UNQUOTED(PCB_PATH_DELIMETER,"$PCB_PATH_DELIMETER",[Search path separat
 
 dnl Checks for programs.
 AC_PROG_CC
+
+if test "x$WIN32" = "xyes" ; then
+	AC_CHECK_TOOL(WINDRES, windres, [no])
+	if test "$WINDRES" = "no" ; then
+		AC_MSG_ERROR([*** Could not find an implementation of windres in your PATH.])
+	fi
+fi
 
 # i18n
 GETTEXT_PACKAGE=$PACKAGE
