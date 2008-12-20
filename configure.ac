@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.108 2008-12-12 22:50:48 danmc Exp $
+dnl $Id: configure.ac,v 1.109 2008-12-20 22:06:31 djdelorie Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT([pcb], [1.99y])
@@ -411,6 +411,9 @@ AM_CONDITIONAL(MISSING_PDFLATEX, test x$PDFLATEX = xnotfound)
 
 AC_CHECK_PROGS(DVIPS, dvips, notfound)
 AM_CONDITIONAL(MISSING_DVIPS, test x$DVIPS = xnotfound)
+
+AC_CHECK_PROGS(TEXI2DVI, texi2dvi, notfound)
+AM_CONDITIONAL(MISSING_TEXI2DVI, test x$TEXI2DVI = xnotfound)
 
 AC_CHECK_PROGS(PS2PDF, ps2pdf, notfound)
 AM_CONDITIONAL(MISSING_PS2PDF, test x$PS2PDF = xnotfound)
@@ -845,6 +848,7 @@ if test -d $srcdir/README_FILES; then
 fi
 if test -d $srcdir/doc; then
    AC_CONFIG_FILES(doc/Makefile)
+   AC_CONFIG_FILES(doc/gs/Makefile)
 fi
 if test -d $srcdir/example; then
    AC_CONFIG_FILES(example/Makefile)
