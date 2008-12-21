@@ -1,4 +1,4 @@
-/* $Id: find.c,v 1.69 2008-03-16 14:33:58 danmc Exp $ */
+/* $Id: find.c,v 1.70 2008-12-21 04:17:49 djdelorie Exp $ */
 
 /*
  *
@@ -101,7 +101,7 @@
 
 #undef DEBUG
 
-RCSID ("$Id: find.c,v 1.69 2008-03-16 14:33:58 danmc Exp $");
+RCSID ("$Id: find.c,v 1.70 2008-12-21 04:17:49 djdelorie Exp $");
 
 
 
@@ -3910,7 +3910,7 @@ DRCAll (void)
         if (IsBad)
           break;
         if (!TEST_FLAG (HOLEFLAG, via) &&
-            via->Thickness - via->DrillingHole < PCB->minRing)
+            via->Thickness - via->DrillingHole < 2 * PCB->minRing)
           {
             AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
             SET_FLAG (TheFlag, via);
