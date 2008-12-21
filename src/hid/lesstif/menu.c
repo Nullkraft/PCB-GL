@@ -1,4 +1,4 @@
-//* $Id: menu.c,v 1.30 2008-11-25 13:50:58 danmc Exp $ */
+//* $Id: menu.c,v 1.31 2008-12-21 04:15:39 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -29,7 +29,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: menu.c,v 1.30 2008-11-25 13:50:58 danmc Exp $");
+RCSID ("$Id: menu.c,v 1.31 2008-12-21 04:15:39 djdelorie Exp $");
 
 #ifndef R_OK
 /* Common value for systems that don't define it.  */
@@ -1464,6 +1464,7 @@ lesstif_menu (Widget parent, char *name, Arg * margs, int mn)
   cmap = DefaultColormap (display, screen);
 
   /* homedir is set by the core */
+  home = homedir;
   home_pcbmenu = NULL;
   if (home == NULL)
     {
