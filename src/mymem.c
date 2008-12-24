@@ -1,4 +1,4 @@
-/* $Id: mymem.c,v 1.25 2006-12-13 22:42:55 danmc Exp $ */
+/* $Id: mymem.c,v 1.26 2008-12-24 13:14:27 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -49,7 +49,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: mymem.c,v 1.25 2006-12-13 22:42:55 danmc Exp $");
+RCSID ("$Id: mymem.c,v 1.26 2008-12-24 13:14:27 petercjclifton Exp $");
 
 /* ---------------------------------------------------------------------------
  * local prototypes
@@ -305,10 +305,19 @@ GetRatMemory (DataTypePtr Data)
   if (Data->RatN >= Data->RatMax)
     {
       Data->RatMax += STEP_RAT;
+      /* all of the pointers move, so rebuild the whole tree */
+      if (Data->rat_tree)
+        r_destroy_tree (&Data->rat_tree);
       rat = MyRealloc (rat, Data->RatMax * sizeof (RatType),
 		       "GetRatMemory()");
       Data->Rat = rat;
       memset (rat + Data->RatN, 0, STEP_RAT * sizeof (RatType));
+      Data->rat_tree = r_create_tree (NULL, 0, 0);
+      RAT_LOOP (Data);
+      {
+        r_insert_entry (Data->rat_tree, (BoxTypePtr) line, 0);
+      }
+      END_LOOP;
     }
   return (rat + Data->RatN++);
 }
