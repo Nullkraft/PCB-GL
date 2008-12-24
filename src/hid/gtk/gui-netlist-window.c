@@ -1,4 +1,4 @@
-/* $Id: gui-netlist-window.c,v 1.15 2008-10-01 03:13:33 petercjclifton Exp $ */
+/* $Id: gui-netlist-window.c,v 1.16 2008-12-24 03:07:02 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -64,7 +64,7 @@
 
 #define NET_HIERARCHY_SEPARATOR "/"
 
-RCSID ("$Id: gui-netlist-window.c,v 1.15 2008-10-01 03:13:33 petercjclifton Exp $");
+RCSID ("$Id: gui-netlist-window.c,v 1.16 2008-12-24 03:07:02 petercjclifton Exp $");
 
 static GtkWidget	*netlist_window;
 static GtkWidget	*disable_all_button;
@@ -385,7 +385,7 @@ net_model_create (void)
         parent_iter = new_iter;
         parent_ptr = &parent_iter;
 
-        join_array = g_new0 (char *, try_depth + 1);
+        join_array = g_new0 (char *, try_depth + 2);
         memcpy (join_array, path_segments, sizeof (char *) * (try_depth + 1));
 
         hash_string = g_strjoinv (NET_HIERARCHY_SEPARATOR, join_array);
