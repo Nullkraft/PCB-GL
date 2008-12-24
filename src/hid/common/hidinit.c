@@ -1,4 +1,4 @@
-/* $Id: hidinit.c,v 1.23 2008-12-24 04:52:34 djdelorie Exp $ */
+/* $Id: hidinit.c,v 1.24 2008-12-24 04:54:40 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -35,7 +35,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: hidinit.c,v 1.23 2008-12-24 04:52:34 djdelorie Exp $");
+RCSID ("$Id: hidinit.c,v 1.24 2008-12-24 04:54:40 djdelorie Exp $");
 
 #define HID_DEF(x) extern void hid_ ## x ## _init(void);
 #include "hid/common/hidlist.h"
@@ -95,21 +95,22 @@ hid_load_dir (char *dirname)
 	  if ((so = dlopen (path, RTLD_NOW | RTLD_GLOBAL)) == NULL)
 	    {
 	      fprintf(stderr, "dl_error: %s\n", dlerror ());
-	      continue;
 	    }
-
-	  symname = Concat ("hid_", basename, "_init", NULL);
-	  if ((sym = dlsym (so, symname)) != NULL)
+	  else
 	    {
-	      symv = (void (*)()) sym;
-	      symv();
+	      symname = Concat ("hid_", basename, "_init", NULL);
+	      if ((sym = dlsym (so, symname)) != NULL)
+		{
+		  symv = (void (*)()) sym;
+		  symv();
+		}
+	      else if ((sym = dlsym (so, "pcb_plugin_init")) != NULL)
+		{
+		  symv = (void (*)()) sym;
+		  symv();
+		}
+	      free (symname);
 	    }
-	  else if ((sym = dlsym (so, "pcb_plugin_init")) != NULL)
-	    {
-	      symv = (void (*)()) sym;
-	      symv();
-	    }
-	  free (symname);
 	}
       free (basename);
       free (path);
