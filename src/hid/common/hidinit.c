@@ -1,4 +1,4 @@
-/* $Id: hidinit.c,v 1.22 2008-11-25 13:50:56 danmc Exp $ */
+/* $Id: hidinit.c,v 1.23 2008-12-24 04:52:34 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -35,7 +35,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: hidinit.c,v 1.22 2008-11-25 13:50:56 danmc Exp $");
+RCSID ("$Id: hidinit.c,v 1.23 2008-12-24 04:52:34 djdelorie Exp $");
 
 #define HID_DEF(x) extern void hid_ ## x ## _init(void);
 #include "hid/common/hidlist.h"
@@ -72,9 +72,11 @@ hid_load_dir (char *dirname)
       struct stat st;
 
       basename = strdup (de->d_name);
-      if (strcasecmp (basename+strlen(basename)-3, ".so") == 0)
+      if (strlen (basename) > 3
+	  && strcasecmp (basename+strlen(basename)-3, ".so") == 0)
 	basename[strlen(basename)-3] = 0;
-      else if (strcasecmp (basename+strlen(basename)-4, ".dll") == 0)
+      else if (strlen (basename) > 5
+	       && strcasecmp (basename+strlen(basename)-4, ".dll") == 0)
 	basename[strlen(basename)-4] = 0;
       path = Concat (dirname, PCB_DIR_SEPARATOR_S, de->d_name, NULL);
 
