@@ -1,4 +1,4 @@
-/* $Id: parse_y.y,v 1.43 2008-03-16 14:33:59 danmc Exp $ */
+/* $Id: parse_y.y,v 1.44 2008-12-27 19:02:23 djdelorie Exp $ */
 /*
  * ************************** README *******************
  *
@@ -61,7 +61,7 @@
 # include <dmalloc.h> /* see http://dmalloc.com */
 #endif
 
-RCSID("$Id: parse_y.y,v 1.43 2008-03-16 14:33:59 danmc Exp $");
+RCSID("$Id: parse_y.y,v 1.44 2008-12-27 19:02:23 djdelorie Exp $");
 
 static	LayerTypePtr	Layer;
 static	PolygonTypePtr	Polygon;
@@ -1023,7 +1023,7 @@ arc_1.7_format
 			/* x, y, width, height, thickness, clearance, startangle, delta, flags */
 		: T_ARC '(' NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER ')'
 			{
-				CreateNewArcOnLayer(Layer, $3*100, $4*100, $4*100, $5*100, $9, $10,
+				CreateNewArcOnLayer(Layer, $3*100, $4*100, $5*100, $6*100, $9, $10,
 						    $7*100, $8*100, OldFlags($11));
 			}
 		;
