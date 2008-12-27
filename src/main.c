@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.76 2008-11-25 14:50:35 danmc Exp $ */
+/* $Id: main.c,v 1.77 2008-12-27 15:21:56 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -69,7 +69,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: main.c,v 1.76 2008-11-25 14:50:35 danmc Exp $");
+RCSID ("$Id: main.c,v 1.77 2008-12-27 15:21:56 djdelorie Exp $");
 
 
 #define PCBLIBPATH ".:" PCBLIBDIR
@@ -147,6 +147,10 @@ usage_attr (HID_Attribute * a)
 {
   int i;
   static char buf[200];
+
+  if (a->help_text == ATTR_UNDOCUMENTED)
+    return;
+
   switch (a->type)
     {
     case HID_Label:
