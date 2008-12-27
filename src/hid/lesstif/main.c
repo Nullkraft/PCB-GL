@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.68 2008-11-29 12:52:27 danmc Exp $ */
+/* $Id: main.c,v 1.69 2008-12-27 16:30:05 djdelorie Exp $ */
 /* 15 Oct 2008 Ineiev: add different crosshair shapes */
 
 #ifdef HAVE_CONFIG_H
@@ -36,7 +36,7 @@
 
 #include <sys/poll.h>
 
-RCSID ("$Id: main.c,v 1.68 2008-11-29 12:52:27 danmc Exp $");
+RCSID ("$Id: main.c,v 1.69 2008-12-27 16:30:05 djdelorie Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -2986,7 +2986,7 @@ lesstif_invalidate_all (void)
 }
 
 static int
-lesstif_set_layer (const char *name, int group)
+lesstif_set_layer (const char *name, int group, int empty)
 {
   int idx = group;
   if (idx >= 0 && idx < max_layer)

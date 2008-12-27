@@ -1,4 +1,4 @@
-/* $Id: gtkhid-main.c,v 1.57 2008-10-13 19:19:37 petercjclifton Exp $ */
+/* $Id: gtkhid-main.c,v 1.58 2008-12-27 16:30:06 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -37,7 +37,7 @@
 #endif
 
 
-RCSID ("$Id: gtkhid-main.c,v 1.57 2008-10-13 19:19:37 petercjclifton Exp $");
+RCSID ("$Id: gtkhid-main.c,v 1.58 2008-12-27 16:30:06 djdelorie Exp $");
 
 
 extern HID ghid_hid;
@@ -577,7 +577,7 @@ ghid_invalidate_all ()
 
 
 int
-ghid_set_layer (const char *name, int group)
+ghid_set_layer (const char *name, int group, int empty)
 {
   int idx = (group >= 0
 	     && group <

@@ -1,4 +1,4 @@
-/* $Id: eps.c,v 1.19 2008-04-13 14:15:40 petercjclifton Exp $ */
+/* $Id: eps.c,v 1.20 2008-12-27 16:30:08 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -22,7 +22,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: eps.c,v 1.19 2008-04-13 14:15:40 petercjclifton Exp $");
+RCSID ("$Id: eps.c,v 1.20 2008-12-27 16:30:08 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented EPS function %s.\n", __FUNCTION__); abort()
 static HID eps_hid;
@@ -307,7 +307,7 @@ static int is_paste;
 static int is_drill;
 
 static int
-eps_set_layer (const char *name, int group)
+eps_set_layer (const char *name, int group, int empty)
 {
   int idx = (group >= 0
 	     && group <

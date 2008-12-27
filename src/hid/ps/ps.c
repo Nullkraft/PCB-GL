@@ -1,4 +1,4 @@
-/* $Id: ps.c,v 1.45 2008-11-23 02:32:53 djdelorie Exp $ */
+/* $Id: ps.c,v 1.46 2008-12-27 16:30:08 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -25,7 +25,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: ps.c,v 1.45 2008-11-23 02:32:53 djdelorie Exp $");
+RCSID ("$Id: ps.c,v 1.46 2008-12-27 16:30:08 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
 
@@ -510,13 +510,16 @@ static int is_copper;
 static int is_paste;
 
 static int
-ps_set_layer (const char *name, int group)
+ps_set_layer (const char *name, int group, int empty)
 {
   int idx = (group >= 0
 	     && group <
 	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
   if (name == 0)
     name = PCB->Data->Layer[idx].Name;
+
+  if (empty)
+    return 0;
 
   if (idx >= 0 && idx < max_layer && !print_layer[idx])
     return 0;

@@ -1,4 +1,4 @@
-/* $Id: hidnogui.c,v 1.17 2008-04-13 14:15:38 petercjclifton Exp $ */
+/* $Id: hidnogui.c,v 1.18 2008-12-27 16:30:10 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -16,7 +16,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: hidnogui.c,v 1.17 2008-04-13 14:15:38 petercjclifton Exp $");
+RCSID ("$Id: hidnogui.c,v 1.18 2008-12-27 16:30:10 djdelorie Exp $");
 
 /* This is the "gui" that is installed at startup, and is used when
    there is no other real GUI to use.  For the most part, it just
@@ -68,7 +68,7 @@ nogui_invalidate_all (void)
 }
 
 static int
-nogui_set_layer (const char *name, int idx)
+nogui_set_layer (const char *name, int idx, int empty)
 {
   CRASH;
   return 0;

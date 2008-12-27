@@ -1,4 +1,4 @@
-/* $Id: png.c,v 1.29 2008-12-27 15:23:05 djdelorie Exp $ */
+/* $Id: png.c,v 1.30 2008-12-27 16:30:04 djdelorie Exp $ */
 /*Sept 2007: patch to enable slanted squared lines*/
 /*
  *                            COPYRIGHT
@@ -51,7 +51,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: png.c,v 1.29 2008-12-27 15:23:05 djdelorie Exp $");
+RCSID ("$Id: png.c,v 1.30 2008-12-27 16:30:04 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PNG function %s.\n", __FUNCTION__); abort()
 
@@ -777,7 +777,7 @@ static int is_mask;
 static int is_drill;
 
 static int
-png_set_layer (const char *name, int group)
+png_set_layer (const char *name, int group, int empty)
 {
   int idx = (group >= 0
 	     && group <

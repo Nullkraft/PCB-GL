@@ -1,4 +1,4 @@
-/* $Id: batch.c,v 1.13 2008-09-23 22:57:42 petercjclifton Exp $ */
+/* $Id: batch.c,v 1.14 2008-12-27 16:30:11 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -17,7 +17,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: batch.c,v 1.13 2008-09-23 22:57:42 petercjclifton Exp $");
+RCSID ("$Id: batch.c,v 1.14 2008-12-27 16:30:11 djdelorie Exp $");
 
 /* This is a text-line "batch" HID, which exists for scripting and
    non-GUI needs.  */
@@ -206,7 +206,7 @@ batch_invalidate_all (void)
 }
 
 static int
-batch_set_layer (const char *name, int idx)
+batch_set_layer (const char *name, int idx, int empty)
 {
   return 0;
 }
