@@ -1,4 +1,4 @@
-dnl $Id: configure.ac,v 1.109 2008-12-20 22:06:31 djdelorie Exp $
+dnl $Id: configure.ac,v 1.110 2008-12-27 04:22:39 danmc Exp $
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT([pcb], [1.99y])
@@ -865,8 +865,6 @@ fi
 if test -d $srcdir/newlib; then
    AC_CONFIG_FILES(newlib/2_pin_thru-hole_packages/Makefile)
    AC_CONFIG_FILES(newlib/Makefile)
-   AC_CONFIG_FILES(newlib/analog-devices/Makefile)
-   AC_CONFIG_FILES(newlib/burr-brown/Makefile)
    AC_CONFIG_FILES(newlib/connectors/Makefile)
    AC_CONFIG_FILES(newlib/crystal/Makefile)
    AC_CONFIG_FILES(newlib/electro-optics/Makefile)
