@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: const.h,v 1.26 2007-08-05 23:40:26 djdelorie Exp $
+ *  RCS: $Id: const.h,v 1.27 2008-12-27 21:24:34 djdelorie Exp $
  */
 
 /* global source constants
@@ -252,6 +252,14 @@ Move items orthogonally.
 Draw autoroute paths real-time.
 @item 0x20000
 New polygons are full ones.
+@item 0x40000
+Names are locked, the mouse cannot select them.
+@item 0x80000
+Everything but names are locked, the mouse cannot select anything else.
+@item 0x100000
+New polygons are full polygons.
+@item 0x200000
+When set, element names are not drawn.
 @end table
 %end-doc */
 
@@ -278,6 +286,7 @@ New polygons are full ones.
 #define LOCKNAMESFLAG           0x00040000
 #define ONLYNAMESFLAG           0x00080000
 #define NEWFULLPOLYFLAG         0x00100000
+#define HIDENAMESFLAG           0x00200000
 
 /* ---------------------------------------------------------------------------
  * object types

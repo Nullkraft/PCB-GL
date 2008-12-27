@@ -1,4 +1,4 @@
-/* $Id: strflags.c,v 1.19 2007-11-04 22:01:26 bjj Exp $ */
+/* $Id: strflags.c,v 1.20 2008-12-27 21:24:34 djdelorie Exp $ */
 /*
  *                            COPYRIGHT
  *
@@ -54,7 +54,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: strflags.c,v 1.19 2007-11-04 22:01:26 bjj Exp $");
+RCSID ("$Id: strflags.c,v 1.20 2008-12-27 21:24:34 djdelorie Exp $");
 
 /* Because all the macros expect it, that's why.  */
 typedef struct
@@ -135,6 +135,7 @@ static FlagBitsType pcb_flagbits[] = {
   { THINDRAWPOLYFLAG, N ("thindrawpoly"), 1 },
   { LOCKNAMESFLAG, N ("locknames"), 1 },
   { ONLYNAMESFLAG, N ("onlynames"), 1 },
+  { HIDENAMESFLAG, N ("hidenames"), 1 },
 };
 
 #undef N

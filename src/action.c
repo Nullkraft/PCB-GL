@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.133 2008-12-27 18:43:52 djdelorie Exp $ */
+/* $Id: action.c,v 1.134 2008-12-27 21:24:34 djdelorie Exp $ */
 /* 15 Oct 2008 Ineiev: add CycleCrosshair action */
 
 /*
@@ -75,7 +75,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.133 2008-12-27 18:43:52 djdelorie Exp $");
+RCSID ("$Id: action.c,v 1.134 2008-12-27 21:24:34 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -174,6 +174,7 @@ typedef enum
   F_ToggleClearLine,
   F_ToggleFullPoly,
   F_ToggleGrid,
+  F_ToggleHideNames,
   F_ToggleMask,
   F_ToggleName,
   F_ToggleObject,
@@ -414,6 +415,7 @@ static FunctionType Functions[] = {
   {"ToggleThindrawPoly", F_ToggleThindrawPoly},
   {"ToggleLockNames", F_ToggleLockNames},
   {"ToggleOnlyNames", F_ToggleOnlyNames},
+  {"ToggleHideNames", F_ToggleHideNames},
   {"ToggleCheckPlanes", F_ToggleCheckPlanes},
   {"ToggleLocalRef", F_ToggleLocalRef},
   {"ToggleOrthoMove", F_ToggleOrthoMove},
@@ -2648,6 +2650,11 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
 	case F_ToggleOnlyNames:
 	  TOGGLE_FLAG (ONLYNAMESFLAG, PCB);
 	  CLEAR_FLAG (LOCKNAMESFLAG, PCB);
+	  break;
+
+	case F_ToggleHideNames:
+	  TOGGLE_FLAG (HIDENAMESFLAG, PCB);
+	  ClearAndRedrawOutput ();
 	  break;
 
 	case F_ToggleShowDRC:

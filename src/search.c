@@ -1,4 +1,4 @@
-/* $Id: search.c,v 1.37 2008-10-13 19:23:56 petercjclifton Exp $ */
+/* $Id: search.c,v 1.38 2008-12-27 21:24:34 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -53,7 +53,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: search.c,v 1.37 2008-10-13 19:23:56 petercjclifton Exp $");
+RCSID ("$Id: search.c,v 1.38 2008-12-27 21:24:34 djdelorie Exp $");
 
 
 /* ---------------------------------------------------------------------------
@@ -1148,7 +1148,8 @@ SearchObjectByLocation (int Type,
   SearchBox.X2 = X + Radius;
   SearchBox.Y2 = Y + Radius;
 
-  if (TEST_FLAG (LOCKNAMESFLAG, PCB))
+  if (TEST_FLAG (LOCKNAMESFLAG, PCB)
+      || TEST_FLAG (HIDENAMESFLAG, PCB))
     {
       Type &= ~ (ELEMENTNAME_TYPE | TEXT_TYPE);
     }

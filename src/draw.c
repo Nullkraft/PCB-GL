@@ -1,4 +1,4 @@
-/* $Id: draw.c,v 1.91 2008-12-27 18:55:37 djdelorie Exp $ */
+/* $Id: draw.c,v 1.92 2008-12-27 21:24:34 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -55,7 +55,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: draw.c,v 1.91 2008-12-27 18:55:37 djdelorie Exp $");
+RCSID ("$Id: draw.c,v 1.92 2008-12-27 21:24:34 djdelorie Exp $");
 
 #define	SMALL_SMALL_TEXT_SIZE	0
 #define	SMALL_TEXT_SIZE			1
@@ -2183,6 +2183,8 @@ DrawElement (ElementTypePtr Element, int unused)
 void
 DrawElementName (ElementTypePtr Element, int unused)
 {
+  if (gui->gui && TEST_FLAG (HIDENAMESFLAG, PCB))
+    return;
   if (TEST_FLAG (HIDENAMEFLAG, Element))
     return;
   if (doing_pinout || doing_assy)

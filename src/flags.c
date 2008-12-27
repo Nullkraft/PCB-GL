@@ -1,4 +1,4 @@
-/* $Id: flags.c,v 1.14 2008-12-20 20:02:04 djdelorie Exp $ */
+/* $Id: flags.c,v 1.15 2008-12-27 21:24:34 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -41,7 +41,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: flags.c,v 1.14 2008-12-20 20:02:04 djdelorie Exp $");
+RCSID ("$Id: flags.c,v 1.15 2008-12-27 21:24:34 djdelorie Exp $");
 
 static int
 FlagCurrentStyle (int dummy)
@@ -221,6 +221,7 @@ HID_Flag flags_flag_list[] = {
   {"locknames", FlagTESTFLAG, LOCKNAMESFLAG},
   {"onlynames", FlagTESTFLAG, ONLYNAMESFLAG},
   {"newfullpoly", FlagTESTFLAG, NEWFULLPOLYFLAG},
+  {"hidenames", FlagTESTFLAG, HIDENAMESFLAG},
 
   {"fullpoly", FlagSETTINGS, OffsetOf (SettingType, FullPoly)},
   {"grid_units_mm", FlagSETTINGS, OffsetOf (SettingType, grid_units_mm)},
