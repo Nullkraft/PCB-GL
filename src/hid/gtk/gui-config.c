@@ -1,4 +1,4 @@
-/* $Id: gui-config.c,v 1.19 2008-11-28 14:01:17 danmc Exp $ */
+/* $Id: gui-config.c,v 1.20 2008-12-27 17:50:39 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -57,7 +57,7 @@
 extern int	MoveLayerAction(int argc, char **argv, int x, int y);
 
 
-RCSID ("$Id: gui-config.c,v 1.19 2008-11-28 14:01:17 danmc Exp $");
+RCSID ("$Id: gui-config.c,v 1.20 2008-12-27 17:50:39 djdelorie Exp $");
 
 enum ConfigType
 {
@@ -145,6 +145,8 @@ static ConfigAttribute config_attributes[] = {
   {"shrink", CONFIG_Unused, NULL},
   {"min-width", CONFIG_Unused, NULL},
   {"min-silk", CONFIG_Unused, NULL},
+  {"min-drill", CONFIG_Unused, NULL},
+  {"min-ring", CONFIG_Unused, NULL},
   {"default-PCB-width", CONFIG_Unused, NULL},
   {"default-PCB-height", CONFIG_Unused, NULL},
 
@@ -2114,10 +2116,10 @@ config_close_cb (gpointer data)
   /* Config pages may need to check for modified entries, use as default
      |  options, etc when the config window is closed.
    */
-  config_general_apply ();
   config_sizes_apply ();
   config_layers_apply ();
   config_library_apply ();
+  config_general_apply ();
 
   config_sizes_vbox = NULL;
   config_increments_vbox = NULL;
