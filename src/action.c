@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.132 2008-12-20 20:00:05 djdelorie Exp $ */
+/* $Id: action.c,v 1.133 2008-12-27 18:43:52 djdelorie Exp $ */
 /* 15 Oct 2008 Ineiev: add CycleCrosshair action */
 
 /*
@@ -75,7 +75,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.132 2008-12-20 20:00:05 djdelorie Exp $");
+RCSID ("$Id: action.c,v 1.133 2008-12-27 18:43:52 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -2724,9 +2724,11 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
 	  {
 	    ElementTypePtr element;
 	    void *ptrtmp;
+	    int x, y;
 
+	    gui->get_coords ("Click on an element", &x, &y);
 	    if ((SearchScreen
-		 (Crosshair.X, Crosshair.Y, ELEMENT_TYPE, &ptrtmp,
+		 (x, y, ELEMENT_TYPE, &ptrtmp,
 		  &ptrtmp, &ptrtmp)) != NO_TYPE)
 	      {
 		element = (ElementTypePtr) ptrtmp;
