@@ -1,4 +1,4 @@
-/* $Id: gerber.c,v 1.36 2008-12-27 16:30:09 djdelorie Exp $ */
+/* $Id: gerber.c,v 1.37 2008-12-27 16:57:46 djdelorie Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -33,7 +33,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gerber.c,v 1.36 2008-12-27 16:30:09 djdelorie Exp $");
+RCSID ("$Id: gerber.c,v 1.37 2008-12-27 16:57:46 djdelorie Exp $");
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented Gerber function %s.\n", __FUNCTION__); abort()
 
@@ -801,9 +801,6 @@ static void
 gerber_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
 {
   Boolean m = False;
-  use_gc (gc, 0);
-  if (!f)
-    return;
 
   if (x1 != x2 && y1 != y2 && gc->cap == Square_Cap)
     {
@@ -826,6 +823,10 @@ gerber_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
       gerber_fill_polygon (gc, 5, x, y);
       return;
     }
+
+  use_gc (gc, 0);
+  if (!f)
+    return;
 
   if (x1 != lastX)
     {
