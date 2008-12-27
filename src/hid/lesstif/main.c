@@ -1,4 +1,4 @@
-/* $Id: main.c,v 1.69 2008-12-27 16:30:05 djdelorie Exp $ */
+/* $Id: main.c,v 1.70 2008-12-27 19:06:05 djdelorie Exp $ */
 /* 15 Oct 2008 Ineiev: add different crosshair shapes */
 
 #ifdef HAVE_CONFIG_H
@@ -36,7 +36,7 @@
 
 #include <sys/poll.h>
 
-RCSID ("$Id: main.c,v 1.69 2008-12-27 16:30:05 djdelorie Exp $");
+RCSID ("$Id: main.c,v 1.70 2008-12-27 19:06:05 djdelorie Exp $");
 
 #ifndef XtRDouble
 #define XtRDouble "Double"
@@ -3314,7 +3314,6 @@ lesstif_draw_arc (hidGC gc, int cx, int cy, int width, int height,
   height = Vz (height);
   cx = Vx (cx) - width;
   cy = Vy (cy) - height;
-  start_angle = (start_angle + 360 + 180) % 360 - 180;
   if (flip_x)
     {
       start_angle = 180 - start_angle;
@@ -3325,6 +3324,7 @@ lesstif_draw_arc (hidGC gc, int cx, int cy, int width, int height,
       start_angle = - start_angle;
       delta_angle = - delta_angle;					
     }
+  start_angle = (start_angle + 360 + 180) % 360 - 180;
 #if 0
   printf (" = %d,%d %dx%d %d %s\n", cx, cy, width, height, gc->width,
 	  gc->colorname);
