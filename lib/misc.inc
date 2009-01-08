@@ -22,7 +22,7 @@
 #   Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
 #   Thomas.Nau@rz.uni-ulm.de
 # 
-#   RCS: $Id: misc.inc,v 1.10 2006-10-09 00:35:24 danmc Exp $
+#   RCS: $Id: misc.inc,v 1.11 2009-01-08 12:51:38 danmc Exp $
 #
 # misc packages
 #
@@ -344,7 +344,7 @@ Element(0x00 "$1" "`$2'" "$3" eval(X2+20) eval(Y2+20) 0 100 0x00)
 #	ElementArc(X1 Y 50 50 270 180 10)
 #	ElementArc(X2 Y 50 50 90 180 10)
 
-	Mark(X1 Y1)
+	Mark(0 Y1)
 )')
 
 # -------------------------------------------------------------------
