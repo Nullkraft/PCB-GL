@@ -1,4 +1,4 @@
-/* $Id: action.c,v 1.134 2008-12-27 21:24:34 djdelorie Exp $ */
+/* $Id: action.c,v 1.135 2009-01-10 21:32:58 djdelorie Exp $ */
 /* 15 Oct 2008 Ineiev: add CycleCrosshair action */
 
 /*
@@ -75,7 +75,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: action.c,v 1.134 2008-12-27 21:24:34 djdelorie Exp $");
+RCSID ("$Id: action.c,v 1.135 2009-01-10 21:32:58 djdelorie Exp $");
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -776,7 +776,7 @@ GetFunctionID (String Ident)
 	return (-1);
       if (!strcasecmp (Ident, Functions[function_hash[i]-1].Identifier))
 	return ((int) Functions[function_hash[i]-1].ID);
-      i ++;
+      i = (i + 1) % HSIZE;
     }
 }
 
