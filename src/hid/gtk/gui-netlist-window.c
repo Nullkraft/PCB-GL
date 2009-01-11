@@ -1,4 +1,4 @@
-/* $Id: gui-netlist-window.c,v 1.16 2008-12-24 03:07:02 petercjclifton Exp $ */
+/* $Id: gui-netlist-window.c,v 1.17 2009-01-11 15:08:01 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -64,7 +64,7 @@
 
 #define NET_HIERARCHY_SEPARATOR "/"
 
-RCSID ("$Id: gui-netlist-window.c,v 1.16 2008-12-24 03:07:02 petercjclifton Exp $");
+RCSID ("$Id: gui-netlist-window.c,v 1.17 2009-01-11 15:08:01 petercjclifton Exp $");
 
 static GtkWidget	*netlist_window;
 static GtkWidget	*disable_all_button;
@@ -297,7 +297,7 @@ enum
   N_NET_COLUMNS
 };
 
-static GtkTreeModel *net_model;
+static GtkTreeModel *net_model = NULL;
 static GtkTreeView *net_treeview;
 
 static gboolean		loading_new_netlist;
@@ -862,6 +862,10 @@ ghid_get_net_from_node_name (gchar * node_name, gboolean enabled_only)
 
   while (gtk_events_pending ())	/* Make sure everything gets built */
     gtk_main_iteration ();
+
+  /* If no netlist is loaded the window doesn't appear. */
+  if (netlist_window == NULL)
+    return;
 
   task.enabled_only = enabled_only;
   task.node_name = node_name;
