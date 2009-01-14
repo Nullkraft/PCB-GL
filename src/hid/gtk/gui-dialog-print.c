@@ -1,4 +1,4 @@
-/* $Id: gui-dialog-print.c,v 1.10 2007-09-04 00:40:22 danmc Exp $ */
+/* $Id: gui-dialog-print.c,v 1.11 2009-01-14 19:56:54 djdelorie Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -42,7 +42,7 @@
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: gui-dialog-print.c,v 1.10 2007-09-04 00:40:22 danmc Exp $");
+RCSID ("$Id: gui-dialog-print.c,v 1.11 2009-01-14 19:56:54 djdelorie Exp $");
 
 static GtkWidget *export_dialog = NULL;
 
@@ -131,6 +131,8 @@ ghid_attribute_dialog (HID_Attribute * attrs,
    */
   for (j = 0; j < n_attrs; j++)
     {
+      if (attrs[j].help_text == ATTR_UNDOCUMENTED)
+	continue;
       switch (attrs[j].type)
 	{
 	case HID_Label:
