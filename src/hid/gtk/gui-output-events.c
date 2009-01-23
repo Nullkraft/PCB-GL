@@ -298,7 +298,7 @@ draw_right_cross (gint x, gint y)
   glVertex2i (x, 0);
   glVertex2i (x, gport->height);
   glVertex2i (0, y);
-  glVertex2i (gport->width,);
+  glVertex2i (gport->width, y);
 }
 
 static void
