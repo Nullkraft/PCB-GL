@@ -1,7 +1,7 @@
-Bottom: a10b94e8246c3e90f200039c1493ba70691bda3b
-Top:    a6198adad24f0656b35ea1b5f1995d27be7c9c77
+Bottom: 0929d8cb45ff0c96e10e590ad949d783dbaf5466
+Top:    0929d8cb45ff0c96e10e590ad949d783dbaf5466
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 18:52:30 +0000
+Date:   2009-01-23 19:35:30 +0000
 
 Hack around Circuit CAM / EDG brokeness reading drill files
 
@@ -12,25 +12,4 @@ Hack around Circuit CAM / EDG brokeness reading drill files
 
 ---
 
-diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index d7290be..814b3c1 100644
---- a/src/hid/gerber/gerber.c
-+++ b/src/hid/gerber/gerber.c
-@@ -462,10 +462,17 @@ gerber_set_layer (const char *name, int group)
- 	      int ap = findApertureCode (pending_drills[i].diam, ROUND);
- 	      fprintf (f, "T%02d\015\012", ap);
- 	    }
-+#ifdef EDG_ARE_BROKEN
-+	  fprintf (f, "X%06ldY%06ld\015\012",
-+		   100 * gerberX (PCB, pending_drills[i].x), 100 * gerberY (PCB,
-+								pending_drills
-+								[i].y));
-+#else
- 	  fprintf (f, "X%06ldY%06ld\015\012",
- 		   gerberX (PCB, pending_drills[i].x), gerberY (PCB,
- 								pending_drills
- 								[i].y));
-+#endif
- 	}
-       free (pending_drills);
-       n_pending_drills = max_pending_drills = 0;
+
