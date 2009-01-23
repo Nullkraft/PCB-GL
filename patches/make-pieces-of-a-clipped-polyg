@@ -1,7 +1,7 @@
-Bottom: 09f68549342a6484c4fbcf6182980f06f797462f
-Top:    b9ca1ac2486ac546e68a1153586f7c3a6bd4d99f
+Bottom: b02e57a8326a8b7425215966a242d34db4f57213
+Top:    ed088d56384d146ee2614d8eb130781427003725
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 18:54:28 +0000
+Date:   2009-01-23 19:35:17 +0000
 
 Make pieces of a clipped polygon a distinct object type
 
@@ -10,10 +10,10 @@ Make pieces of a clipped polygon a distinct object type
 ---
 
 diff --git a/src/const.h b/src/const.h
-index eeb8f15..da85cb8 100644
+index 18927b8..511b714 100644
 --- a/src/const.h
 +++ b/src/const.h
-@@ -300,6 +300,7 @@ New polygons are full ones.
+@@ -309,6 +309,7 @@ When set, element names are not drawn.
  #define ELEMENTARC_TYPE		0x08000
  
  #define LOCKED_TYPE 		0x10000	/* used to tell search to include locked items. */
@@ -38,7 +38,7 @@ index adccb53..52b16e2 100644
    polygon->NoHolesValid = 0;
    return (polygon);
 diff --git a/src/draw.c b/src/draw.c
-index 277f6d6..0314da7 100644
+index e997340..f46639a 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -100,7 +100,7 @@ static void DrawPadLowLevel (hidGC, PadTypePtr, Boolean, Boolean);
@@ -50,7 +50,7 @@ index 277f6d6..0314da7 100644
  static void DrawArcLowLevel (ArcTypePtr);
  static void DrawElementPackageLowLevel (ElementTypePtr Element, int);
  static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
-@@ -1731,50 +1731,44 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
+@@ -1727,50 +1727,44 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
   * lowlevel drawing routine for polygons
   */
  static void
@@ -127,7 +127,7 @@ index 277f6d6..0314da7 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -2118,7 +2112,9 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+@@ -2114,7 +2108,9 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
    else
      gui->set_color (Output.fgGC, Layer->Color);
    layernum = GetLayerNumber (PCB->Data, Layer);
@@ -138,7 +138,7 @@ index 277f6d6..0314da7 100644
    if (TEST_FLAG (CLEARPOLYFLAG, Polygon))
      {
        r_search (PCB->Data->pin_tree, &Polygon->BoundingBox, NULL,
-@@ -2128,6 +2124,35 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+@@ -2124,6 +2120,35 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
      }
  }
  
@@ -174,7 +174,7 @@ index 277f6d6..0314da7 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -2175,12 +2200,22 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2171,12 +2196,22 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
    if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
        && !gui->poly_dicer)
      {
@@ -199,7 +199,7 @@ index 277f6d6..0314da7 100644
        if (!Polygon->NoHolesValid)
          {
            ComputeNoHoles (Polygon);
-@@ -2191,6 +2226,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2187,6 +2222,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
            poly.Clipped = Polygon->NoHoles;
            DrawPolygonLowLevel (&poly, NULL);
          }
@@ -208,7 +208,7 @@ index 277f6d6..0314da7 100644
        /* draw other parts of the polygon if fullpoly flag is set */
        /* NB: No "NoHoles" cache for these */
        if (TEST_FLAG (FULLPOLYFLAG, Polygon))
-@@ -2203,6 +2240,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2199,6 +2236,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  	      NoHolesPolygonDicer (&poly, DrawPolygonLowLevel, NULL, clip_box);
  	    }
  	}
@@ -216,7 +216,7 @@ index 277f6d6..0314da7 100644
      }
    /* if the gui has the dicer flag set then it won't draw missing poly outlines */
  #if 0
-@@ -2496,7 +2534,8 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2494,7 +2532,8 @@ ErasePolygon (PolygonTypePtr Polygon)
  {
    Erasing++;
    gui->set_color (Output.fgGC, Settings.BackgroundColor);
@@ -239,10 +239,10 @@ index 527eff0..33c8989 100644
  void DrawElementName (ElementTypePtr, int);
  void DrawElementPackage (ElementTypePtr, int);
 diff --git a/src/find.c b/src/find.c
-index bc1879b..2cb9ed8 100644
+index c620a63..c9bc437 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -137,8 +137,13 @@ RCSID ("$Id: find.c,v 1.69 2008-03-16 14:33:58 danmc Exp $");
+@@ -137,8 +137,13 @@ RCSID ("$Id: find.c,v 1.70 2008-12-21 04:17:49 djdelorie Exp $");
  #define RATLIST_ENTRY(I)	\
  	(((RatTypePtr *)RatList.Data)[(I)])
  
@@ -1293,10 +1293,10 @@ index 590c6dc..7ff6ed4 100644
  
  #endif
 diff --git a/src/global.h b/src/global.h
-index e05a705..b565c9e 100644
+index 5016534..43a9c25 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -198,12 +198,26 @@ typedef struct
+@@ -199,12 +199,26 @@ typedef struct
    void *Element;
  } TextType, *TextTypePtr;
  
@@ -1343,10 +1343,10 @@ index bd2af7e..4bc1f92 100644
  
  #define	ALLPIN_LOOP(top)	\
 diff --git a/src/mymem.c b/src/mymem.c
-index b0258e9..64e5f9e 100644
+index 7a907b0..369f8d9 100644
 --- a/src/mymem.c
 +++ b/src/mymem.c
-@@ -450,6 +450,28 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
+@@ -459,6 +459,28 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -1375,7 +1375,7 @@ index b0258e9..64e5f9e 100644
   * get next slot for an element, allocates memory if necessary
   */
  ElementTypePtr
-@@ -725,8 +747,10 @@ FreePolygonMemory (PolygonTypePtr Polygon)
+@@ -734,8 +756,10 @@ FreePolygonMemory (PolygonTypePtr Polygon)
    if (Polygon)
      {
        MYFREE (Polygon->Points);
@@ -1409,10 +1409,10 @@ index b9ca439..d78e3af 100644
  BoxTypePtr GetBoxMemory (BoxListTypePtr);
  ConnectionTypePtr GetConnectionMemory (NetTypePtr);
 diff --git a/src/polygon.c b/src/polygon.c
-index cefbab1..af96339 100644
+index e2a7209..4718161 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -77,6 +77,7 @@ static double circleVerticies[] = {
+@@ -122,6 +122,7 @@ static double circleVerticies[] = {
    0.98480775301221, 0.17364817766693,
  };
  
@@ -1420,7 +1420,7 @@ index cefbab1..af96339 100644
  static void
  add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
  {
-@@ -106,10 +107,13 @@ add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
+@@ -151,10 +152,13 @@ add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
  
    poly->NoHoles = new_area;
  }
@@ -1434,7 +1434,7 @@ index cefbab1..af96339 100644
    if (poly->NoHoles)
      poly_Free (&poly->NoHoles);
    poly->NoHoles = NULL;
-@@ -117,53 +121,8 @@ ComputeNoHoles (PolygonType *poly)
+@@ -162,53 +166,8 @@ ComputeNoHoles (PolygonType *poly)
      NoHolesPolygonDicer (poly, add_noholes_polyarea, poly, NULL);
    else
      printf ("Compute_noholes caught poly->Clipped = NULL\n");
@@ -1489,7 +1489,7 @@ index cefbab1..af96339 100644
  }
  
  POLYAREA *
-@@ -1510,6 +1469,19 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1555,6 +1514,19 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
  }
  
  Boolean
@@ -1509,7 +1509,7 @@ index cefbab1..af96339 100644
  isects (POLYAREA * a, PolygonTypePtr p, Boolean fr)
  {
    POLYAREA *x;
-@@ -1542,12 +1514,12 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
+@@ -1587,12 +1559,12 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
  
  
  Boolean
@@ -1524,7 +1524,7 @@ index cefbab1..af96339 100644
  }
  
  Boolean
-@@ -1638,6 +1610,8 @@ void
+@@ -1683,6 +1655,8 @@ void
  NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
                       void *user_data, const BoxType * clip)
  {
@@ -1533,7 +1533,7 @@ index cefbab1..af96339 100644
    POLYAREA *save, *ans;
  
    /* Copy all of the original polgon */
-@@ -1670,12 +1644,16 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
+@@ -1715,12 +1689,16 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
        free (prev);
      }
    while (save != ans);
@@ -1550,12 +1550,14 @@ index cefbab1..af96339 100644
    POLYAREA *p, *start;
    Boolean many = False;
    FlagType flags;
-@@ -1739,4 +1717,5 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+@@ -1784,6 +1762,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
    inhibit = False;
    IncrementUndoSerialNumber ();
    return many;
 +#endif
  }
+ 
+ void debug_pline (PLINE *pl)
 diff --git a/src/polygon.h b/src/polygon.h
 index c67d574..681bd7f 100644
 --- a/src/polygon.h

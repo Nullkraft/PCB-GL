@@ -1,7 +1,7 @@
-Bottom: 7fddd4a844d146108887342fc2e5900194acdb07
-Top:    09f68549342a6484c4fbcf6182980f06f797462f
+Bottom: 85c8211c4a93f95f7a37dbd985f9c7ca59ae8758
+Top:    b02e57a8326a8b7425215966a242d34db4f57213
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 18:54:28 +0000
+Date:   2009-01-23 19:35:17 +0000
 
 Keep all pieces of a divided polygon.
 
@@ -14,10 +14,10 @@ Keep all pieces of a divided polygon.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 624ccba..277f6d6 100644
+index 44b7f24..e997340 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -1733,7 +1733,8 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
+@@ -1729,7 +1729,8 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
  static void
  DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
  {
@@ -27,7 +27,7 @@ index 624ccba..277f6d6 100644
    PLINE *pl;
    VNODE *v;
    if (!Polygon->Clipped)
-@@ -1743,31 +1744,37 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
+@@ -1739,31 +1740,37 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
        AddPart (Polygon);
        return;
      }
@@ -88,7 +88,7 @@ index 624ccba..277f6d6 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -2182,10 +2189,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2178,10 +2185,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
          {
            PolygonType poly = *Polygon;
            poly.Clipped = Polygon->NoHoles;
@@ -100,7 +100,7 @@ index 624ccba..277f6d6 100644
          }
        /* draw other parts of the polygon if fullpoly flag is set */
        /* NB: No "NoHoles" cache for these */
-@@ -2201,6 +2205,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2197,6 +2201,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  	}
      }
    /* if the gui has the dicer flag set then it won't draw missing poly outlines */
@@ -108,7 +108,7 @@ index 624ccba..277f6d6 100644
    if (TEST_FLAG (CHECKPLANESFLAG, PCB) && Polygon->Clipped && !Gathering
        && !gui->poly_dicer)
      {
-@@ -2230,6 +2235,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2226,6 +2231,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  	  free (y);
  	}
      }
@@ -117,7 +117,7 @@ index 624ccba..277f6d6 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/find.c b/src/find.c
-index 2716fe6..bc1879b 100644
+index f1a9a11..c620a63 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -2467,23 +2467,29 @@ Boolean
@@ -302,10 +302,10 @@ index 2716fe6..bc1879b 100644
            (polygon->Clipped->contours->xmin +
             polygon->Clipped->contours->xmax) / 2;
 diff --git a/src/polygon.c b/src/polygon.c
-index 5f6893d..cefbab1 100644
+index 80f4cb4..e2a7209 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -121,7 +121,7 @@ ComputeNoHoles (PolygonType *poly)
+@@ -166,7 +166,7 @@ ComputeNoHoles (PolygonType *poly)
  }
  
  static POLYAREA *
@@ -314,7 +314,7 @@ index 5f6893d..cefbab1 100644
  {
    POLYAREA *n, *top = NULL;
    PLINE *pl;
-@@ -221,7 +221,7 @@ original_poly (PolygonType * p)
+@@ -266,7 +266,7 @@ original_poly (PolygonType * p)
      return NULL;
    poly_InclContour (np, contour);
    assert (poly_Valid (np));
@@ -323,7 +323,7 @@ index 5f6893d..cefbab1 100644
  }
  
  static int
-@@ -241,7 +241,7 @@ ClipOriginal (PolygonType * poly)
+@@ -286,7 +286,7 @@ ClipOriginal (PolygonType * poly)
        poly->NoHoles = NULL;
        return 0;
      }
@@ -332,7 +332,7 @@ index 5f6893d..cefbab1 100644
    assert (!poly->Clipped || poly_Valid (poly->Clipped));
    return 1;
  }
-@@ -616,7 +616,7 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
+@@ -661,7 +661,7 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
        p->NoHoles = NULL;
        return -1;
      }
@@ -341,7 +341,7 @@ index 5f6893d..cefbab1 100644
    assert (!p->Clipped || poly_Valid (p->Clipped));
    if (!p->Clipped)
      Message ("Polygon cleared out of existence near (%d, %d)\n",
-@@ -946,7 +946,7 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
+@@ -991,7 +991,7 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
        p->NoHoles = NULL;
        return 0;
      }
@@ -350,7 +350,7 @@ index 5f6893d..cefbab1 100644
    assert (!p->Clipped || poly_Valid (p->Clipped));
    return ClipOriginal (p);
  }
-@@ -1531,7 +1531,7 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
+@@ -1576,7 +1576,7 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
    Vector v;
    v[0] = X;
    v[1] = Y;
@@ -359,7 +359,7 @@ index 5f6893d..cefbab1 100644
      return True;
    if (r < 1)
      return False;
-@@ -1640,9 +1640,10 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
+@@ -1685,9 +1685,10 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
  {
    POLYAREA *save, *ans;
  
