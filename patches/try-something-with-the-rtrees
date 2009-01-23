@@ -1,7 +1,7 @@
-Bottom: 89087e7b16ef599601a2976b619657fc746a6bfa
-Top:    6750aea778e78046d7578b95f4b5a6057a38384a
+Bottom: 2c752598c28eaf35a2f049e953342fe3b7d36ede
+Top:    6effb785fa7fa8be2e9653ead5f89562c6a6b848
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 18:21:40 +0000
+Date:   2009-01-23 18:51:03 +0000
 
 Try optimising polygon operations by keeping an rtree with their contours
 
@@ -18,7 +18,7 @@ its existance as well.
 ---
 
 diff --git a/src/global.h b/src/global.h
-index 9474d7c..3422551 100644
+index dc24755..ad3f9be 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -39,7 +39,6 @@
