@@ -1,7 +1,7 @@
-Bottom: 47190a628a26f9874af99ccf964d995ec6999619
-Top:    bd641365d64e8a379efa0d60d64b543159337f01
+Bottom: d3709bd3194dd4fb9f86c1c080fd9e09715438a6
+Top:    16249d85b7de79da37c613b92dc0f12d45320467
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 19:13:46 +0000
+Date:   2009-01-23 19:24:23 +0000
 
 Off to find burried treasure on polygon island
 
@@ -121,10 +121,10 @@ index eed1fd4..d93ea7c 100644
    DrawVia (Via, 0);
    Draw ();
 diff --git a/src/draw.c b/src/draw.c
-index 4ab6145..e087df2 100644
+index 30e515b..8143cea 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2251,6 +2251,10 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
+@@ -2247,6 +2247,10 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  static void
  DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  {
@@ -136,7 +136,7 @@ index 4ab6145..e087df2 100644
      {
        if (TEST_FLAG (SELECTEDFLAG, Polygon))
 diff --git a/src/find.c b/src/find.c
-index 7a10eb1..2f8df52 100644
+index 5b89720..1224d7e 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -2480,6 +2480,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
@@ -508,7 +508,7 @@ index f04e342..559f20e 100644
  
  #endif /* __POUR_INCLUDED__ */
 diff --git a/src/search.c b/src/search.c
-index 82e863f..2546ba9 100644
+index 87dbf20..f9bad1d 100644
 --- a/src/search.c
 +++ b/src/search.c
 @@ -466,7 +466,7 @@ SearchPolygonByLocation (int locked, LayerTypePtr * Layer,

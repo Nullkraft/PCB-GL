@@ -1,7 +1,7 @@
-Bottom: e6eef48d89cc85cda57b2710238740a8dc429f93
-Top:    cd69b66053ba524a76809b3a8a9e58d205e0d438
+Bottom: 2e2bc8ef2ca1d5fe340de65c940b9b9c88c4927f
+Top:    75d04c727ce0df9d5a39f5dd2b1c6053b508f227
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 19:13:47 +0000
+Date:   2009-01-23 19:24:24 +0000
 
 Try optimising polygon operations by keeping an rtree with their contours
 
@@ -76,10 +76,10 @@ index 42acc1a..ee185a9 100644
  
  BOOLp poly_M_Copy0(POLYAREA ** dst, const POLYAREA * srcfst);
 diff --git a/src/polygon.c b/src/polygon.c
-index bd35b74..b2d9d93 100644
+index e66bf86..1e23a2e 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -83,10 +83,12 @@ add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
+@@ -128,10 +128,12 @@ add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
    POLYAREA *new_area;
  
    new_area = malloc (sizeof (POLYAREA) * 1);
@@ -92,7 +92,7 @@ index bd35b74..b2d9d93 100644
  
    /* Link the new POLYAREA into the NoHoles circularaly linked list */
    if (poly->NoHoles)
-@@ -905,14 +907,23 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
+@@ -950,14 +952,23 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
  }
  
  static void
@@ -119,7 +119,7 @@ index bd35b74..b2d9d93 100644
      {
        PolygonType poly;
  //      PointType pts[4];
-@@ -952,30 +963,33 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *u
+@@ -997,30 +1008,33 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *u
        poly_AndSubtract_free (pa, poly2, &left, &right);
        if (left)
          {
@@ -167,7 +167,7 @@ index bd35b74..b2d9d93 100644
          }
      }
  }
-@@ -1006,13 +1020,15 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
+@@ -1051,13 +1065,15 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
    /* now dice it up */
    do
      {

@@ -1,7 +1,7 @@
-Bottom: b1e2eb8e69b864e29fd24598588086fc6f1cdd69
-Top:    88f373378a2b75baef072c2002506f418cbc46e7
+Bottom: 85c8211c4a93f95f7a37dbd985f9c7ca59ae8758
+Top:    180cdcc64db4ab4d941873261e56f60d45578a5e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 19:13:46 +0000
+Date:   2009-01-23 19:24:23 +0000
 
 Add support for a "poured" object.
 
@@ -44,7 +44,7 @@ index bd10933..c98b2e4 100755
  						/* an element */
  #define	MAX_LIBRARY_LINE_LENGTH		255	/* maximum line length in the */
 diff --git a/src/Makefile.am b/src/Makefile.am
-index e9491bb..8bdde0d 100644
+index 8109894..1c600a3 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -104,6 +104,8 @@ PCB_SRCS = \
@@ -57,7 +57,7 @@ index e9491bb..8bdde0d 100644
  	print.c \
  	print.h \
 diff --git a/src/action.c b/src/action.c
-index 01ab855..48865bb 100644
+index c90738f..8ec66c3 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -58,6 +58,7 @@
@@ -77,7 +77,7 @@ index 01ab855..48865bb 100644
    F_PreviousPoint,
    F_RatsNest,
    F_Rectangle,
-@@ -286,7 +287,7 @@ static PointType InsertedPoint;
+@@ -287,7 +288,7 @@ static PointType InsertedPoint;
  static LayerTypePtr lastLayer;
  static struct
  {
@@ -86,7 +86,7 @@ index 01ab855..48865bb 100644
    LineType line;
  }
  fake;
-@@ -366,7 +367,7 @@ static FunctionType Functions[] = {
+@@ -367,7 +368,7 @@ static FunctionType Functions[] = {
    {"PinByName", F_PinByName},
    {"PinOrPadName", F_PinOrPadName},
    {"Pinout", F_Pinout},
@@ -95,7 +95,7 @@ index 01ab855..48865bb 100644
    {"PreviousPoint", F_PreviousPoint},
    {"RatsNest", F_RatsNest},
    {"Rectangle", F_Rectangle},
-@@ -827,8 +828,8 @@ AdjustAttachedObjects (void)
+@@ -829,8 +830,8 @@ AdjustAttachedObjects (void)
        AdjustAttachedBox ();
        break;
  
@@ -106,7 +106,7 @@ index 01ab855..48865bb 100644
        AdjustAttachedLine ();
        break;
        /* line creation mode */
-@@ -1337,12 +1338,12 @@ NotifyMode (void)
+@@ -1339,12 +1340,12 @@ NotifyMode (void)
  	  Crosshair.AttachedBox.Point1.X != Crosshair.AttachedBox.Point2.X &&
  	  Crosshair.AttachedBox.Point1.Y != Crosshair.AttachedBox.Point2.Y)
  	{
@@ -121,7 +121,7 @@ index 01ab855..48865bb 100644
  							Crosshair.
  							AttachedBox.Point1.X,
  							Crosshair.
-@@ -1355,10 +1356,10 @@ NotifyMode (void)
+@@ -1357,10 +1358,10 @@ NotifyMode (void)
  							(flags))) !=
  	      NULL)
  	    {
@@ -135,7 +135,7 @@ index 01ab855..48865bb 100644
  	      Draw ();
  	    }
  
-@@ -1398,10 +1399,10 @@ NotifyMode (void)
+@@ -1400,10 +1401,10 @@ NotifyMode (void)
  	break;
        }
  
@@ -149,7 +149,7 @@ index 01ab855..48865bb 100644
  
  	/* do update of position; use the 'LINE_MODE' mechanism */
  	NotifyLine ();
-@@ -1411,7 +1412,7 @@ NotifyMode (void)
+@@ -1413,7 +1414,7 @@ NotifyMode (void)
  	    points->X == Crosshair.AttachedLine.Point2.X &&
  	    points->Y == Crosshair.AttachedLine.Point2.Y)
  	  {
@@ -158,7 +158,7 @@ index 01ab855..48865bb 100644
  	    Draw ();
  	    break;
  	  }
-@@ -1423,9 +1424,9 @@ NotifyMode (void)
+@@ -1425,9 +1426,9 @@ NotifyMode (void)
  	    points[n - 1].X != Crosshair.AttachedLine.Point2.X ||
  	    points[n - 1].Y != Crosshair.AttachedLine.Point2.Y)
  	  {
@@ -171,7 +171,7 @@ index 01ab855..48865bb 100644
  
  	    /* copy the coordinates */
  	    Crosshair.AttachedLine.Point1.X = Crosshair.AttachedLine.Point2.X;
-@@ -1616,17 +1617,15 @@ NotifyMode (void)
+@@ -1618,17 +1619,15 @@ NotifyMode (void)
  	      else
  		{
  		  /* get starting point of nearest segment */
@@ -195,7 +195,7 @@ index 01ab855..48865bb 100644
  		      Crosshair.AttachedObject.Ptr2 = &fake.line;
  
  		    }
-@@ -1638,9 +1637,9 @@ NotifyMode (void)
+@@ -1640,9 +1639,9 @@ NotifyMode (void)
  
  	  /* second notify, insert new point into object */
  	case STATE_SECOND:
@@ -208,7 +208,7 @@ index 01ab855..48865bb 100644
  				   &polyIndex,
  				   InsertedPoint.X, InsertedPoint.Y, False);
  	  else
-@@ -2983,13 +2982,13 @@ ActionMode (int argc, char **argv, int x, int y)
+@@ -2992,13 +2991,13 @@ ActionMode (int argc, char **argv, int x, int y)
  		  }
  		break;
  	  
@@ -224,7 +224,7 @@ index 01ab855..48865bb 100644
  		  }
  		break;
  
-@@ -3018,8 +3017,8 @@ ActionMode (int argc, char **argv, int x, int y)
+@@ -3027,8 +3026,8 @@ ActionMode (int argc, char **argv, int x, int y)
  	case F_PasteBuffer:
  	  SetMode (PASTEBUFFER_MODE);
  	  break;
@@ -235,7 +235,7 @@ index 01ab855..48865bb 100644
  	  break;
  #ifndef HAVE_LIBSTROKE
  	case F_Release:
-@@ -3063,9 +3062,9 @@ ActionMode (int argc, char **argv, int x, int y)
+@@ -3072,9 +3071,9 @@ ActionMode (int argc, char **argv, int x, int y)
  	  else if (Settings.Mode == RECTANGLE_MODE
  		   && Crosshair.AttachedBox.State != STATE_FIRST)
  	    SetMode (RECTANGLE_MODE);
@@ -247,7 +247,7 @@ index 01ab855..48865bb 100644
  	  else
  	    {
  	      SaveMode ();
-@@ -4437,6 +4436,9 @@ off are automatically deleted.
+@@ -4552,6 +4551,9 @@ off are automatically deleted.
  static int
  ActionMorphPolygon (int argc, char **argv, int x, int y)
  {
@@ -257,7 +257,7 @@ index 01ab855..48865bb 100644
    char *function = ARG (0);
    if (function)
      {
-@@ -4472,6 +4474,7 @@ ActionMorphPolygon (int argc, char **argv, int x, int y)
+@@ -4587,6 +4589,7 @@ ActionMorphPolygon (int argc, char **argv, int x, int y)
  	}
      }
    return 0;
@@ -265,7 +265,7 @@ index 01ab855..48865bb 100644
  }
  
  /* --------------------------------------------------------------------------- */
-@@ -5966,9 +5969,9 @@ ActionUndo (int argc, char **argv, int x, int y)
+@@ -6081,9 +6084,9 @@ ActionUndo (int argc, char **argv, int x, int y)
        /* undo the last operation */
  
        HideCrosshair (True);
@@ -277,7 +277,7 @@ index 01ab855..48865bb 100644
  	  RestoreCrosshair (True);
  	  return 0;
  	}
-@@ -6128,8 +6131,8 @@ three "undone" lines.
+@@ -6243,8 +6246,8 @@ three "undone" lines.
  static int
  ActionRedo (int argc, char **argv, int x, int y)
  {
@@ -288,7 +288,7 @@ index 01ab855..48865bb 100644
        Crosshair.AttachedLine.State == STATE_SECOND)
      return 1;
    HideCrosshair (True);
-@@ -6179,19 +6182,19 @@ static int
+@@ -6294,19 +6297,19 @@ static int
  ActionPolygon (int argc, char **argv, int x, int y)
  {
    char *function = ARG (0);
@@ -1505,7 +1505,7 @@ index 9d27833..19b6f03 100644
  #define CHANGETHERMAL_TYPES	\
  	(PIN_TYPE | VIA_TYPE)
 diff --git a/src/const.h b/src/const.h
-index eeb8f15..2d48979 100644
+index 18927b8..bfb0ede 100644
 --- a/src/const.h
 +++ b/src/const.h
 @@ -78,7 +78,8 @@
@@ -1518,7 +1518,7 @@ index eeb8f15..2d48979 100644
  #define	PASTEBUFFER_MODE	5	/* paste objects from buffer */
  #define	TEXT_MODE		6	/* create text objects */
  #define	ROTATE_MODE		102	/* rotate objects */
-@@ -293,17 +294,20 @@ New polygons are full ones.
+@@ -302,17 +303,20 @@ When set, element names are not drawn.
  #define	PIN_TYPE		0x00100	/* objects that are part */
  #define	PAD_TYPE		0x00200	/* 'pin' of SMD element */
  #define	ELEMENTNAME_TYPE	0x00400	/* of others */
@@ -1959,7 +1959,7 @@ index 403ff4a..9e4be3e 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index 624ccba..4ab6145 100644
+index 44b7f24..30e515b 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -101,6 +101,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
@@ -1970,7 +1970,7 @@ index 624ccba..4ab6145 100644
  static void DrawArcLowLevel (ArcTypePtr);
  static void DrawElementPackageLowLevel (ElementTypePtr Element, int);
  static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
-@@ -672,6 +673,7 @@ struct pin_info
+@@ -668,6 +669,7 @@ struct pin_info
  {
    Boolean arg;
    LayerTypePtr Layer;
@@ -1978,7 +1978,7 @@ index 624ccba..4ab6145 100644
  };
  
  static int
-@@ -683,12 +685,31 @@ clearPin_callback (const BoxType * b, void *cl)
+@@ -679,12 +681,31 @@ clearPin_callback (const BoxType * b, void *cl)
      ClearOnlyPin (pin, True);
    return 1;
  }
@@ -2010,7 +2010,7 @@ index 624ccba..4ab6145 100644
    return 1;
  }
  
-@@ -782,6 +803,7 @@ DrawMask (BoxType * screen)
+@@ -778,6 +799,7 @@ DrawMask (BoxType * screen)
    OutputType *out = &Output;
  
    info.arg = True;
@@ -2018,7 +2018,7 @@ index 624ccba..4ab6145 100644
  
    if (thin)
      gui->set_color (Output.pmGC, PCB->MaskColor);
-@@ -888,8 +910,9 @@ DrawLayer (LayerTypePtr Layer, BoxType * screen)
+@@ -884,8 +906,9 @@ DrawLayer (LayerTypePtr Layer, BoxType * screen)
    /* print the non-clearing polys */
    info.Layer = Layer;
    info.arg = False;
@@ -2029,7 +2029,7 @@ index 624ccba..4ab6145 100644
  
    /* draw all visible lines this layer */
    r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
-@@ -943,13 +966,13 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -939,13 +962,13 @@ DrawLayerGroup (int group, const BoxType * screen)
            gui->use_mask (HID_MASK_BEFORE);
  #endif
  
@@ -2047,7 +2047,7 @@ index 624ccba..4ab6145 100644
  	      info.arg = False;
  	    }
  
-@@ -1771,6 +1794,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
+@@ -1767,6 +1790,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2096,7 +2096,7 @@ index 624ccba..4ab6145 100644
   * lowlevel routine to element arcs
   */
  static void
-@@ -2121,6 +2186,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+@@ -2117,6 +2182,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
      }
  }
  
@@ -2134,7 +2134,7 @@ index 624ccba..4ab6145 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -2495,6 +2591,18 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2493,6 +2589,18 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2153,7 +2153,7 @@ index 624ccba..4ab6145 100644
   * erases an element
   */
  void
-@@ -2581,6 +2689,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -2579,6 +2687,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2163,7 +2163,7 @@ index 624ccba..4ab6145 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -2628,6 +2739,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
+@@ -2626,6 +2737,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2, 0);
        break;
@@ -2228,7 +2228,7 @@ index 17520e0..fb1c923 100644
  		fputs ("\n\t\t", FP);
  	      fprintf (FP, "[%i %i] ", (int) point->X, (int) point->Y);
 diff --git a/src/find.c b/src/find.c
-index 2716fe6..f49efbf 100644
+index f1a9a11..07c0f9f 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -540,6 +540,7 @@ void
@@ -2549,10 +2549,10 @@ index 590c6dc..5133bf7 100644
  Boolean LineLineIntersect (LineTypePtr, LineTypePtr);
  Boolean LineArcIntersect (LineTypePtr, ArcTypePtr);
 diff --git a/src/flags.c b/src/flags.c
-index 107310d..92c7d92 100644
+index 81ba072..c1986ea 100644
 --- a/src/flags.c
 +++ b/src/flags.c
-@@ -135,7 +135,8 @@ HID_Flag flags_flag_list[] = {
+@@ -191,7 +191,8 @@ HID_Flag flags_flag_list[] = {
    {"lockmode", FlagMode, LOCK_MODE},
    {"movemode", FlagMode, MOVE_MODE},
    {"pastebuffermode", FlagMode, PASTEBUFFER_MODE},
@@ -2682,10 +2682,10 @@ index 5016534..cd4d1a1 100644
    void *(*Rat) (RatTypePtr);
  } ObjectFunctionType, *ObjectFunctionTypePtr;
 diff --git a/src/gpcb-menu.res b/src/gpcb-menu.res
-index a429f6d..450af38 100644
+index 2dcf4b8..4274dd0 100644
 --- a/src/gpcb-menu.res
 +++ b/src/gpcb-menu.res
-@@ -493,7 +493,7 @@ PopupMenus =
+@@ -494,7 +494,7 @@ PopupMenus =
         {"Arc" checked=arcmode,1 Mode(Arc) a={"F3" "<Key>F3"}}
         {"Text" checked=textmode,1 Mode(Text) a={"F4" "<Key>F4"}}
         {"Rectangle" checked=rectanglemode,1 Mode(Rectangle) a={"F5" "<Key>F5"}}
@@ -2695,10 +2695,10 @@ index a429f6d..450af38 100644
         {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
         {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index d7290be..a016217 100644
+index 54c7f4a..f2d4e1e 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
-@@ -362,7 +362,7 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -382,7 +382,7 @@ gerber_do_export (HID_Attr_Val * options)
    for (i = 0; i < max_layer; i++)
      {
        LayerType *layer = PCB->Data->Layer + i;
@@ -2734,7 +2734,7 @@ index dad837c..ea01a87 100644
        break;
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 1be5dc2..d7d0df8 100644
+index 9bb2504..e6359ea 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -267,7 +267,7 @@ have_crosshair_attachments (void)
@@ -2795,10 +2795,10 @@ index f38d580..5f5703b 100644
  
  			/*
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 886321c..393e996 100644
+index 5c1ca38..348e788 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
-@@ -286,7 +286,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -299,7 +299,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
    for (i = 0; i < max_layer; i++)
      {
        LayerType *layer = PCB->Data->Layer + i;
@@ -2808,7 +2808,7 @@ index 886321c..393e996 100644
      }
    print_group[GetLayerGroupNumberByNumber (max_layer)] = 1;
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index 41ebc3f..6d8174b 100644
+index 58db40b..08de846 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
 @@ -149,7 +149,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
@@ -2821,7 +2821,7 @@ index 41ebc3f..6d8174b 100644
      }
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 11aba09..455a25a 100644
+index 60e480a..febf47d 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -373,7 +373,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
@@ -3079,7 +3079,7 @@ index 51098e8..bf37b89 100644
 +  ClearFromPours (Data, ELEMENT_TYPE, Element, Element);
  }
 diff --git a/src/misc.c b/src/misc.c
-index de3a305..15e9699 100644
+index 196d1eb..a8a29e1 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -65,6 +65,7 @@
@@ -3677,10 +3677,10 @@ index e6e40a4..c1b1f6b 100644
  
  /* index is 0..MAX_LAYER-1.  If old_index is -1, a new layer is
 diff --git a/src/mymem.c b/src/mymem.c
-index b0258e9..f3b5e05 100644
+index 7a907b0..8ad864a 100644
 --- a/src/mymem.c
 +++ b/src/mymem.c
-@@ -399,32 +399,61 @@ GetTextMemory (LayerTypePtr Layer)
+@@ -408,32 +408,61 @@ GetTextMemory (LayerTypePtr Layer)
  }
  
  /* ---------------------------------------------------------------------------
@@ -3757,7 +3757,7 @@ index b0258e9..f3b5e05 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -434,6 +463,9 @@ GetPolygonMemory (LayerTypePtr Layer)
+@@ -443,6 +472,9 @@ GetPolygonMemory (LayerTypePtr Layer)
  PointTypePtr
  GetPointMemoryInPolygon (PolygonTypePtr Polygon)
  {
@@ -3767,7 +3767,7 @@ index b0258e9..f3b5e05 100644
    PointTypePtr points = Polygon->Points;
  
    /* realloc new memory if necessary and clear it */
-@@ -447,6 +479,29 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
+@@ -456,6 +488,29 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
  	      STEP_POLYGONPOINT * sizeof (PointType));
      }
    return (points + Polygon->PointN++);
@@ -3797,7 +3797,7 @@ index b0258e9..f3b5e05 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -724,7 +779,7 @@ FreePolygonMemory (PolygonTypePtr Polygon)
+@@ -733,7 +788,7 @@ FreePolygonMemory (PolygonTypePtr Polygon)
  {
    if (Polygon)
      {
@@ -3806,7 +3806,7 @@ index b0258e9..f3b5e05 100644
        if (Polygon->Clipped)
  	poly_Free (&Polygon->Clipped);
        if (Polygon->NoHoles)
-@@ -734,6 +789,26 @@ FreePolygonMemory (PolygonTypePtr Polygon)
+@@ -743,6 +798,26 @@ FreePolygonMemory (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -3833,7 +3833,7 @@ index b0258e9..f3b5e05 100644
   * frees memory used by a box list
   */
  void
-@@ -897,20 +972,31 @@ FreeDataMemory (DataTypePtr Data)
+@@ -906,20 +981,31 @@ FreeDataMemory (DataTypePtr Data)
  	  MYFREE (layer->Line);
  	  MYFREE (layer->Arc);
  	  MYFREE (layer->Text);
@@ -3903,7 +3903,7 @@ index b9ca439..202c6c6 100644
  void FreePCBMemory (PCBTypePtr);
  void FreeBoxListMemory (BoxListTypePtr);
 diff --git a/src/parse_y.y b/src/parse_y.y
-index 1028bc2..30f23bd 100644
+index d2b3fe0..15256f6 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
 @@ -52,6 +52,7 @@
@@ -3915,7 +3915,7 @@ index 1028bc2..30f23bd 100644
  #include "rtree.h"
  #include "strflags.h"
 @@ -64,7 +65,7 @@
- RCSID("$Id: parse_y.y,v 1.43 2008-03-16 14:33:59 danmc Exp $");
+ RCSID("$Id: parse_y.y,v 1.44 2008-12-27 19:02:23 djdelorie Exp $");
  
  static	LayerTypePtr	Layer;
 -static	PolygonTypePtr	Polygon;
@@ -3992,10 +3992,10 @@ index 1028bc2..30f23bd 100644
  		|
  		;
 diff --git a/src/pcb-menu.res b/src/pcb-menu.res
-index 302274c..c0836a2 100644
+index 5186183..6b5b0c4 100644
 --- a/src/pcb-menu.res
 +++ b/src/pcb-menu.res
-@@ -167,7 +167,7 @@ MainMenu =
+@@ -168,7 +168,7 @@ MainMenu =
     {"Arc" checked=arcmode,1 Mode(Arc) a={"F3" "<Key>F3"}}
     {"Text" checked=textmode,1 Mode(Text) a={"F4" "<Key>F4"}}
     {"Rectangle" checked=rectanglemode,1 Mode(Rectangle) a={"F5" "<Key>F5"}}
@@ -4005,10 +4005,10 @@ index 302274c..c0836a2 100644
     {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
     {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/polygon.c b/src/polygon.c
-index 5f6893d..bd35b74 100644
+index 80f4cb4..e66bf86 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -65,8 +65,6 @@ RCSID ("$Id: polygon.c,v 1.62 2008-09-30 22:40:13 petercjclifton Exp $");
+@@ -110,8 +110,6 @@ RCSID ("$Id: polygon.c,v 1.63 2008-12-30 03:18:12 djdelorie Exp $");
  
  #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
  
@@ -4017,7 +4017,7 @@ index 5f6893d..bd35b74 100644
  /* ---------------------------------------------------------------------------
   * local prototypes
   */
-@@ -120,6 +118,7 @@ ComputeNoHoles (PolygonType *poly)
+@@ -165,6 +163,7 @@ ComputeNoHoles (PolygonType *poly)
    poly->NoHolesValid = 1;
  }
  
@@ -4025,7 +4025,7 @@ index 5f6893d..bd35b74 100644
  static POLYAREA *
  biggest (POLYAREA * p)
  {
-@@ -165,12 +164,14 @@ biggest (POLYAREA * p)
+@@ -210,12 +209,14 @@ biggest (POLYAREA * p)
    assert (p->b);
    return p;
  }
@@ -4040,7 +4040,7 @@ index 5f6893d..bd35b74 100644
    assert (contour->Flags.orient == PLF_DIR);
    if (!(p = poly_Create ()))
      return NULL;
-@@ -179,14 +180,17 @@ ContourToPoly (PLINE * contour)
+@@ -224,14 +225,17 @@ ContourToPoly (PLINE * contour)
    return p;
  }
  
@@ -4060,7 +4060,7 @@ index 5f6893d..bd35b74 100644
    POLYGONPOINT_LOOP (p);
    {
      v[0] = point->X;
-@@ -223,9 +227,11 @@ original_poly (PolygonType * p)
+@@ -268,9 +272,11 @@ original_poly (PolygonType * p)
    assert (poly_Valid (np));
    return biggest (np);
  }
@@ -4073,7 +4073,7 @@ index 5f6893d..bd35b74 100644
  {
    POLYAREA *p, *result;
    int r;
-@@ -241,10 +247,12 @@ ClipOriginal (PolygonType * poly)
+@@ -286,10 +292,12 @@ ClipOriginal (PolygonType * poly)
        poly->NoHoles = NULL;
        return 0;
      }
@@ -4087,7 +4087,7 @@ index 5f6893d..bd35b74 100644
  
  POLYAREA *
  RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2)
-@@ -583,6 +591,8 @@ SquarePadPoly (PadType * pad, BDimension clear)
+@@ -628,6 +636,8 @@ SquarePadPoly (PadType * pad, BDimension clear)
    return np;
  }
  
@@ -4096,7 +4096,7 @@ index 5f6893d..bd35b74 100644
  /* clear np1 from the polygon */
  static int
  Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
-@@ -616,7 +626,9 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
+@@ -661,7 +671,9 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
        p->NoHoles = NULL;
        return -1;
      }
@@ -4107,7 +4107,7 @@ index 5f6893d..bd35b74 100644
    assert (!p->Clipped || poly_Valid (p->Clipped));
    if (!p->Clipped)
      Message ("Polygon cleared out of existence near (%d, %d)\n",
-@@ -624,6 +636,7 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
+@@ -669,6 +681,7 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
               (p->BoundingBox.Y1 + p->BoundingBox.Y2) / 2);
    return 1;
  }
@@ -4115,7 +4115,7 @@ index 5f6893d..bd35b74 100644
  
  /* create a polygon of the pin clearance */
  POLYAREA *
-@@ -655,416 +668,17 @@ BoxPolyBloated (BoxType *box, BDimension bloat)
+@@ -700,416 +713,17 @@ BoxPolyBloated (BoxType *box, BDimension bloat)
                     box->Y1 - bloat, box->Y2 + bloat);
  }
  
@@ -4539,7 +4539,7 @@ index 5f6893d..bd35b74 100644
    if (inhibit)
      return 0;
    if (p->Clipped)
-@@ -1081,205 +695,7 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
+@@ -1126,205 +740,7 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
    else
      p->NoHolesValid = 0;
    return 1;
@@ -4746,7 +4746,7 @@ index 5f6893d..bd35b74 100644
  }
  
  /* find polygon holes in range, then call the callback function for
-@@ -1323,68 +739,14 @@ struct plow_info
+@@ -1368,68 +784,14 @@ struct plow_info
  };
  
  static int
@@ -4821,7 +4821,7 @@ index 5f6893d..bd35b74 100644
    return 0;
  }
  
-@@ -1392,12 +754,10 @@ static int
+@@ -1437,12 +799,10 @@ static int
  plow_callback (const BoxType * b, void *cl)
  {
    struct plow_info *plow = (struct plow_info *) cl;
@@ -4837,7 +4837,7 @@ index 5f6893d..bd35b74 100644
  }
  
  int
-@@ -1424,8 +784,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1469,8 +829,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
            LAYER_LOOP (Data, max_layer);
            {
              info.layer = layer;
@@ -4847,7 +4847,7 @@ index 5f6893d..bd35b74 100644
            }
            END_LOOP;
          }
-@@ -1435,8 +794,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1480,8 +839,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
                                                                           ((LayerTypePtr) ptr1))));
            {
              info.layer = layer;
@@ -4857,7 +4857,7 @@ index 5f6893d..bd35b74 100644
            }
            END_LOOP;
          }
-@@ -1455,7 +813,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1500,7 +858,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
                                                                       ((LayerTypePtr) ptr1))));
        {
          info.layer = layer;
@@ -4866,7 +4866,7 @@ index 5f6893d..bd35b74 100644
        }
        END_LOOP;
        break;
-@@ -1469,7 +827,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1514,7 +872,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
          {
            info.layer = layer;
            r +=
@@ -4875,7 +4875,7 @@ index 5f6893d..bd35b74 100644
          }
          END_LOOP;
        }
-@@ -1493,21 +851,6 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1538,21 +896,6 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
    return r;
  }
  
@@ -4897,7 +4897,7 @@ index 5f6893d..bd35b74 100644
  
  Boolean
  isects (POLYAREA * a, PolygonTypePtr p, Boolean fr)
-@@ -1572,15 +915,17 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *u
+@@ -1617,15 +960,17 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *u
    if (!p->next)                 /* no holes */
      {
        PolygonType poly;
@@ -4917,7 +4917,7 @@ index 5f6893d..bd35b74 100644
        poly.Points = pts;
        pts[0].X = pts[0].X2 = p->xmin;
        pts[0].Y = pts[0].Y2 = p->ymin;
-@@ -1590,6 +935,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *u
+@@ -1635,6 +980,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *u
        pts[2].Y = pts[2].Y2 = p->ymax;
        pts[3].X = pts[3].X2 = p->xmin;
        pts[3].Y = pts[3].Y2 = p->ymax;
@@ -4925,7 +4925,7 @@ index 5f6893d..bd35b74 100644
        poly.Flags = MakeFlags (CLEARPOLYFLAG);
        emit (&poly, user_data);
        poly_Free (&pa);
-@@ -1675,6 +1021,9 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
+@@ -1720,6 +1066,9 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
  Boolean
  MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
  {
@@ -4935,12 +4935,14 @@ index 5f6893d..bd35b74 100644
    POLYAREA *p, *start;
    Boolean many = False;
    FlagType flags;
-@@ -1738,4 +1087,5 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+@@ -1783,6 +1132,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
    inhibit = False;
    IncrementUndoSerialNumber ();
    return many;
 +#endif
  }
+ 
+ void debug_pline (PLINE *pl)
 diff --git a/src/polygon.h b/src/polygon.h
 index c67d574..572573d 100644
 --- a/src/polygon.h
@@ -6949,7 +6951,7 @@ index c7d76b6..626f695 100644
  			    LocationType, BYTE);
  void *RotateObject (int, void *, void *, void *, LocationType, LocationType,
 diff --git a/src/search.c b/src/search.c
-index e81ed21..82e863f 100644
+index f6b5220..87dbf20 100644
 --- a/src/search.c
 +++ b/src/search.c
 @@ -79,6 +79,8 @@ static Boolean SearchTextByLocation (int, LayerTypePtr *, TextTypePtr *,
@@ -7089,7 +7091,7 @@ index e81ed21..82e863f 100644
  	  *Point = point;
  	  found = True;
  	}
-@@ -1178,7 +1235,7 @@ SearchObjectByLocation (int Type,
+@@ -1179,7 +1236,7 @@ SearchObjectByLocation (int Type,
      }
    if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
      {
@@ -7098,7 +7100,7 @@ index e81ed21..82e863f 100644
      }
  
    if (Type & RATLINE_TYPE && PCB->RatOn &&
-@@ -1243,12 +1300,12 @@ SearchObjectByLocation (int Type,
+@@ -1244,12 +1301,12 @@ SearchObjectByLocation (int Type,
        if (SearchLayer->On)
  	{
  	  if ((HigherAvail & (PIN_TYPE | PAD_TYPE)) == 0 &&
@@ -7117,7 +7119,7 @@ index e81ed21..82e863f 100644
  
  	  if ((HigherAvail & (PIN_TYPE | PAD_TYPE)) == 0 &&
  	      Type & LINEPOINT_TYPE &&
-@@ -1299,6 +1356,27 @@ SearchObjectByLocation (int Type,
+@@ -1300,6 +1357,27 @@ SearchObjectByLocation (int Type,
  	      else
  		return (POLYGON_TYPE);
  	    }
@@ -7145,7 +7147,7 @@ index e81ed21..82e863f 100644
  	}
      }
    /* return any previously found objects */
-@@ -1430,31 +1508,47 @@ SearchObjectByID (DataTypePtr Base,
+@@ -1431,31 +1509,47 @@ SearchObjectByID (DataTypePtr Base,
        ENDALL_LOOP;
      }
  
@@ -7428,7 +7430,7 @@ index fe4f398..b583ab4 100644
  	  Mode == THERMAL_MODE)
  	{
 diff --git a/src/strflags.c b/src/strflags.c
-index 894d910..05148b7 100644
+index 587734e..e636e4b 100644
 --- a/src/strflags.c
 +++ b/src/strflags.c
 @@ -95,7 +95,7 @@ static FlagBitsType object_flagbits[] = {

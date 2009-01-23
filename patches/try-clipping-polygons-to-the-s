@@ -1,7 +1,7 @@
-Bottom: cd69b66053ba524a76809b3a8a9e58d205e0d438
-Top:    8bc8b9998ea298cef5651877aca3b6611fa5695d
+Bottom: 75d04c727ce0df9d5a39f5dd2b1c6053b508f227
+Top:    f755490755d17dccfac540264ad630db70058ed2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 19:13:47 +0000
+Date:   2009-01-23 19:24:24 +0000
 
 Try clipping polygons to the screen using our own algebra, not GL
 
@@ -14,7 +14,7 @@ Try clipping polygons to the screen using our own algebra, not GL
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index e087df2..10f340e 100644
+index 8143cea..3841a1a 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -104,7 +104,7 @@ static void DrawPolygonLowLevel (PolygonTypePtr, void *);
@@ -26,7 +26,7 @@ index e087df2..10f340e 100644
  static void AddPart (void *);
  static void SetPVColor (PinTypePtr, int);
  static void DrawEMark (ElementTypePtr, LocationType, LocationType, Boolean);
-@@ -692,7 +692,7 @@ poly_callback (const BoxType * b, void *cl)
+@@ -688,7 +688,7 @@ poly_callback (const BoxType * b, void *cl)
    struct pin_info *i = (struct pin_info *) cl;
  
  //  printf ("Got one poly callback, %p\n", b);
@@ -35,7 +35,7 @@ index e087df2..10f340e 100644
  
    return 1;
  }
-@@ -2249,7 +2249,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
+@@ -2245,7 +2245,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
   * draws a polygon
   */
  static void
@@ -44,7 +44,7 @@ index e087df2..10f340e 100644
  {
    // Re-use HOLEFLAG to cut out islands
    if (TEST_FLAG (HOLEFLAG, Polygon))
-@@ -2258,77 +2258,83 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2254,77 +2254,83 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
    if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Polygon))
      {
        if (TEST_FLAG (SELECTEDFLAG, Polygon))
@@ -183,10 +183,10 @@ index e087df2..10f340e 100644
  }
  
 diff --git a/src/polygon.c b/src/polygon.c
-index b2d9d93..7126cd1 100644
+index 1e23a2e..d8339ed 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -664,7 +664,7 @@ PinPoly (PinType * pin, BDimension thick, BDimension clear)
+@@ -709,7 +709,7 @@ PinPoly (PinType * pin, BDimension thick, BDimension clear)
  }
  
  POLYAREA *

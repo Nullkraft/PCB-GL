@@ -1,7 +1,7 @@
-Bottom: ae23e1f47dbedb9605cea3cb8e50962b9afc6f2c
-Top:    9e20ff3233d1271015f06810d4c925610a06517c
+Bottom: 6647bd400cd952135fc3715131a0456522f7630c
+Top:    4a6dbe88576a014c7e0c309d32f928b0ecc9bbd4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 19:13:45 +0000
+Date:   2009-01-23 19:24:22 +0000
 
 Cure crosshair lagging on screen
 
@@ -14,7 +14,7 @@ Cure crosshair lagging on screen
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 73b1f6e..1be5dc2 100644
+index a758867..9bb2504 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -1095,6 +1095,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
