@@ -1,5 +1,5 @@
 Bottom: c0386dded33a951494e84b8580362e8791f4adf3
-Top:    6647bd400cd952135fc3715131a0456522f7630c
+Top:    9d3797db931c5e93363a725a2ffa088ec342ec89
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-01-23 19:18:52 +0000
 
@@ -1301,7 +1301,7 @@ index 26e3b36..0217dd8 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 31b9d10..a758867 100644
+index 31b9d10..0c4da62 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -293,16 +293,16 @@ have_crosshair_attachments (void)
@@ -1318,7 +1318,7 @@ index 31b9d10..a758867 100644
 +  glVertex2i (x, 0);
 +  glVertex2i (x, gport->height);
 +  glVertex2i (0, y);
-+  glVertex2i (gport->width,);
++  glVertex2i (gport->width, y);
  }
  
  static void
