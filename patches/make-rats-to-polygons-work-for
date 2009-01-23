@@ -1,7 +1,7 @@
-Bottom: a6758f46dc309905b4134bcdab44bdc6310830c0
-Top:    2871d82f6ea56c0ce9aba741c6ad69f49103bbde
+Bottom: 1470079b6c2b93e61d703680d73e64ffef379d3c
+Top:    dc433d97267daf1cb1414b13783f0d27a3d52aaf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 18:58:40 +0000
+Date:   2009-01-23 19:14:20 +0000
 
 Make rats to polygons work for arbitrary clipped shapes
 
@@ -14,10 +14,10 @@ Make rats to polygons work for arbitrary clipped shapes
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 9a08e92..eec82dd 100644
+index 51a6e47..ed27b39 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -1411,6 +1411,16 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
+@@ -1456,6 +1456,16 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
    return isects (c, p, True);
  }
  

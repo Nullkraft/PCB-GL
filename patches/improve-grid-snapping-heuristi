@@ -1,7 +1,7 @@
-Bottom: 2871d82f6ea56c0ce9aba741c6ad69f49103bbde
-Top:    0067fbfd3f83ffb4bfe3a4aeb875f0053ecf6e33
+Bottom: dc433d97267daf1cb1414b13783f0d27a3d52aaf
+Top:    78621b37552b13743ee8d21c48ae5c2b55416226
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 18:58:40 +0000
+Date:   2009-01-23 19:14:20 +0000
 
 Improve grid snapping heuristics
 
@@ -284,7 +284,7 @@ index 42fd81c..7eec9f5 100644
        && Crosshair.AttachedLine.State != STATE_FIRST
        && TEST_FLAG (AUTODRCFLAG, PCB))
 diff --git a/src/search.c b/src/search.c
-index 907039e..e81ed21 100644
+index 3fac0a7..f6b5220 100644
 --- a/src/search.c
 +++ b/src/search.c
 @@ -322,6 +322,7 @@ struct arc_info
@@ -370,7 +370,7 @@ index 907039e..e81ed21 100644
  Boolean
  IsPointOnArc (float X, float Y, float Radius, ArcTypePtr Arc)
  {
-@@ -1583,3 +1603,17 @@ SearchScreen (LocationType X, LocationType Y, int Type, void **Result1,
+@@ -1584,3 +1604,17 @@ SearchScreen (LocationType X, LocationType Y, int Type, void **Result1,
  				X, Y, SLOP * pixel_slop);
    return (ans);
  }
