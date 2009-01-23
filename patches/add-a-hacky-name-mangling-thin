@@ -1,5 +1,5 @@
 Bottom: a6198adad24f0656b35ea1b5f1995d27be7c9c77
-Top:    a6198adad24f0656b35ea1b5f1995d27be7c9c77
+Top:    ffcad96833159616f61391b7abbe6e36c874344e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-01-23 18:52:30 +0000
 
@@ -14,4 +14,145 @@ Add a hacky name-mangling thingy for loading boards
 
 ---
 
-
+diff --git a/doc/pcbfile.texi b/doc/pcbfile.texi
+index 7dd6be8..7ec8517 100644
+--- a/doc/pcbfile.texi
++++ b/doc/pcbfile.texi
+@@ -881,9 +881,11 @@ Marker used internally to avoid revisiting an object.
+ @item 0x10000 nopaste
+ For pads, set to prevent a solderpaste stencil opening for the
+ pad.  Primarily used for pads used as fiducials.
++@item 0x20000 striphierarchy
++Strip hierarchy when displaying this element's refdes.
+ @end table
+ @c pcbfile ~pcbflags
+-@c ./../src/const.h 139
++@c ./../src/const.h 140
+ @node PCBFlags
+ @section PCBFlags
+ @table @code
+diff --git a/src/create.c b/src/create.c
+index adccb53..5789072 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -37,6 +37,7 @@
+ #include <memory.h>
+ #include <setjmp.h>
+ #include <stdlib.h>
++#include <stdio.h>
+ 
+ #include "global.h"
+ 
+@@ -54,6 +55,8 @@
+ #include "undo.h"
+ #include "vendor.h"
+ 
++#include <glib.h>
++
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+ #endif
+@@ -625,6 +628,57 @@ CreateNewPointInPolygon (PolygonTypePtr Polygon, LocationType X,
+   return (point);
+ }
+ 
++static char *refdes_map_file = "refdes.map";
++static GHashTable *refdes_map_table = NULL;
++
++void RefdesMapInit (void)
++{
++  FILE *mapfile;
++  char *from = NULL;
++  char *to = NULL;
++
++  refdes_map_table = g_hash_table_new_full (g_str_hash, g_str_equal,
++                                            g_free, g_free);
++
++  if (refdes_map_file == NULL)
++    return;
++
++  printf ("Refdes map file %s\n", refdes_map_file);
++
++  mapfile = fopen (refdes_map_file, "rb");
++
++  if (mapfile == NULL) {
++    fprintf(stderr, "Could not open [%s]\n", refdes_map_file);
++    return;
++  }
++
++  while (!feof(mapfile) && !ferror(mapfile)) {
++    free (from);
++    free (to);
++
++    from = NULL;
++    to = NULL;
++
++    fscanf (mapfile, "%ms %ms\n", &from, &to);
++
++    if (from == NULL || to == NULL)
++      continue;
++
++    g_hash_table_insert (refdes_map_table, g_strdup (from), g_strdup (to));
++
++    printf ("Stashing rename command: %s to %s\n", from, to);
++  }
++
++  free (to);
++  free (from);
++}
++
++
++char *RefdesMapMap (char *from)
++{
++  return g_hash_table_lookup (refdes_map_table, from);
++}
++
+ /* ---------------------------------------------------------------------------
+  * creates an new element
+  * memory is allocated if needed
+@@ -637,6 +691,19 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
+ 		  LocationType TextX, LocationType TextY, BYTE Direction,
+ 		  int TextScale, FlagType TextFlags, Boolean uniqueName)
+ {
++
++  /* HACK: Mapping between refdes */
++  if (NameOnPCB != NULL) {
++    char *to;
++    to = RefdesMapMap (NameOnPCB);
++    if (to != NULL) {
++//      free (NameOnPCB);
++      printf ("Mapping name from %s to %s\n", NameOnPCB, to);
++      NameOnPCB = malloc (sizeof (char) * (strlen (to) + 1));
++      strcpy (NameOnPCB, to);
++    }
++  }
++
+   if (!Element)
+     Element = GetElementMemory (Data);
+ 
+diff --git a/src/create.h b/src/create.h
+index dc1cbf4..1f00e66 100644
+--- a/src/create.h
++++ b/src/create.h
+@@ -62,6 +62,7 @@ TextTypePtr CreateNewText (LayerTypePtr, FontTypePtr, LocationType,
+ PolygonTypePtr CreateNewPolygon (LayerTypePtr, FlagType);
+ PointTypePtr CreateNewPointInPolygon (PolygonTypePtr,
+ 				      LocationType, LocationType);
++void RefdesMapInit (void);
+ ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
+ 				 FontTypePtr, FlagType, char *, char *,
+ 				 char *, LocationType, LocationType, BYTE,
+diff --git a/src/file.c b/src/file.c
+index 17520e0..c4d1bc3 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -351,6 +351,9 @@ LoadPCB (char *Filename)
+   PCBTypePtr newPCB = CreateNewPCB (False);
+   Boolean units_mm;
+ 
++  /* Hack, load the mapping file */
++  RefdesMapInit ();
++
+   /* new data isn't added to the undo list */
+   if (!ParsePCB (newPCB, Filename))
+     {
