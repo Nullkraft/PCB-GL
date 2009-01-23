@@ -1,5 +1,5 @@
 Bottom: 8bf80d34fb6911975c1ecd5dab97554f8c7ef785
-Top:    3a47aee5f071005c221bdc9ef2efd7f724062d6a
+Top:    c761e87fb019c32a91c69a6232b83322e88327cb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-01-23 18:51:15 +0000
 
@@ -14,23 +14,6 @@ Add a hacky name-mangling thingy for loading boards
 
 ---
 
-diff --git a/doc/pcbfile.texi b/doc/pcbfile.texi
-index 7dd6be8..7ec8517 100644
---- a/doc/pcbfile.texi
-+++ b/doc/pcbfile.texi
-@@ -881,9 +881,11 @@ Marker used internally to avoid revisiting an object.
- @item 0x10000 nopaste
- For pads, set to prevent a solderpaste stencil opening for the
- pad.  Primarily used for pads used as fiducials.
-+@item 0x20000 striphierarchy
-+Strip hierarchy when displaying this element's refdes.
- @end table
- @c pcbfile ~pcbflags
--@c ./../src/const.h 139
-+@c ./../src/const.h 140
- @node PCBFlags
- @section PCBFlags
- @table @code
 diff --git a/src/create.c b/src/create.c
 index 8a70ed0..e6c1e88 100644
 --- a/src/create.c
