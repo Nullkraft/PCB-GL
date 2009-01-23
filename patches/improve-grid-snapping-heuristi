@@ -1,9 +1,10 @@
-Bottom: 1062c885dbd41a58d2c03702b1978ea692e38c3d
-Top:    4fc2e18681d7865d932173f10d2adf6b0bff659d
+Bottom: 2871d82f6ea56c0ce9aba741c6ad69f49103bbde
+Top:    0067fbfd3f83ffb4bfe3a4aeb875f0053ecf6e33
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 18:50:48 +0000
+Date:   2009-01-23 18:58:40 +0000
 
 Improve grid snapping heuristics
+
 
 
 
@@ -16,10 +17,10 @@ Improve grid snapping heuristics
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 6825db4..0625674 100644
+index 42fd81c..7eec9f5 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -782,6 +782,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+@@ -783,6 +783,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
  {
    LocationType x2, y2, x0, y0;
    void *ptr1, *ptr2, *ptr3;
@@ -27,7 +28,7 @@ index 6825db4..0625674 100644
    int ans;
  
    x0 = 0;
-@@ -791,41 +792,6 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+@@ -792,41 +793,6 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
    Crosshair.X = MIN (Crosshair.MaxX, MAX (Crosshair.MinX, X));
    Crosshair.Y = MIN (Crosshair.MaxY, MAX (Crosshair.MinY, Y));
  
@@ -69,7 +70,7 @@ index 6825db4..0625674 100644
    if (PCB->RatDraw)
      {
        x0 = -600;
-@@ -875,82 +841,160 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+@@ -876,82 +842,160 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
  	}
  
      }
