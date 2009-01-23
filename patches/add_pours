@@ -1,7 +1,7 @@
-Bottom: d0cd5c7a6955498affe96b573ff0e0528adc07f6
-Top:    4493d96f64e2a35bef74c751f1ba1c33e68d792a
+Bottom: 7fddd4a844d146108887342fc2e5900194acdb07
+Top:    8ae2f73153f5132ddd70362d6a0221b72db7ee9a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 18:21:25 +0000
+Date:   2009-01-23 18:50:49 +0000
 
 Add support for a "poured" object.
 
@@ -1676,10 +1676,10 @@ index 90a38a2..087c634 100644
  				    ElementTypePtr, Boolean, LocationType, LocationType);
  Boolean CopyPastebufferToLayout (LocationType, LocationType);
 diff --git a/src/create.c b/src/create.c
-index 4830f0f..bbf6192 100644
+index adccb53..ed50c5d 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -532,29 +532,28 @@ CreateNewArcOnLayer (LayerTypePtr Layer,
+@@ -536,29 +536,28 @@ CreateNewArcOnLayer (LayerTypePtr Layer,
    return (Arc);
  }
  
@@ -1725,7 +1725,7 @@ index 4830f0f..bbf6192 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -592,9 +591,9 @@ CreateNewText (LayerTypePtr Layer, FontTypePtr PCBFont,
+@@ -596,9 +595,9 @@ CreateNewText (LayerTypePtr Layer, FontTypePtr PCBFont,
   * creates a new polygon on a layer
   */
  PolygonTypePtr
@@ -1737,7 +1737,7 @@ index 4830f0f..bbf6192 100644
  
    /* copy values */
    polygon->Flags = Flags;
-@@ -602,17 +601,40 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
+@@ -606,17 +605,40 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
    polygon->Clipped = NULL;
    polygon->NoHoles = NULL;
    polygon->NoHolesValid = 0;
@@ -2562,7 +2562,7 @@ index 107310d..92c7d92 100644
    {"removemode", FlagMode, REMOVE_MODE},
    {"rotatemode", FlagMode, ROTATE_MODE},
 diff --git a/src/global.h b/src/global.h
-index 78c3ff2..387d987 100644
+index e05a705..0989799 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -198,16 +198,45 @@ typedef struct
@@ -2733,7 +2733,7 @@ index dad837c..ea01a87 100644
        break;
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 69a6a2e..bdc3631 100644
+index 8b01fb7..e468c5b 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -267,7 +267,7 @@ have_crosshair_attachments (void)
@@ -2745,7 +2745,7 @@ index 69a6a2e..bdc3631 100644
        if (Crosshair.AttachedLine.State != STATE_FIRST)
  	result = TRUE;
        break;
-@@ -571,7 +571,7 @@ in_draw_state (void)
+@@ -567,7 +567,7 @@ in_draw_state (void)
  	  && Crosshair.AttachedBox.State != STATE_FIRST)
        || (Settings.Mode == RECTANGLE_MODE
  	  && Crosshair.AttachedBox.State != STATE_FIRST)
@@ -2754,7 +2754,7 @@ index 69a6a2e..bdc3631 100644
  	  && Crosshair.AttachedLine.State != STATE_FIRST))
      return TRUE;
    return FALSE;
-@@ -633,8 +633,9 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+@@ -629,8 +629,9 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
  	    hid_actionl ("Mode", "Arc", NULL);
  	  else if (Settings.Mode == RECTANGLE_MODE)
  	    hid_actionl ("Mode", "Rectangle", NULL);
@@ -2767,7 +2767,7 @@ index 69a6a2e..bdc3631 100644
  	  hid_actionl ("Mode", "Notify", NULL);
  	  draw_state_reset = TRUE;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 2f0c5e6..54420b7 100644
+index 017ccd8..1c3fabe 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -1981,7 +1981,8 @@ static ModeButton mode_buttons[] = {
@@ -2820,10 +2820,10 @@ index 41ebc3f..6d8174b 100644
      }
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index cf820ae..27ec26d 100644
+index 11aba09..455a25a 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
-@@ -362,7 +362,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -373,7 +373,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
    for (i = 0; i < max_layer; i++)
      {
        LayerType *layer = PCB->Data->Layer + i;

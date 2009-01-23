@@ -1,7 +1,7 @@
-Bottom: 106d0c0c86e8e9da650c0dcc6ed0bc5225f475dc
-Top:    600fc3ca8be2e3e179e7f6a18ad1071d32d885b5
+Bottom: c7262e9613a4f4f621f6fd80832927331e22101f
+Top:    9f3714fa2bff34e1b91090d6b0608741d316961a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 18:21:24 +0000
+Date:   2009-01-23 18:50:48 +0000
 
 Add cache for "noholes", diced versions of polygons
 
@@ -17,10 +17,10 @@ Add cache for "noholes", diced versions of polygons
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 954f205..4830f0f 100644
+index 103f975..adccb53 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -600,6 +600,8 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
+@@ -604,6 +604,8 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
    polygon->Flags = Flags;
    polygon->ID = ID++;
    polygon->Clipped = NULL;
@@ -109,7 +109,7 @@ index 660c1fb..577fcab 100644
  }
  
 diff --git a/src/global.h b/src/global.h
-index 8551355..78c3ff2 100644
+index 81f229b..e05a705 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -204,6 +204,8 @@ typedef struct			/* holds information about a polygon */

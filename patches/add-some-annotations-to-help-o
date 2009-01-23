@@ -1,7 +1,7 @@
-Bottom: 4560b09304bfc370e7b2c606123490d1c47b86b9
-Top:    8099908ff5978cab28a935d677a0c6b0dc2a8601
+Bottom: 10e3de4bee1e827883695ffe7b084a1d7db73206
+Top:    74b9697b0b54a1006c5f0773d75b968b37d3899e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 18:21:26 +0000
+Date:   2009-01-23 18:50:50 +0000
 
 Add some annotations to help optimise branch prediction.
 
@@ -17,7 +17,7 @@ This hasn't had much discernable effect
 ---
 
 diff --git a/src/global.h b/src/global.h
-index 37537f2..9474d7c 100644
+index 863ca9e..dc24755 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -86,6 +86,38 @@ typedef struct

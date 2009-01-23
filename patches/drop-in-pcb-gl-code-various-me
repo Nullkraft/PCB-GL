@@ -1,7 +1,7 @@
-Bottom: a3435ae51250613f776f6aca5043b9abdfe641a6
-Top:    ee37a6104824215b2c3ac4c3724eee1ed7a71c95
+Bottom: dc281f94683e326ce9575a81a89676fe1c8071c6
+Top:    bbc82bfd2ae09f91ad708f714442493e57758ab8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 18:21:23 +0000
+Date:   2009-01-23 18:50:48 +0000
 
 Drop in PCB+GL code + various mess. Needs splitting up
 
@@ -1317,7 +1317,7 @@ index f5cec20..eca17a8 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 576fc9b..5cf1135 100644
+index bb3472d..fb97baa 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -297,66 +297,112 @@ ghid_show_crosshair (gboolean show)
@@ -1470,7 +1470,7 @@ index 576fc9b..5cf1135 100644
  }
  
  static gboolean
-@@ -730,53 +776,220 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -726,53 +772,220 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
    if (!first_time_done)
      {
        gport->colormap = gtk_widget_get_colormap (gport->top_window);
@@ -1704,7 +1704,7 @@ index 576fc9b..5cf1135 100644
    return FALSE;
  }
  
-@@ -789,6 +1002,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -785,6 +998,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
    GdkModifierType state;
@@ -1719,7 +1719,7 @@ index 576fc9b..5cf1135 100644
  
    state = (GdkModifierType) (ev->state);
    mk = ghid_modifier_keys_state (&state);
-@@ -808,9 +1029,18 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -804,9 +1025,18 @@ ghid_port_window_motion_cb (GtkWidget * widget,
      }
    x_prev = y_prev = -1;
    moved = ghid_note_event_location (ev);
@@ -1738,7 +1738,7 @@ index 576fc9b..5cf1135 100644
    return FALSE;
  }
  
-@@ -850,7 +1080,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -846,7 +1076,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        RestoreCrosshair (TRUE);
        cursor_in_viewport = TRUE;
      }
@@ -1748,7 +1748,7 @@ index 576fc9b..5cf1135 100644
  }
  
 diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
-index 72ec525..a9c4d66 100644
+index ab165ea..ca0e985 100644
 --- a/src/hid/gtk/gui-pinout-preview.c
 +++ b/src/hid/gtk/gui-pinout-preview.c
 @@ -150,12 +150,15 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
@@ -1892,7 +1892,7 @@ index 72ec525..a9c4d66 100644
    gobject_class->set_property = ghid_pinout_preview_set_property;
    gobject_class->get_property = ghid_pinout_preview_get_property;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 314f77f..2f0c5e6 100644
+index fe5498c..017ccd8 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2295,6 +2295,11 @@ ghid_build_pcb_top_window (void)
