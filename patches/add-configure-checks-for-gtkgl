@@ -1,7 +1,7 @@
-Bottom: fc749ea6380948e0b65df074724e7bf00318556d
-Top:    a4ed21ff30f586bdb95d36437263e357c9720776
+Bottom: ae9b6b4388fbaa9d2600a5fe2d578034b4dc3693
+Top:    c0386dded33a951494e84b8580362e8791f4adf3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 18:58:40 +0000
+Date:   2009-01-23 19:18:52 +0000
 
 Add configure checks for GtkGLEext, add to CFLAGS and LIBS
 
@@ -18,10 +18,10 @@ Add configure checks for GtkGLEext, add to CFLAGS and LIBS
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 88f215a..7c575f6 100644
+index 7c6aa38..18ab959 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -494,6 +494,24 @@ Please review the following errors:
+@@ -504,6 +504,24 @@ Please review the following errors:
  $GLIB_PKG_ERRORS])]
  	)
  	GLIB_VERSION=`$PKG_CONFIG glib-2.0 --modversion`
@@ -46,7 +46,7 @@ index 88f215a..7c575f6 100644
  	;;
  
        nelma|png )
-@@ -708,8 +726,8 @@ AM_CONDITIONAL(DEBUG_BUILD, test x$enable_debug = xyes)
+@@ -751,8 +769,8 @@ AM_CONDITIONAL(DEBUG_BUILD, test x$enable_debug = xyes)
  
  # ------------- Complete set of CFLAGS and LIBS -------------------
  
