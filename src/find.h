@@ -49,7 +49,7 @@ Boolean LineArcIntersect (LineTypePtr, ArcTypePtr);
 Boolean PinLineIntersect (PinTypePtr, LineTypePtr);
 Boolean LinePadIntersect (LineTypePtr, PadTypePtr);
 Boolean ArcPadIntersect (ArcTypePtr, PadTypePtr);
-Boolean IsPolygonInPolygon (PolygonTypePtr, PolygonTypePtr);
+Boolean IsPolygonPieceInPolygonPiece (PolygonPieceTypePtr, PolygonPieceTypePtr);
 void LookupElementConnections (ElementTypePtr, FILE *);
 void LookupConnectionsToAllElements (FILE *);
 void LookupConnection (LocationType, LocationType, Boolean, BDimension, int);
@@ -67,8 +67,8 @@ void SaveFindFlag (int);
 void RestoreFindFlag (void);
 int DRCAll (void);
 Boolean lineClear (LineTypePtr, Cardinal);
-Boolean IsLineInPolygon (LineTypePtr, PolygonTypePtr);
-Boolean IsArcInPolygon (ArcTypePtr, PolygonTypePtr);
-Boolean IsPadInPolygon (PadTypePtr, PolygonTypePtr);
+Boolean IsLineInPolygonPiece (LineTypePtr, PolygonPieceTypePtr);
+Boolean IsArcInPolygonPiece (ArcTypePtr, PolygonPieceTypePtr);
+Boolean IsPadInPolygonPiece (PadTypePtr, PolygonPieceTypePtr);
 
 #endif
