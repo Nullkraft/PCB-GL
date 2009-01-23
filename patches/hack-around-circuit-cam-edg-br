@@ -1,7 +1,7 @@
-Bottom: a0337f15d03824468326ebd835879f938ca90e31
-Top:    6bc1d9b4399f174995c200e53b523382d98733ae
+Bottom: e2f8b08cb62189831e67485295fb9de710d13384
+Top:    f39d07c4ee609184f4ee534cca332161d568ca2b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-22 00:30:00 +0100
+Date:   2009-01-23 18:35:34 +0000
 
 Hack around Circuit CAM / EDG brokeness reading drill files
 
@@ -13,7 +13,7 @@ Hack around Circuit CAM / EDG brokeness reading drill files
 ---
 
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index e88bb9c..e506876 100644
+index d7290be..814b3c1 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -462,10 +462,17 @@ gerber_set_layer (const char *name, int group)
