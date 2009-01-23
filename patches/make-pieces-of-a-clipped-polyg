@@ -1,7 +1,7 @@
-Bottom: dc73df435f24b1c590206db652b0cbad1716cf3e
-Top:    601f6901f8052299c6654afaaca91fe077824079
+Bottom: 09f68549342a6484c4fbcf6182980f06f797462f
+Top:    b9ca1ac2486ac546e68a1153586f7c3a6bd4d99f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 18:28:57 +0000
+Date:   2009-01-23 18:54:28 +0000
 
 Make pieces of a clipped polygon a distinct object type
 
@@ -22,10 +22,10 @@ index eeb8f15..da85cb8 100644
  #define PIN_TYPES     (VIA_TYPE | PIN_TYPE)
  #define LOCK_TYPES    (VIA_TYPE | LINE_TYPE | ARC_TYPE | POLYGON_TYPE | ELEMENT_TYPE \
 diff --git a/src/create.c b/src/create.c
-index 4830f0f..f5ee1e5 100644
+index adccb53..52b16e2 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -599,7 +599,10 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
+@@ -603,7 +603,10 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
    /* copy values */
    polygon->Flags = Flags;
    polygon->ID = ID++;
@@ -1293,7 +1293,7 @@ index 590c6dc..7ff6ed4 100644
  
  #endif
 diff --git a/src/global.h b/src/global.h
-index 78c3ff2..113a438 100644
+index e05a705..b565c9e 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -198,12 +198,26 @@ typedef struct
