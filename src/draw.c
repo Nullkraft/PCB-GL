@@ -100,7 +100,7 @@ static void DrawPadLowLevel (hidGC, PadTypePtr, Boolean, Boolean);
 static void DrawPadNameLowLevel (PadTypePtr);
 static void DrawLineLowLevel (LineTypePtr, Boolean);
 static void DrawRegularText (LayerTypePtr, TextTypePtr, int);
-static void DrawPolygonLowLevel (PolygonTypePtr, void *);
+static void DrawPolygonPieceLowlevel (PolygonPieceTypePtr, void *);
 static void DrawArcLowLevel (ArcTypePtr);
 static void DrawElementPackageLowLevel (ElementTypePtr Element, int);
 static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
@@ -1731,50 +1731,44 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
  * lowlevel drawing routine for polygons
  */
 static void
-DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
+DrawPolygonPieceLowlevel (PolygonPieceTypePtr piece, void *data)
 {
   int *x, *y, n, i;
-  POLYAREA *pg;
   PLINE *pl;
   VNODE *v;
-  if (!Polygon->Clipped)
-    return;
+
   if (Gathering)
     {
-      AddPart (Polygon);
+      AddPart (piece);
       return;
     }
-  pg = Polygon->Clipped;
-  do
+
+  i = 0;
+  pl = piece->contours;
+  n = pl->Count;
+  x = (int *) malloc (n * sizeof (int));
+  y = (int *) malloc (n * sizeof (int));
+  for (v = &pl->head; i < n; v = v->next)
     {
-      i = 0;
-      pl = pg->contours;
-      n = pl->Count;
-      x = (int *) malloc (n * sizeof (int));
-      y = (int *) malloc (n * sizeof (int));
-      for (v = &pl->head; i < n; v = v->next)
-        {
-          x[i] = v->point[0];
-          y[i++] = v->point[1];
-        }
-      if (TEST_FLAG (THINDRAWFLAG, PCB) ||
-          TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
-          TEST_FLAG (CLEARLINEFLAG, Polygon))
-        {
-          gui->set_line_width (Output.fgGC, 1);
-          for (i = 0; i < n - 1; i++)
-            {
-              gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
-              //  gui->fill_circle (Output.fgGC, x[i], y[i], 30);
-            }
-          gui->draw_line (Output.fgGC, x[n - 1], y[n - 1], x[0], y[0]);
-        }
-      else
-        gui->fill_polygon (Output.fgGC, n, x, y);
-      free (x);
-      free (y);
+      x[i] = v->point[0];
+      y[i++] = v->point[1];
     }
-  while ((pg = pg->f) != Polygon->Clipped);
+  if (TEST_FLAG (THINDRAWFLAG, PCB) ||
+      TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
+      TEST_FLAG (CLEARLINEFLAG, piece))
+    {
+      gui->set_line_width (Output.fgGC, 1);
+      for (i = 0; i < n - 1; i++)
+        {
+          gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
+          //  gui->fill_circle (Output.fgGC, x[i], y[i], 30);
+        }
+      gui->draw_line (Output.fgGC, x[n - 1], y[n - 1], x[0], y[0]);
+    }
+  else
+    gui->fill_polygon (Output.fgGC, n, x, y);
+  free (x);
+  free (y);
 }
 
 /* ---------------------------------------------------------------------------
@@ -2118,12 +2112,43 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
   else
     gui->set_color (Output.fgGC, Layer->Color);
   layernum = GetLayerNumber (PCB->Data, Layer);
-  DrawPolygonLowLevel (Polygon, NULL);
+  printf ("Hello word, I'm DrawPolygon\n");
+  DrawPlainPolygon (Layer, Polygon);
+//  DrawPolygonLowLevel (Polygon, NULL);
   if (TEST_FLAG (CLEARPOLYFLAG, Polygon))
     {
       r_search (PCB->Data->pin_tree, &Polygon->BoundingBox, NULL,
 		cp_callback, (void *) PIN_TYPE);
       r_search (PCB->Data->via_tree, &Polygon->BoundingBox, NULL,
+		cp_callback, (void *) VIA_TYPE);
+    }
+}
+
+/* ---------------------------------------------------------------------------
+ * draws a polygon piece on a layer
+ */
+void
+DrawPolygonPiece (LayerTypePtr Layer, PolygonPieceTypePtr Piece, int unused)
+{
+  int layernum;
+
+  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Piece))
+    {
+      if (TEST_FLAG (SELECTEDFLAG, Piece))
+	gui->set_color (Output.fgGC, Layer->SelectedColor);
+      else
+	gui->set_color (Output.fgGC, PCB->ConnectedColor);
+    }
+  else
+    gui->set_color (Output.fgGC, Layer->Color);
+  layernum = GetLayerNumber (PCB->Data, Layer);
+  printf ("Hello word, I'm DrawPolygonPiece\n");
+  DrawPolygonPieceLowlevel (Piece, NULL);
+  if (TEST_FLAG (CLEARPOLYFLAG, Piece))
+    {
+      r_search (PCB->Data->pin_tree, &Piece->BoundingBox, NULL,
+		cp_callback, (void *) PIN_TYPE);
+      r_search (PCB->Data->via_tree, &Piece->BoundingBox, NULL,
 		cp_callback, (void *) VIA_TYPE);
     }
 }
@@ -2175,12 +2200,22 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
   if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
       && !gui->poly_dicer)
     {
-      DrawPolygonLowLevel (Polygon, NULL);
+      POLYGONPIECE_LOOP (Polygon);
+      {
+        DrawPolygonPieceLowlevel (piece, NULL);
+      }
+      END_LOOP;
       if (!Gathering)
 	PolygonHoles (clip_box, Layer, Polygon, thin_callback);
     }
-  else if (Polygon->Clipped)
+  else if (Polygon->PieceN > 0)
     {
+      POLYGONPIECE_LOOP (Polygon);
+      {
+        DrawPolygonPieceLowlevel (piece, NULL);
+      }
+      END_LOOP;
+#if 0
       if (!Polygon->NoHolesValid)
         {
           ComputeNoHoles (Polygon);
@@ -2191,6 +2226,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
           poly.Clipped = Polygon->NoHoles;
           DrawPolygonLowLevel (&poly, NULL);
         }
+#endif
+#if 0
       /* draw other parts of the polygon if fullpoly flag is set */
       /* NB: No "NoHoles" cache for these */
       if (TEST_FLAG (FULLPOLYFLAG, Polygon))
@@ -2203,6 +2240,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 	      NoHolesPolygonDicer (&poly, DrawPolygonLowLevel, NULL, clip_box);
 	    }
 	}
+#endif
     }
   /* if the gui has the dicer flag set then it won't draw missing poly outlines */
 #if 0
@@ -2496,7 +2534,8 @@ ErasePolygon (PolygonTypePtr Polygon)
 {
   Erasing++;
   gui->set_color (Output.fgGC, Settings.BackgroundColor);
-  DrawPolygonLowLevel (Polygon, NULL);
+  printf ("Hello world, this is ErasePolygon\n");
+  //DrawPolygonLowLevel (Polygon, NULL);
   Erasing--;
 }
 
