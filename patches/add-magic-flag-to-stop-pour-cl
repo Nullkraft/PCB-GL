@@ -1,9 +1,10 @@
-Bottom: ceb459e31e1a9b4f6c9584029c359ea21bbec59b
-Top:    14afb6532b1db376207df85807e3ed1da76abf8a
+Bottom: 5dfd9f12e76148cdd83cf48e9498fbebb5b8cd0d
+Top:    4569afe0efbfe6b8253861ff0fc928c2625c9df1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-22 00:30:34 +0100
+Date:   2009-01-23 18:21:25 +0000
 
 Add magic flag to stop pour clipping for off-screen buffers
+
 
 
 
@@ -13,7 +14,7 @@ Add magic flag to stop pour clipping for off-screen buffers
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 01cfb06..16a096d 100644
+index bbf6192..560ba9a 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -139,6 +139,7 @@ CreateNewPCB (Boolean SetDefaultNames)
@@ -25,7 +26,7 @@ index 01cfb06..16a096d 100644
    ptr->ThermStyle = 4;
    ptr->IsleArea = 2.e8;
 diff --git a/src/global.h b/src/global.h
-index 91851b8..08ae40f 100644
+index 387d987..37537f2 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -358,6 +358,7 @@ typedef struct			/* holds all objects */

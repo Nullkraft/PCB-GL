@@ -1,7 +1,7 @@
-Bottom: 076911d02e39f30505da56a223019e8a0f85b0a3
-Top:    679fcd90d2478a5f294567f0a46a08ec66e884e7
+Bottom: 600fc3ca8be2e3e179e7f6a18ad1071d32d885b5
+Top:    5a8683d41e60a6727e48248f8a768cc6cd9aeefc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-22 00:29:46 +0100
+Date:   2009-01-23 18:21:24 +0000
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -14,10 +14,11 @@ polygon fill.
 
 
 
+
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 8acbfce..a88d11f 100644
+index c801bc9..227f623 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -364,6 +364,7 @@ MovePolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
@@ -37,7 +38,7 @@ index 8acbfce..a88d11f 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index 0599ee4..e0ef99b 100644
+index e29f283..fc9f2f6 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -123,6 +123,9 @@ static void *ChangeTextJoin (LayerTypePtr, TextTypePtr);
@@ -146,7 +147,7 @@ index 0599ee4..e0ef99b 100644
   */
  static void *
 diff --git a/src/change.h b/src/change.h
-index 7f43fba..1be41aa 100644
+index a04a291..9d27833 100644
 --- a/src/change.h
 +++ b/src/change.h
 @@ -56,7 +56,7 @@
@@ -159,7 +160,7 @@ index 7f43fba..1be41aa 100644
  #define CHANGETHERMAL_TYPES	\
  	(PIN_TYPE | VIA_TYPE)
 diff --git a/src/draw.c b/src/draw.c
-index 232b439..525e0f4 100644
+index 577fcab..624ccba 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -1752,8 +1752,9 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
@@ -175,7 +176,7 @@ index 232b439..525e0f4 100644
        gui->set_line_width (Output.fgGC, 1);
        for (i = 0; i < n - 1; i++)
 diff --git a/src/move.c b/src/move.c
-index 003c2e0..aebfc30 100644
+index d0c0a9f..5a2113a 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -355,10 +355,12 @@ MovePolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
@@ -207,7 +208,7 @@ index 003c2e0..aebfc30 100644
      {
        DrawPolygon (Layer, Polygon, 0);
 diff --git a/src/polygon.c b/src/polygon.c
-index 8844adc..c697f3e 100644
+index a21ecf4..64cc662 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -728,6 +728,20 @@ SubtractPad (PadType * pad, PolygonType * p)

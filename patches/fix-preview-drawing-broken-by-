@@ -1,7 +1,7 @@
-Bottom: 554b0e528deaadf831bb127ef1d4e7331177e812
-Top:    7374e1a63877d1d7366c1d652245d608b5c6f253
+Bottom: 6b828c6efa95d272086ffe0c23a6362f170cbf1f
+Top:    066fd757a1f1b4c2ba58d6bc03c216d5a74ccddd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-22 00:26:53 +0100
+Date:   2009-01-23 18:21:22 +0000
 
 Fix preview drawing broken by resetting "Gathering" mode after painting.
 
@@ -11,10 +11,11 @@ preview, We should be calling the hid_expose_callback() function rather
 than DrawElement() directly.
 
 
+
 ---
 
 diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
-index a4da4df..212d37a 100644
+index 66bc1a4..72ec525 100644
 --- a/src/hid/gtk/gui-pinout-preview.c
 +++ b/src/hid/gtk/gui-pinout-preview.c
 @@ -153,6 +153,7 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)

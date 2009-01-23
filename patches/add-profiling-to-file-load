@@ -1,9 +1,10 @@
-Bottom: 7eeb1cbcd221991e5aacca89a3e1f949395ed57e
-Top:    92b2f26dfeb828d5a7ce5f72fd9b19d3ae9e0818
+Bottom: dd5c39e317e5503653b025db91c76169cd7ba928
+Top:    496220972aef2dda8cf474ff669e867f623feac3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-22 00:30:35 +0100
+Date:   2009-01-23 18:21:25 +0000
 
 Add profiling to file load
+
 
 
 
@@ -14,7 +15,7 @@ Add profiling to file load
 ---
 
 diff --git a/src/file.c b/src/file.c
-index 738188a..35bfb57 100644
+index fb1c923..fb75652 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -350,6 +350,10 @@ LoadPCB (char *Filename)

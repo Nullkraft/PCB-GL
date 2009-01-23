@@ -1,9 +1,10 @@
-Bottom: 7374e1a63877d1d7366c1d652245d608b5c6f253
-Top:    c474f54bb07d596e1cdc879ee172db4605529a8e
+Bottom: 066fd757a1f1b4c2ba58d6bc03c216d5a74ccddd
+Top:    6ac632299c304f0512abf6be067733cf313d5408
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-22 00:28:57 +0100
+Date:   2009-01-23 18:21:22 +0000
 
 Make rats to polygons work for arbitrary clipped shapes
+
 
 
 
@@ -12,7 +13,7 @@ Make rats to polygons work for arbitrary clipped shapes
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 3086be6..64f0e2b 100644
+index 9a08e92..eec82dd 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -1411,6 +1411,16 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
@@ -33,7 +34,7 @@ index 3086be6..64f0e2b 100644
  IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
                        LocationType Y2, PolygonTypePtr p)
 diff --git a/src/polygon.h b/src/polygon.h
-index 721ba95..c9672e2 100644
+index f12ee0d..51a1ebc 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
 @@ -57,6 +57,7 @@ void RestoreToPolygon(DataType *, int, void *, void *);
@@ -45,7 +46,7 @@ index 721ba95..c9672e2 100644
  			      LocationType, PolygonTypePtr);
  Boolean isects (POLYAREA *, PolygonTypePtr, Boolean);
 diff --git a/src/rats.c b/src/rats.c
-index cb3b1d0..6e8d369 100644
+index 8188184..b971228 100644
 --- a/src/rats.c
 +++ b/src/rats.c
 @@ -512,24 +512,11 @@ GatherSubnets (NetListTypePtr Netl, Boolean NoWarn, Boolean AndRats)

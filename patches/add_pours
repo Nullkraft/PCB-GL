@@ -1,7 +1,7 @@
-Bottom: 8f0f3ad3d724ecbcdf475959803eb81a483df603
-Top:    223c62129fa4a8cf3e8fb13e9ddc6ff1652b02fd
+Bottom: d0cd5c7a6955498affe96b573ff0e0528adc07f6
+Top:    4493d96f64e2a35bef74c751f1ba1c33e68d792a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-22 00:30:33 +0100
+Date:   2009-01-23 18:21:25 +0000
 
 Add support for a "poured" object.
 
@@ -26,10 +26,11 @@ or if it will take over the meaning of the existing "polygon" entry.
 
 
 
+
 ---
 
 diff --git a/globalconst.h b/globalconst.h
-index cd6f4f9..4ab3813 100755
+index bd10933..c98b2e4 100755
 --- a/globalconst.h
 +++ b/globalconst.h
 @@ -118,6 +118,8 @@
@@ -42,7 +43,7 @@ index cd6f4f9..4ab3813 100755
  						/* an element */
  #define	MAX_LIBRARY_LINE_LENGTH		255	/* maximum line length in the */
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 6a98d3a..6a482c0 100644
+index e9491bb..8bdde0d 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -104,6 +104,8 @@ PCB_SRCS = \
@@ -55,7 +56,7 @@ index 6a98d3a..6a482c0 100644
  	print.c \
  	print.h \
 diff --git a/src/action.c b/src/action.c
-index 04376ac..93c78d4 100644
+index ea23a95..bb08ce2 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -57,6 +57,7 @@
@@ -311,7 +312,7 @@ index 04376ac..93c78d4 100644
  	}
        RestoreCrosshair (True);
 diff --git a/src/action.h b/src/action.h
-index 8ce4a15..bd09d18 100644
+index 45f72c6..702214a 100644
 --- a/src/action.h
 +++ b/src/action.h
 @@ -33,7 +33,7 @@
@@ -324,7 +325,7 @@ index 8ce4a15..bd09d18 100644
  void ActionMovePointer (char *, char *);
  void ActionAdjustStyle (char *);
 diff --git a/src/autoroute.c b/src/autoroute.c
-index 5c689e4..07c73c9 100644
+index 5f5a720..1fa3d2d 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -667,6 +667,8 @@ AddPolygon (PointerListType layergroupboxes[], Cardinal layer,
@@ -367,7 +368,7 @@ index 5c689e4..07c73c9 100644
        END_LOOP;
        /* add all copper text */
 diff --git a/src/buffer.c b/src/buffer.c
-index a88d11f..fe1ee5e 100644
+index 227f623..60bad13 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -50,6 +50,7 @@
@@ -799,7 +800,7 @@ index a88d11f..fe1ee5e 100644
    {
      r_delete_entry (layer->text_tree, (BoxTypePtr) text);
 diff --git a/src/change.c b/src/change.c
-index e0ef99b..669a100 100644
+index fc9f2f6..eed1fd4 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -50,6 +50,7 @@
@@ -1481,7 +1482,7 @@ index e0ef99b..669a100 100644
  
  /* ----------------------------------------------------------------------
 diff --git a/src/change.h b/src/change.h
-index 1be41aa..65a500f 100644
+index 9d27833..19b6f03 100644
 --- a/src/change.h
 +++ b/src/change.h
 @@ -40,7 +40,7 @@
@@ -1503,7 +1504,7 @@ index 1be41aa..65a500f 100644
  #define CHANGETHERMAL_TYPES	\
  	(PIN_TYPE | VIA_TYPE)
 diff --git a/src/const.h b/src/const.h
-index d680770..03ad9e9 100644
+index eeb8f15..2d48979 100644
 --- a/src/const.h
 +++ b/src/const.h
 @@ -78,7 +78,8 @@
@@ -1541,7 +1542,7 @@ index d680770..03ad9e9 100644
  #define	ALL_TYPES		(~0)	/* all bits set */
  
 diff --git a/src/copy.c b/src/copy.c
-index 5a030c9..62daf6f 100644
+index c072e24..58ea7ab 100644
 --- a/src/copy.c
 +++ b/src/copy.c
 @@ -47,7 +47,7 @@
@@ -1658,7 +1659,7 @@ index 5a030c9..62daf6f 100644
  	  END_LOOP;
  	}
 diff --git a/src/copy.h b/src/copy.h
-index 472fc75..8d027d0 100644
+index 90a38a2..087c634 100644
 --- a/src/copy.h
 +++ b/src/copy.h
 @@ -38,10 +38,10 @@
@@ -1675,7 +1676,7 @@ index 472fc75..8d027d0 100644
  				    ElementTypePtr, Boolean, LocationType, LocationType);
  Boolean CopyPastebufferToLayout (LocationType, LocationType);
 diff --git a/src/create.c b/src/create.c
-index d8aaca6..01cfb06 100644
+index 4830f0f..bbf6192 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -532,29 +532,28 @@ CreateNewArcOnLayer (LayerTypePtr Layer,
@@ -1781,7 +1782,7 @@ index d8aaca6..01cfb06 100644
    /* copy values */
    point->X = X;
 diff --git a/src/create.h b/src/create.h
-index a994c84..4c9fae6 100644
+index dc1cbf4..a447845 100644
 --- a/src/create.h
 +++ b/src/create.h
 @@ -54,13 +54,14 @@ RatTypePtr CreateNewRat (DataTypePtr, LocationType, LocationType,
@@ -1803,7 +1804,7 @@ index a994c84..4c9fae6 100644
  ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
  				 FontTypePtr, FlagType, char *, char *,
 diff --git a/src/crosshair.c b/src/crosshair.c
-index b650291..0b2968b 100644
+index 5f2dc98..bee41fe 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -76,6 +76,7 @@ static int CrosshairStackLocation = 0;
@@ -1957,7 +1958,7 @@ index b650291..0b2968b 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index 525e0f4..92a2e21 100644
+index 624ccba..4ab6145 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -101,6 +101,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
@@ -2173,7 +2174,7 @@ index 525e0f4..92a2e21 100644
        if (PCB->ElementOn &&
  	  (FRONT ((ElementTypePtr) ptr2) || PCB->InvisibleObjectsOn))
 diff --git a/src/draw.h b/src/draw.h
-index 47c4c7f..a0f423c 100644
+index 527eff0..7001c6a 100644
 --- a/src/draw.h
 +++ b/src/draw.h
 @@ -51,6 +51,7 @@ void DrawArc (LayerTypePtr, ArcTypePtr, int);
@@ -2193,7 +2194,7 @@ index 47c4c7f..a0f423c 100644
  void EraseElementPinsAndPads (ElementTypePtr);
  void EraseElementName (ElementTypePtr);
 diff --git a/src/file.c b/src/file.c
-index b6c67b9..738188a 100644
+index 17520e0..fb1c923 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -775,7 +775,7 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
@@ -2226,7 +2227,7 @@ index b6c67b9..738188a 100644
  		fputs ("\n\t\t", FP);
  	      fprintf (FP, "[%i %i] ", (int) point->X, (int) point->Y);
 diff --git a/src/find.c b/src/find.c
-index edf2f7e..41f0e72 100644
+index 2716fe6..f49efbf 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -540,6 +540,7 @@ void
@@ -2534,7 +2535,7 @@ index edf2f7e..41f0e72 100644
    ENDALL_LOOP;
    if (change)
 diff --git a/src/find.h b/src/find.h
-index c6e6eef..aae9d89 100644
+index 590c6dc..5133bf7 100644
 --- a/src/find.h
 +++ b/src/find.h
 @@ -42,7 +42,7 @@
@@ -2547,7 +2548,7 @@ index c6e6eef..aae9d89 100644
  Boolean LineLineIntersect (LineTypePtr, LineTypePtr);
  Boolean LineArcIntersect (LineTypePtr, ArcTypePtr);
 diff --git a/src/flags.c b/src/flags.c
-index d4f8a67..7491a48 100644
+index 107310d..92c7d92 100644
 --- a/src/flags.c
 +++ b/src/flags.c
 @@ -135,7 +135,8 @@ HID_Flag flags_flag_list[] = {
@@ -2561,7 +2562,7 @@ index d4f8a67..7491a48 100644
    {"removemode", FlagMode, REMOVE_MODE},
    {"rotatemode", FlagMode, ROTATE_MODE},
 diff --git a/src/global.h b/src/global.h
-index 7763c80..91851b8 100644
+index 78c3ff2..387d987 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -198,16 +198,45 @@ typedef struct
@@ -2693,7 +2694,7 @@ index b09d948..ae6b1e4 100644
         {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
         {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index e88bb9c..e95186b 100644
+index d7290be..a016217 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -362,7 +362,7 @@ gerber_do_export (HID_Attr_Val * options)
@@ -2706,7 +2707,7 @@ index e88bb9c..e95186b 100644
      }
    print_group[GetLayerGroupNumberByNumber (max_layer)] = 1;
 diff --git a/src/hid/gtk/gui-icons-mode-buttons.data b/src/hid/gtk/gui-icons-mode-buttons.data
-index 1938ee2..e210157 100644
+index 2fd6259..ed35824 100644
 --- a/src/hid/gtk/gui-icons-mode-buttons.data
 +++ b/src/hid/gtk/gui-icons-mode-buttons.data
 @@ -252,7 +252,7 @@ static char *pan[] = {
@@ -2719,7 +2720,7 @@ index 1938ee2..e210157 100644
  "21 21 4 1",
  "  c black",
 diff --git a/src/hid/gtk/gui-misc.c b/src/hid/gtk/gui-misc.c
-index e8ad916..e1b6290 100644
+index dad837c..ea01a87 100644
 --- a/src/hid/gtk/gui-misc.c
 +++ b/src/hid/gtk/gui-misc.c
 @@ -219,7 +219,7 @@ ghid_mode_cursor (int Mode)
@@ -2732,7 +2733,7 @@ index e8ad916..e1b6290 100644
        break;
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index aff3e1d..90da219 100644
+index 69a6a2e..bdc3631 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -267,7 +267,7 @@ have_crosshair_attachments (void)
@@ -2766,7 +2767,7 @@ index aff3e1d..90da219 100644
  	  hid_actionl ("Mode", "Notify", NULL);
  	  draw_state_reset = TRUE;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 8143bc8..214032d 100644
+index 2f0c5e6..54420b7 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -1981,7 +1981,8 @@ static ModeButton mode_buttons[] = {
@@ -2780,7 +2781,7 @@ index 8143bc8..214032d 100644
    {NULL, NULL, NULL, "remove", REMOVE_MODE, del},
    {NULL, NULL, NULL, "rotate", ROTATE_MODE, rot},
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index e7d0f9f..1fd0993 100644
+index f38d580..5f5703b 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -525,7 +525,7 @@ nelma_choose_groups()
@@ -2793,7 +2794,7 @@ index e7d0f9f..1fd0993 100644
  
  			/*
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 5b924c5..82ba1e7 100644
+index 886321c..393e996 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -286,7 +286,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
@@ -2806,7 +2807,7 @@ index 5b924c5..82ba1e7 100644
      }
    print_group[GetLayerGroupNumberByNumber (max_layer)] = 1;
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index 0759a88..a129b3b 100644
+index 41ebc3f..6d8174b 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
 @@ -149,7 +149,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
@@ -2819,7 +2820,7 @@ index 0759a88..a129b3b 100644
      }
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 5c59bb9..d698af9 100644
+index cf820ae..27ec26d 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -362,7 +362,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
@@ -2832,7 +2833,7 @@ index 5c59bb9..d698af9 100644
  
        if (strcmp (layer->Name, "outline") == 0
 diff --git a/src/insert.c b/src/insert.c
-index 3d4a2f5..6399fac 100644
+index cb88b12..a09166d 100644
 --- a/src/insert.c
 +++ b/src/insert.c
 @@ -46,6 +46,7 @@
@@ -2843,7 +2844,7 @@ index 3d4a2f5..6399fac 100644
  #include "rtree.h"
  #include "search.h"
  #include "select.h"
-@@ -65,7 +66,7 @@ RCSID ("$Id$");
+@@ -65,7 +66,7 @@ RCSID ("$Id: insert.c,v 1.19 2006-10-09 00:35:25 danmc Exp $");
   * some local prototypes
   */
  static void *InsertPointIntoLine (LayerTypePtr, LineTypePtr);
@@ -2928,7 +2929,7 @@ index 3d4a2f5..6399fac 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/insert.h b/src/insert.h
-index bbe99d5..451d37e 100644
+index 1851bc3..1099bad 100644
 --- a/src/insert.h
 +++ b/src/insert.h
 @@ -33,7 +33,7 @@
@@ -2941,7 +2942,7 @@ index bbe99d5..451d37e 100644
  /* ---------------------------------------------------------------------------
   * prototypes
 diff --git a/src/macro.h b/src/macro.h
-index 819d202..f9200b0 100644
+index bd2af7e..6a5af5e 100644
 --- a/src/macro.h
 +++ b/src/macro.h
 @@ -391,19 +391,26 @@ extern int mem_any_set (unsigned char *, int);
@@ -3041,7 +3042,7 @@ index 819d202..f9200b0 100644
  #define POINTER_LOOP(top) do	{	\
  	Cardinal	n;			\
 diff --git a/src/mirror.c b/src/mirror.c
-index 7ef7d41..1b76e88 100644
+index 51098e8..bf37b89 100644
 --- a/src/mirror.c
 +++ b/src/mirror.c
 @@ -46,6 +46,7 @@
@@ -3077,7 +3078,7 @@ index 7ef7d41..1b76e88 100644
 +  ClearFromPours (Data, ELEMENT_TYPE, Element, Element);
  }
 diff --git a/src/misc.c b/src/misc.c
-index df34363..c01f3b3 100644
+index de3a305..15e9699 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -65,6 +65,7 @@
@@ -3218,7 +3219,7 @@ index df34363..c01f3b3 100644
        *y = ((PointTypePtr) ptr3)->Y;
        break;
 diff --git a/src/misc.h b/src/misc.h
-index 58e75dc..6d7bc4b 100644
+index e8a0bea..bfee146 100644
 --- a/src/misc.h
 +++ b/src/misc.h
 @@ -42,6 +42,7 @@ void SetPointBoundingBox (PointTypePtr);
@@ -3230,7 +3231,7 @@ index 58e75dc..6d7bc4b 100644
  Boolean IsDataEmpty (DataTypePtr);
  BoxTypePtr GetDataBoundingBox (DataTypePtr);
 diff --git a/src/move.c b/src/move.c
-index aebfc30..699a8a3 100644
+index 5a2113a..368f609 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -48,6 +48,7 @@
@@ -3644,7 +3645,7 @@ index aebfc30..699a8a3 100644
      }
    return (new);
 diff --git a/src/move.h b/src/move.h
-index f060ff5..886bf64 100644
+index e6e40a4..c1b1f6b 100644
 --- a/src/move.h
 +++ b/src/move.h
 @@ -85,15 +85,15 @@
@@ -3675,7 +3676,7 @@ index f060ff5..886bf64 100644
  
  /* index is 0..MAX_LAYER-1.  If old_index is -1, a new layer is
 diff --git a/src/mymem.c b/src/mymem.c
-index ffa4dad..a4ddd8d 100644
+index b0258e9..f3b5e05 100644
 --- a/src/mymem.c
 +++ b/src/mymem.c
 @@ -399,32 +399,61 @@ GetTextMemory (LayerTypePtr Layer)
@@ -3867,7 +3868,7 @@ index ffa4dad..a4ddd8d 100644
  
        if (Data->element_tree)
 diff --git a/src/mymem.h b/src/mymem.h
-index b9d4de1..d902609 100644
+index b9ca439..202c6c6 100644
 --- a/src/mymem.h
 +++ b/src/mymem.h
 @@ -56,7 +56,8 @@
@@ -3901,7 +3902,7 @@ index b9d4de1..d902609 100644
  void FreePCBMemory (PCBTypePtr);
  void FreeBoxListMemory (BoxListTypePtr);
 diff --git a/src/parse_y.y b/src/parse_y.y
-index 480cad5..3881750 100644
+index 1028bc2..30f23bd 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
 @@ -52,6 +52,7 @@
@@ -3913,7 +3914,7 @@ index 480cad5..3881750 100644
  #include "rtree.h"
  #include "strflags.h"
 @@ -64,7 +65,7 @@
- RCSID("$Id$");
+ RCSID("$Id: parse_y.y,v 1.43 2008-03-16 14:33:59 danmc Exp $");
  
  static	LayerTypePtr	Layer;
 -static	PolygonTypePtr	Polygon;
@@ -4003,10 +4004,10 @@ index 1874a78..64a474b 100644
     {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
     {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/polygon.c b/src/polygon.c
-index 5c2d1f9..0f95bbb 100644
+index 5f6893d..bd35b74 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -65,8 +65,6 @@ RCSID ("$Id$");
+@@ -65,8 +65,6 @@ RCSID ("$Id: polygon.c,v 1.62 2008-09-30 22:40:13 petercjclifton Exp $");
  
  #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
  
@@ -4940,7 +4941,7 @@ index 5c2d1f9..0f95bbb 100644
 +#endif
  }
 diff --git a/src/polygon.h b/src/polygon.h
-index 8f444fd..e203d07 100644
+index c67d574..572573d 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
 @@ -33,26 +33,25 @@
@@ -6422,7 +6423,7 @@ index 0000000..f04e342
 +
 +#endif /* __POUR_INCLUDED__ */
 diff --git a/src/puller.c b/src/puller.c
-index 848d394..db123b1 100644
+index 3435e53..4517da7 100644
 --- a/src/puller.c
 +++ b/src/puller.c
 @@ -1704,6 +1704,8 @@ gp_text_cb (const BoxType *b, void *cb)
@@ -6463,7 +6464,7 @@ index 848d394..db123b1 100644
    r_search(PCB->Data->via_tree, &box, NULL, gp_pin_cb, 0);
    r_search(PCB->Data->pad_tree, &box, NULL, gp_pad_cb, 0);
 diff --git a/src/rats.c b/src/rats.c
-index f381c1c..e1f67e6 100644
+index b2527af..88c115f 100644
 --- a/src/rats.c
 +++ b/src/rats.c
 @@ -505,20 +505,24 @@ GatherSubnets (NetListTypePtr Netl, Boolean NoWarn, Boolean AndRats)
@@ -6505,7 +6506,7 @@ index f381c1c..e1f67e6 100644
        ENDALL_LOOP;
        VIA_LOOP (PCB->Data);
 diff --git a/src/remove.c b/src/remove.c
-index de88abe..c2eb9ec 100644
+index 1f816a7..4cf6ea0 100644
 --- a/src/remove.c
 +++ b/src/remove.c
 @@ -46,6 +46,7 @@
@@ -6717,7 +6718,7 @@ index de88abe..c2eb9ec 100644
          Draw ();
      }
 diff --git a/src/remove.h b/src/remove.h
-index 8b7c166..7650a65 100644
+index e2cf109..0d23972 100644
 --- a/src/remove.h
 +++ b/src/remove.h
 @@ -38,11 +38,11 @@
@@ -6735,7 +6736,7 @@ index 8b7c166..7650a65 100644
  void *RemoveElement (ElementTypePtr);
  void ClearRemoveList (void);
 diff --git a/src/report.c b/src/report.c
-index af9e0b3..af1b67d 100644
+index e39ca81..5ad5fe6 100644
 --- a/src/report.c
 +++ b/src/report.c
 @@ -330,11 +330,42 @@ ReportDialog (int argc, char **argv, int x, int y)
@@ -6799,7 +6800,7 @@ index af9e0b3..af1b67d 100644
  	break;
        }
 diff --git a/src/report.h b/src/report.h
-index 7abbb79..39ce0ca 100644
+index 8c0d785..a5de4ff 100644
 --- a/src/report.h
 +++ b/src/report.h
 @@ -31,8 +31,8 @@
@@ -6814,7 +6815,7 @@ index 7abbb79..39ce0ca 100644
  
  #endif
 diff --git a/src/rotate.c b/src/rotate.c
-index 247a1a9..43efbe5 100644
+index b66af03..105b749 100644
 --- a/src/rotate.c
 +++ b/src/rotate.c
 @@ -44,6 +44,7 @@
@@ -6934,7 +6935,7 @@ index 247a1a9..43efbe5 100644
  	}
        else
 diff --git a/src/rotate.h b/src/rotate.h
-index f032fcb..8ad4f60 100644
+index c7d76b6..626f695 100644
 --- a/src/rotate.h
 +++ b/src/rotate.h
 @@ -64,7 +64,7 @@ void RotateLineLowLevel (LineTypePtr, LocationType, LocationType, BYTE);
@@ -6947,7 +6948,7 @@ index f032fcb..8ad4f60 100644
  			    LocationType, BYTE);
  void *RotateObject (int, void *, void *, void *, LocationType, LocationType,
 diff --git a/src/search.c b/src/search.c
-index 0d75500..cfe648a 100644
+index e81ed21..82e863f 100644
 --- a/src/search.c
 +++ b/src/search.c
 @@ -79,6 +79,8 @@ static Boolean SearchTextByLocation (int, LayerTypePtr *, TextTypePtr *,
@@ -7209,7 +7210,7 @@ index 0d75500..cfe648a 100644
      {
        VIA_LOOP (Base);
 diff --git a/src/search.h b/src/search.h
-index 3164605..a073f6c 100644
+index 8206490..005b8f9 100644
 --- a/src/search.h
 +++ b/src/search.h
 @@ -59,8 +59,13 @@
@@ -7227,7 +7228,7 @@ index 3164605..a073f6c 100644
  #define	ELEMENT_IN_BOX(e,b)	\
  	(BOX_IN_BOX(&((e)->BoundingBox), (b)))
 diff --git a/src/select.c b/src/select.c
-index 7b96fec..9d17e27 100644
+index dd0e673..53e1e43 100644
 --- a/src/select.c
 +++ b/src/select.c
 @@ -182,6 +182,7 @@ SelectObject (void)
@@ -7395,7 +7396,7 @@ index 7b96fec..9d17e27 100644
    if (PCB->PinOn && PCB->ElementOn)
      {
 diff --git a/src/select.h b/src/select.h
-index 7a48dae..479cc0c 100644
+index 84d3415..fbfdee6 100644
 --- a/src/select.h
 +++ b/src/select.h
 @@ -34,7 +34,7 @@
@@ -7408,7 +7409,7 @@ index 7a48dae..479cc0c 100644
  
  void SelectPin (LibraryEntryTypePtr entry, Boolean toggle);
 diff --git a/src/set.c b/src/set.c
-index 912db04..e9ced1d 100644
+index fe4f398..b583ab4 100644
 --- a/src/set.c
 +++ b/src/set.c
 @@ -248,11 +248,11 @@ SetMode (int Mode)
@@ -7426,7 +7427,7 @@ index 912db04..e9ced1d 100644
  	  Mode == THERMAL_MODE)
  	{
 diff --git a/src/strflags.c b/src/strflags.c
-index 599912f..c2f87c3 100644
+index 894d910..05148b7 100644
 --- a/src/strflags.c
 +++ b/src/strflags.c
 @@ -95,7 +95,7 @@ static FlagBitsType object_flagbits[] = {
@@ -7448,7 +7449,7 @@ index 599912f..c2f87c3 100644
  };
  
 diff --git a/src/undo.c b/src/undo.c
-index 998fc2c..5bcc2d9 100644
+index 5874817..ffe4992 100644
 --- a/src/undo.c
 +++ b/src/undo.c
 @@ -62,6 +62,7 @@
@@ -7705,7 +7706,7 @@ index 998fc2c..5bcc2d9 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/undo.h b/src/undo.h
-index a138927..e5da981 100644
+index 3800e59..a672a2e 100644
 --- a/src/undo.h
 +++ b/src/undo.h
 @@ -61,7 +61,7 @@ void AddObjectTo2ndSizeUndoList (int, void *, void *, void *);

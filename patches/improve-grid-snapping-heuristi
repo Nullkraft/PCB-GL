@@ -1,9 +1,10 @@
-Bottom: c474f54bb07d596e1cdc879ee172db4605529a8e
-Top:    9969f116cd0f5ab130354bb16f3984dd3660e407
+Bottom: 6ac632299c304f0512abf6be067733cf313d5408
+Top:    e3722d934cb4ddb7ff4b34277a864dd6ed3e547c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-22 00:28:57 +0100
+Date:   2009-01-23 18:21:23 +0000
 
 Improve grid snapping heuristics
+
 
 
 
@@ -15,7 +16,7 @@ Improve grid snapping heuristics
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 6578a87..68cae6a 100644
+index 6825db4..0625674 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -782,6 +782,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
@@ -282,7 +283,7 @@ index 6578a87..68cae6a 100644
        && Crosshair.AttachedLine.State != STATE_FIRST
        && TEST_FLAG (AUTODRCFLAG, PCB))
 diff --git a/src/search.c b/src/search.c
-index 53c4eb2..0d75500 100644
+index 907039e..e81ed21 100644
 --- a/src/search.c
 +++ b/src/search.c
 @@ -322,6 +322,7 @@ struct arc_info
@@ -387,7 +388,7 @@ index 53c4eb2..0d75500 100644
 +  return (ans);
 +}
 diff --git a/src/search.h b/src/search.h
-index 11d7d03..3164605 100644
+index 37b8094..8206490 100644
 --- a/src/search.h
 +++ b/src/search.h
 @@ -73,6 +73,7 @@

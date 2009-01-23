@@ -1,9 +1,10 @@
-Bottom: 94f748a71d3ff805ef8b5e029b27bb798d205c63
-Top:    5c92c87309e0a2b6b296e0c79b67889c98457ab7
+Bottom: a3435ae51250613f776f6aca5043b9abdfe641a6
+Top:    ee37a6104824215b2c3ac4c3724eee1ed7a71c95
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-22 00:29:00 +0100
+Date:   2009-01-23 18:21:23 +0000
 
 Drop in PCB+GL code + various mess. Needs splitting up
+
 
 
 
@@ -15,7 +16,7 @@ Drop in PCB+GL code + various mess. Needs splitting up
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 52f7620..b650291 100644
+index ad083cf..5f2dc98 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -83,7 +83,7 @@ static void XORDrawMoveOrCopyObject (void);
@@ -70,7 +71,7 @@ index 52f7620..b650291 100644
  }
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 09d8025..2f1a878 100644
+index f5cec20..eca17a8 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -32,26 +32,83 @@
@@ -86,7 +87,7 @@ index 09d8025..2f1a878 100644
  
 +#define PIXELS_PER_CIRCLINE 5.
  
- RCSID ("$Id$");
+ RCSID ("$Id: gtkhid-main.c,v 1.57 2008-10-13 19:19:37 petercjclifton Exp $");
  
  
  extern HID ghid_hid;
@@ -1316,7 +1317,7 @@ index 09d8025..2f1a878 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 690e48b..271093b 100644
+index 576fc9b..5cf1135 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -297,66 +297,112 @@ ghid_show_crosshair (gboolean show)
@@ -1747,7 +1748,7 @@ index 690e48b..271093b 100644
  }
  
 diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
-index 212d37a..80e1288 100644
+index 72ec525..a9c4d66 100644
 --- a/src/hid/gtk/gui-pinout-preview.c
 +++ b/src/hid/gtk/gui-pinout-preview.c
 @@ -150,12 +150,15 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
@@ -1891,7 +1892,7 @@ index 212d37a..80e1288 100644
    gobject_class->set_property = ghid_pinout_preview_set_property;
    gobject_class->get_property = ghid_pinout_preview_get_property;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 4e98d08..8143bc8 100644
+index 314f77f..2f0c5e6 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2295,6 +2295,11 @@ ghid_build_pcb_top_window (void)
@@ -1931,7 +1932,7 @@ index 4e98d08..8143bc8 100644
  
    Settings.AutoPlace = 0;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index f0b0618..b87cbb6 100644
+index c97edf9..c57173d 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -35,6 +35,10 @@

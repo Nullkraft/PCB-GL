@@ -1,9 +1,10 @@
-Bottom: 9969f116cd0f5ab130354bb16f3984dd3660e407
-Top:    181e7c6bbd9569fecaeb75fbe3f2bb1a615176f3
+Bottom: e3722d934cb4ddb7ff4b34277a864dd6ed3e547c
+Top:    a291413bcf1e6d12272ff308311f87fb71e3d0bc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-22 00:28:58 +0100
+Date:   2009-01-23 18:21:23 +0000
 
 Make rats snap to the center of pads, not the edges
+
 
 
 
@@ -12,7 +13,7 @@ Make rats snap to the center of pads, not the edges
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 31b0fb3..edf2f7e 100644
+index 0b5a241..2716fe6 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -244,7 +244,7 @@ static Boolean LookupLOConnectionsToPad (PadTypePtr, Cardinal);
@@ -97,7 +98,7 @@ index 31b0fb3..edf2f7e 100644
            if (ADD_RAT_TO_LIST (rat))
              longjmp (i->env, 1);
 diff --git a/src/netlist.c b/src/netlist.c
-index d9592b0..7cb923e 100644
+index 14cf463..8358132 100644
 --- a/src/netlist.c
 +++ b/src/netlist.c
 @@ -137,8 +137,10 @@ pin_name_to_xy (LibraryEntryType * pin, int *x, int *y)
@@ -114,7 +115,7 @@ index d9592b0..7cb923e 100644
      }
    return 1;
 diff --git a/src/rats.c b/src/rats.c
-index 6e8d369..f381c1c 100644
+index b971228..b2527af 100644
 --- a/src/rats.c
 +++ b/src/rats.c
 @@ -139,16 +139,8 @@ FindPad (char *ElementName, char *PinNum, ConnectionType * conn, Boolean Same)
