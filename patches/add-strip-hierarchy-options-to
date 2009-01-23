@@ -1,7 +1,7 @@
-Bottom: 69cf256bb05e70668d608e0fe4a92b773e02821f
-Top:    5e31d18740fdf716c874a21e313147d406daa00c
+Bottom: 6c9e8109b56fee3c29c4e802d0de4e02d92c06bb
+Top:    06d438544ed6f829120daf8a4c491deabce9de9b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-22 00:33:23 +0100
+Date:   2009-01-23 18:23:24 +0000
 
 Add strip hierarchy options to display refdes without any "..../" prefix
 
@@ -14,7 +14,7 @@ Add strip hierarchy options to display refdes without any "..../" prefix
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 93c78d4..0a1b874 100644
+index bb08ce2..c3d0296 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -3282,9 +3282,16 @@ ActionRenumber (int argc, char **argv, int x, int y)
@@ -126,7 +126,7 @@ index 93c78d4..0a1b874 100644
     undo_help, undo_syntax}
    ,
 diff --git a/src/const.h b/src/const.h
-index 03ad9e9..1223ab2 100644
+index 2d48979..3756b29 100644
 --- a/src/const.h
 +++ b/src/const.h
 @@ -170,6 +170,8 @@ Marker used internally to avoid revisiting an object.
@@ -147,7 +147,7 @@ index 03ad9e9..1223ab2 100644
   * PCB flags
   */
 diff --git a/src/draw.c b/src/draw.c
-index 189554d..a1b51c4 100644
+index e087df2..31374c1 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -2343,6 +2343,33 @@ DrawElement (ElementTypePtr Element, int unused)
@@ -221,7 +221,7 @@ index 189554d..a1b51c4 100644
  }
  
 diff --git a/src/strflags.c b/src/strflags.c
-index c2f87c3..fb18b2d 100644
+index 05148b7..8ffff7c 100644
 --- a/src/strflags.c
 +++ b/src/strflags.c
 @@ -98,6 +98,7 @@ static FlagBitsType object_flagbits[] = {

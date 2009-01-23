@@ -1,7 +1,7 @@
-Bottom: 5f9b88a15c18c0fdf066e0367f70be887936c3a0
-Top:    088cb5ebb60f49203b0764ecf9e85ebb27187f40
+Bottom: d3a8b41cf27dab015be59dbe3936794722be6248
+Top:    35ed89422d30851cb309495c024bdaafbda4500e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-22 00:33:25 +0100
+Date:   2009-01-23 18:23:25 +0000
 
 Silly space navigator interface to allow funky views
 
@@ -10,7 +10,7 @@ Silly space navigator interface to allow funky views
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 6a482c0..902e993 100644
+index 8bdde0d..097ddd5 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -247,7 +247,9 @@ LIBGTK_SRCS = \
@@ -25,7 +25,7 @@ index 6a482c0..902e993 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 0878b0d..8691169 100644
+index 86cf81e..1171205 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -43,6 +43,7 @@
@@ -83,7 +83,7 @@ index 0878b0d..8691169 100644
 +}
 +
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 214032d..a004f1f 100644
+index 54420b7..ca08eef 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -121,6 +121,7 @@ a zoom in/out.
@@ -108,7 +108,7 @@ index 214032d..a004f1f 100644
  
    gtk_main ();
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index b87cbb6..1a705ca 100644
+index c57173d..93356f1 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -185,6 +185,8 @@ typedef struct
