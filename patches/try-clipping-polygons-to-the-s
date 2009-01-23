@@ -1,9 +1,10 @@
-Bottom: 4c4121d90f65e8d18772b7b9c06d003c29ac0573
-Top:    39854363d58df4e30acb266d9bdb35dc64bf970c
+Bottom: 6750aea778e78046d7578b95f4b5a6057a38384a
+Top:    cb5c06f098c709e903d100114aff1ffeebd2d434
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-22 00:31:56 +0100
+Date:   2009-01-23 18:21:40 +0000
 
 Try clipping polygons to the screen using our own algebra, not GL
+
 
 
 
@@ -13,7 +14,7 @@ Try clipping polygons to the screen using our own algebra, not GL
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 189554d..13630b1 100644
+index e087df2..10f340e 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -104,7 +104,7 @@ static void DrawPolygonLowLevel (PolygonTypePtr, void *);
@@ -182,7 +183,7 @@ index 189554d..13630b1 100644
  }
  
 diff --git a/src/polygon.c b/src/polygon.c
-index f38a610..661658f 100644
+index b2d9d93..7126cd1 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -664,7 +664,7 @@ PinPoly (PinType * pin, BDimension thick, BDimension clear)
@@ -195,7 +196,7 @@ index f38a610..661658f 100644
    return RectPoly (box->X1 - bloat, box->X2 + bloat,
                     box->Y1 - bloat, box->Y2 + bloat);
 diff --git a/src/polygon.h b/src/polygon.h
-index e203d07..889a0ed 100644
+index 572573d..a8c77b2 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
 @@ -50,7 +50,7 @@ POLYAREA * LinePoly(LineType *l, BDimension thick);
