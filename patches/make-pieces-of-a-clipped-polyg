@@ -1,7 +1,7 @@
-Bottom: f9c3f044e0a145b609d6722bc206f866d469c831
-Top:    714877435a889c15d7c21bcaa2fa74973d9c942f
+Bottom: dc73df435f24b1c590206db652b0cbad1716cf3e
+Top:    601f6901f8052299c6654afaaca91fe077824079
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-12 22:26:53 +0100
+Date:   2009-01-23 18:28:57 +0000
 
 Make pieces of a clipped polygon a distinct object type
 
@@ -10,10 +10,10 @@ Make pieces of a clipped polygon a distinct object type
 ---
 
 diff --git a/src/const.h b/src/const.h
-index 3647c3b..26add14 100644
+index eeb8f15..da85cb8 100644
 --- a/src/const.h
 +++ b/src/const.h
-@@ -303,6 +303,7 @@ New polygons are full ones.
+@@ -300,6 +300,7 @@ New polygons are full ones.
  #define ELEMENTARC_TYPE		0x08000
  
  #define LOCKED_TYPE 		0x10000	/* used to tell search to include locked items. */
@@ -22,10 +22,10 @@ index 3647c3b..26add14 100644
  #define PIN_TYPES     (VIA_TYPE | PIN_TYPE)
  #define LOCK_TYPES    (VIA_TYPE | LINE_TYPE | ARC_TYPE | POLYGON_TYPE | ELEMENT_TYPE \
 diff --git a/src/create.c b/src/create.c
-index bbfd52f..a68e843 100644
+index 4830f0f..f5ee1e5 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -602,7 +602,10 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
+@@ -599,7 +599,10 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
    /* copy values */
    polygon->Flags = Flags;
    polygon->ID = ID++;
@@ -38,7 +38,7 @@ index bbfd52f..a68e843 100644
    polygon->NoHolesValid = 0;
    return (polygon);
 diff --git a/src/draw.c b/src/draw.c
-index deefd5f..6d2f847 100644
+index 277f6d6..0314da7 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -100,7 +100,7 @@ static void DrawPadLowLevel (hidGC, PadTypePtr, Boolean, Boolean);
@@ -216,7 +216,7 @@ index deefd5f..6d2f847 100644
      }
    /* if the gui has the dicer flag set then it won't draw missing poly outlines */
  #if 0
-@@ -2523,7 +2561,8 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2496,7 +2534,8 @@ ErasePolygon (PolygonTypePtr Polygon)
  {
    Erasing++;
    gui->set_color (Output.fgGC, Settings.BackgroundColor);
@@ -227,7 +227,7 @@ index deefd5f..6d2f847 100644
  }
  
 diff --git a/src/draw.h b/src/draw.h
-index 47c4c7f..7909dbc 100644
+index 527eff0..33c8989 100644
 --- a/src/draw.h
 +++ b/src/draw.h
 @@ -51,6 +51,7 @@ void DrawArc (LayerTypePtr, ArcTypePtr, int);
@@ -239,10 +239,10 @@ index 47c4c7f..7909dbc 100644
  void DrawElementName (ElementTypePtr, int);
  void DrawElementPackage (ElementTypePtr, int);
 diff --git a/src/find.c b/src/find.c
-index 5707d9f..2a94c63 100644
+index bc1879b..2cb9ed8 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -137,8 +137,13 @@ RCSID ("$Id$");
+@@ -137,8 +137,13 @@ RCSID ("$Id: find.c,v 1.69 2008-03-16 14:33:58 danmc Exp $");
  #define RATLIST_ENTRY(I)	\
  	(((RatTypePtr *)RatList.Data)[(I)])
  
@@ -1268,7 +1268,7 @@ index 5707d9f..2a94c63 100644
      case VIA_TYPE:
        {
 diff --git a/src/find.h b/src/find.h
-index c6e6eef..e0a16e0 100644
+index 590c6dc..7ff6ed4 100644
 --- a/src/find.h
 +++ b/src/find.h
 @@ -49,7 +49,7 @@ Boolean LineArcIntersect (LineTypePtr, ArcTypePtr);
@@ -1293,7 +1293,7 @@ index c6e6eef..e0a16e0 100644
  
  #endif
 diff --git a/src/global.h b/src/global.h
-index 7763c80..9166ce7 100644
+index 78c3ff2..113a438 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -198,12 +198,26 @@ typedef struct
@@ -1325,7 +1325,7 @@ index 7763c80..9166ce7 100644
    int NoHolesValid;		/* Is the NoHoles polygon up to date? */
    PointTypePtr Points;		/* data */
 diff --git a/src/macro.h b/src/macro.h
-index 819d202..200f28b 100644
+index bd2af7e..4bc1f92 100644
 --- a/src/macro.h
 +++ b/src/macro.h
 @@ -405,6 +405,13 @@ extern int mem_any_set (unsigned char *, int);
@@ -1343,7 +1343,7 @@ index 819d202..200f28b 100644
  
  #define	ALLPIN_LOOP(top)	\
 diff --git a/src/mymem.c b/src/mymem.c
-index ffa4dad..d1c5639 100644
+index b0258e9..64e5f9e 100644
 --- a/src/mymem.c
 +++ b/src/mymem.c
 @@ -450,6 +450,28 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
@@ -1389,7 +1389,7 @@ index ffa4dad..d1c5639 100644
  	poly_Free (&Polygon->NoHoles);
        memset (Polygon, 0, sizeof (PolygonType));
 diff --git a/src/mymem.h b/src/mymem.h
-index b9d4de1..3c62228 100644
+index b9ca439..d78e3af 100644
 --- a/src/mymem.h
 +++ b/src/mymem.h
 @@ -58,6 +58,7 @@
@@ -1409,7 +1409,7 @@ index b9d4de1..3c62228 100644
  BoxTypePtr GetBoxMemory (BoxListTypePtr);
  ConnectionTypePtr GetConnectionMemory (NetTypePtr);
 diff --git a/src/polygon.c b/src/polygon.c
-index fea5e89..3c14927 100644
+index cefbab1..af96339 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -77,6 +77,7 @@ static double circleVerticies[] = {
@@ -1557,7 +1557,7 @@ index fea5e89..3c14927 100644
 +#endif
  }
 diff --git a/src/polygon.h b/src/polygon.h
-index 8f444fd..4a48f0d 100644
+index c67d574..681bd7f 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
 @@ -58,7 +58,7 @@ void RestoreToPolygon(DataType *, int, void *, void *);
@@ -1570,7 +1570,7 @@ index 8f444fd..4a48f0d 100644
  			      LocationType, PolygonTypePtr);
  Boolean isects (POLYAREA *, PolygonTypePtr, Boolean);
 diff --git a/src/rats.c b/src/rats.c
-index f381c1c..e16e3cd 100644
+index b2527af..eb7c901 100644
 --- a/src/rats.c
 +++ b/src/rats.c
 @@ -507,18 +507,22 @@ GatherSubnets (NetListTypePtr Netl, Boolean NoWarn, Boolean AndRats)

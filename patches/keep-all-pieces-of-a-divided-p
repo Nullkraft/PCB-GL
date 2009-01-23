@@ -1,7 +1,7 @@
-Bottom: c3b565b5a3e97f2a2532700325e1854c9e1b6ea4
-Top:    f9c3f044e0a145b609d6722bc206f866d469c831
+Bottom: d0cd5c7a6955498affe96b573ff0e0528adc07f6
+Top:    dc73df435f24b1c590206db652b0cbad1716cf3e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2008-10-12 22:26:09 +0100
+Date:   2009-01-23 18:28:57 +0000
 
 Keep all pieces of a divided polygon.
 
@@ -14,7 +14,7 @@ Keep all pieces of a divided polygon.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 0388f55..deefd5f 100644
+index 624ccba..277f6d6 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -1733,7 +1733,8 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
@@ -117,7 +117,7 @@ index 0388f55..deefd5f 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/find.c b/src/find.c
-index edf2f7e..5707d9f 100644
+index 2716fe6..bc1879b 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -2467,23 +2467,29 @@ Boolean
@@ -302,7 +302,7 @@ index edf2f7e..5707d9f 100644
            (polygon->Clipped->contours->xmin +
             polygon->Clipped->contours->xmax) / 2;
 diff --git a/src/polygon.c b/src/polygon.c
-index 5c2d1f9..fea5e89 100644
+index 5f6893d..cefbab1 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -121,7 +121,7 @@ ComputeNoHoles (PolygonType *poly)
