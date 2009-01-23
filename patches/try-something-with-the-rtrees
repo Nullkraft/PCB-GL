@@ -1,7 +1,7 @@
-Bottom: 2c752598c28eaf35a2f049e953342fe3b7d36ede
-Top:    6effb785fa7fa8be2e9653ead5f89562c6a6b848
+Bottom: e6eef48d89cc85cda57b2710238740a8dc429f93
+Top:    cd69b66053ba524a76809b3a8a9e58d205e0d438
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 18:51:03 +0000
+Date:   2009-01-23 19:13:47 +0000
 
 Try optimising polygon operations by keeping an rtree with their contours
 
@@ -18,10 +18,10 @@ its existance as well.
 ---
 
 diff --git a/src/global.h b/src/global.h
-index dc24755..ad3f9be 100644
+index 4de19f5..8d2bada 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -39,7 +39,6 @@
+@@ -40,7 +40,6 @@
  
  #include "const.h"
  #include "macro.h"
@@ -29,7 +29,7 @@ index dc24755..ad3f9be 100644
  
  #include <stdio.h>
  #include <stdlib.h>
-@@ -52,6 +51,10 @@
+@@ -53,6 +52,10 @@
  
  #include "hid.h"
  
@@ -40,7 +40,7 @@ index dc24755..ad3f9be 100644
  #define _(S) (S)
  
  typedef int LocationType;
-@@ -232,11 +235,10 @@ typedef struct
+@@ -233,11 +236,10 @@ typedef struct
  
  typedef struct polygon_st PolygonType, *PolygonTypePtr;
  

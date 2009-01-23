@@ -1,9 +1,10 @@
-Bottom: c7262e9613a4f4f621f6fd80832927331e22101f
-Top:    9f3714fa2bff34e1b91090d6b0608741d316961a
+Bottom: 9e20ff3233d1271015f06810d4c925610a06517c
+Top:    e48b71cfd9dcfd71a265a27be0d372edc3d49529
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 18:50:48 +0000
+Date:   2009-01-23 19:13:45 +0000
 
 Add cache for "noholes", diced versions of polygons
+
 
 
 
@@ -109,10 +110,10 @@ index 660c1fb..577fcab 100644
  }
  
 diff --git a/src/global.h b/src/global.h
-index 81f229b..e05a705 100644
+index 4f2f1a4..5016534 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -204,6 +204,8 @@ typedef struct			/* holds information about a polygon */
+@@ -205,6 +205,8 @@ typedef struct			/* holds information about a polygon */
    Cardinal PointN,		/* number of points in polygon */
      PointMax;			/* max number from malloc() */
    POLYAREA *Clipped;		/* the clipped region of this polygon */

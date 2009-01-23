@@ -1,7 +1,7 @@
-Bottom: 10e3de4bee1e827883695ffe7b084a1d7db73206
-Top:    74b9697b0b54a1006c5f0773d75b968b37d3899e
+Bottom: 436b2ede106df44ada66fc0b70d3ce68d94d0e05
+Top:    a33cbfe517a38aa38187d547dd1cb0c0cbee4012
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 18:50:50 +0000
+Date:   2009-01-23 19:13:47 +0000
 
 Add some annotations to help optimise branch prediction.
 
@@ -14,13 +14,14 @@ This hasn't had much discernable effect
 
 
 
+
 ---
 
 diff --git a/src/global.h b/src/global.h
-index 863ca9e..dc24755 100644
+index 25185a8..4de19f5 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -86,6 +86,38 @@ typedef struct
+@@ -87,6 +87,38 @@ typedef struct
  #define __FUNCTION__ __FUNCTION2(__FILE__,__LINE__)
  #endif
  

@@ -1,7 +1,7 @@
-Bottom: 7fddd4a844d146108887342fc2e5900194acdb07
-Top:    8ae2f73153f5132ddd70362d6a0221b72db7ee9a
+Bottom: b1e2eb8e69b864e29fd24598588086fc6f1cdd69
+Top:    88f373378a2b75baef072c2002506f418cbc46e7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 18:50:49 +0000
+Date:   2009-01-23 19:13:46 +0000
 
 Add support for a "poured" object.
 
@@ -17,6 +17,7 @@ all child polygons selected. Manipulations will always occur on the
 
 It remains to be seen whether "pour" will have its own file-format entry,
 or if it will take over the meaning of the existing "polygon" entry.
+
 
 
 
@@ -56,10 +57,10 @@ index e9491bb..8bdde0d 100644
  	print.c \
  	print.h \
 diff --git a/src/action.c b/src/action.c
-index ea23a95..bb08ce2 100644
+index 01ab855..48865bb 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -57,6 +57,7 @@
+@@ -58,6 +58,7 @@
  #include "misc.h"
  #include "move.h"
  #include "polygon.h"
@@ -67,7 +68,7 @@ index ea23a95..bb08ce2 100644
  /*#include "print.h"*/
  #include "rats.h"
  #include "remove.h"
-@@ -133,7 +134,7 @@ typedef enum
+@@ -135,7 +136,7 @@ typedef enum
    F_PinByName,
    F_PinOrPadName,
    F_Pinout,
@@ -76,7 +77,7 @@ index ea23a95..bb08ce2 100644
    F_PreviousPoint,
    F_RatsNest,
    F_Rectangle,
-@@ -284,7 +285,7 @@ static PointType InsertedPoint;
+@@ -286,7 +287,7 @@ static PointType InsertedPoint;
  static LayerTypePtr lastLayer;
  static struct
  {
@@ -85,7 +86,7 @@ index ea23a95..bb08ce2 100644
    LineType line;
  }
  fake;
-@@ -363,7 +364,7 @@ static FunctionType Functions[] = {
+@@ -366,7 +367,7 @@ static FunctionType Functions[] = {
    {"PinByName", F_PinByName},
    {"PinOrPadName", F_PinOrPadName},
    {"Pinout", F_Pinout},
@@ -94,7 +95,7 @@ index ea23a95..bb08ce2 100644
    {"PreviousPoint", F_PreviousPoint},
    {"RatsNest", F_RatsNest},
    {"Rectangle", F_Rectangle},
-@@ -824,8 +825,8 @@ AdjustAttachedObjects (void)
+@@ -827,8 +828,8 @@ AdjustAttachedObjects (void)
        AdjustAttachedBox ();
        break;
  
@@ -105,7 +106,7 @@ index ea23a95..bb08ce2 100644
        AdjustAttachedLine ();
        break;
        /* line creation mode */
-@@ -1334,12 +1335,12 @@ NotifyMode (void)
+@@ -1337,12 +1338,12 @@ NotifyMode (void)
  	  Crosshair.AttachedBox.Point1.X != Crosshair.AttachedBox.Point2.X &&
  	  Crosshair.AttachedBox.Point1.Y != Crosshair.AttachedBox.Point2.Y)
  	{
@@ -120,7 +121,7 @@ index ea23a95..bb08ce2 100644
  							Crosshair.
  							AttachedBox.Point1.X,
  							Crosshair.
-@@ -1352,10 +1353,10 @@ NotifyMode (void)
+@@ -1355,10 +1356,10 @@ NotifyMode (void)
  							(flags))) !=
  	      NULL)
  	    {
@@ -134,7 +135,7 @@ index ea23a95..bb08ce2 100644
  	      Draw ();
  	    }
  
-@@ -1395,10 +1396,10 @@ NotifyMode (void)
+@@ -1398,10 +1399,10 @@ NotifyMode (void)
  	break;
        }
  
@@ -148,7 +149,7 @@ index ea23a95..bb08ce2 100644
  
  	/* do update of position; use the 'LINE_MODE' mechanism */
  	NotifyLine ();
-@@ -1408,7 +1409,7 @@ NotifyMode (void)
+@@ -1411,7 +1412,7 @@ NotifyMode (void)
  	    points->X == Crosshair.AttachedLine.Point2.X &&
  	    points->Y == Crosshair.AttachedLine.Point2.Y)
  	  {
@@ -157,7 +158,7 @@ index ea23a95..bb08ce2 100644
  	    Draw ();
  	    break;
  	  }
-@@ -1420,9 +1421,9 @@ NotifyMode (void)
+@@ -1423,9 +1424,9 @@ NotifyMode (void)
  	    points[n - 1].X != Crosshair.AttachedLine.Point2.X ||
  	    points[n - 1].Y != Crosshair.AttachedLine.Point2.Y)
  	  {
@@ -170,7 +171,7 @@ index ea23a95..bb08ce2 100644
  
  	    /* copy the coordinates */
  	    Crosshair.AttachedLine.Point1.X = Crosshair.AttachedLine.Point2.X;
-@@ -1613,17 +1614,15 @@ NotifyMode (void)
+@@ -1616,17 +1617,15 @@ NotifyMode (void)
  	      else
  		{
  		  /* get starting point of nearest segment */
@@ -194,7 +195,7 @@ index ea23a95..bb08ce2 100644
  		      Crosshair.AttachedObject.Ptr2 = &fake.line;
  
  		    }
-@@ -1635,9 +1634,9 @@ NotifyMode (void)
+@@ -1638,9 +1637,9 @@ NotifyMode (void)
  
  	  /* second notify, insert new point into object */
  	case STATE_SECOND:
@@ -207,7 +208,7 @@ index ea23a95..bb08ce2 100644
  				   &polyIndex,
  				   InsertedPoint.X, InsertedPoint.Y, False);
  	  else
-@@ -2970,13 +2969,13 @@ ActionMode (int argc, char **argv, int x, int y)
+@@ -2983,13 +2982,13 @@ ActionMode (int argc, char **argv, int x, int y)
  		  }
  		break;
  	  
@@ -223,7 +224,7 @@ index ea23a95..bb08ce2 100644
  		  }
  		break;
  
-@@ -3005,8 +3004,8 @@ ActionMode (int argc, char **argv, int x, int y)
+@@ -3018,8 +3017,8 @@ ActionMode (int argc, char **argv, int x, int y)
  	case F_PasteBuffer:
  	  SetMode (PASTEBUFFER_MODE);
  	  break;
@@ -234,7 +235,7 @@ index ea23a95..bb08ce2 100644
  	  break;
  #ifndef HAVE_LIBSTROKE
  	case F_Release:
-@@ -3050,9 +3049,9 @@ ActionMode (int argc, char **argv, int x, int y)
+@@ -3063,9 +3062,9 @@ ActionMode (int argc, char **argv, int x, int y)
  	  else if (Settings.Mode == RECTANGLE_MODE
  		   && Crosshair.AttachedBox.State != STATE_FIRST)
  	    SetMode (RECTANGLE_MODE);
@@ -246,7 +247,7 @@ index ea23a95..bb08ce2 100644
  	  else
  	    {
  	      SaveMode ();
-@@ -4424,6 +4423,9 @@ off are automatically deleted.
+@@ -4437,6 +4436,9 @@ off are automatically deleted.
  static int
  ActionMorphPolygon (int argc, char **argv, int x, int y)
  {
@@ -256,7 +257,7 @@ index ea23a95..bb08ce2 100644
    char *function = ARG (0);
    if (function)
      {
-@@ -4459,6 +4461,7 @@ ActionMorphPolygon (int argc, char **argv, int x, int y)
+@@ -4472,6 +4474,7 @@ ActionMorphPolygon (int argc, char **argv, int x, int y)
  	}
      }
    return 0;
@@ -264,7 +265,7 @@ index ea23a95..bb08ce2 100644
  }
  
  /* --------------------------------------------------------------------------- */
-@@ -5953,9 +5956,9 @@ ActionUndo (int argc, char **argv, int x, int y)
+@@ -5966,9 +5969,9 @@ ActionUndo (int argc, char **argv, int x, int y)
        /* undo the last operation */
  
        HideCrosshair (True);
@@ -276,7 +277,7 @@ index ea23a95..bb08ce2 100644
  	  RestoreCrosshair (True);
  	  return 0;
  	}
-@@ -6115,8 +6118,8 @@ three "undone" lines.
+@@ -6128,8 +6131,8 @@ three "undone" lines.
  static int
  ActionRedo (int argc, char **argv, int x, int y)
  {
@@ -287,7 +288,7 @@ index ea23a95..bb08ce2 100644
        Crosshair.AttachedLine.State == STATE_SECOND)
      return 1;
    HideCrosshair (True);
-@@ -6166,19 +6169,19 @@ static int
+@@ -6179,19 +6182,19 @@ static int
  ActionPolygon (int argc, char **argv, int x, int y)
  {
    char *function = ARG (0);
@@ -1804,10 +1805,10 @@ index dc1cbf4..a447845 100644
  ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
  				 FontTypePtr, FlagType, char *, char *,
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 5f2dc98..bee41fe 100644
+index 403ff4a..9e4be3e 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -76,6 +76,7 @@ static int CrosshairStackLocation = 0;
+@@ -77,6 +77,7 @@ static int CrosshairStackLocation = 0;
   * some local prototypes
   */
  static void XORPolygon (PolygonTypePtr, LocationType, LocationType);
@@ -1815,7 +1816,7 @@ index 5f2dc98..bee41fe 100644
  static void XORDrawElement (ElementTypePtr, LocationType, LocationType);
  static void XORDrawBuffer (BufferTypePtr);
  static void XORDrawInsertPointObject (void);
-@@ -91,6 +92,8 @@ static void XORDrawAttachedArc (BDimension);
+@@ -92,6 +93,8 @@ static void XORDrawAttachedArc (BDimension);
  static void
  XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
  {
@@ -1824,7 +1825,7 @@ index 5f2dc98..bee41fe 100644
    int i;
    for (i = 0; i < polygon->PointN - 1; i++)
      gui->draw_line (Crosshair.GC,
-@@ -101,6 +104,25 @@ XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
+@@ -102,6 +105,25 @@ XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
      gui->draw_line (Crosshair.GC,
  		    polygon->Points[i].X + dx, polygon->Points[i].Y + dy,
  		    polygon->Points[0].X + dx, polygon->Points[0].Y + dy);
@@ -1850,7 +1851,7 @@ index 5f2dc98..bee41fe 100644
  }
  
  /*-----------------------------------------------------------
-@@ -348,9 +370,11 @@ XORDrawBuffer (BufferTypePtr Buffer)
+@@ -349,9 +371,11 @@ XORDrawBuffer (BufferTypePtr Buffer)
  	/* the tmp polygon has n+1 points because the first
  	 * and the last one are set to the same coordinates
  	 */
@@ -1864,7 +1865,7 @@ index 5f2dc98..bee41fe 100644
  	}
  	END_LOOP;
        }
-@@ -450,6 +474,18 @@ XORDrawMoveOrCopyObject (void)
+@@ -451,6 +475,18 @@ XORDrawMoveOrCopyObject (void)
  	break;
        }
  
@@ -1883,7 +1884,7 @@ index 5f2dc98..bee41fe 100644
      case LINEPOINT_TYPE:
        {
  	LineTypePtr line;
-@@ -468,24 +504,24 @@ XORDrawMoveOrCopyObject (void)
+@@ -469,24 +505,24 @@ XORDrawMoveOrCopyObject (void)
  	break;
        }
  
@@ -1915,7 +1916,7 @@ index 5f2dc98..bee41fe 100644
  	  }
  	else
  	  {
-@@ -596,8 +632,8 @@ DrawAttached (Boolean BlockToo)
+@@ -597,8 +633,8 @@ DrawAttached (Boolean BlockToo)
  	}
        break;
  
@@ -1926,7 +1927,7 @@ index 5f2dc98..bee41fe 100644
        /* draw only if starting point is set */
        if (Crosshair.AttachedLine.State != STATE_FIRST)
  	gui->draw_line (Crosshair.GC,
-@@ -606,10 +642,10 @@ DrawAttached (Boolean BlockToo)
+@@ -607,10 +643,10 @@ DrawAttached (Boolean BlockToo)
  			Crosshair.AttachedLine.Point2.X,
  			Crosshair.AttachedLine.Point2.Y);
  
@@ -1940,7 +1941,7 @@ index 5f2dc98..bee41fe 100644
  	}
        break;
  
-@@ -985,7 +1021,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+@@ -986,7 +1022,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
  
    if (TEST_FLAG (SNAPPINFLAG, PCB))
      ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
@@ -1949,7 +1950,7 @@ index 5f2dc98..bee41fe 100644
    else
      ans = NO_TYPE;
  
-@@ -1157,6 +1193,6 @@ void
+@@ -1161,6 +1197,6 @@ void
  DestroyCrosshair (void)
  {
    CrosshairOff (True);
@@ -2562,10 +2563,10 @@ index 107310d..92c7d92 100644
    {"removemode", FlagMode, REMOVE_MODE},
    {"rotatemode", FlagMode, ROTATE_MODE},
 diff --git a/src/global.h b/src/global.h
-index e05a705..0989799 100644
+index 5016534..cd4d1a1 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -198,16 +198,45 @@ typedef struct
+@@ -199,16 +199,45 @@ typedef struct
    void *Element;
  } TextType, *TextTypePtr;
  
@@ -2579,8 +2580,10 @@ index e05a705..0989799 100644
 +} rtree_t;
 +
 +typedef struct			/* holds information about a poured area */
-+{
-+  ANYOBJECTFIELDS;
+ {
+   ANYOBJECTFIELDS;
+-  Cardinal PointN,		/* number of points in polygon */
+-    PointMax;			/* max number from malloc() */
 +
 +  Cardinal PointN;		/* number of points in pour outline */
 +  Cardinal PointMax;		/* max number from malloc() */
@@ -2595,10 +2598,8 @@ index e05a705..0989799 100644
 +} PourType, *PourTypePtr;
 +
 +struct polygon_st		/* holds information about a polygon */
- {
-   ANYOBJECTFIELDS;
--  Cardinal PointN,		/* number of points in polygon */
--    PointMax;			/* max number from malloc() */
++{
++  ANYOBJECTFIELDS;
 +
 +//  Cardinal PointN,		/* number of points in polygon */
 +//  Cardinal PointMax;		/* max number from malloc() */
@@ -2617,7 +2618,7 @@ index e05a705..0989799 100644
  
  typedef struct			/* holds information about arcs */
  {
-@@ -220,26 +249,25 @@ typedef struct			/* holds information about arcs */
+@@ -221,26 +250,25 @@ typedef struct			/* holds information about arcs */
      Delta;
  } ArcType, *ArcTypePtr;
  
@@ -2653,7 +2654,7 @@ index e05a705..0989799 100644
    Boolean On;			/* visible flag */
    char *Color,			/* color */
     *SelectedColor;
-@@ -515,7 +543,8 @@ typedef struct			/* holds cursor information */
+@@ -524,7 +552,8 @@ typedef struct			/* holds cursor information */
    Boolean On;			/* flag for 'is visible' */
    AttachedLineType AttachedLine;	/* data of new lines... */
    AttachedBoxType AttachedBox;
@@ -2661,9 +2662,9 @@ index e05a705..0989799 100644
 +//  PolygonType AttachedPolygon;
 +  PourType AttachedPour;
    AttachedObjectType AttachedObject;	/* data of attached objects */
+   enum crosshair_shape shape; /* shape of crosshair */
  } CrosshairType, *CrosshairTypePtr;
- 
-@@ -629,13 +658,15 @@ typedef struct
+@@ -639,13 +668,15 @@ typedef struct
    void *(*Line) (LayerTypePtr, LineTypePtr);
    void *(*Text) (LayerTypePtr, TextTypePtr);
    void *(*Polygon) (LayerTypePtr, PolygonTypePtr);
@@ -2681,10 +2682,10 @@ index e05a705..0989799 100644
    void *(*Rat) (RatTypePtr);
  } ObjectFunctionType, *ObjectFunctionTypePtr;
 diff --git a/src/gpcb-menu.res b/src/gpcb-menu.res
-index b09d948..ae6b1e4 100644
+index a429f6d..450af38 100644
 --- a/src/gpcb-menu.res
 +++ b/src/gpcb-menu.res
-@@ -492,7 +492,7 @@ PopupMenus =
+@@ -493,7 +493,7 @@ PopupMenus =
         {"Arc" checked=arcmode,1 Mode(Arc) a={"F3" "<Key>F3"}}
         {"Text" checked=textmode,1 Mode(Text) a={"F4" "<Key>F4"}}
         {"Rectangle" checked=rectanglemode,1 Mode(Rectangle) a={"F5" "<Key>F5"}}
@@ -2733,7 +2734,7 @@ index dad837c..ea01a87 100644
        break;
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 8b01fb7..e468c5b 100644
+index 1be5dc2..d7d0df8 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -267,7 +267,7 @@ have_crosshair_attachments (void)
@@ -2745,7 +2746,7 @@ index 8b01fb7..e468c5b 100644
        if (Crosshair.AttachedLine.State != STATE_FIRST)
  	result = TRUE;
        break;
-@@ -567,7 +567,7 @@ in_draw_state (void)
+@@ -662,7 +662,7 @@ in_draw_state (void)
  	  && Crosshair.AttachedBox.State != STATE_FIRST)
        || (Settings.Mode == RECTANGLE_MODE
  	  && Crosshair.AttachedBox.State != STATE_FIRST)
@@ -2754,7 +2755,7 @@ index 8b01fb7..e468c5b 100644
  	  && Crosshair.AttachedLine.State != STATE_FIRST))
      return TRUE;
    return FALSE;
-@@ -629,8 +629,9 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+@@ -724,8 +724,9 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
  	    hid_actionl ("Mode", "Arc", NULL);
  	  else if (Settings.Mode == RECTANGLE_MODE)
  	    hid_actionl ("Mode", "Rectangle", NULL);
@@ -3991,10 +3992,10 @@ index 1028bc2..30f23bd 100644
  		|
  		;
 diff --git a/src/pcb-menu.res b/src/pcb-menu.res
-index 1874a78..64a474b 100644
+index 302274c..c0836a2 100644
 --- a/src/pcb-menu.res
 +++ b/src/pcb-menu.res
-@@ -166,7 +166,7 @@ MainMenu =
+@@ -167,7 +167,7 @@ MainMenu =
     {"Arc" checked=arcmode,1 Mode(Arc) a={"F3" "<Key>F3"}}
     {"Text" checked=textmode,1 Mode(Text) a={"F4" "<Key>F4"}}
     {"Rectangle" checked=rectanglemode,1 Mode(Rectangle) a={"F5" "<Key>F5"}}
