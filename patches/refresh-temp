@@ -1,0 +1,26 @@
+Bottom: 3a47aee5f071005c221bdc9ef2efd7f724062d6a
+Top:    c761e87fb019c32a91c69a6232b83322e88327cb
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-01-23 18:53:25 +0000
+
+Refresh of add-a-hacky-name-mangling-thin
+
+---
+
+diff --git a/doc/pcbfile.texi b/doc/pcbfile.texi
+index 7ec8517..7dd6be8 100644
+--- a/doc/pcbfile.texi
++++ b/doc/pcbfile.texi
+@@ -881,11 +881,9 @@ Marker used internally to avoid revisiting an object.
+ @item 0x10000 nopaste
+ For pads, set to prevent a solderpaste stencil opening for the
+ pad.  Primarily used for pads used as fiducials.
+-@item 0x20000 striphierarchy
+-Strip hierarchy when displaying this element's refdes.
+ @end table
+ @c pcbfile ~pcbflags
+-@c ./../src/const.h 140
++@c ./../src/const.h 139
+ @node PCBFlags
+ @section PCBFlags
+ @table @code
