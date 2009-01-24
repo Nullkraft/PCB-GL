@@ -44,6 +44,7 @@
 #include "data.h"
 #include "draw.h"
 #include "error.h"
+
 #include "line.h"
 #include "misc.h"
 #include "mymem.h"
@@ -185,7 +186,8 @@ XORDrawAttachedLine (LocationType x1, LocationType y1, LocationType x2,
     {
       LocationType angle = atan2 ((float) dx, (float) dy) * 57.295779;
       gui->draw_line (Crosshair.GC, x1 - ox, y1 - oy, x2 - ox, y2 - oy);
-      gui->draw_arc (Crosshair.GC, x1, y1, thick / 2, thick / 2, angle - 180, 180);
+      gui->draw_arc (Crosshair.GC,
+		     x1, y1, thick / 2, thick / 2, angle - 180, 180);
       gui->draw_arc (Crosshair.GC, x2, y2, thick / 2, thick / 2, angle, 180);
     }
 }
