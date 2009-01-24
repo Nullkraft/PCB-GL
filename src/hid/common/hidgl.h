@@ -25,8 +25,9 @@
 #ifndef __HIDGL_INCLUDED__
 #define __HIDGL_INCLUDED__
 
-#include <GL/glu.h>
-//#include <GL/glut.h>
+//#include <GL/gl.h>
+//#include <GL/glu.h>
+////#include <GL/glut.h>
 
 int trans_lines;
 

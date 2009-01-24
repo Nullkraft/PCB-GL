@@ -1,5 +1,7 @@
 /* $Id: */
 
+#if 0 /* DISABLE EVERYTHING! */
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -1083,4 +1085,6 @@ HID hidgl_hid = {
   NULL, /* hidgl_beep */
   NULL, /* hidgl_progress */
 };
+
+#endif /* DISABLE EVERYTHING! */
 
