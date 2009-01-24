@@ -1,7 +1,7 @@
-Bottom: 78621b37552b13743ee8d21c48ae5c2b55416226
-Top:    579c84d4fb520ea9b851613d8517bd939cc9f0c0
+Bottom: 75308dabba6adca162385133c2353009998d0be0
+Top:    8901a2bdc19c1a731a926904cd7df31a967651cb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 19:14:20 +0000
+Date:   2009-01-24 01:47:18 +0000
 
 Make rats snap to the center of pads, not the edges
 
@@ -116,7 +116,7 @@ index 14cf463..8358132 100644
      }
    return 1;
 diff --git a/src/rats.c b/src/rats.c
-index b971228..b2527af 100644
+index fd585c5..181169a 100644
 --- a/src/rats.c
 +++ b/src/rats.c
 @@ -139,16 +139,8 @@ FindPad (char *ElementName, char *PinNum, ConnectionType * conn, Boolean Same)
