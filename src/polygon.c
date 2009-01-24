@@ -32,6 +32,8 @@
 Here's a brief tour of the data and life of a polygon, courtesy of Ben
 Jackson:
 
+*** FIXME: SOME OF THIS WILL BE OUT DATED BY THE ADDITION OF POURS ****
+
 A PCB PolygonType contains an array of points outlining the polygon.
 This is what is manipulated by the UI and stored in the saved PCB.
 
@@ -1165,9 +1167,9 @@ debug_polygon (PolygonType *p)
 {
   int i;
   POLYAREA *pa;
-  fprintf (stderr, "POLYGON %p  %d pts\n", p, p->PointN);
-  for (i=0; i<p->PointN; i++)
-    fprintf(stderr, "\t%d: %d, %d\n", i, p->Points[i].X, p->Points[i].Y);
+//  fprintf (stderr, "POLYGON %p  %d pts\n", p, p->PointN);
+//  for (i=0; i<p->PointN; i++)
+//    fprintf(stderr, "\t%d: %d, %d\n", i, p->Points[i].X, p->Points[i].Y);
   pa = p->Clipped;
   while (pa)
     {
