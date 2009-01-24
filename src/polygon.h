@@ -22,7 +22,7 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: polygon.h,v 1.14 2008-09-30 22:40:13 petercjclifton Exp $
+ *  RCS: $Id: polygon.h,v 1.15 2009-01-24 01:36:40 petercjclifton Exp $
  */
 
 /* prototypes for polygon editing routines
@@ -57,6 +57,7 @@ void RestoreToPolygon(DataType *, int, void *, void *);
 void ClearFromPolygon(DataType *, int, void *, void *);
 
 Boolean IsPointInPolygon (LocationType, LocationType, BDimension, PolygonTypePtr);
+Boolean IsPointInPolygonIgnoreHoles (LocationType, LocationType, PolygonTypePtr);
 Boolean IsRectangleInPolygon (LocationType, LocationType, LocationType,
 			      LocationType, PolygonTypePtr);
 Boolean isects (POLYAREA *, PolygonTypePtr, Boolean);

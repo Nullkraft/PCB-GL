@@ -1,4 +1,4 @@
-/* $Id: polygon.c,v 1.63 2008-12-30 03:18:12 djdelorie Exp $ */
+/* $Id: polygon.c,v 1.64 2009-01-24 01:36:40 petercjclifton Exp $ */
 
 /*
  *                            COPYRIGHT
@@ -106,7 +106,7 @@ dicer output is used for HIDs which cannot render things with holes
 #include <dmalloc.h>
 #endif
 
-RCSID ("$Id: polygon.c,v 1.63 2008-12-30 03:18:12 djdelorie Exp $");
+RCSID ("$Id: polygon.c,v 1.64 2009-01-24 01:36:40 petercjclifton Exp $");
 
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
@@ -1454,6 +1454,16 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
   if (!(c = CirclePoly (X, Y, r)))
     return False;
   return isects (c, p, True);
+}
+
+
+Boolean
+IsPointInPolygonIgnoreHoles (LocationType X, LocationType Y, PolygonTypePtr p)
+{
+  Vector v;
+  v[0] = X;
+  v[1] = Y;
+  return poly_InsideContour (p->Clipped->contours, v);
 }
 
 Boolean
