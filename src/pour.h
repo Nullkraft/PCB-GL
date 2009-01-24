@@ -22,29 +22,26 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- *  RCS: $Id: copy.h,v 1.5 2006-10-09 00:35:25 danmc Exp $
+ *  RCS: $Id$
  */
 
-/* prototypes for copy routines
+/* prototypes for pour editing routines
  */
 
-#ifndef	__COPY_INCLUDED__
-#define	__COPY_INCLUDED__
+#ifndef	__POUR_INCLUDED__
+#define	__POUR_INCLUDED__
 
 #include "global.h"
 
-/* ---------------------------------------------------------------------------
- * some defines
- */
-#define	COPY_TYPES              \
-	(VIA_TYPE | LINE_TYPE | TEXT_TYPE | \
-	ELEMENT_TYPE | ELEMENTNAME_TYPE | POUR_TYPE | ARC_TYPE)
+Cardinal GetLowestDistancePourPoint (PourTypePtr,
+					LocationType, LocationType);
+Boolean RemoveExcessPourPoints (LayerTypePtr, PourTypePtr);
+void GoToPreviousPourPoint (void);
+void ClosePour (void);
+void CopyAttachedPourToLayer (void);
 
+int InitPourClip(DataType *d, LayerType *l, PourType *p);
+void RestoreToPours(DataType *, int, void *, void *);
+void ClearFromPours(DataType *, int, void *, void *);
 
-PourTypePtr CopyPourLowLevel (PourTypePtr, PourTypePtr);
-ElementTypePtr CopyElementLowLevel (DataTypePtr, ElementTypePtr,
-				    ElementTypePtr, Boolean, LocationType, LocationType);
-Boolean CopyPastebufferToLayout (LocationType, LocationType);
-void *CopyObject (int, void *, void *, void *, LocationType, LocationType);
-
-#endif
+#endif /* __POUR_INCLUDED__ */
