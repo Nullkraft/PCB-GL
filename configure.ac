@@ -268,34 +268,33 @@ AC_ARG_ENABLE([gl],
 [],[enable_gl=no])
 
 AC_MSG_RESULT([$enable_gl])
-AM_CONDITIONAL(WITH_GL, test x$enable_gl = xyes)
+AM_CONDITIONAL(USE_GL, test x$enable_gl = xyes)
 
 if test "x$enable_gl" = "xyes"; then
 	case " $with_gui " in
 		*\ gtk\ *) ;;
 		* ) AC_MSG_ERROR([GL drawing enabled but only works with the GTK HID.
 Either do not use --enable-gl or enable the gtk HID.])
+	;;
 	esac
-	
-	# Check for pkg-config
-	AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
-	if test "$PKG_CONFIG" = "no"; then
-		AC_MSG_ERROR([Cannot find pkg-config, make sure it is installed and in your PATH])
-	fi
 
-	PKG_CHECK_MODULES(DBUS, dbus-1 >= 0.61,
-		[saved_LIBS="$LIBS"
-		 LIBS="$LIBS $DBUS_LIBS"
-		 AC_CHECK_FUNCS(dbus_watch_get_unix_fd)
-		 LIBS="$saved_LIBS" ],
-		[AC_MSG_ERROR([Cannot find dbus-1 >= 0.61, install it and rerun ./configure
-Please review the following errors:
-$DBUS_PKG_ERRORS])]
-	)
-	DBUS_VERSION=`$PKG_CONFIG dbus-1 --modversion`
-	
-	AC_DEFINE([HAVE_DBUS], 1,
-		[Define to 1 if DBUS IPC is to be compiled in])
+# FIXME... what do we need to check for determining we have GL? Is it headers, API ?
+
+	AC_CHECK_HEADERS(GL/gl.h)
+	case $ac_cv_header_GL_glut_h in
+	  no )
+	    AC_MSG_ERROR([You don't seem to have the GL library headers installed.])
+	    ;;
+	  * ) ;;
+	esac
+
+	AC_CHECK_HEADERS(GL/glut.h)
+	case $ac_cv_header_GL_glut_h in
+	  no )
+	    AC_MSG_ERROR([You don't seem to have the GL glut library headers installed.])
+	    ;;
+	  * ) ;;
+	esac
 
 fi
 
@@ -543,22 +542,16 @@ $GLIB_PKG_ERRORS])]
 	)
 	GLIB_VERSION=`$PKG_CONFIG glib-2.0 --modversion`
 
-	# Check for GtkGLExt
-	PKG_CHECK_MODULES(GTKGLEXT, gtkglext-1.0 >= 1.0.0, , [AC_MSG_ERROR([
+	if test "x$enable_gl" = "xyes"; then
+		# Check for GtkGLExt
+		PKG_CHECK_MODULES(GTKGLEXT, gtkglext-1.0 >= 1.0.0, , [AC_MSG_ERROR([
 *** Required version of gtkglext is not installed - please install first ***
 Please review the following errors:
 $GTKGLEXT_PKG_ERRORS])]
-	)
-
+		)
 	GTKGLEXT_VER=`$PKG_CONFIG gtkglext-1.0 --modversion`
+	fi
 
-	AC_CHECK_HEADERS(GL/glut.h)
-	case $ac_cv_header_GL_glut_h in
-	  no )
-	    AC_MSG_ERROR([You don't seem to have the GL glut library headers installed.])
-	    ;;
-	  * ) ;;
-	esac
 	;;
 
       nelma|png )

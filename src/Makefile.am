@@ -272,7 +272,7 @@ BUILT_SOURCES+=	dbus-introspect.h
 endif
 
 # If we are building with GL support, we need some extra files
-if WITH_DBUS
+if USE_GL
 PCB_SRCS+=	${GL_SRCS}
 endif
 
