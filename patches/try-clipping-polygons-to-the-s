@@ -1,7 +1,7 @@
-Bottom: e356beb71c0c7d5c216b7a45afbacb4fc40b28eb
-Top:    7e924a69c1b05773bf4d8c52f65a445d871699b5
+Bottom: 2f0efc840d2a0160082e05a312f3fd4f67cd6a5c
+Top:    b4aa70d66db2ac6e524da07e98ca30eb92a7bee1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-24 03:12:26 +0000
+Date:   2009-01-24 03:24:45 +0000
 
 Try clipping polygons to the screen using our own algebra, not GL
 
@@ -183,10 +183,10 @@ index 8143cea..3841a1a 100644
  }
  
 diff --git a/src/polygon.c b/src/polygon.c
-index 24b466c..ce4c6fa 100644
+index cbdcf0f..5d4683c 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -709,7 +709,7 @@ PinPoly (PinType * pin, BDimension thick, BDimension clear)
+@@ -711,7 +711,7 @@ PinPoly (PinType * pin, BDimension thick, BDimension clear)
  }
  
  POLYAREA *

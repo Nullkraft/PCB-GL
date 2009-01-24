@@ -1,7 +1,7 @@
-Bottom: b0fdd5ae70f7e2f51f53bf33fa01a5b3bb6fb042
-Top:    c7828c749a85f9e8e0e0cd431e65bb6b4c53896c
+Bottom: 552b393826a685be9d702816733dea8fff1c0a1f
+Top:    c52ae360d93ebff503db26841cb6a14fc5ad1179
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-24 03:12:24 +0000
+Date:   2009-01-24 03:24:44 +0000
 
 Off to find burried treasure on polygon island
 
@@ -529,17 +529,3 @@ index 87dbf20..f9bad1d 100644
    if (setjmp (info.env) == 0)
      {
        r_search (SearchLayer->pour_tree, &SearchBox, NULL, pour_polygon_callback, &info);
-diff --git a/src/undo.c b/src/undo.c
-index ffe4992..37b577f 100644
---- a/src/undo.c
-+++ b/src/undo.c
-@@ -1156,8 +1156,8 @@ AddObjectToClearPourUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
-   if (!Locked)
-     {
-       undo = GetUndoSlot (UNDO_CLEAR, OBJECT_ID (Ptr3), Type);
--      undo->Data.ClearPoly.Clear = clear;
--      undo->Data.ClearPoly.Layer = (LayerTypePtr) Ptr1;
-+      undo->Data.ClearPour.Clear = clear;
-+      undo->Data.ClearPour.Layer = (LayerTypePtr) Ptr1;
-     }
- }
