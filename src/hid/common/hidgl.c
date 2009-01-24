@@ -15,6 +15,9 @@
 #include <time.h>
 #include <assert.h>
 
+#include <GL/gl.h>
+#include <GL/glu.h>
+
 #include "action.h"
 #include "crosshair.h"
 #include "data.h"
@@ -29,8 +32,6 @@
 #include "hidgl.h"
 
 
-#include <GL/gl.h>
-#include <GL/glut.h>
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
@@ -42,56 +43,48 @@ RCSID ("$Id: $");
 
 #define USE_GC(x)
 
-#define TRIANGLE_ARRAY_SIZE 5000
-static GLfloat triangle_array [2 * 3 * TRIANGLE_ARRAY_SIZE];
-static unsigned int triangle_count;
-static int coord_comp_count;
+triangle_buffer buffer;
+
+#if 0
+triangle_array *
+hidgl_new_triangle_array (void)
+{
+  return malloc (sizeof (triangle_buffer));
+}
+#endif
 
 void
-hidgl_init_triangle_array (void)
+hidgl_init_triangle_array (triangle_buffer *buffer)
 {
   glEnableClientState (GL_VERTEX_ARRAY);
-  glVertexPointer (2, GL_FLOAT, 0, &triangle_array);
-  triangle_count = 0;
-  coord_comp_count = 0;
+  glVertexPointer (2, GL_FLOAT, 0, &buffer->triangle_array);
+  buffer->triangle_count = 0;
+  buffer->coord_comp_count = 0;
 }
 
 void
-hidgl_flush_triangles ()
+hidgl_flush_triangles (triangle_buffer *buffer)
 {
-  if (triangle_count == 0)
+  if (buffer->triangle_count == 0)
     return;
 
-  glDrawArrays (GL_TRIANGLES, 0, triangle_count * 3);
-  triangle_count = 0;
-  coord_comp_count = 0;
+  glDrawArrays (GL_TRIANGLES, 0, buffer->triangle_count * 3);
+  buffer->triangle_count = 0;
+  buffer->coord_comp_count = 0;
 }
 
-static void
-ensure_triangle_space (int count)
+void
+hidgl_ensure_triangle_space (triangle_buffer *buffer, int count)
 {
   if (count > TRIANGLE_ARRAY_SIZE)
     {
       fprintf (stderr, "Not enough space in vertex buffer\n");
-      fprintf (stderr, "Requested %i triangles, %i available\n", count, TRIANGLE_ARRAY_SIZE);
+      fprintf (stderr, "Requested %i triangles, %i available\n",
+                       count, TRIANGLE_ARRAY_SIZE);
       exit (1);
     }
-  if (count > TRIANGLE_ARRAY_SIZE - triangle_count)
-    hidgl_flush_triangles ();
-}
-
-static inline void
-add_triangle (GLfloat x1, GLfloat y1,
-              GLfloat x2, GLfloat y2,
-              GLfloat x3, GLfloat y3)
-{
-  triangle_array [coord_comp_count++] = x1;
-  triangle_array [coord_comp_count++] = y1;
-  triangle_array [coord_comp_count++] = x2;
-  triangle_array [coord_comp_count++] = y2;
-  triangle_array [coord_comp_count++] = x3;
-  triangle_array [coord_comp_count++] = y3;
-  triangle_count++;
+  if (count > TRIANGLE_ARRAY_SIZE - buffer->triangle_count)
+    hidgl_flush_triangles (buffer);
 }
 
 //static int cur_mask = -1;
@@ -316,7 +309,7 @@ use_gc (hidGC gc)
 }
 #endif
 
-void
+static void
 errorCallback(GLenum errorCode)
 {
    const GLubyte *estring;
@@ -398,15 +391,19 @@ hidgl_draw_line (hidGC gc, int cap, double width, int x1, int y1, int x2, int y2
       break;
   }
 
-  ensure_triangle_space (2);
-  add_triangle (x1 - wdx, y1 - wdy, x2 - wdx, y2 - wdy, x2 + wdx, y2 + wdy);
-  add_triangle (x1 - wdx, y1 - wdy, x2 + wdx, y2 + wdy, x1 + wdx, y1 + wdy);
+  hidgl_ensure_triangle_space (&buffer, 2);
+  hidgl_add_triangle (&buffer, x1 - wdx, y1 - wdy,
+                               x2 - wdx, y2 - wdy,
+                               x2 + wdx, y2 + wdy);
+  hidgl_add_triangle (&buffer, x1 - wdx, y1 - wdy,
+                               x2 + wdx, y2 + wdy,
+                               x1 + wdx, y1 + wdy);
 
   if (circular_caps) {
     int i;
     float last_capx, last_capy;
 
-    ensure_triangle_space (2 * slices);
+    hidgl_ensure_triangle_space (&buffer, 2 * slices);
 
     last_capx = ((float)width) / 2. * cos (angle * M_PI / 180.) + x1;
     last_capy = -((float)width) / 2. * sin (angle * M_PI / 180.) + y1;
@@ -414,7 +411,7 @@ hidgl_draw_line (hidGC gc, int cap, double width, int x1, int y1, int x2, int y2
       float capx, capy;
       capx = ((float)width) / 2. * cos (angle * M_PI / 180. + ((float)(i + 1)) * M_PI / (float)slices) + x1;
       capy = -((float)width) / 2. * sin (angle * M_PI / 180. + ((float)(i + 1)) * M_PI / (float)slices) + y1;
-      add_triangle (last_capx, last_capy, capx, capy, x1, y1);
+      hidgl_add_triangle (&buffer, last_capx, last_capy, capx, capy, x1, y1);
       last_capx = capx;
       last_capy = capy;
     }
@@ -424,7 +421,7 @@ hidgl_draw_line (hidGC gc, int cap, double width, int x1, int y1, int x2, int y2
       float capx, capy;
       capx = -((float)width) / 2. * cos (angle * M_PI / 180. + ((float)(i + 1)) * M_PI / (float)slices) + x2;
       capy = ((float)width) / 2. * sin (angle * M_PI / 180. + ((float)(i + 1)) * M_PI / (float)slices) + y2;
-      add_triangle (last_capx, last_capy, capx, capy, x2, y2);
+      hidgl_add_triangle (&buffer, last_capx, last_capy, capx, capy, x2, y2);
       last_capx = capx;
       last_capy = capy;
     }
@@ -533,7 +530,7 @@ hidgl_fill_circle (hidGC gc, int vx, int vy, int vr)
 
 //  slices = TRIANGLES_PER_CIRCLE;
 
-  ensure_triangle_space (slices);
+  hidgl_ensure_triangle_space (&buffer, slices);
 
   last_x = vx + vr;
   last_y = vy;
@@ -542,7 +539,7 @@ hidgl_fill_circle (hidGC gc, int vx, int vy, int vr)
     float x, y;
     x = ((float)vr) * cos (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
     y = ((float)vr) * sin (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
-    add_triangle (vx, vy, last_x, last_y, x, y);
+    hidgl_add_triangle (&buffer, vx, vy, last_x, last_y, x, y);
     last_x = x;
     last_y = y;
   }
@@ -609,7 +606,7 @@ myBegin (GLenum type)
   triangle_comp_idx = 0;
 }
 
-void
+static void
 myVertex (GLdouble *vertex_data)
 {
   static GLfloat triangle_vertices [2 * 3];
@@ -625,10 +622,11 @@ myVertex (GLdouble *vertex_data)
         }
       else
         {
-          ensure_triangle_space (1);
-          add_triangle (triangle_vertices [0], triangle_vertices [1],
-                        triangle_vertices [2], triangle_vertices [3],
-                        vertex_data [0], vertex_data [1]);
+          hidgl_ensure_triangle_space (&buffer, 1);
+          hidgl_add_triangle (&buffer,
+                              triangle_vertices [0], triangle_vertices [1],
+                              triangle_vertices [2], triangle_vertices [3],
+                              vertex_data [0], vertex_data [1]);
 
           if (tessVertexType == GL_TRIANGLE_STRIP)
             {
@@ -648,10 +646,11 @@ myVertex (GLdouble *vertex_data)
       stashed_vertices ++;
       if (stashed_vertices == 3)
         {
-          ensure_triangle_space (1);
-          add_triangle (triangle_vertices [0], triangle_vertices [1],
-                        triangle_vertices [2], triangle_vertices [3],
-                        triangle_vertices [4], triangle_vertices [5]);
+          hidgl_ensure_triangle_space (&buffer, 1);
+          hidgl_add_triangle (&buffer,
+                              triangle_vertices [0], triangle_vertices [1],
+                              triangle_vertices [2], triangle_vertices [3],
+                              triangle_vertices [4], triangle_vertices [5]);
           triangle_comp_idx = 0;
           stashed_vertices = 0;
         }
