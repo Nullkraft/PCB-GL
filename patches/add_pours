@@ -1,5 +1,5 @@
 Bottom: 16dab66b09154887f51241993ddb7d3e661b4bd4
-Top:    43b08810b2e7adb66f90a62e7a1e6ddf5b974ad3
+Top:    960f0678fc2589e353b5be61ee36e3ac3d1ea932
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-01-24 03:12:24 +0000
 
@@ -4005,10 +4005,19 @@ index 5186183..6b5b0c4 100644
     {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
     {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/polygon.c b/src/polygon.c
-index 7410329..2da60e3 100644
+index 7410329..1fcf933 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -110,8 +110,6 @@ RCSID ("$Id: polygon.c,v 1.64 2009-01-24 01:36:40 petercjclifton Exp $");
+@@ -32,6 +32,8 @@
+ Here's a brief tour of the data and life of a polygon, courtesy of Ben
+ Jackson:
+ 
++*** FIXME: SOME OF THIS WILL BE OUT DATED BY THE ADDITION OF POURS ****
++
+ A PCB PolygonType contains an array of points outlining the polygon.
+ This is what is manipulated by the UI and stored in the saved PCB.
+ 
+@@ -110,8 +112,6 @@ RCSID ("$Id: polygon.c,v 1.64 2009-01-24 01:36:40 petercjclifton Exp $");
  
  #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
  
@@ -4017,7 +4026,7 @@ index 7410329..2da60e3 100644
  /* ---------------------------------------------------------------------------
   * local prototypes
   */
-@@ -165,6 +163,7 @@ ComputeNoHoles (PolygonType *poly)
+@@ -165,6 +165,7 @@ ComputeNoHoles (PolygonType *poly)
    poly->NoHolesValid = 1;
  }
  
@@ -4025,7 +4034,7 @@ index 7410329..2da60e3 100644
  static POLYAREA *
  biggest (POLYAREA * p)
  {
-@@ -210,12 +209,14 @@ biggest (POLYAREA * p)
+@@ -210,12 +211,14 @@ biggest (POLYAREA * p)
    assert (p->b);
    return p;
  }
@@ -4040,7 +4049,7 @@ index 7410329..2da60e3 100644
    assert (contour->Flags.orient == PLF_DIR);
    if (!(p = poly_Create ()))
      return NULL;
-@@ -224,14 +225,17 @@ ContourToPoly (PLINE * contour)
+@@ -224,14 +227,17 @@ ContourToPoly (PLINE * contour)
    return p;
  }
  
@@ -4060,7 +4069,7 @@ index 7410329..2da60e3 100644
    POLYGONPOINT_LOOP (p);
    {
      v[0] = point->X;
-@@ -268,9 +272,11 @@ original_poly (PolygonType * p)
+@@ -268,9 +274,11 @@ original_poly (PolygonType * p)
    assert (poly_Valid (np));
    return biggest (np);
  }
@@ -4073,7 +4082,7 @@ index 7410329..2da60e3 100644
  {
    POLYAREA *p, *result;
    int r;
-@@ -286,10 +292,12 @@ ClipOriginal (PolygonType * poly)
+@@ -286,10 +294,12 @@ ClipOriginal (PolygonType * poly)
        poly->NoHoles = NULL;
        return 0;
      }
@@ -4087,7 +4096,7 @@ index 7410329..2da60e3 100644
  
  POLYAREA *
  RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2)
-@@ -628,6 +636,8 @@ SquarePadPoly (PadType * pad, BDimension clear)
+@@ -628,6 +638,8 @@ SquarePadPoly (PadType * pad, BDimension clear)
    return np;
  }
  
@@ -4096,7 +4105,7 @@ index 7410329..2da60e3 100644
  /* clear np1 from the polygon */
  static int
  Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
-@@ -661,7 +671,9 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
+@@ -661,7 +673,9 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
        p->NoHoles = NULL;
        return -1;
      }
@@ -4107,7 +4116,7 @@ index 7410329..2da60e3 100644
    assert (!p->Clipped || poly_Valid (p->Clipped));
    if (!p->Clipped)
      Message ("Polygon cleared out of existence near (%d, %d)\n",
-@@ -669,6 +681,7 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
+@@ -669,6 +683,7 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
               (p->BoundingBox.Y1 + p->BoundingBox.Y2) / 2);
    return 1;
  }
@@ -4115,7 +4124,7 @@ index 7410329..2da60e3 100644
  
  /* create a polygon of the pin clearance */
  POLYAREA *
-@@ -700,416 +713,17 @@ BoxPolyBloated (BoxType *box, BDimension bloat)
+@@ -700,416 +715,17 @@ BoxPolyBloated (BoxType *box, BDimension bloat)
                     box->Y1 - bloat, box->Y2 + bloat);
  }
  
@@ -4539,7 +4548,7 @@ index 7410329..2da60e3 100644
    if (inhibit)
      return 0;
    if (p->Clipped)
-@@ -1126,205 +740,7 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
+@@ -1126,205 +742,7 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
    else
      p->NoHolesValid = 0;
    return 1;
@@ -4746,7 +4755,7 @@ index 7410329..2da60e3 100644
  }
  
  /* find polygon holes in range, then call the callback function for
-@@ -1368,68 +784,14 @@ struct plow_info
+@@ -1368,68 +786,14 @@ struct plow_info
  };
  
  static int
@@ -4821,7 +4830,7 @@ index 7410329..2da60e3 100644
    return 0;
  }
  
-@@ -1437,12 +799,10 @@ static int
+@@ -1437,12 +801,10 @@ static int
  plow_callback (const BoxType * b, void *cl)
  {
    struct plow_info *plow = (struct plow_info *) cl;
@@ -4837,7 +4846,7 @@ index 7410329..2da60e3 100644
  }
  
  int
-@@ -1469,8 +829,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1469,8 +831,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
            LAYER_LOOP (Data, max_layer);
            {
              info.layer = layer;
@@ -4847,7 +4856,7 @@ index 7410329..2da60e3 100644
            }
            END_LOOP;
          }
-@@ -1480,8 +839,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1480,8 +841,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
                                                                           ((LayerTypePtr) ptr1))));
            {
              info.layer = layer;
@@ -4857,7 +4866,7 @@ index 7410329..2da60e3 100644
            }
            END_LOOP;
          }
-@@ -1500,7 +858,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1500,7 +860,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
                                                                       ((LayerTypePtr) ptr1))));
        {
          info.layer = layer;
@@ -4866,7 +4875,7 @@ index 7410329..2da60e3 100644
        }
        END_LOOP;
        break;
-@@ -1514,7 +872,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1514,7 +874,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
          {
            info.layer = layer;
            r +=
@@ -4875,7 +4884,7 @@ index 7410329..2da60e3 100644
          }
          END_LOOP;
        }
-@@ -1538,21 +896,6 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1538,21 +898,6 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
    return r;
  }
  
@@ -4897,7 +4906,7 @@ index 7410329..2da60e3 100644
  
  Boolean
  isects (POLYAREA * a, PolygonTypePtr p, Boolean fr)
-@@ -1617,15 +960,17 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *u
+@@ -1617,15 +962,17 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *u
    if (!p->next)                 /* no holes */
      {
        PolygonType poly;
@@ -4917,7 +4926,7 @@ index 7410329..2da60e3 100644
        poly.Points = pts;
        pts[0].X = pts[0].X2 = p->xmin;
        pts[0].Y = pts[0].Y2 = p->ymin;
-@@ -1635,6 +980,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *u
+@@ -1635,6 +982,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *u
        pts[2].Y = pts[2].Y2 = p->ymax;
        pts[3].X = pts[3].X2 = p->xmin;
        pts[3].Y = pts[3].Y2 = p->ymax;
@@ -4925,7 +4934,7 @@ index 7410329..2da60e3 100644
        poly.Flags = MakeFlags (CLEARPOLYFLAG);
        emit (&poly, user_data);
        poly_Free (&pa);
-@@ -1720,6 +1066,9 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
+@@ -1720,6 +1068,9 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
  Boolean
  MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
  {
@@ -4935,7 +4944,7 @@ index 7410329..2da60e3 100644
    POLYAREA *p, *start;
    Boolean many = False;
    FlagType flags;
-@@ -1783,6 +1132,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+@@ -1783,6 +1134,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
    inhibit = False;
    IncrementUndoSerialNumber ();
    return many;
@@ -4943,6 +4952,19 @@ index 7410329..2da60e3 100644
  }
  
  void debug_pline (PLINE *pl)
+@@ -1815,9 +1167,9 @@ debug_polygon (PolygonType *p)
+ {
+   int i;
+   POLYAREA *pa;
+-  fprintf (stderr, "POLYGON %p  %d pts\n", p, p->PointN);
+-  for (i=0; i<p->PointN; i++)
+-    fprintf(stderr, "\t%d: %d, %d\n", i, p->Points[i].X, p->Points[i].Y);
++//  fprintf (stderr, "POLYGON %p  %d pts\n", p, p->PointN);
++//  for (i=0; i<p->PointN; i++)
++//    fprintf(stderr, "\t%d: %d, %d\n", i, p->Points[i].X, p->Points[i].Y);
+   pa = p->Clipped;
+   while (pa)
+     {
 diff --git a/src/polygon.h b/src/polygon.h
 index 895f5a6..31bcc82 100644
 --- a/src/polygon.h
@@ -7452,7 +7474,7 @@ index 587734e..e636e4b 100644
  };
  
 diff --git a/src/undo.c b/src/undo.c
-index 5874817..ffe4992 100644
+index 5874817..37b577f 100644
 --- a/src/undo.c
 +++ b/src/undo.c
 @@ -62,6 +62,7 @@
@@ -7668,6 +7690,17 @@ index 5874817..ffe4992 100644
  			      Boolean clear)
  {
    UndoListTypePtr undo;
+@@ -1155,8 +1156,8 @@ AddObjectToClearPolyUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
+   if (!Locked)
+     {
+       undo = GetUndoSlot (UNDO_CLEAR, OBJECT_ID (Ptr3), Type);
+-      undo->Data.ClearPoly.Clear = clear;
+-      undo->Data.ClearPoly.Layer = (LayerTypePtr) Ptr1;
++      undo->Data.ClearPour.Clear = clear;
++      undo->Data.ClearPour.Layer = (LayerTypePtr) Ptr1;
+     }
+ }
+ 
 @@ -1222,23 +1223,23 @@ AddObjectToRemovePointUndoList (int Type,
  				void *Ptr1, void *Ptr2, Cardinal index)
  {
