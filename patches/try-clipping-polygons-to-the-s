@@ -1,7 +1,7 @@
-Bottom: 7fec52a832bc7f7da64f6e8c738ac05e5234b12f
-Top:    851ab4df92bb05320d0d170e7bd640bd946dd407
+Bottom: e356beb71c0c7d5c216b7a45afbacb4fc40b28eb
+Top:    7e924a69c1b05773bf4d8c52f65a445d871699b5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 19:41:43 +0000
+Date:   2009-01-24 03:12:26 +0000
 
 Try clipping polygons to the screen using our own algebra, not GL
 
@@ -183,7 +183,7 @@ index 8143cea..3841a1a 100644
  }
  
 diff --git a/src/polygon.c b/src/polygon.c
-index 1e23a2e..d8339ed 100644
+index 24b466c..ce4c6fa 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -709,7 +709,7 @@ PinPoly (PinType * pin, BDimension thick, BDimension clear)
@@ -196,7 +196,7 @@ index 1e23a2e..d8339ed 100644
    return RectPoly (box->X1 - bloat, box->X2 + bloat,
                     box->Y1 - bloat, box->Y2 + bloat);
 diff --git a/src/polygon.h b/src/polygon.h
-index 572573d..a8c77b2 100644
+index 31bcc82..b3b199d 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
 @@ -50,7 +50,7 @@ POLYAREA * LinePoly(LineType *l, BDimension thick);

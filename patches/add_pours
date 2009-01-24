@@ -1,7 +1,7 @@
-Bottom: 75b81b1c973de862de24a94d944dc4d530462c21
-Top:    a626453fa9f9355abcd2a6ae2546ae9bf45bc4af
+Bottom: 16dab66b09154887f51241993ddb7d3e661b4bd4
+Top:    43b08810b2e7adb66f90a62e7a1e6ddf5b974ad3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 19:41:42 +0000
+Date:   2009-01-24 03:12:24 +0000
 
 Add support for a "poured" object.
 
@@ -44,7 +44,7 @@ index bd10933..c98b2e4 100755
  						/* an element */
  #define	MAX_LIBRARY_LINE_LENGTH		255	/* maximum line length in the */
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 8109894..1c600a3 100644
+index a337e16..ec1cb64 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -104,6 +104,8 @@ PCB_SRCS = \
@@ -4005,10 +4005,10 @@ index 5186183..6b5b0c4 100644
     {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
     {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/polygon.c b/src/polygon.c
-index 80f4cb4..e66bf86 100644
+index 7410329..2da60e3 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -110,8 +110,6 @@ RCSID ("$Id: polygon.c,v 1.63 2008-12-30 03:18:12 djdelorie Exp $");
+@@ -110,8 +110,6 @@ RCSID ("$Id: polygon.c,v 1.64 2009-01-24 01:36:40 petercjclifton Exp $");
  
  #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
  
@@ -4944,7 +4944,7 @@ index 80f4cb4..e66bf86 100644
  
  void debug_pline (PLINE *pl)
 diff --git a/src/polygon.h b/src/polygon.h
-index c67d574..572573d 100644
+index 895f5a6..31bcc82 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
 @@ -33,26 +33,25 @@
@@ -6467,7 +6467,7 @@ index 3435e53..4517da7 100644
    r_search(PCB->Data->via_tree, &box, NULL, gp_pin_cb, 0);
    r_search(PCB->Data->pad_tree, &box, NULL, gp_pad_cb, 0);
 diff --git a/src/rats.c b/src/rats.c
-index b2527af..88c115f 100644
+index 181169a..c6da1a8 100644
 --- a/src/rats.c
 +++ b/src/rats.c
 @@ -505,20 +505,24 @@ GatherSubnets (NetListTypePtr Netl, Boolean NoWarn, Boolean AndRats)

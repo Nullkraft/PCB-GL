@@ -1,7 +1,7 @@
-Bottom: ed692c4ba20d670d935c030a56b4d855a67b52c6
-Top:    7fec52a832bc7f7da64f6e8c738ac05e5234b12f
+Bottom: 385c4df0fadf28e56f59f35e5a69ec7f1be6086c
+Top:    e356beb71c0c7d5c216b7a45afbacb4fc40b28eb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 19:41:43 +0000
+Date:   2009-01-24 03:12:26 +0000
 
 Try optimising polygon operations by keeping an rtree with their contours
 
@@ -76,7 +76,7 @@ index 42acc1a..ee185a9 100644
  
  BOOLp poly_M_Copy0(POLYAREA ** dst, const POLYAREA * srcfst);
 diff --git a/src/polygon.c b/src/polygon.c
-index e66bf86..1e23a2e 100644
+index 2da60e3..24b466c 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -128,10 +128,12 @@ add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
