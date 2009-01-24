@@ -1,7 +1,7 @@
-Bottom: 3e5eaf716ad76dad55eba6475d37f632ddb0fa5c
-Top:    09edf6b5c9f410bae7a1487b49d626085333ecdd
+Bottom: 15f1d22e33bd1829cab6cb3a93252e5ead166988
+Top:    fbcfd8bdf7ef073fb4b9a9c3d2ea797188b4de90
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-23 19:41:24 +0000
+Date:   2009-01-24 02:01:46 +0000
 
 Add cache for "noholes", diced versions of polygons
 
@@ -136,7 +136,7 @@ index de655c6..7a907b0 100644
      }
  }
 diff --git a/src/polygon.c b/src/polygon.c
-index ed27b39..72e92ca 100644
+index 626e499..32f23b9 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -122,6 +122,48 @@ static double circleVerticies[] = {
@@ -338,7 +338,7 @@ index ed27b39..72e92ca 100644
    RemovePolygon (layer, poly);
    inhibit = True;
 diff --git a/src/polygon.h b/src/polygon.h
-index 51a1ebc..c67d574 100644
+index 60412d9..895f5a6 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
 @@ -43,6 +43,7 @@ int PolygonHoles (const BoxType * range, LayerTypePtr, PolygonTypePtr,
