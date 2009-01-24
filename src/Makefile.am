@@ -146,12 +146,16 @@ PCB_SRCS = \
 	hid/hidint.h 
 pcb_SOURCES = ${PCB_SRCS} core_lists.h
 
-EXTRA_pcb_SOURCES = ${DBUS_SRCS}
+EXTRA_pcb_SOURCES = ${DBUS_SRCS} ${GL_SRCS}
 DBUS_SRCS= \
 	dbus-pcbmain.c \
 	dbus-pcbmain.h \
 	dbus.h \
 	dbus.c
+
+GL_SRCS= \
+	hid/common/hidgl.c \
+	hid/common/hidgl.h
 
 BUILT_SOURCES = \
 	core_lists.h \
@@ -265,6 +269,11 @@ dbus-introspect.h : dbus.xml Makefile
 PCB_SRCS+=	${DBUS_SRCS}
 BUILT_SOURCES+=	dbus-introspect.h
 
+endif
+
+# If we are building with GL support, we need some extra files
+if WITH_DBUS
+PCB_SRCS+=	${GL_SRCS}
 endif
 
 # If we are building on win32, then compile in some icons for the
