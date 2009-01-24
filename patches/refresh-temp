@@ -1,0 +1,49 @@
+Bottom: 43b08810b2e7adb66f90a62e7a1e6ddf5b974ad3
+Top:    960f0678fc2589e353b5be61ee36e3ac3d1ea932
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-01-24 03:24:39 +0000
+
+Refresh of add_pours
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 2da60e3..1fcf933 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -32,6 +32,8 @@
+ Here's a brief tour of the data and life of a polygon, courtesy of Ben
+ Jackson:
+ 
++*** FIXME: SOME OF THIS WILL BE OUT DATED BY THE ADDITION OF POURS ****
++
+ A PCB PolygonType contains an array of points outlining the polygon.
+ This is what is manipulated by the UI and stored in the saved PCB.
+ 
+@@ -1165,9 +1167,9 @@ debug_polygon (PolygonType *p)
+ {
+   int i;
+   POLYAREA *pa;
+-  fprintf (stderr, "POLYGON %p  %d pts\n", p, p->PointN);
+-  for (i=0; i<p->PointN; i++)
+-    fprintf(stderr, "\t%d: %d, %d\n", i, p->Points[i].X, p->Points[i].Y);
++//  fprintf (stderr, "POLYGON %p  %d pts\n", p, p->PointN);
++//  for (i=0; i<p->PointN; i++)
++//    fprintf(stderr, "\t%d: %d, %d\n", i, p->Points[i].X, p->Points[i].Y);
+   pa = p->Clipped;
+   while (pa)
+     {
+diff --git a/src/undo.c b/src/undo.c
+index ffe4992..37b577f 100644
+--- a/src/undo.c
++++ b/src/undo.c
+@@ -1156,8 +1156,8 @@ AddObjectToClearPourUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
+   if (!Locked)
+     {
+       undo = GetUndoSlot (UNDO_CLEAR, OBJECT_ID (Ptr3), Type);
+-      undo->Data.ClearPoly.Clear = clear;
+-      undo->Data.ClearPoly.Layer = (LayerTypePtr) Ptr1;
++      undo->Data.ClearPour.Clear = clear;
++      undo->Data.ClearPour.Layer = (LayerTypePtr) Ptr1;
+     }
+ }
