@@ -281,17 +281,17 @@ Either do not use --enable-gl or enable the gtk HID.])
 # FIXME... what do we need to check for determining we have GL? Is it headers, API ?
 
 	AC_CHECK_HEADERS(GL/gl.h)
-	case $ac_cv_header_GL_glut_h in
+	case $ac_cv_header_GL_gl_h in
 	  no )
 	    AC_MSG_ERROR([You don't seem to have the GL library headers installed.])
 	    ;;
 	  * ) ;;
 	esac
 
-	AC_CHECK_HEADERS(GL/glut.h)
-	case $ac_cv_header_GL_glut_h in
+	AC_CHECK_HEADERS(GL/glu.h)
+	case $ac_cv_header_GL_glu_h in
 	  no )
-	    AC_MSG_ERROR([You don't seem to have the GL glut library headers installed.])
+	    AC_MSG_ERROR([You don't seem to have the GL glu library headers installed.])
 	    ;;
 	  * ) ;;
 	esac
