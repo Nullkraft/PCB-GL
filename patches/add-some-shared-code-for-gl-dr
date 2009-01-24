@@ -1,5 +1,5 @@
 Bottom: 26085845e1eeb462139b5ae4aec7092817945dc6
-Top:    79295cbf1b1f5338fd10344885d0583ab3db49e4
+Top:    5bd99ed0603e1be1979aa1d8886efdac63517f62
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-01-24 16:37:10 +0000
 
@@ -47,7 +47,7 @@ index 8109894..a337e16 100644
  if WIN32
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
 new file mode 100644
-index 0000000..c95cc7f
+index 0000000..5cba0b4
 --- /dev/null
 +++ b/src/hid/common/hidgl.c
 @@ -0,0 +1,717 @@
@@ -210,7 +210,7 @@ index 0000000..c95cc7f
 +    {
 +      npoints = n + 10;
 +      points =
-+	MyRealloc (points, npoints * 2 * sizeof (GLfloat), "gtk_draw_grid");
++        MyRealloc (points, npoints * 2 * sizeof (GLfloat), "gtk_draw_grid");
 +    }
 +
 +  glEnableClientState (GL_VERTEX_ARRAY);
@@ -226,7 +226,7 @@ index 0000000..c95cc7f
 +    {
 +      int vy = Vy (y);
 +      for (i = 0; i < n; i++)
-+	points[2 * i + 1] = vy;
++        points[2 * i + 1] = vy;
 +      glDrawArrays (GL_POINTS, 0, n);
 +    }
 +
@@ -243,8 +243,8 @@ index 0000000..c95cc7f
 +hidgl_set_layer (const char *name, int group, int empty)
 +{
 +  int idx = (group >= 0
-+	     && group <
-+	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
++             && group <
++             max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
 +
 +  if (idx >= 0 && idx < max_layer + 2) {
 +    gport->trans_lines = TRUE;
@@ -253,28 +253,28 @@ index 0000000..c95cc7f
 +  if (idx < 0)
 +    {
 +      switch (SL_TYPE (idx))
-+	{
-+	case SL_INVISIBLE:
-+	  return /* pinout ? 0 : */ PCB->InvisibleObjectsOn;
-+	case SL_MASK:
-+	  if (SL_MYSIDE (idx) /*&& !pinout */ )
-+	    return TEST_FLAG (SHOWMASKFLAG, PCB);
-+	  return 0;
-+	case SL_SILK:
++        {
++        case SL_INVISIBLE:
++          return /* pinout ? 0 : */ PCB->InvisibleObjectsOn;
++        case SL_MASK:
++          if (SL_MYSIDE (idx) /*&& !pinout */ )
++            return TEST_FLAG (SHOWMASKFLAG, PCB);
++          return 0;
++        case SL_SILK:
 +//          gport->trans_lines = TRUE;
 +          gport->trans_lines = FALSE;
-+	  if (SL_MYSIDE (idx) /*|| pinout */ )
-+	    return PCB->ElementOn;
-+	  return 0;
-+	case SL_ASSY:
-+	  return 0;
-+	case SL_RATS:
-+	  gport->trans_lines = TRUE;
-+	  return 1;
-+	case SL_PDRILL:
-+	case SL_UDRILL:
-+	  return 1;
-+	}
++          if (SL_MYSIDE (idx) /*|| pinout */ )
++            return PCB->ElementOn;
++          return 0;
++        case SL_ASSY:
++          return 0;
++        case SL_RATS:
++          gport->trans_lines = TRUE;
++          return 1;
++        case SL_PDRILL:
++        case SL_UDRILL:
++          return 1;
++        }
 +    }
 +  return 0;
 +}
@@ -503,7 +503,7 @@ index 0000000..c95cc7f
 +  if (flip_y)
 +    {
 +      start_angle = - start_angle;
-+      delta_angle = - delta_angle;					
++      delta_angle = - delta_angle;
 +    }
 +  /* make sure we fall in the -180 to +180 range */
 +  start_angle = (start_angle + 360 + 180) % 360 - 180;
