@@ -1,7 +1,7 @@
-Bottom: 16dab66b09154887f51241993ddb7d3e661b4bd4
-Top:    960f0678fc2589e353b5be61ee36e3ac3d1ea932
+Bottom: 5e91aa2ed0c3c4e59431c29d53601179f431dac3
+Top:    b0eadb31e82132124c1f65669315b911a7f9158c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-24 03:12:24 +0000
+Date:   2009-01-28 22:02:04 +0000
 
 Add support for a "poured" object.
 
@@ -17,6 +17,7 @@ all child polygons selected. Manipulations will always occur on the
 
 It remains to be seen whether "pour" will have its own file-format entry,
 or if it will take over the meaning of the existing "polygon" entry.
+
 
 
 
@@ -1805,10 +1806,10 @@ index dc1cbf4..a447845 100644
  ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
  				 FontTypePtr, FlagType, char *, char *,
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 403ff4a..9e4be3e 100644
+index 58a245e..aa633ea 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -77,6 +77,7 @@ static int CrosshairStackLocation = 0;
+@@ -78,6 +78,7 @@ static int CrosshairStackLocation = 0;
   * some local prototypes
   */
  static void XORPolygon (PolygonTypePtr, LocationType, LocationType);
@@ -1816,7 +1817,7 @@ index 403ff4a..9e4be3e 100644
  static void XORDrawElement (ElementTypePtr, LocationType, LocationType);
  static void XORDrawBuffer (BufferTypePtr);
  static void XORDrawInsertPointObject (void);
-@@ -92,6 +93,8 @@ static void XORDrawAttachedArc (BDimension);
+@@ -93,6 +94,8 @@ static void XORDrawAttachedArc (BDimension);
  static void
  XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
  {
@@ -1825,7 +1826,7 @@ index 403ff4a..9e4be3e 100644
    int i;
    for (i = 0; i < polygon->PointN - 1; i++)
      gui->draw_line (Crosshair.GC,
-@@ -102,6 +105,25 @@ XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
+@@ -103,6 +106,25 @@ XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
      gui->draw_line (Crosshair.GC,
  		    polygon->Points[i].X + dx, polygon->Points[i].Y + dy,
  		    polygon->Points[0].X + dx, polygon->Points[0].Y + dy);
@@ -1851,7 +1852,7 @@ index 403ff4a..9e4be3e 100644
  }
  
  /*-----------------------------------------------------------
-@@ -349,9 +371,11 @@ XORDrawBuffer (BufferTypePtr Buffer)
+@@ -351,9 +373,11 @@ XORDrawBuffer (BufferTypePtr Buffer)
  	/* the tmp polygon has n+1 points because the first
  	 * and the last one are set to the same coordinates
  	 */
@@ -1865,7 +1866,7 @@ index 403ff4a..9e4be3e 100644
  	}
  	END_LOOP;
        }
-@@ -451,6 +475,18 @@ XORDrawMoveOrCopyObject (void)
+@@ -453,6 +477,18 @@ XORDrawMoveOrCopyObject (void)
  	break;
        }
  
@@ -1884,7 +1885,7 @@ index 403ff4a..9e4be3e 100644
      case LINEPOINT_TYPE:
        {
  	LineTypePtr line;
-@@ -469,24 +505,24 @@ XORDrawMoveOrCopyObject (void)
+@@ -471,24 +507,24 @@ XORDrawMoveOrCopyObject (void)
  	break;
        }
  
@@ -1916,7 +1917,7 @@ index 403ff4a..9e4be3e 100644
  	  }
  	else
  	  {
-@@ -597,8 +633,8 @@ DrawAttached (Boolean BlockToo)
+@@ -599,8 +635,8 @@ DrawAttached (Boolean BlockToo)
  	}
        break;
  
@@ -1927,7 +1928,7 @@ index 403ff4a..9e4be3e 100644
        /* draw only if starting point is set */
        if (Crosshair.AttachedLine.State != STATE_FIRST)
  	gui->draw_line (Crosshair.GC,
-@@ -607,10 +643,10 @@ DrawAttached (Boolean BlockToo)
+@@ -609,10 +645,10 @@ DrawAttached (Boolean BlockToo)
  			Crosshair.AttachedLine.Point2.X,
  			Crosshair.AttachedLine.Point2.Y);
  
@@ -1941,7 +1942,7 @@ index 403ff4a..9e4be3e 100644
  	}
        break;
  
-@@ -986,7 +1022,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+@@ -988,7 +1024,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
  
    if (TEST_FLAG (SNAPPINFLAG, PCB))
      ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
@@ -1950,7 +1951,7 @@ index 403ff4a..9e4be3e 100644
    else
      ans = NO_TYPE;
  
-@@ -1161,6 +1197,6 @@ void
+@@ -1163,6 +1199,6 @@ void
  DestroyCrosshair (void)
  {
    CrosshairOff (True);
