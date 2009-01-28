@@ -1,7 +1,7 @@
-Bottom: 5154d18481e6ce82f2360e5bd5d46947a83d40b4
-Top:    2b0ea6699f0c106bc2dfe0bbf270a7eb31ec2b72
+Bottom: 5e91aa2ed0c3c4e59431c29d53601179f431dac3
+Top:    2d08fa45ebd81b40d4b572b50018e4bc69aea648
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-24 03:25:18 +0000
+Date:   2009-01-28 22:05:22 +0000
 
 Add strip hierarchy options to display refdes without any "..../" prefix
 
@@ -14,10 +14,10 @@ Add strip hierarchy options to display refdes without any "..../" prefix
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 8ec66c3..0cfaaab 100644
+index c90738f..c796d58 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -3304,9 +3304,16 @@ ActionRenumber (int argc, char **argv, int x, int y)
+@@ -3305,9 +3305,16 @@ ActionRenumber (int argc, char **argv, int x, int y)
        /* If there is no refdes, maybe just spit out a warning */
        if (NAMEONPCB_NAME (element_list[i]))
  	{
@@ -35,7 +35,7 @@ index 8ec66c3..0cfaaab 100644
  	  while (tmps[j] && (tmps[j] < '0' || tmps[j] > '9')
  		 && tmps[j] != '?')
  	    j++;
-@@ -4668,6 +4675,79 @@ ActionToggleHideName (int argc, char **argv, int x, int y)
+@@ -4665,6 +4672,79 @@ ActionToggleHideName (int argc, char **argv, int x, int y)
  
  /* --------------------------------------------------------------------------- */
  
@@ -115,7 +115,7 @@ index 8ec66c3..0cfaaab 100644
  static const char changejoin_syntax[] =
    "ChangeJoin(ToggleObject|SelectedLines|SelectedArcs|Selected)";
  
-@@ -6928,6 +7008,9 @@ HID_Action action_action_list[] = {
+@@ -6925,6 +7005,9 @@ HID_Action action_action_list[] = {
    {"ToggleHideName", 0, ActionToggleHideName,
     togglehidename_help, togglehidename_syntax}
    ,
@@ -126,10 +126,10 @@ index 8ec66c3..0cfaaab 100644
     undo_help, undo_syntax}
    ,
 diff --git a/src/const.h b/src/const.h
-index bfb0ede..a8d53ff 100644
+index 18927b8..49019a9 100644
 --- a/src/const.h
 +++ b/src/const.h
-@@ -170,6 +170,8 @@ Marker used internally to avoid revisiting an object.
+@@ -169,6 +169,8 @@ Marker used internally to avoid revisiting an object.
  @item 0x10000 nopaste
  For pads, set to prevent a solderpaste stencil opening for the
  pad.  Primarily used for pads used as fiducials.
@@ -138,7 +138,7 @@ index bfb0ede..a8d53ff 100644
  @end table
  %end-doc */
  
-@@ -206,6 +208,7 @@ pad.  Primarily used for pads used as fiducials.
+@@ -205,6 +207,7 @@ pad.  Primarily used for pads used as fiducials.
  #define EDGE2FLAG               0x4000	/* Padr.Point2 is closer to outside edge */
  					/* also pinout text for pins is vertical */
  #define VISITFLAG		0x8000  /* marker to avoid re-visiting an object */
@@ -147,10 +147,10 @@ index bfb0ede..a8d53ff 100644
   * PCB flags
   */
 diff --git a/src/draw.c b/src/draw.c
-index 8143cea..480bc87 100644
+index 44b7f24..cd31a0e 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2339,6 +2339,33 @@ DrawElement (ElementTypePtr Element, int unused)
+@@ -2239,6 +2239,33 @@ DrawElement (ElementTypePtr Element, int unused)
    DrawElementPinsAndPads (Element, unused);
  }
  
@@ -184,7 +184,7 @@ index 8143cea..480bc87 100644
  #define MASK_SUBCOMPOSITE_ELEMENT_NAMES 0
  
  /* ---------------------------------------------------------------------------
-@@ -2357,7 +2384,7 @@ DrawElementName (ElementTypePtr Element, int unused)
+@@ -2257,7 +2284,7 @@ DrawElementName (ElementTypePtr Element, int unused)
    gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
    gui->use_mask (HID_MASK_BEFORE);
  
@@ -193,7 +193,7 @@ index 8143cea..480bc87 100644
  #endif
  
    if (doing_pinout || doing_assy)
-@@ -2374,7 +2401,7 @@ DrawElementName (ElementTypePtr Element, int unused)
+@@ -2274,7 +2301,7 @@ DrawElementName (ElementTypePtr Element, int unused)
    gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
    gui->use_mask (HID_MASK_OFF);
  #else
@@ -202,7 +202,7 @@ index 8143cea..480bc87 100644
  #endif
  }
  
-@@ -2624,7 +2651,7 @@ EraseElement (ElementTypePtr Element)
+@@ -2512,7 +2539,7 @@ EraseElement (ElementTypePtr Element)
    }
    END_LOOP;
    if (!TEST_FLAG (HIDENAMEFLAG, Element))
@@ -211,7 +211,7 @@ index 8143cea..480bc87 100644
    EraseElementPinsAndPads (Element);
    Erasing--;
  }
-@@ -2670,7 +2697,7 @@ EraseElementName (ElementTypePtr Element)
+@@ -2558,7 +2585,7 @@ EraseElementName (ElementTypePtr Element)
      return;
    Erasing++;
    gui->set_color (Output.fgGC, Settings.BackgroundColor);
@@ -221,11 +221,11 @@ index 8143cea..480bc87 100644
  }
  
 diff --git a/src/strflags.c b/src/strflags.c
-index e636e4b..9c25c3e 100644
+index 587734e..79d1e70 100644
 --- a/src/strflags.c
 +++ b/src/strflags.c
 @@ -98,6 +98,7 @@ static FlagBitsType object_flagbits[] = {
-   { CLEARPOLYFLAG, N ("clearpoly"), POUR_TYPE },
+   { CLEARPOLYFLAG, N ("clearpoly"), POLYGON_TYPE },
    { HIDENAMEFLAG, N ("hidename"), ELEMENT_TYPE },
    { DISPLAYNAMEFLAG, N ("showname"), ELEMENT_TYPE },
 +  { STRIPHIERFLAG, N ("striphierarchy"), ELEMENT_TYPE },
