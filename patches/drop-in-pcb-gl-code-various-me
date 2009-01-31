@@ -1,5 +1,5 @@
 Bottom: 698528ab04b40aabc816db8bd16c1480acf4007b
-Top:    e83a3ba5ad73d6644c39499779563379ef136fad
+Top:    2e7ded39c261a98279bfd01369b130ef0dcab294
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-01-24 17:49:22 +0000
 
@@ -2135,7 +2135,7 @@ index 26e3b36..0217dd8 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 31b9d10..0c4da62 100644
+index 31b9d10..20673eb 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -293,16 +293,16 @@ have_crosshair_attachments (void)
@@ -2387,7 +2387,7 @@ index 31b9d10..0c4da62 100644
  }
  
  static gboolean
-@@ -822,53 +869,220 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -822,53 +869,221 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
    if (!first_time_done)
      {
        gport->colormap = gtk_widget_get_colormap (gport->top_window);
@@ -2606,6 +2606,7 @@ index 31b9d10..0c4da62 100644
 +
 +  ghid_init_triangle_array ();
 +  DrawAttached (TRUE);
++  DrawMark (TRUE);
    ghid_show_crosshair (TRUE);
 +
 +  ghid_flush_triangles ();
@@ -2621,7 +2622,7 @@ index 31b9d10..0c4da62 100644
    return FALSE;
  }
  
-@@ -881,6 +1095,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -881,6 +1096,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
    GdkModifierType state;
@@ -2636,7 +2637,7 @@ index 31b9d10..0c4da62 100644
  
    state = (GdkModifierType) (ev->state);
    mk = ghid_modifier_keys_state (&state);
-@@ -900,9 +1122,18 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -900,9 +1123,18 @@ ghid_port_window_motion_cb (GtkWidget * widget,
      }
    x_prev = y_prev = -1;
    moved = ghid_note_event_location (ev);
@@ -2655,7 +2656,7 @@ index 31b9d10..0c4da62 100644
    return FALSE;
  }
  
-@@ -942,7 +1173,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -942,7 +1174,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        RestoreCrosshair (TRUE);
        cursor_in_viewport = TRUE;
      }
