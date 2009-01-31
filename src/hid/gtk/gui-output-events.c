@@ -1071,6 +1071,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 
   ghid_init_triangle_array ();
   DrawAttached (TRUE);
+  DrawMark (TRUE);
   ghid_show_crosshair (TRUE);
 
   ghid_flush_triangles ();
