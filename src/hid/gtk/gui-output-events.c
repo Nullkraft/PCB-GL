@@ -1302,17 +1302,17 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
 
   state = (GdkModifierType) (ev->state);
   mk = ghid_modifier_keys_state (&state);
+
   if (mk == NONE_PRESSED)
+    dy = ghid_port.height * gport->zoom / 40;
+  else if (mk == SHIFT_PRESSED)
+    dx = ghid_port.width * gport->zoom / 40;
+  else if (mk == CONTROL_PRESSED)
     {
       zoom_factor = (ev->direction == GDK_SCROLL_UP) ? 0.8 : 1.25;
       ghid_port_ranges_zoom (gport->zoom * zoom_factor);
       return TRUE;
     }
-
-  if (mk == SHIFT_PRESSED)
-    dy = ghid_port.height * gport->zoom / 40;
-  else
-    dx = ghid_port.width * gport->zoom / 40;
 
   if (ev->direction == GDK_SCROLL_UP)
     {
