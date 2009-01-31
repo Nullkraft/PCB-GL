@@ -1096,6 +1096,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
   static gint x_prev = -1, y_prev = -1;
   gboolean moved;
   GdkModifierType state;
+#if 0
   GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
   GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
 
@@ -1104,6 +1105,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
     printf ("GL THingy returned\n");
     return FALSE;
   }
+#endif
 
   state = (GdkModifierType) (ev->state);
   mk = ghid_modifier_keys_state (&state);
@@ -1111,8 +1113,11 @@ ghid_port_window_motion_cb (GtkWidget * widget,
   if ((ev->state & GDK_BUTTON3_MASK) == GDK_BUTTON3_MASK
       && mk == NONE_PRESSED)
     {
+/* Not sure this really matters, since we're using invalidate to get a redraw */
+#if 1
       if (gtk_events_pending ())
 	return FALSE;
+#endif
       dx = gport->zoom * (x_prev - ev->x);
       dy = gport->zoom * (y_prev - ev->y);
       if (x_prev > 0)
@@ -1124,10 +1129,11 @@ ghid_port_window_motion_cb (GtkWidget * widget,
   x_prev = y_prev = -1;
   moved = ghid_note_event_location (ev);
 
-  ghid_show_crosshair (TRUE);
-  if (moved && have_crosshair_attachments ())
+//  ghid_show_crosshair (TRUE);
+  if (moved) // && have_crosshair_attachments ())
     ghid_draw_area_update (gport, NULL);
 
+#if 0
   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
     gdk_gl_drawable_swap_buffers (pGlDrawable);
   else
@@ -1135,6 +1141,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
 
   /* end drawing to current GL-context */
   gdk_gl_drawable_gl_end (pGlDrawable);
+#endif
+
   return FALSE;
 }
 
