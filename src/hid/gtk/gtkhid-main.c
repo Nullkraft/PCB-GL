@@ -32,26 +32,83 @@
 #include <gdk/gdkx.h>
 #endif
 
+#include <gtk/gtkgl.h>
+#include <GL/glut.h>
+
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
 
+#define PIXELS_PER_CIRCLINE 5.
 
 RCSID ("$Id: gtkhid-main.c,v 1.59 2008-12-27 19:06:04 djdelorie Exp $");
 
 
 extern HID ghid_hid;
 
+static int ghid_gui_is_up = 0;
+
+#define TRIANGLE_ARRAY_SIZE 5000
+static GLfloat triangle_array [2 * 3 * TRIANGLE_ARRAY_SIZE];
+static unsigned int triangle_count;
+static int coord_comp_count;
+
+void
+ghid_init_triangle_array (void)
+{
+  glEnableClientState (GL_VERTEX_ARRAY);
+  glVertexPointer (2, GL_FLOAT, 0, &triangle_array);
+  triangle_count = 0;
+  coord_comp_count = 0;
+}
+
+void
+ghid_flush_triangles ()
+{
+  if (triangle_count == 0)
+    return;
+
+//  printf ("Flushing %i triangles\n", triangle_count);
+  glDrawArrays (GL_TRIANGLES, 0, triangle_count * 3);
+  triangle_count = 0;
+  coord_comp_count = 0;
+}
+
+static void
+ensure_triangle_space (int count)
+{
+  if (count > TRIANGLE_ARRAY_SIZE)
+    {
+      fprintf (stderr, "Not enough space in vertex buffer\n");
+      fprintf (stderr, "Requested %i triangles, %i available\n", count, TRIANGLE_ARRAY_SIZE);
+      exit (1);
+    }
+  if (count > TRIANGLE_ARRAY_SIZE - triangle_count)
+    ghid_flush_triangles ();
+}
+
+static inline void
+add_triangle (GLfloat x1, GLfloat y1,
+              GLfloat x2, GLfloat y2,
+              GLfloat x3, GLfloat y3)
+{
+  triangle_array [coord_comp_count++] = x1;
+  triangle_array [coord_comp_count++] = y1;
+  triangle_array [coord_comp_count++] = x2;
+  triangle_array [coord_comp_count++] = y2;
+  triangle_array [coord_comp_count++] = x3;
+  triangle_array [coord_comp_count++] = y3;
+  triangle_count++;
+}
 
 static void zoom_to (double factor, int x, int y);
 static void zoom_by (double factor, int x, int y);
 
 /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
 */
-#define USE_GC(gc) if (!use_gc(gc)) return
+#define USE_GC(gc) use_gc (gc)
 
 static int cur_mask = -1;
-static int mask_seq = 0;
 
 int ghid_flip_x = 0, ghid_flip_y = 0;
 
@@ -379,10 +436,10 @@ zoom_by (double factor, int x, int y)
 
 /* ------------------------------------------------------------ */
 
-static void
+/*static*/ void
 draw_grid ()
 {
-  static GdkPoint *points = 0;
+  static GLfloat *points = 0;
   static int npoints = 0;
   int x1, y1, x2, y2, n, i;
   double x, y;
@@ -391,19 +448,23 @@ draw_grid ()
     return;
   if (Vz (PCB->Grid) < MIN_GRID_DISTANCE)
     return;
-  if (!gport->grid_gc)
+
+  if (gdk_color_parse (Settings.GridColor, &gport->grid_color))
     {
-      if (gdk_color_parse (Settings.GridColor, &gport->grid_color))
-	{
-	  gport->grid_color.red ^= gport->bg_color.red;
-	  gport->grid_color.green ^= gport->bg_color.green;
-	  gport->grid_color.blue ^= gport->bg_color.blue;
-	  gdk_color_alloc (gport->colormap, &gport->grid_color);
-	}
-      gport->grid_gc = gdk_gc_new (gport->drawable);
-      gdk_gc_set_function (gport->grid_gc, GDK_XOR);
-      gdk_gc_set_foreground (gport->grid_gc, &gport->grid_color);
+      gport->grid_color.red ^= gport->bg_color.red;
+      gport->grid_color.green ^= gport->bg_color.green;
+      gport->grid_color.blue ^= gport->bg_color.blue;
     }
+
+  ghid_flush_triangles ();
+
+  glEnable (GL_COLOR_LOGIC_OP);
+  glLogicOp (GL_XOR);
+
+  glColor3f (gport->grid_color.red / 65535.,
+             gport->grid_color.green / 65535.,
+             gport->grid_color.blue / 65535.);
+
   x1 = GRIDFIT_X (SIDE_X (gport->view_x0), PCB->Grid);
   y1 = GRIDFIT_Y (SIDE_Y (gport->view_y0), PCB->Grid);
   x2 = GRIDFIT_X (SIDE_X (gport->view_x0 + gport->view_width - 1), PCB->Grid);
@@ -433,21 +494,29 @@ draw_grid ()
     {
       npoints = n + 10;
       points =
-	MyRealloc (points, npoints * sizeof (GdkPoint), "gtk_draw_grid");
+	MyRealloc (points, npoints * 2 * sizeof (GLfloat), "gtk_draw_grid");
     }
+
+  glEnableClientState (GL_VERTEX_ARRAY);
+  glVertexPointer (2, GL_FLOAT, 0, points);
+
   n = 0;
   for (x = x1; x <= x2; x += PCB->Grid)
     {
-      points[n].x = Vx (x);
+      points[2 * n] = Vx (x);
       n++;
     }
   for (y = y1; y <= y2; y += PCB->Grid)
     {
       int vy = Vy (y);
       for (i = 0; i < n; i++)
-	points[i].y = vy;
-      gdk_draw_points (gport->drawable, gport->grid_gc, points, n);
+	points[2 * i + 1] = vy;
+      glDrawArrays (GL_POINTS, 0, n);
     }
+
+  glDisableClientState (GL_VERTEX_ARRAY);
+  glDisable (GL_COLOR_LOGIC_OP);
+  glFlush ();
 }
 
 /* ------------------------------------------------------------ */
@@ -471,108 +540,81 @@ ghid_invalidate_lr (int left, int right, int top, int bottom, int last)
   ghid_invalidate_all ();
 }
 
+#if 0
 static void
 ghid_draw_bg_image(void)
 {
-	static GdkPixbuf	*pixbuf;
-	GdkInterpType	interp_type;
-	gint	x, y, w, h, w_src, h_src;
-	static gint	w_scaled, h_scaled;
+  static GdkPixbuf *pixbuf = NULL;
+  static gint vw_scaled, vh_scaled, x_cached, y_cached;
+  GdkInterpType interp_type;
+  gint x, y, vw, vh, w, h, w_src, h_src;
+  int bits_per_sample;
+  gboolean has_alpha;
 
-	if (!ghidgui->bg_pixbuf)
-		return;
+  if (!ghidgui->bg_pixbuf)
+    return;
 
-	w = PCB->MaxWidth / gport->zoom;
-	h = PCB->MaxHeight / gport->zoom;
-	x = gport->view_x0 / gport->zoom;
-	y = gport->view_y0 / gport->zoom;
+  w = PCB->MaxWidth / gport->zoom;
+  h = PCB->MaxHeight / gport->zoom;
+  x = gport->view_x0 / gport->zoom;
+  y = gport->view_y0 / gport->zoom;
+  vw = gport->view_width / gport->zoom;
+  vh = gport->view_height / gport->zoom;
 
-	if (w_scaled != w || h_scaled != h)
-		{
-		if (pixbuf)
-			g_object_unref(G_OBJECT(pixbuf));
+  if (pixbuf == NULL || vw_scaled != vw || vh_scaled != vh)
+    {
+      if (pixbuf != NULL)
+        g_object_unref(G_OBJECT(pixbuf));
 
-		w_src = gdk_pixbuf_get_width(ghidgui->bg_pixbuf);
-		h_src = gdk_pixbuf_get_height(ghidgui->bg_pixbuf);
-		if (w > w_src && h > h_src)
-			interp_type = GDK_INTERP_NEAREST;
-		else
-			interp_type = GDK_INTERP_BILINEAR;
+      bits_per_sample = gdk_pixbuf_get_bits_per_sample(ghidgui->bg_pixbuf);
+      has_alpha = gdk_pixbuf_get_has_alpha (ghidgui->bg_pixbuf);
+      pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB,
+                              has_alpha,
+                              bits_per_sample,
+                              vw, vh);
+    }
 
-		pixbuf = gdk_pixbuf_scale_simple(ghidgui->bg_pixbuf, w, h, interp_type);
-		w_scaled = w;
-		h_scaled = h;
-		}
-	if (pixbuf)
-		gdk_pixbuf_render_to_drawable(pixbuf, gport->drawable, gport->bg_gc,
-            x, y, 0, 0,
-            w - x, h - y, GDK_RGB_DITHER_NORMAL, 0, 0);
-	}
+  if (pixbuf == NULL)
+    return;
+
+  if (vw_scaled != vw || vh_scaled != vh ||
+       x_cached != x  ||  y_cached != y)
+    {
+      w_src = gdk_pixbuf_get_width(ghidgui->bg_pixbuf);
+      h_src = gdk_pixbuf_get_height(ghidgui->bg_pixbuf);
+
+      if (w > w_src && h > h_src)
+        interp_type = GDK_INTERP_NEAREST;
+      else
+        interp_type = GDK_INTERP_BILINEAR;
+
+      gdk_pixbuf_scale(ghidgui->bg_pixbuf, pixbuf,
+                       0, 0, vw, vh,
+                       (double) -x,
+                       (double) -y,
+                       (double) w / w_src,
+                       (double) h / h_src,
+                       interp_type);
+
+      x_cached = x;
+      y_cached = y;
+      vw_scaled = vw;
+      vh_scaled = vh;
+    }
+
+  if (pixbuf != NULL)
+    gdk_draw_pixbuf(gport->drawable, gport->bg_gc, pixbuf,
+                    0, 0, 0, 0, vw, vh, GDK_RGB_DITHER_NORMAL, 0, 0);
+}
+#endif
 
 void
 ghid_invalidate_all ()
 {
-  int eleft, eright, etop, ebottom;
-  BoxType region;
-
-  if (!gport->pixmap)
-    return;
-
-  region.X1 = MIN(Px(0), Px(gport->width + 1));
-  region.Y1 = MIN(Py(0), Py(gport->height + 1));
-  region.X2 = MAX(Px(0), Px(gport->width + 1));
-  region.Y2 = MAX(Py(0), Py(gport->height + 1));
-
-  eleft = Vx (0);
-  eright = Vx (PCB->MaxWidth);
-  etop = Vy (0);
-  ebottom = Vy (PCB->MaxHeight);
-  if (eleft > eright)
-    {
-      int tmp = eleft;
-      eleft = eright;
-      eright = tmp;
-    }
-  if (etop > ebottom)
-    {
-      int tmp = etop;
-      etop = ebottom;
-      ebottom = tmp;
-    }
-
-  if (eleft > 0)
-    gdk_draw_rectangle (gport->drawable, gport->offlimits_gc,
-			1, 0, 0, eleft, gport->height);
-  else
-    eleft = 0;
-  if (eright < gport->width)
-    gdk_draw_rectangle (gport->drawable, gport->offlimits_gc,
-			1, eright, 0, gport->width - eright, gport->height);
-  else
-    eright = gport->width;
-  if (etop > 0)
-    gdk_draw_rectangle (gport->drawable, gport->offlimits_gc,
-			1, eleft, 0, eright - eleft + 1, etop);
-  else
-    etop = 0;
-  if (ebottom < gport->height)
-    gdk_draw_rectangle (gport->drawable, gport->offlimits_gc,
-			1, eleft, ebottom, eright - eleft + 1,
-			gport->height - ebottom);
-  else
-    ebottom = gport->height;
-
-  gdk_draw_rectangle (gport->drawable, gport->bg_gc, 1,
-		      eleft, etop, eright - eleft + 1, ebottom - etop + 1);
-
-  ghid_draw_bg_image();
-
-  hid_expose_callback (&ghid_hid, &region, 0);
-  draw_grid ();
   if (ghidgui->need_restore_crosshair)
     RestoreCrosshair (FALSE);
   ghidgui->need_restore_crosshair = FALSE;
-  ghid_screen_update ();
+  gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
 }
 
 
@@ -583,8 +625,10 @@ ghid_set_layer (const char *name, int group, int empty)
 	     && group <
 	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
 
-  if (idx >= 0 && idx < max_layer + 2)
+  if (idx >= 0 && idx < max_layer + 2) {
+    gport->trans_lines = TRUE;
     return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
+  }
   if (idx < 0)
     {
       switch (SL_TYPE (idx))
@@ -596,11 +640,16 @@ ghid_set_layer (const char *name, int group, int empty)
 	    return TEST_FLAG (SHOWMASKFLAG, PCB);
 	  return 0;
 	case SL_SILK:
+//          gport->trans_lines = TRUE;
+          gport->trans_lines = FALSE;
 	  if (SL_MYSIDE (idx) /*|| pinout */ )
 	    return PCB->ElementOn;
 	  return 0;
 	case SL_ASSY:
 	  return 0;
+	case SL_RATS:
+	  gport->trans_lines = TRUE;
+	  return 1;
 	case SL_PDRILL:
 	case SL_UDRILL:
 	  return 1;
@@ -609,55 +658,41 @@ ghid_set_layer (const char *name, int group, int empty)
   return 0;
 }
 
-#define WHICH_GC(gc) (cur_mask == HID_MASK_CLEAR ? gport->mask_gc : (gc)->gc)
-
 void
 ghid_use_mask (int use_it)
 {
-  static int mask_seq_id = 0;
-  GdkColor color;
-
-  if (!gport->pixmap)
-    return;
   if (use_it == cur_mask)
     return;
+
+  ghid_flush_triangles ();
+
   switch (use_it)
     {
-    case HID_MASK_OFF:
-      gport->drawable = gport->pixmap;
-      mask_seq = 0;
+    case HID_MASK_BEFORE:
+      /* Write '1' to the stencil buffer where the solder-mask is drawn. */
+      glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
+      glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
+      glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
+      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
       break;
 
-    case HID_MASK_BEFORE:
-      printf ("gtk doesn't support mask_before!\n");
-      abort ();
-
     case HID_MASK_CLEAR:
-      if (!gport->mask)
-	gport->mask = gdk_pixmap_new (0, gport->width, gport->height, 1);
-      gport->drawable = gport->mask;
-      mask_seq = 0;
-      if (!gport->mask_gc)
-	{
-	  gport->mask_gc = gdk_gc_new (gport->drawable);
-	}
-      color.pixel = 1;
-      gdk_gc_set_foreground (gport->mask_gc, &color);
-      gdk_draw_rectangle (gport->drawable, gport->mask_gc, TRUE, 0, 0,
-			  gport->width, gport->height);
-      color.pixel = 0;
-      gdk_gc_set_foreground (gport->mask_gc, &color);
+      /* Drawing operations clear the stencil buffer to '0' */
+      glStencilFunc (GL_ALWAYS, 0, 1);            // Test always passes, value written 0
+      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 0)
       break;
 
     case HID_MASK_AFTER:
-      mask_seq_id++;
-      if (!mask_seq_id)
-	mask_seq_id = 1;
-      mask_seq = mask_seq_id;
-
-      gport->drawable = gport->pixmap;
+      /* Drawing operations as masked to areas where the stencil buffer is '1' */
+      glColorMask (1, 1, 1, 1);                   // Enable drawing of r, g, b & a
+      glStencilFunc (GL_EQUAL, 1, 1);             // Draw only where stencil buffer is 1
+      glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    // Stencil buffer read only
       break;
 
+    case HID_MASK_OFF:
+      /* Disable stenciling */
+      glDisable (GL_STENCIL_TEST);                // Disable Stencil test
+      break;
     }
   cur_mask = use_it;
 }
@@ -674,6 +709,9 @@ typedef struct
   GdkColor color;
   int xor_set;
   GdkColor xor_color;
+  double red;
+  double green;
+  double blue;
 } ColorCache;
 
 
@@ -688,9 +726,7 @@ set_special_grid_color (void)
   gport->grid_color.red ^= gport->bg_color.red;
   gport->grid_color.green ^= gport->bg_color.green;
   gport->grid_color.blue ^= gport->bg_color.blue;
-  gdk_color_alloc (gport->colormap, &gport->grid_color);
-  if (gport->grid_gc)
-    gdk_gc_set_foreground (gport->grid_gc, &gport->grid_color);
+//  gdk_color_alloc (gport->colormap, &gport->grid_color);
 }
 
 void
@@ -698,99 +734,138 @@ ghid_set_special_colors (HID_Attribute * ha)
 {
   if (!ha->name || !ha->value)
     return;
-  if (!strcmp (ha->name, "background-color") && gport->bg_gc)
+  if (!strcmp (ha->name, "background-color"))
     {
       ghid_map_color_string (*(char **) ha->value, &gport->bg_color);
-      gdk_gc_set_foreground (gport->bg_gc, &gport->bg_color);
       set_special_grid_color ();
     }
-  else if (!strcmp (ha->name, "off-limit-color") && gport->offlimits_gc)
-    {
+  else if (!strcmp (ha->name, "off-limit-color"))
+  {
       ghid_map_color_string (*(char **) ha->value, &gport->offlimits_color);
-      gdk_gc_set_foreground (gport->offlimits_gc, &gport->offlimits_color);
     }
-  else if (!strcmp (ha->name, "grid-color") && gport->grid_gc)
+  else if (!strcmp (ha->name, "grid-color"))
     {
       ghid_map_color_string (*(char **) ha->value, &gport->grid_color);
       set_special_grid_color ();
     }
 }
 
+
 void
 ghid_set_color (hidGC gc, const char *name)
 {
-  static void *cache = 0;
+  static void *cache = NULL;
+  static char *old_name = NULL;
   hidval cval;
+  ColorCache *cc;
+  double alpha_mult = 1.0;
+  double r, g, b, a;
+  a = 1.0;
+
+  if (old_name != NULL)
+    {
+      if (strcmp (name, old_name) == 0)
+        return;
+      free (old_name);
+    }
+
+  old_name = strdup (name);
 
   if (name == NULL)
     {
       fprintf (stderr, "%s():  name = NULL, setting to magenta\n",
-	       __FUNCTION__);
+               __FUNCTION__);
       name = "magenta";
     }
 
   gc->colorname = (char *) name;
-  if (!gc->gc)
-    return;
+
   if (gport->colormap == 0)
     gport->colormap = gtk_widget_get_colormap (gport->top_window);
-
   if (strcmp (name, "erase") == 0)
     {
-      gdk_gc_set_foreground (gc->gc, &gport->bg_color);
       gc->erase = 1;
+      r = gport->bg_color.red   / 65535.;
+      g = gport->bg_color.green / 65535.;
+      b = gport->bg_color.blue  / 65535.;
     }
   else if (strcmp (name, "drill") == 0)
     {
-      gdk_gc_set_foreground (gc->gc, &gport->offlimits_color);
       gc->erase = 0;
+      alpha_mult = 0.85;
+      r = gport->offlimits_color.red   / 65535.;
+      g = gport->offlimits_color.green / 65535.;
+      b = gport->offlimits_color.blue  / 65535.;
     }
   else
     {
-      ColorCache *cc;
+      alpha_mult = 0.7;
       if (hid_cache_color (0, name, &cval, &cache))
-	cc = (ColorCache *) cval.ptr;
+        cc = (ColorCache *) cval.ptr;
       else
-	{
-	  cc = (ColorCache *) malloc (sizeof (ColorCache));
-	  memset (cc, 0, sizeof (*cc));
-	  cval.ptr = cc;
-	  hid_cache_color (1, name, &cval, &cache);
-	}
+        {
+          cc = (ColorCache *) malloc (sizeof (ColorCache));
+          memset (cc, 0, sizeof (*cc));
+          cval.ptr = cc;
+          hid_cache_color (1, name, &cval, &cache);
+        }
 
       if (!cc->color_set)
-	{
-	  if (gdk_color_parse (name, &cc->color))
-	    gdk_color_alloc (gport->colormap, &cc->color);
-	  else
-	    gdk_color_white (gport->colormap, &cc->color);
-	  cc->color_set = 1;
-	}
+        {
+          if (gdk_color_parse (name, &cc->color))
+            gdk_color_alloc (gport->colormap, &cc->color);
+          else
+            gdk_color_white (gport->colormap, &cc->color);
+          cc->red   = cc->color.red   / 65535.;
+          cc->green = cc->color.green / 65535.;
+          cc->blue  = cc->color.blue  / 65535.;
+          cc->color_set = 1;
+        }
       if (gc->xor)
-	{
-	  if (!cc->xor_set)
-	    {
-	      cc->xor_color.red = cc->color.red ^ gport->bg_color.red;
-	      cc->xor_color.green = cc->color.green ^ gport->bg_color.green;
-	      cc->xor_color.blue = cc->color.blue ^ gport->bg_color.blue;
-	      gdk_color_alloc (gport->colormap, &cc->xor_color);
-	      cc->xor_set = 1;
-	    }
-	  gdk_gc_set_foreground (gc->gc, &cc->xor_color);
-	}
-      else
-	{
-	  gdk_gc_set_foreground (gc->gc, &cc->color);
-	}
+        {
+          if (!cc->xor_set)
+            {
+              cc->xor_color.red = cc->color.red ^ gport->bg_color.red;
+              cc->xor_color.green = cc->color.green ^ gport->bg_color.green;
+              cc->xor_color.blue = cc->color.blue ^ gport->bg_color.blue;
+              gdk_color_alloc (gport->colormap, &cc->xor_color);
+              cc->red   = cc->color.red   / 65535.;
+              cc->green = cc->color.green / 65535.;
+              cc->blue  = cc->color.blue  / 65535.;
+              cc->xor_set = 1;
+            }
+        }
+      r = cc->red;
+      g = cc->green;
+      b = cc->blue;
 
       gc->erase = 0;
     }
+  if (1) {
+    double maxi, mult;
+    if (gport->trans_lines)
+      a = a * alpha_mult;
+    maxi = r;
+    if (g > maxi) maxi = g;
+    if (b > maxi) maxi = b;
+    mult = MIN (1 / alpha_mult, 1 / maxi);
+#if 1
+    r = r * mult;
+    g = g * mult;
+    b = b * mult;
+#endif
+  }
+
+  if( ! ghid_gui_is_up )
+    return;
+
+  ghid_flush_triangles ();
+  glColor4d (r, g, b, a);
 }
 
 void
 ghid_set_line_cap (hidGC gc, EndCapStyle style)
 {
-
   switch (style)
     {
     case Trace_Cap:
@@ -804,31 +879,22 @@ ghid_set_line_cap (hidGC gc, EndCapStyle style)
       gc->join = GDK_JOIN_MITER;
       break;
     }
-  if (gc->gc)
-    gdk_gc_set_line_attributes (WHICH_GC (gc),
-				Vz (gc->width), GDK_LINE_SOLID,
-				gc->cap, gc->join);
 }
 
 void
 ghid_set_line_width (hidGC gc, int width)
 {
-
   gc->width = width;
-  if (gc->gc)
-    gdk_gc_set_line_attributes (WHICH_GC (gc),
-				Vz (gc->width), GDK_LINE_SOLID,
-				gc->cap, gc->join);
 }
 
 void
 ghid_set_draw_xor (hidGC gc, int xor)
 {
-  gc->xor = xor;
-  if (!gc->gc)
-    return;
-  gdk_gc_set_function (gc->gc, xor ? GDK_XOR : GDK_COPY);
-  ghid_set_color (gc, gc->colorname);
+  // printf ("ghid_set_draw_xor (%p, %d) -- not implemented\n", gc, xor);
+  /* NOT IMPLEMENTED */
+
+  /* Only presently called when setting up a crosshair GC.
+   * We manage our own drawing model for that anyway. */
 }
 
 void
@@ -843,56 +909,55 @@ ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2)
   printf ("ghid_set_line_cap_angle() -- not implemented\n");
 }
 
-static int
+static void
 use_gc (hidGC gc)
 {
-  if (!gport->pixmap)
-    return 0;
-  if (!gc->gc)
-    {
-      gc->gc = gdk_gc_new (gport->top_window->window);
-      ghid_set_color (gc, gc->colorname);
-      ghid_set_line_width (gc, gc->width);
-      ghid_set_line_cap (gc, gc->cap);
-      ghid_set_draw_xor (gc, gc->xor);
-    }
-  if (gc->mask_seq != mask_seq)
-    {
-      if (mask_seq)
-	gdk_gc_set_clip_mask (gc->gc, gport->mask);
-      else
-	gdk_gc_set_clip_mask (gc->gc, NULL);
-      gc->mask_seq = mask_seq;
-    }
-  gport->u_gc = WHICH_GC (gc);
-  return 1;
+  static hidGC current_gc = NULL;
+
+  if (current_gc == gc)
+    return;
+
+  current_gc = gc;
+
+  ghid_set_color (gc, gc->colorname);
 }
+
+void
+errorCallback(GLenum errorCode)
+{
+   const GLubyte *estring;
+
+   estring = gluErrorString(errorCode);
+   fprintf(stderr, "Quadric Error: %s\n", estring);
+//   exit(0);
+}
+
 
 void
 ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
 {
-  double dx1, dy1, dx2, dy2;
-
-  dx1 = Vx ((double)x1);
-  dy1 = Vy ((double)y1);
-  dx2 = Vx ((double)x2);
-  dy2 = Vy ((double)y2);
-
-  if (! ClipLine (0, 0, gport->width, gport->height,
-		  &dx1, &dy1, &dx2, &dy2, gc->width / gport->zoom))
-    return;
+  double width = Vz (gc->width);
 
   USE_GC (gc);
-  gdk_draw_line (gport->drawable, gport->u_gc, dx1, dy1, dx2, dy2);
+
+  hidgl_draw_line (gc, gc->cap, width, Vx (x1), Vy (dy1), Vx (dx2), Vy (dy2));
 }
 
 void
 ghid_draw_arc (hidGC gc, int cx, int cy,
-	       int xradius, int yradius, int start_angle, int delta_angle)
+               int xradius, int yradius, int start_angle, int delta_angle)
 {
+#define MIN_SLICES_PER_ARC 10
   gint vrx, vry;
-  gint w, h, radius;
-  
+  gint w, h, radius, slices;
+  double width;
+  GLUquadricObj *qobj;
+
+  width = Vz (gc->width);
+
+  if (width == 0.0)
+    width = 1.0;
+
   w = gport->width * gport->zoom;
   h = gport->height * gport->zoom;
   radius = (xradius > yradius) ? xradius : yradius;
@@ -919,9 +984,47 @@ ghid_draw_arc (hidGC gc, int cx, int cy,
   /* make sure we fall in the -180 to +180 range */
   start_angle = (start_angle + 360 + 180) % 360 - 180;
 
-  gdk_draw_arc (gport->drawable, gport->u_gc, 0,
-		Vx (cx) - vrx, Vy (cy) - vry,
-		vrx * 2, vry * 2, (start_angle + 180) * 64, delta_angle * 64);
+  if (delta_angle < 0) {
+    start_angle += delta_angle;
+    delta_angle = - delta_angle;
+  }
+
+  slices = M_PI * (vrx + width / 2.) / PIXELS_PER_CIRCLINE;
+
+  if (slices < MIN_SLICES_PER_ARC)
+    slices = MIN_SLICES_PER_ARC;
+
+  /* TODO: CHANGE TO USING THE TRIANGLE LIST */
+  qobj = gluNewQuadric ();
+  gluQuadricCallback (qobj, GLU_ERROR, errorCallback);
+  gluQuadricDrawStyle (qobj, GLU_FILL); /* smooth shaded */
+  gluQuadricNormals (qobj, GLU_SMOOTH);
+
+  glPushMatrix ();
+  glTranslatef (Vx (cx), Vy (cy), 0.0);
+  gluPartialDisk (qobj, vrx - width / 2, vrx + width / 2, slices, 1, 270 + start_angle, delta_angle);
+  glPopMatrix ();
+
+  slices = M_PI * width / PIXELS_PER_CIRCLINE;
+
+  if (slices < MIN_TRIANGLES_PER_CAP)
+    slices = MIN_TRIANGLES_PER_CAP;
+
+  /* TODO: CHANGE TO USING THE TRIANGLE LIST */
+  glPushMatrix ();
+  glTranslatef (Vx (cx) + vrx * -cos (M_PI / 180. * start_angle),
+                Vy (cy) + vrx *  sin (M_PI / 180. * start_angle), 0.0);
+  gluPartialDisk (qobj, 0, width / 2, slices, 1, start_angle + 90., 180);
+  glPopMatrix ();
+
+  /* TODO: CHANGE TO USING THE TRIANGLE LIST */
+  glPushMatrix ();
+  glTranslatef (Vx (cx) + vrx * -cos (M_PI / 180. * (start_angle + delta_angle)),
+                Vy (cy) + vrx *  sin (M_PI / 180. * (start_angle + delta_angle)), 0.0);
+  gluPartialDisk (qobj, 0, width / 2, slices, 1, start_angle + delta_angle + 270., 180);
+  glPopMatrix ();
+
+  gluDeleteQuadric (qobj);
 }
 
 void
@@ -948,19 +1051,27 @@ ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
   x2 = Vx (x2);
   y2 = Vy (y2);
 
-  if (x1 > x2) { gint xt = x1; x1 = x2; x2 = xt; }
-  if (y1 > y2) { gint yt = y1; y1 = y2; y2 = yt; }
-
   USE_GC (gc);
-  gdk_draw_rectangle (gport->drawable, gport->u_gc, FALSE,
-		      x1, y1, x2 - x1 + 1, y2 - y1 + 1);
+
+  glBegin (GL_LINE_LOOP);
+  glVertex2f (x1, y1);
+  glVertex2f (x1, y2);
+  glVertex2f (x2, y2);
+  glVertex2f (x2, y1);
+  glEnd ();
 }
 
 
 void
 ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
 {
-  gint w, h, vr;
+#define TRIANGLES_PER_CIRCLE 30
+#define MIN_TRIANGLES_PER_CIRCLE 6
+#define MAX_TRIANGLES_PER_CIRCLE 2000
+  gint w, h, vx, vy, vr;
+  float last_x, last_y;
+  int slices;
+  int i;
 
   w = gport->width * gport->zoom;
   h = gport->height * gport->zoom;
@@ -971,38 +1082,190 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
     return;
 
   USE_GC (gc);
+  vx = Vx (cx);
+  vy = Vy (cy);
   vr = Vz (radius);
-  gdk_draw_arc (gport->drawable, gport->u_gc, TRUE,
-		Vx (cx) - vr, Vy (cy) - vr,
-		vr * 2, vr * 2, 0, 360 * 64);
+
+  slices = M_PI * 2 * vr / PIXELS_PER_CIRCLINE;
+
+  if (slices < MIN_TRIANGLES_PER_CIRCLE)
+    slices = MIN_TRIANGLES_PER_CIRCLE;
+
+  if (slices > MAX_TRIANGLES_PER_CIRCLE)
+    slices = MAX_TRIANGLES_PER_CIRCLE;
+
+//  slices = TRIANGLES_PER_CIRCLE;
+
+  ensure_triangle_space (slices);
+
+  last_x = vx + vr;
+  last_y = vy;
+
+  for (i = 0; i < slices; i++) {
+    float x, y;
+    x = ((float)vr) * cos (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
+    y = ((float)vr) * sin (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
+    add_triangle (vx, vy, last_x, last_y, x, y);
+    last_x = x;
+    last_y = y;
+  }
+}
+
+#define MAX_COMBINED_MALLOCS 2500
+static void *combined_to_free [MAX_COMBINED_MALLOCS];
+static int combined_num_to_free = 0;
+
+static GLenum tessVertexType;
+static int stashed_vertices;
+static int triangle_comp_idx;
+
+
+void
+myError (GLenum errno)
+{
+  printf ("gluTess error: %s\n", gluErrorString (errno));
+}
+
+static void
+myFreeCombined ()
+{
+  while (combined_num_to_free)
+    free (combined_to_free [-- combined_num_to_free]);
+}
+
+static void
+myCombine ( GLdouble coords[3], void *vertex_data[4], GLfloat weight[4], void **dataOut )
+{
+#define MAX_COMBINED_VERTICES 2500
+  static GLdouble combined_vertices [3 * MAX_COMBINED_VERTICES];
+  static int num_combined_vertices = 0;
+
+  GLdouble *new_vertex;
+
+  if (num_combined_vertices < MAX_COMBINED_VERTICES)
+    {
+      new_vertex = &combined_vertices [3 * num_combined_vertices];
+      num_combined_vertices ++;
+    }
+  else
+    {
+      new_vertex = malloc (3 * sizeof (GLdouble));
+
+      if (combined_num_to_free < MAX_COMBINED_MALLOCS)
+        combined_to_free [combined_num_to_free ++] = new_vertex;
+      else
+        printf ("myCombine leaking %i bytes of memory\n", 3 * sizeof (GLdouble));
+    }
+
+  new_vertex[0] = coords[0];
+  new_vertex[1] = coords[1];
+  new_vertex[2] = coords[2];
+
+  *dataOut = new_vertex;
+}
+
+static void
+myBegin (GLenum type)
+{
+  tessVertexType = type;
+  stashed_vertices = 0;
+  triangle_comp_idx = 0;
+}
+
+void
+myVertex (GLdouble *vertex_data)
+{
+  static GLfloat triangle_vertices [2 * 3];
+
+  if (tessVertexType == GL_TRIANGLE_STRIP ||
+      tessVertexType == GL_TRIANGLE_FAN)
+    {
+      if (stashed_vertices < 2)
+        {
+          triangle_vertices [triangle_comp_idx ++] = vertex_data [0];
+          triangle_vertices [triangle_comp_idx ++] = vertex_data [1];
+          stashed_vertices ++;
+        }
+      else
+        {
+          ensure_triangle_space (1);
+          add_triangle (triangle_vertices [0], triangle_vertices [1],
+                        triangle_vertices [2], triangle_vertices [3],
+                        vertex_data [0], vertex_data [1]);
+
+          if (tessVertexType == GL_TRIANGLE_STRIP)
+            {
+              /* STRIP saves the last two vertices for re-use in the next triangle */
+              triangle_vertices [0] = triangle_vertices [2];
+              triangle_vertices [1] = triangle_vertices [3];
+            }
+          /* Both FAN and STRIP save the last vertex for re-use in the next triangle */
+          triangle_vertices [2] = vertex_data [0];
+          triangle_vertices [3] = vertex_data [1];
+        }
+    }
+  else if (tessVertexType == GL_TRIANGLES)
+    {
+      triangle_vertices [triangle_comp_idx ++] = vertex_data [0];
+      triangle_vertices [triangle_comp_idx ++] = vertex_data [1];
+      stashed_vertices ++;
+      if (stashed_vertices == 3)
+        {
+          ensure_triangle_space (1);
+          add_triangle (triangle_vertices [0], triangle_vertices [1],
+                        triangle_vertices [2], triangle_vertices [3],
+                        triangle_vertices [4], triangle_vertices [5]);
+          triangle_comp_idx = 0;
+          stashed_vertices = 0;
+        }
+    }
+  else
+    printf ("Vertex recieved with unknown type\n");
 }
 
 void
 ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
 {
-  static GdkPoint *points = 0;
-  static int npoints = 0;
   int i;
+
+  GLUtesselator *tobj;
+  GLdouble *vertices;
+
   USE_GC (gc);
 
-  if (npoints < n_coords)
-    {
-      npoints = n_coords + 1;
-      points = MyRealloc (points,
-			  npoints * sizeof (GdkPoint), (char *) __FUNCTION__);
-    }
+  g_assert (n_coords > 0);
+
+  vertices = malloc (sizeof(GLdouble) * n_coords * 3);
+
+  tobj = gluNewTess ();
+  gluTessCallback(tobj, GLU_TESS_BEGIN, myBegin);
+  gluTessCallback(tobj, GLU_TESS_VERTEX, myVertex);
+  gluTessCallback(tobj, GLU_TESS_COMBINE, myCombine);
+  gluTessCallback(tobj, GLU_TESS_ERROR, myError);
+
+  gluTessBeginPolygon (tobj, NULL);
+  gluTessBeginContour (tobj);
+
   for (i = 0; i < n_coords; i++)
     {
-      points[i].x = Vx (x[i]);
-      points[i].y = Vy (y[i]);
+      vertices [0 + i * 3] = Vx (x[i]);
+      vertices [1 + i * 3] = Vy (y[i]);
+      vertices [2 + i * 3] = 0.;
+      gluTessVertex (tobj, &vertices [i * 3], &vertices [i * 3]);
     }
-  gdk_draw_polygon (gport->drawable, gport->u_gc, 1, points, n_coords);
+
+  gluTessEndContour (tobj);
+  gluTessEndPolygon (tobj);
+  gluDeleteTess (tobj);
+
+  myFreeCombined ();
+  free (vertices);
 }
 
 void
 ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
 {
-  gint w, h, lw, xx, yy;
+  gint w, h, lw;
 
   lw = gc->width;
   w = gport->width * gport->zoom;
@@ -1022,21 +1285,14 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
   y1 = Vy (y1);
   x2 = Vx (x2);
   y2 = Vy (y2);
-  if (x2 < x1)
-    {
-      xx = x1;
-      x1 = x2;
-      x2 = xx;
-    }
-  if (y2 < y1)
-    {
-      yy = y1;
-      y1 = y2;
-      y2 = yy;
-    }
+
   USE_GC (gc);
-  gdk_draw_rectangle (gport->drawable, gport->u_gc, TRUE,
-                      x1, y1, x2 - x1 + 1, y2 - y1 + 1);
+  glBegin (GL_QUADS);
+  glVertex2f (x1, y1);
+  glVertex2f (x1, y2);
+  glVertex2f (x2, y2);
+  glVertex2f (x2, y1);
+  glEnd ();
 }
 
 void
@@ -1082,8 +1338,6 @@ ghid_calibrate (double xval, double yval)
 {
   printf ("ghid_calibrate() -- not implemented\n");
 }
-
-static int ghid_gui_is_up = 0;
 
 void
 ghid_notify_gui_is_up ()
@@ -1526,7 +1780,7 @@ HID ghid_hid = {
   1,				/* gui */
   0,				/* printer */
   0,				/* exporter */
-  0,				/* poly before */
+  1,				/* poly before */
   1,				/* poly after */
   0,				/* poly dicer */
 
@@ -2159,11 +2413,14 @@ Benchmark (int argc, char **argv, int x, int y)
   region.X2 = PCB->MaxWidth;
   region.Y2 = PCB->MaxHeight;
 
+  
+
   gdk_display_sync (display);
   time (&start);
   do
     {
-      hid_expose_callback (&ghid_hid, &region, 0);
+      gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
+      gdk_window_process_updates (gport->drawing_area->window, FALSE);
       gdk_display_sync (display);
       time (&end);
       i++;
