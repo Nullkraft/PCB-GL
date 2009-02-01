@@ -418,7 +418,7 @@ ghid_show_crosshair (gboolean show)
   glEnable (GL_COLOR_LOGIC_OP);
   glLogicOp (GL_XOR);
 
-  ghid_flush_triangles ();
+  hidgl_flush_triangles (&buffer);
 
   glColor3f (cross_color.red / 65535.,
              cross_color.green / 65535.,
@@ -1063,18 +1063,18 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 
   /* TODO: Background image */
 
-  ghid_init_triangle_array ();
+  hidgl_init_triangle_array (&buffer);
   hid_expose_callback (&ghid_hid, &region, 0);
-  ghid_flush_triangles ();
+  hidgl_flush_triangles (&buffer);
 
   draw_grid ();
 
-  ghid_init_triangle_array ();
+  hidgl_init_triangle_array (&buffer);
   DrawAttached (TRUE);
   DrawMark (TRUE);
   ghid_show_crosshair (TRUE);
 
-  ghid_flush_triangles ();
+  hidgl_flush_triangles (&buffer);
 
   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
     gdk_gl_drawable_swap_buffers (pGlDrawable);

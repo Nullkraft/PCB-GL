@@ -25,8 +25,13 @@
 
 #include "hid.h"
 #include "../hidint.h"
-#include "gui.h"
 
+#ifdef ENABLE_GL
+#  include <GL/gl.h>
+#  include "hid/common/hidgl.h"
+#endif
+
+#include "gui.h"
 
 #if !GTK_CHECK_VERSION(2,8,0) && defined(HAVE_GDK_GDKX_H)
 #include <gdk/gdkx.h>
@@ -48,58 +53,6 @@ extern HID ghid_hid;
 
 static int ghid_gui_is_up = 0;
 
-#define TRIANGLE_ARRAY_SIZE 5000
-static GLfloat triangle_array [2 * 3 * TRIANGLE_ARRAY_SIZE];
-static unsigned int triangle_count;
-static int coord_comp_count;
-
-void
-ghid_init_triangle_array (void)
-{
-  glEnableClientState (GL_VERTEX_ARRAY);
-  glVertexPointer (2, GL_FLOAT, 0, &triangle_array);
-  triangle_count = 0;
-  coord_comp_count = 0;
-}
-
-void
-ghid_flush_triangles ()
-{
-  if (triangle_count == 0)
-    return;
-
-//  printf ("Flushing %i triangles\n", triangle_count);
-  glDrawArrays (GL_TRIANGLES, 0, triangle_count * 3);
-  triangle_count = 0;
-  coord_comp_count = 0;
-}
-
-static void
-ensure_triangle_space (int count)
-{
-  if (count > TRIANGLE_ARRAY_SIZE)
-    {
-      fprintf (stderr, "Not enough space in vertex buffer\n");
-      fprintf (stderr, "Requested %i triangles, %i available\n", count, TRIANGLE_ARRAY_SIZE);
-      exit (1);
-    }
-  if (count > TRIANGLE_ARRAY_SIZE - triangle_count)
-    ghid_flush_triangles ();
-}
-
-static inline void
-add_triangle (GLfloat x1, GLfloat y1,
-              GLfloat x2, GLfloat y2,
-              GLfloat x3, GLfloat y3)
-{
-  triangle_array [coord_comp_count++] = x1;
-  triangle_array [coord_comp_count++] = y1;
-  triangle_array [coord_comp_count++] = x2;
-  triangle_array [coord_comp_count++] = y2;
-  triangle_array [coord_comp_count++] = x3;
-  triangle_array [coord_comp_count++] = y3;
-  triangle_count++;
-}
 
 static void zoom_to (double factor, int x, int y);
 static void zoom_by (double factor, int x, int y);
@@ -456,7 +409,7 @@ draw_grid ()
       gport->grid_color.blue ^= gport->bg_color.blue;
     }
 
-  ghid_flush_triangles ();
+  hidgl_flush_triangles (&buffer);
 
   glEnable (GL_COLOR_LOGIC_OP);
   glLogicOp (GL_XOR);
@@ -664,7 +617,7 @@ ghid_use_mask (int use_it)
   if (use_it == cur_mask)
     return;
 
-  ghid_flush_triangles ();
+  hidgl_flush_triangles (&buffer);
 
   switch (use_it)
     {
@@ -859,7 +812,7 @@ ghid_set_color (hidGC gc, const char *name)
   if( ! ghid_gui_is_up )
     return;
 
-  ghid_flush_triangles ();
+  hidgl_flush_triangles (&buffer);
   glColor4d (r, g, b, a);
 }
 
@@ -922,16 +875,6 @@ use_gc (hidGC gc)
   ghid_set_color (gc, gc->colorname);
 }
 
-void
-errorCallback(GLenum errorCode)
-{
-   const GLubyte *estring;
-
-   estring = gluErrorString(errorCode);
-   fprintf(stderr, "Quadric Error: %s\n", estring);
-//   exit(0);
-}
-
 
 void
 ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
@@ -940,23 +883,15 @@ ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
 
   USE_GC (gc);
 
-  hidgl_draw_line (gc, gc->cap, width, Vx (x1), Vy (dy1), Vx (dx2), Vy (dy2));
+  hidgl_draw_line (gc, gc->cap, width, Vx (x1), Vy (y1), Vx (x2), Vy (y2));
 }
 
 void
 ghid_draw_arc (hidGC gc, int cx, int cy,
                int xradius, int yradius, int start_angle, int delta_angle)
 {
-#define MIN_SLICES_PER_ARC 10
-  gint vrx, vry;
-  gint w, h, radius, slices;
-  double width;
-  GLUquadricObj *qobj;
-
-  width = Vz (gc->width);
-
-  if (width == 0.0)
-    width = 1.0;
+  gint w, h, radius;
+  double width = Vz (gc->width);
 
   w = gport->width * gport->zoom;
   h = gport->height * gport->zoom;
@@ -966,65 +901,13 @@ ghid_draw_arc (hidGC gc, int cx, int cy,
       || SIDE_Y (cy) < gport->view_y0 - radius 
       || SIDE_Y (cy) > gport->view_y0 + h + radius)
     return;
-  
+
   USE_GC (gc);
-  vrx = Vz (xradius);
-  vry = Vz (yradius);
 
-  if (ghid_flip_x)
-    {
-      start_angle = 180 - start_angle;
-      delta_angle = - delta_angle;
-    }
-  if (ghid_flip_y)
-    {
-      start_angle = - start_angle;
-      delta_angle = - delta_angle;					
-    }
-  /* make sure we fall in the -180 to +180 range */
-  start_angle = (start_angle + 360 + 180) % 360 - 180;
-
-  if (delta_angle < 0) {
-    start_angle += delta_angle;
-    delta_angle = - delta_angle;
-  }
-
-  slices = M_PI * (vrx + width / 2.) / PIXELS_PER_CIRCLINE;
-
-  if (slices < MIN_SLICES_PER_ARC)
-    slices = MIN_SLICES_PER_ARC;
-
-  /* TODO: CHANGE TO USING THE TRIANGLE LIST */
-  qobj = gluNewQuadric ();
-  gluQuadricCallback (qobj, GLU_ERROR, errorCallback);
-  gluQuadricDrawStyle (qobj, GLU_FILL); /* smooth shaded */
-  gluQuadricNormals (qobj, GLU_SMOOTH);
-
-  glPushMatrix ();
-  glTranslatef (Vx (cx), Vy (cy), 0.0);
-  gluPartialDisk (qobj, vrx - width / 2, vrx + width / 2, slices, 1, 270 + start_angle, delta_angle);
-  glPopMatrix ();
-
-  slices = M_PI * width / PIXELS_PER_CIRCLINE;
-
-  if (slices < MIN_TRIANGLES_PER_CAP)
-    slices = MIN_TRIANGLES_PER_CAP;
-
-  /* TODO: CHANGE TO USING THE TRIANGLE LIST */
-  glPushMatrix ();
-  glTranslatef (Vx (cx) + vrx * -cos (M_PI / 180. * start_angle),
-                Vy (cy) + vrx *  sin (M_PI / 180. * start_angle), 0.0);
-  gluPartialDisk (qobj, 0, width / 2, slices, 1, start_angle + 90., 180);
-  glPopMatrix ();
-
-  /* TODO: CHANGE TO USING THE TRIANGLE LIST */
-  glPushMatrix ();
-  glTranslatef (Vx (cx) + vrx * -cos (M_PI / 180. * (start_angle + delta_angle)),
-                Vy (cy) + vrx *  sin (M_PI / 180. * (start_angle + delta_angle)), 0.0);
-  gluPartialDisk (qobj, 0, width / 2, slices, 1, start_angle + delta_angle + 270., 180);
-  glPopMatrix ();
-
-  gluDeleteQuadric (qobj);
+  hidgl_draw_arc (gc, width, Vx (cx), Vy (cy),
+                  Vz (xradius), Vz (yradius),
+                  start_angle, delta_angle,
+                  ghid_flip_x, ghid_flip_y);
 }
 
 void
@@ -1046,32 +929,16 @@ ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
 	  && SIDE_Y (y2) > gport->view_y0 + h + lw))
     return;
 
-  x1 = Vx (x1);
-  y1 = Vy (y1);
-  x2 = Vx (x2);
-  y2 = Vy (y2);
-
   USE_GC (gc);
 
-  glBegin (GL_LINE_LOOP);
-  glVertex2f (x1, y1);
-  glVertex2f (x1, y2);
-  glVertex2f (x2, y2);
-  glVertex2f (x2, y1);
-  glEnd ();
+  hidgl_draw_rect (gc, Vx (x1), Vy (y1), Vx (x2), Vy (y2));
 }
 
 
 void
 ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
 {
-#define TRIANGLES_PER_CIRCLE 30
-#define MIN_TRIANGLES_PER_CIRCLE 6
-#define MAX_TRIANGLES_PER_CIRCLE 2000
-  gint w, h, vx, vy, vr;
-  float last_x, last_y;
-  int slices;
-  int i;
+  gint w, h;
 
   w = gport->width * gport->zoom;
   h = gport->height * gport->zoom;
@@ -1082,184 +949,17 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
     return;
 
   USE_GC (gc);
-  vx = Vx (cx);
-  vy = Vy (cy);
-  vr = Vz (radius);
 
-  slices = M_PI * 2 * vr / PIXELS_PER_CIRCLINE;
-
-  if (slices < MIN_TRIANGLES_PER_CIRCLE)
-    slices = MIN_TRIANGLES_PER_CIRCLE;
-
-  if (slices > MAX_TRIANGLES_PER_CIRCLE)
-    slices = MAX_TRIANGLES_PER_CIRCLE;
-
-//  slices = TRIANGLES_PER_CIRCLE;
-
-  ensure_triangle_space (slices);
-
-  last_x = vx + vr;
-  last_y = vy;
-
-  for (i = 0; i < slices; i++) {
-    float x, y;
-    x = ((float)vr) * cos (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
-    y = ((float)vr) * sin (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
-    add_triangle (vx, vy, last_x, last_y, x, y);
-    last_x = x;
-    last_y = y;
-  }
+  hidgl_fill_circle (gc, Vx (cx), Vy (cy), Vz (radius));
 }
 
-#define MAX_COMBINED_MALLOCS 2500
-static void *combined_to_free [MAX_COMBINED_MALLOCS];
-static int combined_num_to_free = 0;
-
-static GLenum tessVertexType;
-static int stashed_vertices;
-static int triangle_comp_idx;
-
-
-void
-myError (GLenum errno)
-{
-  printf ("gluTess error: %s\n", gluErrorString (errno));
-}
-
-static void
-myFreeCombined ()
-{
-  while (combined_num_to_free)
-    free (combined_to_free [-- combined_num_to_free]);
-}
-
-static void
-myCombine ( GLdouble coords[3], void *vertex_data[4], GLfloat weight[4], void **dataOut )
-{
-#define MAX_COMBINED_VERTICES 2500
-  static GLdouble combined_vertices [3 * MAX_COMBINED_VERTICES];
-  static int num_combined_vertices = 0;
-
-  GLdouble *new_vertex;
-
-  if (num_combined_vertices < MAX_COMBINED_VERTICES)
-    {
-      new_vertex = &combined_vertices [3 * num_combined_vertices];
-      num_combined_vertices ++;
-    }
-  else
-    {
-      new_vertex = malloc (3 * sizeof (GLdouble));
-
-      if (combined_num_to_free < MAX_COMBINED_MALLOCS)
-        combined_to_free [combined_num_to_free ++] = new_vertex;
-      else
-        printf ("myCombine leaking %i bytes of memory\n", 3 * sizeof (GLdouble));
-    }
-
-  new_vertex[0] = coords[0];
-  new_vertex[1] = coords[1];
-  new_vertex[2] = coords[2];
-
-  *dataOut = new_vertex;
-}
-
-static void
-myBegin (GLenum type)
-{
-  tessVertexType = type;
-  stashed_vertices = 0;
-  triangle_comp_idx = 0;
-}
-
-void
-myVertex (GLdouble *vertex_data)
-{
-  static GLfloat triangle_vertices [2 * 3];
-
-  if (tessVertexType == GL_TRIANGLE_STRIP ||
-      tessVertexType == GL_TRIANGLE_FAN)
-    {
-      if (stashed_vertices < 2)
-        {
-          triangle_vertices [triangle_comp_idx ++] = vertex_data [0];
-          triangle_vertices [triangle_comp_idx ++] = vertex_data [1];
-          stashed_vertices ++;
-        }
-      else
-        {
-          ensure_triangle_space (1);
-          add_triangle (triangle_vertices [0], triangle_vertices [1],
-                        triangle_vertices [2], triangle_vertices [3],
-                        vertex_data [0], vertex_data [1]);
-
-          if (tessVertexType == GL_TRIANGLE_STRIP)
-            {
-              /* STRIP saves the last two vertices for re-use in the next triangle */
-              triangle_vertices [0] = triangle_vertices [2];
-              triangle_vertices [1] = triangle_vertices [3];
-            }
-          /* Both FAN and STRIP save the last vertex for re-use in the next triangle */
-          triangle_vertices [2] = vertex_data [0];
-          triangle_vertices [3] = vertex_data [1];
-        }
-    }
-  else if (tessVertexType == GL_TRIANGLES)
-    {
-      triangle_vertices [triangle_comp_idx ++] = vertex_data [0];
-      triangle_vertices [triangle_comp_idx ++] = vertex_data [1];
-      stashed_vertices ++;
-      if (stashed_vertices == 3)
-        {
-          ensure_triangle_space (1);
-          add_triangle (triangle_vertices [0], triangle_vertices [1],
-                        triangle_vertices [2], triangle_vertices [3],
-                        triangle_vertices [4], triangle_vertices [5]);
-          triangle_comp_idx = 0;
-          stashed_vertices = 0;
-        }
-    }
-  else
-    printf ("Vertex recieved with unknown type\n");
-}
 
 void
 ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
 {
-  int i;
-
-  GLUtesselator *tobj;
-  GLdouble *vertices;
-
   USE_GC (gc);
 
-  g_assert (n_coords > 0);
-
-  vertices = malloc (sizeof(GLdouble) * n_coords * 3);
-
-  tobj = gluNewTess ();
-  gluTessCallback(tobj, GLU_TESS_BEGIN, myBegin);
-  gluTessCallback(tobj, GLU_TESS_VERTEX, myVertex);
-  gluTessCallback(tobj, GLU_TESS_COMBINE, myCombine);
-  gluTessCallback(tobj, GLU_TESS_ERROR, myError);
-
-  gluTessBeginPolygon (tobj, NULL);
-  gluTessBeginContour (tobj);
-
-  for (i = 0; i < n_coords; i++)
-    {
-      vertices [0 + i * 3] = Vx (x[i]);
-      vertices [1 + i * 3] = Vy (y[i]);
-      vertices [2 + i * 3] = 0.;
-      gluTessVertex (tobj, &vertices [i * 3], &vertices [i * 3]);
-    }
-
-  gluTessEndContour (tobj);
-  gluTessEndPolygon (tobj);
-  gluDeleteTess (tobj);
-
-  myFreeCombined ();
-  free (vertices);
+  hidgl_fill_polygon (gc, n_coords, x, y);
 }
 
 void
@@ -1281,18 +981,9 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
           && SIDE_Y (y2) > gport->view_y0 + h + lw))
     return;
 
-  x1 = Vx (x1);
-  y1 = Vy (y1);
-  x2 = Vx (x2);
-  y2 = Vy (y2);
-
   USE_GC (gc);
-  glBegin (GL_QUADS);
-  glVertex2f (x1, y1);
-  glVertex2f (x1, y2);
-  glVertex2f (x2, y2);
-  glVertex2f (x2, y1);
-  glEnd ();
+
+  hidgl_fill_rect (gc, Vx (x1), Vy (y1), Vx (x2), Vy (y2));
 }
 
 void

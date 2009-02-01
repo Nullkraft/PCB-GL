@@ -223,9 +223,9 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
   /* call the drawing routine */
-  ghid_init_triangle_array ();
+  hidgl_init_triangle_array (&buffer);
   hid_expose_callback (&ghid_hid, NULL, &pinout->element);
-  ghid_flush_triangles ();
+  hidgl_flush_triangles (&buffer);
 
   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
     gdk_gl_drawable_swap_buffers (pGlDrawable);

@@ -57,7 +57,7 @@ void
 hidgl_init_triangle_array (triangle_buffer *buffer)
 {
   glEnableClientState (GL_VERTEX_ARRAY);
-  glVertexPointer (2, GL_FLOAT, 0, &buffer->triangle_array);
+  glVertexPointer (2, GL_FLOAT, 0, buffer->triangle_array);
   buffer->triangle_count = 0;
   buffer->coord_comp_count = 0;
 }
@@ -439,6 +439,9 @@ hidgl_draw_arc (hidGC gc, double width, int vx, int vy,
 
   USE_GC (gc);
 
+  if (width == 0.0)
+    width = 1.0;
+
   if (flip_x)
     {
       start_angle = 180 - start_angle;
@@ -450,6 +453,7 @@ hidgl_draw_arc (hidGC gc, double width, int vx, int vy,
       delta_angle = - delta_angle;
     }
   /* make sure we fall in the -180 to +180 range */
+  start_angle = (start_angle + 360 + 180) % 360 - 180;
   start_angle = (start_angle + 360 + 180) % 360 - 180;
 
   if (delta_angle < 0) {
@@ -469,7 +473,7 @@ hidgl_draw_arc (hidGC gc, double width, int vx, int vy,
   gluQuadricNormals (qobj, GLU_SMOOTH);
 
   glPushMatrix ();
-  glTranslatef (vx, vx, 0.0);
+  glTranslatef (vx, vy, 0.0);
   gluPartialDisk (qobj, vrx - width / 2, vrx + width / 2, slices, 1, 270 + start_angle, delta_angle);
   glPopMatrix ();
 

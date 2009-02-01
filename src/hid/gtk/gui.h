@@ -35,9 +35,11 @@
 
 #include <gtk/gtk.h>
 
-#include <gtk/gtkgl.h>
-#include <GL/glu.h>
-//#include <GL/glut.h>
+#ifdef ENABLE_GL
+#  include <gtk/gtkgl.h>
+#  include <GL/gl.h>
+#  include "hid/common/hidgl.h"
+#endif
 
 /* Internationalization support.
 */
@@ -321,6 +323,7 @@ void ghid_get_pointer (gint *, gint *);
 
 /* gui-output-events.c function prototypes.
 */
+
 void ghid_port_ranges_changed (void);
 void ghid_port_ranges_zoom (gdouble zoom);
 gboolean ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative);
@@ -518,8 +521,6 @@ void ghid_logv (const char *fmt, va_list args);
 void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
 
 /* gtkhid-main.c */
-void ghid_init_triangle_array ();
-void ghid_flush_triangles ();
 void ghid_invalidate_all ();
 void ghid_get_coords (const char *msg, int *x, int *y);
 gint PCBChanged (int argc, char **argv, int x, int y);
