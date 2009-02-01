@@ -1,0 +1,22 @@
+Bottom: aecfe146bb6a8c85fc043fb6406b9991777537bc
+Top:    6d86d55182fc819a7be9ffacf49dcc2f839b32fd
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-01 20:11:14 +0000
+
+Refresh of gtkhid-return-null-from-ghid_g
+
+---
+
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index fe17b31..39ffb4e 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -865,7 +865,7 @@ ghid_get_net_from_node_name (gchar * node_name, gboolean enabled_only)
+ 
+   /* If no netlist is loaded the window doesn't appear. */
+   if (netlist_window == NULL)
+-    return;
++    return NULL;
+ 
+   task.enabled_only = enabled_only;
+   task.node_name = node_name;
