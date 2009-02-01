@@ -296,6 +296,8 @@ Either do not use --enable-gl or enable the gtk HID.])
 	  * ) ;;
 	esac
 
+	AC_DEFINE([ENABLE_GL], 1,
+		[Define to 1 if GL support is to be compiled in])
 fi
 
 AC_MSG_CHECKING([for which printer to use])
