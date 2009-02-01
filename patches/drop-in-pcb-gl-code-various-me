@@ -1,5 +1,5 @@
 Bottom: f952a3d7054e16e46f4ad13a9cc1d40e79fc599b
-Top:    a56468a99526950a40013b3195b934fdefc8fd7a
+Top:    dc415530bc58466627d64665df0d90fc52cdda97
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-01 18:51:59 +0000
 
@@ -110,10 +110,10 @@ index 42fd81c..e68865d 100644
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
 new file mode 100644
-index 0000000..b447d05
+index 0000000..eea4f77
 --- /dev/null
 +++ b/src/hid/common/hidgl.c
-@@ -0,0 +1,716 @@
+@@ -0,0 +1,720 @@
 +/* $Id: */
 +
 +#if 1 /* DISABLE EVERYTHING! */
@@ -173,7 +173,7 @@ index 0000000..b447d05
 +hidgl_init_triangle_array (triangle_buffer *buffer)
 +{
 +  glEnableClientState (GL_VERTEX_ARRAY);
-+  glVertexPointer (2, GL_FLOAT, 0, &buffer->triangle_array);
++  glVertexPointer (2, GL_FLOAT, 0, buffer->triangle_array);
 +  buffer->triangle_count = 0;
 +  buffer->coord_comp_count = 0;
 +}
@@ -555,6 +555,9 @@ index 0000000..b447d05
 +
 +  USE_GC (gc);
 +
++  if (width == 0.0)
++    width = 1.0;
++
 +  if (flip_x)
 +    {
 +      start_angle = 180 - start_angle;
@@ -566,6 +569,7 @@ index 0000000..b447d05
 +      delta_angle = - delta_angle;
 +    }
 +  /* make sure we fall in the -180 to +180 range */
++  start_angle = (start_angle + 360 + 180) % 360 - 180;
 +  start_angle = (start_angle + 360 + 180) % 360 - 180;
 +
 +  if (delta_angle < 0) {
@@ -585,7 +589,7 @@ index 0000000..b447d05
 +  gluQuadricNormals (qobj, GLU_SMOOTH);
 +
 +  glPushMatrix ();
-+  glTranslatef (vx, vx, 0.0);
++  glTranslatef (vx, vy, 0.0);
 +  gluPartialDisk (qobj, vrx - width / 2, vrx + width / 2, slices, 1, 270 + start_angle, delta_angle);
 +  glPopMatrix ();
 +
@@ -832,10 +836,10 @@ index 0000000..b447d05
 +
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
 new file mode 100644
-index 0000000..256437e
+index 0000000..969cf91
 --- /dev/null
 +++ b/src/hid/common/hidgl.h
-@@ -0,0 +1,71 @@
+@@ -0,0 +1,73 @@
 +/* $Id: gui.h,v 1.25 2008-04-13 14:15:38 petercjclifton Exp $ */
 +
 +/*
@@ -873,6 +877,8 @@ index 0000000..256437e
 +  unsigned int coord_comp_count;
 +} triangle_buffer;
 +
++extern triangle_buffer buffer;
++
 +void hidgl_init_triangle_array (triangle_buffer *buffer);
 +void hidgl_flush_triangles (triangle_buffer *buffer);
 +void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
@@ -908,10 +914,23 @@ index 0000000..256437e
 +
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 26e3b36..3b1c807 100644
+index 26e3b36..1519f5d 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -32,26 +32,83 @@
+@@ -25,33 +25,43 @@
+ 
+ #include "hid.h"
+ #include "../hidint.h"
+-#include "gui.h"
+ 
++#ifdef ENABLE_GL
++#  include <GL/gl.h>
++#  include "hid/common/hidgl.h"
++#endif
++
++#include "gui.h"
+ 
+ #if !GTK_CHECK_VERSION(2,8,0) && defined(HAVE_GDK_GDKX_H)
  #include <gdk/gdkx.h>
  #endif
  
@@ -931,58 +950,6 @@ index 26e3b36..3b1c807 100644
  
 +static int ghid_gui_is_up = 0;
 +
-+#define TRIANGLE_ARRAY_SIZE 5000
-+static GLfloat triangle_array [2 * 3 * TRIANGLE_ARRAY_SIZE];
-+static unsigned int triangle_count;
-+static int coord_comp_count;
-+
-+void
-+ghid_init_triangle_array (void)
-+{
-+  glEnableClientState (GL_VERTEX_ARRAY);
-+  glVertexPointer (2, GL_FLOAT, 0, &triangle_array);
-+  triangle_count = 0;
-+  coord_comp_count = 0;
-+}
-+
-+void
-+ghid_flush_triangles ()
-+{
-+  if (triangle_count == 0)
-+    return;
-+
-+//  printf ("Flushing %i triangles\n", triangle_count);
-+  glDrawArrays (GL_TRIANGLES, 0, triangle_count * 3);
-+  triangle_count = 0;
-+  coord_comp_count = 0;
-+}
-+
-+static void
-+ensure_triangle_space (int count)
-+{
-+  if (count > TRIANGLE_ARRAY_SIZE)
-+    {
-+      fprintf (stderr, "Not enough space in vertex buffer\n");
-+      fprintf (stderr, "Requested %i triangles, %i available\n", count, TRIANGLE_ARRAY_SIZE);
-+      exit (1);
-+    }
-+  if (count > TRIANGLE_ARRAY_SIZE - triangle_count)
-+    ghid_flush_triangles ();
-+}
-+
-+static inline void
-+add_triangle (GLfloat x1, GLfloat y1,
-+              GLfloat x2, GLfloat y2,
-+              GLfloat x3, GLfloat y3)
-+{
-+  triangle_array [coord_comp_count++] = x1;
-+  triangle_array [coord_comp_count++] = y1;
-+  triangle_array [coord_comp_count++] = x2;
-+  triangle_array [coord_comp_count++] = y2;
-+  triangle_array [coord_comp_count++] = x3;
-+  triangle_array [coord_comp_count++] = y3;
-+  triangle_count++;
-+}
  
  static void zoom_to (double factor, int x, int y);
  static void zoom_by (double factor, int x, int y);
@@ -997,7 +964,7 @@ index 26e3b36..3b1c807 100644
  
  int ghid_flip_x = 0, ghid_flip_y = 0;
  
-@@ -379,10 +436,10 @@ zoom_by (double factor, int x, int y)
+@@ -379,10 +389,10 @@ zoom_by (double factor, int x, int y)
  
  /* ------------------------------------------------------------ */
  
@@ -1010,7 +977,7 @@ index 26e3b36..3b1c807 100644
    static int npoints = 0;
    int x1, y1, x2, y2, n, i;
    double x, y;
-@@ -391,19 +448,23 @@ draw_grid ()
+@@ -391,19 +401,23 @@ draw_grid ()
      return;
    if (Vz (PCB->Grid) < MIN_GRID_DISTANCE)
      return;
@@ -1033,7 +1000,7 @@ index 26e3b36..3b1c807 100644
 +      gport->grid_color.blue ^= gport->bg_color.blue;
      }
 +
-+  ghid_flush_triangles ();
++  hidgl_flush_triangles (&buffer);
 +
 +  glEnable (GL_COLOR_LOGIC_OP);
 +  glLogicOp (GL_XOR);
@@ -1045,7 +1012,7 @@ index 26e3b36..3b1c807 100644
    x1 = GRIDFIT_X (SIDE_X (gport->view_x0), PCB->Grid);
    y1 = GRIDFIT_Y (SIDE_Y (gport->view_y0), PCB->Grid);
    x2 = GRIDFIT_X (SIDE_X (gport->view_x0 + gport->view_width - 1), PCB->Grid);
-@@ -433,21 +494,29 @@ draw_grid ()
+@@ -433,21 +447,29 @@ draw_grid ()
      {
        npoints = n + 10;
        points =
@@ -1079,7 +1046,7 @@ index 26e3b36..3b1c807 100644
  }
  
  /* ------------------------------------------------------------ */
-@@ -471,108 +540,81 @@ ghid_invalidate_lr (int left, int right, int top, int bottom, int last)
+@@ -471,108 +493,81 @@ ghid_invalidate_lr (int left, int right, int top, int bottom, int last)
    ghid_invalidate_all ();
  }
  
@@ -1121,12 +1088,6 @@ index 26e3b36..3b1c807 100644
 -            x, y, 0, 0,
 -            w - x, h - y, GDK_RGB_DITHER_NORMAL, 0, 0);
 -	}
--
--void
--ghid_invalidate_all ()
--{
--  int eleft, eright, etop, ebottom;
--  BoxType region;
 +  static GdkPixbuf *pixbuf = NULL;
 +  static gint vw_scaled, vh_scaled, x_cached, y_cached;
 +  GdkInterpType interp_type;
@@ -1134,6 +1095,12 @@ index 26e3b36..3b1c807 100644
 +  int bits_per_sample;
 +  gboolean has_alpha;
  
+-void
+-ghid_invalidate_all ()
+-{
+-  int eleft, eright, etop, ebottom;
+-  BoxType region;
+-
 -  if (!gport->pixmap)
 +  if (!ghidgui->bg_pixbuf)
      return;
@@ -1209,7 +1176,9 @@ index 26e3b36..3b1c807 100644
 +        interp_type = GDK_INTERP_NEAREST;
 +      else
 +        interp_type = GDK_INTERP_BILINEAR;
-+
+ 
+-  gdk_draw_rectangle (gport->drawable, gport->bg_gc, 1,
+-		      eleft, etop, eright - eleft + 1, ebottom - etop + 1);
 +      gdk_pixbuf_scale(ghidgui->bg_pixbuf, pixbuf,
 +                       0, 0, vw, vh,
 +                       (double) -x,
@@ -1217,9 +1186,7 @@ index 26e3b36..3b1c807 100644
 +                       (double) w / w_src,
 +                       (double) h / h_src,
 +                       interp_type);
- 
--  gdk_draw_rectangle (gport->drawable, gport->bg_gc, 1,
--		      eleft, etop, eright - eleft + 1, ebottom - etop + 1);
++
 +      x_cached = x;
 +      y_cached = y;
 +      vw_scaled = vw;
@@ -1246,7 +1213,7 @@ index 26e3b36..3b1c807 100644
  }
  
  
-@@ -583,8 +625,10 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -583,8 +578,10 @@ ghid_set_layer (const char *name, int group, int empty)
  	     && group <
  	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
  
@@ -1258,7 +1225,7 @@ index 26e3b36..3b1c807 100644
    if (idx < 0)
      {
        switch (SL_TYPE (idx))
-@@ -596,11 +640,16 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -596,11 +593,16 @@ ghid_set_layer (const char *name, int group, int empty)
  	    return TEST_FLAG (SHOWMASKFLAG, PCB);
  	  return 0;
  	case SL_SILK:
@@ -1275,7 +1242,7 @@ index 26e3b36..3b1c807 100644
  	case SL_PDRILL:
  	case SL_UDRILL:
  	  return 1;
-@@ -609,55 +658,41 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -609,55 +611,41 @@ ghid_set_layer (const char *name, int group, int empty)
    return 0;
  }
  
@@ -1292,7 +1259,7 @@ index 26e3b36..3b1c807 100644
    if (use_it == cur_mask)
      return;
 +
-+  ghid_flush_triangles ();
++  hidgl_flush_triangles (&buffer);
 +
    switch (use_it)
      {
@@ -1351,7 +1318,7 @@ index 26e3b36..3b1c807 100644
      }
    cur_mask = use_it;
  }
-@@ -674,6 +709,9 @@ typedef struct
+@@ -674,6 +662,9 @@ typedef struct
    GdkColor color;
    int xor_set;
    GdkColor xor_color;
@@ -1361,7 +1328,7 @@ index 26e3b36..3b1c807 100644
  } ColorCache;
  
  
-@@ -688,9 +726,7 @@ set_special_grid_color (void)
+@@ -688,9 +679,7 @@ set_special_grid_color (void)
    gport->grid_color.red ^= gport->bg_color.red;
    gport->grid_color.green ^= gport->bg_color.green;
    gport->grid_color.blue ^= gport->bg_color.blue;
@@ -1372,7 +1339,7 @@ index 26e3b36..3b1c807 100644
  }
  
  void
-@@ -698,99 +734,138 @@ ghid_set_special_colors (HID_Attribute * ha)
+@@ -698,99 +687,138 @@ ghid_set_special_colors (HID_Attribute * ha)
  {
    if (!ha->name || !ha->value)
      return;
@@ -1544,7 +1511,7 @@ index 26e3b36..3b1c807 100644
 +  if( ! ghid_gui_is_up )
 +    return;
 +
-+  ghid_flush_triangles ();
++  hidgl_flush_triangles (&buffer);
 +  glColor4d (r, g, b, a);
  }
  
@@ -1555,7 +1522,7 @@ index 26e3b36..3b1c807 100644
    switch (style)
      {
      case Trace_Cap:
-@@ -804,31 +879,22 @@ ghid_set_line_cap (hidGC gc, EndCapStyle style)
+@@ -804,31 +832,22 @@ ghid_set_line_cap (hidGC gc, EndCapStyle style)
        gc->join = GDK_JOIN_MITER;
        break;
      }
@@ -1592,7 +1559,7 @@ index 26e3b36..3b1c807 100644
  }
  
  void
-@@ -843,56 +909,55 @@ ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2)
+@@ -843,56 +862,37 @@ ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2)
    printf ("ghid_set_line_cap_angle() -- not implemented\n");
  }
  
@@ -1630,35 +1597,26 @@ index 26e3b36..3b1c807 100644
 +  ghid_set_color (gc, gc->colorname);
  }
  
++
  void
--ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
-+errorCallback(GLenum errorCode)
+ ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
  {
 -  double dx1, dy1, dx2, dy2;
-+   const GLubyte *estring;
- 
+-
 -  dx1 = Vx ((double)x1);
 -  dy1 = Vy ((double)y1);
 -  dx2 = Vx ((double)x2);
 -  dy2 = Vy ((double)y2);
-+   estring = gluErrorString(errorCode);
-+   fprintf(stderr, "Quadric Error: %s\n", estring);
-+//   exit(0);
-+}
- 
+-
 -  if (! ClipLine (0, 0, gport->width, gport->height,
 -		  &dx1, &dy1, &dx2, &dy2, gc->width / gport->zoom))
 -    return;
-+
-+void
-+ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
-+{
 +  double width = Vz (gc->width);
  
    USE_GC (gc);
 -  gdk_draw_line (gport->drawable, gport->u_gc, dx1, dy1, dx2, dy2);
 +
-+  hidgl_draw_line (gc, gc->cap, width, Vx (x1), Vy (dy1), Vx (dx2), Vy (dy2));
++  hidgl_draw_line (gc, gc->cap, width, Vx (x1), Vy (y1), Vx (x2), Vy (y2));
  }
  
  void
@@ -1666,77 +1624,56 @@ index 26e3b36..3b1c807 100644
 -	       int xradius, int yradius, int start_angle, int delta_angle)
 +               int xradius, int yradius, int start_angle, int delta_angle)
  {
-+#define MIN_SLICES_PER_ARC 10
-   gint vrx, vry;
--  gint w, h, radius;
+-  gint vrx, vry;
+   gint w, h, radius;
 -  
-+  gint w, h, radius, slices;
-+  double width;
-+  GLUquadricObj *qobj;
-+
-+  width = Vz (gc->width);
-+
-+  if (width == 0.0)
-+    width = 1.0;
++  double width = Vz (gc->width);
 +
    w = gport->width * gport->zoom;
    h = gport->height * gport->zoom;
    radius = (xradius > yradius) ? xradius : yradius;
-@@ -919,9 +984,47 @@ ghid_draw_arc (hidGC gc, int cx, int cy,
-   /* make sure we fall in the -180 to +180 range */
-   start_angle = (start_angle + 360 + 180) % 360 - 180;
+@@ -901,27 +901,13 @@ ghid_draw_arc (hidGC gc, int cx, int cy,
+       || SIDE_Y (cy) < gport->view_y0 - radius 
+       || SIDE_Y (cy) > gport->view_y0 + h + radius)
+     return;
+-  
+-  USE_GC (gc);
+-  vrx = Vz (xradius);
+-  vry = Vz (yradius);
+ 
+-  if (ghid_flip_x)
+-    {
+-      start_angle = 180 - start_angle;
+-      delta_angle = - delta_angle;
+-    }
+-  if (ghid_flip_y)
+-    {
+-      start_angle = - start_angle;
+-      delta_angle = - delta_angle;					
+-    }
+-  /* make sure we fall in the -180 to +180 range */
+-  start_angle = (start_angle + 360 + 180) % 360 - 180;
++  USE_GC (gc);
  
 -  gdk_draw_arc (gport->drawable, gport->u_gc, 0,
 -		Vx (cx) - vrx, Vy (cy) - vry,
 -		vrx * 2, vry * 2, (start_angle + 180) * 64, delta_angle * 64);
-+  if (delta_angle < 0) {
-+    start_angle += delta_angle;
-+    delta_angle = - delta_angle;
-+  }
-+
-+  slices = M_PI * (vrx + width / 2.) / PIXELS_PER_CIRCLINE;
-+
-+  if (slices < MIN_SLICES_PER_ARC)
-+    slices = MIN_SLICES_PER_ARC;
-+
-+  /* TODO: CHANGE TO USING THE TRIANGLE LIST */
-+  qobj = gluNewQuadric ();
-+  gluQuadricCallback (qobj, GLU_ERROR, errorCallback);
-+  gluQuadricDrawStyle (qobj, GLU_FILL); /* smooth shaded */
-+  gluQuadricNormals (qobj, GLU_SMOOTH);
-+
-+  glPushMatrix ();
-+  glTranslatef (Vx (cx), Vy (cy), 0.0);
-+  gluPartialDisk (qobj, vrx - width / 2, vrx + width / 2, slices, 1, 270 + start_angle, delta_angle);
-+  glPopMatrix ();
-+
-+  slices = M_PI * width / PIXELS_PER_CIRCLINE;
-+
-+  if (slices < MIN_TRIANGLES_PER_CAP)
-+    slices = MIN_TRIANGLES_PER_CAP;
-+
-+  /* TODO: CHANGE TO USING THE TRIANGLE LIST */
-+  glPushMatrix ();
-+  glTranslatef (Vx (cx) + vrx * -cos (M_PI / 180. * start_angle),
-+                Vy (cy) + vrx *  sin (M_PI / 180. * start_angle), 0.0);
-+  gluPartialDisk (qobj, 0, width / 2, slices, 1, start_angle + 90., 180);
-+  glPopMatrix ();
-+
-+  /* TODO: CHANGE TO USING THE TRIANGLE LIST */
-+  glPushMatrix ();
-+  glTranslatef (Vx (cx) + vrx * -cos (M_PI / 180. * (start_angle + delta_angle)),
-+                Vy (cy) + vrx *  sin (M_PI / 180. * (start_angle + delta_angle)), 0.0);
-+  gluPartialDisk (qobj, 0, width / 2, slices, 1, start_angle + delta_angle + 270., 180);
-+  glPopMatrix ();
-+
-+  gluDeleteQuadric (qobj);
++  hidgl_draw_arc (gc, width, Vx (cx), Vy (cy),
++                  Vz (xradius), Vz (yradius),
++                  start_angle, delta_angle,
++                  ghid_flip_x, ghid_flip_y);
  }
  
  void
-@@ -948,19 +1051,27 @@ ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
-   x2 = Vx (x2);
-   y2 = Vy (y2);
+@@ -943,24 +929,16 @@ ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
+ 	  && SIDE_Y (y2) > gport->view_y0 + h + lw))
+     return;
  
+-  x1 = Vx (x1);
+-  y1 = Vy (y1);
+-  x2 = Vx (x2);
+-  y2 = Vy (y2);
+-
 -  if (x1 > x2) { gint xt = x1; x1 = x2; x2 = xt; }
 -  if (y1 > y2) { gint yt = y1; y1 = y2; y2 = yt; }
 -
@@ -1744,12 +1681,7 @@ index 26e3b36..3b1c807 100644
 -  gdk_draw_rectangle (gport->drawable, gport->u_gc, FALSE,
 -		      x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 +
-+  glBegin (GL_LINE_LOOP);
-+  glVertex2f (x1, y1);
-+  glVertex2f (x1, y2);
-+  glVertex2f (x2, y2);
-+  glVertex2f (x2, y1);
-+  glEnd ();
++  hidgl_draw_rect (gc, Vx (x1), Vy (y1), Vx (x2), Vy (y2));
  }
  
  
@@ -1757,174 +1689,29 @@ index 26e3b36..3b1c807 100644
  ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
  {
 -  gint w, h, vr;
-+#define TRIANGLES_PER_CIRCLE 30
-+#define MIN_TRIANGLES_PER_CIRCLE 6
-+#define MAX_TRIANGLES_PER_CIRCLE 2000
-+  gint w, h, vx, vy, vr;
-+  float last_x, last_y;
-+  int slices;
-+  int i;
++  gint w, h;
  
    w = gport->width * gport->zoom;
    h = gport->height * gport->zoom;
-@@ -971,38 +1082,190 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
+@@ -971,38 +949,23 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
      return;
  
    USE_GC (gc);
-+  vx = Vx (cx);
-+  vy = Vy (cy);
-   vr = Vz (radius);
+-  vr = Vz (radius);
 -  gdk_draw_arc (gport->drawable, gport->u_gc, TRUE,
 -		Vx (cx) - vr, Vy (cy) - vr,
 -		vr * 2, vr * 2, 0, 360 * 64);
 +
-+  slices = M_PI * 2 * vr / PIXELS_PER_CIRCLINE;
-+
-+  if (slices < MIN_TRIANGLES_PER_CIRCLE)
-+    slices = MIN_TRIANGLES_PER_CIRCLE;
-+
-+  if (slices > MAX_TRIANGLES_PER_CIRCLE)
-+    slices = MAX_TRIANGLES_PER_CIRCLE;
-+
-+//  slices = TRIANGLES_PER_CIRCLE;
-+
-+  ensure_triangle_space (slices);
-+
-+  last_x = vx + vr;
-+  last_y = vy;
-+
-+  for (i = 0; i < slices; i++) {
-+    float x, y;
-+    x = ((float)vr) * cos (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
-+    y = ((float)vr) * sin (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
-+    add_triangle (vx, vy, last_x, last_y, x, y);
-+    last_x = x;
-+    last_y = y;
-+  }
-+}
-+
-+#define MAX_COMBINED_MALLOCS 2500
-+static void *combined_to_free [MAX_COMBINED_MALLOCS];
-+static int combined_num_to_free = 0;
-+
-+static GLenum tessVertexType;
-+static int stashed_vertices;
-+static int triangle_comp_idx;
-+
-+
-+void
-+myError (GLenum errno)
-+{
-+  printf ("gluTess error: %s\n", gluErrorString (errno));
-+}
-+
-+static void
-+myFreeCombined ()
-+{
-+  while (combined_num_to_free)
-+    free (combined_to_free [-- combined_num_to_free]);
-+}
-+
-+static void
-+myCombine ( GLdouble coords[3], void *vertex_data[4], GLfloat weight[4], void **dataOut )
-+{
-+#define MAX_COMBINED_VERTICES 2500
-+  static GLdouble combined_vertices [3 * MAX_COMBINED_VERTICES];
-+  static int num_combined_vertices = 0;
-+
-+  GLdouble *new_vertex;
-+
-+  if (num_combined_vertices < MAX_COMBINED_VERTICES)
-+    {
-+      new_vertex = &combined_vertices [3 * num_combined_vertices];
-+      num_combined_vertices ++;
-+    }
-+  else
-+    {
-+      new_vertex = malloc (3 * sizeof (GLdouble));
-+
-+      if (combined_num_to_free < MAX_COMBINED_MALLOCS)
-+        combined_to_free [combined_num_to_free ++] = new_vertex;
-+      else
-+        printf ("myCombine leaking %i bytes of memory\n", 3 * sizeof (GLdouble));
-+    }
-+
-+  new_vertex[0] = coords[0];
-+  new_vertex[1] = coords[1];
-+  new_vertex[2] = coords[2];
-+
-+  *dataOut = new_vertex;
-+}
-+
-+static void
-+myBegin (GLenum type)
-+{
-+  tessVertexType = type;
-+  stashed_vertices = 0;
-+  triangle_comp_idx = 0;
-+}
-+
-+void
-+myVertex (GLdouble *vertex_data)
-+{
-+  static GLfloat triangle_vertices [2 * 3];
-+
-+  if (tessVertexType == GL_TRIANGLE_STRIP ||
-+      tessVertexType == GL_TRIANGLE_FAN)
-+    {
-+      if (stashed_vertices < 2)
-+        {
-+          triangle_vertices [triangle_comp_idx ++] = vertex_data [0];
-+          triangle_vertices [triangle_comp_idx ++] = vertex_data [1];
-+          stashed_vertices ++;
-+        }
-+      else
-+        {
-+          ensure_triangle_space (1);
-+          add_triangle (triangle_vertices [0], triangle_vertices [1],
-+                        triangle_vertices [2], triangle_vertices [3],
-+                        vertex_data [0], vertex_data [1]);
-+
-+          if (tessVertexType == GL_TRIANGLE_STRIP)
-+            {
-+              /* STRIP saves the last two vertices for re-use in the next triangle */
-+              triangle_vertices [0] = triangle_vertices [2];
-+              triangle_vertices [1] = triangle_vertices [3];
-+            }
-+          /* Both FAN and STRIP save the last vertex for re-use in the next triangle */
-+          triangle_vertices [2] = vertex_data [0];
-+          triangle_vertices [3] = vertex_data [1];
-+        }
-+    }
-+  else if (tessVertexType == GL_TRIANGLES)
-+    {
-+      triangle_vertices [triangle_comp_idx ++] = vertex_data [0];
-+      triangle_vertices [triangle_comp_idx ++] = vertex_data [1];
-+      stashed_vertices ++;
-+      if (stashed_vertices == 3)
-+        {
-+          ensure_triangle_space (1);
-+          add_triangle (triangle_vertices [0], triangle_vertices [1],
-+                        triangle_vertices [2], triangle_vertices [3],
-+                        triangle_vertices [4], triangle_vertices [5]);
-+          triangle_comp_idx = 0;
-+          stashed_vertices = 0;
-+        }
-+    }
-+  else
-+    printf ("Vertex recieved with unknown type\n");
++  hidgl_fill_circle (gc, Vx (cx), Vy (cy), Vz (radius));
  }
  
++
  void
  ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
  {
 -  static GdkPoint *points = 0;
 -  static int npoints = 0;
-   int i;
-+
-+  GLUtesselator *tobj;
-+  GLdouble *vertices;
-+
+-  int i;
    USE_GC (gc);
  
 -  if (npoints < n_coords)
@@ -1933,36 +1720,13 @@ index 26e3b36..3b1c807 100644
 -      points = MyRealloc (points,
 -			  npoints * sizeof (GdkPoint), (char *) __FUNCTION__);
 -    }
-+  g_assert (n_coords > 0);
-+
-+  vertices = malloc (sizeof(GLdouble) * n_coords * 3);
-+
-+  tobj = gluNewTess ();
-+  gluTessCallback(tobj, GLU_TESS_BEGIN, myBegin);
-+  gluTessCallback(tobj, GLU_TESS_VERTEX, myVertex);
-+  gluTessCallback(tobj, GLU_TESS_COMBINE, myCombine);
-+  gluTessCallback(tobj, GLU_TESS_ERROR, myError);
-+
-+  gluTessBeginPolygon (tobj, NULL);
-+  gluTessBeginContour (tobj);
-+
-   for (i = 0; i < n_coords; i++)
-     {
+-  for (i = 0; i < n_coords; i++)
+-    {
 -      points[i].x = Vx (x[i]);
 -      points[i].y = Vy (y[i]);
-+      vertices [0 + i * 3] = Vx (x[i]);
-+      vertices [1 + i * 3] = Vy (y[i]);
-+      vertices [2 + i * 3] = 0.;
-+      gluTessVertex (tobj, &vertices [i * 3], &vertices [i * 3]);
-     }
+-    }
 -  gdk_draw_polygon (gport->drawable, gport->u_gc, 1, points, n_coords);
-+
-+  gluTessEndContour (tobj);
-+  gluTessEndPolygon (tobj);
-+  gluDeleteTess (tobj);
-+
-+  myFreeCombined ();
-+  free (vertices);
++  hidgl_fill_polygon (gc, n_coords, x, y);
  }
  
  void
@@ -1973,10 +1737,14 @@ index 26e3b36..3b1c807 100644
  
    lw = gc->width;
    w = gport->width * gport->zoom;
-@@ -1022,21 +1285,14 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
-   y1 = Vy (y1);
-   x2 = Vx (x2);
-   y2 = Vy (y2);
+@@ -1018,25 +981,9 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
+           && SIDE_Y (y2) > gport->view_y0 + h + lw))
+     return;
+ 
+-  x1 = Vx (x1);
+-  y1 = Vy (y1);
+-  x2 = Vx (x2);
+-  y2 = Vy (y2);
 -  if (x2 < x1)
 -    {
 -      xx = x1;
@@ -1989,20 +1757,15 @@ index 26e3b36..3b1c807 100644
 -      y1 = y2;
 -      y2 = yy;
 -    }
-+
    USE_GC (gc);
 -  gdk_draw_rectangle (gport->drawable, gport->u_gc, TRUE,
 -                      x1, y1, x2 - x1 + 1, y2 - y1 + 1);
-+  glBegin (GL_QUADS);
-+  glVertex2f (x1, y1);
-+  glVertex2f (x1, y2);
-+  glVertex2f (x2, y2);
-+  glVertex2f (x2, y1);
-+  glEnd ();
++
++  hidgl_fill_rect (gc, Vx (x1), Vy (y1), Vx (x2), Vy (y2));
  }
  
  void
-@@ -1083,8 +1339,6 @@ ghid_calibrate (double xval, double yval)
+@@ -1083,8 +1030,6 @@ ghid_calibrate (double xval, double yval)
    printf ("ghid_calibrate() -- not implemented\n");
  }
  
@@ -2011,7 +1774,7 @@ index 26e3b36..3b1c807 100644
  void
  ghid_notify_gui_is_up ()
  {
-@@ -1526,7 +1780,7 @@ HID ghid_hid = {
+@@ -1526,7 +1471,7 @@ HID ghid_hid = {
    1,				/* gui */
    0,				/* printer */
    0,				/* exporter */
@@ -2020,7 +1783,7 @@ index 26e3b36..3b1c807 100644
    1,				/* poly after */
    0,				/* poly dicer */
  
-@@ -2159,11 +2413,14 @@ Benchmark (int argc, char **argv, int x, int y)
+@@ -2159,11 +2104,14 @@ Benchmark (int argc, char **argv, int x, int y)
    region.X2 = PCB->MaxWidth;
    region.Y2 = PCB->MaxHeight;
  
@@ -2037,7 +1800,7 @@ index 26e3b36..3b1c807 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 31b9d10..20673eb 100644
+index 31b9d10..28aeba4 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -293,16 +293,16 @@ have_crosshair_attachments (void)
@@ -2182,7 +1945,7 @@ index 31b9d10..20673eb 100644
 +  glEnable (GL_COLOR_LOGIC_OP);
 +  glLogicOp (GL_XOR);
 +
-+  ghid_flush_triangles ();
++  hidgl_flush_triangles (&buffer);
 +
 +  glColor3f (cross_color.red / 65535.,
 +             cross_color.green / 65535.,
@@ -2500,18 +2263,18 @@ index 31b9d10..20673eb 100644
 +
 +  /* TODO: Background image */
 +
-+  ghid_init_triangle_array ();
++  hidgl_init_triangle_array (&buffer);
 +  hid_expose_callback (&ghid_hid, &region, 0);
-+  ghid_flush_triangles ();
++  hidgl_flush_triangles (&buffer);
 +
 +  draw_grid ();
 +
-+  ghid_init_triangle_array ();
++  hidgl_init_triangle_array (&buffer);
 +  DrawAttached (TRUE);
 +  DrawMark (TRUE);
    ghid_show_crosshair (TRUE);
 +
-+  ghid_flush_triangles ();
++  hidgl_flush_triangles (&buffer);
 +
 +  if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
 +    gdk_gl_drawable_swap_buffers (pGlDrawable);
@@ -2568,7 +2331,7 @@ index 31b9d10..20673eb 100644
  }
  
 diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
-index ab165ea..ca0e985 100644
+index ab165ea..5134741 100644
 --- a/src/hid/gtk/gui-pinout-preview.c
 +++ b/src/hid/gtk/gui-pinout-preview.c
 @@ -150,12 +150,15 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
@@ -2646,9 +2409,9 @@ index ab165ea..ca0e985 100644
 +  glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
  
    /* call the drawing routine */
-+  ghid_init_triangle_array ();
++  hidgl_init_triangle_array (&buffer);
    hid_expose_callback (&ghid_hid, NULL, &pinout->element);
-+  ghid_flush_triangles ();
++  hidgl_flush_triangles (&buffer);
 +
 +  if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
 +    gdk_gl_drawable_swap_buffers (pGlDrawable);
@@ -2752,21 +2515,23 @@ index fe5498c..017ccd8 100644
  
    Settings.AutoPlace = 0;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index c97edf9..c57173d 100644
+index c97edf9..08bb5a9 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -35,6 +35,10 @@
+@@ -35,6 +35,12 @@
  
  #include <gtk/gtk.h>
  
-+#include <gtk/gtkgl.h>
-+#include <GL/glu.h>
-+//#include <GL/glut.h>
++#ifdef ENABLE_GL
++#  include <gtk/gtkgl.h>
++#  include <GL/gl.h>
++#  include "hid/common/hidgl.h"
++#endif
 +
  /* Internationalization support.
  */
  #if defined (ENABLE_NLS)
-@@ -130,7 +134,7 @@ typedef struct hid_gc_struct
+@@ -130,7 +136,7 @@ typedef struct hid_gc_struct
    gint cap, join;
    gchar xor;
    gchar erase;
@@ -2775,7 +2540,7 @@ index c97edf9..c57173d 100644
  }
  hid_gc_struct;
  
-@@ -197,7 +201,11 @@ typedef struct
+@@ -197,7 +203,11 @@ typedef struct
    GdkDrawable *drawable;	/* Current drawable for drawing routines */
    gint width, height;
  
@@ -2788,12 +2553,11 @@ index c97edf9..c57173d 100644
  
    GdkColor bg_color, offlimits_color, grid_color;
  
-@@ -510,6 +518,8 @@ void ghid_logv (const char *fmt, va_list args);
- void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
+@@ -313,6 +323,7 @@ void ghid_get_pointer (gint *, gint *);
  
- /* gtkhid-main.c */
-+void ghid_init_triangle_array ();
-+void ghid_flush_triangles ();
- void ghid_invalidate_all ();
- void ghid_get_coords (const char *msg, int *x, int *y);
- gint PCBChanged (int argc, char **argv, int x, int y);
+ /* gui-output-events.c function prototypes.
+ */
++
+ void ghid_port_ranges_changed (void);
+ void ghid_port_ranges_zoom (gdouble zoom);
+ gboolean ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative);
