@@ -1,7 +1,7 @@
-Bottom: c2832908602d753b32394e46483438ca1d43d116
-Top:    a350bdc310259a7a22a692d2c4d38467d6370f7f
+Bottom: 2fed6d12d66d6d88221f56e27586102007b3f294
+Top:    6881c7bb71625415c427d032868df464326ac07a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-02 14:28:01 +0000
+Date:   2009-02-02 22:26:27 +0000
 
 Rework iteration over contours in "intersect" to improve performance
 
@@ -14,6 +14,7 @@ ensure we loop over the the small one, wait until we've worked out
 which contours we're comparing. Rather than swapping, we just choose
 which to loop over. This saves us time in the case where the larger
 intersecting contour belongs to the polygon with fewer vertices.
+
 
 
 

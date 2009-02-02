@@ -1,7 +1,7 @@
-Bottom: 913a6765cf0637b13ed95fdecf6ed83e3f0337a9
-Top:    02165bc36f1f0db8f0785edbd312ee3958b7c3bc
+Bottom: 1b245bb0d77a5525617d6a902798b750e478e1bc
+Top:    30d7471be462a23c5584fcb6391a331502d22631
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-02 14:28:00 +0000
+Date:   2009-02-02 22:26:25 +0000
 
 Add support for a "poured" object.
 
@@ -17,6 +17,7 @@ all child polygons selected. Manipulations will always occur on the
 
 It remains to be seen whether "pour" will have its own file-format entry,
 or if it will take over the meaning of the existing "polygon" entry.
+
 
 
 
@@ -2735,7 +2736,7 @@ index dad837c..ea01a87 100644
        break;
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 17ecae2..d711982 100644
+index 904bc60..786ac69 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -267,7 +267,7 @@ have_crosshair_attachments (void)
