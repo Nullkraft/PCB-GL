@@ -1,13 +1,14 @@
-Bottom: 2cc0405c7d1f652fe83eed3caec7d2b923af056b
-Top:    8689477a27f06497fae45286c91b4161ef191ae3
+Bottom: 707660f0c5f6e97db80ada7a2a7016b19878bb30
+Top:    913a6765cf0637b13ed95fdecf6ed83e3f0337a9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-02 05:06:14 +0000
+Date:   2009-02-02 14:27:04 +0000
 
 Improve GL stuff:
 
 Use native coordinates, and GL Matrix etc..
 
 Use VBO to try and avoid copying data
+
 
 
 ---
@@ -521,10 +522,10 @@ index 969cf91..f82056a 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 1519f5d..3df3d4c 100644
+index 9ddddd5..24b499d 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -44,15 +44,13 @@
+@@ -45,15 +45,13 @@
  #include <dmalloc.h>
  #endif
  
@@ -541,7 +542,7 @@ index 1519f5d..3df3d4c 100644
  
  static void zoom_to (double factor, int x, int y);
  static void zoom_by (double factor, int x, int y);
-@@ -469,7 +467,7 @@ draw_grid ()
+@@ -470,7 +468,7 @@ draw_grid ()
  
    glDisableClientState (GL_VERTEX_ARRAY);
    glDisable (GL_COLOR_LOGIC_OP);
@@ -550,7 +551,7 @@ index 1519f5d..3df3d4c 100644
  }
  
  /* ------------------------------------------------------------ */
-@@ -862,11 +860,15 @@ ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2)
+@@ -863,11 +861,15 @@ ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2)
    printf ("ghid_set_line_cap_angle() -- not implemented\n");
  }
  
@@ -568,7 +569,7 @@ index 1519f5d..3df3d4c 100644
    if (current_gc == gc)
      return;
  
-@@ -875,82 +877,50 @@ use_gc (hidGC gc)
+@@ -876,82 +878,50 @@ use_gc (hidGC gc)
    ghid_set_color (gc, gc->colorname);
  }
  
@@ -669,7 +670,7 @@ index 1519f5d..3df3d4c 100644
  }
  
  
-@@ -959,31 +929,15 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
+@@ -960,31 +930,15 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
  {
    USE_GC (gc);
  
