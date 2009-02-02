@@ -1,0 +1,25 @@
+Bottom: 1f220178987fe50d4c865125f7c96554f152337d
+Top:    f9ca99eb32f1452682386de36824af29dbcd875f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-02 14:26:54 +0000
+
+Refresh of drop-in-pcb-gl-code-various-me
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 1519f5d..9ddddd5 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -37,8 +37,9 @@
+ #include <gdk/gdkx.h>
+ #endif
+ 
+-#include <gtk/gtkgl.h>
+-#include <GL/glut.h>
++#ifdef ENABLE_GL
++#  include <gtk/gtkgl.h>
++#endif
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
