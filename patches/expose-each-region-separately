@@ -1,0 +1,14 @@
+Bottom: 30e99e2cfb0dbf07e3f25a9e556863894f358734
+Top:    30e99e2cfb0dbf07e3f25a9e556863894f358734
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-02 22:26:14 +0000
+
+Expose each region separately
+
+BUG: Won't work properly, since we set the sciscor region for the
+     size of the whole expose event, then clear that area. BAD!
+
+
+---
+
+
