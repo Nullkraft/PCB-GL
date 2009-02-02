@@ -652,12 +652,8 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
 void
 hidgl_fill_rect (int x1, int y1, int x2, int y2)
 {
-  glBegin (GL_QUADS);
-  glVertex2f (x1, y1);
-  glVertex2f (x1, y2);
-  glVertex2f (x2, y2);
-  glVertex2f (x2, y1);
-  glEnd ();
+  hidgl_add_triangle (&buffer, x1, y1, x1, y2, x2, y2);
+  hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
 }
 
 /* ---------------------------------------------------------------------- */
