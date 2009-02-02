@@ -811,7 +811,6 @@ ghid_set_color (hidGC gc, const char *name)
   if( ! ghid_gui_is_up )
     return;
 
-  //hidgl_flush_triangles (&buffer);
   hidgl_color (r, g, b, a);
 }
 

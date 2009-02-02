@@ -134,6 +134,9 @@ hidgl_color (GLfloat r, GLfloat g, GLfloat b, GLfloat a)
   cur_g = g;
   cur_b = b;
   cur_a = a;
+
+  /* We still draw non-filled rectangles in immediate mode */
+  glColor4f (r, g, b, a);
 }
 
 //static int cur_mask = -1;
@@ -670,12 +673,8 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
 void
 hidgl_fill_rect (int x1, int y1, int x2, int y2)
 {
-  glBegin (GL_QUADS);
-  glVertex2f (x1, y1);
-  glVertex2f (x1, y2);
-  glVertex2f (x2, y2);
-  glVertex2f (x2, y1);
-  glEnd ();
+  hidgl_add_triangle (&buffer, x1, y1, x1, y2, x2, y2, cur_r, cur_g, cur_b, cur_a);
+  hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1, cur_r, cur_g, cur_b, cur_a);
 }
 
 /* ---------------------------------------------------------------------- */
