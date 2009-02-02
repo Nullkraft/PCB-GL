@@ -1,0 +1,46 @@
+Bottom: a74f3e3a64b8329808636a9ab8ea6c047f662a21
+Top:    442cfc7c0667bdae56e610b47634d8278cd9f9f2
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-02 20:54:57 +0000
+
+Refresh of try-not-using-no-holes-dicer-f
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 8143cea..e944790 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -2202,7 +2202,7 @@ DrawPour (LayerTypePtr Layer, PourTypePtr Pour, int unused)
+   layernum = GetLayerNumber (PCB->Data, Layer);
+   DrawPourLowLevel (Pour, NULL);
+ #warning FIXME Later
+-#if 0
++#if 1
+   if (TEST_FLAG (CLEARPOLYFLAG, Pour))
+     {
+       r_search (PCB->Data->pin_tree, &Pour->BoundingBox, NULL,
+@@ -2270,6 +2270,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+     }
+   else if (Polygon->Clipped)
+     {
++#if 0
+       if (!Polygon->NoHolesValid)
+         {
+           ComputeNoHoles (Polygon);
+@@ -2283,6 +2284,15 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+             poly.Clipped = poly.Clipped->f;
+           } while (poly.Clipped != Polygon->NoHoles);
+         }
++#endif
++        {
++          PolygonType poly = *Polygon;
++          poly.Clipped = Polygon->Clipped;
++          do {
++            DrawPolygonLowLevel (&poly, NULL);
++            poly.Clipped = poly.Clipped->f;
++          } while (poly.Clipped != Polygon->Clipped);
++        }
+       /* draw other parts of the polygon if fullpoly flag is set */
+       /* NB: No "NoHoles" cache for these */
+       if (TEST_FLAG (FULLPOLYFLAG, Polygon))
