@@ -69,12 +69,7 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
   glEnableClientState (GL_VERTEX_ARRAY);
   glGenBuffers (1, &buffer->vbo_name);
   glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_name);
-                                                 /* HUGE BUFFER */
-//  glBufferData (GL_ARRAY_BUFFER, sizeof (GLFloat) * 8192 * 2 * 3, NULL, GL_STATIC_DRAW);
   glBufferData (GL_ARRAY_BUFFER, TRIANGLE_ARRAY_BYTES, NULL, GL_STATIC_DRAW);
-//  glBufferSubData (GL_ARRAY_BUFFER, offsetInByte, SizeInBytes, &pvertices);
-//  glBindBuffer (GL_ARRAY_BUFFER, &buffer->vbo_name);
-//  glDeleteBuffers (1, &buffer->vbo_name);
 
   buffer->triangle_array = glMapBuffer (GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 
