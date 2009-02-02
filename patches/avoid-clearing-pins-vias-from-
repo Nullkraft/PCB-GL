@@ -1,16 +1,17 @@
-Bottom: a779b5ff23d4b8d902838323658a3501cb799aa0
-Top:    81f161bb2f2c3b930e36c572a75df598be1ba0dd
+Bottom: b6228fe44a480997aceed815ad1a1ab9feadc60b
+Top:    18966ce65bca6086c0e90da654328adb901403a0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-02 22:26:30 +0000
+Date:   2009-02-02 22:29:03 +0000
 
 Avoid clearing pins / vias from polygons... it is already done!
+
 
 
 
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index e944790..8983654 100644
+index 8143cea..1cacc5c 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -1262,6 +1262,7 @@ ClearPin (PinTypePtr Pin, int Type, int unused)
