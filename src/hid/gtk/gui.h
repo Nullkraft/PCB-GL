@@ -35,9 +35,15 @@
 
 #include <gtk/gtk.h>
 
+/* The Linux OpenGL ABI 1.0 spec requires that we define
+ * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
+ * in order to get prototypes:
+ *   http://www.opengl.org/registry/ABI/
+ */
 #ifdef ENABLE_GL
-#  include <gtk/gtkgl.h>
+#  define GL_GLEXT_PROTOTYPES 1
 #  include <GL/gl.h>
+#  include <gtk/gtkgl.h>
 #  include "hid/common/hidgl.h"
 #endif
 
@@ -521,7 +527,9 @@ void ghid_logv (const char *fmt, va_list args);
 void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
 
 /* gtkhid-main.c */
+
 void ghid_invalidate_all ();
+void ghid_invalidate_current_gc ();
 void ghid_get_coords (const char *msg, int *x, int *y);
 gint PCBChanged (int argc, char **argv, int x, int y);
 
