@@ -37,8 +37,9 @@
 #include <gdk/gdkx.h>
 #endif
 
-#include <gtk/gtkgl.h>
-#include <GL/glut.h>
+#ifdef ENABLE_GL
+#  include <gtk/gtkgl.h>
+#endif
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
