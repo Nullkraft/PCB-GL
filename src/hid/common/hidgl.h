@@ -26,15 +26,28 @@
 #define __HIDGL_INCLUDED__
 
 //#define TRIANGLE_ARRAY_SIZE 5000
-#define TRIANGLE_ARRAY_SIZE 5461
+//#define TRIANGLE_ARRAY_SIZE 5461
 /* Assumes GLFloat is 4 bytes, and we have X,Y coords x3 for each triangle:
    4 * 5461 * 2 * 3 = 109464 */
-#define TRIANGLE_ARRAY_BYTES 131072
+// #define TRIANGLE_ARRAY_BYTES 131072
+
+typedef struct {
+  GLfloat x;
+  GLfloat y;
+  GLfloat r;
+  GLfloat g;
+  GLfloat b;
+  GLfloat a;
+} tri_array_element;
+
+#define TRIANGLE_ARRAY_BYTES 256 * 1024
 typedef struct {
 //  GLfloat triangle_array [2 * 3 * TRIANGLE_ARRAY_SIZE];
-  GLfloat *triangle_array;
+//  GLfloat *triangle_array;
+  tri_array_element *triangle_array;
   unsigned int triangle_count;
-  unsigned int coord_comp_count;
+//  unsigned int coord_comp_count;
+  unsigned int array_size;
   GLuint vbo_name;
 } triangle_buffer;
 
@@ -43,19 +56,37 @@ extern triangle_buffer buffer;
 void hidgl_init_triangle_array (triangle_buffer *buffer);
 void hidgl_flush_triangles (triangle_buffer *buffer);
 void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
+void hidgl_color (GLfloat r, GLfloat g, GLfloat b, GLfloat a);
 
 static inline void
 hidgl_add_triangle (triangle_buffer *buffer,
                     GLfloat x1, GLfloat y1,
                     GLfloat x2, GLfloat y2,
-                    GLfloat x3, GLfloat y3)
+                    GLfloat x3, GLfloat y3,
+                    GLfloat r, GLfloat g,
+                    GLfloat b, GLfloat a)
 {
-  buffer->triangle_array [buffer->coord_comp_count++] = x1;
-  buffer->triangle_array [buffer->coord_comp_count++] = y1;
-  buffer->triangle_array [buffer->coord_comp_count++] = x2;
-  buffer->triangle_array [buffer->coord_comp_count++] = y2;
-  buffer->triangle_array [buffer->coord_comp_count++] = x3;
-  buffer->triangle_array [buffer->coord_comp_count++] = y3;
+  int i = 0;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].x = x1;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].y = y1;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].r = r;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].g = g;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].b = b;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].a = a;
+  i++;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].x = x2;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].y = y2;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].r = r;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].g = g;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].b = b;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].a = a;
+  i++;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].x = x3;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].y = y3;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].r = r;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].g = g;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].b = b;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].a = a;
   buffer->triangle_count++;
 }
 
