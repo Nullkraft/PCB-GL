@@ -1,13 +1,14 @@
-Bottom: 98c8c73a41e5ca01da0a0e3420c099f546694d98
-Top:    b6228fe44a480997aceed815ad1a1ab9feadc60b
+Bottom: 213f1bb1abedf5c47650a38180c34c27610ecd69
+Top:    705478adb3511bd65a18e795dba66cbc7a49e716
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-02 22:26:29 +0000
+Date:   2009-02-02 22:29:17 +0000
 
 Try optimising polygon operations by keeping an rtree with their contours
 
 InsertHoles() already creates an rtree of contours to do its internal
 processing, and it is possible that intersect() could be sped up by
 its existance as well.
+
 
 
 
