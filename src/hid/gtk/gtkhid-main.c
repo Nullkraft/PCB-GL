@@ -26,11 +26,6 @@
 #include "hid.h"
 #include "../hidint.h"
 
-#ifdef ENABLE_GL
-#  include <GL/gl.h>
-#  include "hid/common/hidgl.h"
-#endif
-
 #include "gui.h"
 
 #if !GTK_CHECK_VERSION(2,8,0) && defined(HAVE_GDK_GDKX_H)
@@ -63,6 +58,9 @@ static void zoom_by (double factor, int x, int y);
 static int cur_mask = -1;
 
 int ghid_flip_x = 0, ghid_flip_y = 0;
+
+GLuint fbo_name;
+GLuint tex_name;
 
 /* ------------------------------------------------------------ */
 
@@ -573,9 +571,48 @@ ghid_invalidate_all ()
 int
 ghid_set_layer (const char *name, int group, int empty)
 {
+  GLenum errCode;
+  const GLubyte *errString;
   int idx = (group >= 0
 	     && group <
 	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
+
+  hidgl_flush_triangles (&buffer);
+  /* Composite out existing texture data */
+  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
+  glBindTexture (GL_TEXTURE_2D, tex_name);
+
+  /* Use the texture on a big quad, onto the window */
+  glEnable (GL_TEXTURE_2D);
+  glBegin (GL_QUADS);
+  glColor4f (1.0f, 1.0f, 1.0f, 1.0f);
+  glTexCoord2f (  0,   1);
+  glVertex2f   (  0,   0);
+  glTexCoord2f (  0,   0);
+  glVertex2f   (  0, Vz (PCB->MaxHeight));
+  glTexCoord2f (  1,   0);
+  glVertex2f   (Vz (PCB->MaxWidth), Vz (PCB->MaxHeight));
+  glTexCoord2f (  1,   1);
+  glVertex2f   (Vz (PCB->MaxWidth),   0);
+  glEnd ();
+  glDisable (GL_TEXTURE_2D);
+  glBindTexture (GL_TEXTURE_2D, 0);
+
+  if ((errCode = glGetError()) != GL_NO_ERROR) {
+      errString = gluErrorString(errCode);
+     fprintf (stderr, "5OpenGL Error: %s\n", errString);
+  }
+
+  /* Setup for the next layer */
+  if (group != -99)
+    glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, fbo_name);
+  else
+    return 0;
+
+  if ((errCode = glGetError()) != GL_NO_ERROR) {
+      errString = gluErrorString(errCode);
+     fprintf (stderr, "6OpenGL Error: %s\n", errString);
+  }
 
   if (idx >= 0 && idx < max_layer + 2) {
     gport->trans_lines = TRUE;

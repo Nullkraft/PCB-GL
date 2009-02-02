@@ -131,7 +131,6 @@ extern int ghid_flip_x, ghid_flip_y;
 #define GRID_UNITS_VALUE(mm, mil)   (Settings.grid_units_mm ? (mm) : (mil))
 
 
-
 typedef struct hid_gc_struct
 {
   HID *me_pointer;
@@ -533,6 +532,8 @@ void ghid_logv (const char *fmt, va_list args);
 void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
 
 /* gtkhid-main.c */
+extern GLuint fbo_name;
+extern GLuint tex_name;
 
 void ghid_invalidate_all ();
 void ghid_invalidate_current_gc ();
