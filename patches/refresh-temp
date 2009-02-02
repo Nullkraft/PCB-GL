@@ -1,0 +1,49 @@
+Bottom: 39a8ca103b6090ee390c701e4da157a1652e1f28
+Top:    30e99e2cfb0dbf07e3f25a9e556863894f358734
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-02 22:06:27 +0000
+
+Refresh of add-colour-information-to-vbo
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 3675870..48d798f 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -134,6 +134,9 @@ hidgl_color (GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+   cur_g = g;
+   cur_b = b;
+   cur_a = a;
++
++  /* We still draw non-filled rectangles in immediate mode */
++  glColor4f (r, g, b, a);
+ }
+ 
+ //static int cur_mask = -1;
+@@ -670,12 +673,8 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+ void
+ hidgl_fill_rect (int x1, int y1, int x2, int y2)
+ {
+-  glBegin (GL_QUADS);
+-  glVertex2f (x1, y1);
+-  glVertex2f (x1, y2);
+-  glVertex2f (x2, y2);
+-  glVertex2f (x2, y1);
+-  glEnd ();
++  hidgl_add_triangle (&buffer, x1, y1, x1, y2, x2, y2, cur_r, cur_g, cur_b, cur_a);
++  hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1, cur_r, cur_g, cur_b, cur_a);
+ }
+ 
+ /* ---------------------------------------------------------------------- */
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 2904179..90604c2 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -811,7 +811,6 @@ ghid_set_color (hidGC gc, const char *name)
+   if( ! ghid_gui_is_up )
+     return;
+ 
+-  //hidgl_flush_triangles (&buffer);
+   hidgl_color (r, g, b, a);
+ }
