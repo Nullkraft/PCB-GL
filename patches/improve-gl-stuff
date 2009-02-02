@@ -1,5 +1,5 @@
 Bottom: 2cc0405c7d1f652fe83eed3caec7d2b923af056b
-Top:    064fb858fa40066728b05dc76c85196499aec143
+Top:    8689477a27f06497fae45286c91b4161ef191ae3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-02 05:06:14 +0000
 
@@ -13,7 +13,7 @@ Use VBO to try and avoid copying data
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index eea4f77..bb21ba9 100644
+index eea4f77..eb1044f 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -15,6 +15,12 @@
@@ -38,7 +38,7 @@ index eea4f77..bb21ba9 100644
  triangle_buffer buffer;
  
  #if 0
-@@ -56,10 +60,33 @@ hidgl_new_triangle_array (void)
+@@ -56,10 +60,28 @@ hidgl_new_triangle_array (void)
  void
  hidgl_init_triangle_array (triangle_buffer *buffer)
  {
@@ -53,12 +53,7 @@ index eea4f77..bb21ba9 100644
 +  glEnableClientState (GL_VERTEX_ARRAY);
 +  glGenBuffers (1, &buffer->vbo_name);
 +  glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_name);
-+                                                 /* HUGE BUFFER */
-+//  glBufferData (GL_ARRAY_BUFFER, sizeof (GLFloat) * 8192 * 2 * 3, NULL, GL_STATIC_DRAW);
 +  glBufferData (GL_ARRAY_BUFFER, TRIANGLE_ARRAY_BYTES, NULL, GL_STATIC_DRAW);
-+//  glBufferSubData (GL_ARRAY_BUFFER, offsetInByte, SizeInBytes, &pvertices);
-+//  glBindBuffer (GL_ARRAY_BUFFER, &buffer->vbo_name);
-+//  glDeleteBuffers (1, &buffer->vbo_name);
 +
 +  buffer->triangle_array = glMapBuffer (GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 +
@@ -74,7 +69,7 @@ index eea4f77..bb21ba9 100644
  }
  
  void
-@@ -68,9 +95,18 @@ hidgl_flush_triangles (triangle_buffer *buffer)
+@@ -68,9 +90,18 @@ hidgl_flush_triangles (triangle_buffer *buffer)
    if (buffer->triangle_count == 0)
      return;
  
@@ -95,7 +90,7 @@ index eea4f77..bb21ba9 100644
  }
  
  void
-@@ -260,87 +296,43 @@ hidgl_use_mask (int use_it)
+@@ -260,87 +291,43 @@ hidgl_use_mask (int use_it)
  #endif
  
  
@@ -206,7 +201,7 @@ index eea4f77..bb21ba9 100644
    if (width == 0.0)
      width = 1.0;
  
-@@ -350,9 +342,13 @@ hidgl_draw_line (hidGC gc, int cap, double width, int x1, int y1, int x2, int y2
+@@ -350,9 +337,13 @@ hidgl_draw_line (hidGC gc, int cap, double width, int x1, int y1, int x2, int y2
    length = sqrt (deltax * deltax + deltay * deltay);
  
    if (length == 0) {
@@ -220,7 +215,7 @@ index eea4f77..bb21ba9 100644
    } else {
      wdy = deltax * width / 2. / length;
      wdx = -deltay * width / 2. / length;
-@@ -366,16 +362,6 @@ hidgl_draw_line (hidGC gc, int cap, double width, int x1, int y1, int x2, int y2
+@@ -366,16 +357,6 @@ hidgl_draw_line (hidGC gc, int cap, double width, int x1, int y1, int x2, int y2
        angle += 180.;
    }
  
@@ -237,7 +232,7 @@ index eea4f77..bb21ba9 100644
    switch (cap) {
      case Trace_Cap:
      case Round_Cap:
-@@ -398,111 +384,82 @@ hidgl_draw_line (hidGC gc, int cap, double width, int x1, int y1, int x2, int y2
+@@ -398,111 +379,82 @@ hidgl_draw_line (hidGC gc, int cap, double width, int x1, int y1, int x2, int y2
    hidgl_add_triangle (&buffer, x1 - wdx, y1 - wdy,
                                 x2 + wdx, y2 + wdy,
                                 x1 + wdx, y1 + wdy);
@@ -405,7 +400,7 @@ index eea4f77..bb21ba9 100644
    glBegin (GL_LINE_LOOP);
    glVertex2f (x1, y1);
    glVertex2f (x1, y2);
-@@ -513,18 +470,16 @@ hidgl_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
+@@ -513,18 +465,16 @@ hidgl_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
  
  
  void
@@ -428,7 +423,7 @@ index eea4f77..bb21ba9 100644
  
    if (slices < MIN_TRIANGLES_PER_CIRCLE)
      slices = MIN_TRIANGLES_PER_CIRCLE;
-@@ -532,8 +487,6 @@ hidgl_fill_circle (hidGC gc, int vx, int vy, int vr)
+@@ -532,8 +482,6 @@ hidgl_fill_circle (hidGC gc, int vx, int vy, int vr)
    if (slices > MAX_TRIANGLES_PER_CIRCLE)
      slices = MAX_TRIANGLES_PER_CIRCLE;
  
@@ -437,7 +432,7 @@ index eea4f77..bb21ba9 100644
    hidgl_ensure_triangle_space (&buffer, slices);
  
    last_x = vx + vr;
-@@ -541,8 +494,8 @@ hidgl_fill_circle (hidGC gc, int vx, int vy, int vr)
+@@ -541,8 +489,8 @@ hidgl_fill_circle (hidGC gc, int vx, int vy, int vr)
  
    for (i = 0; i < slices; i++) {
      float x, y;
@@ -448,7 +443,7 @@ index eea4f77..bb21ba9 100644
      hidgl_add_triangle (&buffer, vx, vy, last_x, last_y, x, y);
      last_x = x;
      last_y = y;
-@@ -664,14 +617,13 @@ myVertex (GLdouble *vertex_data)
+@@ -664,14 +612,13 @@ myVertex (GLdouble *vertex_data)
  }
  
  void
@@ -465,7 +460,7 @@ index eea4f77..bb21ba9 100644
  
    assert (n_coords > 0);
  
-@@ -703,9 +655,8 @@ hidgl_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
+@@ -703,9 +650,8 @@ hidgl_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
  }
  
  void
@@ -709,10 +704,10 @@ index 1519f5d..3df3d4c 100644
  
  void
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 8219579..7738098 100644
+index 8219579..17ecae2 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1064,14 +1064,35 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1064,18 +1064,48 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    /* TODO: Background image */
  
    hidgl_init_triangle_array (&buffer);
@@ -728,6 +723,11 @@ index 8219579..7738098 100644
    hid_expose_callback (&ghid_hid, &region, 0);
    hidgl_flush_triangles (&buffer);
 +  glPopMatrix ();
++
++
++  glUnmapBuffer (GL_ARRAY_BUFFER);
++  glBindBuffer(GL_ARRAY_BUFFER, 0);
++  glDeleteBuffers (1, &buffer.vbo_name);
  
    draw_grid ();
  
@@ -748,11 +748,19 @@ index 8219579..7738098 100644
    ghid_show_crosshair (TRUE);
  
    hidgl_flush_triangles (&buffer);
+ 
++  glUnmapBuffer (GL_ARRAY_BUFFER);
++  glBindBuffer(GL_ARRAY_BUFFER, 0);
++  glDeleteBuffers (1, &buffer.vbo_name);
++
+   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
+     gdk_gl_drawable_swap_buffers (pGlDrawable);
+   else
 diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
-index 5134741..137471f 100644
+index 5134741..bebaf96 100644
 --- a/src/hid/gtk/gui-pinout-preview.c
 +++ b/src/hid/gtk/gui-pinout-preview.c
-@@ -224,8 +224,17 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
+@@ -224,8 +224,21 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
  
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
@@ -767,14 +775,35 @@ index 5134741..137471f 100644
    hid_expose_callback (&ghid_hid, NULL, &pinout->element);
    hidgl_flush_triangles (&buffer);
 +  glPopMatrix ();
++
++  glUnmapBuffer (GL_ARRAY_BUFFER);
++  glBindBuffer(GL_ARRAY_BUFFER, 0);
++  glDeleteBuffers (1, &buffer.vbo_name);
  
    if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
      gdk_gl_drawable_swap_buffers (pGlDrawable);
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 08bb5a9..c8e9d85 100644
+index 08bb5a9..c51a0c9 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -521,7 +521,9 @@ void ghid_logv (const char *fmt, va_list args);
+@@ -35,9 +35,15 @@
+ 
+ #include <gtk/gtk.h>
+ 
++/* The Linux OpenGL ABI 1.0 spec requires that we define
++ * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
++ * in order to get prototypes:
++ *   http://www.opengl.org/registry/ABI/
++ */
+ #ifdef ENABLE_GL
+-#  include <gtk/gtkgl.h>
++#  define GL_GLEXT_PROTOTYPES 1
+ #  include <GL/gl.h>
++#  include <gtk/gtkgl.h>
+ #  include "hid/common/hidgl.h"
+ #endif
+ 
+@@ -521,7 +527,9 @@ void ghid_logv (const char *fmt, va_list args);
  void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
  
  /* gtkhid-main.c */
