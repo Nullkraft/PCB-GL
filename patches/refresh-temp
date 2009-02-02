@@ -1,0 +1,28 @@
+Bottom: 913a6765cf0637b13ed95fdecf6ed83e3f0337a9
+Top:    f16af6c0376a344bff88f7df5175a2e9d9718c68
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-02 22:06:59 +0000
+
+Refresh of improve-gl-stuff
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index eb1044f..5d4ae3f 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -652,12 +652,8 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+ void
+ hidgl_fill_rect (int x1, int y1, int x2, int y2)
+ {
+-  glBegin (GL_QUADS);
+-  glVertex2f (x1, y1);
+-  glVertex2f (x1, y2);
+-  glVertex2f (x2, y2);
+-  glVertex2f (x2, y1);
+-  glEnd ();
++  hidgl_add_triangle (&buffer, x1, y1, x1, y2, x2, y2);
++  hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
+ }
+ 
+ /* ---------------------------------------------------------------------- */
