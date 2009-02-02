@@ -224,8 +224,21 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
 
   /* call the drawing routine */
   hidgl_init_triangle_array (&buffer);
+  ghid_invalidate_current_gc ();
+  glPushMatrix ();
+  glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
+            (ghid_flip_y ? -1. : 1.) / gport->zoom, 1);
+  glTranslatef (ghid_flip_x ? gport->view_x0 - PCB->MaxWidth  :
+                             -gport->view_x0,
+                ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
+                             -gport->view_y0, 0);
   hid_expose_callback (&ghid_hid, NULL, &pinout->element);
   hidgl_flush_triangles (&buffer);
+  glPopMatrix ();
+
+  glUnmapBuffer (GL_ARRAY_BUFFER);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDeleteBuffers (1, &buffer.vbo_name);
 
   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
     gdk_gl_drawable_swap_buffers (pGlDrawable);
