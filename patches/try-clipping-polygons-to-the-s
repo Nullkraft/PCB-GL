@@ -1,9 +1,10 @@
-Bottom: a74f3e3a64b8329808636a9ab8ea6c047f662a21
-Top:    6205931d9cad6424c72b4908bba117e326aeba95
+Bottom: 18966ce65bca6086c0e90da654328adb901403a0
+Top:    67e6f83a128ee24b031fdecff2af75dd0eed6c72
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-02 14:28:02 +0000
+Date:   2009-02-02 22:29:07 +0000
 
 Try clipping polygons to the screen using our own algebra, not GL
+
 
 
 
@@ -15,7 +16,7 @@ Try clipping polygons to the screen using our own algebra, not GL
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 8143cea..3841a1a 100644
+index 1cacc5c..ddda57d 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -104,7 +104,7 @@ static void DrawPolygonLowLevel (PolygonTypePtr, void *);
@@ -36,7 +37,7 @@ index 8143cea..3841a1a 100644
  
    return 1;
  }
-@@ -2245,7 +2245,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
+@@ -2247,7 +2247,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
   * draws a polygon
   */
  static void
@@ -45,7 +46,7 @@ index 8143cea..3841a1a 100644
  {
    // Re-use HOLEFLAG to cut out islands
    if (TEST_FLAG (HOLEFLAG, Polygon))
-@@ -2254,77 +2254,83 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2256,77 +2256,83 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
    if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Polygon))
      {
        if (TEST_FLAG (SELECTEDFLAG, Polygon))
