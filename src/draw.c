@@ -104,7 +104,7 @@ static void DrawPolygonLowLevel (PolygonTypePtr, void *);
 static void DrawPourLowLevel (PourTypePtr, void *);
 static void DrawArcLowLevel (ArcTypePtr);
 static void DrawElementPackageLowLevel (ElementTypePtr Element, int);
-static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
+static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *);
 static void AddPart (void *);
 static void SetPVColor (PinTypePtr, int);
 static void DrawEMark (ElementTypePtr, LocationType, LocationType, Boolean);
@@ -688,7 +688,7 @@ poly_callback (const BoxType * b, void *cl)
   struct pin_info *i = (struct pin_info *) cl;
 
 //  printf ("Got one poly callback, %p\n", b);
-  DrawPlainPolygon (i->Layer, (PolygonTypePtr) b);
+  DrawPlainPolygon (i->Layer, (PolygonTypePtr) b, i->clip);
 
   return 1;
 }
@@ -2247,7 +2247,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  * draws a polygon
  */
 static void
-DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType * clip)
 {
   // Re-use HOLEFLAG to cut out islands
   if (TEST_FLAG (HOLEFLAG, Polygon))
@@ -2256,77 +2256,83 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
   if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Polygon))
     {
       if (TEST_FLAG (SELECTEDFLAG, Polygon))
-	gui->set_color (Output.fgGC, Layer->SelectedColor);
+        gui->set_color (Output.fgGC, Layer->SelectedColor);
       else
-	gui->set_color (Output.fgGC, PCB->ConnectedColor);
+        gui->set_color (Output.fgGC, PCB->ConnectedColor);
     }
   else
     gui->set_color (Output.fgGC, Layer->Color);
+
   /* if the gui has the dicer flag set then it won't accept thin draw */
   if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
       && !gui->poly_dicer)
     {
       DrawPolygonLowLevel (Polygon, NULL);
       if (!Gathering)
-	PolygonHoles (clip_box, Layer, Polygon, thin_callback);
+        PolygonHoles (clip_box, Layer, Polygon, thin_callback);
     }
   else if (Polygon->Clipped)
     {
       if (!Polygon->NoHolesValid)
+        ComputeNoHoles (Polygon);
+      if (Polygon->NoHoles != NULL)
         {
-          ComputeNoHoles (Polygon);
-        }
-      if (Polygon->NoHoles)
-        {
+          int x;
+          POLYAREA *tmp, *clip_poly, *noholes_piece;
           PolygonType poly = *Polygon;
-          poly.Clipped = Polygon->NoHoles;
-          do {
-            DrawPolygonLowLevel (&poly, NULL);
-            poly.Clipped = poly.Clipped->f;
-          } while (poly.Clipped != Polygon->NoHoles);
-        }
-      /* draw other parts of the polygon if fullpoly flag is set */
-      /* NB: No "NoHoles" cache for these */
-      if (TEST_FLAG (FULLPOLYFLAG, Polygon))
-	{
-	  POLYAREA *pg;
-	  for (pg = Polygon->Clipped->f; pg != Polygon->Clipped; pg = pg->f)
-	    {
-	      PolygonType poly;
-	      poly.Clipped = pg;
-	      NoHolesPolygonDicer (&poly, DrawPolygonLowLevel, NULL, clip_box);
-	    }
-	}
-    }
-  /* if the gui has the dicer flag set then it won't draw missing poly outlines */
-  if (TEST_FLAG (CHECKPLANESFLAG, PCB) && Polygon->Clipped && !Gathering
-      && !gui->poly_dicer)
-    {
-      POLYAREA *pg;
 
-      for (pg = Polygon->Clipped->f; pg != Polygon->Clipped; pg = pg->f)
-	{
-	  VNODE *v;
-	  PLINE *pl = pg->contours;
-	  int i = 0;
-	  int n = pl->Count;
-	  int *x = (int *) malloc (n * sizeof (int));
-	  int *y = (int *) malloc (n * sizeof (int));
-	  for (v = &pl->head; i < n; v = v->next)
-	    {
-	      x[i] = v->point[0];
-	      y[i++] = v->point[1];
-	    }
-	  gui->set_line_width (Output.fgGC, 1);
-	  for (i = 0; i < n - 1; i++)
-	    {
-	      gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
-	      /* gui->fill_circle (Output.bgGC, x[i], y[i], 10); */
-	    }
-	  gui->draw_line (Output.fgGC, x[n - 1], y[n - 1], x[0], y[0]);
-	  free (x);
-	  free (y);
-	}
+          if (clip != NULL)
+            clip_poly = BoxPolyBloated (clip, 0);
+
+          noholes_piece = Polygon->NoHoles;
+          do
+            {
+              POLYAREA *tmp_b, *tmp_f;
+
+              tmp_b = noholes_piece->b;
+              tmp_f = noholes_piece->f;
+
+              noholes_piece->b = noholes_piece;
+              noholes_piece->f = noholes_piece;
+
+              poly.Clipped = noholes_piece;
+
+              if (clip != NULL)
+                {
+                  x = poly_Boolean (noholes_piece, clip_poly,
+                                    &poly.Clipped, PBO_ISECT);
+                  if (x != err_ok)
+                    {
+                      poly_Free (&clip_poly);
+                      fprintf (stderr, "Error while clipping PBO_ISECT: %d\n", x);
+                      return;
+                    }
+                }
+
+              if (poly.Clipped != NULL)
+                {
+                  tmp = poly.Clipped;
+                  do
+                    {
+                      DrawPolygonLowLevel (&poly, NULL);
+                      poly.Clipped = poly.Clipped->f;
+                    }
+                  while (poly.Clipped != tmp);
+
+                  if (clip != NULL)
+                    poly_Free (&poly.Clipped);
+                }
+
+              noholes_piece->b = tmp_b;
+              noholes_piece->f = tmp_f;
+
+              noholes_piece = tmp_f;
+            }
+          while (noholes_piece != Polygon->NoHoles);
+
+          if (clip != NULL)
+            poly_Free (&clip_poly);
+        }
     }
 }
 
