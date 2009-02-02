@@ -1,7 +1,7 @@
-Bottom: c769f97c0120f2c398e6b3f581a23e26ac572005
-Top:    a1697020d09ed0b2ad87478972d4e10ac4cc9bfc
+Bottom: f4dc6f89c77a00c27c4619839e491b0e53151671
+Top:    6530146b82dbad4a1d8632bc30f3c3fea8b85f13
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-01-31 04:20:51 +0000
+Date:   2009-02-02 05:36:30 +0000
 
 Silly space navigator interface to allow funky views
 
@@ -24,7 +24,7 @@ index a337e16..8e29d89 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 7959ed6..0831c9b 100644
+index b52742f..d043017 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -43,6 +43,7 @@
@@ -35,7 +35,7 @@ index 7959ed6..0831c9b 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -1165,6 +1166,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -1195,6 +1196,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        /* Make sure drawing area has keyboard focus when we are in it.
         */
        gtk_widget_grab_focus (out->drawing_area);
@@ -44,7 +44,7 @@ index 7959ed6..0831c9b 100644
      }
    ghidgui->in_popup = FALSE;
  
-@@ -1272,6 +1275,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -1302,6 +1305,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
  	    }
  	  g_idle_add (ghid_pan_idle_cb, NULL);
  	}
@@ -53,7 +53,7 @@ index 7959ed6..0831c9b 100644
      }
  
    if(cursor_in_viewport)
-@@ -1327,3 +1332,27 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+@@ -1357,3 +1362,27 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  
    return TRUE;
  }
@@ -107,10 +107,10 @@ index 017ccd8..255cd5f 100644
  
    gtk_main ();
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index c57173d..93356f1 100644
+index c51a0c9..1a7e0a5 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -185,6 +185,8 @@ typedef struct
+@@ -193,6 +193,8 @@ typedef struct
      library_window_width,
      library_window_height,
      netlist_window_height, history_size, settings_mode, auto_pan_speed;
@@ -119,7 +119,7 @@ index c57173d..93356f1 100644
  }
  GhidGui;
  
-@@ -358,6 +360,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -367,6 +369,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
  
