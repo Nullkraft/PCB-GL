@@ -1,7 +1,7 @@
-Bottom: ba49cee347e2eef25fac974fef1de545a870e529
-Top:    f16af6c0376a344bff88f7df5175a2e9d9718c68
+Bottom: 6fb99b94d9f16c9d04c4593bd468a52e5be033ae
+Top:    e3eed25b1a415850f55cf4a6501e6e815207d609
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-03 02:14:36 +0000
+Date:   2009-02-03 02:36:36 +0000
 
 GL: Use a VBO to avoid data-copying
 
@@ -11,10 +11,11 @@ BUGS: Breakage due to graphics operations being called outside the
       Leaking of some GL / GPU objects?
 
 
+
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 6bcc47a..5d4ae3f 100644
+index a55ca26..9006466 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -60,10 +60,28 @@ hidgl_new_triangle_array (void)
