@@ -1,0 +1,26 @@
+Bottom: ba49cee347e2eef25fac974fef1de545a870e529
+Top:    f2fb0b848eca4756c49653a4b836b878b0c8a9a0
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-03 02:36:26 +0000
+
+Refresh of improve-gl-stuff
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 6bcc47a..f4367ce 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -394,6 +394,12 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
+ 
+   hidgl_ensure_triangle_space (&buffer, 2 * slices);
+ 
++
++  if (delta_angle < 0) {
++    start_angle += delta_angle;
++    delta_angle = - delta_angle;
++  }
++
+   start_angle_rad = start_angle * M_PI / 180.;
+   delta_angle_rad = delta_angle * M_PI / 180.;
+   angle_incr_rad = delta_angle_rad / (float)slices;
