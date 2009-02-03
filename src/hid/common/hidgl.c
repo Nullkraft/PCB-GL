@@ -394,6 +394,12 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
 
   hidgl_ensure_triangle_space (&buffer, 2 * slices);
 
+
+  if (delta_angle < 0) {
+    start_angle += delta_angle;
+    delta_angle = - delta_angle;
+  }
+
   start_angle_rad = start_angle * M_PI / 180.;
   delta_angle_rad = delta_angle * M_PI / 180.;
   angle_incr_rad = delta_angle_rad / (float)slices;
