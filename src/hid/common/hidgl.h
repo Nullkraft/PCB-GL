@@ -31,11 +31,9 @@
    4 * 5461 * 2 * 3 = 109464 */
 #define TRIANGLE_ARRAY_BYTES 131072
 typedef struct {
-//  GLfloat triangle_array [2 * 3 * TRIANGLE_ARRAY_SIZE];
-  GLfloat *triangle_array;
+  GLfloat triangle_array [2 * 3 * TRIANGLE_ARRAY_SIZE];
   unsigned int triangle_count;
   unsigned int coord_comp_count;
-  GLuint vbo_name;
 } triangle_buffer;
 
 extern triangle_buffer buffer;
