@@ -1,5 +1,5 @@
 Bottom: 707660f0c5f6e97db80ada7a2a7016b19878bb30
-Top:    f2fb0b848eca4756c49653a4b836b878b0c8a9a0
+Top:    6fb99b94d9f16c9d04c4593bd468a52e5be033ae
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-02 14:27:04 +0000
 
@@ -14,7 +14,7 @@ Use VBO to try and avoid copying data
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index eea4f77..f4367ce 100644
+index eea4f77..a55ca26 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -15,6 +15,12 @@
@@ -181,7 +181,7 @@ index eea4f77..f4367ce 100644
    switch (cap) {
      case Trace_Cap:
      case Round_Cap:
-@@ -398,111 +352,88 @@ hidgl_draw_line (hidGC gc, int cap, double width, int x1, int y1, int x2, int y2
+@@ -398,111 +352,87 @@ hidgl_draw_line (hidGC gc, int cap, double width, int x1, int y1, int x2, int y2
    hidgl_add_triangle (&buffer, x1 - wdx, y1 - wdy,
                                 x2 + wdx, y2 + wdy,
                                 x1 + wdx, y1 + wdy);
@@ -290,29 +290,13 @@ index eea4f77..f4367ce 100644
 +  hidgl_ensure_triangle_space (&buffer, 2 * slices);
  
 -  slices = M_PI * width / PIXELS_PER_CIRCLINE;
- 
--  if (slices < MIN_TRIANGLES_PER_CAP)
--    slices = MIN_TRIANGLES_PER_CAP;
 +  if (delta_angle < 0) {
 +    start_angle += delta_angle;
 +    delta_angle = - delta_angle;
 +  }
  
--  /* TODO: CHANGE TO USING THE TRIANGLE LIST */
--  glPushMatrix ();
--  glTranslatef (vx + vrx * -cos (M_PI / 180. * start_angle),
--                vy + vrx *  sin (M_PI / 180. * start_angle), 0.0);
--  gluPartialDisk (qobj, 0, width / 2, slices, 1, start_angle + 90., 180);
--  glPopMatrix ();
--
--  /* TODO: CHANGE TO USING THE TRIANGLE LIST */
--  glPushMatrix ();
--  glTranslatef (vx + vrx * -cos (M_PI / 180. * (start_angle + delta_angle)),
--                vy + vrx *  sin (M_PI / 180. * (start_angle + delta_angle)), 0.0);
--  gluPartialDisk (qobj, 0, width / 2, slices, 1, start_angle + delta_angle + 270., 180);
--  glPopMatrix ();
--
--  gluDeleteQuadric (qobj);
+-  if (slices < MIN_TRIANGLES_PER_CAP)
+-    slices = MIN_TRIANGLES_PER_CAP;
 +  start_angle_rad = start_angle * M_PI / 180.;
 +  delta_angle_rad = delta_angle * M_PI / 180.;
 +  angle_incr_rad = delta_angle_rad / (float)slices;
@@ -335,7 +319,22 @@ index eea4f77..f4367ce 100644
 +    last_inner_x = inner_x;  last_inner_y = inner_y;
 +    last_outer_x = outer_x;  last_outer_y = outer_y;
 +  }
-+
+ 
+-  /* TODO: CHANGE TO USING THE TRIANGLE LIST */
+-  glPushMatrix ();
+-  glTranslatef (vx + vrx * -cos (M_PI / 180. * start_angle),
+-                vy + vrx *  sin (M_PI / 180. * start_angle), 0.0);
+-  gluPartialDisk (qobj, 0, width / 2, slices, 1, start_angle + 90., 180);
+-  glPopMatrix ();
+-
+-  /* TODO: CHANGE TO USING THE TRIANGLE LIST */
+-  glPushMatrix ();
+-  glTranslatef (vx + vrx * -cos (M_PI / 180. * (start_angle + delta_angle)),
+-                vy + vrx *  sin (M_PI / 180. * (start_angle + delta_angle)), 0.0);
+-  gluPartialDisk (qobj, 0, width / 2, slices, 1, start_angle + delta_angle + 270., 180);
+-  glPopMatrix ();
+-
+-  gluDeleteQuadric (qobj);
 +  draw_cap (width, x + rx * -cosf (start_angle_rad),
 +                   y + rx *  sinf (start_angle_rad),
 +                   start_angle, scale);
@@ -352,7 +351,7 @@ index eea4f77..f4367ce 100644
    glBegin (GL_LINE_LOOP);
    glVertex2f (x1, y1);
    glVertex2f (x1, y2);
-@@ -513,18 +444,16 @@ hidgl_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
+@@ -513,18 +443,16 @@ hidgl_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
  
  
  void
@@ -375,7 +374,7 @@ index eea4f77..f4367ce 100644
  
    if (slices < MIN_TRIANGLES_PER_CIRCLE)
      slices = MIN_TRIANGLES_PER_CIRCLE;
-@@ -532,8 +461,6 @@ hidgl_fill_circle (hidGC gc, int vx, int vy, int vr)
+@@ -532,8 +460,6 @@ hidgl_fill_circle (hidGC gc, int vx, int vy, int vr)
    if (slices > MAX_TRIANGLES_PER_CIRCLE)
      slices = MAX_TRIANGLES_PER_CIRCLE;
  
@@ -384,7 +383,7 @@ index eea4f77..f4367ce 100644
    hidgl_ensure_triangle_space (&buffer, slices);
  
    last_x = vx + vr;
-@@ -541,8 +468,8 @@ hidgl_fill_circle (hidGC gc, int vx, int vy, int vr)
+@@ -541,8 +467,8 @@ hidgl_fill_circle (hidGC gc, int vx, int vy, int vr)
  
    for (i = 0; i < slices; i++) {
      float x, y;
@@ -395,7 +394,7 @@ index eea4f77..f4367ce 100644
      hidgl_add_triangle (&buffer, vx, vy, last_x, last_y, x, y);
      last_x = x;
      last_y = y;
-@@ -664,14 +591,13 @@ myVertex (GLdouble *vertex_data)
+@@ -664,14 +590,13 @@ myVertex (GLdouble *vertex_data)
  }
  
  void
@@ -412,7 +411,7 @@ index eea4f77..f4367ce 100644
  
    assert (n_coords > 0);
  
-@@ -703,15 +629,10 @@ hidgl_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
+@@ -703,15 +628,10 @@ hidgl_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
  }
  
  void
