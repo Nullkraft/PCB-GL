@@ -946,12 +946,31 @@ ghid_screen_update (void)
 
 void DrawAttached (Boolean);
 void draw_grid ();
+int ghid_set_layer (const char *name, int group, int empty);
+
+#define CHECK_FRAMEBUFFER_STATUS()                            \
+  do {                                                        \
+    GLenum status;                                            \
+    status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT); \
+    switch(status) {                                          \
+      case GL_FRAMEBUFFER_COMPLETE_EXT:                       \
+        break;                                                \
+      case GL_FRAMEBUFFER_UNSUPPORTED_EXT:                    \
+        /* choose different formats */                        \
+        break;                                                \
+      default:                                                \
+        /* programming error; will fail on all hardware */    \
+        exit (1);                                             \
+    }                                                         \
+  } while (0);
 
 #define Z_NEAR 3.0
 gboolean
 ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 					GdkEventExpose * ev, GHidPort * port)
 {
+  GLenum errCode;
+  const GLubyte *errString;
   BoxType region;
   int eleft, eright, etop, ebottom;
   extern HID ghid_hid;
@@ -965,8 +984,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 
   ghid_show_crosshair (FALSE);
 
-  glEnable (GL_BLEND);
-  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//  glEnable (GL_BLEND);
+//  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 //  glEnable(GL_POLYGON_SMOOTH);
 //  glHint(GL_POLYGON_SMOOTH_HINT, [GL_FASTEST, GL_NICEST, or GL_DONT_CARE]);
@@ -1064,6 +1083,49 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 
   /* TODO: Background image */
 
+  /* Setup a texture for playing each layer into */
+  glGenFramebuffersEXT (1, &fbo_name);
+  glGenTextures (1, &tex_name);
+  glBindTexture (GL_TEXTURE_2D, tex_name);
+
+  glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+  glTexImage2D (GL_TEXTURE_2D,
+                0, /* Level */
+                GL_RGBA8, /* Int. format */
+                eright - eleft + 1, /* Width */
+                ebottom - etop + 1, /* Height */
+                0,      /* Border */
+                GL_RGBA, /* Format */
+                GL_INT, /* Type */
+                NULL);  /* Pixels */
+
+  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, fbo_name);
+  glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, tex_name, 0);
+  if ((errCode = glGetError()) != GL_NO_ERROR) {
+      errString = gluErrorString(errCode);
+     fprintf (stderr, "4OpenGL Error: %s\n", errString);
+  }
+  CHECK_FRAMEBUFFER_STATUS ()
+  glBindTexture (GL_TEXTURE_2D, 0);
+
+  glClearColor (1., 1., 1., 1.);
+  glClear (GL_COLOR_BUFFER_BIT);
+
+//  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
+#if 0
+  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, fbo_name);
+  /* RTT */
+  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
+
+  /* Composite */
+  glBindTexture (GL_TEXTURE_2D, tex_name);
+  /* Use the texture on a big quad, onto the window */
+  glBindTexture (GL_TEXTURE_2D, 0);
+#endif
+
+  /* End texture setup */
+
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
 
@@ -1078,6 +1140,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
 
+  /* Hack to finish compositing */
+  ghid_set_layer ("HACK", -99, 0);
 
   glUnmapBuffer (GL_ARRAY_BUFFER);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -1106,6 +1170,10 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   glUnmapBuffer (GL_ARRAY_BUFFER);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glDeleteBuffers (1, &buffer.vbo_name);
+
+  /* Tear down texture buffer */
+  glDeleteTextures (1, &tex_name);
+  glDeleteFramebuffersEXT (1, &fbo_name);
 
   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
     gdk_gl_drawable_swap_buffers (pGlDrawable);
