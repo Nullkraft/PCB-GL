@@ -1,0 +1,16 @@
+Bottom: ba49cee347e2eef25fac974fef1de545a870e529
+Top:    ba49cee347e2eef25fac974fef1de545a870e529
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-03 02:14:36 +0000
+
+GL: Use a VBO to avoid data-copying
+
+BUGS: Breakage due to graphics operations being called outside the
+      expose handler, and causing invalid memory accesses.
+
+      Leaking of some GL / GPU objects?
+
+
+---
+
+
