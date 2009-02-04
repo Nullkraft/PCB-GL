@@ -72,6 +72,8 @@ RCSID ("$Id$");
  * local prototypes
  */
 
+static int subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour, int type, void *ptr1, void *ptr2);
+
 
 /* --------------------------------------------------------------------------
  * remove redundant polygon points. Any point that lies on the straight
@@ -455,150 +457,11 @@ struct cpInfo
   Boolean solder;
   POLYAREA *pg;
   BoxType *region;
+  int type;
+  void *ptr1;
+  void *ptr2;
   jmp_buf env;
 };
-
-static int
-pin_sub_callback (const BoxType * b, void *cl)
-{
-  PinTypePtr pin = (PinTypePtr) b;
-  struct cpInfo *info = (struct cpInfo *) cl;
-  POLYAREA *np;
-
-  /* don't subtract the object that was put back! */
-  if (b == info->other)
-    return 0;
-
-  np = get_subtract_pin_poly (info->data, pin, info->layer, info->pour);
-  if (np == NULL)
-    return 0;
-
-  if (subtract_poly (np, &info->pg) < 0)
-    longjmp (info->env, 1);
-  return 1;
-}
-
-static int
-arc_sub_callback (const BoxType * b, void *cl)
-{
-  ArcTypePtr arc = (ArcTypePtr) b;
-  struct cpInfo *info = (struct cpInfo *) cl;
-  POLYAREA *np;
-
-  /* don't subtract the object that was put back! */
-  if (b == info->other)
-    return 0;
-  if (!TEST_FLAG (CLEARLINEFLAG, arc))
-    return 0;
-
-  np = get_subtract_arc_poly (arc, info->pour);
-  if (np == NULL)
-    return 0;
-
-  if (subtract_poly (np, &info->pg) < 0)
-    longjmp (info->env, 1);
-  return 1;
-}
-
-static int
-pad_sub_callback (const BoxType * b, void *cl)
-{
-  PadTypePtr pad = (PadTypePtr) b;
-  struct cpInfo *info = (struct cpInfo *) cl;
-  POLYAREA *np;
-
-  /* don't subtract the object that was put back! */
-  if (b == info->other)
-    return 0;
-  if (XOR (TEST_FLAG (ONSOLDERFLAG, pad), info->solder))
-    return 0;
-
-  np = get_subtract_pad_poly (pad, info->pour);
-  if (np == NULL)
-    return 0;
-
-  if (subtract_poly (np, &info->pg) < 0)
-    longjmp (info->env, 1);
-  return 1;
-}
-
-static int
-line_sub_callback (const BoxType * b, void *cl)
-{
-  LineTypePtr line = (LineTypePtr) b;
-  struct cpInfo *info = (struct cpInfo *) cl;
-  POLYAREA *np;
-
-  /* don't subtract the object that was put back! */
-  if (b == info->other)
-    return 0;
-  if (!TEST_FLAG (CLEARLINEFLAG, line))
-    return 0;
-
-  np = get_subtract_line_poly (line, info->pour);
-  if (np == NULL)
-    return 0;
-
-  if (subtract_poly (np, &info->pg) < 0)
-    longjmp (info->env, 1);
-  return 1;
-}
-
-
-static int
-text_sub_callback (const BoxType * b, void *cl)
-{
-  TextTypePtr text = (TextTypePtr) b;
-  struct cpInfo *info = (struct cpInfo *) cl;
-  POLYAREA *np;
-
-  /* don't subtract the object that was put back! */
-  if (b == info->other)
-    return 0;
-  if (!TEST_FLAG (CLEARLINEFLAG, text))
-    return 0;
-
-  np = get_subtract_text_poly (text, info->pour);
-  if (np == NULL)
-    return 0;
-
-  if (subtract_poly (np, &info->pg) < 0)
-    longjmp (info->env, 1);
-  return 1;
-}
-
-static int
-poly_sub_callback (const BoxType * b, void *cl)
-{
-  PolygonTypePtr poly = (PolygonTypePtr) b;
-  struct cpInfo *info = (struct cpInfo *) cl;
-  POLYAREA *np;
-
-  /* don't subtract the object that was put back! */
-  if (b == info->other)
-    return 0;
-  if (!TEST_FLAG (CLEARLINEFLAG, poly))
-    return 0;
-
-  np = get_subtract_polygon_poly (poly, info->pour);
-  if (np == NULL)
-    return 0;
-
-  if (subtract_poly (np, &info->pg) < 0)
-    longjmp (info->env, 1);
-  return 1;
-}
-
-static int
-pour_sub_callback (const BoxType * b, void *cl)
-{
-  PourTypePtr pour = (PourTypePtr) b;
-  struct cpInfo *info = (struct cpInfo *) cl;
-  BoxType *region = info->region;
-
-  return r_search (pour->polygon_tree, region, NULL, poly_sub_callback, info);
-
-}
 
 static int
 Group (DataTypePtr Data, Cardinal layer)
@@ -611,10 +474,24 @@ Group (DataTypePtr Data, Cardinal layer)
   return i;
 }
 
+static int
+clear_callback (const BoxType * b, void *cl)
+{
+  struct cpInfo *info = (struct cpInfo *) cl;
+
+  /* don't subtract the object that was put back! */
+  if (b == info->other)
+    return 0;
+
+  subtract_plow (info->data, info->layer, info->pour,
+                  info->type, (void *)b, (void *)b);
+  return 0;
+}
+
 /* NB: For convenience, we're passing the defined POLYAREA in here */
 static int
-ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
-           POLYAREA **pg, const BoxType * here, BDimension expand)
+InitClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
+               const BoxType * here, BDimension expand)
 {
   int r = 0;
   BoxType region;
@@ -630,7 +507,6 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
   info.other = here;
   info.layer = Layer;
   info.pour = pour;
-  info.pg = *pg;
   if (here)
     region = clip_box (here, &pour->BoundingBox);
   else
@@ -643,19 +519,26 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
       r = 0;
       GROUP_LOOP (Data, group);
       {
-        r += r_search (layer->pour_tree, &region, NULL, pour_sub_callback, &info);
-        r += r_search (layer->line_tree, &region, NULL, line_sub_callback, &info);
-        r += r_search (layer->arc_tree,  &region, NULL, arc_sub_callback,  &info);
-        r += r_search (layer->text_tree, &region, NULL, text_sub_callback, &info);
+        info.layer = layer;
+        info.type = POUR_TYPE;
+        r += r_search (layer->pour_tree, &region, NULL, clear_callback, &info);
+        info.type = LINE_TYPE;
+        r += r_search (layer->line_tree, &region, NULL, clear_callback, &info);
+        info.type = ARC_TYPE;
+        r += r_search (layer->arc_tree,  &region, NULL, clear_callback, &info);
+        info.type = TEXT_TYPE;
+        r += r_search (layer->text_tree, &region, NULL, clear_callback, &info);
       }
       END_LOOP;
-      r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
-      r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
+      info.layer = Layer;
+      info.type = VIA_TYPE;
+      r += r_search (Data->via_tree, &region, NULL, clear_callback, &info);
+      info.type = PIN_TYPE;
+      r += r_search (Data->pin_tree, &region, NULL, clear_callback, &info);
+      info.type = PAD_TYPE;
       if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
-        r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
+        r += r_search (Data->pad_tree, &region, NULL, clear_callback, &info);
     }
-
-  *pg = info.pg;
 
   return r;
 }
@@ -777,7 +660,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
 
   if (np == NULL)
     {
-      printf ("Didn't get a POLYAREA to subtract, so bailing\n");
+//      printf ("Didn't get a POLYAREA to subtract, so bailing\n");
       return 0;
     }
 
@@ -826,7 +709,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
 
   if (pg == NULL)
     {
-      printf ("Hmm, got pg == NULL in subtract_plow\n");
+//      printf ("Hmm, got pg == NULL in subtract_plow\n");
       poly_Free (&np);
       return -1;
     }
@@ -840,20 +723,9 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
 
   if (pg == NULL)
     {
-      printf ("Poly killed to death by subtracting\n");
+//      printf ("Poly killed to death by subtracting\n");
       return -1;
     }
-
-#if 0
-  count = 0;
-  { POLYAREA *pg_start;
-  pg_start = pg;
-  do {
-    count++;
-  } while ((pg = pg->f) != pg_start);
-  }
-  printf ("After subtract, counted %i polygon pieces\n", count);
-#endif
 
   count_all = count_added = 0;
   /* For each piece of the clipped up polygon, create a new child */
@@ -888,7 +760,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
     }
   while ((pg = tmp) != start_pg);
 
-  mark_islands (Data, layer, pour, type, ptr1, ptr2);
+//  mark_islands (Data, layer, pour, type, ptr1, ptr2);
 
   return 0;
 }
@@ -1094,19 +966,6 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
   /* NB: np and old *pg are freed inside intersect_poly() */
   intersect_poly (np, &pg);
 
-#if 0
-  count = 0;
-  { POLYAREA *pg_start;
-  pg_start = pg;
-  do {
-    count++;
-  } while ((pg = pg->f) != pg_start);
-  }
-  printf ("After unsubtract, counted %i polygon pieces\n", count);
-#endif
-
-  ClearPour (PCB->Data, layer, pour, &pg, (const BoxType *) ptr2, 2 * UNSUBTRACT_BLOAT);
-
   if (pg == NULL)
     {
       printf ("Poly killed to death somehow\n");
@@ -1146,9 +1005,9 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
     }
   while ((pg = tmp) != start_pg);
 
-  mark_islands (Data, layer, pour, type, ptr1, ptr2);
+  InitClearPour (Data, layer, pour, (const BoxType *) ptr2, 2 * UNSUBTRACT_BLOAT);
 
-//  printf ("ClearPour counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
+  mark_islands (Data, layer, pour, type, ptr1, ptr2);
 
   return 0;
 }
@@ -1158,8 +1017,7 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
 int
 InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
 {
-  POLYAREA *pg, *tmp, *start_pg;
-  int count_all, count_added;
+  POLYAREA *pg;
 
   /* Free any children we might have */
   if (pour->PolygonN)
@@ -1179,51 +1037,30 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
       printf ("Clipping returned NULL - can that be good?\n");
       return 0;
     }
-//  assert (poly_Valid (clipped));
+  assert (poly_Valid (clipped));
+
+  {
+    PolygonType *poly;
+
+    pg->f = pg;
+    pg->b = pg;
+
+    poly = CreateNewPolygonInPour (pour, pour->Flags);
+    poly->Clipped = pg;
+    CLEAR_FLAG (SELECTEDFLAG, poly);
+
+    SetPolygonBoundingBox (poly);
+
+    if (pour->polygon_tree == NULL)
+      pour->polygon_tree = r_create_tree (NULL, 0, 0);
+    r_insert_entry (pour->polygon_tree, (BoxType *) poly, 0);
+  }
+
   if (TEST_FLAG (CLEARPOLYFLAG, pour))
     {
       /* Clip the pour against anything we can find in this layer */
-      ClearPour (Data, layer, pour, &pg, NULL, UNSUBTRACT_BLOAT);
+      InitClearPour (Data, layer, pour, NULL, UNSUBTRACT_BLOAT);
     }
-
-  if (pg == NULL)
-    {
-      printf ("Got pg == NULL for some reason\n");
-      return;
-    }
-
-  count_all = count_added = 0;
-  /* For each piece of the clipped up polygon, create a new child */
-  start_pg = pg;
-  do
-    {
-      PolygonType *poly;
-
-      tmp = pg->f;
-      pg->f = pg;
-      pg->b = pg;
-
-      count_all++;
-//      if (pg->contours->area > PCB->IsleArea)
-      if (1) // Breaks incremental updates otherwise
-        {
-          count_added++;
-          poly = CreateNewPolygonInPour (pour, pour->Flags);
-          poly->Clipped = pg;
-          CLEAR_FLAG (SELECTEDFLAG, poly);
-
-          SetPolygonBoundingBox (poly);
-
-          if (pour->polygon_tree == NULL)
-            pour->polygon_tree = r_create_tree (NULL, 0, 0);
-          r_insert_entry (pour->polygon_tree, (BoxType *) poly, 0);
-        }
-      else
-        {
-          poly_Free (&pg);
-        }
-    }
-  while ((pg = tmp) != start_pg);
 
   POURPOLYGON_LOOP (pour);
   {
@@ -1376,6 +1213,7 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
       InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
     }
   PlowPours (Data, type, ptr1, ptr2, subtract_plow, False);
+  MarkPourIslands (Data, type, ptr1, ptr2);
 }
 
 #warning FIXME Later: We could perhaps reduce un-necessary computation by using this function
