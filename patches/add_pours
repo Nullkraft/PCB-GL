@@ -1,7 +1,7 @@
-Bottom: 30e99e2cfb0dbf07e3f25a9e556863894f358734
-Top:    1cbea0acbf6b95c791806790f63e14ff555f7709
+Bottom: 7fb312b2914a318ebd77a600ef64533e9debd36b
+Top:    fd6b374cb46afcab746f5392cdc183c98869f400
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-02 22:29:15 +0000
+Date:   2009-02-04 22:55:25 +0000
 
 Add support for a "poured" object.
 
@@ -1808,7 +1808,7 @@ index dc1cbf4..a447845 100644
  ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
  				 FontTypePtr, FlagType, char *, char *,
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 58a245e..aa633ea 100644
+index a8f30f4..cf05166 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -78,6 +78,7 @@ static int CrosshairStackLocation = 0;

@@ -1,7 +1,7 @@
-Bottom: f16af6c0376a344bff88f7df5175a2e9d9718c68
-Top:    30e99e2cfb0dbf07e3f25a9e556863894f358734
+Bottom: 931f43f0b85f732ce352a1f07f8c4ab7c935a7bc
+Top:    7fb312b2914a318ebd77a600ef64533e9debd36b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-02 22:07:01 +0000
+Date:   2009-02-04 22:55:24 +0000
 
 Add colour information to VBO
 
@@ -12,7 +12,7 @@ Add colour information to VBO
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 5d4ae3f..48d798f 100644
+index ccf74af..5e88503 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -48,6 +48,10 @@
@@ -105,7 +105,7 @@ index 5d4ae3f..48d798f 100644
    if (circular_caps)
      {
        draw_cap (width, x1, y1, angle, scale);
-@@ -436,10 +457,10 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
+@@ -442,10 +463,10 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
      outer_x = -outer_r * cos_ang + x;  outer_y = outer_r * sin_ang + y;
      hidgl_add_triangle (&buffer, last_inner_x, last_inner_y,
                                   last_outer_x, last_outer_y,
@@ -118,7 +118,7 @@ index 5d4ae3f..48d798f 100644
      last_inner_x = inner_x;  last_inner_y = inner_y;
      last_outer_x = outer_x;  last_outer_y = outer_y;
    }
-@@ -491,7 +512,7 @@ hidgl_fill_circle (int vx, int vy, int vr, double scale)
+@@ -497,7 +518,7 @@ hidgl_fill_circle (int vx, int vy, int vr, double scale)
      float x, y;
      x = radius * cosf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
      y = radius * sinf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
@@ -127,7 +127,7 @@ index 5d4ae3f..48d798f 100644
      last_x = x;
      last_y = y;
    }
-@@ -578,7 +599,7 @@ myVertex (GLdouble *vertex_data)
+@@ -584,7 +605,7 @@ myVertex (GLdouble *vertex_data)
            hidgl_add_triangle (&buffer,
                                triangle_vertices [0], triangle_vertices [1],
                                triangle_vertices [2], triangle_vertices [3],
@@ -136,7 +136,7 @@ index 5d4ae3f..48d798f 100644
  
            if (tessVertexType == GL_TRIANGLE_STRIP)
              {
-@@ -602,7 +623,7 @@ myVertex (GLdouble *vertex_data)
+@@ -608,7 +629,7 @@ myVertex (GLdouble *vertex_data)
            hidgl_add_triangle (&buffer,
                                triangle_vertices [0], triangle_vertices [1],
                                triangle_vertices [2], triangle_vertices [3],
@@ -145,7 +145,7 @@ index 5d4ae3f..48d798f 100644
            triangle_comp_idx = 0;
            stashed_vertices = 0;
          }
-@@ -652,8 +673,8 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -658,8 +679,8 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
  void
  hidgl_fill_rect (int x1, int y1, int x2, int y2)
  {
