@@ -384,7 +384,8 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
   inner_r = rx - width / 2.;
   outer_r = rx + width / 2.;
 
-  slices = M_PI * (rx + width / 2.) / scale / PIXELS_PER_CIRCLINE;
+  slices = M_PI * (rx + width / 2.) * abs (delta_angle) / 360. /
+           scale / PIXELS_PER_CIRCLINE;
 
   if (slices < MIN_SLICES_PER_ARC)
     slices = MIN_SLICES_PER_ARC;
