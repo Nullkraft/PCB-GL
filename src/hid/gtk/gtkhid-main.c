@@ -45,15 +45,13 @@
 #include <dmalloc.h>
 #endif
 
-#define PIXELS_PER_CIRCLINE 5.
-
 RCSID ("$Id: gtkhid-main.c,v 1.59 2008-12-27 19:06:04 djdelorie Exp $");
 
 
 extern HID ghid_hid;
 
 static int ghid_gui_is_up = 0;
-
+static hidGC current_gc = NULL;
 
 static void zoom_to (double factor, int x, int y);
 static void zoom_by (double factor, int x, int y);
@@ -470,7 +468,7 @@ draw_grid ()
 
   glDisableClientState (GL_VERTEX_ARRAY);
   glDisable (GL_COLOR_LOGIC_OP);
-  glFlush ();
+//  glFlush ();
 }
 
 /* ------------------------------------------------------------ */
@@ -863,11 +861,15 @@ ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2)
   printf ("ghid_set_line_cap_angle() -- not implemented\n");
 }
 
+void
+ghid_invalidate_current_gc (void)
+{
+  current_gc = NULL;
+}
+
 static void
 use_gc (hidGC gc)
 {
-  static hidGC current_gc = NULL;
-
   if (current_gc == gc)
     return;
 
@@ -876,82 +878,50 @@ use_gc (hidGC gc)
   ghid_set_color (gc, gc->colorname);
 }
 
+static inline double
+clamp_min_width (double width)
+{
+  double min_width = gport->zoom;
+
+  if (width < min_width)
+    return min_width;
+
+  return width;
+}
 
 void
 ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
 {
-  double width = Vz (gc->width);
-
   USE_GC (gc);
 
-  hidgl_draw_line (gc, gc->cap, width, Vx (x1), Vy (y1), Vx (x2), Vy (y2));
+  hidgl_draw_line (gc->cap, clamp_min_width (gc->width), x1, y1, x2, y2, gport->zoom);
 }
 
 void
-ghid_draw_arc (hidGC gc, int cx, int cy,
-               int xradius, int yradius, int start_angle, int delta_angle)
+ghid_draw_arc (hidGC gc, int cx, int cy, int xradius, int yradius,
+                         int start_angle, int delta_angle)
 {
-  gint w, h, radius;
-  double width = Vz (gc->width);
-
-  w = gport->width * gport->zoom;
-  h = gport->height * gport->zoom;
-  radius = (xradius > yradius) ? xradius : yradius;
-  if (SIDE_X (cx) < gport->view_x0 - radius
-      || SIDE_X (cx) > gport->view_x0 + w + radius
-      || SIDE_Y (cy) < gport->view_y0 - radius 
-      || SIDE_Y (cy) > gport->view_y0 + h + radius)
-    return;
-
   USE_GC (gc);
 
-  hidgl_draw_arc (gc, width, Vx (cx), Vy (cy),
-                  Vz (xradius), Vz (yradius),
-                  start_angle, delta_angle,
-                  ghid_flip_x, ghid_flip_y);
+  hidgl_draw_arc (clamp_min_width (gc->width), cx, cy, xradius, yradius,
+                  start_angle, delta_angle, gport->zoom);
 }
 
 void
 ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
 {
-  gint w, h, lw;
-
-  lw = gc->width;
-  w = gport->width * gport->zoom;
-  h = gport->height * gport->zoom;
-
-  if ((SIDE_X (x1) < gport->view_x0 - lw
-       && SIDE_X (x2) < gport->view_x0 - lw)
-      || (SIDE_X (x1) > gport->view_x0 + w + lw
-	  && SIDE_X (x2) > gport->view_x0 + w + lw)
-      || (SIDE_Y (y1) < gport->view_y0 - lw 
-	  && SIDE_Y (y2) < gport->view_y0 - lw)
-      || (SIDE_Y (y1) > gport->view_y0 + h + lw 
-	  && SIDE_Y (y2) > gport->view_y0 + h + lw))
-    return;
-
   USE_GC (gc);
 
-  hidgl_draw_rect (gc, Vx (x1), Vy (y1), Vx (x2), Vy (y2));
+  hidgl_draw_rect (x1, y1, x2, y2);
 }
 
 
 void
 ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
 {
-  gint w, h;
-
-  w = gport->width * gport->zoom;
-  h = gport->height * gport->zoom;
-  if (SIDE_X (cx) < gport->view_x0 - radius
-      || SIDE_X (cx) > gport->view_x0 + w + radius
-      || SIDE_Y (cy) < gport->view_y0 - radius 
-      || SIDE_Y (cy) > gport->view_y0 + h + radius)
-    return;
-
   USE_GC (gc);
 
-  hidgl_fill_circle (gc, Vx (cx), Vy (cy), Vz (radius));
+  hidgl_fill_circle (cx, cy, radius, gport->zoom);
 }
 
 
@@ -960,31 +930,15 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
 {
   USE_GC (gc);
 
-  hidgl_fill_polygon (gc, n_coords, x, y);
+  hidgl_fill_polygon (n_coords, x, y);
 }
 
 void
 ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
 {
-  gint w, h, lw;
-
-  lw = gc->width;
-  w = gport->width * gport->zoom;
-  h = gport->height * gport->zoom;
-
-  if ((SIDE_X (x1) < gport->view_x0 - lw
-       && SIDE_X (x2) < gport->view_x0 - lw)
-      || (SIDE_X (x1) > gport->view_x0 + w + lw
-          && SIDE_X (x2) > gport->view_x0 + w + lw)
-      || (SIDE_Y (y1) < gport->view_y0 - lw
-          && SIDE_Y (y2) < gport->view_y0 - lw)
-      || (SIDE_Y (y1) > gport->view_y0 + h + lw
-          && SIDE_Y (y2) > gport->view_y0 + h + lw))
-    return;
-
   USE_GC (gc);
 
-  hidgl_fill_rect (gc, Vx (x1), Vy (y1), Vx (x2), Vy (y2));
+  hidgl_fill_rect (x1, y1, x2, y2);
 }
 
 void
