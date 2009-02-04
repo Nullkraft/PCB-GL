@@ -1734,6 +1734,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 {
   static int one_shot = 1;
   static int display_list;
+  GdkRectangle *rectangles;
+  int n_rectangles;
+  int i;
   BoxType region;
   int eleft, eright, etop, ebottom;
   extern HID ghid_hid;
@@ -1928,8 +1931,24 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
     glEnd ();
   }
 
-  // hid_expose_callback (&ghid_hid, &region, 0);
-  ghid_draw_everything (&region);
+  gdk_region_get_rectangles (ev->region, &rectangles, &n_rectangles);
+  for (i = 0; i < n_rectangles; i++) {
+    int x, y, width, height;
+
+    x = rectangles[i].x;
+    y = rectangles[i].y;
+    width = rectangles[i].width;
+    height = rectangles[i].height;
+
+    region.X1 = MIN (Px (x), Px (x + width + 1));
+    region.X2 = MAX (Px (x), Px (x + width + 1));
+    region.Y1 = MIN (Py (y), Py (y + height + 1));
+    region.Y2 = MAX (Py (y), Py (y + height + 1));
+
+    // hid_expose_callback (&ghid_hid, &region, 0);
+    ghid_draw_everything (&region);
+  }
+  g_free (rectangles);
 
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
