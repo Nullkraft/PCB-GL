@@ -2347,6 +2347,33 @@ DrawElement (ElementTypePtr Element, int unused)
   DrawElementPinsAndPads (Element, unused);
 }
 
+static void
+DrawStrippedText (ElementTypePtr Element, int min_width)
+{
+  TextType text;
+  TextType *text_ptr;
+  char *end_string;
+
+  if (TEST_FLAG (NAMEONPCBFLAG, PCB) &&
+      TEST_FLAG (STRIPHIERFLAG, Element))
+    {
+      text_ptr = &text;
+      memcpy (text_ptr, &ELEMENT_TEXT (PCB, Element), sizeof (TextType));
+
+      /* Strip hierarchy */
+      end_string = strrchr (text.TextString, '/');
+      if (end_string != NULL)
+        text.TextString = end_string + 1;
+    }
+  else
+    {
+      text_ptr = &ELEMENT_TEXT (PCB, Element);
+    }
+
+  DrawTextLowLevel (text_ptr, min_width);
+}
+
+
 #define MASK_SUBCOMPOSITE_ELEMENT_NAMES 0
 
 /* ---------------------------------------------------------------------------
@@ -2365,7 +2392,7 @@ DrawElementName (ElementTypePtr Element, int unused)
   gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
   gui->use_mask (HID_MASK_BEFORE);
 
-  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
+  DrawStrippedText (Element, PCB->minSlk);
 #endif
 
   if (doing_pinout || doing_assy)
@@ -2382,7 +2409,7 @@ DrawElementName (ElementTypePtr Element, int unused)
   gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
   gui->use_mask (HID_MASK_OFF);
 #else
-  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
+  DrawStrippedText (Element, PCB->minSlk);
 #endif
 }
 
@@ -2632,7 +2659,7 @@ EraseElement (ElementTypePtr Element)
   }
   END_LOOP;
   if (!TEST_FLAG (HIDENAMEFLAG, Element))
-    DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
+    DrawStrippedText (Element, PCB->minSlk);
   EraseElementPinsAndPads (Element);
   Erasing--;
 }
@@ -2678,7 +2705,7 @@ EraseElementName (ElementTypePtr Element)
     return;
   Erasing++;
   gui->set_color (Output.fgGC, Settings.BackgroundColor);
-  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
+  DrawStrippedText (Element, PCB->minSlk);
   Erasing--;
 }
 
