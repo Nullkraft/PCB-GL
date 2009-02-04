@@ -1,0 +1,23 @@
+Bottom: 9baa824ae500ce34bf26ab1970aef976ceb0687a
+Top:    bcd94ba1ce1a8cb6de8a3a8bab232297fbcfc8e5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-04 15:42:46 +0000
+
+Refresh of improve-gl-stuff
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index a55ca26..12a484e 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -384,7 +384,8 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
+   inner_r = rx - width / 2.;
+   outer_r = rx + width / 2.;
+ 
+-  slices = M_PI * (rx + width / 2.) / scale / PIXELS_PER_CIRCLINE;
++  slices = M_PI * (rx + width / 2.) * abs (delta_angle) / 360. /
++           scale / PIXELS_PER_CIRCLINE;
+ 
+   if (slices < MIN_SLICES_PER_ARC)
+     slices = MIN_SLICES_PER_ARC;
