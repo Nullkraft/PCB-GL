@@ -1,9 +1,10 @@
-Bottom: 6ff10634bab5cfe5cf3e3fd243d3100cfa8a5323
-Top:    8181bcb1e083c7f4fa53a8cecc42431c6ba591d0
+Bottom: 2e07bed33efa22ef7f3b1b5d113ae5fcbd9c16bd
+Top:    aaa872bedf0fa8b899e1b1ac3b4c104587607aac
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-02 14:26:58 +0000
+Date:   2009-02-04 15:39:49 +0000
 
 Improve grid snapping heuristics
+
 
 
 
@@ -18,7 +19,7 @@ Improve grid snapping heuristics
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index e68865d..701bda0 100644
+index 42ac469..84f083f 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -784,6 +784,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)

@@ -1,7 +1,7 @@
-Bottom: 6fb99b94d9f16c9d04c4593bd468a52e5be033ae
-Top:    9baa824ae500ce34bf26ab1970aef976ceb0687a
+Bottom: aecfe146bb6a8c85fc043fb6406b9991777537bc
+Top:    e9d1fa5b746f5d40ed2e08db7be1d6ebdaa6c711
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-04 15:39:34 +0000
+Date:   2009-02-04 15:39:46 +0000
 
 crosshair.c: When drawing via DRC clearence, pass correct angle.
 
@@ -9,13 +9,14 @@ crosshair.c: When drawing via DRC clearence, pass correct angle.
 angle should be 360.
 
 
+
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 58a245e..a8f30f4 100644
+index 42fd81c..5335cd1 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -594,7 +594,7 @@ DrawAttached (Boolean BlockToo)
+@@ -593,7 +593,7 @@ DrawAttached (Boolean BlockToo)
  	  s = Settings.ViaThickness / 2 + PCB->Bloat + 1;
  	  gui->set_color (Crosshair.GC, Settings.CrossColor);
  	  gui->draw_arc (Crosshair.GC,
