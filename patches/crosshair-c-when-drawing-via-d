@@ -1,0 +1,14 @@
+Bottom: 6fb99b94d9f16c9d04c4593bd468a52e5be033ae
+Top:    6fb99b94d9f16c9d04c4593bd468a52e5be033ae
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-04 15:39:34 +0000
+
+crosshair.c: When drawing via DRC clearence, pass correct angle.
+
+360 * 64 was a hold-over from before the HID split. The passed
+angle should be 360.
+
+
+---
+
+
