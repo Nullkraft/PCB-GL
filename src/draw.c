@@ -1262,6 +1262,7 @@ ClearPin (PinTypePtr Pin, int Type, int unused)
       AddPart (Pin);
       return;
     }
+#if 0
   /* Clear the area around the pin */
   if (TEST_FLAG (SQUAREFLAG, Pin))
     {
@@ -1284,6 +1285,7 @@ ClearPin (PinTypePtr Pin, int Type, int unused)
     {
       gui->fill_circle (Output.pmGC, Pin->X, Pin->Y, half);
     }
+#endif
   if ((!TEST_FLAG (PINFLAG, Pin) && !PCB->ViaOn)
       || (TEST_FLAG (PINFLAG, Pin) && !PCB->PinOn))
     return;
