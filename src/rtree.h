@@ -39,6 +39,7 @@
 
 #include "global.h"
 
+
 /* create an rtree from the list of boxes.  if 'manage' is true, then
  * the tree will take ownership of 'boxlist' and free it when the tree
  * is destroyed. */
