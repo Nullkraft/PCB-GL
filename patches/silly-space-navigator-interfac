@@ -1,7 +1,7 @@
-Bottom: b883903d8701eae0dbb8a1391344f2e522d51d4c
-Top:    0085a4bbd45229293ed11d184214222c156bd0f0
+Bottom: 86e241f7a7befe903bfe235e77cff8ff24058b8a
+Top:    7dd7fe93872b1528a274ece170a7573da08ddd90
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-04 15:44:15 +0000
+Date:   2009-02-06 17:35:08 +0000
 
 Silly space navigator interface to allow funky views
 
@@ -83,7 +83,7 @@ index c79cdca..56e2a40 100644
 +}
 +
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 017ccd8..255cd5f 100644
+index be96681..227f73a 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -121,6 +121,7 @@ a zoom in/out.
@@ -94,7 +94,7 @@ index 017ccd8..255cd5f 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -2747,6 +2748,12 @@ ghid_do_export (HID_Attr_Val * options)
+@@ -2746,6 +2747,12 @@ ghid_do_export (HID_Attr_Val * options)
    if (stdin_listen)
      ghid_create_listener ();
  
