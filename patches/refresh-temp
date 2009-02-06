@@ -1,0 +1,21 @@
+Bottom: 2dde019a8a3760a7547c2be4f031a19ae3fb0ca3
+Top:    c2edd91923775e30d276cea3c369c3d298cc2ebe
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-06 17:29:33 +0000
+
+Refresh of try-something-with-the-rtrees
+
+---
+
+diff --git a/src/rtree.h b/src/rtree.h
+index 4e54b69..60a4f20 100644
+--- a/src/rtree.h
++++ b/src/rtree.h
+@@ -39,6 +39,7 @@
+ 
+ #include "global.h"
+ 
++
+ /* create an rtree from the list of boxes.  if 'manage' is true, then
+  * the tree will take ownership of 'boxlist' and free it when the tree
+  * is destroyed. */
