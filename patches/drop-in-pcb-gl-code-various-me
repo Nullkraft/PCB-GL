@@ -1,5 +1,5 @@
 Bottom: 8ea482c84ffe2784d53e0f54a407df6bafd38aa5
-Top:    fbe024f5d5d0f5821bcfa7e3023c12a8fc99c742
+Top:    b2b0b84b4a45a35227f5805fd036a6623e3c33cf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-04 15:39:48 +0000
 
@@ -2478,7 +2478,7 @@ index ab165ea..5134741 100644
    gobject_class->set_property = ghid_pinout_preview_set_property;
    gobject_class->get_property = ghid_pinout_preview_get_property;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index fe5498c..017ccd8 100644
+index fe5498c..be96681 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2295,6 +2295,11 @@ ghid_build_pcb_top_window (void)
@@ -2493,7 +2493,7 @@ index fe5498c..017ccd8 100644
  
    gtk_widget_add_events (gport->drawing_area, GDK_EXPOSURE_MASK
  			 | GDK_LEAVE_NOTIFY_MASK | GDK_ENTER_NOTIFY_MASK
-@@ -2657,11 +2662,23 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -2657,11 +2662,22 @@ ghid_parse_arguments (int *argc, char ***argv)
    gtk_disable_setlocale ();
  
    gtk_init (argc, argv);
@@ -2504,10 +2504,9 @@ index fe5498c..017ccd8 100644
    pixel_slop = 300;
  
 +  /* setup GL-context */
-+  gport->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB   |
-+                                               GDK_GL_MODE_ALPHA |
++  gport->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
 +                                               GDK_GL_MODE_STENCIL |
-+//                                               GDK_GL_MODE_DEPTH |
++//                                               GDK_GL_MODE_DEPTH   |
 +                                               GDK_GL_MODE_DOUBLE);
 +  if (!gport->glconfig) {
 +    printf("Could not setup GL-context!\n");
