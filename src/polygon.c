@@ -711,7 +711,7 @@ PinPoly (PinType * pin, BDimension thick, BDimension clear)
 }
 
 POLYAREA *
-BoxPolyBloated (BoxType *box, BDimension bloat)
+BoxPolyBloated (const BoxType *box, BDimension bloat)
 {
   return RectPoly (box->X1 - bloat, box->X2 + bloat,
                    box->Y1 - bloat, box->Y2 + bloat);

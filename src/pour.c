@@ -349,7 +349,7 @@ unite_poly (POLYAREA * np, POLYAREA ** pg)
   return 1;
 }
 
-static int
+int
 intersect_poly (POLYAREA * np, POLYAREA ** pg)
 {
   POLYAREA *merged;
