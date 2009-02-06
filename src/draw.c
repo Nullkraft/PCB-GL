@@ -103,7 +103,7 @@ static void DrawPolygonLowLevel (PolygonTypePtr);
 static void DrawPourLowLevel (PourTypePtr);
 static void DrawArcLowLevel (ArcTypePtr);
 static void DrawElementPackageLowLevel (ElementTypePtr Element, int);
-static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
+static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *);
 static void AddPart (void *);
 static void SetPVColor (PinTypePtr, int);
 /* static */ void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
@@ -692,7 +692,7 @@ poly_callback (const BoxType * b, void *cl)
   struct pin_info *i = (struct pin_info *) cl;
 
 //  printf ("Got one poly callback, %p\n", b);
-  DrawPlainPolygon (i->Layer, (PolygonTypePtr) b);
+  DrawPlainPolygon (i->Layer, (PolygonTypePtr) b, i->clip);
 
   return 1;
 }
@@ -2100,7 +2100,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  * draws a polygon
  */
 static void
-DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType * clip)
 {
   static char *color;
 
@@ -2113,8 +2113,15 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 
   if (Gathering)
     {
+<<<<<<< current
       AddPart (Polygon);
       return;
+=======
+      if (TEST_FLAG (SELECTEDFLAG, Polygon))
+        gui->set_color (Output.fgGC, Layer->SelectedColor);
+      else
+        gui->set_color (Output.fgGC, PCB->ConnectedColor);
+>>>>>>> patched
     }
 
   if (TEST_FLAG (SELECTEDFLAG, Polygon))
@@ -2122,6 +2129,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
   else if (TEST_FLAG (FOUNDFLAG, Polygon))
     color = PCB->ConnectedColor;
   else
+<<<<<<< current
     color = Layer->Color;
   gui->set_color (Output.fgGC, color);
 
@@ -2143,6 +2151,80 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
            poly.Clipped != Polygon->Clipped;
            poly.Clipped = poly.Clipped->f)
         gui->thindraw_pcb_polygon (Output.fgGC, &poly, clip_box);
+=======
+    gui->set_color (Output.fgGC, Layer->Color);
+
+  /* if the gui has the dicer flag set then it won't accept thin draw */
+  if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+      && !gui->poly_dicer)
+    {
+      DrawPolygonLowLevel (Polygon, NULL);
+      if (!Gathering)
+        PolygonHoles (clip_box, Layer, Polygon, thin_callback);
+    }
+  else if (Polygon->Clipped)
+    {
+      if (!Polygon->NoHolesValid)
+        ComputeNoHoles (Polygon);
+      if (Polygon->NoHoles != NULL)
+        {
+          int x;
+          POLYAREA *tmp, *clip_poly, *noholes_piece;
+          PolygonType poly = *Polygon;
+
+          if (clip != NULL)
+            clip_poly = BoxPolyBloated (clip, 0);
+
+          noholes_piece = Polygon->NoHoles;
+          do
+            {
+              POLYAREA *tmp_b, *tmp_f;
+
+              tmp_b = noholes_piece->b;
+              tmp_f = noholes_piece->f;
+
+              noholes_piece->b = noholes_piece;
+              noholes_piece->f = noholes_piece;
+
+              poly.Clipped = noholes_piece;
+
+              if (clip != NULL)
+                {
+                  x = poly_Boolean (noholes_piece, clip_poly,
+                                    &poly.Clipped, PBO_ISECT);
+                  if (x != err_ok)
+                    {
+                      poly_Free (&clip_poly);
+                      fprintf (stderr, "Error while clipping PBO_ISECT: %d\n", x);
+                      return;
+                    }
+                }
+
+              if (poly.Clipped != NULL)
+                {
+                  tmp = poly.Clipped;
+                  do
+                    {
+                      DrawPolygonLowLevel (&poly, NULL);
+                      poly.Clipped = poly.Clipped->f;
+                    }
+                  while (poly.Clipped != tmp);
+
+                  if (clip != NULL)
+                    poly_Free (&poly.Clipped);
+                }
+
+              noholes_piece->b = tmp_b;
+              noholes_piece->f = tmp_f;
+
+              noholes_piece = tmp_f;
+            }
+          while (noholes_piece != Polygon->NoHoles);
+
+          if (clip != NULL)
+            poly_Free (&clip_poly);
+        }
+>>>>>>> patched
     }
 }
 
