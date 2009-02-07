@@ -1,0 +1,21 @@
+Bottom: aa90201b09eed9df69318aecfac931396df3ca5d
+Top:    67c9d259fa29a416e53e925e058adbd2c306d052
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-07 20:34:35 +0000
+
+Refresh of add_pours
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 98e20bb..7ea9e66 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1091,7 +1091,7 @@ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
+ 	      return TRUE;
+ 	  }
+     }
+-  while (!touch && (a = a->f) != afst);
++  while ((a = a->f) != afst);
+   return FALSE;
+ }
