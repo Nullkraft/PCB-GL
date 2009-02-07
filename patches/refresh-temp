@@ -1,0 +1,714 @@
+Bottom: b5a09685f0d8e5a902a00b1a6a1e921e6090fb49
+Top:    901387251005a683a9f91abf689fb3ead65e7fc5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-07 18:42:32 +0000
+
+Refresh of instrument-polygon-slowness
+
+---
+
+diff --git a/src/misc.c b/src/misc.c
+index a8a29e1..8e8ce4b 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -245,6 +245,10 @@ void
+ SetPolygonBoundingBox (PolygonTypePtr Polygon)
+ {
+   PLINE *outer = Polygon->Clipped->contours;
++  if (outer == NULL) {
++    printf ("Clipped->contours was null, sorry\n");
++    return;
++  }
+   Polygon->BoundingBox.X1 = outer->xmin;
+   Polygon->BoundingBox.Y1 = outer->ymin;
+   Polygon->BoundingBox.X2 = outer->xmax;
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 8ade932..7edb72f 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -946,6 +946,86 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+   while (add && (a = a->f) != afst);
+ }				/* M_POLYAREA_intersect */
+ 
++static void
++M_POLYAREA_intersect_separate_isected (jmp_buf * e, POLYAREA *afst,
++                                                    POLYAREA *bfst,
++                                                    PLINE **a_isected,
++                                                    PLINE **b_isected)
++{
++  POLYAREA *a = afst, *b = bfst;
++  PLINE *curcA, *curcB, *prev, *next;
++  CVCList *the_list = NULL;
++
++  if (a == NULL || b == NULL) {
++    printf ("a or b is null in M_POLYAREA_intersect_separate_isected\n");
++    error (err_bad_parm);
++  }
++
++  do { /* LOOP OVER B's POLYAREA PIECES */
++
++    do { /* LOOP OVER A's POLYAREA PIECES */
++      if (a->contours &&
++          a->contours->xmax >= b->contours->xmin &&
++          a->contours->ymax >= b->contours->ymin &&
++          a->contours->xmin <= b->contours->xmax &&
++          a->contours->ymin <= b->contours->ymax &&
++          intersect (e, a, b, TRUE)) {
++        error (err_no_memory);
++      }
++    } while ((a = a->f) != afst);
++
++    /* LOOP OVER THE CONTOURS OF THE CURRENT B POLYAREA */
++    prev = NULL;
++    for (curcB = b->contours; curcB != NULL; curcB = next) {
++      next = curcB->next;
++
++      if (curcB->Flags.status != ISECTED) {
++        prev = curcB;
++        continue;
++      }
++
++      if (!(the_list = add_descriptors (curcB, 'B', the_list)))
++        error (err_no_memory);
++
++#if 0
++      /* Unlink from the b contour list, and prepend to the b_isected list */
++      if (prev == NULL)
++        b->contours = next;
++      else
++        prev->next = next;
++      curcB->next = *b_isected;
++      *b_isected = curcB;
++      r_delete_entry (b->contour_tree, (BoxType *)curcB);
++#endif
++    }
++  } while ((b = b->f) != bfst);
++
++  do { /* LOOP OVER A's POLYAREA PIECES */
++    /* LOOP OVER THE CONTOURS OF THE CURRENT A POLYAREA */
++    prev = NULL;
++    for (curcA = a->contours; curcA != NULL; curcA = curcA->next) {
++      next = curcA->next;
++
++      if (curcA->Flags.status != ISECTED) {
++        prev = curcA;
++        continue;
++      }
++
++      if (!(the_list = add_descriptors (curcA, 'A', the_list)))
++        error (err_no_memory);
++
++      /* Unlink from the a contour list, and prepend to the a_isected list */
++      if (prev == NULL)
++        a->contours = next;
++      else
++        prev->next = next;
++      curcA->next = *a_isected;
++      *a_isected = curcA;
++      r_delete_entry (a->contour_tree, (BoxType *)curcA);
++    }
++  } while ((a = a->f) != afst);
++} /* M_POLYAREA_intersect_separate_isected */
++
+ static inline int
+ cntrbox_inside (PLINE * c1, PLINE * c2)
+ {
+@@ -958,6 +1038,48 @@ cntrbox_inside (PLINE * c1, PLINE * c2)
+ /*****************************************************************/
+ /* Routines for making labels */
+ 
++/* cntr_in_M_PLINE
++returns poly is inside outfst ? TRUE : FALSE */
++static int
++cntr_in_M_PLINE (PLINE * poly, PLINE * outfst, BOOLp test)
++{
++  PLINE *curc;
++  PLINE *outer = outfst;
++  heap_t *heap;
++
++  assert (poly != NULL);
++  assert (outer != NULL);
++
++  heap = heap_create ();
++//  do {
++    if (cntrbox_inside (poly, outer))
++      heap_insert (heap, outer->area, (void *) outer);
++//  /* if checking touching, use only the first polygon */
++//  } while (!test && (outer = outer->f) != outfst);
++
++  /* we need only check the smallest poly container
++   * but we must loop in case the box containter is not
++   * the poly container */
++  while (1) {
++    if (heap_is_empty (heap))
++      break;
++    outer = (PLINE *) heap_remove_smallest (heap);
++    if (poly_ContourInContour (outer, poly)) {
++      for (curc = outer->next; curc != NULL; curc = curc->next)
++        if (poly_ContourInContour (curc, poly)) {
++          /* it's inside a hole in the smallest polygon 
++           * no need to check the other polygons */
++          heap_destroy (&heap);
++          return FALSE;
++        }
++      heap_destroy (&heap);
++      return TRUE;
++    }
++  }
++  heap_destroy (&heap);
++  return FALSE;
++}				/* cntr_in_M_PLINE */
++
+ /* cntr_in_M_POLYAREA
+ returns poly is inside outfst ? TRUE : FALSE */
+ static int
+@@ -973,7 +1095,8 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
+   heap = heap_create ();
+   do
+     {
+-      if (cntrbox_inside (poly, outer->contours))
++      if (outer->contours &&
++          cntrbox_inside (poly, outer->contours))
+ 	heap_insert (heap, outer->contours->area, (void *) outer);
+     }
+   /* if checking touching, use only the first polygon */
+@@ -1087,6 +1210,63 @@ label_contour (PLINE * a)
+ }				/* label_contour */
+ 
+ static BOOLp
++cntr_label_PLINE (PLINE * poly, PLINE * pl, BOOLp test)
++{
++  assert (ppl != NULL);
++  if (poly->Flags.status == ISECTED) {
++    printf ("cntr_label_PLINE: Labelling intersected contour\n");
++    label_contour (poly);	/* should never get here when BOOLp is true */
++
++  } else {
++ 
++    fprintf (stderr, "*********** SOMETHING ODD GOING ON HERE?\n");
++//    return FALSE;
++
++    if (cntr_in_M_PLINE (poly, pl, test)) {
++
++      if (test)
++        return TRUE;
++      poly->Flags.status = INSIDE;
++
++    } else {
++
++      if (test)
++        return False;
++      if (poly->Flags.status == UNKNWN) {
++        printf ("cntr_label_PLINE: Changing UNKNWN to OUTSIDE\n");
++        poly->Flags.status = OUTSIDE;
++      }
++
++    }
++  }
++  return FALSE;
++}				/* cntr_label_PLINE */
++
++static BOOLp
++cntr_label_POLYAREA_non_isected (PLINE * poly, POLYAREA * ppl, BOOLp test)
++{
++  assert (ppl != NULL && ppl->contours != NULL);
++  if (poly->Flags.status == ISECTED)
++    {
++      printf ("cntr_label_POLYAREA_non_isected: Skipping labelling intersected contour\n");
++      //label_contour (poly);	/* should never get here when BOOLp is true */
++    }
++  else if (cntr_in_M_POLYAREA (poly, ppl, test))
++    {
++      if (test)
++	return TRUE;
++      poly->Flags.status = INSIDE;
++    }
++  else
++    {
++      if (test)
++	return False;
++      poly->Flags.status = OUTSIDE;
++    }
++  return FALSE;
++}				/* cntr_label_POLYAREA */
++
++static BOOLp
+ cntr_label_POLYAREA (PLINE * poly, POLYAREA * ppl, BOOLp test)
+ {
+   assert (ppl != NULL && ppl->contours != NULL);
+@@ -1110,6 +1290,61 @@ cntr_label_POLYAREA (PLINE * poly, POLYAREA * ppl, BOOLp test)
+ }				/* cntr_label_POLYAREA */
+ 
+ static BOOLp
++M_POLYAREA_label_separated (PLINE * afst, POLYAREA * b, BOOLp touch)
++{
++  PLINE *curc = afst;
++  int i = 0;
++
++  for (curc = afst; curc != NULL; curc = curc->next) {
++    printf ("Testing separated contour %i\n", ++i);
++    if (cntr_label_POLYAREA (curc, b, touch) && touch)
++      return TRUE;
++  }
++  return FALSE;
++}
++
++static BOOLp
++M_POLYAREA_label_isected (POLYAREA * afst, PLINE * b, BOOLp touch)
++{
++  POLYAREA *a = afst;
++  PLINE *curc;
++
++  if (b == NULL) {
++    printf ("M_POLYAREA_label_isected: No PLINE to test against\n");
++    return FALSE;
++  }
++
++  assert (a != NULL);
++  do {
++    for (curc = a->contours; curc != NULL; curc = curc->next)
++      if (cntr_label_PLINE (curc, b, touch) && touch)
++        return TRUE;
++  } while (!touch && (a = a->f) != afst);
++  return FALSE;
++}
++
++
++static BOOLp
++M_POLYAREA_label_non_isected (POLYAREA * afst, POLYAREA * b, BOOLp touch)
++{
++  POLYAREA *a = afst;
++  PLINE *curc;
++
++  assert (a != NULL);
++  do
++    {
++      for (curc = a->contours; curc != NULL; curc = curc->next)
++	if (cntr_label_POLYAREA_non_isected (curc, b, touch))
++	  {
++	    if (touch)
++	      return TRUE;
++	  }
++    }
++  while (!touch && (a = a->f) != afst);
++  return FALSE;
++}
++
++static BOOLp
+ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
+ {
+   POLYAREA *a = afst;
+@@ -1165,10 +1400,15 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+   assert (cntr->Count > 2);
+   cntr->next = NULL;
+ 
++  printf ("PutContour %p, %p, %p, %p, %p, %p\n",
++          cntr, contours, holes, owner, parent, parent_contour);
++
+   if (cntr->Flags.orient == PLF_DIR)
+     {
+-      if (owner != NULL)
++      if (owner != NULL) {
++        printf ("PATH 1\n");
+         r_delete_entry (owner->contour_tree, (BoxType *)cntr);
++      }
+       InsCntr (e, cntr, contours);
+     }
+   /* put hole into temporary list */
+@@ -1181,8 +1421,10 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+ 	  parent_contour->next = cntr;
+           if (owner != parent)
+             {
+-              if (owner != NULL)
++              if (owner != NULL) {
++                printf ("PATH 2\n");
+                 r_delete_entry (owner->contour_tree, (BoxType *)cntr);
++              }
+               r_insert_entry (parent->contour_tree, (BoxType *)cntr, 0);
+             }
+ 	}
+@@ -1192,8 +1434,10 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+ 	  *holes = cntr;	/* let cntr be 1st hole in list */
+           /* We don't insert the holes into an r-tree,
+            * they just form a linked list */
+-          if (owner != NULL)
++          if (owner != NULL) {
++            printf ("PATH 3\n");
+             r_delete_entry (owner->contour_tree, (BoxType *)cntr);
++          }
+ 	}
+     }
+ }				/* PutContour */
+@@ -1547,6 +1791,7 @@ Collect1 (jmp_buf * e, VNODE *cur, DIRECTION dir, POLYAREA **contours, PLINE **
+ 	    DEBUGP ("adding contour with %d verticies and direction %c\n",
+ 		    p->Count, p->Flags.orient ? 'F' : 'B');
+ #endif
++            printf ("1: ");
+ 	    PutContour (e, p, contours, holes, NULL, NULL, NULL);
+ 	  }
+ 	else
+@@ -1580,11 +1825,59 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
+ 
+ 
+ static int
++cntr_Collect_avoid_self (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
++	                 int action, POLYAREA *owner)
++{
++  PLINE *tmprev;
++  int put_contour = 0;
++  int inv_contour = 0;
++
++  printf ("cntr_Collect_avoid_self %p, %p, %p, %i, %p\n",
++          A, contours, holes, action, owner);
++
++  switch (action) {
++    case PBO_ISECT:
++    case PBO_XOR:
++      if ((*A)->Flags.status == INSIDE) {
++        put_contour = 1;
++        inv_contour = (action == PBO_XOR);
++      }
++      break;
++    case PBO_UNITE:
++    case PBO_SUB:
++      if ((*A)->Flags.status == OUTSIDE) {
++        put_contour = 1;
++      }
++      break;
++  }
++#if 0
++  if (put_contour) {
++    tmprev = *A;
++    /* disappear this contour (rtree entry remove int PutContour) */
++    *A = tmprev->next;
++    tmprev->next = NULL;
++    if (inv_contour)
++      poly_InvContour (tmprev);
++    PutContour (e, tmprev, contours, holes, owner, NULL, NULL);
++    return TRUE;
++  }
++#endif
++  if (put_contour && inv_contour)
++    poly_InvContour (*A);
++  else if (!put_contour)
++    poly_DelContour (A);  /* DO WE NEED TO RELINK AROUND THIS? */
++  return FALSE;
++}				/* cntr_Collect_avoid_self */
++
++static int
+ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+ 	      int action, POLYAREA *owner, POLYAREA * parent, PLINE *parent_contour)
+ {
+   PLINE *tmprev;
+ 
++  printf ("cntr_Collect %p, %p, %p, %i, %p, %p, %p\n",
++          A, contours, holes, action, owner, parent, parent_contour);
++
+   if ((*A)->Flags.status == ISECTED)
+     {
+       switch (action)
+@@ -1614,6 +1907,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+ 	      /* disappear this contour (rtree entry remove int PutContour) */
+ 	      *A = tmprev->next;
+ 	      tmprev->next = NULL;
++              printf ("2: ");
+ 	      PutContour (e, tmprev, contours, holes, owner, NULL, NULL);
+ 	      return TRUE;
+ 	    }
+@@ -1626,6 +1920,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+ 	      *A = tmprev->next;
+ 	      tmprev->next = NULL;
+ 	      poly_InvContour (tmprev);
++              printf ("3: ");
+ 	      PutContour (e, tmprev, contours, holes, owner, NULL, NULL);
+ 	      return TRUE;
+ 	    }
+@@ -1638,6 +1933,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+ 	      /* disappear this contour (rtree entry remove int PutContour) */
+ 	      *A = tmprev->next;
+ 	      tmprev->next = NULL;
++              printf ("4: ");
+ 	      PutContour (e, tmprev, contours, holes, owner, parent, parent_contour);
+ 	      return TRUE;
+ 	    }
+@@ -1648,6 +1944,56 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+ }				/* cntr_Collect */
+ 
+ static void
++M_B_AREA_Collect_separated (jmp_buf * e, PLINE * bfst, POLYAREA ** contours,
++                            PLINE ** holes, int action)
++{
++  PLINE **cur, **next, *tmp;
++
++  for (cur = &bfst; *cur != NULL; cur = next) {
++    next = &((*cur)->next);
++    if ((*cur)->Flags.status == ISECTED)
++      continue;
++
++    if ((*cur)->Flags.status == INSIDE) {
++      switch (action) {
++        case PBO_XOR:
++        case PBO_SUB:
++          poly_InvContour (*cur);
++        case PBO_ISECT:
++          tmp = *cur;
++          *cur = tmp->next;
++          next = cur;
++          tmp->next = NULL;
++          tmp->Flags.status = UNKNWN;
++          printf ("5: ");
++          PutContour (e, tmp, contours, holes, NULL, NULL, NULL); /* b */
++          break;
++        case PBO_UNITE:
++          break;		/* nothing to do - already included */
++      }
++    } else if ((*cur)->Flags.status == OUTSIDE) {
++      switch (action) {
++        case PBO_XOR:
++        case PBO_UNITE:
++          /* include */
++          tmp = *cur;
++          *cur = tmp->next;
++          next = cur;
++          tmp->next = NULL;
++          tmp->Flags.status = UNKNWN;
++          printf ("6: ");
++          PutContour (e, tmp, contours, holes, NULL, NULL, NULL); /* b */
++          break;
++        case PBO_ISECT:
++        case PBO_SUB:
++          break;		/* do nothing, not included */
++      }
++    }
++  }
++}
++
++
++static void
+ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
+ 		  PLINE ** holes, int action)
+ {
+@@ -1675,6 +2021,7 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
+ 		next = cur;
+ 		tmp->next = NULL;
+ 		tmp->Flags.status = UNKNWN;
++                printf ("5: ");
+ 		PutContour (e, tmp, contours, holes, NULL, NULL, NULL); /* b */
+ 		break;
+ 	      case PBO_UNITE:
+@@ -1691,6 +2038,7 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
+ 		next = cur;
+ 		tmp->next = NULL;
+ 		tmp->Flags.status = UNKNWN;
++                printf ("6: ");
+ 		PutContour (e, tmp, contours, holes, NULL, NULL, NULL); /* b */
+ 		break;
+ 	      case PBO_ISECT:
+@@ -1704,6 +2052,80 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
+ 
+ 
+ static void
++M_POLYAREA_Collect_avoid_self (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
++                               PLINE ** holes, int action, BOOLp maybe)
++{
++  POLYAREA *a = afst;
++  PLINE **cur, **next;
++
++  printf ("M_POLYAREA_Collect %p, %p, %p, %i, %i\n",
++          afst, contours, holes, action, maybe);
++
++  assert (a != NULL);
++  /* now the non-intersect parts are collected in temp/holes */
++  do {
++    /* Take care of the first contour - so we know if we
++     * can shortcut reparenting some of its children
++     */
++    cur = &a->contours;
++    if (*cur != NULL) {
++      next = &((*cur)->next);
++      /* if we disappear a contour, don't advance twice */
++      printf ("1: ");
++      if (cntr_Collect_avoid_self (e, cur, contours, holes, action, a)) {
++        next = cur;
++      }
++      cur = next;
++    }
++    for ( ; *cur != NULL; cur = next) {
++      next = &((*cur)->next);
++      /* if we disappear a contour, don't advance twice */
++      printf ("2: ");
++      if (cntr_Collect_avoid_self (e, cur, contours, holes, action, a))
++        next = cur;
++    }
++  } while ((a = a->f) != afst);
++}
++
++
++static void
++M_POLYAREA_Collect_separated (jmp_buf * e, PLINE * afst, POLYAREA ** contours,
++                              PLINE ** holes, int action, BOOLp maybe)
++{
++  POLYAREA *parent = NULL; /* Quiet GCC warning */
++  PLINE **cur, **next;
++
++  printf ("M_POLYAREA_Collect %p, %p, %p, %i, %i\n",
++          afst, contours, holes, action, maybe);
++
++  assert (a != NULL);
++
++  /* Take care of the first contour - so we know if we
++   * can shortcut reparenting some of its children
++   */
++  cur = &afst;
++  if (*cur != NULL) {
++    next = &((*cur)->next);
++    /* if we disappear a contour, don't advance twice */
++    printf ("1: ");
++    if (cntr_Collect (e, cur, contours, holes, action, NULL, NULL, NULL)) {
++      parent = *contours;
++      next = cur;
++    } else {
++      parent = NULL;
++    }
++    cur = next;
++  }
++  for ( ; *cur != NULL; cur = next) {
++    next = &((*cur)->next);
++    /* if we disappear a contour, don't advance twice */
++    printf ("2: ");
++    if (cntr_Collect (e, cur, contours, holes, action, NULL, NULL, NULL))
++      next = cur;
++  }
++}
++
++static void
+ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+ 		    PLINE ** holes, int action, BOOLp maybe)
+ {
+@@ -1711,6 +2133,9 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+   POLYAREA *parent = NULL; /* Quiet GCC warning */
+   PLINE **cur, **next, *parent_contour;
+ 
++  printf ("M_POLYAREA_Collect %p, %p, %p, %i, %i\n",
++          afst, contours, holes, action, maybe);
++
+   assert (a != NULL);
+   while ((a = a->f) != afst);
+   /* now the non-intersect parts are collected in temp/holes */
+@@ -1729,6 +2154,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+         {
+           next = &((*cur)->next);
+           /* if we disappear a contour, don't advance twice */
++          printf ("1: ");
+           if (cntr_Collect (e, cur, contours, holes, action, a, NULL, NULL))
+             {
+               parent = *contours;
+@@ -1744,6 +2170,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+           /* if we disappear a contour, don't advance twice */
+           if (*cur == parent_contour)
+             printf ("WTF??\n");
++          printf ("2: ");
+           if (cntr_Collect (e, cur, contours, holes, action, a, parent,
+                             (*cur == parent_contour) ? NULL : parent_contour))
+             next = cur;
+@@ -1767,8 +2194,8 @@ Touching (POLYAREA * a, POLYAREA * b)
+       if (!poly_Valid (b))
+ 	return -1;
+ #endif
+-//      M_POLYAREA_intersect (&e, a, b, False);
+-      M_POLYAREA_intersect2 (&e, a, b, False);
++      M_POLYAREA_intersect (&e, a, b, False);
++//      M_POLYAREA_intersect2 (&e, a, b, False);
+ 
+       if (M_POLYAREA_label (a, b, TRUE))
+ 	return TRUE;
+@@ -1808,6 +2235,7 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
+       M_POLYAREA_label (a, b, FALSE);
+       M_POLYAREA_label (b, a, FALSE);
+ 
++      printf ("1:");
+       M_POLYAREA_Collect (&e, a, res, &holes, action, b->f == b
+ 			  && !b->contours->next
+ 			  && b->contours->Flags.status != ISECTED);
+@@ -1838,6 +2266,8 @@ int
+ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+ {
+   POLYAREA *a = ai, *b = bi;
++  PLINE *a_isected = NULL;
++  PLINE *b_isected = NULL;
+   PLINE *p, *holes = NULL;
+   jmp_buf e;
+   int code;
+@@ -1876,16 +2306,28 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+       assert (poly_Valid (b));
+ #endif
+ 
+-      M_POLYAREA_intersect (&e, a, b, TRUE);
++      M_POLYAREA_intersect_separate_isected (&e, a, b, &a_isected, &b_isected);
++      /* intersect needs to make a list of the contours in a and b which are relevant */
++      /* Not sure if this needs to include any wholey containing, but non-intersecting contours */
+ 
++      /* We could speed things up a little here if we only processed the relevant contours */
++      M_POLYAREA_label_separated (a_isected, b, FALSE);
+       M_POLYAREA_label (a, b, FALSE);
+-      M_POLYAREA_label (b, a, FALSE);
+-
+-      M_POLYAREA_Collect (&e, a, res, &holes, action, b->f == b
+-			  && !b->contours->next
+-			  && b->contours->Flags.status != ISECTED);
++      M_POLYAREA_label_non_isected (b, a, FALSE);
++      M_POLYAREA_label_isected (b, a_isected, FALSE);
++
++      /* And speed things up _A LOT_ here by only processing the relevant contours, specifically
++         keeping the source "a" as a starting point for the output polygon */
++//      M_POLYAREA_Collect (&e, a, res, &holes, action, b->f == b
++//			  && !b->contours->next
++//			  && b->contours->Flags.status != ISECTED);
++//      *res = a;
++      M_POLYAREA_Collect_separated (&e, a_isected, res, &holes, action, FALSE);
++      M_POLYAREA_Collect (&e, a, res, &holes, action, FALSE);
++//      M_POLYAREA_Collect_avoid_self (&e, a, res, &holes, action, FALSE);
+       poly_Free (&a);
+       M_B_AREA_Collect (&e, b, res, &holes, action);
++//      M_B_AREA_Collect_separated (&e, b_isected, res, &holes, action);
+       poly_Free (&b);
+ 
+       InsertHoles (&e, *res, &holes);
+@@ -1957,6 +2399,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
+       M_POLYAREA_label (a, b, FALSE);
+       M_POLYAREA_label (b, a, FALSE);
+ 
++      printf ("3:");
+       M_POLYAREA_Collect (&e, a, aandb, &holes, PBO_ISECT, FALSE);
+       InsertHoles (&e, *aandb, &holes);
+       assert (poly_Valid (*aandb));
+@@ -1969,6 +2412,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
+       holes = NULL;
+       clear_marks (a);
+       clear_marks (b);
++      printf ("4:");
+       M_POLYAREA_Collect (&e, a, aminusb, &holes, PBO_SUB, FALSE);
+       InsertHoles (&e, *aminusb, &holes);
+       poly_Free (&a);
+diff --git a/src/thermal.c b/src/thermal.c
+index 83907df..77350b9 100644
+--- a/src/thermal.c
++++ b/src/thermal.c
+@@ -470,6 +470,9 @@ ThermPoly (PCBTypePtr p, PinTypePtr pin, Cardinal laynum)
+         return NULL;
+       pa->f = arc;
+       arc->b = pa;
++
++      arc->f = pa;
++#if 0
+       a.StartAngle += 90;
+       arc = ArcPoly (&a, a.Clearance);
+       if (!arc)
+@@ -485,6 +488,7 @@ ThermPoly (PCBTypePtr p, PinTypePtr pin, Cardinal laynum)
+       arc->b = pa->f->f;
+       arc->f = pa;
+       pa->b = arc;
++#endif
+       return pa;
+     }
+ }
