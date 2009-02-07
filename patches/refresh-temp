@@ -1,0 +1,288 @@
+Bottom: d9893c5a5f6b9b8aec32bd42957293b9edc6c86b
+Top:    b5a09685f0d8e5a902a00b1a6a1e921e6090fb49
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-07 16:34:53 +0000
+
+Refresh of add-raw-polygons-support-for-t
+
+---
+
+diff --git a/src/dbus.c b/src/dbus.c
+index 653d294..b3bb007 100644
+--- a/src/dbus.c
++++ b/src/dbus.c
+@@ -29,7 +29,7 @@
+ #include "dbus.h"
+ #include "dbus-pcbmain.h"
+ #include "dbus-introspect.h"
+-#include "hid.h"
++#include "global.h"
+ #include "data.h"
+ 
+ /* For lrealpath */
+diff --git a/src/draw.c b/src/draw.c
+index 8983654..8cf7eca 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1764,6 +1764,15 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
+       AddPart (Polygon);
+       return;
+     }
++
++  if (gui->fill_pcb_polygon &&
++      !TEST_FLAG (THINDRAWFLAG, PCB) &&
++      !TEST_FLAG (THINDRAWPOLYFLAG, PCB) &&
++      !TEST_FLAG (CLEARLINEFLAG, Polygon)) {
++    gui->fill_pcb_polygon (Output.fgGC, Polygon);
++    return;
++  }
++
+   pl = Polygon->Clipped->contours;
+   n = pl->Count;
+   x = (int *) malloc (n * sizeof (int));
+@@ -2204,7 +2213,7 @@ DrawPour (LayerTypePtr Layer, PourTypePtr Pour, int unused)
+   layernum = GetLayerNumber (PCB->Data, Layer);
+   DrawPourLowLevel (Pour, NULL);
+ #warning FIXME Later
+-#if 1
++#if 0
+   if (TEST_FLAG (CLEARPOLYFLAG, Pour))
+     {
+       r_search (PCB->Data->pin_tree, &Pour->BoundingBox, NULL,
+@@ -2287,6 +2296,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+           } while (poly.Clipped != Polygon->NoHoles);
+         }
+ #endif
++#if 0
+         {
+           PolygonType poly = *Polygon;
+           poly.Clipped = Polygon->Clipped;
+@@ -2295,6 +2305,9 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+             poly.Clipped = poly.Clipped->f;
+           } while (poly.Clipped != Polygon->Clipped);
+         }
++#endif
++      DrawPolygonLowLevel (Polygon, NULL);
++
+       /* draw other parts of the polygon if fullpoly flag is set */
+       /* NB: No "NoHoles" cache for these */
+       if (TEST_FLAG (FULLPOLYFLAG, Polygon))
+diff --git a/src/global.h b/src/global.h
+index 8d2bada..2b90d20 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -50,6 +50,8 @@
+ #include <ctype.h>
+ #include <sys/types.h>
+ 
++typedef struct polygon_st PolygonType, *PolygonTypePtr;
++
+ #include "hid.h"
+ 
+ typedef struct rtree rtree_t;
+@@ -234,8 +236,6 @@ typedef struct
+   void *Element;
+ } TextType, *TextTypePtr;
+ 
+-typedef struct polygon_st PolygonType, *PolygonTypePtr;
+-
+ struct rtree {
+   struct rtree_node *root;
+   int size;			/* number of entries in tree */
+diff --git a/src/hid.h b/src/hid.h
+index aaca24d..9f3ecdf 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -358,6 +358,8 @@ typedef enum
+     void (*draw_rect) (hidGC gc_, int x1_, int y1_, int x2_, int y2_);
+     void (*fill_circle) (hidGC gc_, int cx_, int cy_, int radius_);
+     void (*fill_polygon) (hidGC gc_, int n_coords_, int *x_, int *y_);
++//    void (*fill_pcb_polygon) (hidGC gc_, void *poly);
++    void (*fill_pcb_polygon) (hidGC gc_, PolygonType *poly);
+     void (*fill_rect) (hidGC gc_, int x1_, int y1_, int x2_, int y2_);
+ 
+ 
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 5e88503..3f94260 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -638,6 +638,7 @@ myVertex (GLdouble *vertex_data)
+     printf ("Vertex recieved with unknown type\n");
+ }
+ 
++
+ void
+ hidgl_fill_polygon (int n_coords, int *x, int *y)
+ {
+@@ -677,6 +678,69 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+ }
+ 
+ void
++hidgl_fill_pcb_polygon (PolygonType *poly)
++{
++  int i, cc;
++  GLUtesselator *tobj;
++  GLdouble *vertices;
++  int vertex_count = 0;
++  POLYAREA *piece;
++  PLINE *contour;
++  VNODE *vnode;
++
++  if (poly->Clipped == NULL) {
++    fprintf (stderr, "hidgl_fill_pcb_polygon: poly->Clipped == NULL\n");
++    return;
++  }
++
++  /* Walk the polygon structure, counting vertices */
++  piece = poly->Clipped;
++  do {
++    for (contour = piece->contours; contour != NULL; contour = contour->next)
++      vertex_count += contour->Count;
++  } while ((piece = piece->f) != poly->Clipped);
++
++  vertices = malloc (sizeof(GLdouble) * vertex_count * 3);
++
++  tobj = gluNewTess ();
++  gluTessCallback(tobj, GLU_TESS_BEGIN, myBegin);
++  gluTessCallback(tobj, GLU_TESS_VERTEX, myVertex);
++  gluTessCallback(tobj, GLU_TESS_COMBINE, myCombine);
++  gluTessCallback(tobj, GLU_TESS_ERROR, myError);
++
++  gluTessBeginPolygon (tobj, NULL);
++
++  /* Walk the polygon structure, adding the vertices */
++  i = 0;
++  cc = 1;
++  piece = poly->Clipped;
++  do {
++    for (contour = piece->contours; contour != NULL; contour = contour->next) {
++      gluTessBeginContour (tobj);
++
++//      printf ("Beginning contour %i\n", cc++);
++      vnode = &contour->head;
++      do {
++        /* SHOULD PROBABLY TRY TO CLIP THIS TO THE VIEWPORT */
++        vertices [0 + i * 3] = vnode->point[0];
++        vertices [1 + i * 3] = vnode->point[1];
++        vertices [2 + i * 3] = 0.;
++        gluTessVertex (tobj, &vertices [i * 3], &vertices [i * 3]);
++
++        i++;
++      } while ((vnode = vnode->next) != &contour->head);
++      gluTessEndContour (tobj);
++    }
++  } while ((piece = piece->f) != poly->Clipped);
++
++  gluTessEndPolygon (tobj);
++  gluDeleteTess (tobj);
++
++  myFreeCombined ();
++  free (vertices);
++}
++
++void
+ hidgl_fill_rect (int x1, int y1, int x2, int y2)
+ {
+   hidgl_add_triangle (&buffer, x1, y1, x1, y2, x2, y2, cur_r, cur_g, cur_b, cur_a);
+diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
+index f5dc1fc..72c6c17 100644
+--- a/src/hid/common/hidgl.h
++++ b/src/hid/common/hidgl.h
+@@ -98,6 +98,7 @@ void hidgl_draw_arc (double width, int vx, int vy, int vrx, int vry, int start_a
+ void hidgl_draw_rect (int x1, int y1, int x2, int y2);
+ void hidgl_fill_circle (int vx, int vy, int vr, double scale);
+ void hidgl_fill_polygon (int n_coords, int *x, int *y);
++void hidgl_fill_pcb_polygon (PolygonType *poly);
+ void hidgl_fill_rect (int x1, int y1, int x2, int y2);
+ 
+ 
+diff --git a/src/hid/common/hidinit.c b/src/hid/common/hidinit.c
+index cc916db..4581f47 100644
+--- a/src/hid/common/hidinit.c
++++ b/src/hid/common/hidinit.c
+@@ -21,6 +21,7 @@
+ #include <windows.h>
+ #endif
+ 
++#include "global.h"
+ #include "hid.h"
+ #include "../hidint.h"
+ 
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 90604c2..0b93e6a 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -13,12 +13,12 @@
+ #include <time.h>
+ 
+ 
++#include "global.h"
+ #include "action.h"
+ #include "crosshair.h"
+ #include "data.h"
+ #include "draw.h"
+ #include "error.h"
+-#include "global.h"
+ #include "mymem.h"
+ #include "draw.h"
+ #include "clip.h"
+@@ -933,6 +933,14 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
+ }
+ 
+ void
++ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly)
++{
++  USE_GC (gc);
++
++  hidgl_fill_pcb_polygon (poly);
++}
++
++void
+ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
+ {
+   USE_GC (gc);
+@@ -1451,6 +1459,7 @@ HID ghid_hid = {
+   ghid_draw_rect,
+   ghid_fill_circle,
+   ghid_fill_polygon,
++  ghid_fill_pcb_polygon,
+   ghid_fill_rect,
+ 
+   ghid_calibrate,
+@@ -1511,6 +1520,7 @@ HID ghid_extents = {
+   ghid_extents_draw_rect,
+   ghid_extents_fill_circle,
+   ghid_extents_fill_polygon,
++  0 /* ghid_extents_fill_pcb_polygon */ ,
+   ghid_extents_fill_rect,
+ 
+   0 /* ghid_calibrate */ ,
+diff --git a/src/hid/gtk/gui-config.c b/src/hid/gtk/gui-config.c
+index b19c34c..77a183c 100644
+--- a/src/hid/gtk/gui-config.c
++++ b/src/hid/gtk/gui-config.c
+@@ -34,11 +34,11 @@
+ #include <stdlib.h>
+ #endif
+ 
++#include "gui.h"
+ #include "hid.h"
+ #include "../hidint.h"
+ #include "gtkhid.h"
+ 
+-#include "gui.h"
+ #include "global.h"
+ #include "action.h"
+ #include "change.h"
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index c51a0c9..0653506 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -27,6 +27,7 @@
+ #ifndef __GHID_INCLUDED__
+ #define __GHID_INCLUDED__
+ 
++#include "global.h"
+ #include "hid.h"
+ 
+ #include "data.h"
