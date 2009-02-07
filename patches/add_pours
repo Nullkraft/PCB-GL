@@ -1,5 +1,5 @@
 Bottom: 30f03ac7c8c987605ab5f609d26656605cb27a50
-Top:    aa90201b09eed9df69318aecfac931396df3ca5d
+Top:    67c9d259fa29a416e53e925e058adbd2c306d052
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-07 19:17:39 +0000
 
@@ -5009,7 +5009,7 @@ index 895f5a6..31bcc82 100644
  void RestoreToPolygon(DataType *, int, void *, void *);
  void ClearFromPolygon(DataType *, int, void *, void *);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 32ffb31..98e20bb 100644
+index 32ffb31..7ea9e66 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -835,6 +835,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
@@ -5058,6 +5058,15 @@ index 32ffb31..98e20bb 100644
  M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  {
    POLYAREA *a = afst, *b = bfst;
+@@ -1052,7 +1091,7 @@ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
+ 	      return TRUE;
+ 	  }
+     }
+-  while (!touch && (a = a->f) != afst);
++  while ((a = a->f) != afst);
+   return FALSE;
+ }
+ 
 @@ -1636,7 +1675,8 @@ Touching (POLYAREA * a, POLYAREA * b)
        if (!poly_Valid (b))
  	return -1;
