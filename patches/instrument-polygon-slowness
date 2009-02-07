@@ -1,5 +1,5 @@
 Bottom: 2a641a19ca84b9c4951c232f305cce1c2f7da537
-Top:    7c27ab720144ababa6558f1eec71d4d4ef5092f2
+Top:    70c9572a85411ade030b375cbf7fd907c067a34f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-07 20:35:13 +0000
 
@@ -693,25 +693,3 @@ index a92541d..74e2d02 100644
        M_POLYAREA_Collect (&e, a, aminusb, &holes, PBO_SUB, FALSE);
        InsertHoles (&e, *aminusb, &holes);
        poly_Free (&a);
-diff --git a/src/thermal.c b/src/thermal.c
-index 83907df..77350b9 100644
---- a/src/thermal.c
-+++ b/src/thermal.c
-@@ -470,6 +470,9 @@ ThermPoly (PCBTypePtr p, PinTypePtr pin, Cardinal laynum)
-         return NULL;
-       pa->f = arc;
-       arc->b = pa;
-+
-+      arc->f = pa;
-+#if 0
-       a.StartAngle += 90;
-       arc = ArcPoly (&a, a.Clearance);
-       if (!arc)
-@@ -485,6 +488,7 @@ ThermPoly (PCBTypePtr p, PinTypePtr pin, Cardinal laynum)
-       arc->b = pa->f->f;
-       arc->f = pa;
-       pa->b = arc;
-+#endif
-       return pa;
-     }
- }
