@@ -13,12 +13,12 @@
 #include <time.h>
 
 
+#include "global.h"
 #include "action.h"
 #include "crosshair.h"
 #include "data.h"
 #include "draw.h"
 #include "error.h"
-#include "global.h"
 #include "mymem.h"
 #include "draw.h"
 #include "clip.h"
@@ -933,6 +933,14 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
 }
 
 void
+ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly)
+{
+  USE_GC (gc);
+
+  hidgl_fill_pcb_polygon (poly);
+}
+
+void
 ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
 {
   USE_GC (gc);
@@ -1451,6 +1459,7 @@ HID ghid_hid = {
   ghid_draw_rect,
   ghid_fill_circle,
   ghid_fill_polygon,
+  ghid_fill_pcb_polygon,
   ghid_fill_rect,
 
   ghid_calibrate,
@@ -1511,6 +1520,7 @@ HID ghid_extents = {
   ghid_extents_draw_rect,
   ghid_extents_fill_circle,
   ghid_extents_fill_polygon,
+  0 /* ghid_extents_fill_pcb_polygon */ ,
   ghid_extents_fill_rect,
 
   0 /* ghid_calibrate */ ,
