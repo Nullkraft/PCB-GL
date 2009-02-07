@@ -1078,6 +1078,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
 
+
+  glUnmapBuffer (GL_ARRAY_BUFFER);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDeleteBuffers (1, &buffer.vbo_name);
+
   draw_grid ();
 
   hidgl_init_triangle_array (&buffer);
@@ -1097,6 +1102,10 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   ghid_show_crosshair (TRUE);
 
   hidgl_flush_triangles (&buffer);
+
+  glUnmapBuffer (GL_ARRAY_BUFFER);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDeleteBuffers (1, &buffer.vbo_name);
 
   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
     gdk_gl_drawable_swap_buffers (pGlDrawable);
