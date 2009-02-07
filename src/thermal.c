@@ -470,6 +470,9 @@ ThermPoly (PCBTypePtr p, PinTypePtr pin, Cardinal laynum)
         return NULL;
       pa->f = arc;
       arc->b = pa;
+
+      arc->f = pa;
+#if 0
       a.StartAngle += 90;
       arc = ArcPoly (&a, a.Clearance);
       if (!arc)
@@ -485,6 +488,7 @@ ThermPoly (PCBTypePtr p, PinTypePtr pin, Cardinal laynum)
       arc->b = pa->f->f;
       arc->f = pa;
       pa->b = arc;
+#endif
       return pa;
     }
 }
