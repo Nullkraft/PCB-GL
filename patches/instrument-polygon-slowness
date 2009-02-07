@@ -1,5 +1,5 @@
 Bottom: d9893c5a5f6b9b8aec32bd42957293b9edc6c86b
-Top:    312a6cf5dea5c11880ee58f6b3885bd72eb39045
+Top:    5a64f4a1e31419df5c480d67f83ca130f27d2f63
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-06 20:38:05 +0000
 
@@ -9,7 +9,7 @@ Instrument polygon slowness
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 8ade932..f9a47bc 100644
+index 8ade932..129faa3 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -1165,10 +1165,15 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
@@ -137,6 +137,17 @@ index 8ade932..f9a47bc 100644
            if (cntr_Collect (e, cur, contours, holes, action, a, parent,
                              (*cur == parent_contour) ? NULL : parent_contour))
              next = cur;
+@@ -1767,8 +1790,8 @@ Touching (POLYAREA * a, POLYAREA * b)
+       if (!poly_Valid (b))
+ 	return -1;
+ #endif
+-//      M_POLYAREA_intersect (&e, a, b, False);
+-      M_POLYAREA_intersect2 (&e, a, b, False);
++      M_POLYAREA_intersect (&e, a, b, False);
++//      M_POLYAREA_intersect2 (&e, a, b, False);
+ 
+       if (M_POLYAREA_label (a, b, TRUE))
+ 	return TRUE;
 @@ -1808,6 +1831,7 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
        M_POLYAREA_label (a, b, FALSE);
        M_POLYAREA_label (b, a, FALSE);
@@ -145,15 +156,24 @@ index 8ade932..f9a47bc 100644
        M_POLYAREA_Collect (&e, a, res, &holes, action, b->f == b
  			  && !b->contours->next
  			  && b->contours->Flags.status != ISECTED);
-@@ -1881,6 +1905,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -1878,9 +1902,16 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+ 
+       M_POLYAREA_intersect (&e, a, b, TRUE);
+ 
++      /* intersect needs to make a list of the contours in a and b which are relevant) */
++      /* Not sure if this needs to invlude any wholey containing, but non-intersecting contours */
++
++      /* We could speed things up a little here if we only processed the relevant contours */
        M_POLYAREA_label (a, b, FALSE);
        M_POLYAREA_label (b, a, FALSE);
  
 +      printf ("2:");
++      /* And speed things up _A LOT_ here by only processing the relevant contours, specifically
++         keeping the source "a" as a starting point for the output polygon */
        M_POLYAREA_Collect (&e, a, res, &holes, action, b->f == b
  			  && !b->contours->next
  			  && b->contours->Flags.status != ISECTED);
-@@ -1957,6 +1982,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
+@@ -1957,6 +1988,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
        M_POLYAREA_label (a, b, FALSE);
        M_POLYAREA_label (b, a, FALSE);
  
@@ -161,7 +181,7 @@ index 8ade932..f9a47bc 100644
        M_POLYAREA_Collect (&e, a, aandb, &holes, PBO_ISECT, FALSE);
        InsertHoles (&e, *aandb, &holes);
        assert (poly_Valid (*aandb));
-@@ -1969,6 +1995,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
+@@ -1969,6 +2001,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
        holes = NULL;
        clear_marks (a);
        clear_marks (b);
