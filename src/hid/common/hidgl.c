@@ -617,6 +617,7 @@ myVertex (GLdouble *vertex_data)
     printf ("Vertex recieved with unknown type\n");
 }
 
+
 void
 hidgl_fill_polygon (int n_coords, int *x, int *y)
 {
@@ -648,6 +649,69 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
     }
 
   gluTessEndContour (tobj);
+  gluTessEndPolygon (tobj);
+  gluDeleteTess (tobj);
+
+  myFreeCombined ();
+  free (vertices);
+}
+
+void
+hidgl_fill_pcb_polygon (PolygonType *poly)
+{
+  int i, cc;
+  GLUtesselator *tobj;
+  GLdouble *vertices;
+  int vertex_count = 0;
+  POLYAREA *piece;
+  PLINE *contour;
+  VNODE *vnode;
+
+  if (poly->Clipped == NULL) {
+    fprintf (stderr, "hidgl_fill_pcb_polygon: poly->Clipped == NULL\n");
+    return;
+  }
+
+  /* Walk the polygon structure, counting vertices */
+  piece = poly->Clipped;
+  do {
+    for (contour = piece->contours; contour != NULL; contour = contour->next)
+      vertex_count += contour->Count;
+  } while ((piece = piece->f) != poly->Clipped);
+
+  vertices = malloc (sizeof(GLdouble) * vertex_count * 3);
+
+  tobj = gluNewTess ();
+  gluTessCallback(tobj, GLU_TESS_BEGIN, myBegin);
+  gluTessCallback(tobj, GLU_TESS_VERTEX, myVertex);
+  gluTessCallback(tobj, GLU_TESS_COMBINE, myCombine);
+  gluTessCallback(tobj, GLU_TESS_ERROR, myError);
+
+  gluTessBeginPolygon (tobj, NULL);
+
+  /* Walk the polygon structure, adding the vertices */
+  i = 0;
+  cc = 1;
+  piece = poly->Clipped;
+  do {
+    for (contour = piece->contours; contour != NULL; contour = contour->next) {
+      gluTessBeginContour (tobj);
+
+//      printf ("Beginning contour %i\n", cc++);
+      vnode = &contour->head;
+      do {
+        /* SHOULD PROBABLY TRY TO CLIP THIS TO THE VIEWPORT */
+        vertices [0 + i * 3] = vnode->point[0];
+        vertices [1 + i * 3] = vnode->point[1];
+        vertices [2 + i * 3] = 0.;
+        gluTessVertex (tobj, &vertices [i * 3], &vertices [i * 3]);
+
+        i++;
+      } while ((vnode = vnode->next) != &contour->head);
+      gluTessEndContour (tobj);
+    }
+  } while ((piece = piece->f) != poly->Clipped);
+
   gluTessEndPolygon (tobj);
   gluDeleteTess (tobj);
 
