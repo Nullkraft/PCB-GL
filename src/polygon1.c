@@ -1091,7 +1091,7 @@ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
 	      return TRUE;
 	  }
     }
-  while (!touch && (a = a->f) != afst);
+  while ((a = a->f) != afst);
   return FALSE;
 }
 
