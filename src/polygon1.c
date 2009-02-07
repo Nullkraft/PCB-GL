@@ -1790,8 +1790,8 @@ Touching (POLYAREA * a, POLYAREA * b)
       if (!poly_Valid (b))
 	return -1;
 #endif
-//      M_POLYAREA_intersect (&e, a, b, False);
-      M_POLYAREA_intersect2 (&e, a, b, False);
+      M_POLYAREA_intersect (&e, a, b, False);
+//      M_POLYAREA_intersect2 (&e, a, b, False);
 
       if (M_POLYAREA_label (a, b, TRUE))
 	return TRUE;
@@ -1902,10 +1902,16 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
 
       M_POLYAREA_intersect (&e, a, b, TRUE);
 
+      /* intersect needs to make a list of the contours in a and b which are relevant) */
+      /* Not sure if this needs to invlude any wholey containing, but non-intersecting contours */
+
+      /* We could speed things up a little here if we only processed the relevant contours */
       M_POLYAREA_label (a, b, FALSE);
       M_POLYAREA_label (b, a, FALSE);
 
       printf ("2:");
+      /* And speed things up _A LOT_ here by only processing the relevant contours, specifically
+         keeping the source "a" as a starting point for the output polygon */
       M_POLYAREA_Collect (&e, a, res, &holes, action, b->f == b
 			  && !b->contours->next
 			  && b->contours->Flags.status != ISECTED);
