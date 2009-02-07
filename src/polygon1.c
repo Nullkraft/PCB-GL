@@ -1003,7 +1003,7 @@ M_POLYAREA_intersect_separate_isected (jmp_buf * e, POLYAREA *afst,
   do { /* LOOP OVER A's POLYAREA PIECES */
     /* LOOP OVER THE CONTOURS OF THE CURRENT A POLYAREA */
     prev = NULL;
-    for (curcA = a->contours; curcA != NULL; curcA = curcA->next) {
+    for (curcA = a->contours; curcA != NULL; curcA = next) {
       next = curcA->next;
 
       if (curcA->Flags.status != ISECTED) {
@@ -1025,6 +1025,41 @@ M_POLYAREA_intersect_separate_isected (jmp_buf * e, POLYAREA *afst,
     }
   } while ((a = a->f) != afst);
 } /* M_POLYAREA_intersect_separate_isected */
+
+static void
+M_POLYAREA_separate_isected (POLYAREA *afst, PLINE **a_isected)
+{
+  POLYAREA *a = afst;
+  PLINE *curc, *prev, *next;
+  CVCList *the_list = NULL;
+
+  assert (a != NULL);
+
+  do { /* LOOP OVER THE POLYAREA PIECES */
+    /* LOOP OVER THE CONTOURS OF THE CURRENT POLYAREA PIECE */
+    prev = NULL;
+    for (curc = a->contours; curc != NULL; curc = next) {
+      next = curc->next;
+
+      if (curc->Flags.status != ISECTED) {
+        prev = curc;
+        continue;
+      }
+
+      /* Unlink from the a contour list, and prepend to the a_isected list */
+      if (prev == NULL) {
+        if (next == NULL)
+          printf ("M_POLYAREA_separate_isected: Need to delete the whole contour?\n");
+        a->contours = next;
+      } else {
+        prev->next = next;
+      }
+      curc->next = *a_isected;
+      *a_isected = curc;
+      r_delete_entry (a->contour_tree, (BoxType *)curc);
+    }
+  } while ((a = a->f) != afst);
+} /* M_POLYAREA_separate_isected */
 
 static inline int
 cntrbox_inside (PLINE * c1, PLINE * c2)
@@ -2194,8 +2229,8 @@ Touching (POLYAREA * a, POLYAREA * b)
       if (!poly_Valid (b))
 	return -1;
 #endif
-      M_POLYAREA_intersect (&e, a, b, False);
-//      M_POLYAREA_intersect2 (&e, a, b, False);
+//      M_POLYAREA_intersect (&e, a, b, False);
+      M_POLYAREA_intersect2 (&e, a, b, False);
 
       if (M_POLYAREA_label (a, b, TRUE))
 	return TRUE;
@@ -2306,15 +2341,22 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
       assert (poly_Valid (b));
 #endif
 
-      M_POLYAREA_intersect_separate_isected (&e, a, b, &a_isected, &b_isected);
       /* intersect needs to make a list of the contours in a and b which are relevant */
       /* Not sure if this needs to include any wholey containing, but non-intersecting contours */
+      M_POLYAREA_intersect (&e, a, b, TRUE);
 
       /* We could speed things up a little here if we only processed the relevant contours */
+      M_POLYAREA_label (a, b, FALSE);
+      M_POLYAREA_label (b, a, FALSE);
+
+      M_POLYAREA_separate_isected (a, &a_isected);
+
+#if 0
       M_POLYAREA_label_separated (a_isected, b, FALSE);
       M_POLYAREA_label (a, b, FALSE);
       M_POLYAREA_label_non_isected (b, a, FALSE);
       M_POLYAREA_label_isected (b, a_isected, FALSE);
+#endif
 
       /* And speed things up _A LOT_ here by only processing the relevant contours, specifically
          keeping the source "a" as a starting point for the output polygon */
@@ -2529,7 +2571,9 @@ poly_DelContour (PLINE ** c)
       rtree_t *r = (*c)->tree;
       r_destroy_tree (&r);
     }
-  free (*c), *c = NULL;
+  printf ("Freeing contour *c = %p\n", *c);
+  free (*c);
+  *c = NULL;
 }
 
 void
