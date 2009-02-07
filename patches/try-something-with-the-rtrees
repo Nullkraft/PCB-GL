@@ -1,7 +1,7 @@
-Bottom: 85ec78221931ee9a4a38b5629b4ee9ec837cdfd0
-Top:    6cc1347bf8fc5d99878e7f11e1201a68187727ab
+Bottom: 2f929a7d11b155816d8c972685e8ca3f4b8ca8e3
+Top:    8c93e60df596caf9b013f5939b10be8d231ebae8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-07 19:17:40 +0000
+Date:   2009-02-07 20:35:11 +0000
 
 Try optimising polygon operations by keeping an rtree with their contours
 
@@ -194,7 +194,7 @@ index 1fcf933..cbdcf0f 100644
    while (save != ans);
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 62e0705..8ade932 100644
+index 2d4cd21..a92541d 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -38,13 +38,15 @@

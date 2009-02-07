@@ -1,7 +1,7 @@
-Bottom: 5cfa0ef2ca0965da6aa7e289df9db9a292c32f8a
-Top:    21beb2dd84c75b4ecc06bbd238f2ac9f730c65d7
+Bottom: 2a641a19ca84b9c4951c232f305cce1c2f7da537
+Top:    7c27ab720144ababa6558f1eec71d4d4ef5092f2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-07 19:17:41 +0000
+Date:   2009-02-07 20:35:13 +0000
 
 Instrument polygon slowness
 
@@ -26,7 +26,7 @@ index a8a29e1..8e8ce4b 100644
    Polygon->BoundingBox.Y1 = outer->ymin;
    Polygon->BoundingBox.X2 = outer->xmax;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 8ade932..7edb72f 100644
+index a92541d..74e2d02 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -946,6 +946,86 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)

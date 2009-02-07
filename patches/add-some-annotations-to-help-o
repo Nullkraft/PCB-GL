@@ -1,7 +1,7 @@
-Bottom: 230fea788d3701f0144d3834ce0dd17bce85891f
-Top:    60f17ad307c81b292550a626ca3e35955f1a12f2
+Bottom: eaea5b199c6afaa3cd6c5ffa737749da10648881
+Top:    9fce390ba4d6fdc021467e1c50aa1535ac5f2f89
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-07 19:17:40 +0000
+Date:   2009-02-07 20:35:10 +0000
 
 Add some annotations to help optimise branch prediction.
 
@@ -65,7 +65,7 @@ index 25185a8..4de19f5 100644
   * Do not change the following definitions even if they're not very
   * nice.  It allows us to have functions act on these "base types" and
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 252150f..5c20ef3 100644
+index 5727faa..b51440c 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -93,6 +93,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,

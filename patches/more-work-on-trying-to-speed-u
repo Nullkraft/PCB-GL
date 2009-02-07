@@ -1,16 +1,17 @@
-Bottom: 21beb2dd84c75b4ecc06bbd238f2ac9f730c65d7
-Top:    e807087314f7bdfffe3f4f19150ea48770a8359e
+Bottom: 7c27ab720144ababa6558f1eec71d4d4ef5092f2
+Top:    3b9bbd43daec4a4d4f728dea3bd80651a1734129
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-07 19:17:41 +0000
+Date:   2009-02-07 20:35:14 +0000
 
 More work on trying to speed up polygon algebra
+
 
 
 
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 7edb72f..bef40ea 100644
+index 74e2d02..edde017 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -1003,7 +1003,7 @@ M_POLYAREA_intersect_separate_isected (jmp_buf * e, POLYAREA *afst,
