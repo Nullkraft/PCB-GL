@@ -1,5 +1,5 @@
 Bottom: 21beb2dd84c75b4ecc06bbd238f2ac9f730c65d7
-Top:    ad78c0b19d368489b32b2a5d4704f84aa454d5b0
+Top:    e807087314f7bdfffe3f4f19150ea48770a8359e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-07 19:17:41 +0000
 
@@ -10,10 +10,19 @@ More work on trying to speed up polygon algebra
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 7edb72f..f43de1d 100644
+index 7edb72f..bef40ea 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -1026,6 +1026,44 @@ M_POLYAREA_intersect_separate_isected (jmp_buf * e, POLYAREA *afst,
+@@ -1003,7 +1003,7 @@ M_POLYAREA_intersect_separate_isected (jmp_buf * e, POLYAREA *afst,
+   do { /* LOOP OVER A's POLYAREA PIECES */
+     /* LOOP OVER THE CONTOURS OF THE CURRENT A POLYAREA */
+     prev = NULL;
+-    for (curcA = a->contours; curcA != NULL; curcA = curcA->next) {
++    for (curcA = a->contours; curcA != NULL; curcA = next) {
+       next = curcA->next;
+ 
+       if (curcA->Flags.status != ISECTED) {
+@@ -1026,6 +1026,41 @@ M_POLYAREA_intersect_separate_isected (jmp_buf * e, POLYAREA *afst,
    } while ((a = a->f) != afst);
  } /* M_POLYAREA_intersect_separate_isected */
  
@@ -39,11 +48,9 @@ index 7edb72f..f43de1d 100644
 +
 +      /* Unlink from the a contour list, and prepend to the a_isected list */
 +      if (prev == NULL) {
-+        if (next == NULL) {
-+          printf ("Need to delete the whole contour!\n");
-+        } else {
-+          a->contours = next;
-+        }
++        if (next == NULL)
++          printf ("M_POLYAREA_separate_isected: Need to delete the whole contour?\n");
++        a->contours = next;
 +      } else {
 +        prev->next = next;
 +      }
@@ -51,14 +58,13 @@ index 7edb72f..f43de1d 100644
 +      *a_isected = curc;
 +      r_delete_entry (a->contour_tree, (BoxType *)curc);
 +    }
-+    printf ("seprating things from next contour\n");
 +  } while ((a = a->f) != afst);
 +} /* M_POLYAREA_separate_isected */
 +
  static inline int
  cntrbox_inside (PLINE * c1, PLINE * c2)
  {
-@@ -2194,8 +2232,8 @@ Touching (POLYAREA * a, POLYAREA * b)
+@@ -2194,8 +2229,8 @@ Touching (POLYAREA * a, POLYAREA * b)
        if (!poly_Valid (b))
  	return -1;
  #endif
@@ -69,7 +75,7 @@ index 7edb72f..f43de1d 100644
  
        if (M_POLYAREA_label (a, b, TRUE))
  	return TRUE;
-@@ -2306,15 +2344,22 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2306,15 +2341,22 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        assert (poly_Valid (b));
  #endif
  
@@ -93,3 +99,14 @@ index 7edb72f..f43de1d 100644
  
        /* And speed things up _A LOT_ here by only processing the relevant contours, specifically
           keeping the source "a" as a starting point for the output polygon */
+@@ -2529,7 +2571,9 @@ poly_DelContour (PLINE ** c)
+       rtree_t *r = (*c)->tree;
+       r_destroy_tree (&r);
+     }
+-  free (*c), *c = NULL;
++  printf ("Freeing contour *c = %p\n", *c);
++  free (*c);
++  *c = NULL;
+ }
+ 
+ void
