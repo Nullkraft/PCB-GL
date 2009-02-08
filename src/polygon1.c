@@ -1330,7 +1330,7 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
         printf ("PATH 1\n");
         r_delete_entry (owner->contour_tree, (BoxType *)cntr);
       }
-      printf ("Put contour adding a new contour\n");
+//      printf ("Put contour adding a new contour\n");
       InsCntr (e, cntr, contours);
     }
   /* put hole into temporary list */
@@ -1341,7 +1341,7 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
 	{
 	  cntr->next = parent_contour->next;
 	  parent_contour->next = cntr;
-          printf ("Put Contour adding a hole directly to its parent\n");
+//          printf ("Put Contour adding a hole directly to its parent\n");
           if (owner != parent)
             {
               if (owner != NULL) {
@@ -1355,7 +1355,7 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
 	{
 	  cntr->next = *holes;
 	  *holes = cntr;	/* let cntr be 1st hole in list */
-          printf ("Put Contour adding a hole\n");
+//          printf ("Put Contour adding a hole\n");
           /* We don't insert the holes into an r-tree,
            * they just form a linked list */
           if (owner != NULL) {
