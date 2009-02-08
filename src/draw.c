@@ -441,6 +441,58 @@ DrawEverything (BoxTypePtr drawn_area)
 
       if (gui->set_layer (0, group, 0))
 	{
+
+/* POLYGON TESTING */
+#if 0
+    static int once = 1;
+
+	  gui->set_color (Output.fgGC, PCB->ElementColor);
+
+    if (group == 0) {
+      static PolygonType Polygon;
+
+      POLYAREA *m;
+      POLYAREA *pa;
+      POLYAREA *arc;
+
+      if (once) {
+        BDimension t = 5000;
+        BDimension w = 1000;
+        BDimension X = 200000;
+        BDimension Y = 200000;
+        int style = 2;
+        pa = CirclePoly (X, Y, t);
+#if 0
+        arc = CirclePoly (X, Y, 4000);
+        /* create a thin ring */
+        poly_Boolean_free (pa, arc, &m, PBO_SUB);
+        Polygon.Clipped = m;
+#else
+        m = pa;
+#endif
+
+        /* fix me needs error checking */
+        if (1)
+          {
+            printf ("Ok, do the first part of the cross\n");
+            pa = RectPoly (X - t, X + t, Y - w, Y + w);
+            Polygon.Clipped = pa;
+            poly_Boolean_free (m, pa, &arc, PBO_SUB);
+            Polygon.Clipped = arc;
+            printf ("Ok, clipped once.. now the second part of the cross\n");
+#if 1
+            pa = RectPoly (X - w, X + w, Y - t, Y + t);
+            Polygon.Clipped = pa;
+            poly_Boolean_free (arc, pa, &m, PBO_SUB);
+            Polygon.Clipped = m;
+#endif
+          }
+        once = 0;
+      }
+
+      gui->fill_pcb_polygon (Output.fgGC, &Polygon);
+    }
+#endif
 	  if (DrawLayerGroup (group, drawn_area) && !gui->gui)
 	    {
 	      int save_swap = SWAP_IDENT;
