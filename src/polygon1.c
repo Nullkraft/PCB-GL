@@ -1747,50 +1747,6 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
 
 
 static int
-cntr_Collect_avoid_self (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
-	                 int action, POLYAREA *owner)
-{
-//  PLINE *tmprev;
-  int put_contour = 0;
-  int inv_contour = 0;
-
-//  printf ("cntr_Collect_avoid_self %p, %p, %p, %i, %p\n", A, contours, holes, action, owner);
-
-  switch (action) {
-    case PBO_ISECT:
-    case PBO_XOR:
-      if ((*A)->Flags.status == INSIDE) {
-        put_contour = 1;
-        inv_contour = (action == PBO_XOR);
-      }
-      break;
-    case PBO_UNITE:
-    case PBO_SUB:
-      if ((*A)->Flags.status == OUTSIDE) {
-        put_contour = 1;
-      }
-      break;
-  }
-#if 0
-  if (put_contour) {
-    tmprev = *A;
-    /* disappear this contour (rtree entry remove int PutContour) */
-    *A = tmprev->next;
-    tmprev->next = NULL;
-    if (inv_contour)
-      poly_InvContour (tmprev);
-    PutContour (e, tmprev, contours, holes, owner, NULL, NULL);
-    return TRUE;
-  }
-#endif
-  if (put_contour && inv_contour)
-    poly_InvContour (*A);
-  else if (!put_contour)
-    poly_DelContour (A);  /* DO WE NEED TO RELINK AROUND THIS? */
-  return FALSE;
-}				/* cntr_Collect_avoid_self */
-
-static int
 cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
 	      int action, POLYAREA *owner, POLYAREA * parent, PLINE *parent_contour)
 {
@@ -2137,6 +2093,8 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
         hole_contour = 1;
     }
 
+    /* If we deleted all the pieces of the polyarea, *pieces is NULL and
+       we don't want to continue */
     if (*pieces == NULL) {
 //      printf ("M_POLYAREA_update_primary: Deleted / removed _all_"
 //              "of the existing polygon pieces\n");
@@ -2144,7 +2102,6 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
     }
 
   } while ((a = anext), !finished);
-//  } while ((a = anext) != *pieces);
 }
 
 
@@ -2152,33 +2109,15 @@ static void
 M_POLYAREA_Collect_separated (jmp_buf * e, PLINE * afst, POLYAREA ** contours,
                               PLINE ** holes, int action, BOOLp maybe)
 {
-  POLYAREA *parent = NULL; /* Quiet GCC warning */
   PLINE **cur, **next;
 
 //  printf ("M_POLYAREA_Collect_separated %p, %p, %p, %i, %i\n", afst, contours, holes, action, maybe);
 
   assert (a != NULL);
 
-  /* Take care of the first contour - so we know if we
-   * can shortcut reparenting some of its children
-   */
-  cur = &afst;
-  if (*cur != NULL) {
+  for (cur = &afst; *cur != NULL; cur = next) {
     next = &((*cur)->next);
     /* if we disappear a contour, don't advance twice */
-//    printf ("1: ");
-    if (cntr_Collect (e, cur, contours, holes, action, NULL, NULL, NULL)) {
-      parent = *contours;
-      next = cur;
-    } else {
-      parent = NULL;
-    }
-    cur = next;
-  }
-  for ( ; *cur != NULL; cur = next) {
-    next = &((*cur)->next);
-    /* if we disappear a contour, don't advance twice */
-//    printf ("2: ");
     if (cntr_Collect (e, cur, contours, holes, action, NULL, NULL, NULL))
       next = cur;
   }
@@ -2384,7 +2323,6 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
       M_POLYAREA_Collect_separated (&e, a_isected, res, &holes, action, FALSE);
       M_B_AREA_Collect (&e, b, res, &holes, action);
       poly_Free (&b);
-
 
 #if 0
       /* And speed things up _A LOT_ here by only processing the relevant
