@@ -441,6 +441,9 @@ DrawEverything (BoxTypePtr drawn_area)
 
       if (gui->set_layer (0, group, 0))
 	{
+
+/* POLYGON TESTING */
+#if 0
     static int once = 1;
 
 	  gui->set_color (Output.fgGC, PCB->ElementColor);
@@ -489,7 +492,7 @@ DrawEverything (BoxTypePtr drawn_area)
 
       gui->fill_pcb_polygon (Output.fgGC, &Polygon);
     }
-
+#endif
 	  if (DrawLayerGroup (group, drawn_area) && !gui->gui)
 	    {
 	      int save_swap = SWAP_IDENT;
