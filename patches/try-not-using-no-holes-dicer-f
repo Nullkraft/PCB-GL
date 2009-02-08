@@ -1,7 +1,7 @@
-Bottom: 51f5a04467d5de8d69cf4f4cbecb97a1a955ca14
-Top:    47f07aafa94eb4388ea417a653aba79077ac0d9a
+Bottom: d8543756985c0d0b0065034b1150a772f2df4f77
+Top:    d4a5d86adca92467f93f45d3ac1daa13cd90f648
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-07 20:35:12 +0000
+Date:   2009-02-08 01:58:08 +0000
 
 Try not using no-holes dicer for drawing polygons
 
@@ -12,7 +12,7 @@ Try not using no-holes dicer for drawing polygons
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 1cacc5c..8983654 100644
+index dd4ff4d..f284dce 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -2204,7 +2204,7 @@ DrawPour (LayerTypePtr Layer, PourTypePtr Pour, int unused)

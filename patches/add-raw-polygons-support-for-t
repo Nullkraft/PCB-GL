@@ -1,7 +1,7 @@
-Bottom: 47f07aafa94eb4388ea417a653aba79077ac0d9a
-Top:    2a641a19ca84b9c4951c232f305cce1c2f7da537
+Bottom: d4a5d86adca92467f93f45d3ac1daa13cd90f648
+Top:    90e789f414e7b3d745bd30f16e36efdd63da9b98
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-07 20:35:13 +0000
+Date:   2009-02-08 01:58:08 +0000
 
 Add raw polygons support for the GTK HID, bypassing the no-holes dicer
 
@@ -23,7 +23,7 @@ index 653d294..b3bb007 100644
  
  /* For lrealpath */
 diff --git a/src/draw.c b/src/draw.c
-index 8983654..8cf7eca 100644
+index f284dce..98264d6 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -1764,6 +1764,15 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
@@ -70,7 +70,7 @@ index 8983654..8cf7eca 100644
        /* NB: No "NoHoles" cache for these */
        if (TEST_FLAG (FULLPOLYFLAG, Polygon))
 diff --git a/src/global.h b/src/global.h
-index 8d2bada..2b90d20 100644
+index 27422f3..4499dcd 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -50,6 +50,8 @@
@@ -199,7 +199,7 @@ index 1f15d3f..75d6650 100644
  
  
 diff --git a/src/hid/common/hidinit.c b/src/hid/common/hidinit.c
-index cc916db..4581f47 100644
+index 846cb4f..9581d32 100644
 --- a/src/hid/common/hidinit.c
 +++ b/src/hid/common/hidinit.c
 @@ -21,6 +21,7 @@
@@ -211,7 +211,7 @@ index cc916db..4581f47 100644
  #include "../hidint.h"
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 24b499d..f43bdba 100644
+index abc7ddb..120c1b7 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -13,12 +13,12 @@
@@ -228,7 +228,7 @@ index 24b499d..f43bdba 100644
  #include "mymem.h"
  #include "draw.h"
  #include "clip.h"
-@@ -934,6 +934,14 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
+@@ -936,6 +936,14 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
  }
  
  void
@@ -243,7 +243,7 @@ index 24b499d..f43bdba 100644
  ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
  {
    USE_GC (gc);
-@@ -1452,6 +1460,7 @@ HID ghid_hid = {
+@@ -1454,6 +1462,7 @@ HID ghid_hid = {
    ghid_draw_rect,
    ghid_fill_circle,
    ghid_fill_polygon,
@@ -251,7 +251,7 @@ index 24b499d..f43bdba 100644
    ghid_fill_rect,
  
    ghid_calibrate,
-@@ -1512,6 +1521,7 @@ HID ghid_extents = {
+@@ -1514,6 +1523,7 @@ HID ghid_extents = {
    ghid_extents_draw_rect,
    ghid_extents_fill_circle,
    ghid_extents_fill_polygon,
@@ -260,7 +260,7 @@ index 24b499d..f43bdba 100644
  
    0 /* ghid_calibrate */ ,
 diff --git a/src/hid/gtk/gui-config.c b/src/hid/gtk/gui-config.c
-index b19c34c..77a183c 100644
+index 55ab6e7..1b50d32 100644
 --- a/src/hid/gtk/gui-config.c
 +++ b/src/hid/gtk/gui-config.c
 @@ -34,11 +34,11 @@
@@ -277,7 +277,7 @@ index b19c34c..77a183c 100644
  #include "action.h"
  #include "change.h"
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index c51a0c9..0653506 100644
+index 6b69a15..4c0dca3 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -27,6 +27,7 @@
