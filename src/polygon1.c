@@ -873,8 +873,7 @@ M_POLYAREA_intersect2 (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
     {
       do
 	{
-	  if (a->contours &&
-              a->contours->xmax >= b->contours->xmin &&
+	  if (a->contours->xmax >= b->contours->xmin &&
 	      a->contours->ymax >= b->contours->ymin &&
 	      a->contours->xmin <= b->contours->xmax &&
 	      a->contours->ymin <= b->contours->ymax)
@@ -946,7 +945,6 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
     }
   while (add && (a = a->f) != afst);
 }				/* M_POLYAREA_intersect */
-
 
 static inline int
 cntrbox_inside (PLINE * c1, PLINE * c2)
