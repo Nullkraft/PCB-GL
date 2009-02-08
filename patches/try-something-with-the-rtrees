@@ -1,7 +1,7 @@
-Bottom: 2f929a7d11b155816d8c972685e8ca3f4b8ca8e3
-Top:    8c93e60df596caf9b013f5939b10be8d231ebae8
+Bottom: f81852a9242f31d69d56526d57c74584405b0dd3
+Top:    1c53e9b22121163ca3109c498759a3a1fea9d7a1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-07 20:35:11 +0000
+Date:   2009-02-08 01:58:02 +0000
 
 Try optimising polygon operations by keeping an rtree with their contours
 
@@ -23,7 +23,7 @@ its existance as well.
 ---
 
 diff --git a/src/global.h b/src/global.h
-index 4de19f5..8d2bada 100644
+index 927be03..27422f3 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -40,7 +40,6 @@
@@ -81,7 +81,7 @@ index 42acc1a..ee185a9 100644
  
  BOOLp poly_M_Copy0(POLYAREA ** dst, const POLYAREA * srcfst);
 diff --git a/src/polygon.c b/src/polygon.c
-index 1fcf933..cbdcf0f 100644
+index 8ce0283..9ba5f71 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -130,10 +130,12 @@ add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
@@ -720,7 +720,7 @@ index 1bdb1f9..bf56de4 100644
    /* For each piece of the clipped up polygon, create a new child */
    start_pg = pg;
 diff --git a/src/report.c b/src/report.c
-index 5ad5fe6..7164c2b 100644
+index af1b67d..7c9011b 100644
 --- a/src/report.c
 +++ b/src/report.c
 @@ -315,7 +315,7 @@ ReportDialog (int argc, char **argv, int x, int y)
@@ -733,7 +733,7 @@ index 5ad5fe6..7164c2b 100644
  	  }
  #endif
 diff --git a/src/rtree.c b/src/rtree.c
-index 0f35f0b..7ee316d 100644
+index 3b30a56..f186edc 100644
 --- a/src/rtree.c
 +++ b/src/rtree.c
 @@ -217,7 +217,8 @@ __r_tree_is_good (struct rtree_node *node)

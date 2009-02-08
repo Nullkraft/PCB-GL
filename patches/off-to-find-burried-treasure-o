@@ -1,7 +1,7 @@
-Bottom: 5d37986397a9421701f960ff82ebd99d1ba74608
-Top:    6b5551198889e37650a11e4697aa9397b5a1f100
+Bottom: 42b111e86213e57e778e42a0a3376341e7ab9109
+Top:    135d82583dcafb485a79870588dcb7758be0fc8d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-07 20:35:08 +0000
+Date:   2009-02-08 01:58:00 +0000
 
 Off to find burried treasure on polygon island
 
@@ -26,7 +26,7 @@ Add feature to remove islanded areas
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 60bad13..ccc17b1 100644
+index fe1ee5e..ec35974 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -373,7 +373,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
@@ -48,7 +48,7 @@ index 60bad13..ccc17b1 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index eed1fd4..d93ea7c 100644
+index 669a100..f3a6af5 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -1107,10 +1107,12 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
@@ -125,7 +125,7 @@ index eed1fd4..d93ea7c 100644
    DrawVia (Via, 0);
    Draw ();
 diff --git a/src/draw.c b/src/draw.c
-index 30e515b..8143cea 100644
+index 98d3a30..545c6e9 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -2247,6 +2247,10 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
@@ -140,7 +140,7 @@ index 30e515b..8143cea 100644
      {
        if (TEST_FLAG (SELECTEDFLAG, Polygon))
 diff --git a/src/find.c b/src/find.c
-index 5b89720..1224d7e 100644
+index 92f3bfb..421994b 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -2480,6 +2480,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
@@ -223,7 +223,7 @@ index 5b89720..1224d7e 100644
   * see if the connectivity changes when everything is bloated, or shrunk
   */
 diff --git a/src/find.h b/src/find.h
-index 5133bf7..ee643f7 100644
+index aae9d89..ade7f5e 100644
 --- a/src/find.h
 +++ b/src/find.h
 @@ -65,6 +65,7 @@ void FreeLayoutLookupMemory (void);
@@ -235,7 +235,7 @@ index 5133bf7..ee643f7 100644
  Boolean lineClear (LineTypePtr, Cardinal);
  Boolean IsLineInPolygon (LineTypePtr, PolygonTypePtr);
 diff --git a/src/move.c b/src/move.c
-index 368f609..9b77f14 100644
+index 699a8a3..d853d3f 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -366,12 +366,12 @@ MovePour (LayerTypePtr Layer, PourTypePtr Pour)
@@ -512,7 +512,7 @@ index f04e342..559f20e 100644
  
  #endif /* __POUR_INCLUDED__ */
 diff --git a/src/search.c b/src/search.c
-index 87dbf20..f9bad1d 100644
+index 2820cab..eb4c4e7 100644
 --- a/src/search.c
 +++ b/src/search.c
 @@ -466,7 +466,7 @@ SearchPolygonByLocation (int locked, LayerTypePtr * Layer,

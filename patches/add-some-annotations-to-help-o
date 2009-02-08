@@ -1,7 +1,7 @@
-Bottom: eaea5b199c6afaa3cd6c5ffa737749da10648881
-Top:    9fce390ba4d6fdc021467e1c50aa1535ac5f2f89
+Bottom: 0b8ed5207efe12f81ff0d411afc877c3c9d335a5
+Top:    4b6de3e6db74f5a97510292ddc285ffc8b5fa937
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-07 20:35:10 +0000
+Date:   2009-02-08 01:58:01 +0000
 
 Add some annotations to help optimise branch prediction.
 
@@ -22,7 +22,7 @@ This hasn't had much discernable effect
 ---
 
 diff --git a/src/global.h b/src/global.h
-index 25185a8..4de19f5 100644
+index ed706b7..927be03 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -87,6 +87,38 @@ typedef struct
@@ -123,7 +123,7 @@ index 5727faa..b51440c 100644
    while ((a = a->f) != afst);
  }				/* M_POLYAREA_intersect */
 diff --git a/src/rtree.c b/src/rtree.c
-index 7bf4cdf..0f35f0b 100644
+index 19741e4..3b30a56 100644
 --- a/src/rtree.c
 +++ b/src/rtree.c
 @@ -911,7 +911,7 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
