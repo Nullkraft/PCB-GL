@@ -1,7 +1,7 @@
-Bottom: 77b6802d04a4d47d906fc64db09cd48d75094894
-Top:    ed0c4d5f9b3d5df37f15ca473a4ab9b8212822de
+Bottom: 6a8cb4718bad2af7b9c700a10e1fbfe93874002f
+Top:    588f402c9eba114f84eb2e3573557660a2e3727d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-06 17:34:48 +0000
+Date:   2009-02-08 02:00:02 +0000
 
 Silly space navigator interface to allow funky views
 
@@ -12,7 +12,7 @@ Silly space navigator interface to allow funky views
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index ec1cb64..2c37429 100644
+index 129184a..06dd1a4 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -251,7 +251,9 @@ LIBGTK_SRCS = \
@@ -27,7 +27,7 @@ index ec1cb64..2c37429 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 1a75afe..849741e 100644
+index eb16f8e..ea37442 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -43,6 +43,7 @@
@@ -38,7 +38,7 @@ index 1a75afe..849741e 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -1196,6 +1197,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -1187,6 +1188,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        /* Make sure drawing area has keyboard focus when we are in it.
         */
        gtk_widget_grab_focus (out->drawing_area);
@@ -47,7 +47,7 @@ index 1a75afe..849741e 100644
      }
    ghidgui->in_popup = FALSE;
  
-@@ -1303,6 +1306,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -1294,6 +1297,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
  	    }
  	  g_idle_add (ghid_pan_idle_cb, NULL);
  	}
@@ -56,7 +56,7 @@ index 1a75afe..849741e 100644
      }
  
    if(cursor_in_viewport)
-@@ -1358,3 +1363,27 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+@@ -1349,3 +1354,27 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  
    return TRUE;
  }
@@ -85,7 +85,7 @@ index 1a75afe..849741e 100644
 +}
 +
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index e9bb4b9..7238376 100644
+index 53a3991..176dabc 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -121,6 +121,7 @@ a zoom in/out.
@@ -110,10 +110,10 @@ index e9bb4b9..7238376 100644
  
    gtk_main ();
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index c51a0c9..1a7e0a5 100644
+index 4c0dca3..771056b 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -193,6 +193,8 @@ typedef struct
+@@ -194,6 +194,8 @@ typedef struct
      library_window_width,
      library_window_height,
      netlist_window_height, history_size, settings_mode, auto_pan_speed;
@@ -122,7 +122,7 @@ index c51a0c9..1a7e0a5 100644
  }
  GhidGui;
  
-@@ -367,6 +369,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -368,6 +370,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
  

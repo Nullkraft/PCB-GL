@@ -1,7 +1,7 @@
-Bottom: 26f82a7df068debc0a294c65c2a161a8f0af560f
-Top:    2e0e1edb174b3a0dfc65a32c35eda97836fd0e6b
+Bottom: ff9fdf348f1f3aa4f642b83cf5d772cd79d7130e
+Top:    ea5ab12a38aa19070affaa13d22a130dfb9ebf86
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-06 17:34:48 +0000
+Date:   2009-02-08 02:00:00 +0000
 
 Add strip hierarchy options to display refdes without any "..../" prefix
 
@@ -16,7 +16,7 @@ Add strip hierarchy options to display refdes without any "..../" prefix
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 8ec66c3..0cfaaab 100644
+index ef22998..088462b 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -3304,9 +3304,16 @@ ActionRenumber (int argc, char **argv, int x, int y)
@@ -128,7 +128,7 @@ index 8ec66c3..0cfaaab 100644
     undo_help, undo_syntax}
    ,
 diff --git a/src/const.h b/src/const.h
-index bfb0ede..a8d53ff 100644
+index cc94f8c..63ea20d 100644
 --- a/src/const.h
 +++ b/src/const.h
 @@ -170,6 +170,8 @@ Marker used internally to avoid revisiting an object.
@@ -149,10 +149,10 @@ index bfb0ede..a8d53ff 100644
   * PCB flags
   */
 diff --git a/src/draw.c b/src/draw.c
-index 1cacc5c..85e97bf 100644
+index 98264d6..b9fa61b 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2341,6 +2341,33 @@ DrawElement (ElementTypePtr Element, int unused)
+@@ -2364,6 +2364,33 @@ DrawElement (ElementTypePtr Element, int unused)
    DrawElementPinsAndPads (Element, unused);
  }
  
@@ -186,7 +186,7 @@ index 1cacc5c..85e97bf 100644
  #define MASK_SUBCOMPOSITE_ELEMENT_NAMES 0
  
  /* ---------------------------------------------------------------------------
-@@ -2359,7 +2386,7 @@ DrawElementName (ElementTypePtr Element, int unused)
+@@ -2382,7 +2409,7 @@ DrawElementName (ElementTypePtr Element, int unused)
    gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
    gui->use_mask (HID_MASK_BEFORE);
  
@@ -195,7 +195,7 @@ index 1cacc5c..85e97bf 100644
  #endif
  
    if (doing_pinout || doing_assy)
-@@ -2376,7 +2403,7 @@ DrawElementName (ElementTypePtr Element, int unused)
+@@ -2399,7 +2426,7 @@ DrawElementName (ElementTypePtr Element, int unused)
    gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
    gui->use_mask (HID_MASK_OFF);
  #else
@@ -204,7 +204,7 @@ index 1cacc5c..85e97bf 100644
  #endif
  }
  
-@@ -2626,7 +2653,7 @@ EraseElement (ElementTypePtr Element)
+@@ -2649,7 +2676,7 @@ EraseElement (ElementTypePtr Element)
    }
    END_LOOP;
    if (!TEST_FLAG (HIDENAMEFLAG, Element))
@@ -213,7 +213,7 @@ index 1cacc5c..85e97bf 100644
    EraseElementPinsAndPads (Element);
    Erasing--;
  }
-@@ -2672,7 +2699,7 @@ EraseElementName (ElementTypePtr Element)
+@@ -2695,7 +2722,7 @@ EraseElementName (ElementTypePtr Element)
      return;
    Erasing++;
    gui->set_color (Output.fgGC, Settings.BackgroundColor);
@@ -223,7 +223,7 @@ index 1cacc5c..85e97bf 100644
  }
  
 diff --git a/src/strflags.c b/src/strflags.c
-index e636e4b..9c25c3e 100644
+index a7df424..bdf3e98 100644
 --- a/src/strflags.c
 +++ b/src/strflags.c
 @@ -98,6 +98,7 @@ static FlagBitsType object_flagbits[] = {

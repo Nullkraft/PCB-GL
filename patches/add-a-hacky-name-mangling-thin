@@ -1,7 +1,7 @@
-Bottom: 0cc6967b6f5fcdae5a661adfa30f6ef56c41029c
-Top:    f86d6fc0f162245017dc93e493fa855ad21e7772
+Bottom: 73b2fffee20a59445af849ff438fea213d263b25
+Top:    fce7b74bcffff1c9ec4c8ba149b55e38b727a0b2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-06 17:34:48 +0000
+Date:   2009-02-08 02:00:01 +0000
 
 Add a hacky name-mangling thingy for loading boards
 
@@ -18,7 +18,7 @@ Add a hacky name-mangling thingy for loading boards
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 8a70ed0..e6c1e88 100644
+index 0c288a9..b2120c5 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -37,6 +37,7 @@
@@ -117,7 +117,7 @@ index 8a70ed0..e6c1e88 100644
      Element = GetElementMemory (Data);
  
 diff --git a/src/create.h b/src/create.h
-index a447845..1ab4085 100644
+index 4c9fae6..644b53e 100644
 --- a/src/create.h
 +++ b/src/create.h
 @@ -63,6 +63,7 @@ PolygonTypePtr CreateNewPolygonInPour (PourType *pour, FlagType);
@@ -129,7 +129,7 @@ index a447845..1ab4085 100644
  				 FontTypePtr, FlagType, char *, char *,
  				 char *, LocationType, LocationType, BYTE,
 diff --git a/src/file.c b/src/file.c
-index fb75652..eb5d3d9 100644
+index 35bfb57..35f00c6 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -353,6 +353,9 @@ LoadPCB (char *Filename)
