@@ -1,7 +1,7 @@
-Bottom: a98daec2e3b0aa5704c8910ad6990d89362163d5
+Bottom: 1d39b3caafa4233ba87a5561349b060bbc4d5916
 Top:    e66a8eea58ebf00b98d59569114e01ad5e761db2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-08 21:17:21 +0000
+Date:   2009-02-08 21:22:27 +0000
 
 More work on trying to speed up polygon algebra
 
@@ -744,15 +744,3 @@ index 74e2d02..c659b3d 100644
        M_POLYAREA_Collect (&e, a, aminusb, &holes, PBO_SUB, FALSE);
        InsertHoles (&e, *aminusb, &holes);
        poly_Free (&a);
-diff --git a/src/thermal.c b/src/thermal.c
-index 445b97d..fa87f28 100644
---- a/src/thermal.c
-+++ b/src/thermal.c
-@@ -432,6 +432,7 @@ ThermPoly (PCBTypePtr p, PinTypePtr pin, Cardinal laynum)
-         arc = CirclePoly (pin->X, pin->Y, pin->Thickness / 2);
-         /* create a thin ring */
-         poly_Boolean_free (pa, arc, &m, PBO_SUB);
-+#warning THIS WOULD BE FASTER IF WE JUST SUTRACTED A CROSS SHAPE
-         /* fix me needs error checking */
-         if (style == 2)
-           {
