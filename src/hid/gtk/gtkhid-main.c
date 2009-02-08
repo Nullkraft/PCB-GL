@@ -47,7 +47,7 @@
 
 #define PIXELS_PER_CIRCLINE 5.
 
-RCSID ("$Id: gtkhid-main.c,v 1.59 2008-12-27 19:06:04 djdelorie Exp $");
+RCSID ("$Id$");
 
 
 extern HID ghid_hid;
