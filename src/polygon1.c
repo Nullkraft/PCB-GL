@@ -2024,6 +2024,11 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
           /* Link into the list of holes */
           curc->next = *holes;
           *holes = curc;
+          if (curc->Flags.orient == PLF_DIR && !is_first)
+            printf ("A:Hmm, got PLF_DIR orientation for a non-first contour\n");
+
+          if (curc->Flags.orient != PLF_DIR && is_first)
+            printf ("A:Hmm, got first contour without PLF_DIR orientation\n");
 //          printf ("Separating a hole (belonging to a moved contour)\n");
         } else {
           assert (0);
@@ -2040,6 +2045,13 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
            candidate for having its "next" pointer adjusted.
            Saves walking the contour list when we delete one. */
         prev = curc;
+
+        if (curc->Flags.orient == PLF_DIR && !is_first)
+          printf ("B:Hmm, got PLF_DIR orientation for a non-first contour\n");
+
+        if (curc->Flags.orient != PLF_DIR && is_first)
+          printf ("B:Hmm, got first contour without PLF_DIR orientation\n");
+
       }
 
       /* If we move or delete an outer contour, we need to move any holes
