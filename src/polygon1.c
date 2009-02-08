@@ -1432,7 +1432,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
   if (*src == NULL)
     return;			/* empty hole list */
   if (dest == NULL) {
-    printf ("dest is null un InsertHoles\n");
+    printf ("dest is null in InsertHoles\n");
     error (err_bad_parm);	/* empty contour list */
   }
 
@@ -2025,12 +2025,12 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
 {
   POLYAREA **a = pieces;
   PLINE **cur, **next, *prev;
-  int del_contour = 0;
+  int del_contour;
 
 //  printf ("M_POLYAREA_update_primary %p, %p, %i\n", pieces, holes, action);
 
   if (*a == NULL) {
-//    printf ("M_POLYAREA_update_primary: No polygon pieces to play with\n");
+    printf ("M_POLYAREA_update_primary: No polygon pieces to play with\n");
     return;
   }
 
@@ -2040,6 +2040,8 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
     prev = NULL;
     for (cur = &(*a)->contours; *cur != NULL; cur = next) {
       next = &((*cur)->next);
+
+      del_contour = 0;
 
       switch (action) {
         case PBO_ISECT:
@@ -2351,6 +2353,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
       M_POLYAREA_label (b, a, FALSE);
 
       *res = a;
+      /* ACTUALLY, MIGHT WANT TO DO THIS DURING M_POLYAREA_update_primary */
       M_POLYAREA_separate_isected (res, &a_isected);
 
       M_POLYAREA_update_primary (&e, res, &holes, action);
