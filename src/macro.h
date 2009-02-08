@@ -405,6 +405,13 @@ extern int mem_any_set (unsigned char *, int);
 	{						\
 		point = &(polygon)->Points[n]
 
+#define	POLYGONPIECE_LOOP(polygon) do	{	\
+	Cardinal			n;		\
+	PolygonPieceTypePtr	piece;				\
+	for (n = (polygon)->PieceN-1; n != -1; n--)	\
+	{						\
+		piece = &(polygon)->Piece[n]
+
 #define ENDALL_LOOP }} while (0);  }} while (0)
 
 #define	ALLPIN_LOOP(top)	\

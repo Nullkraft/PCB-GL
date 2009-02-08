@@ -122,6 +122,7 @@ static double circleVerticies[] = {
   0.98480775301221, 0.17364817766693,
 };
 
+#if 0
 static void
 add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
 {
@@ -151,10 +152,13 @@ add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
 
   poly->NoHoles = new_area;
 }
+#endif
 
 void
 ComputeNoHoles (PolygonType *poly)
 {
+  printf ("Not implemented\n");
+#if 0
   if (poly->NoHoles)
     poly_Free (&poly->NoHoles);
   poly->NoHoles = NULL;
@@ -162,53 +166,8 @@ ComputeNoHoles (PolygonType *poly)
     NoHolesPolygonDicer (poly, add_noholes_polyarea, poly, NULL);
   else
     printf ("Compute_noholes caught poly->Clipped = NULL\n");
-  poly->NoHolesValid = 1;
-}
-
-static POLYAREA *
-biggest_fubar (POLYAREA * p)
-{
-  POLYAREA *n, *top = NULL;
-  PLINE *pl;
-  double big = -1;
-  if (!p)
-    return NULL;
-  n = p;
-  do
-    {
-#if 0
-      if (n->contours->area < PCB->IsleArea)
-        {
-          n->b->f = n->f;
-          n->f->b = n->b;
-          poly_DelContour (&n->contours);
-          if (n == p)
-            p = n->f;
-          n = n->f;
-          if (!n->contours)
-            {
-              free (n);
-              return NULL;
-            }
-        }
 #endif
-      if (n->contours->area > big)
-        {
-          top = n;
-          big = n->contours->area;
-        }
-    }
-  while ((n = n->f) != p);
-  assert (top);
-  if (top == p)
-    return p;
-  pl = top->contours;
-  top->contours = p->contours;
-  p->contours = pl;
-  assert (pl);
-  assert (p->f);
-  assert (p->b);
-  return p;
+  poly->NoHolesValid = 1;
 }
 
 POLYAREA *
@@ -1555,6 +1514,19 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
 }
 
 Boolean
+isects_piece (POLYAREA * a, PolygonPieceTypePtr p, Boolean fr)
+{
+  POLYAREA *x;
+  Boolean ans;
+  ans = Touching (a, p->Clipped);
+  /* argument may be register, so we must copy it */
+  x = a;
+  if (fr)
+    poly_Free (&x);
+  return ans;
+}
+
+Boolean
 isects (POLYAREA * a, PolygonTypePtr p, Boolean fr)
 {
   POLYAREA *x;
@@ -1587,12 +1559,12 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
 
 
 Boolean
-IsPointInPolygonIgnoreHoles (LocationType X, LocationType Y, PolygonTypePtr p)
+IsPointInPolygonIgnoreHoles (LocationType X, LocationType Y, PolygonPieceTypePtr p)
 {
   Vector v;
   v[0] = X;
   v[1] = Y;
-  return poly_InsideContour (p->Clipped->contours, v);
+  return poly_InsideContour (p->contours, v);
 }
 
 Boolean
@@ -1683,6 +1655,8 @@ void
 NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
                      void *user_data, const BoxType * clip)
 {
+  printf ("Not implemented\n");
+#if 0
   POLYAREA *save, *ans;
 
   /* Copy all of the original polgon */
@@ -1715,12 +1689,16 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
       free (prev);
     }
   while (save != ans);
+#endif
 }
 
 /* make a polygon split into multiple parts into multiple polygons */
 Boolean
 MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
 {
+  printf ("Not implemented\n");
+  return 0;
+#if 0
   POLYAREA *p, *start;
   Boolean many = False;
   FlagType flags;
@@ -1784,6 +1762,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
   inhibit = False;
   IncrementUndoSerialNumber ();
   return many;
+#endif
 }
 
 void debug_pline (PLINE *pl)
