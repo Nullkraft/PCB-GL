@@ -1,0 +1,1647 @@
+Bottom: 922b7c204e44bdc44decb68c1a65d2fe2acb06a1
+Top:    5ca5c0ce675f3657da82abe7f06e68f60e4d1f2c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-08 02:15:34 +0000
+
+Refresh of make-pieces-of-a-clipped-polyg
+
+---
+
+diff --git a/src/const.h b/src/const.h
+index 2f97d4e..e4825eb 100644
+--- a/src/const.h
++++ b/src/const.h
+@@ -309,6 +309,7 @@ When set, element names are not drawn.
+ #define ELEMENTARC_TYPE		0x08000
+ 
+ #define LOCKED_TYPE 		0x10000	/* used to tell search to include locked items. */
++#define	POLYGONPIECE_TYPE		0x20000
+ 
+ #define PIN_TYPES     (VIA_TYPE | PIN_TYPE)
+ #define LOCK_TYPES    (VIA_TYPE | LINE_TYPE | ARC_TYPE | POLYGON_TYPE | ELEMENT_TYPE \
+diff --git a/src/create.c b/src/create.c
+index fda2613..90684b5 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -603,7 +603,10 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
+   /* copy values */
+   polygon->Flags = Flags;
+   polygon->ID = ID++;
+-  polygon->Clipped = NULL;
++  polygon->Piece = NULL;
++  polygon->PieceN = 0;
++  polygon->PieceMax = 0;
++//  polygon->Clipped = NULL;
+   polygon->NoHoles = NULL;
+   polygon->NoHolesValid = 0;
+   return (polygon);
+diff --git a/src/draw.c b/src/draw.c
+index af60ddd..424cb12 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -100,7 +100,7 @@ static void DrawPadLowLevel (hidGC, PadTypePtr, Boolean, Boolean);
+ static void DrawPadNameLowLevel (PadTypePtr);
+ static void DrawLineLowLevel (LineTypePtr, Boolean);
+ static void DrawRegularText (LayerTypePtr, TextTypePtr, int);
+-static void DrawPolygonLowLevel (PolygonTypePtr, void *);
++static void DrawPolygonPieceLowlevel (PolygonPieceTypePtr, void *);
+ static void DrawArcLowLevel (ArcTypePtr);
+ static void DrawElementPackageLowLevel (ElementTypePtr Element, int);
+ static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
+@@ -1727,49 +1727,44 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
+  * lowlevel drawing routine for polygons
+  */
+ static void
+-DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
++DrawPolygonPieceLowlevel (PolygonPieceTypePtr piece, void *data)
+ {
+   int *x, *y, n, i;
+-  POLYAREA *pg;
+   PLINE *pl;
+   VNODE *v;
+-  if (!Polygon->Clipped)
+-    return;
++
+   if (Gathering)
+     {
+-      AddPart (Polygon);
++      AddPart (piece);
+       return;
+     }
+-  pg = Polygon->Clipped;
+-  do
++
++  i = 0;
++  pl = piece->contours;
++  n = pl->Count;
++  x = (int *) malloc (n * sizeof (int));
++  y = (int *) malloc (n * sizeof (int));
++  for (v = &pl->head; i < n; v = v->next)
++    {
++      x[i] = v->point[0];
++      y[i++] = v->point[1];
++    }
++  if (TEST_FLAG (THINDRAWFLAG, PCB) ||
++      TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
++      TEST_FLAG (CLEARLINEFLAG, piece))
+     {
+-      i = 0;
+-      pl = pg->contours;
+-      n = pl->Count;
+-      x = (int *) malloc (n * sizeof (int));
+-      y = (int *) malloc (n * sizeof (int));
+-      for (v = &pl->head; i < n; v = v->next)
++      gui->set_line_width (Output.fgGC, 1);
++      for (i = 0; i < n - 1; i++)
+         {
+-          x[i] = v->point[0];
+-          y[i++] = v->point[1];
++          gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
++          //  gui->fill_circle (Output.fgGC, x[i], y[i], 30);
+         }
+-      if (TEST_FLAG (THINDRAWFLAG, PCB) ||
+-          TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+-        {
+-          gui->set_line_width (Output.fgGC, 1);
+-          for (i = 0; i < n - 1; i++)
+-            {
+-              gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
+-              //  gui->fill_circle (Output.fgGC, x[i], y[i], 30);
+-            }
+-          gui->draw_line (Output.fgGC, x[n - 1], y[n - 1], x[0], y[0]);
+-        }
+-      else
+-        gui->fill_polygon (Output.fgGC, n, x, y);
+-      free (x);
+-      free (y);
++      gui->draw_line (Output.fgGC, x[n - 1], y[n - 1], x[0], y[0]);
+     }
+-  while ((pg = pg->f) != Polygon->Clipped);
++  else
++    gui->fill_polygon (Output.fgGC, n, x, y);
++  free (x);
++  free (y);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -2113,7 +2108,9 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+   else
+     gui->set_color (Output.fgGC, Layer->Color);
+   layernum = GetLayerNumber (PCB->Data, Layer);
+-  DrawPolygonLowLevel (Polygon, NULL);
++  printf ("Hello word, I'm DrawPolygon\n");
++  DrawPlainPolygon (Layer, Polygon);
++//  DrawPolygonLowLevel (Polygon, NULL);
+   if (TEST_FLAG (CLEARPOLYFLAG, Polygon))
+     {
+       r_search (PCB->Data->pin_tree, &Polygon->BoundingBox, NULL,
+@@ -2123,6 +2120,35 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+     }
+ }
+ 
++/* ---------------------------------------------------------------------------
++ * draws a polygon piece on a layer
++ */
++void
++DrawPolygonPiece (LayerTypePtr Layer, PolygonPieceTypePtr Piece, int unused)
++{
++  int layernum;
++
++  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Piece))
++    {
++      if (TEST_FLAG (SELECTEDFLAG, Piece))
++	gui->set_color (Output.fgGC, Layer->SelectedColor);
++      else
++	gui->set_color (Output.fgGC, PCB->ConnectedColor);
++    }
++  else
++    gui->set_color (Output.fgGC, Layer->Color);
++  layernum = GetLayerNumber (PCB->Data, Layer);
++  printf ("Hello word, I'm DrawPolygonPiece\n");
++  DrawPolygonPieceLowlevel (Piece, NULL);
++  if (TEST_FLAG (CLEARPOLYFLAG, Piece))
++    {
++      r_search (PCB->Data->pin_tree, &Piece->BoundingBox, NULL,
++		cp_callback, (void *) PIN_TYPE);
++      r_search (PCB->Data->via_tree, &Piece->BoundingBox, NULL,
++		cp_callback, (void *) VIA_TYPE);
++    }
++}
++
+ int
+ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
+ {
+@@ -2170,12 +2196,22 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+   if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+       && !gui->poly_dicer)
+     {
+-      DrawPolygonLowLevel (Polygon, NULL);
++      POLYGONPIECE_LOOP (Polygon);
++      {
++        DrawPolygonPieceLowlevel (piece, NULL);
++      }
++      END_LOOP;
+       if (!Gathering)
+ 	PolygonHoles (clip_box, Layer, Polygon, thin_callback);
+     }
+-  else if (Polygon->Clipped)
++  else if (Polygon->PieceN > 0)
+     {
++      POLYGONPIECE_LOOP (Polygon);
++      {
++        DrawPolygonPieceLowlevel (piece, NULL);
++      }
++      END_LOOP;
++#if 0
+       if (!Polygon->NoHolesValid)
+         {
+           ComputeNoHoles (Polygon);
+@@ -2186,6 +2222,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+           poly.Clipped = Polygon->NoHoles;
+           DrawPolygonLowLevel (&poly, NULL);
+         }
++#endif
++#if 0
+       /* draw other parts of the polygon if fullpoly flag is set */
+       /* NB: No "NoHoles" cache for these */
+       if (TEST_FLAG (FULLPOLYFLAG, Polygon))
+@@ -2198,6 +2236,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+ 	      NoHolesPolygonDicer (&poly, DrawPolygonLowLevel, NULL, clip_box);
+ 	    }
+ 	}
++#endif
+     }
+   /* if the gui has the dicer flag set then it won't draw missing poly outlines */
+ #if 0
+@@ -2493,7 +2532,8 @@ ErasePolygon (PolygonTypePtr Polygon)
+ {
+   Erasing++;
+   gui->set_color (Output.fgGC, Settings.BackgroundColor);
+-  DrawPolygonLowLevel (Polygon, NULL);
++  printf ("Hello world, this is ErasePolygon\n");
++  //DrawPolygonLowLevel (Polygon, NULL);
+   Erasing--;
+ }
+ 
+diff --git a/src/draw.h b/src/draw.h
+index 47c4c7f..7909dbc 100644
+--- a/src/draw.h
++++ b/src/draw.h
+@@ -51,6 +51,7 @@ void DrawArc (LayerTypePtr, ArcTypePtr, int);
+ void DrawText (LayerTypePtr, TextTypePtr, int);
+ void DrawTextLowLevel (TextTypePtr, int);
+ void DrawPolygon (LayerTypePtr, PolygonTypePtr, int);
++void DrawPolygonPiece (LayerTypePtr, PolygonPieceTypePtr, int);
+ void DrawElement (ElementTypePtr, int);
+ void DrawElementName (ElementTypePtr, int);
+ void DrawElementPackage (ElementTypePtr, int);
+diff --git a/src/find.c b/src/find.c
+index 2e31b72..ce00eb3 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -137,8 +137,13 @@ RCSID ("$Id$");
+ #define RATLIST_ENTRY(I)	\
+ 	(((RatTypePtr *)RatList.Data)[(I)])
+ 
++#if 0
+ #define	POLYGONLIST_ENTRY(L,I)	\
+ 	(((PolygonTypePtr *)PolygonList[(L)].Data)[(I)])
++#endif
++
++#define	POLYGONPIECELIST_ENTRY(L,I)	\
++	(((PolygonPieceTypePtr *)PolygonPieceList[(L)].Data)[(I)])
+ 
+ #define	PVLIST_ENTRY(I)	\
+ 	(((PinTypePtr *)PVList.Data)[(I)])
+@@ -230,7 +235,9 @@ static Boolean IsBad = False;
+ static Cardinal drcerr_count;   /* count of drc errors */
+ static Cardinal TotalP, TotalV, NumberOfPads[2];
+ static ListType LineList[MAX_LAYER],    /* list of objects to */
+-  PolygonList[MAX_LAYER], ArcList[MAX_LAYER], PadList[2], RatList, PVList;
++  ArcList[MAX_LAYER], PadList[2], RatList, PVList;
++// static ListType PolygonList[MAX_LAYER];
++static ListType PolygonPieceList[MAX_LAYER];
+ 
+ /* ---------------------------------------------------------------------------
+  * some local prototypes
+@@ -241,7 +248,8 @@ static Boolean LookupPVConnectionsToLOList (Boolean);
+ static Boolean LookupPVConnectionsToPVList (void);
+ static Boolean LookupLOConnectionsToLine (LineTypePtr, Cardinal, Boolean);
+ static Boolean LookupLOConnectionsToPad (PadTypePtr, Cardinal);
+-static Boolean LookupLOConnectionsToPolygon (PolygonTypePtr, Cardinal);
++//static Boolean LookupLOConnectionsToPolygon (PolygonTypePtr, Cardinal);
++static Boolean LookupLOConnectionsToPolygonPiece (PolygonPieceTypePtr, Cardinal);
+ static Boolean LookupLOConnectionsToArc (ArcTypePtr, Cardinal);
+ static Boolean LookupLOConnectionsToRatEnd (PointTypePtr, Cardinal);
+ static Boolean IsRatPointOnLine (PointTypePtr, LineTypePtr);
+@@ -375,6 +383,7 @@ ADD_RAT_TO_LIST (RatTypePtr Ptr)
+   return False;
+ }
+ 
++#if 0
+ static Boolean
+ ADD_POLYGON_TO_LIST (Cardinal L, PolygonTypePtr Ptr)
+ {
+@@ -392,6 +401,25 @@ ADD_POLYGON_TO_LIST (Cardinal L, PolygonTypePtr Ptr)
+     return (SetThing (POLYGON_TYPE, LAYER_PTR (L), (Ptr), (Ptr)));
+   return False;
+ }
++#endif
++
++static Boolean
++ADD_POLYGONPIECE_TO_LIST (Cardinal L, PolygonPieceTypePtr Ptr)
++{
++  if (User)
++    AddObjectToFlagUndoList (POLYGONPIECE_TYPE, LAYER_PTR (L), (Ptr), (Ptr));
++  SET_FLAG (TheFlag, (Ptr));
++  POLYGONPIECELIST_ENTRY ((L), PolygonPieceList[(L)].Number) = (Ptr);
++  PolygonPieceList[(L)].Number++;
++#ifdef DEBUG
++  if (PolygonPieceList[(L)].Number > PolygonPieceList[(L)].Size)
++    printf ("ADD_POLYGONPIECE_TO_LIST overflow! lay=%d, num=%d size=%d\n", L,
++            PolygonPieceList[(L)].Number, PolygonPieceList[(L)].Size);
++#endif
++  if (drc && !TEST_FLAG (SELECTEDFLAG, (Ptr)))
++    return (SetThing (POLYGONPIECE_TYPE, LAYER_PTR (L), (Ptr), (Ptr)));
++  return False;
++}
+ 
+ Boolean
+ PinLineIntersect (PinTypePtr PV, LineTypePtr Line)
+@@ -483,7 +511,8 @@ FreeLayoutLookupMemory (void)
+     {
+       MYFREE (LineList[i].Data);
+       MYFREE (ArcList[i].Data);
+-      MYFREE (PolygonList[i].Data);
++      MYFREE (PolygonPieceList[i].Data);
++//      MYFREE (PolygonList[i].Data);
+     }
+   MYFREE (PVList.Data);
+   MYFREE (RatList.Data);
+@@ -562,15 +591,27 @@ InitLayoutLookup (void)
+           ArcList[i].Size = layer->ArcN;
+         }
+ 
+-
++#if 0
+       /* allocate memory for polygon list */
+       if (layer->PolygonN)
+         {
++#warning ERROR
+           PolygonList[i].Data = (void **) MyCalloc (layer->PolygonN,
+                                                     sizeof (PolygonTypePtr),
+                                                     "InitLayoutLookup()");
+           PolygonList[i].Size = layer->PolygonN;
+         }
++#endif
++
++      /* allocate memory for polygon list */
++      if (layer->PolygonN)
++        {
++#warning ERROR
++          PolygonPieceList[i].Data = (void **) MyCalloc (layer->PolygonN,
++                                                    sizeof (PolygonPieceTypePtr),
++                                                    "InitLayoutLookup()");
++          PolygonPieceList[i].Size = layer->PolygonN;
++        }
+ 
+       /* clear some struct members */
+       LineList[i].Location = 0;
+@@ -579,9 +620,14 @@ InitLayoutLookup (void)
+       ArcList[i].Location = 0;
+       ArcList[i].DrawLocation = 0;
+       ArcList[i].Number = 0;
++#if 0
+       PolygonList[i].Location = 0;
+       PolygonList[i].DrawLocation = 0;
+       PolygonList[i].Number = 0;
++#endif
++      PolygonPieceList[i].Location = 0;
++      PolygonPieceList[i].DrawLocation = 0;
++      PolygonPieceList[i].Number = 0;
+     }
+ 
+   if (PCB->Data->pin_tree)
+@@ -667,10 +713,11 @@ LOCtoPVrat_callback (const BoxType * b, void *cl)
+     longjmp (i->env, 1);
+   return 0;
+ }
++
+ static int
+-LOCtoPVpoly_callback (const BoxType * b, void *cl)
++LOCtoPVpolypiece_callback (const BoxType * b, void *cl)
+ {
+-  PolygonTypePtr polygon = (PolygonTypePtr) b;
++  PolygonPieceTypePtr piece = (PolygonPieceTypePtr) b;
+   struct pv_info *i = (struct pv_info *) cl;
+ 
+   /* if the pin doesn't have a therm and polygon is clearing
+@@ -679,10 +726,9 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
+    * because it might not be inside the polygon, or it could
+    * be on an edge such that it doesn't actually touch.
+    */
+-  if (!TEST_FLAG (TheFlag, polygon) && (TEST_THERM (i->layer, &i->pv)
+-                                        || !TEST_FLAG (CLEARPOLYFLAG,
+-                                                       polygon)
+-                                        || !i->pv.Clearance))
++  if (!TEST_FLAG (TheFlag, piece) && (TEST_THERM (i->layer, &i->pv) ||
++                                      !TEST_FLAG (CLEARPOLYFLAG, piece) ||
++                                      !i->pv.Clearance))
+     {
+       float wide = 0.5 * i->pv.Thickness + fBloat;
+       wide = MAX (wide, 0);
+@@ -692,25 +738,38 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
+           LocationType x2 = i->pv.X + (i->pv.Thickness + 1 + Bloat) / 2;
+           LocationType y1 = i->pv.Y - (i->pv.Thickness + 1 + Bloat) / 2;
+           LocationType y2 = i->pv.Y + (i->pv.Thickness + 1 + Bloat) / 2;
+-          if (IsRectangleInPolygon (x1, y1, x2, y2, polygon)
+-              && ADD_POLYGON_TO_LIST (i->layer, polygon))
++          if (IsRectangleInPolygonPiece (x1, y1, x2, y2, piece)
++              && ADD_POLYGONPIECE_TO_LIST (i->layer, piece))
+             longjmp (i->env, 1);
+         }
+       else if (TEST_FLAG (OCTAGONFLAG, &i->pv))
+         {
+           POLYAREA *oct = OctagonPoly (i->pv.X, i->pv.Y, i->pv.Thickness / 2);
+-          if (isects (oct, polygon, True)
+-              && ADD_POLYGON_TO_LIST (i->layer, polygon))
++          if (isects_piece (oct, piece, True)
++              && ADD_POLYGONPIECE_TO_LIST (i->layer, piece))
+             longjmp (i->env, 1);
+         }
+-      else if (IsPointInPolygon (i->pv.X, i->pv.Y, wide,
+-                                 polygon)
+-               && ADD_POLYGON_TO_LIST (i->layer, polygon))
++      else if (IsPointInPolygonPiece (i->pv.X, i->pv.Y, wide, piece) &&
++               ADD_POLYGONPIECE_TO_LIST (i->layer, piece))
+         longjmp (i->env, 1);
+     }
+   return 0;
+ }
+ 
++static int
++LOCtoPVpoly_callback (const BoxType * b, void *cl)
++{
++  PolygonTypePtr polygon = (PolygonTypePtr) b;
++
++  POLYGONPIECE_LOOP (polygon);
++  {
++    LOCtoPVpolypiece_callback ((BoxType *)piece, cl);
++  }
++  END_LOOP;
++
++  return 0;
++}
++
+ /* ---------------------------------------------------------------------------
+  * checks if a PV is connected to LOs, if it is, the LO is added to
+  * the appropriate list and the 'used' flag is set
+@@ -781,7 +840,9 @@ LookupLOConnectionsToLOList (Boolean AndRats)
+   Boolean done;
+   Cardinal i, group, layer, ratposition,
+     lineposition[MAX_LAYER],
+-    polyposition[MAX_LAYER], arcposition[MAX_LAYER], padposition[2];
++    arcposition[MAX_LAYER], padposition[2];
++//  Cardinal polyposition[MAX_LAYER];
++  Cardinal polypieceposition[MAX_LAYER];
+ 
+   /* copy the current LO list positions; the original data is changed
+    * by 'LookupPVConnectionsToLOList()' which has to check the same
+@@ -790,7 +851,8 @@ LookupLOConnectionsToLOList (Boolean AndRats)
+   for (i = 0; i < max_layer; i++)
+     {
+       lineposition[i] = LineList[i].Location;
+-      polyposition[i] = PolygonList[i].Location;
++//      polyposition[i] = PolygonList[i].Location;
++      polypieceposition[i] = PolygonPieceList[i].Location;
+       arcposition[i] = ArcList[i].Location;
+     }
+   for (i = 0; i < 2; i++)
+@@ -846,13 +908,20 @@ LookupLOConnectionsToLOList (Boolean AndRats)
+                     if (LookupLOConnectionsToArc
+                         (ARCLIST_ENTRY (layer, *position), group))
+                       return (True);
+-
++#if 0
+                   /* try all new polygons */
+                   position = &polyposition[layer];
+                   for (; *position < PolygonList[layer].Number; (*position)++)
+                     if (LookupLOConnectionsToPolygon
+                         (POLYGONLIST_ENTRY (layer, *position), group))
+                       return (True);
++#endif
++                  /* try all new polygon pieces */
++                  position = &polypieceposition[layer];
++                  for (; *position < PolygonPieceList[layer].Number; (*position)++)
++                    if (LookupLOConnectionsToPolygonPiece
++                        (POLYGONPIECELIST_ENTRY (layer, *position), group))
++                      return (True);
+                 }
+               else
+                 {
+@@ -883,7 +952,8 @@ LookupLOConnectionsToLOList (Boolean AndRats)
+             done = done &&
+               lineposition[layer] >= LineList[layer].Number
+               && arcposition[layer] >= ArcList[layer].Number
+-              && polyposition[layer] >= PolygonList[layer].Number;
++//              && polyposition[layer] >= PolygonList[layer].Number
++              && polypieceposition[layer] >= PolygonPieceList[layer].Number;
+           else
+             done = done
+               && padposition[layer - max_layer] >=
+@@ -956,7 +1026,8 @@ struct lo_info
+   LineType line;
+   PadType pad;
+   ArcType arc;
+-  PolygonType polygon;
++//  PolygonType polygon;
++  PolygonPieceType piece;
+   RatType rat;
+   jmp_buf env;
+ };
+@@ -1022,14 +1093,14 @@ pv_arc_callback (const BoxType * b, void *cl)
+ }
+ 
+ static int
+-pv_poly_callback (const BoxType * b, void *cl)
++pv_polypiece_callback (const BoxType * b, void *cl)
+ {
+   PinTypePtr pv = (PinTypePtr) b;
+   struct lo_info *i = (struct lo_info *) cl;
+ 
+   /* note that holes in polygons are ok */
+   if (!TEST_FLAG (TheFlag, pv) && (TEST_THERM (i->layer, pv) ||
+-                                   !TEST_FLAG (CLEARPOLYFLAG, &i->polygon) ||
++                                   !TEST_FLAG (CLEARPOLYFLAG, &i->piece) ||
+                                    !pv->Clearance))
+     {
+       if (TEST_FLAG (SQUAREFLAG, pv))
+@@ -1039,20 +1110,20 @@ pv_poly_callback (const BoxType * b, void *cl)
+           x2 = pv->X + (pv->Thickness + 1 + Bloat) / 2;
+           y1 = pv->Y - (pv->Thickness + 1 + Bloat) / 2;
+           y2 = pv->Y + (pv->Thickness + 1 + Bloat) / 2;
+-          if (IsRectangleInPolygon (x1, y1, x2, y2, &i->polygon)
++          if (IsRectangleInPolygonPiece (x1, y1, x2, y2, &i->piece)
+               && ADD_PV_TO_LIST (pv))
+             longjmp (i->env, 1);
+         }
+       else if (TEST_FLAG (OCTAGONFLAG, pv))
+         {
+           POLYAREA *oct = OctagonPoly (pv->X, pv->Y, pv->Thickness / 2);
+-          if (isects (oct, &i->polygon, True) && ADD_PV_TO_LIST (pv))
++          if (isects_piece (oct, &i->piece, True) && ADD_PV_TO_LIST (pv))
+             longjmp (i->env, 1);
+         }
+       else
+         {
+-          if (IsPointInPolygon
+-              (pv->X, pv->Y, pv->Thickness * 0.5 + fBloat, &i->polygon)
++          if (IsPointInPolygonPiece
++              (pv->X, pv->Y, pv->Thickness * 0.5 + fBloat, &i->piece)
+               && ADD_PV_TO_LIST (pv))
+             longjmp (i->env, 1);
+         }
+@@ -1090,7 +1161,8 @@ LookupPVConnectionsToLOList (Boolean AndRats)
+         {
+           LineList[layer].Location = LineList[layer].Number;
+           ArcList[layer].Location = ArcList[layer].Number;
+-          PolygonList[layer].Location = PolygonList[layer].Number;
++//          PolygonList[layer].Location = PolygonList[layer].Number;
++          PolygonPieceList[layer].Location = PolygonPieceList[layer].Number;
+           continue;
+         }
+ 
+@@ -1132,22 +1204,22 @@ LookupPVConnectionsToLOList (Boolean AndRats)
+ 
+       /* now all polygons */
+       info.layer = layer;
+-      while (PolygonList[layer].Location < PolygonList[layer].Number)
++      while (PolygonPieceList[layer].Location < PolygonPieceList[layer].Number)
+         {
+-          info.polygon =
+-            *(POLYGONLIST_ENTRY (layer, PolygonList[layer].Location));
+-          EXPAND_BOUNDS (&info.polygon);
++          info.piece =
++            *(POLYGONPIECELIST_ENTRY (layer, PolygonPieceList[layer].Location));
++          EXPAND_BOUNDS (&info.piece);
+           if (setjmp (info.env) == 0)
+-            r_search (PCB->Data->via_tree, (BoxType *) & info.polygon, NULL,
+-                      pv_poly_callback, &info);
++            r_search (PCB->Data->via_tree, (BoxType *) & info.piece, NULL,
++                      pv_polypiece_callback, &info);
+           else
+             return True;
+           if (setjmp (info.env) == 0)
+-            r_search (PCB->Data->pin_tree, (BoxType *) & info.polygon, NULL,
+-                      pv_poly_callback, &info);
++            r_search (PCB->Data->pin_tree, (BoxType *) & info.piece, NULL,
++                      pv_polypiece_callback, &info);
+           else
+             return True;
+-          PolygonList[layer].Location++;
++          PolygonPieceList[layer].Location++;
+         }
+     }
+ 
+@@ -1804,9 +1876,16 @@ LookupLOConnectionsToArc (ArcTypePtr Arc, Cardinal LayerGroup)
+           i = 0;
+           polygon = PCB->Data->Layer[layer].Polygon;
+           for (; i < PCB->Data->Layer[layer].PolygonN; i++, polygon++)
+-            if (!TEST_FLAG (TheFlag, polygon) && IsArcInPolygon (Arc, polygon)
+-                && ADD_POLYGON_TO_LIST (layer, polygon))
+-              return True;
++            {
++              POLYGONPIECE_LOOP (polygon);
++              {
++                if (!TEST_FLAG (TheFlag, piece) &&
++                    IsArcInPolygonPiece (Arc, piece) &&
++                    ADD_POLYGONPIECE_TO_LIST (layer, piece))
++                  return True;
++              }
++              END_LOOP;
++            }
+         }
+       else
+         {
+@@ -1943,10 +2022,16 @@ LookupLOConnectionsToLine (LineTypePtr Line, Cardinal LayerGroup,
+               Cardinal i = 0;
+               polygon = PCB->Data->Layer[layer].Polygon;
+               for (; i < PCB->Data->Layer[layer].PolygonN; i++, polygon++)
+-                if (!TEST_FLAG
+-                    (TheFlag, polygon) && IsLineInPolygon (Line, polygon)
+-                    && ADD_POLYGON_TO_LIST (layer, polygon))
+-                  return True;
++                {
++                  POLYGONPIECE_LOOP (polygon);
++                  {
++                    if (!TEST_FLAG (TheFlag, piece) &&
++                        IsLineInPolygonPiece (Line, piece) &&
++                        ADD_POLYGONPIECE_TO_LIST (layer, piece))
++                      return True;
++                  }
++                  END_LOOP;
++                }
+             }
+         }
+       else
+@@ -2040,9 +2125,15 @@ LOTouchesLine (LineTypePtr Line, Cardinal LayerGroup)
+           i = 0;
+           polygon = PCB->Data->Layer[layer].Polygon;
+           for (; i < PCB->Data->Layer[layer].PolygonN; i++, polygon++)
+-            if (!TEST_FLAG (TheFlag, polygon)
+-                && IsLineInPolygon (Line, polygon))
+-              return (True);
++            {
++              POLYGONPIECE_LOOP (polygon);
++              {
++                if (!TEST_FLAG (TheFlag, piece)
++                    && IsLineInPolygonPiece (Line, piece))
++                  return (True);
++              }
++              END_LOOP;
++            }
+         }
+       else
+         {
+@@ -2081,23 +2172,39 @@ LOCtoRat_callback (const BoxType * b, void *cl)
+     }
+   return 0;
+ }
++
+ static int
+-PolygonToRat_callback (const BoxType * b, void *cl)
++PolygonPieceToRat_callback (const BoxType * b, void *cl)
+ {
+-  PolygonTypePtr polygon = (PolygonTypePtr) b;
++  PolygonPieceTypePtr piece = (PolygonPieceTypePtr) b;
+   struct rat_info *i = (struct rat_info *) cl;
+ 
+-  if (!TEST_FLAG (TheFlag, polygon) && polygon->Clipped &&
+-      (i->Point->X == polygon->Clipped->contours->head.point[0]) &&
+-      (i->Point->Y == polygon->Clipped->contours->head.point[1]))
++  if (!TEST_FLAG (TheFlag, piece) &&
++      (i->Point->X == piece->contours->head.point[0]) &&
++      (i->Point->Y == piece->contours->head.point[1]))
+     {
+-      if (ADD_POLYGON_TO_LIST (i->layer, polygon))
++      if (ADD_POLYGONPIECE_TO_LIST (i->layer, piece))
+         longjmp (i->env, 1);
+     }
+   return 0;
+ }
+ 
+ static int
++PolygonToRat_callback (const BoxType * b, void *cl)
++{
++  PolygonTypePtr polygon = (PolygonTypePtr) b;
++
++#warning R_TREE?
++  POLYGONPIECE_LOOP (polygon);
++  {
++    PolygonPieceToRat_callback ((BoxType *)piece, cl);
++  }
++  END_LOOP;
++
++  return 0;
++}
++
++static int
+ LOCtoPad_callback (const BoxType * b, void *cl)
+ {
+   PadTypePtr pad = (PadTypePtr) b;
+@@ -2199,13 +2306,16 @@ LOCtoPadPoly_callback (const BoxType * b, void *cl)
+   PolygonTypePtr polygon = (PolygonTypePtr) b;
+   struct lo_info *i = (struct lo_info *) cl;
+ 
+-
+-  if (!TEST_FLAG (TheFlag, polygon) && !TEST_FLAG (CLEARPOLYFLAG, polygon))
+-    {
+-      if (IsPadInPolygon (&i->pad, polygon) &&
+-          ADD_POLYGON_TO_LIST (i->layer, polygon))
+-        longjmp (i->env, 1);
+-    }
++  POLYGONPIECE_LOOP (polygon);
++  {
++    if (!TEST_FLAG (TheFlag, piece) && !TEST_FLAG (CLEARPOLYFLAG, piece))
++      {
++        if (IsPadInPolygonPiece (&i->pad, piece) &&
++            ADD_POLYGONPIECE_TO_LIST (i->layer, piece))
++          longjmp (i->env, 1);
++      }
++  }
++  END_LOOP;
+   return 0;
+ }
+ 
+@@ -2316,12 +2426,12 @@ LookupLOConnectionsToPad (PadTypePtr Pad, Cardinal LayerGroup)
+ }
+ 
+ static int
+-LOCtoPolyLine_callback (const BoxType * b, void *cl)
++LOCtoPolyPieceLine_callback (const BoxType * b, void *cl)
+ {
+   LineTypePtr line = (LineTypePtr) b;
+   struct lo_info *i = (struct lo_info *) cl;
+ 
+-  if (!TEST_FLAG (TheFlag, line) && IsLineInPolygon (line, &i->polygon))
++  if (!TEST_FLAG (TheFlag, line) && IsLineInPolygonPiece (line, &i->piece))
+     {
+       if (ADD_LINE_TO_LIST (i->layer, line))
+         longjmp (i->env, 1);
+@@ -2330,14 +2440,14 @@ LOCtoPolyLine_callback (const BoxType * b, void *cl)
+ }
+ 
+ static int
+-LOCtoPolyArc_callback (const BoxType * b, void *cl)
++LOCtoPolyPieceArc_callback (const BoxType * b, void *cl)
+ {
+   ArcTypePtr arc = (ArcTypePtr) b;
+   struct lo_info *i = (struct lo_info *) cl;
+ 
+   if (!arc->Thickness)
+     return 0;
+-  if (!TEST_FLAG (TheFlag, arc) && IsArcInPolygon (arc, &i->polygon))
++  if (!TEST_FLAG (TheFlag, arc) && IsArcInPolygonPiece (arc, &i->piece))
+     {
+       if (ADD_ARC_TO_LIST (i->layer, arc))
+         longjmp (i->env, 1);
+@@ -2346,14 +2456,14 @@ LOCtoPolyArc_callback (const BoxType * b, void *cl)
+ }
+ 
+ static int
+-LOCtoPolyPad_callback (const BoxType * b, void *cl)
++LOCtoPolyPiecePad_callback (const BoxType * b, void *cl)
+ {
+   PadTypePtr pad = (PadTypePtr) b;
+   struct lo_info *i = (struct lo_info *) cl;
+ 
+   if (!TEST_FLAG (TheFlag, pad) && i->layer ==
+       (TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER)
+-      && IsPadInPolygon (pad, &i->polygon))
++      && IsPadInPolygonPiece (pad, &i->piece))
+     {
+       if (ADD_PAD_TO_LIST (i->layer, pad))
+         longjmp (i->env, 1);
+@@ -2362,18 +2472,18 @@ LOCtoPolyPad_callback (const BoxType * b, void *cl)
+ }
+ 
+ static int
+-LOCtoPolyRat_callback (const BoxType * b, void *cl)
++LOCtoPolyPieceRat_callback (const BoxType * b, void *cl)
+ {
+   RatTypePtr rat = (RatTypePtr) b;
+   struct lo_info *i = (struct lo_info *) cl;
+ 
+   if (!TEST_FLAG (TheFlag, rat))
+     {
+-      if ((rat->Point1.X == (i->polygon.Clipped->contours->head.point[0]) &&
+-           rat->Point1.Y == (i->polygon.Clipped->contours->head.point[1]) &&
++      if ((rat->Point1.X == (i->piece.contours->head.point[0]) &&
++           rat->Point1.Y == (i->piece.contours->head.point[1]) &&
+            rat->group1 == i->layer) ||
+-          (rat->Point2.X == (i->polygon.Clipped->contours->head.point[0]) &&
+-           rat->Point2.Y == (i->polygon.Clipped->contours->head.point[1]) &&
++          (rat->Point2.X == (i->piece.contours->head.point[0]) &&
++           rat->Point2.Y == (i->piece.contours->head.point[1]) &&
+            rat->group2 == i->layer))
+         if (ADD_RAT_TO_LIST (rat))
+           longjmp (i->env, 1);
+@@ -2383,6 +2493,84 @@ LOCtoPolyRat_callback (const BoxType * b, void *cl)
+ 
+ 
+ /* ---------------------------------------------------------------------------
++ * looks up LOs that are connected to the given polygon piece
++ * on the given layergroup. All found connections are added to the list
++ */
++static Boolean
++LookupLOConnectionsToPolygonPiece (PolygonPieceTypePtr Piece, Cardinal LayerGroup)
++{
++  Cardinal entry;
++  struct lo_info info;
++
++  info.piece = *Piece;
++  EXPAND_BOUNDS (&info.piece);
++  info.layer = LayerGroup;
++  /* check rats */
++  if (setjmp (info.env) == 0)
++    r_search (PCB->Data->rat_tree, (BoxType *) & info.piece, NULL,
++              LOCtoPolyPieceRat_callback, &info);
++  else
++    return True;
++/* loop over all layers of the group */
++  for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
++    {
++      Cardinal layer, i;
++
++      layer = PCB->LayerGroups.Entries[LayerGroup][entry];
++
++      /* handle normal layers */
++      if (layer < max_layer)
++        {
++          PolygonTypePtr polygon;
++
++          /* check all polygons */
++
++          polygon = PCB->Data->Layer[layer].Polygon;
++          for (i = 0; i < PCB->Data->Layer[layer].PolygonN; i++, polygon++)
++            {
++              POLYGONPIECE_LOOP (polygon);
++              {
++                if (!TEST_FLAG (TheFlag, piece) &&
++                    IsPolygonPieceInPolygonPiece (piece, Piece) &&
++                    ADD_POLYGONPIECE_TO_LIST (layer, piece))
++                  return True;
++                }
++              END_LOOP;
++            }
++
++          info.layer = layer;
++          /* check all lines */
++          if (setjmp (info.env) == 0)
++            r_search (LAYER_PTR (layer)->line_tree,
++                      (BoxType *) & info.piece, NULL,
++                      LOCtoPolyPieceLine_callback, &info);
++          else
++            return True;
++          /* check all arcs */
++          if (setjmp (info.env) == 0)
++            r_search (LAYER_PTR (layer)->arc_tree, (BoxType *) & info.piece,
++                      NULL, LOCtoPolyPieceArc_callback, &info);
++          else
++            return True;
++        }
++      else
++        {
++          if (!TEST_FLAG (CLEARPOLYFLAG, Piece))
++            {
++              info.layer = layer - max_layer;
++              if (setjmp (info.env) == 0)
++                r_search (PCB->Data->pad_tree, (BoxType *) & info.piece,
++                          NULL, LOCtoPolyPiecePad_callback, &info);
++              else
++                return True;
++            }
++        }
++    }
++  return (False);
++}
++
++#if 0
++/* ---------------------------------------------------------------------------
+  * looks up LOs that are connected to the given polygon
+  * on the given layergroup. All found connections are added to the list
+  */
+@@ -2419,10 +2607,16 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
+ 
+           polygon = PCB->Data->Layer[layer].Polygon;
+           for (i = 0; i < PCB->Data->Layer[layer].PolygonN; i++, polygon++)
+-            if (!TEST_FLAG (TheFlag, polygon)
+-                && IsPolygonInPolygon (polygon, Polygon)
+-                && ADD_POLYGON_TO_LIST (layer, polygon))
+-              return True;
++            {
++              POLYGONPIECE_LOOP (polygon);
++              {
++                if (!TEST_FLAG (TheFlag, piece) &&
++                    IsPolygonInPolygonPiece (piece, Polygon) &&
++                    ADD_POLYGONPIECE_TO_LIST (layer, piece))
++                  return True;
++                }
++              END_LOOP;
++            }
+ 
+           info.layer = layer;
+           /* check all lines */
+@@ -2454,9 +2648,10 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
+     }
+   return (False);
+ }
++#endif
+ 
+ /* ---------------------------------------------------------------------------
+- * checks if an arc has a connection to a polygon
++ * checks if an arc has a connection to a polygon piece
+  *
+  * - first check if the arc can intersect with the polygon by
+  *   evaluating the bounding boxes
+@@ -2464,37 +2659,31 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
+  * - check all segments of the polygon against the arc.
+  */
+ Boolean
+-IsArcInPolygon (ArcTypePtr Arc, PolygonTypePtr Polygon)
++IsArcInPolygonPiece (ArcTypePtr Arc, PolygonPieceTypePtr Piece)
+ {
+   BoxTypePtr Box = (BoxType *) Arc;
+-  POLYAREA *pg;
+ 
+   /* arcs with clearance never touch polys */
+-  if (TEST_FLAG (CLEARPOLYFLAG, Polygon) && TEST_FLAG (CLEARLINEFLAG, Arc))
+-    return False;
+-  if (!Polygon->Clipped)
++  if (TEST_FLAG (CLEARPOLYFLAG, Piece) && TEST_FLAG (CLEARLINEFLAG, Arc))
+     return False;
+-  pg = Polygon->Clipped;
+-  do
++
++  if (Box->X1 <= Piece->contours->xmax + Bloat &&
++      Box->X2 >= Piece->contours->xmin - Bloat &&
++      Box->Y1 <= Piece->contours->ymax + Bloat &&
++      Box->Y2 >= Piece->contours->ymin - Bloat)
+     {
+-      if (Box->X1 <= pg->contours->xmax + Bloat
+-          && Box->X2 >= pg->contours->xmin - Bloat
+-          && Box->Y1 <= pg->contours->ymax + Bloat
+-          && Box->Y2 >= pg->contours->ymin - Bloat)
+-        {
+-          POLYAREA *ap;
++      POLYAREA *ap;
+ 
+-          if (!(ap = ArcPoly (Arc, Arc->Thickness + Bloat)))
+-            return False;           /* error */
+-          return isects (ap, Polygon, True);
+-        }
++      if (!(ap = ArcPoly (Arc, Arc->Thickness + Bloat)))
++        return False;           /* error */
++      return isects_piece (ap, Piece, True);
+     }
+-  while ((pg = pg->f) != Polygon->Clipped);
++
+   return False;
+ }
+ 
+ /* ---------------------------------------------------------------------------
+- * checks if a line has a connection to a polygon
++ * checks if a line has a connection to a polygon piece
+  *
+  * - first check if the line can intersect with the polygon by
+  *   evaluating the bounding boxes
+@@ -2502,16 +2691,13 @@ IsArcInPolygon (ArcTypePtr Arc, PolygonTypePtr Polygon)
+  * - check all segments of the polygon against the line.
+  */
+ Boolean
+-IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
++IsLineInPolygonPiece (LineTypePtr Line, PolygonPieceTypePtr Piece)
+ {
+   BoxTypePtr Box = (BoxType *) Line;
+   POLYAREA *lp;
+-  POLYAREA *pg;
+ 
+   /* lines with clearance never touch polygons */
+-  if (TEST_FLAG (CLEARPOLYFLAG, Polygon) && TEST_FLAG (CLEARLINEFLAG, Line))
+-    return False;
+-  if (!Polygon->Clipped)
++  if (TEST_FLAG (CLEARPOLYFLAG, Piece) && TEST_FLAG (CLEARLINEFLAG, Line))
+     return False;
+   if (TEST_FLAG(SQUAREFLAG,Line)&&(Line->Point1.X==Line->Point2.X||Line->Point1.Y==Line->Point2.Y))
+      {
+@@ -2522,22 +2708,19 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
+        y1 = MIN (Line->Point1.Y, Line->Point2.Y) - wid;
+        x2 = MAX (Line->Point1.X, Line->Point2.X) + wid;
+        y2 = MAX (Line->Point1.Y, Line->Point2.Y) + wid;
+-       return IsRectangleInPolygon (x1, y1, x2, y2, Polygon);
++       return IsRectangleInPolygonPiece (x1, y1, x2, y2, Piece);
+      }
+-  pg = Polygon->Clipped;
+-  do
++
++  if (Box->X1 <= Piece->contours->xmax + Bloat &&
++      Box->X2 >= Piece->contours->xmin - Bloat &&
++      Box->Y1 <= Piece->contours->ymax + Bloat &&
++      Box->Y2 >= Piece->contours->ymin - Bloat)
+     {
+-      if (Box->X1 <= pg->contours->xmax + Bloat
+-          && Box->X2 >= pg->contours->xmin - Bloat
+-          && Box->Y1 <= pg->contours->ymax + Bloat
+-          && Box->Y2 >= pg->contours->ymin - Bloat)
+-        {
+-          if (!(lp = LinePoly (Line, Line->Thickness + Bloat)))
+-            return FALSE;           /* error */
+-          return isects (lp, Polygon, True);
+-        }
++      if (!(lp = LinePoly (Line, Line->Thickness + Bloat)))
++        return FALSE;           /* error */
++      return isects_piece (lp, Piece, True);
+     }
+-  while ((pg = pg->f) != Polygon->Clipped);
++
+   return False;
+ }
+ 
+@@ -2547,80 +2730,65 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
+  * The polygon is assumed to already have been proven non-clearing
+  */
+ Boolean
+-IsPadInPolygon (PadTypePtr pad, PolygonTypePtr polygon)
++IsPadInPolygonPiece (PadTypePtr pad, PolygonPieceTypePtr piece)
+ {
+-    return IsLineInPolygon ((LineTypePtr) pad, polygon);
++    return IsLineInPolygonPiece ((LineTypePtr) pad, piece);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+- * checks if a polygon has a connection to a second one
++ * checks if a polygon piece has a connection to a second one
+  *
+  * First check all points out of P1 against P2 and vice versa.
+  * If both fail check all lines of P1 against the ones of P2
+  */
+ Boolean
+-IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
++IsPolygonPieceInPolygonPiece (PolygonPieceTypePtr P1, PolygonPieceTypePtr P2)
+ {
+-  POLYAREA *pg1;
+-  POLYAREA *pg2;
+-
+-  if (!P1->Clipped || !P2->Clipped)
+-    return False;
+-  assert (P1->Clipped->contours);
+-  assert (P2->Clipped->contours);
++  assert (P1->contours);
++  assert (P2->contours);
+   /* first check if both bounding boxes intersect */
+-  pg2 = P2->Clipped;
+-  do
++  if (P1->contours->xmin - Bloat <= P2->contours->xmax &&
++      P1->contours->xmax + Bloat >= P2->contours->xmin &&
++      P1->contours->ymin - Bloat <= P2->contours->ymax &&
++      P1->contours->ymax + Bloat >= P2->contours->ymin)
+     {
+-      pg1 = P1->Clipped;
+-      do
++      PLINE *c;
++
++      /* first check un-bloated case */
++      if (isects_piece (P1, P2, False))
++        return TRUE;
++      if (Bloat > 0)
+         {
+-          if (pg1->contours->xmin - Bloat <= pg2->contours->xmax &&
+-              pg1->contours->xmax + Bloat >= pg2->contours->xmin &&
+-              pg1->contours->ymin - Bloat <= pg2->contours->ymax &&
+-              pg1->contours->ymax + Bloat >= pg2->contours->ymin)
++          /* now the difficult case of bloated */
++          for (c = P1->contours; c; c = c->next)
+             {
+-              PLINE *c;
+-
+-              /* first check un-bloated case */
+-              if (isects (pg1, P2, False))
+-                return TRUE;
+-              if (Bloat > 0)
++              LineType line;
++              VNODE *v = &c->head;
++              if (c->xmin - Bloat <= P2->contours->xmax &&
++                  c->xmax + Bloat >= P2->contours->xmin &&
++                  c->ymin - Bloat <= P2->contours->ymax &&
++                  c->ymax + Bloat >= P2->contours->ymin)
+                 {
+-                  /* now the difficult case of bloated */
+-                  for (c = pg1->contours; c; c = c->next)
++
++                  line.Point1.X = v->point[0];
++                  line.Point1.Y = v->point[1];
++                  line.Thickness = 2 * Bloat;
++                  line.Clearance = 0;
++                  line.Flags = NoFlags ();
++                  for (v = v->next; v != &c->head; v = v->next)
+                     {
+-                      LineType line;
+-                      VNODE *v = &c->head;
+-                      if (c->xmin - Bloat <= pg2->contours->xmax &&
+-                          c->xmax + Bloat >= pg2->contours->xmin &&
+-                          c->ymin - Bloat <= pg2->contours->ymax &&
+-                          c->ymax + Bloat >= pg2->contours->ymin)
+-                        {
+-
+-                          line.Point1.X = v->point[0];
+-                          line.Point1.Y = v->point[1];
+-                          line.Thickness = 2 * Bloat;
+-                          line.Clearance = 0;
+-                          line.Flags = NoFlags ();
+-                          for (v = v->next; v != &c->head; v = v->next)
+-                            {
+-                              line.Point2.X = v->point[0];
+-                              line.Point2.Y = v->point[1];
+-                              SetLineBoundingBox (&line);
+-                              if (IsLineInPolygon (&line, P2))
+-                                return (True);
+-                              line.Point1.X = line.Point2.X;
+-                              line.Point1.Y = line.Point2.Y;
+-                            }
+-                        }
++                      line.Point2.X = v->point[0];
++                      line.Point2.Y = v->point[1];
++                      SetLineBoundingBox (&line);
++                      if (IsLineInPolygonPiece (&line, P2))
++                        return (True);
++                      line.Point1.X = line.Point2.X;
++                      line.Point1.Y = line.Point2.Y;
+                     }
+                 }
+             }
+         }
+-      while ((pg1 = pg1->f) != P1->Clipped);
+     }
+-  while ((pg2 = pg2->f) != P2->Clipped);
+   return (False);
+ }
+ 
+@@ -2753,7 +2921,8 @@ ListsEmpty (Boolean AndRats)
+   for (i = 0; i < max_layer && empty; i++)
+     empty = empty && LineList[i].Location >= LineList[i].Number
+       && ArcList[i].Location >= ArcList[i].Number
+-      && PolygonList[i].Location >= PolygonList[i].Number;
++//      && PolygonList[i].Location >= PolygonList[i].Number
++      && PolygonPieceList[i].Location >= PolygonPieceList[i].Number;
+   return (empty);
+ }
+ 
+@@ -2920,7 +3089,8 @@ PrepareNextLoop (FILE * FP)
+     {
+       LineList[layer].Location = LineList[layer].Number = 0;
+       ArcList[layer].Location = ArcList[layer].Number = 0;
+-      PolygonList[layer].Location = PolygonList[layer].Number = 0;
++//      PolygonList[layer].Location = PolygonList[layer].Number = 0;
++      PolygonPieceList[layer].Location = PolygonPieceList[layer].Number = 0;
+     }
+ 
+   /* reset found pads */
+@@ -3025,13 +3195,20 @@ DrawNewConnections (void)
+           for (; position < ArcList[layer].Number; position++)
+             DrawArc (LAYER_PTR (layer), ARCLIST_ENTRY (layer, position), 0);
+           ArcList[layer].DrawLocation = ArcList[layer].Number;
+-
++#if 0
+           /* draw all new polygons */
+           position = PolygonList[layer].DrawLocation;
+           for (; position < PolygonList[layer].Number; position++)
+             DrawPolygon
+               (LAYER_PTR (layer), POLYGONLIST_ENTRY (layer, position), 0);
+           PolygonList[layer].DrawLocation = PolygonList[layer].Number;
++#endif
++          /* draw all new polygon pieces */
++          position = PolygonPieceList[layer].DrawLocation;
++          for (; position < PolygonPieceList[layer].Number; position++)
++            DrawPolygonPiece
++              (LAYER_PTR (layer), POLYGONPIECELIST_ENTRY (layer, position), 0);
++          PolygonPieceList[layer].DrawLocation = PolygonPieceList[layer].Number;
+         }
+     }
+ 
+@@ -3165,7 +3342,7 @@ ListStart (int type, void *ptr1, void *ptr2, void *ptr3)
+           return True;
+         break;
+       }
+-
++#if 0
+     case POLYGON_TYPE:
+       {
+         int layer = GetLayerNumber (PCB->Data,
+@@ -3175,6 +3352,16 @@ ListStart (int type, void *ptr1, void *ptr2, void *ptr3)
+           return True;
+         break;
+       }
++#endif
++    case POLYGONPIECE_TYPE:
++      {
++        int layer = GetLayerNumber (PCB->Data,
++                                    (LayerTypePtr) ptr1);
++
++        if (ADD_POLYGONPIECE_TO_LIST (layer, (PolygonPieceTypePtr) ptr2))
++          return True;
++        break;
++      }
+ 
+     case PAD_TYPE:
+       {
+@@ -3476,9 +3663,14 @@ DumpList (void)
+       ArcList[i].Location = 0;
+       ArcList[i].DrawLocation = 0;
+       ArcList[i].Number = 0;
++#if 0
+       PolygonList[i].Location = 0;
+       PolygonList[i].DrawLocation = 0;
+       PolygonList[i].Number = 0;
++#endif
++      PolygonPieceList[i].Location = 0;
++      PolygonPieceList[i].DrawLocation = 0;
++      PolygonPieceList[i].Number = 0;
+     }
+   RatList.Number = 0;
+   RatList.Location = 0;
+@@ -3625,7 +3817,7 @@ RestoreFindFlag (void)
+ /* DRC clearance callback */
+ 
+ static int
+-drc_callback (DataTypePtr data, LayerTypePtr layer, PolygonTypePtr polygon,
++drc_callback (DataTypePtr data, LayerTypePtr layer, PolygonPieceTypePtr piece,
+               int type, void *ptr1, void *ptr2)
+ {
+   LineTypePtr line = (LineTypePtr) ptr2;
+@@ -3663,7 +3855,7 @@ drc_callback (DataTypePtr data, LayerTypePtr layer, PolygonTypePtr polygon,
+       break;
+     case PAD_TYPE:
+       if (pad->Clearance < 2 * PCB->Bloat)
+-	if (IsPadInPolygon(pad,polygon))
++	if (IsPadInPolygonPiece(pad,piece))
+ 	  {
+ 	    AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
+ 	    SET_FLAG (TheFlag, pad);
+@@ -3703,9 +3895,10 @@ drc_callback (DataTypePtr data, LayerTypePtr layer, PolygonTypePtr polygon,
+   return 0;
+ 
+ doIsBad:
+-  AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
+-  SET_FLAG (FOUNDFLAG, polygon);
+-  DrawPolygon (layer, polygon, 0);
++  AddObjectToFlagUndoList (POLYGONPIECE_TYPE, layer, piece, piece);
++  SET_FLAG (FOUNDFLAG, piece);
++//  DrawPolygon (layer, polygon, 0);
++  DrawPolygonPiece (layer, piece, 0);
+   DrawObject (type, ptr1, ptr2, 0);
+   drcerr_count++;
+   GotoError ();
+@@ -4084,6 +4277,7 @@ GotoError (void)
+         Y = arc->Y;
+         break;
+       }
++#if 0
+     case POLYGON_TYPE:
+       {
+         PolygonTypePtr polygon = (PolygonTypePtr) thing_ptr3;
+@@ -4096,6 +4290,14 @@ GotoError (void)
+            polygon->Clipped->contours->ymax) / 2;
+         break;
+       }
++#endif
++    case POLYGONPIECE_TYPE:
++      {
++        PolygonPieceTypePtr piece = (PolygonPieceTypePtr) thing_ptr3;
++        X = (piece->contours->xmin + piece->contours->xmax) / 2;
++        Y = (piece->contours->ymin + piece->contours->ymax) / 2;
++        break;
++      }
+     case PIN_TYPE:
+     case VIA_TYPE:
+       {
+diff --git a/src/find.h b/src/find.h
+index c6e6eef..e0a16e0 100644
+--- a/src/find.h
++++ b/src/find.h
+@@ -49,7 +49,7 @@ Boolean LineArcIntersect (LineTypePtr, ArcTypePtr);
+ Boolean PinLineIntersect (PinTypePtr, LineTypePtr);
+ Boolean LinePadIntersect (LineTypePtr, PadTypePtr);
+ Boolean ArcPadIntersect (ArcTypePtr, PadTypePtr);
+-Boolean IsPolygonInPolygon (PolygonTypePtr, PolygonTypePtr);
++Boolean IsPolygonPieceInPolygonPiece (PolygonPieceTypePtr, PolygonPieceTypePtr);
+ void LookupElementConnections (ElementTypePtr, FILE *);
+ void LookupConnectionsToAllElements (FILE *);
+ void LookupConnection (LocationType, LocationType, Boolean, BDimension, int);
+@@ -67,8 +67,8 @@ void SaveFindFlag (int);
+ void RestoreFindFlag (void);
+ int DRCAll (void);
+ Boolean lineClear (LineTypePtr, Cardinal);
+-Boolean IsLineInPolygon (LineTypePtr, PolygonTypePtr);
+-Boolean IsArcInPolygon (ArcTypePtr, PolygonTypePtr);
+-Boolean IsPadInPolygon (PadTypePtr, PolygonTypePtr);
++Boolean IsLineInPolygonPiece (LineTypePtr, PolygonPieceTypePtr);
++Boolean IsArcInPolygonPiece (ArcTypePtr, PolygonPieceTypePtr);
++Boolean IsPadInPolygonPiece (PadTypePtr, PolygonPieceTypePtr);
+ 
+ #endif
+diff --git a/src/global.h b/src/global.h
+index f8532c8..3eb3fbe 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -199,12 +199,26 @@ typedef struct
+   void *Element;
+ } TextType, *TextTypePtr;
+ 
++typedef struct			/* holds information about a polygon piece */
++{
++  ANYOBJECTFIELDS;
++//  PLINE *contours;
++  POLYAREA *Clipped;
++//  POLYAREA *NoHoles;
++//  int *NoHolesValid;
++} PolygonPieceType, *PolygonPieceTypePtr;
++
++
+ typedef struct			/* holds information about a polygon */
+ {
+   ANYOBJECTFIELDS;
+   Cardinal PointN,		/* number of points in polygon */
+     PointMax;			/* max number from malloc() */
+-  POLYAREA *Clipped;		/* the clipped region of this polygon */
++  Cardinal PieceN;		/* number of pieces */
++  Cardinal PieceMax;		/* max number from malloc() */
++  PolygonPieceTypePtr Piece;
++//  rtree_t *pieces_tree;		/* r_tree for pieces */
++//  POLYAREA *Clipped;		/* the clipped region of this polygon */
+   POLYAREA *NoHoles;		/* the polygon broken into hole-less regions */
+   int NoHolesValid;		/* Is the NoHoles polygon up to date? */
+   PointTypePtr Points;		/* data */
+diff --git a/src/macro.h b/src/macro.h
+index 819d202..200f28b 100644
+--- a/src/macro.h
++++ b/src/macro.h
+@@ -405,6 +405,13 @@ extern int mem_any_set (unsigned char *, int);
+ 	{						\
+ 		point = &(polygon)->Points[n]
+ 
++#define	POLYGONPIECE_LOOP(polygon) do	{	\
++	Cardinal			n;		\
++	PolygonPieceTypePtr	piece;				\
++	for (n = (polygon)->PieceN-1; n != -1; n--)	\
++	{						\
++		piece = &(polygon)->Piece[n]
++
+ #define ENDALL_LOOP }} while (0);  }} while (0)
+ 
+ #define	ALLPIN_LOOP(top)	\
+diff --git a/src/mymem.c b/src/mymem.c
+index 4b0e234..8d3d9c8 100644
+--- a/src/mymem.c
++++ b/src/mymem.c
+@@ -459,6 +459,28 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
+ }
+ 
+ /* ---------------------------------------------------------------------------
++ * gets the next slot for a piece in a polygon struct, allocates memory
++ * if necessary
++ */
++PolygonPieceTypePtr
++GetPolygonPieceMemoryInPolygon (PolygonTypePtr Polygon)
++{
++  PolygonPieceTypePtr piece = Polygon->Piece;
++
++  /* realloc new memory if necessary and clear it */
++  if (Polygon->PieceN >= Polygon->PieceMax)
++    {
++      Polygon->PieceMax += STEP_POLYGONPIECE;
++      piece = MyRealloc (piece, Polygon->PieceMax * sizeof (PolygonPieceType),
++			  "GetPolygonPieceMemoryInPolygon()");
++      Polygon->Piece = piece;
++      memset (piece + Polygon->PieceN, 0,
++	      STEP_POLYGONPIECE * sizeof (PolygonPieceType));
++    }
++  return (piece + Polygon->PieceN++);
++}
++
++/* ---------------------------------------------------------------------------
+  * get next slot for an element, allocates memory if necessary
+  */
+ ElementTypePtr
+@@ -734,8 +756,10 @@ FreePolygonMemory (PolygonTypePtr Polygon)
+   if (Polygon)
+     {
+       MYFREE (Polygon->Points);
+-      if (Polygon->Clipped)
+-	poly_Free (&Polygon->Clipped);
++#warning NEED TO DO MORE ABOUT FREEING THOSE??
++      MYFREE (Polygon->Piece);
++//      if (Polygon->Clipped)
++//	poly_Free (&Polygon->Clipped);
+       if (Polygon->NoHoles)
+ 	poly_Free (&Polygon->NoHoles);
+       memset (Polygon, 0, sizeof (PolygonType));
+diff --git a/src/mymem.h b/src/mymem.h
+index b9d4de1..3c62228 100644
+--- a/src/mymem.h
++++ b/src/mymem.h
+@@ -58,6 +58,7 @@
+ #define	STEP_UNDOLIST		500
+ #define	STEP_POLYGON		10
+ #define	STEP_POLYGONPOINT	10
++#define	STEP_POLYGONPIECE	10
+ #define	STEP_LIBRARYMENU	10
+ #define	STEP_LIBRARYENTRY	20
+ #define	STEP_RUBBERBAND		100
+@@ -82,6 +83,7 @@ RatTypePtr GetRatMemory (DataTypePtr);
+ TextTypePtr GetTextMemory (LayerTypePtr);
+ PolygonTypePtr GetPolygonMemory (LayerTypePtr);
+ PointTypePtr GetPointMemoryInPolygon (PolygonTypePtr);
++PolygonPieceTypePtr GetPolygonPieceMemoryInPolygon (PolygonTypePtr);
+ ElementTypePtr GetElementMemory (DataTypePtr);
+ BoxTypePtr GetBoxMemory (BoxListTypePtr);
+ ConnectionTypePtr GetConnectionMemory (NetTypePtr);
+diff --git a/src/polygon.c b/src/polygon.c
+index 29de9c4..8eff12e 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -122,6 +122,7 @@ static double circleVerticies[] = {
+   0.98480775301221, 0.17364817766693,
+ };
+ 
++#if 0
+ static void
+ add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
+ {
+@@ -151,10 +152,13 @@ add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
+ 
+   poly->NoHoles = new_area;
+ }
++#endif
+ 
+ void
+ ComputeNoHoles (PolygonType *poly)
+ {
++  printf ("Not implemented\n");
++#if 0
+   if (poly->NoHoles)
+     poly_Free (&poly->NoHoles);
+   poly->NoHoles = NULL;
+@@ -162,53 +166,8 @@ ComputeNoHoles (PolygonType *poly)
+     NoHolesPolygonDicer (poly, add_noholes_polyarea, poly, NULL);
+   else
+     printf ("Compute_noholes caught poly->Clipped = NULL\n");
+-  poly->NoHolesValid = 1;
+-}
+-
+-static POLYAREA *
+-biggest_fubar (POLYAREA * p)
+-{
+-  POLYAREA *n, *top = NULL;
+-  PLINE *pl;
+-  double big = -1;
+-  if (!p)
+-    return NULL;
+-  n = p;
+-  do
+-    {
+-#if 0
+-      if (n->contours->area < PCB->IsleArea)
+-        {
+-          n->b->f = n->f;
+-          n->f->b = n->b;
+-          poly_DelContour (&n->contours);
+-          if (n == p)
+-            p = n->f;
+-          n = n->f;
+-          if (!n->contours)
+-            {
+-              free (n);
+-              return NULL;
+-            }
+-        }
+ #endif
+-      if (n->contours->area > big)
+-        {
+-          top = n;
+-          big = n->contours->area;
+-        }
+-    }
+-  while ((n = n->f) != p);
+-  assert (top);
+-  if (top == p)
+-    return p;
+-  pl = top->contours;
+-  top->contours = p->contours;
+-  p->contours = pl;
+-  assert (pl);
+-  assert (p->f);
+-  assert (p->b);
+-  return p;
++  poly->NoHolesValid = 1;
+ }
+ 
+ POLYAREA *
+@@ -1485,6 +1444,19 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+ }
+ 
+ Boolean
++isects_piece (POLYAREA * a, PolygonPieceTypePtr p, Boolean fr)
++{
++  POLYAREA *x;
++  Boolean ans;
++  ans = Touching (a, p->Clipped);
++  /* argument may be register, so we must copy it */
++  x = a;
++  if (fr)
++    poly_Free (&x);
++  return ans;
++}
++
++Boolean
+ isects (POLYAREA * a, PolygonTypePtr p, Boolean fr)
+ {
+   POLYAREA *x;
+@@ -1517,12 +1489,12 @@ IsPointInPolygon (LocationType X, LocationType Y, BDimension r,
+ 
+ 
+ Boolean
+-IsPointInPolygonIgnoreHoles (LocationType X, LocationType Y, PolygonTypePtr p)
++IsPointInPolygonIgnoreHoles (LocationType X, LocationType Y, PolygonPieceTypePtr p)
+ {
+   Vector v;
+   v[0] = X;
+   v[1] = Y;
+-  return poly_InsideContour (p->Clipped->contours, v);
++  return poly_InsideContour (p->contours, v);
+ }
+ 
+ Boolean
+@@ -1613,6 +1585,8 @@ void
+ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
+                      void *user_data, const BoxType * clip)
+ {
++  printf ("Not implemented\n");
++#if 0
+   POLYAREA *save, *ans;
+ 
+   /* Copy all of the original polgon */
+@@ -1645,12 +1619,16 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
+       free (prev);
+     }
+   while (save != ans);
++#endif
+ }
+ 
+ /* make a polygon split into multiple parts into multiple polygons */
+ Boolean
+ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+ {
++  printf ("Not implemented\n");
++  return 0;
++#if 0
+   POLYAREA *p, *start;
+   Boolean many = False;
+   FlagType flags;
+@@ -1714,6 +1692,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+   inhibit = False;
+   IncrementUndoSerialNumber ();
+   return many;
++#endif
+ }
+ 
+ void debug_pline (PLINE *pl)
+diff --git a/src/polygon.h b/src/polygon.h
+index 8f444fd..4a48f0d 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -58,7 +58,7 @@ void RestoreToPolygon(DataType *, int, void *, void *);
+ void ClearFromPolygon(DataType *, int, void *, void *);
+ 
+ Boolean IsPointInPolygon (LocationType, LocationType, BDimension, PolygonTypePtr);
+-Boolean IsPointInPolygonIgnoreHoles (LocationType, LocationType, PolygonTypePtr);
++Boolean IsPointInPolygonPieceIgnoreHoles (LocationType, LocationType, PolygonPieceTypePtr);
+ Boolean IsRectangleInPolygon (LocationType, LocationType, LocationType,
+ 			      LocationType, PolygonTypePtr);
+ Boolean isects (POLYAREA *, PolygonTypePtr, Boolean);
+diff --git a/src/rats.c b/src/rats.c
+index f381c1c..e16e3cd 100644
+--- a/src/rats.c
++++ b/src/rats.c
+@@ -507,18 +507,22 @@ GatherSubnets (NetListTypePtr Netl, Boolean NoWarn, Boolean AndRats)
+       /* add polygons so the auto-router can see them as targets */
+       ALLPOLYGON_LOOP (PCB->Data);
+       {
+-	if (TEST_FLAG (DRCFLAG, polygon))
+-	  {
+-	    conn = GetConnectionMemory (a);
+-	    /* make point on a vertex */
+-	    conn->X = polygon->Clipped->contours->head.point[0];
+-	    conn->Y = polygon->Clipped->contours->head.point[1];
+-	    conn->type = POLYGON_TYPE;
+-	    conn->ptr1 = layer;
+-	    conn->ptr2 = polygon;
+-	    conn->group = GetLayerGroupNumberByPointer (layer);
+-	    conn->menu = NULL;	/* agnostic view of where it belongs */
+-	  }
++        POLYGONPIECE_LOOP (polygon);
++        {
++          if (TEST_FLAG (DRCFLAG, piece))
++            {
++              conn = GetConnectionMemory (a);
++              /* make point on a vertex */
++              conn->X = piece->contours->head.point[0];
++              conn->Y = piece->contours->head.point[1];
++              conn->type = POLYGONPIECE_TYPE;
++              conn->ptr1 = layer;
++              conn->ptr2 = polygon;
++              conn->group = GetLayerGroupNumberByPointer (layer);
++              conn->menu = NULL;	/* agnostic view of where it belongs */
++            }
++        }
++        END_LOOP;
+       }
+       ENDALL_LOOP;
+       VIA_LOOP (PCB->Data);
+@@ -554,7 +558,7 @@ DrawShortestRats (NetListTypePtr Netl, void (*funcp) ())
+   RatTypePtr line;
+   register float distance, temp;
+   register ConnectionTypePtr conn1, conn2, firstpoint, secondpoint;
+-  PolygonTypePtr polygon;
++  PolygonPieceTypePtr piece;
+   Boolean changed = False;
+   Cardinal n, m, j;
+   NetTypePtr next, subnet, theSubnet = NULL;
+@@ -588,22 +592,22 @@ DrawShortestRats (NetListTypePtr Netl, void (*funcp) ())
+ 		   * not a daisy chain).  Further prefer to pick an existing
+ 		   * via in the Net to make that connection.
+ 		   */
+-		  if (conn1->type == POLYGON_TYPE &&
+-		      (polygon = (PolygonTypePtr)conn1->ptr2) &&
++		  if (conn1->type == POLYGONPIECE_TYPE &&
++		      (piece = (PolygonPieceTypePtr)conn1->ptr2) &&
+ 		      !(distance == 0 &&
+ 		        firstpoint && firstpoint->type == VIA_TYPE) &&
+-		      IsPointInPolygonIgnoreHoles (conn2->X, conn2->Y, polygon))
++		      IsPointInPolygonPieceIgnoreHoles (conn2->X, conn2->Y, piece))
+ 		    {
+ 		      distance = 0;
+ 		      firstpoint = conn2;
+ 		      secondpoint = conn1;
+ 		      theSubnet = next;
+ 		    }
+-		  else if (conn2->type == POLYGON_TYPE &&
+-		      (polygon = (PolygonTypePtr)conn2->ptr2) &&
++		  else if (conn2->type == POLYGONPIECE_TYPE &&
++		      (piece = (PolygonPieceTypePtr)conn2->ptr2) &&
+ 		      !(distance == 0 &&
+ 		        firstpoint && firstpoint->type == VIA_TYPE) &&
+-		      IsPointInPolygonIgnoreHoles (conn1->X, conn1->Y, polygon))
++		      IsPointInPolygonPieceIgnoreHoles (conn1->X, conn1->Y, piece))
+ 		    {
+ 		      distance = 0;
+ 		      firstpoint = conn1;
