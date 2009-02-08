@@ -432,6 +432,7 @@ ThermPoly (PCBTypePtr p, PinTypePtr pin, Cardinal laynum)
         arc = CirclePoly (pin->X, pin->Y, pin->Thickness / 2);
         /* create a thin ring */
         poly_Boolean_free (pa, arc, &m, PBO_SUB);
+#warning THIS WOULD BE FASTER IF WE JUST SUTRACTED A CROSS SHAPE
         /* fix me needs error checking */
         if (style == 2)
           {
