@@ -948,52 +948,6 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
 }				/* M_POLYAREA_intersect */
 
 
-static void
-M_POLYAREA_separate_isected (POLYAREA **afst, PLINE **a_isected)
-{
-  POLYAREA **a = afst;
-  PLINE *curc, *prev, *next;
-
-  assert (a != NULL);
-
-//  printf ("M_POLYAREA_separate_isected: afst %p, *afst %p\n", afst, *afst);
-
-  do { /* LOOP OVER THE POLYAREA PIECES */
-    /* LOOP OVER THE CONTOURS OF THE CURRENT POLYAREA PIECE */
-    prev = NULL;
-    for (curc = (*a)->contours; curc != NULL; curc = next) {
-      next = curc->next;
-
-      if (curc->Flags.status != ISECTED) {
-        prev = curc;
-        continue;
-      }
-
-      /* Unlink from the a contour list, and prepend to the a_isected list */
-      if (prev == NULL) {
-        (*a)->contours = next;
-        if (next == NULL) {
-//          printf ("M_POLYAREA_separate_isected: Delete the whole polygon piece\n");
-          (*a)->b->f = (*a)->f;
-          (*a)->f->b = (*a)->b;
-          (*a)->f = (*a)->b = (*a);
-          poly_Free (a);
-        }
-      } else {
-        prev->next = next;
-      }
-      curc->next = *a_isected;
-      *a_isected = curc;
-      if (prev != NULL && next != NULL) /* Only remove the r-tree entry if we didn't delete the r-tree above */
-        r_delete_entry ((*a)->contour_tree, (BoxType *)curc); /* Actually, we might want to keep those for a bit */
-    }
-    if (*a == NULL) {
-//      printf ("M_POLYAREA_separate_isected: Deleted _all_ of the existing polygon pieces\n");
-      break;
-    }
-  } while (*(a = &(*a)->f) != *afst);
-} /* M_POLYAREA_separate_isected */
-
 static inline int
 cntrbox_inside (PLINE * c1, PLINE * c2)
 {
@@ -2019,13 +1973,55 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
 }
 
 
+static inline int
+contour_is_first (POLYAREA *a, PLINE *cur)
+{
+  return (a->contours == cur);
+}
+
+
+static inline int
+contour_is_last (PLINE *cur)
+{
+  return (cur->next == NULL);
+}
+
+
+static inline void
+remove_polyarea (POLYAREA **piece)
+{
+  (*piece)->b->f = (*piece)->f;
+  (*piece)->f->b = (*piece)->b;
+  (*piece)->f = (*piece)->b = (*piece);
+}
+
+
+static inline void
+remove_contour (POLYAREA *piece, PLINE *prev_contour, PLINE *contour,
+                int remove_rtree_entry)
+{
+  if (piece->contours == contour)
+    piece->contours = contour->next;
+
+  if (prev_contour != NULL)
+    prev_contour->next = contour->next;
+
+  contour->next = NULL;
+
+  if (remove_rtree_entry)
+    r_delete_entry (piece->contour_tree, (BoxType *)contour);
+}
+
+
 static void
 M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
-                           PLINE ** holes, int action)
+                           PLINE ** holes, PLINE ** isected, int action)
 {
   POLYAREA **a = pieces;
-  PLINE **cur, **next, *prev;
-  int del_contour;
+  PLINE *curc, *next, *prev;
+  int inv_inside = 0;
+  int del_inside = 0;
+  int del_outside = 0;
 
 //  printf ("M_POLYAREA_update_primary %p, %p, %i\n", pieces, holes, action);
 
@@ -2034,93 +2030,92 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
     return;
   }
 
+  switch (action) {
+    case PBO_ISECT:
+//      printf ("  PBO_ISECT: Delete any contours OUTSIDE b\n");
+      del_outside = 1;
+      break;
+    case PBO_UNITE:
+//      printf ("  PBO_UNITE: Delete any contours INSIDE B (B's contour replaces it)\n");
+      del_inside = 1;
+      break;
+    case PBO_SUB:
+//      printf ("  PBO_SUB: Delete any contours INSIDE B (B's contour deletes it)\n");
+      del_inside = 1;
+      break;
+    case PBO_XOR: /* NOT IMPLEMENTED OR USED */
+//      printf ("  PBO_XOR: Invert any which are INSIDE B  *** NOT IMPLEMENTED ***\n");
+      inv_inside = 1;
+      break;
+  }
+
   /* now the non-intersect parts are collected in temp/holes */
   do {
-//    printf ("Playing with a piece of the polygon\n");
+    int move_kept_to_holes = 0;
+
     prev = NULL;
-    for (cur = &(*a)->contours; *cur != NULL; cur = next) {
-      next = &((*cur)->next);
+    for (curc = (*a)->contours; curc != NULL; curc = next) {
+      int is_first = contour_is_first (*a, curc);
+      int is_last = contour_is_last (curc);
 
-      del_contour = 0;
+      int del_contour = 0;
+      int inv_contour = 0;
+      int isect_contour = 0;
 
-      switch (action) {
-        case PBO_ISECT:
-//          printf ("PBO_ISECT: Delete any contours OUTSIDE b\n");
-          if ((*cur)->Flags.status == INSIDE) {
-            // put_contour = 1;
-          } else {
-            del_contour = 1;
-          }
+      next = curc->next;
+
+      switch (curc->Flags.status) {
+        case ISECTED:
+//          printf ("M_POLYAREA_update_primary: Encountered intersected, separating\n");
+          isect_contour = 1;
+          move_kept_to_holes = is_first;
           break;
-
-        case PBO_XOR: /* NOT IMPLEMENTED OR USED */
-//          printf ("PBO_XOR: Invert any which are INSIDE B\n");
-          if ((*cur)->Flags.status == INSIDE) {
-            // put_contour = 1;
-            // inv_contour = 1;
-          }
-          /* BUG? Should we put this contour non-inverted if it is outside B? */
-          if ((*cur)->Flags.status == OUTSIDE) {
-            // put_contour = 1;
-          }
+        case INSIDE:
+          if (del_inside) del_contour = 1;
+          if (inv_inside) inv_contour = 1;
           break;
-
-        case PBO_UNITE:
-//          printf ("PBO_UNITE: Delete any contours INSIDE B (B's contour replaces it)\n");
-          if ((*cur)->Flags.status == OUTSIDE) {
-            // put_contour = 1;
-          } else {
-            del_contour = 1;
-          }
-          break;
-
-        case PBO_SUB:
-//          printf ("PBO_SUB: Delete any contours INSIDE B (B's contour marks it for deletion\n");
-          if ((*cur)->Flags.status == OUTSIDE) {
-            // put_contour = 1;
-          } else {
-            del_contour = 1;
-          }
+        case OUTSIDE:
+          if (del_outside) del_contour = 1;
           break;
       }
 
-      if (del_contour) {
-        /* Delete a contour */
+      if (del_contour || isect_contour || move_kept_to_holes) {
 
-        if (prev != NULL && next != NULL) /* Only remove the r-tree entry if we won't delete it below */
-          r_delete_entry ((*a)->contour_tree, (BoxType *)cur);
-        poly_DelContour (cur);
+        remove_contour (*a, prev, curc, !(is_first && is_last));
 
-        if (prev == NULL) {
-          (*a)->contours = *next;
-          if (*next == NULL) {
-            printf ("M_POLYAREA_update_primary: Delete the whole polygon piece\n");
-            (*a)->b->f = (*a)->f;
-            (*a)->f->b = (*a)->b;
-            (*a)->f = (*a)->b = (*a);
-            poly_Free (a);
-          }
+        if (del_contour) {
+          /* Delete the contour */
+          poly_DelContour (&curc); /* Sets curc to NULL */
+        } else if (isect_contour) { /* Overrides move_to_holes */
+          /* Link into the list of intersected contours */
+          curc->next = *isected;
+          *isected = curc;
+        } else if (move_kept_to_holes) {
+          curc->next = *holes;
+          *holes = curc;
         } else {
-          prev->next = *next;
+          assert (0);
         }
-        /* if we disappear a contour, don't advance twice */
-        next = cur;
-      } else {
-        /* Note the item we just didn't delete as the next candidate for having its "next" pointer adjusted */
-        prev = *cur;
-      }
 
-      /* if we disappear a contour, don't advance twice */
-//      if (cntr_Collect_avoid_self (e, cur, pieces, holes, action, a))
-//        next = cur;
+        if (is_first && is_last) {
+//          printf ("M_POLYAREA_update_primary: Delete / removed the whole polygon piece\n");
+          remove_polyarea (a);
+          poly_Free (a); /* NB: This sets *a to NULL, where *a might be the list pointer */
+        }
+
+      } else {
+        /* Note the item we just didn't delete as the next candidate for having its
+           "next" pointer adjusted. Saves walking the contour list when we delete one. */
+        prev = curc;
+      }
     }
 
     if (*a == NULL) {
-      printf ("M_POLYAREA_update_primary: Deleted _all_ of the existing polygon pieces\n");
+//      printf ("M_POLYAREA_update_primary: Deleted / removed _all_"
+//              "of the existing polygon pieces\n");
       break;
     }
   } while (*(a = &(*a)->f) != *pieces);
-//  printf ("Bye!\n");
 }
 
 
@@ -2344,33 +2339,23 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
       assert (poly_Valid (b));
 #endif
 
-      /* intersect needs to make a list of the contours in a and b which are relevant */
-      /* Not sure if this needs to include any wholey containing, but non-intersecting contours */
+      /* intersect needs to make a list of the contours in a and b which are intersected */
       M_POLYAREA_intersect (&e, a, b, TRUE);
 
-      /* We could speed things up a little here if we only processed the relevant contours */
+      /* We could speed things up a lot here if we only processed the relevant contours */
       M_POLYAREA_label (a, b, FALSE);
       M_POLYAREA_label (b, a, FALSE);
+#if 0
+      M_POLYAREA_label_separated (a_isected, b, FALSE);
+      M_POLYAREA_label_isected (b, a_isected, FALSE);
+#endif
 
       *res = a;
-      /* ACTUALLY, MIGHT WANT TO DO THIS DURING M_POLYAREA_update_primary */
-      M_POLYAREA_separate_isected (res, &a_isected);
-
-      M_POLYAREA_update_primary (&e, res, &holes, action);
+      M_POLYAREA_update_primary (&e, res, &holes, &a_isected, action);
       M_POLYAREA_Collect_separated (&e, a_isected, res, &holes, action, FALSE);
       M_B_AREA_Collect (&e, b, res, &holes, action);
       poly_Free (&b);
 
-#if 0
-      M_POLYAREA_label_separated (a_isected, b, FALSE);
-      M_POLYAREA_label (a, b, FALSE);
-      M_POLYAREA_label_non_isected (b, a, FALSE);
-      M_POLYAREA_label_isected (b, a_isected, FALSE);
-#endif
-
-//      M_POLYAREA_Collect (&e, a, res, &holes, action, b->f == b
-//			  && !b->contours->next
-//			  && b->contours->Flags.status != ISECTED);
 
 #if 0
       /* And speed things up _A LOT_ here by only processing the relevant
