@@ -648,8 +648,22 @@ hidgl_fill_pcb_polygon (PolygonType *poly)
   /* Walk the polygon structure, counting vertices */
   piece = poly->Clipped;
   do {
-    for (contour = piece->contours; contour != NULL; contour = contour->next)
+    for (contour = piece->contours; contour != NULL; contour = contour->next) {
+      int contour_count_manual = 0;
+      vnode = &contour->head;
+      do {
+        contour_count_manual++;
+      } while ((vnode = vnode->next) != &contour->head);
+
+      if (contour_count_manual != contour->Count) {
+        fprintf (stderr, "CRAPPY POLYGON ROUTINES MISCOUNTED NODES, FIXING\n");
+        fprintf (stderr, "Manual count was %i, contour claimed %i\n",
+                 contour_count_manual, contour->Count);
+        contour->Count = contour_count_manual;
+      }
+
       vertex_count += contour->Count;
+    }
   } while ((piece = piece->f) != poly->Clipped);
 
   vertices = malloc (sizeof(GLdouble) * vertex_count * 3);
