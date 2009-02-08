@@ -1,9 +1,10 @@
-Bottom: 109ab0aa097bfba7992acbfc4bbd9b1004e2eaa7
-Top:    f59d94dd03682380f216a42d5130ca25efd810d7
+Bottom: 2877954e379e905df687188bb9449b6b36d17c4a
+Top:    d8b54a507e73b0b007503d816525301081c3c493
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-06 17:23:07 +0000
+Date:   2009-02-08 01:56:08 +0000
 
 Add cache for "noholes", diced versions of polygons
+
 
 
 
@@ -20,7 +21,7 @@ Add cache for "noholes", diced versions of polygons
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 103f975..adccb53 100644
+index fa0a394..fda2613 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -604,6 +604,8 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
@@ -33,7 +34,7 @@ index 103f975..adccb53 100644
  }
  
 diff --git a/src/draw.c b/src/draw.c
-index d077214..e70116a 100644
+index 4bd4705..f282b44 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -100,7 +100,7 @@ static void DrawPadLowLevel (hidGC, PadTypePtr, Boolean, Boolean);
@@ -112,7 +113,7 @@ index d077214..e70116a 100644
  }
  
 diff --git a/src/global.h b/src/global.h
-index 4f2f1a4..5016534 100644
+index 767808f..f8532c8 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -205,6 +205,8 @@ typedef struct			/* holds information about a polygon */
@@ -125,7 +126,7 @@ index 4f2f1a4..5016534 100644
  } PolygonType, *PolygonTypePtr;
  
 diff --git a/src/mymem.c b/src/mymem.c
-index de655c6..7a907b0 100644
+index 36b13d5..4b0e234 100644
 --- a/src/mymem.c
 +++ b/src/mymem.c
 @@ -736,6 +736,8 @@ FreePolygonMemory (PolygonTypePtr Polygon)
@@ -138,7 +139,7 @@ index de655c6..7a907b0 100644
      }
  }
 diff --git a/src/polygon.c b/src/polygon.c
-index 626e499..32f23b9 100644
+index 2c74578..217e856 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -122,6 +122,48 @@ static double circleVerticies[] = {
@@ -340,7 +341,7 @@ index 626e499..32f23b9 100644
    RemovePolygon (layer, poly);
    inhibit = True;
 diff --git a/src/polygon.h b/src/polygon.h
-index 60412d9..895f5a6 100644
+index c9672e2..8f444fd 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
 @@ -43,6 +43,7 @@ int PolygonHoles (const BoxType * range, LayerTypePtr, PolygonTypePtr,

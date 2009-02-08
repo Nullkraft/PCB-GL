@@ -1,7 +1,7 @@
-Bottom: e9d1fa5b746f5d40ed2e08db7be1d6ebdaa6c711
-Top:    91c9e13dc1119b42e57be188dcead3c13c2937c1
+Bottom: 2f56e0464b591a6fd34365960ff90c801d283d20
+Top:    d89b3b17143e4f1cbb44aba06931cc25f912142b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-04 15:39:47 +0000
+Date:   2009-02-08 01:56:06 +0000
 
 gtkhid: Return NULL from ghid_get_net_from_node_name()
 
@@ -9,10 +9,11 @@ Fixes calling return; from function returning non-void type.
 
 
 
+
 ---
 
 diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
-index fe17b31..39ffb4e 100644
+index 0048fcf..3696c8f 100644
 --- a/src/hid/gtk/gui-netlist-window.c
 +++ b/src/hid/gtk/gui-netlist-window.c
 @@ -865,7 +865,7 @@ ghid_get_net_from_node_name (gchar * node_name, gboolean enabled_only)

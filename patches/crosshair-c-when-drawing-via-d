@@ -1,7 +1,7 @@
-Bottom: aecfe146bb6a8c85fc043fb6406b9991777537bc
-Top:    e9d1fa5b746f5d40ed2e08db7be1d6ebdaa6c711
+Bottom: 32d82a8bec31f1a184da6158fb384e7b1efa152c
+Top:    2f56e0464b591a6fd34365960ff90c801d283d20
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-04 15:39:46 +0000
+Date:   2009-02-08 01:56:06 +0000
 
 crosshair.c: When drawing via DRC clearence, pass correct angle.
 
@@ -10,10 +10,11 @@ angle should be 360.
 
 
 
+
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 42fd81c..5335cd1 100644
+index 2996516..8321929 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -593,7 +593,7 @@ DrawAttached (Boolean BlockToo)

@@ -1,9 +1,10 @@
-Bottom: 91c9e13dc1119b42e57be188dcead3c13c2937c1
-Top:    c4f4caeaf6d12a2c5869ba379d1b4c11353e437d
+Bottom: d89b3b17143e4f1cbb44aba06931cc25f912142b
+Top:    563ee6ead9d5d5ecd0b6268e24c8b71db9db39a1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-04 15:39:47 +0000
+Date:   2009-02-08 01:56:07 +0000
 
 Add infrastructure for subcompositing various bits of our drawing
+
 
 
 
@@ -18,7 +19,7 @@ Add infrastructure for subcompositing various bits of our drawing
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index d911a4c..d077214 100644
+index 6d03be8..4bd4705 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -355,7 +355,7 @@ static int
