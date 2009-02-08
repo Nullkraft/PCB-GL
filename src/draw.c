@@ -1729,7 +1729,8 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
 static void
 DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
 {
-  int *x, *y, n, i = 0;
+  int *x, *y, n, i;
+  POLYAREA *pg;
   PLINE *pl;
   VNODE *v;
   if (!Polygon->Clipped)
@@ -1739,30 +1740,36 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
       AddPart (Polygon);
       return;
     }
-  pl = Polygon->Clipped->contours;
-  n = pl->Count;
-  x = (int *) malloc (n * sizeof (int));
-  y = (int *) malloc (n * sizeof (int));
-  for (v = &pl->head; i < n; v = v->next)
+  pg = Polygon->Clipped;
+  do
     {
-      x[i] = v->point[0];
-      y[i++] = v->point[1];
+      i = 0;
+      pl = pg->contours;
+      n = pl->Count;
+      x = (int *) malloc (n * sizeof (int));
+      y = (int *) malloc (n * sizeof (int));
+      for (v = &pl->head; i < n; v = v->next)
+        {
+          x[i] = v->point[0];
+          y[i++] = v->point[1];
+        }
+      if (TEST_FLAG (THINDRAWFLAG, PCB) ||
+          TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+        {
+          gui->set_line_width (Output.fgGC, 1);
+          for (i = 0; i < n - 1; i++)
+            {
+              gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
+              //  gui->fill_circle (Output.fgGC, x[i], y[i], 30);
+            }
+          gui->draw_line (Output.fgGC, x[n - 1], y[n - 1], x[0], y[0]);
+        }
+      else
+        gui->fill_polygon (Output.fgGC, n, x, y);
+      free (x);
+      free (y);
     }
-  if (TEST_FLAG (THINDRAWFLAG, PCB)
-      || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-    {
-      gui->set_line_width (Output.fgGC, 1);
-      for (i = 0; i < n - 1; i++)
-	{
-	  gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
-	  //  gui->fill_circle (Output.fgGC, x[i], y[i], 30);
-	}
-      gui->draw_line (Output.fgGC, x[n - 1], y[n - 1], x[0], y[0]);
-    }
-  else
-    gui->fill_polygon (Output.fgGC, n, x, y);
-  free (x);
-  free (y);
+  while ((pg = pg->f) != Polygon->Clipped);
 }
 
 /* ---------------------------------------------------------------------------
@@ -2177,10 +2184,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
         {
           PolygonType poly = *Polygon;
           poly.Clipped = Polygon->NoHoles;
-          do {
-            DrawPolygonLowLevel (&poly, NULL);
-            poly.Clipped = poly.Clipped->f;
-          } while (poly.Clipped != Polygon->NoHoles);
+          DrawPolygonLowLevel (&poly, NULL);
         }
       /* draw other parts of the polygon if fullpoly flag is set */
       /* NB: No "NoHoles" cache for these */
@@ -2196,6 +2200,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 	}
     }
   /* if the gui has the dicer flag set then it won't draw missing poly outlines */
+#if 0
   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && Polygon->Clipped && !Gathering
       && !gui->poly_dicer)
     {
@@ -2225,6 +2230,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 	  free (y);
 	}
     }
+#endif
 }
 
 /* ---------------------------------------------------------------------------
