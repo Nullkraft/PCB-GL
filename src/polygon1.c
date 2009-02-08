@@ -2268,18 +2268,32 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
       M_POLYAREA_label_isected (b, a_isected, FALSE);
 #endif
 
+/* New faster method */
+#if 1
       *res = a;
       M_POLYAREA_update_primary (&e, res, &holes, &a_isected, action);
       M_POLYAREA_Collect_separated (&e, a_isected, res, &holes, action, FALSE);
       M_B_AREA_Collect (&e, b, res, &holes, action);
       poly_Free (&b);
+#endif
 
+/* Old attempt */
 #if 0
       /* And speed things up _A LOT_ here by only processing the relevant
          contours, specifically keeping the source "a" as a starting point
          for the output polygon */
       M_POLYAREA_Collect_separated (&e, a_isected, res, &holes, action, FALSE);
       M_POLYAREA_Collect (&e, a, res, &holes, action, FALSE);
+      poly_Free (&a);
+      M_B_AREA_Collect (&e, b, res, &holes, action);
+      poly_Free (&b);
+#endif
+
+/* Old slow way */
+#if 0
+      M_POLYAREA_Collect (&e, a, res, &holes, action, b->f == b
+			  && !b->contours->next
+			  && b->contours->Flags.status != ISECTED);
       poly_Free (&a);
       M_B_AREA_Collect (&e, b, res, &holes, action);
       poly_Free (&b);
