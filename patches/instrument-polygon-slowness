@@ -1,5 +1,5 @@
 Bottom: 2d41227bdb365eaa3553f7377b29f699b25fe325
-Top:    3a0e9ef4c6aab64612aefa5ac0b2fefafb8b98c9
+Top:    3b8bcc960b1444b2b32583afe07f0add1e0b14a7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-08 02:06:34 +0000
 
@@ -12,21 +12,6 @@ Instrument polygon slowness
 
 ---
 
-diff --git a/src/misc.c b/src/misc.c
-index 4a05b7e..c3c2771 100644
---- a/src/misc.c
-+++ b/src/misc.c
-@@ -245,6 +245,10 @@ void
- SetPolygonBoundingBox (PolygonTypePtr Polygon)
- {
-   PLINE *outer = Polygon->Clipped->contours;
-+  if (outer == NULL) {
-+    printf ("Clipped->contours was null, sorry\n");
-+    return;
-+  }
-   Polygon->BoundingBox.X1 = outer->xmin;
-   Polygon->BoundingBox.Y1 = outer->ymin;
-   Polygon->BoundingBox.X2 = outer->xmax;
 diff --git a/src/polygon1.c b/src/polygon1.c
 index a92541d..74e2d02 100644
 --- a/src/polygon1.c
