@@ -1,9 +1,10 @@
-Bottom: e2b44c2373f1abf4ef1d81131056a807c6ef11aa
-Top:    546ae7446bbe4045b91eba73ba5458474b0f6fd8
+Bottom: 002c8d6c46bf0ba09840020c72f252999c56387c
+Top:    1264c89058702adcff4bd765fa607862daaef647
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-08 01:58:14 +0000
+Date:   2009-02-08 02:20:29 +0000
 
 Add colour information to VBO
+
 
 
 
@@ -240,7 +241,7 @@ index c199a87..72c6c17 100644
  }
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 120c1b7..aad8d5f 100644
+index 6125d2e..6a4123f 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -813,8 +813,7 @@ ghid_set_color (hidGC gc, const char *name)
