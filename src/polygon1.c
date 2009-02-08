@@ -2051,7 +2051,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
 
   /* now the non-intersect parts are collected in temp/holes */
   do {
-    int move_kept_to_holes = 0;
+    int hole_contour = 0;
 
     prev = NULL;
     for (curc = (*a)->contours; curc != NULL; curc = next) {
@@ -2066,9 +2066,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
 
       switch (curc->Flags.status) {
         case ISECTED:
-//          printf ("M_POLYAREA_update_primary: Encountered intersected, separating\n");
           isect_contour = 1;
-          move_kept_to_holes = is_first;
           break;
         case INSIDE:
           if (del_inside) del_contour = 1;
@@ -2079,20 +2077,27 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
           break;
       }
 
-      if (del_contour || isect_contour || move_kept_to_holes) {
+      /* Reset the intersection flags, since we keep these pieces */
+      if (curc->Flags.status != NULL)
+        curc->Flags.status == UNKNWN;
+
+      if (del_contour || isect_contour || hole_contour) {
 
         remove_contour (*a, prev, curc, !(is_first && is_last));
 
         if (del_contour) {
           /* Delete the contour */
           poly_DelContour (&curc); /* Sets curc to NULL */
+          printf ("Deleting contour we don't want in the result\n");
         } else if (isect_contour) { /* Overrides move_to_holes */
           /* Link into the list of intersected contours */
           curc->next = *isected;
           *isected = curc;
-        } else if (move_kept_to_holes) {
+          printf ("Separating intersected contour.\n");
+        } else if (hole_contour) {
           curc->next = *holes;
           *holes = curc;
+          printf ("Separating a hole (belonging to a moved contour)\n");
         } else {
           assert (0);
         }
@@ -2108,6 +2113,11 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
            "next" pointer adjusted. Saves walking the contour list when we delete one. */
         prev = curc;
       }
+
+      /* If we move or delete an outer contour, we need to move any holes
+         we wish to keep within that contour to the holes list. */
+      if (is_first && (del_contour || isect_contour))
+        hole_contour = 1;
     }
 
     if (*a == NULL) {
