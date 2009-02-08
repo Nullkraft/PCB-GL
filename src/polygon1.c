@@ -1821,55 +1821,6 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
   return FALSE;
 }				/* cntr_Collect */
 
-static void
-M_B_AREA_Collect_separated (jmp_buf * e, PLINE * bfst, POLYAREA ** contours,
-                            PLINE ** holes, int action)
-{
-  PLINE **cur, **next, *tmp;
-
-  for (cur = &bfst; *cur != NULL; cur = next) {
-    next = &((*cur)->next);
-    if ((*cur)->Flags.status == ISECTED)
-      continue;
-
-    if ((*cur)->Flags.status == INSIDE) {
-      switch (action) {
-        case PBO_XOR:
-        case PBO_SUB:
-          poly_InvContour (*cur);
-        case PBO_ISECT:
-          tmp = *cur;
-          *cur = tmp->next;
-          next = cur;
-          tmp->next = NULL;
-          tmp->Flags.status = UNKNWN;
-//          printf ("5: ");
-          PutContour (e, tmp, contours, holes, NULL, NULL, NULL); /* b */
-          break;
-        case PBO_UNITE:
-          break;		/* nothing to do - already included */
-      }
-    } else if ((*cur)->Flags.status == OUTSIDE) {
-      switch (action) {
-        case PBO_XOR:
-        case PBO_UNITE:
-          /* include */
-          tmp = *cur;
-          *cur = tmp->next;
-          next = cur;
-          tmp->next = NULL;
-          tmp->Flags.status = UNKNWN;
-//          printf ("6: ");
-          PutContour (e, tmp, contours, holes, NULL, NULL, NULL); /* b */
-          break;
-        case PBO_ISECT:
-        case PBO_SUB:
-          break;		/* do nothing, not included */
-      }
-    }
-  }
-}
-
 
 static void
 M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
@@ -2332,7 +2283,6 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
       M_POLYAREA_Collect (&e, a, res, &holes, action, FALSE);
       poly_Free (&a);
       M_B_AREA_Collect (&e, b, res, &holes, action);
-//      M_B_AREA_Collect_separated (&e, b_isected, res, &holes, action);
       poly_Free (&b);
 #endif
 
