@@ -835,6 +835,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
 }
 
 static void
+M_POLYAREA_intersect2 (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+{
+  POLYAREA *a = afst, *b = bfst;
+  PLINE *curcA, *curcB;
+  CVCList *the_list = NULL;
+
+  if (a == NULL || b == NULL)
+    error (err_bad_parm);
+  do
+    {
+      do
+	{
+	  if (a->contours->xmax >= b->contours->xmin &&
+	      a->contours->ymax >= b->contours->ymin &&
+	      a->contours->xmin <= b->contours->xmax &&
+	      a->contours->ymin <= b->contours->ymax)
+	    {
+	      if (intersect (e, a, b, add))
+		error (err_no_memory);
+	    }
+	}
+      while ((a = a->f) != afst);
+      for (curcB = b->contours; curcB != NULL; curcB = curcB->next)
+	if (curcB->Flags.status == ISECTED)
+	  if (!(the_list = add_descriptors (curcB, 'B', the_list)))
+	    error (err_no_memory);
+    }
+  while ((b = b->f) != bfst);
+  do
+    {
+      for (curcA = a->contours; curcA != NULL; curcA = curcA->next)
+	if (curcA->Flags.status == ISECTED)
+	  if (!(the_list = add_descriptors (curcA, 'A', the_list)))
+	    error (err_no_memory);
+    }
+  while ((a = a->f) != afst);
+}				/* M_POLYAREA_intersect */
+
+static void
 M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
 {
   POLYAREA *a = afst, *b = bfst;
@@ -1636,7 +1675,8 @@ Touching (POLYAREA * a, POLYAREA * b)
       if (!poly_Valid (b))
 	return -1;
 #endif
-      M_POLYAREA_intersect (&e, a, b, False);
+//      M_POLYAREA_intersect (&e, a, b, False);
+      M_POLYAREA_intersect2 (&e, a, b, False);
 
       if (M_POLYAREA_label (a, b, TRUE))
 	return TRUE;
