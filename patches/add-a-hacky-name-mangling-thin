@@ -1,9 +1,10 @@
-Bottom: da1931616aae55bff70bdf9b2939e314d21513d7
-Top:    bd3566f1844dc56012dce064bfb17e6a5f8531df
+Bottom: 0158150512fb965c5d1cce7529c373f29e15cc38
+Top:    0cef237f08958dc13312a8fb8cc29de2a949c6c7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-06 17:35:08 +0000
+Date:   2009-02-08 01:59:20 +0000
 
 Add a hacky name-mangling thingy for loading boards
+
 
 
 
@@ -17,7 +18,7 @@ Add a hacky name-mangling thingy for loading boards
 ---
 
 diff --git a/src/create.c b/src/create.c
-index adccb53..5789072 100644
+index fda2613..373c213 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -37,6 +37,7 @@
@@ -116,7 +117,7 @@ index adccb53..5789072 100644
      Element = GetElementMemory (Data);
  
 diff --git a/src/create.h b/src/create.h
-index dc1cbf4..1f00e66 100644
+index a994c84..98bb525 100644
 --- a/src/create.h
 +++ b/src/create.h
 @@ -62,6 +62,7 @@ TextTypePtr CreateNewText (LayerTypePtr, FontTypePtr, LocationType,
@@ -128,7 +129,7 @@ index dc1cbf4..1f00e66 100644
  				 FontTypePtr, FlagType, char *, char *,
  				 char *, LocationType, LocationType, BYTE,
 diff --git a/src/file.c b/src/file.c
-index 17520e0..c4d1bc3 100644
+index b6c67b9..653e1db 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -351,6 +351,9 @@ LoadPCB (char *Filename)
