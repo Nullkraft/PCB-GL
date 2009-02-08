@@ -245,6 +245,10 @@ void
 SetPolygonBoundingBox (PolygonTypePtr Polygon)
 {
   PLINE *outer = Polygon->Clipped->contours;
+  if (outer == NULL) {
+    printf ("Clipped->contours was null, sorry\n");
+    return;
+  }
   Polygon->BoundingBox.X1 = outer->xmin;
   Polygon->BoundingBox.Y1 = outer->ymin;
   Polygon->BoundingBox.X2 = outer->xmax;
