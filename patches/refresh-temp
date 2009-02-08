@@ -1,0 +1,216 @@
+Bottom: a9de85b504dec1809ebc490fea6680507097b070
+Top:    17c12a8ab528a93d2d57ab1952bcd9464426debe
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-08 19:29:51 +0000
+
+Refresh of more-work-on-trying-to-speed-u
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 08fa910..69be062 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -441,6 +441,9 @@ DrawEverything (BoxTypePtr drawn_area)
+ 
+       if (gui->set_layer (0, group, 0))
+ 	{
++
++/* POLYGON TESTING */
++#if 0
+     static int once = 1;
+ 
+ 	  gui->set_color (Output.fgGC, PCB->ElementColor);
+@@ -489,7 +492,7 @@ DrawEverything (BoxTypePtr drawn_area)
+ 
+       gui->fill_pcb_polygon (Output.fgGC, &Polygon);
+     }
+-
++#endif
+ 	  if (DrawLayerGroup (group, drawn_area) && !gui->gui)
+ 	    {
+ 	      int save_swap = SWAP_IDENT;
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 7106410..0533240 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -648,8 +648,22 @@ hidgl_fill_pcb_polygon (PolygonType *poly)
+   /* Walk the polygon structure, counting vertices */
+   piece = poly->Clipped;
+   do {
+-    for (contour = piece->contours; contour != NULL; contour = contour->next)
++    for (contour = piece->contours; contour != NULL; contour = contour->next) {
++      int contour_count_manual = 0;
++      vnode = &contour->head;
++      do {
++        contour_count_manual++;
++      } while ((vnode = vnode->next) != &contour->head);
++
++      if (contour_count_manual != contour->Count) {
++        fprintf (stderr, "CRAPPY POLYGON ROUTINES MISCOUNTED NODES, FIXING\n");
++        fprintf (stderr, "Manual count was %i, contour claimed %i\n",
++                 contour_count_manual, contour->Count);
++        contour->Count = contour_count_manual;
++      }
++
+       vertex_count += contour->Count;
++    }
+   } while ((piece = piece->f) != poly->Clipped);
+ 
+   vertices = malloc (sizeof(GLdouble) * vertex_count * 3);
+diff --git a/src/polygon1.c b/src/polygon1.c
+index aec637c..9dc15e0 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1988,11 +1988,19 @@ contour_is_last (PLINE *cur)
+ 
+ 
+ static inline void
+-remove_polyarea (POLYAREA **piece)
++remove_polyarea (POLYAREA **list, POLYAREA *piece)
+ {
+-  (*piece)->b->f = (*piece)->f;
+-  (*piece)->f->b = (*piece)->b;
+-  (*piece)->f = (*piece)->b = (*piece);
++  /* If this item was the start of the list, advance that pointer */
++  if (*list == piece)
++    *list = (*list)->f;
++
++  /* But reset it to NULL if it wraps around and hits us again */
++  if (*list == piece)
++    *list = NULL;
++
++  piece->b->f = piece->f;
++  piece->f->b = piece->b;
++  piece->f = piece->b = piece;
+ }
+ 
+ 
+@@ -2017,15 +2025,17 @@ static void
+ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+                            PLINE ** holes, PLINE ** isected, int action)
+ {
+-  POLYAREA **a = pieces;
++  POLYAREA *a = *pieces;
++  POLYAREA *anext;
+   PLINE *curc, *next, *prev;
+   int inv_inside = 0;
+   int del_inside = 0;
+   int del_outside = 0;
++  int finished;
+ 
+ //  printf ("M_POLYAREA_update_primary %p, %p, %i\n", pieces, holes, action);
+ 
+-  if (*a == NULL) {
++  if (a == NULL) {
+     printf ("M_POLYAREA_update_primary: No polygon pieces to play with\n");
+     return;
+   }
+@@ -2053,9 +2063,14 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+   do {
+     int hole_contour = 0;
+ 
++    anext = a->f;
++    finished = (anext == *pieces);
++
++//    printf ("Inspecting a piece of polygon\n");
++
+     prev = NULL;
+-    for (curc = (*a)->contours; curc != NULL; curc = next) {
+-      int is_first = contour_is_first (*a, curc);
++    for (curc = a->contours; curc != NULL; curc = next) {
++      int is_first = contour_is_first (a, curc);
+       int is_last = contour_is_last (curc);
+ 
+       int del_contour = 0;
+@@ -2067,6 +2082,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+       switch (curc->Flags.status) {
+         case ISECTED:
+           isect_contour = 1;
++//          printf ("Found intersected contour\n");
+           break;
+         case INSIDE:
+           if (del_inside) del_contour = 1;
+@@ -2078,39 +2094,40 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+       }
+ 
+       /* Reset the intersection flags, since we keep these pieces */
+-      if (curc->Flags.status != NULL)
+-        curc->Flags.status == UNKNWN;
++      if (curc->Flags.status != ISECTED)
++        curc->Flags.status = UNKNWN;
+ 
+       if (del_contour || isect_contour || hole_contour) {
+ 
+-        remove_contour (*a, prev, curc, !(is_first && is_last));
++        remove_contour (a, prev, curc, !(is_first && is_last));
+ 
+         if (del_contour) {
+           /* Delete the contour */
+-          poly_DelContour (&curc); /* Sets curc to NULL */
+-          printf ("Deleting contour we don't want in the result\n");
++          poly_DelContour (&curc); /* NB: Sets curc to NULL */
++//          printf ("Deleting contour we don't want in the result\n");
+         } else if (isect_contour) { /* Overrides move_to_holes */
+           /* Link into the list of intersected contours */
+           curc->next = *isected;
+           *isected = curc;
+-          printf ("Separating intersected contour.\n");
++//          printf ("Separating intersected contour.\n");
+         } else if (hole_contour) {
+           curc->next = *holes;
+           *holes = curc;
+-          printf ("Separating a hole (belonging to a moved contour)\n");
++//          printf ("Separating a hole (belonging to a moved contour)\n");
+         } else {
+           assert (0);
+         }
+ 
+         if (is_first && is_last) {
+-//          printf ("M_POLYAREA_update_primary: Delete / removed the whole polygon piece\n");
+-          remove_polyarea (a);
+-          poly_Free (a); /* NB: This sets *a to NULL, where *a might be the list pointer */
++//          printf ("M_POLYAREA_update_primary: Deleted / removed the whole polygon piece\n");
++          remove_polyarea (pieces, a);
++          poly_Free (&a); /* NB: Sets a to NULL */
+         }
+ 
+       } else {
+-        /* Note the item we just didn't delete as the next candidate for having its
+-           "next" pointer adjusted. Saves walking the contour list when we delete one. */
++        /* Note the item we just didn't delete as the next
++           candidate for having its "next" pointer adjusted.
++           Saves walking the contour list when we delete one. */
+         prev = curc;
+       }
+ 
+@@ -2120,12 +2137,14 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+         hole_contour = 1;
+     }
+ 
+-    if (*a == NULL) {
++    if (*pieces == NULL) {
+ //      printf ("M_POLYAREA_update_primary: Deleted / removed _all_"
+ //              "of the existing polygon pieces\n");
+-      break;
++      finished = TRUE;
+     }
+-  } while (*(a = &(*a)->f) != *pieces);
++
++  } while ((a = anext), !finished);
++//  } while ((a = anext) != *pieces);
+ }
+ 
+ 
+diff --git a/src/thermal.c b/src/thermal.c
+index 445b97d..fa87f28 100644
+--- a/src/thermal.c
++++ b/src/thermal.c
+@@ -432,6 +432,7 @@ ThermPoly (PCBTypePtr p, PinTypePtr pin, Cardinal laynum)
+         arc = CirclePoly (pin->X, pin->Y, pin->Thickness / 2);
+         /* create a thin ring */
+         poly_Boolean_free (pa, arc, &m, PBO_SUB);
++#warning THIS WOULD BE FASTER IF WE JUST SUTRACTED A CROSS SHAPE
+         /* fix me needs error checking */
+         if (style == 2)
+           {
