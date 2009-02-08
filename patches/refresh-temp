@@ -1,0 +1,86 @@
+Bottom: dd4a10a30efd1450b0589f6f38e80359857bc7b5
+Top:    86c88656023e5c0ef90c54716400c2b1d571aa24
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-08 20:29:18 +0000
+
+Refresh of more-work-on-trying-to-speed-u
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index bb2150f..9f4b142 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1330,6 +1330,7 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+         printf ("PATH 1\n");
+         r_delete_entry (owner->contour_tree, (BoxType *)cntr);
+       }
++      printf ("Put contour adding a brand new contour\n");
+       InsCntr (e, cntr, contours);
+     }
+   /* put hole into temporary list */
+@@ -1351,6 +1352,7 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+ 	}
+       else
+ 	{
++          printf ("Put contour adding a hole\n");
+ 	  cntr->next = *holes;
+ 	  *holes = cntr;	/* let cntr be 1st hole in list */
+           /* We don't insert the holes into an r-tree,
+@@ -1774,6 +1776,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+     }
+   else
+     {
++      printf ("Got non ISECTED contour in cntr_Collect!\n");
+       switch (action)
+ 	{
+ 	case PBO_ISECT:
+@@ -2011,12 +2014,13 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+           /* Delete the contour */
+           poly_DelContour (&curc); /* NB: Sets curc to NULL */
+ //          printf ("Deleting contour we don't want in the result\n");
+-        } else if (isect_contour) { /* Overrides move_to_holes */
++        } else if (isect_contour) {
+           /* Link into the list of intersected contours */
+           curc->next = *isected;
+           *isected = curc;
+ //          printf ("Separating intersected contour.\n");
+         } else if (hole_contour) {
++          /* Link into the list of holes */
+           curc->next = *holes;
+           *holes = curc;
+ //          printf ("Separating a hole (belonging to a moved contour)\n");
+@@ -2273,11 +2277,9 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+       *res = a;
+       M_POLYAREA_update_primary (&e, res, &holes, &a_isected, action);
+       M_POLYAREA_Collect_separated (&e, a_isected, res, &holes, action, FALSE);
+-      M_B_AREA_Collect (&e, b, res, &holes, action);
+-      poly_Free (&b);
+ #endif
+ 
+-/* Old attempt */
++/* First attempt at go-faster stripes */
+ #if 0
+       /* And speed things up _A LOT_ here by only processing the relevant
+          contours, specifically keeping the source "a" as a starting point
+@@ -2285,8 +2287,6 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+       M_POLYAREA_Collect_separated (&e, a_isected, res, &holes, action, FALSE);
+       M_POLYAREA_Collect (&e, a, res, &holes, action, FALSE);
+       poly_Free (&a);
+-      M_B_AREA_Collect (&e, b, res, &holes, action);
+-      poly_Free (&b);
+ #endif
+ 
+ /* Old slow way */
+@@ -2295,9 +2295,10 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+ 			  && !b->contours->next
+ 			  && b->contours->Flags.status != ISECTED);
+       poly_Free (&a);
++#endif
++
+       M_B_AREA_Collect (&e, b, res, &holes, action);
+       poly_Free (&b);
+-#endif
+ 
+       InsertHoles (&e, *res, &holes);
+     }
