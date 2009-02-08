@@ -1015,8 +1015,9 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
   heap = heap_create ();
   do
     {
-      if (outer->contours &&
-          cntrbox_inside (poly, outer->contours))
+      if (outer->contours == NULL) {
+        printf ("cntr_in_M_POLYAREA: outer->contours was NULL\n");
+      } else if (cntrbox_inside (poly, outer->contours))
 	heap_insert (heap, outer->contours->area, (void *) outer);
     }
   /* if checking touching, use only the first polygon */
