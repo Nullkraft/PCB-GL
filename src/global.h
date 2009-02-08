@@ -205,6 +205,8 @@ typedef struct			/* holds information about a polygon */
   Cardinal PointN,		/* number of points in polygon */
     PointMax;			/* max number from malloc() */
   POLYAREA *Clipped;		/* the clipped region of this polygon */
+  POLYAREA *NoHoles;		/* the polygon broken into hole-less regions */
+  int NoHolesValid;		/* Is the NoHoles polygon up to date? */
   PointTypePtr Points;		/* data */
 } PolygonType, *PolygonTypePtr;
 

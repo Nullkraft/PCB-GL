@@ -100,7 +100,7 @@ static void DrawPadLowLevel (hidGC, PadTypePtr, Boolean, Boolean);
 static void DrawPadNameLowLevel (PadTypePtr);
 static void DrawLineLowLevel (LineTypePtr, Boolean);
 static void DrawRegularText (LayerTypePtr, TextTypePtr, int);
-static void DrawPolygonLowLevel (PolygonTypePtr);
+static void DrawPolygonLowLevel (PolygonTypePtr, void *);
 static void DrawArcLowLevel (ArcTypePtr);
 static void DrawElementPackageLowLevel (ElementTypePtr Element, int);
 static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
@@ -1727,7 +1727,7 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
  * lowlevel drawing routine for polygons
  */
 static void
-DrawPolygonLowLevel (PolygonTypePtr Polygon)
+DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
 {
   int *x, *y, n, i = 0;
   PLINE *pl;
@@ -2106,7 +2106,7 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
   else
     gui->set_color (Output.fgGC, Layer->Color);
   layernum = GetLayerNumber (PCB->Data, Layer);
-  DrawPolygonLowLevel (Polygon);
+  DrawPolygonLowLevel (Polygon, NULL);
   if (TEST_FLAG (CLEARPOLYFLAG, Polygon))
     {
       r_search (PCB->Data->pin_tree, &Polygon->BoundingBox, NULL,
@@ -2163,14 +2163,27 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
   if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
       && !gui->poly_dicer)
     {
-      DrawPolygonLowLevel (Polygon);
+      DrawPolygonLowLevel (Polygon, NULL);
       if (!Gathering)
 	PolygonHoles (clip_box, Layer, Polygon, thin_callback);
     }
   else if (Polygon->Clipped)
     {
-      NoHolesPolygonDicer (Polygon, DrawPolygonLowLevel, clip_box);
+      if (!Polygon->NoHolesValid)
+        {
+          ComputeNoHoles (Polygon);
+        }
+      if (Polygon->NoHoles)
+        {
+          PolygonType poly = *Polygon;
+          poly.Clipped = Polygon->NoHoles;
+          do {
+            DrawPolygonLowLevel (&poly, NULL);
+            poly.Clipped = poly.Clipped->f;
+          } while (poly.Clipped != Polygon->NoHoles);
+        }
       /* draw other parts of the polygon if fullpoly flag is set */
+      /* NB: No "NoHoles" cache for these */
       if (TEST_FLAG (FULLPOLYFLAG, Polygon))
 	{
 	  POLYAREA *pg;
@@ -2178,7 +2191,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 	    {
 	      PolygonType poly;
 	      poly.Clipped = pg;
-	      NoHolesPolygonDicer (&poly, DrawPolygonLowLevel, clip_box);
+	      NoHolesPolygonDicer (&poly, DrawPolygonLowLevel, NULL, clip_box);
 	    }
 	}
     }
@@ -2474,7 +2487,7 @@ ErasePolygon (PolygonTypePtr Polygon)
 {
   Erasing++;
   gui->set_color (Output.fgGC, Settings.BackgroundColor);
-  DrawPolygonLowLevel (Polygon);
+  DrawPolygonLowLevel (Polygon, NULL);
   Erasing--;
 }
 
