@@ -51,6 +51,7 @@ void DrawArc (LayerTypePtr, ArcTypePtr, int);
 void DrawText (LayerTypePtr, TextTypePtr, int);
 void DrawTextLowLevel (TextTypePtr, int);
 void DrawPolygon (LayerTypePtr, PolygonTypePtr, int);
+void DrawPolygonPiece (LayerTypePtr, PolygonPieceTypePtr, int);
 void DrawElement (ElementTypePtr, int);
 void DrawElementName (ElementTypePtr, int);
 void DrawElementPackage (ElementTypePtr, int);
