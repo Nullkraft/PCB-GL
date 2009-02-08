@@ -1,0 +1,25 @@
+Bottom: e35f4d7d055454aad2db9f47ed70ef1c03cc8aed
+Top:    86f041fd8971aff6ec4349a7ec7536a68c251369
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-08 20:14:09 +0000
+
+Refresh of more-work-on-trying-to-speed-u
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index d958806..516a6f5 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1015,8 +1015,9 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
+   heap = heap_create ();
+   do
+     {
+-      if (outer->contours &&
+-          cntrbox_inside (poly, outer->contours))
++      if (outer->contours == NULL) {
++        printf ("cntr_in_M_POLYAREA: outer->contours was NULL\n");
++      } else if (cntrbox_inside (poly, outer->contours))
+ 	heap_insert (heap, outer->contours->area, (void *) outer);
+     }
+   /* if checking touching, use only the first polygon */
