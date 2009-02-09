@@ -1980,8 +1980,6 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
           if (curc->Flags.orient == PLF_DIR && !is_first)
             printf ("A:Hmm, got PLF_DIR orientation for a non-first contour\n");
 
-          if (curc->Flags.orient != PLF_DIR && is_first)
-            printf ("A:Hmm, got first contour without PLF_DIR orientation\n");
 //          printf ("Separating a hole (belonging to a moved contour)\n");
         } else {
           assert (0);
