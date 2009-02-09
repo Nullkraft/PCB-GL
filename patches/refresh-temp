@@ -1,0 +1,26 @@
+Bottom: 32eb13e804933900d0bf639083b259219eb0c573
+Top:    01668a84f2f536cad08e9fbf49db70c0d592010d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-09 05:14:38 +0000
+
+Refresh of try-optimising-polygon-operati
+
+---
+
+diff --git a/src/global.h b/src/global.h
+index 1fb3420..157e186 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -261,12 +261,6 @@ typedef struct			/* holds information about arcs */
+     Delta;
+ } ArcType, *ArcTypePtr;
+ 
+-typedef struct
+-{
+-  struct rtree_node *root;
+-  int size;			/* number of entries in tree */
+-} rtree_t;
+-
+ typedef struct			/* holds information about one layer */
+ {
+   char *Name;			/* layer name */
