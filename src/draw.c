@@ -2202,19 +2202,17 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
   }
 
   /* if the gui has the dicer flag set then it won't accept thin draw */
-//  if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-//      && !gui->poly_dicer)
+  if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+      && !gui->poly_dicer)
     {
       hidgl_hack_poly_alpha (1.0);
       gui->set_color (Output.fgGC, color);
       DrawPolygonOutlineLowLevel (Polygon, NULL);
       if (!Gathering)
 	PolygonHoles (clip_box, Layer, Polygon, thin_callback);
-    }
-  if (!((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-      && !gui->poly_dicer) && Polygon->Clipped)
-    {
       hidgl_hack_poly_alpha (0.25);
+    }
+    {
       gui->set_color (Output.fgGC, color);
       if (!Polygon->NoHolesValid)
         {
