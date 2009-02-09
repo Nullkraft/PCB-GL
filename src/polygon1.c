@@ -1854,7 +1854,7 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
 		tmp->next = NULL;
 		tmp->Flags.status = UNKNWN;
 //                printf ("5: ");
-		PutContour (e, tmp, contours, holes, NULL, NULL, NULL); /* b */
+		PutContour (e, tmp, contours, holes, b, NULL, NULL); /* b */
 		break;
 	      case PBO_UNITE:
 		break;		/* nothing to do - already included */
@@ -1871,7 +1871,7 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
 		tmp->next = NULL;
 		tmp->Flags.status = UNKNWN;
 //                printf ("6: ");
-		PutContour (e, tmp, contours, holes, NULL, NULL, NULL); /* b */
+		PutContour (e, tmp, contours, holes, b, NULL, NULL); /* b */
 		break;
 	      case PBO_ISECT:
 	      case PBO_SUB:
