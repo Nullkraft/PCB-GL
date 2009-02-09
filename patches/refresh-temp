@@ -1,0 +1,159 @@
+Bottom: e6ad7e2c764004b56417a83989ea1d9844c53e93
+Top:    026364cf19ef3dcdf713effb379277d93883a1e4
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-09 13:22:27 +0000
+
+Refresh of try-to-fix-the-broken-assumpti
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 149f453..821ba62 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -105,7 +105,7 @@ if (((ptr) = malloc(sizeof(type))) == NULL) \
+ #undef DEBUG_JUMP
+ #define DEBUG_GATHER
+ #undef DEBUG_ANGLE
+-#undef DEBUG
++#define DEBUG
+ #ifdef DEBUG
+ #define DEBUGP(...) fprintf(stderr, ## __VA_ARGS__)
+ #else
+@@ -153,10 +153,19 @@ static void
+ poly_dump (POLYAREA * p)
+ {
+   POLYAREA *f = p;
++  PLINE *contour;
+ 
+   do
+     {
++      printf ("++++++++++\n");
+       pline_dump (&p->contours->head);
++      printf ("----------\n");
++      contour = p->contours->next;
++      while (contour) {
++        pline_dump (&contour->head);
++        contour = contour->next;
++      }
++      printf ("==========\n");
+     }
+   while ((p = p->f) != f);
+   fprintf (stderr, "NEXT_POLY\n");
+@@ -1359,21 +1368,32 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+           /* We don't insert the holes into an r-tree,
+            * they just form a linked list */
+           if (owner != NULL) {
+-            printf ("PATH 3\n");
++//            printf ("PATH 3\n");
+             r_delete_entry (owner->contour_tree, (BoxType *)cntr);
+           }
+ 	}
+     }
+ }				/* PutContour */
+ 
++
++struct heap_struct
++{
++  struct heap_element *element;
++  int size, max;
++};
++
+ static int
+ heap_it (const BoxType * b, void *cl)
+ {
+   heap_t *heap = (heap_t *) cl;
+   PLINE *p = (PLINE *) b;
+-  if (p->Count == 0)
++  if (p->Count == 0) {
++    printf ("???\n");
+     return 0;  /* how did this happen? */
++  }
++  printf ("Adding PLINE %p to heap\n", p);
+   heap_insert (heap, p->area, (void *) p);
++  printf ("Heap size is now %i\n", heap->size);
+   return 1;
+ }
+ 
+@@ -1410,6 +1430,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+       /* build a heap of all of the polys that the hole is inside its bounding box */
+       heap = heap_create ();
+       r_search (tree, (BoxType *) curh, NULL, heap_it, heap);
++      printf ("Finished adding, heap size is %i\n", heap->size);
+       if (heap_is_empty (heap))
+ 	{
+ #ifndef NDEBUG
+@@ -1426,23 +1447,46 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+        * proving it.
+        */
+       tmp = (PLINE *) heap_remove_smallest (heap);
++      printf ("Taken smallest, remainingheap size is %i\n", heap->size);
+       if (heap_is_empty (heap))
+ 	{			/* only one possibility it must be the right one */
++          printf ("Taking the only one in the heap\n");
+ 	  assert (poly_ContourInContour (tmp, curh));
++	  if(!poly_ContourInContour (tmp, curh)) {
++            printf ("FUBAR\n");
++          }
+ 	  container = tmp;
+ 	}
+       else
+ 	{
++          printf ("**remainingheap size is %i\n", heap->size);
+ 	  do
+ 	    {
++              printf ("***remainingheap size is %i\n", heap->size);
+ 	      if (poly_ContourInContour (tmp, curh))
+ 		{
+ 		  container = tmp;
++                  printf ("Found one which the hole fits in: %p\n", tmp);
++                  printf ("remainingheap size is %i\n", heap->size);
++	          if (heap_is_empty (heap))
++                    printf ("Heap is now empty\n");
++                  printf ("remainingheap size is %i\n", heap->size);
++
++                  /* Just checking the rest of the heap for fun */
++                  while (!heap_is_empty (heap)) {
++                    tmp = heap_remove_smallest (heap);
++                    printf ("remainingheap size is %i\n", heap->size);
++                    printf ("Also checking %p\n", tmp);
++                    if (poly_ContourInContour (tmp, curh))
++                      printf ("ALSO, contour %p would fit\n", tmp);
++                  }
++
+ 		  break;
+ 		}
+ 	      if (heap_is_empty (heap))
+ 		break;
+ 	      tmp = (PLINE *) heap_remove_smallest (heap);
++              printf ("Checking %p\n", tmp);
+ 	    }
+ 	  while (1);
+ 	}
+@@ -2058,6 +2102,8 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+          we wish to keep within that contour to the holes list. */
+       if (is_first && (del_contour || isect_contour))
+         hole_contour = 1;
++
++      hole_contour = 1; /* Experiment to see if we were breaking things by not proceesing more of these holes */
+     }
+ 
+     /* If we deleted all the pieces of the polyarea, *pieces is NULL and
+@@ -2267,6 +2313,8 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+     return -1;
+   }
+ 
++  printf ("++++++++++++++\n");
++
+   if ((code = setjmp (e)) == 0)
+     {
+ #ifdef DEBUG
+@@ -2314,6 +2362,8 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+       poly_Free (&b);
+ 
+       InsertHoles (&e, *res, &holes);
++      poly_dump (*res);
++  printf ("--------------\n");
+     }
+   /* delete holes if any left */
+   while ((p = holes) != NULL)
