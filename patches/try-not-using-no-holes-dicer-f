@@ -1,9 +1,10 @@
-Bottom: 7fe099620f5b46a36f5bf97d3524579c8c7ec2bb
-Top:    52f18e19aed713aa3b63d0e57be654d7a2c3e35f
+Bottom: 7c78ecf9ec3e53261fb5fe8e8460b282689cdd15
+Top:    367de195c333cb2882d8d74ebbd361e3f4a1dbc3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-08 21:28:11 +0000
+Date:   2009-02-09 08:55:23 +0000
 
 Try not using no-holes dicer for drawing polygons
+
 
 
 
@@ -13,10 +14,10 @@ Try not using no-holes dicer for drawing polygons
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index dd4ff4d..f284dce 100644
+index 9ff4d57..9420bb1 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2204,7 +2204,7 @@ DrawPour (LayerTypePtr Layer, PourTypePtr Pour, int unused)
+@@ -2256,7 +2256,7 @@ DrawPour (LayerTypePtr Layer, PourTypePtr Pour, int unused)
    layernum = GetLayerNumber (PCB->Data, Layer);
    DrawPourLowLevel (Pour, NULL);
  #warning FIXME Later
@@ -25,7 +26,7 @@ index dd4ff4d..f284dce 100644
    if (TEST_FLAG (CLEARPOLYFLAG, Pour))
      {
        r_search (PCB->Data->pin_tree, &Pour->BoundingBox, NULL,
-@@ -2272,6 +2272,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2324,6 +2324,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
      }
    else if (Polygon->Clipped)
      {
@@ -33,7 +34,7 @@ index dd4ff4d..f284dce 100644
        if (!Polygon->NoHolesValid)
          {
            ComputeNoHoles (Polygon);
-@@ -2285,6 +2286,15 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2337,6 +2338,15 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
              poly.Clipped = poly.Clipped->f;
            } while (poly.Clipped != Polygon->NoHoles);
          }
