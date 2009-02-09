@@ -1,5 +1,5 @@
 Bottom: ca2b7a951a34d4aa27e8fd129f9ba1e705502dce
-Top:    0057d86558560de79e853a7d30092764604c1a73
+Top:    9cb95736016b778ed17f22425f45da2083121886
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-09 05:02:38 +0000
 
@@ -8,8 +8,25 @@ Attempt to fix polygon slowness by avoiding full recreation for each operation
 
 ---
 
+diff --git a/src/global.h b/src/global.h
+index 1fb3420..157e186 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -261,12 +261,6 @@ typedef struct			/* holds information about arcs */
+     Delta;
+ } ArcType, *ArcTypePtr;
+ 
+-typedef struct
+-{
+-  struct rtree_node *root;
+-  int size;			/* number of entries in tree */
+-} rtree_t;
+-
+ typedef struct			/* holds information about one layer */
+ {
+   char *Name;			/* layer name */
 diff --git a/src/polygon1.c b/src/polygon1.c
-index d5677e6..336c54e 100644
+index d5677e6..25155ab 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -911,6 +911,48 @@ cntrbox_inside (PLINE * c1, PLINE * c2)
@@ -329,7 +346,7 @@ index d5677e6..336c54e 100644
  		PutContour (e, tmp, contours, holes, NULL, NULL, NULL); /* b */
  		break;
  	      case PBO_ISECT:
-@@ -1674,6 +1836,213 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
+@@ -1674,6 +1836,211 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
  }
  
  
@@ -477,8 +494,6 @@ index d5677e6..336c54e 100644
 +          if (curc->Flags.orient == PLF_DIR && !is_first)
 +            printf ("A:Hmm, got PLF_DIR orientation for a non-first contour\n");
 +
-+          if (curc->Flags.orient != PLF_DIR && is_first)
-+            printf ("A:Hmm, got first contour without PLF_DIR orientation\n");
 +//          printf ("Separating a hole (belonging to a moved contour)\n");
 +        } else {
 +          assert (0);
@@ -543,7 +558,7 @@ index d5677e6..336c54e 100644
  static void
  M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
  		    PLINE ** holes, int action, BOOLp maybe)
-@@ -1682,8 +2051,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+@@ -1682,8 +2049,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
    POLYAREA *parent = NULL; /* Quiet GCC warning */
    PLINE **cur, **next, *parent_contour;
  
@@ -553,7 +568,7 @@ index d5677e6..336c54e 100644
  
    assert (a != NULL);
    while ((a = a->f) != afst);
-@@ -1703,7 +2071,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+@@ -1703,7 +2069,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
          {
            next = &((*cur)->next);
            /* if we disappear a contour, don't advance twice */
@@ -562,7 +577,7 @@ index d5677e6..336c54e 100644
            if (cntr_Collect (e, cur, contours, holes, action, a, NULL, NULL))
              {
                parent = *contours;
-@@ -1719,7 +2087,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+@@ -1719,7 +2085,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
            /* if we disappear a contour, don't advance twice */
            if (*cur == parent_contour)
              printf ("WTF??\n");
@@ -571,7 +586,7 @@ index d5677e6..336c54e 100644
            if (cntr_Collect (e, cur, contours, holes, action, a, parent,
                              (*cur == parent_contour) ? NULL : parent_contour))
              next = cur;
-@@ -1813,6 +2181,7 @@ int
+@@ -1813,6 +2179,7 @@ int
  poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
  {
    POLYAREA *a = ai, *b = bi;
@@ -579,7 +594,7 @@ index d5677e6..336c54e 100644
    PLINE *p, *holes = NULL;
    jmp_buf e;
    int code;
-@@ -1844,6 +2213,11 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -1844,6 +2211,11 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
  	}
      }
  
@@ -591,7 +606,7 @@ index d5677e6..336c54e 100644
    if ((code = setjmp (e)) == 0)
      {
  #ifdef DEBUG
-@@ -1851,16 +2225,42 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -1851,16 +2223,42 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        assert (poly_Valid (b));
  #endif
  
@@ -635,7 +650,7 @@ index d5677e6..336c54e 100644
        M_B_AREA_Collect (&e, b, res, &holes, action);
        poly_Free (&b);
  
-@@ -1933,7 +2333,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
+@@ -1933,7 +2331,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
        M_POLYAREA_label (a, b, FALSE);
        M_POLYAREA_label (b, a, FALSE);
  
@@ -644,7 +659,7 @@ index d5677e6..336c54e 100644
        M_POLYAREA_Collect (&e, a, aandb, &holes, PBO_ISECT, FALSE);
        InsertHoles (&e, *aandb, &holes);
        assert (poly_Valid (*aandb));
-@@ -1946,7 +2346,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
+@@ -1946,7 +2344,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
        holes = NULL;
        clear_marks (a);
        clear_marks (b);
