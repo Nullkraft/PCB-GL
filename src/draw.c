@@ -1727,6 +1727,41 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
  * lowlevel drawing routine for polygons
  */
 static void
+DrawPolygonOutlineLowLevel (PolygonTypePtr Polygon, void *data)
+{
+  int *x, *y, n, i = 0;
+  PLINE *pl;
+  VNODE *v;
+  if (!Polygon->Clipped)
+    return;
+  if (Gathering)
+    {
+      AddPart (Polygon);
+      return;
+    }
+  pl = Polygon->Clipped->contours;
+  n = pl->Count;
+  x = (int *) malloc (n * sizeof (int));
+  y = (int *) malloc (n * sizeof (int));
+  for (v = &pl->head; i < n; v = v->next)
+    {
+      x[i] = v->point[0];
+      y[i++] = v->point[1];
+    }
+  gui->set_line_width (Output.fgGC, 1);
+  for (i = 0; i < n - 1; i++)
+    {
+      gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
+      //  gui->fill_circle (Output.fgGC, x[i], y[i], 30);
+    }
+  gui->draw_line (Output.fgGC, x[n - 1], y[n - 1], x[0], y[0]);
+  free (x);
+  free (y);
+}
+/* ---------------------------------------------------------------------------
+ * lowlevel drawing routine for polygons
+ */
+static void
 DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
 {
   int *x, *y, n, i = 0;
@@ -2088,6 +2123,8 @@ cp_callback (const BoxType * b, void *cl)
   return 1;
 }
 
+void hidgl_hack_poly_alpha (double alpha);
+
 /* ---------------------------------------------------------------------------
  * draws a polygon on a layer
  */
@@ -2096,6 +2133,7 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
 {
   int layernum;
 
+  hidgl_hack_poly_alpha (0.7);
   if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Polygon))
     {
       if (TEST_FLAG (SELECTEDFLAG, Polygon))
@@ -2107,6 +2145,7 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
     gui->set_color (Output.fgGC, Layer->Color);
   layernum = GetLayerNumber (PCB->Data, Layer);
   DrawPolygonLowLevel (Polygon, NULL);
+  hidgl_hack_poly_alpha (1.0);
   if (TEST_FLAG (CLEARPOLYFLAG, Polygon))
     {
       r_search (PCB->Data->pin_tree, &Polygon->BoundingBox, NULL,
@@ -2150,25 +2189,33 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
 static void
 DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 {
-  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Polygon))
-    {
-      if (TEST_FLAG (SELECTEDFLAG, Polygon))
-	gui->set_color (Output.fgGC, Layer->SelectedColor);
-      else
-	gui->set_color (Output.fgGC, PCB->ConnectedColor);
+  char *color;
+
+  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Polygon)) {
+    if (TEST_FLAG (SELECTEDFLAG, Polygon)) {
+      color = Layer->SelectedColor;
+    } else {
+      color = PCB->ConnectedColor;
     }
-  else
-    gui->set_color (Output.fgGC, Layer->Color);
+  } else {
+    color = Layer->Color;
+  }
+
   /* if the gui has the dicer flag set then it won't accept thin draw */
-  if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-      && !gui->poly_dicer)
+//  if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+//      && !gui->poly_dicer)
     {
-      DrawPolygonLowLevel (Polygon, NULL);
+      hidgl_hack_poly_alpha (1.0);
+      gui->set_color (Output.fgGC, color);
+      DrawPolygonOutlineLowLevel (Polygon, NULL);
       if (!Gathering)
 	PolygonHoles (clip_box, Layer, Polygon, thin_callback);
     }
-  else if (Polygon->Clipped)
+  if (!((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+      && !gui->poly_dicer) && Polygon->Clipped)
     {
+      hidgl_hack_poly_alpha (0.25);
+      gui->set_color (Output.fgGC, color);
       if (!Polygon->NoHolesValid)
         {
           ComputeNoHoles (Polygon);
@@ -2225,6 +2272,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 	  free (y);
 	}
     }
+  hidgl_hack_poly_alpha (1.0);
 }
 
 /* ---------------------------------------------------------------------------
