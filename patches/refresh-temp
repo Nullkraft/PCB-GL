@@ -1,0 +1,22 @@
+Bottom: 41b53f376cba9d88523272fc80423adddd206721
+Top:    2a70f888fb410c1d4e01a632f8bc1206f1605102
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-09 12:22:26 +0000
+
+Refresh of try-something-with-the-rtrees
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index a92541d..12114ce 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1731,7 +1731,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+           /* if we disappear a contour, don't advance twice */
+           if (cntr_Collect (e, cur, contours, holes, action, a, NULL, NULL))
+             {
+-              parent = *contours;
++              parent = (*contours)->b; /* InsCntr inserts behind the head */
+               next = cur;
+             }
+           else
