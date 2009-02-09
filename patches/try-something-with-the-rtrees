@@ -1,5 +1,5 @@
 Bottom: f5ccbafd90fe49b79e4e00d00cefccc76b2d6daa
-Top:    41b53f376cba9d88523272fc80423adddd206721
+Top:    2a70f888fb410c1d4e01a632f8bc1206f1605102
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-09 08:57:42 +0000
 
@@ -185,7 +185,7 @@ index 8ce0283..9ba5f71 100644
    while (save != ans);
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 2d4cd21..a92541d 100644
+index 2d4cd21..12114ce 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -38,13 +38,15 @@
@@ -568,7 +568,7 @@ index 2d4cd21..a92541d 100644
 +          /* if we disappear a contour, don't advance twice */
 +          if (cntr_Collect (e, cur, contours, holes, action, a, NULL, NULL))
 +            {
-+              parent = *contours;
++              parent = (*contours)->b; /* InsCntr inserts behind the head */
 +              next = cur;
 +            }
 +          else
