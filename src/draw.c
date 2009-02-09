@@ -1727,7 +1727,7 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
  * lowlevel drawing routine for polygons
  */
 static void
-DrawPolygonOutlineLowLevel (PolygonTypePtr Polygon, void *data)
+DrawPolygonFillLowLevel (PolygonTypePtr Polygon, void *data)
 {
   int *x, *y, n, i = 0;
   PLINE *pl;
@@ -1748,13 +1748,7 @@ DrawPolygonOutlineLowLevel (PolygonTypePtr Polygon, void *data)
       x[i] = v->point[0];
       y[i++] = v->point[1];
     }
-  gui->set_line_width (Output.fgGC, 1);
-  for (i = 0; i < n - 1; i++)
-    {
-      gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
-      //  gui->fill_circle (Output.fgGC, x[i], y[i], 30);
-    }
-  gui->draw_line (Output.fgGC, x[n - 1], y[n - 1], x[0], y[0]);
+  gui->fill_polygon (Output.fgGC, n, x, y);
   free (x);
   free (y);
 }
@@ -2207,7 +2201,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
     {
       hidgl_hack_poly_alpha (1.0);
       gui->set_color (Output.fgGC, color);
-      DrawPolygonOutlineLowLevel (Polygon, NULL);
+      DrawPolygonLowLevel (Polygon, NULL);
       if (!Gathering)
 	PolygonHoles (clip_box, Layer, Polygon, thin_callback);
       hidgl_hack_poly_alpha (0.25);
@@ -2223,7 +2217,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
           PolygonType poly = *Polygon;
           poly.Clipped = Polygon->NoHoles;
           do {
-            DrawPolygonLowLevel (&poly, NULL);
+            DrawPolygonFillLowLevel (&poly, NULL);
             poly.Clipped = poly.Clipped->f;
           } while (poly.Clipped != Polygon->NoHoles);
         }
@@ -2236,7 +2230,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 	    {
 	      PolygonType poly;
 	      poly.Clipped = pg;
-	      NoHolesPolygonDicer (&poly, DrawPolygonLowLevel, NULL, clip_box);
+	      NoHolesPolygonDicer (&poly, DrawPolygonFillLowLevel, NULL, clip_box);
 	    }
 	}
     }
