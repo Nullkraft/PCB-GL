@@ -1,0 +1,36 @@
+Bottom: 9b7170c09b8ef48be056fb8b60a68cdbe144913c
+Top:    4e3e6acb3ec8e477fb4cac1db64e43cfe24c5efb
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-09 05:20:24 +0000
+
+Refresh of ugly-ugly-hack-to-make-pretty-
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 80951b2..e17db02 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -2202,19 +2202,17 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+   }
+ 
+   /* if the gui has the dicer flag set then it won't accept thin draw */
+-//  if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+-//      && !gui->poly_dicer)
++  if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
++      && !gui->poly_dicer)
+     {
+       hidgl_hack_poly_alpha (1.0);
+       gui->set_color (Output.fgGC, color);
+       DrawPolygonOutlineLowLevel (Polygon, NULL);
+       if (!Gathering)
+ 	PolygonHoles (clip_box, Layer, Polygon, thin_callback);
++      hidgl_hack_poly_alpha (0.25);
+     }
+-  if (!((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+-      && !gui->poly_dicer) && Polygon->Clipped)
+     {
+-      hidgl_hack_poly_alpha (0.25);
+       gui->set_color (Output.fgGC, color);
+       if (!Polygon->NoHolesValid)
+         {
