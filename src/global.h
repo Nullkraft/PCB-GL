@@ -51,6 +51,8 @@
 #include <ctype.h>
 #include <sys/types.h>
 
+typedef struct polygon_st PolygonType, *PolygonTypePtr;
+
 #include "hid.h"
 
 #define _(S) (S)
@@ -230,8 +232,6 @@ typedef struct
   char *TextString;		/* string */
   void *Element;
 } TextType, *TextTypePtr;
-
-typedef struct polygon_st PolygonType, *PolygonTypePtr;
 
 typedef struct
 {
