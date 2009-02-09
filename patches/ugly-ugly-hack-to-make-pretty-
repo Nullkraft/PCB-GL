@@ -1,5 +1,5 @@
 Bottom: c5711fd220cdf6e782077a178b00635862672b1f
-Top:    9b7170c09b8ef48be056fb8b60a68cdbe144913c
+Top:    4e3e6acb3ec8e477fb4cac1db64e43cfe24c5efb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-09 04:53:03 +0000
 
@@ -9,7 +9,7 @@ UGLY UGLY hack to make pretty translucent polygons
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index c083871..80951b2 100644
+index c083871..e17db02 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -1727,6 +1727,41 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
@@ -79,7 +79,7 @@ index c083871..80951b2 100644
    if (TEST_FLAG (CLEARPOLYFLAG, Polygon))
      {
        r_search (PCB->Data->pin_tree, &Polygon->BoundingBox, NULL,
-@@ -2150,25 +2189,33 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
+@@ -2150,25 +2189,31 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  static void
  DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  {
@@ -104,10 +104,8 @@ index c083871..80951b2 100644
 +  }
 +
    /* if the gui has the dicer flag set then it won't accept thin draw */
--  if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
--      && !gui->poly_dicer)
-+//  if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-+//      && !gui->poly_dicer)
+   if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+       && !gui->poly_dicer)
      {
 -      DrawPolygonLowLevel (Polygon, NULL);
 +      hidgl_hack_poly_alpha (1.0);
@@ -115,17 +113,15 @@ index c083871..80951b2 100644
 +      DrawPolygonOutlineLowLevel (Polygon, NULL);
        if (!Gathering)
  	PolygonHoles (clip_box, Layer, Polygon, thin_callback);
++      hidgl_hack_poly_alpha (0.25);
      }
 -  else if (Polygon->Clipped)
-+  if (!((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-+      && !gui->poly_dicer) && Polygon->Clipped)
      {
-+      hidgl_hack_poly_alpha (0.25);
 +      gui->set_color (Output.fgGC, color);
        if (!Polygon->NoHolesValid)
          {
            ComputeNoHoles (Polygon);
-@@ -2225,6 +2272,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2225,6 +2270,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  	  free (y);
  	}
      }
