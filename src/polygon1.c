@@ -93,6 +93,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
 
 #define error(code)  longjmp(*(e), code)
 
+#warning TODO: Unlikely
 #define MemGet(ptr, type) \
 if (((ptr) = malloc(sizeof(type))) == NULL) \
     error(err_no_memory);
@@ -816,8 +817,8 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
               /* NB: If this actually hits anything, we are teleported back to the beginning */
               info.tree = (rtree_t *) rtree_over->tree;
               if (info.tree)
-                if (r_search (info.tree, &info.s->box,
-                              seg_in_region, seg_in_seg, &info))
+                if (UNLIKELY (r_search (info.tree, &info.s->box,
+                                        seg_in_region, seg_in_seg, &info)))
                   return err_no_memory;	/* error */
           }
         while ((av = av->next) != &looping_over->head);
