@@ -1,5 +1,5 @@
 Bottom: 7191893b072b9abd800e9dd860a385df8404ec2d
-Top:    32eb13e804933900d0bf639083b259219eb0c573
+Top:    01668a84f2f536cad08e9fbf49db70c0d592010d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-09 04:58:50 +0000
 
@@ -15,7 +15,7 @@ its existance as well.
 ---
 
 diff --git a/src/global.h b/src/global.h
-index 991b60c..1fb3420 100644
+index 991b60c..157e186 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -40,7 +40,6 @@
@@ -49,6 +49,19 @@ index 991b60c..1fb3420 100644
  typedef struct			/* holds information about a polygon */
  {
    ANYOBJECTFIELDS;
+@@ -253,12 +261,6 @@ typedef struct			/* holds information about arcs */
+     Delta;
+ } ArcType, *ArcTypePtr;
+ 
+-typedef struct
+-{
+-  struct rtree_node *root;
+-  int size;			/* number of entries in tree */
+-} rtree_t;
+-
+ typedef struct			/* holds information about one layer */
+ {
+   char *Name;			/* layer name */
 diff --git a/src/polyarea.h b/src/polyarea.h
 index 42acc1a..ee185a9 100644
 --- a/src/polyarea.h
