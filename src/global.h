@@ -40,7 +40,6 @@
 
 #include "const.h"
 #include "macro.h"
-#include "polyarea.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -54,6 +53,10 @@
 typedef struct polygon_st PolygonType, *PolygonTypePtr;
 
 #include "hid.h"
+
+typedef struct rtree rtree_t;
+
+#include "polyarea.h" /* Needs rtree_t defined */
 
 #define _(S) (S)
 
@@ -233,11 +236,11 @@ typedef struct
   void *Element;
 } TextType, *TextTypePtr;
 
-typedef struct
-{
+
+struct rtree {
   struct rtree_node *root;
   int size;			/* number of entries in tree */
-} rtree_t;
+};
 
 typedef struct			/* holds information about a poured area */
 {
