@@ -1,9 +1,10 @@
-Bottom: 87bbb4645c6813d59d20b53f5780ee1dc7dadf58
-Top:    3b90c561372f55c183925d2d87a6db8e32876a64
+Bottom: 9e841c39c21fccdc4cbaa86f3bf8227613c9469f
+Top:    ecacebedd4179686a81ce4c74a443842b1de5cbc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-08 21:18:00 +0000
+Date:   2009-02-09 12:22:35 +0000
 
 Instrument polygon slowness
+
 
 
 
@@ -15,7 +16,7 @@ Instrument polygon slowness
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index a92541d..9dd09ff 100644
+index 12114ce..8f9c9f2 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -1165,10 +1165,15 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
@@ -134,7 +135,7 @@ index a92541d..9dd09ff 100644
 +          printf ("1: ");
            if (cntr_Collect (e, cur, contours, holes, action, a, NULL, NULL))
              {
-               parent = *contours;
+               parent = (*contours)->b; /* InsCntr inserts behind the head */
 @@ -1744,6 +1766,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
            /* if we disappear a contour, don't advance twice */
            if (*cur == parent_contour)
