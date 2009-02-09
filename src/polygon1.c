@@ -1731,7 +1731,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
           /* if we disappear a contour, don't advance twice */
           if (cntr_Collect (e, cur, contours, holes, action, a, NULL, NULL))
             {
-              parent = *contours;
+              parent = (*contours)->b; /* InsCntr inserts behind the head */
               next = cur;
             }
           else
