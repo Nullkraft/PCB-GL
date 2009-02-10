@@ -234,6 +234,11 @@ typedef struct
   void *Element;
 } TextType, *TextTypePtr;
 
+struct rtree {
+  struct rtree_node *root;
+  int size;			/* number of entries in tree */
+};
+
 typedef struct			/* holds information about a polygon */
 {
   ANYOBJECTFIELDS;
@@ -255,12 +260,6 @@ typedef struct			/* holds information about arcs */
   long int StartAngle,		/* the two limiting angles in degrees */
     Delta;
 } ArcType, *ArcTypePtr;
-
-typedef struct
-{
-  struct rtree_node *root;
-  int size;			/* number of entries in tree */
-} rtree_t;
 
 typedef struct			/* holds information about one layer */
 {
