@@ -1,5 +1,5 @@
 Bottom: 14706377b9658b25d7e95301801e90998283b920
-Top:    c1face496bb74d975ba8362bd5491ccc016ff73e
+Top:    5693cb13b1c08838af784ea99a36558bb0dbd7de
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-10 12:23:50 +0000
 
@@ -12,7 +12,7 @@ Nearly working
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index b923229..7557a66 100644
+index b923229..fdc52f9 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -1000,12 +1000,22 @@ cntr_in_M_PLINE (PLINE * poly, PLINE * outfst, BOOLp test)
@@ -601,7 +601,7 @@ index b923229..7557a66 100644
      }
  
      /* If we deleted all the pieces of the polyarea, *pieces is NULL and
-@@ -2223,42 +2604,39 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2223,42 +2604,45 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        assert (poly_Valid (b));
  #endif
  
@@ -666,5 +666,11 @@ index b923229..7557a66 100644
 -      poly_Free (&a);
 -#endif
 -
++      /* delete of a_isected which is left */
++      while ((p = a_isected) != NULL)
++      {
++        a_isected = p->next;
++        poly_DelContour (&p);
++      }
        M_B_AREA_Collect (&e, b, res, &holes, action);
        poly_Free (&b);
