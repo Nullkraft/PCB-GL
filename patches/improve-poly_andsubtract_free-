@@ -1,5 +1,5 @@
 Bottom: 61902f0c6344cd974b9d82de9a9d187e8ad2fcdf
-Top:    61902f0c6344cd974b9d82de9a9d187e8ad2fcdf
+Top:    61daa92882c01ccbcf4caa2a1744f28134055a69
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-10 11:40:41 +0000
 
@@ -10,4 +10,16 @@ Improve poly_AndSubtract_free() with similar tricks to poly_Boolean_free()
 
 ---
 
-
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 8da586a..f5bdc0f 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2707,7 +2707,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
+ #endif
+       M_POLYAREA_intersect (&e, a, b, TRUE);
+ 
+-      M_POLYAREA_label (a, b, FALSE);
++//      M_POLYAREA_label (a, b, FALSE);
+       M_POLYAREA_label (b, a, FALSE);
+ 
+ //      printf ("3:");
