@@ -1,7 +1,7 @@
-Bottom: 4215f86bb0b3135107d3eb120ece9b86727405a6
-Top:    9282d225eeaaca943a392fd229a60781b2787cbb
+Bottom: dec5bf215a910760e4ee6508c4530d4e3da0ff2e
+Top:    2c3ffd6915bca21aae102cd760fe25d8da26eac2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 13:46:28 +0000
+Date:   2009-02-10 13:52:08 +0000
 
 Off to find burried treasure on polygon island
 
@@ -128,10 +128,10 @@ index 669a100..f3a6af5 100644
    DrawVia (Via, 0);
    Draw ();
 diff --git a/src/draw.c b/src/draw.c
-index 880f09e..9ff4d57 100644
+index e7aa8f8..69be062 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2301,6 +2301,10 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
+@@ -2310,6 +2310,10 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  static void
  DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  {
