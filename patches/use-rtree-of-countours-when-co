@@ -1,5 +1,5 @@
 Bottom: 7ae2942b876269ee60ce20309d885a7d3e2f9911
-Top:    fc1bfdbd128be2dbba6b347418f7877fb7fd4bd4
+Top:    fce03408593e9288463a098c5ffd85ec722c5ea6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-10 19:09:21 +0000
 
@@ -21,7 +21,7 @@ Use rtree of countours when computing an intersection
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 20522f4..320ea18 100644
+index 20522f4..416e092 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -543,9 +543,17 @@ typedef struct info
@@ -61,7 +61,7 @@ index 20522f4..320ea18 100644
   * (C) 2006, harry eaton
   * This uses an rtree to find A-B intersections. Whenever a new vertex is
   * added, the search for intersections is re-started because the rounding
-@@ -731,104 +739,146 @@ get_seg (const BoxType * b, void *cl)
+@@ -731,104 +739,143 @@ get_seg (const BoxType * b, void *cl)
   */
  
  static int
@@ -262,8 +262,6 @@ index 20522f4..320ea18 100644
 +  setjmp (c_info.restart);		/* we loop back here whenever a vertex is inserted */
 +#endif
 +
-+//  printf ("Done making r-tree of b's contours\n");
-+
 +  for (pa = a->contours; pa; pa = pa->next)     /* Loop over the contours of POLYAREA "a" */
 +    {
 +      BoxType sb;
@@ -280,7 +278,6 @@ index 20522f4..320ea18 100644
 +            {
 +              /* The intersection test short-circuited back here,
 +               * we need to clean up, then longjmp to jb */
-+//                printf ("short circuited here\n");
 +              r_destroy_tree (&b_contour_tree);
 +              longjmp (*jb, retval);
 +            }
