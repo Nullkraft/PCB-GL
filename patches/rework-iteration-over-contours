@@ -1,7 +1,7 @@
-Bottom: 573f329bc2dff5ddfe1990907ee92128b7ed29b9
-Top:    61d40a7847b73f2f28b3822b6b97775e2c906a77
+Bottom: c2be5d45b56fc6de0e77a99f447d3e137bc1fbcc
+Top:    d3c0f635dcd52be3ed9a65e962e52c4fbba96db1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 13:10:33 +0000
+Date:   2009-02-10 19:09:06 +0000
 
 Rework iteration over contours in "intersect" to improve performance
 
@@ -27,10 +27,11 @@ intersecting contour belongs to the polygon with fewer vertices.
 
 
 
+
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 32ffb31..7f4821a 100644
+index c0dd8e7..3b9df9e 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -660,12 +660,6 @@ seg_in_seg (const BoxType * b, void *cl)
