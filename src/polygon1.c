@@ -2162,7 +2162,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
           cntr_in_M_POLYAREA (a->contours, bpa, FALSE)) {
 
         /* Delete this contour, all children -> holes queue */
-        printf ("Outer contour needs to be deleted, and children moved to hole queue\n");
+//        printf ("Outer contour needs to be deleted, and children moved to hole queue\n");
 
         /* Delete the outer contour */
         curc = a->contours;
