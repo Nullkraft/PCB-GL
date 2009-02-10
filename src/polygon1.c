@@ -930,9 +930,7 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
   heap = heap_create ();
   do
     {
-      if (outer->contours == NULL) {
-        printf ("cntr_in_M_POLYAREA: outer->contours was NULL\n");
-      } else if (cntrbox_inside (poly, outer->contours))
+      if (cntrbox_inside (poly, outer->contours))
 	heap_insert (heap, outer->contours->area, (void *) outer);
     }
   /* if checking touching, use only the first polygon */
@@ -1574,7 +1572,6 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
     }
   else
     {
-      printf ("Got non ISECTED contour in cntr_Collect!\n");
       switch (action)
 	{
 	case PBO_ISECT:
@@ -1617,7 +1614,6 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
     }
   return FALSE;
 }				/* cntr_Collect */
-
 
 static void
 M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
@@ -1972,11 +1968,6 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
 	}
     }
 
-  if (a->contours == NULL) {
-    fprintf (stderr, "A has no contours bye!\n");
-    return -1;
-  }
-
   if ((code = setjmp (e)) == 0)
     {
 #ifdef DEBUG
@@ -1990,34 +1981,12 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
       /* We could speed things up a lot here if we only processed the relevant contours */
       M_POLYAREA_label (a, b, FALSE);
       M_POLYAREA_label (b, a, FALSE);
-#if 0
-      M_POLYAREA_label_separated (a_isected, b, FALSE);
-#endif
 
-/* New faster method */
-#if 1
+//      M_POLYAREA_label_separated (a_isected, b, FALSE);
+
       *res = a;
       M_POLYAREA_update_primary (&e, res, &holes, &a_isected, action);
       M_POLYAREA_Collect_separated (&e, a_isected, res, &holes, action, FALSE);
-#endif
-
-/* First attempt at go-faster stripes */
-#if 0
-      /* And speed things up _A LOT_ here by only processing the relevant
-         contours, specifically keeping the source "a" as a starting point
-         for the output polygon */
-      M_POLYAREA_Collect_separated (&e, a_isected, res, &holes, action, FALSE);
-      M_POLYAREA_Collect (&e, a, res, &holes, action, FALSE);
-      poly_Free (&a);
-#endif
-
-/* Old slow way */
-#if 0
-      M_POLYAREA_Collect (&e, a, res, &holes, action, b->f == b
-			  && !b->contours->next
-			  && b->contours->Flags.status != ISECTED);
-      poly_Free (&a);
-#endif
 
       M_B_AREA_Collect (&e, b, res, &holes, action);
       poly_Free (&b);
