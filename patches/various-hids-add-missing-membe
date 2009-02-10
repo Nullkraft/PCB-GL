@@ -3,12 +3,20 @@ Top:    17566a5ed8e0a7941077a8c3dc4259304f96c9bd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-10 20:18:13 +0000
 
-Various HIDs: Add missing member pointers for the watch.. and block hander methods
+Various HIDs: Add missing pointers for the watch and block hander methods
 
 These were missed when adding DBus support, since the initialisation of the
 HID structure assumes that unspecified members are zero, and all subsequent
 function pointers were explicitly 0, so as not to cause a type mismatch.
 
+Hids fixed:
+  bom
+  gerber
+  lpr
+  nelma
+  png
+  eps
+  ps
 
 
 ---
