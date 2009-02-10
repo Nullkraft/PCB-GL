@@ -236,7 +236,7 @@ typedef struct
   void *Element;
 } TextType, *TextTypePtr;
 
-struct			/* holds information about a polygon */
+struct polygon_st			/* holds information about a polygon */
 {
   ANYOBJECTFIELDS;
   Cardinal PointN,		/* number of points in polygon */
