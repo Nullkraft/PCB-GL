@@ -1,5 +1,5 @@
 Bottom: b0fa7143575f17e797f524f24cfe46836f397a33
-Top:    3359edb97d99f895d6b40a10b36ed7073de158c7
+Top:    b56fd19d8ad1f93502ff2f417a7d443c768ea473
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-10 13:33:25 +0000
 
@@ -5147,10 +5147,10 @@ index b930f7a..fd8adf0 100644
    return FALSE;
 diff --git a/src/pour.c b/src/pour.c
 new file mode 100644
-index 0000000..b27b0fd
+index 0000000..0a4a1f7
 --- /dev/null
 +++ b/src/pour.c
-@@ -0,0 +1,1260 @@
+@@ -0,0 +1,1269 @@
 +/* $Id$ */
 +
 +/*
@@ -5471,6 +5471,7 @@ index 0000000..b27b0fd
 +    {
 +      fprintf (stderr, "Error while clipping PBO_SUB: %d\n", x);
 +      poly_Free (&merged);
++      *pg = NULL
 +      return -1;
 +    }
 +
@@ -5493,6 +5494,7 @@ index 0000000..b27b0fd
 +    {
 +      fprintf (stderr, "Error while clipping PBO_UNITE: %d\n", x);
 +      poly_Free (&merged);
++      *pg = NULL;
 +      return 0;
 +    }
 +  assert (!merged || poly_Valid (merged));
@@ -5513,6 +5515,7 @@ index 0000000..b27b0fd
 +    {
 +      fprintf (stderr, "Error while clipping PBO_ISECT: %d\n", x);
 +      poly_Free (&merged);
++      *pg = NULL;
 +      return 0;
 +    }
 +  assert (!merged || poly_Valid (merged));
@@ -6231,11 +6234,17 @@ index 0000000..b27b0fd
 +      printf ("Clipping returned NULL - can that be good?\n");
 +      return 0;
 +    }
-+  assert (poly_Valid (clipped));
++//  assert (poly_Valid (clipped));
 +  if (TEST_FLAG (CLEARPOLYFLAG, pour))
 +    {
 +      /* Clip the pour against anything we can find in this layer */
 +      ClearPour (Data, layer, pour, &pg, NULL, UNSUBTRACT_BLOAT);
++    }
++
++  if (pg == NULL)
++    {
++      printf ("Got pg == NULL for some reason\n");
++      return;
 +    }
 +
 +  count_all = count_added = 0;
