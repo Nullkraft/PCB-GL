@@ -1190,47 +1190,6 @@ M_POLYAREA_label_separated (PLINE * afst, POLYAREA * b, BOOLp touch)
 }
 
 static BOOLp
-M_POLYAREA_label_isected (POLYAREA * afst, PLINE * b, BOOLp touch)
-{
-  POLYAREA *a = afst;
-  PLINE *curc;
-
-  if (b == NULL) {
-    printf ("M_POLYAREA_label_isected: No PLINE to test against\n");
-    return FALSE;
-  }
-
-  assert (a != NULL);
-  do {
-    for (curc = a->contours; curc != NULL; curc = curc->next)
-      if (cntr_label_PLINE (curc, b, touch) && touch)
-        return TRUE;
-  } while (!touch && (a = a->f) != afst);
-  return FALSE;
-}
-
-
-static BOOLp
-M_POLYAREA_label_non_isected (POLYAREA * afst, POLYAREA * b, BOOLp touch)
-{
-  POLYAREA *a = afst;
-  PLINE *curc;
-
-  assert (a != NULL);
-  do
-    {
-      for (curc = a->contours; curc != NULL; curc = curc->next)
-	if (cntr_label_POLYAREA_non_isected (curc, b, touch))
-	  {
-	    if (touch)
-	      return TRUE;
-	  }
-    }
-  while (!touch && (a = a->f) != afst);
-  return FALSE;
-}
-
-static BOOLp
 M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
 {
   POLYAREA *a = afst;
@@ -2242,8 +2201,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
   } while ((a = anext), *pieces != NULL && !finished);
 }
 
-
-
+#if 0
 static void
 M_POLYAREA_update_primary_old (jmp_buf * e, POLYAREA ** pieces,
                            PLINE ** holes, PLINE ** isected, int action)
@@ -2256,28 +2214,20 @@ M_POLYAREA_update_primary_old (jmp_buf * e, POLYAREA ** pieces,
   int del_outside = 0;
   int finished;
 
-//  printf ("M_POLYAREA_update_primary %p, %p, %i\n", pieces, holes, action);
-
-  if (a == NULL) {
-    printf ("M_POLYAREA_update_primary: No polygon pieces to play with\n");
+  if (a == NULL)
     return;
-  }
 
   switch (action) {
     case PBO_ISECT:
-//      printf ("  PBO_ISECT: Delete any contours OUTSIDE b\n");
       del_outside = 1;
       break;
     case PBO_UNITE:
-//      printf ("  PBO_UNITE: Delete any contours INSIDE B (B's contour replaces it)\n");
       del_inside = 1;
       break;
     case PBO_SUB:
-//      printf ("  PBO_SUB: Delete any contours INSIDE B (B's contour deletes it)\n");
       del_inside = 1;
       break;
     case PBO_XOR: /* NOT IMPLEMENTED OR USED */
-//      printf ("  PBO_XOR: Invert any which are INSIDE B  *** NOT IMPLEMENTED ***\n");
       inv_inside = 1;
       break;
   }
@@ -2289,8 +2239,6 @@ M_POLYAREA_update_primary_old (jmp_buf * e, POLYAREA ** pieces,
 
     anext = a->f;
     finished = (anext == *pieces);
-
-//    printf ("Inspecting a piece of polygon\n");
 
     prev = NULL;
     for (curc = a->contours; curc != NULL; curc = next, is_outline = 0) {
@@ -2306,7 +2254,6 @@ M_POLYAREA_update_primary_old (jmp_buf * e, POLYAREA ** pieces,
       switch (curc->Flags.status) {
         case ISECTED:
           isect_contour = 1;
-//          printf ("Found intersected contour\n");
           break;
         case INSIDE:
           if (del_inside) del_contour = 1;
@@ -2328,23 +2275,19 @@ M_POLYAREA_update_primary_old (jmp_buf * e, POLYAREA ** pieces,
         if (del_contour) {
           /* Delete the contour */
           poly_DelContour (&curc); /* NB: Sets curc to NULL */
-//          printf ("Deleting contour we don't want in the result\n");
         } else if (isect_contour) {
           /* Link into the list of intersected contours */
           curc->next = *isected;
           *isected = curc;
-//          printf ("Separating intersected contour.\n");
         } else if (hole_contour) {
           /* Link into the list of holes */
           curc->next = *holes;
           *holes = curc;
-//          printf ("Separating a hole (belonging to a moved contour)\n");
         } else {
           assert (0);
         }
 
         if (is_first && is_last) {
-//          printf ("M_POLYAREA_update_primary: Deleted / removed the whole polygon piece\n");
           remove_polyarea (pieces, a);
           poly_Free (&a); /* NB: Sets a to NULL */
         }
@@ -2363,16 +2306,10 @@ M_POLYAREA_update_primary_old (jmp_buf * e, POLYAREA ** pieces,
 
     }
 
-    /* If we deleted all the pieces of the polyarea, *pieces is NULL and
-       we don't want to continue */
-    if (*pieces == NULL) {
-//      printf ("M_POLYAREA_update_primary: Deleted / removed _all_"
-//              "of the existing polygon pieces\n");
-      finished = TRUE;
-    }
-
-  } while ((a = anext), !finished);
+    /* If we deleted all the pieces of the polyarea, *pieces is NULL */
+  } while ((a = anext), *pieces != NULL && !finished);
 }
+'endif
 
 
 static void
