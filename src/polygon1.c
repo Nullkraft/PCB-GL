@@ -944,7 +944,7 @@ cntr_in_M_PLINE (PLINE * poly, PLINE * outfst, BOOLp test)
     if (poly_ContourInContour (outer, poly)) {
       for (curc = outer->next; curc != NULL; curc = curc->next)
         if (poly_ContourInContour (curc, poly)) {
-          /* it's inside a hole in the smallest polygon 
+          /* it's inside a hole in the smallest polygon
            * no need to check the other polygons */
           heap_destroy (&heap);
           return FALSE;
