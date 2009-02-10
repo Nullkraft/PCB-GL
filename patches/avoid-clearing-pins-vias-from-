@@ -1,7 +1,7 @@
-Bottom: bab4ea2a0cb8d6ea91fb0b60a83fcdda27314454
-Top:    e50f65b717e92423e8fb8deb12176c88c0b87ff6
+Bottom: d75feab9097201593b702daf8eded8e985ce5d8b
+Top:    451304130741be72defad7390848e57f32e7af60
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 15:29:01 +0000
+Date:   2009-02-10 19:24:53 +0000
 
 Avoid clearing pins / vias from polygons... it is already done!
 
@@ -18,10 +18,10 @@ Avoid clearing pins / vias from polygons... it is already done!
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 1ccd1e6..7a506d0 100644
+index 4b02420..dbe197c 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -1291,6 +1291,7 @@ ClearPin (PinTypePtr Pin, int Type, int unused)
+@@ -1239,6 +1239,7 @@ ClearPin (PinTypePtr Pin, int Type, int unused)
        AddPart (Pin);
        return;
      }
@@ -29,7 +29,7 @@ index 1ccd1e6..7a506d0 100644
    /* Clear the area around the pin */
    if (TEST_FLAG (SQUAREFLAG, Pin))
      {
-@@ -1313,6 +1314,7 @@ ClearPin (PinTypePtr Pin, int Type, int unused)
+@@ -1261,6 +1262,7 @@ ClearPin (PinTypePtr Pin, int Type, int unused)
      {
        gui->fill_circle (Output.pmGC, Pin->X, Pin->Y, half);
      }
