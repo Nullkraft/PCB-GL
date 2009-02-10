@@ -1,0 +1,27 @@
+Bottom: b08c0727728eb3d5f8449ae6c754af58d7da154f
+Top:    bf1d4b4bf9ad78900a4259756a605c0ce18bbae4
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-10 13:44:03 +0000
+
+Refresh of try-something-with-the-rtrees
+
+---
+
+diff --git a/src/global.h b/src/global.h
+index d6b773c..1be65d6 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -256,11 +256,11 @@ typedef struct			/* holds information about arcs */
+     Delta;
+ } ArcType, *ArcTypePtr;
+ 
+-typedef struct
++struct rtree
+ {
+   struct rtree_node *root;
+   int size;			/* number of entries in tree */
+-} rtree_t;
++};
+ 
+ typedef struct			/* holds information about one layer */
+ {
