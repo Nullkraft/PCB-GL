@@ -1,9 +1,10 @@
-Bottom: ab73f0eb9994fd90a8ddfd479bd7ac1208d9effb
-Top:    dec5bf215a910760e4ee6508c4530d4e3da0ff2e
+Bottom: e6c4a75743dc9605b3ff8e02706b3f4cb0088356
+Top:    0582633f21efa975477c8e7363d601ec4ac427a8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 13:52:07 +0000
+Date:   2009-02-10 14:02:17 +0000
 
 Add magic flag to stop pour clipping for off-screen buffers
+
 
 
 
@@ -34,7 +35,7 @@ index cf3a178..0c288a9 100644
    ptr->ThermStyle = 4;
    ptr->IsleArea = 2.e8;
 diff --git a/src/global.h b/src/global.h
-index 2f28c34..904284b 100644
+index c959d98..06d2d1b 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -394,6 +394,7 @@ typedef struct			/* holds all objects */
@@ -46,7 +47,7 @@ index 2f28c34..904284b 100644
  
  typedef struct			/* holds drill information */
 diff --git a/src/pour.c b/src/pour.c
-index 0a4a1f7..92d88e7 100644
+index ecdd81d..34f6c01 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -1246,6 +1246,8 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
