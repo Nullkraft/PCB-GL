@@ -1,7 +1,7 @@
-Bottom: ab12302e3384728ce0eda6b97de0434088aa5f42
-Top:    9f427b6dde883ed5888564009e4af9c78f54b9ec
+Bottom: 47c13e30cb7dccf7d6e27ba3ee8922be042c9020
+Top:    143d8efbe6616a6a40f7e3c563b7f5bdeb847021
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 13:23:53 +0000
+Date:   2009-02-10 13:31:45 +0000
 
 HACK: Add a drawing of polygon boolean stuff to draw.c, to test polygons
 
@@ -13,10 +13,10 @@ HACK: Add a drawing of polygon boolean stuff to draw.c, to test polygons
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 545c6e9..70c6223 100644
+index 4b02420..1ccd1e6 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -441,6 +441,58 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -440,6 +440,58 @@ DrawEverything (BoxTypePtr drawn_area)
  
        if (gui->set_layer (0, group, 0))
  	{
