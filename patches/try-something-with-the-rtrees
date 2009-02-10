@@ -1,5 +1,5 @@
 Bottom: cc37a4072f846ae6936e3ba37da8c2605eec227b
-Top:    566076017a597309f76ac6a3d202206f30b1d8b1
+Top:    7a5ef851c7ffa131c02fb5dc6c2d168eb4f55c90
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-10 14:01:41 +0000
 
@@ -75,7 +75,7 @@ index 42acc1a..ee185a9 100644
  
  BOOLp poly_M_Copy0(POLYAREA ** dst, const POLYAREA * srcfst);
 diff --git a/src/polygon.c b/src/polygon.c
-index 181a6c3..71d1b2e 100644
+index 181a6c3..471b91c 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -130,10 +130,12 @@ add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
@@ -91,7 +91,27 @@ index 181a6c3..71d1b2e 100644
  
    /* Link the new POLYAREA into the NoHoles circularaly linked list */
    if (poly->NoHoles)
-@@ -1607,14 +1609,23 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
+@@ -170,6 +172,7 @@ biggest (POLYAREA * p)
+ {
+   POLYAREA *n, *top = NULL;
+   PLINE *pl;
++  rtree_t *tree;
+   double big = -1;
+   if (!p)
+     return NULL;
+@@ -203,8 +206,11 @@ biggest (POLYAREA * p)
+   if (top == p)
+     return p;
+   pl = top->contours;
++  tree = top->contour_tree;
+   top->contours = p->contours;
++  top->contour_tree = p->contour_tree;
+   p->contours = pl;
++  p->contour_tree = tree;
+   assert (pl);
+   assert (p->f);
+   assert (p->b);
+@@ -1607,14 +1613,23 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
  }
  
  static void
@@ -118,7 +138,7 @@ index 181a6c3..71d1b2e 100644
      {
        PolygonType poly;
        PointType pts[4];
-@@ -1651,30 +1662,33 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *u
+@@ -1651,30 +1666,33 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr, void *), void *u
        poly_AndSubtract_free (pa, poly2, &left, &right);
        if (left)
          {
@@ -166,7 +186,7 @@ index 181a6c3..71d1b2e 100644
          }
      }
  }
-@@ -1705,13 +1719,15 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
+@@ -1705,13 +1723,15 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *),
    /* now dice it up */
    do
      {
@@ -188,7 +208,7 @@ index 181a6c3..71d1b2e 100644
    while (save != ans);
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 4de7884..5e166de 100644
+index 4de7884..2d4fbe9 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -38,13 +38,15 @@
@@ -321,6 +341,15 @@ index 4de7884..5e166de 100644
    do
      {
        do
+@@ -920,7 +898,7 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+ 	if (curcA->Flags.status == ISECTED)
+ 	  {
+ 	    the_list = add_descriptors (curcA, 'A', the_list);
+-	    if (UNLIKELY (the_list) == NULL)
++	    if (UNLIKELY (the_list == NULL))
+ 	      error (err_no_memory);
+ 	  }
+     }
 @@ -1112,6 +1090,7 @@ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
  
  /****************************************************************/
