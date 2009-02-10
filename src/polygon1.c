@@ -915,48 +915,6 @@ cntrbox_inside (PLINE * c1, PLINE * c2)
 /*****************************************************************/
 /* Routines for making labels */
 
-/* cntr_in_M_PLINE
-returns poly is inside outfst ? TRUE : FALSE */
-static int
-cntr_in_M_PLINE (PLINE * poly, PLINE * outfst, BOOLp test)
-{
-  PLINE *curc;
-  PLINE *outer = outfst;
-  heap_t *heap;
-
-  assert (poly != NULL);
-  assert (outer != NULL);
-
-  heap = heap_create ();
-//  do {
-    if (cntrbox_inside (poly, outer))
-      heap_insert (heap, outer->area, (void *) outer);
-//  /* if checking touching, use only the first polygon */
-//  } while (!test && (outer = outer->f) != outfst);
-
-  /* we need only check the smallest poly container
-   * but we must loop in case the box containter is not
-   * the poly container */
-  while (1) {
-    if (heap_is_empty (heap))
-      break;
-    outer = (PLINE *) heap_remove_smallest (heap);
-    if (poly_ContourInContour (outer, poly)) {
-      for (curc = outer->next; curc != NULL; curc = curc->next)
-        if (poly_ContourInContour (curc, poly)) {
-          /* it's inside a hole in the smallest polygon
-           * no need to check the other polygons */
-          heap_destroy (&heap);
-          return FALSE;
-        }
-      heap_destroy (&heap);
-      return TRUE;
-    }
-  }
-  heap_destroy (&heap);
-  return FALSE;
-}				/* cntr_in_M_PLINE */
-
 static int
 count_contours_i_am_inside (const BoxType *b, void *cl)
 {
@@ -1096,62 +1054,6 @@ label_contour (PLINE * a)
   return FALSE;
 }				/* label_contour */
 
-static BOOLp
-cntr_label_PLINE (PLINE * poly, PLINE * pl, BOOLp test)
-{
-  assert (ppl != NULL);
-  if (poly->Flags.status == ISECTED) {
-    printf ("cntr_label_PLINE: Labelling intersected contour\n");
-    label_contour (poly);	/* should never get here when BOOLp is true */
-
-  } else {
- 
-    fprintf (stderr, "*********** SOMETHING ODD GOING ON HERE?\n");
-//    return FALSE;
-
-    if (cntr_in_M_PLINE (poly, pl, test)) {
-
-      if (test)
-        return TRUE;
-      poly->Flags.status = INSIDE;
-
-    } else {
-
-      if (test)
-        return False;
-      if (poly->Flags.status == UNKNWN) {
-        printf ("cntr_label_PLINE: Changing UNKNWN to OUTSIDE\n");
-        poly->Flags.status = OUTSIDE;
-      }
-
-    }
-  }
-  return FALSE;
-}				/* cntr_label_PLINE */
-
-static BOOLp
-cntr_label_POLYAREA_non_isected (PLINE * poly, POLYAREA * ppl, BOOLp test)
-{
-  assert (ppl != NULL && ppl->contours != NULL);
-  if (poly->Flags.status == ISECTED)
-    {
-      printf ("cntr_label_POLYAREA_non_isected: Skipping labelling intersected contour\n");
-      //label_contour (poly);	/* should never get here when BOOLp is true */
-    }
-  else if (cntr_in_M_POLYAREA (poly, ppl, test))
-    {
-      if (test)
-	return TRUE;
-      poly->Flags.status = INSIDE;
-    }
-  else
-    {
-      if (test)
-	return False;
-      poly->Flags.status = OUTSIDE;
-    }
-  return FALSE;
-}				/* cntr_label_POLYAREA */
 
 static BOOLp
 cntr_label_POLYAREA (PLINE * poly, POLYAREA * ppl, BOOLp test)
@@ -2309,7 +2211,7 @@ M_POLYAREA_update_primary_old (jmp_buf * e, POLYAREA ** pieces,
     /* If we deleted all the pieces of the polyarea, *pieces is NULL */
   } while ((a = anext), *pieces != NULL && !finished);
 }
-'endif
+#endif
 
 
 static void
