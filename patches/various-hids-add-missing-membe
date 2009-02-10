@@ -1,13 +1,14 @@
-Bottom: 47b418e2473de6f37cafa44512f8413be7a616cf
-Top:    47b418e2473de6f37cafa44512f8413be7a616cf
+Bottom: 9fc678ad233ed078aa6dd70b1fdd08246a266644
+Top:    9fc678ad233ed078aa6dd70b1fdd08246a266644
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 20:17:22 +0000
+Date:   2009-02-10 20:18:13 +0000
 
 Various HIDs: Add missing member pointers for the watch.. and block hander methods
 
 These were missed when adding DBus support, since the initialisation of the
 HID structure assumes that unspecified members are zero, and all subsequent
 function pointers were explicitly 0, so as not to cause a type mismatch.
+
 
 
 ---
