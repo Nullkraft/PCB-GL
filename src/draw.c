@@ -2169,6 +2169,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
     }
   else if (Polygon->Clipped)
     {
+#if 0
       if (!Polygon->NoHolesValid)
         {
           ComputeNoHoles (Polygon);
@@ -2181,6 +2182,15 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
             DrawPolygonLowLevel (&poly, NULL);
             poly.Clipped = poly.Clipped->f;
           } while (poly.Clipped != Polygon->NoHoles);
+        }
+#endif
+        {
+          PolygonType poly = *Polygon;
+          poly.Clipped = Polygon->Clipped;
+          do {
+            DrawPolygonLowLevel (&poly, NULL);
+            poly.Clipped = poly.Clipped->f;
+          } while (poly.Clipped != Polygon->Clipped);
         }
       /* draw other parts of the polygon if fullpoly flag is set */
       /* NB: No "NoHoles" cache for these */
