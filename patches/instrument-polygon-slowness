@@ -1,7 +1,7 @@
-Bottom: 9e841c39c21fccdc4cbaa86f3bf8227613c9469f
-Top:    ecacebedd4179686a81ce4c74a443842b1de5cbc
+Bottom: aac898b04da3aa566633ab3b849f48a7b0f99720
+Top:    d3fe04a8669f625cbeabdf6ab5fa0ce0659254d8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-09 12:22:35 +0000
+Date:   2009-02-10 05:17:50 +0000
 
 Instrument polygon slowness
 
@@ -16,7 +16,7 @@ Instrument polygon slowness
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 12114ce..8f9c9f2 100644
+index b1b40ee..2a32e4c 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -1165,10 +1165,15 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
@@ -144,7 +144,7 @@ index 12114ce..8f9c9f2 100644
            if (cntr_Collect (e, cur, contours, holes, action, a, parent,
                              (*cur == parent_contour) ? NULL : parent_contour))
              next = cur;
-@@ -1808,6 +1831,7 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
+@@ -1841,6 +1864,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        M_POLYAREA_label (a, b, FALSE);
        M_POLYAREA_label (b, a, FALSE);
  
@@ -152,7 +152,7 @@ index 12114ce..8f9c9f2 100644
        M_POLYAREA_Collect (&e, a, res, &holes, action, b->f == b
  			  && !b->contours->next
  			  && b->contours->Flags.status != ISECTED);
-@@ -1957,6 +1981,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
+@@ -1917,6 +1941,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
        M_POLYAREA_label (a, b, FALSE);
        M_POLYAREA_label (b, a, FALSE);
  
@@ -160,7 +160,7 @@ index 12114ce..8f9c9f2 100644
        M_POLYAREA_Collect (&e, a, aandb, &holes, PBO_ISECT, FALSE);
        InsertHoles (&e, *aandb, &holes);
        assert (poly_Valid (*aandb));
-@@ -1969,6 +1994,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
+@@ -1929,6 +1954,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
        holes = NULL;
        clear_marks (a);
        clear_marks (b);
