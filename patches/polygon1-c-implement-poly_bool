@@ -1,7 +1,7 @@
-Bottom: 42efa88c8d64d97662c4ad719e9c95280cfdb4de
-Top:    03378cb8bec8907d89ae6634163a96eb89a772bf
+Bottom: f1ba8edb1f8e2c9107c60029f8060112bcaadfc9
+Top:    f6a94af823d931af07ca6f78204db558413f367c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 12:23:49 +0000
+Date:   2009-02-10 13:19:55 +0000
 
 polygon1.c: Implement poly_Boolean() by calling poly_Boolean_free()
 
@@ -12,10 +12,11 @@ taken in poly_Boolean_free().
 
 
 
+
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 12114ce..b1b40ee 100644
+index 5422fb9..1fe0ba5 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -1786,51 +1786,11 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,

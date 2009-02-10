@@ -1,7 +1,7 @@
-Bottom: 33f5e9d52addbabb50effdda54c3787f53530f50
-Top:    271e4683573914f46c32dd88b4c04e2c7cb3511d
+Bottom: 368ca0c2d32e643779fa46affd5de85c745a8aef
+Top:    ab12302e3384728ce0eda6b97de0434088aa5f42
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-08 02:06:33 +0000
+Date:   2009-02-10 13:19:55 +0000
 
 Use rtree of countours when computing an intersection
 
@@ -16,10 +16,11 @@ Use rtree of countours when computing an intersection
 
 
 
+
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index b51440c..2d4cd21 100644
+index 17c61ed..e95718e 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -543,9 +543,17 @@ typedef struct info
@@ -112,11 +113,7 @@ index b51440c..2d4cd21 100644
 -              }
 -            pb = pb->next;
 -          }
-+    {
-+      rtree_over   = pa;
-+      looping_over = pb;
-+    }
- 
+-
 -        /* If we didn't find anything intersting, move onto the next "a" contour */
 -        if (!found_overlapping_a_b_contour)
 -          {
@@ -124,6 +121,69 @@ index b51440c..2d4cd21 100644
 -            pb = b->contours;
 -            continue;
 -          }
+-
+-        /* something intersects so check the edges of the contour */
+-
+-        /* Pick which contour has the fewer points, and do the loop
+-         * over that. The r_tree makes hit-testing against a contour
+-         * faster, so we want to do that on the bigger contour.
+-         */
+-        if (pa->Count < pb->Count)
+-          {
+-            rtree_over   = pb;
+-            looping_over = pa;
+-          }
+-        else
+-          {
+-            rtree_over   = pa;
+-            looping_over = pb;
+-          }
+-
+-        av = &looping_over->head;
+-        do  /* Loop over the nodes in the smaller contour */
+-          {
+-            /* check this edge for any insertions */
+-            double dx;
+-            info.v = av;
+-            /* compute the slant for region trimming */
+-            dx = av->next->point[0] - av->point[0];
+-            if (dx == 0)
+-              info.m = 0;
+-            else
+-              {
+-                info.m = (av->next->point[1] - av->point[1]) / dx;
+-                info.b = av->point[1] - info.m * av->point[0];
+-              }
+-            box.X2 = (box.X1 = av->point[0]) + 1;
+-            box.Y2 = (box.Y1 = av->point[1]) + 1;
+-
+-            /* fill in the segment in info corresponding to this node */
+-            if (setjmp (info.sego) == 0)
+-              {
+-                r_search ((rtree_t *) (looping_over->tree), &box, NULL, get_seg, &info);
+-                assert (0);
+-              }
+-
+-              /* NB: If this actually hits anything, we are teleported back to the beginning */
+-              info.tree = (rtree_t *) rtree_over->tree;
+-              if (info.tree)
+-                if (UNLIKELY (r_search (info.tree, &info.s->box,
+-                                        seg_in_region, seg_in_seg, &info)))
+-                  return err_no_memory;	/* error */
+-          }
+-        while ((av = av->next) != &looping_over->head);
+-
+-        /* Continue the with the _same_ "a" contour,
+-         * testing it against the next "b" contour.
+-         */
+-        pb = pb->next;
+-      }
+-  }				/* end of setjmp loop */
++    {
++      rtree_over   = pa;
++      looping_over = pb;
++    }
++
 +  av = &looping_over->head;
 +  do  /* Loop over the nodes in the smaller contour */
 +    {
@@ -159,8 +219,7 @@ index b51440c..2d4cd21 100644
 +  while ((av = av->next) != &looping_over->head);
 +  return 0;
 +}
- 
--        /* something intersects so check the edges of the contour */
++
 +static int
 +intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
 +{
@@ -169,21 +228,7 @@ index b51440c..2d4cd21 100644
 +  int ca = 0, cb = 0;
 +  contour_info c_info;
 +  rtree_t *b_contour_tree = NULL;
- 
--        /* Pick which contour has the fewer points, and do the loop
--         * over that. The r_tree makes hit-testing against a contour
--         * faster, so we want to do that on the bigger contour.
--         */
--        if (pa->Count < pb->Count)
--          {
--            rtree_over   = pb;
--            looping_over = pa;
--          }
--        else
--          {
--            rtree_over   = pa;
--            looping_over = pb;
--          }
++
 +  /* count the contours in a and b */
 +  for (pa = a->contours; pa; pa = pa->next, ca++);
 +  for (pb = b->contours; pb; pb = pb->next, cb++);
@@ -248,46 +293,6 @@ index b51440c..2d4cd21 100644
 +
 +      r_search ((rtree_t *) (b_contour_tree), &sb, NULL, contour_bounds_touch, &c_info);
 +    }
- 
--        av = &looping_over->head;
--        do  /* Loop over the nodes in the smaller contour */
--          {
--            /* check this edge for any insertions */
--            double dx;
--            info.v = av;
--            /* compute the slant for region trimming */
--            dx = av->next->point[0] - av->point[0];
--            if (dx == 0)
--              info.m = 0;
--            else
--              {
--                info.m = (av->next->point[1] - av->point[1]) / dx;
--                info.b = av->point[1] - info.m * av->point[0];
--              }
--            box.X2 = (box.X1 = av->point[0]) + 1;
--            box.Y2 = (box.Y1 = av->point[1]) + 1;
--
--            /* fill in the segment in info corresponding to this node */
--            if (setjmp (info.sego) == 0)
--              {
--                r_search ((rtree_t *) (looping_over->tree), &box, NULL, get_seg, &info);
--                assert (0);
--              }
--
--              /* NB: If this actually hits anything, we are teleported back to the beginning */
--              info.tree = (rtree_t *) rtree_over->tree;
--              if (info.tree)
--                if (UNLIKELY (r_search (info.tree, &info.s->box,
--                                        seg_in_region, seg_in_seg, &info)))
--                  return err_no_memory;	/* error */
--          }
--        while ((av = av->next) != &looping_over->head);
--
--        /* Continue the with the _same_ "a" contour,
--         * testing it against the next "b" contour.
--         */
--        pb = pb->next;
--      }
--  }				/* end of setjmp loop */
++
    return 0;
  }

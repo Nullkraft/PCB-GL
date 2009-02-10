@@ -1,7 +1,7 @@
-Bottom: d1e67fef1b22263e0d41bddeb746d8bc6470d487
-Top:    1789d44244bfa96545e1755a2e61d6a28d2fb87f
+Bottom: 1eeadf5f88dbd863967db788ff43cba36657ba9c
+Top:    37e3119ce93cb4203ab65603238d5f2f691597eb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-08 02:06:33 +0000
+Date:   2009-02-10 13:19:54 +0000
 
 Add support for a "poured" object.
 
@@ -17,6 +17,7 @@ all child polygons selected. Manipulations will always occur on the
 
 It remains to be seen whether "pour" will have its own file-format entry,
 or if it will take over the meaning of the existing "polygon" entry.
+
 
 
 
@@ -2201,10 +2202,10 @@ index 47c4c7f..a0f423c 100644
  void EraseElementPinsAndPads (ElementTypePtr);
  void EraseElementName (ElementTypePtr);
 diff --git a/src/file.c b/src/file.c
-index b6c67b9..738188a 100644
+index 018b272..35bfb57 100644
 --- a/src/file.c
 +++ b/src/file.c
-@@ -775,7 +775,7 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
+@@ -783,7 +783,7 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
  {
    int n;
    /* write information about non empty layers */
@@ -2213,7 +2214,7 @@ index b6c67b9..738188a 100644
        (layer->Name && *layer->Name))
      {
        fprintf (FP, "Layer(%i ", (int) Number + 1);
-@@ -809,14 +809,14 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
+@@ -817,14 +817,14 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
  	  PrintQuotedString (FP, EMPTY (text->TextString));
  	  fprintf (FP, " %s]\n", F2S (text, TEXT_TYPE));
  	}
@@ -2569,10 +2570,10 @@ index c6c7458..5ae97c3 100644
    {"removemode", FlagMode, REMOVE_MODE},
    {"rotatemode", FlagMode, ROTATE_MODE},
 diff --git a/src/global.h b/src/global.h
-index f8532c8..84ebc40 100644
+index 991b60c..01549ca 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -199,16 +199,45 @@ typedef struct
+@@ -231,16 +231,45 @@ typedef struct
    void *Element;
  } TextType, *TextTypePtr;
  
@@ -2624,7 +2625,7 @@ index f8532c8..84ebc40 100644
  
  typedef struct			/* holds information about arcs */
  {
-@@ -221,26 +250,25 @@ typedef struct			/* holds information about arcs */
+@@ -253,26 +282,25 @@ typedef struct			/* holds information about arcs */
      Delta;
  } ArcType, *ArcTypePtr;
  
@@ -2660,7 +2661,7 @@ index f8532c8..84ebc40 100644
    Boolean On;			/* visible flag */
    char *Color,			/* color */
     *SelectedColor;
-@@ -524,7 +552,8 @@ typedef struct			/* holds cursor information */
+@@ -556,7 +584,8 @@ typedef struct			/* holds cursor information */
    Boolean On;			/* flag for 'is visible' */
    AttachedLineType AttachedLine;	/* data of new lines... */
    AttachedBoxType AttachedBox;
@@ -2670,7 +2671,7 @@ index f8532c8..84ebc40 100644
    AttachedObjectType AttachedObject;	/* data of attached objects */
    enum crosshair_shape shape; /* shape of crosshair */
  } CrosshairType, *CrosshairTypePtr;
-@@ -639,13 +668,15 @@ typedef struct
+@@ -671,13 +700,15 @@ typedef struct
    void *(*Line) (LayerTypePtr, LineTypePtr);
    void *(*Text) (LayerTypePtr, TextTypePtr);
    void *(*Polygon) (LayerTypePtr, PolygonTypePtr);
@@ -5011,10 +5012,10 @@ index 8f444fd..e203d07 100644
  void RestoreToPolygon(DataType *, int, void *, void *);
  void ClearFromPolygon(DataType *, int, void *, void *);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 32ffb31..7ea9e66 100644
+index 5e5e822..17c61ed 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -835,6 +835,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -833,6 +833,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
  }
  
  static void
@@ -5060,7 +5061,7 @@ index 32ffb31..7ea9e66 100644
  M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  {
    POLYAREA *a = afst, *b = bfst;
-@@ -1052,7 +1091,7 @@ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
+@@ -1056,7 +1095,7 @@ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
  	      return TRUE;
  	  }
      }
@@ -5069,7 +5070,7 @@ index 32ffb31..7ea9e66 100644
    return FALSE;
  }
  
-@@ -1636,7 +1675,8 @@ Touching (POLYAREA * a, POLYAREA * b)
+@@ -1640,7 +1679,8 @@ Touching (POLYAREA * a, POLYAREA * b)
        if (!poly_Valid (b))
  	return -1;
  #endif
@@ -5079,7 +5080,7 @@ index 32ffb31..7ea9e66 100644
  
        if (M_POLYAREA_label (a, b, TRUE))
  	return TRUE;
-@@ -2387,15 +2427,19 @@ inside_sector (VNODE * pn, Vector p2)
+@@ -2391,15 +2431,19 @@ inside_sector (VNODE * pn, Vector p2)
  BOOLp
  poly_ChkContour (PLINE * a)
  {
@@ -5101,7 +5102,7 @@ index 32ffb31..7ea9e66 100644
        do
  	{
  	  if (!node_neighbours (a1, a2) &&
-@@ -2403,21 +2447,22 @@ poly_ChkContour (PLINE * a)
+@@ -2407,21 +2451,22 @@ poly_ChkContour (PLINE * a)
  				    a2->point, a2->next->point, i1, i2)) > 0)
  	    {
  	      if (icnt > 1)
@@ -5129,7 +5130,7 @@ index 32ffb31..7ea9e66 100644
  
  #if 1
  	      /* now check if they are inside each other */
-@@ -2425,11 +2470,11 @@ poly_ChkContour (PLINE * a)
+@@ -2429,11 +2474,11 @@ poly_ChkContour (PLINE * a)
  		  inside_sector (hit1, hit2->next->point) ||
  		  inside_sector (hit2, hit1->prev->point) ||
  		  inside_sector (hit2, hit1->next->point))

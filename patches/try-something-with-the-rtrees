@@ -1,13 +1,14 @@
-Bottom: f98678a48c4503a15498116b31cee61560ec5485
-Top:    fc479f7cfcbc78b61eaeabb61b1149bf9b7a4072
+Bottom: 9f427b6dde883ed5888564009e4af9c78f54b9ec
+Top:    1342f288b8353ced38f2f2f563f52b70911b89af
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 12:23:48 +0000
+Date:   2009-02-10 13:19:55 +0000
 
 Try optimising polygon operations by keeping an rtree with their contours
 
 InsertHoles() already creates an rtree of contours to do its internal
 processing, and it is possible that intersect() could be sped up by
 its existance as well.
+
 
 
 
@@ -186,7 +187,7 @@ index 8ce0283..9ba5f71 100644
    while (save != ans);
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 2d4cd21..12114ce 100644
+index e95718e..5422fb9 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -38,13 +38,15 @@
@@ -319,7 +320,7 @@ index 2d4cd21..12114ce 100644
    do
      {
        do
-@@ -934,8 +912,10 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+@@ -928,8 +906,10 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
    PLINE *curcA, *curcB;
    CVCList *the_list = NULL;
  
