@@ -1,7 +1,7 @@
-Bottom: a7d754936891ab13f37f19b799c8334b5a1131d5
-Top:    90149c133c5dff124b09d1c7e1c144ffcd9db3d3
+Bottom: 1e75e9e5591cd9f6620cf0eda5f3f9c0d2054bbf
+Top:    7e138bf2970e707938d2d4d36522d0be862d3822
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 16:12:13 +0000
+Date:   2009-02-10 20:34:27 +0000
 
 Make + and X thermal polys from a single outline, don't composite
 
@@ -9,10 +9,11 @@ Make + and X thermal polys from a single outline, don't composite
 is almost no difference - and it might even be fractionally slower.
 
 
+
 ---
 
 diff --git a/src/thermal.c b/src/thermal.c
-index fa87f28..d307ea3 100644
+index 445b97d..c5722a6 100644
 --- a/src/thermal.c
 +++ b/src/thermal.c
 @@ -88,44 +88,81 @@ struct cent
@@ -144,8 +145,8 @@ index fa87f28..d307ea3 100644
        /* fix me add thermal style 4 */
      case 5:
        {
-@@ -435,18 +468,10 @@ ThermPoly (PCBTypePtr p, PinTypePtr pin, Cardinal laynum)
- #warning THIS WOULD BE FASTER IF WE JUST SUTRACTED A CROSS SHAPE
+@@ -434,18 +467,10 @@ ThermPoly (PCBTypePtr p, PinTypePtr pin, Cardinal laynum)
+         poly_Boolean_free (pa, arc, &m, PBO_SUB);
          /* fix me needs error checking */
          if (style == 2)
 -          {
