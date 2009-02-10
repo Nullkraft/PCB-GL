@@ -636,6 +636,7 @@ static HID eps_hid = {
   eps_draw_rect,
   eps_fill_circle,
   eps_fill_polygon,
+  0 /* eps_fill_pcb_polygon */ ,
   eps_fill_rect,
   eps_calibrate,
   0 /* eps_shift_is_pressed */ ,
