@@ -40,7 +40,6 @@
 
 #include "const.h"
 #include "macro.h"
-#include "polyarea.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,6 +51,10 @@
 #include <sys/types.h>
 
 #include "hid.h"
+
+typedef struct rtree rtree_t;
+
+#include "polyarea.h" /* Needs rtree_t defined */
 
 #define _(S) (S)
 
