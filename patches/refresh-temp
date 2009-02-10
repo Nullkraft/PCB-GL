@@ -1,0 +1,30 @@
+Bottom: 62b3622c228e49c40bdd3e05e9f9a8705b177352
+Top:    81aef8476e93d4a8584dfba4b8374a808e2196eb
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-10 12:20:59 +0000
+
+Refresh of improve-poly_andsubtract_free-
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index f5bdc0f..2137297 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1861,7 +1861,6 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+     }
+   else
+     {
+-      printf ("Got non ISECTED contour in cntr_Collect!\n");
+       switch (action)
+ 	{
+ 	case PBO_ISECT:
+@@ -2707,7 +2706,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
+ #endif
+       M_POLYAREA_intersect (&e, a, b, TRUE);
+ 
+-//      M_POLYAREA_label (a, b, FALSE);
++      M_POLYAREA_label (a, b, FALSE);
+       M_POLYAREA_label (b, a, FALSE);
+ 
+ //      printf ("3:");
