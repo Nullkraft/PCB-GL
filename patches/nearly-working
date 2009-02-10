@@ -3,20 +3,15 @@ Top:    a852e6c359a968d5b448fb8f4b3828b6c3a1390e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-10 19:50:54 +0000
 
-Nearly working
+Various speedups to the polygon code.
 
+Avoid labelling the "A" polygon's contours, use the contour r-trees to
+dynamically search the required data.
 
-
-
-
-
-
-
-
-
-
-
-
+Add code to reparent holes which end up in the wrong polygon piece after
+inserting a new hole in InsertHoles. (Means we don't have to dump every
+potental hole we encounter in the holes insersion queue, hopefully leading
+to better dynamic update performance.
 
 
 ---
