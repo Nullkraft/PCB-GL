@@ -1,7 +1,7 @@
-Bottom: 3ffd705d7d01172033e6f6485caed0f21d1d44c9
-Top:    6de6b5fab752f95841edf19a1e2ba88a8209cb9f
+Bottom: aa7608624b0ca15e8a1865cb449154692c2bb71a
+Top:    24223893af5af8c1bc1724dae4fa791d20604699
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 19:04:39 +0000
+Date:   2009-02-10 19:06:31 +0000
 
 Cure crosshair lagging on screen
 
@@ -18,10 +18,10 @@ Cure crosshair lagging on screen
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index be374e6..4f19a3c 100644
+index ec0018a..258904b 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1096,6 +1096,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -1117,6 +1117,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
    GdkModifierType state;
@@ -29,7 +29,7 @@ index be374e6..4f19a3c 100644
    GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
    GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
  
-@@ -1104,6 +1105,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -1125,6 +1126,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
      printf ("GL THingy returned\n");
      return FALSE;
    }
@@ -37,7 +37,7 @@ index be374e6..4f19a3c 100644
  
    state = (GdkModifierType) (ev->state);
    mk = ghid_modifier_keys_state (&state);
-@@ -1111,8 +1113,11 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -1132,8 +1134,11 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    if ((ev->state & GDK_BUTTON3_MASK) == GDK_BUTTON3_MASK
        && mk == NONE_PRESSED)
      {
@@ -49,7 +49,7 @@ index be374e6..4f19a3c 100644
        dx = gport->zoom * (x_prev - ev->x);
        dy = gport->zoom * (y_prev - ev->y);
        if (x_prev > 0)
-@@ -1124,10 +1129,11 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -1145,10 +1150,11 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    x_prev = y_prev = -1;
    moved = ghid_note_event_location (ev);
  
@@ -63,7 +63,7 @@ index be374e6..4f19a3c 100644
    if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
      gdk_gl_drawable_swap_buffers (pGlDrawable);
    else
-@@ -1135,6 +1141,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -1156,6 +1162,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
  
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
