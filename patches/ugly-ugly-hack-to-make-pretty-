@@ -1,7 +1,7 @@
-Bottom: 4858fc05a7f56a0cebd6ab7ed07255993113d61c
-Top:    a7d754936891ab13f37f19b799c8334b5a1131d5
+Bottom: 4d2b284db95b69a93a7266ef08895ddf8a12256e
+Top:    1e75e9e5591cd9f6620cf0eda5f3f9c0d2054bbf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 15:30:59 +0000
+Date:   2009-02-10 20:33:29 +0000
 
 UGLY UGLY hack to make pretty translucent polygons
 
@@ -11,10 +11,10 @@ UGLY UGLY hack to make pretty translucent polygons
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index acaffb5..6cc96cd 100644
+index 39fce1d..aa706a5 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -1781,6 +1781,35 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
+@@ -1729,6 +1729,35 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
   * lowlevel drawing routine for polygons
   */
  static void
@@ -50,7 +50,7 @@ index acaffb5..6cc96cd 100644
  DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
  {
    int *x, *y, n, i = 0;
-@@ -2152,6 +2181,8 @@ cp_callback (const BoxType * b, void *cl)
+@@ -2099,6 +2128,8 @@ cp_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -59,7 +59,7 @@ index acaffb5..6cc96cd 100644
  /* ---------------------------------------------------------------------------
   * draws a polygon on a layer
   */
-@@ -2160,6 +2191,7 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+@@ -2107,6 +2138,7 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
  {
    int layernum;
  
@@ -67,7 +67,7 @@ index acaffb5..6cc96cd 100644
    if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Polygon))
      {
        if (TEST_FLAG (SELECTEDFLAG, Polygon))
-@@ -2171,6 +2203,7 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+@@ -2118,6 +2150,7 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
      gui->set_color (Output.fgGC, Layer->Color);
    layernum = GetLayerNumber (PCB->Data, Layer);
    DrawPolygonLowLevel (Polygon, NULL);
@@ -75,7 +75,7 @@ index acaffb5..6cc96cd 100644
    if (TEST_FLAG (CLEARPOLYFLAG, Polygon))
      {
        r_search (PCB->Data->pin_tree, &Polygon->BoundingBox, NULL,
-@@ -2214,25 +2247,31 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
+@@ -2161,25 +2194,31 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  static void
  DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  {
@@ -116,7 +116,7 @@ index acaffb5..6cc96cd 100644
  #if 0
        if (!Polygon->NoHolesValid)
          {
-@@ -2243,7 +2282,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2190,7 +2229,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
            PolygonType poly = *Polygon;
            poly.Clipped = Polygon->NoHoles;
            do {
@@ -125,7 +125,7 @@ index acaffb5..6cc96cd 100644
              poly.Clipped = poly.Clipped->f;
            } while (poly.Clipped != Polygon->NoHoles);
          }
-@@ -2258,7 +2297,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2205,7 +2244,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
            } while (poly.Clipped != Polygon->Clipped);
          }
  #endif
@@ -135,7 +135,7 @@ index acaffb5..6cc96cd 100644
  
        /* draw other parts of the polygon if fullpoly flag is set */
        /* NB: No "NoHoles" cache for these */
-@@ -2269,7 +2309,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2216,7 +2256,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  	    {
  	      PolygonType poly;
  	      poly.Clipped = pg;
@@ -144,7 +144,7 @@ index acaffb5..6cc96cd 100644
  	    }
  	}
      }
-@@ -2303,6 +2343,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2250,6 +2290,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  	  free (y);
  	}
      }
