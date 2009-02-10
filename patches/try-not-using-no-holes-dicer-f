@@ -1,7 +1,7 @@
-Bottom: c677165ae72721d4455590ed99d7a5b13daeb474
-Top:    17566a5ed8e0a7941077a8c3dc4259304f96c9bd
+Bottom: 288c9cf209f61ed951b03bd51dbf911e9ad9044a
+Top:    ef5a60e573027f22c928b8eb4e5e46cb5154b3ab
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 20:28:23 +0000
+Date:   2009-02-10 20:31:45 +0000
 
 Try not using no-holes dicer for drawing polygons
 
@@ -18,10 +18,10 @@ Try not using no-holes dicer for drawing polygons
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index dbe197c..6fc566c 100644
+index f282b44..0384f62 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2172,6 +2172,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2169,6 +2169,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
      }
    else if (Polygon->Clipped)
      {
@@ -29,7 +29,7 @@ index dbe197c..6fc566c 100644
        if (!Polygon->NoHolesValid)
          {
            ComputeNoHoles (Polygon);
-@@ -2185,6 +2186,15 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2182,6 +2183,15 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
              poly.Clipped = poly.Clipped->f;
            } while (poly.Clipped != Polygon->NoHoles);
          }
