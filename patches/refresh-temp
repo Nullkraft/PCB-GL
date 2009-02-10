@@ -1,0 +1,101 @@
+Bottom: 2d35f15630cfd6151033752d21916edf89d8db0c
+Top:    bab4ea2a0cb8d6ea91fb0b60a83fcdda27314454
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-10 15:25:00 +0000
+
+Refresh of nearly-working
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 71d1b2e..471b91c 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -172,6 +172,7 @@ biggest (POLYAREA * p)
+ {
+   POLYAREA *n, *top = NULL;
+   PLINE *pl;
++  rtree_t *tree;
+   double big = -1;
+   if (!p)
+     return NULL;
+@@ -205,8 +206,11 @@ biggest (POLYAREA * p)
+   if (top == p)
+     return p;
+   pl = top->contours;
++  tree = top->contour_tree;
+   top->contours = p->contours;
++  top->contour_tree = p->contour_tree;
+   p->contours = pl;
++  p->contour_tree = tree;
+   assert (pl);
+   assert (p->f);
+   assert (p->b);
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 0b9b619..75a62e8 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -898,7 +898,7 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+ 	if (curcA->Flags.status == ISECTED)
+ 	  {
+ 	    the_list = add_descriptors (curcA, 'A', the_list);
+-	    if (UNLIKELY (the_list) == NULL)
++	    if (UNLIKELY (the_list == NULL))
+ 	      error (err_no_memory);
+ 	  }
+     }
+@@ -2565,19 +2565,43 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+ #if 0
+ /* SANITY CHECK */
+   {
+-  POLYAREA *apa;
+-  PLINE *curc;
++    POLYAREA *apa;
++    PLINE *curc;
+ 
+-  apa = a;
+-  do {
+-    for (curc = apa->contours; curc != NULL; curc = curc->next) {
+-      if (curc->Flags.status != UNKNWN) {
+-        curc->Flags.status = UNKNWN;
+-        printf ("SOMETHING DIDN'T CLEAR THE FLAGS\n");
++    apa = a;
++    do {
++      for (curc = apa->contours; curc != NULL; curc = curc->next) {
++        if (curc->Flags.status != UNKNWN) {
++          curc->Flags.status = UNKNWN;
++          printf ("SOMETHING DIDN'T CLEAR THE FLAGS\n");
++        }
+       }
+-    }
+-    /* If we deleted all the pieces of the polyarea, *pieces is NULL */
+-  } while ((apa = apa->f) != a);
++      /* If we deleted all the pieces of the polyarea, *pieces is NULL */
++    } while ((apa = apa->f) != a);
++  }
++  {
++    POLYAREA *apa = a;
++    PLINE *curc;
++    do {
++      int count = 0;
++      for (curc = apa->contours; curc != NULL; curc = curc->next)
++        count ++;
++      if (apa->contour_tree->size != count)
++        printf ("A: Contour rtree has %i elements, counted %i\n",
++                apa->contour_tree->size, count);
++    } while ((apa = apa->f) != a);
++  }
++  {
++    POLYAREA *bpa = b;
++    PLINE *curc;
++    do {
++      int count = 0;
++      for (curc = bpa->contours; curc != NULL; curc = curc->next)
++        count ++;
++      if (bpa->contour_tree->size != count)
++        printf ("B: Contour rtree has %i elements, counted %i\n",
++                bpa->contour_tree->size, count);
++    } while ((bpa = bpa->f) != b);
+   }
+ /* END SANITY CHECK */
+ #endif
