@@ -1,5 +1,5 @@
 Bottom: 61d40a7847b73f2f28b3822b6b97775e2c906a77
-Top:    7ef03c13f649bcf64178d7acf16a1b80b80392a3
+Top:    bf5f2e7e266b4d0262fc91e39b6aad452425c5ef
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-10 13:10:58 +0000
 
@@ -67,7 +67,7 @@ index f8532c8..991b60c 100644
   * Do not change the following definitions even if they're not very
   * nice.  It allows us to have functions act on these "base types" and
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 7f4821a..4808d9b 100644
+index 7f4821a..d1bc197 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -93,6 +93,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -118,7 +118,7 @@ index 7f4821a..4808d9b 100644
 -	    error (err_no_memory);
 +	  {
 +	    the_list = add_descriptors (curcA, 'A', the_list);
-+	    if (UNLIKELY (the_list) == NULL)
++	    if (UNLIKELY (the_list == NULL))
 +	      error (err_no_memory);
 +	  }
      }
