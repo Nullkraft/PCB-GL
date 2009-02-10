@@ -1,5 +1,5 @@
 Bottom: a74a5506d15c21d020fe76fa3c378863eec2d67a
-Top:    068f8685f94d5418e3eda7fddc0f92c0e4742055
+Top:    9283f42bc436a02871e8161e68cb1895f7a77e4f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-10 14:01:45 +0000
 
@@ -115,7 +115,7 @@ index aaca24d..9f3ecdf 100644
  
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 12a484e..7106410 100644
+index 12a484e..374fe5e 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -590,6 +590,7 @@ myVertex (GLdouble *vertex_data)
@@ -126,7 +126,7 @@ index 12a484e..7106410 100644
  void
  hidgl_fill_polygon (int n_coords, int *x, int *y)
  {
-@@ -629,6 +630,69 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -629,6 +630,71 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
  }
  
  void
@@ -145,12 +145,13 @@ index 12a484e..7106410 100644
 +    return;
 +  }
 +
++  /* JUST DRAW THE FIRST PIECE */
 +  /* Walk the polygon structure, counting vertices */
 +  piece = poly->Clipped;
-+  do {
++//  do {
 +    for (contour = piece->contours; contour != NULL; contour = contour->next)
 +      vertex_count += contour->Count;
-+  } while ((piece = piece->f) != poly->Clipped);
++//  } while ((piece = piece->f) != poly->Clipped);
 +
 +  vertices = malloc (sizeof(GLdouble) * vertex_count * 3);
 +
@@ -162,11 +163,12 @@ index 12a484e..7106410 100644
 +
 +  gluTessBeginPolygon (tobj, NULL);
 +
++  /* JUST DRAW THE FIRST PIECE */
 +  /* Walk the polygon structure, adding the vertices */
 +  i = 0;
 +  cc = 1;
 +  piece = poly->Clipped;
-+  do {
++//  do {
 +    for (contour = piece->contours; contour != NULL; contour = contour->next) {
 +      gluTessBeginContour (tobj);
 +
@@ -183,7 +185,7 @@ index 12a484e..7106410 100644
 +      } while ((vnode = vnode->next) != &contour->head);
 +      gluTessEndContour (tobj);
 +    }
-+  } while ((piece = piece->f) != poly->Clipped);
++//  } while ((piece = piece->f) != poly->Clipped);
 +
 +  gluTessEndPolygon (tobj);
 +  gluDeleteTess (tobj);
