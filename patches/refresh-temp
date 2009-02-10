@@ -1,0 +1,191 @@
+Bottom: 35a78b797ead700663b518fd397067ede18ce2e4
+Top:    c47fc1a01fc8cd9162c7226013a860054c197e60
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-10 20:11:34 +0000
+
+Refresh of add-raw-polygons-support-for-t
+
+---
+
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index 1579c6e..094a44b 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -473,6 +473,7 @@ HID batch_gui = {
+   batch_draw_rect,
+   batch_fill_circle,
+   batch_fill_polygon,
++  0 /*batch_fill_pcb_polygon*/ ,
+   batch_fill_rect,
+   batch_calibrate,
+   batch_shift_is_pressed,
+diff --git a/src/hid/bom/bom.c b/src/hid/bom/bom.c
+index 19ad149..3bef104 100644
+--- a/src/hid/bom/bom.c
++++ b/src/hid/bom/bom.c
+@@ -562,6 +562,7 @@ HID bom_hid = {
+   0,				/* bom_draw_rect */
+   0,				/* bom_fill_circle */
+   0,				/* bom_fill_polygon */
++  0,				/* bom_fill_pcb_polygon */
+   0,				/* bom_fill_rect */
+   0,				/* bom_calibrate */
+   0,				/* bom_shift_is_pressed */
+diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
+index 58aa756..154f128 100644
+--- a/src/hid/common/extents.c
++++ b/src/hid/common/extents.c
+@@ -202,6 +202,7 @@ static HID extents_hid = {
+   extents_draw_rect,
+   extents_fill_circle,
+   extents_fill_polygon,
++  0 /* extents_fill_pcb_polygon */,
+   extents_fill_rect,
+ 
+   0 /* extents_calibrate */ ,
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index 458d16a..1d0fd0d 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -364,6 +364,7 @@ HID hid_nogui = {
+   nogui_draw_rect,
+   nogui_fill_circle,
+   nogui_fill_polygon,
++  0 /* nogui_fill_pcb_polygon */ ,
+   nogui_fill_rect,
+   nogui_calibrate,
+   nogui_shift_is_pressed,
+@@ -415,6 +416,7 @@ apply_default_hid (HID * d, HID * s)
+   AD (draw_arc);
+   AD (fill_circle);
+   AD (fill_polygon);
++  AD (fill_pcb_polygon);
+   AD (calibrate);
+   AD (shift_is_pressed);
+   AD (control_is_pressed);
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index babae3f..ecb942d 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -1095,6 +1095,7 @@ static HID gerber_hid = {
+   gerber_draw_rect,
+   gerber_fill_circle,
+   gerber_fill_polygon,
++  0 /* gerber_fill_pcb_polygon */ ,
+   gerber_fill_rect,
+   gerber_calibrate,
+   0 /* gerber_shift_is_pressed */ ,
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index ce5e6a3..01f8778 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -3901,6 +3901,7 @@ HID lesstif_gui = {
+   lesstif_draw_rect,
+   lesstif_fill_circle,
+   lesstif_fill_polygon,
++  0 /* lesstif_fill_pcb_polygon */ ,
+   lesstif_fill_rect,
+ 
+   lesstif_calibrate,
+diff --git a/src/hid/lpr/lpr.c b/src/hid/lpr/lpr.c
+index f7f6c3e..6d16073 100644
+--- a/src/hid/lpr/lpr.c
++++ b/src/hid/lpr/lpr.c
+@@ -139,6 +139,7 @@ HID lpr_hid = {
+   0 /* lpr_draw_rect */ ,
+   0 /* lpr_fill_circle */ ,
+   0 /* lpr_fill_polygon */ ,
++  0 /* lpr_fill_pcb_polygon */ ,
+   0 /* lpr_fill_rect */ ,
+   lpr_calibrate,
+   0 /* lpr_shift_is_pressed */ ,
+diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
+index e7d0f9f..0b90249 100644
+--- a/src/hid/nelma/nelma.c
++++ b/src/hid/nelma/nelma.c
+@@ -698,7 +698,7 @@ nelma_do_export(HID_Attr_Val * options)
+ /* *** PNG export (slightly modified code from PNG export HID) ************* */
+ 
+ static int 
+-nelma_set_layer(const char *name, int group)
++nelma_set_layer(const char *name, int group, int empty)
+ {
+ 	int             idx = (group >= 0 && group < max_layer) ?
+ 	PCB->LayerGroups.Entries[group][0] : group;
+@@ -1073,6 +1073,7 @@ HID             nelma_hid = {
+ 	nelma_draw_rect,
+ 	nelma_fill_circle,
+ 	nelma_fill_polygon,
++	0 /* nelma_fill_pcb_polygon */ ,
+ 	nelma_fill_rect,
+ 	nelma_calibrate,
+ 	0 /* nelma_shift_is_pressed */ ,
+@@ -1081,6 +1082,10 @@ HID             nelma_hid = {
+ 	nelma_set_crosshair,
+ 	0 /* nelma_add_timer */ ,
+ 	0 /* nelma_stop_timer */ ,
++	0 /* nelma_watch_file */ ,
++	0 /* nelma_unwatch_file */ ,
++	0 /* nelma_add_block_hook */ ,
++	0 /* nelma_stop_block_hook */ ,
+ 	0 /* nelma_log */ ,
+ 	0 /* nelma_logv */ ,
+ 	0 /* nelma_confirm_dialog */ ,
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index c0fcb9e..5a38351 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -1351,6 +1351,7 @@ HID png_hid = {
+   png_draw_rect,
+   png_fill_circle,
+   png_fill_polygon,
++  0 /* png_fill_pcb_polygon */ ,
+   png_fill_rect,
+   png_calibrate,
+   0 /* png_shift_is_pressed */ ,
+@@ -1359,6 +1360,10 @@ HID png_hid = {
+   png_set_crosshair,
+   0 /* png_add_timer */ ,
+   0 /* png_stop_timer */ ,
++  0 /* png_watch_file */ ,
++  0 /* png_unwatch_file */ ,
++  0 /* png_add_block_hook */ ,
++  0 /* png_stop_block_hook */ ,
+   0 /* png_log */ ,
+   0 /* png_logv */ ,
+   0 /* png_confirm_dialog */ ,
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index 4dbeedb..b1f0d86 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -636,6 +636,7 @@ static HID eps_hid = {
+   eps_draw_rect,
+   eps_fill_circle,
+   eps_fill_polygon,
++  0 /* eps_fill_pcb_polygon */ ,
+   eps_fill_rect,
+   eps_calibrate,
+   0 /* eps_shift_is_pressed */ ,
+@@ -644,6 +645,10 @@ static HID eps_hid = {
+   eps_set_crosshair,
+   0 /* eps_add_timer */ ,
+   0 /* eps_stop_timer */ ,
++  0 /* eps_watch_file */ ,
++  0 /* eps_unwatch_file */ ,
++  0 /* eps_add_block_hook */ ,
++  0 /* eps_stop_block_hook */ ,
+   0 /* eps_log */ ,
+   0 /* eps_logv */ ,
+   0 /* eps_confirm_dialog */ ,
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index f5ac07e..18cfaf7 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -1174,6 +1174,7 @@ HID ps_hid = {
+   ps_draw_rect,
+   ps_fill_circle,
+   ps_fill_polygon,
++  0 /* ps_fill_pcb_polygon */,
+   ps_fill_rect,
+   ps_calibrate,
+   0 /* ps_shift_is_pressed */ ,
