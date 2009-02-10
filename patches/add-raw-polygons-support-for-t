@@ -1,5 +1,5 @@
 Bottom: 17566a5ed8e0a7941077a8c3dc4259304f96c9bd
-Top:    25e935c3767bc75f2481e9ceccaea9a6cc8bf884
+Top:    4659458688860b29e082f2ff618892647dc74593
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-10 20:25:10 +0000
 
@@ -153,18 +153,10 @@ index 58aa756..154f128 100644
  
    0 /* extents_calibrate */ ,
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 12a484e..374fe5e 100644
+index 12a484e..3f1c590 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -590,6 +590,7 @@ myVertex (GLdouble *vertex_data)
-     printf ("Vertex recieved with unknown type\n");
- }
- 
-+
- void
- hidgl_fill_polygon (int n_coords, int *x, int *y)
- {
-@@ -629,6 +630,71 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -629,6 +629,71 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
  }
  
  void
