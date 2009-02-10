@@ -1,5 +1,5 @@
 Bottom: fe7d00daba11bb3825db5f5d37fed90deb67e001
-Top:    ee0ead8c5bfdb444ae4a97562c1ecbf716a2c9f6
+Top:    82bb08138c6d436da67ee5ec6d655691df613629
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-10 19:26:57 +0000
 
@@ -22,7 +22,7 @@ exact cases cause them.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index e277e4e..ca5ec95 100644
+index e277e4e..a0a0abb 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -915,6 +915,48 @@ cntrbox_inside (PLINE * c1, PLINE * c2)
@@ -58,7 +58,7 @@ index e277e4e..ca5ec95 100644
 +    if (poly_ContourInContour (outer, poly)) {
 +      for (curc = outer->next; curc != NULL; curc = curc->next)
 +        if (poly_ContourInContour (curc, poly)) {
-+          /* it's inside a hole in the smallest polygon 
++          /* it's inside a hole in the smallest polygon
 +           * no need to check the other polygons */
 +          heap_destroy (&heap);
 +          return FALSE;
