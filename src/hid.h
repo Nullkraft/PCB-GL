@@ -358,6 +358,8 @@ typedef enum
     void (*draw_rect) (hidGC gc_, int x1_, int y1_, int x2_, int y2_);
     void (*fill_circle) (hidGC gc_, int cx_, int cy_, int radius_);
     void (*fill_polygon) (hidGC gc_, int n_coords_, int *x_, int *y_);
+//    void (*fill_pcb_polygon) (hidGC gc_, void *poly);
+    void (*fill_pcb_polygon) (hidGC gc_, PolygonType *poly);
     void (*fill_rect) (hidGC gc_, int x1_, int y1_, int x2_, int y2_);
 
 
