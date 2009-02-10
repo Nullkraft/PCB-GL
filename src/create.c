@@ -139,6 +139,7 @@ CreateNewPCB (Boolean SetDefaultNames)
   ptr = MyCalloc (1, sizeof (PCBType), "CreateNewPCB()");
   ptr->Data = CreateNewBuffer ();
   ptr->Data->pcb = (void *) ptr;
+  ptr->Data->ClipPours = 1;
 
   ptr->ThermStyle = 4;
   ptr->IsleArea = 2.e8;
