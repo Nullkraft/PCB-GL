@@ -898,7 +898,7 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
 	if (curcA->Flags.status == ISECTED)
 	  {
 	    the_list = add_descriptors (curcA, 'A', the_list);
-	    if (UNLIKELY (the_list) == NULL)
+	    if (UNLIKELY (the_list == NULL))
 	      error (err_no_memory);
 	  }
     }
@@ -2565,19 +2565,43 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
 #if 0
 /* SANITY CHECK */
   {
-  POLYAREA *apa;
-  PLINE *curc;
+    POLYAREA *apa;
+    PLINE *curc;
 
-  apa = a;
-  do {
-    for (curc = apa->contours; curc != NULL; curc = curc->next) {
-      if (curc->Flags.status != UNKNWN) {
-        curc->Flags.status = UNKNWN;
-        printf ("SOMETHING DIDN'T CLEAR THE FLAGS\n");
+    apa = a;
+    do {
+      for (curc = apa->contours; curc != NULL; curc = curc->next) {
+        if (curc->Flags.status != UNKNWN) {
+          curc->Flags.status = UNKNWN;
+          printf ("SOMETHING DIDN'T CLEAR THE FLAGS\n");
+        }
       }
-    }
-    /* If we deleted all the pieces of the polyarea, *pieces is NULL */
-  } while ((apa = apa->f) != a);
+      /* If we deleted all the pieces of the polyarea, *pieces is NULL */
+    } while ((apa = apa->f) != a);
+  }
+  {
+    POLYAREA *apa = a;
+    PLINE *curc;
+    do {
+      int count = 0;
+      for (curc = apa->contours; curc != NULL; curc = curc->next)
+        count ++;
+      if (apa->contour_tree->size != count)
+        printf ("A: Contour rtree has %i elements, counted %i\n",
+                apa->contour_tree->size, count);
+    } while ((apa = apa->f) != a);
+  }
+  {
+    POLYAREA *bpa = b;
+    PLINE *curc;
+    do {
+      int count = 0;
+      for (curc = bpa->contours; curc != NULL; curc = curc->next)
+        count ++;
+      if (bpa->contour_tree->size != count)
+        printf ("B: Contour rtree has %i elements, counted %i\n",
+                bpa->contour_tree->size, count);
+    } while ((bpa = bpa->f) != b);
   }
 /* END SANITY CHECK */
 #endif
