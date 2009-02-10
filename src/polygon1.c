@@ -2641,6 +2641,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
       M_POLYAREA_separate_isected (&e, res, &holes, &a_isected);
       M_POLYAREA_label_separated (a_isected, b, FALSE);
       M_POLYAREA_update_primary (&e, res, &holes, action, b);
+//      M_POLYAREA_update_primary_old (&e, res, &holes, &a_isected, action);
       M_POLYAREA_Collect_separated (&e, a_isected, res, &holes, action, FALSE);
 #endif
 
