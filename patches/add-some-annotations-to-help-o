@@ -1,7 +1,7 @@
-Bottom: 61d40a7847b73f2f28b3822b6b97775e2c906a77
-Top:    bf5f2e7e266b4d0262fc91e39b6aad452425c5ef
+Bottom: d3c0f635dcd52be3ed9a65e962e52c4fbba96db1
+Top:    7ae2942b876269ee60ce20309d885a7d3e2f9911
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 13:10:58 +0000
+Date:   2009-02-10 19:09:09 +0000
 
 Add some annotations to help optimise branch prediction.
 
@@ -9,6 +9,7 @@ Macros G_LIKELY and G_UNLIKELY were taken from GLib (LGPL 2), and
 renamed without the G_ prefix.
 
 This hasn't had much discernable effect
+
 
 
 
@@ -67,7 +68,7 @@ index f8532c8..991b60c 100644
   * Do not change the following definitions even if they're not very
   * nice.  It allows us to have functions act on these "base types" and
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 7f4821a..d1bc197 100644
+index 3b9df9e..20522f4 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -93,6 +93,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
