@@ -846,8 +846,6 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
   setjmp (c_info.restart);		/* we loop back here whenever a vertex is inserted */
 #endif
 
-//  printf ("Done making r-tree of b's contours\n");
-
   for (pa = a->contours; pa; pa = pa->next)     /* Loop over the contours of POLYAREA "a" */
     {
       BoxType sb;
@@ -864,7 +862,6 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
             {
               /* The intersection test short-circuited back here,
                * we need to clean up, then longjmp to jb */
-//                printf ("short circuited here\n");
               r_destroy_tree (&b_contour_tree);
               longjmp (*jb, retval);
             }
