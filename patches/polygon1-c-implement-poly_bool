@@ -1,13 +1,14 @@
-Bottom: d14a6f1ab029d7ad1d4bea68b98641cc2a941760
-Top:    00ec90b6ca58c332d1e726c9e9f3fe4e826fbb45
+Bottom: db1d48ff7d2dac81f82faf316e322d48ac508ea4
+Top:    8223baa2219e71a88b478c27100d531921b765c3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 11:38:50 +0000
+Date:   2009-02-10 11:40:28 +0000
 
 polygon1.c: Implement poly_Boolean() by calling poly_Boolean_free()
 
 Reduces duplicated code. The poly_Boolean() implemetation already
 copied the original contours, then duplicated the processing steps
 taken in poly_Boolean_free().
+
 
 
 
