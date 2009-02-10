@@ -698,7 +698,7 @@ nelma_do_export(HID_Attr_Val * options)
 /* *** PNG export (slightly modified code from PNG export HID) ************* */
 
 static int 
-nelma_set_layer(const char *name, int group)
+nelma_set_layer(const char *name, int group, int empty)
 {
 	int             idx = (group >= 0 && group < max_layer) ?
 	PCB->LayerGroups.Entries[group][0] : group;
@@ -1081,6 +1081,10 @@ HID             nelma_hid = {
 	nelma_set_crosshair,
 	0 /* nelma_add_timer */ ,
 	0 /* nelma_stop_timer */ ,
+	0 /* nelma_watch_file */ ,
+	0 /* nelma_unwatch_file */ ,
+	0 /* nelma_add_block_hook */ ,
+	0 /* nelma_stop_block_hook */ ,
 	0 /* nelma_log */ ,
 	0 /* nelma_logv */ ,
 	0 /* nelma_confirm_dialog */ ,
