@@ -1861,7 +1861,6 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
     }
   else
     {
-      printf ("Got non ISECTED contour in cntr_Collect!\n");
       switch (action)
 	{
 	case PBO_ISECT:
