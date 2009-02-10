@@ -1,7 +1,7 @@
-Bottom: 60d3d5c87545a77e2d15b06bf8ad6c3b88fb6b00
+Bottom: 068f8685f94d5418e3eda7fddc0f92c0e4742055
 Top:    655de21f38215e4bae0a3b3ca12ad84e0b5c3b97
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 13:56:27 +0000
+Date:   2009-02-10 14:01:46 +0000
 
 Add support for a "poured" object.
 
@@ -17,6 +17,7 @@ all child polygons selected. Manipulations will always occur on the
 
 It remains to be seen whether "pour" will have its own file-format entry,
 or if it will take over the meaning of the existing "polygon" entry.
+
 
 
 
@@ -5012,7 +5013,7 @@ index 8f444fd..e203d07 100644
  void RestoreToPolygon(DataType *, int, void *, void *);
  void ClearFromPolygon(DataType *, int, void *, void *);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index b930f7a..7307c7a 100644
+index 0b9b619..7307c7a 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -859,6 +859,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
@@ -5061,15 +5062,6 @@ index b930f7a..7307c7a 100644
  M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  {
    POLYAREA *a = afst, *b = bfst;
-@@ -897,7 +936,7 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
-       for (curcA = a->contours; curcA != NULL; curcA = curcA->next)
- 	if (curcA->Flags.status == ISECTED)
- 	  {
--	    the_list = add_descriptors (curcA, 'A', the_list)
-+	    the_list = add_descriptors (curcA, 'A', the_list);
- 	    if (UNLIKELY (the_list) == NULL)
- 	      error (err_no_memory);
- 	  }
 @@ -1248,7 +1287,7 @@ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
  	      return TRUE;
  	  }
