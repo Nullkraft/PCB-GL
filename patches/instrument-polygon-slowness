@@ -1,9 +1,10 @@
-Bottom: 9f856ae372d40576563fdbde252d97cb2b87cc26
-Top:    a69357cf050d42f25ced6b3d84fba018e38672dd
+Bottom: e1c82dc944682f3d4f2e3ef5034925d08ef694f2
+Top:    8d4a1b66bfa6bfe720988a9a901bfccc4ddca219
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 13:44:06 +0000
+Date:   2009-02-10 14:01:41 +0000
 
 Instrument polygon slowness
+
 
 
 
@@ -19,7 +20,7 @@ Instrument polygon slowness
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index c3c9ec0..a2f5385 100644
+index 8f3e77b..1d8e7a1 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -1124,10 +1124,15 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
