@@ -645,12 +645,13 @@ hidgl_fill_pcb_polygon (PolygonType *poly)
     return;
   }
 
+  /* JUST DRAW THE FIRST PIECE */
   /* Walk the polygon structure, counting vertices */
   piece = poly->Clipped;
-  do {
+//  do {
     for (contour = piece->contours; contour != NULL; contour = contour->next)
       vertex_count += contour->Count;
-  } while ((piece = piece->f) != poly->Clipped);
+//  } while ((piece = piece->f) != poly->Clipped);
 
   vertices = malloc (sizeof(GLdouble) * vertex_count * 3);
 
@@ -662,11 +663,12 @@ hidgl_fill_pcb_polygon (PolygonType *poly)
 
   gluTessBeginPolygon (tobj, NULL);
 
+  /* JUST DRAW THE FIRST PIECE */
   /* Walk the polygon structure, adding the vertices */
   i = 0;
   cc = 1;
   piece = poly->Clipped;
-  do {
+//  do {
     for (contour = piece->contours; contour != NULL; contour = contour->next) {
       gluTessBeginContour (tobj);
 
@@ -683,7 +685,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly)
       } while ((vnode = vnode->next) != &contour->head);
       gluTessEndContour (tobj);
     }
-  } while ((piece = piece->f) != poly->Clipped);
+//  } while ((piece = piece->f) != poly->Clipped);
 
   gluTessEndPolygon (tobj);
   gluDeleteTess (tobj);
