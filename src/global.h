@@ -50,6 +50,8 @@
 #include <ctype.h>
 #include <sys/types.h>
 
+typedef struct polygon_st PolygonType, *PolygonTypePtr;
+
 #include "hid.h"
 
 typedef struct rtree rtree_t;
@@ -234,7 +236,7 @@ typedef struct
   void *Element;
 } TextType, *TextTypePtr;
 
-typedef struct			/* holds information about a polygon */
+struct polygon_st			/* holds information about a polygon */
 {
   ANYOBJECTFIELDS;
   Cardinal PointN,		/* number of points in polygon */
@@ -243,7 +245,7 @@ typedef struct			/* holds information about a polygon */
   POLYAREA *NoHoles;		/* the polygon broken into hole-less regions */
   int NoHolesValid;		/* Is the NoHoles polygon up to date? */
   PointTypePtr Points;		/* data */
-} PolygonType, *PolygonTypePtr;
+};
 
 typedef struct			/* holds information about arcs */
 {
