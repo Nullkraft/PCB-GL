@@ -1,5 +1,5 @@
 Bottom: 03994a2b4fe78404e2e2d8e2fa69cee5d92fdb3a
-Top:    29a2692341de66114af0a111f5041d68f085dfa6
+Top:    ca4c0b3ef5f1276d2235dde73e4ee2fd88a0f637
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-10 08:42:38 +0000
 
@@ -9,10 +9,79 @@ Nearly working
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index b923229..eb33eef 100644
+index b923229..8da586a 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -1214,10 +1214,9 @@ static BOOLp
+@@ -1000,12 +1000,22 @@ cntr_in_M_PLINE (PLINE * poly, PLINE * outfst, BOOLp test)
+   return FALSE;
+ }				/* cntr_in_M_PLINE */
+ 
++static int
++count_contours_i_am_inside (const BoxType *b, void *cl)
++{
++  PLINE *me = cl;
++  PLINE *check = (PLINE *) b;
++
++  if (poly_ContourInContour (check, me))
++    return 1;
++  return 0;
++}
++
+ /* cntr_in_M_POLYAREA
+ returns poly is inside outfst ? TRUE : FALSE */
+ static int
+ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
+ {
+-  PLINE *curc;
+   POLYAREA *outer = outfst;
+   heap_t *heap;
+ 
+@@ -1015,9 +1025,7 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
+   heap = heap_create ();
+   do
+     {
+-      if (outer->contours == NULL) {
+-        printf ("cntr_in_M_POLYAREA: outer->contours was NULL\n");
+-      } else if (cntrbox_inside (poly, outer->contours))
++      if (cntrbox_inside (poly, outer->contours))
+ 	heap_insert (heap, outer->contours->area, (void *) outer);
+     }
+   /* if checking touching, use only the first polygon */
+@@ -1030,19 +1038,20 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
+       if (heap_is_empty (heap))
+ 	break;
+       outer = (POLYAREA *) heap_remove_smallest (heap);
+-      if (poly_ContourInContour (outer->contours, poly))
+-	{
+-	  for (curc = outer->contours->next; curc != NULL; curc = curc->next)
+-	    if (poly_ContourInContour (curc, poly))
+-	      {
+-		/* it's inside a hole in the smallest polygon 
+-		 * no need to check the other polygons */
+-		heap_destroy (&heap);
+-		return FALSE;
+-	      }
+-	  heap_destroy (&heap);
+-	  return TRUE;
+-	}
++
++      switch (r_search (outer->contour_tree, (BoxType *)poly, NULL, count_contours_i_am_inside, poly)) {
++        case 0: /* Didn't find anything in this piece, Keep looking */
++          break;
++        case 1: /* Found we are inside this piece, and not any of its holes */
++          heap_destroy (&heap);
++          return TRUE;
++        case 2: /* Found inside a hole in the smallest polygon so far. No need to check the other polygons */
++          heap_destroy (&heap);
++          return FALSE;
++        default:
++          printf ("Something strange here\n");
++          break;
++      }
+     }
+   while (1);
+   heap_destroy (&heap);
+@@ -1214,10 +1223,9 @@ static BOOLp
  M_POLYAREA_label_separated (PLINE * afst, POLYAREA * b, BOOLp touch)
  {
    PLINE *curc = afst;
@@ -24,7 +93,7 @@ index b923229..eb33eef 100644
      if (cntr_label_POLYAREA (curc, b, touch) && touch)
        return TRUE;
    }
-@@ -1366,7 +1365,23 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+@@ -1366,7 +1374,23 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
      }
  }				/* PutContour */
  
@@ -49,7 +118,7 @@ index b923229..eb33eef 100644
  heap_it (const BoxType * b, void *cl)
  {
    heap_t *heap = (heap_t *) cl;
-@@ -1377,6 +1392,32 @@ heap_it (const BoxType * b, void *cl)
+@@ -1377,6 +1401,32 @@ heap_it (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -72,7 +141,7 @@ index b923229..eb33eef 100644
 +    return 0;
 +  }
 +  if (poly_ContourInContour (info->want_inside, check)) {
-+    printf ("find_inside: Found a hole inside the one we're checking\n");
++//    printf ("find_inside: Found a hole inside the one we're checking\n");
 +    info->result = check;
 +    longjmp (info->jb, 1);
 +  }
@@ -82,7 +151,7 @@ index b923229..eb33eef 100644
  static void
  InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
  {
-@@ -1462,25 +1503,63 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1462,25 +1512,59 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
  	}
        else
  	{
@@ -116,10 +185,6 @@ index b923229..eb33eef 100644
 +              /* Nothing found? */
 +              break;
 +            }
-+
-+            /* If nothing found, break out of the loop */
-+            if (info.result == NULL)
-+              break;
 +
 +            /* We need to find the contour before it, so we can update its next pointer */
 +            prev = container;
@@ -160,7 +225,7 @@ index b923229..eb33eef 100644
  	}
      }
    r_destroy_tree (&tree);
-@@ -1913,26 +1992,332 @@ remove_polyarea (POLYAREA **list, POLYAREA *piece)
+@@ -1913,26 +1997,324 @@ remove_polyarea (POLYAREA **list, POLYAREA *piece)
    piece->f = piece->b = piece;
  }
  
@@ -182,14 +247,13 @@ index b923229..eb33eef 100644
 -  if (prev_contour != NULL)
 -    prev_contour->next = contour->next;
 +  if (a == NULL) {
-+    printf ("M_POLYAREA_separate_isected: No polygon pieces to play with\n");
++//    printf ("M_POLYAREA_separate_isected: No polygon pieces to play with\n");
 +    return;
 +  }
  
 -  contour->next = NULL;
-+  /* FIXME: Test the outer contour first, for speed...
-+   * coulf shortcut moving all the holes into the holes list.
-+   */
++  /* TODO: STASH ENOUGH INFORMATION EARLIER ON, SO WE CAN REMOVE THE INTERSECTED
++           CONTOURS WITHOUT HAVING TO WALK THE FULL DATA-STRUCTURE LOOKING FOR THEM. */
  
 -  if (remove_rtree_entry)
 -    r_delete_entry (piece->contour_tree, (BoxType *)contour);
@@ -221,6 +285,7 @@ index b923229..eb33eef 100644
 +          curc->next = *isected;
 +          *isected = curc;
 +        } else if (hole_contour) {
++//          printf ("Hole contour, perhaps would have been saved the trouble if we mass-evicted children\n");
 +          /* Link into the list of holes */
 +          curc->next = *holes;
 +          *holes = curc;
@@ -265,19 +330,11 @@ index b923229..eb33eef 100644
 +  /* Don't report for the main contour */
 +  if (check->Flags.orient == PLF_DIR)
 +    return 0;
++  /* Don't look at contours marked as being intersected */
++  if (check->Flags.status == ISECTED)
++    return 0;
 +  if (cntr_in_M_POLYAREA (check, info->want_inside, FALSE)) {
-+    printf ("find_inside_m_pa: Found a hole inside the one we're checking\n");
-+#if 0
-+    if (check->Flags.status == INSIDE) {
-+      printf ("find_inside_m_pa: Sanity check, is flagged INSIDE\n");
-+    } else if (check->Flags.status == OUTSIDE) {
-+      printf ("find_inside_m_pa: ****** IT IS FLAGGED OUTSIDE ********\n");
-+    } else if (check->Flags.status == ISECTED) {
-+      printf ("find_inside_m_pa: ****** IT IS FLAGGED ISECTED ********\n");
-+    } else {
-+      printf ("find_inside_m_pa: ****** UNKNOWN STATUS ********\n");
-+    }
-+#endif
++//    printf ("find_inside_m_pa: Found a hole inside the one we're checking\n");
 +    info->result = check;
 +    longjmp (info->jb, 1);
 +  }
@@ -322,41 +379,40 @@ index b923229..eb33eef 100644
 +  }
 +
 +  box = *((BoxType *)bpa->contours);
-+  b = bpa->f;
-+  do {
++  b = bpa;
++  while ((b = b->f) != bpa) {
 +    BoxType *b_box = (BoxType *)b->contours;
-+    box.X1 = MIN (box.X1, b_box->X1);
-+    box.Y1 = MIN (box.Y1, b_box->Y1);
-+    box.X2 = MAX (box.X2, b_box->X2);
-+    box.Y2 = MAX (box.Y2, b_box->Y2);
-+  } while ((b = b->f) != bpa);
++    MAKEMIN (box.X1, b_box->X1);
++    MAKEMIN (box.Y1, b_box->Y1);
++    MAKEMAX (box.X2, b_box->X2);
++    MAKEMAX (box.Y2, b_box->Y2);
++  }
 +
 +#if 1
 +  if (del_inside) {
-+    /* Test the outer contours first... rahter than having to dive into r-tree stuff? */
-+    /* Cheat for now, and use the labelled results */
 +
 +    do {
 +      anext = a->f;
 +      finished = (anext == *pieces);
 +
-+      if (a->contours->Flags.status == ISECTED) {
-+        /* Move this contour, all children -> holes queue */
-+        printf ("**** SHOULD NOT HAPPEN *****\n");
-+        continue;
-+      }
++      /* Test the outer contour first, as we may need to remove all children */
 +
-+      //if (a->contours->Flags.status == INSIDE) {
-+      /* TODO: SHOULD PROBABLY PRE-FILTER ON THE BOUNDING BOX */
-+      if (cntr_in_M_POLYAREA (a->contours, bpa, FALSE)) {
++      /* We've not yet split intersected contours out, just ignore them */
++      if (a->contours->Flags.status != ISECTED &&
++          /* Pre-filter on bounding box */
++          ((a->contours->xmin >= box.X1) && (a->contours->ymin >= box.Y1) &&
++           (a->contours->xmax <= box.X2) && (a->contours->ymax <= box.Y2)) &&
++          /* Then test properly */
++          cntr_in_M_POLYAREA (a->contours, bpa, FALSE)) {
++
 +        /* Delete this contour, all children -> holes queue */
 +        printf ("Outer contour needs to be deleted, and children moved to hole queue\n");
 +
 +        /* Delete the outer contour */
 +        curc = a->contours;
 +        remove_contour (a, NULL, curc, FALSE); /* Rtree deleted in poly_Free below */
-+        poly_DelContour (&curc);
 +        /* a->contours now points to the remaining holes */
++        poly_DelContour (&curc);
 +
 +        if (a->contours != NULL) {
 +          /* Find the end of the list of holes */
@@ -376,7 +432,7 @@ index b923229..eb33eef 100644
 +        continue;
 +      }
 +
-+      /* Need to check if this new hole means we need to kick out any old ones for reprocessing */
++      /* Loop whilst we find INSIDE contours to delete */
 +      while (1) {
 +        struct find_inside_m_pa_info info;
 +        PLINE *prev;
@@ -450,7 +506,8 @@ index b923229..eb33eef 100644
 +#endif
 +
 +      if (del_outside)
-+        del_contour = !cntr_in_M_POLYAREA (curc, bpa, FALSE);
++        del_contour = curc->Flags.status != ISECTED &&
++                     !cntr_in_M_POLYAREA (curc, bpa, FALSE);
 +
 +      /* Reset the intersection flags, since we keep these pieces */
 +      if (curc->Flags.status != ISECTED)
@@ -504,7 +561,7 @@ index b923229..eb33eef 100644
                             PLINE ** holes, PLINE ** isected, int action)
  {
    POLYAREA *a = *pieces;
-@@ -1972,6 +2357,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -1972,6 +2354,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
    /* now the non-intersect parts are collected in temp/holes */
    do {
      int hole_contour = 0;
@@ -512,7 +569,7 @@ index b923229..eb33eef 100644
  
      anext = a->f;
      finished = (anext == *pieces);
-@@ -1979,7 +2365,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -1979,7 +2362,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
  //    printf ("Inspecting a piece of polygon\n");
  
      prev = NULL;
@@ -521,7 +578,7 @@ index b923229..eb33eef 100644
        int is_first = contour_is_first (a, curc);
        int is_last = contour_is_last (curc);
  
-@@ -2044,10 +2430,9 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -2044,10 +2427,9 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
  
        /* If we move or delete an outer contour, we need to move any holes
           we wish to keep within that contour to the holes list. */
@@ -533,7 +590,7 @@ index b923229..eb33eef 100644
      }
  
      /* If we deleted all the pieces of the polyarea, *pieces is NULL and
-@@ -2223,21 +2608,40 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2223,42 +2605,39 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        assert (poly_Valid (b));
  #endif
  
@@ -548,7 +605,7 @@ index b923229..eb33eef 100644
 +    for (curc = apa->contours; curc != NULL; curc = curc->next) {
 +      if (curc->Flags.status != UNKNWN) {
 +        curc->Flags.status = UNKNWN;
-+        printf ("OH CRAP, SOMETHING DIDN'T CLEAR THE FLAGS\n");
++        printf ("SOMETHING DIDN'T CLEAR THE FLAGS\n");
 +      }
 +    }
 +    /* If we deleted all the pieces of the polyarea, *pieces is NULL */
@@ -569,13 +626,34 @@ index b923229..eb33eef 100644
 -      M_POLYAREA_label_isected (b, a_isected, FALSE);
 -#endif
  
- /* New faster method */
- #if 1
+-/* New faster method */
+-#if 1
        *res = a;
 -      M_POLYAREA_update_primary (&e, res, &holes, &a_isected, action);
-+      M_POLYAREA_separate_isected (&e, res, &holes, &a_isected);
-+      M_POLYAREA_label_separated (a_isected, b, FALSE);
+-      M_POLYAREA_Collect_separated (&e, a_isected, res, &holes, action, FALSE);
+-#endif
+-
+-/* First attempt at go-faster stripes */
+-#if 0
+-      /* And speed things up _A LOT_ here by only processing the relevant
+-         contours, specifically keeping the source "a" as a starting point
+-         for the output polygon */
 +      M_POLYAREA_update_primary (&e, res, &holes, action, b);
 +//      M_POLYAREA_update_primary_old (&e, res, &holes, &a_isected, action);
++      M_POLYAREA_separate_isected (&e, res, &holes, &a_isected);
++      M_POLYAREA_label_separated (a_isected, b, FALSE);
        M_POLYAREA_Collect_separated (&e, a_isected, res, &holes, action, FALSE);
- #endif
+-      M_POLYAREA_Collect (&e, a, res, &holes, action, FALSE);
+-      poly_Free (&a);
+-#endif
+-
+-/* Old slow way */
+-#if 0
+-      M_POLYAREA_Collect (&e, a, res, &holes, action, b->f == b
+-			  && !b->contours->next
+-			  && b->contours->Flags.status != ISECTED);
+-      poly_Free (&a);
+-#endif
+-
+       M_B_AREA_Collect (&e, b, res, &holes, action);
+       poly_Free (&b);
