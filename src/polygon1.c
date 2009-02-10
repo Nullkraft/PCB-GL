@@ -1861,7 +1861,6 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
     }
   else
     {
-      printf ("Got non ISECTED contour in cntr_Collect!\n");
       switch (action)
 	{
 	case PBO_ISECT:
@@ -2707,7 +2706,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
 #endif
       M_POLYAREA_intersect (&e, a, b, TRUE);
 
-//      M_POLYAREA_label (a, b, FALSE);
+      M_POLYAREA_label (a, b, FALSE);
       M_POLYAREA_label (b, a, FALSE);
 
 //      printf ("3:");
