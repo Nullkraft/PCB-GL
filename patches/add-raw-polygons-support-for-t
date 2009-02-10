@@ -1,5 +1,5 @@
 Bottom: 70fe3d08be7091104a128871ff4b3fdf3d0f208f
-Top:    04ba77b10e3c69eedfa5762fa0eb3eee56db4330
+Top:    9a31f45b94fda88d1468a34b541fcc867a5b8c9f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-10 13:49:40 +0000
 
@@ -70,7 +70,7 @@ index 6eb3823..1c37ec4 100644
        /* NB: No "NoHoles" cache for these */
        if (TEST_FLAG (FULLPOLYFLAG, Polygon))
 diff --git a/src/global.h b/src/global.h
-index 1be65d6..4c6043c 100644
+index 1be65d6..88e64e7 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -50,6 +50,8 @@
@@ -87,7 +87,7 @@ index 1be65d6..4c6043c 100644
  } TextType, *TextTypePtr;
  
 -typedef struct			/* holds information about a polygon */
-+struct			/* holds information about a polygon */
++struct polygon_st			/* holds information about a polygon */
  {
    ANYOBJECTFIELDS;
    Cardinal PointN,		/* number of points in polygon */
