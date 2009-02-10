@@ -1,0 +1,22 @@
+Bottom: 49d1adb95dd754335764533f0d55ed3d5abd4c34
+Top:    83276ed771ee5aa59c2bf35eb97ad332d69c245e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-10 19:50:52 +0000
+
+Refresh of attempt-to-fix-slowness
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index d99984d..a89fc68 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1991,7 +1991,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+       M_B_AREA_Collect (&e, b, res, &holes, action);
+       poly_Free (&b);
+ 
+-      /* delete of a_isected which is left */
++      /* free a_isected */
+       while ((p = a_isected) != NULL)
+       {
+         a_isected = p->next;
