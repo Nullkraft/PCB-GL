@@ -1,7 +1,7 @@
-Bottom: afbd9274e5e165124965c13d7b4664c8758be9bd
-Top:    d4eebe419051e48e7e1f3ee02d542b3979a78501
+Bottom: a69357cf050d42f25ced6b3d84fba018e38672dd
+Top:    389bea04642db6966082043a7228e597ce914b43
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 13:31:53 +0000
+Date:   2009-02-10 13:44:06 +0000
 
 Attempt to fix polygon slowness by avoiding full recreation for each operation
 
@@ -10,6 +10,7 @@ Attempt to fix polygon slowness by avoiding full recreation for each operation
 We're leaving some holes in place which need to be moved under a subordinate,
 smaller contour. Not quite sure how to detect those efficiently, nor what
 exact cases cause them.
+
 
 
 
