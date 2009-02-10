@@ -1351,6 +1351,7 @@ HID png_hid = {
   png_draw_rect,
   png_fill_circle,
   png_fill_polygon,
+  0 /* png_fill_pcb_polygon */ ,
   png_fill_rect,
   png_calibrate,
   0 /* png_shift_is_pressed */ ,
