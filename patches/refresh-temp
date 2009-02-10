@@ -1,0 +1,22 @@
+Bottom: 3d77299c8ad4f763ed6e055e638cf03b298a4241
+Top:    c1face496bb74d975ba8362bd5491ccc016ff73e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-10 12:33:29 +0000
+
+Refresh of nearly-working
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 2137297..7557a66 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2162,7 +2162,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+           cntr_in_M_POLYAREA (a->contours, bpa, FALSE)) {
+ 
+         /* Delete this contour, all children -> holes queue */
+-        printf ("Outer contour needs to be deleted, and children moved to hole queue\n");
++//        printf ("Outer contour needs to be deleted, and children moved to hole queue\n");
+ 
+         /* Delete the outer contour */
+         curc = a->contours;
