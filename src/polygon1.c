@@ -870,7 +870,7 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
 	if (curcA->Flags.status == ISECTED)
 	  {
 	    the_list = add_descriptors (curcA, 'A', the_list);
-	    if (UNLIKELY (the_list) == NULL)
+	    if (UNLIKELY (the_list == NULL))
 	      error (err_no_memory);
 	  }
     }
