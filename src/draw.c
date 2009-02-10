@@ -1729,6 +1729,35 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
  * lowlevel drawing routine for polygons
  */
 static void
+DrawPolygonFillLowLevel (PolygonTypePtr Polygon, void *data)
+{
+  int *x, *y, n, i = 0;
+  PLINE *pl;
+  VNODE *v;
+  if (!Polygon->Clipped)
+    return;
+  if (Gathering)
+    {
+      AddPart (Polygon);
+      return;
+    }
+  pl = Polygon->Clipped->contours;
+  n = pl->Count;
+  x = (int *) malloc (n * sizeof (int));
+  y = (int *) malloc (n * sizeof (int));
+  for (v = &pl->head; i < n; v = v->next)
+    {
+      x[i] = v->point[0];
+      y[i++] = v->point[1];
+    }
+  gui->fill_polygon (Output.fgGC, n, x, y);
+  free (x);
+  free (y);
+}
+/* ---------------------------------------------------------------------------
+ * lowlevel drawing routine for polygons
+ */
+static void
 DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
 {
   int *x, *y, n, i = 0;
@@ -2099,6 +2128,8 @@ cp_callback (const BoxType * b, void *cl)
   return 1;
 }
 
+void hidgl_hack_poly_alpha (double alpha);
+
 /* ---------------------------------------------------------------------------
  * draws a polygon on a layer
  */
@@ -2107,6 +2138,7 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
 {
   int layernum;
 
+  hidgl_hack_poly_alpha (0.7);
   if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Polygon))
     {
       if (TEST_FLAG (SELECTEDFLAG, Polygon))
@@ -2118,6 +2150,7 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
     gui->set_color (Output.fgGC, Layer->Color);
   layernum = GetLayerNumber (PCB->Data, Layer);
   DrawPolygonLowLevel (Polygon, NULL);
+  hidgl_hack_poly_alpha (1.0);
   if (TEST_FLAG (CLEARPOLYFLAG, Polygon))
     {
       r_search (PCB->Data->pin_tree, &Polygon->BoundingBox, NULL,
@@ -2161,25 +2194,31 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
 static void
 DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 {
-  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Polygon))
-    {
-      if (TEST_FLAG (SELECTEDFLAG, Polygon))
-	gui->set_color (Output.fgGC, Layer->SelectedColor);
-      else
-	gui->set_color (Output.fgGC, PCB->ConnectedColor);
+  char *color;
+
+  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Polygon)) {
+    if (TEST_FLAG (SELECTEDFLAG, Polygon)) {
+      color = Layer->SelectedColor;
+    } else {
+      color = PCB->ConnectedColor;
     }
-  else
-    gui->set_color (Output.fgGC, Layer->Color);
+  } else {
+    color = Layer->Color;
+  }
+
   /* if the gui has the dicer flag set then it won't accept thin draw */
   if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
       && !gui->poly_dicer)
     {
+      hidgl_hack_poly_alpha (1.0);
+      gui->set_color (Output.fgGC, color);
       DrawPolygonLowLevel (Polygon, NULL);
       if (!Gathering)
 	PolygonHoles (clip_box, Layer, Polygon, thin_callback);
+      hidgl_hack_poly_alpha (0.25);
     }
-  else if (Polygon->Clipped)
     {
+      gui->set_color (Output.fgGC, color);
 #if 0
       if (!Polygon->NoHolesValid)
         {
@@ -2190,7 +2229,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
           PolygonType poly = *Polygon;
           poly.Clipped = Polygon->NoHoles;
           do {
-            DrawPolygonLowLevel (&poly, NULL);
+            DrawPolygonFillLowLevel (&poly, NULL);
             poly.Clipped = poly.Clipped->f;
           } while (poly.Clipped != Polygon->NoHoles);
         }
@@ -2205,7 +2244,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
           } while (poly.Clipped != Polygon->Clipped);
         }
 #endif
-      DrawPolygonLowLevel (Polygon, NULL);
+      gui->fill_pcb_polygon (Output.fgGC, Polygon);
+      //DrawPolygonLowLevel (Polygon, NULL);
 
       /* draw other parts of the polygon if fullpoly flag is set */
       /* NB: No "NoHoles" cache for these */
@@ -2216,7 +2256,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 	    {
 	      PolygonType poly;
 	      poly.Clipped = pg;
-	      NoHolesPolygonDicer (&poly, DrawPolygonLowLevel, NULL, clip_box);
+	      NoHolesPolygonDicer (&poly, DrawPolygonFillLowLevel, NULL, clip_box);
 	    }
 	}
     }
@@ -2250,6 +2290,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 	  free (y);
 	}
     }
+  hidgl_hack_poly_alpha (1.0);
 }
 
 /* ---------------------------------------------------------------------------
