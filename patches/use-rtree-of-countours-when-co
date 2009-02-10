@@ -1,7 +1,7 @@
-Bottom: 368ca0c2d32e643779fa46affd5de85c745a8aef
-Top:    ab12302e3384728ce0eda6b97de0434088aa5f42
+Bottom: 1eeadf5f88dbd863967db788ff43cba36657ba9c
+Top:    58f2fb7f1fd36ba702b6157f4026205ade283ce0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 13:19:55 +0000
+Date:   2009-02-10 13:20:29 +0000
 
 Use rtree of countours when computing an intersection
 
@@ -20,7 +20,7 @@ Use rtree of countours when computing an intersection
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 17c61ed..e95718e 100644
+index 5e5e822..7eabb81 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -543,9 +543,17 @@ typedef struct info
