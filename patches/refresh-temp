@@ -1,0 +1,69 @@
+Bottom: 9fc678ad233ed078aa6dd70b1fdd08246a266644
+Top:    47b418e2473de6f37cafa44512f8413be7a616cf
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-10 20:18:17 +0000
+
+Refresh of various-hids-add-missing-membe
+
+---
+
+diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
+index 2180325..964265a 100644
+--- a/src/hid/nelma/nelma.c
++++ b/src/hid/nelma/nelma.c
+@@ -1081,6 +1081,10 @@ HID             nelma_hid = {
+ 	nelma_set_crosshair,
+ 	0 /* nelma_add_timer */ ,
+ 	0 /* nelma_stop_timer */ ,
++	0 /* nelma_watch_file */ ,
++	0 /* nelma_unwatch_file */ ,
++	0 /* nelma_add_block_hook */ ,
++	0 /* nelma_stop_block_hook */ ,
+ 	0 /* nelma_log */ ,
+ 	0 /* nelma_logv */ ,
+ 	0 /* nelma_confirm_dialog */ ,
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index c0fcb9e..3c688bc 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -1359,6 +1359,10 @@ HID png_hid = {
+   png_set_crosshair,
+   0 /* png_add_timer */ ,
+   0 /* png_stop_timer */ ,
++  0 /* png_watch_file */ ,
++  0 /* png_unwatch_file */ ,
++  0 /* png_add_block_hook */ ,
++  0 /* png_stop_block_hook */ ,
+   0 /* png_log */ ,
+   0 /* png_logv */ ,
+   0 /* png_confirm_dialog */ ,
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index 4dbeedb..3545ddf 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -644,6 +644,10 @@ static HID eps_hid = {
+   eps_set_crosshair,
+   0 /* eps_add_timer */ ,
+   0 /* eps_stop_timer */ ,
++  0 /* eps_watch_file */ ,
++  0 /* eps_unwatch_file */ ,
++  0 /* eps_add_block_hook */ ,
++  0 /* eps_stop_block_hook */ ,
+   0 /* eps_log */ ,
+   0 /* eps_logv */ ,
+   0 /* eps_confirm_dialog */ ,
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index f5ac07e..bfb2e09 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -1182,6 +1182,10 @@ HID ps_hid = {
+   ps_set_crosshair,
+   0 /* ps_add_timer */ ,
+   0 /* ps_stop_timer */ ,
++  0 /* ps_watch_file */ ,
++  0 /* ps_unwatch_file */ ,
++  0 /* ps_add_block_hook */ ,
++  0 /* ps_stop_block_hook */ ,
+   0 /* ps_log */ ,
+   0 /* ps_logv */ ,
+   0 /* ps_confirm_dialog */ ,
