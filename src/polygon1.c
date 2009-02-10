@@ -2397,12 +2397,6 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
       M_POLYAREA_separate_isected (&e, res, &holes, &a_isected);
       M_POLYAREA_label_separated (a_isected, b, FALSE);
       M_POLYAREA_Collect_separated (&e, a_isected, res, &holes, action, FALSE);
-      /* delete of a_isected which is left */
-      while ((p = a_isected) != NULL)
-      {
-        a_isected = p->next;
-        poly_DelContour (&p);
-      }
       M_B_AREA_Collect (&e, b, res, &holes, action);
       poly_Free (&b);
 
