@@ -318,6 +318,7 @@ subtract_poly (POLYAREA * np1, POLYAREA **pg)
     {
       fprintf (stderr, "Error while clipping PBO_SUB: %d\n", x);
       poly_Free (&merged);
+      *pg = NULL;
       return -1;
     }
 
@@ -340,6 +341,7 @@ unite_poly (POLYAREA * np, POLYAREA ** pg)
     {
       fprintf (stderr, "Error while clipping PBO_UNITE: %d\n", x);
       poly_Free (&merged);
+      *pg = NULL;
       return 0;
     }
   assert (!merged || poly_Valid (merged));
@@ -360,6 +362,7 @@ intersect_poly (POLYAREA * np, POLYAREA ** pg)
     {
       fprintf (stderr, "Error while clipping PBO_ISECT: %d\n", x);
       poly_Free (&merged);
+      *pg = NULL;
       return 0;
     }
   assert (!merged || poly_Valid (merged));
@@ -1176,11 +1179,17 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
       printf ("Clipping returned NULL - can that be good?\n");
       return 0;
     }
-  assert (poly_Valid (clipped));
+//  assert (poly_Valid (clipped));
   if (TEST_FLAG (CLEARPOLYFLAG, pour))
     {
       /* Clip the pour against anything we can find in this layer */
       ClearPour (Data, layer, pour, &pg, NULL, UNSUBTRACT_BLOAT);
+    }
+
+  if (pg == NULL)
+    {
+      printf ("Got pg == NULL for some reason\n");
+      return;
     }
 
   count_all = count_added = 0;
