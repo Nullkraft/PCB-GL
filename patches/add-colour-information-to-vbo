@@ -1,9 +1,10 @@
-Bottom: 002c8d6c46bf0ba09840020c72f252999c56387c
-Top:    1264c89058702adcff4bd765fa607862daaef647
+Bottom: cfd3585788986a9524d6e00ec8828a6aa5845b31
+Top:    cce4d1eb8a86f025bbc1efce619110ef80f9e80f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-08 02:20:29 +0000
+Date:   2009-02-10 13:52:48 +0000
 
 Add colour information to VBO
+
 
 
 
@@ -14,7 +15,7 @@ Add colour information to VBO
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 6db465c..3f94260 100644
+index 1486690..b47dea0 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -48,6 +48,10 @@
@@ -147,7 +148,7 @@ index 6db465c..3f94260 100644
            triangle_comp_idx = 0;
            stashed_vertices = 0;
          }
-@@ -722,8 +743,8 @@ hidgl_fill_pcb_polygon (PolygonType *poly)
+@@ -736,8 +757,8 @@ hidgl_fill_pcb_polygon (PolygonType *poly)
  void
  hidgl_fill_rect (int x1, int y1, int x2, int y2)
  {
