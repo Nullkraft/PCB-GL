@@ -1,7 +1,7 @@
-Bottom: 83276ed771ee5aa59c2bf35eb97ad332d69c245e
-Top:    a852e6c359a968d5b448fb8f4b3828b6c3a1390e
+Bottom: 45416c2eb7f87d20fea34522bef727c258519cf9
+Top:    6c45a8b0802edef2be0287cb6c345b2fa0a720f2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 19:50:54 +0000
+Date:   2009-02-10 20:26:14 +0000
 
 Various speedups to the polygon code.
 
@@ -12,6 +12,7 @@ Add code to reparent holes which end up in the wrong polygon piece after
 inserting a new hole in InsertHoles. (Means we don't have to dump every
 potental hole we encounter in the holes insersion queue, hopefully leading
 to better dynamic update performance.
+
 
 
 ---

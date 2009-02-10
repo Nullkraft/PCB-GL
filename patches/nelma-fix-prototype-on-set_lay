@@ -1,15 +1,16 @@
-Bottom: 733bfae67fc7f4b17b88aa8d59dcf45f19cb3218
-Top:    9fc678ad233ed078aa6dd70b1fdd08246a266644
+Bottom: 24fc463d12c5e6f6b2a878211d4ee56eb1d2c08c
+Top:    17566a5ed8e0a7941077a8c3dc4259304f96c9bd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 20:14:46 +0000
+Date:   2009-02-10 20:26:14 +0000
 
 nelma: Fix prototype on set_layer() method to include the "..." flag.
+
 
 
 ---
 
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index e7d0f9f..2180325 100644
+index b27f8e9..964265a 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -698,7 +698,7 @@ nelma_do_export(HID_Attr_Val * options)
