@@ -938,9 +938,16 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
 void
 ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly)
 {
+  BoxType clip_box;
+
   USE_GC (gc);
 
-  hidgl_fill_pcb_polygon (poly);
+  clip_box.X1 = gport->view_x0;
+  clip_box.Y1 = gport->view_y0;
+  clip_box.X2 = gport->view_x0 + gport->view_width;
+  clip_box.Y2 = gport->view_y0 + gport->view_height;
+
+  hidgl_fill_pcb_polygon (poly, &clip_box, gport->zoom);
 }
 
 void
