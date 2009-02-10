@@ -1,9 +1,10 @@
-Bottom: 492dd5de56eacc29eb7e208ec8002d0a7e7c2598
-Top:    4e543160b49e6609350511514b2351192789d9cf
+Bottom: b620113c217dca11fe51ece42ddbd5b4975d9e88
+Top:    a1d93f161843cc2af57632d679355624887011fd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 13:46:33 +0000
+Date:   2009-02-10 13:48:20 +0000
 
 Add raw polygons support for the GTK HID, bypassing the no-holes dicer
+
 
 
 
@@ -31,7 +32,7 @@ index 653d294..b3bb007 100644
  
  /* For lrealpath */
 diff --git a/src/draw.c b/src/draw.c
-index 9420bb1..69be062 100644
+index 842a61e..e7aa8f8 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -1816,6 +1816,15 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
@@ -59,7 +60,7 @@ index 9420bb1..69be062 100644
    if (TEST_FLAG (CLEARPOLYFLAG, Pour))
      {
        r_search (PCB->Data->pin_tree, &Pour->BoundingBox, NULL,
-@@ -2339,6 +2348,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2335,6 +2344,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
            } while (poly.Clipped != Polygon->NoHoles);
          }
  #endif
@@ -67,7 +68,7 @@ index 9420bb1..69be062 100644
          {
            PolygonType poly = *Polygon;
            poly.Clipped = Polygon->Clipped;
-@@ -2347,6 +2357,9 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2343,6 +2353,9 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
              poly.Clipped = poly.Clipped->f;
            } while (poly.Clipped != Polygon->Clipped);
          }
