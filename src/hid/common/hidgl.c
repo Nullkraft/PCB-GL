@@ -590,7 +590,6 @@ myVertex (GLdouble *vertex_data)
     printf ("Vertex recieved with unknown type\n");
 }
 
-
 void
 hidgl_fill_polygon (int n_coords, int *x, int *y)
 {
