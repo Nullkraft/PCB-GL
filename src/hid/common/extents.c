@@ -202,6 +202,7 @@ static HID extents_hid = {
   extents_draw_rect,
   extents_fill_circle,
   extents_fill_polygon,
+  0 /* extents_fill_pcb_polygon */,
   extents_fill_rect,
 
   0 /* extents_calibrate */ ,
