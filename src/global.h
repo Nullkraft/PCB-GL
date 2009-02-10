@@ -256,11 +256,11 @@ typedef struct			/* holds information about arcs */
     Delta;
 } ArcType, *ArcTypePtr;
 
-typedef struct
+struct rtree
 {
   struct rtree_node *root;
   int size;			/* number of entries in tree */
-} rtree_t;
+};
 
 typedef struct			/* holds information about one layer */
 {
