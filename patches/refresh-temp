@@ -1,0 +1,37 @@
+Bottom: 2c58acbe9cea756598c3ca9abf1c0e183197970d
+Top:    70fe3d08be7091104a128871ff4b3fdf3d0f208f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-10 13:49:33 +0000
+
+Refresh of try-not-using-no-holes-dicer-f
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 7a506d0..6eb3823 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -2224,6 +2224,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+     }
+   else if (Polygon->Clipped)
+     {
++#if 0
+       if (!Polygon->NoHolesValid)
+         {
+           ComputeNoHoles (Polygon);
+@@ -2237,6 +2238,15 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+             poly.Clipped = poly.Clipped->f;
+           } while (poly.Clipped != Polygon->NoHoles);
+         }
++#endif
++        {
++          PolygonType poly = *Polygon;
++          poly.Clipped = Polygon->Clipped;
++          do {
++            DrawPolygonLowLevel (&poly, NULL);
++            poly.Clipped = poly.Clipped->f;
++          } while (poly.Clipped != Polygon->Clipped);
++        }
+       /* draw other parts of the polygon if fullpoly flag is set */
+       /* NB: No "NoHoles" cache for these */
+       if (TEST_FLAG (FULLPOLYFLAG, Polygon))
