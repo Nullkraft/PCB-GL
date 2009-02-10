@@ -3901,6 +3901,7 @@ HID lesstif_gui = {
   lesstif_draw_rect,
   lesstif_fill_circle,
   lesstif_fill_polygon,
+  0 /* lesstif_fill_pcb_polygon */ ,
   lesstif_fill_rect,
 
   lesstif_calibrate,
