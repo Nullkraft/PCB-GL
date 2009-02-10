@@ -1,0 +1,54 @@
+Bottom: 47b418e2473de6f37cafa44512f8413be7a616cf
+Top:    17566a5ed8e0a7941077a8c3dc4259304f96c9bd
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-10 20:22:10 +0000
+
+Refresh of various-hids-add-missing-membe
+
+---
+
+diff --git a/src/hid/bom/bom.c b/src/hid/bom/bom.c
+index 19ad149..059e84e 100644
+--- a/src/hid/bom/bom.c
++++ b/src/hid/bom/bom.c
+@@ -570,6 +570,10 @@ HID bom_hid = {
+   0,				/* bom_set_crosshair */
+   0,				/* bom_add_timer */
+   0,				/* bom_stop_timer */
++  0,				/* bom_watch_file */
++  0,				/* bom_unwatch_file */
++  0,				/* bom_add_block_hook */
++  0,				/* bom_stop_block_hook */
+   0,				/* bom_log */
+   0,				/* bom_logv */
+   0,				/* bom_confirm_dialog */
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index babae3f..1557228 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -1103,6 +1103,10 @@ static HID gerber_hid = {
+   gerber_set_crosshair,
+   0 /* gerber_add_timer */ ,
+   0 /* gerber_stop_timer */ ,
++  0 /* gerber_watch_file */ ,
++  0 /* gerber_unwatch_file */ ,
++  0 /* gerber_add_block_hook */ ,
++  0 /* gerber_stop_block_hook */ ,
+   0 /* gerber_log */ ,
+   0 /* gerber_logv */ ,
+   0 /* gerber_confirm_dialog */ ,
+diff --git a/src/hid/lpr/lpr.c b/src/hid/lpr/lpr.c
+index f7f6c3e..5fcc9a7 100644
+--- a/src/hid/lpr/lpr.c
++++ b/src/hid/lpr/lpr.c
+@@ -147,6 +147,10 @@ HID lpr_hid = {
+   0 /* lpr_set_crosshair */ ,
+   0 /* lpr_add_timer */ ,
+   0 /* lpr_stop_timer */ ,
++  0 /* lpr_watch_file */ ,
++  0 /* lpr_unwatch_file */ ,
++  0 /* lpr_add_block_hook */ ,
++  0 /* lpr_stop_block_hook */ ,
+   0 /* lpr_log */ ,
+   0 /* lpr_logv */ ,
+   0 /* lpr_confirm_dialog */ ,
