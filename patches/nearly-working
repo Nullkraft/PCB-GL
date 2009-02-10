@@ -1,5 +1,5 @@
 Bottom: 82bb08138c6d436da67ee5ec6d655691df613629
-Top:    e8ac1e87dc3287b506d512154ed0355cb860a2d6
+Top:    aaa412835feaf8b50e64171e542c496fd5770336
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-10 19:31:17 +0000
 
@@ -17,7 +17,7 @@ Nearly working
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index a0a0abb..3018b19 100644
+index a0a0abb..aeb378a 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -957,12 +957,22 @@ cntr_in_M_PLINE (PLINE * poly, PLINE * outfst, BOOLp test)
@@ -101,7 +101,55 @@ index a0a0abb..3018b19 100644
      if (cntr_label_POLYAREA (curc, b, touch) && touch)
        return TRUE;
    }
-@@ -1313,7 +1321,23 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+@@ -1182,47 +1190,6 @@ M_POLYAREA_label_separated (PLINE * afst, POLYAREA * b, BOOLp touch)
+ }
+ 
+ static BOOLp
+-M_POLYAREA_label_isected (POLYAREA * afst, PLINE * b, BOOLp touch)
+-{
+-  POLYAREA *a = afst;
+-  PLINE *curc;
+-
+-  if (b == NULL) {
+-    printf ("M_POLYAREA_label_isected: No PLINE to test against\n");
+-    return FALSE;
+-  }
+-
+-  assert (a != NULL);
+-  do {
+-    for (curc = a->contours; curc != NULL; curc = curc->next)
+-      if (cntr_label_PLINE (curc, b, touch) && touch)
+-        return TRUE;
+-  } while (!touch && (a = a->f) != afst);
+-  return FALSE;
+-}
+-
+-
+-static BOOLp
+-M_POLYAREA_label_non_isected (POLYAREA * afst, POLYAREA * b, BOOLp touch)
+-{
+-  POLYAREA *a = afst;
+-  PLINE *curc;
+-
+-  assert (a != NULL);
+-  do
+-    {
+-      for (curc = a->contours; curc != NULL; curc = curc->next)
+-	if (cntr_label_POLYAREA_non_isected (curc, b, touch))
+-	  {
+-	    if (touch)
+-	      return TRUE;
+-	  }
+-    }
+-  while (!touch && (a = a->f) != afst);
+-  return FALSE;
+-}
+-
+-static BOOLp
+ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
+ {
+   POLYAREA *a = afst;
+@@ -1313,7 +1280,23 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
      }
  }				/* PutContour */
  
@@ -126,7 +174,7 @@ index a0a0abb..3018b19 100644
  heap_it (const BoxType * b, void *cl)
  {
    heap_t *heap = (heap_t *) cl;
-@@ -1324,6 +1348,32 @@ heap_it (const BoxType * b, void *cl)
+@@ -1324,6 +1307,32 @@ heap_it (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -159,7 +207,7 @@ index a0a0abb..3018b19 100644
  static void
  InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
  {
-@@ -1405,25 +1455,57 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1405,25 +1414,57 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
  	}
        else
  	{
@@ -231,7 +279,7 @@ index a0a0abb..3018b19 100644
  	}
      }
    r_destroy_tree (&tree);
-@@ -1716,7 +1798,6 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+@@ -1716,7 +1757,6 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
      }
    else
      {
@@ -239,7 +287,7 @@ index a0a0abb..3018b19 100644
        switch (action)
  	{
  	case PBO_ISECT:
-@@ -1847,26 +1928,324 @@ remove_polyarea (POLYAREA **list, POLYAREA *piece)
+@@ -1847,31 +1887,117 @@ remove_polyarea (POLYAREA **list, POLYAREA *piece)
    piece->f = piece->b = piece;
  }
  
@@ -358,40 +406,46 @@ index a0a0abb..3018b19 100644
  
  static void
  M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+-                           PLINE ** holes, PLINE ** isected, int action)
 +                           PLINE ** holes, int action, POLYAREA *bpa)
-+{
-+  POLYAREA *a = *pieces;
+ {
+   POLYAREA *a = *pieces;
 +  POLYAREA *b;
-+  POLYAREA *anext;
-+  PLINE *curc, *next, *prev;
+   POLYAREA *anext;
+   PLINE *curc, *next, *prev;
 +  BoxType box;
-+  int inv_inside = 0;
-+  int del_inside = 0;
-+  int del_outside = 0;
-+  int finished;
-+
-+//  printf ("M_POLYAREA_update_primary %p, %p, %i\n", pieces, holes, action);
-+
-+  if (a == NULL) {
+   int inv_inside = 0;
+   int del_inside = 0;
+   int del_outside = 0;
+@@ -1880,40 +2006,242 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+ //  printf ("M_POLYAREA_update_primary %p, %p, %i\n", pieces, holes, action);
+ 
+   if (a == NULL) {
+-    printf ("M_POLYAREA_update_primary: No polygon pieces to play with\n");
 +//    printf ("M_POLYAREA_update_primary: No polygon pieces to play with\n");
-+    return;
-+  }
-+
-+  switch (action) {
-+    case PBO_ISECT:
-+      del_outside = 1;
-+      break;
-+    case PBO_UNITE:
-+      del_inside = 1;
-+      break;
-+    case PBO_SUB:
-+      del_inside = 1;
-+      break;
-+    case PBO_XOR: /* NOT IMPLEMENTED OR USED */
-+      inv_inside = 1;
-+      break;
-+  }
-+
+     return;
+   }
+ 
+   switch (action) {
+     case PBO_ISECT:
+-//      printf ("  PBO_ISECT: Delete any contours OUTSIDE b\n");
+       del_outside = 1;
+       break;
+     case PBO_UNITE:
+-//      printf ("  PBO_UNITE: Delete any contours INSIDE B (B's contour replaces it)\n");
+       del_inside = 1;
+       break;
+     case PBO_SUB:
+-//      printf ("  PBO_SUB: Delete any contours INSIDE B (B's contour deletes it)\n");
+       del_inside = 1;
+       break;
+     case PBO_XOR: /* NOT IMPLEMENTED OR USED */
+-//      printf ("  PBO_XOR: Invert any which are INSIDE B  *** NOT IMPLEMENTED ***\n");
+       inv_inside = 1;
+       break;
+   }
+ 
+-  /* now the non-intersect parts are collected in temp/holes */
 +  box = *((BoxType *)bpa->contours);
 +  b = bpa;
 +  while ((b = b->f) != bpa) {
@@ -487,13 +541,14 @@ index a0a0abb..3018b19 100644
 +  }
 +#endif
 +
-+  do {
-+    int hole_contour = 0;
+   do {
+     int hole_contour = 0;
 +    int is_outline = 1;
-+
-+    anext = a->f;
-+    finished = (anext == *pieces);
-+
+ 
+     anext = a->f;
+     finished = (anext == *pieces);
+ 
+-//    printf ("Inspecting a piece of polygon\n");
 +    prev = NULL;
 +    for (curc = a->contours; curc != NULL; curc = next, is_outline = 0) {
 +      int is_first = contour_is_first (a, curc);
@@ -568,23 +623,44 @@ index a0a0abb..3018b19 100644
 +  } while ((a = anext), *pieces != NULL && !finished);
 +}
 +
-+
-+
++#if 0
 +static void
 +M_POLYAREA_update_primary_old (jmp_buf * e, POLYAREA ** pieces,
-                            PLINE ** holes, PLINE ** isected, int action)
- {
-   POLYAREA *a = *pieces;
-@@ -1906,6 +2285,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
-   /* now the non-intersect parts are collected in temp/holes */
-   do {
-     int hole_contour = 0;
++                           PLINE ** holes, PLINE ** isected, int action)
++{
++  POLYAREA *a = *pieces;
++  POLYAREA *anext;
++  PLINE *curc, *next, *prev;
++  int inv_inside = 0;
++  int del_inside = 0;
++  int del_outside = 0;
++  int finished;
++
++  if (a == NULL)
++    return;
++
++  switch (action) {
++    case PBO_ISECT:
++      del_outside = 1;
++      break;
++    case PBO_UNITE:
++      del_inside = 1;
++      break;
++    case PBO_SUB:
++      del_inside = 1;
++      break;
++    case PBO_XOR: /* NOT IMPLEMENTED OR USED */
++      inv_inside = 1;
++      break;
++  }
++
++  /* now the non-intersect parts are collected in temp/holes */
++  do {
++    int hole_contour = 0;
 +    int is_outline = 1;
- 
-     anext = a->f;
-     finished = (anext == *pieces);
-@@ -1913,7 +2293,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
- //    printf ("Inspecting a piece of polygon\n");
++
++    anext = a->f;
++    finished = (anext == *pieces);
  
      prev = NULL;
 -    for (curc = a->contours; curc != NULL; curc = next) {
@@ -592,7 +668,39 @@ index a0a0abb..3018b19 100644
        int is_first = contour_is_first (a, curc);
        int is_last = contour_is_last (curc);
  
-@@ -1978,10 +2358,9 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -1926,7 +2254,6 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+       switch (curc->Flags.status) {
+         case ISECTED:
+           isect_contour = 1;
+-//          printf ("Found intersected contour\n");
+           break;
+         case INSIDE:
+           if (del_inside) del_contour = 1;
+@@ -1948,23 +2275,19 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+         if (del_contour) {
+           /* Delete the contour */
+           poly_DelContour (&curc); /* NB: Sets curc to NULL */
+-//          printf ("Deleting contour we don't want in the result\n");
+         } else if (isect_contour) {
+           /* Link into the list of intersected contours */
+           curc->next = *isected;
+           *isected = curc;
+-//          printf ("Separating intersected contour.\n");
+         } else if (hole_contour) {
+           /* Link into the list of holes */
+           curc->next = *holes;
+           *holes = curc;
+-//          printf ("Separating a hole (belonging to a moved contour)\n");
+         } else {
+           assert (0);
+         }
+ 
+         if (is_first && is_last) {
+-//          printf ("M_POLYAREA_update_primary: Deleted / removed the whole polygon piece\n");
+           remove_polyarea (pieces, a);
+           poly_Free (&a); /* NB: Sets a to NULL */
+         }
+@@ -1978,22 +2301,15 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
  
        /* If we move or delete an outer contour, we need to move any holes
           we wish to keep within that contour to the holes list. */
@@ -603,8 +711,23 @@ index a0a0abb..3018b19 100644
 -      hole_contour = 1;
      }
  
-     /* If we deleted all the pieces of the polyarea, *pieces is NULL and
-@@ -2150,42 +2529,69 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+-    /* If we deleted all the pieces of the polyarea, *pieces is NULL and
+-       we don't want to continue */
+-    if (*pieces == NULL) {
+-//      printf ("M_POLYAREA_update_primary: Deleted / removed _all_"
+-//              "of the existing polygon pieces\n");
+-      finished = TRUE;
+-    }
+-
+-  } while ((a = anext), !finished);
++    /* If we deleted all the pieces of the polyarea, *pieces is NULL */
++  } while ((a = anext), *pieces != NULL && !finished);
+ }
++'endif
+ 
+ 
+ static void
+@@ -2150,42 +2466,69 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        assert (poly_Valid (b));
  #endif
  
