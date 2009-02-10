@@ -1327,7 +1327,7 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
   if (cntr->Flags.orient == PLF_DIR)
     {
       if (owner != NULL) {
-        printf ("PATH 1\n");
+//        printf ("PATH 1\n");
         r_delete_entry (owner->contour_tree, (BoxType *)cntr);
       }
 //      printf ("Put contour adding a new contour\n");
@@ -1345,7 +1345,7 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
           if (owner != parent)
             {
               if (owner != NULL) {
-                printf ("PATH 2\n");
+//                printf ("PATH 2\n");
                 r_delete_entry (owner->contour_tree, (BoxType *)cntr);
               }
               r_insert_entry (parent->contour_tree, (BoxType *)cntr, 0);
@@ -1359,7 +1359,7 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
           /* We don't insert the holes into an r-tree,
            * they just form a linked list */
           if (owner != NULL) {
-            printf ("PATH 3\n");
+//            printf ("PATH 3\n");
             r_delete_entry (owner->contour_tree, (BoxType *)cntr);
           }
 	}
@@ -2024,11 +2024,6 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
           /* Link into the list of holes */
           curc->next = *holes;
           *holes = curc;
-          if (curc->Flags.orient == PLF_DIR && !is_first)
-            printf ("A:Hmm, got PLF_DIR orientation for a non-first contour\n");
-
-          if (curc->Flags.orient != PLF_DIR && is_first)
-            printf ("A:Hmm, got first contour without PLF_DIR orientation\n");
 //          printf ("Separating a hole (belonging to a moved contour)\n");
         } else {
           assert (0);
@@ -2045,19 +2040,14 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
            candidate for having its "next" pointer adjusted.
            Saves walking the contour list when we delete one. */
         prev = curc;
-
-        if (curc->Flags.orient == PLF_DIR && !is_first)
-          printf ("B:Hmm, got PLF_DIR orientation for a non-first contour\n");
-
-        if (curc->Flags.orient != PLF_DIR && is_first)
-          printf ("B:Hmm, got first contour without PLF_DIR orientation\n");
-
       }
 
       /* If we move or delete an outer contour, we need to move any holes
          we wish to keep within that contour to the holes list. */
       if (is_first && (del_contour || isect_contour))
         hole_contour = 1;
+
+      hole_contour = 1;
     }
 
     /* If we deleted all the pieces of the polyarea, *pieces is NULL and
@@ -2177,52 +2167,11 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
 	      POLYAREA ** res, int action)
 {
   POLYAREA *a = NULL, *b = NULL;
-  PLINE *p, *holes = NULL;
-  jmp_buf e;
-  int code;
 
-  *res = NULL;
+  if (!poly_M_Copy0 (&a, a_org) || !poly_M_Copy0 (&b, b_org))
+    return err_no_memory;
 
-  if ((code = setjmp (e)) == 0)
-    {
-      if (!poly_M_Copy0 (&a, a_org) || !poly_M_Copy0 (&b, b_org))
-	longjmp (e, err_no_memory);
-
-#ifdef DEBUG
-      if (!poly_Valid (a))
-	return -1;
-      if (!poly_Valid (b))
-	return -1;
-#endif
-      M_POLYAREA_intersect (&e, a, b, TRUE);
-
-      M_POLYAREA_label (a, b, FALSE);
-      M_POLYAREA_label (b, a, FALSE);
-
-//      printf ("1:");
-      M_POLYAREA_Collect (&e, a, res, &holes, action, b->f == b
-			  && !b->contours->next
-			  && b->contours->Flags.status != ISECTED);
-      poly_Free (&a);
-      M_B_AREA_Collect (&e, b, res, &holes, action);
-      poly_Free (&b);
-
-      InsertHoles (&e, *res, &holes);
-    }
-  /* delete holes */
-  while ((p = holes) != NULL)
-    {
-      holes = p->next;
-      poly_DelContour (&p);
-    }
-
-  if (code)
-    {
-      poly_Free (res);
-      return code;
-    }
-  assert (!*res || poly_Valid (*res));
-  return code;
+  return poly_Boolean_free (a, b, res, action);
 }				/* poly_Boolean */
 
 /* just like poly_Boolean but frees the input polys */
