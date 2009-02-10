@@ -1,7 +1,7 @@
-Bottom: b620113c217dca11fe51ece42ddbd5b4975d9e88
-Top:    a1d93f161843cc2af57632d679355624887011fd
+Bottom: 4ac9fa9bad6e8fa63a92ec30a15cf2c2b6922209
+Top:    4a505970a9ef212534e6730be8772d51c8b5998f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 13:48:20 +0000
+Date:   2009-02-10 13:48:38 +0000
 
 Add raw polygons support for the GTK HID, bypassing the no-holes dicer
 
@@ -79,7 +79,7 @@ index 842a61e..e7aa8f8 100644
        /* NB: No "NoHoles" cache for these */
        if (TEST_FLAG (FULLPOLYFLAG, Polygon))
 diff --git a/src/global.h b/src/global.h
-index 44b025d..97384dc 100644
+index 586a098..3080b2d 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -50,6 +50,8 @@
