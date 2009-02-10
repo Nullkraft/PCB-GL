@@ -1,7 +1,7 @@
-Bottom: 046fd58615166dcb2bbf625dddf496b5ac77657e
-Top:    fab39d193619310d227549ca7a7b83b4e15d1eed
+Bottom: 8648b61661165f9645543d799b9f534ec673cd43
+Top:    ef5e80f4f0dfa4bd9066c9700d72e6c484b20eaa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 13:52:08 +0000
+Date:   2009-02-10 14:02:21 +0000
 
 Fiddle with the order objects are clipped from pours
 
@@ -23,10 +23,11 @@ more complexity to the polygons.
 
 
 
+
 ---
 
 diff --git a/src/pour.c b/src/pour.c
-index d4ba0c4..38d050c 100644
+index c727e67..8a976bb 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -640,16 +640,17 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
