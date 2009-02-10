@@ -1,5 +1,5 @@
 Bottom: d2d42612ea12c6ada02c036d65e89f8d758bf56c
-Top:    b8bd8de6044e86bb37b9827723a1b82a3fbbc83b
+Top:    81aef8476e93d4a8584dfba4b8374a808e2196eb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-10 11:42:51 +0000
 
@@ -11,7 +11,7 @@ Nearly working
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index b923229..8da586a 100644
+index b923229..2137297 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -1000,12 +1000,22 @@ cntr_in_M_PLINE (PLINE * poly, PLINE * outfst, BOOLp test)
@@ -227,7 +227,15 @@ index b923229..8da586a 100644
  	}
      }
    r_destroy_tree (&tree);
-@@ -1913,26 +1997,324 @@ remove_polyarea (POLYAREA **list, POLYAREA *piece)
+@@ -1777,7 +1861,6 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+     }
+   else
+     {
+-      printf ("Got non ISECTED contour in cntr_Collect!\n");
+       switch (action)
+ 	{
+ 	case PBO_ISECT:
+@@ -1913,26 +1996,324 @@ remove_polyarea (POLYAREA **list, POLYAREA *piece)
    piece->f = piece->b = piece;
  }
  
@@ -563,7 +571,7 @@ index b923229..8da586a 100644
                             PLINE ** holes, PLINE ** isected, int action)
  {
    POLYAREA *a = *pieces;
-@@ -1972,6 +2354,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -1972,6 +2353,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
    /* now the non-intersect parts are collected in temp/holes */
    do {
      int hole_contour = 0;
@@ -571,7 +579,7 @@ index b923229..8da586a 100644
  
      anext = a->f;
      finished = (anext == *pieces);
-@@ -1979,7 +2362,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -1979,7 +2361,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
  //    printf ("Inspecting a piece of polygon\n");
  
      prev = NULL;
@@ -580,7 +588,7 @@ index b923229..8da586a 100644
        int is_first = contour_is_first (a, curc);
        int is_last = contour_is_last (curc);
  
-@@ -2044,10 +2427,9 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -2044,10 +2426,9 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
  
        /* If we move or delete an outer contour, we need to move any holes
           we wish to keep within that contour to the holes list. */
@@ -592,7 +600,7 @@ index b923229..8da586a 100644
      }
  
      /* If we deleted all the pieces of the polyarea, *pieces is NULL and
-@@ -2223,42 +2605,39 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2223,42 +2604,39 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        assert (poly_Valid (b));
  #endif
  
