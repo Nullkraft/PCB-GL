@@ -1095,6 +1095,7 @@ static HID gerber_hid = {
   gerber_draw_rect,
   gerber_fill_circle,
   gerber_fill_polygon,
+  0 /* gerber_fill_pcb_polygon */ ,
   gerber_fill_rect,
   gerber_calibrate,
   0 /* gerber_shift_is_pressed */ ,
