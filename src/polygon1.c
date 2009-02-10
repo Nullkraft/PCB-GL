@@ -1991,7 +1991,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
       M_B_AREA_Collect (&e, b, res, &holes, action);
       poly_Free (&b);
 
-      /* delete of a_isected which is left */
+      /* free a_isected */
       while ((p = a_isected) != NULL)
       {
         a_isected = p->next;
