@@ -50,6 +50,8 @@
 #include <ctype.h>
 #include <sys/types.h>
 
+typedef struct polygon_st PolygonType, *PolygonTypePtr;
+
 #include "hid.h"
 
 typedef struct rtree rtree_t;
@@ -234,10 +236,7 @@ typedef struct
   void *Element;
 } TextType, *TextTypePtr;
 
-typedef struct polygon_st PolygonType, *PolygonTypePtr;
-
-typedef struct
-{
+struct rtree {
   struct rtree_node *root;
   int size;			/* number of entries in tree */
 } rtree_t;
