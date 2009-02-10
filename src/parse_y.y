@@ -52,6 +52,7 @@
 #include "misc.h"
 #include "parse_l.h"
 #include "polygon.h"
+#include "pour.h"
 #include "remove.h"
 #include "rtree.h"
 #include "strflags.h"
@@ -64,7 +65,7 @@
 RCSID("$Id$");
 
 static	LayerTypePtr	Layer;
-static	PolygonTypePtr	Polygon;
+static	PourTypePtr	Pour;
 static	SymbolTypePtr	Symbol;
 static	int		pin_num;
 static	LibraryMenuTypePtr	Menu;
@@ -188,8 +189,8 @@ parsepcb
 			 */
 			PCB = yyPCB;
 			for (i = 0; i < yyData->LayerN+2; i++)
-			  for (j = 0; j < yyData->Layer[i].PolygonN; j++)
-			      InitClip (yyData, &yyData->Layer[i], &yyData->Layer[i].Polygon[j]);
+			  for (j = 0; j < yyData->Layer[i].PourN; j++)
+			      InitPourClip (yyData, &yyData->Layer[i], &yyData->Layer[i].Pour[j]);
 			PCB = pcb_save;
 			}
 			   
@@ -888,7 +889,7 @@ layerdefinition
 			/* x1, y1, x2, y2, flags */
 		| T_RECTANGLE '(' NUMBER NUMBER NUMBER NUMBER NUMBER ')'
 			{
-				CreateNewPolygonFromRectangle(Layer,
+				CreateNewPourFromRectangle(Layer,
 					$3*100, $4*100, ($3+$5)*100, ($4+$6)*100, OldFlags($7));
 			}
 		| text_hi_format
@@ -897,25 +898,25 @@ layerdefinition
 			/* flags are passed in */
 		| T_POLYGON '(' flags ')' '('
 			{
-				Polygon = CreateNewPolygon(Layer, $3);
+				Pour = CreateNewPour(Layer, $3);
 			}
 		  polygonpoints ')'
 		  	{
 					/* ignore junk */
-				if (Polygon->PointN >= 3)
+				if (Pour->PointN >= 3)
 				  {
-				    SetPolygonBoundingBox (Polygon);
-				    if (!Layer->polygon_tree)
-				      Layer->polygon_tree = r_create_tree (NULL, 0, 0);
-				    r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
+				    SetPourBoundingBox (Pour);
+				    if (!Layer->pour_tree)
+				      Layer->pour_tree = r_create_tree (NULL, 0, 0);
+				    r_insert_entry (Layer->pour_tree, (BoxType *) Pour, 0);
 				  }
 				else
 				{
 					Message("WARNING parsing file '%s'\n"
 						"    line:        %i\n"
-						"    description: 'ignored polygon (< 3 points)'\n",
+						"    description: 'ignored polygon pour (< 3 points)'\n",
 						yyfilename, yylineno);
-					DestroyObject(yyData, POLYGON_TYPE, Layer, Polygon, Polygon);
+					DestroyObject(yyData, POLYGON_TYPE, Layer, Pour, Pour);
 				}
 			}
 		;
@@ -1144,11 +1145,11 @@ polygonpoint
 			/* xcoord ycoord */
 		: '(' NUMBER NUMBER ')'
 			{
-				CreateNewPointInPolygon(Polygon, $2*100, $3*100);
+				CreateNewPointInPour(Pour, $2*100, $3*100);
 			}
 		| '[' NUMBER NUMBER ']'
 			{
-				CreateNewPointInPolygon(Polygon, $2, $3);
+				CreateNewPointInPour(Pour, $2, $3);
 			}
 		|
 		;
