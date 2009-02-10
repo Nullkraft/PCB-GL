@@ -137,8 +137,10 @@ pin_name_to_xy (LibraryEntryType * pin, int *x, int *y)
       *y = ((PinType *) (conn.ptr2))->Y;
       return 0;
     case PAD_TYPE:
-      *x = ((PadType *) (conn.ptr2))->Point1.X;
-      *y = ((PadType *) (conn.ptr2))->Point1.Y;
+      *x = (((PadType *) (conn.ptr2))->Point1.X +
+            ((PadType *) (conn.ptr2))->Point2.X) / 2;
+      *y = (((PadType *) (conn.ptr2))->Point1.Y +
+            ((PadType *) (conn.ptr2))->Point2.Y) / 2;
       return 0;
     }
   return 1;
