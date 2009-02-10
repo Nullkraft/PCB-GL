@@ -364,6 +364,7 @@ HID hid_nogui = {
   nogui_draw_rect,
   nogui_fill_circle,
   nogui_fill_polygon,
+  0 /* nogui_fill_pcb_polygon */ ,
   nogui_fill_rect,
   nogui_calibrate,
   nogui_shift_is_pressed,
@@ -415,6 +416,7 @@ apply_default_hid (HID * d, HID * s)
   AD (draw_arc);
   AD (fill_circle);
   AD (fill_polygon);
+  AD (fill_pcb_polygon);
   AD (calibrate);
   AD (shift_is_pressed);
   AD (control_is_pressed);
