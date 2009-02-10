@@ -1,5 +1,5 @@
 Bottom: 58f2fb7f1fd36ba702b6157f4026205ade283ce0
-Top:    b08c0727728eb3d5f8449ae6c754af58d7da154f
+Top:    bf1d4b4bf9ad78900a4259756a605c0ce18bbae4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-10 13:24:22 +0000
 
@@ -16,7 +16,7 @@ its existance as well.
 ---
 
 diff --git a/src/global.h b/src/global.h
-index 991b60c..d6b773c 100644
+index 991b60c..1be65d6 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -40,7 +40,6 @@
@@ -38,6 +38,20 @@ index 991b60c..d6b773c 100644
  #define _(S) (S)
  
  typedef int LocationType;
+@@ -253,11 +256,11 @@ typedef struct			/* holds information about arcs */
+     Delta;
+ } ArcType, *ArcTypePtr;
+ 
+-typedef struct
++struct rtree
+ {
+   struct rtree_node *root;
+   int size;			/* number of entries in tree */
+-} rtree_t;
++};
+ 
+ typedef struct			/* holds information about one layer */
+ {
 diff --git a/src/polyarea.h b/src/polyarea.h
 index 42acc1a..ee185a9 100644
 --- a/src/polyarea.h
