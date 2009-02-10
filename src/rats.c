@@ -505,20 +505,24 @@ GatherSubnets (NetListTypePtr Netl, Boolean NoWarn, Boolean AndRats)
       }
       ENDALL_LOOP;
       /* add polygons so the auto-router can see them as targets */
-      ALLPOLYGON_LOOP (PCB->Data);
+      ALLPOUR_LOOP (PCB->Data);
       {
-	if (TEST_FLAG (DRCFLAG, polygon))
-	  {
-	    conn = GetConnectionMemory (a);
-	    /* make point on a vertex */
-	    conn->X = polygon->Clipped->contours->head.point[0];
-	    conn->Y = polygon->Clipped->contours->head.point[1];
-	    conn->type = POLYGON_TYPE;
-	    conn->ptr1 = layer;
-	    conn->ptr2 = polygon;
-	    conn->group = GetLayerGroupNumberByPointer (layer);
-	    conn->menu = NULL;	/* agnostic view of where it belongs */
-	  }
+        POURPOLYGON_LOOP (pour);
+        {
+          if (TEST_FLAG (DRCFLAG, polygon))
+            {
+              conn = GetConnectionMemory (a);
+              /* make point on a vertex */
+              conn->X = polygon->Clipped->contours->head.point[0];
+              conn->Y = polygon->Clipped->contours->head.point[1];
+              conn->type = POLYGON_TYPE;
+              conn->ptr1 = layer;
+              conn->ptr2 = polygon;
+              conn->group = GetLayerGroupNumberByPointer (layer);
+              conn->menu = NULL;	/* agnostic view of where it belongs */
+            }
+        }
+        END_LOOP;
       }
       ENDALL_LOOP;
       VIA_LOOP (PCB->Data);
