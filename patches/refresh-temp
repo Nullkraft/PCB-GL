@@ -1,0 +1,38 @@
+Bottom: a36dd45898d1535ef890fbd96c87758505ab998b
+Top:    8a336568286a6932a750993c440733e134bafa4c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-10 13:30:11 +0000
+
+Refresh of try-optimising-polygon-operati
+
+---
+
+diff --git a/src/global.h b/src/global.h
+index d6b773c..157e186 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -234,6 +234,11 @@ typedef struct
+   void *Element;
+ } TextType, *TextTypePtr;
+ 
++struct rtree {
++  struct rtree_node *root;
++  int size;			/* number of entries in tree */
++};
++
+ typedef struct			/* holds information about a polygon */
+ {
+   ANYOBJECTFIELDS;
+@@ -256,12 +261,6 @@ typedef struct			/* holds information about arcs */
+     Delta;
+ } ArcType, *ArcTypePtr;
+ 
+-typedef struct
+-{
+-  struct rtree_node *root;
+-  int size;			/* number of entries in tree */
+-} rtree_t;
+-
+ typedef struct			/* holds information about one layer */
+ {
+   char *Name;			/* layer name */
