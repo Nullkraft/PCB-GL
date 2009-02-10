@@ -35,6 +35,18 @@
 
 #include <gtk/gtk.h>
 
+/* The Linux OpenGL ABI 1.0 spec requires that we define
+ * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
+ * in order to get prototypes:
+ *   http://www.opengl.org/registry/ABI/
+ */
+#ifdef ENABLE_GL
+#  define GL_GLEXT_PROTOTYPES 1
+#  include <GL/gl.h>
+#  include <gtk/gtkgl.h>
+#  include "hid/common/hidgl.h"
+#endif
+
 /* Internationalization support.
 */
 #if defined (ENABLE_NLS)
@@ -130,7 +142,7 @@ typedef struct hid_gc_struct
   gint cap, join;
   gchar xor;
   gchar erase;
-  gint mask_seq;
+//  gint mask_seq;
 }
 hid_gc_struct;
 
@@ -197,7 +209,11 @@ typedef struct
   GdkDrawable *drawable;	/* Current drawable for drawing routines */
   gint width, height;
 
-  GdkGC *bg_gc, *offlimits_gc, *mask_gc, *u_gc, *grid_gc;
+  GdkGLConfig *glconfig;
+
+  gint trans_lines;
+
+//  GdkGC *bg_gc, *offlimits_gc, *mask_gc, *u_gc, *grid_gc;
 
   GdkColor bg_color, offlimits_color, grid_color;
 
@@ -313,6 +329,7 @@ void ghid_get_pointer (gint *, gint *);
 
 /* gui-output-events.c function prototypes.
 */
+
 void ghid_port_ranges_changed (void);
 void ghid_port_ranges_zoom (gdouble zoom);
 gboolean ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative);
@@ -510,7 +527,9 @@ void ghid_logv (const char *fmt, va_list args);
 void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
 
 /* gtkhid-main.c */
+
 void ghid_invalidate_all ();
+void ghid_invalidate_current_gc ();
 void ghid_get_coords (const char *msg, int *x, int *y);
 gint PCBChanged (int argc, char **argv, int x, int y);
 
