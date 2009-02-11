@@ -1,9 +1,10 @@
-Bottom: d5b58b706c00e9a331b77b231f39fedba4b13997
-Top:    d48c04ee53e0f2a4beeccd166e8a4d9abaa61c48
+Bottom: 85c722d3d705bca211ce5561b3547618e6b0d7c4
+Top:    1be5d89454a62508e5bf8fd46b7244e4fc0e666d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-10 15:29:42 +0000
+Date:   2009-02-11 15:31:32 +0000
 
 Manually count the vertices in a contour, report if the polygon code is lying
+
 
 
 
@@ -15,11 +16,11 @@ Manually count the vertices in a contour, report if the polygon code is lying
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 374fe5e..9c5aa92 100644
+index d109e1f..cc99da0 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -649,8 +649,22 @@ hidgl_fill_pcb_polygon (PolygonType *poly)
-   /* Walk the polygon structure, counting vertices */
+@@ -701,8 +701,22 @@ hidgl_fill_pcb_polygon (PolygonType *poly, BoxType *clip_box, double scale)
+   /* This gives an upper bound on the amount of storage required */
    piece = poly->Clipped;
  //  do {
 -    for (contour = piece->contours; contour != NULL; contour = contour->next)
