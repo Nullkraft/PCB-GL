@@ -1,5 +1,5 @@
 Bottom: 083fe104693e36085eaeff25e1c4d2628b62582f
-Top:    37ec95a927ef68f34d7e781fa6f882705ec3219c
+Top:    790e7b3d7557af2f2c670cebf90da46fba76b774
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-11 16:09:10 +0000
 
@@ -37,7 +37,7 @@ index 653d294..b3bb007 100644
  
  /* For lrealpath */
 diff --git a/src/draw.c b/src/draw.c
-index fdb33f7..a44a658 100644
+index fdb33f7..de0666f 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -1741,6 +1741,15 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
@@ -56,6 +56,41 @@ index fdb33f7..a44a658 100644
    pl = Polygon->Clipped->contours;
    n = pl->Count;
    x = (int *) malloc (n * sizeof (int));
+@@ -2171,18 +2180,25 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+     }
+   else if (Polygon->Clipped)
+     {
+-      if (!Polygon->NoHolesValid)
++      if (gui->fill_pcb_polygon != NULL)
+         {
+-          ComputeNoHoles (Polygon);
++          gui->fill_pcb_polygon (Output.fgGC, Polygon);
+         }
+-      if (Polygon->NoHoles)
++      else
+         {
+-          PolygonType poly = *Polygon;
+-          poly.Clipped = Polygon->NoHoles;
+-          do {
+-            DrawPolygonLowLevel (&poly, NULL);
+-            poly.Clipped = poly.Clipped->f;
+-          } while (poly.Clipped != Polygon->NoHoles);
++          if (!Polygon->NoHolesValid)
++            {
++              ComputeNoHoles (Polygon);
++            }
++          if (Polygon->NoHoles)
++            {
++              PolygonType poly = *Polygon;
++              poly.Clipped = Polygon->NoHoles;
++              do {
++                DrawPolygonLowLevel (&poly, NULL);
++                poly.Clipped = poly.Clipped->f;
++              } while (poly.Clipped != Polygon->NoHoles);
++            }
+         }
+       /* draw other parts of the polygon if fullpoly flag is set */
+       /* NB: No "NoHoles" cache for these */
 diff --git a/src/global.h b/src/global.h
 index 1be65d6..93aef49 100644
 --- a/src/global.h
