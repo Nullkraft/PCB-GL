@@ -1,0 +1,48 @@
+Bottom: 37ec95a927ef68f34d7e781fa6f882705ec3219c
+Top:    790e7b3d7557af2f2c670cebf90da46fba76b774
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-11 17:26:38 +0000
+
+Refresh of add-raw-polygons-support-for-t
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index a44a658..de0666f 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -2180,18 +2180,25 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+     }
+   else if (Polygon->Clipped)
+     {
+-      if (!Polygon->NoHolesValid)
++      if (gui->fill_pcb_polygon != NULL)
+         {
+-          ComputeNoHoles (Polygon);
++          gui->fill_pcb_polygon (Output.fgGC, Polygon);
+         }
+-      if (Polygon->NoHoles)
++      else
+         {
+-          PolygonType poly = *Polygon;
+-          poly.Clipped = Polygon->NoHoles;
+-          do {
+-            DrawPolygonLowLevel (&poly, NULL);
+-            poly.Clipped = poly.Clipped->f;
+-          } while (poly.Clipped != Polygon->NoHoles);
++          if (!Polygon->NoHolesValid)
++            {
++              ComputeNoHoles (Polygon);
++            }
++          if (Polygon->NoHoles)
++            {
++              PolygonType poly = *Polygon;
++              poly.Clipped = Polygon->NoHoles;
++              do {
++                DrawPolygonLowLevel (&poly, NULL);
++                poly.Clipped = poly.Clipped->f;
++              } while (poly.Clipped != Polygon->NoHoles);
++            }
+         }
+       /* draw other parts of the polygon if fullpoly flag is set */
+       /* NB: No "NoHoles" cache for these */
