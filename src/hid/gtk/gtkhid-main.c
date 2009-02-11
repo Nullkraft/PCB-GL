@@ -13,12 +13,12 @@
 #include <time.h>
 
 
+#include "global.h"
 #include "action.h"
 #include "crosshair.h"
 #include "data.h"
 #include "draw.h"
 #include "error.h"
-#include "global.h"
 #include "mymem.h"
 #include "draw.h"
 #include "clip.h"
@@ -936,6 +936,21 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
 }
 
 void
+ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly)
+{
+  BoxType clip_box;
+
+  USE_GC (gc);
+
+  clip_box.X1 = (ghid_flip_x ? PCB->MaxWidth - gport->view_width - gport->view_x0 : gport->view_x0);
+  clip_box.Y1 = (ghid_flip_y ? PCB->MaxHeight - gport->view_height - gport->view_y0 : gport->view_y0);
+  clip_box.X2 = clip_box.X1 + gport->view_width;
+  clip_box.Y2 = clip_box.Y1 + gport->view_height;
+
+  hidgl_fill_pcb_polygon (poly, &clip_box, gport->zoom);
+}
+
+void
 ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
 {
   USE_GC (gc);
@@ -1454,6 +1469,7 @@ HID ghid_hid = {
   ghid_draw_rect,
   ghid_fill_circle,
   ghid_fill_polygon,
+  ghid_fill_pcb_polygon,
   ghid_fill_rect,
 
   ghid_calibrate,
@@ -1514,6 +1530,7 @@ HID ghid_extents = {
   ghid_extents_draw_rect,
   ghid_extents_fill_circle,
   ghid_extents_fill_polygon,
+  0 /* ghid_extents_fill_pcb_polygon */ ,
   ghid_extents_fill_rect,
 
   0 /* ghid_calibrate */ ,

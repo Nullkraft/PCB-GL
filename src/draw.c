@@ -1741,6 +1741,15 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
       AddPart (Polygon);
       return;
     }
+
+  if (gui->fill_pcb_polygon &&
+      !TEST_FLAG (THINDRAWFLAG, PCB) &&
+      !TEST_FLAG (THINDRAWPOLYFLAG, PCB) &&
+      !TEST_FLAG (CLEARLINEFLAG, Polygon)) {
+    gui->fill_pcb_polygon (Output.fgGC, Polygon);
+    return;
+  }
+
   pl = Polygon->Clipped->contours;
   n = pl->Count;
   x = (int *) malloc (n * sizeof (int));
@@ -2171,18 +2180,25 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
     }
   else if (Polygon->Clipped)
     {
-      if (!Polygon->NoHolesValid)
+      if (gui->fill_pcb_polygon != NULL)
         {
-          ComputeNoHoles (Polygon);
+          gui->fill_pcb_polygon (Output.fgGC, Polygon);
         }
-      if (Polygon->NoHoles)
+      else
         {
-          PolygonType poly = *Polygon;
-          poly.Clipped = Polygon->NoHoles;
-          do {
-            DrawPolygonLowLevel (&poly, NULL);
-            poly.Clipped = poly.Clipped->f;
-          } while (poly.Clipped != Polygon->NoHoles);
+          if (!Polygon->NoHolesValid)
+            {
+              ComputeNoHoles (Polygon);
+            }
+          if (Polygon->NoHoles)
+            {
+              PolygonType poly = *Polygon;
+              poly.Clipped = Polygon->NoHoles;
+              do {
+                DrawPolygonLowLevel (&poly, NULL);
+                poly.Clipped = poly.Clipped->f;
+              } while (poly.Clipped != Polygon->NoHoles);
+            }
         }
       /* draw other parts of the polygon if fullpoly flag is set */
       /* NB: No "NoHoles" cache for these */
