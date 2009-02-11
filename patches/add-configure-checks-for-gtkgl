@@ -1,5 +1,5 @@
 Bottom: 0d5a021d584d17a92c7ed36b4cfa102c3cda65c8
-Top:    0b5048f0657ac0bdc687a2cbe47374df9940e20c
+Top:    2125fd8718d6cfc3235e346c3c2a710e27d123f3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-10 20:28:06 +0000
 
@@ -22,7 +22,7 @@ Add configure checks for GtkGLEext, add to CFLAGS and LIBS
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 80c3737..d8f230f 100644
+index 80c3737..01f6780 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -261,6 +261,45 @@ $DBUS_PKG_ERRORS])]
@@ -96,7 +96,7 @@ index 80c3737..d8f230f 100644
 -CFLAGS="$CFLAGS $X_CFLAGS $DBUS_CFLAGS $GTK_CFLAGS"
 -LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_LIBS $INTLLIBS"
 +CFLAGS="$CFLAGS $X_CFLAGS $DBUS_CFLAGS $GTK_CFLAGS $GTKGLEXT_CFLAGS"
-+LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GTK_LIBS $GTKGLEXT_LIBS $DMALLOC_LIBS $GD_LIBS $INTLLIBS -lglut"
++LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GTK_LIBS $GTKGLEXT_LIBS $DMALLOC_LIBS $GD_LIBS $INTLLIBS"
  
  
  # if we have gcc then add -Wall
