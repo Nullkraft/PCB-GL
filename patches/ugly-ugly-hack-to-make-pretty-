@@ -1,5 +1,5 @@
 Bottom: 989355ec470abda5a5319e4e8fb6b308127f4b53
-Top:    801d774309e845edb98402c73ff087a78cd2d76f
+Top:    dc5f7ffa585b7d6db558fe4437be8a2cf22fd539
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-11 15:33:23 +0000
 
@@ -12,7 +12,7 @@ UGLY UGLY hack to make pretty translucent polygons
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 39fce1d..aa706a5 100644
+index 39fce1d..2a43cd2 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -1729,6 +1729,35 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
@@ -76,7 +76,7 @@ index 39fce1d..aa706a5 100644
    if (TEST_FLAG (CLEARPOLYFLAG, Polygon))
      {
        r_search (PCB->Data->pin_tree, &Polygon->BoundingBox, NULL,
-@@ -2161,25 +2194,31 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
+@@ -2161,51 +2194,50 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  static void
  DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  {
@@ -113,30 +113,54 @@ index 39fce1d..aa706a5 100644
      }
 -  else if (Polygon->Clipped)
      {
-+      gui->set_color (Output.fgGC, color);
- #if 0
-       if (!Polygon->NoHolesValid)
-         {
-@@ -2190,7 +2229,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
-           PolygonType poly = *Polygon;
-           poly.Clipped = Polygon->NoHoles;
-           do {
+-#if 0
+-      if (!Polygon->NoHolesValid)
+-        {
+-          ComputeNoHoles (Polygon);
+-        }
+-      if (Polygon->NoHoles)
+-        {
+-          PolygonType poly = *Polygon;
+-          poly.Clipped = Polygon->NoHoles;
+-          do {
 -            DrawPolygonLowLevel (&poly, NULL);
-+            DrawPolygonFillLowLevel (&poly, NULL);
-             poly.Clipped = poly.Clipped->f;
-           } while (poly.Clipped != Polygon->NoHoles);
+-            poly.Clipped = poly.Clipped->f;
+-          } while (poly.Clipped != Polygon->NoHoles);
+-        }
+-#endif
+-#if 0
++      gui->set_color (Output.fgGC, color);
++
++      if (gui->fill_pcb_polygon != NULL)
++        gui->fill_pcb_polygon (Output.fgGC, Polygon);
++      else
+         {
+-          PolygonType poly = *Polygon;
+-          poly.Clipped = Polygon->Clipped;
+-          do {
+-            DrawPolygonLowLevel (&poly, NULL);
+-            poly.Clipped = poly.Clipped->f;
+-          } while (poly.Clipped != Polygon->Clipped);
++          if (!Polygon->NoHolesValid)
++            {
++              ComputeNoHoles (Polygon);
++            }
++          if (Polygon->NoHoles)
++            {
++              PolygonType poly = *Polygon;
++              poly.Clipped = Polygon->NoHoles;
++              do {
++                DrawPolygonFillLowLevel (&poly, NULL);
++                poly.Clipped = poly.Clipped->f;
++              } while (poly.Clipped != Polygon->NoHoles);
++            }
          }
-@@ -2205,7 +2244,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
-           } while (poly.Clipped != Polygon->Clipped);
-         }
- #endif
+-#endif
 -      DrawPolygonLowLevel (Polygon, NULL);
-+      gui->fill_pcb_polygon (Output.fgGC, Polygon);
-+      //DrawPolygonLowLevel (Polygon, NULL);
  
        /* draw other parts of the polygon if fullpoly flag is set */
        /* NB: No "NoHoles" cache for these */
-@@ -2216,7 +2256,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2216,7 +2248,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  	    {
  	      PolygonType poly;
  	      poly.Clipped = pg;
@@ -145,7 +169,7 @@ index 39fce1d..aa706a5 100644
  	    }
  	}
      }
-@@ -2250,6 +2290,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2250,6 +2282,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  	  free (y);
  	}
      }
