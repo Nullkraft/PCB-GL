@@ -1073,6 +1073,7 @@ HID             nelma_hid = {
 	nelma_draw_rect,
 	nelma_fill_circle,
 	nelma_fill_polygon,
+	0 /* nelma_fill_pcb_polygon */ ,
 	nelma_fill_rect,
 	nelma_calibrate,
 	0 /* nelma_shift_is_pressed */ ,

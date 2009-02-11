@@ -473,6 +473,7 @@ HID batch_gui = {
   batch_draw_rect,
   batch_fill_circle,
   batch_fill_polygon,
+  0 /*batch_fill_pcb_polygon*/ ,
   batch_fill_rect,
   batch_calibrate,
   batch_shift_is_pressed,
