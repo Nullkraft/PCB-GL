@@ -1741,6 +1741,15 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
       AddPart (Polygon);
       return;
     }
+
+  if (gui->fill_pcb_polygon &&
+      !TEST_FLAG (THINDRAWFLAG, PCB) &&
+      !TEST_FLAG (THINDRAWPOLYFLAG, PCB) &&
+      !TEST_FLAG (CLEARLINEFLAG, Polygon)) {
+    gui->fill_pcb_polygon (Output.fgGC, Polygon);
+    return;
+  }
+
   pl = Polygon->Clipped->contours;
   n = pl->Count;
   x = (int *) malloc (n * sizeof (int));
