@@ -2219,33 +2219,25 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
     }
     {
       gui->set_color (Output.fgGC, color);
-#if 0
-      if (!Polygon->NoHolesValid)
+
+      if (gui->fill_pcb_polygon != NULL)
+        gui->fill_pcb_polygon (Output.fgGC, Polygon);
+      else
         {
-          ComputeNoHoles (Polygon);
+          if (!Polygon->NoHolesValid)
+            {
+              ComputeNoHoles (Polygon);
+            }
+          if (Polygon->NoHoles)
+            {
+              PolygonType poly = *Polygon;
+              poly.Clipped = Polygon->NoHoles;
+              do {
+                DrawPolygonFillLowLevel (&poly, NULL);
+                poly.Clipped = poly.Clipped->f;
+              } while (poly.Clipped != Polygon->NoHoles);
+            }
         }
-      if (Polygon->NoHoles)
-        {
-          PolygonType poly = *Polygon;
-          poly.Clipped = Polygon->NoHoles;
-          do {
-            DrawPolygonFillLowLevel (&poly, NULL);
-            poly.Clipped = poly.Clipped->f;
-          } while (poly.Clipped != Polygon->NoHoles);
-        }
-#endif
-#if 0
-        {
-          PolygonType poly = *Polygon;
-          poly.Clipped = Polygon->Clipped;
-          do {
-            DrawPolygonLowLevel (&poly, NULL);
-            poly.Clipped = poly.Clipped->f;
-          } while (poly.Clipped != Polygon->Clipped);
-        }
-#endif
-      gui->fill_pcb_polygon (Output.fgGC, Polygon);
-      //DrawPolygonLowLevel (Polygon, NULL);
 
       /* draw other parts of the polygon if fullpoly flag is set */
       /* NB: No "NoHoles" cache for these */
