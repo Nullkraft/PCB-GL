@@ -1,9 +1,10 @@
-Bottom: aaf1ee9f92b1e9dd727a4b712be9c6839ea584d4
+Bottom: 6553b0b02dba587894124f67157d183800e7a4ac
 Top:    204e1da04f7b4f3a0bc2ae0937ec2aa85e64a450
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-11 17:27:29 +0000
+Date:   2009-02-13 18:35:26 +0000
 
 UGLY UGLY hack to make pretty translucent polygons
+
 
 
 
@@ -140,7 +141,7 @@ index a2fbe7f..e67987a 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 2590f29..96585ad 100644
+index 274440b..96585ad 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -704,6 +704,18 @@ ghid_set_special_colors (HID_Attribute * ha)
@@ -187,18 +188,3 @@ index 2590f29..96585ad 100644
      if (gport->trans_lines)
        a = a * alpha_mult;
      maxi = r;
-@@ -942,10 +957,10 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly)
- 
-   USE_GC (gc);
- 
--  clip_box.X1 = gport->view_x0;
--  clip_box.Y1 = gport->view_y0;
--  clip_box.X2 = gport->view_x0 + gport->view_width;
--  clip_box.Y2 = gport->view_y0 + gport->view_height;
-+  clip_box.X1 = (ghid_flip_x ? PCB->MaxWidth - gport->view_width - gport->view_x0 : gport->view_x0);
-+  clip_box.Y1 = (ghid_flip_y ? PCB->MaxHeight - gport->view_height - gport->view_y0 : gport->view_y0);
-+  clip_box.X2 = clip_box.X1 + gport->view_width;
-+  clip_box.Y2 = clip_box.Y1 + gport->view_height;
- 
-   hidgl_fill_pcb_polygon (poly, &clip_box, gport->zoom);
- }
