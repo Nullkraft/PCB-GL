@@ -1,5 +1,5 @@
 Bottom: 083fe104693e36085eaeff25e1c4d2628b62582f
-Top:    790e7b3d7557af2f2c670cebf90da46fba76b774
+Top:    c7b6a3c8ab484fef89ab4fc3ec8e73e00fea0cef
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-11 16:09:10 +0000
 
@@ -380,7 +380,7 @@ index 1557228..181fdec 100644
    gerber_calibrate,
    0 /* gerber_shift_is_pressed */ ,
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 3332d7e..2590f29 100644
+index 3332d7e..274440b 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -13,12 +13,12 @@
@@ -407,10 +407,10 @@ index 3332d7e..2590f29 100644
 +
 +  USE_GC (gc);
 +
-+  clip_box.X1 = gport->view_x0;
-+  clip_box.Y1 = gport->view_y0;
-+  clip_box.X2 = gport->view_x0 + gport->view_width;
-+  clip_box.Y2 = gport->view_y0 + gport->view_height;
++  clip_box.X1 = (ghid_flip_x ? PCB->MaxWidth - gport->view_width - gport->view_x0 : gport->view_x0);
++  clip_box.Y1 = (ghid_flip_y ? PCB->MaxHeight - gport->view_height - gport->view_y0 : gport->view_y0);
++  clip_box.X2 = clip_box.X1 + gport->view_width;
++  clip_box.Y2 = clip_box.Y1 + gport->view_height;
 +
 +  hidgl_fill_pcb_polygon (poly, &clip_box, gport->zoom);
 +}
