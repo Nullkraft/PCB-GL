@@ -2137,8 +2137,6 @@ cp_callback (const BoxType * b, void *cl)
   return 1;
 }
 
-void hidgl_hack_poly_alpha (double alpha);
-
 /* ---------------------------------------------------------------------------
  * draws a polygon on a layer
  */
@@ -2147,7 +2145,6 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
 {
   int layernum;
 
-  hidgl_hack_poly_alpha (0.7);
   if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Polygon))
     {
       if (TEST_FLAG (SELECTEDFLAG, Polygon))
@@ -2159,7 +2156,6 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
     gui->set_color (Output.fgGC, Layer->Color);
   layernum = GetLayerNumber (PCB->Data, Layer);
   DrawPolygonLowLevel (Polygon, NULL);
-  hidgl_hack_poly_alpha (1.0);
   if (TEST_FLAG (CLEARPOLYFLAG, Polygon))
     {
       r_search (PCB->Data->pin_tree, &Polygon->BoundingBox, NULL,
@@ -2196,6 +2192,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
   return 0;
 }
 
+void hidgl_hack_poly_alpha (double alpha);
 
 /* ---------------------------------------------------------------------------
  * draws a polygon
