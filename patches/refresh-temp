@@ -1,0 +1,65 @@
+Bottom: 1d5208546f8350caca936966fa7d5a2d708390da
+Top:    204e1da04f7b4f3a0bc2ae0937ec2aa85e64a450
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-13 18:33:17 +0000
+
+Refresh of ugly-ugly-hack-to-make-pretty-
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index ec5d0a4..e67987a 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -2137,8 +2137,6 @@ cp_callback (const BoxType * b, void *cl)
+   return 1;
+ }
+ 
+-void hidgl_hack_poly_alpha (double alpha);
+-
+ /* ---------------------------------------------------------------------------
+  * draws a polygon on a layer
+  */
+@@ -2147,7 +2145,6 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+ {
+   int layernum;
+ 
+-  hidgl_hack_poly_alpha (0.7);
+   if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Polygon))
+     {
+       if (TEST_FLAG (SELECTEDFLAG, Polygon))
+@@ -2159,7 +2156,6 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+     gui->set_color (Output.fgGC, Layer->Color);
+   layernum = GetLayerNumber (PCB->Data, Layer);
+   DrawPolygonLowLevel (Polygon, NULL);
+-  hidgl_hack_poly_alpha (1.0);
+   if (TEST_FLAG (CLEARPOLYFLAG, Polygon))
+     {
+       r_search (PCB->Data->pin_tree, &Polygon->BoundingBox, NULL,
+@@ -2196,6 +2192,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
+   return 0;
+ }
+ 
++void hidgl_hack_poly_alpha (double alpha);
+ 
+ /* ---------------------------------------------------------------------------
+  * draws a polygon
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 148f5ae..96585ad 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -957,10 +957,10 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly)
+ 
+   USE_GC (gc);
+ 
+-  clip_box.X1 = gport->view_x0;
+-  clip_box.Y1 = gport->view_y0;
+-  clip_box.X2 = gport->view_x0 + gport->view_width;
+-  clip_box.Y2 = gport->view_y0 + gport->view_height;
++  clip_box.X1 = (ghid_flip_x ? PCB->MaxWidth - gport->view_width - gport->view_x0 : gport->view_x0);
++  clip_box.Y1 = (ghid_flip_y ? PCB->MaxHeight - gport->view_height - gport->view_y0 : gport->view_y0);
++  clip_box.X2 = clip_box.X1 + gport->view_width;
++  clip_box.Y2 = clip_box.Y1 + gport->view_height;
+ 
+   hidgl_fill_pcb_polygon (poly, &clip_box, gport->zoom);
+ }
