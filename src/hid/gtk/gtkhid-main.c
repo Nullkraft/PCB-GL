@@ -942,10 +942,10 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly)
 
   USE_GC (gc);
 
-  clip_box.X1 = gport->view_x0;
-  clip_box.Y1 = gport->view_y0;
-  clip_box.X2 = gport->view_x0 + gport->view_width;
-  clip_box.Y2 = gport->view_y0 + gport->view_height;
+  clip_box.X1 = (ghid_flip_x ? PCB->MaxWidth - gport->view_width - gport->view_x0 : gport->view_x0);
+  clip_box.Y1 = (ghid_flip_y ? PCB->MaxHeight - gport->view_height - gport->view_y0 : gport->view_y0);
+  clip_box.X2 = clip_box.X1 + gport->view_width;
+  clip_box.Y2 = clip_box.Y1 + gport->view_height;
 
   hidgl_fill_pcb_polygon (poly, &clip_box, gport->zoom);
 }
