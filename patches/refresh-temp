@@ -1,0 +1,28 @@
+Bottom: 790e7b3d7557af2f2c670cebf90da46fba76b774
+Top:    c7b6a3c8ab484fef89ab4fc3ec8e73e00fea0cef
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-13 18:34:42 +0000
+
+Refresh of add-raw-polygons-support-for-t
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 2590f29..274440b 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -942,10 +942,10 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly)
+ 
+   USE_GC (gc);
+ 
+-  clip_box.X1 = gport->view_x0;
+-  clip_box.Y1 = gport->view_y0;
+-  clip_box.X2 = gport->view_x0 + gport->view_width;
+-  clip_box.Y2 = gport->view_y0 + gport->view_height;
++  clip_box.X1 = (ghid_flip_x ? PCB->MaxWidth - gport->view_width - gport->view_x0 : gport->view_x0);
++  clip_box.Y1 = (ghid_flip_y ? PCB->MaxHeight - gport->view_height - gport->view_y0 : gport->view_y0);
++  clip_box.X2 = clip_box.X1 + gport->view_width;
++  clip_box.Y2 = clip_box.Y1 + gport->view_height;
+ 
+   hidgl_fill_pcb_polygon (poly, &clip_box, gport->zoom);
+ }
