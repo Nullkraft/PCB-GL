@@ -1,0 +1,17 @@
+Bottom: 204e1da04f7b4f3a0bc2ae0937ec2aa85e64a450
+Top:    204e1da04f7b4f3a0bc2ae0937ec2aa85e64a450
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-17 23:55:28 +0000
+
+Bisect and union self-intersecting arcs in ArcPoly()
+
+Avoids creating a self-intersecting contour which produces incorrect
+result. Bug noted when clearing a 360 degree arc from a polygon.
+
+For self-intersecting arcs, we now bisect, produce two polygons (with
+non-self-intersecting contours), then compute their union.
+
+
+---
+
+
