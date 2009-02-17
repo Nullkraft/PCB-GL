@@ -1,7 +1,7 @@
-Bottom: 12213f626c9659bb5f273acf8ef6099248bcb468
-Top:    da748190415bfc85b96c2590a2adc349b8696151
+Bottom: ecaa0a15780f44cd666cc19aaaa12ed0b31dcdfb
+Top:    3ceab1b875f84343c8591d2e381b99fddee987f4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-11 15:31:17 +0000
+Date:   2009-02-17 23:57:03 +0000
 
 Add cache for "noholes", diced versions of polygons
 
@@ -140,7 +140,7 @@ index 36b13d5..4b0e234 100644
      }
  }
 diff --git a/src/polygon.c b/src/polygon.c
-index 2c74578..217e856 100644
+index b65f0df..629913a 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -122,6 +122,48 @@ static double circleVerticies[] = {
@@ -201,7 +201,7 @@ index 2c74578..217e856 100644
        return 0;
      }
    poly->Clipped = biggest (result);
-@@ -603,6 +647,8 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
+@@ -634,6 +678,8 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
        fprintf (stderr, "Error while clipping PBO_SUB: %d\n", x);
        poly_Free (&merged);
        p->Clipped = NULL;
@@ -210,7 +210,7 @@ index 2c74578..217e856 100644
        return -1;
      }
    p->Clipped = biggest (merged);
-@@ -880,6 +926,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
+@@ -911,6 +957,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
        if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
  	r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
      }
@@ -218,7 +218,7 @@ index 2c74578..217e856 100644
    return r;
  }
  
-@@ -896,6 +943,8 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
+@@ -927,6 +974,8 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
        fprintf (stderr, "Error while clipping PBO_UNITE: %d\n", x);
        poly_Free (&merged);
        p->Clipped = NULL;
@@ -227,7 +227,7 @@ index 2c74578..217e856 100644
        return 0;
      }
    p->Clipped = biggest (merged);
-@@ -1002,11 +1051,16 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
+@@ -1033,11 +1082,16 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
    if (p->Clipped)
      poly_Free (&p->Clipped);
    p->Clipped = original_poly (p);
@@ -244,7 +244,7 @@ index 2c74578..217e856 100644
    return 1;
  }
  
-@@ -1260,18 +1314,23 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
+@@ -1291,18 +1345,23 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
      case PIN_TYPE:
      case VIA_TYPE:
        SubtractPin (Data, (PinTypePtr) ptr2, Layer, Polygon);
@@ -268,7 +268,7 @@ index 2c74578..217e856 100644
        return 1;
      }
    return 0;
-@@ -1478,7 +1537,7 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
+@@ -1509,7 +1568,7 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
  }
  
  static void
@@ -277,7 +277,7 @@ index 2c74578..217e856 100644
  {
    POLYAREA *pa;
  
-@@ -1496,6 +1555,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
+@@ -1527,6 +1586,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
        poly.BoundingBox.Y2 = p->ymax;
        poly.PointN = poly.PointMax = 4;
        poly.Clipped = pa;
@@ -285,7 +285,7 @@ index 2c74578..217e856 100644
        poly.Points = pts;
        pts[0].X = pts[0].X2 = p->xmin;
        pts[0].Y = pts[0].Y2 = p->ymin;
-@@ -1506,7 +1566,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
+@@ -1537,7 +1597,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
        pts[3].X = pts[3].X2 = p->xmin;
        pts[3].Y = pts[3].Y2 = p->ymax;
        poly.Flags = MakeFlags (CLEARPOLYFLAG);
@@ -294,7 +294,7 @@ index 2c74578..217e856 100644
        poly_Free (&pa);
        return;
      }
-@@ -1526,7 +1586,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
+@@ -1557,7 +1617,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
            do
              {
                PLINE *pl = x->contours;
@@ -303,7 +303,7 @@ index 2c74578..217e856 100644
                y = x->f;
                /* the pline was already freed by its use int he recursive dicer */
                free (x);
-@@ -1540,7 +1600,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
+@@ -1571,7 +1631,7 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
            do
              {
                PLINE *pl = x->contours;
@@ -312,7 +312,7 @@ index 2c74578..217e856 100644
                y = x->f;
                free (x);
              }
-@@ -1550,8 +1610,8 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
+@@ -1581,8 +1641,8 @@ r_NoHolesPolygonDicer (PLINE * p, void (*emit) (PolygonTypePtr))
  }
  
  void
@@ -323,7 +323,7 @@ index 2c74578..217e856 100644
  {
    POLYAREA *save, *ans;
  
-@@ -1576,7 +1636,7 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr),
+@@ -1607,7 +1667,7 @@ NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr),
    do
      {
        POLYAREA *prev;
@@ -332,7 +332,7 @@ index 2c74578..217e856 100644
        /* go to next poly (could be one because of clip) */
        prev = save;
        save = prev->f;
-@@ -1609,6 +1669,8 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+@@ -1640,6 +1700,8 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
     * we do this dirty work.
     */
    poly->Clipped = NULL;
