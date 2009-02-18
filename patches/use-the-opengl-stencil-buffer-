@@ -1,0 +1,26 @@
+Bottom: 22586dd1636c8a416af9874989a3a7c1eed778e8
+Top:    22586dd1636c8a416af9874989a3a7c1eed778e8
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-18 02:51:07 +0000
+
+Use the OpenGL stencil buffer to make drawing polygons with holes faster.
+
+1. Turn Stenciling on, updates to colour buffer off
+2. Clear stencil buffer to 0
+3. Paint outer polygon (no holes) to set that area of the stencil buffer to 1
+4. Paint polygon holes, setting those areas of the stencil buffer to 0
+5. Switch on stencil test, turn on updates to colour buffer
+6. Paint entire clip-rect through stencil and into the colour buffer
+
+** BUGS? **
+
+Probably throws up if the function is used whilst drawing the mask,
+since that uses stenciling as well, and they don't know to co-operate.
+
+For now, we don't use polygons on the mask, so its not a a problem (?).
+(OR do we.. for some pins?)
+
+
+---
+
+
