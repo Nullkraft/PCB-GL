@@ -719,39 +719,32 @@ hidgl_fill_pcb_polygon (PolygonType *poly, BoxType *clip_box, double scale)
   glClear (GL_STENCIL_BUFFER_BIT);
   glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
   glEnable (GL_STENCIL_TEST);
+
+  i = 0;
+  cc = 1;
+
+  /* Drawing operations set the stencil buffer to '1' */
   glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
   glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
 
-  /* JUST DRAW THE FIRST PIECE */
-  /* Walk the polygon structure, adding the vertices */
-  i = 0;
-  cc = 1;
+  r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
+  hidgl_flush_triangles (&buffer);
+
+  /* Drawing operations as masked to areas where the stencil buffer is '1' */
+  glColorMask (1, 1, 1, 1);                   // Enable drawing of r, g, b & a
+  glStencilFunc (GL_EQUAL, 0, 1);             // Draw only where stencil buffer is 0
+  glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    // Stencil buffer read only
+
+  /* Draw the polygon outer */
   gluTessBeginPolygon (info.tobj, NULL);
   tesselate_contour (info.tobj, &poly->Clipped->contours->head, info.vertices, &i);
   gluTessEndPolygon (info.tobj);
   hidgl_flush_triangles (&buffer);
 
-  /* Drawing operations clear the stencil buffer to '0' */
-  glStencilFunc (GL_ALWAYS, 0, 1);            // Test always passes, value written 0
-  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 0)
-
-  r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
-  hidgl_flush_triangles (&buffer);
-
-  gluDeleteTess (info.tobj);
-
-  /* Drawing operations as masked to areas where the stencil buffer is '1' */
-  glColorMask (1, 1, 1, 1);                   // Enable drawing of r, g, b & a
-  glStencilFunc (GL_EQUAL, 1, 1);             // Draw only where stencil buffer is 1
-  glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    // Stencil buffer read only
-
-  /* Draw a quad over the area of the polygon */
-  hidgl_fill_rect (clip_box->X1, clip_box->Y1, clip_box->X2, clip_box->Y2);
-  hidgl_flush_triangles (&buffer);
-
   glClear (GL_STENCIL_BUFFER_BIT);
   glDisable (GL_STENCIL_TEST);                // Disable Stencil test
 
+  gluDeleteTess (info.tobj);
   myFreeCombined ();
   free (info.vertices);
 }
