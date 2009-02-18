@@ -7,10 +7,10 @@ Use the OpenGL stencil buffer to make drawing polygons with holes faster.
 
 1. Turn Stenciling on, updates to colour buffer off
 2. Clear stencil buffer to 0
-3. Paint outer polygon (no holes) to set that area of the stencil buffer to 1
-4. Paint polygon holes, setting those areas of the stencil buffer to 0
-5. Switch on stencil test, turn on updates to colour buffer
-6. Paint entire clip-rect through stencil and into the colour buffer
+3. Paint polygon holes, setting those areas of the stencil buffer to 1
+4. Switch on stencil test (== 0), turn on updates to colour buffer
+5. Paint outer polygon through areas of the stencil buffer still 0
+6. Clear stencil buffer, switch off stencilling.
 
 ** BUGS? **
 
