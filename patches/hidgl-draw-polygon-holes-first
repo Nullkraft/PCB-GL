@@ -1,0 +1,15 @@
+Bottom: 81b947ddb73d5b463f522b2426ac3217159c8da4
+Top:    81b947ddb73d5b463f522b2426ac3217159c8da4
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-18 13:27:21 +0000
+
+HIDGL: Draw polygon holes first, then stencil.
+
+If we clear the stencil buffer to 1, then draw polygon holes as "0" into
+the stencil buffer we can then draw the outline whilst, saving an extra
+rasterisising step.
+
+
+---
+
+
