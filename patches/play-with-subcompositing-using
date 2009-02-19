@@ -1,5 +1,5 @@
 Bottom: a92cf01448f9a68082760f617c22909bd14faf2b
-Top:    7e0734a7613f0b60e6b206bfa5086a0e608f18c9
+Top:    1b89eb2966a3e19b43b0a6524099c114679b9936
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-19 17:15:16 +0000
 
@@ -10,7 +10,7 @@ Play with subcompositing using the stencil buffer
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index e2ccd6c..f93feff 100644
+index e2ccd6c..96b3314 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -949,6 +949,9 @@ DrawLayerGroup (int group, const BoxType * screen)
@@ -23,6 +23,15 @@ index e2ccd6c..f93feff 100644
  	  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
  	    continue;
  
+@@ -967,6 +970,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+           gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
+           gui->use_mask (HID_MASK_OFF);
+ #endif
++          /* Reset the compositing HACK */
++          gui->set_layer (0, group, 0);
+ 	}
+     }
+   if (n_entries > 1)
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
 index c66daca..012fed8 100644
 --- a/src/hid/common/hidgl.c
