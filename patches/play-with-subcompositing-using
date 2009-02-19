@@ -1,5 +1,5 @@
 Bottom: 86eb980a9fe002c5251841946baccb9441ed61b0
-Top:    9676d2bd39376bf42d61269517fc6cb07c23b6ef
+Top:    92ae60f4eea5493d51488664a9ab901829b2ff04
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-19 17:13:48 +0000
 
@@ -138,17 +138,3 @@ index f59f22b..935e435 100644
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
  
    /* call the drawing routine */
-diff --git a/src/polygon.c b/src/polygon.c
-index e16fd55..5e79ee8 100644
---- a/src/polygon.c
-+++ b/src/polygon.c
-@@ -253,6 +253,9 @@ original_poly (PolygonType * p)
-       }
-   }
-   END_LOOP;
-+  if (contour == NULL) {
-+    printf ("WTF? Got contour==NULL in original_poly\n");
-+  }
-   poly_PreContour (contour, TRUE);
-   /* make sure it is a positive contour */
-   if ((contour->Flags.orient) != PLF_DIR)
