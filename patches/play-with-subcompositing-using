@@ -1,5 +1,5 @@
 Bottom: a92cf01448f9a68082760f617c22909bd14faf2b
-Top:    803b3fd95265851dbd351831a0fce003effc2ee3
+Top:    7e0734a7613f0b60e6b206bfa5086a0e608f18c9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-19 17:15:16 +0000
 
@@ -95,7 +95,7 @@ index 96585ad..0821758 100644
      gport->trans_lines = TRUE;
      return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 4de2492..4dcd19a 100644
+index 4de2492..93f295c 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -987,11 +987,12 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
@@ -120,7 +120,7 @@ index 4de2492..4dcd19a 100644
 +  /* Drawing operations set the stencil buffer to '1' */
 +//  glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
 +  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
-+  /* Drawing operations as masked to areas where the stencil buffer is '1' */
++  /* Drawing operations as masked to areas where the stencil buffer is '0' */
 +  glStencilFunc (GL_GREATER, 1, 1);             // Draw only where stencil buffer is 0
 +
    glPushMatrix ();
