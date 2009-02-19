@@ -1,5 +1,5 @@
 Bottom: 86eb980a9fe002c5251841946baccb9441ed61b0
-Top:    86eb980a9fe002c5251841946baccb9441ed61b0
+Top:    9676d2bd39376bf42d61269517fc6cb07c23b6ef
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-19 17:13:48 +0000
 
@@ -8,4 +8,147 @@ Play with subcompositing using the stencil buffer
 
 ---
 
-
+diff --git a/src/draw.c b/src/draw.c
+index e2ccd6c..f93feff 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -949,6 +949,9 @@ DrawLayerGroup (int group, const BoxType * screen)
+ 	      info.arg = False;
+ 	    }
+ 
++          /* Reset the compositing HACK */
++          gui->set_layer (0, group, 0);
++
+ 	  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
+ 	    continue;
+ 
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index c66daca..012fed8 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -715,25 +715,27 @@ hidgl_fill_pcb_polygon (PolygonType *poly, BoxType *clip_box, double scale)
+   gluTessCallback(info.tobj, GLU_TESS_COMBINE, myCombine);
+   gluTessCallback(info.tobj, GLU_TESS_ERROR, myError);
+ 
+-  glClearStencil (0);
+-  glClear (GL_STENCIL_BUFFER_BIT);
++  glStencilFunc (GL_ALWAYS, 2, 2);            // Always pass stencil test, reference value is 2
++
++//  glClear (GL_STENCIL_BUFFER_BIT);
+   glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
+-  glEnable (GL_STENCIL_TEST);
++//  glEnable (GL_STENCIL_TEST);
+ 
+   i = 0;
+   cc = 1;
+ 
+   /* Drawing operations set the stencil buffer to '1' */
+-  glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
+-  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
++//  glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
++//  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
+ 
+   r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
+   hidgl_flush_triangles (&buffer);
+ 
+-  /* Drawing operations as masked to areas where the stencil buffer is '1' */
++  /* Drawing operations as masked to areas where the stencil buffer is '0' */
+   glColorMask (1, 1, 1, 1);                   // Enable drawing of r, g, b & a
+-  glStencilFunc (GL_EQUAL, 0, 1);             // Draw only where stencil buffer is 0
+-  glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    // Stencil buffer read only
++//  glStencilFunc (GL_EQUAL, 0, 1);             // Draw only where stencil buffer is 0
++//  glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    // Stencil buffer read only
++  glStencilFunc (GL_GREATER, 1, 3);                // Pass stencil test if all bits clear, reference value is 1
+ 
+   /* Draw the polygon outer */
+   gluTessBeginPolygon (info.tobj, NULL);
+@@ -741,8 +743,14 @@ hidgl_fill_pcb_polygon (PolygonType *poly, BoxType *clip_box, double scale)
+   gluTessEndPolygon (info.tobj);
+   hidgl_flush_triangles (&buffer);
+ 
++//  glClear (GL_STENCIL_BUFFER_BIT);
++//  glDisable (GL_STENCIL_TEST);                // Disable Stencil test
++  glStencilFunc (GL_GREATER, 1, 1);                // Pass stencil test stencil buffer bit 1 is 0, reference value is 1
++
++  /* Clear the second stencil buffer bits */
++  glStencilMask (2);
+   glClear (GL_STENCIL_BUFFER_BIT);
+-  glDisable (GL_STENCIL_TEST);                // Disable Stencil test
++  glStencilMask (~0);
+ 
+   gluDeleteTess (info.tobj);
+   myFreeCombined ();
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 96585ad..0821758 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -579,6 +579,10 @@ ghid_set_layer (const char *name, int group, int empty)
+ 	     && group <
+ 	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
+ 
++  /* Reset stencil buffer so we can paint anywhere */
++  hidgl_flush_triangles (&buffer);
++  glClear (GL_STENCIL_BUFFER_BIT);
++
+   if (idx >= 0 && idx < max_layer + 2) {
+     gport->trans_lines = TRUE;
+     return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 4de2492..4dcd19a 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -987,11 +987,12 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+   glLoadIdentity ();
+   glTranslatef (0.0f, 0.0f, -Z_NEAR);
+ 
++  glEnable (GL_STENCIL_TEST);
+   glClearColor (gport->bg_color.red / 65535.,
+                 gport->bg_color.green / 65535.,
+                 gport->bg_color.blue / 65535.,
+                 1.);
+-
++  glClearStencil (0);
+   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+ 
+   region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
+@@ -1067,6 +1068,13 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+   hidgl_init_triangle_array (&buffer);
+   ghid_invalidate_current_gc ();
+ 
++  /* Setup stenciling */
++  /* Drawing operations set the stencil buffer to '1' */
++//  glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
++  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
++  /* Drawing operations as masked to areas where the stencil buffer is '1' */
++  glStencilFunc (GL_GREATER, 1, 1);             // Draw only where stencil buffer is 0
++
+   glPushMatrix ();
+   glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
+             (ghid_flip_y ? -1. : 1.) / gport->zoom, 1);
+diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
+index f59f22b..935e435 100644
+--- a/src/hid/gtk/gui-pinout-preview.c
++++ b/src/hid/gtk/gui-pinout-preview.c
+@@ -219,7 +219,7 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
+                 gport->bg_color.green / 65535.,
+                 gport->bg_color.blue / 65535.,
+                 1.);
+-
++  glClearStencil (0);
+   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+ 
+   /* call the drawing routine */
+diff --git a/src/polygon.c b/src/polygon.c
+index e16fd55..5e79ee8 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -253,6 +253,9 @@ original_poly (PolygonType * p)
+       }
+   }
+   END_LOOP;
++  if (contour == NULL) {
++    printf ("WTF? Got contour==NULL in original_poly\n");
++  }
+   poly_PreContour (contour, TRUE);
+   /* make sure it is a positive contour */
+   if ((contour->Flags.orient) != PLF_DIR)
