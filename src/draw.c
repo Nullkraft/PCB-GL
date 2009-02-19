@@ -2214,8 +2214,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
   }
 
   /* if the gui has the dicer flag set then it won't accept thin draw */
-  if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB)
-      || TEST_FLAG (CLEARLINEFLAG, Polygon))
+  if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
       && !gui->poly_dicer)
     {
       hidgl_hack_poly_alpha (1.0);
@@ -2229,14 +2228,11 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
     {
       gui->set_color (Output.fgGC, color);
 
-#if 0
       if (gui->fill_pcb_polygon != NULL)
         {
           gui->fill_pcb_polygon (Output.fgGC, Polygon);
         }
       else
-#endif
-      if (!TEST_FLAG (CLEARLINEFLAG, Polygon))
         {
           if (!Polygon->NoHolesValid)
             {
@@ -2244,7 +2240,6 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
             }
           if (Polygon->NoHoles)
             {
-              printf ("Hello world\n");
               PolygonType poly = *Polygon;
               poly.Clipped = Polygon->NoHoles;
               do {

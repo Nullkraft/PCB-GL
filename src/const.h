@@ -189,7 +189,7 @@ Strip hierarchy when displaying this element's refdes.
 #define HIDENAMEFLAG		0x0010	/* hide the element name */
 #define	DISPLAYNAMEFLAG		0x0020	/* display the names of pins/pads */
 					/* of an element */
-#define CLEARLINEFLAG		0x0400 //0x0020	/* line doesn't touch polygons */
+#define CLEARLINEFLAG		0x0020	/* line doesn't touch polygons */
 #define FULLPOLYFLAG            0x0020	/* full polygon is drawn (i.e. all parts instead of only the biggest one) */
 #define	SELECTEDFLAG		0x0040	/* object has been selected */
 #define	ONSOLDERFLAG		0x0080	/* element is on bottom side */
