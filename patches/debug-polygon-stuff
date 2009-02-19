@@ -1,5 +1,5 @@
 Bottom: a2f4f4db03ad4d0dfe7e1293e34f15ad2f7e366f
-Top:    a2f4f4db03ad4d0dfe7e1293e34f15ad2f7e366f
+Top:    c3cbc4f86fe88e79e2c86d3e4b04373e5b987706
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-19 00:02:00 +0000
 
@@ -8,4 +8,44 @@ Debug polygon stuff
 
 ---
 
-
+diff --git a/src/polygon.c b/src/polygon.c
+index 3594946..006705c 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -271,6 +271,11 @@ ClipOriginal (PolygonType * poly)
+   POLYAREA *p, *result;
+   int r;
+ 
++  printf ("Clipping against original contour\n");
++
++  /* Lets not bother for now */
++//  return 1;
++
+   p = original_poly (poly);
+   r = poly_Boolean_free (poly->Clipped, p, &result, PBO_ISECT);
+   if (r != err_ok)
+@@ -1018,8 +1023,10 @@ UnsubtractArc (ArcType * arc, LayerType * l, PolygonType * p)
+ 
+   if (!np)
+     return 0;
++  printf ("Unsubtract call\n");
+   if (!Unsubtract (np, p))
+     return 0;
++  printf ("DONE call\n");
+   clearPoly (PCB->Data, l, p, (const BoxType *) arc, 2 * UNSUBTRACT_BLOAT);
+   return 1;
+ }
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 38b4505..46bcd2e 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -105,7 +105,8 @@ if (((ptr) = malloc(sizeof(type))) == NULL) \
+ #undef DEBUG_JUMP
+ #undef DEBUG_GATHER
+ #undef DEBUG_ANGLE
+-#undef DEBUG
++#define DEBUG_INTERSECT
++#define DEBUG
+ #ifdef DEBUG
+ #define DEBUGP(...) fprintf(stderr, ## __VA_ARGS__)
+ #else
