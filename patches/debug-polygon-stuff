@@ -1,15 +1,16 @@
-Bottom: a2f4f4db03ad4d0dfe7e1293e34f15ad2f7e366f
-Top:    c3cbc4f86fe88e79e2c86d3e4b04373e5b987706
+Bottom: 86eb980a9fe002c5251841946baccb9441ed61b0
+Top:    cd1e43ebca974a7fd58a8100c96d32794059f31e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-19 00:02:00 +0000
+Date:   2009-02-19 00:02:12 +0000
 
 Debug polygon stuff
+
 
 
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 3594946..006705c 100644
+index e16fd55..66c7737 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -271,6 +271,11 @@ ClipOriginal (PolygonType * poly)
@@ -24,7 +25,7 @@ index 3594946..006705c 100644
    p = original_poly (poly);
    r = poly_Boolean_free (poly->Clipped, p, &result, PBO_ISECT);
    if (r != err_ok)
-@@ -1018,8 +1023,10 @@ UnsubtractArc (ArcType * arc, LayerType * l, PolygonType * p)
+@@ -1052,8 +1057,10 @@ UnsubtractArc (ArcType * arc, LayerType * l, PolygonType * p)
  
    if (!np)
      return 0;
