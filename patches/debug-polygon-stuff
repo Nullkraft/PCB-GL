@@ -1,5 +1,5 @@
 Bottom: 86eb980a9fe002c5251841946baccb9441ed61b0
-Top:    cd1e43ebca974a7fd58a8100c96d32794059f31e
+Top:    14e9fab0a74c4d49485c383bbf99ab00aedae781
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-19 00:02:12 +0000
 
@@ -9,6 +9,77 @@ Debug polygon stuff
 
 ---
 
+diff --git a/src/const.h b/src/const.h
+index 0cbfd0e..c10f283 100644
+--- a/src/const.h
++++ b/src/const.h
+@@ -189,7 +189,7 @@ Strip hierarchy when displaying this element's refdes.
+ #define HIDENAMEFLAG		0x0010	/* hide the element name */
+ #define	DISPLAYNAMEFLAG		0x0020	/* display the names of pins/pads */
+ 					/* of an element */
+-#define CLEARLINEFLAG		0x0020	/* line doesn't touch polygons */
++#define CLEARLINEFLAG		0x0400 //0x0020	/* line doesn't touch polygons */
+ #define FULLPOLYFLAG            0x0020	/* full polygon is drawn (i.e. all parts instead of only the biggest one) */
+ #define	SELECTEDFLAG		0x0040	/* object has been selected */
+ #define	ONSOLDERFLAG		0x0080	/* element is on bottom side */
+diff --git a/src/draw.c b/src/draw.c
+index e2ccd6c..9dd423d 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -2214,7 +2214,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+   }
+ 
+   /* if the gui has the dicer flag set then it won't accept thin draw */
+-  if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
++  if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB)
++      || TEST_FLAG (CLEARLINEFLAG, Polygon))
+       && !gui->poly_dicer)
+     {
+       hidgl_hack_poly_alpha (1.0);
+@@ -2228,11 +2229,14 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+     {
+       gui->set_color (Output.fgGC, color);
+ 
++#if 0
+       if (gui->fill_pcb_polygon != NULL)
+         {
+           gui->fill_pcb_polygon (Output.fgGC, Polygon);
+         }
+       else
++#endif
++      if (!TEST_FLAG (CLEARLINEFLAG, Polygon))
+         {
+           if (!Polygon->NoHolesValid)
+             {
+@@ -2240,6 +2244,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+             }
+           if (Polygon->NoHoles)
+             {
++              printf ("Hello world\n");
+               PolygonType poly = *Polygon;
+               poly.Clipped = Polygon->NoHoles;
+               do {
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index c66daca..2917472 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -689,6 +689,8 @@ hidgl_fill_pcb_polygon (PolygonType *poly, BoxType *clip_box, double scale)
+   PLINE *contour;
+   struct do_hole_info info;
+ 
++  printf ("Begin filling pcb polygon\n");
++
+ 
+   global_scale = scale;
+ 
+@@ -747,6 +749,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, BoxType *clip_box, double scale)
+   gluDeleteTess (info.tobj);
+   myFreeCombined ();
+   free (info.vertices);
++  printf ("End filling pcb polygon\n");
+ }
+ 
+ void
 diff --git a/src/polygon.c b/src/polygon.c
 index e16fd55..66c7737 100644
 --- a/src/polygon.c
@@ -37,16 +108,39 @@ index e16fd55..66c7737 100644
    return 1;
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 38b4505..46bcd2e 100644
+index 38b4505..37b376b 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -105,7 +105,8 @@ if (((ptr) = malloc(sizeof(type))) == NULL) \
- #undef DEBUG_JUMP
- #undef DEBUG_GATHER
- #undef DEBUG_ANGLE
+@@ -100,12 +100,13 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
+ if (((ptr) = malloc(sizeof(type))) == NULL) \
+     error(err_no_memory);
+ 
+-#undef DEBUG_LABEL
+-#undef DEBUG_ALL_LABELS
+-#undef DEBUG_JUMP
+-#undef DEBUG_GATHER
+-#undef DEBUG_ANGLE
 -#undef DEBUG
++#define DEBUG_LABEL
++#define DEBUG_ALL_LABELS
++#define DEBUG_JUMP
++#define DEBUG_GATHER
++#define DEBUG_ANGLE
 +#define DEBUG_INTERSECT
 +#define DEBUG
  #ifdef DEBUG
  #define DEBUGP(...) fprintf(stderr, ## __VA_ARGS__)
  #else
+diff --git a/src/strflags.c b/src/strflags.c
+index 2c2beea..28d2181 100644
+--- a/src/strflags.c
++++ b/src/strflags.c
+@@ -99,7 +99,7 @@ static FlagBitsType object_flagbits[] = {
+   { HIDENAMEFLAG, N ("hidename"), ELEMENT_TYPE },
+   { DISPLAYNAMEFLAG, N ("showname"), ELEMENT_TYPE },
+   { STRIPHIERFLAG, N ("striphierarchy"), ELEMENT_TYPE },
+-  { CLEARLINEFLAG, N ("clearline"), LINE_TYPE | ARC_TYPE | TEXT_TYPE },
++  { CLEARLINEFLAG, N ("clearline"), LINE_TYPE | ARC_TYPE | TEXT_TYPE | POLYGON_TYPE},
+   { SELECTEDFLAG, N ("selected"), ALL_TYPES },
+   { ONSOLDERFLAG, N ("onsolder"), ELEMENT_TYPE | PAD_TYPE },
+   { AUTOFLAG, N ("auto"), ALL_TYPES },
