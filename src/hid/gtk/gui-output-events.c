@@ -1072,7 +1072,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   /* Drawing operations set the stencil buffer to '1' */
 //  glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
   glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
-  /* Drawing operations as masked to areas where the stencil buffer is '1' */
+  /* Drawing operations as masked to areas where the stencil buffer is '0' */
   glStencilFunc (GL_GREATER, 1, 1);             // Draw only where stencil buffer is 0
 
   glPushMatrix ();
