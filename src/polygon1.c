@@ -105,7 +105,8 @@ if (((ptr) = malloc(sizeof(type))) == NULL) \
 #undef DEBUG_JUMP
 #undef DEBUG_GATHER
 #undef DEBUG_ANGLE
-#undef DEBUG
+#define DEBUG_INTERSECT
+#define DEBUG
 #ifdef DEBUG
 #define DEBUGP(...) fprintf(stderr, ## __VA_ARGS__)
 #else
