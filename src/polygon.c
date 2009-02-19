@@ -253,9 +253,6 @@ original_poly (PolygonType * p)
       }
   }
   END_LOOP;
-  if (contour == NULL) {
-    printf ("WTF? Got contour==NULL in original_poly\n");
-  }
   poly_PreContour (contour, TRUE);
   /* make sure it is a positive contour */
   if ((contour->Flags.orient) != PLF_DIR)
