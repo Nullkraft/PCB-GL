@@ -1,0 +1,22 @@
+Bottom: 803b3fd95265851dbd351831a0fce003effc2ee3
+Top:    7e0734a7613f0b60e6b206bfa5086a0e608f18c9
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-19 17:21:08 +0000
+
+Refresh of play-with-subcompositing-using
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 4dcd19a..93f295c 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -1072,7 +1072,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+   /* Drawing operations set the stencil buffer to '1' */
+ //  glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
+   glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
+-  /* Drawing operations as masked to areas where the stencil buffer is '1' */
++  /* Drawing operations as masked to areas where the stencil buffer is '0' */
+   glStencilFunc (GL_GREATER, 1, 1);             // Draw only where stencil buffer is 0
+ 
+   glPushMatrix ();
