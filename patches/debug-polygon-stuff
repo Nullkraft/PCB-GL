@@ -1,5 +1,5 @@
 Bottom: 86eb980a9fe002c5251841946baccb9441ed61b0
-Top:    14e9fab0a74c4d49485c383bbf99ab00aedae781
+Top:    dd18943d686585fc7bb01627830fa2aedf597b5c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-19 00:02:12 +0000
 
@@ -9,56 +9,6 @@ Debug polygon stuff
 
 ---
 
-diff --git a/src/const.h b/src/const.h
-index 0cbfd0e..c10f283 100644
---- a/src/const.h
-+++ b/src/const.h
-@@ -189,7 +189,7 @@ Strip hierarchy when displaying this element's refdes.
- #define HIDENAMEFLAG		0x0010	/* hide the element name */
- #define	DISPLAYNAMEFLAG		0x0020	/* display the names of pins/pads */
- 					/* of an element */
--#define CLEARLINEFLAG		0x0020	/* line doesn't touch polygons */
-+#define CLEARLINEFLAG		0x0400 //0x0020	/* line doesn't touch polygons */
- #define FULLPOLYFLAG            0x0020	/* full polygon is drawn (i.e. all parts instead of only the biggest one) */
- #define	SELECTEDFLAG		0x0040	/* object has been selected */
- #define	ONSOLDERFLAG		0x0080	/* element is on bottom side */
-diff --git a/src/draw.c b/src/draw.c
-index e2ccd6c..9dd423d 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -2214,7 +2214,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
-   }
- 
-   /* if the gui has the dicer flag set then it won't accept thin draw */
--  if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-+  if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB)
-+      || TEST_FLAG (CLEARLINEFLAG, Polygon))
-       && !gui->poly_dicer)
-     {
-       hidgl_hack_poly_alpha (1.0);
-@@ -2228,11 +2229,14 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
-     {
-       gui->set_color (Output.fgGC, color);
- 
-+#if 0
-       if (gui->fill_pcb_polygon != NULL)
-         {
-           gui->fill_pcb_polygon (Output.fgGC, Polygon);
-         }
-       else
-+#endif
-+      if (!TEST_FLAG (CLEARLINEFLAG, Polygon))
-         {
-           if (!Polygon->NoHolesValid)
-             {
-@@ -2240,6 +2244,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
-             }
-           if (Polygon->NoHoles)
-             {
-+              printf ("Hello world\n");
-               PolygonType poly = *Polygon;
-               poly.Clipped = Polygon->NoHoles;
-               do {
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
 index c66daca..2917472 100644
 --- a/src/hid/common/hidgl.c
@@ -80,6 +30,19 @@ index c66daca..2917472 100644
  }
  
  void
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 96585ad..8eba171 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -1484,7 +1484,7 @@ HID ghid_hid = {
+   ghid_draw_rect,
+   ghid_fill_circle,
+   ghid_fill_polygon,
+-  ghid_fill_pcb_polygon,
++  NULL, // ghid_fill_pcb_polygon,
+   ghid_fill_rect,
+ 
+   ghid_calibrate,
 diff --git a/src/polygon.c b/src/polygon.c
 index e16fd55..66c7737 100644
 --- a/src/polygon.c
@@ -108,39 +71,77 @@ index e16fd55..66c7737 100644
    return 1;
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 38b4505..37b376b 100644
+index 38b4505..c67a318 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -100,12 +100,13 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
- if (((ptr) = malloc(sizeof(type))) == NULL) \
-     error(err_no_memory);
- 
--#undef DEBUG_LABEL
--#undef DEBUG_ALL_LABELS
--#undef DEBUG_JUMP
--#undef DEBUG_GATHER
--#undef DEBUG_ANGLE
+@@ -105,7 +105,7 @@ if (((ptr) = malloc(sizeof(type))) == NULL) \
+ #undef DEBUG_JUMP
+ #undef DEBUG_GATHER
+ #undef DEBUG_ANGLE
 -#undef DEBUG
-+#define DEBUG_LABEL
-+#define DEBUG_ALL_LABELS
-+#define DEBUG_JUMP
-+#define DEBUG_GATHER
-+#define DEBUG_ANGLE
-+#define DEBUG_INTERSECT
 +#define DEBUG
  #ifdef DEBUG
  #define DEBUGP(...) fprintf(stderr, ## __VA_ARGS__)
  #else
-diff --git a/src/strflags.c b/src/strflags.c
-index 2c2beea..28d2181 100644
---- a/src/strflags.c
-+++ b/src/strflags.c
-@@ -99,7 +99,7 @@ static FlagBitsType object_flagbits[] = {
-   { HIDENAMEFLAG, N ("hidename"), ELEMENT_TYPE },
-   { DISPLAYNAMEFLAG, N ("showname"), ELEMENT_TYPE },
-   { STRIPHIERFLAG, N ("striphierarchy"), ELEMENT_TYPE },
--  { CLEARLINEFLAG, N ("clearline"), LINE_TYPE | ARC_TYPE | TEXT_TYPE },
-+  { CLEARLINEFLAG, N ("clearline"), LINE_TYPE | ARC_TYPE | TEXT_TYPE | POLYGON_TYPE},
-   { SELECTEDFLAG, N ("selected"), ALL_TYPES },
-   { ONSOLDERFLAG, N ("onsolder"), ELEMENT_TYPE | PAD_TYPE },
-   { AUTOFLAG, N ("auto"), ALL_TYPES },
+@@ -2466,10 +2466,15 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
+     {
+ 
+ #ifdef DEBUG
+-      if (!poly_Valid (a))
++      if (!poly_Valid (a)) {
++        printf ("Polygon A fubar\n");
++        *(char *)0 = 0;
+ 	return -1;
+-      if (!poly_Valid (b))
++      }
++      if (!poly_Valid (b)) {
++        printf ("Polygon B fubar\n");
+ 	return -1;
++      }
+ #endif
+       M_POLYAREA_intersect (&e, a, b, TRUE);
+ 
+@@ -3098,12 +3103,14 @@ poly_Valid (POLYAREA * p)
+ {
+   PLINE *c;
+ 
+-  if ((p == NULL) || (p->contours == NULL))
++  if ((p == NULL) || (p->contours == NULL)) {
++    printf ("p or p->contours was NULL\n");
+     return FALSE;
++  }
+ 
+   if (p->contours->Flags.orient == PLF_INV || poly_ChkContour (p->contours))
+     {
+-#ifndef NDEBUG
++//#ifndef NDEBUG
+       VNODE *v;
+       DEBUGP ("Invalid Outer PLINE\n");
+       if (p->contours->Flags.orient == PLF_INV)
+@@ -3117,7 +3124,7 @@ poly_Valid (POLYAREA * p)
+ 	  fprintf (stderr, "Line [%d %d ", v->point[0], v->point[1]);
+ 	}
+       while ((v = v->next) != &p->contours->head);
+-#endif
++//#endif
+       return FALSE;
+     }
+   for (c = p->contours->next; c != NULL; c = c->next)
+@@ -3125,7 +3132,7 @@ poly_Valid (POLYAREA * p)
+       if (c->Flags.orient == PLF_DIR ||
+ 	  poly_ChkContour (c) || !poly_ContourInContour (p->contours, c))
+ 	{
+-#ifndef NDEBUG
++//#ifndef NDEBUG
+ 	  VNODE *v;
+ 	  DEBUGP ("Invalid Inner PLINE orient = %d\n", c->Flags.orient);
+ 	  if (c->Flags.orient == PLF_DIR)
+@@ -3142,7 +3149,7 @@ poly_Valid (POLYAREA * p)
+ 	      fprintf (stderr, "Line [%d %d ", v->point[0], v->point[1]);
+ 	    }
+ 	  while ((v = v->next) != &c->head);
+-#endif
++//#endif
+ 	  return FALSE;
+ 	}
+     }
