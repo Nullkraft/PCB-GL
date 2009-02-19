@@ -1,0 +1,22 @@
+Bottom: 7e0734a7613f0b60e6b206bfa5086a0e608f18c9
+Top:    1b89eb2966a3e19b43b0a6524099c114679b9936
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-19 19:41:43 +0000
+
+Refresh of play-with-subcompositing-using
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index f93feff..96b3314 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -970,6 +970,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+           gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
+           gui->use_mask (HID_MASK_OFF);
+ #endif
++          /* Reset the compositing HACK */
++          gui->set_layer (0, group, 0);
+ 	}
+     }
+   if (n_entries > 1)
