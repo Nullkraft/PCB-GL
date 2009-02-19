@@ -579,6 +579,10 @@ ghid_set_layer (const char *name, int group, int empty)
 	     && group <
 	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
 
+  /* Reset stencil buffer so we can paint anywhere */
+  hidgl_flush_triangles (&buffer);
+  glClear (GL_STENCIL_BUFFER_BIT);
+
   if (idx >= 0 && idx < max_layer + 2) {
     gport->trans_lines = TRUE;
     return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
