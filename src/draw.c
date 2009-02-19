@@ -949,6 +949,9 @@ DrawLayerGroup (int group, const BoxType * screen)
 	      info.arg = False;
 	    }
 
+          /* Reset the compositing HACK */
+          gui->set_layer (0, group, 0);
+
 	  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
 	    continue;
 
