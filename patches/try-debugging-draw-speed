@@ -1,5 +1,5 @@
 Bottom: 1b89eb2966a3e19b43b0a6524099c114679b9936
-Top:    1b89eb2966a3e19b43b0a6524099c114679b9936
+Top:    dcc1ec41a7bd36f6b68d1da3c23e2c0e5e8a9043
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-20 21:25:17 +0000
 
@@ -8,4 +8,147 @@ Try debugging draw speed
 
 ---
 
-
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 012fed8..c35ba2c 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -176,7 +176,6 @@ draw_grid ()
+ 
+   glDisableClientState (GL_VERTEX_ARRAY);
+   glDisable (GL_COLOR_LOGIC_OP);
+-  glFlush ();
+ }
+ 
+ #endif
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 0821758..6918ad9 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -470,7 +470,6 @@ draw_grid ()
+ 
+   glDisableClientState (GL_VERTEX_ARRAY);
+   glDisable (GL_COLOR_LOGIC_OP);
+-//  glFlush ();
+ }
+ 
+ /* ------------------------------------------------------------ */
+@@ -581,6 +580,7 @@ ghid_set_layer (const char *name, int group, int empty)
+ 
+   /* Reset stencil buffer so we can paint anywhere */
+   hidgl_flush_triangles (&buffer);
++//  glClear (GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   glClear (GL_STENCIL_BUFFER_BIT);
+ 
+   if (idx >= 0 && idx < max_layer + 2) {
+@@ -2105,13 +2105,12 @@ Benchmark (int argc, char **argv, int x, int y)
+     {
+       gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
+       gdk_window_process_updates (gport->drawing_area->window, FALSE);
+-      gdk_display_sync (display);
+       time (&end);
+       i++;
+     }
+   while (end - start < 10);
+ 
+-  printf ("%g redraws per second\n", i / 10.0);
++  printf ("%g redraws per second\n", (double)i / (double)(end-start));
+ 
+   return 0;
+ }
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 93f295c..a1d06a6 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -427,7 +427,7 @@ ghid_show_crosshair (gboolean show)
+ 
+   glBegin (GL_LINES);
+ 
+-#if 1
++#if 0
+   if (x_prev >= 0)
+     {
+       draw_crosshair (x_prev, y_prev);
+@@ -445,7 +445,7 @@ ghid_show_crosshair (gboolean show)
+     {
+       glBegin (GL_QUADS);
+ 
+-#if 1
++#if 0
+       if (x_prev >= 0)
+         {
+           glVertex2i (0,                  y_prev - VCD);
+@@ -975,10 +975,12 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+               widget->allocation.height - ev->area.height - ev->area.y,
+               ev->area.width, ev->area.height);
+ 
++#if 1
+   glEnable (GL_SCISSOR_TEST);
+   glScissor (ev->area.x,
+              widget->allocation.height - ev->area.height - ev->area.y,
+              ev->area.width, ev->area.height);
++#endif
+ 
+   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity ();
+@@ -1021,47 +1023,41 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+              gport->offlimits_color.green / 65535.,
+              gport->offlimits_color.blue / 65535.);
+ 
++  glBegin (GL_QUADS);
+   if (eleft > 0)
+     {
+-      glBegin (GL_QUADS);
+       glVertex2i (0, 0);
+       glVertex2i (eleft, 0);
+       glVertex2i (eleft, gport->height);
+       glVertex2i (0, gport->height);
+-      glEnd ();
+     }
+   else
+     eleft = 0;
+ 
+   if (eright < gport->width)
+     {
+-      glBegin (GL_QUADS);
+       glVertex2i (eright, 0);
+       glVertex2i (gport->width, 0);
+       glVertex2i (gport->width, gport->height);
+       glVertex2i (eright, gport->width);
+-      glEnd ();
+     }
+   else
+     eright = gport->width;
+   if (etop > 0)
+     {
+-      glBegin (GL_QUADS);
+       glVertex2i (eleft, 0);
+       glVertex2i (eright, 0);
+       glVertex2i (eright, etop);
+       glVertex2i (eleft, etop);
+-      glEnd ();
+     }
+   if (ebottom < gport->height)
+     {
+-      glBegin (GL_QUADS);
+       glVertex2i (eleft, ebottom);
+       glVertex2i (eright + 1, ebottom);
+       glVertex2i (eright + 1, gport->height);
+       glVertex2i (eleft, gport->height);
+-      glEnd ();
+     }
++  glEnd ();
+ 
+   /* TODO: Background image */
+ 
+@@ -1070,10 +1066,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+ 
+   /* Setup stenciling */
+   /* Drawing operations set the stencil buffer to '1' */
+-//  glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
++  glStencilFunc (GL_GREATER, 1, 1);             // Draw only where stencil buffer is 0
+   glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
+   /* Drawing operations as masked to areas where the stencil buffer is '0' */
+-  glStencilFunc (GL_GREATER, 1, 1);             // Draw only where stencil buffer is 0
+ 
+   glPushMatrix ();
+   glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
