@@ -165,13 +165,6 @@ nogui_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 }
 
 static void
-nogui_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
-                            const BoxType *clip_box)
-{
-  CRASH;
-}
-
-static void
 nogui_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
 {
   CRASH;
@@ -378,7 +371,7 @@ HID hid_nogui = {
   nogui_fill_circle,
   nogui_fill_polygon,
   nogui_fill_pcb_polygon,
-  nogui_thindraw_pcb_polygon,
+  0 /* nogui_thindraw_pcb_polygon */ ,
   nogui_fill_rect,
   nogui_calibrate,
   nogui_shift_is_pressed,
