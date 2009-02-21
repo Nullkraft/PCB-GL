@@ -1,5 +1,5 @@
 Bottom: 69732bd9997027b8e4c0d0739a7b35f17ebd2f59
-Top:    1238998992b7973f475d4d4959f419d7f03aa417
+Top:    7220a4f68d3fa9ef8cd5c061f67e241f919c7bdf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-21 18:51:20 +0000
 
@@ -203,7 +203,7 @@ index ca10f83..57fb94e 100644
    while (save != ans);
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 539e2c9..2d18e08 100644
+index 539e2c9..43e167d 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -45,6 +45,8 @@
@@ -596,11 +596,16 @@ index 539e2c9..2d18e08 100644
  }
  
  POLYAREA *
-@@ -2352,6 +2388,7 @@ poly_FreeContours (PLINE **pline)
-       *pline = (*pl)->next;
-       poly_DelContour (pl);
+@@ -2364,11 +2400,13 @@ poly_Free (POLYAREA ** p)
+   for (cur = (*p)->f; cur != *p; cur = (*p)->f)
+     {
+       poly_FreeContours (&cur->contours);
++      r_destroy_tree (&cur->contour_tree);
+       cur->f->b = cur->b;
+       cur->b->f = cur->f;
+       free (cur);
      }
-+  r_destroy_tree (&P->contour_tree);
+     poly_FreeContours (&cur->contours);
++    r_destroy_tree (&cur->contour_tree);
+   free (*p), *p = NULL;
  }
- 
- void
