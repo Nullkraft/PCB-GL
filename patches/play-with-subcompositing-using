@@ -1,7 +1,7 @@
-Bottom: dd0971512493e67942c29b77a3d3ae357bf0e803
-Top:    acca2c56bb985d2bfdeb56adeec7bc4ff4985f3c
+Bottom: f9971c5b40daabda203772cd10e1c990126057fb
+Top:    5500f8fe1c6f50d72fa1ceddb91d0facb6a6e761
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-21 14:33:20 +0000
+Date:   2009-02-21 20:10:32 +0000
 
 Play with subcompositing using the stencil buffer
 
@@ -11,10 +11,10 @@ Play with subcompositing using the stencil buffer
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index d3d1121..3a1fd85 100644
+index 11b1c47..6d3f763 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -949,6 +949,9 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -948,6 +948,9 @@ DrawLayerGroup (int group, const BoxType * screen)
  	      info.arg = False;
  	    }
  
@@ -24,7 +24,7 @@ index d3d1121..3a1fd85 100644
  	  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
  	    continue;
  
-@@ -967,6 +970,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -966,6 +969,8 @@ DrawLayerGroup (int group, const BoxType * screen)
            gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
            gui->use_mask (HID_MASK_OFF);
  #endif
@@ -34,10 +34,10 @@ index d3d1121..3a1fd85 100644
      }
    if (n_entries > 1)
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 6df5459..e93708f 100644
+index bd91bbb..c8e3998 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -729,25 +729,27 @@ hidgl_fill_pcb_polygon (PolygonType *poly, BoxType *clip_box, double scale)
+@@ -729,25 +729,27 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    gluTessCallback(info.tobj, GLU_TESS_COMBINE, myCombine);
    gluTessCallback(info.tobj, GLU_TESS_ERROR, myError);
  
@@ -73,7 +73,7 @@ index 6df5459..e93708f 100644
  
    /* Draw the polygon outer */
    gluTessBeginPolygon (info.tobj, NULL);
-@@ -755,8 +757,14 @@ hidgl_fill_pcb_polygon (PolygonType *poly, BoxType *clip_box, double scale)
+@@ -755,8 +757,14 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    gluTessEndPolygon (info.tobj);
    hidgl_flush_triangles (&buffer);
  
@@ -90,10 +90,10 @@ index 6df5459..e93708f 100644
    gluDeleteTess (info.tobj);
    myFreeCombined ();
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index eb9c991..505a941 100644
+index 35720ae..55387c9 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -579,6 +579,10 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -580,6 +580,10 @@ ghid_set_layer (const char *name, int group, int empty)
  	     && group <
  	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
  
