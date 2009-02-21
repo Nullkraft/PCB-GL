@@ -987,11 +987,12 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   glLoadIdentity ();
   glTranslatef (0.0f, 0.0f, -Z_NEAR);
 
+  glEnable (GL_STENCIL_TEST);
   glClearColor (gport->bg_color.red / 65535.,
                 gport->bg_color.green / 65535.,
                 gport->bg_color.blue / 65535.,
                 1.);
-
+  glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
   region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
@@ -1066,6 +1067,13 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
+
+  /* Setup stenciling */
+  /* Drawing operations set the stencil buffer to '1' */
+//  glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
+  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
+  /* Drawing operations as masked to areas where the stencil buffer is '0' */
+  glStencilFunc (GL_GREATER, 1, 1);             // Draw only where stencil buffer is 0
 
   glPushMatrix ();
   glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
