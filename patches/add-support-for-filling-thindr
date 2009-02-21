@@ -1,0 +1,16 @@
+Bottom: 0a5e163e46f57cb2529c919d6ea285f5c4844b2c
+Top:    0a5e163e46f57cb2529c919d6ea285f5c4844b2c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-21 15:07:26 +0000
+
+Add support for filling / thindrawing raw polygons to the HID interface
+
+Refactor core polygon drawing to use these member functions, and split
+the old code which used the HID's fill_polygon and draw_line functions
+into a helper function which the guis now use to convert the polygon
+into the primitives it knows how to draw.
+
+
+---
+
+
