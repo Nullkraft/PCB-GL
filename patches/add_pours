@@ -1,5 +1,5 @@
 Bottom: 4a8892615264752007a20c0bbe802bc5416dd208
-Top:    cb1114478940cb1b0d7fabdc73f72ccae08b29e6
+Top:    5978fd8303959184c79386b4929214d93e855a74
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-21 19:18:59 +0000
 
@@ -1972,7 +1972,7 @@ index ef22f73..9f0e843 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index afe2f62..113cf81 100644
+index afe2f62..29846a0 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -100,6 +100,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
@@ -2067,7 +2067,7 @@ index afe2f62..113cf81 100644
 + * lowlevel drawing routine for pours
 + */
 +static void
-+DrawPourLowLevel (PourTypePtr Pour, void *data)
++DrawPourLowLevel (PourTypePtr Pour)
 +{
 +  int *x, *y, n, i;
 +
@@ -2147,6 +2147,15 @@ index afe2f62..113cf81 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
+@@ -2150,7 +2246,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+   if (gui->thindraw_pcb_polygon != NULL &&
+       (TEST_FLAG (THINDRAWFLAG, PCB) ||
+        TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
+-       TEST_FLAG (CLEARLINEFLAG, Polygon))) {
++       TEST_FLAG (CLEARLINEFLAG, Polygon)))
+     gui->thindraw_pcb_polygon (Output.fgGC, Polygon, clip_box);
+   else
+     gui->fill_pcb_polygon (Output.fgGC, Polygon, clip_box);
 @@ -2434,6 +2530,18 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
