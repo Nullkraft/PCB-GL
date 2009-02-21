@@ -1,16 +1,17 @@
-Bottom: a92cf01448f9a68082760f617c22909bd14faf2b
-Top:    1b89eb2966a3e19b43b0a6524099c114679b9936
+Bottom: e967874b10da2ccdea14f9b96428c275e28cfe4e
+Top:    4020010c3346fe6f9c152e6ec332123c9c5015bc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-19 17:15:16 +0000
+Date:   2009-02-21 02:37:50 +0000
 
 Play with subcompositing using the stencil buffer
+
 
 
 
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index e2ccd6c..96b3314 100644
+index 30362f4..9d8c621 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -949,6 +949,9 @@ DrawLayerGroup (int group, const BoxType * screen)
@@ -33,10 +34,10 @@ index e2ccd6c..96b3314 100644
      }
    if (n_entries > 1)
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index c66daca..012fed8 100644
+index 11d5595..14a974a 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -715,25 +715,27 @@ hidgl_fill_pcb_polygon (PolygonType *poly, BoxType *clip_box, double scale)
+@@ -729,25 +729,27 @@ hidgl_fill_pcb_polygon (PolygonType *poly, BoxType *clip_box, double scale)
    gluTessCallback(info.tobj, GLU_TESS_COMBINE, myCombine);
    gluTessCallback(info.tobj, GLU_TESS_ERROR, myError);
  
@@ -72,7 +73,7 @@ index c66daca..012fed8 100644
  
    /* Draw the polygon outer */
    gluTessBeginPolygon (info.tobj, NULL);
-@@ -741,8 +743,14 @@ hidgl_fill_pcb_polygon (PolygonType *poly, BoxType *clip_box, double scale)
+@@ -755,8 +757,14 @@ hidgl_fill_pcb_polygon (PolygonType *poly, BoxType *clip_box, double scale)
    gluTessEndPolygon (info.tobj);
    hidgl_flush_triangles (&buffer);
  
