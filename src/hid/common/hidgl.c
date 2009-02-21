@@ -302,10 +302,11 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
   int circular_caps = 0;
   int hairline = 0;
 
-  if (width == 0.0) {
+  if (width == 0.0)
     hairline = 1;
-    width = 1.0;
-  }
+
+  if (width < scale)
+    width = scale;
 
   deltax = x2 - x1;
   deltay = y2 - y1;
@@ -336,12 +337,8 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
   switch (cap) {
     case Trace_Cap:
     case Round_Cap:
-      /* Don't bother capping hairlines */
-      if (hairline) {
-        circular_caps = 1;
-        break;
-      }
-      /* Fall through */
+      circular_caps = 1;
+      break;
 
     case Square_Cap:
     case Beveled_Cap:
@@ -359,7 +356,9 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
   hidgl_add_triangle (&buffer, x1 - wdx, y1 - wdy,
                                x2 + wdx, y2 + wdy,
                                x1 + wdx, y1 + wdy);
-  if (circular_caps)
+
+  /* Don't bother capping hairlines */
+  if (circular_caps && !hairline)
     {
       draw_cap (width, x1, y1, angle, scale);
       draw_cap (width, x2, y2, angle + 180., scale);
@@ -386,10 +385,11 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
   int i;
   int hairline = 0;
 
-  if (width == 0.0) {
+  if (width == 0.0)
     hairline = 1;
-    width = 1.0;
-  }
+
+  if (width < scale)
+    width = scale;
 
   inner_r = rx - width / 2.;
   outer_r = rx + width / 2.;

@@ -880,23 +880,12 @@ use_gc (hidGC gc)
   ghid_set_color (gc, gc->colorname);
 }
 
-static inline double
-clamp_min_width (double width)
-{
-  double min_width = gport->zoom;
-
-  if (width < min_width)
-    return min_width;
-
-  return width;
-}
-
 void
 ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
 {
   USE_GC (gc);
 
-  hidgl_draw_line (gc->cap, clamp_min_width (gc->width), x1, y1, x2, y2, gport->zoom);
+  hidgl_draw_line (gc->cap, gc->width, x1, y1, x2, y2, gport->zoom);
 }
 
 void
@@ -905,7 +894,7 @@ ghid_draw_arc (hidGC gc, int cx, int cy, int xradius, int yradius,
 {
   USE_GC (gc);
 
-  hidgl_draw_arc (clamp_min_width (gc->width), cx, cy, xradius, yradius,
+  hidgl_draw_arc (gc->width, cx, cy, xradius, yradius,
                   start_angle, delta_angle, gport->zoom);
 }
 
