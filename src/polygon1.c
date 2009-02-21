@@ -2388,7 +2388,6 @@ poly_FreeContours (PLINE **pline)
       *pline = (*pl)->next;
       poly_DelContour (pl);
     }
-  r_destroy_tree (&P->contour_tree);
 }
 
 void
@@ -2401,11 +2400,13 @@ poly_Free (POLYAREA ** p)
   for (cur = (*p)->f; cur != *p; cur = (*p)->f)
     {
       poly_FreeContours (&cur->contours);
+      r_destroy_tree (&cur->contour_tree);
       cur->f->b = cur->b;
       cur->b->f = cur->f;
       free (cur);
     }
     poly_FreeContours (&cur->contours);
+    r_destroy_tree (&cur->contour_tree);
   free (*p), *p = NULL;
 }
 
