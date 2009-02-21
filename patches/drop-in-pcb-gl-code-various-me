@@ -1,5 +1,5 @@
 Bottom: f38e225810ce3a6448999b133f77113ede74da3e
-Top:    8c43a28aead5a5475a2a29f993d5b21bccafa77d
+Top:    e4374e594b9ceaefadbb3ca353751ec2fdaa6889
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-21 02:33:48 +0000
 
@@ -116,10 +116,10 @@ index 8321929..e1ad65c 100644
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
 new file mode 100644
-index 0000000..12a484e
+index 0000000..3ccc684
 --- /dev/null
 +++ b/src/hid/common/hidgl.c
-@@ -0,0 +1,641 @@
+@@ -0,0 +1,655 @@
 +/* $Id: */
 +
 +#if 1 /* DISABLE EVERYTHING! */
@@ -422,9 +422,12 @@ index 0000000..12a484e
 +  float deltax, deltay, length;
 +  float wdx, wdy;
 +  int circular_caps = 0;
++  int hairline = 0;
 +
-+  if (width == 0.0)
++  if (width == 0.0) {
++    hairline = 1;
 +    width = 1.0;
++  }
 +
 +  deltax = x2 - x1;
 +  deltay = y2 - y1;
@@ -455,8 +458,12 @@ index 0000000..12a484e
 +  switch (cap) {
 +    case Trace_Cap:
 +    case Round_Cap:
-+      circular_caps = 1;
-+      break;
++      /* Don't bother capping hairlines */
++      if (hairline) {
++        circular_caps = 1;
++        break;
++      }
++      /* Fall through */
 +
 +    case Square_Cap:
 +    case Beveled_Cap:
@@ -499,9 +506,12 @@ index 0000000..12a484e
 +  float angle_incr_rad;
 +  int slices;
 +  int i;
++  int hairline = 0;
 +
-+  if (width == 0.0)
++  if (width == 0.0) {
++    hairline = 1;
 +    width = 1.0;
++  }
 +
 +  inner_r = rx - width / 2.;
 +  outer_r = rx + width / 2.;
@@ -544,6 +554,10 @@ index 0000000..12a484e
 +    last_inner_x = inner_x;  last_inner_y = inner_y;
 +    last_outer_x = outer_x;  last_outer_y = outer_y;
 +  }
++
++  /* Don't bother capping hairlines */
++  if (hairline)
++    return;
 +
 +  draw_cap (width, x + rx * -cosf (start_angle_rad),
 +                   y + rx *  sinf (start_angle_rad),
