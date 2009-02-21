@@ -121,43 +121,21 @@ static double circleVerticies[] = {
 };
 
 static void
-add_noholes_polyarea (PolygonType *noholes_poly, void *user_data)
+add_noholes_polyarea (PLINE *pline, void *user_data)
 {
   PolygonType *poly = user_data;
-  PLINE *pline;
-  POLYAREA *new_area;
 
-  new_area = malloc (sizeof (POLYAREA) * 1);
-
-  /* Allocate a new PLINE, COPY the PLINE from the passed polygon */
-  poly_CopyContour (&pline, noholes_poly->Clipped->contours);
-  new_area->contours = pline;
-
-  /* Link the new POLYAREA into the NoHoles circularaly linked list */
-  if (poly->NoHoles)
-    {
-      new_area->f = poly->NoHoles;
-      new_area->b = poly->NoHoles->b;
-      poly->NoHoles->b->f = new_area;
-      poly->NoHoles->b = new_area;
-    }
-  else
-    {
-      new_area->f = new_area;
-      new_area->b = new_area;
-    }
-
-  poly->NoHoles = new_area;
+  /* Prepend the pline into the NoHoles linked list */
+  pline->next = poly->NoHoles;
+  poly->NoHoles = pline;
 }
 
 void
 ComputeNoHoles (PolygonType *poly)
 {
-  if (poly->NoHoles)
-    poly_Free (&poly->NoHoles);
-  poly->NoHoles = NULL;
+  poly_FreeContours (&poly->NoHoles);
   if (poly->Clipped)
-    NoHolesPolygonDicer (poly, add_noholes_polyarea, poly, NULL);
+    NoHolesPolygonDicer (poly, NULL, add_noholes_polyarea, poly);
   else
     printf ("Compute_noholes caught poly->Clipped = NULL\n");
   poly->NoHolesValid = 1;
@@ -1080,9 +1058,7 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
   if (p->Clipped)
     poly_Free (&p->Clipped);
   p->Clipped = original_poly (p);
-  if (p->NoHoles)
-    poly_Free (&p->NoHoles);
-  p->NoHoles = NULL;
+  poly_FreeContours (&p->NoHoles);
   if (!p->Clipped)
     return 0;
   assert (poly_Valid (p->Clipped));
@@ -1575,7 +1551,9 @@ r_NoHolesPolygonDicer (PLINE * p,
   pa->contours = p;
   if (!p->next)                 /* no holes */
     {
+      /* The callback now owns the contour */
       emit (p, user_data);
+      pa->contours = NULL;
       poly_Free (&pa);
       return;
     }

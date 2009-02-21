@@ -57,7 +57,10 @@ static void thindraw_contour (hidGC gc, PLINE *pl)
 static void fill_contour_cb (PLINE *pl, void *user_data)
 {
   hidGC gc = user_data;
+  PLINE *local_pl = pl;
+
   fill_contour (gc, pl);
+  poly_FreeContours (&local_pl);
 }
 
 void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
@@ -73,11 +76,10 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
     }
   if (poly->NoHoles)
     {
-      PLINE *pl = poly->NoHoles;
+      PLINE *pl;
 
-      do {
+      for (pl = poly->NoHoles; pl != NULL; pl = pl->next)
         fill_contour (gc, pl);
-      } while ((pl = pl->f) != poly->NoHoles);
     }
 
   /* Draw other parts of the polygon if fullpoly flag is set */
