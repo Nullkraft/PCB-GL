@@ -1,5 +1,5 @@
 Bottom: a1926c22ba95d0c4a8771680493318419e7ada66
-Top:    5ae93ebe078d69d06cc619f628800c0f076b819f
+Top:    1c7098bdbd9de5567090cd870f26b6f516e9d04f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-21 20:09:53 +0000
 
@@ -1765,7 +1765,7 @@ index 484cee0..0e3e6e3 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 1a62dd8..ec0018a 100644
+index 1a62dd8..a4632ee 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -293,16 +293,16 @@ have_crosshair_attachments (void)
@@ -2017,7 +2017,7 @@ index 1a62dd8..ec0018a 100644
  }
  
  static gboolean
-@@ -822,53 +869,242 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -822,53 +869,235 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
    if (!first_time_done)
      {
        gport->colormap = gtk_widget_get_colormap (gport->top_window);
@@ -2184,47 +2184,40 @@ index 1a62dd8..ec0018a 100644
 +             gport->offlimits_color.green / 65535.,
 +             gport->offlimits_color.blue / 65535.);
 +
++  glBegin (GL_QUADS);
 +  if (eleft > 0)
 +    {
-+      glBegin (GL_QUADS);
 +      glVertex2i (0, 0);
 +      glVertex2i (eleft, 0);
 +      glVertex2i (eleft, gport->height);
 +      glVertex2i (0, gport->height);
-+      glEnd ();
 +    }
 +  else
 +    eleft = 0;
-+
 +  if (eright < gport->width)
 +    {
-+      glBegin (GL_QUADS);
 +      glVertex2i (eright, 0);
 +      glVertex2i (gport->width, 0);
 +      glVertex2i (gport->width, gport->height);
-+      glVertex2i (eright, gport->width);
-+      glEnd ();
++      glVertex2i (eright, gport->height);
 +    }
 +  else
 +    eright = gport->width;
 +  if (etop > 0)
 +    {
-+      glBegin (GL_QUADS);
 +      glVertex2i (eleft, 0);
 +      glVertex2i (eright, 0);
 +      glVertex2i (eright, etop);
 +      glVertex2i (eleft, etop);
-+      glEnd ();
 +    }
 +  if (ebottom < gport->height)
 +    {
-+      glBegin (GL_QUADS);
 +      glVertex2i (eleft, ebottom);
 +      glVertex2i (eright + 1, ebottom);
 +      glVertex2i (eright + 1, gport->height);
 +      glVertex2i (eleft, gport->height);
-+      glEnd ();
 +    }
++  glEnd ();
 +
 +  /* TODO: Background image */
 +
@@ -2273,7 +2266,7 @@ index 1a62dd8..ec0018a 100644
    return FALSE;
  }
  
-@@ -881,6 +1117,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -881,6 +1110,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
    GdkModifierType state;
@@ -2288,7 +2281,7 @@ index 1a62dd8..ec0018a 100644
  
    state = (GdkModifierType) (ev->state);
    mk = ghid_modifier_keys_state (&state);
-@@ -900,9 +1144,18 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -900,9 +1137,18 @@ ghid_port_window_motion_cb (GtkWidget * widget,
      }
    x_prev = y_prev = -1;
    moved = ghid_note_event_location (ev);
@@ -2307,7 +2300,7 @@ index 1a62dd8..ec0018a 100644
    return FALSE;
  }
  
-@@ -942,7 +1195,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -942,7 +1188,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        RestoreCrosshair (TRUE);
        cursor_in_viewport = TRUE;
      }
