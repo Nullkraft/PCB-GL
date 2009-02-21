@@ -1,7 +1,7 @@
-Bottom: 74ff189e5bec68ad83c8419b5793be0512e84343
-Top:    79ff051c88c636d3491796b834ddd4a25bfbb41b
+Bottom: 2a7ad340cbc88b9e7a84da21157945495b9db169
+Top:    ad5a7c93717b319db10ea5c7de707ebb32cc89e4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-21 02:35:46 +0000
+Date:   2009-02-21 05:41:16 +0000
 
 Add raw polygons support for the GTK HID, bypassing the no-holes dicer
 
@@ -174,7 +174,7 @@ index 58aa756..154f128 100644
  
    0 /* extents_calibrate */ ,
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 3ccc684..5def13d 100644
+index a63bc00..1a45f2c 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -36,7 +36,7 @@
@@ -382,7 +382,7 @@ index 1557228..181fdec 100644
    gerber_calibrate,
    0 /* gerber_shift_is_pressed */ ,
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 3332d7e..274440b 100644
+index 9e927bd..3716bba 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -13,12 +13,12 @@
@@ -399,7 +399,7 @@ index 3332d7e..274440b 100644
  #include "mymem.h"
  #include "draw.h"
  #include "clip.h"
-@@ -936,6 +936,21 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
+@@ -925,6 +925,21 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
  }
  
  void
@@ -421,7 +421,7 @@ index 3332d7e..274440b 100644
  ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
  {
    USE_GC (gc);
-@@ -1454,6 +1469,7 @@ HID ghid_hid = {
+@@ -1443,6 +1458,7 @@ HID ghid_hid = {
    ghid_draw_rect,
    ghid_fill_circle,
    ghid_fill_polygon,
@@ -429,7 +429,7 @@ index 3332d7e..274440b 100644
    ghid_fill_rect,
  
    ghid_calibrate,
-@@ -1514,6 +1530,7 @@ HID ghid_extents = {
+@@ -1503,6 +1519,7 @@ HID ghid_extents = {
    ghid_extents_draw_rect,
    ghid_extents_fill_circle,
    ghid_extents_fill_polygon,
