@@ -572,13 +572,62 @@ ghid_invalidate_all ()
   gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
 }
 
+/* These calls should be matched as an ignore==1, ignore==0 pair!! */
+/* BUT.. we often call with ingore == 0 without having ignore==1'd */
+void hidgl_hack_ignore_stencil (int ignore)
+{
+  return 0;
+  static GLint ref = 0;
+  static GLuint mask = 0;
+  static int ignored = 0;
+
+  if (ignore)
+    {
+      hidgl_flush_triangles (&buffer);
+      ignored = 1;
+      glPushAttrib (GL_STENCIL_BUFFER_BIT);
+      glGetIntegerv (GL_STENCIL_REF, &ref);
+      glGetIntegerv (GL_STENCIL_VALUE_MASK, (GLint *)&mask);
+      glStencilFunc (GL_ALWAYS, ref, mask);
+    }
+  else if (ignored)
+    {
+      hidgl_flush_triangles (&buffer);
+      ignored = 0;
+      glPopAttrib ();
+//      glStencilFunc (GL_GREATER, ref, mask);
+    }
+}
 
 int
 ghid_set_layer (const char *name, int group, int empty)
 {
+  static int stencil_bit = 0;
   int idx = (group >= 0
 	     && group <
 	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
+
+#define SUBCOMPOSITE_LAYERS
+#ifdef SUBCOMPOSITE_LAYERS
+  /* Flush out any existing geoemtry to be rendered */
+  hidgl_flush_triangles (&buffer);
+
+  /* Reset stencil buffer so we can paint anywhere */
+  hidgl_return_stencil_bit (stencil_bit);               // Relinquish any bitplane we previously used
+  if (SL_TYPE (idx) != SL_FINISHED)
+    {
+      stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
+      glStencilFunc (GL_GREATER, stencil_bit, stencil_bit); // Pass stencil test if our assigned bit is clear
+      glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
+    }
+  else
+    {
+#endif
+      glStencilMask (0);
+      glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  // Always pass stencil test
+#ifdef SUBCOMPOSITE_LAYERS
+    }
+#endif
 
   if (idx >= 0 && idx < max_layer + 2) {
     gport->trans_lines = TRUE;
@@ -595,8 +644,8 @@ ghid_set_layer (const char *name, int group, int empty)
 	    return TEST_FLAG (SHOWMASKFLAG, PCB);
 	  return 0;
 	case SL_SILK:
-//          gport->trans_lines = TRUE;
-          gport->trans_lines = FALSE;
+          gport->trans_lines = TRUE;
+//          gport->trans_lines = FALSE;
 	  if (SL_MYSIDE (idx) /*|| pinout */ )
 	    return PCB->ElementOn;
 	  return 0;
@@ -616,9 +665,13 @@ ghid_set_layer (const char *name, int group, int empty)
 void
 ghid_use_mask (int use_it)
 {
+  static int stencil_bit = 0;
+
+#warning FIX THIS UP TO COOPORATE WITH HIDGL'S ASSIGNMENT OF STENCIL BITPLANES
   if (use_it == cur_mask)
     return;
 
+  /* Flush out any existing geoemtry to be rendered */
   hidgl_flush_triangles (&buffer);
 
   switch (use_it)
@@ -627,25 +680,28 @@ ghid_use_mask (int use_it)
       /* Write '1' to the stencil buffer where the solder-mask is drawn. */
       glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
       glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
-      glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
+      stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
+      glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  // Always pass stencil test, write stencil_bit
+      glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
       glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
       break;
 
     case HID_MASK_CLEAR:
       /* Drawing operations clear the stencil buffer to '0' */
-      glStencilFunc (GL_ALWAYS, 0, 1);            // Test always passes, value written 0
+      glStencilFunc (GL_ALWAYS, 0, stencil_bit);  // Always pass stencil test, write 0
       glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 0)
       break;
 
     case HID_MASK_AFTER:
       /* Drawing operations as masked to areas where the stencil buffer is '1' */
       glColorMask (1, 1, 1, 1);                   // Enable drawing of r, g, b & a
-      glStencilFunc (GL_EQUAL, 1, 1);             // Draw only where stencil buffer is 1
+      glStencilFunc (GL_LEQUAL, stencil_bit, stencil_bit);   // Draw only where our bit of the stencil buffer is set
       glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    // Stencil buffer read only
       break;
 
     case HID_MASK_OFF:
       /* Disable stenciling */
+      hidgl_return_stencil_bit (stencil_bit);               // Relinquish any bitplane we previously used
       glDisable (GL_STENCIL_TEST);                // Disable Stencil test
       break;
     }

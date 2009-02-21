@@ -114,6 +114,8 @@ static void DrawSilk (int, int, BoxType *);
 static int pin_callback (const BoxType * b, void *cl);
 static int pad_callback (const BoxType * b, void *cl);
 
+void hidgl_hack_ignore_stencil (int ignore);
+
 /*--------------------------------------------------------------------------------------
  * setup color for pin or via
  */
@@ -133,6 +135,7 @@ SetPVColor (PinTypePtr Pin, int Type)
 	    color = PCB->ViaSelectedColor;
 	  else
 	    color = PCB->ConnectedColor;
+          hidgl_hack_ignore_stencil (1);
 	}
       else
 	color = PCB->ViaColor;
@@ -148,6 +151,7 @@ SetPVColor (PinTypePtr Pin, int Type)
 	    color = PCB->PinSelectedColor;
 	  else
 	    color = PCB->ConnectedColor;
+          hidgl_hack_ignore_stencil (1);
 	}
       else
 	color = PCB->PinColor;
@@ -430,6 +434,7 @@ DrawEverything (BoxTypePtr drawn_area)
 		    backN_callback, NULL);
 	  DrawLayer (&(PCB->Data->BACKSILKLAYER), drawn_area);
 	}
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
     }
 
   /* draw all layers in layerstack order */
@@ -468,6 +473,7 @@ DrawEverything (BoxTypePtr drawn_area)
 			    &plated);
 		}
 	    }
+	  gui->set_layer (NULL, SL (FINISHED, 0), 0);
 	}
     }
   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
@@ -921,7 +927,8 @@ DrawLayerGroup (int group, const BoxType * screen)
   Cardinal *layers = PCB->LayerGroups.Entries[group];
 
   clip_box = screen;
-  for (i = n_entries - 1; i >= 0; i--)
+  for (i = n_entries - 1; i >= 0;
+      i--, gui->set_layer (0, group, 0)) /* HACK: Subcomposite each layer in a layer group separately */
     {
       layernum = layers[i];
       Layer = PCB->Data->Layer + layers[i];
@@ -946,6 +953,10 @@ DrawLayerGroup (int group, const BoxType * screen)
 	      r_search (Layer->polygon_tree, screen, NULL, poly_callback,
 			&info);
 	      info.arg = False;
+
+	      /* HACK: Subcomposite polygons separately from other layer primitives */
+	      /* Reset the compositing */
+	      gui->set_layer (0, group, 0);
 	    }
 
 	  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
@@ -966,6 +977,8 @@ DrawLayerGroup (int group, const BoxType * screen)
           gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
           gui->use_mask (HID_MASK_OFF);
 #endif
+//          /* Reset the compositing HACK */
+//          gui->set_layer (0, group, 0);
 	}
     }
   if (n_entries > 1)
@@ -1158,9 +1171,15 @@ DrawHole (PinTypePtr Ptr)
   if (TEST_FLAG (HOLEFLAG, Ptr))
     {
       if (TEST_FLAG (WARNFLAG, Ptr))
-	gui->set_color (Output.fgGC, PCB->WarnColor);
+        {
+          gui->set_color (Output.fgGC, PCB->WarnColor);
+          hidgl_hack_ignore_stencil (1);
+        }
       else if (TEST_FLAG (SELECTEDFLAG, Ptr))
-	gui->set_color (Output.fgGC, PCB->ViaSelectedColor);
+        {
+          gui->set_color (Output.fgGC, PCB->ViaSelectedColor);
+          hidgl_hack_ignore_stencil (1);
+        }
       else
 	gui->set_color (Output.fgGC, Settings.BlackColor);
 
@@ -1169,6 +1188,7 @@ DrawHole (PinTypePtr Ptr)
       gui->draw_arc (Output.fgGC,
 		     Ptr->X, Ptr->Y, Ptr->DrillingHole / 2,
 		     Ptr->DrillingHole / 2, 0, 360);
+      hidgl_hack_ignore_stencil (0);
     }
 }
 
@@ -1272,6 +1292,7 @@ ClearPin (PinTypePtr Pin, int Type, int unused)
     case PIN_TYPE:
       SetPVColor (Pin, Type);
       DrawPinOrViaLowLevel (Pin, True);
+      hidgl_hack_ignore_stencil (0);
       break;
     case NO_TYPE:
     default:
@@ -1797,6 +1818,7 @@ DrawVia (PinTypePtr Via, int unused)
   // ClearPin (Via, VIA_TYPE, 0);
   //else
   DrawPinOrViaLowLevel (Via, True);
+  hidgl_hack_ignore_stencil (0);
   if (!TEST_FLAG (HOLEFLAG, Via) && TEST_FLAG (DISPLAYNAMEFLAG, Via))
     DrawPinOrViaNameLowLevel (Via);
 }
@@ -1810,6 +1832,7 @@ DrawPlainVia (PinTypePtr Via, Boolean holeToo)
   if (!Gathering)
     SetPVColor (Via, VIA_TYPE);
   DrawPinOrViaLowLevel (Via, holeToo);
+  hidgl_hack_ignore_stencil (0);
   if (!TEST_FLAG (HOLEFLAG, Via) && TEST_FLAG (DISPLAYNAMEFLAG, Via))
     DrawPinOrViaNameLowLevel (Via);
 }
@@ -1823,11 +1846,15 @@ DrawViaName (PinTypePtr Via, int unused)
   if (!Gathering)
     {
       if (TEST_FLAG (SELECTEDFLAG, Via))
-	gui->set_color (Output.fgGC, PCB->ViaSelectedColor);
+        {
+	  gui->set_color (Output.fgGC, PCB->ViaSelectedColor);
+          hidgl_hack_ignore_stencil (1);
+        }
       else
 	gui->set_color (Output.fgGC, PCB->ViaColor);
     }
   DrawPinOrViaNameLowLevel (Via);
+  hidgl_hack_ignore_stencil (0);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1843,6 +1870,7 @@ DrawPin (PinTypePtr Pin, int unused)
     if (!Gathering)
       SetPVColor (Pin, PIN_TYPE);
     DrawPinOrViaLowLevel (Pin, True);
+    hidgl_hack_ignore_stencil (0);
   }
   if ((!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
       || doing_pinout)
@@ -1857,6 +1885,7 @@ DrawPlainPin (PinTypePtr Pin, Boolean holeToo)
 {
   if (!Gathering)
     SetPVColor (Pin, PIN_TYPE);
+  hidgl_hack_ignore_stencil (0);
   DrawPinOrViaLowLevel (Pin, holeToo);
   if (!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
     DrawPinOrViaNameLowLevel (Pin);
@@ -1871,11 +1900,15 @@ DrawPinName (PinTypePtr Pin, int unused)
   if (!Gathering)
     {
       if (TEST_FLAG (SELECTEDFLAG, Pin))
-	gui->set_color (Output.fgGC, PCB->PinSelectedColor);
+        {
+	  gui->set_color (Output.fgGC, PCB->PinSelectedColor);
+          hidgl_hack_ignore_stencil (1);
+        }
       else
 	gui->set_color (Output.fgGC, PCB->PinColor);
     }
   DrawPinOrViaNameLowLevel (Pin);
+  hidgl_hack_ignore_stencil (0);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1896,6 +1929,7 @@ DrawPad (PadTypePtr Pad, int unused)
 	    gui->set_color (Output.fgGC, PCB->PinSelectedColor);
 	  else
 	    gui->set_color (Output.fgGC, PCB->ConnectedColor);
+          hidgl_hack_ignore_stencil (1);
 	}
       else if (FRONT (Pad))
 	gui->set_color (Output.fgGC, PCB->PinColor);
@@ -1905,6 +1939,7 @@ DrawPad (PadTypePtr Pad, int unused)
   DrawPadLowLevel (Output.fgGC, Pad, False, False);
   if (doing_pinout || TEST_FLAG (DISPLAYNAMEFLAG, Pad))
     DrawPadNameLowLevel (Pad);
+  hidgl_hack_ignore_stencil (0);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1916,13 +1951,17 @@ DrawPadName (PadTypePtr Pad, int unused)
   if (!Gathering)
     {
       if (TEST_FLAG (SELECTEDFLAG, Pad))
-	gui->set_color (Output.fgGC, PCB->PinSelectedColor);
+        {
+	  gui->set_color (Output.fgGC, PCB->PinSelectedColor);
+          hidgl_hack_ignore_stencil (1);
+        }
       else if (FRONT (Pad))
 	gui->set_color (Output.fgGC, PCB->PinColor);
       else
 	gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
     }
   DrawPadNameLowLevel (Pad);
+  hidgl_hack_ignore_stencil (0);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1939,11 +1978,13 @@ DrawLine (LayerTypePtr Layer, LineTypePtr Line, int unused)
 	    gui->set_color (Output.fgGC, Layer->SelectedColor);
 	  else
 	    gui->set_color (Output.fgGC, PCB->ConnectedColor);
+          hidgl_hack_ignore_stencil (1);
 	}
       else
 	gui->set_color (Output.fgGC, Layer->Color);
     }
   DrawLineLowLevel (Line, False);
+  hidgl_hack_ignore_stencil (0);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1960,6 +2001,7 @@ DrawRat (RatTypePtr Line, int unused)
 	    gui->set_color (Output.fgGC, PCB->RatSelectedColor);
 	  else
 	    gui->set_color (Output.fgGC, PCB->ConnectedColor);
+          hidgl_hack_ignore_stencil (1);
 	}
       else
 	gui->set_color (Output.fgGC, PCB->RatColor);
@@ -1993,6 +2035,7 @@ DrawRat (RatTypePtr Line, int unused)
     }
   else
     DrawLineLowLevel ((LineTypePtr) Line, False);
+  hidgl_hack_ignore_stencil (0);
 }
 
 /* ---------------------------------------------------------------------------
@@ -2011,11 +2054,13 @@ DrawArc (LayerTypePtr Layer, ArcTypePtr Arc, int unused)
 	    gui->set_color (Output.fgGC, Layer->SelectedColor);
 	  else
 	    gui->set_color (Output.fgGC, PCB->ConnectedColor);
+          hidgl_hack_ignore_stencil (1);
 	}
       else
 	gui->set_color (Output.fgGC, Layer->Color);
     }
   DrawArcLowLevel (Arc);
+  hidgl_hack_ignore_stencil (0);
 }
 
 /* ---------------------------------------------------------------------------
@@ -2028,7 +2073,10 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
   if (!Layer->On)
     return;
   if (TEST_FLAG (SELECTEDFLAG, Text))
-    gui->set_color (Output.fgGC, Layer->SelectedColor);
+    {
+      gui->set_color (Output.fgGC, Layer->SelectedColor);
+      hidgl_hack_ignore_stencil (1);
+    }
   else
     gui->set_color (Output.fgGC, Layer->Color);
   if (Layer == & PCB->Data->SILKLAYER
@@ -2037,6 +2085,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
   else
     min_silk_line = PCB->minWid;
   DrawTextLowLevel (Text, min_silk_line);
+  hidgl_hack_ignore_stencil (0);
 }
 
 /* ---------------------------------------------------------------------------
@@ -2047,7 +2096,10 @@ DrawRegularText (LayerTypePtr Layer, TextTypePtr Text, int unused)
 {
   int min_silk_line;
   if (TEST_FLAG (SELECTEDFLAG, Text))
-    gui->set_color (Output.fgGC, Layer->SelectedColor);
+    {
+      gui->set_color (Output.fgGC, Layer->SelectedColor);
+      hidgl_hack_ignore_stencil (1);
+    }
   else
     gui->set_color (Output.fgGC, Layer->Color);
   if (Layer == & PCB->Data->SILKLAYER
@@ -2056,6 +2108,7 @@ DrawRegularText (LayerTypePtr Layer, TextTypePtr Text, int unused)
   else
     min_silk_line = PCB->minWid;
   DrawTextLowLevel (Text, min_silk_line);
+  hidgl_hack_ignore_stencil (0);
 }
 
 static int
@@ -2076,7 +2129,10 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
   if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Polygon))
     {
       if (TEST_FLAG (SELECTEDFLAG, Polygon))
-	gui->set_color (Output.fgGC, Layer->SelectedColor);
+        {
+	  gui->set_color (Output.fgGC, Layer->SelectedColor);
+          hidgl_hack_ignore_stencil (1);
+        }
       else
 	gui->set_color (Output.fgGC, PCB->ConnectedColor);
     }
@@ -2084,6 +2140,7 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
     gui->set_color (Output.fgGC, Layer->Color);
   layernum = GetLayerNumber (PCB->Data, Layer);
   DrawPolygonLowLevel (Polygon);
+  hidgl_hack_ignore_stencil (0);
   if (TEST_FLAG (CLEARPOLYFLAG, Polygon))
     {
       r_search (PCB->Data->pin_tree, &Polygon->BoundingBox, NULL,
@@ -2141,7 +2198,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
     }
 
   if (TEST_FLAG (SELECTEDFLAG, Polygon))
-    color = Layer->SelectedColor;
+    {
+      color = Layer->SelectedColor;
+      hidgl_hack_ignore_stencil (1);
+    }
   else if (TEST_FLAG (FOUNDFLAG, Polygon))
     color = PCB->ConnectedColor;
   else
@@ -2174,6 +2234,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
            poly.Clipped = poly.Clipped->f)
         gui->thindraw_pcb_polygon (Output.fgGC, &poly, clip_box);
     }
+  hidgl_hack_ignore_stencil (0);
 }
 
 /* ---------------------------------------------------------------------------
@@ -2238,7 +2299,10 @@ DrawElementName (ElementTypePtr Element, int unused)
   if (doing_pinout || doing_assy)
     gui->set_color (Output.fgGC, PCB->ElementColor);
   else if (TEST_FLAG (SELECTEDFLAG, &ELEMENT_TEXT (PCB, Element)))
-    gui->set_color (Output.fgGC, PCB->ElementSelectedColor);
+    {
+      gui->set_color (Output.fgGC, PCB->ElementSelectedColor);
+      hidgl_hack_ignore_stencil (1);
+    }
   else if (FRONT (Element))
     gui->set_color (Output.fgGC, PCB->ElementColor);
   else
@@ -2251,6 +2315,7 @@ DrawElementName (ElementTypePtr Element, int unused)
 #else
   DrawStrippedText (Element, PCB->minSlk);
 #endif
+  hidgl_hack_ignore_stencil (0);
 }
 
 #define MASK_SUBCOMPOSITE_ELEMENT_PACKAGE 0
@@ -2272,9 +2337,12 @@ DrawElementPackage (ElementTypePtr Element, int unused)
 
   /* set color and draw lines, arcs, text and pins */
   if (doing_pinout || doing_assy)
-    gui->set_color (Output.fgGC, PCB->ElementColor);
+      gui->set_color (Output.fgGC, PCB->ElementColor);
   else if (TEST_FLAG (SELECTEDFLAG, Element))
-    gui->set_color (Output.fgGC, PCB->ElementSelectedColor);
+    {
+      gui->set_color (Output.fgGC, PCB->ElementSelectedColor);
+      hidgl_hack_ignore_stencil (1);
+    }
   else if (FRONT (Element))
     gui->set_color (Output.fgGC, PCB->ElementColor);
   else
@@ -2287,6 +2355,7 @@ DrawElementPackage (ElementTypePtr Element, int unused)
 #else
   DrawElementPackageLowLevel (Element, unused);
 #endif
+  hidgl_hack_ignore_stencil (0);
 }
 
 /* ---------------------------------------------------------------------------
