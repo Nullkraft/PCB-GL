@@ -1,7 +1,7 @@
-Bottom: 4144683b86508a7b859797ae2f9651577a0eed1c
-Top:    6c0cece94f46ed753f0002642c2ffafa3af290f9
+Bottom: 622b0f76c45252f1c726c3d73dc9f36ed7e95079
+Top:    afae535425b9e37f77bc5c8a530d14e4ccb56e82
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-21 05:41:49 +0000
+Date:   2009-02-21 19:40:28 +0000
 
 Hack around Circuit CAM / EDG brokeness reading drill files
 
@@ -17,10 +17,10 @@ Hack around Circuit CAM / EDG brokeness reading drill files
 ---
 
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 181fdec..82fd9de 100644
+index 7fc62f9..3cfbe14 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
-@@ -52,10 +52,16 @@ static void gerber_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
+@@ -53,10 +53,16 @@ static void gerber_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
  #define gerberYOffset(pcb, y) ((long) (-(y)))
  
  /* These are for drills */
