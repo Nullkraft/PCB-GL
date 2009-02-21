@@ -1,9 +1,10 @@
-Bottom: ecaa0a15780f44cd666cc19aaaa12ed0b31dcdfb
-Top:    3ceab1b875f84343c8591d2e381b99fddee987f4
+Bottom: 90f3388277b5fbbcd55d51a76f9706e2c9fb284a
+Top:    bd51bb5ee598d243b6487de0f832b4c264320586
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-17 23:57:03 +0000
+Date:   2009-02-21 02:33:48 +0000
 
 Add cache for "noholes", diced versions of polygons
+
 
 
 
@@ -35,7 +36,7 @@ index fa0a394..fda2613 100644
  }
  
 diff --git a/src/draw.c b/src/draw.c
-index 4bd4705..f282b44 100644
+index 8b14a30..2b81861 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -100,7 +100,7 @@ static void DrawPadLowLevel (hidGC, PadTypePtr, Boolean, Boolean);
@@ -56,7 +57,7 @@ index 4bd4705..f282b44 100644
  {
    int *x, *y, n, i = 0;
    PLINE *pl;
-@@ -2106,7 +2106,7 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+@@ -2107,7 +2107,7 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
    else
      gui->set_color (Output.fgGC, Layer->Color);
    layernum = GetLayerNumber (PCB->Data, Layer);
@@ -65,7 +66,7 @@ index 4bd4705..f282b44 100644
    if (TEST_FLAG (CLEARPOLYFLAG, Polygon))
      {
        r_search (PCB->Data->pin_tree, &Polygon->BoundingBox, NULL,
-@@ -2163,14 +2163,27 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2165,14 +2165,27 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
    if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
        && !gui->poly_dicer)
      {
@@ -95,7 +96,7 @@ index 4bd4705..f282b44 100644
        if (TEST_FLAG (FULLPOLYFLAG, Polygon))
  	{
  	  POLYAREA *pg;
-@@ -2178,7 +2191,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2180,7 +2193,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  	    {
  	      PolygonType poly;
  	      poly.Clipped = pg;
@@ -104,7 +105,7 @@ index 4bd4705..f282b44 100644
  	    }
  	}
      }
-@@ -2474,7 +2487,7 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2477,7 +2490,7 @@ ErasePolygon (PolygonTypePtr Polygon)
  {
    Erasing++;
    gui->set_color (Output.fgGC, Settings.BackgroundColor);
