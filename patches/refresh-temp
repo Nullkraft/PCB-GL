@@ -1,0 +1,36 @@
+Bottom: 6979d018d06ccb16c61579c284e2fba19834873a
+Top:    cbee69b757ef6cfb20e6a5bec7efdcb553386f6c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-21 20:09:15 +0000
+
+Refresh of add-support-for-filling-thindr
+
+---
+
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index 28b2168..57509dc 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -165,13 +165,6 @@ nogui_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ }
+ 
+ static void
+-nogui_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
+-                            const BoxType *clip_box)
+-{
+-  CRASH;
+-}
+-
+-static void
+ nogui_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
+ {
+   CRASH;
+@@ -378,7 +371,7 @@ HID hid_nogui = {
+   nogui_fill_circle,
+   nogui_fill_polygon,
+   nogui_fill_pcb_polygon,
+-  nogui_thindraw_pcb_polygon,
++  0 /* nogui_thindraw_pcb_polygon */ ,
+   nogui_fill_rect,
+   nogui_calibrate,
+   nogui_shift_is_pressed,
