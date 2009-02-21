@@ -1,5 +1,5 @@
 Bottom: a92cf01448f9a68082760f617c22909bd14faf2b
-Top:    a92cf01448f9a68082760f617c22909bd14faf2b
+Top:    71c8f654e72a1dfde4c8d0d500277504c042d38d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-21 02:02:16 +0000
 
@@ -11,4 +11,59 @@ drawing code.
 
 ---
 
-
+diff --git a/src/draw.c b/src/draw.c
+index e2ccd6c..06573df 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1801,7 +1801,8 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
+       TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
+       TEST_FLAG (CLEARLINEFLAG, Polygon))
+     {
+-      gui->set_line_width (Output.fgGC, 1);
++      gui->set_line_width (Output.fgGC, 0);
++      gui->set_line_cap (Output.fgGC, Square_Cap);
+       for (i = 0; i < n - 1; i++)
+ 	{
+ 	  gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
+@@ -2280,7 +2281,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+ 	      x[i] = v->point[0];
+ 	      y[i++] = v->point[1];
+ 	    }
+-	  gui->set_line_width (Output.fgGC, 1);
++	  gui->set_line_width (Output.fgGC, 0);
++//	  gui->set_line_cap (Output.fgGC, Square_Cap);
+ 	  for (i = 0; i < n - 1; i++)
+ 	    {
+ 	      gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index c66daca..be0a6a7 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -300,9 +300,12 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
+   float deltax, deltay, length;
+   float wdx, wdy;
+   int circular_caps = 0;
++  int no_caps = 0;
+ 
+-  if (width == 0.0)
++  if (width == 0.0) {
++    no_caps = 1; /* Don't bother capping hairlines */
+     width = 1.0;
++  }
+ 
+   deltax = x2 - x1;
+   deltay = y2 - y1;
+@@ -333,8 +336,11 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
+   switch (cap) {
+     case Trace_Cap:
+     case Round_Cap:
+-      circular_caps = 1;
+-      break;
++      if (!no_caps) {
++        circular_caps = 1;
++        break;
++      }
++      /* Fall through */
+ 
+     case Square_Cap:
+     case Beveled_Cap:
