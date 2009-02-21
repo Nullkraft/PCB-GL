@@ -1,15 +1,16 @@
-Bottom: f9971c5b40daabda203772cd10e1c990126057fb
-Top:    f0c7318a8172a9cbb87715ff0db503082547ab53
+Bottom: bdce6f4a481d0345a6d1090bc25f90e5e9d76889
+Top:    f1eb7f65b622bfde86715a44eaa7ba3a54450366
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-21 21:09:05 +0000
+Date:   2009-02-21 22:01:22 +0000
 
 Turn off depth writing
+
 
 
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 4de2492..4b0a26f 100644
+index abfd6f4..15bbb2d 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -992,6 +992,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,

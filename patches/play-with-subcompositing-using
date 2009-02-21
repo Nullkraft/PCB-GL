@@ -1,9 +1,10 @@
-Bottom: f0c7318a8172a9cbb87715ff0db503082547ab53
-Top:    396575eacc68ccf601bbe1b907964572e7061dea
+Bottom: f1eb7f65b622bfde86715a44eaa7ba3a54450366
+Top:    353182d0a835a31285519f2557d0a89bbe376ccc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-21 21:09:09 +0000
+Date:   2009-02-21 22:01:22 +0000
 
 Play with subcompositing using the stencil buffer
+
 
 
 
@@ -105,7 +106,7 @@ index 35720ae..55387c9 100644
      gport->trans_lines = TRUE;
      return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 4b0a26f..281d74a 100644
+index 15bbb2d..8c60287 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -987,13 +987,14 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
@@ -124,7 +125,7 @@ index 4b0a26f..281d74a 100644
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
  
    region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-@@ -1069,6 +1070,13 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1062,6 +1063,13 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
