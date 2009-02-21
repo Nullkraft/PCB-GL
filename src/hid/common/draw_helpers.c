@@ -54,10 +54,10 @@ static void thindraw_contour (hidGC gc, PLINE *pl)
   while ((v = v->next) != pl->head.next);
 }
 
-static void poly_fill_first_contour (PolygonType *poly, void *user_data)
+static void fill_contour_cb (PLINE *pl, void *user_data)
 {
   hidGC gc = user_data;
-  fill_contour (gc, poly->Clipped->contours);
+  fill_contour (gc, pl);
 }
 
 void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
@@ -67,7 +67,7 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
             we are dicing for every case. Some GUIs
             rely on this, and need their flags fixing. */
 
-  NoHolesPolygonDicer (poly, clip_box, poly_fill_first_contour, gc);
+  NoHolesPolygonDicer (poly, clip_box, fill_contour_cb, gc);
 
   /* Draw other parts of the polygon if fullpoly flag is set */
   if (TEST_FLAG (FULLPOLYFLAG, poly))
@@ -77,7 +77,7 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
       for (p.Clipped = poly->Clipped->f;
            p.Clipped != poly->Clipped;
            p.Clipped = p.Clipped->f)
-        NoHolesPolygonDicer (&p, clip_box, poly_fill_first_contour, gc);
+        NoHolesPolygonDicer (&p, clip_box, fill_contour_cb, gc);
     }
 
 }
