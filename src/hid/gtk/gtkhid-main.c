@@ -470,7 +470,6 @@ draw_grid ()
 
   glDisableClientState (GL_VERTEX_ARRAY);
   glDisable (GL_COLOR_LOGIC_OP);
-//  glFlush ();
 }
 
 /* ------------------------------------------------------------ */
@@ -581,6 +580,7 @@ ghid_set_layer (const char *name, int group, int empty)
 
   /* Reset stencil buffer so we can paint anywhere */
   hidgl_flush_triangles (&buffer);
+//  glClear (GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glClear (GL_STENCIL_BUFFER_BIT);
 
   if (idx >= 0 && idx < max_layer + 2) {
@@ -2105,13 +2105,12 @@ Benchmark (int argc, char **argv, int x, int y)
     {
       gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
       gdk_window_process_updates (gport->drawing_area->window, FALSE);
-      gdk_display_sync (display);
       time (&end);
       i++;
     }
   while (end - start < 10);
 
-  printf ("%g redraws per second\n", i / 10.0);
+  printf ("%g redraws per second\n", (double)i / (double)(end-start));
 
   return 0;
 }

@@ -176,7 +176,6 @@ draw_grid ()
 
   glDisableClientState (GL_VERTEX_ARRAY);
   glDisable (GL_COLOR_LOGIC_OP);
-  glFlush ();
 }
 
 #endif
