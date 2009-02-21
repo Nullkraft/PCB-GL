@@ -1,5 +1,5 @@
 Bottom: 545cac09b0c45882bc72cdcd6e5c2ee6e67ff3a2
-Top:    0a169d6d28f33a13c522cc707d36c36de534682e
+Top:    e967874b10da2ccdea14f9b96428c275e28cfe4e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-21 02:21:29 +0000
 
@@ -10,30 +10,31 @@ HIDGL Don't bother capping hairlines
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index c66daca..74c3fef 100644
+index c66daca..11d5595 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -300,9 +300,12 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
    float deltax, deltay, length;
    float wdx, wdy;
    int circular_caps = 0;
-+  int no_caps = 0;
++  int hairline = 0;
  
 -  if (width == 0.0)
 +  if (width == 0.0) {
-+    no_caps = 1; /* Don't bother capping hairlines */
++    hairline = 1;
      width = 1.0;
 +  }
  
    deltax = x2 - x1;
    deltay = y2 - y1;
-@@ -333,8 +336,11 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
+@@ -333,8 +336,12 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
    switch (cap) {
      case Trace_Cap:
      case Round_Cap:
 -      circular_caps = 1;
 -      break;
-+      if (!no_caps) {
++      /* Don't bother capping hairlines */
++      if (hairline) {
 +        circular_caps = 1;
 +        break;
 +      }
@@ -41,25 +42,26 @@ index c66daca..74c3fef 100644
  
      case Square_Cap:
      case Beveled_Cap:
-@@ -377,9 +383,12 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
+@@ -377,9 +384,12 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
    float angle_incr_rad;
    int slices;
    int i;
-+  int no_caps = 0;
++  int hairline = 0;
  
 -  if (width == 0.0)
 +  if (width == 0.0) {
-+    no_caps = 1; /* Don't bother capping hairlines */
++    hairline = 1;
      width = 1.0;
 +  }
  
    inner_r = rx - width / 2.;
    outer_r = rx + width / 2.;
-@@ -423,6 +432,9 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
+@@ -423,6 +433,10 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
      last_outer_x = outer_x;  last_outer_y = outer_y;
    }
  
-+  if (no_caps)
++  /* Don't bother capping hairlines */
++  if (hairline)
 +    return;
 +
    draw_cap (width, x + rx * -cosf (start_angle_rad),
