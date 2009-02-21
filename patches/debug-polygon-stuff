@@ -1,19 +1,20 @@
-Bottom: 86eb980a9fe002c5251841946baccb9441ed61b0
-Top:    dd18943d686585fc7bb01627830fa2aedf597b5c
+Bottom: 4820ff96a897d7357dac788a296f2762779e6c68
+Top:    de3fd87567d442be68a060aa772c993b0ccb71c5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-19 00:02:12 +0000
+Date:   2009-02-21 02:37:53 +0000
 
 Debug polygon stuff
+
 
 
 
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index c66daca..2917472 100644
+index f83cbc5..e465e8f 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -689,6 +689,8 @@ hidgl_fill_pcb_polygon (PolygonType *poly, BoxType *clip_box, double scale)
+@@ -702,6 +702,8 @@ hidgl_fill_pcb_polygon (PolygonType *poly, BoxType *clip_box, double scale)
    PLINE *contour;
    struct do_hole_info info;
  
@@ -22,7 +23,7 @@ index c66daca..2917472 100644
  
    global_scale = scale;
  
-@@ -747,6 +749,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, BoxType *clip_box, double scale)
+@@ -768,6 +770,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, BoxType *clip_box, double scale)
    gluDeleteTess (info.tobj);
    myFreeCombined ();
    free (info.vertices);
@@ -31,10 +32,10 @@ index c66daca..2917472 100644
  
  void
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 96585ad..8eba171 100644
+index 6918ad9..8d395cf 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -1484,7 +1484,7 @@ HID ghid_hid = {
+@@ -1488,7 +1488,7 @@ HID ghid_hid = {
    ghid_draw_rect,
    ghid_fill_circle,
    ghid_fill_polygon,
@@ -44,10 +45,10 @@ index 96585ad..8eba171 100644
  
    ghid_calibrate,
 diff --git a/src/polygon.c b/src/polygon.c
-index e16fd55..66c7737 100644
+index 561bda2..9f70a3f 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -271,6 +271,11 @@ ClipOriginal (PolygonType * poly)
+@@ -281,6 +281,11 @@ ClipOriginal (PolygonType * poly)
    POLYAREA *p, *result;
    int r;
  
@@ -59,7 +60,7 @@ index e16fd55..66c7737 100644
    p = original_poly (poly);
    r = poly_Boolean_free (poly->Clipped, p, &result, PBO_ISECT);
    if (r != err_ok)
-@@ -1052,8 +1057,10 @@ UnsubtractArc (ArcType * arc, LayerType * l, PolygonType * p)
+@@ -1062,8 +1067,10 @@ UnsubtractArc (ArcType * arc, LayerType * l, PolygonType * p)
  
    if (!np)
      return 0;
