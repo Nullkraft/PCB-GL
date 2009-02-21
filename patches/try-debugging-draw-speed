@@ -1,7 +1,7 @@
-Bottom: 4020010c3346fe6f9c152e6ec332123c9c5015bc
-Top:    4820ff96a897d7357dac788a296f2762779e6c68
+Bottom: acca2c56bb985d2bfdeb56adeec7bc4ff4985f3c
+Top:    570394b2881f527f944f23db393e32799976b5d5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-21 02:37:52 +0000
+Date:   2009-02-21 14:33:28 +0000
 
 Try debugging draw speed
 
@@ -10,7 +10,7 @@ Try debugging draw speed
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 14a974a..f83cbc5 100644
+index e93708f..8a86f25 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -176,7 +176,6 @@ draw_grid ()
@@ -22,7 +22,7 @@ index 14a974a..f83cbc5 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 0821758..6918ad9 100644
+index 505a941..38c1ca2 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -470,7 +470,6 @@ draw_grid ()
@@ -41,7 +41,7 @@ index 0821758..6918ad9 100644
    glClear (GL_STENCIL_BUFFER_BIT);
  
    if (idx >= 0 && idx < max_layer + 2) {
-@@ -2105,13 +2105,12 @@ Benchmark (int argc, char **argv, int x, int y)
+@@ -2094,13 +2094,12 @@ Benchmark (int argc, char **argv, int x, int y)
      {
        gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
        gdk_window_process_updates (gport->drawing_area->window, FALSE);
