@@ -150,7 +150,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
     {
       LayerType *layer = PCB->Data->Layer + i;
       if (layer->On)
-	if (layer->LineN || layer->TextN || layer->ArcN || layer->PolygonN)
+	if (layer->LineN || layer->TextN || layer->ArcN || layer->PourN)
 	  print_group[GetLayerGroupNumberByNumber (i)] = 1;
     }
 
