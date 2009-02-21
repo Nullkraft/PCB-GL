@@ -1,7 +1,7 @@
-Bottom: a92cf01448f9a68082760f617c22909bd14faf2b
-Top:    acc69ed553bc04ae592c0e3099da8b32c715dd4d
+Bottom: e967874b10da2ccdea14f9b96428c275e28cfe4e
+Top:    e967874b10da2ccdea14f9b96428c275e28cfe4e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-21 02:02:16 +0000
+Date:   2009-02-21 02:36:31 +0000
 
 Thindraw polygons with circular line-caps.
 
@@ -9,33 +9,7 @@ Set an explicit cap style for consistency with other "special" polygon
 drawing code.
 
 
+
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index e2ccd6c..ae025d1 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -1802,6 +1802,7 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
-       TEST_FLAG (CLEARLINEFLAG, Polygon))
-     {
-       gui->set_line_width (Output.fgGC, 1);
-+      gui->set_line_cap (Output.fgGC, Round_Cap);
-       for (i = 0; i < n - 1; i++)
- 	{
- 	  gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
-@@ -2180,6 +2181,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
-       x[i] = v->point[0];
-       y[i++] = v->point[1];
-     }
-+  gui->set_line_cap (Output.fgGC, Round_Cap);
-   gui->set_line_width (Output.fgGC, 1);
-   for (i = 0; i < pl->Count - 1; i++)
-     {
-@@ -2281,6 +2283,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
- 	      y[i++] = v->point[1];
- 	    }
- 	  gui->set_line_width (Output.fgGC, 1);
-+	  gui->set_line_cap (Output.fgGC, Round_Cap);
- 	  for (i = 0; i < n - 1; i++)
- 	    {
- 	      gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
+
