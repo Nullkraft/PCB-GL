@@ -2154,7 +2154,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 
   if (gui->thindraw_pcb_polygon != NULL &&
       (TEST_FLAG (THINDRAWFLAG, PCB) ||
-       TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
+       TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
+       TEST_FLAG (CLEARLINEFLAG, Polygon)))
     {
       gui->set_color (Output.fgGC, color);
       gui->thindraw_pcb_polygon (Output.fgGC, Polygon, clip_box);
