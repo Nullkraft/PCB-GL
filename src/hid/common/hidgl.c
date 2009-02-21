@@ -300,12 +300,9 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
   float deltax, deltay, length;
   float wdx, wdy;
   int circular_caps = 0;
-  int no_caps = 0;
 
-  if (width == 0.0) {
-    no_caps = 1; /* Don't bother capping hairlines */
+  if (width == 0.0)
     width = 1.0;
-  }
 
   deltax = x2 - x1;
   deltay = y2 - y1;
@@ -336,11 +333,8 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
   switch (cap) {
     case Trace_Cap:
     case Round_Cap:
-      if (!no_caps) {
-        circular_caps = 1;
-        break;
-      }
-      /* Fall through */
+      circular_caps = 1;
+      break;
 
     case Square_Cap:
     case Beveled_Cap:
