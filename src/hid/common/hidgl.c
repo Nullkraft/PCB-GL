@@ -383,9 +383,12 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
   float angle_incr_rad;
   int slices;
   int i;
+  int no_caps = 0;
 
-  if (width == 0.0)
+  if (width == 0.0) {
+    no_caps = 1; /* Don't bother capping hairlines */
     width = 1.0;
+  }
 
   inner_r = rx - width / 2.;
   outer_r = rx + width / 2.;
@@ -428,6 +431,9 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
     last_inner_x = inner_x;  last_inner_y = inner_y;
     last_outer_x = outer_x;  last_outer_y = outer_y;
   }
+
+  if (no_caps)
+    return;
 
   draw_cap (width, x + rx * -cosf (start_angle_rad),
                    y + rx *  sinf (start_angle_rad),
