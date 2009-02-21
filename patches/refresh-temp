@@ -1,0 +1,37 @@
+Bottom: 752c61c18ce133118532dcd6167c5e46efaed624
+Top:    0a169d6d28f33a13c522cc707d36c36de534682e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-21 02:22:49 +0000
+
+Refresh of hidgl-don-t-bother-capping-hai
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index be0a6a7..74c3fef 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -383,9 +383,12 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
+   float angle_incr_rad;
+   int slices;
+   int i;
++  int no_caps = 0;
+ 
+-  if (width == 0.0)
++  if (width == 0.0) {
++    no_caps = 1; /* Don't bother capping hairlines */
+     width = 1.0;
++  }
+ 
+   inner_r = rx - width / 2.;
+   outer_r = rx + width / 2.;
+@@ -429,6 +432,9 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
+     last_outer_x = outer_x;  last_outer_y = outer_y;
+   }
+ 
++  if (no_caps)
++    return;
++
+   draw_cap (width, x + rx * -cosf (start_angle_rad),
+                    y + rx *  sinf (start_angle_rad),
+                    start_angle, scale);
