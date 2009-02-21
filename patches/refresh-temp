@@ -1,0 +1,43 @@
+Bottom: 71c8f654e72a1dfde4c8d0d500277504c042d38d
+Top:    3196014354a21bbdec7b3dd16412fff9c8a9d274
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-21 02:19:06 +0000
+
+Refresh of thindraw-polygons-with-square-
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 06573df..ae025d1 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1801,8 +1801,8 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
+       TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
+       TEST_FLAG (CLEARLINEFLAG, Polygon))
+     {
+-      gui->set_line_width (Output.fgGC, 0);
+-      gui->set_line_cap (Output.fgGC, Square_Cap);
++      gui->set_line_width (Output.fgGC, 1);
++      gui->set_line_cap (Output.fgGC, Round_Cap);
+       for (i = 0; i < n - 1; i++)
+ 	{
+ 	  gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
+@@ -2181,6 +2181,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
+       x[i] = v->point[0];
+       y[i++] = v->point[1];
+     }
++  gui->set_line_cap (Output.fgGC, Round_Cap);
+   gui->set_line_width (Output.fgGC, 1);
+   for (i = 0; i < pl->Count - 1; i++)
+     {
+@@ -2281,8 +2282,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+ 	      x[i] = v->point[0];
+ 	      y[i++] = v->point[1];
+ 	    }
+-	  gui->set_line_width (Output.fgGC, 0);
+-//	  gui->set_line_cap (Output.fgGC, Square_Cap);
++	  gui->set_line_width (Output.fgGC, 1);
++	  gui->set_line_cap (Output.fgGC, Round_Cap);
+ 	  for (i = 0; i < n - 1; i++)
+ 	    {
+ 	      gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
