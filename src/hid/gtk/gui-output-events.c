@@ -992,6 +992,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                 gport->bg_color.blue / 65535.,
                 1.);
 
+  glDepthMask (0);
+
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
   region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
