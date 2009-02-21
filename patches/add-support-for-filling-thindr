@@ -1,5 +1,5 @@
 Bottom: 0a13b292a799445fc333dfc4cc3636ffc6822fb9
-Top:    6979d018d06ccb16c61579c284e2fba19834873a
+Top:    cbee69b757ef6cfb20e6a5bec7efdcb553386f6c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-21 17:51:54 +0000
 
@@ -450,10 +450,10 @@ index 846cb4f..9581d32 100644
  #include "../hidint.h"
  
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
-index 458d16a..28b2168 100644
+index 458d16a..57509dc 100644
 --- a/src/hid/common/hidnogui.c
 +++ b/src/hid/common/hidnogui.c
-@@ -159,6 +159,19 @@ nogui_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
+@@ -159,6 +159,12 @@ nogui_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
  }
  
  static void
@@ -463,26 +463,19 @@ index 458d16a..28b2168 100644
 +}
 +
 +static void
-+nogui_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
-+                            const BoxType *clip_box)
-+{
-+  CRASH;
-+}
-+
-+static void
  nogui_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
  {
    CRASH;
-@@ -364,6 +377,8 @@ HID hid_nogui = {
+@@ -364,6 +370,8 @@ HID hid_nogui = {
    nogui_draw_rect,
    nogui_fill_circle,
    nogui_fill_polygon,
 +  nogui_fill_pcb_polygon,
-+  nogui_thindraw_pcb_polygon,
++  0 /* nogui_thindraw_pcb_polygon */ ,
    nogui_fill_rect,
    nogui_calibrate,
    nogui_shift_is_pressed,
-@@ -415,6 +430,8 @@ apply_default_hid (HID * d, HID * s)
+@@ -415,6 +423,8 @@ apply_default_hid (HID * d, HID * s)
    AD (draw_arc);
    AD (fill_circle);
    AD (fill_polygon);
