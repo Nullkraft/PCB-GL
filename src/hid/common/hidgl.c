@@ -300,10 +300,10 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
   float deltax, deltay, length;
   float wdx, wdy;
   int circular_caps = 0;
-  int no_caps = 0;
+  int hairline = 0;
 
   if (width == 0.0) {
-    no_caps = 1; /* Don't bother capping hairlines */
+    hairline = 1;
     width = 1.0;
   }
 
@@ -336,7 +336,8 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
   switch (cap) {
     case Trace_Cap:
     case Round_Cap:
-      if (!no_caps) {
+      /* Don't bother capping hairlines */
+      if (hairline) {
         circular_caps = 1;
         break;
       }
@@ -383,10 +384,10 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
   float angle_incr_rad;
   int slices;
   int i;
-  int no_caps = 0;
+  int hairline = 0;
 
   if (width == 0.0) {
-    no_caps = 1; /* Don't bother capping hairlines */
+    hairline = 1;
     width = 1.0;
   }
 
@@ -432,7 +433,8 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
     last_outer_x = outer_x;  last_outer_y = outer_y;
   }
 
-  if (no_caps)
+  /* Don't bother capping hairlines */
+  if (hairline)
     return;
 
   draw_cap (width, x + rx * -cosf (start_angle_rad),
