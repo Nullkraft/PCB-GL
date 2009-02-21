@@ -1245,10 +1245,9 @@ CopyAttachedPolygonToLayer (void)
  * the search.
  */
 int
-PolygonHoles (const BoxType * range, LayerTypePtr layer,
-              PolygonTypePtr polygon, int (*any_call) (PLINE * contour,
-                                                       LayerTypePtr lay,
-                                                       PolygonTypePtr poly))
+PolygonHoles (PolygonType *polygon, const BoxType *range,
+              int (*callback) (PLINE *contour, void *user_data),
+              void *user_data)
 {
   POLYAREA *pa = polygon->Clipped;
   PLINE *pl;
@@ -1262,7 +1261,7 @@ PolygonHoles (const BoxType * range, LayerTypePtr layer,
       if (pl->xmin > range->X2 || pl->xmax < range->X1 ||
           pl->ymin > range->Y2 || pl->ymax < range->Y1)
         continue;
-      if (any_call (pl, layer, polygon))
+      if (callback (pl, user_data))
         {
           return 1;
         }
