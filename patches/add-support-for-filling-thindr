@@ -1,5 +1,5 @@
 Bottom: 0a13b292a799445fc333dfc4cc3636ffc6822fb9
-Top:    416d62e9d05cddb9f8956568d29685cbd849d40b
+Top:    6979d018d06ccb16c61579c284e2fba19834873a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-21 17:51:54 +0000
 
@@ -584,10 +584,18 @@ index f0b0618..0b4eb21 100644
  
  #include "data.h"
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index ce5e6a3..336fae4 100644
+index ce5e6a3..d2b680b 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -3901,6 +3901,8 @@ HID lesstif_gui = {
+@@ -28,6 +28,7 @@
+ 
+ #include "hid.h"
+ #include "../hidint.h"
++#include "hid/common/draw_helpers.h"
+ #include "lesstif.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+@@ -3901,6 +3902,8 @@ HID lesstif_gui = {
    lesstif_draw_rect,
    lesstif_fill_circle,
    lesstif_fill_polygon,
