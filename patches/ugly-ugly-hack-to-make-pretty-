@@ -1,7 +1,7 @@
-Bottom: 017198595f41e9dca95a308425308ef87f301698
-Top:    a2f4f4db03ad4d0dfe7e1293e34f15ad2f7e366f
+Bottom: 780f7ceeb83642e2be28458a60486c2ca645e21e
+Top:    3d1c699431c437606555e7e6f0d3adf2384cb098
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-18 13:39:28 +0000
+Date:   2009-02-21 02:36:30 +0000
 
 UGLY UGLY hack to make pretty translucent polygons
 
@@ -10,7 +10,7 @@ UGLY UGLY hack to make pretty translucent polygons
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index a2fbe7f..e67987a 100644
+index 44545cd..d3d1121 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -1729,6 +1729,44 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
@@ -58,7 +58,7 @@ index a2fbe7f..e67987a 100644
  DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
  {
    int *x, *y, n, i = 0;
-@@ -2154,6 +2192,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
+@@ -2156,6 +2194,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
    return 0;
  }
  
@@ -66,7 +66,7 @@ index a2fbe7f..e67987a 100644
  
  /* ---------------------------------------------------------------------------
   * draws a polygon
-@@ -2161,25 +2200,33 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
+@@ -2163,25 +2202,33 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  static void
  DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  {
@@ -109,7 +109,7 @@ index a2fbe7f..e67987a 100644
        if (gui->fill_pcb_polygon != NULL)
          {
            gui->fill_pcb_polygon (Output.fgGC, Polygon);
-@@ -2195,7 +2242,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2197,7 +2244,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
                PolygonType poly = *Polygon;
                poly.Clipped = Polygon->NoHoles;
                do {
@@ -118,7 +118,7 @@ index a2fbe7f..e67987a 100644
                  poly.Clipped = poly.Clipped->f;
                } while (poly.Clipped != Polygon->NoHoles);
              }
-@@ -2209,7 +2256,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2211,7 +2258,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  	    {
  	      PolygonType poly;
  	      poly.Clipped = pg;
@@ -127,7 +127,7 @@ index a2fbe7f..e67987a 100644
  	    }
  	}
      }
-@@ -2243,6 +2290,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2246,6 +2293,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  	  free (y);
  	}
      }
