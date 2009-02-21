@@ -1,5 +1,5 @@
 Bottom: acca2c56bb985d2bfdeb56adeec7bc4ff4985f3c
-Top:    570394b2881f527f944f23db393e32799976b5d5
+Top:    65ddf37285622facc3bf0ede05f69bfee2d85567
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-21 14:33:28 +0000
 
@@ -22,7 +22,7 @@ index e93708f..8a86f25 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 505a941..38c1ca2 100644
+index 505a941..b6cf8bb 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -470,7 +470,6 @@ draw_grid ()
@@ -33,15 +33,47 @@ index 505a941..38c1ca2 100644
  }
  
  /* ------------------------------------------------------------ */
-@@ -581,6 +580,7 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -571,6 +570,28 @@ ghid_invalidate_all ()
+   gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
+ }
+ 
++void clear_stencil (void)
++{
++#if 1
++  glStencilMask (~0);
++  glClear (GL_STENCIL_BUFFER_BIT);
++#else
++  glPushMatrix ();
++  glLoadIdentity ();
++  glStencilFunc (GL_ALWAYS, 0, ~0);   // Always pass stencil test, ref=0
++  glColorMask (0, 0, 0, 0);           // Disable writting in color buffer
++  glBegin (GL_QUADS);
++  glVertex2i (0, 0);
++  glVertex2i (0, gport->height);
++  glVertex2i (gport->width, gport->height);
++  glVertex2i (gport->width, 0);
++  glEnd ();
++  glStencilFunc (GL_GREATER, 1, 1);   // Back to the normal stencil test
++  glColorMask (1, 1, 1, 1);           // Enable writting in color buffer
++  glPopMatrix ();
++#endif
++}
++
+ 
+ int
+ ghid_set_layer (const char *name, int group, int empty)
+@@ -581,7 +602,9 @@ ghid_set_layer (const char *name, int group, int empty)
  
    /* Reset stencil buffer so we can paint anywhere */
    hidgl_flush_triangles (&buffer);
+-  glClear (GL_STENCIL_BUFFER_BIT);
 +//  glClear (GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   glClear (GL_STENCIL_BUFFER_BIT);
++//  glClear (GL_STENCIL_BUFFER_BIT);
++  clear_stencil ();
  
    if (idx >= 0 && idx < max_layer + 2) {
-@@ -2094,13 +2094,12 @@ Benchmark (int argc, char **argv, int x, int y)
+     gport->trans_lines = TRUE;
+@@ -2094,13 +2117,12 @@ Benchmark (int argc, char **argv, int x, int y)
      {
        gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
        gdk_window_process_updates (gport->drawing_area->window, FALSE);
