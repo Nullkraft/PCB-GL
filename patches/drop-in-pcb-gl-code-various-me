@@ -1,5 +1,5 @@
 Bottom: f38e225810ce3a6448999b133f77113ede74da3e
-Top:    e4374e594b9ceaefadbb3ca353751ec2fdaa6889
+Top:    6d1011cf715d93b2ad7814f8074cc5b4716168d5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-21 02:33:48 +0000
 
@@ -116,7 +116,7 @@ index 8321929..e1ad65c 100644
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
 new file mode 100644
-index 0000000..3ccc684
+index 0000000..a63bc00
 --- /dev/null
 +++ b/src/hid/common/hidgl.c
 @@ -0,0 +1,655 @@
@@ -424,10 +424,11 @@ index 0000000..3ccc684
 +  int circular_caps = 0;
 +  int hairline = 0;
 +
-+  if (width == 0.0) {
++  if (width == 0.0)
 +    hairline = 1;
-+    width = 1.0;
-+  }
++
++  if (width < scale)
++    width = scale;
 +
 +  deltax = x2 - x1;
 +  deltay = y2 - y1;
@@ -458,12 +459,8 @@ index 0000000..3ccc684
 +  switch (cap) {
 +    case Trace_Cap:
 +    case Round_Cap:
-+      /* Don't bother capping hairlines */
-+      if (hairline) {
-+        circular_caps = 1;
-+        break;
-+      }
-+      /* Fall through */
++      circular_caps = 1;
++      break;
 +
 +    case Square_Cap:
 +    case Beveled_Cap:
@@ -481,7 +478,9 @@ index 0000000..3ccc684
 +  hidgl_add_triangle (&buffer, x1 - wdx, y1 - wdy,
 +                               x2 + wdx, y2 + wdy,
 +                               x1 + wdx, y1 + wdy);
-+  if (circular_caps)
++
++  /* Don't bother capping hairlines */
++  if (circular_caps && !hairline)
 +    {
 +      draw_cap (width, x1, y1, angle, scale);
 +      draw_cap (width, x2, y2, angle + 180., scale);
@@ -508,10 +507,11 @@ index 0000000..3ccc684
 +  int i;
 +  int hairline = 0;
 +
-+  if (width == 0.0) {
++  if (width == 0.0)
 +    hairline = 1;
-+    width = 1.0;
-+  }
++
++  if (width < scale)
++    width = scale;
 +
 +  inner_r = rx - width / 2.;
 +  outer_r = rx + width / 2.;
@@ -853,7 +853,7 @@ index 0000000..1f15d3f
 +
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 61e114e..3332d7e 100644
+index 61e114e..9e927bd 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -25,33 +25,44 @@
@@ -1028,6 +1028,12 @@ index 61e114e..3332d7e 100644
 -            x, y, 0, 0,
 -            w - x, h - y, GDK_RGB_DITHER_NORMAL, 0, 0);
 -	}
+-
+-void
+-ghid_invalidate_all ()
+-{
+-  int eleft, eright, etop, ebottom;
+-  BoxType region;
 +  static GdkPixbuf *pixbuf = NULL;
 +  static gint vw_scaled, vh_scaled, x_cached, y_cached;
 +  GdkInterpType interp_type;
@@ -1035,12 +1041,6 @@ index 61e114e..3332d7e 100644
 +  int bits_per_sample;
 +  gboolean has_alpha;
  
--void
--ghid_invalidate_all ()
--{
--  int eleft, eright, etop, ebottom;
--  BoxType region;
--
 -  if (!gport->pixmap)
 +  if (!ghidgui->bg_pixbuf)
      return;
@@ -1116,7 +1116,9 @@ index 61e114e..3332d7e 100644
 +        interp_type = GDK_INTERP_NEAREST;
 +      else
 +        interp_type = GDK_INTERP_BILINEAR;
-+
+ 
+-  gdk_draw_rectangle (gport->drawable, gport->bg_gc, 1,
+-		      eleft, etop, eright - eleft + 1, ebottom - etop + 1);
 +      gdk_pixbuf_scale(ghidgui->bg_pixbuf, pixbuf,
 +                       0, 0, vw, vh,
 +                       (double) -x,
@@ -1125,23 +1127,21 @@ index 61e114e..3332d7e 100644
 +                       (double) h / h_src,
 +                       interp_type);
  
--  gdk_draw_rectangle (gport->drawable, gport->bg_gc, 1,
--		      eleft, etop, eright - eleft + 1, ebottom - etop + 1);
+-  ghid_draw_bg_image();
 +      x_cached = x;
 +      y_cached = y;
 +      vw_scaled = vw;
 +      vh_scaled = vh;
 +    }
  
--  ghid_draw_bg_image();
+-  hid_expose_callback (&ghid_hid, &region, 0);
+-  draw_grid ();
 +  if (pixbuf != NULL)
 +    gdk_draw_pixbuf(gport->drawable, gport->bg_gc, pixbuf,
 +                    0, 0, 0, 0, vw, vh, GDK_RGB_DITHER_NORMAL, 0, 0);
 +}
 +#endif
- 
--  hid_expose_callback (&ghid_hid, &region, 0);
--  draw_grid ();
++
 +void
 +ghid_invalidate_all ()
 +{
@@ -1499,19 +1499,14 @@ index 61e114e..3332d7e 100644
  }
  
  void
-@@ -843,200 +863,84 @@ ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2)
+@@ -843,200 +863,73 @@ ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2)
    printf ("ghid_set_line_cap_angle() -- not implemented\n");
  }
  
 -static int
+-use_gc (hidGC gc)
 +void
 +ghid_invalidate_current_gc (void)
-+{
-+  current_gc = NULL;
-+}
-+
-+static void
- use_gc (hidGC gc)
  {
 -  if (!gport->pixmap)
 -    return 0;
@@ -1533,33 +1528,28 @@ index 61e114e..3332d7e 100644
 -    }
 -  gport->u_gc = WHICH_GC (gc);
 -  return 1;
-+  if (current_gc == gc)
-+    return;
-+
-+  current_gc = gc;
-+
-+  ghid_set_color (gc, gc->colorname);
++  current_gc = NULL;
  }
  
 -void
 -ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
-+static inline double
-+clamp_min_width (double width)
++static void
++use_gc (hidGC gc)
  {
 -  double dx1, dy1, dx2, dy2;
-+  double min_width = gport->zoom;
++  if (current_gc == gc)
++    return;
  
 -  dx1 = Vx ((double)x1);
 -  dy1 = Vy ((double)y1);
 -  dx2 = Vx ((double)x2);
 -  dy2 = Vy ((double)y2);
-+  if (width < min_width)
-+    return min_width;
++  current_gc = gc;
  
 -  if (! ClipLine (0, 0, gport->width, gport->height,
 -		  &dx1, &dy1, &dx2, &dy2, gc->width / gport->zoom))
 -    return;
-+  return width;
++  ghid_set_color (gc, gc->colorname);
 +}
  
 +void
@@ -1568,7 +1558,7 @@ index 61e114e..3332d7e 100644
    USE_GC (gc);
 -  gdk_draw_line (gport->drawable, gport->u_gc, dx1, dy1, dx2, dy2);
 +
-+  hidgl_draw_line (gc->cap, clamp_min_width (gc->width), x1, y1, x2, y2, gport->zoom);
++  hidgl_draw_line (gc->cap, gc->width, x1, y1, x2, y2, gport->zoom);
  }
  
  void
@@ -1609,7 +1599,7 @@ index 61e114e..3332d7e 100644
 -  gdk_draw_arc (gport->drawable, gport->u_gc, 0,
 -		Vx (cx) - vrx, Vy (cy) - vry,
 -		vrx * 2, vry * 2, (start_angle + 180) * 64, delta_angle * 64);
-+  hidgl_draw_arc (clamp_min_width (gc->width), cx, cy, xradius, yradius,
++  hidgl_draw_arc (gc->width, cx, cy, xradius, yradius,
 +                  start_angle, delta_angle, gport->zoom);
  }
  
@@ -1737,7 +1727,7 @@ index 61e114e..3332d7e 100644
  }
  
  void
-@@ -1083,8 +987,6 @@ ghid_calibrate (double xval, double yval)
+@@ -1083,8 +976,6 @@ ghid_calibrate (double xval, double yval)
    printf ("ghid_calibrate() -- not implemented\n");
  }
  
@@ -1746,7 +1736,7 @@ index 61e114e..3332d7e 100644
  void
  ghid_notify_gui_is_up ()
  {
-@@ -1526,7 +1428,7 @@ HID ghid_hid = {
+@@ -1526,7 +1417,7 @@ HID ghid_hid = {
    1,				/* gui */
    0,				/* printer */
    0,				/* exporter */
@@ -1755,7 +1745,7 @@ index 61e114e..3332d7e 100644
    1,				/* poly after */
    0,				/* poly dicer */
  
-@@ -2159,11 +2061,14 @@ Benchmark (int argc, char **argv, int x, int y)
+@@ -2159,11 +2050,14 @@ Benchmark (int argc, char **argv, int x, int y)
    region.X2 = PCB->MaxWidth;
    region.Y2 = PCB->MaxHeight;
  
