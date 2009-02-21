@@ -1759,8 +1759,9 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
       x[i] = v->point[0];
       y[i++] = v->point[1];
     }
-  if (TEST_FLAG (THINDRAWFLAG, PCB)
-      || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+  if (TEST_FLAG (THINDRAWFLAG, PCB) ||
+      TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
+      TEST_FLAG (CLEARLINEFLAG, Polygon))
     {
       gui->set_line_width (Output.fgGC, 0);
       gui->set_line_cap (Output.fgGC, Round_Cap);
