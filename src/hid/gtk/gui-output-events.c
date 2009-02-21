@@ -1019,47 +1019,40 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
              gport->offlimits_color.green / 65535.,
              gport->offlimits_color.blue / 65535.);
 
+  glBegin (GL_QUADS);
   if (eleft > 0)
     {
-      glBegin (GL_QUADS);
       glVertex2i (0, 0);
       glVertex2i (eleft, 0);
       glVertex2i (eleft, gport->height);
       glVertex2i (0, gport->height);
-      glEnd ();
     }
   else
     eleft = 0;
-
   if (eright < gport->width)
     {
-      glBegin (GL_QUADS);
       glVertex2i (eright, 0);
       glVertex2i (gport->width, 0);
       glVertex2i (gport->width, gport->height);
-      glVertex2i (eright, gport->width);
-      glEnd ();
+      glVertex2i (eright, gport->height);
     }
   else
     eright = gport->width;
   if (etop > 0)
     {
-      glBegin (GL_QUADS);
       glVertex2i (eleft, 0);
       glVertex2i (eright, 0);
       glVertex2i (eright, etop);
       glVertex2i (eleft, etop);
-      glEnd ();
     }
   if (ebottom < gport->height)
     {
-      glBegin (GL_QUADS);
       glVertex2i (eleft, ebottom);
       glVertex2i (eright + 1, ebottom);
       glVertex2i (eright + 1, gport->height);
       glVertex2i (eleft, gport->height);
-      glEnd ();
     }
+  glEnd ();
 
   /* TODO: Background image */
 
