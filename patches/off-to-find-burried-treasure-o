@@ -1,11 +1,12 @@
-Bottom: 2f7dedd0f6e611addac0a7c25cfbf78e38d3c65b
-Top:    65bcded84b8f83f167d8b59f30ac536cc7357a93
+Bottom: c7ac3e456d51ab01d5371c2bcd7833f938460a20
+Top:    85137bde2f289a83fb8660fac3c8ec81f212938e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-18 13:39:06 +0000
+Date:   2009-02-21 02:36:04 +0000
 
 Off to find burried treasure on polygon island
 
 Add feature to remove islanded areas
+
 
 
 
@@ -129,10 +130,10 @@ index 669a100..f3a6af5 100644
    DrawVia (Via, 0);
    Draw ();
 diff --git a/src/draw.c b/src/draw.c
-index 58086f8..220b244 100644
+index 7d078dc..3d15016 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2258,6 +2258,10 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
+@@ -2260,6 +2260,10 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  static void
  DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  {

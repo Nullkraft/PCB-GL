@@ -1,12 +1,13 @@
-Bottom: 4f209a0859ea01b3c426b8392ecb65dff11cb652
-Top:    ff5e2ff15af4368f32d358f3ed9a2701b5b8e553
+Bottom: 730b386a8d8b15f51061240e6b0d15fc1ab093ca
+Top:    551bec14dd6590a208a351b3046f8b63735bba25
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-18 13:39:04 +0000
+Date:   2009-02-21 02:36:02 +0000
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
 Gives the possibility to mask out regions which are to be free of
 polygon fill.
+
 
 
 
@@ -166,7 +167,7 @@ index 7f43fba..1be41aa 100644
  #define CHANGETHERMAL_TYPES	\
  	(PIN_TYPE | VIA_TYPE)
 diff --git a/src/draw.c b/src/draw.c
-index de0666f..93658bf 100644
+index 328d6c6..967a1a3 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -1759,8 +1759,9 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
@@ -179,8 +180,8 @@ index de0666f..93658bf 100644
 +      TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
 +      TEST_FLAG (CLEARLINEFLAG, Polygon))
      {
-       gui->set_line_width (Output.fgGC, 1);
-       for (i = 0; i < n - 1; i++)
+       gui->set_line_width (Output.fgGC, 0);
+       gui->set_line_cap (Output.fgGC, Round_Cap);
 diff --git a/src/move.c b/src/move.c
 index 003c2e0..aebfc30 100644
 --- a/src/move.c

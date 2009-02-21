@@ -1,7 +1,7 @@
-Bottom: 9aba877f4860a744855a8fc6e49ef3268f480d88
-Top:    e08eafa4485a7e0dce3e4d1a993c187bd5c74bda
+Bottom: 347061dffbe9d2f971e7d3896736ae594ff3614c
+Top:    afb6164b8f3d8966139a9bfad75c4713eaf3c79d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-18 13:39:05 +0000
+Date:   2009-02-21 02:36:03 +0000
 
 Add support for a "poured" object.
 
@@ -17,6 +17,7 @@ all child polygons selected. Manipulations will always occur on the
 
 It remains to be seen whether "pour" will have its own file-format entry,
 or if it will take over the meaning of the existing "polygon" entry.
+
 
 
 
@@ -1971,7 +1972,7 @@ index ef22f73..9f0e843 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index 93658bf..58086f8 100644
+index 967a1a3..7d078dc 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -101,6 +101,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
@@ -2059,7 +2060,7 @@ index 93658bf..58086f8 100644
  	      info.arg = False;
  	    }
  
-@@ -1778,6 +1801,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
+@@ -1779,6 +1802,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2108,7 +2109,7 @@ index 93658bf..58086f8 100644
   * lowlevel routine to element arcs
   */
  static void
-@@ -2128,6 +2193,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+@@ -2129,6 +2194,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
      }
  }
  
@@ -2146,7 +2147,7 @@ index 93658bf..58086f8 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -2511,6 +2607,18 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2514,6 +2610,18 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2165,7 +2166,7 @@ index 93658bf..58086f8 100644
   * erases an element
   */
  void
-@@ -2597,6 +2705,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -2600,6 +2708,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2175,7 +2176,7 @@ index 93658bf..58086f8 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -2644,6 +2755,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
+@@ -2647,6 +2758,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2, 0);
        break;
