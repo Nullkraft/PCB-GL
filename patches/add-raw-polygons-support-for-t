@@ -1,9 +1,10 @@
-Bottom: f55a0659258cbb0d11e5e68ba8344b3255ed0ad1
-Top:    1b3a94eefbb89395350dc6883816956e2a0a0b67
+Bottom: 74ff189e5bec68ad83c8419b5793be0512e84343
+Top:    79ff051c88c636d3491796b834ddd4a25bfbb41b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-17 23:57:21 +0000
+Date:   2009-02-21 02:35:46 +0000
 
 Add raw polygons support for the GTK HID, bypassing the no-holes dicer
+
 
 
 
@@ -38,7 +39,7 @@ index 653d294..b3bb007 100644
  
  /* For lrealpath */
 diff --git a/src/draw.c b/src/draw.c
-index fdb33f7..de0666f 100644
+index bfda63a..328d6c6 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -1741,6 +1741,15 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon, void *data)
@@ -57,7 +58,7 @@ index fdb33f7..de0666f 100644
    pl = Polygon->Clipped->contours;
    n = pl->Count;
    x = (int *) malloc (n * sizeof (int));
-@@ -2171,18 +2180,25 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2173,18 +2182,25 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
      }
    else if (Polygon->Clipped)
      {
@@ -173,7 +174,7 @@ index 58aa756..154f128 100644
  
    0 /* extents_calibrate */ ,
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 12a484e..d109e1f 100644
+index 3ccc684..5def13d 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -36,7 +36,7 @@
@@ -185,7 +186,7 @@ index 12a484e..d109e1f 100644
  
  
  #ifdef HAVE_LIBDMALLOC
-@@ -537,6 +537,8 @@ myBegin (GLenum type)
+@@ -551,6 +551,8 @@ myBegin (GLenum type)
    triangle_comp_idx = 0;
  }
  
@@ -194,7 +195,7 @@ index 12a484e..d109e1f 100644
  static void
  myVertex (GLdouble *vertex_data)
  {
-@@ -553,11 +555,23 @@ myVertex (GLdouble *vertex_data)
+@@ -567,11 +569,23 @@ myVertex (GLdouble *vertex_data)
          }
        else
          {
@@ -218,7 +219,7 @@ index 12a484e..d109e1f 100644
  
            if (tessVertexType == GL_TRIANGLE_STRIP)
              {
-@@ -628,6 +642,105 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -642,6 +656,105 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
    free (vertices);
  }
  
