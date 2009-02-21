@@ -702,6 +702,8 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
   PLINE *contour;
   struct do_hole_info info;
 
+  printf ("Begin filling pcb polygon\n");
+
 
   global_scale = scale;
 
@@ -768,6 +770,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
   gluDeleteTess (info.tobj);
   myFreeCombined ();
   free (info.vertices);
+  printf ("End filling pcb polygon\n");
 }
 
 void
