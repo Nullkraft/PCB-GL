@@ -28,6 +28,7 @@
 
 #include "hid.h"
 #include "../hidint.h"
+#include "hid/common/draw_helpers.h"
 #include "lesstif.h"
 
 #ifdef HAVE_LIBDMALLOC
