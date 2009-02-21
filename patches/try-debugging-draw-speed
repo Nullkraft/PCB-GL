@@ -1,16 +1,17 @@
-Bottom: acca2c56bb985d2bfdeb56adeec7bc4ff4985f3c
-Top:    65ddf37285622facc3bf0ede05f69bfee2d85567
+Bottom: 5500f8fe1c6f50d72fa1ceddb91d0facb6a6e761
+Top:    124b7b948ca1af9054dbf7ada4eeac5675a25fb9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-21 14:33:28 +0000
+Date:   2009-02-21 20:10:37 +0000
 
 Try debugging draw speed
+
 
 
 
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index e93708f..8a86f25 100644
+index c8e3998..ca03175 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -176,7 +176,6 @@ draw_grid ()
@@ -22,10 +23,10 @@ index e93708f..8a86f25 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 505a941..b6cf8bb 100644
+index 55387c9..2f06ba5 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -470,7 +470,6 @@ draw_grid ()
+@@ -471,7 +471,6 @@ draw_grid ()
  
    glDisableClientState (GL_VERTEX_ARRAY);
    glDisable (GL_COLOR_LOGIC_OP);
@@ -33,7 +34,7 @@ index 505a941..b6cf8bb 100644
  }
  
  /* ------------------------------------------------------------ */
-@@ -571,6 +570,28 @@ ghid_invalidate_all ()
+@@ -572,6 +571,28 @@ ghid_invalidate_all ()
    gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
  }
  
@@ -62,7 +63,7 @@ index 505a941..b6cf8bb 100644
  
  int
  ghid_set_layer (const char *name, int group, int empty)
-@@ -581,7 +602,9 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -582,7 +603,9 @@ ghid_set_layer (const char *name, int group, int empty)
  
    /* Reset stencil buffer so we can paint anywhere */
    hidgl_flush_triangles (&buffer);
@@ -73,7 +74,7 @@ index 505a941..b6cf8bb 100644
  
    if (idx >= 0 && idx < max_layer + 2) {
      gport->trans_lines = TRUE;
-@@ -2094,13 +2117,12 @@ Benchmark (int argc, char **argv, int x, int y)
+@@ -2090,13 +2113,12 @@ Benchmark (int argc, char **argv, int x, int y)
      {
        gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
        gdk_window_process_updates (gport->drawing_area->window, FALSE);
