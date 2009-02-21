@@ -43,6 +43,7 @@ int PolygonHoles (const BoxType * range, LayerTypePtr, PolygonTypePtr,
 		  int (*callback) (PLINE *, LayerTypePtr, PolygonTypePtr));
 int PlowsPolygon (DataType *, int, void *, void *,
 		  int (*callback) (DataTypePtr, LayerTypePtr, PolygonTypePtr, int, void *, void *));
+void ComputeNoHoles (PolygonType *poly);
 POLYAREA * ContourToPoly (PLINE *);
 POLYAREA * RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2);
 POLYAREA * CirclePoly(LocationType x, LocationType y, BDimension radius);
@@ -62,5 +63,5 @@ Boolean IsRectangleInPolygon (LocationType, LocationType, LocationType,
 			      LocationType, PolygonTypePtr);
 Boolean isects (POLYAREA *, PolygonTypePtr, Boolean);
 Boolean MorphPolygon (LayerTypePtr, PolygonTypePtr);
-void NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr), const BoxType *clip);
+void NoHolesPolygonDicer (PolygonTypePtr p, void (*emit) (PolygonTypePtr, void *), void *user_data, const BoxType *clip);
 #endif
