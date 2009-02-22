@@ -1,7 +1,7 @@
-Bottom: 9f0b13d58ba3cb35de2439b1096be396220bc4eb
-Top:    a280dc7b79580125950584bb7bbb743c192b7d3c
+Bottom: 1f17f4aef5faaba2276bb261f6890fa8276994c8
+Top:    c112d2c3a92e541ff75c75d3f1b237fdb05eb2c4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-21 22:00:59 +0000
+Date:   2009-02-22 02:56:06 +0000
 
 Add raw polygons support for the GTK HID, bypassing the no-holes dicer
 
@@ -27,7 +27,7 @@ Add raw polygons support for the GTK HID, bypassing the no-holes dicer
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index a63bc00..4507dd0 100644
+index 143735a..5f3f276 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -36,7 +36,7 @@
@@ -39,7 +39,7 @@ index a63bc00..4507dd0 100644
  
  
  #ifdef HAVE_LIBDMALLOC
-@@ -551,6 +551,8 @@ myBegin (GLenum type)
+@@ -469,6 +469,8 @@ myBegin (GLenum type)
    triangle_comp_idx = 0;
  }
  
@@ -48,7 +48,7 @@ index a63bc00..4507dd0 100644
  static void
  myVertex (GLdouble *vertex_data)
  {
-@@ -567,11 +569,23 @@ myVertex (GLdouble *vertex_data)
+@@ -485,11 +487,23 @@ myVertex (GLdouble *vertex_data)
          }
        else
          {
@@ -72,7 +72,7 @@ index a63bc00..4507dd0 100644
  
            if (tessVertexType == GL_TRIANGLE_STRIP)
              {
-@@ -642,6 +656,105 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -560,6 +574,105 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
    free (vertices);
  }
  
@@ -179,10 +179,10 @@ index a63bc00..4507dd0 100644
  hidgl_fill_rect (int x1, int y1, int x2, int y2)
  {
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index 1f15d3f..ae7f68f 100644
+index fc2d41a..f7a6aeb 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
-@@ -65,6 +65,7 @@ void hidgl_draw_arc (double width, int vx, int vy, int vrx, int vry, int start_a
+@@ -63,6 +63,7 @@ void hidgl_draw_arc (double width, int vx, int vy, int vrx, int vry, int start_a
  void hidgl_draw_rect (int x1, int y1, int x2, int y2);
  void hidgl_fill_circle (int vx, int vy, int vr, double scale);
  void hidgl_fill_polygon (int n_coords, int *x, int *y);
