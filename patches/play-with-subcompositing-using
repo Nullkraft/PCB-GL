@@ -1,5 +1,5 @@
 Bottom: f1eb7f65b622bfde86715a44eaa7ba3a54450366
-Top:    1e13e2f335ff9f52dd28dba5ef77c6695827ad15
+Top:    56ce3ed7c43d62e49dfbd91fb1ce0a468f045e5e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-21 22:01:22 +0000
 
@@ -12,10 +12,26 @@ Play with subcompositing using the stencil buffer
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 11b1c47..c203df4 100644
+index 11b1c47..d5d4adc 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -921,7 +921,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -430,6 +430,7 @@ DrawEverything (BoxTypePtr drawn_area)
+ 		    backN_callback, NULL);
+ 	  DrawLayer (&(PCB->Data->BACKSILKLAYER), drawn_area);
+ 	}
++      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+     }
+ 
+   /* draw all layers in layerstack order */
+@@ -468,6 +469,7 @@ DrawEverything (BoxTypePtr drawn_area)
+ 			    &plated);
+ 		}
+ 	    }
++	  gui->set_layer (NULL, SL (FINISHED, 0), 0);
+ 	}
+     }
+   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
+@@ -921,7 +923,8 @@ DrawLayerGroup (int group, const BoxType * screen)
    Cardinal *layers = PCB->LayerGroups.Entries[group];
  
    clip_box = screen;
@@ -25,7 +41,7 @@ index 11b1c47..c203df4 100644
      {
        layernum = layers[i];
        Layer = PCB->Data->Layer + layers[i];
-@@ -946,6 +947,10 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -946,6 +949,10 @@ DrawLayerGroup (int group, const BoxType * screen)
  	      r_search (Layer->polygon_tree, screen, NULL, poly_callback,
  			&info);
  	      info.arg = False;
@@ -36,7 +52,7 @@ index 11b1c47..c203df4 100644
  	    }
  
  	  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
-@@ -966,6 +971,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -966,6 +973,8 @@ DrawLayerGroup (int group, const BoxType * screen)
            gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
            gui->use_mask (HID_MASK_OFF);
  #endif
