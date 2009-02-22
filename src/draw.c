@@ -430,6 +430,7 @@ DrawEverything (BoxTypePtr drawn_area)
 		    backN_callback, NULL);
 	  DrawLayer (&(PCB->Data->BACKSILKLAYER), drawn_area);
 	}
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
     }
 
   /* draw all layers in layerstack order */
@@ -468,6 +469,7 @@ DrawEverything (BoxTypePtr drawn_area)
 			    &plated);
 		}
 	    }
+	  gui->set_layer (NULL, SL (FINISHED, 0), 0);
 	}
     }
   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
