@@ -1,7 +1,7 @@
-Bottom: d9f950f23a82cc034152cdef10d575133613969b
-Top:    72d7764725b924eb2e76efc29800d51a5153ec34
+Bottom: ad8c82c2787f93da24b1278bd58c72ac969238b3
+Top:    d01e08dba3e153c3a572e274c2d816baabe61bc4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-21 22:01:22 +0000
+Date:   2009-02-22 02:57:12 +0000
 
 Silly space navigator interface to allow funky views
 
@@ -27,10 +27,10 @@ index 8b4c6ee..847c49f 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 4b78c66..abfd6f4 100644
+index f7b4b2f..55e9e68 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -43,6 +43,7 @@
+@@ -44,6 +44,7 @@
  #include "error.h"
  #include "misc.h"
  #include "set.h"
@@ -38,7 +38,7 @@ index 4b78c66..abfd6f4 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -1179,6 +1180,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -1200,6 +1201,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        /* Make sure drawing area has keyboard focus when we are in it.
         */
        gtk_widget_grab_focus (out->drawing_area);
@@ -47,7 +47,7 @@ index 4b78c66..abfd6f4 100644
      }
    ghidgui->in_popup = FALSE;
  
-@@ -1286,6 +1289,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -1307,6 +1310,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
  	    }
  	  g_idle_add (ghid_pan_idle_cb, NULL);
  	}
@@ -56,7 +56,7 @@ index 4b78c66..abfd6f4 100644
      }
  
    if(cursor_in_viewport)
-@@ -1341,3 +1346,27 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+@@ -1362,3 +1367,27 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  
    return TRUE;
  }
@@ -85,7 +85,7 @@ index 4b78c66..abfd6f4 100644
 +}
 +
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index ff9276f..a2d00b2 100644
+index efe99cc..3027113 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -121,6 +121,7 @@ a zoom in/out.
@@ -96,7 +96,7 @@ index ff9276f..a2d00b2 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -2746,6 +2747,12 @@ ghid_do_export (HID_Attr_Val * options)
+@@ -2748,6 +2749,12 @@ ghid_do_export (HID_Attr_Val * options)
    if (stdin_listen)
      ghid_create_listener ();
  

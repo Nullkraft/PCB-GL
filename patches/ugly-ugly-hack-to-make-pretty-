@@ -1,7 +1,7 @@
-Bottom: 72d7764725b924eb2e76efc29800d51a5153ec34
-Top:    bdce6f4a481d0345a6d1090bc25f90e5e9d76889
+Bottom: d01e08dba3e153c3a572e274c2d816baabe61bc4
+Top:    43652651f7dfb911aa4b39019f332261704d94c5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-21 22:01:22 +0000
+Date:   2009-02-22 02:57:12 +0000
 
 UGLY UGLY hack to make pretty translucent polygons
 
@@ -11,10 +11,10 @@ UGLY UGLY hack to make pretty translucent polygons
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 85e6243..11b1c47 100644
+index 790e994..d5d4adc 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2121,6 +2121,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
+@@ -2130,6 +2130,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
    return 0;
  }
  
@@ -22,7 +22,7 @@ index 85e6243..11b1c47 100644
  
  /* ---------------------------------------------------------------------------
   * draws a polygon
-@@ -2145,14 +2146,21 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2154,14 +2155,21 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
      color = PCB->ConnectedColor;
    else
      color = Layer->Color;
@@ -49,10 +49,10 @@ index 85e6243..11b1c47 100644
    /* If checking planes, thin-draw any pieces which have been clipped away */
    if (gui->thindraw_pcb_polygon != NULL &&
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index a102426..35720ae 100644
+index 9040e44..4c45bf1 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -705,6 +705,18 @@ ghid_set_special_colors (HID_Attribute * ha)
+@@ -734,6 +734,18 @@ ghid_set_special_colors (HID_Attribute * ha)
      }
  }
  
@@ -71,7 +71,7 @@ index a102426..35720ae 100644
  
  void
  ghid_set_color (hidGC gc, const char *name)
-@@ -717,13 +729,15 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -746,13 +758,15 @@ ghid_set_color (hidGC gc, const char *name)
    double r, g, b, a;
    a = 1.0;
  
@@ -88,7 +88,7 @@ index a102426..35720ae 100644
    old_name = strdup (name);
  
    if (name == NULL)
-@@ -798,6 +812,7 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -827,6 +841,7 @@ ghid_set_color (hidGC gc, const char *name)
      }
    if (1) {
      double maxi, mult;
