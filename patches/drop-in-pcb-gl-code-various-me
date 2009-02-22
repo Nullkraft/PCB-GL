@@ -1,5 +1,5 @@
 Bottom: a1926c22ba95d0c4a8771680493318419e7ada66
-Top:    1c7098bdbd9de5567090cd870f26b6f516e9d04f
+Top:    cdc1a8080580bc85a392adda1f4c422f17e049de
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-21 20:09:53 +0000
 
@@ -118,10 +118,10 @@ index 8321929..e1ad65c 100644
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
 new file mode 100644
-index 0000000..a63bc00
+index 0000000..143735a
 --- /dev/null
 +++ b/src/hid/common/hidgl.c
-@@ -0,0 +1,655 @@
+@@ -0,0 +1,573 @@
 +/* $Id: */
 +
 +#if 1 /* DISABLE EVERYTHING! */
@@ -305,88 +305,6 @@ index 0000000..a63bc00
 +
 +#endif
 +/* ------------------------------------------------------------ */
-+
-+#if 0
-+int
-+hidgl_set_layer (const char *name, int group, int empty)
-+{
-+  int idx = (group >= 0
-+             && group <
-+             max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
-+
-+  if (idx >= 0 && idx < max_layer + 2) {
-+    gport->trans_lines = TRUE;
-+    return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
-+  }
-+  if (idx < 0)
-+    {
-+      switch (SL_TYPE (idx))
-+        {
-+        case SL_INVISIBLE:
-+          return /* pinout ? 0 : */ PCB->InvisibleObjectsOn;
-+        case SL_MASK:
-+          if (SL_MYSIDE (idx) /*&& !pinout */ )
-+            return TEST_FLAG (SHOWMASKFLAG, PCB);
-+          return 0;
-+        case SL_SILK:
-+//          gport->trans_lines = TRUE;
-+          gport->trans_lines = FALSE;
-+          if (SL_MYSIDE (idx) /*|| pinout */ )
-+            return PCB->ElementOn;
-+          return 0;
-+        case SL_ASSY:
-+          return 0;
-+        case SL_RATS:
-+          gport->trans_lines = TRUE;
-+          return 1;
-+        case SL_PDRILL:
-+        case SL_UDRILL:
-+          return 1;
-+        }
-+    }
-+  return 0;
-+}
-+
-+void
-+hidgl_use_mask (int use_it)
-+{
-+  if (use_it == cur_mask)
-+    return;
-+
-+  hidgl_flush_triangles ();
-+
-+  switch (use_it)
-+    {
-+    case HID_MASK_BEFORE:
-+      /* Write '1' to the stencil buffer where the solder-mask is drawn. */
-+      glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
-+      glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
-+      glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
-+      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
-+      break;
-+
-+    case HID_MASK_CLEAR:
-+      /* Drawing operations clear the stencil buffer to '0' */
-+      glStencilFunc (GL_ALWAYS, 0, 1);            // Test always passes, value written 0
-+      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 0)
-+      break;
-+
-+    case HID_MASK_AFTER:
-+      /* Drawing operations as masked to areas where the stencil buffer is '1' */
-+      glColorMask (1, 1, 1, 1);                   // Enable drawing of r, g, b & a
-+      glStencilFunc (GL_EQUAL, 1, 1);             // Draw only where stencil buffer is 1
-+      glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    // Stencil buffer read only
-+      break;
-+
-+    case HID_MASK_OFF:
-+      /* Disable stenciling */
-+      glDisable (GL_STENCIL_TEST);                // Disable Stencil test
-+      break;
-+    }
-+  cur_mask = use_it;
-+}
-+#endif
-+
 +
 +#define MIN_TRIANGLES_PER_CAP 3
 +#define MAX_TRIANGLES_PER_CAP 90
@@ -779,10 +697,10 @@ index 0000000..a63bc00
 +
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
 new file mode 100644
-index 0000000..1f15d3f
+index 0000000..fc2d41a
 --- /dev/null
 +++ b/src/hid/common/hidgl.h
-@@ -0,0 +1,71 @@
+@@ -0,0 +1,69 @@
 +/* $Id: gui.h,v 1.25 2008-04-13 14:15:38 petercjclifton Exp $ */
 +
 +/*
@@ -843,8 +761,6 @@ index 0000000..1f15d3f
 +}
 +
 +// void draw_grid ()
-+// int hidgl_set_layer (const char *name, int group, int empty)
-+// void hidgl_use_mask (int use_it)
 +void hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double scale);
 +void hidgl_draw_arc (double width, int vx, int vy, int vrx, int vry, int start_angle, int delta_angle, double scale);
 +void hidgl_draw_rect (int x1, int y1, int x2, int y2);
