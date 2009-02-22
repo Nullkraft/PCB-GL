@@ -1,7 +1,7 @@
-Bottom: d01e08dba3e153c3a572e274c2d816baabe61bc4
+Bottom: 43652651f7dfb911aa4b39019f332261704d94c5
 Top:    43652651f7dfb911aa4b39019f332261704d94c5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-22 02:57:12 +0000
+Date:   2009-02-22 03:02:56 +0000
 
 UGLY UGLY hack to make pretty translucent polygons
 
@@ -10,89 +10,4 @@ UGLY UGLY hack to make pretty translucent polygons
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index 790e994..d5d4adc 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -2130,6 +2130,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
-   return 0;
- }
- 
-+void hidgl_hack_poly_alpha (double alpha);
- 
- /* ---------------------------------------------------------------------------
-  * draws a polygon
-@@ -2154,14 +2155,21 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
-     color = PCB->ConnectedColor;
-   else
-     color = Layer->Color;
--  gui->set_color (Output.fgGC, color);
- 
-   if (gui->thindraw_pcb_polygon != NULL &&
-       (TEST_FLAG (THINDRAWFLAG, PCB) ||
-        TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
--    gui->thindraw_pcb_polygon (Output.fgGC, Polygon, clip_box);
--  else
--    gui->fill_pcb_polygon (Output.fgGC, Polygon, clip_box);
-+    {
-+      gui->set_color (Output.fgGC, color);
-+      gui->thindraw_pcb_polygon (Output.fgGC, Polygon, clip_box);
-+      hidgl_hack_poly_alpha (0.25);
-+    }
-+
-+  gui->set_color (Output.fgGC, color);
-+  gui->fill_pcb_polygon (Output.fgGC, Polygon, clip_box);
-+
-+  hidgl_hack_poly_alpha (1.0);
-+  gui->set_color (Output.fgGC, color);
- 
-   /* If checking planes, thin-draw any pieces which have been clipped away */
-   if (gui->thindraw_pcb_polygon != NULL &&
-diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 9040e44..4c45bf1 100644
---- a/src/hid/gtk/gtkhid-main.c
-+++ b/src/hid/gtk/gtkhid-main.c
-@@ -734,6 +734,18 @@ ghid_set_special_colors (HID_Attribute * ha)
-     }
- }
- 
-+static double global_alpha_mult = 1.0;
-+static int alpha_changed = 0;
-+
-+void
-+hidgl_hack_poly_alpha (double alpha_mult)
-+{
-+  if (alpha_mult != global_alpha_mult) {
-+    global_alpha_mult = alpha_mult;
-+    alpha_changed = 1;
-+  }
-+}
-+
- 
- void
- ghid_set_color (hidGC gc, const char *name)
-@@ -746,13 +758,15 @@ ghid_set_color (hidGC gc, const char *name)
-   double r, g, b, a;
-   a = 1.0;
- 
--  if (old_name != NULL)
-+  if (!alpha_changed && old_name != NULL)
-     {
-       if (strcmp (name, old_name) == 0)
-         return;
-       free (old_name);
-     }
- 
-+  alpha_changed = 0;
-+
-   old_name = strdup (name);
- 
-   if (name == NULL)
-@@ -827,6 +841,7 @@ ghid_set_color (hidGC gc, const char *name)
-     }
-   if (1) {
-     double maxi, mult;
-+    alpha_mult *= global_alpha_mult;
-     if (gport->trans_lines)
-       a = a * alpha_mult;
-     maxi = r;
+
