@@ -58,8 +58,6 @@ hidgl_add_triangle (triangle_buffer *buffer,
 }
 
 // void draw_grid ()
-// int hidgl_set_layer (const char *name, int group, int empty)
-// void hidgl_use_mask (int use_it)
 void hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double scale);
 void hidgl_draw_arc (double width, int vx, int vy, int vrx, int vry, int start_angle, int delta_angle, double scale);
 void hidgl_draw_rect (int x1, int y1, int x2, int y2);
