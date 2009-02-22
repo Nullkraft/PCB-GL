@@ -734,6 +734,18 @@ ghid_set_special_colors (HID_Attribute * ha)
     }
 }
 
+static double global_alpha_mult = 1.0;
+static int alpha_changed = 0;
+
+void
+hidgl_hack_poly_alpha (double alpha_mult)
+{
+  if (alpha_mult != global_alpha_mult) {
+    global_alpha_mult = alpha_mult;
+    alpha_changed = 1;
+  }
+}
+
 
 void
 ghid_set_color (hidGC gc, const char *name)
@@ -746,12 +758,14 @@ ghid_set_color (hidGC gc, const char *name)
   double r, g, b, a;
   a = 1.0;
 
-  if (old_name != NULL)
+  if (!alpha_changed && old_name != NULL)
     {
       if (strcmp (name, old_name) == 0)
         return;
       free (old_name);
     }
+
+  alpha_changed = 0;
 
   old_name = strdup (name);
 
@@ -827,6 +841,7 @@ ghid_set_color (hidGC gc, const char *name)
     }
   if (1) {
     double maxi, mult;
+    alpha_mult *= global_alpha_mult;
     if (gport->trans_lines)
       a = a * alpha_mult;
     maxi = r;
