@@ -1,7 +1,7 @@
-Bottom: bdce6f4a481d0345a6d1090bc25f90e5e9d76889
-Top:    f1eb7f65b622bfde86715a44eaa7ba3a54450366
+Bottom: 43652651f7dfb911aa4b39019f332261704d94c5
+Top:    43652651f7dfb911aa4b39019f332261704d94c5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-21 22:01:22 +0000
+Date:   2009-02-22 02:57:13 +0000
 
 Turn off depth writing
 
@@ -9,16 +9,4 @@ Turn off depth writing
 
 ---
 
-diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index abfd6f4..15bbb2d 100644
---- a/src/hid/gtk/gui-output-events.c
-+++ b/src/hid/gtk/gui-output-events.c
-@@ -992,6 +992,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
-                 gport->bg_color.blue / 65535.,
-                 1.);
- 
-+  glDepthMask (0);
-+
-   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
- 
-   region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
+
