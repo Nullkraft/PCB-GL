@@ -2158,15 +2158,19 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 
   if (gui->thindraw_pcb_polygon != NULL &&
       (TEST_FLAG (THINDRAWFLAG, PCB) ||
-       TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
+       TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
+       TEST_FLAG (CLEARLINEFLAG, Polygon)))
     {
       gui->set_color (Output.fgGC, color);
       gui->thindraw_pcb_polygon (Output.fgGC, Polygon, clip_box);
       hidgl_hack_poly_alpha (0.25);
     }
 
-  gui->set_color (Output.fgGC, color);
-  gui->fill_pcb_polygon (Output.fgGC, Polygon, clip_box);
+  if (!TEST_FLAG (CLEARLINEFLAG, Polygon))
+    {
+      gui->set_color (Output.fgGC, color);
+      gui->fill_pcb_polygon (Output.fgGC, Polygon, clip_box);
+    }
 
   hidgl_hack_poly_alpha (1.0);
   gui->set_color (Output.fgGC, color);
