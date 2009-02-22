@@ -430,6 +430,7 @@ DrawEverything (BoxTypePtr drawn_area)
 		    backN_callback, NULL);
 	  DrawLayer (&(PCB->Data->BACKSILKLAYER), drawn_area);
 	}
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
     }
 
   /* draw all layers in layerstack order */
@@ -468,6 +469,7 @@ DrawEverything (BoxTypePtr drawn_area)
 			    &plated);
 		}
 	    }
+	  gui->set_layer (NULL, SL (FINISHED, 0), 0);
 	}
     }
   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
@@ -921,7 +923,8 @@ DrawLayerGroup (int group, const BoxType * screen)
   Cardinal *layers = PCB->LayerGroups.Entries[group];
 
   clip_box = screen;
-  for (i = n_entries - 1; i >= 0; i--)
+  for (i = n_entries - 1; i >= 0;
+      i--, gui->set_layer (0, group, 0)) /* HACK: Subcomposite each layer in a layer group separately */
     {
       layernum = layers[i];
       Layer = PCB->Data->Layer + layers[i];
@@ -946,6 +949,10 @@ DrawLayerGroup (int group, const BoxType * screen)
 	      r_search (Layer->polygon_tree, screen, NULL, poly_callback,
 			&info);
 	      info.arg = False;
+
+	      /* HACK: Subcomposite polygons separately from other layer primitives */
+	      /* Reset the compositing */
+	      gui->set_layer (0, group, 0);
 	    }
 
 	  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
@@ -966,6 +973,8 @@ DrawLayerGroup (int group, const BoxType * screen)
           gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
           gui->use_mask (HID_MASK_OFF);
 #endif
+//          /* Reset the compositing HACK */
+//          gui->set_layer (0, group, 0);
 	}
     }
   if (n_entries > 1)
