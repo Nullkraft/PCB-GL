@@ -1,0 +1,29 @@
+Bottom: 1e13e2f335ff9f52dd28dba5ef77c6695827ad15
+Top:    56ce3ed7c43d62e49dfbd91fb1ce0a468f045e5e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-22 02:36:40 +0000
+
+Refresh of play-with-subcompositing-using
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index c203df4..d5d4adc 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -430,6 +430,7 @@ DrawEverything (BoxTypePtr drawn_area)
+ 		    backN_callback, NULL);
+ 	  DrawLayer (&(PCB->Data->BACKSILKLAYER), drawn_area);
+ 	}
++      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+     }
+ 
+   /* draw all layers in layerstack order */
+@@ -468,6 +469,7 @@ DrawEverything (BoxTypePtr drawn_area)
+ 			    &plated);
+ 		}
+ 	    }
++	  gui->set_layer (NULL, SL (FINISHED, 0), 0);
+ 	}
+     }
+   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
