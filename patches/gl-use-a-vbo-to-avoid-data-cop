@@ -1,7 +1,7 @@
-Bottom: 15c91517773f3f69a73643460e63ce629cd36aec
-Top:    6383331e7cb74dde7002a61ac1281978b238c8d3
+Bottom: 388ba5a8cc5cf07af4f85a58d05471508e3a8cf7
+Top:    3fc50738a601bfbda5a86dae911543fabc7679b6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-21 19:29:57 +0000
+Date:   2009-02-22 03:02:24 +0000
 
 GL: Use a VBO to avoid data-copying
 
@@ -19,7 +19,7 @@ BUGS: Breakage due to graphics operations being called outside the
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index bd91bbb..a320cbc 100644
+index 31888b6..0d5a5a0 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -60,10 +60,28 @@ hidgl_new_triangle_array (void)
@@ -75,10 +75,10 @@ index bd91bbb..a320cbc 100644
  
  void
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index ae7f68f..be03d53 100644
+index f688fc5..8bade1c 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
-@@ -31,9 +31,11 @@
+@@ -29,9 +29,11 @@
     4 * 5461 * 2 * 3 = 109464 */
  #define TRIANGLE_ARRAY_BYTES 131072
  typedef struct {
@@ -92,10 +92,10 @@ index ae7f68f..be03d53 100644
  
  extern triangle_buffer buffer;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 4e55dd4..1a9029a 100644
+index 745d40c..604c1cc 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1078,6 +1078,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1092,6 +1092,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
@@ -107,7 +107,7 @@ index 4e55dd4..1a9029a 100644
    draw_grid ();
  
    hidgl_init_triangle_array (&buffer);
-@@ -1098,6 +1103,10 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1112,6 +1117,10 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  
    hidgl_flush_triangles (&buffer);
  
@@ -119,7 +119,7 @@ index 4e55dd4..1a9029a 100644
      gdk_gl_drawable_swap_buffers (pGlDrawable);
    else
 diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
-index f59f22b..ec611f6 100644
+index 935e435..efdda50 100644
 --- a/src/hid/gtk/gui-pinout-preview.c
 +++ b/src/hid/gtk/gui-pinout-preview.c
 @@ -236,6 +236,10 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
