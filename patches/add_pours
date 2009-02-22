@@ -1,7 +1,7 @@
-Bottom: 9d21ecb053e40c2d59cfdac884807fedf38c207e
-Top:    34ce93b6661b960572846dc1d8e80f1b85d122b3
+Bottom: 8b1b8f9f0f2d319c019bcea0b1fec57ecd732095
+Top:    8d4f793878687a1232df3c3f1450d4cef6cd0882
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-21 22:01:10 +0000
+Date:   2009-02-22 02:56:49 +0000
 
 Add support for a "poured" object.
 
@@ -1973,7 +1973,7 @@ index ef22f73..9f0e843 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index afe2f62..29846a0 100644
+index 05387c1..8e7eff4 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -100,6 +100,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
@@ -1984,7 +1984,7 @@ index afe2f62..29846a0 100644
  static void DrawArcLowLevel (ArcTypePtr);
  static void DrawElementPackageLowLevel (ElementTypePtr Element, int);
  static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
-@@ -667,6 +668,7 @@ struct pin_info
+@@ -669,6 +670,7 @@ struct pin_info
  {
    Boolean arg;
    LayerTypePtr Layer;
@@ -1992,7 +1992,7 @@ index afe2f62..29846a0 100644
  };
  
  static int
-@@ -678,12 +680,31 @@ clearPin_callback (const BoxType * b, void *cl)
+@@ -680,12 +682,31 @@ clearPin_callback (const BoxType * b, void *cl)
      ClearOnlyPin (pin, True);
    return 1;
  }
@@ -2024,7 +2024,7 @@ index afe2f62..29846a0 100644
    return 1;
  }
  
-@@ -777,6 +798,7 @@ DrawMask (BoxType * screen)
+@@ -779,6 +800,7 @@ DrawMask (BoxType * screen)
    OutputType *out = &Output;
  
    info.arg = True;
@@ -2032,7 +2032,7 @@ index afe2f62..29846a0 100644
  
    if (thin)
      gui->set_color (Output.pmGC, PCB->MaskColor);
-@@ -883,8 +905,9 @@ DrawLayer (LayerTypePtr Layer, BoxType * screen)
+@@ -885,8 +907,9 @@ DrawLayer (LayerTypePtr Layer, BoxType * screen)
    /* print the non-clearing polys */
    info.Layer = Layer;
    info.arg = False;
@@ -2043,7 +2043,7 @@ index afe2f62..29846a0 100644
  
    /* draw all visible lines this layer */
    r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
-@@ -938,13 +961,13 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -941,13 +964,13 @@ DrawLayerGroup (int group, const BoxType * screen)
            gui->use_mask (HID_MASK_BEFORE);
  #endif
  
@@ -2059,9 +2059,9 @@ index afe2f62..29846a0 100644
 +        info.clip = screen;
 +	      r_search (Layer->pour_tree, screen, NULL, pour_callback, &info);
  	      info.arg = False;
- 	    }
  
-@@ -1743,6 +1766,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
+ 	      /* HACK: Subcomposite polygons separately from other layer primitives */
+@@ -1752,6 +1775,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2110,7 +2110,7 @@ index afe2f62..29846a0 100644
   * lowlevel routine to element arcs
   */
  static void
-@@ -2093,6 +2158,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+@@ -2102,6 +2167,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
      }
  }
  
@@ -2148,7 +2148,7 @@ index afe2f62..29846a0 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -2150,7 +2246,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2159,7 +2255,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
    if (gui->thindraw_pcb_polygon != NULL &&
        (TEST_FLAG (THINDRAWFLAG, PCB) ||
         TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
@@ -2157,7 +2157,7 @@ index afe2f62..29846a0 100644
      gui->thindraw_pcb_polygon (Output.fgGC, Polygon, clip_box);
    else
      gui->fill_pcb_polygon (Output.fgGC, Polygon, clip_box);
-@@ -2434,6 +2530,18 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2443,6 +2539,18 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2176,7 +2176,7 @@ index afe2f62..29846a0 100644
   * erases an element
   */
  void
-@@ -2520,6 +2628,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -2529,6 +2637,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2186,7 +2186,7 @@ index afe2f62..29846a0 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -2567,6 +2678,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
+@@ -2576,6 +2687,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2, 0);
        break;
@@ -2752,10 +2752,10 @@ index e8ad916..e1b6290 100644
        break;
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 2dfe6a3..be5ef89 100644
+index 0deb12e..745d40c 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -267,7 +267,7 @@ have_crosshair_attachments (void)
+@@ -268,7 +268,7 @@ have_crosshair_attachments (void)
      case VIA_MODE:
        result = TRUE;
        break;
@@ -2764,7 +2764,7 @@ index 2dfe6a3..be5ef89 100644
        if (Crosshair.AttachedLine.State != STATE_FIRST)
  	result = TRUE;
        break;
-@@ -662,7 +662,7 @@ in_draw_state (void)
+@@ -663,7 +663,7 @@ in_draw_state (void)
  	  && Crosshair.AttachedBox.State != STATE_FIRST)
        || (Settings.Mode == RECTANGLE_MODE
  	  && Crosshair.AttachedBox.State != STATE_FIRST)
@@ -2773,7 +2773,7 @@ index 2dfe6a3..be5ef89 100644
  	  && Crosshair.AttachedLine.State != STATE_FIRST))
      return TRUE;
    return FALSE;
-@@ -724,8 +724,9 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+@@ -725,8 +725,9 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
  	    hid_actionl ("Mode", "Arc", NULL);
  	  else if (Settings.Mode == RECTANGLE_MODE)
  	    hid_actionl ("Mode", "Rectangle", NULL);
@@ -2786,7 +2786,7 @@ index 2dfe6a3..be5ef89 100644
  	  hid_actionl ("Mode", "Notify", NULL);
  	  draw_state_reset = TRUE;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index ff9276f..53a3991 100644
+index efe99cc..c298be1 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -1981,7 +1981,8 @@ static ModeButton mode_buttons[] = {
