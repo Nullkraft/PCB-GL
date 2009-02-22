@@ -1,0 +1,14 @@
+Bottom: 76ed2ca4855906b66b43802ecafe0022e8910344
+Top:    76ed2ca4855906b66b43802ecafe0022e8910344
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-22 02:53:33 +0000
+
+Work in progress on subcompositing / stencil buffers
+
+If we have many stencil buffer bits, we may as well use all of them before
+resorting to a costly clear and re-using the same bit-planes over.
+
+
+---
+
+
