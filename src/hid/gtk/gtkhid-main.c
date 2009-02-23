@@ -585,6 +585,8 @@ ghid_set_layer (const char *name, int group, int empty)
   /* Flush out any existing geoemtry to be rendered */
   hidgl_flush_triangles (&buffer);
 
+  glEnable (GL_STENCIL_TEST);                // Enable Stencil test
+  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
   /* Reset stencil buffer so we can paint anywhere */
   hidgl_return_stencil_bit (stencil_bit);               // Relinquish any bitplane we previously used
   if (SL_TYPE (idx) != SL_FINISHED)
