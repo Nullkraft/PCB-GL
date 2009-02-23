@@ -598,8 +598,9 @@ ghid_set_layer (const char *name, int group, int empty)
   else
     {
 #endif
+      stencil_bit = 0;
       glStencilMask (0);
-      glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  // Always pass stencil test
+      glStencilFunc (GL_ALWAYS, 0, 0);  // Always pass stencil test
 #ifdef SUBCOMPOSITE_LAYERS
     }
 #endif
