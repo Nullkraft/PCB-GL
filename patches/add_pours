@@ -1,7 +1,7 @@
-Bottom: a1bf181b257c65185645c2cdfb319c213fdecb8c
-Top:    b30a63d21cb64245892482129e2f2c12e9f9a2c4
+Bottom: ad0efc0f4104fdd87acd3385346eba1a00614755
+Top:    084ff7311874ce0c779c1426f165f4127182ba72
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-23 22:45:36 +0000
+Date:   2009-02-23 23:36:59 +0000
 
 Add support for a "poured" object.
 
@@ -2705,7 +2705,7 @@ index 2dcf4b8..4274dd0 100644
         {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
         {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 7fc62f9..4c35084 100644
+index 9dc6d2d..cc62adc 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -383,7 +383,7 @@ gerber_do_export (HID_Attr_Val * options)
@@ -2792,7 +2792,7 @@ index efe99cc..c298be1 100644
    {NULL, NULL, NULL, "remove", REMOVE_MODE, del},
    {NULL, NULL, NULL, "rotate", ROTATE_MODE, rot},
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index d06193c..b1144ec 100644
+index e548bc0..0ab0242 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -526,7 +526,7 @@ nelma_choose_groups()
@@ -2805,7 +2805,7 @@ index d06193c..b1144ec 100644
  
  			/*
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 0aa62ac..c060670 100644
+index 5390f29..b589700 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -300,7 +300,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
@@ -2818,7 +2818,7 @@ index 0aa62ac..c060670 100644
      }
    print_group[GetLayerGroupNumberByNumber (max_layer)] = 1;
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index 15febe8..bc19746 100644
+index be49202..2f6eb70 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
 @@ -150,7 +150,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
@@ -2831,7 +2831,7 @@ index 15febe8..bc19746 100644
      }
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index d742a5f..c995332 100644
+index cb96675..45a2805 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -374,7 +374,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
