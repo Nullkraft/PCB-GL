@@ -1,7 +1,7 @@
-Bottom: 43652651f7dfb911aa4b39019f332261704d94c5
-Top:    cbd1549592b933ff67ef3dbed9496baaf2c6d83d
+Bottom: 2658a2f3b65f2ae5fb5bfd140fbea744786fe7ab
+Top:    27c3ee581843feb9bb732389e3e52ff0b589e50f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-22 03:03:08 +0000
+Date:   2009-02-23 22:46:24 +0000
 
 Play with making selected / found objects ignore subcompositing rules
 
@@ -9,10 +9,11 @@ If an area on screen touched by this layer is already painted, draw anyway
 
 
 
+
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index d5d4adc..617e2b1 100644
+index cfec799..22f95d6 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -114,6 +114,8 @@ static void DrawSilk (int, int, BoxType *);
@@ -40,7 +41,7 @@ index d5d4adc..617e2b1 100644
  	}
        else
  	color = PCB->PinColor;
-@@ -1167,9 +1171,15 @@ DrawHole (PinTypePtr Ptr)
+@@ -1186,9 +1190,15 @@ DrawHole (PinTypePtr Ptr)
    if (TEST_FLAG (HOLEFLAG, Ptr))
      {
        if (TEST_FLAG (WARNFLAG, Ptr))
@@ -58,7 +59,7 @@ index d5d4adc..617e2b1 100644
        else
  	gui->set_color (Output.fgGC, Settings.BlackColor);
  
-@@ -1178,6 +1188,7 @@ DrawHole (PinTypePtr Ptr)
+@@ -1197,6 +1207,7 @@ DrawHole (PinTypePtr Ptr)
        gui->draw_arc (Output.fgGC,
  		     Ptr->X, Ptr->Y, Ptr->DrillingHole / 2,
  		     Ptr->DrillingHole / 2, 0, 360);
@@ -66,7 +67,7 @@ index d5d4adc..617e2b1 100644
      }
  }
  
-@@ -1281,6 +1292,7 @@ ClearPin (PinTypePtr Pin, int Type, int unused)
+@@ -1300,6 +1311,7 @@ ClearPin (PinTypePtr Pin, int Type, int unused)
      case PIN_TYPE:
        SetPVColor (Pin, Type);
        DrawPinOrViaLowLevel (Pin, True);
@@ -74,7 +75,7 @@ index d5d4adc..617e2b1 100644
        break;
      case NO_TYPE:
      default:
-@@ -1806,6 +1818,7 @@ DrawVia (PinTypePtr Via, int unused)
+@@ -1825,6 +1837,7 @@ DrawVia (PinTypePtr Via, int unused)
    // ClearPin (Via, VIA_TYPE, 0);
    //else
    DrawPinOrViaLowLevel (Via, True);
@@ -82,7 +83,7 @@ index d5d4adc..617e2b1 100644
    if (!TEST_FLAG (HOLEFLAG, Via) && TEST_FLAG (DISPLAYNAMEFLAG, Via))
      DrawPinOrViaNameLowLevel (Via);
  }
-@@ -1819,6 +1832,7 @@ DrawPlainVia (PinTypePtr Via, Boolean holeToo)
+@@ -1838,6 +1851,7 @@ DrawPlainVia (PinTypePtr Via, Boolean holeToo)
    if (!Gathering)
      SetPVColor (Via, VIA_TYPE);
    DrawPinOrViaLowLevel (Via, holeToo);
@@ -90,7 +91,7 @@ index d5d4adc..617e2b1 100644
    if (!TEST_FLAG (HOLEFLAG, Via) && TEST_FLAG (DISPLAYNAMEFLAG, Via))
      DrawPinOrViaNameLowLevel (Via);
  }
-@@ -1832,11 +1846,15 @@ DrawViaName (PinTypePtr Via, int unused)
+@@ -1851,11 +1865,15 @@ DrawViaName (PinTypePtr Via, int unused)
    if (!Gathering)
      {
        if (TEST_FLAG (SELECTEDFLAG, Via))
@@ -107,7 +108,7 @@ index d5d4adc..617e2b1 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1852,6 +1870,7 @@ DrawPin (PinTypePtr Pin, int unused)
+@@ -1871,6 +1889,7 @@ DrawPin (PinTypePtr Pin, int unused)
      if (!Gathering)
        SetPVColor (Pin, PIN_TYPE);
      DrawPinOrViaLowLevel (Pin, True);
@@ -115,7 +116,7 @@ index d5d4adc..617e2b1 100644
    }
    if ((!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
        || doing_pinout)
-@@ -1866,6 +1885,7 @@ DrawPlainPin (PinTypePtr Pin, Boolean holeToo)
+@@ -1885,6 +1904,7 @@ DrawPlainPin (PinTypePtr Pin, Boolean holeToo)
  {
    if (!Gathering)
      SetPVColor (Pin, PIN_TYPE);
@@ -123,7 +124,7 @@ index d5d4adc..617e2b1 100644
    DrawPinOrViaLowLevel (Pin, holeToo);
    if (!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
      DrawPinOrViaNameLowLevel (Pin);
-@@ -1880,11 +1900,15 @@ DrawPinName (PinTypePtr Pin, int unused)
+@@ -1899,11 +1919,15 @@ DrawPinName (PinTypePtr Pin, int unused)
    if (!Gathering)
      {
        if (TEST_FLAG (SELECTEDFLAG, Pin))
@@ -140,7 +141,7 @@ index d5d4adc..617e2b1 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1905,6 +1929,7 @@ DrawPad (PadTypePtr Pad, int unused)
+@@ -1924,6 +1948,7 @@ DrawPad (PadTypePtr Pad, int unused)
  	    gui->set_color (Output.fgGC, PCB->PinSelectedColor);
  	  else
  	    gui->set_color (Output.fgGC, PCB->ConnectedColor);
@@ -148,7 +149,7 @@ index d5d4adc..617e2b1 100644
  	}
        else if (FRONT (Pad))
  	gui->set_color (Output.fgGC, PCB->PinColor);
-@@ -1914,6 +1939,7 @@ DrawPad (PadTypePtr Pad, int unused)
+@@ -1933,6 +1958,7 @@ DrawPad (PadTypePtr Pad, int unused)
    DrawPadLowLevel (Output.fgGC, Pad, False, False);
    if (doing_pinout || TEST_FLAG (DISPLAYNAMEFLAG, Pad))
      DrawPadNameLowLevel (Pad);
@@ -156,7 +157,7 @@ index d5d4adc..617e2b1 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1925,13 +1951,17 @@ DrawPadName (PadTypePtr Pad, int unused)
+@@ -1944,13 +1970,17 @@ DrawPadName (PadTypePtr Pad, int unused)
    if (!Gathering)
      {
        if (TEST_FLAG (SELECTEDFLAG, Pad))
@@ -175,7 +176,7 @@ index d5d4adc..617e2b1 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1948,11 +1978,13 @@ DrawLine (LayerTypePtr Layer, LineTypePtr Line, int unused)
+@@ -1967,11 +1997,13 @@ DrawLine (LayerTypePtr Layer, LineTypePtr Line, int unused)
  	    gui->set_color (Output.fgGC, Layer->SelectedColor);
  	  else
  	    gui->set_color (Output.fgGC, PCB->ConnectedColor);
@@ -189,7 +190,7 @@ index d5d4adc..617e2b1 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1969,6 +2001,7 @@ DrawRat (RatTypePtr Line, int unused)
+@@ -1988,6 +2020,7 @@ DrawRat (RatTypePtr Line, int unused)
  	    gui->set_color (Output.fgGC, PCB->RatSelectedColor);
  	  else
  	    gui->set_color (Output.fgGC, PCB->ConnectedColor);
@@ -197,7 +198,7 @@ index d5d4adc..617e2b1 100644
  	}
        else
  	gui->set_color (Output.fgGC, PCB->RatColor);
-@@ -2002,6 +2035,7 @@ DrawRat (RatTypePtr Line, int unused)
+@@ -2021,6 +2054,7 @@ DrawRat (RatTypePtr Line, int unused)
      }
    else
      DrawLineLowLevel ((LineTypePtr) Line, False);
@@ -205,7 +206,7 @@ index d5d4adc..617e2b1 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -2020,11 +2054,13 @@ DrawArc (LayerTypePtr Layer, ArcTypePtr Arc, int unused)
+@@ -2039,11 +2073,13 @@ DrawArc (LayerTypePtr Layer, ArcTypePtr Arc, int unused)
  	    gui->set_color (Output.fgGC, Layer->SelectedColor);
  	  else
  	    gui->set_color (Output.fgGC, PCB->ConnectedColor);
@@ -219,7 +220,7 @@ index d5d4adc..617e2b1 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -2037,7 +2073,10 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
+@@ -2056,7 +2092,10 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
    if (!Layer->On)
      return;
    if (TEST_FLAG (SELECTEDFLAG, Text))
@@ -231,7 +232,7 @@ index d5d4adc..617e2b1 100644
    else
      gui->set_color (Output.fgGC, Layer->Color);
    if (Layer == & PCB->Data->SILKLAYER
-@@ -2046,6 +2085,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
+@@ -2065,6 +2104,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
    else
      min_silk_line = PCB->minWid;
    DrawTextLowLevel (Text, min_silk_line);
@@ -239,7 +240,7 @@ index d5d4adc..617e2b1 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -2056,7 +2096,10 @@ DrawRegularText (LayerTypePtr Layer, TextTypePtr Text, int unused)
+@@ -2075,7 +2115,10 @@ DrawRegularText (LayerTypePtr Layer, TextTypePtr Text, int unused)
  {
    int min_silk_line;
    if (TEST_FLAG (SELECTEDFLAG, Text))
@@ -251,7 +252,7 @@ index d5d4adc..617e2b1 100644
    else
      gui->set_color (Output.fgGC, Layer->Color);
    if (Layer == & PCB->Data->SILKLAYER
-@@ -2065,6 +2108,7 @@ DrawRegularText (LayerTypePtr Layer, TextTypePtr Text, int unused)
+@@ -2084,6 +2127,7 @@ DrawRegularText (LayerTypePtr Layer, TextTypePtr Text, int unused)
    else
      min_silk_line = PCB->minWid;
    DrawTextLowLevel (Text, min_silk_line);
@@ -259,7 +260,7 @@ index d5d4adc..617e2b1 100644
  }
  
  static int
-@@ -2085,7 +2129,10 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+@@ -2104,7 +2148,10 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
    if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Polygon))
      {
        if (TEST_FLAG (SELECTEDFLAG, Polygon))
@@ -271,7 +272,7 @@ index d5d4adc..617e2b1 100644
        else
  	gui->set_color (Output.fgGC, PCB->ConnectedColor);
      }
-@@ -2093,6 +2140,7 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+@@ -2112,6 +2159,7 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
      gui->set_color (Output.fgGC, Layer->Color);
    layernum = GetLayerNumber (PCB->Data, Layer);
    DrawPolygonLowLevel (Polygon);
@@ -279,7 +280,7 @@ index d5d4adc..617e2b1 100644
    if (TEST_FLAG (CLEARPOLYFLAG, Polygon))
      {
        r_search (PCB->Data->pin_tree, &Polygon->BoundingBox, NULL,
-@@ -2150,7 +2198,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2168,7 +2216,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
      }
  
    if (TEST_FLAG (SELECTEDFLAG, Polygon))
@@ -291,7 +292,7 @@ index d5d4adc..617e2b1 100644
    else if (TEST_FLAG (FOUNDFLAG, Polygon))
      color = PCB->ConnectedColor;
    else
-@@ -2183,6 +2234,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2194,6 +2245,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
             poly.Clipped = poly.Clipped->f)
          gui->thindraw_pcb_polygon (Output.fgGC, &poly, clip_box);
      }
@@ -299,7 +300,7 @@ index d5d4adc..617e2b1 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -2247,7 +2299,10 @@ DrawElementName (ElementTypePtr Element, int unused)
+@@ -2258,7 +2310,10 @@ DrawElementName (ElementTypePtr Element, int unused)
    if (doing_pinout || doing_assy)
      gui->set_color (Output.fgGC, PCB->ElementColor);
    else if (TEST_FLAG (SELECTEDFLAG, &ELEMENT_TEXT (PCB, Element)))
@@ -311,7 +312,7 @@ index d5d4adc..617e2b1 100644
    else if (FRONT (Element))
      gui->set_color (Output.fgGC, PCB->ElementColor);
    else
-@@ -2260,6 +2315,7 @@ DrawElementName (ElementTypePtr Element, int unused)
+@@ -2271,6 +2326,7 @@ DrawElementName (ElementTypePtr Element, int unused)
  #else
    DrawStrippedText (Element, PCB->minSlk);
  #endif
@@ -319,7 +320,7 @@ index d5d4adc..617e2b1 100644
  }
  
  #define MASK_SUBCOMPOSITE_ELEMENT_PACKAGE 0
-@@ -2281,9 +2337,12 @@ DrawElementPackage (ElementTypePtr Element, int unused)
+@@ -2292,9 +2348,12 @@ DrawElementPackage (ElementTypePtr Element, int unused)
  
    /* set color and draw lines, arcs, text and pins */
    if (doing_pinout || doing_assy)
@@ -334,7 +335,7 @@ index d5d4adc..617e2b1 100644
    else if (FRONT (Element))
      gui->set_color (Output.fgGC, PCB->ElementColor);
    else
-@@ -2296,6 +2355,7 @@ DrawElementPackage (ElementTypePtr Element, int unused)
+@@ -2307,6 +2366,7 @@ DrawElementPackage (ElementTypePtr Element, int unused)
  #else
    DrawElementPackageLowLevel (Element, unused);
  #endif
@@ -343,7 +344,7 @@ index d5d4adc..617e2b1 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 4c45bf1..517d2f4 100644
+index ad11ba8..d2d86a3 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -572,6 +572,33 @@ ghid_invalidate_all ()
