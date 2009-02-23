@@ -1,5 +1,5 @@
 Bottom: fa5499686aabdcf1e89c80f3c1d2494c861fc029
-Top:    ab7178ee766839cef4bbd59a5bf97cf7bea42e1c
+Top:    c9523e4c09c02f7e5877579e101ef6260ff3f565
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-22 02:56:09 +0000
 
@@ -402,10 +402,10 @@ index f7a6aeb..f688fc5 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index a102426..292419b 100644
+index a102426..834a84d 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -572,14 +572,38 @@ ghid_invalidate_all ()
+@@ -572,14 +572,39 @@ ghid_invalidate_all ()
    gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
  }
  
@@ -436,8 +436,9 @@ index a102426..292419b 100644
 +  else
 +    {
 +#endif
++      stencil_bit = 0;
 +      glStencilMask (0);
-+      glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  // Always pass stencil test
++      glStencilFunc (GL_ALWAYS, 0, 0);  // Always pass stencil test
 +#ifdef SUBCOMPOSITE_LAYERS
 +    }
 +#endif
@@ -445,7 +446,7 @@ index a102426..292419b 100644
    if (idx >= 0 && idx < max_layer + 2) {
      gport->trans_lines = TRUE;
      return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
-@@ -595,8 +619,8 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -595,8 +620,8 @@ ghid_set_layer (const char *name, int group, int empty)
  	    return TEST_FLAG (SHOWMASKFLAG, PCB);
  	  return 0;
  	case SL_SILK:
@@ -456,7 +457,7 @@ index a102426..292419b 100644
  	  if (SL_MYSIDE (idx) /*|| pinout */ )
  	    return PCB->ElementOn;
  	  return 0;
-@@ -616,9 +640,13 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -616,9 +641,13 @@ ghid_set_layer (const char *name, int group, int empty)
  void
  ghid_use_mask (int use_it)
  {
@@ -470,7 +471,7 @@ index a102426..292419b 100644
    hidgl_flush_triangles (&buffer);
  
    switch (use_it)
-@@ -627,25 +655,28 @@ ghid_use_mask (int use_it)
+@@ -627,25 +656,28 @@ ghid_use_mask (int use_it)
        /* Write '1' to the stencil buffer where the solder-mask is drawn. */
        glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
        glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
