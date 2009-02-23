@@ -1,7 +1,7 @@
-Bottom: 666e8968d53eda890ac5a6983ff1736c8606f885
-Top:    254a421c5a2648cc60581ff67718fd116ade77e9
+Bottom: 87b62bba8a68143d1f499c70ccea3b7675bc5c53
+Top:    9c657dc58d36cceda5210901ed03c49325c95902
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-22 03:01:13 +0000
+Date:   2009-02-23 21:53:23 +0000
 
 Add support for a "poured" object.
 
@@ -17,6 +17,7 @@ all child polygons selected. Manipulations will always occur on the
 
 It remains to be seen whether "pour" will have its own file-format entry,
 or if it will take over the meaning of the existing "polygon" entry.
+
 
 
 
@@ -1973,7 +1974,7 @@ index ef22f73..9f0e843 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index 1dd7c19..f40d70b 100644
+index 6364698..8e7eff4 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -100,6 +100,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
@@ -2148,7 +2149,7 @@ index 1dd7c19..f40d70b 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -2454,6 +2550,18 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2443,6 +2539,18 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2167,7 +2168,7 @@ index 1dd7c19..f40d70b 100644
   * erases an element
   */
  void
-@@ -2540,6 +2648,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -2529,6 +2637,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2177,7 +2178,7 @@ index 1dd7c19..f40d70b 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -2587,6 +2698,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
+@@ -2576,6 +2687,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2, 0);
        break;
