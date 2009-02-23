@@ -2130,7 +2130,6 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
   return 0;
 }
 
-void hidgl_hack_poly_alpha (double alpha);
 
 /* ---------------------------------------------------------------------------
  * draws a polygon
@@ -2155,21 +2154,14 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
     color = PCB->ConnectedColor;
   else
     color = Layer->Color;
+  gui->set_color (Output.fgGC, color);
 
   if (gui->thindraw_pcb_polygon != NULL &&
       (TEST_FLAG (THINDRAWFLAG, PCB) ||
        TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
-    {
-      gui->set_color (Output.fgGC, color);
-      gui->thindraw_pcb_polygon (Output.fgGC, Polygon, clip_box);
-      hidgl_hack_poly_alpha (0.25);
-    }
-
-  gui->set_color (Output.fgGC, color);
-  gui->fill_pcb_polygon (Output.fgGC, Polygon, clip_box);
-
-  hidgl_hack_poly_alpha (1.0);
-  gui->set_color (Output.fgGC, color);
+    gui->thindraw_pcb_polygon (Output.fgGC, Polygon, clip_box);
+  else
+    gui->fill_pcb_polygon (Output.fgGC, Polygon, clip_box);
 
   /* If checking planes, thin-draw any pieces which have been clipped away */
   if (gui->thindraw_pcb_polygon != NULL &&
