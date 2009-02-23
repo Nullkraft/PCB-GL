@@ -1,5 +1,5 @@
 Bottom: 8f14924185df74d27539e1b92df308a78c22beb3
-Top:    d95a67229a3e73dbda414c4706b9672542c4754e
+Top:    f73345a2319938734e004f7f4f437ec68d82737c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-22 02:58:31 +0000
 
@@ -9,85 +9,47 @@ UGLY UGLY hack to make pretty translucent polygons
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index 50809e0..0b483c9 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -2130,6 +2130,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
-   return 0;
- }
- 
-+void hidgl_hack_poly_alpha (double alpha);
- 
- /* ---------------------------------------------------------------------------
-  * draws a polygon
-@@ -2154,14 +2155,21 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
-     color = PCB->ConnectedColor;
-   else
-     color = Layer->Color;
--  gui->set_color (Output.fgGC, color);
- 
-   if (gui->thindraw_pcb_polygon != NULL &&
-       (TEST_FLAG (THINDRAWFLAG, PCB) ||
-        TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
--    gui->thindraw_pcb_polygon (Output.fgGC, Polygon, clip_box);
--  else
--    gui->fill_pcb_polygon (Output.fgGC, Polygon, clip_box);
-+    {
-+      gui->set_color (Output.fgGC, color);
-+      gui->thindraw_pcb_polygon (Output.fgGC, Polygon, clip_box);
-+      hidgl_hack_poly_alpha (0.25);
-+    }
-+
-+  gui->set_color (Output.fgGC, color);
-+  gui->fill_pcb_polygon (Output.fgGC, Polygon, clip_box);
-+
-+  hidgl_hack_poly_alpha (1.0);
-+  gui->set_color (Output.fgGC, color);
- 
-   /* If checking planes, thin-draw any pieces which have been clipped away */
-   if (gui->thindraw_pcb_polygon != NULL &&
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 9040e44..4c45bf1 100644
+index 9040e44..9c7631b 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -734,6 +734,18 @@ ghid_set_special_colors (HID_Attribute * ha)
+@@ -734,26 +734,30 @@ ghid_set_special_colors (HID_Attribute * ha)
      }
  }
  
++static char *current_color = NULL;
 +static double global_alpha_mult = 1.0;
 +static int alpha_changed = 0;
-+
-+void
-+hidgl_hack_poly_alpha (double alpha_mult)
-+{
-+  if (alpha_mult != global_alpha_mult) {
-+    global_alpha_mult = alpha_mult;
-+    alpha_changed = 1;
-+  }
-+}
-+
  
  void
  ghid_set_color (hidGC gc, const char *name)
-@@ -746,13 +758,15 @@ ghid_set_color (hidGC gc, const char *name)
+ {
+   static void *cache = NULL;
+-  static char *old_name = NULL;
+   hidval cval;
+   ColorCache *cc;
+   double alpha_mult = 1.0;
    double r, g, b, a;
    a = 1.0;
  
 -  if (old_name != NULL)
-+  if (!alpha_changed && old_name != NULL)
++  if (!alpha_changed && current_color != NULL)
      {
-       if (strcmp (name, old_name) == 0)
+-      if (strcmp (name, old_name) == 0)
++      if (strcmp (name, current_color) == 0)
          return;
-       free (old_name);
+-      free (old_name);
++      free (current_color);
      }
  
+-  old_name = strdup (name);
 +  alpha_changed = 0;
 +
-   old_name = strdup (name);
++  current_color = strdup (name);
  
    if (name == NULL)
-@@ -827,6 +841,7 @@ ghid_set_color (hidGC gc, const char *name)
+     {
+@@ -827,6 +831,7 @@ ghid_set_color (hidGC gc, const char *name)
      }
    if (1) {
      double maxi, mult;
@@ -95,3 +57,45 @@ index 9040e44..4c45bf1 100644
      if (gport->trans_lines)
        a = a * alpha_mult;
      maxi = r;
+@@ -848,6 +853,16 @@ ghid_set_color (hidGC gc, const char *name)
+ }
+ 
+ void
++ghid_global_alpha_mult (hidGC gc, double alpha_mult)
++{
++  if (alpha_mult != global_alpha_mult) {
++    global_alpha_mult = alpha_mult;
++    alpha_changed = 1;
++    ghid_set_color (gc, current_color);
++  }
++}
++
++void
+ ghid_set_line_cap (hidGC gc, EndCapStyle style)
+ {
+   switch (style)
+@@ -963,6 +978,15 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ }
+ 
+ void
++ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
++{
++  common_thindraw_pcb_polygon (gc, poly, clip_box);
++  ghid_global_alpha_mult (gc, 0.25);
++  ghid_fill_pcb_polygon (gc, poly, clip_box);
++  ghid_global_alpha_mult (gc, 1.0);
++}
++
++void
+ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
+ {
+   USE_GC (gc);
+@@ -1482,7 +1506,7 @@ HID ghid_hid = {
+   ghid_fill_circle,
+   ghid_fill_polygon,
+   ghid_fill_pcb_polygon,
+-  common_thindraw_pcb_polygon,
++  ghid_thindraw_pcb_polygon,
+   ghid_fill_rect,
+ 
+   ghid_calibrate,
