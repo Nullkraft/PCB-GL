@@ -1,12 +1,13 @@
-Bottom: f73345a2319938734e004f7f4f437ec68d82737c
-Top:    7755ffd6444732d552ca359efc947210ee7140b6
+Bottom: 496fbba49fe79a7130e76e1b1de1a380d9edef1f
+Top:    0470e76806bf01529954b181693b8646b84327a2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-23 21:50:11 +0000
+Date:   2009-02-23 22:45:36 +0000
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
 Gives the possibility to mask out regions which are to be free of
 polygon fill.
+
 
 
 
@@ -169,10 +170,10 @@ index 7f43fba..1be41aa 100644
  #define CHANGETHERMAL_TYPES	\
  	(PIN_TYPE | VIA_TYPE)
 diff --git a/src/draw.c b/src/draw.c
-index 50809e0..6364698 100644
+index ea3c301..0c2d70f 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2158,7 +2158,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2177,7 +2177,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  
    if (gui->thindraw_pcb_polygon != NULL &&
        (TEST_FLAG (THINDRAWFLAG, PCB) ||
