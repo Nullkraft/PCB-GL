@@ -1,0 +1,24 @@
+Bottom: ab7178ee766839cef4bbd59a5bf97cf7bea42e1c
+Top:    c9523e4c09c02f7e5877579e101ef6260ff3f565
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-23 22:45:10 +0000
+
+Refresh of work-in-progress-on-subcomposi
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 292419b..834a84d 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -598,8 +598,9 @@ ghid_set_layer (const char *name, int group, int empty)
+   else
+     {
+ #endif
++      stencil_bit = 0;
+       glStencilMask (0);
+-      glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  // Always pass stencil test
++      glStencilFunc (GL_ALWAYS, 0, 0);  // Always pass stencil test
+ #ifdef SUBCOMPOSITE_LAYERS
+     }
+ #endif
