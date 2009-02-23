@@ -1,7 +1,7 @@
-Bottom: 0942f45fb108eca1177d44d2d60052a3dffffea8
-Top:    44dc73b0a7989b552609ec7da4470e11c70705bc
+Bottom: ae89842e5fd7fa488f05681e0e2f52b65b5fad42
+Top:    2ac6ef7dd8e28e75968c89d5579e28b4ba9746d2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-23 22:45:47 +0000
+Date:   2009-02-23 22:46:06 +0000
 
 Silly space navigator interface to allow funky views
 
@@ -12,10 +12,10 @@ Silly space navigator interface to allow funky views
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 8b4c6ee..847c49f 100644
+index 3529d9a..7043f5a 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -251,7 +251,9 @@ LIBGTK_SRCS = \
+@@ -253,7 +253,9 @@ LIBGTK_SRCS = \
  	hid/gtk/gui-pinout-preview.h \
  	hid/gtk/gui-pinout-window.c \
  	hid/gtk/gui-top-window.c \
@@ -27,7 +27,7 @@ index 8b4c6ee..847c49f 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index f7b4b2f..55e9e68 100644
+index e67c39b..ac2b2c9 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -44,6 +44,7 @@
@@ -38,7 +38,7 @@ index f7b4b2f..55e9e68 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -1200,6 +1201,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -1201,6 +1202,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        /* Make sure drawing area has keyboard focus when we are in it.
         */
        gtk_widget_grab_focus (out->drawing_area);
@@ -47,7 +47,7 @@ index f7b4b2f..55e9e68 100644
      }
    ghidgui->in_popup = FALSE;
  
-@@ -1307,6 +1310,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -1308,6 +1311,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
  	    }
  	  g_idle_add (ghid_pan_idle_cb, NULL);
  	}
@@ -56,7 +56,7 @@ index f7b4b2f..55e9e68 100644
      }
  
    if(cursor_in_viewport)
-@@ -1362,3 +1367,27 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+@@ -1363,3 +1368,27 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  
    return TRUE;
  }
@@ -85,7 +85,7 @@ index f7b4b2f..55e9e68 100644
 +}
 +
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index efe99cc..3027113 100644
+index c298be1..a4bce81 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -121,6 +121,7 @@ a zoom in/out.
@@ -96,7 +96,7 @@ index efe99cc..3027113 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -2748,6 +2749,12 @@ ghid_do_export (HID_Attr_Val * options)
+@@ -2749,6 +2750,12 @@ ghid_do_export (HID_Attr_Val * options)
    if (stdin_listen)
      ghid_create_listener ();
  
