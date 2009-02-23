@@ -1,0 +1,20 @@
+Bottom: 43652651f7dfb911aa4b39019f332261704d94c5
+Top:    43652651f7dfb911aa4b39019f332261704d94c5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-23 01:08:53 +0000
+
+Clear pins and vias last...
+
+There is a chance these objects are simpler, and just end up as holes in
+the main polygon, rather than causing a contour intersection. This means
+it is cheaper to add them last.
+
+If we add them first, and make the polygon complex, objects (usually
+lines) which pierce the polygon's outer contour cause all the holes to
+be removed and queued for re-insersion after the new contour is
+constructed.
+
+
+---
+
+
