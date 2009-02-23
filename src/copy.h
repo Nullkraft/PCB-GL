@@ -38,10 +38,10 @@
  */
 #define	COPY_TYPES              \
 	(VIA_TYPE | LINE_TYPE | TEXT_TYPE | \
-	ELEMENT_TYPE | ELEMENTNAME_TYPE | POLYGON_TYPE | ARC_TYPE)
+	ELEMENT_TYPE | ELEMENTNAME_TYPE | POUR_TYPE | ARC_TYPE)
 
 
-PolygonTypePtr CopyPolygonLowLevel (PolygonTypePtr, PolygonTypePtr);
+PourTypePtr CopyPourLowLevel (PourTypePtr, PourTypePtr);
 ElementTypePtr CopyElementLowLevel (DataTypePtr, ElementTypePtr,
 				    ElementTypePtr, Boolean, LocationType, LocationType);
 Boolean CopyPastebufferToLayout (LocationType, LocationType);
