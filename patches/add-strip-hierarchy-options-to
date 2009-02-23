@@ -1,9 +1,10 @@
-Bottom: d95a67229a3e73dbda414c4706b9672542c4754e
-Top:    82e83b57777bfc058994fd4cfffd831ea10fa033
+Bottom: 496fbba49fe79a7130e76e1b1de1a380d9edef1f
+Top:    fd469fe522b15be77e0953719660724e1006991e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-22 03:02:55 +0000
+Date:   2009-02-23 22:46:17 +0000
 
 Add strip hierarchy options to display refdes without any "..../" prefix
+
 
 
 
@@ -149,10 +150,10 @@ index 2f97d4e..0cbfd0e 100644
   * PCB flags
   */
 diff --git a/src/draw.c b/src/draw.c
-index 0b483c9..d5d4adc 100644
+index ea3c301..cfec799 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2196,6 +2196,33 @@ DrawElement (ElementTypePtr Element, int unused)
+@@ -2207,6 +2207,33 @@ DrawElement (ElementTypePtr Element, int unused)
    DrawElementPinsAndPads (Element, unused);
  }
  
@@ -186,7 +187,7 @@ index 0b483c9..d5d4adc 100644
  #define MASK_SUBCOMPOSITE_ELEMENT_NAMES 0
  
  /* ---------------------------------------------------------------------------
-@@ -2214,7 +2241,7 @@ DrawElementName (ElementTypePtr Element, int unused)
+@@ -2225,7 +2252,7 @@ DrawElementName (ElementTypePtr Element, int unused)
    gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
    gui->use_mask (HID_MASK_BEFORE);
  
@@ -195,7 +196,7 @@ index 0b483c9..d5d4adc 100644
  #endif
  
    if (doing_pinout || doing_assy)
-@@ -2231,7 +2258,7 @@ DrawElementName (ElementTypePtr Element, int unused)
+@@ -2242,7 +2269,7 @@ DrawElementName (ElementTypePtr Element, int unused)
    gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
    gui->use_mask (HID_MASK_OFF);
  #else
@@ -204,7 +205,7 @@ index 0b483c9..d5d4adc 100644
  #endif
  }
  
-@@ -2469,7 +2496,7 @@ EraseElement (ElementTypePtr Element)
+@@ -2480,7 +2507,7 @@ EraseElement (ElementTypePtr Element)
    }
    END_LOOP;
    if (!TEST_FLAG (HIDENAMEFLAG, Element))
@@ -213,7 +214,7 @@ index 0b483c9..d5d4adc 100644
    EraseElementPinsAndPads (Element);
    Erasing--;
  }
-@@ -2515,7 +2542,7 @@ EraseElementName (ElementTypePtr Element)
+@@ -2526,7 +2553,7 @@ EraseElementName (ElementTypePtr Element)
      return;
    Erasing++;
    gui->set_color (Output.fgGC, Settings.BackgroundColor);
