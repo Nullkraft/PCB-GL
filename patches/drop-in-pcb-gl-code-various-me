@@ -1,9 +1,10 @@
-Bottom: a1926c22ba95d0c4a8771680493318419e7ada66
-Top:    cdc1a8080580bc85a392adda1f4c422f17e049de
+Bottom: 3387d46a42570b60f6a74da1c0f74c5ba76b2789
+Top:    dcd2cfcdc2e27bbc101cf0549b1ad4cd81008a50
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-21 20:09:53 +0000
+Date:   2009-03-06 18:47:37 +0000
 
 Drop in PCB+GL code + various mess. Needs splitting up
+
 
 
 
@@ -29,7 +30,7 @@ Drop in PCB+GL code + various mess. Needs splitting up
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index c786e00..8b4c6ee 100644
+index 944eea8..f90d55f 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -148,13 +148,17 @@ PCB_SRCS = \
@@ -51,7 +52,7 @@ index c786e00..8b4c6ee 100644
  BUILT_SOURCES = \
  	core_lists.h \
  	gpcb-menu.h \
-@@ -269,6 +273,11 @@ BUILT_SOURCES+=	dbus-introspect.h
+@@ -270,6 +274,11 @@ BUILT_SOURCES+=	dbus-introspect.h
  
  endif
  

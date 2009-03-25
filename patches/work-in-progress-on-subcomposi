@@ -1,12 +1,13 @@
-Bottom: fa5499686aabdcf1e89c80f3c1d2494c861fc029
-Top:    ff61539794a40a2f4809f311878c6cc0fdd13541
+Bottom: 26a37391eeddfb9aafb43d74e8197d2b7c5d1049
+Top:    553c210df7c37d5569854d8c98415c54f87a96e3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-22 02:56:09 +0000
+Date:   2009-03-06 18:47:38 +0000
 
 Work in progress on subcompositing / stencil buffers
 
 If we have many stencil buffer bits, we may as well use all of them before
 resorting to a costly clear and re-using the same bit-planes over.
+
 
 
 
@@ -402,7 +403,7 @@ index f7a6aeb..f688fc5 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 7fc62f9..9dc6d2d 100644
+index 054208c..f867ff5 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -455,6 +455,9 @@ gerber_set_layer (const char *name, int group, int empty)
@@ -624,10 +625,10 @@ index d06193c..e548bc0 100644
  		name = PCB->Data->Layer[idx].Name;
  	}
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 0aa62ac..5390f29 100644
+index 2f4d959..ae4c95f 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
-@@ -823,6 +823,10 @@ png_set_layer (const char *name, int group, int empty)
+@@ -819,6 +819,10 @@ png_set_layer (const char *name, int group, int empty)
    int idx = (group >= 0
  	     && group <
  	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;

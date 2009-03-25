@@ -1,7 +1,7 @@
-Bottom: ad0efc0f4104fdd87acd3385346eba1a00614755
-Top:    084ff7311874ce0c779c1426f165f4127182ba72
+Bottom: dcd2a641afd896f1b558ca269e927f894261c180
+Top:    0d7d27689331fd048d0802ca8d7021d92c602db2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-02-23 23:36:59 +0000
+Date:   2009-03-06 18:48:17 +0000
 
 Add support for a "poured" object.
 
@@ -59,7 +59,7 @@ index cd6f4f9..4ab3813 100755
  						/* an element */
  #define	MAX_LIBRARY_LINE_LENGTH		255	/* maximum line length in the */
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 8b4c6ee..3529d9a 100644
+index f90d55f..25b954c 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -104,6 +104,8 @@ PCB_SRCS = \
@@ -2705,7 +2705,7 @@ index 2dcf4b8..4274dd0 100644
         {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
         {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 9dc6d2d..cc62adc 100644
+index f867ff5..24f71a0 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -383,7 +383,7 @@ gerber_do_export (HID_Attr_Val * options)
@@ -2805,10 +2805,10 @@ index e548bc0..0ab0242 100644
  
  			/*
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 5390f29..b589700 100644
+index ae4c95f..ab89a93 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
-@@ -300,7 +300,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -296,7 +296,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
    for (i = 0; i < max_layer; i++)
      {
        LayerType *layer = PCB->Data->Layer + i;
