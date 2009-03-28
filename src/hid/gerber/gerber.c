@@ -1129,7 +1129,9 @@ static HID gerber_hid = {
   0 /* gerber_fileselect */ ,
   0 /* gerber_attribute_dialog */ ,
   0 /* gerber_show_item */ ,
-  0				/* gerber_beep */
+  0 /* gerber_beep */ ,
+  0 /* gerber_progress */ ,
+  0 /* gerber_drc_gui */
 };
 
 void

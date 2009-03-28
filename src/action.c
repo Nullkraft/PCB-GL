@@ -1746,6 +1746,8 @@ ActionDRCheck (int argc, char **argv, int x, int y)
 {
   int count;
 
+  /* TODO: Override some of these messages for a GUI driven DRC ? */
+
   Message (_("Rules are minspace %d.%02d, minoverlap %d.%d "
 	     "minwidth %d.%02d, minsilk %d.%02d\n"
 	     "min drill %d.%02d, min annular ring %d.%02d\n"),

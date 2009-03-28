@@ -157,11 +157,18 @@ RCSID ("$Id$");
 #define	IS_PV_ON_PAD(PV,Pad) \
 	( IsPointInPad((PV)->X, (PV)->Y, MAX((PV)->Thickness/2 +Bloat,0), (Pad)))
 
-static char drc_dialog_message[289];
+static char drc_dialog_message[289] = {0,};
 static void
 reset_drc_dialog_message(void)
 {
-   drc_dialog_message[0] = 0;
+  if (gui->drc_gui != NULL)
+    {
+      gui->drc_gui->reset_drc_dialog_message ();
+    }
+  else
+    {
+      drc_dialog_message[0] = 0;
+    }
 }
 #ifdef __GNUC__
 static void append_drc_dialog_message(const char *fmt, ...)
@@ -170,15 +177,26 @@ static void append_drc_dialog_message(const char *fmt, ...)
 static void
 append_drc_dialog_message(const char *fmt, ...)
 {
-  size_t len = strlen (drc_dialog_message), 
-         remained = sizeof (drc_dialog_message) - len - 1;
+  size_t len, remained;
   va_list ap;
+
   va_start (ap, fmt);
+
+  if (gui->drc_gui != NULL)
+    {
+      gui->drc_gui->append_drc_dialog_messagev (fmt, ap);
+    }
+  else
+    {
+      len = strlen (drc_dialog_message);
+      remained = sizeof (drc_dialog_message) - len - 1;
 #ifdef HAVE_VSNPRINTF
-  vsnprintf (drc_dialog_message + len, remained, fmt, ap);
+      vsnprintf (drc_dialog_message + len, remained, fmt, ap);
 #else
-  vsprintf (drc_dialog_message + len, fmt, ap);
+      vsprintf (drc_dialog_message + len, fmt, ap);
 #endif
+    }
+
   va_end (ap);
 }
 
@@ -194,9 +212,18 @@ static int
 throw_drc_dialog(void)
 {
   int r;
-  append_drc_dialog_message (DRC_CONTINUE); 
-  r = gui->confirm_dialog (drc_dialog_message, DRC_CANCEL, DRC_NEXT);
-  reset_drc_dialog_message();
+
+  if (gui->drc_gui != NULL)
+    {
+      r = gui->drc_gui->throw_drc_dialog ();
+      gui->drc_gui->reset_drc_dialog_message ();
+    }
+  else
+    {
+      append_drc_dialog_message (DRC_CONTINUE);
+      r = gui->confirm_dialog (drc_dialog_message, DRC_CANCEL, DRC_NEXT);
+      reset_drc_dialog_message();
+    }
   return r;
 }
 
@@ -3467,7 +3494,7 @@ DumpList (void)
 static Boolean
 DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
 {
-  reset_drc_dialog_message();
+//  reset_drc_dialog_message();
   if (PCB->Shrink != 0)
     {
       Bloat = -PCB->Shrink;
