@@ -229,11 +229,29 @@ typedef enum
   PCB_WATCH_HANGUP   = 1 << 3  /**< As in POLLHUP */
 } PCBWatchFlags;
 
+typedef struct
+{
+  char *title;
+  char *explanation;
+  int x;
+  int y;
+  int angle;
+  int have_measured;
+  double measured_value;
+  double required_value;
+  int value_digits;
+  const char *value_units;
+  int object_count;
+  long int *object_id_list;
+  int *object_type_list;
+} DRC_VIOLATION;
+
 /* DRC GUI Hooks */
   typedef struct
   {
     void (*reset_drc_dialog_message) (void);
-    void (*append_drc_dialog_messagev) (const char *fmt, va_list va);
+    void (*append_drc_violation) (DRC_VIOLATION *violation);
+//    void (*append_drc_dialog_messagev) (const char *fmt, va_list va);
     int (*throw_drc_dialog) (void);
   } HID_DRC_GUI;
 

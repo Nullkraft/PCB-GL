@@ -407,6 +407,7 @@ int ghid_attribute_dialog (HID_Attribute *, int, HID_Attr_Val *, const char *, c
 /* gui-drc-window.c */
 void ghid_drc_window_show (gboolean raise);
 void ghid_drc_window_reset_message (void);
+void ghid_drc_window_append_violation (DRC_VIOLATION *violation);
 //void ghid_drc_window_append_mesage (const char *fmt, ...);
 void ghid_drc_window_append_messagev (const char *fmt, va_list va);
 int ghid_drc_window_throw_dialog (void);
