@@ -3086,12 +3086,12 @@ poly_Create (void)
 void
 poly_FreeContours (PLINE **pline)
 {
-  PLINE **pl;
+  PLINE *pl;
 
-  while (*(pl = pline) != NULL)
+  while ((pl = *pline) != NULL)
     {
-      *pline = (*pl)->next;
-      poly_DelContour (pl);
+      *pline = pl->next;
+      poly_DelContour (&pl);
     }
 }
 
