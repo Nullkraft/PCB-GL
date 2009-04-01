@@ -1,7 +1,7 @@
-Bottom: 026a80e0d2345e9a18595999d68cefd2e36394b5
-Top:    562913baae3614e907bb2c0bbd631d20ffc90e79
+Bottom: ba7213fb35a5861f507bf19ed8c49798cb782ed2
+Top:    ba7213fb35a5861f507bf19ed8c49798cb782ed2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-04-01 13:30:45 +0100
+Date:   2009-04-01 13:31:39 +0100
 
 Fix memory leak of contours when freeing polygons.
 
@@ -15,23 +15,4 @@ to comprehend.
 
 ---
 
-diff --git a/src/polygon1.c b/src/polygon1.c
-index 1a3c926..9192f76 100644
---- a/src/polygon1.c
-+++ b/src/polygon1.c
-@@ -3086,12 +3086,12 @@ poly_Create (void)
- void
- poly_FreeContours (PLINE **pline)
- {
--  PLINE **pl;
-+  PLINE *pl;
- 
--  while (*(pl = pline) != NULL)
-+  while ((pl = *pline) != NULL)
-     {
--      *pline = (*pl)->next;
--      poly_DelContour (pl);
-+      *pline = pl->next;
-+      poly_DelContour (&pl);
-     }
- }
+
