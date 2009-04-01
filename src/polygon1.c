@@ -902,9 +902,11 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
                 c_info.getout = &out;
               }
 #endif
+#if 0
         if (info.s->box.X2 - info.s->box.X1 <= 5 || info.s->box.Y2 - info.s->box.Y1 <= 5)
             printf ("Test box width is %ix%i\n", info.s->box.X2 - info.s->box.X1,
                                                  info.s->box.Y2 - info.s->box.Y1);
+#endif
 #if 0
 //            printf ("Searching B's contours (against a box containing an edge of A) using an rtree\n");
             /* NB: If this actually hits anything, we are teleported back to the beginning */
