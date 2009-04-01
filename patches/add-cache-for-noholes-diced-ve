@@ -1,5 +1,5 @@
 Bottom: 3d83e2c92d70372c6ad2676d28ff4add6ca202eb
-Top:    d13446196c6c40f87be5fcc2d3f7b8286f57516b
+Top:    f5cff464f970eaf8e73e72ff740358f265dd3cd2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-04-01 13:37:17 +0100
 
@@ -256,7 +256,7 @@ index 1ec0a04..2faaa20 100644
  POLYAREA * RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2);
  POLYAREA * CirclePoly(LocationType x, LocationType y, BDimension radius);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index c9a350f..3ad5f22 100644
+index c9a350f..54cda80 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -2311,15 +2311,14 @@ poly_Create (void)
@@ -267,16 +267,16 @@ index c9a350f..3ad5f22 100644
 +poly_FreeContours (PLINE **pline)
  {
 -  PLINE *p;
-+  PLINE **pl;
++  PLINE *pl;
  
 -  assert (P != NULL);
 -  while ((p = P->contours) != NULL)
-+  while (*(pl = pline) != NULL)
++  while ((pl = *pline) != NULL)
      {
 -      P->contours = p->next;
 -      poly_DelContour (&p);
-+      *pline = (*pl)->next;
-+      poly_DelContour (pl);
++      *pline = pl->next;
++      poly_DelContour (&pl);
      }
  }
  
