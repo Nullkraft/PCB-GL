@@ -1,7 +1,7 @@
-Bottom: b5a8d0033e0aacee8ed154f6973c55b9d47e3f76
-Top:    32132ad196404f0b922f3d16274435dd358bae04
+Bottom: 325e76c20c4f8275e5c33ba027d2097a7cd602d2
+Top:    c015eafc319cc14b896c759eaf30c04884f4bf04
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-03-25 19:52:31 +0000
+Date:   2009-04-01 13:40:25 +0100
 
 Various speedups to the polygon code.
 
@@ -19,7 +19,7 @@ to better dynamic update performance.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index b5de5b2..ac831cc 100644
+index 40ecb6d..a394cba 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -915,12 +915,22 @@ cntrbox_inside (PLINE * c1, PLINE * c2)
@@ -574,7 +574,7 @@ index b5de5b2..ac831cc 100644
  
  
  static void
-@@ -1975,19 +2340,63 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -1981,19 +2346,63 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        assert (poly_Valid (b));
  #endif
  
