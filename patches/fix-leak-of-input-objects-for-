@@ -1,0 +1,41 @@
+Bottom: 01d1104959349777ab0427b95b4ad28d573f63bf
+Top:    bc98b81c5c25bac47e9dc779a8317504d2240bbd
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-04-01 13:36:16 +0100
+
+Fix leak of input objects for certain short-cut cases in poly_Boolean_free
+
+When either a or b input object is NULL, depending on the boolean operation
+selected, either a, b or NULL is returned as the result. Make sure we free
+any non NULL, and non-returned inputs when taking these shortcut paths.
+
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index cc00888..c9a350f 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1679,8 +1679,11 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+ 	case PBO_XOR:
+ 	case PBO_UNITE:
+ 	  *res = bi;
++	  return err_ok;
+ 	case PBO_SUB:
+ 	case PBO_ISECT:
++	  if (b != NULL)
++	    poly_Free (&b);
+ 	  return err_ok;
+ 	}
+     }
+@@ -1692,7 +1695,10 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+ 	case PBO_XOR:
+ 	case PBO_UNITE:
+ 	  *res = ai;
++	  return err_ok;
+ 	case PBO_ISECT:
++	  if (a != NULL)
++	    poly_Free (&a);
+ 	  return err_ok;
+ 	}
+     }
