@@ -1,7 +1,7 @@
-Bottom: 3d4738c58f1c875e43b7d6b8f68d6d1780a6ae4b
-Top:    d88c4d3b70ee4a95e945fe50c2792f88424a88a0
+Bottom: 5a8d557ac021a973eb96fafdb627144486cb86fd
+Top:    747aa93e5dd0d36a501ef87b93a5fdc78d1ee8cd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-04-01 13:37:17 +0100
+Date:   2009-04-02 20:11:45 +0100
 
 Drop in PCB+GL code + various mess. Needs splitting up
 
@@ -30,7 +30,7 @@ Drop in PCB+GL code + various mess. Needs splitting up
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 944eea8..f90d55f 100644
+index 270613c..055e544 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -148,13 +148,17 @@ PCB_SRCS = \
@@ -52,7 +52,7 @@ index 944eea8..f90d55f 100644
  BUILT_SOURCES = \
  	core_lists.h \
  	gpcb-menu.h \
-@@ -270,6 +274,11 @@ BUILT_SOURCES+=	dbus-introspect.h
+@@ -273,6 +277,11 @@ BUILT_SOURCES+=	dbus-introspect.h
  
  endif
  
@@ -772,7 +772,7 @@ index 0000000..fc2d41a
 +
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 484cee0..0e3e6e3 100644
+index 471bce1..1effff4 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -25,34 +25,45 @@
@@ -1656,7 +1656,7 @@ index 484cee0..0e3e6e3 100644
  void
  ghid_notify_gui_is_up ()
  {
-@@ -1527,7 +1418,7 @@ HID ghid_hid = {
+@@ -1533,7 +1424,7 @@ HID ghid_hid = {
    1,				/* gui */
    0,				/* printer */
    0,				/* exporter */
@@ -1665,7 +1665,7 @@ index 484cee0..0e3e6e3 100644
    1,				/* poly after */
    0,				/* poly dicer */
  
-@@ -2164,11 +2055,14 @@ Benchmark (int argc, char **argv, int x, int y)
+@@ -2172,11 +2063,14 @@ Benchmark (int argc, char **argv, int x, int y)
    region.X2 = PCB->MaxWidth;
    region.Y2 = PCB->MaxHeight;
  
@@ -2419,7 +2419,7 @@ index 3812e68..ff9276f 100644
  
    Settings.AutoPlace = 0;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 0b4eb21..4c0dca3 100644
+index d3e89f6..2886c57 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -36,6 +36,18 @@
@@ -2450,7 +2450,7 @@ index 0b4eb21..4c0dca3 100644
  }
  hid_gc_struct;
  
-@@ -198,7 +210,11 @@ typedef struct
+@@ -200,7 +212,11 @@ typedef struct
    GdkDrawable *drawable;	/* Current drawable for drawing routines */
    gint width, height;
  
@@ -2463,7 +2463,7 @@ index 0b4eb21..4c0dca3 100644
  
    GdkColor bg_color, offlimits_color, grid_color;
  
-@@ -314,6 +330,7 @@ void ghid_get_pointer (gint *, gint *);
+@@ -316,6 +332,7 @@ void ghid_get_pointer (gint *, gint *);
  
  /* gui-output-events.c function prototypes.
  */
@@ -2471,8 +2471,8 @@ index 0b4eb21..4c0dca3 100644
  void ghid_port_ranges_changed (void);
  void ghid_port_ranges_zoom (gdouble zoom);
  gboolean ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative);
-@@ -511,7 +528,9 @@ void ghid_logv (const char *fmt, va_list args);
- void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
+@@ -529,7 +546,9 @@ GdkPixmap *ghid_render_pixmap (int cx,
+ 			       int depth);
  
  /* gtkhid-main.c */
 +
