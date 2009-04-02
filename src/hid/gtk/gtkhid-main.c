@@ -1521,7 +1521,8 @@ ghid_progress (int so_far, int total, const char *message)
 /* ---------------------------------------------------------------------- */
 HID_DRC_GUI ghid_drc_gui = {
   ghid_drc_window_reset_message,
-  ghid_drc_window_append_messagev,
+  ghid_drc_window_append_violation,
+//  ghid_drc_window_append_messagev,
   ghid_drc_window_throw_dialog
 };
 

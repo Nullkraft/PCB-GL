@@ -238,6 +238,7 @@ LIBGTK_SRCS = \
 	hid/gtk/gui-dialog-size.c \
 	hid/gtk/gui-dialog.c \
 	hid/gtk/gui-drc-window.c \
+	hid/gtk/gui-drc-window.h \
 	hid/gtk/gui-keyref-window.c \
 	hid/gtk/gui-library-window.c \
 	hid/gtk/gui-library-window.h \
