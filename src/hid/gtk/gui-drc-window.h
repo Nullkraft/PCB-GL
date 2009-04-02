@@ -59,6 +59,7 @@ struct _GhidDrcViolation
   double required_value;
   int value_digits;
   char *value_units;
+  GdkDrawable *pixmap;
 };
 
 
@@ -76,7 +77,8 @@ GhidDrcViolation *ghid_drc_violation_new (char *title,
 					  const char *value_units,
 					  int object_count,
 					  long int object_id,
-					  int object_type);
+					  int object_type,
+					  GdkDrawable *pixmap);
 
 
 #define GHID_TYPE_VIOLATION_RENDERER           (ghid_violation_renderer_get_type())

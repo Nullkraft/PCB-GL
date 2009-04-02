@@ -1,0 +1,92 @@
+/* $Id$ */
+
+/*
+ *                            COPYRIGHT
+ *
+ *  PCB, interactive printed circuit board design
+ *  Copyright (C) 1994,1995,1996 Thomas Nau
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ *  Contact addresses for paper mail and Email:
+ *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
+ *  Thomas.Nau@rz.uni-ulm.de
+ *
+ */
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include "gui.h"
+
+#ifdef HAVE_LIBDMALLOC
+#include <dmalloc.h>
+#endif
+
+RCSID ("$Id$");
+
+
+GdkPixmap *
+ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int depth)
+{
+  extern HID ghid_hid;
+  GdkPixmap *pixmap;
+  GdkDrawable *save_drawable;
+  double save_zoom;
+  int save_left, save_top;
+  int save_width, save_height;
+  int save_view_width, save_view_height;
+
+  save_drawable = gport->drawable;
+  save_zoom = gport->zoom;
+  save_width = gport->width;
+  save_height = gport->height;
+  save_left = gport->view_x0;
+  save_top = gport->view_y0;
+  save_view_width = gport->view_width;
+  save_view_height = gport->view_height;
+
+  pixmap = gdk_pixmap_new (NULL, width, height, depth);
+
+  /* Setup drawable and zoom factor for drawing routines
+   */
+
+  gport->drawable = pixmap;
+  gport->zoom = zoom;
+  gport->width = width;                         // Pixels
+  gport->height = height;                       // Pixels
+  gport->view_width = width * gport->zoom;      // PCB Units
+  gport->view_height = height * gport->zoom;    // PCB Units
+  gport->view_x0 = cx - gport->view_height / 2; // PCB Units
+  gport->view_y0 = cy - gport->view_width  / 2; // PCB Units
+
+  /* clear background */
+  gdk_draw_rectangle (pixmap, gport->bg_gc, TRUE, 0, 0, width, height);
+
+  /* call the drawing routine */
+  hid_expose_callback (&ghid_hid, NULL, NULL);
+
+  gport->drawable = save_drawable;
+  gport->zoom = save_zoom;
+  gport->width = save_width;
+  gport->height = save_height;
+  gport->view_x0 = save_left;
+  gport->view_y0 = save_top;
+  gport->view_width = save_view_width;
+  gport->view_height = save_view_height;
+
+  return pixmap;
+}
