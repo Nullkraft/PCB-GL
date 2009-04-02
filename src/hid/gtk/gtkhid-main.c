@@ -1519,6 +1519,11 @@ ghid_progress (int so_far, int total, const char *message)
 }
 
 /* ---------------------------------------------------------------------- */
+HID_DRC_GUI ghid_drc_gui = {
+  ghid_drc_window_reset_message,
+  ghid_drc_window_append_messagev,
+  ghid_drc_window_throw_dialog
+};
 
 HID ghid_hid = {
   sizeof (HID),
@@ -1579,7 +1584,8 @@ HID ghid_hid = {
   ghid_attribute_dialog,
   ghid_show_item,
   ghid_beep,
-  ghid_progress
+  ghid_progress,
+  &ghid_drc_gui
 };
 
 HID ghid_extents = {
@@ -1640,7 +1646,8 @@ HID ghid_extents = {
   0 /* ghid_attribute_dialog */ ,
   0 /* ghid_show_item */ ,
   0 /* ghid_beep */ ,
-  0 /* ghid_progress */
+  0 /* ghid_progress */ ,
+  0 /* ghid_drc_gui */
 };
 
 /* ------------------------------------------------------------ 
@@ -2382,8 +2389,8 @@ CursorAction(int argc, char **argv, int x, int y)
 /* ------------------------------------------------------------ */
 
 static const char dowindows_syntax[] =
-"DoWindows(1|2|3|4)\n"
-"DoWindows(Layout|Library|Log|Netlist|Preferences)";
+"DoWindows(1|2|3|4|5|6)\n"
+"DoWindows(Layout|Library|Log|Netlist|Preferences|DRC)";
 
 static const char dowindows_help[] =
 "Open various GUI windows.";
@@ -2413,6 +2420,10 @@ Open the netlist window.
 @itemx Preferences
 Open the preferences window.
 
+@item 6
+@itemx DRC
+Open the DRC violations window.
+
 @end table
 
 %end-doc */
@@ -2440,6 +2451,10 @@ DoWindows (int argc, char **argv, int x, int y)
   else if (strcmp (a, "5") == 0 || strcasecmp (a, "Preferences") == 0)
     {
       ghid_config_window_show ();
+    }
+  else if (strcmp (a, "6") == 0 || strcasecmp (a, "DRC") == 0)
+    {
+      ghid_drc_window_show (TRUE);
     }
   else
     {
