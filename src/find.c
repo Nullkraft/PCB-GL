@@ -3582,9 +3582,6 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
       if (DoIt (True, False))
         {
           DumpList ();
-          Message
-            (_
-             ("WARNING!!  Design Rule Error - potential for broken trace!\n"));
           /* make the flag changes undoable */
           TheFlag = FOUNDFLAG | SELECTEDFLAG;
           ResetConnections (False);
@@ -3645,7 +3642,6 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
   while (DoIt (True, False))
     {
       DumpList ();
-      Message (_("WARNING!  Design Rule error - copper areas too close!\n"));
       /* make the flag changes undoable */
       TheFlag = FOUNDFLAG | SELECTEDFLAG;
       ResetConnections (False);
@@ -3759,7 +3755,6 @@ drc_callback (DataTypePtr data, LayerTypePtr layer, PolygonTypePtr polygon,
           AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
           SET_FLAG (TheFlag, line);
           message = _("Line with insufficient clearance inside polygon\n");
-          Message (message);
           goto doIsBad;
         }
       break;
@@ -3769,7 +3764,6 @@ drc_callback (DataTypePtr data, LayerTypePtr layer, PolygonTypePtr polygon,
           AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
           SET_FLAG (TheFlag, arc);
           message = _("Arc with insufficient clearance inside polygon\n");
-          Message (message);
           goto doIsBad;
         }
       break;
@@ -3780,7 +3774,6 @@ drc_callback (DataTypePtr data, LayerTypePtr layer, PolygonTypePtr polygon,
 	    AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
 	    SET_FLAG (TheFlag, pad);
 	    message = _("Pad with insufficient clearance inside polygon\n");
-	    Message (message);
 	    goto doIsBad;
 	  }
       break;
@@ -3790,7 +3783,6 @@ drc_callback (DataTypePtr data, LayerTypePtr layer, PolygonTypePtr polygon,
           AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
           SET_FLAG (TheFlag, pin);
           message = _("Pin with insufficient clearance inside polygon\n");
-          Message (message);
           goto doIsBad;
         }
       break;
@@ -3800,7 +3792,6 @@ drc_callback (DataTypePtr data, LayerTypePtr layer, PolygonTypePtr polygon,
           AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
           SET_FLAG (TheFlag, pin);
           message = _("Via with insufficient clearance inside polygon\n");
-          Message (message);
           goto doIsBad;
         }
       break;
@@ -3937,7 +3928,6 @@ DRCAll (void)
           {
             AddObjectToFlagUndoList (LINE_TYPE, layer, line, line);
             SET_FLAG (TheFlag, line);
-            Message (_("Line is too thin\n"));
             DrawLine (layer, line, 0);
             drcerr_count++;
             SetThing (LINE_TYPE, layer, line, line);
@@ -3982,7 +3972,6 @@ DRCAll (void)
           {
             AddObjectToFlagUndoList (ARC_TYPE, layer, arc, arc);
             SET_FLAG (TheFlag, arc);
-            Message (_("Arc is too thin\n"));
             DrawArc (layer, arc, 0);
             drcerr_count++;
             SetThing (ARC_TYPE, layer, arc, arc);
@@ -4028,8 +4017,6 @@ DRCAll (void)
           {
             AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
             SET_FLAG (TheFlag, pin);
-            Message (_
-                     ("Pin annular ring is too small based on minimum annular ring\n"));
             DrawPin (pin, 0);
             drcerr_count++;
             SetThing (PIN_TYPE, element, pin, pin);
@@ -4064,7 +4051,6 @@ DRCAll (void)
           {
             AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
             SET_FLAG (TheFlag, pin);
-            Message (_("Pin drill size is too small\n"));
             DrawPin (pin, 0);
             drcerr_count++;
             SetThing (PIN_TYPE, element, pin, pin);
@@ -4108,7 +4094,6 @@ DRCAll (void)
           {
             AddObjectToFlagUndoList (PAD_TYPE, element, pad, pad);
             SET_FLAG (TheFlag, pad);
-            Message (_("Pad is too thin\n"));
             DrawPad (pad, 0);
             drcerr_count++;
             SetThing (PAD_TYPE, element, pad, pad);
@@ -4154,8 +4139,6 @@ DRCAll (void)
           {
             AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
             SET_FLAG (TheFlag, via);
-            Message (_
-                     ("Via annular ring is too small based on minimum annular ring\n"));
             DrawVia (via, 0);
             drcerr_count++;
             SetThing (VIA_TYPE, via, via, via);
@@ -4190,7 +4173,6 @@ DRCAll (void)
           {
             AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
             SET_FLAG (TheFlag, via);
-            Message (_("Via drill size is too small\n"));
             DrawVia (via, 0);
             drcerr_count++;
             SetThing (VIA_TYPE, via, via, via);
@@ -4239,7 +4221,6 @@ DRCAll (void)
         if (line->Thickness < PCB->minSlk)
           {
             SET_FLAG (TheFlag, line);
-            Message (_("Silk line is too thin\n"));
             DrawLine (layer, line, 0);
             drcerr_count++;
             SetThing (LINE_TYPE, layer, line, line);
@@ -4294,8 +4275,6 @@ DRCAll (void)
             int buflen;
 
             SET_FLAG (TheFlag, element);
-            Message (_("Element %s has %d silk lines which are too thin\n"),
-                     UNKNOWN (NAMEONPCB_NAME (element)), tmpcnt);
 //            append_drc_dialog_message (_
 //                     ("%i silk lines\n of element %s\nare too thin\n"),
 //                     tmpcnt, UNKNOWN (NAMEONPCB_NAME (element)));
