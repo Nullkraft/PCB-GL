@@ -1,7 +1,7 @@
-Bottom: efd09552731a8145044948efda5195a942ed9998
-Top:    5c24977724e10098012a3f264d81dea5d4457f79
+Bottom: b4da870fde1419510193f53492cca2ede58e778d
+Top:    36d391b7dfad31236bd8504766c02adab4ec0bca
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-04-01 13:43:10 +0100
+Date:   2009-04-02 20:30:38 +0100
 
 Silly space navigator interface to allow funky views
 
@@ -12,12 +12,12 @@ Silly space navigator interface to allow funky views
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 25b954c..6269ece 100644
+index 7e51cad..5d14184 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -254,7 +254,9 @@ LIBGTK_SRCS = \
- 	hid/gtk/gui-pinout-preview.h \
+@@ -257,7 +257,9 @@ LIBGTK_SRCS = \
  	hid/gtk/gui-pinout-window.c \
+ 	hid/gtk/gui-render-pixmap.c \
  	hid/gtk/gui-top-window.c \
 -	hid/gtk/gui-utils.c
 +	hid/gtk/gui-utils.c \
@@ -110,10 +110,10 @@ index c298be1..a4bce81 100644
  
    gtk_main ();
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 4c0dca3..771056b 100644
+index 2886c57..663ce2c 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -194,6 +194,8 @@ typedef struct
+@@ -196,6 +196,8 @@ typedef struct
      library_window_width,
      library_window_height,
      netlist_window_height, history_size, settings_mode, auto_pan_speed;
@@ -122,7 +122,7 @@ index 4c0dca3..771056b 100644
  }
  GhidGui;
  
-@@ -368,6 +370,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -370,6 +372,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
  
