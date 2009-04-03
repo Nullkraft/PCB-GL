@@ -1,7 +1,7 @@
-Bottom: c9fdd27a92916dd482776ddf147679bf1a3899b6
-Top:    cb6d5448f9241b4b6ea54cd83da9fc01a394f233
+Bottom: 1a73fc97236fb6c23a7511fec4d8d1ba99586786
+Top:    29e9fefe431ee5672d684a8dc85e0990bef63aae
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-04-02 20:29:58 +0100
+Date:   2009-04-03 04:04:26 +0100
 
 Add support for a "poured" object.
 
@@ -72,7 +72,7 @@ index 055e544..7e51cad 100644
  	print.c \
  	print.h \
 diff --git a/src/action.c b/src/action.c
-index 67b2978..b7d2733 100644
+index ab47e87..c2b8e18 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -58,6 +58,7 @@
@@ -223,7 +223,7 @@ index 67b2978..b7d2733 100644
  				   &polyIndex,
  				   InsertedPoint.X, InsertedPoint.Y, False);
  	  else
-@@ -2994,13 +2993,13 @@ ActionMode (int argc, char **argv, int x, int y)
+@@ -2998,13 +2997,13 @@ ActionMode (int argc, char **argv, int x, int y)
  		  }
  		break;
  	  
@@ -239,7 +239,7 @@ index 67b2978..b7d2733 100644
  		  }
  		break;
  
-@@ -3029,8 +3028,8 @@ ActionMode (int argc, char **argv, int x, int y)
+@@ -3033,8 +3032,8 @@ ActionMode (int argc, char **argv, int x, int y)
  	case F_PasteBuffer:
  	  SetMode (PASTEBUFFER_MODE);
  	  break;
@@ -250,7 +250,7 @@ index 67b2978..b7d2733 100644
  	  break;
  #ifndef HAVE_LIBSTROKE
  	case F_Release:
-@@ -3074,9 +3073,9 @@ ActionMode (int argc, char **argv, int x, int y)
+@@ -3078,9 +3077,9 @@ ActionMode (int argc, char **argv, int x, int y)
  	  else if (Settings.Mode == RECTANGLE_MODE
  		   && Crosshair.AttachedBox.State != STATE_FIRST)
  	    SetMode (RECTANGLE_MODE);
@@ -262,7 +262,7 @@ index 67b2978..b7d2733 100644
  	  else
  	    {
  	      SaveMode ();
-@@ -4554,6 +4553,9 @@ off are automatically deleted.
+@@ -4558,6 +4557,9 @@ off are automatically deleted.
  static int
  ActionMorphPolygon (int argc, char **argv, int x, int y)
  {
@@ -272,7 +272,7 @@ index 67b2978..b7d2733 100644
    char *function = ARG (0);
    if (function)
      {
-@@ -4589,6 +4591,7 @@ ActionMorphPolygon (int argc, char **argv, int x, int y)
+@@ -4593,6 +4595,7 @@ ActionMorphPolygon (int argc, char **argv, int x, int y)
  	}
      }
    return 0;
@@ -280,7 +280,7 @@ index 67b2978..b7d2733 100644
  }
  
  /* --------------------------------------------------------------------------- */
-@@ -6083,9 +6086,9 @@ ActionUndo (int argc, char **argv, int x, int y)
+@@ -6087,9 +6090,9 @@ ActionUndo (int argc, char **argv, int x, int y)
        /* undo the last operation */
  
        HideCrosshair (True);
@@ -292,7 +292,7 @@ index 67b2978..b7d2733 100644
  	  RestoreCrosshair (True);
  	  return 0;
  	}
-@@ -6245,8 +6248,8 @@ three "undone" lines.
+@@ -6249,8 +6252,8 @@ three "undone" lines.
  static int
  ActionRedo (int argc, char **argv, int x, int y)
  {
@@ -303,7 +303,7 @@ index 67b2978..b7d2733 100644
        Crosshair.AttachedLine.State == STATE_SECOND)
      return 1;
    HideCrosshair (True);
-@@ -6296,19 +6299,19 @@ static int
+@@ -6300,19 +6303,19 @@ static int
  ActionPolygon (int argc, char **argv, int x, int y)
  {
    char *function = ARG (0);
@@ -2243,7 +2243,7 @@ index 018b272..35bfb57 100644
  		fputs ("\n\t\t", FP);
  	      fprintf (FP, "[%i %i] ", (int) point->X, (int) point->Y);
 diff --git a/src/find.c b/src/find.c
-index 8af0774..4fdc039 100644
+index a7436cd..2677192 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -628,6 +628,7 @@ void
@@ -2578,10 +2578,10 @@ index c6c7458..5ae97c3 100644
    {"removemode", FlagMode, REMOVE_MODE},
    {"rotatemode", FlagMode, ROTATE_MODE},
 diff --git a/src/global.h b/src/global.h
-index 95df0f8..67c8029 100644
+index a38fe57..7c5be45 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -237,15 +237,41 @@ typedef struct
+@@ -238,15 +238,41 @@ typedef struct
    void *Element;
  } TextType, *TextTypePtr;
  
@@ -2628,7 +2628,7 @@ index 95df0f8..67c8029 100644
  };
  
  typedef struct			/* holds information about arcs */
-@@ -259,26 +285,25 @@ typedef struct			/* holds information about arcs */
+@@ -260,26 +286,25 @@ typedef struct			/* holds information about arcs */
      Delta;
  } ArcType, *ArcTypePtr;
  
@@ -2664,7 +2664,7 @@ index 95df0f8..67c8029 100644
    Boolean On;			/* visible flag */
    char *Color,			/* color */
     *SelectedColor;
-@@ -562,7 +587,8 @@ typedef struct			/* holds cursor information */
+@@ -563,7 +588,8 @@ typedef struct			/* holds cursor information */
    Boolean On;			/* flag for 'is visible' */
    AttachedLineType AttachedLine;	/* data of new lines... */
    AttachedBoxType AttachedBox;
@@ -2674,7 +2674,7 @@ index 95df0f8..67c8029 100644
    AttachedObjectType AttachedObject;	/* data of attached objects */
    enum crosshair_shape shape; /* shape of crosshair */
  } CrosshairType, *CrosshairTypePtr;
-@@ -677,13 +703,15 @@ typedef struct
+@@ -678,13 +704,15 @@ typedef struct
    void *(*Line) (LayerTypePtr, LineTypePtr);
    void *(*Text) (LayerTypePtr, TextTypePtr);
    void *(*Polygon) (LayerTypePtr, PolygonTypePtr);
