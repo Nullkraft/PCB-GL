@@ -1,7 +1,7 @@
-Bottom: 1e461d71dcfd66b1dc3e6e8f4cb8c9b42cec6d73
-Top:    5758c064c06416dec4d5bd4cef34c756751fc362
+Bottom: 39eea4dc89bdb72d74af898c2a1b42a0705b8644
+Top:    15c955ee0ce7f25e884151c923c20519f76b5bb6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-04-02 20:29:51 +0100
+Date:   2009-04-03 04:03:53 +0100
 
 Try optimising polygon operations by keeping an rtree with their contours
 
@@ -21,7 +21,7 @@ its existance as well.
 ---
 
 diff --git a/src/global.h b/src/global.h
-index 4f105f0..95df0f8 100644
+index f494dbc..a38fe57 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -40,7 +40,6 @@
@@ -32,7 +32,7 @@ index 4f105f0..95df0f8 100644
  
  #include <stdio.h>
  #include <stdlib.h>
-@@ -56,6 +55,10 @@ typedef struct polygon_st PolygonType, *PolygonTypePtr;
+@@ -57,6 +56,10 @@ typedef struct drc_violation_st DrcViolationType, *DrcViolationTypePtr;
  
  #include "hid.h"
  
@@ -43,7 +43,7 @@ index 4f105f0..95df0f8 100644
  #define _(S) (S)
  
  typedef int LocationType;
-@@ -256,11 +259,11 @@ typedef struct			/* holds information about arcs */
+@@ -257,11 +260,11 @@ typedef struct			/* holds information about arcs */
      Delta;
  } ArcType, *ArcTypePtr;
  
