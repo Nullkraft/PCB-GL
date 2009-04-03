@@ -1,7 +1,7 @@
-Bottom: d683dd1ab1c0055312f6065f7e35189c1a2000bd
-Top:    09317037755f264dbab0c10267f117302d7310f1
+Bottom: 96a10bfb27f6cd8b6b264520cc212e9a4bc9b41b
+Top:    2832c1e32575b9a9ce7f11547624126a98ea6ac6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-04-02 20:29:57 +0100
+Date:   2009-04-03 04:04:03 +0100
 
 Work in progress on subcompositing / stencil buffers
 
@@ -121,7 +121,7 @@ index d52515f..ea3c301 100644
  
  	  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
 diff --git a/src/hid.h b/src/hid.h
-index 40c9b05..2bbe9fd 100644
+index dad3a70..ef2f166 100644
 --- a/src/hid.h
 +++ b/src/hid.h
 @@ -215,6 +215,7 @@ extern "C"
@@ -417,7 +417,7 @@ index ee2a0ec..4faf5a4 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index b60e816..3d19360 100644
+index 5b3cb8a..bb9f458 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -572,14 +572,39 @@ ghid_invalidate_all ()

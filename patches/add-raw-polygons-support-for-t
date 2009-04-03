@@ -1,7 +1,7 @@
-Bottom: 739ca0226b18b1db8a108f998aa6611bd339e417
-Top:    8e94db5a6ec26870f0adc8f0967535eca2745f4f
+Bottom: 4eba0f9fe16127e4f790a10a6a64a132ce293d8c
+Top:    35ed83d47ed4583f0267565c4612162f36dd45e8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-04-02 20:29:56 +0100
+Date:   2009-04-03 04:04:02 +0100
 
 Add raw polygons support for the GTK HID, bypassing the no-holes dicer
 
@@ -191,7 +191,7 @@ index fc2d41a..f7a6aeb 100644
  
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 1effff4..b60e816 100644
+index e729f34..5b3cb8a 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -926,6 +926,14 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
@@ -209,7 +209,7 @@ index 1effff4..b60e816 100644
  ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
  {
    USE_GC (gc);
-@@ -1450,7 +1458,7 @@ HID ghid_hid = {
+@@ -1451,7 +1459,7 @@ HID ghid_hid = {
    ghid_draw_rect,
    ghid_fill_circle,
    ghid_fill_polygon,
