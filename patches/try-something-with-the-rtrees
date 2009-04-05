@@ -1,7 +1,7 @@
-Bottom: 2635b9f9b18dbb5f14c34622897c33d760f570c4
-Top:    a171b49dcfe8e914ee01da7aae9bc4db65352ff5
+Bottom: e6dfbadb84e24ce7d7c36c041a5e0d3cafac6378
+Top:    41ec0f97a7a237665ab50e0745432dd8c38d3694
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-04-05 22:10:46 +0100
+Date:   2009-04-05 22:30:19 +0100
 
 Try optimising polygon operations by keeping an rtree with their contours
 
@@ -79,7 +79,7 @@ index a883750..50dda4a 100644
  
  BOOLp poly_M_Copy0(POLYAREA ** dst, const POLYAREA * srcfst);
 diff --git a/src/polygon.c b/src/polygon.c
-index ca10f83..57fb94e 100644
+index 367c4eb..5d9ecfd 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -146,6 +146,7 @@ biggest (POLYAREA * p)
@@ -102,7 +102,7 @@ index ca10f83..57fb94e 100644
    assert (pl);
    assert (p->f);
    assert (p->b);
-@@ -1541,17 +1545,28 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
+@@ -1542,17 +1546,28 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
  }
  
  static void
@@ -134,7 +134,7 @@ index ca10f83..57fb94e 100644
        emit (p, user_data);
        pa->contours = NULL;
        poly_Free (&pa);
-@@ -1568,30 +1583,33 @@ r_NoHolesPolygonDicer (PLINE * p,
+@@ -1569,30 +1584,33 @@ r_NoHolesPolygonDicer (PLINE * p,
        poly_AndSubtract_free (pa, poly2, &left, &right);
        if (left)
          {
@@ -182,7 +182,7 @@ index ca10f83..57fb94e 100644
          }
      }
  }
-@@ -1622,13 +1640,15 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
+@@ -1623,13 +1641,15 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
    /* now dice it up */
    do
      {

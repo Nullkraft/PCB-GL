@@ -1,7 +1,7 @@
-Bottom: 00dbf06823bd4b3d34de75aa7f73f36ed19dfc7b
-Top:    818d8062db2baebe1282ecd3b74f6c69ef3df079
+Bottom: cc816e1a4d3dfac70c5c45e8f83c3b23f6fbb64c
+Top:    8cfccb5e02260cf7415f098b7423cc82931965b1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-04-05 22:10:43 +0100
+Date:   2009-04-05 22:30:17 +0100
 
 Add cache for "noholes", diced versions of polygons
 
@@ -120,7 +120,7 @@ index 42acc1a..a883750 100644
  
  enum PolygonBooleanOperation {
 diff --git a/src/polygon.c b/src/polygon.c
-index bc7b555..ca10f83 100644
+index d5df073..367c4eb 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -120,6 +120,26 @@ static double circleVerticies[] = {
@@ -200,7 +200,7 @@ index bc7b555..ca10f83 100644
    return 1;
  }
  
-@@ -1288,18 +1318,23 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
+@@ -1289,18 +1319,23 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
      case PIN_TYPE:
      case VIA_TYPE:
        SubtractPin (Data, (PinTypePtr) ptr2, Layer, Polygon);
@@ -224,7 +224,7 @@ index bc7b555..ca10f83 100644
        return 1;
      }
    return 0;
-@@ -1516,7 +1551,9 @@ r_NoHolesPolygonDicer (PLINE * p,
+@@ -1517,7 +1552,9 @@ r_NoHolesPolygonDicer (PLINE * p,
    pa->contours = p;
    if (!p->next)                 /* no holes */
      {
@@ -234,7 +234,7 @@ index bc7b555..ca10f83 100644
        poly_Free (&pa);
        return;
      }
-@@ -1619,6 +1656,8 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+@@ -1620,6 +1657,8 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
     * we do this dirty work.
     */
    poly->Clipped = NULL;
