@@ -1,7 +1,7 @@
-Bottom: 3432347f0e704c5258d484e6071991830e1336e9
-Top:    07a8a4490f66e7e3f0bd9e2065a77b9cf9fe138a
+Bottom: b0c017c4e3131356d847ffa78a81e3eb480dbd03
+Top:    622d99597cff47692121f0e771e393f41bea14ea
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-04-06 00:09:32 +0100
+Date:   2009-04-06 00:18:25 +0100
 
 Silly space navigator interface to allow funky views
 
@@ -27,7 +27,7 @@ index 7e51cad..5d14184 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index e67c39b..ac2b2c9 100644
+index 9ee8eac..9d17da0 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -44,6 +44,7 @@
@@ -38,7 +38,7 @@ index e67c39b..ac2b2c9 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -1201,6 +1202,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -1161,6 +1162,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        /* Make sure drawing area has keyboard focus when we are in it.
         */
        gtk_widget_grab_focus (out->drawing_area);
@@ -47,7 +47,7 @@ index e67c39b..ac2b2c9 100644
      }
    ghidgui->in_popup = FALSE;
  
-@@ -1308,6 +1311,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -1268,6 +1271,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
  	    }
  	  g_idle_add (ghid_pan_idle_cb, NULL);
  	}
@@ -56,7 +56,7 @@ index e67c39b..ac2b2c9 100644
      }
  
    if(cursor_in_viewport)
-@@ -1363,3 +1368,27 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+@@ -1323,3 +1328,27 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  
    return TRUE;
  }
