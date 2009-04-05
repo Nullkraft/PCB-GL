@@ -1,0 +1,14 @@
+Bottom: 4abb0f67427b00a0f556e5cb205c2c434c476033
+Top:    4abb0f67427b00a0f556e5cb205c2c434c476033
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-04-05 21:41:29 +0100
+
+GTK HID: Fix pango markup in DRC window to be more compatible
+
+Avoid using the attribute alias "font_size" in the markup. Older
+pango versions only support "size", which is functionally identical.
+
+
+---
+
+
