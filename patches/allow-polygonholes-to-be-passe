@@ -1,0 +1,17 @@
+Bottom: b962dcf4eecd1c4ce0f1d60698eff7adf337312a
+Top:    b962dcf4eecd1c4ce0f1d60698eff7adf337312a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-04-05 22:29:51 +0100
+
+Allow PolygonHoles() to be passed a NULL region
+
+Passing a NULL region implies we wish to be called back for all
+holes in the polygon, as we don't have a region to test against.
+
+Fixes crash in the DRC window when the design has polygons, and
+is viewed with either thindraw, or thindraw polygons.
+
+
+---
+
+
