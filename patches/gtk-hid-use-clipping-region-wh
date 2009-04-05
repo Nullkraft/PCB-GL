@@ -1,5 +1,5 @@
 Bottom: 40162b03f0d0298c368821e998f6b7b54781a942
-Top:    85e88f5c0a21896fb7671393f42dfc25bbd7b8aa
+Top:    bb89a004c44043db007a668c9f6e01fe71986845
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-04-05 22:39:50 +0100
 
@@ -11,7 +11,7 @@ Should speed up rendering quite a bit for non-trivial boards.
 ---
 
 diff --git a/src/hid/gtk/gui-render-pixmap.c b/src/hid/gtk/gui-render-pixmap.c
-index 525bde6..5979cf8 100644
+index 525bde6..657d654 100644
 --- a/src/hid/gtk/gui-render-pixmap.c
 +++ b/src/hid/gtk/gui-render-pixmap.c
 @@ -49,6 +49,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
@@ -22,7 +22,16 @@ index 525bde6..5979cf8 100644
  
    save_drawable = gport->drawable;
    save_zoom = gport->zoom;
-@@ -79,7 +80,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -75,11 +76,16 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   gport->view_y0 = ghid_flip_y ? PCB->MaxHeight - cy : cy;
+   gport->view_y0 -= gport->view_width  / 2;
+ 
++  region.X1 = gport->view_x0;
++  region.Y1 = gport->view_y0;
++  region.X2 = gport->view_x0 + gport->view_width;
++  region.Y2 = gport->view_y0 + gport->view_height;
++
+   /* clear background */
    gdk_draw_rectangle (pixmap, gport->bg_gc, TRUE, 0, 0, width, height);
  
    /* call the drawing routine */
