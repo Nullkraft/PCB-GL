@@ -38,11 +38,11 @@
  */
 #define REMOVE_TYPES            \
 	(VIA_TYPE | LINEPOINT_TYPE | LINE_TYPE | TEXT_TYPE | ELEMENT_TYPE |	\
-	POLYGONPOINT_TYPE | POLYGON_TYPE | RATLINE_TYPE | ARC_TYPE)
+	POURPOINT_TYPE | POUR_TYPE | RATLINE_TYPE | ARC_TYPE)
 
 void *RemoveLine (LayerTypePtr, LineTypePtr);
 void *RemoveArc (LayerTypePtr, ArcTypePtr);
-void *RemovePolygon (LayerTypePtr, PolygonTypePtr);
+void *RemovePour (LayerTypePtr, PourTypePtr);
 void *RemoveText (LayerTypePtr, TextTypePtr);
 void *RemoveElement (ElementTypePtr);
 void ClearRemoveList (void);
