@@ -1,0 +1,14 @@
+Bottom: 40162b03f0d0298c368821e998f6b7b54781a942
+Top:    40162b03f0d0298c368821e998f6b7b54781a942
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-04-06 00:01:16 +0100
+
+GTK HID: Move inline coordinate conversions from gtkhid-main.c to gui.h
+
+This allows other source files easy access to the routines
+Vx(), Vy(), Vz() and Px(), Py, Pz().
+
+
+---
+
+
