@@ -1,5 +1,5 @@
 Bottom: 0f1f54ad735c91477adf4ccfb1846523a0ec3f17
-Top:    30d438cf1fb5a01e877fd6d3bfba0472e20a4d2b
+Top:    5a82f307252fbf2a0ae979254e7a402860e3aa5c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-04-06 00:07:17 +0100
 
@@ -1682,7 +1682,7 @@ index c27f857..74149e1 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 1a62dd8..a4632ee 100644
+index 1a62dd8..776f5cf 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -293,16 +293,16 @@ have_crosshair_attachments (void)
@@ -1832,9 +1832,9 @@ index 1a62dd8..a4632ee 100644
 +  glColor3f (cross_color.red / 65535.,
 +             cross_color.green / 65535.,
 +             cross_color.blue / 65535.);
- 
-+  glBegin (GL_LINES);
 +
++  glBegin (GL_LINES);
+ 
 +#if 1
    if (x_prev >= 0)
      {
@@ -1934,7 +1934,7 @@ index 1a62dd8..a4632ee 100644
  }
  
  static gboolean
-@@ -822,53 +869,235 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -822,53 +869,195 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
    if (!first_time_done)
      {
        gport->colormap = gtk_widget_get_colormap (gport->top_window);
@@ -1970,46 +1970,7 @@ index 1a62dd8..a4632ee 100644
    return 0;
  }
  
-+static inline int
-+Px (int x)
-+{
-+  int rv = x * gport->zoom + gport->view_x0;
-+  if (ghid_flip_x)
-+    rv = PCB->MaxWidth - (x * gport->zoom + gport->view_x0);
-+  return  rv;
-+}
-+
-+static inline int
-+Py (int y)
-+{
-+  int rv = y * gport->zoom + gport->view_y0;
-+  if (ghid_flip_y)
-+    rv = PCB->MaxHeight - (y * gport->zoom + gport->view_y0);
-+  return  rv;
-+}
-+
-+static inline int
-+Vx (int x)
-+{
-+  int rv;
-+  if (ghid_flip_x) 
-+    rv = (PCB->MaxWidth - x - gport->view_x0) / gport->zoom + 0.5;
-+  else
-+    rv = (x - gport->view_x0) / gport->zoom + 0.5;
-+  return rv;
-+}
-+
-+static inline int
-+Vy (int y)
-+{
-+  int rv;
-+  if (ghid_flip_y)
-+    rv = (PCB->MaxHeight - y - gport->view_y0) / gport->zoom + 0.5;
-+  else
-+    rv = (y - gport->view_y0) / gport->zoom + 0.5;
-+  return rv;
-+}
- 
+-
  void
  ghid_screen_update (void)
  {
@@ -2183,7 +2144,7 @@ index 1a62dd8..a4632ee 100644
    return FALSE;
  }
  
-@@ -881,6 +1110,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -881,6 +1070,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
    GdkModifierType state;
@@ -2198,7 +2159,7 @@ index 1a62dd8..a4632ee 100644
  
    state = (GdkModifierType) (ev->state);
    mk = ghid_modifier_keys_state (&state);
-@@ -900,9 +1137,18 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -900,9 +1097,18 @@ ghid_port_window_motion_cb (GtkWidget * widget,
      }
    x_prev = y_prev = -1;
    moved = ghid_note_event_location (ev);
@@ -2217,7 +2178,7 @@ index 1a62dd8..a4632ee 100644
    return FALSE;
  }
  
-@@ -942,7 +1188,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -942,7 +1148,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        RestoreCrosshair (TRUE);
        cursor_in_viewport = TRUE;
      }
