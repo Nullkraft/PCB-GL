@@ -1,7 +1,7 @@
-Bottom: 87224cd8f201979d39a11016e693b701bd4cb3db
-Top:    b1e1aa4da37cc1931a2f1c17c90150b46fa22858
+Bottom: dcd9db82b26b5594ca753ef486db943c546a7d4d
+Top:    c1fe9061adbd915ea9d7397570aaa1d96bec1108
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-04-06 00:09:02 +0100
+Date:   2009-04-06 00:17:51 +0100
 
 Work in progress on subcompositing / stencil buffers
 
@@ -519,7 +519,7 @@ index 83068a4..ff1b76c 100644
        break;
      }
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 2dfe6a3..0deb12e 100644
+index 9e56c27..35fdf4a 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -34,6 +34,7 @@
@@ -530,7 +530,7 @@ index 2dfe6a3..0deb12e 100644
  
  #include <gdk/gdkkeysyms.h>
  
-@@ -962,6 +963,17 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -922,6 +923,17 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
      return FALSE;
    }
  
@@ -548,7 +548,7 @@ index 2dfe6a3..0deb12e 100644
    ghid_show_crosshair (FALSE);
  
    glEnable (GL_BLEND);
-@@ -986,11 +998,14 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -946,11 +958,14 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -563,7 +563,7 @@ index 2dfe6a3..0deb12e 100644
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
  
    region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-@@ -1059,6 +1074,12 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1019,6 +1034,12 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
