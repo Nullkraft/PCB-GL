@@ -892,46 +892,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
   return 0;
 }
 
-static inline int
-Px (int x)
-{
-  int rv = x * gport->zoom + gport->view_x0;
-  if (ghid_flip_x)
-    rv = PCB->MaxWidth - (x * gport->zoom + gport->view_x0);
-  return  rv;
-}
-
-static inline int
-Py (int y)
-{
-  int rv = y * gport->zoom + gport->view_y0;
-  if (ghid_flip_y)
-    rv = PCB->MaxHeight - (y * gport->zoom + gport->view_y0);
-  return  rv;
-}
-
-static inline int
-Vx (int x)
-{
-  int rv;
-  if (ghid_flip_x) 
-    rv = (PCB->MaxWidth - x - gport->view_x0) / gport->zoom + 0.5;
-  else
-    rv = (x - gport->view_x0) / gport->zoom + 0.5;
-  return rv;
-}
-
-static inline int
-Vy (int y)
-{
-  int rv;
-  if (ghid_flip_y)
-    rv = (PCB->MaxHeight - y - gport->view_y0) / gport->zoom + 0.5;
-  else
-    rv = (y - gport->view_y0) / gport->zoom + 0.5;
-  return rv;
-}
-
 void
 ghid_screen_update (void)
 {
