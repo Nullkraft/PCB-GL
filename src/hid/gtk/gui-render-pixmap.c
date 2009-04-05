@@ -76,15 +76,14 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   gport->view_y0 = ghid_flip_y ? PCB->MaxHeight - cy : cy;
   gport->view_y0 -= gport->view_width  / 2;
 
-  region.X1 = gport->view_x0;
-  region.Y1 = gport->view_y0;
-  region.X2 = gport->view_x0 + gport->view_width;
-  region.Y2 = gport->view_y0 + gport->view_height;
-
   /* clear background */
   gdk_draw_rectangle (pixmap, gport->bg_gc, TRUE, 0, 0, width, height);
 
   /* call the drawing routine */
+  region.X1 = MIN(Px(0), Px(gport->width + 1));
+  region.Y1 = MIN(Py(0), Py(gport->height + 1));
+  region.X2 = MAX(Px(0), Px(gport->width + 1));
+  region.Y2 = MAX(Py(0), Py(gport->height + 1));
   hid_expose_callback (&ghid_hid, &region, NULL);
 
   gport->drawable = save_drawable;
