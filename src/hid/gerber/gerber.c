@@ -53,10 +53,16 @@ static void gerber_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
 #define gerberYOffset(pcb, y) ((long) (-(y)))
 
 /* These are for drills */
-#define gerberDrX(pcb, x) ((long) ((x)/10))
-#define gerberDrY(pcb, y) ((long) (((pcb)->MaxHeight - (y)))/10)
-#define gerberDrXOffset(pcb, x) ((long) ((x)/10))
-#define gerberDrYOffset(pcb, y) ((long) (-(y))/10)
+#ifdef EDG_ARE_BROKEN
+#  define EDG_MUL 100
+#else
+#  define EDG_MUL 1
+#endif
+
+#define gerberDrX(pcb, x) ((long) (EDG_MUL * (x)/10))
+#define gerberDrY(pcb, y) ((long) (EDG_MUL * ((pcb)->MaxHeight - (y))/10))
+#define gerberDrXOffset(pcb, x) ((long) (EDG_MUL * (x) / 10))
+#define gerberDrYOffset(pcb, y) ((long) (EDG_MUL * -(y) / 10))
 
 /*----------------------------------------------------------------------------*/
 /* Private data structures                                                    */
