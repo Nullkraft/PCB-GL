@@ -1,7 +1,7 @@
-Bottom: 6ec5e03b3b2cfd8087e49e2911276e3d0201ce71
-Top:    1932f12e269b435b3e064d56f7aa96ee5c37c23d
+Bottom: b1e1aa4da37cc1931a2f1c17c90150b46fa22858
+Top:    c547572decfc3ddd3aded9e7e29f72aaaa9bf4cb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-04-05 22:30:21 +0100
+Date:   2009-04-06 00:09:03 +0100
 
 Hack to make pretty translucent polygons in thindraw-poly mode
 
@@ -15,10 +15,10 @@ way to turn it off would also be useful.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index bb9f458..2c7ec94 100644
+index ff1b76c..e894401 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -737,26 +737,30 @@ ghid_set_special_colors (HID_Attribute * ha)
+@@ -683,26 +683,30 @@ ghid_set_special_colors (HID_Attribute * ha)
      }
  }
  
@@ -54,7 +54,7 @@ index bb9f458..2c7ec94 100644
  
    if (name == NULL)
      {
-@@ -830,6 +834,7 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -776,6 +780,7 @@ ghid_set_color (hidGC gc, const char *name)
      }
    if (1) {
      double maxi, mult;
@@ -62,7 +62,7 @@ index bb9f458..2c7ec94 100644
      if (gport->trans_lines)
        a = a * alpha_mult;
      maxi = r;
-@@ -851,6 +856,16 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -797,6 +802,16 @@ ghid_set_color (hidGC gc, const char *name)
  }
  
  void
@@ -79,7 +79,7 @@ index bb9f458..2c7ec94 100644
  ghid_set_line_cap (hidGC gc, EndCapStyle style)
  {
    switch (style)
-@@ -966,6 +981,15 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+@@ -912,6 +927,15 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  }
  
  void
@@ -95,7 +95,7 @@ index bb9f458..2c7ec94 100644
  ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
  {
    USE_GC (gc);
-@@ -1492,7 +1516,7 @@ HID ghid_hid = {
+@@ -1438,7 +1462,7 @@ HID ghid_hid = {
    ghid_fill_circle,
    ghid_fill_polygon,
    ghid_fill_pcb_polygon,
