@@ -1,0 +1,39 @@
+Bottom: 4abb0f67427b00a0f556e5cb205c2c434c476033
+Top:    8f09ee71d50083c903bfa7fb648dfaa3f94dd684
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-04-05 21:43:26 +0100
+
+Refresh of gtk-hid-fix-pango-markup-in-dr
+
+---
+
+diff --git a/src/hid/gtk/gui-drc-window.c b/src/hid/gtk/gui-drc-window.c
+index 83247e8..c0ec649 100644
+--- a/src/hid/gtk/gui-drc-window.c
++++ b/src/hid/gtk/gui-drc-window.c
+@@ -649,10 +649,10 @@ ghid_violation_renderer_set_property (GObject * object, guint property_id,
+   if (renderer->violation->have_measured)
+     {
+       markup = g_strdup_printf ("<b>%s (%.*f %s)</b>\n"
+-				"<span font_size='1024'> </span>\n"
++				"<span size='1024'> </span>\n"
+ 				"<small>"
+ 				  "<i>%s</i>\n"
+-				  "<span font_size='5120'> </span>\n"
++				  "<span size='5120'> </span>\n"
+ 				  "Required: %.*f %s"
+ 				"</small>",
+ 				renderer->violation->title,
+@@ -667,10 +667,10 @@ ghid_violation_renderer_set_property (GObject * object, guint property_id,
+   else
+     {
+       markup = g_strdup_printf ("<b>%s</b>\n"
+-				"<span font_size='1024'> </span>\n"
++				"<span size='1024'> </span>\n"
+ 				"<small>"
+ 				  "<i>%s</i>\n"
+-				  "<span font_size='5120'> </span>\n"
++				  "<span size='5120'> </span>\n"
+ 				  "Required: %.*f %s"
+ 				"</small>",
+ 				renderer->violation->title,
