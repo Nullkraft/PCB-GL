@@ -1,0 +1,60 @@
+Bottom: 30d438cf1fb5a01e877fd6d3bfba0472e20a4d2b
+Top:    5a82f307252fbf2a0ae979254e7a402860e3aa5c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-04-06 00:17:38 +0100
+
+Refresh of drop-in-pcb-gl-code-various-me
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index a4632ee..776f5cf 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -892,46 +892,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+   return 0;
+ }
+ 
+-static inline int
+-Px (int x)
+-{
+-  int rv = x * gport->zoom + gport->view_x0;
+-  if (ghid_flip_x)
+-    rv = PCB->MaxWidth - (x * gport->zoom + gport->view_x0);
+-  return  rv;
+-}
+-
+-static inline int
+-Py (int y)
+-{
+-  int rv = y * gport->zoom + gport->view_y0;
+-  if (ghid_flip_y)
+-    rv = PCB->MaxHeight - (y * gport->zoom + gport->view_y0);
+-  return  rv;
+-}
+-
+-static inline int
+-Vx (int x)
+-{
+-  int rv;
+-  if (ghid_flip_x) 
+-    rv = (PCB->MaxWidth - x - gport->view_x0) / gport->zoom + 0.5;
+-  else
+-    rv = (x - gport->view_x0) / gport->zoom + 0.5;
+-  return rv;
+-}
+-
+-static inline int
+-Vy (int y)
+-{
+-  int rv;
+-  if (ghid_flip_y)
+-    rv = (PCB->MaxHeight - y - gport->view_y0) / gport->zoom + 0.5;
+-  else
+-    rv = (y - gport->view_y0) / gport->zoom + 0.5;
+-  return rv;
+-}
+-
+ void
+ ghid_screen_update (void)
+ {
