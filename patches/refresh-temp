@@ -1,0 +1,30 @@
+Bottom: 40162b03f0d0298c368821e998f6b7b54781a942
+Top:    85e88f5c0a21896fb7671393f42dfc25bbd7b8aa
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-04-05 22:40:43 +0100
+
+Refresh of gtk-hid-use-clipping-region-wh
+
+---
+
+diff --git a/src/hid/gtk/gui-render-pixmap.c b/src/hid/gtk/gui-render-pixmap.c
+index 525bde6..5979cf8 100644
+--- a/src/hid/gtk/gui-render-pixmap.c
++++ b/src/hid/gtk/gui-render-pixmap.c
+@@ -49,6 +49,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   int save_left, save_top;
+   int save_width, save_height;
+   int save_view_width, save_view_height;
++  BoxType region;
+ 
+   save_drawable = gport->drawable;
+   save_zoom = gport->zoom;
+@@ -79,7 +80,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   gdk_draw_rectangle (pixmap, gport->bg_gc, TRUE, 0, 0, width, height);
+ 
+   /* call the drawing routine */
+-  hid_expose_callback (&ghid_hid, NULL, NULL);
++  hid_expose_callback (&ghid_hid, &region, NULL);
+ 
+   gport->drawable = save_drawable;
+   gport->zoom = save_zoom;
