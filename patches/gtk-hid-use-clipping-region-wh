@@ -1,5 +1,5 @@
 Bottom: cb5bb38f6bb0038b16a928ec5f6765a8e05b5dd3
-Top:    ed212559043bacac232c481a125c8cfff34c5b04
+Top:    325288fb57f74c4e563982c6fce059e5f05de9c8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-04-06 00:05:27 +0100
 
@@ -35,17 +35,3 @@ index 525bde6..b24e6c9 100644
  
    gport->drawable = save_drawable;
    gport->zoom = save_zoom;
-diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 7a46672..1ed9082 100644
---- a/src/hid/gtk/gui.h
-+++ b/src/hid/gtk/gui.h
-@@ -532,9 +532,6 @@ void ghid_invalidate_all ();
- void ghid_get_coords (const char *msg, int *x, int *y);
- gint PCBChanged (int argc, char **argv, int x, int y);
- 
--
--
--
- extern GdkPixmap *XC_hand_source, *XC_hand_mask;
- extern GdkPixmap *XC_lock_source, *XC_lock_mask;
- extern GdkPixmap *XC_clock_source, *XC_clock_mask;
