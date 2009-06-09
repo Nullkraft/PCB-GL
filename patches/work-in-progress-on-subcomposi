@@ -1,7 +1,7 @@
-Bottom: 98e0b2da8f37244cd680c66a309a306eed2ea54a
-Top:    994562ff314f8a8d142a85720ff4ff206c7957b7
+Bottom: 55681c5f685e5f3b94604d21c80e807f56355b3c
+Top:    68d37962af9782994a6bfb93bed04eb6523188ca
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-06-09 12:13:00 +0100
+Date:   2009-06-09 12:35:55 +0100
 
 Work in progress on subcompositing / stencil buffers
 
@@ -577,10 +577,10 @@ index 6ac5dce..0d091eb 100644
    glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
              (ghid_flip_y ? -1. : 1.) / gport->zoom, 1);
 diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
-index b7ff90e..dada313 100644
+index f59f22b..935e435 100644
 --- a/src/hid/gtk/gui-pinout-preview.c
 +++ b/src/hid/gtk/gui-pinout-preview.c
-@@ -224,7 +224,7 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
+@@ -219,7 +219,7 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
                  gport->bg_color.green / 65535.,
                  gport->bg_color.blue / 65535.,
                  1.);
