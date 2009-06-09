@@ -1,7 +1,7 @@
-Bottom: 5a82f307252fbf2a0ae979254e7a402860e3aa5c
-Top:    fa903e49aae71e0eebce692b63695374a7a5f0e6
+Bottom: 31e3ff3d1bb5903bf9b0664b8dc50e064d5102a3
+Top:    31e3ff3d1bb5903bf9b0664b8dc50e064d5102a3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-04-06 00:17:46 +0100
+Date:   2009-06-09 12:11:42 +0100
 
 Cure crosshair lagging on screen
 
@@ -18,57 +18,4 @@ Cure crosshair lagging on screen
 
 ---
 
-diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 776f5cf..9e56c27 100644
---- a/src/hid/gtk/gui-output-events.c
-+++ b/src/hid/gtk/gui-output-events.c
-@@ -1070,6 +1070,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
-   static gint x_prev = -1, y_prev = -1;
-   gboolean moved;
-   GdkModifierType state;
-+#if 0
-   GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
-   GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
- 
-@@ -1078,6 +1079,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
-     printf ("GL THingy returned\n");
-     return FALSE;
-   }
-+#endif
- 
-   state = (GdkModifierType) (ev->state);
-   mk = ghid_modifier_keys_state (&state);
-@@ -1085,8 +1087,11 @@ ghid_port_window_motion_cb (GtkWidget * widget,
-   if ((ev->state & GDK_BUTTON3_MASK) == GDK_BUTTON3_MASK
-       && mk == NONE_PRESSED)
-     {
-+/* Not sure this really matters, since we're using invalidate to get a redraw */
-+#if 1
-       if (gtk_events_pending ())
- 	return FALSE;
-+#endif
-       dx = gport->zoom * (x_prev - ev->x);
-       dy = gport->zoom * (y_prev - ev->y);
-       if (x_prev > 0)
-@@ -1098,10 +1103,11 @@ ghid_port_window_motion_cb (GtkWidget * widget,
-   x_prev = y_prev = -1;
-   moved = ghid_note_event_location (ev);
- 
--  ghid_show_crosshair (TRUE);
--  if (moved && have_crosshair_attachments ())
-+//  ghid_show_crosshair (TRUE);
-+  if (moved) // && have_crosshair_attachments ())
-     ghid_draw_area_update (gport, NULL);
- 
-+#if 0
-   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
-     gdk_gl_drawable_swap_buffers (pGlDrawable);
-   else
-@@ -1109,6 +1115,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
- 
-   /* end drawing to current GL-context */
-   gdk_gl_drawable_gl_end (pGlDrawable);
-+#endif
-+
-   return FALSE;
- }
+
