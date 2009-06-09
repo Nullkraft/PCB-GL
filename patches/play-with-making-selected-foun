@@ -1,7 +1,7 @@
-Bottom: 43356544a60bf48494d30ac53619b177f574bc9b
-Top:    6e47dbea4c65e68c0656950f0a392b4105193d3a
+Bottom: 52f9b370bf7faa9450d8b211aa38ac23b8f19712
+Top:    b7daff70c15f4560a710a80c48c82a6e37418a12
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-04-01 13:43:34 +0100
+Date:   2009-06-09 12:32:55 +0100
 
 Play with making selected / found objects ignore subcompositing rules
 
@@ -344,10 +344,10 @@ index cfec799..22f95d6 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index ad11ba8..d2d86a3 100644
+index 865be28..c2e77d5 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -572,6 +572,33 @@ ghid_invalidate_all ()
+@@ -518,6 +518,33 @@ ghid_invalidate_all ()
    gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
  }
  
