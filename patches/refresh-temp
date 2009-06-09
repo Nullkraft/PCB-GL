@@ -1,0 +1,25 @@
+Bottom: 2357c95d2de96bb75d755d6ee4619688f14c418e
+Top:    305c76c2af71b833b7253481c643c2e8926a3a3a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-06-09 12:35:20 +0100
+
+Refresh of cure-cross-hair-lagging-on-scr
+
+---
+
+diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
+index b7ff90e..f59f22b 100644
+--- a/src/hid/gtk/gui-pinout-preview.c
++++ b/src/hid/gtk/gui-pinout-preview.c
+@@ -166,11 +166,6 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
+   int save_view_width, save_view_height;
+   double xz, yz;
+ 
+-  /* make sure that the graphic contexts have been set up before we try to do anything here */
+-  if (gport->bg_gc == NULL) {
+-    return FALSE;
+-  }
+-
+   save_zoom = gport->zoom;
+   save_width = gport->width;
+   save_height = gport->height;
