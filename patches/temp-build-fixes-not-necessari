@@ -1,7 +1,7 @@
-Bottom: ae73528ade1b6fdbb5e2111f29b8b1cad5def93e
+Bottom: a63efbb7f5887bb53271295a7dd840c6b77dbe69
 Top:    fcf41d019b13f39a064e9ff61cf6ac5a07109fdf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-06-09 12:30:07 +0100
+Date:   2009-06-09 12:36:25 +0100
 
 Temp build fixes (NOT NECESSARILY RIGHT!)
 
@@ -31,19 +31,3 @@ index fa2ec86..c9916d4 100644
  	change = True;
        }
    }
-diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
-index dada313..935e435 100644
---- a/src/hid/gtk/gui-pinout-preview.c
-+++ b/src/hid/gtk/gui-pinout-preview.c
-@@ -166,11 +166,6 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
-   int save_view_width, save_view_height;
-   double xz, yz;
- 
--  /* make sure that the graphic contexts have been set up before we try to do anything here */
--  if (gport->bg_gc == NULL) {
--    return FALSE;
--  }
--
-   save_zoom = gport->zoom;
-   save_width = gport->width;
-   save_height = gport->height;
