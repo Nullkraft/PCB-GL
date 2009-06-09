@@ -1,7 +1,7 @@
-Bottom: 0bf0f7d00747b307ed6f45f643690f1abf09d89a
-Top:    efce44ad1eb5d9e9eca6e7e40ed7993ecf1c73c5
+Bottom: 73ed43b5ede439d1de6d03f859a7749c89b84b03
+Top:    52f9b370bf7faa9450d8b211aa38ac23b8f19712
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-04-02 20:30:53 +0100
+Date:   2009-06-09 12:32:54 +0100
 
 Profile NoHoles dicer, and add some warnings about longjmp badness
 
@@ -26,7 +26,7 @@ index 31888b6..d74fc49 100644
  
  //static int cur_mask = -1;
 diff --git a/src/polygon.c b/src/polygon.c
-index 49834af..0dbdce1 100644
+index dd02e0b..ebc1308 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -81,6 +81,7 @@ dicer output is used for HIDs which cannot render things with holes
