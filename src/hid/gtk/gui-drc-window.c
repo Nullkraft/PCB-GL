@@ -166,13 +166,13 @@ unset_found_flags (int AndDraw)
       }
   }
   ENDALL_LOOP;
-  COPPERPOLYGON_LOOP (PCB->Data);
+  COPPERPOUR_LOOP (PCB->Data);
   {
-    if (TEST_FLAG (flag, polygon))
+    if (TEST_FLAG (flag, pour))
       {
-	AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
-	CLEAR_FLAG (flag, polygon);
-	DrawPolygon (layer, polygon, 0);
+	AddObjectToFlagUndoList (POUR_TYPE, layer, pour, pour);
+	CLEAR_FLAG (flag, pour);
+	DrawPour (layer, pour, 0);
 	change = True;
       }
   }
