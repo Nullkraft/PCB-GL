@@ -1,0 +1,48 @@
+Bottom: 9722dd6708d4fe370f9f4eccbdd25afffdc708c0
+Top:    579ec0af411c5d9cab1548dbb529bd6b6fc4200b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-06-09 12:29:51 +0100
+
+Refresh of temp-build-fixes-not-necessari
+
+---
+
+diff --git a/src/hid/gtk/gui-drc-window.c b/src/hid/gtk/gui-drc-window.c
+index fa2ec86..c9916d4 100644
+--- a/src/hid/gtk/gui-drc-window.c
++++ b/src/hid/gtk/gui-drc-window.c
+@@ -166,13 +166,13 @@ unset_found_flags (int AndDraw)
+       }
+   }
+   ENDALL_LOOP;
+-  COPPERPOLYGON_LOOP (PCB->Data);
++  COPPERPOUR_LOOP (PCB->Data);
+   {
+-    if (TEST_FLAG (flag, polygon))
++    if (TEST_FLAG (flag, pour))
+       {
+-	AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
+-	CLEAR_FLAG (flag, polygon);
+-	DrawPolygon (layer, polygon, 0);
++	AddObjectToFlagUndoList (POUR_TYPE, layer, pour, pour);
++	CLEAR_FLAG (flag, pour);
++	DrawPour (layer, pour, 0);
+ 	change = True;
+       }
+   }
+diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
+index dada313..935e435 100644
+--- a/src/hid/gtk/gui-pinout-preview.c
++++ b/src/hid/gtk/gui-pinout-preview.c
+@@ -166,11 +166,6 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
+   int save_view_width, save_view_height;
+   double xz, yz;
+ 
+-  /* make sure that the graphic contexts have been set up before we try to do anything here */
+-  if (gport->bg_gc == NULL) {
+-    return FALSE;
+-  }
+-
+   save_zoom = gport->zoom;
+   save_width = gport->width;
+   save_height = gport->height;
