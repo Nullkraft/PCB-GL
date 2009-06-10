@@ -350,6 +350,10 @@ LoadPCB (char *Filename)
 {
   PCBTypePtr newPCB = CreateNewPCB (False);
   Boolean units_mm;
+  clock_t start, end;
+  double elapsed;
+
+  start = clock();
 
   /* new data isn't added to the undo list */
   if (!ParsePCB (newPCB, Filename))
@@ -379,6 +383,10 @@ LoadPCB (char *Filename)
 		   Filename);
 	  CreateDefaultFont ();
 	}
+
+  end = clock();
+  elapsed = ((double) (end - start)) / CLOCKS_PER_SEC;
+  printf ("Loading file %s took %f\n", Filename, elapsed);
 
       /* clear 'changed flag' */
       SetChangedFlag (False);
