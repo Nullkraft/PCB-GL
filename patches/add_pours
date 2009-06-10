@@ -1,7 +1,7 @@
-Bottom: 5bde97cd0e65e630dbaaf715f0fbd69778bd8e46
-Top:    6a37600ddfe18ea189053ca3a9dada86cdbf316c
+Bottom: 0405c7e5e3cfb3c1bf67706cb29e9c1502c677bf
+Top:    61720a0de293dd9a38e632d6939fc618daabac08
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-06-10 02:23:19 +0100
+Date:   2009-06-10 02:29:40 +0100
 
 Add support for a "poured" object.
 
@@ -6750,7 +6750,7 @@ index 8b7c166..7650a65 100644
  void *RemoveElement (ElementTypePtr);
  void ClearRemoveList (void);
 diff --git a/src/report.c b/src/report.c
-index 98b4f23..66712f8 100644
+index 974c0be..c1f59e4 100644
 --- a/src/report.c
 +++ b/src/report.c
 @@ -330,11 +330,42 @@ ReportDialog (int argc, char **argv, int x, int y)
