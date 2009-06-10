@@ -1,7 +1,7 @@
-Bottom: 31e3ff3d1bb5903bf9b0664b8dc50e064d5102a3
-Top:    305c76c2af71b833b7253481c643c2e8926a3a3a
+Bottom: d9831b9b591d8c28916a8d38a75960f3bf2371ce
+Top:    fe2a9cb77b282a12b90a685091b76e1040f631c8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-06-09 12:11:42 +0100
+Date:   2009-06-10 02:23:09 +0100
 
 Cure crosshair lagging on screen
 
@@ -68,20 +68,3 @@ index 739f29e..6ac5dce 100644
 +
    return FALSE;
  }
- 
-diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
-index b7ff90e..f59f22b 100644
---- a/src/hid/gtk/gui-pinout-preview.c
-+++ b/src/hid/gtk/gui-pinout-preview.c
-@@ -166,11 +166,6 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
-   int save_view_width, save_view_height;
-   double xz, yz;
- 
--  /* make sure that the graphic contexts have been set up before we try to do anything here */
--  if (gport->bg_gc == NULL) {
--    return FALSE;
--  }
--
-   save_zoom = gport->zoom;
-   save_width = gport->width;
-   save_height = gport->height;

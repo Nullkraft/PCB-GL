@@ -1,7 +1,7 @@
-Bottom: 0a60ceb738dc462115b32ca1d895b54de922e345
-Top:    31e3ff3d1bb5903bf9b0664b8dc50e064d5102a3
+Bottom: 6204c36af27187611d2b72979c1748e02c52bfa8
+Top:    d9831b9b591d8c28916a8d38a75960f3bf2371ce
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-06-09 12:08:53 +0100
+Date:   2009-06-10 02:23:08 +0100
 
 Drop in PCB+GL code + various mess. Needs splitting up
 
@@ -2188,7 +2188,7 @@ index 9ea3207..739f29e 100644
  }
  
 diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
-index b3c0ebc..b7ff90e 100644
+index 212d37a..f59f22b 100644
 --- a/src/hid/gtk/gui-pinout-preview.c
 +++ b/src/hid/gtk/gui-pinout-preview.c
 @@ -150,12 +150,15 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
@@ -2209,7 +2209,7 @@ index b3c0ebc..b7ff90e 100644
    double save_zoom;
    int da_w, da_h;
    int save_left, save_top;
-@@ -176,9 +179,7 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * event)
+@@ -171,9 +174,7 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * event)
    save_view_width = gport->view_width;
    save_view_height = gport->view_height;
  
@@ -2220,7 +2220,7 @@ index b3c0ebc..b7ff90e 100644
  
    gdk_window_get_geometry (widget->window, 0, 0, &da_w, &da_h, 0);
    xz = (double) pinout->x_max / da_w;
-@@ -188,7 +189,6 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * event)
+@@ -183,7 +184,6 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * event)
    else
      gport->zoom = yz;
  
@@ -2228,7 +2228,7 @@ index b3c0ebc..b7ff90e 100644
    gport->width = da_w;
    gport->height = da_h;
    gport->view_width = da_w * gport->zoom;
-@@ -196,13 +196,59 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * event)
+@@ -191,13 +191,59 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * event)
    gport->view_x0 = (pinout->x_max - gport->view_width) / 2;
    gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
  
@@ -2291,7 +2291,7 @@ index b3c0ebc..b7ff90e 100644
    gport->zoom = save_zoom;
    gport->width = save_width;
    gport->height = save_height;
-@@ -224,6 +270,40 @@ enum
+@@ -219,6 +265,40 @@ enum
  static GObjectClass *ghid_pinout_preview_parent_class = NULL;
  
  
@@ -2332,7 +2332,7 @@ index b3c0ebc..b7ff90e 100644
  /*! \brief GObject finalise handler
   *
   *  \par Function Description
-@@ -315,6 +395,7 @@ ghid_pinout_preview_class_init (GhidPinoutPreviewClass * klass)
+@@ -310,6 +390,7 @@ ghid_pinout_preview_class_init (GhidPinoutPreviewClass * klass)
    GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
    GtkWidgetClass *gtk_widget_class = GTK_WIDGET_CLASS (klass);
  
