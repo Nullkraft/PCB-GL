@@ -1,7 +1,7 @@
-Bottom: 43aaf691483f58916451b74080fdd6471171f153
-Top:    760ab3ceca39c1647c1d7399dd6417d05e5043f2
+Bottom: 6a81e41aa8061a3b8705e0379dd4785303c68ca8
+Top:    4762168c2552985913d1898a50d2bf836bc1d1aa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-13 15:51:25 +0100
+Date:   2009-10-13 16:08:02 +0100
 
 Off to find burried treasure on polygon island
 
@@ -32,7 +32,7 @@ Add feature to remove islanded areas
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 0bb180f..96e7dfd 100644
+index b451668..a4a3117 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -388,7 +388,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
