@@ -1,33 +1,11 @@
-Bottom: d96b9933f8a94ebf685f097f9c9ef1bc4d2e7805
-Top:    18ffc3d5d7426c8a699855b9de334067a4f6d217
+Bottom: 052711011aab239e42391444404835b1a3dcd523
+Top:    052711011aab239e42391444404835b1a3dcd523
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-13 15:51:49 +0100
+Date:   2009-10-13 16:08:44 +0100
 
 Temp build fixes (NOT NECESSARILY RIGHT!)
 
 
 ---
 
-diff --git a/src/hid/gtk/gui-drc-window.c b/src/hid/gtk/gui-drc-window.c
-index fa2ec86..c9916d4 100644
---- a/src/hid/gtk/gui-drc-window.c
-+++ b/src/hid/gtk/gui-drc-window.c
-@@ -166,13 +166,13 @@ unset_found_flags (int AndDraw)
-       }
-   }
-   ENDALL_LOOP;
--  COPPERPOLYGON_LOOP (PCB->Data);
-+  COPPERPOUR_LOOP (PCB->Data);
-   {
--    if (TEST_FLAG (flag, polygon))
-+    if (TEST_FLAG (flag, pour))
-       {
--	AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
--	CLEAR_FLAG (flag, polygon);
--	DrawPolygon (layer, polygon, 0);
-+	AddObjectToFlagUndoList (POUR_TYPE, layer, pour, pour);
-+	CLEAR_FLAG (flag, pour);
-+	DrawPour (layer, pour, 0);
- 	change = True;
-       }
-   }
+
