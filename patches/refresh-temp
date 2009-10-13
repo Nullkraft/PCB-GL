@@ -1,0 +1,84 @@
+Bottom: 8aef1228b68bc996ebcde7f3ce21d74257528d7d
+Top:    962cc1a7462297aec3de2e1f87ab47d2e136358e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-13 15:05:39 +0100
+
+Refresh of work-in-progress-on-subcomposi
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 31888b6..2525100 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -711,7 +711,7 @@ hidgl_init (void)
+     {
+       printf ("No stencil bits available.\n"
+               "Cannot mask polygon holes or subcomposite layers\n");
+-      /* TODO: Flag this to the HID so it can rever to the dicer? */
++      /* TODO: Flag this to the HID so it can revert to the dicer? */
+     }
+   else if (stencil_bits == 1)
+     {
+@@ -779,6 +779,13 @@ hidgl_return_stencil_bit (int bit)
+   assigned_bits &= ~bit;
+ }
+ 
++void
++hidgl_reset_stencil_usage (void)
++{
++  assigned_bits = 0;
++  dirty_bits = 0;
++}
++
+ 
+ /* ---------------------------------------------------------------------- */
+ 
+diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
+index f688fc5..4e86e27 100644
+--- a/src/hid/common/hidgl.h
++++ b/src/hid/common/hidgl.h
+@@ -68,5 +68,6 @@ void hidgl_init (void);
+ int hidgl_stencil_bits (void);
+ int hidgl_assign_clear_stencil_bit (void);
+ void hidgl_return_stencil_bit (int bit);
++void hidgl_reset_stencil_usage (void);
+ 
+ #endif /* __HIDGL_INCLUDED__  */
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 0d091eb..303c33d 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -852,6 +852,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+   glDepthMask (0);
+   glClearStencil (0);
+   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
++  hidgl_reset_stencil_usage ();
+ 
+   region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
+   region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
+diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
+index 935e435..a086b19 100644
+--- a/src/hid/gtk/gui-pinout-preview.c
++++ b/src/hid/gtk/gui-pinout-preview.c
+@@ -222,6 +222,8 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
+   glClearStencil (0);
+   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+ 
++  hidgl_reset_stencil_usage ();
++
+   /* call the drawing routine */
+   hidgl_init_triangle_array (&buffer);
+   ghid_invalidate_current_gc ();
+diff --git a/src/hid/gtk/gui-render-pixmap.c b/src/hid/gtk/gui-render-pixmap.c
+index 4caddf2..faa09fe 100644
+--- a/src/hid/gtk/gui-render-pixmap.c
++++ b/src/hid/gtk/gui-render-pixmap.c
+@@ -116,6 +116,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+                 1.);
+   glClearStencil (0);
+   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
++  hidgl_reset_stencil_usage ();
+ 
+   /* call the drawing routine */
+   hidgl_init_triangle_array (&buffer);
