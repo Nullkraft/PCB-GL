@@ -1,7 +1,7 @@
-Bottom: d8c2390d81ef46391c865dd3474387e95e1838b5
-Top:    4261a70e3e046e3ebd5ecacf35b0753e73ef93fb
+Bottom: a69c7d2a51c8e503d3009de88a24649ce7327e7f
+Top:    cd3bfb11751bae4089af34017076d2da48429bb6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-06-10 02:29:33 +0100
+Date:   2009-10-13 15:24:44 +0100
 
 Improve grid snapping heuristics
 
@@ -289,10 +289,10 @@ index e1ad65c..e44be35 100644
        && Crosshair.AttachedLine.State != STATE_FIRST
        && TEST_FLAG (AUTODRCFLAG, PCB))
 diff --git a/src/search.c b/src/search.c
-index 6e3f4c5..89dea3c 100644
+index 07015f0..153f60c 100644
 --- a/src/search.c
 +++ b/src/search.c
-@@ -322,6 +322,7 @@ struct arc_info
+@@ -323,6 +323,7 @@ struct arc_info
    ArcTypePtr *Arc, *Dummy;
    jmp_buf env;
    int locked;
@@ -300,7 +300,7 @@ index 6e3f4c5..89dea3c 100644
  };
  
  static int
-@@ -329,16 +330,24 @@ arc_callback (const BoxType * box, void *cl)
+@@ -330,16 +331,24 @@ arc_callback (const BoxType * box, void *cl)
  {
    struct arc_info *i = (struct arc_info *) cl;
    ArcTypePtr a = (ArcTypePtr) box;
@@ -329,7 +329,7 @@ index 6e3f4c5..89dea3c 100644
  }
  
  
-@@ -351,14 +360,18 @@ SearchArcByLocation (int locked, LayerTypePtr * Layer, ArcTypePtr * Arc,
+@@ -352,14 +361,18 @@ SearchArcByLocation (int locked, LayerTypePtr * Layer, ArcTypePtr * Arc,
    info.Arc = Arc;
    info.Dummy = Dummy;
    info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
@@ -353,7 +353,7 @@ index 6e3f4c5..89dea3c 100644
  }
  
  static int
-@@ -492,7 +505,9 @@ SearchLinePointByLocation (int locked, LayerTypePtr * Layer,
+@@ -493,7 +506,9 @@ SearchLinePointByLocation (int locked, LayerTypePtr * Layer,
    info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
    if (r_search
        (SearchLayer->line_tree, &SearchBox, NULL, linepoint_callback, &info))
@@ -363,7 +363,7 @@ index 6e3f4c5..89dea3c 100644
    return False;
  }
  
-@@ -1036,6 +1051,11 @@ IsPointInBox (LocationType X, LocationType Y, BoxTypePtr box, BDimension Radius)
+@@ -1037,6 +1052,11 @@ IsPointInBox (LocationType X, LocationType Y, BoxTypePtr box, BDimension Radius)
    return range < Radius;
  }
  
@@ -375,7 +375,7 @@ index 6e3f4c5..89dea3c 100644
  Boolean
  IsPointOnArc (float X, float Y, float Radius, ArcTypePtr Arc)
  {
-@@ -1584,3 +1604,17 @@ SearchScreen (LocationType X, LocationType Y, int Type, void **Result1,
+@@ -1592,3 +1612,17 @@ SearchScreen (LocationType X, LocationType Y, int Type, void **Result1,
  				X, Y, SLOP * pixel_slop);
    return (ans);
  }

@@ -1,7 +1,7 @@
-Bottom: 84083f3166dc49721d43033ad327a780569ebb11
-Top:    872c81d68a454988cf43e7e2dafb63dd20209320
+Bottom: e79306abee39af95fe6252a007ae0e5047230e18
+Top:    e633416a73e2b65a4f44c3574ffef686cc24484d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-06-10 02:29:35 +0100
+Date:   2009-10-13 15:24:47 +0100
 
 Add some annotations to help optimise branch prediction.
 
@@ -69,7 +69,7 @@ index 40fc325..f494dbc 100644
   * Do not change the following definitions even if they're not very
   * nice.  It allows us to have functions act on these "base types" and
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 5ec0225..eaeadfd 100644
+index f83ee3f..4d36bee 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -93,6 +93,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -127,10 +127,10 @@ index 5ec0225..eaeadfd 100644
    while (add && (a = a->f) != afst);
  }				/* M_POLYAREA_intersect */
 diff --git a/src/rtree.c b/src/rtree.c
-index 19741e4..3b30a56 100644
+index aa5b41a..f7ffe4d 100644
 --- a/src/rtree.c
 +++ b/src/rtree.c
-@@ -911,7 +911,7 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
+@@ -915,7 +915,7 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
      {
        register int i;
  
@@ -139,7 +139,7 @@ index 19741e4..3b30a56 100644
          {
            register int flag = 1;
  
-@@ -992,7 +992,7 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
+@@ -996,7 +996,7 @@ __r_insert_node (struct rtree_node *node, const BoxType * query,
            new_node->u.rects[0].bptr = query;
            new_node->u.rects[0].bounds = *query;
            new_node->box = *query;

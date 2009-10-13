@@ -1,7 +1,7 @@
-Bottom: 499c3fc0ca836a9a5068b7f42cdae967e21aa2be
-Top:    d8c2390d81ef46391c865dd3474387e95e1838b5
+Bottom: 265b6ab359c64ed83d44b0a8a476035e0f1b644a
+Top:    a69c7d2a51c8e503d3009de88a24649ce7327e7f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-06-10 02:29:32 +0100
+Date:   2009-10-13 15:24:44 +0100
 
 Add cache for "noholes", diced versions of polygons
 
@@ -24,10 +24,10 @@ Add cache for "noholes", diced versions of polygons
 ---
 
 diff --git a/src/create.c b/src/create.c
-index fa0a394..fda2613 100644
+index fc6b863..4054c28 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -604,6 +604,8 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
+@@ -608,6 +608,8 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
    polygon->Flags = Flags;
    polygon->ID = ID++;
    polygon->Clipped = NULL;
@@ -256,7 +256,7 @@ index 1ec0a04..2faaa20 100644
  POLYAREA * RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2);
  POLYAREA * CirclePoly(LocationType x, LocationType y, BDimension radius);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index c9a350f..54cda80 100644
+index fdb816d..1e5ab09 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -2311,15 +2311,14 @@ poly_Create (void)
