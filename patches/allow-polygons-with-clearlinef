@@ -1,7 +1,7 @@
-Bottom: 9b933685a4e366a7ec2c2a99d199204a9e063072
-Top:    e59068c5f204909643b1c54a93fcc390dae70cb3
+Bottom: d67c150e4c4e60ecf4085f36af0a2630688df474
+Top:    e933114e0663bc8473981cfa8970c6249f6eceeb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-13 15:09:33 +0100
+Date:   2009-10-13 15:27:06 +0100
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -28,10 +28,10 @@ polygon fill.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 8acbfce..a88d11f 100644
+index be51a0f..f277280 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
-@@ -364,6 +364,7 @@ MovePolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -379,6 +379,7 @@ MovePolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
    LayerTypePtr lay;
    PolygonTypePtr polygon;
  
@@ -39,7 +39,7 @@ index 8acbfce..a88d11f 100644
    r_delete_entry (Layer->polygon_tree, (BoxTypePtr) Polygon);
    lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
    polygon = GetPolygonMemory (lay);
-@@ -377,6 +378,7 @@ MovePolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -395,6 +396,7 @@ MovePolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
    if (!lay->polygon_tree)
      lay->polygon_tree = r_create_tree (NULL, 0, 0);
    r_insert_entry (lay->polygon_tree, (BoxTypePtr) polygon, 0);
