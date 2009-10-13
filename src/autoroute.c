@@ -74,6 +74,7 @@
 #include "misc.h"
 #include "mtspace.h"
 #include "mymem.h"
+#include "pour.h"
 #include "polygon.h"
 #include "rats.h"
 #include "remove.h"
@@ -5062,20 +5063,18 @@ IronDownAllUnfixedPaths (routedata_t * rd)
 	  int type = FindPin (&p->box, &pin);
 	  if (pin)
 	    {
-	      AddObjectToClearPolyUndoList (type,
+	      AddObjectToClearPourUndoList (type,
 					    pin->Element ? pin->Element : pin,
 					    pin, pin, False);
-	      RestoreToPolygon (PCB->Data, VIA_TYPE, LAYER_PTR (p->layer),
-				pin);
+	      RestoreToPours (PCB->Data, VIA_TYPE, LAYER_PTR (p->layer), pin);
 	      AddObjectToFlagUndoList (type,
 				       pin->Element ? pin->Element : pin, pin,
 				       pin);
 	      ASSIGN_THERM (p->layer, PCB->ThermStyle, pin);
-	      AddObjectToClearPolyUndoList (type,
+	      AddObjectToClearPourUndoList (type,
 					    pin->Element ? pin->Element : pin,
 					    pin, pin, True);
-	      ClearFromPolygon (PCB->Data, VIA_TYPE, LAYER_PTR (p->layer),
-				pin);
+	      ClearFromPours (PCB->Data, VIA_TYPE, LAYER_PTR (p->layer), pin);
 	      changed = True;
 	    }
 	}

@@ -271,7 +271,7 @@ SetPourBoundingBox (PourTypePtr Pour)
     MAKEMAX (Pour->BoundingBox.Y2, point->Y);
   }
   /* boxes don't include the lower right corner */
-  close_box(&Polygon->BoundingBox);
+  close_box(&Pour->BoundingBox);
   END_LOOP;
 }
 

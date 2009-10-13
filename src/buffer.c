@@ -394,7 +394,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
   pour = GetPourMemory (lay);
   *pour = *Pour;
   CLEAR_FLAG (FOUNDFLAG, pour);
-  if (Pour != &Layer->Pour[--Layer->PourN]
+  if (Pour != &Layer->Pour[--Layer->PourN])
   {
   *Pour = Layer->Pour[Layer->PourN];
   r_substitute (Layer->pour_tree,
