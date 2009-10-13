@@ -1,7 +1,7 @@
-Bottom: 7ceae4e464d19fc98f6fc326ac74d37f7c992e2f
-Top:    65d2bc065af8116b0c8751a552dda6b972315f88
+Bottom: 43aaf691483f58916451b74080fdd6471171f153
+Top:    760ab3ceca39c1647c1d7399dd6417d05e5043f2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-13 15:09:35 +0100
+Date:   2009-10-13 15:51:25 +0100
 
 Off to find burried treasure on polygon island
 
@@ -32,10 +32,10 @@ Add feature to remove islanded areas
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index fe1ee5e..ec35974 100644
+index 0bb180f..96e7dfd 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
-@@ -373,7 +373,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
+@@ -388,7 +388,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
    LayerTypePtr lay;
    PourTypePtr pour;
  
@@ -44,7 +44,7 @@ index fe1ee5e..ec35974 100644
    r_delete_entry (Layer->pour_tree, (BoxTypePtr) Pour);
    lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
    pour = GetPourMemory (lay);
-@@ -387,7 +387,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
+@@ -405,7 +405,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
    if (!lay->pour_tree)
      lay->pour_tree = r_create_tree (NULL, 0, 0);
    r_insert_entry (lay->pour_tree, (BoxTypePtr) pour, 0);
@@ -518,10 +518,10 @@ index f04e342..559f20e 100644
  
  #endif /* __POUR_INCLUDED__ */
 diff --git a/src/search.c b/src/search.c
-index 2820cab..eb4c4e7 100644
+index 9f2d4a3..560fc33 100644
 --- a/src/search.c
 +++ b/src/search.c
-@@ -466,7 +466,7 @@ SearchPolygonByLocation (int locked, LayerTypePtr * Layer,
+@@ -467,7 +467,7 @@ SearchPolygonByLocation (int locked, LayerTypePtr * Layer,
    return (True);
  }
  
@@ -530,7 +530,7 @@ index 2820cab..eb4c4e7 100644
  #if 0
  static int
  pour_callback (const BoxType * box, void *cl)
-@@ -500,7 +500,7 @@ SearchPourByLocation (int locked, LayerTypePtr * Layer,
+@@ -501,7 +501,7 @@ SearchPourByLocation (int locked, LayerTypePtr * Layer,
    info.ptr3 = (void **) Dummy;
    info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
  
