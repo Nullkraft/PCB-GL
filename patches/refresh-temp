@@ -1,0 +1,103 @@
+Bottom: f5a669e402fce50177b26fd28a82644a78c9ac54
+Top:    b99bc5db66a885d1eb63632cd251235d3070ac23
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-13 16:07:36 +0100
+
+Refresh of add_pours
+
+---
+
+diff --git a/src/autoroute.c b/src/autoroute.c
+index c5b57b8..6d1ec8d 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -74,6 +74,7 @@
+ #include "misc.h"
+ #include "mtspace.h"
+ #include "mymem.h"
++#include "pour.h"
+ #include "polygon.h"
+ #include "rats.h"
+ #include "remove.h"
+@@ -5062,20 +5063,18 @@ IronDownAllUnfixedPaths (routedata_t * rd)
+ 	  int type = FindPin (&p->box, &pin);
+ 	  if (pin)
+ 	    {
+-	      AddObjectToClearPolyUndoList (type,
++	      AddObjectToClearPourUndoList (type,
+ 					    pin->Element ? pin->Element : pin,
+ 					    pin, pin, False);
+-	      RestoreToPolygon (PCB->Data, VIA_TYPE, LAYER_PTR (p->layer),
+-				pin);
++	      RestoreToPours (PCB->Data, VIA_TYPE, LAYER_PTR (p->layer), pin);
+ 	      AddObjectToFlagUndoList (type,
+ 				       pin->Element ? pin->Element : pin, pin,
+ 				       pin);
+ 	      ASSIGN_THERM (p->layer, PCB->ThermStyle, pin);
+-	      AddObjectToClearPolyUndoList (type,
++	      AddObjectToClearPourUndoList (type,
+ 					    pin->Element ? pin->Element : pin,
+ 					    pin, pin, True);
+-	      ClearFromPolygon (PCB->Data, VIA_TYPE, LAYER_PTR (p->layer),
+-				pin);
++	      ClearFromPours (PCB->Data, VIA_TYPE, LAYER_PTR (p->layer), pin);
+ 	      changed = True;
+ 	    }
+ 	}
+diff --git a/src/buffer.c b/src/buffer.c
+index 0bb180f..b451668 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -394,7 +394,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
+   pour = GetPourMemory (lay);
+   *pour = *Pour;
+   CLEAR_FLAG (FOUNDFLAG, pour);
+-  if (Pour != &Layer->Pour[--Layer->PourN]
++  if (Pour != &Layer->Pour[--Layer->PourN])
+   {
+   *Pour = Layer->Pour[Layer->PourN];
+   r_substitute (Layer->pour_tree,
+diff --git a/src/hid/gtk/gui-drc-window.c b/src/hid/gtk/gui-drc-window.c
+index fa2ec86..d4e8065 100644
+--- a/src/hid/gtk/gui-drc-window.c
++++ b/src/hid/gtk/gui-drc-window.c
+@@ -166,15 +166,19 @@ unset_found_flags (int AndDraw)
+       }
+   }
+   ENDALL_LOOP;
+-  COPPERPOLYGON_LOOP (PCB->Data);
++  COPPERPOUR_LOOP (PCB->Data);
+   {
+-    if (TEST_FLAG (flag, polygon))
+-      {
+-	AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
+-	CLEAR_FLAG (flag, polygon);
+-	DrawPolygon (layer, polygon, 0);
+-	change = True;
+-      }
++    POURPOLYGON_LOOP (pour);
++    {
++      if (TEST_FLAG (flag, polygon))
++        {
++          AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
++          CLEAR_FLAG (flag, polygon);
++          DrawPolygon (layer, polygon, 0);
++          change = True;
++        }
++    }
++    END_LOOP;
+   }
+   ENDALL_LOOP;
+   if (change)
+diff --git a/src/misc.c b/src/misc.c
+index f22a246..05621ea 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -271,7 +271,7 @@ SetPourBoundingBox (PourTypePtr Pour)
+     MAKEMAX (Pour->BoundingBox.Y2, point->Y);
+   }
+   /* boxes don't include the lower right corner */
+-  close_box(&Polygon->BoundingBox);
++  close_box(&Pour->BoundingBox);
+   END_LOOP;
+ }
