@@ -1,7 +1,7 @@
-Bottom: 27430fefbd6a34c2755c20339e768034cd2479fd
-Top:    9989c04a03884f15d31172aa4743ae958b1056ab
+Bottom: 25ae515eb152013aec6e22d3ed6cbf70bdc961a4
+Top:    eb38c5079a2eae56d5f9d9035630f23a3d8e31e7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-13 15:09:53 +0100
+Date:   2009-10-13 15:51:47 +0100
 
 Add a hacky name-mangling thingy for loading boards
 
@@ -18,7 +18,7 @@ Add a hacky name-mangling thingy for loading boards
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 0c288a9..b2120c5 100644
+index c3c4a58..995eb0f 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -37,6 +37,7 @@
@@ -38,7 +38,7 @@ index 0c288a9..b2120c5 100644
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
  #endif
-@@ -648,6 +651,57 @@ CreateNewPointInPour (PourTypePtr Pour, LocationType X,
+@@ -652,6 +655,57 @@ CreateNewPointInPour (PourTypePtr Pour, LocationType X,
    return (point);
  }
  
@@ -96,7 +96,7 @@ index 0c288a9..b2120c5 100644
  /* ---------------------------------------------------------------------------
   * creates an new element
   * memory is allocated if needed
-@@ -660,6 +714,19 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
+@@ -664,6 +718,19 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
  		  LocationType TextX, LocationType TextY, BYTE Direction,
  		  int TextScale, FlagType TextFlags, Boolean uniqueName)
  {
