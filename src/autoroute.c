@@ -767,6 +767,8 @@ AddPolygon (PointerListType layergroupboxes[], Cardinal layer,
 			     polygon->BoundingBox.X2,
 			     polygon->BoundingBox.Y2,
 			     layergroup, polygon, style);
+#warning FIXME LATER
+#if 0
   if (polygon->PointN == 4 &&
       (polygon->Points[0].X == polygon->Points[1].X ||
        polygon->Points[0].Y == polygon->Points[1].Y) &&
@@ -777,6 +779,7 @@ AddPolygon (PointerListType layergroupboxes[], Cardinal layer,
       (polygon->Points[3].X == polygon->Points[0].X ||
        polygon->Points[3].Y == polygon->Points[0].Y))
     is_not_rectangle = 0;
+#endif
   rb->flags.nonstraight = is_not_rectangle;
   rb->layer = layer;
   rb->came_from = ALL;
@@ -1182,12 +1185,16 @@ CreateRouteData ()
       }
       END_LOOP;
       /* add all polygons */
-      POLYGON_LOOP (LAYER_PTR (i));
+      POUR_LOOP (LAYER_PTR (i));
       {
-	if (TEST_FLAG (DRCFLAG, polygon))
-	  CLEAR_FLAG (DRCFLAG, polygon);
-	else
-	  AddPolygon (layergroupboxes, i, polygon, rd->styles[NUM_STYLES]);
+        POURPOLYGON_LOOP (pour);
+        {
+          if (TEST_FLAG (DRCFLAG, polygon))
+            CLEAR_FLAG (DRCFLAG, polygon);
+          else
+            AddPolygon (layergroupboxes, i, polygon, rd->styles[NUM_STYLES]);
+        }
+        END_LOOP;
       }
       END_LOOP;
       /* add all copper text */
