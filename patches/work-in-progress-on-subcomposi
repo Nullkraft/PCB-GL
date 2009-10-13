@@ -1,5 +1,5 @@
 Bottom: 6d04aea39316c1690a17b4ffe4bd7889ed79f4ad
-Top:    8aef1228b68bc996ebcde7f3ce21d74257528d7d
+Top:    962cc1a7462297aec3de2e1f87ab47d2e136358e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-06-10 02:29:38 +0100
 
@@ -133,7 +133,7 @@ index aad0bf6..183dc08 100644
  #define SL(type,side) (~0xfff | SL_##type | SL_##side##_SIDE)
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index c09adb5..31888b6 100644
+index c09adb5..2525100 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -574,28 +574,27 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
@@ -206,15 +206,15 @@ index c09adb5..31888b6 100644
 +      fprintf (stderr, "hidgl_fill_pcb_polygon: poly->Clipped == NULL\n");
 +      return;
 +    }
-+
+ 
+-  /* TODO: Just draw our triangles, no need to flush the buffer */
 +  stencil_bit = hidgl_assign_clear_stencil_bit ();
 +  if (!stencil_bit)
 +    {
 +      printf ("hidgl_fill_pcb_polygon: No free stencil bits, aborting polygon\n");
 +      return;
 +    }
- 
--  /* TODO: Just draw our triangles, no need to flush the buffer */
++
 +  /* Flush out any existing geoemtry to be rendered */
    hidgl_flush_triangles (&buffer);
  
@@ -291,7 +291,7 @@ index c09adb5..31888b6 100644
  
    gluDeleteTess (info.tobj);
    myFreeCombined ();
-@@ -688,6 +702,84 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
+@@ -688,6 +702,91 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
    hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
  }
  
@@ -304,7 +304,7 @@ index c09adb5..31888b6 100644
 +    {
 +      printf ("No stencil bits available.\n"
 +              "Cannot mask polygon holes or subcomposite layers\n");
-+      /* TODO: Flag this to the HID so it can rever to the dicer? */
++      /* TODO: Flag this to the HID so it can revert to the dicer? */
 +    }
 +  else if (stencil_bits == 1)
 +    {
@@ -372,12 +372,19 @@ index c09adb5..31888b6 100644
 +  assigned_bits &= ~bit;
 +}
 +
++void
++hidgl_reset_stencil_usage (void)
++{
++  assigned_bits = 0;
++  dirty_bits = 0;
++}
++
 +
  /* ---------------------------------------------------------------------- */
  
  #endif /* DISABLE EVERYTHING! */
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index f7a6aeb..f688fc5 100644
+index f7a6aeb..4e86e27 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
 @@ -1,10 +1,8 @@
@@ -392,7 +399,7 @@ index f7a6aeb..f688fc5 100644
   *
   *  This program is free software; you can redistribute it and/or modify
   *  it under the terms of the GNU General Public License as published by
-@@ -66,5 +64,9 @@ void hidgl_fill_polygon (int n_coords, int *x, int *y);
+@@ -66,5 +64,10 @@ void hidgl_fill_polygon (int n_coords, int *x, int *y);
  void hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale);
  void hidgl_fill_rect (int x1, int y1, int x2, int y2);
  
@@ -400,6 +407,7 @@ index f7a6aeb..f688fc5 100644
 +int hidgl_stencil_bits (void);
 +int hidgl_assign_clear_stencil_bit (void);
 +void hidgl_return_stencil_bit (int bit);
++void hidgl_reset_stencil_usage (void);
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
@@ -519,7 +527,7 @@ index 07ecb99..dfd057f 100644
        break;
      }
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 6ac5dce..0d091eb 100644
+index 6ac5dce..303c33d 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -35,6 +35,7 @@
@@ -548,7 +556,7 @@ index 6ac5dce..0d091eb 100644
    ghid_show_crosshair (FALSE);
  
    glEnable (GL_BLEND);
-@@ -831,11 +843,14 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -831,12 +843,16 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -561,9 +569,11 @@ index 6ac5dce..0d091eb 100644
 +  glDepthMask (0);
 +  glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
++  hidgl_reset_stencil_usage ();
  
    region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-@@ -904,6 +919,12 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+   region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
+@@ -904,6 +920,12 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
@@ -577,10 +587,10 @@ index 6ac5dce..0d091eb 100644
    glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
              (ghid_flip_y ? -1. : 1.) / gport->zoom, 1);
 diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
-index f59f22b..935e435 100644
+index f59f22b..a086b19 100644
 --- a/src/hid/gtk/gui-pinout-preview.c
 +++ b/src/hid/gtk/gui-pinout-preview.c
-@@ -219,7 +219,7 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
+@@ -219,9 +219,11 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
                  gport->bg_color.green / 65535.,
                  gport->bg_color.blue / 65535.,
                  1.);
@@ -588,7 +598,23 @@ index f59f22b..935e435 100644
 +  glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
  
++  hidgl_reset_stencil_usage ();
++
    /* call the drawing routine */
+   hidgl_init_triangle_array (&buffer);
+   ghid_invalidate_current_gc ();
+diff --git a/src/hid/gtk/gui-render-pixmap.c b/src/hid/gtk/gui-render-pixmap.c
+index 4caddf2..faa09fe 100644
+--- a/src/hid/gtk/gui-render-pixmap.c
++++ b/src/hid/gtk/gui-render-pixmap.c
+@@ -116,6 +116,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+                 1.);
+   glClearStencil (0);
+   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
++  hidgl_reset_stencil_usage ();
+ 
+   /* call the drawing routine */
+   hidgl_init_triangle_array (&buffer);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
 index 55137b0..88920e6 100644
 --- a/src/hid/gtk/gui-top-window.c
