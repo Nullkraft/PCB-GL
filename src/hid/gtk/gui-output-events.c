@@ -852,6 +852,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   glDepthMask (0);
   glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+  hidgl_reset_stencil_usage ();
 
   region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
   region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));

@@ -222,6 +222,8 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
   glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+  hidgl_reset_stencil_usage ();
+
   /* call the drawing routine */
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();

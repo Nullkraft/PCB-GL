@@ -711,7 +711,7 @@ hidgl_init (void)
     {
       printf ("No stencil bits available.\n"
               "Cannot mask polygon holes or subcomposite layers\n");
-      /* TODO: Flag this to the HID so it can rever to the dicer? */
+      /* TODO: Flag this to the HID so it can revert to the dicer? */
     }
   else if (stencil_bits == 1)
     {
@@ -777,6 +777,13 @@ void
 hidgl_return_stencil_bit (int bit)
 {
   assigned_bits &= ~bit;
+}
+
+void
+hidgl_reset_stencil_usage (void)
+{
+  assigned_bits = 0;
+  dirty_bits = 0;
 }
 
 

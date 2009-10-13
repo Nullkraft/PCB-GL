@@ -68,5 +68,6 @@ void hidgl_init (void);
 int hidgl_stencil_bits (void);
 int hidgl_assign_clear_stencil_bit (void);
 void hidgl_return_stencil_bit (int bit);
+void hidgl_reset_stencil_usage (void);
 
 #endif /* __HIDGL_INCLUDED__  */
