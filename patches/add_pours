@@ -1,5 +1,5 @@
 Bottom: 0f0d6b0414faeffcde654d1548faaa62ce6a647f
-Top:    f5a669e402fce50177b26fd28a82644a78c9ac54
+Top:    b99bc5db66a885d1eb63632cd251235d3070ac23
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-13 15:27:07 +0100
 
@@ -341,10 +341,18 @@ index 8ce4a15..bd09d18 100644
  void ActionMovePointer (char *, char *);
  void ActionAdjustStyle (char *);
 diff --git a/src/autoroute.c b/src/autoroute.c
-index b9f1fdd..c5b57b8 100644
+index b9f1fdd..6d1ec8d 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
-@@ -767,6 +767,8 @@ AddPolygon (PointerListType layergroupboxes[], Cardinal layer,
+@@ -74,6 +74,7 @@
+ #include "misc.h"
+ #include "mtspace.h"
+ #include "mymem.h"
++#include "pour.h"
+ #include "polygon.h"
+ #include "rats.h"
+ #include "remove.h"
+@@ -767,6 +768,8 @@ AddPolygon (PointerListType layergroupboxes[], Cardinal layer,
  			     polygon->BoundingBox.X2,
  			     polygon->BoundingBox.Y2,
  			     layergroup, polygon, style);
@@ -353,7 +361,7 @@ index b9f1fdd..c5b57b8 100644
    if (polygon->PointN == 4 &&
        (polygon->Points[0].X == polygon->Points[1].X ||
         polygon->Points[0].Y == polygon->Points[1].Y) &&
-@@ -777,6 +779,7 @@ AddPolygon (PointerListType layergroupboxes[], Cardinal layer,
+@@ -777,6 +780,7 @@ AddPolygon (PointerListType layergroupboxes[], Cardinal layer,
        (polygon->Points[3].X == polygon->Points[0].X ||
         polygon->Points[3].Y == polygon->Points[0].Y))
      is_not_rectangle = 0;
@@ -361,7 +369,7 @@ index b9f1fdd..c5b57b8 100644
    rb->flags.nonstraight = is_not_rectangle;
    rb->layer = layer;
    rb->came_from = ALL;
-@@ -1182,12 +1185,16 @@ CreateRouteData ()
+@@ -1182,12 +1186,16 @@ CreateRouteData ()
        }
        END_LOOP;
        /* add all polygons */
@@ -383,8 +391,33 @@ index b9f1fdd..c5b57b8 100644
        }
        END_LOOP;
        /* add all copper text */
+@@ -5055,20 +5063,18 @@ IronDownAllUnfixedPaths (routedata_t * rd)
+ 	  int type = FindPin (&p->box, &pin);
+ 	  if (pin)
+ 	    {
+-	      AddObjectToClearPolyUndoList (type,
++	      AddObjectToClearPourUndoList (type,
+ 					    pin->Element ? pin->Element : pin,
+ 					    pin, pin, False);
+-	      RestoreToPolygon (PCB->Data, VIA_TYPE, LAYER_PTR (p->layer),
+-				pin);
++	      RestoreToPours (PCB->Data, VIA_TYPE, LAYER_PTR (p->layer), pin);
+ 	      AddObjectToFlagUndoList (type,
+ 				       pin->Element ? pin->Element : pin, pin,
+ 				       pin);
+ 	      ASSIGN_THERM (p->layer, PCB->ThermStyle, pin);
+-	      AddObjectToClearPolyUndoList (type,
++	      AddObjectToClearPourUndoList (type,
+ 					    pin->Element ? pin->Element : pin,
+ 					    pin, pin, True);
+-	      ClearFromPolygon (PCB->Data, VIA_TYPE, LAYER_PTR (p->layer),
+-				pin);
++	      ClearFromPours (PCB->Data, VIA_TYPE, LAYER_PTR (p->layer), pin);
+ 	      changed = True;
+ 	    }
+ 	}
 diff --git a/src/buffer.c b/src/buffer.c
-index f277280..0bb180f 100644
+index f277280..b451668 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -50,6 +50,7 @@
@@ -564,7 +597,7 @@ index f277280..0bb180f 100644
 +  pour = GetPourMemory (lay);
 +  *pour = *Pour;
 +  CLEAR_FLAG (FOUNDFLAG, pour);
-+  if (Pour != &Layer->Pour[--Layer->PourN]
++  if (Pour != &Layer->Pour[--Layer->PourN])
    {
 -  *Polygon = Layer->Polygon[Layer->PolygonN];
 -  r_substitute (Layer->polygon_tree,
@@ -2721,6 +2754,38 @@ index 1f7946a..003d93f 100644
  	print_group[GetLayerGroupNumberByNumber (i)] = 1;
      }
    print_group[GetLayerGroupNumberByNumber (max_layer)] = 1;
+diff --git a/src/hid/gtk/gui-drc-window.c b/src/hid/gtk/gui-drc-window.c
+index fa2ec86..d4e8065 100644
+--- a/src/hid/gtk/gui-drc-window.c
++++ b/src/hid/gtk/gui-drc-window.c
+@@ -166,15 +166,19 @@ unset_found_flags (int AndDraw)
+       }
+   }
+   ENDALL_LOOP;
+-  COPPERPOLYGON_LOOP (PCB->Data);
++  COPPERPOUR_LOOP (PCB->Data);
+   {
+-    if (TEST_FLAG (flag, polygon))
+-      {
+-	AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
+-	CLEAR_FLAG (flag, polygon);
+-	DrawPolygon (layer, polygon, 0);
+-	change = True;
+-      }
++    POURPOLYGON_LOOP (pour);
++    {
++      if (TEST_FLAG (flag, polygon))
++        {
++          AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
++          CLEAR_FLAG (flag, polygon);
++          DrawPolygon (layer, polygon, 0);
++          change = True;
++        }
++    }
++    END_LOOP;
+   }
+   ENDALL_LOOP;
+   if (change)
 diff --git a/src/hid/gtk/gui-icons-mode-buttons.data b/src/hid/gtk/gui-icons-mode-buttons.data
 index 1938ee2..e210157 100644
 --- a/src/hid/gtk/gui-icons-mode-buttons.data
@@ -3081,7 +3146,7 @@ index 7ef7d41..1b76e88 100644
 +  ClearFromPours (Data, ELEMENT_TYPE, Element, Element);
  }
 diff --git a/src/misc.c b/src/misc.c
-index 693da81..f22a246 100644
+index 693da81..05621ea 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -66,6 +66,7 @@
@@ -3092,7 +3157,7 @@ index 693da81..f22a246 100644
  #include "remove.h"
  #include "rtree.h"
  #include "rotate.h"
-@@ -242,19 +243,32 @@ SetLineBoundingBox (LineTypePtr Line)
+@@ -242,22 +243,35 @@ SetLineBoundingBox (LineTypePtr Line)
  }
  
  /* ---------------------------------------------------------------------------
@@ -3132,7 +3197,11 @@ index 693da81..f22a246 100644
 +    MAKEMAX (Pour->BoundingBox.Y2, point->Y);
    }
    /* boxes don't include the lower right corner */
-   close_box(&Polygon->BoundingBox);
+-  close_box(&Polygon->BoundingBox);
++  close_box(&Pour->BoundingBox);
+   END_LOOP;
+ }
+ 
 @@ -499,7 +513,9 @@ IsDataEmpty (DataTypePtr Data)
      hasNoObjects = hasNoObjects &&
        Data->Layer[i].LineN == 0 &&
