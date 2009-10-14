@@ -1,7 +1,7 @@
-Bottom: 87f36c60d5fb8926ff794dd269d05e2c1df2611b
-Top:    38a896c0032b292103b70c80f15f605f45bf0573
+Bottom: d75cd2f24aae22b576d750c98dff4e06c5e21025
+Top:    df3fa91bba44a99244ddd96af51b1f4908656316
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-14 13:01:23 +0100
+Date:   2009-10-14 13:19:58 +0100
 
 Add raw polygons support for the GTK HID, bypassing the no-holes dicer
 
@@ -179,10 +179,10 @@ index e6fe1de..ac7db3c 100644
  hidgl_fill_rect (int x1, int y1, int x2, int y2)
  {
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index fc2d41a..f7a6aeb 100644
+index 316208e..49322c0 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
-@@ -63,6 +63,7 @@ void hidgl_draw_arc (double width, int vx, int vy, int vrx, int vry, int start_a
+@@ -59,6 +59,7 @@ void hidgl_draw_arc (double width, int vx, int vy, int vrx, int vry, int start_a
  void hidgl_draw_rect (int x1, int y1, int x2, int y2);
  void hidgl_fill_circle (int vx, int vy, int vr, double scale);
  void hidgl_fill_polygon (int n_coords, int *x, int *y);
