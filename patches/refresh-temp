@@ -1,0 +1,25 @@
+Bottom: 55002bcff210178ffc563d5471c46f1a1c7ab36e
+Top:    27f4cfec5787900aebe1d95965e795804ea10d94
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-14 13:19:47 +0100
+
+Refresh of drop-in-pcb-gl-code-various-me
+
+---
+
+diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
+index fc2d41a..316208e 100644
+--- a/src/hid/common/hidgl.h
++++ b/src/hid/common/hidgl.h
+@@ -25,11 +25,7 @@
+ #ifndef __HIDGL_INCLUDED__
+ #define __HIDGL_INCLUDED__
+ 
+-//#define TRIANGLE_ARRAY_SIZE 5000
+ #define TRIANGLE_ARRAY_SIZE 5461
+-/* Assumes GLFloat is 4 bytes, and we have X,Y coords x3 for each triangle:
+-   4 * 5461 * 2 * 3 = 109464 */
+-#define TRIANGLE_ARRAY_BYTES 131072
+ typedef struct {
+   GLfloat triangle_array [2 * 3 * TRIANGLE_ARRAY_SIZE];
+   unsigned int triangle_count;
