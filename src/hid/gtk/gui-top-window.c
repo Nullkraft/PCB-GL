@@ -2672,7 +2672,6 @@ ghid_parse_arguments (int *argc, char ***argv)
 
   gtk_init (argc, argv);
   gtk_gl_init(argc, argv);
-//  glutInit (argc, argv);
 
   gport = &ghid_port;
   fprintf (stderr, "gport set at %p\n", gport);
