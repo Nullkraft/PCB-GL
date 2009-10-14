@@ -1,0 +1,28 @@
+Bottom: 6f80dc7afbe5aaa0bc8a6669b5128ded4882aa25
+Top:    7800f62007ad8da92462fcd20762fab25b2198eb
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-14 14:32:46 +0100
+
+Refresh of use-trackball-to-allow-rotatio
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 0018b9d..97182fb 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -793,10 +793,10 @@ ghid_screen_update (void)
+ void DrawAttached (Boolean);
+ void draw_grid ();
+ 
+-static float view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
+-                                  {0.0, 1.0, 0.0, 0.0},
+-                                  {0.0, 0.0, 1.0, 0.0},
+-                                  {0.0, 0.0, 0.0, 1.0}};
++static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
++                                    {0.0, 1.0, 0.0, 0.0},
++                                    {0.0, 0.0, 1.0, 0.0},
++                                    {0.0, 0.0, 0.0, 1.0}};
+ 
+ void
+ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
