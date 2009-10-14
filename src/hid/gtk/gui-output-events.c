@@ -793,10 +793,10 @@ ghid_screen_update (void)
 void DrawAttached (Boolean);
 void draw_grid ();
 
-static float view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
-                                  {0.0, 1.0, 0.0, 0.0},
-                                  {0.0, 0.0, 1.0, 0.0},
-                                  {0.0, 0.0, 0.0, 1.0}};
+static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
+                                    {0.0, 1.0, 0.0, 0.0},
+                                    {0.0, 0.0, 1.0, 0.0},
+                                    {0.0, 0.0, 0.0, 1.0}};
 
 void
 ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
