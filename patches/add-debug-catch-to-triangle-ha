@@ -1,7 +1,7 @@
-Bottom: aabb7014ad38f47e53fe09832e18b9d42d833cf8
-Top:    fe7cbbcfd2f8b09c7a76e754eac0d795eb312691
+Bottom: 64eb6c6be82d336e57e9a5992e4f7b659d47e8b9
+Top:    a9d74883703de6ab55ef3eed28fc6045e36ac7f5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-14 13:09:11 +0100
+Date:   2009-10-14 13:20:42 +0100
 
 Add debug catch to triangle handling
 
@@ -12,10 +12,10 @@ triangle array, deliberately segfault so gdb can catch where.
 ---
 
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index 4e86e27..315235c 100644
+index b956a65..d9afb3d 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
-@@ -46,6 +46,10 @@ hidgl_add_triangle (triangle_buffer *buffer,
+@@ -42,6 +42,10 @@ hidgl_add_triangle (triangle_buffer *buffer,
                      GLfloat x2, GLfloat y2,
                      GLfloat x3, GLfloat y3)
  {
