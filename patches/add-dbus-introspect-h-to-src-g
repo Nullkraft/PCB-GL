@@ -1,5 +1,5 @@
 Bottom: 3727ba95c0f69a04180977f4710d394f7b100677
-Top:    3727ba95c0f69a04180977f4710d394f7b100677
+Top:    8e4b1dc03e8dcc8de5b1f8ac3d8f04f6614420d7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-14 12:57:06 +0100
 
@@ -10,4 +10,14 @@ dbus-introspect.h is a generated file.
 
 ---
 
-
+diff --git a/src/.gitignore b/src/.gitignore
+index ed7ee9f..bb22c23 100644
+--- a/src/.gitignore
++++ b/src/.gitignore
+@@ -1,5 +1,6 @@
+ *.[oa]
+ *_lists.h
++dbus-introspect.h
+ edif.[ch]
+ parse_l.c
+ parse_y.[ch]
