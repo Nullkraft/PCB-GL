@@ -1,7 +1,7 @@
-Bottom: 726c07bed2408f17984c76fdcf9d4149a784785c
+Bottom: 7c29d1d92b7841efc0e64336a3eb41e461434ef8
 Top:    8377f6ea8779fa005e5b6cd106b99f93245d305c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-14 03:28:44 +0100
+Date:   2009-10-14 03:32:29 +0100
 
 Shiny 3D eye-candy
 
@@ -192,7 +192,7 @@ index cfec799..10ba3f2 100644
      }
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 2525100..48c84ee 100644
+index 9389885..48c84ee 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -48,6 +48,7 @@
@@ -212,15 +212,7 @@ index 2525100..48c84ee 100644
    buffer->triangle_count = 0;
    buffer->coord_comp_count = 0;
  }
-@@ -698,6 +699,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
- void
- hidgl_fill_rect (int x1, int y1, int x2, int y2)
- {
-+  hidgl_ensure_triangle_space (&buffer, 2);
-   hidgl_add_triangle (&buffer, x1, y1, x1, y2, x2, y2);
-   hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
- }
-@@ -786,6 +788,12 @@ hidgl_reset_stencil_usage (void)
+@@ -787,6 +788,12 @@ hidgl_reset_stencil_usage (void)
    dirty_bits = 0;
  }
  
