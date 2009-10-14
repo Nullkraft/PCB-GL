@@ -123,6 +123,9 @@ static void *ChangeTextJoin (LayerTypePtr, TextTypePtr);
 static void *SetTextJoin (LayerTypePtr, TextTypePtr);
 static void *ClrTextJoin (LayerTypePtr, TextTypePtr);
 static void *ChangePolyClear (LayerTypePtr, PolygonTypePtr);
+static void *ChangePolyJoin (LayerTypePtr, PolygonTypePtr);
+static void *SetPolyJoin (LayerTypePtr, PolygonTypePtr);
+static void *ClrPolyJoin (LayerTypePtr, PolygonTypePtr);
 
 /* ---------------------------------------------------------------------------
  * some local identifiers
@@ -217,7 +220,7 @@ static ObjectFunctionType ChangeSquareFunctions = {
 static ObjectFunctionType ChangeJoinFunctions = {
   ChangeLineJoin,
   ChangeTextJoin,
-  NULL,
+  ChangePolyJoin,
   NULL,
   NULL,
   NULL,
@@ -277,7 +280,7 @@ static ObjectFunctionType SetSquareFunctions = {
 static ObjectFunctionType SetJoinFunctions = {
   SetLineJoin,
   SetTextJoin,
-  NULL,
+  SetPolyJoin,
   NULL,
   NULL,
   NULL,
@@ -319,7 +322,7 @@ static ObjectFunctionType ClrSquareFunctions = {
 static ObjectFunctionType ClrJoinFunctions = {
   ClrLineJoin,
   ClrTextJoin,
-  NULL,
+  ClrPolyJoin,
   NULL,
   NULL,
   NULL,
@@ -1191,6 +1194,31 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
 }
 
 /* ---------------------------------------------------------------------------
+ * changes the clearance flag of a polygon
+ */
+static void *
+ChangePolyJoin (LayerTypePtr Layer, PolygonTypePtr poly)
+{
+  if (TEST_FLAG (LOCKFLAG, poly))
+    return (NULL);
+  ErasePolygon (poly);
+  if (TEST_FLAG(CLEARLINEFLAG, poly))
+  {
+  AddObjectToClearPolyUndoList (POLYGON_TYPE, Layer, poly, poly, False);
+  RestoreToPolygon (PCB->Data, POLYGON_TYPE, Layer, poly);
+  }
+  AddObjectToFlagUndoList (LINE_TYPE, Layer, poly, poly);
+  TOGGLE_FLAG (CLEARLINEFLAG, poly);
+  if (TEST_FLAG(CLEARLINEFLAG, poly))
+  {
+  AddObjectToClearPolyUndoList (POLYGON_TYPE, Layer, poly, poly, True);
+  ClearFromPolygon (PCB->Data, POLYGON_TYPE, Layer, poly);
+  }
+  DrawPolygon (Layer, poly, 0);
+  return (poly);
+}
+
+/* ---------------------------------------------------------------------------
  * sets the clearance flag of a text
  */
 static void *
@@ -1202,6 +1230,17 @@ SetTextJoin (LayerTypePtr Layer, TextTypePtr Text)
 }
 
 /* ---------------------------------------------------------------------------
+ * sets the clearance flag of a polygon
+ */
+static void *
+SetPolyJoin (LayerTypePtr Layer, PolygonTypePtr poly)
+{
+  if (TEST_FLAG (LOCKFLAG, poly) || TEST_FLAG (CLEARLINEFLAG, poly))
+    return (NULL);
+  return ChangePolyJoin (Layer, poly);
+}
+
+/* ---------------------------------------------------------------------------
  * clears the clearance flag of a text
  */
 static void *
@@ -1210,6 +1249,17 @@ ClrTextJoin (LayerTypePtr Layer, TextTypePtr Text)
   if (TEST_FLAG (LOCKFLAG, Text) || !TEST_FLAG (CLEARLINEFLAG, Text))
     return (NULL);
   return ChangeTextJoin (Layer, Text);
+}
+
+/* ---------------------------------------------------------------------------
+ * clears the clearance flag of a polygon
+ */
+static void *
+ClrPolyJoin (LayerTypePtr Layer, PolygonTypePtr poly)
+{
+  if (TEST_FLAG (LOCKFLAG, poly) || !TEST_FLAG (CLEARLINEFLAG, poly))
+    return (NULL);
+  return ChangePolyJoin (Layer, poly);
 }
 
 /* ---------------------------------------------------------------------------
