@@ -1,0 +1,21 @@
+Bottom: 317c46e7fdfce3a2f9a75d68f15bfd957f366916
+Top:    2a78fce218200ba036fdbb627fa906050a23ecee
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-14 03:31:13 +0100
+
+Refresh of drop-in-pcb-gl-code-various-me
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 143735a..e6fe1de 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -563,6 +563,7 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+ void
+ hidgl_fill_rect (int x1, int y1, int x2, int y2)
+ {
++  hidgl_ensure_triangle_space (&buffer, 2);
+   hidgl_add_triangle (&buffer, x1, y1, x1, y2, x2, y2);
+   hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
+ }
