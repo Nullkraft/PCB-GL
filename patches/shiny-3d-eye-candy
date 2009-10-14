@@ -1,5 +1,5 @@
 Bottom: 7c29d1d92b7841efc0e64336a3eb41e461434ef8
-Top:    8377f6ea8779fa005e5b6cd106b99f93245d305c
+Top:    ade089a79c15801f412bd0c14584a3de061643dd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-14 03:32:29 +0100
 
@@ -10,19 +10,6 @@ Experiments in progress - don't expect this to work yet!
 
 ---
 
-diff --git a/configure.ac b/configure.ac
-index 31eec7d..ba1afc7 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -978,7 +978,7 @@ AM_CONDITIONAL(DEBUG_BUILD, test x$enable_debug = xyes)
- # ------------- Complete set of CFLAGS and LIBS -------------------
- 
- CFLAGS="$CFLAGS $X_CFLAGS $DBUS_CFLAGS $GLIB_CFLAGS $GTK_CFLAGS $CAIRO_CFLAGS $GTKGLEXT_CFLAGS"
--LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GLIB_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_LIBS $INTLLIBS $CAIRO_LIBS $GTKGLEXT_LIBS"
-+LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GLIB_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_LIBS $INTLLIBS $CAIRO_LIBS $GTKGLEXT_LIBS -lglut"
- 
- 
- # if we have gcc then add -Wall
 diff --git a/src/Makefile.am b/src/Makefile.am
 index 6d1be55..9bc9e22 100644
 --- a/src/Makefile.am
@@ -913,7 +900,7 @@ index 302fa2a..3bfd354 100644
      gdk_gl_drawable_swap_buffers (pGlDrawable);
    else
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 253542b..de48e56 100644
+index 253542b..be82e4e 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -123,6 +123,7 @@ a zoom in/out.
@@ -944,18 +931,15 @@ index 253542b..de48e56 100644
    vbox = gtk_vbox_new(FALSE, 0);
    gtk_box_pack_start(GTK_BOX(vbox_left), vbox, FALSE, FALSE, 0);
    ghidgui->mode_buttons0_frame_vbox = vbox;
-@@ -2665,8 +2672,10 @@ ghid_parse_arguments (int *argc, char ***argv)
- 
-   gtk_init (argc, argv);
+@@ -2667,6 +2674,7 @@ ghid_parse_arguments (int *argc, char ***argv)
    gtk_gl_init(argc, argv);
-+//  glutInit (argc, argv);
  
    gport = &ghid_port;
 +  fprintf (stderr, "gport set at %p\n", gport);
    gport->zoom = 300.0;
    pixel_slop = 300;
  
-@@ -2674,7 +2683,7 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -2674,7 +2682,7 @@ ghid_parse_arguments (int *argc, char ***argv)
    /* setup GL-context */
    gport->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
                                                 GDK_GL_MODE_STENCIL |
