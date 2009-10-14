@@ -1,7 +1,7 @@
-Bottom: 225bd0d86d5ac5e0264ac982b7929b075eca330e
+Bottom: 01b865222e05abd5601b0cf379ba596bb1e6949e
 Top:    81a8275d7546276e238f3af4bf4d6c0d7a59a3ef
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-14 13:26:03 +0100
+Date:   2009-10-14 14:32:52 +0100
 
 Shiny 3D eye-candy
 
@@ -214,7 +214,7 @@ index 1b28e71..6bde5c0 100644
    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
    /* Reset stencil buffer so we can paint anywhere */
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 3bfd354..feb9207 100644
+index 97182fb..feb9207 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -299,16 +299,16 @@ have_crosshair_attachments (void)
@@ -452,39 +452,16 @@ index 3bfd354..feb9207 100644
  
    glDisable (GL_COLOR_LOGIC_OP);
  }
-@@ -791,12 +794,12 @@ ghid_screen_update (void)
+@@ -791,7 +794,7 @@ ghid_screen_update (void)
  }
  
  void DrawAttached (Boolean);
 -void draw_grid ();
 +void draw_grid (void);
  
--static float view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
--                                  {0.0, 1.0, 0.0, 0.0},
--                                  {0.0, 0.0, 1.0, 0.0},
--                                  {0.0, 0.0, 0.0, 1.0}};
-+static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
-+                                    {0.0, 1.0, 0.0, 0.0},
-+                                    {0.0, 0.0, 1.0, 0.0},
-+                                    {0.0, 0.0, 0.0, 1.0}};
- 
- void
- ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
-@@ -888,13 +891,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
-   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   hidgl_reset_stencil_usage ();
- 
--#if 0
--  glClearColor (gport->bg_color.red / 65535.,
--                gport->bg_color.green / 65535.,
--                gport->bg_color.blue / 65535.,
--                1.);
--#endif
--
- #if 1
-   region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-   region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-@@ -939,6 +935,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+ static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
+                                     {0.0, 1.0, 0.0, 0.0},
+@@ -932,6 +935,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
