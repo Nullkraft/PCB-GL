@@ -876,7 +876,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   glMultMatrixf (view_matrix);
   glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
 
-//  glEnable (GL_STENCIL_TEST);
+  glEnable (GL_STENCIL_TEST);
   glClearColor (gport->offlimits_color.red / 65535.,
                 gport->offlimits_color.green / 65535.,
                 gport->offlimits_color.blue / 65535.,
