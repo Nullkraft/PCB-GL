@@ -123,6 +123,7 @@ a zoom in/out.
 #include "gui-icons-mode-buttons.data"
 #include "gui-icons-misc.data"
 #include "snavi.h"
+#include "gui-trackball.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
@@ -2156,6 +2157,7 @@ ghid_build_pcb_top_window (void)
   GtkWidget *vbox_main, *vbox_left, *hbox_middle, *hbox = NULL;
   GtkWidget *viewport, *ebox, *vbox, *frame;
   GtkWidget *label;
+  GtkWidget *trackball;
   GHidPort *port = &ghid_port;
   gchar *s;
   GtkWidget *scrolled;
@@ -2263,6 +2265,11 @@ ghid_build_pcb_top_window (void)
   vbox = ghid_scrolled_vbox(vbox_left, &scrolled,
       GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   make_layer_buttons(vbox, port);
+
+  trackball = ghid_trackball_new ();
+  g_signal_connect (trackball, "rotation-changed",
+                    G_CALLBACK (ghid_port_rotate), NULL);
+  gtk_box_pack_start (GTK_BOX (vbox_left), trackball, FALSE, FALSE, 0);
 
   vbox = gtk_vbox_new(FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox_left), vbox, FALSE, FALSE, 0);
@@ -2667,6 +2674,7 @@ ghid_parse_arguments (int *argc, char ***argv)
   gtk_gl_init(argc, argv);
 
   gport = &ghid_port;
+  fprintf (stderr, "gport set at %p\n", gport);
   gport->zoom = 300.0;
   pixel_slop = 300;
 
@@ -2674,7 +2682,7 @@ ghid_parse_arguments (int *argc, char ***argv)
   /* setup GL-context */
   gport->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
                                                GDK_GL_MODE_STENCIL |
-//                                               GDK_GL_MODE_DEPTH   |
+                                               GDK_GL_MODE_DEPTH   |
                                                GDK_GL_MODE_DOUBLE);
   if (!gport->glconfig) {
     printf("Could not setup GL-context!\n");
