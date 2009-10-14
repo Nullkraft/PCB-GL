@@ -1,5 +1,5 @@
 Bottom: 5d51497b934b76b28e7f1e1d08023f251bb0e768
-Top:    317c46e7fdfce3a2f9a75d68f15bfd957f366916
+Top:    2a78fce218200ba036fdbb627fa906050a23ecee
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-13 15:11:22 +0100
 
@@ -119,10 +119,10 @@ index 8321929..e1ad65c 100644
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
 new file mode 100644
-index 0000000..143735a
+index 0000000..e6fe1de
 --- /dev/null
 +++ b/src/hid/common/hidgl.c
-@@ -0,0 +1,573 @@
+@@ -0,0 +1,574 @@
 +/* $Id: */
 +
 +#if 1 /* DISABLE EVERYTHING! */
@@ -688,6 +688,7 @@ index 0000000..143735a
 +void
 +hidgl_fill_rect (int x1, int y1, int x2, int y2)
 +{
++  hidgl_ensure_triangle_space (&buffer, 2);
 +  hidgl_add_triangle (&buffer, x1, y1, x1, y2, x2, y2);
 +  hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
 +}
