@@ -793,6 +793,32 @@ ghid_screen_update (void)
 void DrawAttached (Boolean);
 void draw_grid ();
 
+static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
+                                    {0.0, 1.0, 0.0, 0.0},
+                                    {0.0, 0.0, 1.0, 0.0},
+                                    {0.0, 0.0, 0.0, 1.0}};
+
+void
+ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
+{
+  int row, column;
+  build_rotmatrix (view_matrix, quarternion);
+
+#ifdef DEBUG_ROTATE
+  for (row = 0; row < 4; row++) {
+    printf ("[ %f", view_matrix[row][0]);
+    for (column = 1; column < 4; column++) {
+      printf (",\t%f", view_matrix[row][column]);
+    }
+    printf ("\t]\n");
+  }
+  printf ("\n");
+#endif
+
+  ghid_invalidate_all ();
+}
+
+
 #define Z_NEAR 3.0
 gboolean
 ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
@@ -825,24 +851,30 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+//  glEnable (GL_DEPTH_TEST);
+
 //  glEnable(GL_POLYGON_SMOOTH);
 //  glHint(GL_POLYGON_SMOOTH_HINT, [GL_FASTEST, GL_NICEST, or GL_DONT_CARE]);
 
-  glViewport (ev->area.x,
-              widget->allocation.height - ev->area.height - ev->area.y,
-              ev->area.width, ev->area.height);
+  glViewport (widget->allocation.x,     widget->allocation.y,
+              widget->allocation.width, widget->allocation.height);
 
+#if 0
   glEnable (GL_SCISSOR_TEST);
   glScissor (ev->area.x,
              widget->allocation.height - ev->area.height - ev->area.y,
              ev->area.width, ev->area.height);
+#endif
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
-  glOrtho (ev->area.x, ev->area.x + ev->area.width, ev->area.y + ev->area.height, ev->area.y, 0, 100);
+  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
   glMatrixMode (GL_MODELVIEW);
   glLoadIdentity ();
-  glTranslatef (0.0f, 0.0f, -Z_NEAR);
+
+  glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
+  glMultMatrixf (view_matrix);
+  glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
 
   glEnable (GL_STENCIL_TEST);
   glClearColor (gport->offlimits_color.red / 65535.,
@@ -850,11 +882,13 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                 gport->offlimits_color.blue / 65535.,
                 1.);
 
-  glDepthMask (0);
+//  glClearDepth (1000);
+
   glClearStencil (0);
-  glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+  glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   hidgl_reset_stencil_usage ();
 
+#if 1
   region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
   region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
   region.Y1 = MIN (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
@@ -868,14 +902,15 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
              gport->bg_color.blue / 65535.);
 
   glBegin (GL_QUADS);
-  glVertex3i (eleft,  etop,    0);
-  glVertex3i (eright, etop,    0);
-  glVertex3i (eright, ebottom, 0);
-  glVertex3i (eleft,  ebottom, 0);
+  glVertex3i (eleft,  etop,    -50);
+  glVertex3i (eright, etop,    -50);
+  glVertex3i (eright, ebottom, -50);
+  glVertex3i (eleft,  ebottom, -50);
   glEnd ();
 
   /* TODO: Background image */
 
+#if 1
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
 
@@ -892,7 +927,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                              -gport->view_x0,
                 ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                              -gport->view_y0, 0);
-  hid_expose_callback (&ghid_hid, &region, 0);
+//  hid_expose_callback (&ghid_hid, &region, 0);
+  hid_expose_callback (&ghid_hid, NULL, 0);
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
 
@@ -912,9 +948,13 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
 
+#endif
+
   ghid_show_crosshair (TRUE);
 
   hidgl_flush_triangles (&buffer);
+
+#endif
 
   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
     gdk_gl_drawable_swap_buffers (pGlDrawable);
