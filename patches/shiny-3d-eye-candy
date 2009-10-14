@@ -1,5 +1,5 @@
 Bottom: 225bd0d86d5ac5e0264ac982b7929b075eca330e
-Top:    0042aa7c1748013a824d705362ecefb288487bc9
+Top:    f5cd1a8791642c78c3b019205126d605508849b8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-14 13:26:03 +0100
 
@@ -176,14 +176,3 @@ index 1b28e71..41ebe19 100644
    glEnable (GL_STENCIL_TEST);                // Enable Stencil test
    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
    /* Reset stencil buffer so we can paint anywhere */
-diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 854f413..be82e4e 100644
---- a/src/hid/gtk/gui-top-window.c
-+++ b/src/hid/gtk/gui-top-window.c
-@@ -2674,6 +2674,7 @@ ghid_parse_arguments (int *argc, char ***argv)
-   gtk_gl_init(argc, argv);
- 
-   gport = &ghid_port;
-+  fprintf (stderr, "gport set at %p\n", gport);
-   gport->zoom = 300.0;
-   pixel_slop = 300;
