@@ -48,6 +48,7 @@
 RCSID ("$Id: $");
 
 triangle_buffer buffer;
+float global_depth = 0;
 
 #if 0
 triangle_array *
@@ -61,7 +62,7 @@ void
 hidgl_init_triangle_array (triangle_buffer *buffer)
 {
   glEnableClientState (GL_VERTEX_ARRAY);
-  glVertexPointer (2, GL_FLOAT, 0, buffer->triangle_array);
+  glVertexPointer (3, GL_FLOAT, 0, buffer->triangle_array);
   buffer->triangle_count = 0;
   buffer->coord_comp_count = 0;
 }
@@ -785,6 +786,12 @@ hidgl_reset_stencil_usage (void)
 {
   assigned_bits = 0;
   dirty_bits = 0;
+}
+
+void
+hidgl_set_depth (float depth)
+{
+  global_depth = depth;
 }
 
 
