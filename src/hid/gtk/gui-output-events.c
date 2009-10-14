@@ -888,13 +888,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   hidgl_reset_stencil_usage ();
 
-#if 0
-  glClearColor (gport->bg_color.red / 65535.,
-                gport->bg_color.green / 65535.,
-                gport->bg_color.blue / 65535.,
-                1.);
-#endif
-
 #if 1
   region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
   region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
