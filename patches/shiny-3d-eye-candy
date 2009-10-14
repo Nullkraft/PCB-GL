@@ -1,7 +1,7 @@
-Bottom: aabb7014ad38f47e53fe09832e18b9d42d833cf8
+Bottom: 20cf969fc852aae4ea6dec5c4d5b50dce09f099b
 Top:    428551838061a9764d9bd7c9fd7c83fc1215787f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-14 13:05:12 +0100
+Date:   2009-10-14 13:10:47 +0100
 
 Shiny 3D eye-candy
 
@@ -188,7 +188,7 @@ index 9389885..48c84ee 100644
  /* ---------------------------------------------------------------------- */
  
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index 4e86e27..e28b586 100644
+index 1980195..e28b586 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
 @@ -25,16 +25,17 @@
@@ -212,14 +212,8 @@ index 4e86e27..e28b586 100644
  
  void hidgl_init_triangle_array (triangle_buffer *buffer);
  void hidgl_flush_triangles (triangle_buffer *buffer);
-@@ -46,12 +47,19 @@ hidgl_add_triangle (triangle_buffer *buffer,
-                     GLfloat x2, GLfloat y2,
-                     GLfloat x3, GLfloat y3)
- {
-+  if (buffer->triangle_count == TRIANGLE_ARRAY_SIZE) {
-+    printf ("OH CRAP\n");
-+    *(char *)0 = 0;
-+  }
+@@ -52,10 +53,13 @@ hidgl_add_triangle (triangle_buffer *buffer,
+   }
    buffer->triangle_array [buffer->coord_comp_count++] = x1;
    buffer->triangle_array [buffer->coord_comp_count++] = y1;
 +  buffer->triangle_array [buffer->coord_comp_count++] = global_depth;
@@ -232,7 +226,7 @@ index 4e86e27..e28b586 100644
    buffer->triangle_count++;
  }
  
-@@ -69,5 +77,6 @@ int hidgl_stencil_bits (void);
+@@ -73,5 +77,6 @@ int hidgl_stencil_bits (void);
  int hidgl_assign_clear_stencil_bit (void);
  void hidgl_return_stencil_bit (int bit);
  void hidgl_reset_stencil_usage (void);
