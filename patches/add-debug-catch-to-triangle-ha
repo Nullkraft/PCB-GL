@@ -1,5 +1,5 @@
 Bottom: aabb7014ad38f47e53fe09832e18b9d42d833cf8
-Top:    20cf969fc852aae4ea6dec5c4d5b50dce09f099b
+Top:    fe7cbbcfd2f8b09c7a76e754eac0d795eb312691
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-14 13:09:11 +0100
 
@@ -12,7 +12,7 @@ triangle array, deliberately segfault so gdb can catch where.
 ---
 
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index 4e86e27..1980195 100644
+index 4e86e27..315235c 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
 @@ -46,6 +46,10 @@ hidgl_add_triangle (triangle_buffer *buffer,
@@ -20,7 +20,7 @@ index 4e86e27..1980195 100644
                      GLfloat x3, GLfloat y3)
  {
 +  if (buffer->triangle_count == TRIANGLE_ARRAY_SIZE) {
-+    printf ("OH CRAP\n");
++    fprintf (stderr, "hidgl_add_triangle: Attempt to add past end of array. Will now segfault.\n");
 +    *(char *)0 = 0;
 +  }
    buffer->triangle_array [buffer->coord_comp_count++] = x1;
