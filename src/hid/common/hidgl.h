@@ -25,16 +25,17 @@
 
 //#define TRIANGLE_ARRAY_SIZE 5000
 #define TRIANGLE_ARRAY_SIZE 5461
-/* Assumes GLFloat is 4 bytes, and we have X,Y coords x3 for each triangle:
+/* Assumes GLFloat is 4 bytes, and we have X,Y(,Z) coords x3 for each triangle:
    4 * 5461 * 2 * 3 = 109464 */
-#define TRIANGLE_ARRAY_BYTES 131072
+//#define TRIANGLE_ARRAY_BYTES 131072
 typedef struct {
-  GLfloat triangle_array [2 * 3 * TRIANGLE_ARRAY_SIZE];
+  GLfloat triangle_array [3 * 3 * TRIANGLE_ARRAY_SIZE];
   unsigned int triangle_count;
   unsigned int coord_comp_count;
 } triangle_buffer;
 
 extern triangle_buffer buffer;
+extern float global_depth;
 
 void hidgl_init_triangle_array (triangle_buffer *buffer);
 void hidgl_flush_triangles (triangle_buffer *buffer);
@@ -52,10 +53,13 @@ hidgl_add_triangle (triangle_buffer *buffer,
   }
   buffer->triangle_array [buffer->coord_comp_count++] = x1;
   buffer->triangle_array [buffer->coord_comp_count++] = y1;
+  buffer->triangle_array [buffer->coord_comp_count++] = global_depth;
   buffer->triangle_array [buffer->coord_comp_count++] = x2;
   buffer->triangle_array [buffer->coord_comp_count++] = y2;
+  buffer->triangle_array [buffer->coord_comp_count++] = global_depth;
   buffer->triangle_array [buffer->coord_comp_count++] = x3;
   buffer->triangle_array [buffer->coord_comp_count++] = y3;
+  buffer->triangle_array [buffer->coord_comp_count++] = global_depth;
   buffer->triangle_count++;
 }
 
@@ -73,5 +77,6 @@ int hidgl_stencil_bits (void);
 int hidgl_assign_clear_stencil_bit (void);
 void hidgl_return_stencil_bit (int bit);
 void hidgl_reset_stencil_usage (void);
+void hidgl_set_depth (float depth);
 
 #endif /* __HIDGL_INCLUDED__  */
