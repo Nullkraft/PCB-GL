@@ -1,0 +1,14 @@
+Bottom: aabb7014ad38f47e53fe09832e18b9d42d833cf8
+Top:    aabb7014ad38f47e53fe09832e18b9d42d833cf8
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-14 13:09:11 +0100
+
+Add debug catch to triangle handling
+
+If for any reason we are about to run off the end of the
+triangle array, deliberately segfault so gdb can catch where.
+
+
+---
+
+
