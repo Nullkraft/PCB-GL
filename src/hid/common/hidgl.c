@@ -563,6 +563,7 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
 void
 hidgl_fill_rect (int x1, int y1, int x2, int y2)
 {
+  hidgl_ensure_triangle_space (&buffer, 2);
   hidgl_add_triangle (&buffer, x1, y1, x1, y2, x2, y2);
   hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
 }
