@@ -2674,7 +2674,6 @@ ghid_parse_arguments (int *argc, char ***argv)
   gtk_gl_init(argc, argv);
 
   gport = &ghid_port;
-  fprintf (stderr, "gport set at %p\n", gport);
   gport->zoom = 300.0;
   pixel_slop = 300;
 
