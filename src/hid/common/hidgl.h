@@ -47,7 +47,7 @@ hidgl_add_triangle (triangle_buffer *buffer,
                     GLfloat x3, GLfloat y3)
 {
   if (buffer->triangle_count == TRIANGLE_ARRAY_SIZE) {
-    printf ("OH CRAP\n");
+    fprintf (stderr, "hidgl_add_triangle: Attempt to add past end of array. Will now segfault.\n");
     *(char *)0 = 0;
   }
   buffer->triangle_array [buffer->coord_comp_count++] = x1;
