@@ -23,11 +23,7 @@
 #ifndef __HIDGL_INCLUDED__
 #define __HIDGL_INCLUDED__
 
-//#define TRIANGLE_ARRAY_SIZE 5000
 #define TRIANGLE_ARRAY_SIZE 5461
-/* Assumes GLFloat is 4 bytes, and we have X,Y(,Z) coords x3 for each triangle:
-   4 * 5461 * 2 * 3 = 109464 */
-//#define TRIANGLE_ARRAY_BYTES 131072
 typedef struct {
   GLfloat triangle_array [3 * 3 * TRIANGLE_ARRAY_SIZE];
   unsigned int triangle_count;
