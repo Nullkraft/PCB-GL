@@ -1,5 +1,5 @@
 Bottom: 64eb6c6be82d336e57e9a5992e4f7b659d47e8b9
-Top:    1d4cff46b27d0f6192559ee1fed0c2e7fc192320
+Top:    6f80dc7afbe5aaa0bc8a6669b5128ded4882aa25
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-14 13:25:35 +0100
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 302fa2a..3bfd354 100644
+index 302fa2a..0018b9d 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -793,6 +793,32 @@ ghid_screen_update (void)
@@ -45,7 +45,7 @@ index 302fa2a..3bfd354 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
-@@ -825,99 +851,73 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -825,99 +851,66 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
@@ -97,13 +97,6 @@ index 302fa2a..3bfd354 100644
 +  glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    hidgl_reset_stencil_usage ();
  
-+#if 0
-+  glClearColor (gport->bg_color.red / 65535.,
-+                gport->bg_color.green / 65535.,
-+                gport->bg_color.blue / 65535.,
-+                1.);
-+#endif
-+
 +#if 1
    region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
    region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
@@ -181,7 +174,7 @@ index 302fa2a..3bfd354 100644
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
-@@ -934,7 +934,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -934,7 +927,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                               -gport->view_x0,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
@@ -191,7 +184,7 @@ index 302fa2a..3bfd354 100644
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
-@@ -954,10 +955,14 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -954,10 +948,14 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
