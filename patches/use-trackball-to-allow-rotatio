@@ -1,5 +1,5 @@
 Bottom: 64eb6c6be82d336e57e9a5992e4f7b659d47e8b9
-Top:    6f80dc7afbe5aaa0bc8a6669b5128ded4882aa25
+Top:    7800f62007ad8da92462fcd20762fab25b2198eb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-14 13:25:35 +0100
 
@@ -9,17 +9,17 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 302fa2a..0018b9d 100644
+index 302fa2a..97182fb 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -793,6 +793,32 @@ ghid_screen_update (void)
  void DrawAttached (Boolean);
  void draw_grid ();
  
-+static float view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
-+                                  {0.0, 1.0, 0.0, 0.0},
-+                                  {0.0, 0.0, 1.0, 0.0},
-+                                  {0.0, 0.0, 0.0, 1.0}};
++static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
++                                    {0.0, 1.0, 0.0, 0.0},
++                                    {0.0, 0.0, 1.0, 0.0},
++                                    {0.0, 0.0, 0.0, 1.0}};
 +
 +void
 +ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
