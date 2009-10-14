@@ -1,7 +1,7 @@
-Bottom: f8e1d766c5dae1f19cf6c05e871297d079162ce3
-Top:    3f4824612beb5ead60634f6572321bd0eabc09c2
+Bottom: 540b9a261dbec2c15ad405f6dd72750dfc8fdae6
+Top:    f3baf31d0367ad7724cf3ec47eaa5ed475d37c8a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-13 15:24:50 +0100
+Date:   2009-10-14 03:31:25 +0100
 
 Use the OpenGL stencil buffer to make drawing polygons with holes faster.
 
@@ -25,7 +25,7 @@ For now, we don't use polygons on the mask, so its not a a problem (?).
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 5f3f276..c09adb5 100644
+index ac7db3c..41d0aa1 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -607,7 +607,9 @@ do_hole (const BoxType *b, void *cl)

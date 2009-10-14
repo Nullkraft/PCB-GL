@@ -1,7 +1,7 @@
-Bottom: 2a0cfe569876ccd5a40368ed74571d8796665966
-Top:    f8e1d766c5dae1f19cf6c05e871297d079162ce3
+Bottom: b55a2526089f66b6c0274ea779a6cb72377eb910
+Top:    540b9a261dbec2c15ad405f6dd72750dfc8fdae6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-13 15:24:50 +0100
+Date:   2009-10-14 03:31:24 +0100
 
 Add raw polygons support for the GTK HID, bypassing the no-holes dicer
 
@@ -27,7 +27,7 @@ Add raw polygons support for the GTK HID, bypassing the no-holes dicer
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 143735a..5f3f276 100644
+index e6fe1de..ac7db3c 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -36,7 +36,7 @@

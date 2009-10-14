@@ -1,7 +1,7 @@
-Bottom: 3f4824612beb5ead60634f6572321bd0eabc09c2
-Top:    ac905d02b2f26c98a558b64fe77be87b241917f6
+Bottom: f3baf31d0367ad7724cf3ec47eaa5ed475d37c8a
+Top:    bca9fdf3312d0c2aa703ab1e7cdd4c8f1fa724fc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-13 15:24:51 +0100
+Date:   2009-10-14 03:31:26 +0100
 
 Work in progress on subcompositing / stencil buffers
 
@@ -133,7 +133,7 @@ index 7966346..ffb84a2 100644
  #define SL(type,side) (~0xfff | SL_##type | SL_##side##_SIDE)
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index c09adb5..2525100 100644
+index 41d0aa1..9389885 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -574,28 +574,27 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
@@ -291,7 +291,7 @@ index c09adb5..2525100 100644
  
    gluDeleteTess (info.tobj);
    myFreeCombined ();
-@@ -688,6 +702,91 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
+@@ -689,6 +703,91 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
    hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
  }
  
