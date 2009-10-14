@@ -1,5 +1,5 @@
 Bottom: cb46e74a10b848e231ef4eb3a601f6b9dc6324af
-Top:    27f4cfec5787900aebe1d95965e795804ea10d94
+Top:    b582a06f20c72984bb0225c5507036502940e64c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-14 13:01:17 +0100
 
@@ -1703,7 +1703,7 @@ index cbdd104..6f830fb 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 9ea3207..739f29e 100644
+index 9ea3207..0c66353 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -297,16 +297,16 @@ have_crosshair_attachments (void)
@@ -1853,9 +1853,9 @@ index 9ea3207..739f29e 100644
 +  glColor3f (cross_color.red / 65535.,
 +             cross_color.green / 65535.,
 +             cross_color.blue / 65535.);
-+
-+  glBegin (GL_LINES);
  
++  glBegin (GL_LINES);
++
 +#if 1
    if (x_prev >= 0)
      {
@@ -1955,7 +1955,7 @@ index 9ea3207..739f29e 100644
  }
  
  static gboolean
-@@ -707,53 +754,195 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -707,53 +754,153 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
    if (!first_time_done)
      {
        gport->colormap = gtk_widget_get_colormap (gport->top_window);
@@ -2050,9 +2050,9 @@ index 9ea3207..739f29e 100644
 +  glLoadIdentity ();
 +  glTranslatef (0.0f, 0.0f, -Z_NEAR);
 +
-+  glClearColor (gport->bg_color.red / 65535.,
-+                gport->bg_color.green / 65535.,
-+                gport->bg_color.blue / 65535.,
++  glClearColor (gport->offlimits_color.red / 65535.,
++                gport->offlimits_color.green / 65535.,
++                gport->offlimits_color.blue / 65535.,
 +                1.);
 +
 +  glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -2062,60 +2062,18 @@ index 9ea3207..739f29e 100644
 +  region.Y1 = MIN (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
 +  region.Y2 = MAX (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
 +
-+  eleft = Vx (0);
-+  eright = Vx (PCB->MaxWidth);
-+  etop = Vy (0);
-+  ebottom = Vy (PCB->MaxHeight);
-+  if (eleft > eright)
-+    {
-+      int tmp = eleft;
-+      eleft = eright;
-+      eright = tmp;
-+    }
-+  if (etop > ebottom)
-+    {
-+      int tmp = etop;
-+      etop = ebottom;
-+      ebottom = tmp;
-+    }
++  eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
++  etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
 +
-+  glColor3f (gport->offlimits_color.red / 65535.,
-+             gport->offlimits_color.green / 65535.,
-+             gport->offlimits_color.blue / 65535.);
++  glColor3f (gport->bg_color.red / 65535.,
++             gport->bg_color.green / 65535.,
++             gport->bg_color.blue / 65535.);
 +
 +  glBegin (GL_QUADS);
-+  if (eleft > 0)
-+    {
-+      glVertex2i (0, 0);
-+      glVertex2i (eleft, 0);
-+      glVertex2i (eleft, gport->height);
-+      glVertex2i (0, gport->height);
-+    }
-+  else
-+    eleft = 0;
-+  if (eright < gport->width)
-+    {
-+      glVertex2i (eright, 0);
-+      glVertex2i (gport->width, 0);
-+      glVertex2i (gport->width, gport->height);
-+      glVertex2i (eright, gport->height);
-+    }
-+  else
-+    eright = gport->width;
-+  if (etop > 0)
-+    {
-+      glVertex2i (eleft, 0);
-+      glVertex2i (eright, 0);
-+      glVertex2i (eright, etop);
-+      glVertex2i (eleft, etop);
-+    }
-+  if (ebottom < gport->height)
-+    {
-+      glVertex2i (eleft, ebottom);
-+      glVertex2i (eright + 1, ebottom);
-+      glVertex2i (eright + 1, gport->height);
-+      glVertex2i (eleft, gport->height);
-+    }
++  glVertex3i (eleft,  etop,    0);
++  glVertex3i (eright, etop,    0);
++  glVertex3i (eright, ebottom, 0);
++  glVertex3i (eleft,  ebottom, 0);
 +  glEnd ();
 +
 +  /* TODO: Background image */
@@ -2165,7 +2123,7 @@ index 9ea3207..739f29e 100644
    return FALSE;
  }
  
-@@ -764,6 +953,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -764,6 +911,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    gdouble dx, dy;
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
@@ -2180,7 +2138,7 @@ index 9ea3207..739f29e 100644
  
    if (out->panning)
      {
-@@ -779,9 +976,18 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -779,9 +934,18 @@ ghid_port_window_motion_cb (GtkWidget * widget,
      }
    x_prev = y_prev = -1;
    moved = ghid_note_event_location (ev);
@@ -2199,7 +2157,7 @@ index 9ea3207..739f29e 100644
    return FALSE;
  }
  
-@@ -821,7 +1027,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -821,7 +985,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        RestoreCrosshair (TRUE);
        cursor_in_viewport = TRUE;
      }
