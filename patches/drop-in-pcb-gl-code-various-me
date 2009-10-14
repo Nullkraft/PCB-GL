@@ -1,5 +1,5 @@
 Bottom: cb46e74a10b848e231ef4eb3a601f6b9dc6324af
-Top:    55002bcff210178ffc563d5471c46f1a1c7ab36e
+Top:    27f4cfec5787900aebe1d95965e795804ea10d94
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-14 13:01:17 +0100
 
@@ -699,10 +699,10 @@ index 0000000..e6fe1de
 +
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
 new file mode 100644
-index 0000000..fc2d41a
+index 0000000..316208e
 --- /dev/null
 +++ b/src/hid/common/hidgl.h
-@@ -0,0 +1,69 @@
+@@ -0,0 +1,65 @@
 +/* $Id: gui.h,v 1.25 2008-04-13 14:15:38 petercjclifton Exp $ */
 +
 +/*
@@ -730,11 +730,7 @@ index 0000000..fc2d41a
 +#ifndef __HIDGL_INCLUDED__
 +#define __HIDGL_INCLUDED__
 +
-+//#define TRIANGLE_ARRAY_SIZE 5000
 +#define TRIANGLE_ARRAY_SIZE 5461
-+/* Assumes GLFloat is 4 bytes, and we have X,Y coords x3 for each triangle:
-+   4 * 5461 * 2 * 3 = 109464 */
-+#define TRIANGLE_ARRAY_BYTES 131072
 +typedef struct {
 +  GLfloat triangle_array [2 * 3 * TRIANGLE_ARRAY_SIZE];
 +  unsigned int triangle_count;
