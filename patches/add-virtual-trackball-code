@@ -1,24 +1,13 @@
-Bottom: 7c29d1d92b7841efc0e64336a3eb41e461434ef8
+Bottom: 33d7d87bdd4be75e630ce0731472f54fe976d3dc
 Top:    aabb7014ad38f47e53fe09832e18b9d42d833cf8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-14 12:44:08 +0100
+Date:   2009-10-14 13:04:58 +0100
 
 Add virtual trackball code
 
 
 ---
 
-diff --git a/src/.gitignore b/src/.gitignore
-index ed7ee9f..bb22c23 100644
---- a/src/.gitignore
-+++ b/src/.gitignore
-@@ -1,5 +1,6 @@
- *.[oa]
- *_lists.h
-+dbus-introspect.h
- edif.[ch]
- parse_l.c
- parse_y.[ch]
 diff --git a/src/Makefile.am b/src/Makefile.am
 index 6d1be55..9bc9e22 100644
 --- a/src/Makefile.am
