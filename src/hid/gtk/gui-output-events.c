@@ -796,6 +796,12 @@ ghid_screen_update (void)
 void DrawAttached (Boolean);
 void draw_grid (void);
 
+struct pin_info
+{
+  Boolean arg;
+  LayerTypePtr Layer;
+};
+
 static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
                                     {0.0, 1.0, 0.0, 0.0},
                                     {0.0, 0.0, 1.0, 0.0},
@@ -804,7 +810,10 @@ static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
 void
 ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
 {
+#ifdef DEBUG_ROTATE
   int row, column;
+#endif
+
   build_rotmatrix (view_matrix, quarternion);
 
 #ifdef DEBUG_ROTATE
@@ -819,6 +828,529 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
 #endif
 
   ghid_invalidate_all ();
+}
+
+static int
+backE_callback (const BoxType * b, void *cl)
+{
+  ElementTypePtr element = (ElementTypePtr) b;
+
+  if (!FRONT (element))
+    {
+      DrawElementPackage (element, 0);
+    }
+  return 1;
+}
+
+static int
+backN_callback (const BoxType * b, void *cl)
+{
+  TextTypePtr text = (TextTypePtr) b;
+  ElementTypePtr element = (ElementTypePtr) text->Element;
+
+  if (!FRONT (element) && !TEST_FLAG (HIDENAMEFLAG, element))
+    DrawElementName (element, 0);
+  return 0;
+}
+
+static int
+backPad_callback (const BoxType * b, void *cl)
+{
+  PadTypePtr pad = (PadTypePtr) b;
+
+  if (!FRONT (pad))
+    DrawPad (pad, 0);
+  return 1;
+}
+
+static int
+EMark_callback (const BoxType * b, void *cl)
+{
+  ElementTypePtr element = (ElementTypePtr) b;
+
+  DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
+  return 1;
+}
+
+static void
+SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
+{
+  char *color;
+
+  if (TEST_FLAG (WARNFLAG, Pin))
+    color = PCB->WarnColor;
+  else if (TEST_FLAG (SELECTEDFLAG, Pin))
+    color = (Type == VIA_TYPE) ? PCB->ViaSelectedColor : PCB->PinSelectedColor;
+  else if (TEST_FLAG (FOUNDFLAG, Pin))
+    color = PCB->ConnectedColor;
+  else
+    color = Layer->Color;
+
+  gui->set_color (Output.fgGC, color);
+}
+
+
+static int
+pin_inlayer_callback (const BoxType * b, void *cl)
+{
+  SetPVColor_inlayer ((PinTypePtr) b, cl, PIN_TYPE);
+  DrawPinOrViaLowLevel ((PinTypePtr) b, False);
+  return 1;
+}
+
+static int
+via_inlayer_callback (const BoxType * b, void *cl)
+{
+  SetPVColor_inlayer ((PinTypePtr) b, cl, VIA_TYPE);
+  DrawPinOrViaLowLevel ((PinTypePtr) b, False);
+  return 1;
+}
+
+static int
+pin_callback (const BoxType * b, void *cl)
+{
+  DrawPlainPin ((PinTypePtr) b, False);
+  return 1;
+}
+
+static int
+pad_callback (const BoxType * b, void *cl)
+{
+  PadTypePtr pad = (PadTypePtr) b;
+  if (FRONT (pad))
+    DrawPad (pad, 0);
+  return 1;
+}
+
+
+static int
+hole_callback (const BoxType * b, void *cl)
+{
+  PinTypePtr pin = (PinTypePtr) b;
+  int plated = cl ? *(int *) cl : -1;
+
+#if 0
+  switch (plated)
+    {
+    case -1:
+      break;
+    case 0:
+      if (!TEST_FLAG (HOLEFLAG, pin))
+	return 1;
+      break;
+    case 1:
+      if (TEST_FLAG (HOLEFLAG, pin))
+	return 1;
+      break;
+    }
+#endif
+  DrawHole ((PinTypePtr) b);
+  return 1;
+}
+
+static int
+via_callback (const BoxType * b, void *cl)
+{
+  PinTypePtr via = (PinTypePtr) b;
+  DrawPlainVia (via, False);
+  return 1;
+}
+
+static int
+line_callback (const BoxType * b, void *cl)
+{
+  DrawLine ((LayerTypePtr) cl, (LineTypePtr) b, 0);
+  return 1;
+}
+
+static int
+arc_callback (const BoxType * b, void *cl)
+{
+  DrawArc ((LayerTypePtr) cl, (ArcTypePtr) b, 0);
+  return 1;
+}
+
+static int
+text_callback (const BoxType * b, void *cl)
+{
+  DrawRegularText ((LayerTypePtr) cl, (TextTypePtr) b, 0);
+  return 1;
+}
+
+static int
+poly_callback (const BoxType * b, void *cl)
+{
+  struct pin_info *i = (struct pin_info *) cl;
+
+  DrawPlainPolygon (i->Layer, (PolygonTypePtr) b);
+  return 1;
+}
+
+static void
+DrawPadLowLevelSolid (hidGC gc, PadTypePtr Pad, Boolean clear, Boolean mask)
+{
+  int w = clear ? (mask ? Pad->Mask : Pad->Thickness + Pad->Clearance)
+		: Pad->Thickness;
+
+  if (Pad->Point1.X == Pad->Point2.X &&
+      Pad->Point1.Y == Pad->Point2.Y)
+    {
+      if (TEST_FLAG (SQUAREFLAG, Pad))
+        {
+          int l, r, t, b;
+          l = Pad->Point1.X - w / 2;
+          b = Pad->Point1.Y - w / 2;
+          r = l + w;
+          t = b + w;
+          gui->fill_rect (gc, l, b, r, t);
+        }
+      else
+        {
+          gui->fill_circle (gc, Pad->Point1.X, Pad->Point1.Y, w / 2);
+        }
+    }
+  else
+    {
+      gui->set_line_cap (gc,
+                         TEST_FLAG (SQUAREFLAG,
+                                    Pad) ? Square_Cap : Round_Cap);
+      gui->set_line_width (gc, w);
+
+      gui->draw_line (gc,
+                      Pad->Point1.X, Pad->Point1.Y,
+                      Pad->Point2.X, Pad->Point2.Y);
+    }
+}
+
+static void
+ClearPadSolid (PadTypePtr Pad, Boolean mask)
+{
+  DrawPadLowLevelSolid(Output.pmGC, Pad, True, mask);
+}
+
+static void
+ClearOnlyPinSolid (PinTypePtr Pin, Boolean mask)
+{
+  BDimension half =
+    (mask ? Pin->Mask / 2 : (Pin->Thickness + Pin->Clearance) / 2);
+
+  if (!mask && TEST_FLAG (HOLEFLAG, Pin))
+    return;
+  if (half == 0)
+    return;
+  if (!mask && Pin->Clearance <= 0)
+    return;
+
+  /* Clear the area around the pin */
+  if (TEST_FLAG (SQUAREFLAG, Pin))
+    {
+      int l, r, t, b;
+      l = Pin->X - half;
+      b = Pin->Y - half;
+      r = l + half * 2;
+      t = b + half * 2;
+      gui->fill_rect (Output.pmGC, l, b, r, t);
+    }
+  else if (TEST_FLAG (OCTAGONFLAG, Pin))
+    {
+      gui->set_line_cap (Output.pmGC, Round_Cap);
+      gui->set_line_width (Output.pmGC, (Pin->Clearance + Pin->Thickness
+					 - Pin->DrillingHole));
+
+      DrawSpecialPolygon (gui, Output.pmGC, Pin->X, Pin->Y, half * 2);
+    }
+  else
+    {
+      gui->fill_circle (Output.pmGC, Pin->X, Pin->Y, half);
+    }
+}
+
+static int
+clearPin_callback_solid (const BoxType * b, void *cl)
+{
+  PinTypePtr pin = (PinTypePtr) b;
+  struct pin_info *i = (struct pin_info *) cl;
+  if (i->arg)
+    ClearOnlyPinSolid (pin, True);
+  return 1;
+}
+
+static int
+clearPad_callback_solid (const BoxType * b, void *cl)
+{
+  PadTypePtr pad = (PadTypePtr) b;
+  if (!XOR (TEST_FLAG (ONSOLDERFLAG, pad), SWAP_IDENT))
+    ClearPadSolid (pad, True);
+  return 1;
+}
+
+int clearPin_callback (const BoxType * b, void *cl);
+int clearPad_callback (const BoxType * b, void *cl);
+
+
+static void
+DrawMask (BoxType * screen)
+{
+  struct pin_info info;
+  int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
+
+  OutputType *out = &Output;
+
+  info.arg = True;
+
+  if (thin)
+    {
+      gui->set_color (Output.pmGC, PCB->MaskColor);
+      r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, &info);
+      r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, &info);
+      r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, &info);
+      gui->set_color (Output.pmGC, "erase");
+    }
+
+  gui->use_mask (HID_MASK_BEFORE);
+  gui->set_color (out->fgGC, PCB->MaskColor);
+  gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
+
+  gui->use_mask (HID_MASK_CLEAR);
+  r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback_solid, &info);
+  r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback_solid, &info);
+  r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback_solid, &info);
+
+  gui->use_mask (HID_MASK_AFTER);
+  gui->set_color (out->fgGC, PCB->MaskColor);
+  ghid_global_alpha_mult (out->fgGC, thin ? 0.25 : 1.0);
+  gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
+  ghid_global_alpha_mult (out->fgGC, 1.0);
+
+  gui->use_mask (HID_MASK_OFF);
+}
+
+static int
+DrawLayerGroup (int group, const BoxType * screen)
+{
+  int i, rv = 1;
+  int layernum;
+  struct pin_info info;
+  LayerTypePtr Layer;
+  int n_entries = PCB->LayerGroups.Number[group];
+  Cardinal *layers = PCB->LayerGroups.Entries[group];
+
+//  clip_box = screen;
+  for (i = n_entries - 1; i >= 0; i--)
+    { /* HACK: Subcomposite each layer in a layer group separately */
+      if (i < n_entries - 1) /* Don't set layer on the first one */
+        gui->set_layer (0, group, 0);
+      layernum = layers[i];
+      Layer = PCB->Data->Layer + layers[i];
+      if (strcmp (Layer->Name, "outline") == 0
+	  || strcmp (Layer->Name, "route") == 0)
+	rv = 0;
+      if (layernum < max_layer && Layer->On)
+	{
+          if (rv)
+            {
+              /* Mask out drilled holes on this layer */
+              glPushAttrib (GL_COLOR_BUFFER_BIT);
+              glColorMask (0, 0, 0, 0);
+              if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
+              if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
+              glPopAttrib ();
+#if 0
+              /* Draw pins and vias on this layer */
+              if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
+              if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
+#endif
+            }
+
+	  /* draw all polygons on this layer */
+	  if (Layer->PolygonN)
+	    {
+	      info.Layer = Layer;
+	      info.arg = True;
+	      r_search (Layer->polygon_tree, screen, NULL, poly_callback,
+			&info);
+	      info.arg = False;
+
+	      /* HACK: Subcomposite polygons separately from other layer primitives */
+	      /* Reset the compositing */
+	      gui->set_layer (0, group, 0);
+
+              if (rv)
+                {
+                  glPushAttrib (GL_COLOR_BUFFER_BIT);
+                  glColorMask (0, 0, 0, 0);
+#if 1
+                  /* Mask out drilled holes on this layer */
+                  if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
+                  if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
+#endif
+                  glPopAttrib ();
+                }
+	    }
+
+          /* Draw pins and vias on this layer */
+          if (rv)
+            {
+              if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
+              if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
+            }
+
+	  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
+	    continue;
+
+	  /* draw all visible lines this layer */
+	  r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
+
+	  /* draw the layer arcs on screen */
+	  r_search (Layer->arc_tree, screen, NULL, arc_callback, Layer);
+
+	  /* draw the layer text on screen */
+	  r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
+	}
+    }
+
+#if 0
+  /* Draw pins and vias on this layer */
+  if (PCB->PinOn)
+    r_search (PCB->Data->pin_tree, screen, NULL, pin_callback, NULL);
+  if (PCB->ViaOn)
+    r_search (PCB->Data->via_tree, screen, NULL, via_callback, NULL);
+#endif
+
+  if (n_entries > 1)
+    rv = 1;
+  return rv;
+}
+
+void
+ghid_draw_everything (void)
+{
+  int i, ngroups, side;
+  int plated;
+  int component, solder;
+  /* This is the list of layer groups we will draw.  */
+  int do_group[MAX_LAYER];
+  /* This is the reverse of the order in which we draw them.  */
+  int drawn_groups[MAX_LAYER];
+  BoxTypePtr drawn_area = NULL;
+
+  extern char *current_color;
+  extern Boolean Gathering;
+
+  current_color = NULL;
+  Gathering = False;
+
+//  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
+//  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
+
+  memset (do_group, 0, sizeof (do_group));
+  for (ngroups = 0, i = 0; i < max_layer; i++)
+    {
+      LayerType *l = LAYER_ON_STACK (i);
+      int group = GetLayerGroupNumberByNumber (LayerStack[i]);
+      if (l->On && !do_group[group])
+        {
+          do_group[group] = 1;
+          drawn_groups[ngroups++] = group;
+        }
+    }
+
+  component = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+  solder = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
+
+  /*
+   * first draw all 'invisible' stuff
+   */
+  if (!TEST_FLAG (CHECKPLANESFLAG, PCB)
+      && gui->set_layer ("invisible", SL (INVISIBLE, 0), 0))
+    {
+      r_search (PCB->Data->pad_tree, drawn_area, NULL, backPad_callback, NULL);
+      if (PCB->ElementOn)
+        {
+          r_search (PCB->Data->element_tree, drawn_area, NULL, backE_callback, NULL);
+          r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, backN_callback, NULL);
+          DrawLayer (&(PCB->Data->BACKSILKLAYER), drawn_area);
+        }
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    }
+
+  /* draw all layers in layerstack order */
+  for (i = ngroups - 1; i >= 0; i--)
+    {
+      int group = drawn_groups[i];
+
+      if (gui->set_layer (0, group, 0))
+        {
+
+          DrawLayerGroup (group, drawn_area);
+          gui->set_layer (NULL, SL (FINISHED, 0), 0);
+        }
+    }
+
+  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
+    return;
+
+  /* Draw pins, pads, vias below silk */
+  if (!Settings.ShowSolderSide)
+    gui->set_layer ("topsilk", SL (SILK, TOP), 0);
+  else
+    gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0);
+//  gui->set_layer (NULL, SL (FINISHED, 0), 0);
+
+#if 1
+  /* Mask out drilled holes */
+  glPushAttrib (GL_COLOR_BUFFER_BIT);
+  glColorMask (0, 0, 0, 0);
+  if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
+  if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
+  glPopAttrib ();
+
+  if (PCB->PinOn) r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, NULL);
+  if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
+  if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
+#endif
+
+  gui->set_layer (NULL, SL (FINISHED, 0), 0);
+
+  /* Draw the solder mask if turned on */
+  if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
+    {
+      int save_swap = SWAP_IDENT;
+      SWAP_IDENT = 0;
+      DrawMask (drawn_area);
+      SWAP_IDENT = save_swap;
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    }
+  if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
+    {
+      int save_swap = SWAP_IDENT;
+      SWAP_IDENT = 1;
+      DrawMask (drawn_area);
+      SWAP_IDENT = save_swap;
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    }
+  /* Draw top silkscreen */
+  if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
+    {
+      DrawSilk (0, COMPONENT_LAYER, drawn_area);
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    }
+
+  if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
+    {
+      DrawSilk (1, SOLDER_LAYER, drawn_area);
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    }
+
+  /* Draw element Marks */
+  if (PCB->PinOn)
+    r_search (PCB->Data->element_tree, drawn_area, NULL, EMark_callback, NULL);
+
+  /* Draw rat lines on top */
+  if (PCB->RatOn && gui->set_layer ("rats", SL (RATS, 0), 0))
+    DrawRats(drawn_area);
+
+  Gathering = True;
 }
 
 
@@ -931,7 +1463,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                 ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                              -gport->view_y0, 0);
 //  hid_expose_callback (&ghid_hid, &region, 0);
-  hid_expose_callback (&ghid_hid, NULL, 0);
+//  hid_expose_callback (&ghid_hid, NULL, 0);
+  ghid_draw_everything ();
+
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
 
