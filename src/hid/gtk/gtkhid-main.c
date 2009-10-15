@@ -520,6 +520,37 @@ ghid_invalidate_all ()
   gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
 }
 
+int compute_depth (int group)
+{
+  int depth = 0;
+  int newgroup;
+  int idx = (group >= 0
+             && group <
+             max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
+
+  if (group >= 0 && group < max_layer) {
+    newgroup = group;
+#if 0
+    /* Re-ordering doesn't work, since we also need to adjust the rendering order */
+    if (group == 1)
+      newgroup = max_layer - 1;
+    else if (group > 1)
+      newgroup = group - 1;
+#endif
+    depth = ((max_layer - newgroup) * 10) * 200 / gport->zoom;
+  } else if (SL_TYPE (idx) == SL_SILK) {
+    if (SL_SIDE (idx) == SL_TOP_SIDE && !Settings.ShowSolderSide) {
+      depth = (max_layer * 10 + 3) * 200 / gport->zoom;
+    } else {
+      depth = (10 - 3) * 200 / gport->zoom;
+    }
+  } else if (SL_TYPE (idx) == SL_INVISIBLE) {
+    depth = (10 - 3) * 200 / gport->zoom;
+  }
+
+  return depth;
+}
+
 int
 ghid_set_layer (const char *name, int group, int empty)
 {
@@ -533,17 +564,21 @@ ghid_set_layer (const char *name, int group, int empty)
   /* Flush out any existing geoemtry to be rendered */
   hidgl_flush_triangles (&buffer);
 
+  hidgl_set_depth (compute_depth (group));
+#if 0
   if (group >= 0 && group < max_layer) {
-    hidgl_set_depth ((max_layer - group) * 10);
-  } else {
-    if (SL_TYPE (idx) == SL_SILK) {
-      if (SL_SIDE (idx) == SL_TOP_SIDE && !Settings.ShowSolderSide) {
-        hidgl_set_depth (max_layer * 10 + 3);
-      } else {
-        hidgl_set_depth (10 - 3);
-      }
+    hidgl_set_depth (((max_layer - group) * 10) * 200 / gport->zoom);
+  } else if (SL_TYPE (idx) == SL_SILK) {
+    if (SL_SIDE (idx) == SL_TOP_SIDE && !Settings.ShowSolderSide) {
+      hidgl_set_depth ((max_layer * 10 + 3) * 200 / gport->zoom);
+    } else {
+      hidgl_set_depth ((10 - 3) * 200 / gport->zoom);
     }
+  } else if (SL_TYPE (idx) == SL_INVISIBLE) {
+    hidgl_set_depth ((10 - 3) * 200 / gport->zoom);
   }
+#endif
+
 
   glEnable (GL_STENCIL_TEST);                // Enable Stencil test
   glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
@@ -705,9 +740,9 @@ ghid_set_special_colors (HID_Attribute * ha)
     }
 }
 
-static char *current_color = NULL;
-static double global_alpha_mult = 1.0;
-static int alpha_changed = 0;
+/* static */ char *current_color = NULL;
+/* static */ double global_alpha_mult = 1.0;
+/* static */ int alpha_changed = 0;
 
 void
 ghid_set_color (hidGC gc, const char *name)
