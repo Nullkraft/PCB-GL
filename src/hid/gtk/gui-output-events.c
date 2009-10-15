@@ -1167,8 +1167,7 @@ DrawLayerGroup (int group, const BoxType * screen)
 	    {
 	      info.Layer = Layer;
 	      info.arg = True;
-	      r_search (Layer->polygon_tree, screen, NULL, poly_callback,
-			&info);
+	      r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
 	      info.arg = False;
 
 	      /* HACK: Subcomposite polygons separately from other layer primitives */
@@ -1186,14 +1185,16 @@ DrawLayerGroup (int group, const BoxType * screen)
 #endif
                   glPopAttrib ();
                 }
-	    }
+            }
 
+#if 1
           /* Draw pins and vias on this layer */
           if (rv)
             {
               if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
               if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
             }
+#endif
 
 	  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
 	    continue;
@@ -1211,15 +1212,68 @@ DrawLayerGroup (int group, const BoxType * screen)
 
 #if 0
   /* Draw pins and vias on this layer */
-  if (PCB->PinOn)
-    r_search (PCB->Data->pin_tree, screen, NULL, pin_callback, NULL);
-  if (PCB->ViaOn)
-    r_search (PCB->Data->via_tree, screen, NULL, via_callback, NULL);
+  if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_callback, NULL);
+  if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_callback, NULL);
 #endif
 
   if (n_entries > 1)
     rv = 1;
   return rv;
+}
+
+extern int compute_depth (int group);
+
+static void
+DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double scale)
+{
+#define PIXELS_PER_CIRCLINE 5.
+#define MIN_FACES_PER_CYL 6
+#define MAX_FACES_PER_CYL 360
+  float radius = vr;
+  float x1, y1;
+  float x2, y2;
+  float z1, z2;
+  int i;
+  int slices;
+
+  slices = M_PI * 2 * vr / scale / PIXELS_PER_CIRCLINE;
+
+  if (slices < MIN_FACES_PER_CYL)
+    slices = MIN_FACES_PER_CYL;
+
+  if (slices > MAX_FACES_PER_CYL)
+    slices = MAX_FACES_PER_CYL;
+
+  z1 = compute_depth (from_layer);
+  z2 = compute_depth (to_layer);
+
+  x1 = vx + vr;
+  y1 = vy;
+
+  hidgl_ensure_triangle_space (&buffer, 2 * slices);
+  for (i = 0; i < slices; i++)
+    {
+      x2 = radius * cosf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
+      y2 = radius * sinf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
+      hidgl_add_triangle_3D (&buffer, x1, y1, z1,  x2, y2, z1,  x1, y1, z2);
+      hidgl_add_triangle_3D (&buffer, x2, y2, z1,  x1, y1, z2,  x2, y2, z2);
+      x1 = x2;
+      y1 = y2;
+    }
+}
+
+struct cyl_info {
+  int from_layer;
+  int to_layer;
+  double scale;
+};
+
+static int
+hole_cyl_callback (const BoxType * b, void *cl)
+{
+  PinTypePtr Pin = (PinTypePtr) b;
+  struct cyl_info *info = cl;
+  DrawDrillChannel (Pin->X, Pin->Y, Pin->DrillingHole / 2, info->from_layer, info->to_layer, info->scale);
 }
 
 void
@@ -1233,6 +1287,7 @@ ghid_draw_everything (void)
   /* This is the reverse of the order in which we draw them.  */
   int drawn_groups[MAX_LAYER];
   BoxTypePtr drawn_area = NULL;
+  struct cyl_info cyl_info;
 
   extern char *current_color;
   extern Boolean Gathering;
@@ -1285,6 +1340,21 @@ ghid_draw_everything (void)
           DrawLayerGroup (group, drawn_area);
           gui->set_layer (NULL, SL (FINISHED, 0), 0);
         }
+
+#if 1
+      if (i > 0)
+        {
+//          gui->set_color (Output.fgGC, PCB->MaskColor);
+          gui->set_color (Output.fgGC, "drill");
+          ghid_global_alpha_mult (Output.fgGC, 0.75);
+          cyl_info.from_layer = i;
+          cyl_info.to_layer = i - 1;
+          cyl_info.scale = gport->zoom;
+          if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_cyl_callback, &cyl_info);
+          if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_cyl_callback, &cyl_info);
+          ghid_global_alpha_mult (Output.fgGC, 1.0);
+        }
+#endif
     }
 
   if (TEST_FLAG (CHECKPLANESFLAG, PCB))
