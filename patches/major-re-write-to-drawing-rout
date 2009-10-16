@@ -1,5 +1,5 @@
 Bottom: f37fd15c51ba22cc7d8b5f0bab0cff37f31afbce
-Top:    ab40b4e03bf37acc752f9e2ca49383101d48ad79
+Top:    b68ff6a0814e02f5a84d4dbe46944615dce99788
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-16 16:36:14 +0100
 
@@ -392,10 +392,10 @@ index 6bde5c0..a1f1dbb 100644
  void
  ghid_set_color (hidGC gc, const char *name)
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 4dada4a..5911886 100644
+index 4dada4a..04f1851 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -796,6 +796,12 @@ ghid_screen_update (void)
+@@ -796,6 +796,13 @@ ghid_screen_update (void)
  void DrawAttached (Boolean);
  void draw_grid (void);
  
@@ -403,12 +403,13 @@ index 4dada4a..5911886 100644
 +{
 +  Boolean arg;
 +  LayerTypePtr Layer;
++  const BoxType *clip;
 +};
 +
  static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
                                      {0.0, 1.0, 0.0, 0.0},
                                      {0.0, 0.0, 1.0, 0.0},
-@@ -824,6 +830,572 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
+@@ -824,6 +831,590 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
    ghid_invalidate_all ();
  }
  
@@ -568,6 +569,22 @@ index 4dada4a..5911886 100644
 +  return 1;
 +}
 +
++static int
++pour_callback (const BoxType * b, void *cl)
++{
++  struct pin_info *i = (struct pin_info *) cl;
++  PourType *pour = (PourType *)b;
++
++  DrawPour (i->Layer, pour, 0);
++
++  if (pour->PolygonN)
++    {
++      r_search (pour->polygon_tree, i->clip, NULL, poly_callback, i);
++    }
++
++  return 1;
++}
++
 +static void
 +DrawPadLowLevelSolid (hidGC gc, PadTypePtr Pad, Boolean clear, Boolean mask)
 +{
@@ -679,6 +696,7 @@ index 4dada4a..5911886 100644
 +  OutputType *out = &Output;
 +
 +  info.arg = True;
++  info.clip = screen;
 +
 +  if (thin)
 +    {
@@ -753,9 +771,10 @@ index 4dada4a..5911886 100644
 +      }
 +
 +      /* draw all polygons on this layer */
-+      if (Layer->PolygonN) {
++      if (Layer->PourN) {
 +        info.Layer = Layer;
-+        r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
++        info.clip = screen;
++        r_search (Layer->pour_tree, screen, NULL, pour_callback, &info);
 +
 +        /* HACK: Subcomposite polygons separately from other layer primitives */
 +        /* Reset the compositing */
@@ -981,7 +1000,7 @@ index 4dada4a..5911886 100644
  
  #define Z_NEAR 3.0
  gboolean
-@@ -836,6 +1408,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -836,6 +1427,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
    GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
  
@@ -990,7 +1009,7 @@ index 4dada4a..5911886 100644
    /* make GL-context "current" */
    if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
      return FALSE;
-@@ -892,7 +1466,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -892,7 +1485,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  //  glClearDepth (1000);
    glStencilMask (~0);
    glClearStencil (0);
@@ -999,7 +1018,7 @@ index 4dada4a..5911886 100644
    hidgl_reset_stencil_usage ();
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
-@@ -939,7 +1513,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -939,7 +1532,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
  //  hid_expose_callback (&ghid_hid, &region, 0);
@@ -1010,7 +1029,7 @@ index 4dada4a..5911886 100644
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
-@@ -980,6 +1556,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -980,6 +1575,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
  
