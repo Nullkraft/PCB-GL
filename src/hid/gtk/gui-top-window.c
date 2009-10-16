@@ -124,6 +124,7 @@ a zoom in/out.
 #include "gui-icons-misc.data"
 #include "gui-trackball.h"
 #include "snavi.h"
+#include "gui-trackball.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
