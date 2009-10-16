@@ -1,5 +1,5 @@
 Bottom: ea43eb1ed8930a51fdbef9d35b1de52ead63af60
-Top:    1142d3a2be9531e93fb1cb5f7229efe76c67fd7b
+Top:    67b3e606bdad2341c99aa72310b18dd933e60652
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-14 14:39:17 +0100
 
@@ -532,7 +532,7 @@ index b2856b5..6bb896a 100644
        break;
      }
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 41053b3..ae93619 100644
+index 41053b3..2f30d4d 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -35,6 +35,7 @@
@@ -561,7 +561,7 @@ index 41053b3..ae93619 100644
    ghid_show_crosshair (FALSE);
  
    glEnable (GL_BLEND);
-@@ -831,12 +843,16 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -831,12 +843,21 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -572,13 +572,18 @@ index 41053b3..ae93619 100644
                  1.);
  
 +  glDepthMask (0);
++  glStencilMask (~0);
 +  glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 +  hidgl_reset_stencil_usage ();
++
++  /* Disable the stencil test until we need it - otherwise it gets dirty */
++  glDisable (GL_STENCIL_TEST);
++  glStencilFunc (GL_ALWAYS, 0, 0);
  
    region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
    region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-@@ -862,6 +878,12 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -862,6 +883,12 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
