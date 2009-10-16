@@ -1,0 +1,203 @@
+Bottom: b8ba5c6b1ec2aee3ab0336a6191f3eb1cfe7e73d
+Top:    14a66a222d79a3cfd8391502652411b7aada520e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-16 16:22:35 +0100
+
+Refresh of use-trackball-to-allow-rotatio
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 2f30d4d..b847c71 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -792,6 +792,35 @@ ghid_screen_update (void)
+ void DrawAttached (Boolean);
+ void draw_grid ();
+ 
++static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
++                                    {0.0, 1.0, 0.0, 0.0},
++                                    {0.0, 0.0, 1.0, 0.0},
++                                    {0.0, 0.0, 0.0, 1.0}};
++
++void
++ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
++{
++#ifdef DEBUG_ROTATE
++  int row, column;
++#endif
++
++  build_rotmatrix (view_matrix, quarternion);
++
++#ifdef DEBUG_ROTATE
++  for (row = 0; row < 4; row++) {
++    printf ("[ %f", view_matrix[row][0]);
++    for (column = 1; column < 4; column++) {
++      printf (",\t%f", view_matrix[row][column]);
++    }
++    printf ("\t]\n");
++  }
++  printf ("\n");
++#endif
++
++  ghid_invalidate_all ();
++}
++
++
+ #define Z_NEAR 3.0
+ gboolean
+ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -824,24 +853,30 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+   glEnable (GL_BLEND);
+   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+ 
++//  glEnable (GL_DEPTH_TEST);
++
+ //  glEnable(GL_POLYGON_SMOOTH);
+ //  glHint(GL_POLYGON_SMOOTH_HINT, [GL_FASTEST, GL_NICEST, or GL_DONT_CARE]);
+ 
+-  glViewport (ev->area.x,
+-              widget->allocation.height - ev->area.height - ev->area.y,
+-              ev->area.width, ev->area.height);
++  glViewport (widget->allocation.x,     widget->allocation.y,
++              widget->allocation.width, widget->allocation.height);
+ 
++#if 0
+   glEnable (GL_SCISSOR_TEST);
+   glScissor (ev->area.x,
+              widget->allocation.height - ev->area.height - ev->area.y,
+              ev->area.width, ev->area.height);
++#endif
+ 
+   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity ();
+-  glOrtho (ev->area.x, ev->area.x + ev->area.width, ev->area.y + ev->area.height, ev->area.y, 0, 100);
++  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
+   glMatrixMode (GL_MODELVIEW);
+   glLoadIdentity ();
+-  glTranslatef (0.0f, 0.0f, -Z_NEAR);
++
++  glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
++  glMultMatrixf (view_matrix);
++  glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
+ 
+   glEnable (GL_STENCIL_TEST);
+   glClearColor (gport->offlimits_color.red / 65535.,
+@@ -850,15 +885,17 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+                 1.);
+ 
+   glDepthMask (0);
++//  glClearDepth (1000);
+   glStencilMask (~0);
+   glClearStencil (0);
+-  glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
++  glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   hidgl_reset_stencil_usage ();
+ 
+   /* Disable the stencil test until we need it - otherwise it gets dirty */
+   glDisable (GL_STENCIL_TEST);
+   glStencilFunc (GL_ALWAYS, 0, 0);
+ 
++#if 1
+   region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
+   region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
+   region.Y1 = MIN (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
+@@ -872,14 +909,15 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+              gport->bg_color.blue / 65535.);
+ 
+   glBegin (GL_QUADS);
+-  glVertex3i (eleft,  etop,    0);
+-  glVertex3i (eright, etop,    0);
+-  glVertex3i (eright, ebottom, 0);
+-  glVertex3i (eleft,  ebottom, 0);
++  glVertex3i (eleft,  etop,    -50);
++  glVertex3i (eright, etop,    -50);
++  glVertex3i (eright, ebottom, -50);
++  glVertex3i (eleft,  ebottom, -50);
+   glEnd ();
+ 
+   /* TODO: Background image */
+ 
++#if 1
+   hidgl_init_triangle_array (&buffer);
+   ghid_invalidate_current_gc ();
+ 
+@@ -896,7 +934,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+                              -gport->view_x0,
+                 ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
+                              -gport->view_y0, 0);
+-  hid_expose_callback (&ghid_hid, &region, 0);
++//  hid_expose_callback (&ghid_hid, &region, 0);
++  hid_expose_callback (&ghid_hid, NULL, 0);
+   hidgl_flush_triangles (&buffer);
+   glPopMatrix ();
+ 
+@@ -916,10 +955,14 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+   hidgl_flush_triangles (&buffer);
+   glPopMatrix ();
+ 
++#endif
++
+   ghid_show_crosshair (TRUE);
+ 
+   hidgl_flush_triangles (&buffer);
+ 
++#endif
++
+   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
+     gdk_gl_drawable_swap_buffers (pGlDrawable);
+   else
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 88920e6..fa0b6c3 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -122,6 +122,7 @@ a zoom in/out.
+ 
+ #include "gui-icons-mode-buttons.data"
+ #include "gui-icons-misc.data"
++#include "gui-trackball.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+@@ -2155,6 +2156,7 @@ ghid_build_pcb_top_window (void)
+   GtkWidget *vbox_main, *vbox_left, *hbox_middle, *hbox = NULL;
+   GtkWidget *viewport, *ebox, *vbox, *frame;
+   GtkWidget *label;
++  GtkWidget *trackball;
+   GHidPort *port = &ghid_port;
+   gchar *s;
+   GtkWidget *scrolled;
+@@ -2263,6 +2265,11 @@ ghid_build_pcb_top_window (void)
+       GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+   make_layer_buttons(vbox, port);
+ 
++  trackball = ghid_trackball_new ();
++  g_signal_connect (trackball, "rotation-changed",
++                    G_CALLBACK (ghid_port_rotate), NULL);
++  gtk_box_pack_start (GTK_BOX (vbox_left), trackball, FALSE, FALSE, 0);
++
+   vbox = gtk_vbox_new(FALSE, 0);
+   gtk_box_pack_start(GTK_BOX(vbox_left), vbox, FALSE, FALSE, 0);
+   ghidgui->mode_buttons0_frame_vbox = vbox;
+@@ -2673,7 +2680,7 @@ ghid_parse_arguments (int *argc, char ***argv)
+   /* setup GL-context */
+   gport->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
+                                                GDK_GL_MODE_STENCIL |
+-//                                               GDK_GL_MODE_DEPTH   |
++                                               GDK_GL_MODE_DEPTH   |
+                                                GDK_GL_MODE_DOUBLE);
+   if (!gport->glconfig) {
+     printf("Could not setup GL-context!\n");
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index cfde6a9..57de59c 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -364,6 +364,8 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
+ gint ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+ 				       GdkEventScroll * ev, GHidPort * out);
+ 
++void
++ghid_port_rotate (void *ball, float *quarternion, gpointer userdata);
+ 
+ gint ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+ 					     GdkEventExpose * ev,
