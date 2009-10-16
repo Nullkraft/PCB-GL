@@ -1100,6 +1100,7 @@ DrawMask (BoxType * screen)
 
   if (thin)
     {
+      gui->set_line_width (Output.pmGC, 0);
       gui->set_color (Output.pmGC, PCB->MaskColor);
       r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, &info);
       r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, &info);
@@ -1118,7 +1119,7 @@ DrawMask (BoxType * screen)
 
   gui->use_mask (HID_MASK_AFTER);
   gui->set_color (out->fgGC, PCB->MaskColor);
-  ghid_global_alpha_mult (out->fgGC, thin ? 0.25 : 1.0);
+  ghid_global_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
   gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
   ghid_global_alpha_mult (out->fgGC, 1.0);
 
@@ -1134,91 +1135,81 @@ DrawLayerGroup (int group, const BoxType * screen)
   LayerTypePtr Layer;
   int n_entries = PCB->LayerGroups.Number[group];
   Cardinal *layers = PCB->LayerGroups.Entries[group];
+  int first_run = 1;
 
-//  clip_box = screen;
-  for (i = n_entries - 1; i >= 0; i--)
-    { /* HACK: Subcomposite each layer in a layer group separately */
-      if (i < n_entries - 1) /* Don't set layer on the first one */
+  if (!gui->set_layer (0, group, 0)) {
+    gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    return 0;
+  }
+
+  /* HACK: Subcomposite each layer in a layer group separately */
+  for (i = n_entries - 1; i >= 0; i--) {
+    layernum = layers[i];
+    Layer = PCB->Data->Layer + layers[i];
+
+    if (strcmp (Layer->Name, "outline") == 0 ||
+        strcmp (Layer->Name, "route") == 0)
+      rv = 0;
+
+    if (layernum < max_layer /*&& Layer->On*/) {
+
+      if (!first_run)
         gui->set_layer (0, group, 0);
-      layernum = layers[i];
-      Layer = PCB->Data->Layer + layers[i];
-      if (strcmp (Layer->Name, "outline") == 0
-	  || strcmp (Layer->Name, "route") == 0)
-	rv = 0;
-      if (layernum < max_layer && Layer->On)
-	{
-          if (rv)
-            {
-              /* Mask out drilled holes on this layer */
-              glPushAttrib (GL_COLOR_BUFFER_BIT);
-              glColorMask (0, 0, 0, 0);
-              if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
-              if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
-              glPopAttrib ();
-#if 0
-              /* Draw pins and vias on this layer */
-              if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
-              if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
-#endif
-            }
 
-	  /* draw all polygons on this layer */
-	  if (Layer->PolygonN)
-	    {
-	      info.Layer = Layer;
-	      info.arg = True;
-	      r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
-	      info.arg = False;
+      first_run = 0;
 
-	      /* HACK: Subcomposite polygons separately from other layer primitives */
-	      /* Reset the compositing */
-	      gui->set_layer (0, group, 0);
+      if (rv) {
+        /* Mask out drilled holes on this layer */
+        hidgl_flush_triangles (&buffer);
+        glPushAttrib (GL_COLOR_BUFFER_BIT);
+        glColorMask (0, 0, 0, 0);
+        gui->set_color (Output.bgGC, PCB->MaskColor);
+        if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
+        if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
+        hidgl_flush_triangles (&buffer);
+        glPopAttrib ();
+      }
 
-              if (rv)
-                {
-                  glPushAttrib (GL_COLOR_BUFFER_BIT);
-                  glColorMask (0, 0, 0, 0);
-#if 1
-                  /* Mask out drilled holes on this layer */
-                  if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
-                  if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
-#endif
-                  glPopAttrib ();
-                }
-            }
+      /* draw all polygons on this layer */
+      if (Layer->PolygonN) {
+        info.Layer = Layer;
+        r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
 
-#if 1
-          /* Draw pins and vias on this layer */
-          if (rv)
-            {
-              if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
-              if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
-            }
-#endif
+        /* HACK: Subcomposite polygons separately from other layer primitives */
+        /* Reset the compositing */
+        gui->set_layer (NULL, SL (FINISHED, 0), 0);
+        gui->set_layer (0, group, 0);
 
-	  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
-	    continue;
+        if (rv) {
+          hidgl_flush_triangles (&buffer);
+          glPushAttrib (GL_COLOR_BUFFER_BIT);
+          glColorMask (0, 0, 0, 0);
+          /* Mask out drilled holes on this layer */
+          if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
+          if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
+          hidgl_flush_triangles (&buffer);
+          glPopAttrib ();
+        }
+      }
 
-	  /* draw all visible lines this layer */
-	  r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
+      /* Draw pins and vias on this layer */
+      if (rv) {
+        if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
+        if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
+      }
 
-	  /* draw the layer arcs on screen */
-	  r_search (Layer->arc_tree, screen, NULL, arc_callback, Layer);
+      if (TEST_FLAG (CHECKPLANESFLAG, PCB))
+        continue;
 
-	  /* draw the layer text on screen */
-	  r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
-	}
+      r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
+      r_search (Layer->arc_tree, screen, NULL, arc_callback, Layer);
+      r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
     }
+  }
 
-#if 0
-  /* Draw pins and vias on this layer */
-  if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_callback, NULL);
-  if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_callback, NULL);
-#endif
+  gui->set_layer (NULL, SL (FINISHED, 0), 0);
 
-  if (n_entries > 1)
-    rv = 1;
-  return rv;
+  return (n_entries > 1);
 }
 
 extern int compute_depth (int group);
@@ -1281,7 +1272,6 @@ ghid_draw_everything (void)
 {
   int i, ngroups, side;
   int plated;
-  int component, solder;
   /* This is the list of layer groups we will draw.  */
   int do_group[MAX_LAYER];
   /* This is the reverse of the order in which we draw them.  */
@@ -1295,67 +1285,51 @@ ghid_draw_everything (void)
   current_color = NULL;
   Gathering = False;
 
-//  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
-//  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
-
   memset (do_group, 0, sizeof (do_group));
-  for (ngroups = 0, i = 0; i < max_layer; i++)
-    {
-      LayerType *l = LAYER_ON_STACK (i);
-      int group = GetLayerGroupNumberByNumber (LayerStack[i]);
-      if (l->On && !do_group[group])
-        {
-          do_group[group] = 1;
-          drawn_groups[ngroups++] = group;
-        }
-    }
+  for (ngroups = 0, i = 0; i < max_layer; i++) {
 
-  component = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
-  solder = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
+    // Draw in numerical order
+    LayerType *l = LAYER_PTR (i); // LAYER_ON_STACK (i);
+    int group = GetLayerGroupNumberByNumber (i); // (LayerStack[i]);
+
+    if (/*l->On && */!do_group[group]) {
+      do_group[group] = 1;
+      drawn_groups[ngroups++] = group;
+    }
+  }
 
   /*
    * first draw all 'invisible' stuff
    */
-  if (!TEST_FLAG (CHECKPLANESFLAG, PCB)
-      && gui->set_layer ("invisible", SL (INVISIBLE, 0), 0))
-    {
-      r_search (PCB->Data->pad_tree, drawn_area, NULL, backPad_callback, NULL);
-      if (PCB->ElementOn)
-        {
-          r_search (PCB->Data->element_tree, drawn_area, NULL, backE_callback, NULL);
-          r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, backN_callback, NULL);
-          DrawLayer (&(PCB->Data->BACKSILKLAYER), drawn_area);
-        }
-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+  if (!TEST_FLAG (CHECKPLANESFLAG, PCB) &&
+      gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
+    r_search (PCB->Data->pad_tree, drawn_area, NULL, backPad_callback, NULL);
+    if (PCB->ElementOn) {
+      r_search (PCB->Data->element_tree, drawn_area, NULL, backE_callback, NULL);
+      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, backN_callback, NULL);
+      DrawLayer (&(PCB->Data->BACKSILKLAYER), drawn_area);
     }
+    gui->set_layer (NULL, SL (FINISHED, 0), 0);
+  }
 
   /* draw all layers in layerstack order */
-  for (i = ngroups - 1; i >= 0; i--)
-    {
-      int group = drawn_groups[i];
-
-      if (gui->set_layer (0, group, 0))
-        {
-
-          DrawLayerGroup (group, drawn_area);
-          gui->set_layer (NULL, SL (FINISHED, 0), 0);
-        }
+  for (i = ngroups - 1; i >= 0; i--) {
+    DrawLayerGroup (drawn_groups [i], drawn_area);
 
 #if 1
-      if (i > 0)
-        {
-//          gui->set_color (Output.fgGC, PCB->MaskColor);
-          gui->set_color (Output.fgGC, "drill");
-          ghid_global_alpha_mult (Output.fgGC, 0.75);
-          cyl_info.from_layer = i;
-          cyl_info.to_layer = i - 1;
-          cyl_info.scale = gport->zoom;
-          if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_cyl_callback, &cyl_info);
-          if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_cyl_callback, &cyl_info);
-          ghid_global_alpha_mult (Output.fgGC, 1.0);
-        }
-#endif
+    if (i > 0) {
+      cyl_info.from_layer = drawn_groups[i];
+      cyl_info.to_layer = drawn_groups[i - 1];
+      cyl_info.scale = gport->zoom;
+//      gui->set_color (Output.fgGC, PCB->MaskColor);
+      gui->set_color (Output.fgGC, "drill");
+      ghid_global_alpha_mult (Output.fgGC, 0.75);
+      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_cyl_callback, &cyl_info);
+      if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_cyl_callback, &cyl_info);
+      ghid_global_alpha_mult (Output.fgGC, 1.0);
     }
+#endif
+  }
 
   if (TEST_FLAG (CHECKPLANESFLAG, PCB))
     return;
@@ -1369,10 +1343,12 @@ ghid_draw_everything (void)
 
 #if 1
   /* Mask out drilled holes */
+  hidgl_flush_triangles (&buffer);
   glPushAttrib (GL_COLOR_BUFFER_BIT);
   glColorMask (0, 0, 0, 0);
   if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
   if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
+  hidgl_flush_triangles (&buffer);
   glPopAttrib ();
 
   if (PCB->PinOn) r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, NULL);
@@ -1383,34 +1359,30 @@ ghid_draw_everything (void)
   gui->set_layer (NULL, SL (FINISHED, 0), 0);
 
   /* Draw the solder mask if turned on */
-  if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
-    {
-      int save_swap = SWAP_IDENT;
-      SWAP_IDENT = 0;
-      DrawMask (drawn_area);
-      SWAP_IDENT = save_swap;
-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
-    }
-  if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
-    {
-      int save_swap = SWAP_IDENT;
-      SWAP_IDENT = 1;
-      DrawMask (drawn_area);
-      SWAP_IDENT = save_swap;
-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
-    }
+  if (gui->set_layer ("componentmask", SL (MASK, TOP), 0)) {
+    int save_swap = SWAP_IDENT;
+    SWAP_IDENT = 0;
+    DrawMask (drawn_area);
+    SWAP_IDENT = save_swap;
+    gui->set_layer (NULL, SL (FINISHED, 0), 0);
+  }
+  if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0)) {
+    int save_swap = SWAP_IDENT;
+    SWAP_IDENT = 1;
+    DrawMask (drawn_area);
+    SWAP_IDENT = save_swap;
+    gui->set_layer (NULL, SL (FINISHED, 0), 0);
+  }
   /* Draw top silkscreen */
-  if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
-    {
-      DrawSilk (0, COMPONENT_LAYER, drawn_area);
-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
-    }
+  if (gui->set_layer ("topsilk", SL (SILK, TOP), 0)) {
+    DrawSilk (0, COMPONENT_LAYER, drawn_area);
+    gui->set_layer (NULL, SL (FINISHED, 0), 0);
+  }
 
-  if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
-    {
-      DrawSilk (1, SOLDER_LAYER, drawn_area);
-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
-    }
+  if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0)) {
+    DrawSilk (1, SOLDER_LAYER, drawn_area);
+    gui->set_layer (NULL, SL (FINISHED, 0), 0);
+  }
 
   /* Draw element Marks */
   if (PCB->PinOn)
@@ -1423,6 +1395,7 @@ ghid_draw_everything (void)
   Gathering = True;
 }
 
+static int one_shot = 1;
 
 #define Z_NEAR 3.0
 gboolean
@@ -1434,6 +1407,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   extern HID ghid_hid;
   GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
   GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
+
+//  if (!one_shot) return;
 
   /* make GL-context "current" */
   if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
@@ -1487,11 +1462,14 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                 gport->offlimits_color.blue / 65535.,
                 1.);
 
-//  glClearDepth (1000);
-
   glClearStencil (0);
-  glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glStencilMask (~0);
+  glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); // | GL_DEPTH_BUFFER_BIT);
   hidgl_reset_stencil_usage ();
+
+  /* Disable the stencil test until we need it - otherwise it gets dirty */
+  glDisable (GL_STENCIL_TEST);
+  glStencilFunc (GL_ALWAYS, 0, 0);
 
 #if 1
   region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
@@ -1575,6 +1553,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 
   /* end drawing to current GL-context */
   gdk_gl_drawable_gl_end (pGlDrawable);
+
+  one_shot = 0;
 
   return FALSE;
 }
