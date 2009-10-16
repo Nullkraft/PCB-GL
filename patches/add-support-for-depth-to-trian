@@ -1,5 +1,5 @@
 Bottom: 9e65b7a470b367949b9eb80d321e5fab7793aa4f
-Top:    f8bb5b18c7c26fe25684a50bbbdcbba2ea9a11ea
+Top:    6099427d75b28c69a109f129329f56c7c744d864
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-14 14:43:21 +0100
 
@@ -45,7 +45,7 @@ index 9389885..48c84ee 100644
  /* ---------------------------------------------------------------------- */
  
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index d9afb3d..cf38e16 100644
+index d9afb3d..7c71398 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
 @@ -25,12 +25,13 @@
@@ -63,7 +63,7 @@ index d9afb3d..cf38e16 100644
  
  void hidgl_init_triangle_array (triangle_buffer *buffer);
  void hidgl_flush_triangles (triangle_buffer *buffer);
-@@ -48,10 +49,13 @@ hidgl_add_triangle (triangle_buffer *buffer,
+@@ -48,10 +49,35 @@ hidgl_add_triangle (triangle_buffer *buffer,
    }
    buffer->triangle_array [buffer->coord_comp_count++] = x1;
    buffer->triangle_array [buffer->coord_comp_count++] = y1;
@@ -74,10 +74,32 @@ index d9afb3d..cf38e16 100644
    buffer->triangle_array [buffer->coord_comp_count++] = x3;
    buffer->triangle_array [buffer->coord_comp_count++] = y3;
 +  buffer->triangle_array [buffer->coord_comp_count++] = global_depth;
++  buffer->triangle_count++;
++}
++
++static inline void
++hidgl_add_triangle_3D (triangle_buffer *buffer,
++                       GLfloat x1, GLfloat y1, GLfloat z1,
++                       GLfloat x2, GLfloat y2, GLfloat z2,
++                       GLfloat x3, GLfloat y3, GLfloat z3)
++{
++  if (buffer->triangle_count == TRIANGLE_ARRAY_SIZE) {
++    fprintf (stderr, "hidgl_add_triangle_3D: Attempt to add past end of array. Will now segfault.\n");
++    *(char *)0 = 0;
++  }
++  buffer->triangle_array [buffer->coord_comp_count++] = x1;
++  buffer->triangle_array [buffer->coord_comp_count++] = y1;
++  buffer->triangle_array [buffer->coord_comp_count++] = z1;
++  buffer->triangle_array [buffer->coord_comp_count++] = x2;
++  buffer->triangle_array [buffer->coord_comp_count++] = y2;
++  buffer->triangle_array [buffer->coord_comp_count++] = z2;
++  buffer->triangle_array [buffer->coord_comp_count++] = x3;
++  buffer->triangle_array [buffer->coord_comp_count++] = y3;
++  buffer->triangle_array [buffer->coord_comp_count++] = z3;
    buffer->triangle_count++;
  }
  
-@@ -69,5 +73,6 @@ int hidgl_stencil_bits (void);
+@@ -69,5 +95,6 @@ int hidgl_stencil_bits (void);
  int hidgl_assign_clear_stencil_bit (void);
  void hidgl_return_stencil_bit (int bit);
  void hidgl_reset_stencil_usage (void);
