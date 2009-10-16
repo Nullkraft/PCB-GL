@@ -522,7 +522,9 @@ ghid_invalidate_all ()
 
 int compute_depth (int group)
 {
-  int depth = 0;
+  static int last_depth_computed = 0;
+
+  int depth = last_depth_computed;
   int newgroup;
   int idx = (group >= 0
              && group <
@@ -554,6 +556,7 @@ int compute_depth (int group)
     depth = (10 - 3) * 200 / gport->zoom;
   }
 
+  last_depth_computed = depth;
   return depth;
 }
 
@@ -561,81 +564,55 @@ int
 ghid_set_layer (const char *name, int group, int empty)
 {
   static int stencil_bit = 0;
-  int idx = (group >= 0
-	     && group <
-	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
+  int idx = (group >= 0 && group < max_layer) ?
+              PCB->LayerGroups.Entries[group][0] : group;
 
-#define SUBCOMPOSITE_LAYERS
-#ifdef SUBCOMPOSITE_LAYERS
   /* Flush out any existing geoemtry to be rendered */
   hidgl_flush_triangles (&buffer);
 
   hidgl_set_depth (compute_depth (group));
-#if 0
-  if (group >= 0 && group < max_layer) {
-    hidgl_set_depth (((max_layer - group) * 10) * 200 / gport->zoom);
-  } else if (SL_TYPE (idx) == SL_SILK) {
-    if (SL_SIDE (idx) == SL_TOP_SIDE && !Settings.ShowSolderSide) {
-      hidgl_set_depth ((max_layer * 10 + 3) * 200 / gport->zoom);
-    } else {
-      hidgl_set_depth ((10 - 3) * 200 / gport->zoom);
-    }
-  } else if (SL_TYPE (idx) == SL_INVISIBLE) {
-    hidgl_set_depth ((10 - 3) * 200 / gport->zoom);
+
+  glEnable (GL_STENCIL_TEST);                   // Enable Stencil test
+  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);   // Stencil pass => replace stencil value (with 1)
+  hidgl_return_stencil_bit (stencil_bit);       // Relinquish any bitplane we previously used
+  if (SL_TYPE (idx) != SL_FINISHED) {
+    stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
+    glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
+    glStencilFunc (GL_GREATER, stencil_bit, stencil_bit); // Pass stencil test if our assigned bit is clear
+  } else {
+    stencil_bit = 0;
+    glStencilMask (0);
+    glStencilFunc (GL_ALWAYS, 0, 0);  // Always pass stencil test
   }
-#endif
-
-
-  glEnable (GL_STENCIL_TEST);                // Enable Stencil test
-  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
-  /* Reset stencil buffer so we can paint anywhere */
-  hidgl_return_stencil_bit (stencil_bit);               // Relinquish any bitplane we previously used
-  if (SL_TYPE (idx) != SL_FINISHED)
-    {
-      stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
-      glStencilFunc (GL_GREATER, stencil_bit, stencil_bit); // Pass stencil test if our assigned bit is clear
-      glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
-    }
-  else
-    {
-#endif
-      stencil_bit = 0;
-      glStencilMask (0);
-      glStencilFunc (GL_ALWAYS, 0, 0);  // Always pass stencil test
-#ifdef SUBCOMPOSITE_LAYERS
-    }
-#endif
 
   if (idx >= 0 && idx < max_layer + 2) {
     gport->trans_lines = TRUE;
-    return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
+    return PCB->Data->Layer[idx].On;
   }
-  if (idx < 0)
-    {
-      switch (SL_TYPE (idx))
-	{
-	case SL_INVISIBLE:
-	  return /* pinout ? 0 : */ PCB->InvisibleObjectsOn;
-	case SL_MASK:
-	  if (SL_MYSIDE (idx) /*&& !pinout */ )
-	    return TEST_FLAG (SHOWMASKFLAG, PCB);
-	  return 0;
-	case SL_SILK:
-          gport->trans_lines = TRUE;
-//          gport->trans_lines = FALSE;
-	  if (SL_MYSIDE (idx) /*|| pinout */ )
-	    return PCB->ElementOn;
-	  return 0;
-	case SL_ASSY:
-	  return 0;
-	case SL_RATS:
-	  gport->trans_lines = TRUE;
-	  return 1;
-	case SL_PDRILL:
-	case SL_UDRILL:
-	  return 1;
-	}
+
+  if (idx < 0) {
+    switch (SL_TYPE (idx)) {
+      case SL_INVISIBLE:
+        return PCB->InvisibleObjectsOn;
+      case SL_MASK:
+        if (SL_MYSIDE (idx))
+          return TEST_FLAG (SHOWMASKFLAG, PCB);
+        return 0;
+      case SL_SILK:
+        gport->trans_lines = TRUE;
+        if (SL_MYSIDE (idx))
+          return PCB->ElementOn;
+        return 0;
+      case SL_ASSY:
+        return 0;
+      case SL_RATS:
+        gport->trans_lines = TRUE;
+        return 1;
+      case SL_PDRILL:
+      case SL_UDRILL:
+        return 1;
     }
+  }
   return 0;
 }
 
