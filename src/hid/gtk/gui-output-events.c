@@ -801,7 +801,10 @@ static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
 void
 ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
 {
+#ifdef DEBUG_ROTATE
   int row, column;
+#endif
+
   build_rotmatrix (view_matrix, quarternion);
 
 #ifdef DEBUG_ROTATE
