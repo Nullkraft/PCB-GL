@@ -729,6 +729,16 @@ hidgl_stencil_bits (void)
   return stencil_bits;
 }
 
+static void
+hidgl_clean_unassigned_stencil (void)
+{
+  glPushAttrib (GL_STENCIL_BUFFER_BIT);
+  glStencilMask (~assigned_bits);
+  glClearStencil (0);
+  glClear (GL_STENCIL_BUFFER_BIT);
+  glPopAttrib ();
+}
+
 int
 hidgl_assign_clear_stencil_bit (void)
 {
@@ -736,42 +746,28 @@ hidgl_assign_clear_stencil_bit (void)
   int test;
   int first_dirty = 0;
 
-  if (assigned_bits == stencil_bitmask)
-    {
-      printf ("No more stencil bits available, total of %i already assigned\n",
-              stencil_bits);
-      return 0;
-    }
+  if (assigned_bits == stencil_bitmask) {
+    printf ("No more stencil bits available, total of %i already assigned\n",
+            stencil_bits);
+    return 0;
+  }
 
   /* Look for a bitplane we don't have to clear */
-  for (test = 1; test & stencil_bitmask; test <<= 1)
-    {
-      if (!(test & dirty_bits))
-        {
-          assigned_bits |= test;
-          dirty_bits |= test;
-//          printf ("Assigning an already clean stencil bitplane %x\n", test);
-          return test;
-        }
-      else if (!first_dirty && !(test & assigned_bits))
-        {
-          first_dirty = test;
-        }
+  for (test = 1; test & stencil_bitmask; test <<= 1) {
+    if (!(test & dirty_bits)) {
+      assigned_bits |= test;
+      dirty_bits |= test;
+      return test;
+    } else if (!first_dirty && !(test & assigned_bits)) {
+      first_dirty = test;
     }
-
-//  printf ("Cleaning bitplanes %x, assigned are %x\n", ~assigned_bits & dirty_bits, assigned_bits);
+  }
 
   /* Didn't find any non dirty planes. Clear those dirty ones which aren't in use */
-  glPushAttrib (GL_STENCIL_BUFFER_BIT);
-  glStencilMask (~assigned_bits & dirty_bits);
-  glClearStencil (0);
-  glClear (GL_STENCIL_BUFFER_BIT);
-  glPopAttrib ();
-
+  hidgl_clean_unassigned_stencil ();
   assigned_bits |= first_dirty;
   dirty_bits = assigned_bits;
 
-//  printf ("Assigning the first of the dirty bitplanes we just cleaned, %x\n", first_dirty);
   return first_dirty;
 }
 
