@@ -366,6 +366,8 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
 gint ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
 				       GdkEventScroll * ev, GHidPort * out);
 
+void
+ghid_port_rotate (void *ball, float *quarternion, gpointer userdata);
 
 gint ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 					     GdkEventExpose * ev,
