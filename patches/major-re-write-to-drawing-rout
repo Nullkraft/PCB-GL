@@ -1,7 +1,7 @@
-Bottom: e26393576cbcbcb459ee021958c41a996ed98d7f
+Bottom: b5972b630e277e4658c66574d540450c73fcc30c
 Top:    3e28a3ec73b1954abce4dfb5beda9aa98218404a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-16 16:01:00 +0100
+Date:   2009-10-16 16:08:46 +0100
 
 Major re-write to drawing routines
 
@@ -391,7 +391,7 @@ index 6bde5c0..a1f1dbb 100644
  void
  ghid_set_color (hidGC gc, const char *name)
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 260ac42..330382e 100644
+index 039dc53..330382e 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -796,6 +796,12 @@ ghid_screen_update (void)
@@ -407,18 +407,7 @@ index 260ac42..330382e 100644
  static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
                                      {0.0, 1.0, 0.0, 0.0},
                                      {0.0, 0.0, 1.0, 0.0},
-@@ -804,7 +810,10 @@ static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
- void
- ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
- {
-+#ifdef DEBUG_ROTATE
-   int row, column;
-+#endif
-+
-   build_rotmatrix (view_matrix, quarternion);
- 
- #ifdef DEBUG_ROTATE
-@@ -821,6 +830,572 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
+@@ -824,6 +830,572 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
    ghid_invalidate_all ();
  }
  
@@ -991,7 +980,7 @@ index 260ac42..330382e 100644
  
  #define Z_NEAR 3.0
  gboolean
-@@ -833,6 +1408,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -836,6 +1408,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
    GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
  
@@ -1000,7 +989,7 @@ index 260ac42..330382e 100644
    /* make GL-context "current" */
    if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
      return FALSE;
-@@ -885,12 +1462,15 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -888,12 +1462,15 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                  gport->offlimits_color.blue / 65535.,
                  1.);
  
@@ -1019,7 +1008,7 @@ index 260ac42..330382e 100644
  #if 1
    region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
    region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-@@ -931,7 +1511,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -934,7 +1511,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
  //  hid_expose_callback (&ghid_hid, &region, 0);
@@ -1030,7 +1019,7 @@ index 260ac42..330382e 100644
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
-@@ -972,6 +1554,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -975,6 +1554,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
  
