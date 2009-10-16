@@ -1,7 +1,7 @@
-Bottom: 9e65b7a470b367949b9eb80d321e5fab7793aa4f
-Top:    6099427d75b28c69a109f129329f56c7c744d864
+Bottom: 27d77b972af0fdb2e8605534f5ad7412de449820
+Top:    b218fe060a1cb38948ef0a71c244430cb12ab08b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-14 14:43:21 +0100
+Date:   2009-10-16 16:01:00 +0100
 
 Add support for depth to triangle rendering routines.
 
@@ -11,7 +11,7 @@ Nasty global depth_state variable should be replaced!
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 9389885..48c84ee 100644
+index f4b32b7..60af460 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -48,6 +48,7 @@
@@ -31,7 +31,7 @@ index 9389885..48c84ee 100644
    buffer->triangle_count = 0;
    buffer->coord_comp_count = 0;
  }
-@@ -787,6 +788,12 @@ hidgl_reset_stencil_usage (void)
+@@ -788,6 +789,12 @@ hidgl_reset_stencil_usage (void)
    dirty_bits = 0;
  }
  
