@@ -1,5 +1,5 @@
 Bottom: 860d8ac07743940ab591612024e3223696a6651a
-Top:    fca90867bde9e3793efd01e53e619e93e15c03c3
+Top:    658798d33cb5f6284644dec345a9d5e3352594f5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-16 16:00:59 +0100
 
@@ -9,10 +9,10 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 139f01a..a8404e9 100644
+index 139f01a..20c6533 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -793,6 +793,32 @@ ghid_screen_update (void)
+@@ -793,6 +793,35 @@ ghid_screen_update (void)
  void DrawAttached (Boolean);
  void draw_grid ();
  
@@ -24,7 +24,10 @@ index 139f01a..a8404e9 100644
 +void
 +ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
 +{
++#ifdef DEBUG_ROTATE
 +  int row, column;
++#endif
++
 +  build_rotmatrix (view_matrix, quarternion);
 +
 +#ifdef DEBUG_ROTATE
@@ -45,7 +48,7 @@ index 139f01a..a8404e9 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
-@@ -825,24 +851,30 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -825,24 +854,30 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
@@ -81,7 +84,7 @@ index 139f01a..a8404e9 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (gport->offlimits_color.red / 65535.,
-@@ -850,11 +882,13 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -850,11 +885,13 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                  gport->offlimits_color.blue / 65535.,
                  1.);
  
@@ -97,7 +100,7 @@ index 139f01a..a8404e9 100644
    region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
    region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
    region.Y1 = MIN (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
-@@ -868,14 +902,15 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -868,14 +905,15 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
               gport->bg_color.blue / 65535.);
  
    glBegin (GL_QUADS);
@@ -117,7 +120,7 @@ index 139f01a..a8404e9 100644
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
-@@ -892,7 +927,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -892,7 +930,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                               -gport->view_x0,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
@@ -127,7 +130,7 @@ index 139f01a..a8404e9 100644
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
-@@ -912,10 +948,14 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -912,10 +951,14 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
