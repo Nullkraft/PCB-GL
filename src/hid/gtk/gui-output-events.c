@@ -800,6 +800,7 @@ struct pin_info
 {
   Boolean arg;
   LayerTypePtr Layer;
+  const BoxType *clip;
 };
 
 static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
@@ -986,6 +987,22 @@ poly_callback (const BoxType * b, void *cl)
   return 1;
 }
 
+static int
+pour_callback (const BoxType * b, void *cl)
+{
+  struct pin_info *i = (struct pin_info *) cl;
+  PourType *pour = (PourType *)b;
+
+  DrawPour (i->Layer, pour, 0);
+
+  if (pour->PolygonN)
+    {
+      r_search (pour->polygon_tree, i->clip, NULL, poly_callback, i);
+    }
+
+  return 1;
+}
+
 static void
 DrawPadLowLevelSolid (hidGC gc, PadTypePtr Pad, Boolean clear, Boolean mask)
 {
@@ -1097,6 +1114,7 @@ DrawMask (BoxType * screen)
   OutputType *out = &Output;
 
   info.arg = True;
+  info.clip = screen;
 
   if (thin)
     {
@@ -1171,9 +1189,10 @@ DrawLayerGroup (int group, const BoxType * screen)
       }
 
       /* draw all polygons on this layer */
-      if (Layer->PolygonN) {
+      if (Layer->PourN) {
         info.Layer = Layer;
-        r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
+        info.clip = screen;
+        r_search (Layer->pour_tree, screen, NULL, pour_callback, &info);
 
         /* HACK: Subcomposite polygons separately from other layer primitives */
         /* Reset the compositing */
