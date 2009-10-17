@@ -1,7 +1,7 @@
-Bottom: 948f7cabf168ba976c9e4787bc3ec8fed83e5d72
-Top:    e97fc7dab43bf02492d1da5fc987bd8c91816991
+Bottom: 975d0b9c70ce1db997495fe7cb6f761675bc4108
+Top:    939a3a6df75a541dfcacf1bbf507033f6ee9750a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-17 03:09:04 +0100
+Date:   2009-10-17 04:04:02 +0100
 
 Off to find burried treasure on polygon island
 
@@ -146,7 +146,7 @@ index 11f517b..a94e3b0 100644
      {
        AddPart (Polygon);
 diff --git a/src/find.c b/src/find.c
-index 039a675..e176081 100644
+index 630781f..decaae3 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -2568,6 +2568,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
@@ -157,7 +157,7 @@ index 039a675..e176081 100644
    info.polygon = *Polygon;
    EXPAND_BOUNDS (&info.polygon);
    info.layer = LayerGroup;
-@@ -3920,6 +3921,70 @@ doIsBad:
+@@ -3922,6 +3923,70 @@ doIsBad:
  }
  
  /*-----------------------------------------------------------------------------

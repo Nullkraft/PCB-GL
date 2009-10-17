@@ -1,7 +1,7 @@
-Bottom: b15c3243956a55596b4c885d3296c2b3c92345b9
-Top:    8e7ada8aaec754894d1c752960dbfc7cc54fffb9
+Bottom: 521ccbdacd0c6744a52aafe6a24a922986ff9a3a
+Top:    ac1345be78af94e03be3466a06c13ee5a8842437
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-17 03:09:03 +0100
+Date:   2009-10-17 04:04:01 +0100
 
 Use the r_trees to avoid needing to check so many polygons all the time
 
@@ -26,7 +26,7 @@ Use the r_trees to avoid needing to check so many polygons all the time
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 2677192..039a675 100644
+index 1b61a52..630781f 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -33,8 +33,6 @@

@@ -1,7 +1,7 @@
-Bottom: cc44c77caa43b4fb72c0d0072554be159e88d579
-Top:    b15c3243956a55596b4c885d3296c2b3c92345b9
+Bottom: 6953adcc817b15e5af38739f7de5607e347daa58
+Top:    521ccbdacd0c6744a52aafe6a24a922986ff9a3a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-17 03:09:03 +0100
+Date:   2009-10-17 04:04:01 +0100
 
 Add support for a "poured" object.
 
@@ -2280,7 +2280,7 @@ index 018b272..35bfb57 100644
  		fputs ("\n\t\t", FP);
  	      fprintf (FP, "[%i %i] ", (int) point->X, (int) point->Y);
 diff --git a/src/find.c b/src/find.c
-index a7436cd..2677192 100644
+index 6e81d29..1b61a52 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -628,6 +628,7 @@ void
@@ -2555,7 +2555,7 @@ index a7436cd..2677192 100644
            /* check all lines */
            if (setjmp (info.env) == 0)
              r_search (LAYER_PTR (layer)->line_tree,
-@@ -3475,17 +3526,21 @@ ResetFoundLinesAndPolygons (Boolean AndDraw)
+@@ -3477,17 +3528,21 @@ ResetFoundLinesAndPolygons (Boolean AndDraw)
        }
    }
    ENDALL_LOOP;
