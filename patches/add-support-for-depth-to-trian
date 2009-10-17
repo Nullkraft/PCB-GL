@@ -1,5 +1,5 @@
 Bottom: c9eb54fd928707a39c1236f5347dc8713a55a262
-Top:    01e0c526c77aef41cdc2ba9aedfd32930c02e6ee
+Top:    32bcea264d817bc347b447007bd2efffe6153f30
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-17 02:57:14 +0100
 
@@ -45,10 +45,10 @@ index f4b32b7..60af460 100644
  /* ---------------------------------------------------------------------- */
  
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index b956a65..c6f79c4 100644
+index b956a65..ce4724d 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
-@@ -25,12 +25,13 @@
+@@ -25,32 +25,47 @@
  
  #define TRIANGLE_ARRAY_SIZE 5461
  typedef struct {
@@ -63,21 +63,18 @@ index b956a65..c6f79c4 100644
  
  void hidgl_init_triangle_array (triangle_buffer *buffer);
  void hidgl_flush_triangles (triangle_buffer *buffer);
-@@ -42,12 +43,26 @@ hidgl_add_triangle (triangle_buffer *buffer,
-                     GLfloat x2, GLfloat y2,
-                     GLfloat x3, GLfloat y3)
- {
-+  hidgl_add_triangle_3D (x1, y1, global_depth,
-+                         x2, y2, gloabl_depth,
-+                         x3, y3, global_depth);
-+}
-+
-+static inline void
+ void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
+ 
+ static inline void
+-hidgl_add_triangle (triangle_buffer *buffer,
+-                    GLfloat x1, GLfloat y1,
+-                    GLfloat x2, GLfloat y2,
+-                    GLfloat x3, GLfloat y3)
 +hidgl_add_triangle_3D (triangle_buffer *buffer,
 +                       GLfloat x1, GLfloat y1, GLfloat z1,
 +                       GLfloat x2, GLfloat y2, GLfloat z2,
 +                       GLfloat x3, GLfloat y3, GLfloat z3)
-+{
+ {
    buffer->triangle_array [buffer->coord_comp_count++] = x1;
    buffer->triangle_array [buffer->coord_comp_count++] = y1;
 +  buffer->triangle_array [buffer->coord_comp_count++] = z1;
@@ -90,6 +87,20 @@ index b956a65..c6f79c4 100644
    buffer->triangle_count++;
  }
  
++static inline void
++hidgl_add_triangle (triangle_buffer *buffer,
++                    GLfloat x1, GLfloat y1,
++                    GLfloat x2, GLfloat y2,
++                    GLfloat x3, GLfloat y3)
++{
++  hidgl_add_triangle_3D (x1, y1, global_depth,
++                         x2, y2, gloabl_depth,
++                         x3, y3, global_depth);
++}
++
+ // void draw_grid ()
+ void hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double scale);
+ void hidgl_draw_arc (double width, int vx, int vy, int vrx, int vry, int start_angle, int delta_angle, double scale);
 @@ -65,5 +80,6 @@ int hidgl_stencil_bits (void);
  int hidgl_assign_clear_stencil_bit (void);
  void hidgl_return_stencil_bit (int bit);
