@@ -1,7 +1,7 @@
-Bottom: b3b1fa0b5649337799159e0c65e540fe6b9e1f94
-Top:    34133a07eef4387e33262dfc23a2a9dd247b2a59
+Bottom: 0c0e335412497110c2e51476264fac67e8d065ce
+Top:    c6bcb5f16ca9746db443c242e9083aecaffc76bb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-16 16:25:28 +0100
+Date:   2009-10-17 03:02:54 +0100
 
 Add support for a "poured" object.
 
@@ -5045,10 +5045,10 @@ index 2faaa20..4dba4ca 100644
  void RestoreToPolygon(DataType *, int, void *, void *);
  void ClearFromPolygon(DataType *, int, void *, void *);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 8a767e6..e645a16 100644
+index a640222..6fe875b 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -859,6 +859,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -858,6 +858,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
  }
  
  static void
@@ -5094,7 +5094,7 @@ index 8a767e6..e645a16 100644
  M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  {
    POLYAREA *a = afst, *b = bfst;
-@@ -1105,7 +1144,7 @@ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
+@@ -1104,7 +1143,7 @@ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
  	      return TRUE;
  	  }
      }
@@ -5103,7 +5103,7 @@ index 8a767e6..e645a16 100644
    return FALSE;
  }
  
-@@ -2271,7 +2310,8 @@ Touching (POLYAREA * a, POLYAREA * b)
+@@ -2270,7 +2309,8 @@ Touching (POLYAREA * a, POLYAREA * b)
        if (!poly_Valid (b))
  	return -1;
  #endif
@@ -5113,7 +5113,7 @@ index 8a767e6..e645a16 100644
  
        if (M_POLYAREA_label (a, b, TRUE))
  	return TRUE;
-@@ -3063,15 +3103,19 @@ inside_sector (VNODE * pn, Vector p2)
+@@ -3062,15 +3102,19 @@ inside_sector (VNODE * pn, Vector p2)
  BOOLp
  poly_ChkContour (PLINE * a)
  {
@@ -5135,7 +5135,7 @@ index 8a767e6..e645a16 100644
        do
  	{
  	  if (!node_neighbours (a1, a2) &&
-@@ -3079,21 +3123,22 @@ poly_ChkContour (PLINE * a)
+@@ -3078,21 +3122,22 @@ poly_ChkContour (PLINE * a)
  				    a2->point, a2->next->point, i1, i2)) > 0)
  	    {
  	      if (icnt > 1)
@@ -5163,7 +5163,7 @@ index 8a767e6..e645a16 100644
  
  #if 1
  	      /* now check if they are inside each other */
-@@ -3101,11 +3146,11 @@ poly_ChkContour (PLINE * a)
+@@ -3100,11 +3145,11 @@ poly_ChkContour (PLINE * a)
  		  inside_sector (hit1, hit2->next->point) ||
  		  inside_sector (hit2, hit1->prev->point) ||
  		  inside_sector (hit2, hit1->next->point))
