@@ -1,5 +1,5 @@
 Bottom: d42910d96007c318388fa6598b55b6f86e551cc5
-Top:    1d18eeda682bc11c626e127b814fda47017089c0
+Top:    e63611f9872eb3391adc5976eb9e48b8dd06b830
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-17 04:01:03 +0100
 
@@ -25,7 +25,7 @@ No functional changes
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 97424ce..c531419 100644
+index 97424ce..e22d5cc 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -2644,49 +2644,51 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
@@ -37,13 +37,7 @@ index 97424ce..c531419 100644
 -      P1->Clipped->contours->xmax + Bloat >= P2->Clipped->contours->xmin &&
 -      P1->Clipped->contours->ymin - Bloat <= P2->Clipped->contours->ymax &&
 -      P1->Clipped->contours->ymax + Bloat >= P2->Clipped->contours->ymin)
--    {
--      PLINE *c;
- 
--      /* first check un-bloated case */
--      if (isects (P1->Clipped, P2, False))
--        return TRUE;
--      if (Bloat > 0)
++
 +  /* first check if both bounding boxes intersect. If not, return quickly */
 +  if (P1->Clipped->contours->xmin - Bloat > P2->Clipped->contours->xmax ||
 +      P1->Clipped->contours->xmax + Bloat < P2->Clipped->contours->xmin ||
@@ -57,8 +51,13 @@ index 97424ce..c531419 100644
 +
 +  /* now the difficult case of bloated */
 +  if (Bloat > 0)
-+  {
-+    PLINE *c;
+     {
+       PLINE *c;
+-
+-      /* first check un-bloated case */
+-      if (isects (P1->Clipped, P2, False))
+-        return TRUE;
+-      if (Bloat > 0)
 +      for (c = P1->Clipped->contours; c; c = c->next)
          {
 -          /* now the difficult case of bloated */
