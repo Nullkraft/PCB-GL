@@ -61,9 +61,9 @@ hidgl_add_triangle (triangle_buffer *buffer,
                     GLfloat x2, GLfloat y2,
                     GLfloat x3, GLfloat y3)
 {
-  hidgl_add_triangle_3D (x1, y1, global_depth,
-                         x2, y2, gloabl_depth,
-                         x3, y3, global_depth);
+  hidgl_add_triangle_3D (buffer, x1, y1, global_depth,
+                                 x2, y2, gloabl_depth,
+                                 x3, y3, global_depth);
 }
 
 // void draw_grid ()
