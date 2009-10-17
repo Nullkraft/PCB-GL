@@ -38,17 +38,6 @@ void hidgl_flush_triangles (triangle_buffer *buffer);
 void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
 
 static inline void
-hidgl_add_triangle (triangle_buffer *buffer,
-                    GLfloat x1, GLfloat y1,
-                    GLfloat x2, GLfloat y2,
-                    GLfloat x3, GLfloat y3)
-{
-  hidgl_add_triangle_3D (x1, y1, global_depth,
-                         x2, y2, gloabl_depth,
-                         x3, y3, global_depth);
-}
-
-static inline void
 hidgl_add_triangle_3D (triangle_buffer *buffer,
                        GLfloat x1, GLfloat y1, GLfloat z1,
                        GLfloat x2, GLfloat y2, GLfloat z2,
@@ -64,6 +53,17 @@ hidgl_add_triangle_3D (triangle_buffer *buffer,
   buffer->triangle_array [buffer->coord_comp_count++] = y3;
   buffer->triangle_array [buffer->coord_comp_count++] = z3;
   buffer->triangle_count++;
+}
+
+static inline void
+hidgl_add_triangle (triangle_buffer *buffer,
+                    GLfloat x1, GLfloat y1,
+                    GLfloat x2, GLfloat y2,
+                    GLfloat x3, GLfloat y3)
+{
+  hidgl_add_triangle_3D (x1, y1, global_depth,
+                         x2, y2, gloabl_depth,
+                         x3, y3, global_depth);
 }
 
 // void draw_grid ()
