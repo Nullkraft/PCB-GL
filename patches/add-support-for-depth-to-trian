@@ -1,5 +1,5 @@
 Bottom: c9eb54fd928707a39c1236f5347dc8713a55a262
-Top:    29ad88f5f8a8118889256cc8f2e07db96b0c4bb2
+Top:    8b8244150b5d8d574a685bd2d96308e521a18d4e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-17 02:57:14 +0100
 
@@ -45,7 +45,7 @@ index f4b32b7..60af460 100644
  /* ---------------------------------------------------------------------- */
  
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index b956a65..fc1f37a 100644
+index b956a65..aa2985e 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
 @@ -25,32 +25,47 @@
@@ -94,7 +94,7 @@ index b956a65..fc1f37a 100644
 +                    GLfloat x3, GLfloat y3)
 +{
 +  hidgl_add_triangle_3D (buffer, x1, y1, global_depth,
-+                                 x2, y2, gloabl_depth,
++                                 x2, y2, global_depth,
 +                                 x3, y3, global_depth);
 +}
 +
