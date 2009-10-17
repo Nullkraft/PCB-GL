@@ -1,0 +1,27 @@
+Bottom: 01e0c526c77aef41cdc2ba9aedfd32930c02e6ee
+Top:    ead1553b40dd795e2915f3f38b52e49419cc751f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-17 03:01:43 +0100
+
+Refresh of add-debug-catch-to-triangle-ha
+
+---
+
+diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
+index c6f79c4..ee506c3 100644
+--- a/src/hid/common/hidgl.h
++++ b/src/hid/common/hidgl.h
+@@ -54,6 +54,13 @@ hidgl_add_triangle_3D (triangle_buffer *buffer,
+                        GLfloat x2, GLfloat y2, GLfloat z2,
+                        GLfloat x3, GLfloat y3, GLfloat z3)
+ {
++  if (buffer->triangle_count == TRIANGLE_ARRAY_SIZE)
++    {
++      fprintf (stderr, "hidgl_add_triangle_3D: "
++               "Attempt to add past end of array. Will now segfault.\n");
++      *(char *)0 = 0;
++    }
++
+   buffer->triangle_array [buffer->coord_comp_count++] = x1;
+   buffer->triangle_array [buffer->coord_comp_count++] = y1;
+   buffer->triangle_array [buffer->coord_comp_count++] = z1;
