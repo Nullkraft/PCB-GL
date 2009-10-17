@@ -1,7 +1,7 @@
-Bottom: c7e0dd81310e7b1a879acf7a8465b1cbd8c2888f
-Top:    ee46a13459f49cd3ef3418e315565aea003ad4f4
+Bottom: 8867a6bcc79e01b0388033498bb6a2909cc72634
+Top:    d70b771f7edad7bcf2641ad9e9a8831340c1cafe
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-17 02:35:29 +0100
+Date:   2009-10-17 04:03:17 +0100
 
 Make rats snap to the center of pads, not the edges
 
@@ -19,7 +19,7 @@ Make rats snap to the center of pads, not the edges
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 97424ce..a7436cd 100644
+index e22d5cc..6e81d29 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -330,7 +330,7 @@ static Boolean LookupLOConnectionsToPad (PadTypePtr, Cardinal);
