@@ -1,7 +1,7 @@
-Bottom: 4ae32480d61e6eb5f5ac2d830bbbf026e36ff064
-Top:    d4e03f6b3076864337f648df001152b78ce9a081
+Bottom: 7477bb3f041fb426b9cf4d20ba40bbd6915d9032
+Top:    c204c6aaae136eff6a29b3945e35227e8144cb7e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-14 14:39:11 +0100
+Date:   2009-10-17 02:35:28 +0100
 
 Add cache for "noholes", diced versions of polygons
 
@@ -37,10 +37,10 @@ index fc6b863..4054c28 100644
  }
  
 diff --git a/src/global.h b/src/global.h
-index 3c383be..40fc325 100644
+index e8fc8f1..f494dbc 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -209,6 +209,8 @@ struct polygon_st			/* holds information about a polygon */
+@@ -241,6 +241,8 @@ struct polygon_st			/* holds information about a polygon */
    Cardinal PointN,		/* number of points in polygon */
      PointMax;			/* max number from malloc() */
    POLYAREA *Clipped;		/* the clipped region of this polygon */
@@ -256,10 +256,10 @@ index 1ec0a04..2faaa20 100644
  POLYAREA * RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2);
  POLYAREA * CirclePoly(LocationType x, LocationType y, BDimension radius);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index fdb816d..1e5ab09 100644
+index fc01611..1467ddc 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2311,15 +2311,14 @@ poly_Create (void)
+@@ -2314,15 +2314,14 @@ poly_Create (void)
  }
  
  void
@@ -280,7 +280,7 @@ index fdb816d..1e5ab09 100644
      }
  }
  
-@@ -2332,12 +2331,12 @@ poly_Free (POLYAREA ** p)
+@@ -2335,12 +2334,12 @@ poly_Free (POLYAREA ** p)
      return;
    for (cur = (*p)->f; cur != *p; cur = (*p)->f)
      {
