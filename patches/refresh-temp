@@ -1,0 +1,24 @@
+Bottom: 1d18eeda682bc11c626e127b814fda47017089c0
+Top:    e63611f9872eb3391adc5976eb9e48b8dd06b830
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-17 04:02:11 +0100
+
+Refresh of tidy-up-ispolygoninpolygon
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index c531419..e22d5cc 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -2658,8 +2658,8 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
+ 
+   /* now the difficult case of bloated */
+   if (Bloat > 0)
+-  {
+-    PLINE *c;
++    {
++      PLINE *c;
+       for (c = P1->Clipped->contours; c; c = c->next)
+         {
+           LineType line;
