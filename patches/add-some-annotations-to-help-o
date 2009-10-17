@@ -1,5 +1,5 @@
 Bottom: baa59c3bdaaf26b67e075ad36c6abe77ef9b1512
-Top:    084b1c91b1e9fcef7d78a561462c116397331e10
+Top:    3c23418696570faacc65cbd09d94564fb67715bc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-14 14:39:13 +0100
 
@@ -69,18 +69,19 @@ index 40fc325..f494dbc 100644
   * Do not change the following definitions even if they're not very
   * nice.  It allows us to have functions act on these "base types" and
 diff --git a/src/polygon1.c b/src/polygon1.c
-index f83ee3f..4d36bee 100644
+index f83ee3f..1467ddc 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -93,6 +93,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
- 
+@@ -94,7 +94,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
  #define error(code)  longjmp(*(e), code)
  
-+#warning TODO: Unlikely
  #define MemGet(ptr, type) \
- if (((ptr) = malloc(sizeof(type))) == NULL) \
+-if (((ptr) = malloc(sizeof(type))) == NULL) \
++if (UNLIKELY (((ptr) = malloc(sizeof(type))) == NULL)) \
      error(err_no_memory);
-@@ -816,8 +817,8 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+ 
+ #undef DEBUG_LABEL
+@@ -816,8 +816,8 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
                /* NB: If this actually hits anything, we are teleported back to the beginning */
                info.tree = (rtree_t *) rtree_over->tree;
                if (info.tree)
@@ -91,7 +92,7 @@ index f83ee3f..4d36bee 100644
                    return err_no_memory;	/* error */
            }
          while ((av = av->next) != &looping_over->head);
-@@ -849,23 +850,29 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+@@ -849,23 +849,29 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  	      a->contours->xmin <= b->contours->xmax &&
  	      a->contours->ymin <= b->contours->ymax)
  	    {
