@@ -2658,8 +2658,8 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
 
   /* now the difficult case of bloated */
   if (Bloat > 0)
-  {
-    PLINE *c;
+    {
+      PLINE *c;
       for (c = P1->Clipped->contours; c; c = c->next)
         {
           LineType line;
