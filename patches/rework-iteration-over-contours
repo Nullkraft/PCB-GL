@@ -15,18 +15,8 @@ which contours we're comparing. Rather than swapping, we just choose
 which to loop over. This saves us time in the case where the larger
 intersecting contour belongs to the polygon with fewer vertices.
 
-
-
-
-
-
-
-
-
-
-
-
-
+In one case, this change reduced a complex board's load time from
+~140 seconds to ~70.
 
 
 ---
