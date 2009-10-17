@@ -93,9 +93,8 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
 
 #define error(code)  longjmp(*(e), code)
 
-#warning TODO: Unlikely
 #define MemGet(ptr, type) \
-if (((ptr) = malloc(sizeof(type))) == NULL) \
+if (UNLIKELY (((ptr) = malloc(sizeof(type))) == NULL)) \
     error(err_no_memory);
 
 #undef DEBUG_LABEL
