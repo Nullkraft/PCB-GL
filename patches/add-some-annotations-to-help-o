@@ -1,7 +1,7 @@
-Bottom: baa59c3bdaaf26b67e075ad36c6abe77ef9b1512
-Top:    3c23418696570faacc65cbd09d94564fb67715bc
+Bottom: f3c0ca0eb10413fc52ac66f0bf8e3d2c1d537f7f
+Top:    d42910d96007c318388fa6598b55b6f86e551cc5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-14 14:39:13 +0100
+Date:   2009-10-17 02:34:23 +0100
 
 Add some annotations to help optimise branch prediction.
 
@@ -26,7 +26,7 @@ This hasn't had much discernable effect
 ---
 
 diff --git a/src/global.h b/src/global.h
-index 40fc325..f494dbc 100644
+index 3c383be..e8fc8f1 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -91,6 +91,38 @@ typedef struct
@@ -69,7 +69,7 @@ index 40fc325..f494dbc 100644
   * Do not change the following definitions even if they're not very
   * nice.  It allows us to have functions act on these "base types" and
 diff --git a/src/polygon1.c b/src/polygon1.c
-index f83ee3f..1467ddc 100644
+index 1e2e009..fc01611 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -94,7 +94,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
