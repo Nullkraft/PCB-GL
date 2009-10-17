@@ -1,7 +1,7 @@
-Bottom: 21b16369f5171c73f4d8404df2627f93780a71b5
-Top:    b76616e0b6215c39c1e29281161e84c93a265b45
+Bottom: 3905686ed571e98b1233d5567ba326042d0a7e4a
+Top:    587e678abe428eb2ae4fb855a27340a25eabe70e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-14 14:39:14 +0100
+Date:   2009-10-17 02:40:36 +0100
 
 Try optimising polygon operations by keeping an rtree with their contours
 
@@ -204,7 +204,7 @@ index 367c4eb..5d9ecfd 100644
    while (save != ans);
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 1c018f8..7dab1bc 100644
+index cb650a2..6b2e1da 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -45,6 +45,8 @@
@@ -216,7 +216,7 @@ index 1c018f8..7dab1bc 100644
  #include "polyarea.h"
  #include "rtree.h"
  #include "heap.h"
-@@ -647,7 +649,7 @@ seg_in_seg (const BoxType * b, void *cl)
+@@ -646,7 +648,7 @@ seg_in_seg (const BoxType * b, void *cl)
        if (res & 2)
  	{
  	  cntrbox_adjust (i->s->p, cnt > 1 ? s2 : s1);
@@ -225,7 +225,7 @@ index 1c018f8..7dab1bc 100644
  	    return 1;
  	}
        /* if we added a node in the tree we need to change the tree */
-@@ -790,12 +792,12 @@ contour_bounds_touch (const BoxType * b, void *cl)
+@@ -789,12 +791,12 @@ contour_bounds_touch (const BoxType * b, void *cl)
        /* fill in the segment in info corresponding to this node */
        if (setjmp (info.sego) == 0)
          {
@@ -240,7 +240,7 @@ index 1c018f8..7dab1bc 100644
          if (info.tree)
            if (UNLIKELY (r_search (info.tree, &info.s->box,
                                    seg_in_region, seg_in_seg, &info)))
-@@ -809,42 +811,20 @@ static int
+@@ -808,42 +810,20 @@ static int
  intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
  {
    POLYAREA *t;
@@ -288,7 +288,7 @@ index 1c018f8..7dab1bc 100644
  
    for (pa = a->contours; pa; pa = pa->next)     /* Loop over the contours of POLYAREA "a" */
      {
-@@ -862,7 +842,6 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -861,7 +841,6 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
              {
                /* The intersection test short-circuited back here,
                 * we need to clean up, then longjmp to jb */
@@ -296,7 +296,7 @@ index 1c018f8..7dab1bc 100644
                longjmp (*jb, retval);
              }
            c_info.getout = &out;
-@@ -873,7 +852,7 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -872,7 +851,7 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
        sb.X2 = pa->xmax + 1;
        sb.Y2 = pa->ymax + 1;
  
@@ -305,7 +305,7 @@ index 1c018f8..7dab1bc 100644
      }
  
    return 0;
-@@ -1109,6 +1088,7 @@ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
+@@ -1108,6 +1087,7 @@ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
  
  /****************************************************************/
  
@@ -313,7 +313,7 @@ index 1c018f8..7dab1bc 100644
  /* routines for temporary storing resulting contours */
  static void
  InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
-@@ -1129,31 +1109,48 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
+@@ -1128,31 +1108,48 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
        newp->f->b = newp->b->f = newp;
      }
    newp->contours = c;
@@ -367,7 +367,7 @@ index 1c018f8..7dab1bc 100644
  	}
      }
  }				/* PutContour */
-@@ -1182,6 +1179,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1181,6 +1178,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
    if (dest == NULL)
      error (err_bad_parm);	/* empty contour list */
  
@@ -375,7 +375,7 @@ index 1c018f8..7dab1bc 100644
    /* make an rtree of contours */
    tree = r_create_tree (NULL, 0, 0);
    curc = dest;
-@@ -1253,6 +1251,21 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1252,6 +1250,21 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
  	  tmp = container->next;
  	  container->next = curh;
  	  curh->next = tmp;
@@ -397,7 +397,7 @@ index 1c018f8..7dab1bc 100644
  	}
      }
    r_destroy_tree (&tree);
-@@ -1487,7 +1500,7 @@ Collect1 (jmp_buf * e, VNODE *cur, DIRECTION dir, POLYAREA **contours, PLINE **
+@@ -1486,7 +1499,7 @@ Collect1 (jmp_buf * e, VNODE *cur, DIRECTION dir, POLYAREA **contours, PLINE **
  	    DEBUGP ("adding contour with %d verticies and direction %c\n",
  		    p->Count, p->Flags.orient ? 'F' : 'B');
  #endif
@@ -406,7 +406,7 @@ index 1c018f8..7dab1bc 100644
  	  }
  	else
  	  {
-@@ -1504,7 +1517,7 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
+@@ -1503,7 +1516,7 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
  	 S_Rule s_rule, J_Rule j_rule)
  {
    VNODE *cur, *other;
@@ -415,7 +415,7 @@ index 1c018f8..7dab1bc 100644
  
    cur = &a->head;
    do
-@@ -1521,7 +1534,7 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
+@@ -1520,7 +1533,7 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
  
  static int
  cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
@@ -424,7 +424,7 @@ index 1c018f8..7dab1bc 100644
  {
    PLINE *tmprev;
  
-@@ -1551,10 +1564,10 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+@@ -1550,10 +1563,10 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
  	  if ((*A)->Flags.status == INSIDE)
  	    {
  	      tmprev = *A;
@@ -437,7 +437,7 @@ index 1c018f8..7dab1bc 100644
  	      return TRUE;
  	    }
  	  break;
-@@ -1562,11 +1575,11 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+@@ -1561,11 +1574,11 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
  	  if ((*A)->Flags.status == INSIDE)
  	    {
  	      tmprev = *A;
@@ -451,7 +451,7 @@ index 1c018f8..7dab1bc 100644
  	      return TRUE;
  	    }
  	  break;
-@@ -1575,10 +1588,10 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+@@ -1574,10 +1587,10 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
  	  if ((*A)->Flags.status == OUTSIDE)
  	    {
  	      tmprev = *A;
@@ -464,7 +464,7 @@ index 1c018f8..7dab1bc 100644
  	      return TRUE;
  	    }
  	  break;
-@@ -1615,7 +1628,7 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
+@@ -1614,7 +1627,7 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
  		next = cur;
  		tmp->next = NULL;
  		tmp->Flags.status = UNKNWN;
@@ -473,7 +473,7 @@ index 1c018f8..7dab1bc 100644
  		break;
  	      case PBO_UNITE:
  		break;		/* nothing to do - already included */
-@@ -1631,7 +1644,7 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
+@@ -1630,7 +1643,7 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
  		next = cur;
  		tmp->next = NULL;
  		tmp->Flags.status = UNKNWN;
@@ -482,7 +482,7 @@ index 1c018f8..7dab1bc 100644
  		break;
  	      case PBO_ISECT:
  	      case PBO_SUB:
-@@ -1648,7 +1661,8 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+@@ -1647,7 +1660,8 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
  		    PLINE ** holes, int action, BOOLp maybe)
  {
    POLYAREA *a = afst;
@@ -492,7 +492,7 @@ index 1c018f8..7dab1bc 100644
  
    assert (a != NULL);
    while ((a = a->f) != afst);
-@@ -1656,18 +1670,35 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+@@ -1655,18 +1669,35 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
    do
      {
        if (maybe && a->contours->Flags.status != ISECTED)
@@ -539,7 +539,7 @@ index 1c018f8..7dab1bc 100644
      }
    while ((a = a->f) != afst);
  }
-@@ -2067,7 +2098,7 @@ poly_InvContour (PLINE * c)
+@@ -2066,7 +2097,7 @@ poly_InvContour (PLINE * c)
    c->Flags.orient ^= 1;
    if (c->tree)
      {
@@ -548,7 +548,7 @@ index 1c018f8..7dab1bc 100644
        assert (r == c->Count);
      }
  }
-@@ -2150,6 +2181,7 @@ poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
+@@ -2149,6 +2180,7 @@ poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
      *dst = calloc (1, sizeof (POLYAREA));
    if (*dst == NULL)
      return FALSE;
@@ -556,7 +556,7 @@ index 1c018f8..7dab1bc 100644
  
    return poly_Copy1 (*dst, src);
  }
-@@ -2166,6 +2198,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
+@@ -2165,6 +2197,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
      {
        if (!poly_CopyContour (last, cur))
  	return FALSE;
@@ -564,7 +564,7 @@ index 1c018f8..7dab1bc 100644
        last = &(*last)->next;
      }
    return TRUE;
-@@ -2215,6 +2248,7 @@ poly_InclContour (POLYAREA * p, PLINE * c)
+@@ -2214,6 +2247,7 @@ poly_InclContour (POLYAREA * p, PLINE * c)
        if (p->contours != NULL)
  	return FALSE;
        p->contours = c;
@@ -572,7 +572,7 @@ index 1c018f8..7dab1bc 100644
      }
    else
      {
-@@ -2224,6 +2258,7 @@ poly_InclContour (POLYAREA * p, PLINE * c)
+@@ -2223,6 +2257,7 @@ poly_InclContour (POLYAREA * p, PLINE * c)
        tmp = p->contours->next;
        p->contours->next = c;
        c->next = tmp;
@@ -580,7 +580,7 @@ index 1c018f8..7dab1bc 100644
      }
    return TRUE;
  }
-@@ -2295,7 +2330,7 @@ poly_InsideContour (PLINE * c, Vector p)
+@@ -2294,7 +2329,7 @@ poly_InsideContour (PLINE * c, Vector p)
    ray.X2 = 0x7fffffff;
    ray.Y2 = p[1] + 1;
    if (setjmp (info.env) == 0)
@@ -589,7 +589,7 @@ index 1c018f8..7dab1bc 100644
    return info.f;
  }
  
-@@ -2349,6 +2384,7 @@ poly_Init (POLYAREA * p)
+@@ -2348,6 +2383,7 @@ poly_Init (POLYAREA * p)
  {
    p->f = p->b = p;
    p->contours = NULL;
@@ -597,7 +597,7 @@ index 1c018f8..7dab1bc 100644
  }
  
  POLYAREA *
-@@ -2383,11 +2419,13 @@ poly_Free (POLYAREA ** p)
+@@ -2382,11 +2418,13 @@ poly_Free (POLYAREA ** p)
    for (cur = (*p)->f; cur != *p; cur = (*p)->f)
      {
        poly_FreeContours (&cur->contours);
