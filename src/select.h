@@ -34,7 +34,7 @@
 #include "global.h"
 
 #define SELECT_TYPES	\
-	(VIA_TYPE | LINE_TYPE | TEXT_TYPE | POLYGON_TYPE | ELEMENT_TYPE |	\
+	(VIA_TYPE | LINE_TYPE | TEXT_TYPE | POUR_TYPE | ELEMENT_TYPE |	\
 	 PIN_TYPE | PAD_TYPE | ELEMENTNAME_TYPE | RATLINE_TYPE | ARC_TYPE)
 
 void SelectPin (LibraryEntryTypePtr entry, Boolean toggle);
