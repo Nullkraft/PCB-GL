@@ -62,7 +62,7 @@ hidgl_add_triangle (triangle_buffer *buffer,
                     GLfloat x3, GLfloat y3)
 {
   hidgl_add_triangle_3D (buffer, x1, y1, global_depth,
-                                 x2, y2, gloabl_depth,
+                                 x2, y2, global_depth,
                                  x3, y3, global_depth);
 }
 
