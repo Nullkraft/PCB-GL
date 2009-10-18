@@ -1,7 +1,7 @@
-Bottom: 7e5721b037d3a60166fdd2763a323986613cb7d4
-Top:    459bd478e34737c83d41335adf8595a929edd058
+Bottom: 53479d07654b8984e3ce08f24196dfe188b6a423
+Top:    ad20080187967275d419cf8730d6844e923d4463
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-17 04:04:32 +0100
+Date:   2009-10-19 00:27:49 +0100
 
 Shiny 3D eye-candy
 
@@ -214,10 +214,10 @@ index 1b28e71..6bde5c0 100644
    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
    /* Reset stencil buffer so we can paint anywhere */
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 8cb2ffd..0103e1c 100644
+index 64c5e26..23068e8 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -299,16 +299,16 @@ have_crosshair_attachments (void)
+@@ -300,16 +300,16 @@ have_crosshair_attachments (void)
  #define VCD		8
  
  static void
@@ -240,7 +240,7 @@ index 8cb2ffd..0103e1c 100644
  {
    gint x0, y0, x1, y1;
  
-@@ -320,8 +320,8 @@ draw_slanted_cross (gint x, gint y)
+@@ -321,8 +321,8 @@ draw_slanted_cross (gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - x;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -251,7 +251,7 @@ index 8cb2ffd..0103e1c 100644
  
    x0 = x - (gport->height - y);
    x0 = MAX(0, MIN (x0, gport->width));
-@@ -331,12 +331,12 @@ draw_slanted_cross (gint x, gint y)
+@@ -332,12 +332,12 @@ draw_slanted_cross (gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - (gport->width - x);
    y1 = MAX(0, MIN (y1, gport->height));
@@ -267,7 +267,7 @@ index 8cb2ffd..0103e1c 100644
  {
    gint x0, y0, x1, y1;
    gdouble tan60 = sqrt (3);
-@@ -349,8 +349,8 @@ draw_dozen_cross (gint x, gint y)
+@@ -350,8 +350,8 @@ draw_dozen_cross (gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - x * tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -278,7 +278,7 @@ index 8cb2ffd..0103e1c 100644
  
    x0 = x + (gport->height - y) * tan60;
    x0 = MAX(0, MIN (x0, gport->width));
-@@ -360,8 +360,8 @@ draw_dozen_cross (gint x, gint y)
+@@ -361,8 +361,8 @@ draw_dozen_cross (gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - x / tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -289,7 +289,7 @@ index 8cb2ffd..0103e1c 100644
  
    x0 = x - (gport->height - y) / tan60;
    x0 = MAX(0, MIN (x0, gport->width));
-@@ -371,8 +371,8 @@ draw_dozen_cross (gint x, gint y)
+@@ -372,8 +372,8 @@ draw_dozen_cross (gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - (gport->width - x) * tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -300,7 +300,7 @@ index 8cb2ffd..0103e1c 100644
  
    x0 = x - (gport->height - y) * tan60;
    x0 = MAX(0, MIN (x0, gport->width));
-@@ -382,30 +382,31 @@ draw_dozen_cross (gint x, gint y)
+@@ -383,30 +383,31 @@ draw_dozen_cross (gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - (gport->width - x) / tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -340,7 +340,7 @@ index 8cb2ffd..0103e1c 100644
  
    if (gport->x_crosshair < 0 || ghidgui->creating) {// || !gport->has_entered) {
      printf ("Returning\n");
-@@ -420,6 +421,7 @@ ghid_show_crosshair (gboolean show)
+@@ -421,6 +422,7 @@ ghid_show_crosshair (gboolean show)
      }
    x = DRAW_X (gport->x_crosshair);
    y = DRAW_Y (gport->y_crosshair);
@@ -348,7 +348,7 @@ index 8cb2ffd..0103e1c 100644
  
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
-@@ -435,13 +437,13 @@ ghid_show_crosshair (gboolean show)
+@@ -436,13 +438,13 @@ ghid_show_crosshair (gboolean show)
  #if 1
    if (x_prev >= 0)
      {
@@ -364,7 +364,7 @@ index 8cb2ffd..0103e1c 100644
      }
  
    glEnd ();
-@@ -453,43 +455,43 @@ ghid_show_crosshair (gboolean show)
+@@ -454,43 +456,43 @@ ghid_show_crosshair (gboolean show)
  #if 1
        if (x_prev >= 0)
          {
@@ -440,7 +440,7 @@ index 8cb2ffd..0103e1c 100644
          }
  
        glEnd ();
-@@ -499,9 +501,10 @@ ghid_show_crosshair (gboolean show)
+@@ -500,9 +502,10 @@ ghid_show_crosshair (gboolean show)
      {
        x_prev = x;
        y_prev = y;
@@ -452,7 +452,7 @@ index 8cb2ffd..0103e1c 100644
  
    glDisable (GL_COLOR_LOGIC_OP);
  }
-@@ -791,7 +794,7 @@ ghid_screen_update (void)
+@@ -792,7 +795,7 @@ ghid_screen_update (void)
  }
  
  void DrawAttached (Boolean);
@@ -461,7 +461,7 @@ index 8cb2ffd..0103e1c 100644
  
  static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
                                      {0.0, 1.0, 0.0, 0.0},
-@@ -940,6 +943,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -941,6 +944,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
