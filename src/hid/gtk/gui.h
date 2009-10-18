@@ -211,6 +211,7 @@ typedef struct
 {
   GtkWidget *top_window,	/* toplevel widget              */
    *drawing_area;		/* and its drawing area */
+  GtkWidget *trackball;
   GdkPixmap *pixmap, *mask;
   GdkDrawable *drawable;	/* Current drawable for drawing routines */
   gint width, height;

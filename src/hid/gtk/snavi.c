@@ -132,7 +132,7 @@ gboolean snavi_event (GIOChannel   *source,
                        axes[1] / 100.0, cb_userdata);
         update_roll_cb (axes[5] / 100.0,
                         axes[3] / 100.0,
-                        axes[2] / 100.0, cb_userdata);
+                        axes[4] / 100.0, cb_userdata);
         update_done_cb (cb_userdata);
 
         axes[0] = axes[1] = axes[2] = axes[3] = axes[4] = axes[5] = 0;

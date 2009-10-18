@@ -2267,6 +2267,7 @@ ghid_build_pcb_top_window (void)
   make_layer_buttons(vbox, port);
 
   trackball = ghid_trackball_new ();
+  gport->trackball = trackball;
   g_signal_connect (trackball, "rotation-changed",
                     G_CALLBACK (ghid_port_rotate), NULL);
   gtk_box_pack_start (GTK_BOX (vbox_left), trackball, FALSE, FALSE, 0);

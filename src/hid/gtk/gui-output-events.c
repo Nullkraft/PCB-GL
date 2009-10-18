@@ -46,6 +46,7 @@
 #include "misc.h"
 #include "set.h"
 #include "snavi.h"
+#include "gui-trackball.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
@@ -1218,6 +1219,8 @@ void ndof_pan_cb (int dx, int dy, int dz, gpointer data)
 
 void ndof_roll_cb (int dx, int dy, int dz, gpointer data)
 {
+  ghid_trackball_external_rotate (GHID_TRACKBALL (gport->trackball),
+                                  dy / 100., dx / 100., dz / 100.);
 }
 
 void ndof_done_cb (gpointer data)
