@@ -1,7 +1,7 @@
-Bottom: 459bd478e34737c83d41335adf8595a929edd058
-Top:    3d279403bb60522e13cc318ff895279495db3e99
+Bottom: ad20080187967275d419cf8730d6844e923d4463
+Top:    d79070587444064352698a8230fbb4c0c23b542e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-17 04:04:33 +0100
+Date:   2009-10-19 02:31:02 +0100
 
 Major re-write to drawing routines
 
@@ -391,10 +391,10 @@ index 6bde5c0..a1f1dbb 100644
  void
  ghid_set_color (hidGC gc, const char *name)
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 0103e1c..64b22da 100644
+index 23068e8..337dbdb 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -796,6 +796,12 @@ ghid_screen_update (void)
+@@ -797,6 +797,12 @@ ghid_screen_update (void)
  void DrawAttached (Boolean);
  void draw_grid (void);
  
@@ -407,7 +407,7 @@ index 0103e1c..64b22da 100644
  static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
                                      {0.0, 1.0, 0.0, 0.0},
                                      {0.0, 0.0, 1.0, 0.0},
-@@ -824,6 +830,572 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
+@@ -825,6 +831,572 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
    ghid_invalidate_all ();
  }
  
@@ -980,7 +980,7 @@ index 0103e1c..64b22da 100644
  
  #define Z_NEAR 3.0
  gboolean
-@@ -836,6 +1408,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -837,6 +1409,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
    GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
  
@@ -989,7 +989,7 @@ index 0103e1c..64b22da 100644
    /* make GL-context "current" */
    if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
      return FALSE;
-@@ -892,7 +1466,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -893,7 +1467,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  //  glClearDepth (1000);
    glStencilMask (~0);
    glClearStencil (0);
@@ -998,7 +998,7 @@ index 0103e1c..64b22da 100644
    hidgl_reset_stencil_usage ();
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
-@@ -939,7 +1513,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -940,7 +1514,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
  //  hid_expose_callback (&ghid_hid, &region, 0);
@@ -1009,7 +1009,7 @@ index 0103e1c..64b22da 100644
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
-@@ -980,6 +1556,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -981,6 +1557,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
  
