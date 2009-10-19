@@ -1,0 +1,15 @@
+Bottom: e63611f9872eb3391adc5976eb9e48b8dd06b830
+Top:    e63611f9872eb3391adc5976eb9e48b8dd06b830
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-19 17:45:41 +0100
+
+hid/common: Don't walk off end of array
+
+Fixed a bug where the action parser could walk off the end of an array
+when presented with certain action strings without a "(" in them,
+e.g. "benchmark".
+
+
+---
+
+
