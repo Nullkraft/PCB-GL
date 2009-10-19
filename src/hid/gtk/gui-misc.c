@@ -219,7 +219,7 @@ ghid_mode_cursor (int Mode)
       gport_set_cursor (GDK_LEFT_PTR);
       break;
 
-    case POLYGON_MODE:
+    case POUR_MODE:
       gport_set_cursor (GDK_SB_UP_ARROW);
       break;
 
