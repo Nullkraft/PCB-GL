@@ -719,8 +719,6 @@ clearPad_callback (const BoxType * b, void *cl)
   return 1;
 }
 
-#define MASK_SUBCOMPOSITE_SILK 0
-
 /* ---------------------------------------------------------------------------
  * Draws silk layer.
  */
@@ -743,27 +741,11 @@ DrawSilk (int new_swap, int layer, BoxTypePtr drawn_area)
       gui->use_mask (HID_MASK_BEFORE);
 #endif
       DrawLayer (LAYER_PTR (max_layer + layer), drawn_area);
-
-#if MASK_SUBCOMPOSITE_SILK
-      gui->use_mask (HID_MASK_BEFORE);
-      gui->use_mask (HID_MASK_CLEAR);
-      gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
-      gui->use_mask (HID_MASK_BEFORE);
-#endif
-
       /* draw package */
       r_search (PCB->Data->element_tree, drawn_area, NULL, frontE_callback,
 		NULL);
       r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL,
 		frontN_callback, NULL);
-
-#if MASK_SUBCOMPOSITE_SILK
-      gui->use_mask (HID_MASK_AFTER);
-      gui->set_color (Output.fgGC, PCB->ElementColor);
-      gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
-      gui->use_mask (HID_MASK_OFF);
-#endif
-
 #if 0
     }
 
@@ -886,7 +868,6 @@ text_callback (const BoxType * b, void *cl)
   return 1;
 }
 
-#define MASK_SUBCOMPOSITE_LAYERS 0
 
 /* ---------------------------------------------------------------------------
  * draws one non-copper layer
@@ -895,13 +876,6 @@ void
 DrawLayer (LayerTypePtr Layer, BoxType * screen)
 {
   struct pin_info info;
-
-#if MASK_SUBCOMPOSITE_LAYERS
-  gui->use_mask (HID_MASK_BEFORE);
-  gui->use_mask (HID_MASK_CLEAR);
-  gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
-  gui->use_mask (HID_MASK_BEFORE);
-#endif
 
   /* print the non-clearing polys */
   info.Layer = Layer;
@@ -918,16 +892,7 @@ DrawLayer (LayerTypePtr Layer, BoxType * screen)
   /* draw the layer text on screen */
   r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
   clip_box = NULL;
-
-#if MASK_SUBCOMPOSITE_LAYERS
-  gui->use_mask (HID_MASK_AFTER);
-  gui->set_color (Output.fgGC, Layer->Color);
-  gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
-  gui->use_mask (HID_MASK_OFF);
-#endif
 }
-
-#define MASK_SUBCOMPOSITE_LAYER_GROUPS 0
 
 /* ---------------------------------------------------------------------------
  * draws one layer group.  Returns non-zero if pins and pads should be
@@ -954,14 +919,6 @@ DrawLayerGroup (int group, const BoxType * screen)
 	rv = 0;
       if (layernum < max_layer && Layer->On)
 	{
-
-#if MASK_SUBCOMPOSITE_LAYER_GROUPS
-          gui->use_mask (HID_MASK_BEFORE);
-          gui->use_mask (HID_MASK_CLEAR);
-          gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
-          gui->use_mask (HID_MASK_BEFORE);
-#endif
-
 	  /* draw all polygons on this layer */
 	  if (Layer->PolygonN)
 	    {
@@ -988,12 +945,6 @@ DrawLayerGroup (int group, const BoxType * screen)
 	  /* draw the layer text on screen */
 	  r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
 
-#if MASK_SUBCOMPOSITE_LAYER_GROUPS
-          gui->use_mask (HID_MASK_AFTER);
-          gui->set_color (Output.fgGC, Layer->Color);
-          gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
-          gui->use_mask (HID_MASK_OFF);
-#endif
 	}
     }
   if (n_entries > 1)
@@ -2207,8 +2158,6 @@ DrawElement (ElementTypePtr Element, int unused)
   DrawElementPinsAndPads (Element, unused);
 }
 
-#define MASK_SUBCOMPOSITE_ELEMENT_NAMES 0
-
 /* ---------------------------------------------------------------------------
  * draws the name of an element
  */
@@ -2219,15 +2168,6 @@ DrawElementName (ElementTypePtr Element, int unused)
     return;
   if (TEST_FLAG (HIDENAMEFLAG, Element))
     return;
-#if MASK_SUBCOMPOSITE_ELEMENT_NAMES
-  gui->use_mask (HID_MASK_BEFORE);
-  gui->use_mask (HID_MASK_CLEAR);
-  gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
-  gui->use_mask (HID_MASK_BEFORE);
-
-  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
-#endif
-
   if (doing_pinout || doing_assy)
     gui->set_color (Output.fgGC, PCB->ElementColor);
   else if (TEST_FLAG (SELECTEDFLAG, &ELEMENT_TEXT (PCB, Element)))
@@ -2236,17 +2176,8 @@ DrawElementName (ElementTypePtr Element, int unused)
     gui->set_color (Output.fgGC, PCB->ElementColor);
   else
     gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
-
-#if MASK_SUBCOMPOSITE_ELEMENT_NAMES
-  gui->use_mask (HID_MASK_AFTER);
-  gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
-  gui->use_mask (HID_MASK_OFF);
-#else
   DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
-#endif
 }
-
-#define MASK_SUBCOMPOSITE_ELEMENT_PACKAGE 0
 
 /* ---------------------------------------------------------------------------
  * draws the package of an element
@@ -2254,15 +2185,6 @@ DrawElementName (ElementTypePtr Element, int unused)
 void
 DrawElementPackage (ElementTypePtr Element, int unused)
 {
-#if MASK_SUBCOMPOSITE_ELEMENT_PACKAGE
-  gui->use_mask (HID_MASK_BEFORE);
-  gui->use_mask (HID_MASK_CLEAR);
-  gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
-  gui->use_mask (HID_MASK_BEFORE);
-
-  DrawElementPackageLowLevel (Element, unused);
-#endif
-
   /* set color and draw lines, arcs, text and pins */
   if (doing_pinout || doing_assy)
     gui->set_color (Output.fgGC, PCB->ElementColor);
@@ -2272,14 +2194,7 @@ DrawElementPackage (ElementTypePtr Element, int unused)
     gui->set_color (Output.fgGC, PCB->ElementColor);
   else
     gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
-
-#if MASK_SUBCOMPOSITE_ELEMENT_PACKAGE
-  gui->use_mask (HID_MASK_AFTER);
-  gui->fill_rect (Output.fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
-  gui->use_mask (HID_MASK_OFF);
-#else
   DrawElementPackageLowLevel (Element, unused);
-#endif
 }
 
 /* ---------------------------------------------------------------------------
