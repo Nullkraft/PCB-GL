@@ -1498,6 +1498,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   /* This is the reverse of the order in which we draw them.  */
   int drawn_groups[MAX_LAYER];
   struct cyl_info cyl_info;
+  int reverse_layers;
 
   extern char *current_color;
   extern Boolean Gathering;
@@ -1505,12 +1506,24 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   current_color = NULL;
   Gathering = False;
 
+  /* Test direction of rendering */
+  /* Look at sign of eye coordinate system z-coord when projecting a
+     world vector along +ve Z axis, (0, 0, 1). */
+  /* FIXME: This isn't strictly correct, as I've ignored the matrix
+            elements for homogeneous coordinates. */
+    /* NB: last_modelview_matrix is transposed in memory! */
+  reverse_layers = last_modelview_matrix[2][2] < 0;
+  Settings.ShowSolderSide = reverse_layers ? !Settings.ShowSolderSide : Settings.ShowSolderSide;
+
   memset (do_group, 0, sizeof (do_group));
   for (ngroups = 0, i = 0; i < max_layer; i++) {
+    int orderi;
+
+    orderi = reverse_layers ? max_layer - i - 1 : i;
 
     // Draw in numerical order
-    LayerType *l = LAYER_PTR (i); // LAYER_ON_STACK (i);
-    int group = GetLayerGroupNumberByNumber (i); // (LayerStack[i]);
+    LayerType *l = LAYER_PTR (orderi); // LAYER_ON_STACK (i);
+    int group = GetLayerGroupNumberByNumber (orderi); // (LayerStack[i]);
 
     if (/*l->On && */!do_group[group]) {
       do_group[group] = 1;
@@ -1613,6 +1626,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     DrawRats(drawn_area);
 
   Gathering = True;
+  Settings.ShowSolderSide = reverse_layers ? !Settings.ShowSolderSide : Settings.ShowSolderSide;
 }
 
 static int one_shot = 1;
