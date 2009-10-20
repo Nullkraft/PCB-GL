@@ -1,7 +1,7 @@
-Bottom: 5501f15ea3a51038fcd7bd3b35f45943f80045c7
-Top:    ba7c7ec12404b9322c32bd17352e15fde47f055f
+Bottom: ac88d228d0d24abbba83a28cb9dcbecf78596b5f
+Top:    b94bdb2a744cc5be8bd1a7b48343c54c0cbcd5fc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-20 08:24:18 +0100
+Date:   2009-10-20 21:43:54 +0100
 
 Play with display lists and perspective
 
@@ -9,10 +9,10 @@ Play with display lists and perspective
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 3715e05..9a95002 100644
+index 884aa1c..c011846 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1632,6 +1632,8 @@ gboolean
+@@ -1636,6 +1636,8 @@ gboolean
  ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  					GdkEventExpose * ev, GHidPort * port)
  {
@@ -21,7 +21,7 @@ index 3715e05..9a95002 100644
    BoxType region;
    int eleft, eright, etop, ebottom;
    extern HID ghid_hid;
-@@ -1679,15 +1681,35 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1683,15 +1685,35 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -58,7 +58,7 @@ index 3715e05..9a95002 100644
    glEnable (GL_STENCIL_TEST);
    glClearColor (gport->offlimits_color.red / 65535.,
                  gport->offlimits_color.green / 65535.,
-@@ -1834,6 +1856,15 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1829,6 +1851,15 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
