@@ -1,55 +1,11 @@
-Bottom: f7df887a2078a28187473ce2d41b580b6980a92a
-Top:    f72e0350d36f1174648f8089a6e78df72eaa7a3d
+Bottom: 1098297ffc8d31b424a8758393d6f362ab98819c
+Top:    1098297ffc8d31b424a8758393d6f362ab98819c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-19 17:51:06 +0100
+Date:   2009-10-20 23:35:02 +0100
 
 Attempt some GL optimisation
 
 
 ---
 
-diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 60af460..b2768cb 100644
---- a/src/hid/common/hidgl.c
-+++ b/src/hid/common/hidgl.c
-@@ -215,7 +215,7 @@ static void draw_cap (double width, int x, int y, double angle, double scale)
- void
- hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double scale)
- {
--  double angle;
-+  double angle = 0.;
-   float deltax, deltay, length;
-   float wdx, wdy;
-   int circular_caps = 0;
-@@ -244,10 +244,15 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
-     wdy = deltax * width / 2. / length;
-     wdx = -deltay * width / 2. / length;
- 
--    if (deltay == 0.)
--      angle = (deltax < 0) ? 270. : 90.;
-+    if (hairline)
-+      angle = 0;
-     else
--      angle = 180. / M_PI * atanl (deltax / deltay);
-+      {
-+        if (deltay == 0.)
-+          angle = (deltax < 0) ? 270. : 90.;
-+        else
-+          angle = 180. / M_PI * atanl (deltax / deltay);
-+      }
- 
-     if (deltay < 0)
-       angle += 180.;
-diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index bb83085..3caa063 100644
---- a/src/hid/gtk/gui-output-events.c
-+++ b/src/hid/gtk/gui-output-events.c
-@@ -1434,6 +1434,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
-   glEnable (GL_BLEND);
-   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
- 
-+  glShadeModel (GL_FLAT);
-+
- //  glEnable (GL_DEPTH_TEST);
- 
- //  glEnable(GL_POLYGON_SMOOTH);
+
