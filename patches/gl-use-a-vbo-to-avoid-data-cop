@@ -1,5 +1,5 @@
 Bottom: 09af7bfe4db00d19d6b052e13d6dd5aa75b57e7c
-Top:    b2fc6f16e8651478a4a3e16f19ac77eaf28d22b0
+Top:    b8f0efe4fae6507de6744fc69fc65725ce922432
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-20 22:33:41 +0100
 
@@ -19,7 +19,7 @@ BUGS: Breakage due to graphics operations being called outside the
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 52d738a..35fa289 100644
+index 52d738a..bdf9429 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -61,10 +61,28 @@ hidgl_new_triangle_array (void)
@@ -60,7 +60,7 @@ index 52d738a..35fa289 100644
 +  glUnmapBuffer (GL_ARRAY_BUFFER);
 +
 +  glEnableClientState (GL_VERTEX_ARRAY);
-+  glVertexPointer (2, GL_FLOAT, 0, NULL); // buffer->triangle_array);
++  glVertexPointer (3, GL_FLOAT, 0, NULL); // buffer->triangle_array);
    glDrawArrays (GL_TRIANGLES, 0, buffer->triangle_count * 3);
 -  buffer->triangle_count = 0;
 -  buffer->coord_comp_count = 0;
