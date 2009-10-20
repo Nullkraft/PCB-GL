@@ -1,7 +1,7 @@
-Bottom: 15a7e6c923d7fb0e43df8f100d4ff5df312a636d
-Top:    d5388d76c4287fa026686239838a0740757a7495
+Bottom: 0bf2d3f91993228987d298a290866e6597670667
+Top:    3ccaeb29639446c6ac19ed20210d367d11bdabcd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-20 21:38:57 +0100
+Date:   2009-10-20 22:09:01 +0100
 
 TEMP
 
@@ -9,7 +9,7 @@ TEMP
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 7de114b..804ddc1 100644
+index ccee89c..40e0016 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -55,6 +55,16 @@
@@ -211,9 +211,9 @@ index 7de114b..804ddc1 100644
    gport->view_x = event_x * gport->zoom + gport->view_x0;
    gport->view_y = event_y * gport->zoom + gport->view_y0;
  
-@@ -797,12 +975,6 @@ ghid_screen_update (void)
+@@ -794,12 +972,6 @@ ghid_screen_update (void)
  void DrawAttached (Boolean);
- void draw_grid (void);
+ void draw_grid ();
  
 -static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
 -                                    {0.0, 1.0, 0.0, 0.0},
@@ -224,7 +224,7 @@ index 7de114b..804ddc1 100644
  void
  ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata)
  {
-@@ -844,6 +1016,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -841,6 +1013,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    extern HID ghid_hid;
    GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
    GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
@@ -236,7 +236,7 @@ index 7de114b..804ddc1 100644
  
    /* make GL-context "current" */
    if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
-@@ -886,6 +1063,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -883,6 +1060,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
    glMultMatrixf (view_matrix);
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
@@ -244,7 +244,7 @@ index 7de114b..804ddc1 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (gport->offlimits_color.red / 65535.,
-@@ -903,10 +1081,66 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -900,10 +1078,66 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glDisable (GL_STENCIL_TEST);
    glStencilFunc (GL_ALWAYS, 0, 0);
  
@@ -315,7 +315,7 @@ index 7de114b..804ddc1 100644
  
    eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
    etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
-@@ -940,7 +1174,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -937,7 +1171,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                               -gport->view_x0,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
@@ -326,7 +326,7 @@ index 7de114b..804ddc1 100644
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
-@@ -965,7 +1201,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -957,7 +1193,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
