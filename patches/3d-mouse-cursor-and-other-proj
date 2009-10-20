@@ -1,5 +1,5 @@
 Bottom: 7587a105a050161d57b8ad732bbc4259d19a6946
-Top:    9cb18b0152e07aa6e793551ca74d71f4c2cf6fd3
+Top:    6ade27af770937b5cf95e0463911d2238046554e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-20 20:11:17 +0100
 
@@ -28,7 +28,7 @@ index 60af460..52d738a 100644
  }
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 79dc913..3715e05 100644
+index 79dc913..c79673f 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -55,6 +55,16 @@
@@ -48,11 +48,11 @@ index 79dc913..3715e05 100644
  
  /* Set to true if cursor is currently in viewport. This is a hack to prevent
   * Crosshair stack corruption due to unmatching window enter / leave events */
-@@ -226,6 +236,165 @@ ghid_get_coords (const char *msg, int *x, int *y)
+@@ -226,6 +236,169 @@ ghid_get_coords (const char *msg, int *x, int *y)
      }
  }
  
-+float
++static float
 +determinant_2x2 (float m[2][2])
 +{
 +  float det;
@@ -61,7 +61,8 @@ index 79dc913..3715e05 100644
 +  return det;
 +}
 +
-+float
++#if 0
++static float
 +determinant_4x4 (float m[4][4])
 +{
 +  float det;
@@ -79,8 +80,9 @@ index 79dc913..3715e05 100644
 +        m[0][1] * m[1][0] * m[2][2] * m[3][3]+m[0][0] * m[1][1] * m[2][2] * m[3][3];
 +   return det;
 +}
++#endif
 +
-+void
++static void
 +invert_2x2 (float m[2][2], float out[2][2])
 +{
 +  float scale = 1 / determinant_2x2 (m);
@@ -90,7 +92,8 @@ index 79dc913..3715e05 100644
 +  out[1][1] =  m[0][0] * scale;
 +}
 +
-+void
++#if 0
++static void
 +invert_4x4 (float m[4][4], float out[4][4])
 +{
 +  float scale = 1 / determinant_4x4 (m);
@@ -144,6 +147,7 @@ index 79dc913..3715e05 100644
 +               m[0][2] * m[1][0] * m[2][1] - m[0][0] * m[1][2] * m[2][1] -
 +               m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * scale;
 +}
++#endif
 +
 +
 +void
@@ -214,7 +218,7 @@ index 79dc913..3715e05 100644
  gboolean
  ghid_note_event_location (GdkEventButton * ev)
  {
-@@ -243,6 +412,11 @@ ghid_note_event_location (GdkEventButton * ev)
+@@ -243,6 +416,11 @@ ghid_note_event_location (GdkEventButton * ev)
        event_x = ev->x;
        event_y = ev->y;
      }
@@ -226,7 +230,7 @@ index 79dc913..3715e05 100644
    gport->view_x = event_x * gport->zoom + gport->view_x0;
    gport->view_y = event_y * gport->zoom + gport->view_y0;
  
-@@ -804,12 +978,6 @@ struct pin_info
+@@ -804,12 +982,6 @@ struct pin_info
    BoxTypePtr drawn_area;
  };
  
@@ -239,7 +243,7 @@ index 79dc913..3715e05 100644
  void
  ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata)
  {
-@@ -1326,6 +1494,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1326,6 +1498,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    /* This is the reverse of the order in which we draw them.  */
    int drawn_groups[MAX_LAYER];
    struct cyl_info cyl_info;
@@ -247,7 +251,7 @@ index 79dc913..3715e05 100644
  
    extern char *current_color;
    extern Boolean Gathering;
-@@ -1333,12 +1502,24 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1333,12 +1506,24 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    current_color = NULL;
    Gathering = False;
  
@@ -274,7 +278,7 @@ index 79dc913..3715e05 100644
  
      if (/*l->On && */!do_group[group]) {
        do_group[group] = 1;
-@@ -1441,6 +1622,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1441,6 +1626,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
      DrawRats(drawn_area);
  
    Gathering = True;
@@ -282,7 +286,7 @@ index 79dc913..3715e05 100644
  }
  
  static int one_shot = 1;
-@@ -1455,6 +1637,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1455,6 +1641,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    extern HID ghid_hid;
    GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
    GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
@@ -294,7 +298,7 @@ index 79dc913..3715e05 100644
  
  //  if (!one_shot) return;
  
-@@ -1499,6 +1686,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1499,6 +1690,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
    glMultMatrixf (view_matrix);
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
@@ -302,7 +306,7 @@ index 79dc913..3715e05 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (gport->offlimits_color.red / 65535.,
-@@ -1516,10 +1704,66 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1516,10 +1708,66 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glDisable (GL_STENCIL_TEST);
    glStencilFunc (GL_ALWAYS, 0, 0);
  
@@ -373,7 +377,7 @@ index 79dc913..3715e05 100644
  
    eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
    etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
-@@ -1553,8 +1797,18 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1553,8 +1801,18 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                               -gport->view_x0,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
@@ -393,7 +397,7 @@ index 79dc913..3715e05 100644
  
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
-@@ -1580,7 +1834,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1580,7 +1838,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
