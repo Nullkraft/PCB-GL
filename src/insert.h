@@ -33,7 +33,7 @@
 
 #include "global.h"
 
-#define	INSERT_TYPES	(POLYGON_TYPE | LINE_TYPE | RATLINE_TYPE)
+#define	INSERT_TYPES	(POUR_TYPE | LINE_TYPE | RATLINE_TYPE)
 
 /* ---------------------------------------------------------------------------
  * prototypes
