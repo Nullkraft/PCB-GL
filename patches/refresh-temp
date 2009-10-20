@@ -1,0 +1,31 @@
+Bottom: ecbc26fe39500065de68ad23d7abfaac8c7f0a8e
+Top:    a509b6501b3b226d96eba3429e1f17f784935fcd
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-21 00:37:44 +0100
+
+Refresh of work-in-progress-on-subcomposi
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 08506f9..d2a828a 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -485,7 +485,7 @@ DrawEverything (BoxTypePtr drawn_area)
+       SWAP_IDENT = 0;
+       DrawMask (drawn_area);
+       SWAP_IDENT = save_swap;
+-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
++      gui->set_layer (NULL,  SL (FINISHED, 0), 0);
+     }
+   if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
+     {
+@@ -493,7 +493,7 @@ DrawEverything (BoxTypePtr drawn_area)
+       SWAP_IDENT = 1;
+       DrawMask (drawn_area);
+       SWAP_IDENT = save_swap;
+-      gui->set_layer (NULL, SL (FINISHED, 0), 0);
++      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+     }
+   /* Draw pins, pads, vias below silk */
+   if (gui->gui)
