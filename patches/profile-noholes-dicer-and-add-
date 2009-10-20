@@ -1,7 +1,7 @@
-Bottom: 73ed43b5ede439d1de6d03f859a7749c89b84b03
-Top:    52f9b370bf7faa9450d8b211aa38ac23b8f19712
+Bottom: aa6358b95e76f539ea7c6b96bcb85a413ab8c782
+Top:    70af9b1edaa83079b38353b9199d17eb45234f3d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-06-09 12:32:54 +0100
+Date:   2009-10-20 23:38:20 +0100
 
 Profile NoHoles dicer, and add some warnings about longjmp badness
 
@@ -9,10 +9,10 @@ Profile NoHoles dicer, and add some warnings about longjmp badness
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 31888b6..d74fc49 100644
+index da1aa32..07f593d 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -88,7 +88,11 @@ hidgl_ensure_triangle_space (triangle_buffer *buffer, int count)
+@@ -89,7 +89,11 @@ hidgl_ensure_triangle_space (triangle_buffer *buffer, int count)
        exit (1);
      }
    if (count > TRIANGLE_ARRAY_SIZE - buffer->triangle_count)
@@ -60,10 +60,10 @@ index dd02e0b..ebc1308 100644
  
  static POLYAREA *
 diff --git a/src/polygon1.c b/src/polygon1.c
-index a394cba..32fc660 100644
+index a640222..0a67b08 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -813,6 +813,18 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -812,6 +812,18 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
    POLYAREA *t;
    PLINE *pa;
    contour_info c_info;
@@ -82,7 +82,7 @@ index a394cba..32fc660 100644
  
    /* Search the r-tree of the object with most contours
     * We loop over the contours of "a". Swap if necessary.
-@@ -824,13 +836,92 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -823,13 +835,92 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
        a = t;
      }
  
@@ -177,7 +177,7 @@ index a394cba..32fc660 100644
  
        c_info.getout = NULL;
        c_info.pa = pa;
-@@ -852,6 +943,7 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -851,6 +942,7 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
        sb.X2 = pa->xmax + 1;
        sb.Y2 = pa->ymax + 1;
  
@@ -185,7 +185,7 @@ index a394cba..32fc660 100644
        r_search (b->contour_tree, &sb, NULL, contour_bounds_touch, &c_info);
      }
  
-@@ -2272,7 +2364,7 @@ Touching (POLYAREA * a, POLYAREA * b)
+@@ -2271,7 +2363,7 @@ Touching (POLYAREA * a, POLYAREA * b)
  	return -1;
  #endif
        M_POLYAREA_intersect (&e, a, b, False);
@@ -194,7 +194,7 @@ index a394cba..32fc660 100644
        if (M_POLYAREA_label (a, b, TRUE))
  	return TRUE;
        if (M_POLYAREA_label (b, a, TRUE))
-@@ -2415,6 +2507,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2414,6 +2506,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
  
        InsertHoles (&e, *res, &holes);
      }
@@ -202,7 +202,7 @@ index a394cba..32fc660 100644
    /* delete holes if any left */
    while ((p = holes) != NULL)
      {
-@@ -2500,6 +2593,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
+@@ -2499,6 +2592,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
        poly_Free (&b);
        assert (poly_Valid (*aminusb));
      }
@@ -210,7 +210,7 @@ index a394cba..32fc660 100644
    /* delete holes if any left */
    while ((p = holes) != NULL)
      {
-@@ -2507,7 +2601,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
+@@ -2506,7 +2600,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
        poly_DelContour (&p);
      }
  
