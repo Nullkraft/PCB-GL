@@ -64,7 +64,7 @@ void RotateLineLowLevel (LineTypePtr, LocationType, LocationType, BYTE);
 void RotateArcLowLevel (ArcTypePtr, LocationType, LocationType, BYTE);
 void RotateBoxLowLevel (BoxTypePtr, LocationType, LocationType, BYTE);
 void RotateTextLowLevel (TextTypePtr, LocationType, LocationType, BYTE);
-void RotatePolygonLowLevel (PolygonTypePtr, LocationType, LocationType, BYTE);
+void RotatePourLowLevel (PourTypePtr, LocationType, LocationType, BYTE);
 void RotateElementLowLevel (DataTypePtr, ElementTypePtr, LocationType,
 			    LocationType, BYTE);
 void *RotateObject (int, void *, void *, void *, LocationType, LocationType,
