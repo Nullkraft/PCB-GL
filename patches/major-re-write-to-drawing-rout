@@ -1,5 +1,5 @@
 Bottom: ee5bad64a829ac9eb52691be9181afbd11fc5efb
-Top:    b0953d776fe9f0222a3c4f5d4464e76a6c5aa35b
+Top:    ab680266dc71a8f8d3182fe86a546fe20a83dac2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-20 01:42:44 +0100
 
@@ -9,7 +9,7 @@ Major re-write to drawing routines
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 10ba3f2..480fbba 100644
+index 10ba3f2..9253049 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -76,7 +76,7 @@ FloatPolyType, *FloatPolyTypePtr;
@@ -44,8 +44,7 @@ index 10ba3f2..480fbba 100644
  static void DrawPolygonLowLevel (PolygonTypePtr);
  static void DrawArcLowLevel (ArcTypePtr);
  static void DrawElementPackageLowLevel (ElementTypePtr Element, int);
--static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
-+/* static */ void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
+ static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
  static void AddPart (void *);
  static void SetPVColor (PinTypePtr, int);
 -static void DrawEMark (ElementTypePtr, LocationType, LocationType, Boolean);
@@ -204,15 +203,6 @@ index 10ba3f2..480fbba 100644
  DrawRegularText (LayerTypePtr Layer, TextTypePtr Text, int unused)
  {
    int min_silk_line;
-@@ -2183,7 +2187,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
- /* ---------------------------------------------------------------------------
-  * draws a polygon
-  */
--static void
-+/* static */ void
- DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
- {
-   static char *color;
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
 index 6bde5c0..a1f1dbb 100644
 --- a/src/hid/gtk/gtkhid-main.c
@@ -391,10 +381,10 @@ index 6bde5c0..a1f1dbb 100644
  void
  ghid_set_color (hidGC gc, const char *name)
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 63214fd..7f7f931 100644
+index 63214fd..510cce1 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -797,6 +797,12 @@ ghid_screen_update (void)
+@@ -797,6 +797,13 @@ ghid_screen_update (void)
  void DrawAttached (Boolean);
  void draw_grid (void);
  
@@ -402,12 +392,13 @@ index 63214fd..7f7f931 100644
 +{
 +  Boolean arg;
 +  LayerTypePtr Layer;
++  BoxTypePtr drawn_area;
 +};
 +
  static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
                                      {0.0, 1.0, 0.0, 0.0},
                                      {0.0, 0.0, 1.0, 0.0},
-@@ -833,6 +839,572 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
+@@ -833,6 +840,610 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
    ghid_invalidate_all ();
  }
  
@@ -558,12 +549,49 @@ index 63214fd..7f7f931 100644
 +  return 1;
 +}
 +
++static void
++DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, BoxTypePtr drawn_area)
++{
++  static char *color;
++
++  if (!Polygon->Clipped)
++    return;
++
++  if (TEST_FLAG (SELECTEDFLAG, Polygon))
++    color = Layer->SelectedColor;
++  else if (TEST_FLAG (FOUNDFLAG, Polygon))
++    color = PCB->ConnectedColor;
++  else
++    color = Layer->Color;
++  gui->set_color (Output.fgGC, color);
++
++  if (gui->thindraw_pcb_polygon != NULL &&
++      (TEST_FLAG (THINDRAWFLAG, PCB) ||
++       TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
++    gui->thindraw_pcb_polygon (Output.fgGC, Polygon, drawn_area);
++  else
++    gui->fill_pcb_polygon (Output.fgGC, Polygon, drawn_area);
++
++  /* If checking planes, thin-draw any pieces which have been clipped away */
++  if (gui->thindraw_pcb_polygon != NULL &&
++      TEST_FLAG (CHECKPLANESFLAG, PCB) &&
++      !TEST_FLAG (FULLPOLYFLAG, Polygon))
++    {
++      PolygonType poly = *Polygon;
++
++      for (poly.Clipped = Polygon->Clipped->f;
++           poly.Clipped != Polygon->Clipped;
++           poly.Clipped = poly.Clipped->f)
++        gui->thindraw_pcb_polygon (Output.fgGC, &poly, drawn_area);
++    }
++}
++
 +static int
 +poly_callback (const BoxType * b, void *cl)
 +{
 +  struct pin_info *i = (struct pin_info *) cl;
 +
-+  DrawPlainPolygon (i->Layer, (PolygonTypePtr) b);
++  DrawPlainPolygon (i->Layer, (PolygonTypePtr) b, i->drawn_area);
 +  return 1;
 +}
 +
@@ -678,6 +706,7 @@ index 63214fd..7f7f931 100644
 +  OutputType *out = &Output;
 +
 +  info.arg = True;
++  info.drawn_area = screen;
 +
 +  if (thin)
 +    {
@@ -754,6 +783,7 @@ index 63214fd..7f7f931 100644
 +      /* draw all polygons on this layer */
 +      if (Layer->PolygonN) {
 +        info.Layer = Layer;
++        info.drawn_area = screen;
 +        r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
 +
 +        /* HACK: Subcomposite polygons separately from other layer primitives */
@@ -849,7 +879,7 @@ index 63214fd..7f7f931 100644
 +}
 +
 +void
-+ghid_draw_everything (void)
++ghid_draw_everything (BoxTypePtr drawn_area)
 +{
 +  int i, ngroups, side;
 +  int plated;
@@ -857,7 +887,6 @@ index 63214fd..7f7f931 100644
 +  int do_group[MAX_LAYER];
 +  /* This is the reverse of the order in which we draw them.  */
 +  int drawn_groups[MAX_LAYER];
-+  BoxTypePtr drawn_area = NULL;
 +  struct cyl_info cyl_info;
 +
 +  extern char *current_color;
@@ -980,7 +1009,7 @@ index 63214fd..7f7f931 100644
  
  #define Z_NEAR 3.0
  gboolean
-@@ -845,6 +1417,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -845,6 +1456,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
    GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
  
@@ -989,7 +1018,16 @@ index 63214fd..7f7f931 100644
    /* make GL-context "current" */
    if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
      return FALSE;
-@@ -901,7 +1475,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -874,7 +1487,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+   glViewport (widget->allocation.x,     widget->allocation.y,
+               widget->allocation.width, widget->allocation.height);
+ 
+-#if 0
++#if 1
+   glEnable (GL_SCISSOR_TEST);
+   glScissor (ev->area.x,
+              widget->allocation.height - ev->area.height - ev->area.y,
+@@ -901,7 +1514,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  //  glClearDepth (1000);
    glStencilMask (~0);
    glClearStencil (0);
@@ -998,18 +1036,18 @@ index 63214fd..7f7f931 100644
    hidgl_reset_stencil_usage ();
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
-@@ -948,7 +1522,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -948,7 +1561,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
  //  hid_expose_callback (&ghid_hid, &region, 0);
 -  hid_expose_callback (&ghid_hid, NULL, 0);
 +//  hid_expose_callback (&ghid_hid, NULL, 0);
-+  ghid_draw_everything ();
++  ghid_draw_everything (global_view_2d ? &region : NULL);
 +
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
-@@ -989,6 +1565,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -989,6 +1604,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
  
