@@ -1,7 +1,7 @@
-Bottom: f72e0350d36f1174648f8089a6e78df72eaa7a3d
-Top:    2fd42ccc10506b3c7c815416688e2252317d3982
+Bottom: f361ceba438278074271a30c53e69157e8309494
+Top:    9f44c13a87fcab3b7822f7f492ddc54069d85f2c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-19 21:06:13 +0100
+Date:   2009-10-20 23:35:44 +0100
 
 Temp - delete me
 
@@ -9,7 +9,7 @@ Temp - delete me
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index b2768cb..e04a398 100644
+index da1aa32..99b613f 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -193,6 +193,8 @@ static void draw_cap (double width, int x, int y, double angle, double scale)
@@ -40,10 +40,10 @@ index b2768cb..e04a398 100644
  
    /* Drawing operations as masked to areas where the stencil buffer is '0' */
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 3caa063..cf7f2dc 100644
+index 74742f1..b6fc95b 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1171,6 +1171,7 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1376,6 +1376,7 @@ DrawLayerGroup (int group, const BoxType * screen)
          glPopAttrib ();
        }
  
@@ -51,17 +51,17 @@ index 3caa063..cf7f2dc 100644
        /* draw all polygons on this layer */
        if (Layer->PolygonN) {
          info.Layer = Layer;
-@@ -1192,6 +1193,7 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1398,6 +1399,7 @@ DrawLayerGroup (int group, const BoxType * screen)
            glPopAttrib ();
          }
        }
 +#endif
  
        /* Draw pins and vias on this layer */
-       if (rv) {
-@@ -1411,8 +1413,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
-   GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
-   GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
+       if (!global_view_2d && rv) {
+@@ -1635,8 +1637,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+   int min_depth;
+   int max_depth;
  
 -//  if (!one_shot) return;
 -
