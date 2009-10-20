@@ -1,7 +1,7 @@
-Bottom: d5388d76c4287fa026686239838a0740757a7495
-Top:    1976405833f0e6fcc0274000f4a4276b67ca3ed9
+Bottom: 563dfea77ccab9e24c8689715b2989822c2aa0d4
+Top:    2c622f2468d9e3b0d73e43039eb1048917f38b2d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-20 22:05:28 +0100
+Date:   2009-10-20 23:34:27 +0100
 
 Major re-write to drawing routines
 
@@ -204,7 +204,7 @@ index 10ba3f2..9253049 100644
  {
    int min_silk_line;
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 6bde5c0..a1f1dbb 100644
+index 1725cc5..8322376 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -520,81 +520,99 @@ ghid_invalidate_all ()
@@ -367,7 +367,7 @@ index 6bde5c0..a1f1dbb 100644
    return 0;
  }
  
-@@ -705,9 +723,9 @@ ghid_set_special_colors (HID_Attribute * ha)
+@@ -703,9 +721,9 @@ ghid_set_special_colors (HID_Attribute * ha)
      }
  }
  
@@ -381,10 +381,10 @@ index 6bde5c0..a1f1dbb 100644
  void
  ghid_set_color (hidGC gc, const char *name)
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 804ddc1..c12dccc 100644
+index e5957c2..990e744 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -975,6 +975,13 @@ ghid_screen_update (void)
+@@ -961,6 +961,13 @@ ghid_screen_update (void)
  void DrawAttached (Boolean);
  void draw_grid (void);
  
@@ -398,7 +398,7 @@ index 804ddc1..c12dccc 100644
  void
  ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata)
  {
-@@ -1005,6 +1012,610 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
+@@ -991,6 +998,610 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
    ghid_invalidate_all ();
  }
  
@@ -1009,7 +1009,7 @@ index 804ddc1..c12dccc 100644
  
  #define Z_NEAR 3.0
  gboolean
-@@ -1022,6 +1633,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1008,6 +1619,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    int min_depth;
    int max_depth;
  
@@ -1018,7 +1018,7 @@ index 804ddc1..c12dccc 100644
    /* make GL-context "current" */
    if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
      return FALSE;
-@@ -1082,8 +1695,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1068,8 +1681,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1029,7 +1029,7 @@ index 804ddc1..c12dccc 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1175,7 +1788,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1161,7 +1774,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
  
@@ -1039,7 +1039,7 @@ index 804ddc1..c12dccc 100644
  
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
-@@ -1214,6 +1828,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1200,6 +1814,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
  

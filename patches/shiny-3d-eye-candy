@@ -1,7 +1,7 @@
-Bottom: 0bf2d3f91993228987d298a290866e6597670667
-Top:    15a7e6c923d7fb0e43df8f100d4ff5df312a636d
+Bottom: 0ea1d466489215a21befea8bdaa27215752b3627
+Top:    563dfea77ccab9e24c8689715b2989822c2aa0d4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-20 21:36:16 +0100
+Date:   2009-10-20 23:34:27 +0100
 
 Shiny 3D eye-candy
 
@@ -154,7 +154,7 @@ index cfec799..10ba3f2 100644
      }
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 1b28e71..6bde5c0 100644
+index 5d3e091..1725cc5 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -344,6 +344,7 @@ draw_grid ()
@@ -214,10 +214,10 @@ index 1b28e71..6bde5c0 100644
    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
    /* Reset stencil buffer so we can paint anywhere */
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index ccee89c..7de114b 100644
+index 7210f32..e5957c2 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -300,16 +300,16 @@ have_crosshair_attachments (void)
+@@ -479,16 +479,16 @@ have_crosshair_attachments (void)
  #define VCD		8
  
  static void
@@ -240,7 +240,7 @@ index ccee89c..7de114b 100644
  {
    gint x0, y0, x1, y1;
  
-@@ -321,8 +321,8 @@ draw_slanted_cross (gint x, gint y)
+@@ -500,8 +500,8 @@ draw_slanted_cross (gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - x;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -251,7 +251,7 @@ index ccee89c..7de114b 100644
  
    x0 = x - (gport->height - y);
    x0 = MAX(0, MIN (x0, gport->width));
-@@ -332,12 +332,12 @@ draw_slanted_cross (gint x, gint y)
+@@ -511,12 +511,12 @@ draw_slanted_cross (gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - (gport->width - x);
    y1 = MAX(0, MIN (y1, gport->height));
@@ -267,7 +267,7 @@ index ccee89c..7de114b 100644
  {
    gint x0, y0, x1, y1;
    gdouble tan60 = sqrt (3);
-@@ -350,8 +350,8 @@ draw_dozen_cross (gint x, gint y)
+@@ -529,8 +529,8 @@ draw_dozen_cross (gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - x * tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -278,7 +278,7 @@ index ccee89c..7de114b 100644
  
    x0 = x + (gport->height - y) * tan60;
    x0 = MAX(0, MIN (x0, gport->width));
-@@ -361,8 +361,8 @@ draw_dozen_cross (gint x, gint y)
+@@ -540,8 +540,8 @@ draw_dozen_cross (gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - x / tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -289,7 +289,7 @@ index ccee89c..7de114b 100644
  
    x0 = x - (gport->height - y) / tan60;
    x0 = MAX(0, MIN (x0, gport->width));
-@@ -372,8 +372,8 @@ draw_dozen_cross (gint x, gint y)
+@@ -551,8 +551,8 @@ draw_dozen_cross (gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - (gport->width - x) * tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -300,7 +300,7 @@ index ccee89c..7de114b 100644
  
    x0 = x - (gport->height - y) * tan60;
    x0 = MAX(0, MIN (x0, gport->width));
-@@ -383,30 +383,31 @@ draw_dozen_cross (gint x, gint y)
+@@ -562,30 +562,31 @@ draw_dozen_cross (gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - (gport->width - x) / tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -340,7 +340,7 @@ index ccee89c..7de114b 100644
  
    if (gport->x_crosshair < 0 || ghidgui->creating) {// || !gport->has_entered) {
      printf ("Returning\n");
-@@ -421,6 +422,7 @@ ghid_show_crosshair (gboolean show)
+@@ -600,6 +601,7 @@ ghid_show_crosshair (gboolean show)
      }
    x = DRAW_X (gport->x_crosshair);
    y = DRAW_Y (gport->y_crosshair);
@@ -348,7 +348,7 @@ index ccee89c..7de114b 100644
  
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
-@@ -436,13 +438,13 @@ ghid_show_crosshair (gboolean show)
+@@ -615,13 +617,13 @@ ghid_show_crosshair (gboolean show)
  #if 1
    if (x_prev >= 0)
      {
@@ -364,7 +364,7 @@ index ccee89c..7de114b 100644
      }
  
    glEnd ();
-@@ -454,43 +456,43 @@ ghid_show_crosshair (gboolean show)
+@@ -633,43 +635,43 @@ ghid_show_crosshair (gboolean show)
  #if 1
        if (x_prev >= 0)
          {
@@ -440,7 +440,7 @@ index ccee89c..7de114b 100644
          }
  
        glEnd ();
-@@ -500,9 +502,10 @@ ghid_show_crosshair (gboolean show)
+@@ -679,9 +681,10 @@ ghid_show_crosshair (gboolean show)
      {
        x_prev = x;
        y_prev = y;
@@ -452,16 +452,16 @@ index ccee89c..7de114b 100644
  
    glDisable (GL_COLOR_LOGIC_OP);
  }
-@@ -792,7 +795,7 @@ ghid_screen_update (void)
+@@ -956,7 +959,7 @@ ghid_screen_update (void)
  }
  
  void DrawAttached (Boolean);
 -void draw_grid ();
 +void draw_grid (void);
  
- static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
-                                     {0.0, 1.0, 0.0, 0.0},
-@@ -941,6 +944,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+ void
+ ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata)
+@@ -1163,6 +1166,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
