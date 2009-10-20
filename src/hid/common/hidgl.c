@@ -368,10 +368,10 @@ void
 hidgl_draw_rect (int x1, int y1, int x2, int y2)
 {
   glBegin (GL_LINE_LOOP);
-  glVertex2f (x1, y1);
-  glVertex2f (x1, y2);
-  glVertex2f (x2, y2);
-  glVertex2f (x2, y1);
+  glVertex3f (x1, y1, global_depth);
+  glVertex3f (x1, y2, global_depth);
+  glVertex3f (x2, y2, global_depth);
+  glVertex3f (x2, y1, global_depth);
   glEnd ();
 }
 
