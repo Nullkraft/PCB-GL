@@ -1,5 +1,5 @@
 Bottom: 53eee56debd93fc76921a4f3b27bf2fa732ad390
-Top:    9a0bf873aaf3c5407ecee10d0dcf7cea3f3c55e9
+Top:    ee3c6840d690995916b5ebe744a1921774384537
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-20 22:18:41 +0100
 
@@ -123,3 +123,16 @@ index b956a65..aa2985e 100644
 +void hidgl_set_depth (float depth);
  
  #endif /* __HIDGL_INCLUDED__  */
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index e43ec87..a8e87d5 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -417,7 +417,7 @@ ghid_note_event_location (GdkEventButton * ev)
+     }
+ 
+   /* Unproject event_x and event_y to world coordinates of the plane we are on */
+-  ghid_unproject_to_z_plane (event_x, event_y, 0,
++  ghid_unproject_to_z_plane (event_x, event_y, global_depth,
+                              &event_x, &event_y);
+ 
+   gport->view_x = event_x * gport->zoom + gport->view_x0;
