@@ -1,5 +1,5 @@
 Bottom: 15a7e6c923d7fb0e43df8f100d4ff5df312a636d
-Top:    5a45c990b4ad52128cd4b44af908680502f667a0
+Top:    d5388d76c4287fa026686239838a0740757a7495
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-20 21:38:57 +0100
 
@@ -9,7 +9,7 @@ TEMP
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 7de114b..60569c4 100644
+index 7de114b..804ddc1 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -55,6 +55,16 @@
@@ -253,8 +253,8 @@ index 7de114b..60569c4 100644
 -  region.Y1 = MIN (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
 -  region.Y2 = MAX (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
 +  /* Test the 8 corners of a cube spanning the event */
-+  min_depth = -50 + compute_depth (0);         /* FIXME */
-+  max_depth =  50 + compute_depth (max_layer); /* FIXME */
++  min_depth = -50; /* FIXME */
++  max_depth =  0;  /* FIXME */
 +
 +  ghid_unproject_to_z_plane (ev->area.x,
 +                             ev->area.y,
