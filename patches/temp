@@ -1,7 +1,7 @@
-Bottom: 0bf2d3f91993228987d298a290866e6597670667
-Top:    3ccaeb29639446c6ac19ed20210d367d11bdabcd
+Bottom: b17063fcd6adb537e8bccd285e3cdbf049247f2f
+Top:    957a8071f8b5bbd8d0e6b0fddb0258d127d7c5f0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-20 22:09:01 +0100
+Date:   2009-10-20 22:10:48 +0100
 
 TEMP
 
@@ -9,10 +9,10 @@ TEMP
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index ccee89c..40e0016 100644
+index c7968a0..b941475 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -55,6 +55,16 @@
+@@ -53,6 +53,16 @@
  RCSID ("$Id$");
  
  static gint x_pan_speed, y_pan_speed;
@@ -29,7 +29,7 @@ index ccee89c..40e0016 100644
  
  /* Set to true if cursor is currently in viewport. This is a hack to prevent
   * Crosshair stack corruption due to unmatching window enter / leave events */
-@@ -226,6 +236,169 @@ ghid_get_coords (const char *msg, int *x, int *y)
+@@ -224,6 +234,169 @@ ghid_get_coords (const char *msg, int *x, int *y)
      }
  }
  
@@ -199,7 +199,7 @@ index ccee89c..40e0016 100644
  gboolean
  ghid_note_event_location (GdkEventButton * ev)
  {
-@@ -243,6 +416,11 @@ ghid_note_event_location (GdkEventButton * ev)
+@@ -241,6 +414,11 @@ ghid_note_event_location (GdkEventButton * ev)
        event_x = ev->x;
        event_y = ev->y;
      }
@@ -211,7 +211,7 @@ index ccee89c..40e0016 100644
    gport->view_x = event_x * gport->zoom + gport->view_x0;
    gport->view_y = event_y * gport->zoom + gport->view_y0;
  
-@@ -794,12 +972,6 @@ ghid_screen_update (void)
+@@ -792,12 +970,6 @@ ghid_screen_update (void)
  void DrawAttached (Boolean);
  void draw_grid ();
  
@@ -224,7 +224,7 @@ index ccee89c..40e0016 100644
  void
  ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata)
  {
-@@ -841,6 +1013,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -839,6 +1011,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    extern HID ghid_hid;
    GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
    GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
@@ -236,7 +236,7 @@ index ccee89c..40e0016 100644
  
    /* make GL-context "current" */
    if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
-@@ -883,6 +1060,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -881,6 +1058,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
    glMultMatrixf (view_matrix);
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
@@ -244,7 +244,7 @@ index ccee89c..40e0016 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (gport->offlimits_color.red / 65535.,
-@@ -900,10 +1078,66 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -898,10 +1076,66 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glDisable (GL_STENCIL_TEST);
    glStencilFunc (GL_ALWAYS, 0, 0);
  
@@ -315,7 +315,7 @@ index ccee89c..40e0016 100644
  
    eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
    etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
-@@ -937,7 +1171,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -935,7 +1169,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                               -gport->view_x0,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
@@ -326,7 +326,7 @@ index ccee89c..40e0016 100644
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
-@@ -957,7 +1193,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -955,7 +1191,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
