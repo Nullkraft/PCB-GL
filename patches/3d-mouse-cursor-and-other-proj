@@ -1,7 +1,7 @@
-Bottom: 1976405833f0e6fcc0274000f4a4276b67ca3ed9
-Top:    ac88d228d0d24abbba83a28cb9dcbecf78596b5f
+Bottom: 2c622f2468d9e3b0d73e43039eb1048917f38b2d
+Top:    45bcde928f05b65cf7f8b2d1bc5db21d46cd737e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-20 21:43:34 +0100
+Date:   2009-10-20 23:34:37 +0100
 
 Other projection / layer order fixes
 
@@ -9,10 +9,10 @@ Other projection / layer order fixes
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index c12dccc..884aa1c 100644
+index 990e744..5569db1 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1498,6 +1498,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1484,6 +1484,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    /* This is the reverse of the order in which we draw them.  */
    int drawn_groups[MAX_LAYER];
    struct cyl_info cyl_info;
@@ -20,7 +20,7 @@ index c12dccc..884aa1c 100644
  
    extern char *current_color;
    extern Boolean Gathering;
-@@ -1505,12 +1506,24 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1491,12 +1492,24 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    current_color = NULL;
    Gathering = False;
  
@@ -47,7 +47,7 @@ index c12dccc..884aa1c 100644
  
      if (/*l->On && */!do_group[group]) {
        do_group[group] = 1;
-@@ -1613,6 +1626,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1599,6 +1612,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
      DrawRats(drawn_area);
  
    Gathering = True;
