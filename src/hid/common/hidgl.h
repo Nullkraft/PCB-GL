@@ -43,6 +43,13 @@ hidgl_add_triangle_3D (triangle_buffer *buffer,
                        GLfloat x2, GLfloat y2, GLfloat z2,
                        GLfloat x3, GLfloat y3, GLfloat z3)
 {
+  if (buffer->triangle_count == TRIANGLE_ARRAY_SIZE)
+    {
+      fprintf (stderr, "hidgl_add_triangle_3D: "
+               "Attempt to add past end of array. Will now segfault.\n");
+      *(char *)0 = 0;
+    }
+
   buffer->triangle_array [buffer->coord_comp_count++] = x1;
   buffer->triangle_array [buffer->coord_comp_count++] = y1;
   buffer->triangle_array [buffer->coord_comp_count++] = z1;
