@@ -1,7 +1,7 @@
-Bottom: 28c2d67a4dcdd7c38f4b1ffe405465aadc810fa1
-Top:    d5d0f6e761ebedab452a2fb1888eff6d569cb212
+Bottom: b925ecf85b96376bb35209b5e5db6ded5f8cd22b
+Top:    d871faab0bd4af36afafbad1d890dc2a42e5c9a4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-19 17:51:03 +0100
+Date:   2009-10-20 01:42:42 +0100
 
 Silly space navigator interface to allow funky views
 
@@ -28,7 +28,7 @@ index 2f92f29..9bc9e22 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index b847c71..64c5e26 100644
+index 784f77f..f412c9f 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -45,6 +45,8 @@
@@ -40,7 +40,7 @@ index b847c71..64c5e26 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -1046,6 +1048,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -1054,6 +1056,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        /* Make sure drawing area has keyboard focus when we are in it.
         */
        gtk_widget_grab_focus (out->drawing_area);
@@ -49,7 +49,7 @@ index b847c71..64c5e26 100644
      }
    ghidgui->in_popup = FALSE;
  
-@@ -1153,6 +1157,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -1161,6 +1165,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
  	    }
  	  g_idle_add (ghid_pan_idle_cb, NULL);
  	}
@@ -58,7 +58,7 @@ index b847c71..64c5e26 100644
      }
  
    if(cursor_in_viewport)
-@@ -1201,3 +1207,29 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+@@ -1209,3 +1215,29 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  
    return TRUE;
  }
@@ -89,7 +89,7 @@ index b847c71..64c5e26 100644
 +}
 +
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index fa0b6c3..0591900 100644
+index 38f0c13..6ee7c0d 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -123,6 +123,7 @@ a zoom in/out.
@@ -107,8 +107,8 @@ index fa0b6c3..0591900 100644
 +  gport->trackball = trackball;
    g_signal_connect (trackball, "rotation-changed",
                      G_CALLBACK (ghid_port_rotate), NULL);
-   gtk_box_pack_start (GTK_BOX (vbox_left), trackball, FALSE, FALSE, 0);
-@@ -2756,6 +2758,12 @@ ghid_do_export (HID_Attr_Val * options)
+   g_signal_connect (trackball, "view-2d-changed",
+@@ -2758,6 +2760,12 @@ ghid_do_export (HID_Attr_Val * options)
    if (stdin_listen)
      ghid_create_listener ();
  
@@ -122,10 +122,10 @@ index fa0b6c3..0591900 100644
  
    gtk_main ();
 diff --git a/src/hid/gtk/gui-trackball.c b/src/hid/gtk/gui-trackball.c
-index cd8ec44..a115578 100644
+index 26440bb..33b8c81 100644
 --- a/src/hid/gtk/gui-trackball.c
 +++ b/src/hid/gtk/gui-trackball.c
-@@ -90,6 +90,38 @@ button_release_cb (GtkWidget *widget, GdkEventButton *ev, gpointer userdata)
+@@ -99,6 +99,38 @@ button_release_cb (GtkWidget *widget, GdkEventButton *ev, gpointer userdata)
  }
  
  
@@ -164,19 +164,11 @@ index cd8ec44..a115578 100644
  static gboolean
  motion_notify_cb (GtkWidget *widget, GdkEventMotion *ev, gpointer userdata)
  {
-@@ -97,7 +129,6 @@ motion_notify_cb (GtkWidget *widget, GdkEventMotion *ev, gpointer userdata)
-   double x1, y1;
-   double x2, y2;
-   float q[4];
--  float newq[4];
- 
-   if (!ball->dragging)
-     return TRUE;
 diff --git a/src/hid/gtk/gui-trackball.h b/src/hid/gtk/gui-trackball.h
-index 3318695..fd83acf 100644
+index d6bd03c..3af647e 100644
 --- a/src/hid/gtk/gui-trackball.h
 +++ b/src/hid/gtk/gui-trackball.h
-@@ -61,6 +61,7 @@ struct _GhidTrackball
+@@ -65,6 +65,7 @@ struct _GhidTrackball
  
  GType ghid_trackball_get_type (void);
  
@@ -185,7 +177,7 @@ index 3318695..fd83acf 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 57de59c..41263b3 100644
+index 43553be..2c180d3 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -197,6 +197,8 @@ typedef struct
