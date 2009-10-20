@@ -1,5 +1,5 @@
 Bottom: ee5bad64a829ac9eb52691be9181afbd11fc5efb
-Top:    ab680266dc71a8f8d3182fe86a546fe20a83dac2
+Top:    6b199477a3f006390f969887441a745f8b7a1f22
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-20 01:42:44 +0100
 
@@ -381,7 +381,7 @@ index 6bde5c0..a1f1dbb 100644
  void
  ghid_set_color (hidGC gc, const char *name)
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 63214fd..510cce1 100644
+index 63214fd..d12ab36 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -797,6 +797,13 @@ ghid_screen_update (void)
@@ -1018,16 +1018,20 @@ index 63214fd..510cce1 100644
    /* make GL-context "current" */
    if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
      return FALSE;
-@@ -874,7 +1487,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -874,12 +1487,10 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glViewport (widget->allocation.x,     widget->allocation.y,
                widget->allocation.width, widget->allocation.height);
  
 -#if 0
-+#if 1
    glEnable (GL_SCISSOR_TEST);
    glScissor (ev->area.x,
               widget->allocation.height - ev->area.height - ev->area.y,
-@@ -901,7 +1514,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+              ev->area.width, ev->area.height);
+-#endif
+ 
+   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity ();
+@@ -901,7 +1512,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  //  glClearDepth (1000);
    glStencilMask (~0);
    glClearStencil (0);
@@ -1036,7 +1040,7 @@ index 63214fd..510cce1 100644
    hidgl_reset_stencil_usage ();
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
-@@ -948,7 +1561,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -948,7 +1559,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
  //  hid_expose_callback (&ghid_hid, &region, 0);
@@ -1047,7 +1051,7 @@ index 63214fd..510cce1 100644
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
-@@ -989,6 +1604,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -989,6 +1602,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
  
