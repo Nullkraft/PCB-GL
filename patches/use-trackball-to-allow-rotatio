@@ -1,5 +1,5 @@
 Bottom: ae9d931df39597bfeb8a022496be17d92f3eaece
-Top:    e7a9a198982f62970fdf43ffd0c25b449b07c3e3
+Top:    5ad74ec06f4e24676790572573af0952fb480a3f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-20 01:41:05 +0100
 
@@ -122,7 +122,7 @@ index 2f30d4d..c7968a0 100644
      gdk_gl_drawable_swap_buffers (pGlDrawable);
    else
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 88920e6..38f0c13 100644
+index 88920e6..06cbd42 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -122,6 +122,7 @@ a zoom in/out.
@@ -155,15 +155,6 @@ index 88920e6..38f0c13 100644
    vbox = gtk_vbox_new(FALSE, 0);
    gtk_box_pack_start(GTK_BOX(vbox_left), vbox, FALSE, FALSE, 0);
    ghidgui->mode_buttons0_frame_vbox = vbox;
-@@ -2673,7 +2682,7 @@ ghid_parse_arguments (int *argc, char ***argv)
-   /* setup GL-context */
-   gport->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
-                                                GDK_GL_MODE_STENCIL |
--//                                               GDK_GL_MODE_DEPTH   |
-+                                               GDK_GL_MODE_DEPTH   |
-                                                GDK_GL_MODE_DOUBLE);
-   if (!gport->glconfig) {
-     printf("Could not setup GL-context!\n");
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
 index cfde6a9..43553be 100644
 --- a/src/hid/gtk/gui.h
