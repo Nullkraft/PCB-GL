@@ -1082,8 +1082,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   glStencilFunc (GL_ALWAYS, 0, 0);
 
   /* Test the 8 corners of a cube spanning the event */
-  min_depth = -50 + compute_depth (0);         /* FIXME */
-  max_depth =  50 + compute_depth (max_layer); /* FIXME */
+  min_depth = -50; /* FIXME */
+  max_depth =  0;  /* FIXME */
 
   ghid_unproject_to_z_plane (ev->area.x,
                              ev->area.y,
