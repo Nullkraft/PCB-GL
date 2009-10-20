@@ -51,6 +51,7 @@ RCSID ("$Id$");
 
 enum {
   ROTATION_CHANGED,
+  VIEW_2D_CHANGED,
   LAST_SIGNAL
 };
 
@@ -59,16 +60,24 @@ static guint ghid_trackball_signals[ LAST_SIGNAL ] = { 0 };
 static GObjectClass *ghid_trackball_parent_class = NULL;
 
 
-
 static gboolean
 button_press_cb (GtkWidget *widget, GdkEventButton *ev, gpointer userdata)
 {
-  GhidTrackball *ball = GHID_TRACKBALL (widget);
+  GhidTrackball *ball = GHID_TRACKBALL (userdata);
+  float axis[3];
 
   ball->x1 = 2. * ev->x / widget->allocation.width - 1.;
   ball->y1 = 2. * ev->y / widget->allocation.height - 1.;
 
   ball->dragging = TRUE;
+
+  /* If we were in 2D view before, reset the rotation of the trackball */
+  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (ball->view_2d)))
+    {
+      axis[0] = 1.; axis[1] = 0.; axis[2] = 0.;
+      axis_to_quat (axis, 0, ball->quart1);
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (ball->view_2d), FALSE);
+    }
 
   return TRUE;
 }
@@ -77,7 +86,7 @@ button_press_cb (GtkWidget *widget, GdkEventButton *ev, gpointer userdata)
 static gboolean
 button_release_cb (GtkWidget *widget, GdkEventButton *ev, gpointer userdata)
 {
-  GhidTrackball *ball = GHID_TRACKBALL (widget);
+  GhidTrackball *ball = GHID_TRACKBALL (userdata);
 
   ball->quart1[0] = ball->quart2[0];
   ball->quart1[1] = ball->quart2[1];
@@ -93,11 +102,10 @@ button_release_cb (GtkWidget *widget, GdkEventButton *ev, gpointer userdata)
 static gboolean
 motion_notify_cb (GtkWidget *widget, GdkEventMotion *ev, gpointer userdata)
 {
-  GhidTrackball *ball = GHID_TRACKBALL (widget);
+  GhidTrackball *ball = GHID_TRACKBALL (userdata);
   double x1, y1;
   double x2, y2;
   float q[4];
-  float newq[4];
 
   if (!ball->dragging)
     return TRUE;
@@ -112,12 +120,46 @@ motion_notify_cb (GtkWidget *widget, GdkEventMotion *ev, gpointer userdata)
   trackball (q, x1, y1, x2, y2);
   add_quats (q, ball->quart1, ball->quart2);
 
-  g_signal_emit (ball, ghid_trackball_signals[ROTATION_CHANGED], 0, ball->quart2);
+  g_signal_emit (ball, ghid_trackball_signals[ROTATION_CHANGED], 0,
+                 ball->quart2);
 
   return TRUE;
 }
 
+static gboolean
+ghid_trackball_expose (GtkWidget * widget, GdkEventExpose * ev)
+{
+  gdk_draw_arc (widget->window,
+                widget->style->fg_gc[GTK_WIDGET_STATE (widget)],
+                TRUE,
+                0, 0, widget->allocation.width, widget->allocation.height,
+                0, 64 * 360);
+  return TRUE;
+}
 
+static gboolean
+view_2d_toggled_cb (GtkToggleButton *toggle, gpointer userdata)
+{
+  GhidTrackball *ball = GHID_TRACKBALL (userdata);
+  float axis[3];
+  float quart[4];
+  gboolean view_2d;
+
+  view_2d = gtk_toggle_button_get_active (toggle);
+  if (view_2d)
+    {
+      axis[0] = 1.; axis[1] = 0.; axis[2] = 0.;
+      axis_to_quat (axis, 0, quart);
+
+      g_signal_emit (ball, ghid_trackball_signals[ROTATION_CHANGED], 0, quart);
+    }
+  else
+    g_signal_emit (ball, ghid_trackball_signals[ROTATION_CHANGED], 0, ball->quart1);
+
+  g_signal_emit (ball, ghid_trackball_signals[VIEW_2D_CHANGED], 0, view_2d);
+
+  return TRUE;
+}
 /*! \brief GObject constructor
  *
  *  \par Function Description
@@ -142,19 +184,36 @@ ghid_trackball_constructor (GType type,
   ball = GHID_TRACKBALL (G_OBJECT_CLASS (ghid_trackball_parent_class)->
     constructor (type, n_construct_properties, construct_properties));
 
-  gtk_widget_set_size_request (GTK_WIDGET (ball), 100, 100);
+  gtk_widget_set_size_request (GTK_WIDGET (ball), 120, 120);
+
+  ball->view_2d = gtk_toggle_button_new_with_label (_("2D View"));
+  gtk_box_pack_start (GTK_BOX (ball), ball->view_2d, FALSE, FALSE, 0);
+  gtk_widget_show (ball->view_2d);
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (ball->view_2d), TRUE);
+
+  ball->drawing_area = gtk_drawing_area_new ();
+  gtk_box_pack_start (GTK_BOX (ball), ball->drawing_area, TRUE, TRUE, 0);
+  gtk_widget_show (ball->drawing_area);
 
   axis[0] = 1.; axis[1] = 0.; axis[2] = 0.;
   axis_to_quat (axis, 0, ball->quart1);
   axis_to_quat (axis, 0, ball->quart2);
 
-  g_signal_connect (ball, "button-press-event",   G_CALLBACK (button_press_cb),   NULL);
-  g_signal_connect (ball, "button-release-event", G_CALLBACK (button_release_cb), NULL);
-  g_signal_connect (ball, "motion-notify-event",  G_CALLBACK (motion_notify_cb),  NULL);
+  g_signal_connect (ball->view_2d, "toggled",
+                    G_CALLBACK (view_2d_toggled_cb), ball);
 
-  gtk_widget_add_events (GTK_WIDGET (ball), GDK_BUTTON_PRESS_MASK   |
-                                            GDK_BUTTON_RELEASE_MASK |
-                                            GDK_POINTER_MOTION_MASK);
+  g_signal_connect (ball->drawing_area, "expose-event",
+                    G_CALLBACK (ghid_trackball_expose), ball);
+  g_signal_connect (ball->drawing_area, "button-press-event",
+                    G_CALLBACK (button_press_cb), ball);
+  g_signal_connect (ball->drawing_area, "button-release-event",
+                    G_CALLBACK (button_release_cb), ball);
+  g_signal_connect (ball->drawing_area, "motion-notify-event",
+                    G_CALLBACK (motion_notify_cb), ball);
+
+  gtk_widget_add_events (ball->drawing_area, GDK_BUTTON_PRESS_MASK   |
+                                             GDK_BUTTON_RELEASE_MASK |
+                                             GDK_POINTER_MOTION_MASK);
 
   return G_OBJECT (ball);
 }
@@ -229,18 +288,6 @@ ghid_trackball_get_property (GObject * object, guint property_id,
 }
 
 
-static gboolean
-ghid_trackball_expose (GtkWidget * widget, GdkEventExpose * ev)
-{
-  gdk_draw_arc (widget->window,
-                widget->style->fg_gc[GTK_WIDGET_STATE (widget)],
-                TRUE,
-                0, 0, widget->allocation.width, widget->allocation.height,
-                0, 64 * 360);
-  return TRUE;
-}
-
-
 /*! \brief GType class initialiser for GhidTrackball
  *
  *  \par Function Description
@@ -253,14 +300,11 @@ static void
 ghid_trackball_class_init (GhidTrackballClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-  GtkWidgetClass *gtk_widget_class = GTK_WIDGET_CLASS (klass);
 
   gobject_class->constructor  = ghid_trackball_constructor;
   gobject_class->finalize     = ghid_trackball_finalize;
   gobject_class->set_property = ghid_trackball_set_property;
   gobject_class->get_property = ghid_trackball_get_property;
-
-  gtk_widget_class->expose_event = ghid_trackball_expose;
 
   ghid_trackball_parent_class = g_type_class_peek_parent (klass);
 
@@ -275,6 +319,19 @@ ghid_trackball_class_init (GhidTrackballClass * klass)
                   G_TYPE_NONE,
                   1,    /* n_params */
                   G_TYPE_POINTER
+                 );
+
+  ghid_trackball_signals[VIEW_2D_CHANGED] =
+    g_signal_new ("view-2d-changed",
+                  G_OBJECT_CLASS_TYPE( gobject_class ),
+                  G_SIGNAL_RUN_FIRST,     /*signal_flags */
+                  G_STRUCT_OFFSET( GhidTrackballClass, view_2d_changed ),
+                  NULL, /* accumulator */
+                  NULL, /* accu_data */
+                  g_cclosure_marshal_VOID__BOOLEAN,
+                  G_TYPE_NONE,
+                  1,    /* n_params */
+                  G_TYPE_BOOLEAN
                  );
 }
 
@@ -308,7 +365,7 @@ ghid_trackball_get_type ()
       };
 
       ghid_trackball_type =
-	g_type_register_static (GTK_TYPE_DRAWING_AREA, "GhidTrackball",
+	g_type_register_static (GTK_TYPE_VBOX, "GhidTrackball",
 				&ghid_trackball_info, 0);
     }
 

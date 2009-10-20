@@ -796,6 +796,14 @@ static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
                                     {0.0, 1.0, 0.0, 0.0},
                                     {0.0, 0.0, 1.0, 0.0},
                                     {0.0, 0.0, 0.0, 1.0}};
+static int global_view_2d = 1;
+
+void
+ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata)
+{
+  global_view_2d = view_2d;
+  ghid_invalidate_all ();
+}
 
 void
 ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
