@@ -1802,15 +1802,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                 ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                              -gport->view_y0, 0);
 
-#if 0
-  glBegin (GL_QUADS);
-  glVertex3i (region.X1, region.Y1, 0);
-  glVertex3i (region.X2, region.Y1, 0);
-  glVertex3i (region.X2, region.Y2, 0);
-  glVertex3i (region.X1, region.Y2, 0);
-  glEnd ();
-#endif
-
   // hid_expose_callback (&ghid_hid, global_view_2d ? &region : NULL, 0);
   ghid_draw_everything (&region);
 
