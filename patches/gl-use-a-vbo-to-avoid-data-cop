@@ -1,5 +1,5 @@
 Bottom: 09af7bfe4db00d19d6b052e13d6dd5aa75b57e7c
-Top:    b8f0efe4fae6507de6744fc69fc65725ce922432
+Top:    632823a538bbfdade36462b45ceb8c0ebe081d6b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-20 22:33:41 +0100
 
@@ -77,14 +77,14 @@ index 52d738a..bdf9429 100644
  
  void
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index a3e966f..8fcf26e 100644
+index a3e966f..0598b9c 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
 @@ -24,10 +24,13 @@
  #define __HIDGL_INCLUDED__
  
  #define TRIANGLE_ARRAY_SIZE 5461
-+#define TRIANGLE_ARRAY_BYTES (3 * 3 * TRIANGLE_ARRAY_SIZE)
++#define TRIANGLE_ARRAY_BYTES (3 * 3 * sizeof (GLfloat) * TRIANGLE_ARRAY_SIZE)
  typedef struct {
 -  GLfloat triangle_array [3 * 3 * TRIANGLE_ARRAY_SIZE];
 +//  GLfloat triangle_array [3 * 3 * TRIANGLE_ARRAY_SIZE];
