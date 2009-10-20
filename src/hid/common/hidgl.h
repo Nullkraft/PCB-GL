@@ -24,7 +24,7 @@
 #define __HIDGL_INCLUDED__
 
 #define TRIANGLE_ARRAY_SIZE 5461
-#define TRIANGLE_ARRAY_BYTES (3 * 3 * TRIANGLE_ARRAY_SIZE)
+#define TRIANGLE_ARRAY_BYTES (3 * 3 * sizeof (GLfloat) * TRIANGLE_ARRAY_SIZE)
 typedef struct {
 //  GLfloat triangle_array [3 * 3 * TRIANGLE_ARRAY_SIZE];
   GLfloat *triangle_array;
