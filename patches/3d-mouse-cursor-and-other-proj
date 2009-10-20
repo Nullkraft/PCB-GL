@@ -1,32 +1,13 @@
-Bottom: 7587a105a050161d57b8ad732bbc4259d19a6946
+Bottom: 8fedf043eec76ef1aa363aa2758536178196e95c
 Top:    261c4da8b3f597b154faea01549f67b52efb6d1e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-20 20:11:17 +0100
+Date:   2009-10-20 21:36:16 +0100
 
 3D mouse cursor and other projection / matrix fixes
 
 
 ---
 
-diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 60af460..52d738a 100644
---- a/src/hid/common/hidgl.c
-+++ b/src/hid/common/hidgl.c
-@@ -368,10 +368,10 @@ void
- hidgl_draw_rect (int x1, int y1, int x2, int y2)
- {
-   glBegin (GL_LINE_LOOP);
--  glVertex2f (x1, y1);
--  glVertex2f (x1, y2);
--  glVertex2f (x2, y2);
--  glVertex2f (x2, y1);
-+  glVertex3f (x1, y1, global_depth);
-+  glVertex3f (x1, y2, global_depth);
-+  glVertex3f (x2, y2, global_depth);
-+  glVertex3f (x2, y1, global_depth);
-   glEnd ();
- }
- 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
 index 79dc913..3805b78 100644
 --- a/src/hid/gtk/gui-output-events.c
