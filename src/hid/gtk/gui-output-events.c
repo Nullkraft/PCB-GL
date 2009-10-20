@@ -36,6 +36,7 @@
 #include "gtkhid.h"
 #include "hid/common/hid_resource.h"
 #include "hid/common/draw_helpers.h"
+#include "hid/common/trackball.h"
 
 #include <gdk/gdkkeysyms.h>
 
