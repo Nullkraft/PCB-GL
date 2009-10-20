@@ -1619,8 +1619,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   int min_depth;
   int max_depth;
 
-//  if (!one_shot) return;
-
   /* make GL-context "current" */
   if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
     return FALSE;
