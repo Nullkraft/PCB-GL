@@ -1,7 +1,7 @@
-Bottom: 692f9d1e27165e443bfc3070db0ea6e26556859a
-Top:    593f73eb19a1916d6e16a518bc72972f40e4038e
+Bottom: 575bc84886c58b0b900d05365cf7964524583210
+Top:    78976d8bcf3f54b5119fc8db864f9f902b1a872a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-20 01:42:10 +0100
+Date:   2009-10-20 21:34:44 +0100
 
 Shiny 3D eye-candy
 
@@ -214,7 +214,7 @@ index 1b28e71..6bde5c0 100644
    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
    /* Reset stencil buffer so we can paint anywhere */
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index f9edfcb..34084e3 100644
+index 03017c4..e991dd0 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -299,16 +299,16 @@ have_crosshair_attachments (void)
@@ -461,7 +461,7 @@ index f9edfcb..34084e3 100644
  
  static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
                                      {0.0, 1.0, 0.0, 0.0},
-@@ -948,6 +951,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -940,6 +943,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
