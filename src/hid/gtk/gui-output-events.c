@@ -1497,7 +1497,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
      world vector along +ve Z axis, (0, 0, 1). */
   /* FIXME: This isn't strictly correct, as I've ignored the matrix
             elements for homogeneous coordinates. */
-    /* NB: last_modelview_matrix is transposed in memory! */
+  /* NB: last_modelview_matrix is transposed in memory! */
   reverse_layers = last_modelview_matrix[2][2] < 0;
   Settings.ShowSolderSide = reverse_layers ? !Settings.ShowSolderSide : Settings.ShowSolderSide;
 
