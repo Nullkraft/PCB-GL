@@ -1057,9 +1057,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   glLoadIdentity ();
 
   glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
-  glMultMatrixf (view_matrix);
+  glMultMatrixf ((GLfloat *)view_matrix);
   glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
-  glGetFloatv (GL_MODELVIEW_MATRIX, last_modelview_matrix);
+  glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
 
   glEnable (GL_STENCIL_TEST);
   glClearColor (gport->offlimits_color.red / 65535.,
