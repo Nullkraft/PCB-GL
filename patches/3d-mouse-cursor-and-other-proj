@@ -1,5 +1,5 @@
 Bottom: 7587a105a050161d57b8ad732bbc4259d19a6946
-Top:    6ade27af770937b5cf95e0463911d2238046554e
+Top:    261c4da8b3f597b154faea01549f67b52efb6d1e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-20 20:11:17 +0100
 
@@ -28,7 +28,7 @@ index 60af460..52d738a 100644
  }
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 79dc913..c79673f 100644
+index 79dc913..3805b78 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -55,6 +55,16 @@
@@ -377,19 +377,10 @@ index 79dc913..c79673f 100644
  
    eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
    etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
-@@ -1553,8 +1801,18 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1553,8 +1801,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                               -gport->view_x0,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
-+
-+#if 0
-+  glBegin (GL_QUADS);
-+  glVertex3i (region.X1, region.Y1, 0);
-+  glVertex3i (region.X2, region.Y1, 0);
-+  glVertex3i (region.X2, region.Y2, 0);
-+  glVertex3i (region.X1, region.Y2, 0);
-+  glEnd ();
-+#endif
 +
    // hid_expose_callback (&ghid_hid, global_view_2d ? &region : NULL, 0);
 -  ghid_draw_everything (global_view_2d ? &region : NULL);
@@ -397,7 +388,7 @@ index 79dc913..c79673f 100644
  
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
-@@ -1580,7 +1838,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1580,7 +1829,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
