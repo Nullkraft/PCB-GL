@@ -1,5 +1,5 @@
 Bottom: 68569a4fcc9a67d8cf78103f37c5c51a28c60f7c
-Top:    09cd1a18eb13f0784bcf924c068c90413a63a619
+Top:    dc16d4b4853b440bcc681781aaf6f3a4493bcb6d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-21 00:41:33 +0100
 
@@ -21,7 +21,7 @@ Add infrastructure for subcompositing various bits of our drawing
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 1d02376..b75989a 100644
+index 1d02376..ea3c301 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -354,7 +354,7 @@ static int
@@ -72,7 +72,7 @@ index 1d02376..b75989a 100644
 +      SWAP_IDENT = 0;
 +      DrawMask (drawn_area);
 +      SWAP_IDENT = save_swap;
-+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
++      gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +    }
 +  if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
 +    {
@@ -80,7 +80,7 @@ index 1d02376..b75989a 100644
 +      SWAP_IDENT = 1;
 +      DrawMask (drawn_area);
 +      SWAP_IDENT = save_swap;
-+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
++      gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +    }
    /* Draw top silkscreen */
    if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
