@@ -1,5 +1,5 @@
 Bottom: ae9d931df39597bfeb8a022496be17d92f3eaece
-Top:    b8267fd2f582e16abd7766162fc6b1de797d8873
+Top:    53eee56debd93fc76921a4f3b27bf2fa732ad390
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-20 01:41:05 +0100
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 2f30d4d..a8e87d5 100644
+index 2f30d4d..e43ec87 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -36,6 +36,7 @@
@@ -213,7 +213,7 @@ index 2f30d4d..a8e87d5 100644
      }
 +
 +  /* Unproject event_x and event_y to world coordinates of the plane we are on */
-+  ghid_unproject_to_z_plane (event_x, event_y, global_depth,
++  ghid_unproject_to_z_plane (event_x, event_y, 0,
 +                             &event_x, &event_y);
 +
    gport->view_x = event_x * gport->zoom + gport->view_x0;
