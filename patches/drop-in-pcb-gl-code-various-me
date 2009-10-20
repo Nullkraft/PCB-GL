@@ -1,5 +1,5 @@
 Bottom: 3d3cb6f3cced7a8aab1a699fe0099e3b79f78a3f
-Top:    4ff33530d74623d8ed8d9812dc22f5c48b020c63
+Top:    0b6c8394143f9ed6f4cf36065b199ca8e6563d3e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-21 00:08:27 +0100
 
@@ -116,6 +116,18 @@ index 8321929..e1ad65c 100644
 +//      CrosshairOff (BlockToo);
      }
  }
+ 
+diff --git a/src/hid.h b/src/hid.h
+index ee48b9f..7966346 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -214,6 +214,7 @@ extern "C"
+ #define SL_INVISIBLE	0x0060
+ #define SL_FAB		0x0070
+ #define SL_ASSY		0x0080
++#define SL_RATS		0x0090
+ /* Callers should use this.  */
+ #define SL(type,side) (~0xfff | SL_##type | SL_##side##_SIDE)
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
 new file mode 100644
