@@ -935,8 +935,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                              -gport->view_x0,
                 ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                              -gport->view_y0, 0);
-//  hid_expose_callback (&ghid_hid, &region, 0);
-  hid_expose_callback (&ghid_hid, NULL, 0);
+  hid_expose_callback (&ghid_hid, global_view_2d ? &region : NULL, 0);
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
 
