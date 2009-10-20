@@ -1,5 +1,5 @@
 Bottom: 0c6412845d1203cc5fbe164f0d86eb6ce0f891db
-Top:    42d85c6966b786dfb9deeb41eeb8bf86829b8dfb
+Top:    703a56e8474034da68b9e4fcf56df2a9eddbe50b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-19 17:50:15 +0100
 
@@ -426,7 +426,7 @@ index e68026d..1f7946a 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index b2856b5..6bb896a 100644
+index b2856b5..2e7250d 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -518,14 +518,39 @@ ghid_invalidate_all ()
@@ -481,17 +481,15 @@ index b2856b5..6bb896a 100644
  	  if (SL_MYSIDE (idx) /*|| pinout */ )
  	    return PCB->ElementOn;
  	  return 0;
-@@ -562,6 +587,9 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -562,6 +587,7 @@ ghid_set_layer (const char *name, int group, int empty)
  void
  ghid_use_mask (int use_it)
  {
 +  static int stencil_bit = 0;
-+
-+#warning FIX THIS UP TO COOPORATE WITH HIDGL'S ASSIGNMENT OF STENCIL BITPLANES
  
    /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
    if (use_it == HID_LIVE_DRAWING ||
-@@ -573,6 +601,7 @@ ghid_use_mask (int use_it)
+@@ -573,6 +599,7 @@ ghid_use_mask (int use_it)
    if (use_it == cur_mask)
      return;
  
@@ -499,7 +497,7 @@ index b2856b5..6bb896a 100644
    hidgl_flush_triangles (&buffer);
  
    switch (use_it)
-@@ -581,25 +610,28 @@ ghid_use_mask (int use_it)
+@@ -581,25 +608,28 @@ ghid_use_mask (int use_it)
        /* Write '1' to the stencil buffer where the solder-mask is drawn. */
        glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
        glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
