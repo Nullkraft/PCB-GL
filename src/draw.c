@@ -485,7 +485,7 @@ DrawEverything (BoxTypePtr drawn_area)
       SWAP_IDENT = 0;
       DrawMask (drawn_area);
       SWAP_IDENT = save_swap;
-      gui->set_layer (NULL,  SL (FINISHED, 0), 0);
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
     }
   if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
     {
