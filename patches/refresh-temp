@@ -1,0 +1,26 @@
+Bottom: ab680266dc71a8f8d3182fe86a546fe20a83dac2
+Top:    6b199477a3f006390f969887441a745f8b7a1f22
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-20 03:01:27 +0100
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 510cce1..d12ab36 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -1487,12 +1487,10 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+   glViewport (widget->allocation.x,     widget->allocation.y,
+               widget->allocation.width, widget->allocation.height);
+ 
+-#if 1
+   glEnable (GL_SCISSOR_TEST);
+   glScissor (ev->area.x,
+              widget->allocation.height - ev->area.height - ev->area.y,
+              ev->area.width, ev->area.height);
+-#endif
+ 
+   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity ();
