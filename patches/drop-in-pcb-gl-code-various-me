@@ -1,7 +1,7 @@
-Bottom: aa65cd7859c5f008cd7c4742101bd1e0ab9d4ada
-Top:    38b6ce8d61b23ab7777d471e484d08595f3a91d7
+Bottom: f769e7c6acbac3e467a0544e90a152bfa9920d15
+Top:    1ecba7829be99eebeb36470ed2b9be5638966726
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-19 17:50:07 +0100
+Date:   2009-10-20 22:30:03 +0100
 
 Drop in PCB+GL code + various mess. Needs splitting up
 
@@ -1703,7 +1703,7 @@ index cbdd104..6f830fb 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 9ea3207..0c66353 100644
+index 86abad2..0e6a05d 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -297,16 +297,16 @@ have_crosshair_attachments (void)
@@ -1955,7 +1955,7 @@ index 9ea3207..0c66353 100644
  }
  
  static gboolean
-@@ -707,53 +754,153 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -692,53 +739,153 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
    if (!first_time_done)
      {
        gport->colormap = gtk_widget_get_colormap (gport->top_window);
@@ -2123,7 +2123,7 @@ index 9ea3207..0c66353 100644
    return FALSE;
  }
  
-@@ -764,6 +911,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -749,6 +896,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    gdouble dx, dy;
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
@@ -2138,7 +2138,7 @@ index 9ea3207..0c66353 100644
  
    if (out->panning)
      {
-@@ -779,9 +934,18 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -764,9 +919,18 @@ ghid_port_window_motion_cb (GtkWidget * widget,
      }
    x_prev = y_prev = -1;
    moved = ghid_note_event_location (ev);
@@ -2157,7 +2157,7 @@ index 9ea3207..0c66353 100644
    return FALSE;
  }
  
-@@ -821,7 +985,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -806,7 +970,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        RestoreCrosshair (TRUE);
        cursor_in_viewport = TRUE;
      }

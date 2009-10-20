@@ -1,7 +1,7 @@
-Bottom: 38b6ce8d61b23ab7777d471e484d08595f3a91d7
-Top:    8d54704b7c2bf4a654f35268b7f3ec594314e6eb
+Bottom: 1ecba7829be99eebeb36470ed2b9be5638966726
+Top:    d369202887180551adca2a2595e46134c2448ac0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-19 17:50:07 +0100
+Date:   2009-10-20 22:30:03 +0100
 
 Cure crosshair lagging on screen
 
@@ -19,10 +19,10 @@ Cure crosshair lagging on screen
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 0c66353..41053b3 100644
+index 0e6a05d..de0a22d 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -911,6 +911,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -896,6 +896,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    gdouble dx, dy;
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
@@ -30,7 +30,7 @@ index 0c66353..41053b3 100644
    GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
    GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
  
-@@ -919,11 +920,15 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -904,11 +905,15 @@ ghid_port_window_motion_cb (GtkWidget * widget,
      printf ("GL THingy returned\n");
      return FALSE;
    }
@@ -46,7 +46,7 @@ index 0c66353..41053b3 100644
        dx = gport->zoom * (x_prev - ev->x);
        dy = gport->zoom * (y_prev - ev->y);
        if (x_prev > 0)
-@@ -935,10 +940,11 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -920,10 +925,11 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    x_prev = y_prev = -1;
    moved = ghid_note_event_location (ev);
  
@@ -60,7 +60,7 @@ index 0c66353..41053b3 100644
    if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
      gdk_gl_drawable_swap_buffers (pGlDrawable);
    else
-@@ -946,6 +952,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -931,6 +937,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
  
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
