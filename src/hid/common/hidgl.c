@@ -193,6 +193,8 @@ static void draw_cap (double width, int x, int y, double angle, double scale)
   int slices = M_PI * radius / scale / PIXELS_PER_CIRCLINE;
   int i;
 
+  return 0;
+
   if (slices < MIN_TRIANGLES_PER_CAP)
     slices = MIN_TRIANGLES_PER_CAP;
 
@@ -390,6 +392,8 @@ hidgl_fill_circle (int vx, int vy, int vr, double scale)
   float radius = vr;
   int slices;
   int i;
+
+  return;
 
   slices = M_PI * 2 * vr / scale / PIXELS_PER_CIRCLINE;
 
@@ -672,7 +676,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    */
   /* Drawing operations now set our reference bit in the stencil buffer */
 
-  r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
+//  r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
   hidgl_flush_triangles (&buffer);
 
   /* Drawing operations as masked to areas where the stencil buffer is '0' */

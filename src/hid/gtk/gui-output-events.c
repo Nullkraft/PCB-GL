@@ -1376,6 +1376,7 @@ DrawLayerGroup (int group, const BoxType * screen)
         glPopAttrib ();
       }
 
+#if 1
       /* draw all polygons on this layer */
       if (Layer->PolygonN) {
         info.Layer = Layer;
@@ -1398,6 +1399,7 @@ DrawLayerGroup (int group, const BoxType * screen)
           glPopAttrib ();
         }
       }
+#endif
 
       /* Draw pins and vias on this layer */
       if (!global_view_2d && rv) {
@@ -1634,8 +1636,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   int new_x, new_y;
   int min_depth;
   int max_depth;
-
-//  if (!one_shot) return;
 
   /* make GL-context "current" */
   if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
