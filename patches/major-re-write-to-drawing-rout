@@ -1,5 +1,5 @@
 Bottom: 563dfea77ccab9e24c8689715b2989822c2aa0d4
-Top:    2c622f2468d9e3b0d73e43039eb1048917f38b2d
+Top:    51864b089669e4e87a1c4ca0cf82050f6bad16d0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-20 23:34:27 +0100
 
@@ -381,7 +381,7 @@ index 1725cc5..8322376 100644
  void
  ghid_set_color (hidGC gc, const char *name)
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index e5957c2..990e744 100644
+index e5957c2..325b7b4 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -961,6 +961,13 @@ ghid_screen_update (void)
@@ -1009,16 +1009,7 @@ index e5957c2..990e744 100644
  
  #define Z_NEAR 3.0
  gboolean
-@@ -1008,6 +1619,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
-   int min_depth;
-   int max_depth;
- 
-+//  if (!one_shot) return;
-+
-   /* make GL-context "current" */
-   if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
-     return FALSE;
-@@ -1068,8 +1681,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1068,8 +1679,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1029,7 +1020,7 @@ index e5957c2..990e744 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1161,7 +1774,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1161,7 +1772,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
  
@@ -1039,7 +1030,7 @@ index e5957c2..990e744 100644
  
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
-@@ -1200,6 +1814,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1200,6 +1812,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
  
