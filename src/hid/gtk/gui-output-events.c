@@ -272,7 +272,7 @@ have_crosshair_attachments (void)
     case VIA_MODE:
       result = TRUE;
       break;
-    case POLYGON_MODE:
+    case POUR_MODE:
       if (Crosshair.AttachedLine.State != STATE_FIRST)
 	result = TRUE;
       break;
@@ -667,7 +667,7 @@ in_draw_state (void)
 	  && Crosshair.AttachedBox.State != STATE_FIRST)
       || (Settings.Mode == RECTANGLE_MODE
 	  && Crosshair.AttachedBox.State != STATE_FIRST)
-      || (Settings.Mode == POLYGON_MODE
+      || (Settings.Mode == POUR_MODE
 	  && Crosshair.AttachedLine.State != STATE_FIRST))
     return TRUE;
   return FALSE;
