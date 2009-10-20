@@ -1,7 +1,7 @@
-Bottom: c9fac50c5d91702dd4149fa363edd1a9f13f5c71
-Top:    261c4da8b3f597b154faea01549f67b52efb6d1e
+Bottom: 1976405833f0e6fcc0274000f4a4276b67ca3ed9
+Top:    ac88d228d0d24abbba83a28cb9dcbecf78596b5f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-20 21:38:48 +0100
+Date:   2009-10-20 21:43:34 +0100
 
 3D mouse cursor and other projection / matrix fixes
 
@@ -9,7 +9,7 @@ Date:   2009-10-20 21:38:48 +0100
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 510373f..3805b78 100644
+index c12dccc..884aa1c 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -1498,6 +1498,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
