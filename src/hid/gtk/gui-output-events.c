@@ -1202,7 +1202,7 @@ DrawLayerGroup (int group, const BoxType * screen)
       }
 
       /* Draw pins and vias on this layer */
-      if (rv) {
+      if (!global_view_2d && rv) {
         if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
         if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
       }
@@ -1326,7 +1326,7 @@ ghid_draw_everything (void)
     DrawLayerGroup (drawn_groups [i], drawn_area);
 
 #if 1
-    if (i > 0) {
+    if (!global_view_2d && i > 0) {
       cyl_info.from_layer = drawn_groups[i];
       cyl_info.to_layer = drawn_groups[i - 1];
       cyl_info.scale = gport->zoom;
