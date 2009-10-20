@@ -1,5 +1,5 @@
 Bottom: ee5bad64a829ac9eb52691be9181afbd11fc5efb
-Top:    4c715194e8c005a2dce4263bc0f9e832b856eda1
+Top:    b0953d776fe9f0222a3c4f5d4464e76a6c5aa35b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-20 01:42:44 +0100
 
@@ -391,7 +391,7 @@ index 6bde5c0..a1f1dbb 100644
  void
  ghid_set_color (hidGC gc, const char *name)
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 63214fd..c226721 100644
+index 63214fd..7f7f931 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -797,6 +797,12 @@ ghid_screen_update (void)
@@ -774,7 +774,7 @@ index 63214fd..c226721 100644
 +      }
 +
 +      /* Draw pins and vias on this layer */
-+      if (rv) {
++      if (!global_view_2d && rv) {
 +        if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
 +        if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
 +      }
@@ -898,7 +898,7 @@ index 63214fd..c226721 100644
 +    DrawLayerGroup (drawn_groups [i], drawn_area);
 +
 +#if 1
-+    if (i > 0) {
++    if (!global_view_2d && i > 0) {
 +      cyl_info.from_layer = drawn_groups[i];
 +      cyl_info.to_layer = drawn_groups[i - 1];
 +      cyl_info.scale = gport->zoom;
