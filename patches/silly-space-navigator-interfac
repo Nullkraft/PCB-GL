@@ -1,7 +1,7 @@
-Bottom: 7c046480c5500249544695229d050a956ead11bf
-Top:    22b4a9cf113b0d4704b28a63c476f2ccee52ccd9
+Bottom: 1523026a070ec69d731e8c507d38b2251c4502dc
+Top:    692f9d1e27165e443bfc3070db0ea6e26556859a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-19 17:50:51 +0100
+Date:   2009-10-20 01:42:10 +0100
 
 Silly space navigator interface to allow funky views
 
@@ -27,7 +27,7 @@ index 6299ac5..716b337 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 6220ef9..41f12ee 100644
+index 47b787f..f9edfcb 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -45,6 +45,7 @@
@@ -38,7 +38,7 @@ index 6220ef9..41f12ee 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -1046,6 +1047,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -1054,6 +1055,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        /* Make sure drawing area has keyboard focus when we are in it.
         */
        gtk_widget_grab_focus (out->drawing_area);
@@ -47,7 +47,7 @@ index 6220ef9..41f12ee 100644
      }
    ghidgui->in_popup = FALSE;
  
-@@ -1153,6 +1156,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -1161,6 +1164,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
  	    }
  	  g_idle_add (ghid_pan_idle_cb, NULL);
  	}
@@ -56,7 +56,7 @@ index 6220ef9..41f12ee 100644
      }
  
    if(cursor_in_viewport)
-@@ -1201,3 +1206,27 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+@@ -1209,3 +1214,27 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  
    return TRUE;
  }
@@ -85,7 +85,7 @@ index 6220ef9..41f12ee 100644
 +}
 +
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index d6f2550..a2bb259 100644
+index 3d046be..de2a0b6 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -123,6 +123,7 @@ a zoom in/out.
@@ -96,7 +96,7 @@ index d6f2550..a2bb259 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -2757,6 +2758,12 @@ ghid_do_export (HID_Attr_Val * options)
+@@ -2759,6 +2760,12 @@ ghid_do_export (HID_Attr_Val * options)
    if (stdin_listen)
      ghid_create_listener ();
  
@@ -110,7 +110,7 @@ index d6f2550..a2bb259 100644
  
    gtk_main ();
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 57de59c..f7149b0 100644
+index 43553be..fee0a99 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -197,6 +197,8 @@ typedef struct
