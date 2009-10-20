@@ -1,0 +1,24 @@
+Bottom: b8ab0f51b0c7ed11376d497d944f19cb4d8c8132
+Top:    1976405833f0e6fcc0274000f4a4276b67ca3ed9
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-20 22:05:58 +0100
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 23f2594..c12dccc 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -1695,8 +1695,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+   glStencilFunc (GL_ALWAYS, 0, 0);
+ 
+   /* Test the 8 corners of a cube spanning the event */
+-  min_depth = -50; /* FIXME */
+-  max_depth =  0;  /* FIXME */
++  min_depth = -50 + compute_depth (0);         /* FIXME */
++  max_depth =  50 + compute_depth (max_layer); /* FIXME */
+ 
+   ghid_unproject_to_z_plane (ev->area.x,
+                              ev->area.y,
