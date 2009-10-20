@@ -102,7 +102,7 @@ static void DrawLineLowLevel (LineTypePtr, Boolean);
 static void DrawPolygonLowLevel (PolygonTypePtr);
 static void DrawArcLowLevel (ArcTypePtr);
 static void DrawElementPackageLowLevel (ElementTypePtr Element, int);
-/* static */ void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
+static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
 static void AddPart (void *);
 static void SetPVColor (PinTypePtr, int);
 /* static */ void DrawEMark (ElementTypePtr, LocationType, LocationType, Boolean);
@@ -2187,7 +2187,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
 /* ---------------------------------------------------------------------------
  * draws a polygon
  */
-/* static */ void
+static void
 DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 {
   static char *color;

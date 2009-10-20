@@ -801,6 +801,7 @@ struct pin_info
 {
   Boolean arg;
   LayerTypePtr Layer;
+  BoxTypePtr drawn_area;
 };
 
 static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
@@ -986,12 +987,49 @@ text_callback (const BoxType * b, void *cl)
   return 1;
 }
 
+static void
+DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, BoxTypePtr drawn_area)
+{
+  static char *color;
+
+  if (!Polygon->Clipped)
+    return;
+
+  if (TEST_FLAG (SELECTEDFLAG, Polygon))
+    color = Layer->SelectedColor;
+  else if (TEST_FLAG (FOUNDFLAG, Polygon))
+    color = PCB->ConnectedColor;
+  else
+    color = Layer->Color;
+  gui->set_color (Output.fgGC, color);
+
+  if (gui->thindraw_pcb_polygon != NULL &&
+      (TEST_FLAG (THINDRAWFLAG, PCB) ||
+       TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
+    gui->thindraw_pcb_polygon (Output.fgGC, Polygon, drawn_area);
+  else
+    gui->fill_pcb_polygon (Output.fgGC, Polygon, drawn_area);
+
+  /* If checking planes, thin-draw any pieces which have been clipped away */
+  if (gui->thindraw_pcb_polygon != NULL &&
+      TEST_FLAG (CHECKPLANESFLAG, PCB) &&
+      !TEST_FLAG (FULLPOLYFLAG, Polygon))
+    {
+      PolygonType poly = *Polygon;
+
+      for (poly.Clipped = Polygon->Clipped->f;
+           poly.Clipped != Polygon->Clipped;
+           poly.Clipped = poly.Clipped->f)
+        gui->thindraw_pcb_polygon (Output.fgGC, &poly, drawn_area);
+    }
+}
+
 static int
 poly_callback (const BoxType * b, void *cl)
 {
   struct pin_info *i = (struct pin_info *) cl;
 
-  DrawPlainPolygon (i->Layer, (PolygonTypePtr) b);
+  DrawPlainPolygon (i->Layer, (PolygonTypePtr) b, i->drawn_area);
   return 1;
 }
 
@@ -1106,6 +1144,7 @@ DrawMask (BoxType * screen)
   OutputType *out = &Output;
 
   info.arg = True;
+  info.drawn_area = screen;
 
   if (thin)
     {
@@ -1182,6 +1221,7 @@ DrawLayerGroup (int group, const BoxType * screen)
       /* draw all polygons on this layer */
       if (Layer->PolygonN) {
         info.Layer = Layer;
+        info.drawn_area = screen;
         r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
 
         /* HACK: Subcomposite polygons separately from other layer primitives */
@@ -1277,7 +1317,7 @@ hole_cyl_callback (const BoxType * b, void *cl)
 }
 
 void
-ghid_draw_everything (void)
+ghid_draw_everything (BoxTypePtr drawn_area)
 {
   int i, ngroups, side;
   int plated;
@@ -1285,7 +1325,6 @@ ghid_draw_everything (void)
   int do_group[MAX_LAYER];
   /* This is the reverse of the order in which we draw them.  */
   int drawn_groups[MAX_LAYER];
-  BoxTypePtr drawn_area = NULL;
   struct cyl_info cyl_info;
 
   extern char *current_color;
@@ -1448,7 +1487,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   glViewport (widget->allocation.x,     widget->allocation.y,
               widget->allocation.width, widget->allocation.height);
 
-#if 0
+#if 1
   glEnable (GL_SCISSOR_TEST);
   glScissor (ev->area.x,
              widget->allocation.height - ev->area.height - ev->area.y,
@@ -1523,7 +1562,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                              -gport->view_y0, 0);
 //  hid_expose_callback (&ghid_hid, &region, 0);
 //  hid_expose_callback (&ghid_hid, NULL, 0);
-  ghid_draw_everything ();
+  ghid_draw_everything (global_view_2d ? &region : NULL);
 
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
