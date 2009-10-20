@@ -2682,7 +2682,7 @@ ghid_parse_arguments (int *argc, char ***argv)
   /* setup GL-context */
   gport->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
                                                GDK_GL_MODE_STENCIL |
-                                               GDK_GL_MODE_DEPTH   |
+//                                               GDK_GL_MODE_DEPTH   |
                                                GDK_GL_MODE_DOUBLE);
   if (!gport->glconfig) {
     printf("Could not setup GL-context!\n");
