@@ -94,7 +94,7 @@ hidgl_flush_triangles (triangle_buffer *buffer)
   glUnmapBuffer (GL_ARRAY_BUFFER);
 
   glEnableClientState (GL_VERTEX_ARRAY);
-  glVertexPointer (2, GL_FLOAT, 0, NULL); // buffer->triangle_array);
+  glVertexPointer (3, GL_FLOAT, 0, NULL); // buffer->triangle_array);
   glDrawArrays (GL_TRIANGLES, 0, buffer->triangle_count * 3);
   glDisableClientState (GL_VERTEX_ARRAY);
 
