@@ -21,8 +21,8 @@
 
 #include <linux/types.h>
 #include <linux/input.h>
-/* 
-Additional defines for a 3D joystick for (older) linux versions which do not 
+/*
+Additional defines for a 3D joystick for (older) linux versions which do not
 have these defines in <linux/input.h>
 */
 #ifndef REL_RX
