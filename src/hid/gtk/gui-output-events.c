@@ -1487,12 +1487,10 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   glViewport (widget->allocation.x,     widget->allocation.y,
               widget->allocation.width, widget->allocation.height);
 
-#if 1
   glEnable (GL_SCISSOR_TEST);
   glScissor (ev->area.x,
              widget->allocation.height - ev->area.height - ev->area.y,
              ev->area.width, ev->area.height);
-#endif
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
