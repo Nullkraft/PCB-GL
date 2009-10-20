@@ -1,5 +1,5 @@
 Bottom: ecbc26fe39500065de68ad23d7abfaac8c7f0a8e
-Top:    31f76ea7f8e9ec8e514705ae2d3cf0f4a2e18cb2
+Top:    09cd1a18eb13f0784bcf924c068c90413a63a619
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-21 00:23:22 +0100
 
@@ -282,14 +282,3 @@ index 08506f9..b75989a 100644
  }
  
  /* ---------------------------------------------------------------------------
-diff --git a/src/hid.h b/src/hid.h
-index ffb84a2..7966346 100644
---- a/src/hid.h
-+++ b/src/hid.h
-@@ -215,7 +215,6 @@ extern "C"
- #define SL_FAB		0x0070
- #define SL_ASSY		0x0080
- #define SL_RATS		0x0090
--#define SL_FINISHED	0x00A0
- /* Callers should use this.  */
- #define SL(type,side) (~0xfff | SL_##type | SL_##side##_SIDE)
