@@ -149,12 +149,16 @@ PCB_SRCS = \
 	hid/common/hid_resource.h \
 	hid/hidint.h 
 
-EXTRA_pcb_SOURCES = ${DBUS_SRCS} toporouter.c toporouter.h
+EXTRA_pcb_SOURCES = ${DBUS_SRCS} ${GL_SRCS} toporouter.c toporouter.h
 DBUS_SRCS= \
 	dbus-pcbmain.c \
 	dbus-pcbmain.h \
 	dbus.h \
 	dbus.c
+
+GL_SRCS= \
+	hid/common/hidgl.c \
+	hid/common/hidgl.h
 
 BUILT_SOURCES = \
 	core_lists.h \
@@ -281,6 +285,11 @@ dbus-introspect.h : dbus.xml Makefile
 PCB_SRCS+=	${DBUS_SRCS}
 BUILT_SOURCES+=	dbus-introspect.h
 
+endif
+
+# If we are building with GL support, we need some extra files
+if USE_GL
+PCB_SRCS+=	${GL_SRCS}
 endif
 
 # If we are building on win32, then compile in some icons for the
