@@ -1,5 +1,5 @@
 Bottom: 0123bbd49d435cf5f2f8a8be93739814a7d329e8
-Top:    24b1f72a2188e4ef5d16316519a044d9d51b9958
+Top:    5e59b527161f166ad30ab5343076c3b1385a9349
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-20 22:23:27 +0100
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 2f30d4d..e43ec87 100644
+index 2f30d4d..17cd81d 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -36,6 +36,7 @@
@@ -292,9 +292,9 @@ index 2f30d4d..e43ec87 100644
 -  glTranslatef (0.0f, 0.0f, -Z_NEAR);
 +
 +  glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
-+  glMultMatrixf (view_matrix);
++  glMultMatrixf ((GLfloat *)view_matrix);
 +  glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
-+  glGetFloatv (GL_MODELVIEW_MATRIX, last_modelview_matrix);
++  glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (gport->offlimits_color.red / 65535.,
