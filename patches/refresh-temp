@@ -1,0 +1,20 @@
+Bottom: cba5634172f37165e3a5d7135aee15ddb0f651d6
+Top:    b8267fd2f582e16abd7766162fc6b1de797d8873
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-20 22:17:07 +0100
+
+Refresh of use-trackball-to-allow-rotatio
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index b941475..a8e87d5 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -36,6 +36,7 @@
+ #include "gtkhid.h"
+ #include "hid/common/hid_resource.h"
+ #include "hid/common/draw_helpers.h"
++#include "hid/common/trackball.h"
+ 
+ #include <gdk/gdkkeysyms.h>
