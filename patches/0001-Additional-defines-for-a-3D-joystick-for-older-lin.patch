@@ -1,5 +1,5 @@
 Bottom: 5501f15ea3a51038fcd7bd3b35f45943f80045c7
-Top:    512c2ca031d234e10235909a58a12bb9ca94a18d
+Top:    9cb18b0152e07aa6e793551ca74d71f4c2cf6fd3
 Author: Bert Timmerman <bert.timmerman@xs4all.nl>
 Date:   2009-10-20 20:08:35 +0100
 
@@ -10,15 +10,15 @@ Subject: [PATCH] Additional defines for a 3D joystick for (older) linux versions
 ---
 
 diff --git a/src/hid/gtk/snavi.c b/src/hid/gtk/snavi.c
-index 6dd1b5f..f0494bf 100644
+index 6dd1b5f..618be32 100644
 --- a/src/hid/gtk/snavi.c
 +++ b/src/hid/gtk/snavi.c
 @@ -21,6 +21,19 @@
  
  #include <linux/types.h>
  #include <linux/input.h>
-+/* 
-+Additional defines for a 3D joystick for (older) linux versions which do not 
++/*
++Additional defines for a 3D joystick for (older) linux versions which do not
 +have these defines in <linux/input.h>
 +*/
 +#ifndef REL_RX
