@@ -1498,7 +1498,10 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   /* FIXME: This isn't strictly correct, as I've ignored the matrix
             elements for homogeneous coordinates. */
   /* NB: last_modelview_matrix is transposed in memory! */
-  reverse_layers = last_modelview_matrix[2][2] < 0;
+  reverse_layers = (last_modelview_matrix[2][2] < 0);
+  if (Settings.ShowSolderSide)
+    reverse_layers = !reverse_layers;
+
   Settings.ShowSolderSide = reverse_layers ? !Settings.ShowSolderSide : Settings.ShowSolderSide;
 
   memset (do_group, 0, sizeof (do_group));
