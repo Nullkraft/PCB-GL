@@ -1,7 +1,7 @@
-Bottom: b4dcad587538babfaec54712c643f27b1703d5f0
-Top:    b4dcad587538babfaec54712c643f27b1703d5f0
+Bottom: 5501f15ea3a51038fcd7bd3b35f45943f80045c7
+Top:    9cb18b0152e07aa6e793551ca74d71f4c2cf6fd3
 Author: Bert Timmerman <bert.timmerman@xs4all.nl>
-Date:   2009-10-20 20:10:13 +0100
+Date:   2009-10-20 20:08:35 +0100
 
 From 22f4d1dd450f218172b8ee0edf9a2aaef6c20f2f Mon Sep 17 00:00:00 2001
 Subject: [PATCH] Additional defines for a 3D joystick for (older) linux versions which do not have these defines in <linux/input.h>
@@ -9,4 +9,26 @@ Subject: [PATCH] Additional defines for a 3D joystick for (older) linux versions
 
 ---
 
-
+diff --git a/src/hid/gtk/snavi.c b/src/hid/gtk/snavi.c
+index 6dd1b5f..618be32 100644
+--- a/src/hid/gtk/snavi.c
++++ b/src/hid/gtk/snavi.c
+@@ -21,6 +21,19 @@
+ 
+ #include <linux/types.h>
+ #include <linux/input.h>
++/*
++Additional defines for a 3D joystick for (older) linux versions which do not
++have these defines in <linux/input.h>
++*/
++#ifndef REL_RX
++#define REL_RX                  0x03
++#endif
++#ifndef REL_RY
++#define REL_RY                  0x04
++#endif
++#ifndef REL_RZ
++#define REL_RZ                  0x05
++#endif
+ 
+ #include <glib.h>
