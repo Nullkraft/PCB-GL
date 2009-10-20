@@ -1,7 +1,7 @@
-Bottom: aad11ff0e0526f466aba4d1c235d484998884b73
-Top:    f142667f4cb26b7c3472a6d0772d68bf586f6e3d
+Bottom: ba132060af61b9b38ef3e51ae99873565f731e2f
+Top:    8d37e8ccf4f96385d66e15f21269884414188518
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-19 17:50:19 +0100
+Date:   2009-10-20 01:41:51 +0100
 
 Add support for a "poured" object.
 
@@ -2813,7 +2813,7 @@ index e8ad916..e1b6290 100644
        break;
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index b847c71..6220ef9 100644
+index 784f77f..47b787f 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -272,7 +272,7 @@ have_crosshair_attachments (void)
@@ -2835,7 +2835,7 @@ index b847c71..6220ef9 100644
      return TRUE;
    return FALSE;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index fa0b6c3..d6f2550 100644
+index 38f0c13..3d046be 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -1983,7 +1983,8 @@ static ModeButton mode_buttons[] = {
