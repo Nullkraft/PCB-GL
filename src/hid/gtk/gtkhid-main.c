@@ -589,8 +589,6 @@ ghid_use_mask (int use_it)
 {
   static int stencil_bit = 0;
 
-#warning FIX THIS UP TO COOPORATE WITH HIDGL'S ASSIGNMENT OF STENCIL BITPLANES
-
   /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
   if (use_it == HID_LIVE_DRAWING ||
       use_it == HID_LIVE_DRAWING_OFF ||
