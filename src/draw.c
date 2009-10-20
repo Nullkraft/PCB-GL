@@ -947,7 +947,7 @@ DrawLayerGroup (int group, const BoxType * screen)
 	    {
 	      info.Layer = Layer;
 	      info.arg = True;
-        info.clip = screen;
+	      info.clip = screen;
 	      r_search (Layer->pour_tree, screen, NULL, pour_callback, &info);
 	      info.arg = False;
 
