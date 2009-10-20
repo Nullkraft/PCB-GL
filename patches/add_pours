@@ -1,5 +1,5 @@
 Bottom: b4d214f2c7b605f5498789509818bda6d6cf42bc
-Top:    4ea33494b58af67656b748acc5cc12b9b0d70269
+Top:    3d0889913b08a2941c4755678d020b4a68c8c5aa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-21 00:49:40 +0100
 
@@ -2011,7 +2011,7 @@ index ef22f73..9f0e843 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index 696b07c..ff27c6a 100644
+index 696b07c..0992b55 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -100,6 +100,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
@@ -2094,7 +2094,7 @@ index 696b07c..ff27c6a 100644
  	      info.arg = True;
 -	      r_search (Layer->polygon_tree, screen, NULL, poly_callback,
 -			&info);
-+        info.clip = screen;
++	      info.clip = screen;
 +	      r_search (Layer->pour_tree, screen, NULL, pour_callback, &info);
  	      info.arg = False;
  
