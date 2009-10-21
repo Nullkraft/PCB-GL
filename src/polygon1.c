@@ -1087,7 +1087,6 @@ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
 
 /****************************************************************/
 
-#warning are contour r-trees needed for the temporary polyareas?
 /* routines for temporary storing resulting contours */
 static void
 InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
@@ -1178,7 +1177,6 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
   if (dest == NULL)
     error (err_bad_parm);	/* empty contour list */
 
-#warning IF Passed a PourType, we would get this r-tree for free??
   /* make an rtree of contours */
   tree = r_create_tree (NULL, 0, 0);
   curc = dest;
@@ -1251,7 +1249,8 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
 	  container->next = curh;
 	  curh->next = tmp;
 
-#warning WHICH POLYAREA GOT THIS - STUPID LONG SEARCH - STORE IN HEAP STRUCTURE INSTEAD!!
+          /* Search for which POLYAREA the containing contour belongs to */
+          /* FIXME: Perhaps store this information in the heap structure? */
           curc = dest;
           do
             {
@@ -1259,6 +1258,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
                 break;
             }
           while ((curc = curc->f) != dest);
+
           if (curc->contours == container)
             {
               r_insert_entry (curc->contour_tree, (BoxTypePtr) curh, 0);
