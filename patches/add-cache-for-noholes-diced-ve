@@ -1,7 +1,7 @@
-Bottom: db01f691dc8966acf8df37f05f079d8900ca74c9
-Top:    952f562802c4bce7f1d71ea0849147dd19d04196
+Bottom: c1ee23984f4b534f066f463f25ed16b8ab109ee4
+Top:    7f4c50882ec98a73e1d360210c7a6516c346f3e1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 17:25:31 +0100
+Date:   2009-10-21 17:30:49 +0100
 
 Add cache for "noholes", diced versions of polygons
 
@@ -37,10 +37,10 @@ index fc6b863..4054c28 100644
  }
  
 diff --git a/src/global.h b/src/global.h
-index 6340818..a38fe57 100644
+index e8fc8f1..f494dbc 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -244,6 +244,8 @@ struct polygon_st			/* holds information about a polygon */
+@@ -241,6 +241,8 @@ struct polygon_st			/* holds information about a polygon */
    Cardinal PointN,		/* number of points in polygon */
      PointMax;			/* max number from malloc() */
    POLYAREA *Clipped;		/* the clipped region of this polygon */
@@ -107,7 +107,7 @@ index 36b13d5..c3663d6 100644
      }
  }
 diff --git a/src/polygon.c b/src/polygon.c
-index eab57d6..5d9ecfd 100644
+index d5df073..d7157ff 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -120,6 +120,26 @@ static double circleVerticies[] = {
@@ -137,7 +137,7 @@ index eab57d6..5d9ecfd 100644
  
  static POLYAREA *
  biggest (POLYAREA * p)
-@@ -232,6 +252,8 @@ ClipOriginal (PolygonType * poly)
+@@ -228,6 +248,8 @@ ClipOriginal (PolygonType * poly)
        fprintf (stderr, "Error while clipping PBO_ISECT: %d\n", r);
        poly_Free (&result);
        poly->Clipped = NULL;
@@ -146,7 +146,7 @@ index eab57d6..5d9ecfd 100644
        return 0;
      }
    poly->Clipped = biggest (result);
-@@ -636,6 +658,8 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
+@@ -632,6 +654,8 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
        fprintf (stderr, "Error while clipping PBO_SUB: %d\n", x);
        poly_Free (&merged);
        p->Clipped = NULL;
@@ -155,7 +155,7 @@ index eab57d6..5d9ecfd 100644
        return -1;
      }
    p->Clipped = biggest (merged);
-@@ -913,6 +937,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
+@@ -909,6 +933,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
        if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
  	r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
      }
@@ -163,7 +163,7 @@ index eab57d6..5d9ecfd 100644
    return r;
  }
  
-@@ -929,6 +954,8 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
+@@ -925,6 +950,8 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
        fprintf (stderr, "Error while clipping PBO_UNITE: %d\n", x);
        poly_Free (&merged);
        p->Clipped = NULL;
@@ -172,7 +172,7 @@ index eab57d6..5d9ecfd 100644
        return 0;
      }
    p->Clipped = biggest (merged);
-@@ -1035,11 +1062,14 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
+@@ -1031,11 +1058,14 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
    if (p->Clipped)
      poly_Free (&p->Clipped);
    p->Clipped = original_poly (p);
@@ -187,7 +187,7 @@ index eab57d6..5d9ecfd 100644
    return 1;
  }
  
-@@ -1293,18 +1323,23 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
+@@ -1289,18 +1319,23 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
      case PIN_TYPE:
      case VIA_TYPE:
        SubtractPin (Data, (PinTypePtr) ptr2, Layer, Polygon);
@@ -211,15 +211,15 @@ index eab57d6..5d9ecfd 100644
        return 1;
      }
    return 0;
-@@ -1534,6 +1569,7 @@ r_NoHolesPolygonDicer (POLYAREA * pa,
-       /* Don't bother removing it from the POLYAREA's rtree
-          since we're going to free it below anyway */
+@@ -1518,6 +1553,7 @@ r_NoHolesPolygonDicer (PLINE * p,
+   if (!p->next)                 /* no holes */
+     {
        emit (p, user_data);
 +      pa->contours = NULL;
        poly_Free (&pa);
        return;
      }
-@@ -1641,6 +1677,8 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+@@ -1620,6 +1656,8 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
     * we do this dirty work.
     */
    poly->Clipped = NULL;
