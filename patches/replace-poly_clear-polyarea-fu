@@ -1,7 +1,7 @@
-Bottom: 9a451584dd51237175b39da8fb092bd782af06f5
-Top:    db01f691dc8966acf8df37f05f079d8900ca74c9
+Bottom: 434b2a407274722b9f73054065bdae0acdc6a101
+Top:    434b2a407274722b9f73054065bdae0acdc6a101
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 17:17:01 +0100
+Date:   2009-10-21 17:22:45 +0100
 
 Replace poly_Clear(POLYAREA *) function with poly_FreeContours(PLINE **)
 
@@ -15,57 +15,4 @@ separately from a POLYAREA object.
 
 ---
 
-diff --git a/src/polyarea.h b/src/polyarea.h
-index ee185a9..50dda4a 100644
---- a/src/polyarea.h
-+++ b/src/polyarea.h
-@@ -159,7 +159,7 @@ POLYAREA *poly_Create(void);
- 
- void poly_Free(POLYAREA **p);
- void poly_Init(POLYAREA  *p);
--void poly_Clear(POLYAREA *p);
-+void poly_FreeContours(PLINE **pl);
- BOOLp poly_Valid(POLYAREA *p);
- 
- enum PolygonBooleanOperation {
-diff --git a/src/polygon1.c b/src/polygon1.c
-index db68bc7..8e67445 100644
---- a/src/polygon1.c
-+++ b/src/polygon1.c
-@@ -3006,15 +3006,14 @@ poly_Create (void)
- }
- 
- void
--poly_Clear (POLYAREA * P)
-+poly_FreeContours (PLINE **pline)
- {
--  PLINE *p;
-+  PLINE *pl;
- 
--  assert (P != NULL);
--  while ((p = P->contours) != NULL)
-+  while ((pl = *pline) != NULL)
-     {
--      P->contours = p->next;
--      poly_DelContour (&p);
-+      *pline = pl->next;
-+      poly_DelContour (&pl);
-     }
- }
- 
-@@ -3027,13 +3026,13 @@ poly_Free (POLYAREA ** p)
-     return;
-   for (cur = (*p)->f; cur != *p; cur = (*p)->f)
-     {
--      poly_Clear (cur);
-+      poly_FreeContours (&cur->contours);
-       r_destroy_tree (&cur->contour_tree);
-       cur->f->b = cur->b;
-       cur->b->f = cur->f;
-       free (cur);
-     }
--  poly_Clear (cur);
-+  poly_FreeContours (&cur->contours);
-   r_destroy_tree (&cur->contour_tree);
-   free (*p), *p = NULL;
- }
+
