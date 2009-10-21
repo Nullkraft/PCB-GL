@@ -1,7 +1,7 @@
-Bottom: 358596eb1150fe509816a5b70cb310a2069da4ba
-Top:    831d692f00998f285014751e7d6df11eda430e5e
+Bottom: 835f090d73ec9c06e8102b7f0e2776837c2822e5
+Top:    91f03b2c47b6021aa8cbabcb4da4f7e9e3eab4a7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 20:45:41 +0100
+Date:   2009-10-21 21:28:00 +0100
 
 Work in progress on subcompositing / stencil buffers
 
@@ -530,7 +530,7 @@ index b2856b5..2e7250d 100644
        break;
      }
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index de0a22d..4fa5d94 100644
+index 60c2ba2..898b4d1 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -35,6 +35,7 @@
@@ -559,7 +559,7 @@ index de0a22d..4fa5d94 100644
    ghid_show_crosshair (FALSE);
  
    glEnable (GL_BLEND);
-@@ -816,12 +828,20 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -814,12 +826,20 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -580,7 +580,7 @@ index de0a22d..4fa5d94 100644
  
    region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
    region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-@@ -847,6 +867,12 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -845,6 +865,12 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
@@ -594,10 +594,10 @@ index de0a22d..4fa5d94 100644
    glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
              (ghid_flip_y ? -1. : 1.) / gport->zoom, 1);
 diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
-index f59f22b..b9a5107 100644
+index b9d57da..8a4a11c 100644
 --- a/src/hid/gtk/gui-pinout-preview.c
 +++ b/src/hid/gtk/gui-pinout-preview.c
-@@ -219,9 +219,12 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
+@@ -217,9 +217,12 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
                  gport->bg_color.green / 65535.,
                  gport->bg_color.blue / 65535.,
                  1.);
