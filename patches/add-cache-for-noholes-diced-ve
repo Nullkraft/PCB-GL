@@ -1,5 +1,5 @@
 Bottom: ef0ecfd67fba23c8ce3be7ab705f4f2e981a89f4
-Top:    ef0ecfd67fba23c8ce3be7ab705f4f2e981a89f4
+Top:    c0159b70d50ad639b0aad8865caa72ca058cb440
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-21 16:59:57 +0100
 
@@ -23,4 +23,274 @@ Add cache for "noholes", diced versions of polygons
 
 ---
 
-
+diff --git a/src/create.c b/src/create.c
+index fc6b863..4054c28 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -608,6 +608,8 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
+   polygon->Flags = Flags;
+   polygon->ID = ID++;
+   polygon->Clipped = NULL;
++  polygon->NoHoles = NULL;
++  polygon->NoHolesValid = 0;
+   return (polygon);
+ }
+ 
+diff --git a/src/global.h b/src/global.h
+index 6340818..a38fe57 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -244,6 +244,8 @@ struct polygon_st			/* holds information about a polygon */
+   Cardinal PointN,		/* number of points in polygon */
+     PointMax;			/* max number from malloc() */
+   POLYAREA *Clipped;		/* the clipped region of this polygon */
++  PLINE *NoHoles;		/* the polygon broken into hole-less regions */
++  int NoHolesValid;		/* Is the NoHoles polygon up to date? */
+   PointTypePtr Points;		/* data */
+ };
+ 
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 1b7c6b7..ded1bc8 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -57,7 +57,10 @@ static void thindraw_contour (hidGC gc, PLINE *pl)
+ static void fill_contour_cb (PLINE *pl, void *user_data)
+ {
+   hidGC gc = user_data;
++  PLINE *local_pl = pl;
++
+   fill_contour (gc, pl);
++  poly_FreeContours (&local_pl);
+ }
+ 
+ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
+@@ -67,9 +70,20 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
+             we are dicing for every case. Some GUIs
+             rely on this, and need their flags fixing. */
+ 
+-  NoHolesPolygonDicer (poly, clip_box, fill_contour_cb, gc);
++  if (!poly->NoHolesValid)
++    {
++      ComputeNoHoles (poly);
++    }
++  if (poly->NoHoles)
++    {
++      PLINE *pl;
++
++      for (pl = poly->NoHoles; pl != NULL; pl = pl->next)
++        fill_contour (gc, pl);
++    }
+ 
+   /* Draw other parts of the polygon if fullpoly flag is set */
++  /* NB: No "NoHoles" cache for these */
+   if (TEST_FLAG (FULLPOLYFLAG, poly))
+     {
+       PolygonType p = *poly;
+@@ -79,7 +93,6 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
+            p.Clipped = p.Clipped->f)
+         NoHolesPolygonDicer (&p, clip_box, fill_contour_cb, gc);
+     }
+-
+ }
+ 
+ static int thindraw_hole_cb (PLINE *pl, void *user_data)
+diff --git a/src/mymem.c b/src/mymem.c
+index 36b13d5..c3663d6 100644
+--- a/src/mymem.c
++++ b/src/mymem.c
+@@ -736,6 +736,7 @@ FreePolygonMemory (PolygonTypePtr Polygon)
+       MYFREE (Polygon->Points);
+       if (Polygon->Clipped)
+ 	poly_Free (&Polygon->Clipped);
++      poly_FreeContours (&Polygon->NoHoles);
+       memset (Polygon, 0, sizeof (PolygonType));
+     }
+ }
+diff --git a/src/polyarea.h b/src/polyarea.h
+index ee185a9..50dda4a 100644
+--- a/src/polyarea.h
++++ b/src/polyarea.h
+@@ -159,7 +159,7 @@ POLYAREA *poly_Create(void);
+ 
+ void poly_Free(POLYAREA **p);
+ void poly_Init(POLYAREA  *p);
+-void poly_Clear(POLYAREA *p);
++void poly_FreeContours(PLINE **pl);
+ BOOLp poly_Valid(POLYAREA *p);
+ 
+ enum PolygonBooleanOperation {
+diff --git a/src/polygon.c b/src/polygon.c
+index eab57d6..5d9ecfd 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -120,6 +120,26 @@ static double circleVerticies[] = {
+   0.98480775301221, 0.17364817766693,
+ };
+ 
++static void
++add_noholes_polyarea (PLINE *pline, void *user_data)
++{
++  PolygonType *poly = user_data;
++
++  /* Prepend the pline into the NoHoles linked list */
++  pline->next = poly->NoHoles;
++  poly->NoHoles = pline;
++}
++
++void
++ComputeNoHoles (PolygonType *poly)
++{
++  poly_FreeContours (&poly->NoHoles);
++  if (poly->Clipped)
++    NoHolesPolygonDicer (poly, NULL, add_noholes_polyarea, poly);
++  else
++    printf ("Compute_noholes caught poly->Clipped = NULL\n");
++  poly->NoHolesValid = 1;
++}
+ 
+ static POLYAREA *
+ biggest (POLYAREA * p)
+@@ -232,6 +252,8 @@ ClipOriginal (PolygonType * poly)
+       fprintf (stderr, "Error while clipping PBO_ISECT: %d\n", r);
+       poly_Free (&result);
+       poly->Clipped = NULL;
++      if (poly->NoHoles) printf ("Just leaked in ClipOriginal\n");
++      poly->NoHoles = NULL;
+       return 0;
+     }
+   poly->Clipped = biggest (result);
+@@ -636,6 +658,8 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
+       fprintf (stderr, "Error while clipping PBO_SUB: %d\n", x);
+       poly_Free (&merged);
+       p->Clipped = NULL;
++      if (p->NoHoles) printf ("Just leaked in Subtract\n");
++      p->NoHoles = NULL;
+       return -1;
+     }
+   p->Clipped = biggest (merged);
+@@ -913,6 +937,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
+       if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
+ 	r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
+     }
++  polygon->NoHolesValid = 0;
+   return r;
+ }
+ 
+@@ -929,6 +954,8 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
+       fprintf (stderr, "Error while clipping PBO_UNITE: %d\n", x);
+       poly_Free (&merged);
+       p->Clipped = NULL;
++      if (p->NoHoles) printf ("Just leaked in Unsubtract\n");
++      p->NoHoles = NULL;
+       return 0;
+     }
+   p->Clipped = biggest (merged);
+@@ -1035,11 +1062,14 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
+   if (p->Clipped)
+     poly_Free (&p->Clipped);
+   p->Clipped = original_poly (p);
++  poly_FreeContours (&p->NoHoles);
+   if (!p->Clipped)
+     return 0;
+   assert (poly_Valid (p->Clipped));
+   if (TEST_FLAG (CLEARPOLYFLAG, p))
+     clearPoly (Data, layer, p, NULL, 0);
++  else
++    p->NoHolesValid = 0;
+   return 1;
+ }
+ 
+@@ -1293,18 +1323,23 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
+     case PIN_TYPE:
+     case VIA_TYPE:
+       SubtractPin (Data, (PinTypePtr) ptr2, Layer, Polygon);
++      Polygon->NoHolesValid = 0;
+       return 1;
+     case LINE_TYPE:
+       SubtractLine ((LineTypePtr) ptr2, Polygon);
++      Polygon->NoHolesValid = 0;
+       return 1;
+     case ARC_TYPE:
+       SubtractArc ((ArcTypePtr) ptr2, Polygon);
++      Polygon->NoHolesValid = 0;
+       return 1;
+     case PAD_TYPE:
+       SubtractPad ((PadTypePtr) ptr2, Polygon);
++      Polygon->NoHolesValid = 0;
+       return 1;
+     case TEXT_TYPE:
+       SubtractText ((TextTypePtr) ptr2, Polygon);
++      Polygon->NoHolesValid = 0;
+       return 1;
+     }
+   return 0;
+@@ -1534,6 +1569,7 @@ r_NoHolesPolygonDicer (POLYAREA * pa,
+       /* Don't bother removing it from the POLYAREA's rtree
+          since we're going to free it below anyway */
+       emit (p, user_data);
++      pa->contours = NULL;
+       poly_Free (&pa);
+       return;
+     }
+@@ -1641,6 +1677,8 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+    * we do this dirty work.
+    */
+   poly->Clipped = NULL;
++  if (poly->NoHoles) printf ("Just leaked in MorpyPolygon\n");
++  poly->NoHoles = NULL;
+   flags = poly->Flags;
+   RemovePolygon (layer, poly);
+   inhibit = True;
+diff --git a/src/polygon.h b/src/polygon.h
+index 1ec0a04..2faaa20 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -44,6 +44,7 @@ int PolygonHoles (PolygonType *ptr, const BoxType *range,
+                   void *user_data);
+ int PlowsPolygon (DataType *, int, void *, void *,
+ 		  int (*callback) (DataTypePtr, LayerTypePtr, PolygonTypePtr, int, void *, void *));
++void ComputeNoHoles (PolygonType *poly);
+ POLYAREA * ContourToPoly (PLINE *);
+ POLYAREA * RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2);
+ POLYAREA * CirclePoly(LocationType x, LocationType y, BDimension radius);
+diff --git a/src/polygon1.c b/src/polygon1.c
+index a4e461c..714acc6 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2397,15 +2397,14 @@ poly_Create (void)
+ }
+ 
+ void
+-poly_Clear (POLYAREA * P)
++poly_FreeContours (PLINE **pline)
+ {
+-  PLINE *p;
++  PLINE *pl;
+ 
+-  assert (P != NULL);
+-  while ((p = P->contours) != NULL)
++  while ((pl = *pline) != NULL)
+     {
+-      P->contours = p->next;
+-      poly_DelContour (&p);
++      *pline = pl->next;
++      poly_DelContour (&pl);
+     }
+ }
+ 
+@@ -2418,13 +2417,13 @@ poly_Free (POLYAREA ** p)
+     return;
+   for (cur = (*p)->f; cur != *p; cur = (*p)->f)
+     {
+-      poly_Clear (cur);
++      poly_FreeContours (&cur->contours);
+       r_destroy_tree (&cur->contour_tree);
+       cur->f->b = cur->b;
+       cur->b->f = cur->f;
+       free (cur);
+     }
+-  poly_Clear (cur);
++  poly_FreeContours (&cur->contours);
+   r_destroy_tree (&cur->contour_tree);
+   free (*p), *p = NULL;
+ }
