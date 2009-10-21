@@ -1,5 +1,5 @@
 Bottom: bc1aeb119675abdcb6234164ceac2a1306388b40
-Top:    3c315a033698e62be0d00ca2a1cb4bc613804dc0
+Top:    5089d6267ebf61d6f213ecaf0a3ddfc842e48002
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-21 21:04:38 +0100
 
@@ -472,7 +472,7 @@ index 4d60df9..5a298d4 100644
  
    hidgl_init_triangle_array (&buffer);
 diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
-index b9a5107..e59557f 100644
+index b9a5107..7db4772 100644
 --- a/src/hid/gtk/gui-pinout-preview.c
 +++ b/src/hid/gtk/gui-pinout-preview.c
 @@ -210,10 +210,10 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
@@ -488,11 +488,3 @@ index b9a5107..e59557f 100644
  
    glClearColor (gport->bg_color.red / 65535.,
                  gport->bg_color.green / 65535.,
-@@ -221,6 +221,7 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
-                 1.);
-   glStencilMask (~0);
-   glClearStencil (0);
-+  glStencilMask (~0);
-   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
- 
-   hidgl_reset_stencil_usage ();
