@@ -491,7 +491,6 @@ DrawEverything (BoxTypePtr drawn_area)
 		    &plated);
 	}
     }
-#if 1
   /* Draw the solder mask if turned on */
   if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
     {
@@ -507,7 +506,6 @@ DrawEverything (BoxTypePtr drawn_area)
       DrawMask (drawn_area);
       SWAP_IDENT = save_swap;
     }
-#endif
   /* Draw top silkscreen */
   if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
     DrawSilk (0, COMPONENT_LAYER, drawn_area);
