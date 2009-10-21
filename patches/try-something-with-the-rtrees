@@ -1,7 +1,7 @@
-Bottom: 706005103a321b178871ca2ea73c15bc4ce6f705
-Top:    cba8917cbeb9e0c262f5d27e5c13f94bd3008d97
+Bottom: 5525fb49a6bae26124cedfa4ce23107e0d0e7b6f
+Top:    6f9fae123c8d39ec936b3881df7086e9d39289b3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 22:33:29 +0100
+Date:   2009-10-21 22:37:05 +0100
 
 Optimise polygon operations by keeping an rtree with their contours
 
@@ -25,7 +25,7 @@ index 6652fce..50dda4a 100644
  
  BOOLp poly_M_Copy0(POLYAREA ** dst, const POLYAREA * srcfst);
 diff --git a/src/polygon.c b/src/polygon.c
-index f4dcfb7..53260ea 100644
+index 07abfb7..aed3977 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -146,6 +146,7 @@ biggest (POLYAREA * p)
@@ -48,7 +48,7 @@ index f4dcfb7..53260ea 100644
    assert (pl);
    assert (p->f);
    assert (p->b);
-@@ -1562,6 +1566,8 @@ r_NoHolesPolygonDicer (POLYAREA * pa,
+@@ -1552,6 +1556,8 @@ r_NoHolesPolygonDicer (POLYAREA * pa,
    if (!pa->contours->next)                 /* no holes */
      {
        pa->contours = NULL; /* The callback now owns the contour */
