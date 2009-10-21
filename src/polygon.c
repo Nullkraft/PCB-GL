@@ -120,6 +120,26 @@ static double circleVerticies[] = {
   0.98480775301221, 0.17364817766693,
 };
 
+static void
+add_noholes_polyarea (PLINE *pline, void *user_data)
+{
+  PolygonType *poly = user_data;
+
+  /* Prepend the pline into the NoHoles linked list */
+  pline->next = poly->NoHoles;
+  poly->NoHoles = pline;
+}
+
+void
+ComputeNoHoles (PolygonType *poly)
+{
+  poly_FreeContours (&poly->NoHoles);
+  if (poly->Clipped)
+    NoHolesPolygonDicer (poly, NULL, add_noholes_polyarea, poly);
+  else
+    printf ("Compute_noholes caught poly->Clipped = NULL\n");
+  poly->NoHolesValid = 1;
+}
 
 static POLYAREA *
 biggest (POLYAREA * p)
@@ -232,6 +252,8 @@ ClipOriginal (PolygonType * poly)
       fprintf (stderr, "Error while clipping PBO_ISECT: %d\n", r);
       poly_Free (&result);
       poly->Clipped = NULL;
+      if (poly->NoHoles) printf ("Just leaked in ClipOriginal\n");
+      poly->NoHoles = NULL;
       return 0;
     }
   poly->Clipped = biggest (result);
@@ -636,6 +658,8 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
       fprintf (stderr, "Error while clipping PBO_SUB: %d\n", x);
       poly_Free (&merged);
       p->Clipped = NULL;
+      if (p->NoHoles) printf ("Just leaked in Subtract\n");
+      p->NoHoles = NULL;
       return -1;
     }
   p->Clipped = biggest (merged);
@@ -913,6 +937,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
       if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
 	r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
     }
+  polygon->NoHolesValid = 0;
   return r;
 }
 
@@ -929,6 +954,8 @@ Unsubtract (POLYAREA * np1, PolygonType * p)
       fprintf (stderr, "Error while clipping PBO_UNITE: %d\n", x);
       poly_Free (&merged);
       p->Clipped = NULL;
+      if (p->NoHoles) printf ("Just leaked in Unsubtract\n");
+      p->NoHoles = NULL;
       return 0;
     }
   p->Clipped = biggest (merged);
@@ -1035,11 +1062,14 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
   if (p->Clipped)
     poly_Free (&p->Clipped);
   p->Clipped = original_poly (p);
+  poly_FreeContours (&p->NoHoles);
   if (!p->Clipped)
     return 0;
   assert (poly_Valid (p->Clipped));
   if (TEST_FLAG (CLEARPOLYFLAG, p))
     clearPoly (Data, layer, p, NULL, 0);
+  else
+    p->NoHolesValid = 0;
   return 1;
 }
 
@@ -1293,18 +1323,23 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
     case PIN_TYPE:
     case VIA_TYPE:
       SubtractPin (Data, (PinTypePtr) ptr2, Layer, Polygon);
+      Polygon->NoHolesValid = 0;
       return 1;
     case LINE_TYPE:
       SubtractLine ((LineTypePtr) ptr2, Polygon);
+      Polygon->NoHolesValid = 0;
       return 1;
     case ARC_TYPE:
       SubtractArc ((ArcTypePtr) ptr2, Polygon);
+      Polygon->NoHolesValid = 0;
       return 1;
     case PAD_TYPE:
       SubtractPad ((PadTypePtr) ptr2, Polygon);
+      Polygon->NoHolesValid = 0;
       return 1;
     case TEXT_TYPE:
       SubtractText ((TextTypePtr) ptr2, Polygon);
+      Polygon->NoHolesValid = 0;
       return 1;
     }
   return 0;
@@ -1534,6 +1569,7 @@ r_NoHolesPolygonDicer (POLYAREA * pa,
       /* Don't bother removing it from the POLYAREA's rtree
          since we're going to free it below anyway */
       emit (p, user_data);
+      pa->contours = NULL;
       poly_Free (&pa);
       return;
     }
@@ -1641,6 +1677,8 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
    * we do this dirty work.
    */
   poly->Clipped = NULL;
+  if (poly->NoHoles) printf ("Just leaked in MorpyPolygon\n");
+  poly->NoHoles = NULL;
   flags = poly->Flags;
   RemovePolygon (layer, poly);
   inhibit = True;
