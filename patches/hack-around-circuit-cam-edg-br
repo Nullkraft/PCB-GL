@@ -1,7 +1,7 @@
-Bottom: ef0cc6946dc5fcad9e74f34c86d23f140d0fe2dc
-Top:    c7bf5bcac9b68935361d8fa49bc87e2295db5788
+Bottom: 4a272f5c241874a69d504b4797c2b133f04c1655
+Top:    eb6916f9d0ae790f76b82bdcea9fde7ef51d40a2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 02:07:40 +0100
+Date:   2009-10-21 20:11:14 +0100
 
 Hack around Circuit CAM / EDG brokeness reading drill files
 
@@ -17,7 +17,7 @@ Hack around Circuit CAM / EDG brokeness reading drill files
 ---
 
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 1f7946a..877ee87 100644
+index 003d93f..39612cc 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -53,10 +53,16 @@ static void gerber_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
