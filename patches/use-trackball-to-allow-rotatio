@@ -1,7 +1,7 @@
-Bottom: 8c00eb3bd647d8f52765b3a6dc4ef5f8ad4bcd84
-Top:    56c067060598b33531bd069985f537e6ae55a5b2
+Bottom: 4a8df37cbb69b483551b83a57bf4e6537399697d
+Top:    9b3879fb9df73f782bd623f63978fedd1ce761ac
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 20:45:50 +0100
+Date:   2009-10-21 21:03:59 +0100
 
 Use trackball to allow rotation of 3D view
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 57b1aaa..26d870a 100644
+index 4fa5d94..52ab44c 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -36,6 +36,7 @@
@@ -298,7 +298,7 @@ index 57b1aaa..26d870a 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (gport->offlimits_color.red / 65535.,
-@@ -844,10 +1062,66 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -843,10 +1061,66 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glDisable (GL_STENCIL_TEST);
    glStencilFunc (GL_ALWAYS, 0, 0);
  
@@ -369,7 +369,7 @@ index 57b1aaa..26d870a 100644
  
    eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
    etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
-@@ -857,10 +1131,10 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -856,10 +1130,10 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
               gport->bg_color.blue / 65535.);
  
    glBegin (GL_QUADS);
@@ -384,7 +384,7 @@ index 57b1aaa..26d870a 100644
    glEnd ();
  
    /* TODO: Background image */
-@@ -881,7 +1155,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -880,7 +1154,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                               -gport->view_x0,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
@@ -394,7 +394,7 @@ index 57b1aaa..26d870a 100644
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
-@@ -905,6 +1181,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -904,6 +1180,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  
    hidgl_flush_triangles (&buffer);
  
