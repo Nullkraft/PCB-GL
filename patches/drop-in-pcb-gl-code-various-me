@@ -1,5 +1,5 @@
 Bottom: 3898478d998bd8c5f7a8460cba686662daab1af7
-Top:    65426338b4ba4a2fa1420376e9d24ce700cad3d4
+Top:    04c1c23d78a41e29dbc4066df226425715ba2f69
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-21 20:10:16 +0100
 
@@ -2493,7 +2493,7 @@ index b950a25..4a52baa 100644
  
    Settings.AutoPlace = 0;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index ca56361..cfde6a9 100644
+index ca56361..3f442ce 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -37,6 +37,18 @@
@@ -2524,12 +2524,14 @@ index ca56361..cfde6a9 100644
  }
  hid_gc_struct;
  
-@@ -201,7 +213,11 @@ typedef struct
+@@ -201,7 +213,13 @@ typedef struct
    GdkDrawable *drawable;	/* Current drawable for drawing routines */
    gint width, height;
  
 -  GdkGC *bg_gc, *offlimits_gc, *mask_gc, *u_gc, *grid_gc;
++#ifdef ENABLE_GL
 +  GdkGLConfig *glconfig;
++#endif
 +
 +  gint trans_lines;
 +
@@ -2537,7 +2539,7 @@ index ca56361..cfde6a9 100644
  
    GdkColor bg_color, offlimits_color, grid_color;
  
-@@ -318,6 +334,7 @@ void ghid_get_pointer (gint *, gint *);
+@@ -318,6 +336,7 @@ void ghid_get_pointer (gint *, gint *);
  
  /* gui-output-events.c function prototypes.
  */
@@ -2545,7 +2547,7 @@ index ca56361..cfde6a9 100644
  void ghid_port_ranges_changed (void);
  void ghid_port_ranges_zoom (gdouble zoom);
  gboolean ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative);
-@@ -531,7 +548,9 @@ GdkPixmap *ghid_render_pixmap (int cx,
+@@ -531,7 +550,9 @@ GdkPixmap *ghid_render_pixmap (int cx,
  			       int depth);
  
  /* gtkhid-main.c */
