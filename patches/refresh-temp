@@ -1,0 +1,35 @@
+Bottom: 5089d6267ebf61d6f213ecaf0a3ddfc842e48002
+Top:    e0965be39d87f88e744eee26507d969497cd9a64
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-21 21:06:05 +0100
+
+Refresh of shiny-3d-eye-candy
+
+---
+
+diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
+index 7db4772..29a491d 100644
+--- a/src/hid/gtk/gui-pinout-preview.c
++++ b/src/hid/gtk/gui-pinout-preview.c
+@@ -210,7 +210,7 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
+ 
+   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity ();
+-  glOrtho (ev->area.x, ev->area.x + ev->area.width, ev->area.y + ev->area.height, ev->area.y, -1000, 1000);
++  glOrtho (ev->area.x, ev->area.x + ev->area.width, ev->area.y + ev->area.height, ev->area.y, -10000, 10000);
+   glMatrixMode (GL_MODELVIEW);
+   glLoadIdentity ();
+ //  glTranslatef (0.0f, 0.0f, -Z_NEAR);
+diff --git a/src/hid/gtk/gui-render-pixmap.c b/src/hid/gtk/gui-render-pixmap.c
+index faa09fe..cf66f77 100644
+--- a/src/hid/gtk/gui-render-pixmap.c
++++ b/src/hid/gtk/gui-render-pixmap.c
+@@ -105,7 +105,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+ 
+   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity ();
+-  glOrtho (0, width, height, 0, 0, 100);
++  glOrtho (0, width, height, 0, -10000, 10000);
+   glMatrixMode (GL_MODELVIEW);
+   glLoadIdentity ();
+   glTranslatef (0.0f, 0.0f, -Z_NEAR);
