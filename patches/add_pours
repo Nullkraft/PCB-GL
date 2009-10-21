@@ -1,7 +1,7 @@
-Bottom: ce27d0f314b669323ff98c057197416a215b8042
-Top:    da4b10efe2f2ca930d10494f56472cc60e4afb78
+Bottom: 33f8dfebc4edc2277779686993281badfac1ef12
+Top:    74ae8719e1c0fc6e57e57b890e12c80e6029ceb0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 02:05:51 +0100
+Date:   2009-10-21 20:10:50 +0100
 
 Add support for a "poured" object.
 
@@ -72,7 +72,7 @@ index 2f92f29..6299ac5 100644
  	print.c \
  	print.h \
 diff --git a/src/action.c b/src/action.c
-index 92fdbae..e39f9fc 100644
+index 6b979d3..4ee29b8 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -58,6 +58,7 @@
@@ -129,7 +129,7 @@ index 92fdbae..e39f9fc 100644
 +	  PourTypePtr pour;
  
  	  int flags = CLEARPOLYFLAG;
- 	  if (Settings.FullPoly)
+ 	  if (TEST_FLAG (NEWFULLPOLYFLAG, PCB))
  	    flags |= FULLPOLYFLAG;
 -	  if ((polygon = CreateNewPolygonFromRectangle (CURRENT,
 +	  if ((pour = CreateNewPourFromRectangle (CURRENT,
@@ -1729,10 +1729,10 @@ index 472fc75..8d027d0 100644
  				    ElementTypePtr, Boolean, LocationType, LocationType);
  Boolean CopyPastebufferToLayout (LocationType, LocationType);
 diff --git a/src/create.c b/src/create.c
-index 4054c28..eefcb94 100644
+index 500d0a0..0543772 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -540,29 +540,28 @@ CreateNewArcOnLayer (LayerTypePtr Layer,
+@@ -542,29 +542,28 @@ CreateNewArcOnLayer (LayerTypePtr Layer,
    return (Arc);
  }
  
@@ -1778,7 +1778,7 @@ index 4054c28..eefcb94 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -600,9 +599,9 @@ CreateNewText (LayerTypePtr Layer, FontTypePtr PCBFont,
+@@ -602,9 +601,9 @@ CreateNewText (LayerTypePtr Layer, FontTypePtr PCBFont,
   * creates a new polygon on a layer
   */
  PolygonTypePtr
@@ -1790,7 +1790,7 @@ index 4054c28..eefcb94 100644
  
    /* copy values */
    polygon->Flags = Flags;
-@@ -610,17 +609,40 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
+@@ -612,17 +611,40 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
    polygon->Clipped = NULL;
    polygon->NoHoles = NULL;
    polygon->NoHolesValid = 0;
@@ -2826,7 +2826,7 @@ index 28f8edd..278dd4a 100644
  	result = TRUE;
        break;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 06cbd42..8eee20b 100644
+index 337f9da..c74e02c 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -1983,7 +1983,8 @@ static ModeButton mode_buttons[] = {
@@ -4063,7 +4063,7 @@ index 5186183..6b5b0c4 100644
     {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
     {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/polygon.c b/src/polygon.c
-index c02e07d..baa8656 100644
+index 55538e3..de616aa 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -32,6 +32,8 @@
@@ -4964,7 +4964,7 @@ index c02e07d..baa8656 100644
  
  Boolean
  isects (POLYAREA * a, PolygonTypePtr p, Boolean fr)
-@@ -1728,6 +1073,9 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
+@@ -1727,6 +1072,9 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
  Boolean
  MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
  {
@@ -4974,7 +4974,7 @@ index c02e07d..baa8656 100644
    POLYAREA *p, *start;
    Boolean many = False;
    FlagType flags;
-@@ -1791,6 +1139,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+@@ -1790,6 +1138,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
    inhibit = False;
    IncrementUndoSerialNumber ();
    return many;
@@ -4982,7 +4982,7 @@ index c02e07d..baa8656 100644
  }
  
  void debug_pline (PLINE *pl)
-@@ -1823,9 +1172,9 @@ debug_polygon (PolygonType *p)
+@@ -1822,9 +1171,9 @@ debug_polygon (PolygonType *p)
  {
    int i;
    POLYAREA *pa;
@@ -5036,7 +5036,7 @@ index 2faaa20..4dba4ca 100644
  void RestoreToPolygon(DataType *, int, void *, void *);
  void ClearFromPolygon(DataType *, int, void *, void *);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index a640222..6fe875b 100644
+index 8e67445..2f98049 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -858,6 +858,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
@@ -7507,7 +7507,7 @@ index 912db04..e9ced1d 100644
  	  Mode == THERMAL_MODE)
  	{
 diff --git a/src/strflags.c b/src/strflags.c
-index c2073a5..a7df424 100644
+index ac1fdcc..26a2405 100644
 --- a/src/strflags.c
 +++ b/src/strflags.c
 @@ -95,7 +95,7 @@ static FlagBitsType object_flagbits[] = {

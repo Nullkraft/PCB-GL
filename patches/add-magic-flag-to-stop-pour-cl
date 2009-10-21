@@ -1,7 +1,7 @@
-Bottom: 251976974ac5d7651390cd96d7025d32d04aeaa8
-Top:    9968d0c531491ee02297f2a38a872b37ccac22f3
+Bottom: dbec6bea80d06ba8468851db66e4dffe03e6091b
+Top:    e61f02b539d0fefd74aa31ccdcd931bf3f0e3cab
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 02:05:51 +0100
+Date:   2009-10-21 20:10:51 +0100
 
 Add magic flag to stop pour clipping for off-screen buffers
 
@@ -24,7 +24,7 @@ Add magic flag to stop pour clipping for off-screen buffers
 ---
 
 diff --git a/src/create.c b/src/create.c
-index eefcb94..c3c4a58 100644
+index 0543772..cac38c7 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -139,6 +139,7 @@ CreateNewPCB (Boolean SetDefaultNames)
