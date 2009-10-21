@@ -1,0 +1,14 @@
+Bottom: c1ee23984f4b534f066f463f25ed16b8ab109ee4
+Top:    c1ee23984f4b534f066f463f25ed16b8ab109ee4
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-21 19:12:29 +0100
+
+Give callback from NoHolesPolygonDicer ownership of the returned contour
+
+This means callers of NoHolesPolygonDicer() should call poly_FreeContours
+on the contour they are passed (if they do not wish to retain it).
+
+
+---
+
+
