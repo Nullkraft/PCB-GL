@@ -3,7 +3,21 @@ Top:    1dd51c5d0753d8cdb0aff2c65bf5c72b83607322
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-21 19:17:07 +0100
 
-Fix "fullpoly" flag test
+Fix "newfullpoly" flag test and save its state into the .pcb file.
+
+The flag controlling this behaviour is kept up to date as a PCB flag,
+not something which is updated in Settings.FullPoly. Change the test
+accordingly.
+
+Added a PCB flag "newfullpoly" to save this state in the .pcb file.
+
+NOTE: "full" polygons severly break connectivity checking, as the code
+      always treats broken up pieces of the polygon as being connected.
+
+      It _might_ have been better to leave this support broken - so
+      users don't inadvertently create polygons with the "fullpoly" flag.
+
+TODO: Consider removing, hiding or adding warnings to this feature.
 
 
 ---
