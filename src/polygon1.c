@@ -1069,10 +1069,8 @@ static BOOLp
 M_POLYAREA_label_separated (PLINE * afst, POLYAREA * b, BOOLp touch)
 {
   PLINE *curc = afst;
-  int i = 0;
 
   for (curc = afst; curc != NULL; curc = curc->next) {
-    printf ("Testing separated contour %i\n", ++i);
     if (cntr_label_POLYAREA (curc, b, touch) && touch)
       return TRUE;
   }
