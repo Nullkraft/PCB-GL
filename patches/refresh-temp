@@ -1,0 +1,21 @@
+Bottom: c77b6e6980d395d727f6d61cadcb8a4936816c6d
+Top:    ef0ecfd67fba23c8ce3be7ab705f4f2e981a89f4
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-21 16:59:55 +0100
+
+Refresh of try-something-with-the-rtrees
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 59fb70a..a4e461c 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2425,7 +2425,7 @@ poly_Free (POLYAREA ** p)
+       free (cur);
+     }
+   poly_Clear (cur);
+-    r_destroy_tree (&cur->contour_tree);
++  r_destroy_tree (&cur->contour_tree);
+   free (*p), *p = NULL;
+ }
