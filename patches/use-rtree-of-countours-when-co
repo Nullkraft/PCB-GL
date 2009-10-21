@@ -1,7 +1,7 @@
-Bottom: be90cfd3f3251348558efe3b41b4af163f0db643
+Bottom: f243dd0dad2d7e5ba06b4d51e131232367a53c06
 Top:    839b9e9b16a017382d6cd970b8393c9a3a7353f3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 22:59:30 +0100
+Date:   2009-10-21 23:00:37 +0100
 
 Use rtree of countours when computing an intersection
 
@@ -15,7 +15,7 @@ NOTE: This is more complex than the existing code, and on its own,
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index d413f37..e2dced4 100644
+index 0bbfbd2..e2dced4 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -544,9 +544,17 @@ typedef struct info
@@ -37,15 +37,6 @@ index d413f37..e2dced4 100644
  /*
   * adjust_tree()
   * (C) 2006 harry eaton
-@@ -640,7 +648,7 @@ seg_in_seg (const BoxType * b, void *cl)
-       if (res & 2)
- 	{
- 	  cntrbox_adjust (i->s->p, cnt > 1 ? s2 : s1);
--	  if (adjust_tree ((i->s->p->tree), i->s))
-+	  if (adjust_tree (i->s->p->tree, i->s))
- 	    return 1;
- 	}
-       /* if we added a node in the tree we need to change the tree */
 @@ -656,7 +664,7 @@ seg_in_seg (const BoxType * b, void *cl)
  	  DEBUGP ("new intersection at (%d, %d)\n", cnt > 1 ? s2[0] : s1[0],
  		  cnt > 1 ? s2[1] : s1[1]);
