@@ -1,0 +1,32 @@
+Bottom: 706005103a321b178871ca2ea73c15bc4ce6f705
+Top:    5525fb49a6bae26124cedfa4ce23107e0d0e7b6f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-21 22:37:04 +0100
+
+Refresh of make-polygon-dicer-pass
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index f4dcfb7..07abfb7 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -1546,18 +1546,8 @@ r_NoHolesPolygonDicer (POLYAREA * pa,
+                        void (*emit) (PLINE *, void *), void *user_data)
+ {
+   PLINE *p = pa->contours;
+-#if 0
+-  POLYAREA *pa;
+-
+-  pa = (POLYAREA *) malloc (sizeof (*pa));
+-#endif
+ #warning DO WE NEED TO SAVE THIS POINTER?
+   pa->b = pa->f = pa;
+-#if 0
+-  pa->contours = inp->contours;
+-  pa->contour_tree = r_create_tree (NULL, 0, 0);
+-#endif
+-
+ 
+   if (!pa->contours->next)                 /* no holes */
+     {
