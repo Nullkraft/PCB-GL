@@ -1,7 +1,7 @@
-Bottom: 55a5560b39d5efb3c27a9fde35686988a84bfa5b
-Top:    8e1a504c776091f1e66fad36d2cf14ae671d3680
+Bottom: 8c00eb3bd647d8f52765b3a6dc4ef5f8ad4bcd84
+Top:    56c067060598b33531bd069985f537e6ae55a5b2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 20:10:27 +0100
+Date:   2009-10-21 20:45:50 +0100
 
 Use trackball to allow rotation of 3D view
 
@@ -437,10 +437,10 @@ index e598bdf..337f9da 100644
    gtk_box_pack_start(GTK_BOX(vbox_left), vbox, FALSE, FALSE, 0);
    ghidgui->mode_buttons0_frame_vbox = vbox;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index cfde6a9..43553be 100644
+index 3f442ce..98180d8 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -364,6 +364,8 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -366,6 +366,8 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
  gint ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  				       GdkEventScroll * ev, GHidPort * out);
  
