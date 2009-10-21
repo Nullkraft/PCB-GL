@@ -3,9 +3,13 @@ Top:    13ee4ef6dc80ff5e748799b74b3d877de0a34fd8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-21 23:35:57 +0100
 
-Make polygon dicer pass ....
+Pass r_NoHolesPolygonDicer a POLYAREA *, not a PLINE *
 
-FIXME
+No functional changes to callers of NoHolesPolygonDicer()
+
+The allows state in the POLYAREA to be passed into the recursive
+dicer. This is needed in order to maintain an up to date r-tree
+of contours in the POLYAREA.
 
 
 ---
