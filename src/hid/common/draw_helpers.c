@@ -79,7 +79,7 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
       PLINE *pl;
 
       for (pl = poly->NoHoles; pl != NULL; pl = pl->next)
-        thindraw_contour (gc, pl);
+        fill_contour (gc, pl);
     }
 
   /* Draw other parts of the polygon if fullpoly flag is set */
