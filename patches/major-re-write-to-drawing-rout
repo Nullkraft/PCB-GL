@@ -1,7 +1,7 @@
-Bottom: 797d41ddb8a7bc4c16632d0ff731653de222f535
-Top:    01499454253b99597d14f017d4f6c927faa7d2c2
+Bottom: 254bb44719c0547a67b765794680a828ad0e4d24
+Top:    8344b5aa6f04438197daf94cfe1d38c7a79e852a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 20:46:11 +0100
+Date:   2009-10-21 21:04:26 +0100
 
 Major re-write to drawing routines
 
@@ -392,7 +392,7 @@ index 1725cc5..8322376 100644
  void
  ghid_set_color (hidGC gc, const char *name)
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index b8a263c..d82f3d7 100644
+index 34f792b..1b0a613 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -960,6 +960,13 @@ ghid_screen_update (void)
@@ -1009,7 +1009,7 @@ index b8a263c..d82f3d7 100644
    /* make GL-context "current" */
    if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
      return FALSE;
-@@ -1160,7 +1753,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1159,7 +1752,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
  
@@ -1019,7 +1019,7 @@ index b8a263c..d82f3d7 100644
  
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
-@@ -1199,6 +1793,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1198,6 +1792,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
  
