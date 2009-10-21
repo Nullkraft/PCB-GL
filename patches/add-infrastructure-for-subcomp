@@ -1,7 +1,7 @@
-Bottom: 68569a4fcc9a67d8cf78103f37c5c51a28c60f7c
-Top:    d400f07226c208c9f58417acddd5aaf1fa9497e8
+Bottom: d64af61cba46d113ddfb897ddcc1575f724151da
+Top:    d64af61cba46d113ddfb897ddcc1575f724151da
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 00:41:33 +0100
+Date:   2009-10-21 01:23:02 +0100
 
 Add infrastructure for subcompositing various bits of our drawing
 
@@ -20,86 +20,4 @@ Add infrastructure for subcompositing various bits of our drawing
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index 1d02376..f3e9e24 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -354,7 +354,7 @@ static int
- lowvia_callback (const BoxType * b, void *cl)
- {
-   PinTypePtr via = (PinTypePtr) b;
--  if (!via->Mask)
-+//  if (!via->Mask)
-     DrawPlainVia (via, False);
-   return 1;
- }
-@@ -474,27 +474,9 @@ DrawEverything (BoxTypePtr drawn_area)
-     }
-   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
-     return;
--
-   /* draw vias below silk */
-   if (PCB->ViaOn && gui->gui)
-     r_search (PCB->Data->via_tree, drawn_area, NULL, lowvia_callback, NULL);
--  /* Draw the solder mask if turned on */
--  if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
--    {
--      int save_swap = SWAP_IDENT;
--      SWAP_IDENT = 0;
--      DrawMask (drawn_area);
--      SWAP_IDENT = save_swap;
--      gui->set_layer (NULL, SL (FINISHED, 0), 0);
--    }
--  if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
--    {
--      int save_swap = SWAP_IDENT;
--      SWAP_IDENT = 1;
--      DrawMask (drawn_area);
--      SWAP_IDENT = save_swap;
--      gui->set_layer (NULL, SL (FINISHED, 0), 0);
--    }
-   /* Draw pins, pads, vias below silk */
-   if (gui->gui)
-     DrawTop (drawn_area);
-@@ -523,6 +505,23 @@ DrawEverything (BoxTypePtr drawn_area)
- 		    &plated);
- 	}
-     }
-+  /* Draw the solder mask if turned on */
-+  if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
-+    {
-+      int save_swap = SWAP_IDENT;
-+      SWAP_IDENT = 0;
-+      DrawMask (drawn_area);
-+      SWAP_IDENT = save_swap;
-+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
-+    }
-+  if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
-+    {
-+      int save_swap = SWAP_IDENT;
-+      SWAP_IDENT = 1;
-+      DrawMask (drawn_area);
-+      SWAP_IDENT = save_swap;
-+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
-+    }
-   /* Draw top silkscreen */
-   if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
-     {
-@@ -543,7 +542,7 @@ DrawEverything (BoxTypePtr drawn_area)
- 	r_search (PCB->Data->element_tree, drawn_area, NULL, EMark_callback,
- 		  NULL);
-       /* Draw rat lines on top */
--      if (PCB->RatOn)
-+      if (PCB->RatOn && gui->set_layer ("rats", SL (RATS, 0), 0))
- 	DrawRats(drawn_area);
-     }
- 
-@@ -643,7 +642,7 @@ static int
- via_callback (const BoxType * b, void *cl)
- {
-   PinTypePtr via = (PinTypePtr) b;
--  if (via->Mask)
-+//  if (via->Mask)
-     DrawPlainVia (via, False);
-   return 1;
- }
+
