@@ -1,0 +1,18 @@
+Bottom: 9a451584dd51237175b39da8fb092bd782af06f5
+Top:    9a451584dd51237175b39da8fb092bd782af06f5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-21 17:17:01 +0100
+
+Replace poly_Clear(POLYAREA *) function with poly_FreeContours(PLINE *)
+
+The poly_Clear function only clears the contours of the polygon anyway,
+so make a more explicitly named function to do this work, and pass the
+contours directly.
+
+This will be useful should we want to deal with a series of contours
+separately from a POLYAREA object.
+
+
+---
+
+
