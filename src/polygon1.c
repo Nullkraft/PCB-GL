@@ -3006,15 +3006,14 @@ poly_Create (void)
 }
 
 void
-poly_Clear (POLYAREA * P)
+poly_FreeContours (PLINE **pline)
 {
-  PLINE *p;
+  PLINE *pl;
 
-  assert (P != NULL);
-  while ((p = P->contours) != NULL)
+  while ((pl = *pline) != NULL)
     {
-      P->contours = p->next;
-      poly_DelContour (&p);
+      *pline = pl->next;
+      poly_DelContour (&pl);
     }
 }
 
@@ -3027,13 +3026,13 @@ poly_Free (POLYAREA ** p)
     return;
   for (cur = (*p)->f; cur != *p; cur = (*p)->f)
     {
-      poly_Clear (cur);
+      poly_FreeContours (&cur->contours);
       r_destroy_tree (&cur->contour_tree);
       cur->f->b = cur->b;
       cur->b->f = cur->f;
       free (cur);
     }
-  poly_Clear (cur);
+  poly_FreeContours (&cur->contours);
   r_destroy_tree (&cur->contour_tree);
   free (*p), *p = NULL;
 }
