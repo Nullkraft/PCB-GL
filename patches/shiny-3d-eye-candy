@@ -1,5 +1,5 @@
 Bottom: bc1aeb119675abdcb6234164ceac2a1306388b40
-Top:    5089d6267ebf61d6f213ecaf0a3ddfc842e48002
+Top:    e0965be39d87f88e744eee26507d969497cd9a64
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-21 21:04:38 +0100
 
@@ -472,7 +472,7 @@ index 4d60df9..5a298d4 100644
  
    hidgl_init_triangle_array (&buffer);
 diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
-index b9a5107..7db4772 100644
+index b9a5107..29a491d 100644
 --- a/src/hid/gtk/gui-pinout-preview.c
 +++ b/src/hid/gtk/gui-pinout-preview.c
 @@ -210,10 +210,10 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
@@ -480,7 +480,7 @@ index b9a5107..7db4772 100644
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
 -  glOrtho (ev->area.x, ev->area.x + ev->area.width, ev->area.y + ev->area.height, ev->area.y, 0, 100);
-+  glOrtho (ev->area.x, ev->area.x + ev->area.width, ev->area.y + ev->area.height, ev->area.y, -1000, 1000);
++  glOrtho (ev->area.x, ev->area.x + ev->area.width, ev->area.y + ev->area.height, ev->area.y, -10000, 10000);
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
 -  glTranslatef (0.0f, 0.0f, -Z_NEAR);
@@ -488,3 +488,16 @@ index b9a5107..7db4772 100644
  
    glClearColor (gport->bg_color.red / 65535.,
                  gport->bg_color.green / 65535.,
+diff --git a/src/hid/gtk/gui-render-pixmap.c b/src/hid/gtk/gui-render-pixmap.c
+index faa09fe..cf66f77 100644
+--- a/src/hid/gtk/gui-render-pixmap.c
++++ b/src/hid/gtk/gui-render-pixmap.c
+@@ -105,7 +105,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+ 
+   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity ();
+-  glOrtho (0, width, height, 0, 0, 100);
++  glOrtho (0, width, height, 0, -10000, 10000);
+   glMatrixMode (GL_MODELVIEW);
+   glLoadIdentity ();
+   glTranslatef (0.0f, 0.0f, -Z_NEAR);
