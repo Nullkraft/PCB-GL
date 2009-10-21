@@ -1546,18 +1546,8 @@ r_NoHolesPolygonDicer (POLYAREA * pa,
                        void (*emit) (PLINE *, void *), void *user_data)
 {
   PLINE *p = pa->contours;
-#if 0
-  POLYAREA *pa;
-
-  pa = (POLYAREA *) malloc (sizeof (*pa));
-#endif
 #warning DO WE NEED TO SAVE THIS POINTER?
   pa->b = pa->f = pa;
-#if 0
-  pa->contours = inp->contours;
-  pa->contour_tree = r_create_tree (NULL, 0, 0);
-#endif
-
 
   if (!pa->contours->next)                 /* no holes */
     {
