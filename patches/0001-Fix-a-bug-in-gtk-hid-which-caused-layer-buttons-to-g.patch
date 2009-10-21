@@ -3,8 +3,7 @@ Top:    460c31bdd7ebd918773d2209efd95bf230bc7bb4
 Author: Jared Casper <jaredcasper@gmail.com>
 Date:   2009-10-21 19:55:36 +0100
 
-From c5b84a8d1068baedebce85b8a4a9c39d4dd925e2 Mon Sep 17 00:00:00 2001
-Subject: [PATCH] Fix a bug in gtk hid which caused layer buttons to get confused (sourceforge bug 1988951)
+Fix a bug in gtk hid which caused layer buttons to get confused (sourceforge bug 1988951)
 
 In ghid_layer_enable_buttons_update, the layer_buttons array was being
 indexed using a counter which stoped at the current max_layer, which
