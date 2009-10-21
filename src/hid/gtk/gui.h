@@ -213,7 +213,9 @@ typedef struct
   GdkDrawable *drawable;	/* Current drawable for drawing routines */
   gint width, height;
 
+#ifdef ENABLE_GL
   GdkGLConfig *glconfig;
+#endif
 
   gint trans_lines;
 
