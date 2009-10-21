@@ -1552,6 +1552,7 @@ r_NoHolesPolygonDicer (PLINE * p,
   pa->contours = p;
   if (!p->next)                 /* no holes */
     {
+      /* The callback now owns the contour */
       emit (p, user_data);
       pa->contours = NULL;
       poly_Free (&pa);
