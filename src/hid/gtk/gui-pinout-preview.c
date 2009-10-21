@@ -210,16 +210,17 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
-  glOrtho (ev->area.x, ev->area.x + ev->area.width, ev->area.y + ev->area.height, ev->area.y, 0, 100);
+  glOrtho (ev->area.x, ev->area.x + ev->area.width, ev->area.y + ev->area.height, ev->area.y, -1000, 1000);
   glMatrixMode (GL_MODELVIEW);
   glLoadIdentity ();
-  glTranslatef (0.0f, 0.0f, -Z_NEAR);
+//  glTranslatef (0.0f, 0.0f, -Z_NEAR);
 
   glClearColor (gport->bg_color.red / 65535.,
                 gport->bg_color.green / 65535.,
                 gport->bg_color.blue / 65535.,
                 1.);
   glClearStencil (0);
+  glStencilMask (~0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
   hidgl_reset_stencil_usage ();
