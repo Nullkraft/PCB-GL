@@ -1,0 +1,21 @@
+Bottom: d64af61cba46d113ddfb897ddcc1575f724151da
+Top:    0a5012a0b637d660558d08a71965d54801c274c7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-21 01:36:19 +0100
+
+Refresh of add-infrastructure-for-subcomp
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 59e5e31..6089eba 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -530,7 +530,7 @@ DrawEverything (BoxTypePtr drawn_area)
+ 	r_search (PCB->Data->element_tree, drawn_area, NULL, EMark_callback,
+ 		  NULL);
+       /* Draw rat lines on top */
+-      if (PCB->RatOn)
++      if (PCB->RatOn && gui->set_layer ("rats", SL (RATS, 0), 0))
+ 	DrawRats(drawn_area);
+     }
