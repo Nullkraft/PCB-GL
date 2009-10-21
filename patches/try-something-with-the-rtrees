@@ -1,5 +1,5 @@
 Bottom: 5525fb49a6bae26124cedfa4ce23107e0d0e7b6f
-Top:    6f9fae123c8d39ec936b3881df7086e9d39289b3
+Top:    ae906aa67203eb8d582235806a7d62cf94d8081a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-21 22:37:05 +0100
 
@@ -58,7 +58,7 @@ index 07abfb7..aed3977 100644
        poly_Free (&pa);
        return;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index e2dced4..714acc6 100644
+index e2dced4..fc77ac3 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -810,31 +810,19 @@ static int
@@ -106,15 +106,7 @@ index e2dced4..714acc6 100644
                longjmp (*jb, retval);
              }
            c_info.getout = &out;
-@@ -1100,6 +1087,7 @@ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
- 
- /****************************************************************/
- 
-+#warning are contour r-trees needed for the temporary polyareas?
- /* routines for temporary storing resulting contours */
- static void
- InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
-@@ -1120,31 +1108,48 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
+@@ -1120,31 +1107,48 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
        newp->f->b = newp->b->f = newp;
      }
    newp->contours = c;
@@ -168,20 +160,13 @@ index e2dced4..714acc6 100644
  	}
      }
  }				/* PutContour */
-@@ -1173,6 +1178,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
-   if (dest == NULL)
-     error (err_bad_parm);	/* empty contour list */
- 
-+#warning IF Passed a PourType, we would get this r-tree for free??
-   /* make an rtree of contours */
-   tree = r_create_tree (NULL, 0, 0);
-   curc = dest;
-@@ -1244,6 +1250,21 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1244,6 +1248,23 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
  	  tmp = container->next;
  	  container->next = curh;
  	  curh->next = tmp;
 +
-+#warning WHICH POLYAREA GOT THIS - STUPID LONG SEARCH - STORE IN HEAP STRUCTURE INSTEAD!!
++          /* Search for which POLYAREA the containing contour belongs to */
++          /* FIXME: Perhaps store this information in the heap structure? */
 +          curc = dest;
 +          do
 +            {
@@ -189,6 +174,7 @@ index e2dced4..714acc6 100644
 +                break;
 +            }
 +          while ((curc = curc->f) != dest);
++
 +          if (curc->contours == container)
 +            {
 +              r_insert_entry (curc->contour_tree, (BoxTypePtr) curh, 0);
