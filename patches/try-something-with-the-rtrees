@@ -1,5 +1,5 @@
 Bottom: 13ee4ef6dc80ff5e748799b74b3d877de0a34fd8
-Top:    01fdc95fa667b62b1d6925820962eec808413702
+Top:    896c3b2cfd19c79060220e0ac6e7a027190a8f3c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-22 00:28:18 +0100
 
@@ -58,7 +58,7 @@ index 0c8c0cb..ca69338 100644
        poly_Free (&pa);
        return;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index df7581d..13f56b4 100644
+index df7581d..c958385 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -809,31 +809,19 @@ static int
@@ -225,7 +225,7 @@ index df7581d..13f56b4 100644
  	    {
  	      tmprev = *A;
 -	      /* disappear this contour */
-+	      /* disappear this contour (rtree entry remove int PutContour) */
++	      /* disappear this contour (rtree entry removed in PutContour) */
  	      *A = tmprev->next;
  	      tmprev->next = NULL;
 -	      PutContour (e, tmprev, contours, holes, NULL);
@@ -238,7 +238,7 @@ index df7581d..13f56b4 100644
  	    {
  	      tmprev = *A;
 -	      /* disappear this contour */
-+	      /* disappear this contour (rtree entry remove int PutContour) */
++	      /* disappear this contour (rtree entry removed in PutContour) */
  	      *A = tmprev->next;
  	      tmprev->next = NULL;
  	      poly_InvContour (tmprev);
@@ -252,7 +252,7 @@ index df7581d..13f56b4 100644
  	    {
  	      tmprev = *A;
 -	      /* disappear this contour */
-+	      /* disappear this contour (rtree entry remove int PutContour) */
++	      /* disappear this contour (rtree entry removed in PutContour) */
  	      *A = tmprev->next;
  	      tmprev->next = NULL;
 -	      PutContour (e, tmprev, contours, holes, parent);
