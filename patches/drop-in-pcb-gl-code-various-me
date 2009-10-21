@@ -1,5 +1,5 @@
 Bottom: 3898478d998bd8c5f7a8460cba686662daab1af7
-Top:    04c1c23d78a41e29dbc4066df226425715ba2f69
+Top:    3fe959437c79b8c683ab571190907bcdc46af5e3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-21 20:10:16 +0100
 
@@ -1715,7 +1715,7 @@ index cbdd104..6f830fb 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 86abad2..0e6a05d 100644
+index 86abad2..32631a3 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -297,16 +297,16 @@ have_crosshair_attachments (void)
@@ -1967,7 +1967,7 @@ index 86abad2..0e6a05d 100644
  }
  
  static gboolean
-@@ -692,53 +739,153 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -692,53 +739,151 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
    if (!first_time_done)
      {
        gport->colormap = gtk_widget_get_colormap (gport->top_window);
@@ -2046,9 +2046,7 @@ index 86abad2..0e6a05d 100644
 +//  glEnable(GL_POLYGON_SMOOTH);
 +//  glHint(GL_POLYGON_SMOOTH_HINT, [GL_FASTEST, GL_NICEST, or GL_DONT_CARE]);
 +
-+  glViewport (ev->area.x,
-+              widget->allocation.height - ev->area.height - ev->area.y,
-+              ev->area.width, ev->area.height);
++  glViewport (0, 0, widget->allocation.width, widget->allocation.height);
 +
 +  glEnable (GL_SCISSOR_TEST);
 +  glScissor (ev->area.x,
@@ -2057,7 +2055,7 @@ index 86abad2..0e6a05d 100644
 +
 +  glMatrixMode (GL_PROJECTION);
 +  glLoadIdentity ();
-+  glOrtho (ev->area.x, ev->area.x + ev->area.width, ev->area.y + ev->area.height, ev->area.y, 0, 100);
++  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, 0, 100);
 +  glMatrixMode (GL_MODELVIEW);
 +  glLoadIdentity ();
 +  glTranslatef (0.0f, 0.0f, -Z_NEAR);
@@ -2135,7 +2133,7 @@ index 86abad2..0e6a05d 100644
    return FALSE;
  }
  
-@@ -749,6 +896,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -749,6 +894,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    gdouble dx, dy;
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
@@ -2150,7 +2148,7 @@ index 86abad2..0e6a05d 100644
  
    if (out->panning)
      {
-@@ -764,9 +919,18 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -764,9 +917,18 @@ ghid_port_window_motion_cb (GtkWidget * widget,
      }
    x_prev = y_prev = -1;
    moved = ghid_note_event_location (ev);
@@ -2169,7 +2167,7 @@ index 86abad2..0e6a05d 100644
    return FALSE;
  }
  
-@@ -806,7 +970,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -806,7 +968,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        RestoreCrosshair (TRUE);
        cursor_in_viewport = TRUE;
      }
@@ -2179,7 +2177,7 @@ index 86abad2..0e6a05d 100644
  }
  
 diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
-index 212d37a..f59f22b 100644
+index 212d37a..b9d57da 100644
 --- a/src/hid/gtk/gui-pinout-preview.c
 +++ b/src/hid/gtk/gui-pinout-preview.c
 @@ -150,12 +150,15 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
@@ -2219,7 +2217,7 @@ index 212d37a..f59f22b 100644
    gport->width = da_w;
    gport->height = da_h;
    gport->view_width = da_w * gport->zoom;
-@@ -191,13 +191,59 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * event)
+@@ -191,13 +191,57 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * event)
    gport->view_x0 = (pinout->x_max - gport->view_width) / 2;
    gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
  
@@ -2233,9 +2231,7 @@ index 212d37a..f59f22b 100644
 +  glEnable (GL_BLEND);
 +  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 +
-+  glViewport (ev->area.x,
-+              widget->allocation.height - ev->area.height - ev->area.y,
-+              ev->area.width, ev->area.height);
++  glViewport (0, 0, widget->allocation.width, widget->allocation.height);
 +
 +  glEnable (GL_SCISSOR_TEST);
 +  glScissor (ev->area.x,
@@ -2244,7 +2240,7 @@ index 212d37a..f59f22b 100644
 +
 +  glMatrixMode (GL_PROJECTION);
 +  glLoadIdentity ();
-+  glOrtho (ev->area.x, ev->area.x + ev->area.width, ev->area.y + ev->area.height, ev->area.y, 0, 100);
++  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, 0, 100);
 +  glMatrixMode (GL_MODELVIEW);
 +  glLoadIdentity ();
 +  glTranslatef (0.0f, 0.0f, -Z_NEAR);
@@ -2282,7 +2278,7 @@ index 212d37a..f59f22b 100644
    gport->zoom = save_zoom;
    gport->width = save_width;
    gport->height = save_height;
-@@ -219,6 +265,40 @@ enum
+@@ -219,6 +263,40 @@ enum
  static GObjectClass *ghid_pinout_preview_parent_class = NULL;
  
  
@@ -2323,7 +2319,7 @@ index 212d37a..f59f22b 100644
  /*! \brief GObject finalise handler
   *
   *  \par Function Description
-@@ -310,6 +390,7 @@ ghid_pinout_preview_class_init (GhidPinoutPreviewClass * klass)
+@@ -310,6 +388,7 @@ ghid_pinout_preview_class_init (GhidPinoutPreviewClass * klass)
    GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
    GtkWidgetClass *gtk_widget_class = GTK_WIDGET_CLASS (klass);
  
