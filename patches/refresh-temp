@@ -1,0 +1,22 @@
+Bottom: 764b5e520046c8114079a302fb50ba850f900826
+Top:    134f6306c21159ebfc6967b2a5f539bbaa47eb8f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-21 21:30:47 +0100
+
+Refresh of use-trackball-to-allow-rotatio
+
+---
+
+diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
+index f692cf0..89a3563 100644
+--- a/src/hid/gtk/gui-pinout-preview.c
++++ b/src/hid/gtk/gui-pinout-preview.c
+@@ -208,7 +208,7 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
+ 
+   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity ();
+-  glOrtho (0, widget->allocation.width, widget->allocation.height, -100000, 100000);
++  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
+   glMatrixMode (GL_MODELVIEW);
+   glLoadIdentity ();
+   glTranslatef (0.0f, 0.0f, -Z_NEAR);
