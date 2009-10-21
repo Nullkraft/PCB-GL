@@ -1,7 +1,7 @@
-Bottom: 563dfea77ccab9e24c8689715b2989822c2aa0d4
-Top:    4e7eadfc2eca9275d876db1d11f37926a8292ed9
+Bottom: 2ec24be3483f32aa616b0ef47a6b17fb84866cc6
+Top:    7b48bb2db5d592545afa41cc3d619b300620bd40
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-20 23:34:27 +0100
+Date:   2009-10-21 02:12:53 +0100
 
 Major re-write to drawing routines
 
@@ -9,7 +9,7 @@ Major re-write to drawing routines
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 10ba3f2..9253049 100644
+index 5efb010..9932d97 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -76,7 +76,7 @@ FloatPolyType, *FloatPolyTypePtr;
@@ -61,7 +61,7 @@ index 10ba3f2..9253049 100644
  static int pin_callback (const BoxType * b, void *cl);
  static int pad_callback (const BoxType * b, void *cl);
  
-@@ -425,6 +425,8 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -414,6 +414,8 @@ DrawEverything (BoxTypePtr drawn_area)
    /* This is the reverse of the order in which we draw them.  */
    int drawn_groups[MAX_LAYER];
  
@@ -70,7 +70,7 @@ index 10ba3f2..9253049 100644
    PCB->Data->SILKLAYER.Color = PCB->ElementColor;
    PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
  
-@@ -653,7 +655,7 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -640,7 +642,7 @@ DrawEverything (BoxTypePtr drawn_area)
      }
  }
  
@@ -79,7 +79,7 @@ index 10ba3f2..9253049 100644
  DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
  	   Boolean invisible)
  {
-@@ -691,7 +693,7 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
+@@ -678,7 +680,7 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
  /* ---------------------------------------------------------------------------
   * draws pins pads and vias
   */
@@ -88,7 +88,7 @@ index 10ba3f2..9253049 100644
  DrawTop (const BoxType * screen)
  {
    if (PCB->PinOn || doing_assy)
-@@ -717,7 +719,7 @@ struct pin_info
+@@ -704,7 +706,7 @@ struct pin_info
    LayerTypePtr Layer;
  };
  
@@ -97,7 +97,7 @@ index 10ba3f2..9253049 100644
  clearPin_callback (const BoxType * b, void *cl)
  {
    PinTypePtr pin = (PinTypePtr) b;
-@@ -735,7 +737,7 @@ poly_callback (const BoxType * b, void *cl)
+@@ -722,7 +724,7 @@ poly_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -106,7 +106,7 @@ index 10ba3f2..9253049 100644
  clearPad_callback (const BoxType * b, void *cl)
  {
    PadTypePtr pad = (PadTypePtr) b;
-@@ -750,7 +752,7 @@ clearPad_callback (const BoxType * b, void *cl)
+@@ -735,7 +737,7 @@ clearPad_callback (const BoxType * b, void *cl)
   * Draws silk layer.
   */
  
@@ -115,7 +115,7 @@ index 10ba3f2..9253049 100644
  DrawSilk (int new_swap, int layer, BoxTypePtr drawn_area)
  {
  #if 0
-@@ -816,7 +818,7 @@ DrawSilk (int new_swap, int layer, BoxTypePtr drawn_area)
+@@ -785,7 +787,7 @@ DrawSilk (int new_swap, int layer, BoxTypePtr drawn_area)
  /* ---------------------------------------------------------------------------
   * draws solder mask layer - this will cover nearly everything
   */
@@ -124,7 +124,7 @@ index 10ba3f2..9253049 100644
  DrawMask (BoxType * screen)
  {
    struct pin_info info;
-@@ -873,7 +875,7 @@ DrawMask (BoxType * screen)
+@@ -842,7 +844,7 @@ DrawMask (BoxType * screen)
  #endif
  }
  
@@ -133,7 +133,7 @@ index 10ba3f2..9253049 100644
  DrawRats (BoxTypePtr drawn_area)
  {
    /*
-@@ -1039,7 +1041,7 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -977,7 +979,7 @@ DrawLayerGroup (int group, const BoxType * screen)
   *         \       /
   *          2 --- 1
    */
@@ -142,7 +142,7 @@ index 10ba3f2..9253049 100644
  DrawSpecialPolygon (HID * hid, hidGC DrawGC,
  		    LocationType X, LocationType Y, int Thickness)
  {
-@@ -1102,7 +1104,7 @@ DrawSpecialPolygon (HID * hid, hidGC DrawGC,
+@@ -1040,7 +1042,7 @@ DrawSpecialPolygon (HID * hid, hidGC DrawGC,
  /* ---------------------------------------------------------------------------
   * lowlevel drawing routine for pins and vias
   */
@@ -151,7 +151,7 @@ index 10ba3f2..9253049 100644
  DrawPinOrViaLowLevel (PinTypePtr Ptr, Boolean drawHole)
  {
    if (Gathering)
-@@ -1164,12 +1166,14 @@ DrawPinOrViaLowLevel (PinTypePtr Ptr, Boolean drawHole)
+@@ -1102,12 +1104,14 @@ DrawPinOrViaLowLevel (PinTypePtr Ptr, Boolean drawHole)
  	}
        else
  	{
@@ -167,7 +167,7 @@ index 10ba3f2..9253049 100644
  	}
      }
  
-@@ -1195,7 +1199,7 @@ DrawPinOrViaLowLevel (PinTypePtr Ptr, Boolean drawHole)
+@@ -1133,7 +1137,7 @@ DrawPinOrViaLowLevel (PinTypePtr Ptr, Boolean drawHole)
  /**************************************************************
   * draw pin/via hole
   */
@@ -176,7 +176,7 @@ index 10ba3f2..9253049 100644
  DrawHole (PinTypePtr Ptr)
  {
    if (TEST_FLAG (THINDRAWFLAG, PCB))
-@@ -1862,7 +1866,7 @@ DrawVia (PinTypePtr Via, int unused)
+@@ -1800,7 +1804,7 @@ DrawVia (PinTypePtr Via, int unused)
  /* ---------------------------------------------------------------------------
   * draw a via without dealing with polygon clearance 
   */
@@ -185,7 +185,7 @@ index 10ba3f2..9253049 100644
  DrawPlainVia (PinTypePtr Via, Boolean holeToo)
  {
    if (!Gathering)
-@@ -1910,7 +1914,7 @@ DrawPin (PinTypePtr Pin, int unused)
+@@ -1848,7 +1852,7 @@ DrawPin (PinTypePtr Pin, int unused)
  /* ---------------------------------------------------------------------------
   * draw a pin without clearing around polygons 
   */
@@ -194,7 +194,7 @@ index 10ba3f2..9253049 100644
  DrawPlainPin (PinTypePtr Pin, Boolean holeToo)
  {
    if (!Gathering)
-@@ -2100,7 +2104,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
+@@ -2038,7 +2042,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
  /* ---------------------------------------------------------------------------
   * draws text on a layer
   */
