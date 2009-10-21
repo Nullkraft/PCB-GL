@@ -36,6 +36,7 @@
 #include "gtkhid.h"
 #include "hid/common/hid_resource.h"
 #include "hid/common/draw_helpers.h"
+#include "hid/common/trackball.h"
 
 #include <gdk/gdkkeysyms.h>
 
@@ -53,6 +54,16 @@
 RCSID ("$Id$");
 
 static gint x_pan_speed, y_pan_speed;
+static GLfloat view_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
+                                    {0.0, 1.0, 0.0, 0.0},
+                                    {0.0, 0.0, 1.0, 0.0},
+                                    {0.0, 0.0, 0.0, 1.0}};
+static GLfloat last_modelview_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
+                                              {0.0, 1.0, 0.0, 0.0},
+                                              {0.0, 0.0, 1.0, 0.0},
+                                              {0.0, 0.0, 0.0, 1.0}};
+static int global_view_2d = 1;
+
 
 /* Set to true if cursor is currently in viewport. This is a hack to prevent
  * Crosshair stack corruption due to unmatching window enter / leave events */
@@ -224,6 +235,169 @@ ghid_get_coords (const char *msg, int *x, int *y)
     }
 }
 
+static float
+determinant_2x2 (float m[2][2])
+{
+  float det;
+  det = m[0][0] * m[1][1] -
+        m[0][1] * m[1][0];
+  return det;
+}
+
+#if 0
+static float
+determinant_4x4 (float m[4][4])
+{
+  float det;
+  det = m[0][3] * m[1][2] * m[2][1] * m[3][0]-m[0][2] * m[1][3] * m[2][1] * m[3][0] -
+        m[0][3] * m[1][1] * m[2][2] * m[3][0]+m[0][1] * m[1][3] * m[2][2] * m[3][0] +
+        m[0][2] * m[1][1] * m[2][3] * m[3][0]-m[0][1] * m[1][2] * m[2][3] * m[3][0] -
+        m[0][3] * m[1][2] * m[2][0] * m[3][1]+m[0][2] * m[1][3] * m[2][0] * m[3][1] +
+        m[0][3] * m[1][0] * m[2][2] * m[3][1]-m[0][0] * m[1][3] * m[2][2] * m[3][1] -
+        m[0][2] * m[1][0] * m[2][3] * m[3][1]+m[0][0] * m[1][2] * m[2][3] * m[3][1] +
+        m[0][3] * m[1][1] * m[2][0] * m[3][2]-m[0][1] * m[1][3] * m[2][0] * m[3][2] -
+        m[0][3] * m[1][0] * m[2][1] * m[3][2]+m[0][0] * m[1][3] * m[2][1] * m[3][2] +
+        m[0][1] * m[1][0] * m[2][3] * m[3][2]-m[0][0] * m[1][1] * m[2][3] * m[3][2] -
+        m[0][2] * m[1][1] * m[2][0] * m[3][3]+m[0][1] * m[1][2] * m[2][0] * m[3][3] +
+        m[0][2] * m[1][0] * m[2][1] * m[3][3]-m[0][0] * m[1][2] * m[2][1] * m[3][3] -
+        m[0][1] * m[1][0] * m[2][2] * m[3][3]+m[0][0] * m[1][1] * m[2][2] * m[3][3];
+   return det;
+}
+#endif
+
+static void
+invert_2x2 (float m[2][2], float out[2][2])
+{
+  float scale = 1 / determinant_2x2 (m);
+  out[0][0] =  m[1][1] * scale;
+  out[0][1] = -m[0][1] * scale;
+  out[1][0] = -m[1][0] * scale;
+  out[1][1] =  m[0][0] * scale;
+}
+
+#if 0
+static void
+invert_4x4 (float m[4][4], float out[4][4])
+{
+  float scale = 1 / determinant_4x4 (m);
+
+  out[0][0] = (m[1][2] * m[2][3] * m[3][1] - m[1][3] * m[2][2] * m[3][1] +
+               m[1][3] * m[2][1] * m[3][2] - m[1][1] * m[2][3] * m[3][2] -
+               m[1][2] * m[2][1] * m[3][3] + m[1][1] * m[2][2] * m[3][3]) * scale;
+  out[0][1] = (m[0][3] * m[2][2] * m[3][1] - m[0][2] * m[2][3] * m[3][1] -
+               m[0][3] * m[2][1] * m[3][2] + m[0][1] * m[2][3] * m[3][2] +
+               m[0][2] * m[2][1] * m[3][3] - m[0][1] * m[2][2] * m[3][3]) * scale;
+  out[0][2] = (m[0][2] * m[1][3] * m[3][1] - m[0][3] * m[1][2] * m[3][1] +
+               m[0][3] * m[1][1] * m[3][2] - m[0][1] * m[1][3] * m[3][2] -
+               m[0][2] * m[1][1] * m[3][3] + m[0][1] * m[1][2] * m[3][3]) * scale;
+  out[0][3] = (m[0][3] * m[1][2] * m[2][1] - m[0][2] * m[1][3] * m[2][1] -
+               m[0][3] * m[1][1] * m[2][2] + m[0][1] * m[1][3] * m[2][2] +
+               m[0][2] * m[1][1] * m[2][3] - m[0][1] * m[1][2] * m[2][3]) * scale;
+  out[1][0] = (m[1][3] * m[2][2] * m[3][0] - m[1][2] * m[2][3] * m[3][0] -
+               m[1][3] * m[2][0] * m[3][2] + m[1][0] * m[2][3] * m[3][2] +
+               m[1][2] * m[2][0] * m[3][3] - m[1][0] * m[2][2] * m[3][3]) * scale;
+  out[1][1] = (m[0][2] * m[2][3] * m[3][0] - m[0][3] * m[2][2] * m[3][0] +
+               m[0][3] * m[2][0] * m[3][2] - m[0][0] * m[2][3] * m[3][2] -
+               m[0][2] * m[2][0] * m[3][3] + m[0][0] * m[2][2] * m[3][3]) * scale;
+  out[1][2] = (m[0][3] * m[1][2] * m[3][0] - m[0][2] * m[1][3] * m[3][0] -
+               m[0][3] * m[1][0] * m[3][2] + m[0][0] * m[1][3] * m[3][2] +
+               m[0][2] * m[1][0] * m[3][3] - m[0][0] * m[1][2] * m[3][3]) * scale;
+  out[1][3] = (m[0][2] * m[1][3] * m[2][0] - m[0][3] * m[1][2] * m[2][0] +
+               m[0][3] * m[1][0] * m[2][2] - m[0][0] * m[1][3] * m[2][2] -
+               m[0][2] * m[1][0] * m[2][3] + m[0][0] * m[1][2] * m[2][3]) * scale;
+  out[2][0] = (m[1][1] * m[2][3] * m[3][0] - m[1][3] * m[2][1] * m[3][0] +
+               m[1][3] * m[2][0] * m[3][1] - m[1][0] * m[2][3] * m[3][1] -
+               m[1][1] * m[2][0] * m[3][3] + m[1][0] * m[2][1] * m[3][3]) * scale;
+  out[2][1] = (m[0][3] * m[2][1] * m[3][0] - m[0][1] * m[2][3] * m[3][0] -
+               m[0][3] * m[2][0] * m[3][1] + m[0][0] * m[2][3] * m[3][1] +
+               m[0][1] * m[2][0] * m[3][3] - m[0][0] * m[2][1] * m[3][3]) * scale;
+  out[2][2] = (m[0][1] * m[1][3] * m[3][0] - m[0][3] * m[1][1] * m[3][0] +
+               m[0][3] * m[1][0] * m[3][1] - m[0][0] * m[1][3] * m[3][1] -
+               m[0][1] * m[1][0] * m[3][3] + m[0][0] * m[1][1] * m[3][3]) * scale;
+  out[2][3] = (m[0][3] * m[1][1] * m[2][0] - m[0][1] * m[1][3] * m[2][0] -
+               m[0][3] * m[1][0] * m[2][1] + m[0][0] * m[1][3] * m[2][1] +
+               m[0][1] * m[1][0] * m[2][3] - m[0][0] * m[1][1] * m[2][3]) * scale;
+  out[3][0] = (m[1][2] * m[2][1] * m[3][0] - m[1][1] * m[2][2] * m[3][0] -
+               m[1][2] * m[2][0] * m[3][1] + m[1][0] * m[2][2] * m[3][1] +
+               m[1][1] * m[2][0] * m[3][2] - m[1][0] * m[2][1] * m[3][2]) * scale;
+  out[3][1] = (m[0][1] * m[2][2] * m[3][0] - m[0][2] * m[2][1] * m[3][0] +
+               m[0][2] * m[2][0] * m[3][1] - m[0][0] * m[2][2] * m[3][1] -
+               m[0][1] * m[2][0] * m[3][2] + m[0][0] * m[2][1] * m[3][2]) * scale;
+  out[3][2] = (m[0][2] * m[1][1] * m[3][0] - m[0][1] * m[1][2] * m[3][0] -
+               m[0][2] * m[1][0] * m[3][1] + m[0][0] * m[1][2] * m[3][1] +
+               m[0][1] * m[1][0] * m[3][2] - m[0][0] * m[1][1] * m[3][2]) * scale;
+  out[3][3] = (m[0][1] * m[1][2] * m[2][0] - m[0][2] * m[1][1] * m[2][0] +
+               m[0][2] * m[1][0] * m[2][1] - m[0][0] * m[1][2] * m[2][1] -
+               m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * scale;
+}
+#endif
+
+
+void
+ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
+{
+  float mat[2][2];
+  float inv_mat[2][2];
+  float x, y;
+
+  /*
+    ex = view_matrix[0][0] * vx +
+         view_matrix[0][1] * vy +
+         view_matrix[0][2] * vz +
+         view_matrix[0][3] * 1;
+    ey = view_matrix[1][0] * vx +
+         view_matrix[1][1] * vy +
+         view_matrix[1][2] * vz +
+         view_matrix[1][3] * 1;
+    UNKNOWN ez = view_matrix[2][0] * vx +
+                 view_matrix[2][1] * vy +
+                 view_matrix[2][2] * vz +
+                 view_matrix[2][3] * 1;
+
+    ex - view_matrix[0][3] * 1
+       - view_matrix[0][2] * vz
+      = view_matrix[0][0] * vx +
+        view_matrix[0][1] * vy;
+
+    ey - view_matrix[1][3] * 1
+       - view_matrix[1][2] * vz
+      = view_matrix[1][0] * vx +
+        view_matrix[1][1] * vy;
+  */
+
+  /* NB: last_modelview_matrix is transposed in memory! */
+  x = (float)ex - last_modelview_matrix[3][0] * 1
+                - last_modelview_matrix[2][0] * vz;
+
+  y = (float)ey - last_modelview_matrix[3][1] * 1
+                - last_modelview_matrix[2][1] * vz;
+
+  /*
+    x = view_matrix[0][0] * vx +
+        view_matrix[0][1] * vy;
+
+    y = view_matrix[1][0] * vx +
+        view_matrix[1][1] * vy;
+
+    [view_matrix[0][0] view_matrix[0][1]] [vx] = [x]
+    [view_matrix[1][0] view_matrix[1][1]] [vy]   [y]
+  */
+
+  mat[0][0] = last_modelview_matrix[0][0];
+  mat[0][1] = last_modelview_matrix[1][0];
+  mat[1][0] = last_modelview_matrix[0][1];
+  mat[1][1] = last_modelview_matrix[1][1];
+
+//    if (determinant_2x2 (mat) < 0.00001)
+//      printf ("Determinant is quite small\n");
+
+  invert_2x2 (mat, inv_mat);
+
+  *vx = (int)(inv_mat[0][0] * x + inv_mat[0][1] * y);
+  *vy = (int)(inv_mat[1][0] * x + inv_mat[1][1] * y);
+}
+
+
 gboolean
 ghid_note_event_location (GdkEventButton * ev)
 {
@@ -241,6 +415,11 @@ ghid_note_event_location (GdkEventButton * ev)
       event_x = ev->x;
       event_y = ev->y;
     }
+
+  /* Unproject event_x and event_y to world coordinates of the plane we are on */
+  ghid_unproject_to_z_plane (event_x, event_y, 0,
+                             &event_x, &event_y);
+
   gport->view_x = event_x * gport->zoom + gport->view_x0;
   gport->view_y = event_y * gport->zoom + gport->view_y0;
 
@@ -777,6 +956,37 @@ ghid_screen_update (void)
 void DrawAttached (Boolean);
 void draw_grid ();
 
+void
+ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata)
+{
+  global_view_2d = view_2d;
+  ghid_invalidate_all ();
+}
+
+void
+ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
+{
+#ifdef DEBUG_ROTATE
+  int row, column;
+#endif
+
+  build_rotmatrix (view_matrix, quarternion);
+
+#ifdef DEBUG_ROTATE
+  for (row = 0; row < 4; row++) {
+    printf ("[ %f", view_matrix[row][0]);
+    for (column = 1; column < 4; column++) {
+      printf (",\t%f", view_matrix[row][column]);
+    }
+    printf ("\t]\n");
+  }
+  printf ("\n");
+#endif
+
+  ghid_invalidate_all ();
+}
+
+
 #define Z_NEAR 3.0
 gboolean
 ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
@@ -787,6 +997,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   extern HID ghid_hid;
   GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
   GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
+  int min_x, min_y;
+  int max_x, max_y;
+  int new_x, new_y;
+  int min_depth;
+  int max_depth;
 
   /* make GL-context "current" */
   if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
@@ -821,10 +1036,14 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
-  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, 0, 100);
+  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
   glMatrixMode (GL_MODELVIEW);
   glLoadIdentity ();
-  glTranslatef (0.0f, 0.0f, -Z_NEAR);
+
+  glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
+  glMultMatrixf ((GLfloat *)view_matrix);
+  glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
+  glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
 
   glEnable (GL_STENCIL_TEST);
   glClearColor (gport->offlimits_color.red / 65535.,
@@ -841,10 +1060,66 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   glDisable (GL_STENCIL_TEST);
   glStencilFunc (GL_ALWAYS, 0, 0);
 
-  region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-  region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-  region.Y1 = MIN (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
-  region.Y2 = MAX (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
+  /* Test the 8 corners of a cube spanning the event */
+  min_depth = -50; /* FIXME */
+  max_depth =  0;  /* FIXME */
+
+  ghid_unproject_to_z_plane (ev->area.x,
+                             ev->area.y,
+                             min_depth, &new_x, &new_y);
+  max_x = min_x = new_x;
+  max_y = min_y = new_y;
+
+  ghid_unproject_to_z_plane (ev->area.x,
+                             ev->area.y,
+                             max_depth, &new_x, &new_y);
+  min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
+  min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
+
+  /* */
+  ghid_unproject_to_z_plane (ev->area.x + ev->area.width,
+                             ev->area.y,
+                             min_depth, &new_x, &new_y);
+  min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
+  min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
+
+  ghid_unproject_to_z_plane (ev->area.x + ev->area.width, ev->area.y,
+                             max_depth, &new_x, &new_y);
+  min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
+  min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
+
+  /* */
+  ghid_unproject_to_z_plane (ev->area.x + ev->area.width,
+                             ev->area.y + ev->area.height,
+                             min_depth, &new_x, &new_y);
+  min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
+  min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
+
+  ghid_unproject_to_z_plane (ev->area.x + ev->area.width,
+                             ev->area.y + ev->area.height,
+                             max_depth, &new_x, &new_y);
+  min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
+  min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
+
+  /* */
+  ghid_unproject_to_z_plane (ev->area.x,
+                             ev->area.y + ev->area.height,
+                             min_depth,
+                             &new_x, &new_y);
+  min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
+  min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
+
+  ghid_unproject_to_z_plane (ev->area.x,
+                             ev->area.y + ev->area.height,
+                             max_depth,
+                             &new_x, &new_y);
+  min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
+  min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
+
+  region.X1 = MIN (Px (min_x), Px (max_x + 1));
+  region.X2 = MAX (Px (min_x), Px (max_x + 1));
+  region.Y1 = MIN (Py (min_y), Py (max_y + 1));
+  region.Y2 = MAX (Py (min_y), Py (max_y + 1));
 
   eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
   etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
@@ -854,10 +1129,10 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
              gport->bg_color.blue / 65535.);
 
   glBegin (GL_QUADS);
-  glVertex3i (eleft,  etop,    0);
-  glVertex3i (eright, etop,    0);
-  glVertex3i (eright, ebottom, 0);
-  glVertex3i (eleft,  ebottom, 0);
+  glVertex3i (eleft,  etop,    -50);
+  glVertex3i (eright, etop,    -50);
+  glVertex3i (eright, ebottom, -50);
+  glVertex3i (eleft,  ebottom, -50);
   glEnd ();
 
   /* TODO: Background image */
@@ -878,7 +1153,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                              -gport->view_x0,
                 ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                              -gport->view_y0, 0);
+
   hid_expose_callback (&ghid_hid, &region, 0);
+
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
 
@@ -901,6 +1178,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   ghid_show_crosshair (TRUE);
 
   hidgl_flush_triangles (&buffer);
+
 
   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
     gdk_gl_drawable_swap_buffers (pGlDrawable);
