@@ -1,7 +1,7 @@
-Bottom: 9dc16daec9188bf9e17254b3ba74f09592e4e631
-Top:    e99353d7caf076807daa2488ade2fc65963559d4
+Bottom: 2d53f60722638dfaab750ae821144de7f96ae768
+Top:    fb51ca80e17965109197b66cb06143f756c1542a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 20:11:15 +0100
+Date:   2009-10-21 20:46:10 +0100
 
 Silly space navigator interface to allow funky views
 
@@ -110,7 +110,7 @@ index c74e02c..a6397d0 100644
  
    gtk_main ();
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 43553be..fee0a99 100644
+index 98180d8..24e2df2 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -197,6 +197,8 @@ typedef struct
@@ -122,7 +122,7 @@ index 43553be..fee0a99 100644
  }
  GhidGui;
  
-@@ -374,6 +376,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -376,6 +378,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
  
