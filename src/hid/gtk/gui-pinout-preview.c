@@ -219,6 +219,7 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
                 gport->bg_color.green / 65535.,
                 gport->bg_color.blue / 65535.,
                 1.);
+  glStencilMask (~0);
   glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 

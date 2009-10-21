@@ -834,7 +834,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                 gport->offlimits_color.blue / 65535.,
                 1.);
 
-  glDepthMask (0);
   glStencilMask (~0);
   glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
