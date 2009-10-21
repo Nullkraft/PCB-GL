@@ -1,5 +1,5 @@
 Bottom: 839b9e9b16a017382d6cd970b8393c9a3a7353f3
-Top:    706005103a321b178871ca2ea73c15bc4ce6f705
+Top:    5525fb49a6bae26124cedfa4ce23107e0d0e7b6f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-21 22:32:23 +0100
 
@@ -11,10 +11,10 @@ FIXME
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 106caff..f4dcfb7 100644
+index 106caff..07abfb7 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -1542,15 +1542,24 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
+@@ -1542,15 +1542,14 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
  }
  
  static void
@@ -22,27 +22,20 @@ index 106caff..f4dcfb7 100644
 +r_NoHolesPolygonDicer (POLYAREA * pa,
                         void (*emit) (PLINE *, void *), void *user_data)
  {
+-  POLYAREA *pa;
+-
+-  pa = (POLYAREA *) malloc (sizeof (*pa));
 +  PLINE *p = pa->contours;
-+#if 0
-   POLYAREA *pa;
- 
-   pa = (POLYAREA *) malloc (sizeof (*pa));
-+#endif
 +#warning DO WE NEED TO SAVE THIS POINTER?
    pa->b = pa->f = pa;
 -  pa->contours = p;
 -  if (!p->next)                 /* no holes */
-+#if 0
-+  pa->contours = inp->contours;
-+  pa->contour_tree = r_create_tree (NULL, 0, 0);
-+#endif
-+
 +
 +  if (!pa->contours->next)                 /* no holes */
      {
        pa->contours = NULL; /* The callback now owns the contour */
        emit (p, user_data);
-@@ -1568,30 +1577,33 @@ r_NoHolesPolygonDicer (PLINE * p,
+@@ -1568,30 +1567,33 @@ r_NoHolesPolygonDicer (PLINE * p,
        poly_AndSubtract_free (pa, poly2, &left, &right);
        if (left)
          {
@@ -90,7 +83,7 @@ index 106caff..f4dcfb7 100644
          }
      }
  }
-@@ -1622,13 +1634,15 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
+@@ -1622,13 +1624,15 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
    /* now dice it up */
    do
      {
