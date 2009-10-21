@@ -5,19 +5,11 @@ Date:   2009-10-21 20:10:15 +0100
 
 Use rtree of countours when computing an intersection
 
-*** MORE COMPLEX, AND ACTUALLY SLOWS THING DOWN ***
-(Might be faster if the r-tree already existed though)
+NOTE: This is more complex than the existing code, and on its own,
+      actually slows things down a little.
 
-
-
-
-
-
-
-
-
-
-
+      The intention is that the r-tree should be maintained continually,
+      so it doesn't need to be recreated with each call to intersect().
 
 
 ---
