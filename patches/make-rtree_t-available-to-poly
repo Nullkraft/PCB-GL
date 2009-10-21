@@ -1,5 +1,5 @@
 Bottom: 460c31bdd7ebd918773d2209efd95bf230bc7bb4
-Top:    460c31bdd7ebd918773d2209efd95bf230bc7bb4
+Top:    4675d8f567155ed0b893d75857521a7fc29d4e12
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-21 22:56:40 +0100
 
@@ -8,4 +8,66 @@ Make rtree_t available to polygon1.c
 
 ---
 
-
+diff --git a/src/global.h b/src/global.h
+index f494dbc..a38fe57 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -40,7 +40,6 @@
+ 
+ #include "const.h"
+ #include "macro.h"
+-#include "polyarea.h"
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+@@ -57,6 +56,10 @@ typedef struct drc_violation_st DrcViolationType, *DrcViolationTypePtr;
+ 
+ #include "hid.h"
+ 
++typedef struct rtree rtree_t;
++
++#include "polyarea.h" /* Needs rtree_t defined */
++
+ #define _(S) (S)
+ 
+ typedef int LocationType;
+@@ -257,11 +260,11 @@ typedef struct			/* holds information about arcs */
+     Delta;
+ } ArcType, *ArcTypePtr;
+ 
+-typedef struct
++struct rtree
+ {
+   struct rtree_node *root;
+   int size;			/* number of entries in tree */
+-} rtree_t;
++};
+ 
+ typedef struct			/* holds information about one layer */
+ {
+diff --git a/src/polyarea.h b/src/polyarea.h
+index a883750..6652fce 100644
+--- a/src/polyarea.h
++++ b/src/polyarea.h
+@@ -98,7 +98,7 @@ struct PLINE
+     VNODE head;
+     unsigned int Count;
+     double area;
+-    void *tree;
++    rtree_t *tree;
+     struct {
+       unsigned int status:3;
+       unsigned int orient:1;
+diff --git a/src/polygon1.c b/src/polygon1.c
+index bfa39b3..8c8275a 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -45,6 +45,8 @@
+ #include	<setjmp.h>
+ #include	<math.h>
+ #include	<string.h>
++
++#include "global.h"
+ #include "polyarea.h"
+ #include "rtree.h"
+ #include "heap.h"
