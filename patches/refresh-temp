@@ -1,0 +1,34 @@
+Bottom: 1dd51c5d0753d8cdb0aff2c65bf5c72b83607322
+Top:    bbea19cf7078756a8ec64798b79973d24550af66
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-21 19:44:57 +0100
+
+Refresh of fix-fullpoly-flag-test
+
+---
+
+diff --git a/src/create.c b/src/create.c
+index fc6b863..6d34465 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -160,6 +160,8 @@ CreateNewPCB (Boolean SetDefaultNames)
+     SET_FLAG (SNAPPINFLAG, ptr);
+   if (Settings.ClearLine)
+     SET_FLAG (CLEARNEWFLAG, ptr);
++  if (Settings.FullPoly)
++    SET_FLAG (NEWFULLPOLYFLAG, ptr);
+   if (Settings.OrthogonalMoves)
+     SET_FLAG (ORTHOMOVEFLAG, ptr);
+   if (Settings.liveRouting)
+diff --git a/src/strflags.c b/src/strflags.c
+index c2073a5..ac1fdcc 100644
+--- a/src/strflags.c
++++ b/src/strflags.c
+@@ -127,6 +127,7 @@ static FlagBitsType pcb_flagbits[] = {
+   { SWAPSTARTDIRFLAG, N ("swapstartdir"), 1 },
+   { UNIQUENAMEFLAG, N ("uniquename"), 1 },
+   { CLEARNEWFLAG, N ("clearnew"), 1 },
++  { NEWFULLPOLYFLAG, N ("newfullpoly"), 1 },
+   { SNAPPINFLAG, N ("snappin"), 1 },
+   { SHOWMASKFLAG, N ("showmask"), 1 },
+   { THINDRAWFLAG, N ("thindraw"), 1 },
