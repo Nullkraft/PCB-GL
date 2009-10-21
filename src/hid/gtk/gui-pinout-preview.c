@@ -221,7 +221,6 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
                 1.);
   glStencilMask (~0);
   glClearStencil (0);
-  glStencilMask (~0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
   hidgl_reset_stencil_usage ();
