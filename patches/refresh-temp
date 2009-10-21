@@ -1,0 +1,35 @@
+Bottom: 9b3879fb9df73f782bd623f63978fedd1ce761ac
+Top:    dbf4877668346f8bd2356e20f9a352affaa674d1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-21 21:09:01 +0100
+
+Refresh of use-trackball-to-allow-rotatio
+
+---
+
+diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
+index b9a5107..725e8e8 100644
+--- a/src/hid/gtk/gui-pinout-preview.c
++++ b/src/hid/gtk/gui-pinout-preview.c
+@@ -210,7 +210,7 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
+ 
+   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity ();
+-  glOrtho (ev->area.x, ev->area.x + ev->area.width, ev->area.y + ev->area.height, ev->area.y, 0, 100);
++  glOrtho (ev->area.x, ev->area.x + ev->area.width, ev->area.y + ev->area.height, ev->area.y, -100000, 100000);
+   glMatrixMode (GL_MODELVIEW);
+   glLoadIdentity ();
+   glTranslatef (0.0f, 0.0f, -Z_NEAR);
+diff --git a/src/hid/gtk/gui-render-pixmap.c b/src/hid/gtk/gui-render-pixmap.c
+index faa09fe..15412ea 100644
+--- a/src/hid/gtk/gui-render-pixmap.c
++++ b/src/hid/gtk/gui-render-pixmap.c
+@@ -105,7 +105,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+ 
+   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity ();
+-  glOrtho (0, width, height, 0, 0, 100);
++  glOrtho (0, width, height, 0, -100000, 100000);
+   glMatrixMode (GL_MODELVIEW);
+   glLoadIdentity ();
+   glTranslatef (0.0f, 0.0f, -Z_NEAR);
