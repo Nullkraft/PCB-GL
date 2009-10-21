@@ -1,0 +1,122 @@
+Bottom: b7550318af95874ebd83479d643a8d7fb48f911e
+Top:    839b9e9b16a017382d6cd970b8393c9a3a7353f3
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-21 22:26:12 +0100
+
+Refresh of make-rtree_t-type-available-to
+
+---
+
+diff --git a/src/global.h b/src/global.h
+index f494dbc..a38fe57 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -40,7 +40,6 @@
+ 
+ #include "const.h"
+ #include "macro.h"
+-#include "polyarea.h"
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+@@ -57,6 +56,10 @@ typedef struct drc_violation_st DrcViolationType, *DrcViolationTypePtr;
+ 
+ #include "hid.h"
+ 
++typedef struct rtree rtree_t;
++
++#include "polyarea.h" /* Needs rtree_t defined */
++
+ #define _(S) (S)
+ 
+ typedef int LocationType;
+@@ -257,11 +260,11 @@ typedef struct			/* holds information about arcs */
+     Delta;
+ } ArcType, *ArcTypePtr;
+ 
+-typedef struct
++struct rtree
+ {
+   struct rtree_node *root;
+   int size;			/* number of entries in tree */
+-} rtree_t;
++};
+ 
+ typedef struct			/* holds information about one layer */
+ {
+diff --git a/src/polyarea.h b/src/polyarea.h
+index a883750..6652fce 100644
+--- a/src/polyarea.h
++++ b/src/polyarea.h
+@@ -98,7 +98,7 @@ struct PLINE
+     VNODE head;
+     unsigned int Count;
+     double area;
+-    void *tree;
++    rtree_t *tree;
+     struct {
+       unsigned int status:3;
+       unsigned int orient:1;
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 8527074..e2dced4 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -45,6 +45,8 @@
+ #include	<setjmp.h>
+ #include	<math.h>
+ #include	<string.h>
++
++#include "global.h"
+ #include "polyarea.h"
+ #include "rtree.h"
+ #include "heap.h"
+@@ -646,7 +648,7 @@ seg_in_seg (const BoxType * b, void *cl)
+       if (res & 2)
+ 	{
+ 	  cntrbox_adjust (i->s->p, cnt > 1 ? s2 : s1);
+-	  if (adjust_tree ((rtree_t *) (i->s->p->tree), i->s))
++	  if (adjust_tree (i->s->p->tree, i->s))
+ 	    return 1;
+ 	}
+       /* if we added a node in the tree we need to change the tree */
+@@ -789,12 +791,12 @@ contour_bounds_touch (const BoxType * b, void *cl)
+       /* fill in the segment in info corresponding to this node */
+       if (setjmp (info.sego) == 0)
+         {
+-          r_search ((rtree_t *) (looping_over->tree), &box, NULL, get_seg, &info);
++          r_search (looping_over->tree, &box, NULL, get_seg, &info);
+           assert (0);
+         }
+ 
+         /* NB: If this actually hits anything, we are teleported back to the beginning */
+-        info.tree = (rtree_t *) rtree_over->tree;
++        info.tree = rtree_over->tree;
+         if (info.tree)
+           if (UNLIKELY (r_search (info.tree, &info.s->box,
+                                   seg_in_region, seg_in_seg, &info)))
+@@ -862,7 +864,7 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+       sb.X2 = pa->xmax + 1;
+       sb.Y2 = pa->ymax + 1;
+ 
+-      r_search ((rtree_t *) (b_contour_tree), &sb, NULL, contour_bounds_touch, &c_info);
++      r_search (b->contour_tree, &sb, NULL, contour_bounds_touch, &c_info);
+     }
+ 
+   return 0;
+@@ -2056,7 +2058,7 @@ poly_InvContour (PLINE * c)
+   c->Flags.orient ^= 1;
+   if (c->tree)
+     {
+-      r = r_search ((rtree_t *) (c->tree), NULL, NULL, flip_cb, NULL);
++      r = r_search (c->tree, NULL, NULL, flip_cb, NULL);
+       assert (r == c->Count);
+     }
+ }
+@@ -2284,7 +2286,7 @@ poly_InsideContour (PLINE * c, Vector p)
+   ray.X2 = 0x7fffffff;
+   ray.Y2 = p[1] + 1;
+   if (setjmp (info.env) == 0)
+-    r_search ((rtree_t *) c->tree, &ray, NULL, crossing, &info);
++    r_search (c->tree, &ray, NULL, crossing, &info);
+   return info.f;
+ }
