@@ -323,6 +323,7 @@ struct arc_info
   ArcTypePtr *Arc, *Dummy;
   jmp_buf env;
   int locked;
+  int smallest_radius;
 };
 
 static int
@@ -330,16 +331,24 @@ arc_callback (const BoxType * box, void *cl)
 {
   struct arc_info *i = (struct arc_info *) cl;
   ArcTypePtr a = (ArcTypePtr) box;
+  int found_radius;
 
   if (TEST_FLAG (i->locked, a))
     return 0;
 
   if (!IsPointOnArc (PosX, PosY, SearchRadius, a))
     return 0;
-  *i->Arc = a;
-  *i->Dummy = a;
-  longjmp (i->env, 1);
-  return 1;			/* never reached */
+
+  found_radius = ClosestArcPoint (PosX, PosY, a);
+
+  if (i->smallest_radius == -1 || found_radius < i->smallest_radius)
+    {
+      i->smallest_radius = found_radius;
+      *i->Arc = a;
+      *i->Dummy = a;
+    }
+//  longjmp (i->env, 1);
+  return 1;//			/* never reached */
 }
 
 
@@ -352,14 +361,18 @@ SearchArcByLocation (int locked, LayerTypePtr * Layer, ArcTypePtr * Arc,
   info.Arc = Arc;
   info.Dummy = Dummy;
   info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
+  info.smallest_radius = -1;
 
   *Layer = SearchLayer;
-  if (setjmp (info.env) == 0)
-    {
+//  if (setjmp (info.env) == 0)
+//    {
       r_search (SearchLayer->arc_tree, &SearchBox, NULL, arc_callback, &info);
-      return False;
-    }
-  return (True);
+//      return False;
+//    }
+  if (info.smallest_radius > -1)
+    return True;
+  else
+    return False;
 }
 
 static int
@@ -493,7 +506,9 @@ SearchLinePointByLocation (int locked, LayerTypePtr * Layer,
   info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
   if (r_search
       (SearchLayer->line_tree, &SearchBox, NULL, linepoint_callback, &info))
+  {
     return True;
+  }
   return False;
 }
 
@@ -1035,6 +1050,11 @@ IsPointInBox (LocationType X, LocationType Y, BoxTypePtr box, BDimension Radius)
     }
 
   return range < Radius;
+}
+
+int ClosestArcPoint (float X, float Y, ArcTypePtr Arc)
+{
+  return 0;
 }
 
 Boolean
@@ -1590,5 +1610,19 @@ SearchScreen (LocationType X, LocationType Y, int Type, void **Result1,
 
   ans = SearchObjectByLocation (Type, Result1, Result2, Result3,
 				X, Y, SLOP * pixel_slop);
+  return (ans);
+}
+
+/* ---------------------------------------------------------------------------
+ * searches the cursor position for the type 
+ */
+int
+SearchScreenGridSlop (LocationType X, LocationType Y, int Type, void **Result1,
+	      void **Result2, void **Result3)
+{
+  int ans;
+
+  ans = SearchObjectByLocation (Type, Result1, Result2, Result3,
+				X, Y, PCB->Grid / 2);
   return (ans);
 }
