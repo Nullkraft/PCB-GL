@@ -1575,7 +1575,7 @@ r_NoHolesPolygonDicer (POLYAREA * pa,
 //              PLINE *pl = x->contours;
               r_NoHolesPolygonDicer (cur, emit, user_data);
 //              y = x->f;
-              /* the pline was already freed by its use int he recursive dicer */
+              /* the pline was already freed by its use in the recursive dicer */
 //              free (x);
             }
           while ((cur = next) != left);
@@ -1622,19 +1622,7 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
   if (!save)
     return;
   /* now dice it up */
-  do
-    {
-      POLYAREA *next;
-      next = save->f;
-
-      r_NoHolesPolygonDicer (save, emit, user_data);
-      /* go to next poly (could be one because of clip) */
-
-      save = next;
-      /* free the previouse POLYAREA. Note the contour was consumed in the dicer */
-//      free (prev);
-    }
-  while (save != ans);
+  r_NoHolesPolygonDicer (save, emit, user_data);
 }
 
 /* make a polygon split into multiple parts into multiple polygons */
