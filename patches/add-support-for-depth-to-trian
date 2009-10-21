@@ -1,7 +1,7 @@
-Bottom: 9b3879fb9df73f782bd623f63978fedd1ce761ac
-Top:    4318047fcfbda7531a6b0ba01d7a8f733a22447e
+Bottom: 764b5e520046c8114079a302fb50ba850f900826
+Top:    c9226636e7100e388975e4367ac5fb74b74b43da
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 21:04:01 +0100
+Date:   2009-10-21 21:29:42 +0100
 
 Add support for depth to triangle rendering routines.
 
@@ -124,7 +124,7 @@ index b956a65..aa2985e 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 52ab44c..871c4bd 100644
+index 8e78e6f..ad85719 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -417,7 +417,7 @@ ghid_note_event_location (GdkEventButton * ev)
