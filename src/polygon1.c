@@ -827,23 +827,13 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
       a = t;
     }
 
-#if 0
-  setjmp (c_info.restart);		/* we loop back here whenever a vertex is inserted */
-
-  /* Since we may have already executed the function body already, we need to clean up */
-  if (b_contour_tree != NULL)
-    r_destroy_tree (&b_contour_tree);
-#endif
-
   /* make an rtree of b's contours */
   b_contour_tree = r_create_tree (NULL, 0, 0);
   for (pb = b->contours; pb != NULL; pb = pb->next)
     r_insert_entry (b_contour_tree, (const BoxType *) pb, 0);
 
-#if 1
-#warning We might actually need to re-build the r_tree if the geometry changes
+  /* FIXME: We might actually need to re-build the r_tree if the geometry changes */
   setjmp (c_info.restart);		/* we loop back here whenever a vertex is inserted */
-#endif
 
   for (pa = a->contours; pa; pa = pa->next)     /* Loop over the contours of POLYAREA "a" */
     {
