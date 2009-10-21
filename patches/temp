@@ -1,5 +1,5 @@
 Bottom: fa801e3734f55d80d531e8b0f0e54012dec40151
-Top:    fa801e3734f55d80d531e8b0f0e54012dec40151
+Top:    950eaba4d37a7895e328b31387f8ff92a95bf474
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-21 23:31:15 +0100
 
@@ -8,4 +8,37 @@ TEMP
 
 ---
 
-
+diff --git a/src/polygon.c b/src/polygon.c
+index 07abfb7..3569072 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -1575,7 +1575,7 @@ r_NoHolesPolygonDicer (POLYAREA * pa,
+ //              PLINE *pl = x->contours;
+               r_NoHolesPolygonDicer (cur, emit, user_data);
+ //              y = x->f;
+-              /* the pline was already freed by its use int he recursive dicer */
++              /* the pline was already freed by its use in the recursive dicer */
+ //              free (x);
+             }
+           while ((cur = next) != left);
+@@ -1622,19 +1622,7 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
+   if (!save)
+     return;
+   /* now dice it up */
+-  do
+-    {
+-      POLYAREA *next;
+-      next = save->f;
+-
+-      r_NoHolesPolygonDicer (save, emit, user_data);
+-      /* go to next poly (could be one because of clip) */
+-
+-      save = next;
+-      /* free the previouse POLYAREA. Note the contour was consumed in the dicer */
+-//      free (prev);
+-    }
+-  while (save != ans);
++  r_NoHolesPolygonDicer (save, emit, user_data);
+ }
+ 
+ /* make a polygon split into multiple parts into multiple polygons */
