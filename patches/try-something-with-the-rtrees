@@ -1,5 +1,5 @@
 Bottom: 13ee4ef6dc80ff5e748799b74b3d877de0a34fd8
-Top:    896c3b2cfd19c79060220e0ac6e7a027190a8f3c
+Top:    fe0d778f5f274071b409a4fb4092e1d93fc358f7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-22 00:28:18 +0100
 
@@ -58,7 +58,7 @@ index 0c8c0cb..ca69338 100644
        poly_Free (&pa);
        return;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index df7581d..c958385 100644
+index df7581d..5741037 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -809,31 +809,19 @@ static int
@@ -351,23 +351,15 @@ index df7581d..c958385 100644
        last = &(*last)->next;
      }
    return TRUE;
-@@ -2205,6 +2246,7 @@ poly_InclContour (POLYAREA * p, PLINE * c)
-       if (p->contours != NULL)
- 	return FALSE;
-       p->contours = c;
-+      r_insert_entry (p->contour_tree, (BoxTypePtr) c, 0);
-     }
-   else
-     {
-@@ -2214,6 +2256,7 @@ poly_InclContour (POLYAREA * p, PLINE * c)
-       tmp = p->contours->next;
+@@ -2215,6 +2256,7 @@ poly_InclContour (POLYAREA * p, PLINE * c)
        p->contours->next = c;
        c->next = tmp;
-+      r_insert_entry (p->contour_tree, (BoxTypePtr) c, 0);
      }
++  r_insert_entry (p->contour_tree, (BoxTypePtr) c, 0);
    return TRUE;
  }
-@@ -2339,6 +2382,7 @@ poly_Init (POLYAREA * p)
+ 
+@@ -2339,6 +2381,7 @@ poly_Init (POLYAREA * p)
  {
    p->f = p->b = p;
    p->contours = NULL;
@@ -375,7 +367,7 @@ index df7581d..c958385 100644
  }
  
  POLYAREA *
-@@ -2373,11 +2417,13 @@ poly_Free (POLYAREA ** p)
+@@ -2373,11 +2416,13 @@ poly_Free (POLYAREA ** p)
    for (cur = (*p)->f; cur != *p; cur = (*p)->f)
      {
        poly_FreeContours (&cur->contours);
