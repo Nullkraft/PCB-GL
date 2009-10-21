@@ -1,7 +1,7 @@
-Bottom: b4d214f2c7b605f5498789509818bda6d6cf42bc
-Top:    3d0889913b08a2941c4755678d020b4a68c8c5aa
+Bottom: ce27d0f314b669323ff98c057197416a215b8042
+Top:    da4b10efe2f2ca930d10494f56472cc60e4afb78
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 00:49:40 +0100
+Date:   2009-10-21 02:05:51 +0100
 
 Add support for a "poured" object.
 
@@ -2011,7 +2011,7 @@ index ef22f73..9f0e843 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index 696b07c..0992b55 100644
+index f997a8d..cdfdf9f 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -100,6 +100,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
@@ -2022,7 +2022,7 @@ index 696b07c..0992b55 100644
  static void DrawArcLowLevel (ArcTypePtr);
  static void DrawElementPackageLowLevel (ElementTypePtr Element, int);
  static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
-@@ -690,6 +691,7 @@ struct pin_info
+@@ -677,6 +678,7 @@ struct pin_info
  {
    Boolean arg;
    LayerTypePtr Layer;
@@ -2030,7 +2030,7 @@ index 696b07c..0992b55 100644
  };
  
  static int
-@@ -701,12 +703,31 @@ clearPin_callback (const BoxType * b, void *cl)
+@@ -688,12 +690,31 @@ clearPin_callback (const BoxType * b, void *cl)
      ClearOnlyPin (pin, True);
    return 1;
  }
@@ -2062,7 +2062,7 @@ index 696b07c..0992b55 100644
    return 1;
  }
  
-@@ -782,6 +803,7 @@ DrawMask (BoxType * screen)
+@@ -769,6 +790,7 @@ DrawMask (BoxType * screen)
    OutputType *out = &Output;
  
    info.arg = True;
@@ -2070,7 +2070,7 @@ index 696b07c..0992b55 100644
  
    if (thin)
      gui->set_color (Output.pmGC, PCB->MaskColor);
-@@ -880,8 +902,9 @@ DrawLayer (LayerTypePtr Layer, BoxType * screen)
+@@ -867,8 +889,9 @@ DrawLayer (LayerTypePtr Layer, BoxType * screen)
    /* print the non-clearing polys */
    info.Layer = Layer;
    info.arg = False;
@@ -2081,7 +2081,7 @@ index 696b07c..0992b55 100644
  
    /* draw all visible lines this layer */
    r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
-@@ -919,13 +942,13 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -906,13 +929,13 @@ DrawLayerGroup (int group, const BoxType * screen)
  	rv = 0;
        if (layernum < max_layer && Layer->On)
  	{
@@ -2099,7 +2099,7 @@ index 696b07c..0992b55 100644
  	      info.arg = False;
  
  	      /* HACK: Subcomposite polygons separately from other layer primitives */
-@@ -1722,6 +1745,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
+@@ -1709,6 +1732,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2148,7 +2148,7 @@ index 696b07c..0992b55 100644
   * lowlevel routine to element arcs
   */
  static void
-@@ -2072,6 +2137,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+@@ -2059,6 +2124,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
      }
  }
  
@@ -2186,7 +2186,7 @@ index 696b07c..0992b55 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -2377,6 +2473,18 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2364,6 +2460,18 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2205,7 +2205,7 @@ index 696b07c..0992b55 100644
   * erases an element
   */
  void
-@@ -2463,6 +2571,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -2450,6 +2558,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2215,7 +2215,7 @@ index 696b07c..0992b55 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -2510,6 +2621,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
+@@ -2497,6 +2608,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2, 0);
        break;
