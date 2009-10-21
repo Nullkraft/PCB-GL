@@ -211,7 +211,7 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
   glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
   glMatrixMode (GL_MODELVIEW);
   glLoadIdentity ();
-  glTranslatef (0.0f, 0.0f, -Z_NEAR);
+//  glTranslatef (0.0f, 0.0f, -Z_NEAR);
 
   glClearColor (gport->bg_color.red / 65535.,
                 gport->bg_color.green / 65535.,
