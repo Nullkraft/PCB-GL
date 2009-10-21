@@ -2246,7 +2246,6 @@ poly_InclContour (POLYAREA * p, PLINE * c)
       if (p->contours != NULL)
 	return FALSE;
       p->contours = c;
-      r_insert_entry (p->contour_tree, (BoxTypePtr) c, 0);
     }
   else
     {
@@ -2256,8 +2255,8 @@ poly_InclContour (POLYAREA * p, PLINE * c)
       tmp = p->contours->next;
       p->contours->next = c;
       c->next = tmp;
-      r_insert_entry (p->contour_tree, (BoxTypePtr) c, 0);
     }
+  r_insert_entry (p->contour_tree, (BoxTypePtr) c, 0);
   return TRUE;
 }
 
