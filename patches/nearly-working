@@ -1,7 +1,7 @@
-Bottom: fcb3785e669e557ab4abdb03d365900e901c5fa3
-Top:    0af151b87126ed89074d53364cf6cb04b28b2e95
+Bottom: a59bda72fccf4d3abeb48df10b4d1c64e6485498
+Top:    ebc1e10cdf0733638db30010142351853c4b35c2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 00:28:20 +0100
+Date:   2009-10-22 00:39:40 +0100
 
 Various speedups to the polygon code.
 
@@ -19,7 +19,7 @@ to better dynamic update performance.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index a2a48c0..23af090 100644
+index 9ca4a28..cb0c11b 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -913,12 +913,22 @@ cntrbox_inside (PLINE * c1, PLINE * c2)
