@@ -1,7 +1,7 @@
-Bottom: fa801e3734f55d80d531e8b0f0e54012dec40151
-Top:    cc039d63601e5708bb85404bc743ec0680ca777e
+Bottom: 6e3ec91a383c3ef195ffafcc058028a3d973ff02
+Top:    fc003681d141a917d0342feb3ef20229c85124fb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 23:16:03 +0100
+Date:   2009-10-21 23:36:06 +0100
 
 Optimise polygon operations by keeping an rtree with their contours
 
@@ -25,7 +25,7 @@ index 6652fce..50dda4a 100644
  
  BOOLp poly_M_Copy0(POLYAREA ** dst, const POLYAREA * srcfst);
 diff --git a/src/polygon.c b/src/polygon.c
-index 07abfb7..aed3977 100644
+index 3569072..8874106 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -146,6 +146,7 @@ biggest (POLYAREA * p)
@@ -58,7 +58,7 @@ index 07abfb7..aed3977 100644
        poly_Free (&pa);
        return;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 585b977..13f56b4 100644
+index df7581d..b2a11cb 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -809,31 +809,19 @@ static int
