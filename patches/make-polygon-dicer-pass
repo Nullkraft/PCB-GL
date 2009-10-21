@@ -1,5 +1,5 @@
 Bottom: 2d6cae25ca382c2f0e3e29ac1a617032de8090e4
-Top:    94b22a164077e4efdbc63f20fffbaafe9bbef89b
+Top:    13ee4ef6dc80ff5e748799b74b3d877de0a34fd8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-21 23:35:57 +0100
 
@@ -11,31 +11,41 @@ FIXME
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 106caff..07abfb7 100644
+index 106caff..0c8c0cb 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -1542,15 +1542,14 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
+@@ -1541,16 +1541,16 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
+   return isects (s, p, True);
  }
  
++/* NB: This function will free the passed POLYAREA.
++ *     It must only be passed a single POLYAREA (pa->f == pa->b == pa)
++ */
  static void
 -r_NoHolesPolygonDicer (PLINE * p,
 +r_NoHolesPolygonDicer (POLYAREA * pa,
                         void (*emit) (PLINE *, void *), void *user_data)
  {
 -  POLYAREA *pa;
--
--  pa = (POLYAREA *) malloc (sizeof (*pa));
 +  PLINE *p = pa->contours;
-+#warning DO WE NEED TO SAVE THIS POINTER?
-   pa->b = pa->f = pa;
+ 
+-  pa = (POLYAREA *) malloc (sizeof (*pa));
+-  pa->b = pa->f = pa;
 -  pa->contours = p;
 -  if (!p->next)                 /* no holes */
-+
 +  if (!pa->contours->next)                 /* no holes */
      {
        pa->contours = NULL; /* The callback now owns the contour */
        emit (p, user_data);
-@@ -1568,30 +1567,33 @@ r_NoHolesPolygonDicer (PLINE * p,
+@@ -1562,36 +1562,34 @@ r_NoHolesPolygonDicer (PLINE * p,
+       POLYAREA *poly2, *left, *right;
+ 
+       /* make a rectangle of the left region slicing through the middle of the first hole */
+-      poly2 =
+-        RectPoly (p->xmin, (p->next->xmin + p->next->xmax) / 2, p->ymin,
+-                  p->ymax);
++      poly2 = RectPoly (p->xmin, (p->next->xmin + p->next->xmax) / 2,
++                        p->ymin, p->ymax);
        poly_AndSubtract_free (pa, poly2, &left, &right);
        if (left)
          {
@@ -48,17 +58,15 @@ index 106caff..07abfb7 100644
 -              PLINE *pl = x->contours;
 -              r_NoHolesPolygonDicer (pl, emit, user_data);
 -              y = x->f;
-+              next = cur->f;
-+//              PLINE *pl = x->contours;
-+              r_NoHolesPolygonDicer (cur, emit, user_data);
-+//              y = x->f;
-               /* the pline was already freed by its use int he recursive dicer */
+-              /* the pline was already freed by its use int he recursive dicer */
 -              free (x);
-+//              free (x);
++              next = cur->f;
++              cur->f = cur->b = cur; /* Detach this polygon piece */
++              r_NoHolesPolygonDicer (cur, emit, user_data);
++              /* NB: The POLYAREA was freed by its use in the recursive dicer */
              }
 -          while ((x = y) != left);
 +          while ((cur = next) != left);
-+//          while ((x = y) != left);
          }
        if (right)
          {
@@ -73,34 +81,49 @@ index 106caff..07abfb7 100644
 -              y = x->f;
 -              free (x);
 +              next = cur->f;
-+//              PLINE *pl = x->contours;
++              cur->f = cur->b = cur; /* Detach this polygon piece */
 +              r_NoHolesPolygonDicer (cur, emit, user_data);
-+//              y = x->f;
-+//              free (x);
++              /* NB: The POLYAREA was freed by its use in the recursive dicer */
              }
 -          while ((x = y) != right);
 +          while ((cur = next) != right);
          }
      }
  }
-@@ -1622,13 +1624,15 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
-   /* now dice it up */
+@@ -1600,7 +1598,7 @@ void
+ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
+                      void (*emit) (PLINE *, void *), void *user_data)
+ {
+-  POLYAREA *save, *ans;
++  POLYAREA *save, *ans, *cur, *next;
+ 
+   ans = save = poly_Create ();
+   /* copy the main poly only */
+@@ -1619,18 +1617,18 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
+     }
+   if (!save)
+     return;
+-  /* now dice it up */
++  /* Now dice it up.
++   * NB: Could be more than one piece (because of the clip above)
++   */
++  cur = save;
    do
      {
 -      POLYAREA *prev;
 -      r_NoHolesPolygonDicer (save->contours, emit, user_data);
-+      POLYAREA *next;
-+      next = save->f;
-+
-+      r_NoHolesPolygonDicer (save, emit, user_data);
-       /* go to next poly (could be one because of clip) */
+-      /* go to next poly (could be one because of clip) */
 -      prev = save;
 -      save = prev->f;
-+
-+      save = next;
-       /* free the previouse POLYAREA. Note the contour was consumed in the dicer */
+-      /* free the previouse POLYAREA. Note the contour was consumed in the dicer */
 -      free (prev);
-+//      free (prev);
++      next = cur->f;
++      cur->f = cur->b = cur; /* Detach this polygon piece */
++      r_NoHolesPolygonDicer (cur, emit, user_data);
++      /* NB: The POLYAREA was freed by its use in the recursive dicer */
      }
-   while (save != ans);
+-  while (save != ans);
++  while ((cur = next) != save);
  }
+ 
+ /* make a polygon split into multiple parts into multiple polygons */
