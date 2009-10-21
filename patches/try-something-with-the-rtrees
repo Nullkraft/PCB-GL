@@ -1,5 +1,5 @@
 Bottom: 439cd7b8f7ea8dcf209e0b742542e52844eaa700
-Top:    c77b6e6980d395d727f6d61cadcb8a4936816c6d
+Top:    ef0ecfd67fba23c8ce3be7ab705f4f2e981a89f4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-21 16:52:02 +0100
 
@@ -204,7 +204,7 @@ index d5df073..eab57d6 100644
    while (save != ans);
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index bac35f5..59fb70a 100644
+index bac35f5..a4e461c 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -45,6 +45,8 @@
@@ -607,6 +607,6 @@ index bac35f5..59fb70a 100644
        free (cur);
      }
    poly_Clear (cur);
-+    r_destroy_tree (&cur->contour_tree);
++  r_destroy_tree (&cur->contour_tree);
    free (*p), *p = NULL;
  }
