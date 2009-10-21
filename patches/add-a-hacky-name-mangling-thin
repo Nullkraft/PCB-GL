@@ -1,7 +1,7 @@
-Bottom: b2a29aeb981af78eecdc9709e45bad7fe70ee386
-Top:    94db98766f0b0d23ede407f4a680ae6f879601b9
+Bottom: c6a151182c6f53959adcb2df39774609913d1c97
+Top:    b3afee3dac0e64205797c43884d78eb78d96a543
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 02:10:01 +0100
+Date:   2009-10-21 20:11:31 +0100
 
 Add a hacky name-mangling thingy for loading boards
 
@@ -20,7 +20,7 @@ Add a hacky name-mangling thingy for loading boards
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 4054c28..59f3a70 100644
+index 500d0a0..1a6aef9 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -37,6 +37,7 @@
@@ -40,7 +40,7 @@ index 4054c28..59f3a70 100644
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
  #endif
-@@ -629,6 +632,57 @@ CreateNewPointInPolygon (PolygonTypePtr Polygon, LocationType X,
+@@ -631,6 +634,57 @@ CreateNewPointInPolygon (PolygonTypePtr Polygon, LocationType X,
    return (point);
  }
  
@@ -98,7 +98,7 @@ index 4054c28..59f3a70 100644
  /* ---------------------------------------------------------------------------
   * creates an new element
   * memory is allocated if needed
-@@ -641,6 +695,19 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
+@@ -643,6 +697,19 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
  		  LocationType TextX, LocationType TextY, BYTE Direction,
  		  int TextScale, FlagType TextFlags, Boolean uniqueName)
  {

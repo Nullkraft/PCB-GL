@@ -1,7 +1,7 @@
-Bottom: a6de9277b51ac8b699ca7bace45b3f08d3d64ae2
-Top:    bc1ca2ee36af92bc89a1e93ec81a6e4e81d44df4
+Bottom: e122d4a9e3b74875083ca42151fa8f3ae79bb317
+Top:    a91d0ddde826bac8266848debef4e8fa2de9c1ca
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 02:09:20 +0100
+Date:   2009-10-21 20:11:30 +0100
 
 Clear pins and vias last...
 
@@ -37,7 +37,7 @@ Batch sizes (20 for lines, 100 for pins / vias) aren't necessarily optimal!
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 5d9ecfd..dd02e0b 100644
+index 53260ea..3c73cd4 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -791,22 +791,54 @@ struct cpInfo
