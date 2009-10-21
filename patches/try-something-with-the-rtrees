@@ -1,7 +1,7 @@
-Bottom: 634075d1b8b16ca7e753815ee6a444f2188e74c1
-Top:    73107d4c5654f3556745237de6df5cde95fc98a5
+Bottom: 9c66562e62b35eb92e24f4a4e01637ab47efaaf1
+Top:    c0159b70d50ad639b0aad8865caa72ca058cb440
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 17:25:04 +0100
+Date:   2009-10-21 18:52:40 +0100
 
 Try optimising polygon operations by keeping an rtree with their contours
 
@@ -21,7 +21,7 @@ its existance as well.
 ---
 
 diff --git a/src/global.h b/src/global.h
-index e8fc8f1..6340818 100644
+index f494dbc..a38fe57 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -40,7 +40,6 @@
@@ -43,7 +43,7 @@ index e8fc8f1..6340818 100644
  #define _(S) (S)
  
  typedef int LocationType;
-@@ -255,11 +258,11 @@ typedef struct			/* holds information about arcs */
+@@ -257,11 +260,11 @@ typedef struct			/* holds information about arcs */
      Delta;
  } ArcType, *ArcTypePtr;
  
@@ -79,10 +79,10 @@ index a883750..50dda4a 100644
  
  BOOLp poly_M_Copy0(POLYAREA ** dst, const POLYAREA * srcfst);
 diff --git a/src/polygon.c b/src/polygon.c
-index d5df073..eab57d6 100644
+index d7157ff..5d9ecfd 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -126,6 +126,7 @@ biggest (POLYAREA * p)
+@@ -146,6 +146,7 @@ biggest (POLYAREA * p)
  {
    POLYAREA *n, *top = NULL;
    PLINE *pl;
@@ -90,7 +90,7 @@ index d5df073..eab57d6 100644
    double big = -1;
    if (!p)
      return NULL;
-@@ -159,8 +160,11 @@ biggest (POLYAREA * p)
+@@ -179,8 +180,11 @@ biggest (POLYAREA * p)
    if (top == p)
      return p;
    pl = top->contours;
@@ -102,7 +102,7 @@ index d5df073..eab57d6 100644
    assert (pl);
    assert (p->f);
    assert (p->b);
-@@ -1507,16 +1511,28 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
+@@ -1542,16 +1546,28 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
  }
  
  static void
@@ -132,9 +132,9 @@ index d5df073..eab57d6 100644
 +      /* Don't bother removing it from the POLYAREA's rtree
 +         since we're going to free it below anyway */
        emit (p, user_data);
+       pa->contours = NULL;
        poly_Free (&pa);
-       return;
-@@ -1532,30 +1548,33 @@ r_NoHolesPolygonDicer (PLINE * p,
+@@ -1568,30 +1584,33 @@ r_NoHolesPolygonDicer (PLINE * p,
        poly_AndSubtract_free (pa, poly2, &left, &right);
        if (left)
          {
@@ -182,7 +182,7 @@ index d5df073..eab57d6 100644
          }
      }
  }
-@@ -1586,13 +1605,15 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
+@@ -1622,13 +1641,15 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
    /* now dice it up */
    do
      {
