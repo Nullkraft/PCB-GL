@@ -1,7 +1,7 @@
-Bottom: ef0ecfd67fba23c8ce3be7ab705f4f2e981a89f4
-Top:    c0159b70d50ad639b0aad8865caa72ca058cb440
+Bottom: 9a451584dd51237175b39da8fb092bd782af06f5
+Top:    952f562802c4bce7f1d71ea0849147dd19d04196
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 16:59:57 +0100
+Date:   2009-10-21 17:01:12 +0100
 
 Add cache for "noholes", diced versions of polygons
 
@@ -254,10 +254,10 @@ index 1ec0a04..2faaa20 100644
  POLYAREA * RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2);
  POLYAREA * CirclePoly(LocationType x, LocationType y, BDimension radius);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index a4e461c..714acc6 100644
+index db68bc7..8e67445 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2397,15 +2397,14 @@ poly_Create (void)
+@@ -3006,15 +3006,14 @@ poly_Create (void)
  }
  
  void
@@ -278,7 +278,7 @@ index a4e461c..714acc6 100644
      }
  }
  
-@@ -2418,13 +2417,13 @@ poly_Free (POLYAREA ** p)
+@@ -3027,13 +3026,13 @@ poly_Free (POLYAREA ** p)
      return;
    for (cur = (*p)->f; cur != *p; cur = (*p)->f)
      {
