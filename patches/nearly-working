@@ -1,7 +1,7 @@
-Bottom: 92c6c1d750066a7c2e30a6a4899676c8a0bc86b6
-Top:    76421fdce69301dbcc0f83b4e1bd64d647453864
+Bottom: ad4ce846adfc683fc49824cc5e34eb2bab926e02
+Top:    5a33509f75465a847d0d21522408bea8fa95f8b1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 22:53:35 +0100
+Date:   2009-10-21 23:16:03 +0100
 
 Various speedups to the polygon code.
 
@@ -19,10 +19,10 @@ to better dynamic update performance.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 809f4e3..c999982 100644
+index a2a48c0..23af090 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -914,12 +914,22 @@ cntrbox_inside (PLINE * c1, PLINE * c2)
+@@ -913,12 +913,22 @@ cntrbox_inside (PLINE * c1, PLINE * c2)
  /*****************************************************************/
  /* Routines for making labels */
  
@@ -46,7 +46,7 @@ index 809f4e3..c999982 100644
    POLYAREA *outer = outfst;
    heap_t *heap;
  
-@@ -942,19 +952,20 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
+@@ -941,19 +951,20 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
        if (heap_is_empty (heap))
  	break;
        outer = (POLYAREA *) heap_remove_smallest (heap);
@@ -80,7 +80,7 @@ index 809f4e3..c999982 100644
      }
    while (1);
    heap_destroy (&heap);
-@@ -1165,7 +1176,23 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+@@ -1164,7 +1175,23 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
      }
  }				/* PutContour */
  
@@ -105,7 +105,7 @@ index 809f4e3..c999982 100644
  heap_it (const BoxType * b, void *cl)
  {
    heap_t *heap = (heap_t *) cl;
-@@ -1176,6 +1203,29 @@ heap_it (const BoxType * b, void *cl)
+@@ -1175,6 +1202,29 @@ heap_it (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -135,7 +135,7 @@ index 809f4e3..c999982 100644
  static void
  InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
  {
-@@ -1256,11 +1306,6 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1255,11 +1305,6 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
  	}
        else
  	{
@@ -147,7 +147,7 @@ index 809f4e3..c999982 100644
            /* Search for which POLYAREA the containing contour belongs to */
            /* FIXME: Perhaps store this information in the heap structure? */
            curc = dest;
-@@ -1270,13 +1315,51 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1269,13 +1314,51 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
                  break;
              }
            while ((curc = curc->f) != dest);
@@ -204,7 +204,7 @@ index 809f4e3..c999982 100644
  	}
      }
    r_destroy_tree (&tree);
-@@ -1698,26 +1781,310 @@ remove_polyarea (POLYAREA **list, POLYAREA *piece)
+@@ -1697,26 +1780,310 @@ remove_polyarea (POLYAREA **list, POLYAREA *piece)
    piece->f = piece->b = piece;
  }
  
@@ -526,7 +526,7 @@ index 809f4e3..c999982 100644
                             PLINE ** holes, PLINE ** isected, int action)
  {
    POLYAREA *a = *pieces;
-@@ -1749,12 +2116,13 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -1748,12 +2115,13 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
    /* now the non-intersect parts are collected in temp/holes */
    do {
      int hole_contour = 0;
@@ -541,7 +541,7 @@ index 809f4e3..c999982 100644
        int is_first = contour_is_first (a, curc);
        int is_last = contour_is_last (curc);
  
-@@ -1814,15 +2182,15 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -1813,15 +2181,15 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
  
        /* If we move or delete an outer contour, we need to move any holes
           we wish to keep within that contour to the holes list. */
@@ -560,7 +560,7 @@ index 809f4e3..c999982 100644
  
  
  static void
-@@ -1978,19 +2346,63 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -1977,19 +2345,63 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        assert (poly_Valid (b));
  #endif
  
