@@ -2425,7 +2425,7 @@ poly_Free (POLYAREA ** p)
       free (cur);
     }
   poly_Clear (cur);
-    r_destroy_tree (&cur->contour_tree);
+  r_destroy_tree (&cur->contour_tree);
   free (*p), *p = NULL;
 }
 
