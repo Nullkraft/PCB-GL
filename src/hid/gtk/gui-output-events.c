@@ -800,9 +800,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 //  glEnable(GL_POLYGON_SMOOTH);
 //  glHint(GL_POLYGON_SMOOTH_HINT, [GL_FASTEST, GL_NICEST, or GL_DONT_CARE]);
 
-  glViewport (ev->area.x,
-              widget->allocation.height - ev->area.height - ev->area.y,
-              ev->area.width, ev->area.height);
+  glViewport (0, 0, widget->allocation.width, widget->allocation.height);
 
   glEnable (GL_SCISSOR_TEST);
   glScissor (ev->area.x,
@@ -811,7 +809,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
-  glOrtho (ev->area.x, ev->area.x + ev->area.width, ev->area.y + ev->area.height, ev->area.y, 0, 100);
+  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, 0, 100);
   glMatrixMode (GL_MODELVIEW);
   glLoadIdentity ();
   glTranslatef (0.0f, 0.0f, -Z_NEAR);
