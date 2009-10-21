@@ -1,5 +1,5 @@
 Bottom: c1ee23984f4b534f066f463f25ed16b8ab109ee4
-Top:    7f4c50882ec98a73e1d360210c7a6516c346f3e1
+Top:    791df09bc5797df2df555ff05926fbb23434424a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-21 17:30:49 +0100
 
@@ -107,7 +107,7 @@ index 36b13d5..c3663d6 100644
      }
  }
 diff --git a/src/polygon.c b/src/polygon.c
-index d5df073..d7157ff 100644
+index d5df073..367c4eb 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -120,6 +120,26 @@ static double circleVerticies[] = {
@@ -211,15 +211,17 @@ index d5df073..d7157ff 100644
        return 1;
      }
    return 0;
-@@ -1518,6 +1553,7 @@ r_NoHolesPolygonDicer (PLINE * p,
+@@ -1517,7 +1552,9 @@ r_NoHolesPolygonDicer (PLINE * p,
+   pa->contours = p;
    if (!p->next)                 /* no holes */
      {
++      /* The callback now owns the contour */
        emit (p, user_data);
 +      pa->contours = NULL;
        poly_Free (&pa);
        return;
      }
-@@ -1620,6 +1656,8 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+@@ -1620,6 +1657,8 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
     * we do this dirty work.
     */
    poly->Clipped = NULL;
