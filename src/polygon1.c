@@ -1562,7 +1562,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
 	  if ((*A)->Flags.status == INSIDE)
 	    {
 	      tmprev = *A;
-	      /* disappear this contour (rtree entry remove int PutContour) */
+	      /* disappear this contour (rtree entry removed in PutContour) */
 	      *A = tmprev->next;
 	      tmprev->next = NULL;
 	      PutContour (e, tmprev, contours, holes, owner, NULL, NULL);
@@ -1573,7 +1573,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
 	  if ((*A)->Flags.status == INSIDE)
 	    {
 	      tmprev = *A;
-	      /* disappear this contour (rtree entry remove int PutContour) */
+	      /* disappear this contour (rtree entry removed in PutContour) */
 	      *A = tmprev->next;
 	      tmprev->next = NULL;
 	      poly_InvContour (tmprev);
@@ -1586,7 +1586,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
 	  if ((*A)->Flags.status == OUTSIDE)
 	    {
 	      tmprev = *A;
-	      /* disappear this contour (rtree entry remove int PutContour) */
+	      /* disappear this contour (rtree entry removed in PutContour) */
 	      *A = tmprev->next;
 	      tmprev->next = NULL;
 	      PutContour (e, tmprev, contours, holes, owner, parent, parent_contour);
