@@ -3,19 +3,11 @@ Top:    cba8917cbeb9e0c262f5d27e5c13f94bd3008d97
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-21 22:16:49 +0100
 
-Try optimising polygon operations by keeping an rtree with their contours
+Optimise polygon operations by keeping an rtree with their contours
 
 InsertHoles() already creates an rtree of contours to do its internal
 processing, and it is possible that intersect() could be sped up by
 its existance as well.
-
-
-
-
-
-
-
-
 
 
 ---
