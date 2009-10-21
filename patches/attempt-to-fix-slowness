@@ -1,7 +1,7 @@
-Bottom: ef0ecfd67fba23c8ce3be7ab705f4f2e981a89f4
-Top:    e05c5e344c13bd3b19e2c3e9be5cc2505f48b67b
+Bottom: 73107d4c5654f3556745237de6df5cde95fc98a5
+Top:    921445d4362e4a8d8b4dfbb8d88db5b511651719
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 17:01:02 +0100
+Date:   2009-10-21 17:25:28 +0100
 
 Attempt to fix polygon slowness by avoiding full recreation for each operation
 
@@ -24,7 +24,7 @@ exact cases cause them.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index a4e461c..87d3fc1 100644
+index 714acc6..f340e48 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -1066,6 +1066,20 @@ cntr_label_POLYAREA (PLINE * poly, POLYAREA * ppl, BOOLp test)
