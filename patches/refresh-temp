@@ -1,0 +1,32 @@
+Bottom: 1055c3b0644dd96b0a94071820670dd82be75c5e
+Top:    831d692f00998f285014751e7d6df11eda430e5e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-21 21:03:26 +0100
+
+Refresh of work-in-progress-on-subcomposi
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 57b1aaa..4fa5d94 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -834,7 +834,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+                 gport->offlimits_color.blue / 65535.,
+                 1.);
+ 
+-  glDepthMask (0);
+   glStencilMask (~0);
+   glClearStencil (0);
+   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
+index a086b19..b9a5107 100644
+--- a/src/hid/gtk/gui-pinout-preview.c
++++ b/src/hid/gtk/gui-pinout-preview.c
+@@ -219,6 +219,7 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
+                 gport->bg_color.green / 65535.,
+                 gport->bg_color.blue / 65535.,
+                 1.);
++  glStencilMask (~0);
+   glClearStencil (0);
+   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
