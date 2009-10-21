@@ -414,8 +414,6 @@ DrawEverything (BoxTypePtr drawn_area)
   /* This is the reverse of the order in which we draw them.  */
   int drawn_groups[MAX_LAYER];
 
-  printf ("WARNING\n");
-
   PCB->Data->SILKLAYER.Color = PCB->ElementColor;
   PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
 
