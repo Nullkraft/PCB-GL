@@ -850,7 +850,7 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
       sb.X2 = pa->xmax + 1;
       sb.Y2 = pa->ymax + 1;
 
-      r_search (b_contour_tree, &sb, NULL, contour_bounds_touch, &c_info);
+      r_search (b->contour_tree, &sb, NULL, contour_bounds_touch, &c_info);
     }
 
   return 0;
