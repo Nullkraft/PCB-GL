@@ -45,6 +45,8 @@
 #include	<setjmp.h>
 #include	<math.h>
 #include	<string.h>
+
+#include "global.h"
 #include "polyarea.h"
 #include "rtree.h"
 #include "heap.h"
