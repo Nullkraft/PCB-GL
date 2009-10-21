@@ -1,5 +1,5 @@
 Bottom: 460c31bdd7ebd918773d2209efd95bf230bc7bb4
-Top:    be90cfd3f3251348558efe3b41b4af163f0db643
+Top:    f243dd0dad2d7e5ba06b4d51e131232367a53c06
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-21 22:57:49 +0100
 
@@ -62,7 +62,7 @@ index a883750..6652fce 100644
        unsigned int status:3;
        unsigned int orient:1;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index bfa39b3..d413f37 100644
+index bfa39b3..0bbfbd2 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -45,6 +45,8 @@
@@ -79,7 +79,7 @@ index bfa39b3..d413f37 100644
  	{
  	  cntrbox_adjust (i->s->p, cnt > 1 ? s2 : s1);
 -	  if (adjust_tree ((rtree_t *) (i->s->p->tree), i->s))
-+	  if (adjust_tree ((i->s->p->tree), i->s))
++	  if (adjust_tree (i->s->p->tree, i->s))
  	    return 1;
  	}
        /* if we added a node in the tree we need to change the tree */
