@@ -640,7 +640,7 @@ seg_in_seg (const BoxType * b, void *cl)
       if (res & 2)
 	{
 	  cntrbox_adjust (i->s->p, cnt > 1 ? s2 : s1);
-	  if (adjust_tree ((i->s->p->tree), i->s))
+	  if (adjust_tree (i->s->p->tree, i->s))
 	    return 1;
 	}
       /* if we added a node in the tree we need to change the tree */
