@@ -1,7 +1,7 @@
-Bottom: f243dd0dad2d7e5ba06b4d51e131232367a53c06
-Top:    839b9e9b16a017382d6cd970b8393c9a3a7353f3
+Bottom: 8b3146ce840e65e14a9e5b9636a956be56835448
+Top:    d3a6a0947180f07a4beb4881a62931e3f054295e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 23:00:37 +0100
+Date:   2009-10-21 23:14:19 +0100
 
 Use rtree of countours when computing an intersection
 
@@ -15,10 +15,10 @@ NOTE: This is more complex than the existing code, and on its own,
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 0bbfbd2..e2dced4 100644
+index 8170197..585b977 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -544,9 +544,17 @@ typedef struct info
+@@ -543,9 +543,17 @@ typedef struct info
    rtree_t *tree;
    VNODE *v;
    struct seg *s;
@@ -37,7 +37,7 @@ index 0bbfbd2..e2dced4 100644
  /*
   * adjust_tree()
   * (C) 2006 harry eaton
-@@ -656,7 +664,7 @@ seg_in_seg (const BoxType * b, void *cl)
+@@ -655,7 +663,7 @@ seg_in_seg (const BoxType * b, void *cl)
  	  DEBUGP ("new intersection at (%d, %d)\n", cnt > 1 ? s2[0] : s1[0],
  		  cnt > 1 ? s2[1] : s1[1]);
  #endif
@@ -46,7 +46,7 @@ index 0bbfbd2..e2dced4 100644
  	}
      }
    return 0;
-@@ -714,7 +722,7 @@ get_seg (const BoxType * b, void *cl)
+@@ -713,7 +721,7 @@ get_seg (const BoxType * b, void *cl)
  }
  
  /*
@@ -55,7 +55,7 @@ index 0bbfbd2..e2dced4 100644
   * (C) 2006, harry eaton
   * This uses an rtree to find A-B intersections. Whenever a new vertex is
   * added, the search for intersections is re-started because the rounding
-@@ -732,104 +740,133 @@ get_seg (const BoxType * b, void *cl)
+@@ -731,104 +739,133 @@ get_seg (const BoxType * b, void *cl)
   */
  
  static int
