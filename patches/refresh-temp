@@ -1,0 +1,22 @@
+Bottom: be90cfd3f3251348558efe3b41b4af163f0db643
+Top:    f243dd0dad2d7e5ba06b4d51e131232367a53c06
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-21 23:00:35 +0100
+
+Refresh of make-rtree_t-type-available-to
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index d413f37..0bbfbd2 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -640,7 +640,7 @@ seg_in_seg (const BoxType * b, void *cl)
+       if (res & 2)
+ 	{
+ 	  cntrbox_adjust (i->s->p, cnt > 1 ? s2 : s1);
+-	  if (adjust_tree ((i->s->p->tree), i->s))
++	  if (adjust_tree (i->s->p->tree, i->s))
+ 	    return 1;
+ 	}
+       /* if we added a node in the tree we need to change the tree */
