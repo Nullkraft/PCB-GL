@@ -1,7 +1,7 @@
-Bottom: 489b70b6a1ba86a20ee76f1068ae70dcfadf355e
+Bottom: 92c6c1d750066a7c2e30a6a4899676c8a0bc86b6
 Top:    76421fdce69301dbcc0f83b4e1bd64d647453864
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 22:45:47 +0100
+Date:   2009-10-21 22:53:35 +0100
 
 Various speedups to the polygon code.
 
@@ -19,7 +19,7 @@ to better dynamic update performance.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 1186497..c999982 100644
+index 809f4e3..c999982 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -914,12 +914,22 @@ cntrbox_inside (PLINE * c1, PLINE * c2)
@@ -80,18 +80,7 @@ index 1186497..c999982 100644
      }
    while (1);
    heap_destroy (&heap);
-@@ -1069,10 +1080,8 @@ static BOOLp
- M_POLYAREA_label_separated (PLINE * afst, POLYAREA * b, BOOLp touch)
- {
-   PLINE *curc = afst;
--  int i = 0;
- 
-   for (curc = afst; curc != NULL; curc = curc->next) {
--    printf ("Testing separated contour %i\n", ++i);
-     if (cntr_label_POLYAREA (curc, b, touch) && touch)
-       return TRUE;
-   }
-@@ -1167,7 +1176,23 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+@@ -1165,7 +1176,23 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
      }
  }				/* PutContour */
  
@@ -116,7 +105,7 @@ index 1186497..c999982 100644
  heap_it (const BoxType * b, void *cl)
  {
    heap_t *heap = (heap_t *) cl;
-@@ -1178,6 +1203,29 @@ heap_it (const BoxType * b, void *cl)
+@@ -1176,6 +1203,29 @@ heap_it (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -146,7 +135,7 @@ index 1186497..c999982 100644
  static void
  InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
  {
-@@ -1258,11 +1306,6 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1256,11 +1306,6 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
  	}
        else
  	{
@@ -158,7 +147,7 @@ index 1186497..c999982 100644
            /* Search for which POLYAREA the containing contour belongs to */
            /* FIXME: Perhaps store this information in the heap structure? */
            curc = dest;
-@@ -1272,13 +1315,51 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1270,13 +1315,51 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
                  break;
              }
            while ((curc = curc->f) != dest);
@@ -215,7 +204,7 @@ index 1186497..c999982 100644
  	}
      }
    r_destroy_tree (&tree);
-@@ -1700,26 +1781,310 @@ remove_polyarea (POLYAREA **list, POLYAREA *piece)
+@@ -1698,26 +1781,310 @@ remove_polyarea (POLYAREA **list, POLYAREA *piece)
    piece->f = piece->b = piece;
  }
  
@@ -537,7 +526,7 @@ index 1186497..c999982 100644
                             PLINE ** holes, PLINE ** isected, int action)
  {
    POLYAREA *a = *pieces;
-@@ -1751,12 +2116,13 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -1749,12 +2116,13 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
    /* now the non-intersect parts are collected in temp/holes */
    do {
      int hole_contour = 0;
@@ -552,7 +541,7 @@ index 1186497..c999982 100644
        int is_first = contour_is_first (a, curc);
        int is_last = contour_is_last (curc);
  
-@@ -1816,15 +2182,15 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -1814,15 +2182,15 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
  
        /* If we move or delete an outer contour, we need to move any holes
           we wish to keep within that contour to the holes list. */
@@ -571,7 +560,7 @@ index 1186497..c999982 100644
  
  
  static void
-@@ -1980,19 +2346,63 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -1978,19 +2346,63 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        assert (poly_Valid (b));
  #endif
  
