@@ -1,0 +1,24 @@
+Bottom: 489b70b6a1ba86a20ee76f1068ae70dcfadf355e
+Top:    92c6c1d750066a7c2e30a6a4899676c8a0bc86b6
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-21 22:53:33 +0100
+
+Refresh of attempt-to-fix-slowness
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 1186497..809f4e3 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1069,10 +1069,8 @@ static BOOLp
+ M_POLYAREA_label_separated (PLINE * afst, POLYAREA * b, BOOLp touch)
+ {
+   PLINE *curc = afst;
+-  int i = 0;
+ 
+   for (curc = afst; curc != NULL; curc = curc->next) {
+-    printf ("Testing separated contour %i\n", ++i);
+     if (cntr_label_POLYAREA (curc, b, touch) && touch)
+       return TRUE;
+   }
