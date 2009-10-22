@@ -1152,6 +1152,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, BoxTypePtr drawn_a
   if (!Polygon->Clipped)
     return;
 
+  /* Re-use HOLEFLAG to cut out islands */
+  if (TEST_FLAG (HOLEFLAG, Polygon))
+    return;
+
   if (TEST_FLAG (SELECTEDFLAG, Polygon))
     color = Layer->SelectedColor;
   else if (TEST_FLAG (FOUNDFLAG, Polygon))
