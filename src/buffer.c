@@ -388,7 +388,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
   LayerTypePtr lay;
   PourTypePtr pour;
 
-  RestoreToPours (Source, POLYGON_TYPE, Layer, Pour);
+  RestoreToPours (Source, POUR_TYPE, Layer, Pour);
   r_delete_entry (Layer->pour_tree, (BoxTypePtr) Pour);
   lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
   pour = GetPourMemory (lay);
@@ -405,7 +405,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
   if (!lay->pour_tree)
     lay->pour_tree = r_create_tree (NULL, 0, 0);
   r_insert_entry (lay->pour_tree, (BoxTypePtr) pour, 0);
-  ClearFromPours (Source, POLYGON_TYPE, Layer, Pour);
+  ClearFromPours (Dest, POUR_TYPE, lay, Pour);
   return (pour);
 }
 
