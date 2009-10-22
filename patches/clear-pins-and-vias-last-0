@@ -3,7 +3,10 @@ Top:    184864d916f813a76376f70f8cf8e83cb30b85b2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-22 04:48:58 +0100
 
-Clear pins and vias last...
+REVERT: Clear pins and vias last...
+
+** We really do want these improvements, but I need to roll
+** them into the pour code first!
 
 There is a chance these objects are simpler, and just end up as holes in
 the main polygon, rather than causing a contour intersection. This means
