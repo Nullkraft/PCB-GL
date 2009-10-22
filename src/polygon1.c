@@ -811,6 +811,18 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
   POLYAREA *t;
   PLINE *pa;
   contour_info c_info;
+  VNODE *av;
+  struct info info;
+  BoxType box;
+  jmp_buf out;
+  int retval;
+  volatile int first = 1;
+
+//  /* Have seg_in_seg return to our desired location if it touches */
+//  info.env = &c_info->restart;
+//  info.touch = c_info->getout;
+
+//  printf ("Intersect called\n");
 
   /* Search the r-tree of the object with most contours
    * We loop over the contours of "a". Swap if necessary.
@@ -822,13 +834,92 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
       a = t;
     }
 
+  /* setjmp / longjmp is being used to short-circuit the return of a
+   * recursive r-tree search call. It can just be a little mind-bendy to
+   * get your head around the execution flow, and potential side-effects
+   * (the content of automatic variables modified after the setjmp, but
+   * not declared as volatile is undefined).
+   */
   setjmp (c_info.restart);		/* we loop back here whenever a vertex is inserted */
+//  if (first)
+//    first = 0;
+//  else
+//    printf ("Vertex inserted\n");
+
+//  printf ("A's contour tree has %i elements\n", a->contour_tree->size);
+//  printf ("B's contour tree has %i elements\n", b->contour_tree->size);
+#if 1
+  if (a->contour_tree->size == 1 &&
+      a->contours->Count == 4)
+#else
+  if (0)
+#endif
+    {
+//      printf ("A is a simple box contour.. can we be faster by testing each vertex?\n");
+
+      av = &a->contours->head;
+      do  /* Loop over the nodes in the a contour */
+        {
+          /* check this edge for any insertions */
+//          double dx;
+          info.v = av;
+#if 0
+          /* compute the slant for region trimming */
+          dx = av->next->point[0] - av->point[0];
+          if (dx == 0)
+            info.m = 0;
+          else
+            {
+              info.m = (av->next->point[1] - av->point[1]) / dx;
+              info.b = av->point[1] - info.m * av->point[0];
+            }
+#endif
+          box.X2 = (box.X1 = av->point[0]) + 1;
+          box.Y2 = (box.Y1 = av->point[1]) + 1;
+
+          /* fill in the segment in info corresponding to this node */
+          if (setjmp (info.sego) == 0)
+            {
+              r_search (a->contours->tree, &box, NULL, get_seg, &info);
+              assert (0);
+            }
+
+#if 0
+            c_info.getout = NULL;
+            c_info.pa = a->contours;
+
+            if (!add)
+              {
+                retval = setjmp (out);
+                if (retval)
+                  {
+                    /* The intersection test short-circuited back here,
+                     * we need to clean up, then longjmp to jb */
+                    longjmp (*jb, retval);
+                  }
+                c_info.getout = &out;
+              }
+#endif
+        if (info.s->box.X2 - info.s->box.X1 <= 5 || info.s->box.Y2 - info.s->box.Y1 <= 5)
+            printf ("Test box width is %ix%i\n", info.s->box.X2 - info.s->box.X1,
+                                                 info.s->box.Y2 - info.s->box.Y1);
+#if 0
+//            printf ("Searching B's contours (against a box containing an edge of A) using an rtree\n");
+            /* NB: If this actually hits anything, we are teleported back to the beginning */
+            if (UNLIKELY (r_search (b->contour_tree, &info.s->box,
+                                    NULL, contour_bounds_touch, &c_info)))
+              return err_no_memory;	/* error */
+#endif
+        }
+      while ((av = av->next) != &a->contours->head);
+
+
+//      return 0;
+    }
 
   for (pa = a->contours; pa; pa = pa->next)     /* Loop over the contours of POLYAREA "a" */
     {
       BoxType sb;
-      jmp_buf out;
-      int retval;
 
       c_info.getout = NULL;
       c_info.pa = pa;
@@ -850,6 +941,7 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
       sb.X2 = pa->xmax + 1;
       sb.Y2 = pa->ymax + 1;
 
+//      printf ("Searching B's contours using an rtree\n");
       r_search (b->contour_tree, &sb, NULL, contour_bounds_touch, &c_info);
     }
 
@@ -2159,7 +2251,7 @@ Touching (POLYAREA * a, POLYAREA * b)
 	return -1;
 #endif
       M_POLYAREA_intersect (&e, a, b, False);
-
+#warning Do we end up leaving uncleared labels on our polygons? (Does this mess up the new clipping code?)
       if (M_POLYAREA_label (a, b, TRUE))
 	return TRUE;
       if (M_POLYAREA_label (b, a, TRUE))
@@ -2257,6 +2349,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
 
       InsertHoles (&e, *res, &holes);
     }
+#warning holes may be undefined due to the setjmp, if it was modified before the longjmp returned above.
   /* delete holes if any left */
   while ((p = holes) != NULL)
     {
@@ -2342,6 +2435,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
       poly_Free (&b);
       assert (poly_Valid (*aminusb));
     }
+#warning holes may be undefined due to the setjmp, if it was modified before the longjmp returned above.
   /* delete holes if any left */
   while ((p = holes) != NULL)
     {
@@ -2349,7 +2443,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
       poly_DelContour (&p);
     }
 
-
+#warning aand, aminsus may be undefined due to the setjmp, if it was modified before the longjmp returned above.
   if (code)
     {
       poly_Free (aandb);
