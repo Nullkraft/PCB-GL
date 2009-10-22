@@ -1208,6 +1208,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
       all_pa_info[i].BoundingBox.Y2 = curc->contours->ymax;
       all_pa_info[i].pa = curc;
       r_insert_entry (tree, (const BoxType *) &all_pa_info[i], 0);
+      i++;
     }
   while ((curc = curc->f) != dest);
 
