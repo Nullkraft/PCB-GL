@@ -1,7 +1,7 @@
-Bottom: 8b546acc829b05925a2899822e52cbe1eb814bd0
-Top:    2e92c3a4c244d452765ee7955927c37371a32740
+Bottom: ebd60d688f22ad85900c68d7d10ec7f6429512f6
+Top:    00d5db5d82a04814352e5ede4ffb5f2f2d7c515e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 02:16:53 +0100
+Date:   2009-10-22 02:36:13 +0100
 
 Various speedups to the polygon code.
 
@@ -19,7 +19,7 @@ to better dynamic update performance.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index a4e3996..0c7f141 100644
+index c284a68..06fe903 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -913,12 +913,22 @@ cntrbox_inside (PLINE * c1, PLINE * c2)
@@ -133,7 +133,7 @@ index a4e3996..0c7f141 100644
  static void
  InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
  {
-@@ -1283,10 +1333,46 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1284,10 +1334,46 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
  	}
        else
  	{
@@ -180,7 +180,7 @@ index a4e3996..0c7f141 100644
  	}
      }
    r_destroy_tree (&tree);
-@@ -1709,26 +1795,310 @@ remove_polyarea (POLYAREA **list, POLYAREA *piece)
+@@ -1710,26 +1796,310 @@ remove_polyarea (POLYAREA **list, POLYAREA *piece)
    piece->f = piece->b = piece;
  }
  
@@ -502,7 +502,7 @@ index a4e3996..0c7f141 100644
                             PLINE ** holes, PLINE ** isected, int action)
  {
    POLYAREA *a = *pieces;
-@@ -1760,12 +2130,13 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -1761,12 +2131,13 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
    /* now the non-intersect parts are collected in temp/holes */
    do {
      int hole_contour = 0;
@@ -517,7 +517,7 @@ index a4e3996..0c7f141 100644
        int is_first = contour_is_first (a, curc);
        int is_last = contour_is_last (curc);
  
-@@ -1825,15 +2196,15 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -1826,15 +2197,15 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
  
        /* If we move or delete an outer contour, we need to move any holes
           we wish to keep within that contour to the holes list. */
@@ -536,7 +536,7 @@ index a4e3996..0c7f141 100644
  
  
  static void
-@@ -1989,19 +2360,63 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -1990,19 +2361,63 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        assert (poly_Valid (b));
  #endif
  
