@@ -236,15 +236,41 @@ typedef struct
   void *Element;
 } TextType, *TextTypePtr;
 
-struct polygon_st			/* holds information about a polygon */
+struct rtree
+{
+  struct rtree_node *root;
+  int size;			/* number of entries in tree */
+};
+
+typedef struct			/* holds information about a polygon */
 {
   ANYOBJECTFIELDS;
-  Cardinal PointN,		/* number of points in polygon */
-    PointMax;			/* max number from malloc() */
+
+  Cardinal PointN;		/* number of points in pour outline */
+  Cardinal PointMax;		/* max number from malloc() */
+  PointTypePtr Points;		/* pour outline data */
+
+  Cardinal PolygonN;		/* number of polygons this pour has */
+  Cardinal PolygonMax;		/* max number from malloc() */
+  PolygonTypePtr Polygons;	/* pour polygons */
+
+  rtree_t *polygon_tree;	/* r-tree of child polygons */
+
+} PourType, *PourTypePtr;
+
+struct polygon_st		/* holds information about a polygon */
+{
+  ANYOBJECTFIELDS;
+
+//  Cardinal PointN,		/* number of points in polygon */
+//  Cardinal PointMax;		/* max number from malloc() */
+//  PointTypePtr Points;		/* data */
+
   POLYAREA *Clipped;		/* the clipped region of this polygon */
-  PLINE *NoHoles;		/* the polygon broken into hole-less regions */
+  PLINE *NoHoles;		/* the clipped polygon broken into hole-less regions */
   int NoHolesValid;		/* Is the NoHoles polygon up to date? */
-  PointTypePtr Points;		/* data */
+
+  PourTypePtr ParentPour;	/* The pour which resulted in this polygon */
 };
 
 typedef struct			/* holds information about arcs */
@@ -258,26 +284,25 @@ typedef struct			/* holds information about arcs */
     Delta;
 } ArcType, *ArcTypePtr;
 
-struct rtree
-{
-  struct rtree_node *root;
-  int size;			/* number of entries in tree */
-};
-
 typedef struct			/* holds information about one layer */
 {
   char *Name;			/* layer name */
   Cardinal LineN,		/* number of lines */
     TextN,			/* labels */
-    PolygonN,			/* polygons */
+//    PolygonN,			/* polygons */
+    PourN,			/* poured areas */
     ArcN,			/* and arcs */
     LineMax,			/* max number from malloc() */
-    TextMax, PolygonMax, ArcMax;
+    TextMax,
+//    PolygonMax,
+    PourMax,
+    ArcMax;
   LineTypePtr Line;		/* pointer to additional structures */
   TextTypePtr Text;
-  PolygonTypePtr Polygon;
+//  PolygonTypePtr Polygon;
+  PourTypePtr Pour;
   ArcTypePtr Arc;
-  rtree_t *line_tree, *text_tree, *polygon_tree, *arc_tree;
+  rtree_t *line_tree, *text_tree, *pour_tree, *arc_tree;
   Boolean On;			/* visible flag */
   char *Color,			/* color */
    *SelectedColor;
@@ -561,7 +586,8 @@ typedef struct			/* holds cursor information */
   Boolean On;			/* flag for 'is visible' */
   AttachedLineType AttachedLine;	/* data of new lines... */
   AttachedBoxType AttachedBox;
-  PolygonType AttachedPolygon;
+//  PolygonType AttachedPolygon;
+  PourType AttachedPour;
   AttachedObjectType AttachedObject;	/* data of attached objects */
   enum crosshair_shape shape; /* shape of crosshair */
 } CrosshairType, *CrosshairTypePtr;
@@ -676,13 +702,15 @@ typedef struct
   void *(*Line) (LayerTypePtr, LineTypePtr);
   void *(*Text) (LayerTypePtr, TextTypePtr);
   void *(*Polygon) (LayerTypePtr, PolygonTypePtr);
+  void *(*Pour) (LayerTypePtr, PourTypePtr);
   void *(*Via) (PinTypePtr);
   void *(*Element) (ElementTypePtr);
   void *(*ElementName) (ElementTypePtr);
   void *(*Pin) (ElementTypePtr, PinTypePtr);
   void *(*Pad) (ElementTypePtr, PadTypePtr);
   void *(*LinePoint) (LayerTypePtr, LineTypePtr, PointTypePtr);
-  void *(*Point) (LayerTypePtr, PolygonTypePtr, PointTypePtr);
+//  void *(*PolygonPoint) (LayerTypePtr, PolygonTypePtr, PointTypePtr);
+  void *(*PourPoint) (LayerTypePtr, PourTypePtr, PointTypePtr);
   void *(*Arc) (LayerTypePtr, ArcTypePtr);
   void *(*Rat) (RatTypePtr);
 } ObjectFunctionType, *ObjectFunctionTypePtr;
