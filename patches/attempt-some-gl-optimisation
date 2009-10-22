@@ -1,7 +1,7 @@
-Bottom: 44aca61c64348471fc00455afd80dfb6b0f34e8a
-Top:    f876a9c85b124d3855960f501f974f999ebd395c
+Bottom: 1a84d1c2a473c78c80ce4742201894980dca1dfa
+Top:    3abbaac932ac04ac1113129ab0363cb0018921eb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 05:19:55 +0100
+Date:   2009-10-22 05:41:17 +0100
 
 Attempt some GL optimisation
 
@@ -9,10 +9,10 @@ Attempt some GL optimisation
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 52d738a..da1aa32 100644
+index 54c2b3b..4489da4 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -215,7 +215,7 @@ static void draw_cap (double width, int x, int y, double angle, double scale)
+@@ -214,7 +214,7 @@ static void draw_cap (double width, int x, int y, double angle, double scale)
  void
  hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double scale)
  {
@@ -21,7 +21,7 @@ index 52d738a..da1aa32 100644
    float deltax, deltay, length;
    float wdx, wdy;
    int circular_caps = 0;
-@@ -244,10 +244,15 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
+@@ -243,10 +243,15 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
      wdy = deltax * width / 2. / length;
      wdx = -deltay * width / 2. / length;
  

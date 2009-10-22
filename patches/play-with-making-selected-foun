@@ -1,7 +1,7 @@
-Bottom: db0158a495f1a2f3bd7ba71e05a74a789d6f97c4
-Top:    f7a7517b7bea16fcdd79854ff34076df7821d425
+Bottom: 79745a5d18265348a557d755f52f4c2d14997eb7
+Top:    33bb85cbcce6261a0e381b612d28a1a8f0cbe64d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 05:22:12 +0100
+Date:   2009-10-22 05:41:17 +0100
 
 Play with making selected / found objects ignore subcompositing rules
 
@@ -340,10 +340,10 @@ index ddad0a2..8f96c6e 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index e173aa9..22a1fc8 100644
+index 2abd05a..7204be9 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -560,6 +560,33 @@ int compute_depth (int group)
+@@ -559,6 +559,33 @@ int compute_depth (int group)
    return depth;
  }
  

@@ -1,7 +1,7 @@
-Bottom: f7a7517b7bea16fcdd79854ff34076df7821d425
+Bottom: 33bb85cbcce6261a0e381b612d28a1a8f0cbe64d
 Top:    bb71773f72decca0c522eb1ea891e04541be7b0e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 05:25:21 +0100
+Date:   2009-10-22 05:41:18 +0100
 
 Try debugging draw speed
 
@@ -10,31 +10,11 @@ Try debugging draw speed
 
 ---
 
-diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index da1aa32..4489da4 100644
---- a/src/hid/common/hidgl.c
-+++ b/src/hid/common/hidgl.c
-@@ -177,7 +177,6 @@ draw_grid ()
- 
-   glDisableClientState (GL_VERTEX_ARRAY);
-   glDisable (GL_COLOR_LOGIC_OP);
--  glFlush ();
- }
- 
- #endif
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 22a1fc8..bb9999e 100644
+index 7204be9..bb9999e 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -419,7 +419,6 @@ draw_grid (BoxTypePtr drawn_area)
- 
-   glDisableClientState (GL_VERTEX_ARRAY);
-   glDisable (GL_COLOR_LOGIC_OP);
--//  glFlush ();
- }
- 
- /* ------------------------------------------------------------ */
-@@ -2166,13 +2165,12 @@ Benchmark (int argc, char **argv, int x, int y)
+@@ -2165,13 +2165,12 @@ Benchmark (int argc, char **argv, int x, int y)
      {
        gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
        gdk_window_process_updates (gport->drawing_area->window, FALSE);
