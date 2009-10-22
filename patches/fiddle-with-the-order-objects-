@@ -1,7 +1,7 @@
-Bottom: 5fb3d6f9d3f8cefdd78e8e70cb7ee3fd7c530b57
-Top:    92eede5eb84e41667d14b41a599beb8b87c2ac93
+Bottom: c29916fc8c6050c1adce51f4b066362f99b68c07
+Top:    c29916fc8c6050c1adce51f4b066362f99b68c07
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 21:15:05 +0100
+Date:   2009-10-22 22:57:53 +0100
 
 Fiddle with the order objects are clipped from pours
 
@@ -27,28 +27,4 @@ more complexity to the polygons.
 
 ---
 
-diff --git a/src/pour.c b/src/pour.c
-index 0961944..3660da4 100644
---- a/src/pour.c
-+++ b/src/pour.c
-@@ -640,16 +640,17 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
- 
-   if (setjmp (info.env) == 0)
-     {
--      r  = r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
--      r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
-+      r = 0;
-       GROUP_LOOP (Data, group);
-       {
-+        r += r_search (layer->pour_tree, &region, NULL, pour_sub_callback, &info);
-         r += r_search (layer->line_tree, &region, NULL, line_sub_callback, &info);
-         r += r_search (layer->arc_tree,  &region, NULL, arc_sub_callback,  &info);
-         r += r_search (layer->text_tree, &region, NULL, text_sub_callback, &info);
--        r += r_search (layer->pour_tree, &region, NULL, pour_sub_callback, &info);
-       }
-       END_LOOP;
-+      r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
-+      r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
-       if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
-         r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
-     }
+
