@@ -1,7 +1,7 @@
-Bottom: 87d49d35849a2413bd1740722b52c372d76e3835
-Top:    68933313d2130055328f425d731dc06d508a95a4
+Bottom: 7ca527dff8040c8165692dedbb8bce3b168f3d7c
+Top:    6ab8e08594f717b9b3690222a73a9d9deebf1b43
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 04:23:53 +0100
+Date:   2009-10-22 04:26:55 +0100
 
 Various speedups to the polygon code.
 
@@ -30,7 +30,7 @@ exact cases cause them.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 4583732..4fa2d8c 100644
+index 336dace..1c6096b 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -913,12 +913,22 @@ cntrbox_inside (PLINE * c1, PLINE * c2)
