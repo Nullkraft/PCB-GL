@@ -46,6 +46,7 @@
 #include "mirror.h"
 #include "misc.h"
 #include "polygon.h"
+#include "pour.h"
 #include "search.h"
 #include "select.h"
 #include "set.h"
@@ -78,14 +79,14 @@ MirrorElementCoordinates (DataTypePtr Data, ElementTypePtr Element,
   END_LOOP;
   PIN_LOOP (Element);
   {
-    RestoreToPolygon (Data, PIN_TYPE, Element, pin);
+    RestoreToPours (Data, PIN_TYPE, Element, pin);
     pin->X = SWAP_X (pin->X);
     pin->Y = SWAP_Y (pin->Y) + yoff;
   }
   END_LOOP;
   PAD_LOOP (Element);
   {
-    RestoreToPolygon (Data, PAD_TYPE, Element, pad);
+    RestoreToPours (Data, PAD_TYPE, Element, pad);
     pad->Point1.X = SWAP_X (pad->Point1.X);
     pad->Point1.Y = SWAP_Y (pad->Point1.Y) + yoff;
     pad->Point2.X = SWAP_X (pad->Point2.X);
@@ -115,5 +116,5 @@ MirrorElementCoordinates (DataTypePtr Data, ElementTypePtr Element,
   TOGGLE_FLAG (ONSOLDERFLAG, Element);
   /* this inserts all of the rtree data too */
   SetElementBoundingBox (Data, Element, &PCB->Font);
-  ClearFromPolygon (Data, ELEMENT_TYPE, Element, Element);
+  ClearFromPours (Data, ELEMENT_TYPE, Element, Element);
 }
