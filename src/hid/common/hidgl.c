@@ -214,7 +214,7 @@ static void draw_cap (double width, int x, int y, double angle, double scale)
 void
 hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double scale)
 {
-  double angle;
+  double angle = 0.;
   float deltax, deltay, length;
   float wdx, wdy;
   int circular_caps = 0;
@@ -243,10 +243,15 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
     wdy = deltax * width / 2. / length;
     wdx = -deltay * width / 2. / length;
 
-    if (deltay == 0.)
-      angle = (deltax < 0) ? 270. : 90.;
+    if (hairline)
+      angle = 0;
     else
-      angle = 180. / M_PI * atanl (deltax / deltay);
+      {
+        if (deltay == 0.)
+          angle = (deltax < 0) ? 270. : 90.;
+        else
+          angle = 180. / M_PI * atanl (deltax / deltay);
+      }
 
     if (deltay < 0)
       angle += 180.;
