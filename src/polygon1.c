@@ -103,7 +103,7 @@ if (UNLIKELY (((ptr) = malloc(sizeof(type))) == NULL)) \
 #undef DEBUG_JUMP
 #undef DEBUG_GATHER
 #undef DEBUG_ANGLE
-#undef DEBUG
+#define DEBUG
 #ifdef DEBUG
 #define DEBUGP(...) fprintf(stderr, ## __VA_ARGS__)
 #else
@@ -2407,10 +2407,15 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
     {
 
 #ifdef DEBUG
-      if (!poly_Valid (a))
+      if (!poly_Valid (a)) {
+        printf ("Polygon A fubar\n");
+        *(char *)0 = 0;
 	return -1;
-      if (!poly_Valid (b))
+      }
+      if (!poly_Valid (b)) {
+        printf ("Polygon B fubar\n");
 	return -1;
+      }
 #endif
       M_POLYAREA_intersect (&e, a, b, TRUE);
 
@@ -3052,12 +3057,14 @@ poly_Valid (POLYAREA * p)
 {
   PLINE *c;
 
-  if ((p == NULL) || (p->contours == NULL))
+  if ((p == NULL) || (p->contours == NULL)) {
+    printf ("p or p->contours was NULL\n");
     return FALSE;
+  }
 
   if (p->contours->Flags.orient == PLF_INV || poly_ChkContour (p->contours))
     {
-#ifndef NDEBUG
+//#ifndef NDEBUG
       VNODE *v;
       DEBUGP ("Invalid Outer PLINE\n");
       if (p->contours->Flags.orient == PLF_INV)
@@ -3071,7 +3078,7 @@ poly_Valid (POLYAREA * p)
 	  fprintf (stderr, "Line [%d %d ", v->point[0], v->point[1]);
 	}
       while ((v = v->next) != &p->contours->head);
-#endif
+//#endif
       return FALSE;
     }
   for (c = p->contours->next; c != NULL; c = c->next)
@@ -3079,7 +3086,7 @@ poly_Valid (POLYAREA * p)
       if (c->Flags.orient == PLF_DIR ||
 	  poly_ChkContour (c) || !poly_ContourInContour (p->contours, c))
 	{
-#ifndef NDEBUG
+//#ifndef NDEBUG
 	  VNODE *v;
 	  DEBUGP ("Invalid Inner PLINE orient = %d\n", c->Flags.orient);
 	  if (c->Flags.orient == PLF_DIR)
@@ -3096,7 +3103,7 @@ poly_Valid (POLYAREA * p)
 	      fprintf (stderr, "Line [%d %d ", v->point[0], v->point[1]);
 	    }
 	  while ((v = v->next) != &c->head);
-#endif
+//#endif
 	  return FALSE;
 	}
     }
