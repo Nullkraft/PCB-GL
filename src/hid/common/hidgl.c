@@ -89,11 +89,7 @@ hidgl_ensure_triangle_space (triangle_buffer *buffer, int count)
       exit (1);
     }
   if (count > TRIANGLE_ARRAY_SIZE - buffer->triangle_count)
-    {
-//      printf ("Ensuring we have %i triangles.. only %i out of %i available, flushing\n",
-//              count, TRIANGLE_ARRAY_SIZE - buffer->triangle_count, TRIANGLE_ARRAY_SIZE);
-      hidgl_flush_triangles (buffer);
-    }
+    hidgl_flush_triangles (buffer);
 }
 
 //static int cur_mask = -1;
