@@ -1,0 +1,28 @@
+Bottom: 0f1e0eb3d6a821cf900883cebf937fca82c005a8
+Top:    38bb9ef810cc8b2639ff3dd86dc5f1dcb87a8aef
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-23 00:36:26 +0100
+
+Refresh of fix-grid-extents-in-3d-view
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 27b7721..9439d28 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -367,10 +367,10 @@ draw_grid (BoxTypePtr drawn_area)
+              gport->grid_color.green / 65535.,
+              gport->grid_color.blue / 65535.);
+ 
+-  x1 = GRIDFIT_X (SIDE_X (MAX (0, drawn_area->X1)), PCB->Grid);
+-  y1 = GRIDFIT_Y (SIDE_Y (MAX (0, drawn_area->Y1)), PCB->Grid);
+-  x2 = GRIDFIT_X (SIDE_X (MIN (PCB->MaxWidth, drawn_area->X2)), PCB->Grid);
+-  y2 = GRIDFIT_Y (SIDE_Y (MIN (PCB->MaxHeight, drawn_area->Y2)), PCB->Grid);
++  x1 = GRIDFIT_X (MAX (0, drawn_area->X1), PCB->Grid);
++  y1 = GRIDFIT_Y (MAX (0, drawn_area->Y1), PCB->Grid);
++  x2 = GRIDFIT_X (MIN (PCB->MaxWidth, drawn_area->X2), PCB->Grid);
++  y2 = GRIDFIT_Y (MIN (PCB->MaxHeight, drawn_area->Y2), PCB->Grid);
+   if (x1 > x2)
+     {
+       int tmp = x1;
