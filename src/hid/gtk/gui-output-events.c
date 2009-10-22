@@ -1190,6 +1190,22 @@ poly_callback (const BoxType * b, void *cl)
   return 1;
 }
 
+static int
+pour_callback (const BoxType * b, void *cl)
+{
+  struct pin_info *i = (struct pin_info *) cl;
+  PourType *pour = (PourType *)b;
+
+  DrawPour (i->Layer, pour, 0);
+
+  if (pour->PolygonN)
+    {
+      r_search (pour->polygon_tree, i->drawn_area, NULL, poly_callback, i);
+    }
+
+  return 1;
+}
+
 static void
 DrawPadLowLevelSolid (hidGC gc, PadTypePtr Pad, Boolean clear, Boolean mask)
 {
@@ -1376,10 +1392,10 @@ DrawLayerGroup (int group, const BoxType * screen)
       }
 
       /* draw all polygons on this layer */
-      if (Layer->PolygonN) {
+      if (Layer->PourN) {
         info.Layer = Layer;
         info.drawn_area = screen;
-        r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
+        r_search (Layer->pour_tree, screen, NULL, pour_callback, &info);
 
         /* HACK: Subcomposite polygons separately from other layer primitives */
         /* Reset the compositing */
