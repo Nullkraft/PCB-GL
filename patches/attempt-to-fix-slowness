@@ -3,6 +3,21 @@ Top:    ebd60d688f22ad85900c68d7d10ec7f6429512f6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-22 03:12:37 +0100
 
+Various speedups to the polygon code.
+
+Avoid labelling the "A" polygon's contours, use the contour r-trees to
+dynamically search the required data.
+
+Add code to reparent holes which end up in the wrong polygon piece after
+inserting a new hole in InsertHoles. (Means we don't have to dump every
+potental hole we encounter in the holes insersion queue, hopefully leading
+to better dynamic update performance.
+
+---------
+
+AND:
+
+
 Attempt to fix polygon slowness by avoiding full recreation for each operation
 
 ******** KNOWN TO BE BROKEN ********
@@ -10,15 +25,6 @@ Attempt to fix polygon slowness by avoiding full recreation for each operation
 We're leaving some holes in place which need to be moved under a subordinate,
 smaller contour. Not quite sure how to detect those efficiently, nor what
 exact cases cause them.
-
-
-
-
-
-
-
-
-
 
 
 ---
