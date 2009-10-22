@@ -1,7 +1,7 @@
-Bottom: de531c39d6ac67ebaa48aef78c686a682043006b
-Top:    68bfbce105c1490ddf0744a8e5507c2d9e8bd886
+Bottom: 7e53f88d16abb25966f7939b4ed4515a4b101df9
+Top:    b9999f8d2f0740d11de00c17bb5b7ae8019f257e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 05:17:57 +0100
+Date:   2009-10-22 05:40:27 +0100
 
 Work in progress on subcompositing / stencil buffers
 
@@ -133,10 +133,10 @@ index 7966346..ffb84a2 100644
  #define SL(type,side) (~0xfff | SL_##type | SL_##side##_SIDE)
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 41d0aa1..f4b32b7 100644
+index c806cf1..9875db5 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -574,28 +574,27 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -573,28 +573,27 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
    free (vertices);
  }
  
@@ -169,7 +169,7 @@ index 41d0aa1..f4b32b7 100644
  };
  
  static int
-@@ -607,74 +606,89 @@ do_hole (const BoxType *b, void *cl)
+@@ -606,74 +605,89 @@ do_hole (const BoxType *b, void *cl)
    if (curc->Flags.orient == PLF_DIR) {
      return 0;
    }
@@ -291,7 +291,7 @@ index 41d0aa1..f4b32b7 100644
  
    gluDeleteTess (info.tobj);
    myFreeCombined ();
-@@ -689,6 +703,92 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
+@@ -688,6 +702,92 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
    hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
  }
  
@@ -426,10 +426,10 @@ index e68026d..1f7946a 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index b2856b5..2e7250d 100644
+index 65f59cb..c9a3f06 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -518,14 +518,39 @@ ghid_invalidate_all ()
+@@ -517,14 +517,39 @@ ghid_invalidate_all ()
    gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
  }
  
@@ -470,7 +470,7 @@ index b2856b5..2e7250d 100644
    if (idx >= 0 && idx < max_layer + 2) {
      gport->trans_lines = TRUE;
      return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
-@@ -541,8 +566,8 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -540,8 +565,8 @@ ghid_set_layer (const char *name, int group, int empty)
  	    return TEST_FLAG (SHOWMASKFLAG, PCB);
  	  return 0;
  	case SL_SILK:
@@ -481,7 +481,7 @@ index b2856b5..2e7250d 100644
  	  if (SL_MYSIDE (idx) /*|| pinout */ )
  	    return PCB->ElementOn;
  	  return 0;
-@@ -562,6 +587,7 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -561,6 +586,7 @@ ghid_set_layer (const char *name, int group, int empty)
  void
  ghid_use_mask (int use_it)
  {
@@ -489,7 +489,7 @@ index b2856b5..2e7250d 100644
  
    /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
    if (use_it == HID_LIVE_DRAWING ||
-@@ -573,6 +599,7 @@ ghid_use_mask (int use_it)
+@@ -572,6 +598,7 @@ ghid_use_mask (int use_it)
    if (use_it == cur_mask)
      return;
  
@@ -497,7 +497,7 @@ index b2856b5..2e7250d 100644
    hidgl_flush_triangles (&buffer);
  
    switch (use_it)
-@@ -581,25 +608,28 @@ ghid_use_mask (int use_it)
+@@ -580,25 +607,28 @@ ghid_use_mask (int use_it)
        /* Write '1' to the stencil buffer where the solder-mask is drawn. */
        glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
        glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
