@@ -1,7 +1,7 @@
-Bottom: 9c94b0da9f63cd1388beb3b55693eeb1fd52ee90
-Top:    8dd456220b35e10764f17cbc17ca9d19f2fedef1
+Bottom: 7b9d170f689f1e669738a363edeada230b6c1a0a
+Top:    adc552dade078d64c888ada7c1c725e4ae645e54
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-23 00:16:32 +0100
+Date:   2009-10-23 00:16:55 +0100
 
 Use r-trees to find and remove touched polygons
 
@@ -21,7 +21,7 @@ Use r-trees to find and remove touched polygons
 ---
 
 diff --git a/src/pour.c b/src/pour.c
-index c726418..85cb9fd 100644
+index b9c1de3..2f8e0bc 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -715,12 +715,64 @@ mark_islands (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
