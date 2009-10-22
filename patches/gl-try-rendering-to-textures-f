@@ -1,11 +1,224 @@
-Bottom: c558f4e28b03913a596d4efb79dc4c649833e2e9
-Top:    c558f4e28b03913a596d4efb79dc4c649833e2e9
+Bottom: b8ddcce7e6f7bb0679cd2885e6bfb2c4a9e4cae4
+Top:    749901f5fe2f127590a448b77286481649776f5e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 05:35:06 +0100
+Date:   2009-02-02 23:50:49 +0000
 
 GL: Try rendering to textures for subcompositing layers
 
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 90604c2..28c9d6d 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -26,11 +26,6 @@
+ #include "hid.h"
+ #include "../hidint.h"
+ 
+-#ifdef ENABLE_GL
+-#  include <GL/gl.h>
+-#  include "hid/common/hidgl.h"
+-#endif
+-
+ #include "gui.h"
+ 
+ #if !GTK_CHECK_VERSION(2,8,0) && defined(HAVE_GDK_GDKX_H)
+@@ -64,6 +59,9 @@ static int cur_mask = -1;
+ 
+ int ghid_flip_x = 0, ghid_flip_y = 0;
+ 
++GLuint fbo_name;
++GLuint tex_name;
++
+ /* ------------------------------------------------------------ */
+ 
+ /* Px converts view->pcb, Vx converts pcb->view */
+@@ -573,10 +571,49 @@ ghid_invalidate_all ()
+ int
+ ghid_set_layer (const char *name, int group, int empty)
+ {
++  GLenum errCode;
++  const GLubyte *errString;
+   int idx = (group >= 0
+ 	     && group <
+ 	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
+ 
++  hidgl_flush_triangles (&buffer);
++  /* Composite out existing texture data */
++  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
++  glBindTexture (GL_TEXTURE_2D, tex_name);
++
++  /* Use the texture on a big quad, onto the window */
++  glEnable (GL_TEXTURE_2D);
++  glBegin (GL_QUADS);
++  glColor4f (1.0f, 1.0f, 1.0f, 1.0f);
++  glTexCoord2f (  0,   1);
++  glVertex2f   (  0,   0);
++  glTexCoord2f (  0,   0);
++  glVertex2f   (  0, Vz (PCB->MaxHeight));
++  glTexCoord2f (  1,   0);
++  glVertex2f   (Vz (PCB->MaxWidth), Vz (PCB->MaxHeight));
++  glTexCoord2f (  1,   1);
++  glVertex2f   (Vz (PCB->MaxWidth),   0);
++  glEnd ();
++  glDisable (GL_TEXTURE_2D);
++  glBindTexture (GL_TEXTURE_2D, 0);
++
++  if ((errCode = glGetError()) != GL_NO_ERROR) {
++      errString = gluErrorString(errCode);
++     fprintf (stderr, "5OpenGL Error: %s\n", errString);
++  }
++
++  /* Setup for the next layer */
++  if (group != -99)
++    glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, fbo_name);
++  else
++    return 0;
++
++  if ((errCode = glGetError()) != GL_NO_ERROR) {
++      errString = gluErrorString(errCode);
++     fprintf (stderr, "6OpenGL Error: %s\n", errString);
++  }
++
+   if (idx >= 0 && idx < max_layer + 2) {
+     gport->trans_lines = TRUE;
+     return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index d043017..cb35693 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -946,12 +946,31 @@ ghid_screen_update (void)
+ 
+ void DrawAttached (Boolean);
+ void draw_grid ();
++int ghid_set_layer (const char *name, int group, int empty);
++
++#define CHECK_FRAMEBUFFER_STATUS()                            \
++  do {                                                        \
++    GLenum status;                                            \
++    status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT); \
++    switch(status) {                                          \
++      case GL_FRAMEBUFFER_COMPLETE_EXT:                       \
++        break;                                                \
++      case GL_FRAMEBUFFER_UNSUPPORTED_EXT:                    \
++        /* choose different formats */                        \
++        break;                                                \
++      default:                                                \
++        /* programming error; will fail on all hardware */    \
++        exit (1);                                             \
++    }                                                         \
++  } while (0);
+ 
+ #define Z_NEAR 3.0
+ gboolean
+ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+ 					GdkEventExpose * ev, GHidPort * port)
+ {
++  GLenum errCode;
++  const GLubyte *errString;
+   BoxType region;
+   int eleft, eright, etop, ebottom;
+   extern HID ghid_hid;
+@@ -965,8 +984,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+ 
+   ghid_show_crosshair (FALSE);
+ 
+-  glEnable (GL_BLEND);
+-  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
++//  glEnable (GL_BLEND);
++//  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+ 
+ //  glEnable(GL_POLYGON_SMOOTH);
+ //  glHint(GL_POLYGON_SMOOTH_HINT, [GL_FASTEST, GL_NICEST, or GL_DONT_CARE]);
+@@ -1064,6 +1083,49 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+ 
+   /* TODO: Background image */
+ 
++  /* Setup a texture for playing each layer into */
++  glGenFramebuffersEXT (1, &fbo_name);
++  glGenTextures (1, &tex_name);
++  glBindTexture (GL_TEXTURE_2D, tex_name);
++
++  glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
++
++  glTexImage2D (GL_TEXTURE_2D,
++                0, /* Level */
++                GL_RGBA8, /* Int. format */
++                eright - eleft + 1, /* Width */
++                ebottom - etop + 1, /* Height */
++                0,      /* Border */
++                GL_RGBA, /* Format */
++                GL_INT, /* Type */
++                NULL);  /* Pixels */
++
++  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, fbo_name);
++  glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, tex_name, 0);
++  if ((errCode = glGetError()) != GL_NO_ERROR) {
++      errString = gluErrorString(errCode);
++     fprintf (stderr, "4OpenGL Error: %s\n", errString);
++  }
++  CHECK_FRAMEBUFFER_STATUS ()
++  glBindTexture (GL_TEXTURE_2D, 0);
++
++  glClearColor (1., 1., 1., 1.);
++  glClear (GL_COLOR_BUFFER_BIT);
++
++//  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
++#if 0
++  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, fbo_name);
++  /* RTT */
++  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
++
++  /* Composite */
++  glBindTexture (GL_TEXTURE_2D, tex_name);
++  /* Use the texture on a big quad, onto the window */
++  glBindTexture (GL_TEXTURE_2D, 0);
++#endif
++
++  /* End texture setup */
++
+   hidgl_init_triangle_array (&buffer);
+   ghid_invalidate_current_gc ();
+ 
+@@ -1078,6 +1140,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+   hidgl_flush_triangles (&buffer);
+   glPopMatrix ();
+ 
++  /* Hack to finish compositing */
++  ghid_set_layer ("HACK", -99, 0);
+ 
+   glUnmapBuffer (GL_ARRAY_BUFFER);
+   glBindBuffer(GL_ARRAY_BUFFER, 0);
+@@ -1107,6 +1171,10 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+   glBindBuffer(GL_ARRAY_BUFFER, 0);
+   glDeleteBuffers (1, &buffer.vbo_name);
+ 
++  /* Tear down texture buffer */
++  glDeleteTextures (1, &tex_name);
++  glDeleteFramebuffersEXT (1, &fbo_name);
++
+   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
+     gdk_gl_drawable_swap_buffers (pGlDrawable);
+   else
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 1a7e0a5..686579d 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -131,7 +131,6 @@ extern int ghid_flip_x, ghid_flip_y;
+ #define GRID_UNITS_VALUE(mm, mil)   (Settings.grid_units_mm ? (mm) : (mil))
+ 
+ 
+-
+ typedef struct hid_gc_struct
+ {
+   HID *me_pointer;
+@@ -533,6 +532,8 @@ void ghid_logv (const char *fmt, va_list args);
+ void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
+ 
+ /* gtkhid-main.c */
++extern GLuint fbo_name;
++extern GLuint tex_name;
+ 
+ void ghid_invalidate_all ();
+ void ghid_invalidate_current_gc ();
