@@ -1,0 +1,60 @@
+Bottom: 3e7dfb30deaea67ea3400436e4e39b0df85c0731
+Top:    69fb9c02cfe22fb0bb2b7268b5e1d26f51f90b68
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-22 05:55:03 +0100
+
+Fix grid extents in 3D view
+
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 1fee6be..2abd05a 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -338,7 +338,7 @@ zoom_by (double factor, int x, int y)
+ /* ------------------------------------------------------------ */
+ 
+ /*static*/ void
+-draw_grid ()
++draw_grid (BoxTypePtr drawn_area)
+ {
+   static GLfloat *points = 0;
+   static int npoints = 0;
+@@ -367,10 +367,10 @@ draw_grid ()
+              gport->grid_color.green / 65535.,
+              gport->grid_color.blue / 65535.);
+ 
+-  x1 = GRIDFIT_X (SIDE_X (gport->view_x0), PCB->Grid);
+-  y1 = GRIDFIT_Y (SIDE_Y (gport->view_y0), PCB->Grid);
+-  x2 = GRIDFIT_X (SIDE_X (gport->view_x0 + gport->view_width - 1), PCB->Grid);
+-  y2 = GRIDFIT_Y (SIDE_Y (gport->view_y0 + gport->view_height - 1), PCB->Grid);
++  x1 = GRIDFIT_X (SIDE_X (MAX (0, drawn_area->X1)), PCB->Grid);
++  y1 = GRIDFIT_Y (SIDE_Y (MAX (0, drawn_area->Y1)), PCB->Grid);
++  x2 = GRIDFIT_X (SIDE_X (MIN (PCB->MaxWidth, drawn_area->X2)), PCB->Grid);
++  y2 = GRIDFIT_Y (SIDE_Y (MIN (PCB->MaxHeight, drawn_area->Y2)), PCB->Grid);
+   if (x1 > x2)
+     {
+       int tmp = x1;
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 45dbfce..2b18ed9 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -958,7 +958,7 @@ ghid_screen_update (void)
+ }
+ 
+ void DrawAttached (Boolean);
+-void draw_grid (void);
++void draw_grid (BoxTypePtr drawn_area);
+ 
+ struct pin_info
+ {
+@@ -1799,7 +1799,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+   gui->set_layer (NULL, INDEXOFCURRENT, 0);
+   gui->set_layer (NULL, SL_FINISHED, 0);
+ 
+-  draw_grid ();
++  draw_grid (&region);
+ 
+   hidgl_init_triangle_array (&buffer);
+   ghid_invalidate_current_gc ();
