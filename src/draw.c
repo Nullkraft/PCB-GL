@@ -88,7 +88,7 @@ static const BoxType *clip_box = NULL;
  */
 static void Redraw (Boolean, BoxTypePtr);
 static void DrawEverything (BoxTypePtr);
-static void DrawTop (const BoxType *);
+/* static */ void DrawTop (const BoxType *);
 static int DrawLayerGroup (int, const BoxType *);
 /* static */ void DrawPinOrViaLowLevel (PinTypePtr, Boolean);
 static void ClearOnlyPin (PinTypePtr, Boolean);
@@ -654,7 +654,7 @@ pad_callback (const BoxType * b, void *cl)
 /* ---------------------------------------------------------------------------
  * draws pins pads and vias
  */
-static void
+/* static */ void
 DrawTop (const BoxType * screen)
 {
   if (PCB->PinOn || doing_assy)
@@ -781,7 +781,7 @@ DrawSilk (int new_swap, int layer, BoxTypePtr drawn_area)
 /* ---------------------------------------------------------------------------
  * draws solder mask layer - this will cover nearly everything
  */
-static void
+/* static */ void
 DrawMask (BoxType * screen)
 {
   struct pin_info info;
