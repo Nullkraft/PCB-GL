@@ -35,6 +35,7 @@
 #include "gui.h"
 #include "gtkhid.h"
 #include "hid/common/hid_resource.h"
+#include "hid/common/draw_helpers.h"
 
 #include <gdk/gdkkeysyms.h>
 
@@ -792,6 +793,17 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
     return FALSE;
   }
 
+  hidgl_init ();
+
+  /* If we don't have any stencil bits available,
+     we can't use the hidgl polygon drawing routine */
+  /* TODO: We could use the GLU tessellator though */
+  if (hidgl_stencil_bits() == 0)
+    {
+      ghid_hid.fill_pcb_polygon = common_fill_pcb_polygon;
+      ghid_hid.poly_dicer = 1;
+    }
+
   ghid_show_crosshair (FALSE);
 
   glEnable (GL_BLEND);
@@ -814,12 +826,20 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   glLoadIdentity ();
   glTranslatef (0.0f, 0.0f, -Z_NEAR);
 
+  glEnable (GL_STENCIL_TEST);
   glClearColor (gport->offlimits_color.red / 65535.,
                 gport->offlimits_color.green / 65535.,
                 gport->offlimits_color.blue / 65535.,
                 1.);
 
+  glStencilMask (~0);
+  glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+  hidgl_reset_stencil_usage ();
+
+  /* Disable the stencil test until we need it - otherwise it gets dirty */
+  glDisable (GL_STENCIL_TEST);
+  glStencilFunc (GL_ALWAYS, 0, 0);
 
   region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
   region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
@@ -844,6 +864,12 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
+
+  /* Setup stenciling */
+  /* Drawing operations set the stencil buffer to '1' */
+  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
+  /* Drawing operations as masked to areas where the stencil buffer is '0' */
+//  glStencilFunc (GL_GREATER, 1, 1);             // Draw only where stencil buffer is 0
 
   glPushMatrix ();
   glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
