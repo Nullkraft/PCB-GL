@@ -1,7 +1,7 @@
-Bottom: 7f1b243bb345a1808daaa98d4374fd7be68da333
-Top:    ed4ebf1830dd5f406664e85a38e596478918cdba
+Bottom: cff43bafeaa4cd7edaf20d6fa784a04eef268e02
+Top:    a632f1eef4f2fb167f2563189b8d110da5c49239
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 05:19:44 +0100
+Date:   2009-10-22 05:41:07 +0100
 
 Major re-write to drawing routines
 
@@ -195,10 +195,10 @@ index 5efb010..ddad0a2 100644
  {
    int min_silk_line;
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 1725cc5..8322376 100644
+index 5bf382b..1fee6be 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -520,81 +520,99 @@ ghid_invalidate_all ()
+@@ -519,81 +519,99 @@ ghid_invalidate_all ()
    gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
  }
  
@@ -358,7 +358,7 @@ index 1725cc5..8322376 100644
    return 0;
  }
  
-@@ -703,9 +721,9 @@ ghid_set_special_colors (HID_Attribute * ha)
+@@ -702,9 +720,9 @@ ghid_set_special_colors (HID_Attribute * ha)
      }
  }
  

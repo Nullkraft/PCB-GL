@@ -1,7 +1,7 @@
-Bottom: ed4ebf1830dd5f406664e85a38e596478918cdba
-Top:    0838e59588a03651079b2442498a4a5c222f243e
+Bottom: a632f1eef4f2fb167f2563189b8d110da5c49239
+Top:    aba78e7a5fef42ac649dc891de607db1f1c70a7e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 05:19:45 +0100
+Date:   2009-10-22 05:41:07 +0100
 
 Fix grid extents in 3D view
 
@@ -9,7 +9,7 @@ Fix grid extents in 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 8322376..e173aa9 100644
+index 1fee6be..2abd05a 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -338,7 +338,7 @@ zoom_by (double factor, int x, int y)
