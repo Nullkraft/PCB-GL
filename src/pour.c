@@ -667,12 +667,12 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
         r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
       GROUP_LOOP (Data, group);
       {
+        r += r_search (layer->pour_tree, &region, NULL, pour_sub_callback, &info);
         r += r_search (layer->line_tree, &region, NULL, line_sub_callback, &info);
         subtract_poly (info.accumulate, &info.pg);
         info.accumulate = NULL;
         r += r_search (layer->arc_tree,  &region, NULL, arc_sub_callback,  &info);
         r += r_search (layer->text_tree, &region, NULL, text_sub_callback, &info);
-        r += r_search (layer->pour_tree, &region, NULL, pour_sub_callback, &info);
       }
       END_LOOP;
       r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
