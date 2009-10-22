@@ -1,6 +1,6 @@
 Version: 1
-Previous: 3f783d30e9697666202ca640780b28b317e0add3
-Head: ff3395a021ab014e08e6f8b06f4371f59b44ac1c
+Previous: 73694f406a7dec222d6b9b918af9a7ca5da11d5e
+Head: 9e3d3be997dcfac4ce7847dcd3f5924705be24ca
 Applied:
   add-configure-checks-for-gtkgl: 42ed5c0519cfc85ab995179a0c9540725d0f30e7
   drop-in-pcb-gl-code-various-me: e5cf78e5763104a32c0ceb9c6e8605437d6d2dfe
@@ -8,29 +8,28 @@ Applied:
   improve-grid-snapping-heuristi: cb919ca83cb2c41cb89dfc2aec61d18e33e88393
   make-rats-snap-to-the-center-o: 7717ea54b1f604928384dbd33e18c32db2dda6bf
   only-snap-to-pads-on-the-activ: 1368dcc201a1ee2a2c8beb623a4fb58d7cfbec04
-  add-profiling-to-file-load: d22f0f4f89cf950cdd673a5eab1aea1ada72dad5
-  avoid-clearing-pins-vias-from-: d475a09c52c92163f79c1aaac3b25b608bf59e2f
-  add-raw-polygons-support-for-t: d694f8f8cc3d08daabac17c7ecacff82915ca7cc
-  use-the-opengl-stencil-buffer-: 616104527bdfafab51c7f30710e7e21a0370147c
-  draw-c-draw-all-vias-under-the: dd87f4bd8495afea64fd23840b1de0bb505d7634
-  work-in-progress-on-subcomposi: 858eab0cf33fc4182ec3ea173d96263ba5d02901
-  not-sure-what-this-patch-is-fo: 75912ba6c0dfef836d1ad3d05574201bf673618f
-  ugly-ugly-hack-to-make-pretty-: 76f558740fe1c43f7036e5171e6ccfc31b971d3e
-  add-virtual-trackball-code: 2620b169d8bdcb351ecb3c8dbde65e6d6c2de3ce
-  use-trackball-to-allow-rotatio: 9194269852d151dd6d2f3b5d1830393a7c089f5d
-  add-support-for-depth-to-trian: 2a7194fe7a55c28cd01404d427adf7d16998b528
-  add-debug-catch-to-triangle-ha: f4b319f86a41d2f691c0a013df94dbecc5195ef4
-  allow-polygons-with-clearlinef: 1ad58982f20887370d10d3324cd019b0e2080f6e
-  workaround-crash-where-contour: 868f1da07d6e09549d3a5999538d275a50f31b4b
-  add_pours: 66c578717804a55aa111b46410d622433e88e5df
-  speedup_poly_poly_checking: 81973b1af279bd62dabbd7862707d35319ec1d30
-  add-magic-flag-to-stop-pour-cl: 5009d39aede0154b1054f29768a9ee87f08c0cda
-  off-to-find-burried-treasure-o: 0d88333f0e7fbe40c33e4558db54f53a0fdefa4b
-  fiddle-with-the-order-objects-: 70eeb05d223a789cbb413ae0c5cc5d739fbcad52
-  use-r-trees-to-find-and-remove: d5baeac78c0fa82ac22ecd4284dd949b1a3742e5
-  improve-poly_andsubtract_free-: 685172fd1cfba9dcc443768b941962537dc5274d
-  gl-use-a-vbo-to-avoid-data-cop: 1ab7ad4ce5bae0e130ef3bc423fef3ea3b81ceda
-  add-colour-information-to-vbo: ff3395a021ab014e08e6f8b06f4371f59b44ac1c
+  avoid-clearing-pins-vias-from-: 8a2bdac394fa8823ad8819575b58fc9e97aa9e66
+  add-raw-polygons-support-for-t: 60ba118a8b4f8c6488db1d495e859abf68aac0d3
+  use-the-opengl-stencil-buffer-: ce43a05898cfed7af4e10dc9e26b9465bb20d18a
+  draw-c-draw-all-vias-under-the: 2d5dafccbf3eeef96ee2f910c6ebf0434dfaa96e
+  work-in-progress-on-subcomposi: 5f15e15eb3cb7f512a9bab9a2ffaab396a8dc719
+  not-sure-what-this-patch-is-fo: abf90a584207d20573200e6f2471c93f66ca8dfe
+  ugly-ugly-hack-to-make-pretty-: 39ac62e18b2eb6291dce80eca9bc2d3521796f7a
+  add-virtual-trackball-code: 72ce772db04f92dd13680431b1fa593ee0be6f45
+  use-trackball-to-allow-rotatio: 570d3ebc4666c3226367db4f5f2d538e93d37248
+  add-support-for-depth-to-trian: 1fdd1c4de5fba76bcfee0afcafae50740d1876d3
+  add-debug-catch-to-triangle-ha: 62b9a36d475c5399448954349293bd3929acfde4
+  allow-polygons-with-clearlinef: 944112c0b9c13b7fa79ce68cdaf0516ff9cce10a
+  workaround-crash-where-contour: d6db9630b11a6f1699afcd9f12f21c20d297db55
+  add_pours: 9283bbe2f7148f896052a7b5317e1c1d736e7753
+  speedup_poly_poly_checking: 55aed2db23f712aa2c5a8adcf187aa084c36e01f
+  add-magic-flag-to-stop-pour-cl: c5bbd3ee0d20c8382bc66d7cc7d5530178356f32
+  off-to-find-burried-treasure-o: 43eaaf1608064958c4e1cd9802c9a9d58efeb9db
+  fiddle-with-the-order-objects-: dc844283b868f6ca9352755834b0277b69e1ad84
+  use-r-trees-to-find-and-remove: 79ff1bdc32f7c0a521f21e80e5da0f5fb238afc1
+  improve-poly_andsubtract_free-: 6051c0b08a505738746abbc076862651a83b04f9
+  gl-use-a-vbo-to-avoid-data-cop: 287542ea6d55aa7b39e6473cccb967b088ecffde
+  add-colour-information-to-vbo: 9e3d3be997dcfac4ce7847dcd3f5924705be24ca
 Unapplied:
   old-debug-code: 5df342b052ca38bb840335183319e4ca1dff8c9f
   try-clipping-polygons-to-the-s: e83d04fdfdc2c92e22f0dcca7add2be432e635ce
