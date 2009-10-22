@@ -1,0 +1,31 @@
+Bottom: fe0d778f5f274071b409a4fb4092e1d93fc358f7
+Top:    78bf4fbf65192d6495b3d0d171e1a40fc82b93a4
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-22 01:09:10 +0100
+
+Refresh of try-something-with-the-rtrees
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 5741037..df7e2ee 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1515,7 +1515,7 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
+ 	 S_Rule s_rule, J_Rule j_rule)
+ {
+   VNODE *cur, *other;
+-  DIRECTION dir = FORW; /* Not sure, but stops valgrind complaining */
++  DIRECTION dir = FORW; /* Initialise to stop valgrind complaining */
+ 
+   cur = &a->head;
+   do
+@@ -1659,7 +1659,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+ 		    PLINE ** holes, int action, BOOLp maybe)
+ {
+   POLYAREA *a = afst;
+-  POLYAREA *parent = NULL; /* Quiet GCC warning */
++  POLYAREA *parent = NULL; /* Quiet compiler warning */
+   PLINE **cur, **next, *parent_contour;
+ 
+   assert (a != NULL);
