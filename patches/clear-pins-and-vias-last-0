@@ -1,7 +1,7 @@
-Bottom: b8685de79291b137d0165bd820578e0fd9bfe7b9
-Top:    5b799ec73fcbea6e01b3fc934aaea6c60306ae72
+Bottom: af51e902878407abaf8400267ca823354fe3dfac
+Top:    6e021def05d6bdffb1c476d52a59475a51dc1af8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 15:43:49 +0100
+Date:   2009-10-22 20:55:28 +0100
 
 REVERT: Clear pins and vias last...
 
@@ -39,10 +39,10 @@ Batch sizes (20 for lines, 100 for pins / vias) aren't necessarily optimal!
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 7dd5969..6632e75 100644
+index 9955885..d3c16bc 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -815,54 +815,22 @@ struct cpInfo
+@@ -793,54 +793,22 @@ struct cpInfo
    LayerType *layer;
    PolygonType *polygon;
    Boolean solder;
@@ -99,7 +99,7 @@ index 7dd5969..6632e75 100644
    return 1;
  }
  
-@@ -907,12 +875,9 @@ pad_sub_callback (const BoxType * b, void *cl)
+@@ -885,12 +853,9 @@ pad_sub_callback (const BoxType * b, void *cl)
  static int
  line_sub_callback (const BoxType * b, void *cl)
  {
@@ -112,7 +112,7 @@ index 7dd5969..6632e75 100644
  
    /* don't subtract the object that was put back! */
    if (b == info->other)
-@@ -920,22 +885,8 @@ line_sub_callback (const BoxType * b, void *cl)
+@@ -898,22 +863,8 @@ line_sub_callback (const BoxType * b, void *cl)
    if (!TEST_FLAG (CLEARLINEFLAG, line))
      return 0;
    polygon = info->polygon;
@@ -136,7 +136,7 @@ index 7dd5969..6632e75 100644
    return 1;
  }
  
-@@ -1012,17 +963,13 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
+@@ -990,17 +941,13 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
  
    if (setjmp (info.env) == 0)
      {
@@ -156,7 +156,7 @@ index 7dd5969..6632e75 100644
          r +=
            r_search (layer->arc_tree, &region, NULL, arc_sub_callback, &info);
  	r +=
-@@ -1031,10 +978,8 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
+@@ -1009,10 +956,8 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
            r_search (layer->polygon_tree, &region, NULL, poly_sub_callback, &info);
        }
        END_LOOP;
