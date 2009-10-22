@@ -1,5 +1,5 @@
 Bottom: 229e7874c04f4c437ae8b647dc4a300923185aa3
-Top:    18a148a7a30fc0ee0f7d620670000cc484f13b13
+Top:    3634db1ea5c58d1498f994500fd8ad6f774899e0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-22 14:47:23 +0100
 
@@ -9,7 +9,7 @@ Major re-write to drawing routines
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 4359225..efa905f 100644
+index 4359225..f28f6c9 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -76,7 +76,7 @@ FloatPolyType, *FloatPolyTypePtr;
@@ -21,12 +21,9 @@ index 4359225..efa905f 100644
  static int Erasing = False;
  
  static int doing_pinout = False;
-@@ -88,29 +88,29 @@ static const BoxType *clip_box = NULL;
-  */
- static void Redraw (Boolean, BoxTypePtr);
+@@ -90,27 +90,27 @@ static void Redraw (Boolean, BoxTypePtr);
  static void DrawEverything (BoxTypePtr);
--static void DrawTop (const BoxType *);
-+void DrawTop (const BoxType *);
+ static void DrawTop (const BoxType *);
  static int DrawLayerGroup (int, const BoxType *);
 -static void DrawPinOrViaLowLevel (PinTypePtr, Boolean);
 +/* static */ void DrawPinOrViaLowLevel (PinTypePtr, Boolean);
@@ -51,11 +48,10 @@ index 4359225..efa905f 100644
 +/* static */ void DrawEMark (ElementTypePtr, LocationType, LocationType, Boolean);
  static void ClearPad (PadTypePtr, Boolean);
 -static void DrawHole (PinTypePtr);
--static void DrawMask (BoxType *);
++/* static */ void DrawHole (PinTypePtr);
+ static void DrawMask (BoxType *);
 -static void DrawRats (BoxType *);
 -static void DrawSilk (int, int, BoxType *);
-+/* static */ void DrawHole (PinTypePtr);
-+/* static */ void DrawMask (BoxType *);
 +/* static */ void DrawRats (BoxType *);
 +/* static */ void DrawSilk (int, int, BoxType *);
  static int pin_callback (const BoxType * b, void *cl);
@@ -97,15 +93,6 @@ index 4359225..efa905f 100644
  DrawSilk (int new_swap, int layer, BoxTypePtr drawn_area)
  {
  #if 0
-@@ -760,7 +760,7 @@ DrawSilk (int new_swap, int layer, BoxTypePtr drawn_area)
- /* ---------------------------------------------------------------------------
-  * draws solder mask layer - this will cover nearly everything
-  */
--static void
-+/* static */ void
- DrawMask (BoxType * screen)
- {
-   struct pin_info info;
 @@ -817,7 +817,7 @@ DrawMask (BoxType * screen)
  #endif
  }
@@ -170,10 +157,10 @@ index 4359225..efa905f 100644
  {
    int min_silk_line;
 diff --git a/src/draw.h b/src/draw.h
-index 47c4c7f..0acb0cb 100644
+index 47c4c7f..d7a2774 100644
 --- a/src/draw.h
 +++ b/src/draw.h
-@@ -75,6 +75,18 @@ void EraseObject (int, void *, void *);
+@@ -75,6 +75,19 @@ void EraseObject (int, void *, void *);
  void LoadBackgroundImage (char *);
  void UpdateAll (void);
  
@@ -184,9 +171,10 @@ index 47c4c7f..0acb0cb 100644
 +void DrawRegularText (LayerTypePtr, TextTypePtr, int);
 +void DrawEMark (ElementTypePtr, LocationType, LocationType, Boolean);
 +void DrawHole (PinTypePtr);
-+void DrawMask (BoxType *);
 +void DrawRats (BoxType *);
 +void DrawSilk (int, int, BoxType *);
++void DrawSpecialPolygon (HID * hid, hidGC DrawGC, LocationType X, LocationType Y, int Thickness);
++
 +/* TEMPORARY */
 +
  /*GdkDrawable *draw_get_current_drawable(void);*/
@@ -370,10 +358,18 @@ index 27b7721..2abd05a 100644
  void
  ghid_set_color (hidGC gc, const char *name)
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index d005136..3dfd9ac 100644
+index d005136..efed6ef 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -961,6 +961,13 @@ ghid_screen_update (void)
+@@ -46,6 +46,7 @@
+ #include "error.h"
+ #include "misc.h"
+ #include "set.h"
++#include "rtree.h"
+ #include "snavi.h"
+ #include "gui-trackball.h"
+ 
+@@ -961,6 +962,13 @@ ghid_screen_update (void)
  void DrawAttached (Boolean);
  void draw_grid (BoxTypePtr drawn_area);
  
@@ -381,13 +377,13 @@ index d005136..3dfd9ac 100644
 +{
 +  Boolean arg;
 +  LayerTypePtr Layer;
-+  BoxTypePtr drawn_area;
++  const BoxType *drawn_area;
 +};
 +
  void
  ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata)
  {
-@@ -991,6 +998,629 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
+@@ -991,6 +999,629 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
    ghid_invalidate_all ();
  }
  
@@ -487,10 +483,10 @@ index d005136..3dfd9ac 100644
 +static int
 +hole_callback (const BoxType * b, void *cl)
 +{
++#if 0
 +  PinTypePtr pin = (PinTypePtr) b;
 +  int plated = cl ? *(int *) cl : -1;
 +
-+#if 0
 +  switch (plated)
 +    {
 +    case -1:
@@ -539,7 +535,7 @@ index d005136..3dfd9ac 100644
 +}
 +
 +static void
-+DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, BoxTypePtr drawn_area)
++DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *drawn_area)
 +{
 +  static char *color;
 +
@@ -865,13 +861,13 @@ index d005136..3dfd9ac 100644
 +  PinTypePtr Pin = (PinTypePtr) b;
 +  struct cyl_info *info = cl;
 +  DrawDrillChannel (Pin->X, Pin->Y, Pin->DrillingHole / 2, info->from_layer, info->to_layer, info->scale);
++  return 0;
 +}
 +
 +void
 +ghid_draw_everything (BoxTypePtr drawn_area)
 +{
-+  int i, ngroups, side;
-+  int plated;
++  int i, ngroups;
 +  /* This is the list of layer groups we will draw.  */
 +  int do_group[MAX_LAYER];
 +  /* This is the reverse of the order in which we draw them.  */
@@ -1017,7 +1013,7 @@ index d005136..3dfd9ac 100644
  
  #define Z_NEAR 3.0
  gboolean
-@@ -1066,8 +1696,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1066,8 +1697,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1028,7 +1024,7 @@ index d005136..3dfd9ac 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1159,7 +1789,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1159,7 +1790,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
  
@@ -1038,7 +1034,7 @@ index d005136..3dfd9ac 100644
  
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
-@@ -1198,6 +1829,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1198,6 +1830,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
  
@@ -1046,3 +1042,16 @@ index d005136..3dfd9ac 100644
 +
    return FALSE;
  }
+ 
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index aa5a6c1..81e0c09 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -561,6 +561,7 @@ GdkPixmap *ghid_render_pixmap (int cx,
+ /* gtkhid-main.c */
+ 
+ void ghid_invalidate_all ();
++void ghid_global_alpha_mult (hidGC gc, double alpha_mult);
+ void ghid_invalidate_current_gc ();
+ void ghid_get_coords (const char *msg, int *x, int *y);
+ gint PCBChanged (int argc, char **argv, int x, int y);
