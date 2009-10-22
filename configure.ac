@@ -347,9 +347,16 @@ AC_MSG_CHECKING([for whether to use GL drawing])
 AC_ARG_ENABLE([gl],
 [  --enable-gl           Enable GL drawing (with GTK HID)],
 [],[enable_gl=no])
-
 AC_MSG_RESULT([$enable_gl])
 AM_CONDITIONAL(USE_GL, test x$enable_gl = xyes)
+
+AC_MSG_CHECKING([for whether to use GDL library])
+AC_ARG_ENABLE([gdl],
+[  --enable-gdl           Enable GDL library (with GTK HID)],
+[],[enable_gdl=no])
+AC_MSG_RESULT([$enable_gdl])
+AM_CONDITIONAL(USE_GDL, test x$enable_gdl = xyes)
+
 
 if test "x$enable_gl" = "xyes"; then
 	case " $with_gui " in
@@ -730,6 +737,16 @@ $GTKGLEXT_PKG_ERRORS])]
 	GTKGLEXT_VER=`$PKG_CONFIG gtkglext-1.0 --modversion`
 	fi
 
+	if test "x$enable_gdl" = "xyes"; then
+		# Check for GDL
+		PKG_CHECK_MODULES(GDL, gdl-1.0, , [AC_MSG_ERROR([
+*** Required version of libgdl (gnome dock library) is not installed - please install first ***
+Please review the following errors:
+$GDL_PKG_ERRORS])]
+		)
+	GDL_VER=`$PKG_CONFIG gdl-1.0 --modversion`
+	fi
+
 	;;
 
       nelma|png )
@@ -977,8 +994,8 @@ AM_CONDITIONAL(DEBUG_BUILD, test x$enable_debug = xyes)
 
 # ------------- Complete set of CFLAGS and LIBS -------------------
 
-CFLAGS="$CFLAGS $X_CFLAGS $DBUS_CFLAGS $GLIB_CFLAGS $GTK_CFLAGS $CAIRO_CFLAGS $GTKGLEXT_CFLAGS"
-LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GLIB_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_LIBS $INTLLIBS $CAIRO_LIBS $GTKGLEXT_LIBS"
+CFLAGS="$CFLAGS $X_CFLAGS $DBUS_CFLAGS $GLIB_CFLAGS $GTK_CFLAGS $CAIRO_CFLAGS $GTKGLEXT_CFLAGS $GDL_CFLAGS"
+LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GLIB_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_LIBS $INTLLIBS $CAIRO_LIBS $GTKGLEXT_LIBS $GDL_LIBS"
 
 
 # if we have gcc then add -Wall
