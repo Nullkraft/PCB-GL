@@ -1,7 +1,7 @@
-Bottom: 096dcdb2cc9f81b757a5eaa94bbf97b9203550f4
-Top:    2bf99ca160e2049065bd347d9ba29588731cfcce
+Bottom: 0838e59588a03651079b2442498a4a5c222f243e
+Top:    d7e62b1d93e7f90118bfbcf7df4f94dc838e1a56
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 04:26:58 +0100
+Date:   2009-10-22 05:19:48 +0100
 
 Playing with stack rendering
 
@@ -9,7 +9,7 @@ Playing with stack rendering
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index f3c5bf5..eb1190e 100644
+index 3dfd9ac..5c8c32c 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -1052,7 +1052,16 @@ SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
