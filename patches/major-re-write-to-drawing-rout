@@ -1,7 +1,7 @@
-Bottom: ce96d591da83d35d7d34480234802873460b17fc
-Top:    6f42c2055847ac9c60d261305192a71cdb794dc1
+Bottom: 229e7874c04f4c437ae8b647dc4a300923185aa3
+Top:    5981bd1c7791b7e1fd425ffae860d1427c2a85f4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 14:44:30 +0100
+Date:   2009-10-22 14:45:50 +0100
 
 Major re-write to drawing routines
 
@@ -179,7 +179,7 @@ index 4359225..4b5c79e 100644
  {
    int min_silk_line;
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 5bf382b..1fee6be 100644
+index 27b7721..2abd05a 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -519,81 +519,99 @@ ghid_invalidate_all ()
@@ -356,12 +356,12 @@ index 5bf382b..1fee6be 100644
  void
  ghid_set_color (hidGC gc, const char *name)
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 1a94356..d104ffe 100644
+index d005136..3dfd9ac 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -961,6 +961,13 @@ ghid_screen_update (void)
  void DrawAttached (Boolean);
- void draw_grid (void);
+ void draw_grid (BoxTypePtr drawn_area);
  
 +struct pin_info
 +{

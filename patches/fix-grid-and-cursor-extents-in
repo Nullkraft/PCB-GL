@@ -1,7 +1,7 @@
-Bottom: 6f42c2055847ac9c60d261305192a71cdb794dc1
-Top:    5981bd1c7791b7e1fd425ffae860d1427c2a85f4
+Bottom: 19290fee9541eb6ae6152b017e1f6a0bb777b82d
+Top:    56d05dad42799ed7cfe921256f5d458c753e227c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 14:44:30 +0100
+Date:   2009-10-22 14:45:47 +0100
 
 Fix grid extents in 3D view
 
@@ -9,7 +9,7 @@ Fix grid extents in 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 1fee6be..2abd05a 100644
+index 5bf382b..27b7721 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -338,7 +338,7 @@ zoom_by (double factor, int x, int y)
@@ -37,19 +37,19 @@ index 1fee6be..2abd05a 100644
      {
        int tmp = x1;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index d104ffe..3dfd9ac 100644
+index 6ffbd90..211adaf 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -959,7 +959,7 @@ ghid_screen_update (void)
+@@ -957,7 +957,7 @@ ghid_screen_update (void)
  }
  
  void DrawAttached (Boolean);
 -void draw_grid (void);
 +void draw_grid (BoxTypePtr drawn_area);
  
- struct pin_info
- {
-@@ -1800,7 +1800,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+ void
+ ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata)
+@@ -1167,7 +1167,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    gui->set_layer (NULL, INDEXOFCURRENT, 0);
    gui->set_layer (NULL, SL_FINISHED, 0);
  
