@@ -2343,62 +2343,40 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
 		       POLYAREA ** aandb, POLYAREA ** aminusb)
 {
   POLYAREA *a = ai, *b = bi;
+  POLYAREA *ac = NULL, *bc = NULL;
   PLINE *p, *holes = NULL;
   jmp_buf e;
-  int code;
+  int code1;
+  int code2;
 
   *aandb = NULL;
   *aminusb = NULL;
 
-  if ((code = setjmp (e)) == 0)
-    {
+  if (!poly_M_Copy0 (&ac, ai) || !poly_M_Copy0 (&bc, bi))
+    return err_no_memory;
 
-#ifdef DEBUG
-      if (!poly_Valid (a))
-	return -1;
-      if (!poly_Valid (b))
-	return -1;
-#endif
-      M_POLYAREA_intersect (&e, a, b, TRUE);
+  /* THESE GO _VERY_ _VERY_ SLOWLY
+   * Since the outer contour is by always piereced by the no-holes dicer,
+   * every contour within is going to be relegated to the hole insersion queue.
+   */
+  code1 = poly_Boolean_free (a, b, aandb, PBO_ISECT); /* OOPS.. NO FAST PATH YET? */
+  code2 = poly_Boolean_free (ac, bc, aminusb, PBO_SUB);
 
-      M_POLYAREA_label (a, b, FALSE);
-      M_POLYAREA_label (b, a, FALSE);
+  if (code1)
+    poly_Free (aandb);
 
-      M_POLYAREA_Collect (&e, a, aandb, &holes, PBO_ISECT, FALSE);
-      InsertHoles (&e, *aandb, &holes);
-      assert (poly_Valid (*aandb));
-      /* delete holes if any left */
-      while ((p = holes) != NULL)
-	{
-	  holes = p->next;
-	  poly_DelContour (&p);
-	}
-      holes = NULL;
-      clear_marks (a);
-      clear_marks (b);
-      M_POLYAREA_Collect (&e, a, aminusb, &holes, PBO_SUB, FALSE);
-      InsertHoles (&e, *aminusb, &holes);
-      poly_Free (&a);
-      poly_Free (&b);
-      assert (poly_Valid (*aminusb));
-    }
-  /* delete holes if any left */
-  while ((p = holes) != NULL)
-    {
-      holes = p->next;
-      poly_DelContour (&p);
-    }
+  if (code2)
+    poly_Free (aminusb);
 
+  if (code1)
+    return code1;
 
-  if (code)
-    {
-      poly_Free (aandb);
-      poly_Free (aminusb);
-      return code;
-    }
+  if (code2)
+    return code2;
+
   assert (!*aandb || poly_Valid (*aandb));
   assert (!*aminusb || poly_Valid (*aminusb));
-  return code;
+  return err_ok;
 }				/* poly_AndSubtract_free */
 
 static inline int
