@@ -542,29 +542,28 @@ CreateNewArcOnLayer (LayerTypePtr Layer,
   return (Arc);
 }
 
-
 /* ---------------------------------------------------------------------------
- * creates a new polygon from the old formats rectangle data
+ * creates a new pour from the old formats rectangle data
  */
-PolygonTypePtr
-CreateNewPolygonFromRectangle (LayerTypePtr Layer,
+PourTypePtr
+CreateNewPourFromRectangle (LayerTypePtr Layer,
 			       LocationType X1, LocationType Y1,
 			       LocationType X2, LocationType Y2,
 			       FlagType Flags)
 {
-  PolygonTypePtr polygon = CreateNewPolygon (Layer, Flags);
-  if (!polygon)
-    return (polygon);
+  PourTypePtr pour = CreateNewPour (Layer, Flags);
+  if (!pour)
+    return (pour);
 
-  CreateNewPointInPolygon (polygon, X1, Y1);
-  CreateNewPointInPolygon (polygon, X2, Y1);
-  CreateNewPointInPolygon (polygon, X2, Y2);
-  CreateNewPointInPolygon (polygon, X1, Y2);
-  SetPolygonBoundingBox (polygon);
-  if (!Layer->polygon_tree)
-    Layer->polygon_tree = r_create_tree (NULL, 0, 0);
-  r_insert_entry (Layer->polygon_tree, (BoxTypePtr) polygon, 0);
-  return (polygon);
+  CreateNewPointInPour (pour, X1, Y1);
+  CreateNewPointInPour (pour, X2, Y1);
+  CreateNewPointInPour (pour, X2, Y2);
+  CreateNewPointInPour (pour, X1, Y2);
+  SetPourBoundingBox (pour);
+  if (!Layer->pour_tree)
+    Layer->pour_tree = r_create_tree (NULL, 0, 0);
+  r_insert_entry (Layer->pour_tree, (BoxTypePtr) pour, 0);
+  return (pour);
 }
 
 /* ---------------------------------------------------------------------------
@@ -602,9 +601,9 @@ CreateNewText (LayerTypePtr Layer, FontTypePtr PCBFont,
  * creates a new polygon on a layer
  */
 PolygonTypePtr
-CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
+CreateNewPolygonInPour (PourType *pour, FlagType Flags)
 {
-  PolygonTypePtr polygon = GetPolygonMemory (Layer);
+  PolygonTypePtr polygon = GetPolygonMemoryInPour (pour);
 
   /* copy values */
   polygon->Flags = Flags;
@@ -612,17 +611,40 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
   polygon->Clipped = NULL;
   polygon->NoHoles = NULL;
   polygon->NoHolesValid = 0;
+  polygon->ParentPour = pour;
   return (polygon);
 }
 
 /* ---------------------------------------------------------------------------
- * creates a new point in a polygon
+ * creates a new pour on a layer
+ */
+PourTypePtr
+CreateNewPour (LayerTypePtr Layer, FlagType Flags)
+{
+  PourTypePtr pour = GetPourMemory (Layer);
+
+  /* copy values */
+  pour->Flags = Flags;
+  pour->ID = ID++;
+
+  pour->PointN = 0;
+  pour->PointMax = 0;
+  pour->Points = NULL;
+  pour->PolygonN = 0;
+  pour->PolygonMax = 0;
+  pour->Polygons = NULL;
+
+  return (pour);
+}
+
+/* ---------------------------------------------------------------------------
+ * creates a new point in a pour
  */
 PointTypePtr
-CreateNewPointInPolygon (PolygonTypePtr Polygon, LocationType X,
+CreateNewPointInPour (PourTypePtr Pour, LocationType X,
 			 LocationType Y)
 {
-  PointTypePtr point = GetPointMemoryInPolygon (Polygon);
+  PointTypePtr point = GetPointMemoryInPour (Pour);
 
   /* copy values */
   point->X = X;
