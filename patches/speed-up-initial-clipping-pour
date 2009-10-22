@@ -1,7 +1,7 @@
-Bottom: 3b6d09150f911a2a35ae77e81b99184a66508a43
-Top:    003fcb03a229822580045929c441ef59088d718f
+Bottom: 777b00958ca87d13b9f9bcbb503689bc2609f86d
+Top:    bdaa90acc6ce5ba3043f4bbb2bed37efede00899
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 22:13:05 +0100
+Date:   2009-10-22 22:55:07 +0100
 
 Speed up initial clipping (pours version of what we had before)
 
@@ -9,7 +9,7 @@ Speed up initial clipping (pours version of what we had before)
 ---
 
 diff --git a/src/pour.c b/src/pour.c
-index b461564..d2846b3 100644
+index 48f1aae..5ae1384 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -455,12 +455,14 @@ struct cpInfo
