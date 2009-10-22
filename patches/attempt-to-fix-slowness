@@ -1,7 +1,7 @@
-Bottom: 09b860c62c6f4c145795a52cfd2c926c17429805
-Top:    ce5a0219d049100eff0b2e3765683a2da509e26d
+Bottom: 3d5e9ad354c82e6a5dd0f73ba73625695e5e6363
+Top:    8b546acc829b05925a2899822e52cbe1eb814bd0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 01:24:27 +0100
+Date:   2009-10-22 02:16:51 +0100
 
 Attempt to fix polygon slowness by avoiding full recreation for each operation
 
@@ -24,7 +24,7 @@ exact cases cause them.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index d9f96f4..9f3a33b 100644
+index 7c21e80..a4e3996 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -1065,6 +1065,18 @@ cntr_label_POLYAREA (PLINE * poly, POLYAREA * ppl, BOOLp test)
@@ -46,7 +46,7 @@ index d9f96f4..9f3a33b 100644
  M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
  {
    POLYAREA *a = afst;
-@@ -1580,7 +1592,8 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+@@ -1592,7 +1604,8 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
  	      PutContour (e, tmprev, contours, holes, owner, NULL, NULL);
  	      return TRUE;
  	    }
@@ -56,7 +56,7 @@ index d9f96f4..9f3a33b 100644
  	case PBO_UNITE:
  	case PBO_SUB:
  	  if ((*A)->Flags.status == OUTSIDE)
-@@ -1654,6 +1667,179 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
+@@ -1666,6 +1679,179 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
  }
  
  
@@ -236,7 +236,7 @@ index d9f96f4..9f3a33b 100644
  static void
  M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
  		    PLINE ** holes, int action, BOOLp maybe)
-@@ -1746,6 +1932,7 @@ int
+@@ -1758,6 +1944,7 @@ int
  poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
  {
    POLYAREA *a = ai, *b = bi;
@@ -244,7 +244,7 @@ index d9f96f4..9f3a33b 100644
    PLINE *p, *holes = NULL;
    jmp_buf e;
    int code;
-@@ -1790,18 +1977,29 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -1802,18 +1989,29 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        assert (poly_Valid (b));
  #endif
  
