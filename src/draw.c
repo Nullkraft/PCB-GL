@@ -309,6 +309,10 @@ hole_callback (const BoxType * b, void *cl)
 {
   PinTypePtr pin = (PinTypePtr) b;
   int plated = cl ? *(int *) cl : -1;
+
+  if (!TEST_FLAG (SQUAREFLAG,pin))
+    return;
+
   switch (plated)
     {
     case -1:
@@ -371,6 +375,30 @@ PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
 	    swap_ident ? SOLDER_LAYER : COMPONENT_LAYER,
 	    drawn_area);
   SWAP_IDENT = save_swap;
+}
+
+static int
+via_callback (const BoxType * b, void *cl)
+{
+  PinTypePtr via = (PinTypePtr) b;
+  DrawPlainVia (via, False);
+  return 1;
+}
+
+static int
+pin_callback (const BoxType * b, void *cl)
+{
+  DrawPlainPin ((PinTypePtr) b, False);
+  return 1;
+}
+
+static int
+pad_callback (const BoxType * b, void *cl)
+{
+  PadTypePtr pad = (PadTypePtr) b;
+  if (FRONT (pad))
+    DrawPad (pad, 0);
+  return 1;
 }
 
 /* ---------------------------------------------------------------------------
@@ -461,6 +489,20 @@ DrawEverything (BoxTypePtr drawn_area)
 		}
 	    }
 	  gui->set_layer (NULL, SL (FINISHED, 0), 0);
+	  if (gui->gui) {
+            /* draw element pins */
+            if (PCB->PinOn || doing_assy)
+              {
+                r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
+//                r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
+              }
+            /* draw vias */
+            if (PCB->ViaOn || doing_assy)
+              {
+                r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
+//                r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
+              }
+          }
 	}
     }
   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
@@ -468,7 +510,14 @@ DrawEverything (BoxTypePtr drawn_area)
 
   /* Draw pins, pads, vias below silk */
   if (gui->gui)
-    DrawTop (drawn_area);
+    {
+      if (!Settings.ShowSolderSide)
+        gui->set_layer ("topsilk", SL (SILK, TOP), 0);
+      else
+        gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0);
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+      DrawTop (drawn_area);
+    }
   else
     {
       HoleCountStruct hcs;
@@ -627,30 +676,6 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
   
 }
 
-static int
-via_callback (const BoxType * b, void *cl)
-{
-  PinTypePtr via = (PinTypePtr) b;
-  DrawPlainVia (via, False);
-  return 1;
-}
-
-static int
-pin_callback (const BoxType * b, void *cl)
-{
-  DrawPlainPin ((PinTypePtr) b, False);
-  return 1;
-}
-
-static int
-pad_callback (const BoxType * b, void *cl)
-{
-  PadTypePtr pad = (PadTypePtr) b;
-  if (FRONT (pad))
-    DrawPad (pad, 0);
-  return 1;
-}
-
 /* ---------------------------------------------------------------------------
  * draws pins pads and vias
  */
@@ -668,10 +693,10 @@ DrawTop (const BoxType * screen)
   if (PCB->ViaOn || doing_assy)
     {
       r_search (PCB->Data->via_tree, screen, NULL, via_callback, NULL);
-      r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
+//      r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
     }
   if (PCB->PinOn || doing_assy)
-    r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
+      r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
 }
 
 struct pin_info
@@ -1100,7 +1125,12 @@ DrawPinOrViaLowLevel (PinTypePtr Ptr, Boolean drawHole)
 	}
       else
 	{
-	  gui->fill_circle (Output.fgGC, Ptr->X, Ptr->Y, Ptr->Thickness / 2);
+	  gui->set_line_cap (Output.fgGC, Round_Cap);
+	  gui->set_line_width (Output.fgGC, (Ptr->Thickness - Ptr->DrillingHole) / 2);
+	  gui->draw_arc (Output.fgGC, Ptr->X, Ptr->Y,
+			 (Ptr->Thickness + Ptr->DrillingHole) / 4,
+                         (Ptr->Thickness + Ptr->DrillingHole) / 4, 0, 360);
+//          gui->fill_circle (Output.fgGC, Ptr->X, Ptr->Y, Ptr->Thickness / 2);
 	}
     }
 
