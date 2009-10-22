@@ -2119,6 +2119,117 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
   } while ((a = anext), *pieces != NULL && !finished);
 }
 
+#if 0
+static void
+M_POLYAREA_update_primary_old (jmp_buf * e, POLYAREA ** pieces,
+                           PLINE ** holes, PLINE ** isected, int action)
+{
+  POLYAREA *a = *pieces;
+  POLYAREA *anext;
+  PLINE *curc, *next, *prev;
+  int inv_inside = 0;
+  int del_inside = 0;
+  int del_outside = 0;
+  int finished;
+
+  if (a == NULL)
+    return;
+
+  switch (action) {
+    case PBO_ISECT:
+      del_outside = 1;
+      break;
+    case PBO_UNITE:
+      del_inside = 1;
+      break;
+    case PBO_SUB:
+      del_inside = 1;
+      break;
+    case PBO_XOR: /* NOT IMPLEMENTED OR USED */
+      inv_inside = 1;
+      break;
+  }
+
+  /* now the non-intersect parts are collected in temp/holes */
+  do {
+    int hole_contour = 0;
+    int is_outline = 1;
+
+    anext = a->f;
+    finished = (anext == *pieces);
+
+    prev = NULL;
+    for (curc = a->contours; curc != NULL; curc = next, is_outline = 0) {
+      int is_first = contour_is_first (a, curc);
+      int is_last = contour_is_last (curc);
+
+      int del_contour = 0;
+      int inv_contour = 0;
+      int isect_contour = 0;
+
+      next = curc->next;
+
+      switch (curc->Flags.status) {
+        case ISECTED:
+          isect_contour = 1;
+          break;
+        case INSIDE:
+          if (del_inside) del_contour = 1;
+          if (inv_inside) inv_contour = 1;
+          break;
+        case OUTSIDE:
+          if (del_outside) del_contour = 1;
+          break;
+      }
+
+      /* Reset the intersection flags, since we keep these pieces */
+      if (curc->Flags.status != ISECTED)
+        curc->Flags.status = UNKNWN;
+
+      if (del_contour || isect_contour || hole_contour) {
+
+        remove_contour (a, prev, curc, !(is_first && is_last));
+
+        if (del_contour) {
+          /* Delete the contour */
+          poly_DelContour (&curc); /* NB: Sets curc to NULL */
+        } else if (isect_contour) {
+          /* Link into the list of intersected contours */
+          curc->next = *isected;
+          *isected = curc;
+        } else if (hole_contour) {
+          /* Link into the list of holes */
+          curc->next = *holes;
+          *holes = curc;
+        } else {
+          assert (0);
+        }
+
+        if (is_first && is_last) {
+          remove_polyarea (pieces, a);
+          poly_Free (&a); /* NB: Sets a to NULL */
+        }
+
+      } else {
+        /* Note the item we just didn't delete as the next
+           candidate for having its "next" pointer adjusted.
+           Saves walking the contour list when we delete one. */
+        prev = curc;
+      }
+
+      /* If we move or delete an outer contour, we need to move any holes
+         we wish to keep within that contour to the holes list. */
+      if (is_outline && (del_contour || isect_contour))
+        hole_contour = 1;
+
+    }
+
+    /* If we deleted all the pieces of the polyarea, *pieces is NULL */
+  } while ((a = anext), *pieces != NULL && !finished);
+}
+#endif
+
+
 static void
 M_POLYAREA_Collect_separated (jmp_buf * e, PLINE * afst, POLYAREA ** contours,
                               PLINE ** holes, int action, BOOLp maybe)
@@ -2273,15 +2384,60 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
       assert (poly_Valid (b));
 #endif
 
+#if 0
+/* SANITY CHECK */
+  {
+    POLYAREA *apa;
+    PLINE *curc;
+
+    apa = a;
+    do {
+      for (curc = apa->contours; curc != NULL; curc = curc->next) {
+        if (curc->Flags.status != UNKNWN) {
+          curc->Flags.status = UNKNWN;
+          printf ("SOMETHING DIDN'T CLEAR THE FLAGS\n");
+        }
+      }
+      /* If we deleted all the pieces of the polyarea, *pieces is NULL */
+    } while ((apa = apa->f) != a);
+  }
+  {
+    POLYAREA *apa = a;
+    PLINE *curc;
+    do {
+      int count = 0;
+      for (curc = apa->contours; curc != NULL; curc = curc->next)
+        count ++;
+      if (apa->contour_tree->size != count)
+        printf ("A: Contour rtree has %i elements, counted %i\n",
+                apa->contour_tree->size, count);
+    } while ((apa = apa->f) != a);
+  }
+  {
+    POLYAREA *bpa = b;
+    PLINE *curc;
+    do {
+      int count = 0;
+      for (curc = bpa->contours; curc != NULL; curc = curc->next)
+        count ++;
+      if (bpa->contour_tree->size != count)
+        printf ("B: Contour rtree has %i elements, counted %i\n",
+                bpa->contour_tree->size, count);
+    } while ((bpa = bpa->f) != b);
+  }
+/* END SANITY CHECK */
+#endif
+
       /* intersect needs to make a list of the contours in a and b which are intersected */
       M_POLYAREA_intersect (&e, a, b, TRUE);
 
       /* We could speed things up a lot here if we only processed the relevant contours */
-      /* NB: Relevant parts of a are labeled below */
+//      M_POLYAREA_label (a, b, FALSE);
       M_POLYAREA_label (b, a, FALSE);
 
       *res = a;
       M_POLYAREA_update_primary (&e, res, &holes, action, b);
+//      M_POLYAREA_update_primary_old (&e, res, &holes, &a_isected, action);
       M_POLYAREA_separate_isected (&e, res, &holes, &a_isected);
       M_POLYAREA_label_separated (a_isected, b, FALSE);
       M_POLYAREA_Collect_separated (&e, a_isected, res, &holes, action, FALSE);
