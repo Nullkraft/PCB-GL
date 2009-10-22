@@ -791,54 +791,22 @@ struct cpInfo
   LayerType *layer;
   PolygonType *polygon;
   Boolean solder;
-  POLYAREA *accumulate;
   jmp_buf env;
 };
 
 static int
 pin_sub_callback (const BoxType * b, void *cl)
 {
-  static int counter = 0;
   PinTypePtr pin = (PinTypePtr) b;
   struct cpInfo *info = (struct cpInfo *) cl;
   PolygonTypePtr polygon;
-  POLYAREA *np;
-  POLYAREA *merged;
-  Cardinal i;
 
   /* don't subtract the object that was put back! */
   if (b == info->other)
     return 0;
   polygon = info->polygon;
-
-  if (pin->Clearance == 0)
-    return 0;
-  i = GetLayerNumber (info->data, info->layer);
-  if (TEST_THERM (i, pin))
-    {
-      np = ThermPoly ((PCBTypePtr) (info->data->pcb), pin, i);
-      if (!np)
-        return 0;
-    }
-  else
-    {
-      np = PinPoly (pin, pin->Thickness, pin->Clearance);
-      if (!np)
-        return -1;
-    }
-
-  poly_Boolean_free (info->accumulate, np, &merged, PBO_UNITE);
-  info->accumulate = merged;
-
-  counter ++;
-
-  if (counter == 100)
-    {
-      counter = 0;
-      Subtract (info->accumulate, polygon, True);
-      info->accumulate = NULL;
-    }
-
+  if (SubtractPin (info->data, pin, info->layer, polygon) < 0)
+    longjmp (info->env, 1);
   return 1;
 }
 
@@ -883,12 +851,9 @@ pad_sub_callback (const BoxType * b, void *cl)
 static int
 line_sub_callback (const BoxType * b, void *cl)
 {
-  static int counter = 0;
   LineTypePtr line = (LineTypePtr) b;
   struct cpInfo *info = (struct cpInfo *) cl;
   PolygonTypePtr polygon;
-  POLYAREA *np;
-  POLYAREA *merged;
 
   /* don't subtract the object that was put back! */
   if (b == info->other)
@@ -896,22 +861,8 @@ line_sub_callback (const BoxType * b, void *cl)
   if (!TEST_FLAG (CLEARLINEFLAG, line))
     return 0;
   polygon = info->polygon;
-
-  if (!(np = LinePoly (line, line->Thickness + line->Clearance)))
+  if (SubtractLine (line, polygon) < 0)
     longjmp (info->env, 1);
-
-  poly_Boolean_free (info->accumulate, np, &merged, PBO_UNITE);
-  info->accumulate = merged;
-
-  counter ++;
-
-  if (counter == 20)
-    {
-      counter = 0;
-      Subtract (info->accumulate, polygon, True);
-      info->accumulate = NULL;
-    }
-
   return 1;
 }
 
@@ -970,27 +921,21 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
 
   if (setjmp (info.env) == 0)
     {
-      r = 0;
-      info.accumulate = NULL;
-      if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
-	r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
+      r = r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
+      r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
       GROUP_LOOP (Data, group);
       {
         r +=
           r_search (layer->line_tree, &region, NULL, line_sub_callback,
                     &info);
-        Subtract (info.accumulate, polygon, True);
-        info.accumulate = NULL;
         r +=
           r_search (layer->arc_tree, &region, NULL, arc_sub_callback, &info);
 	r +=
           r_search (layer->text_tree, &region, NULL, text_sub_callback, &info);
       }
       END_LOOP;
-      r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
-      r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
-      Subtract (info.accumulate, polygon, True);
-      info.accumulate = NULL;
+      if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
+	r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
     }
   polygon->NoHolesValid = 0;
   return r;
