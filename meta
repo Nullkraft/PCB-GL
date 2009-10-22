@@ -1,36 +1,36 @@
 Version: 1
-Previous: b1fd4c31ca73c4cbb1ec529f5a3af95a5d925887
-Head: daf7d4fbf2815cdac0a5db755a4bd803d2450f21
+Previous: fc34a3b4f88def6abd3334116912bfec8b8411a4
+Head: 0ead224aef1ab750cb150ff75ceff54bf2b699c4
 Applied:
   add-configure-checks-for-gtkgl: 1de8696f4e1758f346d5c4fb680a37a3d168d66c
-  old-debug-code-from-polygon1-c: c7635943ac8bcfbbd7bbc2cc399c3780ca3fbbc3
-  drop-in-pcb-gl-code-various-me: 847b73473b4ddc91f4ce2f7661a79e02012610f6
-  cure-cross-hair-lagging-on-scr: a7c8d5d9788495891509fe5f2ac18c61b12e4580
-  improve-grid-snapping-heuristi: fdd1253b6f84aef6fbab65bf58422552f6edd86a
-  make-rats-snap-to-the-center-o: dd728ab5701936194554185ec89675a73b380f1a
-  only-snap-to-pads-on-the-activ: bb9d7245f099674a02790c01f29fd790098830b3
-  avoid-clearing-pins-vias-from-: 72c8a23986ddf90c074e98e231f6679607102076
-  add-raw-polygons-support-for-t: 47df46e17a66a0d1584f0b366000066b578f5309
-  use-the-opengl-stencil-buffer-: 4b1df82e8e59e89ab5ffe9806a47057dc9f3e9cb
-  draw-c-draw-all-vias-under-the: 9a471284be9092ee3f07e83060aa3ff8363f6d91
-  work-in-progress-on-subcomposi: d0bb8f700c495dfae94cda5a48730710852fc754
-  not-sure-what-this-patch-is-fo: bec34ad39cdac485653a9b60333cb9d633236e64
-  ugly-ugly-hack-to-make-pretty-: de7fe2bc3d910155976169d1f6d2ddc2fbd2a6a3
-  add-virtual-trackball-code: 9e81444edaa648f82bbbd7b248ecc5757a8519ef
-  use-trackball-to-allow-rotatio: 31ed91705b97fb9abe707acb49ce88bc4568c7ce
-  add-support-for-depth-to-trian: 995991a696f5716b3618f2870d60d96449ed99f5
-  clear-pins-and-vias-last-0: 0c1688443ad627ba9c342bc0894a25aad1b0ec56
-  allow-polygons-with-clearlinef: ebd1d409ace123c2c6d97164bc908e3afa4204e2
-  workaround-crash-where-contour: 2380e3237e5fc2bb2189e4889bee7327a39648a9
-  add_pours: 265a7acaf95e8afafa627ba9adbce27dbd077d17
-  speedup_poly_poly_checking: fcfcc4bbb635c43ce6bc9540bce492915109291d
-  add-magic-flag-to-stop-pour-cl: 46401674dbbcd7a47a2a4325a1904529cd910f5e
-  off-to-find-burried-treasure-o: fe72557b07a632e8d7f8035fb7f02cc34a131207
-  fiddle-with-the-order-objects-: 45147a0b80f97fee5193c8f6d830743d5bb8ccc3
-  use-r-trees-to-find-and-remove: 2672da341e0e32275c912ed29f601de854fa01d5
-  improve-poly_andsubtract_free-: 267b3f38ed3ca417488f6fce7f614fd42931ac30
-  gl-use-a-vbo-to-avoid-data-cop: d4bbb1a140d9460a8ddeae6addab380f461c6c2a
-  add-colour-information-to-vbo: daf7d4fbf2815cdac0a5db755a4bd803d2450f21
+  drop-in-pcb-gl-code-various-me: 9507a06478fad0f5e379a1d3e0b6852a45a4fc77
+  cure-cross-hair-lagging-on-scr: 3d4c2f41edbe1fcb630096e4a338fc021aed7219
+  improve-grid-snapping-heuristi: a1d069a3f3925a7d3f0ce246ce78ead4387e2261
+  make-rats-snap-to-the-center-o: 1d322eb9ab0e3effc44665c1bc68af3e615e1fb2
+  only-snap-to-pads-on-the-activ: 1cd9c7a9761a3b2c41b540acca89be64401cdb5a
+  avoid-clearing-pins-vias-from-: ced5956f9816a9b391de00e68820c2dc0a036812
+  add-raw-polygons-support-for-t: e9242cb7521bc22ce78ffd0d8f65c1b1f469e3bd
+  use-the-opengl-stencil-buffer-: 4a6e64b1913425cc80f582535802d0cba059d434
+  draw-c-draw-all-vias-under-the: 14a6cee5a4306baaff453e35759b0bacd2b3cc5a
+  work-in-progress-on-subcomposi: 73b6bc755864a88a7022f3ccf51e36e26664f3b0
+  not-sure-what-this-patch-is-fo: b07079a984eddf34403a33969eee80a6f967b844
+  ugly-ugly-hack-to-make-pretty-: 110d552dfb106cb0a77c26980160238be93abfab
+  add-virtual-trackball-code: b450ac790f34d332559f472bf55d584a0081c4b5
+  use-trackball-to-allow-rotatio: 32491d2df6f82420698d758fe874ab0dc786eda4
+  add-support-for-depth-to-trian: d15565c1c9c29f1b24f5ea5304cbed52dfc2d86f
+  clear-pins-and-vias-last-0: be12e4af287aa2f296e1e707a439793147065240
+  allow-polygons-with-clearlinef: 646b2b1f831cbec45f63bb24c0b3fc15d9efecfd
+  workaround-crash-where-contour: f30ee7e072354b23c60911c9c1b4dcd0b8430dc7
+  add_pours: 7678835a467318c5dc001105dd41cae2e7084aab
+  speedup_poly_poly_checking: 21d80c3e7234b783b2352639c49d76302193c478
+  add-magic-flag-to-stop-pour-cl: c30413dcc97dcbd4e510cf6566b3d02b6eeb078d
+  off-to-find-burried-treasure-o: 935e49e1faa2739f648e5cd8286d4418e303ca91
+  fiddle-with-the-order-objects-: 2a39e80c6bfea83467e7c37df55fc7e385aab735
+  use-r-trees-to-find-and-remove: 9e34b13653092cf9a6accffdf775f4e6f92e760e
+  improve-poly_andsubtract_free-: ac45d5f75ed83e0a05b481d5b18f1d2d7eeae694
+  gl-use-a-vbo-to-avoid-data-cop: 4b90668f86b588b44b1fd65c5e8e5cb3e294f01c
+  add-colour-information-to-vbo: 763f54076e585c6c645e1467c3767ec96acaa25d
+  old-debug-code-from-polygon1-c: 0ead224aef1ab750cb150ff75ceff54bf2b699c4
 Unapplied:
   try-clipping-polygons-to-the-s: e83d04fdfdc2c92e22f0dcca7add2be432e635ce
   try-adding-polygon-objects-aft: 84f102bb5a8c018b07c99f4e8cac40d006e56abb
