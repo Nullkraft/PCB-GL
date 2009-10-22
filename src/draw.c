@@ -88,7 +88,7 @@ static const BoxType *clip_box = NULL;
  */
 static void Redraw (Boolean, BoxTypePtr);
 static void DrawEverything (BoxTypePtr);
-/* static */ void DrawTop (const BoxType *);
+void DrawTop (const BoxType *);
 static int DrawLayerGroup (int, const BoxType *);
 /* static */ void DrawPinOrViaLowLevel (PinTypePtr, Boolean);
 static void ClearOnlyPin (PinTypePtr, Boolean);
@@ -653,7 +653,7 @@ pad_callback (const BoxType * b, void *cl)
 /* ---------------------------------------------------------------------------
  * draws pins pads and vias
  */
-/* static */ void
+static void
 DrawTop (const BoxType * screen)
 {
   if (PCB->PinOn || doing_assy)
