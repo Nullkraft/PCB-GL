@@ -614,7 +614,7 @@ ghid_show_crosshair (gboolean show)
 
   glBegin (GL_LINES);
 
-#if 1
+#if 0
   if (x_prev >= 0)
     {
       draw_crosshair (x_prev, y_prev, z_prev);
@@ -632,7 +632,7 @@ ghid_show_crosshair (gboolean show)
     {
       glBegin (GL_QUADS);
 
-#if 1
+#if 0
       if (x_prev >= 0)
         {
           glVertex3i (0,                  y_prev - VCD,        z_prev);
@@ -1686,10 +1686,12 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 
   glViewport (0, 0, widget->allocation.width, widget->allocation.height);
 
+#if 1
   glEnable (GL_SCISSOR_TEST);
   glScissor (ev->area.x,
              widget->allocation.height - ev->area.height - ev->area.y,
              ev->area.width, ev->area.height);
+#endif
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
