@@ -1,5 +1,5 @@
 Bottom: fd3dbef699c9799898c0f3a273e55db7a03f0cfb
-Top:    864de5a53353f1b93a18f88afb0c30b7de5fa308
+Top:    851bb38f731771c9ae128c958020b42ecec05713
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-22 16:46:25 +0100
 
@@ -60,7 +60,7 @@ index 31eec7d..a759070 100644
  
  # if we have gcc then add -Wall
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 6ad55a1..989a50c 100644
+index 6ad55a1..8b34c17 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -88,6 +88,8 @@ a zoom in/out.
@@ -90,12 +90,12 @@ index 6ad55a1..989a50c 100644
 +  dock = gdl_dock_new ();
 +  gtk_box_pack_start (GTK_BOX (hbox_middle), dock, FALSE, FALSE, 0);
 +  gtk_widget_show (dock);
-+
+ 
 +  tmp = gdl_dock_bar_new (GDL_DOCK (dock));
 +  gdl_dock_bar_set_orientation (GDL_DOCK_BAR (dock), GTK_ORIENTATION_VERTICAL);
 +  gtk_box_pack_start (GTK_BOX (hbox_middle), dock, FALSE, FALSE, 0);
 +  gtk_widget_show (dock);
- 
++
 +#if 1
    /* -- Left control bar */
    ebox = gtk_event_box_new ();
@@ -123,11 +123,3 @@ index 6ad55a1..989a50c 100644
  
    vbox = gtk_vbox_new (FALSE, 0);
    gtk_box_pack_start (GTK_BOX (hbox_middle), vbox, TRUE, TRUE, 0);
-@@ -2304,6 +2330,7 @@ ghid_build_pcb_top_window (void)
-   /* -- The PCB layout output drawing area */
-   viewport = gtk_viewport_new (NULL, NULL);
-   gtk_viewport_set_shadow_type (GTK_VIEWPORT (viewport), GTK_SHADOW_IN);
-+
-   gtk_box_pack_start (GTK_BOX (hbox), viewport, TRUE, TRUE, 0);
- 
-   gport->drawing_area = gtk_drawing_area_new ();
