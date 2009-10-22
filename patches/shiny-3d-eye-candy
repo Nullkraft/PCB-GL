@@ -1,5 +1,5 @@
 Bottom: 57f7e42a132c83ec0f589c6041595d5522f97f36
-Top:    cff43bafeaa4cd7edaf20d6fa784a04eef268e02
+Top:    09461b8e31437d1a43997d13b5091f918ad5eb61
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-22 05:41:06 +0100
 
@@ -471,16 +471,3 @@ index 0237723..1a94356 100644
    draw_grid ();
  
    hidgl_init_triangle_array (&buffer);
-diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
-index 89a3563..fbb89de 100644
---- a/src/hid/gtk/gui-pinout-preview.c
-+++ b/src/hid/gtk/gui-pinout-preview.c
-@@ -211,7 +211,7 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
-   glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
-   glMatrixMode (GL_MODELVIEW);
-   glLoadIdentity ();
--  glTranslatef (0.0f, 0.0f, -Z_NEAR);
-+//  glTranslatef (0.0f, 0.0f, -Z_NEAR);
- 
-   glClearColor (gport->bg_color.red / 65535.,
-                 gport->bg_color.green / 65535.,
