@@ -698,6 +698,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
   gluDeleteTess (info.tobj);
   myFreeCombined ();
   free (info.vertices);
+  printf ("End filling pcb polygon\n");
 }
 
 void

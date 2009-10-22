@@ -265,6 +265,11 @@ ClipOriginal (PolygonType * poly)
   POLYAREA *p, *result;
   int r;
 
+  printf ("Clipping against original contour\n");
+
+  /* Lets not bother for now */
+//  return 1;
+
   p = original_poly (poly);
   r = poly_Boolean_free (poly->Clipped, p, &result, PBO_ISECT);
   if (r != err_ok)
@@ -1101,8 +1106,10 @@ UnsubtractArc (ArcType * arc, LayerType * l, PolygonType * p)
 
   if (!np)
     return 0;
+  printf ("Unsubtract call\n");
   if (!Unsubtract (np, p))
     return 0;
+  printf ("DONE call\n");
   clearPoly (PCB->Data, l, p, (const BoxType *) arc, 2 * UNSUBTRACT_BLOAT);
   return 1;
 }
