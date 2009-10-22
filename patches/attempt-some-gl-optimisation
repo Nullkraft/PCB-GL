@@ -1,7 +1,7 @@
-Bottom: 1a84d1c2a473c78c80ce4742201894980dca1dfa
-Top:    3abbaac932ac04ac1113129ab0363cb0018921eb
+Bottom: 6dc76e1d5fb700a875c0c1c380fe1f69719ecdbc
+Top:    70627e30f35762ca46cf4bc61c7503b817b8cd59
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 05:41:17 +0100
+Date:   2009-10-22 15:42:37 +0100
 
 Attempt some GL optimisation
 
@@ -41,10 +41,10 @@ index 54c2b3b..4489da4 100644
      if (deltay < 0)
        angle += 180.;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 5ab4162..5e4510b 100644
+index 17351fd..f17762c 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1680,6 +1680,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1681,6 +1681,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
