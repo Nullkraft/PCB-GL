@@ -907,7 +907,7 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
           int type, void *ptr1, void *ptr2)
 {
   POLYAREA *np = NULL, *pg = NULL, *tmp, *start_pg;
-  POLYAREA orig_poly;
+  POLYAREA *orig_poly;
   int count, count_all, count_added;
 
   switch (type)
