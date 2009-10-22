@@ -803,7 +803,8 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
 
   if (np == NULL)
     {
-      printf ("Didn't get a POLYAREA to subtract, so bailing\n");
+      mark_islands (Data, layer, pour, type, ptr1, ptr2);
+      // printf ("Didn't get a POLYAREA to subtract, so bailing\n");
       return 0;
     }
 
@@ -854,6 +855,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
     {
       printf ("Hmm, got pg == NULL in subtract_plow\n");
       poly_Free (&np);
+      mark_islands (Data, layer, pour, type, ptr1, ptr2);
       return -1;
     }
 
@@ -1057,6 +1059,7 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
   if (np == NULL)
     {
       printf ("Didn't get a POLYAREA to add, so bailing\n");
+      mark_islands (Data, layer, pour, type, ptr1, ptr2);
       return 0;
     }
 
@@ -1067,6 +1070,7 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
   if (np == NULL)
     {
       printf ("POLYAREA to add got clipped away, so bailing\n");
+      mark_islands (Data, layer, pour, type, ptr1, ptr2);
       return 0;
     }
 
@@ -1336,9 +1340,10 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
     case POLYGON_TYPE:
     case POUR_TYPE:
       /* the cast works equally well for lines and arcs */
-      if (!ignore_clearflags &&
-          !TEST_FLAG (CLEARLINEFLAG, (LineTypePtr) ptr2))
-        return 0;
+// NEED TO KEEP GOING FOR POURS
+//      if (!ignore_clearflags &&
+//          !TEST_FLAG (CLEARLINEFLAG, (LineTypePtr) ptr2))
+//        return 0;
       /* silk doesn't plow */
       if (GetLayerNumber (Data, ptr1) >= max_layer)
         return 0;
