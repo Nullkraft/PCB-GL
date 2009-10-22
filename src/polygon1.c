@@ -1156,7 +1156,7 @@ struct polyarea_info
 {
   BoxType BoundingBox;
   POLYAREA *pa;
-}
+};
 
 static int
 heap_it (const BoxType * b, void *cl)
@@ -1190,7 +1190,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
   curc = dest;
   do
     {
-      num_polyareas ++:
+      num_polyareas ++;
     }
   while ((curc = curc->f) != dest);
 
@@ -1202,10 +1202,10 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
   curc = dest;
   do
     {
-      all_pa_info[i].BoundingBox.X1 = (BoxType)curc->contours.xmin;
-      all_pa_info[i].BoundingBox.Y1 = (BoxType)curc->contours.ymin;
-      all_pa_info[i].BoundingBox.X2 = (BoxType)curc->contours.xmax;
-      all_pa_info[i].BoundingBox.Y2 = (BoxType)curc->contours.ymax;
+      all_pa_info[i].BoundingBox.X1 = curc->contours->xmin;
+      all_pa_info[i].BoundingBox.Y1 = curc->contours->ymin;
+      all_pa_info[i].BoundingBox.X2 = curc->contours->xmax;
+      all_pa_info[i].BoundingBox.Y2 = curc->contours->ymax;
       all_pa_info[i].pa = curc;
       r_insert_entry (tree, (const BoxType *) &all_pa_info[i], 0);
     }
