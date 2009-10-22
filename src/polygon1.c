@@ -1244,9 +1244,8 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
       else
 	{
 	  /* link at front of hole list */
-	  tmp = container->next;
+	  curh->next = container->next;
 	  container->next = curh;
-	  curh->next = tmp;
 
           /* Search for which POLYAREA the containing contour belongs to */
           /* FIXME: Perhaps store this information in the heap structure? */
