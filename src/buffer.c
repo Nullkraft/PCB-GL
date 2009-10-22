@@ -379,6 +379,7 @@ MovePolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
   LayerTypePtr lay;
   PolygonTypePtr polygon;
 
+  RestoreToPolygon (Source, POLYGON_TYPE, Layer, Polygon);
   r_delete_entry (Layer->polygon_tree, (BoxTypePtr) Polygon);
   lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
   polygon = GetPolygonMemory (lay);
@@ -395,6 +396,7 @@ MovePolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
   if (!lay->polygon_tree)
     lay->polygon_tree = r_create_tree (NULL, 0, 0);
   r_insert_entry (lay->polygon_tree, (BoxTypePtr) polygon, 0);
+  ClearFromPolygon (Source, POLYGON_TYPE, Layer, Polygon);
   return (polygon);
 }
 
