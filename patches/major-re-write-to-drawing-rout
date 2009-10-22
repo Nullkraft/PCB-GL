@@ -1,5 +1,5 @@
 Bottom: 229e7874c04f4c437ae8b647dc4a300923185aa3
-Top:    5981bd1c7791b7e1fd425ffae860d1427c2a85f4
+Top:    18a148a7a30fc0ee0f7d620670000cc484f13b13
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-22 14:47:23 +0100
 
@@ -9,7 +9,7 @@ Major re-write to drawing routines
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 4359225..4b5c79e 100644
+index 4359225..efa905f 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -76,7 +76,7 @@ FloatPolyType, *FloatPolyTypePtr;
@@ -26,7 +26,7 @@ index 4359225..4b5c79e 100644
  static void Redraw (Boolean, BoxTypePtr);
  static void DrawEverything (BoxTypePtr);
 -static void DrawTop (const BoxType *);
-+/* static */ void DrawTop (const BoxType *);
++void DrawTop (const BoxType *);
  static int DrawLayerGroup (int, const BoxType *);
 -static void DrawPinOrViaLowLevel (PinTypePtr, Boolean);
 +/* static */ void DrawPinOrViaLowLevel (PinTypePtr, Boolean);
@@ -70,15 +70,6 @@ index 4359225..4b5c79e 100644
  DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
  	   Boolean invisible)
  {
-@@ -653,7 +653,7 @@ pad_callback (const BoxType * b, void *cl)
- /* ---------------------------------------------------------------------------
-  * draws pins pads and vias
-  */
--static void
-+/* static */ void
- DrawTop (const BoxType * screen)
- {
-   if (PCB->PinOn || doing_assy)
 @@ -679,7 +679,7 @@ struct pin_info
    LayerTypePtr Layer;
  };
@@ -178,6 +169,29 @@ index 4359225..4b5c79e 100644
  DrawRegularText (LayerTypePtr Layer, TextTypePtr Text, int unused)
  {
    int min_silk_line;
+diff --git a/src/draw.h b/src/draw.h
+index 47c4c7f..0acb0cb 100644
+--- a/src/draw.h
++++ b/src/draw.h
+@@ -75,6 +75,18 @@ void EraseObject (int, void *, void *);
+ void LoadBackgroundImage (char *);
+ void UpdateAll (void);
+ 
++/* TEMPORARY */
++void DrawPinOrViaLowLevel (PinTypePtr, Boolean);
++void DrawPlainPin (PinTypePtr, Boolean);
++void DrawPlainVia (PinTypePtr, Boolean);
++void DrawRegularText (LayerTypePtr, TextTypePtr, int);
++void DrawEMark (ElementTypePtr, LocationType, LocationType, Boolean);
++void DrawHole (PinTypePtr);
++void DrawMask (BoxType *);
++void DrawRats (BoxType *);
++void DrawSilk (int, int, BoxType *);
++/* TEMPORARY */
++
+ /*GdkDrawable *draw_get_current_drawable(void);*/
+ 
+ #endif
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
 index 27b7721..2abd05a 100644
 --- a/src/hid/gtk/gtkhid-main.c
