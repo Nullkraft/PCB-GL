@@ -1,0 +1,40 @@
+Bottom: 9a30d2cd4335a4927efc158b335abb0627301dce
+Top:    a716bb7be8357ae1eebab8a16ba293f34f807e32
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-22 15:13:28 +0100
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index d6558ac..477dfdb 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -88,7 +88,7 @@ static const BoxType *clip_box = NULL;
+  */
+ static void Redraw (Boolean, BoxTypePtr);
+ static void DrawEverything (BoxTypePtr);
+-/* static */ void DrawTop (const BoxType *);
++static void DrawTop (const BoxType *);
+ static int DrawLayerGroup (int, const BoxType *);
+ /* static */ void DrawPinOrViaLowLevel (PinTypePtr, Boolean);
+ static void ClearOnlyPin (PinTypePtr, Boolean);
+@@ -654,7 +654,7 @@ pad_callback (const BoxType * b, void *cl)
+ /* ---------------------------------------------------------------------------
+  * draws pins pads and vias
+  */
+-/* static */ void
++static void
+ DrawTop (const BoxType * screen)
+ {
+   if (PCB->PinOn || doing_assy)
+@@ -781,7 +781,7 @@ DrawSilk (int new_swap, int layer, BoxTypePtr drawn_area)
+ /* ---------------------------------------------------------------------------
+  * draws solder mask layer - this will cover nearly everything
+  */
+-/* static */ void
++static void
+ DrawMask (BoxType * screen)
+ {
+   struct pin_info info;
