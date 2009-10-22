@@ -1,7 +1,7 @@
-Bottom: a6bd09068f112ed811d8527d9062c6715159291b
-Top:    3a517c736c68c77a6d5c408afd8844ba8c606b47
+Bottom: 6ab8e08594f717b9b3690222a73a9d9deebf1b43
+Top:    3b72dc5e978b5919a20c1724e3f8acdd1667e9f0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 03:53:57 +0100
+Date:   2009-10-22 04:35:18 +0100
 
 Add configure checks for GtkGLEext, add to CFLAGS and LIBS
 
@@ -103,10 +103,10 @@ index 0efe7da..31eec7d 100644
  
  # if we have gcc then add -Wall
 diff --git a/src/polygon1.c b/src/polygon1.c
-index bb8f9b1..06fe903 100644
+index 1c6096b..4bc33b2 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2097,6 +2097,117 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -2080,6 +2080,117 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
    } while ((a = anext), *pieces != NULL && !finished);
  }
  
@@ -224,7 +224,7 @@ index bb8f9b1..06fe903 100644
  static void
  M_POLYAREA_Collect_separated (jmp_buf * e, PLINE * afst, POLYAREA ** contours,
                                PLINE ** holes, int action, BOOLp maybe)
-@@ -2250,15 +2361,60 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2233,15 +2344,60 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        assert (poly_Valid (b));
  #endif
  

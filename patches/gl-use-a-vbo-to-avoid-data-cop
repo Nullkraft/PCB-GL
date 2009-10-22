@@ -1,7 +1,7 @@
-Bottom: 48fcc0ad703aab58c494cb2474474a71644ac3b0
-Top:    093dd1f6e0ea9538070a5d4cabc155b816516f59
+Bottom: 193f777e9b707fa5c79644fd0fb3c1a405451359
+Top:    86d88d7a99f7191d8e24cd9854499629c5d2361d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 20:11:04 +0100
+Date:   2009-10-22 04:35:28 +0100
 
 GL: Use a VBO to avoid data-copying
 
@@ -96,10 +96,10 @@ index a3e966f..0598b9c 100644
  
  extern triangle_buffer buffer;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 278dd4a..f0572cd 100644
+index e2c3c80..6d97056 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1161,6 +1161,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1159,6 +1159,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
@@ -111,7 +111,7 @@ index 278dd4a..f0572cd 100644
    draw_grid ();
  
    hidgl_init_triangle_array (&buffer);
-@@ -1181,6 +1186,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1179,6 +1184,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  
    hidgl_flush_triangles (&buffer);
  
@@ -122,10 +122,10 @@ index 278dd4a..f0572cd 100644
    if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
      gdk_gl_drawable_swap_buffers (pGlDrawable);
 diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
-index a086b19..75f4804 100644
+index 89a3563..c0814e9 100644
 --- a/src/hid/gtk/gui-pinout-preview.c
 +++ b/src/hid/gtk/gui-pinout-preview.c
-@@ -238,6 +238,10 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
+@@ -237,6 +237,10 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  

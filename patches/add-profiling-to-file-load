@@ -1,7 +1,7 @@
-Bottom: b213593c0a52cd427223affbe519af614cb06c11
-Top:    ac8f625d0c33c2c0057464a573f59b4d5bedde5f
+Bottom: cbe1d9becabb04f7561ec883ae8ae2a64b47a343
+Top:    cbe1d9becabb04f7561ec883ae8ae2a64b47a343
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 03:12:38 +0100
+Date:   2009-10-22 04:35:19 +0100
 
 Add profiling to file load
 
@@ -23,29 +23,4 @@ Add profiling to file load
 
 ---
 
-diff --git a/src/file.c b/src/file.c
-index b6c67b9..018b272 100644
---- a/src/file.c
-+++ b/src/file.c
-@@ -350,6 +350,10 @@ LoadPCB (char *Filename)
- {
-   PCBTypePtr newPCB = CreateNewPCB (False);
-   Boolean units_mm;
-+  clock_t start, end;
-+  double elapsed;
-+
-+  start = clock();
- 
-   /* new data isn't added to the undo list */
-   if (!ParsePCB (newPCB, Filename))
-@@ -380,6 +384,10 @@ LoadPCB (char *Filename)
- 	  CreateDefaultFont ();
- 	}
- 
-+  end = clock();
-+  elapsed = ((double) (end - start)) / CLOCKS_PER_SEC;
-+  printf ("Loading file %s took %f\n", Filename, elapsed);
-+
-       /* clear 'changed flag' */
-       SetChangedFlag (False);
-       PCB->Filename = MyStrdup (Filename, "LoadPCB()");
+

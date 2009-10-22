@@ -1,7 +1,7 @@
-Bottom: a26c19f67a3bad53ed90bb98c63927bfa5d56bce
-Top:    c53ba3db23fda6427a60df2c214ec92024029989
+Bottom: 53b9fbd6e41a4239a8a837648d4ef0367b573adc
+Top:    bf8357ffef3d7b1b63f7e7dd67bfb56949d2b788
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 21:55:21 +0100
+Date:   2009-10-22 04:35:24 +0100
 
 Add support for a "poured" object.
 
@@ -2615,10 +2615,10 @@ index c6c7458..5ae97c3 100644
    {"removemode", FlagMode, REMOVE_MODE},
    {"rotatemode", FlagMode, ROTATE_MODE},
 diff --git a/src/global.h b/src/global.h
-index a38fe57..7c5be45 100644
+index 4cf489a..d450016 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -238,15 +238,41 @@ typedef struct
+@@ -236,15 +236,41 @@ typedef struct
    void *Element;
  } TextType, *TextTypePtr;
  
@@ -2665,7 +2665,7 @@ index a38fe57..7c5be45 100644
  };
  
  typedef struct			/* holds information about arcs */
-@@ -260,26 +286,25 @@ typedef struct			/* holds information about arcs */
+@@ -258,26 +284,25 @@ typedef struct			/* holds information about arcs */
      Delta;
  } ArcType, *ArcTypePtr;
  
@@ -2701,7 +2701,7 @@ index a38fe57..7c5be45 100644
    Boolean On;			/* visible flag */
    char *Color,			/* color */
     *SelectedColor;
-@@ -563,7 +588,8 @@ typedef struct			/* holds cursor information */
+@@ -561,7 +586,8 @@ typedef struct			/* holds cursor information */
    Boolean On;			/* flag for 'is visible' */
    AttachedLineType AttachedLine;	/* data of new lines... */
    AttachedBoxType AttachedBox;
@@ -2711,7 +2711,7 @@ index a38fe57..7c5be45 100644
    AttachedObjectType AttachedObject;	/* data of attached objects */
    enum crosshair_shape shape; /* shape of crosshair */
  } CrosshairType, *CrosshairTypePtr;
-@@ -678,13 +704,15 @@ typedef struct
+@@ -676,13 +702,15 @@ typedef struct
    void *(*Line) (LayerTypePtr, LineTypePtr);
    void *(*Text) (LayerTypePtr, TextTypePtr);
    void *(*Polygon) (LayerTypePtr, PolygonTypePtr);
@@ -4063,7 +4063,7 @@ index 5186183..6b5b0c4 100644
     {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
     {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/polygon.c b/src/polygon.c
-index 55538e3..de616aa 100644
+index 6632e75..01f0348 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -32,6 +32,8 @@
@@ -4964,7 +4964,7 @@ index 55538e3..de616aa 100644
  
  Boolean
  isects (POLYAREA * a, PolygonTypePtr p, Boolean fr)
-@@ -1727,6 +1072,9 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
+@@ -1711,6 +1056,9 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
  Boolean
  MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
  {
@@ -4974,7 +4974,7 @@ index 55538e3..de616aa 100644
    POLYAREA *p, *start;
    Boolean many = False;
    FlagType flags;
-@@ -1790,6 +1138,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+@@ -1774,6 +1122,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
    inhibit = False;
    IncrementUndoSerialNumber ();
    return many;
@@ -4982,7 +4982,7 @@ index 55538e3..de616aa 100644
  }
  
  void debug_pline (PLINE *pl)
-@@ -1822,9 +1171,9 @@ debug_polygon (PolygonType *p)
+@@ -1806,9 +1155,9 @@ debug_polygon (PolygonType *p)
  {
    int i;
    POLYAREA *pa;
@@ -5036,10 +5036,10 @@ index 2faaa20..4dba4ca 100644
  void RestoreToPolygon(DataType *, int, void *, void *);
  void ClearFromPolygon(DataType *, int, void *, void *);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 8e67445..2f98049 100644
+index 4bc33b2..5caf097 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -858,6 +858,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -857,6 +857,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
  }
  
  static void
@@ -5085,7 +5085,7 @@ index 8e67445..2f98049 100644
  M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  {
    POLYAREA *a = afst, *b = bfst;
-@@ -1104,7 +1143,7 @@ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
+@@ -1103,7 +1142,7 @@ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
  	      return TRUE;
  	  }
      }
@@ -5094,7 +5094,7 @@ index 8e67445..2f98049 100644
    return FALSE;
  }
  
-@@ -2270,7 +2309,8 @@ Touching (POLYAREA * a, POLYAREA * b)
+@@ -2269,7 +2308,8 @@ Touching (POLYAREA * a, POLYAREA * b)
        if (!poly_Valid (b))
  	return -1;
  #endif
@@ -5104,7 +5104,7 @@ index 8e67445..2f98049 100644
  
        if (M_POLYAREA_label (a, b, TRUE))
  	return TRUE;
-@@ -3062,15 +3102,19 @@ inside_sector (VNODE * pn, Vector p2)
+@@ -3060,15 +3100,19 @@ inside_sector (VNODE * pn, Vector p2)
  BOOLp
  poly_ChkContour (PLINE * a)
  {
@@ -5126,7 +5126,7 @@ index 8e67445..2f98049 100644
        do
  	{
  	  if (!node_neighbours (a1, a2) &&
-@@ -3078,21 +3122,22 @@ poly_ChkContour (PLINE * a)
+@@ -3076,21 +3120,22 @@ poly_ChkContour (PLINE * a)
  				    a2->point, a2->next->point, i1, i2)) > 0)
  	    {
  	      if (icnt > 1)
@@ -5154,7 +5154,7 @@ index 8e67445..2f98049 100644
  
  #if 1
  	      /* now check if they are inside each other */
-@@ -3100,11 +3145,11 @@ poly_ChkContour (PLINE * a)
+@@ -3098,11 +3143,11 @@ poly_ChkContour (PLINE * a)
  		  inside_sector (hit1, hit2->next->point) ||
  		  inside_sector (hit2, hit1->prev->point) ||
  		  inside_sector (hit2, hit1->next->point))

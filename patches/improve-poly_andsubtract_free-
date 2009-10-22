@@ -1,7 +1,7 @@
-Bottom: 091cf1ebd800f5b51a70a65f9764af728ae79533
-Top:    48fcc0ad703aab58c494cb2474474a71644ac3b0
+Bottom: 39327f450d2897fa25932154061a3829ed9fc23a
+Top:    193f777e9b707fa5c79644fd0fb3c1a405451359
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-21 20:11:04 +0100
+Date:   2009-10-22 04:35:26 +0100
 
 Improve poly_AndSubtract_free() with similar tricks to poly_Boolean_free()
 
@@ -17,10 +17,10 @@ Improve poly_AndSubtract_free() with similar tricks to poly_Boolean_free()
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 2f98049..2d0c460 100644
+index 5caf097..964e037 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2500,62 +2500,40 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
+@@ -2499,62 +2499,40 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
  		       POLYAREA ** aandb, POLYAREA ** aminusb)
  {
    POLYAREA *a = ai, *b = bi;
