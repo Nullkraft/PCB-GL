@@ -1,5 +1,5 @@
 Bottom: f7a7517b7bea16fcdd79854ff34076df7821d425
-Top:    f7a7517b7bea16fcdd79854ff34076df7821d425
+Top:    fb9939a0f9100b292a698d3c24b719095776c9e2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-22 05:25:21 +0100
 
@@ -10,4 +10,77 @@ Try debugging draw speed
 
 ---
 
-
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index da1aa32..4489da4 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -177,7 +177,6 @@ draw_grid ()
+ 
+   glDisableClientState (GL_VERTEX_ARRAY);
+   glDisable (GL_COLOR_LOGIC_OP);
+-  glFlush ();
+ }
+ 
+ #endif
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 22a1fc8..bb9999e 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -419,7 +419,6 @@ draw_grid (BoxTypePtr drawn_area)
+ 
+   glDisableClientState (GL_VERTEX_ARRAY);
+   glDisable (GL_COLOR_LOGIC_OP);
+-//  glFlush ();
+ }
+ 
+ /* ------------------------------------------------------------ */
+@@ -2166,13 +2165,12 @@ Benchmark (int argc, char **argv, int x, int y)
+     {
+       gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
+       gdk_window_process_updates (gport->drawing_area->window, FALSE);
+-      gdk_display_sync (display);
+       time (&end);
+       i++;
+     }
+   while (end - start < 10);
+ 
+-  printf ("%g redraws per second\n", i / 10.0);
++  printf ("%g redraws per second\n", (double)i / (double)(end-start));
+ 
+   return 0;
+ }
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 5e4510b..8ab100c 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -614,7 +614,7 @@ ghid_show_crosshair (gboolean show)
+ 
+   glBegin (GL_LINES);
+ 
+-#if 1
++#if 0
+   if (x_prev >= 0)
+     {
+       draw_crosshair (x_prev, y_prev, z_prev);
+@@ -632,7 +632,7 @@ ghid_show_crosshair (gboolean show)
+     {
+       glBegin (GL_QUADS);
+ 
+-#if 1
++#if 0
+       if (x_prev >= 0)
+         {
+           glVertex3i (0,                  y_prev - VCD,        z_prev);
+@@ -1686,10 +1686,12 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+ 
+   glViewport (0, 0, widget->allocation.width, widget->allocation.height);
+ 
++#if 1
+   glEnable (GL_SCISSOR_TEST);
+   glScissor (ev->area.x,
+              widget->allocation.height - ev->area.height - ev->area.y,
+              ev->area.width, ev->area.height);
++#endif
+ 
+   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity ();
