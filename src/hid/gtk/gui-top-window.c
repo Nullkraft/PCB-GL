@@ -2330,7 +2330,6 @@ ghid_build_pcb_top_window (void)
   /* -- The PCB layout output drawing area */
   viewport = gtk_viewport_new (NULL, NULL);
   gtk_viewport_set_shadow_type (GTK_VIEWPORT (viewport), GTK_SHADOW_IN);
-
   gtk_box_pack_start (GTK_BOX (hbox), viewport, TRUE, TRUE, 0);
 
   gport->drawing_area = gtk_drawing_area_new ();
