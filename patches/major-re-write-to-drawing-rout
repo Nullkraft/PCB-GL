@@ -1,7 +1,7 @@
-Bottom: 0f1e0eb3d6a821cf900883cebf937fca82c005a8
-Top:    443403048d3530d3f9324ea1e71e2d896dcdb710
+Bottom: 38bb9ef810cc8b2639ff3dd86dc5f1dcb87a8aef
+Top:    cf79b68804cd98de5ff8195ae15e9538a76f5e7b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 20:55:20 +0100
+Date:   2009-10-23 00:36:29 +0100
 
 Major re-write to drawing routines
 
@@ -181,7 +181,7 @@ index 47c4c7f..d7a2774 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 27b7721..2abd05a 100644
+index 9439d28..3f101be 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -519,81 +519,99 @@ ghid_invalidate_all ()
