@@ -1515,7 +1515,7 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
 	 S_Rule s_rule, J_Rule j_rule)
 {
   VNODE *cur, *other;
-  DIRECTION dir = FORW; /* Not sure, but stops valgrind complaining */
+  DIRECTION dir = FORW; /* Initialise to stop valgrind complaining */
 
   cur = &a->head;
   do
@@ -1659,7 +1659,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
 		    PLINE ** holes, int action, BOOLp maybe)
 {
   POLYAREA *a = afst;
-  POLYAREA *parent = NULL; /* Quiet GCC warning */
+  POLYAREA *parent = NULL; /* Quiet compiler warning */
   PLINE **cur, **next, *parent_contour;
 
   assert (a != NULL);
