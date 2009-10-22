@@ -1176,7 +1176,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
   if (dest == NULL)
     error (err_bad_parm);	/* empty contour list */
 
-  /* make an rtree of contours */
+  /* make an rtree of outer contours */
   tree = r_create_tree (NULL, 0, 0);
   curc = dest;
   do
