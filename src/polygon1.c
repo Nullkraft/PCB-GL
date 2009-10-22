@@ -1174,7 +1174,7 @@ static void
 InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
 {
   POLYAREA *curc;
-  PLINE *curh, *container, *tmp;
+  PLINE *curh, *container;
   heap_t *heap;
   rtree_t *tree;
   int i;
