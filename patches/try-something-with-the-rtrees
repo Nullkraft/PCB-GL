@@ -1,5 +1,5 @@
 Bottom: 13ee4ef6dc80ff5e748799b74b3d877de0a34fd8
-Top:    78bf4fbf65192d6495b3d0d171e1a40fc82b93a4
+Top:    7125f7f07015d1cbe41b6ec0158eb62b0a81507d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-22 00:28:18 +0100
 
@@ -58,7 +58,7 @@ index 0c8c0cb..ca69338 100644
        poly_Free (&pa);
        return;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index df7581d..df7e2ee 100644
+index df7581d..1faf196 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -809,31 +809,19 @@ static int
@@ -260,25 +260,33 @@ index df7581d..df7e2ee 100644
  	      return TRUE;
  	    }
  	  break;
-@@ -1605,7 +1626,7 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
+@@ -1605,7 +1626,11 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
  		next = cur;
  		tmp->next = NULL;
  		tmp->Flags.status = UNKNWN;
 -		PutContour (e, tmp, contours, holes, NULL);
-+		PutContour (e, tmp, contours, holes, NULL, NULL, NULL); /* b */
++		/* Strictly we should pass b as the "owner" parameter, but
++		 * since the b POLYAREA is going to be delete anyway, it
++		 * doesn't matter that its contour r-tree gets out of sync.
++		 */
++		PutContour (e, tmp, contours, holes, NULL /* b */, NULL, NULL);
  		break;
  	      case PBO_UNITE:
  		break;		/* nothing to do - already included */
-@@ -1621,7 +1642,7 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
+@@ -1621,7 +1646,11 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
  		next = cur;
  		tmp->next = NULL;
  		tmp->Flags.status = UNKNWN;
 -		PutContour (e, tmp, contours, holes, NULL);
-+		PutContour (e, tmp, contours, holes, NULL, NULL, NULL); /* b */
++		/* Strictly we should pass b as the "owner" parameter, but
++		 * since the b POLYAREA is going to be delete anyway, it
++		 * doesn't matter that its contour r-tree gets out of sync.
++		 */
++		PutContour (e, tmp, contours, holes, NULL /* b */, NULL, NULL);
  		break;
  	      case PBO_ISECT:
  	      case PBO_SUB:
-@@ -1638,7 +1659,8 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+@@ -1638,7 +1667,8 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
  		    PLINE ** holes, int action, BOOLp maybe)
  {
    POLYAREA *a = afst;
@@ -288,7 +296,7 @@ index df7581d..df7e2ee 100644
  
    assert (a != NULL);
    while ((a = a->f) != afst);
-@@ -1646,18 +1668,35 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+@@ -1646,18 +1676,35 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
    do
      {
        if (maybe && a->contours->Flags.status != ISECTED)
@@ -335,7 +343,7 @@ index df7581d..df7e2ee 100644
      }
    while ((a = a->f) != afst);
  }
-@@ -2140,6 +2179,7 @@ poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
+@@ -2140,6 +2187,7 @@ poly_Copy0 (POLYAREA ** dst, const POLYAREA * src)
      *dst = calloc (1, sizeof (POLYAREA));
    if (*dst == NULL)
      return FALSE;
@@ -343,7 +351,7 @@ index df7581d..df7e2ee 100644
  
    return poly_Copy1 (*dst, src);
  }
-@@ -2156,6 +2196,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
+@@ -2156,6 +2204,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
      {
        if (!poly_CopyContour (last, cur))
  	return FALSE;
@@ -351,7 +359,7 @@ index df7581d..df7e2ee 100644
        last = &(*last)->next;
      }
    return TRUE;
-@@ -2215,6 +2256,7 @@ poly_InclContour (POLYAREA * p, PLINE * c)
+@@ -2215,6 +2264,7 @@ poly_InclContour (POLYAREA * p, PLINE * c)
        p->contours->next = c;
        c->next = tmp;
      }
@@ -359,7 +367,7 @@ index df7581d..df7e2ee 100644
    return TRUE;
  }
  
-@@ -2339,6 +2381,7 @@ poly_Init (POLYAREA * p)
+@@ -2339,6 +2389,7 @@ poly_Init (POLYAREA * p)
  {
    p->f = p->b = p;
    p->contours = NULL;
@@ -367,7 +375,7 @@ index df7581d..df7e2ee 100644
  }
  
  POLYAREA *
-@@ -2373,11 +2416,13 @@ poly_Free (POLYAREA ** p)
+@@ -2373,11 +2424,13 @@ poly_Free (POLYAREA ** p)
    for (cur = (*p)->f; cur != *p; cur = (*p)->f)
      {
        poly_FreeContours (&cur->contours);
