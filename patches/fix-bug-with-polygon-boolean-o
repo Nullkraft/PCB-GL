@@ -8,6 +8,9 @@ Fix bug with polygon boolean operation PBO_XOR (I think!)
 If the contour in A is outside of B, it should be kept. It seems
 this case may have been missed.
 
+PCB does not use the PBO_XOR operation, so it is difficult to test
+whether this is correct or not.
+
 
 ---
 
