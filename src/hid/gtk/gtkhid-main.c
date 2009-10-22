@@ -559,6 +559,33 @@ int compute_depth (int group)
   return depth;
 }
 
+/* These calls should be matched as an ignore==1, ignore==0 pair!! */
+/* BUT.. we often call with ingore == 0 without having ignore==1'd */
+void hidgl_hack_ignore_stencil (int ignore)
+{
+  return 0;
+  static GLint ref = 0;
+  static GLuint mask = 0;
+  static int ignored = 0;
+
+  if (ignore)
+    {
+      hidgl_flush_triangles (&buffer);
+      ignored = 1;
+      glPushAttrib (GL_STENCIL_BUFFER_BIT);
+      glGetIntegerv (GL_STENCIL_REF, &ref);
+      glGetIntegerv (GL_STENCIL_VALUE_MASK, (GLint *)&mask);
+      glStencilFunc (GL_ALWAYS, ref, mask);
+    }
+  else if (ignored)
+    {
+      hidgl_flush_triangles (&buffer);
+      ignored = 0;
+      glPopAttrib ();
+//      glStencilFunc (GL_GREATER, ref, mask);
+    }
+}
+
 int
 ghid_set_layer (const char *name, int group, int empty)
 {
