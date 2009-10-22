@@ -1626,11 +1626,7 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
 		next = cur;
 		tmp->next = NULL;
 		tmp->Flags.status = UNKNWN;
-		/* Strictly we should pass b as the "owner" parameter, but
-		 * since the b POLYAREA is going to be delete anyway, it
-		 * doesn't matter that its contour r-tree gets out of sync.
-		 */
-		PutContour (e, tmp, contours, holes, NULL /* b */, NULL, NULL);
+		PutContour (e, tmp, contours, holes, b, NULL, NULL);
 		break;
 	      case PBO_UNITE:
 		break;		/* nothing to do - already included */
@@ -1646,11 +1642,7 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
 		next = cur;
 		tmp->next = NULL;
 		tmp->Flags.status = UNKNWN;
-		/* Strictly we should pass b as the "owner" parameter, but
-		 * since the b POLYAREA is going to be delete anyway, it
-		 * doesn't matter that its contour r-tree gets out of sync.
-		 */
-		PutContour (e, tmp, contours, holes, NULL /* b */, NULL, NULL);
+		PutContour (e, tmp, contours, holes, b, NULL, NULL);
 		break;
 	      case PBO_ISECT:
 	      case PBO_SUB:
