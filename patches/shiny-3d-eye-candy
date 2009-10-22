@@ -1,7 +1,7 @@
-Bottom: 1741028fc6d19b14ce37612baa020e14d5eed14e
-Top:    a0af45e5757e0f4a95d11503170be6ecbf43f2f6
+Bottom: c56ce9add5680a495141aa44f3d44898f671a0d3
+Top:    f07cadd1dcb4e58c6eeaec002316b1ad13cca334
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 05:19:33 +0100
+Date:   2009-10-22 05:40:50 +0100
 
 Shiny 3D eye-candy
 
@@ -152,7 +152,7 @@ index 7e17cb9..0923586 100644
      }
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 5d3e091..1725cc5 100644
+index 2925b26..5bf382b 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -344,6 +344,7 @@ draw_grid ()
@@ -192,7 +192,7 @@ index 5d3e091..1725cc5 100644
        glDrawArrays (GL_POINTS, 0, n);
      }
  
-@@ -531,6 +533,18 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -530,6 +532,18 @@ ghid_set_layer (const char *name, int group, int empty)
    /* Flush out any existing geoemtry to be rendered */
    hidgl_flush_triangles (&buffer);
  

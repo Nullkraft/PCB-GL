@@ -1,7 +1,7 @@
-Bottom: a0af45e5757e0f4a95d11503170be6ecbf43f2f6
-Top:    ceb054b53ed5f27540015730ef410a9a9170ddf7
+Bottom: f07cadd1dcb4e58c6eeaec002316b1ad13cca334
+Top:    8fe30773e7503e8ee654d6f938a4259fdb7aa07c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 05:19:33 +0100
+Date:   2009-10-22 05:40:51 +0100
 
 Major re-write to drawing routines
 
@@ -215,10 +215,10 @@ index 0923586..61551d3 100644
  {
    static char *color;
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 1725cc5..8322376 100644
+index 5bf382b..1fee6be 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -520,81 +520,99 @@ ghid_invalidate_all ()
+@@ -519,81 +519,99 @@ ghid_invalidate_all ()
    gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
  }
  
@@ -378,7 +378,7 @@ index 1725cc5..8322376 100644
    return 0;
  }
  
-@@ -703,9 +721,9 @@ ghid_set_special_colors (HID_Attribute * ha)
+@@ -702,9 +720,9 @@ ghid_set_special_colors (HID_Attribute * ha)
      }
  }
  
