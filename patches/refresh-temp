@@ -1,0 +1,21 @@
+Bottom: 864de5a53353f1b93a18f88afb0c30b7de5fa308
+Top:    851bb38f731771c9ae128c958020b42ecec05713
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-22 19:11:10 +0100
+
+Refresh of gdl
+
+---
+
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 989a50c..8b34c17 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -2330,7 +2330,6 @@ ghid_build_pcb_top_window (void)
+   /* -- The PCB layout output drawing area */
+   viewport = gtk_viewport_new (NULL, NULL);
+   gtk_viewport_set_shadow_type (GTK_VIEWPORT (viewport), GTK_SHADOW_IN);
+-
+   gtk_box_pack_start (GTK_BOX (hbox), viewport, TRUE, TRUE, 0);
+ 
+   gport->drawing_area = gtk_drawing_area_new ();
