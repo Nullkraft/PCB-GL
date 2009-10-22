@@ -1,5 +1,5 @@
 Bottom: fd3dbef699c9799898c0f3a273e55db7a03f0cfb
-Top:    fd3dbef699c9799898c0f3a273e55db7a03f0cfb
+Top:    255ec3c7d08fedbc9593e40092aecc48fd2bccb1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-22 20:40:26 +0100
 
@@ -8,4 +8,211 @@ More polygon work
 
 ---
 
-
+diff --git a/src/polygon.c b/src/polygon.c
+index 3ecf0ac..89a258d 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -239,28 +239,6 @@ original_poly (PolygonType * p)
+   return biggest (np);
+ }
+ 
+-static int
+-ClipOriginal (PolygonType * poly)
+-{
+-  POLYAREA *p, *result;
+-  int r;
+-
+-  p = original_poly (poly);
+-  r = poly_Boolean_free (poly->Clipped, p, &result, PBO_ISECT);
+-  if (r != err_ok)
+-    {
+-      fprintf (stderr, "Error while clipping PBO_ISECT: %d\n", r);
+-      poly_Free (&result);
+-      poly->Clipped = NULL;
+-      if (poly->NoHoles) printf ("Just leaked in ClipOriginal\n");
+-      poly->NoHoles = NULL;
+-      return 0;
+-    }
+-  poly->Clipped = biggest (result);
+-  assert (!poly->Clipped || poly_Valid (poly->Clipped));
+-  return 1;
+-}
+-
+ POLYAREA *
+ RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2)
+ {
+@@ -1000,22 +978,37 @@ static int
+ Unsubtract (POLYAREA * np1, PolygonType * p)
+ {
+   POLYAREA *merged = NULL, *np = np1;
++  POLYAREA *orig_poly, *clipped_np;
+   int x;
+   assert (np);
+   assert (p && p->Clipped);
+-  x = poly_Boolean_free (p->Clipped, np, &merged, PBO_UNITE);
++
++  orig_poly = original_poly (p);
++
++  x = poly_Boolean_free (np, orig_poly, &clipped_np, PBO_ISECT);
++  if (x != err_ok)
++    {
++      fprintf (stderr, "Error while clipping PBO_ISECT: %d\n", x);
++      poly_Free (&clipped_np);
++      goto fail;
++    }
++
++  x = poly_Boolean_free (p->Clipped, clipped_np, &merged, PBO_UNITE);
+   if (x != err_ok)
+     {
+       fprintf (stderr, "Error while clipping PBO_UNITE: %d\n", x);
+       poly_Free (&merged);
+-      p->Clipped = NULL;
+-      if (p->NoHoles) printf ("Just leaked in Unsubtract\n");
+-      p->NoHoles = NULL;
+-      return 0;
++      goto fail;
+     }
+   p->Clipped = biggest (merged);
+   assert (!p->Clipped || poly_Valid (p->Clipped));
+-  return ClipOriginal (p);
++  return 1;
++
++fail:
++  p->Clipped = NULL;
++  if (p->NoHoles) printf ("Just leaked in Unsubtract\n");
++  p->NoHoles = NULL;
++  return 0;
+ }
+ 
+ static int
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 1c6096b..11b09e5 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1859,8 +1859,16 @@ M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
+ 
+       /* If we move or delete an outer contour, we need to move any holes
+          we wish to keep within that contour to the holes list. */
+-      if (is_outline && isect_contour)
++      if (is_outline && isect_contour) {
++        PLINE *cont;
++        int count_holes = 0;
++        for (cont = next; cont != NULL; cont = cont->next)
++          {
++            count_holes ++;
++          }
++        printf ("Smashing outer contour, orphaning %i holes\n", count_holes);
+         hole_contour = 1;
++      }
+ 
+     }
+ 
+@@ -1959,16 +1967,19 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+         /* a->contours now points to the remaining holes */
+         poly_DelContour (&curc);
+ 
++/* Delete any holes inside.. they are not wanted any more */
+         if (a->contours != NULL) {
+           /* Find the end of the list of holes */
++          printf ("Deleteing all holes inside a main contour\n");
++#if 0
+           curc = a->contours;
+           while (curc->next != NULL)
+             curc = curc->next;
+-
+           /* Take the holes and prepend to the holes queue */
+           curc->next = *holes;
+           *holes = a->contours;
+           a->contours = NULL;
++#endif
+         }
+ 
+         remove_polyarea (pieces, a);
+@@ -2183,6 +2194,38 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
+   return poly_Boolean_free (a, b, res, action);
+ }				/* poly_Boolean */
+ 
++static void
++poly_stats (POLYAREA *poly, int *pieces, int *avg_holes, int *max_holes)
++{
++  POLYAREA *cur;
++  int count_holes = 0;
++  int count_all_holes = 0;
++  PLINE *cont;
++
++  *pieces = 0;
++  *max_holes = 0;
++  *avg_holes = 0;
++  if (poly == NULL)
++    return;
++
++  cur = poly;
++  do
++    {
++      (*pieces) ++;
++      count_holes = 0;
++      for (cont = cur->contours->next;
++           cont != NULL; cont = cont->next)
++	{
++          count_holes ++;
++	}
++      *max_holes = MAX (*max_holes, count_holes);
++      count_all_holes += count_holes;
++    }
++  while ((cur = cur->f) != poly);
++
++  *avg_holes = count_all_holes / *pieces;
++}
++
+ /* just like poly_Boolean but frees the input polys */
+ int
+ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2193,6 +2236,16 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+   jmp_buf e;
+   int code;
+ 
++  int num_a_pieces = 0;
++  int num_b_pieces = 0;
++  int num_o_pieces = 0;
++  int avg_a_holes = 0;
++  int avg_b_holes = 0;
++  int avg_o_holes = 0;
++  int max_a_holes = 0;
++  int max_b_holes = 0;
++  int max_o_holes = 0;
++
+   *res = NULL;
+ 
+   if (!a)
+@@ -2233,6 +2286,9 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+       assert (poly_Valid (b));
+ #endif
+ 
++      poly_stats (a, &num_a_pieces, &avg_a_holes, &max_a_holes);
++      poly_stats (b, &num_b_pieces, &avg_b_holes, &max_b_holes);
++
+       /* intersect needs to make a list of the contours in a and b which are intersected */
+       M_POLYAREA_intersect (&e, a, b, TRUE);
+ 
+@@ -2269,6 +2325,21 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+       poly_Free (res);
+       return code;
+     }
++
++  poly_stats (*res, &num_o_pieces, &avg_o_holes, &max_o_holes);
++
++#if 1
++  printf ("PBO_%s, A: P: %i AH: %i MH: %i,\t"
++               "   B: P: %i AH: %i MH: %i,\t"
++               "   O: P: %i AH: %i MH: %i\n",
++              (action == PBO_ISECT) ? "ISECT" :
++               ((action == PBO_UNITE) ? "UNITE" :
++                ((action == PBO_SUB) ? "SUB" : "???")),
++               num_a_pieces, avg_a_holes, max_a_holes,
++               num_b_pieces, avg_b_holes, max_b_holes,
++               num_o_pieces, avg_o_holes, max_o_holes);
++#endif
++
+   assert (!*res || poly_Valid (*res));
+   return code;
+ }				/* poly_Boolean_free */
