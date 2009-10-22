@@ -1,0 +1,14 @@
+Bottom: 54b954e2878106918c9a8b22f23522915099fab7
+Top:    54b954e2878106918c9a8b22f23522915099fab7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-22 04:21:25 +0100
+
+Fix bug with polygon boolean operation PBO_XOR (I think!)
+
+If the contour in A is outside of B, it should be kept. It seems
+this case may have been missed.
+
+
+---
+
+
