@@ -46,6 +46,7 @@
 #include "error.h"
 #include "misc.h"
 #include "set.h"
+#include "snavi.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
@@ -1271,6 +1272,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
       /* Make sure drawing area has keyboard focus when we are in it.
        */
       gtk_widget_grab_focus (out->drawing_area);
+      if (ghidgui->snavi)
+        snavi_set_led (ghidgui->snavi, TRUE);
     }
   ghidgui->in_popup = FALSE;
 
@@ -1378,6 +1381,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
 	    }
 	  g_idle_add (ghid_pan_idle_cb, NULL);
 	}
+      else if (ghidgui->snavi)
+        snavi_set_led (ghidgui->snavi, FALSE);
     }
 
   if(cursor_in_viewport)
@@ -1426,3 +1431,27 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
 
   return TRUE;
 }
+
+void ndof_pan_cb (int dx, int dy, int dz, gpointer data)
+{
+  if (dx || dy)
+    ghid_port_ranges_pan (-gport->zoom * 5 * dx,
+                          -gport->zoom * 5 * dy, TRUE);
+  if (dz)
+    ghid_port_ranges_zoom (gport->zoom * (1.0 - (dz / 100.0)));
+}
+
+void ndof_roll_cb (int dx, int dy, int dz, gpointer data)
+{
+}
+
+void ndof_done_cb (gpointer data)
+{
+}
+
+void ndof_button_cb (int button, int value, gpointer data)
+{
+  if (value == 1)
+    hid_actionl ("SwapSides", (button == 0) ? "V" : "H", NULL);
+}
+
