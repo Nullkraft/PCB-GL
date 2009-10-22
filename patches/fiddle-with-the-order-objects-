@@ -1,5 +1,5 @@
 Bottom: c29916fc8c6050c1adce51f4b066362f99b68c07
-Top:    c29916fc8c6050c1adce51f4b066362f99b68c07
+Top:    e1d8131399c48bec0199ad16f10827fb44304003
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-22 22:57:53 +0100
 
@@ -27,4 +27,21 @@ more complexity to the polygons.
 
 ---
 
-
+diff --git a/src/pour.c b/src/pour.c
+index 5407e8e..10b4c68 100644
+--- a/src/pour.c
++++ b/src/pour.c
+@@ -667,12 +667,12 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
+         r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
+       GROUP_LOOP (Data, group);
+       {
++        r += r_search (layer->pour_tree, &region, NULL, pour_sub_callback, &info);
+         r += r_search (layer->line_tree, &region, NULL, line_sub_callback, &info);
+         subtract_poly (info.accumulate, &info.pg);
+         info.accumulate = NULL;
+         r += r_search (layer->arc_tree,  &region, NULL, arc_sub_callback,  &info);
+         r += r_search (layer->text_tree, &region, NULL, text_sub_callback, &info);
+-        r += r_search (layer->pour_tree, &region, NULL, pour_sub_callback, &info);
+       }
+       END_LOOP;
+       r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
