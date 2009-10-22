@@ -1,7 +1,7 @@
-Bottom: 1741028fc6d19b14ce37612baa020e14d5eed14e
-Top:    a0af45e5757e0f4a95d11503170be6ecbf43f2f6
+Bottom: 613ff9a2ba3895e9d0ac7ac3a34846deed91af12
+Top:    53c349f944d9266c0204b2d42b8afef7b62854d4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 05:18:37 +0100
+Date:   2009-10-22 05:19:05 +0100
 
 Shiny 3D eye-candy
 
@@ -11,10 +11,10 @@ Experiments in progress - don't expect this to work yet!
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 7e17cb9..0923586 100644
+index 4359225..5efb010 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -309,6 +309,10 @@ hole_callback (const BoxType * b, void *cl)
+@@ -308,6 +308,10 @@ hole_callback (const BoxType * b, void *cl)
  {
    PinTypePtr pin = (PinTypePtr) b;
    int plated = cl ? *(int *) cl : -1;
@@ -25,7 +25,7 @@ index 7e17cb9..0923586 100644
    switch (plated)
      {
      case -1:
-@@ -373,6 +377,30 @@ PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
+@@ -372,6 +376,30 @@ PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
    SWAP_IDENT = save_swap;
  }
  
@@ -56,7 +56,7 @@ index 7e17cb9..0923586 100644
  /* ---------------------------------------------------------------------------
   * initializes some identifiers for a new zoom factor and redraws whole screen
   */
-@@ -461,6 +489,20 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -460,6 +488,20 @@ DrawEverything (BoxTypePtr drawn_area)
  		}
  	    }
  	  gui->set_layer (NULL, SL (FINISHED, 0), 0);
@@ -77,7 +77,7 @@ index 7e17cb9..0923586 100644
  	}
      }
    if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
-@@ -468,7 +510,14 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -467,7 +509,14 @@ DrawEverything (BoxTypePtr drawn_area)
  
    /* Draw pins, pads, vias below silk */
    if (gui->gui)
@@ -93,7 +93,7 @@ index 7e17cb9..0923586 100644
    else
      {
        HoleCountStruct hcs;
-@@ -627,30 +676,6 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
+@@ -626,30 +675,6 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
    
  }
  
@@ -124,7 +124,7 @@ index 7e17cb9..0923586 100644
  /* ---------------------------------------------------------------------------
   * draws pins pads and vias
   */
-@@ -668,10 +693,10 @@ DrawTop (const BoxType * screen)
+@@ -667,10 +692,10 @@ DrawTop (const BoxType * screen)
    if (PCB->ViaOn || doing_assy)
      {
        r_search (PCB->Data->via_tree, screen, NULL, via_callback, NULL);
@@ -137,7 +137,7 @@ index 7e17cb9..0923586 100644
  }
  
  struct pin_info
-@@ -1100,7 +1125,12 @@ DrawPinOrViaLowLevel (PinTypePtr Ptr, Boolean drawHole)
+@@ -1077,7 +1102,12 @@ DrawPinOrViaLowLevel (PinTypePtr Ptr, Boolean drawHole)
  	}
        else
  	{
@@ -212,7 +212,7 @@ index 5d3e091..1725cc5 100644
    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
    /* Reset stencil buffer so we can paint anywhere */
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index cf7843f..5d1ad3c 100644
+index 3e14523..53c3480 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -478,16 +478,16 @@ have_crosshair_attachments (void)

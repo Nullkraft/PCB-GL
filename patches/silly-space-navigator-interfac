@@ -1,7 +1,7 @@
-Bottom: 2d4d4b967798ddae9d8141c9eb452ace5fc8883c
-Top:    1741028fc6d19b14ce37612baa020e14d5eed14e
+Bottom: ae905d7dd5f53f00a64f533c252c2382c697b708
+Top:    613ff9a2ba3895e9d0ac7ac3a34846deed91af12
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 05:18:36 +0100
+Date:   2009-10-22 05:19:04 +0100
 
 Silly space navigator interface to allow funky views
 
@@ -12,10 +12,10 @@ Silly space navigator interface to allow funky views
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 6299ac5..716b337 100644
+index 2f92f29..9bc9e22 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -272,7 +272,9 @@ LIBGTK_SRCS = \
+@@ -270,7 +270,9 @@ LIBGTK_SRCS = \
  	hid/gtk/gui-top-window.c \
  	hid/gtk/gui-trackball.c \
  	hid/gtk/gui-trackball.h \
@@ -27,7 +27,7 @@ index 6299ac5..716b337 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index e2c3c80..cf7843f 100644
+index ad85719..3e14523 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -46,6 +46,7 @@
@@ -85,7 +85,7 @@ index e2c3c80..cf7843f 100644
 +}
 +
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index c74e02c..a6397d0 100644
+index 337f9da..3a1276e 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -123,6 +123,7 @@ a zoom in/out.
@@ -96,7 +96,7 @@ index c74e02c..a6397d0 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -2759,6 +2760,12 @@ ghid_do_export (HID_Attr_Val * options)
+@@ -2758,6 +2759,12 @@ ghid_do_export (HID_Attr_Val * options)
    if (stdin_listen)
      ghid_create_listener ();
  
