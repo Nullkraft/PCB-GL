@@ -1,0 +1,22 @@
+Bottom: 09b860c62c6f4c145795a52cfd2c926c17429805
+Top:    7df9b83a2da52497d04fff46a3bc3a34e119497d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-22 01:42:56 +0100
+
+Refresh of try-something-with-the-rtrees
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index d9f96f4..436ecb6 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1176,7 +1176,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+   if (dest == NULL)
+     error (err_bad_parm);	/* empty contour list */
+ 
+-  /* make an rtree of contours */
++  /* make an rtree of outer contours */
+   tree = r_create_tree (NULL, 0, 0);
+   curc = dest;
+   do
