@@ -1,7 +1,7 @@
-Bottom: e034cabb9d12e46020186717d8204f91dbe633a7
-Top:    cb67c357509ea16595782d6cb217f088b59e141d
+Bottom: 3b6d09150f911a2a35ae77e81b99184a66508a43
+Top:    5fb3d6f9d3f8cefdd78e8e70cb7ee3fd7c530b57
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 15:26:25 +0100
+Date:   2009-10-22 21:15:03 +0100
 
 Off to find burried treasure on polygon island
 
@@ -277,7 +277,7 @@ index 699a8a3..d853d3f 100644
      {
        DrawPour (Layer, Pour, 0);
 diff --git a/src/pour.c b/src/pour.c
-index 34f6c01..c727e67 100644
+index b461564..0961944 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -66,7 +66,7 @@ RCSID ("$Id$");
@@ -365,7 +365,7 @@ index 34f6c01..c727e67 100644
            int type, void *ptr1, void *ptr2)
  {
    POLYAREA *np = NULL, *pg = NULL, *tmp, *start_pg;
-@@ -913,22 +948,26 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+@@ -914,22 +949,26 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
      {
      case PIN_TYPE:
      case VIA_TYPE:
@@ -398,7 +398,7 @@ index 34f6c01..c727e67 100644
        break;
      }
  
-@@ -1009,7 +1048,7 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+@@ -1016,7 +1055,7 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
    printf ("After unsubtract, counted %i polygon pieces\n", count);
  #endif
  
@@ -407,7 +407,7 @@ index 34f6c01..c727e67 100644
  
    if (pg == NULL)
      {
-@@ -1050,6 +1089,8 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+@@ -1057,6 +1096,8 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
      }
    while ((pg = tmp) != start_pg);
  
@@ -416,7 +416,7 @@ index 34f6c01..c727e67 100644
  //  printf ("ClearPour counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
  
    return 0;
-@@ -1127,6 +1168,12 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
+@@ -1134,6 +1175,12 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
      }
    while ((pg = tmp) != start_pg);
  
@@ -429,7 +429,7 @@ index 34f6c01..c727e67 100644
    return 1;
  }
  
-@@ -1156,7 +1203,8 @@ int
+@@ -1163,7 +1210,8 @@ int
  PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
             int (*call_back) (DataTypePtr data, LayerTypePtr lay,
                               PourTypePtr poly, int type,
@@ -439,7 +439,7 @@ index 34f6c01..c727e67 100644
  {
    BoxType sb = ((PinTypePtr) ptr2)->BoundingBox;
    int r = 0;
-@@ -1196,8 +1244,10 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1203,8 +1251,10 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
      case ARC_TYPE:
      case TEXT_TYPE:
      case POLYGON_TYPE:
@@ -451,7 +451,7 @@ index 34f6c01..c727e67 100644
          return 0;
        /* silk doesn't plow */
        if (GetLayerNumber (Data, ptr1) >= max_layer)
-@@ -1229,12 +1279,12 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1236,12 +1286,12 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
        {
          PIN_LOOP ((ElementType *) ptr1);
          {
@@ -466,7 +466,7 @@ index 34f6c01..c727e67 100644
          }
          END_LOOP;
        }
-@@ -1254,7 +1304,7 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1261,7 +1311,7 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
  //      printf ("Calling InitPourClip from RestoreToPour\n");
        InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
      }
@@ -475,7 +475,7 @@ index 34f6c01..c727e67 100644
  }
  
  void
-@@ -1268,6 +1318,14 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1275,6 +1325,14 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
  //      printf ("Calling InitPourClip from ClearFromPour\n");
        InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
      }
