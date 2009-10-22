@@ -1,0 +1,97 @@
+Bottom: a6bd09068f112ed811d8527d9062c6715159291b
+Top:    a0fcef33aabac31999c63e17fa8824c9de4448cc
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-22 04:14:22 +0100
+
+Refresh of attempt-to-fix-slowness
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index bb8f9b1..bf63051 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1842,6 +1842,8 @@ M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
+           /* Link into the list of holes */
+           curc->next = *holes;
+           *holes = curc;
++        } else {
++          assert (0);
+         }
+ 
+         if (is_first && is_last) {
+@@ -1915,13 +1917,12 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+       del_outside = 1;
+       break;
+     case PBO_UNITE:
+-      del_inside = 1;
+-      break;
+     case PBO_SUB:
+       del_inside = 1;
+       break;
+     case PBO_XOR: /* NOT IMPLEMENTED OR USED */
+       inv_inside = 1;
++      assert (0);
+       break;
+   }
+ 
+@@ -1935,7 +1936,6 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+     MAKEMAX (box.Y2, b_box->Y2);
+   }
+ 
+-#if 1
+   if (del_inside) {
+ 
+     do {
+@@ -1990,8 +1990,10 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+           /* Returned here! */
+         } else {
+           info.result = NULL;
+-          /* Rtree search, calling back a routine to longjmp back with data about any hole inside the B polygon */
+-          /*   Be sure not to bother jumping back to report the main contour! */
++          /* r-tree search, calling back a routine to longjmp back with
++           * data about any hole inside the B polygon.
++           * NB: Does not jump back to report the main contour!
++           */
+           r_search (a->contour_tree, &box, NULL, find_inside_m_pa, &info);
+ 
+           /* Nothing found? */
+@@ -2015,9 +2017,8 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+ 
+     return;
+   } else {
+-    printf ("Sorry, this isn't optimised for speed.....\n");
++    /* This path isn't optimised for speed */
+   }
+-#endif
+ 
+   do {
+     int hole_contour = 0;
+@@ -2030,27 +2031,10 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+     for (curc = a->contours; curc != NULL; curc = next, is_outline = 0) {
+       int is_first = contour_is_first (a, curc);
+       int is_last = contour_is_last (curc);
+-
+       int del_contour = 0;
+-//      int inv_contour = 0;
+ 
+       next = curc->next;
+ 
+-#if 0
+-      switch (curc->Flags.status) {
+-        case ISECTED:
+-          printf ("Found intersected contour!! BADNESS\n");
+-          break;
+-        case INSIDE:
+-          if (del_inside) del_contour = 1;
+-          if (inv_inside) inv_contour = 1;
+-          break;
+-        case OUTSIDE:
+-          if (del_outside) del_contour = 1;
+-          break;
+-      }
+-#endif
+-
+       if (del_outside)
+         del_contour = curc->Flags.status != ISECTED &&
+                      !cntr_in_M_POLYAREA (curc, bpa, FALSE);
