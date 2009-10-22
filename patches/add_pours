@@ -1,5 +1,5 @@
 Bottom: 6e021def05d6bdffb1c476d52a59475a51dc1af8
-Top:    b0dc8007e66e15480940dd9605948168d87b6acd
+Top:    777b00958ca87d13b9f9bcbb503689bc2609f86d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-22 20:55:30 +0100
 
@@ -5164,7 +5164,7 @@ index 1c6096b..5befd51 100644
    return FALSE;
 diff --git a/src/pour.c b/src/pour.c
 new file mode 100644
-index 0000000..33bd6e0
+index 0000000..48f1aae
 --- /dev/null
 +++ b/src/pour.c
 @@ -0,0 +1,1276 @@
@@ -6077,7 +6077,7 @@ index 0000000..33bd6e0
 +          int type, void *ptr1, void *ptr2)
 +{
 +  POLYAREA *np = NULL, *pg = NULL, *tmp, *start_pg;
-+  POLYAREA orig_poly;
++  POLYAREA *orig_poly;
 +  int count, count_all, count_added;
 +
 +  switch (type)
