@@ -1,5 +1,5 @@
 Bottom: b48dddc04c8e45a3b42ac713a31d3d0cf355bfc1
-Top:    3e7dfb30deaea67ea3400436e4e39b0df85c0731
+Top:    18ba654fcfc02e7d00d708d4b1b3e8a0706a2c7e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-22 05:55:01 +0100
 
@@ -373,7 +373,7 @@ index 5bf382b..1fee6be 100644
  void
  ghid_set_color (hidGC gc, const char *name)
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 5d1ad3c..45dbfce 100644
+index 5d1ad3c..0e1cac2 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -960,6 +960,13 @@ ghid_screen_update (void)
@@ -390,7 +390,7 @@ index 5d1ad3c..45dbfce 100644
  void
  ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata)
  {
-@@ -990,6 +997,629 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
+@@ -990,6 +997,645 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
    ghid_invalidate_all ();
  }
  
@@ -587,6 +587,22 @@ index 5d1ad3c..45dbfce 100644
 +  return 1;
 +}
 +
++static int
++pour_callback (const BoxType * b, void *cl)
++{
++  struct pin_info *i = (struct pin_info *) cl;
++  PourType *pour = (PourType *)b;
++
++  DrawPour (i->Layer, pour, 0);
++
++  if (pour->PolygonN)
++    {
++      r_search (pour->polygon_tree, i->drawn_area, NULL, poly_callback, i);
++    }
++
++  return 1;
++}
++
 +static void
 +DrawPadLowLevelSolid (hidGC gc, PadTypePtr Pad, Boolean clear, Boolean mask)
 +{
@@ -773,10 +789,10 @@ index 5d1ad3c..45dbfce 100644
 +      }
 +
 +      /* draw all polygons on this layer */
-+      if (Layer->PolygonN) {
++      if (Layer->PourN) {
 +        info.Layer = Layer;
 +        info.drawn_area = screen;
-+        r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
++        r_search (Layer->pour_tree, screen, NULL, pour_callback, &info);
 +
 +        /* HACK: Subcomposite polygons separately from other layer primitives */
 +        /* Reset the compositing */
@@ -1020,7 +1036,7 @@ index 5d1ad3c..45dbfce 100644
  
  #define Z_NEAR 3.0
  gboolean
-@@ -1065,8 +1695,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1065,8 +1711,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1031,7 +1047,7 @@ index 5d1ad3c..45dbfce 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1158,7 +1788,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1158,7 +1804,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
  
@@ -1041,7 +1057,7 @@ index 5d1ad3c..45dbfce 100644
  
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
-@@ -1197,6 +1828,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1197,6 +1844,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
  
