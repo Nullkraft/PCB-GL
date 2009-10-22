@@ -1,0 +1,54 @@
+Bottom: 5981bd1c7791b7e1fd425ffae860d1427c2a85f4
+Top:    18a148a7a30fc0ee0f7d620670000cc484f13b13
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-22 14:52:32 +0100
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 4b5c79e..efa905f 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -88,7 +88,7 @@ static const BoxType *clip_box = NULL;
+  */
+ static void Redraw (Boolean, BoxTypePtr);
+ static void DrawEverything (BoxTypePtr);
+-/* static */ void DrawTop (const BoxType *);
++void DrawTop (const BoxType *);
+ static int DrawLayerGroup (int, const BoxType *);
+ /* static */ void DrawPinOrViaLowLevel (PinTypePtr, Boolean);
+ static void ClearOnlyPin (PinTypePtr, Boolean);
+@@ -653,7 +653,7 @@ pad_callback (const BoxType * b, void *cl)
+ /* ---------------------------------------------------------------------------
+  * draws pins pads and vias
+  */
+-/* static */ void
++static void
+ DrawTop (const BoxType * screen)
+ {
+   if (PCB->PinOn || doing_assy)
+diff --git a/src/draw.h b/src/draw.h
+index 47c4c7f..0acb0cb 100644
+--- a/src/draw.h
++++ b/src/draw.h
+@@ -75,6 +75,18 @@ void EraseObject (int, void *, void *);
+ void LoadBackgroundImage (char *);
+ void UpdateAll (void);
+ 
++/* TEMPORARY */
++void DrawPinOrViaLowLevel (PinTypePtr, Boolean);
++void DrawPlainPin (PinTypePtr, Boolean);
++void DrawPlainVia (PinTypePtr, Boolean);
++void DrawRegularText (LayerTypePtr, TextTypePtr, int);
++void DrawEMark (ElementTypePtr, LocationType, LocationType, Boolean);
++void DrawHole (PinTypePtr);
++void DrawMask (BoxType *);
++void DrawRats (BoxType *);
++void DrawSilk (int, int, BoxType *);
++/* TEMPORARY */
++
+ /*GdkDrawable *draw_get_current_drawable(void);*/
+ 
+ #endif
