@@ -1,7 +1,7 @@
-Bottom: 6e021def05d6bdffb1c476d52a59475a51dc1af8
+Bottom: af51e902878407abaf8400267ca823354fe3dfac
 Top:    777b00958ca87d13b9f9bcbb503689bc2609f86d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 20:55:30 +0100
+Date:   2009-10-22 22:56:58 +0100
 
 Add support for a "poured" object.
 
@@ -17,31 +17,6 @@ all child polygons selected. Manipulations will always occur on the
 
 It remains to be seen whether "pour" will have its own file-format entry,
 or if it will take over the meaning of the existing "polygon" entry.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ---
 
@@ -4063,7 +4038,7 @@ index 5186183..6b5b0c4 100644
     {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
     {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/polygon.c b/src/polygon.c
-index d3c16bc..2a9288e 100644
+index 9955885..2a9288e 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -32,6 +32,8 @@
@@ -4163,7 +4138,7 @@ index d3c16bc..2a9288e 100644
  
  /* create a polygon of the pin clearance */
  POLYAREA *
-@@ -689,431 +701,15 @@ BoxPolyBloated (BoxType *box, BDimension bloat)
+@@ -689,486 +701,15 @@ BoxPolyBloated (BoxType *box, BDimension bloat)
                     box->Y1 - bloat, box->Y2 + bloat);
  }
  
@@ -4271,22 +4246,54 @@ index d3c16bc..2a9288e 100644
 -  LayerType *layer;
 -  PolygonType *polygon;
 -  Boolean solder;
+-  POLYAREA *accumulate;
 -  jmp_buf env;
 -};
 -
 -static int
 -pin_sub_callback (const BoxType * b, void *cl)
 -{
+-  static int counter = 0;
 -  PinTypePtr pin = (PinTypePtr) b;
 -  struct cpInfo *info = (struct cpInfo *) cl;
 -  PolygonTypePtr polygon;
+-  POLYAREA *np;
+-  POLYAREA *merged;
+-  Cardinal i;
 -
 -  /* don't subtract the object that was put back! */
 -  if (b == info->other)
 -    return 0;
 -  polygon = info->polygon;
--  if (SubtractPin (info->data, pin, info->layer, polygon) < 0)
--    longjmp (info->env, 1);
+-
+-  if (pin->Clearance == 0)
+-    return 0;
+-  i = GetLayerNumber (info->data, info->layer);
+-  if (TEST_THERM (i, pin))
+-    {
+-      np = ThermPoly ((PCBTypePtr) (info->data->pcb), pin, i);
+-      if (!np)
+-        return 0;
+-    }
+-  else
+-    {
+-      np = PinPoly (pin, pin->Thickness, pin->Clearance);
+-      if (!np)
+-        return -1;
+-    }
+-
+-  poly_Boolean_free (info->accumulate, np, &merged, PBO_UNITE);
+-  info->accumulate = merged;
+-
+-  counter ++;
+-
+-  if (counter == 100)
+-    {
+-      counter = 0;
+-      Subtract (info->accumulate, polygon, True);
+-      info->accumulate = NULL;
+-    }
+-
 -  return 1;
 -}
 -
@@ -4331,9 +4338,12 @@ index d3c16bc..2a9288e 100644
 -static int
 -line_sub_callback (const BoxType * b, void *cl)
 -{
+-  static int counter = 0;
 -  LineTypePtr line = (LineTypePtr) b;
 -  struct cpInfo *info = (struct cpInfo *) cl;
 -  PolygonTypePtr polygon;
+-  POLYAREA *np;
+-  POLYAREA *merged;
 -
 -  /* don't subtract the object that was put back! */
 -  if (b == info->other)
@@ -4341,8 +4351,22 @@ index d3c16bc..2a9288e 100644
 -  if (!TEST_FLAG (CLEARLINEFLAG, line))
 -    return 0;
 -  polygon = info->polygon;
--  if (SubtractLine (line, polygon) < 0)
+-
+-  if (!(np = LinePoly (line, line->Thickness + line->Clearance)))
 -    longjmp (info->env, 1);
+-
+-  poly_Boolean_free (info->accumulate, np, &merged, PBO_UNITE);
+-  info->accumulate = merged;
+-
+-  counter ++;
+-
+-  if (counter == 20)
+-    {
+-      counter = 0;
+-      Subtract (info->accumulate, polygon, True);
+-      info->accumulate = NULL;
+-    }
+-
 -  return 1;
 -}
 -
@@ -4419,13 +4443,17 @@ index d3c16bc..2a9288e 100644
 -
 -  if (setjmp (info.env) == 0)
 -    {
--      r = r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
--      r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
+-      r = 0;
+-      info.accumulate = NULL;
+-      if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
+-	r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
 -      GROUP_LOOP (Data, group);
 -      {
 -        r +=
 -          r_search (layer->line_tree, &region, NULL, line_sub_callback,
 -                    &info);
+-        Subtract (info.accumulate, polygon, True);
+-        info.accumulate = NULL;
 -        r +=
 -          r_search (layer->arc_tree, &region, NULL, arc_sub_callback, &info);
 -	r +=
@@ -4434,8 +4462,10 @@ index d3c16bc..2a9288e 100644
 -          r_search (layer->polygon_tree, &region, NULL, poly_sub_callback, &info);
 -      }
 -      END_LOOP;
--      if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
--	r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
+-      r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
+-      r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
+-      Subtract (info.accumulate, polygon, True);
+-      info.accumulate = NULL;
 -    }
 -  polygon->NoHolesValid = 0;
 -  return r;
@@ -4600,7 +4630,7 @@ index d3c16bc..2a9288e 100644
    if (inhibit)
      return 0;
    if (p->Clipped)
-@@ -1128,205 +724,7 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
+@@ -1183,205 +724,7 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
    else
      p->NoHolesValid = 0;
    return 1;
@@ -4807,7 +4837,7 @@ index d3c16bc..2a9288e 100644
  }
  
  /* find polygon holes in range, then call the callback function for
-@@ -1370,68 +768,14 @@ struct plow_info
+@@ -1425,68 +768,14 @@ struct plow_info
  };
  
  static int
@@ -4882,7 +4912,7 @@ index d3c16bc..2a9288e 100644
    return 0;
  }
  
-@@ -1439,12 +783,10 @@ static int
+@@ -1494,12 +783,10 @@ static int
  plow_callback (const BoxType * b, void *cl)
  {
    struct plow_info *plow = (struct plow_info *) cl;
@@ -4898,7 +4928,7 @@ index d3c16bc..2a9288e 100644
  }
  
  int
-@@ -1471,8 +813,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1526,8 +813,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
            LAYER_LOOP (Data, max_layer);
            {
              info.layer = layer;
@@ -4908,7 +4938,7 @@ index d3c16bc..2a9288e 100644
            }
            END_LOOP;
          }
-@@ -1482,8 +823,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1537,8 +823,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
                                                                           ((LayerTypePtr) ptr1))));
            {
              info.layer = layer;
@@ -4918,7 +4948,7 @@ index d3c16bc..2a9288e 100644
            }
            END_LOOP;
          }
-@@ -1502,7 +842,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1557,7 +842,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
                                                                       ((LayerTypePtr) ptr1))));
        {
          info.layer = layer;
@@ -4927,7 +4957,7 @@ index d3c16bc..2a9288e 100644
        }
        END_LOOP;
        break;
-@@ -1516,7 +856,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1571,7 +856,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
          {
            info.layer = layer;
            r +=
@@ -4936,7 +4966,7 @@ index d3c16bc..2a9288e 100644
          }
          END_LOOP;
        }
-@@ -1540,21 +880,6 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1595,21 +880,6 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
    return r;
  }
  
@@ -4958,7 +4988,7 @@ index d3c16bc..2a9288e 100644
  
  Boolean
  isects (POLYAREA * a, PolygonTypePtr p, Boolean fr)
-@@ -1704,6 +1029,9 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
+@@ -1759,6 +1029,9 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
  Boolean
  MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
  {
@@ -4968,7 +4998,7 @@ index d3c16bc..2a9288e 100644
    POLYAREA *p, *start;
    Boolean many = False;
    FlagType flags;
-@@ -1767,6 +1095,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+@@ -1822,6 +1095,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
    inhibit = False;
    IncrementUndoSerialNumber ();
    return many;
@@ -4976,7 +5006,7 @@ index d3c16bc..2a9288e 100644
  }
  
  void debug_pline (PLINE *pl)
-@@ -1799,9 +1128,9 @@ debug_polygon (PolygonType *p)
+@@ -1854,9 +1128,9 @@ debug_polygon (PolygonType *p)
  {
    int i;
    POLYAREA *pa;
