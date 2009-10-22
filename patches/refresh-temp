@@ -1,0 +1,33 @@
+Bottom: 9d381be1b194c773a0588f11410a1b70ba77add2
+Top:    1850441fc5597a10bd8a4ec8dfe54f251d488e66
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-22 05:40:15 +0100
+
+Refresh of drop-in-pcb-gl-code-various-me
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index e6fe1de..a435629 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -176,7 +176,6 @@ draw_grid ()
+ 
+   glDisableClientState (GL_VERTEX_ARRAY);
+   glDisable (GL_COLOR_LOGIC_OP);
+-  glFlush ();
+ }
+ 
+ #endif
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 6f830fb..e6d1d06 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -417,7 +417,6 @@ draw_grid ()
+ 
+   glDisableClientState (GL_VERTEX_ARRAY);
+   glDisable (GL_COLOR_LOGIC_OP);
+-//  glFlush ();
+ }
+ 
+ /* ------------------------------------------------------------ */
