@@ -1,7 +1,7 @@
-Bottom: 193f777e9b707fa5c79644fd0fb3c1a405451359
-Top:    86d88d7a99f7191d8e24cd9854499629c5d2361d
+Bottom: 946f0c9992c712527a9bb1d04e81ec8a37655065
+Top:    05e1fde98b6cede7e6421a76edcadff5066e7822
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 04:35:28 +0100
+Date:   2009-10-22 04:59:00 +0100
 
 GL: Use a VBO to avoid data-copying
 
@@ -77,7 +77,7 @@ index 52d738a..bdf9429 100644
  
  void
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index a3e966f..0598b9c 100644
+index aa2985e..1005235 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
 @@ -24,10 +24,13 @@

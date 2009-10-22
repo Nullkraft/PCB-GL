@@ -1,36 +1,36 @@
 Version: 1
-Previous: b5ce91c832253ce8ea3ad645c806f519b1948d1c
-Head: c7635943ac8bcfbbd7bbc2cc399c3780ca3fbbc3
+Previous: 7dc756affac1115b28a428e02d67d0cd25815780
+Head: d4bbb1a140d9460a8ddeae6addab380f461c6c2a
 Applied:
   add-configure-checks-for-gtkgl: 1de8696f4e1758f346d5c4fb680a37a3d168d66c
   old-debug-code-from-polygon1-c: c7635943ac8bcfbbd7bbc2cc399c3780ca3fbbc3
+  drop-in-pcb-gl-code-various-me: 847b73473b4ddc91f4ce2f7661a79e02012610f6
+  cure-cross-hair-lagging-on-scr: a7c8d5d9788495891509fe5f2ac18c61b12e4580
+  improve-grid-snapping-heuristi: fdd1253b6f84aef6fbab65bf58422552f6edd86a
+  make-rats-snap-to-the-center-o: dd728ab5701936194554185ec89675a73b380f1a
+  only-snap-to-pads-on-the-activ: bb9d7245f099674a02790c01f29fd790098830b3
+  avoid-clearing-pins-vias-from-: 72c8a23986ddf90c074e98e231f6679607102076
+  add-raw-polygons-support-for-t: 47df46e17a66a0d1584f0b366000066b578f5309
+  use-the-opengl-stencil-buffer-: 4b1df82e8e59e89ab5ffe9806a47057dc9f3e9cb
+  draw-c-draw-all-vias-under-the: 9a471284be9092ee3f07e83060aa3ff8363f6d91
+  work-in-progress-on-subcomposi: d0bb8f700c495dfae94cda5a48730710852fc754
+  not-sure-what-this-patch-is-fo: bec34ad39cdac485653a9b60333cb9d633236e64
+  ugly-ugly-hack-to-make-pretty-: de7fe2bc3d910155976169d1f6d2ddc2fbd2a6a3
+  add-virtual-trackball-code: 9e81444edaa648f82bbbd7b248ecc5757a8519ef
+  use-trackball-to-allow-rotatio: 31ed91705b97fb9abe707acb49ce88bc4568c7ce
+  add-support-for-depth-to-trian: 995991a696f5716b3618f2870d60d96449ed99f5
+  clear-pins-and-vias-last-0: 0c1688443ad627ba9c342bc0894a25aad1b0ec56
+  allow-polygons-with-clearlinef: ebd1d409ace123c2c6d97164bc908e3afa4204e2
+  workaround-crash-where-contour: 2380e3237e5fc2bb2189e4889bee7327a39648a9
+  add_pours: 265a7acaf95e8afafa627ba9adbce27dbd077d17
+  speedup_poly_poly_checking: fcfcc4bbb635c43ce6bc9540bce492915109291d
+  add-magic-flag-to-stop-pour-cl: 46401674dbbcd7a47a2a4325a1904529cd910f5e
+  off-to-find-burried-treasure-o: fe72557b07a632e8d7f8035fb7f02cc34a131207
+  fiddle-with-the-order-objects-: 45147a0b80f97fee5193c8f6d830743d5bb8ccc3
+  use-r-trees-to-find-and-remove: 2672da341e0e32275c912ed29f601de854fa01d5
+  improve-poly_andsubtract_free-: 267b3f38ed3ca417488f6fce7f614fd42931ac30
+  gl-use-a-vbo-to-avoid-data-cop: d4bbb1a140d9460a8ddeae6addab380f461c6c2a
 Unapplied:
-  drop-in-pcb-gl-code-various-me: e0b9e35dc2cb5a0909cead74954f2b2302456aef
-  cure-cross-hair-lagging-on-scr: b53e7f66245851f397e6f407e55f5ba8bb3bfc95
-  improve-grid-snapping-heuristi: 10ce03a5bc350bbb6ec0273505279fd19c42cd93
-  make-rats-snap-to-the-center-o: c738e52eaba263c4c474c15ad9555c445417f6e0
-  only-snap-to-pads-on-the-activ: 02ab4ba2fa68aa5e6053b1838bc7ac53f54e593e
-  avoid-clearing-pins-vias-from-: d51cbdacf96f357b1efdad28a61bf2bfc53a3865
-  add-raw-polygons-support-for-t: 3b6deb459ec53ae9e226b9912ad4f8c0182cfcfb
-  use-the-opengl-stencil-buffer-: 07cf0fb56c529f5d3f05de5fe4777b16b2f1f44e
-  draw-c-draw-all-vias-under-the: 3dee65d257f9e5db6c8141a005806aeb883a8742
-  work-in-progress-on-subcomposi: 1c48c859d6e0da54cd8f05f58cbff40dc9543f01
-  not-sure-what-this-patch-is-fo: ab984b2a2936502eecff2db44b423dd31042d9cd
-  ugly-ugly-hack-to-make-pretty-: 10337b79d41793182abea18f5d1ab045637d5ef2
-  add-virtual-trackball-code: d26efe5e21e936b23c1a7eac1de706ce38e139e6
-  use-trackball-to-allow-rotatio: 543172d2e5fe4117f7a3ecedb53f09b661fa31b3
-  add-support-for-depth-to-trian: 61743da94479328b590403d8a1cf4d98e83c2945
-  clear-pins-and-vias-last-0: 8ea411db080bf8b347a3c90afbbdb6549be79306
-  allow-polygons-with-clearlinef: b775f8de4c3dbd518db2bd7d5ecf6345cbdf5d5e
-  workaround-crash-where-contour: 69650225bc0cc7976c76ebea0f55cc58155a70b4
-  add_pours: 5d06f1d82c4b785ca795a7cdc1e45b1bcb87d372
-  speedup_poly_poly_checking: 5195cf762b53c61243336f03ad46fa8a31c173cd
-  add-magic-flag-to-stop-pour-cl: a362a5d723e509b6ef745ff5ecac7ee09dcf0b2b
-  off-to-find-burried-treasure-o: 1d2eee6546daf9161f6b9e2dcee2bb2c8dcf6e78
-  fiddle-with-the-order-objects-: 6f6a4a2883c646d8dcc5ff066cc75f3e9935148d
-  use-r-trees-to-find-and-remove: 79ff1bdc32f7c0a521f21e80e5da0f5fb238afc1
-  improve-poly_andsubtract_free-: 6051c0b08a505738746abbc076862651a83b04f9
-  gl-use-a-vbo-to-avoid-data-cop: 287542ea6d55aa7b39e6473cccb967b088ecffde
   add-colour-information-to-vbo: 9e3d3be997dcfac4ce7847dcd3f5924705be24ca
   try-clipping-polygons-to-the-s: e83d04fdfdc2c92e22f0dcca7add2be432e635ce
   try-adding-polygon-objects-aft: 84f102bb5a8c018b07c99f4e8cac40d006e56abb
