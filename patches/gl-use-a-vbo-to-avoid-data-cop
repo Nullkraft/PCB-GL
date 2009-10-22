@@ -1,7 +1,7 @@
-Bottom: 85f42b3150ad6e8dae9d349046c5f18f053c92e2
-Top:    05cf8ada90d78e7bca8bcf7c46285f44ff9e4739
+Bottom: b68bd3c39f2d106b57bc7c53dc54a4c52b3e9050
+Top:    883f5af45a8768deb3b7964093e48694b004defe
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 05:00:48 +0100
+Date:   2009-10-22 05:53:14 +0100
 
 GL: Use a VBO to avoid data-copying
 
@@ -19,7 +19,7 @@ BUGS: Breakage due to graphics operations being called outside the
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 52d738a..bdf9429 100644
+index 54c2b3b..e4c83ba 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -61,10 +61,28 @@ hidgl_new_triangle_array (void)
