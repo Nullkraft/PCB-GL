@@ -1,7 +1,7 @@
-Bottom: 24c09aee0ea01b60125efea554d1b15162a4f8ef
-Top:    5ccc77846225332f4aa748957d99cb3a888a5370
+Bottom: 5b799ec73fcbea6e01b3fc934aaea6c60306ae72
+Top:    9ff31f3a941a56a8c6936bcd72a1f2871920e4df
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 14:47:04 +0100
+Date:   2009-10-22 15:15:50 +0100
 
 Add support for a "poured" object.
 
@@ -2011,12 +2011,12 @@ index ef22f73..9f0e843 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index f997a8d..cdfdf9f 100644
+index 770afd7..759323a 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -100,6 +100,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
  static void DrawLineLowLevel (LineTypePtr, Boolean);
- static void DrawRegularText (LayerTypePtr, TextTypePtr, int);
+ /* static */ void DrawRegularText (LayerTypePtr, TextTypePtr, int);
  static void DrawPolygonLowLevel (PolygonTypePtr);
 +static void DrawPourLowLevel (PourTypePtr);
  static void DrawArcLowLevel (ArcTypePtr);
@@ -2029,7 +2029,7 @@ index f997a8d..cdfdf9f 100644
 +  const BoxType * clip;
  };
  
- static int
+ /* static */ int
 @@ -688,12 +690,31 @@ clearPin_callback (const BoxType * b, void *cl)
      ClearOnlyPin (pin, True);
    return 1;
@@ -2227,7 +2227,7 @@ index f997a8d..cdfdf9f 100644
        if (PCB->ElementOn &&
  	  (FRONT ((ElementTypePtr) ptr2) || PCB->InvisibleObjectsOn))
 diff --git a/src/draw.h b/src/draw.h
-index 47c4c7f..a0f423c 100644
+index d7a2774..593f89d 100644
 --- a/src/draw.h
 +++ b/src/draw.h
 @@ -51,6 +51,7 @@ void DrawArc (LayerTypePtr, ArcTypePtr, int);
@@ -2813,10 +2813,10 @@ index e8ad916..e1b6290 100644
        break;
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 211adaf..7257003 100644
+index 3792538..c2c3236 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -451,7 +451,7 @@ have_crosshair_attachments (void)
+@@ -452,7 +452,7 @@ have_crosshair_attachments (void)
      case VIA_MODE:
        result = TRUE;
        break;
