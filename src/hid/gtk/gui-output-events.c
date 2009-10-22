@@ -46,6 +46,7 @@
 #include "error.h"
 #include "misc.h"
 #include "set.h"
+#include "rtree.h"
 #include "snavi.h"
 #include "gui-trackball.h"
 
@@ -965,7 +966,7 @@ struct pin_info
 {
   Boolean arg;
   LayerTypePtr Layer;
-  BoxTypePtr drawn_area;
+  const BoxType *drawn_area;
 };
 
 void
@@ -1094,10 +1095,10 @@ pad_callback (const BoxType * b, void *cl)
 static int
 hole_callback (const BoxType * b, void *cl)
 {
+#if 0
   PinTypePtr pin = (PinTypePtr) b;
   int plated = cl ? *(int *) cl : -1;
 
-#if 0
   switch (plated)
     {
     case -1:
@@ -1146,7 +1147,7 @@ text_callback (const BoxType * b, void *cl)
 }
 
 static void
-DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, BoxTypePtr drawn_area)
+DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *drawn_area)
 {
   static char *color;
 
@@ -1472,13 +1473,13 @@ hole_cyl_callback (const BoxType * b, void *cl)
   PinTypePtr Pin = (PinTypePtr) b;
   struct cyl_info *info = cl;
   DrawDrillChannel (Pin->X, Pin->Y, Pin->DrillingHole / 2, info->from_layer, info->to_layer, info->scale);
+  return 0;
 }
 
 void
 ghid_draw_everything (BoxTypePtr drawn_area)
 {
-  int i, ngroups, side;
-  int plated;
+  int i, ngroups;
   /* This is the list of layer groups we will draw.  */
   int do_group[MAX_LAYER];
   /* This is the reverse of the order in which we draw them.  */

@@ -82,9 +82,10 @@ void DrawPlainVia (PinTypePtr, Boolean);
 void DrawRegularText (LayerTypePtr, TextTypePtr, int);
 void DrawEMark (ElementTypePtr, LocationType, LocationType, Boolean);
 void DrawHole (PinTypePtr);
-void DrawMask (BoxType *);
 void DrawRats (BoxType *);
 void DrawSilk (int, int, BoxType *);
+void DrawSpecialPolygon (HID * hid, hidGC DrawGC, LocationType X, LocationType Y, int Thickness);
+
 /* TEMPORARY */
 
 /*GdkDrawable *draw_get_current_drawable(void);*/

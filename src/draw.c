@@ -88,7 +88,7 @@ static const BoxType *clip_box = NULL;
  */
 static void Redraw (Boolean, BoxTypePtr);
 static void DrawEverything (BoxTypePtr);
-void DrawTop (const BoxType *);
+static void DrawTop (const BoxType *);
 static int DrawLayerGroup (int, const BoxType *);
 /* static */ void DrawPinOrViaLowLevel (PinTypePtr, Boolean);
 static void ClearOnlyPin (PinTypePtr, Boolean);
@@ -108,7 +108,7 @@ static void SetPVColor (PinTypePtr, int);
 /* static */ void DrawEMark (ElementTypePtr, LocationType, LocationType, Boolean);
 static void ClearPad (PadTypePtr, Boolean);
 /* static */ void DrawHole (PinTypePtr);
-/* static */ void DrawMask (BoxType *);
+static void DrawMask (BoxType *);
 /* static */ void DrawRats (BoxType *);
 /* static */ void DrawSilk (int, int, BoxType *);
 static int pin_callback (const BoxType * b, void *cl);
@@ -760,7 +760,7 @@ DrawSilk (int new_swap, int layer, BoxTypePtr drawn_area)
 /* ---------------------------------------------------------------------------
  * draws solder mask layer - this will cover nearly everything
  */
-/* static */ void
+static void
 DrawMask (BoxType * screen)
 {
   struct pin_info info;
