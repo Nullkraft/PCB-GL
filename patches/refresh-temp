@@ -1,0 +1,22 @@
+Bottom: b0dc8007e66e15480940dd9605948168d87b6acd
+Top:    777b00958ca87d13b9f9bcbb503689bc2609f86d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-22 21:12:47 +0100
+
+Refresh of add_pours
+
+---
+
+diff --git a/src/pour.c b/src/pour.c
+index 33bd6e0..48f1aae 100644
+--- a/src/pour.c
++++ b/src/pour.c
+@@ -907,7 +907,7 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PourTypePtr pour,
+           int type, void *ptr1, void *ptr2)
+ {
+   POLYAREA *np = NULL, *pg = NULL, *tmp, *start_pg;
+-  POLYAREA orig_poly;
++  POLYAREA *orig_poly;
+   int count, count_all, count_added;
+ 
+   switch (type)
