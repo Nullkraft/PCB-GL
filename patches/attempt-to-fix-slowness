@@ -5,26 +5,29 @@ Date:   2009-10-22 04:26:55 +0100
 
 Various speedups to the polygon code.
 
-Avoid labelling the "A" polygon's contours, use the contour r-trees to
-dynamically search the required data.
+Attempt to fix polygon slowness by avoiding the need to create a
+completely new polygon for each boolean operation. This mostly relies
+upon r-tree searches to find contours to operate on - rather than
+searching each in turn.
 
-Add code to reparent holes which end up in the wrong polygon piece after
-inserting a new hole in InsertHoles. (Means we don't have to dump every
-potental hole we encounter in the holes insersion queue, hopefully leading
-to better dynamic update performance.
+We avoid labelling all of the "A" polygon's contours, use the contour
+r-trees to dynamically search the required data.
 
----------
+Added code to reparent holes which end up in the wrong polygon piece
+after inserting a new hole in InsertHoles. This means we don't have
+to dump every potental hole we encounter in the holes insersion queue,
+hopefully leading to better dynamic update performance.
 
-AND:
+At this point, polygon performance has finally seen a net gain.
 
+HOWEVER: Due to differences in the order of polygon operations, the
+         data-structures resulting from a boolean polygon operation
+         may be sorted differently.
 
-Attempt to fix polygon slowness by avoiding full recreation for each operation
-
-******** KNOWN TO BE BROKEN ********
-
-We're leaving some holes in place which need to be moved under a subordinate,
-smaller contour. Not quite sure how to detect those efficiently, nor what
-exact cases cause them.
+         In certain contrived cases, where a polygon is clipped into
+         identically sized pieces, the resulting piece of polygon
+         which PCB will keep and use on the board is different after
+         this commit.
 
 
 ---
