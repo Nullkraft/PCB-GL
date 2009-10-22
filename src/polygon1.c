@@ -1194,10 +1194,9 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
     }
   while ((curc = curc->f) != dest);
 
-  all_pa_info = malloc (sizeof (struct polyarea_info) * num_polyareas);
-
   /* make a polyarea info table */
   /* make an rtree of polyarea info table */
+  all_pa_info = malloc (sizeof (struct polyarea_info) * num_polyareas);
   tree = r_create_tree (NULL, 0, 0);
   i = 0;
   curc = dest;
