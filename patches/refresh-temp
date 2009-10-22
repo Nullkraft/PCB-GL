@@ -1,0 +1,24 @@
+Bottom: 18ba654fcfc02e7d00d708d4b1b3e8a0706a2c7e
+Top:    12ca3ec111cf57962570547e9170dba12d170be1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-22 06:06:24 +0100
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 0e1cac2..4cf366a 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -1152,6 +1152,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, BoxTypePtr drawn_a
+   if (!Polygon->Clipped)
+     return;
+ 
++  /* Re-use HOLEFLAG to cut out islands */
++  if (TEST_FLAG (HOLEFLAG, Polygon))
++    return;
++
+   if (TEST_FLAG (SELECTEDFLAG, Polygon))
+     color = Layer->SelectedColor;
+   else if (TEST_FLAG (FOUNDFLAG, Polygon))
