@@ -1,5 +1,5 @@
 Bottom: 13ee4ef6dc80ff5e748799b74b3d877de0a34fd8
-Top:    fe0d778f5f274071b409a4fb4092e1d93fc358f7
+Top:    78bf4fbf65192d6495b3d0d171e1a40fc82b93a4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-22 00:28:18 +0100
 
@@ -58,7 +58,7 @@ index 0c8c0cb..ca69338 100644
        poly_Free (&pa);
        return;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index df7581d..5741037 100644
+index df7581d..df7e2ee 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -809,31 +809,19 @@ static int
@@ -207,7 +207,7 @@ index df7581d..5741037 100644
  {
    VNODE *cur, *other;
 -  DIRECTION dir;
-+  DIRECTION dir = FORW; /* Not sure, but stops valgrind complaining */
++  DIRECTION dir = FORW; /* Initialise to stop valgrind complaining */
  
    cur = &a->head;
    do
@@ -283,7 +283,7 @@ index df7581d..5741037 100644
  {
    POLYAREA *a = afst;
 -  PLINE **cur, **next, *parent;
-+  POLYAREA *parent = NULL; /* Quiet GCC warning */
++  POLYAREA *parent = NULL; /* Quiet compiler warning */
 +  PLINE **cur, **next, *parent_contour;
  
    assert (a != NULL);
