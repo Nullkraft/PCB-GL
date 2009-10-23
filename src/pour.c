@@ -455,12 +455,14 @@ struct cpInfo
   Boolean solder;
   POLYAREA *pg;
   BoxType *region;
+  POLYAREA *accumulate;
   jmp_buf env;
 };
 
 static int
 pin_sub_callback (const BoxType * b, void *cl)
 {
+  static int counter = 0;
   PinTypePtr pin = (PinTypePtr) b;
   struct cpInfo *info = (struct cpInfo *) cl;
   POLYAREA *np;
@@ -473,8 +475,17 @@ pin_sub_callback (const BoxType * b, void *cl)
   if (np == NULL)
     return 0;
 
-  if (subtract_poly (np, &info->pg) < 0)
-    longjmp (info->env, 1);
+  unite_poly (np, &info->accumulate);
+  counter ++;
+
+  if (counter == 100)
+    {
+      counter = 0;
+      if (subtract_poly (info->accumulate, &info->pg) < 0)
+        longjmp (info->env, 1);
+      info->accumulate = NULL;
+    }
+
   return 1;
 }
 
@@ -525,6 +536,7 @@ pad_sub_callback (const BoxType * b, void *cl)
 static int
 line_sub_callback (const BoxType * b, void *cl)
 {
+  static int counter = 0;
   LineTypePtr line = (LineTypePtr) b;
   struct cpInfo *info = (struct cpInfo *) cl;
   POLYAREA *np;
@@ -539,8 +551,17 @@ line_sub_callback (const BoxType * b, void *cl)
   if (np == NULL)
     return 0;
 
-  if (subtract_poly (np, &info->pg) < 0)
-    longjmp (info->env, 1);
+  unite_poly (np, &info->accumulate);
+  counter ++;
+
+  if (counter == 100)
+    {
+      counter = 0;
+      if (subtract_poly (info->accumulate, &info->pg) < 0)
+        longjmp (info->env, 1);
+      info->accumulate = NULL;
+    }
+
   return 1;
 }
 
@@ -640,18 +661,24 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
 
   if (setjmp (info.env) == 0)
     {
-      r  = r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
-      r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
+      r = 0;
+      info.accumulate = NULL;
+      if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
+        r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
       GROUP_LOOP (Data, group);
       {
         r += r_search (layer->line_tree, &region, NULL, line_sub_callback, &info);
+        subtract_poly (info.accumulate, &info.pg);
+        info.accumulate = NULL;
         r += r_search (layer->arc_tree,  &region, NULL, arc_sub_callback,  &info);
         r += r_search (layer->text_tree, &region, NULL, text_sub_callback, &info);
         r += r_search (layer->pour_tree, &region, NULL, pour_sub_callback, &info);
       }
       END_LOOP;
-      if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
-        r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
+      r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
+      r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
+      subtract_poly (info.accumulate, &info.pg);
+      info.accumulate = NULL;
     }
 
   *pg = info.pg;
