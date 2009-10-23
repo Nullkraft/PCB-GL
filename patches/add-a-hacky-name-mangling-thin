@@ -1,7 +1,7 @@
-Bottom: 313874fc4e8814bfae1f17e89824e20a09964a84
-Top:    37f80c44a6699a957d903bd758b32a35b6fd9910
+Bottom: 2472468c66491b291c5862abe991941cfd760670
+Top:    8c9052b12cf34d9de22372a91a30ce385448e790
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-23 01:19:09 +0100
+Date:   2009-10-23 23:53:34 +0100
 
 Add a hacky name-mangling thingy for loading boards
 
@@ -18,7 +18,7 @@ Add a hacky name-mangling thingy for loading boards
 ---
 
 diff --git a/src/create.c b/src/create.c
-index cac38c7..e870d73 100644
+index 500d0a0..1a6aef9 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -37,6 +37,7 @@
@@ -38,7 +38,7 @@ index cac38c7..e870d73 100644
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
  #endif
-@@ -654,6 +657,57 @@ CreateNewPointInPour (PourTypePtr Pour, LocationType X,
+@@ -631,6 +634,57 @@ CreateNewPointInPolygon (PolygonTypePtr Polygon, LocationType X,
    return (point);
  }
  
@@ -96,7 +96,7 @@ index cac38c7..e870d73 100644
  /* ---------------------------------------------------------------------------
   * creates an new element
   * memory is allocated if needed
-@@ -666,6 +720,19 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
+@@ -643,6 +697,19 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
  		  LocationType TextX, LocationType TextY, BYTE Direction,
  		  int TextScale, FlagType TextFlags, Boolean uniqueName)
  {
@@ -117,19 +117,19 @@ index cac38c7..e870d73 100644
      Element = GetElementMemory (Data);
  
 diff --git a/src/create.h b/src/create.h
-index 4c9fae6..644b53e 100644
+index a994c84..98bb525 100644
 --- a/src/create.h
 +++ b/src/create.h
-@@ -63,6 +63,7 @@ PolygonTypePtr CreateNewPolygonInPour (PourType *pour, FlagType);
- PourTypePtr CreateNewPour (LayerTypePtr, FlagType);
- PointTypePtr CreateNewPointInPour (PourTypePtr,
+@@ -62,6 +62,7 @@ TextTypePtr CreateNewText (LayerTypePtr, FontTypePtr, LocationType,
+ PolygonTypePtr CreateNewPolygon (LayerTypePtr, FlagType);
+ PointTypePtr CreateNewPointInPolygon (PolygonTypePtr,
  				      LocationType, LocationType);
 +void RefdesMapInit (void);
  ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
  				 FontTypePtr, FlagType, char *, char *,
  				 char *, LocationType, LocationType, BYTE,
 diff --git a/src/file.c b/src/file.c
-index 35bfb57..35f00c6 100644
+index 018b272..4a32915 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -353,6 +353,9 @@ LoadPCB (char *Filename)
