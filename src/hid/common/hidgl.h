@@ -1,10 +1,8 @@
-/* $Id: gui.h,v 1.25 2008-04-13 14:15:38 petercjclifton Exp $ */
-
 /*
  *                            COPYRIGHT
  *
  *  PCB, interactive printed circuit board design
- *  Copyright (C) 1994,1995,1996 Thomas Nau
+ *  Copyright (C) 2009 PCB Contributors (See ChangeLog for details).
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -62,5 +60,10 @@ void hidgl_fill_polygon (int n_coords, int *x, int *y);
 void hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale);
 void hidgl_fill_rect (int x1, int y1, int x2, int y2);
 
+void hidgl_init (void);
+int hidgl_stencil_bits (void);
+int hidgl_assign_clear_stencil_bit (void);
+void hidgl_return_stencil_bit (int bit);
+void hidgl_reset_stencil_usage (void);
 
 #endif /* __HIDGL_INCLUDED__  */
