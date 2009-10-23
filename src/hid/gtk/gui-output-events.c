@@ -1053,7 +1053,16 @@ SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
   else if (TEST_FLAG (FOUNDFLAG, Pin))
     color = PCB->ConnectedColor;
   else
-    color = Layer->Color;
+    {
+      int component = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+      int solder    = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
+
+      if (Layer == LAYER_PTR (component) || Layer == LAYER_PTR (solder))
+        color = (SWAP_IDENT == (Layer == LAYER_PTR (solder)))
+                  ? PCB->ViaColor : PCB->InvisibleObjectsColor;
+      else
+        color = Layer->Color;
+    }
 
   gui->set_color (Output.fgGC, color);
 }
@@ -1343,6 +1352,8 @@ DrawLayerGroup (int group, const BoxType * screen)
   int n_entries = PCB->LayerGroups.Number[group];
   Cardinal *layers = PCB->LayerGroups.Entries[group];
   int first_run = 1;
+  int component = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+  int solder    = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
 
   if (!gui->set_layer (0, group, 0)) {
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
@@ -1400,10 +1411,18 @@ DrawLayerGroup (int group, const BoxType * screen)
         }
       }
 
-      /* Draw pins and vias on this layer */
+      /* Draw pins, vias and pads on this layer */
       if (!global_view_2d && rv) {
         if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
         if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
+        if ((layernum == component && !SWAP_IDENT) ||
+            (layernum == solder    &&  SWAP_IDENT))
+          if (PCB->PinOn)
+            r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, Layer);
+        if ((layernum == solder    && !SWAP_IDENT) ||
+            (layernum == component &&  SWAP_IDENT))
+          if (PCB->PinOn)
+            r_search (PCB->Data->pad_tree, screen, NULL, backPad_callback, Layer);
       }
 
       if (TEST_FLAG (CHECKPLANESFLAG, PCB))
@@ -1533,7 +1552,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    */
   if (!TEST_FLAG (CHECKPLANESFLAG, PCB) &&
       gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
-    r_search (PCB->Data->pad_tree, drawn_area, NULL, backPad_callback, NULL);
+//    r_search (PCB->Data->pad_tree, drawn_area, NULL, backPad_callback, NULL);
     if (PCB->ElementOn) {
       r_search (PCB->Data->element_tree, drawn_area, NULL, backE_callback, NULL);
       r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, backN_callback, NULL);
@@ -1571,7 +1590,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0);
 //  gui->set_layer (NULL, SL (FINISHED, 0), 0);
 
-#if 1
+#if 0
   /* Mask out drilled holes */
   hidgl_flush_triangles (&buffer);
   glPushAttrib (GL_COLOR_BUFFER_BIT);
