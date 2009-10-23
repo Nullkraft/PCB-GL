@@ -1484,6 +1484,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   int drawn_groups[MAX_LAYER];
   struct cyl_info cyl_info;
   int reverse_layers;
+  int save_show_solder;
 
   extern char *current_color;
   extern Boolean Gathering;
@@ -1498,10 +1499,14 @@ ghid_draw_everything (BoxTypePtr drawn_area)
             elements for homogeneous coordinates. */
   /* NB: last_modelview_matrix is transposed in memory! */
   reverse_layers = (last_modelview_matrix[2][2] < 0);
-  if (Settings.ShowSolderSide)
-    reverse_layers = !reverse_layers;
 
-  Settings.ShowSolderSide = reverse_layers ? !Settings.ShowSolderSide : Settings.ShowSolderSide;
+  save_show_solder = Settings.ShowSolderSide;
+
+  if (reverse_layers)
+    Settings.ShowSolderSide = !Settings.ShowSolderSide;
+
+  if (!global_view_2d && save_show_solder)
+    reverse_layers = !reverse_layers;
 
   memset (do_group, 0, sizeof (do_group));
   for (ngroups = 0, i = 0; i < max_layer; i++) {
@@ -1616,7 +1621,8 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     DrawRats(drawn_area);
 
   Gathering = True;
-  Settings.ShowSolderSide = reverse_layers ? !Settings.ShowSolderSide : Settings.ShowSolderSide;
+
+  Settings.ShowSolderSide = save_show_solder;
 }
 
 static int one_shot = 1;
