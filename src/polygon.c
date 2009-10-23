@@ -1613,12 +1613,20 @@ r_NoHolesPolygonDicer (POLYAREA * pa,
     }
   else
     {
-      POLYAREA *poly2, *left, *right;
+      POLYAREA *pa_copy, *left_rect, *right_rect, *left, *right;
+
+      /* copy the main poly only */
+      poly_Copy0 (&pa_copy, pa);
 
       /* make a rectangle of the left region slicing through the middle of the first hole */
-      poly2 = RectPoly (p->xmin, (p->next->xmin + p->next->xmax) / 2,
-                        p->ymin, p->ymax);
-      poly_AndSubtract_free (pa, poly2, &left, &right);
+      left_rect = RectPoly (p->xmin - 1, (p->next->xmin + p->next->xmax) / 2, p->ymin - 1, p->ymax + 1);
+      /* make a rectangle of the right region slicing through the middle of the first hole */
+      right_rect = RectPoly ((p->next->xmin + p->next->xmax) / 2 - 1, p->xmax, p->ymin - 1, p->ymax + 1);
+
+      /* NB: Subtraction is faster than intersection */
+      poly_Boolean_free (pa, right_rect, &left, PBO_SUB);
+      poly_Boolean_free (pa_copy, left_rect, &right, PBO_SUB);
+
       if (left)
         {
           POLYAREA *cur, *next;
