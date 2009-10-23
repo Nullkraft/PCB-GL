@@ -1,5 +1,5 @@
 Bottom: 38bb9ef810cc8b2639ff3dd86dc5f1dcb87a8aef
-Top:    cf79b68804cd98de5ff8195ae15e9538a76f5e7b
+Top:    95517d176e1ce36e71d9a0ab07002233c74d2baa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-23 00:36:29 +0100
 
@@ -358,7 +358,7 @@ index 9439d28..3f101be 100644
  void
  ghid_set_color (hidGC gc, const char *name)
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 211adaf..3792538 100644
+index 211adaf..86c3e78 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -46,6 +46,7 @@
@@ -383,7 +383,7 @@ index 211adaf..3792538 100644
  void
  ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata)
  {
-@@ -989,6 +997,629 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
+@@ -989,6 +997,635 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
    ghid_invalidate_all ();
  }
  
@@ -874,6 +874,7 @@ index 211adaf..3792538 100644
 +  int drawn_groups[MAX_LAYER];
 +  struct cyl_info cyl_info;
 +  int reverse_layers;
++  int save_show_solder;
 +
 +  extern char *current_color;
 +  extern Boolean Gathering;
@@ -888,10 +889,14 @@ index 211adaf..3792538 100644
 +            elements for homogeneous coordinates. */
 +  /* NB: last_modelview_matrix is transposed in memory! */
 +  reverse_layers = (last_modelview_matrix[2][2] < 0);
-+  if (Settings.ShowSolderSide)
-+    reverse_layers = !reverse_layers;
 +
-+  Settings.ShowSolderSide = reverse_layers ? !Settings.ShowSolderSide : Settings.ShowSolderSide;
++  save_show_solder = Settings.ShowSolderSide;
++
++  if (reverse_layers)
++    Settings.ShowSolderSide = !Settings.ShowSolderSide;
++
++  if (!global_view_2d && save_show_solder)
++    reverse_layers = !reverse_layers;
 +
 +  memset (do_group, 0, sizeof (do_group));
 +  for (ngroups = 0, i = 0; i < max_layer; i++) {
@@ -1006,14 +1011,15 @@ index 211adaf..3792538 100644
 +    DrawRats(drawn_area);
 +
 +  Gathering = True;
-+  Settings.ShowSolderSide = reverse_layers ? !Settings.ShowSolderSide : Settings.ShowSolderSide;
++
++  Settings.ShowSolderSide = save_show_solder;
 +}
 +
 +static int one_shot = 1;
  
  #define Z_NEAR 3.0
  gboolean
-@@ -1064,8 +1695,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1064,8 +1701,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1024,7 +1030,7 @@ index 211adaf..3792538 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1157,7 +1788,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1157,7 +1794,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
  
@@ -1034,7 +1040,7 @@ index 211adaf..3792538 100644
  
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
-@@ -1196,6 +1828,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1196,6 +1834,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
  
