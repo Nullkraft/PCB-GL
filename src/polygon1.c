@@ -49,6 +49,7 @@
 #include "global.h"
 #include "rtree.h"
 #include "heap.h"
+#include "sweep.h"
 
 #define ROUND(a) (long)((a) > 0 ? ((a) + 0.5) : ((a) - 0.5))
 
@@ -127,7 +128,7 @@ if (UNLIKELY (((ptr) = malloc(sizeof(type))) == NULL)) \
 
 #define R_SEARCH_WRAP(x) int r_search_##x (rtree_t * rtree, const BoxType * starting_region, int (*region_in_search) (const BoxType * region, void *cl), void *closure, void *data) \
 { \
-  r_search (rtree, starting_region, region_in_search, closure, data); \
+  return r_search (rtree, starting_region, region_in_search, closure, data); \
 }
 
 R_SEARCH_WRAP(1);
@@ -889,8 +890,16 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
 	      a->contours->xmin <= b->contours->xmax &&
 	      a->contours->ymin <= b->contours->ymax)
 	    {
-	      if (UNLIKELY (intersect (e, a, b, add)))
-		error (err_no_memory);
+              if (!add)
+                {
+                  if (UNLIKELY (intersect (e, a, b, add)))
+                    error (err_no_memory);
+                }
+              else
+                {
+                  if (UNLIKELY (bo_intersect (e, a, b)))
+                    error (err_no_memory);
+                }
 	    }
 	}
       while (add && (a = a->f) != afst);
