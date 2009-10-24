@@ -1350,7 +1350,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
       else
 	{
           /* Need to check if this new hole means we need to kick out any old ones for reprocessing */
-          while (0) {
+          while (1) {
             struct find_inside_info info;
             PLINE *prev;
 
@@ -1370,7 +1370,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
             }
 
             printf ("Damnit\n");
-
+#if 1
             /* We need to find the contour before it, so we can update its next pointer */
             prev = container;
             while (prev->next != info.result) {
@@ -1383,6 +1383,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
             /* Add hole as the next on the list to be processed in this very function */
             info.result->next = *src;
             *src = info.result;
+#endif
           }
           /* End check for kicked out holes */
 
