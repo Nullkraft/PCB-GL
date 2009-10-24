@@ -5,8 +5,8 @@
  */
 
 #include "config.h"
-#include "glib.h"
-#include "galias.h"
+#include <glib.h>
+#include "gpqueue.h"
 
 struct _GPQueue {
 	struct _GPQueue *next;
@@ -192,17 +192,20 @@ g_pqueue_fix_rootlist (GPQueue* pqueue)
 
 	const gsize degnode_size = (8 * sizeof(gpointer) + 1) * sizeof(gpointer);
 	GPQueue **degnode = g_slice_alloc0(degnode_size);
-
+	GPQueue *current;
+	GPQueue *minimum;
 	GPQueue sentinel;
+	gint d;
+
 	sentinel.next = &sentinel;
 	sentinel.prev = &sentinel;
 	g_pqueue_insert_before(pqueue, &sentinel);
 
-	GPQueue *current = pqueue;
+	current = pqueue;
 	while (current != &sentinel) {
 		current->marked = FALSE;
 		current->parent = NULL;
-		gint d = current->degree;
+		d = current->degree;
 		if (degnode[d] == NULL) {
 			degnode[d] = current;
 			current = current->next;
@@ -217,7 +220,7 @@ g_pqueue_fix_rootlist (GPQueue* pqueue)
 	}
 
 	current = sentinel.next;
-	GPQueue *minimum = current;
+	minimum = current;
 	while (current != &sentinel) {
 		if (current->priority < minimum->priority) minimum = current;
 		current = current->next;
@@ -294,8 +297,9 @@ g_pqueue_delete_top (GPQueue *pqueue)
 gpointer
 g_pqueue_pop (GPQueue **pqueue)
 {
+	gpointer data;
 	if (*pqueue == NULL) return NULL;
-	gpointer data = (*pqueue)->data;
+	data = (*pqueue)->data;
 	*pqueue = g_pqueue_delete_root(*pqueue, *pqueue);
 	return data;
 }
@@ -406,9 +410,10 @@ g_pqueue_delete (GPQueue* pqueue, GPQueueHandle entry)
 GPQueue*
 g_pqueue_change_priority (GPQueue* pqueue, GPQueueHandle entry, gint priority)
 {
-	if (entry->priority == priority) return pqueue;
+	gint oldpriority;
+  if (entry->priority == priority) return pqueue;
 
-	gint oldpriority = entry->priority;
+	oldpriority = entry->priority;
 	entry->priority = priority;
 
 	pqueue = g_pqueue_cut_tree(pqueue, entry);
@@ -445,74 +450,3 @@ g_pqueue_destroy (GPQueue* pqueue)
 	g_pqueue_destroy(pqueue->next);
 	g_slice_free(GPQueue, pqueue);
 }
-
-#define __G_PQUEUE_C__
-#include "galiasdef.c"
-
-iff -X diffignore -ruN glib-2.19.10/glib/gpqueue.h glib-2.19.10.local/glib/gpqueue.h
--- glib-2.19.10/glib/gpqueue.h	1970-01-01 01:00:00.000000000 +0100
-++ glib-2.19.10.local/glib/gpqueue.h	2009-03-09 19:33:47.588035881 +0100
-@ -0,0 +1,63 @@
-#if defined(G_DISABLE_SINGLE_INCLUDES) && !defined (__GLIB_H_INSIDE__) && !defined (GLIB_COMPILATION)
-#error "Only <glib.h> can be included directly."
-#endif
-
-#ifndef __G_PQUEUE_H__
-#define __G_PQUEUE_H__
-
-G_BEGIN_DECLS
-
-/**
- * GPQueue:
- * 
- * An opaque structure representing a priority queue.
- **/
-typedef struct _GPQueue GPQueue;
-
-/**
- * GPQueueHandle:
- * 
- * An opaque value representing one entry in a #GPQueue.
- * 
- * DO NOT RELY on the fact that a #GPQueue and a #GPQueueHandle are
- * essentially the same thing at this time, this may change along with the
- * underlying implementation in future releases.
- **/
-typedef GPQueue* GPQueueHandle;
-
-GPQueue*	g_pqueue_insert			(GPQueue *pqueue,
-						 gpointer data,
-						 gint priority,
-						 GPQueueHandle *handle)
-						G_GNUC_WARN_UNUSED_RESULT;
-
-gpointer	g_pqueue_top			(GPQueue *pqueue);
-
-gboolean	g_pqueue_top_extended		(GPQueue *pqueue,
-						 gpointer *data,
-						 gint *priority);
-
-GPQueue*	g_pqueue_delete_top		(GPQueue *pqueue)
-						G_GNUC_WARN_UNUSED_RESULT;
-
-gpointer	g_pqueue_pop			(GPQueue **pqueue);
-
-gboolean	g_pqueue_pop_extended		(GPQueue **pqueue,
-						 gpointer *data,
-						 gint *priority);
-
-GPQueue*	g_pqueue_delete			(GPQueue* pqueue,
-						 GPQueueHandle entry)
-						G_GNUC_WARN_UNUSED_RESULT;
-
-GPQueue*	g_pqueue_change_priority	(GPQueue* pqueue,
-						 GPQueueHandle entry,
-						 gint priority)
-						G_GNUC_WARN_UNUSED_RESULT;
-
-void		g_pqueue_destroy		(GPQueue* pqueue);
-
-G_END_DECLS
-
-#endif /* __G_PQUEUE_H__ */
-
