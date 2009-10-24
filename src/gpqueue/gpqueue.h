@@ -9,10 +9,14 @@
 
 G_BEGIN_DECLS
 
+typedef struct _GPQueueNode GPQueueNode;
+
 /**
  * GPQueue:
  * 
  * An opaque structure representing a priority queue.
+ * 
+ * Since: 2.x
  **/
 typedef struct _GPQueue GPQueue;
 
@@ -21,43 +25,34 @@ typedef struct _GPQueue GPQueue;
  * 
  * An opaque value representing one entry in a #GPQueue.
  * 
- * DO NOT RELY on the fact that a #GPQueue and a #GPQueueHandle are
- * essentially the same thing at this time, this may change along with the
- * underlying implementation in future releases.
+ * Since: 2.x
  **/
-typedef GPQueue* GPQueueHandle;
+typedef GPQueueNode* GPQueueHandle;
 
-GPQueue*	g_pqueue_insert			(GPQueue *pqueue,
-						 gpointer data,
-						 gint priority,
-						 GPQueueHandle *handle)
-						G_GNUC_WARN_UNUSED_RESULT;
+GPQueue*	g_pqueue_new			(GCompareDataFunc compare_func,
+						 gpointer *compare_userdata);
 
-gpointer	g_pqueue_top			(GPQueue *pqueue);
+void		g_pqueue_free			(GPQueue* pqueue);
 
-gboolean	g_pqueue_top_extended		(GPQueue *pqueue,
-						 gpointer *data,
-						 gint *priority);
+gboolean	g_pqueue_is_empty		(GPQueue *pqueue);
 
-GPQueue*	g_pqueue_delete_top		(GPQueue *pqueue)
-						G_GNUC_WARN_UNUSED_RESULT;
+GPQueueHandle	g_pqueue_push			(GPQueue *pqueue,
+						 gpointer data);
 
-gpointer	g_pqueue_pop			(GPQueue **pqueue);
+gpointer	g_pqueue_peek			(GPQueue *pqueue);
 
-gboolean	g_pqueue_pop_extended		(GPQueue **pqueue,
-						 gpointer *data,
-						 gint *priority);
+gpointer	g_pqueue_pop			(GPQueue *pqueue);
 
-GPQueue*	g_pqueue_delete			(GPQueue* pqueue,
-						 GPQueueHandle entry)
-						G_GNUC_WARN_UNUSED_RESULT;
+void		g_pqueue_remove			(GPQueue* pqueue,
+						 GPQueueHandle entry);
 
-GPQueue*	g_pqueue_change_priority	(GPQueue* pqueue,
-						 GPQueueHandle entry,
-						 gint priority)
-						G_GNUC_WARN_UNUSED_RESULT;
+void		g_pqueue_priority_changed	(GPQueue* pqueue,
+						 GPQueueHandle entry);
 
-void		g_pqueue_destroy		(GPQueue* pqueue);
+void		g_pqueue_priority_decreased	(GPQueue* pqueue,
+						 GPQueueHandle entry);
+
+void		g_pqueue_clear			(GPQueue* pqueue);
 
 G_END_DECLS
 

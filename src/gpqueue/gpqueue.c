@@ -5,448 +5,542 @@
  */
 
 #include "config.h"
+
 #include <glib.h>
 #include "gpqueue.h"
 
-struct _GPQueue {
-	struct _GPQueue *next;
-	struct _GPQueue *prev;
-	struct _GPQueue *parent;
-	struct _GPQueue *child;
+/**
+ * SECTION:priority_queues
+ * @short_description: a collection of data entries with associated priority
+ * values that returns entries one by one in order of priority
+ * 
+ * <para>
+ * The #GPQueue structure and its associated functions provide a sorted
+ * collection of objects. Entries can be inserted in any order and at any time,
+ * and an entry's priority can be changed after it has been inserted into the
+ * queue. Entries are supposed to be removed one at a time in order of priority
+ * with g_pqueue_pop(), but deleting entries out of order is possible.
+ * </para>
+ * <para>
+ * The entries <emphasis>cannot</emphasis> be iterated over in any way other
+ * than removing them one by one in order of priority, but when doing that,
+ * this structure is far more efficient than sorted lists or balanced trees,
+ * which on the other hand do not suffer from this restriction.
+ * </para>
+ * <para>
+ * You will want to be very careful with calls that use #GPQueueHandle.
+ * Handles immediately become invalid when an entry is removed from a #GPQueue,
+ * but the current implementation cannot detect this and will do unfortunate
+ * things to undefined memory locations if you try to use an invalid handle.
+ * </para>
+ * <note>
+ *   <para>
+ *     Internally, #GPQueue currently uses a Fibonacci heap to store
+ *     the entries. This implementation detail may change.
+ *   </para>
+ * </note>
+ **/
 
-	gpointer data;
-	gint priority;
-	gint degree;
-	gboolean marked;
+struct _GPQueueNode {
+  GPQueueNode *next;
+  GPQueueNode *prev;
+  GPQueueNode *parent;
+  GPQueueNode *child;
+
+  gpointer data;
+
+  gint degree;
+  gboolean marked;
 };
 
-/*
-static void
-structure_dump (GPQueue *pqueue, gint indent)
-{
-	if (pqueue == NULL) return;
-	g_debug("%*s%p %d", indent, "", pqueue, pqueue->priority);
-	structure_dump(pqueue->child, indent + 2);
-	pqueue->prev->next = NULL;
-	structure_dump(pqueue->next, indent);
-	pqueue->prev->next = pqueue;
-}
-*/
-
-static inline void
-g_pqueue_remove (GPQueue *src)
-{
-	src->prev->next = src->next;
-	src->next->prev = src->prev;
-	src->next = src;
-	src->prev = src;
-}
-
-static inline void
-g_pqueue_insert_before (GPQueue *dest, GPQueue *src)
-{
-	GPQueue *prev = dest->prev;
-	dest->prev = src->prev;
-	src->prev->next = dest;
-	src->prev = prev;
-	prev->next = src;
-}
-
-static inline void
-g_pqueue_insert_after (GPQueue *dest, GPQueue *src)
-{
-	GPQueue *next = dest->next;
-	dest->next = src;
-	src->prev->next = next;
-	next->prev = src->prev;
-	src->prev = dest;
-}
-
- /**
-  * g_pqueue_insert:
-  * @pqueue: an existing GPQueue or %NULL to begin with an empty queue.
-  * @data: a pointer to something associated with this queue entry.
-  *   %NULL or the use of GINT_TO_POINTER() is acceptable. The same @data can
-  *   be inserted into a GPQueue more than once, with different or identical
-  *   priorities.
-  * @priority: the priority for this entry. Entries are returned from the queue
-  *   in <emphasis>ascending</emphasis> order of priority.
-  * @handle: if not %NULL, a handle for the freshly inserted entry
-  *   will be returned into this. This handle can be used in calls to
-  *   g_pqueue_delete() and g_pqueue_change_priority(). Never make such calls
-  *   for entries that have already been removed from the queue.
-  * 
-  * Inserts a new entry into a #GPQueue.
-  * 
-  * Return value: The altered priority queue.
-  **/
-GPQueue*
-g_pqueue_insert (GPQueue *pqueue, gpointer data, gint priority, GPQueueHandle *handle)
-{
-	GPQueue *e = g_slice_new(GPQueue);
-
-	e->next = e;
-	e->prev = e;
-	e->parent = NULL;
-	e->child = NULL;
-	e->data = data;
-	e->priority = priority;
-	e->degree = 0;
-	e->marked = FALSE;
-
-	if (handle != NULL) *handle = e;
-
-	if (pqueue != NULL) {
-		g_pqueue_insert_before(pqueue, e);
-		if (e->priority < pqueue->priority)
-			return e;
-		else
-			return pqueue;
-	} else {
-		return e;
-	}
-}
+struct _GPQueue {
+  GPQueueNode *root;
+  GCompareDataFunc cmp;
+  gpointer *cmpdata;
+};
 
 /**
- * g_pqueue_top:
- * @pqueue: a #GPQueue.
+ * g_pqueue_new:
+ * @compare_func: the #GCompareDataFunc used to sort the new priority queue.
+ *   This function is passed two elements of the queue and should return 0 if
+ *   they are equal, a negative value if the first comes before the second, and
+ *   a positive value if the second comes before the first.
+ * @compare_userdata: user data passed to @compare_func
  * 
- * Returns the topmost entry's data pointer.
+ * Creates a new #GPQueue.
  * 
- * If you need to tell the difference between an empty queue and a queue
- * that happens to have a %NULL pointer at the top, use g_pqueue_top_extended()
- * or check if the queue is empty first.
+ * Returns: a new #GPQueue.
  * 
- * Return value: the topmost entry's data pointer.
+ * Since: 2.x
  **/
-gpointer
-g_pqueue_top (GPQueue *pqueue)
+GPQueue*
+g_pqueue_new (GCompareDataFunc compare_func,
+              gpointer *compare_userdata)
 {
-	return (pqueue != NULL) ? (pqueue->data) : (NULL);
+  g_return_val_if_fail (compare_func != NULL, NULL);
+
+  GPQueue *pqueue = g_slice_new (GPQueue);
+  pqueue->root = NULL;
+  pqueue->cmp = compare_func;
+  pqueue->cmpdata = compare_userdata;
+  return pqueue;
 }
 
 /**
- * g_pqueue_top_extended:
+ * g_pqueue_is_empty:
  * @pqueue: a #GPQueue.
- * @data: where to write the data pointer.
- * @priority: where to write the priority value.
  * 
- * If the queue is empty, writes %NULL into *@data if @data is not %NULL
- * and returns %FALSE.
+ * Returns %TRUE if the queue is empty.
  * 
- * If the queue is not empty, writes the topmost entry's data pointer
- * and priority value into *@data and *@priority unless they are %NULL
- * and returns %TRUE.
+ * Returns: %TRUE if the queue is empty.
  * 
- * Return value: %TRUE if the queue is not empty, %FALSE if it is.
+ * Since: 2.x
  **/
 gboolean
-g_pqueue_top_extended (GPQueue *pqueue, gpointer *data, gint *priority)
+g_pqueue_is_empty (GPQueue *pqueue)
 {
-	if (pqueue == NULL) {
-		if (data != NULL) *data = NULL;
-		return FALSE;
-	} else {
-		if (data != NULL) *data = pqueue->data;
-		if (priority != NULL) *priority = pqueue->priority;
-		return TRUE;
-	}
+  return (pqueue->root == NULL);
 }
 
-static GPQueue*
-g_pqueue_make_child (GPQueue *a, GPQueue *b)
+static inline gint
+cmp (GPQueue *pqueue,
+     GPQueueNode *a,
+     GPQueueNode *b)
 {
-	g_pqueue_remove(b);
-	if (a->child != NULL) {
-		g_pqueue_insert_before(a->child, b);
-		a->degree += 1;
-	} else {
-		a->child = b;
-		a->degree = 1;
-	}
-	b->parent = a;
-	return a;
+  return pqueue->cmp (a->data, b->data, pqueue->cmpdata);
 }
 
-static inline GPQueue*
-g_pqueue_join_trees (GPQueue *a, GPQueue *b)
+static inline void
+g_pqueue_node_cut (GPQueueNode *src)
 {
-	if (b->priority < a->priority)
-		return g_pqueue_make_child(b, a);
-	return g_pqueue_make_child(a, b);
+  src->prev->next = src->next;
+  src->next->prev = src->prev;
+  src->next = src;
+  src->prev = src;
 }
 
-static GPQueue*
-g_pqueue_fix_rootlist (GPQueue* pqueue)
+static inline void
+g_pqueue_node_insert_before (GPQueueNode *dest,
+                             GPQueueNode *src)
 {
-	/* We need to iterate over the circular list we are given and do
-	 * several things:
-	 * - Make sure all the elements are unmarked
-	 * - Make sure to return the element in the list with smallest
-	 *   priority value
-	 * - Find elements of identical degree and join them into trees
-	 * The last point is irrelevant for correctness, but essential
-	 * for performance. If we did not do this, our data structure would
-	 * degrade into an unsorted linked list.
-	 */
+  GPQueueNode *prev;
 
-	const gsize degnode_size = (8 * sizeof(gpointer) + 1) * sizeof(gpointer);
-	GPQueue **degnode = g_slice_alloc0(degnode_size);
-	GPQueue *current;
-	GPQueue *minimum;
-	GPQueue sentinel;
-	gint d;
-
-	sentinel.next = &sentinel;
-	sentinel.prev = &sentinel;
-	g_pqueue_insert_before(pqueue, &sentinel);
-
-	current = pqueue;
-	while (current != &sentinel) {
-		current->marked = FALSE;
-		current->parent = NULL;
-		d = current->degree;
-		if (degnode[d] == NULL) {
-			degnode[d] = current;
-			current = current->next;
-		} else {
-			if (degnode[d] != current) {
-				current = g_pqueue_join_trees(degnode[d], current);
-				degnode[d] = NULL;
-			} else {
-				current = current->next;
-			}
-		}
-	}
-
-	current = sentinel.next;
-	minimum = current;
-	while (current != &sentinel) {
-		if (current->priority < minimum->priority) minimum = current;
-		current = current->next;
-	}
-
-	g_pqueue_remove(&sentinel);
-
-	g_slice_free1(degnode_size, degnode);
-
-	return minimum;
+  prev = dest->prev;
+  dest->prev = src->prev;
+  src->prev->next = dest;
+  src->prev = prev;
+  prev->next = src;
 }
 
-static GPQueue*
-g_pqueue_delete_root (GPQueue *pqueue, GPQueue *root)
+static inline void
+g_pqueue_node_insert_after (GPQueueNode *dest,
+                            GPQueueNode *src)
 {
-	/* Step one:
-	 * If root has any children, pull them up to root level.
-	 * At this time, we only deal with their next/prev pointers,
-	 * further changes are made later in g_pqueue_fix_rootlist().
-	 */
-	if (root->child) {
-		g_pqueue_insert_after(root, root->child);
-		root->child = NULL;
-		root->degree = 0;
-	}
+  GPQueueNode *next;
 
-	/* Step two:
-	 * Cut root out of the list.
-	 */
-	if (root->next != root) {
-		pqueue = root->next;
-		g_pqueue_remove(root);
-		/* Step three:
-		 * Clean up the remaining list.
-		 */
-		pqueue = g_pqueue_fix_rootlist(pqueue);
-	} else {
-		pqueue = NULL;
-	}
-
-	g_slice_free(GPQueue, root);
-	return pqueue;
+  next = dest->next;
+  dest->next = src;
+  src->prev->next = next;
+  next->prev = src->prev;
+  src->prev = dest;
 }
 
 /**
- * g_pqueue_delete_top:
+ * g_pqueue_push:
+ * @pqueue: a #GPQueue.
+ * @data: the object to insert into the priority queue.
+ * 
+ * Inserts a new entry into a #GPQueue.
+ * 
+ * The returned handle can be used in calls to g_pqueue_remove() and
+ * g_pqueue_priority_changed(). Never make such calls for entries that have
+ * already been removed from the queue. The same @data can be inserted into
+ * a #GPQueue more than once, but remember that in this case,
+ * g_pqueue_priority_changed() needs to be called for
+ * <emphasis>every</emphasis> handle for that object if its priority changes.
+ * 
+ * Returns: a handle for the freshly inserted entry.
+ * 
+ * Since: 2.x
+ **/
+GPQueueHandle
+g_pqueue_push (GPQueue *pqueue,
+               gpointer data)
+{
+  GPQueueNode *e;
+
+  e = g_slice_new (GPQueueNode);
+  e->next = e;
+  e->prev = e;
+  e->parent = NULL;
+  e->child = NULL;
+  e->data = data;
+  e->degree = 0;
+  e->marked = FALSE;
+
+  if (pqueue->root != NULL) {
+    g_pqueue_node_insert_before (pqueue->root, e);
+    if (cmp (pqueue, e, pqueue->root) < 0)
+      pqueue->root = e;
+  } else {
+    pqueue->root = e;
+  }
+
+  return e;
+}
+
+/**
+ * g_pqueue_peek:
  * @pqueue: a #GPQueue.
  * 
- * Deletes the topmost entry from a #GPQueue and returns the altered queue.
+ * Returns the topmost entry's data pointer, or %NULL if the queue is empty.
  * 
- * Return value: the altered #GPQueue.
+ * If you need to tell the difference between an empty queue and a queue
+ * that happens to have a %NULL pointer at the top, check if the queue is
+ * empty first.
+ * 
+ * Returns: the topmost entry's data pointer, or %NULL if the queue is empty.
+ * 
+ * Since: 2.x
  **/
-GPQueue*
-g_pqueue_delete_top (GPQueue *pqueue)
+gpointer
+g_pqueue_peek (GPQueue *pqueue)
 {
-	if (pqueue == NULL) return NULL;
-	return g_pqueue_delete_root(pqueue, pqueue);
+  return (pqueue->root != NULL) ? pqueue->root->data : NULL;
+}
+
+static inline GPQueueNode*
+g_pqueue_make_child (GPQueueNode *a,
+                     GPQueueNode *b)
+{
+  g_pqueue_node_cut(b);
+  if (a->child != NULL) {
+    g_pqueue_node_insert_before (a->child, b);
+    a->degree += 1;
+  } else {
+    a->child = b;
+    a->degree = 1;
+  }
+  b->parent = a;
+  return a;
+}
+
+static inline GPQueueNode*
+g_pqueue_join_trees (GPQueue *pqueue,
+                     GPQueueNode *a,
+                     GPQueueNode *b)
+{
+  if (cmp (pqueue, a, b) < 0)
+    return g_pqueue_make_child (a, b);
+  return g_pqueue_make_child (b, a);
+}
+
+static void
+g_pqueue_fix_rootlist (GPQueue* pqueue)
+{
+  gsize degnode_size;
+  GPQueueNode **degnode;
+  GPQueueNode sentinel;
+  GPQueueNode *current;
+  GPQueueNode *minimum;
+
+  /* We need to iterate over the circular list we are given and do
+   * several things:
+   * - Make sure all the elements are unmarked
+   * - Make sure to return the element in the list with smallest
+   *   priority value
+   * - Find elements of identical degree and join them into trees
+   * The last point is irrelevant for correctness, but essential
+   * for performance. If we did not do this, our data structure would
+   * degrade into an unsorted linked list.
+   */
+
+  degnode_size = (8 * sizeof(gpointer) + 1) * sizeof(gpointer);
+  degnode = g_slice_alloc0 (degnode_size);
+
+  sentinel.next = &sentinel;
+  sentinel.prev = &sentinel;
+  g_pqueue_node_insert_before (pqueue->root, &sentinel);
+
+  current = pqueue->root;
+  while (current != &sentinel) {
+    current->marked = FALSE;
+    current->parent = NULL;
+    gint d = current->degree;
+    if (degnode[d] == NULL) {
+      degnode[d] = current;
+      current = current->next;
+    } else {
+      if (degnode[d] != current) {
+        current = g_pqueue_join_trees (pqueue, degnode[d], current);
+        degnode[d] = NULL;
+      } else {
+        current = current->next;
+      }
+    }
+  }
+
+  current = sentinel.next;
+  minimum = current;
+  while (current != &sentinel) {
+    if (cmp (pqueue, current, minimum) < 0)
+      minimum = current;
+    current = current->next;
+  }
+  pqueue->root = minimum;
+
+  g_pqueue_node_cut (&sentinel);
+
+  g_slice_free1 (degnode_size, degnode);
+}
+
+static void
+g_pqueue_remove_root (GPQueue *pqueue,
+                      GPQueueNode *root)
+{
+  /* This removes a node at the root _level_ of the structure, which can be,
+   * but does not have to be, the actual pqueue->root node. That is why
+   * we require an explicit pointer to the node to be removed instead of just
+   * removing pqueue->root implictly.
+   */
+
+  /* Step one:
+   * If root has any children, pull them up to root level.
+   * At this time, we only deal with their next/prev pointers,
+   * further changes are made later in g_pqueue_fix_rootlist().
+   */
+  if (root->child) {
+    g_pqueue_node_insert_after (root, root->child);
+    root->child = NULL;
+    root->degree = 0;
+  }
+
+  /* Step two:
+   * Cut root out of the list.
+   */
+  if (root->next != root) {
+    pqueue->root = root->next;
+    g_pqueue_node_cut (root);
+    /* Step three:
+     * Clean up the remaining list.
+     */
+    g_pqueue_fix_rootlist (pqueue);
+  } else {
+    pqueue->root = NULL;
+  }
+
+  g_slice_free (GPQueueNode, root);
 }
 
 /**
  * g_pqueue_pop:
- * @pqueue: a <emphasis>pointer</emphasis> to a #GPQueue.
+ * @pqueue: a #GPQueue.
  * 
- * Deletes the topmost entry from a #GPQueue and returns its data pointer.
- * The altered queue is written back to *@pqueue.
+ * Removes the topmost entry from a #GPQueue and returns its data pointer.
+ * Calling this on an empty #GPQueue is not an error, but removes nothing
+ * and returns %NULL.
  * 
- * If you also need to know the elements priority value or be able to tell
- * the difference between an empty #GPQueue and one that happens to have an
- * entry with a %NULL data pointer at the top, use g_pqueue_pop_extended()
- * instead.
+ * If you need to tell the difference between an empty queue and a queue
+ * that happens to have a %NULL pointer at the top, check if the queue is
+ * empty first.
  * 
- * Return value: the topmost entry's data pointer.
+ * Returns: the topmost entry's data pointer, or %NULL if the queue was empty.
+ * 
+ * Since: 2.x
  **/
 gpointer
-g_pqueue_pop (GPQueue **pqueue)
+g_pqueue_pop (GPQueue *pqueue)
 {
-	gpointer data;
-	if (*pqueue == NULL) return NULL;
-	data = (*pqueue)->data;
-	*pqueue = g_pqueue_delete_root(*pqueue, *pqueue);
-	return data;
+  gpointer data;
+
+  if (pqueue->root == NULL) return NULL;
+  data = pqueue->root->data;
+  g_pqueue_remove_root (pqueue, pqueue->root);
+  return data;
+}
+
+static inline void
+g_pqueue_make_root (GPQueue *pqueue,
+                    GPQueueNode *entry)
+{
+  /* This moves a node up to the root _level_ of the structure.
+   * It does not always become the actual root element (pqueue->root).
+   */
+
+  GPQueueNode *parent;
+
+  parent = entry->parent;
+  entry->parent = NULL;
+  entry->marked = FALSE;
+  if (parent != NULL) {
+    if (entry->next != entry) {
+      if (parent->child == entry) parent->child = entry->next;
+      g_pqueue_node_cut (entry);
+      parent->degree -= 1;
+    } else {
+      parent->child = NULL;
+      parent->degree = 0;
+    }
+    g_pqueue_node_insert_before (pqueue->root, entry);
+  }
+
+  if (cmp (pqueue, entry, pqueue->root) < 0)
+    pqueue->root = entry;
+}
+
+static void
+g_pqueue_cut_tree (GPQueue *pqueue,
+                   GPQueueNode *entry)
+{
+  /* This function moves an entry up to the root level of the structure.
+   * It extends g_pqueue_make_root() in that the entry's parent, grandparent
+   * etc. may also be moved to the root level if they are "marked". This is
+   * not essential for correctness, it just maintains the so-called "potential"
+   * of the structure, which is necessary for the amortized runtime analysis.
+   */
+
+  GPQueueNode *current;
+  GPQueueNode *parent;
+
+  current = entry;
+  while ((current != NULL) && (current->parent != NULL)) {
+    parent = current->parent;
+    g_pqueue_make_root (pqueue, entry);
+    if (parent->marked) {
+      current = parent;
+    } else {
+      parent->marked = TRUE;
+      current = NULL;
+    }
+  }
+  if (cmp (pqueue, entry, pqueue->root) < 0)
+    pqueue->root = entry;
 }
 
 /**
- * g_pqueue_pop_extended:
- * @pqueue: a <emphasis>pointer to a</emphasis> #GPQueue.
- * @data: unless this is %NULL, the topmost entry's data pointer or %NULL
- *   will be written here.
- * @priority: if this is not %NULL and the queue is not empty, the topmost
- *   entry's priority value will be written here.
- * 
- * Deletes the topmost entry from a #GPQueue and returns (by reference) both
- * its data pointer and its priority value.
- * The altered queue is written back to *@pqueue.
- * 
- * Return value: %TRUE if the queue was not empty, %FALSE if it was.
- **/
-gboolean
-g_pqueue_pop_extended (GPQueue **pqueue, gpointer *data, gint *priority)
-{
-	if (*pqueue == NULL) {
-		if (data != NULL) *data = NULL;
-		return FALSE;
-	}
-
-	if (data != NULL) *data = (*pqueue)->data;
-	if (priority != NULL) *priority = (*pqueue)->priority;
-	*pqueue = g_pqueue_delete_top(*pqueue);
-	return TRUE;
-}
-
-static inline GPQueue*
-g_pqueue_make_root (GPQueue *pqueue, GPQueue *entry)
-{
-	GPQueue *parent = entry->parent;
-	entry->parent = NULL;
-	entry->marked = FALSE;
-	if (parent != NULL) {
-		if (entry->next != entry) {
-			if (parent->child == entry) parent->child = entry->next;
-			g_pqueue_remove(entry);
-			parent->degree -= 1;
-		} else {
-			parent->child = NULL;
-			parent->degree = 0;
-		}
-		g_pqueue_insert_before(pqueue, entry);
-	}
-	if (entry->priority < pqueue->priority) return entry;
-	else return pqueue;
-}
-
-static GPQueue*
-g_pqueue_cut_tree (GPQueue *pqueue, GPQueue *entry)
-{
-	GPQueue *current = entry;
-	while ((current != NULL) && (current->parent != NULL)) {
-		GPQueue *parent = current->parent;
-		pqueue = g_pqueue_make_root(pqueue, entry);
-		if (parent->marked) {
-			current = parent;
-		} else {
-			parent->marked = TRUE;
-			current = NULL;
-		}
-	}
-	if (entry->priority < pqueue->priority) return entry;
-	else return pqueue;
-}
-
-/**
- * g_pqueue_delete:
+ * g_pqueue_remove:
  * @pqueue: a #GPQueue.
  * @entry: a #GPQueueHandle for an entry in @pqueue.
  * 
- * Deletes one entry in a #GPQueue and returns the altered queue.
+ * Removes one entry from a #GPQueue.
  * 
  * Make sure that @entry refers to an entry that is actually part of
  * @pqueue at the time, otherwise the behavior of this function is
  * undefined (expect crashes).
  * 
- * Return value: the altered #GPQueue.
+ * Since: 2.x
  **/
-GPQueue*
-g_pqueue_delete (GPQueue* pqueue, GPQueueHandle entry)
+void
+g_pqueue_remove (GPQueue* pqueue,
+                 GPQueueHandle entry)
 {
-	pqueue = g_pqueue_cut_tree(pqueue, entry);
-	pqueue = g_pqueue_delete_root(pqueue, entry);
-	return pqueue;
+  g_pqueue_cut_tree (pqueue, entry);
+  g_pqueue_remove_root (pqueue, entry);
 }
 
 /**
- * g_pqueue_change_priority:
+ * g_pqueue_priority_changed:
  * @pqueue: a #GPQueue.
  * @entry: a #GPQueueHandle for an entry in @pqueue.
- * @priority: the new priority value for @entry.
  * 
- * Changes the priority of one entry in a #GPQueue
- * and returns the altered queue.
+ * Notifies the #GPQueue that the priority of one entry has changed.
+ * The internal representation is updated accordingly.
  * 
  * Make sure that @entry refers to an entry that is actually part of
  * @pqueue at the time, otherwise the behavior of this function is
  * undefined (expect crashes).
  * 
- * Return value: the altered #GPQueue.
+ * Do not attempt to change the priorities of several entries at once.
+ * Every time a single object is changed, the #GPQueue needs to be updated
+ * by calling g_pqueue_priority_changed() for that object.
+ * 
+ * Since: 2.x
  **/
-GPQueue*
-g_pqueue_change_priority (GPQueue* pqueue, GPQueueHandle entry, gint priority)
+void
+g_pqueue_priority_changed (GPQueue* pqueue,
+                           GPQueueHandle entry)
 {
-	gint oldpriority;
-  if (entry->priority == priority) return pqueue;
+  g_pqueue_cut_tree (pqueue, entry);
 
-	oldpriority = entry->priority;
-	entry->priority = priority;
+  if (entry->child) {
+    g_pqueue_node_insert_after (entry, entry->child);
+    entry->child = NULL;
+    entry->degree = 0;
+  }
 
-	pqueue = g_pqueue_cut_tree(pqueue, entry);
-
-	if (priority > oldpriority) {
-		if (entry->child) {
-			g_pqueue_insert_after(entry, entry->child);
-			entry->child = NULL;
-			entry->degree = 0;
-		}
-		pqueue = g_pqueue_fix_rootlist(pqueue);
-	}
-
-	return pqueue;
+  g_pqueue_fix_rootlist (pqueue);
 }
 
 /**
- * g_pqueue_destroy:
+ * g_pqueue_priority_decreased:
+ * @pqueue: a #GPQueue.
+ * @entry: a #GPQueueHandle for an entry in @pqueue.
+ * 
+ * Notifies the #GPQueue that the priority of one entry has
+ * <emphasis>decreased</emphasis>.
+ * 
+ * This is a special case of g_pqueue_priority_changed(). If you are absolutely
+ * sure that the new priority of @entry is lower than it was before, you
+ * may call this function instead of g_pqueue_priority_changed().
+ * 
+ * <note>
+ *   <para>
+ *     In the current implementation, an expensive step in
+ *     g_pqueue_priority_changed() can be skipped if the new priority is known
+ *     to be lower, leading to an amortized running time of O(1) instead of
+ *     O(log n). Of course, if the priority is not actually lower, behavior
+ *     is undefined.
+ *   </para>
+ * </note>
+ * 
+ * Since: 2.x
+ **/
+void
+g_pqueue_priority_decreased (GPQueue* pqueue,
+                             GPQueueHandle entry)
+{
+  g_pqueue_cut_tree (pqueue, entry);
+}
+
+static void
+g_pqueue_node_free_all (GPQueueNode *node)
+{
+  if (node == NULL) return;
+  g_pqueue_node_free_all (node->child);
+  node->prev->next = NULL;
+  g_pqueue_node_free_all (node->next);
+  g_slice_free (GPQueueNode, node);
+}
+
+/**
+ * g_pqueue_clear:
+ * @pqueue: a #GPQueue.
+ * 
+ * Removes all entries from a @pqueue.
+ * 
+ * Since: 2.x
+ **/
+void
+g_pqueue_clear (GPQueue* pqueue)
+{
+  g_pqueue_node_free_all (pqueue->root);
+  pqueue->root = NULL;
+}
+
+/**
+ * g_pqueue_free:
  * @pqueue: a #GPQueue.
  * 
  * Deallocates the memory used by @pqueue itself, but not any memory pointed
- * to by the entries' data pointers.
+ * to by the data pointers of its entries.
  * 
- * This is unnecessary for empty queues, which are just a %NULL pointer,
- * but can be used if you ever want to get rid of a #GPQueue before you have
- * removed all the entries.
+ * Since: 2.x
  **/
 void
-g_pqueue_destroy (GPQueue* pqueue)
+g_pqueue_free (GPQueue* pqueue)
 {
-	if (pqueue == NULL) return;
-	g_pqueue_destroy(pqueue->child);
-	pqueue->prev->next = NULL;
-	g_pqueue_destroy(pqueue->next);
-	g_slice_free(GPQueue, pqueue);
+  g_pqueue_clear (pqueue);
+  g_slice_free (GPQueue, pqueue);
 }
+
+#define __G_PQUEUE_C__
