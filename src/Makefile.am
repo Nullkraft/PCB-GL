@@ -72,6 +72,8 @@ PCB_SRCS = \
 	flags.c \
 	fontmode.c \
 	global.h \
+	gpqueue/gpqueue.c \
+	gpqueue/gpqueue.h \
 	heap.c \
 	heap.h \
 	hid.h \
