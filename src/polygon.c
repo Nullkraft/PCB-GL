@@ -32,6 +32,8 @@
 Here's a brief tour of the data and life of a polygon, courtesy of Ben
 Jackson:
 
+*** FIXME: SOME OF THIS WILL BE OUT DATED BY THE ADDITION OF POURS ****
+
 A PCB PolygonType contains an array of points outlining the polygon.
 This is what is manipulated by the UI and stored in the saved PCB.
 
@@ -108,8 +110,6 @@ RCSID ("$Id$");
 
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
-#define UNSUBTRACT_BLOAT 10
-
 /* ---------------------------------------------------------------------------
  * local prototypes
  */
@@ -141,6 +141,7 @@ ComputeNoHoles (PolygonType *poly)
   poly->NoHolesValid = 1;
 }
 
+#if 0
 static POLYAREA *
 biggest (POLYAREA * p)
 {
@@ -190,12 +191,14 @@ biggest (POLYAREA * p)
   assert (p->b);
   return p;
 }
+#endif
 
 POLYAREA *
 ContourToPoly (PLINE * contour)
 {
   POLYAREA *p;
   poly_PreContour (contour, TRUE);
+  poly_ChkContour (contour);
   assert (contour->Flags.orient == PLF_DIR);
   if (!(p = poly_Create ()))
     return NULL;
@@ -204,14 +207,17 @@ ContourToPoly (PLINE * contour)
   return p;
 }
 
+#warning FIXME Later
+#if 0
 static POLYAREA *
-original_poly (PolygonType * p)
+original_poly (PourType * p)
 {
+  return NULL;
   PLINE *contour = NULL;
   POLYAREA *np = NULL;
   Vector v;
 
-  /* first make initial polygon contour */
+  /* first make initial pour contour */
   POLYGONPOINT_LOOP (p);
   {
     v[0] = point->X;
@@ -248,6 +254,7 @@ original_poly (PolygonType * p)
   assert (poly_Valid (np));
   return biggest (np);
 }
+#endif
 
 POLYAREA *
 RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2)
@@ -617,6 +624,8 @@ SquarePadPoly (PadType * pad, BDimension clear)
   return np;
 }
 
+#warning FIXME Later
+#if 0
 /* clear np1 from the polygon */
 static int
 Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
@@ -650,7 +659,9 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
       p->NoHoles = NULL;
       return -1;
     }
-  p->Clipped = biggest (merged);
+#warning FIXME Later
+//  p->Clipped = biggest (merged);
+  p->Clipped = merged;
   assert (!p->Clipped || poly_Valid (p->Clipped));
   if (!p->Clipped)
     Message ("Polygon cleared out of existence near (%d, %d)\n",
@@ -658,6 +669,7 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
              (p->BoundingBox.Y1 + p->BoundingBox.Y2) / 2);
   return 1;
 }
+#endif
 
 /* create a polygon of the pin clearance */
 POLYAREA *
@@ -689,486 +701,15 @@ BoxPolyBloated (BoxType *box, BDimension bloat)
                    box->Y1 - bloat, box->Y2 + bloat);
 }
 
-/* remove the pin clearance from the polygon */
-static int
-SubtractPin (DataType * d, PinType * pin, LayerType * l, PolygonType * p)
-{
-  POLYAREA *np;
-  Cardinal i;
-
-  if (pin->Clearance == 0)
-    return 0;
-  i = GetLayerNumber (d, l);
-  if (TEST_THERM (i, pin))
-    {
-      np = ThermPoly ((PCBTypePtr) (d->pcb), pin, i);
-      if (!np)
-        return 0;
-    }
-  else
-    {
-      np = PinPoly (pin, pin->Thickness, pin->Clearance);
-      if (!np)
-        return -1;
-    }
-  return Subtract (np, p, TRUE);
-}
-
-static int
-SubtractLine (LineType * line, PolygonType * p)
-{
-  POLYAREA *np;
-
-  if (!TEST_FLAG (CLEARLINEFLAG, line))
-    return 0;
-  if (!(np = LinePoly (line, line->Thickness + line->Clearance)))
-    return -1;
-  return Subtract (np, p, True);
-}
-
-static int
-SubtractArc (ArcType * arc, PolygonType * p)
-{
-  POLYAREA *np;
-
-  if (!TEST_FLAG (CLEARLINEFLAG, arc))
-    return 0;
-  if (!(np = ArcPoly (arc, arc->Thickness + arc->Clearance)))
-    return -1;
-  return Subtract (np, p, True);
-}
-
-static int
-SubtractText (TextType * text, PolygonType * p)
-{
-  POLYAREA *np;
-  const BoxType *b = &text->BoundingBox;
-
-  if (!TEST_FLAG (CLEARLINEFLAG, text))
-    return 0;
-  if (!(np = RoundRect (b->X1 + PCB->Bloat, b->X2 - PCB->Bloat,
-                        b->Y1 + PCB->Bloat, b->Y2 - PCB->Bloat, PCB->Bloat)))
-    return -1;
-  return Subtract (np, p, True);
-}
-
-static int
-SubtractPad (PadType * pad, PolygonType * p)
-{
-  POLYAREA *np = NULL;
-
-  if (TEST_FLAG (SQUAREFLAG, pad))
-    {
-      if (!
-          (np = SquarePadPoly (pad, pad->Thickness + pad->Clearance)))
-        return -1;
-    }
-  else
-    {
-      if (!
-          (np = LinePoly ((LineType *) pad, pad->Thickness + pad->Clearance)))
-        return -1;
-    }
-  return Subtract (np, p, True);
-}
-
-static int
-SubtractPolygon (PolygonType * poly, PolygonType * p)
-{
-  POLYAREA *np;
-
-  /* Don't subtract from ourselves! */
-  if (poly == p || !TEST_FLAG (CLEARLINEFLAG, poly))
-    return 0;
-
-  np = original_poly (poly);
-
-  return Subtract (np, p, True);
-}
-
-struct cpInfo
-{
-  const BoxType *other;
-  DataType *data;
-  LayerType *layer;
-  PolygonType *polygon;
-  Boolean solder;
-  POLYAREA *accumulate;
-  jmp_buf env;
-};
-
-static int
-pin_sub_callback (const BoxType * b, void *cl)
-{
-  static int counter = 0;
-  PinTypePtr pin = (PinTypePtr) b;
-  struct cpInfo *info = (struct cpInfo *) cl;
-  PolygonTypePtr polygon;
-  POLYAREA *np;
-  POLYAREA *merged;
-  Cardinal i;
-
-  /* don't subtract the object that was put back! */
-  if (b == info->other)
-    return 0;
-  polygon = info->polygon;
-
-  if (pin->Clearance == 0)
-    return 0;
-  i = GetLayerNumber (info->data, info->layer);
-  if (TEST_THERM (i, pin))
-    {
-      np = ThermPoly ((PCBTypePtr) (info->data->pcb), pin, i);
-      if (!np)
-        return 0;
-    }
-  else
-    {
-      np = PinPoly (pin, pin->Thickness, pin->Clearance);
-      if (!np)
-        return -1;
-    }
-
-  poly_Boolean_free (info->accumulate, np, &merged, PBO_UNITE);
-  info->accumulate = merged;
-
-  counter ++;
-
-  if (counter == 100)
-    {
-      counter = 0;
-      Subtract (info->accumulate, polygon, True);
-      info->accumulate = NULL;
-    }
-
-  return 1;
-}
-
-static int
-arc_sub_callback (const BoxType * b, void *cl)
-{
-  ArcTypePtr arc = (ArcTypePtr) b;
-  struct cpInfo *info = (struct cpInfo *) cl;
-  PolygonTypePtr polygon;
-
-  /* don't subtract the object that was put back! */
-  if (b == info->other)
-    return 0;
-  if (!TEST_FLAG (CLEARLINEFLAG, arc))
-    return 0;
-  polygon = info->polygon;
-  if (SubtractArc (arc, polygon) < 0)
-    longjmp (info->env, 1);
-  return 1;
-}
-
-static int
-pad_sub_callback (const BoxType * b, void *cl)
-{
-  PadTypePtr pad = (PadTypePtr) b;
-  struct cpInfo *info = (struct cpInfo *) cl;
-  PolygonTypePtr polygon;
-
-  /* don't subtract the object that was put back! */
-  if (b == info->other)
-    return 0;
-  polygon = info->polygon;
-  if (XOR (TEST_FLAG (ONSOLDERFLAG, pad), !info->solder))
-    {
-      if (SubtractPad (pad, polygon) < 0)
-        longjmp (info->env, 1);
-      return 1;
-    }
-  return 0;
-}
-
-static int
-line_sub_callback (const BoxType * b, void *cl)
-{
-  static int counter = 0;
-  LineTypePtr line = (LineTypePtr) b;
-  struct cpInfo *info = (struct cpInfo *) cl;
-  PolygonTypePtr polygon;
-  POLYAREA *np;
-  POLYAREA *merged;
-
-  /* don't subtract the object that was put back! */
-  if (b == info->other)
-    return 0;
-  if (!TEST_FLAG (CLEARLINEFLAG, line))
-    return 0;
-  polygon = info->polygon;
-
-  if (!(np = LinePoly (line, line->Thickness + line->Clearance)))
-    longjmp (info->env, 1);
-
-  poly_Boolean_free (info->accumulate, np, &merged, PBO_UNITE);
-  info->accumulate = merged;
-
-  counter ++;
-
-  if (counter == 20)
-    {
-      counter = 0;
-      Subtract (info->accumulate, polygon, True);
-      info->accumulate = NULL;
-    }
-
-  return 1;
-}
-
-static int
-text_sub_callback (const BoxType * b, void *cl)
-{
-  TextTypePtr text = (TextTypePtr) b;
-  struct cpInfo *info = (struct cpInfo *) cl;
-  PolygonTypePtr polygon;
-
-  /* don't subtract the object that was put back! */
-  if (b == info->other)
-    return 0;
-  if (!TEST_FLAG (CLEARLINEFLAG, text))
-    return 0;
-  polygon = info->polygon;
-  if (SubtractText (text, polygon) < 0)
-    longjmp (info->env, 1);
-  return 1;
-}
-
-static int
-poly_sub_callback (const BoxType * b, void *cl)
-{
-  PolygonTypePtr poly = (PolygonTypePtr) b;
-  struct cpInfo *info = (struct cpInfo *) cl;
-  PolygonTypePtr polygon;
-
-  /* don't subtract the object that was put back! */
-  if (b == info->other)
-    return 0;
-  if (!TEST_FLAG (CLEARLINEFLAG, poly))
-    return 0;
-  polygon = info->polygon;
-  if (SubtractPolygon (poly, polygon) < 0)
-    longjmp (info->env, 1);
-  return 1;
-}
-
-static int
-Group (DataTypePtr Data, Cardinal layer)
-{
-  Cardinal i, j;
-  for (i = 0; i < max_layer; i++)
-    for (j = 0; j < ((PCBType *) (Data->pcb))->LayerGroups.Number[i]; j++)
-      if (layer == ((PCBType *) (Data->pcb))->LayerGroups.Entries[i][j])
-        return i;
-  return i;
-}
-
-static int
-clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
-           const BoxType * here, BDimension expand)
-{
-  int r = 0;
-  BoxType region;
-  struct cpInfo info;
-  Cardinal group;
-
-  if (!TEST_FLAG (CLEARPOLYFLAG, polygon)
-      || GetLayerNumber (Data, Layer) >= max_layer)
-    return 0;
-  group = Group (Data, GetLayerNumber (Data, Layer));
-  info.solder = (group == Group (Data, max_layer + SOLDER_LAYER));
-  info.data = Data;
-  info.other = here;
-  info.layer = Layer;
-  info.polygon = polygon;
-  if (here)
-    region = clip_box (here, &polygon->BoundingBox);
-  else
-    region = polygon->BoundingBox;
-  region = bloat_box (&region, expand);
-
-  if (setjmp (info.env) == 0)
-    {
-      r = 0;
-      info.accumulate = NULL;
-      if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
-	r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
-      GROUP_LOOP (Data, group);
-      {
-        r +=
-          r_search (layer->line_tree, &region, NULL, line_sub_callback,
-                    &info);
-        Subtract (info.accumulate, polygon, True);
-        info.accumulate = NULL;
-        r +=
-          r_search (layer->arc_tree, &region, NULL, arc_sub_callback, &info);
-	r +=
-          r_search (layer->text_tree, &region, NULL, text_sub_callback, &info);
-        r +=
-          r_search (layer->polygon_tree, &region, NULL, poly_sub_callback, &info);
-      }
-      END_LOOP;
-      r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
-      r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
-      Subtract (info.accumulate, polygon, True);
-      info.accumulate = NULL;
-    }
-  polygon->NoHolesValid = 0;
-  return r;
-}
-
-static int
-Unsubtract (POLYAREA * np1, PolygonType * p)
-{
-  POLYAREA *merged = NULL, *np = np1;
-  POLYAREA *orig_poly, *clipped_np;
-  int x;
-  assert (np);
-  assert (p && p->Clipped);
-
-  orig_poly = original_poly (p);
-
-  x = poly_Boolean_free (np, orig_poly, &clipped_np, PBO_ISECT);
-  if (x != err_ok)
-    {
-      fprintf (stderr, "Error while clipping PBO_ISECT: %d\n", x);
-      poly_Free (&clipped_np);
-      goto fail;
-    }
-
-  x = poly_Boolean_free (p->Clipped, clipped_np, &merged, PBO_UNITE);
-  if (x != err_ok)
-    {
-      fprintf (stderr, "Error while clipping PBO_UNITE: %d\n", x);
-      poly_Free (&merged);
-      goto fail;
-    }
-  p->Clipped = biggest (merged);
-  assert (!p->Clipped || poly_Valid (p->Clipped));
-  return 1;
-
-fail:
-  p->Clipped = NULL;
-  if (p->NoHoles) printf ("Just leaked in Unsubtract\n");
-  p->NoHoles = NULL;
-  return 0;
-}
-
-static int
-UnsubtractPin (PinType * pin, LayerType * l, PolygonType * p)
-{
-  POLYAREA *np;
-
-  /* overlap a bit to prevent gaps from rounding errors */
-  np = BoxPolyBloated (&pin->BoundingBox, UNSUBTRACT_BLOAT);
-
-  if (!np)
-    return 0;
-  if (!Unsubtract (np, p))
-    return 0;
-  clearPoly (PCB->Data, l, p, (const BoxType *) pin, 2 * UNSUBTRACT_BLOAT);
-  return 1;
-}
-
-static int
-UnsubtractArc (ArcType * arc, LayerType * l, PolygonType * p)
-{
-  POLYAREA *np;
-
-  if (!TEST_FLAG (CLEARLINEFLAG, arc))
-    return 0;
-
-  /* overlap a bit to prevent gaps from rounding errors */
-  np = BoxPolyBloated (&arc->BoundingBox, UNSUBTRACT_BLOAT);
-
-  if (!np)
-    return 0;
-  if (!Unsubtract (np, p))
-    return 0;
-  clearPoly (PCB->Data, l, p, (const BoxType *) arc, 2 * UNSUBTRACT_BLOAT);
-  return 1;
-}
-
-static int
-UnsubtractLine (LineType * line, LayerType * l, PolygonType * p)
-{
-  POLYAREA *np;
-
-  if (!TEST_FLAG (CLEARLINEFLAG, line))
-    return 0;
-
-  /* overlap a bit to prevent notches from rounding errors */
-  np = BoxPolyBloated (&line->BoundingBox, UNSUBTRACT_BLOAT);
-
-  if (!np)
-    return 0;
-  if (!Unsubtract (np, p))
-    return 0;
-  clearPoly (PCB->Data, l, p, (const BoxType *) line, 2 * UNSUBTRACT_BLOAT);
-  return 1;
-}
-
-static int
-UnsubtractText (TextType * text, LayerType * l, PolygonType * p)
-{
-  POLYAREA *np;
-
-  if (!TEST_FLAG (CLEARLINEFLAG, text))
-    return 0;
-
-  /* overlap a bit to prevent notches from rounding errors */
-  np = BoxPolyBloated (&text->BoundingBox, UNSUBTRACT_BLOAT);
-
-  if (!np)
-    return -1;
-  if (!Unsubtract (np, p))
-    return 0;
-  clearPoly (PCB->Data, l, p, (const BoxType *) text, 2 * UNSUBTRACT_BLOAT);
-  return 1;
-}
-
-static int
-UnsubtractPad (PadType * pad, LayerType * l, PolygonType * p)
-{
-  POLYAREA *np;
-
-  /* overlap a bit to prevent notches from rounding errors */
-  np = BoxPolyBloated (&pad->BoundingBox, UNSUBTRACT_BLOAT);
-
-  if (!np)
-    return 0;
-  if (!Unsubtract (np, p))
-    return 0;
-  clearPoly (PCB->Data, l, p, (const BoxType *) pad, 2 * UNSUBTRACT_BLOAT);
-  return 1;
-}
-
-static int
-UnsubtractPolygon (PolygonType * poly, LayerType * l, PolygonType * p)
-{
-  POLYAREA *np;
-
-  /* Don't subtract from ourselves! */
-  if (poly == p || !TEST_FLAG (CLEARLINEFLAG, poly))
-    return 0;
-
-  /* overlap a bit to prevent notches from rounding errors */
-  np = BoxPolyBloated (&poly->BoundingBox, UNSUBTRACT_BLOAT);
-
-  if (!np)
-    return 0;
-  if (!Unsubtract (np, p))
-    return 0;
-  clearPoly (PCB->Data, l, p, (const BoxType *) poly, 2 * UNSUBTRACT_BLOAT);
-  return 1;
-}
-
-static Boolean inhibit = False;
 
 int
 InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
 {
+  /* NOP */
+  printf ("Someone called InitClip, bad someone.\n");
+  return 0;
+#warning FIXME Later
+#if 0
   if (inhibit)
     return 0;
   if (p->Clipped)
@@ -1183,205 +724,7 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
   else
     p->NoHolesValid = 0;
   return 1;
-}
-
-/* --------------------------------------------------------------------------
- * remove redundant polygon points. Any point that lies on the straight
- * line between the points on either side of it is redundant.
- * returns true if any points are removed
- */
-Boolean
-RemoveExcessPolygonPoints (LayerTypePtr Layer, PolygonTypePtr Polygon)
-{
-  PointTypePtr pt1, pt2, pt3;
-  Cardinal n;
-  LineType line;
-  Boolean changed = False;
-
-  if (Undoing ())
-    return (False);
-  /* there are always at least three points in a polygon */
-  pt1 = &Polygon->Points[Polygon->PointN - 1];
-  pt2 = &Polygon->Points[0];
-  pt3 = &Polygon->Points[1];
-  for (n = 0; n < Polygon->PointN; n++, pt1++, pt2++, pt3++)
-    {
-      /* wrap around polygon */
-      if (n == 1)
-        pt1 = &Polygon->Points[0];
-      if (n == Polygon->PointN - 1)
-        pt3 = &Polygon->Points[0];
-      line.Point1 = *pt1;
-      line.Point2 = *pt3;
-      line.Thickness = 0;
-      if (IsPointOnLine ((float) pt2->X, (float) pt2->Y, 0.0, &line))
-        {
-          RemoveObject (POLYGONPOINT_TYPE, (void *) Layer, (void *) Polygon,
-                        (void *) pt2);
-          changed = True;
-        }
-    }
-  return (changed);
-}
-
-/* ---------------------------------------------------------------------------
- * returns the index of the polygon point which is the end
- * point of the segment with the lowest distance to the passed
- * coordinates
- */
-Cardinal
-GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, LocationType X,
-                               LocationType Y)
-{
-  double mindistance = (double) MAX_COORD * MAX_COORD;
-  PointTypePtr ptr1 = &Polygon->Points[Polygon->PointN - 1],
-    ptr2 = &Polygon->Points[0];
-  Cardinal n, result = 0;
-
-  /* we calculate the distance to each segment and choose the
-   * shortest distance. If the closest approach between the
-   * given point and the projected line (i.e. the segment extended)
-   * is not on the segment, then the distance is the distance
-   * to the segment end point.
-   */
-
-  for (n = 0; n < Polygon->PointN; n++, ptr2++)
-    {
-      register double u, dx, dy;
-      dx = ptr2->X - ptr1->X;
-      dy = ptr2->Y - ptr1->Y;
-      if (dx != 0.0 || dy != 0.0)
-        {
-          /* projected intersection is at P1 + u(P2 - P1) */
-          u = ((X - ptr1->X) * dx + (Y - ptr1->Y) * dy) / (dx * dx + dy * dy);
-
-          if (u < 0.0)
-            {                   /* ptr1 is closest point */
-              u = SQUARE (X - ptr1->X) + SQUARE (Y - ptr1->Y);
-            }
-          else if (u > 1.0)
-            {                   /* ptr2 is closest point */
-              u = SQUARE (X - ptr2->X) + SQUARE (Y - ptr2->Y);
-            }
-          else
-            {                   /* projected intersection is closest point */
-              u = SQUARE (X - ptr1->X * (1.0 - u) - u * ptr2->X) +
-                SQUARE (Y - ptr1->Y * (1.0 - u) - u * ptr2->Y);
-            }
-          if (u < mindistance)
-            {
-              mindistance = u;
-              result = n;
-            }
-        }
-      ptr1 = ptr2;
-    }
-  return (result);
-}
-
-/* ---------------------------------------------------------------------------
- * go back to the  previous point of the polygon
- */
-void
-GoToPreviousPoint (void)
-{
-  switch (Crosshair.AttachedPolygon.PointN)
-    {
-      /* do nothing if mode has just been entered */
-    case 0:
-      break;
-
-      /* reset number of points and 'LINE_MODE' state */
-    case 1:
-      Crosshair.AttachedPolygon.PointN = 0;
-      Crosshair.AttachedLine.State = STATE_FIRST;
-      addedLines = 0;
-      break;
-
-      /* back-up one point */
-    default:
-      {
-        PointTypePtr points = Crosshair.AttachedPolygon.Points;
-        Cardinal n = Crosshair.AttachedPolygon.PointN - 2;
-
-        Crosshair.AttachedPolygon.PointN--;
-        Crosshair.AttachedLine.Point1.X = points[n].X;
-        Crosshair.AttachedLine.Point1.Y = points[n].Y;
-        break;
-      }
-    }
-}
-
-/* ---------------------------------------------------------------------------
- * close polygon if possible
- */
-void
-ClosePolygon (void)
-{
-  Cardinal n = Crosshair.AttachedPolygon.PointN;
-
-  /* check number of points */
-  if (n >= 3)
-    {
-      /* if 45 degree lines are what we want do a quick check
-       * if closing the polygon makes sense
-       */
-      if (!TEST_FLAG (ALLDIRECTIONFLAG, PCB))
-        {
-          BDimension dx, dy;
-
-          dx = abs (Crosshair.AttachedPolygon.Points[n - 1].X -
-                    Crosshair.AttachedPolygon.Points[0].X);
-          dy = abs (Crosshair.AttachedPolygon.Points[n - 1].Y -
-                    Crosshair.AttachedPolygon.Points[0].Y);
-          if (!(dx == 0 || dy == 0 || dx == dy))
-            {
-              Message
-                (_
-                 ("Cannot close polygon because 45 degree lines are requested.\n"));
-              return;
-            }
-        }
-      CopyAttachedPolygonToLayer ();
-      Draw ();
-    }
-  else
-    Message (_("A polygon has to have at least 3 points\n"));
-}
-
-/* ---------------------------------------------------------------------------
- * moves the data of the attached (new) polygon to the current layer
- */
-void
-CopyAttachedPolygonToLayer (void)
-{
-  PolygonTypePtr polygon;
-  int saveID;
-
-  /* move data to layer and clear attached struct */
-  polygon = CreateNewPolygon (CURRENT, NoFlags ());
-  saveID = polygon->ID;
-  *polygon = Crosshair.AttachedPolygon;
-  polygon->ID = saveID;
-  SET_FLAG (CLEARPOLYFLAG, polygon);
-  if (TEST_FLAG (NEWFULLPOLYFLAG, PCB))
-    SET_FLAG (FULLPOLYFLAG, polygon);
-  memset (&Crosshair.AttachedPolygon, 0, sizeof (PolygonType));
-  SetPolygonBoundingBox (polygon);
-  if (!CURRENT->polygon_tree)
-    CURRENT->polygon_tree = r_create_tree (NULL, 0, 0);
-  r_insert_entry (CURRENT->polygon_tree, (BoxType *) polygon, 0);
-  InitClip (PCB->Data, CURRENT, polygon);
-  DrawPolygon (CURRENT, polygon, 0);
-  SetChangedFlag (True);
-
-  /* reset state of attached line */
-  Crosshair.AttachedLine.State = STATE_FIRST;
-  addedLines = 0;
-
-  /* add to undo list */
-  AddObjectToCreateUndoList (POLYGON_TYPE, CURRENT, polygon, polygon);
-  IncrementUndoSerialNumber ();
+#endif
 }
 
 /* find polygon holes in range, then call the callback function for
@@ -1425,73 +768,7 @@ struct plow_info
 };
 
 static int
-subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
-               int type, void *ptr1, void *ptr2)
-{
-  if (!Polygon->Clipped)
-    return 0;
-  switch (type)
-    {
-    case PIN_TYPE:
-    case VIA_TYPE:
-      SubtractPin (Data, (PinTypePtr) ptr2, Layer, Polygon);
-      Polygon->NoHolesValid = 0;
-      return 1;
-    case LINE_TYPE:
-      SubtractLine ((LineTypePtr) ptr2, Polygon);
-      Polygon->NoHolesValid = 0;
-      return 1;
-    case ARC_TYPE:
-      SubtractArc ((ArcTypePtr) ptr2, Polygon);
-      Polygon->NoHolesValid = 0;
-      return 1;
-    case PAD_TYPE:
-      SubtractPad ((PadTypePtr) ptr2, Polygon);
-      Polygon->NoHolesValid = 0;
-      return 1;
-    case POLYGON_TYPE:
-      SubtractPolygon ((PolygonTypePtr) ptr2, Polygon);
-      Polygon->NoHolesValid = 0;
-      return 1;
-    case TEXT_TYPE:
-      SubtractText ((TextTypePtr) ptr2, Polygon);
-      Polygon->NoHolesValid = 0;
-      return 1;
-    }
-  return 0;
-}
-
-static int
-add_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
-          int type, void *ptr1, void *ptr2)
-{
-  switch (type)
-    {
-    case PIN_TYPE:
-    case VIA_TYPE:
-      UnsubtractPin ((PinTypePtr) ptr2, Layer, Polygon);
-      return 1;
-    case LINE_TYPE:
-      UnsubtractLine ((LineTypePtr) ptr2, Layer, Polygon);
-      return 1;
-    case ARC_TYPE:
-      UnsubtractArc ((ArcTypePtr) ptr2, Layer, Polygon);
-      return 1;
-    case PAD_TYPE:
-      UnsubtractPad ((PadTypePtr) ptr2, Layer, Polygon);
-      return 1;
-    case POLYGON_TYPE:
-      UnsubtractPolygon ((PolygonTypePtr) ptr2, Layer, Polygon);
-      return 1;
-    case TEXT_TYPE:
-      UnsubtractText ((TextTypePtr) ptr2, Layer, Polygon);
-      return 1;
-    }
-  return 0;
-}
-
-static int
-plow_callback (const BoxType * b, void *cl)
+plow_callback_2 (const BoxType * b, void *cl)
 {
   struct plow_info *plow = (struct plow_info *) cl;
   PolygonTypePtr polygon = (PolygonTypePtr) b;
@@ -1500,6 +777,16 @@ plow_callback (const BoxType * b, void *cl)
     return plow->callback (plow->data, plow->layer, polygon, plow->type,
                            plow->ptr1, plow->ptr2);
   return 0;
+}
+
+static int
+plow_callback (const BoxType * b, void *cl)
+{
+  struct plow_info *plow = (struct plow_info *) cl;
+  PourTypePtr pour = (PourTypePtr) b;
+  BoxType *sb = &((PinTypePtr) plow->ptr2)->BoundingBox;
+
+  return r_search (pour->polygon_tree, sb, NULL, plow_callback_2, plow);
 }
 
 int
@@ -1526,8 +813,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
           LAYER_LOOP (Data, max_layer);
           {
             info.layer = layer;
-            r +=
-              r_search (layer->polygon_tree, &sb, NULL, plow_callback, &info);
+            r += r_search (layer->pour_tree, &sb, NULL, plow_callback, &info);
           }
           END_LOOP;
         }
@@ -1537,8 +823,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
                                                                          ((LayerTypePtr) ptr1))));
           {
             info.layer = layer;
-            r +=
-              r_search (layer->polygon_tree, &sb, NULL, plow_callback, &info);
+            r += r_search (layer->pour_tree, &sb, NULL, plow_callback, &info);
           }
           END_LOOP;
         }
@@ -1557,7 +842,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
                                                                      ((LayerTypePtr) ptr1))));
       {
         info.layer = layer;
-        r += r_search (layer->polygon_tree, &sb, NULL, plow_callback, &info);
+        r += r_search (layer->pour_tree, &sb, NULL, plow_callback, &info);
       }
       END_LOOP;
       break;
@@ -1571,7 +856,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
         {
           info.layer = layer;
           r +=
-            r_search (layer->polygon_tree, &sb, NULL, plow_callback, &info);
+            r_search (layer->pour_tree, &sb, NULL, plow_callback, &info);
         }
         END_LOOP;
       }
@@ -1595,21 +880,6 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
   return r;
 }
 
-void
-RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
-{
-  if (type == POLYGON_TYPE)
-    InitClip (PCB->Data, (LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
-  PlowsPolygon (Data, type, ptr1, ptr2, add_plow);
-}
-
-void
-ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
-{
-  if (type == POLYGON_TYPE)
-    InitClip (PCB->Data, (LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
-  PlowsPolygon (Data, type, ptr1, ptr2, subtract_plow);
-}
 
 Boolean
 isects (POLYAREA * a, PolygonTypePtr p, Boolean fr)
@@ -1767,6 +1037,9 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
 Boolean
 MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
 {
+  return 0;
+#warning FIXME Later
+#if 0
   POLYAREA *p, *start;
   Boolean many = False;
   FlagType flags;
@@ -1830,6 +1103,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
   inhibit = False;
   IncrementUndoSerialNumber ();
   return many;
+#endif
 }
 
 void debug_pline (PLINE *pl)
@@ -1862,9 +1136,9 @@ debug_polygon (PolygonType *p)
 {
   int i;
   POLYAREA *pa;
-  fprintf (stderr, "POLYGON %p  %d pts\n", p, p->PointN);
-  for (i=0; i<p->PointN; i++)
-    fprintf(stderr, "\t%d: %d, %d\n", i, p->Points[i].X, p->Points[i].Y);
+//  fprintf (stderr, "POLYGON %p  %d pts\n", p, p->PointN);
+//  for (i=0; i<p->PointN; i++)
+//    fprintf(stderr, "\t%d: %d, %d\n", i, p->Points[i].X, p->Points[i].Y);
   pa = p->Clipped;
   while (pa)
     {
