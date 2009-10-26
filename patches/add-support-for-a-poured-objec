@@ -1,7 +1,7 @@
-Bottom: b63fc040f9a9a6ef963651f71e2306c19791580d
-Top:    0f4efec350199efab5e8f6309c73843dda8d874e
+Bottom: e809f70c265b9c91183bdb6f160d416d800fbb13
+Top:    784b881518e9dc0a10a8c9828b6b4f468961323a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-23 01:19:00 +0100
+Date:   2009-10-26 13:47:52 +0000
 
 Add support for a "poured" object.
 
@@ -2855,10 +2855,10 @@ index 9e59ca1..73f843c 100644
      }
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 34447b7..6f1d0ce 100644
+index 0f1742f..324f363 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
-@@ -374,7 +374,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -377,7 +377,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
    for (i = 0; i < max_layer; i++)
      {
        LayerType *layer = PCB->Data->Layer + i;
@@ -4039,7 +4039,7 @@ index 5186183..6b5b0c4 100644
     {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
     {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/polygon.c b/src/polygon.c
-index 9955885..2a9288e 100644
+index cc3f718..36631e6 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -32,6 +32,8 @@
@@ -4989,7 +4989,7 @@ index 9955885..2a9288e 100644
  
  Boolean
  isects (POLYAREA * a, PolygonTypePtr p, Boolean fr)
-@@ -1759,6 +1029,9 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
+@@ -1767,6 +1037,9 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
  Boolean
  MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
  {
@@ -4999,7 +4999,7 @@ index 9955885..2a9288e 100644
    POLYAREA *p, *start;
    Boolean many = False;
    FlagType flags;
-@@ -1822,6 +1095,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+@@ -1830,6 +1103,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
    inhibit = False;
    IncrementUndoSerialNumber ();
    return many;
@@ -5007,7 +5007,7 @@ index 9955885..2a9288e 100644
  }
  
  void debug_pline (PLINE *pl)
-@@ -1854,9 +1128,9 @@ debug_polygon (PolygonType *p)
+@@ -1862,9 +1136,9 @@ debug_polygon (PolygonType *p)
  {
    int i;
    POLYAREA *pa;
@@ -5061,10 +5061,10 @@ index 2faaa20..4dba4ca 100644
  void RestoreToPolygon(DataType *, int, void *, void *);
  void ClearFromPolygon(DataType *, int, void *, void *);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 1c6096b..5befd51 100644
+index 6b009e5..dfc8989 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -857,6 +857,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -872,6 +872,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
  }
  
  static void
@@ -5110,7 +5110,7 @@ index 1c6096b..5befd51 100644
  M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  {
    POLYAREA *a = afst, *b = bfst;
-@@ -1103,7 +1142,7 @@ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
+@@ -1118,7 +1157,7 @@ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
  	      return TRUE;
  	  }
      }
@@ -5119,7 +5119,7 @@ index 1c6096b..5befd51 100644
    return FALSE;
  }
  
-@@ -2158,7 +2197,8 @@ Touching (POLYAREA * a, POLYAREA * b)
+@@ -2199,7 +2238,8 @@ Touching (POLYAREA * a, POLYAREA * b)
        if (!poly_Valid (b))
  	return -1;
  #endif
@@ -5129,7 +5129,7 @@ index 1c6096b..5befd51 100644
  
        if (M_POLYAREA_label (a, b, TRUE))
  	return TRUE;
-@@ -2904,15 +2944,19 @@ inside_sector (VNODE * pn, Vector p2)
+@@ -2945,15 +2985,19 @@ inside_sector (VNODE * pn, Vector p2)
  BOOLp
  poly_ChkContour (PLINE * a)
  {
@@ -5151,7 +5151,7 @@ index 1c6096b..5befd51 100644
        do
  	{
  	  if (!node_neighbours (a1, a2) &&
-@@ -2920,21 +2964,22 @@ poly_ChkContour (PLINE * a)
+@@ -2961,21 +3005,22 @@ poly_ChkContour (PLINE * a)
  				    a2->point, a2->next->point, i1, i2)) > 0)
  	    {
  	      if (icnt > 1)
@@ -5179,7 +5179,7 @@ index 1c6096b..5befd51 100644
  
  #if 1
  	      /* now check if they are inside each other */
-@@ -2942,11 +2987,11 @@ poly_ChkContour (PLINE * a)
+@@ -2983,11 +3028,11 @@ poly_ChkContour (PLINE * a)
  		  inside_sector (hit1, hit2->next->point) ||
  		  inside_sector (hit2, hit1->prev->point) ||
  		  inside_sector (hit2, hit1->next->point))
