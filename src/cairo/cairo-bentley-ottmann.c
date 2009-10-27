@@ -2351,7 +2351,7 @@ my_cairo_test (void)
 {
   GList *data = NULL;
 
-//  return;
+  return;
 
   printf ("Cairo bentley ottmann test\n");
 
@@ -2540,7 +2540,7 @@ do_intersect (cairo_bo_edge_t *e1, cairo_bo_edge_t *e2, cairo_point_t point)
   VNODE *new_node;
   int count = 0;
 
-  return 0;
+//  return 0;
 
   if (e1->p == e2->p) {
 //    printf ("do_intersect: SAME CONTOUR\n");
