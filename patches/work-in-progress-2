@@ -1,5 +1,5 @@
 Bottom: 993b2bcd5d0861e4c22e39323148bf338f898ffa
-Top:    f85d2429958bcec2c6ac70e90a787b772c7a80f4
+Top:    f2402bf0f6ca7377dcc3c9c85c7cc301740de414
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-27 04:20:16 +0000
 
@@ -9,7 +9,7 @@ Work in progress
 ---
 
 diff --git a/src/cairo/cairo-bentley-ottmann.c b/src/cairo/cairo-bentley-ottmann.c
-index 56d22c1..537bc12 100644
+index 56d22c1..1dddb01 100644
 --- a/src/cairo/cairo-bentley-ottmann.c
 +++ b/src/cairo/cairo-bentley-ottmann.c
 @@ -116,6 +116,8 @@ typedef struct _cairo_bo_queue_event {
@@ -1190,15 +1190,15 @@ index 56d22c1..537bc12 100644
 -                if (e1 == e2->next)
 -                  printf ("Oops, we were backwards adjacent\n");
 -#endif
--
++            if (e2 != e1->next)
++              break;
+ 
 -                // Do the intersection anyway?
 -                // do_intersect (e1, e2, event->point);
 -
 -                break;
 -            }
-+            if (e2 != e1->next)
-+              break;
- 
+-
 -#if 0
 -            printf ("EVENT: (%i,%i), e1: (%i,%i)-(%i,%i), e2: (%i,%i)-(%i,%i)\n",
 +#if 1
@@ -1516,8 +1516,7 @@ index 56d22c1..537bc12 100644
    GList *data = NULL;
 -  int i = 0;
  
--  return;
-+//  return;
+   return;
  
    printf ("Cairo bentley ottmann test\n");
  
@@ -1579,17 +1578,6 @@ index 56d22c1..537bc12 100644
 +  add_line (&data, 20, 20, 10, 20);
 +  add_line (&data, 10, 20, 10, 10);
 +#endif
-+
-+#if 0
-+  add_line (&data, 10, 10, 20, 20);
-+  add_line (&data, 20, 10, 10, 20);
-+  add_line (&data, 15, 15, 25, 16);
-+#endif
-+
-+#if 0
-+  add_line (&data, 10, 15, 20, 15); /* Misses this intersection on start event! */
-+  add_line (&data, 10, 10, 10, 20);
-+#endif
  
  #if 0
 -  /* Line from (14,10)-(16,20) */
@@ -1605,6 +1593,17 @@ index 56d22c1..537bc12 100644
 -  points[i].num = i;
 -  data = g_list_prepend (data, &points[i]);
 -  i++;
++  add_line (&data, 10, 10, 20, 20);
++  add_line (&data, 20, 10, 10, 20);
++  add_line (&data, 15, 15, 25, 16);
++#endif
++
++#if 0
++  add_line (&data, 10, 15, 20, 15); /* Misses this intersection on start event! */
++  add_line (&data, 10, 10, 10, 20);
++#endif
++
++#if 0
 +  add_line (&data, 10, 20, 20, 20);
 +  add_line (&data, 15, 20, 15, 30);
 +#endif
@@ -1639,7 +1638,7 @@ index 56d22c1..537bc12 100644
    VNODE *new_node;
    int count = 0;
  
-+  return 0;
++//  return 0;
 +
    if (e1->p == e2->p) {
  //    printf ("do_intersect: SAME CONTOUR\n");
