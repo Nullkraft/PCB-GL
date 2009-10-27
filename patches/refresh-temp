@@ -1,0 +1,31 @@
+Bottom: f85d2429958bcec2c6ac70e90a787b772c7a80f4
+Top:    f2402bf0f6ca7377dcc3c9c85c7cc301740de414
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-27 04:20:39 +0000
+
+Refresh of work-in-progress-2
+
+---
+
+diff --git a/src/cairo/cairo-bentley-ottmann.c b/src/cairo/cairo-bentley-ottmann.c
+index 537bc12..1dddb01 100644
+--- a/src/cairo/cairo-bentley-ottmann.c
++++ b/src/cairo/cairo-bentley-ottmann.c
+@@ -2351,7 +2351,7 @@ my_cairo_test (void)
+ {
+   GList *data = NULL;
+ 
+-//  return;
++  return;
+ 
+   printf ("Cairo bentley ottmann test\n");
+ 
+@@ -2540,7 +2540,7 @@ do_intersect (cairo_bo_edge_t *e1, cairo_bo_edge_t *e2, cairo_point_t point)
+   VNODE *new_node;
+   int count = 0;
+ 
+-  return 0;
++//  return 0;
+ 
+   if (e1->p == e2->p) {
+ //    printf ("do_intersect: SAME CONTOUR\n");
