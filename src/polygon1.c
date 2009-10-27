@@ -1353,6 +1353,8 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
               break;
             }
 
+            printf ("Damnit\n");
+
             /* We need to find the contour before it, so we can update its next pointer */
             prev = container;
             while (prev->next != info.result) {
@@ -1906,6 +1908,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
   int del_inside = 0;
   int del_outside = 0;
   int finished;
+  int everything_holes;
 
   if (a == NULL)
     return;
@@ -1939,6 +1942,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
     do {
       anext = a->f;
       finished = (anext == *pieces);
+      everything_holes = 0;
 
       /* Test the outer contour first, as we may need to remove all children */
 
@@ -1958,6 +1962,9 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
         /* a->contours now points to the remaining holes */
         poly_DelContour (&curc);
 
+        everything_holes = 1;
+
+#if 1
         if (a->contours != NULL) {
           /* Find the end of the list of holes */
           curc = a->contours;
@@ -1974,6 +1981,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
         poly_Free (&a); /* NB: Sets a to NULL */
 
         continue;
+#endif
       }
 
       /* Loop whilst we find INSIDE contours to delete */
@@ -2009,6 +2017,24 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
         poly_DelContour (&info.result);
       }
       /* End check for deleted holes */
+
+      if (everything_holes)
+        {
+          if (a->contours != NULL) {
+            /* Find the end of the list of holes */
+            curc = a->contours;
+            while (curc->next != NULL)
+              curc = curc->next;
+
+            /* Take the holes and prepend to the holes queue */
+            curc->next = *holes;
+            *holes = a->contours;
+            a->contours = NULL;
+          }
+
+          remove_polyarea (pieces, a);
+          poly_Free (&a); /* NB: Sets a to NULL */
+        }
 
     /* If we deleted all the pieces of the polyarea, *pieces is NULL */
     } while ((a = anext), *pieces != NULL && !finished);
