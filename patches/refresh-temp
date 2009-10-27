@@ -1,0 +1,186 @@
+Bottom: 8cdc80122897a6ae7ec2b4e0425b191587a17f8a
+Top:    447e9016b0ee9b72a447b5b18fdea28f22705a87
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-27 16:13:03 +0000
+
+Refresh of work-in-progress-3
+
+---
+
+diff --git a/src/cairo/cairo-bentley-ottmann.c b/src/cairo/cairo-bentley-ottmann.c
+index 2978500..b4e14cf 100644
+--- a/src/cairo/cairo-bentley-ottmann.c
++++ b/src/cairo/cairo-bentley-ottmann.c
+@@ -631,7 +631,7 @@ choose_intersect (int                         x1,
+                   cairo_bo_intersect_point_t *intersection,
+                   cairo_bo_intersect_point_t *intersection2)
+ {
+-#if 1
++#if 0
+ 
+   intersection->x.exactness = EXACT;
+   intersection->y.exactness = EXACT;
+@@ -652,18 +652,22 @@ choose_intersect (int                         x1,
+   int reject1 = FALSE;
+   int reject2 = FALSE;
+ 
++  intersection->x.exactness = EXACT;
++  intersection->y.exactness = EXACT;
++  intersection2->x.exactness = EXACT;
++  intersection2->y.exactness = EXACT;
++
+   if (x1 == x2 && y1 == y2) {
+ //    printf ("Something screwey.. just getting a single point\n");
+-    return 0;
++    intersection->x.ordinate = x1;
++    intersection->y.ordinate = y1;
++    return 1;
+   }
+ 
+ //  printf ("Choosing between possible intersections (%i,%i) and (%i, %i)\n",
+ //          x1, y1, x2, y2);
+ //  printf ("Sweep line has got to y=%i, (x=%i)\n", y, x);
+ 
+-  intersection->x.exactness = EXACT;
+-  intersection->y.exactness = EXACT;
+-
+   if (y1 < y) {
+ //    printf ("Rejecting the first because of y1 < %i\n", y);
+     reject1 = TRUE;
+@@ -682,6 +686,9 @@ choose_intersect (int                         x1,
+     reject2 = TRUE;
+   }
+ 
++  reject1 = FALSE;
++  reject2 = FALSE;
++
+   if (reject1 && reject2) {
+ //    printf ("Both points intersect behind the sweep line\n");
+     intersection->x.ordinate = -1;
+@@ -706,19 +713,27 @@ choose_intersect (int                         x1,
+   if (y1 < y2) {
+     intersection->x.ordinate = x1;
+     intersection->y.ordinate = y1;
++    intersection2->x.ordinate = x2;
++    intersection2->y.ordinate = y2;
+   } else if (y2 < y1) {
+     intersection->x.ordinate = x2;
+     intersection->y.ordinate = y2;
++    intersection2->x.ordinate = x1;
++    intersection2->y.ordinate = y1;
+   } else {
+     if (x1 < x2) {
+       intersection->x.ordinate = x1;
+       intersection->y.ordinate = y1;
++      intersection2->x.ordinate = x2;
++      intersection2->y.ordinate = y2;
+     } else {
+       intersection->x.ordinate = x2;
+       intersection->y.ordinate = y2;
++      intersection2->x.ordinate = x1;
++      intersection2->y.ordinate = y1;
+     }
+   }
+-  return 1;
++  return 2;
+ #endif
+ }
+ 
+@@ -765,16 +780,21 @@ intersect_lines_parallel (cairo_bo_edge_t            *a,
+     if (a1_a2_sq_dist < a1_b1_sq_dist)
+       return FALSE;
+     if (a1_a2_sq_dist < a1_b2_sq_dist) {
+-      /* Intersect at a2, b1 */
+-      return choose_intersect (a->edge.line.p2.x, a->edge.line.p2.y,
+-                               b->edge.line.p1.x, b->edge.line.p1.y,
+-                               y, x, intersection1, intersection2);
++      /* Intersect at a2, b1 */ /***************************/
++      if (a < b)
++        return choose_intersect (a->edge.line.p2.x, a->edge.line.p2.y,
++                                 b->edge.line.p1.x, b->edge.line.p1.y,
++                                 y, x, intersection1, intersection2);
++      else
++        return choose_intersect (b->edge.line.p1.x, b->edge.line.p1.y,
++                                 a->edge.line.p2.x, a->edge.line.p2.y,
++                                 y, x, intersection1, intersection2);
+ 
+     } else {
+       /* Intersect at b1, b2 */
+-      return choose_intersect (b->edge.line.p1.x, b->edge.line.p1.y,
+-                               b->edge.line.p2.x, b->edge.line.p2.y,
+-                               y, x, intersection1, intersection2);
++        return choose_intersect (b->edge.line.p1.x, b->edge.line.p1.y,
++                                 b->edge.line.p2.x, b->edge.line.p2.y,
++                                 y, x, intersection1, intersection2);
+     }
+   } else {
+     if (0 > a1_b2_sq_dist)
+@@ -785,10 +805,15 @@ intersect_lines_parallel (cairo_bo_edge_t            *a,
+                                a->edge.line.p2.x, a->edge.line.p2.y,
+                                y, x, intersection1, intersection2);
+     } else {
+-      /* Intersect at a1, b2 */
+-      return choose_intersect (a->edge.line.p1.x, a->edge.line.p1.y,
+-                               b->edge.line.p2.x, b->edge.line.p2.y,
+-                               y, x, intersection1, intersection2);
++      /* Intersect at a1, b2 */ /***************************/
++      if (a < b)
++        return choose_intersect (a->edge.line.p1.x, a->edge.line.p1.y,
++                                 b->edge.line.p2.x, b->edge.line.p2.y,
++                                 y, x, intersection1, intersection2);
++      else
++        return choose_intersect (b->edge.line.p2.x, b->edge.line.p2.y,
++                                 a->edge.line.p1.x, a->edge.line.p1.y,
++                                 y, x, intersection1, intersection2);
+     }
+   }
+ }
+@@ -1476,8 +1501,8 @@ _cairo_bo_event_queue_insert_if_intersect_below_current_y (cairo_bo_event_queue_
+         ;
+       else
+       if (!choose_second) {
+-        printf ("Inserting intersection 1 (%i,%i)\n",
+-                intersection1.x, intersection1.y);
++//        printf ("Inserting intersection 1 (%i,%i)\n",
++//                intersection1.x, intersection1.y);
+         _cairo_bo_event_queue_insert (event_queue,
+                                       CAIRO_BO_EVENT_TYPE_INTERSECTION,
+                                       left, right, 0 /* (count > 1)*/,
+@@ -1492,8 +1517,8 @@ _cairo_bo_event_queue_insert_if_intersect_below_current_y (cairo_bo_event_queue_
+         ;
+       else
+       if (choose_second) {
+-        printf ("Inserting intersection 2 (%i,%i)\n",
+-                intersection2.x, intersection2.y);
++//        printf ("Inserting intersection 2 (%i,%i)\n",
++//                intersection2.x, intersection2.y);
+         _cairo_bo_event_queue_insert (event_queue,
+                                     CAIRO_BO_EVENT_TYPE_INTERSECTION,
+                                     left, right, 0 /*(count > 1)*/,
+@@ -1901,7 +1926,7 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+             if (e2 != e1->next)
+               break;
+ 
+-#if 1
++#if 0
+             printf ("INTERSECT EVENT: (%i,%i), e1: (%i,%i)-(%i,%i), e2: (%i,%i)-(%i,%i)\n",
+                     event->point.x, event->point.y,
+                     e1->edge.line.p1.x, e1->edge.line.p1.y,
+@@ -2384,7 +2409,7 @@ my_cairo_test (void)
+ {
+   GList *data = NULL;
+ 
+-//  return;
++  return;
+ 
+   printf ("Cairo bentley ottmann test\n");
+ 
+@@ -2393,7 +2418,7 @@ my_cairo_test (void)
+   add_line (&data, 20, 10, 30, 10);
+ #endif
+ 
+-#if 1
++#if 0
+   add_line (&data, 10, 10, 30, 10);
+   add_line (&data, 20, 10, 40, 10);
+ #endif
