@@ -125,6 +125,21 @@ if (UNLIKELY (((ptr) = malloc(sizeof(type))) == NULL)) \
 	t = (a)[1], (a)[1] = (b)[1], (b)[1] = t; \
 }
 
+#define R_SEARCH_WRAP(x) int r_search_##x (rtree_t * rtree, const BoxType * starting_region, int (*region_in_search) (const BoxType * region, void *cl), void *closure, void *data) \
+{ \
+  r_search (rtree, starting_region, region_in_search, closure, data); \
+}
+
+R_SEARCH_WRAP(1);
+R_SEARCH_WRAP(2);
+R_SEARCH_WRAP(3);
+R_SEARCH_WRAP(4);
+R_SEARCH_WRAP(5);
+R_SEARCH_WRAP(6);
+R_SEARCH_WRAP(7);
+R_SEARCH_WRAP(8);
+R_SEARCH_WRAP(9);
+
 #ifdef DEBUG
 static char *theState (VNODE * v);
 
@@ -790,14 +805,14 @@ contour_bounds_touch (const BoxType * b, void *cl)
       /* fill in the segment in info corresponding to this node */
       if (setjmp (info.sego) == 0)
         {
-          r_search (looping_over->tree, &box, NULL, get_seg, &info);
+          r_search_1 (looping_over->tree, &box, NULL, get_seg, &info);
           assert (0);
         }
 
         /* NB: If this actually hits anything, we are teleported back to the beginning */
         info.tree = rtree_over->tree;
         if (info.tree)
-          if (UNLIKELY (r_search (info.tree, &info.s->box,
+          if (UNLIKELY (r_search_2 (info.tree, &info.s->box,
                                   seg_in_region, seg_in_seg, &info)))
             return err_no_memory;	/* error */
     }
@@ -850,7 +865,7 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
       sb.X2 = pa->xmax + 1;
       sb.Y2 = pa->ymax + 1;
 
-      r_search (b->contour_tree, &sb, NULL, contour_bounds_touch, &c_info);
+      r_search_3 (b->contour_tree, &sb, NULL, contour_bounds_touch, &c_info);
     }
 
   return 0;
@@ -952,7 +967,7 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
 	break;
       outer = (POLYAREA *) heap_remove_smallest (heap);
 
-      switch (r_search (outer->contour_tree, (BoxType *)poly, NULL, count_contours_i_am_inside, poly)) {
+      switch (r_search_4 (outer->contour_tree, (BoxType *)poly, NULL, count_contours_i_am_inside, poly)) {
         case 0: /* Didn't find anything in this piece, Keep looking */
           break;
         case 1: /* Found we are inside this piece, and not any of its holes */
@@ -1284,7 +1299,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
       container = NULL;
       /* build a heap of all of the polys that the hole is inside its bounding box */
       heap = heap_create ();
-      r_search (tree, (BoxType *) curh, NULL, heap_it, heap);
+      r_search_5 (tree, (BoxType *) curh, NULL, heap_it, heap);
       if (heap_is_empty (heap))
 	{
 #ifndef NDEBUG
@@ -1336,7 +1351,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
       else
 	{
           /* Need to check if this new hole means we need to kick out any old ones for reprocessing */
-          while (1) {
+          while (0) {
             struct find_inside_info info;
             PLINE *prev;
 
@@ -1349,7 +1364,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
               info.result = NULL;
               /* Rtree search, calling back a routine to longjmp back with data about any hole inside the added one */
               /*   Be sure not to bother jumping back to report the main contour! */
-              r_search (pa_info->pa->contour_tree, (BoxType *)curh, NULL, find_inside, &info);
+              r_search_6 (pa_info->pa->contour_tree, (BoxType *)curh, NULL, find_inside, &info);
 
               /* Nothing found? */
               break;
@@ -2002,7 +2017,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
            * data about any hole inside the B polygon.
            * NB: Does not jump back to report the main contour!
            */
-          r_search (a->contour_tree, &box, NULL, find_inside_m_pa, &info);
+          r_search_7 (a->contour_tree, &box, NULL, find_inside_m_pa, &info);
 
           /* Nothing found? */
           break;
@@ -2576,7 +2591,7 @@ poly_InvContour (PLINE * c)
   c->Flags.orient ^= 1;
   if (c->tree)
     {
-      r = r_search (c->tree, NULL, NULL, flip_cb, NULL);
+      r = r_search_8 (c->tree, NULL, NULL, flip_cb, NULL);
       assert (r == c->Count);
     }
 }
@@ -2807,7 +2822,7 @@ poly_InsideContour (PLINE * c, Vector p)
   ray.X2 = 0x7fffffff;
   ray.Y2 = p[1] + 1;
   if (setjmp (info.env) == 0)
-    r_search (c->tree, &ray, NULL, crossing, &info);
+    r_search_9 (c->tree, &ray, NULL, crossing, &info);
   return info.f;
 }
 
