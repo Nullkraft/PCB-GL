@@ -1,7 +1,7 @@
-Bottom: c0126d399946f17664574ebff629d96d47181771
-Top:    1a4e70facebc0023bd254add4af04f4f08501d0b
+Bottom: 02e106b13a5883e9cb0fd82d258a7b7b0cd0a8bd
+Top:    b213799c6708ce5a3779e319c54ea916bb04450d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-28 17:44:42 +0000
+Date:   2009-10-28 22:03:28 +0000
 
 Work in progress on subcompositing / stencil buffers
 
@@ -689,10 +689,10 @@ index 2115b47..9e59ca1 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 5dd0256..0f1742f 100644
+index cf57f92..0310e1d 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
-@@ -525,6 +525,10 @@ ps_set_layer (const char *name, int group, int empty)
+@@ -516,6 +516,10 @@ ps_set_layer (const char *name, int group, int empty)
    int idx = (group >= 0
  	     && group <
  	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
