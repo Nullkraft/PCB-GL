@@ -1,0 +1,15 @@
+Bottom: f03215d2dff3df73f45312f5f955f40e9ad16d88
+Top:    f03215d2dff3df73f45312f5f955f40e9ad16d88
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-28 15:47:19 +0000
+
+Try harder to avoid the snap-rounding problem.
+
+Perhaps we don't solve snap-rounding unless we insist on skipping
+further intersections of edges which have new nodes inserted.
+(Leaving them for a later pass).
+
+
+---
+
+
