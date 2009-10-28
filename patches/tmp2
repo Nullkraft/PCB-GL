@@ -1,26 +1,13 @@
-Bottom: ca9c2853c656b0340cf105195935dcbbf0fb946d
+Bottom: acc8e8f72ce28d03e2278954cada41bca1675223
 Top:    78d618761f9dcbb4a99175b4b99b18d8cb5d4f23
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-28 17:46:49 +0000
+Date:   2009-10-28 17:47:59 +0000
 
 TMP2
 
 
 ---
 
-diff --git a/configure.ac b/configure.ac
-index 31eec7d..3dccdd7 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -8,6 +8,8 @@ AM_INIT_AUTOMAKE([1.9])
- AC_GNU_SOURCE
- AM_CONFIG_HEADER([config.h])
- 
-+m4_include(configure.ac.system)	dnl checks for system functions, headers, libs
-+
- ##########################################################################
- #
- # Try to figure out if we are building from git sources.
 diff --git a/src/cairo/cairo-bentley-ottmann.c b/src/cairo/cairo-bentley-ottmann.c
 index 3835399..e3b3a0c 100644
 --- a/src/cairo/cairo-bentley-ottmann.c
