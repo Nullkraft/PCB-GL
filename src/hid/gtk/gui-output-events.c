@@ -1512,17 +1512,15 @@ ghid_draw_everything (BoxTypePtr drawn_area)
 
   memset (do_group, 0, sizeof (do_group));
   for (ngroups = 0, i = 0; i < max_layer; i++) {
-    LayerType *l;
     int group;
     int orderi;
 
     orderi = reverse_layers ? max_layer - i - 1 : i;
 
     // Draw in numerical order when in 3D view
-    l = global_view_2d ? LAYER_ON_STACK (i) : LAYER_PTR (orderi);
-    group = GetLayerGroupNumberByNumber (global_view_2d ? LayerStack[i] : orderi);
+    group = global_view_2d ? GetLayerGroupNumberByNumber (LayerStack[i]) : orderi;
 
-    if (/*l->On && */!do_group[group]) {
+    if (!do_group[group]) {
       do_group[group] = 1;
       drawn_groups[ngroups++] = group;
     }
