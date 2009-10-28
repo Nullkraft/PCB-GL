@@ -53,6 +53,7 @@
 #include "action.h"
 #include "misc.h"
 #include "lrealpath.h"
+#include "sweep.h"
 
 /* This next one is so we can print the help messages. */
 #include "hid/hidint.h"
@@ -830,6 +831,7 @@ char *program_directory = 0;
 
 #include "dolists.h"
 
+#if 1
 int
 main (int argc, char *argv[])
 {
@@ -1032,7 +1034,10 @@ main (int argc, char *argv[])
 	      Settings.LibraryTree);
 #endif
 
-      gui->do_export (0);
+//      bos_test_intersections ();
+      my_cairo_test ();
+
+      //gui->do_export (0);
 #if HAVE_DBUS
       pcb_dbus_finish();
 #endif
@@ -1040,4 +1045,5 @@ main (int argc, char *argv[])
 
   return (0);
 }
+#endif
 
