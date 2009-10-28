@@ -1,7 +1,7 @@
-Bottom: 6fdbdc843636652360c3c5fa0d43dc5b3b9ee165
+Bottom: a829f4eb638cb03282e89af76c1579c669a25edc
 Top:    27a139cfc77fd74651f72faab09195707828dd93
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-27 22:16:51 +0000
+Date:   2009-10-28 17:41:59 +0000
 
 TMP2
 
@@ -604,7 +604,7 @@ index 82ee75c..91a183f 100644
        pcb_dbus_finish();
  #endif
 diff --git a/src/polygon1.c b/src/polygon1.c
-index b68c43a..1aa5219 100644
+index 5a7a260..1aa5219 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -49,6 +49,7 @@
@@ -615,15 +615,6 @@ index b68c43a..1aa5219 100644
  
  #define ROUND(a) (long)((a) > 0 ? ((a) + 0.5) : ((a) - 0.5))
  
-@@ -127,7 +128,7 @@ if (UNLIKELY (((ptr) = malloc(sizeof(type))) == NULL)) \
- 
- #define R_SEARCH_WRAP(x) int r_search_##x (rtree_t * rtree, const BoxType * starting_region, int (*region_in_search) (const BoxType * region, void *cl), void *closure, void *data) \
- { \
--  r_search (rtree, starting_region, region_in_search, closure, data); \
-+  return r_search (rtree, starting_region, region_in_search, closure, data); \
- }
- 
- R_SEARCH_WRAP(1);
 @@ -889,8 +890,16 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  	      a->contours->xmin <= b->contours->xmax &&
  	      a->contours->ymin <= b->contours->ymax)
