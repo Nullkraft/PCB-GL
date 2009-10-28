@@ -1,7 +1,7 @@
-Bottom: c3476114911308c187afeb047fc359911f8f30f8
+Bottom: 9315334268451cc52518aa4770e52cb3c898b8bd
 Top:    b8244af4f2a379a6dc0be26106cb5a19dbd12459
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-28 17:41:28 +0000
+Date:   2009-10-28 17:45:31 +0000
 
 Tmp
 
@@ -9,18 +9,9 @@ Tmp
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index fc7a25a..5a7a260 100644
+index 628a4fa..5a7a260 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -1351,7 +1351,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
-       else
- 	{
-           /* Need to check if this new hole means we need to kick out any old ones for reprocessing */
--          while (0) {
-+          while (1) {
-             struct find_inside_info info;
-             PLINE *prev;
- 
 @@ -1371,7 +1371,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
              }
  
