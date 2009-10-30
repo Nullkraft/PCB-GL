@@ -1560,7 +1560,8 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    */
   if (!TEST_FLAG (CHECKPLANESFLAG, PCB) &&
       gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
-//    r_search (PCB->Data->pad_tree, drawn_area, NULL, backPad_callback, NULL);
+    if (global_view_2d)
+      r_search (PCB->Data->pad_tree, drawn_area, NULL, backPad_callback, NULL);
     if (PCB->ElementOn) {
       r_search (PCB->Data->element_tree, drawn_area, NULL, backE_callback, NULL);
       r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, backN_callback, NULL);
@@ -1600,20 +1601,21 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0);
 //  gui->set_layer (NULL, SL (FINISHED, 0), 0);
 
-#if 0
-  /* Mask out drilled holes */
-  hidgl_flush_triangles (&buffer);
-  glPushAttrib (GL_COLOR_BUFFER_BIT);
-  glColorMask (0, 0, 0, 0);
-  if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
-  if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
-  hidgl_flush_triangles (&buffer);
-  glPopAttrib ();
+  if (global_view_2d)
+    {
+      /* Mask out drilled holes */
+      hidgl_flush_triangles (&buffer);
+      glPushAttrib (GL_COLOR_BUFFER_BIT);
+      glColorMask (0, 0, 0, 0);
+      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
+      if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
+      hidgl_flush_triangles (&buffer);
+      glPopAttrib ();
 
-  if (PCB->PinOn) r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, NULL);
-  if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
-  if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
-#endif
+      if (PCB->PinOn) r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, NULL);
+      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
+      if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
+    }
 
   gui->set_layer (NULL, SL (FINISHED, 0), 0);
 
