@@ -1487,6 +1487,10 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   struct cyl_info cyl_info;
   int reverse_layers;
   int save_show_solder;
+  int solder_group;
+  int component_group;
+  int min_phys_group;
+  int max_phys_group;
 
   extern char *current_color;
   extern Boolean Gathering;
@@ -1509,6 +1513,12 @@ ghid_draw_everything (BoxTypePtr drawn_area)
 
   if (!global_view_2d && save_show_solder)
     reverse_layers = !reverse_layers;
+
+  solder_group = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
+  component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+
+  min_phys_group = MIN (solder_group, component_group);
+  max_phys_group = MAX (solder_group, component_group);
 
   memset (do_group, 0, sizeof (do_group));
   for (ngroups = 0, i = 0; i < max_layer; i++) {
@@ -1545,7 +1555,9 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     DrawLayerGroup (drawn_groups [i], drawn_area);
 
 #if 1
-    if (!global_view_2d && i > 0) {
+    if (!global_view_2d &&
+        drawn_groups[i] > min_phys_group &&
+        drawn_groups[i] <= max_phys_group) {
       cyl_info.from_layer = drawn_groups[i];
       cyl_info.to_layer = drawn_groups[i - 1];
       cyl_info.scale = gport->zoom;
