@@ -1,5 +1,5 @@
 Bottom: f6c9388e9622bb74c3cef6c06b7dca54aac1eeb6
-Top:    f6c9388e9622bb74c3cef6c06b7dca54aac1eeb6
+Top:    1cfe172307595f99903068f7e4b8f5bcbd51bcae
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-30 00:15:57 +0000
 
@@ -8,4 +8,17 @@ Fix z-coord when flipping the board
 
 ---
 
-
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index feed8b7..5065ac0 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -1800,7 +1800,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+ 
+   glPushMatrix ();
+   glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
+-            (ghid_flip_y ? -1. : 1.) / gport->zoom, 1);
++            (ghid_flip_y ? -1. : 1.) / gport->zoom,
++            (ghid_flip_x == ghid_flip_y) ? 1. : -1.);
+   glTranslatef (ghid_flip_x ? gport->view_x0 - PCB->MaxWidth  :
+                              -gport->view_x0,
+                 ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
