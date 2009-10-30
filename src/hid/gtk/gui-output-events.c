@@ -1054,11 +1054,12 @@ SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
     color = PCB->ConnectedColor;
   else
     {
-      int component = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
-      int solder    = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
+      int component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+      int solder_group    = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
+      int this_group      = GetLayerGroupNumberByPointer (Layer);
 
-      if (Layer == LAYER_PTR (component) || Layer == LAYER_PTR (solder))
-        color = (SWAP_IDENT == (Layer == LAYER_PTR (solder)))
+      if (this_group == component_group || this_group == solder_group)
+        color = (SWAP_IDENT == (this_group == solder_group))
                   ? PCB->ViaColor : PCB->InvisibleObjectsColor;
       else
         color = Layer->Color;
