@@ -1,5 +1,5 @@
 Bottom: 17a3c2bb9c09764c778527f4cb326e6228dbbcd9
-Top:    17a3c2bb9c09764c778527f4cb326e6228dbbcd9
+Top:    6836c7522806a435f98f2b5199f52adff7bc718b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-10-30 01:06:12 +0000
 
@@ -10,4 +10,31 @@ Fix misuse of MAX_LAYER vs. max_layer.
 
 ---
 
-
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index cc09564..407bc3a 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -82,8 +82,8 @@ info (int argc, char **argv, int x, int y)
+ 	 PCB->MaxHeight / 100.0,
+ 	 PCB->MaxWidth * COOR_TO_MM,
+ 	 PCB->MaxHeight * COOR_TO_MM);
+-  cg = GetLayerGroupNumberByNumber (MAX_LAYER + COMPONENT_LAYER);
+-  sg = GetLayerGroupNumberByNumber (MAX_LAYER + SOLDER_LAYER);
++  cg = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
++  sg = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
+   for (i=0; i<MAX_LAYER; i++)
+     {
+       
+diff --git a/src/move.c b/src/move.c
+index 003c2e0..6f0c82f 100644
+--- a/src/move.c
++++ b/src/move.c
+@@ -654,7 +654,7 @@ MoveTextToLayerLowLevel (LayerTypePtr Source, TextTypePtr Text,
+   r_substitute (Source->text_tree, (BoxType *) & Source->Text[Source->TextN],
+ 		(BoxType *) Text);
+   memset (&Source->Text[Source->TextN], 0, sizeof (TextType));
+-  if (GetLayerGroupNumberByNumber (MAX_LAYER + SOLDER_LAYER) ==
++  if (GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER) ==
+       GetLayerGroupNumberByPointer (Destination))
+     SET_FLAG (ONSOLDERFLAG, new);
+   else
