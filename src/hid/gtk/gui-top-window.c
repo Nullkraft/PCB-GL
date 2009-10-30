@@ -88,6 +88,8 @@ a zoom in/out.
 #include "../hidint.h"
 #include "hid/common/hid_resource.h"
 
+#include <gdl/gdl.h>
+
 #include "action.h"
 #include "autoplace.h"
 #include "autoroute.h"
@@ -2158,6 +2160,10 @@ ghid_build_pcb_top_window (void)
   GtkWidget *viewport, *ebox, *vbox, *frame;
   GtkWidget *label;
   GtkWidget *trackball;
+
+  GtkWidget *dock;
+  GtkWidget *tmp;
+
   GHidPort *port = &ghid_port;
   gchar *s;
   GtkWidget *scrolled;
@@ -2247,11 +2253,30 @@ ghid_build_pcb_top_window (void)
   hbox_middle = gtk_hbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (vbox_main), hbox_middle, TRUE, TRUE, 3);
 
+  dock = gdl_dock_new ();
+  gtk_box_pack_start (GTK_BOX (hbox_middle), dock, FALSE, FALSE, 0);
+  gtk_widget_show (dock);
 
+  tmp = gdl_dock_bar_new (GDL_DOCK (dock));
+  gdl_dock_bar_set_orientation (GDL_DOCK_BAR (dock), GTK_ORIENTATION_VERTICAL);
+  gtk_box_pack_start (GTK_BOX (hbox_middle), dock, FALSE, FALSE, 0);
+  gtk_widget_show (dock);
+
+#if 1
   /* -- Left control bar */
   ebox = gtk_event_box_new ();
   gtk_widget_set_events (ebox, GDK_EXPOSURE_MASK);
-  gtk_box_pack_start (GTK_BOX (hbox_middle), ebox, FALSE, FALSE, 3);
+
+  tmp = gdl_dock_item_new ("Left bar", "Left bar : description",
+                           GDL_DOCK_ITEM_BEH_NEVER_HORIZONTAL |
+                           GDL_DOCK_ITEM_BEH_CANT_DOCK_TOP |
+                           GDL_DOCK_ITEM_BEH_CANT_DOCK_BOTTOM |
+                           GDL_DOCK_ITEM_BEH_CANT_CLOSE);
+  gtk_container_add (GTK_CONTAINER (tmp), ebox);
+  gdl_dock_add_item (GDL_DOCK (dock), GDL_DOCK_ITEM (tmp), GDL_DOCK_LEFT);
+  gtk_widget_set_size_request (dock, 5, -1);
+  gtk_widget_set_size_request (dock, -1, -1);
+  gtk_widget_show (tmp);
 
   /* 
    * This box will also be made insensitive when the gui needs
@@ -2294,6 +2319,7 @@ ghid_build_pcb_top_window (void)
   vbox = gtk_vbox_new(FALSE, 0);
   gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
   make_route_style_buttons(vbox, port);
+#endif
 
   vbox = gtk_vbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (hbox_middle), vbox, TRUE, TRUE, 0);
