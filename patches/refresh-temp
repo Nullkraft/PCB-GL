@@ -1,0 +1,48 @@
+Bottom: 8e74714852485c1503b2fe88005915261a2bc73e
+Top:    4ee0c88a1a0b3c2926d93bd4fc727196badf18b5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-10-30 00:02:28 +0000
+
+Refresh of playing-with-stack-rendering
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index b881ced..11bcc98 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -1506,6 +1506,10 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+   struct cyl_info cyl_info;
+   int reverse_layers;
+   int save_show_solder;
++  int solder_group;
++  int component_group;
++  int min_phys_group;
++  int max_phys_group;
+ 
+   extern char *current_color;
+   extern Boolean Gathering;
+@@ -1529,6 +1533,12 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+   if (!global_view_2d && save_show_solder)
+     reverse_layers = !reverse_layers;
+ 
++  solder_group = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
++  component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
++
++  min_phys_group = MIN (solder_group, component_group);
++  max_phys_group = MAX (solder_group, component_group);
++
+   memset (do_group, 0, sizeof (do_group));
+   for (ngroups = 0, i = 0; i < max_layer; i++) {
+     int group;
+@@ -1564,7 +1574,9 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+     DrawLayerGroup (drawn_groups [i], drawn_area);
+ 
+ #if 1
+-    if (!global_view_2d && i > 0) {
++    if (!global_view_2d &&
++        drawn_groups[i] > min_phys_group &&
++        drawn_groups[i] <= max_phys_group) {
+       cyl_info.from_layer = drawn_groups[i];
+       cyl_info.to_layer = drawn_groups[i - 1];
+       cyl_info.scale = gport->zoom;
