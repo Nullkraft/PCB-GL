@@ -53,6 +53,7 @@
 #include "action.h"
 #include "misc.h"
 #include "lrealpath.h"
+#include "sweep.h"
 
 /* This next one is so we can print the help messages. */
 #include "hid/hidint.h"
@@ -830,6 +831,7 @@ char *program_directory = 0;
 
 #include "dolists.h"
 
+#if 1
 int
 main (int argc, char *argv[])
 {
@@ -1040,4 +1042,5 @@ main (int argc, char *argv[])
 
   return (0);
 }
+#endif
 
