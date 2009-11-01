@@ -1034,10 +1034,7 @@ main (int argc, char *argv[])
 	      Settings.LibraryTree);
 #endif
 
-//      bos_test_intersections ();
-      my_cairo_test ();
-
-      //gui->do_export (0);
+      gui->do_export (0);
 #if HAVE_DBUS
       pcb_dbus_finish();
 #endif
