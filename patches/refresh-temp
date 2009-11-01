@@ -1,0 +1,382 @@
+Bottom: 632eb6bce63f2a90b556684bdcdaf10b0b883847
+Top:    b2b67972913e4ec6a364aa3828ae3f3c8ff01f3c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-01 13:53:28 +0000
+
+Refresh of cache-triangulated-polygons-fo
+
+---
+
+diff --git a/src/create.c b/src/create.c
+index 1a6aef9..55732a7 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -615,6 +615,8 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
+   polygon->Clipped = NULL;
+   polygon->NoHoles = NULL;
+   polygon->NoHolesValid = 0;
++  polygon->gui_cache = NULL;
++  polygon->gui_cache_valid = 0;
+   return (polygon);
+ }
+ 
+diff --git a/src/global.h b/src/global.h
+index 4cf489a..0bb5161 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -245,6 +245,8 @@ struct polygon_st			/* holds information about a polygon */
+   PLINE *NoHoles;		/* the polygon broken into hole-less regions */
+   int NoHolesValid;		/* Is the NoHoles polygon up to date? */
+   PointTypePtr Points;		/* data */
++  void *gui_cache;		/* Private cache for the GUI */
++  int gui_cache_valid;		/* Reset to false when the polygon changes */
+ };
+ 
+ typedef struct			/* holds information about arcs */
+diff --git a/src/hid.h b/src/hid.h
+index ffb84a2..c545768 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -555,6 +555,8 @@ typedef enum
+ 
+     HID_DRC_GUI *drc_gui;
+ 
++    void (*free_polygon_cache) (PolygonType *poly);
++
+   } HID;
+ 
+ /* Call this as soon as possible from main().  No other HID calls are
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 54c2b3b..99ab59d 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -221,7 +221,8 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
+   int hairline = 0;
+ 
+   if (width == 0.0)
+-    hairline = 1;
++    return;
++//    hairline = 1;
+ 
+   if (width < scale)
+     width = scale;
+@@ -304,7 +305,8 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
+   int hairline = 0;
+ 
+   if (width == 0.0)
+-    hairline = 1;
++    return;
++//    hairline = 1;
+ 
+   if (width < scale)
+     width = scale;
+@@ -470,6 +472,7 @@ myBegin (GLenum type)
+ }
+ 
+ static double global_scale;
++static int global_triangle_count;
+ 
+ static void
+ myVertex (GLdouble *vertex_data)
+@@ -487,7 +490,7 @@ myVertex (GLdouble *vertex_data)
+         }
+       else
+         {
+-#if 1
++#if 0
+           hidgl_ensure_triangle_space (&buffer, 1);
+           hidgl_add_triangle (&buffer,
+                               triangle_vertices [0], triangle_vertices [1],
+@@ -504,6 +507,7 @@ myVertex (GLdouble *vertex_data)
+                            vertex_data [0],       vertex_data [1],
+                            triangle_vertices [0], triangle_vertices [1], global_scale);
+ #endif
++          global_triangle_count ++;
+ 
+           if (tessVertexType == GL_TRIANGLE_STRIP)
+             {
+@@ -530,6 +534,7 @@ myVertex (GLdouble *vertex_data)
+                               triangle_vertices [4], triangle_vertices [5]);
+           triangle_comp_idx = 0;
+           stashed_vertices = 0;
++          global_triangle_count ++;
+         }
+     }
+   else
+@@ -574,12 +579,11 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+   free (vertices);
+ }
+ 
+-void tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices)
++void tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices, int *vertex_offset)
+ {
+   VNODE *vn = vnode;
+-  int offset = 0;
++  int offset = *vertex_offset;;
+ 
+-  gluTessBeginPolygon (tobj, NULL);
+   gluTessBeginContour (tobj);
+   do {
+     vertices [0 + offset] = vn->point[0];
+@@ -589,12 +593,13 @@ void tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices)
+     offset += 3;
+   } while ((vn = vn->next) != vnode);
+   gluTessEndContour (tobj);
+-  gluTessEndPolygon (tobj);
++  *vertex_offset = offset;
+ }
+ 
+ struct do_hole_info {
+   GLUtesselator *tobj;
+   GLdouble *vertices;
++  int vertex_offset;
+ };
+ 
+ static int
+@@ -606,7 +611,7 @@ do_hole (const BoxType *b, void *cl)
+   if (curc->Flags.orient == PLF_DIR) {
+     return 0;
+   }
+-  tesselate_contour (info->tobj, &curc->head, info->vertices);
++  tesselate_contour (info->tobj, &curc->head, info->vertices, &info->vertex_offset);
+   return 1;
+ }
+ 
+@@ -614,14 +619,17 @@ static GLint stencil_bits;
+ static int dirty_bits = 0;
+ static int assigned_bits = 0;
+ 
++struct polygon_cache {
++  int fill_display_list;
++};
++
+ /* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
+ void
+-hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
++hidgl_fill_pcb_polygon_nocache (PolygonType *poly, const BoxType *clip_box, double scale)
+ {
+   int vertex_count = 0;
+   PLINE *contour;
+   struct do_hole_info info;
+-  int stencil_bit;
+ 
+   global_scale = scale;
+ 
+@@ -631,68 +639,71 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+       return;
+     }
+ 
+-  stencil_bit = hidgl_assign_clear_stencil_bit ();
+-  if (!stencil_bit)
+-    {
+-      printf ("hidgl_fill_pcb_polygon: No free stencil bits, aborting polygon\n");
+-      return;
+-    }
+-
+-  /* Flush out any existing geoemtry to be rendered */
+-  hidgl_flush_triangles (&buffer);
+-
+   /* Walk the polygon structure, counting vertices */
+   /* This gives an upper bound on the amount of storage required */
++  vertex_count = 0;
+   for (contour = poly->Clipped->contours;
+        contour != NULL; contour = contour->next)
+-    vertex_count = MAX (vertex_count, contour->Count);
++    vertex_count +=contour->Count;
++//    vertex_count = MAX (vertex_count, contour->Count);
+ 
+   info.vertices = malloc (sizeof(GLdouble) * vertex_count * 3);
++  info.vertex_offset = 0;
+   info.tobj = gluNewTess ();
+   gluTessCallback(info.tobj, GLU_TESS_BEGIN, myBegin);
+   gluTessCallback(info.tobj, GLU_TESS_VERTEX, myVertex);
+   gluTessCallback(info.tobj, GLU_TESS_COMBINE, myCombine);
+   gluTessCallback(info.tobj, GLU_TESS_ERROR, myError);
++  global_triangle_count = 0;
+ 
+-  glPushAttrib (GL_STENCIL_BUFFER_BIT);                   // Save the write mask etc.. for final restore
+-  glPushAttrib (GL_STENCIL_BUFFER_BIT |                   // Resave the stencil write-mask etc.., and
+-                GL_COLOR_BUFFER_BIT);                     // the colour buffer write mask etc.. for part way restore
+-  glStencilMask (stencil_bit);                            // Only write to our stencil bit
+-  glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);    // Always pass stencil test, ref value is our bit
+-  glColorMask (0, 0, 0, 0);                               // Disable writting in color buffer
++  gluTessBeginPolygon (info.tobj, NULL);
+ 
+-  /* It will already be setup like this (so avoid prodding the state-machine):
+-   * glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value
+-   */
+-  /* Drawing operations now set our reference bit in the stencil buffer */
++  /* Draw the polygon outer */
++  tesselate_contour (info.tobj, &poly->Clipped->contours->head, info.vertices, &info.vertex_offset);
+ 
++  /* Draw the polygon holes */
+   r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
+-  hidgl_flush_triangles (&buffer);
+ 
+-  /* Drawing operations as masked to areas where the stencil buffer is '0' */
++  gluTessEndPolygon (info.tobj);
++  gluDeleteTess (info.tobj);
++  myFreeCombined ();
+ 
+-  glPopAttrib ();                                             // Restore the colour and stencil buffer write-mask etc..
++  printf ("global triangle count = %i\n", global_triangle_count);
++  free (info.vertices);
++}
+ 
+-  glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT); // This allows us to toggle the bit on the subcompositing bitplane
+-                                             // If the stencil test has passed, we know that bit is 0, so we're
+-                                             // effectively just setting it to 1.
+-  glStencilFunc (GL_GEQUAL, 0, assigned_bits);
+-//  glStencilFunc (GL_GREATER, assigned_bits, assigned_bits);   // Pass stencil test if all assigned bits clear,
+-                                                              // reference is all assigned bits so we set
+-                                                              // any bits permitted by the stencil writemask
++void
++hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
++{
++  struct polygon_cache *cache;
++  int new_cache = 0;
+ 
+-  /* Draw the polygon outer */
+-  tesselate_contour (info.tobj, &poly->Clipped->contours->head, info.vertices);
+-  hidgl_flush_triangles (&buffer);
++  if (poly->gui_cache == NULL) {
++    poly->gui_cache = malloc (sizeof (struct polygon_cache));
++    new_cache = 1;
++  }
+ 
+-  /* Unassign our stencil buffer bit */
+-  hidgl_return_stencil_bit (stencil_bit);
++  cache = poly->gui_cache;
+ 
+-  glPopAttrib ();                                             // Restore the stencil buffer write-mask etc..
++#if 0
++  if (!poly->gui_cache_valid) {
++    if (!new_cache)
++      glDeleteLists (cache->fill_display_list, 1);
++
++    cache->fill_display_list = glGenLists (1);
++    hidgl_flush_triangles (&buffer);
++    glNewList (cache->fill_display_list, GL_COMPILE);
++    hidgl_fill_pcb_polygon_nocache (poly, NULL /* clip_box */, scale);
++    hidgl_flush_triangles (&buffer);
++    glEndList ();
++    poly->gui_cache_valid = 1;
++  }
+ 
+-  gluDeleteTess (info.tobj);
+-  myFreeCombined ();
+-  free (info.vertices);
++  glCallList (cache->fill_display_list);
++
++#else
++  hidgl_fill_pcb_polygon_nocache (poly, clip_box, scale);
++#endif
+ }
+ 
+ void
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 3f101be..dfb89b8 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -1473,6 +1473,14 @@ ghid_progress (int so_far, int total, const char *message)
+   return 0;
+ }
+ 
++static void
++ghid_free_polygon_cache (PolygonType *poly)
++{
++  printf ("FIXME: Should free cached polygon data\n");
++  free (poly->gui_cache);
++  poly->gui_cache_valid = 0;
++}
++
+ /* ---------------------------------------------------------------------- */
+ HID_DRC_GUI ghid_drc_gui = {
+   1,				/* log_drc_overview */
+@@ -1543,7 +1551,8 @@ HID ghid_hid = {
+   ghid_show_item,
+   ghid_beep,
+   ghid_progress,
+-  &ghid_drc_gui
++  &ghid_drc_gui,
++  ghid_free_polygon_cache,
+ };
+ 
+ HID ghid_extents = {
+@@ -1606,7 +1615,8 @@ HID ghid_extents = {
+   0 /* ghid_show_item */ ,
+   0 /* ghid_beep */ ,
+   0 /* ghid_progress */ ,
+-  0 /* ghid_drc_gui */
++  0 /* ghid_drc_gui */ ,
++  0 /* ghid_free_polygon_cache */ ,
+ };
+ 
+ /* ------------------------------------------------------------ 
+diff --git a/src/mymem.c b/src/mymem.c
+index c3663d6..add7e71 100644
+--- a/src/mymem.c
++++ b/src/mymem.c
+@@ -733,6 +733,10 @@ FreePolygonMemory (PolygonTypePtr Polygon)
+ {
+   if (Polygon)
+     {
++      if (Polygon->gui_cache)
++        {
++          gui->free_polygon_cache (Polygon);
++        }
+       MYFREE (Polygon->Points);
+       if (Polygon->Clipped)
+ 	poly_Free (&Polygon->Clipped);
+diff --git a/src/polygon.c b/src/polygon.c
+index e724649..c0e2ab6 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -979,6 +979,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
+       info.accumulate = NULL;
+     }
+   polygon->NoHolesValid = 0;
++  polygon->gui_cache_valid = 0;
+   return r;
+ }
+ 
+@@ -1124,8 +1125,9 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
+   assert (poly_Valid (p->Clipped));
+   if (TEST_FLAG (CLEARPOLYFLAG, p))
+     clearPoly (Data, layer, p, NULL, 0);
+-  else
+-    p->NoHolesValid = 0;
++  /* HACK */
++  p->NoHolesValid = 0;
++  p->gui_cache_valid = 0;
+   return 1;
+ }
+ 
+@@ -1380,22 +1382,27 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
+     case VIA_TYPE:
+       SubtractPin (Data, (PinTypePtr) ptr2, Layer, Polygon);
+       Polygon->NoHolesValid = 0;
++      Polygon->gui_cache_valid = 0;
+       return 1;
+     case LINE_TYPE:
+       SubtractLine ((LineTypePtr) ptr2, Polygon);
+       Polygon->NoHolesValid = 0;
++      Polygon->gui_cache_valid = 0;
+       return 1;
+     case ARC_TYPE:
+       SubtractArc ((ArcTypePtr) ptr2, Polygon);
+       Polygon->NoHolesValid = 0;
++      Polygon->gui_cache_valid = 0;
+       return 1;
+     case PAD_TYPE:
+       SubtractPad ((PadTypePtr) ptr2, Polygon);
+       Polygon->NoHolesValid = 0;
++      Polygon->gui_cache_valid = 0;
+       return 1;
+     case TEXT_TYPE:
+       SubtractText ((TextTypePtr) ptr2, Polygon);
+       Polygon->NoHolesValid = 0;
++      Polygon->gui_cache_valid = 0;
+       return 1;
+     }
+   return 0;
