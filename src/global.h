@@ -245,6 +245,8 @@ struct polygon_st			/* holds information about a polygon */
   PLINE *NoHoles;		/* the polygon broken into hole-less regions */
   int NoHolesValid;		/* Is the NoHoles polygon up to date? */
   PointTypePtr Points;		/* data */
+  void *gui_cache;		/* Private cache for the GUI */
+  int gui_cache_valid;		/* Reset to false when the polygon changes */
 };
 
 typedef struct			/* holds information about arcs */
