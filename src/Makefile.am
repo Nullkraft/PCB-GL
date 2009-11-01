@@ -157,7 +157,6 @@ PCB_SRCS = \
 	set.h \
 	strflags.c \
 	strflags.h \
-	sweep.c \
 	sweep.h \
 	thermal.c \
 	thermal.h \
