@@ -37,7 +37,7 @@
 #include "hid.h"
 #include "hidgl.h"
 #include "rtree.h"
-
+#include "sweep.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
@@ -490,7 +490,7 @@ myVertex (GLdouble *vertex_data)
         }
       else
         {
-#if 0
+#if 1
           hidgl_ensure_triangle_space (&buffer, 1);
           hidgl_add_triangle (&buffer,
                               triangle_vertices [0], triangle_vertices [1],
@@ -631,6 +631,10 @@ hidgl_fill_pcb_polygon_nocache (PolygonType *poly, const BoxType *clip_box, doub
   PLINE *contour;
   struct do_hole_info info;
 
+  bo_poly_to_traps (poly->Clipped);
+
+  return;
+
   global_scale = scale;
 
   if (poly->Clipped == NULL)
@@ -668,7 +672,7 @@ hidgl_fill_pcb_polygon_nocache (PolygonType *poly, const BoxType *clip_box, doub
   gluDeleteTess (info.tobj);
   myFreeCombined ();
 
-  printf ("global triangle count = %i\n", global_triangle_count);
+//  printf ("global triangle count = %i\n", global_triangle_count);
   free (info.vertices);
 }
 
