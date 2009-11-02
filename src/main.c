@@ -40,6 +40,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <setjmp.h>
 
 #include "global.h"
 #include "data.h"
@@ -53,6 +54,7 @@
 #include "action.h"
 #include "misc.h"
 #include "lrealpath.h"
+#include "sweep.h"
 
 /* This next one is so we can print the help messages. */
 #include "hid/hidint.h"
