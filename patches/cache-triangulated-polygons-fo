@@ -1,7 +1,7 @@
-Bottom: 632eb6bce63f2a90b556684bdcdaf10b0b883847
-Top:    b2b67972913e4ec6a364aa3828ae3f3c8ff01f3c
+Bottom: 5f1e36014715b8d5401c0e7021b6924e060fddaa
+Top:    7d73b595977fdd7d89fea6adb0d5288e55cb90ee
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-31 19:23:33 +0000
+Date:   2009-11-02 18:12:37 +0000
 
 Cache triangulated polygons for rendering
 
@@ -330,7 +330,7 @@ index c3663d6..add7e71 100644
        if (Polygon->Clipped)
  	poly_Free (&Polygon->Clipped);
 diff --git a/src/polygon.c b/src/polygon.c
-index e724649..c0e2ab6 100644
+index bbd8e7a..061309d 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -979,6 +979,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
