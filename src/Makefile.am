@@ -58,9 +58,12 @@ PCB_SRCS = \
 	cairo/cairo-mutex-type-private.h \
 	cairo/cairo-path-fixed-private.h \
 	cairo/cairo-reference-count-private.h \
+	cairo/cairo-region-private.h \
 	cairo/cairo-scaled-font-private.h \
+	cairo/cairo-slope-private.h \
 	cairo/cairo-spans-private.h \
 	cairo/cairo-surface-private.h \
+	cairo/cairo-traps.c \
 	cairo/cairo-types-private.h \
 	cairo/cairo-wideint.c \
 	cairo/cairo-wideint-private.h \
