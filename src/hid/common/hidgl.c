@@ -221,8 +221,7 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
   int hairline = 0;
 
   if (width == 0.0)
-    return;
-//    hairline = 1;
+    hairline = 1;
 
   if (width < scale)
     width = scale;
@@ -305,8 +304,7 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
   int hairline = 0;
 
   if (width == 0.0)
-    return;
-//    hairline = 1;
+    hairline = 1;
 
   if (width < scale)
     width = scale;
@@ -579,11 +577,12 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
   free (vertices);
 }
 
-void tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices, int *vertex_offset)
+void tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices)
 {
   VNODE *vn = vnode;
-  int offset = *vertex_offset;;
+  int offset = 0;
 
+  gluTessBeginPolygon (tobj, NULL);
   gluTessBeginContour (tobj);
   do {
     vertices [0 + offset] = vn->point[0];
@@ -593,25 +592,43 @@ void tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices, i
     offset += 3;
   } while ((vn = vn->next) != vnode);
   gluTessEndContour (tobj);
-  *vertex_offset = offset;
+  gluTessEndPolygon (tobj);
 }
 
-struct do_hole_info {
-  GLUtesselator *tobj;
-  GLdouble *vertices;
-  int vertex_offset;
+struct hole_info {
+  double scale;
 };
 
 static int
 do_hole (const BoxType *b, void *cl)
 {
-  struct do_hole_info *info = cl;
+  cairo_traps_t *traps;
+
   PLINE *curc = (PLINE *) b;
+  struct hole_info *info = cl;
+
   /* Ignore the outer contour - we draw it first explicitly*/
   if (curc->Flags.orient == PLF_DIR) {
     return 0;
   }
-  tesselate_contour (info->tobj, &curc->head, info->vertices, &info->vertex_offset);
+
+  if (curc->is_round) {
+//    double slices;
+
+//    slices = M_PI * 2 * curc->radius / info->scale / PIXELS_PER_CIRCLINE;
+
+    /* If hidgl_fill_circle would use less slices than we have vertices,
+     * then call hidgl_fill_circle to draw this contour.
+     */
+//    if (slices < curc->Count) {
+      hidgl_fill_circle (curc->cx, curc->cy, curc->radius, info->scale);
+      return 1;
+//    }
+  }
+
+  traps = bo_contour_to_traps (curc);
+  _cairo_traps_fini (traps);
+
   return 1;
 }
 
@@ -619,21 +636,19 @@ static GLint stencil_bits;
 static int dirty_bits = 0;
 static int assigned_bits = 0;
 
-struct polygon_cache {
-  int fill_display_list;
-};
-
 /* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
 void
-hidgl_fill_pcb_polygon_nocache (PolygonType *poly, const BoxType *clip_box, double scale)
+hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
 {
-  int vertex_count = 0;
-  PLINE *contour;
-  struct do_hole_info info;
+  int stencil_bit;
+  cairo_traps_t *traps;
+  struct hole_info info;
 
-  bo_poly_to_traps (poly->Clipped);
+  info.scale = scale;
 
-  return;
+//  bo_poly_to_traps (poly->Clipped);
+
+//  return;
 
   global_scale = scale;
 
@@ -643,71 +658,53 @@ hidgl_fill_pcb_polygon_nocache (PolygonType *poly, const BoxType *clip_box, doub
       return;
     }
 
-  /* Walk the polygon structure, counting vertices */
-  /* This gives an upper bound on the amount of storage required */
-  vertex_count = 0;
-  for (contour = poly->Clipped->contours;
-       contour != NULL; contour = contour->next)
-    vertex_count +=contour->Count;
-//    vertex_count = MAX (vertex_count, contour->Count);
+  stencil_bit = hidgl_assign_clear_stencil_bit ();
+  if (!stencil_bit)
+    {
+      printf ("hidgl_fill_pcb_polygon: No free stencil bits, aborting polygon\n");
+      return;
+    }
 
-  info.vertices = malloc (sizeof(GLdouble) * vertex_count * 3);
-  info.vertex_offset = 0;
-  info.tobj = gluNewTess ();
-  gluTessCallback(info.tobj, GLU_TESS_BEGIN, myBegin);
-  gluTessCallback(info.tobj, GLU_TESS_VERTEX, myVertex);
-  gluTessCallback(info.tobj, GLU_TESS_COMBINE, myCombine);
-  gluTessCallback(info.tobj, GLU_TESS_ERROR, myError);
-  global_triangle_count = 0;
+  /* Flush out any existing geoemtry to be rendered */
+  hidgl_flush_triangles (&buffer);
 
-  gluTessBeginPolygon (info.tobj, NULL);
+  glPushAttrib (GL_STENCIL_BUFFER_BIT);                   // Save the write mask etc.. for final restore
+  glPushAttrib (GL_STENCIL_BUFFER_BIT |                   // Resave the stencil write-mask etc.., and
+                GL_COLOR_BUFFER_BIT);                     // the colour buffer write mask etc.. for part way restore
+  glStencilMask (stencil_bit);                            // Only write to our stencil bit
+  glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);    // Always pass stencil test, ref value is our bit
+  glColorMask (0, 0, 0, 0);                               // Disable writting in color buffer
+
+  /* It will already be setup like this (so avoid prodding the state-machine):
+   * glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value
+   */
+  /* Drawing operations now set our reference bit in the stencil buffer */
+
+  r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
+  hidgl_flush_triangles (&buffer);
+
+  /* Drawing operations as masked to areas where the stencil buffer is '0' */
+
+  glPopAttrib ();                                             // Restore the colour and stencil buffer write-mask etc..
+
+  glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT); // This allows us to toggle the bit on the subcompositing bitplane
+                                             // If the stencil test has passed, we know that bit is 0, so we're
+                                             // effectively just setting it to 1.
+  glStencilFunc (GL_GEQUAL, 0, assigned_bits);
+//  glStencilFunc (GL_GREATER, assigned_bits, assigned_bits);   // Pass stencil test if all assigned bits clear,
+                                                              // reference is all assigned bits so we set
+                                                              // any bits permitted by the stencil writemask
 
   /* Draw the polygon outer */
-  tesselate_contour (info.tobj, &poly->Clipped->contours->head, info.vertices, &info.vertex_offset);
+//  tesselate_contour (info.tobj, &poly->Clipped->contours->head, info.vertices);
+  traps = bo_contour_to_traps (poly->Clipped->contours);
+  _cairo_traps_fini (traps);
+  hidgl_flush_triangles (&buffer);
 
-  /* Draw the polygon holes */
-  r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
+  /* Unassign our stencil buffer bit */
+  hidgl_return_stencil_bit (stencil_bit);
 
-  gluTessEndPolygon (info.tobj);
-  gluDeleteTess (info.tobj);
-  myFreeCombined ();
-
-//  printf ("global triangle count = %i\n", global_triangle_count);
-  free (info.vertices);
-}
-
-void
-hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
-{
-  struct polygon_cache *cache;
-  int new_cache = 0;
-
-  if (poly->gui_cache == NULL) {
-    poly->gui_cache = malloc (sizeof (struct polygon_cache));
-    new_cache = 1;
-  }
-
-  cache = poly->gui_cache;
-
-#if 0
-  if (!poly->gui_cache_valid) {
-    if (!new_cache)
-      glDeleteLists (cache->fill_display_list, 1);
-
-    cache->fill_display_list = glGenLists (1);
-    hidgl_flush_triangles (&buffer);
-    glNewList (cache->fill_display_list, GL_COMPILE);
-    hidgl_fill_pcb_polygon_nocache (poly, NULL /* clip_box */, scale);
-    hidgl_flush_triangles (&buffer);
-    glEndList ();
-    poly->gui_cache_valid = 1;
-  }
-
-  glCallList (cache->fill_display_list);
-
-#else
-  hidgl_fill_pcb_polygon_nocache (poly, clip_box, scale);
-#endif
+  glPopAttrib ();                                             // Restore the stencil buffer write-mask etc..
 }
 
 void
