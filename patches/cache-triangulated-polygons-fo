@@ -1,7 +1,7 @@
-Bottom: 5f1e36014715b8d5401c0e7021b6924e060fddaa
-Top:    7d73b595977fdd7d89fea6adb0d5288e55cb90ee
+Bottom: 13df4f970ee8003bf7bfde3dede14e81508ed8bd
+Top:    456b52d246261879f1f51813c6001045f9eac83e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-02 18:12:37 +0000
+Date:   2009-11-03 22:02:39 +0000
 
 Cache triangulated polygons for rendering
 
@@ -22,7 +22,7 @@ index 1a6aef9..55732a7 100644
  }
  
 diff --git a/src/global.h b/src/global.h
-index 4cf489a..0bb5161 100644
+index fa9f55e..cc51af2 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -245,6 +245,8 @@ struct polygon_st			/* holds information about a polygon */
@@ -315,7 +315,7 @@ index 3f101be..dfb89b8 100644
  
  /* ------------------------------------------------------------ 
 diff --git a/src/mymem.c b/src/mymem.c
-index c3663d6..add7e71 100644
+index 4118cf0..cfdbd26 100644
 --- a/src/mymem.c
 +++ b/src/mymem.c
 @@ -733,6 +733,10 @@ FreePolygonMemory (PolygonTypePtr Polygon)
