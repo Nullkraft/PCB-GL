@@ -1,5 +1,5 @@
 Bottom: 70c6d75ef5e17eb4c1feecccad965b45a1bdb8af
-Top:    98863da99df53bf5eff6827ef9839f62a03bbc0c
+Top:    d4626f107ea0d33715338a8429dbc8f88c3b0f63
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-03 23:48:35 +0000
 
@@ -9,19 +9,10 @@ Play with perspective rendering
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index edb7498..984a0ca 100644
+index edb7498..cf76ee7 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1659,6 +1659,8 @@ ghid_draw_everything (BoxTypePtr drawn_area)
-   Settings.ShowSolderSide = save_show_solder;
- }
- 
-+static int one_shot = 1;
-+
- #define Z_NEAR 3.0
- gboolean
- ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
-@@ -1710,13 +1712,26 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1710,13 +1710,26 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
