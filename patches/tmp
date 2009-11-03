@@ -1,7 +1,7 @@
-Bottom: 42e8fac75ffe5bf8d2f06a758c9e96fe709df96e
-Top:    d9b362c79c0e8922d514e307a907f2ea45664472
+Bottom: 7ce4b43ed17a0d66c4208c1e0246058e33376e9a
+Top:    4a5a236cf06f393af533de7f7a186580166de7d9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-02 18:12:45 +0000
+Date:   2009-11-03 22:03:04 +0000
 
 Tmp
 
@@ -1083,10 +1083,10 @@ index 061309d..3324781 100644
  }
  
 diff --git a/src/polygon1.c b/src/polygon1.c
-index b932f35..b7f6e6c 100644
+index 1a46ea4..ee9c82a 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2510,6 +2510,10 @@ poly_IniContour (PLINE * c)
+@@ -2402,6 +2402,10 @@ poly_IniContour (PLINE * c)
    c->head.next = c->head.prev = &c->head;
    c->xmin = c->ymin = 0x7fffffff;
    c->xmax = c->ymax = 0x80000000;
