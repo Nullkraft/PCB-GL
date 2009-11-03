@@ -1,5 +1,5 @@
 Bottom: da89308fc85fefcab50e366f4ad7f74e86b20cab
-Top:    98863da99df53bf5eff6827ef9839f62a03bbc0c
+Top:    70c6d75ef5e17eb4c1feecccad965b45a1bdb8af
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-03 23:46:40 +0000
 
@@ -9,10 +9,17 @@ Play with display lists
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 819f882..984a0ca 100644
+index 819f882..edb7498 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1666,6 +1666,8 @@ gboolean
+@@ -1659,13 +1659,13 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+   Settings.ShowSolderSide = save_show_solder;
+ }
+ 
+-static int one_shot = 1;
+-
+ #define Z_NEAR 3.0
+ gboolean
  ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  					GdkEventExpose * ev, GHidPort * port)
  {
@@ -21,31 +28,8 @@ index 819f882..984a0ca 100644
    BoxType region;
    int eleft, eright, etop, ebottom;
    extern HID ghid_hid;
-@@ -1710,15 +1712,35 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
- 
-   glMatrixMode (GL_PROJECTION);
-   glLoadIdentity ();
--  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
-+//  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
-+//  glOrtho (-1, 1, -1, 1, 100, 10000);
-+//  glFrustum (0, widget->allocation.width, widget->allocation.height, 0, 10, 1000);
-+  glFrustum (-1, 1, -1, 1, 10, 10000);
-+//  gluPerspective (30, widget->allocation.width / widget->allocation.height, 10, 1000);
-   glMatrixMode (GL_MODELVIEW);
-   glLoadIdentity ();
- 
-+  glScalef (2, 2, 1);
-+
-+  glTranslatef (-1., 1., 0.);
-+  glScalef ( 2. / (float)widget->allocation.width,
-+            -2. / (float)widget->allocation.height,
-+             1. / 100.);
-+
-+  glTranslatef (0., 0., -2000.);
-   glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
-   glMultMatrixf ((GLfloat *)view_matrix);
+@@ -1719,6 +1719,13 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
-+  glScalef (1., 1., 1. / 3.);
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
 +#if 0
@@ -58,7 +42,7 @@ index 819f882..984a0ca 100644
    glEnable (GL_STENCIL_TEST);
    glClearColor (gport->offlimits_color.red / 65535.,
                  gport->offlimits_color.green / 65535.,
-@@ -1856,6 +1878,15 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1856,6 +1863,15 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
