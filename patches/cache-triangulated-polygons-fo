@@ -1,5 +1,5 @@
 Bottom: bd775c9e72e1749321c3149b84f9bb80420d03de
-Top:    eb348e7ff6592c6b4dff188756e77907b983b335
+Top:    87e640f1ac03adc064a1d3d1cd971c36eaec0d57
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-03 23:50:26 +0000
 
@@ -48,63 +48,10 @@ index ffb84a2..c545768 100644
  
  /* Call this as soon as possible from main().  No other HID calls are
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 54c2b3b..99ab59d 100644
+index 54c2b3b..8ae6047 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -221,7 +221,8 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
-   int hairline = 0;
- 
-   if (width == 0.0)
--    hairline = 1;
-+    return;
-+//    hairline = 1;
- 
-   if (width < scale)
-     width = scale;
-@@ -304,7 +305,8 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
-   int hairline = 0;
- 
-   if (width == 0.0)
--    hairline = 1;
-+    return;
-+//    hairline = 1;
- 
-   if (width < scale)
-     width = scale;
-@@ -470,6 +472,7 @@ myBegin (GLenum type)
- }
- 
- static double global_scale;
-+static int global_triangle_count;
- 
- static void
- myVertex (GLdouble *vertex_data)
-@@ -487,7 +490,7 @@ myVertex (GLdouble *vertex_data)
-         }
-       else
-         {
--#if 1
-+#if 0
-           hidgl_ensure_triangle_space (&buffer, 1);
-           hidgl_add_triangle (&buffer,
-                               triangle_vertices [0], triangle_vertices [1],
-@@ -504,6 +507,7 @@ myVertex (GLdouble *vertex_data)
-                            vertex_data [0],       vertex_data [1],
-                            triangle_vertices [0], triangle_vertices [1], global_scale);
- #endif
-+          global_triangle_count ++;
- 
-           if (tessVertexType == GL_TRIANGLE_STRIP)
-             {
-@@ -530,6 +534,7 @@ myVertex (GLdouble *vertex_data)
-                               triangle_vertices [4], triangle_vertices [5]);
-           triangle_comp_idx = 0;
-           stashed_vertices = 0;
-+          global_triangle_count ++;
-         }
-     }
-   else
-@@ -574,12 +579,11 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -574,12 +574,11 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
    free (vertices);
  }
  
@@ -119,7 +66,7 @@ index 54c2b3b..99ab59d 100644
    gluTessBeginContour (tobj);
    do {
      vertices [0 + offset] = vn->point[0];
-@@ -589,12 +593,13 @@ void tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices)
+@@ -589,12 +588,13 @@ void tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices)
      offset += 3;
    } while ((vn = vn->next) != vnode);
    gluTessEndContour (tobj);
@@ -134,7 +81,7 @@ index 54c2b3b..99ab59d 100644
  };
  
  static int
-@@ -606,7 +611,7 @@ do_hole (const BoxType *b, void *cl)
+@@ -606,7 +606,7 @@ do_hole (const BoxType *b, void *cl)
    if (curc->Flags.orient == PLF_DIR) {
      return 0;
    }
@@ -143,7 +90,7 @@ index 54c2b3b..99ab59d 100644
    return 1;
  }
  
-@@ -614,14 +619,17 @@ static GLint stencil_bits;
+@@ -614,14 +614,17 @@ static GLint stencil_bits;
  static int dirty_bits = 0;
  static int assigned_bits = 0;
  
@@ -163,7 +110,7 @@ index 54c2b3b..99ab59d 100644
  
    global_scale = scale;
  
-@@ -631,68 +639,71 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -631,68 +634,69 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
        return;
      }
  
@@ -193,7 +140,6 @@ index 54c2b3b..99ab59d 100644
    gluTessCallback(info.tobj, GLU_TESS_VERTEX, myVertex);
    gluTessCallback(info.tobj, GLU_TESS_COMBINE, myCombine);
    gluTessCallback(info.tobj, GLU_TESS_ERROR, myError);
-+  global_triangle_count = 0;
  
 -  glPushAttrib (GL_STENCIL_BUFFER_BIT);                   // Save the write mask etc.. for final restore
 -  glPushAttrib (GL_STENCIL_BUFFER_BIT |                   // Resave the stencil write-mask etc.., and
@@ -218,11 +164,16 @@ index 54c2b3b..99ab59d 100644
 +  gluTessEndPolygon (info.tobj);
 +  gluDeleteTess (info.tobj);
 +  myFreeCombined ();
- 
--  glPopAttrib ();                                             // Restore the colour and stencil buffer write-mask etc..
-+  printf ("global triangle count = %i\n", global_triangle_count);
++
 +  free (info.vertices);
 +}
+ 
+-  glPopAttrib ();                                             // Restore the colour and stencil buffer write-mask etc..
++void
++hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
++{
++  struct polygon_cache *cache;
++  int new_cache = 0;
  
 -  glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT); // This allows us to toggle the bit on the subcompositing bitplane
 -                                             // If the stencil test has passed, we know that bit is 0, so we're
@@ -231,25 +182,18 @@ index 54c2b3b..99ab59d 100644
 -//  glStencilFunc (GL_GREATER, assigned_bits, assigned_bits);   // Pass stencil test if all assigned bits clear,
 -                                                              // reference is all assigned bits so we set
 -                                                              // any bits permitted by the stencil writemask
-+void
-+hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
-+{
-+  struct polygon_cache *cache;
-+  int new_cache = 0;
- 
--  /* Draw the polygon outer */
--  tesselate_contour (info.tobj, &poly->Clipped->contours->head, info.vertices);
--  hidgl_flush_triangles (&buffer);
 +  if (poly->gui_cache == NULL) {
 +    poly->gui_cache = malloc (sizeof (struct polygon_cache));
 +    new_cache = 1;
 +  }
  
--  /* Unassign our stencil buffer bit */
--  hidgl_return_stencil_bit (stencil_bit);
+-  /* Draw the polygon outer */
+-  tesselate_contour (info.tobj, &poly->Clipped->contours->head, info.vertices);
+-  hidgl_flush_triangles (&buffer);
 +  cache = poly->gui_cache;
  
--  glPopAttrib ();                                             // Restore the stencil buffer write-mask etc..
+-  /* Unassign our stencil buffer bit */
+-  hidgl_return_stencil_bit (stencil_bit);
 +#if 0
 +  if (!poly->gui_cache_valid) {
 +    if (!new_cache)
@@ -264,11 +208,12 @@ index 54c2b3b..99ab59d 100644
 +    poly->gui_cache_valid = 1;
 +  }
  
+-  glPopAttrib ();                                             // Restore the stencil buffer write-mask etc..
++  glCallList (cache->fill_display_list);
+ 
 -  gluDeleteTess (info.tobj);
 -  myFreeCombined ();
 -  free (info.vertices);
-+  glCallList (cache->fill_display_list);
-+
 +#else
 +  hidgl_fill_pcb_polygon_nocache (poly, clip_box, scale);
 +#endif
