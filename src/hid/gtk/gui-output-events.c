@@ -1659,8 +1659,6 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   Settings.ShowSolderSide = save_show_solder;
 }
 
-static int one_shot = 1;
-
 #define Z_NEAR 3.0
 gboolean
 ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
