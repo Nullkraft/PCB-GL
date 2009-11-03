@@ -957,7 +957,7 @@ ghid_screen_update (void)
 }
 
 void DrawAttached (Boolean);
-void draw_grid (void);
+void draw_grid (BoxTypePtr drawn_area);
 
 void
 ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata)
@@ -1167,7 +1167,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   gui->set_layer (NULL, INDEXOFCURRENT, 0);
   gui->set_layer (NULL, SL_FINISHED, 0);
 
-  draw_grid ();
+  draw_grid (&region);
 
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
