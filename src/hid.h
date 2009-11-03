@@ -555,6 +555,8 @@ typedef enum
 
     HID_DRC_GUI *drc_gui;
 
+    void (*free_polygon_cache) (PolygonType *poly);
+
   } HID;
 
 /* Call this as soon as possible from main().  No other HID calls are
