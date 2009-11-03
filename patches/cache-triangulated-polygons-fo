@@ -1,7 +1,7 @@
-Bottom: 1da1cc2fa6746353a8ec603186b8d478f88acdae
-Top:    4b21f6622a20729e0080c31fe82c2dc7009c885a
+Bottom: 70c6d75ef5e17eb4c1feecccad965b45a1bdb8af
+Top:    b5eb46f781b3f3d13b3a1d3d494d715ef3ef007f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-03 22:57:56 +0000
+Date:   2009-11-03 23:46:41 +0000
 
 Cache triangulated polygons for rendering
 
@@ -330,10 +330,10 @@ index 4118cf0..cfdbd26 100644
        if (Polygon->Clipped)
  	poly_Free (&Polygon->Clipped);
 diff --git a/src/polygon.c b/src/polygon.c
-index bbd8e7a..061309d 100644
+index a0d0bef..169739f 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -979,6 +979,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
+@@ -982,6 +982,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
        info.accumulate = NULL;
      }
    polygon->NoHolesValid = 0;
@@ -341,7 +341,7 @@ index bbd8e7a..061309d 100644
    return r;
  }
  
-@@ -1124,8 +1125,9 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
+@@ -1127,8 +1128,9 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
    assert (poly_Valid (p->Clipped));
    if (TEST_FLAG (CLEARPOLYFLAG, p))
      clearPoly (Data, layer, p, NULL, 0);
@@ -353,7 +353,7 @@ index bbd8e7a..061309d 100644
    return 1;
  }
  
-@@ -1380,22 +1382,27 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
+@@ -1383,22 +1385,27 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
      case VIA_TYPE:
        SubtractPin (Data, (PinTypePtr) ptr2, Layer, Polygon);
        Polygon->NoHolesValid = 0;
