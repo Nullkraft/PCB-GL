@@ -1,5 +1,5 @@
 Bottom: 87e640f1ac03adc064a1d3d1cd971c36eaec0d57
-Top:    6bfa18a292efc9f91c4ff5cd6f5ea273ec8b6583
+Top:    718b39d442446811c39ae9f2134ec998fa883ef6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-03 23:52:55 +0000
 
@@ -13771,23 +13771,3 @@ index 8ae6047..90d1078 100644
    global_scale = scale;
  
    if (poly->Clipped == NULL)
-diff --git a/src/main.c b/src/main.c
-index a0b38f3..a72dad4 100644
---- a/src/main.c
-+++ b/src/main.c
-@@ -40,6 +40,7 @@
- #include <signal.h>
- #include <unistd.h>
- #include <sys/stat.h>
-+#include <setjmp.h>
- 
- #include "global.h"
- #include "data.h"
-@@ -53,6 +54,7 @@
- #include "action.h"
- #include "misc.h"
- #include "lrealpath.h"
-+#include "sweep.h"
- 
- /* This next one is so we can print the help messages. */
- #include "hid/hidint.h"
