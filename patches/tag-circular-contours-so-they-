@@ -1,5 +1,5 @@
 Bottom: 70c6d75ef5e17eb4c1feecccad965b45a1bdb8af
-Top:    70c6d75ef5e17eb4c1feecccad965b45a1bdb8af
+Top:    bd775c9e72e1749321c3149b84f9bb80420d03de
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-03 23:47:22 +0000
 
@@ -8,4 +8,48 @@ Tag circular contours so they can be drawn quicker
 
 ---
 
-
+diff --git a/src/polyarea.h b/src/polyarea.h
+index 50dda4a..ce427ad 100644
+--- a/src/polyarea.h
++++ b/src/polyarea.h
+@@ -99,6 +99,10 @@ struct PLINE
+     unsigned int Count;
+     double area;
+     rtree_t *tree;
++    int is_round;
++    int cx;
++    int cy;
++    int radius;
+     struct {
+       unsigned int status:3;
+       unsigned int orient:1;
+diff --git a/src/polygon.c b/src/polygon.c
+index a0d0bef..0a86fa4 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -351,6 +351,10 @@ CirclePoly (LocationType x, LocationType y, BDimension radius)
+   if ((contour = poly_NewContour (v)) == NULL)
+     return NULL;
+   frac_circle (contour, x, y, v, 1);
++  contour->is_round = TRUE;
++  contour->cx = x;
++  contour->cy = y;
++  contour->radius = radius;
+   return ContourToPoly (contour);
+ }
+ 
+diff --git a/src/polygon1.c b/src/polygon1.c
+index b932f35..b7f6e6c 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2510,6 +2510,10 @@ poly_IniContour (PLINE * c)
+   c->head.next = c->head.prev = &c->head;
+   c->xmin = c->ymin = 0x7fffffff;
+   c->xmax = c->ymax = 0x80000000;
++  c->is_round = FALSE;
++  c->cx = 0;
++  c->cy = 0;
++  c->radius = 0;
+ }
+ 
+ PLINE *
