@@ -602,10 +602,26 @@ do_hole (const BoxType *b, void *cl)
 {
   struct do_hole_info *info = cl;
   PLINE *curc = (PLINE *) b;
+  cairo_traps_t *traps;
+
   /* Ignore the outer contour - we draw it first explicitly*/
   if (curc->Flags.orient == PLF_DIR) {
     return 0;
   }
+
+  /* If the contour is round, and hidgl_fill_circle would use
+   * less slices than we have vertices to draw it, then call
+   * hidgl_fill_circle to draw this contour.
+   */
+  if (curc->is_round) {
+    double slices = M_PI * 2 * curc->radius /
+                    info->scale / PIXELS_PER_CIRCLINE;
+    if (slices < curc->Count) {
+      hidgl_fill_circle (curc->cx, curc->cy, curc->radius, info->scale);
+      return 1;
+    }
+  }
+
   tesselate_contour (info->tobj, &curc->head, info->vertices);
   return 1;
 }
