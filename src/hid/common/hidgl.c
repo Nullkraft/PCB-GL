@@ -37,7 +37,7 @@
 #include "hid.h"
 #include "hidgl.h"
 #include "rtree.h"
-
+#include "sweep.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
@@ -625,6 +625,10 @@ hidgl_fill_pcb_polygon_nocache (PolygonType *poly, const BoxType *clip_box, doub
   int vertex_count = 0;
   PLINE *contour;
   struct do_hole_info info;
+
+  bo_poly_to_traps (poly->Clipped);
+
+  return;
 
   global_scale = scale;
 
