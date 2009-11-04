@@ -1811,3 +1811,8 @@ debug_polygon (PolygonType *p)
 	break;
     }
 }
+
+POLYAREA *board_outline_poly ()
+{
+
+}
