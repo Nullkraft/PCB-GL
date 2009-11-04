@@ -1,7 +1,7 @@
-Bottom: 1b00f3f058a1f98826c8683b8f735a5a63b5b01e
-Top:    ec43e9f752c0dec2b6ee4f9f84b278ad376a98a6
+Bottom: 26b743f40f1299c7a5fe09683c03f94bb91ea397
+Top:    f515e8d81087c40464c9cc39ad1a2f6569b20b79
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-04 17:55:00 +0000
+Date:   2009-11-04 18:15:23 +0000
 
 Board outline polygon generation
 
@@ -215,7 +215,7 @@ index cc5c259..82098ca 100644
        cyl_info.to_layer = drawn_groups[i - 1];
        cyl_info.scale = gport->zoom;
 diff --git a/src/polygon.c b/src/polygon.c
-index 274bace..83313bc 100644
+index 0a86fa4..95704bb 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -81,6 +81,7 @@ dicer output is used for HIDs which cannot render things with holes
@@ -226,7 +226,7 @@ index 274bace..83313bc 100644
  
  #include "global.h"
  #include "box.h"
-@@ -1745,3 +1746,171 @@ debug_polygon (PolygonType *p)
+@@ -1811,3 +1812,171 @@ debug_polygon (PolygonType *p)
  	break;
      }
  }
