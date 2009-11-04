@@ -618,16 +618,11 @@ static int assigned_bits = 0;
 void
 hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
 {
+  struct do_hole_info info;
   int stencil_bit;
   cairo_traps_t *traps;
-  struct do_hole_info info;
 
   info.scale = scale;
-
-//  bo_poly_to_traps (poly->Clipped);
-
-//  return;
-
   global_scale = scale;
 
   if (poly->Clipped == NULL)
