@@ -1,0 +1,457 @@
+Bottom: 58ca5c377f49b488949c9a18fe45b7054fd32d8e
+Top:    76b6f9595871ebf891bbb42b6ed59c117093cf52
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-04 00:12:22 +0000
+
+Refresh of tmp
+
+---
+
+diff --git a/src/cairo/cairo-bentley-ottmann.c b/src/cairo/cairo-bentley-ottmann.c
+index 7f58475..7f291ee 100644
+--- a/src/cairo/cairo-bentley-ottmann.c
++++ b/src/cairo/cairo-bentley-ottmann.c
+@@ -1284,44 +1284,25 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+     return status;
+ }
+ 
+-
+ static void
+-poly_area_to_start_events (POLYAREA                *poly,
+-                           cairo_bo_start_event_t  *events,
+-                           cairo_bo_event_t       **event_ptrs,
+-                           int                     *counter)
++contour_to_start_events (PLINE                   *contour,
++                         cairo_bo_start_event_t  *events,
++                         cairo_bo_event_t       **event_ptrs,
++                         int                     *counter,
++                         int                      outer_contour)
+ {
+     int i = *counter;
+-    PLINE *contour;
+-    POLYAREA *pa;
+-    int outer_contour;
++    VNODE *bv;
+ 
+-    pa = poly;
++    /* Loop over nodes, adding edges */
++    bv = &contour->head;
+     do {
+-      /* Loop over contours */
+-      outer_contour = 1;
+-      for (contour = pa->contours; contour != NULL; contour = contour->next) {
+-        /* Loop over nodes, adding edges */
+-        VNODE *bv;
+-        bv = &contour->head;
+-        do {
+-          int x1, y1, x2, y2;
+-          cairo_edge_t cairo_edge;
+-          /* Node is between bv->point[0,1] and bv->next->point[0,1] */
+-
+-          if (bv->point[1] == bv->next->point[1]) {
+-              if (bv->point[0] < bv->next->point[0]) {
+-                x1 = bv->point[0];
+-                y1 = bv->point[1];
+-                x2 = bv->next->point[0];
+-                y2 = bv->next->point[1];
+-              } else {
+-                x1 = bv->next->point[0];
+-                y1 = bv->next->point[1];
+-                x2 = bv->point[0];
+-                y2 = bv->point[1];
+-              }
+-          } else if (bv->point[1] < bv->next->point[1]) {
++      int x1, y1, x2, y2;
++      cairo_edge_t cairo_edge;
++      /* Node is between bv->point[0,1] and bv->next->point[0,1] */
++
++      if (bv->point[1] == bv->next->point[1]) {
++          if (bv->point[0] < bv->next->point[0]) {
+             x1 = bv->point[0];
+             y1 = bv->point[1];
+             x2 = bv->next->point[0];
+@@ -1332,28 +1313,62 @@ poly_area_to_start_events (POLYAREA                *poly,
+             x2 = bv->point[0];
+             y2 = bv->point[1];
+           }
++      } else if (bv->point[1] < bv->next->point[1]) {
++        x1 = bv->point[0];
++        y1 = bv->point[1];
++        x2 = bv->next->point[0];
++        y2 = bv->next->point[1];
++      } else {
++        x1 = bv->next->point[0];
++        y1 = bv->next->point[1];
++        x2 = bv->point[0];
++        y2 = bv->point[1];
++      }
++
++      cairo_edge.line.p1.x = x1;
++      cairo_edge.line.p1.y = y1;
++      cairo_edge.line.p2.x = x2;
++      cairo_edge.line.p2.y = y2;
++      cairo_edge.top = y1;
++      cairo_edge.bottom = y2;
++      cairo_edge.dir = outer_contour ? 1 : -1;
++
++      event_ptrs[i] = (cairo_bo_event_t *) &events[i];
+ 
+-          cairo_edge.line.p1.x = x1;
+-          cairo_edge.line.p1.y = y1;
+-          cairo_edge.line.p2.x = x2;
+-          cairo_edge.line.p2.y = y2;
+-          cairo_edge.top = y1;
+-          cairo_edge.bottom = y2;
+-          cairo_edge.dir = outer_contour ? 1 : -1;
++      events[i].type = CAIRO_BO_EVENT_TYPE_START;
++      events[i].point.y = cairo_edge.line.p1.y;
++      events[i].point.x = cairo_edge.line.p1.x;
+ 
+-          event_ptrs[i] = (cairo_bo_event_t *) &events[i];
++      events[i].edge.edge = cairo_edge;
++      events[i].edge.deferred_trap.right = NULL;
++      events[i].edge.prev = NULL;
++      events[i].edge.next = NULL;
++      i++;
+ 
+-          events[i].type = CAIRO_BO_EVENT_TYPE_START;
+-          events[i].point.y = cairo_edge.line.p1.y;
+-          events[i].point.x = cairo_edge.line.p1.x;
++    } while ((bv = bv->next) != &contour->head);
+ 
+-          events[i].edge.edge = cairo_edge;
+-          events[i].edge.deferred_trap.right = NULL;
+-          events[i].edge.prev = NULL;
+-          events[i].edge.next = NULL;
+-          i++;
++    *counter = i;
++}
++
++
++static void
++poly_area_to_start_events (POLYAREA                *poly,
++                           cairo_bo_start_event_t  *events,
++                           cairo_bo_event_t       **event_ptrs,
++                           int                     *counter)
++{
++    int i = *counter;
++    PLINE *contour;
++    POLYAREA *pa;
++    int outer_contour;
+ 
+-        } while ((bv = bv->next) != &contour->head);
++    pa = poly;
++    do {
++      /* Loop over contours */
++      outer_contour = 1;
++      for (contour = pa->contours; contour != NULL; contour = contour->next) {
++        contour_to_start_events (contour, events, event_ptrs,
++                                 counter, outer_contour);
+         outer_contour = 0;
+       }
+ 
+@@ -1463,3 +1478,98 @@ bo_poly_to_traps (POLYAREA *poly)
+ 
+   return traps;
+ }
++
++
++cairo_traps_t *
++bo_contour_to_traps (PLINE *contour)
++{
++  int intersections;
++  cairo_status_t status;
++  cairo_bo_start_event_t stack_events[CAIRO_STACK_ARRAY_LENGTH (cairo_bo_start_event_t)];
++  cairo_bo_start_event_t *events;
++  cairo_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
++  cairo_bo_event_t **event_ptrs;
++  int num_events = 0;
++  int i;
++  int n;
++  cairo_traps_t int_traps;
++  cairo_traps_t *traps = &int_traps;
++
++  _cairo_traps_init (traps);
++
++  num_events = contour->Count;
++
++  if (unlikely (0 == num_events))
++      return CAIRO_STATUS_SUCCESS;
++
++  events = stack_events;
++  event_ptrs = stack_event_ptrs;
++  if (num_events > ARRAY_LENGTH (stack_events)) {
++      events = _cairo_malloc_ab_plus_c (num_events,
++                                        sizeof (cairo_bo_start_event_t) +
++                                        sizeof (cairo_bo_event_t *),
++                                        sizeof (cairo_bo_event_t *));
++      if (unlikely (events == NULL))
++          return NULL;
++
++      event_ptrs = (cairo_bo_event_t **) (events + num_events);
++  }
++
++  i = 0;
++
++  contour_to_start_events (contour, events, event_ptrs, &i, 1);
++
++  /* XXX: This would be the convenient place to throw in multiple
++   * passes of the Bentley-Ottmann algorithm. It would merely
++   * require storing the results of each pass into a temporary
++   * cairo_traps_t. */
++  status = _cairo_bentley_ottmann_tessellate_bo_edges (event_ptrs,
++                                                       num_events,
++                                                       traps,
++                                                       &intersections);
++
++  for (n = 0; n < traps->num_traps; n++) {
++    int x1, y1, x2, y2, x3, y3, x4, y4;
++
++    x1 = _line_compute_intersection_x_for_y (&traps->traps[n].left, traps->traps[n].top);
++    y1 = traps->traps[n].top;
++    x2 = _line_compute_intersection_x_for_y (&traps->traps[n].right, traps->traps[n].top);
++    y2 = traps->traps[n].top;
++    x3 = _line_compute_intersection_x_for_y (&traps->traps[n].right, traps->traps[n].bottom);
++    y3 = traps->traps[n].bottom;
++    x4 = _line_compute_intersection_x_for_y (&traps->traps[n].left, traps->traps[n].bottom);
++    y4 = traps->traps[n].bottom;
++
++#if 1
++    if (x1 == x2) {
++      hidgl_ensure_triangle_space (&buffer, 1);
++      hidgl_add_triangle (&buffer, x1, y1, x3, y3, x4, y4);
++    } else if (x3 == x4) {
++      hidgl_ensure_triangle_space (&buffer, 1);
++      hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
++    } else {
++      hidgl_ensure_triangle_space (&buffer, 2);
++      hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
++      hidgl_add_triangle (&buffer, x3, y3, x4, y4, x1, y1);
++    }
++#else
++    glBegin (GL_LINES);
++    glVertex2i (x1, y1); glVertex2i (x2, y2);
++    glVertex2i (x2, y2); glVertex2i (x3, y3);
++     glVertex2i (x3, y3); glVertex2i (x1, y1);
++    glVertex2i (x3, y3); glVertex2i (x4, y4);
++    glVertex2i (x4, y4); glVertex2i (x1, y1);
++     glVertex2i (x1, y1); glVertex2i (x3, y3);
++    glEnd ();
++#endif
++  }
++
++#if DEBUG_TRAPS
++  dump_traps (traps, "bo-polygon-out.txt");
++#endif
++
++  if (events != stack_events)
++      free (events);
++
++  return traps;
++}
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 90d1078..203b42a 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -574,11 +574,12 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+   free (vertices);
+ }
+ 
+-void tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices, int *vertex_offset)
++void tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices)
+ {
+   VNODE *vn = vnode;
+-  int offset = *vertex_offset;;
++  int offset = 0;
+ 
++  gluTessBeginPolygon (tobj, NULL);
+   gluTessBeginContour (tobj);
+   do {
+     vertices [0 + offset] = vn->point[0];
+@@ -588,25 +589,43 @@ void tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices, i
+     offset += 3;
+   } while ((vn = vn->next) != vnode);
+   gluTessEndContour (tobj);
+-  *vertex_offset = offset;
++  gluTessEndPolygon (tobj);
+ }
+ 
+-struct do_hole_info {
+-  GLUtesselator *tobj;
+-  GLdouble *vertices;
+-  int vertex_offset;
++struct hole_info {
++  double scale;
+ };
+ 
+ static int
+ do_hole (const BoxType *b, void *cl)
+ {
+-  struct do_hole_info *info = cl;
++  cairo_traps_t *traps;
++
+   PLINE *curc = (PLINE *) b;
++  struct hole_info *info = cl;
++
+   /* Ignore the outer contour - we draw it first explicitly*/
+   if (curc->Flags.orient == PLF_DIR) {
+     return 0;
+   }
+-  tesselate_contour (info->tobj, &curc->head, info->vertices, &info->vertex_offset);
++
++  if (curc->is_round) {
++//    double slices;
++
++//    slices = M_PI * 2 * curc->radius / info->scale / PIXELS_PER_CIRCLINE;
++
++    /* If hidgl_fill_circle would use less slices than we have vertices,
++     * then call hidgl_fill_circle to draw this contour.
++     */
++//    if (slices < curc->Count) {
++      hidgl_fill_circle (curc->cx, curc->cy, curc->radius, info->scale);
++      return 1;
++//    }
++  }
++
++  traps = bo_contour_to_traps (curc);
++  _cairo_traps_fini (traps);
++
+   return 1;
+ }
+ 
+@@ -614,21 +633,19 @@ static GLint stencil_bits;
+ static int dirty_bits = 0;
+ static int assigned_bits = 0;
+ 
+-struct polygon_cache {
+-  int fill_display_list;
+-};
+-
+ /* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
+ void
+-hidgl_fill_pcb_polygon_nocache (PolygonType *poly, const BoxType *clip_box, double scale)
++hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
+ {
+-  int vertex_count = 0;
+-  PLINE *contour;
+-  struct do_hole_info info;
++  int stencil_bit;
++  cairo_traps_t *traps;
++  struct hole_info info;
+ 
+-  bo_poly_to_traps (poly->Clipped);
++  info.scale = scale;
+ 
+-  return;
++//  bo_poly_to_traps (poly->Clipped);
++
++//  return;
+ 
+   global_scale = scale;
+ 
+@@ -638,69 +655,53 @@ hidgl_fill_pcb_polygon_nocache (PolygonType *poly, const BoxType *clip_box, doub
+       return;
+     }
+ 
+-  /* Walk the polygon structure, counting vertices */
+-  /* This gives an upper bound on the amount of storage required */
+-  vertex_count = 0;
+-  for (contour = poly->Clipped->contours;
+-       contour != NULL; contour = contour->next)
+-    vertex_count +=contour->Count;
+-//    vertex_count = MAX (vertex_count, contour->Count);
++  stencil_bit = hidgl_assign_clear_stencil_bit ();
++  if (!stencil_bit)
++    {
++      printf ("hidgl_fill_pcb_polygon: No free stencil bits, aborting polygon\n");
++      return;
++    }
+ 
+-  info.vertices = malloc (sizeof(GLdouble) * vertex_count * 3);
+-  info.vertex_offset = 0;
+-  info.tobj = gluNewTess ();
+-  gluTessCallback(info.tobj, GLU_TESS_BEGIN, myBegin);
+-  gluTessCallback(info.tobj, GLU_TESS_VERTEX, myVertex);
+-  gluTessCallback(info.tobj, GLU_TESS_COMBINE, myCombine);
+-  gluTessCallback(info.tobj, GLU_TESS_ERROR, myError);
++  /* Flush out any existing geoemtry to be rendered */
++  hidgl_flush_triangles (&buffer);
+ 
+-  gluTessBeginPolygon (info.tobj, NULL);
++  glPushAttrib (GL_STENCIL_BUFFER_BIT);                   // Save the write mask etc.. for final restore
++  glPushAttrib (GL_STENCIL_BUFFER_BIT |                   // Resave the stencil write-mask etc.., and
++                GL_COLOR_BUFFER_BIT);                     // the colour buffer write mask etc.. for part way restore
++  glStencilMask (stencil_bit);                            // Only write to our stencil bit
++  glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);    // Always pass stencil test, ref value is our bit
++  glColorMask (0, 0, 0, 0);                               // Disable writting in color buffer
+ 
+-  /* Draw the polygon outer */
+-  tesselate_contour (info.tobj, &poly->Clipped->contours->head, info.vertices, &info.vertex_offset);
++  /* It will already be setup like this (so avoid prodding the state-machine):
++   * glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value
++   */
++  /* Drawing operations now set our reference bit in the stencil buffer */
+ 
+-  /* Draw the polygon holes */
+   r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
++  hidgl_flush_triangles (&buffer);
+ 
+-  gluTessEndPolygon (info.tobj);
+-  gluDeleteTess (info.tobj);
+-  myFreeCombined ();
++  /* Drawing operations as masked to areas where the stencil buffer is '0' */
+ 
+-  free (info.vertices);
+-}
++  glPopAttrib ();                                             // Restore the colour and stencil buffer write-mask etc..
+ 
+-void
+-hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
+-{
+-  struct polygon_cache *cache;
+-  int new_cache = 0;
++  glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT); // This allows us to toggle the bit on the subcompositing bitplane
++                                             // If the stencil test has passed, we know that bit is 0, so we're
++                                             // effectively just setting it to 1.
++  glStencilFunc (GL_GEQUAL, 0, assigned_bits);
++//  glStencilFunc (GL_GREATER, assigned_bits, assigned_bits);   // Pass stencil test if all assigned bits clear,
++                                                              // reference is all assigned bits so we set
++                                                              // any bits permitted by the stencil writemask
+ 
+-  if (poly->gui_cache == NULL) {
+-    poly->gui_cache = malloc (sizeof (struct polygon_cache));
+-    new_cache = 1;
+-  }
+-
+-  cache = poly->gui_cache;
+-
+-#if 0
+-  if (!poly->gui_cache_valid) {
+-    if (!new_cache)
+-      glDeleteLists (cache->fill_display_list, 1);
+-
+-    cache->fill_display_list = glGenLists (1);
+-    hidgl_flush_triangles (&buffer);
+-    glNewList (cache->fill_display_list, GL_COMPILE);
+-    hidgl_fill_pcb_polygon_nocache (poly, NULL /* clip_box */, scale);
+-    hidgl_flush_triangles (&buffer);
+-    glEndList ();
+-    poly->gui_cache_valid = 1;
+-  }
++  /* Draw the polygon outer */
++//  tesselate_contour (info.tobj, &poly->Clipped->contours->head, info.vertices);
++  traps = bo_contour_to_traps (poly->Clipped->contours);
++  _cairo_traps_fini (traps);
++  hidgl_flush_triangles (&buffer);
+ 
+-  glCallList (cache->fill_display_list);
++  /* Unassign our stencil buffer bit */
++  hidgl_return_stencil_bit (stencil_bit);
+ 
+-#else
+-  hidgl_fill_pcb_polygon_nocache (poly, clip_box, scale);
+-#endif
++  glPopAttrib ();                                             // Restore the stencil buffer write-mask etc..
+ }
+ 
+ void
