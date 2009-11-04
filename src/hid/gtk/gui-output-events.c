@@ -1542,6 +1542,9 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   if (!global_view_2d && save_show_solder)
     reverse_layers = !reverse_layers;
 
+  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
+  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
+
   solder_group = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
   component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
 
@@ -1597,6 +1600,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
         SWAP_IDENT = save_swap;
         gui->set_layer (NULL, SL (FINISHED, 0), 0);
       }
+      gui->set_layer ("invisible", SL (INVISIBLE, 0), 0);
     }
 #endif
     if (global_view_2d)

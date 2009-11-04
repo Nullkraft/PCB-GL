@@ -553,13 +553,17 @@ int compute_depth (int group)
       depth = (10 - 3) * 200 / gport->zoom;
     }
   } else if (SL_TYPE (idx) == SL_SILK) {
-    if (SL_SIDE (idx) == SL_TOP_SIDE && !Settings.ShowSolderSide) {
+    if (SL_SIDE (idx) == SL_TOP_SIDE) {
       depth = (max_depth + 5) * 200 / gport->zoom;
     } else {
       depth = (10 - 5) * 200 / gport->zoom;
     }
   } else if (SL_TYPE (idx) == SL_INVISIBLE) {
-    depth = (10 - 3) * 200 / gport->zoom;
+    if (Settings.ShowSolderSide) {
+      depth = (max_depth + 5) * 200 / gport->zoom;
+    } else {
+      depth = (10 - 5) * 200 / gport->zoom;
+    }
   }
 
   last_depth_computed = depth;
