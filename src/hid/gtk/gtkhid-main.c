@@ -344,6 +344,7 @@ draw_grid ()
   static int npoints = 0;
   int x1, y1, x2, y2, n, i;
   double x, y;
+  extern float global_depth;
 
   if (!Settings.DrawGrid)
     return;
@@ -395,23 +396,24 @@ draw_grid ()
     {
       npoints = n + 10;
       points =
-	MyRealloc (points, npoints * 2 * sizeof (GLfloat), "gtk_draw_grid");
+	MyRealloc (points, npoints * 3 * sizeof (GLfloat), "gtk_draw_grid");
     }
 
   glEnableClientState (GL_VERTEX_ARRAY);
-  glVertexPointer (2, GL_FLOAT, 0, points);
+  glVertexPointer (3, GL_FLOAT, 0, points);
 
   n = 0;
   for (x = x1; x <= x2; x += PCB->Grid)
     {
-      points[2 * n] = Vx (x);
+      points[3 * n] = Vx (x);
+      points[3 * n + 2] = global_depth;
       n++;
     }
   for (y = y1; y <= y2; y += PCB->Grid)
     {
       int vy = Vy (y);
       for (i = 0; i < n; i++)
-	points[2 * i + 1] = vy;
+	points[3 * i + 1] = vy;
       glDrawArrays (GL_POINTS, 0, n);
     }
 
@@ -529,6 +531,18 @@ ghid_set_layer (const char *name, int group, int empty)
 #ifdef SUBCOMPOSITE_LAYERS
   /* Flush out any existing geoemtry to be rendered */
   hidgl_flush_triangles (&buffer);
+
+  if (group >= 0 && group < max_layer) {
+    hidgl_set_depth ((max_layer - group) * 10);
+  } else {
+    if (SL_TYPE (idx) == SL_SILK) {
+      if (SL_SIDE (idx) == SL_TOP_SIDE && !Settings.ShowSolderSide) {
+        hidgl_set_depth (max_layer * 10 + 3);
+      } else {
+        hidgl_set_depth (10 - 3);
+      }
+    }
+  }
 
   glEnable (GL_STENCIL_TEST);                // Enable Stencil test
   glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
