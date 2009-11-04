@@ -1,5 +1,5 @@
 Bottom: 66285e9f00d5bf45575411833d73f290f07f3621
-Top:    66285e9f00d5bf45575411833d73f290f07f3621
+Top:    f9e8ff6b23aec51ec11d2a4c6045b096a4731083
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-04 19:18:18 +0000
 
@@ -8,4 +8,88 @@ Fixup depth for layers and element marks
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index be37956..4ae4931 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -545,7 +545,7 @@ int compute_depth (int group)
+   if (group >= 0 && group < max_layer) {
+     newgroup = group;
+ 
+-    depth = (max_depth - newgroup * 10) * 200 / gport->zoom;
++    depth = (max_depth - (newgroup - min_phys_group) * 10) * 200 / gport->zoom;
+   } else if (SL_TYPE (idx) == SL_MASK) {
+     if (SL_SIDE (idx) == SL_TOP_SIDE) {
+       depth = (max_depth + 3) * 200 / gport->zoom;
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 82098ca..91d28c2 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -1677,12 +1677,14 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+     gui->set_layer (NULL, SL (FINISHED, 0), 0);
+   }
+   /* Draw top silkscreen */
+-  if (gui->set_layer ("topsilk", SL (SILK, TOP), 0)) {
++  if (!Settings.ShowSolderSide &&
++      gui->set_layer ("topsilk", SL (SILK, TOP), 0)) {
+     DrawSilk (0, COMPONENT_LAYER, drawn_area);
+     gui->set_layer (NULL, SL (FINISHED, 0), 0);
+   }
+ 
+-  if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0)) {
++  if (Settings.ShowSolderSide &&
++      gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0)) {
+     DrawSilk (1, SOLDER_LAYER, drawn_area);
+     gui->set_layer (NULL, SL (FINISHED, 0), 0);
+   }
+@@ -1850,13 +1852,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+              gport->bg_color.green / 65535.,
+              gport->bg_color.blue / 65535.);
+ 
+-  glBegin (GL_QUADS);
+-  glVertex3i (eleft,  etop,    -50);
+-  glVertex3i (eright, etop,    -50);
+-  glVertex3i (eright, ebottom, -50);
+-  glVertex3i (eleft,  ebottom, -50);
+-  glEnd ();
+-
+   /* TODO: Background image */
+ 
+   hidgl_init_triangle_array (&buffer);
+@@ -1877,6 +1872,37 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+                 ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
+                              -gport->view_y0, 0);
+ 
++  if (global_view_2d) {
++    glBegin (GL_QUADS);
++    glVertex3i (0,             0,              0);
++    glVertex3i (PCB->MaxWidth, 0,              0);
++    glVertex3i (PCB->MaxWidth, PCB->MaxHeight, 0);
++    glVertex3i (0,             PCB->MaxHeight, 0);
++    glEnd ();
++  } else {
++    int solder_group;
++    int component_group;
++    int min_phys_group;
++    int max_phys_group;
++    int i;
++
++    solder_group = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
++    component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
++
++    min_phys_group = MIN (solder_group, component_group);
++    max_phys_group = MAX (solder_group, component_group);
++
++    glBegin (GL_QUADS);
++    for (i = min_phys_group; i <= max_phys_group; i++) {
++      int depth = compute_depth (i);
++      glVertex3i (0,             0,              depth);
++      glVertex3i (PCB->MaxWidth, 0,              depth);
++      glVertex3i (PCB->MaxWidth, PCB->MaxHeight, depth);
++      glVertex3i (0,             PCB->MaxHeight, depth);
++    }
++    glEnd ();
++  }
++
+   // hid_expose_callback (&ghid_hid, &region, 0);
+   ghid_draw_everything (&region);
