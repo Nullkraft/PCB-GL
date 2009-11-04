@@ -1,7 +1,7 @@
-Bottom: dfaec038bcd007541876607d1686f8ef767e5055
-Top:    dda3cb735e8f25b9b38b6781715f1b5ed1f7705a
+Bottom: a9e98367bf16bb8320a5c7e8a3fe91b52907ebaf
+Top:    d297bf69ca0ca5892a05984155e8c6d5055d67d5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-04 00:31:10 +0000
+Date:   2009-11-04 01:24:28 +0000
 
 Cache triangulated polygons for rendering
 
@@ -48,10 +48,10 @@ index ffb84a2..c545768 100644
  
  /* Call this as soon as possible from main().  No other HID calls are
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 92f2d32..7c029a1 100644
+index dafa059..1c36eaa 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -614,12 +614,15 @@ static GLint stencil_bits;
+@@ -613,12 +613,15 @@ static GLint stencil_bits;
  static int dirty_bits = 0;
  static int assigned_bits = 0;
  
@@ -69,7 +69,7 @@ index 92f2d32..7c029a1 100644
    cairo_traps_t *traps;
  
    info.scale = scale;
-@@ -631,52 +634,42 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -630,52 +633,42 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
        return;
      }
  
