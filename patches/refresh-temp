@@ -1,0 +1,48 @@
+Bottom: c02674b103366b5d8d90919ce2e1e862bc8398ef
+Top:    44fd1746b13a2ebbd07085abc31630be2924998d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-04 19:33:55 +0000
+
+Refresh of tag-circular-contours-so-they-
+
+---
+
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 80f3f10..4b78966 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -101,6 +101,14 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
+ static int thindraw_hole_cb (PLINE *pl, void *user_data)
+ {
+   hidGC gc = user_data;
++
++  /* If the contour is round, use an arc drawing routine. */
++  if (pl->is_round) {
++    gui->set_line_width (gc, 0);
++    gui->draw_arc (gc, pl->cx, pl->cy, pl->radius, pl->radius, 0, 360);
++    return 1;
++  }
++
+   thindraw_contour (gc, pl);
+   return 0;
+ }
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 76953d1..677cc22 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -595,6 +595,7 @@ void tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices)
+ struct do_hole_info {
+   GLUtesselator *tobj;
+   GLdouble *vertices;
++  double scale;
+ };
+ 
+ static int
+@@ -638,6 +639,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+   struct do_hole_info info;
+   int stencil_bit;
+ 
++  info.scale = scale;
+   global_scale = scale;
+ 
+   if (poly->Clipped == NULL)
