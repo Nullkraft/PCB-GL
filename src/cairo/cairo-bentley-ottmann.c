@@ -1284,6 +1284,73 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
     return status;
 }
 
+static void
+contour_to_start_events (PLINE                   *contour,
+                         cairo_bo_start_event_t  *events,
+                         cairo_bo_event_t       **event_ptrs,
+                         int                     *counter)
+{
+    int i = *counter;
+    int outer_contour;
+    VNODE *bv;
+
+    outer_contour = 1;
+    /* Loop over nodes, adding edges */
+    bv = &contour->head;
+    do {
+      int x1, y1, x2, y2;
+      cairo_edge_t cairo_edge;
+      /* Node is between bv->point[0,1] and bv->next->point[0,1] */
+
+      if (bv->point[1] == bv->next->point[1]) {
+          if (bv->point[0] < bv->next->point[0]) {
+            x1 = bv->point[0];
+            y1 = bv->point[1];
+            x2 = bv->next->point[0];
+            y2 = bv->next->point[1];
+          } else {
+            x1 = bv->next->point[0];
+            y1 = bv->next->point[1];
+            x2 = bv->point[0];
+            y2 = bv->point[1];
+          }
+      } else if (bv->point[1] < bv->next->point[1]) {
+        x1 = bv->point[0];
+        y1 = bv->point[1];
+        x2 = bv->next->point[0];
+        y2 = bv->next->point[1];
+      } else {
+        x1 = bv->next->point[0];
+        y1 = bv->next->point[1];
+        x2 = bv->point[0];
+        y2 = bv->point[1];
+      }
+
+      cairo_edge.line.p1.x = x1;
+      cairo_edge.line.p1.y = y1;
+      cairo_edge.line.p2.x = x2;
+      cairo_edge.line.p2.y = y2;
+      cairo_edge.top = y1;
+      cairo_edge.bottom = y2;
+      cairo_edge.dir = outer_contour ? 1 : -1;
+
+      event_ptrs[i] = (cairo_bo_event_t *) &events[i];
+
+      events[i].type = CAIRO_BO_EVENT_TYPE_START;
+      events[i].point.y = cairo_edge.line.p1.y;
+      events[i].point.x = cairo_edge.line.p1.x;
+
+      events[i].edge.edge = cairo_edge;
+      events[i].edge.deferred_trap.right = NULL;
+      events[i].edge.prev = NULL;
+      events[i].edge.next = NULL;
+      i++;
+
+    } while ((bv = bv->next) != &contour->head);
+
+    *counter = i;
+}
+
 
 static void
 poly_area_to_start_events (POLYAREA                *poly,
@@ -1362,7 +1429,6 @@ poly_area_to_start_events (POLYAREA                *poly,
     *counter = i;
 }
 
-
 cairo_traps_t *
 bo_poly_to_traps (POLYAREA *poly)
 {
@@ -1418,8 +1484,6 @@ bo_poly_to_traps (POLYAREA *poly)
                                                        traps,
                                                        &intersections);
 
-//  printf ("Number of traps: %i\n", traps->num_traps);
-
   for (n = 0; n < traps->num_traps; n++) {
     int x1, y1, x2, y2, x3, y3, x4, y4;
 
@@ -1432,16 +1496,114 @@ bo_poly_to_traps (POLYAREA *poly)
     x4 = _line_compute_intersection_x_for_y (&traps->traps[n].left, traps->traps[n].bottom);
     y4 = traps->traps[n].bottom;
 
-#if 0
-    x1 = traps->traps[n].left.p1.x;
-    y1 = traps->traps[n].left.p1.y;
-    x2 = traps->traps[n].right.p1.x;
-    y2 = traps->traps[n].right.p1.y;
-    x3 = traps->traps[n].right.p2.x;
-    y3 = traps->traps[n].right.p2.y;
-    x4 = traps->traps[n].left.p2.x;
-    y4 = traps->traps[n].left.p2.y;
+#if 1
+    if (x1 == x2) {
+      hidgl_ensure_triangle_space (&buffer, 1);
+      hidgl_add_triangle (&buffer, x1, y1, x3, y3, x4, y4);
+    } else if (x3 == x4) {
+      hidgl_ensure_triangle_space (&buffer, 1);
+      hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
+    } else {
+      hidgl_ensure_triangle_space (&buffer, 2);
+      hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
+      hidgl_add_triangle (&buffer, x3, y3, x4, y4, x1, y1);
+    }
+#else
+    glBegin (GL_LINES);
+    glVertex2i (x1, y1); glVertex2i (x2, y2);
+    glVertex2i (x2, y2); glVertex2i (x3, y3);
+     glVertex2i (x3, y3); glVertex2i (x1, y1);
+    glVertex2i (x3, y3); glVertex2i (x4, y4);
+    glVertex2i (x4, y4); glVertex2i (x1, y1);
+     glVertex2i (x1, y1); glVertex2i (x3, y3);
+    glEnd ();
 #endif
+
+#if 0
+    printf ("%d %d L:(%d, %d), (%d, %d) R:(%d, %d), (%d, %d)\n",
+             traps->traps[n].top,
+             traps->traps[n].bottom,
+             traps->traps[n].left.p1.x,
+             traps->traps[n].left.p1.y,
+             traps->traps[n].left.p2.x,
+             traps->traps[n].left.p2.y,
+             traps->traps[n].right.p1.x,
+             traps->traps[n].right.p1.y,
+             traps->traps[n].right.p2.x,
+             traps->traps[n].right.p2.y);
+#endif
+  }
+
+#if DEBUG_TRAPS
+  dump_traps (traps, "bo-polygon-out.txt");
+#endif
+
+  if (events != stack_events)
+      free (events);
+
+  return traps;
+}
+
+
+cairo_traps_t *
+bo_contour_to_traps (PLINE *contour)
+{
+  int intersections;
+  cairo_status_t status;
+  cairo_bo_start_event_t stack_events[CAIRO_STACK_ARRAY_LENGTH (cairo_bo_start_event_t)];
+  cairo_bo_start_event_t *events;
+  cairo_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
+  cairo_bo_event_t **event_ptrs;
+  int num_events = 0;
+  int i;
+  int n;
+  cairo_traps_t int_traps;
+  cairo_traps_t *traps = &int_traps;
+
+  _cairo_traps_init (traps);
+
+  num_events = contour->Count;
+
+  if (unlikely (0 == num_events))
+      return CAIRO_STATUS_SUCCESS;
+
+  events = stack_events;
+  event_ptrs = stack_event_ptrs;
+  if (num_events > ARRAY_LENGTH (stack_events)) {
+      events = _cairo_malloc_ab_plus_c (num_events,
+                                        sizeof (cairo_bo_start_event_t) +
+                                        sizeof (cairo_bo_event_t *),
+                                        sizeof (cairo_bo_event_t *));
+      if (unlikely (events == NULL))
+          return NULL;
+
+      event_ptrs = (cairo_bo_event_t **) (events + num_events);
+  }
+
+  i = 0;
+
+  contour_to_start_events (contour, events, event_ptrs, &i);
+
+  /* XXX: This would be the convenient place to throw in multiple
+   * passes of the Bentley-Ottmann algorithm. It would merely
+   * require storing the results of each pass into a temporary
+   * cairo_traps_t. */
+  status = _cairo_bentley_ottmann_tessellate_bo_edges (event_ptrs,
+                                                       num_events,
+                                                       traps,
+                                                       &intersections);
+
+  for (n = 0; n < traps->num_traps; n++) {
+    int x1, y1, x2, y2, x3, y3, x4, y4;
+
+    x1 = _line_compute_intersection_x_for_y (&traps->traps[n].left, traps->traps[n].top);
+    y1 = traps->traps[n].top;
+    x2 = _line_compute_intersection_x_for_y (&traps->traps[n].right, traps->traps[n].top);
+    y2 = traps->traps[n].top;
+    x3 = _line_compute_intersection_x_for_y (&traps->traps[n].right, traps->traps[n].bottom);
+    y3 = traps->traps[n].bottom;
+    x4 = _line_compute_intersection_x_for_y (&traps->traps[n].left, traps->traps[n].bottom);
+    y4 = traps->traps[n].bottom;
 
 #if 1
     if (x1 == x2) {
