@@ -1,7 +1,7 @@
-Bottom: bd775c9e72e1749321c3149b84f9bb80420d03de
-Top:    cc4d6a4655efe93ac04211dd2589bed4c43857fa
+Bottom: b8386f53d00f8b85c6231e904e3724a50703b000
+Top:    f4cf7e9f2de7edaba8c5708cf84887d6cb811aac
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-04 00:14:31 +0000
+Date:   2009-11-04 01:22:28 +0000
 
 Bentley-Ottann test implementation
 
@@ -13642,7 +13642,7 @@ index 0000000..a9207a1
 +
 +#endif
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 54c2b3b..58f2194 100644
+index a582d3d..5df1f5f 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -37,7 +37,7 @@
@@ -13654,7 +13654,7 @@ index 54c2b3b..58f2194 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -623,6 +623,10 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -639,6 +639,10 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    struct do_hole_info info;
    int stencil_bit;
  
