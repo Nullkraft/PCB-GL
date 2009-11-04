@@ -1,7 +1,7 @@
-Bottom: bd775c9e72e1749321c3149b84f9bb80420d03de
-Top:    87e640f1ac03adc064a1d3d1cd971c36eaec0d57
+Bottom: cc4d6a4655efe93ac04211dd2589bed4c43857fa
+Top:    b2b1ce27ad1b728fd2b1ed2abf741872194644e7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-03 23:50:26 +0000
+Date:   2009-11-04 00:14:45 +0000
 
 Cache triangulated polygons for rendering
 
@@ -48,7 +48,7 @@ index ffb84a2..c545768 100644
  
  /* Call this as soon as possible from main().  No other HID calls are
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 54c2b3b..8ae6047 100644
+index 58f2194..90d1078 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -574,12 +574,11 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
@@ -108,9 +108,9 @@ index 54c2b3b..8ae6047 100644
    struct do_hole_info info;
 -  int stencil_bit;
  
-   global_scale = scale;
+   bo_poly_to_traps (poly->Clipped);
  
-@@ -631,68 +634,69 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -635,68 +638,69 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
        return;
      }
  
