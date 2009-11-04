@@ -614,12 +614,15 @@ static GLint stencil_bits;
 static int dirty_bits = 0;
 static int assigned_bits = 0;
 
+struct polygon_cache {
+  int fill_display_list;
+};
+
 /* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
 void
-hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
+hidgl_fill_pcb_polygon_nocache (PolygonType *poly, const BoxType *clip_box, double scale)
 {
   struct do_hole_info info;
-  int stencil_bit;
   cairo_traps_t *traps;
 
   info.scale = scale;
@@ -631,52 +634,42 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
       return;
     }
 
-  stencil_bit = hidgl_assign_clear_stencil_bit ();
-  if (!stencil_bit)
-    {
-      printf ("hidgl_fill_pcb_polygon: No free stencil bits, aborting polygon\n");
-      return;
-    }
-
-  /* Flush out any existing geoemtry to be rendered */
-  hidgl_flush_triangles (&buffer);
-
-  glPushAttrib (GL_STENCIL_BUFFER_BIT);                   // Save the write mask etc.. for final restore
-  glPushAttrib (GL_STENCIL_BUFFER_BIT |                   // Resave the stencil write-mask etc.., and
-                GL_COLOR_BUFFER_BIT);                     // the colour buffer write mask etc.. for part way restore
-  glStencilMask (stencil_bit);                            // Only write to our stencil bit
-  glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);    // Always pass stencil test, ref value is our bit
-  glColorMask (0, 0, 0, 0);                               // Disable writting in color buffer
-
-  /* It will already be setup like this (so avoid prodding the state-machine):
-   * glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value
-   */
-  /* Drawing operations now set our reference bit in the stencil buffer */
-
-  r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
-  hidgl_flush_triangles (&buffer);
-
-  /* Drawing operations as masked to areas where the stencil buffer is '0' */
-
-  glPopAttrib ();                                             // Restore the colour and stencil buffer write-mask etc..
-
-  glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT); // This allows us to toggle the bit on the subcompositing bitplane
-                                             // If the stencil test has passed, we know that bit is 0, so we're
-                                             // effectively just setting it to 1.
-  glStencilFunc (GL_GEQUAL, 0, assigned_bits);
-//  glStencilFunc (GL_GREATER, assigned_bits, assigned_bits);   // Pass stencil test if all assigned bits clear,
-                                                              // reference is all assigned bits so we set
-                                                              // any bits permitted by the stencil writemask
-
-  /* Draw the polygon outer */
-  traps = bo_contour_to_traps (poly->Clipped->contours);
+  traps = bo_poly_to_traps (poly->Clipped);
   _cairo_traps_fini (traps);
-  hidgl_flush_triangles (&buffer);
+}
 
-  /* Unassign our stencil buffer bit */
-  hidgl_return_stencil_bit (stencil_bit);
+void
+hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
+{
+  struct polygon_cache *cache;
+  int new_cache = 0;
 
-  glPopAttrib ();                                             // Restore the stencil buffer write-mask etc..
+  if (poly->gui_cache == NULL) {
+    poly->gui_cache = malloc (sizeof (struct polygon_cache));
+    new_cache = 1;
+  }
+
+  cache = poly->gui_cache;
+
+#if 1
+  if (!poly->gui_cache_valid) {
+    if (!new_cache)
+      glDeleteLists (cache->fill_display_list, 1);
+
+    cache->fill_display_list = glGenLists (1);
+    hidgl_flush_triangles (&buffer);
+    glNewList (cache->fill_display_list, GL_COMPILE);
+    hidgl_fill_pcb_polygon_nocache (poly, NULL /* clip_box */, scale);
+    hidgl_flush_triangles (&buffer);
+    glEndList ();
+    poly->gui_cache_valid = 1;
+  }
+
+  glCallList (cache->fill_display_list);
+
+#else
+  hidgl_fill_pcb_polygon_nocache (poly, clip_box, scale);
+#endif
 }
 
 void
