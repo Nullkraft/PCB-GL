@@ -114,11 +114,19 @@ RCSID ("$Id$");
  * local prototypes
  */
 
+#define CIRC_SEGS 40
+static double circleVerticies[] = {
+  1.0, 0.0,
+  0.98768834059513777, 0.15643446504023087,
+};
+
+#if 0
 #define CIRC_SEGS 36
 static double circleVerticies[] = {
   1.0, 0.0,
   0.98480775301221, 0.17364817766693,
 };
+#endif
 
 static void
 add_noholes_polyarea (PLINE *pline, void *user_data)
@@ -312,7 +320,7 @@ frac_circle (PLINE * c, LocationType X, LocationType Y, Vector v, int range)
   e1 = v[0] - X;
   e2 = v[1] - Y;
 
-  range = range == 1 ? CIRC_SEGS-1 : (CIRC_SEGS / range);
+  range = (range == 1) ? CIRC_SEGS-1 : (CIRC_SEGS / range);
   for (i = 0; i < range; i++)
     {
       /* rotate the vector */
@@ -326,7 +334,7 @@ frac_circle (PLINE * c, LocationType X, LocationType Y, Vector v, int range)
 }
 
 #define COARSE_CIRCLE 0
-/* create a 35-vertex circle approximation */
+/* create a circle approximation from lines */
 POLYAREA *
 CirclePoly (LocationType x, LocationType y, BDimension radius)
 {
