@@ -1,0 +1,26 @@
+Bottom: 4f4df1ec0dd22fc53dab057f94d2e3af8d372269
+Top:    9e1add009f1c4d157ef031871290abe1c805733a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-04 16:37:12 +0000
+
+Refresh of board-outline-polygon-generati
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index e246aaf..7552493 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -1612,8 +1612,10 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+ 
+ #if 1
+     if (!global_view_2d &&
+-        drawn_groups[i] > min_phys_group &&
+-        drawn_groups[i] <= max_phys_group) {
++        drawn_groups[i] >= min_phys_group &&
++        drawn_groups[i] <= max_phys_group &&
++        drawn_groups[i - 1] >= min_phys_group &&
++        drawn_groups[i - 1] <= max_phys_group) {
+       cyl_info.from_layer = drawn_groups[i];
+       cyl_info.to_layer = drawn_groups[i - 1];
+       cyl_info.scale = gport->zoom;
