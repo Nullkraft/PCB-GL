@@ -1,7 +1,7 @@
-Bottom: 35ebae543d7fcf32c74c37e8f2fae3b4234a5f6f
-Top:    4d2975dc6428d330d61c2571234810b4b5d90de6
+Bottom: 9ff0357188bfa1551651dcc93fafddf24db234bd
+Top:    c02674b103366b5d8d90919ce2e1e862bc8398ef
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-04 18:15:21 +0000
+Date:   2009-11-04 18:24:15 +0000
 
 Tag circular contours so they can be drawn quicker
 
@@ -69,10 +69,10 @@ index a0d0bef..0a86fa4 100644
  }
  
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 989ab79..a92b166 100644
+index f18df09..3f79746 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2513,6 +2513,10 @@ poly_IniContour (PLINE * c)
+@@ -2515,6 +2515,10 @@ poly_IniContour (PLINE * c)
    c->head.next = c->head.prev = &c->head;
    c->xmin = c->ymin = 0x7fffffff;
    c->xmax = c->ymax = 0x80000000;
