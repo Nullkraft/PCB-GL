@@ -150,12 +150,15 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
 }
 
 
+#define Z_NEAR 3.0
+
 static gboolean
-ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * event)
+ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
 {
   extern HID ghid_hid;
+  GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
+  GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
   GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
-  GdkDrawable *save_drawable;
   double save_zoom;
   int da_w, da_h;
   int save_left, save_top;
@@ -171,9 +174,7 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * event)
   save_view_width = gport->view_width;
   save_view_height = gport->view_height;
 
-  /* Setup drawable and zoom factor for drawing routines
-   */
-  save_drawable = gport->drawable;
+  /* Setup zoom factor for drawing routines */
 
   gdk_window_get_geometry (widget->window, 0, 0, &da_w, &da_h, 0);
   xz = (double) pinout->x_max / da_w;
@@ -183,7 +184,6 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * event)
   else
     gport->zoom = yz;
 
-  gport->drawable = widget->window;
   gport->width = da_w;
   gport->height = da_h;
   gport->view_width = da_w * gport->zoom;
@@ -191,13 +191,57 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * event)
   gport->view_x0 = (pinout->x_max - gport->view_width) / 2;
   gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
 
-  /* clear background */
-  gdk_draw_rectangle (widget->window, gport->bg_gc, TRUE, 0, 0, da_w, da_h);
+  /* make GL-context "current" */
+  if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
+    return FALSE;
+  }
+
+  glEnable (GL_BLEND);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  glViewport (0, 0, widget->allocation.width, widget->allocation.height);
+
+  glEnable (GL_SCISSOR_TEST);
+  glScissor (ev->area.x,
+             widget->allocation.height - ev->area.height - ev->area.y,
+             ev->area.width, ev->area.height);
+
+  glMatrixMode (GL_PROJECTION);
+  glLoadIdentity ();
+  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, 0, 100);
+  glMatrixMode (GL_MODELVIEW);
+  glLoadIdentity ();
+  glTranslatef (0.0f, 0.0f, -Z_NEAR);
+
+  glClearColor (gport->bg_color.red / 65535.,
+                gport->bg_color.green / 65535.,
+                gport->bg_color.blue / 65535.,
+                1.);
+
+  glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
   /* call the drawing routine */
+  hidgl_init_triangle_array (&buffer);
+  ghid_invalidate_current_gc ();
+  glPushMatrix ();
+  glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
+            (ghid_flip_y ? -1. : 1.) / gport->zoom, 1);
+  glTranslatef (ghid_flip_x ? gport->view_x0 - PCB->MaxWidth  :
+                             -gport->view_x0,
+                ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
+                             -gport->view_y0, 0);
   hid_expose_callback (&ghid_hid, NULL, &pinout->element);
+  hidgl_flush_triangles (&buffer);
+  glPopMatrix ();
 
-  gport->drawable = save_drawable;
+  if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
+    gdk_gl_drawable_swap_buffers (pGlDrawable);
+  else
+    glFlush ();
+
+  /* end drawing to current GL-context */
+  gdk_gl_drawable_gl_end (pGlDrawable);
+
   gport->zoom = save_zoom;
   gport->width = save_width;
   gport->height = save_height;
@@ -217,6 +261,40 @@ enum
 
 
 static GObjectClass *ghid_pinout_preview_parent_class = NULL;
+
+
+/*! \brief GObject constructor
+ *
+ *  \par Function Description
+ *  Chain up and construct the object, then setup the
+ *  necessary state for our widget now it is constructed.
+ *
+ *  \param [in] type                    The GType of object to be constructed
+ *  \param [in] n_construct_properties  Number of construct properties
+ *  \param [in] contruct_params         The construct properties
+ *
+ *  \returns The GObject having just been constructed.
+ */
+static GObject *
+ghid_pinout_preview_constructor (GType type,
+                                 guint n_construct_properties,
+                                 GObjectConstructParam *construct_properties)
+{
+  GObject *object;
+
+  /* chain up to constructor of parent class */
+  object = G_OBJECT_CLASS (ghid_pinout_preview_parent_class)->
+    constructor (type, n_construct_properties, construct_properties);
+
+  gtk_widget_set_gl_capability (GTK_WIDGET (object),
+                                gport->glconfig,
+                                NULL,
+                                TRUE,
+                                GDK_GL_RGBA_TYPE);
+
+  return object;
+}
+
 
 
 /*! \brief GObject finalise handler
@@ -310,6 +388,7 @@ ghid_pinout_preview_class_init (GhidPinoutPreviewClass * klass)
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *gtk_widget_class = GTK_WIDGET_CLASS (klass);
 
+  gobject_class->constructor = ghid_pinout_preview_constructor;
   gobject_class->finalize = ghid_pinout_preview_finalize;
   gobject_class->set_property = ghid_pinout_preview_set_property;
   gobject_class->get_property = ghid_pinout_preview_get_property;
