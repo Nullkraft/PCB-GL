@@ -1,5 +1,5 @@
 Bottom: 21163739eaacb74fcd943476ad6dcb2d14276602
-Top:    6d0264494297b4184e7cd87f0f397680fba28163
+Top:    0a9b15058d65b369e88352a8fbc3cd566a539b3c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-04 13:32:14 +0000
 
@@ -44,7 +44,7 @@ index cc5c259..9bcbccc 100644
  
    gui->use_mask (HID_MASK_OFF);
 diff --git a/src/polygon.c b/src/polygon.c
-index 0a86fa4..7ef94c6 100644
+index 0a86fa4..8d31b31 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -81,6 +81,7 @@ dicer output is used for HIDs which cannot render things with holes
@@ -55,7 +55,7 @@ index 0a86fa4..7ef94c6 100644
  
  #include "global.h"
  #include "box.h"
-@@ -1811,3 +1812,167 @@ debug_polygon (PolygonType *p)
+@@ -1811,3 +1812,168 @@ debug_polygon (PolygonType *p)
  	break;
      }
  }
@@ -64,7 +64,7 @@ index 0a86fa4..7ef94c6 100644
 +  POLYAREA *poly;
 +};
 +
-+#define ROUTER_THICKNESS 2000
++#define ROUTER_THICKNESS 1000
 +//#define ROUTER_THICKNESS 10
 +
 +static int
@@ -134,6 +134,8 @@ index 0a86fa4..7ef94c6 100644
 +  POLYAREA *check;
 +  GList *pieces_to_delete = NULL;
 +
++  whole_world = RectPoly (0, PCB->MaxWidth, 0, PCB->MaxHeight);
++
 +  for (i = 0; i < max_layer; i++)
 +    {
 +      Layer = PCB->Data->Layer + i;
@@ -146,8 +148,10 @@ index 0a86fa4..7ef94c6 100644
 +        }
 +    }
 +
-+  if (!found_outline)
-+    return NULL;
++  if (!found_outline) {
++    printf ("Didn't find outline\n");
++    return whole_world;
++  }
 +
 +  /* Do stuff to turn the outline layer into a polygon */
 +
@@ -172,8 +176,6 @@ index 0a86fa4..7ef94c6 100644
 +   *  \_____________/
 +   */
 +
-+  whole_world = RectPoly (0, PCB->MaxWidth, 0, PCB->MaxHeight);
-+
 +  info.poly = whole_world;
 +
 +  region.X1 = 0;
@@ -181,36 +183,35 @@ index 0a86fa4..7ef94c6 100644
 +  region.X2 = PCB->MaxWidth;
 +  region.Y2 = PCB->MaxHeight;
 +
-+  // region = bloat_box (&region, expand);
-+
 +  r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
 +  r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
 +
 +  clipped = info.poly;
 +
-+  /* Now we just need to work out which pieces of polygon are inside and outside! */
++  /* Now we just need to work out which pieces of polygon are inside
++     and outside the board! */
 +
 +  /* If there is only one piece, return that */
 +  if (clipped->f == clipped)
 +    return clipped;
 +
-+  /* WARNING: This next check is O(n^2), where n is the number of clipped pieces,
-+   *          hopefully the outline layer isn't too complex!
++  /* WARNING: This next check is O(n^2), where n is the number of clipped
++   *          pieces, hopefully the outline layer isn't too complex!
 +   */
 +
 +  piece = clipped;
 +  do { /* LOOP OVER POLYGON PIECES */
 +
-+    count = 0;
++    if (piece->contours == NULL)
++      printf ("WTF?\n");
 +
++    count = 0;
 +    check = clipped;
 +    do { /* LOOP OVER POLYGON PIECES */
 +      if (check == piece)
 +        continue;
-+
 +      if (poly_ContourInContour (check->contours, piece->contours))
 +        count ++;
-+
 +    } while ((check = check->f) != clipped);
 +
 +    /* If the piece is inside an odd number of others, delete it */
