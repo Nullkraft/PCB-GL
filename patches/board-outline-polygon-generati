@@ -1,5 +1,5 @@
 Bottom: a9e98367bf16bb8320a5c7e8a3fe91b52907ebaf
-Top:    a9e98367bf16bb8320a5c7e8a3fe91b52907ebaf
+Top:    e4a5d23369a00d7938e75a41ac5ab222f759a539
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-04 13:25:18 +0000
 
@@ -8,4 +8,16 @@ Board outline polygon generation
 
 ---
 
-
+diff --git a/src/polygon.c b/src/polygon.c
+index 0a86fa4..2e299a1 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -1811,3 +1811,8 @@ debug_polygon (PolygonType *p)
+ 	break;
+     }
+ }
++
++POLYAREA *board_outline_poly ()
++{
++
++}
