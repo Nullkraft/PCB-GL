@@ -595,6 +595,7 @@ void tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices)
 struct do_hole_info {
   GLUtesselator *tobj;
   GLdouble *vertices;
+  double scale;
 };
 
 static int
@@ -638,6 +639,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
   struct do_hole_info info;
   int stencil_bit;
 
+  info.scale = scale;
   global_scale = scale;
 
   if (poly->Clipped == NULL)
