@@ -574,24 +574,6 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
   free (vertices);
 }
 
-void tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices)
-{
-  VNODE *vn = vnode;
-  int offset = 0;
-
-  gluTessBeginPolygon (tobj, NULL);
-  gluTessBeginContour (tobj);
-  do {
-    vertices [0 + offset] = vn->point[0];
-    vertices [1 + offset] = vn->point[1];
-    vertices [2 + offset] = 0.;
-    gluTessVertex (tobj, &vertices [offset], &vertices [offset]);
-    offset += 3;
-  } while ((vn = vn->next) != vnode);
-  gluTessEndContour (tobj);
-  gluTessEndPolygon (tobj);
-}
-
 struct do_hole_info {
   double scale;
 };
@@ -638,7 +620,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
 {
   int stencil_bit;
   cairo_traps_t *traps;
-  struct hole_info info;
+  struct do_hole_info info;
 
   info.scale = scale;
 
@@ -692,7 +674,6 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
                                                               // any bits permitted by the stencil writemask
 
   /* Draw the polygon outer */
-//  tesselate_contour (info.tobj, &poly->Clipped->contours->head, info.vertices);
   traps = bo_contour_to_traps (poly->Clipped->contours);
   _cairo_traps_fini (traps);
   hidgl_flush_triangles (&buffer);
