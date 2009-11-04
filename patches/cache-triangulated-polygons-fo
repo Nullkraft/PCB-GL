@@ -1,5 +1,5 @@
 Bottom: dfaec038bcd007541876607d1686f8ef767e5055
-Top:    5aa8f647e686d9f7dab6e7775130882a0b666b14
+Top:    dda3cb735e8f25b9b38b6781715f1b5ed1f7705a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-04 00:31:10 +0000
 
@@ -48,7 +48,7 @@ index ffb84a2..c545768 100644
  
  /* Call this as soon as possible from main().  No other HID calls are
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 92f2d32..4e96a2d 100644
+index 92f2d32..7c029a1 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -614,12 +614,15 @@ static GLint stencil_bits;
@@ -127,7 +127,7 @@ index 92f2d32..4e96a2d 100644
 -  traps = bo_contour_to_traps (poly->Clipped->contours);
 -  _cairo_traps_fini (traps);
 -  hidgl_flush_triangles (&buffer);
-+#if 0
++#if 1
 +  if (!poly->gui_cache_valid) {
 +    if (!new_cache)
 +      glDeleteLists (cache->fill_display_list, 1);
