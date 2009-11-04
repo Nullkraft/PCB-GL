@@ -1,0 +1,22 @@
+Bottom: 5aa8f647e686d9f7dab6e7775130882a0b666b14
+Top:    dda3cb735e8f25b9b38b6781715f1b5ed1f7705a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-04 00:41:39 +0000
+
+Refresh of cache-triangulated-polygons-fo
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 4e96a2d..7c029a1 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -651,7 +651,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+ 
+   cache = poly->gui_cache;
+ 
+-#if 0
++#if 1
+   if (!poly->gui_cache_valid) {
+     if (!new_cache)
+       glDeleteLists (cache->fill_display_list, 1);
