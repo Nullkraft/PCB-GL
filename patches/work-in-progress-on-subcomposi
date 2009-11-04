@@ -1,7 +1,7 @@
-Bottom: a898ef90446c8e0c1d8817c0dcdc593753c0e9f3
-Top:    5202704444224cda5eb8054a24818fc78dfe44fb
+Bottom: 4202365853c8db8f05d81d1941caec28708dc94f
+Top:    eb63df2bad5f31c5b1e12d735d7ee86313238ade
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-04 17:49:18 +0000
+Date:   2009-11-04 17:52:46 +0000
 
 Work in progress on subcompositing / stencil buffers
 
@@ -689,7 +689,7 @@ index 2115b47..9e59ca1 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index fdbf7ac..34447b7 100644
+index cf57f92..0310e1d 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -516,6 +516,10 @@ ps_set_layer (const char *name, int group, int empty)
