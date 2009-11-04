@@ -1,7 +1,7 @@
-Bottom: 005ed84d80707b7b303dcfc9ab6c4d3816221854
-Top:    c32396100a1503ac5ad4b10789a96772579e8709
+Bottom: ec43e9f752c0dec2b6ee4f9f84b278ad376a98a6
+Top:    012ea127fd44e75aed630394253f347925bf3bfe
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-04 00:12:57 +0000
+Date:   2009-11-04 17:55:46 +0000
 
 More polygon work
 
@@ -9,10 +9,10 @@ More polygon work
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index b7f6e6c..ac3b97c 100644
+index ee9c82a..82b6961 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -1968,8 +1968,16 @@ M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
+@@ -1860,8 +1860,16 @@ M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
  
        /* If we move or delete an outer contour, we need to move any holes
           we wish to keep within that contour to the holes list. */
@@ -30,7 +30,7 @@ index b7f6e6c..ac3b97c 100644
  
      }
  
-@@ -2068,16 +2076,19 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -1960,16 +1968,19 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
          /* a->contours now points to the remaining holes */
          poly_DelContour (&curc);
  
@@ -51,7 +51,7 @@ index b7f6e6c..ac3b97c 100644
          }
  
          remove_polyarea (pieces, a);
-@@ -2292,6 +2303,38 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
+@@ -2184,6 +2195,38 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
    return poly_Boolean_free (a, b, res, action);
  }				/* poly_Boolean */
  
@@ -90,7 +90,7 @@ index b7f6e6c..ac3b97c 100644
  /* just like poly_Boolean but frees the input polys */
  int
  poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
-@@ -2302,6 +2345,16 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2194,6 +2237,16 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
    jmp_buf e;
    int code;
  
@@ -107,7 +107,7 @@ index b7f6e6c..ac3b97c 100644
    *res = NULL;
  
    if (!a)
-@@ -2342,6 +2395,9 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2234,6 +2287,9 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        assert (poly_Valid (b));
  #endif
  
@@ -117,7 +117,7 @@ index b7f6e6c..ac3b97c 100644
        /* intersect needs to make a list of the contours in a and b which are intersected */
        M_POLYAREA_intersect (&e, a, b, TRUE);
  
-@@ -2378,6 +2434,21 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2270,6 +2326,21 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        poly_Free (res);
        return code;
      }
