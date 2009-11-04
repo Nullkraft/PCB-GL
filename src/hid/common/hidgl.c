@@ -593,8 +593,7 @@ void tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices)
 }
 
 struct do_hole_info {
-  GLUtesselator *tobj;
-  GLdouble *vertices;
+  double scale;
 };
 
 static int
@@ -602,11 +601,30 @@ do_hole (const BoxType *b, void *cl)
 {
   struct do_hole_info *info = cl;
   PLINE *curc = (PLINE *) b;
+  cairo_traps_t *traps;
+
   /* Ignore the outer contour - we draw it first explicitly*/
   if (curc->Flags.orient == PLF_DIR) {
     return 0;
   }
-  tesselate_contour (info->tobj, &curc->head, info->vertices);
+
+  if (curc->is_round) {
+//    double slices;
+
+//    slices = M_PI * 2 * curc->radius / info->scale / PIXELS_PER_CIRCLINE;
+
+    /* If hidgl_fill_circle would use less slices than we have vertices,
+     * then call hidgl_fill_circle to draw this contour.
+     */
+//    if (slices < curc->Count) {
+      hidgl_fill_circle (curc->cx, curc->cy, curc->radius, info->scale);
+      return 1;
+//    }
+  }
+
+  traps = bo_contour_to_traps (curc);
+  _cairo_traps_fini (traps);
+
   return 1;
 }
 
@@ -618,14 +636,15 @@ static int assigned_bits = 0;
 void
 hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
 {
-  int vertex_count = 0;
-  PLINE *contour;
-  struct do_hole_info info;
   int stencil_bit;
+  cairo_traps_t *traps;
+  struct hole_info info;
 
-  bo_poly_to_traps (poly->Clipped);
+  info.scale = scale;
 
-  return;
+//  bo_poly_to_traps (poly->Clipped);
+
+//  return;
 
   global_scale = scale;
 
@@ -644,19 +663,6 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
 
   /* Flush out any existing geoemtry to be rendered */
   hidgl_flush_triangles (&buffer);
-
-  /* Walk the polygon structure, counting vertices */
-  /* This gives an upper bound on the amount of storage required */
-  for (contour = poly->Clipped->contours;
-       contour != NULL; contour = contour->next)
-    vertex_count = MAX (vertex_count, contour->Count);
-
-  info.vertices = malloc (sizeof(GLdouble) * vertex_count * 3);
-  info.tobj = gluNewTess ();
-  gluTessCallback(info.tobj, GLU_TESS_BEGIN, myBegin);
-  gluTessCallback(info.tobj, GLU_TESS_VERTEX, myVertex);
-  gluTessCallback(info.tobj, GLU_TESS_COMBINE, myCombine);
-  gluTessCallback(info.tobj, GLU_TESS_ERROR, myError);
 
   glPushAttrib (GL_STENCIL_BUFFER_BIT);                   // Save the write mask etc.. for final restore
   glPushAttrib (GL_STENCIL_BUFFER_BIT |                   // Resave the stencil write-mask etc.., and
@@ -686,17 +692,15 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
                                                               // any bits permitted by the stencil writemask
 
   /* Draw the polygon outer */
-  tesselate_contour (info.tobj, &poly->Clipped->contours->head, info.vertices);
+//  tesselate_contour (info.tobj, &poly->Clipped->contours->head, info.vertices);
+  traps = bo_contour_to_traps (poly->Clipped->contours);
+  _cairo_traps_fini (traps);
   hidgl_flush_triangles (&buffer);
 
   /* Unassign our stencil buffer bit */
   hidgl_return_stencil_bit (stencil_bit);
 
   glPopAttrib ();                                             // Restore the stencil buffer write-mask etc..
-
-  gluDeleteTess (info.tobj);
-  myFreeCombined ();
-  free (info.vertices);
 }
 
 void
