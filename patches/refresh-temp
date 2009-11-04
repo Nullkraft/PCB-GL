@@ -1,0 +1,87 @@
+Bottom: c72bae8a24ee36d1122a9faf806f092fd80671eb
+Top:    e2dee496bb21a0bffdc7a8a92a4efca76539a518
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-04 00:04:32 +0000
+
+Refresh of remove-unused-functions-from-c
+
+---
+
+diff --git a/src/cairo/cairo-bentley-ottmann.c b/src/cairo/cairo-bentley-ottmann.c
+index a29a840..6608e70 100644
+--- a/src/cairo/cairo-bentley-ottmann.c
++++ b/src/cairo/cairo-bentley-ottmann.c
+@@ -1284,73 +1284,6 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+     return status;
+ }
+ 
+-cairo_status_t
+-_cairo_bentley_ottmann_tessellate_polygon (cairo_traps_t         *traps,
+-                                           const cairo_polygon_t *polygon)
+-{
+-    int intersections;
+-    cairo_status_t status;
+-    cairo_bo_start_event_t stack_events[CAIRO_STACK_ARRAY_LENGTH (cairo_bo_start_event_t)];
+-    cairo_bo_start_event_t *events;
+-    cairo_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
+-    cairo_bo_event_t **event_ptrs;
+-    int num_events;
+-    int i;
+-
+-    num_events = polygon->num_edges;
+-    if (unlikely (0 == num_events))
+-        return CAIRO_STATUS_SUCCESS;
+-
+-    events = stack_events;
+-    event_ptrs = stack_event_ptrs;
+-    if (num_events > ARRAY_LENGTH (stack_events)) {
+-        events = _cairo_malloc_ab_plus_c (num_events,
+-                                          sizeof (cairo_bo_start_event_t) +
+-                                          sizeof (cairo_bo_event_t *),
+-                                          sizeof (cairo_bo_event_t *));
+-        if (unlikely (events == NULL))
+-            return _cairo_error (CAIRO_STATUS_NO_MEMORY);
+-
+-        event_ptrs = (cairo_bo_event_t **) (events + num_events);
+-    }
+-
+-    for (i = 0; i < num_events; i++) {
+-        event_ptrs[i] = (cairo_bo_event_t *) &events[i];
+-
+-        events[i].type = CAIRO_BO_EVENT_TYPE_START;
+-        events[i].point.y = polygon->edges[i].top;
+-        events[i].point.x =
+-            _line_compute_intersection_x_for_y (&polygon->edges[i].line,
+-                                                events[i].point.y);
+-
+-        events[i].edge.edge = polygon->edges[i];
+-        events[i].edge.deferred_trap.right = NULL;
+-        events[i].edge.prev = NULL;
+-        events[i].edge.next = NULL;
+-    }
+-
+-#if DEBUG_TRAPS
+-    dump_edges (events, num_events, "bo-polygon-edges.txt");
+-#endif
+-
+-    /* XXX: This would be the convenient place to throw in multiple
+-     * passes of the Bentley-Ottmann algorithm. It would merely
+-     * require storing the results of each pass into a temporary
+-     * cairo_traps_t. */
+-    status = _cairo_bentley_ottmann_tessellate_bo_edges (event_ptrs,
+-                                                         num_events,
+-                                                         traps,
+-                                                         &intersections);
+-#if DEBUG_TRAPS
+-    dump_traps (traps, "bo-polygon-out.txt");
+-#endif
+-
+-    if (events != stack_events)
+-        free (events);
+-
+-    return status;
+-}
+-
+ 
+ static void
+ poly_area_to_start_events (POLYAREA                *poly,
