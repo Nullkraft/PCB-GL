@@ -1,7 +1,7 @@
-Bottom: 46aef291a30962eb35f30e85bad8d7ce6197e068
-Top:    6cdf3d94a2a2475ec7d386ba251256bab7b6035f
+Bottom: 1f675f3ecfe682583713124250df44c6b445cdb8
+Top:    08341d4319e7978c8c1b1db3440e82e85fd698ad
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-04 17:49:28 +0000
+Date:   2009-11-04 17:52:56 +0000
 
 Add a hacky name-mangling thingy for loading boards
 
@@ -131,12 +131,12 @@ index a994c84..98bb525 100644
  				 FontTypePtr, FlagType, char *, char *,
  				 char *, LocationType, LocationType, BYTE,
 diff --git a/src/file.c b/src/file.c
-index db167c8..9719a87 100644
+index 88412bb..b1b4b9e 100644
 --- a/src/file.c
 +++ b/src/file.c
-@@ -351,6 +351,9 @@ LoadPCB (char *Filename)
-   PCBTypePtr newPCB = CreateNewPCB (False);
-   Boolean units_mm;
+@@ -355,6 +355,9 @@ LoadPCB (char *Filename)
+ 
+   start = clock();
  
 +  /* Hack, load the mapping file */
 +  RefdesMapInit ();

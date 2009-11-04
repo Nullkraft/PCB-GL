@@ -1,7 +1,7 @@
-Bottom: 2b83f67f601ae7a458d33909ea6226305d7c147f
-Top:    df0fa7726172a3b2f08c3454f498c6a17fe578dd
+Bottom: f8a318f8cc0d68380ba289a33b995d0396bcd197
+Top:    0d1c6eee2c0f465e134df7c8e2e4d5e1f1346ad6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-04 17:49:35 +0000
+Date:   2009-11-04 17:53:00 +0000
 
 Use strcasecmp when looking for the "outline" layer
 
@@ -56,7 +56,7 @@ index edb7498..cc5c259 100644
  
      if (layernum < max_layer /*&& Layer->On*/) {
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index e5e2ef5..8443909 100644
+index 0f1742f..b72fad9 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -380,8 +380,8 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
