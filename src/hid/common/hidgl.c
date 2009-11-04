@@ -606,7 +606,9 @@ do_hole (const BoxType *b, void *cl)
   if (curc->Flags.orient == PLF_DIR) {
     return 0;
   }
+  gluTessBeginPolygon (info->tobj, NULL);
   tesselate_contour (info->tobj, &curc->head, info->vertices, info->i);
+  gluTessEndPolygon (info->tobj);
   return 1;
 }
 
@@ -614,11 +616,10 @@ void
 hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
 {
   int i, cc;
-  GLUtesselator *tobj;
-  GLdouble *vertices;
   int vertex_count = 0;
-  POLYAREA *piece;
   PLINE *contour;
+  struct do_hole_info info;
+
 
   global_scale = scale;
 
@@ -627,49 +628,56 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
     return;
   }
 
+  /* TODO: Just draw our triangles, no need to flush the buffer */
+  hidgl_flush_triangles (&buffer);
+
   /* JUST DRAW THE FIRST PIECE */
   /* Walk the polygon structure, counting vertices */
   /* This gives an upper bound on the amount of storage required */
-  piece = poly->Clipped;
-//  do {
-    for (contour = piece->contours; contour != NULL; contour = contour->next)
-      vertex_count += contour->Count;
-//  } while ((piece = piece->f) != poly->Clipped);
+  for (contour = poly->Clipped->contours;
+       contour != NULL; contour = contour->next)
+    vertex_count += contour->Count;
 
-  vertices = malloc (sizeof(GLdouble) * vertex_count * 3);
+  info.vertices = malloc (sizeof(GLdouble) * vertex_count * 3);
+  info.tobj = gluNewTess ();
+  info.i = &i;
+  gluTessCallback(info.tobj, GLU_TESS_BEGIN, myBegin);
+  gluTessCallback(info.tobj, GLU_TESS_VERTEX, myVertex);
+  gluTessCallback(info.tobj, GLU_TESS_COMBINE, myCombine);
+  gluTessCallback(info.tobj, GLU_TESS_ERROR, myError);
 
-  tobj = gluNewTess ();
-  gluTessCallback(tobj, GLU_TESS_BEGIN, myBegin);
-  gluTessCallback(tobj, GLU_TESS_VERTEX, myVertex);
-  gluTessCallback(tobj, GLU_TESS_COMBINE, myCombine);
-  gluTessCallback(tobj, GLU_TESS_ERROR, myError);
+  glClearStencil (0);
+  glClear (GL_STENCIL_BUFFER_BIT);
+  glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
+  glEnable (GL_STENCIL_TEST);
 
-  gluTessBeginPolygon (tobj, NULL);
-
-  /* JUST DRAW THE FIRST PIECE */
-  /* Walk the polygon structure, adding the vertices */
   i = 0;
   cc = 1;
-  piece = poly->Clipped;
-  do {
-    struct do_hole_info info;
-    info.tobj = tobj;
-    info.vertices = vertices;
-    info.i = &i;
 
-    tesselate_contour (tobj, &piece->contours->head, vertices, &i);
+  /* Drawing operations set the stencil buffer to '1' */
+  glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
+  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
 
-    /* Search for a contour to draw */
-    r_search (piece->contour_tree, clip_box, NULL, do_hole, &info);
+  r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
+  hidgl_flush_triangles (&buffer);
 
-  } while (0);
-//  } while ((piece = piece->f) != poly->Clipped);
+  /* Drawing operations as masked to areas where the stencil buffer is '1' */
+  glColorMask (1, 1, 1, 1);                   // Enable drawing of r, g, b & a
+  glStencilFunc (GL_EQUAL, 0, 1);             // Draw only where stencil buffer is 0
+  glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    // Stencil buffer read only
 
-  gluTessEndPolygon (tobj);
-  gluDeleteTess (tobj);
+  /* Draw the polygon outer */
+  gluTessBeginPolygon (info.tobj, NULL);
+  tesselate_contour (info.tobj, &poly->Clipped->contours->head, info.vertices, &i);
+  gluTessEndPolygon (info.tobj);
+  hidgl_flush_triangles (&buffer);
 
+  glClear (GL_STENCIL_BUFFER_BIT);
+  glDisable (GL_STENCIL_TEST);                // Disable Stencil test
+
+  gluDeleteTess (info.tobj);
   myFreeCombined ();
-  free (vertices);
+  free (info.vertices);
 }
 
 void
