@@ -1612,8 +1612,10 @@ ghid_draw_everything (BoxTypePtr drawn_area)
 
 #if 1
     if (!global_view_2d &&
-        drawn_groups[i] > min_phys_group &&
-        drawn_groups[i] <= max_phys_group) {
+        drawn_groups[i] >= min_phys_group &&
+        drawn_groups[i] <= max_phys_group &&
+        drawn_groups[i - 1] >= min_phys_group &&
+        drawn_groups[i - 1] <= max_phys_group) {
       cyl_info.from_layer = drawn_groups[i];
       cyl_info.to_layer = drawn_groups[i - 1];
       cyl_info.scale = gport->zoom;
