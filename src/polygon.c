@@ -1817,7 +1817,7 @@ struct clip_outline_info {
   POLYAREA *poly;
 };
 
-#define ROUTER_THICKNESS 2000
+#define ROUTER_THICKNESS 1000
 //#define ROUTER_THICKNESS 10
 
 static int
@@ -1887,6 +1887,8 @@ POLYAREA *board_outline_poly ()
   POLYAREA *check;
   GList *pieces_to_delete = NULL;
 
+  whole_world = RectPoly (0, PCB->MaxWidth, 0, PCB->MaxHeight);
+
   for (i = 0; i < max_layer; i++)
     {
       Layer = PCB->Data->Layer + i;
@@ -1899,8 +1901,10 @@ POLYAREA *board_outline_poly ()
         }
     }
 
-  if (!found_outline)
-    return NULL;
+  if (!found_outline) {
+    printf ("Didn't find outline\n");
+    return whole_world;
+  }
 
   /* Do stuff to turn the outline layer into a polygon */
 
@@ -1925,8 +1929,6 @@ POLYAREA *board_outline_poly ()
    *  \_____________/
    */
 
-  whole_world = RectPoly (0, PCB->MaxWidth, 0, PCB->MaxHeight);
-
   info.poly = whole_world;
 
   region.X1 = 0;
@@ -1934,36 +1936,35 @@ POLYAREA *board_outline_poly ()
   region.X2 = PCB->MaxWidth;
   region.Y2 = PCB->MaxHeight;
 
-  // region = bloat_box (&region, expand);
-
   r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
   r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
 
   clipped = info.poly;
 
-  /* Now we just need to work out which pieces of polygon are inside and outside! */
+  /* Now we just need to work out which pieces of polygon are inside
+     and outside the board! */
 
   /* If there is only one piece, return that */
   if (clipped->f == clipped)
     return clipped;
 
-  /* WARNING: This next check is O(n^2), where n is the number of clipped pieces,
-   *          hopefully the outline layer isn't too complex!
+  /* WARNING: This next check is O(n^2), where n is the number of clipped
+   *          pieces, hopefully the outline layer isn't too complex!
    */
 
   piece = clipped;
   do { /* LOOP OVER POLYGON PIECES */
 
-    count = 0;
+    if (piece->contours == NULL)
+      printf ("WTF?\n");
 
+    count = 0;
     check = clipped;
     do { /* LOOP OVER POLYGON PIECES */
       if (check == piece)
         continue;
-
       if (poly_ContourInContour (check->contours, piece->contours))
         count ++;
-
     } while ((check = check->f) != clipped);
 
     /* If the piece is inside an odd number of others, delete it */
