@@ -45,6 +45,7 @@
 #include "draw.h"
 #include "error.h"
 #include "misc.h"
+#include "polygon.h"
 #include "set.h"
 #include "rtree.h"
 #include "snavi.h"
@@ -1309,6 +1310,7 @@ DrawMask (BoxType * screen)
 {
   struct pin_info info;
   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
+  PolygonType polygon;
 
   OutputType *out = &Output;
 
@@ -1337,7 +1339,13 @@ DrawMask (BoxType * screen)
   gui->use_mask (HID_MASK_AFTER);
   gui->set_color (out->fgGC, PCB->MaskColor);
   ghid_global_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
-  gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
+
+  polygon.Clipped = board_outline_poly ();
+  SET_FLAG (FULLPOLYFLAG, &polygon);
+  common_fill_pcb_polygon (out->fgGC, &polygon, screen);
+  /* THE GL fill_pcb_polygon doesn't work whilst masking */
+//  gui->fill_pcb_polygon (out->fgGC, &polygon, screen);
+//  gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
   ghid_global_alpha_mult (out->fgGC, 1.0);
 
   gui->use_mask (HID_MASK_OFF);
@@ -1353,8 +1361,8 @@ DrawLayerGroup (int group, const BoxType * screen)
   int n_entries = PCB->LayerGroups.Number[group];
   Cardinal *layers = PCB->LayerGroups.Entries[group];
   int first_run = 1;
-  int component = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
-  int solder    = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
+  int component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+  int solder_group    = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
 
   if (!gui->set_layer (0, group, 0)) {
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
@@ -1416,12 +1424,12 @@ DrawLayerGroup (int group, const BoxType * screen)
       if (!global_view_2d && rv) {
         if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
         if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
-        if ((layernum == component && !SWAP_IDENT) ||
-            (layernum == solder    &&  SWAP_IDENT))
+        if ((group == component_group && !SWAP_IDENT) ||
+            (group == solder_group    &&  SWAP_IDENT))
           if (PCB->PinOn)
             r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, Layer);
-        if ((layernum == solder    && !SWAP_IDENT) ||
-            (layernum == component &&  SWAP_IDENT))
+        if ((group == solder_group    && !SWAP_IDENT) ||
+            (group == component_group &&  SWAP_IDENT))
           if (PCB->PinOn)
             r_search (PCB->Data->pad_tree, screen, NULL, backPad_callback, Layer);
       }
@@ -1556,18 +1564,45 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     }
   }
 
+
   /*
    * first draw all 'invisible' stuff
    */
   if (!TEST_FLAG (CHECKPLANESFLAG, PCB) &&
       gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
-    if (global_view_2d)
-      r_search (PCB->Data->pad_tree, drawn_area, NULL, backPad_callback, NULL);
     if (PCB->ElementOn) {
-      r_search (PCB->Data->element_tree, drawn_area, NULL, backE_callback, NULL);
       r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, backN_callback, NULL);
       DrawLayer (&(PCB->Data->BACKSILKLAYER), drawn_area);
     }
+#if 1
+    if (!global_view_2d) {
+      /* Draw the solder mask if turned on */
+      if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0)) {
+        int save_swap = SWAP_IDENT;
+        gui->set_layer (NULL, SL (FINISHED, 0), 0);
+        gui->set_layer ("componentmask", SL (MASK, TOP), 0);
+        //^__ HACK, THE GUI DOESNT WANT US TO DRAW THIS!
+        SWAP_IDENT = 0;
+        DrawMask (drawn_area);
+        SWAP_IDENT = save_swap;
+        gui->set_layer (NULL, SL (FINISHED, 0), 0);
+      }
+      if (gui->set_layer ("componentmask", SL (MASK, TOP), 0)) {
+        int save_swap = SWAP_IDENT;
+        gui->set_layer (NULL, SL (FINISHED, 0), 0);
+        gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0);
+        //^__ HACK, THE GUI DOESNT WANT US TO DRAW THIS!
+        SWAP_IDENT = 1;
+        DrawMask (drawn_area);
+        SWAP_IDENT = save_swap;
+        gui->set_layer (NULL, SL (FINISHED, 0), 0);
+      }
+    }
+#endif
+    if (global_view_2d)
+      r_search (PCB->Data->pad_tree, drawn_area, NULL, backPad_callback, NULL);
+    if (PCB->ElementOn)
+      r_search (PCB->Data->element_tree, drawn_area, NULL, backE_callback, NULL);
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
   }
 
