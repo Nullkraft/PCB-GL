@@ -583,6 +583,7 @@ do_hole (const BoxType *b, void *cl)
 {
   struct do_hole_info *info = cl;
   PLINE *curc = (PLINE *) b;
+
   cairo_traps_t *traps;
 
   /* Ignore the outer contour - we draw it first explicitly*/
@@ -614,13 +615,9 @@ static GLint stencil_bits;
 static int dirty_bits = 0;
 static int assigned_bits = 0;
 
-struct polygon_cache {
-  int fill_display_list;
-};
-
 /* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
 void
-hidgl_fill_pcb_polygon_nocache (PolygonType *poly, const BoxType *clip_box, double scale)
+hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
 {
   cairo_traps_t *traps;
   struct do_hole_info info;
@@ -642,41 +639,26 @@ hidgl_fill_pcb_polygon_nocache (PolygonType *poly, const BoxType *clip_box, doub
   traps = bo_poly_to_traps (poly->Clipped);
   _cairo_traps_fini (traps);
 
-  free (info.vertices);
-}
+  glPopAttrib ();                                             // Restore the colour and stencil buffer write-mask etc..
 
-void
-hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
-{
-  struct polygon_cache *cache;
-  int new_cache = 0;
+  glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT); // This allows us to toggle the bit on the subcompositing bitplane
+                                             // If the stencil test has passed, we know that bit is 0, so we're
+                                             // effectively just setting it to 1.
+  glStencilFunc (GL_GEQUAL, 0, assigned_bits);
+//  glStencilFunc (GL_GREATER, assigned_bits, assigned_bits);   // Pass stencil test if all assigned bits clear,
+                                                              // reference is all assigned bits so we set
+                                                              // any bits permitted by the stencil writemask
 
-  if (poly->gui_cache == NULL) {
-    poly->gui_cache = malloc (sizeof (struct polygon_cache));
-    new_cache = 1;
-  }
+  /* Draw the polygon outer */
+//  tesselate_contour (info.tobj, &poly->Clipped->contours->head, info.vertices);
+  traps = bo_contour_to_traps (poly->Clipped->contours);
+  _cairo_traps_fini (traps);
+  hidgl_flush_triangles (&buffer);
 
-  cache = poly->gui_cache;
+  /* Unassign our stencil buffer bit */
+  hidgl_return_stencil_bit (stencil_bit);
 
-#if 0
-  if (!poly->gui_cache_valid) {
-    if (!new_cache)
-      glDeleteLists (cache->fill_display_list, 1);
-
-    cache->fill_display_list = glGenLists (1);
-    hidgl_flush_triangles (&buffer);
-    glNewList (cache->fill_display_list, GL_COMPILE);
-    hidgl_fill_pcb_polygon_nocache (poly, NULL /* clip_box */, scale);
-    hidgl_flush_triangles (&buffer);
-    glEndList ();
-    poly->gui_cache_valid = 1;
-  }
-
-  glCallList (cache->fill_display_list);
-
-#else
-  hidgl_fill_pcb_polygon_nocache (poly, clip_box, scale);
-#endif
+  glPopAttrib ();                                             // Restore the stencil buffer write-mask etc..
 }
 
 void
