@@ -651,7 +651,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
 
   cache = poly->gui_cache;
 
-#if 0
+#if 1
   if (!poly->gui_cache_valid) {
     if (!new_cache)
       glDeleteLists (cache->fill_display_list, 1);
