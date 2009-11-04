@@ -1,5 +1,5 @@
 Bottom: 70c6d75ef5e17eb4c1feecccad965b45a1bdb8af
-Top:    b8386f53d00f8b85c6231e904e3724a50703b000
+Top:    3ac6ab007adb37525f56b8e4f0f8b21b19fee3e0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-03 23:47:22 +0000
 
@@ -9,14 +9,13 @@ Tag circular contours so they can be drawn quicker
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 54c2b3b..a582d3d 100644
+index 54c2b3b..76953d1 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -602,10 +602,26 @@ do_hole (const BoxType *b, void *cl)
+@@ -602,10 +602,25 @@ do_hole (const BoxType *b, void *cl)
  {
    struct do_hole_info *info = cl;
    PLINE *curc = (PLINE *) b;
-+  cairo_traps_t *traps;
 +
    /* Ignore the outer contour - we draw it first explicitly*/
    if (curc->Flags.orient == PLF_DIR) {
