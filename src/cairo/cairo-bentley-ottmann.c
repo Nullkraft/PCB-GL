@@ -1725,85 +1725,6 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
     return status;
 }
 
-cairo_status_t
-_cairo_bentley_ottmann_tessellate_polygon (cairo_traps_t         *traps,
-                                           const cairo_polygon_t *polygon)
-{
-    int intersections;
-    cairo_status_t status;
-    cairo_bo_start_event_t stack_events[CAIRO_STACK_ARRAY_LENGTH (cairo_bo_start_event_t)];
-    cairo_bo_start_event_t *events;
-    cairo_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
-    cairo_bo_event_t **event_ptrs;
-    int num_events;
-    int i;
-
-    num_events = polygon->num_edges;
-    if (unlikely (0 == num_events))
-        return CAIRO_STATUS_SUCCESS;
-
-    events = stack_events;
-    event_ptrs = stack_event_ptrs;
-    if (num_events > ARRAY_LENGTH (stack_events)) {
-        events = _cairo_malloc_ab_plus_c (num_events,
-                                          sizeof (cairo_bo_start_event_t) +
-                                          sizeof (cairo_bo_event_t *),
-                                          sizeof (cairo_bo_event_t *));
-        if (unlikely (events == NULL))
-            return _cairo_error (CAIRO_STATUS_NO_MEMORY);
-
-        event_ptrs = (cairo_bo_event_t **) (events + num_events);
-    }
-
-    for (i = 0; i < num_events; i++) {
-        event_ptrs[i] = (cairo_bo_event_t *) &events[i];
-
-        events[i].type = CAIRO_BO_EVENT_TYPE_START;
-        events[i].point.y = polygon->edges[i].top;
-        events[i].point.x =
-            _line_compute_intersection_x_for_y (&polygon->edges[i].line,
-                                                events[i].point.y);
-
-        events[i].edge.edge = polygon->edges[i];
-        events[i].edge.deferred_trap.right = NULL;
-        events[i].edge.prev = NULL;
-        events[i].edge.next = NULL;
-    }
-
-#if DEBUG_TRAPS
-    dump_edges (events, num_events, "bo-polygon-edges.txt");
-#endif
-
-    /* XXX: This would be the convenient place to throw in multiple
-     * passes of the Bentley-Ottmann algorithm. It would merely
-     * require storing the results of each pass into a temporary
-     * cairo_traps_t. */
-    status = _cairo_bentley_ottmann_tessellate_bo_edges (event_ptrs,
-                                                         num_events,
-                                                         traps,
-                                                         &intersections);
-#if DEBUG_TRAPS
-    dump_traps (traps, "bo-polygon-out.txt");
-#endif
-
-    if (events != stack_events)
-        free (events);
-
-    return status;
-}
-
-
-typedef struct {
-  int x;
-  int y;
-} bos_point;
-
-typedef struct {
-  bos_point a;
-  bos_point b;
-  int num;
-} bos_line;
-
 
 static void
 poly_area_to_start_events (POLYAREA                *poly,
@@ -1938,8 +1859,6 @@ bo_poly_to_traps (POLYAREA *poly)
                                                        traps,
                                                        &intersections);
 
-//  printf ("Number of traps: %i\n", traps->num_traps);
-
   for (n = 0; n < traps->num_traps; n++) {
     int x1, y1, x2, y2, x3, y3, x4, y4;
 
@@ -1951,17 +1870,6 @@ bo_poly_to_traps (POLYAREA *poly)
     y3 = traps->traps[n].bottom;
     x4 = _line_compute_intersection_x_for_y (&traps->traps[n].left, traps->traps[n].bottom);
     y4 = traps->traps[n].bottom;
-
-#if 0
-    x1 = traps->traps[n].left.p1.x;
-    y1 = traps->traps[n].left.p1.y;
-    x2 = traps->traps[n].right.p1.x;
-    y2 = traps->traps[n].right.p1.y;
-    x3 = traps->traps[n].right.p2.x;
-    y3 = traps->traps[n].right.p2.y;
-    x4 = traps->traps[n].left.p2.x;
-    y4 = traps->traps[n].left.p2.y;
-#endif
 
 #if 1
     if (x1 == x2) {
@@ -1984,20 +1892,6 @@ bo_poly_to_traps (POLYAREA *poly)
     glVertex2i (x4, y4); glVertex2i (x1, y1);
      glVertex2i (x1, y1); glVertex2i (x3, y3);
     glEnd ();
-#endif
-
-#if 0
-    printf ("%d %d L:(%d, %d), (%d, %d) R:(%d, %d), (%d, %d)\n",
-             traps->traps[n].top,
-             traps->traps[n].bottom,
-             traps->traps[n].left.p1.x,
-             traps->traps[n].left.p1.y,
-             traps->traps[n].left.p2.x,
-             traps->traps[n].left.p2.y,
-             traps->traps[n].right.p1.x,
-             traps->traps[n].right.p1.y,
-             traps->traps[n].right.p2.x,
-             traps->traps[n].right.p2.y);
 #endif
   }
 
