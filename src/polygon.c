@@ -1887,7 +1887,10 @@ POLYAREA *board_outline_poly ()
   POLYAREA *check;
   GList *pieces_to_delete = NULL;
 
-  whole_world = RectPoly (0, PCB->MaxWidth, 0, PCB->MaxHeight);
+#define BLOAT_WORLD 1000
+
+  whole_world = RectPoly (-BLOAT_WORLD, BLOAT_WORLD + PCB->MaxWidth,
+                          -BLOAT_WORLD, BLOAT_WORLD + PCB->MaxHeight);
 
   for (i = 0; i < max_layer; i++)
     {
