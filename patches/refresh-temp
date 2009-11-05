@@ -1,0 +1,18 @@
+Bottom: 05584dc49b8ce21decb3dcca9758629e91970a1c
+Top:    1f958a5461ada681823fbb35277b323f5b5328e7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-05 16:48:51 +0000
+
+Refresh of bentley-ottann-test-implementa
+
+---
+
+diff --git a/src/sweep.h b/src/sweep.h
+index c6b14ad..005adf5 100644
+--- a/src/sweep.h
++++ b/src/sweep.h
+@@ -1,4 +1,3 @@
+ #include "cairo/cairoint.h"
+ 
+ cairo_status_t bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps);
+-cairo_status_t bo_contour_to_traps (PLINE *contour, cairo_traps_t *traps);
