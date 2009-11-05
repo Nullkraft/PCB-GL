@@ -38,9 +38,7 @@
 #ifndef CAIRO_H
 #define CAIRO_H
 
-#include "cairo-version.h"
 #include "cairo-features.h"
-#include "cairo-deprecated.h"
 
 #ifdef  __cplusplus
 # define CAIRO_BEGIN_DECLS  extern "C" {
@@ -51,11 +49,7 @@
 #endif
 
 #ifndef cairo_public
-# if defined (_MSC_VER) && ! defined (CAIRO_WIN32_STATIC_BUILD)
-#  define cairo_public __declspec(dllimport)
-# else
-#  define cairo_public
-# endif
+# define cairo_public
 #endif
 
 CAIRO_BEGIN_DECLS
@@ -81,13 +75,10 @@ CAIRO_BEGIN_DECLS
 	CAIRO_VERSION_MINOR,				\
 	CAIRO_VERSION_MICRO)
 
-
-cairo_public int
-cairo_version (void);
-
+#if 0
 cairo_public const char*
 cairo_version_string (void);
-
+#endif
 /**
  * cairo_bool_t:
  *
