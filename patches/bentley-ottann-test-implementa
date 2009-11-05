@@ -1,5 +1,5 @@
 Bottom: 33098b04c4aeecb42c8c14f01e10bf537db75549
-Top:    578b48bb92c5f362422841bdadac5157c8136763
+Top:    05584dc49b8ce21decb3dcca9758629e91970a1c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-05 16:16:58 +0000
 
@@ -409,10 +409,10 @@ index 0000000..8532f62
 +#endif
 diff --git a/src/cairo/cairo-bentley-ottmann.c b/src/cairo/cairo-bentley-ottmann.c
 new file mode 100644
-index 0000000..94c71eb
+index 0000000..057f4aa
 --- /dev/null
 +++ b/src/cairo/cairo-bentley-ottmann.c
-@@ -0,0 +1,1906 @@
+@@ -0,0 +1,1902 @@
 +/*
 + * Copyright © 2004 Carl Worth
 + * Copyright © 2006 Red Hat, Inc.
@@ -2219,8 +2219,8 @@ index 0000000..94c71eb
 +}
 +
 +
-+cairo_traps_t *
-+bo_poly_to_traps (POLYAREA *poly)
++cairo_status_t
++bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps)
 +{
 +  int intersections;
 +  cairo_status_t status;
@@ -2232,11 +2232,7 @@ index 0000000..94c71eb
 +  int i;
 +  int n;
 +  POLYAREA *pa;
-+  cairo_traps_t int_traps;
-+  cairo_traps_t *traps = &int_traps;
 +  PLINE *contour;
-+
-+  _cairo_traps_init (traps);
 +
 +  pa = poly;
 +  do {
@@ -2256,7 +2252,7 @@ index 0000000..94c71eb
 +                                        sizeof (cairo_bo_event_t *),
 +                                        sizeof (cairo_bo_event_t *));
 +      if (unlikely (events == NULL))
-+          return NULL;
++          return CAIRO_STATUS_NO_MEMORY;
 +
 +      event_ptrs = (cairo_bo_event_t **) (events + num_events);
 +  }
@@ -2317,7 +2313,7 @@ index 0000000..94c71eb
 +  if (events != stack_events)
 +      free (events);
 +
-+  return traps;
++  return CAIRO_STATUS_SUCCESS;
 +}
 diff --git a/src/cairo/cairo-cache-private.h b/src/cairo/cairo-cache-private.h
 new file mode 100644
@@ -13642,7 +13638,7 @@ index 0000000..a9207a1
 +
 +#endif
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 677cc22..b37a26a 100644
+index 677cc22..ac247ec 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -37,7 +37,7 @@
@@ -13654,13 +13650,27 @@ index 677cc22..b37a26a 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -639,6 +639,10 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -638,6 +638,13 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+   PLINE *contour;
    struct do_hole_info info;
    int stencil_bit;
- 
-+  bo_poly_to_traps (poly->Clipped);
++  cairo_traps_t traps;
++
++  _cairo_traps_init (&traps);
++  bo_poly_to_traps (poly->Clipped, &traps);
++  _cairo_traps_fini (&traps);
 +
 +  return;
-+
+ 
    info.scale = scale;
    global_scale = scale;
+diff --git a/src/sweep.h b/src/sweep.h
+new file mode 100644
+index 0000000..c6b14ad
+--- /dev/null
++++ b/src/sweep.h
+@@ -0,0 +1,4 @@
++#include "cairo/cairoint.h"
++
++cairo_status_t bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps);
++cairo_status_t bo_contour_to_traps (PLINE *contour, cairo_traps_t *traps);
