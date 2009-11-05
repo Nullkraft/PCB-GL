@@ -1,7 +1,7 @@
-Bottom: 05cf8ada90d78e7bca8bcf7c46285f44ff9e4739
-Top:    b42d69cecaa05e2d0aa4f897fe64eb8568425c16
+Bottom: 1a49297621358e05f9da1c4e1d78dd2d19fb625e
+Top:    c89e90f4e964a6da7f74d642514e9f3fa3445f47
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 05:00:48 +0100
+Date:   2009-11-05 16:56:07 +0000
 
 Add colour information to VBO
 
@@ -16,7 +16,7 @@ Add colour information to VBO
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index bdf9429..b1820b7 100644
+index e4c83ba..e8d2aa8 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -49,6 +49,10 @@ RCSID ("$Id: $");
@@ -88,7 +88,7 @@ index bdf9429..b1820b7 100644
  //static int cur_mask = -1;
  
  
-@@ -235,7 +256,7 @@ static void draw_cap (double width, int x, int y, double angle, double scale)
+@@ -234,7 +255,7 @@ static void draw_cap (double width, int x, int y, double angle, double scale)
    for (i = 0; i < slices; i++) {
      capx =  radius * cosf (angle * M_PI / 180. + ((float)(i + 1)) * M_PI / (float)slices) + x;
      capy = -radius * sinf (angle * M_PI / 180. + ((float)(i + 1)) * M_PI / (float)slices) + y;
@@ -97,7 +97,7 @@ index bdf9429..b1820b7 100644
      last_capx = capx;
      last_capy = capy;
    }
-@@ -300,10 +321,10 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
+@@ -299,10 +320,10 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
    hidgl_ensure_triangle_space (&buffer, 2);
    hidgl_add_triangle (&buffer, x1 - wdx, y1 - wdy,
                                 x2 - wdx, y2 - wdy,
@@ -110,7 +110,7 @@ index bdf9429..b1820b7 100644
  
    /* Don't bother capping hairlines */
    if (circular_caps && !hairline)
-@@ -373,10 +394,10 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
+@@ -372,10 +393,10 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
      outer_x = -outer_r * cos_ang + x;  outer_y = outer_r * sin_ang + y;
      hidgl_add_triangle (&buffer, last_inner_x, last_inner_y,
                                   last_outer_x, last_outer_y,
@@ -123,7 +123,7 @@ index bdf9429..b1820b7 100644
      last_inner_x = inner_x;  last_inner_y = inner_y;
      last_outer_x = outer_x;  last_outer_y = outer_y;
    }
-@@ -432,7 +453,7 @@ hidgl_fill_circle (int vx, int vy, int vr, double scale)
+@@ -431,7 +452,7 @@ hidgl_fill_circle (int vx, int vy, int vr, double scale)
      float x, y;
      x = radius * cosf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
      y = radius * sinf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
@@ -132,7 +132,7 @@ index bdf9429..b1820b7 100644
      last_x = x;
      last_y = y;
    }
-@@ -522,7 +543,7 @@ myVertex (GLdouble *vertex_data)
+@@ -521,7 +542,7 @@ myVertex (GLdouble *vertex_data)
            hidgl_add_triangle (&buffer,
                                triangle_vertices [0], triangle_vertices [1],
                                triangle_vertices [2], triangle_vertices [3],
@@ -141,7 +141,7 @@ index bdf9429..b1820b7 100644
  #else
            hidgl_draw_line (Square_Cap, global_scale,
                             triangle_vertices [0], triangle_vertices [1],
-@@ -557,7 +578,7 @@ myVertex (GLdouble *vertex_data)
+@@ -556,7 +577,7 @@ myVertex (GLdouble *vertex_data)
            hidgl_add_triangle (&buffer,
                                triangle_vertices [0], triangle_vertices [1],
                                triangle_vertices [2], triangle_vertices [3],
@@ -150,7 +150,7 @@ index bdf9429..b1820b7 100644
            triangle_comp_idx = 0;
            stashed_vertices = 0;
          }
-@@ -729,8 +750,8 @@ void
+@@ -728,8 +749,8 @@ void
  hidgl_fill_rect (int x1, int y1, int x2, int y2)
  {
    hidgl_ensure_triangle_space (&buffer, 2);
@@ -266,10 +266,10 @@ index 1005235..89ef8a5 100644
  
  // void draw_grid ()
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 5d3e091..e8daf3e 100644
+index 3f101be..7774900 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -803,8 +803,7 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -834,8 +834,7 @@ ghid_set_color (hidGC gc, const char *name)
    if( ! ghid_gui_is_up )
      return;
  
