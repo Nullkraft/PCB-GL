@@ -1,7 +1,7 @@
-Bottom: 61152eca9d1a1d62247a5aa34ae0f04035102a0e
-Top:    9cf20067812a932ef49b3f7b79c7b9ada685ea0c
+Bottom: b579fe1fda52b28d57c001149b911509ed1d9417
+Top:    cf0ff3711d1e9bc07e4bb87acc094ea7a31ff017
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-23 01:19:02 +0100
+Date:   2009-11-05 16:54:50 +0000
 
 Island removal fixes
 
@@ -130,7 +130,7 @@ index 05621ea..f5a40b2 100644
    a->StartAngle = new_sa;
    a->Delta = new_da;
 diff --git a/src/move.c b/src/move.c
-index d853d3f..eb01cd1 100644
+index 54d885a..626368f 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -282,8 +282,8 @@ MoveLine (LayerTypePtr Layer, LineTypePtr Line)
