@@ -38,32 +38,18 @@ PCB_SRCS = \
 	buffer.c \
 	buffer.h \
 	cairo/cairo.h \
-	cairo/cairoint.h \
-	cairo/cairo-atomic-private.h \
+	cairo/cairoint-minimal.h \
 	cairo/cairo-bentley-ottmann.c \
-	cairo/cairo-cache-private.h \
-	cairo/cairo-clip-private.h \
 	cairo/cairo-combsort-private.h \
 	cairo/cairo-compiler-private.h \
 	cairo/cairo-fixed-private.h \
 	cairo/cairo-fixed-type-private.h \
 	cairo/cairo-freelist.c \
 	cairo/cairo-freelist-private.h \
-	cairo/cairo-hash-private.h \
 	cairo/cairo-list-private.h \
 	cairo/cairo-malloc-private.h \
-	cairo/cairo-mutex-impl-private.h \
-	cairo/cairo-mutex-list-private.h \
-	cairo/cairo-mutex-private.h \
-	cairo/cairo-mutex-type-private.h \
-	cairo/cairo-path-fixed-private.h \
-	cairo/cairo-reference-count-private.h \
-	cairo/cairo-region-private.h \
-	cairo/cairo-scaled-font-private.h \
-	cairo/cairo-slope-private.h \
-	cairo/cairo-spans-private.h \
-	cairo/cairo-surface-private.h \
 	cairo/cairo-traps.c \
+	cairo/cairo-traps-private.h \
 	cairo/cairo-types-private.h \
 	cairo/cairo-wideint.c \
 	cairo/cairo-wideint-private.h \
