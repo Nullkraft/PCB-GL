@@ -1,7 +1,7 @@
-Bottom: e3312f34233be3ccc6ef3ce3569f176ff3feba0c
-Top:    397a4fa76001c096d6dedbd1d4a29f509645d8aa
+Bottom: f40af8af42755486b4c40790680cedce423f89ae
+Top:    f1e1ae92a48ec4d53a30fdf2cc91bd00b80d3e7e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-28 17:48:38 +0000
+Date:   2009-11-05 16:58:37 +0000
 
 TMP2
 
@@ -591,10 +591,10 @@ index 82ee75c..91a183f 100644
        pcb_dbus_finish();
  #endif
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 628a4fa..1261386 100644
+index f18df09..027437f 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -49,6 +49,7 @@
+@@ -51,6 +51,7 @@
  #include "global.h"
  #include "rtree.h"
  #include "heap.h"
@@ -602,7 +602,7 @@ index 628a4fa..1261386 100644
  
  #define ROUND(a) (long)((a) > 0 ? ((a) + 0.5) : ((a) - 0.5))
  
-@@ -889,8 +890,16 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+@@ -982,8 +983,16 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  	      a->contours->xmin <= b->contours->xmax &&
  	      a->contours->ymin <= b->contours->ymax)
  	    {
