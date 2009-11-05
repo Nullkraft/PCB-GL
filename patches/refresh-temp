@@ -1,0 +1,22 @@
+Bottom: 44fd1746b13a2ebbd07085abc31630be2924998d
+Top:    33098b04c4aeecb42c8c14f01e10bf537db75549
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-05 16:16:24 +0000
+
+Refresh of tag-circular-contours-so-they-
+
+---
+
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 4b78966..6190b0b 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -106,7 +106,7 @@ static int thindraw_hole_cb (PLINE *pl, void *user_data)
+   if (pl->is_round) {
+     gui->set_line_width (gc, 0);
+     gui->draw_arc (gc, pl->cx, pl->cy, pl->radius, pl->radius, 0, 360);
+-    return 1;
++    return 0;
+   }
+ 
+   thindraw_contour (gc, pl);
