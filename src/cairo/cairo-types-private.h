@@ -39,7 +39,7 @@
 #ifndef CAIRO_TYPES_PRIVATE_H
 #define CAIRO_TYPES_PRIVATE_H
 
-#include "cairo.h"
+#include "cairo-minimal.h"
 #include "cairo-fixed-type-private.h"
 #include "cairo-list-private.h"
 

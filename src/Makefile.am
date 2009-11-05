@@ -37,7 +37,7 @@ PCB_SRCS = \
 	box.h \
 	buffer.c \
 	buffer.h \
-	cairo/cairo.h \
+	cairo/cairo-minimal.h \
 	cairo/cairoint-minimal.h \
 	cairo/cairo-bentley-ottmann.c \
 	cairo/cairo-combsort-private.h \
