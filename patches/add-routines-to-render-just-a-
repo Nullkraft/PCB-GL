@@ -1,7 +1,7 @@
-Bottom: 5c29a4c01524118c6b0db37537cea1ffaf8f8d6d
-Top:    dc669e40744434817f77509fa562a3dcf79d112a
+Bottom: 6e1fb17d2cba51a7480b39c93ae44f060c270477
+Top:    efe031245e1341eb961eb03e85df0473783c1758
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-05 16:48:58 +0000
+Date:   2009-11-05 18:49:17 +0000
 
 Add routines to render just a single contour
 
@@ -11,10 +11,10 @@ Use them rather than the GLU tessellator
 ---
 
 diff --git a/src/cairo/cairo-bentley-ottmann.c b/src/cairo/cairo-bentley-ottmann.c
-index 3d6a0b3..b59df45 100644
+index 92679f8..fcc0e66 100644
 --- a/src/cairo/cairo-bentley-ottmann.c
 +++ b/src/cairo/cairo-bentley-ottmann.c
-@@ -1284,44 +1284,25 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+@@ -1286,44 +1286,25 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
      return status;
  }
  
@@ -73,7 +73,7 @@ index 3d6a0b3..b59df45 100644
              x1 = bv->point[0];
              y1 = bv->point[1];
              x2 = bv->next->point[0];
-@@ -1332,28 +1313,62 @@ poly_area_to_start_events (POLYAREA                *poly,
+@@ -1334,28 +1315,62 @@ poly_area_to_start_events (POLYAREA                *poly,
              x2 = bv->point[0];
              y2 = bv->point[1];
            }
@@ -153,7 +153,7 @@ index 3d6a0b3..b59df45 100644
          outer_contour = 0;
        }
  
-@@ -1459,3 +1474,94 @@ bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps)
+@@ -1461,3 +1476,94 @@ bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps)
  
    return CAIRO_STATUS_SUCCESS;
  }
@@ -361,11 +361,11 @@ index ac247ec..97d670d 100644
  
  void
 diff --git a/src/sweep.h b/src/sweep.h
-index 005adf5..c6b14ad 100644
+index 2d084ed..257664f 100644
 --- a/src/sweep.h
 +++ b/src/sweep.h
 @@ -1,3 +1,4 @@
- #include "cairo/cairoint.h"
+ #include "cairo/cairo-traps-private.h"
  
  cairo_status_t bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps);
 +cairo_status_t bo_contour_to_traps (PLINE *contour, cairo_traps_t *traps);
