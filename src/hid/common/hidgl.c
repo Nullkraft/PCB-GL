@@ -594,7 +594,7 @@ do_hole (const BoxType *b, void *cl)
 {
   struct do_hole_info *info = cl;
   PLINE *curc = (PLINE *) b;
-  cairo_traps_t *traps;
+  cairo_traps_t traps;
 
   /* Ignore the outer contour - we draw it first explicitly*/
   if (curc->Flags.orient == PLF_DIR) {
@@ -613,8 +613,9 @@ do_hole (const BoxType *b, void *cl)
     }
   }
 
-  traps = bo_contour_to_traps (curc);
-  _cairo_traps_fini (traps);
+  _cairo_traps_init (&traps);
+  bo_contour_to_traps (curc, &traps);
+  _cairo_traps_fini (&traps);
 
   return 1;
 }
@@ -629,7 +630,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
 {
   struct do_hole_info info;
   int stencil_bit;
-  cairo_traps_t *traps;
+  cairo_traps_t traps;
 
   info.scale = scale;
   global_scale = scale;
@@ -678,8 +679,9 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
                                                               // any bits permitted by the stencil writemask
 
   /* Draw the polygon outer */
-  traps = bo_contour_to_traps (poly->Clipped->contours);
-  _cairo_traps_fini (traps);
+  _cairo_traps_init (&traps);
+  bo_contour_to_traps (poly->Clipped->contours, &traps);
+  _cairo_traps_fini (&traps);
   hidgl_flush_triangles (&buffer);
 
   /* Unassign our stencil buffer bit */
