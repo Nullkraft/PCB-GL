@@ -37,6 +37,23 @@ PCB_SRCS = \
 	box.h \
 	buffer.c \
 	buffer.h \
+	cairo/cairo.h \
+	cairo/cairoint-minimal.h \
+	cairo/cairo-bentley-ottmann.c \
+	cairo/cairo-combsort-private.h \
+	cairo/cairo-compiler-private.h \
+	cairo/cairo-fixed-private.h \
+	cairo/cairo-fixed-type-private.h \
+	cairo/cairo-freelist.c \
+	cairo/cairo-freelist-private.h \
+	cairo/cairo-list-private.h \
+	cairo/cairo-malloc-private.h \
+	cairo/cairo-traps.c \
+	cairo/cairo-traps-private.h \
+	cairo/cairo-types-private.h \
+	cairo/cairo-wideint.c \
+	cairo/cairo-wideint-private.h \
+	cairo/cairo-wideint-type-private.h \
 	change.c \
 	change.h \
 	clip.c \
@@ -130,6 +147,7 @@ PCB_SRCS = \
 	set.h \
 	strflags.c \
 	strflags.h \
+	sweep.h \
 	thermal.c \
 	thermal.h \
 	undo.c \
