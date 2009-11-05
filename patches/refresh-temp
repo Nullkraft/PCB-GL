@@ -1,0 +1,80 @@
+Bottom: 578b48bb92c5f362422841bdadac5157c8136763
+Top:    05584dc49b8ce21decb3dcca9758629e91970a1c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-05 16:48:32 +0000
+
+Refresh of bentley-ottann-test-implementa
+
+---
+
+diff --git a/src/cairo/cairo-bentley-ottmann.c b/src/cairo/cairo-bentley-ottmann.c
+index 94c71eb..057f4aa 100644
+--- a/src/cairo/cairo-bentley-ottmann.c
++++ b/src/cairo/cairo-bentley-ottmann.c
+@@ -1804,8 +1804,8 @@ poly_area_to_start_events (POLYAREA                *poly,
+ }
+ 
+ 
+-cairo_traps_t *
+-bo_poly_to_traps (POLYAREA *poly)
++cairo_status_t
++bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps)
+ {
+   int intersections;
+   cairo_status_t status;
+@@ -1817,12 +1817,8 @@ bo_poly_to_traps (POLYAREA *poly)
+   int i;
+   int n;
+   POLYAREA *pa;
+-  cairo_traps_t int_traps;
+-  cairo_traps_t *traps = &int_traps;
+   PLINE *contour;
+ 
+-  _cairo_traps_init (traps);
+-
+   pa = poly;
+   do {
+     for (contour = pa->contours; contour != NULL; contour = contour->next)
+@@ -1841,7 +1837,7 @@ bo_poly_to_traps (POLYAREA *poly)
+                                         sizeof (cairo_bo_event_t *),
+                                         sizeof (cairo_bo_event_t *));
+       if (unlikely (events == NULL))
+-          return NULL;
++          return CAIRO_STATUS_NO_MEMORY;
+ 
+       event_ptrs = (cairo_bo_event_t **) (events + num_events);
+   }
+@@ -1902,5 +1898,5 @@ bo_poly_to_traps (POLYAREA *poly)
+   if (events != stack_events)
+       free (events);
+ 
+-  return traps;
++  return CAIRO_STATUS_SUCCESS;
+ }
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index b37a26a..ac247ec 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -638,8 +638,11 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+   PLINE *contour;
+   struct do_hole_info info;
+   int stencil_bit;
++  cairo_traps_t traps;
+ 
+-  bo_poly_to_traps (poly->Clipped);
++  _cairo_traps_init (&traps);
++  bo_poly_to_traps (poly->Clipped, &traps);
++  _cairo_traps_fini (&traps);
+ 
+   return;
+ 
+diff --git a/src/sweep.h b/src/sweep.h
+new file mode 100644
+index 0000000..c6b14ad
+--- /dev/null
++++ b/src/sweep.h
+@@ -0,0 +1,4 @@
++#include "cairo/cairoint.h"
++
++cairo_status_t bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps);
++cairo_status_t bo_contour_to_traps (PLINE *contour, cairo_traps_t *traps);
