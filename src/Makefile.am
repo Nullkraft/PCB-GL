@@ -46,7 +46,6 @@ PCB_SRCS = \
 	cairo/cairo-fixed-type-private.h \
 	cairo/cairo-freelist.c \
 	cairo/cairo-freelist-private.h \
-	cairo/cairo-list-private.h \
 	cairo/cairo-malloc-private.h \
 	cairo/cairo-traps.c \
 	cairo/cairo-traps-private.h \
