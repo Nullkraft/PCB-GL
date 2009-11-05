@@ -1,5 +1,5 @@
 Bottom: a66be8038dc82718693b22cc89fa87976baec323
-Top:    5c74648554387dabe7afa003398d7bd70657df8d
+Top:    9e5c7e887557e7e8b02e7fc90316655db22dda97
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-05 19:03:07 +0000
 
@@ -2804,15 +2804,15 @@ index 6c43402..0000000
 -
 -#endif /* CAIRO_H */
 diff --git a/src/cairo/cairoint-minimal.h b/src/cairo/cairoint-minimal.h
-index 4bde38d..99f452e 100644
+index 4bde38d..4b6d20b 100644
 --- a/src/cairo/cairoint-minimal.h
 +++ b/src/cairo/cairoint-minimal.h
-@@ -67,7 +67,7 @@
+@@ -67,8 +67,7 @@
  #include <limits.h>
  #include <stdio.h>
  
 -#include "cairo.h"
+-#include <pixman.h>
 +#include "cairo-minimal.h"
- #include <pixman.h>
  
  #include "cairo-compiler-private.h"
