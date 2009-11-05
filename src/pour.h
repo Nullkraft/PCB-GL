@@ -43,5 +43,6 @@ void CopyAttachedPourToLayer (void);
 int InitPourClip(DataType *d, LayerType *l, PourType *p);
 void RestoreToPours(DataType *, int, void *, void *);
 void ClearFromPours(DataType *, int, void *, void *);
+void MarkPourIslands(DataType *, int, void *, void *);
 
 #endif /* __POUR_INCLUDED__ */
