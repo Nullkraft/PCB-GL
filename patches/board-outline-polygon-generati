@@ -1,5 +1,5 @@
 Bottom: 37f50e63fa17210bde0d9aede3be06369a119319
-Top:    4ae672abe0bd947cd1214507dfb391e5771b84a1
+Top:    ba2fa45a2ce66e29c539d87bde21d32455ae6bc5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-05 16:51:20 +0000
 
@@ -79,7 +79,7 @@ index 3f101be..be37956 100644
  
    last_depth_computed = depth;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index cc5c259..82098ca 100644
+index cc5c259..14f125c 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -45,6 +45,7 @@
@@ -201,12 +201,14 @@ index cc5c259..82098ca 100644
      gui->set_layer (NULL, SL (FINISHED, 0), 0);
    }
  
-@@ -1577,8 +1616,10 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1576,9 +1615,11 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+     DrawLayerGroup (drawn_groups [i], drawn_area);
  
  #if 1
-     if (!global_view_2d &&
+-    if (!global_view_2d &&
 -        drawn_groups[i] > min_phys_group &&
 -        drawn_groups[i] <= max_phys_group) {
++    if (!global_view_2d && i > 0 &&
 +        drawn_groups[i] >= min_phys_group &&
 +        drawn_groups[i] <= max_phys_group &&
 +        drawn_groups[i - 1] >= min_phys_group &&
