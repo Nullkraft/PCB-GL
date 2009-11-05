@@ -33,7 +33,7 @@
  *	Keith R. Packard <keithp@keithp.com>
  */
 
-#include "cairoint.h"
+#include "cairo-wideint-private.h"
 
 #if HAVE_UINT64_T
 

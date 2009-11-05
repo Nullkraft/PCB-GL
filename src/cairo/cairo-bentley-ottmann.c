@@ -38,8 +38,10 @@
  */
 
 /* Provide definitions for standalone compilation */
-#include "cairoint.h"
-
+#include "cairoint-minimal.h"
+#include "cairo-malloc-private.h"
+#include "cairo-traps-private.h"
+#include "cairo-fixed-private.h"
 #include "cairo-freelist-private.h"
 #include "cairo-combsort-private.h"
 

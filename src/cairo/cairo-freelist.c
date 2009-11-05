@@ -20,7 +20,8 @@
  * OF THIS SOFTWARE.
  */
 
-#include "cairoint.h"
+#include <stdlib.h>
+#include <string.h>
 
 #include "cairo-freelist-private.h"
 
