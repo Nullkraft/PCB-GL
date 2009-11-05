@@ -720,7 +720,7 @@ make_edge_tree (PLINE * pb)
 	}
       s->v = bv;
       s->p = pb;
-      r_insert_entry (ans, (const BoxType *) s, 1);
+//      r_insert_entry (ans, (const BoxType *) s, 1);
     }
   while ((bv = bv->next) != &pb->head);
   return (void *) ans;
@@ -985,7 +985,7 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
       do {
         num_new_nodes = bo_intersect (e, a, b, first_pass);
         if (!first_pass && num_new_nodes != 0)
-          printf ("Got %i new nodes with another pass\n", num_new_nodes);
+//          printf ("Got %i new nodes with another pass\n", num_new_nodes);
         first_pass = 0;
       } while (num_new_nodes != 0);
 
