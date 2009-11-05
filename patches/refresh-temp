@@ -1,0 +1,20 @@
+Bottom: 5c74648554387dabe7afa003398d7bd70657df8d
+Top:    9e5c7e887557e7e8b02e7fc90316655db22dda97
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-05 21:54:09 +0000
+
+Refresh of strip-out-more-cairo-stuff
+
+---
+
+diff --git a/src/cairo/cairoint-minimal.h b/src/cairo/cairoint-minimal.h
+index 99f452e..4b6d20b 100644
+--- a/src/cairo/cairoint-minimal.h
++++ b/src/cairo/cairoint-minimal.h
+@@ -68,7 +68,6 @@
+ #include <stdio.h>
+ 
+ #include "cairo-minimal.h"
+-#include <pixman.h>
+ 
+ #include "cairo-compiler-private.h"
