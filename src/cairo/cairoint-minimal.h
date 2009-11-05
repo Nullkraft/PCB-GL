@@ -67,7 +67,7 @@
 #include <limits.h>
 #include <stdio.h>
 
-#include "cairo.h"
+#include "cairo-minimal.h"
 #include <pixman.h>
 
 #include "cairo-compiler-private.h"
