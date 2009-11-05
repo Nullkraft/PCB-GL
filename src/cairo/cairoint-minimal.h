@@ -68,7 +68,6 @@
 #include <stdio.h>
 
 #include "cairo-minimal.h"
-#include <pixman.h>
 
 #include "cairo-compiler-private.h"
 
