@@ -1804,8 +1804,8 @@ poly_area_to_start_events (POLYAREA                *poly,
 }
 
 
-cairo_traps_t *
-bo_poly_to_traps (POLYAREA *poly)
+cairo_status_t
+bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps)
 {
   int intersections;
   cairo_status_t status;
@@ -1817,11 +1817,7 @@ bo_poly_to_traps (POLYAREA *poly)
   int i;
   int n;
   POLYAREA *pa;
-  cairo_traps_t int_traps;
-  cairo_traps_t *traps = &int_traps;
   PLINE *contour;
-
-  _cairo_traps_init (traps);
 
   pa = poly;
   do {
@@ -1841,7 +1837,7 @@ bo_poly_to_traps (POLYAREA *poly)
                                         sizeof (cairo_bo_event_t *),
                                         sizeof (cairo_bo_event_t *));
       if (unlikely (events == NULL))
-          return NULL;
+          return CAIRO_STATUS_NO_MEMORY;
 
       event_ptrs = (cairo_bo_event_t **) (events + num_events);
   }
@@ -1902,5 +1898,5 @@ bo_poly_to_traps (POLYAREA *poly)
   if (events != stack_events)
       free (events);
 
-  return traps;
+  return CAIRO_STATUS_SUCCESS;
 }
