@@ -1,7 +1,7 @@
-Bottom: eeac5f1e6afc807eb67fc677bc45e9e385ea266e
-Top:    3805caee547618da19873c9f385cbaffe140cb58
+Bottom: 5c29a4c01524118c6b0db37537cea1ffaf8f8d6d
+Top:    dbe206b1e334f7a7b2f28addeec3ebefb2ec89e0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-05 18:47:05 +0000
+Date:   2009-11-05 18:47:22 +0000
 
 Remove unused cairo bits
 
@@ -214,7 +214,7 @@ index 8532f62..0000000
 -
 -#endif
 diff --git a/src/cairo/cairo-bentley-ottmann.c b/src/cairo/cairo-bentley-ottmann.c
-index b59df45..fcc0e66 100644
+index 3d6a0b3..92679f8 100644
 --- a/src/cairo/cairo-bentley-ottmann.c
 +++ b/src/cairo/cairo-bentley-ottmann.c
 @@ -38,8 +38,10 @@
@@ -5994,12 +5994,11 @@ index a9207a1..0000000
 -
 -#endif
 diff --git a/src/sweep.h b/src/sweep.h
-index c6b14ad..257664f 100644
+index 005adf5..2d084ed 100644
 --- a/src/sweep.h
 +++ b/src/sweep.h
-@@ -1,4 +1,4 @@
+@@ -1,3 +1,3 @@
 -#include "cairo/cairoint.h"
 +#include "cairo/cairo-traps-private.h"
  
  cairo_status_t bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps);
- cairo_status_t bo_contour_to_traps (PLINE *contour, cairo_traps_t *traps);
