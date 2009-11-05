@@ -23,13 +23,26 @@
 #ifndef __HIDGL_INCLUDED__
 #define __HIDGL_INCLUDED__
 
+typedef struct {
+  GLfloat x;
+  GLfloat y;
+  GLfloat z;
+  GLfloat r;
+  GLfloat g;
+  GLfloat b;
+  GLfloat a;
+} tri_array_element;
+
 #define TRIANGLE_ARRAY_SIZE 5461
-#define TRIANGLE_ARRAY_BYTES (3 * 3 * sizeof (GLfloat) * TRIANGLE_ARRAY_SIZE)
+#define TRIANGLE_ARRAY_BYTES (3 * sizeof (tri_array_element) * TRIANGLE_ARRAY_SIZE)
+
 typedef struct {
 //  GLfloat triangle_array [3 * 3 * TRIANGLE_ARRAY_SIZE];
-  GLfloat *triangle_array;
+//  GLfloat *triangle_array;
+  tri_array_element *triangle_array;
   unsigned int triangle_count;
-  unsigned int coord_comp_count;
+//  unsigned int coord_comp_count;
+  unsigned int array_size;
   GLuint vbo_name;
 } triangle_buffer;
 
@@ -39,22 +52,42 @@ extern float global_depth;
 void hidgl_init_triangle_array (triangle_buffer *buffer);
 void hidgl_flush_triangles (triangle_buffer *buffer);
 void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
+void hidgl_color (GLfloat r, GLfloat g, GLfloat b, GLfloat a);
 
 static inline void
 hidgl_add_triangle_3D (triangle_buffer *buffer,
                        GLfloat x1, GLfloat y1, GLfloat z1,
                        GLfloat x2, GLfloat y2, GLfloat z2,
-                       GLfloat x3, GLfloat y3, GLfloat z3)
+                       GLfloat x3, GLfloat y3, GLfloat z3,
+                       GLfloat r, GLfloat g,
+                       GLfloat b, GLfloat a)
 {
-  buffer->triangle_array [buffer->coord_comp_count++] = x1;
-  buffer->triangle_array [buffer->coord_comp_count++] = y1;
-  buffer->triangle_array [buffer->coord_comp_count++] = z1;
-  buffer->triangle_array [buffer->coord_comp_count++] = x2;
-  buffer->triangle_array [buffer->coord_comp_count++] = y2;
-  buffer->triangle_array [buffer->coord_comp_count++] = z2;
-  buffer->triangle_array [buffer->coord_comp_count++] = x3;
-  buffer->triangle_array [buffer->coord_comp_count++] = y3;
-  buffer->triangle_array [buffer->coord_comp_count++] = z3;
+  int i = 0;
+
+  buffer->triangle_array[buffer->triangle_count * 3 + i].x = x1;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].y = y1;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].z = z1;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].r = r;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].g = g;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].b = b;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].a = a;
+  i++;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].x = x2;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].y = y2;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].z = z2;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].r = r;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].g = g;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].b = b;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].a = a;
+  i++;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].x = x3;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].y = y3;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].z = z3;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].r = r;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].g = g;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].b = b;
+  buffer->triangle_array[buffer->triangle_count * 3 + i].a = a;
+
   buffer->triangle_count++;
 }
 
@@ -62,11 +95,14 @@ static inline void
 hidgl_add_triangle (triangle_buffer *buffer,
                     GLfloat x1, GLfloat y1,
                     GLfloat x2, GLfloat y2,
-                    GLfloat x3, GLfloat y3)
+                    GLfloat x3, GLfloat y3,
+                    GLfloat r, GLfloat g,
+                    GLfloat b, GLfloat a)
 {
   hidgl_add_triangle_3D (buffer, x1, y1, global_depth,
                                  x2, y2, global_depth,
-                                 x3, y3, global_depth);
+                                 x3, y3, global_depth,
+                                 r, g, b, a);
 }
 
 // void draw_grid ()
