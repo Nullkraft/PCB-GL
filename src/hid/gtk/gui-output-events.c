@@ -1341,8 +1341,12 @@ DrawMask (BoxType * screen)
   ghid_global_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
 
   polygon.Clipped = board_outline_poly ();
+  polygon.NoHoles = NULL;
+  polygon.NoHolesValid = 0;
   SET_FLAG (FULLPOLYFLAG, &polygon);
   common_fill_pcb_polygon (out->fgGC, &polygon, screen);
+  poly_Free (&polygon.Clipped);
+  poly_FreeContours (&polygon.NoHoles);
   /* THE GL fill_pcb_polygon doesn't work whilst masking */
 //  gui->fill_pcb_polygon (out->fgGC, &polygon, screen);
 //  gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
