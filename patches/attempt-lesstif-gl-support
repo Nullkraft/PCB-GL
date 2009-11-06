@@ -1,7 +1,7 @@
-Bottom: 45f554e00a38d3b2dc1972bfed7771ff6816b165
+Bottom: add9acde7bba069feb63e8f02d067bcba53c9caa
 Top:    d3e37b08d02176568df844a7a91cc9350b550228
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-06 16:13:19 +0000
+Date:   2009-11-06 16:58:24 +0000
 
 Attempt lesstif GL support
 
@@ -56,7 +56,7 @@ index 3ec426e..31b0f81 100644
  
        gtk )
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 370d816..92d58f3 100644
+index 93bb2b8..92d58f3 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -28,10 +28,14 @@
@@ -1041,15 +1041,6 @@ index 370d816..92d58f3 100644
  }
  
  static void
-@@ -3704,7 +4123,7 @@ lesstif_show_item (void *item)
- 
-   if (pd->left > pd->right)
-     {
--      free (&pd);
-+      free (pd);
-       return;
-     }
-   pd->prev = 0;
 @@ -3777,21 +4196,21 @@ HID lesstif_gui = {
    lesstif_set_layer,
    lesstif_make_gc,
