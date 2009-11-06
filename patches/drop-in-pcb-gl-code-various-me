@@ -1,5 +1,5 @@
 Bottom: d7be9980738fd6f5f35ff4b6426bb0eeab052fee
-Top:    00a2668da2a4878e83e3b481591bf5aa957a63e9
+Top:    cd706d948d8acde4c290f816b48863054d4875d7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-06 15:04:48 +0000
 
@@ -1713,7 +1713,7 @@ index cbdd104..e6d1d06 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 86abad2..32631a3 100644
+index 86abad2..fe465d7 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -297,16 +297,16 @@ have_crosshair_attachments (void)
@@ -1965,7 +1965,7 @@ index 86abad2..32631a3 100644
  }
  
  static gboolean
-@@ -692,53 +739,151 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -692,53 +739,152 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
    if (!first_time_done)
      {
        gport->colormap = gtk_widget_get_colormap (gport->top_window);
@@ -2091,7 +2091,8 @@ index 86abad2..32631a3 100644
 +
 +  glPushMatrix ();
 +  glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
-+            (ghid_flip_y ? -1. : 1.) / gport->zoom, 1);
++            (ghid_flip_y ? -1. : 1.) / gport->zoom,
++            (ghid_flip_x == ghid_flip_y) ? 1. : -1.);
 +  glTranslatef (ghid_flip_x ? gport->view_x0 - PCB->MaxWidth  :
 +                             -gport->view_x0,
 +                ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
@@ -2131,7 +2132,7 @@ index 86abad2..32631a3 100644
    return FALSE;
  }
  
-@@ -749,6 +894,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -749,6 +895,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    gdouble dx, dy;
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
@@ -2146,7 +2147,7 @@ index 86abad2..32631a3 100644
  
    if (out->panning)
      {
-@@ -764,9 +917,18 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -764,9 +918,18 @@ ghid_port_window_motion_cb (GtkWidget * widget,
      }
    x_prev = y_prev = -1;
    moved = ghid_note_event_location (ev);
@@ -2165,7 +2166,7 @@ index 86abad2..32631a3 100644
    return FALSE;
  }
  
-@@ -806,7 +968,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -806,7 +969,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        RestoreCrosshair (TRUE);
        cursor_in_viewport = TRUE;
      }
