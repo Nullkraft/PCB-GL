@@ -146,6 +146,7 @@ biggest (POLYAREA * p)
 {
   POLYAREA *n, *top = NULL;
   PLINE *pl;
+  rtree_t *tree;
   double big = -1;
   if (!p)
     return NULL;
@@ -179,8 +180,11 @@ biggest (POLYAREA * p)
   if (top == p)
     return p;
   pl = top->contours;
+  tree = top->contour_tree;
   top->contours = p->contours;
+  top->contour_tree = p->contour_tree;
   p->contours = pl;
+  p->contour_tree = tree;
   assert (pl);
   assert (p->f);
   assert (p->b);
@@ -1546,6 +1550,8 @@ r_NoHolesPolygonDicer (POLYAREA * pa,
   if (!pa->contours->next)                 /* no holes */
     {
       pa->contours = NULL; /* The callback now owns the contour */
+      /* Don't bother removing it from the POLYAREA's rtree
+         since we're going to free the POLYAREA below anyway */
       emit (p, user_data);
       poly_Free (&pa);
       return;
