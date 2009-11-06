@@ -247,8 +247,8 @@ MoveViaToBuffer (PinTypePtr Via)
 {
   PinTypePtr via;
 
-  RestoreToPours (Source, VIA_TYPE, Via, Via);
   r_delete_entry (Source->via_tree, (BoxType *) Via);
+  RestoreToPours (Source, VIA_TYPE, Via, Via);
   via = GetViaMemory (Dest);
   *via = *Via;
   CLEAR_FLAG (WARNFLAG | FOUNDFLAG, via);
@@ -300,8 +300,8 @@ MoveLineToBuffer (LayerTypePtr Layer, LineTypePtr Line)
   LayerTypePtr lay;
   LineTypePtr line;
 
-  RestoreToPours (Source, LINE_TYPE, Layer, Line);
   r_delete_entry (Layer->line_tree, (BoxTypePtr) Line);
+  RestoreToPours (Source, LINE_TYPE, Layer, Line);
   lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
   line = GetLineMemory (lay);
   *line = *Line;
@@ -330,8 +330,8 @@ MoveArcToBuffer (LayerTypePtr Layer, ArcTypePtr Arc)
   LayerTypePtr lay;
   ArcTypePtr arc;
 
-  RestoreToPours (Source, ARC_TYPE, Layer, Arc);
   r_delete_entry (Layer->arc_tree, (BoxTypePtr) Arc);
+  RestoreToPours (Source, ARC_TYPE, Layer, Arc);
   lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
   arc = GetArcMemory (lay);
   *arc = *Arc;
@@ -388,8 +388,8 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
   LayerTypePtr lay;
   PourTypePtr pour;
 
-  RestoreToPours (Source, POUR_TYPE, Layer, Pour);
   r_delete_entry (Layer->pour_tree, (BoxTypePtr) Pour);
+  RestoreToPours (Source, POUR_TYPE, Layer, Pour);
   lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
   pour = GetPourMemory (lay);
   *pour = *Pour;
