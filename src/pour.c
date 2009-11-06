@@ -424,6 +424,9 @@ get_subtract_pad_poly (PadType * pad, PourType * pour)
 {
   POLYAREA *np;
 
+  if (pad->Clearance == 0)
+    return NULL;
+
   if (TEST_FLAG (SQUAREFLAG, pad))
     np = SquarePadPoly (pad, pad->Thickness + pad->Clearance);
   else
