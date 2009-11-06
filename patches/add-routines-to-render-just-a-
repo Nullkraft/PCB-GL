@@ -1,7 +1,7 @@
-Bottom: 49f473a75c0e440960e9f8cd32d465b7d983252e
-Top:    01f9b7668a677675b617ea6f1490975f4602c90d
+Bottom: 5891a63ce49af7776874c263196f6f2bbf084cff
+Top:    bdcbfdcf2d2a8e288871d1271094296cc43506fc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-06 15:48:21 +0000
+Date:   2009-11-06 15:49:02 +0000
 
 Add routines to render just a single contour
 
@@ -11,7 +11,7 @@ Use them rather than the GLU tessellator
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 05d9428..0882b5c 100644
+index 360aa83..6931651 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -585,27 +585,7 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
@@ -50,7 +50,7 @@ index 05d9428..0882b5c 100644
  
    /* Ignore the outer contour - we draw it first explicitly*/
    if (curc->Flags.orient == PLF_DIR) {
-@@ -633,7 +614,10 @@ do_hole (const BoxType *b, void *cl)
+@@ -632,7 +613,10 @@ do_hole (const BoxType *b, void *cl)
      }
    }
  
@@ -62,7 +62,7 @@ index 05d9428..0882b5c 100644
    return 1;
  }
  
-@@ -645,18 +629,10 @@ static int assigned_bits = 0;
+@@ -644,18 +628,10 @@ static int assigned_bits = 0;
  void
  hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
  {
@@ -81,7 +81,7 @@ index 05d9428..0882b5c 100644
    info.scale = scale;
    global_scale = scale;
  
-@@ -676,19 +652,6 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -675,19 +651,6 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    /* Flush out any existing geoemtry to be rendered */
    hidgl_flush_triangles (&buffer);
  
@@ -101,7 +101,7 @@ index 05d9428..0882b5c 100644
    glPushAttrib (GL_STENCIL_BUFFER_BIT);                   // Save the write mask etc.. for final restore
    glPushAttrib (GL_STENCIL_BUFFER_BIT |                   // Resave the stencil write-mask etc.., and
                  GL_COLOR_BUFFER_BIT);                     // the colour buffer write mask etc.. for part way restore
-@@ -717,17 +680,15 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -716,17 +679,15 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
                                                                // any bits permitted by the stencil writemask
  
    /* Draw the polygon outer */
