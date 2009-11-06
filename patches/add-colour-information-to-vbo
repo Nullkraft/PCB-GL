@@ -1,7 +1,7 @@
-Bottom: 1a49297621358e05f9da1c4e1d78dd2d19fb625e
-Top:    c89e90f4e964a6da7f74d642514e9f3fa3445f47
+Bottom: 2be8b6c550b06f1ce5706871391e2bae3159cfbc
+Top:    bc1094a6d4278daf0615c25977e96d9a71e3e6b8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-05 16:56:07 +0000
+Date:   2009-11-06 16:35:19 +0000
 
 Add colour information to VBO
 
@@ -16,10 +16,10 @@ Add colour information to VBO
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index e4c83ba..e8d2aa8 100644
+index ebc2ce5..db2786f 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -49,6 +49,10 @@ RCSID ("$Id: $");
+@@ -47,6 +47,10 @@ RCSID ("$Id: $");
  
  triangle_buffer buffer;
  float global_depth = 0;
@@ -30,7 +30,7 @@ index e4c83ba..e8d2aa8 100644
  
  #if 0
  triangle_array *
-@@ -65,7 +69,8 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
+@@ -63,7 +67,8 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
    const GLubyte *errString;
  
    buffer->triangle_count = 0;
@@ -40,7 +40,7 @@ index e4c83ba..e8d2aa8 100644
  
    glEnableClientState (GL_VERTEX_ARRAY);
    glGenBuffers (1, &buffer->vbo_name);
-@@ -94,9 +99,12 @@ hidgl_flush_triangles (triangle_buffer *buffer)
+@@ -92,9 +97,12 @@ hidgl_flush_triangles (triangle_buffer *buffer)
    glUnmapBuffer (GL_ARRAY_BUFFER);
  
    glEnableClientState (GL_VERTEX_ARRAY);
@@ -54,7 +54,7 @@ index e4c83ba..e8d2aa8 100644
  
  //  buffer->triangle_count = 0;
  //  buffer->coord_comp_count = 0;
-@@ -110,17 +118,30 @@ hidgl_flush_triangles (triangle_buffer *buffer)
+@@ -108,17 +116,30 @@ hidgl_flush_triangles (triangle_buffer *buffer)
  void
  hidgl_ensure_triangle_space (triangle_buffer *buffer, int count)
  {
@@ -88,7 +88,7 @@ index e4c83ba..e8d2aa8 100644
  //static int cur_mask = -1;
  
  
-@@ -234,7 +255,7 @@ static void draw_cap (double width, int x, int y, double angle, double scale)
+@@ -245,7 +266,7 @@ static void draw_cap (double width, int x, int y, double angle, double scale)
    for (i = 0; i < slices; i++) {
      capx =  radius * cosf (angle * M_PI / 180. + ((float)(i + 1)) * M_PI / (float)slices) + x;
      capy = -radius * sinf (angle * M_PI / 180. + ((float)(i + 1)) * M_PI / (float)slices) + y;
@@ -97,7 +97,7 @@ index e4c83ba..e8d2aa8 100644
      last_capx = capx;
      last_capy = capy;
    }
-@@ -299,10 +320,10 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
+@@ -310,10 +331,10 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
    hidgl_ensure_triangle_space (&buffer, 2);
    hidgl_add_triangle (&buffer, x1 - wdx, y1 - wdy,
                                 x2 - wdx, y2 - wdy,
@@ -110,7 +110,7 @@ index e4c83ba..e8d2aa8 100644
  
    /* Don't bother capping hairlines */
    if (circular_caps && !hairline)
-@@ -372,10 +393,10 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
+@@ -383,10 +404,10 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
      outer_x = -outer_r * cos_ang + x;  outer_y = outer_r * sin_ang + y;
      hidgl_add_triangle (&buffer, last_inner_x, last_inner_y,
                                   last_outer_x, last_outer_y,
@@ -123,7 +123,7 @@ index e4c83ba..e8d2aa8 100644
      last_inner_x = inner_x;  last_inner_y = inner_y;
      last_outer_x = outer_x;  last_outer_y = outer_y;
    }
-@@ -431,7 +452,7 @@ hidgl_fill_circle (int vx, int vy, int vr, double scale)
+@@ -442,7 +463,7 @@ hidgl_fill_circle (int vx, int vy, int vr, double scale)
      float x, y;
      x = radius * cosf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
      y = radius * sinf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
@@ -132,7 +132,7 @@ index e4c83ba..e8d2aa8 100644
      last_x = x;
      last_y = y;
    }
-@@ -521,7 +542,7 @@ myVertex (GLdouble *vertex_data)
+@@ -532,7 +553,7 @@ myVertex (GLdouble *vertex_data)
            hidgl_add_triangle (&buffer,
                                triangle_vertices [0], triangle_vertices [1],
                                triangle_vertices [2], triangle_vertices [3],
@@ -141,7 +141,7 @@ index e4c83ba..e8d2aa8 100644
  #else
            hidgl_draw_line (Square_Cap, global_scale,
                             triangle_vertices [0], triangle_vertices [1],
-@@ -556,7 +577,7 @@ myVertex (GLdouble *vertex_data)
+@@ -567,7 +588,7 @@ myVertex (GLdouble *vertex_data)
            hidgl_add_triangle (&buffer,
                                triangle_vertices [0], triangle_vertices [1],
                                triangle_vertices [2], triangle_vertices [3],
@@ -150,7 +150,7 @@ index e4c83ba..e8d2aa8 100644
            triangle_comp_idx = 0;
            stashed_vertices = 0;
          }
-@@ -728,8 +749,8 @@ void
+@@ -755,8 +776,8 @@ void
  hidgl_fill_rect (int x1, int y1, int x2, int y2)
  {
    hidgl_ensure_triangle_space (&buffer, 2);
