@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <time.h>
 
 #include "global.h"
 #include "data.h"
@@ -311,6 +312,8 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   int i;
   static int saved_layer_stack[MAX_LAYER];
   FlagType save_thindraw;
+  clock_t start, end;
+  double elapsed;
 
   save_thindraw = PCB->Flags;
   CLEAR_FLAG(THINDRAWFLAG, PCB);
@@ -403,6 +406,8 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   region.X2 = PCB->MaxWidth;
   region.Y2 = PCB->MaxHeight;
 
+  start = clock ();
+
   if (! multi_file)
     {
       pagecount = 1;
@@ -421,6 +426,10 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   doing_toc = 0;
   lastgroup = -1;
   hid_expose_callback (&ps_hid, &region, 0);
+
+  end = clock ();
+  elapsed = ((double) (end - start)) / CLOCKS_PER_SEC;
+  printf ("Printing file took %f\n", elapsed);
 
   if (f)
     fprintf (f, "showpage\n");
