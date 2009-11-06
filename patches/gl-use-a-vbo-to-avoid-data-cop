@@ -1,7 +1,7 @@
-Bottom: 3a93a68cbc1d8027c1f9de85d7f95049e16685ac
-Top:    1a49297621358e05f9da1c4e1d78dd2d19fb625e
+Bottom: 6b961dfd86ce25e88b660646bdebe5828309f6e0
+Top:    2be8b6c550b06f1ce5706871391e2bae3159cfbc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-05 16:54:54 +0000
+Date:   2009-11-06 16:35:18 +0000
 
 GL: Use a VBO to avoid data-copying
 
@@ -19,10 +19,10 @@ BUGS: Breakage due to graphics operations being called outside the
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 54c2b3b..e4c83ba 100644
+index cb53763..ebc2ce5 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -61,10 +61,28 @@ hidgl_new_triangle_array (void)
+@@ -59,10 +59,28 @@ hidgl_new_triangle_array (void)
  void
  hidgl_init_triangle_array (triangle_buffer *buffer)
  {
@@ -53,7 +53,7 @@ index 54c2b3b..e4c83ba 100644
  }
  
  void
-@@ -73,9 +91,20 @@ hidgl_flush_triangles (triangle_buffer *buffer)
+@@ -71,9 +89,20 @@ hidgl_flush_triangles (triangle_buffer *buffer)
    if (buffer->triangle_count == 0)
      return;
  
@@ -96,10 +96,10 @@ index aa2985e..1005235 100644
  
  extern triangle_buffer buffer;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 373b865..9ec925d 100644
+index 0598ef9..a0ea452 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1825,6 +1825,10 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1828,6 +1828,10 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    gui->set_layer (NULL, INDEXOFCURRENT, 0);
    gui->set_layer (NULL, SL_FINISHED, 0);
  
@@ -110,7 +110,7 @@ index 373b865..9ec925d 100644
    draw_grid (&region);
  
    hidgl_init_triangle_array (&buffer);
-@@ -1845,6 +1849,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1848,6 +1852,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  
    hidgl_flush_triangles (&buffer);
  
