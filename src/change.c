@@ -1107,10 +1107,12 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
   AddObjectToFlagUndoList (LINE_TYPE, Layer, Line, Line);
   TOGGLE_FLAG (CLEARLINEFLAG, Line);
   if (TEST_FLAG(CLEARLINEFLAG, Line))
-  {
-  AddObjectToClearPourUndoList (LINE_TYPE, Layer, Line, Line, True);
-  ClearFromPours (PCB->Data, LINE_TYPE, Layer, Line);
-  }
+    {
+      AddObjectToClearPourUndoList (LINE_TYPE, Layer, Line, Line, True);
+      ClearFromPours (PCB->Data, LINE_TYPE, Layer, Line);
+    }
+  else
+    MarkPourIslands (PCB->Data, LINE_TYPE, Layer, Line);
   DrawLine (Layer, Line, 0);
   return (Line);
 }
@@ -1155,9 +1157,11 @@ ChangeArcJoin (LayerTypePtr Layer, ArcTypePtr Arc)
   TOGGLE_FLAG (CLEARLINEFLAG, Arc);
   if (TEST_FLAG (CLEARLINEFLAG, Arc))
     {
-      ClearFromPours (PCB->Data, ARC_TYPE, Layer, Arc);
       AddObjectToClearPourUndoList (ARC_TYPE, Layer, Arc, Arc, True);
+      ClearFromPours (PCB->Data, ARC_TYPE, Layer, Arc);
     }
+  else
+    MarkPourIslands (PCB->Data, ARC_TYPE, Layer, Arc);
   DrawArc (Layer, Arc, 0);
   return (Arc);
 }
@@ -1201,10 +1205,12 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
   AddObjectToFlagUndoList (LINE_TYPE, Layer, Text, Text);
   TOGGLE_FLAG (CLEARLINEFLAG, Text);
   if (TEST_FLAG(CLEARLINEFLAG, Text))
-  {
-  AddObjectToClearPourUndoList (TEXT_TYPE, Layer, Text, Text, True);
-  ClearFromPours (PCB->Data, TEXT_TYPE, Layer, Text);
-  }
+    {
+      AddObjectToClearPourUndoList (TEXT_TYPE, Layer, Text, Text, True);
+      ClearFromPours (PCB->Data, TEXT_TYPE, Layer, Text);
+    }
+  else
+    MarkPourIslands (PCB->Data, TEXT_TYPE, Layer, Text);
   DrawText (Layer, Text, 0);
   return (Text);
 }
@@ -1226,10 +1232,12 @@ ChangePourJoin (LayerTypePtr Layer, PourTypePtr pour)
   AddObjectToFlagUndoList (LINE_TYPE, Layer, pour, pour);
   TOGGLE_FLAG (CLEARLINEFLAG, pour);
   if (TEST_FLAG(CLEARLINEFLAG, pour))
-  {
-  AddObjectToClearPourUndoList (POUR_TYPE, Layer, pour, pour, True);
-  ClearFromPours (PCB->Data, POUR_TYPE, Layer, pour);
-  }
+    {
+      AddObjectToClearPourUndoList (POUR_TYPE, Layer, pour, pour, True);
+      ClearFromPours (PCB->Data, POUR_TYPE, Layer, pour);
+    }
+  else
+    MarkPourIslands (PCB->Data, POUR_TYPE, Layer, pour);
   DrawPour (Layer, pour, 0);
   return (pour);
 }
@@ -1602,6 +1610,8 @@ ChangeHole (PinTypePtr Via)
     {
       AddObjectTo2ndSizeUndoList (VIA_TYPE, Via, Via, Via);
       Via->DrillingHole = Via->Thickness - MIN_PINORVIACOPPER;
+#warning FIXME Later: Come back to check this
+      MarkPourIslands (PCB->Data, VIA_TYPE, Via, Via);
     }
   DrawVia (Via, 0);
   Draw ();
