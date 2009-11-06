@@ -1,7 +1,7 @@
-Bottom: e9c76e6ea92c24c45c9aea42b5fbafcafe2cdc41
-Top:    45f554e00a38d3b2dc1972bfed7771ff6816b165
+Bottom: b18a8ee7da523f071c413a0b09352fbdcc251dfc
+Top:    5cfce6685ff83a13aea511bd36aa87f1a0115756
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-06 16:38:24 +0000
+Date:   2009-11-06 16:48:43 +0000
 
 Fixup depth for layers and element marks
 
@@ -22,10 +22,10 @@ index be37956..4ae4931 100644
      if (SL_SIDE (idx) == SL_TOP_SIDE) {
        depth = (max_depth + 3) * 200 / gport->zoom;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 14f125c..ea1c120 100644
+index 42769a9..6fd9aa5 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1677,12 +1677,14 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1669,12 +1669,14 @@ ghid_draw_everything (BoxTypePtr drawn_area)
      gui->set_layer (NULL, SL (FINISHED, 0), 0);
    }
    /* Draw top silkscreen */
@@ -42,7 +42,7 @@ index 14f125c..ea1c120 100644
      DrawSilk (1, SOLDER_LAYER, drawn_area);
      gui->set_layer (NULL, SL (FINISHED, 0), 0);
    }
-@@ -1850,13 +1852,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1842,13 +1844,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
               gport->bg_color.green / 65535.,
               gport->bg_color.blue / 65535.);
  
@@ -56,7 +56,7 @@ index 14f125c..ea1c120 100644
    /* TODO: Background image */
  
    hidgl_init_triangle_array (&buffer);
-@@ -1877,6 +1872,37 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1869,6 +1864,37 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
  
