@@ -1,5 +1,5 @@
 Bottom: a5b273b2d49f02c750d3968264c4e40e3e2d8ae6
-Top:    dcc79fc5f3a9aac43ef60099515a4551b77c0a71
+Top:    f33fe881847aa508a15622dc561b81206586d595
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-06 16:24:50 +0000
 
@@ -358,7 +358,7 @@ index 9439d28..3f101be 100644
  void
  ghid_set_color (hidGC gc, const char *name)
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 7462513..2e0502c 100644
+index 7462513..d6d1e83 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -46,6 +46,7 @@
@@ -742,8 +742,8 @@ index 7462513..2e0502c 100644
 +    layernum = layers[i];
 +    Layer = PCB->Data->Layer + layers[i];
 +
-+    if (strcmp (Layer->Name, "outline") == 0 ||
-+        strcmp (Layer->Name, "route") == 0)
++    if (strcasecmp (Layer->Name, "outline") == 0 ||
++        strcasecmp (Layer->Name, "route") == 0)
 +      rv = 0;
 +
 +    if (layernum < max_layer /*&& Layer->On*/) {
