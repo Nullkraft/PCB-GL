@@ -783,7 +783,7 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
 {
   int n;
   /* write information about non empty layers */
-  if (layer->LineN || layer->ArcN || layer->TextN || layer->PolygonN ||
+  if (layer->LineN || layer->ArcN || layer->TextN || layer->PourN ||
       (layer->Name && *layer->Name))
     {
       fprintf (FP, "Layer(%i ", (int) Number + 1);
@@ -818,14 +818,14 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
 	  PrintQuotedString (FP, EMPTY (text->TextString));
 	  fprintf (FP, " %s]\n", F2S (text, TEXT_TYPE));
 	}
-      for (n = 0; n < layer->PolygonN; n++)
+      for (n = 0; n < layer->PourN; n++)
 	{
-	  PolygonTypePtr polygon = &layer->Polygon[n];
+	  PourTypePtr pour = &layer->Pour[n];
 	  int p, i = 0;
-	  fprintf (FP, "\tPolygon(%s)\n\t(", F2S (polygon, POLYGON_TYPE));
-	  for (p = 0; p < polygon->PointN; p++)
+	  fprintf (FP, "\tPolygon(%s)\n\t(", F2S (pour, POUR_TYPE));
+	  for (p = 0; p < pour->PointN; p++)
 	    {
-	      PointTypePtr point = &polygon->Points[p];
+	      PointTypePtr point = &pour->Points[p];
 	      if (i++ % 5 == 0)
 		fputs ("\n\t\t", FP);
 	      fprintf (FP, "[%i %i] ", (int) point->X, (int) point->Y);
