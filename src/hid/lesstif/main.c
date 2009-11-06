@@ -1586,9 +1586,9 @@ work_area_expose (Widget work_area, void *me,
   int max_x, max_y;
   Dimension width, height;
 
+  n = 0;
   stdarg (XtNwidth, &width);
   stdarg (XtNheight, &height);
-  stdarg (XmNbackground, &bgcolor);
   XtGetValues (work_area, args, n);
 
   e = &(cbs->event->xexpose);
