@@ -1,5 +1,5 @@
 Bottom: 2ffa6b61d001a3fcb185786005ce42fabb1d6f20
-Top:    fa804a14603fa551f2d399664c7b12f51ed7f3bc
+Top:    dd4aa5c431d99808445cf0ddf36ad11505a54816
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-06 00:53:05 +0000
 
@@ -56,7 +56,7 @@ index 3ec426e..31b0f81 100644
  
        gtk )
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 370d816..9d1a4a9 100644
+index 370d816..92d58f3 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -28,10 +28,14 @@
@@ -115,9 +115,9 @@ index 370d816..9d1a4a9 100644
 +  int max_x, max_y;
 +  Dimension width, height;
 +
++  n = 0;
 +  stdarg (XtNwidth, &width);
 +  stdarg (XtNheight, &height);
-+  stdarg (XmNbackground, &bgcolor);
 +  XtGetValues (work_area, args, n);
  
 -  show_crosshair (0);
