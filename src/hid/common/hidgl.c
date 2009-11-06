@@ -43,8 +43,6 @@
 #include <dmalloc.h>
 #endif
 
-#define PIXELS_PER_CIRCLINE 5.
-
 RCSID ("$Id: $");
 
 triangle_buffer buffer;
@@ -182,6 +180,19 @@ draw_grid ()
 #endif
 /* ------------------------------------------------------------ */
 
+#define MAX_PIXELS_ARC_TO_CHORD 0.5
+#define MIN_SLICES 6
+int calc_slices (float pix_radius, float sweep_angle)
+{
+  float slices;
+
+  if (pix_radius <= MAX_PIXELS_ARC_TO_CHORD)
+    return MIN_SLICES;
+
+  slices = sweep_angle / acosf (1 - MAX_PIXELS_ARC_TO_CHORD / pix_radius) / 2.;
+  return (int)ceilf (slices);
+}
+
 #define MIN_TRIANGLES_PER_CAP 3
 #define MAX_TRIANGLES_PER_CAP 90
 static void draw_cap (double width, int x, int y, double angle, double scale)
@@ -189,7 +200,7 @@ static void draw_cap (double width, int x, int y, double angle, double scale)
   float last_capx, last_capy;
   float capx, capy;
   float radius = width / 2.;
-  int slices = M_PI * radius / scale / PIXELS_PER_CIRCLINE;
+  int slices = calc_slices (radius / scale, M_PI);
   int i;
 
   if (slices < MIN_TRIANGLES_PER_CAP)
@@ -312,8 +323,15 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
   inner_r = rx - width / 2.;
   outer_r = rx + width / 2.;
 
-  slices = M_PI * (rx + width / 2.) * abs (delta_angle) / 360. /
-           scale / PIXELS_PER_CIRCLINE;
+  if (delta_angle < 0) {
+    start_angle += delta_angle;
+    delta_angle = - delta_angle;
+  }
+
+  start_angle_rad = start_angle * M_PI / 180.;
+  delta_angle_rad = delta_angle * M_PI / 180.;
+
+  slices = calc_slices ((rx + width / 2.) / scale, delta_angle_rad);
 
   if (slices < MIN_SLICES_PER_ARC)
     slices = MIN_SLICES_PER_ARC;
@@ -323,13 +341,6 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
 
   hidgl_ensure_triangle_space (&buffer, 2 * slices);
 
-  if (delta_angle < 0) {
-    start_angle += delta_angle;
-    delta_angle = - delta_angle;
-  }
-
-  start_angle_rad = start_angle * M_PI / 180.;
-  delta_angle_rad = delta_angle * M_PI / 180.;
   angle_incr_rad = delta_angle_rad / (float)slices;
 
   cos_ang = cosf (start_angle_rad);
@@ -385,7 +396,7 @@ hidgl_fill_circle (int vx, int vy, int vr, double scale)
   int slices;
   int i;
 
-  slices = M_PI * 2 * vr / scale / PIXELS_PER_CIRCLINE;
+  slices = calc_slices (vr / scale, 2 * M_PI);
 
   if (slices < MIN_TRIANGLES_PER_CIRCLE)
     slices = MIN_TRIANGLES_PER_CIRCLE;
@@ -595,8 +606,7 @@ do_hole (const BoxType *b, void *cl)
    * hidgl_fill_circle to draw this contour.
    */
   if (curc->is_round) {
-    double slices = M_PI * 2 * curc->radius /
-                    info->scale / PIXELS_PER_CIRCLINE;
+    double slices = calc_slices (curc->radius / info->scale, 2 * M_PI);
     if (slices < curc->Count) {
       hidgl_fill_circle (curc->cx, curc->cy, curc->radius, info->scale);
       return 1;
