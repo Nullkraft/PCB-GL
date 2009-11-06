@@ -105,7 +105,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
-  glOrtho (0, width, height, 0, 0, 100);
+  glOrtho (0, width, height, 0, -100000, 100000);
   glMatrixMode (GL_MODELVIEW);
   glLoadIdentity ();
   glTranslatef (0.0f, 0.0f, -Z_NEAR);
