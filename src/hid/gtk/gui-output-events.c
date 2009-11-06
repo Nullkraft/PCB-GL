@@ -847,7 +847,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 
   glPushMatrix ();
   glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
-            (ghid_flip_y ? -1. : 1.) / gport->zoom, 1);
+            (ghid_flip_y ? -1. : 1.) / gport->zoom,
+            (ghid_flip_x == ghid_flip_y) ? 1. : -1.);
   glTranslatef (ghid_flip_x ? gport->view_x0 - PCB->MaxWidth  :
                              -gport->view_x0,
                 ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
