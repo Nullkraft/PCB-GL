@@ -39,9 +39,9 @@
 #ifndef CAIRO_TYPES_PRIVATE_H
 #define CAIRO_TYPES_PRIVATE_H
 
-#include "cairo.h"
+#include "cairo-minimal.h"
 #include "cairo-fixed-type-private.h"
-#include "cairo-list-private.h"
+#include "cairo-compiler-private.h"
 
 typedef struct _cairo_array cairo_array_t;
 typedef struct _cairo_backend cairo_backend_t;
