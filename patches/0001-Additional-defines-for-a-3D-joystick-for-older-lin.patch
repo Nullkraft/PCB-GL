@@ -1,7 +1,7 @@
-Bottom: bd45c65dccfc0beb51e4fce57b946a80a1af22c7
+Bottom: 4c50526ffc5973759b94ce2d0e239762104d645e
 Top:    4c50526ffc5973759b94ce2d0e239762104d645e
 Author: Bert Timmerman <bert.timmerman@xs4all.nl>
-Date:   2009-11-06 16:11:44 +0000
+Date:   2009-11-06 16:13:16 +0000
 
 From 22f4d1dd450f218172b8ee0edf9a2aaef6c20f2f Mon Sep 17 00:00:00 2001
 Subject: [PATCH] Additional defines for a 3D joystick for (older) linux versions which do not have these defines in <linux/input.h>
@@ -9,26 +9,4 @@ Subject: [PATCH] Additional defines for a 3D joystick for (older) linux versions
 
 ---
 
-diff --git a/src/hid/gtk/snavi.c b/src/hid/gtk/snavi.c
-index 6dd1b5f..618be32 100644
---- a/src/hid/gtk/snavi.c
-+++ b/src/hid/gtk/snavi.c
-@@ -21,6 +21,19 @@
- 
- #include <linux/types.h>
- #include <linux/input.h>
-+/*
-+Additional defines for a 3D joystick for (older) linux versions which do not
-+have these defines in <linux/input.h>
-+*/
-+#ifndef REL_RX
-+#define REL_RX                  0x03
-+#endif
-+#ifndef REL_RY
-+#define REL_RY                  0x04
-+#endif
-+#ifndef REL_RZ
-+#define REL_RZ                  0x05
-+#endif
- 
- #include <glib.h>
+
