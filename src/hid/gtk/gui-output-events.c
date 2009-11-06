@@ -477,16 +477,16 @@ have_crosshair_attachments (void)
 #define VCD		8
 
 static void
-draw_right_cross (gint x, gint y)
+draw_right_cross (gint x, gint y, gint z)
 {
-  glVertex2i (x, 0);
-  glVertex2i (x, gport->height);
-  glVertex2i (0, y);
-  glVertex2i (gport->width, y);
+  glVertex3i (x, 0, z);
+  glVertex3i (x, gport->height, z);
+  glVertex3i (0, y, z);
+  glVertex3i (gport->width, y, z);
 }
 
 static void
-draw_slanted_cross (gint x, gint y)
+draw_slanted_cross (gint x, gint y, gint z)
 {
   gint x0, y0, x1, y1;
 
@@ -498,8 +498,8 @@ draw_slanted_cross (gint x, gint y)
   y0 = MAX(0, MIN (y0, gport->height));
   y1 = y - x;
   y1 = MAX(0, MIN (y1, gport->height));
-  glVertex2i (x0, y0);
-  glVertex2i (x1, y1);
+  glVertex3i (x0, y0, z);
+  glVertex3i (x1, y1, z);
 
   x0 = x - (gport->height - y);
   x0 = MAX(0, MIN (x0, gport->width));
@@ -509,12 +509,12 @@ draw_slanted_cross (gint x, gint y)
   y0 = MAX(0, MIN (y0, gport->height));
   y1 = y - (gport->width - x);
   y1 = MAX(0, MIN (y1, gport->height));
-  glVertex2i (x0, y0);
-  glVertex2i (x1, y1);
+  glVertex3i (x0, y0, z);
+  glVertex3i (x1, y1, z);
 }
 
 static void
-draw_dozen_cross (gint x, gint y)
+draw_dozen_cross (gint x, gint y, gint z)
 {
   gint x0, y0, x1, y1;
   gdouble tan60 = sqrt (3);
@@ -527,8 +527,8 @@ draw_dozen_cross (gint x, gint y)
   y0 = MAX(0, MIN (y0, gport->height));
   y1 = y - x * tan60;
   y1 = MAX(0, MIN (y1, gport->height));
-  glVertex2i (x0, y0);
-  glVertex2i (x1, y1);
+  glVertex3i (x0, y0, z);
+  glVertex3i (x1, y1, z);
 
   x0 = x + (gport->height - y) * tan60;
   x0 = MAX(0, MIN (x0, gport->width));
@@ -538,8 +538,8 @@ draw_dozen_cross (gint x, gint y)
   y0 = MAX(0, MIN (y0, gport->height));
   y1 = y - x / tan60;
   y1 = MAX(0, MIN (y1, gport->height));
-  glVertex2i (x0, y0);
-  glVertex2i (x1, y1);
+  glVertex3i (x0, y0, z);
+  glVertex3i (x1, y1, z);
 
   x0 = x - (gport->height - y) / tan60;
   x0 = MAX(0, MIN (x0, gport->width));
@@ -549,8 +549,8 @@ draw_dozen_cross (gint x, gint y)
   y0 = MAX(0, MIN (y0, gport->height));
   y1 = y - (gport->width - x) * tan60;
   y1 = MAX(0, MIN (y1, gport->height));
-  glVertex2i (x0, y0);
-  glVertex2i (x1, y1);
+  glVertex3i (x0, y0, z);
+  glVertex3i (x1, y1, z);
 
   x0 = x - (gport->height - y) * tan60;
   x0 = MAX(0, MIN (x0, gport->width));
@@ -560,30 +560,31 @@ draw_dozen_cross (gint x, gint y)
   y0 = MAX(0, MIN (y0, gport->height));
   y1 = y - (gport->width - x) / tan60;
   y1 = MAX(0, MIN (y1, gport->height));
-  glVertex2i (x0, y0);
-  glVertex2i (x1, y1);
+  glVertex3i (x0, y0, z);
+  glVertex3i (x1, y1, z);
 }
 
 static void
-draw_crosshair (gint x, gint y)
+draw_crosshair (gint x, gint y, gint z)
 {
   static enum crosshair_shape prev = Basic_Crosshair_Shape;
 
-  draw_right_cross (x, y);
+  draw_right_cross (x, y, z);
   if (prev == Union_Jack_Crosshair_Shape)
-    draw_slanted_cross (x, y);
+    draw_slanted_cross (x, y, z);
   if (prev == Dozen_Crosshair_Shape)
-    draw_dozen_cross (x, y);
+    draw_dozen_cross (x, y, z);
   prev = Crosshair.shape;
 }
 
 void
 ghid_show_crosshair (gboolean show)
 {
-  gint x, y;
-  static gint x_prev = -1, y_prev = -1;
+  gint x, y, z;
+  static gint x_prev = -1, y_prev = -1, z_prev = -1;
   static int done_once = 0;
   static GdkColor cross_color;
+  extern float global_depth;
 
   if (gport->x_crosshair < 0 || ghidgui->creating) {// || !gport->has_entered) {
     printf ("Returning\n");
@@ -598,6 +599,7 @@ ghid_show_crosshair (gboolean show)
     }
   x = DRAW_X (gport->x_crosshair);
   y = DRAW_Y (gport->y_crosshair);
+  z = global_depth;
 
   glEnable (GL_COLOR_LOGIC_OP);
   glLogicOp (GL_XOR);
@@ -613,13 +615,13 @@ ghid_show_crosshair (gboolean show)
 #if 1
   if (x_prev >= 0)
     {
-      draw_crosshair (x_prev, y_prev);
+      draw_crosshair (x_prev, y_prev, z_prev);
     }
 #endif
 
   if (x >= 0 && show)
     {
-      draw_crosshair (x, y);
+      draw_crosshair (x, y, z);
     }
 
   glEnd ();
@@ -631,43 +633,43 @@ ghid_show_crosshair (gboolean show)
 #if 1
       if (x_prev >= 0)
         {
-          glVertex2i (0,                  y_prev - VCD);
-          glVertex2i (0,                  y_prev - VCD + VCW);
-          glVertex2i (VCD,                y_prev - VCD + VCW);
-          glVertex2i (VCD,                y_prev - VCD);
-          glVertex2i (gport->width,       y_prev - VCD);
-          glVertex2i (gport->width,       y_prev - VCD + VCW);
-          glVertex2i (gport->width - VCD, y_prev - VCD + VCW);
-          glVertex2i (gport->width - VCD, y_prev - VCD);
-          glVertex2i (x_prev - VCD,       0);
-          glVertex2i (x_prev - VCD,       VCD);
-          glVertex2i (x_prev - VCD + VCW, VCD);
-          glVertex2i (x_prev - VCD + VCW, 0);
-          glVertex2i (x_prev - VCD,       gport->height - VCD);
-          glVertex2i (x_prev - VCD,       gport->height);
-          glVertex2i (x_prev - VCD + VCW, gport->height);
-          glVertex2i (x_prev - VCD + VCW, gport->height - VCD);
+          glVertex3i (0,                  y_prev - VCD,        z_prev);
+          glVertex3i (0,                  y_prev - VCD + VCW,  z_prev);
+          glVertex3i (VCD,                y_prev - VCD + VCW,  z_prev);
+          glVertex3i (VCD,                y_prev - VCD,        z_prev);
+          glVertex3i (gport->width,       y_prev - VCD,        z_prev);
+          glVertex3i (gport->width,       y_prev - VCD + VCW,  z_prev);
+          glVertex3i (gport->width - VCD, y_prev - VCD + VCW,  z_prev);
+          glVertex3i (gport->width - VCD, y_prev - VCD,        z_prev);
+          glVertex3i (x_prev - VCD,       0,                   z_prev);
+          glVertex3i (x_prev - VCD,       VCD,                 z_prev);
+          glVertex3i (x_prev - VCD + VCW, VCD,                 z_prev);
+          glVertex3i (x_prev - VCD + VCW, 0,                   z_prev);
+          glVertex3i (x_prev - VCD,       gport->height - VCD, z_prev);
+          glVertex3i (x_prev - VCD,       gport->height,       z_prev);
+          glVertex3i (x_prev - VCD + VCW, gport->height,       z_prev);
+          glVertex3i (x_prev - VCD + VCW, gport->height - VCD, z_prev);
         }
 #endif
 
       if (x >= 0 && show)
         {
-          glVertex2i (0,                  y - VCD);
-          glVertex2i (0,                  y - VCD + VCW);
-          glVertex2i (VCD,                y - VCD + VCW);
-          glVertex2i (VCD,                y - VCD);
-          glVertex2i (gport->width,       y - VCD);
-          glVertex2i (gport->width,       y - VCD + VCW);
-          glVertex2i (gport->width - VCD, y - VCD + VCW);
-          glVertex2i (gport->width - VCD, y - VCD);
-          glVertex2i (x - VCD,            0);
-          glVertex2i (x - VCD,            VCD);
-          glVertex2i (x - VCD + VCW,      VCD);
-          glVertex2i (x - VCD + VCW,      0);
-          glVertex2i (x - VCD,            gport->height - VCD);
-          glVertex2i (x - VCD,            gport->height);
-          glVertex2i (x - VCD + VCW,      gport->height);
-          glVertex2i (x - VCD + VCW,      gport->height - VCD);
+          glVertex3i (0,                  y - VCD,             z);
+          glVertex3i (0,                  y - VCD + VCW,       z);
+          glVertex3i (VCD,                y - VCD + VCW,       z);
+          glVertex3i (VCD,                y - VCD,             z);
+          glVertex3i (gport->width,       y - VCD,             z);
+          glVertex3i (gport->width,       y - VCD + VCW,       z);
+          glVertex3i (gport->width - VCD, y - VCD + VCW,       z);
+          glVertex3i (gport->width - VCD, y - VCD,             z);
+          glVertex3i (x - VCD,            0,                   z);
+          glVertex3i (x - VCD,            VCD,                 z);
+          glVertex3i (x - VCD + VCW,      VCD,                 z);
+          glVertex3i (x - VCD + VCW,      0,                   z);
+          glVertex3i (x - VCD,            gport->height - VCD, z);
+          glVertex3i (x - VCD,            gport->height,       z);
+          glVertex3i (x - VCD + VCW,      gport->height,       z);
+          glVertex3i (x - VCD + VCW,      gport->height - VCD, z);
         }
 
       glEnd ();
@@ -677,9 +679,10 @@ ghid_show_crosshair (gboolean show)
     {
       x_prev = x;
       y_prev = y;
+      z_prev = z;
     }
   else
-    x_prev = y_prev = -1;
+    x_prev = y_prev = z_prev = -1;
 
   glDisable (GL_COLOR_LOGIC_OP);
 }
@@ -954,7 +957,7 @@ ghid_screen_update (void)
 }
 
 void DrawAttached (Boolean);
-void draw_grid ();
+void draw_grid (void);
 
 void
 ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata)
@@ -1159,6 +1162,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
+
+  /* Just prod the drawing code so the current depth gets set to
+     the right value for the layer we are editing */
+  gui->set_layer (NULL, INDEXOFCURRENT, 0);
+  gui->set_layer (NULL, SL_FINISHED, 0);
 
   draw_grid ();
 
