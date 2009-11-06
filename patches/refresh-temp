@@ -1,0 +1,22 @@
+Bottom: 83ee1e3c2805837772fde845d713ed9d08901dec
+Top:    cfee783432769db55e14e2ea3e0955aed3491f1d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-06 16:42:48 +0000
+
+Refresh of layer-fixes
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index cc5c259..6023d12 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -1576,7 +1576,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+     DrawLayerGroup (drawn_groups [i], drawn_area);
+ 
+ #if 1
+-    if (!global_view_2d &&
++    if (!global_view_2d && i > 0 &&
+         drawn_groups[i] > min_phys_group &&
+         drawn_groups[i] <= max_phys_group) {
+       cyl_info.from_layer = drawn_groups[i];
