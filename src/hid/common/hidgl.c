@@ -37,7 +37,7 @@
 #include "hid.h"
 #include "hidgl.h"
 #include "rtree.h"
-
+#include "sweep.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
@@ -649,6 +649,13 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
   PLINE *contour;
   struct do_hole_info info;
   int stencil_bit;
+  cairo_traps_t traps;
+
+  _cairo_traps_init (&traps);
+  bo_poly_to_traps (poly->Clipped, &traps);
+  _cairo_traps_fini (&traps);
+
+  return;
 
   info.scale = scale;
   global_scale = scale;
