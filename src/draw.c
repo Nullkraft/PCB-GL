@@ -708,7 +708,8 @@ pour_callback (const BoxType * b, void *cl)
   struct pin_info *i = (struct pin_info *) cl;
   PourType *pour = (PourType *)b;
 
-  DrawPour (i->Layer, pour, 0);
+  if (gui->gui)
+    DrawPour (i->Layer, pour, 0);
 
   if (pour->PolygonN)
     {
