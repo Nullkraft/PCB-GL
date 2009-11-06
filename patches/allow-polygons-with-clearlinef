@@ -1,7 +1,7 @@
-Bottom: 06da313661b3d12828d38a1ea65323472ad2069a
-Top:    5f03b5304e9d43464933029753c0a7349afe0106
+Bottom: afdcc356d6ca6dfe99d8321cbbdca5507a8c0ac5
+Top:    000ee20d0acf5984f9b875d4bc97dbbcfe1dc8d8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-06 16:54:18 +0000
+Date:   2009-11-06 17:00:47 +0000
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -216,10 +216,10 @@ index 6f0c82f..3141b9c 100644
      {
        DrawPolygon (Layer, Polygon, 0);
 diff --git a/src/polygon.c b/src/polygon.c
-index 0a86fa4..b1283e6 100644
+index 95704bb..766ab67 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -777,6 +777,20 @@ SubtractPad (PadType * pad, PolygonType * p)
+@@ -778,6 +778,20 @@ SubtractPad (PadType * pad, PolygonType * p)
    return Subtract (np, p, True);
  }
  
@@ -240,7 +240,7 @@ index 0a86fa4..b1283e6 100644
  struct cpInfo
  {
    const BoxType *other;
-@@ -927,6 +941,24 @@ text_sub_callback (const BoxType * b, void *cl)
+@@ -928,6 +942,24 @@ text_sub_callback (const BoxType * b, void *cl)
  }
  
  static int
@@ -265,7 +265,7 @@ index 0a86fa4..b1283e6 100644
  Group (DataTypePtr Data, Cardinal layer)
  {
    Cardinal i, j;
-@@ -978,6 +1010,8 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
+@@ -979,6 +1011,8 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
            r_search (layer->arc_tree, &region, NULL, arc_sub_callback, &info);
  	r +=
            r_search (layer->text_tree, &region, NULL, text_sub_callback, &info);
@@ -274,7 +274,7 @@ index 0a86fa4..b1283e6 100644
        }
        END_LOOP;
        r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
-@@ -1115,6 +1149,26 @@ UnsubtractPad (PadType * pad, LayerType * l, PolygonType * p)
+@@ -1116,6 +1150,26 @@ UnsubtractPad (PadType * pad, LayerType * l, PolygonType * p)
    return 1;
  }
  
@@ -301,7 +301,7 @@ index 0a86fa4..b1283e6 100644
  static Boolean inhibit = False;
  
  int
-@@ -1400,6 +1454,10 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
+@@ -1401,6 +1455,10 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
        SubtractPad ((PadTypePtr) ptr2, Polygon);
        Polygon->NoHolesValid = 0;
        return 1;
@@ -312,7 +312,7 @@ index 0a86fa4..b1283e6 100644
      case TEXT_TYPE:
        SubtractText ((TextTypePtr) ptr2, Polygon);
        Polygon->NoHolesValid = 0;
-@@ -1427,6 +1485,9 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
+@@ -1428,6 +1486,9 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
      case PAD_TYPE:
        UnsubtractPad ((PadTypePtr) ptr2, Layer, Polygon);
        return 1;
@@ -322,7 +322,7 @@ index 0a86fa4..b1283e6 100644
      case TEXT_TYPE:
        UnsubtractText ((TextTypePtr) ptr2, Layer, Polygon);
        return 1;
-@@ -1490,6 +1551,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1491,6 +1552,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
      case LINE_TYPE:
      case ARC_TYPE:
      case TEXT_TYPE:
@@ -330,7 +330,7 @@ index 0a86fa4..b1283e6 100644
        /* the cast works equally well for lines and arcs */
        if (!TEST_FLAG (CLEARLINEFLAG, (LineTypePtr) ptr2))
          return 0;
-@@ -1543,8 +1605,7 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1544,8 +1606,7 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
  {
    if (type == POLYGON_TYPE)
      InitClip (PCB->Data, (LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
@@ -340,7 +340,7 @@ index 0a86fa4..b1283e6 100644
  }
  
  void
-@@ -1552,8 +1613,7 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1553,8 +1614,7 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
  {
    if (type == POLYGON_TYPE)
      InitClip (PCB->Data, (LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);

@@ -1,7 +1,7 @@
-Bottom: 33dec8f728bb2e06e25a5d4c429cab78a428d212
-Top:    9dc3198404b35827e81496df46f79fd86d13f16f
+Bottom: 7aa2790ae36d6090e667a5b274cb372577abbba0
+Top:    18ff7a00404748f7dc15f403d49232746e8de684
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-06 16:54:19 +0000
+Date:   2009-11-06 17:00:48 +0000
 
 Add support for a "poured" object.
 
@@ -35,10 +35,10 @@ index cd6f4f9..4ab3813 100755
  						/* an element */
  #define	MAX_LIBRARY_LINE_LENGTH		255	/* maximum line length in the */
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 9bc9e22..716b337 100644
+index af714d8..4b2553e 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -104,6 +104,8 @@ PCB_SRCS = \
+@@ -120,6 +120,8 @@ PCB_SRCS = \
  	polygon.h \
  	polygon1.c \
  	polyarea.h \
@@ -2789,10 +2789,10 @@ index e8ad916..e1b6290 100644
        break;
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 13fdd02..36724c0 100644
+index ea1c120..428c6fb 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -454,7 +454,7 @@ have_crosshair_attachments (void)
+@@ -455,7 +455,7 @@ have_crosshair_attachments (void)
      case VIA_MODE:
        result = TRUE;
        break;
@@ -4039,7 +4039,7 @@ index 5186183..6b5b0c4 100644
     {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
     {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/polygon.c b/src/polygon.c
-index 75d197b..f280da3 100644
+index 4bf7069..f0caf74 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -32,6 +32,8 @@
@@ -4051,7 +4051,7 @@ index 75d197b..f280da3 100644
  A PCB PolygonType contains an array of points outlining the polygon.
  This is what is manipulated by the UI and stored in the saved PCB.
  
-@@ -108,8 +110,6 @@ RCSID ("$Id$");
+@@ -109,8 +111,6 @@ RCSID ("$Id$");
  
  #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
  
@@ -4060,7 +4060,7 @@ index 75d197b..f280da3 100644
  /* ---------------------------------------------------------------------------
   * local prototypes
   */
-@@ -149,6 +149,7 @@ ComputeNoHoles (PolygonType *poly)
+@@ -150,6 +150,7 @@ ComputeNoHoles (PolygonType *poly)
    poly->NoHolesValid = 1;
  }
  
@@ -4068,7 +4068,7 @@ index 75d197b..f280da3 100644
  static POLYAREA *
  biggest (POLYAREA * p)
  {
-@@ -198,12 +199,14 @@ biggest (POLYAREA * p)
+@@ -199,12 +200,14 @@ biggest (POLYAREA * p)
    assert (p->b);
    return p;
  }
@@ -4083,7 +4083,7 @@ index 75d197b..f280da3 100644
    assert (contour->Flags.orient == PLF_DIR);
    if (!(p = poly_Create ()))
      return NULL;
-@@ -212,14 +215,17 @@ ContourToPoly (PLINE * contour)
+@@ -213,14 +216,17 @@ ContourToPoly (PLINE * contour)
    return p;
  }
  
@@ -4103,7 +4103,7 @@ index 75d197b..f280da3 100644
    POLYGONPOINT_LOOP (p);
    {
      v[0] = point->X;
-@@ -256,6 +262,7 @@ original_poly (PolygonType * p)
+@@ -257,6 +263,7 @@ original_poly (PolygonType * p)
    assert (poly_Valid (np));
    return biggest (np);
  }
@@ -4111,7 +4111,7 @@ index 75d197b..f280da3 100644
  
  POLYAREA *
  RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2)
-@@ -632,6 +639,8 @@ SquarePadPoly (PadType * pad, BDimension clear)
+@@ -633,6 +640,8 @@ SquarePadPoly (PadType * pad, BDimension clear)
    return np;
  }
  
@@ -4120,7 +4120,7 @@ index 75d197b..f280da3 100644
  /* clear np1 from the polygon */
  static int
  Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
-@@ -665,7 +674,9 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
+@@ -666,7 +675,9 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
        p->NoHoles = NULL;
        return -1;
      }
@@ -4131,7 +4131,7 @@ index 75d197b..f280da3 100644
    assert (!p->Clipped || poly_Valid (p->Clipped));
    if (!p->Clipped)
      Message ("Polygon cleared out of existence near (%d, %d)\n",
-@@ -673,6 +684,7 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
+@@ -674,6 +685,7 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
               (p->BoundingBox.Y1 + p->BoundingBox.Y2) / 2);
    return 1;
  }
@@ -4139,7 +4139,7 @@ index 75d197b..f280da3 100644
  
  /* create a polygon of the pin clearance */
  POLYAREA *
-@@ -704,486 +716,15 @@ BoxPolyBloated (BoxType *box, BDimension bloat)
+@@ -705,486 +717,15 @@ BoxPolyBloated (BoxType *box, BDimension bloat)
                     box->Y1 - bloat, box->Y2 + bloat);
  }
  
@@ -4631,7 +4631,7 @@ index 75d197b..f280da3 100644
    if (inhibit)
      return 0;
    if (p->Clipped)
-@@ -1198,205 +739,7 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
+@@ -1199,205 +740,7 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
    else
      p->NoHolesValid = 0;
    return 1;
@@ -4838,7 +4838,7 @@ index 75d197b..f280da3 100644
  }
  
  /* find polygon holes in range, then call the callback function for
-@@ -1440,68 +783,14 @@ struct plow_info
+@@ -1441,68 +784,14 @@ struct plow_info
  };
  
  static int
@@ -4913,7 +4913,7 @@ index 75d197b..f280da3 100644
    return 0;
  }
  
-@@ -1509,12 +798,10 @@ static int
+@@ -1510,12 +799,10 @@ static int
  plow_callback (const BoxType * b, void *cl)
  {
    struct plow_info *plow = (struct plow_info *) cl;
@@ -4929,7 +4929,7 @@ index 75d197b..f280da3 100644
  }
  
  int
-@@ -1541,8 +828,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1542,8 +829,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
            LAYER_LOOP (Data, max_layer);
            {
              info.layer = layer;
@@ -4939,7 +4939,7 @@ index 75d197b..f280da3 100644
            }
            END_LOOP;
          }
-@@ -1552,8 +838,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1553,8 +839,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
                                                                           ((LayerTypePtr) ptr1))));
            {
              info.layer = layer;
@@ -4949,7 +4949,7 @@ index 75d197b..f280da3 100644
            }
            END_LOOP;
          }
-@@ -1572,7 +857,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1573,7 +858,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
                                                                       ((LayerTypePtr) ptr1))));
        {
          info.layer = layer;
@@ -4958,7 +4958,7 @@ index 75d197b..f280da3 100644
        }
        END_LOOP;
        break;
-@@ -1586,7 +871,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1587,7 +872,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
          {
            info.layer = layer;
            r +=
@@ -4967,7 +4967,7 @@ index 75d197b..f280da3 100644
          }
          END_LOOP;
        }
-@@ -1610,21 +895,6 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1611,21 +896,6 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
    return r;
  }
  
@@ -4989,7 +4989,7 @@ index 75d197b..f280da3 100644
  
  Boolean
  isects (POLYAREA * a, PolygonTypePtr p, Boolean fr)
-@@ -1774,6 +1044,9 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
+@@ -1775,6 +1045,9 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
  Boolean
  MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
  {
@@ -4999,7 +4999,7 @@ index 75d197b..f280da3 100644
    POLYAREA *p, *start;
    Boolean many = False;
    FlagType flags;
-@@ -1837,6 +1110,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+@@ -1838,6 +1111,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
    inhibit = False;
    IncrementUndoSerialNumber ();
    return many;
@@ -5007,7 +5007,7 @@ index 75d197b..f280da3 100644
  }
  
  void debug_pline (PLINE *pl)
-@@ -1869,9 +1143,9 @@ debug_polygon (PolygonType *p)
+@@ -1870,9 +1144,9 @@ debug_polygon (PolygonType *p)
  {
    int i;
    POLYAREA *pa;
@@ -5021,7 +5021,7 @@ index 75d197b..f280da3 100644
    while (pa)
      {
 diff --git a/src/polygon.h b/src/polygon.h
-index 2faaa20..4dba4ca 100644
+index ccf3164..15223c0 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
 @@ -33,27 +33,26 @@
