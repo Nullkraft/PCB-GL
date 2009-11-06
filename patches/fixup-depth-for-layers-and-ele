@@ -1,7 +1,7 @@
-Bottom: 57e366c6bf3f949bcb2b05e84360b919f09b32ec
-Top:    3463047824e398686a7e09351593907548944e0e
+Bottom: c20e319989c7dabd4a1bfa0e21926a20fdd4b5b0
+Top:    c786241cbdb2f9ff9d84c5d4c08056e350143631
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-06 16:57:58 +0000
+Date:   2009-11-06 17:16:55 +0000
 
 Fixup depth for layers and element marks
 
@@ -22,7 +22,7 @@ index be37956..4ae4931 100644
      if (SL_SIDE (idx) == SL_TOP_SIDE) {
        depth = (max_depth + 3) * 200 / gport->zoom;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 42769a9..6fd9aa5 100644
+index fd2f9cd..ca76142 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -1669,12 +1669,14 @@ ghid_draw_everything (BoxTypePtr drawn_area)
