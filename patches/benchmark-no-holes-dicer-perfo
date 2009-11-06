@@ -1,7 +1,7 @@
-Bottom: 6b273e5ccbca96e73b71a2fb44e86349608e32ec
-Top:    21f66cd973e49cb632a042ffec5cd61986f2f576
+Bottom: 9c1e31956886b3b5a44b54f7d5f676fba88aadab
+Top:    8ba6ba40804ce56d1d4e86add76cb454b1290013
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-06 16:35:43 +0000
+Date:   2009-11-06 16:38:02 +0000
 
 Benchmark no-holes dicer performance
 
@@ -30,10 +30,10 @@ index fa2df9b..6190b0b 100644
    /* Draw other parts of the polygon if fullpoly flag is set */
    /* NB: No "NoHoles" cache for these */
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 13fdd02..346b01f 100644
+index 9a9a2ad..96c759a 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1487,6 +1487,10 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1507,6 +1507,10 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    struct cyl_info cyl_info;
    int reverse_layers;
    int save_show_solder;
@@ -44,7 +44,7 @@ index 13fdd02..346b01f 100644
  
    extern char *current_color;
    extern Boolean Gathering;
-@@ -1510,19 +1514,23 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1530,19 +1534,23 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    if (!global_view_2d && save_show_solder)
      reverse_layers = !reverse_layers;
  
@@ -72,7 +72,7 @@ index 13fdd02..346b01f 100644
        do_group[group] = 1;
        drawn_groups[ngroups++] = group;
      }
-@@ -1547,7 +1555,9 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1568,7 +1576,9 @@ ghid_draw_everything (BoxTypePtr drawn_area)
      DrawLayerGroup (drawn_groups [i], drawn_area);
  
  #if 1
