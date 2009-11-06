@@ -1,0 +1,22 @@
+Bottom: 36359b730cc9c6ae68f01827d3b286297163c94b
+Top:    9db70406454e18e6125edc0052d3b44f3c4bf9f7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-06 17:16:49 +0000
+
+Refresh of shiny-3d-eye-candy
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 27fcccf..beba2f4 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -1165,7 +1165,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+ 
+   /* Just prod the drawing code so the current depth gets set to
+      the right value for the layer we are editing */
+-  gui->set_layer (NULL, INDEXOFCURRENT, 0);
++  gui->set_layer (NULL, GetLayerGroupNumberByNumber (INDEXOFCURRENT), 0);
+   gui->set_layer (NULL, SL_FINISHED, 0);
+ 
+   draw_grid ();
