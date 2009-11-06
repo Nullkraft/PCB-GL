@@ -1,7 +1,7 @@
-Bottom: 5d292df815c28df92ab2e46b94fc0fb33d4de8f6
+Bottom: 83ee1e3c2805837772fde845d713ed9d08901dec
 Top:    83ee1e3c2805837772fde845d713ed9d08901dec
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-06 16:25:04 +0000
+Date:   2009-11-06 16:26:16 +0000
 
 Use strcasecmp when looking for the "outline" layer
 
@@ -10,18 +10,4 @@ A few cases used strcmp, leading to inconsistencies in our handling
 
 ---
 
-diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index edb7498..cc5c259 100644
---- a/src/hid/gtk/gui-output-events.c
-+++ b/src/hid/gtk/gui-output-events.c
-@@ -1366,8 +1366,8 @@ DrawLayerGroup (int group, const BoxType * screen)
-     layernum = layers[i];
-     Layer = PCB->Data->Layer + layers[i];
- 
--    if (strcmp (Layer->Name, "outline") == 0 ||
--        strcmp (Layer->Name, "route") == 0)
-+    if (strcasecmp (Layer->Name, "outline") == 0 ||
-+        strcasecmp (Layer->Name, "route") == 0)
-       rv = 0;
- 
-     if (layernum < max_layer /*&& Layer->On*/) {
+
