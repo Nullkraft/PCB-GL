@@ -1677,12 +1677,14 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
   }
   /* Draw top silkscreen */
-  if (gui->set_layer ("topsilk", SL (SILK, TOP), 0)) {
+  if (!Settings.ShowSolderSide &&
+      gui->set_layer ("topsilk", SL (SILK, TOP), 0)) {
     DrawSilk (0, COMPONENT_LAYER, drawn_area);
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
   }
 
-  if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0)) {
+  if (Settings.ShowSolderSide &&
+      gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0)) {
     DrawSilk (1, SOLDER_LAYER, drawn_area);
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
   }
@@ -1850,13 +1852,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
              gport->bg_color.green / 65535.,
              gport->bg_color.blue / 65535.);
 
-  glBegin (GL_QUADS);
-  glVertex3i (eleft,  etop,    -50);
-  glVertex3i (eright, etop,    -50);
-  glVertex3i (eright, ebottom, -50);
-  glVertex3i (eleft,  ebottom, -50);
-  glEnd ();
-
   /* TODO: Background image */
 
   hidgl_init_triangle_array (&buffer);
@@ -1876,6 +1871,37 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                              -gport->view_x0,
                 ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                              -gport->view_y0, 0);
+
+  if (global_view_2d) {
+    glBegin (GL_QUADS);
+    glVertex3i (0,             0,              0);
+    glVertex3i (PCB->MaxWidth, 0,              0);
+    glVertex3i (PCB->MaxWidth, PCB->MaxHeight, 0);
+    glVertex3i (0,             PCB->MaxHeight, 0);
+    glEnd ();
+  } else {
+    int solder_group;
+    int component_group;
+    int min_phys_group;
+    int max_phys_group;
+    int i;
+
+    solder_group = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
+    component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+
+    min_phys_group = MIN (solder_group, component_group);
+    max_phys_group = MAX (solder_group, component_group);
+
+    glBegin (GL_QUADS);
+    for (i = min_phys_group; i <= max_phys_group; i++) {
+      int depth = compute_depth (i);
+      glVertex3i (0,             0,              depth);
+      glVertex3i (PCB->MaxWidth, 0,              depth);
+      glVertex3i (PCB->MaxWidth, PCB->MaxHeight, depth);
+      glVertex3i (0,             PCB->MaxHeight, depth);
+    }
+    glEnd ();
+  }
 
   // hid_expose_callback (&ghid_hid, &region, 0);
   ghid_draw_everything (&region);
