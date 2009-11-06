@@ -1,7 +1,7 @@
-Bottom: e55f492ac0e28ba5492fa62cd533690087c43374
-Top:    747e1307f82d376bbce8fd0ba8bdc056ed75bbb5
+Bottom: 59edf15f73c27be36d0d1bbed4fbb3adc3a78f79
+Top:    1a63789a04ae112aaee7ef4621e8db1910bc5caa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-06 16:19:07 +0000
+Date:   2009-11-06 16:24:47 +0000
 
 Work in progress on subcompositing / stencil buffers
 
@@ -14,7 +14,7 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 9017f92..59e5e31 100644
+index 0493977..b2add35 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -420,6 +420,7 @@ DrawEverything (BoxTypePtr drawn_area)
@@ -412,7 +412,7 @@ index 49322c0..b956a65 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index e68026d..1f7946a 100644
+index e33e6ef..9c7e7e1 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -455,6 +455,9 @@ gerber_set_layer (const char *name, int group, int empty)
@@ -689,7 +689,7 @@ index 2115b47..9e59ca1 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index cf57f92..0310e1d 100644
+index c415759..f57a91b 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -516,6 +516,10 @@ ps_set_layer (const char *name, int group, int empty)
