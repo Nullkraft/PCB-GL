@@ -1,0 +1,106 @@
+Bottom: 07343a4f6605e4bfebf869248d73617534f8616a
+Top:    9ca1f24a56380af6b937cdcfad87cb4f8431119f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-06 16:29:47 +0000
+
+Hack to make pretty translucent polygons in thindraw-poly mode
+
+TODO: Perhaps need some way to configure this.. it might be nice in
+non-thindraw mode too. If people want thin-draw to gain extra speed,
+rather than have it actually slower (due to fill + outline), then a
+way to turn it off would also be useful.
+
+
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index c9a3f06..2925b26 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -688,26 +688,30 @@ ghid_set_special_colors (HID_Attribute * ha)
+     }
+ }
+ 
++static char *current_color = NULL;
++static double global_alpha_mult = 1.0;
++static int alpha_changed = 0;
+ 
+ void
+ ghid_set_color (hidGC gc, const char *name)
+ {
+   static void *cache = NULL;
+-  static char *old_name = NULL;
+   hidval cval;
+   ColorCache *cc;
+   double alpha_mult = 1.0;
+   double r, g, b, a;
+   a = 1.0;
+ 
+-  if (old_name != NULL)
++  if (!alpha_changed && current_color != NULL)
+     {
+-      if (strcmp (name, old_name) == 0)
++      if (strcmp (name, current_color) == 0)
+         return;
+-      free (old_name);
++      free (current_color);
+     }
+ 
+-  old_name = strdup (name);
++  alpha_changed = 0;
++
++  current_color = strdup (name);
+ 
+   if (name == NULL)
+     {
+@@ -781,6 +785,7 @@ ghid_set_color (hidGC gc, const char *name)
+     }
+   if (1) {
+     double maxi, mult;
++    alpha_mult *= global_alpha_mult;
+     if (gport->trans_lines)
+       a = a * alpha_mult;
+     maxi = r;
+@@ -802,6 +807,16 @@ ghid_set_color (hidGC gc, const char *name)
+ }
+ 
+ void
++ghid_global_alpha_mult (hidGC gc, double alpha_mult)
++{
++  if (alpha_mult != global_alpha_mult) {
++    global_alpha_mult = alpha_mult;
++    alpha_changed = 1;
++    ghid_set_color (gc, current_color);
++  }
++}
++
++void
+ ghid_set_line_cap (hidGC gc, EndCapStyle style)
+ {
+   switch (style)
+@@ -917,6 +932,15 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ }
+ 
+ void
++ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
++{
++  common_thindraw_pcb_polygon (gc, poly, clip_box);
++  ghid_global_alpha_mult (gc, 0.25);
++  ghid_fill_pcb_polygon (gc, poly, clip_box);
++  ghid_global_alpha_mult (gc, 1.0);
++}
++
++void
+ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
+ {
+   USE_GC (gc);
+@@ -1460,7 +1484,7 @@ HID ghid_hid = {
+   ghid_fill_circle,
+   ghid_fill_polygon,
+   ghid_fill_pcb_polygon,
+-  common_thindraw_pcb_polygon,
++  ghid_thindraw_pcb_polygon,
+   ghid_fill_rect,
+ 
+   ghid_calibrate,

@@ -1,0 +1,32 @@
+Bottom: f95ea3e924d28b9aaacb1a075ae3a2fc452a2bf4
+Top:    c3c012ccecb0390aa26372518d25056e1e98cdb5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-06 16:29:46 +0000
+
+Avoid clearing pins / vias from polygons... it is already done!
+
+
+
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 3756955..33b7650 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1190,6 +1190,7 @@ ClearPin (PinTypePtr Pin, int Type, int unused)
+       AddPart (Pin);
+       return;
+     }
++#if 0
+   /* Clear the area around the pin */
+   if (TEST_FLAG (SQUAREFLAG, Pin))
+     {
+@@ -1212,6 +1213,7 @@ ClearPin (PinTypePtr Pin, int Type, int unused)
+     {
+       gui->fill_circle (Output.pmGC, Pin->X, Pin->Y, half);
+     }
++#endif
+   if ((!TEST_FLAG (PINFLAG, Pin) && !PCB->ViaOn)
+       || (TEST_FLAG (PINFLAG, Pin) && !PCB->PinOn))
+     return;

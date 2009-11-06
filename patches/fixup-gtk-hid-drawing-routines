@@ -1,0 +1,61 @@
+Bottom: d620a239e06665a597798abbad368b2fb38c5dbd
+Top:    ae7757861b5906783ba68cd0378fb70bb11aa178
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-06 16:29:42 +0000
+
+Fixup gtk hid drawing routines for pour support
+
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 36724c0..0598ef9 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -1154,6 +1154,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *dra
+   if (!Polygon->Clipped)
+     return;
+ 
++  /* Re-use HOLEFLAG to cut out islands */
++  if (TEST_FLAG (HOLEFLAG, Polygon))
++    return;
++
+   if (TEST_FLAG (SELECTEDFLAG, Polygon))
+     color = Layer->SelectedColor;
+   else if (TEST_FLAG (FOUNDFLAG, Polygon))
+@@ -1192,6 +1196,22 @@ poly_callback (const BoxType * b, void *cl)
+   return 1;
+ }
+ 
++static int
++pour_callback (const BoxType * b, void *cl)
++{
++  struct pin_info *i = (struct pin_info *) cl;
++  PourType *pour = (PourType *)b;
++
++  DrawPour (i->Layer, pour, 0);
++
++  if (pour->PolygonN)
++    {
++      r_search (pour->polygon_tree, i->drawn_area, NULL, poly_callback, i);
++    }
++
++  return 1;
++}
++
+ static void
+ DrawPadLowLevelSolid (hidGC gc, PadTypePtr Pad, Boolean clear, Boolean mask)
+ {
+@@ -1378,10 +1398,10 @@ DrawLayerGroup (int group, const BoxType * screen)
+       }
+ 
+       /* draw all polygons on this layer */
+-      if (Layer->PolygonN) {
++      if (Layer->PourN) {
+         info.Layer = Layer;
+         info.drawn_area = screen;
+-        r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
++        r_search (Layer->pour_tree, screen, NULL, pour_callback, &info);
+ 
+         /* HACK: Subcomposite polygons separately from other layer primitives */
+         /* Reset the compositing */

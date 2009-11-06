@@ -1,0 +1,22 @@
+Bottom: 1a63789a04ae112aaee7ef4621e8db1910bc5caa
+Top:    07343a4f6605e4bfebf869248d73617534f8616a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-06 16:29:47 +0000
+
+Not sure what this patch is for ;)
+
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index b2add35..ff94ccf 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -530,7 +530,7 @@ DrawEverything (BoxTypePtr drawn_area)
+ 	r_search (PCB->Data->element_tree, drawn_area, NULL, EMark_callback,
+ 		  NULL);
+       /* Draw rat lines on top */
+-      if (PCB->RatOn)
++      if (PCB->RatOn && gui->set_layer ("rats", SL (RATS, 0), 0))
+ 	DrawRats(drawn_area);
+     }

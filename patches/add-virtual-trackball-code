@@ -1,0 +1,922 @@
+Bottom: 9ca1f24a56380af6b937cdcfad87cb4f8431119f
+Top:    c5ce51633443b4d8b834f28c07c720ba6f16e9f3
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-06 16:29:47 +0000
+
+Add virtual trackball code
+
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 49460cd..2f92f29 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -158,7 +158,10 @@ DBUS_SRCS= \
+ 
+ GL_SRCS= \
+ 	hid/common/hidgl.c \
+-	hid/common/hidgl.h
++	hid/common/hidgl.h \
++	hid/common/trackball.c \
++	hid/common/trackball.h
++
+ 
+ BUILT_SOURCES = \
+ 	core_lists.h \
+@@ -265,6 +268,8 @@ LIBGTK_SRCS = \
+ 	hid/gtk/gui-pinout-window.c \
+ 	hid/gtk/gui-render-pixmap.c \
+ 	hid/gtk/gui-top-window.c \
++	hid/gtk/gui-trackball.c \
++	hid/gtk/gui-trackball.h \
+ 	hid/gtk/gui-utils.c
+ libgtk_a_SOURCES = ${LIBGTK_SRCS} hid/gtk/gtk_lists.h
+ 
+diff --git a/src/hid/common/trackball.c b/src/hid/common/trackball.c
+new file mode 100644
+index 0000000..c4b8501
+--- /dev/null
++++ b/src/hid/common/trackball.c
+@@ -0,0 +1,324 @@
++/*
++ * (c) Copyright 1993, 1994, Silicon Graphics, Inc.
++ * ALL RIGHTS RESERVED
++ * Permission to use, copy, modify, and distribute this software for
++ * any purpose and without fee is hereby granted, provided that the above
++ * copyright notice appear in all copies and that both the copyright notice
++ * and this permission notice appear in supporting documentation, and that
++ * the name of Silicon Graphics, Inc. not be used in advertising
++ * or publicity pertaining to distribution of the software without specific,
++ * written prior permission.
++ *
++ * THE MATERIAL EMBODIED ON THIS SOFTWARE IS PROVIDED TO YOU "AS-IS"
++ * AND WITHOUT WARRANTY OF ANY KIND, EXPRESS, IMPLIED OR OTHERWISE,
++ * INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY OR
++ * FITNESS FOR A PARTICULAR PURPOSE.  IN NO EVENT SHALL SILICON
++ * GRAPHICS, INC.  BE LIABLE TO YOU OR ANYONE ELSE FOR ANY DIRECT,
++ * SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
++ * KIND, OR ANY DAMAGES WHATSOEVER, INCLUDING WITHOUT LIMITATION,
++ * LOSS OF PROFIT, LOSS OF USE, SAVINGS OR REVENUE, OR THE CLAIMS OF
++ * THIRD PARTIES, WHETHER OR NOT SILICON GRAPHICS, INC.  HAS BEEN
++ * ADVISED OF THE POSSIBILITY OF SUCH LOSS, HOWEVER CAUSED AND ON
++ * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN PAD_CONNECTION WITH THE
++ * POSSESSION, USE OR PERFORMANCE OF THIS SOFTWARE.
++ *
++ * US Government Users Restricted Rights
++ * Use, duplication, or disclosure by the Government is subject to
++ * restrictions set forth in FAR 52.227.19(c)(2) or subparagraph
++ * (c)(1)(ii) of the Rights in Technical Data and Computer Software
++ * clause at DFARS 252.227-7013 and/or in similar or successor
++ * clauses in the FAR or the DOD or NASA FAR Supplement.
++ * Unpublished-- rights reserved under the copyright laws of the
++ * United States.  Contractor/manufacturer is Silicon Graphics,
++ * Inc., 2011 N.  Shoreline Blvd., Mountain View, CA 94039-7311.
++ *
++ * OpenGL(TM) is a trademark of Silicon Graphics, Inc.
++ */
++/*
++ * Trackball code:
++ *
++ * Implementation of a virtual trackball.
++ * Implemented by Gavin Bell, lots of ideas from Thant Tessman and
++ *   the August '88 issue of Siggraph's "Computer Graphics," pp. 121-129.
++ *
++ * Vector manip code:
++ *
++ * Original code from:
++ * David M. Ciemiewicz, Mark Grossman, Henry Moreton, and Paul Haeberli
++ *
++ * Much mucking with by:
++ * Gavin Bell
++ */
++#include <math.h>
++#include "trackball.h"
++
++/*
++ * This size should really be based on the distance from the center of
++ * rotation to the point on the object underneath the mouse.  That
++ * point would then track the mouse as closely as possible.  This is a
++ * simple example, though, so that is left as an Exercise for the
++ * Programmer.
++ */
++#define TRACKBALLSIZE  (0.8f)
++
++/*
++ * Local function prototypes (not defined in trackball.h)
++ */
++static float tb_project_to_sphere(float, float, float);
++static void normalize_quat(float [4]);
++
++void
++vzero(float *v)
++{
++    v[0] = 0.0;
++    v[1] = 0.0;
++    v[2] = 0.0;
++}
++
++void
++vset(float *v, float x, float y, float z)
++{
++    v[0] = x;
++    v[1] = y;
++    v[2] = z;
++}
++
++void
++vsub(const float *src1, const float *src2, float *dst)
++{
++    dst[0] = src1[0] - src2[0];
++    dst[1] = src1[1] - src2[1];
++    dst[2] = src1[2] - src2[2];
++}
++
++void
++vcopy(const float *v1, float *v2)
++{
++    register int i;
++    for (i = 0 ; i < 3 ; i++)
++        v2[i] = v1[i];
++}
++
++void
++vcross(const float *v1, const float *v2, float *cross)
++{
++    float temp[3];
++
++    temp[0] = (v1[1] * v2[2]) - (v1[2] * v2[1]);
++    temp[1] = (v1[2] * v2[0]) - (v1[0] * v2[2]);
++    temp[2] = (v1[0] * v2[1]) - (v1[1] * v2[0]);
++    vcopy(temp, cross);
++}
++
++float
++vlength(const float *v)
++{
++    return (float) sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
++}
++
++void
++vscale(float *v, float div)
++{
++    v[0] *= div;
++    v[1] *= div;
++    v[2] *= div;
++}
++
++void
++vnormal(float *v)
++{
++    vscale(v, 1.0f/vlength(v));
++}
++
++float
++vdot(const float *v1, const float *v2)
++{
++    return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
++}
++
++void
++vadd(const float *src1, const float *src2, float *dst)
++{
++    dst[0] = src1[0] + src2[0];
++    dst[1] = src1[1] + src2[1];
++    dst[2] = src1[2] + src2[2];
++}
++
++/*
++ * Ok, simulate a track-ball.  Project the points onto the virtual
++ * trackball, then figure out the axis of rotation, which is the cross
++ * product of P1 P2 and O P1 (O is the center of the ball, 0,0,0)
++ * Note:  This is a deformed trackball-- is a trackball in the center,
++ * but is deformed into a hyperbolic sheet of rotation away from the
++ * center.  This particular function was chosen after trying out
++ * several variations.
++ *
++ * It is assumed that the arguments to this routine are in the range
++ * (-1.0 ... 1.0)
++ */
++void
++trackball(float q[4], float p1x, float p1y, float p2x, float p2y)
++{
++    float a[3]; /* Axis of rotation */
++    float phi;  /* how much to rotate about axis */
++    float p1[3], p2[3], d[3];
++    float t;
++
++    if (p1x == p2x && p1y == p2y) {
++        /* Zero rotation */
++        vzero(q);
++        q[3] = 1.0;
++        return;
++    }
++
++    /*
++     * First, figure out z-coordinates for projection of P1 and P2 to
++     * deformed sphere
++     */
++    vset(p1, p1x, p1y, tb_project_to_sphere(TRACKBALLSIZE, p1x, p1y));
++    vset(p2, p2x, p2y, tb_project_to_sphere(TRACKBALLSIZE, p2x, p2y));
++
++    /*
++     *  Now, we want the cross product of P1 and P2
++     */
++    vcross(p2,p1,a);
++
++    /*
++     *  Figure out how much to rotate around that axis.
++     */
++    vsub(p1, p2, d);
++    t = vlength(d) / (2.0f*TRACKBALLSIZE);
++
++    /*
++     * Avoid problems with out-of-control values...
++     */
++    if (t > 1.0) t = 1.0;
++    if (t < -1.0) t = -1.0;
++    phi = 2.0f * (float) asin(t);
++
++    axis_to_quat(a,phi,q);
++}
++
++/*
++ *  Given an axis and angle, compute quaternion.
++ */
++void
++axis_to_quat(float a[3], float phi, float q[4])
++{
++    vnormal(a);
++    vcopy(a, q);
++    vscale(q, (float) sin(phi/2.0));
++    q[3] = (float) cos(phi/2.0);
++}
++
++/*
++ * Project an x,y pair onto a sphere of radius r OR a hyperbolic sheet
++ * if we are away from the center of the sphere.
++ */
++static float
++tb_project_to_sphere(float r, float x, float y)
++{
++    float d, t, z;
++
++    d = (float) sqrt(x*x + y*y);
++    if (d < r * 0.70710678118654752440) {    /* Inside sphere */
++        z = (float) sqrt(r*r - d*d);
++    } else {           /* On hyperbola */
++        t = r / 1.41421356237309504880f;
++        z = t*t / d;
++    }
++    return z;
++}
++
++/*
++ * Given two rotations, e1 and e2, expressed as quaternion rotations,
++ * figure out the equivalent single rotation and stuff it into dest.
++ *
++ * This routine also normalizes the result every RENORMCOUNT times it is
++ * called, to keep error from creeping in.
++ *
++ * NOTE: This routine is written so that q1 or q2 may be the same
++ * as dest (or each other).
++ */
++
++#define RENORMCOUNT 97
++
++void
++add_quats(float q1[4], float q2[4], float dest[4])
++{
++    static int count=0;
++    float t1[4], t2[4], t3[4];
++    float tf[4];
++
++    vcopy(q1,t1);
++    vscale(t1,q2[3]);
++
++    vcopy(q2,t2);
++    vscale(t2,q1[3]);
++
++    vcross(q2,q1,t3);
++    vadd(t1,t2,tf);
++    vadd(t3,tf,tf);
++    tf[3] = q1[3] * q2[3] - vdot(q1,q2);
++
++    dest[0] = tf[0];
++    dest[1] = tf[1];
++    dest[2] = tf[2];
++    dest[3] = tf[3];
++
++    if (++count > RENORMCOUNT) {
++        count = 0;
++        normalize_quat(dest);
++    }
++}
++
++/*
++ * Quaternions always obey:  a^2 + b^2 + c^2 + d^2 = 1.0
++ * If they don't add up to 1.0, dividing by their magnitued will
++ * renormalize them.
++ *
++ * Note: See the following for more information on quaternions:
++ *
++ * - Shoemake, K., Animating rotation with quaternion curves, Computer
++ *   Graphics 19, No 3 (Proc. SIGGRAPH'85), 245-254, 1985.
++ * - Pletinckx, D., Quaternion calculus as a basic tool in computer
++ *   graphics, The Visual Computer 5, 2-13, 1989.
++ */
++static void
++normalize_quat(float q[4])
++{
++    int i;
++    float mag;
++
++    mag = (q[0]*q[0] + q[1]*q[1] + q[2]*q[2] + q[3]*q[3]);
++    for (i = 0; i < 4; i++) q[i] /= mag;
++}
++
++/*
++ * Build a rotation matrix, given a quaternion rotation.
++ *
++ */
++void
++build_rotmatrix(float m[4][4], float q[4])
++{
++    m[0][0] = 1.0f - 2.0f * (q[1] * q[1] + q[2] * q[2]);
++    m[0][1] = 2.0f * (q[0] * q[1] - q[2] * q[3]);
++    m[0][2] = 2.0f * (q[2] * q[0] + q[1] * q[3]);
++    m[0][3] = 0.0f;
++
++    m[1][0] = 2.0f * (q[0] * q[1] + q[2] * q[3]);
++    m[1][1]= 1.0f - 2.0f * (q[2] * q[2] + q[0] * q[0]);
++    m[1][2] = 2.0f * (q[1] * q[2] - q[0] * q[3]);
++    m[1][3] = 0.0f;
++
++    m[2][0] = 2.0f * (q[2] * q[0] - q[1] * q[3]);
++    m[2][1] = 2.0f * (q[1] * q[2] + q[0] * q[3]);
++    m[2][2] = 1.0f - 2.0f * (q[1] * q[1] + q[0] * q[0]);
++    m[2][3] = 0.0f;
++
++    m[3][0] = 0.0f;
++    m[3][1] = 0.0f;
++    m[3][2] = 0.0f;
++    m[3][3] = 1.0f;
++}
++
+diff --git a/src/hid/common/trackball.h b/src/hid/common/trackball.h
+new file mode 100644
+index 0000000..ed0c267
+--- /dev/null
++++ b/src/hid/common/trackball.h
+@@ -0,0 +1,78 @@
++/*
++ * (c) Copyright 1993, 1994, Silicon Graphics, Inc.
++ * ALL RIGHTS RESERVED
++ * Permission to use, copy, modify, and distribute this software for
++ * any purpose and without fee is hereby granted, provided that the above
++ * copyright notice appear in all copies and that both the copyright notice
++ * and this permission notice appear in supporting documentation, and that
++ * the name of Silicon Graphics, Inc. not be used in advertising
++ * or publicity pertaining to distribution of the software without specific,
++ * written prior permission.
++ *
++ * THE MATERIAL EMBODIED ON THIS SOFTWARE IS PROVIDED TO YOU "AS-IS"
++ * AND WITHOUT WARRANTY OF ANY KIND, EXPRESS, IMPLIED OR OTHERWISE,
++ * INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY OR
++ * FITNESS FOR A PARTICULAR PURPOSE.  IN NO EVENT SHALL SILICON
++ * GRAPHICS, INC.  BE LIABLE TO YOU OR ANYONE ELSE FOR ANY DIRECT,
++ * SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY
++ * KIND, OR ANY DAMAGES WHATSOEVER, INCLUDING WITHOUT LIMITATION,
++ * LOSS OF PROFIT, LOSS OF USE, SAVINGS OR REVENUE, OR THE CLAIMS OF
++ * THIRD PARTIES, WHETHER OR NOT SILICON GRAPHICS, INC.  HAS BEEN
++ * ADVISED OF THE POSSIBILITY OF SUCH LOSS, HOWEVER CAUSED AND ON
++ * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN PAD_CONNECTION WITH THE
++ * POSSESSION, USE OR PERFORMANCE OF THIS SOFTWARE.
++ *
++ * US Government Users Restricted Rights
++ * Use, duplication, or disclosure by the Government is subject to
++ * restrictions set forth in FAR 52.227.19(c)(2) or subparagraph
++ * (c)(1)(ii) of the Rights in Technical Data and Computer Software
++ * clause at DFARS 252.227-7013 and/or in similar or successor
++ * clauses in the FAR or the DOD or NASA FAR Supplement.
++ * Unpublished-- rights reserved under the copyright laws of the
++ * United States.  Contractor/manufacturer is Silicon Graphics,
++ * Inc., 2011 N.  Shoreline Blvd., Mountain View, CA 94039-7311.
++ *
++ * OpenGL(TM) is a trademark of Silicon Graphics, Inc.
++ */
++/*
++ * trackball.h
++ * A virtual trackball implementation
++ * Written by Gavin Bell for Silicon Graphics, November 1988.
++ */
++
++/*
++ * Pass the x and y coordinates of the last and current positions of
++ * the mouse, scaled so they are from (-1.0 ... 1.0).
++ *
++ * The resulting rotation is returned as a quaternion rotation in the
++ * first paramater.
++ */
++void
++trackball(float q[4], float p1x, float p1y, float p2x, float p2y);
++
++/*
++ * Given two quaternions, add them together to get a third quaternion.
++ * Adding quaternions to get a compound rotation is analagous to adding
++ * translations to get a compound translation.  When incrementally
++ * adding rotations, the first argument here should be the new
++ * rotation, the second and third the total rotation (which will be
++ * over-written with the resulting new total rotation).
++ */
++void
++add_quats(float *q1, float *q2, float *dest);
++
++/*
++ * A useful function, builds a rotation matrix in Matrix based on
++ * given quaternion.
++ */
++void
++build_rotmatrix(float m[4][4], float q[4]);
++
++/*
++ * This function computes a quaternion based on an axis (defined by
++ * the given vector) and an angle about which to rotate.  The angle is
++ * expressed in radians.  The result is put into the third argument.
++ */
++void
++axis_to_quat(float a[3], float phi, float q[4]);
++
+diff --git a/src/hid/gtk/gui-trackball.c b/src/hid/gtk/gui-trackball.c
+new file mode 100644
+index 0000000..26440bb
+--- /dev/null
++++ b/src/hid/gtk/gui-trackball.c
+@@ -0,0 +1,391 @@
++/* $Id$ */
++
++/*
++ *                            COPYRIGHT
++ *
++ *  PCB, interactive printed circuit board design
++ *  Copyright (C) 2009 PCB Contributors (See ChangeLog for details)
++ *
++ *  This program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; either version 2 of the License, or
++ *  (at your option) any later version.
++ *
++ *  This program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *  GNU General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License
++ *  along with this program; if not, write to the Free Software
++ *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++ *
++ *  Contact addresses for paper mail and Email:
++ *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
++ *  Thomas.Nau@rz.uni-ulm.de
++ *
++ */
++
++#ifdef HAVE_CONFIG_H
++#include "config.h"
++#endif
++
++#include "global.h"
++
++#include "gui.h"
++
++#include "copy.h"
++#include "data.h"
++#include "draw.h"
++#include "mymem.h"
++#include "move.h"
++#include "rotate.h"
++#include "hid/common/trackball.h"
++#include "gui-trackball.h"
++
++#ifdef HAVE_LIBDMALLOC
++#include <dmalloc.h>
++#endif
++
++RCSID ("$Id$");
++
++enum {
++  ROTATION_CHANGED,
++  VIEW_2D_CHANGED,
++  LAST_SIGNAL
++};
++
++
++static guint ghid_trackball_signals[ LAST_SIGNAL ] = { 0 };
++static GObjectClass *ghid_trackball_parent_class = NULL;
++
++
++static gboolean
++button_press_cb (GtkWidget *widget, GdkEventButton *ev, gpointer userdata)
++{
++  GhidTrackball *ball = GHID_TRACKBALL (userdata);
++  float axis[3];
++
++  ball->x1 = 2. * ev->x / widget->allocation.width - 1.;
++  ball->y1 = 2. * ev->y / widget->allocation.height - 1.;
++
++  ball->dragging = TRUE;
++
++  /* If we were in 2D view before, reset the rotation of the trackball */
++  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (ball->view_2d)))
++    {
++      axis[0] = 1.; axis[1] = 0.; axis[2] = 0.;
++      axis_to_quat (axis, 0, ball->quart1);
++      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (ball->view_2d), FALSE);
++    }
++
++  return TRUE;
++}
++
++
++static gboolean
++button_release_cb (GtkWidget *widget, GdkEventButton *ev, gpointer userdata)
++{
++  GhidTrackball *ball = GHID_TRACKBALL (userdata);
++
++  ball->quart1[0] = ball->quart2[0];
++  ball->quart1[1] = ball->quart2[1];
++  ball->quart1[2] = ball->quart2[2];
++  ball->quart1[3] = ball->quart2[3];
++
++  ball->dragging = FALSE;
++
++  return TRUE;
++}
++
++
++static gboolean
++motion_notify_cb (GtkWidget *widget, GdkEventMotion *ev, gpointer userdata)
++{
++  GhidTrackball *ball = GHID_TRACKBALL (userdata);
++  double x1, y1;
++  double x2, y2;
++  float q[4];
++
++  if (!ball->dragging)
++    return TRUE;
++
++  x1 = ball->x1;
++  y1 = ball->y1;
++
++  x2 = 2. * ev->x / widget->allocation.width - 1.;
++  y2 = 2. * ev->y / widget->allocation.height - 1.;
++
++  /* Trackball computation */
++  trackball (q, x1, y1, x2, y2);
++  add_quats (q, ball->quart1, ball->quart2);
++
++  g_signal_emit (ball, ghid_trackball_signals[ROTATION_CHANGED], 0,
++                 ball->quart2);
++
++  return TRUE;
++}
++
++static gboolean
++ghid_trackball_expose (GtkWidget * widget, GdkEventExpose * ev)
++{
++  gdk_draw_arc (widget->window,
++                widget->style->fg_gc[GTK_WIDGET_STATE (widget)],
++                TRUE,
++                0, 0, widget->allocation.width, widget->allocation.height,
++                0, 64 * 360);
++  return TRUE;
++}
++
++static gboolean
++view_2d_toggled_cb (GtkToggleButton *toggle, gpointer userdata)
++{
++  GhidTrackball *ball = GHID_TRACKBALL (userdata);
++  float axis[3];
++  float quart[4];
++  gboolean view_2d;
++
++  view_2d = gtk_toggle_button_get_active (toggle);
++  if (view_2d)
++    {
++      axis[0] = 1.; axis[1] = 0.; axis[2] = 0.;
++      axis_to_quat (axis, 0, quart);
++
++      g_signal_emit (ball, ghid_trackball_signals[ROTATION_CHANGED], 0, quart);
++    }
++  else
++    g_signal_emit (ball, ghid_trackball_signals[ROTATION_CHANGED], 0, ball->quart1);
++
++  g_signal_emit (ball, ghid_trackball_signals[VIEW_2D_CHANGED], 0, view_2d);
++
++  return TRUE;
++}
++/*! \brief GObject constructor
++ *
++ *  \par Function Description
++ *  Chain up and construct the object, then setup the
++ *  necessary state for our widget now it is constructed.
++ *
++ *  \param [in] type                    The GType of object to be constructed
++ *  \param [in] n_construct_properties  Number of construct properties
++ *  \param [in] contruct_params         The construct properties
++ *
++ *  \returns The GObject having just been constructed.
++ */
++static GObject *
++ghid_trackball_constructor (GType type,
++                            guint n_construct_properties,
++                            GObjectConstructParam *construct_properties)
++{
++  GhidTrackball *ball;
++  float axis[3];
++
++  /* chain up to constructor of parent class */
++  ball = GHID_TRACKBALL (G_OBJECT_CLASS (ghid_trackball_parent_class)->
++    constructor (type, n_construct_properties, construct_properties));
++
++  gtk_widget_set_size_request (GTK_WIDGET (ball), 120, 120);
++
++  ball->view_2d = gtk_toggle_button_new_with_label (_("2D View"));
++  gtk_box_pack_start (GTK_BOX (ball), ball->view_2d, FALSE, FALSE, 0);
++  gtk_widget_show (ball->view_2d);
++  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (ball->view_2d), TRUE);
++
++  ball->drawing_area = gtk_drawing_area_new ();
++  gtk_box_pack_start (GTK_BOX (ball), ball->drawing_area, TRUE, TRUE, 0);
++  gtk_widget_show (ball->drawing_area);
++
++  axis[0] = 1.; axis[1] = 0.; axis[2] = 0.;
++  axis_to_quat (axis, 0, ball->quart1);
++  axis_to_quat (axis, 0, ball->quart2);
++
++  g_signal_connect (ball->view_2d, "toggled",
++                    G_CALLBACK (view_2d_toggled_cb), ball);
++
++  g_signal_connect (ball->drawing_area, "expose-event",
++                    G_CALLBACK (ghid_trackball_expose), ball);
++  g_signal_connect (ball->drawing_area, "button-press-event",
++                    G_CALLBACK (button_press_cb), ball);
++  g_signal_connect (ball->drawing_area, "button-release-event",
++                    G_CALLBACK (button_release_cb), ball);
++  g_signal_connect (ball->drawing_area, "motion-notify-event",
++                    G_CALLBACK (motion_notify_cb), ball);
++
++  gtk_widget_add_events (ball->drawing_area, GDK_BUTTON_PRESS_MASK   |
++                                             GDK_BUTTON_RELEASE_MASK |
++                                             GDK_POINTER_MOTION_MASK);
++
++  return G_OBJECT (ball);
++}
++
++
++
++/*! \brief GObject finalise handler
++ *
++ *  \par Function Description
++ *  Just before the GhidTrackball GObject is finalized, free our
++ *  allocated data, and then chain up to the parent's finalize handler.
++ *
++ *  \param [in] widget  The GObject being finalized.
++ */
++static void
++ghid_trackball_finalize (GObject * object)
++{
++//  GhidTrackball *pinout = GHID_TRACKBALL (object);
++
++  G_OBJECT_CLASS (ghid_trackball_parent_class)->finalize (object);
++}
++
++
++/*! \brief GObject property setter function
++ *
++ *  \par Function Description
++ *  Setter function for GhidTrackball's GObject properties,
++ *  "settings-name" and "toplevel".
++ *
++ *  \param [in]  object       The GObject whose properties we are setting
++ *  \param [in]  property_id  The numeric id. under which the property was
++ *                            registered with g_object_class_install_property()
++ *  \param [in]  value        The GValue the property is being set from
++ *  \param [in]  pspec        A GParamSpec describing the property being set
++ */
++static void
++ghid_trackball_set_property (GObject * object, guint property_id,
++				  const GValue * value, GParamSpec * pspec)
++{
++//  GhidTrackball *pinout = GHID_TRACKBALL (object);
++
++  switch (property_id)
++    {
++    default:
++      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
++    }
++}
++
++
++/*! \brief GObject property getter function
++ *
++ *  \par Function Description
++ *  Getter function for GhidTrackball's GObject properties,
++ *  "settings-name" and "toplevel".
++ *
++ *  \param [in]  object       The GObject whose properties we are getting
++ *  \param [in]  property_id  The numeric id. under which the property was
++ *                            registered with g_object_class_install_property()
++ *  \param [out] value        The GValue in which to return the value of the property
++ *  \param [in]  pspec        A GParamSpec describing the property being got
++ */
++static void
++ghid_trackball_get_property (GObject * object, guint property_id,
++				  GValue * value, GParamSpec * pspec)
++{
++  switch (property_id)
++    {
++    default:
++      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
++    }
++
++}
++
++
++/*! \brief GType class initialiser for GhidTrackball
++ *
++ *  \par Function Description
++ *  GType class initialiser for GhidTrackball. We override our parent
++ *  virtual class methods as needed and register our GObject properties.
++ *
++ *  \param [in]  klass       The GhidTrackballClass we are initialising
++ */
++static void
++ghid_trackball_class_init (GhidTrackballClass * klass)
++{
++  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
++
++  gobject_class->constructor  = ghid_trackball_constructor;
++  gobject_class->finalize     = ghid_trackball_finalize;
++  gobject_class->set_property = ghid_trackball_set_property;
++  gobject_class->get_property = ghid_trackball_get_property;
++
++  ghid_trackball_parent_class = g_type_class_peek_parent (klass);
++
++  ghid_trackball_signals[ROTATION_CHANGED] =
++    g_signal_new ("rotation-changed",
++                  G_OBJECT_CLASS_TYPE( gobject_class ),
++                  G_SIGNAL_RUN_FIRST,     /*signal_flags */
++                  G_STRUCT_OFFSET( GhidTrackballClass, rotation_changed ),
++                  NULL, /* accumulator */
++                  NULL, /* accu_data */
++                  g_cclosure_marshal_VOID__POINTER,
++                  G_TYPE_NONE,
++                  1,    /* n_params */
++                  G_TYPE_POINTER
++                 );
++
++  ghid_trackball_signals[VIEW_2D_CHANGED] =
++    g_signal_new ("view-2d-changed",
++                  G_OBJECT_CLASS_TYPE( gobject_class ),
++                  G_SIGNAL_RUN_FIRST,     /*signal_flags */
++                  G_STRUCT_OFFSET( GhidTrackballClass, view_2d_changed ),
++                  NULL, /* accumulator */
++                  NULL, /* accu_data */
++                  g_cclosure_marshal_VOID__BOOLEAN,
++                  G_TYPE_NONE,
++                  1,    /* n_params */
++                  G_TYPE_BOOLEAN
++                 );
++}
++
++
++/*! \brief Function to retrieve GhidTrackball's GType identifier.
++ *
++ *  \par Function Description
++ *  Function to retrieve GhidTrackball's GType identifier.
++ *  Upon first call, this registers the GhidTrackball in the GType system.
++ *  Subsequently it returns the saved value from its first execution.
++ *
++ *  \return the GType identifier associated with GhidTrackball.
++ */
++GType
++ghid_trackball_get_type ()
++{
++  static GType ghid_trackball_type = 0;
++
++  if (!ghid_trackball_type)
++    {
++      static const GTypeInfo ghid_trackball_info = {
++	sizeof (GhidTrackballClass),
++	NULL,			/* base_init */
++	NULL,			/* base_finalize */
++	(GClassInitFunc) ghid_trackball_class_init,
++	NULL,			/* class_finalize */
++	NULL,			/* class_data */
++	sizeof (GhidTrackball),
++	0,			/* n_preallocs */
++	NULL,			/* instance_init */
++      };
++
++      ghid_trackball_type =
++	g_type_register_static (GTK_TYPE_VBOX, "GhidTrackball",
++				&ghid_trackball_info, 0);
++    }
++
++  return ghid_trackball_type;
++}
++
++
++/*! \brief Convenience function to create a new pinout preview
++ *
++ *  \par Function Description
++ *  Convenience function which creates a GhidTrackball.
++ *
++ *  \return  The GhidTrackball created.
++ */
++GtkWidget *
++ghid_trackball_new (void)
++{
++  GhidTrackball *ball;
++
++  ball = g_object_new (GHID_TYPE_TRACKBALL, NULL);
++
++  return GTK_WIDGET (ball);
++}
+diff --git a/src/hid/gtk/gui-trackball.h b/src/hid/gtk/gui-trackball.h
+new file mode 100644
+index 0000000..d6bd03c
+--- /dev/null
++++ b/src/hid/gtk/gui-trackball.h
+@@ -0,0 +1,70 @@
++/* $Id$ */
++
++/*
++ *                            COPYRIGHT
++ *
++ *  PCB, interactive printed circuit board design
++ *  Copyright (C) 2009  PCB Contributors (see ChangeLog for details)
++ *
++ *  This program is free software; you can redistribute it and/or modify
++ *  it under the terms of the GNU General Public License as published by
++ *  the Free Software Foundation; either version 2 of the License, or
++ *  (at your option) any later version.
++ *
++ *  This program is distributed in the hope that it will be useful,
++ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *  GNU General Public License for more details.
++ *
++ *  You should have received a copy of the GNU General Public License
++ *  along with this program; if not, write to the Free Software
++ *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++ *
++ *  Contact addresses for paper mail and Email:
++ *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
++ *  Thomas.Nau@rz.uni-ulm.de
++ *
++ */
++
++#ifndef __GHID_TRACKBALL_H__
++#define __GHID_TRACKBALL_H__
++
++
++#define GHID_TYPE_TRACKBALL           (ghid_trackball_get_type())
++#define GHID_TRACKBALL(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), GHID_TYPE_TRACKBALL, GhidTrackball))
++#define GHID_TRACKBALL_CLASS(klass)   (G_TYPE_CHECK_CLASS_CAST ((klass),  GHID_TYPE_TRACKBALL, GhidTrackballClass))
++#define GHID_IS_TRACKBALL(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GHID_TYPE_TRACKBALL))
++#define GHID_TRACKBALL_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj),  GHID_TYPE_TRACKBALL, GhidTrackballClass))
++
++typedef struct _GhidTrackballClass GhidTrackballClass;
++typedef struct _GhidTrackball GhidTrackball;
++
++
++struct _GhidTrackballClass
++{
++  GtkVBoxClass parent_class;
++
++  void (*rotation_changed) (GhidTrackball *ball, gpointer rotation, gpointer user_data);
++  void (*view_2d_changed) (GhidTrackball *ball, gboolean view_2d, gpointer user_data);
++};
++
++struct _GhidTrackball
++{
++  GtkVBox parent_instance;
++
++  GtkWidget *drawing_area;
++  GtkWidget *view_2d;
++
++  gboolean dragging;
++  gdouble x1, y1;
++
++  float quart1[4];
++  float quart2[4];
++};
++
++
++GType ghid_trackball_get_type (void);
++
++GtkWidget *ghid_trackball_new (void);
++
++#endif /* __GHID_TRACKBALL_H__ */

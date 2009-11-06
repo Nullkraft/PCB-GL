@@ -1,0 +1,145 @@
+Bottom: a26f4f972683581dc03adf0ed9d015d0e4ed67bd
+Top:    f52aaca8374159e6d6953f4acd457eea4151c132
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-06 16:29:46 +0000
+
+Make rats snap to the center of pads, not the edges
+
+
+
+
+
+
+
+
+
+
+
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index e22d5cc..6e81d29 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -330,7 +330,7 @@ static Boolean LookupLOConnectionsToPad (PadTypePtr, Cardinal);
+ static Boolean LookupLOConnectionsToPolygon (PolygonTypePtr, Cardinal);
+ static Boolean LookupLOConnectionsToArc (ArcTypePtr, Cardinal);
+ static Boolean LookupLOConnectionsToRatEnd (PointTypePtr, Cardinal);
+-static Boolean IsRatPointOnLineEnd (PointTypePtr, LineTypePtr);
++static Boolean IsRatPointOnLine (PointTypePtr, LineTypePtr);
+ static Boolean ArcArcIntersect (ArcTypePtr, ArcTypePtr);
+ static Boolean PrepareNextLoop (FILE *);
+ static Boolean PrintElementConnections (ElementTypePtr, FILE *, Boolean);
+@@ -1458,11 +1458,12 @@ ArcArcIntersect (ArcTypePtr Arc1, ArcTypePtr Arc2)
+  * Tests if point is same as line end point
+  */
+ static Boolean
+-IsRatPointOnLineEnd (PointTypePtr Point, LineTypePtr Line)
++IsRatPointOnLine (PointTypePtr Point, LineTypePtr Line)
+ {
+-  if ((Point->X == Line->Point1.X
+-       && Point->Y == Line->Point1.Y)
+-      || (Point->X == Line->Point2.X && Point->Y == Line->Point2.Y))
++  if ((Point->X == Line->Point1.X && Point->Y == Line->Point1.Y) ||
++      (Point->X == Line->Point2.X && Point->Y == Line->Point2.Y) ||
++      (Point->X == (Line->Point1.X + Line->Point2.X) / 2 &&
++       Point->Y == (Line->Point1.Y + Line->Point2.Y) / 2))
+     return (True);
+   return (False);
+ }
+@@ -1947,13 +1948,13 @@ LOCtoLineRat_callback (const BoxType * b, void *cl)
+   if (!TEST_FLAG (TheFlag, rat))
+     {
+       if ((rat->group1 == i->layer)
+-          && IsRatPointOnLineEnd (&rat->Point1, &i->line))
++          && IsRatPointOnLine (&rat->Point1, &i->line))
+         {
+           if (ADD_RAT_TO_LIST (rat))
+             longjmp (i->env, 1);
+         }
+       else if ((rat->group2 == i->layer)
+-               && IsRatPointOnLineEnd (&rat->Point2, &i->line))
++               && IsRatPointOnLine (&rat->Point2, &i->line))
+         {
+           if (ADD_RAT_TO_LIST (rat))
+             longjmp (i->env, 1);
+@@ -2191,10 +2192,10 @@ LOCtoPad_callback (const BoxType * b, void *cl)
+   struct rat_info *i = (struct rat_info *) cl;
+ 
+   if (!TEST_FLAG (TheFlag, pad) && i->layer ==
+-      (TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER)
+-      && (((pad->Point1.X == i->Point->X && pad->Point1.Y == i->Point->Y)) ||
+-          ((pad->Point2.X == i->Point->X && pad->Point2.Y == i->Point->Y)))
+-      && ADD_PAD_TO_LIST (i->layer, pad))
++        (TEST_FLAG (ONSOLDERFLAG, pad) ? SOLDER_LAYER : COMPONENT_LAYER) &&
++      i->Point->X == (pad->Point1.X + pad->Point2.X) / 2 &&
++      i->Point->Y == (pad->Point1.Y + pad->Point2.Y) / 2 &&
++      ADD_PAD_TO_LIST (i->layer, pad))
+     longjmp (i->env, 1);
+   return 0;
+ }
+@@ -2305,19 +2306,15 @@ LOCtoPadRat_callback (const BoxType * b, void *cl)
+   if (!TEST_FLAG (TheFlag, rat))
+     {
+       if (rat->group1 == i->layer &&
+-          ((rat->Point1.X == i->pad.Point1.X
+-            && rat->Point1.Y == i->pad.Point1.Y)
+-           || (rat->Point1.X == i->pad.Point2.X
+-               && rat->Point1.Y == i->pad.Point2.Y)))
++          rat->Point1.X == (i->pad.Point1.X + i->pad.Point2.X) / 2 &&
++          rat->Point1.Y == (i->pad.Point1.Y + i->pad.Point2.Y) / 2)
+         {
+           if (ADD_RAT_TO_LIST (rat))
+             longjmp (i->env, 1);
+         }
+       else if (rat->group2 == i->layer &&
+-               ((rat->Point2.X == i->pad.Point1.X
+-                 && rat->Point2.Y == i->pad.Point1.Y)
+-                || (rat->Point2.X == i->pad.Point2.X
+-                    && rat->Point2.Y == i->pad.Point2.Y)))
++               rat->Point2.X == (i->pad.Point1.X + i->pad.Point2.X) / 2 &&
++               rat->Point2.Y == (i->pad.Point1.Y + i->pad.Point2.Y) / 2)
+         {
+           if (ADD_RAT_TO_LIST (rat))
+             longjmp (i->env, 1);
+diff --git a/src/netlist.c b/src/netlist.c
+index d9592b0..7cb923e 100644
+--- a/src/netlist.c
++++ b/src/netlist.c
+@@ -137,8 +137,10 @@ pin_name_to_xy (LibraryEntryType * pin, int *x, int *y)
+       *y = ((PinType *) (conn.ptr2))->Y;
+       return 0;
+     case PAD_TYPE:
+-      *x = ((PadType *) (conn.ptr2))->Point1.X;
+-      *y = ((PadType *) (conn.ptr2))->Point1.Y;
++      *x = (((PadType *) (conn.ptr2))->Point1.X +
++            ((PadType *) (conn.ptr2))->Point2.X) / 2;
++      *y = (((PadType *) (conn.ptr2))->Point1.Y +
++            ((PadType *) (conn.ptr2))->Point2.Y) / 2;
+       return 0;
+     }
+   return 1;
+diff --git a/src/rats.c b/src/rats.c
+index 35047b5..85a3f93 100644
+--- a/src/rats.c
++++ b/src/rats.c
+@@ -139,16 +139,8 @@ FindPad (char *ElementName, char *PinNum, ConnectionType * conn, Boolean Same)
+ 	    conn->ptr2 = &element->Pad[i];
+ 	    conn->group =
+ 	      TEST_FLAG (ONSOLDERFLAG, &element->Pad[i]) ? SLayer : CLayer;
+-	    if (TEST_FLAG (EDGE2FLAG, &element->Pad[i]))
+-	      {
+-		conn->X = element->Pad[i].Point2.X;
+-		conn->Y = element->Pad[i].Point2.Y;
+-	      }
+-	    else
+-	      {
+-		conn->X = element->Pad[i].Point1.X;
+-		conn->Y = element->Pad[i].Point1.Y;
+-	      }
++	      conn->X = (element->Pad[i].Point1.X + element->Pad[i].Point2.X) / 2;
++	      conn->Y = (element->Pad[i].Point1.Y + element->Pad[i].Point2.Y) / 2;
+ 	    break;
+ 	  }
+       if (i == element->PadN)
