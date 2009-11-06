@@ -605,8 +605,14 @@ ChangePadClearSize (ElementTypePtr Element, PadTypePtr Pad)
 
   if (TEST_FLAG (LOCKFLAG, Pad))
     return (NULL);
-  value = MIN (MAX_LINESIZE, MAX (value, PCB->Bloat * 2 + 2));
-  if (value <= MAX_PADSIZE && value >= MIN_PADSIZE && value != Pad->Clearance)
+  value = MIN (MAX_LINESIZE, value);
+  if (value < 0)
+    value = 0;
+  if (Delta < 0 && value < PCB->Bloat * 2)
+    value = 0;
+  if ((Delta > 0 || Absolute) && value < PCB->Bloat * 2)
+    value = PCB->Bloat * 2 + 2;
+  if (value != Pad->Clearance)
     {
       AddObjectToClearSizeUndoList (PAD_TYPE, Element, Pad, Pad);
       r_delete_entry (PCB->Data->pad_tree, &Pad->BoundingBox);
