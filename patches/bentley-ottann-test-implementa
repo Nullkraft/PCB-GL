@@ -1,0 +1,5935 @@
+Bottom: ad887f3f399365fafc01aefa4fe046e9e86f2349
+Top:    6af7ad89a4043b8ea75424d6d317df793d303187
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-06 16:36:47 +0000
+
+Bentley-Ottann test implementation
+
+
+---
+
+diff --git a/configure.ac b/configure.ac
+index d7b0198..3ec426e 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -7,6 +7,8 @@ AM_INIT_AUTOMAKE([1.9])
+ AC_GNU_SOURCE
+ AM_CONFIG_HEADER([config.h])
+ 
++m4_include(configure.ac.system)	dnl checks for system functions, headers, libs
++
+ ##########################################################################
+ #
+ # Try to figure out if we are building from git sources.
+diff --git a/configure.ac.system b/configure.ac.system
+new file mode 100644
+index 0000000..3f6ab7e
+--- /dev/null
++++ b/configure.ac.system
+@@ -0,0 +1,164 @@
++dnl
++dnl Non-failing checks for functions, headers, libraries, etc go here
++dnl
++
++dnl ====================================================================
++dnl Feature checks
++dnl ====================================================================
++
++AM_CONDITIONAL(CROSS_COMPILING, test "x$cross_compiling" = "xyes")
++CAIRO_BIGENDIAN
++AC_ARG_ENABLE(atomic,
++	      [AS_HELP_STRING([--disable-atomic],
++			      [disable use of native atomic operations])],
++	      [use_atomic=$enableval], [use_atomic=yes])
++AS_IF([test "x$use_atomic" = "xyes"], [
++  CAIRO_CHECK_NATIVE_ATOMIC_PRIMITIVES
++  CAIRO_CHECK_ATOMIC_OP_NEEDS_MEMORY_BARRIER
++])
++AC_CHECK_SIZEOF(void *)
++AC_CHECK_SIZEOF(int)
++AC_CHECK_SIZEOF(long)
++AC_CHECK_SIZEOF(long long)
++AC_CHECK_SIZEOF(size_t)
++
++AC_MSG_CHECKING([for native Win32])
++case "$host" in
++  *-*-mingw*)
++    cairo_os_win32=yes
++    ;;
++  *)
++    cairo_os_win32=no
++    ;;
++esac
++AC_MSG_RESULT([$cairo_os_win32])
++AM_CONDITIONAL(OS_WIN32, test "$cairo_os_win32" = "yes")
++
++AC_MSG_CHECKING([for Sun Solaris (non-POSIX ctime_r)])
++case "$host" in
++    *-*-solaris*)
++	CFLAGS="$CFLAGS -D_POSIX_PTHREAD_SEMANTICS"
++	solaris_posix_pthread=yes
++	;;
++    *)
++	solaris_posix_pthread=no
++	;;
++esac
++AC_MSG_RESULT([$solaris_posix_pthread])
++
++dnl ====================================================================
++dnl Library checks
++dnl ====================================================================
++
++AC_CHECK_LIBM
++LIBS="$LIBS $LIBM"
++
++AC_CHECK_LIB(rt, sched_yield, [RT_LIBS=-lrt], [RT_LIBS=])
++CAIROPERF_LIBS=$RT_LIBS
++AC_SUBST(CAIROPERF_LIBS)
++
++has_shm_open=
++AC_CHECK_LIB(rt, shm_open, [
++	     SHM_LIBS=-lrt
++	     has_shm_open=yes
++	     ], [SHM_LIBS=])
++AM_CONDITIONAL(HAVE_SHM, test "x$has_shm_open" = "xyes")
++AC_SUBST(SHM_LIBS)
++
++AC_CHECK_LIB(socket, connect, [SOCKET_LIBS=-lsocket], [SOCKET_LIBS=])
++CAIROBOILERPLATE_LIBS=$SOCKET_LIBS
++AC_SUBST(CAIROBOILERPLATE_LIBS)
++
++dnl ====================================================================
++dnl Header/function checks
++dnl ====================================================================
++
++dnl check if we have a __builtin_return_address for the cairo-trace
++dnl utility.
++AC_MSG_CHECKING([for __builtin_return_address(0)])
++AC_TRY_COMPILE([],[__builtin_return_address(0);],
++		[have_builtin_return_address=yes],
++		[have_builtin_return_address=no])
++AC_MSG_RESULT($have_builtin_return_address)
++if test "x$have_builtin_return_address" = "xyes"; then
++    AC_DEFINE(HAVE_BUILTIN_RETURN_ADDRESS, 1,
++	[Define to 1 if your compiler supports the __builtin_return_address() intrinsic.])
++fi
++
++dnl Checks for precise integer types
++AC_CHECK_HEADERS([stdint.h inttypes.h sys/int_types.h])
++AC_CHECK_TYPES([uint64_t, uint128_t, __uint128_t])
++
++dnl Check for socket support for any2ppm daemon
++AC_CHECK_HEADERS([fcntl.h unistd.h signal.h sys/stat.h sys/socket.h sys/poll.h sys/un.h])
++
++dnl Check for infinite loops
++AC_CHECK_FUNCS([alarm])
++
++dnl check for CPU affinity support
++AC_CHECK_HEADERS([sched.h], [AC_CHECK_FUNCS([sched_getaffinity])])
++
++dnl check for mmap support
++AC_CHECK_HEADERS([sys/mman.h], [AC_CHECK_FUNCS([mmap])])
++
++dnl check for clock_gettime() support
++save_LIBS="$LIBS"
++LIBS="$LIBS $RT_LIBS"
++AC_CHECK_HEADERS([time.h], [AC_CHECK_FUNCS([clock_gettime])])
++LIBS="$save_LIBS"
++
++dnl check for GNU-extensions to fenv
++AC_CHECK_HEADER(fenv.h,
++	[AC_CHECK_FUNCS(feenableexcept fedisableexcept feclearexcept)])
++
++dnl check for misc headers and functions
++AC_CHECK_HEADERS([libgen.h byteswap.h signal.h setjmp.h fenv.h])
++AC_CHECK_FUNCS([vasnprintf link ctime_r drand48 flockfile ffs])
++
++dnl check for win32 headers (this detects mingw as well)
++AC_CHECK_HEADERS([windows.h], have_windows=yes, have_windows=no)
++
++
++dnl Possible headers for mkdir
++AC_CHECK_HEADERS([sys/stat.h io.h])
++AC_CHECK_FUNC(mkdir,
++	      [AC_MSG_CHECKING([mkdir variant])
++	      mkdir_variant="unknown"
++	      save_CFLAGS="$CFLAGS"
++	      CFLAGS=$WARN_CFLAGS
++	      AC_TRY_COMPILE([
++#ifdef HAVE_SYS_STAT_H
++#include <sys/stat.h>
++#endif
++#ifdef HAVE_IO_H
++#include <io.h>
++#endif
++		      ],
++		      [mkdir ("hello.world", 0777)],
++		      mkdir_variant="mkdir(path, mode)",
++		      [AC_TRY_COMPILE([
++#ifdef HAVE_SYS_STAT_H
++#include <sys/stat.h>
++#endif
++#ifdef HAVE_IO_H
++#include <io.h>
++#endif
++			      ],
++			      [mkdir ("hello.world")],
++			      mkdir_variant="mkdir(path)")])
++	      AC_MSG_RESULT([$mkdir_variant])
++	      CFLAGS="$save_CFLAGS"
++	      if test "x$mkdir_variant" = "xmkdir(path, mode)"; then
++		  AC_DEFINE(HAVE_MKDIR, 2,
++			    [Define to non-zero if your system has mkdir, and to 2 if your version of mkdir requires a mode parameter])
++	      else
++		  AC_DEFINE(HAVE_MKDIR, 1,
++			    [Define to non-zero if your system has mkdir, and to 2 if your version of mkdir requires a mode parameter])
++	      fi])
++
++dnl ===========================================================================
++dnl
++dnl Test for the tools required for building one big test binary
++dnl
++
++AC_CHECK_FUNCS(fork waitpid raise)
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 9bc9e22..af714d8 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -37,6 +37,22 @@ PCB_SRCS = \
+ 	box.h \
+ 	buffer.c \
+ 	buffer.h \
++	cairo/cairo-minimal.h \
++	cairo/cairoint-minimal.h \
++	cairo/cairo-bentley-ottmann.c \
++	cairo/cairo-combsort-private.h \
++	cairo/cairo-compiler-private.h \
++	cairo/cairo-fixed-private.h \
++	cairo/cairo-fixed-type-private.h \
++	cairo/cairo-freelist.c \
++	cairo/cairo-freelist-private.h \
++	cairo/cairo-malloc-private.h \
++	cairo/cairo-traps.c \
++	cairo/cairo-traps-private.h \
++	cairo/cairo-types-private.h \
++	cairo/cairo-wideint.c \
++	cairo/cairo-wideint-private.h \
++	cairo/cairo-wideint-type-private.h \
+ 	change.c \
+ 	change.h \
+ 	clip.c \
+@@ -130,6 +146,7 @@ PCB_SRCS = \
+ 	set.h \
+ 	strflags.c \
+ 	strflags.h \
++	sweep.h \
+ 	thermal.c \
+ 	thermal.h \
+ 	undo.c \
+diff --git a/src/cairo/cairo-bentley-ottmann.c b/src/cairo/cairo-bentley-ottmann.c
+new file mode 100644
+index 0000000..778d69c
+--- /dev/null
++++ b/src/cairo/cairo-bentley-ottmann.c
+@@ -0,0 +1,2010 @@
++/*
++ * Copyright © 2004 Carl Worth
++ * Copyright © 2006 Red Hat, Inc.
++ * Copyright © 2008 Chris Wilson
++ * Copyright © 2009 Peter Clifton
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it either under the terms of the GNU Lesser General Public
++ * License version 2.1 as published by the Free Software Foundation
++ * (the "LGPL") or, at your option, under the terms of the Mozilla
++ * Public License Version 1.1 (the "MPL"). If you do not alter this
++ * notice, a recipient may use your version of this file under either
++ * the MPL or the LGPL.
++ *
++ * You should have received a copy of the LGPL along with this library
++ * in the file COPYING-LGPL-2.1; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
++ * You should have received a copy of the MPL along with this library
++ * in the file COPYING-MPL-1.1
++ *
++ * The contents of this file are subject to the Mozilla Public License
++ * Version 1.1 (the "License"); you may not use this file except in
++ * compliance with the License. You may obtain a copy of the License at
++ * http://www.mozilla.org/MPL/
++ *
++ * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY
++ * OF ANY KIND, either express or implied. See the LGPL or the MPL for
++ * the specific language governing rights and limitations.
++ *
++ * The Original Code is the cairo graphics library.
++ *
++ * The Initial Developer of the Original Code is Carl Worth
++ *
++ * Contributor(s):
++ *        Carl D. Worth <cworth@cworth.org>
++ *        Chris Wilson <chris@chris-wilson.co.uk>
++ *        Peter Clifton <pcjc2@cam.ac.uk> (Adaptation to PCB use)
++ */
++
++/* Provide definitions for standalone compilation */
++#include "cairoint-minimal.h"
++#include "cairo-malloc-private.h"
++#include "cairo-traps-private.h"
++#include "cairo-fixed-private.h"
++#include "cairo-freelist-private.h"
++#include "cairo-combsort-private.h"
++
++#include <glib.h>
++
++#include "polygon.h"
++#include <GL/gl.h>
++#include "hid/common/hidgl.h"
++
++#define _cairo_error(x) (x)
++
++#define DEBUG_PRINT_STATE 0
++#define DEBUG_EVENTS 0
++#define DEBUG_TRAPS 0
++
++typedef cairo_point_t cairo_bo_point32_t;
++
++typedef struct _cairo_bo_intersect_ordinate {
++    int32_t ordinate;
++    enum { EXACT, INEXACT } exactness;
++} cairo_bo_intersect_ordinate_t;
++
++typedef struct _cairo_bo_intersect_point {
++    cairo_bo_intersect_ordinate_t x;
++    cairo_bo_intersect_ordinate_t y;
++} cairo_bo_intersect_point_t;
++
++typedef struct _cairo_bo_edge cairo_bo_edge_t;
++typedef struct _cairo_bo_trap cairo_bo_trap_t;
++
++/* A deferred trapezoid of an edge */
++struct _cairo_bo_trap {
++    cairo_bo_edge_t *right;
++    int32_t top;
++};
++
++struct _cairo_bo_edge {
++    cairo_edge_t edge;
++    cairo_bo_edge_t *prev;
++    cairo_bo_edge_t *next;
++    cairo_bo_trap_t deferred_trap;
++};
++
++/* the parent is always given by index/2 */
++#define PQ_PARENT_INDEX(i) ((i) >> 1)
++#define PQ_FIRST_ENTRY 1
++
++/* left and right children are index * 2 and (index * 2) +1 respectively */
++#define PQ_LEFT_CHILD_INDEX(i) ((i) << 1)
++
++typedef enum {
++    CAIRO_BO_EVENT_TYPE_STOP,
++    CAIRO_BO_EVENT_TYPE_INTERSECTION,
++    CAIRO_BO_EVENT_TYPE_START
++} cairo_bo_event_type_t;
++
++typedef struct _cairo_bo_event {
++    cairo_bo_event_type_t type;
++    cairo_point_t point;
++} cairo_bo_event_t;
++
++typedef struct _cairo_bo_start_event {
++    cairo_bo_event_type_t type;
++    cairo_point_t point;
++    cairo_bo_edge_t edge;
++} cairo_bo_start_event_t;
++
++typedef struct _cairo_bo_queue_event {
++    cairo_bo_event_type_t type;
++    cairo_point_t point;
++    cairo_bo_edge_t *e1;
++    cairo_bo_edge_t *e2;
++} cairo_bo_queue_event_t;
++
++typedef struct _pqueue {
++    int size, max_size;
++
++    cairo_bo_event_t **elements;
++    cairo_bo_event_t *elements_embedded[1024];
++} pqueue_t;
++
++typedef struct _cairo_bo_event_queue {
++    cairo_freepool_t pool;
++    pqueue_t pqueue;
++    cairo_bo_event_t **start_events;
++} cairo_bo_event_queue_t;
++
++typedef struct _cairo_bo_sweep_line {
++    cairo_bo_edge_t *head;
++    cairo_bo_edge_t *stopped;
++    int32_t current_y;
++    cairo_bo_edge_t *current_edge;
++} cairo_bo_sweep_line_t;
++
++#if DEBUG_TRAPS
++static void
++dump_traps (cairo_traps_t *traps, const char *filename)
++{
++    FILE *file;
++    int n;
++
++    if (getenv ("CAIRO_DEBUG_TRAPS") == NULL)
++        return;
++
++    if (traps->has_limits) {
++        printf ("%s: limits=(%d, %d, %d, %d)\n",
++                filename,
++                traps->limits.p1.x, traps->limits.p1.y,
++                traps->limits.p2.x, traps->limits.p2.y);
++    }
++    printf ("%s: extents=(%d, %d, %d, %d)\n",
++            filename,
++            traps->extents.p1.x, traps->extents.p1.y,
++            traps->extents.p2.x, traps->extents.p2.y);
++
++    file = fopen (filename, "a");
++    if (file != NULL) {
++        for (n = 0; n < traps->num_traps; n++) {
++            fprintf (file, "%d %d L:(%d, %d), (%d, %d) R:(%d, %d), (%d, %d)\n",
++                     traps->traps[n].top,
++                     traps->traps[n].bottom,
++                     traps->traps[n].left.p1.x,
++                     traps->traps[n].left.p1.y,
++                     traps->traps[n].left.p2.x,
++                     traps->traps[n].left.p2.y,
++                     traps->traps[n].right.p1.x,
++                     traps->traps[n].right.p1.y,
++                     traps->traps[n].right.p2.x,
++                     traps->traps[n].right.p2.y);
++        }
++        fprintf (file, "\n");
++        fclose (file);
++    }
++}
++
++static void
++dump_edges (cairo_bo_start_event_t *events,
++            int num_edges,
++            const char *filename)
++{
++    FILE *file;
++    int n;
++
++    if (getenv ("CAIRO_DEBUG_TRAPS") == NULL)
++        return;
++
++    file = fopen (filename, "a");
++    if (file != NULL) {
++        for (n = 0; n < num_edges; n++) {
++            fprintf (file, "(%d, %d), (%d, %d) %d %d %d\n",
++                     events[n].edge.edge.line.p1.x,
++                     events[n].edge.edge.line.p1.y,
++                     events[n].edge.edge.line.p2.x,
++                     events[n].edge.edge.line.p2.y,
++                     events[n].edge.edge.top,
++                     events[n].edge.edge.bottom,
++                     events[n].edge.edge.dir);
++        }
++        fprintf (file, "\n");
++        fclose (file);
++    }
++}
++#endif
++
++static cairo_fixed_t
++_line_compute_intersection_x_for_y (const cairo_line_t *line,
++                                    cairo_fixed_t y)
++{
++    cairo_fixed_t x, dy;
++
++    if (y == line->p1.y)
++        return line->p1.x;
++    if (y == line->p2.y)
++        return line->p2.x;
++
++    x = line->p1.x;
++    dy = line->p2.y - line->p1.y;
++    if (dy != 0) {
++        x += _cairo_fixed_mul_div_floor (y - line->p1.y,
++                                         line->p2.x - line->p1.x,
++                                         dy);
++    }
++
++    return x;
++}
++
++static inline int
++_cairo_bo_point32_compare (cairo_bo_point32_t const *a,
++                           cairo_bo_point32_t const *b)
++{
++    int cmp;
++
++    cmp = a->y - b->y;
++    if (cmp)
++        return cmp;
++
++    return a->x - b->x;
++}
++
++/* Compare the slope of a to the slope of b, returning 1, 0, -1 if the
++ * slope a is respectively greater than, equal to, or less than the
++ * slope of b.
++ *
++ * For each edge, consider the direction vector formed from:
++ *
++ *        top -> bottom
++ *
++ * which is:
++ *
++ *        (dx, dy) = (line.p2.x - line.p1.x, line.p2.y - line.p1.y)
++ *
++ * We then define the slope of each edge as dx/dy, (which is the
++ * inverse of the slope typically used in math instruction). We never
++ * compute a slope directly as the value approaches infinity, but we
++ * can derive a slope comparison without division as follows, (where
++ * the ? represents our compare operator).
++ *
++ * 1.           slope(a) ? slope(b)
++ * 2.            adx/ady ? bdx/bdy
++ * 3.        (adx * bdy) ? (bdx * ady)
++ *
++ * Note that from step 2 to step 3 there is no change needed in the
++ * sign of the result since both ady and bdy are guaranteed to be
++ * greater than or equal to 0.
++ *
++ * When using this slope comparison to sort edges, some care is needed
++ * when interpreting the results. Since the slope compare operates on
++ * distance vectors from top to bottom it gives a correct left to
++ * right sort for edges that have a common top point, (such as two
++ * edges with start events at the same location). On the other hand,
++ * the sense of the result will be exactly reversed for two edges that
++ * have a common stop point.
++ */
++static inline int
++_slope_compare (const cairo_bo_edge_t *a,
++                const cairo_bo_edge_t *b)
++{
++    /* XXX: We're assuming here that dx and dy will still fit in 32
++     * bits. That's not true in general as there could be overflow. We
++     * should prevent that before the tessellation algorithm
++     * begins.
++     */
++    int32_t adx = a->edge.line.p2.x - a->edge.line.p1.x;
++    int32_t bdx = b->edge.line.p2.x - b->edge.line.p1.x;
++
++    /* Since the dy's are all positive by construction we can fast
++     * path several common cases.
++     */
++
++    /* First check for vertical lines. */
++    if (adx == 0)
++        return -bdx;
++    if (bdx == 0)
++        return adx;
++
++    /* Then where the two edges point in different directions wrt x. */
++    if ((adx ^ bdx) < 0)
++        return adx;
++
++    /* Finally we actually need to do the general comparison. */
++    {
++        int32_t ady = a->edge.line.p2.y - a->edge.line.p1.y;
++        int32_t bdy = b->edge.line.p2.y - b->edge.line.p1.y;
++        cairo_int64_t adx_bdy = _cairo_int32x32_64_mul (adx, bdy);
++        cairo_int64_t bdx_ady = _cairo_int32x32_64_mul (bdx, ady);
++
++        return _cairo_int64_cmp (adx_bdy, bdx_ady);
++    }
++}
++
++/*
++ * We need to compare the x-coordinates of a pair of lines for a particular y,
++ * without loss of precision.
++ *
++ * The x-coordinate along an edge for a given y is:
++ *   X = A_x + (Y - A_y) * A_dx / A_dy
++ *
++ * So the inequality we wish to test is:
++ *   A_x + (Y - A_y) * A_dx / A_dy ∘ B_x + (Y - B_y) * B_dx / B_dy,
++ * where ∘ is our inequality operator.
++ *
++ * By construction, we know that A_dy and B_dy (and (Y - A_y), (Y - B_y)) are
++ * all positive, so we can rearrange it thus without causing a sign change:
++ *   A_dy * B_dy * (A_x - B_x) ∘ (Y - B_y) * B_dx * A_dy
++ *                                 - (Y - A_y) * A_dx * B_dy
++ *
++ * Given the assumption that all the deltas fit within 32 bits, we can compute
++ * this comparison directly using 128 bit arithmetic. For certain, but common,
++ * input we can reduce this down to a single 32 bit compare by inspecting the
++ * deltas.
++ *
++ * (And put the burden of the work on developing fast 128 bit ops, which are
++ * required throughout the tessellator.)
++ *
++ * See the similar discussion for _slope_compare().
++ */
++static int
++edges_compare_x_for_y_general (const cairo_bo_edge_t *a,
++                               const cairo_bo_edge_t *b,
++                               int32_t y)
++{
++    /* XXX: We're assuming here that dx and dy will still fit in 32
++     * bits. That's not true in general as there could be overflow. We
++     * should prevent that before the tessellation algorithm
++     * begins.
++     */
++    int32_t dx;
++    int32_t adx, ady;
++    int32_t bdx, bdy;
++    enum {
++       HAVE_NONE    = 0x0,
++       HAVE_DX      = 0x1,
++       HAVE_ADX     = 0x2,
++       HAVE_DX_ADX  = HAVE_DX | HAVE_ADX,
++       HAVE_BDX     = 0x4,
++       HAVE_DX_BDX  = HAVE_DX | HAVE_BDX,
++       HAVE_ADX_BDX = HAVE_ADX | HAVE_BDX,
++       HAVE_ALL     = HAVE_DX | HAVE_ADX | HAVE_BDX
++    } have_dx_adx_bdx = HAVE_ALL;
++
++    /* don't bother solving for abscissa if the edges' bounding boxes
++     * can be used to order them. */
++    {
++           int32_t amin, amax;
++           int32_t bmin, bmax;
++           if (a->edge.line.p1.x < a->edge.line.p2.x) {
++                   amin = a->edge.line.p1.x;
++                   amax = a->edge.line.p2.x;
++           } else {
++                   amin = a->edge.line.p2.x;
++                   amax = a->edge.line.p1.x;
++           }
++           if (b->edge.line.p1.x < b->edge.line.p2.x) {
++                   bmin = b->edge.line.p1.x;
++                   bmax = b->edge.line.p2.x;
++           } else {
++                   bmin = b->edge.line.p2.x;
++                   bmax = b->edge.line.p1.x;
++           }
++           if (amax < bmin) return -1;
++           if (amin > bmax) return +1;
++    }
++
++    ady = a->edge.line.p2.y - a->edge.line.p1.y;
++    adx = a->edge.line.p2.x - a->edge.line.p1.x;
++    if (adx == 0)
++        have_dx_adx_bdx &= ~HAVE_ADX;
++
++    bdy = b->edge.line.p2.y - b->edge.line.p1.y;
++    bdx = b->edge.line.p2.x - b->edge.line.p1.x;
++    if (bdx == 0)
++        have_dx_adx_bdx &= ~HAVE_BDX;
++
++    dx = a->edge.line.p1.x - b->edge.line.p1.x;
++    if (dx == 0)
++        have_dx_adx_bdx &= ~HAVE_DX;
++
++#define L _cairo_int64x32_128_mul (_cairo_int32x32_64_mul (ady, bdy), dx)
++#define A _cairo_int64x32_128_mul (_cairo_int32x32_64_mul (adx, bdy), y - a->edge.line.p1.y)
++#define B _cairo_int64x32_128_mul (_cairo_int32x32_64_mul (bdx, ady), y - b->edge.line.p1.y)
++    switch (have_dx_adx_bdx) {
++    default:
++    case HAVE_NONE:
++        return 0;
++    case HAVE_DX:
++        /* A_dy * B_dy * (A_x - B_x) ∘ 0 */
++        return dx; /* ady * bdy is positive definite */
++    case HAVE_ADX:
++        /* 0 ∘  - (Y - A_y) * A_dx * B_dy */
++        return adx; /* bdy * (y - a->top.y) is positive definite */
++    case HAVE_BDX:
++        /* 0 ∘ (Y - B_y) * B_dx * A_dy */
++        return -bdx; /* ady * (y - b->top.y) is positive definite */
++    case HAVE_ADX_BDX:
++        /*  0 ∘ (Y - B_y) * B_dx * A_dy - (Y - A_y) * A_dx * B_dy */
++        if ((adx ^ bdx) < 0) {
++            return adx;
++        } else if (a->edge.line.p1.y == b->edge.line.p1.y) { /* common origin */
++            cairo_int64_t adx_bdy, bdx_ady;
++
++            /* ∴ A_dx * B_dy ∘ B_dx * A_dy */
++
++            adx_bdy = _cairo_int32x32_64_mul (adx, bdy);
++            bdx_ady = _cairo_int32x32_64_mul (bdx, ady);
++
++            return _cairo_int64_cmp (adx_bdy, bdx_ady);
++        } else
++            return _cairo_int128_cmp (A, B);
++    case HAVE_DX_ADX:
++        /* A_dy * (A_x - B_x) ∘ - (Y - A_y) * A_dx */
++        if ((-adx ^ dx) < 0) {
++            return dx;
++        } else {
++            cairo_int64_t ady_dx, dy_adx;
++
++            ady_dx = _cairo_int32x32_64_mul (ady, dx);
++            dy_adx = _cairo_int32x32_64_mul (a->edge.line.p1.y - y, adx);
++
++            return _cairo_int64_cmp (ady_dx, dy_adx);
++        }
++    case HAVE_DX_BDX:
++        /* B_dy * (A_x - B_x) ∘ (Y - B_y) * B_dx */
++        if ((bdx ^ dx) < 0) {
++            return dx;
++        } else {
++            cairo_int64_t bdy_dx, dy_bdx;
++
++            bdy_dx = _cairo_int32x32_64_mul (bdy, dx);
++            dy_bdx = _cairo_int32x32_64_mul (y - b->edge.line.p1.y, bdx);
++
++            return _cairo_int64_cmp (bdy_dx, dy_bdx);
++        }
++    case HAVE_ALL:
++        /* XXX try comparing (a->edge.line.p2.x - b->edge.line.p2.x) et al */
++        return _cairo_int128_cmp (L, _cairo_int128_sub (B, A));
++    }
++#undef B
++#undef A
++#undef L
++}
++
++/*
++ * We need to compare the x-coordinate of a line for a particular y wrt to a
++ * given x, without loss of precision.
++ *
++ * The x-coordinate along an edge for a given y is:
++ *   X = A_x + (Y - A_y) * A_dx / A_dy
++ *
++ * So the inequality we wish to test is:
++ *   A_x + (Y - A_y) * A_dx / A_dy ∘ X
++ * where ∘ is our inequality operator.
++ *
++ * By construction, we know that A_dy (and (Y - A_y)) are
++ * all positive, so we can rearrange it thus without causing a sign change:
++ *   (Y - A_y) * A_dx ∘ (X - A_x) * A_dy
++ *
++ * Given the assumption that all the deltas fit within 32 bits, we can compute
++ * this comparison directly using 64 bit arithmetic.
++ *
++ * See the similar discussion for _slope_compare() and
++ * edges_compare_x_for_y_general().
++ */
++static int
++edge_compare_for_y_against_x (const cairo_bo_edge_t *a,
++                              int32_t y,
++                              int32_t x)
++{
++    int32_t adx, ady;
++    int32_t dx, dy;
++    cairo_int64_t L, R;
++
++    if (x < a->edge.line.p1.x && x < a->edge.line.p2.x)
++        return 1;
++    if (x > a->edge.line.p1.x && x > a->edge.line.p2.x)
++        return -1;
++
++    adx = a->edge.line.p2.x - a->edge.line.p1.x;
++    dx = x - a->edge.line.p1.x;
++
++    if (adx == 0)
++        return -dx;
++    if (dx == 0 || (adx ^ dx) < 0)
++        return adx;
++
++    dy = y - a->edge.line.p1.y;
++    ady = a->edge.line.p2.y - a->edge.line.p1.y;
++
++    L = _cairo_int32x32_64_mul (dy, adx);
++    R = _cairo_int32x32_64_mul (dx, ady);
++
++    return _cairo_int64_cmp (L, R);
++}
++
++static int
++edges_compare_x_for_y (const cairo_bo_edge_t *a,
++                       const cairo_bo_edge_t *b,
++                       int32_t y)
++{
++    /* If the sweep-line is currently on an end-point of a line,
++     * then we know its precise x value (and considering that we often need to
++     * compare events at end-points, this happens frequently enough to warrant
++     * special casing).
++     */
++    enum {
++       HAVE_NEITHER = 0x0,
++       HAVE_AX      = 0x1,
++       HAVE_BX      = 0x2,
++       HAVE_BOTH    = HAVE_AX | HAVE_BX
++    } have_ax_bx = HAVE_BOTH;
++    int32_t ax, bx;
++
++    if (y == a->edge.line.p1.y)
++        ax = a->edge.line.p1.x;
++    else if (y == a->edge.line.p2.y)
++        ax = a->edge.line.p2.x;
++    else
++        have_ax_bx &= ~HAVE_AX;
++
++    if (y == b->edge.line.p1.y)
++        bx = b->edge.line.p1.x;
++    else if (y == b->edge.line.p2.y)
++        bx = b->edge.line.p2.x;
++    else
++        have_ax_bx &= ~HAVE_BX;
++
++    switch (have_ax_bx) {
++    default:
++    case HAVE_NEITHER:
++        return edges_compare_x_for_y_general (a, b, y);
++    case HAVE_AX:
++        return -edge_compare_for_y_against_x (b, y, ax);
++    case HAVE_BX:
++        return edge_compare_for_y_against_x (a, y, bx);
++    case HAVE_BOTH:
++        return ax - bx;
++    }
++}
++
++static inline int
++_line_equal (const cairo_line_t *a, const cairo_line_t *b)
++{
++    return a->p1.x == b->p1.x && a->p1.y == b->p1.y &&
++           a->p2.x == b->p2.x && a->p2.y == b->p2.y;
++}
++
++static int
++_cairo_bo_sweep_line_compare_edges (cairo_bo_sweep_line_t        *sweep_line,
++                                    const cairo_bo_edge_t        *a,
++                                    const cairo_bo_edge_t        *b)
++{
++    int cmp;
++
++    /* compare the edges if not identical */
++    if (! _line_equal (&a->edge.line, &b->edge.line)) {
++        cmp = edges_compare_x_for_y (a, b, sweep_line->current_y);
++        if (cmp)
++            return cmp;
++
++        /* The two edges intersect exactly at y, so fall back on slope
++         * comparison. We know that this compare_edges function will be
++         * called only when starting a new edge, (not when stopping an
++         * edge), so we don't have to worry about conditionally inverting
++         * the sense of _slope_compare. */
++        cmp = _slope_compare (a, b);
++        if (cmp)
++            return cmp;
++    }
++
++    /* We've got two collinear edges now. */
++    return b->edge.bottom - a->edge.bottom;
++}
++
++static inline cairo_int64_t
++det32_64 (int32_t a, int32_t b,
++          int32_t c, int32_t d)
++{
++    /* det = a * d - b * c */
++    return _cairo_int64_sub (_cairo_int32x32_64_mul (a, d),
++                             _cairo_int32x32_64_mul (b, c));
++}
++
++static inline cairo_int128_t
++det64x32_128 (cairo_int64_t a, int32_t       b,
++              cairo_int64_t c, int32_t       d)
++{
++    /* det = a * d - b * c */
++    return _cairo_int128_sub (_cairo_int64x32_128_mul (a, d),
++                              _cairo_int64x32_128_mul (c, b));
++}
++
++/* Compute the intersection of two lines as defined by two edges. The
++ * result is provided as a coordinate pair of 128-bit integers.
++ *
++ * Returns %CAIRO_BO_STATUS_INTERSECTION if there is an intersection or
++ * %CAIRO_BO_STATUS_PARALLEL if the two lines are exactly parallel.
++ */
++static cairo_bool_t
++intersect_lines (cairo_bo_edge_t                *a,
++                 cairo_bo_edge_t                *b,
++                 cairo_bo_intersect_point_t        *intersection)
++{
++    cairo_int64_t a_det, b_det;
++
++    /* XXX: We're assuming here that dx and dy will still fit in 32
++     * bits. That's not true in general as there could be overflow. We
++     * should prevent that before the tessellation algorithm begins.
++     * What we're doing to mitigate this is to perform clamping in
++     * cairo_bo_tessellate_polygon().
++     */
++    int32_t dx1 = a->edge.line.p1.x - a->edge.line.p2.x;
++    int32_t dy1 = a->edge.line.p1.y - a->edge.line.p2.y;
++
++    int32_t dx2 = b->edge.line.p1.x - b->edge.line.p2.x;
++    int32_t dy2 = b->edge.line.p1.y - b->edge.line.p2.y;
++
++    cairo_int64_t den_det;
++    cairo_int64_t R;
++    cairo_quorem64_t qr;
++
++    den_det = det32_64 (dx1, dy1, dx2, dy2);
++
++     /* Q: Can we determine that the lines do not intersect (within range)
++      * much more cheaply than computing the intersection point i.e. by
++      * avoiding the division?
++      *
++      *   X = ax + t * adx = bx + s * bdx;
++      *   Y = ay + t * ady = by + s * bdy;
++      *   ∴ t * (ady*bdx - bdy*adx) = bdx * (by - ay) + bdy * (ax - bx)
++      *   => t * L = R
++      *
++      * Therefore we can reject any intersection (under the criteria for
++      * valid intersection events) if:
++      *   L^R < 0 => t < 0, or
++      *   L<R => t > 1
++      *
++      * (where top/bottom must at least extend to the line endpoints).
++      *
++      * A similar substitution can be performed for s, yielding:
++      *   s * (ady*bdx - bdy*adx) = ady * (ax - bx) - adx * (ay - by)
++      */
++    R = det32_64 (dx2, dy2,
++                  b->edge.line.p1.x - a->edge.line.p1.x,
++                  b->edge.line.p1.y - a->edge.line.p1.y);
++    if (_cairo_int64_negative (den_det)) {
++        if (_cairo_int64_ge (den_det, R))
++            return FALSE;
++    } else {
++        if (_cairo_int64_le (den_det, R))
++            return FALSE;
++    }
++
++    R = det32_64 (dy1, dx1,
++                  a->edge.line.p1.y - b->edge.line.p1.y,
++                  a->edge.line.p1.x - b->edge.line.p1.x);
++    if (_cairo_int64_negative (den_det)) {
++        if (_cairo_int64_ge (den_det, R))
++            return FALSE;
++    } else {
++        if (_cairo_int64_le (den_det, R))
++            return FALSE;
++    }
++
++    /* We now know that the two lines should intersect within range. */
++
++    a_det = det32_64 (a->edge.line.p1.x, a->edge.line.p1.y,
++                      a->edge.line.p2.x, a->edge.line.p2.y);
++    b_det = det32_64 (b->edge.line.p1.x, b->edge.line.p1.y,
++                      b->edge.line.p2.x, b->edge.line.p2.y);
++
++    /* x = det (a_det, dx1, b_det, dx2) / den_det */
++    qr = _cairo_int_96by64_32x64_divrem (det64x32_128 (a_det, dx1,
++                                                       b_det, dx2),
++                                         den_det);
++    if (_cairo_int64_eq (qr.rem, den_det))
++        return FALSE;
++#if 0
++    intersection->x.exactness = _cairo_int64_is_zero (qr.rem) ? EXACT : INEXACT;
++#else
++    intersection->x.exactness = EXACT;
++    if (! _cairo_int64_is_zero (qr.rem)) {
++        if (_cairo_int64_negative (den_det) ^ _cairo_int64_negative (qr.rem))
++            qr.rem = _cairo_int64_negate (qr.rem);
++        qr.rem = _cairo_int64_mul (qr.rem, _cairo_int32_to_int64 (2));
++        if (_cairo_int64_ge (qr.rem, den_det)) {
++            qr.quo = _cairo_int64_add (qr.quo,
++                                       _cairo_int32_to_int64 (_cairo_int64_negative (qr.quo) ? -1 : 1));
++        } else
++            intersection->x.exactness = INEXACT;
++    }
++#endif
++    intersection->x.ordinate = _cairo_int64_to_int32 (qr.quo);
++
++    /* y = det (a_det, dy1, b_det, dy2) / den_det */
++    qr = _cairo_int_96by64_32x64_divrem (det64x32_128 (a_det, dy1,
++                                                       b_det, dy2),
++                                         den_det);
++    if (_cairo_int64_eq (qr.rem, den_det))
++        return FALSE;
++#if 0
++    intersection->y.exactness = _cairo_int64_is_zero (qr.rem) ? EXACT : INEXACT;
++#else
++    intersection->y.exactness = EXACT;
++    if (! _cairo_int64_is_zero (qr.rem)) {
++        if (_cairo_int64_negative (den_det) ^ _cairo_int64_negative (qr.rem))
++            qr.rem = _cairo_int64_negate (qr.rem);
++        qr.rem = _cairo_int64_mul (qr.rem, _cairo_int32_to_int64 (2));
++        if (_cairo_int64_ge (qr.rem, den_det)) {
++            qr.quo = _cairo_int64_add (qr.quo,
++                                       _cairo_int32_to_int64 (_cairo_int64_negative (qr.quo) ? -1 : 1));
++        } else
++            intersection->y.exactness = INEXACT;
++    }
++#endif
++    intersection->y.ordinate = _cairo_int64_to_int32 (qr.quo);
++
++    return TRUE;
++}
++
++static int
++_cairo_bo_intersect_ordinate_32_compare (cairo_bo_intersect_ordinate_t        a,
++                                         int32_t                        b)
++{
++    /* First compare the quotient */
++    if (a.ordinate > b)
++        return +1;
++    if (a.ordinate < b)
++        return -1;
++    /* With quotient identical, if remainder is 0 then compare equal */
++    /* Otherwise, the non-zero remainder makes a > b */
++    return INEXACT == a.exactness;
++}
++
++/* Does the given edge contain the given point. The point must already
++ * be known to be contained within the line determined by the edge,
++ * (most likely the point results from an intersection of this edge
++ * with another).
++ *
++ * If we had exact arithmetic, then this function would simply be a
++ * matter of examining whether the y value of the point lies within
++ * the range of y values of the edge. But since intersection points
++ * are not exact due to being rounded to the nearest integer within
++ * the available precision, we must also examine the x value of the
++ * point.
++ *
++ * The definition of "contains" here is that the given intersection
++ * point will be seen by the sweep line after the start event for the
++ * given edge and before the stop event for the edge. See the comments
++ * in the implementation for more details.
++ */
++static cairo_bool_t
++_cairo_bo_edge_contains_intersect_point (cairo_bo_edge_t                *edge,
++                                         cairo_bo_intersect_point_t        *point)
++{
++    int cmp_top, cmp_bottom;
++
++    /* XXX: When running the actual algorithm, we don't actually need to
++     * compare against edge->top at all here, since any intersection above
++     * top is eliminated early via a slope comparison. We're leaving these
++     * here for now only for the sake of the quadratic-time intersection
++     * finder which needs them.
++     */
++
++    cmp_top = _cairo_bo_intersect_ordinate_32_compare (point->y,
++                                                       edge->edge.top);
++    cmp_bottom = _cairo_bo_intersect_ordinate_32_compare (point->y,
++                                                          edge->edge.bottom);
++
++    if (cmp_top < 0 || cmp_bottom > 0)
++    {
++        return FALSE;
++    }
++
++    if (cmp_top > 0 && cmp_bottom < 0)
++    {
++        return TRUE;
++    }
++
++    /* At this stage, the point lies on the same y value as either
++     * edge->top or edge->bottom, so we have to examine the x value in
++     * order to properly determine containment. */
++
++    /* If the y value of the point is the same as the y value of the
++     * top of the edge, then the x value of the point must be greater
++     * to be considered as inside the edge. Similarly, if the y value
++     * of the point is the same as the y value of the bottom of the
++     * edge, then the x value of the point must be less to be
++     * considered as inside. */
++
++    if (cmp_top == 0) {
++        cairo_fixed_t top_x;
++
++        top_x = _line_compute_intersection_x_for_y (&edge->edge.line,
++                                                    edge->edge.top);
++        return _cairo_bo_intersect_ordinate_32_compare (point->x, top_x) > 0;
++    } else { /* cmp_bottom == 0 */
++        cairo_fixed_t bot_x;
++
++        bot_x = _line_compute_intersection_x_for_y (&edge->edge.line,
++                                                    edge->edge.bottom);
++        return _cairo_bo_intersect_ordinate_32_compare (point->x, bot_x) < 0;
++    }
++}
++
++/* Compute the intersection of two edges. The result is provided as a
++ * coordinate pair of 128-bit integers.
++ *
++ * Returns %CAIRO_BO_STATUS_INTERSECTION if there is an intersection
++ * that is within both edges, %CAIRO_BO_STATUS_NO_INTERSECTION if the
++ * intersection of the lines defined by the edges occurs outside of
++ * one or both edges, and %CAIRO_BO_STATUS_PARALLEL if the two edges
++ * are exactly parallel.
++ *
++ * Note that when determining if a candidate intersection is "inside"
++ * an edge, we consider both the infinitesimal shortening and the
++ * infinitesimal tilt rules described by John Hobby. Specifically, if
++ * the intersection is exactly the same as an edge point, it is
++ * effectively outside (no intersection is returned). Also, if the
++ * intersection point has the same
++ */
++static cairo_bool_t
++_cairo_bo_edge_intersect (cairo_bo_edge_t        *a,
++                          cairo_bo_edge_t        *b,
++                          cairo_bo_point32_t        *intersection)
++{
++    cairo_bo_intersect_point_t quorem;
++
++    if (! intersect_lines (a, b, &quorem))
++        return FALSE;
++
++    if (! _cairo_bo_edge_contains_intersect_point (a, &quorem))
++        return FALSE;
++
++    if (! _cairo_bo_edge_contains_intersect_point (b, &quorem))
++        return FALSE;
++
++    /* Now that we've correctly compared the intersection point and
++     * determined that it lies within the edge, then we know that we
++     * no longer need any more bits of storage for the intersection
++     * than we do for our edge coordinates. We also no longer need the
++     * remainder from the division. */
++    intersection->x = quorem.x.ordinate;
++    intersection->y = quorem.y.ordinate;
++
++    return TRUE;
++}
++
++static inline int
++cairo_bo_event_compare (const cairo_bo_event_t *a,
++                        const cairo_bo_event_t *b)
++{
++    int cmp;
++
++    cmp = _cairo_bo_point32_compare (&a->point, &b->point);
++    if (cmp)
++        return cmp;
++
++    cmp = a->type - b->type;
++    if (cmp)
++        return cmp;
++
++    return a - b;
++}
++
++static inline void
++_pqueue_init (pqueue_t *pq)
++{
++    pq->max_size = ARRAY_LENGTH (pq->elements_embedded);
++    pq->size = 0;
++
++    pq->elements = pq->elements_embedded;
++}
++
++static inline void
++_pqueue_fini (pqueue_t *pq)
++{
++    if (pq->elements != pq->elements_embedded)
++        free (pq->elements);
++}
++
++static cairo_status_t
++_pqueue_grow (pqueue_t *pq)
++{
++    cairo_bo_event_t **new_elements;
++    pq->max_size *= 2;
++
++    if (pq->elements == pq->elements_embedded) {
++        new_elements = _cairo_malloc_ab (pq->max_size,
++                                         sizeof (cairo_bo_event_t *));
++        if (unlikely (new_elements == NULL))
++            return _cairo_error (CAIRO_STATUS_NO_MEMORY);
++
++        memcpy (new_elements, pq->elements_embedded,
++                sizeof (pq->elements_embedded));
++    } else {
++        new_elements = _cairo_realloc_ab (pq->elements,
++                                          pq->max_size,
++                                          sizeof (cairo_bo_event_t *));
++        if (unlikely (new_elements == NULL))
++            return _cairo_error (CAIRO_STATUS_NO_MEMORY);
++    }
++
++    pq->elements = new_elements;
++    return CAIRO_STATUS_SUCCESS;
++}
++
++static inline cairo_status_t
++_pqueue_push (pqueue_t *pq, cairo_bo_event_t *event)
++{
++    cairo_bo_event_t **elements;
++    int i, parent;
++
++    if (unlikely (pq->size + 1 == pq->max_size)) {
++        cairo_status_t status;
++
++        status = _pqueue_grow (pq);
++        if (unlikely (status))
++            return status;
++    }
++
++    elements = pq->elements;
++
++    for (i = ++pq->size;
++         i != PQ_FIRST_ENTRY &&
++         cairo_bo_event_compare (event,
++                                 elements[parent = PQ_PARENT_INDEX (i)]) < 0;
++         i = parent)
++    {
++        elements[i] = elements[parent];
++    }
++
++    elements[i] = event;
++
++    return CAIRO_STATUS_SUCCESS;
++}
++
++static inline void
++_pqueue_pop (pqueue_t *pq)
++{
++    cairo_bo_event_t **elements = pq->elements;
++    cairo_bo_event_t *tail;
++    int child, i;
++
++    tail = elements[pq->size--];
++    if (pq->size == 0) {
++        elements[PQ_FIRST_ENTRY] = NULL;
++        return;
++    }
++
++    for (i = PQ_FIRST_ENTRY;
++         (child = PQ_LEFT_CHILD_INDEX (i)) <= pq->size;
++         i = child)
++    {
++        if (child != pq->size &&
++            cairo_bo_event_compare (elements[child+1],
++                                    elements[child]) < 0)
++        {
++            child++;
++        }
++
++        if (cairo_bo_event_compare (elements[child], tail) >= 0)
++            break;
++
++        elements[i] = elements[child];
++    }
++    elements[i] = tail;
++}
++
++static inline cairo_status_t
++_cairo_bo_event_queue_insert (cairo_bo_event_queue_t        *queue,
++                              cairo_bo_event_type_t         type,
++                              cairo_bo_edge_t                *e1,
++                              cairo_bo_edge_t                *e2,
++                              const cairo_point_t         *point)
++{
++    cairo_bo_queue_event_t *event;
++
++    event = _cairo_freepool_alloc (&queue->pool);
++    if (unlikely (event == NULL))
++        return _cairo_error (CAIRO_STATUS_NO_MEMORY);
++
++    event->type = type;
++    event->e1 = e1;
++    event->e2 = e2;
++    event->point = *point;
++
++    return _pqueue_push (&queue->pqueue, (cairo_bo_event_t *) event);
++}
++
++static void
++_cairo_bo_event_queue_delete (cairo_bo_event_queue_t *queue,
++                              cairo_bo_event_t             *event)
++{
++    _cairo_freepool_free (&queue->pool, event);
++}
++
++static cairo_bo_event_t *
++_cairo_bo_event_dequeue (cairo_bo_event_queue_t *event_queue)
++{
++    cairo_bo_event_t *event, *cmp;
++
++    event = event_queue->pqueue.elements[PQ_FIRST_ENTRY];
++    cmp = *event_queue->start_events;
++    if (event == NULL ||
++        (cmp != NULL && cairo_bo_event_compare (cmp, event) < 0))
++    {
++        event = cmp;
++        event_queue->start_events++;
++    }
++    else
++    {
++        _pqueue_pop (&event_queue->pqueue);
++    }
++
++    return event;
++}
++
++CAIRO_COMBSORT_DECLARE (_cairo_bo_event_queue_sort,
++                        cairo_bo_event_t *,
++                        cairo_bo_event_compare)
++
++static void
++_cairo_bo_event_queue_init (cairo_bo_event_queue_t         *event_queue,
++                            cairo_bo_event_t                **start_events,
++                            int                                  num_events)
++{
++    _cairo_bo_event_queue_sort (start_events, num_events);
++    start_events[num_events] = NULL;
++
++    event_queue->start_events = start_events;
++
++    _cairo_freepool_init (&event_queue->pool,
++                          sizeof (cairo_bo_queue_event_t));
++    _pqueue_init (&event_queue->pqueue);
++    event_queue->pqueue.elements[PQ_FIRST_ENTRY] = NULL;
++}
++
++static cairo_status_t
++_cairo_bo_event_queue_insert_stop (cairo_bo_event_queue_t        *event_queue,
++                                   cairo_bo_edge_t                *edge)
++{
++    cairo_bo_point32_t point;
++
++    point.y = edge->edge.bottom;
++    point.x = _line_compute_intersection_x_for_y (&edge->edge.line,
++                                                  point.y);
++    return _cairo_bo_event_queue_insert (event_queue,
++                                         CAIRO_BO_EVENT_TYPE_STOP,
++                                         edge, NULL,
++                                         &point);
++}
++
++static void
++_cairo_bo_event_queue_fini (cairo_bo_event_queue_t *event_queue)
++{
++    _pqueue_fini (&event_queue->pqueue);
++    _cairo_freepool_fini (&event_queue->pool);
++}
++
++static inline cairo_status_t
++_cairo_bo_event_queue_insert_if_intersect_below_current_y (cairo_bo_event_queue_t        *event_queue,
++                                                           cairo_bo_edge_t        *left,
++                                                           cairo_bo_edge_t *right)
++{
++    cairo_bo_point32_t intersection;
++
++    if (_line_equal (&left->edge.line, &right->edge.line))
++        return CAIRO_STATUS_SUCCESS;
++
++    /* The names "left" and "right" here are correct descriptions of
++     * the order of the two edges within the active edge list. So if a
++     * slope comparison also puts left less than right, then we know
++     * that the intersection of these two segments has already
++     * occurred before the current sweep line position. */
++    if (_slope_compare (left, right) <= 0)
++        return CAIRO_STATUS_SUCCESS;
++
++    if (! _cairo_bo_edge_intersect (left, right, &intersection))
++        return CAIRO_STATUS_SUCCESS;
++
++    return _cairo_bo_event_queue_insert (event_queue,
++                                         CAIRO_BO_EVENT_TYPE_INTERSECTION,
++                                         left, right,
++                                         &intersection);
++}
++
++static void
++_cairo_bo_sweep_line_init (cairo_bo_sweep_line_t *sweep_line)
++{
++    sweep_line->head = NULL;
++    sweep_line->stopped = NULL;
++    sweep_line->current_y = INT32_MIN;
++    sweep_line->current_edge = NULL;
++}
++
++static cairo_status_t
++_cairo_bo_sweep_line_insert (cairo_bo_sweep_line_t        *sweep_line,
++                             cairo_bo_edge_t                *edge)
++{
++    if (sweep_line->current_edge != NULL) {
++        cairo_bo_edge_t *prev, *next;
++        int cmp;
++
++        cmp = _cairo_bo_sweep_line_compare_edges (sweep_line,
++                                                  sweep_line->current_edge,
++                                                  edge);
++        if (cmp < 0) {
++            prev = sweep_line->current_edge;
++            next = prev->next;
++            while (next != NULL &&
++                   _cairo_bo_sweep_line_compare_edges (sweep_line,
++                                                       next, edge) < 0)
++            {
++                prev = next, next = prev->next;
++            }
++
++            prev->next = edge;
++            edge->prev = prev;
++            edge->next = next;
++            if (next != NULL)
++                next->prev = edge;
++        } else if (cmp > 0) {
++            next = sweep_line->current_edge;
++            prev = next->prev;
++            while (prev != NULL &&
++                   _cairo_bo_sweep_line_compare_edges (sweep_line,
++                                                       prev, edge) > 0)
++            {
++                next = prev, prev = next->prev;
++            }
++
++            next->prev = edge;
++            edge->next = next;
++            edge->prev = prev;
++            if (prev != NULL)
++                prev->next = edge;
++            else
++                sweep_line->head = edge;
++        } else {
++            prev = sweep_line->current_edge;
++            edge->prev = prev;
++            edge->next = prev->next;
++            if (prev->next != NULL)
++                prev->next->prev = edge;
++            prev->next = edge;
++        }
++    } else {
++        sweep_line->head = edge;
++    }
++
++    sweep_line->current_edge = edge;
++
++    return CAIRO_STATUS_SUCCESS;
++}
++
++static void
++_cairo_bo_sweep_line_delete (cairo_bo_sweep_line_t        *sweep_line,
++                             cairo_bo_edge_t        *edge)
++{
++    if (edge->prev != NULL)
++        edge->prev->next = edge->next;
++    else
++        sweep_line->head = edge->next;
++
++    if (edge->next != NULL)
++        edge->next->prev = edge->prev;
++
++    if (sweep_line->current_edge == edge)
++        sweep_line->current_edge = edge->prev ? edge->prev : edge->next;
++}
++
++static void
++_cairo_bo_sweep_line_swap (cairo_bo_sweep_line_t        *sweep_line,
++                           cairo_bo_edge_t                *left,
++                           cairo_bo_edge_t                *right)
++{
++    if (left->prev != NULL)
++        left->prev->next = right;
++    else
++        sweep_line->head = right;
++
++    if (right->next != NULL)
++        right->next->prev = left;
++
++    left->next = right->next;
++    right->next = left;
++
++    right->prev = left->prev;
++    left->prev = right;
++}
++
++#if DEBUG_PRINT_STATE
++static void
++_cairo_bo_edge_print (cairo_bo_edge_t *edge)
++{
++    printf ("(%d, %d)-(%d, %d)",
++            edge->edge.line.p1.x, edge->edge.line.p1.y,
++            edge->edge.line.p2.x, edge->edge.line.p2.y);
++}
++
++static void
++_cairo_bo_event_print (cairo_bo_event_t *event)
++{
++    switch (event->type) {
++    case CAIRO_BO_EVENT_TYPE_START:
++        printf ("Start: ");
++        break;
++    case CAIRO_BO_EVENT_TYPE_STOP:
++        printf ("Stop: ");
++        break;
++    case CAIRO_BO_EVENT_TYPE_INTERSECTION:
++        printf ("Intersection: ");
++        break;
++    }
++    printf ("(%d, %d)\t", event->point.x, event->point.y);
++    _cairo_bo_edge_print (((cairo_bo_queue_event_t *)event)->e1);
++    if (event->type == CAIRO_BO_EVENT_TYPE_INTERSECTION) {
++        printf (" X ");
++        _cairo_bo_edge_print (((cairo_bo_queue_event_t *)event)->e2);
++    }
++    printf ("\n");
++}
++
++static void
++_cairo_bo_event_queue_print (cairo_bo_event_queue_t *event_queue)
++{
++    /* XXX: fixme to print the start/stop array too. */
++    printf ("Event queue:\n");
++}
++
++static void
++_cairo_bo_sweep_line_print (cairo_bo_sweep_line_t *sweep_line)
++{
++    cairo_bool_t first = TRUE;
++    cairo_bo_edge_t *edge;
++
++    printf ("Sweep line from edge list: ");
++    first = TRUE;
++    for (edge = sweep_line->head;
++         edge;
++         edge = edge->next)
++    {
++        if (!first)
++            printf (", ");
++        _cairo_bo_edge_print (edge);
++        first = FALSE;
++    }
++    printf ("\n");
++}
++
++static void
++print_state (const char                        *msg,
++             cairo_bo_event_t                *event,
++             cairo_bo_event_queue_t        *event_queue,
++             cairo_bo_sweep_line_t        *sweep_line)
++{
++    printf ("%s ", msg);
++    _cairo_bo_event_print (event);
++    _cairo_bo_event_queue_print (event_queue);
++    _cairo_bo_sweep_line_print (sweep_line);
++    printf ("\n");
++}
++#endif
++
++#if DEBUG_EVENTS
++static void CAIRO_PRINTF_FORMAT (1, 2)
++event_log (const char *fmt, ...)
++{
++    FILE *file;
++
++    if (getenv ("CAIRO_DEBUG_EVENTS") == NULL)
++        return;
++
++    file = fopen ("bo-events.txt", "a");
++    if (file != NULL) {
++        va_list ap;
++
++        va_start (ap, fmt);
++        vfprintf (file, fmt, ap);
++        va_end (ap);
++
++        fclose (file);
++    }
++}
++#endif
++
++static inline cairo_bool_t
++edges_colinear (const cairo_bo_edge_t *a, const cairo_bo_edge_t *b)
++{
++    if (_line_equal (&a->edge.line, &b->edge.line))
++        return TRUE;
++
++    if (_slope_compare (a, b))
++        return FALSE;
++
++    /* The choice of y is not truly arbitrary since we must guarantee that it
++     * is greater than the start of either line.
++     */
++    if (a->edge.line.p1.y == b->edge.line.p1.y) {
++        return a->edge.line.p1.x == b->edge.line.p1.x;
++    } else if (a->edge.line.p1.y < b->edge.line.p1.y) {
++        return edge_compare_for_y_against_x (b,
++                                             a->edge.line.p1.y,
++                                             a->edge.line.p1.x) == 0;
++    } else {
++        return edge_compare_for_y_against_x (a,
++                                             b->edge.line.p1.y,
++                                             b->edge.line.p1.x) == 0;
++    }
++}
++
++/* Adds the trapezoid, if any, of the left edge to the #cairo_traps_t */
++static cairo_status_t
++_cairo_bo_edge_end_trap (cairo_bo_edge_t        *left,
++                         int32_t                 bot,
++                         cairo_traps_t          *traps)
++{
++    cairo_bo_trap_t *trap = &left->deferred_trap;
++
++    /* Only emit (trivial) non-degenerate trapezoids with positive height. */
++    if (likely (trap->top < bot)) {
++        _cairo_traps_add_trap (traps,
++                               trap->top, bot,
++                               &left->edge.line, &trap->right->edge.line);
++
++#if DEBUG_PRINT_STATE
++        printf ("Deferred trap: left=(%d, %d)-(%d,%d) "
++                "right=(%d,%d)-(%d,%d) top=%d, bot=%d\n",
++                left->edge.line.p1.x, left->edge.line.p1.y,
++                left->edge.line.p2.x, left->edge.line.p2.y,
++                trap->right->edge.line.p1.x, trap->right->edge.line.p1.y,
++                trap->right->edge.line.p2.x, trap->right->edge.line.p2.y,
++                trap->top, bot);
++#endif
++#if DEBUG_EVENTS
++        event_log ("end trap: %lu %lu %d %d\n",
++                   (long) left,
++                   (long) trap->right,
++                   trap->top,
++                   bot);
++#endif
++    }
++
++    trap->right = NULL;
++
++//    return _cairo_traps_status (traps);
++    return 0;
++}
++
++
++/* Start a new trapezoid at the given top y coordinate, whose edges
++ * are `edge' and `edge->next'. If `edge' already has a trapezoid,
++ * then either add it to the traps in `traps', if the trapezoid's
++ * right edge differs from `edge->next', or do nothing if the new
++ * trapezoid would be a continuation of the existing one. */
++static inline cairo_status_t
++_cairo_bo_edge_start_or_continue_trap (cairo_bo_edge_t        *left,
++                                       cairo_bo_edge_t  *right,
++                                       int               top,
++                                       cairo_traps_t        *traps)
++{
++    cairo_status_t status;
++    if (left->deferred_trap.right == right) {
++        return CAIRO_STATUS_SUCCESS;
++    }
++
++    if (left->deferred_trap.right != NULL) {
++        if (right != NULL && edges_colinear (left->deferred_trap.right, right))
++        {
++            /* continuation on right, so just swap edges */
++            left->deferred_trap.right = right;
++            return CAIRO_STATUS_SUCCESS;
++        }
++
++        status = _cairo_bo_edge_end_trap (left, top, traps);
++        if (unlikely (status))
++            return status;
++    }
++
++    if (right != NULL && ! edges_colinear (left, right)) {
++        left->deferred_trap.top = top;
++        left->deferred_trap.right = right;
++
++#if DEBUG_EVENTS
++        event_log ("begin trap: %lu %lu %d\n",
++                   (long) left,
++                   (long) right,
++                   top);
++#endif
++    }
++
++    return CAIRO_STATUS_SUCCESS;
++}
++
++static inline cairo_status_t
++_active_edges_to_traps (cairo_bo_edge_t		*left,
++			int32_t			 top,
++			cairo_fill_rule_t	 fill_rule,
++			cairo_traps_t	        *traps)
++{
++    cairo_bo_edge_t *right;
++    cairo_status_t status;
++
++#if DEBUG_PRINT_STATE
++    printf ("Processing active edges for %d\n", top);
++#endif
++
++    if (fill_rule == CAIRO_FILL_RULE_WINDING) {
++	while (left != NULL) {
++	    int in_out;
++
++	    /* Greedily search for the closing edge, so that we generate the
++	     * maximal span width with the minimal number of trapezoids.
++	     */
++	    in_out = left->edge.dir;
++
++	    /* Check if there is a co-linear edge with an existing trap */
++	    right = left->next;
++	    if (left->deferred_trap.right == NULL) {
++		while (right != NULL && right->deferred_trap.right == NULL)
++		    right = right->next;
++
++		if (right != NULL && edges_colinear (left, right)) {
++		    /* continuation on left */
++		    left->deferred_trap = right->deferred_trap;
++		    right->deferred_trap.right = NULL;
++		}
++	    }
++
++	    /* End all subsumed traps */
++	    right = left->next;
++	    while (right != NULL) {
++		if (right->deferred_trap.right != NULL) {
++		    status = _cairo_bo_edge_end_trap (right, top, traps);
++		    if (unlikely (status))
++			return status;
++		}
++
++		in_out += right->edge.dir;
++		if (in_out == 0) {
++		    cairo_bo_edge_t *next;
++		    cairo_bool_t skip = FALSE;
++
++		    /* skip co-linear edges */
++		    next = right->next;
++		    if (next != NULL)
++			skip = edges_colinear (right, next);
++
++		    if (! skip)
++			break;
++		}
++
++		right = right->next;
++	    }
++
++	    status = _cairo_bo_edge_start_or_continue_trap (left, right,
++							    top, traps);
++	    if (unlikely (status))
++		return status;
++
++	    left = right;
++	    if (left != NULL)
++		left = left->next;
++	}
++    } else {
++	while (left != NULL) {
++	    int in_out = 0;
++
++	    right = left->next;
++	    while (right != NULL) {
++		if (right->deferred_trap.right != NULL) {
++		    status = _cairo_bo_edge_end_trap (right, top, traps);
++		    if (unlikely (status))
++			return status;
++		}
++
++		if ((in_out++ & 1) == 0) {
++		    cairo_bo_edge_t *next;
++		    cairo_bool_t skip = FALSE;
++
++		    /* skip co-linear edges */
++		    next = right->next;
++		    if (next != NULL)
++			skip = edges_colinear (right, next);
++
++		    if (! skip)
++			break;
++		}
++
++		right = right->next;
++	    }
++
++	    status = _cairo_bo_edge_start_or_continue_trap (left, right,
++							    top, traps);
++	    if (unlikely (status))
++		return status;
++
++	    left = right;
++	    if (left != NULL)
++		left = left->next;
++	}
++    }
++
++    return CAIRO_STATUS_SUCCESS;
++}
++
++/* Execute a single pass of the Bentley-Ottmann algorithm on edges,
++ * generating trapezoids according to the fill_rule and appending them
++ * to traps. */
++static cairo_status_t
++_cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
++                                            int                  num_events,
++                                            cairo_traps_t       *traps,
++                                            int                 *num_intersections)
++{
++    cairo_status_t status = CAIRO_STATUS_SUCCESS; /* silence compiler */
++    int intersection_count = 0;
++    cairo_bo_event_queue_t event_queue;
++    cairo_bo_sweep_line_t sweep_line;
++    cairo_bo_event_t *event;
++    cairo_bo_edge_t *left, *right;
++    cairo_bo_edge_t *e1, *e2;
++
++#if DEBUG_EVENTS
++    {
++        int i;
++
++        for (i = 0; i < num_events; i++) {
++            cairo_bo_start_event_t *event =
++                ((cairo_bo_start_event_t **) start_events)[i];
++            event_log ("edge: %lu (%d, %d) (%d, %d) (%d, %d) %d\n",
++//                       (long) &events[i].edge,
++                       (long) 666,
++                       event->edge.edge.line.p1.x,
++                       event->edge.edge.line.p1.y,
++                       event->edge.edge.line.p2.x,
++                       event->edge.edge.line.p2.y,
++                       event->edge.edge.top,
++                       event->edge.edge.bottom,
++                       event->edge.edge.dir);
++        }
++    }
++#endif
++
++    _cairo_bo_event_queue_init (&event_queue, start_events, num_events);
++    _cairo_bo_sweep_line_init (&sweep_line);
++
++    while ((event = _cairo_bo_event_dequeue (&event_queue))) {
++        if (event->point.y != sweep_line.current_y) {
++            for (e1 = sweep_line.stopped; e1; e1 = e1->next) {
++                if (e1->deferred_trap.right != NULL) {
++                    status = _cairo_bo_edge_end_trap (e1,
++                                                      e1->edge.bottom,
++                                                      traps);
++                    if (unlikely (status))
++                        goto unwind;
++                }
++            }
++            sweep_line.stopped = NULL;
++
++            status = _active_edges_to_traps (sweep_line.head,
++                                             sweep_line.current_y,
++//                                             CAIRO_FILL_RULE_WINDING,
++                                             CAIRO_FILL_RULE_EVEN_ODD,
++                                             traps);
++            if (unlikely (status))
++                goto unwind;
++
++            sweep_line.current_y = event->point.y;
++        }
++
++#if DEBUG_EVENTS
++        event_log ("event: %d (%ld, %ld) %lu, %lu\n",
++                   event->type,
++                   (long) event->point.x,
++                   (long) event->point.y,
++                   (long) ((cairo_bo_queue_event_t *)event)->e1,
++                   (long) ((cairo_bo_queue_event_t *)event)->e2);
++#endif
++
++        switch (event->type) {
++        case CAIRO_BO_EVENT_TYPE_START:
++            e1 = &((cairo_bo_start_event_t *) event)->edge;
++
++            status = _cairo_bo_sweep_line_insert (&sweep_line, e1);
++            if (unlikely (status))
++                goto unwind;
++
++            status = _cairo_bo_event_queue_insert_stop (&event_queue, e1);
++            if (unlikely (status))
++                goto unwind;
++
++            /* check to see if this is a continuation of a stopped edge */
++            /* XXX change to an infinitesimal lengthening rule */
++            for (left = sweep_line.stopped; left; left = left->next) {
++                if (e1->edge.top <= left->edge.bottom &&
++                    edges_colinear (e1, left))
++                {
++                    e1->deferred_trap = left->deferred_trap;
++                    if (left->prev != NULL)
++                        left->prev = left->next;
++                    else
++                        sweep_line.stopped = left->next;
++                    if (left->next != NULL)
++                        left->next->prev = left->prev;
++                    break;
++                }
++            }
++
++            left = e1->prev;
++            right = e1->next;
++
++            if (left != NULL) {
++                status = _cairo_bo_event_queue_insert_if_intersect_below_current_y (&event_queue, left, e1);
++                if (unlikely (status))
++                    goto unwind;
++            }
++
++            if (right != NULL) {
++                status = _cairo_bo_event_queue_insert_if_intersect_below_current_y (&event_queue, e1, right);
++                if (unlikely (status))
++                    goto unwind;
++            }
++
++            break;
++
++        case CAIRO_BO_EVENT_TYPE_STOP:
++            e1 = ((cairo_bo_queue_event_t *) event)->e1;
++            _cairo_bo_event_queue_delete (&event_queue, event);
++
++            left = e1->prev;
++            right = e1->next;
++
++            _cairo_bo_sweep_line_delete (&sweep_line, e1);
++
++            /* first, check to see if we have a continuation via a fresh edge */
++            if (e1->deferred_trap.right != NULL) {
++                e1->next = sweep_line.stopped;
++                if (sweep_line.stopped != NULL)
++                    sweep_line.stopped->prev = e1;
++                sweep_line.stopped = e1;
++                e1->prev = NULL;
++            }
++
++            if (left != NULL && right != NULL) {
++                status = _cairo_bo_event_queue_insert_if_intersect_below_current_y (&event_queue, left, right);
++                if (unlikely (status))
++                    goto unwind;
++            }
++
++            break;
++
++        case CAIRO_BO_EVENT_TYPE_INTERSECTION:
++            break;
++            printf ("Intersection event\n");
++            e1 = ((cairo_bo_queue_event_t *) event)->e1;
++            e2 = ((cairo_bo_queue_event_t *) event)->e2;
++            _cairo_bo_event_queue_delete (&event_queue, event);
++
++            /* skip this intersection if its edges are not adjacent */
++            if (e2 != e1->next)
++                break;
++
++            intersection_count++;
++
++            left = e1->prev;
++            right = e2->next;
++
++            _cairo_bo_sweep_line_swap (&sweep_line, e1, e2);
++
++            /* after the swap e2 is left of e1 */
++
++            if (left != NULL) {
++                status = _cairo_bo_event_queue_insert_if_intersect_below_current_y (&event_queue, left, e2);
++                if (unlikely (status))
++                    goto unwind;
++            }
++
++            if (right != NULL) {
++                status = _cairo_bo_event_queue_insert_if_intersect_below_current_y (&event_queue, e1, right);
++                if (unlikely (status))
++                    goto unwind;
++            }
++
++            break;
++        }
++    }
++
++    *num_intersections = intersection_count;
++    for (e1 = sweep_line.stopped; e1; e1 = e1->next) {
++        if (e1->deferred_trap.right != NULL) {
++            status = _cairo_bo_edge_end_trap (e1, e1->edge.bottom, traps);
++            if (unlikely (status))
++                break;
++        }
++    }
++ unwind:
++    _cairo_bo_event_queue_fini (&event_queue);
++
++#if DEBUG_EVENTS
++    event_log ("\n");
++#endif
++
++    return status;
++}
++
++static void
++contour_to_start_events (PLINE                   *contour,
++                         cairo_bo_start_event_t  *events,
++                         cairo_bo_event_t       **event_ptrs,
++                         int                     *counter,
++                         int                      outer_contour)
++{
++    int i = *counter;
++    VNODE *bv;
++
++    /* Loop over nodes, adding edges */
++    bv = &contour->head;
++    do {
++      int x1, y1, x2, y2;
++      cairo_edge_t cairo_edge;
++      /* Node is between bv->point[0,1] and bv->next->point[0,1] */
++
++      if (bv->point[1] == bv->next->point[1]) {
++          if (bv->point[0] < bv->next->point[0]) {
++            x1 = bv->point[0];
++            y1 = bv->point[1];
++            x2 = bv->next->point[0];
++            y2 = bv->next->point[1];
++          } else {
++            x1 = bv->next->point[0];
++            y1 = bv->next->point[1];
++            x2 = bv->point[0];
++            y2 = bv->point[1];
++          }
++      } else if (bv->point[1] < bv->next->point[1]) {
++        x1 = bv->point[0];
++        y1 = bv->point[1];
++        x2 = bv->next->point[0];
++        y2 = bv->next->point[1];
++      } else {
++        x1 = bv->next->point[0];
++        y1 = bv->next->point[1];
++        x2 = bv->point[0];
++        y2 = bv->point[1];
++      }
++
++      cairo_edge.line.p1.x = x1;
++      cairo_edge.line.p1.y = y1;
++      cairo_edge.line.p2.x = x2;
++      cairo_edge.line.p2.y = y2;
++      cairo_edge.top = y1;
++      cairo_edge.bottom = y2;
++      cairo_edge.dir = outer_contour ? 1 : -1;
++
++      event_ptrs[i] = (cairo_bo_event_t *) &events[i];
++
++      events[i].type = CAIRO_BO_EVENT_TYPE_START;
++      events[i].point.y = cairo_edge.line.p1.y;
++      events[i].point.x = cairo_edge.line.p1.x;
++
++      events[i].edge.edge = cairo_edge;
++      events[i].edge.deferred_trap.right = NULL;
++      events[i].edge.prev = NULL;
++      events[i].edge.next = NULL;
++      i++;
++
++    } while ((bv = bv->next) != &contour->head);
++
++    *counter = i;
++}
++
++
++static void
++poly_area_to_start_events (POLYAREA                *poly,
++                           cairo_bo_start_event_t  *events,
++                           cairo_bo_event_t       **event_ptrs,
++                           int                     *counter)
++{
++    int i = *counter;
++    PLINE *contour;
++    POLYAREA *pa;
++    int outer_contour;
++
++    pa = poly;
++    do {
++      /* Loop over contours */
++      outer_contour = 1;
++      for (contour = pa->contours; contour != NULL; contour = contour->next) {
++        contour_to_start_events (contour, events, event_ptrs,
++                                 counter, outer_contour);
++        outer_contour = 0;
++      }
++
++    } while ((pa = pa->f) != poly);
++
++    *counter = i;
++}
++
++
++cairo_status_t
++bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps)
++{
++  int intersections;
++  cairo_status_t status;
++  cairo_bo_start_event_t stack_events[CAIRO_STACK_ARRAY_LENGTH (cairo_bo_start_event_t)];
++  cairo_bo_start_event_t *events;
++  cairo_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
++  cairo_bo_event_t **event_ptrs;
++  int num_events = 0;
++  int i;
++  int n;
++  POLYAREA *pa;
++  PLINE *contour;
++
++  pa = poly;
++  do {
++    for (contour = pa->contours; contour != NULL; contour = contour->next)
++      num_events += contour->Count;
++    /* FIXME: Remove horizontal edges? */
++  } while ((pa = pa->f) != poly);
++
++  if (unlikely (0 == num_events))
++      return CAIRO_STATUS_SUCCESS;
++
++  events = stack_events;
++  event_ptrs = stack_event_ptrs;
++  if (num_events > ARRAY_LENGTH (stack_events)) {
++      events = _cairo_malloc_ab_plus_c (num_events,
++                                        sizeof (cairo_bo_start_event_t) +
++                                        sizeof (cairo_bo_event_t *),
++                                        sizeof (cairo_bo_event_t *));
++      if (unlikely (events == NULL))
++          return CAIRO_STATUS_NO_MEMORY;
++
++      event_ptrs = (cairo_bo_event_t **) (events + num_events);
++  }
++
++  i = 0;
++
++  poly_area_to_start_events (poly, events, event_ptrs, &i);
++
++  /* XXX: This would be the convenient place to throw in multiple
++   * passes of the Bentley-Ottmann algorithm. It would merely
++   * require storing the results of each pass into a temporary
++   * cairo_traps_t. */
++  status = _cairo_bentley_ottmann_tessellate_bo_edges (event_ptrs,
++                                                       num_events,
++                                                       traps,
++                                                       &intersections);
++
++  for (n = 0; n < traps->num_traps; n++) {
++    int x1, y1, x2, y2, x3, y3, x4, y4;
++
++    x1 = _line_compute_intersection_x_for_y (&traps->traps[n].left, traps->traps[n].top);
++    y1 = traps->traps[n].top;
++    x2 = _line_compute_intersection_x_for_y (&traps->traps[n].right, traps->traps[n].top);
++    y2 = traps->traps[n].top;
++    x3 = _line_compute_intersection_x_for_y (&traps->traps[n].right, traps->traps[n].bottom);
++    y3 = traps->traps[n].bottom;
++    x4 = _line_compute_intersection_x_for_y (&traps->traps[n].left, traps->traps[n].bottom);
++    y4 = traps->traps[n].bottom;
++
++#if 1
++    if (x1 == x2) {
++      hidgl_ensure_triangle_space (&buffer, 1);
++      hidgl_add_triangle (&buffer, x1, y1, x3, y3, x4, y4);
++    } else if (x3 == x4) {
++      hidgl_ensure_triangle_space (&buffer, 1);
++      hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
++    } else {
++      hidgl_ensure_triangle_space (&buffer, 2);
++      hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
++      hidgl_add_triangle (&buffer, x3, y3, x4, y4, x1, y1);
++    }
++#else
++    glBegin (GL_LINES);
++    glVertex2i (x1, y1); glVertex2i (x2, y2);
++    glVertex2i (x2, y2); glVertex2i (x3, y3);
++     glVertex2i (x3, y3); glVertex2i (x1, y1);
++    glVertex2i (x3, y3); glVertex2i (x4, y4);
++    glVertex2i (x4, y4); glVertex2i (x1, y1);
++     glVertex2i (x1, y1); glVertex2i (x3, y3);
++    glEnd ();
++#endif
++  }
++
++#if DEBUG_TRAPS
++  dump_traps (traps, "bo-polygon-out.txt");
++#endif
++
++  if (events != stack_events)
++      free (events);
++
++  return CAIRO_STATUS_SUCCESS;
++}
++
++
++cairo_status_t
++bo_contour_to_traps (PLINE *contour, cairo_traps_t *traps)
++{
++  int intersections;
++  cairo_status_t status;
++  cairo_bo_start_event_t stack_events[CAIRO_STACK_ARRAY_LENGTH (cairo_bo_start_event_t)];
++  cairo_bo_start_event_t *events;
++  cairo_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
++  cairo_bo_event_t **event_ptrs;
++  int num_events = 0;
++  int i;
++  int n;
++
++  num_events = contour->Count;
++
++  if (unlikely (0 == num_events))
++      return CAIRO_STATUS_SUCCESS;
++
++  events = stack_events;
++  event_ptrs = stack_event_ptrs;
++  if (num_events > ARRAY_LENGTH (stack_events)) {
++      events = _cairo_malloc_ab_plus_c (num_events,
++                                        sizeof (cairo_bo_start_event_t) +
++                                        sizeof (cairo_bo_event_t *),
++                                        sizeof (cairo_bo_event_t *));
++      if (unlikely (events == NULL))
++          return CAIRO_STATUS_NO_MEMORY;
++
++      event_ptrs = (cairo_bo_event_t **) (events + num_events);
++  }
++
++  i = 0;
++
++  contour_to_start_events (contour, events, event_ptrs, &i, 1);
++
++  /* XXX: This would be the convenient place to throw in multiple
++   * passes of the Bentley-Ottmann algorithm. It would merely
++   * require storing the results of each pass into a temporary
++   * cairo_traps_t. */
++  status = _cairo_bentley_ottmann_tessellate_bo_edges (event_ptrs,
++                                                       num_events,
++                                                       traps,
++                                                       &intersections);
++
++  for (n = 0; n < traps->num_traps; n++) {
++    int x1, y1, x2, y2, x3, y3, x4, y4;
++
++    x1 = _line_compute_intersection_x_for_y (&traps->traps[n].left, traps->traps[n].top);
++    y1 = traps->traps[n].top;
++    x2 = _line_compute_intersection_x_for_y (&traps->traps[n].right, traps->traps[n].top);
++    y2 = traps->traps[n].top;
++    x3 = _line_compute_intersection_x_for_y (&traps->traps[n].right, traps->traps[n].bottom);
++    y3 = traps->traps[n].bottom;
++    x4 = _line_compute_intersection_x_for_y (&traps->traps[n].left, traps->traps[n].bottom);
++    y4 = traps->traps[n].bottom;
++
++#if 1
++    if (x1 == x2) {
++      hidgl_ensure_triangle_space (&buffer, 1);
++      hidgl_add_triangle (&buffer, x1, y1, x3, y3, x4, y4);
++    } else if (x3 == x4) {
++      hidgl_ensure_triangle_space (&buffer, 1);
++      hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
++    } else {
++      hidgl_ensure_triangle_space (&buffer, 2);
++      hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
++      hidgl_add_triangle (&buffer, x3, y3, x4, y4, x1, y1);
++    }
++#else
++    glBegin (GL_LINES);
++    glVertex2i (x1, y1); glVertex2i (x2, y2);
++    glVertex2i (x2, y2); glVertex2i (x3, y3);
++     glVertex2i (x3, y3); glVertex2i (x1, y1);
++    glVertex2i (x3, y3); glVertex2i (x4, y4);
++    glVertex2i (x4, y4); glVertex2i (x1, y1);
++     glVertex2i (x1, y1); glVertex2i (x3, y3);
++    glEnd ();
++#endif
++  }
++
++#if DEBUG_TRAPS
++  dump_traps (traps, "bo-polygon-out.txt");
++#endif
++
++  if (events != stack_events)
++      free (events);
++
++  return CAIRO_STATUS_SUCCESS;
++}
+diff --git a/src/cairo/cairo-combsort-private.h b/src/cairo/cairo-combsort-private.h
+new file mode 100644
+index 0000000..ce31257
+--- /dev/null
++++ b/src/cairo/cairo-combsort-private.h
+@@ -0,0 +1,71 @@
++/*
++ * Copyright © 2008 Chris Wilson
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it either under the terms of the GNU Lesser General Public
++ * License version 2.1 as published by the Free Software Foundation
++ * (the "LGPL") or, at your option, under the terms of the Mozilla
++ * Public License Version 1.1 (the "MPL"). If you do not alter this
++ * notice, a recipient may use your version of this file under either
++ * the MPL or the LGPL.
++ *
++ * You should have received a copy of the LGPL along with this library
++ * in the file COPYING-LGPL-2.1; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
++ * You should have received a copy of the MPL along with this library
++ * in the file COPYING-MPL-1.1
++ *
++ * The contents of this file are subject to the Mozilla Public License
++ * Version 1.1 (the "License"); you may not use this file except in
++ * compliance with the License. You may obtain a copy of the License at
++ * http://www.mozilla.org/MPL/
++ *
++ * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY
++ * OF ANY KIND, either express or implied. See the LGPL or the MPL for
++ * the specific language governing rights and limitations.
++ *
++ * The Original Code is the cairo graphics library.
++ *
++ * The Initial Developer of the Original Code is Chris Wilson
++ *
++ * Contributor(s):
++ *	Chris Wilson <chris@chris-wilson.co.uk>
++ */
++
++/* This fragment implements a comb sort (specifically combsort11) */
++#ifndef _HAVE_CAIRO_COMBSORT_NEWGAP
++#define _HAVE_CAIRO_COMBSORT_NEWGAP
++static inline unsigned int
++_cairo_combsort_newgap (unsigned int gap)
++{
++  gap = 10 * gap / 13;
++  if (gap == 9 || gap == 10)
++    gap = 11;
++  if (gap < 1)
++    gap = 1;
++  return gap;
++}
++#endif
++
++#define CAIRO_COMBSORT_DECLARE(NAME, TYPE, CMP) \
++static void \
++NAME (TYPE *base, unsigned int nmemb) \
++{ \
++  unsigned int gap = nmemb; \
++  unsigned int i, j; \
++  int swapped; \
++  do { \
++      gap = _cairo_combsort_newgap (gap); \
++      swapped = gap > 1; \
++      for (i = 0; i < nmemb-gap ; i++) { \
++	  j = i + gap; \
++	  if (CMP (base[i], base[j]) > 0 ) { \
++	      TYPE tmp; \
++	      tmp = base[i]; \
++	      base[i] = base[j]; \
++	      base[j] = tmp; \
++	      swapped = 1; \
++	  } \
++      } \
++  } while (swapped); \
++}
+diff --git a/src/cairo/cairo-compiler-private.h b/src/cairo/cairo-compiler-private.h
+new file mode 100644
+index 0000000..9fe8e9b
+--- /dev/null
++++ b/src/cairo/cairo-compiler-private.h
+@@ -0,0 +1,203 @@
++/* cairo - a vector graphics library with display and print output
++ *
++ * Copyright © 2002 University of Southern California
++ * Copyright © 2005 Red Hat, Inc.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it either under the terms of the GNU Lesser General Public
++ * License version 2.1 as published by the Free Software Foundation
++ * (the "LGPL") or, at your option, under the terms of the Mozilla
++ * Public License Version 1.1 (the "MPL"). If you do not alter this
++ * notice, a recipient may use your version of this file under either
++ * the MPL or the LGPL.
++ *
++ * You should have received a copy of the LGPL along with this library
++ * in the file COPYING-LGPL-2.1; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
++ * You should have received a copy of the MPL along with this library
++ * in the file COPYING-MPL-1.1
++ *
++ * The contents of this file are subject to the Mozilla Public License
++ * Version 1.1 (the "License"); you may not use this file except in
++ * compliance with the License. You may obtain a copy of the License at
++ * http://www.mozilla.org/MPL/
++ *
++ * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY
++ * OF ANY KIND, either express or implied. See the LGPL or the MPL for
++ * the specific language governing rights and limitations.
++ *
++ * The Original Code is the cairo graphics library.
++ *
++ * The Initial Developer of the Original Code is University of Southern
++ * California.
++ *
++ * Contributor(s):
++ *	Carl D. Worth <cworth@cworth.org>
++ */
++
++#ifndef CAIRO_COMPILER_PRIVATE_H
++#define CAIRO_COMPILER_PRIVATE_H
++
++#if HAVE_CONFIG_H
++#include "config.h"
++#endif
++
++#if __GNUC__ >= 3 && defined(__ELF__) && !defined(__sun)
++# define slim_hidden_proto(name)		slim_hidden_proto1(name, slim_hidden_int_name(name)) cairo_private
++# define slim_hidden_proto_no_warn(name)	slim_hidden_proto1(name, slim_hidden_int_name(name)) cairo_private_no_warn
++# define slim_hidden_def(name)			slim_hidden_def1(name, slim_hidden_int_name(name))
++# define slim_hidden_int_name(name) INT_##name
++# define slim_hidden_proto1(name, internal)				\
++  extern __typeof (name) name						\
++	__asm__ (slim_hidden_asmname (internal))
++# define slim_hidden_def1(name, internal)				\
++  extern __typeof (name) EXT_##name __asm__(slim_hidden_asmname(name))	\
++	__attribute__((__alias__(slim_hidden_asmname(internal))))
++# define slim_hidden_ulp		slim_hidden_ulp1(__USER_LABEL_PREFIX__)
++# define slim_hidden_ulp1(x)		slim_hidden_ulp2(x)
++# define slim_hidden_ulp2(x)		#x
++# define slim_hidden_asmname(name)	slim_hidden_asmname1(name)
++# define slim_hidden_asmname1(name)	slim_hidden_ulp #name
++#else
++# define slim_hidden_proto(name)		int _cairo_dummy_prototype(void)
++# define slim_hidden_proto_no_warn(name)	int _cairo_dummy_prototype(void)
++# define slim_hidden_def(name)			int _cairo_dummy_prototype(void)
++#endif
++
++#if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
++#define CAIRO_PRINTF_FORMAT(fmt_index, va_index) \
++	__attribute__((__format__(__printf__, fmt_index, va_index)))
++#else
++#define CAIRO_PRINTF_FORMAT(fmt_index, va_index)
++#endif
++
++/* slim_internal.h */
++#define CAIRO_HAS_HIDDEN_SYMBOLS 1
++#if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 3)) && defined(__ELF__) && !defined(__sun)
++#define cairo_private_no_warn	__attribute__((__visibility__("hidden")))
++#elif defined(__SUNPRO_C) && (__SUNPRO_C >= 0x550)
++#define cairo_private_no_warn	__hidden
++#else /* not gcc >= 3.3 and not Sun Studio >= 8 */
++#define cairo_private_no_warn
++#undef CAIRO_HAS_HIDDEN_SYMBOLS
++#endif
++
++#ifndef WARN_UNUSED_RESULT
++#define WARN_UNUSED_RESULT
++#endif
++/* Add attribute(warn_unused_result) if supported */
++#define cairo_warn	    WARN_UNUSED_RESULT
++#define cairo_private	    cairo_private_no_warn cairo_warn
++
++/* This macro allow us to deprecate a function by providing an alias
++   for the old function name to the new function name. With this
++   macro, binary compatibility is preserved. The macro only works on
++   some platforms --- tough.
++
++   Meanwhile, new definitions in the public header file break the
++   source code so that it will no longer link against the old
++   symbols. Instead it will give a descriptive error message
++   indicating that the old function has been deprecated by the new
++   function.
++*/
++#if __GNUC__ >= 2 && defined(__ELF__)
++# define CAIRO_FUNCTION_ALIAS(old, new)		\
++	extern __typeof (new) old		\
++	__asm__ ("" #old)			\
++	__attribute__((__alias__("" #new)))
++#else
++# define CAIRO_FUNCTION_ALIAS(old, new)
++#endif
++
++/*
++ * Cairo uses the following function attributes in order to improve the
++ * generated code (effectively by manual inter-procedural analysis).
++ *
++ *   'cairo_pure': The function is only allowed to read from its arguments
++ *                 and global memory (i.e. following a pointer argument or
++ *                 accessing a shared variable). The return value should
++ *                 only depend on its arguments, and for an identical set of
++ *                 arguments should return the same value.
++ *
++ *   'cairo_const': The function is only allowed to read from its arguments.
++ *                  It is not allowed to access global memory. The return
++ *                  value should only depend its arguments, and for an
++ *                  identical set of arguments should return the same value.
++ *                  This is currently the most strict function attribute.
++ *
++ * Both these function attributes allow gcc to perform CSE and
++ * constant-folding, with 'cairo_const 'also guaranteeing that pointer contents
++ * do not change across the function call.
++ */
++#if __GNUC__ >= 3
++#define cairo_pure __attribute__((pure))
++#define cairo_const __attribute__((const))
++#else
++#define cairo_pure
++#define cairo_const
++#endif
++
++#if defined(__GNUC__) && (__GNUC__ > 2) && defined(__OPTIMIZE__)
++#define _CAIRO_BOOLEAN_EXPR(expr)                   \
++ __extension__ ({                               \
++   int _cairo_boolean_var_;                         \
++   if (expr)                                    \
++      _cairo_boolean_var_ = 1;                      \
++   else                                         \
++      _cairo_boolean_var_ = 0;                      \
++   _cairo_boolean_var_;                             \
++})
++#define likely(expr) (__builtin_expect (_CAIRO_BOOLEAN_EXPR(expr), 1))
++#define unlikely(expr) (__builtin_expect (_CAIRO_BOOLEAN_EXPR(expr), 0))
++#else
++#define likely(expr) (expr)
++#define unlikely(expr) (expr)
++#endif
++
++#ifndef __GNUC__
++#undef __attribute__
++#define __attribute__(x)
++#endif
++
++#if (defined(__WIN32__) && !defined(__WINE__)) || defined(_MSC_VER)
++#define snprintf _snprintf
++#define popen _popen
++#define pclose _pclose
++#define hypot _hypot
++#endif
++
++#ifdef _MSC_VER
++#undef inline
++#define inline __inline
++#endif
++
++#if defined(_MSC_VER) && defined(_M_IX86)
++/* When compiling with /Gy and /OPT:ICF identical functions will be folded in together.
++   The CAIRO_ENSURE_UNIQUE macro ensures that a function is always unique and
++   will never be folded into another one. Something like this might eventually
++   be needed for GCC but it seems fine for now. */
++#define CAIRO_ENSURE_UNIQUE                       \
++    do {                                          \
++	char func[] = __FUNCTION__;               \
++	char file[] = __FILE__;                   \
++	__asm {                                   \
++	    __asm jmp __internal_skip_line_no     \
++	    __asm _emit (__LINE__ & 0xff)         \
++	    __asm _emit ((__LINE__>>8) & 0xff)    \
++	    __asm _emit ((__LINE__>>16) & 0xff)   \
++	    __asm _emit ((__LINE__>>24) & 0xff)   \
++	    __asm lea eax, func                   \
++	    __asm lea eax, file                   \
++	    __asm __internal_skip_line_no:        \
++	};                                        \
++    } while (0)
++#else
++#define CAIRO_ENSURE_UNIQUE    do { } while (0)
++#endif
++
++#ifdef __STRICT_ANSI__
++#undef inline
++#define inline __inline__
++#endif
++
++#endif
+diff --git a/src/cairo/cairo-fixed-private.h b/src/cairo/cairo-fixed-private.h
+new file mode 100644
+index 0000000..e3add4a
+--- /dev/null
++++ b/src/cairo/cairo-fixed-private.h
+@@ -0,0 +1,290 @@
++/* -*- Mode: c; tab-width: 8; c-basic-offset: 4; indent-tabs-mode: t; -*- */
++/* Cairo - a vector graphics library with display and print output
++ *
++ * Copyright © 2007 Mozilla Corporation
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it either under the terms of the GNU Lesser General Public
++ * License version 2.1 as published by the Free Software Foundation
++ * (the "LGPL") or, at your option, under the terms of the Mozilla
++ * Public License Version 1.1 (the "MPL"). If you do not alter this
++ * notice, a recipient may use your version of this file under either
++ * the MPL or the LGPL.
++ *
++ * You should have received a copy of the LGPL along with this library
++ * in the file COPYING-LGPL-2.1; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
++ * You should have received a copy of the MPL along with this library
++ * in the file COPYING-MPL-1.1
++ *
++ * The contents of this file are subject to the Mozilla Public License
++ * Version 1.1 (the "License"); you may not use this file except in
++ * compliance with the License. You may obtain a copy of the License at
++ * http://www.mozilla.org/MPL/
++ *
++ * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY
++ * OF ANY KIND, either express or implied. See the LGPL or the MPL for
++ * the specific language governing rights and limitations.
++ *
++ * The Original Code is the cairo graphics library.
++ *
++ * The Initial Developer of the Original Code is Mozilla Corporation
++ *
++ * Contributor(s):
++ *	Vladimir Vukicevic <vladimir@pobox.com>
++ */
++
++#ifndef CAIRO_FIXED_PRIVATE_H
++#define CAIRO_FIXED_PRIVATE_H
++
++#include "cairo-fixed-type-private.h"
++
++#include "cairo-wideint-private.h"
++
++/* Implementation */
++
++#if (CAIRO_FIXED_BITS != 32)
++# error CAIRO_FIXED_BITS must be 32, and the type must be a 32-bit type.
++# error To remove this limitation, you will have to fix the tesselator.
++#endif
++
++#define CAIRO_FIXED_ONE        ((cairo_fixed_t)(1 << CAIRO_FIXED_FRAC_BITS))
++#define CAIRO_FIXED_ONE_DOUBLE ((double)(1 << CAIRO_FIXED_FRAC_BITS))
++#define CAIRO_FIXED_EPSILON    ((cairo_fixed_t)(1))
++
++#define CAIRO_FIXED_FRAC_MASK  (((cairo_fixed_unsigned_t)(-1)) >> (CAIRO_FIXED_BITS - CAIRO_FIXED_FRAC_BITS))
++#define CAIRO_FIXED_WHOLE_MASK (~CAIRO_FIXED_FRAC_MASK)
++
++static inline cairo_fixed_t
++_cairo_fixed_from_int (int i)
++{
++    return i << CAIRO_FIXED_FRAC_BITS;
++}
++
++/* This is the "magic number" approach to converting a double into fixed
++ * point as described here:
++ *
++ * http://www.stereopsis.com/sree/fpu2006.html (an overview)
++ * http://www.d6.com/users/checker/pdfs/gdmfp.pdf (in detail)
++ *
++ * The basic idea is to add a large enough number to the double that the
++ * literal floating point is moved up to the extent that it forces the
++ * double's value to be shifted down to the bottom of the mantissa (to make
++ * room for the large number being added in). Since the mantissa is, at a
++ * given moment in time, a fixed point integer itself, one can convert a
++ * float to various fixed point representations by moving around the point
++ * of a floating point number through arithmetic operations. This behavior
++ * is reliable on most modern platforms as it is mandated by the IEEE-754
++ * standard for floating point arithmetic.
++ *
++ * For our purposes, a "magic number" must be carefully selected that is
++ * both large enough to produce the desired point-shifting effect, and also
++ * has no lower bits in its representation that would interfere with our
++ * value at the bottom of the mantissa. The magic number is calculated as
++ * follows:
++ *
++ *          (2 ^ (MANTISSA_SIZE - FRACTIONAL_SIZE)) * 1.5
++ *
++ * where in our case:
++ *  - MANTISSA_SIZE for 64-bit doubles is 52
++ *  - FRACTIONAL_SIZE for 16.16 fixed point is 16
++ *
++ * Although this approach provides a very large speedup of this function
++ * on a wide-array of systems, it does come with two caveats:
++ *
++ * 1) It uses banker's rounding as opposed to arithmetic rounding.
++ * 2) It doesn't function properly if the FPU is in single-precision
++ *    mode.
++ */
++
++/* The 16.16 number must always be available */
++#define CAIRO_MAGIC_NUMBER_FIXED_16_16 (103079215104.0)
++
++#if CAIRO_FIXED_BITS <= 32
++#define CAIRO_MAGIC_NUMBER_FIXED ((1LL << (52 - CAIRO_FIXED_FRAC_BITS)) * 1.5)
++
++/* For 32-bit fixed point numbers */
++static inline cairo_fixed_t
++_cairo_fixed_from_double (double d)
++{
++    union {
++        double d;
++        int32_t i[2];
++    } u;
++
++    u.d = d + CAIRO_MAGIC_NUMBER_FIXED;
++#ifdef FLOAT_WORDS_BIGENDIAN
++    return u.i[1];
++#else
++    return u.i[0];
++#endif
++}
++
++#else
++# error Please define a magic number for your fixed point type!
++# error See cairo-fixed-private.h for details.
++#endif
++
++static inline cairo_fixed_t
++_cairo_fixed_from_26_6 (uint32_t i)
++{
++#if CAIRO_FIXED_FRAC_BITS > 6
++    return i << (CAIRO_FIXED_FRAC_BITS - 6);
++#else
++    return i >> (6 - CAIRO_FIXED_FRAC_BITS);
++#endif
++}
++
++static inline double
++_cairo_fixed_to_double (cairo_fixed_t f)
++{
++    return ((double) f) / CAIRO_FIXED_ONE_DOUBLE;
++}
++
++static inline int
++_cairo_fixed_is_integer (cairo_fixed_t f)
++{
++    return (f & CAIRO_FIXED_FRAC_MASK) == 0;
++}
++
++static inline int
++_cairo_fixed_integer_part (cairo_fixed_t f)
++{
++    return f >> CAIRO_FIXED_FRAC_BITS;
++}
++
++static inline int
++_cairo_fixed_integer_floor (cairo_fixed_t f)
++{
++    if (f >= 0)
++        return f >> CAIRO_FIXED_FRAC_BITS;
++    else
++        return -((-f - 1) >> CAIRO_FIXED_FRAC_BITS) - 1;
++}
++
++static inline int
++_cairo_fixed_integer_ceil (cairo_fixed_t f)
++{
++    if (f > 0)
++	return ((f - 1)>>CAIRO_FIXED_FRAC_BITS) + 1;
++    else
++	return - (-f >> CAIRO_FIXED_FRAC_BITS);
++}
++
++/* A bunch of explicit 16.16 operators; we need these
++ * to interface with pixman and other backends that require
++ * 16.16 fixed point types.
++ */
++static inline cairo_fixed_16_16_t
++_cairo_fixed_to_16_16 (cairo_fixed_t f)
++{
++#if (CAIRO_FIXED_FRAC_BITS == 16) && (CAIRO_FIXED_BITS == 32)
++    return f;
++#elif CAIRO_FIXED_FRAC_BITS > 16
++    /* We're just dropping the low bits, so we won't ever got over/underflow here */
++    return f >> (CAIRO_FIXED_FRAC_BITS - 16);
++#else
++    cairo_fixed_16_16_t x;
++
++    /* Handle overflow/underflow by clamping to the lowest/highest
++     * value representable as 16.16
++     */
++    if ((f >> CAIRO_FIXED_FRAC_BITS) < INT16_MIN) {
++	x = INT32_MIN;
++    } else if ((f >> CAIRO_FIXED_FRAC_BITS) > INT16_MAX) {
++	x = INT32_MAX;
++    } else {
++	x = f << (16 - CAIRO_FIXED_FRAC_BITS);
++    }
++
++    return x;
++#endif
++}
++
++static inline cairo_fixed_16_16_t
++_cairo_fixed_16_16_from_double (double d)
++{
++    union {
++        double d;
++        int32_t i[2];
++    } u;
++
++    u.d = d + CAIRO_MAGIC_NUMBER_FIXED_16_16;
++#ifdef FLOAT_WORDS_BIGENDIAN
++    return u.i[1];
++#else
++    return u.i[0];
++#endif
++}
++
++#if CAIRO_FIXED_BITS == 32
++
++static inline cairo_fixed_t
++_cairo_fixed_mul (cairo_fixed_t a, cairo_fixed_t b)
++{
++    cairo_int64_t temp = _cairo_int32x32_64_mul (a, b);
++    return _cairo_int64_to_int32(_cairo_int64_rsl (temp, CAIRO_FIXED_FRAC_BITS));
++}
++
++/* computes round (a * b / c) */
++static inline cairo_fixed_t
++_cairo_fixed_mul_div (cairo_fixed_t a, cairo_fixed_t b, cairo_fixed_t c)
++{
++    cairo_int64_t ab  = _cairo_int32x32_64_mul (a, b);
++    cairo_int64_t c64 = _cairo_int32_to_int64 (c);
++    return _cairo_int64_to_int32 (_cairo_int64_divrem (ab, c64).quo);
++}
++
++/* computes floor (a * b / c) */
++static inline cairo_fixed_t
++_cairo_fixed_mul_div_floor (cairo_fixed_t a, cairo_fixed_t b, cairo_fixed_t c)
++{
++    return _cairo_int64_32_div (_cairo_int32x32_64_mul (a, b), c);
++}
++
++
++static inline cairo_fixed_t
++_cairo_edge_compute_intersection_y_for_x (const cairo_point_t *p1,
++					  const cairo_point_t *p2,
++					  cairo_fixed_t x)
++{
++    cairo_fixed_t y, dx;
++
++    if (x == p1->x)
++	return p1->y;
++    if (x == p2->x)
++	return p2->y;
++
++    y = p1->y;
++    dx = p2->x - p1->x;
++    if (dx != 0)
++	y += _cairo_fixed_mul_div_floor (x - p1->x, p2->y - p1->y, dx);
++
++    return y;
++}
++
++static inline cairo_fixed_t
++_cairo_edge_compute_intersection_x_for_y (const cairo_point_t *p1,
++					  const cairo_point_t *p2,
++					  cairo_fixed_t y)
++{
++    cairo_fixed_t x, dy;
++
++    if (y == p1->y)
++	return p1->x;
++    if (y == p2->y)
++	return p2->x;
++
++    x = p1->x;
++    dy = p2->y - p1->y;
++    if (dy != 0)
++	x += _cairo_fixed_mul_div_floor (y - p1->y, p2->x - p1->x, dy);
++
++    return x;
++}
++
++#else
++# error Please define multiplication and other operands for your fixed-point type size
++#endif
++
++#endif /* CAIRO_FIXED_PRIVATE_H */
+diff --git a/src/cairo/cairo-fixed-type-private.h b/src/cairo/cairo-fixed-type-private.h
+new file mode 100644
+index 0000000..730ed3e
+--- /dev/null
++++ b/src/cairo/cairo-fixed-type-private.h
+@@ -0,0 +1,75 @@
++/* -*- Mode: c; tab-width: 8; c-basic-offset: 4; indent-tabs-mode: t; -*- */
++/* Cairo - a vector graphics library with display and print output
++ *
++ * Copyright © 2007 Mozilla Corporation
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it either under the terms of the GNU Lesser General Public
++ * License version 2.1 as published by the Free Software Foundation
++ * (the "LGPL") or, at your option, under the terms of the Mozilla
++ * Public License Version 1.1 (the "MPL"). If you do not alter this
++ * notice, a recipient may use your version of this file under either
++ * the MPL or the LGPL.
++ *
++ * You should have received a copy of the LGPL along with this library
++ * in the file COPYING-LGPL-2.1; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
++ * You should have received a copy of the MPL along with this library
++ * in the file COPYING-MPL-1.1
++ *
++ * The contents of this file are subject to the Mozilla Public License
++ * Version 1.1 (the "License"); you may not use this file except in
++ * compliance with the License. You may obtain a copy of the License at
++ * http://www.mozilla.org/MPL/
++ *
++ * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY
++ * OF ANY KIND, either express or implied. See the LGPL or the MPL for
++ * the specific language governing rights and limitations.
++ *
++ * The Original Code is the cairo graphics library.
++ *
++ * The Initial Developer of the Original Code is Mozilla Corporation
++ *
++ * Contributor(s):
++ *	Vladimir Vukicevic <vladimir@pobox.com>
++ */
++
++#ifndef CAIRO_FIXED_TYPE_PRIVATE_H
++#define CAIRO_FIXED_TYPE_PRIVATE_H
++
++#include "cairo-wideint-type-private.h"
++
++/*
++ * Fixed-point configuration
++ */
++
++typedef int32_t		cairo_fixed_16_16_t;
++typedef cairo_int64_t	cairo_fixed_32_32_t;
++typedef cairo_int64_t	cairo_fixed_48_16_t;
++typedef cairo_int128_t	cairo_fixed_64_64_t;
++typedef cairo_int128_t	cairo_fixed_96_32_t;
++
++/* Eventually, we should allow changing this, but I think
++ * there are some assumptions in the tesselator about the
++ * size of a fixed type.  For now, it must be 32.
++ */
++#define CAIRO_FIXED_BITS	32
++
++/* The number of fractional bits.  Changing this involves
++ * making sure that you compute a double-to-fixed magic number.
++ * (see below).
++ */
++#define CAIRO_FIXED_FRAC_BITS	8
++
++/* A signed type %CAIRO_FIXED_BITS in size; the main fixed point type */
++typedef int32_t cairo_fixed_t;
++
++/* An unsigned type of the same size as #cairo_fixed_t */
++typedef uint32_t cairo_fixed_unsigned_t;
++
++typedef struct _cairo_point {
++    cairo_fixed_t x;
++    cairo_fixed_t y;
++} cairo_point_t;
++
++#endif /* CAIRO_FIXED_TYPE_PRIVATE_H */
+diff --git a/src/cairo/cairo-freelist-private.h b/src/cairo/cairo-freelist-private.h
+new file mode 100644
+index 0000000..5be22b1
+--- /dev/null
++++ b/src/cairo/cairo-freelist-private.h
+@@ -0,0 +1,150 @@
++/*
++ * Copyright © 2006 Joonas Pihlaja
++ *
++ * Permission to use, copy, modify, distribute, and sell this software and its
++ * documentation for any purpose is hereby granted without fee, provided that
++ * the above copyright notice appear in all copies and that both that copyright
++ * notice and this permission notice appear in supporting documentation, and
++ * that the name of the copyright holders not be used in advertising or
++ * publicity pertaining to distribution of the software without specific,
++ * written prior permission.  The copyright holders make no representations
++ * about the suitability of this software for any purpose.  It is provided "as
++ * is" without express or implied warranty.
++ *
++ * THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
++ * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
++ * EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY SPECIAL, INDIRECT OR
++ * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
++ * DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
++ * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
++ * OF THIS SOFTWARE.
++ */
++#ifndef CAIRO_FREELIST_H
++#define CAIRO_FREELIST_H
++
++#include "cairo-types-private.h"
++#include "cairo-compiler-private.h"
++
++/* for stand-alone compilation*/
++#ifndef VG
++#define VG(x)
++#endif
++
++#ifndef NULL
++#define NULL (void *) 0
++#endif
++
++typedef struct _cairo_freelist_node cairo_freelist_node_t;
++struct _cairo_freelist_node {
++    cairo_freelist_node_t *next;
++};
++
++typedef struct _cairo_freelist {
++    cairo_freelist_node_t *first_free_node;
++    unsigned nodesize;
++} cairo_freelist_t;
++
++typedef struct _cairo_freelist_pool cairo_freelist_pool_t;
++struct _cairo_freelist_pool {
++    cairo_freelist_pool_t *next;
++    unsigned size, rem;
++    uint8_t *data;
++};
++
++typedef struct _cairo_freepool {
++    cairo_freelist_node_t *first_free_node;
++    cairo_freelist_pool_t *pools;
++    unsigned nodesize;
++    cairo_freelist_pool_t embedded_pool;
++    uint8_t embedded_data[1000];
++} cairo_freepool_t;
++
++
++/* Initialise a freelist that will be responsible for allocating
++ * nodes of size nodesize. */
++cairo_private void
++_cairo_freelist_init (cairo_freelist_t *freelist, unsigned nodesize);
++
++/* Deallocate any nodes in the freelist. */
++cairo_private void
++_cairo_freelist_fini (cairo_freelist_t *freelist);
++
++/* Allocate a new node from the freelist.  If the freelist contains no
++ * nodes, a new one will be allocated using malloc().  The caller is
++ * responsible for calling _cairo_freelist_free() or free() on the
++ * returned node.  Returns %NULL on memory allocation error. */
++cairo_private void *
++_cairo_freelist_alloc (cairo_freelist_t *freelist);
++
++/* Allocate a new node from the freelist.  If the freelist contains no
++ * nodes, a new one will be allocated using calloc().  The caller is
++ * responsible for calling _cairo_freelist_free() or free() on the
++ * returned node.  Returns %NULL on memory allocation error. */
++cairo_private void *
++_cairo_freelist_calloc (cairo_freelist_t *freelist);
++
++/* Return a node to the freelist. This does not deallocate the memory,
++ * but makes it available for later reuse by
++ * _cairo_freelist_alloc(). */
++cairo_private void
++_cairo_freelist_free (cairo_freelist_t *freelist, void *node);
++
++
++cairo_private void
++_cairo_freepool_init (cairo_freepool_t *freepool, unsigned nodesize);
++
++cairo_private void
++_cairo_freepool_fini (cairo_freepool_t *freepool);
++
++cairo_private void *
++_cairo_freepool_alloc_from_new_pool (cairo_freepool_t *freepool);
++
++static inline void *
++_cairo_freepool_alloc_from_pool (cairo_freepool_t *freepool)
++{
++    cairo_freelist_pool_t *pool;
++    uint8_t *ptr;
++
++    pool = freepool->pools;
++    if (unlikely (freepool->nodesize > pool->rem))
++	return _cairo_freepool_alloc_from_new_pool (freepool);
++
++    ptr = pool->data;
++    pool->data += freepool->nodesize;
++    pool->rem -= freepool->nodesize;
++    VG (VALGRIND_MAKE_MEM_UNDEFINED (ptr, freepool->nodesize));
++    return ptr;
++}
++
++static inline void *
++_cairo_freepool_alloc (cairo_freepool_t *freepool)
++{
++    cairo_freelist_node_t *node;
++
++    node = freepool->first_free_node;
++    if (unlikely (node == NULL))
++	return _cairo_freepool_alloc_from_pool (freepool);
++
++    VG (VALGRIND_MAKE_MEM_DEFINED (node, sizeof (node->next)));
++    freepool->first_free_node = node->next;
++    VG (VALGRIND_MAKE_MEM_UNDEFINED (node, freepool->nodesize));
++
++    return node;
++}
++
++cairo_private cairo_status_t
++_cairo_freepool_alloc_array (cairo_freepool_t *freepool,
++			     int count,
++			     void **array);
++
++static inline void
++_cairo_freepool_free (cairo_freepool_t *freepool, void *ptr)
++{
++    cairo_freelist_node_t *node = ptr;
++
++    node->next = freepool->first_free_node;
++    freepool->first_free_node = node;
++    VG (VALGRIND_MAKE_MEM_NOACCESS (node, freepool->nodesize));
++}
++
++#endif /* CAIRO_FREELIST_H */
+diff --git a/src/cairo/cairo-freelist.c b/src/cairo/cairo-freelist.c
+new file mode 100644
+index 0000000..6ea5c17
+--- /dev/null
++++ b/src/cairo/cairo-freelist.c
+@@ -0,0 +1,176 @@
++/*
++ * Copyright © 2006 Joonas Pihlaja
++ *
++ * Permission to use, copy, modify, distribute, and sell this software and its
++ * documentation for any purpose is hereby granted without fee, provided that
++ * the above copyright notice appear in all copies and that both that copyright
++ * notice and this permission notice appear in supporting documentation, and
++ * that the name of the copyright holders not be used in advertising or
++ * publicity pertaining to distribution of the software without specific,
++ * written prior permission.  The copyright holders make no representations
++ * about the suitability of this software for any purpose.  It is provided "as
++ * is" without express or implied warranty.
++ *
++ * THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
++ * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
++ * EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY SPECIAL, INDIRECT OR
++ * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
++ * DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
++ * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
++ * OF THIS SOFTWARE.
++ */
++
++#include <stdlib.h>
++#include <string.h>
++
++#include "cairo-freelist-private.h"
++
++#define _cairo_error(x) (x)
++
++void
++_cairo_freelist_init (cairo_freelist_t *freelist, unsigned nodesize)
++{
++    memset (freelist, 0, sizeof (cairo_freelist_t));
++    freelist->nodesize = nodesize;
++}
++
++void
++_cairo_freelist_fini (cairo_freelist_t *freelist)
++{
++    cairo_freelist_node_t *node = freelist->first_free_node;
++    while (node) {
++	cairo_freelist_node_t *next;
++
++	VG (VALGRIND_MAKE_MEM_DEFINED (node, sizeof (node->next)));
++	next = node->next;
++
++	free (node);
++	node = next;
++    }
++}
++
++void *
++_cairo_freelist_alloc (cairo_freelist_t *freelist)
++{
++    if (freelist->first_free_node) {
++	cairo_freelist_node_t *node;
++
++	node = freelist->first_free_node;
++	VG (VALGRIND_MAKE_MEM_DEFINED (node, sizeof (node->next)));
++	freelist->first_free_node = node->next;
++	VG (VALGRIND_MAKE_MEM_UNDEFINED (node, freelist->nodesize));
++
++	return node;
++    }
++
++    return malloc (freelist->nodesize);
++}
++
++void *
++_cairo_freelist_calloc (cairo_freelist_t *freelist)
++{
++    void *node = _cairo_freelist_alloc (freelist);
++    if (node)
++	memset (node, 0, freelist->nodesize);
++    return node;
++}
++
++void
++_cairo_freelist_free (cairo_freelist_t *freelist, void *voidnode)
++{
++    cairo_freelist_node_t *node = voidnode;
++    if (node) {
++	node->next = freelist->first_free_node;
++	freelist->first_free_node = node;
++	VG (VALGRIND_MAKE_MEM_NOACCESS (node, freelist->nodesize));
++    }
++}
++
++
++void
++_cairo_freepool_init (cairo_freepool_t *freepool, unsigned nodesize)
++{
++    freepool->first_free_node = NULL;
++    freepool->pools = &freepool->embedded_pool;
++    freepool->nodesize = nodesize;
++
++    freepool->embedded_pool.next = NULL;
++    freepool->embedded_pool.size = sizeof (freepool->embedded_data);
++    freepool->embedded_pool.rem = sizeof (freepool->embedded_data);
++    freepool->embedded_pool.data = freepool->embedded_data;
++
++    VG (VALGRIND_MAKE_MEM_NOACCESS (freepool->embedded_data,
++				    sizeof (freepool->embedded_data)));
++}
++
++void
++_cairo_freepool_fini (cairo_freepool_t *freepool)
++{
++    cairo_freelist_pool_t *pool = freepool->pools;
++    while (pool != &freepool->embedded_pool) {
++	cairo_freelist_pool_t *next = pool->next;
++	free (pool);
++	pool = next;
++    }
++    VG (VALGRIND_MAKE_MEM_NOACCESS (freepool, sizeof (freepool)));
++}
++
++void *
++_cairo_freepool_alloc_from_new_pool (cairo_freepool_t *freepool)
++{
++    cairo_freelist_pool_t *pool;
++    int poolsize;
++
++    if (freepool->pools != &freepool->embedded_pool)
++	poolsize = 2 * freepool->pools->size;
++    else
++	poolsize = (128 * freepool->nodesize + 8191) & -8192;
++    pool = malloc (sizeof (cairo_freelist_pool_t) + poolsize);
++    if (unlikely (pool == NULL))
++	return pool;
++
++    pool->next = freepool->pools;
++    freepool->pools = pool;
++
++    pool->size = poolsize;
++    pool->rem = poolsize - freepool->nodesize;
++    pool->data = (uint8_t *) (pool + 1) + freepool->nodesize;
++
++    VG (VALGRIND_MAKE_MEM_NOACCESS (pool->data, poolsize));
++    VG (VALGRIND_MAKE_MEM_UNDEFINED (pool->data, freepool->nodesize));
++
++    return pool + 1;
++}
++
++cairo_status_t
++_cairo_freepool_alloc_array (cairo_freepool_t *freepool,
++			     int count,
++			     void **array)
++{
++    int i;
++
++    for (i = 0; i < count; i++) {
++	cairo_freelist_node_t *node;
++
++	node = freepool->first_free_node;
++	if (likely (node != NULL)) {
++	    VG (VALGRIND_MAKE_MEM_DEFINED (node, sizeof (node->next)));
++	    freepool->first_free_node = node->next;
++	    VG (VALGRIND_MAKE_MEM_UNDEFINED (node, freepool->nodesize));
++	} else {
++	    node = _cairo_freepool_alloc_from_pool (freepool);
++	    if (unlikely (node == NULL))
++		goto CLEANUP;
++	}
++
++	array[i] = node;
++    }
++
++    return CAIRO_STATUS_SUCCESS;
++
++  CLEANUP:
++    while (i--)
++	_cairo_freepool_free (freepool, array[i]);
++
++    return _cairo_error (CAIRO_STATUS_NO_MEMORY);
++}
+diff --git a/src/cairo/cairo-malloc-private.h b/src/cairo/cairo-malloc-private.h
+new file mode 100644
+index 0000000..d812058
+--- /dev/null
++++ b/src/cairo/cairo-malloc-private.h
+@@ -0,0 +1,148 @@
++/* -*- Mode: c; tab-width: 8; c-basic-offset: 4; indent-tabs-mode: t; -*- */
++/* Cairo - a vector graphics library with display and print output
++ *
++ * Copyright © 2007 Mozilla Corporation
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it either under the terms of the GNU Lesser General Public
++ * License version 2.1 as published by the Free Software Foundation
++ * (the "LGPL") or, at your option, under the terms of the Mozilla
++ * Public License Version 1.1 (the "MPL"). If you do not alter this
++ * notice, a recipient may use your version of this file under either
++ * the MPL or the LGPL.
++ *
++ * You should have received a copy of the LGPL along with this library
++ * in the file COPYING-LGPL-2.1; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
++ * You should have received a copy of the MPL along with this library
++ * in the file COPYING-MPL-1.1
++ *
++ * The contents of this file are subject to the Mozilla Public License
++ * Version 1.1 (the "License"); you may not use this file except in
++ * compliance with the License. You may obtain a copy of the License at
++ * http://www.mozilla.org/MPL/
++ *
++ * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY
++ * OF ANY KIND, either express or implied. See the LGPL or the MPL for
++ * the specific language governing rights and limitations.
++ *
++ * The Original Code is the cairo graphics library.
++ *
++ * The Initial Developer of the Original Code is Mozilla Corporation
++ *
++ * Contributor(s):
++ *	Vladimir Vukicevic <vladimir@pobox.com>
++ */
++
++#ifndef CAIRO_MALLOC_PRIVATE_H
++#define CAIRO_MALLOC_PRIVATE_H
++
++#include "cairo-wideint-private.h"
++
++#if HAVE_MEMFAULT
++#include <memfault.h>
++#define CAIRO_INJECT_FAULT() MEMFAULT_INJECT_FAULT()
++#else
++#define CAIRO_INJECT_FAULT() 0
++#endif
++
++/**
++ * _cairo_malloc:
++ * @size: size in bytes
++ *
++ * Allocate @size memory using malloc().
++ * The memory should be freed using free().
++ * malloc is skipped, if 0 bytes are requested, and %NULL will be returned.
++ *
++ * Return value: A pointer to the newly allocated memory, or %NULL in
++ * case of malloc() failure or size is 0.
++ */
++
++#define _cairo_malloc(size) \
++   ((size) ? malloc((unsigned) (size)) : NULL)
++
++/**
++ * _cairo_malloc_ab:
++ * @n: number of elements to allocate
++ * @size: size of each element
++ *
++ * Allocates @n*@size memory using _cairo_malloc(), taking care to not
++ * overflow when doing the multiplication.  Behaves much like
++ * calloc(), except that the returned memory is not set to zero.
++ * The memory should be freed using free().
++ *
++ * @size should be a constant so that the compiler can optimize
++ * out a constant division.
++ *
++ * Return value: A pointer to the newly allocated memory, or %NULL in
++ * case of malloc() failure or overflow.
++ */
++
++#define _cairo_malloc_ab(a, size) \
++  ((size) && (unsigned) (a) >= INT32_MAX / (unsigned) (size) ? NULL : \
++   _cairo_malloc((unsigned) (a) * (unsigned) (size)))
++
++/**
++ * _cairo_realloc_ab:
++ * @ptr: original pointer to block of memory to be resized
++ * @n: number of elements to allocate
++ * @size: size of each element
++ *
++ * Reallocates @ptr a block of @n*@size memory using realloc(), taking
++ * care to not overflow when doing the multiplication.  The memory
++ * should be freed using free().
++ *
++ * @size should be a constant so that the compiler can optimize
++ * out a constant division.
++ *
++ * Return value: A pointer to the newly allocated memory, or %NULL in
++ * case of realloc() failure or overflow (whereupon the original block
++ * of memory * is left untouched).
++ */
++
++#define _cairo_realloc_ab(ptr, a, size) \
++  ((size) && (unsigned) (a) >= INT32_MAX / (unsigned) (size) ? NULL : \
++   realloc(ptr, (unsigned) (a) * (unsigned) (size)))
++
++/**
++ * _cairo_malloc_abc:
++ * @n: first factor of number of elements to allocate
++ * @b: second factor of number of elements to allocate
++ * @size: size of each element
++ *
++ * Allocates @n*@b*@size memory using _cairo_malloc(), taking care to not
++ * overflow when doing the multiplication.  Behaves like
++ * _cairo_malloc_ab().  The memory should be freed using free().
++ *
++ * @size should be a constant so that the compiler can optimize
++ * out a constant division.
++ *
++ * Return value: A pointer to the newly allocated memory, or %NULL in
++ * case of malloc() failure or overflow.
++ */
++
++#define _cairo_malloc_abc(a, b, size) \
++  ((b) && (unsigned) (a) >= INT32_MAX / (unsigned) (b) ? NULL : \
++   (size) && (unsigned) ((a)*(b)) >= INT32_MAX / (unsigned) (size) ? NULL : \
++   _cairo_malloc((unsigned) (a) * (unsigned) (b) * (unsigned) (size)))
++
++/**
++ * _cairo_malloc_ab_plus_c:
++ * @n: number of elements to allocate
++ * @size: size of each element
++ * @k: additional size to allocate
++ *
++ * Allocates @n*@ksize+@k memory using _cairo_malloc(), taking care to not
++ * overflow when doing the arithmetic.  Behaves like
++ * _cairo_malloc_ab().  The memory should be freed using free().
++ *
++ * Return value: A pointer to the newly allocated memory, or %NULL in
++ * case of malloc() failure or overflow.
++ */
++
++#define _cairo_malloc_ab_plus_c(n, size, k) \
++  ((size) && (unsigned) (n) >= INT32_MAX / (unsigned) (size) ? NULL : \
++   (unsigned) (k) >= INT32_MAX - (unsigned) (n) * (unsigned) (size) ? NULL : \
++   _cairo_malloc((unsigned) (n) * (unsigned) (size) + (unsigned) (k)))
++
++#endif /* CAIRO_MALLOC_PRIVATE_H */
+diff --git a/src/cairo/cairo-minimal.h b/src/cairo/cairo-minimal.h
+new file mode 100644
+index 0000000..9028299
+--- /dev/null
++++ b/src/cairo/cairo-minimal.h
+@@ -0,0 +1,208 @@
++/* cairo - a vector graphics library with display and print output
++ *
++ * Copyright © 2002 University of Southern California
++ * Copyright © 2005 Red Hat, Inc.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it either under the terms of the GNU Lesser General Public
++ * License version 2.1 as published by the Free Software Foundation
++ * (the "LGPL") or, at your option, under the terms of the Mozilla
++ * Public License Version 1.1 (the "MPL"). If you do not alter this
++ * notice, a recipient may use your version of this file under either
++ * the MPL or the LGPL.
++ *
++ * You should have received a copy of the LGPL along with this library
++ * in the file COPYING-LGPL-2.1; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
++ * You should have received a copy of the MPL along with this library
++ * in the file COPYING-MPL-1.1
++ *
++ * The contents of this file are subject to the Mozilla Public License
++ * Version 1.1 (the "License"); you may not use this file except in
++ * compliance with the License. You may obtain a copy of the License at
++ * http://www.mozilla.org/MPL/
++ *
++ * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY
++ * OF ANY KIND, either express or implied. See the LGPL or the MPL for
++ * the specific language governing rights and limitations.
++ *
++ * The Original Code is the cairo graphics library.
++ *
++ * The Initial Developer of the Original Code is University of Southern
++ * California.
++ *
++ * Contributor(s):
++ *	Carl D. Worth <cworth@cworth.org>
++ */
++
++#ifndef _CAIRO_MINIMAL_H_
++#define _CAIRO_MINIMAL_H_
++
++#ifdef  __cplusplus
++# define CAIRO_BEGIN_DECLS  extern "C" {
++# define CAIRO_END_DECLS    }
++#else
++# define CAIRO_BEGIN_DECLS
++# define CAIRO_END_DECLS
++#endif
++
++#ifndef cairo_public
++# define cairo_public
++#endif
++
++CAIRO_BEGIN_DECLS
++
++/**
++ * cairo_bool_t:
++ *
++ * #cairo_bool_t is used for boolean values. Returns of type
++ * #cairo_bool_t will always be either 0 or 1, but testing against
++ * these values explicitly is not encouraged; just use the
++ * value as a boolean condition.
++ *
++ * <informalexample><programlisting>
++ *  if (cairo_in_stroke (cr, x, y)) {
++ *      /<!-- -->* do something *<!-- -->/
++ *  }
++ * </programlisting></informalexample>
++ **/
++typedef int cairo_bool_t;
++
++
++/**
++ * cairo_status_t:
++ * @CAIRO_STATUS_SUCCESS: no error has occurred
++ * @CAIRO_STATUS_NO_MEMORY: out of memory
++ * @CAIRO_STATUS_INVALID_RESTORE: cairo_restore() called without matching cairo_save()
++ * @CAIRO_STATUS_INVALID_POP_GROUP: no saved group to pop, i.e. cairo_pop_group() without matching cairo_push_group()
++ * @CAIRO_STATUS_NO_CURRENT_POINT: no current point defined
++ * @CAIRO_STATUS_INVALID_MATRIX: invalid matrix (not invertible)
++ * @CAIRO_STATUS_INVALID_STATUS: invalid value for an input #cairo_status_t
++ * @CAIRO_STATUS_NULL_POINTER: %NULL pointer
++ * @CAIRO_STATUS_INVALID_STRING: input string not valid UTF-8
++ * @CAIRO_STATUS_INVALID_PATH_DATA: input path data not valid
++ * @CAIRO_STATUS_READ_ERROR: error while reading from input stream
++ * @CAIRO_STATUS_WRITE_ERROR: error while writing to output stream
++ * @CAIRO_STATUS_SURFACE_FINISHED: target surface has been finished
++ * @CAIRO_STATUS_SURFACE_TYPE_MISMATCH: the surface type is not appropriate for the operation
++ * @CAIRO_STATUS_PATTERN_TYPE_MISMATCH: the pattern type is not appropriate for the operation
++ * @CAIRO_STATUS_INVALID_CONTENT: invalid value for an input #cairo_content_t
++ * @CAIRO_STATUS_INVALID_FORMAT: invalid value for an input #cairo_format_t
++ * @CAIRO_STATUS_INVALID_VISUAL: invalid value for an input Visual*
++ * @CAIRO_STATUS_FILE_NOT_FOUND: file not found
++ * @CAIRO_STATUS_INVALID_DASH: invalid value for a dash setting
++ * @CAIRO_STATUS_INVALID_DSC_COMMENT: invalid value for a DSC comment (Since 1.2)
++ * @CAIRO_STATUS_INVALID_INDEX: invalid index passed to getter (Since 1.4)
++ * @CAIRO_STATUS_CLIP_NOT_REPRESENTABLE: clip region not representable in desired format (Since 1.4)
++ * @CAIRO_STATUS_TEMP_FILE_ERROR: error creating or writing to a temporary file (Since 1.6)
++ * @CAIRO_STATUS_INVALID_STRIDE: invalid value for stride (Since 1.6)
++ * @CAIRO_STATUS_FONT_TYPE_MISMATCH: the font type is not appropriate for the operation (Since 1.8)
++ * @CAIRO_STATUS_USER_FONT_IMMUTABLE: the user-font is immutable (Since 1.8)
++ * @CAIRO_STATUS_USER_FONT_ERROR: error occurred in a user-font callback function (Since 1.8)
++ * @CAIRO_STATUS_NEGATIVE_COUNT: negative number used where it is not allowed (Since 1.8)
++ * @CAIRO_STATUS_INVALID_CLUSTERS: input clusters do not represent the accompanying text and glyph array (Since 1.8)
++ * @CAIRO_STATUS_INVALID_SLANT: invalid value for an input #cairo_font_slant_t (Since 1.8)
++ * @CAIRO_STATUS_INVALID_WEIGHT: invalid value for an input #cairo_font_weight_t (Since 1.8)
++ * @CAIRO_STATUS_INVALID_SIZE: invalid value (typically too big) for the size of the input (surface, pattern, etc.) (Since 1.10)
++ * @CAIRO_STATUS_USER_FONT_NOT_IMPLEMENTED: user-font method not implemented (Since 1.10)
++ * @CAIRO_STATUS_LAST_STATUS: this is a special value indicating the number of
++ *   status values defined in this enumeration.  When using this value, note
++ *   that the version of cairo at run-time may have additional status values
++ *   defined than the value of this symbol at compile-time. (Since 1.10)
++ *
++ * #cairo_status_t is used to indicate errors that can occur when
++ * using Cairo. In some cases it is returned directly by functions.
++ * but when using #cairo_t, the last error, if any, is stored in
++ * the context and can be retrieved with cairo_status().
++ *
++ * New entries may be added in future versions.  Use cairo_status_to_string()
++ * to get a human-readable representation of an error message.
++ **/
++typedef enum _cairo_status {
++    CAIRO_STATUS_SUCCESS = 0,
++
++    CAIRO_STATUS_NO_MEMORY,
++    CAIRO_STATUS_INVALID_RESTORE,
++    CAIRO_STATUS_INVALID_POP_GROUP,
++    CAIRO_STATUS_NO_CURRENT_POINT,
++    CAIRO_STATUS_INVALID_MATRIX,
++    CAIRO_STATUS_INVALID_STATUS,
++    CAIRO_STATUS_NULL_POINTER,
++    CAIRO_STATUS_INVALID_STRING,
++    CAIRO_STATUS_INVALID_PATH_DATA,
++    CAIRO_STATUS_READ_ERROR,
++    CAIRO_STATUS_WRITE_ERROR,
++    CAIRO_STATUS_SURFACE_FINISHED,
++    CAIRO_STATUS_SURFACE_TYPE_MISMATCH,
++    CAIRO_STATUS_PATTERN_TYPE_MISMATCH,
++    CAIRO_STATUS_INVALID_CONTENT,
++    CAIRO_STATUS_INVALID_FORMAT,
++    CAIRO_STATUS_INVALID_VISUAL,
++    CAIRO_STATUS_FILE_NOT_FOUND,
++    CAIRO_STATUS_INVALID_DASH,
++    CAIRO_STATUS_INVALID_DSC_COMMENT,
++    CAIRO_STATUS_INVALID_INDEX,
++    CAIRO_STATUS_CLIP_NOT_REPRESENTABLE,
++    CAIRO_STATUS_TEMP_FILE_ERROR,
++    CAIRO_STATUS_INVALID_STRIDE,
++    CAIRO_STATUS_FONT_TYPE_MISMATCH,
++    CAIRO_STATUS_USER_FONT_IMMUTABLE,
++    CAIRO_STATUS_USER_FONT_ERROR,
++    CAIRO_STATUS_NEGATIVE_COUNT,
++    CAIRO_STATUS_INVALID_CLUSTERS,
++    CAIRO_STATUS_INVALID_SLANT,
++    CAIRO_STATUS_INVALID_WEIGHT,
++    CAIRO_STATUS_INVALID_SIZE,
++    CAIRO_STATUS_USER_FONT_NOT_IMPLEMENTED,
++
++    CAIRO_STATUS_LAST_STATUS
++} cairo_status_t;
++
++/**
++ * cairo_fill_rule_t:
++ * @CAIRO_FILL_RULE_WINDING: If the path crosses the ray from
++ * left-to-right, counts +1. If the path crosses the ray
++ * from right to left, counts -1. (Left and right are determined
++ * from the perspective of looking along the ray from the starting
++ * point.) If the total count is non-zero, the point will be filled.
++ * @CAIRO_FILL_RULE_EVEN_ODD: Counts the total number of
++ * intersections, without regard to the orientation of the contour. If
++ * the total number of intersections is odd, the point will be
++ * filled.
++ *
++ * #cairo_fill_rule_t is used to select how paths are filled. For both
++ * fill rules, whether or not a point is included in the fill is
++ * determined by taking a ray from that point to infinity and looking
++ * at intersections with the path. The ray can be in any direction,
++ * as long as it doesn't pass through the end point of a segment
++ * or have a tricky intersection such as intersecting tangent to the path.
++ * (Note that filling is not actually implemented in this way. This
++ * is just a description of the rule that is applied.)
++ *
++ * The default fill rule is %CAIRO_FILL_RULE_WINDING.
++ *
++ * New entries may be added in future versions.
++ **/
++typedef enum _cairo_fill_rule {
++    CAIRO_FILL_RULE_WINDING,
++    CAIRO_FILL_RULE_EVEN_ODD
++} cairo_fill_rule_t;
++
++/* Region functions */
++
++typedef struct _cairo_region cairo_region_t;
++
++typedef struct _cairo_rectangle_int {
++    int x, y;
++    int width, height;
++} cairo_rectangle_int_t;
++
++typedef enum _cairo_region_overlap {
++    CAIRO_REGION_OVERLAP_IN,		/* completely inside region */
++    CAIRO_REGION_OVERLAP_OUT,		/* completely outside region */
++    CAIRO_REGION_OVERLAP_PART		/* partly inside region */
++} cairo_region_overlap_t;
++
++CAIRO_END_DECLS
++
++#endif /* _CAIRO_MINIMAL_H_ */
+diff --git a/src/cairo/cairo-traps-private.h b/src/cairo/cairo-traps-private.h
+new file mode 100644
+index 0000000..ac26aee
+--- /dev/null
++++ b/src/cairo/cairo-traps-private.h
+@@ -0,0 +1,152 @@
++/* cairo - a vector graphics library with display and print output
++ *
++ * Copyright © 2002 University of Southern California
++ * Copyright © 2005 Red Hat, Inc.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it either under the terms of the GNU Lesser General Public
++ * License version 2.1 as published by the Free Software Foundation
++ * (the "LGPL") or, at your option, under the terms of the Mozilla
++ * Public License Version 1.1 (the "MPL"). If you do not alter this
++ * notice, a recipient may use your version of this file under either
++ * the MPL or the LGPL.
++ *
++ * You should have received a copy of the LGPL along with this library
++ * in the file COPYING-LGPL-2.1; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
++ * You should have received a copy of the MPL along with this library
++ * in the file COPYING-MPL-1.1
++ *
++ * The contents of this file are subject to the Mozilla Public License
++ * Version 1.1 (the "License"); you may not use this file except in
++ * compliance with the License. You may obtain a copy of the License at
++ * http://www.mozilla.org/MPL/
++ *
++ * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY
++ * OF ANY KIND, either express or implied. See the LGPL or the MPL for
++ * the specific language governing rights and limitations.
++ *
++ * The Original Code is the cairo graphics library.
++ *
++ * The Initial Developer of the Original Code is University of Southern
++ * California.
++ *
++ * Contributor(s):
++ *	Carl D. Worth <cworth@cworth.org>
++ */
++
++/*
++ * These definitions are solely for use by the implementation of cairo
++ * and constitute no kind of standard.  If you need any of these
++ * functions, please drop me a note.  Either the library needs new
++ * functionality, or there's a way to do what you need using the
++ * existing published interfaces. cworth@cworth.org
++ */
++
++#ifndef _CAIRO_TRAPS_PRIVATE_H_
++#define _CAIRO_TRAPS_PRIVATE_H_
++
++#if HAVE_CONFIG_H
++#include "config.h"
++#endif
++
++#include "cairo-types-private.h"
++
++typedef struct _cairo_traps {
++    cairo_status_t status;
++
++    const cairo_box_t *limits;
++    int num_limits;
++
++    unsigned int maybe_region : 1; /* hint: 0 implies that it cannot be */
++    unsigned int has_intersections : 1;
++    unsigned int is_rectilinear : 1;
++    unsigned int is_rectangular : 1;
++
++    int num_traps;
++    int traps_size;
++    cairo_trapezoid_t *traps;
++    cairo_trapezoid_t  traps_embedded[16];
++} cairo_traps_t;
++
++
++/* cairo-traps.c */
++cairo_private void
++_cairo_traps_init (cairo_traps_t *traps);
++
++cairo_private void
++_cairo_traps_limit (cairo_traps_t	*traps,
++		    const cairo_box_t	*boxes,
++		    int			 num_boxes);
++
++cairo_private cairo_status_t
++_cairo_traps_init_boxes (cairo_traps_t	    *traps,
++			 const cairo_box_t    *boxes,
++			 int		     num_boxes);
++
++cairo_private void
++_cairo_traps_clear (cairo_traps_t *traps);
++
++cairo_private void
++_cairo_traps_fini (cairo_traps_t *traps);
++
++#define _cairo_traps_status(T) (T)->status
++
++cairo_private void
++_cairo_traps_translate (cairo_traps_t *traps, int x, int y);
++
++cairo_private cairo_status_t
++_cairo_traps_tessellate_rectangle (cairo_traps_t *traps,
++				   const cairo_point_t *top_left,
++				   const cairo_point_t *bottom_right);
++
++cairo_private void
++_cairo_traps_add_trap (cairo_traps_t *traps,
++		       cairo_fixed_t top, cairo_fixed_t bottom,
++		       cairo_line_t *left, cairo_line_t *right);
++
++cairo_private cairo_status_t
++_cairo_bentley_ottmann_tessellate_rectilinear_polygon (cairo_traps_t	 *traps,
++						       const cairo_polygon_t *polygon,
++						       cairo_fill_rule_t	  fill_rule);
++
++cairo_private cairo_status_t
++_cairo_bentley_ottmann_tessellate_polygon (cairo_traps_t         *traps,
++					   const cairo_polygon_t *polygon);
++
++cairo_private cairo_status_t
++_cairo_bentley_ottmann_tessellate_traps (cairo_traps_t *traps,
++					 cairo_fill_rule_t fill_rule);
++
++cairo_private cairo_status_t
++_cairo_bentley_ottmann_tessellate_rectangular_traps (cairo_traps_t *traps,
++						     cairo_fill_rule_t fill_rule);
++
++cairo_private cairo_status_t
++_cairo_bentley_ottmann_tessellate_rectilinear_traps (cairo_traps_t *traps,
++						     cairo_fill_rule_t fill_rule);
++
++cairo_private int
++_cairo_traps_contain (const cairo_traps_t *traps,
++		      double x, double y);
++
++cairo_private void
++_cairo_traps_extents (const cairo_traps_t *traps,
++		      cairo_box_t         *extents);
++
++cairo_private cairo_int_status_t
++_cairo_traps_extract_region (cairo_traps_t  *traps,
++			     cairo_region_t **region);
++
++cairo_private cairo_status_t
++_cairo_traps_path (const cairo_traps_t *traps,
++		   cairo_path_fixed_t  *path);
++
++cairo_private void
++_cairo_trapezoid_array_translate_and_scale (cairo_trapezoid_t *offset_traps,
++					    cairo_trapezoid_t *src_traps,
++					    int num_traps,
++					    double tx, double ty,
++					    double sx, double sy);
++
++#endif
+diff --git a/src/cairo/cairo-traps.c b/src/cairo/cairo-traps.c
+new file mode 100644
+index 0000000..089f3c6
+--- /dev/null
++++ b/src/cairo/cairo-traps.c
+@@ -0,0 +1,438 @@
++/* -*- Mode: c; tab-width: 8; c-basic-offset: 4; indent-tabs-mode: t; -*- */
++/*
++ * Copyright © 2002 Keith Packard
++ * Copyright © 2007 Red Hat, Inc.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it either under the terms of the GNU Lesser General Public
++ * License version 2.1 as published by the Free Software Foundation
++ * (the "LGPL") or, at your option, under the terms of the Mozilla
++ * Public License Version 1.1 (the "MPL"). If you do not alter this
++ * notice, a recipient may use your version of this file under either
++ * the MPL or the LGPL.
++ *
++ * You should have received a copy of the LGPL along with this library
++ * in the file COPYING-LGPL-2.1; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
++ * You should have received a copy of the MPL along with this library
++ * in the file COPYING-MPL-1.1
++ *
++ * The contents of this file are subject to the Mozilla Public License
++ * Version 1.1 (the "License"); you may not use this file except in
++ * compliance with the License. You may obtain a copy of the License at
++ * http://www.mozilla.org/MPL/
++ *
++ * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY
++ * OF ANY KIND, either express or implied. See the LGPL or the MPL for
++ * the specific language governing rights and limitations.
++ *
++ * The Original Code is the cairo graphics library.
++ *
++ * The Initial Developer of the Original Code is Keith Packard
++ *
++ * Contributor(s):
++ *	Keith R. Packard <keithp@keithp.com>
++ *	Carl D. Worth <cworth@cworth.org>
++ *
++ * 2002-07-15: Converted from XRenderCompositeDoublePoly to #cairo_trap_t. Carl D. Worth
++ */
++
++#include "cairoint-minimal.h"
++#include "cairo-malloc-private.h"
++#include "cairo-traps-private.h"
++#include "cairo-fixed-private.h"
++
++#define _cairo_error(x) (x)
++
++/* private functions */
++
++void
++_cairo_traps_init (cairo_traps_t *traps)
++{
++    VG (VALGRIND_MAKE_MEM_UNDEFINED (traps, sizeof (cairo_traps_t)));
++
++    traps->status = CAIRO_STATUS_SUCCESS;
++
++    traps->maybe_region = 1;
++    traps->is_rectilinear = 0;
++    traps->is_rectangular = 0;
++
++    traps->num_traps = 0;
++
++    traps->traps_size = ARRAY_LENGTH (traps->traps_embedded);
++    traps->traps = traps->traps_embedded;
++
++    traps->num_limits = 0;
++    traps->has_intersections = FALSE;
++}
++
++void
++_cairo_traps_limit (cairo_traps_t	*traps,
++		    const cairo_box_t	*limits,
++		    int			 num_limits)
++{
++    traps->limits = limits;
++    traps->num_limits = num_limits;
++}
++
++void
++_cairo_traps_clear (cairo_traps_t *traps)
++{
++    traps->status = CAIRO_STATUS_SUCCESS;
++
++    traps->maybe_region = 1;
++    traps->is_rectilinear = 0;
++    traps->is_rectangular = 0;
++
++    traps->num_traps = 0;
++    traps->has_intersections = FALSE;
++}
++
++void
++_cairo_traps_fini (cairo_traps_t *traps)
++{
++    if (traps->traps != traps->traps_embedded)
++	free (traps->traps);
++
++    VG (VALGRIND_MAKE_MEM_NOACCESS (traps, sizeof (cairo_traps_t)));
++}
++
++/* make room for at least one more trap */
++static cairo_bool_t
++_cairo_traps_grow (cairo_traps_t *traps)
++{
++    cairo_trapezoid_t *new_traps;
++    int new_size = 4 * traps->traps_size;
++
++    if (traps->traps == traps->traps_embedded) {
++	new_traps = _cairo_malloc_ab (new_size, sizeof (cairo_trapezoid_t));
++	if (new_traps != NULL)
++	    memcpy (new_traps, traps->traps, sizeof (traps->traps_embedded));
++    } else {
++	new_traps = _cairo_realloc_ab (traps->traps,
++	                               new_size, sizeof (cairo_trapezoid_t));
++    }
++
++    if (unlikely (new_traps == NULL)) {
++	traps->status = _cairo_error (CAIRO_STATUS_NO_MEMORY);
++	return FALSE;
++    }
++
++    traps->traps = new_traps;
++    traps->traps_size = new_size;
++    return TRUE;
++}
++
++void
++_cairo_traps_add_trap (cairo_traps_t *traps,
++		       cairo_fixed_t top, cairo_fixed_t bottom,
++		       cairo_line_t *left, cairo_line_t *right)
++{
++    cairo_trapezoid_t *trap;
++
++    if (unlikely (traps->num_traps == traps->traps_size)) {
++	if (unlikely (! _cairo_traps_grow (traps)))
++	    return;
++    }
++
++    trap = &traps->traps[traps->num_traps++];
++    trap->top = top;
++    trap->bottom = bottom;
++    trap->left = *left;
++    trap->right = *right;
++}
++
++/**
++ * _cairo_traps_init_box:
++ * @traps: a #cairo_traps_t
++ * @box: an array box that will each be converted to a single trapezoid
++ *       to store in @traps.
++ *
++ * Initializes a #cairo_traps_t to contain an array of rectangular
++ * trapezoids.
++ **/
++cairo_status_t
++_cairo_traps_init_boxes (cairo_traps_t	    *traps,
++		         const cairo_box_t  *boxes,
++			 int		     num_boxes)
++{
++    cairo_trapezoid_t *trap;
++
++    _cairo_traps_init (traps);
++
++    while (traps->traps_size < num_boxes) {
++	if (unlikely (! _cairo_traps_grow (traps))) {
++	    _cairo_traps_fini (traps);
++	    return _cairo_error (CAIRO_STATUS_NO_MEMORY);
++	}
++    }
++
++    traps->num_traps = num_boxes;
++    traps->is_rectilinear = TRUE;
++    traps->is_rectangular = TRUE;
++
++    trap = &traps->traps[0];
++    while (num_boxes--) {
++	trap->top    = boxes->p1.y;
++	trap->bottom = boxes->p2.y;
++
++	trap->left.p1   = boxes->p1;
++	trap->left.p2.x = boxes->p1.x;
++	trap->left.p2.y = boxes->p2.y;
++
++	trap->right.p1.x = boxes->p2.x;
++	trap->right.p1.y = boxes->p1.y;
++	trap->right.p2   = boxes->p2;
++
++	if (traps->maybe_region) {
++	    traps->maybe_region  = _cairo_fixed_is_integer (boxes->p1.x) &&
++		                   _cairo_fixed_is_integer (boxes->p1.y) &&
++		                   _cairo_fixed_is_integer (boxes->p2.x) &&
++		                   _cairo_fixed_is_integer (boxes->p2.y);
++	}
++
++	trap++, boxes++;
++    }
++
++    return CAIRO_STATUS_SUCCESS;
++}
++
++cairo_status_t
++_cairo_traps_tessellate_rectangle (cairo_traps_t *traps,
++				   const cairo_point_t *top_left,
++				   const cairo_point_t *bottom_right)
++{
++    cairo_line_t left;
++    cairo_line_t right;
++    cairo_fixed_t top, bottom;
++
++    if (top_left->y == bottom_right->y)
++	return CAIRO_STATUS_SUCCESS;
++
++    if (top_left->x == bottom_right->x)
++	return CAIRO_STATUS_SUCCESS;
++
++     left.p1.x =  left.p2.x = top_left->x;
++     left.p1.y = right.p1.y = top_left->y;
++    right.p1.x = right.p2.x = bottom_right->x;
++     left.p2.y = right.p2.y = bottom_right->y;
++
++     top = top_left->y;
++     bottom = bottom_right->y;
++
++    if (traps->num_limits) {
++	cairo_bool_t reversed;
++	int n;
++
++	/* support counter-clockwise winding for rectangular tessellation */
++	reversed = top_left->x > bottom_right->x;
++	if (reversed) {
++	    right.p1.x = right.p2.x = top_left->x;
++	    left.p1.x = left.p2.x = bottom_right->x;
++	}
++
++	for (n = 0; n < traps->num_limits; n++) {
++	    const cairo_box_t *limits = &traps->limits[n];
++	    cairo_line_t _left, _right;
++	    cairo_fixed_t _top, _bottom;
++
++	    if (top >= limits->p2.y)
++		continue;
++	    if (bottom <= limits->p1.y)
++		continue;
++
++	    /* Trivially reject if trapezoid is entirely to the right or
++	     * to the left of the limits. */
++	    if (left.p1.x >= limits->p2.x)
++		continue;
++	    if (right.p1.x <= limits->p1.x)
++		continue;
++
++	    /* Otherwise, clip the trapezoid to the limits. */
++	    _top = top;
++	    if (_top < limits->p1.y)
++		_top = limits->p1.y;
++
++	    _bottom = bottom;
++	    if (_bottom > limits->p2.y)
++		_bottom = limits->p2.y;
++
++	    if (_bottom <= _top)
++		continue;
++
++	    _left = left;
++	    if (_left.p1.x < limits->p1.x) {
++		_left.p1.x = limits->p1.x;
++		_left.p1.y = limits->p1.y;
++		_left.p2.x = limits->p1.x;
++		_left.p2.y = limits->p2.y;
++	    }
++
++	    _right = right;
++	    if (_right.p1.x > limits->p2.x) {
++		_right.p1.x = limits->p2.x;
++		_right.p1.y = limits->p1.y;
++		_right.p2.x = limits->p2.x;
++		_right.p2.y = limits->p2.y;
++	    }
++
++	    if (left.p1.x >= right.p1.x)
++		continue;
++
++	    if (reversed)
++		_cairo_traps_add_trap (traps, _top, _bottom, &_right, &_left);
++	    else
++		_cairo_traps_add_trap (traps, _top, _bottom, &_left, &_right);
++	}
++    } else {
++	_cairo_traps_add_trap (traps, top, bottom, &left, &right);
++    }
++
++    return traps->status;
++}
++
++void
++_cairo_traps_translate (cairo_traps_t *traps, int x, int y)
++{
++    cairo_fixed_t xoff, yoff;
++    cairo_trapezoid_t *t;
++    int i;
++
++    /* Ugh. The cairo_composite/(Render) interface doesn't allow
++       an offset for the trapezoids. Need to manually shift all
++       the coordinates to align with the offset origin of the
++       intermediate surface. */
++
++    xoff = _cairo_fixed_from_int (x);
++    yoff = _cairo_fixed_from_int (y);
++
++    for (i = 0, t = traps->traps; i < traps->num_traps; i++, t++) {
++	t->top += yoff;
++	t->bottom += yoff;
++	t->left.p1.x += xoff;
++	t->left.p1.y += yoff;
++	t->left.p2.x += xoff;
++	t->left.p2.y += yoff;
++	t->right.p1.x += xoff;
++	t->right.p1.y += yoff;
++	t->right.p2.x += xoff;
++	t->right.p2.y += yoff;
++    }
++}
++
++void
++_cairo_trapezoid_array_translate_and_scale (cairo_trapezoid_t *offset_traps,
++                                            cairo_trapezoid_t *src_traps,
++                                            int num_traps,
++                                            double tx, double ty,
++                                            double sx, double sy)
++{
++    int i;
++    cairo_fixed_t xoff = _cairo_fixed_from_double (tx);
++    cairo_fixed_t yoff = _cairo_fixed_from_double (ty);
++
++    if (sx == 1.0 && sy == 1.0) {
++        for (i = 0; i < num_traps; i++) {
++            offset_traps[i].top = src_traps[i].top + yoff;
++            offset_traps[i].bottom = src_traps[i].bottom + yoff;
++            offset_traps[i].left.p1.x = src_traps[i].left.p1.x + xoff;
++            offset_traps[i].left.p1.y = src_traps[i].left.p1.y + yoff;
++            offset_traps[i].left.p2.x = src_traps[i].left.p2.x + xoff;
++            offset_traps[i].left.p2.y = src_traps[i].left.p2.y + yoff;
++            offset_traps[i].right.p1.x = src_traps[i].right.p1.x + xoff;
++            offset_traps[i].right.p1.y = src_traps[i].right.p1.y + yoff;
++            offset_traps[i].right.p2.x = src_traps[i].right.p2.x + xoff;
++            offset_traps[i].right.p2.y = src_traps[i].right.p2.y + yoff;
++        }
++    } else {
++        cairo_fixed_t xsc = _cairo_fixed_from_double (sx);
++        cairo_fixed_t ysc = _cairo_fixed_from_double (sy);
++
++        for (i = 0; i < num_traps; i++) {
++            offset_traps[i].top = _cairo_fixed_mul (src_traps[i].top + yoff, ysc);
++            offset_traps[i].bottom = _cairo_fixed_mul (src_traps[i].bottom + yoff, ysc);
++            offset_traps[i].left.p1.x = _cairo_fixed_mul (src_traps[i].left.p1.x + xoff, xsc);
++            offset_traps[i].left.p1.y = _cairo_fixed_mul (src_traps[i].left.p1.y + yoff, ysc);
++            offset_traps[i].left.p2.x = _cairo_fixed_mul (src_traps[i].left.p2.x + xoff, xsc);
++            offset_traps[i].left.p2.y = _cairo_fixed_mul (src_traps[i].left.p2.y + yoff, ysc);
++            offset_traps[i].right.p1.x = _cairo_fixed_mul (src_traps[i].right.p1.x + xoff, xsc);
++            offset_traps[i].right.p1.y = _cairo_fixed_mul (src_traps[i].right.p1.y + yoff, ysc);
++            offset_traps[i].right.p2.x = _cairo_fixed_mul (src_traps[i].right.p2.x + xoff, xsc);
++            offset_traps[i].right.p2.y = _cairo_fixed_mul (src_traps[i].right.p2.y + yoff, ysc);
++        }
++    }
++}
++
++static cairo_fixed_t
++_line_compute_intersection_x_for_y (const cairo_line_t *line,
++				    cairo_fixed_t y)
++{
++    return _cairo_edge_compute_intersection_x_for_y (&line->p1, &line->p2, y);
++}
++
++void
++_cairo_traps_extents (const cairo_traps_t *traps,
++		      cairo_box_t *extents)
++{
++    int i;
++
++    if (traps->num_traps == 0) {
++	extents->p1.x = extents->p1.y = 0;
++	extents->p2.x = extents->p2.y = 0;
++	return;
++    }
++
++    extents->p1.x = extents->p1.y = INT32_MAX;
++    extents->p2.x = extents->p2.y = INT32_MIN;
++
++    for (i = 0; i < traps->num_traps; i++) {
++	const cairo_trapezoid_t *trap =  &traps->traps[i];
++
++	if (trap->top < extents->p1.y)
++	    extents->p1.y = trap->top;
++	if (trap->bottom > extents->p2.y)
++	    extents->p2.y = trap->bottom;
++
++	if (trap->left.p1.x < extents->p1.x) {
++	    cairo_fixed_t x = trap->left.p1.x;
++	    if (trap->top != trap->left.p1.y) {
++		x = _line_compute_intersection_x_for_y (&trap->left,
++							trap->top);
++		if (x < extents->p1.x)
++		    extents->p1.x = x;
++	    } else
++		extents->p1.x = x;
++	}
++	if (trap->left.p2.x < extents->p1.x) {
++	    cairo_fixed_t x = trap->left.p2.x;
++	    if (trap->bottom != trap->left.p2.y) {
++		x = _line_compute_intersection_x_for_y (&trap->left,
++							trap->bottom);
++		if (x < extents->p1.x)
++		    extents->p1.x = x;
++	    } else
++		extents->p1.x = x;
++	}
++
++	if (trap->right.p1.x > extents->p2.x) {
++	    cairo_fixed_t x = trap->right.p1.x;
++	    if (trap->top != trap->right.p1.y) {
++		x = _line_compute_intersection_x_for_y (&trap->right,
++							trap->top);
++		if (x > extents->p2.x)
++		    extents->p2.x = x;
++	    } else
++		extents->p2.x = x;
++	}
++	if (trap->right.p2.x > extents->p2.x) {
++	    cairo_fixed_t x = trap->right.p2.x;
++	    if (trap->bottom != trap->right.p2.y) {
++		x = _line_compute_intersection_x_for_y (&trap->right,
++							trap->bottom);
++		if (x > extents->p2.x)
++		    extents->p2.x = x;
++	    } else
++		extents->p2.x = x;
++	}
++    }
++}
+diff --git a/src/cairo/cairo-types-private.h b/src/cairo/cairo-types-private.h
+new file mode 100644
+index 0000000..44c29b9
+--- /dev/null
++++ b/src/cairo/cairo-types-private.h
+@@ -0,0 +1,206 @@
++/* -*- Mode: c; tab-width: 8; c-basic-offset: 4; indent-tabs-mode: t; -*- */
++/* cairo - a vector graphics library with display and print output
++ *
++ * Copyright © 2002 University of Southern California
++ * Copyright © 2005 Red Hat, Inc.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it either under the terms of the GNU Lesser General Public
++ * License version 2.1 as published by the Free Software Foundation
++ * (the "LGPL") or, at your option, under the terms of the Mozilla
++ * Public License Version 1.1 (the "MPL"). If you do not alter this
++ * notice, a recipient may use your version of this file under either
++ * the MPL or the LGPL.
++ *
++ * You should have received a copy of the LGPL along with this library
++ * in the file COPYING-LGPL-2.1; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
++ * You should have received a copy of the MPL along with this library
++ * in the file COPYING-MPL-1.1
++ *
++ * The contents of this file are subject to the Mozilla Public License
++ * Version 1.1 (the "License"); you may not use this file except in
++ * compliance with the License. You may obtain a copy of the License at
++ * http://www.mozilla.org/MPL/
++ *
++ * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY
++ * OF ANY KIND, either express or implied. See the LGPL or the MPL for
++ * the specific language governing rights and limitations.
++ *
++ * The Original Code is the cairo graphics library.
++ *
++ * The Initial Developer of the Original Code is University of Southern
++ * California.
++ *
++ * Contributor(s):
++ *	Carl D. Worth <cworth@cworth.org>
++ */
++
++#ifndef CAIRO_TYPES_PRIVATE_H
++#define CAIRO_TYPES_PRIVATE_H
++
++#include "cairo-minimal.h"
++#include "cairo-fixed-type-private.h"
++#include "cairo-compiler-private.h"
++
++typedef struct _cairo_array cairo_array_t;
++typedef struct _cairo_backend cairo_backend_t;
++typedef struct _cairo_cache cairo_cache_t;
++typedef struct _cairo_clip cairo_clip_t;
++typedef struct _cairo_clip_path cairo_clip_path_t;
++typedef struct _cairo_gstate cairo_gstate_t;
++typedef struct _cairo_hash_entry cairo_hash_entry_t;
++typedef struct _cairo_hash_table cairo_hash_table_t;
++typedef struct _cairo_path_fixed cairo_path_fixed_t;
++
++typedef cairo_array_t cairo_user_data_array_t;
++
++/**
++ * cairo_hash_entry_t:
++ *
++ * A #cairo_hash_entry_t contains both a key and a value for
++ * #cairo_hash_table_t. User-derived types for #cairo_hash_entry_t must
++ * be type-compatible with this structure (eg. they must have an
++ * unsigned long as the first parameter. The easiest way to get this
++ * is to use:
++ *
++ * 	typedef _my_entry {
++ *	    cairo_hash_entry_t base;
++ *	    ... Remainder of key and value fields here ..
++ *	} my_entry_t;
++ *
++ * which then allows a pointer to my_entry_t to be passed to any of
++ * the #cairo_hash_table_t functions as follows without requiring a cast:
++ *
++ *	_cairo_hash_table_insert (hash_table, &my_entry->base);
++ *
++ * IMPORTANT: The caller is reponsible for initializing
++ * my_entry->base.hash with a hash code derived from the key. The
++ * essential property of the hash code is that keys_equal must never
++ * return %TRUE for two keys that have different hashes. The best hash
++ * code will reduce the frequency of two keys with the same code for
++ * which keys_equal returns %FALSE.
++ *
++ * Which parts of the entry make up the "key" and which part make up
++ * the value are entirely up to the caller, (as determined by the
++ * computation going into base.hash as well as the keys_equal
++ * function). A few of the #cairo_hash_table_t functions accept an entry
++ * which will be used exclusively as a "key", (indicated by a
++ * parameter name of key). In these cases, the value-related fields of
++ * the entry need not be initialized if so desired.
++ **/
++struct _cairo_hash_entry {
++    unsigned long hash;
++};
++
++struct _cairo_array {
++    unsigned int size;
++    unsigned int num_elements;
++    unsigned int element_size;
++    char **elements;
++
++    cairo_bool_t is_snapshot;
++};
++
++/* Sure wish C had a real enum type so that this would be distinct
++ * from #cairo_status_t. Oh well, without that, I'll use this bogus 100
++ * offset.  We want to keep it fit in int8_t as the compiler may choose
++ * that for #cairo_status_t */
++typedef enum _cairo_int_status {
++    CAIRO_INT_STATUS_UNSUPPORTED = 100,
++    CAIRO_INT_STATUS_DEGENERATE,
++    CAIRO_INT_STATUS_NOTHING_TO_DO,
++    CAIRO_INT_STATUS_FLATTEN_TRANSPARENCY,
++    CAIRO_INT_STATUS_IMAGE_FALLBACK,
++    CAIRO_INT_STATUS_ANALYZE_RECORDING_SURFACE_PATTERN,
++
++    CAIRO_INT_STATUS_LAST_STATUS
++} cairo_int_status_t;
++
++typedef struct _cairo_slope {
++    cairo_fixed_t dx;
++    cairo_fixed_t dy;
++} cairo_slope_t, cairo_distance_t;
++
++typedef struct _cairo_point_double {
++    double x;
++    double y;
++} cairo_point_double_t;
++
++typedef struct _cairo_distance_double {
++    double dx;
++    double dy;
++} cairo_distance_double_t;
++
++typedef struct _cairo_line {
++    cairo_point_t p1;
++    cairo_point_t p2;
++} cairo_line_t, cairo_box_t;
++
++typedef struct _cairo_trapezoid {
++    cairo_fixed_t top, bottom;
++    cairo_line_t left, right;
++} cairo_trapezoid_t;
++
++typedef struct _cairo_point_int {
++    int x, y;
++} cairo_point_int_t;
++
++#define CAIRO_RECT_INT_MIN (INT_MIN >> CAIRO_FIXED_FRAC_BITS)
++#define CAIRO_RECT_INT_MAX (INT_MAX >> CAIRO_FIXED_FRAC_BITS)
++
++/* Rectangles that take part in a composite operation.
++ *
++ * This defines four translations that define which pixels of the
++ * source pattern, mask, clip and destination surface take part in a
++ * general composite operation.  The idea is that the pixels at
++ *
++ *	(i,j)+(src.x, src.y) of the source,
++ *      (i,j)+(mask.x, mask.y) of the mask,
++ *      (i,j)+(clip.x, clip.y) of the clip and
++ *      (i,j)+(dst.x, dst.y) of the destination
++ *
++ * all combine together to form the result at (i,j)+(dst.x,dst.y),
++ * for i,j ranging in [0,width) and [0,height) respectively.
++ */
++typedef struct _cairo_composite_rectangles {
++        cairo_point_int_t src;
++        cairo_point_int_t mask;
++        cairo_point_int_t clip;
++        cairo_point_int_t dst;
++        int width;
++        int height;
++} cairo_composite_rectangles_t;
++
++typedef struct _cairo_edge {
++    cairo_line_t line;
++    int top, bottom;
++    int dir;
++} cairo_edge_t;
++
++typedef struct _cairo_polygon {
++    cairo_status_t status;
++
++    cairo_point_t first_point;
++    cairo_point_t last_point;
++    cairo_point_t current_point;
++    cairo_slope_t current_edge;
++    cairo_bool_t has_current_point;
++    cairo_bool_t has_current_edge;
++
++    cairo_box_t extents;
++    cairo_box_t limit;
++    const cairo_box_t *limits;
++    int num_limits;
++
++    int num_edges;
++    int edges_size;
++    cairo_edge_t *edges;
++    cairo_edge_t  edges_embedded[32];
++} cairo_polygon_t;
++
++typedef cairo_warn cairo_status_t
++(*cairo_spline_add_point_func_t) (void *closure,
++				  const cairo_point_t *point);
++
++#endif /* CAIRO_TYPES_PRIVATE_H */
+diff --git a/src/cairo/cairo-wideint-private.h b/src/cairo/cairo-wideint-private.h
+new file mode 100644
+index 0000000..303dab1
+--- /dev/null
++++ b/src/cairo/cairo-wideint-private.h
+@@ -0,0 +1,329 @@
++/* cairo - a vector graphics library with display and print output
++ *
++ * Copyright © 2004 Keith Packard
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it either under the terms of the GNU Lesser General Public
++ * License version 2.1 as published by the Free Software Foundation
++ * (the "LGPL") or, at your option, under the terms of the Mozilla
++ * Public License Version 1.1 (the "MPL"). If you do not alter this
++ * notice, a recipient may use your version of this file under either
++ * the MPL or the LGPL.
++ *
++ * You should have received a copy of the LGPL along with this library
++ * in the file COPYING-LGPL-2.1; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
++ * You should have received a copy of the MPL along with this library
++ * in the file COPYING-MPL-1.1
++ *
++ * The contents of this file are subject to the Mozilla Public License
++ * Version 1.1 (the "License"); you may not use this file except in
++ * compliance with the License. You may obtain a copy of the License at
++ * http://www.mozilla.org/MPL/
++ *
++ * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY
++ * OF ANY KIND, either express or implied. See the LGPL or the MPL for
++ * the specific language governing rights and limitations.
++ *
++ * The Original Code is the cairo graphics library.
++ *
++ * The Initial Developer of the Original Code is Keith Packard
++ *
++ * Contributor(s):
++ *	Keith R. Packard <keithp@keithp.com>
++ *
++ */
++
++#ifndef CAIRO_WIDEINT_H
++#define CAIRO_WIDEINT_H
++
++#include "cairo-wideint-type-private.h"
++
++#include "cairo-compiler-private.h"
++
++/*
++ * 64-bit datatypes.  Two separate implementations, one using
++ * built-in 64-bit signed/unsigned types another implemented
++ * as a pair of 32-bit ints
++ */
++
++#define I cairo_private cairo_const
++
++#if !HAVE_UINT64_T
++
++cairo_uquorem64_t I
++_cairo_uint64_divrem (cairo_uint64_t num, cairo_uint64_t den);
++
++cairo_uint64_t I	_cairo_uint32_to_uint64 (uint32_t i);
++#define			_cairo_uint64_to_uint32(a)  ((a).lo)
++cairo_uint64_t I	_cairo_uint64_add (cairo_uint64_t a, cairo_uint64_t b);
++cairo_uint64_t I	_cairo_uint64_sub (cairo_uint64_t a, cairo_uint64_t b);
++cairo_uint64_t I	_cairo_uint64_mul (cairo_uint64_t a, cairo_uint64_t b);
++cairo_uint64_t I	_cairo_uint32x32_64_mul (uint32_t a, uint32_t b);
++cairo_uint64_t I	_cairo_uint64_lsl (cairo_uint64_t a, int shift);
++cairo_uint64_t I	_cairo_uint64_rsl (cairo_uint64_t a, int shift);
++cairo_uint64_t I	_cairo_uint64_rsa (cairo_uint64_t a, int shift);
++int	       I	_cairo_uint64_lt (cairo_uint64_t a, cairo_uint64_t b);
++int	       I	_cairo_uint64_cmp (cairo_uint64_t a, cairo_uint64_t b);
++int	       I	_cairo_uint64_eq (cairo_uint64_t a, cairo_uint64_t b);
++cairo_uint64_t I	_cairo_uint64_negate (cairo_uint64_t a);
++#define			_cairo_uint64_is_zero(a) ((a).hi == 0 && (a).lo == 0)
++#define			_cairo_uint64_negative(a)   (((int32_t) ((a).hi)) < 0)
++cairo_uint64_t I	_cairo_uint64_not (cairo_uint64_t a);
++
++#define			_cairo_uint64_to_int64(i)   (i)
++#define			_cairo_int64_to_uint64(i)   (i)
++
++cairo_int64_t  I	_cairo_int32_to_int64(int32_t i);
++#define			_cairo_int64_to_int32(a)    ((int32_t) _cairo_uint64_to_uint32(a))
++#define			_cairo_int64_add(a,b)	    _cairo_uint64_add (a,b)
++#define			_cairo_int64_sub(a,b)	    _cairo_uint64_sub (a,b)
++#define			_cairo_int64_mul(a,b)	    _cairo_uint64_mul (a,b)
++cairo_int64_t  I	_cairo_int32x32_64_mul (int32_t a, int32_t b);
++int	       I	_cairo_int64_lt (cairo_int64_t a, cairo_int64_t b);
++int	       I	_cairo_int64_cmp (cairo_int64_t a, cairo_int64_t b);
++#define			_cairo_int64_is_zero(a)	    _cairo_uint64_is_zero (a)
++#define			_cairo_int64_eq(a,b)	    _cairo_uint64_eq (a,b)
++#define			_cairo_int64_lsl(a,b)	    _cairo_uint64_lsl (a,b)
++#define			_cairo_int64_rsl(a,b)	    _cairo_uint64_rsl (a,b)
++#define			_cairo_int64_rsa(a,b)	    _cairo_uint64_rsa (a,b)
++#define			_cairo_int64_negate(a)	    _cairo_uint64_negate(a)
++#define			_cairo_int64_negative(a)    (((int32_t) ((a).hi)) < 0)
++#define			_cairo_int64_not(a)	    _cairo_uint64_not(a)
++
++#else
++
++static inline cairo_uquorem64_t
++_cairo_uint64_divrem (cairo_uint64_t num, cairo_uint64_t den)
++{
++    cairo_uquorem64_t	qr;
++
++    qr.quo = num / den;
++    qr.rem = num % den;
++    return qr;
++}
++
++#define			_cairo_uint32_to_uint64(i)  ((uint64_t) (i))
++#define			_cairo_uint64_to_uint32(i)  ((uint32_t) (i))
++#define			_cairo_uint64_add(a,b)	    ((a) + (b))
++#define			_cairo_uint64_sub(a,b)	    ((a) - (b))
++#define			_cairo_uint64_mul(a,b)	    ((a) * (b))
++#define			_cairo_uint32x32_64_mul(a,b)	((uint64_t) (a) * (b))
++#define			_cairo_uint64_lsl(a,b)	    ((a) << (b))
++#define			_cairo_uint64_rsl(a,b)	    ((uint64_t) (a) >> (b))
++#define			_cairo_uint64_rsa(a,b)	    ((uint64_t) ((int64_t) (a) >> (b)))
++#define			_cairo_uint64_lt(a,b)	    ((a) < (b))
++#define                 _cairo_uint64_cmp(a,b)       ((a) == (b) ? 0 : (a) < (b) ? -1 : 1)
++#define			_cairo_uint64_is_zero(a)    ((a) == 0)
++#define			_cairo_uint64_eq(a,b)	    ((a) == (b))
++#define			_cairo_uint64_negate(a)	    ((uint64_t) -((int64_t) (a)))
++#define			_cairo_uint64_negative(a)   ((int64_t) (a) < 0)
++#define			_cairo_uint64_not(a)	    (~(a))
++
++#define			_cairo_uint64_to_int64(i)   ((int64_t) (i))
++#define			_cairo_int64_to_uint64(i)   ((uint64_t) (i))
++
++#define			_cairo_int32_to_int64(i)    ((int64_t) (i))
++#define			_cairo_int64_to_int32(i)    ((int32_t) (i))
++#define			_cairo_int64_add(a,b)	    ((a) + (b))
++#define			_cairo_int64_sub(a,b)	    ((a) - (b))
++#define			_cairo_int64_mul(a,b)	    ((a) * (b))
++#define			_cairo_int32x32_64_mul(a,b) ((int64_t) (a) * (b))
++#define			_cairo_int64_lt(a,b)	    ((a) < (b))
++#define                 _cairo_int64_cmp(a,b)       ((a) == (b) ? 0 : (a) < (b) ? -1 : 1)
++#define			_cairo_int64_is_zero(a)     ((a) == 0)
++#define			_cairo_int64_eq(a,b)	    ((a) == (b))
++#define			_cairo_int64_lsl(a,b)	    ((a) << (b))
++#define			_cairo_int64_rsl(a,b)	    ((int64_t) ((uint64_t) (a) >> (b)))
++#define			_cairo_int64_rsa(a,b)	    ((int64_t) (a) >> (b))
++#define			_cairo_int64_negate(a)	    (-(a))
++#define			_cairo_int64_negative(a)    ((a) < 0)
++#define			_cairo_int64_not(a)	    (~(a))
++
++#endif
++
++/*
++ * 64-bit comparisions derived from lt or eq
++ */
++#define			_cairo_uint64_le(a,b)	    (!_cairo_uint64_gt(a,b))
++#define			_cairo_uint64_ne(a,b)	    (!_cairo_uint64_eq(a,b))
++#define			_cairo_uint64_ge(a,b)	    (!_cairo_uint64_lt(a,b))
++#define			_cairo_uint64_gt(a,b)	    _cairo_uint64_lt(b,a)
++
++#define			_cairo_int64_le(a,b)	    (!_cairo_int64_gt(a,b))
++#define			_cairo_int64_ne(a,b)	    (!_cairo_int64_eq(a,b))
++#define			_cairo_int64_ge(a,b)	    (!_cairo_int64_lt(a,b))
++#define			_cairo_int64_gt(a,b)	    _cairo_int64_lt(b,a)
++
++/*
++ * As the C implementation always computes both, create
++ * a function which returns both for the 'native' type as well
++ */
++
++static inline cairo_quorem64_t
++_cairo_int64_divrem (cairo_int64_t num, cairo_int64_t den)
++{
++    int			num_neg = _cairo_int64_negative (num);
++    int			den_neg = _cairo_int64_negative (den);
++    cairo_uquorem64_t	uqr;
++    cairo_quorem64_t	qr;
++
++    if (num_neg)
++	num = _cairo_int64_negate (num);
++    if (den_neg)
++	den = _cairo_int64_negate (den);
++    uqr = _cairo_uint64_divrem (num, den);
++    if (num_neg)
++	qr.rem = _cairo_int64_negate (uqr.rem);
++    else
++	qr.rem = uqr.rem;
++    if (num_neg != den_neg)
++	qr.quo = (cairo_int64_t) _cairo_int64_negate (uqr.quo);
++    else
++	qr.quo = (cairo_int64_t) uqr.quo;
++    return qr;
++}
++
++#if 0
++static inline int32_t
++_cairo_int64_32_div (cairo_int64_t num, int32_t den)
++{
++    return num / den;
++}
++#endif
++
++static inline int32_t
++_cairo_int64_32_div (cairo_int64_t num, int32_t den)
++{
++  cairo_quorem64_t quorem;
++  cairo_int64_t den64;
++
++  den64 = _cairo_int32_to_int64 (den);
++  quorem = _cairo_int64_divrem (num, den64);
++
++  return _cairo_int64_to_int32 (quorem.quo);
++}
++
++/*
++ * 128-bit datatypes.  Again, provide two implementations in
++ * case the machine has a native 128-bit datatype.  GCC supports int128_t
++ * on ia64
++ */
++
++#if !HAVE_UINT128_T
++
++cairo_uint128_t I	_cairo_uint32_to_uint128 (uint32_t i);
++cairo_uint128_t I	_cairo_uint64_to_uint128 (cairo_uint64_t i);
++#define			_cairo_uint128_to_uint64(a)	((a).lo)
++#define			_cairo_uint128_to_uint32(a)	_cairo_uint64_to_uint32(_cairo_uint128_to_uint64(a))
++cairo_uint128_t I	_cairo_uint128_add (cairo_uint128_t a, cairo_uint128_t b);
++cairo_uint128_t I	_cairo_uint128_sub (cairo_uint128_t a, cairo_uint128_t b);
++cairo_uint128_t I	_cairo_uint128_mul (cairo_uint128_t a, cairo_uint128_t b);
++cairo_uint128_t I	_cairo_uint64x64_128_mul (cairo_uint64_t a, cairo_uint64_t b);
++cairo_uint128_t I	_cairo_uint128_lsl (cairo_uint128_t a, int shift);
++cairo_uint128_t I	_cairo_uint128_rsl (cairo_uint128_t a, int shift);
++cairo_uint128_t I	_cairo_uint128_rsa (cairo_uint128_t a, int shift);
++int	        I	_cairo_uint128_lt (cairo_uint128_t a, cairo_uint128_t b);
++int	        I	_cairo_uint128_cmp (cairo_uint128_t a, cairo_uint128_t b);
++int	        I	_cairo_uint128_eq (cairo_uint128_t a, cairo_uint128_t b);
++#define			_cairo_uint128_is_zero(a) (_cairo_uint64_is_zero ((a).hi) && _cairo_uint64_is_zero ((a).lo))
++cairo_uint128_t I	_cairo_uint128_negate (cairo_uint128_t a);
++#define			_cairo_uint128_negative(a)  (_cairo_uint64_negative(a.hi))
++cairo_uint128_t I	_cairo_uint128_not (cairo_uint128_t a);
++
++#define			_cairo_uint128_to_int128(i)	(i)
++#define			_cairo_int128_to_uint128(i)	(i)
++
++cairo_int128_t  I	_cairo_int32_to_int128 (int32_t i);
++cairo_int128_t  I	_cairo_int64_to_int128 (cairo_int64_t i);
++#define			_cairo_int128_to_int64(a)   ((cairo_int64_t) (a).lo)
++#define			_cairo_int128_to_int32(a)   _cairo_int64_to_int32(_cairo_int128_to_int64(a))
++#define			_cairo_int128_add(a,b)	    _cairo_uint128_add(a,b)
++#define			_cairo_int128_sub(a,b)	    _cairo_uint128_sub(a,b)
++#define			_cairo_int128_mul(a,b)	    _cairo_uint128_mul(a,b)
++cairo_int128_t I _cairo_int64x64_128_mul (cairo_int64_t a, cairo_int64_t b);
++#define                 _cairo_int64x32_128_mul(a, b) _cairo_int64x64_128_mul(a, _cairo_int32_to_int64(b))
++#define			_cairo_int128_lsl(a,b)	    _cairo_uint128_lsl(a,b)
++#define			_cairo_int128_rsl(a,b)	    _cairo_uint128_rsl(a,b)
++#define			_cairo_int128_rsa(a,b)	    _cairo_uint128_rsa(a,b)
++int 	        I	_cairo_int128_lt (cairo_int128_t a, cairo_int128_t b);
++int	        I	_cairo_int128_cmp (cairo_int128_t a, cairo_int128_t b);
++#define			_cairo_int128_is_zero(a)    _cairo_uint128_is_zero (a)
++#define			_cairo_int128_eq(a,b)	    _cairo_uint128_eq (a,b)
++#define			_cairo_int128_negate(a)	    _cairo_uint128_negate(a)
++#define			_cairo_int128_negative(a)   (_cairo_uint128_negative(a))
++#define			_cairo_int128_not(a)	    _cairo_uint128_not(a)
++
++#else	/* !HAVE_UINT128_T */
++
++#define			_cairo_uint32_to_uint128(i) ((uint128_t) (i))
++#define			_cairo_uint64_to_uint128(i) ((uint128_t) (i))
++#define			_cairo_uint128_to_uint64(i) ((uint64_t) (i))
++#define			_cairo_uint128_to_uint32(i) ((uint32_t) (i))
++#define			_cairo_uint128_add(a,b)	    ((a) + (b))
++#define			_cairo_uint128_sub(a,b)	    ((a) - (b))
++#define			_cairo_uint128_mul(a,b)	    ((a) * (b))
++#define			_cairo_uint64x64_128_mul(a,b)	((uint128_t) (a) * (b))
++#define			_cairo_uint128_lsl(a,b)	    ((a) << (b))
++#define			_cairo_uint128_rsl(a,b)	    ((uint128_t) (a) >> (b))
++#define			_cairo_uint128_rsa(a,b)	    ((uint128_t) ((int128_t) (a) >> (b)))
++#define			_cairo_uint128_lt(a,b)	    ((a) < (b))
++#define			_cairo_uint128_cmp(a,b)	    ((a) == (b) ? 0 : (a) < (b) ? -1 : 1)
++#define			_cairo_uint128_is_zero(a)   ((a) == 0)
++#define			_cairo_uint128_eq(a,b)	    ((a) == (b))
++#define			_cairo_uint128_negate(a)    ((uint128_t) -((int128_t) (a)))
++#define			_cairo_uint128_negative(a)  ((int128_t) (a) < 0)
++#define			_cairo_uint128_not(a)	    (~(a))
++
++#define			_cairo_uint128_to_int128(i) ((int128_t) (i))
++#define			_cairo_int128_to_uint128(i) ((uint128_t) (i))
++
++#define			_cairo_int32_to_int128(i)   ((int128_t) (i))
++#define			_cairo_int64_to_int128(i)   ((int128_t) (i))
++#define			_cairo_int128_to_int64(i)   ((int64_t) (i))
++#define			_cairo_int128_to_int32(i)   ((int32_t) (i))
++#define			_cairo_int128_add(a,b)	    ((a) + (b))
++#define			_cairo_int128_sub(a,b)	    ((a) - (b))
++#define			_cairo_int128_mul(a,b)	    ((a) * (b))
++#define			_cairo_int64x64_128_mul(a,b) ((int128_t) (a) * (b))
++#define                 _cairo_int64x32_128_mul(a, b) _cairo_int64x64_128_mul(a, _cairo_int32_to_int64(b))
++#define			_cairo_int128_lt(a,b)	    ((a) < (b))
++#define			_cairo_int128_cmp(a,b)	    ((a) == (b) ? 0 : (a) < (b) ? -1 : 1)
++#define			_cairo_int128_is_zero(a)    ((a) == 0)
++#define			_cairo_int128_eq(a,b)	    ((a) == (b))
++#define			_cairo_int128_lsl(a,b)	    ((a) << (b))
++#define			_cairo_int128_rsl(a,b)	    ((int128_t) ((uint128_t) (a) >> (b)))
++#define			_cairo_int128_rsa(a,b)	    ((int128_t) (a) >> (b))
++#define			_cairo_int128_negate(a)	    (-(a))
++#define			_cairo_int128_negative(a)   ((a) < 0)
++#define			_cairo_int128_not(a)	    (~(a))
++
++#endif	/* HAVE_UINT128_T */
++
++cairo_uquorem128_t I
++_cairo_uint128_divrem (cairo_uint128_t num, cairo_uint128_t den);
++
++cairo_quorem128_t I
++_cairo_int128_divrem (cairo_int128_t num, cairo_int128_t den);
++
++cairo_uquorem64_t I
++_cairo_uint_96by64_32x64_divrem (cairo_uint128_t num,
++				 cairo_uint64_t  den);
++
++cairo_quorem64_t I
++_cairo_int_96by64_32x64_divrem (cairo_int128_t num,
++				cairo_int64_t  den);
++
++#define			_cairo_uint128_le(a,b)	    (!_cairo_uint128_gt(a,b))
++#define			_cairo_uint128_ne(a,b)	    (!_cairo_uint128_eq(a,b))
++#define			_cairo_uint128_ge(a,b)	    (!_cairo_uint128_lt(a,b))
++#define			_cairo_uint128_gt(a,b)	    _cairo_uint128_lt(b,a)
++
++#define			_cairo_int128_le(a,b)	    (!_cairo_int128_gt(a,b))
++#define			_cairo_int128_ne(a,b)	    (!_cairo_int128_eq(a,b))
++#define			_cairo_int128_ge(a,b)	    (!_cairo_int128_lt(a,b))
++#define			_cairo_int128_gt(a,b)	    _cairo_int128_lt(b,a)
++
++#undef I
++
++#endif /* CAIRO_WIDEINT_H */
+diff --git a/src/cairo/cairo-wideint-type-private.h b/src/cairo/cairo-wideint-type-private.h
+new file mode 100644
+index 0000000..e18f48e
+--- /dev/null
++++ b/src/cairo/cairo-wideint-type-private.h
+@@ -0,0 +1,153 @@
++/* cairo - a vector graphics library with display and print output
++ *
++ * Copyright © 2004 Keith Packard
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it either under the terms of the GNU Lesser General Public
++ * License version 2.1 as published by the Free Software Foundation
++ * (the "LGPL") or, at your option, under the terms of the Mozilla
++ * Public License Version 1.1 (the "MPL"). If you do not alter this
++ * notice, a recipient may use your version of this file under either
++ * the MPL or the LGPL.
++ *
++ * You should have received a copy of the LGPL along with this library
++ * in the file COPYING-LGPL-2.1; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
++ * You should have received a copy of the MPL along with this library
++ * in the file COPYING-MPL-1.1
++ *
++ * The contents of this file are subject to the Mozilla Public License
++ * Version 1.1 (the "License"); you may not use this file except in
++ * compliance with the License. You may obtain a copy of the License at
++ * http://www.mozilla.org/MPL/
++ *
++ * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY
++ * OF ANY KIND, either express or implied. See the LGPL or the MPL for
++ * the specific language governing rights and limitations.
++ *
++ * The Original Code is the cairo graphics library.
++ *
++ * The Initial Developer of the Original Code is Keith Packard
++ *
++ * Contributor(s):
++ *	Keith R. Packard <keithp@keithp.com>
++ *
++ */
++
++#ifndef CAIRO_WIDEINT_TYPE_H
++#define CAIRO_WIDEINT_TYPE_H
++
++#if HAVE_CONFIG_H
++#include "config.h"
++#endif
++
++#if   HAVE_STDINT_H
++# include <stdint.h>
++#elif HAVE_INTTYPES_H
++# include <inttypes.h>
++#elif HAVE_SYS_INT_TYPES_H
++# include <sys/int_types.h>
++#elif defined(_MSC_VER)
++  typedef __int8 int8_t;
++  typedef unsigned __int8 uint8_t;
++  typedef __int16 int16_t;
++  typedef unsigned __int16 uint16_t;
++  typedef __int32 int32_t;
++  typedef unsigned __int32 uint32_t;
++  typedef __int64 int64_t;
++  typedef unsigned __int64 uint64_t;
++# ifndef HAVE_UINT64_T
++#  define HAVE_UINT64_T 1
++# endif
++#else
++#error Cannot find definitions for fixed-width integral types (uint8_t, uint32_t, etc.)
++#endif
++
++#ifndef INT16_MIN
++# define INT16_MIN	(-32767-1)
++#endif
++#ifndef INT16_MAX
++# define INT16_MAX	(32767)
++#endif
++#ifndef UINT16_MAX
++# define UINT16_MAX	(65535)
++#endif
++#ifndef INT32_MIN
++# define INT32_MIN	(-2147483647-1)
++#endif
++#ifndef INT32_MAX
++# define INT32_MAX	(2147483647)
++#endif
++
++#if HAVE_BYTESWAP_H
++# include <byteswap.h>
++#endif
++#ifndef bswap_16
++# define bswap_16(p) \
++	(((((uint16_t)(p)) & 0x00ff) << 8) | \
++	  (((uint16_t)(p))           >> 8));
++#endif
++#ifndef bswap_32
++# define bswap_32(p) \
++         (((((uint32_t)(p)) & 0x000000ff) << 24) | \
++	  ((((uint32_t)(p)) & 0x0000ff00) << 8)  | \
++	  ((((uint32_t)(p)) & 0x00ff0000) >> 8)  | \
++	  ((((uint32_t)(p)))              >> 24));
++#endif
++
++
++#if !HAVE_UINT64_T
++
++typedef struct _cairo_uint64 {
++    uint32_t	lo, hi;
++} cairo_uint64_t, cairo_int64_t;
++
++#else
++
++typedef uint64_t    cairo_uint64_t;
++typedef int64_t	    cairo_int64_t;
++
++#endif
++
++typedef struct _cairo_uquorem64 {
++    cairo_uint64_t	quo;
++    cairo_uint64_t	rem;
++} cairo_uquorem64_t;
++
++typedef struct _cairo_quorem64 {
++    cairo_int64_t	quo;
++    cairo_int64_t	rem;
++} cairo_quorem64_t;
++
++/* gcc has a non-standard name. */
++#if HAVE___UINT128_T && !HAVE_UINT128_T
++typedef __uint128_t uint128_t;
++typedef __int128_t int128_t;
++#define HAVE_UINT128_T 1
++#endif
++
++#if !HAVE_UINT128_T
++
++typedef struct cairo_uint128 {
++    cairo_uint64_t	lo, hi;
++} cairo_uint128_t, cairo_int128_t;
++
++#else
++
++typedef uint128_t	cairo_uint128_t;
++typedef int128_t	cairo_int128_t;
++
++#endif
++
++typedef struct _cairo_uquorem128 {
++    cairo_uint128_t	quo;
++    cairo_uint128_t	rem;
++} cairo_uquorem128_t;
++
++typedef struct _cairo_quorem128 {
++    cairo_int128_t	quo;
++    cairo_int128_t	rem;
++} cairo_quorem128_t;
++
++
++#endif /* CAIRO_WIDEINT_H */
+diff --git a/src/cairo/cairo-wideint.c b/src/cairo/cairo-wideint.c
+new file mode 100644
+index 0000000..823ebca
+--- /dev/null
++++ b/src/cairo/cairo-wideint.c
+@@ -0,0 +1,819 @@
++/* cairo - a vector graphics library with display and print output
++ *
++ * Copyright © 2004 Keith Packard
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it either under the terms of the GNU Lesser General Public
++ * License version 2.1 as published by the Free Software Foundation
++ * (the "LGPL") or, at your option, under the terms of the Mozilla
++ * Public License Version 1.1 (the "MPL"). If you do not alter this
++ * notice, a recipient may use your version of this file under either
++ * the MPL or the LGPL.
++ *
++ * You should have received a copy of the LGPL along with this library
++ * in the file COPYING-LGPL-2.1; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
++ * You should have received a copy of the MPL along with this library
++ * in the file COPYING-MPL-1.1
++ *
++ * The contents of this file are subject to the Mozilla Public License
++ * Version 1.1 (the "License"); you may not use this file except in
++ * compliance with the License. You may obtain a copy of the License at
++ * http://www.mozilla.org/MPL/
++ *
++ * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY
++ * OF ANY KIND, either express or implied. See the LGPL or the MPL for
++ * the specific language governing rights and limitations.
++ *
++ * The Original Code is the cairo graphics library.
++ *
++ * The Initial Developer of the Original Code is Keith Packard
++ *
++ * Contributor(s):
++ *	Keith R. Packard <keithp@keithp.com>
++ */
++
++#include "cairo-wideint-private.h"
++
++#if HAVE_UINT64_T
++
++#define uint64_lo32(i)	((i) & 0xffffffff)
++#define uint64_hi32(i)	((i) >> 32)
++#define uint64_lo(i)	((i) & 0xffffffff)
++#define uint64_hi(i)	((i) >> 32)
++#define uint64_shift32(i)   ((i) << 32)
++#define uint64_carry32	(((uint64_t) 1) << 32)
++
++#define _cairo_uint32s_to_uint64(h,l) ((uint64_t) (h) << 32 | (l))
++
++#else
++
++#define uint64_lo32(i)	((i).lo)
++#define uint64_hi32(i)	((i).hi)
++
++static cairo_uint64_t
++uint64_lo (cairo_uint64_t i)
++{
++    cairo_uint64_t  s;
++
++    s.lo = i.lo;
++    s.hi = 0;
++    return s;
++}
++
++static cairo_uint64_t
++uint64_hi (cairo_uint64_t i)
++{
++    cairo_uint64_t  s;
++
++    s.lo = i.hi;
++    s.hi = 0;
++    return s;
++}
++
++static cairo_uint64_t
++uint64_shift32 (cairo_uint64_t i)
++{
++    cairo_uint64_t  s;
++
++    s.lo = 0;
++    s.hi = i.lo;
++    return s;
++}
++
++static const cairo_uint64_t uint64_carry32 = { 0, 1 };
++
++cairo_uint64_t
++_cairo_uint32_to_uint64 (uint32_t i)
++{
++    cairo_uint64_t	q;
++
++    q.lo = i;
++    q.hi = 0;
++    return q;
++}
++
++cairo_int64_t
++_cairo_int32_to_int64 (int32_t i)
++{
++    cairo_uint64_t	q;
++
++    q.lo = i;
++    q.hi = i < 0 ? -1 : 0;
++    return q;
++}
++
++static cairo_uint64_t
++_cairo_uint32s_to_uint64 (uint32_t h, uint32_t l)
++{
++    cairo_uint64_t	q;
++
++    q.lo = l;
++    q.hi = h;
++    return q;
++}
++
++cairo_uint64_t
++_cairo_uint64_add (cairo_uint64_t a, cairo_uint64_t b)
++{
++    cairo_uint64_t	s;
++
++    s.hi = a.hi + b.hi;
++    s.lo = a.lo + b.lo;
++    if (s.lo < a.lo)
++	s.hi++;
++    return s;
++}
++
++cairo_uint64_t
++_cairo_uint64_sub (cairo_uint64_t a, cairo_uint64_t b)
++{
++    cairo_uint64_t	s;
++
++    s.hi = a.hi - b.hi;
++    s.lo = a.lo - b.lo;
++    if (s.lo > a.lo)
++	s.hi--;
++    return s;
++}
++
++#define uint32_lo(i)	((i) & 0xffff)
++#define uint32_hi(i)	((i) >> 16)
++#define uint32_carry16	((1) << 16)
++
++cairo_uint64_t
++_cairo_uint32x32_64_mul (uint32_t a, uint32_t b)
++{
++    cairo_uint64_t  s;
++
++    uint16_t	ah, al, bh, bl;
++    uint32_t	r0, r1, r2, r3;
++
++    al = uint32_lo (a);
++    ah = uint32_hi (a);
++    bl = uint32_lo (b);
++    bh = uint32_hi (b);
++
++    r0 = (uint32_t) al * bl;
++    r1 = (uint32_t) al * bh;
++    r2 = (uint32_t) ah * bl;
++    r3 = (uint32_t) ah * bh;
++
++    r1 += uint32_hi(r0);    /* no carry possible */
++    r1 += r2;		    /* but this can carry */
++    if (r1 < r2)	    /* check */
++	r3 += uint32_carry16;
++
++    s.hi = r3 + uint32_hi(r1);
++    s.lo = (uint32_lo (r1) << 16) + uint32_lo (r0);
++    return s;
++}
++
++cairo_int64_t
++_cairo_int32x32_64_mul (int32_t a, int32_t b)
++{
++    cairo_int64_t s;
++    s = _cairo_uint32x32_64_mul ((uint32_t) a, (uint32_t) b);
++    if (a < 0)
++	s.hi -= b;
++    if (b < 0)
++	s.hi -= a;
++    return s;
++}
++
++cairo_uint64_t
++_cairo_uint64_mul (cairo_uint64_t a, cairo_uint64_t b)
++{
++    cairo_uint64_t	s;
++
++    s = _cairo_uint32x32_64_mul (a.lo, b.lo);
++    s.hi += a.lo * b.hi + a.hi * b.lo;
++    return s;
++}
++
++cairo_uint64_t
++_cairo_uint64_lsl (cairo_uint64_t a, int shift)
++{
++    if (shift >= 32)
++    {
++	a.hi = a.lo;
++	a.lo = 0;
++	shift -= 32;
++    }
++    if (shift)
++    {
++	a.hi = a.hi << shift | a.lo >> (32 - shift);
++	a.lo = a.lo << shift;
++    }
++    return a;
++}
++
++cairo_uint64_t
++_cairo_uint64_rsl (cairo_uint64_t a, int shift)
++{
++    if (shift >= 32)
++    {
++	a.lo = a.hi;
++	a.hi = 0;
++	shift -= 32;
++    }
++    if (shift)
++    {
++	a.lo = a.lo >> shift | a.hi << (32 - shift);
++	a.hi = a.hi >> shift;
++    }
++    return a;
++}
++
++#define _cairo_uint32_rsa(a,n)	((uint32_t) (((int32_t) (a)) >> (n)))
++
++cairo_int64_t
++_cairo_uint64_rsa (cairo_int64_t a, int shift)
++{
++    if (shift >= 32)
++    {
++	a.lo = a.hi;
++	a.hi = _cairo_uint32_rsa (a.hi, 31);
++	shift -= 32;
++    }
++    if (shift)
++    {
++	a.lo = a.lo >> shift | a.hi << (32 - shift);
++	a.hi = _cairo_uint32_rsa (a.hi, shift);
++    }
++    return a;
++}
++
++int
++_cairo_uint64_lt (cairo_uint64_t a, cairo_uint64_t b)
++{
++    return (a.hi < b.hi ||
++	    (a.hi == b.hi && a.lo < b.lo));
++}
++
++int
++_cairo_uint64_eq (cairo_uint64_t a, cairo_uint64_t b)
++{
++    return a.hi == b.hi && a.lo == b.lo;
++}
++
++int
++_cairo_int64_lt (cairo_int64_t a, cairo_int64_t b)
++{
++    if (_cairo_int64_negative (a) && !_cairo_int64_negative (b))
++	return 1;
++    if (!_cairo_int64_negative (a) && _cairo_int64_negative (b))
++	return 0;
++    return _cairo_uint64_lt (a, b);
++}
++
++int
++_cairo_uint64_cmp (cairo_uint64_t a, cairo_uint64_t b)
++{
++    if (a.hi < b.hi)
++	return -1;
++    else if (a.hi > b.hi)
++	return 1;
++    else if (a.lo < b.lo)
++	return -1;
++    else if (a.lo > b.lo)
++	return 1;
++    else
++	return 0;
++}
++
++int
++_cairo_int64_cmp (cairo_int64_t a, cairo_int64_t b)
++{
++    if (_cairo_int64_negative (a) && !_cairo_int64_negative (b))
++	return -1;
++    if (!_cairo_int64_negative (a) && _cairo_int64_negative (b))
++	return 1;
++
++    return _cairo_uint64_cmp (a, b);
++}
++
++cairo_uint64_t
++_cairo_uint64_not (cairo_uint64_t a)
++{
++    a.lo = ~a.lo;
++    a.hi = ~a.hi;
++    return a;
++}
++
++cairo_uint64_t
++_cairo_uint64_negate (cairo_uint64_t a)
++{
++    a.lo = ~a.lo;
++    a.hi = ~a.hi;
++    if (++a.lo == 0)
++	++a.hi;
++    return a;
++}
++
++/*
++ * Simple bit-at-a-time divide.
++ */
++cairo_uquorem64_t
++_cairo_uint64_divrem (cairo_uint64_t num, cairo_uint64_t den)
++{
++    cairo_uquorem64_t	qr;
++    cairo_uint64_t	bit;
++    cairo_uint64_t	quo;
++
++    bit = _cairo_uint32_to_uint64 (1);
++
++    /* normalize to make den >= num, but not overflow */
++    while (_cairo_uint64_lt (den, num) && (den.hi & 0x80000000) == 0)
++    {
++	bit = _cairo_uint64_lsl (bit, 1);
++	den = _cairo_uint64_lsl (den, 1);
++    }
++    quo = _cairo_uint32_to_uint64 (0);
++
++    /* generate quotient, one bit at a time */
++    while (bit.hi | bit.lo)
++    {
++	if (_cairo_uint64_le (den, num))
++	{
++	    num = _cairo_uint64_sub (num, den);
++	    quo = _cairo_uint64_add (quo, bit);
++	}
++	bit = _cairo_uint64_rsl (bit, 1);
++	den = _cairo_uint64_rsl (den, 1);
++    }
++    qr.quo = quo;
++    qr.rem = num;
++    return qr;
++}
++
++#endif /* !HAVE_UINT64_T */
++
++#if HAVE_UINT128_T
++cairo_uquorem128_t
++_cairo_uint128_divrem (cairo_uint128_t num, cairo_uint128_t den)
++{
++    cairo_uquorem128_t	qr;
++
++    qr.quo = num / den;
++    qr.rem = num % den;
++    return qr;
++}
++
++#else
++
++cairo_uint128_t
++_cairo_uint32_to_uint128 (uint32_t i)
++{
++    cairo_uint128_t	q;
++
++    q.lo = _cairo_uint32_to_uint64 (i);
++    q.hi = _cairo_uint32_to_uint64 (0);
++    return q;
++}
++
++cairo_int128_t
++_cairo_int32_to_int128 (int32_t i)
++{
++    cairo_int128_t	q;
++
++    q.lo = _cairo_int32_to_int64 (i);
++    q.hi = _cairo_int32_to_int64 (i < 0 ? -1 : 0);
++    return q;
++}
++
++cairo_uint128_t
++_cairo_uint64_to_uint128 (cairo_uint64_t i)
++{
++    cairo_uint128_t	q;
++
++    q.lo = i;
++    q.hi = _cairo_uint32_to_uint64 (0);
++    return q;
++}
++
++cairo_int128_t
++_cairo_int64_to_int128 (cairo_int64_t i)
++{
++    cairo_int128_t	q;
++
++    q.lo = i;
++    q.hi = _cairo_int32_to_int64 (_cairo_int64_negative(i) ? -1 : 0);
++    return q;
++}
++
++cairo_uint128_t
++_cairo_uint128_add (cairo_uint128_t a, cairo_uint128_t b)
++{
++    cairo_uint128_t	s;
++
++    s.hi = _cairo_uint64_add (a.hi, b.hi);
++    s.lo = _cairo_uint64_add (a.lo, b.lo);
++    if (_cairo_uint64_lt (s.lo, a.lo))
++	s.hi = _cairo_uint64_add (s.hi, _cairo_uint32_to_uint64 (1));
++    return s;
++}
++
++cairo_uint128_t
++_cairo_uint128_sub (cairo_uint128_t a, cairo_uint128_t b)
++{
++    cairo_uint128_t	s;
++
++    s.hi = _cairo_uint64_sub (a.hi, b.hi);
++    s.lo = _cairo_uint64_sub (a.lo, b.lo);
++    if (_cairo_uint64_gt (s.lo, a.lo))
++	s.hi = _cairo_uint64_sub (s.hi, _cairo_uint32_to_uint64(1));
++    return s;
++}
++
++cairo_uint128_t
++_cairo_uint64x64_128_mul (cairo_uint64_t a, cairo_uint64_t b)
++{
++    cairo_uint128_t	s;
++    uint32_t		ah, al, bh, bl;
++    cairo_uint64_t	r0, r1, r2, r3;
++
++    al = uint64_lo32 (a);
++    ah = uint64_hi32 (a);
++    bl = uint64_lo32 (b);
++    bh = uint64_hi32 (b);
++
++    r0 = _cairo_uint32x32_64_mul (al, bl);
++    r1 = _cairo_uint32x32_64_mul (al, bh);
++    r2 = _cairo_uint32x32_64_mul (ah, bl);
++    r3 = _cairo_uint32x32_64_mul (ah, bh);
++
++    r1 = _cairo_uint64_add (r1, uint64_hi (r0));    /* no carry possible */
++    r1 = _cairo_uint64_add (r1, r2);	    	    /* but this can carry */
++    if (_cairo_uint64_lt (r1, r2))		    /* check */
++	r3 = _cairo_uint64_add (r3, uint64_carry32);
++
++    s.hi = _cairo_uint64_add (r3, uint64_hi(r1));
++    s.lo = _cairo_uint64_add (uint64_shift32 (r1),
++				uint64_lo (r0));
++    return s;
++}
++
++cairo_int128_t
++_cairo_int64x64_128_mul (cairo_int64_t a, cairo_int64_t b)
++{
++    cairo_int128_t  s;
++    s = _cairo_uint64x64_128_mul (_cairo_int64_to_uint64(a),
++				  _cairo_int64_to_uint64(b));
++    if (_cairo_int64_negative (a))
++	s.hi = _cairo_uint64_sub (s.hi,
++				  _cairo_int64_to_uint64 (b));
++    if (_cairo_int64_negative (b))
++	s.hi = _cairo_uint64_sub (s.hi,
++				  _cairo_int64_to_uint64 (a));
++    return s;
++}
++
++cairo_uint128_t
++_cairo_uint128_mul (cairo_uint128_t a, cairo_uint128_t b)
++{
++    cairo_uint128_t	s;
++
++    s = _cairo_uint64x64_128_mul (a.lo, b.lo);
++    s.hi = _cairo_uint64_add (s.hi,
++				_cairo_uint64_mul (a.lo, b.hi));
++    s.hi = _cairo_uint64_add (s.hi,
++				_cairo_uint64_mul (a.hi, b.lo));
++    return s;
++}
++
++cairo_uint128_t
++_cairo_uint128_lsl (cairo_uint128_t a, int shift)
++{
++    if (shift >= 64)
++    {
++	a.hi = a.lo;
++	a.lo = _cairo_uint32_to_uint64 (0);
++	shift -= 64;
++    }
++    if (shift)
++    {
++	a.hi = _cairo_uint64_add (_cairo_uint64_lsl (a.hi, shift),
++				    _cairo_uint64_rsl (a.lo, (64 - shift)));
++	a.lo = _cairo_uint64_lsl (a.lo, shift);
++    }
++    return a;
++}
++
++cairo_uint128_t
++_cairo_uint128_rsl (cairo_uint128_t a, int shift)
++{
++    if (shift >= 64)
++    {
++	a.lo = a.hi;
++	a.hi = _cairo_uint32_to_uint64 (0);
++	shift -= 64;
++    }
++    if (shift)
++    {
++	a.lo = _cairo_uint64_add (_cairo_uint64_rsl (a.lo, shift),
++				    _cairo_uint64_lsl (a.hi, (64 - shift)));
++	a.hi = _cairo_uint64_rsl (a.hi, shift);
++    }
++    return a;
++}
++
++cairo_uint128_t
++_cairo_uint128_rsa (cairo_int128_t a, int shift)
++{
++    if (shift >= 64)
++    {
++	a.lo = a.hi;
++	a.hi = _cairo_uint64_rsa (a.hi, 64-1);
++	shift -= 64;
++    }
++    if (shift)
++    {
++	a.lo = _cairo_uint64_add (_cairo_uint64_rsl (a.lo, shift),
++				    _cairo_uint64_lsl (a.hi, (64 - shift)));
++	a.hi = _cairo_uint64_rsa (a.hi, shift);
++    }
++    return a;
++}
++
++int
++_cairo_uint128_lt (cairo_uint128_t a, cairo_uint128_t b)
++{
++    return (_cairo_uint64_lt (a.hi, b.hi) ||
++	    (_cairo_uint64_eq (a.hi, b.hi) &&
++	     _cairo_uint64_lt (a.lo, b.lo)));
++}
++
++int
++_cairo_int128_lt (cairo_int128_t a, cairo_int128_t b)
++{
++    if (_cairo_int128_negative (a) && !_cairo_int128_negative (b))
++	return 1;
++    if (!_cairo_int128_negative (a) && _cairo_int128_negative (b))
++	return 0;
++    return _cairo_uint128_lt (a, b);
++}
++
++int
++_cairo_uint128_cmp (cairo_uint128_t a, cairo_uint128_t b)
++{
++    int cmp;
++
++    cmp = _cairo_uint64_cmp (a.hi, b.hi);
++    if (cmp)
++	return cmp;
++    return _cairo_uint64_cmp (a.lo, b.lo);
++}
++
++int
++_cairo_int128_cmp (cairo_int128_t a, cairo_int128_t b)
++{
++    if (_cairo_int128_negative (a) && !_cairo_int128_negative (b))
++	return -1;
++    if (!_cairo_int128_negative (a) && _cairo_int128_negative (b))
++	return 1;
++
++    return _cairo_uint128_cmp (a, b);
++}
++
++int
++_cairo_uint128_eq (cairo_uint128_t a, cairo_uint128_t b)
++{
++    return (_cairo_uint64_eq (a.hi, b.hi) &&
++	    _cairo_uint64_eq (a.lo, b.lo));
++}
++
++#if HAVE_UINT64_T
++#define _cairo_msbset64(q)  (q & ((uint64_t) 1 << 63))
++#else
++#define _cairo_msbset64(q)  (q.hi & ((uint32_t) 1 << 31))
++#endif
++
++cairo_uquorem128_t
++_cairo_uint128_divrem (cairo_uint128_t num, cairo_uint128_t den)
++{
++    cairo_uquorem128_t	qr;
++    cairo_uint128_t	bit;
++    cairo_uint128_t	quo;
++
++    bit = _cairo_uint32_to_uint128 (1);
++
++    /* normalize to make den >= num, but not overflow */
++    while (_cairo_uint128_lt (den, num) && !_cairo_msbset64(den.hi))
++    {
++	bit = _cairo_uint128_lsl (bit, 1);
++	den = _cairo_uint128_lsl (den, 1);
++    }
++    quo = _cairo_uint32_to_uint128 (0);
++
++    /* generate quotient, one bit at a time */
++    while (_cairo_uint128_ne (bit, _cairo_uint32_to_uint128(0)))
++    {
++	if (_cairo_uint128_le (den, num))
++	{
++	    num = _cairo_uint128_sub (num, den);
++	    quo = _cairo_uint128_add (quo, bit);
++	}
++	bit = _cairo_uint128_rsl (bit, 1);
++	den = _cairo_uint128_rsl (den, 1);
++    }
++    qr.quo = quo;
++    qr.rem = num;
++    return qr;
++}
++
++cairo_int128_t
++_cairo_int128_negate (cairo_int128_t a)
++{
++    a.lo = _cairo_uint64_not (a.lo);
++    a.hi = _cairo_uint64_not (a.hi);
++    return _cairo_uint128_add (a, _cairo_uint32_to_uint128 (1));
++}
++
++cairo_int128_t
++_cairo_int128_not (cairo_int128_t a)
++{
++    a.lo = _cairo_uint64_not (a.lo);
++    a.hi = _cairo_uint64_not (a.hi);
++    return a;
++}
++
++#endif /* !HAVE_UINT128_T */
++
++cairo_quorem128_t
++_cairo_int128_divrem (cairo_int128_t num, cairo_int128_t den)
++{
++    int			num_neg = _cairo_int128_negative (num);
++    int			den_neg = _cairo_int128_negative (den);
++    cairo_uquorem128_t	uqr;
++    cairo_quorem128_t	qr;
++
++    if (num_neg)
++	num = _cairo_int128_negate (num);
++    if (den_neg)
++	den = _cairo_int128_negate (den);
++    uqr = _cairo_uint128_divrem (num, den);
++    if (num_neg)
++	qr.rem = _cairo_int128_negate (uqr.rem);
++    else
++	qr.rem = uqr.rem;
++    if (num_neg != den_neg)
++	qr.quo = _cairo_int128_negate (uqr.quo);
++    else
++	qr.quo = uqr.quo;
++    return qr;
++}
++
++/**
++ * _cairo_uint_96by64_32x64_divrem:
++ *
++ * Compute a 32 bit quotient and 64 bit remainder of a 96 bit unsigned
++ * dividend and 64 bit divisor.  If the quotient doesn't fit into 32
++ * bits then the returned remainder is equal to the divisor, and the
++ * quotient is the largest representable 64 bit integer.  It is an
++ * error to call this function with the high 32 bits of @num being
++ * non-zero. */
++cairo_uquorem64_t
++_cairo_uint_96by64_32x64_divrem (cairo_uint128_t num,
++				 cairo_uint64_t den)
++{
++    cairo_uquorem64_t result;
++    cairo_uint64_t B = _cairo_uint32s_to_uint64 (1, 0);
++
++    /* These are the high 64 bits of the *96* bit numerator.  We're
++     * going to represent the numerator as xB + y, where x is a 64,
++     * and y is a 32 bit number. */
++    cairo_uint64_t x = _cairo_uint128_to_uint64 (_cairo_uint128_rsl(num, 32));
++
++    /* Initialise the result to indicate overflow. */
++    result.quo = _cairo_uint32s_to_uint64 (-1U, -1U);
++    result.rem = den;
++
++    /* Don't bother if the quotient is going to overflow. */
++    if (_cairo_uint64_ge (x, den)) {
++	return /* overflow */ result;
++    }
++
++    if (_cairo_uint64_lt (x, B)) {
++	/* When the final quotient is known to fit in 32 bits, then
++	 * num < 2^64 if and only if den < 2^32. */
++	return _cairo_uint64_divrem (_cairo_uint128_to_uint64 (num), den);
++    }
++    else {
++	/* Denominator is >= 2^32. the numerator is >= 2^64, and the
++	 * division won't overflow: need two divrems.  Write the
++	 * numerator and denominator as
++	 *
++	 *	num = xB + y		x : 64 bits, y : 32 bits
++	 *	den = uB + v		u, v : 32 bits
++	 */
++	uint32_t y = _cairo_uint128_to_uint32 (num);
++	uint32_t u = uint64_hi32 (den);
++	uint32_t v = _cairo_uint64_to_uint32 (den);
++
++	/* Compute a lower bound approximate quotient of num/den
++	 * from x/(u+1).  Then we have
++	 *
++	 * x	= q(u+1) + r	; q : 32 bits, r <= u : 32 bits.
++	 *
++	 * xB + y	= q(u+1)B	+ (rB+y)
++	 *		= q(uB + B + v - v) + (rB+y)
++	 *		= q(uB + v)	+ qB - qv + (rB+y)
++	 *		= q(uB + v)	+ q(B-v) + (rB+y)
++	 *
++	 * The true quotient of num/den then is q plus the
++	 * contribution of q(B-v) + (rB+y).  The main contribution
++	 * comes from the term q(B-v), with the term (rB+y) only
++	 * contributing at most one part.
++	 *
++	 * The term q(B-v) must fit into 64 bits, since q fits into 32
++	 * bits on account of being a lower bound to the true
++	 * quotient, and as B-v <= 2^32, we may safely use a single
++	 * 64/64 bit division to find its contribution. */
++
++	cairo_uquorem64_t quorem;
++	cairo_uint64_t remainder; /* will contain final remainder */
++	uint32_t quotient;	/* will contain final quotient. */
++	uint32_t q;
++	uint32_t r;
++
++	/* Approximate quotient by dividing the high 64 bits of num by
++	 * u+1. Watch out for overflow of u+1. */
++	if (u+1) {
++	    quorem = _cairo_uint64_divrem (x, _cairo_uint32_to_uint64 (u+1));
++	    q = _cairo_uint64_to_uint32 (quorem.quo);
++	    r = _cairo_uint64_to_uint32 (quorem.rem);
++	}
++	else {
++	    q = uint64_hi32 (x);
++	    r = _cairo_uint64_to_uint32 (x);
++	}
++	quotient = q;
++
++	/* Add the main term's contribution to quotient.  Note B-v =
++	 * -v as an uint32 (unless v = 0) */
++	if (v)
++	    quorem = _cairo_uint64_divrem (_cairo_uint32x32_64_mul (q, -v), den);
++	else
++	    quorem = _cairo_uint64_divrem (_cairo_uint32s_to_uint64 (q, 0), den);
++	quotient += _cairo_uint64_to_uint32 (quorem.quo);
++
++	/* Add the contribution of the subterm and start computing the
++	 * true remainder. */
++	remainder = _cairo_uint32s_to_uint64 (r, y);
++	if (_cairo_uint64_ge (remainder, den)) {
++	    remainder = _cairo_uint64_sub (remainder, den);
++	    quotient++;
++	}
++
++	/* Add the contribution of the main term's remainder. The
++	 * funky test here checks that remainder + main_rem >= den,
++	 * taking into account overflow of the addition. */
++	remainder = _cairo_uint64_add (remainder, quorem.rem);
++	if (_cairo_uint64_ge (remainder, den) ||
++	    _cairo_uint64_lt (remainder, quorem.rem))
++	{
++	    remainder = _cairo_uint64_sub (remainder, den);
++	    quotient++;
++	}
++
++	result.quo = _cairo_uint32_to_uint64 (quotient);
++	result.rem = remainder;
++    }
++    return result;
++}
++
++cairo_quorem64_t
++_cairo_int_96by64_32x64_divrem (cairo_int128_t num, cairo_int64_t den)
++{
++    int			num_neg = _cairo_int128_negative (num);
++    int			den_neg = _cairo_int64_negative (den);
++    cairo_uint64_t	nonneg_den;
++    cairo_uquorem64_t	uqr;
++    cairo_quorem64_t	qr;
++
++    if (num_neg)
++	num = _cairo_int128_negate (num);
++    if (den_neg)
++	nonneg_den = _cairo_int64_negate (den);
++    else
++	nonneg_den = den;
++
++    uqr = _cairo_uint_96by64_32x64_divrem (num, nonneg_den);
++    if (_cairo_uint64_eq (uqr.rem, nonneg_den)) {
++	/* bail on overflow. */
++	qr.quo = _cairo_uint32s_to_uint64 (0x7FFFFFFF, -1U);;
++	qr.rem = den;
++	return qr;
++    }
++
++    if (num_neg)
++	qr.rem = _cairo_int64_negate (uqr.rem);
++    else
++	qr.rem = uqr.rem;
++    if (num_neg != den_neg)
++	qr.quo = _cairo_int64_negate (uqr.quo);
++    else
++	qr.quo = uqr.quo;
++    return qr;
++}
+diff --git a/src/cairo/cairoint-minimal.h b/src/cairo/cairoint-minimal.h
+new file mode 100644
+index 0000000..4b6d20b
+--- /dev/null
++++ b/src/cairo/cairoint-minimal.h
+@@ -0,0 +1,146 @@
++/* cairo - a vector graphics library with display and print output
++ *
++ * Copyright © 2002 University of Southern California
++ * Copyright © 2005 Red Hat, Inc.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it either under the terms of the GNU Lesser General Public
++ * License version 2.1 as published by the Free Software Foundation
++ * (the "LGPL") or, at your option, under the terms of the Mozilla
++ * Public License Version 1.1 (the "MPL"). If you do not alter this
++ * notice, a recipient may use your version of this file under either
++ * the MPL or the LGPL.
++ *
++ * You should have received a copy of the LGPL along with this library
++ * in the file COPYING-LGPL-2.1; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
++ * You should have received a copy of the MPL along with this library
++ * in the file COPYING-MPL-1.1
++ *
++ * The contents of this file are subject to the Mozilla Public License
++ * Version 1.1 (the "License"); you may not use this file except in
++ * compliance with the License. You may obtain a copy of the License at
++ * http://www.mozilla.org/MPL/
++ *
++ * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY
++ * OF ANY KIND, either express or implied. See the LGPL or the MPL for
++ * the specific language governing rights and limitations.
++ *
++ * The Original Code is the cairo graphics library.
++ *
++ * The Initial Developer of the Original Code is University of Southern
++ * California.
++ *
++ * Contributor(s):
++ *	Carl D. Worth <cworth@cworth.org>
++ */
++
++/*
++ * These definitions are solely for use by the implementation of cairo
++ * and constitute no kind of standard.  If you need any of these
++ * functions, please drop me a note.  Either the library needs new
++ * functionality, or there's a way to do what you need using the
++ * existing published interfaces. cworth@cworth.org
++ */
++
++#ifndef _CAIROINT_H_
++#define _CAIROINT_H_
++
++#if HAVE_CONFIG_H
++#include "config.h"
++#endif
++
++#ifdef _MSC_VER
++#define cairo_public __declspec(dllexport)
++#endif
++
++#include <assert.h>
++#include <stdlib.h>
++#include <string.h>
++#include <stdarg.h>
++#include <stddef.h>
++
++#ifdef _MSC_VER
++#define _USE_MATH_DEFINES
++#endif
++#include <math.h>
++#include <limits.h>
++#include <stdio.h>
++
++#include "cairo-minimal.h"
++
++#include "cairo-compiler-private.h"
++
++CAIRO_BEGIN_DECLS
++
++#if _WIN32 && !_WIN32_WCE /* Permissions on WinCE? No worries! */
++cairo_private FILE *
++_cairo_win32_tmpfile (void);
++#define tmpfile() _cairo_win32_tmpfile()
++#endif
++
++#undef MIN
++#define MIN(a, b) ((a) < (b) ? (a) : (b))
++
++#undef MAX
++#define MAX(a, b) ((a) > (b) ? (a) : (b))
++
++#ifndef FALSE
++#define FALSE 0
++#endif
++
++#ifndef TRUE
++#define TRUE 1
++#endif
++
++#ifndef M_PI
++#define M_PI 3.14159265358979323846
++#endif
++
++#ifndef M_SQRT2
++#define M_SQRT2 1.41421356237309504880
++#endif
++
++#ifndef M_SQRT1_2
++#define M_SQRT1_2 0.707106781186547524400844362104849039
++#endif
++
++#undef  ARRAY_LENGTH
++#define ARRAY_LENGTH(__array) ((int) (sizeof (__array) / sizeof (__array[0])))
++
++#undef STRINGIFY
++#undef STRINGIFY_ARG
++#define STRINGIFY(macro_or_string)    STRINGIFY_ARG (macro_or_string)
++#define STRINGIFY_ARG(contents)       #contents
++
++#if defined (__GNUC__)
++#define cairo_container_of(ptr, type, member) ({ \
++    const __typeof__ (((type *) 0)->member) *mptr__ = (ptr); \
++    (type *) ((char *) mptr__ - offsetof (type, member)); \
++})
++#else
++#define cairo_container_of(ptr, type, member) \
++    (type *)((char *) (ptr) - (char *) &((type *)0)->member)
++#endif
++
++
++/* Size in bytes of buffer to use off the stack per functions.
++ * Mostly used by text functions.  For larger allocations, they'll
++ * malloc(). */
++#ifndef CAIRO_STACK_BUFFER_SIZE
++#define CAIRO_STACK_BUFFER_SIZE (512 * sizeof (int))
++#endif
++
++#define CAIRO_STACK_ARRAY_LENGTH(T) (CAIRO_STACK_BUFFER_SIZE / sizeof(T))
++
++
++#include "cairo-types-private.h"
++
++#if HAVE_VALGRIND
++# include <memcheck.h>
++# define VG(x) x
++#else
++# define VG(x)
++#endif
++
++#endif
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index cb53763..360aa83 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -37,7 +37,7 @@
+ #include "hid.h"
+ #include "hidgl.h"
+ #include "rtree.h"
+-
++#include "sweep.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+@@ -648,6 +648,13 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+   PLINE *contour;
+   struct do_hole_info info;
+   int stencil_bit;
++  cairo_traps_t traps;
++
++  _cairo_traps_init (&traps);
++  bo_poly_to_traps (poly->Clipped, &traps);
++  _cairo_traps_fini (&traps);
++
++  return;
+ 
+   info.scale = scale;
+   global_scale = scale;
+diff --git a/src/sweep.h b/src/sweep.h
+new file mode 100644
+index 0000000..257664f
+--- /dev/null
++++ b/src/sweep.h
+@@ -0,0 +1,4 @@
++#include "cairo/cairo-traps-private.h"
++
++cairo_status_t bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps);
++cairo_status_t bo_contour_to_traps (PLINE *contour, cairo_traps_t *traps);
