@@ -1,7 +1,7 @@
-Bottom: b18f3aa1e9afeccf53057e54182e33c3db0df2ca
-Top:    5777c29402662f306ea88d2f0417697ea7bd12a6
+Bottom: 26e493c01e454014a7d5441c87750df631734c4f
+Top:    0430734c023fc44c87fcbd353745bcbb25527459
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-06 16:12:21 +0000
+Date:   2009-11-06 16:28:03 +0000
 
 Allow zero clearance pads to touch polygons
 
@@ -30,7 +30,7 @@ index 775517d..ceef865 100644
        AddObjectToClearSizeUndoList (PAD_TYPE, Element, Pad, Pad);
        r_delete_entry (PCB->Data->pad_tree, &Pad->BoundingBox);
 diff --git a/src/draw.c b/src/draw.c
-index 8ad94c5..931126f 100644
+index 1c1a504..989bd10 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -1389,6 +1389,9 @@ DrawPadLowLevel (hidGC gc, PadTypePtr Pad, Boolean clear, Boolean mask)

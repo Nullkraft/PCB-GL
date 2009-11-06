@@ -1,7 +1,7 @@
-Bottom: 50e42976806f62ae588ecf5700f4c9ac7e995948
-Top:    5c7165f8a920eca0111f47bb6f7f5783dc33a013
+Bottom: 847b5b69562c87489d8f8787c4d792ad923bf0bc
+Top:    437cf52f27529ca3487de1e2277a765f280df438
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-06 16:12:17 +0000
+Date:   2009-11-06 16:27:59 +0000
 
 Add support for a "poured" object.
 
@@ -1987,7 +1987,7 @@ index ef22f73..9f0e843 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index 770afd7..759323a 100644
+index 5dffeba..531ef40 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -100,6 +100,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
@@ -2718,7 +2718,7 @@ index b844f56..bfacde4 100644
         {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
         {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 1f7946a..003d93f 100644
+index 9c7e7e1..c8080aa 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -383,7 +383,7 @@ gerber_do_export (HID_Attr_Val * options)
@@ -2789,7 +2789,7 @@ index e8ad916..e1b6290 100644
        break;
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 3a9afe7..59abd70 100644
+index 13fdd02..36724c0 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -454,7 +454,7 @@ have_crosshair_attachments (void)
@@ -2855,7 +2855,7 @@ index 9e59ca1..73f843c 100644
      }
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 0310e1d..383a25d 100644
+index f57a91b..0499e4f 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -374,7 +374,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
@@ -2866,7 +2866,7 @@ index 0310e1d..383a25d 100644
 +      if (layer->LineN || layer->TextN || layer->ArcN || layer->PourN)
  	print_group[GetLayerGroupNumberByNumber (i)] = 1;
  
-       if (strcmp (layer->Name, "outline") == 0
+       if (strcasecmp (layer->Name, "outline") == 0
 diff --git a/src/insert.c b/src/insert.c
 index 3d4a2f5..6399fac 100644
 --- a/src/insert.c
@@ -4039,7 +4039,7 @@ index 5186183..6b5b0c4 100644
     {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
     {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/polygon.c b/src/polygon.c
-index fd68900..364b0de 100644
+index 75d197b..f280da3 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -32,6 +32,8 @@
@@ -4111,7 +4111,7 @@ index fd68900..364b0de 100644
  
  POLYAREA *
  RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2)
-@@ -628,6 +635,8 @@ SquarePadPoly (PadType * pad, BDimension clear)
+@@ -632,6 +639,8 @@ SquarePadPoly (PadType * pad, BDimension clear)
    return np;
  }
  
@@ -4120,7 +4120,7 @@ index fd68900..364b0de 100644
  /* clear np1 from the polygon */
  static int
  Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
-@@ -661,7 +670,9 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
+@@ -665,7 +674,9 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
        p->NoHoles = NULL;
        return -1;
      }
@@ -4131,7 +4131,7 @@ index fd68900..364b0de 100644
    assert (!p->Clipped || poly_Valid (p->Clipped));
    if (!p->Clipped)
      Message ("Polygon cleared out of existence near (%d, %d)\n",
-@@ -669,6 +680,7 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
+@@ -673,6 +684,7 @@ Subtract (POLYAREA * np1, PolygonType * p, Boolean fnp)
               (p->BoundingBox.Y1 + p->BoundingBox.Y2) / 2);
    return 1;
  }
@@ -4139,7 +4139,7 @@ index fd68900..364b0de 100644
  
  /* create a polygon of the pin clearance */
  POLYAREA *
-@@ -700,486 +712,15 @@ BoxPolyBloated (BoxType *box, BDimension bloat)
+@@ -704,486 +716,15 @@ BoxPolyBloated (BoxType *box, BDimension bloat)
                     box->Y1 - bloat, box->Y2 + bloat);
  }
  
@@ -4631,7 +4631,7 @@ index fd68900..364b0de 100644
    if (inhibit)
      return 0;
    if (p->Clipped)
-@@ -1194,205 +735,7 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
+@@ -1198,205 +739,7 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
    else
      p->NoHolesValid = 0;
    return 1;
@@ -4838,7 +4838,7 @@ index fd68900..364b0de 100644
  }
  
  /* find polygon holes in range, then call the callback function for
-@@ -1436,68 +779,14 @@ struct plow_info
+@@ -1440,68 +783,14 @@ struct plow_info
  };
  
  static int
@@ -4913,7 +4913,7 @@ index fd68900..364b0de 100644
    return 0;
  }
  
-@@ -1505,12 +794,10 @@ static int
+@@ -1509,12 +798,10 @@ static int
  plow_callback (const BoxType * b, void *cl)
  {
    struct plow_info *plow = (struct plow_info *) cl;
@@ -4929,7 +4929,7 @@ index fd68900..364b0de 100644
  }
  
  int
-@@ -1537,8 +824,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1541,8 +828,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
            LAYER_LOOP (Data, max_layer);
            {
              info.layer = layer;
@@ -4939,7 +4939,7 @@ index fd68900..364b0de 100644
            }
            END_LOOP;
          }
-@@ -1548,8 +834,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1552,8 +838,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
                                                                           ((LayerTypePtr) ptr1))));
            {
              info.layer = layer;
@@ -4949,7 +4949,7 @@ index fd68900..364b0de 100644
            }
            END_LOOP;
          }
-@@ -1568,7 +853,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1572,7 +857,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
                                                                       ((LayerTypePtr) ptr1))));
        {
          info.layer = layer;
@@ -4958,7 +4958,7 @@ index fd68900..364b0de 100644
        }
        END_LOOP;
        break;
-@@ -1582,7 +867,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1586,7 +871,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
          {
            info.layer = layer;
            r +=
@@ -4967,7 +4967,7 @@ index fd68900..364b0de 100644
          }
          END_LOOP;
        }
-@@ -1606,21 +891,6 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1610,21 +895,6 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
    return r;
  }
  
@@ -4989,7 +4989,7 @@ index fd68900..364b0de 100644
  
  Boolean
  isects (POLYAREA * a, PolygonTypePtr p, Boolean fr)
-@@ -1770,6 +1040,9 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
+@@ -1774,6 +1044,9 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
  Boolean
  MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
  {
@@ -4999,7 +4999,7 @@ index fd68900..364b0de 100644
    POLYAREA *p, *start;
    Boolean many = False;
    FlagType flags;
-@@ -1833,6 +1106,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+@@ -1837,6 +1110,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
    inhibit = False;
    IncrementUndoSerialNumber ();
    return many;
@@ -5007,7 +5007,7 @@ index fd68900..364b0de 100644
  }
  
  void debug_pline (PLINE *pl)
-@@ -1865,9 +1139,9 @@ debug_polygon (PolygonType *p)
+@@ -1869,9 +1143,9 @@ debug_polygon (PolygonType *p)
  {
    int i;
    POLYAREA *pa;
@@ -5061,7 +5061,7 @@ index 2faaa20..4dba4ca 100644
  void RestoreToPolygon(DataType *, int, void *, void *);
  void ClearFromPolygon(DataType *, int, void *, void *);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index f18df09..a6bf8f0 100644
+index 3f79746..67c2fd7 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -965,6 +965,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
@@ -5129,7 +5129,7 @@ index f18df09..a6bf8f0 100644
  
        if (M_POLYAREA_label (a, b, TRUE))
  	return TRUE;
-@@ -3018,15 +3058,19 @@ inside_sector (VNODE * pn, Vector p2)
+@@ -3022,15 +3062,19 @@ inside_sector (VNODE * pn, Vector p2)
  BOOLp
  poly_ChkContour (PLINE * a)
  {
@@ -5151,7 +5151,7 @@ index f18df09..a6bf8f0 100644
        do
  	{
  	  if (!node_neighbours (a1, a2) &&
-@@ -3034,21 +3078,22 @@ poly_ChkContour (PLINE * a)
+@@ -3038,21 +3082,22 @@ poly_ChkContour (PLINE * a)
  				    a2->point, a2->next->point, i1, i2)) > 0)
  	    {
  	      if (icnt > 1)
@@ -5179,7 +5179,7 @@ index f18df09..a6bf8f0 100644
  
  #if 1
  	      /* now check if they are inside each other */
-@@ -3056,11 +3101,11 @@ poly_ChkContour (PLINE * a)
+@@ -3060,11 +3105,11 @@ poly_ChkContour (PLINE * a)
  		  inside_sector (hit1, hit2->next->point) ||
  		  inside_sector (hit2, hit1->prev->point) ||
  		  inside_sector (hit2, hit1->next->point))

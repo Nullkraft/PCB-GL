@@ -1,7 +1,7 @@
-Bottom: be6c7c4a422c1f781de1f85e8b3ddb471c1cbed4
-Top:    2daa33cdc5b40d2b86170f7a5d5b1be6880e2af2
+Bottom: 8086dca2aaf8dfe1c0ea5c3ce82f596578e05e36
+Top:    78aec4bb203000d649ade8edf068f3e82c472491
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-06 16:12:16 +0000
+Date:   2009-11-06 16:27:58 +0000
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -170,7 +170,7 @@ index 7f43fba..1be41aa 100644
  #define CHANGETHERMAL_TYPES	\
  	(PIN_TYPE | VIA_TYPE)
 diff --git a/src/draw.c b/src/draw.c
-index e44ed95..770afd7 100644
+index 4657f7c..5dffeba 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -2115,7 +2115,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
@@ -216,10 +216,10 @@ index 6f0c82f..3141b9c 100644
      {
        DrawPolygon (Layer, Polygon, 0);
 diff --git a/src/polygon.c b/src/polygon.c
-index a0d0bef..181ba6e 100644
+index 0a86fa4..b1283e6 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -773,6 +773,20 @@ SubtractPad (PadType * pad, PolygonType * p)
+@@ -777,6 +777,20 @@ SubtractPad (PadType * pad, PolygonType * p)
    return Subtract (np, p, True);
  }
  
@@ -240,7 +240,7 @@ index a0d0bef..181ba6e 100644
  struct cpInfo
  {
    const BoxType *other;
-@@ -923,6 +937,24 @@ text_sub_callback (const BoxType * b, void *cl)
+@@ -927,6 +941,24 @@ text_sub_callback (const BoxType * b, void *cl)
  }
  
  static int
@@ -265,7 +265,7 @@ index a0d0bef..181ba6e 100644
  Group (DataTypePtr Data, Cardinal layer)
  {
    Cardinal i, j;
-@@ -974,6 +1006,8 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
+@@ -978,6 +1010,8 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
            r_search (layer->arc_tree, &region, NULL, arc_sub_callback, &info);
  	r +=
            r_search (layer->text_tree, &region, NULL, text_sub_callback, &info);
@@ -274,7 +274,7 @@ index a0d0bef..181ba6e 100644
        }
        END_LOOP;
        r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
-@@ -1111,6 +1145,26 @@ UnsubtractPad (PadType * pad, LayerType * l, PolygonType * p)
+@@ -1115,6 +1149,26 @@ UnsubtractPad (PadType * pad, LayerType * l, PolygonType * p)
    return 1;
  }
  
@@ -301,7 +301,7 @@ index a0d0bef..181ba6e 100644
  static Boolean inhibit = False;
  
  int
-@@ -1396,6 +1450,10 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
+@@ -1400,6 +1454,10 @@ subtract_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
        SubtractPad ((PadTypePtr) ptr2, Polygon);
        Polygon->NoHolesValid = 0;
        return 1;
@@ -312,7 +312,7 @@ index a0d0bef..181ba6e 100644
      case TEXT_TYPE:
        SubtractText ((TextTypePtr) ptr2, Polygon);
        Polygon->NoHolesValid = 0;
-@@ -1423,6 +1481,9 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
+@@ -1427,6 +1485,9 @@ add_plow (DataTypePtr Data, LayerTypePtr Layer, PolygonTypePtr Polygon,
      case PAD_TYPE:
        UnsubtractPad ((PadTypePtr) ptr2, Layer, Polygon);
        return 1;
@@ -322,7 +322,7 @@ index a0d0bef..181ba6e 100644
      case TEXT_TYPE:
        UnsubtractText ((TextTypePtr) ptr2, Layer, Polygon);
        return 1;
-@@ -1486,6 +1547,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1490,6 +1551,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
      case LINE_TYPE:
      case ARC_TYPE:
      case TEXT_TYPE:
@@ -330,7 +330,7 @@ index a0d0bef..181ba6e 100644
        /* the cast works equally well for lines and arcs */
        if (!TEST_FLAG (CLEARLINEFLAG, (LineTypePtr) ptr2))
          return 0;
-@@ -1539,8 +1601,7 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1543,8 +1605,7 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
  {
    if (type == POLYGON_TYPE)
      InitClip (PCB->Data, (LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
@@ -340,7 +340,7 @@ index a0d0bef..181ba6e 100644
  }
  
  void
-@@ -1548,8 +1609,7 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1552,8 +1613,7 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
  {
    if (type == POLYGON_TYPE)
      InitClip (PCB->Data, (LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
