@@ -45,6 +45,7 @@
 #include "draw.h"
 #include "error.h"
 #include "misc.h"
+#include "polygon.h"
 #include "set.h"
 #include "rtree.h"
 #include "snavi.h"
@@ -1309,6 +1310,7 @@ DrawMask (BoxType * screen)
 {
   struct pin_info info;
   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
+  PolygonType polygon;
 
   OutputType *out = &Output;
 
@@ -1337,7 +1339,13 @@ DrawMask (BoxType * screen)
   gui->use_mask (HID_MASK_AFTER);
   gui->set_color (out->fgGC, PCB->MaskColor);
   ghid_global_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
-  gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
+
+  polygon.Clipped = board_outline_poly ();
+  SET_FLAG (FULLPOLYFLAG, &polygon);
+  common_fill_pcb_polygon (out->fgGC, &polygon, screen);
+  /* THE GL fill_pcb_polygon doesn't work whilst masking */
+//  gui->fill_pcb_polygon (out->fgGC, &polygon, screen);
+//  gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
   ghid_global_alpha_mult (out->fgGC, 1.0);
 
   gui->use_mask (HID_MASK_OFF);
