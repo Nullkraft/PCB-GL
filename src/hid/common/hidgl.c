@@ -625,8 +625,7 @@ do_hole (const BoxType *b, void *cl)
    * hidgl_fill_circle to draw this contour.
    */
   if (curc->is_round) {
-    double slices = M_PI * 2 * curc->radius /
-                    info->scale / PIXELS_PER_CIRCLINE;
+    double slices = calc_slices (curc->radius / info->scale, 2 * M_PI);
     if (slices < curc->Count) {
       hidgl_fill_circle (curc->cx, curc->cy, curc->radius, info->scale);
       return 1;
