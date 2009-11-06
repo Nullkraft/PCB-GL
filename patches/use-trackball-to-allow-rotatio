@@ -1,7 +1,7 @@
-Bottom: 3ee1dbe1a478918ac6b6f9bef5b81caf44409c26
-Top:    cbaf56653881873a6803f8527c77c9a936d09aa5
+Bottom: dd40a630bc958587aff88c8e030708b43c3d610c
+Top:    da9bab26d77dfc71e646d35d2aae23aca088f294
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-06 15:04:52 +0000
+Date:   2009-11-06 16:19:08 +0000
 
 Use trackball to allow rotation of 3D view
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 898b4d1..8e78e6f 100644
+index 8ec5dad..d0b2df4 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -36,6 +36,7 @@
@@ -372,7 +372,7 @@ index 898b4d1..8e78e6f 100644
    glEnd ();
  
    /* TODO: Background image */
-@@ -878,7 +1153,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -879,7 +1154,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                               -gport->view_x0,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
@@ -382,7 +382,7 @@ index 898b4d1..8e78e6f 100644
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
-@@ -902,6 +1179,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -903,6 +1180,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  
    hidgl_flush_triangles (&buffer);
  

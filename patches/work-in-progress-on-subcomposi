@@ -1,7 +1,7 @@
-Bottom: e9ad78de2f0fa5396606d2c39c72bb1fbc82ae5b
-Top:    5eadbeb8b961fad31bb1b9e6c31881a4378d2eb4
+Bottom: e55f492ac0e28ba5492fa62cd533690087c43374
+Top:    747e1307f82d376bbce8fd0ba8bdc056ed75bbb5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-06 15:04:51 +0000
+Date:   2009-11-06 16:19:07 +0000
 
 Work in progress on subcompositing / stencil buffers
 
@@ -530,7 +530,7 @@ index 65f59cb..c9a3f06 100644
        break;
      }
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 60c2ba2..898b4d1 100644
+index 7db1e7d..8ec5dad 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -35,6 +35,7 @@
@@ -592,7 +592,7 @@ index 60c2ba2..898b4d1 100644
 +
    glPushMatrix ();
    glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
-             (ghid_flip_y ? -1. : 1.) / gport->zoom, 1);
+             (ghid_flip_y ? -1. : 1.) / gport->zoom,
 diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
 index b9d57da..8a4a11c 100644
 --- a/src/hid/gtk/gui-pinout-preview.c
