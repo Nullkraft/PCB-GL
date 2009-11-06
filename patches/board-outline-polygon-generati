@@ -1,5 +1,5 @@
 Bottom: c786241cbdb2f9ff9d84c5d4c08056e350143631
-Top:    b30d991b5564a067eccc2bdfb3afa9aefa5c5382
+Top:    8015345655c3637778448ee74cf642b29ce12868
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-06 17:16:56 +0000
 
@@ -12,7 +12,7 @@ FIXME: Make this work with the GL masking polygon drawing routines, rather
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index ca76142..4861b4d 100644
+index ca76142..e5ec20a 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -45,6 +45,7 @@
@@ -31,15 +31,19 @@ index ca76142..4861b4d 100644
  
    OutputType *out = &Output;
  
-@@ -1337,7 +1339,13 @@ DrawMask (BoxType * screen)
+@@ -1337,7 +1339,17 @@ DrawMask (BoxType * screen)
    gui->use_mask (HID_MASK_AFTER);
    gui->set_color (out->fgGC, PCB->MaskColor);
    ghid_global_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
 -  gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
 +
 +  polygon.Clipped = board_outline_poly ();
++  polygon.NoHoles = NULL;
++  polygon.NoHolesValid = 0;
 +  SET_FLAG (FULLPOLYFLAG, &polygon);
 +  common_fill_pcb_polygon (out->fgGC, &polygon, screen);
++  poly_Free (&polygon.Clipped);
++  poly_FreeContours (&polygon.NoHoles);
 +  /* THE GL fill_pcb_polygon doesn't work whilst masking */
 +//  gui->fill_pcb_polygon (out->fgGC, &polygon, screen);
 +//  gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
