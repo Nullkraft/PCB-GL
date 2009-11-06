@@ -1,0 +1,26 @@
+Bottom: b30d991b5564a067eccc2bdfb3afa9aefa5c5382
+Top:    8015345655c3637778448ee74cf642b29ce12868
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-06 17:30:33 +0000
+
+Refresh of board-outline-polygon-generati
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 4861b4d..e5ec20a 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -1341,8 +1341,12 @@ DrawMask (BoxType * screen)
+   ghid_global_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
+ 
+   polygon.Clipped = board_outline_poly ();
++  polygon.NoHoles = NULL;
++  polygon.NoHolesValid = 0;
+   SET_FLAG (FULLPOLYFLAG, &polygon);
+   common_fill_pcb_polygon (out->fgGC, &polygon, screen);
++  poly_Free (&polygon.Clipped);
++  poly_FreeContours (&polygon.NoHoles);
+   /* THE GL fill_pcb_polygon doesn't work whilst masking */
+ //  gui->fill_pcb_polygon (out->fgGC, &polygon, screen);
+ //  gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
