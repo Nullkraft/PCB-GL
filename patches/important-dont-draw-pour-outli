@@ -1,7 +1,7 @@
-Bottom: fe69bd2ffe5c8fda95ffac3a92ded842316ebc2b
-Top:    069839e66b4bd2a0f7dc42bcb6308e3c00a47d41
+Bottom: 2ec67e7f0d984db382c2cc20117762813f88342f
+Top:    a2a227c85c2d77caa956fa73ecbf1a6a7c0add2e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-06 17:31:40 +0000
+Date:   2009-11-07 09:54:34 +0000
 
 IMPORTANT: DONT DRAW POUR OUTLINES DURING EXPORT
 
@@ -11,7 +11,7 @@ They can produce shorted boards otherwise!
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 49f011f..1c1a504 100644
+index a81ecae..989bd10 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -708,7 +708,8 @@ pour_callback (const BoxType * b, void *cl)
