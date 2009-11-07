@@ -913,6 +913,8 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
   for (pa = a->contours; pa; pa = pa->next)     /* Loop over the contours of POLYAREA "a" */
     {
       BoxType sb;
+      jmp_buf out;
+      int retval;
 
       c_info.getout = NULL;
       c_info.pa = pa;
