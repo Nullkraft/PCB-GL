@@ -707,6 +707,7 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
   free (vertices);
 }
 
+<<<<<<< current
 static inline void
 stash_vertex (PLINE *contour, int *vertex_comp,
               float x, float y, float z, float r, float s)
@@ -859,12 +860,19 @@ polygon_contains_user_holes (PolygonType *polygon)
 }
 
 
+=======
+>>>>>>> patched
 static GLint stencil_bits;
 static int dirty_bits = 0;
 static int assigned_bits = 0;
 
+struct polygon_cache {
+  int fill_display_list;
+};
+
 /* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
 void
+<<<<<<< current
 hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box /*, bool force_new_stencil */)
 {
   bool force_new_stencil = false;
@@ -872,6 +880,15 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box /*, bool forc
   int stencil_bit;
 
   CHECK_IS_IN_CONTEXT ();
+=======
+hidgl_fill_pcb_polygon_nocache (PolygonType *poly, const BoxType *clip_box, double scale)
+{
+  cairo_traps_t traps;
+
+  CHECK_IS_IN_CONTEXT ();
+
+  global_scale = scale;
+>>>>>>> patched
 
   if (poly->Clipped == NULL)
     {
@@ -879,6 +896,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box /*, bool forc
       return;
     }
 
+<<<<<<< current
   if (poly->Clipped->contour_tree->size == 1)
     {
       /* Polygon does not have holes */
@@ -946,6 +964,45 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box /*, bool forc
     hidgl_return_stencil_bit (stencil_bit);       // Unassign our stencil buffer bit
 
   glPopAttrib ();                                 // Restore the stencil buffer op and function
+=======
+  _cairo_traps_init (&traps);
+  bo_poly_to_traps (poly->Clipped, &traps);
+  _cairo_traps_fini (&traps);
+}
+
+void
+hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
+{
+  struct polygon_cache *cache;
+  int new_cache = 0;
+
+  if (poly->gui_cache == NULL) {
+    poly->gui_cache = malloc (sizeof (struct polygon_cache));
+    new_cache = 1;
+  }
+
+  cache = poly->gui_cache;
+
+#if 1
+  if (!poly->gui_cache_valid) {
+    if (!new_cache)
+      glDeleteLists (cache->fill_display_list, 1);
+
+    cache->fill_display_list = glGenLists (1);
+    hidgl_flush_triangles (&buffer);
+    glNewList (cache->fill_display_list, GL_COMPILE);
+    hidgl_fill_pcb_polygon_nocache (poly, NULL /* clip_box */, scale);
+    hidgl_flush_triangles (&buffer);
+    glEndList ();
+    poly->gui_cache_valid = 1;
+  }
+
+  glCallList (cache->fill_display_list);
+
+#else
+  hidgl_fill_pcb_polygon_nocache (poly, clip_box, scale);
+#endif
+>>>>>>> patched
 }
 
 void
