@@ -536,6 +536,9 @@ FreePolygonMemory (PolygonType *polygon)
   if (polygon == NULL)
     return;
 
+  if (Polygon->gui_cache)
+    gui->free_polygon_cache (Polygon);
+
   free (polygon->Points);
   free (polygon->HoleIndex);
 
@@ -543,7 +546,6 @@ FreePolygonMemory (PolygonType *polygon)
     poly_Free (&polygon->Clipped);
   poly_FreeContours (&polygon->NoHoles);
 
-  memset (polygon, 0, sizeof (PolygonType));
 }
 
 /* ---------------------------------------------------------------------------
