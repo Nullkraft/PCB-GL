@@ -272,6 +272,8 @@ struct polygon_st			/* holds information about a polygon */
   Cardinal HoleIndexN;		/* number of holes in polygon */
   Cardinal HoleIndexMax;	/* max number from malloc() */
 
+  void *gui_cache;		/* Private cache for the GUI */
+  int gui_cache_valid;		/* Reset to false when the polygon changes */
 };
 
 typedef struct			/* holds information about arcs */

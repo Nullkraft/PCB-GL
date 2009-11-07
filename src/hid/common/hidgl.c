@@ -755,269 +755,63 @@ hidgl_fill_polygon (hidGC gc, int n_coords, Coord *x, Coord *y)
   free (vertices);
 }
 
-static inline void
-stash_vertex (PLINE *contour, int *vertex_comp,
-              float x, float y, float z, float r, float s)
-{
-  contour->tristrip_vertices[(*vertex_comp)++] = x;
-  contour->tristrip_vertices[(*vertex_comp)++] = y;
-#if MEMCPY_VERTEX_DATA
-  contour->tristrip_vertices[(*vertex_comp)++] = z;
-  contour->tristrip_vertices[(*vertex_comp)++] = r;
-  contour->tristrip_vertices[(*vertex_comp)++] = s;
-#endif
-  contour->tristrip_num_vertices ++;
-}
+struct polygon_cache {
+  int fill_display_list;
+};
 
-static void
-fill_contour (hidGC gc, PLINE *contour)
+/* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
+void
+hidgl_fill_pcb_polygon_nocache (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
-  hidglGC hidgl_gc = (hidglGC)gc;
-#if MEMCPY_VERTEX_DATA
-  hidgl_instance *hidgl = hidgl_gc->hidgl;
-  hidgl_priv *priv = hidgl->priv;
-#endif
-  int i;
-  int vertex_comp;
   borast_traps_t traps;
-
-  /* If the contour is round, then call hidgl_fill_circle to draw it. */
-  if (contour->is_round) {
-    hidgl_fill_circle (gc, contour->cx, contour->cy, contour->radius);
-    return;
-  }
-
-  /* If we don't have a cached set of tri-strips, compute them */
-  if (contour->tristrip_vertices == NULL) {
-    int tristrip_space;
-    int x1, x2, x3, x4, y_top, y_bot;
-
-    _borast_traps_init (&traps);
-    bo_contour_to_traps_no_draw (contour, &traps);
-
-    tristrip_space = 0;
-
-    for (i = 0; i < traps.num_traps; i++) {
-      y_top = traps.traps[i].top;
-      y_bot = traps.traps[i].bottom;
-
-      x1 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_top);
-      x2 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_top);
-      x3 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_bot);
-      x4 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
-
-      if ((x1 == x2) || (x3 == x4)) {
-        tristrip_space += 5; /* Three vertices + repeated start and end */
-      } else {
-        tristrip_space += 6; /* Four vertices + repeated start and end */
-      }
-    }
-
-    if (tristrip_space == 0) {
-      printf ("Strange, contour didn't tesselate\n");
-      return;
-    }
-
-#if MEMCPY_VERTEX_DATA
-    /* NB: MEMCPY of vertex data causes a problem with depth being cached at the wrong level! */
-    contour->tristrip_vertices = malloc (sizeof (float) * 5 * tristrip_space);
-#else
-    contour->tristrip_vertices = malloc (sizeof (float) * 2 * tristrip_space);
-#endif
-    contour->tristrip_num_vertices = 0;
-
-    vertex_comp = 0;
-    for (i = 0; i < traps.num_traps; i++) {
-      y_top = traps.traps[i].top;
-      y_bot = traps.traps[i].bottom;
-
-      x1 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_top);
-      x2 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_top);
-      x3 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_bot);
-      x4 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
-
-      if (x1 == x2) {
-        /* NB: Repeated first virtex to separate from other tri-strip */
-        stash_vertex (contour, &vertex_comp, x1, y_top, hidgl_gc->depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x1, y_top, hidgl_gc->depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x3, y_bot, hidgl_gc->depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x4, y_bot, hidgl_gc->depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x4, y_bot, hidgl_gc->depth, 0.0, 0.0);
-        /* NB: Repeated last virtex to separate from other tri-strip */
-      } else if (x3 == x4) {
-        /* NB: Repeated first virtex to separate from other tri-strip */
-        stash_vertex (contour, &vertex_comp, x1, y_top, hidgl_gc->depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x1, y_top, hidgl_gc->depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x2, y_top, hidgl_gc->depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x3, y_bot, hidgl_gc->depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x3, y_bot, hidgl_gc->depth, 0.0, 0.0);
-        /* NB: Repeated last virtex to separate from other tri-strip */
-      } else {
-        /* NB: Repeated first virtex to separate from other tri-strip */
-        stash_vertex (contour, &vertex_comp, x2, y_top, hidgl_gc->depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x2, y_top, hidgl_gc->depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x3, y_bot, hidgl_gc->depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x1, y_top, hidgl_gc->depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x4, y_bot, hidgl_gc->depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x4, y_bot, hidgl_gc->depth, 0.0, 0.0);
-        /* NB: Repeated last virtex to separate from other tri-strip */
-      }
-    }
-
-    _borast_traps_fini (&traps);
-  }
-
-  if (contour->tristrip_num_vertices == 0)
-    return;
-
-  hidgl_ensure_vertex_space (gc, contour->tristrip_num_vertices);
-
-#if MEMCPY_VERTEX_DATA
-  memcpy (&priv->buffer.triangle_array[priv->buffer.coord_comp_count],
-          contour->tristrip_vertices,
-          sizeof (float) * 5 * contour->tristrip_num_vertices);
-  priv->buffer.coord_comp_count += 5 * contour->tristrip_num_vertices;
-  priv->buffer.vertex_count += contour->tristrip_num_vertices;
-
-#else
-  vertex_comp = 0;
-  for (i = 0; i < contour->tristrip_num_vertices; i++) {
-    int x, y;
-    x = contour->tristrip_vertices[vertex_comp++];
-    y = contour->tristrip_vertices[vertex_comp++];
-    hidgl_add_vertex_tex (gc, x, y, 0.0, 0.0);
-  }
-#endif
-
-}
-
-static int
-do_hole (const BoxType *b, void *cl)
-{
-  PLINE *curc = (PLINE *) b;
-  hidGC gc = (hidGC)cl;
-
-  /* Ignore the outer contour - we draw it first explicitly*/
-  if (curc->Flags.orient == PLF_DIR) {
-    return 0;
-  }
-
-  fill_contour (gc, curc);
-  return 1;
-}
-
-static bool
-polygon_contains_user_holes (PolygonType *polygon)
-{
-  return (polygon->HoleIndexN > 0);
-}
-
-static void
-fill_polyarea (hidGC gc, POLYAREA *pa, const BoxType *clip_box, bool use_new_stencil)
-{
-  hidglGC hidgl_gc = (hidglGC)gc;
-  hidgl_instance *hidgl = hidgl_gc->hidgl;
-  hidgl_priv *priv = hidgl->priv;
-  int stencil_bit;
 
   CHECK_IS_IN_CONTEXT ();
 
-  /* Special case non-holed polygons which don't require a stencil bit */
-  if (pa->contour_tree->size == 1) {
-    fill_contour (gc, pa->contours);
-    return;
-  }
-
-  /* Polygon has holes.. does it have any user-drawn holes? (caller tells us)
-   * If so, it must be masked with a _new_ stencil bit.
-   */
-  if (use_new_stencil)
+  if (poly->Clipped == NULL)
     {
-      stencil_bit = hidgl_assign_clear_stencil_bit (hidgl);
-      if (!stencil_bit)
-        {
-          printf ("hidgl_fill_pcb_polygon: No free stencil bits, aborting polygon\n");
-          /* XXX: Could use the GLU tesselator or the full BO polygon tesselator */
-          return;
-        }
+      fprintf (stderr, "hidgl_fill_pcb_polygon: poly->Clipped == NULL\n");
+      return;
     }
 
-  /* Flush out any existing geoemtry to be rendered */
-  hidgl_flush_triangles (hidgl);
-
-  glPushAttrib (GL_STENCIL_BUFFER_BIT |                 /* Resave the stencil write-mask etc.., and */
-                GL_COLOR_BUFFER_BIT |                   /* the colour buffer write mask etc.. for part way restore */
-                GL_DEPTH_BUFFER_BIT);
-  glEnable (GL_STENCIL_TEST);                           /* Enable the stencil test, just in case it wasn't already on */
-//=======
-//<<<<<<< current
-//                GL_COLOR_BUFFER_BIT);                   /* the colour buffer write mask etc.. for part way restore */
-//  glEnable (GL_STENCIL_TEST);                           /* Enable the stencil test, just in case it wasn't already on */
-//=======
-//                GL_COLOR_BUFFER_BIT |                   /* the colour buffer write mask etc.. for part way restore */
-//                GL_DEPTH_BUFFER_BIT);
-//>>>>>>> patched
-  glColorMask (0, 0, 0, 0);                             /* Disable writting in color buffer */
-  glDepthFunc (GL_ALWAYS);
-  glDepthMask (GL_FALSE);
-
-  if (use_new_stencil)
-    {
-      glStencilMask (stencil_bit);                            /* Only write to our stencil bit */
-      glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);    /* Always pass stencil test, ref value is our bit */
-      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);             /* Stencil pass => replace stencil value */
-    }
-
-  /* Drawing operations now set our reference bit in the stencil buffer */
-
-  r_search (pa->contour_tree, clip_box, NULL, do_hole, gc);
-  hidgl_flush_triangles (hidgl);
-
-  glPopAttrib ();                               /* Restore the colour and stencil buffer write-mask etc.. */
-  glPushAttrib (GL_STENCIL_BUFFER_BIT);         /* Save the stencil op and function */
-  glEnable (GL_STENCIL_TEST);                   /* Enable the stencil test, just in case it wasn't already on */
-
-  glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT);    /* This allows us to toggle the bit on the subcompositing bitplane */
-                                                /* If the stencil test has passed, we know that bit is 0, so we're */
-                                                /* effectively just setting it to 1. */
-
-  glStencilFunc (GL_GEQUAL, 0, priv->assigned_bits);  /* Pass stencil test if all assigned bits clear, */
-                                                /* reference is all assigned bits so we set */
-                                                /* any bits permitted by the stencil writemask */
-
-  /* Drawing operations as masked to areas where the stencil buffer is '0' */
-
-  /* Draw the polygon outer */
-  fill_contour (gc, pa->contours);
-  hidgl_flush_triangles (hidgl);
-
-  /* Unassign our stencil buffer bit */
-  if (use_new_stencil)
-    hidgl_return_stencil_bit (hidgl, stencil_bit);
-
-  glPopAttrib ();                               /* Restore the stencil buffer op and function */
+  _borast_traps_init (&traps);
+  bo_poly_to_traps (gc, poly->Clipped, &traps);
+  _borast_traps_fini (&traps);
 }
 
 void
 hidgl_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
-  bool use_new_stencil;
+  hidglGC hidgl_gc = (hidglGC)gc;
+  hidgl_instance *hidgl = hidgl_gc->hidgl;
+  struct polygon_cache *cache;
+  int new_cache = 0;
 
-  if (poly->Clipped == NULL)
-    return;
+  if (poly->gui_cache == NULL) {
+    poly->gui_cache = malloc (sizeof (struct polygon_cache));
+    new_cache = 1;
+  }
 
-  use_new_stencil = polygon_contains_user_holes (poly) ||
-                    TEST_FLAG (FULLPOLYFLAG, poly);
+  cache = poly->gui_cache;
 
-  fill_polyarea (gc, poly->Clipped, clip_box, use_new_stencil);
+#if 1
+  if (!poly->gui_cache_valid) {
+    if (!new_cache)
+      glDeleteLists (cache->fill_display_list, 1);
 
-  if (TEST_FLAG (FULLPOLYFLAG, poly))
-    {
-      POLYAREA *pa;
+    cache->fill_display_list = glGenLists (1);
+    hidgl_flush_triangles (hidgl);
+    glNewList (cache->fill_display_list, GL_COMPILE);
+    hidgl_fill_pcb_polygon_nocache (gc, poly, NULL /* clip_box */);
+    hidgl_flush_triangles (hidgl);
+    glEndList ();
+    poly->gui_cache_valid = 1;
+  }
 
-      for (pa = poly->Clipped->f; pa != poly->Clipped; pa = pa->f)
-        fill_polyarea (gc, pa, clip_box, use_new_stencil);
-    }
+  glCallList (cache->fill_display_list);
+
+#else
+  hidgl_fill_pcb_polygon_nocache (poly, clip_box, scale);
+#endif
 }
 
 void
