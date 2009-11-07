@@ -493,10 +493,10 @@ ChangeViaClearSize (PinTypePtr Via)
     value = PCB->Bloat * 2 + 2;
   if (Via->Clearance == value)
     return NULL;
+  r_delete_entry (PCB->Data->via_tree, (BoxType *) Via);
   RestoreToPours (PCB->Data, VIA_TYPE, Via, Via);
   AddObjectToClearSizeUndoList (VIA_TYPE, Via, Via, Via);
   EraseVia (Via);
-  r_delete_entry (PCB->Data->via_tree, (BoxType *) Via);
   Via->Clearance = value;
   SetPinBoundingBox (Via);
   r_insert_entry (PCB->Data->via_tree, (BoxType *) Via, 0);
@@ -559,10 +559,10 @@ ChangePinClearSize (ElementTypePtr Element, PinTypePtr Pin)
     value = PCB->Bloat * 2 + 2;
   if (Pin->Clearance == value)
     return NULL;
+  r_delete_entry (PCB->Data->pin_tree, &Pin->BoundingBox);
   RestoreToPours (PCB->Data, PIN_TYPE, Element, Pin);
   AddObjectToClearSizeUndoList (PIN_TYPE, Element, Pin, Pin);
   ErasePin (Pin);
-  r_delete_entry (PCB->Data->pin_tree, &Pin->BoundingBox);
   Pin->Clearance = value;
   /* SetElementBB updates all associated rtrees */
   SetElementBoundingBox (PCB->Data, Element, &PCB->Font);
@@ -586,9 +586,9 @@ ChangePadSize (ElementTypePtr Element, PadTypePtr Pad)
     {
       AddObjectToSizeUndoList (PAD_TYPE, Element, Pad, Pad);
       AddObjectToMaskSizeUndoList (PAD_TYPE, Element, Pad, Pad);
+      r_delete_entry (PCB->Data->pad_tree, &Pad->BoundingBox);
       RestoreToPours (PCB->Data, PAD_TYPE, Element, Pad);
       ErasePad (Pad);
-      r_delete_entry (PCB->Data->pad_tree, &Pad->BoundingBox);
       Pad->Mask += value - Pad->Thickness;
       Pad->Thickness = value;
       /* SetElementBB updates all associated rtrees */
@@ -621,9 +621,9 @@ ChangePadClearSize (ElementTypePtr Element, PadTypePtr Pad)
   if (value == Pad->Clearance)
     return NULL;
   AddObjectToClearSizeUndoList (PAD_TYPE, Element, Pad, Pad);
+  r_delete_entry (PCB->Data->pad_tree, &Pad->BoundingBox);
   RestoreToPours (PCB->Data, PAD_TYPE, Element, Pad);
   ErasePad (Pad);
-  r_delete_entry (PCB->Data->pad_tree, &Pad->BoundingBox);
   Pad->Clearance = value;
   /* SetElementBB updates all associated rtrees */
   SetElementBoundingBox (PCB->Data, Element, &PCB->Font);
@@ -751,9 +751,9 @@ ChangeLineClearSize (LayerTypePtr Layer, LineTypePtr Line)
   if (value != Line->Clearance)
     {
       AddObjectToClearSizeUndoList (LINE_TYPE, Layer, Line, Line);
+      r_delete_entry (Layer->line_tree, (BoxTypePtr) Line);
       RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
       EraseLine (Line);
-      r_delete_entry (Layer->line_tree, (BoxTypePtr) Line);
       Line->Clearance = value;
       if (Line->Clearance == 0)
 	{
