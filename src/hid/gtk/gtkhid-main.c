@@ -2186,13 +2186,12 @@ Benchmark (int argc, char **argv, int x, int y)
     {
       gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
       gdk_window_process_updates (gport->drawing_area->window, FALSE);
-      gdk_display_sync (display);
       time (&end);
       i++;
     }
   while (end - start < 10);
 
-  printf ("%g redraws per second\n", i / 10.0);
+  printf ("%g redraws per second\n", (double)i / (double)(end-start));
 
   return 0;
 }
