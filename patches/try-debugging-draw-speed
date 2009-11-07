@@ -1,7 +1,7 @@
-Bottom: dcefccbaebe07d0165be8f816bbea8b2ee18f94c
-Top:    a66b8db72437ac3275c139b1e1792bc2554a5241
+Bottom: 17108a4108f0ccf4ae4d205fe3140c3c8d71f975
+Top:    0dcf06fd595be48af633629827f77e4588a9e0c8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 15:42:39 +0100
+Date:   2009-11-07 10:20:07 +0000
 
 Try debugging draw speed
 
@@ -11,10 +11,10 @@ Try debugging draw speed
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 7204be9..bb9999e 100644
+index fc7c352..b48c6bf 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -2165,13 +2165,12 @@ Benchmark (int argc, char **argv, int x, int y)
+@@ -2186,13 +2186,12 @@ Benchmark (int argc, char **argv, int x, int y)
      {
        gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
        gdk_window_process_updates (gport->drawing_area->window, FALSE);
