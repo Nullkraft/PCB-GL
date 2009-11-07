@@ -1938,6 +1938,10 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   gui->set_layer (NULL, GetLayerGroupNumberByNumber (INDEXOFCURRENT), 0);
   gui->set_layer (NULL, SL_FINISHED, 0);
 
+  glUnmapBuffer (GL_ARRAY_BUFFER);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDeleteBuffers (1, &buffer.vbo_name);
+
   draw_grid (&region);
 
   hidgl_init_triangle_array (&buffer);
@@ -1967,6 +1971,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 
   hidgl_flush_triangles (&buffer);
 
+  glUnmapBuffer (GL_ARRAY_BUFFER);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDeleteBuffers (1, &buffer.vbo_name);
 
   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
     gdk_gl_drawable_swap_buffers (pGlDrawable);

@@ -237,6 +237,10 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
 
+  glUnmapBuffer (GL_ARRAY_BUFFER);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDeleteBuffers (1, &buffer.vbo_name);
+
   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
     gdk_gl_drawable_swap_buffers (pGlDrawable);
   else
