@@ -27,11 +27,6 @@
 #include "../hidint.h"
 #include "hid/common/draw_helpers.h"
 
-#ifdef ENABLE_GL
-#  include <GL/gl.h>
-#  include "hid/common/hidgl.h"
-#endif
-
 #include "gui.h"
 
 #if !GTK_CHECK_VERSION(2,8,0) && defined(HAVE_GDK_GDKX_H)
@@ -66,6 +61,9 @@ static void zoom_by (double factor, int x, int y);
 static int cur_mask = -1;
 
 int ghid_flip_x = 0, ghid_flip_y = 0;
+
+GLuint fbo_name;
+GLuint tex_name;
 
 /* ------------------------------------------------------------ */
 
@@ -600,7 +598,8 @@ void hidgl_hack_ignore_stencil (int ignore)
 int
 ghid_set_layer (const char *name, int group, int empty)
 {
-  static int stencil_bit = 0;
+  GLenum errCode;
+  const GLubyte *errString;
   int idx = (group >= 0 && group < max_layer) ?
               PCB->LayerGroups.Entries[group][0] : group;
 
@@ -609,17 +608,41 @@ ghid_set_layer (const char *name, int group, int empty)
 
   hidgl_set_depth (compute_depth (group));
 
-  glEnable (GL_STENCIL_TEST);                   // Enable Stencil test
-  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);   // Stencil pass => replace stencil value (with 1)
-  hidgl_return_stencil_bit (stencil_bit);       // Relinquish any bitplane we previously used
-  if (SL_TYPE (idx) != SL_FINISHED) {
-    stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
-    glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
-    glStencilFunc (GL_GREATER, stencil_bit, stencil_bit); // Pass stencil test if our assigned bit is clear
-  } else {
-    stencil_bit = 0;
-    glStencilMask (0);
-    glStencilFunc (GL_ALWAYS, 0, 0);  // Always pass stencil test
+  hidgl_flush_triangles (&buffer);
+  /* Composite out existing texture data */
+  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
+  glBindTexture (GL_TEXTURE_2D, tex_name);
+
+  /* Use the texture on a big quad, onto the window */
+  glEnable (GL_TEXTURE_2D);
+  glBegin (GL_QUADS);
+  glColor4f (1.0f, 1.0f, 1.0f, 1.0f);
+  glTexCoord2f (  0,   1);
+  glVertex2f   (  0,   0);
+  glTexCoord2f (  0,   0);
+  glVertex2f   (  0, Vz (PCB->MaxHeight));
+  glTexCoord2f (  1,   0);
+  glVertex2f   (Vz (PCB->MaxWidth), Vz (PCB->MaxHeight));
+  glTexCoord2f (  1,   1);
+  glVertex2f   (Vz (PCB->MaxWidth),   0);
+  glEnd ();
+  glDisable (GL_TEXTURE_2D);
+  glBindTexture (GL_TEXTURE_2D, 0);
+
+  if ((errCode = glGetError()) != GL_NO_ERROR) {
+      errString = gluErrorString(errCode);
+     fprintf (stderr, "5OpenGL Error: %s\n", errString);
+  }
+
+  /* Setup for the next layer */
+  if (group != -99)
+    glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, fbo_name);
+  else
+    return 0;
+
+  if ((errCode = glGetError()) != GL_NO_ERROR) {
+      errString = gluErrorString(errCode);
+     fprintf (stderr, "6OpenGL Error: %s\n", errString);
   }
 
   if (idx >= 0 && idx < max_layer + 2) {

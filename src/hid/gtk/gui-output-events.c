@@ -1706,13 +1706,33 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   Settings.ShowSolderSide = save_show_solder;
 }
 
+void DrawAttached (Boolean);
+void draw_grid ();
+int ghid_set_layer (const char *name, int group, int empty);
+
+#define CHECK_FRAMEBUFFER_STATUS()                            \
+  do {                                                        \
+    GLenum status;                                            \
+    status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT); \
+    switch(status) {                                          \
+      case GL_FRAMEBUFFER_COMPLETE_EXT:                       \
+        break;                                                \
+      case GL_FRAMEBUFFER_UNSUPPORTED_EXT:                    \
+        /* choose different formats */                        \
+        break;                                                \
+      default:                                                \
+        /* programming error; will fail on all hardware */    \
+        exit (1);                                             \
+    }                                                         \
+  } while (0);
+
 #define Z_NEAR 3.0
 gboolean
 ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 					GdkEventExpose * ev, GHidPort * port)
 {
-  static int one_shot = 1;
-  static int display_list;
+  GLenum errCode;
+  const GLubyte *errString;
   BoxType region;
   int eleft, eright, etop, ebottom;
   extern HID ghid_hid;
@@ -1742,8 +1762,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 
   ghid_show_crosshair (FALSE);
 
-  glEnable (GL_BLEND);
-  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//  glEnable (GL_BLEND);
+//  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   glShadeModel (GL_FLAT);
 //  glEnable(GL_POLYGON_SMOOTH);
@@ -1779,13 +1799,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
   glScalef (1., 1., 1. / 3.);
   glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
-
-#if 0
-  if (one_shot) {
-
-    display_list = glGenLists(1);
-    glNewList (display_list, GL_COMPILE);
-#endif
 
   glEnable (GL_STENCIL_TEST);
   glClearColor (gport->offlimits_color.red / 65535.,
@@ -1872,6 +1885,49 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 
   /* TODO: Background image */
 
+  /* Setup a texture for playing each layer into */
+  glGenFramebuffersEXT (1, &fbo_name);
+  glGenTextures (1, &tex_name);
+  glBindTexture (GL_TEXTURE_2D, tex_name);
+
+  glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+  glTexImage2D (GL_TEXTURE_2D,
+                0, /* Level */
+                GL_RGBA8, /* Int. format */
+                eright - eleft + 1, /* Width */
+                ebottom - etop + 1, /* Height */
+                0,      /* Border */
+                GL_RGBA, /* Format */
+                GL_INT, /* Type */
+                NULL);  /* Pixels */
+
+  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, fbo_name);
+  glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, tex_name, 0);
+  if ((errCode = glGetError()) != GL_NO_ERROR) {
+      errString = gluErrorString(errCode);
+     fprintf (stderr, "4OpenGL Error: %s\n", errString);
+  }
+  CHECK_FRAMEBUFFER_STATUS ()
+  glBindTexture (GL_TEXTURE_2D, 0);
+
+  glClearColor (1., 1., 1., 1.);
+  glClear (GL_COLOR_BUFFER_BIT);
+
+//  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
+#if 0
+  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, fbo_name);
+  /* RTT */
+  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
+
+  /* Composite */
+  glBindTexture (GL_TEXTURE_2D, tex_name);
+  /* Use the texture on a big quad, onto the window */
+  glBindTexture (GL_TEXTURE_2D, 0);
+#endif
+
+  /* End texture setup */
+
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
 
@@ -1932,6 +1988,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   gui->set_layer (NULL, GetLayerGroupNumberByNumber (INDEXOFCURRENT), 0);
   gui->set_layer (NULL, SL_FINISHED, 0);
 
+  /* Hack to finish compositing */
+  ghid_set_layer ("HACK", -99, 0);
+
   draw_grid (&region);
 
   hidgl_init_triangle_array (&buffer);
@@ -1948,19 +2007,14 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
 
-#if 0
-    glEndList ();
-    one_shot = 0;
-  } else {
-    /* Second and subsequent times */
-    glCallList (display_list);
-  }
-#endif
-
   ghid_show_crosshair (TRUE);
 
   hidgl_flush_triangles (&buffer);
 
+
+  /* Tear down texture buffer */
+  glDeleteTextures (1, &tex_name);
+  glDeleteFramebuffersEXT (1, &fbo_name);
 
   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
     gdk_gl_drawable_swap_buffers (pGlDrawable);
@@ -1969,8 +2023,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 
   /* end drawing to current GL-context */
   gdk_gl_drawable_gl_end (pGlDrawable);
-
-  one_shot = 0;
 
   return FALSE;
 }
