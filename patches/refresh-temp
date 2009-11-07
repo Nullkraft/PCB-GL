@@ -1,0 +1,23 @@
+Bottom: a2a227c85c2d77caa956fa73ecbf1a6a7c0add2e
+Top:    9c416677553e5439a90ae5bdc99c0cc48a315cb7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-07 09:55:37 +0000
+
+Refresh of allow-zero-clearance-pads-to-t
+
+---
+
+diff --git a/src/pour.c b/src/pour.c
+index 2f8e0bc..45018f5 100644
+--- a/src/pour.c
++++ b/src/pour.c
+@@ -424,6 +424,9 @@ get_subtract_pad_poly (PadType * pad, PourType * pour)
+ {
+   POLYAREA *np;
+ 
++  if (pad->Clearance == 0)
++    return NULL;
++
+   if (TEST_FLAG (SQUAREFLAG, pad))
+     np = SquarePadPoly (pad, pad->Thickness + pad->Clearance);
+   else
