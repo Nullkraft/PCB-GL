@@ -81,20 +81,73 @@ static bool doing_assy = false;
  */
 static void DrawEverything (const BoxType *);
 static void AddPart (void *);
+<<<<<<< current
 /* static */ void DrawEMark (ElementType *, Coord, Coord, bool);
 /* static */ void DrawRats (const BoxType *);
 
+=======
+static void SetPVColor (PinTypePtr, int);
+/* static */ void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
+static void ClearPad (PadTypePtr, bool);
+/* static */ void DrawHole (PinTypePtr);
+static void DrawMask (BoxType *);
+/* static */ void DrawRats (BoxType *);
+/* static */ void DrawSilk (int, int, const BoxType *);
+static int pin_callback (const BoxType * b, void *cl);
+static int pad_callback (const BoxType * b, void *cl);
+
+void hidgl_hack_ignore_stencil (int ignore);
+
+/*--------------------------------------------------------------------------------------
+ * setup color for pin or via
+ */
+>>>>>>> patched
 static void
 set_object_color (AnyObjectType *obj, char *warn_color, char *selected_color,
                   char *connected_color, char *found_color, char *normal_color)
 {
   char *color;
 
+<<<<<<< current
   if      (warn_color      != NULL && TEST_FLAG (WARNFLAG,      obj)) color = warn_color;
   else if (selected_color  != NULL && TEST_FLAG (SELECTEDFLAG,  obj)) color = selected_color;
   else if (connected_color != NULL && TEST_FLAG (CONNECTEDFLAG, obj)) color = connected_color;
   else if (found_color     != NULL && TEST_FLAG (FOUNDFLAG,     obj)) color = found_color;
   else                                                                color = normal_color;
+=======
+  if (Type == VIA_TYPE)
+    {
+      if (!doing_pinout
+	  && TEST_FLAG (WARNFLAG | SELECTEDFLAG | FOUNDFLAG, Pin))
+	{
+	  if (TEST_FLAG (WARNFLAG, Pin))
+	    color = PCB->WarnColor;
+	  else if (TEST_FLAG (SELECTEDFLAG, Pin))
+	    color = PCB->ViaSelectedColor;
+	  else
+	    color = PCB->ConnectedColor;
+          hidgl_hack_ignore_stencil (1);
+	}
+      else
+	color = PCB->ViaColor;
+    }
+  else
+    {
+      if (!doing_pinout
+	  && TEST_FLAG (WARNFLAG | SELECTEDFLAG | FOUNDFLAG, Pin))
+	{
+	  if (TEST_FLAG (WARNFLAG, Pin))
+	    color = PCB->WarnColor;
+	  else if (TEST_FLAG (SELECTEDFLAG, Pin))
+	    color = PCB->PinSelectedColor;
+	  else
+	    color = PCB->ConnectedColor;
+          hidgl_hack_ignore_stencil (1);
+	}
+      else
+	color = PCB->PinColor;
+    }
+>>>>>>> patched
 
   hid_draw_set_color (Output.fgGC, color);
 }
@@ -560,6 +613,463 @@ DrawSilk (int side, const BoxType * drawn_area)
 }
 
 
+<<<<<<< current
+=======
+  if (thin)
+    gui->set_color (Output.pmGC, "erase");
+  else
+    {
+      if (gui->poly_after)
+	{
+	  gui->use_mask (HID_MASK_AFTER);
+	  gui->set_color (out->fgGC, PCB->MaskColor);
+	  gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
+	}
+      gui->use_mask (HID_MASK_OFF);
+    }
+
+#if 0
+  /* Some fabs want the board outline on the solder mask layer.  If
+     you need this, change the '0' above to '1', and the code below
+     will copy the outline layer to the mask layers.  */
+  if (!gui->gui)
+    {
+      int i;
+      for (i=PCB->Data->LayerN; i>=0; i--)
+	{
+	  LayerTypePtr Layer = PCB->Data->Layer + i;
+	  if (strcmp (Layer->Name, "outline") == 0)
+	    DrawLayer (Layer, screen);
+	}
+    }
+#endif
+}
+
+/* static */ void
+DrawRats (BoxTypePtr drawn_area)
+{
+  /*
+   * XXX lesstif allows positive AND negative drawing in HID_MASK_CLEAR.
+   * XXX gtk only allows negative drawing.
+   * XXX using the mask here is to get rat transparency
+   */
+  int can_mask = strcmp(gui->name, "lesstif") == 0;
+
+  if (can_mask)
+    gui->use_mask (HID_MASK_CLEAR);
+  r_search (PCB->Data->rat_tree, drawn_area, NULL, rat_callback, NULL);
+  if (can_mask)
+    gui->use_mask (HID_MASK_OFF);
+}
+
+static int
+line_callback (const BoxType * b, void *cl)
+{
+  DrawLine ((LayerTypePtr) cl, (LineTypePtr) b, 0);
+  return 1;
+}
+
+static int
+arc_callback (const BoxType * b, void *cl)
+{
+  DrawArc ((LayerTypePtr) cl, (ArcTypePtr) b, 0);
+  return 1;
+}
+
+static int
+text_callback (const BoxType * b, void *cl)
+{
+  DrawRegularText ((LayerTypePtr) cl, (TextTypePtr) b, 0);
+  return 1;
+}
+
+
+/* ---------------------------------------------------------------------------
+ * draws one non-copper layer
+ */
+void
+DrawLayer (LayerTypePtr Layer, const BoxType * screen)
+{
+  struct pin_info info;
+
+  /* print the non-clearing polys */
+  info.Layer = Layer;
+  info.arg = false;
+  clip_box = screen;
+  r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
+
+  /* draw all visible lines this layer */
+  r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
+
+  /* draw the layer arcs on screen */
+  r_search (Layer->arc_tree, screen, NULL, arc_callback, Layer);
+
+  /* draw the layer text on screen */
+  r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
+  clip_box = NULL;
+}
+
+/* ---------------------------------------------------------------------------
+ * draws one layer group.  Returns non-zero if pins and pads should be
+ * drawn with this group.
+ */
+static int
+DrawLayerGroup (int group, const BoxType * screen)
+{
+  int i, rv = 1;
+  int layernum;
+  struct pin_info info;
+  LayerTypePtr Layer;
+  int n_entries = PCB->LayerGroups.Number[group];
+  Cardinal *layers = PCB->LayerGroups.Entries[group];
+
+  clip_box = screen;
+  for (i = n_entries - 1; i >= 0;
+      i--, gui->set_layer (0, group, 0)) /* HACK: Subcomposite each layer in a layer group separately */
+    {
+      layernum = layers[i];
+      Layer = PCB->Data->Layer + layers[i];
+      if (strcmp (Layer->Name, "outline") == 0 ||
+	  strcmp (Layer->Name, "route") == 0)
+	rv = 0;
+      if (layernum < max_layer && Layer->On)
+	{
+	  /* draw all polygons on this layer */
+	  if (Layer->PolygonN)
+	    {
+	      info.Layer = Layer;
+	      info.arg = true;
+	      r_search (Layer->polygon_tree, screen, NULL, poly_callback,
+			&info);
+	      info.arg = false;
+
+	      /* HACK: Subcomposite polygons separately from other layer primitives */
+	      /* Reset the compositing */
+	      gui->set_layer (0, group, 0);
+	    }
+
+	  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
+	    continue;
+
+	  /* draw all visible lines this layer */
+	  r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
+
+	  /* draw the layer arcs on screen */
+	  r_search (Layer->arc_tree, screen, NULL, arc_callback, Layer);
+
+	  /* draw the layer text on screen */
+	  r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
+
+	}
+    }
+  if (n_entries > 1)
+    rv = 1;
+  return rv;
+}
+
+/* ---------------------------------------------------------------------------
+ * draws one polygon
+ * x and y are already in display coordinates
+ * the points are numbered:
+ *
+ *          5 --- 6
+ *         /       \
+ *        4         7
+ *        |         |
+ *        3         0
+ *         \       /
+ *          2 --- 1
+  */
+/* static */ void
+DrawSpecialPolygon (hidGC DrawGC,
+		    LocationType X, LocationType Y, int Thickness,
+		    int thin_draw)
+{
+  static FloatPolyType p[8] = {
+    {
+     0.5, -TAN_22_5_DEGREE_2},
+    {
+     TAN_22_5_DEGREE_2, -0.5},
+    {
+     -TAN_22_5_DEGREE_2, -0.5},
+    {
+     -0.5, -TAN_22_5_DEGREE_2},
+    {
+     -0.5, TAN_22_5_DEGREE_2},
+    {
+     -TAN_22_5_DEGREE_2, 0.5},
+    {
+     TAN_22_5_DEGREE_2, 0.5},
+    {
+     0.5, TAN_22_5_DEGREE_2}
+  };
+  static int special_size = 0;
+  static int scaled_x[8];
+  static int scaled_y[8];
+  int polygon_x[9];
+  int polygon_y[9];
+  int i;
+
+
+  if (Thickness != special_size)
+    {
+      special_size = Thickness;
+      for (i = 0; i < 8; i++)
+	{
+	  scaled_x[i] = p[i].X * special_size;
+	  scaled_y[i] = p[i].Y * special_size;
+	}
+    }
+  /* add line offset */
+  for (i = 0; i < 8; i++)
+    {
+      polygon_x[i] = X + scaled_x[i];
+      polygon_y[i] = Y + scaled_y[i];
+    }
+  if (thin_draw)
+    {
+      int i;
+      gui->set_line_cap (DrawGC, Round_Cap);
+      gui->set_line_width (DrawGC, 0);
+      polygon_x[8] = X + scaled_x[0];
+      polygon_y[8] = Y + scaled_y[0];
+      for (i = 0; i < 8; i++)
+	gui->draw_line (DrawGC, polygon_x[i], polygon_y[i],
+			polygon_x[i + 1], polygon_y[i + 1]);
+    }
+  else
+    gui->fill_polygon (DrawGC, 8, polygon_x, polygon_y);
+}
+
+/* ---------------------------------------------------------------------------
+ * lowlevel drawing routine for pins and vias
+ */
+/* static */ void
+DrawPinOrViaLowLevel (PinTypePtr Ptr, bool drawHole)
+{
+  if (Gathering)
+    {
+      AddPart (Ptr);
+      return;
+    }
+
+  if (TEST_FLAG (HOLEFLAG, Ptr))
+    {
+      if (drawHole)
+	{
+	  gui->fill_circle (Output.bgGC, Ptr->X, Ptr->Y, Ptr->Thickness / 2);
+	  gui->set_line_cap (Output.fgGC, Round_Cap);
+	  gui->set_line_width (Output.fgGC, 0);
+	  gui->draw_arc (Output.fgGC, Ptr->X, Ptr->Y,
+			 Ptr->Thickness / 2, Ptr->Thickness / 2, 0, 360);
+	}
+      return;
+    }
+  if (TEST_FLAG (SQUAREFLAG, Ptr))
+    {
+      int l, r, t, b;
+      l = Ptr->X - Ptr->Thickness / 2;
+      b = Ptr->Y - Ptr->Thickness / 2;
+      r = l + Ptr->Thickness;
+      t = b + Ptr->Thickness;
+      if (TEST_FLAG (THINDRAWFLAG, PCB))
+        {
+          gui->set_line_cap (Output.fgGC, Round_Cap);
+          gui->set_line_width (Output.fgGC, 0);
+          gui->draw_line (Output.fgGC, r, t, r, b);
+          gui->draw_line (Output.fgGC, l, t, l, b);
+          gui->draw_line (Output.fgGC, r, t, l, t);
+          gui->draw_line (Output.fgGC, r, b, l, b);
+        }
+      else
+        {
+          gui->fill_rect (Output.fgGC, l, b, r, t);
+        }
+    }
+  else if (TEST_FLAG (OCTAGONFLAG, Ptr))
+    {
+      DrawSpecialPolygon (Output.fgGC, Ptr->X, Ptr->Y, Ptr->Thickness,
+			  TEST_FLAG (THINDRAWFLAG, PCB));
+    }
+  else
+    {				/* draw a round pin or via */
+      if (TEST_FLAG (THINDRAWFLAG, PCB))
+	{
+	  gui->set_line_cap (Output.fgGC, Round_Cap);
+	  gui->set_line_width (Output.fgGC, 0);
+	  gui->draw_arc (Output.fgGC, Ptr->X, Ptr->Y,
+			 Ptr->Thickness / 2, Ptr->Thickness / 2, 0, 360);
+	}
+      else
+	{
+	  gui->fill_circle (Output.fgGC, Ptr->X, Ptr->Y, Ptr->Thickness / 2);
+	}
+    }
+
+  /* and the drilling hole  (which is always round */
+  if (drawHole)
+    {
+      if (TEST_FLAG (THINDRAWFLAG, PCB))
+	{
+	  gui->set_line_cap (Output.fgGC, Round_Cap);
+	  gui->set_line_width (Output.fgGC, 0);
+	  gui->draw_arc (Output.fgGC,
+			 Ptr->X, Ptr->Y, Ptr->DrillingHole / 2,
+			 Ptr->DrillingHole / 2, 0, 360);
+	}
+      else
+	{
+	  gui->fill_circle (Output.bgGC, Ptr->X, Ptr->Y,
+			    Ptr->DrillingHole / 2);
+	}
+    }
+}
+
+/**************************************************************
+ * draw pin/via hole
+ */
+/* static */ void
+DrawHole (PinTypePtr Ptr)
+{
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    {
+      if (!TEST_FLAG (HOLEFLAG, Ptr))
+	{
+	  gui->set_line_cap (Output.fgGC, Round_Cap);
+	  gui->set_line_width (Output.fgGC, 0);
+	  gui->draw_arc (Output.fgGC,
+			 Ptr->X, Ptr->Y, Ptr->DrillingHole / 2,
+			 Ptr->DrillingHole / 2, 0, 360);
+	}
+    }
+  else
+    {
+      gui->fill_circle (Output.bgGC, Ptr->X, Ptr->Y, Ptr->DrillingHole / 2);
+    }
+  if (TEST_FLAG (HOLEFLAG, Ptr))
+    {
+      if (TEST_FLAG (WARNFLAG, Ptr))
+        {
+          gui->set_color (Output.fgGC, PCB->WarnColor);
+          hidgl_hack_ignore_stencil (1);
+        }
+      else if (TEST_FLAG (SELECTEDFLAG, Ptr))
+        {
+          gui->set_color (Output.fgGC, PCB->ViaSelectedColor);
+          hidgl_hack_ignore_stencil (1);
+        }
+      else
+	gui->set_color (Output.fgGC, Settings.BlackColor);
+
+      gui->set_line_cap (Output.fgGC, Round_Cap);
+      gui->set_line_width (Output.fgGC, 0);
+      gui->draw_arc (Output.fgGC,
+		     Ptr->X, Ptr->Y, Ptr->DrillingHole / 2,
+		     Ptr->DrillingHole / 2, 0, 360);
+      hidgl_hack_ignore_stencil (0);
+    }
+}
+
+/*******************************************************************
+ * draw clearance in pixmask around pins and vias that pierce polygons
+ */
+static void
+ClearOnlyPin (PinTypePtr Pin, bool mask)
+{
+  BDimension half =
+    (mask ? Pin->Mask / 2 : (Pin->Thickness + Pin->Clearance) / 2);
+
+  if (!mask && TEST_FLAG (HOLEFLAG, Pin))
+    return;
+  if (half == 0)
+    return;
+  if (!mask && Pin->Clearance <= 0)
+    return;
+
+  /* Clear the area around the pin */
+  if (TEST_FLAG (SQUAREFLAG, Pin))
+    {
+      int l, r, t, b;
+      l = Pin->X - half;
+      b = Pin->Y - half;
+      r = l + half * 2;
+      t = b + half * 2;
+      if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+        {
+          gui->set_line_cap (Output.pmGC, Round_Cap);
+          gui->set_line_width (Output.pmGC, 0);
+          gui->draw_line (Output.pmGC, r, t, r, b);
+          gui->draw_line (Output.pmGC, l, t, l, b);
+          gui->draw_line (Output.pmGC, r, t, l, t);
+          gui->draw_line (Output.pmGC, r, b, l, b);
+        }
+      else
+	gui->fill_rect (Output.pmGC, l, b, r, t);
+    }
+  else if (TEST_FLAG (OCTAGONFLAG, Pin))
+    {
+      DrawSpecialPolygon (Output.pmGC, Pin->X, Pin->Y, half * 2,
+			  TEST_FLAG (THINDRAWFLAG, PCB) ||
+			  TEST_FLAG (THINDRAWPOLYFLAG, PCB));
+    }
+  else
+    {
+      if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+	{
+	  gui->set_line_cap (Output.pmGC, Round_Cap);
+	  gui->set_line_width (Output.pmGC, 0);
+	  gui->draw_arc (Output.pmGC, Pin->X, Pin->Y, half, half, 0, 360);
+	}
+      else
+	gui->fill_circle (Output.pmGC, Pin->X, Pin->Y, half);
+    }
+}
+
+
+#if VERTICAL_TEXT
+/* vertical text handling provided by Martin Devera with fixes by harry eaton */
+
+/* draw vertical text; xywh is bounding, de is text's descend used for
+   positioning */
+static void
+DrawVText (int x, int y, int w, int h, char *str)
+{
+  GdkPixmap *pm;
+  GdkImage *im;
+  GdkGCValues values;
+  guint32 pixel;
+  int i, j;
+
+  if (!str || !*str)
+    return;
+
+  pm = gdk_pixmap_new (DrawingWindow, w, h, -1);
+
+  /* draw into pixmap */
+  gdk_draw_rectangle (pm, Output.bgGC, TRUE, 0, 0, w, h);
+
+  gui_draw_string_markup (DrawingWindow, Output.font_desc, Output.fgGC,
+			  0, 0, str);
+
+  im = gdk_drawable_get_image (pm, 0, 0, w, h);
+  gdk_gc_get_values (Output.fgGC, &values);
+
+  /* draw Transpose(im).  TODO: Pango should be doing vertical text soon */
+  for (i = 0; i < w; i++)
+    for (j = 0; j < h; j++)
+      {
+	pixel = gdk_image_get_pixel (im, i, j);
+	if (pixel == values.foreground.pixel)
+	  gdk_draw_point (DrawingWindow, Output.fgGC, x + j, y + w - i - 1);
+      }
+  g_object_unref (G_OBJECT (pm));
+}
+#endif
+
+/* ---------------------------------------------------------------------------
+ * lowlevel drawing routine for pin and via names
+ */
+>>>>>>> patched
 static void
 DrawMaskBoardArea (int mask_type, const BoxType *drawn_area)
 {
@@ -794,9 +1304,32 @@ GatherPadName (PadType *Pad)
 void
 DrawVia (PinType *Via)
 {
+<<<<<<< current
   AddPart (Via);
   if (!TEST_FLAG (HOLEFLAG, Via) && TEST_FLAG (DISPLAYNAMEFLAG, Via))
     DrawViaName (Via);
+=======
+  if (!Gathering)
+    SetPVColor (Via, VIA_TYPE);
+  DrawPinOrViaLowLevel (Via, true);
+  hidgl_hack_ignore_stencil (0);
+  if (!TEST_FLAG (HOLEFLAG, Via) && TEST_FLAG (DISPLAYNAMEFLAG, Via))
+    DrawPinOrViaNameLowLevel (Via);
+}
+
+/* ---------------------------------------------------------------------------
+ * draw a via without dealing with polygon clearance 
+ */
+/* static */ void
+DrawPlainVia (PinTypePtr Via, bool holeToo)
+{
+  if (!Gathering)
+    SetPVColor (Via, VIA_TYPE);
+  DrawPinOrViaLowLevel (Via, holeToo);
+  hidgl_hack_ignore_stencil (0);
+  if (!TEST_FLAG (HOLEFLAG, Via) && TEST_FLAG (DISPLAYNAMEFLAG, Via))
+    DrawPinOrViaNameLowLevel (Via);
+>>>>>>> patched
 }
 
 /* ---------------------------------------------------------------------------
@@ -805,7 +1338,22 @@ DrawVia (PinType *Via)
 void
 DrawViaName (PinType *Via)
 {
+<<<<<<< current
   GatherPVName (Via);
+=======
+  if (!Gathering)
+    {
+      if (TEST_FLAG (SELECTEDFLAG, Via))
+        {
+	  gui->set_color (Output.fgGC, PCB->ViaSelectedColor);
+          hidgl_hack_ignore_stencil (1);
+        }
+      else
+	gui->set_color (Output.fgGC, PCB->ViaColor);
+    }
+  DrawPinOrViaNameLowLevel (Via);
+  hidgl_hack_ignore_stencil (0);
+>>>>>>> patched
 }
 
 /* ---------------------------------------------------------------------------
@@ -814,10 +1362,36 @@ DrawViaName (PinType *Via)
 void
 DrawPin (PinType *Pin)
 {
+<<<<<<< current
   AddPart (Pin);
   if ((!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
       || doing_pinout)
     DrawPinName (Pin);
+=======
+  {
+    if (!Gathering)
+      SetPVColor (Pin, PIN_TYPE);
+    DrawPinOrViaLowLevel (Pin, true);
+    hidgl_hack_ignore_stencil (0);
+  }
+  if ((!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
+      || doing_pinout)
+    DrawPinOrViaNameLowLevel (Pin);
+}
+
+/* ---------------------------------------------------------------------------
+ * draw a pin without clearing around polygons 
+ */
+/* static */ void
+DrawPlainPin (PinTypePtr Pin, bool holeToo)
+{
+  if (!Gathering)
+    SetPVColor (Pin, PIN_TYPE);
+  hidgl_hack_ignore_stencil (0);
+  DrawPinOrViaLowLevel (Pin, holeToo);
+  if (!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
+    DrawPinOrViaNameLowLevel (Pin);
+>>>>>>> patched
 }
 
 /* ---------------------------------------------------------------------------
@@ -826,7 +1400,22 @@ DrawPin (PinType *Pin)
 void
 DrawPinName (PinType *Pin)
 {
+<<<<<<< current
   GatherPVName (Pin);
+=======
+  if (!Gathering)
+    {
+      if (TEST_FLAG (SELECTEDFLAG, Pin))
+        {
+	  gui->set_color (Output.fgGC, PCB->PinSelectedColor);
+          hidgl_hack_ignore_stencil (1);
+        }
+      else
+	gui->set_color (Output.fgGC, PCB->PinColor);
+    }
+  DrawPinOrViaNameLowLevel (Pin);
+  hidgl_hack_ignore_stencil (0);
+>>>>>>> patched
 }
 
 /* ---------------------------------------------------------------------------
@@ -835,9 +1424,35 @@ DrawPinName (PinType *Pin)
 void
 DrawPad (PadType *Pad)
 {
+<<<<<<< current
   AddPart (Pad);
   if (doing_pinout || TEST_FLAG (DISPLAYNAMEFLAG, Pad))
     DrawPadName (Pad);
+=======
+  if (!Gathering)
+    {
+      if (doing_pinout)
+	gui->set_color (Output.fgGC, PCB->PinColor);
+      else if (TEST_FLAG (WARNFLAG | SELECTEDFLAG | FOUNDFLAG, Pad))
+	{
+	  if (TEST_FLAG (WARNFLAG, Pad))
+	    gui->set_color (Output.fgGC, PCB->WarnColor);
+	  else if (TEST_FLAG (SELECTEDFLAG, Pad))
+	    gui->set_color (Output.fgGC, PCB->PinSelectedColor);
+	  else
+	    gui->set_color (Output.fgGC, PCB->ConnectedColor);
+          hidgl_hack_ignore_stencil (1);
+	}
+      else if (FRONT (Pad))
+	gui->set_color (Output.fgGC, PCB->PinColor);
+      else
+	gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
+    }
+  DrawPadLowLevel (Output.fgGC, Pad, false, false);
+  if (doing_pinout || TEST_FLAG (DISPLAYNAMEFLAG, Pad))
+    DrawPadNameLowLevel (Pad);
+  hidgl_hack_ignore_stencil (0);
+>>>>>>> patched
 }
 
 /* ---------------------------------------------------------------------------
@@ -846,7 +1461,24 @@ DrawPad (PadType *Pad)
 void
 DrawPadName (PadType *Pad)
 {
+<<<<<<< current
   GatherPadName (Pad);
+=======
+  if (!Gathering)
+    {
+      if (TEST_FLAG (SELECTEDFLAG, Pad))
+        {
+	  gui->set_color (Output.fgGC, PCB->PinSelectedColor);
+          hidgl_hack_ignore_stencil (1);
+        }
+      else if (FRONT (Pad))
+	gui->set_color (Output.fgGC, PCB->PinColor);
+      else
+	gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
+    }
+  DrawPadNameLowLevel (Pad);
+  hidgl_hack_ignore_stencil (0);
+>>>>>>> patched
 }
 
 /* ---------------------------------------------------------------------------
@@ -855,7 +1487,25 @@ DrawPadName (PadType *Pad)
 void
 DrawLine (LayerType *Layer, LineType *Line)
 {
+<<<<<<< current
   AddPart (Line);
+=======
+  if (!Gathering)
+    {
+      if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Line))
+	{
+	  if (TEST_FLAG (SELECTEDFLAG, Line))
+	    gui->set_color (Output.fgGC, Layer->SelectedColor);
+	  else
+	    gui->set_color (Output.fgGC, PCB->ConnectedColor);
+          hidgl_hack_ignore_stencil (1);
+	}
+      else
+	gui->set_color (Output.fgGC, Layer->Color);
+    }
+  DrawLineLowLevel (Line);
+  hidgl_hack_ignore_stencil (0);
+>>>>>>> patched
 }
 
 /* ---------------------------------------------------------------------------
@@ -864,8 +1514,26 @@ DrawLine (LayerType *Layer, LineType *Line)
 void
 DrawRat (RatType *Rat)
 {
+<<<<<<< current
   if (Settings.RatThickness < 100)
     Rat->Thickness = pixel_slop * Settings.RatThickness;
+=======
+  if (!Gathering)
+    {
+      if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Line))
+	{
+	  if (TEST_FLAG (SELECTEDFLAG, Line))
+	    gui->set_color (Output.fgGC, PCB->RatSelectedColor);
+	  else
+	    gui->set_color (Output.fgGC, PCB->ConnectedColor);
+          hidgl_hack_ignore_stencil (1);
+	}
+      else
+	gui->set_color (Output.fgGC, PCB->RatColor);
+    }
+  if (Settings.RatThickness < 20)
+    Line->Thickness = pixel_slop * Settings.RatThickness;
+>>>>>>> patched
   /* rats.c set VIAFLAG if this rat goes to a containing poly: draw a donut */
   if (TEST_FLAG(VIAFLAG, Rat))
     {
@@ -880,7 +1548,12 @@ DrawRat (RatType *Rat)
       AddPart (&b);
     }
   else
+<<<<<<< current
     DrawLine (NULL, (LineType *)Rat);
+=======
+    DrawLineLowLevel ((LineTypePtr) Line);
+  hidgl_hack_ignore_stencil (0);
+>>>>>>> patched
 }
 
 /* ---------------------------------------------------------------------------
@@ -889,7 +1562,27 @@ DrawRat (RatType *Rat)
 void
 DrawArc (LayerType *Layer, ArcType *Arc)
 {
+<<<<<<< current
   AddPart (Arc);
+=======
+  if (!Arc->Thickness)
+    return;
+  if (!Gathering)
+    {
+      if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Arc))
+	{
+	  if (TEST_FLAG (SELECTEDFLAG, Arc))
+	    gui->set_color (Output.fgGC, Layer->SelectedColor);
+	  else
+	    gui->set_color (Output.fgGC, PCB->ConnectedColor);
+          hidgl_hack_ignore_stencil (1);
+	}
+      else
+	gui->set_color (Output.fgGC, Layer->Color);
+    }
+  DrawArcLowLevel (Arc);
+  hidgl_hack_ignore_stencil (0);
+>>>>>>> patched
 }
 
 /* ---------------------------------------------------------------------------
@@ -898,17 +1591,147 @@ DrawArc (LayerType *Layer, ArcType *Arc)
 void
 DrawText (LayerType *Layer, TextType *Text)
 {
+<<<<<<< current
   AddPart (Text);
 }
 
+=======
+  int min_silk_line;
+  if (!Layer->On)
+    return;
+  if (TEST_FLAG (SELECTEDFLAG, Text))
+    {
+      gui->set_color (Output.fgGC, Layer->SelectedColor);
+      hidgl_hack_ignore_stencil (1);
+    }
+  else
+    gui->set_color (Output.fgGC, Layer->Color);
+  if (Layer == & PCB->Data->SILKLAYER
+      || Layer == & PCB->Data->BACKSILKLAYER)
+    min_silk_line = PCB->minSlk;
+  else
+    min_silk_line = PCB->minWid;
+  DrawTextLowLevel (Text, min_silk_line);
+  hidgl_hack_ignore_stencil (0);
+}
+
+/* ---------------------------------------------------------------------------
+ * draws text on a layer
+ */
+/* static */ void
+DrawRegularText (LayerTypePtr Layer, TextTypePtr Text, int unused)
+{
+  int min_silk_line;
+  if (TEST_FLAG (SELECTEDFLAG, Text))
+    {
+      gui->set_color (Output.fgGC, Layer->SelectedColor);
+      hidgl_hack_ignore_stencil (1);
+    }
+  else
+    gui->set_color (Output.fgGC, Layer->Color);
+  if (Layer == & PCB->Data->SILKLAYER
+      || Layer == & PCB->Data->BACKSILKLAYER)
+    min_silk_line = PCB->minSlk;
+  else
+    min_silk_line = PCB->minWid;
+  DrawTextLowLevel (Text, min_silk_line);
+  hidgl_hack_ignore_stencil (0);
+}
+>>>>>>> patched
 
 /* ---------------------------------------------------------------------------
  * draws a polygon on a layer
  */
 void
+<<<<<<< current
 DrawPolygon (LayerType *Layer, PolygonType *Polygon)
 {
   AddPart (Polygon);
+=======
+DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+{
+  DrawPolygonLowLevel (Polygon);
+  hidgl_hack_ignore_stencil (0);
+}
+
+int
+thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
+{
+  int i, *x, *y;
+  VNODE *v;
+
+  i = 0;
+  x = (int *) malloc (pl->Count * sizeof (int));
+  y = (int *) malloc (pl->Count * sizeof (int));
+  for (v = &pl->head; i < pl->Count; v = v->next)
+    {
+      x[i] = v->point[0];
+      y[i++] = v->point[1];
+    }
+  gui->set_line_cap (Output.fgGC, Round_Cap);
+  gui->set_line_width (Output.fgGC, 0);
+  for (i = 0; i < pl->Count - 1; i++)
+    {
+      gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
+      //  gui->fill_circle (Output.fgGC, x[i], y[i], 30);
+    }
+  gui->draw_line (Output.fgGC, x[pl->Count - 1], y[pl->Count - 1], x[0],
+		  y[0]);
+  free (x);
+  free (y);
+  return 0;
+}
+
+
+/* ---------------------------------------------------------------------------
+ * draws a polygon
+ */
+static void
+DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+{
+  static char *color;
+
+  if (!Polygon->Clipped)
+    return;
+
+  if (Gathering)
+    {
+      AddPart (Polygon);
+      return;
+    }
+
+  if (TEST_FLAG (SELECTEDFLAG, Polygon))
+    {
+      color = Layer->SelectedColor;
+      hidgl_hack_ignore_stencil (1);
+    }
+  else if (TEST_FLAG (FOUNDFLAG, Polygon))
+    color = PCB->ConnectedColor;
+  else
+    color = Layer->Color;
+  gui->set_color (Output.fgGC, color);
+
+  if (gui->thindraw_pcb_polygon != NULL &&
+      (TEST_FLAG (THINDRAWFLAG, PCB) ||
+       TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
+    gui->thindraw_pcb_polygon (Output.fgGC, Polygon, clip_box);
+  else
+    gui->fill_pcb_polygon (Output.fgGC, Polygon, clip_box);
+
+  /* If checking planes, thin-draw any pieces which have been clipped away */
+  if (gui->thindraw_pcb_polygon != NULL &&
+      TEST_FLAG (CHECKPLANESFLAG, PCB) &&
+      !TEST_FLAG (FULLPOLYFLAG, Polygon))
+    {
+      PolygonType poly = *Polygon;
+
+      for (poly.Clipped = Polygon->Clipped->f;
+           poly.Clipped != Polygon->Clipped;
+           poly.Clipped = poly.Clipped->f)
+        gui->thindraw_pcb_polygon (Output.fgGC, &poly, clip_box);
+    }
+  hidgl_hack_ignore_stencil (0);
+>>>>>>> patched
 }
 
 /* ---------------------------------------------------------------------------
@@ -930,7 +1753,23 @@ DrawElementName (ElementType *Element)
 {
   if (TEST_FLAG (HIDENAMEFLAG, Element))
     return;
+<<<<<<< current
   DrawText (NULL, &ELEMENT_TEXT (PCB, Element));
+=======
+  if (doing_pinout || doing_assy)
+    gui->set_color (Output.fgGC, PCB->ElementColor);
+  else if (TEST_FLAG (SELECTEDFLAG, &ELEMENT_TEXT (PCB, Element)))
+    {
+      gui->set_color (Output.fgGC, PCB->ElementSelectedColor);
+      hidgl_hack_ignore_stencil (1);
+    }
+  else if (FRONT (Element))
+    gui->set_color (Output.fgGC, PCB->ElementColor);
+  else
+    gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
+  DrawStrippedText (Element, PCB->minSlk);
+  hidgl_hack_ignore_stencil (0);
+>>>>>>> patched
 }
 
 /* ---------------------------------------------------------------------------
@@ -939,6 +1778,7 @@ DrawElementName (ElementType *Element)
 void
 DrawElementPackage (ElementType *Element)
 {
+<<<<<<< current
   ELEMENTLINE_LOOP (Element);
   {
     DrawLine (NULL, line);
@@ -949,6 +1789,22 @@ DrawElementPackage (ElementType *Element)
     DrawArc (NULL, arc);
   }
   END_LOOP;
+=======
+  /* set color and draw lines, arcs, text and pins */
+  if (doing_pinout || doing_assy)
+      gui->set_color (Output.fgGC, PCB->ElementColor);
+  else if (TEST_FLAG (SELECTEDFLAG, Element))
+    {
+      gui->set_color (Output.fgGC, PCB->ElementSelectedColor);
+      hidgl_hack_ignore_stencil (1);
+    }
+  else if (FRONT (Element))
+    gui->set_color (Output.fgGC, PCB->ElementColor);
+  else
+    gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
+  DrawElementPackageLowLevel (Element, unused);
+  hidgl_hack_ignore_stencil (0);
+>>>>>>> patched
 }
 
 /* ---------------------------------------------------------------------------
