@@ -1484,6 +1484,14 @@ ghid_progress (int so_far, int total, const char *message)
   return 0;
 }
 
+static void
+ghid_free_polygon_cache (PolygonType *poly)
+{
+  printf ("FIXME: Should free cached polygon data\n");
+  free (poly->gui_cache);
+  poly->gui_cache_valid = 0;
+}
+
 /* ---------------------------------------------------------------------- */
 HID_DRC_GUI ghid_drc_gui = {
   1,				/* log_drc_overview */
@@ -1554,7 +1562,8 @@ HID ghid_hid = {
   ghid_show_item,
   ghid_beep,
   ghid_progress,
-  &ghid_drc_gui
+  &ghid_drc_gui,
+  ghid_free_polygon_cache,
 };
 
 HID ghid_extents = {
@@ -1617,7 +1626,8 @@ HID ghid_extents = {
   0 /* ghid_show_item */ ,
   0 /* ghid_beep */ ,
   0 /* ghid_progress */ ,
-  0 /* ghid_drc_gui */
+  0 /* ghid_drc_gui */ ,
+  0 /* ghid_free_polygon_cache */ ,
 };
 
 /* ------------------------------------------------------------ 
