@@ -1,7 +1,7 @@
-Bottom: 695e05865155ac32cb12fb37c61411e82e1b11ed
-Top:    cdf2b3f1e9acd2f5fcb33e8bf3a42dc6162c3810
+Bottom: bfd7de0bf80a6d3705ae594c5aca52c07c6c968e
+Top:    8e1343e9533dfbb922406affb1d52d6528e7f26d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-07 09:56:15 +0000
+Date:   2009-11-07 10:00:29 +0000
 
 Island removal fixes
 
@@ -204,10 +204,10 @@ index 54d885a..626368f 100644
    *new = *Text;
    *Text = Source->Text[--Source->TextN];
 diff --git a/src/pour.c b/src/pour.c
-index 5407e8e..b9c1de3 100644
+index 798121b..21dcac4 100644
 --- a/src/pour.c
 +++ b/src/pour.c
-@@ -751,7 +751,8 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -754,7 +754,8 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
  
    if (np == NULL)
      {
@@ -217,7 +217,7 @@ index 5407e8e..b9c1de3 100644
        return 0;
      }
  
-@@ -801,6 +802,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -804,6 +805,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
      {
        printf ("Hmm, got pg == NULL in subtract_plow\n");
        poly_Free (&np);
@@ -225,7 +225,7 @@ index 5407e8e..b9c1de3 100644
        return -1;
      }
  
-@@ -1002,6 +1004,7 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -1005,6 +1007,7 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
    if (np == NULL)
      {
        printf ("Didn't get a POLYAREA to add, so bailing\n");
@@ -233,7 +233,7 @@ index 5407e8e..b9c1de3 100644
        return 0;
      }
  
-@@ -1012,6 +1015,7 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -1015,6 +1018,7 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
    if (np == NULL)
      {
        printf ("POLYAREA to add got clipped away, so bailing\n");
@@ -241,7 +241,7 @@ index 5407e8e..b9c1de3 100644
        return 0;
      }
  
-@@ -1280,9 +1284,10 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1283,9 +1287,10 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
      case POLYGON_TYPE:
      case POUR_TYPE:
        /* the cast works equally well for lines and arcs */

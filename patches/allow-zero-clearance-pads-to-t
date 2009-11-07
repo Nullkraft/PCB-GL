@@ -1,24 +1,11 @@
-Bottom: 76bdecc0f73cf5b38d238756206015fe53be007f
+Bottom: 88cf2dbc45a62df4d1d455d8f0b9e12ae8e821e3
 Top:    88cf2dbc45a62df4d1d455d8f0b9e12ae8e821e3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-07 09:56:44 +0000
+Date:   2009-11-07 10:00:30 +0000
 
 Allow zero clearance pads to touch polygons
 
 
 ---
 
-diff --git a/src/pour.c b/src/pour.c
-index 2f8e0bc..45018f5 100644
---- a/src/pour.c
-+++ b/src/pour.c
-@@ -424,6 +424,9 @@ get_subtract_pad_poly (PadType * pad, PourType * pour)
- {
-   POLYAREA *np;
- 
-+  if (pad->Clearance == 0)
-+    return NULL;
-+
-   if (TEST_FLAG (SQUAREFLAG, pad))
-     np = SquarePadPoly (pad, pad->Thickness + pad->Clearance);
-   else
+
