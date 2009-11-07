@@ -718,12 +718,64 @@ mark_islands (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
                    check_polygon_island_cb, &info);
 }
 
+struct touched_info
+{
+  PourType *pour;
+  POLYAREA *pg, *np;
+  jmp_buf env;
+  PolygonType *polygon;
+};
+
+static int
+touched_children_callback (const BoxType * b, void *cl)
+{
+  struct touched_info *touched = (struct touched_info *) cl;
+  PolygonType *polygon = (PolygonType *) b;
+
+  /* Do we actually intersect? */
+  if (isects (touched->np, polygon, False))
+    {
+      /* Steal the clipped contours, the delete the polygon. */
+      /* Add contour to local list to fiddle about with */
+
+      assert (poly_Valid (polygon->Clipped));
+      if (polygon->Clipped == NULL)
+        {
+          printf ("Got polygon->clipped == NULL!\n");
+          return 0;
+        }
+      if (touched->pg == NULL)
+        {
+          touched->pg = polygon->Clipped;
+          polygon->Clipped = NULL;
+        }
+      else
+        {
+          /* Link the _single_ polygon->Clipped into our circular pg list. */
+          polygon->Clipped->f = touched->pg;
+          polygon->Clipped->b = touched->pg->b;
+          touched->pg->b->f = polygon->Clipped;
+          touched->pg->b = polygon->Clipped;
+          polygon->Clipped = NULL;
+        }
+
+      touched->polygon = polygon;
+
+      longjmp (touched->env, 1);
+    }
+
+  return 0;
+}
+
+
 static int
 subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
               int type, void *ptr1, void *ptr2)
 {
   POLYAREA *np = NULL, *pg = NULL, *start_pg, *tmp;
-  int count, count_all, count_added;
+  BoxType box;
+  int count_all, count_added;
+  struct touched_info touched;
 
   switch (type)
     {
@@ -763,43 +815,44 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
 
   /* Make pg contain the polygons we're going to fiddle with */
 
-  count = 0;
-  POURPOLYGON_LOOP (pour);
-  {
-    /* Gather up children which are touched by np */
-    if (isects (np, polygon, False))
-      {
-        count++;
-        /* Steal their clipped contours, then delete them */
-        /* Add contour to local list to fiddle about with */
+  box.X1 = np->contours->xmin;
+  box.Y1 = np->contours->ymin;
+  box.X2 = np->contours->xmax;
+  box.Y2 = np->contours->ymax;
 
-        assert (poly_Valid (polygon->Clipped));
-        if (polygon->Clipped == NULL)
-          {
-            printf ("Got polygon->clipped == NULL!\n");
-            continue;
-          }
-        if (pg == NULL)
-          {
-            pg = polygon->Clipped;
-            polygon->Clipped = NULL;
-          }
-        else
-          {
-            /* Link the _single_ polygon->Clipped into our circular pg list. */
-            polygon->Clipped->f = pg;
-            polygon->Clipped->b = pg->b;
-            pg->b->f = polygon->Clipped;
-            pg->b = polygon->Clipped;
-            polygon->Clipped = NULL;
-          }
-        /* POURPOLYGON_LOOP iterates backwards, so it's OK
-         * to delete the current element we're sitting on */
-        DestroyPolygonInPour (pour, polygon);
-      }
-  }
-  END_LOOP;
-//  printf ("Subtract counted %i touching children, now removed\n", count);
+  tmp = np->f;
+  while (tmp != np)
+    {
+      MAKEMIN (box.X1, tmp->contours->xmin);
+      MAKEMIN (box.Y1, tmp->contours->ymin);
+      MAKEMAX (box.X2, tmp->contours->xmax);
+      MAKEMAX (box.Y2, tmp->contours->ymax);
+      tmp = tmp->f;
+    }
+
+  box.X1 -= UNSUBTRACT_BLOAT;
+  box.Y1 -= UNSUBTRACT_BLOAT;
+  box.X2 += UNSUBTRACT_BLOAT;
+  box.Y2 += UNSUBTRACT_BLOAT;
+
+  touched.pour = pour;
+  touched.np = np;
+  touched.pg = NULL;
+  touched.polygon = NULL;
+
+  /* This is a loop. Since we can't delete from an r_tree whilst we're
+   * searching it, we short-cut the search with a longjmp (returning 0),
+   * delete the polygon we found, then start searching again
+   */
+  setjmp (touched.env);
+
+  if (touched.polygon != NULL)
+    DestroyPolygonInPour (pour, touched.polygon);
+
+  r_search (pour->polygon_tree, &box, NULL, touched_children_callback, &touched);
+  /* Due to the setjmp / longjmp, we've just looped until the search is complete */
+
+  pg = touched.pg;
 
   if (pg == NULL)
     {
@@ -975,7 +1028,9 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
 {
   POLYAREA *np = NULL, *pg = NULL, *tmp, *start_pg;
   POLYAREA *orig_poly;
-  int count, count_all, count_added;
+  BoxType box;
+  int count_all, count_added;
+  struct touched_info touched;
 
   switch (type)
     {
@@ -1026,43 +1081,44 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
 
   /* Make pg contain the polygons we're going to fiddle with */
 
-  count = 0;
-  POURPOLYGON_LOOP (pour);
-  {
-    /* Gather up children which are touched by np */
-    if (isects (np, polygon, False))
-      {
-        count++;
-        /* Steal their clipped contours, then delete them */
-        /* Add contour to local list to fiddle about with */
+  box.X1 = np->contours->xmin;
+  box.Y1 = np->contours->ymin;
+  box.X2 = np->contours->xmax;
+  box.Y2 = np->contours->ymax;
 
-        assert (poly_Valid (polygon->Clipped));
-        if (polygon->Clipped == NULL)
-          {
-            printf ("Got polygon->clipped == NULL!\n");
-            continue;
-          }
-        if (pg == NULL)
-          {
-            pg = polygon->Clipped;
-            polygon->Clipped = NULL;
-          }
-        else
-          {
-            /* Link the _single_ polygon->Clipped into our circular pg list. */
-            polygon->Clipped->f = pg;
-            polygon->Clipped->b = pg->b;
-            pg->b->f = polygon->Clipped;
-            pg->b = polygon->Clipped;
-            polygon->Clipped = NULL;
-          }
-        /* POURPOLYGON_LOOP iterates backwards, so it's OK
-         * to delete the current element we're sitting on */
-        DestroyPolygonInPour (pour, polygon);
-      }
-  }
-  END_LOOP;
-//  printf ("Unsubtract counted %i touching children, now removed\n", count);
+  tmp = np->f;
+  while (tmp != np)
+    {
+      MAKEMIN (box.X1, tmp->contours->xmin);
+      MAKEMIN (box.Y1, tmp->contours->ymin);
+      MAKEMAX (box.X2, tmp->contours->xmax);
+      MAKEMAX (box.Y2, tmp->contours->ymax);
+      tmp = tmp->f;
+    }
+
+  box.X1 -= UNSUBTRACT_BLOAT;
+  box.Y1 -= UNSUBTRACT_BLOAT;
+  box.X2 += UNSUBTRACT_BLOAT;
+  box.Y2 += UNSUBTRACT_BLOAT;
+
+  touched.pour = pour;
+  touched.np = np;
+  touched.pg = NULL;
+  touched.polygon = NULL;
+
+  /* This is a loop. Since we can't delete from an r_tree whilst we're
+   * searching it, we short-cut the search with a longjmp (returning 0),
+   * delete the polygon we found, then start searching again
+   */
+  setjmp (touched.env);
+
+  if (touched.polygon != NULL)
+    DestroyPolygonInPour (pour, touched.polygon);
+
+  r_search (pour->polygon_tree, &box, NULL, touched_children_callback, &touched);
+  /* Due to the setjmp / longjmp, we've just looped until the search is complete */
+
+  pg = touched.pg;
 
   if (pg == NULL)
     {
