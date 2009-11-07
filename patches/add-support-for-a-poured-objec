@@ -1,5 +1,5 @@
 Bottom: f7719eb00c6d410ffdad802b55112c554d9b20ad
-Top:    b133f392278208f13d214f109850a01cb0c249fc
+Top:    7f65405d39cff8c832fa9d06e57fd40af6a9098e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-07 09:51:36 +0000
 
@@ -5199,10 +5199,10 @@ index 3f79746..67c2fd7 100644
    return FALSE;
 diff --git a/src/pour.c b/src/pour.c
 new file mode 100644
-index 0000000..48f1aae
+index 0000000..84fb231
 --- /dev/null
 +++ b/src/pour.c
-@@ -0,0 +1,1276 @@
+@@ -0,0 +1,1279 @@
 +/* $Id$ */
 +
 +/*
@@ -5628,6 +5628,9 @@ index 0000000..48f1aae
 +get_subtract_pad_poly (PadType * pad, PourType * pour)
 +{
 +  POLYAREA *np;
++
++  if (pad->Clearance == 0)
++    return NULL;
 +
 +  if (TEST_FLAG (SQUAREFLAG, pad))
 +    np = SquarePadPoly (pad, pad->Thickness + pad->Clearance);
