@@ -1,7 +1,7 @@
-Bottom: 771a11d5f756a1ba30e2783d6311d5d18b4fefbd
-Top:    dcefccbaebe07d0165be8f816bbea8b2ee18f94c
+Bottom: 1c1ea36851b79c27de1fb9356d6ca5322d2ea6d2
+Top:    17108a4108f0ccf4ae4d205fe3140c3c8d71f975
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 15:42:38 +0100
+Date:   2009-11-07 10:19:36 +0000
 
 Play with making selected / found objects ignore subcompositing rules
 
@@ -13,7 +13,7 @@ If an area on screen touched by this layer is already painted, draw anyway
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index f28f6c9..f340b14 100644
+index 03c4335..ee1be9f 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -114,6 +114,8 @@ static void DrawMask (BoxType *);
@@ -340,10 +340,10 @@ index f28f6c9..f340b14 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 2abd05a..7204be9 100644
+index 1a4ba5e..fc7c352 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -559,6 +559,33 @@ int compute_depth (int group)
+@@ -570,6 +570,33 @@ int compute_depth (int group)
    return depth;
  }
  
