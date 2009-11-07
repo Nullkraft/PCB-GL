@@ -1079,6 +1079,7 @@ clearPoly (DataType *Data, LayerType *Layer, PolygonType * polygon,
       subtract_accumulated (&info, polygon);
     }
   polygon->NoHolesValid = 0;
+  polygon->gui_cache_valid = 0;
   return r;
 }
 
@@ -1226,8 +1227,9 @@ InitClip (DataType *Data, LayerType *layer, PolygonType * p)
   assert (poly_Valid (p->Clipped));
   if (TEST_FLAG (CLEARPOLYFLAG, p))
     clearPoly (Data, layer, p, NULL, 0);
-  else
-    p->NoHolesValid = 0;
+  /* HACK */
+  p->NoHolesValid = 0;
+  p->gui_cache_valid = 0;
   return 1;
 }
 
@@ -1478,22 +1480,27 @@ subtract_plow (DataType *Data, LayerType *Layer, PolygonType *Polygon,
     case VIA_TYPE:
       SubtractPin (Data, (PinType *) ptr2, Layer, Polygon);
       Polygon->NoHolesValid = 0;
+      Polygon->gui_cache_valid = 0;
       return 1;
     case LINE_TYPE:
       SubtractLine ((LineType *) ptr2, Polygon);
       Polygon->NoHolesValid = 0;
+      Polygon->gui_cache_valid = 0;
       return 1;
     case ARC_TYPE:
       SubtractArc ((ArcType *) ptr2, Polygon);
       Polygon->NoHolesValid = 0;
+      Polygon->gui_cache_valid = 0;
       return 1;
     case PAD_TYPE:
       SubtractPad ((PadType *) ptr2, Polygon);
       Polygon->NoHolesValid = 0;
+      Polygon->gui_cache_valid = 0;
       return 1;
     case TEXT_TYPE:
       SubtractText ((TextType *) ptr2, Polygon);
       Polygon->NoHolesValid = 0;
+      Polygon->gui_cache_valid = 0;
       return 1;
     }
   return 0;

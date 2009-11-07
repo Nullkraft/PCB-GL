@@ -643,6 +643,8 @@ CreateNewPolygon (LayerType *Layer, FlagType Flags)
   polygon->Clipped = NULL;
   polygon->NoHoles = NULL;
   polygon->NoHolesValid = 0;
+  polygon->gui_cache = NULL;
+  polygon->gui_cache_valid = 0;
   return (polygon);
 }
 
