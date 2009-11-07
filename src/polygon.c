@@ -82,6 +82,7 @@ dicer output is used for HIDs which cannot render things with holes
 #include <memory.h>
 #include <setjmp.h>
 #include <glib.h>
+#include <time.h>
 
 #include "global.h"
 #include "box.h"
@@ -142,12 +143,21 @@ add_noholes_polyarea (PLINE *pline, void *user_data)
 void
 ComputeNoHoles (PolygonType *poly)
 {
+  clock_t start, end;
+  double elapsed;
+
+  start = clock();
+
   poly_FreeContours (&poly->NoHoles);
   if (poly->Clipped)
     NoHolesPolygonDicer (poly, NULL, add_noholes_polyarea, poly);
   else
     printf ("Compute_noholes caught poly->Clipped = NULL\n");
   poly->NoHolesValid = 1;
+
+  end = clock();
+  elapsed = ((double) (end - start)) / CLOCKS_PER_SEC;
+  printf ("Computing NoHoles polygons took %f\n", elapsed);
 }
 
 static POLYAREA *
