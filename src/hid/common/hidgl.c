@@ -613,54 +613,22 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
   free (vertices);
 }
 
-struct do_hole_info {
-  double scale;
-};
-
-static int
-do_hole (const BoxType *b, void *cl)
-{
-  struct do_hole_info *info = cl;
-  PLINE *curc = (PLINE *) b;
-  cairo_traps_t traps;
-
-  /* Ignore the outer contour - we draw it first explicitly*/
-  if (curc->Flags.orient == PLF_DIR) {
-    return 0;
-  }
-
-  /* If the contour is round, and hidgl_fill_circle would use
-   * less slices than we have vertices to draw it, then call
-   * hidgl_fill_circle to draw this contour.
-   */
-  if (curc->is_round) {
-    double slices = calc_slices (curc->radius / info->scale, 2 * M_PI);
-    if (slices < curc->Count) {
-      hidgl_fill_circle (curc->cx, curc->cy, curc->radius, info->scale);
-      return 1;
-    }
-  }
-
-  _cairo_traps_init (&traps);
-  bo_contour_to_traps (curc, &traps);
-  _cairo_traps_fini (&traps);
-
-  return 1;
-}
-
 static GLint stencil_bits;
 static int dirty_bits = 0;
 static int assigned_bits = 0;
 
+struct polygon_cache {
+  int fill_display_list;
+};
+
 /* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
 void
-hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
+hidgl_fill_pcb_polygon_nocache (PolygonType *poly, const BoxType *clip_box, double scale)
 {
-  struct do_hole_info info;
   cairo_traps_t traps;
 
   CHECK_IS_IN_CONTEXT ();
-  info.scale = scale;
+
   global_scale = scale;
 
   if (poly->Clipped == NULL)
@@ -669,26 +637,43 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
       return;
     }
 
-  /* Flush out any existing geoemtry to be rendered */
-  hidgl_flush_triangles (&buffer);
-
-  /* Draw the polygon outer */
   _cairo_traps_init (&traps);
-  bo_contour_to_traps (poly->Clipped->contours, &traps);
+  bo_poly_to_traps (poly->Clipped, &traps);
   _cairo_traps_fini (&traps);
-  hidgl_flush_triangles (&buffer);
+}
 
-  glPushAttrib (GL_CURRENT_BIT);
+void
+hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
+{
+  struct polygon_cache *cache;
+  int new_cache = 0;
 
-  glDisable (GL_BLEND);
+  if (poly->gui_cache == NULL) {
+    poly->gui_cache = malloc (sizeof (struct polygon_cache));
+    new_cache = 1;
+  }
 
-  glColor4f (0., 0., 0., 0.0);
-  r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
-  hidgl_flush_triangles (&buffer);
+  cache = poly->gui_cache;
 
-  glEnable (GL_BLEND);
+#if 1
+  if (!poly->gui_cache_valid) {
+    if (!new_cache)
+      glDeleteLists (cache->fill_display_list, 1);
 
-  glPopAttrib ();
+    cache->fill_display_list = glGenLists (1);
+    hidgl_flush_triangles (&buffer);
+    glNewList (cache->fill_display_list, GL_COMPILE);
+    hidgl_fill_pcb_polygon_nocache (poly, NULL /* clip_box */, scale);
+    hidgl_flush_triangles (&buffer);
+    glEndList ();
+    poly->gui_cache_valid = 1;
+  }
+
+  glCallList (cache->fill_display_list);
+
+#else
+  hidgl_fill_pcb_polygon_nocache (poly, clip_box, scale);
+#endif
 }
 
 void

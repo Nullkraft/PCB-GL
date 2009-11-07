@@ -755,6 +755,10 @@ FreePolygonMemory (PolygonTypePtr Polygon)
 {
   if (Polygon)
     {
+      if (Polygon->gui_cache)
+        {
+          gui->free_polygon_cache (Polygon);
+        }
       MYFREE (Polygon->Points);
       MYFREE (Polygon->HoleIndex);
       if (Polygon->Clipped)
