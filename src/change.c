@@ -611,7 +611,6 @@ ChangePadClearSize (ElementTypePtr Element, PadTypePtr Pad)
 
   if (TEST_FLAG (LOCKFLAG, Pad))
     return (NULL);
-<<<<<<< current:src/change.c
   value = MIN (MAX_LINESIZE, value);
   if (value < 0)
     value = 0;
