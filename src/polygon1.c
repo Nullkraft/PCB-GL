@@ -913,8 +913,6 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
   for (pa = a->contours; pa; pa = pa->next)     /* Loop over the contours of POLYAREA "a" */
     {
       BoxType sb;
-      jmp_buf out;
-      int retval;
 
       c_info.getout = NULL;
       c_info.pa = pa;
@@ -936,6 +934,7 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
       sb.X2 = pa->xmax + 1;
       sb.Y2 = pa->ymax + 1;
 
+//      printf ("Searching B's contours using an rtree\n");
       r_search (b->contour_tree, &sb, NULL, contour_bounds_touch, &c_info);
       if (c_info.need_restart) {
         need_restart = 1;
@@ -2284,7 +2283,7 @@ Touching (POLYAREA * a, POLYAREA * b)
 	return -1;
 #endif
       M_POLYAREA_intersect (&e, a, b, False);
-
+#warning Do we end up leaving uncleared labels on our polygons? (Does this mess up the new clipping code?)
       if (M_POLYAREA_label (a, b, TRUE))
 	return TRUE;
       if (M_POLYAREA_label (b, a, TRUE))
@@ -2427,6 +2426,7 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
 
       InsertHoles (&e, *res, &holes);
     }
+#warning holes may be undefined due to the setjmp, if it was modified before the longjmp returned above.
   /* delete holes if any left */
   while ((p = holes) != NULL)
     {
@@ -2527,6 +2527,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
       poly_Free (&b);
       assert (poly_Valid (*aminusb));
     }
+#warning holes may be undefined due to the setjmp, if it was modified before the longjmp returned above.
   /* delete holes if any left */
   while ((p = holes) != NULL)
     {
@@ -2534,7 +2535,7 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
       poly_DelContour (&p);
     }
 
-
+#warning aand, aminsus may be undefined due to the setjmp, if it was modified before the longjmp returned above.
   if (code)
     {
       poly_Free (aandb);
