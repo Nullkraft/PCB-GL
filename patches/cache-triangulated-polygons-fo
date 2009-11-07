@@ -1,5 +1,5 @@
 Bottom: fdb4f9846196c800a53268c3f3166b237a4ae060
-Top:    7d46cb2d58f9d1bce1fe277d17e95c54aa7f9bd8
+Top:    33ed669ca34ad34b05210e5766e75a1ff4158dc1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-07 10:06:57 +0000
 
@@ -48,10 +48,49 @@ index ffb84a2..c545768 100644
  
  /* Call this as soon as possible from main().  No other HID calls are
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 6931651..a5dc7ed 100644
+index 6931651..4f944f6 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -624,13 +624,16 @@ static GLint stencil_bits;
+@@ -585,54 +585,20 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+   free (vertices);
+ }
+ 
+-struct do_hole_info {
+-  double scale;
+-};
+-
+-static int
+-do_hole (const BoxType *b, void *cl)
+-{
+-  struct do_hole_info *info = cl;
+-  PLINE *curc = (PLINE *) b;
+-  cairo_traps_t traps;
+-
+-  /* Ignore the outer contour - we draw it first explicitly*/
+-  if (curc->Flags.orient == PLF_DIR) {
+-    return 0;
+-  }
+-
+-  /* If the contour is round, and hidgl_fill_circle would use
+-   * less slices than we have vertices to draw it, then call
+-   * hidgl_fill_circle to draw this contour.
+-   */
+-  if (curc->is_round) {
+-    double slices = calc_slices (curc->radius / info->scale, 2 * M_PI);
+-    if (slices < curc->Count) {
+-      hidgl_fill_circle (curc->cx, curc->cy, curc->radius, info->scale);
+-      return 1;
+-    }
+-  }
+-
+-  _cairo_traps_init (&traps);
+-  bo_contour_to_traps (curc, &traps);
+-  _cairo_traps_fini (&traps);
+-
+-  return 1;
+-}
+-
+ static GLint stencil_bits;
  static int dirty_bits = 0;
  static int assigned_bits = 0;
  
@@ -64,14 +103,15 @@ index 6931651..a5dc7ed 100644
 -hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
 +hidgl_fill_pcb_polygon_nocache (PolygonType *poly, const BoxType *clip_box, double scale)
  {
-   struct do_hole_info info;
+-  struct do_hole_info info;
 -  int stencil_bit;
--  cairo_traps_t traps;
-+  cairo_traps_t *traps;
+   cairo_traps_t traps;
  
-   info.scale = scale;
+-  info.scale = scale;
    global_scale = scale;
-@@ -641,53 +644,43 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+ 
+   if (poly->Clipped == NULL)
+@@ -641,53 +607,43 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
        return;
      }
  
@@ -100,7 +140,7 @@ index 6931651..a5dc7ed 100644
 -  r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
 -  hidgl_flush_triangles (&buffer);
 +  _cairo_traps_init (&traps);
-+  bo_poly_to_traps (poly->Clipped, traps);
++  bo_poly_to_traps (poly->Clipped, &traps);
 +  _cairo_traps_fini (&traps);
 +}
  
