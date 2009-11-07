@@ -133,7 +133,6 @@ extern int ghid_flip_x, ghid_flip_y;
 #define GRID_UNITS_VALUE(mm, mil)   (Settings.grid_units_mm ? (mm) : (mil))
 
 
-
 typedef struct hid_gc_struct
 {
   HID *me_pointer;
@@ -559,6 +558,8 @@ GdkPixmap *ghid_render_pixmap (int cx,
 			       int depth);
 
 /* gtkhid-main.c */
+extern GLuint fbo_name;
+extern GLuint tex_name;
 
 void ghid_invalidate_all ();
 void ghid_global_alpha_mult (hidGC gc, double alpha_mult);
