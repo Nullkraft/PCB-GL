@@ -1779,9 +1779,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
 //  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
-//  glOrtho (-1, 1, -1, 1, 100, 10000);
+  glOrtho (-1, 1, -1, 1, -100, 10000);
 //  glFrustum (0, widget->allocation.width, widget->allocation.height, 0, 10, 1000);
-  glFrustum (-1, 1, -1, 1, 10, 10000);
+//  glFrustum (-1, 1, -1, 1, 10, 10000);
 //  gluPerspective (30, widget->allocation.width / widget->allocation.height, 10, 1000);
   glMatrixMode (GL_MODELVIEW);
   glLoadIdentity ();
@@ -1876,8 +1876,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   region.Y1 = MIN (Py (min_y), Py (max_y + 1));
   region.Y2 = MAX (Py (min_y), Py (max_y + 1));
 
-  eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
-  etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
+//  eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
+//  etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
+
+  eleft = ev->area.x; eright = ev->area.x + ev->area.width;
+  etop = ev->area.y; ebottom = ev->area.y + ev->area.height;
 
   glColor3f (gport->bg_color.red / 65535.,
              gport->bg_color.green / 65535.,
@@ -1895,8 +1898,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   glTexImage2D (GL_TEXTURE_2D,
                 0, /* Level */
                 GL_RGBA8, /* Int. format */
-                eright - eleft + 1, /* Width */
-                ebottom - etop + 1, /* Height */
+                widget->allocation.width, /* Width */
+                widget->allocation.height, /* Height */
                 0,      /* Border */
                 GL_RGBA, /* Format */
                 GL_INT, /* Type */
@@ -1911,7 +1914,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   CHECK_FRAMEBUFFER_STATUS ()
   glBindTexture (GL_TEXTURE_2D, 0);
 
-  glClearColor (1., 1., 1., 1.);
+  glClearColor (1., 1., 1., 0.);
   glClear (GL_COLOR_BUFFER_BIT);
 
 //  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);

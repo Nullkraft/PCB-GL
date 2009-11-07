@@ -613,21 +613,26 @@ ghid_set_layer (const char *name, int group, int empty)
   glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
   glBindTexture (GL_TEXTURE_2D, tex_name);
 
+  glPushMatrix ();
+  glLoadIdentity ();
+
   /* Use the texture on a big quad, onto the window */
   glEnable (GL_TEXTURE_2D);
   glBegin (GL_QUADS);
   glColor4f (1.0f, 1.0f, 1.0f, 1.0f);
   glTexCoord2f (  0,   1);
-  glVertex2f   (  0,   0);
+  glVertex2f   (  -1, -1);
   glTexCoord2f (  0,   0);
-  glVertex2f   (  0, Vz (PCB->MaxHeight));
+  glVertex2f   (  -1,   1);
   glTexCoord2f (  1,   0);
-  glVertex2f   (Vz (PCB->MaxWidth), Vz (PCB->MaxHeight));
+  glVertex2f   (  1,   1);
   glTexCoord2f (  1,   1);
-  glVertex2f   (Vz (PCB->MaxWidth),   0);
+  glVertex2f   (  1,   -1);
   glEnd ();
   glDisable (GL_TEXTURE_2D);
   glBindTexture (GL_TEXTURE_2D, 0);
+
+  glPopMatrix ();
 
   if ((errCode = glGetError()) != GL_NO_ERROR) {
       errString = gluErrorString(errCode);
@@ -635,9 +640,10 @@ ghid_set_layer (const char *name, int group, int empty)
   }
 
   /* Setup for the next layer */
-  if (group != -99)
+  if (group != -99) {
     glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, fbo_name);
-  else
+    glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, tex_name, 0);
+  } else
     return 0;
 
   if ((errCode = glGetError()) != GL_NO_ERROR) {
