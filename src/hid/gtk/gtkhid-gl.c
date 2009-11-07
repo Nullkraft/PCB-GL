@@ -1687,6 +1687,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glBlendFunc (GL_ONE, GL_ZERO);
 //  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+  glShadeModel (GL_FLAT);
+
   glViewport (0, 0, widget->allocation.width, widget->allocation.height);
 
   glEnable (GL_SCISSOR_TEST);
