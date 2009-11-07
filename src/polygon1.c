@@ -1968,8 +1968,16 @@ M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
 
       /* If we move or delete an outer contour, we need to move any holes
          we wish to keep within that contour to the holes list. */
-      if (is_outline && isect_contour)
+      if (is_outline && isect_contour) {
+        PLINE *cont;
+        int count_holes = 0;
+        for (cont = next; cont != NULL; cont = cont->next)
+          {
+            count_holes ++;
+          }
+        printf ("Smashing outer contour, orphaning %i holes\n", count_holes);
         hole_contour = 1;
+      }
 
     }
 
@@ -2068,16 +2076,19 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
         /* a->contours now points to the remaining holes */
         poly_DelContour (&curc);
 
+/* Delete any holes inside.. they are not wanted any more */
         if (a->contours != NULL) {
           /* Find the end of the list of holes */
+          printf ("Deleteing all holes inside a main contour\n");
+#if 0
           curc = a->contours;
           while (curc->next != NULL)
             curc = curc->next;
-
           /* Take the holes and prepend to the holes queue */
           curc->next = *holes;
           *holes = a->contours;
           a->contours = NULL;
+#endif
         }
 
         remove_polyarea (pieces, a);
@@ -2297,6 +2308,38 @@ poly_Boolean (const POLYAREA * a_org, const POLYAREA * b_org,
   return poly_Boolean_free (a, b, res, action);
 }				/* poly_Boolean */
 
+static void
+poly_stats (POLYAREA *poly, int *pieces, int *avg_holes, int *max_holes)
+{
+  POLYAREA *cur;
+  int count_holes = 0;
+  int count_all_holes = 0;
+  PLINE *cont;
+
+  *pieces = 0;
+  *max_holes = 0;
+  *avg_holes = 0;
+  if (poly == NULL)
+    return;
+
+  cur = poly;
+  do
+    {
+      (*pieces) ++;
+      count_holes = 0;
+      for (cont = cur->contours->next;
+           cont != NULL; cont = cont->next)
+	{
+          count_holes ++;
+	}
+      *max_holes = MAX (*max_holes, count_holes);
+      count_all_holes += count_holes;
+    }
+  while ((cur = cur->f) != poly);
+
+  *avg_holes = count_all_holes / *pieces;
+}
+
 /* just like poly_Boolean but frees the input polys */
 int
 poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
@@ -2306,6 +2349,16 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
   PLINE *p, *holes = NULL;
   jmp_buf e;
   int code;
+
+  int num_a_pieces = 0;
+  int num_b_pieces = 0;
+  int num_o_pieces = 0;
+  int avg_a_holes = 0;
+  int avg_b_holes = 0;
+  int avg_o_holes = 0;
+  int max_a_holes = 0;
+  int max_b_holes = 0;
+  int max_o_holes = 0;
 
   *res = NULL;
 
@@ -2347,6 +2400,9 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
       assert (poly_Valid (b));
 #endif
 
+      poly_stats (a, &num_a_pieces, &avg_a_holes, &max_a_holes);
+      poly_stats (b, &num_b_pieces, &avg_b_holes, &max_b_holes);
+
       /* intersect needs to make a list of the contours in a and b which are intersected */
       M_POLYAREA_intersect (&e, a, b, TRUE);
 
@@ -2383,6 +2439,21 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
       poly_Free (res);
       return code;
     }
+
+  poly_stats (*res, &num_o_pieces, &avg_o_holes, &max_o_holes);
+
+#if 1
+  printf ("PBO_%s, A: P: %i AH: %i MH: %i,\t"
+               "   B: P: %i AH: %i MH: %i,\t"
+               "   O: P: %i AH: %i MH: %i\n",
+              (action == PBO_ISECT) ? "ISECT" :
+               ((action == PBO_UNITE) ? "UNITE" :
+                ((action == PBO_SUB) ? "SUB" : "???")),
+               num_a_pieces, avg_a_holes, max_a_holes,
+               num_b_pieces, avg_b_holes, max_b_holes,
+               num_o_pieces, avg_o_holes, max_o_holes);
+#endif
+
   assert (!*res || poly_Valid (*res));
   return code;
 }				/* poly_Boolean_free */
