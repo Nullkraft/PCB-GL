@@ -1,5 +1,5 @@
 Bottom: d34d48aa1fa0853b5b6a0cf152a332b7ba4a5282
-Top:    ac7b2c0ca586020626ab7a89ef7e82b05d11c085
+Top:    9579a8373d964b31b2b216b2dd8ff04162b57d75
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-07 10:35:00 +0000
 
@@ -9,7 +9,7 @@ GL: Try rendering to textures for subcompositing layers
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 91fb370..ce6a891 100644
+index 91fb370..0984bef 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -27,11 +27,6 @@
@@ -44,7 +44,7 @@ index 91fb370..ce6a891 100644
    int idx = (group >= 0 && group < max_layer) ?
                PCB->LayerGroups.Entries[group][0] : group;
  
-@@ -609,17 +608,41 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -609,17 +608,47 @@ ghid_set_layer (const char *name, int group, int empty)
  
    hidgl_set_depth (compute_depth (group));
  
@@ -64,21 +64,26 @@ index 91fb370..ce6a891 100644
 +  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
 +  glBindTexture (GL_TEXTURE_2D, tex_name);
 +
++  glPushMatrix ();
++  glLoadIdentity ();
++
 +  /* Use the texture on a big quad, onto the window */
 +  glEnable (GL_TEXTURE_2D);
 +  glBegin (GL_QUADS);
 +  glColor4f (1.0f, 1.0f, 1.0f, 1.0f);
 +  glTexCoord2f (  0,   1);
-+  glVertex2f   (  0,   0);
++  glVertex2f   (  -1, -1);
 +  glTexCoord2f (  0,   0);
-+  glVertex2f   (  0, Vz (PCB->MaxHeight));
++  glVertex2f   (  -1,   1);
 +  glTexCoord2f (  1,   0);
-+  glVertex2f   (Vz (PCB->MaxWidth), Vz (PCB->MaxHeight));
++  glVertex2f   (  1,   1);
 +  glTexCoord2f (  1,   1);
-+  glVertex2f   (Vz (PCB->MaxWidth),   0);
++  glVertex2f   (  1,   -1);
 +  glEnd ();
 +  glDisable (GL_TEXTURE_2D);
 +  glBindTexture (GL_TEXTURE_2D, 0);
++
++  glPopMatrix ();
 +
 +  if ((errCode = glGetError()) != GL_NO_ERROR) {
 +      errString = gluErrorString(errCode);
@@ -86,9 +91,10 @@ index 91fb370..ce6a891 100644
 +  }
 +
 +  /* Setup for the next layer */
-+  if (group != -99)
++  if (group != -99) {
 +    glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, fbo_name);
-+  else
++    glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, tex_name, 0);
++  } else
 +    return 0;
 +
 +  if ((errCode = glGetError()) != GL_NO_ERROR) {
@@ -98,7 +104,7 @@ index 91fb370..ce6a891 100644
  
    if (idx >= 0 && idx < max_layer + 2) {
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 92c6fb9..7b47c59 100644
+index 92c6fb9..67c92b4 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -1706,13 +1706,33 @@ ghid_draw_everything (BoxTypePtr drawn_area)
@@ -148,6 +154,18 @@ index 92c6fb9..7b47c59 100644
  
    glShadeModel (GL_FLAT);
  //  glEnable(GL_POLYGON_SMOOTH);
+@@ -1759,9 +1779,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity ();
+ //  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
+-//  glOrtho (-1, 1, -1, 1, 100, 10000);
++  glOrtho (-1, 1, -1, 1, -100, 10000);
+ //  glFrustum (0, widget->allocation.width, widget->allocation.height, 0, 10, 1000);
+-  glFrustum (-1, 1, -1, 1, 10, 10000);
++//  glFrustum (-1, 1, -1, 1, 10, 10000);
+ //  gluPerspective (30, widget->allocation.width / widget->allocation.height, 10, 1000);
+   glMatrixMode (GL_MODELVIEW);
+   glLoadIdentity ();
 @@ -1780,13 +1800,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glScalef (1., 1., 1. / 3.);
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
@@ -162,7 +180,21 @@ index 92c6fb9..7b47c59 100644
    glEnable (GL_STENCIL_TEST);
    glClearColor (gport->offlimits_color.red / 65535.,
                  gport->offlimits_color.green / 65535.,
-@@ -1872,6 +1885,49 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1863,8 +1876,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+   region.Y1 = MIN (Py (min_y), Py (max_y + 1));
+   region.Y2 = MAX (Py (min_y), Py (max_y + 1));
+ 
+-  eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
+-  etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
++//  eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
++//  etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
++
++  eleft = ev->area.x; eright = ev->area.x + ev->area.width;
++  etop = ev->area.y; ebottom = ev->area.y + ev->area.height;
+ 
+   glColor3f (gport->bg_color.red / 65535.,
+              gport->bg_color.green / 65535.,
+@@ -1872,6 +1888,49 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  
    /* TODO: Background image */
  
@@ -176,8 +208,8 @@ index 92c6fb9..7b47c59 100644
 +  glTexImage2D (GL_TEXTURE_2D,
 +                0, /* Level */
 +                GL_RGBA8, /* Int. format */
-+                eright - eleft + 1, /* Width */
-+                ebottom - etop + 1, /* Height */
++                widget->allocation.width, /* Width */
++                widget->allocation.height, /* Height */
 +                0,      /* Border */
 +                GL_RGBA, /* Format */
 +                GL_INT, /* Type */
@@ -192,7 +224,7 @@ index 92c6fb9..7b47c59 100644
 +  CHECK_FRAMEBUFFER_STATUS ()
 +  glBindTexture (GL_TEXTURE_2D, 0);
 +
-+  glClearColor (1., 1., 1., 1.);
++  glClearColor (1., 1., 1., 0.);
 +  glClear (GL_COLOR_BUFFER_BIT);
 +
 +//  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
@@ -212,7 +244,7 @@ index 92c6fb9..7b47c59 100644
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
-@@ -1932,6 +1988,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1932,6 +1991,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    gui->set_layer (NULL, GetLayerGroupNumberByNumber (INDEXOFCURRENT), 0);
    gui->set_layer (NULL, SL_FINISHED, 0);
  
@@ -222,7 +254,7 @@ index 92c6fb9..7b47c59 100644
    draw_grid (&region);
  
    hidgl_init_triangle_array (&buffer);
-@@ -1948,20 +2007,15 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1948,20 +2010,15 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
@@ -247,7 +279,7 @@ index 92c6fb9..7b47c59 100644
    if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
      gdk_gl_drawable_swap_buffers (pGlDrawable);
    else
-@@ -1970,8 +2024,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1970,8 +2027,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
  
