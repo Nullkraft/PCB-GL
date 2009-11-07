@@ -1,7 +1,7 @@
-Bottom: 00775ba7106e5213125681261040f35bd399b321
-Top:    949f26b4ee537a46fa4a6d7327ca0a4460b1f1cc
+Bottom: 06d7abffc2f2ca015816900598eef7b595943cd0
+Top:    21e3f15740f29b135ee49ae5abd387b3f5933c05
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-06 17:31:39 +0000
+Date:   2009-11-07 09:53:37 +0000
 
 Off to find burried treasure on polygon island
 
@@ -39,10 +39,10 @@ index b451668..a4a3117 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index 669a100..f3a6af5 100644
+index f0d7e69..9e7fda7 100644
 --- a/src/change.c
 +++ b/src/change.c
-@@ -1107,10 +1107,12 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
+@@ -1118,10 +1118,12 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
    AddObjectToFlagUndoList (LINE_TYPE, Layer, Line, Line);
    TOGGLE_FLAG (CLEARLINEFLAG, Line);
    if (TEST_FLAG(CLEARLINEFLAG, Line))
@@ -59,7 +59,7 @@ index 669a100..f3a6af5 100644
    DrawLine (Layer, Line, 0);
    return (Line);
  }
-@@ -1155,9 +1157,11 @@ ChangeArcJoin (LayerTypePtr Layer, ArcTypePtr Arc)
+@@ -1166,9 +1168,11 @@ ChangeArcJoin (LayerTypePtr Layer, ArcTypePtr Arc)
    TOGGLE_FLAG (CLEARLINEFLAG, Arc);
    if (TEST_FLAG (CLEARLINEFLAG, Arc))
      {
@@ -72,7 +72,7 @@ index 669a100..f3a6af5 100644
    DrawArc (Layer, Arc, 0);
    return (Arc);
  }
-@@ -1201,10 +1205,12 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1212,10 +1216,12 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
    AddObjectToFlagUndoList (LINE_TYPE, Layer, Text, Text);
    TOGGLE_FLAG (CLEARLINEFLAG, Text);
    if (TEST_FLAG(CLEARLINEFLAG, Text))
@@ -89,7 +89,7 @@ index 669a100..f3a6af5 100644
    DrawText (Layer, Text, 0);
    return (Text);
  }
-@@ -1226,10 +1232,12 @@ ChangePourJoin (LayerTypePtr Layer, PourTypePtr pour)
+@@ -1237,10 +1243,12 @@ ChangePourJoin (LayerTypePtr Layer, PourTypePtr pour)
    AddObjectToFlagUndoList (LINE_TYPE, Layer, pour, pour);
    TOGGLE_FLAG (CLEARLINEFLAG, pour);
    if (TEST_FLAG(CLEARLINEFLAG, pour))
@@ -106,7 +106,7 @@ index 669a100..f3a6af5 100644
    DrawPour (Layer, pour, 0);
    return (pour);
  }
-@@ -1602,6 +1610,8 @@ ChangeHole (PinTypePtr Via)
+@@ -1613,6 +1621,8 @@ ChangeHole (PinTypePtr Via)
      {
        AddObjectTo2ndSizeUndoList (VIA_TYPE, Via, Via, Via);
        Via->DrillingHole = Via->Thickness - MIN_PINORVIACOPPER;
@@ -116,10 +116,10 @@ index 669a100..f3a6af5 100644
    DrawVia (Via, 0);
    Draw ();
 diff --git a/src/draw.c b/src/draw.c
-index 531ef40..49f011f 100644
+index 6d668e5..a81ecae 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2195,6 +2195,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2198,6 +2198,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
    if (!Polygon->Clipped)
      return;
  
@@ -131,10 +131,10 @@ index 531ef40..49f011f 100644
      {
        AddPart (Polygon);
 diff --git a/src/find.c b/src/find.c
-index 630781f..decaae3 100644
+index fe34d63..b2b1b4c 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -2568,6 +2568,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
+@@ -2569,6 +2569,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
  
    if (!Polygon->Clipped)
      return False;
@@ -142,7 +142,7 @@ index 630781f..decaae3 100644
    info.polygon = *Polygon;
    EXPAND_BOUNDS (&info.polygon);
    info.layer = LayerGroup;
-@@ -3922,6 +3923,70 @@ doIsBad:
+@@ -3920,6 +3921,70 @@ doIsBad:
  }
  
  /*-----------------------------------------------------------------------------

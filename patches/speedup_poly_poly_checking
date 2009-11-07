@@ -1,7 +1,7 @@
-Bottom: 9553566f384b1e0ac1302fb0e0c76fc2ca483651
-Top:    dc637cc9230f9f3438d9b5bfd1d0ea2b1f6e4dd3
+Bottom: 1fcdfa6a1b04b1e5d557e2924c57820786cb228d
+Top:    95b9ea9beb9d0994d6e8a3aa365df5f892bfa550
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-06 17:31:39 +0000
+Date:   2009-11-07 09:53:36 +0000
 
 Use the r_trees to avoid needing to check so many polygons all the time
 
@@ -26,7 +26,7 @@ Use the r_trees to avoid needing to check so many polygons all the time
 ---
 
 diff --git a/src/find.c b/src/find.c
-index 1b61a52..630781f 100644
+index dd49487..fe34d63 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -33,8 +33,6 @@
@@ -109,7 +109,7 @@ index 1b61a52..630781f 100644
            POUR_LOOP (LAYER_PTR (layer));
            {
              POURPOLYGON_LOOP (pour);
-@@ -2515,6 +2532,29 @@ LOCtoPolyRat_callback (const BoxType * b, void *cl)
+@@ -2516,6 +2533,29 @@ LOCtoPolyRat_callback (const BoxType * b, void *cl)
    return 0;
  }
  
@@ -139,7 +139,7 @@ index 1b61a52..630781f 100644
  
  /* ---------------------------------------------------------------------------
   * looks up LOs that are connected to the given polygon
-@@ -2550,19 +2590,12 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
+@@ -2551,19 +2591,12 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
            info.layer = layer;
  
            /* check all polygons */
