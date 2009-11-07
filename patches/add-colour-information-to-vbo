@@ -1,7 +1,7 @@
-Bottom: 2be8b6c550b06f1ce5706871391e2bae3159cfbc
-Top:    bc1094a6d4278daf0615c25977e96d9a71e3e6b8
+Bottom: e8076724844b078dd90a41efd4ab599f096ebf1a
+Top:    5362287b1fc3459daca4fd76022d169a2ed152d8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-06 16:35:19 +0000
+Date:   2009-11-07 09:56:46 +0000
 
 Add colour information to VBO
 
@@ -16,7 +16,7 @@ Add colour information to VBO
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index ebc2ce5..db2786f 100644
+index d3dfa76..ea5f5a1 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -47,6 +47,10 @@ RCSID ("$Id: $");
@@ -150,7 +150,7 @@ index ebc2ce5..db2786f 100644
            triangle_comp_idx = 0;
            stashed_vertices = 0;
          }
-@@ -755,8 +776,8 @@ void
+@@ -723,8 +744,8 @@ void
  hidgl_fill_rect (int x1, int y1, int x2, int y2)
  {
    hidgl_ensure_triangle_space (&buffer, 2);
@@ -266,10 +266,10 @@ index 1005235..89ef8a5 100644
  
  // void draw_grid ()
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 3f101be..7774900 100644
+index 4ae4931..a9e9286 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -834,8 +834,7 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -845,8 +845,7 @@ ghid_set_color (hidGC gc, const char *name)
    if( ! ghid_gui_is_up )
      return;
  
