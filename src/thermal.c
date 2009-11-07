@@ -88,43 +88,80 @@ struct cent
 };
 
 static POLYAREA *
-diag_line (LocationType X, LocationType Y, BDimension l, BDimension w,
-           Boolean rt)
+cross_poly (LocationType X, LocationType Y, BDimension l, BDimension w)
 {
   PLINE *c;
   Vector v;
-  BDimension x1, x2, y1, y2;
+  BDimension l1, l2, l3;
 
-  if (rt)
-    {
-      x1 = (l - w) * M_SQRT1_2;
-      x2 = (l + w) * M_SQRT1_2;
-      y1 = x1;
-      y2 = x2;
-    }
-  else
-    {
-      x2 = -(l - w) * M_SQRT1_2;
-      x1 = -(l + w) * M_SQRT1_2;
-      y1 = -x1;
-      y2 = -x2;
-    }
+  l1 = (l + w) * M_SQRT1_2;
+  l2 = (l - w) * M_SQRT1_2;
+  l3 = 2 * w * M_SQRT1_2;
 
-  v[0] = X + x1;
-  v[1] = Y + y2;
+  v[0] = X - l1; v[1] = Y - l2;
   if ((c = poly_NewContour (v)) == NULL)
     return NULL;
-  v[0] = X - x2;
-  v[1] = Y - y1;
+  v[0] = X - l2; v[1] = Y - l1;
   poly_InclVertex (c->head.prev, poly_CreateNode (v));
-  v[0] = X - x1;
-  v[1] = Y - y2;
+  v[0] = X     ; v[1] = Y - l3;
   poly_InclVertex (c->head.prev, poly_CreateNode (v));
-  v[0] = X + x2;
-  v[1] = Y + y1;
+  v[0] = X + l2; v[1] = Y - l1;
   poly_InclVertex (c->head.prev, poly_CreateNode (v));
+  v[0] = X + l1; v[1] = Y - l2;
+  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+  v[0] = X + l3; v[1] = Y;
+  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+  v[0] = X + l1; v[1] = Y + l2;
+  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+  v[0] = X + l2; v[1] = Y + l1;
+  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+  v[0] = X;      v[1] = Y + l3;
+  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+  v[0] = X - l2; v[1] = Y + l1;
+  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+  v[0] = X - l1; v[1] = Y + l2;
+  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+  v[0] = X - l3; v[1] = Y;
+  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+
   return ContourToPoly (c);
 }
+
+static POLYAREA *
+plus_poly (LocationType X, LocationType Y, BDimension l, BDimension w)
+{
+  PLINE *c;
+  Vector v;
+
+  v[0] = X - w;       v[1] = Y - (l + w);
+  if ((c = poly_NewContour (v)) == NULL)
+    return NULL;
+  v[0] = X + w;       v[1] = Y - (l + w);
+  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+  v[0] = X + w;       v[1] = Y - w;
+  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+  v[0] = X + (l + w); v[1] = Y - w;
+  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+  v[0] = X + (l + w); v[1] = Y + w;
+  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+  v[0] = X + w;       v[1] = Y + w;
+  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+  v[0] = X + w;       v[1] = Y + (l + w);
+  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+  v[0] = X - w;       v[1] = Y + (l + w);
+  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+  v[0] = X - w;       v[1] = Y + w;
+  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+  v[0] = X - (l + w); v[1] = Y + w;
+  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+  v[0] = X - (l + w); v[1] = Y - w;
+  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+  v[0] = X - w;       v[1] = Y - w;
+  poly_InclVertex (c->head.prev, poly_CreateNode (v));
+
+  return ContourToPoly (c);
+}
+
 
 static POLYAREA *
 square_therm (PinTypePtr pin, Cardinal style)
@@ -374,17 +411,13 @@ oct_therm (PinTypePtr pin, Cardinal style)
     {
     default:
     case 1:
-      p = diag_line (pin->X, pin->Y, w, t, True);
+      p = cross_poly (pin->X, pin->Y, w, t);
       poly_Boolean_free (m, p, &p2, PBO_SUB);
-      p = diag_line (pin->X, pin->Y, w, t, False);
-      poly_Boolean_free (p2, p, &m, PBO_SUB);
-      return m;
+      return p2;
     case 2:
-      p = RectPoly (pin->X - t, pin->X + t, pin->Y - w, pin->Y + w);
+      p = plus_poly (pin->X, pin->X, w, t);
       poly_Boolean_free (m, p, &p2, PBO_SUB);
-      p = RectPoly (pin->X - w, pin->X + w, pin->Y - t, pin->Y + t);
-      poly_Boolean_free (p2, p, &m, PBO_SUB);
-      return m;
+      return p2;
       /* fix me add thermal style 4 */
     case 5:
       {
@@ -434,18 +467,10 @@ ThermPoly (PCBTypePtr p, PinTypePtr pin, Cardinal laynum)
         poly_Boolean_free (pa, arc, &m, PBO_SUB);
         /* fix me needs error checking */
         if (style == 2)
-          {
-            pa = RectPoly (pin->X - t, pin->X + t, pin->Y - w, pin->Y + w);
-            poly_Boolean_free (m, pa, &arc, PBO_SUB);
-            pa = RectPoly (pin->X - w, pin->X + w, pin->Y - t, pin->Y + t);
-          }
+          arc = plus_poly (pin->X, pin->Y, t, w);
         else
-          {
-            pa = diag_line (pin->X, pin->Y, t, w, True);
-            poly_Boolean_free (m, pa, &arc, PBO_SUB);
-            pa = diag_line (pin->X, pin->Y, t, w, False);
-          }
-        poly_Boolean_free (arc, pa, &m, PBO_SUB);
+          arc = cross_poly (pin->X, pin->Y, t, w);
+        poly_Boolean_free (m, arc, &m, PBO_SUB);
         return m;
       }
 
