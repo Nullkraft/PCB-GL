@@ -1,7 +1,7 @@
-Bottom: 06d7abffc2f2ca015816900598eef7b595943cd0
-Top:    21e3f15740f29b135ee49ae5abd387b3f5933c05
+Bottom: 6d2d8c5e041aee1d5e77a9ccd65dcefd9909ec74
+Top:    695e05865155ac32cb12fb37c61411e82e1b11ed
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-07 09:53:37 +0000
+Date:   2009-11-07 09:56:14 +0000
 
 Off to find burried treasure on polygon island
 
@@ -39,10 +39,10 @@ index b451668..a4a3117 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index f0d7e69..9e7fda7 100644
+index 0b5f129..109fcd6 100644
 --- a/src/change.c
 +++ b/src/change.c
-@@ -1118,10 +1118,12 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
+@@ -1117,10 +1117,12 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
    AddObjectToFlagUndoList (LINE_TYPE, Layer, Line, Line);
    TOGGLE_FLAG (CLEARLINEFLAG, Line);
    if (TEST_FLAG(CLEARLINEFLAG, Line))
@@ -59,7 +59,7 @@ index f0d7e69..9e7fda7 100644
    DrawLine (Layer, Line, 0);
    return (Line);
  }
-@@ -1166,9 +1168,11 @@ ChangeArcJoin (LayerTypePtr Layer, ArcTypePtr Arc)
+@@ -1165,9 +1167,11 @@ ChangeArcJoin (LayerTypePtr Layer, ArcTypePtr Arc)
    TOGGLE_FLAG (CLEARLINEFLAG, Arc);
    if (TEST_FLAG (CLEARLINEFLAG, Arc))
      {
@@ -72,7 +72,7 @@ index f0d7e69..9e7fda7 100644
    DrawArc (Layer, Arc, 0);
    return (Arc);
  }
-@@ -1212,10 +1216,12 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1211,10 +1215,12 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
    AddObjectToFlagUndoList (LINE_TYPE, Layer, Text, Text);
    TOGGLE_FLAG (CLEARLINEFLAG, Text);
    if (TEST_FLAG(CLEARLINEFLAG, Text))
@@ -89,7 +89,7 @@ index f0d7e69..9e7fda7 100644
    DrawText (Layer, Text, 0);
    return (Text);
  }
-@@ -1237,10 +1243,12 @@ ChangePourJoin (LayerTypePtr Layer, PourTypePtr pour)
+@@ -1236,10 +1242,12 @@ ChangePourJoin (LayerTypePtr Layer, PourTypePtr pour)
    AddObjectToFlagUndoList (LINE_TYPE, Layer, pour, pour);
    TOGGLE_FLAG (CLEARLINEFLAG, pour);
    if (TEST_FLAG(CLEARLINEFLAG, pour))
@@ -106,7 +106,7 @@ index f0d7e69..9e7fda7 100644
    DrawPour (Layer, pour, 0);
    return (pour);
  }
-@@ -1613,6 +1621,8 @@ ChangeHole (PinTypePtr Via)
+@@ -1612,6 +1620,8 @@ ChangeHole (PinTypePtr Via)
      {
        AddObjectTo2ndSizeUndoList (VIA_TYPE, Via, Via, Via);
        Via->DrillingHole = Via->Thickness - MIN_PINORVIACOPPER;
