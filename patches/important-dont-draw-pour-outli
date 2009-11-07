@@ -1,7 +1,7 @@
-Bottom: 84fdaeaafea0fc6f4ae155461c946cd0a3ef06b7
+Bottom: 88cf2dbc45a62df4d1d455d8f0b9e12ae8e821e3
 Top:    88cf2dbc45a62df4d1d455d8f0b9e12ae8e821e3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-07 10:00:29 +0000
+Date:   2009-11-07 10:02:52 +0000
 
 IMPORTANT: DONT DRAW POUR OUTLINES DURING EXPORT
 
@@ -10,17 +10,4 @@ They can produce shorted boards otherwise!
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index a81ecae..989bd10 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -708,7 +708,8 @@ pour_callback (const BoxType * b, void *cl)
-   struct pin_info *i = (struct pin_info *) cl;
-   PourType *pour = (PourType *)b;
- 
--  DrawPour (i->Layer, pour, 0);
-+  if (gui->gui)
-+    DrawPour (i->Layer, pour, 0);
- 
-   if (pour->PolygonN)
-     {
+
