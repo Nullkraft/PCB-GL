@@ -585,41 +585,6 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
   free (vertices);
 }
 
-struct do_hole_info {
-  double scale;
-};
-
-static int
-do_hole (const BoxType *b, void *cl)
-{
-  struct do_hole_info *info = cl;
-  PLINE *curc = (PLINE *) b;
-  cairo_traps_t traps;
-
-  /* Ignore the outer contour - we draw it first explicitly*/
-  if (curc->Flags.orient == PLF_DIR) {
-    return 0;
-  }
-
-  /* If the contour is round, and hidgl_fill_circle would use
-   * less slices than we have vertices to draw it, then call
-   * hidgl_fill_circle to draw this contour.
-   */
-  if (curc->is_round) {
-    double slices = calc_slices (curc->radius / info->scale, 2 * M_PI);
-    if (slices < curc->Count) {
-      hidgl_fill_circle (curc->cx, curc->cy, curc->radius, info->scale);
-      return 1;
-    }
-  }
-
-  _cairo_traps_init (&traps);
-  bo_contour_to_traps (curc, &traps);
-  _cairo_traps_fini (&traps);
-
-  return 1;
-}
-
 static GLint stencil_bits;
 static int dirty_bits = 0;
 static int assigned_bits = 0;
@@ -632,10 +597,8 @@ struct polygon_cache {
 void
 hidgl_fill_pcb_polygon_nocache (PolygonType *poly, const BoxType *clip_box, double scale)
 {
-  struct do_hole_info info;
-  cairo_traps_t *traps;
+  cairo_traps_t traps;
 
-  info.scale = scale;
   global_scale = scale;
 
   if (poly->Clipped == NULL)
@@ -645,7 +608,7 @@ hidgl_fill_pcb_polygon_nocache (PolygonType *poly, const BoxType *clip_box, doub
     }
 
   _cairo_traps_init (&traps);
-  bo_poly_to_traps (poly->Clipped, traps);
+  bo_poly_to_traps (poly->Clipped, &traps);
   _cairo_traps_fini (&traps);
 }
 
