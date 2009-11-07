@@ -1,7 +1,7 @@
-Bottom: 6dc76e1d5fb700a875c0c1c380fe1f69719ecdbc
-Top:    70627e30f35762ca46cf4bc61c7503b817b8cd59
+Bottom: 7f706fbcce873a5602c083819fbf2b3775f885cb
+Top:    437274657c6a8822a511bae89408c6eddc634e0f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-10-22 15:42:37 +0100
+Date:   2009-11-07 10:16:10 +0000
 
 Attempt some GL optimisation
 
@@ -9,10 +9,10 @@ Attempt some GL optimisation
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 54c2b3b..4489da4 100644
+index 4f944f6..383bee5 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -214,7 +214,7 @@ static void draw_cap (double width, int x, int y, double angle, double scale)
+@@ -225,7 +225,7 @@ static void draw_cap (double width, int x, int y, double angle, double scale)
  void
  hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double scale)
  {
@@ -21,7 +21,7 @@ index 54c2b3b..4489da4 100644
    float deltax, deltay, length;
    float wdx, wdy;
    int circular_caps = 0;
-@@ -243,10 +243,15 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
+@@ -254,10 +254,15 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
      wdy = deltax * width / 2. / length;
      wdx = -deltay * width / 2. / length;
  
@@ -41,10 +41,10 @@ index 54c2b3b..4489da4 100644
      if (deltay < 0)
        angle += 180.;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 17351fd..f17762c 100644
+index 0517d96..92c6fb9 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1681,6 +1681,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1745,6 +1745,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
