@@ -1,7 +1,7 @@
-Bottom: 4b019a99ec150531d107c14ca59d8f3976157c5d
-Top:    61958208dded08c85202bd0f54c0b72dfbe9053a
+Bottom: 1f946dd1682cb18777f196a43b2683da953fa451
+Top:    0aeff15f7b4556837a43b8cac3249f27cdce644e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-07 10:20:39 +0000
+Date:   2009-11-07 10:34:59 +0000
 
 Debug polygon stuff
 
@@ -39,7 +39,7 @@ index 2f82405..9669e91 100644
    return 1;
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 67f5665..f6da13f 100644
+index abad25a..553b2d6 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -105,7 +105,7 @@ if (UNLIKELY (((ptr) = malloc(sizeof(type))) == NULL)) \
@@ -51,7 +51,7 @@ index 67f5665..f6da13f 100644
  #ifdef DEBUG
  #define DEBUGP(...) fprintf(stderr, ## __VA_ARGS__)
  #else
-@@ -2499,10 +2499,15 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
+@@ -2501,10 +2501,15 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
      {
  
  #ifdef DEBUG
@@ -69,7 +69,7 @@ index 67f5665..f6da13f 100644
  #endif
        M_POLYAREA_intersect (&e, a, b, TRUE);
  
-@@ -3148,12 +3153,14 @@ poly_Valid (POLYAREA * p)
+@@ -3150,12 +3155,14 @@ poly_Valid (POLYAREA * p)
  {
    PLINE *c;
  
@@ -86,7 +86,7 @@ index 67f5665..f6da13f 100644
        VNODE *v;
        DEBUGP ("Invalid Outer PLINE\n");
        if (p->contours->Flags.orient == PLF_INV)
-@@ -3167,7 +3174,7 @@ poly_Valid (POLYAREA * p)
+@@ -3169,7 +3176,7 @@ poly_Valid (POLYAREA * p)
  	  fprintf (stderr, "Line [%d %d ", v->point[0], v->point[1]);
  	}
        while ((v = v->next) != &p->contours->head);
@@ -95,7 +95,7 @@ index 67f5665..f6da13f 100644
        return FALSE;
      }
    for (c = p->contours->next; c != NULL; c = c->next)
-@@ -3175,7 +3182,7 @@ poly_Valid (POLYAREA * p)
+@@ -3177,7 +3184,7 @@ poly_Valid (POLYAREA * p)
        if (c->Flags.orient == PLF_DIR ||
  	  poly_ChkContour (c) || !poly_ContourInContour (p->contours, c))
  	{
@@ -104,7 +104,7 @@ index 67f5665..f6da13f 100644
  	  VNODE *v;
  	  DEBUGP ("Invalid Inner PLINE orient = %d\n", c->Flags.orient);
  	  if (c->Flags.orient == PLF_DIR)
-@@ -3192,7 +3199,7 @@ poly_Valid (POLYAREA * p)
+@@ -3194,7 +3201,7 @@ poly_Valid (POLYAREA * p)
  	      fprintf (stderr, "Line [%d %d ", v->point[0], v->point[1]);
  	    }
  	  while ((v = v->next) != &c->head);
