@@ -763,6 +763,8 @@ SubtractPad (PadType * pad, PolygonType * p)
 {
   POLYAREA *np = NULL;
 
+  if (pad->Clearance == 0)
+    return 0;
   if (TEST_FLAG (SQUAREFLAG, pad))
     {
       if (!
@@ -863,6 +865,8 @@ pad_sub_callback (const BoxType * b, void *cl)
 
   /* don't subtract the object that was put back! */
   if (b == info->other)
+    return 0;
+  if (pad->Clearance == 0)
     return 0;
   polygon = info->polygon;
   if (XOR (TEST_FLAG (ONSOLDERFLAG, pad), !info->solder))
