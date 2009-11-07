@@ -1,0 +1,23 @@
+Bottom: b133f392278208f13d214f109850a01cb0c249fc
+Top:    7f65405d39cff8c832fa9d06e57fd40af6a9098e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-07 10:00:25 +0000
+
+Refresh of add-support-for-a-poured-objec
+
+---
+
+diff --git a/src/pour.c b/src/pour.c
+index 48f1aae..84fb231 100644
+--- a/src/pour.c
++++ b/src/pour.c
+@@ -424,6 +424,9 @@ get_subtract_pad_poly (PadType * pad, PourType * pour)
+ {
+   POLYAREA *np;
+ 
++  if (pad->Clearance == 0)
++    return NULL;
++
+   if (TEST_FLAG (SQUAREFLAG, pad))
+     np = SquarePadPoly (pad, pad->Thickness + pad->Clearance);
+   else
