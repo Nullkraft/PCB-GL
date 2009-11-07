@@ -845,6 +845,14 @@ ghid_progress (int so_far, int total, const char *message)
           pd->response_id == GTK_RESPONSE_DELETE_EVENT) ? 1 : 0;
 }
 
+static void
+ghid_free_polygon_cache (PolygonType *poly)
+{
+  printf ("FIXME: Should free cached polygon data\n");
+  free (poly->gui_cache);
+  poly->gui_cache_valid = 0;
+}
+
 /* ---------------------------------------------------------------------- */
 
 
@@ -2180,6 +2188,7 @@ hid_gtk_init ()
 
   ghid_hid.notify_save_pcb          = ghid_notify_save_pcb;
   ghid_hid.notify_filename_changed  = ghid_notify_filename_changed;
+  ghid_hid.free_polygon_cache       = ghid_free_polygon_cache,
 
   ghid_hid.graphics                 = &ghid_graphics;
 
