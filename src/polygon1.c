@@ -83,14 +83,8 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
 /* note that a vertex v's Flags.status represents the edge defined by
  * v to v->next (i.e. the edge is forward of v)
  */
-#define ISECTED 3
-#define UNKNWN  0
-#define INSIDE  1
-#define OUTSIDE 2
-#define SHARED 3
-#define SHARED2 4
 
-#define TOUCHES 99
+#include "polygon-priv.h"
 
 #define NODE_LABEL(n)  ((n)->Flags.status)
 #define LABEL_NODE(n,l) ((n)->Flags.status = (l))
@@ -200,11 +194,6 @@ node_add_single (VNODE * dest, Vector po)
   p->Flags.status = UNKNWN;
   return p;
 }				/* node_add */
-
-#define ISECT_BAD_PARAM (-1)
-#define ISECT_NO_MEMORY (-2)
-
-
 /*
 new_descriptor
   (C) 2006 harry eaton
@@ -535,14 +524,6 @@ cntrbox_adjust (PLINE * c, Vector p)
 
 /* some structures for handling segment intersections using the rtrees */
 
-typedef struct seg
-{
-  BoxType box;
-  VNODE *v;
-  PLINE *p;
-  int intersected;
-} seg;
-
 typedef struct insert_task
 {
   VNODE *new_node;
@@ -755,6 +736,25 @@ get_seg (const BoxType * b, void *cl)
     }
   return 0;
 }
+
+struct seg *
+lookup_seg (PLINE *contour, VNODE *vertex)
+{
+  struct info info;
+  BoxType box;
+
+  info.v = vertex;
+  box.X2 = (box.X1 = vertex->point[0]) + 1;
+  box.Y2 = (box.Y1 = vertex->point[1]) + 1;
+  /* fill in the segment in info corresponding to this node */
+  if (setjmp (info.sego) == 0)
+    {
+      r_search_1 (contour->tree, &box, NULL, get_seg, &info);
+      assert (0);
+    }
+  return info.s;
+}
+
 
 /*
  * intersect() (and helpers)
@@ -983,15 +983,21 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
 	      a->contours->xmin <= b->contours->xmax &&
 	      a->contours->ymin <= b->contours->ymax)
 	    {
+#if 1
               if (!add)
                 {
-                  if (UNLIKELY (intersect (e, a, b, add)))
+                  if (UNLIKELY (intersect (e, a, b, add))) {
+                    printf ("is_enom\n");
                     error (err_no_memory);
+                  }
                 }
               else
+#endif
                 {
-                  if (UNLIKELY (bo_intersect (e, a, b)))
+                  if (UNLIKELY (bo_intersect (e, a, b))) {
+                    printf ("bo_is_enom\n");
                     error (err_no_memory);
+                  }
                 }
 	    }
 	}
@@ -1000,8 +1006,10 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
 	if (curcB->Flags.status == ISECTED)
 	  {
 	    the_list = add_descriptors (curcB, 'B', the_list);
-	    if (UNLIKELY (the_list == NULL))
+	    if (UNLIKELY (the_list == NULL)) {
+              printf ("add_desc\n");
 	      error (err_no_memory);
+            }
 	  }
     }
   while (add && (b = b->f) != bfst);
@@ -1011,8 +1019,10 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
 	if (curcA->Flags.status == ISECTED)
 	  {
 	    the_list = add_descriptors (curcA, 'A', the_list);
-	    if (UNLIKELY (the_list == NULL))
+	    if (UNLIKELY (the_list == NULL)) {
+              printf ("add_desc2\n");
 	      error (err_no_memory);
+            }
 	  }
     }
   while (add && (a = a->f) != afst);
