@@ -98,12 +98,13 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
 if (UNLIKELY (((ptr) = malloc(sizeof(type))) == NULL)) \
     error(err_no_memory);
 
+//#define DEBUG_LABEL
 #undef DEBUG_LABEL
 #undef DEBUG_ALL_LABELS
 #undef DEBUG_JUMP
 #undef DEBUG_GATHER
 #undef DEBUG_ANGLE
-#undef DEBUG
+#define DEBUG
 #ifdef DEBUG
 #define DEBUGP(...) fprintf(stderr, ## __VA_ARGS__)
 #else
@@ -460,12 +461,12 @@ node_label (VNODE * pn)
 	    v = l->parent;
 	  if (NODE_LABEL (v) != SHARED && NODE_LABEL (v) != SHARED2)
 	    {
-#ifdef DEBUG_LABEL
+//#ifdef DEBUG_LABEL
 	      /* debugging */
 	      if (NODE_LABEL (v) != UNKNWN && NODE_LABEL (v) != region)
 		{
 		  CVCList *x = l;
-		  LABEL_NODE (v, region);
+//		  LABEL_NODE (v, region);
 		  pline_dump (v);
 		  do
 		    {
@@ -474,7 +475,7 @@ node_label (VNODE * pn)
 		    }
 		  while ((x = x->next) != l);
 		}
-#endif
+//#endif
 	      assert (NODE_LABEL (v) == UNKNWN || NODE_LABEL (v) == region);
 	      LABEL_NODE (v, region);
 	    }
