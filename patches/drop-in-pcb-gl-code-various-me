@@ -1,7 +1,7 @@
-Bottom: 2e755fd2f6344b89905cc5538ac594bb65473c55
-Top:    3ddd18b9faa6b6cafd206c31f8355bb83a44838a
+Bottom: 6b18f35578bd4f0d8e81ad4dd4d9d37aefeb89c7
+Top:    c526ec9db4c9979fb0319a2b6996229f44b2f16c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-06 16:57:48 +0000
+Date:   2009-11-10 17:12:09 +0000
 
 Drop in PCB+GL code + various mess. Needs splitting up
 
@@ -2449,7 +2449,7 @@ index b24e6c9..4caddf2 100644
    gport->width = save_width;
    gport->height = save_height;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index b950a25..4a52baa 100644
+index 69e1909..63615c4 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2296,6 +2296,11 @@ ghid_build_pcb_top_window (void)

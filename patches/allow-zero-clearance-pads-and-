@@ -1,7 +1,7 @@
-Bottom: 8015345655c3637778448ee74cf642b29ce12868
-Top:    e017bba324d76b88d2681c6ca77793e075c7616c
+Bottom: 7ba0685e7a10fcdcbcaaf84c1e3a74eb9b6e1a6a
+Top:    d76efaf70a63c95b36e280145249e139f1702731
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-07 09:30:22 +0000
+Date:   2009-11-10 17:12:22 +0000
 
 Allow zero clearance pads and pins to touch polygons
 
@@ -139,7 +139,7 @@ index 6e81d29..c747b8f 100644
            AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
            SET_FLAG (TheFlag, pin);
 diff --git a/src/polygon.c b/src/polygon.c
-index 95704bb..6d77df6 100644
+index 451383b..c1784e0 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -763,6 +763,8 @@ SubtractPad (PadType * pad, PolygonType * p)

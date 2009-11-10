@@ -1,7 +1,7 @@
-Bottom: 1353f8cabb9d7aef22551f991f97fd5d83b59361
-Top:    ca034ec8341463fdbcc621543baf3e74177e5b18
+Bottom: 1d2364e95357e8b4ee3c459b460422012a7111b1
+Top:    e676e7f531145310f2a9674b0e4dab608ee06ca1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-06 16:57:51 +0000
+Date:   2009-11-10 17:12:13 +0000
 
 Work in progress on subcompositing / stencil buffers
 
@@ -624,7 +624,7 @@ index 4caddf2..faa09fe 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 4a52baa..e598bdf 100644
+index 63615c4..abb2ee1 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2669,6 +2669,7 @@ ghid_parse_arguments (int *argc, char ***argv)

@@ -1,7 +1,7 @@
-Bottom: f46d17766b7b7e2eb78e6035ccf7c93692e83719
-Top:    f57b77c065d7986a95960819ff1be13b74042f28
+Bottom: 8467f2e4696a9e83595bfecc319afe289cc93b90
+Top:    6f055b21c8f3b18418dd5d44879d4e65eee64be2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-06 17:16:52 +0000
+Date:   2009-11-10 17:12:17 +0000
 
 Tag circular contours so they can be drawn quicker
 
@@ -88,7 +88,7 @@ index 50dda4a..ce427ad 100644
        unsigned int status:3;
        unsigned int orient:1;
 diff --git a/src/polygon.c b/src/polygon.c
-index a0d0bef..0a86fa4 100644
+index 1fbfc34..4a4f48c 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -351,6 +351,10 @@ CirclePoly (LocationType x, LocationType y, BDimension radius)
@@ -103,10 +103,10 @@ index a0d0bef..0a86fa4 100644
  }
  
 diff --git a/src/polygon1.c b/src/polygon1.c
-index f18df09..3f79746 100644
+index 6f20dc4..35400a8 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2515,6 +2515,10 @@ poly_IniContour (PLINE * c)
+@@ -2519,6 +2519,10 @@ poly_IniContour (PLINE * c)
    c->head.next = c->head.prev = &c->head;
    c->xmin = c->ymin = 0x7fffffff;
    c->xmax = c->ymax = 0x80000000;
