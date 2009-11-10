@@ -388,6 +388,7 @@ node_label (VNODE * pn)
   char this_poly;
   int region = UNKNWN;
   static int one_shot = 1;
+  int extra_debug = 0;
 
   assert (pn);
   assert (pn->cvc_prev);
@@ -400,6 +401,13 @@ node_label (VNODE * pn)
 #ifdef DEBUG_LABEL
   DEBUGP ("CVCLIST for point (%d,%d)\n", pn->point[0], pn->point[1]);
 #endif
+  if (pn->point[0] == 39173 &&
+      pn->point[1] == 40200)
+    extra_debug = 1;
+
+  if (extra_debug)
+    DEBUGP ("Extra debugging\n");
+
   /* first find whether we're starting inside or outside */
   for (l = pn->cvc_prev->prev; l != pn->cvc_prev; l = l->prev)
     {
@@ -418,6 +426,24 @@ node_label (VNODE * pn)
 #ifdef DEBUG_LABEL
       DEBUGP ("  poly %c side %c angle = %g\n", l->poly, l->side, l->angle);
 #endif
+      if (extra_debug) {
+        if (l->side == 'P') {
+          DEBUGP ("(%d, %d)-(%d, %d)\n", l->parent->prev->point[0],
+                                         l->parent->prev->point[1],
+                                         l->parent->point[0],
+                                         l->parent->point[1]);
+//          if (l->parent->prev->cvc_prev == NULL)
+          if (l->parent->cvc_prev == NULL)
+            DEBUGP ("WTF, NO CVC LISTED?\n");
+        } else {
+          DEBUGP ("(%d, %d)-(%d, %d)\n", l->parent->point[0],
+                                         l->parent->point[1],
+                                         l->parent->next->point[0],
+                                         l->parent->next->point[1]);
+          if (l->parent->cvc_prev == NULL)
+            DEBUGP ("WTF, NO CVC LISTED?\n");
+        }
+      }
       if (l->poly != this_poly)
 	{
 	  if (l->side == 'P')
@@ -1006,31 +1032,51 @@ static BOOLp
 label_contour (PLINE * a)
 {
   VNODE *cur = &a->head;
-  int did_label = FALSE, label = UNKNWN;
+  VNODE *last_unknown = cur;
+  VNODE *first_not_unknown = NULL;
+  int label = UNKNWN;
 
   do
     {
-      if (cur == &a->head)
-	did_label = FALSE;
+      if (cur->cvc_next)	/* _always_ examine cross vertex */
+        {
+          label = node_label (cur);
+          if (first_not_unknown == NULL)
+            first_not_unknown = cur;
+          continue;
+        }
+
       if (NODE_LABEL (cur) != UNKNWN)
-	{
-	  label = NODE_LABEL (cur);
-	  continue;
-	}
-      if (cur->cvc_next)	/* examine cross vertex */
-	{
-	  label = node_label (cur);
-	  did_label = TRUE;
-	}
-      else if (label == INSIDE || label == OUTSIDE)
-	{
-	  LABEL_NODE (cur, label);
-          if (cur->point[0] == 39173 && cur->point[1] == 40200 && label == OUTSIDE)
-            DEBUGP ("IS IT HERE WHERE WE MIS-LABEL THE VERTEX 2?\n");
-	  did_label = TRUE;
-	}
+        {
+          /* This might get hit if the last cross vertex labelling
+           * pass was a bit keen, and labeled past its own edges?
+           */
+          label = NODE_LABEL (cur);
+          continue;
+        }
+
+      if (label == INSIDE || label == OUTSIDE)
+        {
+          /* This labels nodes which aren't cross-connected */
+          LABEL_NODE (cur, label);
+          continue;
+        }
+
+      /* The node we are at is UNKNWN, and we haven't yet got
+       * an answer as to how its predecessors were labeled.
+       * We update the last_unknown pointer to ensure we get
+       * back to this node after the circular linked list
+       * loops around
+       */
+//      last_unknown = cur;
     }
-  while ((cur = cur->next) != &a->head || did_label);
+  while ((cur = cur->next) != first_not_unknown);
+//  while ((cur = cur->next) != last_unknown);
+//  while ((cur = cur->next) != &a->head || did_label);
+  if (NODE_LABEL (cur) == UNKNWN)
+    {
+      fprintf (stderr, "----- WHOOPS ------*\n");
+    }
 #ifdef DEBUG_ALL_LABELS
   print_labels (a);
   DEBUGP ("\n\n");
