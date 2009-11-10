@@ -99,17 +99,15 @@ if (UNLIKELY (((ptr) = malloc(sizeof(type))) == NULL)) \
     error(err_no_memory);
 
 #undef DEBUG_LABEL
-//#define DEBUG_LABEL
 #undef DEBUG_ALL_LABELS
 #undef DEBUG_JUMP
 #undef DEBUG_GATHER
 #undef DEBUG_ANGLE
 #undef DEBUG
-//#define DEBUG
 #ifdef DEBUG
 #define DEBUGP(...) fprintf(stderr, ## __VA_ARGS__)
 #else
-#define DEBUGP(...) (void)0;
+#define DEBUGP(...)
 #endif
 
 /* ///////////////////////////////////////////////////////////////////////////// * /
@@ -387,8 +385,6 @@ node_label (VNODE * pn)
   CVCList *l;
   char this_poly;
   int region = UNKNWN;
-  static int one_shot = 1;
-  int extra_debug = 0;
 
   assert (pn);
   assert (pn->cvc_prev);
@@ -401,13 +397,6 @@ node_label (VNODE * pn)
 #ifdef DEBUG_LABEL
   DEBUGP ("CVCLIST for point (%d,%d)\n", pn->point[0], pn->point[1]);
 #endif
-  if (pn->point[0] == 39173 &&
-      pn->point[1] == 40200)
-    extra_debug = 1;
-
-  if (extra_debug)
-    DEBUGP ("Extra debugging\n");
-
   /* first find whether we're starting inside or outside */
   for (l = pn->cvc_prev->prev; l != pn->cvc_prev; l = l->prev)
     {
@@ -426,24 +415,6 @@ node_label (VNODE * pn)
 #ifdef DEBUG_LABEL
       DEBUGP ("  poly %c side %c angle = %g\n", l->poly, l->side, l->angle);
 #endif
-      if (extra_debug) {
-        if (l->side == 'P') {
-          DEBUGP ("(%d, %d)-(%d, %d)\n", l->parent->prev->point[0],
-                                         l->parent->prev->point[1],
-                                         l->parent->point[0],
-                                         l->parent->point[1]);
-//          if (l->parent->prev->cvc_prev == NULL)
-          if (l->parent->cvc_prev == NULL)
-            DEBUGP ("WTF, NO CVC LISTED?\n");
-        } else {
-          DEBUGP ("(%d, %d)-(%d, %d)\n", l->parent->point[0],
-                                         l->parent->point[1],
-                                         l->parent->next->point[0],
-                                         l->parent->next->point[1]);
-          if (l->parent->cvc_prev == NULL)
-            DEBUGP ("WTF, NO CVC LISTED?\n");
-        }
-      }
       if (l->poly != this_poly)
 	{
 	  if (l->side == 'P')
@@ -453,14 +424,12 @@ node_label (VNODE * pn)
 		  l->parent->prev->point[1] == pn->prev->point[1])
 		{
 		  LABEL_NODE (pn->prev, SHARED);	/* incoming is shared */
-                  DEBUGP ("Labelling node pn->prev as SHARED\n");
 		  pn->prev->shared = l->parent->prev;
 		}
 	      else if (l->parent->prev->point[0] == pn->next->point[0] &&
 		       l->parent->prev->point[1] == pn->next->point[1])
 		{
 		  LABEL_NODE (pn, SHARED2);	/* outgoing is shared2 */
-                  DEBUGP ("Labelling node pn as SHARED2\n");
 		  pn->shared = l->parent->prev;
 		}
 	    }
@@ -472,13 +441,11 @@ node_label (VNODE * pn)
 		{
 		  LABEL_NODE (pn, SHARED);
 		  pn->shared = l->parent;
-                  DEBUGP ("Labelling node pn as SHARED\n");
 		}
 	      else if (l->parent->next->point[0] == pn->prev->point[0] &&
 		       l->parent->next->point[1] == pn->prev->point[1])
 		{
 		  LABEL_NODE (pn->prev, SHARED2);	/* outgoing is shared2 */
-                  DEBUGP ("Labelling node pn->prev as SHARED2\n");
 		  pn->prev->shared = l->parent;
 		}
 	    }
@@ -486,13 +453,10 @@ node_label (VNODE * pn)
       else
 	{
 	  VNODE *v;
-	  if (l->side == 'P') {
+	  if (l->side == 'P')
 	    v = l->parent->prev;
-            DEBUGP ("v is l->parent->prev\n");
-          } else {
+	  else
 	    v = l->parent;
-            DEBUGP ("v is l->parent\n");
-          }
 	  if (NODE_LABEL (v) != SHARED && NODE_LABEL (v) != SHARED2)
 	    {
 #ifdef DEBUG_LABEL
@@ -500,7 +464,7 @@ node_label (VNODE * pn)
 	      if (NODE_LABEL (v) != UNKNWN && NODE_LABEL (v) != region)
 		{
 		  CVCList *x = l;
-//		  LABEL_NODE (v, region);
+		  LABEL_NODE (v, region);
 		  pline_dump (v);
 		  do
 		    {
@@ -511,17 +475,7 @@ node_label (VNODE * pn)
 		}
 #endif
 	      assert (NODE_LABEL (v) == UNKNWN || NODE_LABEL (v) == region);
-              if (v->point[0] == 39173 && v->point[1] == 40200 && region == OUTSIDE) {
-                DEBUGP ("IS IT HERE WHERE WE MIS-LABEL THE VERTEX?\n");
-//                if (one_shot)
-                  LABEL_NODE (v, region);
-                  DEBUGP ("Labelling node v as %s\n", theState (v));
-//                  LABEL_NODE (v, SHARED);
-                one_shot = 0;
-              } else {
-	        LABEL_NODE (v, region);
-                DEBUGP ("Labelling node v as %s\n", theState (v));
-              }
+	      LABEL_NODE (v, region);
 	    }
 	}
     }
@@ -1032,7 +986,6 @@ static BOOLp
 label_contour (PLINE * a)
 {
   VNODE *cur = &a->head;
-  VNODE *last_unknown = cur;
   VNODE *first_not_unknown = NULL;
   int label = UNKNWN;
 
@@ -1061,22 +1014,8 @@ label_contour (PLINE * a)
           LABEL_NODE (cur, label);
           continue;
         }
-
-      /* The node we are at is UNKNWN, and we haven't yet got
-       * an answer as to how its predecessors were labeled.
-       * We update the last_unknown pointer to ensure we get
-       * back to this node after the circular linked list
-       * loops around
-       */
-//      last_unknown = cur;
     }
   while ((cur = cur->next) != first_not_unknown);
-//  while ((cur = cur->next) != last_unknown);
-//  while ((cur = cur->next) != &a->head || did_label);
-  if (NODE_LABEL (cur) == UNKNWN)
-    {
-      fprintf (stderr, "----- WHOOPS ------*\n");
-    }
 #ifdef DEBUG_ALL_LABELS
   print_labels (a);
   DEBUGP ("\n\n");
@@ -1848,8 +1787,6 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
   *aandb = NULL;
   *aminusb = NULL;
 
-  DEBUGP ("******** poly_AndSubtract_free ********\n");
-
   if ((code = setjmp (e)) == 0)
     {
 
@@ -1859,42 +1796,6 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
       if (!poly_Valid (b))
 	return -1;
 #endif
-
-#ifdef DEBUG
-      {
-        POLYAREA *dbg = a;
-        POLYAREA *start = dbg;
-        int piece = 0;
-        DEBUGP ("INPUT POLYGON A:\n");
-        do {
-          PLINE *contour = dbg->contours;
-          int outer = 1;
-          DEBUGP ("PIECE %i\n", ++piece);
-          do {
-            DEBUGP ("%s CONTOUR\n", outer ? "OUTER" : "INNER");
-            pline_dump (&contour->head);
-            outer = 0;
-          } while ((contour = contour->next) != NULL);
-        } while ((dbg = dbg->f) != start);
-      }
-      {
-        POLYAREA *dbg = b;
-        POLYAREA *start = dbg;
-        int piece = 0;
-        DEBUGP ("INPUT POLYGON B:\n");
-        do {
-          PLINE *contour = dbg->contours;
-          int outer = 1;
-          DEBUGP ("PIECE %i\n", ++piece);
-          do {
-            DEBUGP ("%s CONTOUR\n", outer ? "OUTER" : "INNER");
-            pline_dump (&contour->head);
-            outer = 0;
-          } while ((contour = contour->next) != NULL);
-        } while ((dbg = dbg->f) != start);
-      }
-#endif
-
       M_POLYAREA_intersect (&e, a, b, TRUE);
 
       M_POLYAREA_label (a, b, FALSE);
@@ -1917,41 +1818,6 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
       poly_Free (&a);
       poly_Free (&b);
       assert (poly_Valid (*aminusb));
-#ifdef DEBUG
-      {
-        POLYAREA *dbg = *aandb;
-        POLYAREA *start = dbg;
-        int piece = 0;
-        DEBUGP ("OUTPUT A AND B:\n");
-        do {
-          PLINE *contour = dbg->contours;
-          int outer = 1;
-          DEBUGP ("PIECE %i\n", ++piece);
-          do {
-            DEBUGP ("%s CONTOUR\n", outer ? "OUTER" : "INNER");
-            pline_dump (&contour->head);
-            outer = 0;
-          } while ((contour = contour->next) != NULL);
-        } while ((dbg = dbg->f) != start);
-      }
-      {
-        POLYAREA *dbg = *aminusb;
-        POLYAREA *start = dbg;
-        int piece = 0;
-        DEBUGP ("OUTPUT A MINUS B:\n");
-        do {
-          PLINE *contour = dbg->contours;
-          int outer = 1;
-          DEBUGP ("PIECE %i\n", ++piece);
-          do {
-            DEBUGP ("%s CONTOUR\n", outer ? "OUTER" : "INNER");
-            pline_dump (&contour->head);
-            outer = 0;
-          } while ((contour = contour->next) != NULL);
-        } while ((dbg = dbg->f) != start);
-      }
-#endif
-
     }
   /* delete holes if any left */
   while ((p = holes) != NULL)
