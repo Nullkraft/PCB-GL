@@ -1362,6 +1362,8 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
             }
 
             /* We need to find the contour before it, so we can update its next pointer */
+            printf ("Found inside??\n");
+//            exit (0);
             prev = container;
             while (prev->next != info.result) {
               prev = prev->next;
