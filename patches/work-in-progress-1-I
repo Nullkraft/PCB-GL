@@ -1,15 +1,180 @@
 Bottom: 86a7a488ef728707b3445ca4e24d84e733c87773
-Top:    35fe52cdd9a2e667196edf15d34caf9c6cd652ef
+Top:    477b6b0e707b15c95f6b1c49efd60fcb6da341eb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-11 16:38:51 +0000
+Date:   2009-11-11 16:39:41 +0000
 
-Undo
-
+Work in progress
 
 ---
 
+diff --git a/src/cairo/cairo-bentley-ottmann.c b/src/cairo/cairo-bentley-ottmann.c
+index b7156b9..56d22c1 100644
+--- a/src/cairo/cairo-bentley-ottmann.c
++++ b/src/cairo/cairo-bentley-ottmann.c
+@@ -1425,7 +1425,7 @@ _add_result_edge (cairo_array_t *array,
+     return CAIRO_STATUS_SUCCESS;
+ }
+ 
+-static void do_intersect (cairo_bo_edge_t *e1, cairo_bo_edge_t *e2, cairo_point_t point);
++static int do_intersect (cairo_bo_edge_t *e1, cairo_bo_edge_t *e2, cairo_point_t point);
+ 
+ /* Execute a single pass of the Bentley-Ottmann algorithm on edges,
+  * generating trapezoids according to the fill_rule and appending them
+@@ -1434,7 +1434,8 @@ static cairo_status_t
+ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+                                             int                  num_events,
+                                             cairo_traps_t       *traps,
+-                                            int                 *num_intersections)
++                                            int                 *num_intersections,
++                                            int                 *num_new_nodes)
+ {
+     cairo_status_t status = CAIRO_STATUS_SUCCESS; /* silence compiler */
+     int intersection_count = 0;
+@@ -1443,6 +1444,7 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+     cairo_bo_event_t *event;
+     cairo_bo_edge_t *left, *right;
+     cairo_bo_edge_t *e1, *e2;
++    int new_nodes = 0;
+ 
+ #if DEBUG_EVENTS
+     {
+@@ -1587,7 +1589,7 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+ #endif
+             intersection_count++;
+ 
+-            do_intersect (e1, e2, event->point);
++            new_nodes += do_intersect (e1, e2, event->point);
+ 
+             {
+                 cairo_edge_t intersected;
+@@ -1638,6 +1640,7 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+     }
+ 
+     *num_intersections = intersection_count;
++    *num_new_nodes = new_nodes;
+  unwind:
+     _cairo_bo_event_queue_fini (&event_queue);
+ 
+@@ -2095,6 +2098,7 @@ bentley_ottmann_intersect_segments (GList *data)
+     cairo_bo_event_t **event_ptrs;
+     int num_events;
+     int i;
++    int num_new_nodes;
+     cairo_traps_t *traps = NULL;
+     GList *iter;
+ 
+@@ -2147,7 +2151,8 @@ bentley_ottmann_intersect_segments (GList *data)
+     status = _cairo_bentley_ottmann_tessellate_bo_edges (event_ptrs,
+                                                          num_events,
+                                                          traps,
+-                                                         &intersections);
++                                                         &intersections,
++                                                         &num_new_nodes);
+ #if DEBUG_TRAPS
+     dump_traps (traps, "bo-polygon-out.txt");
+ #endif
+@@ -2339,29 +2344,15 @@ node_add_single_point (VNODE *inp_node, cairo_point_t p)
+ }				/* node_add_point */
+ 
+ 
+-static void
++static int
+ do_intersect (cairo_bo_edge_t *e1, cairo_bo_edge_t *e2, cairo_point_t point)
+ {
+   VNODE *new_node;
+-
+-  // i->s is some seg from the edge tree, pointing to v (and corresponds to one of the intersected items)
+-  // s is some other seg the item hit.
+-  // Need to know the VNODE of the segment (VNODE)-----(VNODE->next) and the PLINE they belong to.
+-
+-//  cnt = vect_inters2 (e2->v->point, e2->v->next->point,
+-//                      e1->v->point, e1->v->next->point, s1, s2);
+-
+-  // cnt == 0: No intersection (error)
+-  // cnt == 1: Intersection, s1 gives the intersection point
+-  // cnt == 2: (GUESS) Lines coincident: -----X======x----
+-  //                                          ^_s1   ^_s2
+-
+-  // BUT: We know our _single_ intersection is passed as (point.x,point.y) - so why bother?
+-  // Just need to check that intersection isn't with one of our existing vertex end-points?
++  int count = 0;
+ 
+   if (e1->p == e2->p) {
+ //    printf ("do_intersect: SAME CONTOUR\n");
+-    return;
++    return 0;
+   }
+ 
+ //  printf ("do_intersect: ");
+@@ -2373,9 +2364,10 @@ do_intersect (cairo_bo_edge_t *e1, cairo_bo_edge_t *e2, cairo_point_t point)
+   /* adjust the bounding box and tree if necessary */
+   if (new_node != NULL) {
+ //    printf ("1 ");
++    count ++;
+     e1->p->Count ++; /* ??? */
+     cntrbox_adjust (e1->p, point);
+-    if (adjust_tree (e1->p, e1->v)) return; /* error */
++    if (adjust_tree (e1->p, e1->v)) return 0; /* error */
+     /* Need to decide whether the new piece, or the old piece is
+        going to continue seeing "action" in the sweepline algorithm */
+     if (new_node->point[1] > e1->v->point[1]) {
+@@ -2389,9 +2381,10 @@ do_intersect (cairo_bo_edge_t *e1, cairo_bo_edge_t *e2, cairo_point_t point)
+   new_node = node_add_single_point (e2->v, point);
+   if (new_node != NULL) {
+ //    printf ("2");
++    count ++;
+     e2->p->Count ++; /* ??? */
+     cntrbox_adjust (e2->p, point);
+-    if (adjust_tree (e2->p, e2->v)) return /*1*/;
++    if (adjust_tree (e2->p, e2->v)) return 0; /* error */
+     if (new_node->point[1] > e2->v->point[1]) {
+       e2->v = new_node;
+     } else if (new_node->point[1] == e2->v->point[1]) {
+@@ -2400,7 +2393,7 @@ do_intersect (cairo_bo_edge_t *e1, cairo_bo_edge_t *e2, cairo_point_t point)
+     }
+   }
+ //  printf ("\n");
+-  return;
++  return count;
+ }
+ 
+ 
+@@ -2427,7 +2420,7 @@ poly_area_to_start_events (POLYAREA                *poly,
+           /* Node is between bv->point[0,1] and bv->next->point[0,1] */
+ 
+           /* HACK TEST: */
+-//        bv->cvc_prev = bv->cvc_next = NULL;
++        bv->cvc_prev = bv->cvc_next = NULL;
+ //        bv->cvc_prev = bv->cvc_next = (CVCList *) - 1;
+ 
+           if (bv->point[1] == bv->next->point[1]) {
+@@ -2495,6 +2488,7 @@ bo_intersect (jmp_buf *jb, POLYAREA *b, POLYAREA *a)
+     cairo_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
+     cairo_bo_event_t **event_ptrs;
+     int num_events = 0;
++    int num_new_nodes;
+     int i;
+     POLYAREA *pa;
+     cairo_traps_t *traps = NULL;
+@@ -2540,7 +2534,8 @@ bo_intersect (jmp_buf *jb, POLYAREA *b, POLYAREA *a)
+     status = _cairo_bentley_ottmann_tessellate_bo_edges (event_ptrs,
+                                                          num_events,
+                                                          traps,
+-                                                         &intersections);
++                                                         &intersections,
++                                                         &num_new_nodes);
+ //    printf ("Number of intersections was %i\n", intersections);
+ #if DEBUG_TRAPS
+     dump_traps (traps, "bo-polygon-out.txt");
+@@ -2549,5 +2544,5 @@ bo_intersect (jmp_buf *jb, POLYAREA *b, POLYAREA *a)
+     if (events != stack_events)
+         free (events);
+ 
+-    return status;
++    return num_new_nodes;
+ }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 79f7942..9f184b3 100644
+index 79f7942..25a9ff9 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -192,7 +192,6 @@ node_add_single (VNODE * dest, Vector po)
@@ -306,7 +471,23 @@ index 79f7942..9f184b3 100644
    return 0;
  }
  
-@@ -947,33 +939,31 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+@@ -943,37 +935,46 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+   if (a == NULL || b == NULL)
+     error (err_bad_parm);
+   if (add)
+-    bo_intersect (e, a, b);
++    {
++      int num_new_nodes;
++      int first_pass = 1;
++
++      do {
++        num_new_nodes = bo_intersect (e, a, b);
++        if (!first_pass && num_new_nodes != 0)
++          printf ("Got %i new nodes with another pass\n", num_new_nodes);
++        first_pass = 0;
++      } while (num_new_nodes != 0);
++
++    }
    do
      {
        if (!add)
@@ -360,7 +541,7 @@ index 79f7942..9f184b3 100644
  	  }
      }
    while (add && (b = b->f) != bfst);
-@@ -984,11 +974,10 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+@@ -984,11 +985,10 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  	if (curcA->Flags.status == ISECTED)
  	  {
  	    the_list = add_descriptors (curcA, 'A', the_list);
@@ -376,7 +557,7 @@ index 79f7942..9f184b3 100644
  	  }
      }
    while (add && (a = a->f) != afst);
-@@ -1008,7 +997,7 @@ cntrbox_inside (PLINE * c1, PLINE * c2)
+@@ -1008,7 +1008,7 @@ cntrbox_inside (PLINE * c1, PLINE * c2)
  /* Routines for making labels */
  
  static int
@@ -385,7 +566,7 @@ index 79f7942..9f184b3 100644
  {
    PLINE *me = cl;
    PLINE *check = (PLINE *) b;
-@@ -1046,22 +1035,19 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
+@@ -1046,22 +1046,19 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
  	break;
        outer = (POLYAREA *) heap_remove_smallest (heap);
  
@@ -421,7 +602,7 @@ index 79f7942..9f184b3 100644
      }
    while (1);
    heap_destroy (&heap);
-@@ -1125,28 +1111,28 @@ label_contour (PLINE * a)
+@@ -1125,28 +1122,28 @@ label_contour (PLINE * a)
    do
      {
        if (cur->cvc_next)	/* _always_ examine cross vertex */
@@ -468,7 +649,7 @@ index 79f7942..9f184b3 100644
      }
    while ((cur = cur->next) != first_not_unknown);
  #ifdef DEBUG_ALL_LABELS
-@@ -1184,11 +1170,10 @@ M_POLYAREA_label_separated (PLINE * afst, POLYAREA * b, BOOLp touch)
+@@ -1184,11 +1181,10 @@ M_POLYAREA_label_separated (PLINE * afst, POLYAREA * b, BOOLp touch)
  {
    PLINE *curc = afst;
  
@@ -484,7 +665,7 @@ index 79f7942..9f184b3 100644
    return FALSE;
  }
  
-@@ -1241,7 +1226,7 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
+@@ -1241,7 +1237,7 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
  
  static void
  PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
@@ -493,7 +674,7 @@ index 79f7942..9f184b3 100644
  {
    assert (cntr != NULL);
    assert (cntr->Count > 2);
-@@ -1250,7 +1235,7 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+@@ -1250,7 +1246,7 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
    if (cntr->Flags.orient == PLF_DIR)
      {
        if (owner != NULL)
@@ -502,7 +683,7 @@ index 79f7942..9f184b3 100644
        InsCntr (e, cntr, contours);
      }
    /* put hole into temporary list */
-@@ -1261,28 +1246,28 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+@@ -1261,28 +1257,28 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
  	{
  	  cntr->next = parent_contour->next;
  	  parent_contour->next = cntr;
@@ -543,7 +724,7 @@ index 79f7942..9f184b3 100644
  {
    if (piece->contours == contour)
      piece->contours = contour->next;
-@@ -1295,7 +1280,7 @@ remove_contour (POLYAREA * piece, PLINE * prev_contour, PLINE * contour,
+@@ -1295,7 +1291,7 @@ remove_contour (POLYAREA * piece, PLINE * prev_contour, PLINE * contour,
    contour->next = NULL;
  
    if (remove_rtree_entry)
@@ -552,7 +733,7 @@ index 79f7942..9f184b3 100644
  }
  
  struct polyarea_info
-@@ -1308,37 +1293,34 @@ static int
+@@ -1308,37 +1304,34 @@ static int
  heap_it (const BoxType * b, void *cl)
  {
    heap_t *heap = (heap_t *) cl;
@@ -601,7 +782,7 @@ index 79f7942..9f184b3 100644
    return 0;
  }
  
-@@ -1362,7 +1344,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1362,7 +1355,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
    curc = dest;
    do
      {
@@ -610,7 +791,7 @@ index 79f7942..9f184b3 100644
      }
    while ((curc = curc->f) != dest);
  
-@@ -1410,7 +1392,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1410,7 +1403,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
        pa_info = heap_remove_smallest (heap);
        if (heap_is_empty (heap))
  	{			/* only one possibility it must be the right one */
@@ -619,7 +800,7 @@ index 79f7942..9f184b3 100644
  	  container = pa_info->pa->contours;
  	}
        else
-@@ -1443,48 +1425,42 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1443,48 +1436,42 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
  	}
        else
  	{
@@ -701,7 +882,7 @@ index 79f7942..9f184b3 100644
  
  	  /* link at front of hole list */
  	  curh->next = container->next;
-@@ -1705,37 +1681,37 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
+@@ -1705,37 +1692,37 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
  }				/* Gather */
  
  static void
@@ -763,7 +944,7 @@ index 79f7942..9f184b3 100644
  }
  
  static void
-@@ -1747,21 +1723,20 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
+@@ -1747,21 +1734,20 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
  
    cur = &a->head;
    do
@@ -793,7 +974,7 @@ index 79f7942..9f184b3 100644
  {
    PLINE *tmprev;
  
-@@ -1809,7 +1784,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+@@ -1809,7 +1795,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
  	      PutContour (e, tmprev, contours, holes, owner, NULL, NULL);
  	      return TRUE;
  	    }
@@ -802,7 +983,7 @@ index 79f7942..9f184b3 100644
  	case PBO_UNITE:
  	case PBO_SUB:
  	  if ((*A)->Flags.status == OUTSIDE)
-@@ -1818,8 +1793,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+@@ -1818,8 +1804,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
  	      /* disappear this contour (rtree entry removed in PutContour) */
  	      *A = tmprev->next;
  	      tmprev->next = NULL;
@@ -812,7 +993,7 @@ index 79f7942..9f184b3 100644
  	      return TRUE;
  	    }
  	  break;
-@@ -1885,21 +1859,21 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
+@@ -1885,21 +1870,21 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
  
  
  static inline int
@@ -837,7 +1018,7 @@ index 79f7942..9f184b3 100644
  {
    /* If this item was the start of the list, advance that pointer */
    if (*list == piece)
-@@ -1916,7 +1890,7 @@ remove_polyarea (POLYAREA ** list, POLYAREA * piece)
+@@ -1916,7 +1901,7 @@ remove_polyarea (POLYAREA ** list, POLYAREA * piece)
  
  static void
  M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
@@ -846,7 +1027,7 @@ index 79f7942..9f184b3 100644
  {
    POLYAREA *a = *pieces;
    POLYAREA *anext;
-@@ -1927,88 +1901,75 @@ M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
+@@ -1927,88 +1912,75 @@ M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
      return;
  
    /* TODO: STASH ENOUGH INFORMATION EARLIER ON, SO WE CAN REMOVE THE INTERSECTED
@@ -941,6 +1122,11 @@ index 79f7942..9f184b3 100644
 -	         Saves walking the contour list when we delete one. */
 -	      prev = curc;
 -	    }
+-
+-	  /* If we move or delete an outer contour, we need to move any holes
+-	     we wish to keep within that contour to the holes list. */
+-	  if (is_outline && isect_contour)
+-	    hole_contour = 1;
 +      } else {
 +        /* Note the item we just didn't delete as the next
 +           candidate for having its "next" pointer adjusted.
@@ -948,17 +1134,12 @@ index 79f7942..9f184b3 100644
 +        prev = curc;
 +      }
  
--	  /* If we move or delete an outer contour, we need to move any holes
--	     we wish to keep within that contour to the holes list. */
--	  if (is_outline && isect_contour)
--	    hole_contour = 1;
+-	}
 +      /* If we move or delete an outer contour, we need to move any holes
 +         we wish to keep within that contour to the holes list. */
 +      if (is_outline && isect_contour)
 +        hole_contour = 1;
  
--	}
--
 -      /* If we deleted all the pieces of the polyarea, *pieces is NULL */
      }
 -  while ((a = anext), *pieces != NULL && !finished);
@@ -982,7 +1163,7 @@ index 79f7942..9f184b3 100644
  {
    struct find_inside_m_pa_info *info = cl;
    PLINE *check = (PLINE *) b;
-@@ -2018,18 +1979,17 @@ find_inside_m_pa (const BoxType * b, void *cl)
+@@ -2018,18 +1990,17 @@ find_inside_m_pa (const BoxType * b, void *cl)
    /* Don't look at contours marked as being intersected */
    if (check->Flags.status == ISECTED)
      return 0;
@@ -1006,7 +1187,7 @@ index 79f7942..9f184b3 100644
  {
    POLYAREA *a = *pieces;
    POLYAREA *b;
-@@ -2044,8 +2004,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -2044,8 +2015,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
    if (a == NULL)
      return;
  
@@ -1016,7 +1197,7 @@ index 79f7942..9f184b3 100644
      case PBO_ISECT:
        del_outside = 1;
        break;
-@@ -2053,213 +2012,184 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -2053,213 +2023,184 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
      case PBO_SUB:
        del_inside = 1;
        break;
@@ -1377,7 +1558,7 @@ index 79f7942..9f184b3 100644
  }
  
  static void
-@@ -2267,7 +2197,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+@@ -2267,7 +2208,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
  		    PLINE ** holes, int action, BOOLp maybe)
  {
    POLYAREA *a = afst;
@@ -1386,7 +1567,7 @@ index 79f7942..9f184b3 100644
    PLINE **cur, **next, *parent_contour;
  
    assert (a != NULL);
-@@ -2276,35 +2206,35 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+@@ -2276,35 +2217,35 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
    do
      {
        if (maybe && a->contours->Flags.status != ISECTED)
@@ -1444,7 +1625,7 @@ index 79f7942..9f184b3 100644
      }
    while ((a = a->f) != afst);
  }
-@@ -2410,17 +2340,16 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2410,17 +2351,16 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        M_POLYAREA_update_primary (&e, res, &holes, action, b);
        M_POLYAREA_separate_isected (&e, res, &holes, &a_isected);
        M_POLYAREA_label_separated (a_isected, b, FALSE);
@@ -1467,7 +1648,7 @@ index 79f7942..9f184b3 100644
  
        InsertHoles (&e, *res, &holes);
      }
-@@ -2615,10 +2544,10 @@ poly_DelContour (PLINE ** c)
+@@ -2615,10 +2555,10 @@ poly_DelContour (PLINE ** c)
      {
        prev = cur->prev;
        if (cur->cvc_next != NULL)
@@ -1482,7 +1663,7 @@ index 79f7942..9f184b3 100644
        free (cur);
      }
    if ((*c)->head.cvc_next != NULL)
-@@ -2816,7 +2745,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
+@@ -2816,7 +2756,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
      {
        if (!poly_CopyContour (last, cur))
  	return FALSE;
@@ -1491,7 +1672,7 @@ index 79f7942..9f184b3 100644
        last = &(*last)->next;
      }
    return TRUE;
-@@ -3015,7 +2944,7 @@ poly_Create (void)
+@@ -3015,7 +2955,7 @@ poly_Create (void)
  }
  
  void
