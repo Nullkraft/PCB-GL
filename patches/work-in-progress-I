@@ -1,5 +1,5 @@
 Bottom: 88240424fbc750c30551387937f2dd7b0c9d79f1
-Top:    d080e0fdeac708f61640e985a278e64034e0ea77
+Top:    7896699442a0a39dcb6816b79203e30abf7134f9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-11 16:37:14 +0000
 
@@ -569,7 +569,7 @@ index 0000000..c27606b
 +
 +int vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2, Vector S1, Vector S2);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index d6e9b91..ad664cb 100644
+index d6e9b91..f793b0a 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -83,14 +83,8 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -630,7 +630,7 @@ index d6e9b91..ad664cb 100644
 +  /* fill in the segment in info corresponding to this node */
 +  if (setjmp (info.sego) == 0)
 +    {
-+      r_search_1 (contour->tree, &box, NULL, get_seg, &info);
++      r_search (contour->tree, &box, NULL, get_seg, &info);
 +      assert (0);
 +    }
 +  return info.s;
