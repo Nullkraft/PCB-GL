@@ -114,10 +114,18 @@ RCSID ("$Id$");
  * local prototypes
  */
 
+#if 0
 #define CIRC_SEGS 36
 static double circleVerticies[] = {
   1.0, 0.0,
   0.98480775301221, 0.17364817766693,
+};
+#endif
+
+#define CIRC_SEGS 4
+static double circleVerticies[] = {
+  1.0, 0.0,
+  cos (M_PI * 2. / (double)CIRC_SEGS), sin(M_PI * 2. / (double)CIRC_SEGS),
 };
 
 static void
@@ -330,7 +338,7 @@ frac_circle (PLINE * c, LocationType X, LocationType Y, Vector v, int range)
   e1 = v[0] - X;
   e2 = v[1] - Y;
 
-  range = range == 1 ? CIRC_SEGS-1 : (CIRC_SEGS / range);
+  range = range == 1 ? CIRC_SEGS : (CIRC_SEGS / range) - 1;
   for (i = 0; i < range; i++)
     {
       /* rotate the vector */

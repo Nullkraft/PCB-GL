@@ -98,17 +98,18 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
 if (UNLIKELY (((ptr) = malloc(sizeof(type))) == NULL)) \
     error(err_no_memory);
 
-//#define DEBUG_LABEL
 #undef DEBUG_LABEL
+//#define DEBUG_LABEL
 #undef DEBUG_ALL_LABELS
 #undef DEBUG_JUMP
 #undef DEBUG_GATHER
 #undef DEBUG_ANGLE
-#define DEBUG
+#undef DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #define DEBUGP(...) fprintf(stderr, ## __VA_ARGS__)
 #else
-#define DEBUGP(...)
+#define DEBUGP(...) (void)0;
 #endif
 
 /* ///////////////////////////////////////////////////////////////////////////// * /
@@ -132,19 +133,18 @@ static char *theState (VNODE * v);
 static void
 pline_dump (VNODE * v)
 {
-  VNODE *s;
+  VNODE *s, *n;
 
   s = v;
   do
     {
-      if (v != s)
-	fprintf (stderr, "%d %d 10 10 \"%s\"]\n", v->point[0], v->point[1],
-		 theState (v));
-      fprintf (stderr, "Line [%d %d ", v->point[0], v->point[1]);
+      n = v->next;
+      fprintf (stderr, "Line [%d %d %d %d 10 10 \"%s\"]\n",
+                       v->point[0], v->point[1],
+                       n->point[0], n->point[1],
+                       theState (v));
     }
   while ((v = v->next) != s);
-  fprintf (stderr, "%d %d 10 10 \"%s\"]\n", v->point[0], v->point[1],
-	   theState (v));
   fprintf (stderr, "NEXT PLINE\n");
 }
 
@@ -387,6 +387,7 @@ node_label (VNODE * pn)
   CVCList *l;
   char this_poly;
   int region = UNKNWN;
+  static int one_shot = 1;
 
   assert (pn);
   assert (pn->cvc_next);
@@ -966,6 +967,8 @@ label_contour (PLINE * a)
       else if (label == INSIDE || label == OUTSIDE)
 	{
 	  LABEL_NODE (cur, label);
+          if (cur->point[0] == 39173 && cur->point[1] == 40200 && label == OUTSIDE)
+            DEBUGP ("IS IT HERE WHERE WE MIS-LABEL THE VERTEX 2?\n");
 	  did_label = TRUE;
 	}
     }
@@ -1741,6 +1744,8 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
   *aandb = NULL;
   *aminusb = NULL;
 
+  DEBUGP ("******** poly_AndSubtract_free ********\n");
+
   if ((code = setjmp (e)) == 0)
     {
 
@@ -1750,6 +1755,42 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
       if (!poly_Valid (b))
 	return -1;
 #endif
+
+#ifdef DEBUG
+      {
+        POLYAREA *dbg = a;
+        POLYAREA *start = dbg;
+        int piece = 0;
+        DEBUGP ("INPUT POLYGON A:\n");
+        do {
+          PLINE *contour = dbg->contours;
+          int outer = 1;
+          DEBUGP ("PIECE %i\n", ++piece);
+          do {
+            DEBUGP ("%s CONTOUR\n", outer ? "OUTER" : "INNER");
+            pline_dump (&contour->head);
+            outer = 0;
+          } while ((contour = contour->next) != NULL);
+        } while ((dbg = dbg->f) != start);
+      }
+      {
+        POLYAREA *dbg = b;
+        POLYAREA *start = dbg;
+        int piece = 0;
+        DEBUGP ("INPUT POLYGON B:\n");
+        do {
+          PLINE *contour = dbg->contours;
+          int outer = 1;
+          DEBUGP ("PIECE %i\n", ++piece);
+          do {
+            DEBUGP ("%s CONTOUR\n", outer ? "OUTER" : "INNER");
+            pline_dump (&contour->head);
+            outer = 0;
+          } while ((contour = contour->next) != NULL);
+        } while ((dbg = dbg->f) != start);
+      }
+#endif
+
       M_POLYAREA_intersect (&e, a, b, TRUE);
 
       M_POLYAREA_label (a, b, FALSE);
@@ -1772,6 +1813,41 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
       poly_Free (&a);
       poly_Free (&b);
       assert (poly_Valid (*aminusb));
+#ifdef DEBUG
+      {
+        POLYAREA *dbg = *aandb;
+        POLYAREA *start = dbg;
+        int piece = 0;
+        DEBUGP ("OUTPUT A AND B:\n");
+        do {
+          PLINE *contour = dbg->contours;
+          int outer = 1;
+          DEBUGP ("PIECE %i\n", ++piece);
+          do {
+            DEBUGP ("%s CONTOUR\n", outer ? "OUTER" : "INNER");
+            pline_dump (&contour->head);
+            outer = 0;
+          } while ((contour = contour->next) != NULL);
+        } while ((dbg = dbg->f) != start);
+      }
+      {
+        POLYAREA *dbg = *aminusb;
+        POLYAREA *start = dbg;
+        int piece = 0;
+        DEBUGP ("OUTPUT A MINUS B:\n");
+        do {
+          PLINE *contour = dbg->contours;
+          int outer = 1;
+          DEBUGP ("PIECE %i\n", ++piece);
+          do {
+            DEBUGP ("%s CONTOUR\n", outer ? "OUTER" : "INNER");
+            pline_dump (&contour->head);
+            outer = 0;
+          } while ((contour = contour->next) != NULL);
+        } while ((dbg = dbg->f) != start);
+      }
+#endif
+
     }
   /* delete holes if any left */
   while ((p = holes) != NULL)
