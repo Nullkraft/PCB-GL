@@ -709,7 +709,7 @@ lookup_seg (PLINE * contour, VNODE * vertex)
   /* fill in the segment in info corresponding to this node */
   if (setjmp (info.sego) == 0)
     {
-      r_search_1 (contour->tree, &box, NULL, get_seg, &info);
+      r_search (contour->tree, &box, NULL, get_seg, &info);
       assert (0);
     }
   return info.s;
