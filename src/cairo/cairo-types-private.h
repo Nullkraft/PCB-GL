@@ -239,7 +239,6 @@ typedef enum _cairo_direction {
 
 typedef struct _cairo_edge {
     cairo_line_t line;
-    int top, bottom;
     int dir;
 } cairo_edge_t;
 
