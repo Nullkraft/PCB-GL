@@ -36,7 +36,7 @@
 
 #include "hid.h"
 #include "hidgl.h"
-
+#include "rtree.h"
 
 
 #ifdef HAVE_LIBDMALLOC
@@ -468,6 +468,8 @@ myBegin (GLenum type)
   triangle_comp_idx = 0;
 }
 
+static double global_scale;
+
 static void
 myVertex (GLdouble *vertex_data)
 {
@@ -484,11 +486,23 @@ myVertex (GLdouble *vertex_data)
         }
       else
         {
+#if 1
           hidgl_ensure_triangle_space (&buffer, 1);
           hidgl_add_triangle (&buffer,
                               triangle_vertices [0], triangle_vertices [1],
                               triangle_vertices [2], triangle_vertices [3],
                               vertex_data [0], vertex_data [1]);
+#else
+          hidgl_draw_line (Square_Cap, global_scale,
+                           triangle_vertices [0], triangle_vertices [1],
+                           triangle_vertices [2], triangle_vertices [3], global_scale);
+          hidgl_draw_line (Square_Cap, global_scale,
+                           triangle_vertices [2], triangle_vertices [3],
+                           vertex_data [0],       vertex_data [1],       global_scale);
+          hidgl_draw_line (Square_Cap, global_scale,
+                           vertex_data [0],       vertex_data [1],
+                           triangle_vertices [0], triangle_vertices [1], global_scale);
+#endif
 
           if (tessVertexType == GL_TRIANGLE_STRIP)
             {
@@ -552,6 +566,105 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
     }
 
   gluTessEndContour (tobj);
+  gluTessEndPolygon (tobj);
+  gluDeleteTess (tobj);
+
+  myFreeCombined ();
+  free (vertices);
+}
+
+void tesselate_contour (GLUtesselator *tobj, VNODE *vnode,
+                        GLdouble *vertices, int *i)
+{
+  VNODE *vn = vnode;
+  int offset = *i * 3;
+
+  gluTessBeginContour (tobj);
+  do {
+    vertices [0 + offset] = vn->point[0];
+    vertices [1 + offset] = vn->point[1];
+    vertices [2 + offset] = 0.;
+    gluTessVertex (tobj, &vertices [offset], &vertices [offset]);
+    (*i)++;
+    offset += 3;
+  } while ((vn = vn->next) != vnode);
+  gluTessEndContour (tobj);
+}
+
+struct do_hole_info {
+  GLUtesselator *tobj;
+  GLdouble *vertices;
+  int *i;
+};
+
+static int
+do_hole (const BoxType *b, void *cl)
+{
+  struct do_hole_info *info = cl;
+  PLINE *curc = (PLINE *) b;
+  /* Ignore the outer contour - we draw it first explicitly*/
+  if (curc->Flags.orient == PLF_DIR) {
+    return 0;
+  }
+  tesselate_contour (info->tobj, &curc->head, info->vertices, info->i);
+  return 1;
+}
+
+void
+hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
+{
+  int i, cc;
+  GLUtesselator *tobj;
+  GLdouble *vertices;
+  int vertex_count = 0;
+  POLYAREA *piece;
+  PLINE *contour;
+
+  global_scale = scale;
+
+  if (poly->Clipped == NULL) {
+    fprintf (stderr, "hidgl_fill_pcb_polygon: poly->Clipped == NULL\n");
+    return;
+  }
+
+  /* JUST DRAW THE FIRST PIECE */
+  /* Walk the polygon structure, counting vertices */
+  /* This gives an upper bound on the amount of storage required */
+  piece = poly->Clipped;
+//  do {
+    for (contour = piece->contours; contour != NULL; contour = contour->next)
+      vertex_count += contour->Count;
+//  } while ((piece = piece->f) != poly->Clipped);
+
+  vertices = malloc (sizeof(GLdouble) * vertex_count * 3);
+
+  tobj = gluNewTess ();
+  gluTessCallback(tobj, GLU_TESS_BEGIN, myBegin);
+  gluTessCallback(tobj, GLU_TESS_VERTEX, myVertex);
+  gluTessCallback(tobj, GLU_TESS_COMBINE, myCombine);
+  gluTessCallback(tobj, GLU_TESS_ERROR, myError);
+
+  gluTessBeginPolygon (tobj, NULL);
+
+  /* JUST DRAW THE FIRST PIECE */
+  /* Walk the polygon structure, adding the vertices */
+  i = 0;
+  cc = 1;
+  piece = poly->Clipped;
+  do {
+    struct do_hole_info info;
+    info.tobj = tobj;
+    info.vertices = vertices;
+    info.i = &i;
+
+    tesselate_contour (tobj, &piece->contours->head, vertices, &i);
+
+    /* Search for a contour to draw */
+    r_search (piece->contour_tree, clip_box, NULL, do_hole, &info);
+
+  } while (0);
+//  } while ((piece = piece->f) != poly->Clipped);
+
   gluTessEndPolygon (tobj);
   gluDeleteTess (tobj);
 
