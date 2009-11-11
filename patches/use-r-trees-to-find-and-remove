@@ -1,7 +1,7 @@
-Bottom: 65ee1b22c1f395f8a75507edba48e97915e81199
-Top:    88cf2dbc45a62df4d1d455d8f0b9e12ae8e821e3
+Bottom: 26dee16e650b0d0e2c4674334cd896210f4e3351
+Top:    797e7e47e9b67b7d6c4fff2dff4b895bae70c16b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-07 10:02:52 +0000
+Date:   2009-11-11 15:36:30 +0000
 
 Use r-trees to find and remove touched polygons
 
@@ -21,10 +21,10 @@ Use r-trees to find and remove touched polygons
 ---
 
 diff --git a/src/pour.c b/src/pour.c
-index 21dcac4..45018f5 100644
+index ffafd37..998051d 100644
 --- a/src/pour.c
 +++ b/src/pour.c
-@@ -718,12 +718,64 @@ mark_islands (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -720,12 +720,64 @@ mark_islands (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
                     check_polygon_island_cb, &info);
  }
  
@@ -90,7 +90,7 @@ index 21dcac4..45018f5 100644
  
    switch (type)
      {
-@@ -763,43 +815,44 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -765,43 +817,44 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
  
    /* Make pg contain the polygons we're going to fiddle with */
  
@@ -171,7 +171,7 @@ index 21dcac4..45018f5 100644
  
    if (pg == NULL)
      {
-@@ -975,7 +1028,9 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -977,7 +1030,9 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
  {
    POLYAREA *np = NULL, *pg = NULL, *tmp, *start_pg;
    POLYAREA *orig_poly;
@@ -182,7 +182,7 @@ index 21dcac4..45018f5 100644
  
    switch (type)
      {
-@@ -1026,43 +1081,44 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -1028,43 +1083,44 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
  
    /* Make pg contain the polygons we're going to fiddle with */
  
