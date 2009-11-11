@@ -1,15 +1,14 @@
 Bottom: 07b28c69531d5a8491e9ee8af6463cb6da65b91e
-Top:    ba3eca830dd99d2bfcdb5628551aeda976f32bc2
+Top:    7339c5d937e457ecb893618d66bd6bcd91b15ebe
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-11 16:52:13 +0000
+Date:   2009-11-11 16:52:46 +0000
 
-Undo
-
+Reduce the redundant work done in node_label
 
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 03dd4d8..f9fa617 100644
+index 03dd4d8..f472fdc 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -609,12 +609,11 @@ seg_in_seg (const BoxType * b, void *cl)
@@ -330,7 +329,7 @@ index 03dd4d8..f9fa617 100644
      }
    while (1);
    heap_destroy (&heap);
-@@ -1103,28 +1093,28 @@ label_contour (PLINE * a)
+@@ -1103,28 +1093,31 @@ label_contour (PLINE * a)
    do
      {
        if (cur->cvc_next)	/* _always_ examine cross vertex */
@@ -347,6 +346,7 @@ index 03dd4d8..f9fa617 100644
 +          continue;
 +        }
  
++#if 0
        if (NODE_LABEL (cur) != UNKNWN)
 -	{
 -	  /* This might get hit if the last cross vertex labelling
@@ -356,12 +356,14 @@ index 03dd4d8..f9fa617 100644
 -	  continue;
 -	}
 +        {
++          fprintf (stderr, "Not expected...\n");
 +          /* This might get hit if the last cross vertex labelling
 +           * pass was a bit keen, and labeled past its own edges?
 +           */
 +          label = NODE_LABEL (cur);
 +          continue;
 +        }
++#endif
  
        if (label == INSIDE || label == OUTSIDE)
 -	{
@@ -377,7 +379,7 @@ index 03dd4d8..f9fa617 100644
      }
    while ((cur = cur->next) != first_not_unknown);
  #ifdef DEBUG_ALL_LABELS
-@@ -1162,11 +1152,10 @@ M_POLYAREA_label_separated (PLINE * afst, POLYAREA * b, BOOLp touch)
+@@ -1162,11 +1155,10 @@ M_POLYAREA_label_separated (PLINE * afst, POLYAREA * b, BOOLp touch)
  {
    PLINE *curc = afst;
  
@@ -393,7 +395,7 @@ index 03dd4d8..f9fa617 100644
    return FALSE;
  }
  
-@@ -1219,7 +1208,7 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
+@@ -1219,7 +1211,7 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
  
  static void
  PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
@@ -402,7 +404,7 @@ index 03dd4d8..f9fa617 100644
  {
    assert (cntr != NULL);
    assert (cntr->Count > 2);
-@@ -1228,7 +1217,7 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+@@ -1228,7 +1220,7 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
    if (cntr->Flags.orient == PLF_DIR)
      {
        if (owner != NULL)
@@ -411,7 +413,7 @@ index 03dd4d8..f9fa617 100644
        InsCntr (e, cntr, contours);
      }
    /* put hole into temporary list */
-@@ -1239,28 +1228,28 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+@@ -1239,28 +1231,28 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
  	{
  	  cntr->next = parent_contour->next;
  	  parent_contour->next = cntr;
@@ -452,7 +454,7 @@ index 03dd4d8..f9fa617 100644
  {
    if (piece->contours == contour)
      piece->contours = contour->next;
-@@ -1273,7 +1262,7 @@ remove_contour (POLYAREA * piece, PLINE * prev_contour, PLINE * contour,
+@@ -1273,7 +1265,7 @@ remove_contour (POLYAREA * piece, PLINE * prev_contour, PLINE * contour,
    contour->next = NULL;
  
    if (remove_rtree_entry)
@@ -461,7 +463,7 @@ index 03dd4d8..f9fa617 100644
  }
  
  struct polyarea_info
-@@ -1286,37 +1275,34 @@ static int
+@@ -1286,37 +1278,34 @@ static int
  heap_it (const BoxType * b, void *cl)
  {
    heap_t *heap = (heap_t *) cl;
@@ -510,7 +512,7 @@ index 03dd4d8..f9fa617 100644
    return 0;
  }
  
-@@ -1340,7 +1326,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1340,7 +1329,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
    curc = dest;
    do
      {
@@ -519,7 +521,7 @@ index 03dd4d8..f9fa617 100644
      }
    while ((curc = curc->f) != dest);
  
-@@ -1388,7 +1374,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1388,7 +1377,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
        pa_info = heap_remove_smallest (heap);
        if (heap_is_empty (heap))
  	{			/* only one possibility it must be the right one */
@@ -528,7 +530,7 @@ index 03dd4d8..f9fa617 100644
  	  container = pa_info->pa->contours;
  	}
        else
-@@ -1421,46 +1407,40 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1421,46 +1410,40 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
  	}
        else
  	{
@@ -609,7 +611,7 @@ index 03dd4d8..f9fa617 100644
  
  	  /* link at front of hole list */
  	  curh->next = container->next;
-@@ -1681,37 +1661,37 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
+@@ -1681,37 +1664,37 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
  }				/* Gather */
  
  static void
@@ -671,7 +673,7 @@ index 03dd4d8..f9fa617 100644
  }
  
  static void
-@@ -1723,21 +1703,20 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
+@@ -1723,21 +1706,20 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
  
    cur = &a->head;
    do
@@ -701,7 +703,7 @@ index 03dd4d8..f9fa617 100644
  {
    PLINE *tmprev;
  
-@@ -1785,7 +1764,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+@@ -1785,7 +1767,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
  	      PutContour (e, tmprev, contours, holes, owner, NULL, NULL);
  	      return TRUE;
  	    }
@@ -710,7 +712,7 @@ index 03dd4d8..f9fa617 100644
  	case PBO_UNITE:
  	case PBO_SUB:
  	  if ((*A)->Flags.status == OUTSIDE)
-@@ -1794,8 +1773,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+@@ -1794,8 +1776,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
  	      /* disappear this contour (rtree entry removed in PutContour) */
  	      *A = tmprev->next;
  	      tmprev->next = NULL;
@@ -720,7 +722,7 @@ index 03dd4d8..f9fa617 100644
  	      return TRUE;
  	    }
  	  break;
-@@ -1861,21 +1839,21 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
+@@ -1861,21 +1842,21 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
  
  
  static inline int
@@ -745,7 +747,7 @@ index 03dd4d8..f9fa617 100644
  {
    /* If this item was the start of the list, advance that pointer */
    if (*list == piece)
-@@ -1892,7 +1870,7 @@ remove_polyarea (POLYAREA ** list, POLYAREA * piece)
+@@ -1892,7 +1873,7 @@ remove_polyarea (POLYAREA ** list, POLYAREA * piece)
  
  static void
  M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
@@ -754,7 +756,7 @@ index 03dd4d8..f9fa617 100644
  {
    POLYAREA *a = *pieces;
    POLYAREA *anext;
-@@ -1903,88 +1881,75 @@ M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
+@@ -1903,88 +1884,75 @@ M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
      return;
  
    /* TODO: STASH ENOUGH INFORMATION EARLIER ON, SO WE CAN REMOVE THE INTERSECTED
@@ -890,7 +892,7 @@ index 03dd4d8..f9fa617 100644
  {
    struct find_inside_m_pa_info *info = cl;
    PLINE *check = (PLINE *) b;
-@@ -1994,18 +1959,17 @@ find_inside_m_pa (const BoxType * b, void *cl)
+@@ -1994,18 +1962,17 @@ find_inside_m_pa (const BoxType * b, void *cl)
    /* Don't look at contours marked as being intersected */
    if (check->Flags.status == ISECTED)
      return 0;
@@ -914,7 +916,7 @@ index 03dd4d8..f9fa617 100644
  {
    POLYAREA *a = *pieces;
    POLYAREA *b;
-@@ -2020,8 +1984,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -2020,8 +1987,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
    if (a == NULL)
      return;
  
@@ -924,7 +926,7 @@ index 03dd4d8..f9fa617 100644
      case PBO_ISECT:
        del_outside = 1;
        break;
-@@ -2029,213 +1992,184 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -2029,213 +1995,184 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
      case PBO_SUB:
        del_inside = 1;
        break;
@@ -950,7 +952,14 @@ index 03dd4d8..f9fa617 100644
 -
 -  if (del_inside)
 -    {
--
++  while ((b = b->f) != bpa) {
++    BoxType *b_box = (BoxType *)b->contours;
++    MAKEMIN (box.X1, b_box->X1);
++    MAKEMIN (box.Y1, b_box->Y1);
++    MAKEMAX (box.X2, b_box->X2);
++    MAKEMAX (box.Y2, b_box->Y2);
++  }
+ 
 -      do
 -	{
 -	  anext = a->f;
@@ -967,17 +976,9 @@ index 03dd4d8..f9fa617 100644
 -	      /* Then test properly */
 -	      cntr_in_M_POLYAREA (a->contours, bpa, FALSE))
 -	    {
-+  while ((b = b->f) != bpa) {
-+    BoxType *b_box = (BoxType *)b->contours;
-+    MAKEMIN (box.X1, b_box->X1);
-+    MAKEMIN (box.Y1, b_box->Y1);
-+    MAKEMAX (box.X2, b_box->X2);
-+    MAKEMAX (box.Y2, b_box->Y2);
-+  }
- 
+-
 -	      /* Delete this contour, all children -> holes queue */
-+  if (del_inside) {
- 
+-
 -	      /* Delete the outer contour */
 -	      curc = a->contours;
 -	      remove_contour (a, NULL, curc, FALSE);	/* Rtree deleted in poly_Free below */
@@ -1042,7 +1043,8 @@ index 03dd4d8..f9fa617 100644
 -	      poly_DelContour (&info.result);
 -	    }
 -	  /* End check for deleted holes */
--
++  if (del_inside) {
+ 
 -	  /* If we deleted all the pieces of the polyarea, *pieces is NULL */
 -	}
 -      while ((a = anext), *pieces != NULL && !finished);
@@ -1285,7 +1287,7 @@ index 03dd4d8..f9fa617 100644
  }
  
  static void
-@@ -2243,7 +2177,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+@@ -2243,7 +2180,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
  		    PLINE ** holes, int action, BOOLp maybe)
  {
    POLYAREA *a = afst;
@@ -1294,7 +1296,7 @@ index 03dd4d8..f9fa617 100644
    PLINE **cur, **next, *parent_contour;
  
    assert (a != NULL);
-@@ -2252,35 +2186,35 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+@@ -2252,35 +2189,35 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
    do
      {
        if (maybe && a->contours->Flags.status != ISECTED)
@@ -1352,7 +1354,7 @@ index 03dd4d8..f9fa617 100644
      }
    while ((a = a->f) != afst);
  }
-@@ -2386,17 +2320,16 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2386,17 +2323,16 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        M_POLYAREA_update_primary (&e, res, &holes, action, b);
        M_POLYAREA_separate_isected (&e, res, &holes, &a_isected);
        M_POLYAREA_label_separated (a_isected, b, FALSE);
@@ -1375,7 +1377,7 @@ index 03dd4d8..f9fa617 100644
  
        InsertHoles (&e, *res, &holes);
      }
-@@ -2595,10 +2528,10 @@ poly_DelContour (PLINE ** c)
+@@ -2595,10 +2531,10 @@ poly_DelContour (PLINE ** c)
      {
        prev = cur->prev;
        if (cur->cvc_next != NULL)
@@ -1390,7 +1392,7 @@ index 03dd4d8..f9fa617 100644
        free (cur);
      }
    if ((*c)->head.cvc_next != NULL)
-@@ -2796,7 +2729,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
+@@ -2796,7 +2732,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
      {
        if (!poly_CopyContour (last, cur))
  	return FALSE;
@@ -1399,7 +1401,7 @@ index 03dd4d8..f9fa617 100644
        last = &(*last)->next;
      }
    return TRUE;
-@@ -2995,7 +2928,7 @@ poly_Create (void)
+@@ -2995,7 +2931,7 @@ poly_Create (void)
  }
  
  void
