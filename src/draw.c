@@ -2199,6 +2199,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
   if (!Polygon->Clipped)
     return;
 
+  /* Re-use HOLEFLAG to cut out islands */
+  if (TEST_FLAG (HOLEFLAG, Polygon))
+    return;
+
   if (Gathering)
     {
       AddPart (Polygon);
