@@ -73,6 +73,7 @@
  */
 Boolean IsPointOnLine (float, float, float, LineTypePtr);
 Boolean IsPointOnPin (float, float, float, PinTypePtr);
+int ClosestArcPoint (float, float, ArcTypePtr);
 Boolean IsPointOnArc (float, float, float, ArcTypePtr);
 Boolean IsPointOnLineEnd (LocationType, LocationType, RatTypePtr);
 Boolean IsLineInRectangle (LocationType, LocationType, LocationType,
@@ -85,6 +86,7 @@ Boolean IsPointInBox (LocationType, LocationType, BoxTypePtr, BDimension);
 int SearchObjectByLocation (int, void **, void **, void **, LocationType,
 			    LocationType, BDimension);
 int SearchScreen (LocationType, LocationType, int, void **, void **, void **);
+int SearchScreenGridSlop (LocationType, LocationType, int, void **, void **, void **);
 int SearchObjectByID (DataTypePtr, void **, void **, void **, int, int);
 ElementTypePtr SearchElementByName (DataTypePtr, char *);
 
