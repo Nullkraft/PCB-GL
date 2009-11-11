@@ -1,5 +1,5 @@
 Bottom: 456435f9fd2a9e7007f8de228f63db43ed026eca
-Top:    456435f9fd2a9e7007f8de228f63db43ed026eca
+Top:    c70e35eb99d8a4c5e2f6b2a6eaf1fd2037059a18
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-11 04:49:40 +0000
 
@@ -8,4 +8,29 @@ Temp fixes and diagnostics
 
 ---
 
-
+diff --git a/src/polygon1.c b/src/polygon1.c
+index acce8d7..c3e9bd3 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -750,7 +750,7 @@ lookup_seg (PLINE *contour, VNODE *vertex)
+   /* fill in the segment in info corresponding to this node */
+   if (setjmp (info.sego) == 0)
+     {
+-      r_search_1 (contour->tree, &box, NULL, get_seg, &info);
++      r_search (contour->tree, &box, NULL, get_seg, &info);
+       assert (0);
+     }
+   return info.s;
+@@ -1187,7 +1187,11 @@ label_contour (PLINE * a)
+           continue;
+         }
+     }
+-  while ((cur = cur->next) != first_not_unknown);
++  while ((cur = cur->next) != first_not_unknown &&
++         !(cur->next == &a->head && first_not_unknown == NULL));
++
++  if (first_not_unknown == NULL)
++    fprintf (stderr, "OOPS, DIDN'T LABEL ANYTHING!\n");
+ #ifdef DEBUG_ALL_LABELS
+   print_labels (a);
+   DEBUGP ("\n\n");
