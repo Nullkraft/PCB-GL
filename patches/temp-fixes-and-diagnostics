@@ -1,7 +1,7 @@
-Bottom: 456435f9fd2a9e7007f8de228f63db43ed026eca
-Top:    ce15a03ef1caf53416fc9c0586edbe414e0260b6
+Bottom: 7f5cac7ae2f22d13595f044007c96f8c1f272f39
+Top:    cd88d9fdde844f5987cce753bd199b3bff89367c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-11 04:49:40 +0000
+Date:   2009-11-11 16:35:01 +0000
 
 Temp fixes and diagnostics
 
@@ -9,10 +9,10 @@ Temp fixes and diagnostics
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index acce8d7..c3e9bd3 100644
+index 65a1958..6dc8b76 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -750,7 +750,7 @@ lookup_seg (PLINE *contour, VNODE *vertex)
+@@ -708,7 +708,7 @@ lookup_seg (PLINE *contour, VNODE *vertex)
    /* fill in the segment in info corresponding to this node */
    if (setjmp (info.sego) == 0)
      {
@@ -21,7 +21,7 @@ index acce8d7..c3e9bd3 100644
        assert (0);
      }
    return info.s;
-@@ -1187,7 +1187,11 @@ label_contour (PLINE * a)
+@@ -1145,7 +1145,11 @@ label_contour (PLINE * a)
            continue;
          }
      }
