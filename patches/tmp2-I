@@ -1,18 +1,607 @@
 Bottom: 08ebe4dceb6990c7aafb7a4ec8c8d5933f2529fd
-Top:    dd2816643def85cbdeacaff2c8dd5edfa8e85ad3
+Top:    886c4096b5efbd4952ad4a472180a8116371658b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-11 16:35:44 +0000
+Date:   2009-11-11 16:36:03 +0000
 
-Undo polygon1.c indenting
-
+TMP2
 
 ---
 
+diff --git a/src/cairo/cairo-bentley-ottmann.c b/src/cairo/cairo-bentley-ottmann.c
+index 3835399..e3b3a0c 100644
+--- a/src/cairo/cairo-bentley-ottmann.c
++++ b/src/cairo/cairo-bentley-ottmann.c
+@@ -44,10 +44,13 @@
+ #include "cairo-combsort-private.h"
+ 
+ #include <glib.h>
++#include <setjmp.h>
++
++#include "polygon.h"
+ 
+ #define _cairo_error(x) (x)
+ 
+-#define DEBUG_PRINT_STATE 1
++#define DEBUG_PRINT_STATE 0
+ #define DEBUG_EVENTS 1
+ #define DEBUG_TRAPS 0
+ 
+@@ -64,19 +67,12 @@ typedef struct _cairo_bo_intersect_point {
+ } cairo_bo_intersect_point_t;
+ 
+ typedef struct _cairo_bo_edge cairo_bo_edge_t;
+-typedef struct _cairo_bo_trap cairo_bo_trap_t;
+-
+-/* A deferred trapezoid of an edge */
+-struct _cairo_bo_trap {
+-    cairo_bo_edge_t *right;
+-    int32_t top;
+-};
+ 
+ struct _cairo_bo_edge {
+     cairo_edge_t edge;
+     cairo_bo_edge_t *prev;
+     cairo_bo_edge_t *next;
+-    cairo_bo_trap_t deferred_trap;
++    cairo_point_t middle;
+ };
+ 
+ /* the parent is always given by index/2 */
+@@ -125,7 +121,6 @@ typedef struct _cairo_bo_event_queue {
+ 
+ typedef struct _cairo_bo_sweep_line {
+     cairo_bo_edge_t *head;
+-    cairo_bo_edge_t *stopped;
+     int32_t current_y;
+     cairo_bo_edge_t *current_edge;
+ } cairo_bo_sweep_line_t;
+@@ -1105,7 +1100,6 @@ static void
+ _cairo_bo_sweep_line_init (cairo_bo_sweep_line_t *sweep_line)
+ {
+     sweep_line->head = NULL;
+-    sweep_line->stopped = NULL;
+     sweep_line->current_y = INT32_MIN;
+     sweep_line->current_edge = NULL;
+ }
+@@ -1326,162 +1320,33 @@ edges_colinear (const cairo_bo_edge_t *a, const cairo_bo_edge_t *b)
+     }
+ }
+ 
+-/* Adds the trapezoid, if any, of the left edge to the #cairo_traps_t */
++
+ static cairo_status_t
+-_cairo_bo_edge_end_trap (cairo_bo_edge_t        *left,
+-                         int32_t                 bot,
+-                         cairo_traps_t                *traps)
++_add_result_edge (cairo_array_t *array,
++                  cairo_edge_t  *edge)
+ {
+-    cairo_bo_trap_t *trap = &left->deferred_trap;
++  int tmp;
+ 
+-    /* Only emit (trivial) non-degenerate trapezoids with positive height. */
+-    if (likely (trap->top < bot)) {
+ #if 0
+-        _cairo_traps_add_trap (traps,
+-                               trap->top, bot,
+-                               &left->edge.line, &trap->right->edge.line);
+-#else
+-        printf ("added trap\n");
+-#endif
+-
+-#if DEBUG_PRINT_STATE
+-        printf ("Deferred trap: left=(%d, %d)-(%d,%d) "
+-                "right=(%d,%d)-(%d,%d) top=%d, bot=%d\n",
+-                left->edge.line.p1.x, left->edge.line.p1.y,
+-                left->edge.line.p2.x, left->edge.line.p2.y,
+-                trap->right->edge.line.p1.x, trap->right->edge.line.p1.y,
+-                trap->right->edge.line.p2.x, trap->right->edge.line.p2.y,
+-                trap->top, bot);
+-#endif
+-#if DEBUG_EVENTS
+-        event_log ("end trap: %lu %lu %d %d\n",
+-                   (long) left,
+-                   (long) trap->right,
+-                   trap->top,
+-                   bot);
+-#endif
++    /* Avoid creating any horizontal edges due to bending. */
++    if (edge->top == edge->bottom) {
++        printf ("Not emitting horizontal edge :(\n");
++       return CAIRO_STATUS_SUCCESS;
+     }
+-
+-//    trap->right = NULL;
+-
+-//    return _cairo_traps_status (traps);
+-    return 0;
+-}
+-
+-
+-/* Start a new trapezoid at the given top y coordinate, whose edges
+- * are `edge' and `edge->next'. If `edge' already has a trapezoid,
+- * then either add it to the traps in `traps', if the trapezoid's
+- * right edge differs from `edge->next', or do nothing if the new
+- * trapezoid would be a continuation of the existing one. */
+-static inline cairo_status_t
+-_cairo_bo_edge_start_or_continue_trap (cairo_bo_edge_t        *left,
+-                                       cairo_bo_edge_t  *right,
+-                                       int               top,
+-                                       cairo_traps_t        *traps)
+-{
+-    cairo_status_t status;
+-
+-    if (left->deferred_trap.right == right)
+-        return CAIRO_STATUS_SUCCESS;
+-
+-    if (left->deferred_trap.right != NULL) {
+-        if (right != NULL && edges_colinear (left->deferred_trap.right, right))
+-        {
+-            /* continuation on right, so just swap edges */
+-            left->deferred_trap.right = right;
+-            return CAIRO_STATUS_SUCCESS;
+-        }
+-
+-        status = _cairo_bo_edge_end_trap (left, top, traps);
+-        if (unlikely (status))
+-            return status;
+-    }
+-
+-    if (right != NULL && ! edges_colinear (left, right)) {
+-        left->deferred_trap.top = top;
+-        left->deferred_trap.right = right;
+-
+-#if DEBUG_EVENTS
+-        event_log ("begin trap: %lu %lu %d\n",
+-                   (long) left,
+-                   (long) right,
+-                   top);
+ #endif
+-    }
+-
+-    return CAIRO_STATUS_SUCCESS;
+-}
+-
+-static inline cairo_status_t
+-_active_edges_to_traps (cairo_bo_edge_t                *left,
+-                        int32_t                         top,
+-                        cairo_traps_t                *traps)
+-{
+-    cairo_bo_edge_t *right;
+-    cairo_status_t status;
+-
+-#if DEBUG_PRINT_STATE
+-    printf ("Processing active edges for %d\n", top);
+-#endif
+-
+-    while (left != NULL) {
+-        int in_out;
+-
+-        /* Greedily search for the closing edge, so that we generate the
+-         * maximal span width with the minimal number of trapezoids.
+-         */
+-        in_out = left->edge.dir;
+-
+-        /* Check if there is a co-linear edge with an existing trap */
+-        right = left->next;
+-        if (left->deferred_trap.right == NULL) {
+-            while (right != NULL && right->deferred_trap.right == NULL)
+-                right = right->next;
+-
+-            if (right != NULL && edges_colinear (left, right)) {
+-                /* continuation on left */
+-                left->deferred_trap = right->deferred_trap;
+-                right->deferred_trap.right = NULL;
+-            }
+-        }
+-
+-        /* End all subsumed traps */
+-        right = left->next;
+-        while (right != NULL) {
+-            if (right->deferred_trap.right != NULL) {
+-                status = _cairo_bo_edge_end_trap (right, top, traps);
+-                if (unlikely (status))
+-                    return status;
+-            }
+-
+-            in_out += right->edge.dir;
+-            if (in_out == 0) {
+-                cairo_bo_edge_t *next;
+-                cairo_bool_t skip = FALSE;
+-
+-                /* skip co-linear edges */
+-                next = right->next;
+-                if (next != NULL)
+-                    skip = edges_colinear (right, next);
+-
+-                if (! skip)
+-                    break;
+-            }
+-
+-            right = right->next;
+-        }
+-
+-        status = _cairo_bo_edge_start_or_continue_trap (left, right,
+-                                                        top, traps);
+-        if (unlikely (status))
+-            return status;
+ 
+-        left = right;
+-        if (left != NULL)
+-            left = left->next;
++    /* Fix up any edge that got bent so badly as to reverse top and bottom */
++    if (edge->top > edge->bottom) {
++       tmp = edge->bottom;
++       edge->bottom = edge->top;
++       edge->top = tmp;
+     }
+ 
++    printf ("Emitting result edge (%i,%i)-(%i,%i)\n",
++            edge->line.p1.x, edge->line.p1.y,
++            edge->line.p2.x, edge->line.p2.y);
++
++//    return _cairo_array_append (array, edge);
+     return CAIRO_STATUS_SUCCESS;
+ }
+ 
+@@ -1528,26 +1393,10 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+     _cairo_bo_sweep_line_init (&sweep_line);
+ 
+     while ((event = _cairo_bo_event_dequeue (&event_queue))) {
+-        if (event->point.y != sweep_line.current_y) {
+-            for (e1 = sweep_line.stopped; e1; e1 = e1->next) {
+-                if (e1->deferred_trap.right != NULL) {
+-                    status = _cairo_bo_edge_end_trap (e1,
+-                                                      e1->edge.bottom,
+-                                                      traps);
+-                    if (unlikely (status))
+-                        goto unwind;
+-                }
+-            }
+-            sweep_line.stopped = NULL;
+-
+-            status = _active_edges_to_traps (sweep_line.head,
+-                                             sweep_line.current_y,
+-                                             traps);
+-            if (unlikely (status))
+-                goto unwind;
++//        if (event->point.y != sweep_line.current_y) {
+ 
+             sweep_line.current_y = event->point.y;
+-        }
++//        }
+ 
+ #if DEBUG_EVENTS
+         event_log ("event: %d (%ld, %ld) %lu, %lu\n",
+@@ -1561,7 +1410,8 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+         switch (event->type) {
+         case CAIRO_BO_EVENT_TYPE_START:
+             e1 = &((cairo_bo_start_event_t *) event)->edge;
+-            printf ("Start event\n");
++
++            e1->middle = event->point;
+ 
+             status = _cairo_bo_sweep_line_insert (&sweep_line, e1);
+             if (unlikely (status))
+@@ -1571,23 +1421,6 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+             if (unlikely (status))
+                 goto unwind;
+ 
+-            /* check to see if this is a continuation of a stopped edge */
+-            /* XXX change to an infinitesimal lengthening rule */
+-            for (left = sweep_line.stopped; left; left = left->next) {
+-                if (e1->edge.top <= left->edge.bottom &&
+-                    edges_colinear (e1, left))
+-                {
+-                    e1->deferred_trap = left->deferred_trap;
+-                    if (left->prev != NULL)
+-                        left->prev = left->next;
+-                    else
+-                        sweep_line.stopped = left->next;
+-                    if (left->next != NULL)
+-                        left->next->prev = left->prev;
+-                    break;
+-                }
+-            }
+-
+             left = e1->prev;
+             right = e1->next;
+ 
+@@ -1606,24 +1439,27 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+             break;
+ 
+         case CAIRO_BO_EVENT_TYPE_STOP:
+-            printf ("Stop event\n");
+             e1 = ((cairo_bo_queue_event_t *) event)->e1;
+             _cairo_bo_event_queue_delete (&event_queue, event);
+ 
++            {
++                cairo_edge_t intersected;
++                /* FIXME: Coordinates of the intersection?? */
++                intersected.line.p1.x = e1->middle.x;
++                intersected.line.p1.y = e1->middle.y;
++                intersected.top = intersected.line.p1.y;
++                intersected.line.p2.x = e1->edge.line.p2.x;
++                intersected.line.p2.y = e1->edge.line.p2.y;
++                intersected.bottom = intersected.line.p2.y;
++                _add_result_edge (/*intersected_edges*/NULL, &intersected);
++            }
++
+             left = e1->prev;
+             right = e1->next;
+ 
+             _cairo_bo_sweep_line_delete (&sweep_line, e1);
+ 
+             /* first, check to see if we have a continuation via a fresh edge */
+-            if (e1->deferred_trap.right != NULL) {
+-                e1->next = sweep_line.stopped;
+-                if (sweep_line.stopped != NULL)
+-                    sweep_line.stopped->prev = e1;
+-                sweep_line.stopped = e1;
+-                e1->prev = NULL;
+-            }
+-
+             if (left != NULL && right != NULL) {
+                 status = _cairo_bo_event_queue_insert_if_intersect_below_current_y (&event_queue, left, right);
+                 if (unlikely (status))
+@@ -1633,7 +1469,6 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+             break;
+ 
+         case CAIRO_BO_EVENT_TYPE_INTERSECTION:
+-            printf ("Intersection event\n");
+             e1 = ((cairo_bo_queue_event_t *) event)->e1;
+             e2 = ((cairo_bo_queue_event_t *) event)->e2;
+             _cairo_bo_event_queue_delete (&event_queue, event);
+@@ -1644,6 +1479,29 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+ 
+             intersection_count++;
+ 
++            {
++                cairo_edge_t intersected;
++                /* FIXME: Coordinates of the intersection?? */
++                intersected.line.p1.x = e1->middle.x;
++                intersected.line.p1.y = e1->middle.y;
++                intersected.top = intersected.line.p1.y;
++                intersected.line.p2.x = event->point.x;
++                intersected.line.p2.y = event->point.y;
++                intersected.bottom = intersected.line.p2.y;
++                _add_result_edge (/*intersected_edges*/NULL, &intersected);
++
++                intersected.line.p1.x = e2->middle.x;
++                intersected.line.p1.y = e2->middle.y;
++                intersected.top = intersected.line.p1.y;
++                intersected.line.p2.x = event->point.x;
++                intersected.line.p2.y = event->point.y;
++                intersected.bottom = intersected.line.p2.y;
++                _add_result_edge (/*intersected_edges*/NULL, &intersected);
++
++                e1->middle = event->point;
++                e2->middle = event->point;
++            }
++
+             left = e1->prev;
+             right = e2->next;
+ 
+@@ -1668,13 +1526,6 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+     }
+ 
+     *num_intersections = intersection_count;
+-    for (e1 = sweep_line.stopped; e1; e1 = e1->next) {
+-        if (e1->deferred_trap.right != NULL) {
+-            status = _cairo_bo_edge_end_trap (e1, e1->edge.bottom, traps);
+-            if (unlikely (status))
+-                break;
+-        }
+-    }
+  unwind:
+     _cairo_bo_event_queue_fini (&event_queue);
+ 
+@@ -1725,7 +1576,6 @@ _cairo_bentley_ottmann_tessellate_polygon (cairo_traps_t         *traps,
+                                                 events[i].point.y);
+ 
+         events[i].edge.edge = polygon->edges[i];
+-        events[i].edge.deferred_trap.right = NULL;
+         events[i].edge.prev = NULL;
+         events[i].edge.next = NULL;
+     }
+@@ -2172,7 +2022,6 @@ bentley_ottmann_intersect_segments (GList *data)
+                                                 events[i].point.y);
+ 
+         events[i].edge.edge = *cairo_edge;
+-        events[i].edge.deferred_trap.right = NULL;
+         events[i].edge.prev = NULL;
+         events[i].edge.next = NULL;
+     }
+@@ -2220,6 +2069,13 @@ my_cairo_test (void)
+   data = g_list_prepend (data, &points[i]);
+   i++;
+ 
++  /* Line from (15,15)-(25,16) */
++  points[i].a.x = 15; points[i].a.y = 15;
++  points[i].b.x = 25; points[i].b.y = 15;
++  points[i].num = i;
++  data = g_list_prepend (data, &points[i]);
++  i++;
++
+ #if 0
+   /* Line from (14,10)-(16,20) */
+   points[i].a.x = 14; points[i].a.y = 10;
+@@ -2238,3 +2094,112 @@ my_cairo_test (void)
+ 
+   bentley_ottmann_intersect_segments (data);
+ }
++
++#ifdef OLD_WAY
++
++/*
++node_add
++ (C) 1993 Klamer Schutte
++ (C) 1997 Alexey Nikitin, Michael Leonov
++ (C) 2006 harry eaton
++
++ returns a bit field in new_point that indicates where the
++ point was.
++ 1 means a new node was created and inserted
++ 4 means the intersection was not on the dest point
++*/
++static VNODE *
++node_add (VNODE * dest, Vector po, int *new_point)
++{
++  VNODE *p;
++
++  if (vect_equal (po, dest->point))
++    return dest;
++  if (vect_equal (po, dest->next->point))
++    {
++      (*new_point) += 4;
++      return dest->next;
++    }
++  p = poly_CreateNode (po);
++  if (p == NULL)
++    return NULL;
++  (*new_point) += 5;
++  p->prev = dest;
++  p->next = dest->next;
++  p->cvc_prev = p->cvc_next = NULL;
++  p->Flags.status = UNKNWN;
++  return (dest->next = dest->next->prev = p);
++}				/* node_add */
++
++
++/*
++node_add_point
++ (C) 1993 Klamer Schutte
++ (C) 1997 Alexey Nikitin, Michael Leonov
++
++ return 1 if new node in b, 2 if new node in a and 3 if new node in both
++*/
++
++static int
++node_add_point (VNODE * a, VNODE * b, Vector p)
++{
++  int res = 0;
++
++  VNODE *node_a, *node_b;
++
++  node_a = node_add (a, p, &res);
++  res += res;
++  node_b = node_add (b, p, &res);
++
++  if (node_a == NULL || node_b == NULL)
++    return ISECT_NO_MEMORY;
++  node_b->cvc_prev = node_b->cvc_next = (CVCList *) - 1;
++  node_a->cvc_prev = node_a->cvc_next = (CVCList *) - 1;
++  return res;
++}				/* node_add_point */
++
++
++
++
++static void
++dummy (void)
++{
++  struct info *i = (struct info *) cl;
++  struct seg *s = (struct seg *) b;
++  Vector s1, s2;
++  int cnt, res;
++
++  i->s->p->Flags.status = ISECTED;
++  s->p->Flags.status = ISECTED;
++  for (; cnt; cnt--)
++    {
++      res = node_add_point (i->v, s->v, cnt > 1 ? s2 : s1);
++      if (res < 0)
++        return 1;                /* error */
++      /* adjust the bounding box and tree if necessary */
++      if (res & 2) {
++        cntrbox_adjust (i->s->p, cnt > 1 ? s2 : s1);
++        if (adjust_tree (i->s->p->tree, i->s))
++          return 1;
++      }
++      /* if we added a node in the tree we need to change the tree */
++      if (res & 1) {
++        cntrbox_adjust (s->p, cnt > 1 ? s2 : s1);
++        if (adjust_tree (i->tree, s))
++          return 1;
++      }
++      if (res & 3) {               /* if a point was inserted start over */
++        DEBUGP ("new intersection at (%d, %d)\n", cnt > 1 ? s2[0] : s1[0], cnt > 1 ? s2[1] : s1[1]);
++        longjmp (*i->env, 1);
++      }
++    }
++  return 0;
++}
++#endif
++
++
++int
++bo_intersect (jmp_buf *jb, POLYAREA *b, POLYAREA *a)
++{
++  return 0;
++}
+diff --git a/src/cairo/cairo-wideint-private.h b/src/cairo/cairo-wideint-private.h
+index 303dab1..23d653f 100644
+--- a/src/cairo/cairo-wideint-private.h
++++ b/src/cairo/cairo-wideint-private.h
+@@ -184,14 +184,13 @@ _cairo_int64_divrem (cairo_int64_t num, cairo_int64_t den)
+     return qr;
+ }
+ 
+-#if 0
++#if 1
+ static inline int32_t
+ _cairo_int64_32_div (cairo_int64_t num, int32_t den)
+ {
+     return num / den;
+ }
+-#endif
+-
++#else
+ static inline int32_t
+ _cairo_int64_32_div (cairo_int64_t num, int32_t den)
+ {
+@@ -203,6 +202,7 @@ _cairo_int64_32_div (cairo_int64_t num, int32_t den)
+ 
+   return _cairo_int64_to_int32 (quorem.quo);
+ }
++#endif
+ 
+ /*
+  * 128-bit datatypes.  Again, provide two implementations in
+diff --git a/src/main.c b/src/main.c
+index 82ee75c..91a183f 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -53,6 +53,7 @@
+ #include "action.h"
+ #include "misc.h"
+ #include "lrealpath.h"
++#include "setjmp.h"
+ #include "sweep.h"
+ 
+ /* This next one is so we can print the help messages. */
+@@ -1037,7 +1038,7 @@ main (int argc, char *argv[])
+ //      bos_test_intersections ();
+       my_cairo_test ();
+ 
+-      //gui->do_export (0);
++      gui->do_export (0);
+ #if HAVE_DBUS
+       pcb_dbus_finish();
+ #endif
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 576bfdb..78ba119 100644
+index 576bfdb..a69e317 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -609,12 +609,11 @@ seg_in_seg (const BoxType * b, void *cl)
+@@ -51,6 +51,7 @@
+ #include "global.h"
+ #include "rtree.h"
+ #include "heap.h"
++#include "sweep.h"
+ 
+ #define ROUND(a) (long)((a) > 0 ? ((a) + 0.5) : ((a) - 0.5))
+ 
+@@ -609,12 +610,11 @@ seg_in_seg (const BoxType * b, void *cl)
  //  printf ("Looking at intersection between %p(%i) and %p(%i)\n",
  //          s->v, s->v->Flags.intersected, i->v, i->v->Flags.intersected);
  
@@ -29,7 +618,7 @@ index 576bfdb..78ba119 100644
  
    cnt = vect_inters2 (s->v->point, s->v->next->point,
  		      i->v->point, i->v->next->point, s1, s2);
-@@ -629,35 +628,34 @@ seg_in_seg (const BoxType * b, void *cl)
+@@ -629,35 +629,34 @@ seg_in_seg (const BoxType * b, void *cl)
        int done_insert = 0;
        new_node = node_add_single_point (i->v, cnt > 1 ? s2 : s1);
        if (new_node != NULL)
@@ -86,7 +675,7 @@ index 576bfdb..78ba119 100644
      }
    return 0;
  }
-@@ -735,9 +733,9 @@ get_seg (const BoxType * b, void *cl)
+@@ -735,9 +734,9 @@ get_seg (const BoxType * b, void *cl)
  static int
  contour_bounds_touch (const BoxType * b, void *cl)
  {
@@ -98,7 +687,7 @@ index 576bfdb..78ba119 100644
    PLINE *rtree_over;
    PLINE *looping_over;
    VNODE *av;			/* node iterators */
-@@ -758,17 +756,17 @@ contour_bounds_touch (const BoxType * b, void *cl)
+@@ -758,17 +757,17 @@ contour_bounds_touch (const BoxType * b, void *cl)
     */
    if (pa->Count < pb->Count)
      {
@@ -119,7 +708,7 @@ index 576bfdb..78ba119 100644
      {
        /* check this edge for any insertions */
        double dx;
-@@ -776,56 +774,54 @@ contour_bounds_touch (const BoxType * b, void *cl)
+@@ -776,56 +775,54 @@ contour_bounds_touch (const BoxType * b, void *cl)
  #if 0
        /* We know we will just reject any intersections found until
           the next pass anyway */
@@ -200,7 +789,7 @@ index 576bfdb..78ba119 100644
    return 0;
  }
  
-@@ -841,7 +837,7 @@ insert_new_nodes_cb (gpointer data, gpointer userdata)
+@@ -841,7 +838,7 @@ insert_new_nodes_cb (gpointer data, gpointer userdata)
    task->new_node->next = task->seg->v->next;
    task->seg->v->next->prev = task->new_node;
    task->seg->v->next = task->new_node;
@@ -209,7 +798,7 @@ index 576bfdb..78ba119 100644
  
    cntrbox_adjust (task->seg->p, task->new_node->point);
    if (adjust_tree (task->seg->p->tree, task->seg))
-@@ -869,9 +865,9 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -869,9 +866,9 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
        a = t;
      }
  
@@ -221,7 +810,7 @@ index 576bfdb..78ba119 100644
      {
        BoxType sb;
        jmp_buf out;
-@@ -881,16 +877,16 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -881,16 +878,16 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
        c_info.pa = pa;
  
        if (!add)
@@ -248,7 +837,7 @@ index 576bfdb..78ba119 100644
  
        sb.X1 = pa->xmin;
        sb.Y1 = pa->ymin;
-@@ -898,20 +894,18 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -898,20 +895,18 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
        sb.Y2 = pa->ymax + 1;
  
        r_search (b->contour_tree, &sb, NULL, contour_bounds_touch, &c_info);
@@ -275,7 +864,7 @@ index 576bfdb..78ba119 100644
    g_list_foreach (c_info.node_insert_list, insert_new_nodes_cb, NULL);
    g_list_free (c_info.node_insert_list);
  //  printf ("====\n");
-@@ -923,8 +917,7 @@ static int
+@@ -923,8 +918,7 @@ static int
  intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
  {
    int call_count = 1;
@@ -285,7 +874,26 @@ index 576bfdb..78ba119 100644
    return 0;
  }
  
-@@ -986,7 +979,7 @@ cntrbox_inside (PLINE * c1, PLINE * c2)
+@@ -946,8 +940,16 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+ 	      a->contours->xmin <= b->contours->xmax &&
+ 	      a->contours->ymin <= b->contours->ymax)
+ 	    {
+-	      if (UNLIKELY (intersect (e, a, b, add)))
+-		error (err_no_memory);
++              if (!add)
++                {
++                  if (UNLIKELY (intersect (e, a, b, add)))
++                    error (err_no_memory);
++                }
++              else
++                {
++                  if (UNLIKELY (bo_intersect (e, a, b)))
++                    error (err_no_memory);
++                }
+ 	    }
+ 	}
+       while (add && (a = a->f) != afst);
+@@ -986,7 +988,7 @@ cntrbox_inside (PLINE * c1, PLINE * c2)
  /* Routines for making labels */
  
  static int
@@ -294,7 +902,7 @@ index 576bfdb..78ba119 100644
  {
    PLINE *me = cl;
    PLINE *check = (PLINE *) b;
-@@ -1024,22 +1017,19 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
+@@ -1024,22 +1026,19 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
  	break;
        outer = (POLYAREA *) heap_remove_smallest (heap);
  
@@ -330,7 +938,7 @@ index 576bfdb..78ba119 100644
      }
    while (1);
    heap_destroy (&heap);
-@@ -1103,28 +1093,28 @@ label_contour (PLINE * a)
+@@ -1103,28 +1102,28 @@ label_contour (PLINE * a)
    do
      {
        if (cur->cvc_next)	/* _always_ examine cross vertex */
@@ -377,7 +985,7 @@ index 576bfdb..78ba119 100644
      }
    while ((cur = cur->next) != first_not_unknown);
  #ifdef DEBUG_ALL_LABELS
-@@ -1162,11 +1152,10 @@ M_POLYAREA_label_separated (PLINE * afst, POLYAREA * b, BOOLp touch)
+@@ -1162,11 +1161,10 @@ M_POLYAREA_label_separated (PLINE * afst, POLYAREA * b, BOOLp touch)
  {
    PLINE *curc = afst;
  
@@ -393,7 +1001,7 @@ index 576bfdb..78ba119 100644
    return FALSE;
  }
  
-@@ -1219,7 +1208,7 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
+@@ -1219,7 +1217,7 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
  
  static void
  PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
@@ -402,7 +1010,7 @@ index 576bfdb..78ba119 100644
  {
    assert (cntr != NULL);
    assert (cntr->Count > 2);
-@@ -1228,7 +1217,7 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+@@ -1228,7 +1226,7 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
    if (cntr->Flags.orient == PLF_DIR)
      {
        if (owner != NULL)
@@ -411,7 +1019,7 @@ index 576bfdb..78ba119 100644
        InsCntr (e, cntr, contours);
      }
    /* put hole into temporary list */
-@@ -1239,28 +1228,28 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
+@@ -1239,28 +1237,28 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
  	{
  	  cntr->next = parent_contour->next;
  	  parent_contour->next = cntr;
@@ -452,7 +1060,7 @@ index 576bfdb..78ba119 100644
  {
    if (piece->contours == contour)
      piece->contours = contour->next;
-@@ -1273,7 +1262,7 @@ remove_contour (POLYAREA * piece, PLINE * prev_contour, PLINE * contour,
+@@ -1273,7 +1271,7 @@ remove_contour (POLYAREA * piece, PLINE * prev_contour, PLINE * contour,
    contour->next = NULL;
  
    if (remove_rtree_entry)
@@ -461,7 +1069,7 @@ index 576bfdb..78ba119 100644
  }
  
  struct polyarea_info
-@@ -1286,37 +1275,34 @@ static int
+@@ -1286,37 +1284,34 @@ static int
  heap_it (const BoxType * b, void *cl)
  {
    heap_t *heap = (heap_t *) cl;
@@ -510,7 +1118,7 @@ index 576bfdb..78ba119 100644
    return 0;
  }
  
-@@ -1340,7 +1326,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1340,7 +1335,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
    curc = dest;
    do
      {
@@ -519,7 +1127,7 @@ index 576bfdb..78ba119 100644
      }
    while ((curc = curc->f) != dest);
  
-@@ -1388,7 +1374,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1388,7 +1383,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
        pa_info = heap_remove_smallest (heap);
        if (heap_is_empty (heap))
  	{			/* only one possibility it must be the right one */
@@ -528,7 +1136,7 @@ index 576bfdb..78ba119 100644
  	  container = pa_info->pa->contours;
  	}
        else
-@@ -1421,48 +1407,42 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1421,48 +1416,42 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
  	}
        else
  	{
@@ -610,7 +1218,7 @@ index 576bfdb..78ba119 100644
  
  	  /* link at front of hole list */
  	  curh->next = container->next;
-@@ -1683,37 +1663,37 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
+@@ -1683,37 +1672,37 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
  }				/* Gather */
  
  static void
@@ -672,7 +1280,7 @@ index 576bfdb..78ba119 100644
  }
  
  static void
-@@ -1725,21 +1705,20 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
+@@ -1725,21 +1714,20 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
  
    cur = &a->head;
    do
@@ -702,7 +1310,7 @@ index 576bfdb..78ba119 100644
  {
    PLINE *tmprev;
  
-@@ -1787,7 +1766,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+@@ -1787,7 +1775,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
  	      PutContour (e, tmprev, contours, holes, owner, NULL, NULL);
  	      return TRUE;
  	    }
@@ -711,7 +1319,7 @@ index 576bfdb..78ba119 100644
  	case PBO_UNITE:
  	case PBO_SUB:
  	  if ((*A)->Flags.status == OUTSIDE)
-@@ -1796,8 +1775,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
+@@ -1796,8 +1784,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
  	      /* disappear this contour (rtree entry removed in PutContour) */
  	      *A = tmprev->next;
  	      tmprev->next = NULL;
@@ -721,7 +1329,7 @@ index 576bfdb..78ba119 100644
  	      return TRUE;
  	    }
  	  break;
-@@ -1863,21 +1841,21 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
+@@ -1863,21 +1850,21 @@ M_B_AREA_Collect (jmp_buf * e, POLYAREA * bfst, POLYAREA ** contours,
  
  
  static inline int
@@ -746,7 +1354,7 @@ index 576bfdb..78ba119 100644
  {
    /* If this item was the start of the list, advance that pointer */
    if (*list == piece)
-@@ -1894,7 +1872,7 @@ remove_polyarea (POLYAREA ** list, POLYAREA * piece)
+@@ -1894,7 +1881,7 @@ remove_polyarea (POLYAREA ** list, POLYAREA * piece)
  
  static void
  M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
@@ -755,7 +1363,7 @@ index 576bfdb..78ba119 100644
  {
    POLYAREA *a = *pieces;
    POLYAREA *anext;
-@@ -1905,88 +1883,75 @@ M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
+@@ -1905,88 +1892,75 @@ M_POLYAREA_separate_isected (jmp_buf * e, POLYAREA ** pieces,
      return;
  
    /* TODO: STASH ENOUGH INFORMATION EARLIER ON, SO WE CAN REMOVE THE INTERSECTED
@@ -891,7 +1499,7 @@ index 576bfdb..78ba119 100644
  {
    struct find_inside_m_pa_info *info = cl;
    PLINE *check = (PLINE *) b;
-@@ -1996,18 +1961,17 @@ find_inside_m_pa (const BoxType * b, void *cl)
+@@ -1996,18 +1970,17 @@ find_inside_m_pa (const BoxType * b, void *cl)
    /* Don't look at contours marked as being intersected */
    if (check->Flags.status == ISECTED)
      return 0;
@@ -915,7 +1523,7 @@ index 576bfdb..78ba119 100644
  {
    POLYAREA *a = *pieces;
    POLYAREA *b;
-@@ -2022,8 +1986,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -2022,8 +1995,7 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
    if (a == NULL)
      return;
  
@@ -925,7 +1533,7 @@ index 576bfdb..78ba119 100644
      case PBO_ISECT:
        del_outside = 1;
        break;
-@@ -2031,213 +1994,184 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
+@@ -2031,213 +2003,184 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
      case PBO_SUB:
        del_inside = 1;
        break;
@@ -1286,7 +1894,7 @@ index 576bfdb..78ba119 100644
  }
  
  static void
-@@ -2245,7 +2179,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+@@ -2245,7 +2188,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
  		    PLINE ** holes, int action, BOOLp maybe)
  {
    POLYAREA *a = afst;
@@ -1295,7 +1903,7 @@ index 576bfdb..78ba119 100644
    PLINE **cur, **next, *parent_contour;
  
    assert (a != NULL);
-@@ -2254,35 +2188,35 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
+@@ -2254,35 +2197,35 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
    do
      {
        if (maybe && a->contours->Flags.status != ISECTED)
@@ -1353,7 +1961,7 @@ index 576bfdb..78ba119 100644
      }
    while ((a = a->f) != afst);
  }
-@@ -2388,17 +2322,16 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
+@@ -2388,17 +2331,16 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
        M_POLYAREA_update_primary (&e, res, &holes, action, b);
        M_POLYAREA_separate_isected (&e, res, &holes, &a_isected);
        M_POLYAREA_label_separated (a_isected, b, FALSE);
@@ -1376,7 +1984,7 @@ index 576bfdb..78ba119 100644
  
        InsertHoles (&e, *res, &holes);
      }
-@@ -2593,10 +2526,10 @@ poly_DelContour (PLINE ** c)
+@@ -2593,10 +2535,10 @@ poly_DelContour (PLINE ** c)
      {
        prev = cur->prev;
        if (cur->cvc_next != NULL)
@@ -1391,7 +1999,7 @@ index 576bfdb..78ba119 100644
        free (cur);
      }
    if ((*c)->head.cvc_next != NULL)
-@@ -2794,7 +2727,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
+@@ -2794,7 +2736,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
      {
        if (!poly_CopyContour (last, cur))
  	return FALSE;
@@ -1400,7 +2008,7 @@ index 576bfdb..78ba119 100644
        last = &(*last)->next;
      }
    return TRUE;
-@@ -2993,7 +2926,7 @@ poly_Create (void)
+@@ -2993,7 +2935,7 @@ poly_Create (void)
  }
  
  void
