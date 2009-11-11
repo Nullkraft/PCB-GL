@@ -99,17 +99,15 @@ if (UNLIKELY (((ptr) = malloc(sizeof(type))) == NULL)) \
     error(err_no_memory);
 
 #undef DEBUG_LABEL
-//#define DEBUG_LABEL
 #undef DEBUG_ALL_LABELS
 #undef DEBUG_JUMP
 #undef DEBUG_GATHER
 #undef DEBUG_ANGLE
 #undef DEBUG
-//#define DEBUG
 #ifdef DEBUG
 #define DEBUGP(...) fprintf(stderr, ## __VA_ARGS__)
 #else
-#define DEBUGP(...) (void)0;
+#define DEBUGP(...)
 #endif
 
 /* ///////////////////////////////////////////////////////////////////////////// * /
@@ -387,8 +385,6 @@ node_label (VNODE * pn)
   CVCList *l;
   char this_poly;
   int region = UNKNWN;
-  static int one_shot = 1;
-  int extra_debug = 0;
 
   assert (pn);
   assert (pn->cvc_next);
@@ -949,7 +945,6 @@ static BOOLp
 label_contour (PLINE * a)
 {
   VNODE *cur = &a->head;
-  VNODE *last_unknown = cur;
   VNODE *first_not_unknown = NULL;
   int label = UNKNWN;
 
@@ -978,22 +973,8 @@ label_contour (PLINE * a)
           LABEL_NODE (cur, label);
           continue;
         }
-
-      /* The node we are at is UNKNWN, and we haven't yet got
-       * an answer as to how its predecessors were labeled.
-       * We update the last_unknown pointer to ensure we get
-       * back to this node after the circular linked list
-       * loops around
-       */
-//      last_unknown = cur;
     }
   while ((cur = cur->next) != first_not_unknown);
-//  while ((cur = cur->next) != last_unknown);
-//  while ((cur = cur->next) != &a->head || did_label);
-  if (NODE_LABEL (cur) == UNKNWN)
-    {
-      fprintf (stderr, "----- WHOOPS ------*\n");
-    }
 #ifdef DEBUG_ALL_LABELS
   print_labels (a);
   DEBUGP ("\n\n");
@@ -1765,8 +1746,6 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
   *aandb = NULL;
   *aminusb = NULL;
 
-  DEBUGP ("******** poly_AndSubtract_free ********\n");
-
   if ((code = setjmp (e)) == 0)
     {
 
@@ -1776,42 +1755,6 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
       if (!poly_Valid (b))
 	return -1;
 #endif
-
-#ifdef DEBUG
-      {
-        POLYAREA *dbg = a;
-        POLYAREA *start = dbg;
-        int piece = 0;
-        DEBUGP ("INPUT POLYGON A:\n");
-        do {
-          PLINE *contour = dbg->contours;
-          int outer = 1;
-          DEBUGP ("PIECE %i\n", ++piece);
-          do {
-            DEBUGP ("%s CONTOUR\n", outer ? "OUTER" : "INNER");
-            pline_dump (&contour->head);
-            outer = 0;
-          } while ((contour = contour->next) != NULL);
-        } while ((dbg = dbg->f) != start);
-      }
-      {
-        POLYAREA *dbg = b;
-        POLYAREA *start = dbg;
-        int piece = 0;
-        DEBUGP ("INPUT POLYGON B:\n");
-        do {
-          PLINE *contour = dbg->contours;
-          int outer = 1;
-          DEBUGP ("PIECE %i\n", ++piece);
-          do {
-            DEBUGP ("%s CONTOUR\n", outer ? "OUTER" : "INNER");
-            pline_dump (&contour->head);
-            outer = 0;
-          } while ((contour = contour->next) != NULL);
-        } while ((dbg = dbg->f) != start);
-      }
-#endif
-
       M_POLYAREA_intersect (&e, a, b, TRUE);
 
       M_POLYAREA_label (a, b, FALSE);
@@ -1834,41 +1777,6 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
       poly_Free (&a);
       poly_Free (&b);
       assert (poly_Valid (*aminusb));
-#ifdef DEBUG
-      {
-        POLYAREA *dbg = *aandb;
-        POLYAREA *start = dbg;
-        int piece = 0;
-        DEBUGP ("OUTPUT A AND B:\n");
-        do {
-          PLINE *contour = dbg->contours;
-          int outer = 1;
-          DEBUGP ("PIECE %i\n", ++piece);
-          do {
-            DEBUGP ("%s CONTOUR\n", outer ? "OUTER" : "INNER");
-            pline_dump (&contour->head);
-            outer = 0;
-          } while ((contour = contour->next) != NULL);
-        } while ((dbg = dbg->f) != start);
-      }
-      {
-        POLYAREA *dbg = *aminusb;
-        POLYAREA *start = dbg;
-        int piece = 0;
-        DEBUGP ("OUTPUT A MINUS B:\n");
-        do {
-          PLINE *contour = dbg->contours;
-          int outer = 1;
-          DEBUGP ("PIECE %i\n", ++piece);
-          do {
-            DEBUGP ("%s CONTOUR\n", outer ? "OUTER" : "INNER");
-            pline_dump (&contour->head);
-            outer = 0;
-          } while ((contour = contour->next) != NULL);
-        } while ((dbg = dbg->f) != start);
-      }
-#endif
-
     }
   /* delete holes if any left */
   while ((p = holes) != NULL)
