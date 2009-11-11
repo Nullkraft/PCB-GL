@@ -1,7 +1,7 @@
-Bottom: b6b2dcf8729081e4fc466256fee0737530a17b6b
-Top:    05aa89dceb67f9773c8923170d7994707c14c46f
+Bottom: b7b5388d122416ac7125e2466dab953ff18c9cf8
+Top:    55c9fc72c783ff9f96cf4d54dbad7ee8b4247321
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-07 10:05:32 +0000
+Date:   2009-11-11 04:20:23 +0000
 
 Work in progress
 
@@ -570,7 +570,7 @@ index 0000000..c27606b
 +
 +int vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2, Vector S1, Vector S2);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 027437f..a9e6b4f 100644
+index e4d8e55..bd25ad5 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -83,14 +83,8 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
@@ -589,7 +589,7 @@ index 027437f..a9e6b4f 100644
  
  #define NODE_LABEL(n)  ((n)->Flags.status)
  #define LABEL_NODE(n,l) ((n)->Flags.status = (l))
-@@ -200,11 +194,6 @@ node_add_single (VNODE * dest, Vector po)
+@@ -199,11 +193,6 @@ node_add_single (VNODE * dest, Vector po)
    p->Flags.status = UNKNWN;
    return p;
  }				/* node_add */
@@ -601,7 +601,7 @@ index 027437f..a9e6b4f 100644
  /*
  new_descriptor
    (C) 2006 harry eaton
-@@ -535,14 +524,6 @@ cntrbox_adjust (PLINE * c, Vector p)
+@@ -534,14 +523,6 @@ cntrbox_adjust (PLINE * c, Vector p)
  
  /* some structures for handling segment intersections using the rtrees */
  
@@ -616,7 +616,7 @@ index 027437f..a9e6b4f 100644
  typedef struct insert_task
  {
    VNODE *new_node;
-@@ -756,6 +737,25 @@ get_seg (const BoxType * b, void *cl)
+@@ -755,6 +736,25 @@ get_seg (const BoxType * b, void *cl)
    return 0;
  }
  
@@ -642,7 +642,7 @@ index 027437f..a9e6b4f 100644
  /*
   * intersect() (and helpers)
   * (C) 2006, harry eaton
-@@ -983,15 +983,21 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+@@ -982,15 +982,21 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  	      a->contours->xmin <= b->contours->xmax &&
  	      a->contours->ymin <= b->contours->ymax)
  	    {
@@ -666,7 +666,7 @@ index 027437f..a9e6b4f 100644
                  }
  	    }
  	}
-@@ -1000,8 +1006,10 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+@@ -999,8 +1005,10 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  	if (curcB->Flags.status == ISECTED)
  	  {
  	    the_list = add_descriptors (curcB, 'B', the_list);
@@ -678,7 +678,7 @@ index 027437f..a9e6b4f 100644
  	  }
      }
    while (add && (b = b->f) != bfst);
-@@ -1011,8 +1019,10 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+@@ -1010,8 +1018,10 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  	if (curcA->Flags.status == ISECTED)
  	  {
  	    the_list = add_descriptors (curcA, 'A', the_list);
