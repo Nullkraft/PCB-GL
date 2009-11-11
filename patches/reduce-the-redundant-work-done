@@ -1,7 +1,7 @@
-Bottom: d76efaf70a63c95b36e280145249e139f1702731
-Top:    16ce99869f4fdc5a471cfe4f5c61f5c63b26c71c
+Bottom: 43d5c0311c8339e30c6dd4f43f7ac5351fb430d4
+Top:    eb025d9d38cd50e8783093edacb19b0e6f1f2e35
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-11 03:14:57 +0000
+Date:   2009-11-11 04:56:18 +0000
 
 Reduce the redundant work done in node_label
 
@@ -9,7 +9,7 @@ Reduce the redundant work done in node_label
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 35400a8..043db86 100644
+index d407964..78e1a54 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -424,13 +424,16 @@ node_label (VNODE * pn)

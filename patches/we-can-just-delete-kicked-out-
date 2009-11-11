@@ -1,7 +1,7 @@
-Bottom: 16ce99869f4fdc5a471cfe4f5c61f5c63b26c71c
-Top:    d50babdc10223754a9011b7060b263fceb25230f
+Bottom: eb025d9d38cd50e8783093edacb19b0e6f1f2e35
+Top:    2887273f0be635f54120d79ebec7ecd6bf05d2ec
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-11 04:17:03 +0000
+Date:   2009-11-11 04:56:18 +0000
 
 We can just delete kicked out holes
 
@@ -12,7 +12,7 @@ kicked out, we know it is destined for the bin.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 043db86..6aa18b2 100644
+index 78e1a54..1c4ae17 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -1351,6 +1351,7 @@ find_inside (const BoxType *b, void *cl)
@@ -33,7 +33,7 @@ index 043db86..6aa18b2 100644
            while (1) {
              struct find_inside_info info;
              PLINE *prev;
-@@ -1487,10 +1489,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
+@@ -1489,10 +1491,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
  
              /* Remove hole from the contour */
              remove_contour (pa_info->pa, prev, info.result, TRUE);
