@@ -1351,6 +1351,7 @@ find_inside (const BoxType *b, void *cl)
   if (check->Flags.orient == PLF_DIR) {
     return 0;
   }
+
   if (poly_ContourInContour (info->want_inside, check)) {
     info->result = check;
     longjmp (info->jb, 1);
@@ -1459,7 +1460,8 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
 	}
       else
 	{
-          /* Need to check if this new hole means we need to kick out any old ones for reprocessing */
+          /* Need to check if this new hole means we need to kick out any old
+           * ones for deletion */
           while (1) {
             struct find_inside_info info;
             PLINE *prev;
@@ -1489,10 +1491,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
 
             /* Remove hole from the contour */
             remove_contour (pa_info->pa, prev, info.result, TRUE);
-
-            /* Add hole as the next on the list to be processed in this very function */
-            info.result->next = *src;
-            *src = info.result;
+            poly_DelContour (&info.result);
           }
           /* End check for kicked out holes */
 
