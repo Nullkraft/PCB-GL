@@ -1,15 +1,108 @@
 Bottom: 93ea42d913ae26cd9420aa5b4584e93d10a6435e
-Top:    84f99ed7490d7f5476560bd825f1d839a22fc446
+Top:    61bd17d7c012ba6e52a2e148e6b160fa991bfcfb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-11 16:49:10 +0000
+Date:   2009-11-11 16:49:56 +0000
 
-Undo polygon1.c indenting
-
+Tag circular contours so they can be drawn quicker
 
 ---
 
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index ded1bc8..fa2df9b 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -98,6 +98,14 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
+ static int thindraw_hole_cb (PLINE *pl, void *user_data)
+ {
+   hidGC gc = user_data;
++
++  /* If the contour is round, use an arc drawing routine. */
++  if (pl->is_round) {
++    gui->set_line_width (gc, 0);
++    gui->draw_arc (gc, pl->cx, pl->cy, pl->radius, pl->radius, 0, 360);
++    return 0;
++  }
++
+   thindraw_contour (gc, pl);
+   return 0;
+ }
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index db206cd..cb53763 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -606,6 +606,7 @@ void tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices)
+ struct do_hole_info {
+   GLUtesselator *tobj;
+   GLdouble *vertices;
++  double scale;
+ };
+ 
+ static int
+@@ -613,10 +614,24 @@ do_hole (const BoxType *b, void *cl)
+ {
+   struct do_hole_info *info = cl;
+   PLINE *curc = (PLINE *) b;
++
+   /* Ignore the outer contour - we draw it first explicitly*/
+   if (curc->Flags.orient == PLF_DIR) {
+     return 0;
+   }
++
++  /* If the contour is round, and hidgl_fill_circle would use
++   * less slices than we have vertices to draw it, then call
++   * hidgl_fill_circle to draw this contour.
++   */
++  if (curc->is_round) {
++    double slices = calc_slices (curc->radius / info->scale, 2 * M_PI);
++    if (slices < curc->Count) {
++      hidgl_fill_circle (curc->cx, curc->cy, curc->radius, info->scale);
++      return 1;
++    }
++  }
++
+   tesselate_contour (info->tobj, &curc->head, info->vertices);
+   return 1;
+ }
+@@ -634,6 +649,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+   struct do_hole_info info;
+   int stencil_bit;
+ 
++  info.scale = scale;
+   global_scale = scale;
+ 
+   if (poly->Clipped == NULL)
+diff --git a/src/polyarea.h b/src/polyarea.h
+index 50dda4a..ce427ad 100644
+--- a/src/polyarea.h
++++ b/src/polyarea.h
+@@ -99,6 +99,10 @@ struct PLINE
+     unsigned int Count;
+     double area;
+     rtree_t *tree;
++    int is_round;
++    int cx;
++    int cy;
++    int radius;
+     struct {
+       unsigned int status:3;
+       unsigned int orient:1;
+diff --git a/src/polygon.c b/src/polygon.c
+index 1fbfc34..4a4f48c 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -351,6 +351,10 @@ CirclePoly (LocationType x, LocationType y, BDimension radius)
+   if ((contour = poly_NewContour (v)) == NULL)
+     return NULL;
+   frac_circle (contour, x, y, v, 1);
++  contour->is_round = TRUE;
++  contour->cx = x;
++  contour->cy = y;
++  contour->radius = radius;
+   return ContourToPoly (contour);
+ }
+ 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index c8aa3f0..e69fc86 100644
+index c8aa3f0..f9fa617 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -609,12 +609,11 @@ seg_in_seg (const BoxType * b, void *cl)
@@ -1375,7 +1468,18 @@ index c8aa3f0..e69fc86 100644
  
        InsertHoles (&e, *res, &holes);
      }
-@@ -2591,10 +2524,10 @@ poly_DelContour (PLINE ** c)
+@@ -2544,6 +2477,10 @@ poly_IniContour (PLINE * c)
+   c->head.next = c->head.prev = &c->head;
+   c->xmin = c->ymin = 0x7fffffff;
+   c->xmax = c->ymax = 0x80000000;
++  c->is_round = FALSE;
++  c->cx = 0;
++  c->cy = 0;
++  c->radius = 0;
+ }
+ 
+ PLINE *
+@@ -2591,10 +2528,10 @@ poly_DelContour (PLINE ** c)
      {
        prev = cur->prev;
        if (cur->cvc_next != NULL)
@@ -1390,7 +1494,7 @@ index c8aa3f0..e69fc86 100644
        free (cur);
      }
    if ((*c)->head.cvc_next != NULL)
-@@ -2792,7 +2725,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
+@@ -2792,7 +2729,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
      {
        if (!poly_CopyContour (last, cur))
  	return FALSE;
@@ -1399,7 +1503,7 @@ index c8aa3f0..e69fc86 100644
        last = &(*last)->next;
      }
    return TRUE;
-@@ -2991,7 +2924,7 @@ poly_Create (void)
+@@ -2991,7 +2928,7 @@ poly_Create (void)
  }
  
  void
