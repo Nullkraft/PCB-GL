@@ -1110,14 +1110,17 @@ label_contour (PLINE * a)
 	  continue;
 	}
 
+#if 0
       if (NODE_LABEL (cur) != UNKNWN)
 	{
+	  fprintf (stderr, "Not expected...\n");
 	  /* This might get hit if the last cross vertex labelling
 	   * pass was a bit keen, and labeled past its own edges?
 	   */
 	  label = NODE_LABEL (cur);
 	  continue;
 	}
+#endif
 
       if (label == INSIDE || label == OUTSIDE)
 	{
