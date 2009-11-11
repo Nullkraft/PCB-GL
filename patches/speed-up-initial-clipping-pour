@@ -1,5 +1,5 @@
 Bottom: 3e22caeb9a3d07d8128b646f67788b216d60d732
-Top:    cc5489fd7e01c2e2d341ab4f9abd0fee9b5d65fd
+Top:    35e43af233ec7a7465e0f9f75f05510e1f43455b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-11 15:35:27 +0000
 
@@ -9,7 +9,7 @@ Speed up initial clipping (pours version of what we had before)
 ---
 
 diff --git a/src/pour.c b/src/pour.c
-index 84fb231..240ae0d 100644
+index 84fb231..cea5f75 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -458,12 +458,14 @@ struct cpInfo
@@ -75,7 +75,7 @@ index 84fb231..240ae0d 100644
    return 1;
  }
  
-@@ -643,18 +664,26 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
+@@ -643,18 +664,24 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
  
    if (setjmp (info.env) == 0)
      {
@@ -88,8 +88,7 @@ index 84fb231..240ae0d 100644
        GROUP_LOOP (Data, group);
        {
          r += r_search (layer->line_tree, &region, NULL, line_sub_callback, &info);
-+        if (info.accumulate != NULL)
-+          subtract_poly (info.accumulate, &info.pg);
++        subtract_poly (info.accumulate, &info.pg);
 +        info.accumulate = NULL;
          r += r_search (layer->arc_tree,  &region, NULL, arc_sub_callback,  &info);
          r += r_search (layer->text_tree, &region, NULL, text_sub_callback, &info);
@@ -100,8 +99,7 @@ index 84fb231..240ae0d 100644
 -        r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
 +      r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
 +      r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
-+      if (info.accumulate != NULL)
-+        subtract_poly (info.accumulate, &info.pg);
++      subtract_poly (info.accumulate, &info.pg);
 +      info.accumulate = NULL;
      }
  
