@@ -235,6 +235,16 @@ original_poly (PolygonType * p)
       }
   }
   END_LOOP;
+  if (contour == NULL)
+    {
+      printf ("How did that escape - did the loop iterate zero times??\n");
+      POLYGONPOINT_LOOP (p);
+        {
+          printf ("Hello\n");
+        }
+      END_LOOP;
+      return NULL;
+    }
   poly_PreContour (contour, TRUE);
   /* make sure it is a positive contour */
   if ((contour->Flags.orient) != PLF_DIR)
