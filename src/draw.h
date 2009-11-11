@@ -75,6 +75,19 @@ void EraseObject (int, void *, void *);
 void LoadBackgroundImage (char *);
 void UpdateAll (void);
 
+/* TEMPORARY */
+void DrawPinOrViaLowLevel (PinTypePtr, Boolean);
+void DrawPlainPin (PinTypePtr, Boolean);
+void DrawPlainVia (PinTypePtr, Boolean);
+void DrawRegularText (LayerTypePtr, TextTypePtr, int);
+void DrawEMark (ElementTypePtr, LocationType, LocationType, Boolean);
+void DrawHole (PinTypePtr);
+void DrawRats (BoxType *);
+void DrawSilk (int, int, BoxType *);
+void DrawSpecialPolygon (HID * hid, hidGC DrawGC, LocationType X, LocationType Y, int Thickness);
+
+/* TEMPORARY */
+
 /*GdkDrawable *draw_get_current_drawable(void);*/
 
 #endif
