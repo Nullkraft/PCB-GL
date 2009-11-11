@@ -2004,9 +2004,14 @@ M_POLYAREA_update_primary (jmp_buf * e, POLYAREA ** pieces,
         del_contour = curc->Flags.status != ISECTED &&
                      !cntr_in_M_POLYAREA (curc, bpa, FALSE);
 
+      /* Skip intersected contours */
+      if (curc->Flags.status == ISECTED) {
+        prev = curc;
+        continue;
+      }
+
       /* Reset the intersection flags, since we keep these pieces */
-      if (curc->Flags.status != ISECTED)
-        curc->Flags.status = UNKNWN;
+      curc->Flags.status = UNKNWN;
 
       if (del_contour || hole_contour) {
 
