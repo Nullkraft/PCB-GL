@@ -1,42 +1,42 @@
 Version: 1
-Previous: 26c59bbc44f5b00a2b8bc19baaf1cb5c1b4da3b5
-Head: dc7ca24a89d43a5ba54d01ecad11527884521e25
+Previous: 685d1e794cbe8b1766a1f948ff578848e3e28a82
+Head: 969526e1db05baf440d1c666fdc327e209a5c20a
 Applied:
   undo-polygon1-c-indenting: dc7ca24a89d43a5ba54d01ecad11527884521e25
+  use-strcasecmp-when-looking-fo: 9c988d47f6333f9632249912fd1c407e820256a6
+  add-configure-checks-for-gtkgl: 68abc6524a2a9cd48d52e0e7bbbd9bc0bc17c0cf
+  drop-in-pcb-gl-code-various-me: 21460ac2059dd7a27bf0b645bc1daed86bec9b0e
+  cure-cross-hair-lagging-on-scr: bda7c0873479420e54d38affba630624c124d520
+  improve-grid-snapping-heuristi: 3ab3540ac2ee67f542e6332008a8586ad157c3aa
+  make-rats-snap-to-the-center-o: 81cb049d87638e962aa45d91b829cb4f6cc50aed
+  only-snap-to-pads-on-the-activ: 765d807e28356811c5822f6b6bdfa2006623bcc7
+  avoid-clearing-pins-vias-from-: 56d04b1fc15f52e7380740c314a110b051b96bac
+  add-raw-polygons-support-for-t: a7c45440325ac8c33f9e1af34f58bbc63f98cda2
+  use-the-opengl-stencil-buffer-: eb944446c41a3e75ae9037c24ec193ecced4fcf6
+  draw-c-draw-all-vias-under-the: 5f261519d9aedf4c8fbf76412c9ebd653f14b1d6
+  work-in-progress-on-subcomposi: 510ad1c1e92f6bdb0c7380de407656401ac52e28
+  not-sure-what-this-patch-is-fo: 7de29f7d0a02648b919a52e4597376ba370df4fa
+  ugly-ugly-hack-to-make-pretty-: 9bbf8be4800123154a333c46525ca5e7982217f8
+  add-virtual-trackball-code: 01539d2756401d67fad11c8087b085f6c5a6b07d
+  use-trackball-to-allow-rotatio: c241eb759af118f88f98ba752032fe6ba79cb8ce
+  add-support-for-depth-to-trian: bd45ee3e0d103b908a2cc162cf467d09e66d5217
+  shiny-3d-eye-candy: 9f3530815f2020276c745bc43ed8b0f4bc8cd9fd
+  fix-grid-extents-in-3d-view: 4b0f3d685bf1dc0cb8a86b650d667044c4509b52
+  major-re-write-to-drawing-rout: 532aa7ec6848ab01b73f0c99f050ef994770c62a
+  change-calculation-for-how-man: cdd5fa7bc7f1b383155918156ba648fed9b933c0
+  tag-circular-contours-so-they-: b1565c4ab5e248b57cd992554386cc10b9890435
+  silly-space-navigator-interfac: ef87c9de1c7fc30640af475f8ea2c695619d00d6
+  from-22f4d1dd450f218172b8ee0ed: d072827d4aa77c49f2e3cb8b64ed11af717e3a85
+  playing-with-stack-rendering: f34967d5a61d0dca5787f7aabd064e70341c00d9
+  play-with-display-lists: 91f965bf47255f862620f8fe57ebc09d98d13316
+  bentley-ottann-test-implementa: d7dc0f5dd7f0a4279bc99e72727d992534e825a3
+  remove-unused-intersection-rou: 836594224aeab80269f45b597ec694f92d0ccdf0
+  add-routines-to-render-just-a-: a224f2293c5818f70d2afa08f02f8d716d33421f
+  layer-fixes: 9bb31fa1b1c26f2816de6729e86e81f5fa554412
+  fixup-depth-for-layers-and-ele: d31e662cac491b44c1835506774dc0562e7a8b7d
+  board-outline-polygon-generati: e19643230c0245706b50c9a8663916cd11427b38
+  allow-zero-clearance-pads-and-: 0f6578756c9376186a31e3307702bd53be22c8f8
+  reduce-the-redundant-work-done: 6614dfa3eeab6c3dffa4931f8f5d4d4067af6871
+  we-can-just-delete-kicked-out-: 969526e1db05baf440d1c666fdc327e209a5c20a
 Unapplied:
-  use-strcasecmp-when-looking-fo: 2fa7aa7efcc9a06dcab44724d57ae40496c962c1
-  add-configure-checks-for-gtkgl: 9f6da10bc1c120810fb1544da3234e1b17dbb15d
-  drop-in-pcb-gl-code-various-me: a930560eb85391417afa4d33bcc0d507a09c3e8b
-  cure-cross-hair-lagging-on-scr: 81f728cc1a244174d0173110f2f9d115feb78513
-  improve-grid-snapping-heuristi: 9d5e536d08addd3a5d6abf9a68c4eab9e83e119b
-  make-rats-snap-to-the-center-o: 6586c8f29621780bfab1fdd6b0095dc252030a76
-  only-snap-to-pads-on-the-activ: 674e0f48f54c0f2625eb31de9205eda8d573965a
-  avoid-clearing-pins-vias-from-: 4e4da6ab013a8f8321ff98ecfa9fca4b11a5571f
-  add-raw-polygons-support-for-t: 5c0b283a619486f3861fdefbd56c65158057e36f
-  use-the-opengl-stencil-buffer-: e03d4655745f3d2c100cf093ea69f187eb0808f2
-  draw-c-draw-all-vias-under-the: 9461e4eb59067f39aa0ea013443830fc5e13fe7f
-  work-in-progress-on-subcomposi: 7b7987c0c66b01dd52e55b57f30bf8b5d56067d1
-  not-sure-what-this-patch-is-fo: 8e114ad8e833867af3c00a375e81310ec4816d4e
-  ugly-ugly-hack-to-make-pretty-: 28a153e2c3855c3eae5b233a221f44e4c2f2c663
-  add-virtual-trackball-code: 5af3be37d2e612e06a1c1996a3223376e25bbc5b
-  use-trackball-to-allow-rotatio: 914fd8eeffc9d887d88b82d02c12b6b58dd14b1b
-  add-support-for-depth-to-trian: dc8714b4469abc5cb52945993a5e2e6c46521bf9
-  shiny-3d-eye-candy: 333b3223be60064dde93cb1c251f2b6683306a7f
-  fix-grid-extents-in-3d-view: 2d44a39a6be5301a4dc8f12aae8facde8ef014a6
-  major-re-write-to-drawing-rout: 1a4e6c467ecdf66cd85934c2213943fd0f43bdf3
-  change-calculation-for-how-man: 51c1d32eb93a32d637b5d96e4c5356748abcacc1
-  tag-circular-contours-so-they-: ce4fa08685606e4a30b4942a4d25ca00681e9981
-  silly-space-navigator-interfac: f6c3cb95509b63fb0515687b6efff7704263b452
-  from-22f4d1dd450f218172b8ee0ed: fd651b8f1893b75c13eb35ad19b3d463e9351fe8
-  playing-with-stack-rendering: 8268d7f8ec0d3c0897ebe36191dc8a42b3a21485
-  play-with-display-lists: 1dd0abdbe3785071324e76556cff429d0d9a193a
-  bentley-ottann-test-implementa: 206bcd1662c59a3ad775e1bd6d3786342517a812
-  remove-unused-intersection-rou: 0ca29b734fb8399d5bf90f5543c6f66445b3ebb0
-  add-routines-to-render-just-a-: 5e89c7da5816be9ddf3f9a9b86be7ee92f893b48
-  layer-fixes: d733751a606c1cd61d28a16d30ff6a7f608e7c85
-  fixup-depth-for-layers-and-ele: 500b63ea1ab8bf6b0af83c4ffba9d85667a2965e
-  board-outline-polygon-generati: 013e52fcf17edef4a47aa29fc06b031ba33cd658
-  allow-zero-clearance-pads-and-: d362047a33e24ce35a9bb3206c59a0355a4992b5
-  reduce-the-redundant-work-done: eab387f012bda8611de14342fd75bb5e4aeddc39
-  we-can-just-delete-kicked-out-: ca02db3c79e5f571c4b4a06cbcf021fb6ff5d0e0
 Hidden:
