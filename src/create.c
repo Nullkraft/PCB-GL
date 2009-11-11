@@ -951,9 +951,7 @@ CreateNewNet (LibraryTypePtr lib, char *name, char *style)
   LibraryMenuTypePtr menu;
   char temp[64];
 
-  if (strlen (name) > 61)
-    fprintf (stderr, "temp string looks quite long: \'%s\'\n", temp);
-  sprintf (temp, "  %s", name); /* BIG BAD WOLF OVERFLOW ERROR */
+  sprintf (temp, "  %s", name);
   menu = GetLibraryMenuMemory (lib);
   menu->Name = MyStrdup (temp, "CreateNewNet()");
   menu->flag = 1;		/* net is enabled by default */
