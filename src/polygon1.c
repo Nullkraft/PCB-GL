@@ -698,9 +698,9 @@ get_seg (const BoxType * b, void *cl)
 static int
 contour_bounds_touch (const BoxType * b, void *cl)
 {
-  contour_info *c_info = (contour_info *) cl;
+  contour_info *c_info = (contour_info *)cl;
   PLINE *pa = c_info->pa;
-  PLINE *pb = (PLINE *) b;
+  PLINE *pb = (PLINE *)b;
   PLINE *rtree_over;
   PLINE *looping_over;
   VNODE *av;			/* node iterators */
@@ -717,17 +717,17 @@ contour_bounds_touch (const BoxType * b, void *cl)
    */
   if (pa->Count < pb->Count)
     {
-      rtree_over = pb;
+      rtree_over   = pb;
       looping_over = pa;
     }
   else
     {
-      rtree_over = pa;
+      rtree_over   = pa;
       looping_over = pb;
     }
 
   av = &looping_over->head;
-  do				/* Loop over the nodes in the smaller contour */
+  do  /* Loop over the nodes in the smaller contour */
     {
       /* check this edge for any insertions */
       double dx;
@@ -735,28 +735,28 @@ contour_bounds_touch (const BoxType * b, void *cl)
       /* compute the slant for region trimming */
       dx = av->next->point[0] - av->point[0];
       if (dx == 0)
-	info.m = 0;
+        info.m = 0;
       else
-	{
-	  info.m = (av->next->point[1] - av->point[1]) / dx;
-	  info.b = av->point[1] - info.m * av->point[0];
-	}
+        {
+          info.m = (av->next->point[1] - av->point[1]) / dx;
+          info.b = av->point[1] - info.m * av->point[0];
+        }
       box.X2 = (box.X1 = av->point[0]) + 1;
       box.Y2 = (box.Y1 = av->point[1]) + 1;
 
       /* fill in the segment in info corresponding to this node */
       if (setjmp (info.sego) == 0)
-	{
-	  r_search (looping_over->tree, &box, NULL, get_seg, &info);
-	  assert (0);
-	}
+        {
+          r_search (looping_over->tree, &box, NULL, get_seg, &info);
+          assert (0);
+        }
 
-      /* NB: If this actually hits anything, we are teleported back to the beginning */
-      info.tree = rtree_over->tree;
-      if (info.tree)
-	if (UNLIKELY (r_search (info.tree, &info.s->box,
-				seg_in_region, seg_in_seg, &info)))
-	  return err_no_memory;	/* error */
+        /* NB: If this actually hits anything, we are teleported back to the beginning */
+        info.tree = rtree_over->tree;
+        if (info.tree)
+          if (UNLIKELY (r_search (info.tree, &info.s->box,
+                                  seg_in_region, seg_in_seg, &info)))
+            return err_no_memory;	/* error */
     }
   while ((av = av->next) != &looping_over->head);
   return 0;
@@ -779,9 +779,9 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
       a = t;
     }
 
-  setjmp (c_info.restart);	/* we loop back here whenever a vertex is inserted */
+  setjmp (c_info.restart);		/* we loop back here whenever a vertex is inserted */
 
-  for (pa = a->contours; pa; pa = pa->next)	/* Loop over the contours of POLYAREA "a" */
+  for (pa = a->contours; pa; pa = pa->next)     /* Loop over the contours of POLYAREA "a" */
     {
       BoxType sb;
       jmp_buf out;
@@ -791,16 +791,16 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
       c_info.pa = pa;
 
       if (!add)
-	{
-	  retval = setjmp (out);
-	  if (retval)
-	    {
-	      /* The intersection test short-circuited back here,
-	       * we need to clean up, then longjmp to jb */
-	      longjmp (*jb, retval);
-	    }
-	  c_info.getout = &out;
-	}
+        {
+          retval = setjmp (out);
+          if (retval)
+            {
+              /* The intersection test short-circuited back here,
+               * we need to clean up, then longjmp to jb */
+              longjmp (*jb, retval);
+            }
+          c_info.getout = &out;
+        }
 
       sb.X1 = pa->xmin;
       sb.Y1 = pa->ymin;
@@ -974,28 +974,28 @@ label_contour (PLINE * a)
   do
     {
       if (cur->cvc_next)	/* _always_ examine cross vertex */
-	{
-	  label = node_label (cur);
-	  if (first_not_unknown == NULL)
-	    first_not_unknown = cur;
-	  continue;
-	}
+        {
+          label = node_label (cur);
+          if (first_not_unknown == NULL)
+            first_not_unknown = cur;
+          continue;
+        }
 
       if (NODE_LABEL (cur) != UNKNWN)
-	{
-	  /* This might get hit if the last cross vertex labelling
-	   * pass was a bit keen, and labeled past its own edges?
-	   */
-	  label = NODE_LABEL (cur);
-	  continue;
-	}
+        {
+          /* This might get hit if the last cross vertex labelling
+           * pass was a bit keen, and labeled past its own edges?
+           */
+          label = NODE_LABEL (cur);
+          continue;
+        }
 
       if (label == INSIDE || label == OUTSIDE)
-	{
-	  /* This labels nodes which aren't cross-connected */
-	  LABEL_NODE (cur, label);
-	  continue;
-	}
+        {
+          /* This labels nodes which aren't cross-connected */
+          LABEL_NODE (cur, label);
+          continue;
+        }
     }
   while ((cur = cur->next) != first_not_unknown);
 #ifdef DEBUG_ALL_LABELS
@@ -1077,7 +1077,7 @@ InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
 
 static void
 PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
-	    POLYAREA * owner, POLYAREA * parent, PLINE * parent_contour)
+            POLYAREA *owner, POLYAREA * parent, PLINE * parent_contour)
 {
   assert (cntr != NULL);
   assert (cntr->Count > 2);
@@ -1086,7 +1086,7 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
   if (cntr->Flags.orient == PLF_DIR)
     {
       if (owner != NULL)
-	r_delete_entry (owner->contour_tree, (BoxType *) cntr);
+        r_delete_entry (owner->contour_tree, (BoxType *)cntr);
       InsCntr (e, cntr, contours);
     }
   /* put hole into temporary list */
@@ -1097,21 +1097,21 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,
 	{
 	  cntr->next = parent_contour->next;
 	  parent_contour->next = cntr;
-	  if (owner != parent)
-	    {
-	      if (owner != NULL)
-		r_delete_entry (owner->contour_tree, (BoxType *) cntr);
-	      r_insert_entry (parent->contour_tree, (BoxType *) cntr, 0);
-	    }
+          if (owner != parent)
+            {
+              if (owner != NULL)
+                r_delete_entry (owner->contour_tree, (BoxType *)cntr);
+              r_insert_entry (parent->contour_tree, (BoxType *)cntr, 0);
+            }
 	}
       else
 	{
 	  cntr->next = *holes;
 	  *holes = cntr;	/* let cntr be 1st hole in list */
-	  /* We don't insert the holes into an r-tree,
-	   * they just form a linked list */
-	  if (owner != NULL)
-	    r_delete_entry (owner->contour_tree, (BoxType *) cntr);
+          /* We don't insert the holes into an r-tree,
+           * they just form a linked list */
+          if (owner != NULL)
+            r_delete_entry (owner->contour_tree, (BoxType *)cntr);
 	}
     }
 }				/* PutContour */
@@ -1122,7 +1122,7 @@ heap_it (const BoxType * b, void *cl)
   heap_t *heap = (heap_t *) cl;
   PLINE *p = (PLINE *) b;
   if (p->Count == 0)
-    return 0;			/* how did this happen? */
+    return 0;  /* how did this happen? */
   heap_insert (heap, p->area, (void *) p);
   return 1;
 }
@@ -1211,22 +1211,22 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
 	  curh->next = container->next;
 	  container->next = curh;
 
-	  /* Search for which POLYAREA the containing contour belongs to */
-	  /* FIXME: Perhaps store this information in the heap structure? */
-	  curc = dest;
-	  do
-	    {
-	      if (curc->contours == container)
-		break;
-	    }
-	  while ((curc = curc->f) != dest);
+          /* Search for which POLYAREA the containing contour belongs to */
+          /* FIXME: Perhaps store this information in the heap structure? */
+          curc = dest;
+          do
+            {
+              if (curc->contours == container)
+                break;
+            }
+          while ((curc = curc->f) != dest);
 
-	  if (curc->contours == container)
-	    {
-	      r_insert_entry (curc->contour_tree, (BoxTypePtr) curh, 0);
-	    }
-	  else
-	    assert (0);
+          if (curc->contours == container)
+            {
+              r_insert_entry (curc->contour_tree, (BoxTypePtr) curh, 0);
+            }
+          else
+            assert (0);
 	}
     }
   r_destroy_tree (&tree);
@@ -1440,37 +1440,37 @@ Gather (VNODE * start, PLINE ** result, J_Rule v_rule, DIRECTION initdir)
 }				/* Gather */
 
 static void
-Collect1 (jmp_buf * e, VNODE * cur, DIRECTION dir, POLYAREA ** contours,
-	  PLINE ** holes, J_Rule j_rule)
+Collect1 (jmp_buf * e, VNODE *cur, DIRECTION dir, POLYAREA **contours, PLINE ** holes, J_Rule j_rule)
 {
   PLINE *p = NULL;		/* start making contour */
   int errc = err_ok;
-  if ((errc =
-       Gather (dir == FORW ? cur : cur->next, &p, j_rule, dir)) != err_ok)
-    {
-      if (p != NULL)
-	poly_DelContour (&p);
-      error (errc);
-    }
-  if (!p)
-    return;
-  poly_PreContour (p, TRUE);
-  if (p->Count > 2)
-    {
+	if ((errc =
+	     Gather (dir == FORW ? cur : cur->next, &p, j_rule,
+		     dir)) != err_ok)
+	  {
+	    if (p != NULL)
+	      poly_DelContour (&p);
+	    error (errc);
+	  }
+	if (!p)
+	  return;
+	poly_PreContour (p, TRUE);
+	if (p->Count > 2)
+	  {
 #ifdef DEBUG_GATHER
-      DEBUGP ("adding contour with %d verticies and direction %c\n",
-	      p->Count, p->Flags.orient ? 'F' : 'B');
+	    DEBUGP ("adding contour with %d verticies and direction %c\n",
+		    p->Count, p->Flags.orient ? 'F' : 'B');
 #endif
-      PutContour (e, p, contours, holes, NULL, NULL, NULL);
-    }
-  else
-    {
-      /* some sort of computation error ? */
+	    PutContour (e, p, contours, holes, NULL, NULL, NULL);
+	  }
+	else
+	  {
+	    /* some sort of computation error ? */
 #ifdef DEBUG_GATHER
-      DEBUGP ("Bad contour! Not enough points!!\n");
+	    DEBUGP ("Bad contour! Not enough points!!\n");
 #endif
-      poly_DelContour (&p);
-    }
+	    poly_DelContour (&p);
+	  }
 }
 
 static void
@@ -1482,21 +1482,20 @@ Collect (jmp_buf * e, PLINE * a, POLYAREA ** contours, PLINE ** holes,
 
   cur = &a->head;
   do
-    {
-      if (s_rule (cur, &dir) && cur->Flags.mark == 0)
-	Collect1 (e, cur, dir, contours, holes, j_rule);
-      other = cur;
-      if ((other->cvc_prev && jump (&other, &dir, j_rule)))
-	Collect1 (e, other, dir, contours, holes, j_rule);
-    }
+   {
+    if (s_rule (cur, &dir) && cur->Flags.mark == 0)
+        Collect1(e, cur, dir, contours, holes, j_rule);
+    other = cur;
+    if ((other->cvc_prev && jump(&other, &dir, j_rule)))
+        Collect1(e, other, dir, contours, holes, j_rule);
+   }
   while ((cur = cur->next) != &a->head);
 }				/* Collect */
 
 
 static int
 cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
-	      int action, POLYAREA * owner, POLYAREA * parent,
-	      PLINE * parent_contour)
+	      int action, POLYAREA *owner, POLYAREA * parent, PLINE *parent_contour)
 {
   PLINE *tmprev;
 
@@ -1544,7 +1543,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
 	      PutContour (e, tmprev, contours, holes, owner, NULL, NULL);
 	      return TRUE;
 	    }
-	  /* break; *//* Fall through (I think this is correct! pcjc2) */
+	  /* break; */ /* Fall through (I think this is correct! pcjc2) */
 	case PBO_UNITE:
 	case PBO_SUB:
 	  if ((*A)->Flags.status == OUTSIDE)
@@ -1553,8 +1552,7 @@ cntr_Collect (jmp_buf * e, PLINE ** A, POLYAREA ** contours, PLINE ** holes,
 	      /* disappear this contour (rtree entry removed in PutContour) */
 	      *A = tmprev->next;
 	      tmprev->next = NULL;
-	      PutContour (e, tmprev, contours, holes, owner, parent,
-			  parent_contour);
+	      PutContour (e, tmprev, contours, holes, owner, parent, parent_contour);
 	      return TRUE;
 	    }
 	  break;
@@ -1624,7 +1622,7 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
 		    PLINE ** holes, int action, BOOLp maybe)
 {
   POLYAREA *a = afst;
-  POLYAREA *parent = NULL;	/* Quiet compiler warning */
+  POLYAREA *parent = NULL; /* Quiet compiler warning */
   PLINE **cur, **next, *parent_contour;
 
   assert (a != NULL);
@@ -1633,35 +1631,35 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
   do
     {
       if (maybe && a->contours->Flags.status != ISECTED)
-	parent_contour = a->contours;
+          parent_contour = a->contours;
       else
-	parent_contour = NULL;
+          parent_contour = NULL;
 
       /* Take care of the first contour - so we know if we
        * can shortcut reparenting some of its children
        */
       cur = &a->contours;
       if (*cur != NULL)
-	{
-	  next = &((*cur)->next);
-	  /* if we disappear a contour, don't advance twice */
-	  if (cntr_Collect (e, cur, contours, holes, action, a, NULL, NULL))
-	    {
-	      parent = (*contours)->b;	/* InsCntr inserts behind the head */
-	      next = cur;
-	    }
-	  else
-	    parent = a;
-	  cur = next;
-	}
-      for (; *cur != NULL; cur = next)
-	{
-	  next = &((*cur)->next);
-	  /* if we disappear a contour, don't advance twice */
-	  if (cntr_Collect (e, cur, contours, holes, action, a, parent,
-			    parent_contour))
-	    next = cur;
-	}
+        {
+          next = &((*cur)->next);
+          /* if we disappear a contour, don't advance twice */
+          if (cntr_Collect (e, cur, contours, holes, action, a, NULL, NULL))
+            {
+              parent = (*contours)->b; /* InsCntr inserts behind the head */
+              next = cur;
+            }
+          else
+            parent = a;
+          cur = next;
+        }
+      for ( ; *cur != NULL; cur = next)
+        {
+          next = &((*cur)->next);
+          /* if we disappear a contour, don't advance twice */
+          if (cntr_Collect (e, cur, contours, holes, action, a, parent,
+                            parent_contour))
+            next = cur;
+        }
     }
   while ((a = a->f) != afst);
 }
@@ -1960,10 +1958,10 @@ poly_DelContour (PLINE ** c)
     {
       prev = cur->prev;
       if (cur->cvc_next != NULL)
-	{
-	  free (cur->cvc_next);
-	  free (cur->cvc_prev);
-	}
+        {
+          free (cur->cvc_next);
+          free (cur->cvc_prev);
+        }
       free (cur);
     }
   if ((*c)->head.cvc_next != NULL)
@@ -2161,7 +2159,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
     {
       if (!poly_CopyContour (last, cur))
 	return FALSE;
-      r_insert_entry (dst->contour_tree, (BoxTypePtr) * last, 0);
+      r_insert_entry (dst->contour_tree, (BoxTypePtr) *last, 0);
       last = &(*last)->next;
     }
   return TRUE;
@@ -2360,7 +2358,7 @@ poly_Create (void)
 }
 
 void
-poly_FreeContours (PLINE ** pline)
+poly_FreeContours (PLINE **pline)
 {
   PLINE *pl;
 
