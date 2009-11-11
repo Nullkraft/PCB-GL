@@ -1145,7 +1145,11 @@ label_contour (PLINE * a)
           continue;
         }
     }
-  while ((cur = cur->next) != first_not_unknown);
+  while ((cur = cur->next) != first_not_unknown &&
+         !(cur->next == &a->head && first_not_unknown == NULL));
+
+  if (first_not_unknown == NULL)
+    fprintf (stderr, "OOPS, DIDN'T LABEL ANYTHING!\n");
 #ifdef DEBUG_ALL_LABELS
   print_labels (a);
   DEBUGP ("\n\n");
