@@ -1,15 +1,14 @@
 Bottom: e4c82321f7789ea5b9cdacc559e34810e1047f19
-Top:    9ab7b702f52ab03bf534daa34cc788a047c79068
+Top:    a161dce91a92a8cc8b4e4c7c21d794a2dd7da433
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-11 17:03:24 +0000
+Date:   2009-11-11 17:03:53 +0000
 
-Undo polygon1.c indenting
-
+Improve poly_AndSubtract_free() with similar tricks to poly_Boolean_free()
 
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 2bfe658..32ea7db 100644
+index 2bfe658..a656391 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -609,12 +609,11 @@ seg_in_seg (const BoxType * b, void *cl)
@@ -802,7 +801,8 @@ index 2bfe658..32ea7db 100644
 +          curc->Flags.status = UNKNWN;
  
 -	      remove_contour (a, prev, curc, !(is_first && is_last));
--
++        remove_contour (a, prev, curc, !(is_first && is_last));
+ 
 -	      if (isect_contour)
 -		{
 -		  /* Link into the list of intersected contours */
@@ -819,13 +819,6 @@ index 2bfe658..32ea7db 100644
 -		{
 -		  assert (0);
 -		}
-+        remove_contour (a, prev, curc, !(is_first && is_last));
- 
--	      if (is_first && is_last)
--		{
--		  remove_polyarea (pieces, a);
--		  poly_Free (&a);	/* NB: Sets a to NULL */
--		}
 +        if (isect_contour) {
 +          /* Link into the list of intersected contours */
 +          curc->next = *isected;
@@ -838,6 +831,16 @@ index 2bfe658..32ea7db 100644
 +          assert (0);
 +        }
  
+-	      if (is_first && is_last)
+-		{
+-		  remove_polyarea (pieces, a);
+-		  poly_Free (&a);	/* NB: Sets a to NULL */
+-		}
++        if (is_first && is_last) {
++          remove_polyarea (pieces, a);
++          poly_Free (&a); /* NB: Sets a to NULL */
++        }
+ 
 -	    }
 -	  else
 -	    {
@@ -846,15 +849,6 @@ index 2bfe658..32ea7db 100644
 -	         Saves walking the contour list when we delete one. */
 -	      prev = curc;
 -	    }
-+        if (is_first && is_last) {
-+          remove_polyarea (pieces, a);
-+          poly_Free (&a); /* NB: Sets a to NULL */
-+        }
- 
--	  /* If we move or delete an outer contour, we need to move any holes
--	     we wish to keep within that contour to the holes list. */
--	  if (is_outline && isect_contour)
--	    hole_contour = 1;
 +      } else {
 +        /* Note the item we just didn't delete as the next
 +           candidate for having its "next" pointer adjusted.
@@ -862,12 +856,17 @@ index 2bfe658..32ea7db 100644
 +        prev = curc;
 +      }
  
--	}
+-	  /* If we move or delete an outer contour, we need to move any holes
+-	     we wish to keep within that contour to the holes list. */
+-	  if (is_outline && isect_contour)
+-	    hole_contour = 1;
 +      /* If we move or delete an outer contour, we need to move any holes
 +         we wish to keep within that contour to the holes list. */
 +      if (is_outline && isect_contour)
 +        hole_contour = 1;
  
+-	}
+-
 -      /* If we deleted all the pieces of the polyarea, *pieces is NULL */
      }
 -  while ((a = anext), *pieces != NULL && !finished);
@@ -968,17 +967,9 @@ index 2bfe658..32ea7db 100644
 -	      /* Then test properly */
 -	      cntr_in_M_POLYAREA (a->contours, bpa, FALSE))
 -	    {
-+  while ((b = b->f) != bpa) {
-+    BoxType *b_box = (BoxType *)b->contours;
-+    MAKEMIN (box.X1, b_box->X1);
-+    MAKEMIN (box.Y1, b_box->Y1);
-+    MAKEMAX (box.X2, b_box->X2);
-+    MAKEMAX (box.Y2, b_box->Y2);
-+  }
- 
+-
 -	      /* Delete this contour, all children -> holes queue */
-+  if (del_inside) {
- 
+-
 -	      /* Delete the outer contour */
 -	      curc = a->contours;
 -	      remove_contour (a, NULL, curc, FALSE);	/* Rtree deleted in poly_Free below */
@@ -997,10 +988,18 @@ index 2bfe658..32ea7db 100644
 -		  *holes = a->contours;
 -		  a->contours = NULL;
 -		}
--
++  while ((b = b->f) != bpa) {
++    BoxType *b_box = (BoxType *)b->contours;
++    MAKEMIN (box.X1, b_box->X1);
++    MAKEMIN (box.Y1, b_box->Y1);
++    MAKEMAX (box.X2, b_box->X2);
++    MAKEMAX (box.Y2, b_box->Y2);
++  }
+ 
 -	      remove_polyarea (pieces, a);
 -	      poly_Free (&a);	/* NB: Sets a to NULL */
--
++  if (del_inside) {
+ 
 -	      continue;
 -	    }
 -
@@ -1030,33 +1029,16 @@ index 2bfe658..32ea7db 100644
 -		  /* Nothing found? */
 -		  break;
 -		}
--
++    do {
++      anext = a->f;
++      finished = (anext == *pieces);
+ 
 -	      /* We need to find the contour before it, so we can update its next pointer */
 -	      prev = a->contours;
 -	      while (prev->next != info.result)
 -		{
 -		  prev = prev->next;
 -		}
--
--	      /* Remove hole from the contour */
--	      remove_contour (a, prev, info.result, TRUE);
--	      poly_DelContour (&info.result);
--	    }
--	  /* End check for deleted holes */
--
--	  /* If we deleted all the pieces of the polyarea, *pieces is NULL */
--	}
--      while ((a = anext), *pieces != NULL && !finished);
-+    do {
-+      anext = a->f;
-+      finished = (anext == *pieces);
- 
--      return;
--    }
--  else
--    {
--      /* This path isn't optimised for speed */
--    }
 +      /* Test the outer contour first, as we may need to remove all children */
 +
 +      /* We've not yet split intersected contours out, just ignore them */
@@ -1130,20 +1112,45 @@ index 2bfe658..32ea7db 100644
 +    /* If we deleted all the pieces of the polyarea, *pieces is NULL */
 +    } while ((a = anext), *pieces != NULL && !finished);
  
--  do
--    {
--      int hole_contour = 0;
--      int is_outline = 1;
+-	      /* Remove hole from the contour */
+-	      remove_contour (a, prev, info.result, TRUE);
+-	      poly_DelContour (&info.result);
+-	    }
+-	  /* End check for deleted holes */
 +    return;
 +  } else {
 +    /* This path isn't optimised for speed */
 +  }
  
--      anext = a->f;
--      finished = (anext == *pieces);
+-	  /* If we deleted all the pieces of the polyarea, *pieces is NULL */
+-	}
+-      while ((a = anext), *pieces != NULL && !finished);
 +  do {
 +    int hole_contour = 0;
 +    int is_outline = 1;
+ 
+-      return;
+-    }
+-  else
+-    {
+-      /* This path isn't optimised for speed */
+-    }
++    anext = a->f;
++    finished = (anext == *pieces);
+ 
+-  do
+-    {
+-      int hole_contour = 0;
+-      int is_outline = 1;
++    prev = NULL;
++    for (curc = a->contours; curc != NULL; curc = next, is_outline = 0) {
++      int is_first = contour_is_first (a, curc);
++      int is_last = contour_is_last (curc);
++      int del_contour = 0;
+ 
+-      anext = a->f;
+-      finished = (anext == *pieces);
++      next = curc->next;
  
 -      prev = NULL;
 -      for (curc = a->contours; curc != NULL; curc = next, is_outline = 0)
@@ -1151,20 +1158,22 @@ index 2bfe658..32ea7db 100644
 -	  int is_first = contour_is_first (a, curc);
 -	  int is_last = contour_is_last (curc);
 -	  int del_contour = 0;
-+    anext = a->f;
-+    finished = (anext == *pieces);
++      if (del_outside)
++        del_contour = curc->Flags.status != ISECTED &&
++                     !cntr_in_M_POLYAREA (curc, bpa, FALSE);
  
 -	  next = curc->next;
-+    prev = NULL;
-+    for (curc = a->contours; curc != NULL; curc = next, is_outline = 0) {
-+      int is_first = contour_is_first (a, curc);
-+      int is_last = contour_is_last (curc);
-+      int del_contour = 0;
++      /* Skip intersected contours */
++      if (curc->Flags.status == ISECTED) {
++        prev = curc;
++        continue;
++      }
  
 -	  if (del_outside)
 -	    del_contour = curc->Flags.status != ISECTED &&
 -	      !cntr_in_M_POLYAREA (curc, bpa, FALSE);
-+      next = curc->next;
++      /* Reset the intersection flags, since we keep these pieces */
++      curc->Flags.status = UNKNWN;
  
 -	  /* Skip intersected contours */
 -	  if (curc->Flags.status == ISECTED)
@@ -1172,25 +1181,30 @@ index 2bfe658..32ea7db 100644
 -	      prev = curc;
 -	      continue;
 -	    }
-+      if (del_outside)
-+        del_contour = curc->Flags.status != ISECTED &&
-+                     !cntr_in_M_POLYAREA (curc, bpa, FALSE);
++      if (del_contour || hole_contour) {
  
 -	  /* Reset the intersection flags, since we keep these pieces */
 -	  curc->Flags.status = UNKNWN;
-+      /* Skip intersected contours */
-+      if (curc->Flags.status == ISECTED) {
-+        prev = curc;
-+        continue;
-+      }
++        remove_contour (a, prev, curc, !(is_first && is_last));
  
 -	  if (del_contour || hole_contour)
 -	    {
-+      /* Reset the intersection flags, since we keep these pieces */
-+      curc->Flags.status = UNKNWN;
++        if (del_contour) {
++          /* Delete the contour */
++          poly_DelContour (&curc); /* NB: Sets curc to NULL */
++        } else if (hole_contour) {
++          /* Link into the list of holes */
++          curc->next = *holes;
++          *holes = curc;
++        } else {
++          assert (0);
++        }
  
 -	      remove_contour (a, prev, curc, !(is_first && is_last));
-+      if (del_contour || hole_contour) {
++        if (is_first && is_last) {
++          remove_polyarea (pieces, a);
++          poly_Free (&a); /* NB: Sets a to NULL */
++        }
  
 -	      if (del_contour)
 -		{
@@ -1207,23 +1221,22 @@ index 2bfe658..32ea7db 100644
 -		{
 -		  assert (0);
 -		}
-+        remove_contour (a, prev, curc, !(is_first && is_last));
++      } else {
++        /* Note the item we just didn't delete as the next
++           candidate for having its "next" pointer adjusted.
++           Saves walking the contour list when we delete one. */
++        prev = curc;
++      }
  
 -	      if (is_first && is_last)
 -		{
 -		  remove_polyarea (pieces, a);
 -		  poly_Free (&a);	/* NB: Sets a to NULL */
 -		}
-+        if (del_contour) {
-+          /* Delete the contour */
-+          poly_DelContour (&curc); /* NB: Sets curc to NULL */
-+        } else if (hole_contour) {
-+          /* Link into the list of holes */
-+          curc->next = *holes;
-+          *holes = curc;
-+        } else {
-+          assert (0);
-+        }
++      /* If we move or delete an outer contour, we need to move any holes
++         we wish to keep within that contour to the holes list. */
++      if (is_outline && del_contour)
++        hole_contour = 1;
  
 -	    }
 -	  else
@@ -1233,28 +1246,14 @@ index 2bfe658..32ea7db 100644
 -	         Saves walking the contour list when we delete one. */
 -	      prev = curc;
 -	    }
-+        if (is_first && is_last) {
-+          remove_polyarea (pieces, a);
-+          poly_Free (&a); /* NB: Sets a to NULL */
-+        }
- 
+-
 -	  /* If we move or delete an outer contour, we need to move any holes
 -	     we wish to keep within that contour to the holes list. */
 -	  if (is_outline && del_contour)
 -	    hole_contour = 1;
-+      } else {
-+        /* Note the item we just didn't delete as the next
-+           candidate for having its "next" pointer adjusted.
-+           Saves walking the contour list when we delete one. */
-+        prev = curc;
-+      }
- 
+-
 -	}
-+      /* If we move or delete an outer contour, we need to move any holes
-+         we wish to keep within that contour to the holes list. */
-+      if (is_outline && del_contour)
-+        hole_contour = 1;
- 
+-
 -      /* If we deleted all the pieces of the polyarea, *pieces is NULL */
      }
 -  while ((a = anext), *pieces != NULL && !finished);
@@ -1376,7 +1375,91 @@ index 2bfe658..32ea7db 100644
  
        InsertHoles (&e, *res, &holes);
      }
-@@ -2637,10 +2570,10 @@ poly_DelContour (PLINE ** c)
+@@ -2488,62 +2421,40 @@ poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
+ 		       POLYAREA ** aandb, POLYAREA ** aminusb)
+ {
+   POLYAREA *a = ai, *b = bi;
++  POLYAREA *ac = NULL, *bc = NULL;
+   PLINE *p, *holes = NULL;
+   jmp_buf e;
+-  int code;
++  int code1;
++  int code2;
+ 
+   *aandb = NULL;
+   *aminusb = NULL;
+ 
+-  if ((code = setjmp (e)) == 0)
+-    {
++  if (!poly_M_Copy0 (&ac, ai) || !poly_M_Copy0 (&bc, bi))
++    return err_no_memory;
+ 
+-#ifdef DEBUG
+-      if (!poly_Valid (a))
+-	return -1;
+-      if (!poly_Valid (b))
+-	return -1;
+-#endif
+-      M_POLYAREA_intersect (&e, a, b, TRUE);
++  /* THESE GO _VERY_ _VERY_ SLOWLY
++   * Since the outer contour is by always piereced by the no-holes dicer,
++   * every contour within is going to be relegated to the hole insersion queue.
++   */
++  code1 = poly_Boolean_free (a, b, aandb, PBO_ISECT); /* OOPS.. NO FAST PATH YET? */
++  code2 = poly_Boolean_free (ac, bc, aminusb, PBO_SUB);
+ 
+-      M_POLYAREA_label (a, b, FALSE);
+-      M_POLYAREA_label (b, a, FALSE);
++  if (code1)
++    poly_Free (aandb);
+ 
+-      M_POLYAREA_Collect (&e, a, aandb, &holes, PBO_ISECT, FALSE);
+-      InsertHoles (&e, *aandb, &holes);
+-      assert (poly_Valid (*aandb));
+-      /* delete holes if any left */
+-      while ((p = holes) != NULL)
+-	{
+-	  holes = p->next;
+-	  poly_DelContour (&p);
+-	}
+-      holes = NULL;
+-      clear_marks (a);
+-      clear_marks (b);
+-      M_POLYAREA_Collect (&e, a, aminusb, &holes, PBO_SUB, FALSE);
+-      InsertHoles (&e, *aminusb, &holes);
+-      poly_Free (&a);
+-      poly_Free (&b);
+-      assert (poly_Valid (*aminusb));
+-    }
+-  /* delete holes if any left */
+-  while ((p = holes) != NULL)
+-    {
+-      holes = p->next;
+-      poly_DelContour (&p);
+-    }
++  if (code2)
++    poly_Free (aminusb);
+ 
++  if (code1)
++    return code1;
++
++  if (code2)
++    return code2;
+ 
+-  if (code)
+-    {
+-      poly_Free (aandb);
+-      poly_Free (aminusb);
+-      return code;
+-    }
+   assert (!*aandb || poly_Valid (*aandb));
+   assert (!*aminusb || poly_Valid (*aminusb));
+-  return code;
++  return err_ok;
+ }				/* poly_AndSubtract_free */
+ 
+ static inline int
+@@ -2637,10 +2548,10 @@ poly_DelContour (PLINE ** c)
      {
        prev = cur->prev;
        if (cur->cvc_next != NULL)
@@ -1391,7 +1474,7 @@ index 2bfe658..32ea7db 100644
        free (cur);
      }
    if ((*c)->head.cvc_next != NULL)
-@@ -2838,7 +2771,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
+@@ -2838,7 +2749,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
      {
        if (!poly_CopyContour (last, cur))
  	return FALSE;
@@ -1400,7 +1483,7 @@ index 2bfe658..32ea7db 100644
        last = &(*last)->next;
      }
    return TRUE;
-@@ -3037,7 +2970,7 @@ poly_Create (void)
+@@ -3037,7 +2948,7 @@ poly_Create (void)
  }
  
  void
@@ -1409,7 +1492,7 @@ index 2bfe658..32ea7db 100644
  {
    PLINE *pl;
  
-@@ -3096,7 +3029,7 @@ poly_ChkContour (PLINE * a)
+@@ -3096,7 +3007,7 @@ poly_ChkContour (PLINE * a)
    VNODE *a1, *a2, *a2_start, *hit1, *hit2;
    Vector i1, i2;
    int icnt;
@@ -1418,7 +1501,7 @@ index 2bfe658..32ea7db 100644
  
  #warning FIXME Later: Deliberately disabled this test - seems something strange is going on
    return FALSE;
-@@ -3113,23 +3046,22 @@ poly_ChkContour (PLINE * a)
+@@ -3113,23 +3024,22 @@ poly_ChkContour (PLINE * a)
  				    a2->point, a2->next->point, i1, i2)) > 0)
  	    {
  	      if (icnt > 1)
@@ -1448,7 +1531,7 @@ index 2bfe658..32ea7db 100644
  
  #if 1
  	      /* now check if they are inside each other */
-@@ -3137,7 +3069,7 @@ poly_ChkContour (PLINE * a)
+@@ -3137,7 +3047,7 @@ poly_ChkContour (PLINE * a)
  		  inside_sector (hit1, hit2->next->point) ||
  		  inside_sector (hit2, hit1->prev->point) ||
  		  inside_sector (hit2, hit1->next->point))
