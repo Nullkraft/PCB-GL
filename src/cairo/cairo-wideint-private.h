@@ -184,14 +184,13 @@ _cairo_int64_divrem (cairo_int64_t num, cairo_int64_t den)
     return qr;
 }
 
-#if 0
+#if 1
 static inline int32_t
 _cairo_int64_32_div (cairo_int64_t num, int32_t den)
 {
     return num / den;
 }
-#endif
-
+#else
 static inline int32_t
 _cairo_int64_32_div (cairo_int64_t num, int32_t den)
 {
@@ -203,6 +202,7 @@ _cairo_int64_32_div (cairo_int64_t num, int32_t den)
 
   return _cairo_int64_to_int32 (quorem.quo);
 }
+#endif
 
 /*
  * 128-bit datatypes.  Again, provide two implementations in
