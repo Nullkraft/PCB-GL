@@ -530,7 +530,7 @@ DrawEverything (BoxTypePtr drawn_area)
 	r_search (PCB->Data->element_tree, drawn_area, NULL, EMark_callback,
 		  NULL);
       /* Draw rat lines on top */
-      if (PCB->RatOn)
+      if (PCB->RatOn && gui->set_layer ("rats", SL (RATS, 0), 0))
 	DrawRats(drawn_area);
     }
 
