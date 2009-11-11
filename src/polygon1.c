@@ -98,12 +98,13 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
 if (UNLIKELY (((ptr) = malloc(sizeof(type))) == NULL)) \
     error(err_no_memory);
 
+//#define DEBUG_LABEL
 #undef DEBUG_LABEL
 #undef DEBUG_ALL_LABELS
 #undef DEBUG_JUMP
 #undef DEBUG_GATHER
 #undef DEBUG_ANGLE
-#undef DEBUG
+#define DEBUG
 #ifdef DEBUG
 #define DEBUGP(...) fprintf(stderr, ## __VA_ARGS__)
 #else
