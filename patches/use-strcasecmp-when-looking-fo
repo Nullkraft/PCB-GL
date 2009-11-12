@@ -3,9 +3,10 @@ Top:    78653869b85ddf1455d9d241d9cd046539dafac0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-12 00:55:46 +0000
 
-Use strcasecmp when looking for the "outline" layer
+Use strcasecmp when looking for the "outline" or "route" layer
 
-A few cases used strcmp, leading to inconsistencies in our handling
+A some cases previously used strcmp, leading to inconsistencies
+in our handling of these "special" layers.
 
 
 ---
