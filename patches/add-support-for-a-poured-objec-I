@@ -1,7 +1,7 @@
-Bottom: 5033e2f398aa7d9f180f156a51a950b01c44ca8a
-Top:    9dbc0940ba62cde8f8b148e2ac8ea7e52a5512b6
+Bottom: b80f3a1ca09f3d83c2880b45c54acc1f14943d25
+Top:    42ae38b8c916bc0e6e5e388fdf73cbd18acfc45d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-12 01:02:15 +0000
+Date:   2009-11-12 14:10:42 +0000
 
 Add support for a "poured" object.
 
@@ -1987,7 +1987,7 @@ index ef22f73..9f0e843 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index 21994ef..56b99e9 100644
+index 59072d1..9ce7fcb 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -100,6 +100,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
@@ -2719,7 +2719,7 @@ index b844f56..bfacde4 100644
         {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
         {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 9c7e7e1..c8080aa 100644
+index 1900a6e..af00e81 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -383,7 +383,7 @@ gerber_do_export (HID_Attr_Val * options)
@@ -2803,7 +2803,7 @@ index e5ec20a..bd0c137 100644
  	result = TRUE;
        break;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index d0bcdda..f8f311f 100644
+index 141195b..9f27cc9 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -1984,7 +1984,8 @@ static ModeButton mode_buttons[] = {
@@ -2830,7 +2830,7 @@ index 1282331..7590879 100644
  
  			/*
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 5eeb71f..2a5c9f7 100644
+index 383e5aa..a0f94ea 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -330,7 +330,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
@@ -2856,7 +2856,7 @@ index 9e59ca1..73f843c 100644
      }
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 7e72de5..38991d5 100644
+index 9abe279..71edd24 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -374,7 +374,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
@@ -2867,7 +2867,7 @@ index 7e72de5..38991d5 100644
 +      if (layer->LineN || layer->TextN || layer->ArcN || layer->PourN)
  	print_group[GetLayerGroupNumberByNumber (i)] = 1;
  
-       if (strcasecmp (layer->Name, "outline") == 0
+       if (strcmp (layer->Name, "outline") == 0 ||
 diff --git a/src/insert.c b/src/insert.c
 index 3d4a2f5..6399fac 100644
 --- a/src/insert.c
