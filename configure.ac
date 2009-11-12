@@ -366,8 +366,9 @@ AM_CONDITIONAL(USE_GL, test x$enable_gl = xyes)
 if test "x$enable_gl" = "xyes"; then
 	case " $with_gui " in
 		*\ gtk\ *) ;;
-		* ) AC_MSG_ERROR([GL drawing enabled but only works with the GTK HID.
-Either do not use --enable-gl or enable the gtk HID.])
+		*\ lesstif\ *) ;;
+		* ) AC_MSG_ERROR([GL drawing enabled but only works with the GTK or lesstif HIDs.
+Either do not use --enable-gl or enable the gtk or lesstif HID.])
 	;;
 	esac
 
@@ -706,6 +707,25 @@ for e in $HIDLIST; do
 	    ;;
 	  * ) ;;
 	esac
+
+	if test "x$enable_gl" = "xyes"; then
+		# Check for libGL
+		AC_CHECK_LIB(GL, glBegin, , , $X_LIBS)
+		if test $ac_cv_lib_GL_glBegin = "no"; then
+			AC_MSG_ERROR([You don't seem to have libGL installed.])
+		fi
+		# Check for libGLw
+		AC_CHECK_LIB(GLw, GLwDrawingAreaMakeCurrent, , , $X_LIBS)
+		if test $ac_cv_lib_GLw_GLwDrawingAreaMakeCurrent = "no"; then
+			AC_MSG_ERROR([You don't seem to have libGLw installed.])
+		fi
+		# Check for libGLU
+		AC_CHECK_LIB(GLU, gluNewTess, , , $X_LIBS)
+		if test $ac_cv_lib_GLU_gluNewTess = "no"; then
+			AC_MSG_ERROR([You don't seem to have libGLU installed.])
+		fi
+	fi
+
         ;;
 
       gtk )
