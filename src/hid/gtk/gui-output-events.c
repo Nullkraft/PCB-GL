@@ -1649,13 +1649,13 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   Settings.ShowSolderSide = save_show_solder;
 }
 
-static int one_shot = 1;
-
 #define Z_NEAR 3.0
 gboolean
 ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 					GdkEventExpose * ev, GHidPort * port)
 {
+  static int one_shot = 1;
+  static int display_list;
   BoxType region;
   int eleft, eright, etop, ebottom;
   extern HID ghid_hid;
@@ -1708,6 +1708,13 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   glMultMatrixf ((GLfloat *)view_matrix);
   glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
   glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
+
+#if 0
+  if (one_shot) {
+
+    display_list = glGenLists(1);
+    glNewList (display_list, GL_COMPILE);
+#endif
 
   glEnable (GL_STENCIL_TEST);
   glClearColor (gport->offlimits_color.red / 65535.,
@@ -1845,6 +1852,15 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   DrawMark (TRUE);
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
+
+#if 0
+    glEndList ();
+    one_shot = 0;
+  } else {
+    /* Second and subsequent times */
+    glCallList (display_list);
+  }
+#endif
 
   ghid_show_crosshair (TRUE);
 
