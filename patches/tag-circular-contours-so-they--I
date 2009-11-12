@@ -1,7 +1,7 @@
-Bottom: ff102f3c387d7ef11a3aa23731e4b964cde2472a
-Top:    21305d38d5a453337bdaff9500a5f82e04ff29df
+Bottom: a5d2dda35c7413e49f8d33c4b0a2c9c7bee89924
+Top:    81f60dc6008fb250cd253390c91c3b155299b164
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-12 00:52:07 +0000
+Date:   2009-11-12 00:55:54 +0000
 
 Tag circular contours so they can be drawn quicker
 
@@ -88,10 +88,10 @@ index 50dda4a..ce427ad 100644
        unsigned int status:3;
        unsigned int orient:1;
 diff --git a/src/polygon.c b/src/polygon.c
-index 287e97a..df8105c 100644
+index dfb6bb6..2b5a678 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -343,6 +343,10 @@ CirclePoly (LocationType x, LocationType y, BDimension radius)
+@@ -342,6 +342,10 @@ CirclePoly (LocationType x, LocationType y, BDimension radius)
    if ((contour = poly_NewContour (v)) == NULL)
      return NULL;
    frac_circle (contour, x, y, v, 1);

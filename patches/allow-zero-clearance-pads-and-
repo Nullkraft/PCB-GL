@@ -1,7 +1,7 @@
-Bottom: 0e858a01dc6989f004ba83b8dfed78e85273bcce
-Top:    468fbe6a44ee0dec789ddf2be9bfd15932d573cf
+Bottom: b80606b56c3c2b5130bf3325a8e435daa58f0f9a
+Top:    bc4b85083b972b7a497bcbe72c55afa6d23b9fbc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-12 00:52:10 +0000
+Date:   2009-11-12 00:55:58 +0000
 
 Allow zero clearance pads and pins to touch polygons
 
@@ -139,10 +139,10 @@ index 6e81d29..c747b8f 100644
            AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
            SET_FLAG (TheFlag, pin);
 diff --git a/src/polygon.c b/src/polygon.c
-index 5dc8409..d3c1cca 100644
+index ec53c70..8bf8049 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -755,6 +755,8 @@ SubtractPad (PadType * pad, PolygonType * p)
+@@ -754,6 +754,8 @@ SubtractPad (PadType * pad, PolygonType * p)
  {
    POLYAREA *np = NULL;
  
@@ -151,7 +151,7 @@ index 5dc8409..d3c1cca 100644
    if (TEST_FLAG (SQUAREFLAG, pad))
      {
        if (!
-@@ -862,6 +864,8 @@ pad_sub_callback (const BoxType * b, void *cl)
+@@ -861,6 +863,8 @@ pad_sub_callback (const BoxType * b, void *cl)
    /* don't subtract the object that was put back! */
    if (b == info->other)
      return 0;
