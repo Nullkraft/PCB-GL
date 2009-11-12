@@ -1,7 +1,7 @@
-Bottom: 8ed7e63bb039e20c73e78c13e77794ab0fad6fe2
+Bottom: 78653869b85ddf1455d9d241d9cd046539dafac0
 Top:    78653869b85ddf1455d9d241d9cd046539dafac0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-12 00:55:46 +0000
+Date:   2009-11-12 01:00:22 +0000
 
 Use strcasecmp when looking for the "outline" or "route" layer
 
@@ -11,59 +11,4 @@ in our handling of these "special" layers.
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index 1d902b2..3756955 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -891,8 +891,8 @@ DrawLayerGroup (int group, const BoxType * screen)
-     {
-       layernum = layers[i];
-       Layer = PCB->Data->Layer + layers[i];
--      if (strcmp (Layer->Name, "outline") == 0
--	  || strcmp (Layer->Name, "route") == 0)
-+      if (strcasecmp (Layer->Name, "outline") == 0
-+	  || strcasecmp (Layer->Name, "route") == 0)
- 	rv = 0;
-       if (layernum < max_layer && Layer->On)
- 	{
-diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index e68026d..e33e6ef 100644
---- a/src/hid/gerber/gerber.c
-+++ b/src/hid/gerber/gerber.c
-@@ -467,8 +467,8 @@ gerber_set_layer (const char *name, int group, int empty)
-     return 0;
- 
-   flash_drills = 0;
--  if (strcmp (name, "outline") == 0
--      || strcmp (name, "route") == 0)
-+  if (strcasecmp (name, "outline") == 0
-+      || strcasecmp (name, "route") == 0)
-     flash_drills = 1;
- 
-   if (is_drill && n_pending_drills)
-diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index d7e0371..2d96e16 100644
---- a/src/hid/ps/ps.c
-+++ b/src/hid/ps/ps.c
-@@ -377,8 +377,8 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
-       if (layer->LineN || layer->TextN || layer->ArcN || layer->PolygonN)
- 	print_group[GetLayerGroupNumberByNumber (i)] = 1;
- 
--      if (strcmp (layer->Name, "outline") == 0
--	  || strcmp (layer->Name, "route") == 0)
-+      if (strcasecmp (layer->Name, "outline") == 0
-+	  || strcasecmp (layer->Name, "route") == 0)
- 	{
- 	  printf("see outline layer\n");
- 	  outline_layer = layer;
-@@ -704,8 +704,8 @@ ps_set_layer (const char *name, int group, int empty)
-       && outline_layer
-       && outline_layer != PCB->Data->Layer+idx
-       && SL_TYPE (idx) == 0 /* copper */
--      && strcmp (name, "outline")
--      && strcmp (name, "route"))
-+      && strcasecmp (name, "outline")
-+      && strcasecmp (name, "route"))
-     {
-       printf("attempting to draw outlines on %s\n", name);
-       DrawLayer (outline_layer, &region);
+
