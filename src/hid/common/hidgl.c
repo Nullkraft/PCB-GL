@@ -47,6 +47,10 @@ RCSID ("$Id: $");
 
 triangle_buffer buffer;
 float global_depth = 0;
+GLfloat cur_r = 1.;
+GLfloat cur_g = 1.;
+GLfloat cur_b = 1.;
+GLfloat cur_a = 1.;
 
 #if 0
 triangle_array *
@@ -63,7 +67,8 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
   const GLubyte *errString;
 
   buffer->triangle_count = 0;
-  buffer->coord_comp_count = 0;
+//  buffer->coord_comp_count = 0;
+  buffer->array_size = TRIANGLE_ARRAY_BYTES / (3 * sizeof (tri_array_element));
 
   glEnableClientState (GL_VERTEX_ARRAY);
   glGenBuffers (1, &buffer->vbo_name);
@@ -92,9 +97,12 @@ hidgl_flush_triangles (triangle_buffer *buffer)
   glUnmapBuffer (GL_ARRAY_BUFFER);
 
   glEnableClientState (GL_VERTEX_ARRAY);
-  glVertexPointer (3, GL_FLOAT, 0, NULL); // buffer->triangle_array);
+  glEnableClientState (GL_COLOR_ARRAY);
+  glVertexPointer (3, GL_FLOAT, sizeof (tri_array_element), &((tri_array_element *)NULL)->x);
+  glColorPointer (4, GL_FLOAT, sizeof (tri_array_element), &((tri_array_element *)NULL)->r );
   glDrawArrays (GL_TRIANGLES, 0, buffer->triangle_count * 3);
   glDisableClientState (GL_VERTEX_ARRAY);
+  glDisableClientState (GL_COLOR_ARRAY);
 
 //  buffer->triangle_count = 0;
 //  buffer->coord_comp_count = 0;
@@ -108,15 +116,28 @@ hidgl_flush_triangles (triangle_buffer *buffer)
 void
 hidgl_ensure_triangle_space (triangle_buffer *buffer, int count)
 {
-  if (count > TRIANGLE_ARRAY_SIZE)
+  if (count > buffer->array_size)
     {
       fprintf (stderr, "Not enough space in vertex buffer\n");
       fprintf (stderr, "Requested %i triangles, %i available\n",
-                       count, TRIANGLE_ARRAY_SIZE);
+                       count, buffer->array_size);
       exit (1);
     }
-  if (count > TRIANGLE_ARRAY_SIZE - buffer->triangle_count)
+  if (count > buffer->array_size - buffer->triangle_count)
     hidgl_flush_triangles (buffer);
+}
+
+
+void
+hidgl_color (GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+{
+  cur_r = r;
+  cur_g = g;
+  cur_b = b;
+  cur_a = a;
+
+  /* We still draw non-filled rectangles in immediate mode */
+  glColor4f (r, g, b, a);
 }
 
 //static int cur_mask = -1;
@@ -245,7 +266,7 @@ static void draw_cap (double width, int x, int y, double angle, double scale)
   for (i = 0; i < slices; i++) {
     capx =  radius * cosf (angle * M_PI / 180. + ((float)(i + 1)) * M_PI / (float)slices) + x;
     capy = -radius * sinf (angle * M_PI / 180. + ((float)(i + 1)) * M_PI / (float)slices) + y;
-    hidgl_add_triangle (&buffer, last_capx, last_capy, capx, capy, x, y);
+    hidgl_add_triangle (&buffer, last_capx, last_capy, capx, capy, x, y, cur_r, cur_g, cur_b, cur_a);
     last_capx = capx;
     last_capy = capy;
   }
@@ -310,10 +331,10 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
   hidgl_ensure_triangle_space (&buffer, 2);
   hidgl_add_triangle (&buffer, x1 - wdx, y1 - wdy,
                                x2 - wdx, y2 - wdy,
-                               x2 + wdx, y2 + wdy);
+                               x2 + wdx, y2 + wdy, cur_r, cur_g, cur_b, cur_a);
   hidgl_add_triangle (&buffer, x1 - wdx, y1 - wdy,
                                x2 + wdx, y2 + wdy,
-                               x1 + wdx, y1 + wdy);
+                               x1 + wdx, y1 + wdy, cur_r, cur_g, cur_b, cur_a);
 
   /* Don't bother capping hairlines */
   if (circular_caps && !hairline)
@@ -383,10 +404,10 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
     outer_x = -outer_r * cos_ang + x;  outer_y = outer_r * sin_ang + y;
     hidgl_add_triangle (&buffer, last_inner_x, last_inner_y,
                                  last_outer_x, last_outer_y,
-                                 outer_x, outer_y);
+                                 outer_x, outer_y, cur_r, cur_g, cur_b, cur_a);
     hidgl_add_triangle (&buffer, last_inner_x, last_inner_y,
                                  inner_x, inner_y,
-                                 outer_x, outer_y);
+                                 outer_x, outer_y, cur_r, cur_g, cur_b, cur_a);
     last_inner_x = inner_x;  last_inner_y = inner_y;
     last_outer_x = outer_x;  last_outer_y = outer_y;
   }
@@ -442,7 +463,7 @@ hidgl_fill_circle (int vx, int vy, int vr, double scale)
     float x, y;
     x = radius * cosf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
     y = radius * sinf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
-    hidgl_add_triangle (&buffer, vx, vy, last_x, last_y, x, y);
+    hidgl_add_triangle (&buffer, vx, vy, last_x, last_y, x, y, cur_r, cur_g, cur_b, cur_a);
     last_x = x;
     last_y = y;
   }
@@ -532,7 +553,7 @@ myVertex (GLdouble *vertex_data)
           hidgl_add_triangle (&buffer,
                               triangle_vertices [0], triangle_vertices [1],
                               triangle_vertices [2], triangle_vertices [3],
-                              vertex_data [0], vertex_data [1]);
+                              vertex_data [0], vertex_data [1], cur_r, cur_g, cur_b, cur_a);
 #else
           hidgl_draw_line (Square_Cap, global_scale,
                            triangle_vertices [0], triangle_vertices [1],
@@ -567,7 +588,7 @@ myVertex (GLdouble *vertex_data)
           hidgl_add_triangle (&buffer,
                               triangle_vertices [0], triangle_vertices [1],
                               triangle_vertices [2], triangle_vertices [3],
-                              triangle_vertices [4], triangle_vertices [5]);
+                              triangle_vertices [4], triangle_vertices [5], cur_r, cur_g, cur_b, cur_a);
           triangle_comp_idx = 0;
           stashed_vertices = 0;
         }
@@ -723,8 +744,8 @@ void
 hidgl_fill_rect (int x1, int y1, int x2, int y2)
 {
   hidgl_ensure_triangle_space (&buffer, 2);
-  hidgl_add_triangle (&buffer, x1, y1, x1, y2, x2, y2);
-  hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
+  hidgl_add_triangle (&buffer, x1, y1, x1, y2, x2, y2, cur_r, cur_g, cur_b, cur_a);
+  hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1, cur_r, cur_g, cur_b, cur_a);
 }
 
 void
