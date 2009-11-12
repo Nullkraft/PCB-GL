@@ -1,9 +1,11 @@
 Bottom: 62b608f7ccbd7d1c0f3a23c65f718b5984d2c742
 Top:    495276334353e549ec93720a3fb140f7e48337e1
-Author: Peter Clifton <pcjc2@cam.ac.uk>
+Author: Patrick Bernaud <b-patrick@wanadoo.fr>
 Date:   2009-11-12 13:55:20 +0000
 
 hid/gtk: Fix strncat length when building accelerator string. (CODE!)
+
+(Oops, I pushed an empty patch last time - Peter Clifton)
 
 Commit d6b396c4a34bb619c8e91da1e9cd9bd27ff54657 was not enough:
 strncat() must be given the remaining length of buffer to ensure it
