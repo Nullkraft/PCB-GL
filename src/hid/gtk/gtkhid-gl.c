@@ -591,8 +591,7 @@ ghid_set_color (hidGC gc, const char *name)
   if( ! ghid_gui_is_up )
     return;
 
-  hidgl_flush_triangles (&buffer);
-  glColor4d (r, g, b, a);
+  hidgl_color (r, g, b, a);
 }
 
 static void
@@ -2019,6 +2018,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   gui->set_layer (NULL, GetLayerGroupNumberByNumber (INDEXOFCURRENT), 0);
   gui->set_layer (NULL, SL_FINISHED, 0);
 
+  glUnmapBuffer (GL_ARRAY_BUFFER);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDeleteBuffers (1, &buffer.vbo_name);
+
   ghid_draw_grid (&region);
 
   hidgl_init_triangle_array (&buffer);
@@ -2047,6 +2050,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   ghid_show_crosshair (TRUE);
 
   hidgl_flush_triangles (&buffer);
+
+  glUnmapBuffer (GL_ARRAY_BUFFER);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDeleteBuffers (1, &buffer.vbo_name);
 
   check_gl_drawing_ok_hack = false;
   ghid_end_drawing (port);
@@ -2154,6 +2161,10 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   hid_expose_callback (&ghid_hid, NULL, &pinout->element);
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
+
+  glUnmapBuffer (GL_ARRAY_BUFFER);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDeleteBuffers (1, &buffer.vbo_name);
 
   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
     gdk_gl_drawable_swap_buffers (pGlDrawable);
