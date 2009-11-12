@@ -2669,6 +2669,7 @@ ghid_parse_arguments (int *argc, char ***argv)
   gport->zoom = 300.0;
   pixel_slop = 300;
 
+#ifdef ENABLE_GL
   /* setup GL-context */
   gport->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
                                                GDK_GL_MODE_STENCIL |
@@ -2678,6 +2679,7 @@ ghid_parse_arguments (int *argc, char ***argv)
     printf("Could not setup GL-context!\n");
     return; /* Should we abort? */
   }
+#endif
 
   ghid_config_files_read (argc, argv);
 
