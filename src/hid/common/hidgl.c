@@ -59,10 +59,28 @@ hidgl_new_triangle_array (void)
 void
 hidgl_init_triangle_array (triangle_buffer *buffer)
 {
-  glEnableClientState (GL_VERTEX_ARRAY);
-  glVertexPointer (3, GL_FLOAT, 0, buffer->triangle_array);
+  GLenum errCode;
+  const GLubyte *errString;
+
   buffer->triangle_count = 0;
   buffer->coord_comp_count = 0;
+
+  glEnableClientState (GL_VERTEX_ARRAY);
+  glGenBuffers (1, &buffer->vbo_name);
+  glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_name);
+  glBufferData (GL_ARRAY_BUFFER, TRIANGLE_ARRAY_BYTES, NULL, GL_STATIC_DRAW);
+
+  buffer->triangle_array = glMapBuffer (GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+
+  if ((errCode = glGetError()) != GL_NO_ERROR) {
+      errString = gluErrorString(errCode);
+     fprintf (stderr, "OpenGL Error: %s\n", errString);
+  }
+
+  if (buffer->triangle_array == NULL) {
+    printf ("Couldn't map VBO.. sorry, don't know how best to handle this gracefully\n");
+    exit (1);
+  }
 }
 
 void
@@ -71,9 +89,20 @@ hidgl_flush_triangles (triangle_buffer *buffer)
   if (buffer->triangle_count == 0)
     return;
 
+  glUnmapBuffer (GL_ARRAY_BUFFER);
+
+  glEnableClientState (GL_VERTEX_ARRAY);
+  glVertexPointer (3, GL_FLOAT, 0, NULL); // buffer->triangle_array);
   glDrawArrays (GL_TRIANGLES, 0, buffer->triangle_count * 3);
-  buffer->triangle_count = 0;
-  buffer->coord_comp_count = 0;
+  glDisableClientState (GL_VERTEX_ARRAY);
+
+//  buffer->triangle_count = 0;
+//  buffer->coord_comp_count = 0;
+
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDeleteBuffers (1, &buffer->vbo_name);
+
+  hidgl_init_triangle_array (buffer);
 }
 
 void
