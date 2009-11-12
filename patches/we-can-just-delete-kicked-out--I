@@ -1,7 +1,7 @@
-Bottom: f23cda11fb12ab486986dacd58e09b82d26f8967
+Bottom: 468fbe6a44ee0dec789ddf2be9bfd15932d573cf
 Top:    468fbe6a44ee0dec789ddf2be9bfd15932d573cf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-12 00:50:21 +0000
+Date:   2009-11-12 00:52:11 +0000
 
 We can just delete kicked out holes
 
@@ -11,28 +11,4 @@ kicked out, we know it is destined for the bin.
 
 ---
 
-diff --git a/src/polygon1.c b/src/polygon1.c
-index e2ad210..a369b2d 100644
---- a/src/polygon1.c
-+++ b/src/polygon1.c
-@@ -1414,7 +1414,8 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
- 	}
-       else
- 	{
--	  /* Need to check if this new hole means we need to kick out any old ones for reprocessing */
-+	  /* Need to check if this new hole means we need to kick out any old
-+	   * ones for deletion */
- 	  while (1)
- 	    {
- 	      struct find_inside_info info;
-@@ -1448,10 +1449,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
- 
- 	      /* Remove hole from the contour */
- 	      remove_contour (pa_info->pa, prev, info.result, TRUE);
--
--	      /* Add hole as the next on the list to be processed in this very function */
--	      info.result->next = *src;
--	      *src = info.result;
-+	      poly_DelContour (&info.result);
- 	    }
- 	  /* End check for kicked out holes */
+
