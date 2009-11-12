@@ -1,7 +1,7 @@
-Bottom: 628e620ee4ec43e66db40e5eb323c97a8c910d7f
-Top:    97a3c5d51848bd5ccd97cf7dc0f1602a7ad0ab18
+Bottom: 49627cf91f8c06cb9cbce60b0de29e10fd27fe0e
+Top:    c6f9d87106407e3b3265e07a290e381e484c883b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-12 01:00:27 +0000
+Date:   2009-11-12 01:31:19 +0000
 
 draw.c: Draw all vias under the mask layer
 
@@ -13,7 +13,7 @@ become obscured by the mask drawn above them.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 33b7650..0493977 100644
+index 64ff374..e18c9ca 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -350,15 +350,6 @@ rat_callback (const BoxType * b, void *cl)

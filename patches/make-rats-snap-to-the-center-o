@@ -1,7 +1,7 @@
-Bottom: cb5654d3174d578b4fd63b797c03f7971d5d6d4e
-Top:    f5a90e0f422fb9d9af2468bf618db6b77109f187
+Bottom: f8ae3b2afb47c9fca6c8bf65892484899523e308
+Top:    fb0f7b4e15a56ef1dcc808833a55d3cb0da470a6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-12 01:00:26 +0000
+Date:   2009-11-12 01:31:17 +0000
 
 Make rats snap to the center of pads, not the edges
 
@@ -19,7 +19,7 @@ Make rats snap to the center of pads, not the edges
 ---
 
 diff --git a/src/find.c b/src/find.c
-index e22d5cc..6e81d29 100644
+index b24512a..30a1ea5 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -330,7 +330,7 @@ static Boolean LookupLOConnectionsToPad (PadTypePtr, Cardinal);
@@ -79,7 +79,7 @@ index e22d5cc..6e81d29 100644
      longjmp (i->env, 1);
    return 0;
  }
-@@ -2305,19 +2306,15 @@ LOCtoPadRat_callback (const BoxType * b, void *cl)
+@@ -2306,19 +2307,15 @@ LOCtoPadRat_callback (const BoxType * b, void *cl)
    if (!TEST_FLAG (TheFlag, rat))
      {
        if (rat->group1 == i->layer &&
