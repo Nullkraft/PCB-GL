@@ -128,6 +128,7 @@ struct POLYAREA
 {
     POLYAREA *f, *b;
     PLINE *contours;
+    rtree_t *contour_tree;
 };
 
 BOOLp poly_M_Copy0(POLYAREA ** dst, const POLYAREA * srcfst);
