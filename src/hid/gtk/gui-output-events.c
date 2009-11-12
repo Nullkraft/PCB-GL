@@ -297,16 +297,16 @@ have_crosshair_attachments (void)
 #define VCD		8
 
 static void
-draw_right_cross (GdkGC *xor_gc, gint x, gint y)
+draw_right_cross (gint x, gint y)
 {
-  gdk_draw_line (gport->drawing_area->window, xor_gc,
-		 x, 0, x, gport->height);
-  gdk_draw_line (gport->drawing_area->window, xor_gc,
-		 0, y, gport->width, y);
+  glVertex2i (x, 0);
+  glVertex2i (x, gport->height);
+  glVertex2i (0, y);
+  glVertex2i (gport->width, y);
 }
 
 static void
-draw_slanted_cross (GdkGC *xor_gc, gint x, gint y)
+draw_slanted_cross (gint x, gint y)
 {
   gint x0, y0, x1, y1;
 
@@ -318,8 +318,9 @@ draw_slanted_cross (GdkGC *xor_gc, gint x, gint y)
   y0 = MAX(0, MIN (y0, gport->height));
   y1 = y - x;
   y1 = MAX(0, MIN (y1, gport->height));
-  gdk_draw_line (gport->drawing_area->window, xor_gc,
-		 x0, y0, x1, y1);
+  glVertex2i (x0, y0);
+  glVertex2i (x1, y1);
+
   x0 = x - (gport->height - y);
   x0 = MAX(0, MIN (x0, gport->width));
   x1 = x + y;
@@ -328,12 +329,12 @@ draw_slanted_cross (GdkGC *xor_gc, gint x, gint y)
   y0 = MAX(0, MIN (y0, gport->height));
   y1 = y - (gport->width - x);
   y1 = MAX(0, MIN (y1, gport->height));
-  gdk_draw_line (gport->drawing_area->window, xor_gc,
-		 x0, y0, x1, y1);
+  glVertex2i (x0, y0);
+  glVertex2i (x1, y1);
 }
 
 static void
-draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
+draw_dozen_cross (gint x, gint y)
 {
   gint x0, y0, x1, y1;
   gdouble tan60 = sqrt (3);
@@ -346,8 +347,8 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
   y0 = MAX(0, MIN (y0, gport->height));
   y1 = y - x * tan60;
   y1 = MAX(0, MIN (y1, gport->height));
-  gdk_draw_line (gport->drawing_area->window, xor_gc,
-		 x0, y0, x1, y1);
+  glVertex2i (x0, y0);
+  glVertex2i (x1, y1);
 
   x0 = x + (gport->height - y) * tan60;
   x0 = MAX(0, MIN (x0, gport->width));
@@ -357,8 +358,8 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
   y0 = MAX(0, MIN (y0, gport->height));
   y1 = y - x / tan60;
   y1 = MAX(0, MIN (y1, gport->height));
-  gdk_draw_line (gport->drawing_area->window, xor_gc,
-		 x0, y0, x1, y1);
+  glVertex2i (x0, y0);
+  glVertex2i (x1, y1);
 
   x0 = x - (gport->height - y) / tan60;
   x0 = MAX(0, MIN (x0, gport->width));
@@ -368,8 +369,8 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
   y0 = MAX(0, MIN (y0, gport->height));
   y1 = y - (gport->width - x) * tan60;
   y1 = MAX(0, MIN (y1, gport->height));
-  gdk_draw_line (gport->drawing_area->window, xor_gc,
-		 x0, y0, x1, y1);
+  glVertex2i (x0, y0);
+  glVertex2i (x1, y1);
 
   x0 = x - (gport->height - y) * tan60;
   x0 = MAX(0, MIN (x0, gport->width));
@@ -379,20 +380,20 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
   y0 = MAX(0, MIN (y0, gport->height));
   y1 = y - (gport->width - x) / tan60;
   y1 = MAX(0, MIN (y1, gport->height));
-  gdk_draw_line (gport->drawing_area->window, xor_gc,
-		 x0, y0, x1, y1);
+  glVertex2i (x0, y0);
+  glVertex2i (x1, y1);
 }
 
 static void
-draw_crosshair (GdkGC *xor_gc, gint x, gint y)
+draw_crosshair (gint x, gint y)
 {
   static enum crosshair_shape prev = Basic_Crosshair_Shape;
 
-  draw_right_cross (xor_gc, x, y);
+  draw_right_cross (x, y);
   if (prev == Union_Jack_Crosshair_Shape)
-    draw_slanted_cross (xor_gc, x, y);
+    draw_slanted_cross (x, y);
   if (prev == Dozen_Crosshair_Shape)
-    draw_dozen_cross (xor_gc, x, y);
+    draw_dozen_cross (x, y);
   prev = Crosshair.shape;
 }
 
@@ -401,60 +402,106 @@ ghid_show_crosshair (gboolean show)
 {
   gint x, y;
   static gint x_prev = -1, y_prev = -1;
-  static GdkGC *xor_gc;
+  static int done_once = 0;
   static GdkColor cross_color;
 
-  if (gport->x_crosshair < 0 || ghidgui->creating || !gport->has_entered)
+  if (gport->x_crosshair < 0 || ghidgui->creating) {// || !gport->has_entered) {
+    printf ("Returning\n");
     return;
+  }
 
-  if (!xor_gc)
+  if (!done_once)
     {
-      xor_gc = gdk_gc_new (ghid_port.drawing_area->window);
-      gdk_gc_copy (xor_gc, ghid_port.drawing_area->style->white_gc);
-      gdk_gc_set_function (xor_gc, GDK_XOR);
+      done_once = 1;
       /* FIXME: when CrossColor changed from config */
       ghid_map_color_string (Settings.CrossColor, &cross_color);
     }
   x = DRAW_X (gport->x_crosshair);
   y = DRAW_Y (gport->y_crosshair);
 
-  gdk_gc_set_foreground (xor_gc, &cross_color);
+  glEnable (GL_COLOR_LOGIC_OP);
+  glLogicOp (GL_XOR);
 
+  hidgl_flush_triangles (&buffer);
+
+  glColor3f (cross_color.red / 65535.,
+             cross_color.green / 65535.,
+             cross_color.blue / 65535.);
+
+  glBegin (GL_LINES);
+
+#if 1
   if (x_prev >= 0)
     {
-      draw_crosshair (xor_gc, x_prev, y_prev);
-      if (ghidgui->auto_pan_on && have_crosshair_attachments ())
-	{
-	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
-			      0, y_prev - VCD, VCD, VCW);
-	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
-			      gport->width - VCD, y_prev - VCD, VCD, VCW);
-	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
-			      x_prev - VCD, 0, VCW, VCD);
-	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
-			      x_prev - VCD, gport->height - VCD, VCW, VCD);
-	}
+      draw_crosshair (x_prev, y_prev);
+    }
+#endif
+
+  if (x >= 0 && show)
+    {
+      draw_crosshair (x, y);
+    }
+
+  glEnd ();
+
+  if (ghidgui->auto_pan_on && have_crosshair_attachments ())
+    {
+      glBegin (GL_QUADS);
+
+#if 1
+      if (x_prev >= 0)
+        {
+          glVertex2i (0,                  y_prev - VCD);
+          glVertex2i (0,                  y_prev - VCD + VCW);
+          glVertex2i (VCD,                y_prev - VCD + VCW);
+          glVertex2i (VCD,                y_prev - VCD);
+          glVertex2i (gport->width,       y_prev - VCD);
+          glVertex2i (gport->width,       y_prev - VCD + VCW);
+          glVertex2i (gport->width - VCD, y_prev - VCD + VCW);
+          glVertex2i (gport->width - VCD, y_prev - VCD);
+          glVertex2i (x_prev - VCD,       0);
+          glVertex2i (x_prev - VCD,       VCD);
+          glVertex2i (x_prev - VCD + VCW, VCD);
+          glVertex2i (x_prev - VCD + VCW, 0);
+          glVertex2i (x_prev - VCD,       gport->height - VCD);
+          glVertex2i (x_prev - VCD,       gport->height);
+          glVertex2i (x_prev - VCD + VCW, gport->height);
+          glVertex2i (x_prev - VCD + VCW, gport->height - VCD);
+        }
+#endif
+
+      if (x >= 0 && show)
+        {
+          glVertex2i (0,                  y - VCD);
+          glVertex2i (0,                  y - VCD + VCW);
+          glVertex2i (VCD,                y - VCD + VCW);
+          glVertex2i (VCD,                y - VCD);
+          glVertex2i (gport->width,       y - VCD);
+          glVertex2i (gport->width,       y - VCD + VCW);
+          glVertex2i (gport->width - VCD, y - VCD + VCW);
+          glVertex2i (gport->width - VCD, y - VCD);
+          glVertex2i (x - VCD,            0);
+          glVertex2i (x - VCD,            VCD);
+          glVertex2i (x - VCD + VCW,      VCD);
+          glVertex2i (x - VCD + VCW,      0);
+          glVertex2i (x - VCD,            gport->height - VCD);
+          glVertex2i (x - VCD,            gport->height);
+          glVertex2i (x - VCD + VCW,      gport->height);
+          glVertex2i (x - VCD + VCW,      gport->height - VCD);
+        }
+
+      glEnd ();
     }
 
   if (x >= 0 && show)
     {
-      draw_crosshair (xor_gc, x, y);
-      if (ghidgui->auto_pan_on && have_crosshair_attachments ())
-	{
-	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
-			      0, y - VCD, VCD, VCW);
-	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
-			      gport->width - VCD, y - VCD, VCD, VCW);
-	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
-			      x - VCD, 0, VCW, VCD);
-	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
-			      x - VCD, gport->height - VCD, VCW, VCD);
-	}
       x_prev = x;
       y_prev = y;
     }
   else
     x_prev = y_prev = -1;
+
+  glDisable (GL_COLOR_LOGIC_OP);
 }
 
 static gboolean
@@ -692,53 +739,152 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
   if (!first_time_done)
     {
       gport->colormap = gtk_widget_get_colormap (gport->top_window);
-      gport->bg_gc = gdk_gc_new (gport->drawable);
       if (gdk_color_parse (Settings.BackgroundColor, &gport->bg_color))
 	gdk_color_alloc (gport->colormap, &gport->bg_color);
       else
 	gdk_color_white (gport->colormap, &gport->bg_color);
-      gdk_gc_set_foreground (gport->bg_gc, &gport->bg_color);
 
-      gport->offlimits_gc = gdk_gc_new (gport->drawable);
       if (gdk_color_parse (Settings.OffLimitColor, &gport->offlimits_color))
 	gdk_color_alloc (gport->colormap, &gport->offlimits_color);
       else
 	gdk_color_white (gport->colormap, &gport->offlimits_color);
-      gdk_gc_set_foreground (gport->offlimits_gc, &gport->offlimits_color);
       first_time_done = TRUE;
       PCBChanged (0, NULL, 0, 0);
     }
-  if (gport->mask)
-    {
-      gdk_pixmap_unref (gport->mask);
-      gport->mask = gdk_pixmap_new (0, gport->width, gport->height, 1);
-    }
+//  if (gport->mask)
+//    {
+//      gdk_pixmap_unref (gport->mask);
+//      gport->mask = gdk_pixmap_new (0, gport->width, gport->height, 1);
+//    }
   ghid_port_ranges_scale (FALSE);
   ghid_invalidate_all ();
   RestoreCrosshair (TRUE);
   return 0;
 }
 
-
 void
 ghid_screen_update (void)
 {
-
+#if 0
   ghid_show_crosshair (FALSE);
   gdk_draw_drawable (gport->drawing_area->window, gport->bg_gc, gport->pixmap,
 		     0, 0, 0, 0, gport->width, gport->height);
   ghid_show_crosshair (TRUE);
+#endif
 }
 
+void DrawAttached (Boolean);
+void draw_grid ();
+
+#define Z_NEAR 3.0
 gboolean
 ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 					GdkEventExpose * ev, GHidPort * port)
 {
+  BoxType region;
+  int eleft, eright, etop, ebottom;
+  extern HID ghid_hid;
+  GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
+  GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
+
+  /* make GL-context "current" */
+  if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
+    return FALSE;
+  }
+
   ghid_show_crosshair (FALSE);
-  gdk_draw_drawable (widget->window, port->bg_gc, port->pixmap,
-		     ev->area.x, ev->area.y, ev->area.x, ev->area.y,
-		     ev->area.width, ev->area.height);
+
+  glEnable (GL_BLEND);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+//  glEnable(GL_POLYGON_SMOOTH);
+//  glHint(GL_POLYGON_SMOOTH_HINT, [GL_FASTEST, GL_NICEST, or GL_DONT_CARE]);
+
+  glViewport (0, 0, widget->allocation.width, widget->allocation.height);
+
+  glEnable (GL_SCISSOR_TEST);
+  glScissor (ev->area.x,
+             widget->allocation.height - ev->area.height - ev->area.y,
+             ev->area.width, ev->area.height);
+
+  glMatrixMode (GL_PROJECTION);
+  glLoadIdentity ();
+  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, 0, 100);
+  glMatrixMode (GL_MODELVIEW);
+  glLoadIdentity ();
+  glTranslatef (0.0f, 0.0f, -Z_NEAR);
+
+  glClearColor (gport->offlimits_color.red / 65535.,
+                gport->offlimits_color.green / 65535.,
+                gport->offlimits_color.blue / 65535.,
+                1.);
+
+  glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+  region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
+  region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
+  region.Y1 = MIN (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
+  region.Y2 = MAX (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
+
+  eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
+  etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
+
+  glColor3f (gport->bg_color.red / 65535.,
+             gport->bg_color.green / 65535.,
+             gport->bg_color.blue / 65535.);
+
+  glBegin (GL_QUADS);
+  glVertex3i (eleft,  etop,    0);
+  glVertex3i (eright, etop,    0);
+  glVertex3i (eright, ebottom, 0);
+  glVertex3i (eleft,  ebottom, 0);
+  glEnd ();
+
+  /* TODO: Background image */
+
+  hidgl_init_triangle_array (&buffer);
+  ghid_invalidate_current_gc ();
+
+  glPushMatrix ();
+  glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
+            (ghid_flip_y ? -1. : 1.) / gport->zoom,
+            (ghid_flip_x == ghid_flip_y) ? 1. : -1.);
+  glTranslatef (ghid_flip_x ? gport->view_x0 - PCB->MaxWidth  :
+                             -gport->view_x0,
+                ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
+                             -gport->view_y0, 0);
+  hid_expose_callback (&ghid_hid, &region, 0);
+  hidgl_flush_triangles (&buffer);
+  glPopMatrix ();
+
+  draw_grid ();
+
+  hidgl_init_triangle_array (&buffer);
+  ghid_invalidate_current_gc ();
+  glPushMatrix ();
+  glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
+            (ghid_flip_y ? -1. : 1.) / gport->zoom, 1);
+  glTranslatef (ghid_flip_x ? gport->view_x0 - PCB->MaxWidth  :
+                             -gport->view_x0,
+                ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
+                             -gport->view_y0, 0);
+  DrawAttached (TRUE);
+  DrawMark (TRUE);
+  hidgl_flush_triangles (&buffer);
+  glPopMatrix ();
+
   ghid_show_crosshair (TRUE);
+
+  hidgl_flush_triangles (&buffer);
+
+  if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
+    gdk_gl_drawable_swap_buffers (pGlDrawable);
+  else
+    glFlush ();
+
+  /* end drawing to current GL-context */
+  gdk_gl_drawable_gl_end (pGlDrawable);
+
   return FALSE;
 }
 
@@ -749,6 +895,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
   gdouble dx, dy;
   static gint x_prev = -1, y_prev = -1;
   gboolean moved;
+  GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
+  GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
+
+  /* make GL-context "current" */
+  if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
+    printf ("GL THingy returned\n");
+    return FALSE;
+  }
 
   if (out->panning)
     {
@@ -764,9 +918,18 @@ ghid_port_window_motion_cb (GtkWidget * widget,
     }
   x_prev = y_prev = -1;
   moved = ghid_note_event_location (ev);
+
   ghid_show_crosshair (TRUE);
   if (moved && have_crosshair_attachments ())
     ghid_draw_area_update (gport, NULL);
+
+  if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
+    gdk_gl_drawable_swap_buffers (pGlDrawable);
+  else
+    glFlush ();
+
+  /* end drawing to current GL-context */
+  gdk_gl_drawable_gl_end (pGlDrawable);
   return FALSE;
 }
 
@@ -806,7 +969,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
       RestoreCrosshair (TRUE);
       cursor_in_viewport = TRUE;
     }
-	  
+
   return FALSE;
 }
 
