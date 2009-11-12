@@ -468,6 +468,8 @@ struct cpInfo
 static void
 subtract_accumulated (struct cpInfo *info)
 {
+  if (info->accumulate == NULL)
+    return;
   if (subtract_poly (info->accumulate, &info->pg) < 0)
     longjmp (info->env, 1);
   info->accumulate = NULL;
