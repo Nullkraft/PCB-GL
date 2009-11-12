@@ -1,7 +1,7 @@
-Bottom: 2fcf57ad3c51ffd9d350f58ad31c2984ae2e40bb
-Top:    24599ca7b0c9ee47e668f8400bf5815d83c0e7d8
+Bottom: 7eb0d5737e53e209017f78e5a42e2b42793cdd6b
+Top:    3c40eaf6224c4d21805458c7c0be7d5530221b5c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-12 01:31:21 +0000
+Date:   2009-11-12 14:10:09 +0000
 
 Use trackball to allow rotation of 3D view
 
@@ -417,7 +417,7 @@ index faa09fe..15412ea 100644
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index abb2ee1..998d746 100644
+index 162ad9c..21076f0 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -122,6 +122,7 @@ a zoom in/out.

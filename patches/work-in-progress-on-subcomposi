@@ -1,7 +1,7 @@
-Bottom: c6f9d87106407e3b3265e07a290e381e484c883b
-Top:    fa85202bff648ab2dfea58006b458f519240e26c
+Bottom: e7ee68db6dcdc6f401bdd1279b1994d5f2cc685b
+Top:    d73730d5264f1238ad703e2b47c5fa4c238049a4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-12 01:31:19 +0000
+Date:   2009-11-12 14:10:06 +0000
 
 Work in progress on subcompositing / stencil buffers
 
@@ -14,7 +14,7 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index e18c9ca..a787e87 100644
+index 9646779..11c75d2 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -420,6 +420,7 @@ DrawEverything (BoxTypePtr drawn_area)
@@ -412,7 +412,7 @@ index 49322c0..b956a65 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index e33e6ef..9c7e7e1 100644
+index afa6a08..1900a6e 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -455,6 +455,9 @@ gerber_set_layer (const char *name, int group, int empty)
@@ -624,7 +624,7 @@ index 4caddf2..faa09fe 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 63615c4..abb2ee1 100644
+index b6e0224..162ad9c 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2669,6 +2669,7 @@ ghid_parse_arguments (int *argc, char ***argv)
@@ -659,7 +659,7 @@ index ee3a896..1282331 100644
  		name = PCB->Data->Layer[idx].Name;
  	}
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index c407840..5eeb71f 100644
+index 83f8976..383e5aa 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -871,6 +871,10 @@ png_set_layer (const char *name, int group, int empty)
@@ -689,7 +689,7 @@ index 2115b47..9e59ca1 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 2d96e16..7e72de5 100644
+index e648fa1..9abe279 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -516,6 +516,10 @@ ps_set_layer (const char *name, int group, int empty)
