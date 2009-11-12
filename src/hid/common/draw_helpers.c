@@ -98,6 +98,14 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
 static int thindraw_hole_cb (PLINE *pl, void *user_data)
 {
   hidGC gc = user_data;
+
+  /* If the contour is round, use an arc drawing routine. */
+  if (pl->is_round) {
+    gui->set_line_width (gc, 0);
+    gui->draw_arc (gc, pl->cx, pl->cy, pl->radius, pl->radius, 0, 360);
+    return 0;
+  }
+
   thindraw_contour (gc, pl);
   return 0;
 }
