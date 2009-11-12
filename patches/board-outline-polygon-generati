@@ -1,7 +1,7 @@
-Bottom: 010da9db7db6bf62e1f01f267b32ae0bf9ecc267
-Top:    c0c9f6b3ccf6af343dc731990ca75d430b83c25e
+Bottom: 8a04956ce7e87e3a152f76f4a917ee4ab85d5077
+Top:    17e2de174f56d5169a74042d9d72b3cb1488eb44
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-11 16:52:13 +0000
+Date:   2009-11-12 00:49:44 +0000
 
 Board outline polygon generation
 
@@ -51,7 +51,7 @@ index ca76142..e5ec20a 100644
  
    gui->use_mask (HID_MASK_OFF);
 diff --git a/src/polygon.c b/src/polygon.c
-index 4a4f48c..451383b 100644
+index df8105c..5dc8409 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -81,6 +81,7 @@ dicer output is used for HIDs which cannot render things with holes
@@ -62,7 +62,7 @@ index 4a4f48c..451383b 100644
  
  #include "global.h"
  #include "box.h"
-@@ -1813,3 +1814,171 @@ debug_polygon (PolygonType *p)
+@@ -1802,3 +1803,171 @@ debug_polygon (PolygonType *p)
  	break;
      }
  }

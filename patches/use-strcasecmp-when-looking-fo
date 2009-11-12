@@ -1,7 +1,7 @@
-Bottom: a79f9e2b4b528ba4e5bc98cce6b43a95f379d036
-Top:    0069aaaf532f4658143f57003888ea583bf5083a
+Bottom: 77b1099947f3541b8d69763ec155290b7913dc66
+Top:    ec1f45b921b4949fd1dd6657b8f35fe46ecb909f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-11 16:49:03 +0000
+Date:   2009-11-12 00:49:31 +0000
 
 Use strcasecmp when looking for the "outline" layer
 
@@ -41,7 +41,7 @@ index e68026d..e33e6ef 100644
  
    if (is_drill && n_pending_drills)
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index cf57f92..c415759 100644
+index d7e0371..2d96e16 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -377,8 +377,8 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
