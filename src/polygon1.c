@@ -1305,7 +1305,6 @@ find_inside (const BoxType * b, void *cl)
     {
       return 0;
     }
-
   if (poly_ContourInContour (info->want_inside, check))
     {
       info->result = check;
