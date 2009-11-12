@@ -1,0 +1,16 @@
+Bottom: 495276334353e549ec93720a3fb140f7e48337e1
+Top:    495276334353e549ec93720a3fb140f7e48337e1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-12 14:04:14 +0000
+
+Use strcmp() for special layer names, rather than strcasecmp()
+
+Before commit 086aa491fae18f1ec72da047b772fa3510f72d0b, we were using
+strcmp() and strcasecmp() in different places. That commit changed to
+strcasecmp(). Lets choose to keep the more restrictive option for now,
+which reduces the number of "magic" layer names PCB supports.
+
+
+---
+
+
