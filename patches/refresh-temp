@@ -1,0 +1,21 @@
+Bottom: ffee0619bdb183f2befb8840b4cadf92bd0fe01c
+Top:    468fbe6a44ee0dec789ddf2be9bfd15932d573cf
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-12 00:51:07 +0000
+
+Refresh of we-can-just-delete-kicked-out--I
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index f33c24a..a369b2d 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1305,7 +1305,6 @@ find_inside (const BoxType * b, void *cl)
+     {
+       return 0;
+     }
+-
+   if (poly_ContourInContour (info->want_inside, check))
+     {
+       info->result = check;
