@@ -1,7 +1,7 @@
-Bottom: b80606b56c3c2b5130bf3325a8e435daa58f0f9a
+Bottom: 17760921d8eef8dbcf3148e8ac062e2b60ca482d
 Top:    bc4b85083b972b7a497bcbe72c55afa6d23b9fbc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-12 01:00:30 +0000
+Date:   2009-11-12 01:26:11 +0000
 
 Allow zero clearance pads and pins to touch polygons
 
@@ -70,57 +70,11 @@ index 0599ee4..67aa38a 100644
  }
  
  /* ---------------------------------------------------------------------------
-diff --git a/src/draw.c b/src/draw.c
-index 4657f7c..4d7c8de 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -1365,6 +1365,9 @@ DrawPadLowLevel (hidGC gc, PadTypePtr Pad, Boolean clear, Boolean mask)
-       return;
-     }
- 
-+  if (clear && !mask && Pad->Clearance <= 0)
-+    return;
-+
-   if (TEST_FLAG (THINDRAWFLAG, PCB) ||
-       (clear && TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
-     {
 diff --git a/src/find.c b/src/find.c
-index 6e81d29..c747b8f 100644
+index 30a1ea5..c747b8f 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -2288,7 +2288,8 @@ LOCtoPadPoly_callback (const BoxType * b, void *cl)
-   struct lo_info *i = (struct lo_info *) cl;
- 
- 
--  if (!TEST_FLAG (TheFlag, polygon) && !TEST_FLAG (CLEARPOLYFLAG, polygon))
-+  if (!TEST_FLAG (TheFlag, polygon) &&
-+      (!TEST_FLAG (CLEARPOLYFLAG, polygon) || !i->pad.Clearance))
-     {
-       if (IsPadInPolygon (&i->pad, polygon) &&
-           ADD_POLYGON_TO_LIST (i->layer, polygon))
-@@ -2529,15 +2530,12 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
-         }
-       else
-         {
--          if (!TEST_FLAG (CLEARPOLYFLAG, Polygon))
--            {
--              info.layer = layer - max_layer;
--              if (setjmp (info.env) == 0)
--                r_search (PCB->Data->pad_tree, (BoxType *) & info.polygon,
--                          NULL, LOCtoPolyPad_callback, &info);
--              else
--                return True;
--            }
-+          info.layer = layer - max_layer;
-+          if (setjmp (info.env) == 0)
-+            r_search (PCB->Data->pad_tree, (BoxType *) & info.polygon,
-+                      NULL, LOCtoPolyPad_callback, &info);
-+          else
-+            return True;
-         }
-     }
-   return (False);
-@@ -3766,7 +3764,7 @@ drc_callback (DataTypePtr data, LayerTypePtr layer, PolygonTypePtr polygon,
+@@ -3764,7 +3764,7 @@ drc_callback (DataTypePtr data, LayerTypePtr layer, PolygonTypePtr polygon,
          }
        break;
      case PAD_TYPE:
@@ -129,7 +83,7 @@ index 6e81d29..c747b8f 100644
  	if (IsPadInPolygon(pad,polygon))
  	  {
  	    AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
-@@ -3776,7 +3774,7 @@ drc_callback (DataTypePtr data, LayerTypePtr layer, PolygonTypePtr polygon,
+@@ -3774,7 +3774,7 @@ drc_callback (DataTypePtr data, LayerTypePtr layer, PolygonTypePtr polygon,
  	  }
        break;
      case PIN_TYPE:
@@ -138,25 +92,3 @@ index 6e81d29..c747b8f 100644
          {
            AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
            SET_FLAG (TheFlag, pin);
-diff --git a/src/polygon.c b/src/polygon.c
-index ec53c70..8bf8049 100644
---- a/src/polygon.c
-+++ b/src/polygon.c
-@@ -754,6 +754,8 @@ SubtractPad (PadType * pad, PolygonType * p)
- {
-   POLYAREA *np = NULL;
- 
-+  if (pad->Clearance == 0)
-+    return 0;
-   if (TEST_FLAG (SQUAREFLAG, pad))
-     {
-       if (!
-@@ -861,6 +863,8 @@ pad_sub_callback (const BoxType * b, void *cl)
-   /* don't subtract the object that was put back! */
-   if (b == info->other)
-     return 0;
-+  if (pad->Clearance == 0)
-+    return 0;
-   polygon = info->polygon;
-   if (XOR (TEST_FLAG (ONSOLDERFLAG, pad), !info->solder))
-     {
