@@ -519,81 +519,99 @@ ghid_invalidate_all ()
   gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
 }
 
+int compute_depth (int group)
+{
+  static int last_depth_computed = 0;
+
+  int depth = last_depth_computed;
+  int newgroup;
+  int idx = (group >= 0
+             && group <
+             max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
+
+  if (group >= 0 && group < max_layer) {
+    newgroup = group;
+#if 0
+    /* Re-ordering doesn't work, since we also need to adjust the rendering order */
+    if (group == 1)
+      newgroup = max_layer - 1;
+    else if (group > 1)
+      newgroup = group - 1;
+#endif
+    depth = ((max_layer - newgroup) * 10) * 200 / gport->zoom;
+  } else if (SL_TYPE (idx) == SL_MASK) {
+    if (SL_SIDE (idx) == SL_TOP_SIDE && !Settings.ShowSolderSide) {
+      depth = (max_layer * 10 + 3) * 200 / gport->zoom;
+    } else {
+      depth = (10 - 3) * 200 / gport->zoom;
+    }
+  } else if (SL_TYPE (idx) == SL_SILK) {
+    if (SL_SIDE (idx) == SL_TOP_SIDE && !Settings.ShowSolderSide) {
+      depth = (max_layer * 10 + 5) * 200 / gport->zoom;
+    } else {
+      depth = (10 - 5) * 200 / gport->zoom;
+    }
+  } else if (SL_TYPE (idx) == SL_INVISIBLE) {
+    depth = (10 - 3) * 200 / gport->zoom;
+  }
+
+  last_depth_computed = depth;
+  return depth;
+}
+
 int
 ghid_set_layer (const char *name, int group, int empty)
 {
   static int stencil_bit = 0;
-  int idx = (group >= 0
-	     && group <
-	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
+  int idx = (group >= 0 && group < max_layer) ?
+              PCB->LayerGroups.Entries[group][0] : group;
 
-#define SUBCOMPOSITE_LAYERS
-#ifdef SUBCOMPOSITE_LAYERS
   /* Flush out any existing geoemtry to be rendered */
   hidgl_flush_triangles (&buffer);
 
-  if (group >= 0 && group < max_layer) {
-    hidgl_set_depth ((max_layer - group) * 10);
-  } else {
-    if (SL_TYPE (idx) == SL_SILK) {
-      if (SL_SIDE (idx) == SL_TOP_SIDE && !Settings.ShowSolderSide) {
-        hidgl_set_depth (max_layer * 10 + 3);
-      } else {
-        hidgl_set_depth (10 - 3);
-      }
-    }
-  }
+  hidgl_set_depth (compute_depth (group));
 
-  glEnable (GL_STENCIL_TEST);                // Enable Stencil test
-  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
-  /* Reset stencil buffer so we can paint anywhere */
-  hidgl_return_stencil_bit (stencil_bit);               // Relinquish any bitplane we previously used
-  if (SL_TYPE (idx) != SL_FINISHED)
-    {
-      stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
-      glStencilFunc (GL_GREATER, stencil_bit, stencil_bit); // Pass stencil test if our assigned bit is clear
-      glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
-    }
-  else
-    {
-#endif
-      stencil_bit = 0;
-      glStencilMask (0);
-      glStencilFunc (GL_ALWAYS, 0, 0);  // Always pass stencil test
-#ifdef SUBCOMPOSITE_LAYERS
-    }
-#endif
+  glEnable (GL_STENCIL_TEST);                   // Enable Stencil test
+  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);   // Stencil pass => replace stencil value (with 1)
+  hidgl_return_stencil_bit (stencil_bit);       // Relinquish any bitplane we previously used
+  if (SL_TYPE (idx) != SL_FINISHED) {
+    stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
+    glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
+    glStencilFunc (GL_GREATER, stencil_bit, stencil_bit); // Pass stencil test if our assigned bit is clear
+  } else {
+    stencil_bit = 0;
+    glStencilMask (0);
+    glStencilFunc (GL_ALWAYS, 0, 0);  // Always pass stencil test
+  }
 
   if (idx >= 0 && idx < max_layer + 2) {
     gport->trans_lines = TRUE;
-    return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
+    return PCB->Data->Layer[idx].On;
   }
-  if (idx < 0)
-    {
-      switch (SL_TYPE (idx))
-	{
-	case SL_INVISIBLE:
-	  return /* pinout ? 0 : */ PCB->InvisibleObjectsOn;
-	case SL_MASK:
-	  if (SL_MYSIDE (idx) /*&& !pinout */ )
-	    return TEST_FLAG (SHOWMASKFLAG, PCB);
-	  return 0;
-	case SL_SILK:
-          gport->trans_lines = TRUE;
-//          gport->trans_lines = FALSE;
-	  if (SL_MYSIDE (idx) /*|| pinout */ )
-	    return PCB->ElementOn;
-	  return 0;
-	case SL_ASSY:
-	  return 0;
-	case SL_RATS:
-	  gport->trans_lines = TRUE;
-	  return 1;
-	case SL_PDRILL:
-	case SL_UDRILL:
-	  return 1;
-	}
+
+  if (idx < 0) {
+    switch (SL_TYPE (idx)) {
+      case SL_INVISIBLE:
+        return PCB->InvisibleObjectsOn;
+      case SL_MASK:
+        if (SL_MYSIDE (idx))
+          return TEST_FLAG (SHOWMASKFLAG, PCB);
+        return 0;
+      case SL_SILK:
+        gport->trans_lines = TRUE;
+        if (SL_MYSIDE (idx))
+          return PCB->ElementOn;
+        return 0;
+      case SL_ASSY:
+        return 0;
+      case SL_RATS:
+        gport->trans_lines = TRUE;
+        return 1;
+      case SL_PDRILL:
+      case SL_UDRILL:
+        return 1;
     }
+  }
   return 0;
 }
 
@@ -702,9 +720,9 @@ ghid_set_special_colors (HID_Attribute * ha)
     }
 }
 
-static char *current_color = NULL;
-static double global_alpha_mult = 1.0;
-static int alpha_changed = 0;
+/* static */ char *current_color = NULL;
+/* static */ double global_alpha_mult = 1.0;
+/* static */ int alpha_changed = 0;
 
 void
 ghid_set_color (hidGC gc, const char *name)
