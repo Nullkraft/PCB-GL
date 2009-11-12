@@ -1,0 +1,118 @@
+Bottom: 495276334353e549ec93720a3fb140f7e48337e1
+Top:    fb138e41d863904e10be59c7f681425bb055662b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-12 14:08:52 +0000
+
+Refresh of use-strcmp-for-special-layer-n
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index f3bb2cb..a71b1b3 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -801,7 +801,7 @@ DrawMask (BoxType * screen)
+       for (i=PCB->Data->LayerN; i>=0; i--)
+ 	{
+ 	  LayerTypePtr Layer = PCB->Data->Layer + i;
+-	  if (strcasecmp (Layer->Name, "outline") == 0)
++	  if (strcmp (Layer->Name, "outline") == 0)
+ 	    DrawLayer (Layer, screen);
+ 	}
+     }
+@@ -891,8 +891,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+     {
+       layernum = layers[i];
+       Layer = PCB->Data->Layer + layers[i];
+-      if (strcasecmp (Layer->Name, "outline") == 0
+-	  || strcasecmp (Layer->Name, "route") == 0)
++      if (strcmp (Layer->Name, "outline") == 0 ||
++	  strcmp (Layer->Name, "route") == 0)
+ 	rv = 0;
+       if (layernum < max_layer && Layer->On)
+ 	{
+diff --git a/src/hid/common/flags.c b/src/hid/common/flags.c
+index 8aba3ab..3915c7a 100644
+--- a/src/hid/common/flags.c
++++ b/src/hid/common/flags.c
+@@ -185,8 +185,8 @@ layer_type_to_file_name (int idx)
+       else if (group == GetLayerGroupNumberByNumber(max_layer+SOLDER_LAYER))
+ 	return "back";
+       else if (PCB->LayerGroups.Number[group] == 1
+-	       && (strcasecmp (PCB->Data->Layer[idx].Name, "route") == 0
+-		   || strcasecmp (PCB->Data->Layer[idx].Name, "outline") == 0))
++	       && (strcmp (PCB->Data->Layer[idx].Name, "route") == 0 ||
++		   strcmp (PCB->Data->Layer[idx].Name, "outline") == 0))
+ 	return "outline";
+       else
+ 	{
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index e33e6ef..afa6a08 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -467,8 +467,8 @@ gerber_set_layer (const char *name, int group, int empty)
+     return 0;
+ 
+   flash_drills = 0;
+-  if (strcasecmp (name, "outline") == 0
+-      || strcasecmp (name, "route") == 0)
++  if (strcmp (name, "outline") == 0 ||
++      strcmp (name, "route") == 0)
+     flash_drills = 1;
+ 
+   if (is_drill && n_pending_drills)
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index c407840..83f8976 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -923,7 +923,7 @@ png_set_layer (const char *name, int group, int empty)
+ 	  if (idx < 0)
+ 	    return 0;
+ 
+-	  if (strcasecmp (name, "outline") == 0)
++	  if (strcmp (name, "outline") == 0)
+ 	    photo_im = &photo_outline;
+ 	  else
+ 	    photo_im = photo_copper + group;
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 2d96e16..e648fa1 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -377,8 +377,8 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+       if (layer->LineN || layer->TextN || layer->ArcN || layer->PolygonN)
+ 	print_group[GetLayerGroupNumberByNumber (i)] = 1;
+ 
+-      if (strcasecmp (layer->Name, "outline") == 0
+-	  || strcasecmp (layer->Name, "route") == 0)
++      if (strcmp (layer->Name, "outline") == 0 ||
++	  strcmp (layer->Name, "route") == 0)
+ 	{
+ 	  printf("see outline layer\n");
+ 	  outline_layer = layer;
+@@ -704,8 +704,8 @@ ps_set_layer (const char *name, int group, int empty)
+       && outline_layer
+       && outline_layer != PCB->Data->Layer+idx
+       && SL_TYPE (idx) == 0 /* copper */
+-      && strcasecmp (name, "outline")
+-      && strcasecmp (name, "route"))
++      && strcmp (name, "outline")
++      && strcmp (name, "route"))
+     {
+       printf("attempting to draw outlines on %s\n", name);
+       DrawLayer (outline_layer, &region);
+diff --git a/src/print.c b/src/print.c
+index 1f7bc53..3831b4a 100644
+--- a/src/print.c
++++ b/src/print.c
+@@ -298,9 +298,9 @@ PrintFab (void)
+       LayerType *l = LAYER_PTR (i);
+       if (l->Name && (l->LineN || l->ArcN))
+ 	{
+-	  if (strcasecmp ("route", l->Name) == 0)
++	  if (strcmp ("route", l->Name) == 0)
+ 	    break;
+-	  if (strcasecmp ("outline", l->Name) == 0)
++	  if (strcmp ("outline", l->Name) == 0)
+ 	    break;
+ 	}
+     }
