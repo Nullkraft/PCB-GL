@@ -104,6 +104,10 @@ should_compute_no_holes (PolygonType *poly, const BoxType *clip_box)
   float poly_bounding_area;
   float clipped_poly_area;
 
+  /* If there is no passed clip box, compute the whole thing */
+  if (clip_box == NULL)
+    return 1;
+
   x1 = MAX (poly->BoundingBox.X1, clip_box->X1);
   x2 = MIN (poly->BoundingBox.X2, clip_box->X2);
   y1 = MAX (poly->BoundingBox.Y1, clip_box->Y1);
