@@ -1,0 +1,39 @@
+Bottom: 0dc22bee24e0a9634f69965d2684e22a3b4e769d
+Top:    c80d9c871740e9ad66700a54b55f53e529ba255d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-13 20:15:24 +0000
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/draw.h b/src/draw.h
+index d7a2774..43b2f1b 100644
+--- a/src/draw.h
++++ b/src/draw.h
+@@ -84,7 +84,7 @@ void DrawEMark (ElementTypePtr, LocationType, LocationType, Boolean);
+ void DrawHole (PinTypePtr);
+ void DrawRats (BoxType *);
+ void DrawSilk (int, int, BoxType *);
+-void DrawSpecialPolygon (HID * hid, hidGC DrawGC, LocationType X, LocationType Y, int Thickness);
++void DrawSpecialPolygon (HID * hid, hidGC DrawGC, LocationType X, LocationType Y, int Thickness, int thin_draw);
+ 
+ /* TEMPORARY */
+ 
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index d6d018f..659f729 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -1257,11 +1257,7 @@ ClearOnlyPinSolid (PinTypePtr Pin, Boolean mask)
+     }
+   else if (TEST_FLAG (OCTAGONFLAG, Pin))
+     {
+-      gui->set_line_cap (Output.pmGC, Round_Cap);
+-      gui->set_line_width (Output.pmGC, (Pin->Clearance + Pin->Thickness
+-					 - Pin->DrillingHole));
+-
+-      DrawSpecialPolygon (gui, Output.pmGC, Pin->X, Pin->Y, half * 2);
++      DrawSpecialPolygon (gui, Output.pmGC, Pin->X, Pin->Y, half * 2, False);
+     }
+   else
+     {
