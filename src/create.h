@@ -63,6 +63,7 @@ PolygonTypePtr CreateNewPolygonInPour (PourType *pour, FlagType);
 PourTypePtr CreateNewPour (LayerTypePtr, FlagType);
 PointTypePtr CreateNewPointInPour (PourTypePtr,
 				      LocationType, LocationType);
+void RefdesMapInit (void);
 ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
 				 FontTypePtr, FlagType, char *, char *,
 				 char *, LocationType, LocationType, BYTE,
