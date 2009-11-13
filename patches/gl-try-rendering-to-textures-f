@@ -1,7 +1,7 @@
-Bottom: ccd8e965795e36fb12807f96386778dc8d5babb1
-Top:    0087bf5c1c88d397ebd0aab8a90c4c5d2b2e44ff
+Bottom: 7933b920a6bc7205dbae76e080948598ae8b3311
+Top:    44351656473515f754b9de9c7604e296c8c9fc08
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-13 01:20:50 +0000
+Date:   2009-11-13 20:16:10 +0000
 
 GL: Try rendering to textures for subcompositing layers
 
@@ -187,10 +187,10 @@ index 4ae4931..1dd958c 100644
  
    if (idx >= 0 && idx < max_layer + 2) {
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index e5ec20a..847ae0d 100644
+index 4e7fb87..668e1af 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1706,13 +1706,33 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1702,13 +1702,33 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    Settings.ShowSolderSide = save_show_solder;
  }
  
@@ -226,7 +226,7 @@ index e5ec20a..847ae0d 100644
    BoxType region;
    int eleft, eright, etop, ebottom;
    extern HID ghid_hid;
-@@ -1743,7 +1763,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1739,7 +1759,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    ghid_show_crosshair (FALSE);
  
    glEnable (GL_BLEND);
@@ -236,7 +236,7 @@ index e5ec20a..847ae0d 100644
  
  //  glEnable(GL_POLYGON_SMOOTH);
  //  glHint(GL_POLYGON_SMOOTH_HINT, [GL_FASTEST, GL_NICEST, or GL_DONT_CARE]);
-@@ -1766,13 +1787,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1762,13 +1783,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
@@ -250,7 +250,7 @@ index e5ec20a..847ae0d 100644
    glEnable (GL_STENCIL_TEST);
    glClearColor (gport->offlimits_color.red / 65535.,
                  gport->offlimits_color.green / 65535.,
-@@ -1849,8 +1863,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1845,8 +1859,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    region.Y1 = MIN (Py (min_y), Py (max_y + 1));
    region.Y2 = MAX (Py (min_y), Py (max_y + 1));
  
@@ -264,7 +264,7 @@ index e5ec20a..847ae0d 100644
  
    glColor3f (gport->bg_color.red / 65535.,
               gport->bg_color.green / 65535.,
-@@ -1858,6 +1875,53 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1854,6 +1871,53 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  
    /* TODO: Background image */
  
@@ -318,7 +318,7 @@ index e5ec20a..847ae0d 100644
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
-@@ -1918,6 +1982,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1914,6 +1978,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    gui->set_layer (NULL, GetLayerGroupNumberByNumber (INDEXOFCURRENT), 0);
    gui->set_layer (NULL, SL_FINISHED, 0);
  
@@ -328,7 +328,7 @@ index e5ec20a..847ae0d 100644
    draw_grid (&region);
  
    hidgl_init_triangle_array (&buffer);
-@@ -1934,20 +2001,15 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1930,20 +1997,15 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
@@ -353,7 +353,7 @@ index e5ec20a..847ae0d 100644
    if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
      gdk_gl_drawable_swap_buffers (pGlDrawable);
    else
-@@ -1956,8 +2018,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1952,8 +2014,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
  
