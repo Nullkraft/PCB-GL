@@ -1,7 +1,7 @@
-Bottom: c65a7b13a5a7e84aacbf563135033c1e17b5715b
-Top:    a7a1df61c08da95bd58f8a0a6d374555819207b7
+Bottom: efcbf5a2675ee7a39199263e6121ada6648f60ba
+Top:    415576a81b9ca65a37e6afb5d6b79106e5db81f8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-13 20:10:36 +0000
+Date:   2009-11-13 20:15:36 +0000
 
 Board outline polygon generation
 
@@ -12,7 +12,7 @@ FIXME: Make this work with the GL masking polygon drawing routines, rather
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index ca76142..e5ec20a 100644
+index aa31622..4e7fb87 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -45,6 +45,7 @@
@@ -23,7 +23,7 @@ index ca76142..e5ec20a 100644
  #include "set.h"
  #include "rtree.h"
  #include "snavi.h"
-@@ -1309,6 +1310,7 @@ DrawMask (BoxType * screen)
+@@ -1305,6 +1306,7 @@ DrawMask (BoxType * screen)
  {
    struct pin_info info;
    int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
@@ -31,7 +31,7 @@ index ca76142..e5ec20a 100644
  
    OutputType *out = &Output;
  
-@@ -1337,7 +1339,17 @@ DrawMask (BoxType * screen)
+@@ -1333,7 +1335,17 @@ DrawMask (BoxType * screen)
    gui->use_mask (HID_MASK_AFTER);
    gui->set_color (out->fgGC, PCB->MaskColor);
    ghid_global_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);

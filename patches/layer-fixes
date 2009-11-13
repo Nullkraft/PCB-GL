@@ -1,7 +1,7 @@
-Bottom: 2fbbd9571502da7e8bdfed94a3aa4ffbcea65ca8
-Top:    ff368d81b1f2e3c04720937b771f3c104aa4daa0
+Bottom: 62233ddd8fce421150f763cf39ddb3a8357dac15
+Top:    577832e94d4c13b1bbc3ea3a99d8a2e14dc9f551
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-13 20:10:36 +0000
+Date:   2009-11-13 20:15:35 +0000
 
 Layer fixes
 
@@ -79,10 +79,10 @@ index 3f101be..be37956 100644
  
    last_depth_computed = depth;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 70ce76b..fd2f9cd 100644
+index ba509f7..86405f9 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1353,8 +1353,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1349,8 +1349,8 @@ DrawLayerGroup (int group, const BoxType * screen)
    int n_entries = PCB->LayerGroups.Number[group];
    Cardinal *layers = PCB->LayerGroups.Entries[group];
    int first_run = 1;
@@ -93,7 +93,7 @@ index 70ce76b..fd2f9cd 100644
  
    if (!gui->set_layer (0, group, 0)) {
      gui->set_layer (NULL, SL (FINISHED, 0), 0);
-@@ -1416,12 +1416,12 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1412,12 +1412,12 @@ DrawLayerGroup (int group, const BoxType * screen)
        if (!global_view_2d && rv) {
          if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
          if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
@@ -110,7 +110,7 @@ index 70ce76b..fd2f9cd 100644
            if (PCB->PinOn)
              r_search (PCB->Data->pad_tree, screen, NULL, backPad_callback, Layer);
        }
-@@ -1507,6 +1507,10 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1503,6 +1503,10 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    struct cyl_info cyl_info;
    int reverse_layers;
    int save_show_solder;
@@ -121,7 +121,7 @@ index 70ce76b..fd2f9cd 100644
  
    extern char *current_color;
    extern Boolean Gathering;
-@@ -1530,36 +1534,71 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1526,36 +1530,71 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    if (!global_view_2d && save_show_solder)
      reverse_layers = !reverse_layers;
  
@@ -200,7 +200,7 @@ index 70ce76b..fd2f9cd 100644
      gui->set_layer (NULL, SL (FINISHED, 0), 0);
    }
  
-@@ -1568,7 +1607,11 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1564,7 +1603,11 @@ ghid_draw_everything (BoxTypePtr drawn_area)
      DrawLayerGroup (drawn_groups [i], drawn_area);
  
  #if 1
