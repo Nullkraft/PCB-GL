@@ -1,7 +1,7 @@
-Bottom: 303ba53fd57b842e6f75a7b73ea0229146403b36
-Top:    a0f68f63cb1211ab617d18927e3122527d2cc3a1
+Bottom: 0087bf5c1c88d397ebd0aab8a90c4c5d2b2e44ff
+Top:    dba86a0ee545439e7bd9c012d7cfc6d3c129ceca
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-12 14:11:33 +0000
+Date:   2009-11-13 01:20:50 +0000
 
 Benchmark no-holes dicer performance
 
@@ -9,10 +9,10 @@ Benchmark no-holes dicer performance
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index fa2df9b..6190b0b 100644
+index 5c49d3e..7b5cdc6 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
-@@ -70,6 +70,8 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
+@@ -136,6 +136,8 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
              we are dicing for every case. Some GUIs
              rely on this, and need their flags fixing. */
  
@@ -20,10 +20,10 @@ index fa2df9b..6190b0b 100644
 +#if 0
    if (!poly->NoHolesValid)
      {
-       ComputeNoHoles (poly);
-@@ -81,6 +83,7 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
-       for (pl = poly->NoHoles; pl != NULL; pl = pl->next)
-         fill_contour (gc, pl);
+       /* If enough of the polygon is on-screen, compute the entire
+@@ -159,6 +161,7 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
+             fill_clipped_contour (gc, pl, clip_box);
+         }
      }
 +#endif
  
