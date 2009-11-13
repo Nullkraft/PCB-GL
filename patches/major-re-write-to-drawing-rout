@@ -1,5 +1,5 @@
 Bottom: 78d8c7d6086826019f77678d3c233c41f9d7d9f0
-Top:    0dc22bee24e0a9634f69965d2684e22a3b4e769d
+Top:    c80d9c871740e9ad66700a54b55f53e529ba255d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-13 20:10:32 +0000
 
@@ -157,7 +157,7 @@ index 5a44fb8..cac56cf 100644
  {
    int min_silk_line;
 diff --git a/src/draw.h b/src/draw.h
-index 47c4c7f..d7a2774 100644
+index 47c4c7f..43b2f1b 100644
 --- a/src/draw.h
 +++ b/src/draw.h
 @@ -75,6 +75,19 @@ void EraseObject (int, void *, void *);
@@ -173,7 +173,7 @@ index 47c4c7f..d7a2774 100644
 +void DrawHole (PinTypePtr);
 +void DrawRats (BoxType *);
 +void DrawSilk (int, int, BoxType *);
-+void DrawSpecialPolygon (HID * hid, hidGC DrawGC, LocationType X, LocationType Y, int Thickness);
++void DrawSpecialPolygon (HID * hid, hidGC DrawGC, LocationType X, LocationType Y, int Thickness, int thin_draw);
 +
 +/* TEMPORARY */
 +
@@ -358,7 +358,7 @@ index 9439d28..3f101be 100644
  void
  ghid_set_color (hidGC gc, const char *name)
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 5bb96ed..d6d018f 100644
+index 5bb96ed..659f729 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -46,6 +46,7 @@
@@ -383,7 +383,7 @@ index 5bb96ed..d6d018f 100644
  void
  ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata)
  {
-@@ -989,6 +997,635 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
+@@ -989,6 +997,631 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
    ghid_invalidate_all ();
  }
  
@@ -647,11 +647,7 @@ index 5bb96ed..d6d018f 100644
 +    }
 +  else if (TEST_FLAG (OCTAGONFLAG, Pin))
 +    {
-+      gui->set_line_cap (Output.pmGC, Round_Cap);
-+      gui->set_line_width (Output.pmGC, (Pin->Clearance + Pin->Thickness
-+					 - Pin->DrillingHole));
-+
-+      DrawSpecialPolygon (gui, Output.pmGC, Pin->X, Pin->Y, half * 2);
++      DrawSpecialPolygon (gui, Output.pmGC, Pin->X, Pin->Y, half * 2, False);
 +    }
 +  else
 +    {
@@ -1019,7 +1015,7 @@ index 5bb96ed..d6d018f 100644
  
  #define Z_NEAR 3.0
  gboolean
-@@ -1064,8 +1701,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1064,8 +1697,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1030,7 +1026,7 @@ index 5bb96ed..d6d018f 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1158,7 +1795,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1158,7 +1791,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
  
@@ -1040,7 +1036,7 @@ index 5bb96ed..d6d018f 100644
  
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
-@@ -1197,6 +1835,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1197,6 +1831,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
  
