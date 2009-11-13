@@ -3,7 +3,14 @@ Top:    d9a72ea37706ceb9a5acf8c104a91bf9b3a69acc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-13 01:14:08 +0000
 
-Control updates of NoHoles cache based on clip region
+hid/common: Control update of NoHoles cache based on clip region
+
+If at least 50% of the bounding box of a polygon is within the
+clip region, compute the whole NoHoles polygon and cache it for
+later rendering.
+
+If less of the polygon is within the clip region, just compute
+what we need to draw the piece we've been asked for.
 
 
 ---
