@@ -1,5 +1,5 @@
 Bottom: f411c2c57d07cf5d7a0e7b1f931a0b1a68839241
-Top:    d9a72ea37706ceb9a5acf8c104a91bf9b3a69acc
+Top:    f095085ed9ab81060970e8b4f9376634e882d75a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-13 01:14:08 +0000
 
@@ -16,10 +16,10 @@ what we need to draw the piece we've been asked for.
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index 5020745..4d2708a 100644
+index 5020745..e975f3b 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
-@@ -93,6 +93,38 @@ fill_clipped_contour (hidGC gc, PLINE *pl, const BoxType *clip_box)
+@@ -93,6 +93,42 @@ fill_clipped_contour (hidGC gc, PLINE *pl, const BoxType *clip_box)
    poly_Free (&clipped_pieces);
  }
  
@@ -33,6 +33,10 @@ index 5020745..4d2708a 100644
 +  int x1, x2, y1, y2;
 +  float poly_bounding_area;
 +  float clipped_poly_area;
++
++  /* If there is no passed clip box, compute the whole thing */
++  if (clip_box == NULL)
++    return 1;
 +
 +  x1 = MAX (poly->BoundingBox.X1, clip_box->X1);
 +  x2 = MIN (poly->BoundingBox.X2, clip_box->X2);
@@ -58,7 +62,7 @@ index 5020745..4d2708a 100644
  void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
                                const BoxType *clip_box)
  {
-@@ -102,9 +134,16 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
+@@ -102,9 +138,16 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
  
    if (!poly->NoHolesValid)
      {
