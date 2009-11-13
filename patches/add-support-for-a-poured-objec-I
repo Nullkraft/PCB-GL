@@ -1,7 +1,7 @@
-Bottom: 9e23237028f49d2de727f5c0678ba4e0d055619d
-Top:    1fa520960df144b561e7df83588a7a87e9016ed9
+Bottom: 3c143ec76f39e98d7f9eb42da0fb20bec4300373
+Top:    135f17a682ad426f14e3b6f4e12f76979289b1a0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-13 01:20:26 +0000
+Date:   2009-11-13 20:15:44 +0000
 
 Add support for a "poured" object.
 
@@ -1987,7 +1987,7 @@ index ef22f73..9f0e843 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index 59072d1..9ce7fcb 100644
+index 5ea77f5..9e82137 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -100,6 +100,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
@@ -2076,7 +2076,7 @@ index 59072d1..9ce7fcb 100644
  	      info.arg = False;
  
  	      /* HACK: Subcomposite polygons separately from other layer primitives */
-@@ -1712,6 +1736,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
+@@ -1707,6 +1731,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2125,7 +2125,7 @@ index 59072d1..9ce7fcb 100644
   * lowlevel routine to element arcs
   */
  static void
-@@ -2062,6 +2128,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+@@ -2057,6 +2123,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
      }
  }
  
@@ -2163,7 +2163,7 @@ index 59072d1..9ce7fcb 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -2367,6 +2464,18 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2362,6 +2459,18 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2182,7 +2182,7 @@ index 59072d1..9ce7fcb 100644
   * erases an element
   */
  void
-@@ -2453,6 +2562,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -2448,6 +2557,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2192,7 +2192,7 @@ index 59072d1..9ce7fcb 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -2500,6 +2612,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
+@@ -2495,6 +2607,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2, 0);
        break;
@@ -2204,7 +2204,7 @@ index 59072d1..9ce7fcb 100644
        if (PCB->ElementOn &&
  	  (FRONT ((ElementTypePtr) ptr2) || PCB->InvisibleObjectsOn))
 diff --git a/src/draw.h b/src/draw.h
-index d7a2774..593f89d 100644
+index 43b2f1b..cbf2663 100644
 --- a/src/draw.h
 +++ b/src/draw.h
 @@ -51,6 +51,7 @@ void DrawArc (LayerTypePtr, ArcTypePtr, int);
@@ -2790,7 +2790,7 @@ index e8ad916..e1b6290 100644
        break;
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index e5ec20a..bd0c137 100644
+index 4e7fb87..efa5dc5 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -455,7 +455,7 @@ have_crosshair_attachments (void)
