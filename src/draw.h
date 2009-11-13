@@ -84,7 +84,7 @@ void DrawEMark (ElementTypePtr, LocationType, LocationType, Boolean);
 void DrawHole (PinTypePtr);
 void DrawRats (BoxType *);
 void DrawSilk (int, int, BoxType *);
-void DrawSpecialPolygon (HID * hid, hidGC DrawGC, LocationType X, LocationType Y, int Thickness);
+void DrawSpecialPolygon (HID * hid, hidGC DrawGC, LocationType X, LocationType Y, int Thickness, int thin_draw);
 
 /* TEMPORARY */
 

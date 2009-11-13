@@ -1257,11 +1257,7 @@ ClearOnlyPinSolid (PinTypePtr Pin, Boolean mask)
     }
   else if (TEST_FLAG (OCTAGONFLAG, Pin))
     {
-      gui->set_line_cap (Output.pmGC, Round_Cap);
-      gui->set_line_width (Output.pmGC, (Pin->Clearance + Pin->Thickness
-					 - Pin->DrillingHole));
-
-      DrawSpecialPolygon (gui, Output.pmGC, Pin->X, Pin->Y, half * 2);
+      DrawSpecialPolygon (gui, Output.pmGC, Pin->X, Pin->Y, half * 2, False);
     }
   else
     {
