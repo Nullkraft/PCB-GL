@@ -1,0 +1,71 @@
+Bottom: f411c2c57d07cf5d7a0e7b1f931a0b1a68839241
+Top:    d9a72ea37706ceb9a5acf8c104a91bf9b3a69acc
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-13 01:14:08 +0000
+
+Control updates of NoHoles cache based on clip region
+
+
+---
+
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 5020745..4d2708a 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -93,6 +93,38 @@ fill_clipped_contour (hidGC gc, PLINE *pl, const BoxType *clip_box)
+   poly_Free (&clipped_pieces);
+ }
+ 
++/* If at least 50% of the bounding box of the polygon is on the screen,
++ * lets compute the complete no-holes polygon.
++ */
++#define BOUNDS_INSIDE_CLIP_THRESHOLD 0.5
++static int
++should_compute_no_holes (PolygonType *poly, const BoxType *clip_box)
++{
++  int x1, x2, y1, y2;
++  float poly_bounding_area;
++  float clipped_poly_area;
++
++  x1 = MAX (poly->BoundingBox.X1, clip_box->X1);
++  x2 = MIN (poly->BoundingBox.X2, clip_box->X2);
++  y1 = MAX (poly->BoundingBox.Y1, clip_box->Y1);
++  y2 = MIN (poly->BoundingBox.Y2, clip_box->Y2);
++
++  /* Check if the polygon is outside the clip box */
++  if ((x2 <= x1) || (y2 <= y1))
++    return 0;
++
++  poly_bounding_area = (float)(poly->BoundingBox.X2 - poly->BoundingBox.X1) *
++                       (float)(poly->BoundingBox.Y2 - poly->BoundingBox.Y1);
++
++  clipped_poly_area = (float)(x2 - x1) * (float)(y2 - y1);
++
++  if (clipped_poly_area / poly_bounding_area >= BOUNDS_INSIDE_CLIP_THRESHOLD)
++    return 1;
++
++  return 0;
++}
++#undef BOUNDS_INSIDE_CLIP_THRESHOLD
++
+ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
+                               const BoxType *clip_box)
+ {
+@@ -102,9 +134,16 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
+ 
+   if (!poly->NoHolesValid)
+     {
+-      ComputeNoHoles (poly);
++      /* If enough of the polygon is on-screen, compute the entire
++       * NoHoles version and cache it for later rendering, otherwise
++       * just compute what we need to render now.
++       */
++      if (should_compute_no_holes (poly, clip_box))
++        ComputeNoHoles (poly);
++      else
++        NoHolesPolygonDicer (poly, clip_box, fill_contour_cb, gc);
+     }
+-  if (poly->NoHoles)
++  if (poly->NoHolesValid && poly->NoHoles)
+     {
+       PLINE *pl;
