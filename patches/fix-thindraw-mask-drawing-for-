@@ -1,0 +1,22 @@
+Bottom: f095085ed9ab81060970e8b4f9376634e882d75a
+Top:    f095085ed9ab81060970e8b4f9376634e882d75a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-13 19:58:16 +0000
+
+Fix thindraw mask drawing for pins, including octagonal ones
+
+We need to set the line-width for round pins when in thin-draw and
+clearing the mask.
+
+We need to tell DrawSpecialPolygon() whether we need thin-draw or
+not depending on whether we're clearing the mask or not. We don't
+need to set the line-width outside of DrawSpecialPolygon(), since
+it sets it its-self.
+
+Fix DrawSpecialPolygon() to set the line width and cap style on the
+correct GC.
+
+
+---
+
+
