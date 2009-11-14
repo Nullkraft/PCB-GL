@@ -1,5 +1,5 @@
 Bottom: 7ad932e62ad25d004d352becd601e86f780a8387
-Top:    7ad932e62ad25d004d352becd601e86f780a8387
+Top:    855f6aaecdc8a07713adf6717e1c0b4944d995f3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-14 18:41:13 +0000
 
@@ -8,4 +8,15 @@ draw.h: Remove ClearPin prototype missed in last commit
 
 ---
 
-
+diff --git a/src/draw.h b/src/draw.h
+index 47c4c7f..088d01b 100644
+--- a/src/draw.h
++++ b/src/draw.h
+@@ -38,7 +38,6 @@
+ void Draw (void);
+ void RedrawOutput (BoxTypePtr area);
+ void ClearAndRedrawOutput (void);
+-void ClearPin (PinTypePtr, int, int);
+ void DrawVia (PinTypePtr, int);
+ void DrawRat (RatTypePtr, int);
+ void DrawViaName (PinTypePtr, int);
