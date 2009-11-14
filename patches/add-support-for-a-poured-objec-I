@@ -1,7 +1,7 @@
-Bottom: 3c143ec76f39e98d7f9eb42da0fb20bec4300373
-Top:    135f17a682ad426f14e3b6f4e12f76979289b1a0
+Bottom: f11431b02888cd44034e87fec0b73c288ce9c8ad
+Top:    f204858dc1301419db7291a61687ddc435612784
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-13 20:15:44 +0000
+Date:   2009-11-14 02:46:30 +0000
 
 Add support for a "poured" object.
 
@@ -5067,7 +5067,7 @@ index ccf3164..15223c0 100644
  void RestoreToPolygon(DataType *, int, void *, void *);
  void ClearFromPolygon(DataType *, int, void *, void *);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index a369b2d..9daf4f3 100644
+index bbc022e..520f129 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -929,6 +929,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
