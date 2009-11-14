@@ -1,11 +1,55 @@
-Bottom: db68be3c834f9f7a5b44dae59838570293be7d77
-Top:    db68be3c834f9f7a5b44dae59838570293be7d77
+Bottom: 41785b148c3fa57c008952b68074641800e21dc4
+Top:    66a7fcb5bbf404ae743ee1940c00a1089e175876
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-14 02:41:00 +0000
+Date:   2009-11-14 02:40:10 +0000
 
 Use tags on circular contours to render them faster
 
 
 ---
 
-
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 06b62e4..faf27c7 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -605,6 +605,7 @@ void tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices)
+ struct do_hole_info {
+   GLUtesselator *tobj;
+   GLdouble *vertices;
++  double scale;
+ };
+ 
+ static int
+@@ -612,10 +613,24 @@ do_hole (const BoxType *b, void *cl)
+ {
+   struct do_hole_info *info = cl;
+   PLINE *curc = (PLINE *) b;
++
+   /* Ignore the outer contour - we draw it first explicitly*/
+   if (curc->Flags.orient == PLF_DIR) {
+     return 0;
+   }
++
++  /* If the contour is round, and hidgl_fill_circle would use
++   * less slices than we have vertices to draw it, then call
++   * hidgl_fill_circle to draw this contour.
++   */
++  if (curc->is_round) {
++    double slices = calc_slices (curc->radius / info->scale, 2 * M_PI);
++    if (slices < curc->Count) {
++      hidgl_fill_circle (curc->cx, curc->cy, curc->radius, info->scale);
++      return 1;
++    }
++  }
++
+   tesselate_contour (info->tobj, &curc->head, info->vertices);
+   return 1;
+ }
+@@ -633,6 +648,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+   struct do_hole_info info;
+   int stencil_bit;
+ 
++  info.scale = scale;
+   global_scale = scale;
+ 
+   if (poly->Clipped == NULL)
