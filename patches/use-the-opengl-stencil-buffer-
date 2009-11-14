@@ -1,7 +1,7 @@
-Bottom: a019e49784ded59870e34d8614978b6e8fd0abe9
-Top:    d1cf2f86faeb9aed71c56b47c17fe444c990470a
+Bottom: 45bf0afccc8897a09cf72f2655dbba55fff0cac5
+Top:    db68be3c834f9f7a5b44dae59838570293be7d77
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-14 02:36:35 +0000
+Date:   2009-11-14 02:45:25 +0000
 
 Use the OpenGL stencil buffer to make drawing polygons with holes faster.
 
@@ -25,10 +25,10 @@ For now, we don't use polygons on the mask, so its not a a problem (?).
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index b9ab01a..c806cf1 100644
+index 0b1645f..413d92f 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -606,7 +606,9 @@ do_hole (const BoxType *b, void *cl)
+@@ -617,7 +617,9 @@ do_hole (const BoxType *b, void *cl)
    if (curc->Flags.orient == PLF_DIR) {
      return 0;
    }
@@ -38,7 +38,7 @@ index b9ab01a..c806cf1 100644
    return 1;
  }
  
-@@ -614,11 +616,10 @@ void
+@@ -625,11 +627,10 @@ void
  hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
  {
    int i, cc;
@@ -52,7 +52,7 @@ index b9ab01a..c806cf1 100644
  
    global_scale = scale;
  
-@@ -627,49 +628,56 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -638,49 +639,56 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
      return;
    }
  
