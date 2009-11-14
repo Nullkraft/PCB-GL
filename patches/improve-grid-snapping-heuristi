@@ -1,5 +1,5 @@
 Bottom: 1075de348334c40df41b8e97a04a0178be191a32
-Top:    904df4efcaa82ecdf00d70bf3dde1dafda6af2df
+Top:    fb36e6669f63cca7c31fd10bade78e97c33f726b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-14 18:41:53 +0000
 
@@ -289,7 +289,7 @@ index 8321929..1e2ac85 100644
        && Crosshair.AttachedLine.State != STATE_FIRST
        && TEST_FLAG (AUTODRCFLAG, PCB))
 diff --git a/src/search.c b/src/search.c
-index 07015f0..85c8fe4 100644
+index 07015f0..4d6c8db 100644
 --- a/src/search.c
 +++ b/src/search.c
 @@ -320,9 +320,9 @@ SearchRatLineByLocation (int locked, RatTypePtr * Line, RatTypePtr * Dummy1,
@@ -354,29 +354,20 @@ index 07015f0..85c8fe4 100644
  }
  
  static int
-@@ -493,7 +498,9 @@ SearchLinePointByLocation (int locked, LayerTypePtr * Layer,
-   info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
-   if (r_search
-       (SearchLayer->line_tree, &SearchBox, NULL, linepoint_callback, &info))
-+  {
-     return True;
-+  }
-   return False;
- }
- 
-@@ -1037,6 +1044,11 @@ IsPointInBox (LocationType X, LocationType Y, BoxTypePtr box, BDimension Radius)
+@@ -1037,6 +1042,12 @@ IsPointInBox (LocationType X, LocationType Y, BoxTypePtr box, BDimension Radius)
    return range < Radius;
  }
  
 +int ClosestArcPoint (float X, float Y, ArcTypePtr Arc)
 +{
++  /* FIXME: Implement this function to return the distance to the arc */
 +  return 0;
 +}
 +
  Boolean
  IsPointOnArc (float X, float Y, float Radius, ArcTypePtr Arc)
  {
-@@ -1592,3 +1604,17 @@ SearchScreen (LocationType X, LocationType Y, int Type, void **Result1,
+@@ -1592,3 +1603,17 @@ SearchScreen (LocationType X, LocationType Y, int Type, void **Result1,
  				X, Y, SLOP * pixel_slop);
    return (ans);
  }
