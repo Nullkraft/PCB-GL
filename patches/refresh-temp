@@ -1,0 +1,28 @@
+Bottom: 518dbf0e02a2bd0f3116af3009c0693be65fb547
+Top:    829c3ff7cee9e06aec925d8615188847a567d0dc
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-14 18:27:34 +0000
+
+Refresh of avoid-clearing-pins-vias-from-
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 9035f31..4605ae5 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1944,15 +1944,6 @@ DrawRegularText (LayerTypePtr Layer, TextTypePtr Text, int unused)
+ void
+ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+ {
+-  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Polygon))
+-    {
+-      if (TEST_FLAG (SELECTEDFLAG, Polygon))
+-	gui->set_color (Output.fgGC, Layer->SelectedColor);
+-      else
+-	gui->set_color (Output.fgGC, PCB->ConnectedColor);
+-    }
+-  else
+-    gui->set_color (Output.fgGC, Layer->Color);
+   DrawPolygonLowLevel (Polygon);
+ }
