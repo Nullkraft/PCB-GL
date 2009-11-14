@@ -1606,7 +1606,7 @@ SearchScreen (LocationType X, LocationType Y, int Type, void **Result1,
 }
 
 /* ---------------------------------------------------------------------------
- * searches the cursor position for the type 
+ * searches the cursor position for the type
  */
 int
 SearchScreenGridSlop (LocationType X, LocationType Y, int Type, void **Result1,
