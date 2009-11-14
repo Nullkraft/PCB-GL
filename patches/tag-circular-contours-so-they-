@@ -3,7 +3,25 @@ Top:    9a6c97c626b351d8b2486959957b9a128781f4cf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-14 02:12:30 +0000
 
-Tag circular contours so they can be drawn quicker
+polygons: Tag circular contours so they can be special-cased when drawing.
+
+Tagging circular contours allows GUIs (if they wish) to draw circular
+holes in polygons more accurately, and potentially faster - depending
+on whether they use mask based rendering or rely on the dicer.
+
+When zoomed far out (and using a mask based scheme), the drawing routine
+can use a lower vertex count approximation to the contour - leading to
+rendering speed improvements. This is used to reasonable effect in the
+experimental OpenGL branch.
+
+Modify hid/common/draw_helpers.c to use these tags when thin-drawing
+polygon contours with common_thindraw_pcb_polygon(). This allows the
+GUI to change the level of detail rendered with zoom, and serves to
+test this feature.
+
+DRC checking and output are still done using the fixed resolution
+approximation present in the polygon contour, so in this respect -
+it makes rendering somewhat unfaithful to the final output.
 
 
 ---
