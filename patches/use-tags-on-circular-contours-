@@ -1,7 +1,7 @@
-Bottom: 80ae7935795654f4d231f1329990f82634cdd2ee
-Top:    81d9d4a201582ec50efdb1221e8afc8cdaf3b44c
+Bottom: 41785b148c3fa57c008952b68074641800e21dc4
+Top:    66a7fcb5bbf404ae743ee1940c00a1089e175876
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-14 02:38:24 +0000
+Date:   2009-11-14 02:40:10 +0000
 
 Use tags on circular contours to render them faster
 
@@ -9,10 +9,10 @@ Use tags on circular contours to render them faster
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index db206cd..cb53763 100644
+index 06b62e4..faf27c7 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -606,6 +606,7 @@ void tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices)
+@@ -605,6 +605,7 @@ void tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices)
  struct do_hole_info {
    GLUtesselator *tobj;
    GLdouble *vertices;
@@ -20,7 +20,7 @@ index db206cd..cb53763 100644
  };
  
  static int
-@@ -613,10 +614,24 @@ do_hole (const BoxType *b, void *cl)
+@@ -612,10 +613,24 @@ do_hole (const BoxType *b, void *cl)
  {
    struct do_hole_info *info = cl;
    PLINE *curc = (PLINE *) b;
@@ -45,7 +45,7 @@ index db206cd..cb53763 100644
    tesselate_contour (info->tobj, &curc->head, info->vertices);
    return 1;
  }
-@@ -634,6 +649,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -633,6 +648,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    struct do_hole_info info;
    int stencil_bit;
  
