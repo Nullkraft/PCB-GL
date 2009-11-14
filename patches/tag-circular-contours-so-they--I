@@ -1,5 +1,5 @@
 Bottom: 620dd9a99be7e8bbb12911635b1fdc20ab50fdbf
-Top:    f4b5902ba11b1b9990fd846712c86f4e26fbe3c3
+Top:    3b559d3eba087da1e3a3ee3f50d79ad2aad227e9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-13 20:15:31 +0000
 
@@ -27,51 +27,6 @@ index e975f3b..5c49d3e 100644
    thindraw_contour (gc, pl);
    return 0;
  }
-diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index db206cd..cb53763 100644
---- a/src/hid/common/hidgl.c
-+++ b/src/hid/common/hidgl.c
-@@ -606,6 +606,7 @@ void tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices)
- struct do_hole_info {
-   GLUtesselator *tobj;
-   GLdouble *vertices;
-+  double scale;
- };
- 
- static int
-@@ -613,10 +614,24 @@ do_hole (const BoxType *b, void *cl)
- {
-   struct do_hole_info *info = cl;
-   PLINE *curc = (PLINE *) b;
-+
-   /* Ignore the outer contour - we draw it first explicitly*/
-   if (curc->Flags.orient == PLF_DIR) {
-     return 0;
-   }
-+
-+  /* If the contour is round, and hidgl_fill_circle would use
-+   * less slices than we have vertices to draw it, then call
-+   * hidgl_fill_circle to draw this contour.
-+   */
-+  if (curc->is_round) {
-+    double slices = calc_slices (curc->radius / info->scale, 2 * M_PI);
-+    if (slices < curc->Count) {
-+      hidgl_fill_circle (curc->cx, curc->cy, curc->radius, info->scale);
-+      return 1;
-+    }
-+  }
-+
-   tesselate_contour (info->tobj, &curc->head, info->vertices);
-   return 1;
- }
-@@ -634,6 +649,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
-   struct do_hole_info info;
-   int stencil_bit;
- 
-+  info.scale = scale;
-   global_scale = scale;
- 
-   if (poly->Clipped == NULL)
 diff --git a/src/polyarea.h b/src/polyarea.h
 index 50dda4a..ce427ad 100644
 --- a/src/polyarea.h
