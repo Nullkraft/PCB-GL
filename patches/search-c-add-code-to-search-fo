@@ -1,5 +1,5 @@
 Bottom: 1075de348334c40df41b8e97a04a0178be191a32
-Top:    8e8a97e4e2a9e9f0bc8a52b4096a1d51db03f850
+Top:    eb1c0defc6e50a258cd71d9be110224c5ea7fca1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-14 19:05:37 +0000
 
@@ -89,3 +89,15 @@ index 07015f0..7756e91 100644
  Boolean
  IsPointOnArc (float X, float Y, float Radius, ArcTypePtr Arc)
  {
+diff --git a/src/search.h b/src/search.h
+index 11d7d03..bc7a4eb 100644
+--- a/src/search.h
++++ b/src/search.h
+@@ -73,6 +73,7 @@
+  */
+ Boolean IsPointOnLine (float, float, float, LineTypePtr);
+ Boolean IsPointOnPin (float, float, float, PinTypePtr);
++int ClosestArcPoint (float, float, ArcTypePtr);
+ Boolean IsPointOnArc (float, float, float, ArcTypePtr);
+ Boolean IsPointOnLineEnd (LocationType, LocationType, RatTypePtr);
+ Boolean IsLineInRectangle (LocationType, LocationType, LocationType,
