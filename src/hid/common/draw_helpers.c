@@ -183,7 +183,6 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
 static int thindraw_hole_cb (PLINE *pl, void *user_data)
 {
   hidGC gc = user_data;
-
   thindraw_contour (gc, pl);
   return 0;
 }
