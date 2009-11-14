@@ -1,5 +1,5 @@
 Bottom: 15d2d855c4256391cc652e50261cc3dff44dbb0e
-Top:    9047916ac482a52eb998715177bd853f57733611
+Top:    91e0748f6a40f1f295a0e74ad65dfcdc8448126b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-14 02:12:30 +0000
 
@@ -27,7 +27,7 @@ it makes rendering somewhat unfaithful to the final output.
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index e975f3b..0da8c0a 100644
+index e975f3b..d9ded42 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -29,13 +29,20 @@ static void thindraw_contour (hidGC gc, PLINE *pl)
@@ -41,7 +41,7 @@ index e975f3b..0da8c0a 100644
 +  if (pl->is_round)
 +    {
 +      gui->draw_arc (gc, pl->cx, pl->cy, pl->radius, pl->radius, 0, 360);
-+      return 0;
++      return;
 +    }
 +
    /* Need at least two points in the contour */
