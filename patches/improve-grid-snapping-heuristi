@@ -1,5 +1,5 @@
 Bottom: 1075de348334c40df41b8e97a04a0178be191a32
-Top:    ed5f8b2d65a70d1b508c400e0b98dae46dcfcca3
+Top:    904df4efcaa82ecdf00d70bf3dde1dafda6af2df
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-14 18:41:53 +0000
 
@@ -289,7 +289,7 @@ index 8321929..1e2ac85 100644
        && Crosshair.AttachedLine.State != STATE_FIRST
        && TEST_FLAG (AUTODRCFLAG, PCB))
 diff --git a/src/search.c b/src/search.c
-index 07015f0..5e86cc1 100644
+index 07015f0..85c8fe4 100644
 --- a/src/search.c
 +++ b/src/search.c
 @@ -320,9 +320,9 @@ SearchRatLineByLocation (int locked, RatTypePtr * Line, RatTypePtr * Dummy1,
@@ -382,7 +382,7 @@ index 07015f0..5e86cc1 100644
  }
 +
 +/* ---------------------------------------------------------------------------
-+ * searches the cursor position for the type 
++ * searches the cursor position for the type
 + */
 +int
 +SearchScreenGridSlop (LocationType X, LocationType Y, int Type, void **Result1,
