@@ -1944,8 +1944,6 @@ DrawRegularText (LayerTypePtr Layer, TextTypePtr Text, int unused)
 void
 DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
 {
-  int layernum;
-
   if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Polygon))
     {
       if (TEST_FLAG (SELECTEDFLAG, Polygon))
@@ -1955,7 +1953,6 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
     }
   else
     gui->set_color (Output.fgGC, Layer->Color);
-  layernum = GetLayerNumber (PCB->Data, Layer);
   DrawPolygonLowLevel (Polygon);
 }
 
