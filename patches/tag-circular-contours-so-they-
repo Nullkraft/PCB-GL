@@ -1,0 +1,74 @@
+Bottom: 15d2d855c4256391cc652e50261cc3dff44dbb0e
+Top:    9a6c97c626b351d8b2486959957b9a128781f4cf
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-14 02:12:30 +0000
+
+Tag circular contours so they can be drawn quicker
+
+
+---
+
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index e975f3b..5c49d3e 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -176,6 +176,14 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
+ static int thindraw_hole_cb (PLINE *pl, void *user_data)
+ {
+   hidGC gc = user_data;
++
++  /* If the contour is round, use an arc drawing routine. */
++  if (pl->is_round) {
++    gui->set_line_width (gc, 0);
++    gui->draw_arc (gc, pl->cx, pl->cy, pl->radius, pl->radius, 0, 360);
++    return 0;
++  }
++
+   thindraw_contour (gc, pl);
+   return 0;
+ }
+diff --git a/src/polyarea.h b/src/polyarea.h
+index 6652fce..958498b 100644
+--- a/src/polyarea.h
++++ b/src/polyarea.h
+@@ -99,6 +99,10 @@ struct PLINE
+     unsigned int Count;
+     double area;
+     rtree_t *tree;
++    int is_round;
++    int cx;
++    int cy;
++    int radius;
+     struct {
+       unsigned int status:3;
+       unsigned int orient:1;
+diff --git a/src/polygon.c b/src/polygon.c
+index 71cfd60..365539a 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -336,6 +336,10 @@ CirclePoly (LocationType x, LocationType y, BDimension radius)
+   if ((contour = poly_NewContour (v)) == NULL)
+     return NULL;
+   frac_circle (contour, x, y, v, 1);
++  contour->is_round = TRUE;
++  contour->cx = x;
++  contour->cy = y;
++  contour->radius = radius;
+   return ContourToPoly (contour);
+ }
+ 
+diff --git a/src/polygon1.c b/src/polygon1.c
+index eb4819d..2ffd7cb 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -1829,6 +1829,10 @@ poly_IniContour (PLINE * c)
+   c->head.next = c->head.prev = &c->head;
+   c->xmin = c->ymin = 0x7fffffff;
+   c->xmax = c->ymax = 0x80000000;
++  c->is_round = FALSE;
++  c->cx = 0;
++  c->cy = 0;
++  c->radius = 0;
+ }
+ 
+ PLINE *
