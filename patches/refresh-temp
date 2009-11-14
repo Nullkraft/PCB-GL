@@ -1,0 +1,22 @@
+Bottom: 9047916ac482a52eb998715177bd853f57733611
+Top:    91e0748f6a40f1f295a0e74ad65dfcdc8448126b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-14 02:34:48 +0000
+
+Refresh of tag-circular-contours-so-they-
+
+---
+
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 0da8c0a..d9ded42 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -36,7 +36,7 @@ static void thindraw_contour (hidGC gc, PLINE *pl)
+   if (pl->is_round)
+     {
+       gui->draw_arc (gc, pl->cx, pl->cy, pl->radius, pl->radius, 0, 360);
+-      return 0;
++      return;
+     }
+ 
+   /* Need at least two points in the contour */
