@@ -320,8 +320,7 @@ SearchRatLineByLocation (int locked, RatTypePtr * Line, RatTypePtr * Dummy1,
  */
 struct arc_info
 {
-  ArcTypePtr *Arc, *Dummy;
-  jmp_buf env;
+  ArcTypePtr *Arc;
   int locked;
   int smallest_radius;
 };
@@ -345,10 +344,8 @@ arc_callback (const BoxType * box, void *cl)
     {
       i->smallest_radius = found_radius;
       *i->Arc = a;
-      *i->Dummy = a;
     }
-//  longjmp (i->env, 1);
-  return 1;//			/* never reached */
+  return 1;
 }
 
 
@@ -359,16 +356,11 @@ SearchArcByLocation (int locked, LayerTypePtr * Layer, ArcTypePtr * Arc,
   struct arc_info info;
 
   info.Arc = Arc;
-  info.Dummy = Dummy;
   info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
   info.smallest_radius = -1;
 
   *Layer = SearchLayer;
-//  if (setjmp (info.env) == 0)
-//    {
-      r_search (SearchLayer->arc_tree, &SearchBox, NULL, arc_callback, &info);
-//      return False;
-//    }
+    r_search (SearchLayer->arc_tree, &SearchBox, NULL, arc_callback, &info);
   if (info.smallest_radius > -1)
     return True;
   else
