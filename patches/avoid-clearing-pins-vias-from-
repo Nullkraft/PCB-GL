@@ -1,5 +1,5 @@
 Bottom: eda57ff11e0a7aa5982a6d9d0eddd8581807288e
-Top:    278a7293c895b8e53d2127129bc43cbfe08b33ed
+Top:    f5a6e0cc0bdb8da2ddcecec1e29d614f68473e7f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-14 18:03:24 +0000
 
@@ -11,22 +11,122 @@ Avoid clearing pins / vias from polygons... it is already done!
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 946668f..d2831a3 100644
+index 946668f..e15cfc4 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -1175,6 +1175,7 @@ ClearPin (PinTypePtr Pin, int Type, int unused)
-       AddPart (Pin);
-       return;
+@@ -1162,54 +1162,6 @@ ClearOnlyPin (PinTypePtr Pin, Boolean mask)
      }
-+#if 0
-   /* Clear the area around the pin */
-   if (TEST_FLAG (SQUAREFLAG, Pin))
-     {
-@@ -1193,6 +1194,7 @@ ClearPin (PinTypePtr Pin, int Type, int unused)
-     {
-       gui->fill_circle (Output.pmGC, Pin->X, Pin->Y, half);
-     }
-+#endif
-   if ((!TEST_FLAG (PINFLAG, Pin) && !PCB->ViaOn)
-       || (TEST_FLAG (PINFLAG, Pin) && !PCB->PinOn))
-     return;
+ }
+ 
+-/* ---------------------------------------------------------------------------
+- * lowlevel drawing routine for pins and vias that pierce polygons
+- */
+-void
+-ClearPin (PinTypePtr Pin, int Type, int unused)
+-{
+-  BDimension half = (Pin->Thickness + Pin->Clearance) / 2;
+-
+-  if (Gathering)
+-    {
+-      AddPart (Pin);
+-      return;
+-    }
+-  /* Clear the area around the pin */
+-  if (TEST_FLAG (SQUAREFLAG, Pin))
+-    {
+-      int l, r, t, b;
+-      l = Pin->X - half;
+-      b = Pin->Y - half;
+-      r = l + half * 2;
+-      t = b + half * 2;
+-      gui->fill_rect (Output.pmGC, l, b, r, t);
+-    }
+-  else if (TEST_FLAG (OCTAGONFLAG, Pin))
+-    {
+-      DrawSpecialPolygon (gui, Output.pmGC, Pin->X, Pin->Y, half * 2, False);
+-    }
+-  else
+-    {
+-      gui->fill_circle (Output.pmGC, Pin->X, Pin->Y, half);
+-    }
+-  if ((!TEST_FLAG (PINFLAG, Pin) && !PCB->ViaOn)
+-      || (TEST_FLAG (PINFLAG, Pin) && !PCB->PinOn))
+-    return;
+-  /* now draw the pin or via as appropriate */
+-  switch (Type)
+-    {
+-    case VIA_TYPE:
+-    case PIN_TYPE:
+-      SetPVColor (Pin, Type);
+-      DrawPinOrViaLowLevel (Pin, True);
+-      break;
+-    case NO_TYPE:
+-    default:
+-      break;
+-    }
+-}
+-
+ 
+ #if VERTICAL_TEXT
+ /* vertical text handling provided by Martin Devera with fixes by harry eaton */
+@@ -1727,9 +1679,6 @@ DrawVia (PinTypePtr Via, int unused)
+ {
+   if (!Gathering)
+     SetPVColor (Via, VIA_TYPE);
+-  //if (!doing_pinout && !TEST_FLAG (HOLEFLAG, Via) && TEST_ANY_PIPS (Via))
+-  // ClearPin (Via, VIA_TYPE, 0);
+-  //else
+   DrawPinOrViaLowLevel (Via, True);
+   if (!TEST_FLAG (HOLEFLAG, Via) && TEST_FLAG (DISPLAYNAMEFLAG, Via))
+     DrawPinOrViaNameLowLevel (Via);
+@@ -1770,9 +1719,6 @@ DrawViaName (PinTypePtr Via, int unused)
+ void
+ DrawPin (PinTypePtr Pin, int unused)
+ {
+-  //if (!doing_pinout && !TEST_FLAG (HOLEFLAG, Pin) && TEST_ANY_PIPS (Pin))
+-  //  ClearPin (Pin, PIN_TYPE, 0);
+-  //else
+   {
+     if (!Gathering)
+       SetPVColor (Pin, PIN_TYPE);
+@@ -1992,13 +1938,6 @@ DrawRegularText (LayerTypePtr Layer, TextTypePtr Text, int unused)
+   DrawTextLowLevel (Text, min_silk_line);
+ }
+ 
+-static int
+-cp_callback (const BoxType * b, void *cl)
+-{
+-  ClearPin ((PinTypePtr) b, (int) (size_t) cl, 0);
+-  return 1;
+-}
+-
+ /* ---------------------------------------------------------------------------
+  * draws a polygon on a layer
+  */
+@@ -2018,13 +1957,6 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+     gui->set_color (Output.fgGC, Layer->Color);
+   layernum = GetLayerNumber (PCB->Data, Layer);
+   DrawPolygonLowLevel (Polygon);
+-  if (TEST_FLAG (CLEARPOLYFLAG, Polygon))
+-    {
+-      r_search (PCB->Data->pin_tree, &Polygon->BoundingBox, NULL,
+-		cp_callback, (void *) PIN_TYPE);
+-      r_search (PCB->Data->via_tree, &Polygon->BoundingBox, NULL,
+-		cp_callback, (void *) VIA_TYPE);
+-    }
+ }
+ 
+ int
+@@ -2365,12 +2297,6 @@ EraseElementPinsAndPads (ElementTypePtr Element)
+   gui->set_color (Output.fgGC, Settings.BackgroundColor);
+   PIN_LOOP (Element);
+   {
+-    /* if (TEST_ANY_PIPS (pin))
+-       {
+-       ClearPin (pin, NO_TYPE, 0);
+-       gui->set_color (Output.fgGC, Settings.BackgroundColor);
+-       }
+-     */
+     DrawPinOrViaLowLevel (pin, False);
+     if (TEST_FLAG (DISPLAYNAMEFLAG, pin))
+       DrawPinOrViaNameLowLevel (pin);
