@@ -498,9 +498,7 @@ SearchLinePointByLocation (int locked, LayerTypePtr * Layer,
   info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
   if (r_search
       (SearchLayer->line_tree, &SearchBox, NULL, linepoint_callback, &info))
-  {
     return True;
-  }
   return False;
 }
 
@@ -1046,6 +1044,7 @@ IsPointInBox (LocationType X, LocationType Y, BoxTypePtr box, BDimension Radius)
 
 int ClosestArcPoint (float X, float Y, ArcTypePtr Arc)
 {
+  /* FIXME: Implement this function to return the distance to the arc */
   return 0;
 }
 
