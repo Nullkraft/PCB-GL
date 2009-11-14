@@ -3,10 +3,11 @@ Top:    829c3ff7cee9e06aec925d8615188847a567d0dc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-14 18:03:24 +0000
 
-Avoid clearing pins / vias from polygons... it is already done!
+draw.c: Don't clear pins / vias from polygons... it is already done!
 
 Our polygons already the required holes for pins, vias, pads etc..
-so don't waste drawing clearances twice.
+so don't waste drawing clearances twice. This looks to be a legacy
+from the way PCB used to draw polygons.
 
 
 ---
