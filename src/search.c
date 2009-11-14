@@ -320,9 +320,9 @@ SearchRatLineByLocation (int locked, RatTypePtr * Line, RatTypePtr * Dummy1,
  */
 struct arc_info
 {
-  ArcTypePtr *Arc, *Dummy;
-  jmp_buf env;
+  ArcTypePtr *Arc;
   int locked;
+  int smallest_radius;
 };
 
 static int
@@ -330,16 +330,22 @@ arc_callback (const BoxType * box, void *cl)
 {
   struct arc_info *i = (struct arc_info *) cl;
   ArcTypePtr a = (ArcTypePtr) box;
+  int found_radius;
 
   if (TEST_FLAG (i->locked, a))
     return 0;
 
   if (!IsPointOnArc (PosX, PosY, SearchRadius, a))
     return 0;
-  *i->Arc = a;
-  *i->Dummy = a;
-  longjmp (i->env, 1);
-  return 1;			/* never reached */
+
+  found_radius = ClosestArcPoint (PosX, PosY, a);
+
+  if (i->smallest_radius == -1 || found_radius < i->smallest_radius)
+    {
+      i->smallest_radius = found_radius;
+      *i->Arc = a;
+    }
+  return 1;
 }
 
 
@@ -350,16 +356,15 @@ SearchArcByLocation (int locked, LayerTypePtr * Layer, ArcTypePtr * Arc,
   struct arc_info info;
 
   info.Arc = Arc;
-  info.Dummy = Dummy;
   info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
+  info.smallest_radius = -1;
 
   *Layer = SearchLayer;
-  if (setjmp (info.env) == 0)
-    {
-      r_search (SearchLayer->arc_tree, &SearchBox, NULL, arc_callback, &info);
-      return False;
-    }
-  return (True);
+    r_search (SearchLayer->arc_tree, &SearchBox, NULL, arc_callback, &info);
+  if (info.smallest_radius > -1)
+    return True;
+  else
+    return False;
 }
 
 static int
@@ -1035,6 +1040,12 @@ IsPointInBox (LocationType X, LocationType Y, BoxTypePtr box, BDimension Radius)
     }
 
   return range < Radius;
+}
+
+int ClosestArcPoint (float X, float Y, ArcTypePtr Arc)
+{
+  /* FIXME: Implement this function to return the distance to the arc */
+  return 0;
 }
 
 Boolean
