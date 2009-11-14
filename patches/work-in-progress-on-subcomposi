@@ -1,7 +1,7 @@
-Bottom: db68be3c834f9f7a5b44dae59838570293be7d77
-Top:    41785b148c3fa57c008952b68074641800e21dc4
+Bottom: a9529158cd264e0699a5a7827c95c42e82b5adee
+Top:    df0e64dc09fa35d052cb17d4f54ce06356efb7de
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-14 02:45:26 +0000
+Date:   2009-11-14 18:39:55 +0000
 
 Work in progress on subcompositing / stencil buffers
 
@@ -14,7 +14,7 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index d2831a3..507aa78 100644
+index 4605ae5..3468b9b 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -420,6 +420,7 @@ DrawEverything (BoxTypePtr drawn_area)
@@ -689,10 +689,10 @@ index 2115b47..9e59ca1 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index e648fa1..9abe279 100644
+index 9c5a905..7de0295 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
-@@ -516,6 +516,10 @@ ps_set_layer (const char *name, int group, int empty)
+@@ -525,6 +525,10 @@ ps_set_layer (const char *name, int group, int empty)
    int idx = (group >= 0
  	     && group <
  	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
