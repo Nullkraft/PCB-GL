@@ -1,7 +1,7 @@
-Bottom: 16a8e8b4f2e2982c882673d4676e30b2fda42e31
-Top:    41785b148c3fa57c008952b68074641800e21dc4
+Bottom: d1cf2f86faeb9aed71c56b47c17fe444c990470a
+Top:    db68be3c834f9f7a5b44dae59838570293be7d77
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-14 02:40:05 +0000
+Date:   2009-11-14 02:40:55 +0000
 
 Change calculation for how many segments to use when drawing curves
 
@@ -11,7 +11,7 @@ Suggested algorithm by DJ Delorie
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 9875db5..06b62e4 100644
+index c806cf1..413d92f 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -43,8 +43,6 @@
