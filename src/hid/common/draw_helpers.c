@@ -36,7 +36,7 @@ static void thindraw_contour (hidGC gc, PLINE *pl)
   if (pl->is_round)
     {
       gui->draw_arc (gc, pl->cx, pl->cy, pl->radius, pl->radius, 0, 360);
-      return 0;
+      return;
     }
 
   /* Need at least two points in the contour */
