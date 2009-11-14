@@ -1944,15 +1944,6 @@ DrawRegularText (LayerTypePtr Layer, TextTypePtr Text, int unused)
 void
 DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
 {
-  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Polygon))
-    {
-      if (TEST_FLAG (SELECTEDFLAG, Polygon))
-	gui->set_color (Output.fgGC, Layer->SelectedColor);
-      else
-	gui->set_color (Output.fgGC, PCB->ConnectedColor);
-    }
-  else
-    gui->set_color (Output.fgGC, Layer->Color);
   DrawPolygonLowLevel (Polygon);
 }
 
