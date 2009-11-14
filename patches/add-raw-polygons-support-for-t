@@ -1,7 +1,7 @@
-Bottom: de0e54da4027aee3b12ef94f1f79ab5b95ef9ae2
-Top:    a019e49784ded59870e34d8614978b6e8fd0abe9
+Bottom: 278a7293c895b8e53d2127129bc43cbfe08b33ed
+Top:    45bf0afccc8897a09cf72f2655dbba55fff0cac5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-14 02:36:34 +0000
+Date:   2009-11-14 02:45:15 +0000
 
 Add raw polygons support for the GTK HID, bypassing the no-holes dicer
 
@@ -27,7 +27,7 @@ Add raw polygons support for the GTK HID, bypassing the no-holes dicer
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index a435629..b9ab01a 100644
+index e206cea..0b1645f 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -36,7 +36,7 @@
@@ -39,7 +39,7 @@ index a435629..b9ab01a 100644
  
  
  #ifdef HAVE_LIBDMALLOC
-@@ -468,6 +468,8 @@ myBegin (GLenum type)
+@@ -479,6 +479,8 @@ myBegin (GLenum type)
    triangle_comp_idx = 0;
  }
  
@@ -48,7 +48,7 @@ index a435629..b9ab01a 100644
  static void
  myVertex (GLdouble *vertex_data)
  {
-@@ -484,11 +486,23 @@ myVertex (GLdouble *vertex_data)
+@@ -495,11 +497,23 @@ myVertex (GLdouble *vertex_data)
          }
        else
          {
@@ -72,7 +72,7 @@ index a435629..b9ab01a 100644
  
            if (tessVertexType == GL_TRIANGLE_STRIP)
              {
-@@ -559,6 +573,105 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -570,6 +584,105 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
    free (vertices);
  }
  
