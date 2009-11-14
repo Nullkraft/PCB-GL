@@ -1,5 +1,5 @@
 Bottom: 15d2d855c4256391cc652e50261cc3dff44dbb0e
-Top:    91e0748f6a40f1f295a0e74ad65dfcdc8448126b
+Top:    2039ae95c74a55fb22d95656289bb536ed229a2e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-14 02:12:30 +0000
 
@@ -27,7 +27,7 @@ it makes rendering somewhat unfaithful to the final output.
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index e975f3b..d9ded42 100644
+index e975f3b..1c7ead9 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -29,13 +29,20 @@ static void thindraw_contour (hidGC gc, PLINE *pl)
@@ -54,14 +54,6 @@ index e975f3b..d9ded42 100644
    last_x = pl->head.point[0];
    last_y = pl->head.point[1];
    v = pl->head.next;
-@@ -176,6 +183,7 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
- static int thindraw_hole_cb (PLINE *pl, void *user_data)
- {
-   hidGC gc = user_data;
-+
-   thindraw_contour (gc, pl);
-   return 0;
- }
 diff --git a/src/polyarea.h b/src/polyarea.h
 index 6652fce..958498b 100644
 --- a/src/polyarea.h
