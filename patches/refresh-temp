@@ -1,0 +1,208 @@
+Bottom: 06360183e3f6b47259470d929eb4c157f8c50c76
+Top:    35198e297ac67298331054a375ec2d110f650cab
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-15 19:53:43 +0000
+
+Refresh of temp-revert-changes-to-gtkhid-
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 7246aa4..4d7e3bf 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -20,7 +20,6 @@
+ #include "hid/common/draw_helpers.h"
+ 
+ #ifdef ENABLE_GL
+-#  include <gtk/gtkgl.h>
+ #  include <GL/gl.h>
+ #  include "hid/common/hidgl.h"
+ #endif
+@@ -31,6 +30,10 @@
+ #include <gdk/gdkx.h>
+ #endif
+ 
++#ifdef ENABLE_GL
++#  include <gtk/gtkgl.h>
++#endif
++
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+ #endif
+@@ -41,7 +44,8 @@ RCSID ("$Id$");
+ 
+ extern HID ghid_hid;
+ 
+-int ghid_gui_is_up = 0;
++static int ghid_gui_is_up = 0;
++static hidGC current_gc = NULL;
+ 
+ static void zoom_to (double factor, int x, int y);
+ static void zoom_by (double factor, int x, int y);
+@@ -318,6 +322,90 @@ zoom_by (double factor, int x, int y)
+ 
+ /* ------------------------------------------------------------ */
+ 
++/*static*/ void
++draw_grid ()
++{
++  static GLfloat *points = 0;
++  static int npoints = 0;
++  int x1, y1, x2, y2, n, i;
++  double x, y;
++
++  if (!Settings.DrawGrid)
++    return;
++  if (Vz (PCB->Grid) < MIN_GRID_DISTANCE)
++    return;
++
++  if (gdk_color_parse (Settings.GridColor, &gport->grid_color))
++    {
++      gport->grid_color.red ^= gport->bg_color.red;
++      gport->grid_color.green ^= gport->bg_color.green;
++      gport->grid_color.blue ^= gport->bg_color.blue;
++    }
++
++  hidgl_flush_triangles (&buffer);
++
++  glEnable (GL_COLOR_LOGIC_OP);
++  glLogicOp (GL_XOR);
++
++  glColor3f (gport->grid_color.red / 65535.,
++             gport->grid_color.green / 65535.,
++             gport->grid_color.blue / 65535.);
++
++  x1 = GRIDFIT_X (SIDE_X (gport->view_x0), PCB->Grid);
++  y1 = GRIDFIT_Y (SIDE_Y (gport->view_y0), PCB->Grid);
++  x2 = GRIDFIT_X (SIDE_X (gport->view_x0 + gport->view_width - 1), PCB->Grid);
++  y2 = GRIDFIT_Y (SIDE_Y (gport->view_y0 + gport->view_height - 1), PCB->Grid);
++  if (x1 > x2)
++    {
++      int tmp = x1;
++      x1 = x2;
++      x2 = tmp;
++    }
++  if (y1 > y2)
++    {
++      int tmp = y1;
++      y1 = y2;
++      y2 = tmp;
++    }
++  if (Vx (x1) < 0)
++    x1 += PCB->Grid;
++  if (Vy (y1) < 0)
++    y1 += PCB->Grid;
++  if (Vx (x2) >= gport->width)
++    x2 -= PCB->Grid;
++  if (Vy (y2) >= gport->height)
++    y2 -= PCB->Grid;
++  n = (int) ((x2 - x1) / PCB->Grid + 0.5) + 1;
++  if (n > npoints)
++    {
++      npoints = n + 10;
++      points =
++	MyRealloc (points, npoints * 2 * sizeof (GLfloat), "gtk_draw_grid");
++    }
++
++  glEnableClientState (GL_VERTEX_ARRAY);
++  glVertexPointer (2, GL_FLOAT, 0, points);
++
++  n = 0;
++  for (x = x1; x <= x2; x += PCB->Grid)
++    {
++      points[2 * n] = Vx (x);
++      n++;
++    }
++  for (y = y1; y <= y2; y += PCB->Grid)
++    {
++      int vy = Vy (y);
++      for (i = 0; i < n; i++)
++	points[2 * i + 1] = vy;
++      glDrawArrays (GL_POINTS, 0, n);
++    }
++
++  glDisableClientState (GL_VERTEX_ARRAY);
++  glDisable (GL_COLOR_LOGIC_OP);
++}
++
++/* ------------------------------------------------------------ */
++
+ HID_Attribute *
+ ghid_get_export_options (int *n_ret)
+ {
+@@ -337,6 +425,74 @@ ghid_invalidate_lr (int left, int right, int top, int bottom, int last)
+   ghid_invalidate_all ();
+ }
+ 
++#if 0
++static void
++ghid_draw_bg_image(void)
++{
++  static GdkPixbuf *pixbuf = NULL;
++  static gint vw_scaled, vh_scaled, x_cached, y_cached;
++  GdkInterpType interp_type;
++  gint x, y, vw, vh, w, h, w_src, h_src;
++  int bits_per_sample;
++  gboolean has_alpha;
++
++  if (!ghidgui->bg_pixbuf)
++    return;
++
++  w = PCB->MaxWidth / gport->zoom;
++  h = PCB->MaxHeight / gport->zoom;
++  x = gport->view_x0 / gport->zoom;
++  y = gport->view_y0 / gport->zoom;
++  vw = gport->view_width / gport->zoom;
++  vh = gport->view_height / gport->zoom;
++
++  if (pixbuf == NULL || vw_scaled != vw || vh_scaled != vh)
++    {
++      if (pixbuf != NULL)
++        g_object_unref(G_OBJECT(pixbuf));
++
++      bits_per_sample = gdk_pixbuf_get_bits_per_sample(ghidgui->bg_pixbuf);
++      has_alpha = gdk_pixbuf_get_has_alpha (ghidgui->bg_pixbuf);
++      pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB,
++                              has_alpha,
++                              bits_per_sample,
++                              vw, vh);
++    }
++
++  if (pixbuf == NULL)
++    return;
++
++  if (vw_scaled != vw || vh_scaled != vh ||
++       x_cached != x  ||  y_cached != y)
++    {
++      w_src = gdk_pixbuf_get_width(ghidgui->bg_pixbuf);
++      h_src = gdk_pixbuf_get_height(ghidgui->bg_pixbuf);
++
++      if (w > w_src && h > h_src)
++        interp_type = GDK_INTERP_NEAREST;
++      else
++        interp_type = GDK_INTERP_BILINEAR;
++
++      gdk_pixbuf_scale(ghidgui->bg_pixbuf, pixbuf,
++                       0, 0, vw, vh,
++                       (double) -x,
++                       (double) -y,
++                       (double) w / w_src,
++                       (double) h / h_src,
++                       interp_type);
++
++      x_cached = x;
++      y_cached = y;
++      vw_scaled = vw;
++      vh_scaled = vh;
++    }
++
++  if (pixbuf != NULL)
++    gdk_draw_pixbuf(gport->drawable, gport->bg_gc, pixbuf,
++                    0, 0, 0, 0, vw, vh, GDK_RGB_DITHER_NORMAL, 0, 0);
++}
++#endif
++
+ void
+ ghid_invalidate_all ()
+ {
