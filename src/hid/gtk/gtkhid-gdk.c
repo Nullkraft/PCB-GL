@@ -5,33 +5,11 @@
 #endif
 
 #include <stdio.h>
-#include <stdlib.h>
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif
-#include <math.h>
-#include <time.h>
 
-
-#include "global.h"
-#include "action.h"
 #include "crosshair.h"
-#include "data.h"
-#include "draw.h"
-#include "error.h"
-#include "mymem.h"
-#include "draw.h"
 #include "clip.h"
-
-#include "hid.h"
 #include "../hidint.h"
 #include "gui.h"
-#include "hid/common/draw_helpers.h"
-
-
-#if !GTK_CHECK_VERSION(2,8,0) && defined(HAVE_GDK_GDKX_H)
-#include <gdk/gdkx.h>
-#endif
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>

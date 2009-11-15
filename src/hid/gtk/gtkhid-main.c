@@ -13,17 +13,9 @@
 #include <time.h>
 
 
-#include "global.h"
 #include "action.h"
 #include "crosshair.h"
-#include "data.h"
-#include "draw.h"
 #include "error.h"
-#include "mymem.h"
-#include "draw.h"
-#include "clip.h"
-
-#include "hid.h"
 #include "../hidint.h"
 #include "gui.h"
 #include "hid/common/draw_helpers.h"
