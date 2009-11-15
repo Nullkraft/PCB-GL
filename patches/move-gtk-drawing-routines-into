@@ -8,6 +8,10 @@ hid/gtk: Move gdk drawing routines into a new file gtkhid-gdk.c
 This separates some of the drawing code so it could be replaced
 more easily.
 
+Pretty much a straight move at this point, but renamed the static
+function "draw_grid()" to ghid_draw_grid() now it is no longer
+local to gtkhid-main.c
+
 
 ---
 
