@@ -1,10 +1,8 @@
-/* $Id: gui.h,v 1.25 2008-04-13 14:15:38 petercjclifton Exp $ */
-
 /*
  *                            COPYRIGHT
  *
  *  PCB, interactive printed circuit board design
- *  Copyright (C) 1994,1995,1996 Thomas Nau
+ *  Copyright (C) 2009 PCB Contributors (See ChangeLog for details).
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
