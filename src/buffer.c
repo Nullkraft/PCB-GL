@@ -389,7 +389,6 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
   PourTypePtr pour;
 
   r_delete_entry (Layer->pour_tree, (BoxTypePtr) Pour);
-  RestoreToPours (Source, POUR_TYPE, Layer, Pour);
   lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
   pour = GetPourMemory (lay);
   *pour = *Pour;

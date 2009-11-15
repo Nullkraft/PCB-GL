@@ -367,7 +367,6 @@ MovePour (LayerTypePtr Layer, PourTypePtr Pour)
       ErasePour (Pour);
     }
   r_delete_entry (Layer->pour_tree, (BoxType *) Pour);
-  RestoreToPours (PCB->Data, POUR_TYPE, Layer, Pour);
   MovePourLowLevel (Pour, DeltaX, DeltaY);
   r_insert_entry (Layer->pour_tree, (BoxType *) Pour, 0);
   InitPourClip (PCB->Data, Layer, Pour);
@@ -433,7 +432,6 @@ MovePourPoint (LayerTypePtr Layer, PourTypePtr Pour, PointTypePtr Point)
       ErasePour (Pour);
     }
   r_delete_entry (Layer->pour_tree, (BoxType *) Pour);
-  RestoreToPours (PCB->Data, POUR_TYPE, Layer, Pour);
   MOVE (Point->X, Point->Y, DeltaX, DeltaY);
   SetPourBoundingBox (Pour);
   r_insert_entry (Layer->pour_tree, (BoxType *) Pour, 0);
