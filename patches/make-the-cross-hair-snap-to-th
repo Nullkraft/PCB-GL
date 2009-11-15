@@ -1,37 +1,11 @@
-Bottom: 2492720b487f30ec9b5dfd64bb25579b1acbcd54
+Bottom: dca360a9c6efc262e74b1882cfb6fd56c6a1ce7f
 Top:    dca360a9c6efc262e74b1882cfb6fd56c6a1ce7f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 00:16:25 +0000
+Date:   2009-11-15 00:28:19 +0000
 
 Make the cross-hair snap to the center of pads (By popular request)
 
 
 ---
 
-diff --git a/src/crosshair.c b/src/crosshair.c
-index 8321929..367922e 100644
---- a/src/crosshair.c
-+++ b/src/crosshair.c
-@@ -880,19 +880,9 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
-     {
-       PadTypePtr pad = (PadTypePtr) ptr2;
-       LocationType px, py;
--      if (SQUARE (pad->Point1.X - Crosshair.X) +
--	  SQUARE (pad->Point1.Y - Crosshair.Y) <
--	  SQUARE (pad->Point2.X - Crosshair.X) + SQUARE (pad->Point2.Y -
--							 Crosshair.Y))
--	{
--	  px = pad->Point1.X;
--	  py = pad->Point1.Y;
--	}
--      else
--	{
--	  px = pad->Point2.X;
--	  py = pad->Point2.Y;
--	}
-+
-+      px = (pad->Point1.X + pad->Point2.X) / 2;
-+      py = (pad->Point1.Y + pad->Point2.Y) / 2;
- 
-       if (!gui->shift_is_pressed()
- 	  || (SQUARE (x0 - Crosshair.X) + SQUARE (y0 - Crosshair.Y) >
+
