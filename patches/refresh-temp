@@ -1,0 +1,90 @@
+Bottom: fab291be6a4a99e784529f2f04aca406080b12f4
+Top:    5b32ce6d1c59032ff04b9fb2301e57599a91226b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-15 18:00:29 +0000
+
+Refresh of shiny-3d-eye-candy
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 7a2b283..bb0d10f 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -38,6 +38,7 @@ ghid_draw_grid ()
+   static int npoints = 0;
+   int x1, y1, x2, y2, n, i;
+   double x, y;
++  extern float global_depth;
+ 
+   if (!Settings.DrawGrid)
+     return;
+@@ -89,23 +90,24 @@ ghid_draw_grid ()
+     {
+       npoints = n + 10;
+       points =
+-	MyRealloc (points, npoints * 2 * sizeof (GLfloat), "gtk_draw_grid");
++	MyRealloc (points, npoints * 3 * sizeof (GLfloat), "gtk_draw_grid");
+     }
+ 
+   glEnableClientState (GL_VERTEX_ARRAY);
+-  glVertexPointer (2, GL_FLOAT, 0, points);
++  glVertexPointer (3, GL_FLOAT, 0, points);
+ 
+   n = 0;
+   for (x = x1; x <= x2; x += PCB->Grid)
+     {
+-      points[2 * n] = Vx (x);
++      points[3 * n] = Vx (x);
++      points[3 * n + 2] = global_depth;
+       n++;
+     }
+   for (y = y1; y <= y2; y += PCB->Grid)
+     {
+       int vy = Vy (y);
+       for (i = 0; i < n; i++)
+-	points[2 * i + 1] = vy;
++	points[3 * i + 1] = vy;
+       glDrawArrays (GL_POINTS, 0, n);
+     }
+ 
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index bfe464b..209152f 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -335,7 +335,6 @@ draw_grid ()
+   static int npoints = 0;
+   int x1, y1, x2, y2, n, i;
+   double x, y;
+-  extern float global_depth;
+ 
+   if (!Settings.DrawGrid)
+     return;
+@@ -387,24 +386,23 @@ draw_grid ()
+     {
+       npoints = n + 10;
+       points =
+-	MyRealloc (points, npoints * 3 * sizeof (GLfloat), "gtk_draw_grid");
++	MyRealloc (points, npoints * 2 * sizeof (GLfloat), "gtk_draw_grid");
+     }
+ 
+   glEnableClientState (GL_VERTEX_ARRAY);
+-  glVertexPointer (3, GL_FLOAT, 0, points);
++  glVertexPointer (2, GL_FLOAT, 0, points);
+ 
+   n = 0;
+   for (x = x1; x <= x2; x += PCB->Grid)
+     {
+-      points[3 * n] = Vx (x);
+-      points[3 * n + 2] = global_depth;
++      points[2 * n] = Vx (x);
+       n++;
+     }
+   for (y = y1; y <= y2; y += PCB->Grid)
+     {
+       int vy = Vy (y);
+       for (i = 0; i < n; i++)
+-	points[3 * i + 1] = vy;
++	points[2 * i + 1] = vy;
+       glDrawArrays (GL_POINTS, 0, n);
+     }
