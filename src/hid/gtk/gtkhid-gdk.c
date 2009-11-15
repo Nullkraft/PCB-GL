@@ -47,6 +47,7 @@ Vy2 (int y)
 
 typedef struct hid_gc_struct
 {
+  HID *me_pointer;
   GdkGC *gc;
 
   gchar *colorname;
@@ -73,6 +74,7 @@ ghid_make_gc (void)
   hidGC rv;
 
   rv = g_new0 (hid_gc_struct, 1);
+  rv->me_pointer = &ghid_hid;
   rv->colorname = Settings.BackgroundColor;
   return rv;
 }
@@ -439,6 +441,13 @@ ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2)
 static int
 use_gc (hidGC gc)
 {
+
+  if (gc->me_pointer != &ghid_hid)
+    {
+      fprintf (stderr, "Fatal: GC from another HID passed to GTK HID\n");
+      abort ();
+    }
+
   if (!gport->pixmap)
     return 0;
   if (!gc->gc)
