@@ -1,7 +1,7 @@
-Bottom: 5388462e82076ca88e044428c18e74bf17315a42
-Top:    054ea0494313489cc083f55dc3bd2539adf47dc6
+Bottom: 5de1f192623eabb730973869662afb3de8f723b5
+Top:    987d696fa37ffd134a00e6a980e3d5ac93c9556a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 02:42:58 +0000
+Date:   2009-11-15 18:07:29 +0000
 
 Silly space navigator interface to allow funky views
 
@@ -12,10 +12,10 @@ Silly space navigator interface to allow funky views
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 2f92f29..9bc9e22 100644
+index 54ed24b..0e41c47 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -270,7 +270,9 @@ LIBGTK_SRCS = \
+@@ -276,7 +276,9 @@ LIBGTK_SRCS = \
  	hid/gtk/gui-top-window.c \
  	hid/gtk/gui-trackball.c \
  	hid/gtk/gui-trackball.h \
@@ -27,7 +27,7 @@ index 2f92f29..9bc9e22 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 659f729..a42962f 100644
+index 71c2ada..48580cf 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -47,6 +47,8 @@
@@ -39,7 +39,7 @@ index 659f729..a42962f 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -1908,6 +1910,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -1907,6 +1909,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        /* Make sure drawing area has keyboard focus when we are in it.
         */
        gtk_widget_grab_focus (out->drawing_area);
@@ -48,7 +48,7 @@ index 659f729..a42962f 100644
      }
    ghidgui->in_popup = FALSE;
  
-@@ -2015,6 +2019,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -2014,6 +2018,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
  	    }
  	  g_idle_add (ghid_pan_idle_cb, NULL);
  	}
@@ -57,7 +57,7 @@ index 659f729..a42962f 100644
      }
  
    if(cursor_in_viewport)
-@@ -2063,3 +2069,29 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+@@ -2062,3 +2068,29 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  
    return TRUE;
  }
@@ -176,7 +176,7 @@ index d6bd03c..3af647e 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 3309fe3..81e0c09 100644
+index 3536168..3dff93a 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -197,6 +197,8 @@ typedef struct
