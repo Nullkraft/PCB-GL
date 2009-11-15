@@ -1,0 +1,55 @@
+Bottom: 71d11e4612bfd42f6a32a7c41b914861cd0248f8
+Top:    b6f174e25b70cc9c3138c1c2f1643aff3b624a50
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-02-04 22:57:16 +0000
+
+Expose each region separately
+
+BUG: Won't work properly, since we set the sciscor region for the
+     size of the whole expose event, then clear that area. BAD!
+
+
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index d711982..786ac69 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -952,6 +952,9 @@ gboolean
+ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+ 					GdkEventExpose * ev, GHidPort * port)
+ {
++  GdkRectangle *rectangles;
++  int n_rectangles;
++  int i;
+   BoxType region;
+   int eleft, eright, etop, ebottom;
+   extern HID ghid_hid;
+@@ -1074,7 +1077,26 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+                              -gport->view_x0,
+                 ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
+                              -gport->view_y0, 0);
+-  hid_expose_callback (&ghid_hid, &region, 0);
++
++  gdk_region_get_rectangles (ev->region, &rectangles, &n_rectangles);
++  for (i = 0; i < n_rectangles; i++) {
++    int x, y, width, height;
++
++    x = rectangles[i].x;
++    y = rectangles[i].y;
++    width = rectangles[i].width;
++    height = rectangles[i].height;
++
++    region.X1 = MIN (Px (x), Px (x + width + 1));
++    region.X2 = MAX (Px (x), Px (x + width + 1));
++    region.Y1 = MIN (Py (y), Py (y + height + 1));
++    region.Y2 = MAX (Py (y), Py (y + height + 1));
++
++    hid_expose_callback (&ghid_hid, &region, 0);
++  }
++  g_free (rectangles);
++
++
+   hidgl_flush_triangles (&buffer);
+   glPopMatrix ();
