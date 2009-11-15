@@ -613,6 +613,7 @@ do_hole (const BoxType *b, void *cl)
 {
   struct do_hole_info *info = cl;
   PLINE *curc = (PLINE *) b;
+
   /* Ignore the outer contour - we draw it first explicitly*/
   if (curc->Flags.orient == PLF_DIR) {
     return 0;
