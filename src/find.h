@@ -42,7 +42,7 @@
 #define LOOKUP_MORE	\
 	(VIA_TYPE | LINE_TYPE | RATLINE_TYPE | POLYGON_TYPE | ARC_TYPE)
 #define SILK_TYPE	\
-	(LINE_TYPE | ARC_TYPE | POLYGON_TYPE)
+	(LINE_TYPE | ARC_TYPE | POUR_TYPE)
 
 Boolean LineLineIntersect (LineTypePtr, LineTypePtr);
 Boolean LineArcIntersect (LineTypePtr, ArcTypePtr);
