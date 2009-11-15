@@ -1,5 +1,5 @@
 Bottom: 5224128c6fdf2b154292dc1525f24b983e0bf916
-Top:    a380bfdebff0cbbcca0510a6ed13b996ed507c1f
+Top:    3746609fd440ca842d2d8f4ad20c765891fc016f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 19:04:18 +0000
 
@@ -32,10 +32,10 @@ index 1c97b60..371173a 100644
  	hid/gtk/gui-command-window.c \
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
 new file mode 100644
-index 0000000..4a35d0c
+index 0000000..f577d3e
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -0,0 +1,610 @@
+@@ -0,0 +1,629 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -82,6 +82,25 @@ index 0000000..4a35d0c
 +}
 +
 +/* ------------------------------------------------------------ */
++
++void
++ghid_destroy_gc (hidGC gc)
++{
++  if (gc->gc)
++    g_object_unref (gc->gc);
++  g_free (gc);
++}
++
++hidGC
++ghid_make_gc (void)
++{
++  hidGC rv;
++
++  rv = g_new0 (hid_gc_struct, 1);
++  rv->me_pointer = &ghid_hid;
++  rv->colorname = Settings.BackgroundColor;
++  return rv;
++}
 +
 +void
 +ghid_draw_grid (void)
@@ -1271,15 +1290,58 @@ index 280cfbe..2f65ffe 100644
  void
  ghid_extents_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
  {
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index c6a2e58..eb8ba18 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -2696,27 +2696,6 @@ ghid_parse_arguments (int *argc, char ***argv)
+   ghidgui->creating = TRUE;
+ }
+ 
+-
+-
+-void
+-ghid_destroy_gc (hidGC gc)
+-{
+-  if (gc->gc)
+-    g_object_unref (gc->gc);
+-  g_free (gc);
+-}
+-
+-hidGC
+-ghid_make_gc (void)
+-{
+-  hidGC rv;
+-
+-  rv = g_new0 (hid_gc_struct, 1);
+-  rv->me_pointer = &ghid_hid;
+-  rv->colorname = Settings.BackgroundColor;
+-  return rv;
+-}
+-
+ void
+ ghid_do_export (HID_Attr_Val * options)
+ {
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index ca56361..fdd7d9e 100644
+index ca56361..245a2c3 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -530,6 +530,24 @@ GdkPixmap *ghid_render_pixmap (int cx,
+@@ -252,8 +252,6 @@ ButtonState;
+ /* Function prototypes
+ */
+ void ghid_parse_arguments (gint * argc, gchar *** argv);
+-hidGC ghid_make_gc (void);
+-void ghid_destroy_gc (hidGC);
+ void ghid_do_export (HID_Attr_Val * options);
+ 
+ void ghid_create_pcb_widgets (void);
+@@ -530,6 +528,26 @@ GdkPixmap *ghid_render_pixmap (int cx,
  			       int height,
  			       int depth);
  
 +/* gtkhid-gdk.c */
++hidGC ghid_make_gc (void);
++void ghid_destroy_gc (hidGC);
 +void ghid_draw_grid (void);
 +void ghid_draw_bg_image (void);
 +void ghid_use_mask (int use_it);
