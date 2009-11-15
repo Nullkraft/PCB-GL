@@ -1,5 +1,5 @@
 Bottom: beee93e65cf50d9329676ced1a89d71b385f650e
-Top:    f2bbd90e42ffecc5526a8a89eee1ea85006ba567
+Top:    9e5ede7791f6b2511004117b075778269baa6fc8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 02:28:10 +0000
 
@@ -51,18 +51,10 @@ index 1c97b60..49460cd 100644
  # desktop and application toolbar
  if WIN32
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 5f62e2c..601d5d6 100644
+index 5f62e2c..cea493a 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -44,6 +44,7 @@
- #include "data.h"
- #include "draw.h"
- #include "error.h"
-+
- #include "line.h"
- #include "misc.h"
- #include "mymem.h"
-@@ -84,7 +85,7 @@ static void XORDrawMoveOrCopyObject (void);
+@@ -84,7 +84,7 @@ static void XORDrawMoveOrCopyObject (void);
  static void XORDrawAttachedLine (LocationType, LocationType, LocationType,
  				 LocationType, BDimension);
  static void XORDrawAttachedArc (BDimension);
@@ -71,7 +63,7 @@ index 5f62e2c..601d5d6 100644
  
  /* ---------------------------------------------------------------------------
   * creates a tmp polygon with coordinates converted to screen system
-@@ -576,7 +577,7 @@ XORDrawMoveOrCopyObject (void)
+@@ -576,7 +576,7 @@ XORDrawMoveOrCopyObject (void)
  /* ---------------------------------------------------------------------------
   * draws additional stuff that follows the crosshair
   */
@@ -80,7 +72,7 @@ index 5f62e2c..601d5d6 100644
  DrawAttached (Boolean BlockToo)
  {
    BDimension s;
-@@ -747,7 +748,7 @@ HideCrosshair (Boolean BlockToo)
+@@ -747,7 +747,7 @@ HideCrosshair (Boolean BlockToo)
    CrosshairStack[CrosshairStackLocation] = Crosshair.On;
    CrosshairStackLocation++;
  
@@ -89,7 +81,7 @@ index 5f62e2c..601d5d6 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -767,11 +768,11 @@ RestoreCrosshair (Boolean BlockToo)
+@@ -767,11 +767,11 @@ RestoreCrosshair (Boolean BlockToo)
  
    if (CrosshairStack[CrosshairStackLocation])
      {
