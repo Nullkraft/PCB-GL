@@ -143,6 +143,8 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
             we are dicing for every case. Some GUIs
             rely on this, and need their flags fixing. */
 
+  NoHolesPolygonDicer (poly, clip_box, fill_contour_cb, gc);
+#if 0
   if (!poly->NoHolesValid)
     {
       /* If enough of the polygon is on-screen, compute the entire
@@ -166,6 +168,7 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
             fill_clipped_contour (gc, pl, clip_box);
         }
     }
+#endif
 
   /* Draw other parts of the polygon if fullpoly flag is set */
   /* NB: No "NoHoles" cache for these */
