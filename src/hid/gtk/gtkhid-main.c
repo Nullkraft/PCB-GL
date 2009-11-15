@@ -881,6 +881,14 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
 }
 
 void
+ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+{
+  USE_GC (gc);
+
+  hidgl_fill_pcb_polygon (poly, clip_box, gport->zoom);
+}
+
+void
 ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
 {
   USE_GC (gc);
@@ -1423,7 +1431,7 @@ HID ghid_hid = {
   ghid_draw_rect,
   ghid_fill_circle,
   ghid_fill_polygon,
-  common_fill_pcb_polygon,
+  ghid_fill_pcb_polygon,
   common_thindraw_pcb_polygon,
   ghid_fill_rect,
 
