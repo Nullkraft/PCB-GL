@@ -1,7 +1,7 @@
-Bottom: fbaa3e253f60451c074823528cf071300b35b15b
-Top:    414b4626b97519115fd5beba94f28236a2bae44f
+Bottom: 88bbc2649b9072cd38d3b589f03a91538a3326b9
+Top:    f56150af5416e2e0d009e18cb461daff83ddcc49
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 02:43:03 +0000
+Date:   2009-11-15 18:09:38 +0000
 
 Fixup depth for layers and element marks
 
@@ -9,10 +9,10 @@ Fixup depth for layers and element marks
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 83bd4ba..7de12f8 100644
+index a11eaa0..e67e621 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -545,7 +545,7 @@ int compute_depth (int group)
+@@ -534,7 +534,7 @@ int compute_depth (int group)
    if (group >= 0 && group < max_layer) {
      newgroup = group;
  
@@ -22,10 +22,10 @@ index 83bd4ba..7de12f8 100644
      if (SL_SIDE (idx) == SL_TOP_SIDE) {
        depth = (max_depth + 3) * 200 / gport->zoom;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 86405f9..aa31622 100644
+index e381224..ea76f8f 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1665,12 +1665,14 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1664,12 +1664,14 @@ ghid_draw_everything (BoxTypePtr drawn_area)
      gui->set_layer (NULL, SL (FINISHED, 0), 0);
    }
    /* Draw top silkscreen */
@@ -42,7 +42,7 @@ index 86405f9..aa31622 100644
      DrawSilk (1, SOLDER_LAYER, drawn_area);
      gui->set_layer (NULL, SL (FINISHED, 0), 0);
    }
-@@ -1838,13 +1840,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1837,13 +1839,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
               gport->bg_color.green / 65535.,
               gport->bg_color.blue / 65535.);
  
@@ -56,7 +56,7 @@ index 86405f9..aa31622 100644
    /* TODO: Background image */
  
    hidgl_init_triangle_array (&buffer);
-@@ -1865,6 +1860,37 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1864,6 +1859,37 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
  
