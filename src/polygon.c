@@ -883,8 +883,16 @@ struct cpInfo
 static void
 subtract_accumulated (struct cpInfo *info, PolygonType *polygon)
 {
+  POLYAREA *curp;
   if (info->accumulate == NULL)
     return;
+  printf ("Subtracting accumulated polygons\n");
+
+  curp = info->accumulate;
+  do {
+    printf ("Polygon\n");
+  } while ((curp = curp->f) != info->accumulate);
+  printf ("--------------\n");
   Subtract (info->accumulate, polygon, true);
   info->accumulate = NULL;
   info->batch_size = 0;
@@ -921,7 +929,9 @@ pin_sub_callback (const BoxType * b, void *cl)
         longjmp (info->env, 1);
     }
 
+  printf (" -- Appending pin / via to accumulated poly\n");
   poly_Boolean_free (info->accumulate, np, &merged, PBO_UNITE);
+  printf (" -- Done\n");
   info->accumulate = merged;
 
   info->batch_size ++;
