@@ -523,36 +523,47 @@ int compute_depth (int group)
 {
   static int last_depth_computed = 0;
 
+  int solder_group;
+  int component_group;
+  int min_phys_group;
+  int max_phys_group;
+  int max_depth;
   int depth = last_depth_computed;
   int newgroup;
   int idx = (group >= 0
              && group <
              max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
 
+  solder_group = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
+  component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+
+  min_phys_group = MIN (solder_group, component_group);
+  max_phys_group = MAX (solder_group, component_group);
+
+  max_depth = (1 + max_phys_group - min_phys_group) * 10;
+
   if (group >= 0 && group < max_layer) {
     newgroup = group;
-#if 0
-    /* Re-ordering doesn't work, since we also need to adjust the rendering order */
-    if (group == 1)
-      newgroup = max_layer - 1;
-    else if (group > 1)
-      newgroup = group - 1;
-#endif
-    depth = ((max_layer - newgroup) * 10) * 200 / gport->zoom;
+
+    depth = (max_depth - newgroup * 10) * 200 / gport->zoom;
   } else if (SL_TYPE (idx) == SL_MASK) {
-    if (SL_SIDE (idx) == SL_TOP_SIDE && !Settings.ShowSolderSide) {
-      depth = (max_layer * 10 + 3) * 200 / gport->zoom;
+    if (SL_SIDE (idx) == SL_TOP_SIDE) {
+      depth = (max_depth + 3) * 200 / gport->zoom;
     } else {
       depth = (10 - 3) * 200 / gport->zoom;
     }
   } else if (SL_TYPE (idx) == SL_SILK) {
-    if (SL_SIDE (idx) == SL_TOP_SIDE && !Settings.ShowSolderSide) {
-      depth = (max_layer * 10 + 5) * 200 / gport->zoom;
+    if (SL_SIDE (idx) == SL_TOP_SIDE) {
+      depth = (max_depth + 5) * 200 / gport->zoom;
     } else {
       depth = (10 - 5) * 200 / gport->zoom;
     }
   } else if (SL_TYPE (idx) == SL_INVISIBLE) {
-    depth = (10 - 3) * 200 / gport->zoom;
+    if (Settings.ShowSolderSide) {
+      depth = (max_depth + 5) * 200 / gport->zoom;
+    } else {
+      depth = (10 - 5) * 200 / gport->zoom;
+    }
   }
 
   last_depth_computed = depth;
