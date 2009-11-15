@@ -627,6 +627,17 @@ seg_in_seg (const BoxType * b, void *cl)
 		      i->v->point, i->v->next->point, s1, s2);
   if (!cnt)
     return 0;
+
+  printf ("Intersection between (%d, %d)-(%d, %d) and \n"
+          "                     (%d, %d)-(%d, %d), point at (%d, %d)\n",
+          s->v->point[0], s->v->point[1], s->v->next->point[0], s->v->next->point[1],
+          i->v->point[0], i->v->point[1], i->v->next->point[0], i->v->next->point[1],
+          s1[0], s1[1]);
+  if (cnt == 2)
+    printf(
+          "                                          and at (%d, %d)\n",
+          s2[0], s2[1]);
+
   if (i->touch)			/* if checking touches one find and we're done */
     longjmp (*i->touch, TOUCHES);
   i->s->p->Flags.status = ISECTED;
@@ -900,8 +911,10 @@ static int
 intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
 {
   int call_count = 1;
-  while (intersect_impl (jb, b, a, add))
+  while (intersect_impl (jb, b, a, add)) {
+    poly_Valid (b);
     call_count++;
+  }
   return 0;
 }
 
@@ -2343,13 +2356,21 @@ poly_Boolean_free (POLYAREA * ai, POLYAREA * bi, POLYAREA ** res, int action)
   if ((code = setjmp (e)) == 0)
     {
 #ifdef DEBUG
+      printf ("Checking input poygon A\n");
       assert (poly_Valid (a));
+      printf ("Checking input poygon B\n");
       assert (poly_Valid (b));
 #endif
 
       /* intersect needs to make a list of the contours in a and b which are intersected */
       M_POLYAREA_intersect (&e, a, b, TRUE);
 
+#ifdef DEBUG
+      printf ("Checking output poygon A\n");
+      assert (poly_Valid (a));
+      printf ("Checking output poygon B\n");
+      assert (poly_Valid (b));
+#endif
       /* We could speed things up a lot here if we only processed the relevant contours */
       /* NB: Relevant parts of a are labeled below */
       M_POLYAREA_label (b, a, FALSE);
