@@ -38,7 +38,6 @@
 #include "hidgl.h"
 
 
-
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
