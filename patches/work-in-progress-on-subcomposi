@@ -1,7 +1,7 @@
-Bottom: 5aeea97c56eaf4a53e0fbeac7db82d553529b56e
+Bottom: 62a6cfa130309907f9f5264cc9689119e2e3d865
 Top:    73dca28dd2d7c6108756683d95a00aa0c7df75e7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 02:28:45 +0000
+Date:   2009-11-15 02:31:05 +0000
 
 Work in progress on subcompositing / stencil buffers
 
@@ -414,7 +414,7 @@ index afa6a08..1900a6e 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 4df4329..45f753b 100644
+index c2251db..45f753b 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -517,14 +517,39 @@ ghid_invalidate_all ()
@@ -458,7 +458,7 @@ index 4df4329..45f753b 100644
    if (idx >= 0 && idx < max_layer + 2) {
      gport->trans_lines = TRUE;
      return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
-@@ -540,20 +565,19 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -540,8 +565,8 @@ ghid_set_layer (const char *name, int group, int empty)
  	    return TEST_FLAG (SHOWMASKFLAG, PCB);
  	  return 0;
  	case SL_SILK:
@@ -469,21 +469,7 @@ index 4df4329..45f753b 100644
  	  if (SL_MYSIDE (idx) /*|| pinout */ )
  	    return PCB->ElementOn;
  	  return 0;
- 	case SL_ASSY:
- 	  return 0;
--	case SL_RATS:
--	  gport->trans_lines = TRUE;
--	  return 1;
- 	case SL_PDRILL:
- 	case SL_UDRILL:
- 	  return 1;
- 	case SL_RATS:
-+	  if (PCB->RatOn)
-+	    gport->trans_lines = TRUE;
- 	  return PCB->RatOn;
- 	}
-     }
-@@ -563,6 +587,7 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -562,6 +587,7 @@ ghid_set_layer (const char *name, int group, int empty)
  void
  ghid_use_mask (int use_it)
  {
@@ -491,7 +477,7 @@ index 4df4329..45f753b 100644
  
    /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
    if (use_it == HID_LIVE_DRAWING ||
-@@ -574,6 +599,7 @@ ghid_use_mask (int use_it)
+@@ -573,6 +599,7 @@ ghid_use_mask (int use_it)
    if (use_it == cur_mask)
      return;
  
@@ -499,7 +485,7 @@ index 4df4329..45f753b 100644
    hidgl_flush_triangles (&buffer);
  
    switch (use_it)
-@@ -582,25 +608,28 @@ ghid_use_mask (int use_it)
+@@ -581,25 +608,28 @@ ghid_use_mask (int use_it)
        /* Write '1' to the stencil buffer where the solder-mask is drawn. */
        glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
        glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
