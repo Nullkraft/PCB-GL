@@ -1,0 +1,23 @@
+Bottom: dabe7f3c60ee2dbee5bf32a6cadfeda3f3c3f73c
+Top:    ba25690fdaa8f340c461e3fb26d8b2fc12f5984c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-15 18:59:58 +0000
+
+Refresh of move-gtk-drawing-routines-into
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 685330e..2f65ffe 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -39,9 +39,6 @@ extern HID ghid_hid;
+ static void zoom_to (double factor, int x, int y);
+ static void zoom_by (double factor, int x, int y);
+ 
+-/* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
+-*/
+-
+ int ghid_flip_x = 0, ghid_flip_y = 0;
+ 
+ /* ------------------------------------------------------------ */
