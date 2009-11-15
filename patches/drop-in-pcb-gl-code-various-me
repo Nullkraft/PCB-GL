@@ -1,5 +1,5 @@
 Bottom: beee93e65cf50d9329676ced1a89d71b385f650e
-Top:    7ae07701e0e35c8189e821e638ad4902c97e88e7
+Top:    f2bbd90e42ffecc5526a8a89eee1ea85006ba567
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 02:28:10 +0000
 
@@ -762,7 +762,7 @@ index 0000000..73d9a34
 +
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 280cfbe..be9c633 100644
+index 280cfbe..6f38fb8 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -25,34 +25,45 @@
@@ -1074,7 +1074,7 @@ index 280cfbe..be9c633 100644
    if (idx < 0)
      {
        switch (SL_TYPE (idx))
-@@ -543,11 +540,16 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -543,6 +540,8 @@ ghid_set_layer (const char *name, int group, int empty)
  	    return TEST_FLAG (SHOWMASKFLAG, PCB);
  	  return 0;
  	case SL_SILK:
@@ -1083,15 +1083,15 @@ index 280cfbe..be9c633 100644
  	  if (SL_MYSIDE (idx) /*|| pinout */ )
  	    return PCB->ElementOn;
  	  return 0;
- 	case SL_ASSY:
- 	  return 0;
-+	case SL_RATS:
-+	  gport->trans_lines = TRUE;
-+	  return 1;
- 	case SL_PDRILL:
+@@ -552,79 +551,57 @@ ghid_set_layer (const char *name, int group, int empty)
  	case SL_UDRILL:
  	  return 1;
-@@ -558,73 +560,49 @@ ghid_set_layer (const char *name, int group, int empty)
+ 	case SL_RATS:
++	  if (PCB->RatOn)
++	    gport->trans_lines = TRUE;
+ 	  return PCB->RatOn;
+ 	}
+     }
    return 0;
  }
  
@@ -1191,7 +1191,7 @@ index 280cfbe..be9c633 100644
      }
    cur_mask = use_it;
  }
-@@ -641,6 +619,9 @@ typedef struct
+@@ -641,6 +618,9 @@ typedef struct
    GdkColor color;
    int xor_set;
    GdkColor xor_color;
@@ -1201,7 +1201,7 @@ index 280cfbe..be9c633 100644
  } ColorCache;
  
  
-@@ -655,9 +636,7 @@ set_special_grid_color (void)
+@@ -655,9 +635,7 @@ set_special_grid_color (void)
    gport->grid_color.red ^= gport->bg_color.red;
    gport->grid_color.green ^= gport->bg_color.green;
    gport->grid_color.blue ^= gport->bg_color.blue;
@@ -1212,7 +1212,7 @@ index 280cfbe..be9c633 100644
  }
  
  void
-@@ -665,99 +644,138 @@ ghid_set_special_colors (HID_Attribute * ha)
+@@ -665,99 +643,138 @@ ghid_set_special_colors (HID_Attribute * ha)
  {
    if (!ha->name || !ha->value)
      return;
@@ -1395,7 +1395,7 @@ index 280cfbe..be9c633 100644
    switch (style)
      {
      case Trace_Cap:
-@@ -771,31 +789,22 @@ ghid_set_line_cap (hidGC gc, EndCapStyle style)
+@@ -771,31 +788,22 @@ ghid_set_line_cap (hidGC gc, EndCapStyle style)
        gc->join = GDK_JOIN_MITER;
        break;
      }
@@ -1432,7 +1432,7 @@ index 280cfbe..be9c633 100644
  }
  
  void
-@@ -810,200 +819,73 @@ ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2)
+@@ -810,200 +818,73 @@ ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2)
    printf ("ghid_set_line_cap_angle() -- not implemented\n");
  }
  
@@ -1660,7 +1660,7 @@ index 280cfbe..be9c633 100644
  }
  
  void
-@@ -1050,8 +932,6 @@ ghid_calibrate (double xval, double yval)
+@@ -1050,8 +931,6 @@ ghid_calibrate (double xval, double yval)
    printf ("ghid_calibrate() -- not implemented\n");
  }
  
@@ -1669,7 +1669,7 @@ index 280cfbe..be9c633 100644
  void
  ghid_notify_gui_is_up ()
  {
-@@ -1517,7 +1397,7 @@ HID ghid_hid = {
+@@ -1517,7 +1396,7 @@ HID ghid_hid = {
    1,				/* gui */
    0,				/* printer */
    0,				/* exporter */
@@ -1678,7 +1678,7 @@ index 280cfbe..be9c633 100644
    1,				/* poly after */
    0,				/* poly dicer */
  
-@@ -2158,11 +2038,14 @@ Benchmark (int argc, char **argv, int x, int y)
+@@ -2158,11 +2037,14 @@ Benchmark (int argc, char **argv, int x, int y)
    region.X2 = PCB->MaxWidth;
    region.Y2 = PCB->MaxHeight;
  
