@@ -39,6 +39,9 @@ static void zoom_by (double factor, int x, int y);
 int ghid_gui_is_up = 0;
 int ghid_flip_x = 0, ghid_flip_y = 0;
 
+GLuint fbo_name;
+GLuint tex_name;
+
 /* ------------------------------------------------------------ */
 
 static inline int 
