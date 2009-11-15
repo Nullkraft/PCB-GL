@@ -1,5 +1,5 @@
 Bottom: 8fb5fc0a54547a57089dd47948bb0f76d1d70408
-Top:    7fef7d191425e5a3b8a550169fcb1824a1a20e44
+Top:    5388462e82076ca88e044428c18e74bf17315a42
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 02:35:02 +0000
 
@@ -157,7 +157,7 @@ index cce46ab..8fee2ca 100644
  {
    int min_silk_line;
 diff --git a/src/draw.h b/src/draw.h
-index 5d7c874..4c6528c 100644
+index 5d7c874..94ea83d 100644
 --- a/src/draw.h
 +++ b/src/draw.h
 @@ -74,6 +74,19 @@ void EraseObject (int, void *, void *);
@@ -172,7 +172,7 @@ index 5d7c874..4c6528c 100644
 +void DrawEMark (ElementTypePtr, LocationType, LocationType, Boolean);
 +void DrawHole (PinTypePtr);
 +void DrawRats (BoxType *);
-+void DrawSilk (int, int, BoxType *);
++void DrawSilk (int, int, const BoxType *);
 +void DrawSpecialPolygon (HID * hid, hidGC DrawGC, LocationType X, LocationType Y, int Thickness, int thin_draw);
 +
 +/* TEMPORARY */
@@ -181,7 +181,7 @@ index 5d7c874..4c6528c 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index aa590a6..6656139 100644
+index aa590a6..12584da 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -519,68 +519,89 @@ ghid_invalidate_all ()
@@ -312,16 +312,15 @@ index aa590a6..6656139 100644
  	    return PCB->ElementOn;
  	  return 0;
  	case SL_ASSY:
-@@ -593,7 +614,7 @@ ghid_set_layer (const char *name, int group, int empty)
- 	    gport->trans_lines = TRUE;
+@@ -594,6 +615,7 @@ ghid_set_layer (const char *name, int group, int empty)
  	  return PCB->RatOn;
  	}
--    }
+     }
 +
    return 0;
  }
  
-@@ -702,9 +723,9 @@ ghid_set_special_colors (HID_Attribute * ha)
+@@ -702,9 +724,9 @@ ghid_set_special_colors (HID_Attribute * ha)
      }
  }
  
