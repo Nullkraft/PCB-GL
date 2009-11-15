@@ -1,0 +1,64 @@
+Bottom: f974506726d77532565539bb9e17880dee9ed379
+Top:    5224128c6fdf2b154292dc1525f24b983e0bf916
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-15 02:27:20 +0000
+
+Add SL_RATS layer ID to tell the GUI we're drawing rats
+
+Also, let the GUI decide whether it wants to draw rats or not,
+rather than have the core test PCB->RatsOn directly.
+
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 8340b85..b843da6 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -518,7 +518,7 @@ DrawEverything (BoxTypePtr drawn_area)
+ 	r_search (PCB->Data->element_tree, drawn_area, NULL, EMark_callback,
+ 		  NULL);
+       /* Draw rat lines on top */
+-      if (PCB->RatOn)
++      if (gui->set_layer ("rats", SL (RATS, 0), 0))
+ 	DrawRats(drawn_area);
+     }
+ 
+diff --git a/src/hid.h b/src/hid.h
+index ee48b9f..7966346 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -214,6 +214,7 @@ extern "C"
+ #define SL_INVISIBLE	0x0060
+ #define SL_FAB		0x0070
+ #define SL_ASSY		0x0080
++#define SL_RATS		0x0090
+ /* Callers should use this.  */
+ #define SL(type,side) (~0xfff | SL_##type | SL_##side##_SIDE)
+ 
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index cbdd104..280cfbe 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -551,6 +551,8 @@ ghid_set_layer (const char *name, int group, int empty)
+ 	case SL_PDRILL:
+ 	case SL_UDRILL:
+ 	  return 1;
++	case SL_RATS:
++	  return PCB->RatOn;
+ 	}
+     }
+   return 0;
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 93bb2b8..6ff7e74 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -2890,6 +2890,8 @@ lesstif_set_layer (const char *name, int group, int empty)
+ 	case SL_UDRILL:
+ 	case SL_PDRILL:
+ 	  return 1;
++	case SL_RATS:
++	  return PCB->RatOn;
+ 	}
+     }
+   return 0;
