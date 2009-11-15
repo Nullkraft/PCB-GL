@@ -1,0 +1,116 @@
+Bottom: c51b9e60d1b53a61062ee0488e2cc5e0c4411efb
+Top:    eb9c2a991ebe5cbde1fc851cb0bc71b92cd4ae7e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-15 17:52:15 +0000
+
+Refresh of ugly-ugly-hack-to-make-pretty-
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index d240b7a..7a2b283 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -281,25 +281,30 @@ typedef struct
+   double blue;
+ } ColorCache;
+ 
++static char *current_color = NULL;
++static double global_alpha_mult = 1.0;
++static int alpha_changed = 0;
++
+ void
+ ghid_set_color (hidGC gc, const char *name)
+ {
+   static void *cache = NULL;
+-  static char *old_name = NULL;
+   hidval cval;
+   ColorCache *cc;
+   double alpha_mult = 1.0;
+   double r, g, b, a;
+   a = 1.0;
+ 
+-  if (old_name != NULL)
++  if (!alpha_changed && current_color != NULL)
+     {
+-      if (strcmp (name, old_name) == 0)
++      if (strcmp (name, current_color) == 0)
+         return;
+-      free (old_name);
++      free (current_color);
+     }
+ 
+-  old_name = strdup (name);
++  alpha_changed = 0;
++
++  current_color = strdup (name);
+ 
+   if (name == NULL)
+     {
+@@ -373,6 +378,7 @@ ghid_set_color (hidGC gc, const char *name)
+     }
+   if (1) {
+     double maxi, mult;
++    alpha_mult *= global_alpha_mult;
+     if (gport->trans_lines)
+       a = a * alpha_mult;
+     maxi = r;
+@@ -394,6 +400,16 @@ ghid_set_color (hidGC gc, const char *name)
+ }
+ 
+ void
++ghid_global_alpha_mult (hidGC gc, double alpha_mult)
++{
++  if (alpha_mult != global_alpha_mult) {
++    global_alpha_mult = alpha_mult;
++    alpha_changed = 1;
++    ghid_set_color (gc, current_color);
++  }
++}
++
++void
+ ghid_set_line_cap (hidGC gc, EndCapStyle style)
+ {
+   gc->cap = style;
+@@ -499,6 +515,15 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ }
+ 
+ void
++ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
++{
++  common_thindraw_pcb_polygon (gc, poly, clip_box);
++  ghid_global_alpha_mult (gc, 0.25);
++  ghid_fill_pcb_polygon (gc, poly, clip_box);
++  ghid_global_alpha_mult (gc, 1.0);
++}
++
++void
+ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
+ {
+   USE_GC (gc);
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 86eb930..0f9da0b 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -1463,7 +1463,7 @@ HID ghid_hid = {
+   ghid_fill_circle,
+   ghid_fill_polygon,
+   ghid_fill_pcb_polygon,
+-  ghid_thindraw_pcb_polygon,
++  common_thindraw_pcb_polygon,
+   ghid_fill_rect,
+ 
+   ghid_calibrate,
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index fd33f94..9d732ec 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -567,6 +567,8 @@ void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
+ void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
+ void ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly,
+                             const BoxType *clip_box); /* GL ONLY */
++void ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
++                                const BoxType *clip_box); /* GL ONLY */
+ void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
+ 
+ /* gtkhid-main.c */
