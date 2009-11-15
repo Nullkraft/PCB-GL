@@ -569,6 +569,8 @@ void ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
 void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
 
 /* gtkhid-main.c */
+extern GLuint fbo_name;
+extern GLuint tex_name;
 
 void ghid_invalidate_all ();
 void ghid_global_alpha_mult (hidGC gc, double alpha_mult);
