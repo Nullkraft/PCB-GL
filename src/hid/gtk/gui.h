@@ -525,6 +525,9 @@ void ghid_port_rotate (void *ball, float *quarternion, gpointer userdata);
 void ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata);
 
 /* gtkhid-main.c */
+extern GLuint fbo_name;
+extern GLuint tex_name;
+
 void ghid_invalidate_current_gc ();
 void ghid_get_coords (const char *msg, int *x, int *y);
 gint PCBChanged (int argc, char **argv, int x, int y);
