@@ -1,7 +1,7 @@
-Bottom: dda04d460eb0ab8011d5df43d3634587ee2a0b02
-Top:    ae07ac1401550fdd3a1a21a4136a35ec7c99b462
+Bottom: 94fe3295049a2847ce10533a587d24ad245456db
+Top:    2f9618c1bf3b409c1c7c293096235b5a23e75779
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 18:00:49 +0000
+Date:   2009-11-15 19:51:40 +0000
 
 Shiny 3D eye-candy
 
@@ -11,10 +11,10 @@ Experiments in progress - don't expect this to work yet!
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7a2b283..bb0d10f 100644
+index 6b1e306..ae58cbb 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -38,6 +38,7 @@ ghid_draw_grid ()
+@@ -68,6 +68,7 @@ ghid_draw_grid ()
    static int npoints = 0;
    int x1, y1, x2, y2, n, i;
    double x, y;
@@ -22,7 +22,7 @@ index 7a2b283..bb0d10f 100644
  
    if (!Settings.DrawGrid)
      return;
-@@ -89,23 +90,24 @@ ghid_draw_grid ()
+@@ -119,23 +120,24 @@ ghid_draw_grid ()
      {
        npoints = n + 10;
        points =
@@ -52,10 +52,10 @@ index 7a2b283..bb0d10f 100644
      }
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 28759ec..2f9611b 100644
+index 436ea99..2ced7d5 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -362,6 +362,18 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -359,6 +359,18 @@ ghid_set_layer (const char *name, int group, int empty)
    /* Flush out any existing geoemtry to be rendered */
    hidgl_flush_triangles (&buffer);
  

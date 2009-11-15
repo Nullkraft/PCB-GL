@@ -1,7 +1,7 @@
-Bottom: 371ff44c735b2754def2d223914706f507bdefb3
-Top:    92de7e07c19e606cbc28ae4e3819a4b7326d3e52
+Bottom: 2d1efa147c77ded17e39639001d2f005b47ecc97
+Top:    eb994ff40818beb5ba8a34ea4c0d916d3b5ef12f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 17:45:51 +0000
+Date:   2009-11-15 19:51:37 +0000
 
 Work in progress on subcompositing / stencil buffers
 
@@ -414,10 +414,10 @@ index afa6a08..1900a6e 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 04ea728..d240b7a 100644
+index 430059b..fec839e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -185,6 +185,7 @@ ghid_draw_bg_image (void)
+@@ -215,6 +215,7 @@ ghid_draw_bg_image (void)
  void
  ghid_use_mask (int use_it)
  {
@@ -425,7 +425,7 @@ index 04ea728..d240b7a 100644
  
    /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
    if (use_it == HID_LIVE_DRAWING ||
-@@ -196,6 +197,7 @@ ghid_use_mask (int use_it)
+@@ -226,6 +227,7 @@ ghid_use_mask (int use_it)
    if (use_it == cur_mask)
      return;
  
@@ -433,7 +433,7 @@ index 04ea728..d240b7a 100644
    hidgl_flush_triangles (&buffer);
  
    switch (use_it)
-@@ -204,25 +206,28 @@ ghid_use_mask (int use_it)
+@@ -234,25 +236,28 @@ ghid_use_mask (int use_it)
        /* Write '1' to the stencil buffer where the solder-mask is drawn. */
        glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
        glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
@@ -466,10 +466,10 @@ index 04ea728..d240b7a 100644
        break;
      }
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index b0cc1fd..5b75127 100644
+index a39bc7d..6456174 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -349,14 +349,39 @@ ghid_invalidate_all ()
+@@ -346,14 +346,39 @@ ghid_invalidate_all ()
    gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
  }
  
@@ -510,7 +510,7 @@ index b0cc1fd..5b75127 100644
    if (idx >= 0 && idx < max_layer + 2) {
      gport->trans_lines = TRUE;
      return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
-@@ -372,8 +397,7 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -369,8 +394,7 @@ ghid_set_layer (const char *name, int group, int empty)
  	    return TEST_FLAG (SHOWMASKFLAG, PCB);
  	  return 0;
  	case SL_SILK:
@@ -615,7 +615,7 @@ index 4caddf2..faa09fe 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index b6e0224..162ad9c 100644
+index 0ecc466..2c28955 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2669,6 +2669,7 @@ ghid_parse_arguments (int *argc, char ***argv)
