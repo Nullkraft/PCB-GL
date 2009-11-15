@@ -462,6 +462,12 @@ ghid_invalidate_current_gc (void)
 static int
 use_gc (hidGC gc)
 {
+  if (gc->me_pointer != &ghid_hid)
+    {
+      fprintf (stderr, "Fatal: GC from another HID passed to GTK HID\n");
+      abort ();
+    }
+
   if (current_gc == gc)
     return 1;
 
