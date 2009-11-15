@@ -39,9 +39,6 @@ extern HID ghid_hid;
 static void zoom_to (double factor, int x, int y);
 static void zoom_by (double factor, int x, int y);
 
-/* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
-*/
-
 int ghid_flip_x = 0, ghid_flip_y = 0;
 
 /* ------------------------------------------------------------ */
