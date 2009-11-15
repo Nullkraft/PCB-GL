@@ -1,5 +1,5 @@
 Bottom: 861456d4b2f96c7df46889f44e5f8dcba0c0191f
-Top:    acfc36c8a578b1e206206151eba0f84d7ed8d712
+Top:    f6c5f1b8a8696454861bec73c082d74ee93e3825
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 02:09:32 +0000
 
@@ -14,7 +14,7 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 66ec017..399b614 100644
+index 66ec017..c509712 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -420,6 +420,7 @@ DrawEverything (BoxTypePtr drawn_area)
@@ -65,6 +65,15 @@ index 66ec017..399b614 100644
    if (gui->gui)
      {
        /* Draw element Marks */
+@@ -518,7 +530,7 @@ DrawEverything (BoxTypePtr drawn_area)
+ 	r_search (PCB->Data->element_tree, drawn_area, NULL, EMark_callback,
+ 		  NULL);
+       /* Draw rat lines on top */
+-      if (PCB->RatOn && gui->set_layer ("rats", SL (RATS, 0), 0))
++      if (gui->set_layer ("rats", SL (RATS, 0), 0))
+ 	DrawRats(drawn_area);
+     }
+ 
 @@ -553,19 +565,30 @@ DrawEverything (BoxTypePtr drawn_area)
  		DrawPadLowLevel (Output.fgGC, pad, False, False);
  	  }
@@ -414,7 +423,7 @@ index afa6a08..1900a6e 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 65f59cb..c9a3f06 100644
+index 65f59cb..45f753b 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -517,14 +517,39 @@ ghid_invalidate_all ()
@@ -458,7 +467,7 @@ index 65f59cb..c9a3f06 100644
    if (idx >= 0 && idx < max_layer + 2) {
      gport->trans_lines = TRUE;
      return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
-@@ -540,8 +565,8 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -540,19 +565,20 @@ ghid_set_layer (const char *name, int group, int empty)
  	    return TEST_FLAG (SHOWMASKFLAG, PCB);
  	  return 0;
  	case SL_SILK:
@@ -469,7 +478,22 @@ index 65f59cb..c9a3f06 100644
  	  if (SL_MYSIDE (idx) /*|| pinout */ )
  	    return PCB->ElementOn;
  	  return 0;
-@@ -561,6 +586,7 @@ ghid_set_layer (const char *name, int group, int empty)
+ 	case SL_ASSY:
+ 	  return 0;
+-	case SL_RATS:
+-	  gport->trans_lines = TRUE;
+-	  return 1;
+ 	case SL_PDRILL:
+ 	case SL_UDRILL:
+ 	  return 1;
++	case SL_RATS:
++	  if (PCB->RatOn)
++	    gport->trans_lines = TRUE;
++	  return PCB->RatOn;
+ 	}
+     }
+   return 0;
+@@ -561,6 +587,7 @@ ghid_set_layer (const char *name, int group, int empty)
  void
  ghid_use_mask (int use_it)
  {
@@ -477,7 +501,7 @@ index 65f59cb..c9a3f06 100644
  
    /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
    if (use_it == HID_LIVE_DRAWING ||
-@@ -572,6 +598,7 @@ ghid_use_mask (int use_it)
+@@ -572,6 +599,7 @@ ghid_use_mask (int use_it)
    if (use_it == cur_mask)
      return;
  
@@ -485,7 +509,7 @@ index 65f59cb..c9a3f06 100644
    hidgl_flush_triangles (&buffer);
  
    switch (use_it)
-@@ -580,25 +607,28 @@ ghid_use_mask (int use_it)
+@@ -580,25 +608,28 @@ ghid_use_mask (int use_it)
        /* Write '1' to the stencil buffer where the solder-mask is drawn. */
        glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
        glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
@@ -631,6 +655,19 @@ index b6e0224..162ad9c 100644
  
    ghid_config_files_read (argc, argv);
  
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 93bb2b8..6ff7e74 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -2890,6 +2890,8 @@ lesstif_set_layer (const char *name, int group, int empty)
+ 	case SL_UDRILL:
+ 	case SL_PDRILL:
+ 	  return 1;
++	case SL_RATS:
++	  return PCB->RatOn;
+ 	}
+     }
+   return 0;
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
 index ee3a896..1282331 100644
 --- a/src/hid/nelma/nelma.c
