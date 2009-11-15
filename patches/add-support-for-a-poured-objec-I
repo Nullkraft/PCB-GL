@@ -1,7 +1,7 @@
-Bottom: 41765aea8a0e02c31fee024cda93fe4d584f817a
-Top:    a89d601aeae15175c023fec4e7a4d46f38ea745d
+Bottom: 3ca3af04c20bb13758481782da50f2d6df58e7a2
+Top:    d5220efc73fcb1d4a6543fbc97a0a3e121686549
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 02:43:53 +0000
+Date:   2009-11-15 18:10:35 +0000
 
 Add support for a "poured" object.
 
@@ -35,7 +35,7 @@ index cd6f4f9..4ab3813 100755
  						/* an element */
  #define	MAX_LIBRARY_LINE_LENGTH		255	/* maximum line length in the */
 diff --git a/src/Makefile.am b/src/Makefile.am
-index af714d8..4b2553e 100644
+index c936738..6adf90c 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -120,6 +120,8 @@ PCB_SRCS = \
@@ -1833,10 +1833,10 @@ index a994c84..4c9fae6 100644
  ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
  				 FontTypePtr, FlagType, char *, char *,
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 601d5d6..fe3b547 100644
+index cea493a..d75cfbe 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -78,6 +78,7 @@ static int CrosshairStackLocation = 0;
+@@ -77,6 +77,7 @@ static int CrosshairStackLocation = 0;
   * some local prototypes
   */
  static void XORPolygon (PolygonTypePtr, LocationType, LocationType);
@@ -1844,7 +1844,7 @@ index 601d5d6..fe3b547 100644
  static void XORDrawElement (ElementTypePtr, LocationType, LocationType);
  static void XORDrawBuffer (BufferTypePtr);
  static void XORDrawInsertPointObject (void);
-@@ -93,6 +94,8 @@ static void XORDrawAttachedArc (BDimension);
+@@ -92,6 +93,8 @@ static void XORDrawAttachedArc (BDimension);
  static void
  XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
  {
@@ -1853,7 +1853,7 @@ index 601d5d6..fe3b547 100644
    int i;
    for (i = 0; i < polygon->PointN - 1; i++)
      gui->draw_line (Crosshair.GC,
-@@ -103,6 +106,25 @@ XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
+@@ -102,6 +105,25 @@ XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
      gui->draw_line (Crosshair.GC,
  		    polygon->Points[i].X + dx, polygon->Points[i].Y + dy,
  		    polygon->Points[0].X + dx, polygon->Points[0].Y + dy);
@@ -1879,7 +1879,7 @@ index 601d5d6..fe3b547 100644
  }
  
  /*-----------------------------------------------------------
-@@ -351,9 +373,11 @@ XORDrawBuffer (BufferTypePtr Buffer)
+@@ -350,9 +372,11 @@ XORDrawBuffer (BufferTypePtr Buffer)
  	/* the tmp polygon has n+1 points because the first
  	 * and the last one are set to the same coordinates
  	 */
@@ -1893,7 +1893,7 @@ index 601d5d6..fe3b547 100644
  	}
  	END_LOOP;
        }
-@@ -453,6 +477,18 @@ XORDrawMoveOrCopyObject (void)
+@@ -452,6 +476,18 @@ XORDrawMoveOrCopyObject (void)
  	break;
        }
  
@@ -1912,7 +1912,7 @@ index 601d5d6..fe3b547 100644
      case LINEPOINT_TYPE:
        {
  	LineTypePtr line;
-@@ -471,24 +507,24 @@ XORDrawMoveOrCopyObject (void)
+@@ -470,24 +506,24 @@ XORDrawMoveOrCopyObject (void)
  	break;
        }
  
@@ -1944,7 +1944,7 @@ index 601d5d6..fe3b547 100644
  	  }
  	else
  	  {
-@@ -599,8 +635,8 @@ DrawAttached (Boolean BlockToo)
+@@ -598,8 +634,8 @@ DrawAttached (Boolean BlockToo)
  	}
        break;
  
@@ -1955,7 +1955,7 @@ index 601d5d6..fe3b547 100644
        /* draw only if starting point is set */
        if (Crosshair.AttachedLine.State != STATE_FIRST)
  	gui->draw_line (Crosshair.GC,
-@@ -609,10 +645,10 @@ DrawAttached (Boolean BlockToo)
+@@ -608,10 +644,10 @@ DrawAttached (Boolean BlockToo)
  			Crosshair.AttachedLine.Point2.X,
  			Crosshair.AttachedLine.Point2.Y);
  
@@ -1969,7 +1969,7 @@ index 601d5d6..fe3b547 100644
  	}
        break;
  
-@@ -989,7 +1025,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+@@ -988,7 +1024,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
  
    if (TEST_FLAG (SNAPPINFLAG, PCB))
      ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
@@ -1978,7 +1978,7 @@ index 601d5d6..fe3b547 100644
    else
      ans = NO_TYPE;
  
-@@ -1164,6 +1200,6 @@ void
+@@ -1163,6 +1199,6 @@ void
  DestroyCrosshair (void)
  {
    CrosshairOff (True);
@@ -2790,7 +2790,7 @@ index e8ad916..e1b6290 100644
        break;
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 4e7fb87..efa5dc5 100644
+index 2e3c638..579f425 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -455,7 +455,7 @@ have_crosshair_attachments (void)
