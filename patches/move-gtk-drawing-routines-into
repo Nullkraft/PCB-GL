@@ -1,5 +1,5 @@
 Bottom: beee93e65cf50d9329676ced1a89d71b385f650e
-Top:    fd793a5af83c9095d3fcabe6693e9f286a99d294
+Top:    098cf985f3c169e8ac7e483f88ea60756ddf1a38
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 16:13:57 +0000
 
@@ -29,10 +29,10 @@ index 1c97b60..371173a 100644
  	hid/gtk/gui-command-window.c \
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
 new file mode 100644
-index 0000000..77661ee
+index 0000000..2f49da7
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -0,0 +1,621 @@
+@@ -0,0 +1,599 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -40,33 +40,11 @@ index 0000000..77661ee
 +#endif
 +
 +#include <stdio.h>
-+#include <stdlib.h>
-+#ifdef HAVE_STRING_H
-+#include <string.h>
-+#endif
-+#include <math.h>
-+#include <time.h>
 +
-+
-+#include "global.h"
-+#include "action.h"
 +#include "crosshair.h"
-+#include "data.h"
-+#include "draw.h"
-+#include "error.h"
-+#include "mymem.h"
-+#include "draw.h"
 +#include "clip.h"
-+
-+#include "hid.h"
 +#include "../hidint.h"
 +#include "gui.h"
-+#include "hid/common/draw_helpers.h"
-+
-+
-+#if !GTK_CHECK_VERSION(2,8,0) && defined(HAVE_GDK_GDKX_H)
-+#include <gdk/gdkx.h>
-+#endif
 +
 +#ifdef HAVE_LIBDMALLOC
 +#include <dmalloc.h>
@@ -655,10 +633,28 @@ index 0000000..77661ee
 +                      x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 +}
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 280cfbe..aa41792 100644
+index 280cfbe..685330e 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -49,10 +49,6 @@ static void zoom_by (double factor, int x, int y);
+@@ -13,17 +13,9 @@
+ #include <time.h>
+ 
+ 
+-#include "global.h"
+ #include "action.h"
+ #include "crosshair.h"
+-#include "data.h"
+-#include "draw.h"
+ #include "error.h"
+-#include "mymem.h"
+-#include "draw.h"
+-#include "clip.h"
+-
+-#include "hid.h"
+ #include "../hidint.h"
+ #include "gui.h"
+ #include "hid/common/draw_helpers.h"
+@@ -49,10 +41,6 @@ static void zoom_by (double factor, int x, int y);
  
  /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
  */
@@ -669,7 +665,7 @@ index 280cfbe..aa41792 100644
  
  int ghid_flip_x = 0, ghid_flip_y = 0;
  
-@@ -326,79 +322,6 @@ zoom_by (double factor, int x, int y)
+@@ -326,79 +314,6 @@ zoom_by (double factor, int x, int y)
  
  /* ------------------------------------------------------------ */
  
@@ -749,7 +745,7 @@ index 280cfbe..aa41792 100644
  HID_Attribute *
  ghid_get_export_options (int *n_ret)
  {
-@@ -418,44 +341,6 @@ ghid_invalidate_lr (int left, int right, int top, int bottom, int last)
+@@ -418,44 +333,6 @@ ghid_invalidate_lr (int left, int right, int top, int bottom, int last)
    ghid_invalidate_all ();
  }
  
@@ -794,7 +790,7 @@ index 280cfbe..aa41792 100644
  void
  ghid_invalidate_all ()
  {
-@@ -515,7 +400,7 @@ ghid_invalidate_all ()
+@@ -515,7 +392,7 @@ ghid_invalidate_all ()
    ghid_draw_bg_image();
  
    hid_expose_callback (&ghid_hid, &region, 0);
@@ -803,7 +799,7 @@ index 280cfbe..aa41792 100644
    if (ghidgui->need_restore_crosshair)
      RestoreCrosshair (FALSE);
    ghidgui->need_restore_crosshair = FALSE;
-@@ -558,454 +443,11 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -558,454 +435,11 @@ ghid_set_layer (const char *name, int group, int empty)
    return 0;
  }
  
