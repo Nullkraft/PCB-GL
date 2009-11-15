@@ -1,7 +1,7 @@
-Bottom: 2cab48b3c68b8330e62e586be9b5448a5ef92721
-Top:    1ff94988e1f52932249ef5b0742dfeb90df13693
+Bottom: 747f6ec31f6d19ab4bf8e5295e0b8839f7557ba8
+Top:    053d4a2864757c39a0180ebb4e72d3e5ac6bf66c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 02:33:56 +0000
+Date:   2009-11-15 17:41:35 +0000
 
 Work in progress on subcompositing / stencil buffers
 
@@ -414,10 +414,10 @@ index afa6a08..1900a6e 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index c2251db..e872e87 100644
+index e532c9a..28fd8b1 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -517,14 +517,39 @@ ghid_invalidate_all ()
+@@ -508,14 +508,39 @@ ghid_invalidate_all ()
    gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
  }
  
@@ -458,7 +458,7 @@ index c2251db..e872e87 100644
    if (idx >= 0 && idx < max_layer + 2) {
      gport->trans_lines = TRUE;
      return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
-@@ -540,8 +565,7 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -531,8 +556,7 @@ ghid_set_layer (const char *name, int group, int empty)
  	    return TEST_FLAG (SHOWMASKFLAG, PCB);
  	  return 0;
  	case SL_SILK:
@@ -468,7 +468,7 @@ index c2251db..e872e87 100644
  	  if (SL_MYSIDE (idx) /*|| pinout */ )
  	    return PCB->ElementOn;
  	  return 0;
-@@ -562,6 +586,7 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -553,6 +577,7 @@ ghid_set_layer (const char *name, int group, int empty)
  void
  ghid_use_mask (int use_it)
  {
@@ -476,7 +476,7 @@ index c2251db..e872e87 100644
  
    /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
    if (use_it == HID_LIVE_DRAWING ||
-@@ -573,6 +598,7 @@ ghid_use_mask (int use_it)
+@@ -564,6 +589,7 @@ ghid_use_mask (int use_it)
    if (use_it == cur_mask)
      return;
  
@@ -484,7 +484,7 @@ index c2251db..e872e87 100644
    hidgl_flush_triangles (&buffer);
  
    switch (use_it)
-@@ -581,25 +607,28 @@ ghid_use_mask (int use_it)
+@@ -572,25 +598,28 @@ ghid_use_mask (int use_it)
        /* Write '1' to the stencil buffer where the solder-mask is drawn. */
        glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
        glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
@@ -517,7 +517,7 @@ index c2251db..e872e87 100644
        break;
      }
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 7db1e7d..8ec5dad 100644
+index 896f8c4..57bedf9 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -35,6 +35,7 @@
@@ -528,7 +528,7 @@ index 7db1e7d..8ec5dad 100644
  
  #include <gdk/gdkkeysyms.h>
  
-@@ -792,6 +793,17 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -791,6 +792,17 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
      return FALSE;
    }
  
@@ -546,7 +546,7 @@ index 7db1e7d..8ec5dad 100644
    ghid_show_crosshair (FALSE);
  
    glEnable (GL_BLEND);
-@@ -814,12 +826,20 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -813,12 +825,20 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -567,7 +567,7 @@ index 7db1e7d..8ec5dad 100644
  
    region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
    region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-@@ -845,6 +865,12 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -844,6 +864,12 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
