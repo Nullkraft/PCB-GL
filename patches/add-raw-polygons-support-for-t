@@ -1,5 +1,5 @@
 Bottom: d04abdf0dee3ac50fcd670fcfc719f7c48bcd666
-Top:    d32d60e56a4b21efff211c3149f047939fbb22b7
+Top:    747f6ec31f6d19ab4bf8e5295e0b8839f7557ba8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 17:38:50 +0000
 
@@ -217,25 +217,10 @@ index e50392f..04ea728 100644
  {
    USE_GC (gc);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index d6b0c8c..420ca2f 100644
+index d6b0c8c..e532c9a 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -872,6 +872,14 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
- }
- 
- void
-+ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
-+{
-+  USE_GC (gc);
-+
-+  hidgl_fill_pcb_polygon (poly, clip_box, gport->zoom);
-+}
-+
-+void
- ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
- {
-   USE_GC (gc);
-@@ -1414,7 +1422,7 @@ HID ghid_hid = {
+@@ -1414,7 +1414,7 @@ HID ghid_hid = {
    ghid_draw_rect,
    ghid_fill_circle,
    ghid_fill_polygon,
