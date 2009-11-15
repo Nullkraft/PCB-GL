@@ -1,7 +1,7 @@
-Bottom: 3cd6c0d796de9960de0a3b847cb27f2e6d925ce2
-Top:    1f697a8d8e12b614113980e5ee54a597b420d3e9
+Bottom: d61f10817d34cd3b9f23e53da24fd1fbdede4c28
+Top:    8ba3fcc36da44e8de66642dd902ce7581a13b2f9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 18:07:25 +0000
+Date:   2009-11-15 19:52:43 +0000
 
 Major re-write to drawing routines
 
@@ -181,10 +181,10 @@ index 5d7c874..94ea83d 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 090a49d..f0752d0 100644
+index 87daf19..8705cd4 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -283,9 +283,9 @@ typedef struct
+@@ -313,9 +313,9 @@ typedef struct
    double blue;
  } ColorCache;
  
@@ -198,10 +198,10 @@ index 090a49d..f0752d0 100644
  void
  ghid_set_color (hidGC gc, const char *name)
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 2f9611b..8e28d2e 100644
+index 2ced7d5..4ea6468 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -349,68 +349,89 @@ ghid_invalidate_all ()
+@@ -346,68 +346,89 @@ ghid_invalidate_all ()
    gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
  }
  
@@ -329,7 +329,7 @@ index 2f9611b..8e28d2e 100644
  	    return PCB->ElementOn;
  	  return 0;
  	case SL_ASSY:
-@@ -424,6 +445,7 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -421,6 +442,7 @@ ghid_set_layer (const char *name, int group, int empty)
  	  return PCB->RatOn;
  	}
      }
@@ -1026,10 +1026,10 @@ index d6abd71..71c2ada 100644
  }
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 8e98038..3536168 100644
+index 822865d..84691e7 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -577,6 +577,7 @@ void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
+@@ -561,6 +561,7 @@ void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
  /* gtkhid-main.c */
  
  void ghid_invalidate_all ();

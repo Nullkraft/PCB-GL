@@ -1,7 +1,7 @@
-Bottom: 1f697a8d8e12b614113980e5ee54a597b420d3e9
-Top:    e1aa5966c6a871d0c78e84ce6fbab4b197509f7a
+Bottom: 8ba3fcc36da44e8de66642dd902ce7581a13b2f9
+Top:    1da67672a808936174fd49e7f8f0ebdcb4e6159a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 18:07:58 +0000
+Date:   2009-11-15 19:52:44 +0000
 
 Silly space navigator interface to allow funky views
 
@@ -88,7 +88,7 @@ index 71c2ada..48580cf 100644
 +}
 +
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 21076f0..141195b 100644
+index ae88a45..794f2af 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -123,6 +123,7 @@ a zoom in/out.
@@ -107,7 +107,7 @@ index 21076f0..141195b 100644
    g_signal_connect (trackball, "rotation-changed",
                      G_CALLBACK (ghid_port_rotate), NULL);
    g_signal_connect (trackball, "view-2d-changed",
-@@ -2758,6 +2760,12 @@ ghid_do_export (HID_Attr_Val * options)
+@@ -2737,6 +2739,12 @@ ghid_do_export (HID_Attr_Val * options)
    if (stdin_listen)
      ghid_create_listener ();
  
@@ -176,10 +176,10 @@ index d6bd03c..3af647e 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 3536168..3dff93a 100644
+index 84691e7..5b7c0af 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -197,6 +197,8 @@ typedef struct
+@@ -181,6 +181,8 @@ typedef struct
      library_window_width,
      library_window_height,
      netlist_window_height, history_size, settings_mode, auto_pan_speed;
@@ -188,7 +188,7 @@ index 3536168..3dff93a 100644
  }
  GhidGui;
  
-@@ -209,6 +211,7 @@ typedef struct
+@@ -193,6 +195,7 @@ typedef struct
  {
    GtkWidget *top_window,	/* toplevel widget              */
     *drawing_area;		/* and its drawing area */
@@ -196,7 +196,7 @@ index 3536168..3dff93a 100644
    GdkPixmap *pixmap, *mask;
    GdkDrawable *drawable;	/* Current drawable for drawing routines */
    gint width, height;
-@@ -376,6 +379,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -358,6 +361,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
  

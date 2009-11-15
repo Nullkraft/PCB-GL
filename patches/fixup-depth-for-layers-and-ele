@@ -1,7 +1,7 @@
-Bottom: 4083f5c0cf7228aee44f84cc9d3cd5fffc10f4b3
-Top:    93ad142f6fccd642d7a68457f290d127222e5643
+Bottom: 0e9d76b05008d0d96555af94f79f6459df118023
+Top:    635caf108e6495ad904565f4123d7fdb68ec41aa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 18:10:00 +0000
+Date:   2009-11-15 19:52:48 +0000
 
 Fixup depth for layers and element marks
 
@@ -9,10 +9,10 @@ Fixup depth for layers and element marks
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index a56ed94..4c55251 100644
+index 05520df..7246aa4 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -375,7 +375,7 @@ int compute_depth (int group)
+@@ -372,7 +372,7 @@ int compute_depth (int group)
    if (group >= 0 && group < max_layer) {
      newgroup = group;
  

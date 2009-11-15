@@ -1,7 +1,7 @@
-Bottom: 2da52be40750047549a969ed9ad4eadd65d4b8d1
-Top:    4083f5c0cf7228aee44f84cc9d3cd5fffc10f4b3
+Bottom: 58931b894118367baa4f56408825ccd35a4b85e2
+Top:    0e9d76b05008d0d96555af94f79f6459df118023
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 18:09:33 +0000
+Date:   2009-11-15 19:52:47 +0000
 
 Layer fixes
 
@@ -14,10 +14,10 @@ Fix rendering depths for silk and mask layers
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 8e28d2e..a56ed94 100644
+index 4ea6468..05520df 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -353,36 +353,47 @@ int compute_depth (int group)
+@@ -350,36 +350,47 @@ int compute_depth (int group)
  {
    static int last_depth_computed = 0;
  
