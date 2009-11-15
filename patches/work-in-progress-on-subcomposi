@@ -1,7 +1,7 @@
-Bottom: 62a6cfa130309907f9f5264cc9689119e2e3d865
-Top:    e35f13e7defae8cc0c8c759a5655661cce731701
+Bottom: 2cab48b3c68b8330e62e586be9b5448a5ef92721
+Top:    1ff94988e1f52932249ef5b0742dfeb90df13693
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 02:31:05 +0000
+Date:   2009-11-15 02:33:56 +0000
 
 Work in progress on subcompositing / stencil buffers
 
@@ -133,7 +133,7 @@ index 7966346..ffb84a2 100644
  #define SL(type,side) (~0xfff | SL_##type | SL_##side##_SIDE)
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 413d92f..06b62e4 100644
+index 4594c63..c2efdd4 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -584,28 +584,27 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
@@ -169,7 +169,7 @@ index 413d92f..06b62e4 100644
  };
  
  static int
-@@ -617,74 +616,89 @@ do_hole (const BoxType *b, void *cl)
+@@ -618,74 +617,89 @@ do_hole (const BoxType *b, void *cl)
    if (curc->Flags.orient == PLF_DIR) {
      return 0;
    }
@@ -291,7 +291,7 @@ index 413d92f..06b62e4 100644
  
    gluDeleteTess (info.tobj);
    myFreeCombined ();
-@@ -699,6 +713,92 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
+@@ -700,6 +714,92 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
    hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
  }
  
