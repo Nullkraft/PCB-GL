@@ -1,7 +1,7 @@
-Bottom: 2da52be40750047549a969ed9ad4eadd65d4b8d1
-Top:    03a5543f1bd4474d2ca0a7017af4a1065e86c5ff
+Bottom: 4083f5c0cf7228aee44f84cc9d3cd5fffc10f4b3
+Top:    88bbc2649b9072cd38d3b589f03a91538a3326b9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 18:09:09 +0000
+Date:   2009-11-15 18:09:33 +0000
 
 TEMP: Revert changes to gtkhid-main.c
 
@@ -9,7 +9,7 @@ TEMP: Revert changes to gtkhid-main.c
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 8e28d2e..edbe061 100644
+index a56ed94..a11eaa0 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -20,7 +20,6 @@
@@ -216,7 +216,7 @@ index 8e28d2e..edbe061 100644
  void
  ghid_invalidate_all ()
  {
-@@ -450,10 +609,334 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -461,10 +620,334 @@ ghid_set_layer (const char *name, int group, int empty)
  }
  
  void
