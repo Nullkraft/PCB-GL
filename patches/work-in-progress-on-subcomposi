@@ -1,7 +1,7 @@
-Bottom: 747f6ec31f6d19ab4bf8e5295e0b8839f7557ba8
-Top:    4d8a10ac326318300004bd9f3a1cbb47fc862195
+Bottom: 371ff44c735b2754def2d223914706f507bdefb3
+Top:    92de7e07c19e606cbc28ae4e3819a4b7326d3e52
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 17:41:35 +0000
+Date:   2009-11-15 17:45:51 +0000
 
 Work in progress on subcompositing / stencil buffers
 
@@ -466,10 +466,10 @@ index 04ea728..d240b7a 100644
        break;
      }
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index e532c9a..88c9ec6 100644
+index b0cc1fd..5b75127 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -508,14 +508,39 @@ ghid_invalidate_all ()
+@@ -349,14 +349,39 @@ ghid_invalidate_all ()
    gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
  }
  
@@ -510,7 +510,7 @@ index e532c9a..88c9ec6 100644
    if (idx >= 0 && idx < max_layer + 2) {
      gport->trans_lines = TRUE;
      return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
-@@ -531,8 +556,7 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -372,8 +397,7 @@ ghid_set_layer (const char *name, int group, int empty)
  	    return TEST_FLAG (SHOWMASKFLAG, PCB);
  	  return 0;
  	case SL_SILK:
