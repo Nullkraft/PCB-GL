@@ -1,0 +1,56 @@
+Bottom: 5ee3ea58ac85a19244cef9c27a6b98419cab3abe
+Top:    f974506726d77532565539bb9e17880dee9ed379
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-15 02:27:17 +0000
+
+draw.c: Apply const qualifier to DrawLayer and DrawSilk bounds
+
+This keeps the compiler happier.
+
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 4605ae5..8340b85 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -110,7 +110,7 @@ static void ClearPad (PadTypePtr, Boolean);
+ static void DrawHole (PinTypePtr);
+ static void DrawMask (BoxType *);
+ static void DrawRats (BoxType *);
+-static void DrawSilk (int, int, BoxType *);
++static void DrawSilk (int, int, const BoxType *);
+ static int pin_callback (const BoxType * b, void *cl);
+ static int pad_callback (const BoxType * b, void *cl);
+ 
+@@ -688,7 +688,7 @@ clearPad_callback (const BoxType * b, void *cl)
+  */
+ 
+ static void
+-DrawSilk (int new_swap, int layer, BoxTypePtr drawn_area)
++DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
+ {
+ #if 0
+   /* This code is used when you want to mask silk to avoid exposed
+@@ -837,7 +837,7 @@ text_callback (const BoxType * b, void *cl)
+  * draws one non-copper layer
+  */
+ void
+-DrawLayer (LayerTypePtr Layer, BoxType * screen)
++DrawLayer (LayerTypePtr Layer, const BoxType * screen)
+ {
+   struct pin_info info;
+ 
+diff --git a/src/draw.h b/src/draw.h
+index 088d01b..5d7c874 100644
+--- a/src/draw.h
++++ b/src/draw.h
+@@ -55,7 +55,7 @@ void DrawElementName (ElementTypePtr, int);
+ void DrawElementPackage (ElementTypePtr, int);
+ void DrawElementPinsAndPads (ElementTypePtr, int);
+ void DrawObject (int, void *, void *, int);
+-void DrawLayer (LayerTypePtr, BoxType *);
++void DrawLayer (LayerTypePtr, const BoxType *);
+ void EraseVia (PinTypePtr);
+ void EraseRat (RatTypePtr);
+ void EraseViaName (PinTypePtr);
