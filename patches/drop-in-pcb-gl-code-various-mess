@@ -1,5 +1,5 @@
 Bottom: 0525221825bef266d31813af53181f15d6ba9c60
-Top:    9f6db4660fc82242d18440d494087c0890d5ca94
+Top:    cbe6932aacee43c6cd29b4e27843ce4f306cd7ec
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 19:25:16 +0000
 
@@ -772,10 +772,10 @@ index 0000000..73d9a34
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..e50392f
+index 0000000..6f9a37e
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -0,0 +1,494 @@
+@@ -0,0 +1,511 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -808,6 +808,23 @@ index 0000000..e50392f
 +
 +static int cur_mask = -1;
 +
++
++void
++ghid_destroy_gc (hidGC gc)
++{
++  g_free (gc);
++}
++
++hidGC
++ghid_make_gc (void)
++{
++  hidGC rv;
++
++  rv = g_new0 (hid_gc_struct, 1);
++  rv->me_pointer = &ghid_hid;
++  rv->colorname = Settings.BackgroundColor;
++  return rv;
++}
 +
 +void
 +ghid_draw_grid ()
