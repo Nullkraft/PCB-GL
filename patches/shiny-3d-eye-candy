@@ -1,5 +1,5 @@
 Bottom: 8840f260a91dfe9e50362eab666895bb6663dd55
-Top:    fab291be6a4a99e784529f2f04aca406080b12f4
+Top:    5b32ce6d1c59032ff04b9fb2301e57599a91226b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 17:57:23 +0000
 
@@ -10,11 +10,11 @@ Experiments in progress - don't expect this to work yet!
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 43b0d55..bfe464b 100644
---- a/src/hid/gtk/gtkhid-main.c
-+++ b/src/hid/gtk/gtkhid-main.c
-@@ -335,6 +335,7 @@ draw_grid ()
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 7a2b283..bb0d10f 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -38,6 +38,7 @@ ghid_draw_grid ()
    static int npoints = 0;
    int x1, y1, x2, y2, n, i;
    double x, y;
@@ -22,7 +22,7 @@ index 43b0d55..bfe464b 100644
  
    if (!Settings.DrawGrid)
      return;
-@@ -386,23 +387,24 @@ draw_grid ()
+@@ -89,23 +90,24 @@ ghid_draw_grid ()
      {
        npoints = n + 10;
        points =
@@ -51,7 +51,11 @@ index 43b0d55..bfe464b 100644
        glDrawArrays (GL_POINTS, 0, n);
      }
  
-@@ -521,6 +523,18 @@ ghid_set_layer (const char *name, int group, int empty)
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 43b0d55..209152f 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -521,6 +521,18 @@ ghid_set_layer (const char *name, int group, int empty)
    /* Flush out any existing geoemtry to be rendered */
    hidgl_flush_triangles (&buffer);
  
