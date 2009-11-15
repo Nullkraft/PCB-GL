@@ -46,7 +46,6 @@
 #include <dmalloc.h>
 #endif
 
-#define PIXELS_PER_CIRCLINE 5.
 
 RCSID ("$Id$");
 
@@ -61,7 +60,7 @@ static void zoom_by (double factor, int x, int y);
 
 /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
 */
-#define USE_GC(gc) use_gc (gc)
+#define USE_GC(gc) if (!use_gc(gc)) return
 
 static int cur_mask = -1;
 
@@ -824,15 +823,16 @@ ghid_invalidate_current_gc (void)
   current_gc = NULL;
 }
 
-static void
+static int
 use_gc (hidGC gc)
 {
   if (current_gc == gc)
-    return;
+    return 1;
 
   current_gc = gc;
 
   ghid_set_color (gc, gc->colorname);
+  return 1;
 }
 
 void
@@ -2036,8 +2036,6 @@ Benchmark (int argc, char **argv, int x, int y)
   region.Y1 = 0;
   region.X2 = PCB->MaxWidth;
   region.Y2 = PCB->MaxHeight;
-
-  
 
   gdk_display_sync (display);
   time (&start);
