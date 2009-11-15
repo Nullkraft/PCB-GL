@@ -1,5 +1,5 @@
 Bottom: bfb1ca72f5d59a4f12ca20c7b1ed231d13f6b672
-Top:    710fd4841e48bbaf2cfbe54a84e1e39df125d31c
+Top:    e408dc550942ef1f7036745cee12d162998872e2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 00:28:52 +0000
 
@@ -102,6 +102,19 @@ index 5f62e2c..601d5d6 100644
 +//      CrosshairOff (BlockToo);
      }
  }
+ 
+diff --git a/src/draw.c b/src/draw.c
+index 4605ae5..66ec017 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -518,7 +518,7 @@ DrawEverything (BoxTypePtr drawn_area)
+ 	r_search (PCB->Data->element_tree, drawn_area, NULL, EMark_callback,
+ 		  NULL);
+       /* Draw rat lines on top */
+-      if (PCB->RatOn)
++      if (PCB->RatOn && gui->set_layer ("rats", SL (RATS, 0), 0))
+ 	DrawRats(drawn_area);
+     }
  
 diff --git a/src/hid.h b/src/hid.h
 index ee48b9f..7966346 100644
