@@ -252,8 +252,6 @@ ButtonState;
 /* Function prototypes
 */
 void ghid_parse_arguments (gint * argc, gchar *** argv);
-hidGC ghid_make_gc (void);
-void ghid_destroy_gc (hidGC);
 void ghid_do_export (HID_Attr_Val * options);
 
 void ghid_create_pcb_widgets (void);
@@ -531,6 +529,8 @@ GdkPixmap *ghid_render_pixmap (int cx,
 			       int depth);
 
 /* gtkhid-gdk.c */
+hidGC ghid_make_gc (void);
+void ghid_destroy_gc (hidGC);
 void ghid_draw_grid (void);
 void ghid_draw_bg_image (void);
 void ghid_use_mask (int use_it);
