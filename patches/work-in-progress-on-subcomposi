@@ -1,7 +1,7 @@
-Bottom: a0212bfa6d5798b9061c238fea029da8d78ad0da
+Bottom: 7123ac4f38ac78f4cbfdf8a49e7feb39635a3a5a
 Top:    7c9ccc0705dcd10253b8e9c7ba3bab14f03624f8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 01:56:27 +0000
+Date:   2009-11-15 01:58:08 +0000
 
 Work in progress on subcompositing / stencil buffers
 
@@ -385,22 +385,10 @@ index 413d92f..06b62e4 100644
  
  #endif /* DISABLE EVERYTHING! */
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index 49322c0..b956a65 100644
+index bb1383c..b956a65 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
-@@ -1,10 +1,8 @@
--/* $Id: gui.h,v 1.25 2008-04-13 14:15:38 petercjclifton Exp $ */
--
- /*
-  *                            COPYRIGHT
-  *
-  *  PCB, interactive printed circuit board design
-- *  Copyright (C) 1994,1995,1996 Thomas Nau
-+ *  Copyright (C) 2009 PCB Contributors (See ChangeLog for details).
-  *
-  *  This program is free software; you can redistribute it and/or modify
-  *  it under the terms of the GNU General Public License as published by
-@@ -62,5 +60,10 @@ void hidgl_fill_polygon (int n_coords, int *x, int *y);
+@@ -60,5 +60,10 @@ void hidgl_fill_polygon (int n_coords, int *x, int *y);
  void hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale);
  void hidgl_fill_rect (int x1, int y1, int x2, int y2);
  
