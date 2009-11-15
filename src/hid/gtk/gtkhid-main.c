@@ -614,6 +614,7 @@ ghid_set_layer (const char *name, int group, int empty)
 	    gport->trans_lines = TRUE;
 	  return PCB->RatOn;
 	}
+    }
 
   return 0;
 }
