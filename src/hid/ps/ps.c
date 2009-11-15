@@ -596,6 +596,8 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   int i;
   static int saved_layer_stack[MAX_LAYER];
   FlagType save_thindraw;
+  clock_t start, end;
+  double elapsed;
 
   save_thindraw = PCB->Flags;
   CLEAR_FLAG(THINDRAWFLAG, PCB);
@@ -681,6 +683,8 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   global.region.X2 = PCB->MaxWidth;
   global.region.Y2 = PCB->MaxHeight;
 
+  start = clock ();
+
   if (!global.multi_file)
     {
       /* %%Page DSC requires both a label and an ordinal */
@@ -699,6 +703,10 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   global.doing_toc = 0;
   ps_set_layer (NULL, 0, -1);  /* reset static vars */
   hid_expose_callback (&ps_hid, &global.region, 0);
+
+  end = clock ();
+  elapsed = ((double) (end - start)) / CLOCKS_PER_SEC;
+  printf ("Printing file took %f\n", elapsed);
 
   if (the_file)
     fprintf (the_file, "showpage\n");
@@ -1520,6 +1528,7 @@ ps_set_crosshair (int x, int y, int action)
 {
 }
 
+
 #include "dolists.h"
 
 void ps_ps_init (HID *hid)
@@ -1549,7 +1558,7 @@ void ps_ps_graphics_init (HID_DRAW *graphics)
   graphics->fill_polygon       = ps_fill_polygon;
   graphics->fill_rect          = ps_fill_rect;
 
-  graphics->draw_pcb_polygon   = ps_draw_pcb_polygon;
+  //graphics->draw_pcb_polygon   = ps_draw_pcb_polygon; /* Use common implementation for benchmarking */
 }
 
 void
