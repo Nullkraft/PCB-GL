@@ -32,6 +32,23 @@ static int cur_mask = -1;
 
 
 void
+ghid_destroy_gc (hidGC gc)
+{
+  g_free (gc);
+}
+
+hidGC
+ghid_make_gc (void)
+{
+  hidGC rv;
+
+  rv = g_new0 (hid_gc_struct, 1);
+  rv->me_pointer = &ghid_hid;
+  rv->colorname = Settings.BackgroundColor;
+  return rv;
+}
+
+void
 ghid_draw_grid ()
 {
   static GLfloat *points = 0;
