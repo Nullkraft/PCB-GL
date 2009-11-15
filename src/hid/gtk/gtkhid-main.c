@@ -335,7 +335,6 @@ draw_grid ()
   static int npoints = 0;
   int x1, y1, x2, y2, n, i;
   double x, y;
-  extern float global_depth;
 
   if (!Settings.DrawGrid)
     return;
@@ -387,24 +386,23 @@ draw_grid ()
     {
       npoints = n + 10;
       points =
-	MyRealloc (points, npoints * 3 * sizeof (GLfloat), "gtk_draw_grid");
+	MyRealloc (points, npoints * 2 * sizeof (GLfloat), "gtk_draw_grid");
     }
 
   glEnableClientState (GL_VERTEX_ARRAY);
-  glVertexPointer (3, GL_FLOAT, 0, points);
+  glVertexPointer (2, GL_FLOAT, 0, points);
 
   n = 0;
   for (x = x1; x <= x2; x += PCB->Grid)
     {
-      points[3 * n] = Vx (x);
-      points[3 * n + 2] = global_depth;
+      points[2 * n] = Vx (x);
       n++;
     }
   for (y = y1; y <= y2; y += PCB->Grid)
     {
       int vy = Vy (y);
       for (i = 0; i < n; i++)
-	points[3 * i + 1] = vy;
+	points[2 * i + 1] = vy;
       glDrawArrays (GL_POINTS, 0, n);
     }
 
