@@ -120,7 +120,7 @@ RCSID ("$Id$");
 #define CIRC_SEGS 40
 static double circleVerticies[] = {
   1.0, 0.0,
-  0.98768834059513777, 0.15643446504023087,
+  cos(2. * M_PI / CIRC_SEGS), sin (2. * M_PI / CIRC_SEGS),
 };
 
 static void
@@ -786,8 +786,16 @@ struct cpInfo
 static void
 subtract_accumulated (struct cpInfo *info, PolygonTypePtr polygon)
 {
+  POLYAREA *curp;
   if (info->accumulate == NULL)
     return;
+  printf ("Subtracting accumulated polygons\n");
+
+  curp = info->accumulate;
+  do {
+    printf ("Polygon\n");
+  } while ((curp = curp->f) != info->accumulate);
+  printf ("--------------\n");
   Subtract (info->accumulate, polygon, True);
   info->accumulate = NULL;
   info->batch_size = 0;
@@ -824,7 +832,9 @@ pin_sub_callback (const BoxType * b, void *cl)
         longjmp (info->env, 1);
     }
 
+  printf (" -- Appending pin / via to accumulated poly\n");
   poly_Boolean_free (info->accumulate, np, &merged, PBO_UNITE);
+  printf (" -- Done\n");
   info->accumulate = merged;
 
   info->batch_size ++;
