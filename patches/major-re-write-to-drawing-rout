@@ -1,7 +1,7 @@
-Bottom: 89fe99d75a912233bb07e39e034bccf504144f7b
-Top:    5de1f192623eabb730973869662afb3de8f723b5
+Bottom: 3cd6c0d796de9960de0a3b847cb27f2e6d925ce2
+Top:    1f697a8d8e12b614113980e5ee54a597b420d3e9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 18:04:15 +0000
+Date:   2009-11-15 18:07:25 +0000
 
 Major re-write to drawing routines
 
@@ -198,10 +198,10 @@ index 090a49d..f0752d0 100644
  void
  ghid_set_color (hidGC gc, const char *name)
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 209152f..edbe061 100644
+index 2f9611b..8e28d2e 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -508,68 +508,89 @@ ghid_invalidate_all ()
+@@ -349,68 +349,89 @@ ghid_invalidate_all ()
    gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
  }
  
@@ -329,7 +329,7 @@ index 209152f..edbe061 100644
  	    return PCB->ElementOn;
  	  return 0;
  	case SL_ASSY:
-@@ -583,6 +604,7 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -424,6 +445,7 @@ ghid_set_layer (const char *name, int group, int empty)
  	  return PCB->RatOn;
  	}
      }
