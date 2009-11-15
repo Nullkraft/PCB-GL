@@ -56,7 +56,8 @@
 #define	STEP_SELECTORENTRY	128
 #define	STEP_REMOVELIST		500
 #define	STEP_UNDOLIST		500
-#define	STEP_POLYGON		10
+#define	STEP_POUR		10
+#define	STEP_POLYGON		100
 #define	STEP_POLYGONPOINT	10
 #define	STEP_LIBRARYMENU	10
 #define	STEP_LIBRARYENTRY	20
@@ -80,8 +81,10 @@ LineTypePtr GetLineMemory (LayerTypePtr);
 ArcTypePtr GetArcMemory (LayerTypePtr);
 RatTypePtr GetRatMemory (DataTypePtr);
 TextTypePtr GetTextMemory (LayerTypePtr);
-PolygonTypePtr GetPolygonMemory (LayerTypePtr);
+PolygonTypePtr GetPolygonMemoryInPour (PourTypePtr);
+PourTypePtr GetPourMemory (LayerTypePtr);
 PointTypePtr GetPointMemoryInPolygon (PolygonTypePtr);
+PointTypePtr GetPointMemoryInPour (PourTypePtr);
 ElementTypePtr GetElementMemory (DataTypePtr);
 BoxTypePtr GetBoxMemory (BoxListTypePtr);
 ConnectionTypePtr GetConnectionMemory (NetTypePtr);
@@ -100,6 +103,7 @@ char *MyStrdup (char *s, const char *);
 /* void MyFree (void **); */
 #define MYFREE(x) do { SaveFree(x); (x)=NULL; } while (0)
 void FreePolygonMemory (PolygonTypePtr);
+void FreePourMemory (PourTypePtr);
 void FreeElementMemory (ElementTypePtr);
 void FreePCBMemory (PCBTypePtr);
 void FreeBoxListMemory (BoxListTypePtr);
