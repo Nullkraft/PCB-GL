@@ -1,0 +1,65 @@
+Bottom: 93e43e4e537395fb2f36f932fcff74d9e2ccbf3f
+Top:    a1a9cfa9f0b3da7e4c7b4eac32d592f3195c8afa
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-15 19:41:44 +0000
+
+hid/gtk: Move definition of the device context inside gtkhid-gdk.c
+
+Keep it private to the drawing routines.
+
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index f577d3e..51a6f22 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -45,6 +45,21 @@ Vy2 (int y)
+ 
+ /* ------------------------------------------------------------ */
+ 
++typedef struct hid_gc_struct
++{
++  HID *me_pointer;
++  GdkGC *gc;
++
++  gchar *colorname;
++  gint width;
++  gint cap, join;
++  gchar xor;
++  gchar erase;
++  gint mask_seq;
++}
++hid_gc_struct;
++
++
+ void
+ ghid_destroy_gc (hidGC gc)
+ {
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 245a2c3..deb3112 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -121,22 +121,6 @@ extern int ghid_flip_x, ghid_flip_y;
+ #define GRID_UNITS_VALUE(mm, mil)   (Settings.grid_units_mm ? (mm) : (mil))
+ 
+ 
+-
+-typedef struct hid_gc_struct
+-{
+-  HID *me_pointer;
+-  GdkGC *gc;
+-
+-  gchar *colorname;
+-  gint width;
+-  gint cap, join;
+-  gchar xor;
+-  gchar erase;
+-  gint mask_seq;
+-}
+-hid_gc_struct;
+-
+-
+ typedef struct
+ {
+   GtkUIManager *ui_manager;
