@@ -1,5 +1,5 @@
 Bottom: cd2ab5352ab3b042e1c86f057775ccb346e6bf38
-Top:    0ca8708caa50faeac8b90d39f9210e6ea930457f
+Top:    c69a9f917b453c62496e7544d1136f31ba87d14e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 19:48:15 +0000
 
@@ -772,10 +772,10 @@ index 0000000..73d9a34
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..93eb2fb
+index 0000000..3e41c35
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -0,0 +1,524 @@
+@@ -0,0 +1,530 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -1240,6 +1240,12 @@ index 0000000..93eb2fb
 +static int
 +use_gc (hidGC gc)
 +{
++  if (gc->me_pointer != &ghid_hid)
++    {
++      fprintf (stderr, "Fatal: GC from another HID passed to GTK HID\n");
++      abort ();
++    }
++
 +  if (current_gc == gc)
 +    return 1;
 +
