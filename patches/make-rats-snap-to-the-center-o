@@ -1,5 +1,5 @@
 Bottom: 1075de348334c40df41b8e97a04a0178be191a32
-Top:    926b018a0c9a8483c86888bffe3e061f53ffb7f6
+Top:    76117077ebd9ada8f4a1b61d2ba78e05914d6b0c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-14 23:17:55 +0000
 
@@ -19,7 +19,7 @@ Make rats snap to the center of pads, not the edges
 ---
 
 diff --git a/src/find.c b/src/find.c
-index b24512a..dba0e3a 100644
+index b24512a..1962234 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -2191,10 +2191,12 @@ LOCtoPad_callback (const BoxType * b, void *cl)
@@ -39,7 +39,7 @@ index b24512a..dba0e3a 100644
      longjmp (i->env, 1);
    return 0;
  }
-@@ -2306,19 +2308,15 @@ LOCtoPadRat_callback (const BoxType * b, void *cl)
+@@ -2306,19 +2308,19 @@ LOCtoPadRat_callback (const BoxType * b, void *cl)
    if (!TEST_FLAG (TheFlag, rat))
      {
        if (rat->group1 == i->layer &&
@@ -47,8 +47,10 @@ index b24512a..dba0e3a 100644
 -            && rat->Point1.Y == i->pad.Point1.Y)
 -           || (rat->Point1.X == i->pad.Point2.X
 -               && rat->Point1.Y == i->pad.Point2.Y)))
-+          rat->Point1.X == (i->pad.Point1.X + i->pad.Point2.X) / 2 &&
-+          rat->Point1.Y == (i->pad.Point1.Y + i->pad.Point2.Y) / 2)
++	  ((rat->Point1.X == i->pad.Point1.X && rat->Point1.Y == i->pad.Point1.Y) ||
++	   (rat->Point1.X == i->pad.Point2.X && rat->Point1.Y == i->pad.Point2.Y) ||
++	   (rat->Point1.X == (i->pad.Point1.X + i->pad.Point2.X) / 2 &&
++	    rat->Point1.Y == (i->pad.Point1.Y + i->pad.Point2.Y) / 2)))
          {
            if (ADD_RAT_TO_LIST (rat))
              longjmp (i->env, 1);
@@ -58,8 +60,10 @@ index b24512a..dba0e3a 100644
 -                 && rat->Point2.Y == i->pad.Point1.Y)
 -                || (rat->Point2.X == i->pad.Point2.X
 -                    && rat->Point2.Y == i->pad.Point2.Y)))
-+               rat->Point2.X == (i->pad.Point1.X + i->pad.Point2.X) / 2 &&
-+               rat->Point2.Y == (i->pad.Point1.Y + i->pad.Point2.Y) / 2)
++	       ((rat->Point2.X == i->pad.Point1.X && rat->Point2.Y == i->pad.Point1.Y) ||
++		(rat->Point2.X == i->pad.Point2.X && rat->Point2.Y == i->pad.Point2.Y) ||
++		(rat->Point2.X == (i->pad.Point1.X + i->pad.Point2.X) / 2 &&
++		 rat->Point2.Y == (i->pad.Point1.Y + i->pad.Point2.Y) / 2)))
          {
            if (ADD_RAT_TO_LIST (rat))
              longjmp (i->env, 1);
