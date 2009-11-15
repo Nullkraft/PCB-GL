@@ -418,6 +418,8 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   int i;
   static int saved_layer_stack[MAX_LAYER];
   FlagType save_thindraw;
+  clock_t start, end;
+  double elapsed;
 
   save_thindraw = PCB->Flags;
   CLEAR_FLAG(THINDRAWFLAG, PCB);
@@ -510,6 +512,8 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   region.X2 = PCB->MaxWidth;
   region.Y2 = PCB->MaxHeight;
 
+  start = clock ();
+
   if (! multi_file)
     {
       fprintf (f, "%%%%Page: TableOfContents 1\n");  /* %%Page DSC requires both a label and an ordinal */
@@ -529,6 +533,10 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
   doing_toc = 0;
   lastgroup = -1;
   hid_expose_callback (&ps_hid, &region, 0);
+
+  end = clock ();
+  elapsed = ((double) (end - start)) / CLOCKS_PER_SEC;
+  printf ("Printing file took %f\n", elapsed);
 
   if (f)
     fprintf (f, "showpage\n");
@@ -1354,7 +1362,7 @@ HID ps_hid = {
   ps_draw_rect,
   ps_fill_circle,
   ps_fill_polygon,
-  ps_fill_pcb_polygon,
+  common_fill_pcb_polygon /* ps_fill_pcb_polygon */,
   0 /* ps_thindraw_pcb_polygon */,
   ps_fill_rect,
   ps_calibrate,
