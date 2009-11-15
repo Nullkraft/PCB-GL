@@ -139,8 +139,16 @@ FindPad (char *ElementName, char *PinNum, ConnectionType * conn, Boolean Same)
 	    conn->ptr2 = &element->Pad[i];
 	    conn->group =
 	      TEST_FLAG (ONSOLDERFLAG, &element->Pad[i]) ? SLayer : CLayer;
-	      conn->X = (element->Pad[i].Point1.X + element->Pad[i].Point2.X) / 2;
-	      conn->Y = (element->Pad[i].Point1.Y + element->Pad[i].Point2.Y) / 2;
+	    if (TEST_FLAG (EDGE2FLAG, &element->Pad[i]))
+	      {
+		conn->X = element->Pad[i].Point2.X;
+		conn->Y = element->Pad[i].Point2.Y;
+	      }
+	    else
+	      {
+		conn->X = element->Pad[i].Point1.X;
+		conn->Y = element->Pad[i].Point1.Y;
+	      }
 	    break;
 	  }
       if (i == element->PadN)
