@@ -545,7 +545,7 @@ int compute_depth (int group)
   if (group >= 0 && group < max_layer) {
     newgroup = group;
 
-    depth = (max_depth - newgroup * 10) * 200 / gport->zoom;
+    depth = (max_depth - (newgroup - min_phys_group) * 10) * 200 / gport->zoom;
   } else if (SL_TYPE (idx) == SL_MASK) {
     if (SL_SIDE (idx) == SL_TOP_SIDE) {
       depth = (max_depth + 3) * 200 / gport->zoom;
