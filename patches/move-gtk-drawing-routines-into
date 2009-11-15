@@ -10,7 +10,10 @@ more easily.
 
 Pretty much a straight move at this point, but renamed the static
 function "draw_grid()" to ghid_draw_grid() now it is no longer
-local to gtkhid-main.c
+local to gtkhid-main.
+
+Removed all #include not required to build in gtkhid-main.c and
+gtkhid-gdk.c
 
 
 ---
