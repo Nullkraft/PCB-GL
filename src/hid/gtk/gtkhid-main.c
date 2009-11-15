@@ -565,8 +565,7 @@ ghid_set_layer (const char *name, int group, int empty)
 	    return TEST_FLAG (SHOWMASKFLAG, PCB);
 	  return 0;
 	case SL_SILK:
-          gport->trans_lines = TRUE;
-//          gport->trans_lines = FALSE;
+	  gport->trans_lines = TRUE;
 	  if (SL_MYSIDE (idx) /*|| pinout */ )
 	    return PCB->ElementOn;
 	  return 0;
