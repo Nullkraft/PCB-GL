@@ -1,0 +1,37 @@
+Bottom: 9f6db4660fc82242d18440d494087c0890d5ca94
+Top:    cbe6932aacee43c6cd29b4e27843ce4f306cd7ec
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-15 19:32:58 +0000
+
+Refresh of drop-in-pcb-gl-code-various-mess
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index e50392f..6f9a37e 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -32,6 +32,23 @@ static int cur_mask = -1;
+ 
+ 
+ void
++ghid_destroy_gc (hidGC gc)
++{
++  g_free (gc);
++}
++
++hidGC
++ghid_make_gc (void)
++{
++  hidGC rv;
++
++  rv = g_new0 (hid_gc_struct, 1);
++  rv->me_pointer = &ghid_hid;
++  rv->colorname = Settings.BackgroundColor;
++  return rv;
++}
++
++void
+ ghid_draw_grid ()
+ {
+   static GLfloat *points = 0;
