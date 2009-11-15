@@ -1,7 +1,7 @@
-Bottom: f11431b02888cd44034e87fec0b73c288ce9c8ad
-Top:    f204858dc1301419db7291a61687ddc435612784
+Bottom: 41765aea8a0e02c31fee024cda93fe4d584f817a
+Top:    a89d601aeae15175c023fec4e7a4d46f38ea745d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-14 02:46:30 +0000
+Date:   2009-11-15 02:43:53 +0000
 
 Add support for a "poured" object.
 
@@ -1833,7 +1833,7 @@ index a994c84..4c9fae6 100644
  ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
  				 FontTypePtr, FlagType, char *, char *,
 diff --git a/src/crosshair.c b/src/crosshair.c
-index ef22f73..9f0e843 100644
+index 601d5d6..fe3b547 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -78,6 +78,7 @@ static int CrosshairStackLocation = 0;
@@ -1969,7 +1969,7 @@ index ef22f73..9f0e843 100644
  	}
        break;
  
-@@ -988,7 +1024,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+@@ -989,7 +1025,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
  
    if (TEST_FLAG (SNAPPINFLAG, PCB))
      ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
@@ -1978,7 +1978,7 @@ index ef22f73..9f0e843 100644
    else
      ans = NO_TYPE;
  
-@@ -1163,6 +1199,6 @@ void
+@@ -1164,6 +1200,6 @@ void
  DestroyCrosshair (void)
  {
    CrosshairOff (True);
@@ -1987,7 +1987,7 @@ index ef22f73..9f0e843 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index 5ea77f5..9e82137 100644
+index e374448..077e08a 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -100,6 +100,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
@@ -2047,7 +2047,7 @@ index 5ea77f5..9e82137 100644
  
    if (thin)
      gui->set_color (Output.pmGC, PCB->MaskColor);
-@@ -867,8 +890,9 @@ DrawLayer (LayerTypePtr Layer, BoxType * screen)
+@@ -867,8 +890,9 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
    /* print the non-clearing polys */
    info.Layer = Layer;
    info.arg = False;
@@ -2076,7 +2076,7 @@ index 5ea77f5..9e82137 100644
  	      info.arg = False;
  
  	      /* HACK: Subcomposite polygons separately from other layer primitives */
-@@ -1707,6 +1731,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
+@@ -1657,6 +1681,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2125,8 +2125,8 @@ index 5ea77f5..9e82137 100644
   * lowlevel routine to element arcs
   */
  static void
-@@ -2057,6 +2123,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
-     }
+@@ -1975,6 +2041,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+   DrawPolygonLowLevel (Polygon);
  }
  
 +/* ---------------------------------------------------------------------------
@@ -2163,7 +2163,7 @@ index 5ea77f5..9e82137 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -2362,6 +2459,18 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2280,6 +2377,18 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2182,7 +2182,7 @@ index 5ea77f5..9e82137 100644
   * erases an element
   */
  void
-@@ -2448,6 +2557,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -2360,6 +2469,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2192,7 +2192,7 @@ index 5ea77f5..9e82137 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -2495,6 +2607,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
+@@ -2407,6 +2519,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2, 0);
        break;
@@ -2204,10 +2204,10 @@ index 5ea77f5..9e82137 100644
        if (PCB->ElementOn &&
  	  (FRONT ((ElementTypePtr) ptr2) || PCB->InvisibleObjectsOn))
 diff --git a/src/draw.h b/src/draw.h
-index 43b2f1b..cbf2663 100644
+index 94ea83d..6c5d7e2 100644
 --- a/src/draw.h
 +++ b/src/draw.h
-@@ -51,6 +51,7 @@ void DrawArc (LayerTypePtr, ArcTypePtr, int);
+@@ -50,6 +50,7 @@ void DrawArc (LayerTypePtr, ArcTypePtr, int);
  void DrawText (LayerTypePtr, TextTypePtr, int);
  void DrawTextLowLevel (TextTypePtr, int);
  void DrawPolygon (LayerTypePtr, PolygonTypePtr, int);
@@ -2215,7 +2215,7 @@ index 43b2f1b..cbf2663 100644
  void DrawElement (ElementTypePtr, int);
  void DrawElementName (ElementTypePtr, int);
  void DrawElementPackage (ElementTypePtr, int);
-@@ -68,6 +69,7 @@ void EraseLine (LineTypePtr);
+@@ -67,6 +68,7 @@ void EraseLine (LineTypePtr);
  void EraseArc (ArcTypePtr);
  void EraseText (LayerTypePtr, TextTypePtr);
  void ErasePolygon (PolygonTypePtr);
@@ -2257,7 +2257,7 @@ index 4cef71f..6890bf2 100644
  		fputs ("\n\t\t", FP);
  	      fprintf (FP, "[%i %i] ", (int) point->X, (int) point->Y);
 diff --git a/src/find.c b/src/find.c
-index c747b8f..dd49487 100644
+index f68c8a2..5e54ecc 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -628,6 +628,7 @@ void
@@ -2318,7 +2318,7 @@ index c747b8f..dd49487 100644
            else
              return True;
          }
-@@ -1865,15 +1882,13 @@ LookupLOConnectionsToArc (ArcTypePtr Arc, Cardinal LayerGroup)
+@@ -1864,15 +1881,13 @@ LookupLOConnectionsToArc (ArcTypePtr Arc, Cardinal LayerGroup)
    /* loop over all layers of the group */
    for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
      {
@@ -2335,7 +2335,7 @@ index c747b8f..dd49487 100644
            info.layer = layer;
            /* add arcs */
            if (setjmp (info.env) == 0)
-@@ -1889,12 +1904,18 @@ LookupLOConnectionsToArc (ArcTypePtr Arc, Cardinal LayerGroup)
+@@ -1888,12 +1903,18 @@ LookupLOConnectionsToArc (ArcTypePtr Arc, Cardinal LayerGroup)
              return True;
  
            /* now check all polygons */
@@ -2360,7 +2360,7 @@ index c747b8f..dd49487 100644
          }
        else
          {
-@@ -2010,8 +2031,6 @@ LookupLOConnectionsToLine (LineTypePtr Line, Cardinal LayerGroup,
+@@ -2009,8 +2030,6 @@ LookupLOConnectionsToLine (LineTypePtr Line, Cardinal LayerGroup,
        /* handle normal layers */
        if (layer < max_layer)
          {
@@ -2369,7 +2369,7 @@ index c747b8f..dd49487 100644
            info.layer = layer;
            /* add lines */
            if (setjmp (info.env) == 0)
-@@ -2028,13 +2047,18 @@ LookupLOConnectionsToLine (LineTypePtr Line, Cardinal LayerGroup,
+@@ -2027,13 +2046,18 @@ LookupLOConnectionsToLine (LineTypePtr Line, Cardinal LayerGroup,
            /* now check all polygons */
            if (PolysTo)
              {
@@ -2395,7 +2395,7 @@ index c747b8f..dd49487 100644
              }
          }
        else
-@@ -2092,7 +2116,6 @@ static Boolean
+@@ -2091,7 +2115,6 @@ static Boolean
  LOTouchesLine (LineTypePtr Line, Cardinal LayerGroup)
  {
    Cardinal entry;
@@ -2403,7 +2403,7 @@ index c747b8f..dd49487 100644
    struct lo_info info;
  
  
-@@ -2109,8 +2132,6 @@ LOTouchesLine (LineTypePtr Line, Cardinal LayerGroup)
+@@ -2108,8 +2131,6 @@ LOTouchesLine (LineTypePtr Line, Cardinal LayerGroup)
        /* handle normal layers */
        if (layer < max_layer)
          {
@@ -2412,7 +2412,7 @@ index c747b8f..dd49487 100644
            /* find the first line that touches coordinates */
  
            if (setjmp (info.env) == 0)
-@@ -2125,12 +2146,17 @@ LOTouchesLine (LineTypePtr Line, Cardinal LayerGroup)
+@@ -2124,12 +2145,17 @@ LOTouchesLine (LineTypePtr Line, Cardinal LayerGroup)
              return (True);
  
            /* now check all polygons */
@@ -2436,7 +2436,7 @@ index c747b8f..dd49487 100644
          }
        else
          {
-@@ -2186,6 +2212,16 @@ PolygonToRat_callback (const BoxType * b, void *cl)
+@@ -2185,6 +2211,16 @@ PolygonToRat_callback (const BoxType * b, void *cl)
  }
  
  static int
@@ -2453,7 +2453,7 @@ index c747b8f..dd49487 100644
  LOCtoPad_callback (const BoxType * b, void *cl)
  {
    PadTypePtr pad = (PadTypePtr) b;
-@@ -2234,8 +2270,8 @@ LookupLOConnectionsToRatEnd (PointTypePtr Point, Cardinal LayerGroup)
+@@ -2235,8 +2271,8 @@ LookupLOConnectionsToRatEnd (PointTypePtr Point, Cardinal LayerGroup)
            else
              return True;
            if (setjmp (info.env) == 0)
@@ -2464,7 +2464,7 @@ index c747b8f..dd49487 100644
          }
        else
          {
-@@ -2299,6 +2335,16 @@ LOCtoPadPoly_callback (const BoxType * b, void *cl)
+@@ -2300,6 +2336,16 @@ LOCtoPadPoly_callback (const BoxType * b, void *cl)
  }
  
  static int
@@ -2481,7 +2481,7 @@ index c747b8f..dd49487 100644
  LOCtoPadRat_callback (const BoxType * b, void *cl)
  {
    RatTypePtr rat = (RatTypePtr) b;
-@@ -2384,8 +2430,8 @@ LookupLOConnectionsToPad (PadTypePtr Pad, Cardinal LayerGroup)
+@@ -2389,8 +2435,8 @@ LookupLOConnectionsToPad (PadTypePtr Pad, Cardinal LayerGroup)
              return True;
            /* add polygons */
            if (setjmp (info.env) == 0)
@@ -2492,7 +2492,7 @@ index c747b8f..dd49487 100644
            else
              return True;
          }
-@@ -2495,25 +2541,30 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
+@@ -2500,25 +2546,30 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
  /* loop over all layers of the group */
    for (entry = 0; entry < PCB->LayerGroups.Number[LayerGroup]; entry++)
      {
@@ -2532,7 +2532,7 @@ index c747b8f..dd49487 100644
            /* check all lines */
            if (setjmp (info.env) == 0)
              r_search (LAYER_PTR (layer)->line_tree,
-@@ -3475,17 +3526,21 @@ ResetFoundLinesAndPolygons (Boolean AndDraw)
+@@ -3480,17 +3531,21 @@ ResetFoundLinesAndPolygons (Boolean AndDraw)
        }
    }
    ENDALL_LOOP;
@@ -5067,7 +5067,7 @@ index ccf3164..15223c0 100644
  void RestoreToPolygon(DataType *, int, void *, void *);
  void ClearFromPolygon(DataType *, int, void *, void *);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index bbc022e..520f129 100644
+index a369b2d..9daf4f3 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -929,6 +929,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
@@ -6560,10 +6560,10 @@ index 848d394..db123b1 100644
    r_search(PCB->Data->via_tree, &box, NULL, gp_pin_cb, 0);
    r_search(PCB->Data->pad_tree, &box, NULL, gp_pad_cb, 0);
 diff --git a/src/rats.c b/src/rats.c
-index 85a3f93..1a37954 100644
+index 35047b5..170698e 100644
 --- a/src/rats.c
 +++ b/src/rats.c
-@@ -505,20 +505,24 @@ GatherSubnets (NetListTypePtr Netl, Boolean NoWarn, Boolean AndRats)
+@@ -513,20 +513,24 @@ GatherSubnets (NetListTypePtr Netl, Boolean NoWarn, Boolean AndRats)
        }
        ENDALL_LOOP;
        /* add polygons so the auto-router can see them as targets */
@@ -7050,7 +7050,7 @@ index f032fcb..8ad4f60 100644
  			    LocationType, BYTE);
  void *RotateObject (int, void *, void *, void *, LocationType, LocationType,
 diff --git a/src/search.c b/src/search.c
-index 153f60c..9f2d4a3 100644
+index 612df6d..8506df9 100644
 --- a/src/search.c
 +++ b/src/search.c
 @@ -80,6 +80,8 @@ static Boolean SearchTextByLocation (int, LayerTypePtr *, TextTypePtr *,
@@ -7079,7 +7079,7 @@ index 153f60c..9f2d4a3 100644
    jmp_buf env;
    int locked;			/* This will be zero or LOCKFLAG */
  };
-@@ -432,6 +435,14 @@ polygon_callback (const BoxType * box, void *cl)
+@@ -419,6 +422,14 @@ polygon_callback (const BoxType * box, void *cl)
    return 0;
  }
  
@@ -7094,7 +7094,7 @@ index 153f60c..9f2d4a3 100644
  
  /* ---------------------------------------------------------------------------
   * searches a polygon on the SearchLayer 
-@@ -449,13 +460,59 @@ SearchPolygonByLocation (int locked, LayerTypePtr * Layer,
+@@ -436,13 +447,59 @@ SearchPolygonByLocation (int locked, LayerTypePtr * Layer,
  
    if (setjmp (info.env) == 0)
      {
@@ -7155,7 +7155,7 @@ index 153f60c..9f2d4a3 100644
  static int
  linepoint_callback (const BoxType * b, void *cl)
  {
-@@ -513,27 +570,27 @@ SearchLinePointByLocation (int locked, LayerTypePtr * Layer,
+@@ -498,27 +555,27 @@ SearchLinePointByLocation (int locked, LayerTypePtr * Layer,
  }
  
  /* ---------------------------------------------------------------------------
@@ -7190,7 +7190,7 @@ index 153f60c..9f2d4a3 100644
  	  *Point = point;
  	  found = True;
  	}
-@@ -1187,7 +1244,7 @@ SearchObjectByLocation (int Type,
+@@ -1167,7 +1224,7 @@ SearchObjectByLocation (int Type,
      }
    if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
      {
@@ -7199,7 +7199,7 @@ index 153f60c..9f2d4a3 100644
      }
  
    if (Type & RATLINE_TYPE && PCB->RatOn &&
-@@ -1252,12 +1309,12 @@ SearchObjectByLocation (int Type,
+@@ -1232,12 +1289,12 @@ SearchObjectByLocation (int Type,
        if (SearchLayer->On)
  	{
  	  if ((HigherAvail & (PIN_TYPE | PAD_TYPE)) == 0 &&
@@ -7218,7 +7218,7 @@ index 153f60c..9f2d4a3 100644
  
  	  if ((HigherAvail & (PIN_TYPE | PAD_TYPE)) == 0 &&
  	      Type & LINEPOINT_TYPE &&
-@@ -1308,6 +1365,27 @@ SearchObjectByLocation (int Type,
+@@ -1288,6 +1345,27 @@ SearchObjectByLocation (int Type,
  	      else
  		return (POLYGON_TYPE);
  	    }
@@ -7246,7 +7246,7 @@ index 153f60c..9f2d4a3 100644
  	}
      }
    /* return any previously found objects */
-@@ -1439,31 +1517,47 @@ SearchObjectByID (DataTypePtr Base,
+@@ -1419,31 +1497,47 @@ SearchObjectByID (DataTypePtr Base,
        ENDALL_LOOP;
      }
  
@@ -7312,7 +7312,7 @@ index 153f60c..9f2d4a3 100644
      {
        VIA_LOOP (Base);
 diff --git a/src/search.h b/src/search.h
-index 3164605..a073f6c 100644
+index 43f48d7..f5c6d42 100644
 --- a/src/search.h
 +++ b/src/search.h
 @@ -59,8 +59,13 @@

@@ -1,7 +1,7 @@
-Bottom: 021a4cee97803ee3714a2a3264c7992c303270cf
-Top:    7234958bc8df1e4e07cb81550db1294673722e17
+Bottom: ad1dd526a49fd638d7dbc52e2592686a67583b91
+Top:    b49313bfd9e4b17d2e960b0c4bffdb4d5714c27d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-14 02:46:32 +0000
+Date:   2009-11-15 02:43:56 +0000
 
 Off to find burried treasure on polygon island
 
@@ -116,10 +116,10 @@ index 0b5f129..109fcd6 100644
    DrawVia (Via, 0);
    Draw ();
 diff --git a/src/draw.c b/src/draw.c
-index 9e82137..73ebcbf 100644
+index 077e08a..153605f 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2194,6 +2194,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2112,6 +2112,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
    if (!Polygon->Clipped)
      return;
  
@@ -131,10 +131,10 @@ index 9e82137..73ebcbf 100644
      {
        AddPart (Polygon);
 diff --git a/src/find.c b/src/find.c
-index fe34d63..b2b1b4c 100644
+index 450f05f..380f808 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -2569,6 +2569,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
+@@ -2574,6 +2574,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
  
    if (!Polygon->Clipped)
      return False;
@@ -142,7 +142,7 @@ index fe34d63..b2b1b4c 100644
    info.polygon = *Polygon;
    EXPAND_BOUNDS (&info.polygon);
    info.layer = LayerGroup;
-@@ -3920,6 +3921,70 @@ doIsBad:
+@@ -3925,6 +3926,70 @@ doIsBad:
  }
  
  /*-----------------------------------------------------------------------------
@@ -503,10 +503,10 @@ index f04e342..559f20e 100644
  
  #endif /* __POUR_INCLUDED__ */
 diff --git a/src/search.c b/src/search.c
-index 9f2d4a3..560fc33 100644
+index 8506df9..e2a359f 100644
 --- a/src/search.c
 +++ b/src/search.c
-@@ -467,7 +467,7 @@ SearchPolygonByLocation (int locked, LayerTypePtr * Layer,
+@@ -454,7 +454,7 @@ SearchPolygonByLocation (int locked, LayerTypePtr * Layer,
    return (True);
  }
  
@@ -515,7 +515,7 @@ index 9f2d4a3..560fc33 100644
  #if 0
  static int
  pour_callback (const BoxType * box, void *cl)
-@@ -501,7 +501,7 @@ SearchPourByLocation (int locked, LayerTypePtr * Layer,
+@@ -488,7 +488,7 @@ SearchPourByLocation (int locked, LayerTypePtr * Layer,
    info.ptr3 = (void **) Dummy;
    info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
  

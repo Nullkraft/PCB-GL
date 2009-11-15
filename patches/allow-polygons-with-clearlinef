@@ -1,7 +1,7 @@
-Bottom: c66801442e1b2f1930fa707ecdcfb9f9e5b02882
-Top:    a0a91cb196dfd7b1dbecf50e52a75358b118b14e
+Bottom: 11fca5d41ca2d4a77d4b3e706faa57e092053836
+Top:    7d0d2bfe142a5aec61c40750114ccb7fbe1acb3e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-14 02:46:29 +0000
+Date:   2009-11-15 02:43:51 +0000
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -170,10 +170,10 @@ index 7f43fba..1be41aa 100644
  #define CHANGETHERMAL_TYPES	\
  	(PIN_TYPE | VIA_TYPE)
 diff --git a/src/draw.c b/src/draw.c
-index cac56cf..5ea77f5 100644
+index 8fee2ca..e374448 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2113,7 +2113,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2031,7 +2031,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  
    if (gui->thindraw_pcb_polygon != NULL &&
        (TEST_FLAG (THINDRAWFLAG, PCB) ||
