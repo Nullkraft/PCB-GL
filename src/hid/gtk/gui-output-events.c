@@ -774,7 +774,6 @@ ghid_screen_update (void)
 }
 
 void DrawAttached (Boolean);
-void draw_grid ();
 
 #define Z_NEAR 3.0
 gboolean
@@ -857,7 +856,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
 
-  draw_grid ();
+  ghid_draw_grid ();
 
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();

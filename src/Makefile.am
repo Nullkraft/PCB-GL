@@ -156,6 +156,12 @@ DBUS_SRCS= \
 	dbus.h \
 	dbus.c
 
+LIBGTK_GDK_SRCS= \
+	hid/gtk/gtkhid-gdk.c
+
+LIBGTK_GL_SRCS= \
+	hid/gtk/gtkhid-gl.c
+
 GL_SRCS= \
 	hid/common/hidgl.c \
 	hid/common/hidgl.h
@@ -244,7 +250,6 @@ LIBGTK_SRCS = \
 	dolists.h \
 	hid/hidint.h \
 	hid/gtk/gtkhid-main.c \
-	hid/gtk/gtkhid-gdk.c \
 	hid/gtk/gtkhid.h \
 	hid/gtk/gui.h \
 	hid/gtk/gui-command-window.c \
@@ -291,6 +296,9 @@ endif
 # If we are building with GL support, we need some extra files
 if USE_GL
 PCB_SRCS+=	${GL_SRCS}
+LIBGTK_SRCS+=	${LIBGTK_GL_SRCS}
+else
+LIBGTK_SRCS+=	${LIBGTK_GDK_SRCS}
 endif
 
 # If we are building on win32, then compile in some icons for the

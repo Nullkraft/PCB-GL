@@ -549,7 +549,7 @@ GdkPixmap *ghid_render_pixmap (int cx,
 			       int height,
 			       int depth);
 
-/* gtkhid-gdk.c */
+/* gtkhid-gdk.c OR gtkhid-gl.c */
 void ghid_draw_grid (void);
 void ghid_draw_bg_image (void);
 void ghid_use_mask (int use_it);
