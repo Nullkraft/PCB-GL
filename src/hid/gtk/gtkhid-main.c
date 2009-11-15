@@ -674,30 +674,26 @@ ghid_set_special_colors (HID_Attribute * ha)
     }
 }
 
-static char *current_color = NULL;
-static double global_alpha_mult = 1.0;
-static int alpha_changed = 0;
 
 void
 ghid_set_color (hidGC gc, const char *name)
 {
   static void *cache = NULL;
+  static char *old_name = NULL;
   hidval cval;
   ColorCache *cc;
   double alpha_mult = 1.0;
   double r, g, b, a;
   a = 1.0;
 
-  if (!alpha_changed && current_color != NULL)
+  if (old_name != NULL)
     {
-      if (strcmp (name, current_color) == 0)
+      if (strcmp (name, old_name) == 0)
         return;
-      free (current_color);
+      free (old_name);
     }
 
-  alpha_changed = 0;
-
-  current_color = strdup (name);
+  old_name = strdup (name);
 
   if (name == NULL)
     {
@@ -771,7 +767,6 @@ ghid_set_color (hidGC gc, const char *name)
     }
   if (1) {
     double maxi, mult;
-    alpha_mult *= global_alpha_mult;
     if (gport->trans_lines)
       a = a * alpha_mult;
     maxi = r;
@@ -790,16 +785,6 @@ ghid_set_color (hidGC gc, const char *name)
 
   hidgl_flush_triangles (&buffer);
   glColor4d (r, g, b, a);
-}
-
-void
-ghid_global_alpha_mult (hidGC gc, double alpha_mult)
-{
-  if (alpha_mult != global_alpha_mult) {
-    global_alpha_mult = alpha_mult;
-    alpha_changed = 1;
-    ghid_set_color (gc, current_color);
-  }
 }
 
 void
@@ -908,15 +893,6 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
   USE_GC (gc);
 
   hidgl_fill_polygon (n_coords, x, y);
-}
-
-void
-ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
-{
-  common_thindraw_pcb_polygon (gc, poly, clip_box);
-  ghid_global_alpha_mult (gc, 0.25);
-  ghid_fill_pcb_polygon (gc, poly, clip_box);
-  ghid_global_alpha_mult (gc, 1.0);
 }
 
 void
@@ -1463,7 +1439,7 @@ HID ghid_hid = {
   ghid_fill_circle,
   ghid_fill_polygon,
   ghid_fill_pcb_polygon,
-  common_thindraw_pcb_polygon,
+  ghid_thindraw_pcb_polygon,
   ghid_fill_rect,
 
   ghid_calibrate,
