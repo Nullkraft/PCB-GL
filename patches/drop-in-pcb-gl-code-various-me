@@ -1,7 +1,7 @@
-Bottom: beee93e65cf50d9329676ced1a89d71b385f650e
-Top:    0250f2e5aede7d7dba9c032c53e4afccc8eae3fd
+Bottom: 6301cd34fb277aefff082bd64d08f5462954361e
+Top:    13c4a4e000f4c0b1f8d3a04bdccbea90d5a817ea
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 02:28:10 +0000
+Date:   2009-11-15 16:57:14 +0000
 
 Drop in PCB+GL code + various mess. Needs splitting up?
 
@@ -16,7 +16,7 @@ FIXME: SHOULD NOT RE-WRITE THE GTK HID!
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 1c97b60..49460cd 100644
+index 371173a..7e11efa 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -149,13 +149,17 @@ PCB_SRCS = \
@@ -38,7 +38,7 @@ index 1c97b60..49460cd 100644
  BUILT_SOURCES = \
  	core_lists.h \
  	gpcb-menu.h \
-@@ -283,6 +287,11 @@ BUILT_SOURCES+=	dbus-introspect.h
+@@ -284,6 +288,11 @@ BUILT_SOURCES+=	dbus-introspect.h
  
  endif
  
@@ -754,12 +754,12 @@ index 0000000..73d9a34
 +
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 280cfbe..ab923a1 100644
+index 92946b2..d6b0c8c 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -25,14 +25,23 @@
- 
- #include "hid.h"
+@@ -17,14 +17,23 @@
+ #include "crosshair.h"
+ #include "error.h"
  #include "../hidint.h"
 -#include "gui.h"
  #include "hid/common/draw_helpers.h"
@@ -782,7 +782,7 @@ index 280cfbe..ab923a1 100644
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
  #endif
-@@ -43,6 +52,8 @@ RCSID ("$Id$");
+@@ -35,6 +44,8 @@ RCSID ("$Id$");
  
  extern HID ghid_hid;
  
@@ -791,7 +791,7 @@ index 280cfbe..ab923a1 100644
  
  static void zoom_to (double factor, int x, int y);
  static void zoom_by (double factor, int x, int y);
-@@ -52,7 +63,6 @@ static void zoom_by (double factor, int x, int y);
+@@ -44,7 +55,6 @@ static void zoom_by (double factor, int x, int y);
  #define USE_GC(gc) if (!use_gc(gc)) return
  
  static int cur_mask = -1;
@@ -799,7 +799,7 @@ index 280cfbe..ab923a1 100644
  
  int ghid_flip_x = 0, ghid_flip_y = 0;
  
-@@ -326,10 +336,10 @@ zoom_by (double factor, int x, int y)
+@@ -318,10 +328,10 @@ zoom_by (double factor, int x, int y)
  
  /* ------------------------------------------------------------ */
  
@@ -812,7 +812,7 @@ index 280cfbe..ab923a1 100644
    static int npoints = 0;
    int x1, y1, x2, y2, n, i;
    double x, y;
-@@ -338,19 +348,23 @@ draw_grid ()
+@@ -330,19 +340,23 @@ draw_grid ()
      return;
    if (Vz (PCB->Grid) < MIN_GRID_DISTANCE)
      return;
@@ -847,7 +847,7 @@ index 280cfbe..ab923a1 100644
    x1 = GRIDFIT_X (SIDE_X (gport->view_x0), PCB->Grid);
    y1 = GRIDFIT_Y (SIDE_Y (gport->view_y0), PCB->Grid);
    x2 = GRIDFIT_X (SIDE_X (gport->view_x0 + gport->view_width - 1), PCB->Grid);
-@@ -380,21 +394,28 @@ draw_grid ()
+@@ -372,21 +386,28 @@ draw_grid ()
      {
        npoints = n + 10;
        points =
@@ -880,7 +880,7 @@ index 280cfbe..ab923a1 100644
  }
  
  /* ------------------------------------------------------------ */
-@@ -418,108 +439,81 @@ ghid_invalidate_lr (int left, int right, int top, int bottom, int last)
+@@ -410,108 +431,81 @@ ghid_invalidate_lr (int left, int right, int top, int bottom, int last)
    ghid_invalidate_all ();
  }
  
@@ -1047,7 +1047,7 @@ index 280cfbe..ab923a1 100644
  }
  
  
-@@ -530,8 +524,10 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -522,8 +516,10 @@ ghid_set_layer (const char *name, int group, int empty)
  	     && group <
  	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
  
@@ -1059,7 +1059,7 @@ index 280cfbe..ab923a1 100644
    if (idx < 0)
      {
        switch (SL_TYPE (idx))
-@@ -543,6 +539,8 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -535,6 +531,8 @@ ghid_set_layer (const char *name, int group, int empty)
  	    return TEST_FLAG (SHOWMASKFLAG, PCB);
  	  return 0;
  	case SL_SILK:
@@ -1068,7 +1068,7 @@ index 280cfbe..ab923a1 100644
  	  if (SL_MYSIDE (idx) /*|| pinout */ )
  	    return PCB->ElementOn;
  	  return 0;
-@@ -552,79 +550,57 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -544,79 +542,57 @@ ghid_set_layer (const char *name, int group, int empty)
  	case SL_UDRILL:
  	  return 1;
  	case SL_RATS:
@@ -1176,7 +1176,7 @@ index 280cfbe..ab923a1 100644
      }
    cur_mask = use_it;
  }
-@@ -641,6 +617,9 @@ typedef struct
+@@ -633,6 +609,9 @@ typedef struct
    GdkColor color;
    int xor_set;
    GdkColor xor_color;
@@ -1186,7 +1186,7 @@ index 280cfbe..ab923a1 100644
  } ColorCache;
  
  
-@@ -655,9 +634,7 @@ set_special_grid_color (void)
+@@ -647,9 +626,7 @@ set_special_grid_color (void)
    gport->grid_color.red ^= gport->bg_color.red;
    gport->grid_color.green ^= gport->bg_color.green;
    gport->grid_color.blue ^= gport->bg_color.blue;
@@ -1197,7 +1197,7 @@ index 280cfbe..ab923a1 100644
  }
  
  void
-@@ -665,99 +642,138 @@ ghid_set_special_colors (HID_Attribute * ha)
+@@ -657,99 +634,138 @@ ghid_set_special_colors (HID_Attribute * ha)
  {
    if (!ha->name || !ha->value)
      return;
@@ -1380,7 +1380,7 @@ index 280cfbe..ab923a1 100644
    switch (style)
      {
      case Trace_Cap:
-@@ -771,31 +787,22 @@ ghid_set_line_cap (hidGC gc, EndCapStyle style)
+@@ -763,31 +779,22 @@ ghid_set_line_cap (hidGC gc, EndCapStyle style)
        gc->join = GDK_JOIN_MITER;
        break;
      }
@@ -1417,7 +1417,7 @@ index 280cfbe..ab923a1 100644
  }
  
  void
-@@ -810,200 +817,74 @@ ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2)
+@@ -802,200 +809,74 @@ ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2)
    printf ("ghid_set_line_cap_angle() -- not implemented\n");
  }
  
@@ -1644,7 +1644,7 @@ index 280cfbe..ab923a1 100644
  }
  
  void
-@@ -1050,8 +931,6 @@ ghid_calibrate (double xval, double yval)
+@@ -1042,8 +923,6 @@ ghid_calibrate (double xval, double yval)
    printf ("ghid_calibrate() -- not implemented\n");
  }
  
@@ -1653,7 +1653,7 @@ index 280cfbe..ab923a1 100644
  void
  ghid_notify_gui_is_up ()
  {
-@@ -1517,7 +1396,7 @@ HID ghid_hid = {
+@@ -1509,7 +1388,7 @@ HID ghid_hid = {
    1,				/* gui */
    0,				/* printer */
    0,				/* exporter */
@@ -1662,7 +1662,7 @@ index 280cfbe..ab923a1 100644
    1,				/* poly after */
    0,				/* poly dicer */
  
-@@ -2162,7 +2041,8 @@ Benchmark (int argc, char **argv, int x, int y)
+@@ -2154,7 +2033,8 @@ Benchmark (int argc, char **argv, int x, int y)
    time (&start);
    do
      {
@@ -2448,7 +2448,7 @@ index c6a2e58..b6e0224 100644
  
    Settings.AutoPlace = 0;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index ca56361..3f442ce 100644
+index fdd7d9e..1da3b28 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -37,6 +37,18 @@
@@ -2502,8 +2502,8 @@ index ca56361..3f442ce 100644
  void ghid_port_ranges_changed (void);
  void ghid_port_ranges_zoom (gdouble zoom);
  gboolean ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative);
-@@ -531,7 +550,9 @@ GdkPixmap *ghid_render_pixmap (int cx,
- 			       int depth);
+@@ -549,7 +568,9 @@ void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
+ void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
  
  /* gtkhid-main.c */
 +
