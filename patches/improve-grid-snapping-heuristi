@@ -1,7 +1,7 @@
-Bottom: f40a0c003dff0ef7a242e1b27e1c9b4687754a73
-Top:    e6f748a265468ed8b12ec9aac5ae5e7a2b74cffc
+Bottom: dca360a9c6efc262e74b1882cfb6fd56c6a1ce7f
+Top:    8d84431968e99587224ae5c14f1358241fc2122e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 00:16:26 +0000
+Date:   2009-11-15 00:28:47 +0000
 
 Improve grid snapping heuristics
 
@@ -276,10 +276,10 @@ index 367922e..b7ae847 100644
        && Crosshair.AttachedLine.State != STATE_FIRST
        && TEST_FLAG (AUTODRCFLAG, PCB))
 diff --git a/src/search.c b/src/search.c
-index 7756e91..4d6c8db 100644
+index 07015f0..612df6d 100644
 --- a/src/search.c
 +++ b/src/search.c
-@@ -1603,3 +1603,17 @@ SearchScreen (LocationType X, LocationType Y, int Type, void **Result1,
+@@ -1592,3 +1592,17 @@ SearchScreen (LocationType X, LocationType Y, int Type, void **Result1,
  				X, Y, SLOP * pixel_slop);
    return (ans);
  }
@@ -298,10 +298,10 @@ index 7756e91..4d6c8db 100644
 +  return (ans);
 +}
 diff --git a/src/search.h b/src/search.h
-index bc7a4eb..3164605 100644
+index 11d7d03..43f48d7 100644
 --- a/src/search.h
 +++ b/src/search.h
-@@ -86,6 +86,7 @@ Boolean IsPointInBox (LocationType, LocationType, BoxTypePtr, BDimension);
+@@ -85,6 +85,7 @@ Boolean IsPointInBox (LocationType, LocationType, BoxTypePtr, BDimension);
  int SearchObjectByLocation (int, void **, void **, void **, LocationType,
  			    LocationType, BDimension);
  int SearchScreen (LocationType, LocationType, int, void **, void **, void **);
