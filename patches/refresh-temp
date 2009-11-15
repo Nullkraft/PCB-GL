@@ -1,0 +1,41 @@
+Bottom: 1c4e1f4de5c41efcb3c113f445f797a35c42aa69
+Top:    d32d60e56a4b21efff211c3149f047939fbb22b7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-15 17:40:28 +0000
+
+Refresh of add-raw-polygons-support-for-t
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index e50392f..04ea728 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -486,6 +486,14 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
+ }
+ 
+ void
++ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
++{
++  USE_GC (gc);
++
++  hidgl_fill_pcb_polygon (poly, clip_box, gport->zoom);
++}
++
++void
+ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
+ {
+   USE_GC (gc);
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index a5ff72f..fd33f94 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -565,6 +565,8 @@ void ghid_draw_arc (hidGC gc, int cx, int cy, int xradius, int yradius,
+ void ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2);
+ void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
+ void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
++void ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly,
++                            const BoxType *clip_box); /* GL ONLY */
+ void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
+ 
+ /* gtkhid-main.c */
