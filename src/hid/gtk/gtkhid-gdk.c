@@ -47,7 +47,6 @@ Vy2 (int y)
 
 typedef struct hid_gc_struct
 {
-  HID *me_pointer;
   GdkGC *gc;
 
   gchar *colorname;
@@ -74,7 +73,6 @@ ghid_make_gc (void)
   hidGC rv;
 
   rv = g_new0 (hid_gc_struct, 1);
-  rv->me_pointer = &ghid_hid;
   rv->colorname = Settings.BackgroundColor;
   return rv;
 }
