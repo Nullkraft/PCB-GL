@@ -1,0 +1,21 @@
+Bottom: 62a6cfa130309907f9f5264cc9689119e2e3d865
+Top:    2cab48b3c68b8330e62e586be9b5448a5ef92721
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-15 02:33:54 +0000
+
+Refresh of add-raw-polygons-support-for-t
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 413d92f..4594c63 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -613,6 +613,7 @@ do_hole (const BoxType *b, void *cl)
+ {
+   struct do_hole_info *info = cl;
+   PLINE *curc = (PLINE *) b;
++
+   /* Ignore the outer contour - we draw it first explicitly*/
+   if (curc->Flags.orient == PLF_DIR) {
+     return 0;
