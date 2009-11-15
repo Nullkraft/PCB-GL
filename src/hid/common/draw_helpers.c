@@ -280,6 +280,13 @@ common_gui_draw_pcb_polygon (hidGC gc, PolygonType *polygon, const BoxType *clip
 void
 common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
+  /* FIXME: We aren't checking the gui's dicer flag..
+            we are dicing for every case. Some GUIs
+            rely on this, and need their flags fixing. */
+
+  NoHolesPolygonDicer (poly, clip_box, fill_contour_cb, gc);
+
+#if 0
   if (poly->Clipped == NULL)
     return;
 
@@ -306,6 +313,7 @@ common_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
             fill_clipped_contour (gc, pl, clip_box);
         }
     }
+#endif
 
   /* Draw other parts of the polygon if fullpoly flag is set */
   /* NB: No "NoHoles" cache for these */
