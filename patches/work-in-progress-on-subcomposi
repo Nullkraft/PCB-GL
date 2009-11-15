@@ -1,7 +1,7 @@
-Bottom: 7123ac4f38ac78f4cbfdf8a49e7feb39635a3a5a
-Top:    7c9ccc0705dcd10253b8e9c7ba3bab14f03624f8
+Bottom: 861456d4b2f96c7df46889f44e5f8dcba0c0191f
+Top:    acfc36c8a578b1e206206151eba0f84d7ed8d712
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 01:58:08 +0000
+Date:   2009-11-15 02:09:32 +0000
 
 Work in progress on subcompositing / stencil buffers
 
@@ -14,7 +14,7 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 4605ae5..3468b9b 100644
+index 66ec017..399b614 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -420,6 +420,7 @@ DrawEverything (BoxTypePtr drawn_area)
