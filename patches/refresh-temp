@@ -1,0 +1,28 @@
+Bottom: d32d60e56a4b21efff211c3149f047939fbb22b7
+Top:    747f6ec31f6d19ab4bf8e5295e0b8839f7557ba8
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-15 17:41:09 +0000
+
+Refresh of add-raw-polygons-support-for-t
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 420ca2f..e532c9a 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -872,14 +872,6 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
+ }
+ 
+ void
+-ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+-{
+-  USE_GC (gc);
+-
+-  hidgl_fill_pcb_polygon (poly, clip_box, gport->zoom);
+-}
+-
+-void
+ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
+ {
+   USE_GC (gc);
