@@ -1,0 +1,56 @@
+Bottom: acfc36c8a578b1e206206151eba0f84d7ed8d712
+Top:    f6c5f1b8a8696454861bec73c082d74ee93e3825
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-15 02:18:30 +0000
+
+Refresh of work-in-progress-on-subcomposi
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 399b614..c509712 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -530,7 +530,7 @@ DrawEverything (BoxTypePtr drawn_area)
+ 	r_search (PCB->Data->element_tree, drawn_area, NULL, EMark_callback,
+ 		  NULL);
+       /* Draw rat lines on top */
+-      if (PCB->RatOn && gui->set_layer ("rats", SL (RATS, 0), 0))
++      if (gui->set_layer ("rats", SL (RATS, 0), 0))
+ 	DrawRats(drawn_area);
+     }
+ 
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index c9a3f06..45f753b 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -572,12 +572,13 @@ ghid_set_layer (const char *name, int group, int empty)
+ 	  return 0;
+ 	case SL_ASSY:
+ 	  return 0;
+-	case SL_RATS:
+-	  gport->trans_lines = TRUE;
+-	  return 1;
+ 	case SL_PDRILL:
+ 	case SL_UDRILL:
+ 	  return 1;
++	case SL_RATS:
++	  if (PCB->RatOn)
++	    gport->trans_lines = TRUE;
++	  return PCB->RatOn;
+ 	}
+     }
+   return 0;
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 93bb2b8..6ff7e74 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -2890,6 +2890,8 @@ lesstif_set_layer (const char *name, int group, int empty)
+ 	case SL_UDRILL:
+ 	case SL_PDRILL:
+ 	  return 1;
++	case SL_RATS:
++	  return PCB->RatOn;
+ 	}
+     }
+   return 0;
