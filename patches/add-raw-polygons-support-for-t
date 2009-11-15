@@ -1,5 +1,5 @@
 Bottom: d4327ebbe1c1634bd6c3c433123afa7243e81d07
-Top:    acd48d2860fb156df3108eb275dce5d349142dde
+Top:    a0212bfa6d5798b9061c238fea029da8d78ad0da
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 01:52:50 +0000
 
@@ -26,19 +26,18 @@ For now, we don't use polygons on the mask, so its not a a problem (?).
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index b0a5049..73bf7d0 100644
+index b0a5049..413d92f 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -36,7 +36,7 @@
+@@ -36,6 +36,7 @@
  
  #include "hid.h"
  #include "hidgl.h"
--
 +#include "rtree.h"
  
+ 
  #ifdef HAVE_LIBDMALLOC
- #include <dmalloc.h>
-@@ -478,6 +478,8 @@ myBegin (GLenum type)
+@@ -478,6 +479,8 @@ myBegin (GLenum type)
    triangle_comp_idx = 0;
  }
  
@@ -47,7 +46,7 @@ index b0a5049..73bf7d0 100644
  static void
  myVertex (GLdouble *vertex_data)
  {
-@@ -494,11 +496,23 @@ myVertex (GLdouble *vertex_data)
+@@ -494,11 +497,23 @@ myVertex (GLdouble *vertex_data)
          }
        else
          {
@@ -71,7 +70,7 @@ index b0a5049..73bf7d0 100644
  
            if (tessVertexType == GL_TRIANGLE_STRIP)
              {
-@@ -569,6 +583,113 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -569,6 +584,113 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
    free (vertices);
  }
  
