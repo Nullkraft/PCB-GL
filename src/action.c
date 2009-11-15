@@ -3313,9 +3313,16 @@ ActionRenumber (int argc, char **argv, int x, int y)
       /* If there is no refdes, maybe just spit out a warning */
       if (NAMEONPCB_NAME (element_list[i]))
 	{
+          /* Strip hierarchy */
+          tmps = strrchr (NAMEONPCB_NAME (element_list[i]), '/');
+          if (tmps == NULL)
+	    tmps = strdup (NAMEONPCB_NAME (element_list[i]));
+          else
+            tmps = strdup (tmps + 1);
+
 	  /* figure out the prefix */
-	  tmps = strdup (NAMEONPCB_NAME (element_list[i]));
 	  j = 0;
+
 	  while (tmps[j] && (tmps[j] < '0' || tmps[j] > '9')
 		 && tmps[j] != '?')
 	    j++;
@@ -4658,6 +4665,79 @@ ActionToggleHideName (int argc, char **argv, int x, int y)
 					   element, element);
 		  EraseElementName (element);
 		  TOGGLE_FLAG (HIDENAMEFLAG, element);
+		  DrawElementName (element, 0);
+		  changed = True;
+		}
+	    }
+	    END_LOOP;
+	    if (changed)
+	      {
+		Draw ();
+		IncrementUndoSerialNumber ();
+	      }
+	  }
+	}
+      RestoreCrosshair (True);
+    }
+  return 0;
+}
+
+/* --------------------------------------------------------------------------- */
+
+static const char togglestriphierarchy_syntax[] =
+  "ToggleStripHierarchy(Object|SelectedElements)";
+
+static const char togglestriphierarchy_help[] =
+  "Toggles the visibility of element names.";
+
+/* %start-doc actions ToggleStripHierarchy
+
+%end-doc */
+
+static int
+ActionToggleStripHierarchy (int argc, char **argv, int x, int y)
+{
+  char *function = ARG (0);
+  if (function && PCB->ElementOn)
+    {
+      HideCrosshair (True);
+      switch (GetFunctionID (function))
+	{
+	case F_Object:
+	  {
+	    int type;
+	    void *ptr1, *ptr2, *ptr3;
+
+	    gui->get_coords ("Select an Object", &x, &y);
+	    if ((type = SearchScreen (x, y, ELEMENT_TYPE,
+				      &ptr1, &ptr2, &ptr3)) != NO_TYPE)
+	      {
+		AddObjectToFlagUndoList (type, ptr1, ptr2, ptr3);
+		EraseElementName ((ElementTypePtr) ptr2);
+		TOGGLE_FLAG (HIDENAMEFLAG, (ElementTypePtr) ptr2);
+/* TODO: 		   SetTextBoundingBox (&PCB->Font, new); */
+		DrawElementName ((ElementTypePtr) ptr2, 0);
+		Draw ();
+		IncrementUndoSerialNumber ();
+	      }
+	    break;
+	  }
+	case F_SelectedElements:
+	case F_Selected:
+	  {
+	    Boolean changed = False;
+	    ELEMENT_LOOP (PCB->Data);
+	    {
+	      if ((TEST_FLAG (SELECTEDFLAG, element) ||
+		   TEST_FLAG (SELECTEDFLAG,
+			      &NAMEONPCB_TEXT (element)))
+		  && (FRONT (element) || PCB->InvisibleObjectsOn))
+		{
+		  AddObjectToFlagUndoList (ELEMENT_TYPE, element,
+					   element, element);
+		  EraseElementName (element);
+		  TOGGLE_FLAG (STRIPHIERFLAG, element);
+/* TODO: 		   SetTextBoundingBox (&PCB->Font, new); */
 		  DrawElementName (element, 0);
 		  changed = True;
 		}
@@ -6936,6 +7016,9 @@ HID_Action action_action_list[] = {
   ,
   {"ToggleHideName", 0, ActionToggleHideName,
    togglehidename_help, togglehidename_syntax}
+  ,
+  {"ToggleStripHierarchy", 0, ActionToggleStripHierarchy,
+   togglestriphierarchy_help, togglestriphierarchy_syntax}
   ,
   {"Undo", 0, ActionUndo,
    undo_help, undo_syntax}
