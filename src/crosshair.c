@@ -44,7 +44,6 @@
 #include "data.h"
 #include "draw.h"
 #include "error.h"
-
 #include "line.h"
 #include "misc.h"
 #include "mymem.h"
