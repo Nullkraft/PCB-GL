@@ -1,7 +1,7 @@
-Bottom: 22f0690de02d3f9b7c57924acbc7c87b66e37cb4
-Top:    0a75945c6e7826c39015b58ca762a09b449216da
+Bottom: a9bdf4f1e57db3605c6b79093f3f8942c1fe7433
+Top:    fe941162ae3046aafeb6c6225a73547a57837273
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 02:34:56 +0000
+Date:   2009-11-15 17:57:03 +0000
 
 Add virtual trackball code
 
@@ -9,10 +9,10 @@ Add virtual trackball code
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 49460cd..2f92f29 100644
+index 9c4e0ce..54ed24b 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -158,7 +158,10 @@ DBUS_SRCS= \
+@@ -164,7 +164,10 @@ LIBGTK_GL_SRCS= \
  
  GL_SRCS= \
  	hid/common/hidgl.c \
@@ -24,7 +24,7 @@ index 49460cd..2f92f29 100644
  
  BUILT_SOURCES = \
  	core_lists.h \
-@@ -265,6 +268,8 @@ LIBGTK_SRCS = \
+@@ -271,6 +274,8 @@ LIBGTK_SRCS = \
  	hid/gtk/gui-pinout-window.c \
  	hid/gtk/gui-render-pixmap.c \
  	hid/gtk/gui-top-window.c \
