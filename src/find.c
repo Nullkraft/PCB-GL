@@ -2308,15 +2308,19 @@ LOCtoPadRat_callback (const BoxType * b, void *cl)
   if (!TEST_FLAG (TheFlag, rat))
     {
       if (rat->group1 == i->layer &&
-          rat->Point1.X == (i->pad.Point1.X + i->pad.Point2.X) / 2 &&
-          rat->Point1.Y == (i->pad.Point1.Y + i->pad.Point2.Y) / 2)
+	  ((rat->Point1.X == i->pad.Point1.X && rat->Point1.Y == i->pad.Point1.Y) ||
+	   (rat->Point1.X == i->pad.Point2.X && rat->Point1.Y == i->pad.Point2.Y) ||
+	   (rat->Point1.X == (i->pad.Point1.X + i->pad.Point2.X) / 2 &&
+	    rat->Point1.Y == (i->pad.Point1.Y + i->pad.Point2.Y) / 2)))
         {
           if (ADD_RAT_TO_LIST (rat))
             longjmp (i->env, 1);
         }
       else if (rat->group2 == i->layer &&
-               rat->Point2.X == (i->pad.Point1.X + i->pad.Point2.X) / 2 &&
-               rat->Point2.Y == (i->pad.Point1.Y + i->pad.Point2.Y) / 2)
+	       ((rat->Point2.X == i->pad.Point1.X && rat->Point2.Y == i->pad.Point1.Y) ||
+		(rat->Point2.X == i->pad.Point2.X && rat->Point2.Y == i->pad.Point2.Y) ||
+		(rat->Point2.X == (i->pad.Point1.X + i->pad.Point2.X) / 2 &&
+		 rat->Point2.Y == (i->pad.Point1.Y + i->pad.Point2.Y) / 2)))
         {
           if (ADD_RAT_TO_LIST (rat))
             longjmp (i->env, 1);
