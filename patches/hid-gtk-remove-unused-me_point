@@ -3,7 +3,9 @@ Top:    e038ac18d56a25359cc0f01bdbd771a64942b07a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 19:42:27 +0000
 
-hid/gtk: Remove unused "me_pointer" from the hidGC structure
+hid/gtk: Add a guard against GC's being passed from another HID
+
+Various other HIDs have this check.
 
 
 ---
