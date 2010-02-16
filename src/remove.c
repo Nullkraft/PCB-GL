@@ -46,6 +46,7 @@
 #include "move.h"
 #include "mymem.h"
 #include "polygon.h"
+#include "pour.h"
 #include "rats.h"
 #include "remove.h"
 #include "rtree.h"
@@ -69,12 +70,12 @@ static void *DestroyRat (RatTypePtr);
 static void *DestroyLine (LayerTypePtr, LineTypePtr);
 static void *DestroyArc (LayerTypePtr, ArcTypePtr);
 static void *DestroyText (LayerTypePtr, TextTypePtr);
-static void *DestroyPolygon (LayerTypePtr, PolygonTypePtr);
+static void *DestroyPour (LayerTypePtr, PourTypePtr);
 static void *DestroyElement (ElementTypePtr);
 static void *RemoveVia (PinTypePtr);
 static void *RemoveRat (RatTypePtr);
-static void *DestroyPolygonPoint (LayerTypePtr, PolygonTypePtr, PointTypePtr);
-static void *RemovePolygonPoint (LayerTypePtr, PolygonTypePtr, PointTypePtr);
+static void *DestroyPourPoint (LayerTypePtr, PourTypePtr, PointTypePtr);
+static void *RemovePourPoint (LayerTypePtr, PourTypePtr, PointTypePtr);
 static void *RemoveLinePoint (LayerTypePtr, LineTypePtr, PointTypePtr);
 
 /* ---------------------------------------------------------------------------
@@ -83,28 +84,30 @@ static void *RemoveLinePoint (LayerTypePtr, LineTypePtr, PointTypePtr);
 static ObjectFunctionType RemoveFunctions = {
   RemoveLine,
   RemoveText,
-  RemovePolygon,
+  NULL,
+  RemovePour,
   RemoveVia,
   RemoveElement,
   NULL,
   NULL,
   NULL,
   RemoveLinePoint,
-  RemovePolygonPoint,
+  RemovePourPoint,
   RemoveArc,
   RemoveRat
 };
 static ObjectFunctionType DestroyFunctions = {
   DestroyLine,
   DestroyText,
-  DestroyPolygon,
+  NULL, //DestroyPolygon,
+  DestroyPour,
   DestroyVia,
   DestroyElement,
   NULL,
   NULL,
   NULL,
   NULL,
-  DestroyPolygonPoint,
+  DestroyPourPoint,
   DestroyArc,
   DestroyRat
 };
@@ -178,21 +181,21 @@ DestroyArc (LayerTypePtr Layer, ArcTypePtr Arc)
 }
 
 /* ---------------------------------------------------------------------------
- * destroys a polygon from a layer
+ * destroys a pour from a layer
  */
 static void *
-DestroyPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+DestroyPour (LayerTypePtr Layer, PourTypePtr Pour)
 {
-  r_delete_entry (Layer->polygon_tree, (BoxTypePtr) Polygon);
-  FreePolygonMemory (Polygon);
-  if (Polygon != &Layer->Polygon[--Layer->PolygonN])
+  r_delete_entry (Layer->pour_tree, (BoxTypePtr) Pour);
+  FreePourMemory (Pour);
+  if (Pour != &Layer->Pour[--Layer->PourN])
     {
-      *Polygon = Layer->Polygon[Layer->PolygonN];
-      r_substitute (Layer->polygon_tree,
-		    (BoxType *) & Layer->Polygon[Layer->PolygonN],
-		    (BoxType *) Polygon);
+      *Pour = Layer->Pour[Layer->PourN];
+      r_substitute (Layer->pour_tree,
+                    (BoxType *) & Layer->Pour[Layer->PourN],
+                    (BoxType *) Pour);
     }
-  memset (&Layer->Polygon[Layer->PolygonN], 0, sizeof (PolygonType));
+  memset (&Layer->Pour[Layer->PourN], 0, sizeof (PourType));
   return (NULL);
 }
 
@@ -200,24 +203,24 @@ DestroyPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  * removes a polygon-point from a polygon and destroys the data
  */
 static void *
-DestroyPolygonPoint (LayerTypePtr Layer,
-		     PolygonTypePtr Polygon, PointTypePtr Point)
+DestroyPourPoint (LayerTypePtr Layer,
+                  PourTypePtr Pour, PointTypePtr Point)
 {
   PointTypePtr ptr;
 
-  if (Polygon->PointN <= 3)
-    return RemovePolygon (Layer, Polygon);
-  r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
-  for (ptr = Point + 1; ptr != &Polygon->Points[Polygon->PointN]; ptr++)
+  if (Pour->PointN <= 3)
+    return RemovePour (Layer, Pour);
+  r_delete_entry (Layer->pour_tree, (BoxType *) Pour);
+  for (ptr = Point + 1; ptr != &Pour->Points[Pour->PointN]; ptr++)
     {
       *Point = *ptr;
       Point = ptr;
     }
-  Polygon->PointN--;
-  SetPolygonBoundingBox (Polygon);
-  r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
-  InitClip (PCB->Data, Layer, Polygon);
-  return (Polygon);
+  Pour->PointN--;
+  SetPourBoundingBox (Pour);
+  r_insert_entry (Layer->pour_tree, (BoxType *) Pour, 0);
+  InitPourClip (PCB->Data, Layer, Pour);
+  return (Pour);
 }
 
 /* ---------------------------------------------------------------------------
@@ -464,62 +467,62 @@ RemoveText (LayerTypePtr Layer, TextTypePtr Text)
 }
 
 /* ---------------------------------------------------------------------------
- * removes a polygon from a layer
+ * removes a pour from a layer
  */
 void *
-RemovePolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+RemovePour (LayerTypePtr Layer, PourTypePtr Pour)
 {
   /* erase from screen */
   if (Layer->On)
     {
-      ErasePolygon (Polygon);
+      ErasePour (Pour);
       if (!Bulk)
 	Draw ();
     }
-  MoveObjectToRemoveUndoList (POLYGON_TYPE, Layer, Polygon, Polygon);
+  MoveObjectToRemoveUndoList (POUR_TYPE, Layer, Pour, Pour);
   return (NULL);
 }
 
 /* ---------------------------------------------------------------------------
- * removes a polygon-point from a polygon
+ * removes a pour-point from a pour
  */
 static void *
-RemovePolygonPoint (LayerTypePtr Layer,
-		    PolygonTypePtr Polygon, PointTypePtr Point)
+RemovePourPoint (LayerTypePtr Layer,
+                 PourTypePtr Pour, PointTypePtr Point)
 {
   PointTypePtr ptr;
   Cardinal index = 0;
-  if (Polygon->PointN <= 3)
-    return RemovePolygon (Layer, Polygon);
+  if (Pour->PointN <= 3)
+    return RemovePour (Layer, Pour);
   if (Layer->On)
-    ErasePolygon (Polygon);
-  /* insert the polygon-point into the undo list */
-  POLYGONPOINT_LOOP (Polygon);
+    ErasePour (Pour);
+  /* insert the pour-point into the undo list */
+  POURPOINT_LOOP (Pour);
   {
     if (point == Point)
       {
-	index = n;
-	break;
+        index = n;
+        break;
       }
   }
   END_LOOP;
-  AddObjectToRemovePointUndoList (POLYGONPOINT_TYPE, Layer, Polygon, index);
-  r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
+  AddObjectToRemovePointUndoList (POURPOINT_TYPE, Layer, Pour, index);
+  r_delete_entry (Layer->pour_tree, (BoxType *) Pour);
   /* remove point from list, keep point order */
-  for (ptr = Point + 1; ptr != &Polygon->Points[Polygon->PointN]; ptr++)
+  for (ptr = Point + 1; ptr != &Pour->Points[Pour->PointN]; ptr++)
     {
       *Point = *ptr;
       Point = ptr;
     }
-  Polygon->PointN--;
-  SetPolygonBoundingBox (Polygon);
-  r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
-  RemoveExcessPolygonPoints (Layer, Polygon);
-  InitClip (PCB->Data, Layer, Polygon);
-  /* redraw polygon if necessary */
+  Pour->PointN--;
+  SetPourBoundingBox (Pour);
+  r_insert_entry (Layer->pour_tree, (BoxType *) Pour, 0);
+  RemoveExcessPourPoints (Layer, Pour);
+  InitPourClip (PCB->Data, Layer, Pour);
+  /* redraw pour if necessary */
   if (Layer->On)
     {
-      DrawPolygon (Layer, Polygon, 0);
+      DrawPour (Layer, Pour, 0);
       if (!Bulk)
 	Draw ();
     }
