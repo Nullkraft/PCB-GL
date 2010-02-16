@@ -62,6 +62,7 @@
 #include "move.h"
 #include "mymem.h"
 #include "polygon.h"
+#include "pour.h"
 #include "remove.h"
 #include "rotate.h"
 #include "rtree.h"
@@ -126,7 +127,7 @@ typedef struct			/* information about poly clear/restore */
   Boolean Clear;		/* true was clear, false was restore */
   LayerTypePtr Layer;
 }
-ClearPolyType, *ClearPolyTypePtr;
+ClearPourType, *ClearPourTypePtr;
 
 typedef struct			/* information about netlist lib changes */
 {
@@ -151,7 +152,7 @@ typedef struct			/* holds information about an operation */
     FlagType Flags;
     BDimension Size;
     LayerChangeType LayerChange;
-    ClearPolyType ClearPoly;
+    ClearPourType ClearPour;
     NetlistChangeType NetlistChange;
   }
   Data;
@@ -192,7 +193,7 @@ static Boolean UndoChange2ndSize (UndoListTypePtr);
 static Boolean UndoChangeAngles (UndoListTypePtr);
 static Boolean UndoChangeClearSize (UndoListTypePtr);
 static Boolean UndoChangeMaskSize (UndoListTypePtr);
-static Boolean UndoClearPoly (UndoListTypePtr);
+static Boolean UndoClearPour (UndoListTypePtr);
 static int PerformUndo (UndoListTypePtr);
 
 /* ---------------------------------------------------------------------------
@@ -310,7 +311,7 @@ UndoRotate (UndoListTypePtr Entry)
  * returns True if anything has been recovered
  */
 static Boolean
-UndoClearPoly (UndoListTypePtr Entry)
+UndoClearPour (UndoListTypePtr Entry)
 {
   void *ptr1, *ptr2, *ptr3;
   int type;
@@ -319,11 +320,11 @@ UndoClearPoly (UndoListTypePtr Entry)
     SearchObjectByID (PCB->Data, &ptr1, &ptr2, &ptr3, Entry->ID, Entry->Kind);
   if (type != NO_TYPE)
     {
-      if (Entry->Data.ClearPoly.Clear)
-	RestoreToPolygon (PCB->Data, type, Entry->Data.ClearPoly.Layer, ptr3);
+      if (Entry->Data.ClearPour.Clear)
+	RestoreToPours (PCB->Data, type, Entry->Data.ClearPour.Layer, ptr3);
       else
-	ClearFromPolygon (PCB->Data, type, Entry->Data.ClearPoly.Layer, ptr3);
-      Entry->Data.ClearPoly.Clear = !Entry->Data.ClearPoly.Clear;
+	ClearFromPours (PCB->Data, type, Entry->Data.ClearPour.Layer, ptr3);
+      Entry->Data.ClearPour.Clear = !Entry->Data.ClearPour.Clear;
       return True;
     }
   return False;
@@ -436,11 +437,11 @@ UndoChangeClearSize (UndoListTypePtr Entry)
       if (TEST_FLAG (LOCKFLAG, (LineTypePtr) ptr2))
 	return (False);
       swap = ((PinTypePtr) ptr2)->Clearance;
-      RestoreToPolygon (PCB->Data, type, ptr1, ptr2);
+      RestoreToPours (PCB->Data, type, ptr1, ptr2);
       if (andDraw)
 	EraseObject (type, ptr1, ptr2);
       ((PinTypePtr) ptr2)->Clearance = Entry->Data.Size;
-      ClearFromPolygon (PCB->Data, type, ptr1, ptr2);
+      ClearFromPours (PCB->Data, type, ptr1, ptr2);
       Entry->Data.Size = swap;
       if (andDraw)
 	DrawObject (type, ptr1, ptr2, 0);
@@ -504,12 +505,12 @@ UndoChangeSize (UndoListTypePtr Entry)
       /* Wow! can any object be treated as a pin type for size change?? */
       /* pins, vias, lines, and arcs can. Text can't but it has it's own mechanism */
       swap = ((PinTypePtr) ptr2)->Thickness;
-      RestoreToPolygon (PCB->Data, type, ptr1, ptr2);
+      RestoreToPours (PCB->Data, type, ptr1, ptr2);
       if (andDraw)
 	EraseObject (type, ptr1, ptr2);
       ((PinTypePtr) ptr2)->Thickness = Entry->Data.Size;
       Entry->Data.Size = swap;
-      ClearFromPolygon (PCB->Data, type, ptr1, ptr2);
+      ClearFromPours (PCB->Data, type, ptr1, ptr2);
       if (andDraw)
 	DrawObject (type, ptr1, ptr2, 0);
       return (True);
@@ -710,35 +711,35 @@ static Boolean
 UndoRemovePoint (UndoListTypePtr Entry)
 {
   LayerTypePtr layer;
-  PolygonTypePtr polygon;
+  PourTypePtr pour;
   void *ptr3;
   int type;
 
   /* lookup entry (polygon not point was saved) by it's ID */
-  assert (Entry->Kind == POLYGON_TYPE);
+  assert (Entry->Kind == POUR_TYPE);
   type =
-    SearchObjectByID (PCB->Data, (void *) &layer, (void *) &polygon, &ptr3,
+    SearchObjectByID (PCB->Data, (void *) &layer, (void *) &pour, &ptr3,
 		      Entry->ID, Entry->Kind);
   switch (type)
     {
-    case POLYGON_TYPE:		/* restore the removed point */
+    case POUR_TYPE:		/* restore the removed point */
       {
-	if (TEST_FLAG (LOCKFLAG, polygon))
+	if (TEST_FLAG (LOCKFLAG, pour))
 	  return (False);
 	/* recover the point */
 	if (andDraw && layer->On)
-	  ErasePolygon (polygon);
-	InsertPointIntoObject (POLYGON_TYPE, layer, polygon,
+	  ErasePour (pour);
+	InsertPointIntoObject (POUR_TYPE, layer, pour,
 			       &Entry->Data.RemovedPoint.Index,
 			       Entry->Data.RemovedPoint.X,
 			       Entry->Data.RemovedPoint.Y, True);
-	polygon->Points[Entry->Data.RemovedPoint.Index].ID =
+	pour->Points[Entry->Data.RemovedPoint.Index].ID =
 	  Entry->Data.RemovedPoint.ID;
 	if (andDraw && layer->On)
-	  DrawPolygon (layer, polygon, 0);
+	  DrawPour (layer, pour, 0);
 	Entry->Type = UNDO_INSERT_POINT;
 	Entry->ID = Entry->Data.RemovedPoint.ID;
-	Entry->Kind = POLYGONPOINT_TYPE;
+	Entry->Kind = POURPOINT_TYPE;
 	return (True);
       }
 
@@ -748,37 +749,37 @@ UndoRemovePoint (UndoListTypePtr Entry)
 }
 
 /* ---------------------------------------------------------------------------
- * recovers an inserted polygon point
+ * recovers an inserted pour point
  * returns true on success
  */
 static Boolean
 UndoInsertPoint (UndoListTypePtr Entry)
 {
   LayerTypePtr layer;
-  PolygonTypePtr polygon;
+  PourTypePtr pour;
   PointTypePtr pnt;
   int type;
 
-  assert (Entry->Kind == POLYGONPOINT_TYPE);
+  assert (Entry->Kind == POURPOINT_TYPE);
   /* lookup entry by it's ID */
   type =
-    SearchObjectByID (PCB->Data, (void *) &layer, (void *) &polygon,
+    SearchObjectByID (PCB->Data, (void *) &layer, (void *) &pour,
 		      (void *) &pnt, Entry->ID, Entry->Kind);
   switch (type)
     {
-    case POLYGONPOINT_TYPE:	/* removes an inserted polygon point */
+    case POURPOINT_TYPE:	/* removes an inserted pour point */
       {
-	if (TEST_FLAG (LOCKFLAG, polygon))
+	if (TEST_FLAG (LOCKFLAG, pour))
 	  return (False);
 	if (andDraw && layer->On)
-	  ErasePolygon (polygon);
+	  ErasePour (pour);
 	Entry->Data.RemovedPoint.X = pnt->X;
 	Entry->Data.RemovedPoint.Y = pnt->Y;
 	Entry->Data.RemovedPoint.ID = pnt->ID;
-	Entry->ID = polygon->ID;
-	Entry->Kind = POLYGON_TYPE;
+	Entry->ID = pour->ID;
+	Entry->Kind = POUR_TYPE;
 	Entry->Type = UNDO_REMOVE_POINT;
-	POLYGONPOINT_LOOP (polygon);
+	POURPOINT_LOOP (pour);
 	{
 	  if (pnt == point)
 	    {
@@ -787,9 +788,9 @@ UndoInsertPoint (UndoListTypePtr Entry)
 	    }
 	}
 	END_LOOP;
-	DestroyObject (PCB->Data, POLYGONPOINT_TYPE, layer, polygon, pnt);
+	DestroyObject (PCB->Data, POURPOINT_TYPE, layer, pour, pnt);
 	if (andDraw && layer->On)
-	  DrawPolygon (layer, polygon, 0);
+	  DrawPour (layer, pour, 0);
 	return (True);
       }
 
@@ -975,7 +976,7 @@ PerformUndo (UndoListTypePtr ptr)
       break;
 
     case UNDO_CLEAR:
-      if (UndoClearPoly (ptr))
+      if (UndoClearPour (ptr))
 	return (UNDO_CLEAR);
       break;
 
@@ -1147,7 +1148,7 @@ ClearUndoList (Boolean Force)
  * adds an object to the list of clearpoly objects
  */
 void
-AddObjectToClearPolyUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
+AddObjectToClearPourUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
 			      Boolean clear)
 {
   UndoListTypePtr undo;
@@ -1155,8 +1156,8 @@ AddObjectToClearPolyUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
   if (!Locked)
     {
       undo = GetUndoSlot (UNDO_CLEAR, OBJECT_ID (Ptr3), Type);
-      undo->Data.ClearPoly.Clear = clear;
-      undo->Data.ClearPoly.Layer = (LayerTypePtr) Ptr1;
+      undo->Data.ClearPour.Clear = clear;
+      undo->Data.ClearPour.Layer = (LayerTypePtr) Ptr1;
     }
 }
 
@@ -1222,23 +1223,23 @@ AddObjectToRemovePointUndoList (int Type,
 				void *Ptr1, void *Ptr2, Cardinal index)
 {
   UndoListTypePtr undo;
-  PolygonTypePtr polygon = (PolygonTypePtr) Ptr2;
+  PourTypePtr pour = (PourTypePtr) Ptr2;
 
   if (!Locked)
     {
       switch (Type)
 	{
-	case POLYGONPOINT_TYPE:
+	case POURPOINT_TYPE:
 	  {
 	    /* save the ID of the parent object; else it will be
 	     * impossible to recover the point
 	     */
 	    undo =
-	      GetUndoSlot (UNDO_REMOVE_POINT, OBJECT_ID (polygon),
-			   POLYGON_TYPE);
-	    undo->Data.RemovedPoint.X = polygon->Points[index].X;
-	    undo->Data.RemovedPoint.Y = polygon->Points[index].Y;
-	    undo->Data.RemovedPoint.ID = polygon->Points[index].ID;
+	      GetUndoSlot (UNDO_REMOVE_POINT, OBJECT_ID (pour),
+			   POUR_TYPE);
+	    undo->Data.RemovedPoint.X = pour->Points[index].X;
+	    undo->Data.RemovedPoint.Y = pour->Points[index].Y;
+	    undo->Data.RemovedPoint.ID = pour->Points[index].ID;
 	    undo->Data.RemovedPoint.Index = index;
 	  }
 	  break;
@@ -1317,7 +1318,7 @@ AddObjectToCreateUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
 
   if (!Locked)
     undo = GetUndoSlot (UNDO_CREATE, OBJECT_ID (Ptr3), Type);
-  ClearFromPolygon (PCB->Data, Type, Ptr1, Ptr2);
+  ClearFromPours (PCB->Data, Type, Ptr1, Ptr2);
 }
 
 /* ---------------------------------------------------------------------------
