@@ -1,7 +1,7 @@
-Bottom: a36af1891df46e8865058208f2e2a93d43a3131b
-Top:    4939b68b90651786e39ba2283dc43fca8831ed63
+Bottom: b5346b219ed0e6198c1644a01621ff108e84a4ec
+Top:    e91bab9929d01e2da4230bdf641fe969963fed24
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-13 20:10:12 +0000
+Date:   2010-02-16 13:19:11 +0000
 
 Bentley-Ottann test implementation
 
@@ -9,7 +9,7 @@ Bentley-Ottann test implementation
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 49d7714..656119c 100644
+index 9c14582..590db43 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -7,6 +7,8 @@ AM_INIT_AUTOMAKE([1.9])
@@ -192,7 +192,7 @@ index 0000000..3f6ab7e
 +
 +AC_CHECK_FUNCS(fork waitpid raise)
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 1c97b60..c1a5aaf 100644
+index 371173a..7bdb4a7 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -37,6 +37,33 @@ PCB_SRCS = \
@@ -13833,7 +13833,7 @@ index 0000000..bb5ff35
 +
 +#endif /* __G_PQUEUE_H__ */
 diff --git a/src/main.c b/src/main.c
-index a0b38f3..82ee75c 100644
+index 9d61ffb..e22f18e 100644
 --- a/src/main.c
 +++ b/src/main.c
 @@ -53,6 +53,7 @@
@@ -13844,7 +13844,7 @@ index a0b38f3..82ee75c 100644
  
  /* This next one is so we can print the help messages. */
  #include "hid/hidint.h"
-@@ -830,6 +831,7 @@ char *program_directory = 0;
+@@ -854,6 +855,7 @@ char *program_directory = 0;
  
  #include "dolists.h"
  
@@ -13852,8 +13852,8 @@ index a0b38f3..82ee75c 100644
  int
  main (int argc, char *argv[])
  {
-@@ -1032,7 +1034,10 @@ main (int argc, char *argv[])
- 	      Settings.LibraryTree);
+@@ -1060,7 +1062,10 @@ main (int argc, char *argv[])
+ 	      UNKNOWN (Settings.GnetlistProgram));
  #endif
  
 -      gui->do_export (0);
@@ -13864,7 +13864,7 @@ index a0b38f3..82ee75c 100644
  #if HAVE_DBUS
        pcb_dbus_finish();
  #endif
-@@ -1040,4 +1045,5 @@ main (int argc, char *argv[])
+@@ -1068,4 +1073,5 @@ main (int argc, char *argv[])
  
    return (0);
  }

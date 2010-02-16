@@ -1,7 +1,7 @@
-Bottom: 4939b68b90651786e39ba2283dc43fca8831ed63
-Top:    be323753b69cc14c4d023e503e52870846f2b8ff
+Bottom: e91bab9929d01e2da4230bdf641fe969963fed24
+Top:    b2c6345c3868abc661accdbd20833be601cfee32
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-13 20:10:12 +0000
+Date:   2010-02-16 13:19:11 +0000
 
 TMP2
 
@@ -570,7 +570,7 @@ index 303dab1..23d653f 100644
  /*
   * 128-bit datatypes.  Again, provide two implementations in
 diff --git a/src/main.c b/src/main.c
-index 82ee75c..91a183f 100644
+index e22f18e..c9eb1bd 100644
 --- a/src/main.c
 +++ b/src/main.c
 @@ -53,6 +53,7 @@
@@ -581,7 +581,7 @@ index 82ee75c..91a183f 100644
  #include "sweep.h"
  
  /* This next one is so we can print the help messages. */
-@@ -1037,7 +1038,7 @@ main (int argc, char *argv[])
+@@ -1065,7 +1066,7 @@ main (int argc, char *argv[])
  //      bos_test_intersections ();
        my_cairo_test ();
  
@@ -591,7 +591,7 @@ index 82ee75c..91a183f 100644
        pcb_dbus_finish();
  #endif
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 9dd09e2..af83ef3 100644
+index a369b2d..2d16a36 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -51,6 +51,7 @@
