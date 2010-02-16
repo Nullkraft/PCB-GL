@@ -1,0 +1,22 @@
+Bottom: 970c9ab1775e29bf68dbee1a54e0830ccd1da1b6
+Top:    48c74b545cb1bee9879c23403ccd02bb77f939ca
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-02-16 13:17:54 +0000
+
+Refresh of fix-broken-build-due-to-missin
+
+---
+
+diff --git a/src/global.h b/src/global.h
+index 1462e50..3794448 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -635,6 +635,8 @@ typedef struct			/* some resources... */
+    *ScriptFilename,		/* PCB Actions script to execute on startup */
+    *ActionString,		/* PCB Actions string to execute on startup */
+    *FabAuthor,			/* Full name of author for FAB drawings */
++   *GnetlistProgram,		/* gnetlist program name */
++   *MakeProgram,		/* make program name */
+    *InitialLayerStack;		/* If set, the initial layer stack is set to this */
+   Boolean DumpMenuFile;		/* dump internal menu definitions */
+   LocationType PinoutOffsetX,	/* offset of origin */
