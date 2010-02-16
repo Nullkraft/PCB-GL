@@ -1,7 +1,7 @@
-Bottom: 3775c07d82ff350408ec66ef9dd146d96b9efba0
-Top:    09042c50bc5ab9b0532c0218fb0d6055f90573bd
+Bottom: 441e03ebc025438baa92dda22d12da7af89a5cff
+Top:    89bb5bcc86df13749373b8e0c1797ac056dc5075
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 19:54:13 +0000
+Date:   2010-02-16 13:30:27 +0000
 
 Island removal fixes
 
@@ -11,10 +11,10 @@ Kept separate for now because they might have unknown side-effects.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index a4a3117..f7969ad 100644
+index 1e2b28d..42b6ba8 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
-@@ -247,8 +247,8 @@ MoveViaToBuffer (PinTypePtr Via)
+@@ -249,8 +249,8 @@ MoveViaToBuffer (PinTypePtr Via)
  {
    PinTypePtr via;
  
@@ -24,7 +24,7 @@ index a4a3117..f7969ad 100644
    via = GetViaMemory (Dest);
    *via = *Via;
    CLEAR_FLAG (WARNFLAG | FOUNDFLAG, via);
-@@ -300,8 +300,8 @@ MoveLineToBuffer (LayerTypePtr Layer, LineTypePtr Line)
+@@ -302,8 +302,8 @@ MoveLineToBuffer (LayerTypePtr Layer, LineTypePtr Line)
    LayerTypePtr lay;
    LineTypePtr line;
  
@@ -34,7 +34,7 @@ index a4a3117..f7969ad 100644
    lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
    line = GetLineMemory (lay);
    *line = *Line;
-@@ -330,8 +330,8 @@ MoveArcToBuffer (LayerTypePtr Layer, ArcTypePtr Arc)
+@@ -332,8 +332,8 @@ MoveArcToBuffer (LayerTypePtr Layer, ArcTypePtr Arc)
    LayerTypePtr lay;
    ArcTypePtr arc;
  
@@ -44,7 +44,7 @@ index a4a3117..f7969ad 100644
    lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
    arc = GetArcMemory (lay);
    *arc = *Arc;
-@@ -388,8 +388,8 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
+@@ -390,8 +390,8 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
    LayerTypePtr lay;
    PourTypePtr pour;
  
@@ -55,7 +55,7 @@ index a4a3117..f7969ad 100644
    pour = GetPourMemory (lay);
    *pour = *Pour;
 diff --git a/src/change.c b/src/change.c
-index 109fcd6..52c7a9a 100644
+index 1a80f00..cd21fe3 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -493,10 +493,10 @@ ChangeViaClearSize (PinTypePtr Via)
@@ -116,10 +116,10 @@ index 109fcd6..52c7a9a 100644
        if (Line->Clearance == 0)
  	{
 diff --git a/src/misc.c b/src/misc.c
-index 05621ea..f5a40b2 100644
+index b533bf4..075bd9a 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -1521,8 +1521,8 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
+@@ -1529,8 +1529,8 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
        new_da = 360;
        new_sa = 0;
      }

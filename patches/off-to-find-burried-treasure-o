@@ -1,7 +1,7 @@
-Bottom: 2f928a59bdf5ee503174abee9ea93ee899302f82
-Top:    3775c07d82ff350408ec66ef9dd146d96b9efba0
+Bottom: 352faad4378b2c564719c4df8244b229bad63061
+Top:    441e03ebc025438baa92dda22d12da7af89a5cff
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 19:54:13 +0000
+Date:   2010-02-16 13:30:26 +0000
 
 Off to find burried treasure on polygon island
 
@@ -17,10 +17,10 @@ of a selection will re-create the polygon.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index b451668..a4a3117 100644
+index b525780..1e2b28d 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
-@@ -388,7 +388,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
+@@ -390,7 +390,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
    LayerTypePtr lay;
    PourTypePtr pour;
  
@@ -29,7 +29,7 @@ index b451668..a4a3117 100644
    r_delete_entry (Layer->pour_tree, (BoxTypePtr) Pour);
    lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
    pour = GetPourMemory (lay);
-@@ -405,7 +405,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
+@@ -407,7 +407,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
    if (!lay->pour_tree)
      lay->pour_tree = r_create_tree (NULL, 0, 0);
    r_insert_entry (lay->pour_tree, (BoxTypePtr) pour, 0);
@@ -39,10 +39,10 @@ index b451668..a4a3117 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index 0b5f129..109fcd6 100644
+index 42e1a35..1a80f00 100644
 --- a/src/change.c
 +++ b/src/change.c
-@@ -1117,10 +1117,12 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
+@@ -1134,10 +1134,12 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
    AddObjectToFlagUndoList (LINE_TYPE, Layer, Line, Line);
    TOGGLE_FLAG (CLEARLINEFLAG, Line);
    if (TEST_FLAG(CLEARLINEFLAG, Line))
@@ -59,7 +59,7 @@ index 0b5f129..109fcd6 100644
    DrawLine (Layer, Line, 0);
    return (Line);
  }
-@@ -1165,9 +1167,11 @@ ChangeArcJoin (LayerTypePtr Layer, ArcTypePtr Arc)
+@@ -1182,9 +1184,11 @@ ChangeArcJoin (LayerTypePtr Layer, ArcTypePtr Arc)
    TOGGLE_FLAG (CLEARLINEFLAG, Arc);
    if (TEST_FLAG (CLEARLINEFLAG, Arc))
      {
@@ -72,7 +72,7 @@ index 0b5f129..109fcd6 100644
    DrawArc (Layer, Arc, 0);
    return (Arc);
  }
-@@ -1211,10 +1215,12 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1228,10 +1232,12 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
    AddObjectToFlagUndoList (LINE_TYPE, Layer, Text, Text);
    TOGGLE_FLAG (CLEARLINEFLAG, Text);
    if (TEST_FLAG(CLEARLINEFLAG, Text))
@@ -89,7 +89,7 @@ index 0b5f129..109fcd6 100644
    DrawText (Layer, Text, 0);
    return (Text);
  }
-@@ -1236,10 +1242,12 @@ ChangePourJoin (LayerTypePtr Layer, PourTypePtr pour)
+@@ -1253,10 +1259,12 @@ ChangePourJoin (LayerTypePtr Layer, PourTypePtr pour)
    AddObjectToFlagUndoList (LINE_TYPE, Layer, pour, pour);
    TOGGLE_FLAG (CLEARLINEFLAG, pour);
    if (TEST_FLAG(CLEARLINEFLAG, pour))
@@ -106,7 +106,7 @@ index 0b5f129..109fcd6 100644
    DrawPour (Layer, pour, 0);
    return (pour);
  }
-@@ -1612,6 +1620,8 @@ ChangeHole (PinTypePtr Via)
+@@ -1629,6 +1637,8 @@ ChangeHole (PinTypePtr Via)
      {
        AddObjectTo2ndSizeUndoList (VIA_TYPE, Via, Via, Via);
        Via->DrillingHole = Via->Thickness - MIN_PINORVIACOPPER;
@@ -131,10 +131,10 @@ index 077e08a..153605f 100644
      {
        AddPart (Polygon);
 diff --git a/src/find.c b/src/find.c
-index 450f05f..380f808 100644
+index 6349b8e..ebc4f98 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -2574,6 +2574,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
+@@ -2649,6 +2649,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
  
    if (!Polygon->Clipped)
      return False;
@@ -142,7 +142,7 @@ index 450f05f..380f808 100644
    info.polygon = *Polygon;
    EXPAND_BOUNDS (&info.polygon);
    info.layer = LayerGroup;
-@@ -3925,6 +3926,70 @@ doIsBad:
+@@ -4000,6 +4001,70 @@ doIsBad:
  }
  
  /*-----------------------------------------------------------------------------
@@ -503,7 +503,7 @@ index f04e342..559f20e 100644
  
  #endif /* __POUR_INCLUDED__ */
 diff --git a/src/search.c b/src/search.c
-index 8506df9..e2a359f 100644
+index aa65fd2..e1c3288 100644
 --- a/src/search.c
 +++ b/src/search.c
 @@ -454,7 +454,7 @@ SearchPolygonByLocation (int locked, LayerTypePtr * Layer,
