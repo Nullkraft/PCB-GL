@@ -1,7 +1,7 @@
-Bottom: 015b32077f8437d33f1bfda2a690f7931e187257
-Top:    47a54729a2f29b1fdb157c0a8738a6e782b38c18
+Bottom: 4ee960726bc3d84e5028adafc5218bef9b99f1b5
+Top:    6386574503d26a423fffbc416a98c850c5c18e93
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 20:09:58 +0000
+Date:   2010-02-16 13:30:42 +0000
 
 Off to find burried treasure on polygon island
 
@@ -17,10 +17,10 @@ of a selection will re-create the polygon.
 ---
 
 diff --git a/src/change.c b/src/change.c
-index 7554a72..16a7295 100644
+index 8be63e8..d54c707 100644
 --- a/src/change.c
 +++ b/src/change.c
-@@ -1114,10 +1114,12 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
+@@ -1131,10 +1131,12 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
    AddObjectToFlagUndoList (LINE_TYPE, Layer, Line, Line);
    TOGGLE_FLAG (CLEARLINEFLAG, Line);
    if (TEST_FLAG(CLEARLINEFLAG, Line))
@@ -37,7 +37,7 @@ index 7554a72..16a7295 100644
    DrawLine (Layer, Line, 0);
    return (Line);
  }
-@@ -1162,9 +1164,11 @@ ChangeArcJoin (LayerTypePtr Layer, ArcTypePtr Arc)
+@@ -1179,9 +1181,11 @@ ChangeArcJoin (LayerTypePtr Layer, ArcTypePtr Arc)
    TOGGLE_FLAG (CLEARLINEFLAG, Arc);
    if (TEST_FLAG (CLEARLINEFLAG, Arc))
      {
@@ -50,7 +50,7 @@ index 7554a72..16a7295 100644
    DrawArc (Layer, Arc, 0);
    return (Arc);
  }
-@@ -1208,10 +1212,12 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1225,10 +1229,12 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
    AddObjectToFlagUndoList (LINE_TYPE, Layer, Text, Text);
    TOGGLE_FLAG (CLEARLINEFLAG, Text);
    if (TEST_FLAG(CLEARLINEFLAG, Text))
@@ -67,7 +67,7 @@ index 7554a72..16a7295 100644
    DrawText (Layer, Text, 0);
    return (Text);
  }
-@@ -1562,6 +1568,8 @@ ChangeHole (PinTypePtr Via)
+@@ -1579,6 +1585,8 @@ ChangeHole (PinTypePtr Via)
      {
        AddObjectTo2ndSizeUndoList (VIA_TYPE, Via, Via, Via);
        Via->DrillingHole = Via->Thickness - MIN_PINORVIACOPPER;
@@ -92,10 +92,10 @@ index e5cfd96..33a6ba8 100644
      {
        AddPart (Polygon);
 diff --git a/src/find.c b/src/find.c
-index 450f05f..380f808 100644
+index 6349b8e..ebc4f98 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -2574,6 +2574,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
+@@ -2649,6 +2649,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
  
    if (!Polygon->Clipped)
      return False;
@@ -103,7 +103,7 @@ index 450f05f..380f808 100644
    info.polygon = *Polygon;
    EXPAND_BOUNDS (&info.polygon);
    info.layer = LayerGroup;
-@@ -3925,6 +3926,70 @@ doIsBad:
+@@ -4000,6 +4001,70 @@ doIsBad:
  }
  
  /*-----------------------------------------------------------------------------
@@ -429,7 +429,7 @@ index f04e342..559f20e 100644
  
  #endif /* __POUR_INCLUDED__ */
 diff --git a/src/search.c b/src/search.c
-index 8506df9..e2a359f 100644
+index aa65fd2..e1c3288 100644
 --- a/src/search.c
 +++ b/src/search.c
 @@ -454,7 +454,7 @@ SearchPolygonByLocation (int locked, LayerTypePtr * Layer,

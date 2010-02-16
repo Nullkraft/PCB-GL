@@ -1,7 +1,7 @@
-Bottom: 47a54729a2f29b1fdb157c0a8738a6e782b38c18
-Top:    44afd53886ae7b4e89c45e06646b61691e5b2918
+Bottom: 6386574503d26a423fffbc416a98c850c5c18e93
+Top:    fe12a34fb01ddefe6ec8549c1b2a32d9ee864ec4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 20:58:50 +0000
+Date:   2010-02-16 13:30:43 +0000
 
 Island removal fixes
 
@@ -11,10 +11,10 @@ Kept separate for now because they might have unknown side-effects.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 66a31c5..8cf8096 100644
+index ddac496..8b4395d 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
-@@ -247,8 +247,8 @@ MoveViaToBuffer (PinTypePtr Via)
+@@ -249,8 +249,8 @@ MoveViaToBuffer (PinTypePtr Via)
  {
    PinTypePtr via;
  
@@ -24,7 +24,7 @@ index 66a31c5..8cf8096 100644
    via = GetViaMemory (Dest);
    *via = *Via;
    CLEAR_FLAG (WARNFLAG | FOUNDFLAG, via);
-@@ -300,8 +300,8 @@ MoveLineToBuffer (LayerTypePtr Layer, LineTypePtr Line)
+@@ -302,8 +302,8 @@ MoveLineToBuffer (LayerTypePtr Layer, LineTypePtr Line)
    LayerTypePtr lay;
    LineTypePtr line;
  
@@ -34,7 +34,7 @@ index 66a31c5..8cf8096 100644
    lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
    line = GetLineMemory (lay);
    *line = *Line;
-@@ -330,8 +330,8 @@ MoveArcToBuffer (LayerTypePtr Layer, ArcTypePtr Arc)
+@@ -332,8 +332,8 @@ MoveArcToBuffer (LayerTypePtr Layer, ArcTypePtr Arc)
    LayerTypePtr lay;
    ArcTypePtr arc;
  
@@ -45,7 +45,7 @@ index 66a31c5..8cf8096 100644
    arc = GetArcMemory (lay);
    *arc = *Arc;
 diff --git a/src/change.c b/src/change.c
-index 16a7295..8143ff1 100644
+index d54c707..3249b7e 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -490,10 +490,10 @@ ChangeViaClearSize (PinTypePtr Via)
@@ -106,10 +106,10 @@ index 16a7295..8143ff1 100644
        if (Line->Clearance == 0)
  	{
 diff --git a/src/misc.c b/src/misc.c
-index 05621ea..f5a40b2 100644
+index b533bf4..075bd9a 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -1521,8 +1521,8 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
+@@ -1529,8 +1529,8 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
        new_da = 360;
        new_sa = 0;
      }
