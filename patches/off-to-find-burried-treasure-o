@@ -1,5 +1,5 @@
-Bottom: 4ee960726bc3d84e5028adafc5218bef9b99f1b5
-Top:    6386574503d26a423fffbc416a98c850c5c18e93
+Bottom: d82dded89ce6efd5dcbe9da022fc277a770df30a
+Top:    df9e40448b0106deb80edd7824b252445d079940
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-02-16 13:30:42 +0000
 
@@ -203,7 +203,7 @@ index 7875020..e60c021 100644
  	{
  	  DrawLine (Layer, Line, 0);
 diff --git a/src/pour.c b/src/pour.c
-index ee2b947..7a25e1a 100644
+index ebac0ac..ea1aead 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -66,7 +66,7 @@ RCSID ("$Id$");
@@ -213,7 +213,7 @@ index ee2b947..7a25e1a 100644
 -#define UNSUBTRACT_BLOAT 100
 +#define UNSUBTRACT_BLOAT 10
  #define SUBTRACT_PIN_VIA_BATCH_SIZE 100
- #define SUBTRACT_LINE_BATCH_SIZE 20
+ #define SUBTRACT_LINE_BATCH_SIZE 1
  
 @@ -691,7 +691,36 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
  }
