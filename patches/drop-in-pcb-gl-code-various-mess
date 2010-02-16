@@ -1,7 +1,7 @@
-Bottom: cd2ab5352ab3b042e1c86f057775ccb346e6bf38
-Top:    c69a9f917b453c62496e7544d1136f31ba87d14e
+Bottom: bbe45d1d413b5c997f9edc88db01916bd2d013b6
+Top:    183960212fa89d8028df9e5938b9764c77220f0e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 19:48:15 +0000
+Date:   2010-02-16 13:19:47 +0000
 
 Drop in PCB+GL code + various mess. Needs splitting up?
 
@@ -1307,7 +1307,7 @@ index 0000000..3e41c35
 +  hidgl_fill_rect (x1, y1, x2, y2);
 +}
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 64d8622..6e02cca 100644
+index cd30221..484e1ff 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -17,9 +17,15 @@
@@ -1443,7 +1443,7 @@ index 64d8622..6e02cca 100644
  void
  ghid_notify_gui_is_up ()
  {
-@@ -905,7 +859,7 @@ HID ghid_hid = {
+@@ -1121,7 +1075,7 @@ HID ghid_hid = {
    1,				/* gui */
    0,				/* printer */
    0,				/* exporter */
@@ -1452,7 +1452,7 @@ index 64d8622..6e02cca 100644
    1,				/* poly after */
    0,				/* poly dicer */
  
-@@ -1487,7 +1441,8 @@ Benchmark (int argc, char **argv, int x, int y)
+@@ -1704,7 +1658,8 @@ Benchmark (int argc, char **argv, int x, int y)
    time (&start);
    do
      {

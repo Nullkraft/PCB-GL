@@ -1,7 +1,7 @@
-Bottom: be4838cb2eca6b75d28d37a99a0eb025be9f0906
-Top:    c15ef36d12deb093b795099f17cb3dda5324297a
+Bottom: 921b31c86a603e1f9b2562ab155e76d6f90330f1
+Top:    73cf1269db28a901e12acdcd29623f29a3caacd2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 19:47:59 +0000
+Date:   2010-02-16 13:19:45 +0000
 
 Improve grid snapping heuristics
 
@@ -276,10 +276,10 @@ index 367922e..b7ae847 100644
        && Crosshair.AttachedLine.State != STATE_FIRST
        && TEST_FLAG (AUTODRCFLAG, PCB))
 diff --git a/src/search.c b/src/search.c
-index 07015f0..612df6d 100644
+index 4d450d3..d6a3c38 100644
 --- a/src/search.c
 +++ b/src/search.c
-@@ -1592,3 +1592,17 @@ SearchScreen (LocationType X, LocationType Y, int Type, void **Result1,
+@@ -1601,3 +1601,17 @@ SearchScreen (LocationType X, LocationType Y, int Type, void **Result1,
  				X, Y, SLOP * pixel_slop);
    return (ans);
  }
