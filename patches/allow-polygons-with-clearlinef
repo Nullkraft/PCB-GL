@@ -1,7 +1,7 @@
-Bottom: 06360183e3f6b47259470d929eb4c157f8c50c76
-Top:    ed6fe08d2f90de5be0e57f6923d357125bb3eb83
+Bottom: e6f7c92b8296809f1e0fc011119ea0c7708d6c14
+Top:    ef9f8674658d2767a4627b4d9b039c0c34b903f3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2009-11-15 19:57:45 +0000
+Date:   2010-02-16 13:30:01 +0000
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -28,10 +28,10 @@ polygon fill.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index be51a0f..f277280 100644
+index cdb34dd..8d56305 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
-@@ -379,6 +379,7 @@ MovePolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -381,6 +381,7 @@ MovePolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
    LayerTypePtr lay;
    PolygonTypePtr polygon;
  
@@ -39,7 +39,7 @@ index be51a0f..f277280 100644
    r_delete_entry (Layer->polygon_tree, (BoxTypePtr) Polygon);
    lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
    polygon = GetPolygonMemory (lay);
-@@ -395,6 +396,7 @@ MovePolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -397,6 +398,7 @@ MovePolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
    if (!lay->polygon_tree)
      lay->polygon_tree = r_create_tree (NULL, 0, 0);
    r_insert_entry (lay->polygon_tree, (BoxTypePtr) polygon, 0);
@@ -48,7 +48,7 @@ index be51a0f..f277280 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index 67aa38a..9ef8fb3 100644
+index 6818dc9..d55880d 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -123,6 +123,9 @@ static void *ChangeTextJoin (LayerTypePtr, TextTypePtr);
@@ -88,7 +88,7 @@ index 67aa38a..9ef8fb3 100644
    NULL,
    NULL,
    NULL,
-@@ -1201,6 +1204,31 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1218,6 +1221,31 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
  }
  
  /* ---------------------------------------------------------------------------
@@ -120,7 +120,7 @@ index 67aa38a..9ef8fb3 100644
   * sets the clearance flag of a text
   */
  static void *
-@@ -1212,6 +1240,17 @@ SetTextJoin (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1229,6 +1257,17 @@ SetTextJoin (LayerTypePtr Layer, TextTypePtr Text)
  }
  
  /* ---------------------------------------------------------------------------
@@ -138,7 +138,7 @@ index 67aa38a..9ef8fb3 100644
   * clears the clearance flag of a text
   */
  static void *
-@@ -1223,6 +1262,17 @@ ClrTextJoin (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1240,6 +1279,17 @@ ClrTextJoin (LayerTypePtr Layer, TextTypePtr Text)
  }
  
  /* ---------------------------------------------------------------------------
@@ -157,7 +157,7 @@ index 67aa38a..9ef8fb3 100644
   */
  static void *
 diff --git a/src/change.h b/src/change.h
-index 7f43fba..1be41aa 100644
+index bd7749a..6c0f890 100644
 --- a/src/change.h
 +++ b/src/change.h
 @@ -56,7 +56,7 @@
