@@ -1,5 +1,5 @@
 Bottom: de758c494ea0bcf0c7a6db7caa007ae66fe2eb57
-Top:    de758c494ea0bcf0c7a6db7caa007ae66fe2eb57
+Top:    fb3f97e02115a6859b693a8a8335a61511d20c39
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-02-16 14:12:06 +0000
 
@@ -11,4 +11,16 @@ to what I had in the non-pours variant of the code.
 
 ---
 
-
+diff --git a/src/pour.c b/src/pour.c
+index d1099cd..d9ee86f 100644
+--- a/src/pour.c
++++ b/src/pour.c
+@@ -68,7 +68,7 @@ RCSID ("$Id$");
+ 
+ #define UNSUBTRACT_BLOAT 100
+ #define SUBTRACT_PIN_VIA_BATCH_SIZE 100
+-#define SUBTRACT_LINE_BATCH_SIZE 20
++#define SUBTRACT_LINE_BATCH_SIZE 1
+ 
+ /* ---------------------------------------------------------------------------
+  * local prototypes
