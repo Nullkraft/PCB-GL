@@ -313,6 +313,10 @@ eps_set_layer (const char *name, int group, int empty)
   int idx = (group >= 0
 	     && group <
 	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
+
+  if (SL_TYPE (idx) == SL_FINISHED)
+    return 0;
+
   if (name == 0)
     name = PCB->Data->Layer[idx].Name;
 
