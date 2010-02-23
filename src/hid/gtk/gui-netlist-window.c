@@ -1019,9 +1019,9 @@ GhidNetlistPresent (int argc, char **argv, int x, int y)
 HID_Action ghid_netlist_action_list[] = {
   {"NetlistChanged", 0, GhidNetlistChanged,
    netlistchanged_help, netlistchanged_syntax},
-  {"NetlistShow", 0, GhidNetlistShow, 
+  {"NetlistShow", 0, GhidNetlistShow,
    netlistshow_help, netlistshow_syntax},
-  {"NetlistPresent", 0, GhidNetlistPresent, 
+  {"NetlistPresent", 0, GhidNetlistPresent,
    netlistpresent_help, netlistpresent_syntax}
   ,
 };
