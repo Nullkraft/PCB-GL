@@ -1,0 +1,25 @@
+Bottom: 314c3287c22cdc91d2d42f1c68cef948d6d49cea
+Top:    bd51852a75497e645d34138cdd29ff62ad5c0dcd
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-02-23 23:43:26 +0000
+
+Refresh of 0001-Prevent-extra-windows-from-showing-unnecessarily-in-.patch
+
+---
+
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index 64971c3..0cfe51d 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -1019,9 +1019,9 @@ GhidNetlistPresent (int argc, char **argv, int x, int y)
+ HID_Action ghid_netlist_action_list[] = {
+   {"NetlistChanged", 0, GhidNetlistChanged,
+    netlistchanged_help, netlistchanged_syntax},
+-  {"NetlistShow", 0, GhidNetlistShow, 
++  {"NetlistShow", 0, GhidNetlistShow,
+    netlistshow_help, netlistshow_syntax},
+-  {"NetlistPresent", 0, GhidNetlistPresent, 
++  {"NetlistPresent", 0, GhidNetlistPresent,
+    netlistpresent_help, netlistpresent_syntax}
+   ,
+ };
