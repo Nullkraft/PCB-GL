@@ -3,8 +3,7 @@ Top:    314c3287c22cdc91d2d42f1c68cef948d6d49cea
 Author: Jared Casper <jaredcasper@gmail.com>
 Date:   2010-02-22 19:24:17 -0800
 
-From d994c124332a25bbb248d4e7dc5ee166dc2ef769 Mon Sep 17 00:00:00 2001
-Subject: [PATCH] Prevent extra windows from showing unnecessarily in GTK HID.
+hid/gtk: Prevent extra windows from showing unnecessarily
 
 Prevent the library, log, and netlist windows in the GTK HID from
 being shown unless explicitely requested.  This is done by splitting
