@@ -1,5 +1,5 @@
 Bottom: bd51852a75497e645d34138cdd29ff62ad5c0dcd
-Top:    bd51852a75497e645d34138cdd29ff62ad5c0dcd
+Top:    205d0e16f0a477e8ee02c60c0e10fd52d8c6dc35
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-02-23 23:54:40 +0000
 
@@ -10,4 +10,14 @@ The old value "defgnetlist" appears to have been a mistake.
 
 ---
 
-
+diff --git a/src/main.c b/src/main.c
+index 9d61ffb..400aebc 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -612,7 +612,7 @@ REGISTER_ATTRIBUTES (main_attribute_list)
+     Settings.GnetlistProgram = getenv ("PCB_GNETLIST");
+   }
+   if (Settings.GnetlistProgram == NULL) {
+-    Settings.GnetlistProgram = strdup ("defgnetlist");
++    Settings.GnetlistProgram = strdup ("gnetlist");
+   }
