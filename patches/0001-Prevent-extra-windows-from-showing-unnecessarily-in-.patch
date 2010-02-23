@@ -1,5 +1,5 @@
 Bottom: ff2fff53faedf3d1e970e4e57fe6b491502433aa
-Top:    314c3287c22cdc91d2d42f1c68cef948d6d49cea
+Top:    bd51852a75497e645d34138cdd29ff62ad5c0dcd
 Author: Jared Casper <jaredcasper@gmail.com>
 Date:   2010-02-22 19:24:17 -0800
 
@@ -227,7 +227,7 @@ index 7d11221..33e1940 100644
 +
 +REGISTER_ACTIONS (ghid_log_action_list)
 diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
-index 8fd5360..64971c3 100644
+index 8fd5360..0cfe51d 100644
 --- a/src/hid/gtk/gui-netlist-window.c
 +++ b/src/hid/gtk/gui-netlist-window.c
 @@ -589,11 +589,11 @@ node_get_node_from_name (gchar * node_name, LibraryMenuType ** node_net)
@@ -356,9 +356,9 @@ index 8fd5360..64971c3 100644
 -  {"NetlistShow", 0, GhidNetlistShow}
 +  {"NetlistChanged", 0, GhidNetlistChanged,
 +   netlistchanged_help, netlistchanged_syntax},
-+  {"NetlistShow", 0, GhidNetlistShow, 
++  {"NetlistShow", 0, GhidNetlistShow,
 +   netlistshow_help, netlistshow_syntax},
-+  {"NetlistPresent", 0, GhidNetlistPresent, 
++  {"NetlistPresent", 0, GhidNetlistPresent,
 +   netlistpresent_help, netlistpresent_syntax}
    ,
  };
