@@ -1,7 +1,7 @@
-Bottom: 459d328467e9a73b7abd4f56806e5de690a64681
-Top:    4553c16de30b223779bfb534d5e733c5ec05ac1c
+Bottom: f43a669145a6c3049c85de135fc78a0d5eb7dd36
+Top:    644d321598db03d4c0a20aa86a73cd9460788776
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-02-16 17:11:06 +0000
+Date:   2010-02-24 00:06:05 +0000
 
 Drop in PCB+GL code + various mess. Needs splitting up?
 
@@ -1307,7 +1307,7 @@ index 0000000..3e41c35
 +  hidgl_fill_rect (x1, y1, x2, y2);
 +}
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index cd30221..484e1ff 100644
+index 81f0d77..6280611 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -17,9 +17,15 @@
@@ -1452,7 +1452,7 @@ index cd30221..484e1ff 100644
    1,				/* poly after */
    0,				/* poly dicer */
  
-@@ -1704,7 +1658,8 @@ Benchmark (int argc, char **argv, int x, int y)
+@@ -1706,7 +1660,8 @@ Benchmark (int argc, char **argv, int x, int y)
    time (&start);
    do
      {
@@ -2237,7 +2237,7 @@ index eb8ba18..0ecc466 100644
  
    Settings.AutoPlace = 0;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index deb3112..e3934fd 100644
+index 610f30e..3dee231 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -37,6 +37,18 @@
@@ -2282,7 +2282,7 @@ index deb3112..e3934fd 100644
  void ghid_port_ranges_changed (void);
  void ghid_port_ranges_zoom (gdouble zoom);
  gboolean ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative);
-@@ -512,7 +531,7 @@ GdkPixmap *ghid_render_pixmap (int cx,
+@@ -515,7 +534,7 @@ GdkPixmap *ghid_render_pixmap (int cx,
  			       int height,
  			       int depth);
  
@@ -2291,7 +2291,7 @@ index deb3112..e3934fd 100644
  hidGC ghid_make_gc (void);
  void ghid_destroy_gc (hidGC);
  void ghid_draw_grid (void);
-@@ -533,7 +552,9 @@ void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
+@@ -536,7 +555,9 @@ void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
  void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
  
  /* gtkhid-main.c */

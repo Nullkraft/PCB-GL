@@ -1,7 +1,7 @@
-Bottom: f1824d32273e829811cc52c0bbae46e6d9e9ad26
-Top:    4304cf29c1278bcfd8fe84fcb9cb09d50e2ff3e5
+Bottom: 8f87e623d1de73b49ba0952828df7f774e866276
+Top:    c82097b9d6f166ce5d1b5e061fd588cf4cc88885
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-02-16 17:11:07 +0000
+Date:   2010-02-24 00:06:06 +0000
 
 Work in progress on subcompositing / stencil buffers
 
@@ -466,7 +466,7 @@ index 430059b..fec839e 100644
        break;
      }
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 7932a89..10d5991 100644
+index a9ec4c5..6955508 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -346,14 +346,39 @@ ghid_invalidate_all ()
