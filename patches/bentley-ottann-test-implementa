@@ -1,7 +1,7 @@
-Bottom: 075cde0874d60e0e59c7ab09b5a31124b13ffe1f
-Top:    b4b203f13b1bd2c4ce2b61ec70559adbcebd4725
+Bottom: bf8c609f84d155a1f93410b3e6a53dd12b3b95c7
+Top:    7a593cc37aef70abbb6dc1b2c75603cc24d9356d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-02-16 17:10:55 +0000
+Date:   2010-02-24 00:05:53 +0000
 
 Bentley-Ottann test implementation
 
@@ -13833,7 +13833,7 @@ index 0000000..bb5ff35
 +
 +#endif /* __G_PQUEUE_H__ */
 diff --git a/src/main.c b/src/main.c
-index 9d61ffb..e22f18e 100644
+index bb79991..88fdcc2 100644
 --- a/src/main.c
 +++ b/src/main.c
 @@ -53,6 +53,7 @@
@@ -13844,7 +13844,7 @@ index 9d61ffb..e22f18e 100644
  
  /* This next one is so we can print the help messages. */
  #include "hid/hidint.h"
-@@ -854,6 +855,7 @@ char *program_directory = 0;
+@@ -860,6 +861,7 @@ char *program_directory = 0;
  
  #include "dolists.h"
  
@@ -13852,7 +13852,7 @@ index 9d61ffb..e22f18e 100644
  int
  main (int argc, char *argv[])
  {
-@@ -1060,7 +1062,10 @@ main (int argc, char *argv[])
+@@ -1066,7 +1068,10 @@ main (int argc, char *argv[])
  	      UNKNOWN (Settings.GnetlistProgram));
  #endif
  
@@ -13864,7 +13864,7 @@ index 9d61ffb..e22f18e 100644
  #if HAVE_DBUS
        pcb_dbus_finish();
  #endif
-@@ -1068,4 +1073,5 @@ main (int argc, char *argv[])
+@@ -1074,4 +1079,5 @@ main (int argc, char *argv[])
  
    return (0);
  }
