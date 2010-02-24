@@ -215,6 +215,7 @@ ghid_draw_bg_image (void)
 void
 ghid_use_mask (int use_it)
 {
+  static int stencil_bit = 0;
 
   /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
   if (use_it == HID_LIVE_DRAWING ||
@@ -226,6 +227,7 @@ ghid_use_mask (int use_it)
   if (use_it == cur_mask)
     return;
 
+  /* Flush out any existing geoemtry to be rendered */
   hidgl_flush_triangles (&buffer);
 
   switch (use_it)
@@ -234,25 +236,28 @@ ghid_use_mask (int use_it)
       /* Write '1' to the stencil buffer where the solder-mask is drawn. */
       glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
       glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
-      glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
+      stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
+      glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  // Always pass stencil test, write stencil_bit
+      glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
       glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
       break;
 
     case HID_MASK_CLEAR:
       /* Drawing operations clear the stencil buffer to '0' */
-      glStencilFunc (GL_ALWAYS, 0, 1);            // Test always passes, value written 0
+      glStencilFunc (GL_ALWAYS, 0, stencil_bit);  // Always pass stencil test, write 0
       glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 0)
       break;
 
     case HID_MASK_AFTER:
       /* Drawing operations as masked to areas where the stencil buffer is '1' */
       glColorMask (1, 1, 1, 1);                   // Enable drawing of r, g, b & a
-      glStencilFunc (GL_EQUAL, 1, 1);             // Draw only where stencil buffer is 1
+      glStencilFunc (GL_LEQUAL, stencil_bit, stencil_bit);   // Draw only where our bit of the stencil buffer is set
       glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    // Stencil buffer read only
       break;
 
     case HID_MASK_OFF:
       /* Disable stenciling */
+      hidgl_return_stencil_bit (stencil_bit);               // Relinquish any bitplane we previously used
       glDisable (GL_STENCIL_TEST);                // Disable Stencil test
       break;
     }

@@ -116,6 +116,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                 1.);
   glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+  hidgl_reset_stencil_usage ();
 
   /* call the drawing routine */
   hidgl_init_triangle_array (&buffer);
