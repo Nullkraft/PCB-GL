@@ -54,13 +54,14 @@ RatTypePtr CreateNewRat (DataTypePtr, LocationType, LocationType,
 ArcTypePtr CreateNewArcOnLayer (LayerTypePtr, LocationType, LocationType,
 				BDimension, BDimension, int, int, BDimension, BDimension,
 				FlagType);
-PolygonTypePtr CreateNewPolygonFromRectangle (LayerTypePtr, LocationType,
+PourTypePtr CreateNewPourFromRectangle (LayerTypePtr, LocationType,
 					      LocationType, LocationType,
 					      LocationType, FlagType);
 TextTypePtr CreateNewText (LayerTypePtr, FontTypePtr, LocationType,
 			   LocationType, BYTE, int, char *, FlagType);
-PolygonTypePtr CreateNewPolygon (LayerTypePtr, FlagType);
-PointTypePtr CreateNewPointInPolygon (PolygonTypePtr,
+PolygonTypePtr CreateNewPolygonInPour (PourType *pour, FlagType);
+PourTypePtr CreateNewPour (LayerTypePtr, FlagType);
+PointTypePtr CreateNewPointInPour (PourTypePtr,
 				      LocationType, LocationType);
 ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
 				 FontTypePtr, FlagType, char *, char *,
