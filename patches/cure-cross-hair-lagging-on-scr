@@ -1,5 +1,5 @@
-Bottom: 644d321598db03d4c0a20aa86a73cd9460788776
-Top:    4650965f6b5b4446fd4721cb67052e8e9ffbca11
+Bottom: 5fa1938d79accc5047920ed12a3dcbf7e8804579
+Top:    5fa1938d79accc5047920ed12a3dcbf7e8804579
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-02-24 00:06:05 +0000
 
@@ -10,53 +10,4 @@ FIXME: SHOULD NOT RE-WRITE THE GTK HID
 
 ---
 
-diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 6313ce4..896f8c4 100644
---- a/src/hid/gtk/gui-output-events.c
-+++ b/src/hid/gtk/gui-output-events.c
-@@ -894,6 +894,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
-   gdouble dx, dy;
-   static gint x_prev = -1, y_prev = -1;
-   gboolean moved;
-+#if 0
-   GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
-   GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
- 
-@@ -902,11 +903,15 @@ ghid_port_window_motion_cb (GtkWidget * widget,
-     printf ("GL THingy returned\n");
-     return FALSE;
-   }
-+#endif
- 
-   if (out->panning)
-     {
-+/* Not sure this really matters, since we're using invalidate to get a redraw */
-+#if 1
-       if (gtk_events_pending ())
- 	return FALSE;
-+#endif
-       dx = gport->zoom * (x_prev - ev->x);
-       dy = gport->zoom * (y_prev - ev->y);
-       if (x_prev > 0)
-@@ -918,10 +923,11 @@ ghid_port_window_motion_cb (GtkWidget * widget,
-   x_prev = y_prev = -1;
-   moved = ghid_note_event_location (ev);
- 
--  ghid_show_crosshair (TRUE);
--  if (moved && have_crosshair_attachments ())
-+//  ghid_show_crosshair (TRUE);
-+  if (moved) // && have_crosshair_attachments ())
-     ghid_draw_area_update (gport, NULL);
- 
-+#if 0
-   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
-     gdk_gl_drawable_swap_buffers (pGlDrawable);
-   else
-@@ -929,6 +935,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
- 
-   /* end drawing to current GL-context */
-   gdk_gl_drawable_gl_end (pGlDrawable);
-+#endif
-+
-   return FALSE;
- }
+
