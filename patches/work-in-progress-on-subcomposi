@@ -1,5 +1,5 @@
-Bottom: 8f87e623d1de73b49ba0952828df7f774e866276
-Top:    c82097b9d6f166ce5d1b5e061fd588cf4cc88885
+Bottom: ff193e89c14e43b5405c68555e3457380ed0180d
+Top:    0785f80795a423ad4cbd0982c990fee9533c21bc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-02-24 00:06:06 +0000
 
@@ -521,7 +521,7 @@ index a9ec4c5..6955508 100644
  	    return PCB->ElementOn;
  	  return 0;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 896f8c4..57bedf9 100644
+index 2b0ed81..a9c191b 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -35,6 +35,7 @@
@@ -532,7 +532,7 @@ index 896f8c4..57bedf9 100644
  
  #include <gdk/gdkkeysyms.h>
  
-@@ -791,6 +792,17 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -796,6 +797,17 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
      return FALSE;
    }
  
@@ -550,7 +550,7 @@ index 896f8c4..57bedf9 100644
    ghid_show_crosshair (FALSE);
  
    glEnable (GL_BLEND);
-@@ -813,12 +825,20 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -818,12 +830,20 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -571,7 +571,7 @@ index 896f8c4..57bedf9 100644
  
    region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
    region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-@@ -844,6 +864,12 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -849,6 +869,12 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
