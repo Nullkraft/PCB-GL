@@ -1,7 +1,7 @@
-Bottom: f46a751ac19c382d0c90adb7caf302df79c57da0
-Top:    b18bb178621b75fc370d8078b513eeabd7023eee
+Bottom: 9c633602d5a3ea80868e0ee85350e8522a753633
+Top:    b971ccea61dab7f996b6959deea2b153da30310e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-02-26 01:11:55 +0000
+Date:   2010-03-02 17:37:43 +0000
 
 Attempt lesstif GL support
 
@@ -14,10 +14,10 @@ __ A LOT __ of drawing model changes in lesstif
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 6cf2e19..ac7011a 100644
+index 4582868..4662156 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -370,8 +370,9 @@ AM_CONDITIONAL(USE_GL, test x$enable_gl = xyes)
+@@ -380,8 +380,9 @@ AM_CONDITIONAL(USE_GL, test x$enable_gl = xyes)
  if test "x$enable_gl" = "xyes"; then
  	case " $with_gui " in
  		*\ gtk\ *) ;;
@@ -29,7 +29,7 @@ index 6cf2e19..ac7011a 100644
  	;;
  	esac
  
-@@ -712,6 +713,25 @@ for e in $HIDLIST; do
+@@ -722,6 +723,25 @@ for e in $HIDLIST; do
  	    ;;
  	  * ) ;;
  	esac
