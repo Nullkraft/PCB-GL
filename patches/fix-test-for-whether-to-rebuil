@@ -1,5 +1,5 @@
 Bottom: 149d3f6e5a4dfff9b203b710ecdb6488dbe94f68
-Top:    149d3f6e5a4dfff9b203b710ecdb6488dbe94f68
+Top:    8a1cd7404bda0ee74b4843e61d8de9f888593750
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-03-02 18:41:01 +0000
 
@@ -10,4 +10,16 @@ ${top_srcdir} is a Makefile variable, we need $srcdir in configure.ac
 
 ---
 
-
+diff --git a/configure.ac b/configure.ac
+index 9c14582..415c400 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -857,7 +857,7 @@ AM_CONDITIONAL(PNG_PREVIEW, test x$enable_m4lib_png = xyes)
+ build_pcblib_newlib=no
+ if test "$pcb_sources" = "tarball" ; then
+ 	AC_MSG_CHECKING([If pcblib-newlib was built with png previews])
+-	stamp=${top_srcdir}/lib/pcblib-newlib.stamp 
++	stamp=$srcdir/lib/pcblib-newlib.stamp
+ 	if test ! -f ${stamp} ; then
+ 		AC_MSG_RESULT([unknown, missing ${stamp}])
+ 		build_pcblib_newlib=yes
