@@ -3,9 +3,12 @@ Top:    149d3f6e5a4dfff9b203b710ecdb6488dbe94f68
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-03-02 14:26:57 +0000
 
-lib: Fix make distcheck
+lib: Fix make distcheck by removing regenerated newlib footprints
 
 The generated newlib files need to be removed by make distclean
+if they are being updated by the build process. If the files aren't
+being updated, we should not delete them as they were originally
+distributed with the source tarball.
 
 
 ---
