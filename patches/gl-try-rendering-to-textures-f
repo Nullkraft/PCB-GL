@@ -1,5 +1,5 @@
-Bottom: 45d009d4e9f961efd7c8f05012cd3e1a812722d9
-Top:    231a96c5ecccfade6e932550c0f277a93be83bb2
+Bottom: 649a8bc29d0b1acf74f02cde9198d8c209ba7402
+Top:    03bae09587ef96fbefbfbb3c15e475a18b3e117e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 18:17:10 +0000
 
@@ -85,7 +85,7 @@ index 6931651..76f730a 100644
  
  void
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 7246aa4..2946027 100644
+index 99044c6..abdf1a9 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -48,6 +48,9 @@ static void zoom_by (double factor, int x, int y);
@@ -175,10 +175,10 @@ index 7246aa4..2946027 100644
  
    if (idx >= 0 && idx < max_layer + 2) {
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 2e3c638..d7c355f 100644
+index 9264468..311f287 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1701,13 +1701,33 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1706,13 +1706,33 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    Settings.ShowSolderSide = save_show_solder;
  }
  
@@ -214,7 +214,7 @@ index 2e3c638..d7c355f 100644
    BoxType region;
    int eleft, eright, etop, ebottom;
    extern HID ghid_hid;
-@@ -1738,7 +1758,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1743,7 +1763,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    ghid_show_crosshair (FALSE);
  
    glEnable (GL_BLEND);
@@ -224,7 +224,7 @@ index 2e3c638..d7c355f 100644
  
  //  glEnable(GL_POLYGON_SMOOTH);
  //  glHint(GL_POLYGON_SMOOTH_HINT, [GL_FASTEST, GL_NICEST, or GL_DONT_CARE]);
-@@ -1761,13 +1782,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1766,13 +1787,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
@@ -238,7 +238,7 @@ index 2e3c638..d7c355f 100644
    glEnable (GL_STENCIL_TEST);
    glClearColor (gport->offlimits_color.red / 65535.,
                  gport->offlimits_color.green / 65535.,
-@@ -1844,8 +1858,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1849,8 +1863,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    region.Y1 = MIN (Py (min_y), Py (max_y + 1));
    region.Y2 = MAX (Py (min_y), Py (max_y + 1));
  
@@ -252,7 +252,7 @@ index 2e3c638..d7c355f 100644
  
    glColor3f (gport->bg_color.red / 65535.,
               gport->bg_color.green / 65535.,
-@@ -1853,6 +1870,53 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1858,6 +1875,53 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  
    /* TODO: Background image */
  
@@ -306,7 +306,7 @@ index 2e3c638..d7c355f 100644
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
-@@ -1913,6 +1977,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1918,6 +1982,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    gui->set_layer (NULL, GetLayerGroupNumberByNumber (INDEXOFCURRENT), 0);
    gui->set_layer (NULL, SL_FINISHED, 0);
  
@@ -316,7 +316,7 @@ index 2e3c638..d7c355f 100644
    ghid_draw_grid (&region);
  
    hidgl_init_triangle_array (&buffer);
-@@ -1929,20 +1996,15 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1934,20 +2001,15 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
@@ -341,7 +341,7 @@ index 2e3c638..d7c355f 100644
    if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
      gdk_gl_drawable_swap_buffers (pGlDrawable);
    else
-@@ -1951,8 +2013,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1956,8 +2018,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
  
@@ -351,10 +351,10 @@ index 2e3c638..d7c355f 100644
  }
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 5b7c0af..a014cee 100644
+index 8013de9..bc0b25a 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -566,6 +566,8 @@ void ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
+@@ -569,6 +569,8 @@ void ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
  void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
  
  /* gtkhid-main.c */
