@@ -66,4 +66,5 @@ Boolean isects (POLYAREA *, PolygonTypePtr, Boolean);
 Boolean MorphPolygon (LayerTypePtr, PolygonTypePtr);
 void NoHolesPolygonDicer (PolygonType *p, const BoxType *clip,
                           void (*emit) (PLINE *, void *), void *user_data);
+POLYAREA *board_outline_poly ();
 #endif
