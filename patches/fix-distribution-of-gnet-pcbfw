@@ -1,0 +1,15 @@
+Bottom: a57a41b830bdad9601a5a04fec685b96d10d715d
+Top:    a57a41b830bdad9601a5a04fec685b96d10d715d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-03-02 14:25:46 +0000
+
+Fix distribution of gnet-pcbfwd.scm in the dist tarball
+
+Use the dist_ prefix to make this simple, so our installed
+targets are now listed in dist_..._DATA, rather than ..._DATA
+and EXTRA_DIST.
+
+
+---
+
+
