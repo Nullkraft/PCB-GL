@@ -1,5 +1,5 @@
 Bottom: 1ce5ead21b9f832e86e56da60bb356bcb34c1579
-Top:    2b5befc716275c1fb31152b1f27cea2ebbabad82
+Top:    5c1e94bc28e2844ff2cb9edb8047004b0e1c95ca
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-03-02 17:49:26 +0000
 
@@ -34,6 +34,18 @@ index cd6f4f9..4ab3813 100755
  #define	MAX_ELEMENTNAMES		3	/* number of supported names of */
  						/* an element */
  #define	MAX_LIBRARY_LINE_LENGTH		255	/* maximum line length in the */
+diff --git a/po/POTFILES.in b/po/POTFILES.in
+index b0e6f31..24b21f2 100644
+--- a/po/POTFILES.in
++++ b/po/POTFILES.in
+@@ -36,6 +36,7 @@ src/move.c
+ src/netlist.c
+ src/parse_y.c
+ src/polygon.c
++src/pour.c
+ src/rats.c
+ src/report.c
+ src/res_parse.c
 diff --git a/src/Makefile.am b/src/Makefile.am
 index c936738..6adf90c 100644
 --- a/src/Makefile.am
