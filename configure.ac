@@ -370,7 +370,8 @@ AC_ARG_ENABLE([gl],
 [  --enable-gl           Enable GL drawing (with GTK HID)],
 [],[
 	case " $with_gui " in
-		*\ gtk\ *) enable_gl=yes;;
+		*\ gtk\ *)     enable_gl=yes;;
+		*\ lesstif\ *) enable_gl=yes;;
 		* ) enable_gl=no;;
 	esac
 ])
