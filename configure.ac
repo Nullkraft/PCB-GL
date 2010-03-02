@@ -329,9 +329,9 @@ AC_ARG_ENABLE([dbus],
 [  --enable-dbus           Enable DBUS IPC],
 [],[
 	case " $with_gui " in
-		*\ gtk\ *)
+		*\ gtk\ *)     enable_dbus=yes ;;
 		*\ lesstif\ *) enable_dbus=yes ;;
-		* ) enable_dbus=no ;;
+		* )            enable_dbus=no ;;
 	esac
 ])
 
