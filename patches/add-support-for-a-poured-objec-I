@@ -1,7 +1,7 @@
-Bottom: 288970079362fe485cd1fdf768e0199b8d03d146
-Top:    b1a86b5aaf5c09e76b92b89df18f6360484cbd3c
+Bottom: 14626b11e0e7e577c43bde64e070fb9eaff1c2af
+Top:    e433b5fa6755e6c6f2b17b786ff706c17deca335
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-02-26 01:12:22 +0000
+Date:   2010-03-02 17:38:38 +0000
 
 Add support for a "poured" object.
 
@@ -48,7 +48,7 @@ index c936738..6adf90c 100644
  	print.c \
  	print.h \
 diff --git a/src/action.c b/src/action.c
-index fff740c..81a9de9 100644
+index d7c754b..f9fb10a 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -57,6 +57,7 @@
@@ -393,7 +393,7 @@ index b9f1fdd..6d1ec8d 100644
  	    }
  	}
 diff --git a/src/buffer.c b/src/buffer.c
-index cdb34dd..ddac496 100644
+index 7daecf5..9fa931e 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -50,6 +50,7 @@
@@ -627,7 +627,7 @@ index cdb34dd..ddac496 100644
    }
    END_LOOP;
  
-@@ -959,6 +968,8 @@ SmashBufferElement (BufferTypePtr Buffer)
+@@ -971,6 +980,8 @@ SmashBufferElement (BufferTypePtr Buffer)
    return (True);
  }
  
@@ -636,7 +636,7 @@ index cdb34dd..ddac496 100644
  /*---------------------------------------------------------------------------
   *
   * see if a polygon is a rectangle.  If so, canonicalize it.
-@@ -995,6 +1006,7 @@ polygon_is_rectangle (PolygonTypePtr poly)
+@@ -1007,6 +1018,7 @@ polygon_is_rectangle (PolygonTypePtr poly)
      return 1;
    return 0;
  }
@@ -644,7 +644,7 @@ index cdb34dd..ddac496 100644
  
  /*---------------------------------------------------------------------------
   *
-@@ -1061,34 +1073,40 @@ ConvertBufferToElement (BufferTypePtr Buffer)
+@@ -1073,34 +1085,40 @@ ConvertBufferToElement (BufferTypePtr Buffer)
        hasParts = True;
      }
      END_LOOP;
@@ -710,7 +710,7 @@ index cdb34dd..ddac496 100644
    }
    END_LOOP;
    /* now get the opposite side pads */
-@@ -1241,6 +1259,8 @@ RotateBuffer (BufferTypePtr Buffer, BYTE Number)
+@@ -1253,6 +1271,8 @@ RotateBuffer (BufferTypePtr Buffer, BYTE Number)
      r_insert_entry (layer->text_tree, (BoxTypePtr) text, 0);
    }
    ENDALL_LOOP;
@@ -719,7 +719,7 @@ index cdb34dd..ddac496 100644
    ALLPOLYGON_LOOP (Buffer->Data);
    {
      r_delete_entry (layer->polygon_tree, (BoxTypePtr) polygon);
-@@ -1248,6 +1268,14 @@ RotateBuffer (BufferTypePtr Buffer, BYTE Number)
+@@ -1260,6 +1280,14 @@ RotateBuffer (BufferTypePtr Buffer, BYTE Number)
      r_insert_entry (layer->polygon_tree, (BoxTypePtr) polygon, 0);
    }
    ENDALL_LOOP;
@@ -734,7 +734,7 @@ index cdb34dd..ddac496 100644
  
    /* finally the origin and the bounding box */
    ROTATE (Buffer->X, Buffer->Y, Buffer->X, Buffer->Y, Number);
-@@ -1299,7 +1327,7 @@ FreeRotateElementLowLevel (DataTypePtr Data, ElementTypePtr Element,
+@@ -1311,7 +1339,7 @@ FreeRotateElementLowLevel (DataTypePtr Data, ElementTypePtr Element,
      /* pre-delete the pins from the pin-tree before their coordinates change */
      if (Data)
        r_delete_entry (Data->pin_tree, (BoxType *) pin);
@@ -743,7 +743,7 @@ index cdb34dd..ddac496 100644
      free_rotate (&pin->X, &pin->Y, X, Y, cosa, sina);
      SetPinBoundingBox (pin);
    }
-@@ -1309,7 +1337,7 @@ FreeRotateElementLowLevel (DataTypePtr Data, ElementTypePtr Element,
+@@ -1321,7 +1349,7 @@ FreeRotateElementLowLevel (DataTypePtr Data, ElementTypePtr Element,
      /* pre-delete the pads before their coordinates change */
      if (Data)
        r_delete_entry (Data->pad_tree, (BoxType *) pad);
@@ -752,7 +752,7 @@ index cdb34dd..ddac496 100644
      free_rotate (&pad->Point1.X, &pad->Point1.Y, X, Y, cosa, sina);
      free_rotate (&pad->Point2.X, &pad->Point2.Y, X, Y, cosa, sina);
      SetLineBoundingBox ((LineType *) pad);
-@@ -1325,7 +1353,7 @@ FreeRotateElementLowLevel (DataTypePtr Data, ElementTypePtr Element,
+@@ -1337,7 +1365,7 @@ FreeRotateElementLowLevel (DataTypePtr Data, ElementTypePtr Element,
  
    free_rotate (&Element->MarkX, &Element->MarkY, X, Y, cosa, sina);
    SetElementBoundingBox (Data, Element, &PCB->Font);
@@ -761,7 +761,7 @@ index cdb34dd..ddac496 100644
  }
  
  void
-@@ -1374,6 +1402,8 @@ FreeRotateBuffer (BufferTypePtr Buffer, double Angle)
+@@ -1386,6 +1414,8 @@ FreeRotateBuffer (BufferTypePtr Buffer, double Angle)
    }
    ENDALL_LOOP;
    /* FIXME: rotate text */
@@ -770,7 +770,7 @@ index cdb34dd..ddac496 100644
    ALLPOLYGON_LOOP (Buffer->Data);
    {
      r_delete_entry (layer->polygon_tree, (BoxTypePtr) polygon);
-@@ -1386,6 +1416,19 @@ FreeRotateBuffer (BufferTypePtr Buffer, double Angle)
+@@ -1398,6 +1428,19 @@ FreeRotateBuffer (BufferTypePtr Buffer, double Angle)
      r_insert_entry (layer->polygon_tree, (BoxTypePtr) polygon, 0);
    }
    ENDALL_LOOP;
@@ -790,7 +790,7 @@ index cdb34dd..ddac496 100644
  
    SetBufferBoundingBox (Buffer);
  }
-@@ -1481,6 +1524,8 @@ MirrorBuffer (BufferTypePtr Buffer)
+@@ -1493,6 +1536,8 @@ MirrorBuffer (BufferTypePtr Buffer)
      SetArcBoundingBox (arc);
    }
    ENDALL_LOOP;
@@ -799,7 +799,7 @@ index cdb34dd..ddac496 100644
    ALLPOLYGON_LOOP (Buffer->Data);
    {
      POLYGONPOINT_LOOP (polygon);
-@@ -1492,6 +1537,7 @@ MirrorBuffer (BufferTypePtr Buffer)
+@@ -1504,6 +1549,7 @@ MirrorBuffer (BufferTypePtr Buffer)
      SetPolygonBoundingBox (polygon);
    }
    ENDALL_LOOP;
@@ -807,7 +807,7 @@ index cdb34dd..ddac496 100644
    SetBufferBoundingBox (Buffer);
  }
  
-@@ -1546,6 +1592,8 @@ SwapBuffer (BufferTypePtr Buffer)
+@@ -1558,6 +1604,8 @@ SwapBuffer (BufferTypePtr Buffer)
      r_insert_entry (layer->arc_tree, (BoxTypePtr) arc, 0);
    }
    ENDALL_LOOP;
@@ -816,7 +816,7 @@ index cdb34dd..ddac496 100644
    ALLPOLYGON_LOOP (Buffer->Data);
    {
      r_delete_entry (layer->polygon_tree, (BoxTypePtr) polygon);
-@@ -1560,6 +1608,7 @@ SwapBuffer (BufferTypePtr Buffer)
+@@ -1572,6 +1620,7 @@ SwapBuffer (BufferTypePtr Buffer)
      /* hmmm, how to handle clip */
    }
    ENDALL_LOOP;
@@ -825,7 +825,7 @@ index cdb34dd..ddac496 100644
    {
      r_delete_entry (layer->text_tree, (BoxTypePtr) text);
 diff --git a/src/change.c b/src/change.c
-index 6818dc9..8be63e8 100644
+index b2f42a7..d7b639b 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -50,6 +50,7 @@
@@ -3825,7 +3825,7 @@ index b9d4de1..d902609 100644
  void FreePCBMemory (PCBTypePtr);
  void FreeBoxListMemory (BoxListTypePtr);
 diff --git a/src/parse_y.y b/src/parse_y.y
-index 646ef77..4c91139 100644
+index bbb7255..8e35612 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
 @@ -52,6 +52,7 @@
