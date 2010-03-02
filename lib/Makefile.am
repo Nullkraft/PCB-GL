@@ -57,6 +57,8 @@ ${NEWLIB}.stamp : footprint.pcb ${NEWLIB_DEPS}
 		${PREVIEW} --pcb "${PCB}" --awk "${AWK}"
 	echo '${PREVIEW_MSG}' > $@
 
+distclean-local:
+	rm -fr ${NEWLIB}
 
 install-data-local: ${NEWLIB}.stamp
 	if test -d ${NEWLIB} ; then \
