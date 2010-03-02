@@ -1,7 +1,7 @@
-Bottom: a728b345e3b72498462c5c2d8c91a00bfd3737a0
-Top:    f46a751ac19c382d0c90adb7caf302df79c57da0
+Bottom: e502ab4036107fc9728571cbe9612b8114970986
+Top:    75f5e5eae8a504a9a5a13fc27b9a3ad9c419f01d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-02-24 00:06:15 +0000
+Date:   2010-03-02 17:17:45 +0000
 
 Allow zero clearance pads and pins to touch polygons
 
@@ -11,7 +11,7 @@ This was already supported for vias, lets be consistent.
 ---
 
 diff --git a/src/change.c b/src/change.c
-index f67e682..6818dc9 100644
+index db13d5e..b2f42a7 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -531,7 +531,13 @@ ChangePinClearSize (ElementTypePtr Element, PinTypePtr Pin)
