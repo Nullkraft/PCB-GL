@@ -1,7 +1,7 @@
-Bottom: f46a751ac19c382d0c90adb7caf302df79c57da0
-Top:    f12af5cc3171302167b701426cbc8b287296f79c
+Bottom: 9c633602d5a3ea80868e0ee85350e8522a753633
+Top:    8619a34edca5a3d4e0f7bbe1e00e4c8a2effa844
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-02-26 01:12:02 +0000
+Date:   2010-03-02 17:38:17 +0000
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -28,7 +28,7 @@ polygon fill.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index cdb34dd..8d56305 100644
+index 7daecf5..149e18f 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -381,6 +381,7 @@ MovePolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
@@ -48,7 +48,7 @@ index cdb34dd..8d56305 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index 6818dc9..d55880d 100644
+index b2f42a7..5c426c9 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -123,6 +123,9 @@ static void *ChangeTextJoin (LayerTypePtr, TextTypePtr);
