@@ -1,5 +1,5 @@
 Bottom: 3178803fbbbfc816e5eaffe3f5dd62dd3361b8a8
-Top:    fd438ca9665550ccb5bbf074f7d01ba3179bc91d
+Top:    a79148579f602412211a86e896f1539dfe0f4d5d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-03-02 17:17:38 +0000
 
@@ -8,6 +8,18 @@ Add virtual trackball code
 
 ---
 
+diff --git a/po/POTFILES.in b/po/POTFILES.in
+index 01627a2..b0e6f31 100644
+--- a/po/POTFILES.in
++++ b/po/POTFILES.in
+@@ -30,6 +30,7 @@ src/hid/gtk/gui-log-window.c
+ src/hid/gtk/gui-misc.c
+ src/hid/gtk/gui-netlist-window.c
+ src/hid/gtk/gui-top-window.c
++src/hid/gtk/gui-trackball.c
+ src/main.c
+ src/move.c
+ src/netlist.c
 diff --git a/src/Makefile.am b/src/Makefile.am
 index 9c4e0ce..54ed24b 100644
 --- a/src/Makefile.am
