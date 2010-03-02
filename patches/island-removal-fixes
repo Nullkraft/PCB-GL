@@ -1,7 +1,7 @@
-Bottom: f465604f65315b06ac51b504cf93adf68a71b1de
-Top:    6106f02615790ef3068bb12e9698bcbd51ea2fb3
+Bottom: 60c67d4e624fbf9974ad6ac325b0ce2d6f070bda
+Top:    b29facf05dc38e5b0ecc5cce443187c2014db5d0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-02-26 01:12:13 +0000
+Date:   2010-03-02 17:38:28 +0000
 
 Island removal fixes
 
@@ -11,7 +11,7 @@ Kept separate for now because they might have unknown side-effects.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 1e2b28d..42b6ba8 100644
+index df29b42..9719845 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -249,8 +249,8 @@ MoveViaToBuffer (PinTypePtr Via)
@@ -55,7 +55,7 @@ index 1e2b28d..42b6ba8 100644
    pour = GetPourMemory (lay);
    *pour = *Pour;
 diff --git a/src/change.c b/src/change.c
-index 1a80f00..cd21fe3 100644
+index b0b799a..6713ac8 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -493,10 +493,10 @@ ChangeViaClearSize (PinTypePtr Via)
