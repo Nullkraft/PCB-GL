@@ -1,5 +1,5 @@
 Bottom: a4d87fda3c02362c6f1680c2b3b4d9408a488caa
-Top:    27db12b0845f1cb61171bd3247bf3a5217cf9a9d
+Top:    149d3f6e5a4dfff9b203b710ecdb6488dbe94f68
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-03-02 14:26:57 +0000
 
@@ -11,15 +11,18 @@ The generated newlib files need to be removed by make distclean
 ---
 
 diff --git a/lib/Makefile.am b/lib/Makefile.am
-index 95be997..d5a62f1 100644
+index 95be997..ae1b485 100644
 --- a/lib/Makefile.am
 +++ b/lib/Makefile.am
-@@ -57,6 +57,8 @@ ${NEWLIB}.stamp : footprint.pcb ${NEWLIB_DEPS}
+@@ -57,6 +57,11 @@ ${NEWLIB}.stamp : footprint.pcb ${NEWLIB_DEPS}
  		${PREVIEW} --pcb "${PCB}" --awk "${AWK}"
  	echo '${PREVIEW_MSG}' > $@
  
++# Remove any rebuilt footprints
++if BUILD_PCBLIB_NEWLIB
 +distclean-local:
 +	rm -fr ${NEWLIB}
++endif
  
  install-data-local: ${NEWLIB}.stamp
  	if test -d ${NEWLIB} ; then \
