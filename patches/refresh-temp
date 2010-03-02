@@ -1,0 +1,23 @@
+Bottom: b971ccea61dab7f996b6959deea2b153da30310e
+Top:    a38de8434e87adcfb47cef4d33d8d4a06a01bffe
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-03-02 17:38:01 +0000
+
+Refresh of attempt-lesstif-gl-support
+
+---
+
+diff --git a/configure.ac b/configure.ac
+index 4662156..aee12f6 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -370,7 +370,8 @@ AC_ARG_ENABLE([gl],
+ [  --enable-gl           Enable GL drawing (with GTK HID)],
+ [],[
+ 	case " $with_gui " in
+-		*\ gtk\ *) enable_gl=yes;;
++		*\ gtk\ *)     enable_gl=yes;;
++		*\ lesstif\ *) enable_gl=yes;;
+ 		* ) enable_gl=no;;
+ 	esac
+ ])
