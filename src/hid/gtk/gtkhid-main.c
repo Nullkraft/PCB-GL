@@ -17,9 +17,15 @@
 #include "crosshair.h"
 #include "error.h"
 #include "../hidint.h"
-#include "gui.h"
 #include "hid/common/draw_helpers.h"
 
+#ifdef ENABLE_GL
+#  include <gtk/gtkgl.h>
+#  include <GL/gl.h>
+#  include "hid/common/hidgl.h"
+#endif
+
+#include "gui.h"
 
 #if !GTK_CHECK_VERSION(2,8,0) && defined(HAVE_GDK_GDKX_H)
 #include <gdk/gdkx.h>
@@ -35,6 +41,7 @@ RCSID ("$Id$");
 
 extern HID ghid_hid;
 
+int ghid_gui_is_up = 0;
 
 static void zoom_to (double factor, int x, int y);
 static void zoom_by (double factor, int x, int y);
@@ -333,67 +340,10 @@ ghid_invalidate_lr (int left, int right, int top, int bottom, int last)
 void
 ghid_invalidate_all ()
 {
-  int eleft, eright, etop, ebottom;
-  BoxType region;
-
-  if (!gport->pixmap)
-    return;
-
-  region.X1 = MIN(Px(0), Px(gport->width + 1));
-  region.Y1 = MIN(Py(0), Py(gport->height + 1));
-  region.X2 = MAX(Px(0), Px(gport->width + 1));
-  region.Y2 = MAX(Py(0), Py(gport->height + 1));
-
-  eleft = Vx (0);
-  eright = Vx (PCB->MaxWidth);
-  etop = Vy (0);
-  ebottom = Vy (PCB->MaxHeight);
-  if (eleft > eright)
-    {
-      int tmp = eleft;
-      eleft = eright;
-      eright = tmp;
-    }
-  if (etop > ebottom)
-    {
-      int tmp = etop;
-      etop = ebottom;
-      ebottom = tmp;
-    }
-
-  if (eleft > 0)
-    gdk_draw_rectangle (gport->drawable, gport->offlimits_gc,
-			1, 0, 0, eleft, gport->height);
-  else
-    eleft = 0;
-  if (eright < gport->width)
-    gdk_draw_rectangle (gport->drawable, gport->offlimits_gc,
-			1, eright, 0, gport->width - eright, gport->height);
-  else
-    eright = gport->width;
-  if (etop > 0)
-    gdk_draw_rectangle (gport->drawable, gport->offlimits_gc,
-			1, eleft, 0, eright - eleft + 1, etop);
-  else
-    etop = 0;
-  if (ebottom < gport->height)
-    gdk_draw_rectangle (gport->drawable, gport->offlimits_gc,
-			1, eleft, ebottom, eright - eleft + 1,
-			gport->height - ebottom);
-  else
-    ebottom = gport->height;
-
-  gdk_draw_rectangle (gport->drawable, gport->bg_gc, 1,
-		      eleft, etop, eright - eleft + 1, ebottom - etop + 1);
-
-  ghid_draw_bg_image();
-
-  hid_expose_callback (&ghid_hid, &region, 0);
-  ghid_draw_grid ();
   if (ghidgui->need_restore_crosshair)
     RestoreCrosshair (FALSE);
   ghidgui->need_restore_crosshair = FALSE;
-  ghid_screen_update ();
+  gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
 }
 
 
@@ -404,8 +354,10 @@ ghid_set_layer (const char *name, int group, int empty)
 	     && group <
 	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
 
-  if (idx >= 0 && idx < max_layer + 2)
+  if (idx >= 0 && idx < max_layer + 2) {
+    gport->trans_lines = TRUE;
     return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
+  }
   if (idx < 0)
     {
       switch (SL_TYPE (idx))
@@ -417,6 +369,8 @@ ghid_set_layer (const char *name, int group, int empty)
 	    return TEST_FLAG (SHOWMASKFLAG, PCB);
 	  return 0;
 	case SL_SILK:
+//          gport->trans_lines = TRUE;
+          gport->trans_lines = FALSE;
 	  if (SL_MYSIDE (idx) /*|| pinout */ )
 	    return PCB->ElementOn;
 	  return 0;
@@ -426,6 +380,8 @@ ghid_set_layer (const char *name, int group, int empty)
 	case SL_UDRILL:
 	  return 1;
 	case SL_RATS:
+	  if (PCB->RatOn)
+	    gport->trans_lines = TRUE;
 	  return PCB->RatOn;
 	}
     }
@@ -437,8 +393,6 @@ ghid_calibrate (double xval, double yval)
 {
   printf ("ghid_calibrate() -- not implemented\n");
 }
-
-static int ghid_gui_is_up = 0;
 
 void
 ghid_notify_gui_is_up ()
@@ -1121,7 +1075,7 @@ HID ghid_hid = {
   1,				/* gui */
   0,				/* printer */
   0,				/* exporter */
-  0,				/* poly before */
+  1,				/* poly before */
   1,				/* poly after */
   0,				/* poly dicer */
 
@@ -1706,7 +1660,8 @@ Benchmark (int argc, char **argv, int x, int y)
   time (&start);
   do
     {
-      hid_expose_callback (&ghid_hid, &region, 0);
+      gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
+      gdk_window_process_updates (gport->drawing_area->window, FALSE);
       gdk_display_sync (display);
       time (&end);
       i++;
