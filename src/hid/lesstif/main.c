@@ -3766,7 +3766,6 @@ HID lesstif_gui = {
   lesstif_get_export_options,
   lesstif_do_export,
   lesstif_parse_arguments,
-
   lesstif_invalidate_lr,
   lesstif_invalidate_all,
   lesstif_set_layer,
