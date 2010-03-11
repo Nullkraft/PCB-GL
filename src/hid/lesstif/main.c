@@ -2840,7 +2840,7 @@ lesstif_invalidate_lr (int l, int r, int t, int b, int last)
 void
 lesstif_invalidate_all (void)
 {
-  lesstif_invalidate_lr (0, 0, PCB->MaxWidth, PCB->MaxHeight, 1);
+  lesstif_invalidate_lr (0, PCB->MaxWidth, 0, PCB->MaxHeight, 1);
 }
 
 static int
