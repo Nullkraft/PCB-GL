@@ -11,8 +11,8 @@ The requirement seems to date back prior to the HID split, where the
 "Quit" action would call gtk_main_quit(), an operation which is illegal
 if the GUI main loop was never started.
 
-During the HID split, the "Quit" action was changed to call exit(0),
-so this dance isn't really necessary at all.
+During the HID split, the QuitApplication() function was changed to
+call exit(0), so this dance isn't really necessary at all now.
 
 
 
