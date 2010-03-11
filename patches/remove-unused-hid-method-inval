@@ -1,5 +1,5 @@
 Bottom: 707a09faefc0ab9f4339d4d2d9de51c28d1ba7a3
-Top:    cc346790d9fd691fdce657c3a9b4c33e94343c97
+Top:    941649396eb9e3d935ba7ded567be7edaa265305
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-03-11 19:35:51 +0000
 
@@ -150,7 +150,7 @@ index 81f0d77..330e716 100644
    ghid_invalidate_all,
    ghid_set_layer,
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 84e095a..8d1354f 100644
+index 84e095a..2a92514 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -2828,7 +2828,7 @@ lesstif_need_idle_proc ()
@@ -176,7 +176,7 @@ index 84e095a..8d1354f 100644
  lesstif_invalidate_all (void)
  {
 -  lesstif_invalidate_wh (0, 0, PCB->MaxWidth, PCB->MaxHeight, 1);
-+  lesstif_invalidate_lr (0, 0, PCB->MaxWidth, PCB->MaxHeight, 1);
++  lesstif_invalidate_lr (0, PCB->MaxWidth, 0, PCB->MaxHeight, 1);
  }
  
  static int
