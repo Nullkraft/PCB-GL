@@ -1,0 +1,104 @@
+Bottom: 25d350c655447e0d5e6f2b429b9034e88ec50045
+Top:    ccca746d86ec160d6578a1ed6a1a4b61632132c0
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-03-11 19:13:47 +0000
+
+Refresh of remove-settings-init_done
+
+---
+
+diff --git a/src/main.c b/src/main.c
+index bb79991..162a0e0 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -1021,12 +1021,6 @@ main (int argc, char *argv[])
+ #ifdef HAVE_LIBSTROKE
+   stroke_init ();
+ #endif
+-  /*
+-   * Set this flag to zero.  Then if we have a startup
+-   * action which includes Quit(), the flag will be set
+-   * to -1 and we can avoid ever calling gtk_main();
+-   */
+-  Settings.init_done = 0;
+ 
+   if (Settings.ScriptFilename)
+     {
+@@ -1040,37 +1034,33 @@ main (int argc, char *argv[])
+       hid_parse_actions (Settings.ActionString, 0);
+     }
+ 
+-  if (Settings.init_done == 0)
+-    {
+-      Settings.init_done = 1;
+ #if HAVE_DBUS
+-      pcb_dbus_setup();
++  pcb_dbus_setup();
+ #endif
+ 
+-      EnableAutosave ();
++  EnableAutosave ();
+ 
+ #ifdef DEBUG
+-      printf ("Settings.LibraryCommandDir = \"%s\"\n",
+-	      Settings.LibraryCommandDir);
+-      printf ("Settings.FontPath          = \"%s\"\n", 
+-	      Settings.FontPath);
+-      printf ("Settings.ElementPath       = \"%s\"\n", 
+-	      Settings.ElementPath);
+-      printf ("Settings.LibraryPath       = \"%s\"\n", 
+-	      Settings.LibraryPath);
+-      printf ("Settings.LibraryTree       = \"%s\"\n", 
+-	      Settings.LibraryTree);
+-      printf ("Settings.MakeProgram = \"%s\"\n",
+-	      UNKNOWN (Settings.MakeProgram));
+-      printf ("Settings.GnetlistProgram = \"%s\"\n",
+-	      UNKNOWN (Settings.GnetlistProgram));
++  printf ("Settings.LibraryCommandDir = \"%s\"\n",
++          Settings.LibraryCommandDir);
++  printf ("Settings.FontPath          = \"%s\"\n", 
++          Settings.FontPath);
++  printf ("Settings.ElementPath       = \"%s\"\n", 
++          Settings.ElementPath);
++  printf ("Settings.LibraryPath       = \"%s\"\n", 
++          Settings.LibraryPath);
++  printf ("Settings.LibraryTree       = \"%s\"\n", 
++          Settings.LibraryTree);
++  printf ("Settings.MakeProgram = \"%s\"\n",
++          UNKNOWN (Settings.MakeProgram));
++  printf ("Settings.GnetlistProgram = \"%s\"\n",
++          UNKNOWN (Settings.GnetlistProgram));
+ #endif
+ 
+-      gui->do_export (0);
++  gui->do_export (0);
+ #if HAVE_DBUS
+-      pcb_dbus_finish();
++  pcb_dbus_finish();
+ #endif
+-    }
+ 
+   return (0);
+ }
+diff --git a/src/misc.c b/src/misc.c
+index b675090..cca9e1b 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -879,16 +879,7 @@ QuitApplication (void)
+   else
+     DisableEmergencySave ();
+ 
+-  /*
+-   * if Settings.init_done is not > 0 then we haven't even called
+-   * gtk_main() yet so gtk_main_quit() will give an error.  In
+-   * this case just set the flag to -1 and we will exit instead
+-   * of calling gtk_main()
+-   */
+-  if (Settings.init_done > 0)
+-    exit (0);
+-  else
+-    Settings.init_done = -1;
++  exit (0);
+ }
+ 
+ /* ---------------------------------------------------------------------------
