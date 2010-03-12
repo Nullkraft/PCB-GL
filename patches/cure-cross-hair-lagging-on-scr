@@ -1,7 +1,7 @@
-Bottom: 38f13c3d33df10578eaf86ec16c8f95615daf7fa
-Top:    cadda2533daac52ab7d92a0f4b567648a0c21e40
+Bottom: ba7966e57318cf1e9a6092640b5d948d7792bcb8
+Top:    ba7966e57318cf1e9a6092640b5d948d7792bcb8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-12 01:26:00 +0000
+Date:   2010-03-12 01:31:03 +0000
 
 Cure crosshair lagging on screen
 
@@ -10,56 +10,4 @@ FIXME: SHOULD NOT RE-WRITE THE GTK HID
 
 ---
 
-diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 966a610..fdf5eba 100644
---- a/src/hid/gtk/gui-output-events.c
-+++ b/src/hid/gtk/gui-output-events.c
-@@ -894,6 +894,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
-   gdouble dx, dy;
-   static gint x_prev = -1, y_prev = -1;
-   gboolean moved;
-+#if 0
-   GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
-   GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
- 
-@@ -902,11 +903,15 @@ ghid_port_window_motion_cb (GtkWidget * widget,
-     printf ("GL THingy returned\n");
-     return FALSE;
-   }
-+#endif
- 
-   if (out->panning)
-     {
-+/* Not sure this really matters, since we're using invalidate to get a redraw */
-+#if 1
-       if (gtk_events_pending ())
- 	return FALSE;
-+#endif
-       dx = gport->zoom * (x_prev - ev->x);
-       dy = gport->zoom * (y_prev - ev->y);
-       if (x_prev > 0)
-@@ -917,10 +922,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
-     }
-   x_prev = y_prev = -1;
-   moved = ghid_note_event_location (ev);
--  ghid_show_crosshair (TRUE);
--  if (moved && have_crosshair_attachments ())
-+
-+  queue_tooltip_update (out);
-+
-+//  ghid_show_crosshair (TRUE);
-+  if (moved) // && have_crosshair_attachments ())
-     ghid_draw_area_update (gport, NULL);
- 
-+#if 0
-   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
-     gdk_gl_drawable_swap_buffers (pGlDrawable);
-   else
-@@ -928,6 +937,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
- 
-   /* end drawing to current GL-context */
-   gdk_gl_drawable_gl_end (pGlDrawable);
-+#endif
-+
-   return FALSE;
- }
+
