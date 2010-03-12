@@ -1,7 +1,7 @@
-Bottom: 210e6f4ffdbc7a52a7080a9043dfa864ac31e7fd
-Top:    f2e28a942a2464516c070a19f9c8f6d500f85954
+Bottom: 27232fd7e55ec8a934863c5492321ebba1472ab5
+Top:    4c78e484452be159f65a193edc66c33af9079542
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-02 18:43:54 +0000
+Date:   2010-03-12 01:33:12 +0000
 
 Island removal fixes
 
@@ -116,10 +116,10 @@ index b0b799a..6713ac8 100644
        if (Line->Clearance == 0)
  	{
 diff --git a/src/misc.c b/src/misc.c
-index b533bf4..075bd9a 100644
+index 7a0aa77..fff2b3e 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -1529,8 +1529,8 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
+@@ -1520,8 +1520,8 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
        new_da = 360;
        new_sa = 0;
      }

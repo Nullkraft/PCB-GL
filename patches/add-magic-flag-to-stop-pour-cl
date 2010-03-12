@@ -1,7 +1,7 @@
-Bottom: 410cda21b1890db95eaea00afb4e24688aa54115
-Top:    af6afc8502b294268274e0299d5aefccca242d50
+Bottom: f8910af46f0aebadc6324122f76721f21a0c06d3
+Top:    da807816c462ca2534d6f82c8e3d622a0583e0a5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-02 18:43:53 +0000
+Date:   2010-03-12 01:33:10 +0000
 
 Add magic flag to stop pour clipping for off-screen buffers
 
@@ -36,7 +36,7 @@ index e108dbe..51dcb3d 100644
    ptr->ThermStyle = 4;
    ptr->IsleArea = 2.e8;
 diff --git a/src/global.h b/src/global.h
-index 0059267..ebfe249 100644
+index d9eb3ba..043a611 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -396,6 +396,7 @@ typedef struct			/* holds all objects */
