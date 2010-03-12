@@ -1,7 +1,7 @@
-Bottom: e7d4d03d082c95eafddd2b042a4fc804e0671f67
-Top:    62022bd96c9c92dce6aa2ae4f4dc0f05f3e1392a
+Bottom: 67024f81d01ffab43c8ad6a4b5599a6f79e33feb
+Top:    81b5fe9c821b656d996dc3f142a6456b9aaf6055
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-02 18:43:08 +0000
+Date:   2010-03-12 01:25:59 +0000
 
 Make --enable-dbus default
 
@@ -9,10 +9,10 @@ Make --enable-dbus default
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 0f11e4a..c1d020f 100644
+index 26b20cb..c6f27e5 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -327,7 +327,13 @@ fi
+@@ -353,7 +353,13 @@ fi
  AC_MSG_CHECKING([for whether to use DBUS])
  AC_ARG_ENABLE([dbus],
  [  --enable-dbus           Enable DBUS IPC],

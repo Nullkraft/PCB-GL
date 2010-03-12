@@ -1,7 +1,7 @@
-Bottom: 62022bd96c9c92dce6aa2ae4f4dc0f05f3e1392a
-Top:    156e05cb7bac84df2bafe15d0114da75626dbbb2
+Bottom: 81b5fe9c821b656d996dc3f142a6456b9aaf6055
+Top:    38f13c3d33df10578eaf86ec16c8f95615daf7fa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-02 18:43:09 +0000
+Date:   2010-03-12 01:26:00 +0000
 
 Drop in PCB+GL code + various mess. Needs splitting up?
 
@@ -16,10 +16,10 @@ FIXME: SHOULD NOT RE-WRITE THE GTK HID!
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 371173a..9c4e0ce 100644
+index e719268..f66cca7 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -149,13 +149,23 @@ PCB_SRCS = \
+@@ -150,13 +150,23 @@ PCB_SRCS = \
  	hid/common/hid_resource.h \
  	hid/hidint.h 
  
@@ -44,7 +44,7 @@ index 371173a..9c4e0ce 100644
  BUILT_SOURCES = \
  	core_lists.h \
  	gpcb-menu.h \
-@@ -240,7 +250,6 @@ LIBGTK_SRCS = \
+@@ -244,7 +254,6 @@ LIBGTK_SRCS = \
  	dolists.h \
  	hid/hidint.h \
  	hid/gtk/gtkhid-main.c \
@@ -52,7 +52,7 @@ index 371173a..9c4e0ce 100644
  	hid/gtk/gtkhid.h \
  	hid/gtk/gui.h \
  	hid/gtk/gui-command-window.c \
-@@ -284,6 +293,14 @@ BUILT_SOURCES+=	dbus-introspect.h
+@@ -289,6 +298,14 @@ BUILT_SOURCES+=	dbus-introspect.h
  
  endif
  
@@ -1307,7 +1307,7 @@ index 0000000..3e41c35
 +  hidgl_fill_rect (x1, y1, x2, y2);
 +}
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 81f0d77..6280611 100644
+index b8fdc75..1267e84 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -17,9 +17,15 @@
@@ -1335,7 +1335,7 @@ index 81f0d77..6280611 100644
  
  static void zoom_to (double factor, int x, int y);
  static void zoom_by (double factor, int x, int y);
-@@ -333,67 +340,10 @@ ghid_invalidate_lr (int left, int right, int top, int bottom, int last)
+@@ -326,67 +333,10 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
  void
  ghid_invalidate_all ()
  {
@@ -1404,7 +1404,7 @@ index 81f0d77..6280611 100644
  }
  
  
-@@ -404,8 +354,10 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -397,8 +347,10 @@ ghid_set_layer (const char *name, int group, int empty)
  	     && group <
  	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
  
@@ -1416,7 +1416,7 @@ index 81f0d77..6280611 100644
    if (idx < 0)
      {
        switch (SL_TYPE (idx))
-@@ -417,6 +369,8 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -410,6 +362,8 @@ ghid_set_layer (const char *name, int group, int empty)
  	    return TEST_FLAG (SHOWMASKFLAG, PCB);
  	  return 0;
  	case SL_SILK:
@@ -1425,7 +1425,7 @@ index 81f0d77..6280611 100644
  	  if (SL_MYSIDE (idx) /*|| pinout */ )
  	    return PCB->ElementOn;
  	  return 0;
-@@ -426,6 +380,8 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -419,6 +373,8 @@ ghid_set_layer (const char *name, int group, int empty)
  	case SL_UDRILL:
  	  return 1;
  	case SL_RATS:
@@ -1434,7 +1434,7 @@ index 81f0d77..6280611 100644
  	  return PCB->RatOn;
  	}
      }
-@@ -438,8 +394,6 @@ ghid_calibrate (double xval, double yval)
+@@ -431,8 +387,6 @@ ghid_calibrate (double xval, double yval)
    printf ("ghid_calibrate() -- not implemented\n");
  }
  
@@ -1443,7 +1443,7 @@ index 81f0d77..6280611 100644
  void
  ghid_notify_gui_is_up ()
  {
-@@ -1121,7 +1075,7 @@ HID ghid_hid = {
+@@ -1114,7 +1068,7 @@ HID ghid_hid = {
    1,				/* gui */
    0,				/* printer */
    0,				/* exporter */
@@ -1452,7 +1452,7 @@ index 81f0d77..6280611 100644
    1,				/* poly after */
    0,				/* poly dicer */
  
-@@ -1706,7 +1660,8 @@ Benchmark (int argc, char **argv, int x, int y)
+@@ -1697,7 +1651,8 @@ Benchmark (int argc, char **argv, int x, int y)
    time (&start);
    do
      {
@@ -1463,10 +1463,10 @@ index 81f0d77..6280611 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 7466e59..53d184d 100644
+index 86abad2..966a610 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -302,16 +302,16 @@ have_crosshair_attachments (void)
+@@ -297,16 +297,16 @@ have_crosshair_attachments (void)
  #define VCD		8
  
  static void
@@ -1489,7 +1489,7 @@ index 7466e59..53d184d 100644
  {
    gint x0, y0, x1, y1;
  
-@@ -323,8 +323,9 @@ draw_slanted_cross (GdkGC *xor_gc, gint x, gint y)
+@@ -318,8 +318,9 @@ draw_slanted_cross (GdkGC *xor_gc, gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - x;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -1501,7 +1501,7 @@ index 7466e59..53d184d 100644
    x0 = x - (gport->height - y);
    x0 = MAX(0, MIN (x0, gport->width));
    x1 = x + y;
-@@ -333,12 +334,12 @@ draw_slanted_cross (GdkGC *xor_gc, gint x, gint y)
+@@ -328,12 +329,12 @@ draw_slanted_cross (GdkGC *xor_gc, gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - (gport->width - x);
    y1 = MAX(0, MIN (y1, gport->height));
@@ -1517,7 +1517,7 @@ index 7466e59..53d184d 100644
  {
    gint x0, y0, x1, y1;
    gdouble tan60 = sqrt (3);
-@@ -351,8 +352,8 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
+@@ -346,8 +347,8 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - x * tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -1528,7 +1528,7 @@ index 7466e59..53d184d 100644
  
    x0 = x + (gport->height - y) * tan60;
    x0 = MAX(0, MIN (x0, gport->width));
-@@ -362,8 +363,8 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
+@@ -357,8 +358,8 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - x / tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -1539,7 +1539,7 @@ index 7466e59..53d184d 100644
  
    x0 = x - (gport->height - y) / tan60;
    x0 = MAX(0, MIN (x0, gport->width));
-@@ -373,8 +374,8 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
+@@ -368,8 +369,8 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - (gport->width - x) * tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -1550,7 +1550,7 @@ index 7466e59..53d184d 100644
  
    x0 = x - (gport->height - y) * tan60;
    x0 = MAX(0, MIN (x0, gport->width));
-@@ -384,20 +385,20 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
+@@ -379,20 +380,20 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - (gport->width - x) / tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -1577,7 +1577,7 @@ index 7466e59..53d184d 100644
    prev = Crosshair.shape;
  }
  
-@@ -406,60 +407,106 @@ ghid_show_crosshair (gboolean show)
+@@ -401,60 +402,106 @@ ghid_show_crosshair (gboolean show)
  {
    gint x, y;
    static gint x_prev = -1, y_prev = -1;
@@ -1609,11 +1609,11 @@ index 7466e59..53d184d 100644
 +  glLogicOp (GL_XOR);
 +
 +  hidgl_flush_triangles (&buffer);
- 
++
 +  glColor3f (cross_color.red / 65535.,
 +             cross_color.green / 65535.,
 +             cross_color.blue / 65535.);
-+
+ 
 +  glBegin (GL_LINES);
 +
 +#if 1
@@ -1715,7 +1715,7 @@ index 7466e59..53d184d 100644
  }
  
  static gboolean
-@@ -697,53 +744,151 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -692,53 +739,151 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
    if (!first_time_done)
      {
        gport->colormap = gtk_widget_get_colormap (gport->top_window);
@@ -1881,7 +1881,7 @@ index 7466e59..53d184d 100644
    return FALSE;
  }
  
-@@ -871,6 +1016,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -749,6 +894,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    gdouble dx, dy;
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
@@ -1896,7 +1896,7 @@ index 7466e59..53d184d 100644
  
    if (out->panning)
      {
-@@ -892,6 +1045,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -767,6 +920,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    ghid_show_crosshair (TRUE);
    if (moved && have_crosshair_attachments ())
      ghid_draw_area_update (gport, NULL);
@@ -1911,7 +1911,7 @@ index 7466e59..53d184d 100644
    return FALSE;
  }
  
-@@ -931,7 +1092,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -806,7 +967,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        RestoreCrosshair (TRUE);
        cursor_in_viewport = TRUE;
      }
