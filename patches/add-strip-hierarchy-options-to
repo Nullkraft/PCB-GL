@@ -1,7 +1,7 @@
-Bottom: baf46e66b11c007b69bbee58b55c47a0c0e4a914
-Top:    5c6529e06ca7bffe5179e74862ad10e43db4bf17
+Bottom: 8cbd2a836423078ac41a77f3f52e99e8a34c5186
+Top:    628b36ba25f250acef27000dc061d9a609e141e4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-02 18:43:26 +0000
+Date:   2010-03-12 01:31:56 +0000
 
 Add strip hierarchy options to display refdes without any "..../" prefix
 
@@ -150,7 +150,7 @@ index 2f97d4e..0cbfd0e 100644
   * PCB flags
   */
 diff --git a/src/draw.c b/src/draw.c
-index 8fee2ca..d6e2f62 100644
+index 8d28c6c..4d50b7d 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -2061,6 +2061,32 @@ DrawElement (ElementTypePtr Element, int unused)
