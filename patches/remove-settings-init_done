@@ -3,17 +3,21 @@ Top:    157e6a7f961919a389353525a8a276e1ab693815
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-03-11 23:47:43 +0000
 
-Remove Settings.init_done variable
+Remove Settings.init_done variable and its usage
 
 This variable was previously used to allow action scripts run prior to
-loading the GUI to avoid GUI startup after they call a "Quit" action.
-The requirement seems to date back prior to the HID split, where the
-"Quit" action would call gtk_main_quit(), an operation which is illegal
-if the GUI main loop was never started.
+loading the GUI to avoid GUI startup if they executed a "Quit" action.
 
-During the HID split, the QuitApplication() function was changed to
-call exit(0), so this dance isn't really necessary at all now.
+The requirement dates back prior to the HID split, where the "Quit"
+action would cause PCB to call gtk_main_quit(), an operation which is
+illegal if the GUI main loop was not yet started. The init_done flag
+was used in QuitApplication(), both to determine whether the GUI had
+started, and if not - to note that the GUI should not be initialised
+later. (Instead of calling gtk_main_quit()).
 
+With the HID split, the QuitApplication() function was changed to call
+exit(0) rather than gtk_main_quit(), so this dance isn't necessary at
+all now.. in either case, we can just exit the application immediately.
 
 
 ---
