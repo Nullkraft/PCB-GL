@@ -1,7 +1,7 @@
-Bottom: 81b5fe9c821b656d996dc3f142a6456b9aaf6055
-Top:    38f13c3d33df10578eaf86ec16c8f95615daf7fa
+Bottom: 4d692d318c19d5aeb0d533ba782e45c9cee3b18e
+Top:    ba7966e57318cf1e9a6092640b5d948d7792bcb8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-12 01:26:00 +0000
+Date:   2010-03-12 01:31:03 +0000
 
 Drop in PCB+GL code + various mess. Needs splitting up?
 
@@ -1463,10 +1463,10 @@ index b8fdc75..1267e84 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 86abad2..966a610 100644
+index 7466e59..53d184d 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -297,16 +297,16 @@ have_crosshair_attachments (void)
+@@ -302,16 +302,16 @@ have_crosshair_attachments (void)
  #define VCD		8
  
  static void
@@ -1489,7 +1489,7 @@ index 86abad2..966a610 100644
  {
    gint x0, y0, x1, y1;
  
-@@ -318,8 +318,9 @@ draw_slanted_cross (GdkGC *xor_gc, gint x, gint y)
+@@ -323,8 +323,9 @@ draw_slanted_cross (GdkGC *xor_gc, gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - x;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -1501,7 +1501,7 @@ index 86abad2..966a610 100644
    x0 = x - (gport->height - y);
    x0 = MAX(0, MIN (x0, gport->width));
    x1 = x + y;
-@@ -328,12 +329,12 @@ draw_slanted_cross (GdkGC *xor_gc, gint x, gint y)
+@@ -333,12 +334,12 @@ draw_slanted_cross (GdkGC *xor_gc, gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - (gport->width - x);
    y1 = MAX(0, MIN (y1, gport->height));
@@ -1517,7 +1517,7 @@ index 86abad2..966a610 100644
  {
    gint x0, y0, x1, y1;
    gdouble tan60 = sqrt (3);
-@@ -346,8 +347,8 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
+@@ -351,8 +352,8 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - x * tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -1528,7 +1528,7 @@ index 86abad2..966a610 100644
  
    x0 = x + (gport->height - y) * tan60;
    x0 = MAX(0, MIN (x0, gport->width));
-@@ -357,8 +358,8 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
+@@ -362,8 +363,8 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - x / tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -1539,7 +1539,7 @@ index 86abad2..966a610 100644
  
    x0 = x - (gport->height - y) / tan60;
    x0 = MAX(0, MIN (x0, gport->width));
-@@ -368,8 +369,8 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
+@@ -373,8 +374,8 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - (gport->width - x) * tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -1550,7 +1550,7 @@ index 86abad2..966a610 100644
  
    x0 = x - (gport->height - y) * tan60;
    x0 = MAX(0, MIN (x0, gport->width));
-@@ -379,20 +380,20 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
+@@ -384,20 +385,20 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - (gport->width - x) / tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -1577,7 +1577,7 @@ index 86abad2..966a610 100644
    prev = Crosshair.shape;
  }
  
-@@ -401,60 +402,106 @@ ghid_show_crosshair (gboolean show)
+@@ -406,60 +407,106 @@ ghid_show_crosshair (gboolean show)
  {
    gint x, y;
    static gint x_prev = -1, y_prev = -1;
@@ -1609,11 +1609,11 @@ index 86abad2..966a610 100644
 +  glLogicOp (GL_XOR);
 +
 +  hidgl_flush_triangles (&buffer);
-+
+ 
 +  glColor3f (cross_color.red / 65535.,
 +             cross_color.green / 65535.,
 +             cross_color.blue / 65535.);
- 
++
 +  glBegin (GL_LINES);
 +
 +#if 1
@@ -1715,7 +1715,7 @@ index 86abad2..966a610 100644
  }
  
  static gboolean
-@@ -692,53 +739,151 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -697,53 +744,151 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
    if (!first_time_done)
      {
        gport->colormap = gtk_widget_get_colormap (gport->top_window);
@@ -1881,7 +1881,7 @@ index 86abad2..966a610 100644
    return FALSE;
  }
  
-@@ -749,6 +894,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -871,6 +1016,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    gdouble dx, dy;
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
@@ -1896,7 +1896,7 @@ index 86abad2..966a610 100644
  
    if (out->panning)
      {
-@@ -767,6 +920,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -892,6 +1045,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    ghid_show_crosshair (TRUE);
    if (moved && have_crosshair_attachments ())
      ghid_draw_area_update (gport, NULL);
@@ -1911,7 +1911,7 @@ index 86abad2..966a610 100644
    return FALSE;
  }
  
-@@ -806,7 +967,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -931,7 +1092,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        RestoreCrosshair (TRUE);
        cursor_in_viewport = TRUE;
      }
