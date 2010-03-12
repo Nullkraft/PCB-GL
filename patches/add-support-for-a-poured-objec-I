@@ -1,7 +1,7 @@
-Bottom: d91205c457ab7732bb5b3d5c142f588784fe39b0
-Top:    640c27b7472b44902a61626160c1f07a7e07a18e
+Bottom: 484b7d04f06c1e093a3c9865038ff5781eb08b7a
+Top:    e0c341b56c126436d1e15a95a970964a60099f53
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-02 18:44:09 +0000
+Date:   2010-03-12 01:33:15 +0000
 
 Add support for a "poured" object.
 
@@ -47,10 +47,10 @@ index b0e6f31..24b21f2 100644
  src/report.c
  src/res_parse.c
 diff --git a/src/Makefile.am b/src/Makefile.am
-index c936738..6adf90c 100644
+index b709c27..452e325 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -120,6 +120,8 @@ PCB_SRCS = \
+@@ -121,6 +121,8 @@ PCB_SRCS = \
  	polygon.h \
  	polygon1.c \
  	polyarea.h \
@@ -1894,7 +1894,7 @@ index cea493a..d75cfbe 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index 8fee2ca..e5cfd96 100644
+index 8d28c6c..bda040b 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -100,6 +100,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
@@ -2499,7 +2499,7 @@ index c6c7458..5ae97c3 100644
    {"removemode", FlagMode, REMOVE_MODE},
    {"rotatemode", FlagMode, ROTATE_MODE},
 diff --git a/src/global.h b/src/global.h
-index 3794448..0059267 100644
+index 80bea72..d9eb3ba 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -238,15 +238,41 @@ typedef struct
@@ -2595,7 +2595,7 @@ index 3794448..0059267 100644
    AttachedObjectType AttachedObject;	/* data of attached objects */
    enum crosshair_shape shape; /* shape of crosshair */
  } CrosshairType, *CrosshairTypePtr;
-@@ -681,13 +707,15 @@ typedef struct
+@@ -679,13 +705,15 @@ typedef struct
    void *(*Line) (LayerTypePtr, LineTypePtr);
    void *(*Text) (LayerTypePtr, TextTypePtr);
    void *(*Polygon) (LayerTypePtr, PolygonTypePtr);
@@ -2626,7 +2626,7 @@ index 11251b2..2b28922 100644
         {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
         {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 1900a6e..af00e81 100644
+index 55d1218..ab6fdb0 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -383,7 +383,7 @@ gerber_do_export (HID_Attr_Val * options)
@@ -2724,7 +2724,7 @@ index 794f2af..0340ed4 100644
    {NULL, NULL, NULL, "remove", REMOVE_MODE, del},
    {NULL, NULL, NULL, "rotate", ROTATE_MODE, rot},
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index 8c16532..2037817 100644
+index c2f6ddf..7303953 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -526,7 +526,7 @@ nelma_choose_groups()
@@ -2737,7 +2737,7 @@ index 8c16532..2037817 100644
  
  			/*
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 1d7f7de..cde1643 100644
+index de8010e..bc4a560 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -333,7 +333,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
@@ -2750,7 +2750,7 @@ index 1d7f7de..cde1643 100644
      }
    print_group[GetLayerGroupNumberByNumber (max_layer)] = 1;
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index e9ea26a..d135f53 100644
+index d67947d..16e0718 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
 @@ -150,7 +150,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
@@ -2763,10 +2763,10 @@ index e9ea26a..d135f53 100644
      }
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 7d68b13..21f1556 100644
+index 6a915f0..0860ca3 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
-@@ -374,7 +374,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -481,7 +481,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
    for (i = 0; i < max_layer; i++)
      {
        LayerType *layer = PCB->Data->Layer + i;
@@ -3021,7 +3021,7 @@ index 7ef7d41..1b76e88 100644
 +  ClearFromPours (Data, ELEMENT_TYPE, Element, Element);
  }
 diff --git a/src/misc.c b/src/misc.c
-index b675090..b533bf4 100644
+index cca9e1b..7a0aa77 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -66,6 +66,7 @@
@@ -3113,7 +3113,7 @@ index b675090..b533bf4 100644
    ENDALL_LOOP;
    return (IsDataEmpty (Data) ? NULL : &box);
  }
-@@ -1232,13 +1252,14 @@ GetObjectBoundingBox (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
+@@ -1223,13 +1243,14 @@ GetObjectBoundingBox (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
      case ARC_TYPE:
      case TEXT_TYPE:
      case POLYGON_TYPE:
@@ -3129,7 +3129,7 @@ index b675090..b533bf4 100644
      case LINEPOINT_TYPE:
        return (BoxType *)Ptr3;
      default:
-@@ -1508,14 +1529,14 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
+@@ -1499,14 +1520,14 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
        new_da = 360;
        new_sa = 0;
      }
@@ -3146,7 +3146,7 @@ index b675090..b533bf4 100644
  }
  
  static char *
-@@ -1600,13 +1621,8 @@ GetGridLockCoordinates (int type, void *ptr1,
+@@ -1591,13 +1612,8 @@ GetGridLockCoordinates (int type, void *ptr1,
        *x = ((ElementTypePtr) ptr2)->MarkX;
        *y = ((ElementTypePtr) ptr2)->MarkY;
        break;
