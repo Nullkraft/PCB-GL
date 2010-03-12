@@ -1,5 +1,5 @@
-Bottom: 8637d634f968d30f79a200f94faa81ebdc452567
-Top:    604a34e7314904df6f3ff8e4080cad8be0904c47
+Bottom: ed2368666ae601f65de44d55712d7b329fbf24e5
+Top:    c97c0d48055df6a920a3005ad79288e7ba41ecb0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-03-02 18:43:10 +0000
 
@@ -14,7 +14,7 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index b843da6..cce46ab 100644
+index 9571b29..5188960 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -420,6 +420,7 @@ DrawEverything (BoxTypePtr drawn_area)
@@ -121,7 +121,7 @@ index b843da6..cce46ab 100644
  
  	  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
 diff --git a/src/hid.h b/src/hid.h
-index 3c23338..966a98c 100644
+index 7409bbf..5b8e614 100644
 --- a/src/hid.h
 +++ b/src/hid.h
 @@ -215,6 +215,7 @@ extern "C"
@@ -400,7 +400,7 @@ index bb1383c..b956a65 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index afa6a08..1900a6e 100644
+index dee7d06..55d1218 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -455,6 +455,9 @@ gerber_set_layer (const char *name, int group, int empty)
@@ -466,10 +466,10 @@ index 430059b..fec839e 100644
        break;
      }
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index a9ec4c5..6955508 100644
+index a0166aa..94fb923 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -346,14 +346,39 @@ ghid_invalidate_all ()
+@@ -339,14 +339,39 @@ ghid_invalidate_all ()
    gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
  }
  
@@ -510,7 +510,7 @@ index a9ec4c5..6955508 100644
    if (idx >= 0 && idx < max_layer + 2) {
      gport->trans_lines = TRUE;
      return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
-@@ -369,8 +394,7 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -362,8 +387,7 @@ ghid_set_layer (const char *name, int group, int empty)
  	    return TEST_FLAG (SHOWMASKFLAG, PCB);
  	  return 0;
  	case SL_SILK:
@@ -635,7 +635,7 @@ index 0ecc466..2c28955 100644
    ghid_config_files_read (argc, argv);
  
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index dc1cee5..8c16532 100644
+index 8e5ff0c..c2f6ddf 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -704,6 +704,10 @@ nelma_set_layer(const char *name, int group, int empty)
@@ -650,7 +650,7 @@ index dc1cee5..8c16532 100644
  		name = PCB->Data->Layer[idx].Name;
  	}
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 2e8e40c..1d7f7de 100644
+index 404eb53..de8010e 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -890,6 +890,10 @@ png_set_layer (const char *name, int group, int empty)
@@ -665,7 +665,7 @@ index 2e8e40c..1d7f7de 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index b0e7a7d..e9ea26a 100644
+index 0c9345b..d67947d 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
 @@ -313,6 +313,10 @@ eps_set_layer (const char *name, int group, int empty)
@@ -680,10 +680,10 @@ index b0e7a7d..e9ea26a 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 3a92dc3..7d68b13 100644
+index 810ceba..6a915f0 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
-@@ -516,6 +516,10 @@ ps_set_layer (const char *name, int group, int empty)
+@@ -636,6 +636,10 @@ ps_set_layer (const char *name, int group, int empty)
    int idx = (group >= 0
  	     && group <
  	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;

@@ -1,5 +1,5 @@
-Bottom: 431f0c8a488f44817b295d45cf1a487f56afcd6c
-Top:    19e7719e8c0c811512d421d360de2c76d3ab65c0
+Bottom: 941a32e6b9dd762cd9be2736829b60837f534982
+Top:    c1316d8aa9247b7d1c6aa9f87e41e7de68a23daf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-03-02 18:43:13 +0000
 
@@ -52,10 +52,10 @@ index 6b1e306..ae58cbb 100644
      }
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index c215b19..eb1b243 100644
+index 896f870..d3376b3 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -359,6 +359,18 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -352,6 +352,18 @@ ghid_set_layer (const char *name, int group, int empty)
    /* Flush out any existing geoemtry to be rendered */
    hidgl_flush_triangles (&buffer);
  
