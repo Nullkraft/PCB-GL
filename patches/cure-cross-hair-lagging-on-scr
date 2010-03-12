@@ -1,7 +1,7 @@
-Bottom: 156e05cb7bac84df2bafe15d0114da75626dbbb2
-Top:    33857161da804e499f2a4dee35fa2d81a389d374
+Bottom: 38f13c3d33df10578eaf86ec16c8f95615daf7fa
+Top:    38f13c3d33df10578eaf86ec16c8f95615daf7fa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-02 18:43:09 +0000
+Date:   2010-03-12 01:26:00 +0000
 
 Cure crosshair lagging on screen
 
@@ -10,53 +10,4 @@ FIXME: SHOULD NOT RE-WRITE THE GTK HID
 
 ---
 
-diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 53d184d..2b0ed81 100644
---- a/src/hid/gtk/gui-output-events.c
-+++ b/src/hid/gtk/gui-output-events.c
-@@ -1016,6 +1016,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
-   gdouble dx, dy;
-   static gint x_prev = -1, y_prev = -1;
-   gboolean moved;
-+#if 0
-   GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
-   GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
- 
-@@ -1024,11 +1025,15 @@ ghid_port_window_motion_cb (GtkWidget * widget,
-     printf ("GL THingy returned\n");
-     return FALSE;
-   }
-+#endif
- 
-   if (out->panning)
-     {
-+/* Not sure this really matters, since we're using invalidate to get a redraw */
-+#if 1
-       if (gtk_events_pending ())
- 	return FALSE;
-+#endif
-       dx = gport->zoom * (x_prev - ev->x);
-       dy = gport->zoom * (y_prev - ev->y);
-       if (x_prev > 0)
-@@ -1042,10 +1047,11 @@ ghid_port_window_motion_cb (GtkWidget * widget,
- 
-   queue_tooltip_update (out);
- 
--  ghid_show_crosshair (TRUE);
--  if (moved && have_crosshair_attachments ())
-+//  ghid_show_crosshair (TRUE);
-+  if (moved) // && have_crosshair_attachments ())
-     ghid_draw_area_update (gport, NULL);
- 
-+#if 0
-   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
-     gdk_gl_drawable_swap_buffers (pGlDrawable);
-   else
-@@ -1053,6 +1059,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
- 
-   /* end drawing to current GL-context */
-   gdk_gl_drawable_gl_end (pGlDrawable);
-+#endif
-+
-   return FALSE;
- }
+
