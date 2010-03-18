@@ -1,0 +1,47 @@
+Bottom: d9e60558990aed8cbd4393af97db125db827728a
+Top:    5780f384b7e01416aaf035547b7d06c43f86ae20
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-03-18 20:53:34 +0000
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 0d7098d..37055e1 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -952,7 +952,6 @@ DrawLayerGroup (int group, const BoxType * screen)
+  *         \       /
+  *          2 --- 1
+   */
+-static void
+ /* static */ void
+ DrawSpecialPolygon (hidGC DrawGC,
+ 		    LocationType X, LocationType Y, int Thickness,
+diff --git a/src/draw.h b/src/draw.h
+index 94ea83d..e87f88c 100644
+--- a/src/draw.h
++++ b/src/draw.h
+@@ -83,7 +83,7 @@ void DrawEMark (ElementTypePtr, LocationType, LocationType, Boolean);
+ void DrawHole (PinTypePtr);
+ void DrawRats (BoxType *);
+ void DrawSilk (int, int, const BoxType *);
+-void DrawSpecialPolygon (HID * hid, hidGC DrawGC, LocationType X, LocationType Y, int Thickness, int thin_draw);
++void DrawSpecialPolygon (hidGC DrawGC, LocationType X, LocationType Y, int Thickness, int thin_draw);
+ 
+ /* TEMPORARY */
+ 
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index ac621df..6648f2d 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -1261,7 +1261,7 @@ ClearOnlyPinSolid (PinTypePtr Pin, Boolean mask)
+     }
+   else if (TEST_FLAG (OCTAGONFLAG, Pin))
+     {
+-      DrawSpecialPolygon (gui, Output.pmGC, Pin->X, Pin->Y, half * 2, False);
++      DrawSpecialPolygon (Output.pmGC, Pin->X, Pin->Y, half * 2, False);
+     }
+   else
+     {
