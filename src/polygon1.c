@@ -144,20 +144,26 @@ pline_dump (VNODE * v)
 	       n->point[0], n->point[1], theState (v));
     }
   while ((v = v->next) != s);
-  fprintf (stderr, "NEXT PLINE\n");
 }
 
-static void
+/*static */void
 poly_dump (POLYAREA * p)
 {
   POLYAREA *f = p;
+  PLINE *pl;
 
   do
     {
-      pline_dump (&p->contours->head);
+      pl = p->contours;
+      do
+        {
+          pline_dump (&pl->head);
+          fprintf (stderr, "NEXT PLINE\n");
+        }
+      while ((pl = pl->next) != NULL);
+      fprintf (stderr, "NEXT_POLY\n");
     }
   while ((p = p->f) != f);
-  fprintf (stderr, "NEXT_POLY\n");
 }
 #endif
 
@@ -2960,10 +2966,25 @@ poly_M_CheckInside (POLYAREA * p, Vector v0)
 int
 poly_ContourInContour (PLINE * poly, PLINE * inner)
 {
+  VNODE *pt;
   assert (poly != NULL);
   assert (inner != NULL);
-  if (cntrbox_inside (inner, poly))
+  if (cntrbox_inside (inner, poly)) {
+#if 1
+    pt = &inner->head;
+    /* HACK: Check all points on the contour being tested, because we don't
+     *       want to falsely return that two contours are inside each other
+     *       if they just touch at a few points.
+     */
+    do {
+      if (!poly_InsideContour (poly, pt->point))
+        return 0;
+    } while ((pt = pt->next) != &inner->head);
+    return 1;
+#else
     return poly_InsideContour (poly, inner->head.point);
+#endif
+  }
   return 0;
 }
 
