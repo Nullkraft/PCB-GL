@@ -159,7 +159,7 @@ poly_dump (POLYAREA * p)
           fprintf (stderr, "NEXT PLINE\n");
         }
       while ((pl = pl->next) != NULL);
-      fprintf (stderr, "NEXT_POLY\n");
+      fprintf (stderr, "NEXT POLY\n");
     }
   while ((p = p->f) != f);
 }
