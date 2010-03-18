@@ -146,7 +146,7 @@ pline_dump (VNODE * v)
   while ((v = v->next) != s);
 }
 
-/*static */void
+static void
 poly_dump (POLYAREA * p)
 {
   POLYAREA *f = p;
