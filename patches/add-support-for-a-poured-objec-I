@@ -1,7 +1,7 @@
-Bottom: f03407c37ad1a6d72a139952c368c4c1914b2c0a
-Top:    06f8a95332b1ade1287a93a501f50ed270841bbd
+Bottom: 38c301d79b6ff71ee4aa4e31c2d5644740d8d491
+Top:    dbf1475e1fadaf6b7976d1eec591ed4065338eee
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-18 20:47:00 +0000
+Date:   2010-03-18 20:55:45 +0000
 
 Add support for a "poured" object.
 
@@ -1894,7 +1894,7 @@ index cea493a..d75cfbe 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index 0d7098d..a80595d 100644
+index 37055e1..dfe0d46 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -100,6 +100,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
@@ -1983,7 +1983,7 @@ index 0d7098d..a80595d 100644
  	      info.arg = False;
  
  	      /* HACK: Subcomposite polygons separately from other layer primitives */
-@@ -1658,6 +1682,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
+@@ -1657,6 +1681,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2032,7 +2032,7 @@ index 0d7098d..a80595d 100644
   * lowlevel routine to element arcs
   */
  static void
-@@ -1976,6 +2042,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+@@ -1975,6 +2041,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
    DrawPolygonLowLevel (Polygon);
  }
  
@@ -2070,7 +2070,7 @@ index 0d7098d..a80595d 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -2280,6 +2377,18 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2279,6 +2376,18 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2089,7 +2089,7 @@ index 0d7098d..a80595d 100644
   * erases an element
   */
  void
-@@ -2360,6 +2469,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -2359,6 +2468,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2099,7 +2099,7 @@ index 0d7098d..a80595d 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -2407,6 +2519,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
+@@ -2406,6 +2518,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2, 0);
        break;
@@ -2111,7 +2111,7 @@ index 0d7098d..a80595d 100644
        if (PCB->ElementOn &&
  	  (FRONT ((ElementTypePtr) ptr2) || PCB->InvisibleObjectsOn))
 diff --git a/src/draw.h b/src/draw.h
-index 94ea83d..6c5d7e2 100644
+index e87f88c..05c3856 100644
 --- a/src/draw.h
 +++ b/src/draw.h
 @@ -50,6 +50,7 @@ void DrawArc (LayerTypePtr, ArcTypePtr, int);
@@ -2697,7 +2697,7 @@ index e8ad916..e1b6290 100644
        break;
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 9264468..575fe67 100644
+index 4922cb4..0663b5d 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -460,7 +460,7 @@ have_crosshair_attachments (void)
@@ -4907,7 +4907,7 @@ index ccf3164..15223c0 100644
  void RestoreToPolygon(DataType *, int, void *, void *);
  void ClearFromPolygon(DataType *, int, void *, void *);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 42fe4be..aaf423d 100644
+index c624d8b..f74febf 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -935,6 +935,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
@@ -4975,7 +4975,7 @@ index 42fe4be..aaf423d 100644
  
        if (M_POLYAREA_label (a, b, TRUE))
  	return TRUE;
-@@ -3062,15 +3102,19 @@ inside_sector (VNODE * pn, Vector p2)
+@@ -3061,15 +3101,19 @@ inside_sector (VNODE * pn, Vector p2)
  BOOLp
  poly_ChkContour (PLINE * a)
  {
@@ -4997,7 +4997,7 @@ index 42fe4be..aaf423d 100644
        do
  	{
  	  if (!node_neighbours (a1, a2) &&
-@@ -3080,9 +3124,11 @@ poly_ChkContour (PLINE * a)
+@@ -3079,9 +3123,11 @@ poly_ChkContour (PLINE * a)
  	      if (icnt > 1)
  		return TRUE;
  
@@ -5011,7 +5011,7 @@ index 42fe4be..aaf423d 100644
  		hit1 = a1->next;
  	      else
  		return TRUE;
-@@ -3104,7 +3150,7 @@ poly_ChkContour (PLINE * a)
+@@ -3103,7 +3149,7 @@ poly_ChkContour (PLINE * a)
  #endif
  	    }
  	}
