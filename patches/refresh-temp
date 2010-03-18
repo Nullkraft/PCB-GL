@@ -1,0 +1,21 @@
+Bottom: b3cc86db60f77cc9ad41b27aa77f4c90fced67eb
+Top:    e0be63f49681ed2522ebb5a955f6c72e2ef3998c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-03-18 20:35:59 +0000
+
+Refresh of fix-poly_contourincontour-test
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 0f7bf98..10b3599 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2972,7 +2972,6 @@ poly_ContourInContour (PLINE * poly, PLINE * inner)
+   if (cntrbox_inside (inner, poly))
+ #if 1
+     { /* FIXME: This is SLOW!!
+-       *
+        * Check all points on the contour being tested, because we don't
+        * want to falsely return that two contours are inside each other
+        * if they just touch at a few points.
