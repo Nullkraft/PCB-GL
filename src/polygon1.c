@@ -2970,7 +2970,6 @@ poly_ContourInContour (PLINE * poly, PLINE * inner)
   assert (poly != NULL);
   assert (inner != NULL);
   if (cntrbox_inside (inner, poly))
-#if 1
     { /* FIXME: This is SLOW!!
        * Check all points on the contour being tested, because we don't
        * want to falsely return that two contours are inside each other
@@ -2984,9 +2983,6 @@ poly_ContourInContour (PLINE * poly, PLINE * inner)
         } while ((pt = pt->next) != &inner->head);
       return 1;
     }
-#else
-    return poly_InsideContour (poly, inner->head.point);
-#endif
   }
   return 0;
 }
