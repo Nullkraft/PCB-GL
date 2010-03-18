@@ -2983,7 +2983,6 @@ poly_ContourInContour (PLINE * poly, PLINE * inner)
         } while ((pt = pt->next) != &inner->head);
       return 1;
     }
-  }
   return 0;
 }
 
