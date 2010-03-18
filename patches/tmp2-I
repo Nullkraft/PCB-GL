@@ -1,7 +1,7 @@
-Bottom: b50cfbc8a7bff6fbfc49a6174e26f099ab2df7ba
-Top:    8f507ba195e82185f763b0d481ec3cd47c1e8fe1
+Bottom: 4456e6c8a60c939f0edaa13ba5d1e0dd8271c328
+Top:    8654e29f1978995d9b9266602c5e7db9ef2a989e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-12 01:30:56 +0000
+Date:   2010-03-18 20:44:09 +0000
 
 TMP2
 
@@ -570,7 +570,7 @@ index 303dab1..23d653f 100644
  /*
   * 128-bit datatypes.  Again, provide two implementations in
 diff --git a/src/main.c b/src/main.c
-index 9f91b37..a47ef83 100644
+index 3b5b2d8..a626e4c 100644
 --- a/src/main.c
 +++ b/src/main.c
 @@ -53,6 +53,7 @@
@@ -581,7 +581,7 @@ index 9f91b37..a47ef83 100644
  #include "sweep.h"
  
  /* This next one is so we can print the help messages. */
-@@ -1062,7 +1063,7 @@ main (int argc, char *argv[])
+@@ -1057,7 +1058,7 @@ main (int argc, char *argv[])
    // bos_test_intersections ();
    my_cairo_test ();
  
@@ -591,7 +591,7 @@ index 9f91b37..a47ef83 100644
  #if HAVE_DBUS
    pcb_dbus_finish();
 diff --git a/src/polygon1.c b/src/polygon1.c
-index a369b2d..2d16a36 100644
+index 42fe4be..4b032cc 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -51,6 +51,7 @@
@@ -602,7 +602,7 @@ index a369b2d..2d16a36 100644
  
  #define ROUND(a) (long)((a) > 0 ? ((a) + 0.5) : ((a) - 0.5))
  
-@@ -946,8 +947,16 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+@@ -952,8 +953,16 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  	      a->contours->xmin <= b->contours->xmax &&
  	      a->contours->ymin <= b->contours->ymax)
  	    {

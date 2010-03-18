@@ -1,7 +1,7 @@
-Bottom: a3814b850345e53f45493c6e4fe19e2b4bebeebf
-Top:    78295bd33813c09c02bc7080de82600f596f0563
+Bottom: 778fe3fcfc1af57d30b7143ee6d8e369f021c00f
+Top:    c1d62ef39d7e9b05cc53969ed3f42db9bb87a8ad
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-12 01:30:57 +0000
+Date:   2010-03-18 20:44:11 +0000
 
 Work in progress
 
@@ -175,10 +175,10 @@ index b7156b9..56d22c1 100644
 +    return num_new_nodes;
  }
 diff --git a/src/polygon1.c b/src/polygon1.c
-index e2c59a3..ebdef60 100644
+index 9e3b6f3..0282807 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -943,7 +943,20 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+@@ -949,7 +949,20 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
    if (a == NULL || b == NULL)
      error (err_bad_parm);
    if (add)
