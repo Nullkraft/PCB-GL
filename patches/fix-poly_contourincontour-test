@@ -1,0 +1,60 @@
+Bottom: e67eb4a93b7515014402ae0647d0a76dece141c3
+Top:    a449b3b87fb68ad39c9a3a05bbd649c13b98eff1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-03-18 20:43:19 +0000
+
+Fix poly_ContourInContour() test not to return TRUE for touching contours
+
+This test could previously return true for touching contours, such as:
+ __________....
+|_________ |  :
+:........ ||  :
+::  /\  : ||  :   Note that the bounding box of A is inside that of B,
+:: /  \ :/  \ :   such that initial bounding box checks won't reject the
+::/ A  \/  B \:   possibility of A being inside B.
+::\    /\    /:
+:: \  / :\  / :
+::..\/..:.\/..:
+
+When testing for insideness, the first point on A's contour is picked.
+In this case, unfortunately being the touching X point between the two
+contours. This point (correctly) returns as being inside B - and the
+false presumption is that the whole A contour is inside B.
+
+This commit introduces an unfortunately slow, but more robust test,
+where we check each note in A for whether it is inside B. We return
+as soon as we find an A node outside B, however this means the test
+is VERY much slower for the case where A _is_ inside B.
+
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index d9f6ce4..c3bc1c9 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2257,10 +2257,24 @@ poly_M_CheckInside (POLYAREA * p, Vector v0)
+ int
+ poly_ContourInContour (PLINE * poly, PLINE * inner)
+ {
++  VNODE *pt;
+   assert (poly != NULL);
+   assert (inner != NULL);
+   if (cntrbox_inside (inner, poly))
+-    return poly_InsideContour (poly, inner->head.point);
++    { /* FIXME: This is SLOW!!
++       * Check all points on the contour being tested, because we don't
++       * want to falsely return that two contours are inside each other
++       * if they just touch at a few points.
++       */
++      pt = &inner->head;
++      do
++        {
++          if (!poly_InsideContour (poly, pt->point))
++            return 0;
++        } while ((pt = pt->next) != &inner->head);
++      return 1;
++    }
++  }
+   return 0;
+ }
