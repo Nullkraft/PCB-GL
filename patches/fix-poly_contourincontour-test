@@ -1,5 +1,5 @@
 Bottom: 5d75ca02f120fa4a21fe9e2a3ba880d1546ce025
-Top:    e0be63f49681ed2522ebb5a955f6c72e2ef3998c
+Top:    d283e3ee1bb9101a2cdd074a4db4c02efb852cc2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-03-18 20:33:49 +0000
 
@@ -30,10 +30,10 @@ is VERY much slower for the case where A _is_ inside B.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 226b8ca..10b3599 100644
+index 226b8ca..1866a4f 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2966,10 +2966,28 @@ poly_M_CheckInside (POLYAREA * p, Vector v0)
+@@ -2966,10 +2966,24 @@ poly_M_CheckInside (POLYAREA * p, Vector v0)
  int
  poly_ContourInContour (PLINE * poly, PLINE * inner)
  {
@@ -41,7 +41,7 @@ index 226b8ca..10b3599 100644
    assert (poly != NULL);
    assert (inner != NULL);
    if (cntrbox_inside (inner, poly))
-+#if 1
+-    return poly_InsideContour (poly, inner->head.point);
 +    { /* FIXME: This is SLOW!!
 +       * Check all points on the contour being tested, because we don't
 +       * want to falsely return that two contours are inside each other
@@ -55,9 +55,6 @@ index 226b8ca..10b3599 100644
 +        } while ((pt = pt->next) != &inner->head);
 +      return 1;
 +    }
-+#else
-     return poly_InsideContour (poly, inner->head.point);
-+#endif
 +  }
    return 0;
  }
