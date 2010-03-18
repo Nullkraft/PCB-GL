@@ -1,0 +1,22 @@
+Bottom: 5d75ca02f120fa4a21fe9e2a3ba880d1546ce025
+Top:    1ecb7a9b028b874199c0cce3a6549aa30ba44660
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-03-18 20:37:30 +0000
+
+Refresh of improve-dump_poly-output
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 226b8ca..7032370 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -146,7 +146,7 @@ pline_dump (VNODE * v)
+   while ((v = v->next) != s);
+ }
+ 
+-/*static */void
++static void
+ poly_dump (POLYAREA * p)
+ {
+   POLYAREA *f = p;
