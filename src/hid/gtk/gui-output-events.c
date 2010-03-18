@@ -1261,7 +1261,7 @@ ClearOnlyPinSolid (PinTypePtr Pin, Boolean mask)
     }
   else if (TEST_FLAG (OCTAGONFLAG, Pin))
     {
-      DrawSpecialPolygon (gui, Output.pmGC, Pin->X, Pin->Y, half * 2, False);
+      DrawSpecialPolygon (Output.pmGC, Pin->X, Pin->Y, half * 2, False);
     }
   else
     {

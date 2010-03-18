@@ -952,7 +952,6 @@ DrawLayerGroup (int group, const BoxType * screen)
  *         \       /
  *          2 --- 1
   */
-static void
 /* static */ void
 DrawSpecialPolygon (hidGC DrawGC,
 		    LocationType X, LocationType Y, int Thickness,
