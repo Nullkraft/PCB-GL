@@ -1,7 +1,7 @@
-Bottom: ed2368666ae601f65de44d55712d7b329fbf24e5
-Top:    c97c0d48055df6a920a3005ad79288e7ba41ecb0
+Bottom: 9f9b2644683901da04f4cceaa9344125ca5ffffb
+Top:    d51a0f308a6d7a4adc6e58b849359137e6b32d76
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-02 18:43:10 +0000
+Date:   2010-03-18 20:44:20 +0000
 
 Work in progress on subcompositing / stencil buffers
 
@@ -14,7 +14,7 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 9571b29..5188960 100644
+index d06813d..3eeee3b 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -420,6 +420,7 @@ DrawEverything (BoxTypePtr drawn_area)
@@ -121,10 +121,10 @@ index 9571b29..5188960 100644
  
  	  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
 diff --git a/src/hid.h b/src/hid.h
-index 7409bbf..5b8e614 100644
+index 7b30022..5bb2be5 100644
 --- a/src/hid.h
 +++ b/src/hid.h
-@@ -215,6 +215,7 @@ extern "C"
+@@ -199,6 +199,7 @@ extern "C"
  #define SL_FAB		0x0070
  #define SL_ASSY		0x0080
  #define SL_RATS		0x0090
