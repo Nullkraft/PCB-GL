@@ -1,0 +1,32 @@
+Bottom: 5d75ca02f120fa4a21fe9e2a3ba880d1546ce025
+Top:    5d75ca02f120fa4a21fe9e2a3ba880d1546ce025
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-03-18 20:33:49 +0000
+
+Fix poly_ContourInContour() test not to return TRUE for touching contours
+
+This test could previously return true for touching contours, such as:
+ __________....
+|_________ |  :
+:........ ||  :
+::  /\  : ||  :   Note that the bounding box of A is inside that of B,
+:: /  \ :/  \ :   such that initial bounding box checks won't reject the
+::/ A  \/  B \:   possibility of A being inside B.
+::\    /\    /:
+:: \  / :\  / :
+::..\/..:.\/..:
+
+When testing for insideness, the first point on A's contour is picked.
+In this case, unfortunately being the touching X point between the two
+contours. This point (correctly) returns as being inside B - and the
+false presumption is that the whole A contour is inside B.
+
+This commit introduces an unfortunately slow, but more robust test,
+where we check each note in A for whether it is inside B. We return
+as soon as we find an A node outside B, however this means the test
+is VERY much slower for the case where A _is_ inside B.
+
+
+---
+
+
