@@ -1,7 +1,7 @@
-Bottom: 8816902741c6f2f1f3a75620da9a5527504c8abe
+Bottom: d43729a56e0a2611264a638a4ee450a33691aa00
 Top:    9c4659a19939c5839e0b1a39badde2b8d8b3ce00
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-18 20:44:24 +0000
+Date:   2010-03-18 20:55:27 +0000
 
 Fix grid extents in 3D view
 
@@ -63,14 +63,3 @@ index 48b3593..e497528 100644
  void ghid_draw_bg_image (void);
  void ghid_use_mask (int use_it);
  void ghid_set_color (hidGC gc, const char *name);
-diff --git a/src/polygon1.c b/src/polygon1.c
-index 42fe4be..c624d8b 100644
---- a/src/polygon1.c
-+++ b/src/polygon1.c
-@@ -2983,7 +2983,6 @@ poly_ContourInContour (PLINE * poly, PLINE * inner)
-         } while ((pt = pt->next) != &inner->head);
-       return 1;
-     }
--  }
-   return 0;
- }
