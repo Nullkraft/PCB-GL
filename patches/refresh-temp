@@ -1,0 +1,54 @@
+Bottom: 81fd77c2dbde70c4b2d73d1b7102dd45f04d16b4
+Top:    2ad1d9664749b98849248bab343abda797b40c55
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-03-19 00:09:12 +0000
+
+Refresh of try-bert-s-dxf-hid
+
+---
+
+diff --git a/configure.ac b/configure.ac
+index d9620df..9949619 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -447,7 +447,7 @@ esac
+ 
+ AC_MSG_CHECKING([for which exporters to use])
+ AC_ARG_WITH([exporters],
+-[  --with-exporters=       Enable export devices: bom gerber gcode nelma png ps [[default=bom gerber gcode nelma png ps]]],
++[  --with-exporters=       Enable export devices: bom dxf gerber gcode nelma png ps [[default=bom dxf gerber gcode nelma png ps]]],
+ [],[with_exporters=$hid_exporters])
+ AC_MSG_RESULT([$with_exporters])
+ for e in `echo $with_exporters | sed 's/,/ /g'`; do
+diff --git a/src/Makefile.am b/src/Makefile.am
+index b709c27..c415f77 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -13,7 +13,7 @@ noinst_LIBRARIES = @HIDLIBS@
+ EXTRA_LIBRARIES = \
+ 	libgtk.a liblesstif.a libbatch.a \
+ 	liblpr.a libgerber.a libbom.a libpng.a libps.a libnelma.a libgts.a \
+-	libgcode.a
++	libgcode.a libdxf.a
+ 
+ pcblib_DATA=	\
+ 	default_font \
+@@ -230,6 +230,7 @@ EXTRA_DIST= \
+ 	default_font \
+ 	$(srcdir)/hid/batch/hid.conf \
+ 	$(srcdir)/hid/bom/hid.conf \
++	$(srcdir)/hid/dxf/hid.conf \
+ 	$(srcdir)/hid/gcode/hid.conf \
+ 	$(srcdir)/hid/gerber/hid.conf \
+ 	$(srcdir)/hid/gtk/gui-icons-misc.data \
+@@ -464,6 +465,10 @@ hid/png/png_lists.h : ${LIBPNG_SRCS} Makefile
+ 	(for f in ${LIBPNG_SRCS} ; do cat $(srcdir)/$$f ; done) | grep "^REGISTER" > $@.tmp
+ 	mv $@.tmp $@
+ 
++libdxf_a_SOURCES = \
++	hid/hidint.h \
++	hid/dxf/dxf.c
++
+ libgcode_a_CPPFLAGS = -I./hid/gcode
+ LIBGCODE_SRCS = \
+ 	dolists.h \
