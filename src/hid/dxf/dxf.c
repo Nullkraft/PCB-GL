@@ -290,7 +290,7 @@ RCSID ("$Id$");
 /*!
  * \brief Debugging on/off switch.
  */
-#define DEBUG 1
+//#define DEBUG 1
 
 /*!
  * \brief Error handling of not yet implemented functions.
