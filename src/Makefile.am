@@ -13,7 +13,7 @@ noinst_LIBRARIES = @HIDLIBS@
 EXTRA_LIBRARIES = \
 	libgtk.a liblesstif.a libbatch.a \
 	liblpr.a libgerber.a libbom.a libpng.a libps.a libnelma.a libgts.a \
-	libgcode.a
+	libgcode.a libdxf.a
 
 pcblib_DATA=	\
 	default_font \
@@ -230,6 +230,7 @@ EXTRA_DIST= \
 	default_font \
 	$(srcdir)/hid/batch/hid.conf \
 	$(srcdir)/hid/bom/hid.conf \
+	$(srcdir)/hid/dxf/hid.conf \
 	$(srcdir)/hid/gcode/hid.conf \
 	$(srcdir)/hid/gerber/hid.conf \
 	$(srcdir)/hid/gtk/gui-icons-misc.data \
@@ -463,6 +464,10 @@ hid/png/png_lists.h : ${LIBPNG_SRCS} Makefile
 	true > $@
 	(for f in ${LIBPNG_SRCS} ; do cat $(srcdir)/$$f ; done) | grep "^REGISTER" > $@.tmp
 	mv $@.tmp $@
+
+libdxf_a_SOURCES = \
+	hid/hidint.h \
+	hid/dxf/dxf.c
 
 libgcode_a_CPPFLAGS = -I./hid/gcode
 LIBGCODE_SRCS = \
