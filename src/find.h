@@ -65,6 +65,7 @@ void FreeLayoutLookupMemory (void);
 void RatFindHook (int, void *, void *, void *, Boolean, Boolean);
 void SaveFindFlag (int);
 void RestoreFindFlag (void);
+int IsPolygonAnIsland (LayerTypePtr, PolygonTypePtr);
 int DRCAll (void);
 Boolean lineClear (LineTypePtr, Cardinal);
 Boolean IsLineInPolygon (LineTypePtr, PolygonTypePtr);
