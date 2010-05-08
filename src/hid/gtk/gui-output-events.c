@@ -1968,17 +1968,23 @@ describe_location (LocationType X, LocationType Y)
   void *ptr1, *ptr2, *ptr3;
   int type;
   int Range = 0;
-  char *elename;
+  char *elename = "";
   char *pinname;
   char *netname = NULL;
   char *description;
 
   /* check if there are any pins or pads at that position */
 
-  type = SearchObjectByLocation (LOOKUP_FIRST,
+  type = SearchObjectByLocation (PIN_TYPE | PAD_TYPE,
                                  &ptr1, &ptr2, &ptr3, X, Y, Range);
   if (type == NO_TYPE)
-    type = SearchObjectByLocation (LOOKUP_MORE,
+    type = SearchObjectByLocation (VIA_TYPE | LINE_TYPE | ARC_TYPE,
+                                   &ptr1, &ptr2, &ptr3, X, Y, Range);
+  if (type == NO_TYPE)
+    type = SearchObjectByLocation (RATLINE_TYPE,
+                                   &ptr1, &ptr2, &ptr3, X, Y, Range);
+  if (type == NO_TYPE)
+    type = SearchObjectByLocation (POLYGON_TYPE,
                                    &ptr1, &ptr2, &ptr3, X, Y, Range);
 
   if (type == NO_TYPE)
@@ -1989,7 +1995,9 @@ describe_location (LocationType X, LocationType Y)
       GetLayerNumber (PCB->Data, (LayerTypePtr) ptr1) >= max_layer)
     return NULL;
 
-  elename = UNKNOWN (NAMEONPCB_NAME ((ElementTypePtr) ptr1));
+  if (type == PIN_TYPE || type == PAD_TYPE)
+    elename = UNKNOWN (NAMEONPCB_NAME ((ElementTypePtr) ptr1));
+
   pinname = ConnectionName (type, ptr1, ptr2);
 
   if (pinname == NULL)
