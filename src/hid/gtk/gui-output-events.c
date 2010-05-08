@@ -1989,7 +1989,7 @@ describe_location (LocationType X, LocationType Y)
       GetLayerNumber (PCB->Data, (LayerTypePtr) ptr1) >= max_layer)
     return NULL;
 
-  elename = UNKNOWN (NAMEONPCB_NAME ((ElementTypePtr) ptr1));
+  elename = "DUMMY"; // UNKNOWN (NAMEONPCB_NAME ((ElementTypePtr) ptr1));
   pinname = ConnectionName (type, ptr1, ptr2);
 
   if (pinname == NULL)
