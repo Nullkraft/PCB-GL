@@ -747,7 +747,13 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   return FALSE;
 }
 
+#if GTK_CHECK_VERSION(2,12,0)
+# define ENABLE_TOOLTIPS 1
+#else
+# define ENABLE_TOOLTIPS 0
+#endif
 
+#if ENABLE_TOOLTIPS
 static char *
 describe_location (LocationType X, LocationType Y)
 {
@@ -861,6 +867,7 @@ queue_tooltip_update (GHidPort *out)
                      (GSourceFunc) check_object_tooltips,
                      out);
 }
+#endif
 
 gint
 ghid_port_window_motion_cb (GtkWidget * widget,
@@ -885,7 +892,9 @@ ghid_port_window_motion_cb (GtkWidget * widget,
   x_prev = y_prev = -1;
   moved = ghid_note_event_location (ev);
 
+#if ENABLE_TOOLTIPS
   queue_tooltip_update (out);
+#endif
 
   ghid_show_crosshair (TRUE);
   if (moved && have_crosshair_attachments ())
