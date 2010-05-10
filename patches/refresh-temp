@@ -1,0 +1,45 @@
+Bottom: c4feb15fa47ed5cf04fc7d745b645177c03e14f1
+Top:    deda240b1926010c0befe6c3ecf50d10fffb4fdc
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-05-10 17:40:03 +0100
+
+Refresh of hid-gtk-add-tool-tip-to-identi
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 463c417..3912aa3 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -747,7 +747,13 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+   return FALSE;
+ }
+ 
++#if GTK_CHECK_VERSION(2,12,0)
++# define ENABLE_TOOLTIPS 1
++#else
++# define ENABLE_TOOLTIPS 0
++#endif
+ 
++#if ENABLE_TOOLTIPS
+ static char *
+ describe_location (LocationType X, LocationType Y)
+ {
+@@ -861,6 +867,7 @@ queue_tooltip_update (GHidPort *out)
+                      (GSourceFunc) check_object_tooltips,
+                      out);
+ }
++#endif
+ 
+ gint
+ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -885,7 +892,9 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+   x_prev = y_prev = -1;
+   moved = ghid_note_event_location (ev);
+ 
++#if ENABLE_TOOLTIPS
+   queue_tooltip_update (out);
++#endif
+ 
+   ghid_show_crosshair (TRUE);
+   if (moved && have_crosshair_attachments ())
