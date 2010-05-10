@@ -25,14 +25,23 @@
  *  RCS: $Id$
  */
 
-#ifndef __REPORT_INCLUDED__
-#define __REPORT_INCLUDED__
+/* prototypes for pour editing routines
+ */
+
+#ifndef	__POUR_INCLUDED__
+#define	__POUR_INCLUDED__
 
 #include "global.h"
 
-#define REPORT_TYPES \
-	(VIA_TYPE | LINE_TYPE | TEXT_TYPE | POUR_TYPE | ELEMENT_TYPE | \
-	 RATLINE_TYPE | PIN_TYPE | PAD_TYPE | ELEMENTNAME_TYPE | ARC_TYPE \
-	 | POURPOINT_TYPE | LINEPOINT_TYPE)
+Cardinal GetLowestDistancePourPoint (PourTypePtr,
+					LocationType, LocationType);
+Boolean RemoveExcessPourPoints (LayerTypePtr, PourTypePtr);
+void GoToPreviousPourPoint (void);
+void ClosePour (void);
+void CopyAttachedPourToLayer (void);
 
-#endif
+int InitPourClip(DataType *d, LayerType *l, PourType *p);
+void RestoreToPours(DataType *, int, void *, void *);
+void ClearFromPours(DataType *, int, void *, void *);
+
+#endif /* __POUR_INCLUDED__ */
