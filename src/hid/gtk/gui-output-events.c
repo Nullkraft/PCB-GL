@@ -1353,8 +1353,8 @@ DrawLayerGroup (int group, const BoxType * screen)
   int n_entries = PCB->LayerGroups.Number[group];
   Cardinal *layers = PCB->LayerGroups.Entries[group];
   int first_run = 1;
-  int component = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
-  int solder    = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
+  int component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+  int solder_group    = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
 
   if (!gui->set_layer (0, group, 0)) {
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
@@ -1416,12 +1416,12 @@ DrawLayerGroup (int group, const BoxType * screen)
       if (!global_view_2d && rv) {
         if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
         if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
-        if ((layernum == component && !SWAP_IDENT) ||
-            (layernum == solder    &&  SWAP_IDENT))
+        if ((group == component_group && !SWAP_IDENT) ||
+            (group == solder_group    &&  SWAP_IDENT))
           if (PCB->PinOn)
             r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, Layer);
-        if ((layernum == solder    && !SWAP_IDENT) ||
-            (layernum == component &&  SWAP_IDENT))
+        if ((group == solder_group    && !SWAP_IDENT) ||
+            (group == component_group &&  SWAP_IDENT))
           if (PCB->PinOn)
             r_search (PCB->Data->pad_tree, screen, NULL, backPad_callback, Layer);
       }
@@ -1507,6 +1507,10 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   struct cyl_info cyl_info;
   int reverse_layers;
   int save_show_solder;
+  int solder_group;
+  int component_group;
+  int min_phys_group;
+  int max_phys_group;
 
   extern char *current_color;
   extern Boolean Gathering;
@@ -1530,36 +1534,71 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   if (!global_view_2d && save_show_solder)
     reverse_layers = !reverse_layers;
 
+  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
+  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
+
+  solder_group = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
+  component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+
+  min_phys_group = MIN (solder_group, component_group);
+  max_phys_group = MAX (solder_group, component_group);
+
   memset (do_group, 0, sizeof (do_group));
   for (ngroups = 0, i = 0; i < max_layer; i++) {
-    LayerType *l;
     int group;
     int orderi;
 
     orderi = reverse_layers ? max_layer - i - 1 : i;
 
     // Draw in numerical order when in 3D view
-    l = global_view_2d ? LAYER_ON_STACK (i) : LAYER_PTR (orderi);
-    group = GetLayerGroupNumberByNumber (global_view_2d ? LayerStack[i] : orderi);
+    group = global_view_2d ? GetLayerGroupNumberByNumber (LayerStack[i]) : orderi;
 
-    if (/*l->On && */!do_group[group]) {
+    if (!do_group[group]) {
       do_group[group] = 1;
       drawn_groups[ngroups++] = group;
     }
   }
+
 
   /*
    * first draw all 'invisible' stuff
    */
   if (!TEST_FLAG (CHECKPLANESFLAG, PCB) &&
       gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
-    if (global_view_2d)
-      r_search (PCB->Data->pad_tree, drawn_area, NULL, backPad_callback, NULL);
     if (PCB->ElementOn) {
-      r_search (PCB->Data->element_tree, drawn_area, NULL, backE_callback, NULL);
       r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, backN_callback, NULL);
       DrawLayer (&(PCB->Data->BACKSILKLAYER), drawn_area);
     }
+#if 1
+    if (!global_view_2d) {
+      /* Draw the solder mask if turned on */
+      if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0)) {
+        int save_swap = SWAP_IDENT;
+        gui->set_layer (NULL, SL (FINISHED, 0), 0);
+        gui->set_layer ("componentmask", SL (MASK, TOP), 0);
+        //^__ HACK, THE GUI DOESNT WANT US TO DRAW THIS!
+        SWAP_IDENT = 0;
+        DrawMask (drawn_area);
+        SWAP_IDENT = save_swap;
+        gui->set_layer (NULL, SL (FINISHED, 0), 0);
+      }
+      if (gui->set_layer ("componentmask", SL (MASK, TOP), 0)) {
+        int save_swap = SWAP_IDENT;
+        gui->set_layer (NULL, SL (FINISHED, 0), 0);
+        gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0);
+        //^__ HACK, THE GUI DOESNT WANT US TO DRAW THIS!
+        SWAP_IDENT = 1;
+        DrawMask (drawn_area);
+        SWAP_IDENT = save_swap;
+        gui->set_layer (NULL, SL (FINISHED, 0), 0);
+      }
+      gui->set_layer ("invisible", SL (INVISIBLE, 0), 0);
+    }
+#endif
+    if (global_view_2d)
+      r_search (PCB->Data->pad_tree, drawn_area, NULL, backPad_callback, NULL);
+    if (PCB->ElementOn)
+      r_search (PCB->Data->element_tree, drawn_area, NULL, backE_callback, NULL);
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
   }
 
@@ -1568,7 +1607,11 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     DrawLayerGroup (drawn_groups [i], drawn_area);
 
 #if 1
-    if (!global_view_2d && i > 0) {
+    if (!global_view_2d && i > 0 &&
+        drawn_groups[i] >= min_phys_group &&
+        drawn_groups[i] <= max_phys_group &&
+        drawn_groups[i - 1] >= min_phys_group &&
+        drawn_groups[i - 1] <= max_phys_group) {
       cyl_info.from_layer = drawn_groups[i];
       cyl_info.to_layer = drawn_groups[i - 1];
       cyl_info.scale = gport->zoom;
