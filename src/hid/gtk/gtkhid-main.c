@@ -420,7 +420,272 @@ ghid_set_layer (const char *name, int group, int empty)
     return PCB->Data->Layer[idx].On;
   }
 
+<<<<<<< current
   if (idx < 0)
+=======
+  if (idx < 0) {
+    switch (SL_TYPE (idx)) {
+      case SL_INVISIBLE:
+        return PCB->InvisibleObjectsOn;
+      case SL_MASK:
+        if (SL_MYSIDE (idx))
+          return TEST_FLAG (SHOWMASKFLAG, PCB);
+        return 0;
+      case SL_SILK:
+        gport->trans_lines = TRUE;
+        if (SL_MYSIDE (idx))
+          return PCB->ElementOn;
+        return 0;
+      case SL_ASSY:
+        return 0;
+      case SL_RATS:
+        gport->trans_lines = TRUE;
+        return 1;
+      case SL_PDRILL:
+      case SL_UDRILL:
+        return 1;
+    }
+  }
+  return 0;
+}
+
+void
+ghid_use_mask (int use_it)
+{
+  static int stencil_bit = 0;
+
+  /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
+  if (use_it == HID_LIVE_DRAWING ||
+      use_it == HID_LIVE_DRAWING_OFF ||
+      use_it == HID_FLUSH_DRAW_Q) {
+    return;
+  }
+
+  if (use_it == cur_mask)
+    return;
+
+  /* Flush out any existing geoemtry to be rendered */
+  hidgl_flush_triangles (&buffer);
+
+  switch (use_it)
+    {
+    case HID_MASK_BEFORE:
+      /* Write '1' to the stencil buffer where the solder-mask is drawn. */
+      glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
+      glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
+      stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
+      glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  // Always pass stencil test, write stencil_bit
+      glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
+      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
+      break;
+
+    case HID_MASK_CLEAR:
+      /* Drawing operations clear the stencil buffer to '0' */
+      glStencilFunc (GL_ALWAYS, 0, stencil_bit);  // Always pass stencil test, write 0
+      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 0)
+      break;
+
+    case HID_MASK_AFTER:
+      /* Drawing operations as masked to areas where the stencil buffer is '1' */
+      glColorMask (1, 1, 1, 1);                   // Enable drawing of r, g, b & a
+      glStencilFunc (GL_LEQUAL, stencil_bit, stencil_bit);   // Draw only where our bit of the stencil buffer is set
+      glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    // Stencil buffer read only
+      break;
+
+    case HID_MASK_OFF:
+      /* Disable stenciling */
+      hidgl_return_stencil_bit (stencil_bit);               // Relinquish any bitplane we previously used
+      glDisable (GL_STENCIL_TEST);                // Disable Stencil test
+      break;
+    }
+  cur_mask = use_it;
+}
+
+void
+ghid_extents_use_mask (int use_it)
+{
+}
+
+
+typedef struct
+{
+  int color_set;
+  GdkColor color;
+  int xor_set;
+  GdkColor xor_color;
+  double red;
+  double green;
+  double blue;
+} ColorCache;
+
+
+  /* Config helper functions for when the user changes color preferences.
+     |  set_special colors used in the gtkhid.
+   */
+static void
+set_special_grid_color (void)
+{
+  if (!gport->colormap)
+    return;
+  gport->grid_color.red ^= gport->bg_color.red;
+  gport->grid_color.green ^= gport->bg_color.green;
+  gport->grid_color.blue ^= gport->bg_color.blue;
+//  gdk_color_alloc (gport->colormap, &gport->grid_color);
+}
+
+void
+ghid_set_special_colors (HID_Attribute * ha)
+{
+  if (!ha->name || !ha->value)
+    return;
+  if (!strcmp (ha->name, "background-color"))
+    {
+      ghid_map_color_string (*(char **) ha->value, &gport->bg_color);
+      set_special_grid_color ();
+    }
+  else if (!strcmp (ha->name, "off-limit-color"))
+  {
+      ghid_map_color_string (*(char **) ha->value, &gport->offlimits_color);
+    }
+  else if (!strcmp (ha->name, "grid-color"))
+    {
+      ghid_map_color_string (*(char **) ha->value, &gport->grid_color);
+      set_special_grid_color ();
+    }
+}
+
+/* static */ char *current_color = NULL;
+/* static */ double global_alpha_mult = 1.0;
+/* static */ int alpha_changed = 0;
+
+void
+ghid_set_color (hidGC gc, const char *name)
+{
+  static void *cache = NULL;
+  hidval cval;
+  ColorCache *cc;
+  double alpha_mult = 1.0;
+  double r, g, b, a;
+  a = 1.0;
+
+  if (!alpha_changed && current_color != NULL)
+    {
+      if (strcmp (name, current_color) == 0)
+        return;
+      free (current_color);
+    }
+
+  alpha_changed = 0;
+
+  current_color = strdup (name);
+
+  if (name == NULL)
+    {
+      fprintf (stderr, "%s():  name = NULL, setting to magenta\n",
+               __FUNCTION__);
+      name = "magenta";
+    }
+
+  gc->colorname = (char *) name;
+
+  if (gport->colormap == 0)
+    gport->colormap = gtk_widget_get_colormap (gport->top_window);
+  if (strcmp (name, "erase") == 0)
+    {
+      gc->erase = 1;
+      r = gport->bg_color.red   / 65535.;
+      g = gport->bg_color.green / 65535.;
+      b = gport->bg_color.blue  / 65535.;
+    }
+  else if (strcmp (name, "drill") == 0)
+    {
+      gc->erase = 0;
+      alpha_mult = 0.85;
+      r = gport->offlimits_color.red   / 65535.;
+      g = gport->offlimits_color.green / 65535.;
+      b = gport->offlimits_color.blue  / 65535.;
+    }
+  else
+    {
+      alpha_mult = 0.7;
+      if (hid_cache_color (0, name, &cval, &cache))
+        cc = (ColorCache *) cval.ptr;
+      else
+        {
+          cc = (ColorCache *) malloc (sizeof (ColorCache));
+          memset (cc, 0, sizeof (*cc));
+          cval.ptr = cc;
+          hid_cache_color (1, name, &cval, &cache);
+        }
+
+      if (!cc->color_set)
+        {
+          if (gdk_color_parse (name, &cc->color))
+            gdk_color_alloc (gport->colormap, &cc->color);
+          else
+            gdk_color_white (gport->colormap, &cc->color);
+          cc->red   = cc->color.red   / 65535.;
+          cc->green = cc->color.green / 65535.;
+          cc->blue  = cc->color.blue  / 65535.;
+          cc->color_set = 1;
+        }
+      if (gc->xor)
+        {
+          if (!cc->xor_set)
+            {
+              cc->xor_color.red = cc->color.red ^ gport->bg_color.red;
+              cc->xor_color.green = cc->color.green ^ gport->bg_color.green;
+              cc->xor_color.blue = cc->color.blue ^ gport->bg_color.blue;
+              gdk_color_alloc (gport->colormap, &cc->xor_color);
+              cc->red   = cc->color.red   / 65535.;
+              cc->green = cc->color.green / 65535.;
+              cc->blue  = cc->color.blue  / 65535.;
+              cc->xor_set = 1;
+            }
+        }
+      r = cc->red;
+      g = cc->green;
+      b = cc->blue;
+
+      gc->erase = 0;
+    }
+  if (1) {
+    double maxi, mult;
+    alpha_mult *= global_alpha_mult;
+    if (gport->trans_lines)
+      a = a * alpha_mult;
+    maxi = r;
+    if (g > maxi) maxi = g;
+    if (b > maxi) maxi = b;
+    mult = MIN (1 / alpha_mult, 1 / maxi);
+#if 1
+    r = r * mult;
+    g = g * mult;
+    b = b * mult;
+#endif
+  }
+
+  if( ! ghid_gui_is_up )
+    return;
+
+  hidgl_color (r, g, b, a);
+}
+
+void
+ghid_global_alpha_mult (hidGC gc, double alpha_mult)
+{
+  if (alpha_mult != global_alpha_mult) {
+    global_alpha_mult = alpha_mult;
+    alpha_changed = 1;
+    ghid_set_color (gc, current_color);
+  }
+}
+
+void
+ghid_set_line_cap (hidGC gc, EndCapStyle style)
+{
+  switch (style)
+>>>>>>> patched
     {
       switch (SL_TYPE (idx))
 	{
