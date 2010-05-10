@@ -1,5 +1,5 @@
-Bottom: 613d9fad9560a86d39995067e03b2247217dec3f
-Top:    9b45cb741ffbe901deaa948938ad407c6647943b
+Bottom: fab49d77cced04ef35ee567adae090f2fce71efa
+Top:    73783344f41ad370ae1ddd806df0a61894ebb62b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-12 14:10:57 +0000
 
@@ -96,10 +96,10 @@ index aa2985e..1005235 100644
  
  extern triangle_buffer buffer;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index de4b552..325c50e 100644
+index f42ef3d..5bc59a4 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1933,6 +1933,10 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1938,6 +1938,10 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    gui->set_layer (NULL, GetLayerGroupNumberByNumber (INDEXOFCURRENT), 0);
    gui->set_layer (NULL, SL_FINISHED, 0);
  
@@ -110,7 +110,7 @@ index de4b552..325c50e 100644
    ghid_draw_grid (&region);
  
    hidgl_init_triangle_array (&buffer);
-@@ -1962,6 +1966,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1967,6 +1971,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  
    hidgl_flush_triangles (&buffer);
  
