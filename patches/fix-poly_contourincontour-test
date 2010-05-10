@@ -22,7 +22,7 @@ contours. This point (correctly) returns as being inside B - and the
 false presumption is that the whole A contour is inside B.
 
 This commit introduces an unfortunately slow, but more robust test,
-where we check each note in A for whether it is inside B. We return
+where we check each node in A for whether it is inside B. We return
 as soon as we find an A node outside B, however this means the test
 is VERY much slower for the case where A _is_ inside B.
 
