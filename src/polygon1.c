@@ -2254,25 +2254,29 @@ poly_M_CheckInside (POLYAREA * p, Vector v0)
   return FALSE;
 }
 
+static void
+poly_ComputeInteriorPoint (PLINE *poly, Vector v)
+{
+  v[0] = poly->head.point[0];
+  v[1] = poly->head.point[1];
+}
+
+
+/* NB: This function assumes the caller _knows_ the contours do not
+ *     intersect. If the contours intersect, the result is undefined,
+ *     however it will return the correct (FALSE) result for two
+ *     polygons which share common points between their contours.
+ */
 int
 poly_ContourInContour (PLINE * poly, PLINE * inner)
 {
-  VNODE *pt;
+  Vector point;
   assert (poly != NULL);
   assert (inner != NULL);
   if (cntrbox_inside (inner, poly))
-    { /* FIXME: This is SLOW!!
-       * Check all points on the contour being tested, because we don't
-       * want to falsely return that two contours are inside each other
-       * if they just touch at a few points.
-       */
-      pt = &inner->head;
-      do
-        {
-          if (!poly_InsideContour (poly, pt->point))
-            return 0;
-        } while ((pt = pt->next) != &inner->head);
-      return 1;
+    {
+      poly_ComputeInteriorPoint (inner, point);
+      return poly_InsideContour (poly, point);
     }
   return 0;
 }
