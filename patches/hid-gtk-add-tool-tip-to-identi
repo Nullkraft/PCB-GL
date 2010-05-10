@@ -1,5 +1,5 @@
 Bottom: db510e9299cb4ef1e3799b97e5c9e4a868eadbfd
-Top:    5625997313f89f745a58d9549c1414195e478c6a
+Top:    c4feb15fa47ed5cf04fc7d745b645177c03e14f1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-05-10 17:29:40 +0100
 
@@ -8,7 +8,7 @@ hid/gtk: Add tool-tip to identify element, pin and net when hovering
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 86abad2..1930bd9 100644
+index 86abad2..463c417 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -44,11 +44,16 @@
@@ -28,7 +28,7 @@ index 86abad2..1930bd9 100644
  RCSID ("$Id$");
  
  static gint x_pan_speed, y_pan_speed;
-@@ -742,6 +747,131 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -742,6 +747,121 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    return FALSE;
  }
  
@@ -48,16 +48,6 @@ index 86abad2..1930bd9 100644
 +
 +  type = SearchObjectByLocation (PIN_TYPE | PAD_TYPE,
 +                                 &ptr1, &ptr2, &ptr3, X, Y, Range);
-+  if (type == NO_TYPE)
-+    type = SearchObjectByLocation (VIA_TYPE | LINE_TYPE | ARC_TYPE,
-+                                   &ptr1, &ptr2, &ptr3, X, Y, Range);
-+  if (type == NO_TYPE)
-+    type = SearchObjectByLocation (RATLINE_TYPE,
-+                                   &ptr1, &ptr2, &ptr3, X, Y, Range);
-+  if (type == NO_TYPE)
-+    type = SearchObjectByLocation (POLYGON_TYPE,
-+                                   &ptr1, &ptr2, &ptr3, X, Y, Range);
-+
 +  if (type == NO_TYPE)
 +    return NULL;
 +
@@ -160,7 +150,7 @@ index 86abad2..1930bd9 100644
  gint
  ghid_port_window_motion_cb (GtkWidget * widget,
  			    GdkEventButton * ev, GHidPort * out)
-@@ -764,6 +894,9 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -764,6 +884,9 @@ ghid_port_window_motion_cb (GtkWidget * widget,
      }
    x_prev = y_prev = -1;
    moved = ghid_note_event_location (ev);
