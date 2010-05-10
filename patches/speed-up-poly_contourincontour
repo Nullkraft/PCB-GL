@@ -1,5 +1,5 @@
 Bottom: bb7a61d4c5a8e869e07c98b7e7882a14d3b44825
-Top:    bb7a61d4c5a8e869e07c98b7e7882a14d3b44825
+Top:    ea8bebc4ec31750fe4c601c0b49e8f3fccfd0afb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-05-10 23:28:02 +0100
 
@@ -11,4 +11,50 @@ point (not on the boundary), and test that against the second polygon.
 
 ---
 
-
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 11e6146..6b7175d 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2254,25 +2254,29 @@ poly_M_CheckInside (POLYAREA * p, Vector v0)
+   return FALSE;
+ }
+ 
++static void
++poly_ComputeInteriorPoint (PLINE *poly, Vector v)
++{
++  v[0] = poly->head.point[0];
++  v[1] = poly->head.point[1];
++}
++
++
++/* NB: This function assumes the caller _knows_ the contours do not
++ *     intersect. If the contours intersect, the result is undefined,
++ *     however it will return the correct (FALSE) result for two
++ *     polygons which share common points between their contours.
++ */
+ int
+ poly_ContourInContour (PLINE * poly, PLINE * inner)
+ {
+-  VNODE *pt;
++  Vector point;
+   assert (poly != NULL);
+   assert (inner != NULL);
+   if (cntrbox_inside (inner, poly))
+-    { /* FIXME: This is SLOW!!
+-       * Check all points on the contour being tested, because we don't
+-       * want to falsely return that two contours are inside each other
+-       * if they just touch at a few points.
+-       */
+-      pt = &inner->head;
+-      do
+-        {
+-          if (!poly_InsideContour (poly, pt->point))
+-            return 0;
+-        } while ((pt = pt->next) != &inner->head);
+-      return 1;
++    {
++      poly_ComputeInteriorPoint (inner, point);
++      return poly_InsideContour (poly, point);
+     }
+   return 0;
+ }
