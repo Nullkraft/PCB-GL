@@ -1,7 +1,7 @@
-Bottom: 8eeb4436a58e72cd1a9454986f1a6d594a5a582f
-Top:    415a15438191392630f61a27f37570beec57569f
+Bottom: 2eebcf0b86e9a12b8ab34ed2208f64bd5c814ef6
+Top:    ee0fc6fb91adbcc0ad8083f803b0782bf6414919
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-21 23:45:14 +0000
+Date:   2010-05-10 18:09:18 +0100
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -28,7 +28,7 @@ polygon fill.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 7daecf5..149e18f 100644
+index fbd1735..c7c7266 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -381,6 +381,7 @@ MovePolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
@@ -48,10 +48,10 @@ index 7daecf5..149e18f 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index b2f42a7..5c426c9 100644
+index fe159f4..5c68767 100644
 --- a/src/change.c
 +++ b/src/change.c
-@@ -123,6 +123,9 @@ static void *ChangeTextJoin (LayerTypePtr, TextTypePtr);
+@@ -124,6 +124,9 @@ static void *ChangeTextJoin (LayerTypePtr, TextTypePtr);
  static void *SetTextJoin (LayerTypePtr, TextTypePtr);
  static void *ClrTextJoin (LayerTypePtr, TextTypePtr);
  static void *ChangePolyClear (LayerTypePtr, PolygonTypePtr);
@@ -61,7 +61,7 @@ index b2f42a7..5c426c9 100644
  
  /* ---------------------------------------------------------------------------
   * some local identifiers
-@@ -217,7 +220,7 @@ static ObjectFunctionType ChangeSquareFunctions = {
+@@ -218,7 +221,7 @@ static ObjectFunctionType ChangeSquareFunctions = {
  static ObjectFunctionType ChangeJoinFunctions = {
    ChangeLineJoin,
    ChangeTextJoin,
@@ -70,7 +70,7 @@ index b2f42a7..5c426c9 100644
    NULL,
    NULL,
    NULL,
-@@ -277,7 +280,7 @@ static ObjectFunctionType SetSquareFunctions = {
+@@ -278,7 +281,7 @@ static ObjectFunctionType SetSquareFunctions = {
  static ObjectFunctionType SetJoinFunctions = {
    SetLineJoin,
    SetTextJoin,
@@ -79,7 +79,7 @@ index b2f42a7..5c426c9 100644
    NULL,
    NULL,
    NULL,
-@@ -319,7 +322,7 @@ static ObjectFunctionType ClrSquareFunctions = {
+@@ -320,7 +323,7 @@ static ObjectFunctionType ClrSquareFunctions = {
  static ObjectFunctionType ClrJoinFunctions = {
    ClrLineJoin,
    ClrTextJoin,
@@ -88,7 +88,7 @@ index b2f42a7..5c426c9 100644
    NULL,
    NULL,
    NULL,
-@@ -1218,6 +1221,31 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1243,6 +1246,31 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
  }
  
  /* ---------------------------------------------------------------------------
@@ -120,7 +120,7 @@ index b2f42a7..5c426c9 100644
   * sets the clearance flag of a text
   */
  static void *
-@@ -1229,6 +1257,17 @@ SetTextJoin (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1254,6 +1282,17 @@ SetTextJoin (LayerTypePtr Layer, TextTypePtr Text)
  }
  
  /* ---------------------------------------------------------------------------
@@ -138,7 +138,7 @@ index b2f42a7..5c426c9 100644
   * clears the clearance flag of a text
   */
  static void *
-@@ -1240,6 +1279,17 @@ ClrTextJoin (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1265,6 +1304,17 @@ ClrTextJoin (LayerTypePtr Layer, TextTypePtr Text)
  }
  
  /* ---------------------------------------------------------------------------
@@ -157,10 +157,10 @@ index b2f42a7..5c426c9 100644
   */
  static void *
 diff --git a/src/change.h b/src/change.h
-index bd7749a..6c0f890 100644
+index fc577a0..cee64f6 100644
 --- a/src/change.h
 +++ b/src/change.h
-@@ -56,7 +56,7 @@
+@@ -57,7 +57,7 @@
  	(ELEMENT_TYPE | PIN_TYPE | VIA_TYPE)
  
  #define CHANGEJOIN_TYPES	\
