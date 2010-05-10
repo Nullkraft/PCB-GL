@@ -764,16 +764,6 @@ describe_location (LocationType X, LocationType Y)
   type = SearchObjectByLocation (PIN_TYPE | PAD_TYPE,
                                  &ptr1, &ptr2, &ptr3, X, Y, Range);
   if (type == NO_TYPE)
-    type = SearchObjectByLocation (VIA_TYPE | LINE_TYPE | ARC_TYPE,
-                                   &ptr1, &ptr2, &ptr3, X, Y, Range);
-  if (type == NO_TYPE)
-    type = SearchObjectByLocation (RATLINE_TYPE,
-                                   &ptr1, &ptr2, &ptr3, X, Y, Range);
-  if (type == NO_TYPE)
-    type = SearchObjectByLocation (POLYGON_TYPE,
-                                   &ptr1, &ptr2, &ptr3, X, Y, Range);
-
-  if (type == NO_TYPE)
     return NULL;
 
   /* don't mess with silk objects! */
