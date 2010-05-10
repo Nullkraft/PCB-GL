@@ -1,5 +1,5 @@
-Bottom: df3ba886752b76731ffda577519373ad801c6eb1
-Top:    736c6d32eb005c95190f02a6fd8934e63d1040b7
+Bottom: ed437be482b1f68d8174760b14d8ed1e547d5b5b
+Top:    eb6e8e893d8c4fb81ad8f22f2e27f3e8dacbb463
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-03-21 23:45:24 +0000
 
@@ -11,7 +11,7 @@ Kept separate for now because they might have unknown side-effects.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 9fa931e..a764e7b 100644
+index dd269bc..af55760 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -249,8 +249,8 @@ MoveViaToBuffer (PinTypePtr Via)
@@ -45,10 +45,10 @@ index 9fa931e..a764e7b 100644
    arc = GetArcMemory (lay);
    *arc = *Arc;
 diff --git a/src/change.c b/src/change.c
-index 7f65d68..05667cd 100644
+index a0d620e..107f2a9 100644
 --- a/src/change.c
 +++ b/src/change.c
-@@ -490,10 +490,10 @@ ChangeViaClearSize (PinTypePtr Via)
+@@ -492,10 +492,10 @@ ChangeViaClearSize (PinTypePtr Via)
      value = PCB->Bloat * 2 + 2;
    if (Via->Clearance == value)
      return NULL;
@@ -60,7 +60,7 @@ index 7f65d68..05667cd 100644
    Via->Clearance = value;
    SetPinBoundingBox (Via);
    r_insert_entry (PCB->Data->via_tree, (BoxType *) Via, 0);
-@@ -556,10 +556,10 @@ ChangePinClearSize (ElementTypePtr Element, PinTypePtr Pin)
+@@ -558,10 +558,10 @@ ChangePinClearSize (ElementTypePtr Element, PinTypePtr Pin)
      value = PCB->Bloat * 2 + 2;
    if (Pin->Clearance == value)
      return NULL;
@@ -72,7 +72,7 @@ index 7f65d68..05667cd 100644
    Pin->Clearance = value;
    /* SetElementBB updates all associated rtrees */
    SetElementBoundingBox (PCB->Data, Element, &PCB->Font);
-@@ -583,9 +583,9 @@ ChangePadSize (ElementTypePtr Element, PadTypePtr Pad)
+@@ -585,9 +585,9 @@ ChangePadSize (ElementTypePtr Element, PadTypePtr Pad)
      {
        AddObjectToSizeUndoList (PAD_TYPE, Element, Pad, Pad);
        AddObjectToMaskSizeUndoList (PAD_TYPE, Element, Pad, Pad);
@@ -83,7 +83,7 @@ index 7f65d68..05667cd 100644
        Pad->Mask += value - Pad->Thickness;
        Pad->Thickness = value;
        /* SetElementBB updates all associated rtrees */
-@@ -618,9 +618,9 @@ ChangePadClearSize (ElementTypePtr Element, PadTypePtr Pad)
+@@ -620,9 +620,9 @@ ChangePadClearSize (ElementTypePtr Element, PadTypePtr Pad)
    if (value == Pad->Clearance)
      return NULL;
    AddObjectToClearSizeUndoList (PAD_TYPE, Element, Pad, Pad);
@@ -94,7 +94,7 @@ index 7f65d68..05667cd 100644
    Pad->Clearance = value;
    /* SetElementBB updates all associated rtrees */
    SetElementBoundingBox (PCB->Data, Element, &PCB->Font);
-@@ -748,9 +748,9 @@ ChangeLineClearSize (LayerTypePtr Layer, LineTypePtr Line)
+@@ -750,9 +750,9 @@ ChangeLineClearSize (LayerTypePtr Layer, LineTypePtr Line)
    if (value != Line->Clearance)
      {
        AddObjectToClearSizeUndoList (LINE_TYPE, Layer, Line, Line);
@@ -106,10 +106,10 @@ index 7f65d68..05667cd 100644
        if (Line->Clearance == 0)
  	{
 diff --git a/src/misc.c b/src/misc.c
-index 7a0aa77..fff2b3e 100644
+index 574c45b..a5b3881 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -1520,8 +1520,8 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
+@@ -1521,8 +1521,8 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
        new_da = 360;
        new_sa = 0;
      }
