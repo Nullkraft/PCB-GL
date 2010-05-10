@@ -1,5 +1,5 @@
-Bottom: 0798fe52e15039960c3d67a9143a90fb995e8632
-Top:    ec7b9dd033526504b45f904a8882cce9b1ce849c
+Bottom: dc6b9f3addb56c02648bbba19cdb16c4c5152f78
+Top:    dc6b9f3addb56c02648bbba19cdb16c4c5152f78
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-05-08 13:39:50 +0100
 
@@ -8,45 +8,4 @@ Fix crash hovering over unconnected element
 
 ---
 
-diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 4922cb4..f8be7dd 100644
---- a/src/hid/gtk/gui-output-events.c
-+++ b/src/hid/gtk/gui-output-events.c
-@@ -1968,17 +1968,23 @@ describe_location (LocationType X, LocationType Y)
-   void *ptr1, *ptr2, *ptr3;
-   int type;
-   int Range = 0;
--  char *elename;
-+  char *elename = "";
-   char *pinname;
-   char *netname = NULL;
-   char *description;
- 
-   /* check if there are any pins or pads at that position */
- 
--  type = SearchObjectByLocation (LOOKUP_FIRST,
-+  type = SearchObjectByLocation (PIN_TYPE | PAD_TYPE,
-                                  &ptr1, &ptr2, &ptr3, X, Y, Range);
-   if (type == NO_TYPE)
--    type = SearchObjectByLocation (LOOKUP_MORE,
-+    type = SearchObjectByLocation (VIA_TYPE | LINE_TYPE | ARC_TYPE,
-+                                   &ptr1, &ptr2, &ptr3, X, Y, Range);
-+  if (type == NO_TYPE)
-+    type = SearchObjectByLocation (RATLINE_TYPE,
-+                                   &ptr1, &ptr2, &ptr3, X, Y, Range);
-+  if (type == NO_TYPE)
-+    type = SearchObjectByLocation (POLYGON_TYPE,
-                                    &ptr1, &ptr2, &ptr3, X, Y, Range);
- 
-   if (type == NO_TYPE)
-@@ -1989,7 +1995,9 @@ describe_location (LocationType X, LocationType Y)
-       GetLayerNumber (PCB->Data, (LayerTypePtr) ptr1) >= max_layer)
-     return NULL;
- 
--  elename = UNKNOWN (NAMEONPCB_NAME ((ElementTypePtr) ptr1));
-+  if (type == PIN_TYPE || type == PAD_TYPE)
-+    elename = UNKNOWN (NAMEONPCB_NAME ((ElementTypePtr) ptr1));
-+
-   pinname = ConnectionName (type, ptr1, ptr2);
- 
-   if (pinname == NULL)
+
