@@ -1,7 +1,7 @@
-Bottom: f58ae77637a6413f32d5a28f39594d9287e5b987
-Top:    6fc613d538894a2017c71a62b6914b11e5e9c772
+Bottom: 2b1c727046b65b8f8c26c0867e49c545a4b2df10
+Top:    596065a5b0eff885d2209c2824825970153838f7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-21 23:44:58 +0000
+Date:   2010-05-10 18:06:31 +0100
 
 Major re-write to drawing routines
 
@@ -198,7 +198,7 @@ index 87daf19..8705cd4 100644
  void
  ghid_set_color (hidGC gc, const char *name)
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index d3376b3..2c601d0 100644
+index b4befd5..acdcb7a 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -339,68 +339,89 @@ ghid_invalidate_all ()
@@ -338,7 +338,7 @@ index d3376b3..2c601d0 100644
  }
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 708f1ce..6648f2d 100644
+index 381b857..5ad3296 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -49,6 +49,7 @@

@@ -1,7 +1,7 @@
-Bottom: 4913f980e5380a2cef2aff92f6fde250554cb671
-Top:    4fa28e973fe5a9ae5f4a8e25f529b5f713683208
+Bottom: 1f0a1333b7887a02f7aaf51b2a7f811942db49f9
+Top:    6fea0cbeb56ecef6abc78d6c818c59deb407cb48
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-21 23:45:03 +0000
+Date:   2010-05-10 18:06:36 +0100
 
 Layer fixes
 
@@ -14,7 +14,7 @@ Fix rendering depths for silk and mask layers
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 2c601d0..db7446d 100644
+index acdcb7a..12c4e1a 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -343,36 +343,47 @@ int compute_depth (int group)
@@ -79,7 +79,7 @@ index 2c601d0..db7446d 100644
  
    last_depth_computed = depth;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 362278c..c439ccc 100644
+index 69e1dcf..44944a8 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -1353,8 +1353,8 @@ DrawLayerGroup (int group, const BoxType * screen)

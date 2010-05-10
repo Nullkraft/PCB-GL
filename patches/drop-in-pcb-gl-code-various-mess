@@ -1,7 +1,7 @@
-Bottom: d47ba7a4c4d0a59f988b67cb0743d6243785c30c
-Top:    cb96799c2896236b9919ba131e8409496fb2a890
+Bottom: 525bd0530a91934c272824ed617bdad81f6aab89
+Top:    b773879a4d94c083d0b9249bbca125addca93919
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-21 23:44:50 +0000
+Date:   2010-05-10 18:06:23 +0100
 
 Drop in PCB+GL code + various mess. Needs splitting up?
 
@@ -1307,7 +1307,7 @@ index 0000000..3e41c35
 +  hidgl_fill_rect (x1, y1, x2, y2);
 +}
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index b8fdc75..1267e84 100644
+index 90d1485..a1bb55f 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -17,9 +17,15 @@
@@ -1443,7 +1443,7 @@ index b8fdc75..1267e84 100644
  void
  ghid_notify_gui_is_up ()
  {
-@@ -1114,7 +1068,7 @@ HID ghid_hid = {
+@@ -1135,7 +1089,7 @@ HID ghid_hid = {
    1,				/* gui */
    0,				/* printer */
    0,				/* exporter */
@@ -1452,7 +1452,7 @@ index b8fdc75..1267e84 100644
    1,				/* poly after */
    0,				/* poly dicer */
  
-@@ -1697,7 +1651,8 @@ Benchmark (int argc, char **argv, int x, int y)
+@@ -1718,7 +1672,8 @@ Benchmark (int argc, char **argv, int x, int y)
    time (&start);
    do
      {
@@ -1463,7 +1463,7 @@ index b8fdc75..1267e84 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 7466e59..53d184d 100644
+index 3912aa3..1a26560 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -302,16 +302,16 @@ have_crosshair_attachments (void)
@@ -1881,7 +1881,7 @@ index 7466e59..53d184d 100644
    return FALSE;
  }
  
-@@ -871,6 +1016,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -876,6 +1021,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    gdouble dx, dy;
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
@@ -1896,7 +1896,7 @@ index 7466e59..53d184d 100644
  
    if (out->panning)
      {
-@@ -892,6 +1045,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -899,6 +1052,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    ghid_show_crosshair (TRUE);
    if (moved && have_crosshair_attachments ())
      ghid_draw_area_update (gport, NULL);
@@ -1911,7 +1911,7 @@ index 7466e59..53d184d 100644
    return FALSE;
  }
  
-@@ -931,7 +1092,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -938,7 +1099,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        RestoreCrosshair (TRUE);
        cursor_in_viewport = TRUE;
      }
@@ -2194,7 +2194,7 @@ index b24e6c9..4caddf2 100644
    gport->width = save_width;
    gport->height = save_height;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index eb8ba18..0ecc466 100644
+index e61c9f3..673184e 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2296,6 +2296,11 @@ ghid_build_pcb_top_window (void)

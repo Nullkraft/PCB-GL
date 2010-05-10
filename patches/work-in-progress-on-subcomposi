@@ -1,7 +1,7 @@
-Bottom: dfc5ff404e52a6839f2cab61fec361ca88ac847e
-Top:    e01773054caf7f4bfab2379eb7b50ef338339557
+Bottom: 6efcbe39df95f7e0ba372cfd0ee6e75d14d4b14b
+Top:    0c6d83546b9144764c686b164c1e9676ec6550c0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-21 23:44:52 +0000
+Date:   2010-05-10 18:06:27 +0100
 
 Work in progress on subcompositing / stencil buffers
 
@@ -121,10 +121,10 @@ index d06813d..3eeee3b 100644
  
  	  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
 diff --git a/src/hid.h b/src/hid.h
-index 7b30022..5bb2be5 100644
+index dd34b8e..073dbae 100644
 --- a/src/hid.h
 +++ b/src/hid.h
-@@ -199,6 +199,7 @@ extern "C"
+@@ -205,6 +205,7 @@ extern "C"
  #define SL_FAB		0x0070
  #define SL_ASSY		0x0080
  #define SL_RATS		0x0090
@@ -466,7 +466,7 @@ index 430059b..fec839e 100644
        break;
      }
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index a0166aa..94fb923 100644
+index bbb95ae..59a390e 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -339,14 +339,39 @@ ghid_invalidate_all ()
@@ -521,7 +521,7 @@ index a0166aa..94fb923 100644
  	    return PCB->ElementOn;
  	  return 0;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 2b0ed81..a9c191b 100644
+index c62a73e..114ab1d 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -35,6 +35,7 @@
@@ -615,7 +615,7 @@ index 4caddf2..faa09fe 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 0ecc466..2c28955 100644
+index 673184e..56f0016 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2669,6 +2669,7 @@ ghid_parse_arguments (int *argc, char ***argv)
@@ -650,7 +650,7 @@ index 8e5ff0c..c2f6ddf 100644
  		name = PCB->Data->Layer[idx].Name;
  	}
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 404eb53..de8010e 100644
+index d5d6617..0c292cd 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -890,6 +890,10 @@ png_set_layer (const char *name, int group, int empty)

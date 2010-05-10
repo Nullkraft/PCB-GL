@@ -1,7 +1,7 @@
-Bottom: cb96799c2896236b9919ba131e8409496fb2a890
-Top:    362ecfb950e3d3f5950ea149ca6194b0499aaf45
+Bottom: b773879a4d94c083d0b9249bbca125addca93919
+Top:    832b48cce32ab5d375ab0e7c25f5b6df55433ad6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-21 23:44:51 +0000
+Date:   2010-05-10 18:06:24 +0100
 
 Cure crosshair lagging on screen
 
@@ -11,10 +11,10 @@ FIXME: SHOULD NOT RE-WRITE THE GTK HID
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 53d184d..2b0ed81 100644
+index 1a26560..c62a73e 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1016,6 +1016,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -1021,6 +1021,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    gdouble dx, dy;
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
@@ -22,7 +22,7 @@ index 53d184d..2b0ed81 100644
    GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
    GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
  
-@@ -1024,11 +1025,15 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -1029,11 +1030,15 @@ ghid_port_window_motion_cb (GtkWidget * widget,
      printf ("GL THingy returned\n");
      return FALSE;
    }
@@ -38,9 +38,9 @@ index 53d184d..2b0ed81 100644
        dx = gport->zoom * (x_prev - ev->x);
        dy = gport->zoom * (y_prev - ev->y);
        if (x_prev > 0)
-@@ -1042,10 +1047,11 @@ ghid_port_window_motion_cb (GtkWidget * widget,
- 
+@@ -1049,10 +1054,11 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    queue_tooltip_update (out);
+ #endif
  
 -  ghid_show_crosshair (TRUE);
 -  if (moved && have_crosshair_attachments ())
@@ -52,7 +52,7 @@ index 53d184d..2b0ed81 100644
    if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
      gdk_gl_drawable_swap_buffers (pGlDrawable);
    else
-@@ -1053,6 +1059,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -1060,6 +1066,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
  
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);

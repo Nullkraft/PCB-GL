@@ -1,7 +1,7 @@
-Bottom: 4fa28e973fe5a9ae5f4a8e25f529b5f713683208
-Top:    3a5745ace19a1a19d0a1fc1e078aeb7f02ea7519
+Bottom: 6fea0cbeb56ecef6abc78d6c818c59deb407cb48
+Top:    69fe8efcb973df90e957df2b17571eacc818721f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-21 23:45:04 +0000
+Date:   2010-05-10 18:06:36 +0100
 
 Fixup depth for layers and element marks
 
@@ -9,7 +9,7 @@ Fixup depth for layers and element marks
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index db7446d..ca52c79 100644
+index 12c4e1a..2a9d810 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -365,7 +365,7 @@ int compute_depth (int group)
@@ -22,7 +22,7 @@ index db7446d..ca52c79 100644
      if (SL_SIDE (idx) == SL_TOP_SIDE) {
        depth = (max_depth + 3) * 200 / gport->zoom;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index c439ccc..d8c7c2e 100644
+index 44944a8..4118b47 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -1669,12 +1669,14 @@ ghid_draw_everything (BoxTypePtr drawn_area)

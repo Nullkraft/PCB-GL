@@ -1,7 +1,7 @@
-Bottom: b3ec8a29fd4750492472db98c5964c205736a5bb
-Top:    f58ae77637a6413f32d5a28f39594d9287e5b987
+Bottom: 28c1bc5f50a50f484a53e9241df561565b4152f1
+Top:    2b1c727046b65b8f8c26c0867e49c545a4b2df10
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-21 23:44:57 +0000
+Date:   2010-05-10 18:06:31 +0100
 
 Fix grid extents in 3D view
 
@@ -37,7 +37,7 @@ index ae58cbb..87daf19 100644
      {
        int tmp = x1;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index bf267e9..708f1ce 100644
+index bc08df6..381b857 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -1172,7 +1172,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
