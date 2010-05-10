@@ -1,7 +1,7 @@
-Bottom: 5e870352ff25c03e79e3187bc5d95f3716511d38
-Top:    deda240b1926010c0befe6c3ecf50d10fffb4fdc
+Bottom: 03d69815a721a0e98bd49a97e7dfe10872cb1b40
+Top:    6971bf5ff325b8aa7f48cfba01e20a09d6bd0c82
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-03-21 23:44:33 +0000
+Date:   2010-05-10 17:40:16 +0100
 
 Allow running of action scripts when running PCB as an exporter
 
@@ -9,10 +9,10 @@ Allow running of action scripts when running PCB as an exporter
 ---
 
 diff --git a/src/main.c b/src/main.c
-index e5d93eb..992801c 100644
+index 7e29d56..8b80afe 100644
 --- a/src/main.c
 +++ b/src/main.c
-@@ -991,12 +991,6 @@ main (int argc, char *argv[])
+@@ -998,12 +998,6 @@ main (int argc, char *argv[])
        LayerStringToLayerStack (Settings.InitialLayerStack);
      }
  
@@ -25,8 +25,8 @@ index e5d93eb..992801c 100644
    /*    FIX_ME
       LoadBackgroundImage (Settings.BackgroundImage); */
  
-@@ -1029,6 +1023,12 @@ main (int argc, char *argv[])
-       hid_parse_actions (Settings.ActionString, 0);
+@@ -1036,6 +1030,12 @@ main (int argc, char *argv[])
+       hid_parse_actions (Settings.ActionString);
      }
  
 +  if (gui->printer || gui->exporter)
