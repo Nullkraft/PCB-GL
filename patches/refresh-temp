@@ -1,0 +1,30 @@
+Bottom: 5625997313f89f745a58d9549c1414195e478c6a
+Top:    c4feb15fa47ed5cf04fc7d745b645177c03e14f1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-05-10 17:30:46 +0100
+
+Refresh of hid-gtk-add-tool-tip-to-identi
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 1930bd9..463c417 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -764,16 +764,6 @@ describe_location (LocationType X, LocationType Y)
+   type = SearchObjectByLocation (PIN_TYPE | PAD_TYPE,
+                                  &ptr1, &ptr2, &ptr3, X, Y, Range);
+   if (type == NO_TYPE)
+-    type = SearchObjectByLocation (VIA_TYPE | LINE_TYPE | ARC_TYPE,
+-                                   &ptr1, &ptr2, &ptr3, X, Y, Range);
+-  if (type == NO_TYPE)
+-    type = SearchObjectByLocation (RATLINE_TYPE,
+-                                   &ptr1, &ptr2, &ptr3, X, Y, Range);
+-  if (type == NO_TYPE)
+-    type = SearchObjectByLocation (POLYGON_TYPE,
+-                                   &ptr1, &ptr2, &ptr3, X, Y, Range);
+-
+-  if (type == NO_TYPE)
+     return NULL;
+ 
+   /* don't mess with silk objects! */
