@@ -1,5 +1,5 @@
-Bottom: cd137c580ab3be77282fbd0be876a00ad0490c95
-Top:    ef1299759c9a6e6f17fb1d963963d4d395eac8bf
+Bottom: 5ecd87b969b3b1754e0d823a051b400adc3b73e1
+Top:    08bec923fa99e77f830a3a1fbda142cb2d7e82de
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-03-21 23:45:18 +0000
 
@@ -17,7 +17,7 @@ of a selection will re-create the polygon.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 9e23b7a..df29b42 100644
+index c90dc01..e5ec456 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -390,7 +390,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
@@ -39,10 +39,10 @@ index 9e23b7a..df29b42 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index 21e1c7a..b0b799a 100644
+index c20838c..288123d 100644
 --- a/src/change.c
 +++ b/src/change.c
-@@ -1134,10 +1134,12 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
+@@ -1180,10 +1180,12 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
    AddObjectToFlagUndoList (LINE_TYPE, Layer, Line, Line);
    TOGGLE_FLAG (CLEARLINEFLAG, Line);
    if (TEST_FLAG(CLEARLINEFLAG, Line))
@@ -59,7 +59,7 @@ index 21e1c7a..b0b799a 100644
    DrawLine (Layer, Line, 0);
    return (Line);
  }
-@@ -1182,9 +1184,11 @@ ChangeArcJoin (LayerTypePtr Layer, ArcTypePtr Arc)
+@@ -1228,9 +1230,11 @@ ChangeArcJoin (LayerTypePtr Layer, ArcTypePtr Arc)
    TOGGLE_FLAG (CLEARLINEFLAG, Arc);
    if (TEST_FLAG (CLEARLINEFLAG, Arc))
      {
@@ -72,7 +72,7 @@ index 21e1c7a..b0b799a 100644
    DrawArc (Layer, Arc, 0);
    return (Arc);
  }
-@@ -1228,10 +1232,12 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1274,10 +1278,12 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
    AddObjectToFlagUndoList (LINE_TYPE, Layer, Text, Text);
    TOGGLE_FLAG (CLEARLINEFLAG, Text);
    if (TEST_FLAG(CLEARLINEFLAG, Text))
@@ -89,7 +89,7 @@ index 21e1c7a..b0b799a 100644
    DrawText (Layer, Text, 0);
    return (Text);
  }
-@@ -1253,10 +1259,12 @@ ChangePourJoin (LayerTypePtr Layer, PourTypePtr pour)
+@@ -1299,10 +1305,12 @@ ChangePourJoin (LayerTypePtr Layer, PourTypePtr pour)
    AddObjectToFlagUndoList (LINE_TYPE, Layer, pour, pour);
    TOGGLE_FLAG (CLEARLINEFLAG, pour);
    if (TEST_FLAG(CLEARLINEFLAG, pour))
@@ -106,7 +106,7 @@ index 21e1c7a..b0b799a 100644
    DrawPour (Layer, pour, 0);
    return (pour);
  }
-@@ -1629,6 +1637,8 @@ ChangeHole (PinTypePtr Via)
+@@ -1675,6 +1683,8 @@ ChangeHole (PinTypePtr Via)
      {
        AddObjectTo2ndSizeUndoList (VIA_TYPE, Via, Via, Via);
        Via->DrillingHole = Via->Thickness - MIN_PINORVIACOPPER;
