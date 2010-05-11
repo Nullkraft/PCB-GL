@@ -1,5 +1,5 @@
 Bottom: dd9c43bbf4d30324d759b1420515220a48c4c1af
-Top:    0e0717d850658c1fbaca4673f0298caac1466776
+Top:    d5fc3e852f2a881944ff9ee18c15fb8c91bff56f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-05-11 15:55:37 +0100
 
@@ -28,10 +28,10 @@ Example board load (CPU) times for a complex board:
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 57bea9c..e287559 100644
+index 57bea9c..f9608ca 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2254,31 +2254,158 @@ poly_M_CheckInside (POLYAREA * p, Vector v0)
+@@ -2254,31 +2254,156 @@ poly_M_CheckInside (POLYAREA * p, Vector v0)
    return FALSE;
  }
  
@@ -183,10 +183,8 @@ index 57bea9c..e287559 100644
 -       * want to falsely return that two contours are inside each other
 -       * if they just touch at a few points.
 +    {
-+      /* Since computing the interior point isn't that quick,
-+       * and many tests will return FALSE, try this quick test
-+       * of an arbitrary external point. If it returns FALSE,
-+       * the "inner" polygon is NOT inside poly.
++      /* We need to prove the "inner" contour is not outside
++       * "poly" contour. If it is outside, we can return.
         */
 -      pt = &inner->head;
 -      do
