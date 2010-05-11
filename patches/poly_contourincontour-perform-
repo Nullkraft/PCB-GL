@@ -1,0 +1,33 @@
+Bottom: 1f83bb8aa759d6d3481a4df05af1c559c91aec03
+Top:    2abbf5d7952e35ef9d17ea2e6411e59edbf8cc6d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-05-11 15:28:37 +0100
+
+poly_ContourInContour: Perform cheaper test before more expensive one
+
+In many cases, a simple arbitrary external node test can prove the
+contour being tested is not inside. If this is the case, return 0
+without computing and testing an interior point.
+
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 3afd6d5..a9ab4b6 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2395,6 +2395,14 @@ poly_ContourInContour (PLINE * poly, PLINE * inner)
+   assert (inner != NULL);
+   if (cntrbox_inside (inner, poly))
+     {
++      /* Since computing the interior point isn't that quick,
++       * and many tests will return FALSE, try this quick test
++       * of an arbitrary external point. If it returns FALSE,
++       * the "inner" polygon is NOT inside poly.
++       */
++      if (!poly_InsideContour (poly, inner->head.point))
++        return 0;
++
+       poly_ComputeInteriorPoint (inner, point);
+       return poly_InsideContour (poly, point);
+     }
