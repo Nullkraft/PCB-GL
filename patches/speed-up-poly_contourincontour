@@ -8,6 +8,9 @@ Speed up poly_ContourInContour() test by computing interior point
 Rather than checking each exterior point, compute a strictly interior
 point (not on the boundary), and test that against the second polygon.
 
+This introduces a behaviour change in the boundary case, that two
+identical contours will now be considered to be inside each other.
+
 
 ---
 
