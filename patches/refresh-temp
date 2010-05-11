@@ -1,0 +1,22 @@
+Bottom: d5fc3e852f2a881944ff9ee18c15fb8c91bff56f
+Top:    d9ca792132580d3d49790c6aefa2d8ffaf3fecd7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-05-11 15:58:49 +0100
+
+Refresh of speed-up-poly_contourincontour
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index f9608ca..31b71f1 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2296,7 +2296,7 @@ point_in_triangle (Vector A, Vector B, Vector C, Vector P)
+  * orthogonal to Vector C->D. The result is not normalisd, so will be
+  * weighted by the magnitude of the C->D vector.
+  */
+-static float
++static double
+ dot_orthogonal_to_direction (Vector A, Vector B, Vector C, Vector D)
+ {
+   Vector l1, l2, l3;
