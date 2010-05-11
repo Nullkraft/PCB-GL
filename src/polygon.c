@@ -111,7 +111,7 @@ RCSID ("$Id$");
 
 #define UNSUBTRACT_BLOAT 10
 #define SUBTRACT_PIN_VIA_BATCH_SIZE 100
-#define SUBTRACT_LINE_BATCH_SIZE 1
+#define SUBTRACT_LINE_BATCH_SIZE 20
 
 /* ---------------------------------------------------------------------------
  * local prototypes
