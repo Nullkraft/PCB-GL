@@ -5,6 +5,10 @@ Date:   2010-05-11 15:35:26 +0100
 
 Add comment explaining assumptions for poly_ContourInContour function
 
+Also, document its buggy boundary condition where the arbitrary point
+chosen to test happens to be a common node shared between two separate
+contours (which the test should return FALSE for).
+
 
 ---
 
