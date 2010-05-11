@@ -1,5 +1,5 @@
-Bottom: 1f83bb8aa759d6d3481a4df05af1c559c91aec03
-Top:    2abbf5d7952e35ef9d17ea2e6411e59edbf8cc6d
+Bottom: 838a55957d648a386cd9476c9fb97ff0a8468cef
+Top:    0e0717d850658c1fbaca4673f0298caac1466776
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-05-11 15:28:37 +0100
 
@@ -22,10 +22,10 @@ Example board load (CPU) times for a complex board:
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 3afd6d5..a9ab4b6 100644
+index d05bc76..e287559 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2395,6 +2395,14 @@ poly_ContourInContour (PLINE * poly, PLINE * inner)
+@@ -2396,6 +2396,14 @@ poly_ContourInContour (PLINE * poly, PLINE * inner)
    assert (inner != NULL);
    if (cntrbox_inside (inner, poly))
      {
