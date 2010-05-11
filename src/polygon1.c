@@ -2296,7 +2296,7 @@ point_in_triangle (Vector A, Vector B, Vector C, Vector P)
  * orthogonal to Vector C->D. The result is not normalisd, so will be
  * weighted by the magnitude of the C->D vector.
  */
-static float
+static double
 dot_orthogonal_to_direction (Vector A, Vector B, Vector C, Vector D)
 {
   Vector l1, l2, l3;
