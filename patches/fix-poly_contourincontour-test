@@ -1,5 +1,5 @@
-Bottom: 4f457f176c3b02306c8021002e41ac8f1e9cdb3c
-Top:    bb7a61d4c5a8e869e07c98b7e7882a14d3b44825
+Bottom: 4328902b1eef4f10552263dc74258fbcd89c91f1
+Top:    66ccd0157258b7e2c3ccc1605cf948dd06bdff74
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-05-10 17:40:15 +0100
 
@@ -30,10 +30,10 @@ is VERY much slower for the case where A _is_ inside B.
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index d9f6ce4..11e6146 100644
+index a0dd109..615cae5 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2257,10 +2257,23 @@ poly_M_CheckInside (POLYAREA * p, Vector v0)
+@@ -2262,10 +2262,23 @@ poly_M_CheckInside (POLYAREA * p, Vector v0)
  int
  poly_ContourInContour (PLINE * poly, PLINE * inner)
  {
