@@ -2396,10 +2396,8 @@ poly_ContourInContour (PLINE * poly, PLINE * inner)
   assert (inner != NULL);
   if (cntrbox_inside (inner, poly))
     {
-      /* Since computing the interior point isn't that quick,
-       * and many tests will return FALSE, try this quick test
-       * of an arbitrary external point. If it returns FALSE,
-       * the "inner" polygon is NOT inside poly.
+      /* We need to prove the "inner" contour is not outside
+       * "poly" contour. If it is outside, we can return.
        */
       if (!poly_InsideContour (poly, inner->head.point))
         return 0;
