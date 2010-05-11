@@ -9,15 +9,14 @@ In many cases, a simple  node test can prove the contour being tested
 is not inside. If this is the case, return 0 without computing and
 testing an interior point.
 
-Benchmarked to improve performance over other fixes for the buggy test:
+Benchmarked to improve performance over other fixes for the buggy test.
+Example board load (CPU) times for a complex board:
 
-pcb ~/Desktop/EDA/gEDA_STUFF/John_Bass/OctalSpartan3-FG676-Rev3_pcjc2_mods.pcb
-
-21.50 (buggy contour_in_contour - single node point test)
-24.43 (brute-force node point tests)
-24.68 (internal point test - atan2 used)
-23.55 (internal point test - dot product used)
-21.79 (cheap node test, then internal point test - dot product used)
+  21.50 (buggy contour_in_contour - single node point test)
+  24.43 (brute-force node point tests)
+  24.68 (internal point test - atan2 used)
+  23.55 (internal point test - dot product used)
+  21.79 (cheap node test, then internal point test - dot product used)
 
 
 ---
