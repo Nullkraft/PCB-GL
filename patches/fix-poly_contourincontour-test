@@ -1,5 +1,5 @@
-Bottom: 1ecb7a9b028b874199c0cce3a6549aa30ba44660
-Top:    634be4d0311d0d35af687115c2bf2fb6f3af74c7
+Bottom: 688f8c30f5f680c538a03d3c64f0b70742b141ac
+Top:    688f8c30f5f680c538a03d3c64f0b70742b141ac
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-03-18 20:33:49 +0000
 
@@ -29,32 +29,4 @@ is VERY much slower for the case where A _is_ inside B.
 
 ---
 
-diff --git a/src/polygon1.c b/src/polygon1.c
-index 7032370..09cafae 100644
---- a/src/polygon1.c
-+++ b/src/polygon1.c
-@@ -2966,10 +2966,24 @@ poly_M_CheckInside (POLYAREA * p, Vector v0)
- int
- poly_ContourInContour (PLINE * poly, PLINE * inner)
- {
-+  VNODE *pt;
-   assert (poly != NULL);
-   assert (inner != NULL);
-   if (cntrbox_inside (inner, poly))
--    return poly_InsideContour (poly, inner->head.point);
-+    { /* FIXME: This is SLOW!!
-+       * Check all points on the contour being tested, because we don't
-+       * want to falsely return that two contours are inside each other
-+       * if they just touch at a few points.
-+       */
-+      pt = &inner->head;
-+      do
-+        {
-+          if (!poly_InsideContour (poly, pt->point))
-+            return 0;
-+        } while ((pt = pt->next) != &inner->head);
-+      return 1;
-+    }
-+  }
-   return 0;
- }
+
