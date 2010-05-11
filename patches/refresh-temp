@@ -1,0 +1,41 @@
+Bottom: 4d578b0fbd911d53d9e9a3b01e4d4c3c0cd28cab
+Top:    c44ebc059c96c1c05f6eeeb6752d9e1f4ebfa81b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-05-11 15:24:50 +0100
+
+Refresh of avoid-computing-internal-point
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 0d484c0..af92d10 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -111,7 +111,7 @@ RCSID ("$Id$");
+ 
+ #define UNSUBTRACT_BLOAT 10
+ #define SUBTRACT_PIN_VIA_BATCH_SIZE 100
+-#define SUBTRACT_LINE_BATCH_SIZE 1
++#define SUBTRACT_LINE_BATCH_SIZE 20
+ 
+ /* ---------------------------------------------------------------------------
+  * local prototypes
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 3a78cf0..3f42057 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -3104,6 +3104,14 @@ poly_ContourInContour (PLINE * poly, PLINE * inner)
+   assert (inner != NULL);
+   if (cntrbox_inside (inner, poly))
+     {
++      /* Since computing the interior point isn't that quick,
++       * and many tests will return FALSE, try this quick test
++       * of an arbitrary external point. If it returns FALSE,
++       * the "inner" polygon is NOT inside poly.
++       */
++      if (!poly_InsideContour (poly, inner->head.point))
++        return 0;
++
+       poly_ComputeInteriorPoint (inner, point);
+       return poly_InsideContour (poly, point);
+     }
