@@ -2334,24 +2334,20 @@ poly_ComputeInteriorPoint (PLINE *poly, Vector v)
   double dist;
   double min_dist;
 
+  /* Find a convex node on the polygon */
   pt1 = &poly->head;
-
   do
     {
-      double angle_a, angle_b, angle_ab;
+      double dot_product;
 
       pt2 = pt1->next;
       pt3 = pt2->next;
 
-      /* NB: Could possibly calculate this test with slopes rather than arc tangents */
-      angle_a = atan2 (pt2->point[1] - pt1->point[1], pt2->point[0] - pt1->point[0]);
-      angle_b = atan2 (pt3->point[1] - pt2->point[1], pt3->point[0] - pt2->point[0]);
-      angle_ab = angle_b - angle_a;
+      dot_product = dot_orthogonal_to_direction (pt1->point, pt2->point,
+                                                 pt3->point, pt2->point);
 
-      if (angle_ab < 0)        angle_ab += 2 * M_PI;
-      if (angle_ab > 2 * M_PI) angle_ab -= 2 * M_PI;
-
-      if (angle_ab < M_PI) break;
+      if (dot_product > 0.)
+        break;
     }
   while ((pt1 = pt1->next) != &poly->head);
 
