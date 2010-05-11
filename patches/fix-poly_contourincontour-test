@@ -1,5 +1,5 @@
-Bottom: 128f1a506433b5924ecc78ee5eb6c6832612264b
-Top:    2b6891dabade51a32e90e756e066e1341785d115
+Bottom: e7442ffb41b7a5013dfd2c0baa5dfba31010be8e
+Top:    e7442ffb41b7a5013dfd2c0baa5dfba31010be8e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-05-10 17:40:15 +0100
 
@@ -29,40 +29,4 @@ is VERY much slower for the case where A _is_ inside B.
 
 ---
 
-diff --git a/src/polygon1.c b/src/polygon1.c
-index 5147492..c2371b5 100644
---- a/src/polygon1.c
-+++ b/src/polygon1.c
-@@ -2256,16 +2256,30 @@ poly_M_CheckInside (POLYAREA * p, Vector v0)
- 
- /* NB: This function assumes the caller _knows_ the contours do not
-  *     intersect. If the contours intersect, the result is undefined.
-- *     This function will return an incorrect results if the contours
-- *     share a commnon node at the arbitrary point tested.
-+ *     Tt will return the correct result if the contours which share
-+ *     common points beteween their contours. (Two identical contours
-+ *     are treated as being not inside each other).
-  */
- int
- poly_ContourInContour (PLINE * poly, PLINE * inner)
- {
-+  VNODE *pt;
-   assert (poly != NULL);
-   assert (inner != NULL);
-   if (cntrbox_inside (inner, poly))
--    return poly_InsideContour (poly, inner->head.point);
-+    { /* FIXME: This is SLOW!!
-+       * Check all points on the contour being tested, because we don't
-+       * want to falsely return that two contours are inside each other
-+       * if they just touch at a few points.
-+       */
-+      pt = &inner->head;
-+      do
-+        {
-+          if (!poly_InsideContour (poly, pt->point))
-+            return 0;
-+        } while ((pt = pt->next) != &inner->head);
-+      return 1;
-+    }
-   return 0;
- }
+
