@@ -1,0 +1,22 @@
+Bottom: 4328902b1eef4f10552263dc74258fbcd89c91f1
+Top:    128f1a506433b5924ecc78ee5eb6c6832612264b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-05-11 15:38:13 +0100
+
+Refresh of add-comment-explaining-assumpt
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index a0dd109..5147492 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2256,7 +2256,7 @@ poly_M_CheckInside (POLYAREA * p, Vector v0)
+ 
+ /* NB: This function assumes the caller _knows_ the contours do not
+  *     intersect. If the contours intersect, the result is undefined.
+- *     This function can return incorrect results if the contours
++ *     This function will return an incorrect results if the contours
+  *     share a commnon node at the arbitrary point tested.
+  */
+ int
