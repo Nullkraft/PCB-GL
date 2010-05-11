@@ -313,9 +313,9 @@ typedef struct
   double blue;
 } ColorCache;
 
-static char *current_color = NULL;
-static double global_alpha_mult = 1.0;
-static int alpha_changed = 0;
+/* static */ char *current_color = NULL;
+/* static */ double global_alpha_mult = 1.0;
+/* static */ int alpha_changed = 0;
 
 void
 ghid_set_color (hidGC gc, const char *name)
