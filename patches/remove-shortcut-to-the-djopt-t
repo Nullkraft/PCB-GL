@@ -1,0 +1,36 @@
+Bottom: 1f83bb8aa759d6d3481a4df05af1c559c91aec03
+Top:    46d0b6a634774c0ab49427e8c521e15ad6bde303
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-05-11 15:27:24 +0100
+
+Remove "=" shortcut to the djopt() thingy which keeps eating my design
+
+ARR!! how much work have I lost to this key binding!
+
+
+
+
+
+
+
+
+---
+
+diff --git a/src/gpcb-menu.res b/src/gpcb-menu.res
+index 1511e09..2fd32e2 100644
+--- a/src/gpcb-menu.res
++++ b/src/gpcb-menu.res
+@@ -326,13 +326,11 @@ MainMenu =
+    {"Rip up all auto-routed tracks" RipUp(All)}
+    -
+    {"Optimize routed tracks"
+-    {"Auto-Optimize" djopt(auto)  a={"Shift-=" "Shift<Key>="}}
+     {"Debumpify" djopt(debumpify) }
+     {"Unjaggy" djopt(unjaggy) }
+     {"Vianudge" djopt(vianudge) }
+     {"Viatrim" djopt(viatrim) }
+     {"Ortho pull" djopt(orthopull) }
+-    {"Simple optimization" djopt(simple)  a={"=" "<Key>="}}
+     {"Miter" djopt(miter) }
+     {"Puller" a={"Y" "<Key>y"} Puller() }
+     {"Global Puller"
