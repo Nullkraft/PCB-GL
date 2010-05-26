@@ -1,7 +1,7 @@
-Bottom: f3a3de1e5cbff4d2bc87e182eaf6fd2daf58db7f
-Top:    2b442f58122a888f9f21444f2925420cecd88ffd
+Bottom: a0f475124cac902e50fe9c4570c346fde9387832
+Top:    eb8e5a73d04300d2a0f13e7cd6c283868cd79dd5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-05-11 15:06:18 +0100
+Date:   2010-05-26 22:42:06 +0100
 
 Add support for a "poured" object.
 
@@ -4943,7 +4943,7 @@ index ccf3164..15223c0 100644
  void RestoreToPolygon(DataType *, int, void *, void *);
  void ClearFromPolygon(DataType *, int, void *, void *);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 3a78cf0..52c75fd 100644
+index 84220a2..cc03c53 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -935,6 +935,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
@@ -5011,7 +5011,7 @@ index 3a78cf0..52c75fd 100644
  
        if (M_POLYAREA_label (a, b, TRUE))
  	return TRUE;
-@@ -3185,15 +3225,19 @@ inside_sector (VNODE * pn, Vector p2)
+@@ -3192,15 +3232,19 @@ inside_sector (VNODE * pn, Vector p2)
  BOOLp
  poly_ChkContour (PLINE * a)
  {
@@ -5033,7 +5033,7 @@ index 3a78cf0..52c75fd 100644
        do
  	{
  	  if (!node_neighbours (a1, a2) &&
-@@ -3203,9 +3247,11 @@ poly_ChkContour (PLINE * a)
+@@ -3210,9 +3254,11 @@ poly_ChkContour (PLINE * a)
  	      if (icnt > 1)
  		return TRUE;
  
@@ -5047,7 +5047,7 @@ index 3a78cf0..52c75fd 100644
  		hit1 = a1->next;
  	      else
  		return TRUE;
-@@ -3227,7 +3273,7 @@ poly_ChkContour (PLINE * a)
+@@ -3234,7 +3280,7 @@ poly_ChkContour (PLINE * a)
  #endif
  	    }
  	}
