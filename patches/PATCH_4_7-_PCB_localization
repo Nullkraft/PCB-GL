@@ -1,56 +1,9 @@
 Bottom: 740e68bd16d2f81af75cdf945151721e98e3ebab
 Top:    fbe60d049ada6ff374ba6d0ac790a5bd61ff3695
-Author: Peter Clifton <pcjc2@cam.ac.uk>
+Author: Sergey Alyoshin <alyoshin.s@gmail.com>
 Date:   2010-05-26 22:58:27 +0100
 
-From alyoshin.s@gmail.com Wed May 26 05:35:42 2010
-Return-Path: <alyoshin.s@gmail.com>
-Received: from ppsw-33.csi.cam.ac.uk (ppsw-3-intramail.csi.cam.ac.uk
- [192.168.128.133]) by cyrus-29.csi.private.cam.ac.uk (Cyrus v2.3.14) with
- LMTPA; Wed, 26 May 2010 05:35:42 +0100
-X-Sieve: CMU Sieve 2.3
-X-Cam-AntiVirus: no malware found
-X-Cam-SpamDetails: score -0.1 from SpamAssassin-3.3.1-946085  *  0.0
- FREEMAIL_FROM Sender email is freemail (alyoshin.s[at]gmail.com) * -0.1
- DKIM_VALID_AU Message has a valid DKIM or DK signature from *      author's
- domain *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not
- necessarily *      valid * -0.1 DKIM_VALID Message has at least one valid
- DKIM or DK signature * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
- http://www.dnswl.org/, low *       trust *      [209.85.217.210 listed in
- list.dnswl.org]
-X-Cam-ScannerInfo: http://www.cam.ac.uk/cs/email/scanner/
-Received: from mail-gx0-f210.google.com ([209.85.217.210]:36877) by
- ppsw-33.csi.cam.ac.uk (mx.cam.ac.uk [131.111.8.149]:25) with esmtp
- (csa=unknown) id 1OH8LE-0001f6-Cl (Exim 4.70) for pcjc2@cam.ac.uk
- (return-path <alyoshin.s@gmail.com>); Wed, 26 May 2010 05:35:42 +0100
-Received: by gxk2 with SMTP id 2so3239579gxk.0 for <pcjc2@cam.ac.uk>; Tue,
- 25 May 2010 21:35:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=gamma;
- h=domainkey-signature:mime-version:received:received:date:message-id
- :subject:from:to:content-type;
- bh=ZYgiA9oK4ot8t1YMCNaUJPhQzwCuIvt5cs83UOOttls=;
- b=v0uATRH0fD82k9K4z1tv4dE/vpdSNOZXkEJFygrZx+GlQXRbA1LJBvnHmApijN1CqN
- CKmIINJaf8qXJvoU0lbamHSg8muinXmZOVwofF6t8GFrkOWp0xIzfUt+MQR9qqwvKq3U
- O0j8oHBZAOTtwsbkyrS5H3J2Slee4l3bwBYBg=
-DomainKey-Signature: a=rsa-sha1; c=nofws; d=gmail.com; s=gamma;
- h=mime-version:date:message-id:subject:from:to:content-type;
- b=YgusqUgOMecUaDIUvX7iIoaw8vUkcMDnd3fXh8wq56A7KQRII0GW0gPSkBVj5Neufp
- UP37RrFY3ODXXPjNzdyENgBlZLweRyT4dhSkKqlbL7u7R6ohfEirgIrLWr8vdZ0DH+pv
- zEXSUsgm5I+jRRlxNdYAMyo0TuFLeebD8tLBc=
-MIME-Version: 1.0
-Received: by 10.231.148.200 with SMTP id q8mr6501568ibv.10.1274848539901;
- Tue,  25 May 2010 21:35:39 -0700 (PDT)
-Received: by 10.231.182.77 with HTTP; Tue, 25 May 2010 21:35:39 -0700 (PDT)
-Date: Wed, 26 May 2010 08:35:39 +0400
-Message-ID: <AANLkTilbN3QrT2Txky4HWbG0Db44u5DM7rdS5rb8M8SF@mail.gmail.com>
-Subject: [PATCH 4/7] PCB localization
-From: Sergey Alyoshin <alyoshin.s@gmail.com>
-To: Peter Clifton <pcjc2@cam.ac.uk>
-Content-Type: text/plain; charset=ISO-8859-1
-X-Evolution-Source: imap://pcjc2@imap.hermes.cam.ac.uk/
-Content-Transfer-Encoding: 8bit
-
-Add rule to extract localized stings from .res files
+L18N: Add rule to extract localized stings from .res files
 
 
 ---
