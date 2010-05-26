@@ -1,0 +1,81 @@
+Bottom: bf5b596deb5cc5740503e5247f82d448e1817db0
+Top:    740e68bd16d2f81af75cdf945151721e98e3ebab
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-05-26 22:58:22 +0100
+
+From alyoshin.s@gmail.com Wed May 26 05:34:54 2010
+Return-Path: <alyoshin.s@gmail.com>
+Received: from ppsw-32.csi.cam.ac.uk (ppsw-2-intramail.csi.cam.ac.uk
+ [192.168.128.132]) by cyrus-29.csi.private.cam.ac.uk (Cyrus v2.3.14) with
+ LMTPA; Wed, 26 May 2010 05:34:54 +0100
+X-Sieve: CMU Sieve 2.3
+X-Cam-AntiVirus: no malware found
+X-Cam-SpamDetails: score -0.1 from SpamAssassin-3.3.1-946085  *  0.0
+ FREEMAIL_FROM Sender email is freemail (alyoshin.s[at]gmail.com) * -0.1
+ DKIM_VALID_AU Message has a valid DKIM or DK signature from *      author's
+ domain *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not
+ necessarily *      valid * -0.1 DKIM_VALID Message has at least one valid
+ DKIM or DK signature
+X-Cam-ScannerInfo: http://www.cam.ac.uk/cs/email/scanner/
+Received: from mail-gy0-f180.google.com ([209.85.160.180]:40149) by
+ ppsw-32.csi.cam.ac.uk (mx.cam.ac.uk [131.111.8.148]:25) with esmtp
+ (csa=unknown) id 1OH8KS-00083O-BP (Exim 4.70) for pcjc2@cam.ac.uk
+ (return-path <alyoshin.s@gmail.com>); Wed, 26 May 2010 05:34:54 +0100
+Received: by gyb13 with SMTP id 13so2514467gyb.25 for <pcjc2@cam.ac.uk>;
+ Tue, 25 May 2010 21:34:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=gamma;
+ h=domainkey-signature:mime-version:received:received:date:message-id
+ :subject:from:to:content-type;
+ bh=ycYT8cip57FggTOdwgMF0//QCMgmjw2d4/NXN1X76ps=;
+ b=U7DTjratW/J89XgZBxuI9hjSVRZtwiAvnGxVLHaeBs4wGzPiEIq24tx1NGFR1U7zJy
+ /emmDGlGHFGB5Yo5cROcDUNkcLhM3c13AaKwLhXoTcVCJp7lFQ9QnXBFkwIvyJ2Sdkgp
+ N1crJtDJiEDNevYx/9XyVWlsgKmpmfixTDNUY=
+DomainKey-Signature: a=rsa-sha1; c=nofws; d=gmail.com; s=gamma;
+ h=mime-version:date:message-id:subject:from:to:content-type;
+ b=DPWnygCtDlMgB7fYSvnoXAj1E9pyxNQHafG/SW2N0v/mh1WqF2aciCUQBJOuS0rL4N
+ bWuRQgwFxDkWp5wCTxpoaduhAPzwj8h1qWQlFxwP1MYVgITHcz8YiQ2JI7F9auHBjaG3
+ WtwHKTTVJbqy8GCn1tpfrdc3N0wJx5HbtpVCs=
+MIME-Version: 1.0
+Received: by 10.231.174.130 with SMTP id t2mr7601868ibz.50.1274848490137;
+ Tue,  25 May 2010 21:34:50 -0700 (PDT)
+Received: by 10.231.182.77 with HTTP; Tue, 25 May 2010 21:34:50 -0700 (PDT)
+Date: Wed, 26 May 2010 08:34:50 +0400
+Message-ID: <AANLkTinHXQqd_Kl_3qyhxndhcieo8wKQ0Cef-yfkwzni@mail.gmail.com>
+Subject: [PATCH 3/7] PCB localization
+From: Sergey Alyoshin <alyoshin.s@gmail.com>
+To: Peter Clifton <pcjc2@cam.ac.uk>
+Content-Type: text/plain; charset=ISO-8859-1
+X-Evolution-Source: imap://pcjc2@imap.hermes.cam.ac.uk/
+Content-Transfer-Encoding: 8bit
+
+Add source files with localized strings to .po generation
+
+
+---
+
+diff --git a/po/POTFILES.in b/po/POTFILES.in
+index 01627a2..9ef4db5 100644
+--- a/po/POTFILES.in
++++ b/po/POTFILES.in
+@@ -14,6 +14,7 @@ src/edif.c
+ src/error.c
+ src/file.c
+ src/find.c
++src/gpcb-menu.res.h
+ src/hid/batch/batch.c
+ src/hid/common/hidnogui.c
+ src/hid/gerber/gerber.c
+@@ -30,10 +31,13 @@ src/hid/gtk/gui-log-window.c
+ src/hid/gtk/gui-misc.c
+ src/hid/gtk/gui-netlist-window.c
+ src/hid/gtk/gui-top-window.c
++src/hid/ps/ps.c
+ src/main.c
++src/misc.c
+ src/move.c
+ src/netlist.c
+ src/parse_y.c
++src/pcb-menu.res.h
+ src/polygon.c
+ src/rats.c
+ src/report.c
