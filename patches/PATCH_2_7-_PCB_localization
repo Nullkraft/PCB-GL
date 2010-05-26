@@ -1,0 +1,69 @@
+Bottom: 4ff63410ef0e13c83aa60c48beec01a04ce1b86f
+Top:    bf5b596deb5cc5740503e5247f82d448e1817db0
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-05-26 22:58:12 +0100
+
+From alyoshin.s@gmail.com Wed May 26 05:34:00 2010
+Return-Path: <alyoshin.s@gmail.com>
+Received: from ppsw-31.csi.cam.ac.uk (ppsw-1-intramail.csi.cam.ac.uk
+ [192.168.128.131]) by cyrus-29.csi.private.cam.ac.uk (Cyrus v2.3.14) with
+ LMTPA; Wed, 26 May 2010 05:34:00 +0100
+X-Sieve: CMU Sieve 2.3
+X-Cam-AntiVirus: no malware found
+X-Cam-SpamDetails: score -0.1 from SpamAssassin-3.3.1-946085  * -0.0
+ RCVD_IN_DNSWL_NONE RBL: Sender listed at http://www.dnswl.org/, low *
+ trust *      [74.125.83.52 listed in list.dnswl.org] *  0.0 FREEMAIL_FROM
+ Sender email is freemail (alyoshin.s[at]gmail.com) * -0.1 DKIM_VALID_AU
+ Message has a valid DKIM or DK signature from *      author's domain *  0.1
+ DKIM_SIGNED Message has a DKIM or DK signature, not necessarily *
+ valid * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+X-Cam-ScannerInfo: http://www.cam.ac.uk/cs/email/scanner/
+Received: from mail-gw0-f52.google.com ([74.125.83.52]:61150) by
+ ppsw-31.csi.cam.ac.uk (mx.cam.ac.uk [131.111.8.147]:25) with esmtp
+ (csa=unknown) id 1OH8Jc-0004MQ-AG (Exim 4.70) for pcjc2@cam.ac.uk
+ (return-path <alyoshin.s@gmail.com>); Wed, 26 May 2010 05:34:00 +0100
+Received: by gwj20 with SMTP id 20so2529042gwj.25 for <pcjc2@cam.ac.uk>;
+ Tue, 25 May 2010 21:33:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmail.com; s=gamma;
+ h=domainkey-signature:mime-version:received:received:date:message-id
+ :subject:from:to:content-type;
+ bh=dzzXidTtw2lJyaXq4nz7lpzNQfBkQXUmoKhkuFtsGK8=;
+ b=o+O0oAlkMUCwbdqMDIPMmnBC8noaHsHX9YHsIpdUkcMkOVDTY78VeUhVwHP0CnMaSN
+ AZVMTVErzGPJ6f9rvhd2Wr+v93d+xXy6rGiOYc0ivmB9bWxvL60tsIdbCwBFsaY0hAJI
+ RMlq+t2cfGrGKdKSiVVgj7a4X4z9xxO9vZBDQ=
+DomainKey-Signature: a=rsa-sha1; c=nofws; d=gmail.com; s=gamma;
+ h=mime-version:date:message-id:subject:from:to:content-type;
+ b=k565ZX49LxlbSjd7tESzhtBhI/9dlJyTvhv8BxaTV+3jMRxRxItLEuBmdMSOgz6SRu
+ G1ahsGOUPyJiOyDo4uEhilI4osDxwk9LoUEu1IYOZLVSHPXW9HmHakfDFMGPHqNwis70
+ BGItj+Um572EnusplzM+52W6aY2UUw7tkmz24=
+MIME-Version: 1.0
+Received: by 10.231.120.100 with SMTP id c36mr6635033ibr.77.1274848439189;
+ Tue, 25 May 2010 21:33:59 -0700 (PDT)
+Received: by 10.231.182.77 with HTTP; Tue, 25 May 2010 21:33:59 -0700 (PDT)
+Date: Wed, 26 May 2010 08:33:59 +0400
+Message-ID: <AANLkTimx5Mu80JWHEfZbCA2SBc7DDh8x_2xWT1Er5E4s@mail.gmail.com>
+Subject: [PATCH 2/7] PCB localization
+From: Sergey Alyoshin <alyoshin.s@gmail.com>
+To: Peter Clifton <pcjc2@cam.ac.uk>
+Content-Type: text/plain; charset=ISO-8859-1
+X-Evolution-Source: imap://pcjc2@imap.hermes.cam.ac.uk/
+Content-Transfer-Encoding: 8bit
+
+Localize "need coord" message before output
+
+
+---
+
+diff --git a/src/hid/common/actions.c b/src/hid/common/actions.c
+index 9fa129d..d1e87f5 100644
+--- a/src/hid/common/actions.c
++++ b/src/hid/common/actions.c
+@@ -231,7 +231,7 @@ hid_actionv (const char *name, int argc, char **argv)
+     }
+ 
+   if (a->need_coord_msg)
+-    gui->get_coords (a->need_coord_msg, &x, &y);
++    gui->get_coords (_(a->need_coord_msg), &x, &y);
+ 
+   if (Settings.verbose)
+     {
