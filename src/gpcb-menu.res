@@ -78,6 +78,10 @@ MainMenu =
 #
 # Edit Menu
 #
+<<<<<<< current
+=======
+
+>>>>>>> patched
   {"Edit"
    {"Undo last operation" Undo() a={"U" "<Key>u"}}
    {"Redo last undone operation" Redo() a={"Shift-R" "Shift<Key>r"}}
@@ -116,6 +120,10 @@ MainMenu =
 #
 # View Menu
 #
+<<<<<<< current
+=======
+
+>>>>>>> patched
   {"View"
    {"Enable visible grid" checked=drawgrid Display(Grid)}
    {"Grid units"
