@@ -1,0 +1,76 @@
+Bottom: d9ca792132580d3d49790c6aefa2d8ffaf3fecd7
+Top:    4ff63410ef0e13c83aa60c48beec01a04ce1b86f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-05-26 22:57:57 +0100
+
+From alyoshin.s@gmail.com Wed May 26 05:33:19 2010
+
+PCB localization
+
+Move internationalization macros to one header
+
+
+---
+
+diff --git a/src/global.h b/src/global.h
+index 1082dd1..b7c9d0f 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -60,7 +60,24 @@ typedef struct AttributeListType AttributeListType, *AttributeListTypePtr;
+ #include "hid.h"
+ #include "polyarea.h"
+ 
+-#define _(S) (S)
++/* Internationalization support. */
++#ifdef ENABLE_NLS
++# include <libintl.h>
++# define _(S) gettext(S)
++# if defined(gettext_noop)
++#  define N_(S) gettext_noop(S)
++# else
++#  define N_(S) (S)
++# endif
++#else
++# define _(S) (S)
++# define N_(S) (S)
++# define textdomain(S) (S)
++# define gettext(S) (S)
++# define dgettext(D, S) (S)
++# define dcgettext(D, S, T) (S)
++# define bindtextdomain(D, Dir) (D)
++#endif /* ENABLE_NLS */
+ 
+ typedef int LocationType;
+ typedef int BDimension;		/* big dimension */
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 610f30e..0a2e747 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -37,27 +37,6 @@
+ 
+ #include <gtk/gtk.h>
+ 
+-/* Internationalization support.
+-*/
+-#if defined (ENABLE_NLS)
+-#include <libintl.h>
+-#   undef _
+-#   define _(String) dgettext(GETTEXT_PACKAGE,String)
+-#   if defined(gettext_noop)
+-#       define N_(String) gettext_noop(String)
+-#   else
+-#       define N_(String) (String)
+-#   endif /* gettext_noop */
+-#else
+-#   undef _
+-#   define _(String) (String)
+-#   define N_(String) (String)
+-#   define textdomain(String) (String)
+-#   define gettext(String) (String)
+-#   define dgettext(Domain,String) (String)
+-#   define dcgettext(Domain,String,Type) (String)
+-#   define bindtextdomain(Domain,Directory) (Domain)
+-#endif /* ENABLE_NLS */
+ 
+ 
+   /* Silk and rats lines are the two additional selectable to draw on.
