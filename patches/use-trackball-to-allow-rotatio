@@ -1,5 +1,5 @@
-Bottom: 42af63092d3c59a445b2633cb7a7d97cc9969e55
-Top:    4a3c843b358a880ee17f5c00d0b7d0d0496eab8a
+Bottom: a5e9bf1f6485ad94151084aa8469e2ea1c799afc
+Top:    387ba84e674a7ec3a689df1ba03441785fb6485b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-01 22:18:44 +0100
 
@@ -417,7 +417,7 @@ index faa09fe..15412ea 100644
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 56f0016..a61cff3 100644
+index 3e30d9a..7c9289e 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -122,6 +122,7 @@ a zoom in/out.
@@ -451,10 +451,10 @@ index 56f0016..a61cff3 100644
    gtk_box_pack_start(GTK_BOX(vbox_left), vbox, FALSE, FALSE, 0);
    ghidgui->mode_buttons0_frame_vbox = vbox;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 1f87edb..48b3593 100644
+index 4dd32a3..dad9dea 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -348,6 +348,8 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -326,6 +326,8 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
  gint ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  				       GdkEventScroll * ev, GHidPort * out);
  

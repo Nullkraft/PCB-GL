@@ -1,5 +1,5 @@
-Bottom: a0801835bb682003834573a6605db32cde901f2c
-Top:    eb06d142800ec3c3f9dd38c71ddc631495f0cab9
+Bottom: dd3fa58720666f3731f907da903e3674025a754c
+Top:    f523ada97ca316b274f29f2ea31feba42f637634
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-01 22:18:46 +0100
 
@@ -88,7 +88,7 @@ index 5ad3296..b9a2b30 100644
 +}
 +
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index a61cff3..0cda4d5 100644
+index 7c9289e..d18d2eb 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -123,6 +123,7 @@ a zoom in/out.
@@ -176,10 +176,10 @@ index d6bd03c..3af647e 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index b53ab2a..8013de9 100644
+index 38f2148..af281b3 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -181,6 +181,8 @@ typedef struct
+@@ -159,6 +159,8 @@ typedef struct
      library_window_width,
      library_window_height,
      netlist_window_height, history_size, settings_mode, auto_pan_speed;
@@ -188,7 +188,7 @@ index b53ab2a..8013de9 100644
  }
  GhidGui;
  
-@@ -193,6 +195,7 @@ typedef struct
+@@ -171,6 +173,7 @@ typedef struct
  {
    GtkWidget *top_window,	/* toplevel widget              */
     *drawing_area;		/* and its drawing area */
@@ -196,7 +196,7 @@ index b53ab2a..8013de9 100644
    GdkPixmap *pixmap, *mask;
    GdkDrawable *drawable;	/* Current drawable for drawing routines */
    gint width, height;
-@@ -358,6 +361,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -336,6 +339,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
  

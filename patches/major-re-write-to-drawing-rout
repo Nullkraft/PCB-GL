@@ -1,5 +1,5 @@
-Bottom: e2e81c063d24368b454d66c2586b3abbd86149f3
-Top:    a0801835bb682003834573a6605db32cde901f2c
+Bottom: 499f6b993562575b35d8d0402beea17f2900ff7d
+Top:    dd3fa58720666f3731f907da903e3674025a754c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-01 22:18:46 +0100
 
@@ -198,7 +198,7 @@ index 87daf19..8705cd4 100644
  void
  ghid_set_color (hidGC gc, const char *name)
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index b4befd5..acdcb7a 100644
+index 404a969..a34bc91 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -339,68 +339,89 @@ ghid_invalidate_all ()
@@ -1026,10 +1026,10 @@ index 381b857..5ad3296 100644
  }
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index e497528..b53ab2a 100644
+index e676b43..38f2148 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -564,6 +564,7 @@ void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
+@@ -542,6 +542,7 @@ void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
  /* gtkhid-main.c */
  
  void ghid_invalidate_all ();
