@@ -3226,9 +3226,9 @@ poly_ChkContour (PLINE * a)
 
 #if 1
 	      /* now check if they are inside each other */
-	      if (inside_sector (hit1, hit2->prev->point) ||
+	      if (inside_sector (hit1, hit2->prev->point) !=
 		  inside_sector (hit1, hit2->next->point) ||
-		  inside_sector (hit2, hit1->prev->point) ||
+		  inside_sector (hit2, hit1->prev->point) !=
 		  inside_sector (hit2, hit1->next->point))
 		return TRUE;
 #endif
