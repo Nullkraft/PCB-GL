@@ -1,7 +1,7 @@
-Bottom: f985062170045f4e9ed1a160ff330fe5b5673429
-Top:    f50b2af065612427541dffd5fad9ce83a0e11220
+Bottom: eb574c4ae464a430f34bbec9b90f35beef712926
+Top:    27b8034501a84079d409adfb2b161320eeb114dc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-05-26 22:41:53 +0100
+Date:   2010-06-01 22:25:10 +0100
 
 Add magic flag to stop pour clipping for off-screen buffers
 
@@ -24,7 +24,7 @@ Add magic flag to stop pour clipping for off-screen buffers
 ---
 
 diff --git a/src/create.c b/src/create.c
-index e911290..1747188 100644
+index aa3f8e0..774dd51 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -139,6 +139,7 @@ CreateNewPCB (Boolean SetDefaultNames)
@@ -36,10 +36,10 @@ index e911290..1747188 100644
    ptr->ThermStyle = 4;
    ptr->IsleArea = 2.e8;
 diff --git a/src/global.h b/src/global.h
-index d9a4e62..4335c73 100644
+index 96011bd..537819d 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -395,6 +395,7 @@ typedef struct			/* holds all objects */
+@@ -412,6 +412,7 @@ typedef struct			/* holds all objects */
     *rat_tree;
    struct PCBType *pcb;
    LayerType Layer[MAX_LAYER + 2];	/* add 2 silkscreen layers */
