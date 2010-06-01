@@ -1,7 +1,7 @@
-Bottom: a0f475124cac902e50fe9c4570c346fde9387832
-Top:    eb8e5a73d04300d2a0f13e7cd6c283868cd79dd5
+Bottom: 9abda9d8ad36d1b223b481c46a9fd7e655819c51
+Top:    1fb37d380d75d070e75267056aab4d4685f70f59
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-05-26 22:42:06 +0100
+Date:   2010-06-01 22:25:14 +0100
 
 Add support for a "poured" object.
 
@@ -35,12 +35,12 @@ index cd6f4f9..4ab3813 100755
  						/* an element */
  #define	MAX_LIBRARY_LINE_LENGTH		255	/* maximum line length in the */
 diff --git a/po/POTFILES.in b/po/POTFILES.in
-index b0e6f31..24b21f2 100644
+index 8db0918..5faaf6d 100644
 --- a/po/POTFILES.in
 +++ b/po/POTFILES.in
-@@ -36,6 +36,7 @@ src/move.c
- src/netlist.c
+@@ -40,6 +40,7 @@ src/netlist.c
  src/parse_y.c
+ src/pcb-menu.res.h
  src/polygon.c
 +src/pour.c
  src/rats.c
@@ -60,7 +60,7 @@ index b709c27..452e325 100644
  	print.c \
  	print.h \
 diff --git a/src/action.c b/src/action.c
-index 6bbee09..87d5665 100644
+index dde6484..9645a7f 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -57,6 +57,7 @@
@@ -837,7 +837,7 @@ index fbd1735..dd269bc 100644
    {
      r_delete_entry (layer->text_tree, (BoxTypePtr) text);
 diff --git a/src/change.c b/src/change.c
-index fe159f4..1149dec 100644
+index 059b06f..b0d34bf 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -50,6 +50,7 @@
@@ -1647,7 +1647,7 @@ index 472fc75..8d027d0 100644
  				    ElementTypePtr, Boolean, LocationType, LocationType);
  Boolean CopyPastebufferToLayout (LocationType, LocationType);
 diff --git a/src/create.c b/src/create.c
-index eced68d..e911290 100644
+index 1a79ae6..aa3f8e0 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -545,29 +545,28 @@ CreateNewArcOnLayer (LayerTypePtr Layer,
@@ -2534,10 +2534,10 @@ index c6c7458..5ae97c3 100644
    {"removemode", FlagMode, REMOVE_MODE},
    {"rotatemode", FlagMode, ROTATE_MODE},
 diff --git a/src/global.h b/src/global.h
-index 1082dd1..d9a4e62 100644
+index b7c9d0f..96011bd 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -237,15 +237,41 @@ typedef struct
+@@ -254,15 +254,41 @@ typedef struct
    void *Element;
  } TextType, *TextTypePtr;
  
@@ -2584,7 +2584,7 @@ index 1082dd1..d9a4e62 100644
  };
  
  typedef struct			/* holds information about arcs */
-@@ -259,26 +285,25 @@ typedef struct			/* holds information about arcs */
+@@ -276,26 +302,25 @@ typedef struct			/* holds information about arcs */
      Delta;
  } ArcType, *ArcTypePtr;
  
@@ -2620,7 +2620,7 @@ index 1082dd1..d9a4e62 100644
    Boolean On;			/* visible flag */
    char *Color,			/* color */
     *SelectedColor;
-@@ -563,7 +588,8 @@ typedef struct			/* holds cursor information */
+@@ -580,7 +605,8 @@ typedef struct			/* holds cursor information */
    Boolean On;			/* flag for 'is visible' */
    AttachedLineType AttachedLine;	/* data of new lines... */
    AttachedBoxType AttachedBox;
@@ -2630,7 +2630,7 @@ index 1082dd1..d9a4e62 100644
    AttachedObjectType AttachedObject;	/* data of attached objects */
    enum crosshair_shape shape; /* shape of crosshair */
  } CrosshairType, *CrosshairTypePtr;
-@@ -678,13 +704,15 @@ typedef struct
+@@ -695,13 +721,15 @@ typedef struct
    void *(*Line) (LayerTypePtr, LineTypePtr);
    void *(*Text) (LayerTypePtr, TextTypePtr);
    void *(*Polygon) (LayerTypePtr, PolygonTypePtr);
@@ -2648,7 +2648,7 @@ index 1082dd1..d9a4e62 100644
    void *(*Rat) (RatTypePtr);
  } ObjectFunctionType, *ObjectFunctionTypePtr;
 diff --git a/src/gpcb-menu.res b/src/gpcb-menu.res
-index 1511e09..14ec444 100644
+index f9e425a..58d62dc 100644
 --- a/src/gpcb-menu.res
 +++ b/src/gpcb-menu.res
 @@ -509,7 +509,7 @@ PopupMenus =
@@ -2745,7 +2745,7 @@ index 4e69c74..b95aa6f 100644
  	result = TRUE;
        break;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 0cda4d5..9d02688 100644
+index d18d2eb..7bb3628 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -1984,7 +1984,8 @@ static ModeButton mode_buttons[] = {
@@ -2798,7 +2798,7 @@ index d67947d..16e0718 100644
      }
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 6a915f0..0860ca3 100644
+index 2a7a4d7..394f41b 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -481,7 +481,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
@@ -3962,7 +3962,7 @@ index bbb7255..8e35612 100644
  		|
  		;
 diff --git a/src/pcb-menu.res b/src/pcb-menu.res
-index c18eb86..447a1d2 100644
+index cbdcd2d..84eb1ed 100644
 --- a/src/pcb-menu.res
 +++ b/src/pcb-menu.res
 @@ -173,7 +173,7 @@ MainMenu =
@@ -4943,7 +4943,7 @@ index ccf3164..15223c0 100644
  void RestoreToPolygon(DataType *, int, void *, void *);
  void ClearFromPolygon(DataType *, int, void *, void *);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 84220a2..cc03c53 100644
+index b6729d4..0c24a98 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -935,6 +935,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
@@ -5047,7 +5047,7 @@ index 84220a2..cc03c53 100644
  		hit1 = a1->next;
  	      else
  		return TRUE;
-@@ -3234,7 +3280,7 @@ poly_ChkContour (PLINE * a)
+@@ -3232,7 +3278,7 @@ poly_ChkContour (PLINE * a)
  #endif
  	    }
  	}
@@ -6436,7 +6436,7 @@ index 848d394..db123b1 100644
    r_search(PCB->Data->via_tree, &box, NULL, gp_pin_cb, 0);
    r_search(PCB->Data->pad_tree, &box, NULL, gp_pad_cb, 0);
 diff --git a/src/rats.c b/src/rats.c
-index c174cc9..e0e6a32 100644
+index 0e2a068..990d510 100644
 --- a/src/rats.c
 +++ b/src/rats.c
 @@ -513,20 +513,24 @@ GatherSubnets (NetListTypePtr Netl, Boolean NoWarn, Boolean AndRats)
