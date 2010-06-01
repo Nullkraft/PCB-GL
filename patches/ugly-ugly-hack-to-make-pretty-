@@ -1,5 +1,5 @@
-Bottom: 14a65f737d5c9ed93e64af617ab68e2a250c480e
-Top:    3eb6326ed0e892eea6c1aa36865a493c58e812e3
+Bottom: 34aee45af30994e849768a55aee3dee3871c54f7
+Top:    51bf220e27680d322e500f0564296b168fa695d4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-01 22:18:43 +0100
 
@@ -96,7 +96,7 @@ index fec839e..6b1e306 100644
  {
    USE_GC (gc);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 59a390e..7960c74 100644
+index a6d3f92..b3ec8da 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -1138,7 +1138,7 @@ HID ghid_hid = {
@@ -109,10 +109,10 @@ index 59a390e..7960c74 100644
  
    ghid_calibrate,
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 78ad75c..1f87edb 100644
+index 4342f3f..4dd32a3 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -554,6 +554,8 @@ void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
+@@ -532,6 +532,8 @@ void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
  void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
  void ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly,
                              const BoxType *clip_box); /* GL ONLY */

@@ -1,5 +1,5 @@
-Bottom: f72c01b5e82b1bc45efb8da0e4bfe54d23c61353
-Top:    2759aacb3216c1e975c33d86613740e424e5dbc4
+Bottom: 1a9c75dabbbb48b91a0a65356f6efb646db312d9
+Top:    b7566a1bf565000d1539dba19a4a67c25386a3a3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-01 22:18:42 +0100
 
@@ -466,7 +466,7 @@ index 430059b..fec839e 100644
        break;
      }
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index bbb95ae..59a390e 100644
+index d92d7ec..a6d3f92 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -339,14 +339,39 @@ ghid_invalidate_all ()
@@ -615,7 +615,7 @@ index 4caddf2..faa09fe 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 673184e..56f0016 100644
+index 02947b1..3e30d9a 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2669,6 +2669,7 @@ ghid_parse_arguments (int *argc, char ***argv)
@@ -680,7 +680,7 @@ index 0c9345b..d67947d 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 810ceba..6a915f0 100644
+index 7b42b5f..2a7a4d7 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -636,6 +636,10 @@ ps_set_layer (const char *name, int group, int empty)
