@@ -37,6 +37,17 @@
 
 #include <gtk/gtk.h>
 
+/* The Linux OpenGL ABI 1.0 spec requires that we define
+ * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
+ * in order to get prototypes:
+ *   http://www.opengl.org/registry/ABI/
+ */
+#ifdef ENABLE_GL
+#  define GL_GLEXT_PROTOTYPES 1
+#  include <GL/gl.h>
+#  include <gtk/gtkgl.h>
+#  include "hid/common/hidgl.h"
+#endif
 
 
   /* Silk and rats lines are the two additional selectable to draw on.
@@ -164,7 +175,13 @@ typedef struct
   GdkDrawable *drawable;	/* Current drawable for drawing routines */
   gint width, height;
 
-  GdkGC *bg_gc, *offlimits_gc, *mask_gc, *u_gc, *grid_gc;
+#ifdef ENABLE_GL
+  GdkGLConfig *glconfig;
+#endif
+
+  gint trans_lines;
+
+//  GdkGC *bg_gc, *offlimits_gc, *mask_gc, *u_gc, *grid_gc;
 
   GdkColor bg_color, offlimits_color, grid_color;
 
@@ -279,6 +296,7 @@ void ghid_get_pointer (gint *, gint *);
 
 /* gui-output-events.c function prototypes.
 */
+
 void ghid_port_ranges_changed (void);
 void ghid_port_ranges_zoom (gdouble zoom);
 gboolean ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative);
@@ -494,7 +512,7 @@ GdkPixmap *ghid_render_pixmap (int cx,
 			       int height,
 			       int depth);
 
-/* gtkhid-gdk.c */
+/* gtkhid-gdk.c OR gtkhid-gl.c */
 hidGC ghid_make_gc (void);
 void ghid_destroy_gc (hidGC);
 void ghid_draw_grid (void);
@@ -515,7 +533,9 @@ void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
 void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
 
 /* gtkhid-main.c */
+
 void ghid_invalidate_all ();
+void ghid_invalidate_current_gc ();
 void ghid_get_coords (const char *msg, int *x, int *y);
 gint PCBChanged (int argc, char **argv, int x, int y);
 
