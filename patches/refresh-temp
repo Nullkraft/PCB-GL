@@ -1,0 +1,22 @@
+Bottom: e88108deab9900512a8094f9765a8fff3f145621
+Top:    758305d55504b97fc2c3acada99fcfc886fc35bc
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-02 21:26:20 +0100
+
+Refresh of hid-gtk-don-t-call-gdk_draw_po
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index dc2ad98..461b779 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -142,6 +142,8 @@ ghid_draw_grid (void)
+       points[n].x = Vx (x);
+       n++;
+     }
++  if (n == 0)
++    return;
+   for (y = y1; y <= y2; y += PCB->Grid)
+     {
+       int vy = Vy (y);
