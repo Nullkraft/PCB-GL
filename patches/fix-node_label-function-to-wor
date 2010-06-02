@@ -1,0 +1,61 @@
+Bottom: 406edeb130884aa2bd7bdbb9d1008be0103d39f7
+Top:    ac197b3ba5d8fd365da86e905aa7b1c371b6adc9
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-02 21:09:51 +0100
+
+Fix node_label() function to work with self-intersection
+
+Rather than just giving up if we encounter our own edges in the
+CVC list at first, skip them until we either run out of edges, or
+find one belonging to the other polygon.
+
+Test-case:
+
+Layer(1 "component")
+(
+        Line[60000 70000 60000 90000 4000 2000 "clearline"]
+        Line[80000 60000 80000 90000 4000 2000 "clearline"]
+        Line[90000 90000 90000 50000 4000 6000 "clearline"]
+        Line[60000 40000 80000 60000 4000 6000 "clearline"]
+        Polygon("clearpoly")
+        (
+                [10000 10000] [140000 10000] [140000 140000] [10000 140000]
+        )
+)
+
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 6a40752..787974b 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -387,7 +387,7 @@ node_label
+ static unsigned int
+ node_label (VNODE * pn)
+ {
+-  CVCList *l;
++  CVCList *first_l, *l;
+   char this_poly;
+   int region = UNKNWN;
+ 
+@@ -400,12 +400,15 @@ node_label (VNODE * pn)
+    * and check if this edge (pn -> pn->next) is found between the other poly's entry and exit
+    */
+   if (pn->cvc_next->angle == pn->cvc_next->prev->angle)
+-    {
+-      l = pn->cvc_next->prev;
+-      assert (l->poly != this_poly);
+-    }
++    l = pn->cvc_next->prev;
+   else
+     l = pn->cvc_next->next;
++
++  first_l = l;
++  while ((l->poly == this_poly) && (l != first_l->prev))
++    l= l->next;
++  assert (l->poly != this_poly);
++
+   assert (l && l->angle >= 0 && l->angle <= 4.0);
+   if (l->poly != this_poly)
+     {
