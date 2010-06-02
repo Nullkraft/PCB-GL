@@ -5,40 +5,52 @@ Date:   2010-06-02 21:08:42 +0100
 
 Fix the polygon touching contour test in poly_ChkContour
 
-This polygon must report as good:
+The following test-cases were used to help verify the changes:
 
-Polygon("")
-  (
-[85000 50000]
-[85000 90000]
-[83000 90000]
-[83536 63535]
-[85000 59999] ##
-[83535 56464]
-)
-
-The intersection forms a polygon like this:
+This polygon forms a self-touching shape like this:
 
 \|  However, the right-hand edge does NOT have a node at the junction.
 /|  This previously caused it to fail the self-intersection test.
-
-
-This polygon must report as bad:
+    It should be reported as good.
 
 Polygon("")
   (
-[85000 50000]
-[85000 90000]
-[83000 90000]
-[83536 63535]
-[85000 59999] ##
-[89535 56464] ##
-)
+    [85000 50000] [85000 90000] [83000 90000]
+    [83536 63535] [85000 59999] [83535 56464]
+  )
 
-The intersection forms a polygon like this:
+
+This polygon forms a self-intersecting shape like this:
 
  |/  (The vertical section is a straight line with no node in the middle)
-/|
+/|   It must be reported as bad.
+
+Polygon("")
+  (
+    [85000 50000] [85000 90000] [83000 90000]
+    [83536 63535] [85000 59999] [89535 56464]
+  )
+
+
+This polygon self-intersects, and must be reported as bad:
+
+Polygon("")
+  (
+    [160000  50000] [160000  90000] [170000 100000]
+    [180000 120000] [180000 150000] [160000 150000]
+    [160000 120000] [170000 100000] [180000  90000]
+    [180000  50000]
+  )
+
+This polygon self-touches, and should be reported as good:
+
+Polygon("clearpoly")
+  (
+    [120000  50000] [120000  90000] [130000 100000]
+    [120000 120000] [120000 150000] [140000 150000]
+    [140000 120000] [130000 100000] [140000  90000]
+    [140000  50000]
+  )
 
 
 ---
