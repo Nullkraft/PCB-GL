@@ -1,5 +1,5 @@
 Bottom: a71e965df94a2b4195cb78232978567de496ca55
-Top:    db1a61a21f720b82f2c245923aa1c2bef3edca7a
+Top:    e0222666bc16346a134d98b1c36d58d0e6fdc515
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-02 21:38:18 +0100
 
@@ -9,7 +9,7 @@ Add strings to localization
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 6bbee09..80d666d 100644
+index 6bbee09..dde6484 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -560,7 +560,7 @@ FinishStroke (void)
@@ -242,7 +242,7 @@ index 6bbee09..80d666d 100644
  
    } else {
 -    fprintf (stderr, "%s():  Unable to determine temp directory name from the temp file\n", 
-+    fprintf (stderr, _("%s():  Unable to determine temp directory name from the temp file\n"), 
++    fprintf (stderr, _("%s():  Unable to determine temp directory name from the temp file\n"),
  	     __FUNCTION__);
      fprintf (stderr, "%s():  \"%s\"\n", 
  	     __FUNCTION__, name);
