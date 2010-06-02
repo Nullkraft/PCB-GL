@@ -7350,7 +7350,7 @@ tempfile_unlink (char * name)
     }
 
   } else {
-    fprintf (stderr, _("%s():  Unable to determine temp directory name from the temp file\n"), 
+    fprintf (stderr, _("%s():  Unable to determine temp directory name from the temp file\n"),
 	     __FUNCTION__);
     fprintf (stderr, "%s():  \"%s\"\n", 
 	     __FUNCTION__, name);
