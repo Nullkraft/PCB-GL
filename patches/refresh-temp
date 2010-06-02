@@ -1,0 +1,22 @@
+Bottom: ac197b3ba5d8fd365da86e905aa7b1c371b6adc9
+Top:    e88108deab9900512a8094f9765a8fff3f145621
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-02 21:10:49 +0100
+
+Refresh of fix-node_label-function-to-wor
+
+---
+
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 787974b..a8a8b89 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -406,7 +406,7 @@ node_label (VNODE * pn)
+ 
+   first_l = l;
+   while ((l->poly == this_poly) && (l != first_l->prev))
+-    l= l->next;
++    l = l->next;
+   assert (l->poly != this_poly);
+ 
+   assert (l && l->angle >= 0 && l->angle <= 4.0);
