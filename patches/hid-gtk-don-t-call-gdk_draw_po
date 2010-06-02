@@ -1,0 +1,16 @@
+Bottom: e88108deab9900512a8094f9765a8fff3f145621
+Top:    e88108deab9900512a8094f9765a8fff3f145621
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-02 21:24:15 +0100
+
+hid/gtk: Don't call gdk_draw_points() when we have no grid points to draw
+
+Fixes this warning seen when zooming close in on a course grid setting:
+
+Gdk-CRITICAL **: gdk_draw_points: assertion `(points != NULL) && (n_points > 0)' failed
+
+
+
+---
+
+
