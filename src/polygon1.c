@@ -406,7 +406,7 @@ node_label (VNODE * pn)
 
   first_l = l;
   while ((l->poly == this_poly) && (l != first_l->prev))
-    l= l->next;
+    l = l->next;
   assert (l->poly != this_poly);
 
   assert (l && l->angle >= 0 && l->angle <= 4.0);
