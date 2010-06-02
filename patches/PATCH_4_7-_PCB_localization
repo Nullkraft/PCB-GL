@@ -1,5 +1,5 @@
-Bottom: 740e68bd16d2f81af75cdf945151721e98e3ebab
-Top:    fbe60d049ada6ff374ba6d0ac790a5bd61ff3695
+Bottom: f7b6651f7950a2356525cce7d8d238bcb4ecb209
+Top:    f7b6651f7950a2356525cce7d8d238bcb4ecb209
 Author: Sergey Alyoshin <alyoshin.s@gmail.com>
 Date:   2010-05-26 22:58:27 +0100
 
@@ -8,20 +8,4 @@ Add rule to extract localized stings from .res files
 
 ---
 
-diff --git a/autogen.sh b/autogen.sh
-index d1671fb..3eeeca2 100755
---- a/autogen.sh
-+++ b/autogen.sh
-@@ -70,6 +70,12 @@ sed \
- 	-e 's/^GENPOT *=/GENPOT = XGETTEXT=\${XGETTEXT} MSGFMT=\${MSGFMT} /g' \
- 	-e 's/ChangeLog//g' \
- 	po/Makefile.in.in.orig > po/Makefile.in.in
-+
-+# Add rule for .res file processing
-+echo "
-+%.res.h: %.res
-+	\$(INTLTOOL_EXTRACT) --type=gettext/quoted $^" >> po/Makefile.in.in
-+
- rm -f po/Makefile.in.in.orig
- 
- ############################################################################
+
