@@ -13,7 +13,7 @@ rather than possibly outside it.
 This fixes an assertion on the following test-case. Prior to this
 commit, the incorrect "interior" point tested for the concave hole
 happens to lie inside the polygon's other hole, causing it to fail
-an assert when processing the concave hole.
+an assert during processing.
 
 Layer(2 "solder")
 (
