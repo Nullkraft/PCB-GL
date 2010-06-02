@@ -1,5 +1,5 @@
-Bottom: 4ff63410ef0e13c83aa60c48beec01a04ce1b86f
-Top:    bf5b596deb5cc5740503e5247f82d448e1817db0
+Bottom: f7b6651f7950a2356525cce7d8d238bcb4ecb209
+Top:    f7b6651f7950a2356525cce7d8d238bcb4ecb209
 Author: Sergey Alyoshin <alyoshin.s@gmail.com>
 Date:   2010-05-26 22:58:12 +0100
 
@@ -8,16 +8,4 @@ Localize "need coord" message before output
 
 ---
 
-diff --git a/src/hid/common/actions.c b/src/hid/common/actions.c
-index 9fa129d..d1e87f5 100644
---- a/src/hid/common/actions.c
-+++ b/src/hid/common/actions.c
-@@ -231,7 +231,7 @@ hid_actionv (const char *name, int argc, char **argv)
-     }
- 
-   if (a->need_coord_msg)
--    gui->get_coords (a->need_coord_msg, &x, &y);
-+    gui->get_coords (_(a->need_coord_msg), &x, &y);
- 
-   if (Settings.verbose)
-     {
+
