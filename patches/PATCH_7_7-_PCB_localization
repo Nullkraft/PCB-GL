@@ -1,5 +1,5 @@
-Bottom: 700a05dda2bf0cded7088b8185d23182fc3a6801
-Top:    2e6adaedbbefce200a4cfe37f7716ac23eff18f2
+Bottom: 8689918b360f1ce447ae13b148ffad8bedc17eb5
+Top:    8689918b360f1ce447ae13b148ffad8bedc17eb5
 Author: Sergey Alyoshin <alyoshin.s@gmail.com>
 Date:   2010-05-26 23:23:46 +0100
 
@@ -8,42 +8,4 @@ Localized strings unification
 
 ---
 
-diff --git a/src/hid/gtk/gui-keyref-window.c b/src/hid/gtk/gui-keyref-window.c
-index 5037bb0..801d6d7 100644
---- a/src/hid/gtk/gui-keyref-window.c
-+++ b/src/hid/gtk/gui-keyref-window.c
-@@ -296,7 +296,7 @@ static gchar *key_ref_text[] = {
-   N_(" - pan vertically.\n"),
-   "\t",
-   N_("<b><ctrl>"),
--  N_(" - pan horizontally..\n"),
-+  N_(" - pan horizontally.\n"),
-   "\n",
-   N_("<b>Usage:\n"),
-   N_("\tMouse actions can typically be combined.  For example: while moving\n"
-diff --git a/src/pcb-menu.res b/src/pcb-menu.res
-index c18eb86..cbdcd2d 100644
---- a/src/pcb-menu.res
-+++ b/src/pcb-menu.res
-@@ -236,7 +236,7 @@ MainMenu =
-    -
-    {"Optimize selected rats" DeleteRats(SelectedRats) AddRats(SelectedRats)}
-    {"Auto-route selected rats" AutoRoute(SelectedRats) a={"Alt-R" "Alt<Key>r"}}
--   {"Rip-up selected auto-routed tracks" RipUp(Selected)}
-+   {"Rip up selected auto-routed tracks" RipUp(Selected)}
-    -
-    {"Change size of selected objects" foreground=grey50 sensitive=false}
-    {"Lines -10 mil" ChangeSize(SelectedLines,-10,mil) ChangeSize(SelectedArcs,-10,mil)}
-diff --git a/src/rats.c b/src/rats.c
-index c174cc9..0e2a068 100644
---- a/src/rats.c
-+++ b/src/rats.c
-@@ -397,7 +397,7 @@ CheckShorts (LibraryMenuTypePtr theNet)
- 	  {
- 	    menu = GetPointerMemory (generic);
- 	    *menu = pin->Spare;
--	    Message (_("Warning! net \"%s\" is shorted to net \"%s\"\n"),
-+	    Message (_("Warning! Net \"%s\" is shorted to net \"%s\"\n"),
- 		     &theNet->Name[2],
- 		     &((LibraryMenuTypePtr) (pin->Spare))->Name[2]);
- 	    SET_FLAG (WARNFLAG, pin);
+
