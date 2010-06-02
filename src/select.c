@@ -182,6 +182,7 @@ SelectObject (void)
 	break;
       }
 
+#if 0
     case POLYGON_TYPE:
       {
 	PolygonType *poly = (PolygonTypePtr) ptr2;
@@ -190,6 +191,19 @@ SelectObject (void)
 	AddObjectToFlagUndoList (POLYGON_TYPE, ptr1, ptr2, ptr2);
 	TOGGLE_FLAG (SELECTEDFLAG, poly);
 	DrawPolygon (layer, poly, 0);
+	/* changing memory order no longer effects draw order */
+	break;
+      }
+#endif
+
+    case POUR_TYPE:
+      {
+	PourType *pour = (PolygonTypePtr) ptr2;
+
+	layer = (LayerTypePtr) ptr1;
+	AddObjectToFlagUndoList (POUR_TYPE, ptr1, ptr2, ptr2);
+	TOGGLE_FLAG (SELECTEDFLAG, pour);
+	DrawPour (layer, pour, 0);
 	/* changing memory order no longer effects draw order */
 	break;
       }
@@ -340,8 +354,20 @@ SelectBlock (BoxTypePtr Box, Boolean Flag)
 	}
     }
     END_LOOP;
-    POLYGON_LOOP (layer);
+    POUR_LOOP (layer);
     {
+#warning FIXME Later: Do we want to be able to select the polygon pieces?
+      if (POUR_IN_BOX (pour, Box)
+	  && !TEST_FLAG (LOCKFLAG, pour)
+	  && TEST_FLAG (SELECTEDFLAG, pour) != Flag)
+	{
+	  AddObjectToFlagUndoList (POUR_TYPE, layer, pour, pour);
+	  ASSIGN_FLAG (SELECTEDFLAG, Flag, pour);
+	  if (layer->On)
+	    DrawPour (layer, pour, 0);
+	  changed = True;
+	}
+#if 0
       if (POLYGON_IN_BOX (polygon, Box)
 	  && !TEST_FLAG (LOCKFLAG, polygon)
 	  && TEST_FLAG (SELECTEDFLAG, polygon) != Flag)
@@ -352,6 +378,7 @@ SelectBlock (BoxTypePtr Box, Boolean Flag)
 	    DrawPolygon (layer, polygon, 0);
 	  changed = True;
 	}
+#endif
     }
     END_LOOP;
   }
@@ -512,9 +539,14 @@ ObjectOperation (ObjectFunctionTypePtr F,
 	return (F->Polygon ((LayerTypePtr) Ptr1, (PolygonTypePtr) Ptr2));
       break;
 
-    case POLYGONPOINT_TYPE:
-      if (F->Point)
-	return (F->Point ((LayerTypePtr) Ptr1, (PolygonTypePtr) Ptr2,
+    case POUR_TYPE:
+      if (F->Pour)
+	return (F->Pour ((LayerTypePtr) Ptr1, (PourTypePtr) Ptr2));
+      break;
+
+    case POURPOINT_TYPE:
+      if (F->PourPoint)
+	return (F->PourPoint ((LayerTypePtr) Ptr1, (PourTypePtr) Ptr2,
 			  (PointTypePtr) Ptr3));
       break;
 
@@ -613,21 +645,44 @@ SelectedOperation (ObjectFunctionTypePtr F, Boolean Reset, int type)
   }
   ENDALL_LOOP;
 
+#if 0
   /* check polygons */
   if (type & POLYGON_TYPE && F->Polygon)
-    VISIBLEPOLYGON_LOOP (PCB->Data);
-  {
-    if (TEST_FLAG (SELECTEDFLAG, polygon))
+    VISIBLEPOUR_LOOP (PCB->Data);
+    {
+      POURPOLYGON_LOOP (pour);
       {
-	if (Reset)
-	  {
-	    AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
-	    CLEAR_FLAG (SELECTEDFLAG, polygon);
-	  }
-	F->Polygon (layer, polygon);
-	changed = True;
+        if (TEST_FLAG (SELECTEDFLAG, polygon))
+          {
+            if (Reset)
+              {
+                AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
+                CLEAR_FLAG (SELECTEDFLAG, polygon);
+              }
+            F->Polygon (layer, polygon);
+            changed = True;
+          }
       }
-  }
+      END_LOOP;
+    }
+  ENDALL_LOOP;
+#endif
+
+  /* check pours */
+  if (type & POUR_TYPE && F->Pour)
+    VISIBLEPOUR_LOOP (PCB->Data);
+    {
+      if (TEST_FLAG (SELECTEDFLAG, pour))
+        {
+          if (Reset)
+            {
+              AddObjectToFlagUndoList (POUR_TYPE, layer, pour, pour);
+              CLEAR_FLAG (SELECTEDFLAG, pour);
+            }
+          F->Pour (layer, pour);
+          changed = True;
+        }
+    }
   ENDALL_LOOP;
 
   /* elements silkscreen */
@@ -789,17 +844,23 @@ SelectConnection (Boolean Flag)
       }
   }
   ENDALL_LOOP;
-  VISIBLEPOLYGON_LOOP (PCB->Data);
+#if 0
+  VISIBLEPOUR_LOOP (PCB->Data);
   {
-    if (TEST_FLAG (FOUNDFLAG, polygon) && !TEST_FLAG (LOCKFLAG, polygon))
-      {
-	AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
-	ASSIGN_FLAG (SELECTEDFLAG, Flag, polygon);
-	DrawPolygon (layer, polygon, 0);
-	changed = True;
-      }
+    POURPOLYGON_LOOP (pour);
+    {
+      if (TEST_FLAG (FOUNDFLAG, polygon) && !TEST_FLAG (LOCKFLAG, polygon))
+        {
+          AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
+          ASSIGN_FLAG (SELECTEDFLAG, Flag, polygon);
+          DrawPolygon (layer, polygon, 0);
+          changed = True;
+        }
+    }
+    END_LOOP;
   }
   ENDALL_LOOP;
+#endif
 
   if (PCB->PinOn && PCB->ElementOn)
     {
