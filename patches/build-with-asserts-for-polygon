@@ -1,0 +1,43 @@
+Bottom: 4835f2769874520efebde7e908eb41a8e86b55d1
+Top:    e07c3008df28051ee1fa970146305a15545e7b5e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-02 17:56:57 +0100
+
+Build with asserts for polygons
+
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 40adc08..4577d62 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -73,6 +73,7 @@ dicer output is used for HIDs which cannot render things with holes
+ /* special polygon editing routines
+  */
+ 
++#undef NDEBUG
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif
+diff --git a/src/polygon1.c b/src/polygon1.c
+index 320454f..6e163a6 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -39,6 +39,7 @@
+       are marked
+ */
+ 
++#undef NDEBUG
+ #include	<assert.h>
+ #include	<stdlib.h>
+ #include	<stdio.h>
+@@ -105,7 +106,7 @@ if (UNLIKELY (((ptr) = malloc(sizeof(type))) == NULL)) \
+ #undef DEBUG_JUMP
+ #undef DEBUG_GATHER
+ #undef DEBUG_ANGLE
+-#undef DEBUG
++#define DEBUG
+ #ifdef DEBUG
+ #define DEBUGP(...) fprintf(stderr, ## __VA_ARGS__)
+ #else

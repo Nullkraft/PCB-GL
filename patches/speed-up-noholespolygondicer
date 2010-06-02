@@ -1,0 +1,46 @@
+Bottom: fa4dec0807ab8952bab98fde0ec384dc3053b2df
+Top:    7d2bc2ae2f791334f778a516c39094ffba18466d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2009-11-15 23:20:39 +0000
+
+Speed up^M^M^M^M^M^M^M^M Slow down NoHolesPolygonDicer
+
+Avoid using poly_AndSubtract_free(), since it uses PBO_ISECT which
+is relatively slow. Instead, make two copies of the input polygon,
+then subtract from them with a PBO_SUB operation.
+
+GAH.. The overheads of all the extra copying seem to be swamping
+the supposed benefits!
+
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 37dd82f..e1b79c2 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -1633,12 +1633,20 @@ r_NoHolesPolygonDicer (POLYAREA * pa,
+     }
+   else
+     {
+-      POLYAREA *poly2, *left, *right;
++      POLYAREA *pa_copy, *left_rect, *right_rect, *left, *right;
++
++      /* copy the main poly only */
++      poly_Copy0 (&pa_copy, pa);
+ 
+       /* make a rectangle of the left region slicing through the middle of the first hole */
+-      poly2 = RectPoly (p->xmin, (p->next->xmin + p->next->xmax) / 2,
+-                        p->ymin, p->ymax);
+-      poly_AndSubtract_free (pa, poly2, &left, &right);
++      left_rect = RectPoly (p->xmin - 1, (p->next->xmin + p->next->xmax) / 2, p->ymin - 1, p->ymax + 1);
++      /* make a rectangle of the right region slicing through the middle of the first hole */
++      right_rect = RectPoly ((p->next->xmin + p->next->xmax) / 2 - 1, p->xmax, p->ymin - 1, p->ymax + 1);
++
++      /* NB: Subtraction is faster than intersection */
++      poly_Boolean_free (pa, right_rect, &left, PBO_SUB);
++      poly_Boolean_free (pa_copy, left_rect, &right, PBO_SUB);
++
+       if (left)
+         {
+           POLYAREA *cur, *next;
