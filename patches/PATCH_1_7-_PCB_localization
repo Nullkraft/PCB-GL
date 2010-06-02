@@ -1,5 +1,5 @@
-Bottom: 406edeb130884aa2bd7bdbb9d1008be0103d39f7
-Top:    c1bf5eabb93b015ad7ce902e28f190db975d6ebb
+Bottom: f7b6651f7950a2356525cce7d8d238bcb4ecb209
+Top:    f7b6651f7950a2356525cce7d8d238bcb4ecb209
 Author: Sergey Alyoshin <alyoshin.s@gmail.com>
 Date:   2010-05-26 22:57:57 +0100
 
@@ -8,65 +8,4 @@ Move internationalization macros to one header
 
 ---
 
-diff --git a/src/global.h b/src/global.h
-index 1082dd1..b7c9d0f 100644
---- a/src/global.h
-+++ b/src/global.h
-@@ -60,7 +60,24 @@ typedef struct AttributeListType AttributeListType, *AttributeListTypePtr;
- #include "hid.h"
- #include "polyarea.h"
- 
--#define _(S) (S)
-+/* Internationalization support. */
-+#ifdef ENABLE_NLS
-+# include <libintl.h>
-+# define _(S) gettext(S)
-+# if defined(gettext_noop)
-+#  define N_(S) gettext_noop(S)
-+# else
-+#  define N_(S) (S)
-+# endif
-+#else
-+# define _(S) (S)
-+# define N_(S) (S)
-+# define textdomain(S) (S)
-+# define gettext(S) (S)
-+# define dgettext(D, S) (S)
-+# define dcgettext(D, S, T) (S)
-+# define bindtextdomain(D, Dir) (D)
-+#endif /* ENABLE_NLS */
- 
- typedef int LocationType;
- typedef int BDimension;		/* big dimension */
-diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 610f30e..0a2e747 100644
---- a/src/hid/gtk/gui.h
-+++ b/src/hid/gtk/gui.h
-@@ -37,27 +37,6 @@
- 
- #include <gtk/gtk.h>
- 
--/* Internationalization support.
--*/
--#if defined (ENABLE_NLS)
--#include <libintl.h>
--#   undef _
--#   define _(String) dgettext(GETTEXT_PACKAGE,String)
--#   if defined(gettext_noop)
--#       define N_(String) gettext_noop(String)
--#   else
--#       define N_(String) (String)
--#   endif /* gettext_noop */
--#else
--#   undef _
--#   define _(String) (String)
--#   define N_(String) (String)
--#   define textdomain(String) (String)
--#   define gettext(String) (String)
--#   define dgettext(Domain,String) (String)
--#   define dcgettext(Domain,String,Type) (String)
--#   define bindtextdomain(Domain,Directory) (Domain)
--#endif /* ENABLE_NLS */
- 
- 
-   /* Silk and rats lines are the two additional selectable to draw on.
+
