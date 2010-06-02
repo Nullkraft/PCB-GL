@@ -1,7 +1,7 @@
-Bottom: 6fcf303dd18bcb54573a5a196a5742f4e2a0889c
-Top:    4c444c803b0bb5d9a39a9804635ae84e4a543fff
+Bottom: 1b4ca72ecb26c142b94c1b9925c3e23fbecedb73
+Top:    4cb0cf6e2a8a78cafc8b87fb488a8d9c7668aacd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-01 22:20:11 +0100
+Date:   2010-06-02 21:56:22 +0100
 
 Temp fixes and diagnostics
 
@@ -9,10 +9,10 @@ Temp fixes and diagnostics
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 974338f..1fa547c 100644
+index f1a0e22..2657f30 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -1160,7 +1160,11 @@ label_contour (PLINE * a)
+@@ -1163,7 +1163,11 @@ label_contour (PLINE * a)
        assert (label == INSIDE || label == OUTSIDE);
        LABEL_NODE (cur, label);
      }

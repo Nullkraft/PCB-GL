@@ -1,7 +1,7 @@
-Bottom: 41b277330be5fc5cdfd165610c3d97541c617a54
-Top:    7dc9669460998c057a9485e0c4b3342ea02ea9be
+Bottom: 6c83b19bd776b9a72ec6a7d5f6ba381a99c760b2
+Top:    59c1e77f76c6bf5b83b9f90baa5a757118304d3b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-01 22:20:07 +0100
+Date:   2010-06-02 21:56:18 +0100
 
 TMP2
 
@@ -591,7 +591,7 @@ index 3a99244..a7190d8 100644
  #if HAVE_DBUS
    pcb_dbus_finish();
 diff --git a/src/polygon1.c b/src/polygon1.c
-index b6729d4..298f832 100644
+index 320454f..c9c0eec 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -51,6 +51,7 @@
@@ -602,7 +602,7 @@ index b6729d4..298f832 100644
  
  #define ROUND(a) (long)((a) > 0 ? ((a) + 0.5) : ((a) - 0.5))
  
-@@ -952,8 +953,16 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+@@ -955,8 +956,16 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  	      a->contours->xmin <= b->contours->xmax &&
  	      a->contours->ymin <= b->contours->ymax)
  	    {

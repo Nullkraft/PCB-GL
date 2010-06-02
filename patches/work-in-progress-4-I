@@ -1,7 +1,7 @@
-Bottom: 4c444c803b0bb5d9a39a9804635ae84e4a543fff
-Top:    baeacf5461553c15e7d13498c34d65003dc1562e
+Bottom: 4cb0cf6e2a8a78cafc8b87fb488a8d9c7668aacd
+Top:    fe05e4234e0bc8e268b055783c7f5742fc06dbb5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-01 22:20:11 +0100
+Date:   2010-06-02 21:56:22 +0100
 
 Work in progress
 
@@ -55,10 +55,10 @@ index 76921b2..a092db1 100644
    struct seg *q;
  
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 1fa547c..3ca4cbd 100644
+index 2657f30..c018c52 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -686,7 +686,7 @@ make_edge_tree (PLINE * pb)
+@@ -689,7 +689,7 @@ make_edge_tree (PLINE * pb)
  	}
        s->v = bv;
        s->p = pb;
@@ -67,7 +67,7 @@ index 1fa547c..3ca4cbd 100644
      }
    while ((bv = bv->next) != &pb->head);
    return (void *) ans;
-@@ -957,8 +957,8 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+@@ -960,8 +960,8 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  	{
  	  num_new_nodes = bo_intersect (e, a, b, first_pass);
  	  if (!first_pass && num_new_nodes != 0)

@@ -1,7 +1,7 @@
-Bottom: 909b3a8baf9ab059ea3774ab88aae38b7913a152
-Top:    0e18c8a534fe379066f2ef2513726695f1eb0c16
+Bottom: 19a66412f069da9458f37f50952196e19bd9ff19
+Top:    2097586dd8da73e6d7f1338f7278ecf10df323dd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-01 22:20:08 +0100
+Date:   2010-06-02 21:56:19 +0100
 
 Work in progress
 
@@ -685,10 +685,10 @@ index 03795fb..b7156b9 100644
      dump_traps (traps, "bo-polygon-out.txt");
  #endif
 diff --git a/src/polygon1.c b/src/polygon1.c
-index bf648ff..ba0d0a5 100644
+index fbaf4a3..c77e6c7 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -636,6 +636,7 @@ seg_in_seg (const BoxType * b, void *cl)
+@@ -639,6 +639,7 @@ seg_in_seg (const BoxType * b, void *cl)
  	  task->seg = s;
  	  task->seg->intersected = 1;
  	  i->node_insert_list = g_list_prepend (i->node_insert_list, task);
@@ -696,7 +696,7 @@ index bf648ff..ba0d0a5 100644
  	  return 0;		/* Don't do any more processing */
  	}
  //      else
-@@ -645,6 +646,7 @@ seg_in_seg (const BoxType * b, void *cl)
+@@ -648,6 +649,7 @@ seg_in_seg (const BoxType * b, void *cl)
  //        printf ("Long-jmping back, since we intersected on i\n");
  	  longjmp (*i->env, 1);	/* Skip this contour if we intersected on i */
  	  i->need_restart = 1;	/* If we skip some processing, we definately need a restart */
@@ -704,7 +704,7 @@ index bf648ff..ba0d0a5 100644
  	  return 0;
  	}
      }
-@@ -943,19 +945,21 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+@@ -946,19 +948,21 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
    PLINE *curcA, *curcB;
    CVCList *the_list = NULL;
  
@@ -733,7 +733,7 @@ index bf648ff..ba0d0a5 100644
  		{
  		  if (UNLIKELY (intersect (e, a, b, add)))
  		    {
-@@ -963,18 +967,10 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+@@ -966,18 +970,10 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  		      error (err_no_memory);
  		    }
  		}
@@ -754,7 +754,7 @@ index bf648ff..ba0d0a5 100644
        for (curcB = b->contours; curcB != NULL; curcB = curcB->next)
  	if (curcB->Flags.status == ISECTED)
  	  {
-@@ -987,6 +983,7 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+@@ -990,6 +986,7 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  	  }
      }
    while (add && (b = b->f) != bfst);
@@ -762,7 +762,7 @@ index bf648ff..ba0d0a5 100644
    do
      {
        for (curcA = a->contours; curcA != NULL; curcA = curcA->next)
-@@ -1001,6 +998,7 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+@@ -1004,6 +1001,7 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  	  }
      }
    while (add && (a = a->f) != afst);

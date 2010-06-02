@@ -1,7 +1,7 @@
-Bottom: 1241be1791625086e89e4fa7fe9a1bb05cfdc3ac
-Top:    6fcf303dd18bcb54573a5a196a5742f4e2a0889c
+Bottom: 3294afa6345e0fb5fd2e20c4801c6fcf465e1e57
+Top:    1b4ca72ecb26c142b94c1b9925c3e23fbecedb73
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-01 22:20:10 +0100
+Date:   2010-06-02 21:56:21 +0100
 
 Try harder to avoid the snap-rounding problem.
 
@@ -114,10 +114,10 @@ index b4e14cf..76921b2 100644
      /* XXX: This would be the convenient place to throw in multiple
       * passes of the Bentley-Ottmann algorithm. It would merely
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 0ed07a2..974338f 100644
+index e4bb9b9..f1a0e22 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -955,7 +955,7 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
+@@ -958,7 +958,7 @@ M_POLYAREA_intersect (jmp_buf * e, POLYAREA * afst, POLYAREA * bfst, int add)
  
        do
  	{
