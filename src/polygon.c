@@ -1975,3 +1975,10 @@ POLYAREA *board_outline_poly ()
 
   return clipped;
 }
+
+PolygonType *
+CreateNewPolygonHole (PolygonType *Polygon)
+{
+  printf ("Creating hole in polygon %i\n", Polygon->ID);
+  return Polygon;
+}
