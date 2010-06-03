@@ -1,5 +1,5 @@
 Bottom: f7b6651f7950a2356525cce7d8d238bcb4ecb209
-Top:    c649c7fb44e510d4d0b26a902a2cea337070b445
+Top:    0cba386a52bcae3ea43d0d5b308a1ce4ec1d6af2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-03 23:31:28 +0100
 
@@ -8,6 +8,19 @@ Refer to git, not cvs when reading a file from newer PCB.
 
 ---
 
+diff --git a/src/file.c b/src/file.c
+index 639c971..2704ede 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -544,7 +544,7 @@ WritePCBDataHeader (FILE * FP)
+    * ************************** README *******************
+    */
+ 
+-  fprintf (FP, "\n# To read pcb files, the pcb version (or the cvs source date) must be >= the file version\n");
++  fprintf (FP, "\n# To read pcb files, the pcb version (or the git source date) must be >= the file version\n");
+   fprintf (FP, "FileVersion[%i]\n", PCB_FILE_VERSION);
+ 
+   fputs ("\nPCB[", FP);
 diff --git a/src/parse_y.y b/src/parse_y.y
 index bbb7255..b76e689 100644
 --- a/src/parse_y.y
