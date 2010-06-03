@@ -1,5 +1,5 @@
 Bottom: b3ebaad001e516867d12a81b76d66514016ae6fb
-Top:    b3ebaad001e516867d12a81b76d66514016ae6fb
+Top:    c16744a8a512154ceca49ec2745063d7ef7012b9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-03 22:53:36 +0100
 
@@ -8,4 +8,225 @@ File format extension to support holes in polygons
 
 ---
 
-
+diff --git a/src/create.c b/src/create.c
+index bdb7b9b..cb8f312 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -637,6 +637,25 @@ CreateNewPointInPolygon (PolygonTypePtr Polygon, LocationType X,
+   return (point);
+ }
+ 
++/* ---------------------------------------------------------------------------
++ * creates a new point in a polygon's hole
++ */
++PointTypePtr
++CreateNewPointInPolygonHole (PolygonTypePtr Polygon,
++                             LocationType X,
++                             LocationType Y)
++{
++  PointTypePtr point = GetPointMemoryInPolygon (Polygon);
++
++  printf ("Adding point %i,%i to polygon %i\n", X, Y, Polygon->ID);
++
++  /* copy values */
++  point->X = X;
++  point->Y = Y;
++  point->ID = ID++;
++  return point;
++}
++
+ static char *refdes_map_file = "refdes.map";
+ static GHashTable *refdes_map_table = NULL;
+ 
+diff --git a/src/create.h b/src/create.h
+index 98bb525..c47a2e8 100644
+--- a/src/create.h
++++ b/src/create.h
+@@ -62,6 +62,8 @@ TextTypePtr CreateNewText (LayerTypePtr, FontTypePtr, LocationType,
+ PolygonTypePtr CreateNewPolygon (LayerTypePtr, FlagType);
+ PointTypePtr CreateNewPointInPolygon (PolygonTypePtr,
+ 				      LocationType, LocationType);
++PointTypePtr CreateNewPointInPolygonHole (PolygonTypePtr,
++					  LocationType, LocationType);
+ void RefdesMapInit (void);
+ ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
+ 				 FontTypePtr, FlagType, char *, char *,
+diff --git a/src/parse_l.l b/src/parse_l.l
+index 2a9d589..3e718c8 100644
+--- a/src/parse_l.l
++++ b/src/parse_l.l
+@@ -129,6 +129,7 @@ Mark		{ return(T_MARK); }
+ Groups		{ return(T_GROUPS); }
+ Styles		{ return(T_STYLES); }
+ Polygon		{ return(T_POLYGON); }
++Hole		{ return(T_POLYGON_HOLE); }
+ Arc		{ return(T_ARC); }
+ NetList		{ return(T_NETLIST); }
+ Net		{ return(T_NET); }
+diff --git a/src/parse_y.y b/src/parse_y.y
+index bbb7255..15765f4 100644
+--- a/src/parse_y.y
++++ b/src/parse_y.y
+@@ -65,6 +65,7 @@ RCSID("$Id$");
+ 
+ static	LayerTypePtr	Layer;
+ static	PolygonTypePtr	Polygon;
++static	PolygonTypePtr	Hole;
+ static	SymbolTypePtr	Symbol;
+ static	int		pin_num;
+ static	LibraryMenuTypePtr	Menu;
+@@ -102,9 +103,8 @@ static int check_file_version (int);
+ 
+ %token	T_FILEVERSION T_PCB T_LAYER T_VIA T_RAT T_LINE T_ARC T_RECTANGLE T_TEXT T_ELEMENTLINE
+ %token	T_ELEMENT T_PIN T_PAD T_GRID T_FLAGS T_SYMBOL T_SYMBOLLINE T_CURSOR
+-%token	T_ELEMENTARC T_MARK T_GROUPS T_STYLES T_POLYGON T_NETLIST T_NET T_CONN
++%token	T_ELEMENTARC T_MARK T_GROUPS T_STYLES T_POLYGON T_POLYGON_HOLE T_NETLIST T_NET T_CONN
+ %token	T_AREA T_THERMAL T_DRC T_ATTRIBUTE
+-
+ %type	<number>	symbolid
+ %type	<string>	opt_string
+ %type	<flagtype>	flags
+@@ -895,31 +895,7 @@ layerdefinition
+ 		| text_newformat
+ 		| text_oldformat
+ 		| { attr_list = & Layer->Attributes; } attributes
+-			/* flags are passed in */
+-		| T_POLYGON '(' flags ')' '('
+-			{
+-				Polygon = CreateNewPolygon(Layer, $3);
+-			}
+-		  polygonpoints ')'
+-		  	{
+-					/* ignore junk */
+-				if (Polygon->PointN >= 3)
+-				  {
+-				    SetPolygonBoundingBox (Polygon);
+-				    if (!Layer->polygon_tree)
+-				      Layer->polygon_tree = r_create_tree (NULL, 0, 0);
+-				    r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
+-				  }
+-				else
+-				{
+-					Message("WARNING parsing file '%s'\n"
+-						"    line:        %i\n"
+-						"    description: 'ignored polygon (< 3 points)'\n",
+-						yyfilename, yylineno);
+-					DestroyObject(yyData, POLYGON_TYPE, Layer, Polygon, Polygon);
+-				}
+-			}
+-		;
++		| polygon_format
+ 
+ /* %start-doc pcbfile Line
+ 
+@@ -1124,6 +1100,11 @@ text_hi_format
+ Polygon (SFlags) (
+ @ @ @ @dots{} (X Y) @dots{}
+ @ @ @ @dots{} [X Y] @dots{}
++Hole (
++@ @ @ @dots{} (X Y) @dots{}
++@ @ @ @dots{} [X Y] @dots{}
++)
++...
+ )
+ @end syntax
+ 
+@@ -1136,6 +1117,40 @@ Coordinates of each vertex.  You must list at least three coordinates.
+ 
+ %end-doc */
+ 
++polygonholes
++		: /* empty */
++		| polygonhole
++		| polygonholes polygonhole
++		;
++
++polygon_format
++		: /* flags are passed in */
++		T_POLYGON '(' flags ')' '('
++			{
++				Polygon = CreateNewPolygon(Layer, $3);
++			}
++		  polygonpoints
++		  polygonholes ')'
++			{
++					/* ignore junk */
++				if (Polygon->PointN >= 3)
++				  {
++				    SetPolygonBoundingBox (Polygon);
++				    if (!Layer->polygon_tree)
++				      Layer->polygon_tree = r_create_tree (NULL, 0, 0);
++				    r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
++				  }
++				else
++				{
++					Message("WARNING parsing file '%s'\n"
++						"    line:        %i\n"
++						"    description: 'ignored polygon (< 3 points)'\n",
++						yyfilename, yylineno);
++					DestroyObject(yyData, POLYGON_TYPE, Layer, Polygon, Polygon);
++				}
++			}
++		;
++
+ polygonpoints
+ 		: polygonpoint
+ 		| polygonpoints polygonpoint
+@@ -1154,6 +1169,31 @@ polygonpoint
+ 		|
+ 		;
+ 
++polygonhole
++		: T_POLYGON_HOLE '('
++			{
++				Hole = CreateNewPolygonHole (Polygon);
++			}
++		  polygonholepoints ')'
++
++polygonholepoints
++		: polygonholepoint
++		| polygonholepoints polygonholepoint
++		;
++
++polygonholepoint
++			/* xcoord ycoord */
++		: '(' NUMBER NUMBER ')'
++			{
++				CreateNewPointInPolygonHole(Hole, $2*100, $3*100);
++			}
++		| '[' NUMBER NUMBER ']'
++			{
++				CreateNewPointInPolygonHole(Hole, $2, $3);
++			}
++		|
++		;
++
+ /* %start-doc pcbfile Element
+ 
+ @syntax
+diff --git a/src/polygon.c b/src/polygon.c
+index 1417e31..5977e77 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -1975,3 +1975,10 @@ POLYAREA *board_outline_poly ()
+ 
+   return clipped;
+ }
++
++PolygonType *
++CreateNewPolygonHole (PolygonType *Polygon)
++{
++  printf ("Creating hole in polygon %i\n", Polygon->ID);
++  return Polygon;
++}
+diff --git a/src/polygon.h b/src/polygon.h
+index ccf3164..f4c0b01 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -67,4 +67,6 @@ Boolean MorphPolygon (LayerTypePtr, PolygonTypePtr);
+ void NoHolesPolygonDicer (PolygonType *p, const BoxType *clip,
+                           void (*emit) (PLINE *, void *), void *user_data);
+ POLYAREA *board_outline_poly ();
++PolygonType *CreateNewPolygonHole (PolygonType *polygon);
++PointTypePtr CreateNewPointInPolygonHole (PolygonTypePtr Polygon, LocationType X, LocationType Y);
+ #endif
