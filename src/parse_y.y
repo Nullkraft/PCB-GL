@@ -1100,11 +1100,11 @@ text_hi_format
 Polygon (SFlags) (
 @ @ @ @dots{} (X Y) @dots{}
 @ @ @ @dots{} [X Y] @dots{}
-Hole (
-@ @ @ @dots{} (X Y) @dots{}
-@ @ @ @dots{} [X Y] @dots{}
-)
-...
+@ @ @ Hole (
+@ @ @ @ @ @ @dots{} (X Y) @dots{}
+@ @ @ @ @ @ @dots{} [X Y] @dots{}
+@ @ @ )
+@ @ @ @dots{}
 )
 @end syntax
 
@@ -1113,6 +1113,8 @@ Hole (
 Symbolic or numeric flags.
 @item X Y
 Coordinates of each vertex.  You must list at least three coordinates.
+@item Hole (...)
+Defines a hole within the polygon's outer contour. There may be zero or more such sections.
 @end table
 
 %end-doc */
