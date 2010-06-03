@@ -1,7 +1,7 @@
-Bottom: 609d3a23948c03f47c5a6e1b54d18886e2625e1a
-Top:    7359f99fba88d8765c7f485766b6ace6075205c2
+Bottom: 62407a768c1eb04c4bbd4ba24ce82f61979d3420
+Top:    3dc39d99d28a5dfa1a91a4e7d17f1f2e90c2e6cf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-02 21:56:43 +0100
+Date:   2010-06-03 23:35:39 +0100
 
 Add a hacky name-mangling thingy for loading boards
 
@@ -130,7 +130,7 @@ index a994c84..98bb525 100644
  				 FontTypePtr, FlagType, char *, char *,
  				 char *, LocationType, LocationType, BYTE,
 diff --git a/src/file.c b/src/file.c
-index 639c971..dbdc095 100644
+index 2704ede..ad77a73 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -357,6 +357,9 @@ LoadPCB (char *Filename)

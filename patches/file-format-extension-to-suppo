@@ -1,7 +1,7 @@
-Bottom: b3ebaad001e516867d12a81b76d66514016ae6fb
-Top:    ee6ae72e89dcfc5bcb6c212d2f1ece15c56f9df8
+Bottom: 2a28d3e68ce4df9802017d234f586e8553776063
+Top:    be2b960c700e193f66bb1c17393d048f3d68a28b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-03 22:53:36 +0100
+Date:   2010-06-03 23:35:42 +0100
 
 File format extension to support holes in polygons
 
@@ -77,7 +77,7 @@ index 2a9d589..3e718c8 100644
  NetList		{ return(T_NETLIST); }
  Net		{ return(T_NET); }
 diff --git a/src/parse_y.y b/src/parse_y.y
-index bbb7255..4677695 100644
+index b76e689..cedbdb5 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
 @@ -65,6 +65,7 @@ RCSID("$Id$");
