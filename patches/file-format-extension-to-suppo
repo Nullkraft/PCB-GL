@@ -1,5 +1,5 @@
 Bottom: b3ebaad001e516867d12a81b76d66514016ae6fb
-Top:    c16744a8a512154ceca49ec2745063d7ef7012b9
+Top:    ee6ae72e89dcfc5bcb6c212d2f1ece15c56f9df8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-03 22:53:36 +0100
 
@@ -51,6 +51,19 @@ index 98bb525..c47a2e8 100644
  void RefdesMapInit (void);
  ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
  				 FontTypePtr, FlagType, char *, char *,
+diff --git a/src/file.h b/src/file.h
+index 64eba23..13e47b1 100644
+--- a/src/file.h
++++ b/src/file.h
+@@ -56,7 +56,7 @@ void sort_netlist (void);
+  * guidance to the user as to what the minimum version of pcb required
+  * is.
+  */
+-#define PCB_FILE_VERSION 20070407
++#define PCB_FILE_VERSION 20100603
+ 
+ 
+ #ifndef HAS_ATEXIT
 diff --git a/src/parse_l.l b/src/parse_l.l
 index 2a9d589..3e718c8 100644
 --- a/src/parse_l.l
@@ -64,7 +77,7 @@ index 2a9d589..3e718c8 100644
  NetList		{ return(T_NETLIST); }
  Net		{ return(T_NET); }
 diff --git a/src/parse_y.y b/src/parse_y.y
-index bbb7255..15765f4 100644
+index bbb7255..4677695 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
 @@ -65,6 +65,7 @@ RCSID("$Id$");
@@ -123,15 +136,21 @@ index bbb7255..15765f4 100644
  Polygon (SFlags) (
  @ @ @ @dots{} (X Y) @dots{}
  @ @ @ @dots{} [X Y] @dots{}
-+Hole (
-+@ @ @ @dots{} (X Y) @dots{}
-+@ @ @ @dots{} [X Y] @dots{}
-+)
-+...
++@ @ @ Hole (
++@ @ @ @ @ @ @dots{} (X Y) @dots{}
++@ @ @ @ @ @ @dots{} [X Y] @dots{}
++@ @ @ )
++@ @ @ @dots{}
  )
  @end syntax
  
-@@ -1136,6 +1117,40 @@ Coordinates of each vertex.  You must list at least three coordinates.
+@@ -1132,10 +1113,46 @@ Polygon (SFlags) (
+ Symbolic or numeric flags.
+ @item X Y
+ Coordinates of each vertex.  You must list at least three coordinates.
++@item Hole (...)
++Defines a hole within the polygon's outer contour. There may be zero or more such sections.
+ @end table
  
  %end-doc */
  
@@ -172,7 +191,7 @@ index bbb7255..15765f4 100644
  polygonpoints
  		: polygonpoint
  		| polygonpoints polygonpoint
-@@ -1154,6 +1169,31 @@ polygonpoint
+@@ -1154,6 +1171,31 @@ polygonpoint
  		|
  		;
  
