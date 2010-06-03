@@ -213,33 +213,49 @@ original_poly (PolygonType * p)
 {
   PLINE *contour = NULL;
   POLYAREA *np = NULL;
+  Cardinal n;
   Vector v;
+  int hole = 0;
 
-  /* first make initial polygon contour */
-  POLYGONPOINT_LOOP (p);
-  {
-    v[0] = point->X;
-    v[1] = point->Y;
-    if (contour == NULL)
-      {
-        if ((contour = poly_NewContour (v)) == NULL)
-          return NULL;
-      }
-    else
-      {
-        poly_InclVertex (contour->head.prev, poly_CreateNode (v));
-      }
-  }
-  END_LOOP;
-  poly_PreContour (contour, TRUE);
-  /* make sure it is a positive contour */
-  if ((contour->Flags.orient) != PLF_DIR)
-    poly_InvContour (contour);
-  assert ((contour->Flags.orient) == PLF_DIR);
   if ((np = poly_Create ()) == NULL)
     return NULL;
-  poly_InclContour (np, contour);
-  assert (poly_Valid (np));
+
+  /* first make initial polygon contour */
+  for (n = 0; n < p->PointN; n++)
+    {
+      /* No current contour? Make a new one starting at point */
+      /*   (or) Add point to existing contour */
+
+      v[0] = p->Points[n].X;
+      v[1] = p->Points[n].Y;
+      if (contour == NULL)
+        {
+          if ((contour = poly_NewContour (v)) == NULL)
+            return NULL;
+        }
+      else
+        {
+          poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+        }
+
+      /* Is current point last in contour? If so process it. */
+      if (n == p->PointN - 1 ||
+          (hole < p->HoleIndexN && n == p->HoleIndex[hole] - 1))
+        {
+          poly_PreContour (contour, TRUE);
+
+          /* make sure it is a positive contour (outer) or negative (hole) */
+          if (contour->Flags.orient != (hole ? PLF_INV : PLF_DIR))
+            poly_InvContour (contour);
+          assert (contour->Flags.orient == (hole ? PLF_INV : PLF_DIR));
+
+          poly_InclContour (np, contour);
+          contour = NULL;
+          assert (poly_Valid (np));
+
+          hole++;
+        }
+  }
   return biggest (np);
 }
 
