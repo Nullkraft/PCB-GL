@@ -1,7 +1,7 @@
-Bottom: e1df6f2e09e8d5faeac0c321b6e37d70310975c1
-Top:    e094af4c7e92d8c60925e776611b843f97e140d4
+Bottom: bed49600b089c286fcacfc8a1fc699be67e6deae
+Top:    5616b840207cbdbab04881529736c316afc93a5e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-02 21:57:56 +0100
+Date:   2010-06-03 23:35:56 +0100
 
 Add support for a "poured" object.
 
@@ -2166,7 +2166,7 @@ index e87f88c..05c3856 100644
  void EraseElementPinsAndPads (ElementTypePtr);
  void EraseElementName (ElementTypePtr);
 diff --git a/src/file.c b/src/file.c
-index 639c971..cc6a964 100644
+index 2704ede..9a50b33 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -786,7 +786,7 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
@@ -3873,7 +3873,7 @@ index b9d4de1..d902609 100644
  void FreePCBMemory (PCBTypePtr);
  void FreeBoxListMemory (BoxListTypePtr);
 diff --git a/src/parse_y.y b/src/parse_y.y
-index bbb7255..8e35612 100644
+index b76e689..0eb6245 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
 @@ -52,6 +52,7 @@
