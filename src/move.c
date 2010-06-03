@@ -366,12 +366,12 @@ MovePour (LayerTypePtr Layer, PourTypePtr Pour)
     {
       ErasePour (Pour);
     }
-  RestoreToPours (PCB->Data, POLYGON_TYPE, Layer, Pour);
+  RestoreToPours (PCB->Data, POUR_TYPE, Layer, Pour);
   r_delete_entry (Layer->pour_tree, (BoxType *) Pour);
   MovePourLowLevel (Pour, DeltaX, DeltaY);
   r_insert_entry (Layer->pour_tree, (BoxType *) Pour, 0);
   InitPourClip (PCB->Data, Layer, Pour);
-  ClearFromPours (PCB->Data, POLYGON_TYPE, Layer, Pour);
+  ClearFromPours (PCB->Data, POUR_TYPE, Layer, Pour);
   if (Layer->On)
     {
       DrawPour (Layer, Pour, 0);
@@ -395,7 +395,10 @@ MoveLinePoint (LayerTypePtr Layer, LineTypePtr Line, PointTypePtr Point)
       MOVE (Point->X, Point->Y, DeltaX, DeltaY);
       SetLineBoundingBox (Line);
       r_insert_entry (Layer->line_tree, &Line->BoundingBox, 0);
-      ClearFromPours (PCB->Data, LINE_TYPE, Layer, Line);
+      if (TEST_FLAG (CLEARLINEFLAG, Line))
+        ClearFromPours (PCB->Data, LINE_TYPE, Layer, Line);
+      else
+        MarkPourIslands (PCB->Data, LINE_TYPE, Layer, Line);
       if (Layer->On)
 	{
 	  DrawLine (Layer, Line, 0);
@@ -430,14 +433,17 @@ MovePourPoint (LayerTypePtr Layer, PourTypePtr Pour, PointTypePtr Point)
     {
       ErasePour (Pour);
     }
-  RestoreToPours (PCB->Data, POLYGON_TYPE, Layer, Pour);
+  RestoreToPours (PCB->Data, POUR_TYPE, Layer, Pour);
   r_delete_entry (Layer->pour_tree, (BoxType *) Pour);
   MOVE (Point->X, Point->Y, DeltaX, DeltaY);
   SetPourBoundingBox (Pour);
   r_insert_entry (Layer->pour_tree, (BoxType *) Pour, 0);
   RemoveExcessPourPoints (Layer, Pour);
   InitPourClip (PCB->Data, Layer, Pour);
-  ClearFromPours (PCB->Data, POLYGON_TYPE, Layer, Pour);
+  if (!TEST_FLAG (CLEARPOLYFLAG, Pour))
+    ClearFromPours (PCB->Data, POUR_TYPE, Layer, Pour);
+  else
+    MarkPourIslands (PCB->Data, POUR_TYPE, Layer, Pour);
   if (Layer->On)
     {
       DrawPour (Layer, Pour, 0);
