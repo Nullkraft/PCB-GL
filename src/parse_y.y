@@ -1119,12 +1119,6 @@ Defines a hole within the polygon's outer contour. There may be zero or more suc
 
 %end-doc */
 
-polygonholes
-		: /* empty */
-		| polygonhole
-		| polygonholes polygonhole
-		;
-
 polygon_format
 		: /* flags are passed in */
 		T_POLYGON '(' flags ')' '('
@@ -1153,6 +1147,20 @@ polygon_format
 			}
 		;
 
+polygonholes
+		: /* empty */
+		| polygonhole
+		| polygonholes polygonhole
+		;
+
+polygonhole
+		: T_POLYGON_HOLE '('
+			{
+				Hole = CreateNewHoleInPolygon (Polygon);
+			}
+		  polygonpoints ')'
+		;
+
 polygonpoints
 		: polygonpoint
 		| polygonpoints polygonpoint
@@ -1167,31 +1175,6 @@ polygonpoint
 		| '[' NUMBER NUMBER ']'
 			{
 				CreateNewPointInPolygon(Polygon, $2, $3);
-			}
-		|
-		;
-
-polygonhole
-		: T_POLYGON_HOLE '('
-			{
-				Hole = CreateNewHoleInPolygon (Polygon);
-			}
-		  polygonholepoints ')'
-
-polygonholepoints
-		: polygonholepoint
-		| polygonholepoints polygonholepoint
-		;
-
-polygonholepoint
-			/* xcoord ycoord */
-		: '(' NUMBER NUMBER ')'
-			{
-				CreateNewPointInPolygonHole(Hole, $2*100, $3*100);
-			}
-		| '[' NUMBER NUMBER ']'
-			{
-				CreateNewPointInPolygonHole(Hole, $2, $3);
 			}
 		|
 		;

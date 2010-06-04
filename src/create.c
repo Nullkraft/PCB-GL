@@ -650,25 +650,6 @@ CreateNewHoleInPolygon (PolygonType *Polygon)
   return Polygon;
 }
 
-/* ---------------------------------------------------------------------------
- * creates a new point in a polygon's hole
- */
-PointTypePtr
-CreateNewPointInPolygonHole (PolygonTypePtr Polygon,
-                             LocationType X,
-                             LocationType Y)
-{
-  PointTypePtr point = GetPointMemoryInPolygon (Polygon);
-
-  printf ("Adding point %i,%i to polygon %i hole\n", X, Y, Polygon->ID);
-
-  /* copy values */
-  point->X = X;
-  point->Y = Y;
-  point->ID = ID++;
-  return point;
-}
-
 static char *refdes_map_file = "refdes.map";
 static GHashTable *refdes_map_table = NULL;
 
