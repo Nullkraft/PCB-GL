@@ -1,5 +1,5 @@
 Bottom: 2a28d3e68ce4df9802017d234f586e8553776063
-Top:    24f22c095bce08e25f94955b4d128962c13ab3f3
+Top:    0e14e0fd773fae11a6e41cf754ec4f3857a7bb9d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-04 13:02:59 +0100
 
@@ -20,10 +20,10 @@ index 583feb8..3ffd439 100644
    POLYGONPOINT_LOOP (Src);
    {
 diff --git a/src/create.c b/src/create.c
-index bdb7b9b..5bade30 100644
+index bdb7b9b..f419d2a 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -637,6 +637,38 @@ CreateNewPointInPolygon (PolygonTypePtr Polygon, LocationType X,
+@@ -637,6 +637,19 @@ CreateNewPointInPolygon (PolygonTypePtr Polygon, LocationType X,
    return (point);
  }
  
@@ -40,39 +40,18 @@ index bdb7b9b..5bade30 100644
 +  return Polygon;
 +}
 +
-+/* ---------------------------------------------------------------------------
-+ * creates a new point in a polygon's hole
-+ */
-+PointTypePtr
-+CreateNewPointInPolygonHole (PolygonTypePtr Polygon,
-+                             LocationType X,
-+                             LocationType Y)
-+{
-+  PointTypePtr point = GetPointMemoryInPolygon (Polygon);
-+
-+  printf ("Adding point %i,%i to polygon %i hole\n", X, Y, Polygon->ID);
-+
-+  /* copy values */
-+  point->X = X;
-+  point->Y = Y;
-+  point->ID = ID++;
-+  return point;
-+}
-+
  static char *refdes_map_file = "refdes.map";
  static GHashTable *refdes_map_table = NULL;
  
 diff --git a/src/create.h b/src/create.h
-index 98bb525..721e577 100644
+index 98bb525..5ed2404 100644
 --- a/src/create.h
 +++ b/src/create.h
-@@ -62,6 +62,9 @@ TextTypePtr CreateNewText (LayerTypePtr, FontTypePtr, LocationType,
+@@ -62,6 +62,7 @@ TextTypePtr CreateNewText (LayerTypePtr, FontTypePtr, LocationType,
  PolygonTypePtr CreateNewPolygon (LayerTypePtr, FlagType);
  PointTypePtr CreateNewPointInPolygon (PolygonTypePtr,
  				      LocationType, LocationType);
 +PolygonType *CreateNewHoleInPolygon (PolygonType *polygon);
-+PointTypePtr CreateNewPointInPolygonHole (PolygonTypePtr,
-+					  LocationType, LocationType);
  void RefdesMapInit (void);
  ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
  				 FontTypePtr, FlagType, char *, char *,
@@ -259,7 +238,7 @@ index 2a9d589..3e718c8 100644
  NetList		{ return(T_NETLIST); }
  Net		{ return(T_NET); }
 diff --git a/src/parse_y.y b/src/parse_y.y
-index b76e689..ef178e3 100644
+index b76e689..b5a3fe3 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
 @@ -65,6 +65,7 @@ RCSID("$Id$");
@@ -326,7 +305,7 @@ index b76e689..ef178e3 100644
  )
  @end syntax
  
-@@ -1132,10 +1113,46 @@ Polygon (SFlags) (
+@@ -1132,10 +1113,54 @@ Polygon (SFlags) (
  Symbolic or numeric flags.
  @item X Y
  Coordinates of each vertex.  You must list at least three coordinates.
@@ -336,12 +315,6 @@ index b76e689..ef178e3 100644
  
  %end-doc */
  
-+polygonholes
-+		: /* empty */
-+		| polygonhole
-+		| polygonholes polygonhole
-+		;
-+
 +polygon_format
 +		: /* flags are passed in */
 +		T_POLYGON '(' flags ')' '('
@@ -370,41 +343,23 @@ index b76e689..ef178e3 100644
 +			}
 +		;
 +
- polygonpoints
- 		: polygonpoint
- 		| polygonpoints polygonpoint
-@@ -1154,6 +1171,31 @@ polygonpoint
- 		|
- 		;
- 
++polygonholes
++		: /* empty */
++		| polygonhole
++		| polygonholes polygonhole
++		;
++
 +polygonhole
 +		: T_POLYGON_HOLE '('
 +			{
 +				Hole = CreateNewHoleInPolygon (Polygon);
 +			}
-+		  polygonholepoints ')'
-+
-+polygonholepoints
-+		: polygonholepoint
-+		| polygonholepoints polygonholepoint
++		  polygonpoints ')'
 +		;
 +
-+polygonholepoint
-+			/* xcoord ycoord */
-+		: '(' NUMBER NUMBER ')'
-+			{
-+				CreateNewPointInPolygonHole(Hole, $2*100, $3*100);
-+			}
-+		| '[' NUMBER NUMBER ']'
-+			{
-+				CreateNewPointInPolygonHole(Hole, $2, $3);
-+			}
-+		|
-+		;
-+
- /* %start-doc pcbfile Element
- 
- @syntax
+ polygonpoints
+ 		: polygonpoint
+ 		| polygonpoints polygonpoint
 diff --git a/src/polygon.c b/src/polygon.c
 index 1417e31..126152c 100644
 --- a/src/polygon.c
@@ -481,15 +436,3 @@ index 1417e31..126152c 100644
 +  }
    return biggest (np);
  }
- 
-diff --git a/src/polygon.h b/src/polygon.h
-index ccf3164..f4c0b01 100644
---- a/src/polygon.h
-+++ b/src/polygon.h
-@@ -67,4 +67,6 @@ Boolean MorphPolygon (LayerTypePtr, PolygonTypePtr);
- void NoHolesPolygonDicer (PolygonType *p, const BoxType *clip,
-                           void (*emit) (PLINE *, void *), void *user_data);
- POLYAREA *board_outline_poly ();
-+PolygonType *CreateNewPolygonHole (PolygonType *polygon);
-+PointTypePtr CreateNewPointInPolygonHole (PolygonTypePtr Polygon, LocationType X, LocationType Y);
- #endif
