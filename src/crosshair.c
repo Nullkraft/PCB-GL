@@ -86,6 +86,35 @@ static void XORDrawAttachedLine (LocationType, LocationType, LocationType,
 static void XORDrawAttachedArc (BDimension);
 /*static*/ void DrawAttached (Boolean);
 
+static int
+next_contour_point (PolygonTypePtr polygon, int point)
+{
+  int hole;
+  int this_contour_start;
+  int next_contour_start;
+
+  /* Find which contour / hole the specified point is in */
+  for (hole = polygon->HoleIndexN - 1; hole >= 0; hole--)
+    if (point >= polygon->HoleIndex[hole])
+      break;
+  hole++;
+
+  /* hole = 0 for an outer contour point */
+  /* hole = 1 for the first contour etc. */
+
+  this_contour_start = (hole == 0) ? 0 :
+                                     polygon->HoleIndex[hole - 1];
+  next_contour_start =
+    (hole == polygon->HoleIndexN) ? polygon->PointN :
+                                    polygon->HoleIndex[hole];
+
+  /* Wrap back to the start of the contour we're in if we pass the end */
+  if (++point == next_contour_start)
+    point = this_contour_start;
+
+  return point;
+}
+
 /* ---------------------------------------------------------------------------
  * creates a tmp polygon with coordinates converted to screen system
  */
@@ -93,15 +122,16 @@ static void
 XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
 {
   int i;
-  for (i = 0; i < polygon->PointN - 1; i++)
-    gui->draw_line (Crosshair.GC,
-		    polygon->Points[i].X + dx, polygon->Points[i].Y + dy,
-		    polygon->Points[i + 1].X + dx,
-		    polygon->Points[i + 1].Y + dy);
-  if (i > 1)
-    gui->draw_line (Crosshair.GC,
-		    polygon->Points[i].X + dx, polygon->Points[i].Y + dy,
-		    polygon->Points[0].X + dx, polygon->Points[0].Y + dy);
+  int next;
+  for (i = 0; i < polygon->PointN; i++)
+    {
+      next = next_contour_point (polygon, i);
+      gui->draw_line (Crosshair.GC,
+                      polygon->Points[i].X + dx,
+                      polygon->Points[i].Y + dy,
+                      polygon->Points[next].X + dx,
+                      polygon->Points[next].Y + dy);
+    }
 }
 
 /*-----------------------------------------------------------
