@@ -1,5 +1,5 @@
 Bottom: bd3b8bbae1b8a5ba99c21ce6a8bd359c8add0d7d
-Top:    1e0c947022c06614833b99366a4603936b8bc875
+Top:    24f22c095bce08e25f94955b4d128962c13ab3f3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-03 23:35:42 +0100
 
@@ -8,6 +8,18 @@ File format extension to support holes in polygons
 
 ---
 
+diff --git a/src/copy.c b/src/copy.c
+index 583feb8..3ffd439 100644
+--- a/src/copy.c
++++ b/src/copy.c
+@@ -95,6 +95,7 @@ static ObjectFunctionType CopyFunctions = {
+ PolygonTypePtr
+ CopyPolygonLowLevel (PolygonTypePtr Dest, PolygonTypePtr Src)
+ {
++#warning FIXME FOR HOLES
+   /* copy all data */
+   POLYGONPOINT_LOOP (Src);
+   {
 diff --git a/src/create.c b/src/create.c
 index bdb7b9b..5bade30 100644
 --- a/src/create.c
@@ -65,6 +77,72 @@ index 98bb525..721e577 100644
  void RefdesMapInit (void);
  ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
  				 FontTypePtr, FlagType, char *, char *,
+diff --git a/src/crosshair.c b/src/crosshair.c
+index cea493a..953f29a 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -86,6 +86,35 @@ static void XORDrawAttachedLine (LocationType, LocationType, LocationType,
+ static void XORDrawAttachedArc (BDimension);
+ /*static*/ void DrawAttached (Boolean);
+ 
++static int
++next_contour_point (PolygonTypePtr polygon, int point)
++{
++  int hole;
++  int this_contour_start;
++  int next_contour_start;
++
++  /* Find which contour / hole the specified point is in */
++  for (hole = polygon->HoleIndexN - 1; hole >= 0; hole--)
++    if (point >= polygon->HoleIndex[hole])
++      break;
++  hole++;
++
++  /* hole = 0 for an outer contour point */
++  /* hole = 1 for the first contour etc. */
++
++  this_contour_start = (hole == 0) ? 0 :
++                                     polygon->HoleIndex[hole - 1];
++  next_contour_start =
++    (hole == polygon->HoleIndexN) ? polygon->PointN :
++                                    polygon->HoleIndex[hole];
++
++  /* Wrap back to the start of the contour we're in if we pass the end */
++  if (++point == next_contour_start)
++    point = this_contour_start;
++
++  return point;
++}
++
+ /* ---------------------------------------------------------------------------
+  * creates a tmp polygon with coordinates converted to screen system
+  */
+@@ -93,15 +122,16 @@ static void
+ XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
+ {
+   int i;
+-  for (i = 0; i < polygon->PointN - 1; i++)
+-    gui->draw_line (Crosshair.GC,
+-		    polygon->Points[i].X + dx, polygon->Points[i].Y + dy,
+-		    polygon->Points[i + 1].X + dx,
+-		    polygon->Points[i + 1].Y + dy);
+-  if (i > 1)
+-    gui->draw_line (Crosshair.GC,
+-		    polygon->Points[i].X + dx, polygon->Points[i].Y + dy,
+-		    polygon->Points[0].X + dx, polygon->Points[0].Y + dy);
++  int next;
++  for (i = 0; i < polygon->PointN; i++)
++    {
++      next = next_contour_point (polygon, i);
++      gui->draw_line (Crosshair.GC,
++                      polygon->Points[i].X + dx,
++                      polygon->Points[i].Y + dy,
++                      polygon->Points[next].X + dx,
++                      polygon->Points[next].Y + dy);
++    }
+ }
+ 
+ /*-----------------------------------------------------------
 diff --git a/src/file.h b/src/file.h
 index 64eba23..13e47b1 100644
 --- a/src/file.h
