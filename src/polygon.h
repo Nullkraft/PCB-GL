@@ -67,4 +67,6 @@ Boolean MorphPolygon (LayerTypePtr, PolygonTypePtr);
 void NoHolesPolygonDicer (PolygonType *p, const BoxType *clip,
                           void (*emit) (PLINE *, void *), void *user_data);
 POLYAREA *board_outline_poly ();
+PolygonType *CreateNewPolygonHole (PolygonType *polygon);
+PointTypePtr CreateNewPointInPolygonHole (PolygonTypePtr Polygon, LocationType X, LocationType Y);
 #endif

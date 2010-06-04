@@ -62,6 +62,9 @@ TextTypePtr CreateNewText (LayerTypePtr, FontTypePtr, LocationType,
 PolygonTypePtr CreateNewPolygon (LayerTypePtr, FlagType);
 PointTypePtr CreateNewPointInPolygon (PolygonTypePtr,
 				      LocationType, LocationType);
+PolygonType *CreateNewHoleInPolygon (PolygonType *polygon);
+PointTypePtr CreateNewPointInPolygonHole (PolygonTypePtr,
+					  LocationType, LocationType);
 void RefdesMapInit (void);
 ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
 				 FontTypePtr, FlagType, char *, char *,
