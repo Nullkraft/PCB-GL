@@ -1,0 +1,170 @@
+Bottom: b2365e9a1462f5eb80ad2fc052548599a4d3bcbb
+Top:    1e0c947022c06614833b99366a4603936b8bc875
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-04 11:20:50 +0100
+
+Refresh of file-format-extension-to-suppo
+
+---
+
+diff --git a/src/create.c b/src/create.c
+index cb8f312..5bade30 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -638,6 +638,19 @@ CreateNewPointInPolygon (PolygonTypePtr Polygon, LocationType X,
+ }
+ 
+ /* ---------------------------------------------------------------------------
++ * creates a new hole in a polygon
++ */
++PolygonType *
++CreateNewHoleInPolygon (PolygonType *Polygon)
++{
++  int *holeindex = GetHoleIndexMemoryInPolygon (Polygon);
++  *holeindex = Polygon->PointN;
++  printf ("Creating hole in polygon %i, Hole %i, PointIndex %i\n",
++          Polygon->ID, Polygon->HoleIndexN, *holeindex);
++  return Polygon;
++}
++
++/* ---------------------------------------------------------------------------
+  * creates a new point in a polygon's hole
+  */
+ PointTypePtr
+@@ -647,7 +660,7 @@ CreateNewPointInPolygonHole (PolygonTypePtr Polygon,
+ {
+   PointTypePtr point = GetPointMemoryInPolygon (Polygon);
+ 
+-  printf ("Adding point %i,%i to polygon %i\n", X, Y, Polygon->ID);
++  printf ("Adding point %i,%i to polygon %i hole\n", X, Y, Polygon->ID);
+ 
+   /* copy values */
+   point->X = X;
+diff --git a/src/create.h b/src/create.h
+index c47a2e8..721e577 100644
+--- a/src/create.h
++++ b/src/create.h
+@@ -62,6 +62,7 @@ TextTypePtr CreateNewText (LayerTypePtr, FontTypePtr, LocationType,
+ PolygonTypePtr CreateNewPolygon (LayerTypePtr, FlagType);
+ PointTypePtr CreateNewPointInPolygon (PolygonTypePtr,
+ 				      LocationType, LocationType);
++PolygonType *CreateNewHoleInPolygon (PolygonType *polygon);
+ PointTypePtr CreateNewPointInPolygonHole (PolygonTypePtr,
+ 					  LocationType, LocationType);
+ void RefdesMapInit (void);
+diff --git a/src/insert.c b/src/insert.c
+index 3d4a2f5..9ecc37f 100644
+--- a/src/insert.c
++++ b/src/insert.c
+@@ -194,6 +194,10 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+   SetChangedFlag (True);
+   AddObjectToInsertPointUndoList (POLYGONPOINT_TYPE, Layer, Polygon,
+ 				  &Polygon->Points[InsertAt]);
++
++  /* Shift up indices of any holes */
++#warning FIXME
++
+   SetPolygonBoundingBox (Polygon);
+   r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
+   InitClip (PCB->Data, Layer, Polygon);
+diff --git a/src/parse_y.y b/src/parse_y.y
+index cedbdb5..ef178e3 100644
+--- a/src/parse_y.y
++++ b/src/parse_y.y
+@@ -1174,7 +1174,7 @@ polygonpoint
+ polygonhole
+ 		: T_POLYGON_HOLE '('
+ 			{
+-				Hole = CreateNewPolygonHole (Polygon);
++				Hole = CreateNewHoleInPolygon (Polygon);
+ 			}
+ 		  polygonholepoints ')'
+ 
+diff --git a/src/polygon.c b/src/polygon.c
+index 5977e77..126152c 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -213,33 +213,49 @@ original_poly (PolygonType * p)
+ {
+   PLINE *contour = NULL;
+   POLYAREA *np = NULL;
++  Cardinal n;
+   Vector v;
++  int hole = 0;
+ 
+-  /* first make initial polygon contour */
+-  POLYGONPOINT_LOOP (p);
+-  {
+-    v[0] = point->X;
+-    v[1] = point->Y;
+-    if (contour == NULL)
+-      {
+-        if ((contour = poly_NewContour (v)) == NULL)
+-          return NULL;
+-      }
+-    else
+-      {
+-        poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+-      }
+-  }
+-  END_LOOP;
+-  poly_PreContour (contour, TRUE);
+-  /* make sure it is a positive contour */
+-  if ((contour->Flags.orient) != PLF_DIR)
+-    poly_InvContour (contour);
+-  assert ((contour->Flags.orient) == PLF_DIR);
+   if ((np = poly_Create ()) == NULL)
+     return NULL;
+-  poly_InclContour (np, contour);
+-  assert (poly_Valid (np));
++
++  /* first make initial polygon contour */
++  for (n = 0; n < p->PointN; n++)
++    {
++      /* No current contour? Make a new one starting at point */
++      /*   (or) Add point to existing contour */
++
++      v[0] = p->Points[n].X;
++      v[1] = p->Points[n].Y;
++      if (contour == NULL)
++        {
++          if ((contour = poly_NewContour (v)) == NULL)
++            return NULL;
++        }
++      else
++        {
++          poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++        }
++
++      /* Is current point last in contour? If so process it. */
++      if (n == p->PointN - 1 ||
++          (hole < p->HoleIndexN && n == p->HoleIndex[hole] - 1))
++        {
++          poly_PreContour (contour, TRUE);
++
++          /* make sure it is a positive contour (outer) or negative (hole) */
++          if (contour->Flags.orient != (hole ? PLF_INV : PLF_DIR))
++            poly_InvContour (contour);
++          assert (contour->Flags.orient == (hole ? PLF_INV : PLF_DIR));
++
++          poly_InclContour (np, contour);
++          contour = NULL;
++          assert (poly_Valid (np));
++
++          hole++;
++        }
++  }
+   return biggest (np);
+ }
+ 
+@@ -1975,10 +1991,3 @@ POLYAREA *board_outline_poly ()
+ 
+   return clipped;
+ }
+-
+-PolygonType *
+-CreateNewPolygonHole (PolygonType *Polygon)
+-{
+-  printf ("Creating hole in polygon %i\n", Polygon->ID);
+-  return Polygon;
+-}
