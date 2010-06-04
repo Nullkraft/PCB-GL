@@ -1,13 +1,160 @@
 Bottom: 2a28d3e68ce4df9802017d234f586e8553776063
-Top:    bd3b8bbae1b8a5ba99c21ce6a8bd359c8add0d7d
+Top:    24f22c095bce08e25f94955b4d128962c13ab3f3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-04 10:17:07 +0100
+Date:   2010-06-04 13:02:59 +0100
 
-Support holes in input polygons
-
+Support holes in input polygons (incl. file-format addition)
 
 ---
 
+diff --git a/src/copy.c b/src/copy.c
+index 583feb8..3ffd439 100644
+--- a/src/copy.c
++++ b/src/copy.c
+@@ -95,6 +95,7 @@ static ObjectFunctionType CopyFunctions = {
+ PolygonTypePtr
+ CopyPolygonLowLevel (PolygonTypePtr Dest, PolygonTypePtr Src)
+ {
++#warning FIXME FOR HOLES
+   /* copy all data */
+   POLYGONPOINT_LOOP (Src);
+   {
+diff --git a/src/create.c b/src/create.c
+index bdb7b9b..5bade30 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -637,6 +637,38 @@ CreateNewPointInPolygon (PolygonTypePtr Polygon, LocationType X,
+   return (point);
+ }
+ 
++/* ---------------------------------------------------------------------------
++ * creates a new hole in a polygon
++ */
++PolygonType *
++CreateNewHoleInPolygon (PolygonType *Polygon)
++{
++  int *holeindex = GetHoleIndexMemoryInPolygon (Polygon);
++  *holeindex = Polygon->PointN;
++  printf ("Creating hole in polygon %i, Hole %i, PointIndex %i\n",
++          Polygon->ID, Polygon->HoleIndexN, *holeindex);
++  return Polygon;
++}
++
++/* ---------------------------------------------------------------------------
++ * creates a new point in a polygon's hole
++ */
++PointTypePtr
++CreateNewPointInPolygonHole (PolygonTypePtr Polygon,
++                             LocationType X,
++                             LocationType Y)
++{
++  PointTypePtr point = GetPointMemoryInPolygon (Polygon);
++
++  printf ("Adding point %i,%i to polygon %i hole\n", X, Y, Polygon->ID);
++
++  /* copy values */
++  point->X = X;
++  point->Y = Y;
++  point->ID = ID++;
++  return point;
++}
++
+ static char *refdes_map_file = "refdes.map";
+ static GHashTable *refdes_map_table = NULL;
+ 
+diff --git a/src/create.h b/src/create.h
+index 98bb525..721e577 100644
+--- a/src/create.h
++++ b/src/create.h
+@@ -62,6 +62,9 @@ TextTypePtr CreateNewText (LayerTypePtr, FontTypePtr, LocationType,
+ PolygonTypePtr CreateNewPolygon (LayerTypePtr, FlagType);
+ PointTypePtr CreateNewPointInPolygon (PolygonTypePtr,
+ 				      LocationType, LocationType);
++PolygonType *CreateNewHoleInPolygon (PolygonType *polygon);
++PointTypePtr CreateNewPointInPolygonHole (PolygonTypePtr,
++					  LocationType, LocationType);
+ void RefdesMapInit (void);
+ ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
+ 				 FontTypePtr, FlagType, char *, char *,
+diff --git a/src/crosshair.c b/src/crosshair.c
+index cea493a..953f29a 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -86,6 +86,35 @@ static void XORDrawAttachedLine (LocationType, LocationType, LocationType,
+ static void XORDrawAttachedArc (BDimension);
+ /*static*/ void DrawAttached (Boolean);
+ 
++static int
++next_contour_point (PolygonTypePtr polygon, int point)
++{
++  int hole;
++  int this_contour_start;
++  int next_contour_start;
++
++  /* Find which contour / hole the specified point is in */
++  for (hole = polygon->HoleIndexN - 1; hole >= 0; hole--)
++    if (point >= polygon->HoleIndex[hole])
++      break;
++  hole++;
++
++  /* hole = 0 for an outer contour point */
++  /* hole = 1 for the first contour etc. */
++
++  this_contour_start = (hole == 0) ? 0 :
++                                     polygon->HoleIndex[hole - 1];
++  next_contour_start =
++    (hole == polygon->HoleIndexN) ? polygon->PointN :
++                                    polygon->HoleIndex[hole];
++
++  /* Wrap back to the start of the contour we're in if we pass the end */
++  if (++point == next_contour_start)
++    point = this_contour_start;
++
++  return point;
++}
++
+ /* ---------------------------------------------------------------------------
+  * creates a tmp polygon with coordinates converted to screen system
+  */
+@@ -93,15 +122,16 @@ static void
+ XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
+ {
+   int i;
+-  for (i = 0; i < polygon->PointN - 1; i++)
+-    gui->draw_line (Crosshair.GC,
+-		    polygon->Points[i].X + dx, polygon->Points[i].Y + dy,
+-		    polygon->Points[i + 1].X + dx,
+-		    polygon->Points[i + 1].Y + dy);
+-  if (i > 1)
+-    gui->draw_line (Crosshair.GC,
+-		    polygon->Points[i].X + dx, polygon->Points[i].Y + dy,
+-		    polygon->Points[0].X + dx, polygon->Points[0].Y + dy);
++  int next;
++  for (i = 0; i < polygon->PointN; i++)
++    {
++      next = next_contour_point (polygon, i);
++      gui->draw_line (Crosshair.GC,
++                      polygon->Points[i].X + dx,
++                      polygon->Points[i].Y + dy,
++                      polygon->Points[next].X + dx,
++                      polygon->Points[next].Y + dy);
++    }
+ }
+ 
+ /*-----------------------------------------------------------
+diff --git a/src/file.h b/src/file.h
+index 64eba23..13e47b1 100644
+--- a/src/file.h
++++ b/src/file.h
+@@ -56,7 +56,7 @@ void sort_netlist (void);
+  * guidance to the user as to what the minimum version of pcb required
+  * is.
+  */
+-#define PCB_FILE_VERSION 20070407
++#define PCB_FILE_VERSION 20100603
+ 
+ 
+ #ifndef HAS_ATEXIT
 diff --git a/src/global.h b/src/global.h
 index b7c9d0f..a63b349 100644
 --- a/src/global.h
@@ -23,6 +170,21 @@ index b7c9d0f..a63b349 100644
  };
  
  typedef struct			/* holds information about arcs */
+diff --git a/src/insert.c b/src/insert.c
+index 3d4a2f5..9ecc37f 100644
+--- a/src/insert.c
++++ b/src/insert.c
+@@ -194,6 +194,10 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+   SetChangedFlag (True);
+   AddObjectToInsertPointUndoList (POLYGONPOINT_TYPE, Layer, Polygon,
+ 				  &Polygon->Points[InsertAt]);
++
++  /* Shift up indices of any holes */
++#warning FIXME
++
+   SetPolygonBoundingBox (Polygon);
+   r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
+   InitClip (PCB->Data, Layer, Polygon);
 diff --git a/src/mymem.c b/src/mymem.c
 index 4118cf0..7e39e68 100644
 --- a/src/mymem.c
@@ -84,3 +246,250 @@ index b9d4de1..d3ac668 100644
  ElementTypePtr GetElementMemory (DataTypePtr);
  BoxTypePtr GetBoxMemory (BoxListTypePtr);
  ConnectionTypePtr GetConnectionMemory (NetTypePtr);
+diff --git a/src/parse_l.l b/src/parse_l.l
+index 2a9d589..3e718c8 100644
+--- a/src/parse_l.l
++++ b/src/parse_l.l
+@@ -129,6 +129,7 @@ Mark		{ return(T_MARK); }
+ Groups		{ return(T_GROUPS); }
+ Styles		{ return(T_STYLES); }
+ Polygon		{ return(T_POLYGON); }
++Hole		{ return(T_POLYGON_HOLE); }
+ Arc		{ return(T_ARC); }
+ NetList		{ return(T_NETLIST); }
+ Net		{ return(T_NET); }
+diff --git a/src/parse_y.y b/src/parse_y.y
+index b76e689..ef178e3 100644
+--- a/src/parse_y.y
++++ b/src/parse_y.y
+@@ -65,6 +65,7 @@ RCSID("$Id$");
+ 
+ static	LayerTypePtr	Layer;
+ static	PolygonTypePtr	Polygon;
++static	PolygonTypePtr	Hole;
+ static	SymbolTypePtr	Symbol;
+ static	int		pin_num;
+ static	LibraryMenuTypePtr	Menu;
+@@ -102,9 +103,8 @@ static int check_file_version (int);
+ 
+ %token	T_FILEVERSION T_PCB T_LAYER T_VIA T_RAT T_LINE T_ARC T_RECTANGLE T_TEXT T_ELEMENTLINE
+ %token	T_ELEMENT T_PIN T_PAD T_GRID T_FLAGS T_SYMBOL T_SYMBOLLINE T_CURSOR
+-%token	T_ELEMENTARC T_MARK T_GROUPS T_STYLES T_POLYGON T_NETLIST T_NET T_CONN
++%token	T_ELEMENTARC T_MARK T_GROUPS T_STYLES T_POLYGON T_POLYGON_HOLE T_NETLIST T_NET T_CONN
+ %token	T_AREA T_THERMAL T_DRC T_ATTRIBUTE
+-
+ %type	<number>	symbolid
+ %type	<string>	opt_string
+ %type	<flagtype>	flags
+@@ -895,31 +895,7 @@ layerdefinition
+ 		| text_newformat
+ 		| text_oldformat
+ 		| { attr_list = & Layer->Attributes; } attributes
+-			/* flags are passed in */
+-		| T_POLYGON '(' flags ')' '('
+-			{
+-				Polygon = CreateNewPolygon(Layer, $3);
+-			}
+-		  polygonpoints ')'
+-		  	{
+-					/* ignore junk */
+-				if (Polygon->PointN >= 3)
+-				  {
+-				    SetPolygonBoundingBox (Polygon);
+-				    if (!Layer->polygon_tree)
+-				      Layer->polygon_tree = r_create_tree (NULL, 0, 0);
+-				    r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
+-				  }
+-				else
+-				{
+-					Message("WARNING parsing file '%s'\n"
+-						"    line:        %i\n"
+-						"    description: 'ignored polygon (< 3 points)'\n",
+-						yyfilename, yylineno);
+-					DestroyObject(yyData, POLYGON_TYPE, Layer, Polygon, Polygon);
+-				}
+-			}
+-		;
++		| polygon_format
+ 
+ /* %start-doc pcbfile Line
+ 
+@@ -1124,6 +1100,11 @@ text_hi_format
+ Polygon (SFlags) (
+ @ @ @ @dots{} (X Y) @dots{}
+ @ @ @ @dots{} [X Y] @dots{}
++@ @ @ Hole (
++@ @ @ @ @ @ @dots{} (X Y) @dots{}
++@ @ @ @ @ @ @dots{} [X Y] @dots{}
++@ @ @ )
++@ @ @ @dots{}
+ )
+ @end syntax
+ 
+@@ -1132,10 +1113,46 @@ Polygon (SFlags) (
+ Symbolic or numeric flags.
+ @item X Y
+ Coordinates of each vertex.  You must list at least three coordinates.
++@item Hole (...)
++Defines a hole within the polygon's outer contour. There may be zero or more such sections.
+ @end table
+ 
+ %end-doc */
+ 
++polygonholes
++		: /* empty */
++		| polygonhole
++		| polygonholes polygonhole
++		;
++
++polygon_format
++		: /* flags are passed in */
++		T_POLYGON '(' flags ')' '('
++			{
++				Polygon = CreateNewPolygon(Layer, $3);
++			}
++		  polygonpoints
++		  polygonholes ')'
++			{
++					/* ignore junk */
++				if (Polygon->PointN >= 3)
++				  {
++				    SetPolygonBoundingBox (Polygon);
++				    if (!Layer->polygon_tree)
++				      Layer->polygon_tree = r_create_tree (NULL, 0, 0);
++				    r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
++				  }
++				else
++				{
++					Message("WARNING parsing file '%s'\n"
++						"    line:        %i\n"
++						"    description: 'ignored polygon (< 3 points)'\n",
++						yyfilename, yylineno);
++					DestroyObject(yyData, POLYGON_TYPE, Layer, Polygon, Polygon);
++				}
++			}
++		;
++
+ polygonpoints
+ 		: polygonpoint
+ 		| polygonpoints polygonpoint
+@@ -1154,6 +1171,31 @@ polygonpoint
+ 		|
+ 		;
+ 
++polygonhole
++		: T_POLYGON_HOLE '('
++			{
++				Hole = CreateNewHoleInPolygon (Polygon);
++			}
++		  polygonholepoints ')'
++
++polygonholepoints
++		: polygonholepoint
++		| polygonholepoints polygonholepoint
++		;
++
++polygonholepoint
++			/* xcoord ycoord */
++		: '(' NUMBER NUMBER ')'
++			{
++				CreateNewPointInPolygonHole(Hole, $2*100, $3*100);
++			}
++		| '[' NUMBER NUMBER ']'
++			{
++				CreateNewPointInPolygonHole(Hole, $2, $3);
++			}
++		|
++		;
++
+ /* %start-doc pcbfile Element
+ 
+ @syntax
+diff --git a/src/polygon.c b/src/polygon.c
+index 1417e31..126152c 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -213,33 +213,49 @@ original_poly (PolygonType * p)
+ {
+   PLINE *contour = NULL;
+   POLYAREA *np = NULL;
++  Cardinal n;
+   Vector v;
++  int hole = 0;
+ 
+-  /* first make initial polygon contour */
+-  POLYGONPOINT_LOOP (p);
+-  {
+-    v[0] = point->X;
+-    v[1] = point->Y;
+-    if (contour == NULL)
+-      {
+-        if ((contour = poly_NewContour (v)) == NULL)
+-          return NULL;
+-      }
+-    else
+-      {
+-        poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+-      }
+-  }
+-  END_LOOP;
+-  poly_PreContour (contour, TRUE);
+-  /* make sure it is a positive contour */
+-  if ((contour->Flags.orient) != PLF_DIR)
+-    poly_InvContour (contour);
+-  assert ((contour->Flags.orient) == PLF_DIR);
+   if ((np = poly_Create ()) == NULL)
+     return NULL;
+-  poly_InclContour (np, contour);
+-  assert (poly_Valid (np));
++
++  /* first make initial polygon contour */
++  for (n = 0; n < p->PointN; n++)
++    {
++      /* No current contour? Make a new one starting at point */
++      /*   (or) Add point to existing contour */
++
++      v[0] = p->Points[n].X;
++      v[1] = p->Points[n].Y;
++      if (contour == NULL)
++        {
++          if ((contour = poly_NewContour (v)) == NULL)
++            return NULL;
++        }
++      else
++        {
++          poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++        }
++
++      /* Is current point last in contour? If so process it. */
++      if (n == p->PointN - 1 ||
++          (hole < p->HoleIndexN && n == p->HoleIndex[hole] - 1))
++        {
++          poly_PreContour (contour, TRUE);
++
++          /* make sure it is a positive contour (outer) or negative (hole) */
++          if (contour->Flags.orient != (hole ? PLF_INV : PLF_DIR))
++            poly_InvContour (contour);
++          assert (contour->Flags.orient == (hole ? PLF_INV : PLF_DIR));
++
++          poly_InclContour (np, contour);
++          contour = NULL;
++          assert (poly_Valid (np));
++
++          hole++;
++        }
++  }
+   return biggest (np);
+ }
+ 
+diff --git a/src/polygon.h b/src/polygon.h
+index ccf3164..f4c0b01 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -67,4 +67,6 @@ Boolean MorphPolygon (LayerTypePtr, PolygonTypePtr);
+ void NoHolesPolygonDicer (PolygonType *p, const BoxType *clip,
+                           void (*emit) (PLINE *, void *), void *user_data);
+ POLYAREA *board_outline_poly ();
++PolygonType *CreateNewPolygonHole (PolygonType *polygon);
++PointTypePtr CreateNewPointInPolygonHole (PolygonTypePtr Polygon, LocationType X, LocationType Y);
+ #endif
