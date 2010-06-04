@@ -638,6 +638,19 @@ CreateNewPointInPolygon (PolygonTypePtr Polygon, LocationType X,
 }
 
 /* ---------------------------------------------------------------------------
+ * creates a new hole in a polygon
+ */
+PolygonType *
+CreateNewHoleInPolygon (PolygonType *Polygon)
+{
+  int *holeindex = GetHoleIndexMemoryInPolygon (Polygon);
+  *holeindex = Polygon->PointN;
+  printf ("Creating hole in polygon %i, Hole %i, PointIndex %i\n",
+          Polygon->ID, Polygon->HoleIndexN, *holeindex);
+  return Polygon;
+}
+
+/* ---------------------------------------------------------------------------
  * creates a new point in a polygon's hole
  */
 PointTypePtr
@@ -647,7 +660,7 @@ CreateNewPointInPolygonHole (PolygonTypePtr Polygon,
 {
   PointTypePtr point = GetPointMemoryInPolygon (Polygon);
 
-  printf ("Adding point %i,%i to polygon %i\n", X, Y, Polygon->ID);
+  printf ("Adding point %i,%i to polygon %i hole\n", X, Y, Polygon->ID);
 
   /* copy values */
   point->X = X;

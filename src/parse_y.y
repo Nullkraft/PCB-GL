@@ -1174,7 +1174,7 @@ polygonpoint
 polygonhole
 		: T_POLYGON_HOLE '('
 			{
-				Hole = CreateNewPolygonHole (Polygon);
+				Hole = CreateNewHoleInPolygon (Polygon);
 			}
 		  polygonholepoints ')'
 

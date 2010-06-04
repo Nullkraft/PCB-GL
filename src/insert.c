@@ -194,6 +194,10 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
   SetChangedFlag (True);
   AddObjectToInsertPointUndoList (POLYGONPOINT_TYPE, Layer, Polygon,
 				  &Polygon->Points[InsertAt]);
+
+  /* Shift up indices of any holes */
+#warning FIXME
+
   SetPolygonBoundingBox (Polygon);
   r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
   InitClip (PCB->Data, Layer, Polygon);
