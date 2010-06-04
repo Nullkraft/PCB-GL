@@ -1,0 +1,332 @@
+Bottom: 351d96f57ed7d86ccde0d5aa930ba85ff8ba50c6
+Top:    198fb06d8a0839ad905cbcb129d2836574544a38
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-05 00:45:26 +0100
+
+Refresh of support-holes-in-input-polygon
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 1d3dd0c..617dfe5 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -1641,9 +1641,8 @@ NotifyMode (void)
+ 			GetLowestDistancePolygonPoint (fake.poly, Note.X,
+ 						       Note.Y);
+ 		      fake.line.Point1 = fake.poly->Points[polyIndex];
+-		      fake.line.Point2 = (polyIndex) ?
+-			fake.poly->Points[polyIndex - 1]
+-			: fake.poly->Points[fake.poly->PointN - 1];
++		      fake.line.Point2 = fake.poly->Points[
++			  prev_contour_point (fake.poly, polyIndex)];
+ 		      Crosshair.AttachedObject.Ptr2 = &fake.line;
+ 
+ 		    }
+diff --git a/src/autoroute.c b/src/autoroute.c
+index b9f1fdd..31ee09d 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -768,6 +768,7 @@ AddPolygon (PointerListType layergroupboxes[], Cardinal layer,
+ 			     polygon->BoundingBox.Y2,
+ 			     layergroup, polygon, style);
+   if (polygon->PointN == 4 &&
++      polygon->HoleIndexN == 0 &&
+       (polygon->Points[0].X == polygon->Points[1].X ||
+        polygon->Points[0].Y == polygon->Points[1].Y) &&
+       (polygon->Points[1].X == polygon->Points[2].X ||
+diff --git a/src/buffer.c b/src/buffer.c
+index fbd1735..5505d63 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -1001,7 +1001,7 @@ polygon_is_rectangle (PolygonTypePtr poly)
+ {
+   int i, best;
+   PointType temp[4];
+-  if (poly->PointN != 4)
++  if (poly->PointN != 4 || poly->HoleIndexN != 0)
+     return 0;
+   best = 0;
+   for (i=1; i<4; i++)
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 8a0c750..f4f0ffc 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -86,66 +86,6 @@ static void XORDrawAttachedLine (LocationType, LocationType, LocationType,
+ static void XORDrawAttachedArc (BDimension);
+ /*static*/ void DrawAttached (Boolean);
+ 
+-static int
+-next_contour_point (PolygonTypePtr polygon, int point)
+-{
+-  int hole;
+-  int this_contour_start;
+-  int next_contour_start;
+-
+-  /* Find which contour / hole the specified point is in */
+-  for (hole = polygon->HoleIndexN - 1; hole >= 0; hole--)
+-    if (point >= polygon->HoleIndex[hole])
+-      break;
+-  hole++;
+-
+-  /* hole = 0 for an outer contour point */
+-  /* hole = 1 for the first contour etc. */
+-
+-  this_contour_start = (hole == 0) ? 0 :
+-                                     polygon->HoleIndex[hole - 1];
+-  next_contour_start =
+-    (hole == polygon->HoleIndexN) ? polygon->PointN :
+-                                    polygon->HoleIndex[hole];
+-
+-  /* Wrap back to the start of the contour we're in if we pass the end */
+-  if (++point == next_contour_start)
+-    point = this_contour_start;
+-
+-  return point;
+-}
+-
+-static int
+-prev_contour_point (PolygonTypePtr polygon, int point)
+-{
+-  int hole;
+-  int prev_contour_end;
+-  int this_contour_end;
+-
+-  /* Find which contour / hole the specified point is in */
+-  for (hole = polygon->HoleIndexN - 1; hole >= 0; hole--)
+-    if (point >= polygon->HoleIndex[hole])
+-      break;
+-  hole++;
+-
+-  /* hole = 0 for an outer contour point */
+-  /* hole = 1 for the first contour etc. */
+-
+-  prev_contour_end = (hole == 0) ? 0 :
+-                                   polygon->HoleIndex[hole - 1];
+-  this_contour_end =
+-    (hole == polygon->HoleIndexN) ? polygon->PointN - 1:
+-                                    polygon->HoleIndex[hole] - 1;
+-
+-  /* Wrap back to the start of the contour we're in if we pass the end */
+-  if (point == prev_contour_end)
+-    point = this_contour_end;
+-  else
+-    point--;
+-
+-  return point;
+-}
+-
+ /* ---------------------------------------------------------------------------
+  * creates a tmp polygon with coordinates converted to screen system
+  */
+diff --git a/src/global.h b/src/global.h
+index a63b349..192e3fe 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -263,7 +263,7 @@ struct polygon_st			/* holds information about a polygon */
+   PLINE *NoHoles;		/* the polygon broken into hole-less regions */
+   int NoHolesValid;		/* Is the NoHoles polygon up to date? */
+   PointTypePtr Points;		/* data */
+-  int *HoleIndex;		/* Index of hole data within the Points array */
++  Cardinal *HoleIndex;		/* Index of hole data within the Points array */
+   Cardinal HoleIndexN;		/* number of holes in polygon */
+   Cardinal HoleIndexMax;	/* max number from malloc() */
+ 
+diff --git a/src/insert.c b/src/insert.c
+index 9ecc37f..a5ced0d 100644
+--- a/src/insert.c
++++ b/src/insert.c
+@@ -174,10 +174,7 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+        * first make sure adding the point is sensible
+        */
+       line.Thickness = 0;
+-      if (InsertAt == 0)
+-	line.Point1 = Polygon->Points[Polygon->PointN - 1];
+-      else
+-	line.Point1 = Polygon->Points[InsertAt - 1];
++      line.Point1 = Polygon->Points[prev_contour_point (Polygon, InsertAt)];
+       line.Point2 = Polygon->Points[InsertAt];
+       if (IsPointOnLine ((float) InsertX, (float) InsertY, 0.0, &line))
+ 	return (NULL);
+@@ -190,14 +187,18 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+   save = *CreateNewPointInPolygon (Polygon, InsertX, InsertY);
+   for (n = Polygon->PointN - 1; n > InsertAt; n--)
+     Polygon->Points[n] = Polygon->Points[n - 1];
++
++#warning "FIXME: How do we know which contour / hole the inserted item belongs to if it is on a boundary?"
++  /* Shift up indices of any holes */
++  for (n = Polygon->HoleIndexN - 1; n > 0; n--)
++    if (Polygon->HoleIndex[n] >= InsertAt)
++      Polygon->HoleIndex[n]++;
++
+   Polygon->Points[InsertAt] = save;
+   SetChangedFlag (True);
+   AddObjectToInsertPointUndoList (POLYGONPOINT_TYPE, Layer, Polygon,
+ 				  &Polygon->Points[InsertAt]);
+ 
+-  /* Shift up indices of any holes */
+-#warning FIXME
+-
+   SetPolygonBoundingBox (Polygon);
+   r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
+   InitClip (PCB->Data, Layer, Polygon);
+diff --git a/src/polygon.c b/src/polygon.c
+index 126152c..17b5def 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -124,6 +124,66 @@ static double circleVerticies[] = {
+   0.98768834059513777, 0.15643446504023087,
+ };
+ 
++Cardinal
++next_contour_point (PolygonTypePtr polygon, Cardinal point)
++{
++  int hole; /* Must be a signed type */
++  Cardinal this_contour_start;
++  Cardinal next_contour_start;
++
++  /* Find which contour / hole the specified point is in */
++  for (hole = polygon->HoleIndexN - 1; hole >= 0; hole--)
++    if (point >= polygon->HoleIndex[hole])
++      break;
++  hole++;
++
++  /* hole = 0 for an outer contour point */
++  /* hole = 1 for the first contour etc. */
++
++  this_contour_start = (hole == 0) ? 0 :
++                                     polygon->HoleIndex[hole - 1];
++  next_contour_start =
++    (hole == polygon->HoleIndexN) ? polygon->PointN :
++                                    polygon->HoleIndex[hole];
++
++  /* Wrap back to the start of the contour we're in if we pass the end */
++  if (++point == next_contour_start)
++    point = this_contour_start;
++
++  return point;
++}
++
++Cardinal
++prev_contour_point (PolygonTypePtr polygon, Cardinal point)
++{
++  int hole; /* Must be a signed type */
++  Cardinal prev_contour_end;
++  Cardinal this_contour_end;
++
++  /* Find which contour / hole the specified point is in */
++  for (hole = polygon->HoleIndexN - 1; hole >= 0; hole--)
++    if (point >= polygon->HoleIndex[hole])
++      break;
++  hole++;
++
++  /* hole = 0 for an outer contour point */
++  /* hole = 1 for the first contour etc. */
++
++  prev_contour_end = (hole == 0) ? 0 :
++                                   polygon->HoleIndex[hole - 1];
++  this_contour_end =
++    (hole == polygon->HoleIndexN) ? polygon->PointN - 1:
++                                    polygon->HoleIndex[hole] - 1;
++
++  /* Wrap back to the start of the contour we're in if we pass the end */
++  if (point == prev_contour_end)
++    point = this_contour_end;
++  else
++    point--;
++
++  return point;
++}
++
+ static void
+ add_noholes_polyarea (PLINE *pline, void *user_data)
+ {
+@@ -1161,6 +1221,7 @@ RemoveExcessPolygonPoints (LayerTypePtr Layer, PolygonTypePtr Polygon)
+   LineType line;
+   Boolean changed = False;
+ 
++#warning NEED TO TAKE HOLES INTO ACCOUNT
+   if (Undoing ())
+     return (False);
+   /* there are always at least three points in a polygon */
+@@ -1264,6 +1325,7 @@ GoToPreviousPoint (void)
+       /* back-up one point */
+     default:
+       {
++#warning Any implication for holes?
+         PointTypePtr points = Crosshair.AttachedPolygon.Points;
+         Cardinal n = Crosshair.AttachedPolygon.PointN - 2;
+ 
+@@ -1283,6 +1345,7 @@ ClosePolygon (void)
+ {
+   Cardinal n = Crosshair.AttachedPolygon.PointN;
+ 
++#warning Any implication for holes?
+   /* check number of points */
+   if (n >= 3)
+     {
+@@ -1811,6 +1874,7 @@ debug_polygon (PolygonType *p)
+ {
+   int i;
+   POLYAREA *pa;
++#warning Augment to display hole contours properly
+   fprintf (stderr, "POLYGON %p  %d pts\n", p, p->PointN);
+   for (i=0; i<p->PointN; i++)
+     fprintf(stderr, "\t%d: %d, %d\n", i, p->Points[i].X, p->Points[i].Y);
+diff --git a/src/polygon.h b/src/polygon.h
+index ccf3164..0ad5989 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -33,6 +33,8 @@
+ 
+ #include "global.h"
+ 
++Cardinal prev_contour_point (PolygonTypePtr polygon, Cardinal point);
++Cardinal next_contour_point (PolygonTypePtr polygon, Cardinal point);
+ Cardinal GetLowestDistancePolygonPoint (PolygonTypePtr,
+ 					LocationType, LocationType);
+ Boolean RemoveExcessPolygonPoints (LayerTypePtr, PolygonTypePtr);
+diff --git a/src/remove.c b/src/remove.c
+index a82b478..20f9bea 100644
+--- a/src/remove.c
++++ b/src/remove.c
+@@ -205,6 +205,7 @@ DestroyPolygonPoint (LayerTypePtr Layer,
+ {
+   PointTypePtr ptr;
+ 
++#warning Need to shift hole indices down
+   if (Polygon->PointN <= 3)
+     return RemovePolygon (Layer, Polygon);
+   r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
+@@ -489,6 +490,7 @@ RemovePolygonPoint (LayerTypePtr Layer,
+ {
+   PointTypePtr ptr;
+   Cardinal index = 0;
++#warning Need to shift hole indices down
+   if (Polygon->PointN <= 3)
+     return RemovePolygon (Layer, Polygon);
+   if (Layer->On)
+diff --git a/src/report.c b/src/report.c
+index 2e80e66..35a9888 100644
+--- a/src/report.c
++++ b/src/report.c
+@@ -321,6 +321,7 @@ ReportDialog (int argc, char **argv, int x, int y)
+ #endif
+ 	Polygon = (PolygonTypePtr) ptr2;
+ 
++#warning Report about holes as well?
+ 	sprintf (&report[0], "POLYGON ID# %ld   Flags:%s\n"
+ 		 "Its bounding box is (%d,%d) (%d,%d)\n"
+ 		 "It has %d points and could store %d more\n"
+diff --git a/src/undo.c b/src/undo.c
+index cb8d180..c601fe7 100644
+--- a/src/undo.c
++++ b/src/undo.c
+@@ -778,6 +778,7 @@ UndoInsertPoint (UndoListTypePtr Entry)
+ 	Entry->ID = polygon->ID;
+ 	Entry->Kind = POLYGON_TYPE;
+ 	Entry->Type = UNDO_REMOVE_POINT;
++#warning Any implication for holes? Do we need to store which contour the insert was in?
+ 	POLYGONPOINT_LOOP (polygon);
+ 	{
+ 	  if (pnt == point)
