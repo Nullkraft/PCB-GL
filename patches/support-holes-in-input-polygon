@@ -1,5 +1,5 @@
 Bottom: 2a28d3e68ce4df9802017d234f586e8553776063
-Top:    4c315f0029427de2b159a3dcb9ceb27e69d6d0ae
+Top:    351d96f57ed7d86ccde0d5aa930ba85ff8ba50c6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-04 13:02:59 +0100
 
@@ -20,10 +20,10 @@ index 583feb8..3ffd439 100644
    POLYGONPOINT_LOOP (Src);
    {
 diff --git a/src/create.c b/src/create.c
-index bdb7b9b..f419d2a 100644
+index bdb7b9b..c73b399 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -637,6 +637,19 @@ CreateNewPointInPolygon (PolygonTypePtr Polygon, LocationType X,
+@@ -637,6 +637,17 @@ CreateNewPointInPolygon (PolygonTypePtr Polygon, LocationType X,
    return (point);
  }
  
@@ -35,8 +35,6 @@ index bdb7b9b..f419d2a 100644
 +{
 +  int *holeindex = GetHoleIndexMemoryInPolygon (Polygon);
 +  *holeindex = Polygon->PointN;
-+  printf ("Creating hole in polygon %i, Hole %i, PointIndex %i\n",
-+          Polygon->ID, Polygon->HoleIndexN, *holeindex);
 +  return Polygon;
 +}
 +
