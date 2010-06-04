@@ -33,6 +33,8 @@
 
 #include "global.h"
 
+Cardinal prev_contour_point (PolygonTypePtr polygon, Cardinal point);
+Cardinal next_contour_point (PolygonTypePtr polygon, Cardinal point);
 Cardinal GetLowestDistancePolygonPoint (PolygonTypePtr,
 					LocationType, LocationType);
 Boolean RemoveExcessPolygonPoints (LayerTypePtr, PolygonTypePtr);

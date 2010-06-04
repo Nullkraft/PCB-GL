@@ -263,7 +263,7 @@ struct polygon_st			/* holds information about a polygon */
   PLINE *NoHoles;		/* the polygon broken into hole-less regions */
   int NoHolesValid;		/* Is the NoHoles polygon up to date? */
   PointTypePtr Points;		/* data */
-  int *HoleIndex;		/* Index of hole data within the Points array */
+  Cardinal *HoleIndex;		/* Index of hole data within the Points array */
   Cardinal HoleIndexN;		/* number of holes in polygon */
   Cardinal HoleIndexMax;	/* max number from malloc() */
 

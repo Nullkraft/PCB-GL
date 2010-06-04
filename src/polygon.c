@@ -124,6 +124,66 @@ static double circleVerticies[] = {
   0.98768834059513777, 0.15643446504023087,
 };
 
+Cardinal
+next_contour_point (PolygonTypePtr polygon, Cardinal point)
+{
+  int hole; /* Must be a signed type */
+  Cardinal this_contour_start;
+  Cardinal next_contour_start;
+
+  /* Find which contour / hole the specified point is in */
+  for (hole = polygon->HoleIndexN - 1; hole >= 0; hole--)
+    if (point >= polygon->HoleIndex[hole])
+      break;
+  hole++;
+
+  /* hole = 0 for an outer contour point */
+  /* hole = 1 for the first contour etc. */
+
+  this_contour_start = (hole == 0) ? 0 :
+                                     polygon->HoleIndex[hole - 1];
+  next_contour_start =
+    (hole == polygon->HoleIndexN) ? polygon->PointN :
+                                    polygon->HoleIndex[hole];
+
+  /* Wrap back to the start of the contour we're in if we pass the end */
+  if (++point == next_contour_start)
+    point = this_contour_start;
+
+  return point;
+}
+
+Cardinal
+prev_contour_point (PolygonTypePtr polygon, Cardinal point)
+{
+  int hole; /* Must be a signed type */
+  Cardinal prev_contour_end;
+  Cardinal this_contour_end;
+
+  /* Find which contour / hole the specified point is in */
+  for (hole = polygon->HoleIndexN - 1; hole >= 0; hole--)
+    if (point >= polygon->HoleIndex[hole])
+      break;
+  hole++;
+
+  /* hole = 0 for an outer contour point */
+  /* hole = 1 for the first contour etc. */
+
+  prev_contour_end = (hole == 0) ? 0 :
+                                   polygon->HoleIndex[hole - 1];
+  this_contour_end =
+    (hole == polygon->HoleIndexN) ? polygon->PointN - 1:
+                                    polygon->HoleIndex[hole] - 1;
+
+  /* Wrap back to the start of the contour we're in if we pass the end */
+  if (point == prev_contour_end)
+    point = this_contour_end;
+  else
+    point--;
+
+  return point;
+}
+
 static void
 add_noholes_polyarea (PLINE *pline, void *user_data)
 {
@@ -1161,6 +1221,7 @@ RemoveExcessPolygonPoints (LayerTypePtr Layer, PolygonTypePtr Polygon)
   LineType line;
   Boolean changed = False;
 
+#warning NEED TO TAKE HOLES INTO ACCOUNT
   if (Undoing ())
     return (False);
   /* there are always at least three points in a polygon */
@@ -1264,6 +1325,7 @@ GoToPreviousPoint (void)
       /* back-up one point */
     default:
       {
+#warning Any implication for holes?
         PointTypePtr points = Crosshair.AttachedPolygon.Points;
         Cardinal n = Crosshair.AttachedPolygon.PointN - 2;
 
@@ -1283,6 +1345,7 @@ ClosePolygon (void)
 {
   Cardinal n = Crosshair.AttachedPolygon.PointN;
 
+#warning Any implication for holes?
   /* check number of points */
   if (n >= 3)
     {
@@ -1811,6 +1874,7 @@ debug_polygon (PolygonType *p)
 {
   int i;
   POLYAREA *pa;
+#warning Augment to display hole contours properly
   fprintf (stderr, "POLYGON %p  %d pts\n", p, p->PointN);
   for (i=0; i<p->PointN; i++)
     fprintf(stderr, "\t%d: %d, %d\n", i, p->Points[i].X, p->Points[i].Y);

@@ -86,66 +86,6 @@ static void XORDrawAttachedLine (LocationType, LocationType, LocationType,
 static void XORDrawAttachedArc (BDimension);
 /*static*/ void DrawAttached (Boolean);
 
-static int
-next_contour_point (PolygonTypePtr polygon, int point)
-{
-  int hole;
-  int this_contour_start;
-  int next_contour_start;
-
-  /* Find which contour / hole the specified point is in */
-  for (hole = polygon->HoleIndexN - 1; hole >= 0; hole--)
-    if (point >= polygon->HoleIndex[hole])
-      break;
-  hole++;
-
-  /* hole = 0 for an outer contour point */
-  /* hole = 1 for the first contour etc. */
-
-  this_contour_start = (hole == 0) ? 0 :
-                                     polygon->HoleIndex[hole - 1];
-  next_contour_start =
-    (hole == polygon->HoleIndexN) ? polygon->PointN :
-                                    polygon->HoleIndex[hole];
-
-  /* Wrap back to the start of the contour we're in if we pass the end */
-  if (++point == next_contour_start)
-    point = this_contour_start;
-
-  return point;
-}
-
-static int
-prev_contour_point (PolygonTypePtr polygon, int point)
-{
-  int hole;
-  int prev_contour_end;
-  int this_contour_end;
-
-  /* Find which contour / hole the specified point is in */
-  for (hole = polygon->HoleIndexN - 1; hole >= 0; hole--)
-    if (point >= polygon->HoleIndex[hole])
-      break;
-  hole++;
-
-  /* hole = 0 for an outer contour point */
-  /* hole = 1 for the first contour etc. */
-
-  prev_contour_end = (hole == 0) ? 0 :
-                                   polygon->HoleIndex[hole - 1];
-  this_contour_end =
-    (hole == polygon->HoleIndexN) ? polygon->PointN - 1:
-                                    polygon->HoleIndex[hole] - 1;
-
-  /* Wrap back to the start of the contour we're in if we pass the end */
-  if (point == prev_contour_end)
-    point = this_contour_end;
-  else
-    point--;
-
-  return point;
-}
-
 /* ---------------------------------------------------------------------------
  * creates a tmp polygon with coordinates converted to screen system
  */
