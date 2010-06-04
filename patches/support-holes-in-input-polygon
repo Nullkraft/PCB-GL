@@ -1,5 +1,5 @@
 Bottom: 2a28d3e68ce4df9802017d234f586e8553776063
-Top:    5728d754961bf1050d32cd8692555ab9a0550d57
+Top:    4c315f0029427de2b159a3dcb9ceb27e69d6d0ae
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-04 13:02:59 +0100
 
@@ -56,10 +56,10 @@ index 98bb525..5ed2404 100644
  ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
  				 FontTypePtr, FlagType, char *, char *,
 diff --git a/src/crosshair.c b/src/crosshair.c
-index cea493a..953f29a 100644
+index cea493a..8a0c750 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -86,6 +86,35 @@ static void XORDrawAttachedLine (LocationType, LocationType, LocationType,
+@@ -86,6 +86,66 @@ static void XORDrawAttachedLine (LocationType, LocationType, LocationType,
  static void XORDrawAttachedArc (BDimension);
  /*static*/ void DrawAttached (Boolean);
  
@@ -92,10 +92,41 @@ index cea493a..953f29a 100644
 +  return point;
 +}
 +
++static int
++prev_contour_point (PolygonTypePtr polygon, int point)
++{
++  int hole;
++  int prev_contour_end;
++  int this_contour_end;
++
++  /* Find which contour / hole the specified point is in */
++  for (hole = polygon->HoleIndexN - 1; hole >= 0; hole--)
++    if (point >= polygon->HoleIndex[hole])
++      break;
++  hole++;
++
++  /* hole = 0 for an outer contour point */
++  /* hole = 1 for the first contour etc. */
++
++  prev_contour_end = (hole == 0) ? 0 :
++                                   polygon->HoleIndex[hole - 1];
++  this_contour_end =
++    (hole == polygon->HoleIndexN) ? polygon->PointN - 1:
++                                    polygon->HoleIndex[hole] - 1;
++
++  /* Wrap back to the start of the contour we're in if we pass the end */
++  if (point == prev_contour_end)
++    point = this_contour_end;
++  else
++    point--;
++
++  return point;
++}
++
  /* ---------------------------------------------------------------------------
   * creates a tmp polygon with coordinates converted to screen system
   */
-@@ -93,15 +122,16 @@ static void
+@@ -93,15 +153,16 @@ static void
  XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
  {
    int i;
@@ -121,6 +152,54 @@ index cea493a..953f29a 100644
  }
  
  /*-----------------------------------------------------------
+@@ -473,35 +534,28 @@ XORDrawMoveOrCopyObject (void)
+     case POLYGONPOINT_TYPE:
+       {
+ 	PolygonTypePtr polygon;
+-	PointTypePtr point, previous, following;
++	PointTypePtr point;
++	int point_idx, prev, next;
+ 
+ 	polygon = (PolygonTypePtr) Crosshair.AttachedObject.Ptr2;
+ 	point = (PointTypePtr) Crosshair.AttachedObject.Ptr3;
++	point_idx = ((char *)point - (char *)polygon->Points) /
++		    sizeof (PointType);
+ 
+ 	/* get previous and following point */
+-	if (point == polygon->Points)
+-	  {
+-	    previous = &polygon->Points[polygon->PointN - 1];
+-	    following = point + 1;
+-	  }
+-	else if (point == &polygon->Points[polygon->PointN - 1])
+-	  {
+-	    previous = point - 1;
+-	    following = &polygon->Points[0];
+-	  }
+-	else
+-	  {
+-	    previous = point - 1;
+-	    following = point + 1;
+-	  }
++	prev = prev_contour_point (polygon, point_idx);
++	next = next_contour_point (polygon, point_idx);
+ 
+ 	/* draw the two segments */
+ 	gui->draw_line (Crosshair.GC,
+-			previous->X,
+-			previous->Y, point->X + dx, point->Y + dy);
++			polygon->Points[prev].X,
++			polygon->Points[prev].Y,
++			point->X + dx, point->Y + dy);
+ 	gui->draw_line (Crosshair.GC,
+ 			point->X + dx,
+-			point->Y + dy, following->X, following->Y);
++			point->Y + dy,
++			polygon->Points[next].X,
++			polygon->Points[next].Y);
+ 	break;
+       }
+ 
 diff --git a/src/file.c b/src/file.c
 index ad77a73..a5e3c5f 100644
 --- a/src/file.c
