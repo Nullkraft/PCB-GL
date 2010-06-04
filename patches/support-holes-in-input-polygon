@@ -1,5 +1,5 @@
 Bottom: 2a28d3e68ce4df9802017d234f586e8553776063
-Top:    0e14e0fd773fae11a6e41cf754ec4f3857a7bb9d
+Top:    5728d754961bf1050d32cd8692555ab9a0550d57
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-04 13:02:59 +0100
 
@@ -121,6 +121,44 @@ index cea493a..953f29a 100644
  }
  
  /*-----------------------------------------------------------
+diff --git a/src/file.c b/src/file.c
+index ad77a73..a5e3c5f 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -828,14 +828,32 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
+ 	{
+ 	  PolygonTypePtr polygon = &layer->Polygon[n];
+ 	  int p, i = 0;
++	  int hole = 0;
+ 	  fprintf (FP, "\tPolygon(%s)\n\t(", F2S (polygon, POLYGON_TYPE));
+ 	  for (p = 0; p < polygon->PointN; p++)
+ 	    {
+ 	      PointTypePtr point = &polygon->Points[p];
++
++	      if (hole < polygon->HoleIndexN &&
++		  p == polygon->HoleIndex[hole])
++		{
++		  if (hole > 0)
++		    fputs ("\n\t\t)", FP);
++		  fputs ("\n\t\tHole (", FP);
++		  hole++;
++		  i = 0;
++		}
++
+ 	      if (i++ % 5 == 0)
+-		fputs ("\n\t\t", FP);
++		{
++		  fputs ("\n\t\t", FP);
++		  if (hole)
++		    fputs ("\t", FP);
++		}
+ 	      fprintf (FP, "[%i %i] ", (int) point->X, (int) point->Y);
+ 	    }
++	  if (hole > 0)
++	    fputs ("\n\t\t)", FP);
+ 	  fputs ("\n\t)\n", FP);
+ 	}
+       fputs (")\n", FP);
 diff --git a/src/file.h b/src/file.h
 index 64eba23..13e47b1 100644
 --- a/src/file.h
