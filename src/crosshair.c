@@ -115,6 +115,37 @@ next_contour_point (PolygonTypePtr polygon, int point)
   return point;
 }
 
+static int
+prev_contour_point (PolygonTypePtr polygon, int point)
+{
+  int hole;
+  int prev_contour_end;
+  int this_contour_end;
+
+  /* Find which contour / hole the specified point is in */
+  for (hole = polygon->HoleIndexN - 1; hole >= 0; hole--)
+    if (point >= polygon->HoleIndex[hole])
+      break;
+  hole++;
+
+  /* hole = 0 for an outer contour point */
+  /* hole = 1 for the first contour etc. */
+
+  prev_contour_end = (hole == 0) ? 0 :
+                                   polygon->HoleIndex[hole - 1];
+  this_contour_end =
+    (hole == polygon->HoleIndexN) ? polygon->PointN - 1:
+                                    polygon->HoleIndex[hole] - 1;
+
+  /* Wrap back to the start of the contour we're in if we pass the end */
+  if (point == prev_contour_end)
+    point = this_contour_end;
+  else
+    point--;
+
+  return point;
+}
+
 /* ---------------------------------------------------------------------------
  * creates a tmp polygon with coordinates converted to screen system
  */
@@ -503,35 +534,28 @@ XORDrawMoveOrCopyObject (void)
     case POLYGONPOINT_TYPE:
       {
 	PolygonTypePtr polygon;
-	PointTypePtr point, previous, following;
+	PointTypePtr point;
+	int point_idx, prev, next;
 
 	polygon = (PolygonTypePtr) Crosshair.AttachedObject.Ptr2;
 	point = (PointTypePtr) Crosshair.AttachedObject.Ptr3;
+	point_idx = ((char *)point - (char *)polygon->Points) /
+		    sizeof (PointType);
 
 	/* get previous and following point */
-	if (point == polygon->Points)
-	  {
-	    previous = &polygon->Points[polygon->PointN - 1];
-	    following = point + 1;
-	  }
-	else if (point == &polygon->Points[polygon->PointN - 1])
-	  {
-	    previous = point - 1;
-	    following = &polygon->Points[0];
-	  }
-	else
-	  {
-	    previous = point - 1;
-	    following = point + 1;
-	  }
+	prev = prev_contour_point (polygon, point_idx);
+	next = next_contour_point (polygon, point_idx);
 
 	/* draw the two segments */
 	gui->draw_line (Crosshair.GC,
-			previous->X,
-			previous->Y, point->X + dx, point->Y + dy);
+			polygon->Points[prev].X,
+			polygon->Points[prev].Y,
+			point->X + dx, point->Y + dy);
 	gui->draw_line (Crosshair.GC,
 			point->X + dx,
-			point->Y + dy, following->X, following->Y);
+			point->Y + dy,
+			polygon->Points[next].X,
+			polygon->Points[next].Y);
 	break;
       }
 
