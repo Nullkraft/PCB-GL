@@ -645,8 +645,6 @@ CreateNewHoleInPolygon (PolygonType *Polygon)
 {
   int *holeindex = GetHoleIndexMemoryInPolygon (Polygon);
   *holeindex = Polygon->PointN;
-  printf ("Creating hole in polygon %i, Hole %i, PointIndex %i\n",
-          Polygon->ID, Polygon->HoleIndexN, *holeindex);
   return Polygon;
 }
 
