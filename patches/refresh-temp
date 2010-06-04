@@ -1,0 +1,85 @@
+Bottom: 2a28d3e68ce4df9802017d234f586e8553776063
+Top:    bd3b8bbae1b8a5ba99c21ce6a8bd359c8add0d7d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-04 10:17:09 +0100
+
+Refresh of support-holes-in-input-polygon
+
+---
+
+diff --git a/src/global.h b/src/global.h
+index b7c9d0f..a63b349 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -263,6 +263,10 @@ struct polygon_st			/* holds information about a polygon */
+   PLINE *NoHoles;		/* the polygon broken into hole-less regions */
+   int NoHolesValid;		/* Is the NoHoles polygon up to date? */
+   PointTypePtr Points;		/* data */
++  int *HoleIndex;		/* Index of hole data within the Points array */
++  Cardinal HoleIndexN;		/* number of holes in polygon */
++  Cardinal HoleIndexMax;	/* max number from malloc() */
++
+ };
+ 
+ typedef struct			/* holds information about arcs */
+diff --git a/src/mymem.c b/src/mymem.c
+index 4118cf0..7e39e68 100644
+--- a/src/mymem.c
++++ b/src/mymem.c
+@@ -459,6 +459,28 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
+ }
+ 
+ /* ---------------------------------------------------------------------------
++ * gets the next slot for a point in a polygon struct, allocates memory
++ * if necessary
++ */
++int *
++GetHoleIndexMemoryInPolygon (PolygonTypePtr Polygon)
++{
++  int *holeindex = Polygon->HoleIndex;
++
++  /* realloc new memory if necessary and clear it */
++  if (Polygon->HoleIndexN >= Polygon->HoleIndexMax)
++    {
++      Polygon->HoleIndexMax += STEP_POLYGONHOLEINDEX;
++      holeindex = MyRealloc (holeindex, Polygon->HoleIndexMax * sizeof (int),
++			     "GetHoleIndexMemoryInPolygon()");
++      Polygon->HoleIndex = holeindex;
++      memset (holeindex + Polygon->HoleIndexN, 0,
++	      STEP_POLYGONHOLEINDEX * sizeof (int));
++    }
++  return (holeindex + Polygon->HoleIndexN++);
++}
++
++/* ---------------------------------------------------------------------------
+  * get next slot for an element, allocates memory if necessary
+  */
+ ElementTypePtr
+@@ -734,6 +756,7 @@ FreePolygonMemory (PolygonTypePtr Polygon)
+   if (Polygon)
+     {
+       MYFREE (Polygon->Points);
++      MYFREE (Polygon->HoleIndex);
+       if (Polygon->Clipped)
+ 	poly_Free (&Polygon->Clipped);
+       poly_FreeContours (&Polygon->NoHoles);
+diff --git a/src/mymem.h b/src/mymem.h
+index b9d4de1..d3ac668 100644
+--- a/src/mymem.h
++++ b/src/mymem.h
+@@ -58,6 +58,7 @@
+ #define	STEP_UNDOLIST		500
+ #define	STEP_POLYGON		10
+ #define	STEP_POLYGONPOINT	10
++#define	STEP_POLYGONHOLEINDEX	10
+ #define	STEP_LIBRARYMENU	10
+ #define	STEP_LIBRARYENTRY	20
+ #define	STEP_RUBBERBAND		100
+@@ -82,6 +83,7 @@ RatTypePtr GetRatMemory (DataTypePtr);
+ TextTypePtr GetTextMemory (LayerTypePtr);
+ PolygonTypePtr GetPolygonMemory (LayerTypePtr);
+ PointTypePtr GetPointMemoryInPolygon (PolygonTypePtr);
++int *GetHoleIndexMemoryInPolygon (PolygonTypePtr);
+ ElementTypePtr GetElementMemory (DataTypePtr);
+ BoxTypePtr GetBoxMemory (BoxListTypePtr);
+ ConnectionTypePtr GetConnectionMemory (NetTypePtr);
