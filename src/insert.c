@@ -174,10 +174,7 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
        * first make sure adding the point is sensible
        */
       line.Thickness = 0;
-      if (InsertAt == 0)
-	line.Point1 = Polygon->Points[Polygon->PointN - 1];
-      else
-	line.Point1 = Polygon->Points[InsertAt - 1];
+      line.Point1 = Polygon->Points[prev_contour_point (Polygon, InsertAt)];
       line.Point2 = Polygon->Points[InsertAt];
       if (IsPointOnLine ((float) InsertX, (float) InsertY, 0.0, &line))
 	return (NULL);
@@ -190,10 +187,18 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
   save = *CreateNewPointInPolygon (Polygon, InsertX, InsertY);
   for (n = Polygon->PointN - 1; n > InsertAt; n--)
     Polygon->Points[n] = Polygon->Points[n - 1];
+
+#warning "FIXME: How do we know which contour / hole the inserted item belongs to if it is on a boundary?"
+  /* Shift up indices of any holes */
+  for (n = Polygon->HoleIndexN - 1; n > 0; n--)
+    if (Polygon->HoleIndex[n] >= InsertAt)
+      Polygon->HoleIndex[n]++;
+
   Polygon->Points[InsertAt] = save;
   SetChangedFlag (True);
   AddObjectToInsertPointUndoList (POLYGONPOINT_TYPE, Layer, Polygon,
 				  &Polygon->Points[InsertAt]);
+
   SetPolygonBoundingBox (Polygon);
   r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
   InitClip (PCB->Data, Layer, Polygon);

@@ -1001,7 +1001,7 @@ polygon_is_rectangle (PolygonTypePtr poly)
 {
   int i, best;
   PointType temp[4];
-  if (poly->PointN != 4)
+  if (poly->PointN != 4 || poly->HoleIndexN != 0)
     return 0;
   best = 0;
   for (i=1; i<4; i++)
