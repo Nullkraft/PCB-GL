@@ -321,6 +321,7 @@ ReportDialog (int argc, char **argv, int x, int y)
 #endif
 	Polygon = (PolygonTypePtr) ptr2;
 
+#warning Report about holes as well?
 	sprintf (&report[0], "POLYGON ID# %ld   Flags:%s\n"
 		 "Its bounding box is (%d,%d) (%d,%d)\n"
 		 "It has %d points and could store %d more\n"
