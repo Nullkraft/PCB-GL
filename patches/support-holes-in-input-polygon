@@ -1,5 +1,5 @@
 Bottom: b8f623e816d9de7dd542f66b2e052ebc45a781ea
-Top:    edfb9fdb4e2af9f14d797d41abd25fc782e749bc
+Top:    6c30bc51c82b267038ff63a398e6518d7ed6db61
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-05 13:09:31 +0100
 
@@ -96,7 +96,7 @@ index 5c50151..da95919 100644
  ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
  				 FontTypePtr, FlagType, char *, char *,
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 9d85373..1d3a081 100644
+index 9d85373..e8542e0 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -48,6 +48,7 @@
@@ -107,7 +107,7 @@ index 9d85373..1d3a081 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -92,16 +93,15 @@ static void XORDrawAttachedArc (BDimension);
+@@ -92,16 +93,16 @@ static void XORDrawAttachedArc (BDimension);
  static void
  XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
  {
@@ -126,14 +126,15 @@ index 9d85373..1d3a081 100644
 +    {
 +      Cardinal next = next_contour_point (polygon, i);
 +      gui->draw_line (Crosshair.GC,
-+                      polygon->Points[i].X + dx, polygon->Points[i].Y + dy,
++                      polygon->Points[i].X + dx,
++                      polygon->Points[i].Y + dy,
 +                      polygon->Points[next].X + dx,
 +                      polygon->Points[next].Y + dy);
 +    }
  }
  
  /*-----------------------------------------------------------
-@@ -472,36 +472,21 @@ XORDrawMoveOrCopyObject (void)
+@@ -472,36 +473,21 @@ XORDrawMoveOrCopyObject (void)
  
      case POLYGONPOINT_TYPE:
        {
