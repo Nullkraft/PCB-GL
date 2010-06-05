@@ -97,6 +97,7 @@ typedef struct			/* information about removed polygon points */
   LocationType X, Y;		/* data */
   int ID;
   Cardinal Index;		/* index in a polygons array of points */
+  bool last_in_contour;		/* Whether the point was the last in its contour */
 }
 RemovedPointType, *RemovedPointTypePtr;
 
@@ -153,6 +154,7 @@ typedef struct			/* holds information about an operation */
     LayerChangeType LayerChange;
     ClearPolyType ClearPoly;
     NetlistChangeType NetlistChange;
+    long int CopyID;
   }
   Data;
 }
@@ -184,6 +186,8 @@ static bool UndoMove (UndoListTypePtr);
 static bool UndoRemove (UndoListTypePtr);
 static bool UndoRemovePoint (UndoListTypePtr);
 static bool UndoInsertPoint (UndoListTypePtr);
+static bool UndoRemoveContour (UndoListTypePtr);
+static bool UndoInsertContour (UndoListTypePtr);
 static bool UndoMoveToLayer (UndoListTypePtr);
 static bool UndoFlag (UndoListTypePtr);
 static bool UndoMirror (UndoListTypePtr);
@@ -731,7 +735,9 @@ UndoRemovePoint (UndoListTypePtr Entry)
 	InsertPointIntoObject (POLYGON_TYPE, layer, polygon,
 			       &Entry->Data.RemovedPoint.Index,
 			       Entry->Data.RemovedPoint.X,
-			       Entry->Data.RemovedPoint.Y, true);
+			       Entry->Data.RemovedPoint.Y, true,
+			       Entry->Data.RemovedPoint.last_in_contour);
+
 	polygon->Points[Entry->Data.RemovedPoint.Index].ID =
 	  Entry->Data.RemovedPoint.ID;
 	if (andDraw && layer->On)
@@ -758,6 +764,9 @@ UndoInsertPoint (UndoListTypePtr Entry)
   PolygonTypePtr polygon;
   PointTypePtr pnt;
   int type;
+  Cardinal point_idx;
+  Cardinal hole;
+  bool last_in_contour = false;
 
   assert (Entry->Kind == POLYGONPOINT_TYPE);
   /* lookup entry by it's ID */
@@ -772,21 +781,26 @@ UndoInsertPoint (UndoListTypePtr Entry)
 	  return (false);
 	if (andDraw && layer->On)
 	  ErasePolygon (polygon);
+
+	/* Check whether this point was at the end of its contour.
+	 * If so, we need to flag as such when re-adding the point
+	 * so it goes back in the correct place
+	 */
+	point_idx = polygon_point_idx (polygon, pnt);
+	for (hole = 0; hole < polygon->HoleIndexN; hole++)
+	  if (point_idx == polygon->HoleIndex[hole] - 1)
+	    last_in_contour = true;
+	if (point_idx == polygon->PointN - 1)
+	  last_in_contour = true;
+	Entry->Data.RemovedPoint.last_in_contour = last_in_contour;
+
 	Entry->Data.RemovedPoint.X = pnt->X;
 	Entry->Data.RemovedPoint.Y = pnt->Y;
 	Entry->Data.RemovedPoint.ID = pnt->ID;
 	Entry->ID = polygon->ID;
 	Entry->Kind = POLYGON_TYPE;
 	Entry->Type = UNDO_REMOVE_POINT;
-	POLYGONPOINT_LOOP (polygon);
-	{
-	  if (pnt == point)
-	    {
-	      Entry->Data.RemovedPoint.Index = n;
-	      break;
-	    }
-	}
-	END_LOOP;
+	Entry->Data.RemovedPoint.Index = point_idx;
 	DestroyObject (PCB->Data, POLYGONPOINT_TYPE, layer, polygon, pnt);
 	if (andDraw && layer->On)
 	  DrawPolygon (layer, polygon, 0);
@@ -796,6 +810,96 @@ UndoInsertPoint (UndoListTypePtr Entry)
     default:
       return (false);
     }
+}
+
+/* ---------------------------------------------------------------------------
+ * recovers an removed polygon point
+ * returns true on success
+ */
+static bool
+UndoRemoveContour (UndoListTypePtr Entry)
+{
+  void *ptr1, *ptr2, *ptr3;
+  void *ptr1b, *ptr2b, *ptr3b;
+  PolygonType *poly, *poly2;
+  int type;
+  long int swap_id;
+
+  assert (Entry->Kind == POLYGON_TYPE);
+
+  /* lookup entry by it's ID */
+  type =
+    SearchObjectByID (RemoveList, &ptr1, &ptr2, &ptr3, Entry->Data.CopyID,
+		      Entry->Kind);
+  if (type == NO_TYPE)
+    return false;
+
+  type =
+    SearchObjectByID (PCB->Data, &ptr1b, &ptr2b, &ptr3b, Entry->ID,
+		      Entry->Kind);
+  if (type == NO_TYPE)
+    return FALSE;
+
+  poly = ptr2;
+  poly2 = ptr2b;
+
+  swap_id = poly->ID;
+  poly->ID = poly2->ID;
+  poly2->ID = swap_id;
+
+  MoveObjectToBuffer (RemoveList, PCB->Data, type, ptr1b, ptr2b, ptr3b);
+
+  if (andDraw)
+    DrawRecoveredObject (Entry->Kind, ptr1, ptr2, ptr3);
+
+  poly = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
+  InitClip (PCB->Data, ptr1b, poly);
+  return (true);
+}
+
+/* ---------------------------------------------------------------------------
+ * recovers an inserted polygon point
+ * returns true on success
+ */
+static bool
+UndoInsertContour (UndoListTypePtr Entry)
+{
+  void *ptr1, *ptr2, *ptr3;
+  void *ptr1b, *ptr2b, *ptr3b;
+  PolygonType *poly, *poly2;
+  int type;
+  long int swap_id;
+
+  assert (Entry->Kind == POLYGON_TYPE);
+
+  /* lookup entry by it's ID */
+  type =
+    SearchObjectByID (RemoveList, &ptr1, &ptr2, &ptr3, Entry->Data.CopyID,
+		      Entry->Kind);
+  if (type == NO_TYPE)
+    return false;
+
+  type =
+    SearchObjectByID (PCB->Data, &ptr1b, &ptr2b, &ptr3b, Entry->ID,
+		      Entry->Kind);
+  if (type == NO_TYPE)
+    return FALSE;
+
+  poly = ptr2;
+  poly2 = ptr2b;
+
+  swap_id = poly->ID;
+  poly->ID = poly2->ID;
+  poly2->ID = swap_id;
+
+  MoveObjectToBuffer (RemoveList, PCB->Data, type, ptr1b, ptr2b, ptr3b);
+
+  if (andDraw)
+    DrawRecoveredObject (Entry->Kind, ptr1, ptr2, ptr3);
+
+  poly = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
+  InitClip (PCB->Data, ptr1b, poly);
+  return (true);
 }
 
 /* ---------------------------------------------------------------------------
@@ -967,6 +1071,16 @@ PerformUndo (UndoListTypePtr ptr)
     case UNDO_INSERT_POINT:
       if (UndoInsertPoint (ptr))
 	return (UNDO_INSERT_POINT);
+      break;
+
+    case UNDO_REMOVE_CONTOUR:
+      if (UndoRemoveContour (ptr))
+	return (UNDO_REMOVE_CONTOUR);
+      break;
+
+    case UNDO_INSERT_CONTOUR:
+      if (UndoInsertContour (ptr))
+	return (UNDO_INSERT_CONTOUR);
       break;
 
     case UNDO_ROTATE:
@@ -1223,6 +1337,8 @@ AddObjectToRemovePointUndoList (int Type,
 {
   UndoListTypePtr undo;
   PolygonTypePtr polygon = (PolygonTypePtr) Ptr2;
+  Cardinal hole;
+  bool last_in_contour = false;
 
   if (!Locked)
     {
@@ -1240,6 +1356,17 @@ AddObjectToRemovePointUndoList (int Type,
 	    undo->Data.RemovedPoint.Y = polygon->Points[index].Y;
 	    undo->Data.RemovedPoint.ID = polygon->Points[index].ID;
 	    undo->Data.RemovedPoint.Index = index;
+
+	    /* Check whether this point was at the end of its contour.
+	     * If so, we need to flag as such when re-adding the point
+	     * so it goes back in the correct place
+	     */
+	    for (hole = 0; hole < polygon->HoleIndexN; hole++)
+	      if (index == polygon->HoleIndex[hole] - 1)
+		last_in_contour = true;
+	    if (index == polygon->PointN - 1)
+	      last_in_contour = true;
+	    undo->Data.RemovedPoint.last_in_contour = last_in_contour;
 	  }
 	  break;
 	}
@@ -1256,6 +1383,50 @@ AddObjectToInsertPointUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
 
   if (!Locked)
     undo = GetUndoSlot (UNDO_INSERT_POINT, OBJECT_ID (Ptr3), Type);
+}
+
+/* ---------------------------------------------------------------------------
+ * adds an object to the list of removed contours
+ * (Actually just takes a copy of the whole polygon to restore)
+ */
+void
+AddObjectToRemoveContourUndoList (int Type,
+				  LayerType *Layer, PolygonType *Polygon)
+{
+  UndoListTypePtr undo;
+  PolygonType *copy;
+
+  if (Locked)
+    return;
+
+  if (!RemoveList)
+    RemoveList = CreateNewBuffer ();
+
+  undo = GetUndoSlot (UNDO_REMOVE_CONTOUR, OBJECT_ID (Polygon), POLYGON_TYPE);
+  copy = CopyObjectToBuffer (RemoveList, PCB->Data, Type, Layer, Polygon, NULL);
+  undo->Data.CopyID = copy->ID;
+}
+
+/* ---------------------------------------------------------------------------
+ * adds an object to the list of insert contours
+ * (Actually just takes a copy of the whole polygon to restore)
+ */
+void
+AddObjectToInsertContourUndoList (int Type,
+				  LayerType *Layer, PolygonType *Polygon)
+{
+  UndoListTypePtr undo;
+  PolygonType *copy;
+
+  if (Locked)
+    return;
+
+  if (!RemoveList)
+    RemoveList = CreateNewBuffer ();
+
+  undo = GetUndoSlot (UNDO_REMOVE_CONTOUR, OBJECT_ID (Polygon), POLYGON_TYPE);
+  copy = CopyObjectToBuffer (RemoveList, PCB->Data, Type, Layer, Polygon, NULL);
+  undo->Data.CopyID = copy->ID;
 }
 
 /* ---------------------------------------------------------------------------
