@@ -1,5 +1,5 @@
-Bottom: f6e5f80152357641939219501b3fbf88124b645c
-Top:    c19cee7f860fa2d227cc81ecbf870f3b6ce0b2ca
+Bottom: 9919135e4221cbbde7a645f110696e1a02f3250c
+Top:    afa5338cc3b1db036734433970278d8b616cd714
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-03 23:35:58 +0100
 
@@ -24,10 +24,10 @@ Add magic flag to stop pour clipping for off-screen buffers
 ---
 
 diff --git a/src/create.c b/src/create.c
-index aa3f8e0..774dd51 100644
+index 69ba61a..9517a12 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -139,6 +139,7 @@ CreateNewPCB (Boolean SetDefaultNames)
+@@ -139,6 +139,7 @@ CreateNewPCB (bool SetDefaultNames)
    ptr = MyCalloc (1, sizeof (PCBType), "CreateNewPCB()");
    ptr->Data = CreateNewBuffer ();
    ptr->Data->pcb = (void *) ptr;
@@ -36,10 +36,10 @@ index aa3f8e0..774dd51 100644
    ptr->ThermStyle = 4;
    ptr->IsleArea = 2.e8;
 diff --git a/src/global.h b/src/global.h
-index 96011bd..537819d 100644
+index 5a51eac..a00059d 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -412,6 +412,7 @@ typedef struct			/* holds all objects */
+@@ -409,6 +409,7 @@ typedef struct			/* holds all objects */
     *rat_tree;
    struct PCBType *pcb;
    LayerType Layer[MAX_LAYER + 2];	/* add 2 silkscreen layers */
@@ -48,7 +48,7 @@ index 96011bd..537819d 100644
  
  typedef struct			/* holds drill information */
 diff --git a/src/pour.c b/src/pour.c
-index d9ee86f..ebac0ac 100644
+index 24846d4..005e5e2 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -1284,6 +1284,8 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
