@@ -1,5 +1,5 @@
-Bottom: 628fb5fedd1acdbd85c0e2051875974468979158
-Top:    63b787483b7e29c216e219eafa9addcf827c05a1
+Bottom: fbdaa0c7e0296b3b6a9a770192845413010b07b5
+Top:    e12e2dc6ed6daf2c9899c77f84e3f98eb0b7accc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-03 23:35:59 +0100
 
@@ -11,7 +11,7 @@ Kept separate for now because they might have unknown side-effects.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index dd269bc..af55760 100644
+index 280a82e..1348118 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -249,8 +249,8 @@ MoveViaToBuffer (PinTypePtr Via)
@@ -45,7 +45,7 @@ index dd269bc..af55760 100644
    arc = GetArcMemory (lay);
    *arc = *Arc;
 diff --git a/src/change.c b/src/change.c
-index 86845a8..2181b71 100644
+index a6d0ecf..ab59413 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -492,10 +492,10 @@ ChangeViaClearSize (PinTypePtr Via)
@@ -106,7 +106,7 @@ index 86845a8..2181b71 100644
        if (Line->Clearance == 0)
  	{
 diff --git a/src/misc.c b/src/misc.c
-index 574c45b..a5b3881 100644
+index ada4878..65caaca 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -1521,8 +1521,8 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
@@ -120,7 +120,7 @@ index 574c45b..a5b3881 100644
    a->StartAngle = new_sa;
    a->Delta = new_da;
 diff --git a/src/move.c b/src/move.c
-index e60c021..f9a80bd 100644
+index 5b05c64..eb297a0 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -282,8 +282,8 @@ MoveLine (LayerTypePtr Layer, LineTypePtr Line)
@@ -174,7 +174,7 @@ index e60c021..f9a80bd 100644
    *new = *Text;
    *Text = Source->Text[--Source->TextN];
 diff --git a/src/pour.c b/src/pour.c
-index ea1aead..47f1e02 100644
+index d94ec87..956e644 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -755,7 +755,8 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
@@ -226,7 +226,7 @@ index ea1aead..47f1e02 100644
        if (GetLayerNumber (Data, ptr1) >= max_layer)
          return 0;
 diff --git a/src/rotate.c b/src/rotate.c
-index 43efbe5..35cdfa6 100644
+index 229e705..406e025 100644
 --- a/src/rotate.c
 +++ b/src/rotate.c
 @@ -181,8 +181,8 @@ static void *
