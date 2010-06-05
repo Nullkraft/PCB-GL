@@ -1,7 +1,7 @@
-Bottom: 95e25ac20416b0d8f02b92cbaff2faee7d5af44c
-Top:    78b15fcfd1421652d02bdb0b53d41f72ef78f6d8
+Bottom: 81d9c8171ee1d9c57724576f676a1fa549faeaa6
+Top:    a82b4637de08ef67d60c7271e8b0e82d8e098f1a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-05 12:55:58 +0100
+Date:   2010-06-05 13:09:31 +0100
 
 Support holes in input polygons (incl. file-format addition)
 
@@ -96,7 +96,7 @@ index 5c50151..da95919 100644
  ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
  				 FontTypePtr, FlagType, char *, char *,
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 7f4b9a3..31e7f94 100644
+index 9d85373..75a29f8 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -93,15 +93,16 @@ static void
