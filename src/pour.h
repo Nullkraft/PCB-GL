@@ -25,31 +25,23 @@
  *  RCS: $Id$
  */
 
-/* prototypes for remove routines
+/* prototypes for pour editing routines
  */
 
-#ifndef	__REMOVE_INCLUDED__
-#define	__REMOVE_INCLUDED__
+#ifndef	__POUR_INCLUDED__
+#define	__POUR_INCLUDED__
 
 #include "global.h"
 
-/* ---------------------------------------------------------------------------
- * some constants
- */
-#define REMOVE_TYPES            \
-	(VIA_TYPE | LINEPOINT_TYPE | LINE_TYPE | TEXT_TYPE | ELEMENT_TYPE |	\
-	POURPOINT_TYPE | POUR_TYPE | RATLINE_TYPE | ARC_TYPE)
+Cardinal GetLowestDistancePourPoint (PourTypePtr,
+					LocationType, LocationType);
+bool RemoveExcessPourPoints (LayerTypePtr, PourTypePtr);
+void GoToPreviousPourPoint (void);
+void ClosePour (void);
+void CopyAttachedPourToLayer (void);
 
-void *RemoveLine (LayerTypePtr, LineTypePtr);
-void *RemoveArc (LayerTypePtr, ArcTypePtr);
-void *RemovePour (LayerTypePtr, PourTypePtr);
-void *RemoveText (LayerTypePtr, TextTypePtr);
-void *RemoveElement (ElementTypePtr);
-void ClearRemoveList (void);
-void RemovePCB (PCBTypePtr);
-bool RemoveSelected (void);
-bool DeleteRats (bool);
-void *RemoveObject (int, void *, void *, void *);
-void *DestroyObject (DataTypePtr, int, void *, void *, void *);
+int InitPourClip(DataType *d, LayerType *l, PourType *p);
+void RestoreToPours(DataType *, int, void *, void *);
+void ClearFromPours(DataType *, int, void *, void *);
 
-#endif
+#endif /* __POUR_INCLUDED__ */
