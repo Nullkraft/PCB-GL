@@ -76,7 +76,7 @@ void UpdateAll (void);
 
 /* TEMPORARY */
 void DrawPinOrViaLowLevel (PinTypePtr, bool);
-void DrawPlainPin (PinTypePtr, Booleab);
+void DrawPlainPin (PinTypePtr, bool);
 void DrawPlainVia (PinTypePtr, bool);
 void DrawRegularText (LayerTypePtr, TextTypePtr, int);
 void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
