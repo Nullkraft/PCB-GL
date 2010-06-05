@@ -492,12 +492,12 @@ SearchPourByLocation (int locked, LayerTypePtr * Layer,
   if (setjmp (info.env) == 0)
     {
       r_search (SearchLayer->pour_tree, &SearchBox, NULL, pour_polygon_callback, &info);
-      return False;
+      return false;
     }
 
   /* Make sure we return the pour, not the polygon */
   *info.ptr2 = *info.ptr3 = ((PolygonTypePtr)*info.ptr2)->ParentPour;
-  return (True);
+  return (true);
 }
 
 static int
