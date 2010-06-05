@@ -1,5 +1,5 @@
-Bottom: b53d8f256f07ad523cabf9dc6c7d640a5459fee3
-Top:    900588d161abc2a56ced6efaf42fa1fa03e1d13f
+Bottom: 6a28eeb722bea2679b75a6641ed99c1f5e3a7683
+Top:    fa5ea9d4be72849311c38f1d3a22da8e334df153
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-03 23:34:38 +0100
 
@@ -9,7 +9,7 @@ Use heap structure to insert holes quicker in InsertHoles()
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index c2d4d6e..a184801 100644
+index 2799a67..a0be8e6 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -1118,14 +1118,21 @@ PutContour (jmp_buf * e, PLINE * cntr, POLYAREA ** contours, PLINE ** holes,

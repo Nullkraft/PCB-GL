@@ -1,5 +1,5 @@
-Bottom: c26e92b3c63ba43eb3ac34ef56b5a70058b053da
-Top:    fa4dec0807ab8952bab98fde0ec384dc3053b2df
+Bottom: ebd9271e8c683df67d07d1f0ff97fff1379de2fa
+Top:    046307cacdd3a4d68504bbc2ef27663011fdbf5f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 23:19:30 +0000
 
@@ -9,7 +9,7 @@ Debug self intersecting nastiness 2
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 3d42fa9..ed38594 100644
+index 82cb08b..0dcf060 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -630,6 +630,17 @@ seg_in_seg (const BoxType * b, void *cl)

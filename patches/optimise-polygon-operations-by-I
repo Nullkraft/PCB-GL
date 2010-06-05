@@ -1,5 +1,5 @@
-Bottom: ae1f95d703d164f28ee103fe8fdb81f7df83affd
-Top:    b53d8f256f07ad523cabf9dc6c7d640a5459fee3
+Bottom: ccdbddf24f14ce1b9c91f31f173db71cbc5764ea
+Top:    6a28eeb722bea2679b75a6641ed99c1f5e3a7683
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-03 23:34:38 +0100
 
@@ -27,7 +27,7 @@ index 958498b..ce427ad 100644
  
  BOOLp poly_M_Copy0(POLYAREA ** dst, const POLYAREA * srcfst);
 diff --git a/src/polygon.c b/src/polygon.c
-index e67dee6..40adc08 100644
+index 6437b98..b52e1f7 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -148,6 +148,7 @@ biggest (POLYAREA * p)
@@ -60,7 +60,7 @@ index e67dee6..40adc08 100644
        poly_Free (&pa);
        return;
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 5224097..c2d4d6e 100644
+index d2c0798..2799a67 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -775,31 +775,19 @@ static int
