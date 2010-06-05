@@ -1,5 +1,5 @@
 Bottom: ea29bda945698f65d518852ee08f1062c50943cc
-Top:    cba30b8265a0f1fded9a3221d59724b99a139d3c
+Top:    9bb0089ad8ea63881932854d11182a076d48bbe4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-05 13:40:17 +0100
 
@@ -6343,7 +6343,7 @@ index 0000000..400787c
 +
 diff --git a/src/pour.h b/src/pour.h
 new file mode 100644
-index 0000000..f04e342
+index 0000000..79bebc2
 --- /dev/null
 +++ b/src/pour.h
 @@ -0,0 +1,47 @@
@@ -6384,7 +6384,7 @@ index 0000000..f04e342
 +
 +Cardinal GetLowestDistancePourPoint (PourTypePtr,
 +					LocationType, LocationType);
-+Boolean RemoveExcessPourPoints (LayerTypePtr, PourTypePtr);
++bool RemoveExcessPourPoints (LayerTypePtr, PourTypePtr);
 +void GoToPreviousPourPoint (void);
 +void ClosePour (void);
 +void CopyAttachedPourToLayer (void);
