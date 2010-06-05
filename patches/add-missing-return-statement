@@ -1,0 +1,22 @@
+Bottom: b815f7908d4146a972f4724d8a08331e0a251723
+Top:    6475e8e51f0612ec3d0594d6eba41b706e61239e
+Author: Jared Casper <jaredcasper@gmail.com>
+Date:   2010-06-05 23:47:51 +0100
+
+Add missing return statement.
+
+
+---
+
+diff --git a/src/hid/gtk/gui-log-window.c b/src/hid/gtk/gui-log-window.c
+index 33e1940..ae25ed7 100644
+--- a/src/hid/gtk/gui-log-window.c
++++ b/src/hid/gtk/gui-log-window.c
+@@ -218,6 +218,7 @@ GhidLogShowOnAppend (int argc, char **argv, int x, int y)
+     {
+       log_show_on_append = FALSE;
+     }
++  return 0;
+ }
+ 
+ HID_Action ghid_log_action_list[] = {
