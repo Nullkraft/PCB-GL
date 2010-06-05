@@ -75,11 +75,11 @@ void LoadBackgroundImage (char *);
 void UpdateAll (void);
 
 /* TEMPORARY */
-void DrawPinOrViaLowLevel (PinTypePtr, Boolean);
-void DrawPlainPin (PinTypePtr, Boolean);
-void DrawPlainVia (PinTypePtr, Boolean);
+void DrawPinOrViaLowLevel (PinTypePtr, bool);
+void DrawPlainPin (PinTypePtr, Booleab);
+void DrawPlainVia (PinTypePtr, bool);
 void DrawRegularText (LayerTypePtr, TextTypePtr, int);
-void DrawEMark (ElementTypePtr, LocationType, LocationType, Boolean);
+void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
 void DrawHole (PinTypePtr);
 void DrawRats (BoxType *);
 void DrawSilk (int, int, const BoxType *);
