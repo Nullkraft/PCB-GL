@@ -1,5 +1,5 @@
 Bottom: b8f623e816d9de7dd542f66b2e052ebc45a781ea
-Top:    2451e6090da9ab68b1a32fa9b03ef136f8d1651c
+Top:    6c30bc51c82b267038ff63a398e6518d7ed6db61
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-05 13:09:31 +0100
 
@@ -96,7 +96,7 @@ index 5c50151..da95919 100644
  ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
  				 FontTypePtr, FlagType, char *, char *,
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 9d85373..d1aa847 100644
+index 9d85373..e8542e0 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -48,6 +48,7 @@
@@ -107,10 +107,11 @@ index 9d85373..d1aa847 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -93,15 +94,16 @@ static void
+@@ -92,16 +93,16 @@ static void XORDrawAttachedArc (BDimension);
+ static void
  XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
  {
-   int i;
+-  int i;
 -  for (i = 0; i < polygon->PointN - 1; i++)
 -    gui->draw_line (Crosshair.GC,
 -		    polygon->Points[i].X + dx, polygon->Points[i].Y + dy,
@@ -120,10 +121,10 @@ index 9d85373..d1aa847 100644
 -    gui->draw_line (Crosshair.GC,
 -		    polygon->Points[i].X + dx, polygon->Points[i].Y + dy,
 -		    polygon->Points[0].X + dx, polygon->Points[0].Y + dy);
-+  int next;
++  Cardinal i
 +  for (i = 0; i < polygon->PointN; i++)
 +    {
-+      next = next_contour_point (polygon, i);
++      Cardinal next = next_contour_point (polygon, i);
 +      gui->draw_line (Crosshair.GC,
 +                      polygon->Points[i].X + dx,
 +                      polygon->Points[i].Y + dy,
@@ -133,17 +134,18 @@ index 9d85373..d1aa847 100644
  }
  
  /*-----------------------------------------------------------
-@@ -473,35 +475,27 @@ XORDrawMoveOrCopyObject (void)
+@@ -472,36 +473,21 @@ XORDrawMoveOrCopyObject (void)
+ 
      case POLYGONPOINT_TYPE:
        {
- 	PolygonTypePtr polygon;
+-	PolygonTypePtr polygon;
 -	PointTypePtr point, previous, following;
-+	PointTypePtr point;
-+	int point_idx, prev, next;
- 
- 	polygon = (PolygonTypePtr) Crosshair.AttachedObject.Ptr2;
- 	point = (PointTypePtr) Crosshair.AttachedObject.Ptr3;
-+        point_idx = polygon_point_idx (polygon, point);
+-
+-	polygon = (PolygonTypePtr) Crosshair.AttachedObject.Ptr2;
+-	point = (PointTypePtr) Crosshair.AttachedObject.Ptr3;
++	PolygonTypePtr polygon = (PolygonTypePtr) Crosshair.AttachedObject.Ptr2;
++	PointTypePtr point = (PointTypePtr) Crosshair.AttachedObject.Ptr3;
++	Cadinal point_idx = point_idx = polygon_point_idx (polygon, point);
  
  	/* get previous and following point */
 -	if (point == polygon->Points)
@@ -161,22 +163,20 @@ index 9d85373..d1aa847 100644
 -	    previous = point - 1;
 -	    following = point + 1;
 -	  }
-+	prev = prev_contour_point (polygon, point_idx);
-+	next = next_contour_point (polygon, point_idx);
++	Cardinal prev = prev_contour_point (polygon, point_idx);
++	Cardinal next = next_contour_point (polygon, point_idx);
  
  	/* draw the two segments */
  	gui->draw_line (Crosshair.GC,
 -			previous->X,
 -			previous->Y, point->X + dx, point->Y + dy);
-+			polygon->Points[prev].X,
-+			polygon->Points[prev].Y,
++			polygon->Points[prev].X, polygon->Points[prev].Y,
 +			point->X + dx, point->Y + dy);
  	gui->draw_line (Crosshair.GC,
- 			point->X + dx,
+-			point->X + dx,
 -			point->Y + dy, following->X, following->Y);
-+			point->Y + dy,
-+			polygon->Points[next].X,
-+			polygon->Points[next].Y);
++			point->X + dx, point->Y + dy,
++			polygon->Points[next].X, polygon->Points[next].Y);
  	break;
        }
  
@@ -707,7 +707,7 @@ index 5fc0cd5..38777b1 100644
  					LocationType, LocationType);
  bool RemoveExcessPolygonPoints (LayerTypePtr, PolygonTypePtr);
 diff --git a/src/remove.c b/src/remove.c
-index a537bc0..1964dfb 100644
+index a537bc0..0e73f38 100644
 --- a/src/remove.c
 +++ b/src/remove.c
 @@ -205,6 +205,7 @@ DestroyPolygonPoint (LayerTypePtr Layer,
@@ -718,7 +718,7 @@ index a537bc0..1964dfb 100644
    if (Polygon->PointN <= 3)
      return RemovePolygon (Layer, Polygon);
    r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
-@@ -489,20 +490,13 @@ RemovePolygonPoint (LayerTypePtr Layer,
+@@ -489,20 +490,14 @@ RemovePolygonPoint (LayerTypePtr Layer,
  {
    PointTypePtr ptr;
    Cardinal index = 0;
@@ -726,6 +726,7 @@ index a537bc0..1964dfb 100644
    if (Polygon->PointN <= 3)
      return RemovePolygon (Layer, Polygon);
    if (Layer->On)
++////////////////////////////////////////////////////////////////////////////////////////////
      ErasePolygon (Polygon);
    /* insert the polygon-point into the undo list */
 -  POLYGONPOINT_LOOP (Polygon);
@@ -741,6 +742,14 @@ index a537bc0..1964dfb 100644
    AddObjectToRemovePointUndoList (POLYGONPOINT_TYPE, Layer, Polygon, index);
    r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
    /* remove point from list, keep point order */
+@@ -512,6 +507,7 @@ RemovePolygonPoint (LayerTypePtr Layer,
+       Point = ptr;
+     }
+   Polygon->PointN--;
++////////////////////////////////////////////////////////////////////////////////////////////
+   SetPolygonBoundingBox (Polygon);
+   r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
+   RemoveExcessPolygonPoints (Layer, Polygon);
 diff --git a/src/report.c b/src/report.c
 index 6a1c47b..bf43f21 100644
 --- a/src/report.c
