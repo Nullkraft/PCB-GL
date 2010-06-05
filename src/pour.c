@@ -734,7 +734,7 @@ touched_children_callback (const BoxType * b, void *cl)
   PolygonType *polygon = (PolygonType *) b;
 
   /* Do we actually intersect? */
-  if (isects (touched->np, polygon, False))
+  if (isects (touched->np, polygon, false))
     {
       /* Steal the clipped contours, the delete the polygon. */
       /* Add contour to local list to fiddle about with */
