@@ -93,7 +93,7 @@ static void XORDrawAttachedArc (BDimension);
 static void
 XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
 {
-  Cardinal i
+  Cardinal i;
   for (i = 0; i < polygon->PointN; i++)
     {
       Cardinal next = next_contour_point (polygon, i);
@@ -473,13 +473,17 @@ XORDrawMoveOrCopyObject (void)
 
     case POLYGONPOINT_TYPE:
       {
-	PolygonTypePtr polygon = (PolygonTypePtr) Crosshair.AttachedObject.Ptr2;
-	PointTypePtr point = (PointTypePtr) Crosshair.AttachedObject.Ptr3;
-	Cadinal point_idx = point_idx = polygon_point_idx (polygon, point);
+	PolygonTypePtr polygon;
+	PointTypePtr point;
+	Cardinal point_idx, prev, next;
+
+	polygon = (PolygonTypePtr) Crosshair.AttachedObject.Ptr2;
+	point = (PointTypePtr) Crosshair.AttachedObject.Ptr3;
+	point_idx = polygon_point_idx (polygon, point);
 
 	/* get previous and following point */
-	Cardinal prev = prev_contour_point (polygon, point_idx);
-	Cardinal next = next_contour_point (polygon, point_idx);
+	prev = prev_contour_point (polygon, point_idx);
+	next = next_contour_point (polygon, point_idx);
 
 	/* draw the two segments */
 	gui->draw_line (Crosshair.GC,
