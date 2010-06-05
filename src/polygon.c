@@ -783,7 +783,7 @@ subtract_accumulated (struct cpInfo *info, PolygonTypePtr polygon)
 {
   if (info->accumulate == NULL)
     return;
-  Subtract (info->accumulate, polygon, True);
+  Subtract (info->accumulate, polygon, true);
   info->accumulate = NULL;
   info->batch_size = 0;
 }
