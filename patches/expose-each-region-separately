@@ -1,5 +1,5 @@
-Bottom: ba793c268482d8118d0aeb1cff59da07e57e3401
-Top:    676cd57038dcc136a7241d4e945fffbad70ffede
+Bottom: 80e884e9bfb97c3bbbfb88f2ce6a4286526764ae
+Top:    95d31bb0544897e5ed0e5c49093a528c414fac90
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-04 22:57:16 +0000
 
@@ -13,7 +13,7 @@ BUG: Won't work properly, since we set the sciscor region for the
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 5bc59a4..d8bda94 100644
+index 287a0a7..a0f0511 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -1733,6 +1733,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
