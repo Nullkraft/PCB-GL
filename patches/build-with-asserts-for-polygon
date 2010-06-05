@@ -1,7 +1,7 @@
-Bottom: 668d2571b33cd79e8fd25cbbc272826972bef8b5
-Top:    2a28d3e68ce4df9802017d234f586e8553776063
+Bottom: 95ac06b46399ab2e7ae0031bd8574e481698c472
+Top:    95e25ac20416b0d8f02b92cbaff2faee7d5af44c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-03 23:35:41 +0100
+Date:   2010-06-05 12:55:56 +0100
 
 Build with asserts for polygons
 
@@ -9,7 +9,7 @@ Build with asserts for polygons
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index af92d10..1417e31 100644
+index 504bc34..234d1d8 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -73,6 +73,7 @@ dicer output is used for HIDs which cannot render things with holes
@@ -21,7 +21,7 @@ index af92d10..1417e31 100644
  #include "config.h"
  #endif
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 320454f..6e163a6 100644
+index 4a761d5..03b02cd 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -39,6 +39,7 @@

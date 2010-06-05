@@ -1,14 +1,15 @@
-Bottom: 2a28d3e68ce4df9802017d234f586e8553776063
-Top:    ad95850460ab7c01d19a729a8956af7d792269b1
+Bottom: 95e25ac20416b0d8f02b92cbaff2faee7d5af44c
+Top:    78b15fcfd1421652d02bdb0b53d41f72ef78f6d8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-04 13:02:59 +0100
+Date:   2010-06-05 12:55:58 +0100
 
 Support holes in input polygons (incl. file-format addition)
+
 
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 1d3dd0c..617dfe5 100644
+index 14b00dc..eac07a7 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1641,9 +1641,8 @@ NotifyMode (void)
@@ -24,7 +25,7 @@ index 1d3dd0c..617dfe5 100644
  
  		    }
 diff --git a/src/autoroute.c b/src/autoroute.c
-index b9f1fdd..31ee09d 100644
+index b6bf91d..7fb7443 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -768,6 +768,7 @@ AddPolygon (PointerListType layergroupboxes[], Cardinal layer,
@@ -36,7 +37,7 @@ index b9f1fdd..31ee09d 100644
         polygon->Points[0].Y == polygon->Points[1].Y) &&
        (polygon->Points[1].X == polygon->Points[2].X ||
 diff --git a/src/buffer.c b/src/buffer.c
-index fbd1735..5505d63 100644
+index e04ae2a..b776aac 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -1001,7 +1001,7 @@ polygon_is_rectangle (PolygonTypePtr poly)
@@ -49,7 +50,7 @@ index fbd1735..5505d63 100644
    best = 0;
    for (i=1; i<4; i++)
 diff --git a/src/copy.c b/src/copy.c
-index 583feb8..3ffd439 100644
+index ffa0ed3..ee594f3 100644
 --- a/src/copy.c
 +++ b/src/copy.c
 @@ -95,6 +95,7 @@ static ObjectFunctionType CopyFunctions = {
@@ -61,7 +62,7 @@ index 583feb8..3ffd439 100644
    POLYGONPOINT_LOOP (Src);
    {
 diff --git a/src/create.c b/src/create.c
-index bdb7b9b..c73b399 100644
+index d1bb3fb..3022db0 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -637,6 +637,17 @@ CreateNewPointInPolygon (PolygonTypePtr Polygon, LocationType X,
@@ -83,7 +84,7 @@ index bdb7b9b..c73b399 100644
  static GHashTable *refdes_map_table = NULL;
  
 diff --git a/src/create.h b/src/create.h
-index 98bb525..5ed2404 100644
+index 5c50151..da95919 100644
 --- a/src/create.h
 +++ b/src/create.h
 @@ -62,6 +62,7 @@ TextTypePtr CreateNewText (LayerTypePtr, FontTypePtr, LocationType,
@@ -95,7 +96,7 @@ index 98bb525..5ed2404 100644
  ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
  				 FontTypePtr, FlagType, char *, char *,
 diff --git a/src/crosshair.c b/src/crosshair.c
-index cea493a..f4f0ffc 100644
+index 7f4b9a3..31e7f94 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -93,15 +93,16 @@ static void
@@ -173,7 +174,7 @@ index cea493a..f4f0ffc 100644
        }
  
 diff --git a/src/file.c b/src/file.c
-index ad77a73..a5e3c5f 100644
+index 390ca5e..79a28da 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -828,14 +828,32 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
@@ -211,7 +212,7 @@ index ad77a73..a5e3c5f 100644
  	}
        fputs (")\n", FP);
 diff --git a/src/file.h b/src/file.h
-index 64eba23..13e47b1 100644
+index 5791dda..e124c4d 100644
 --- a/src/file.h
 +++ b/src/file.h
 @@ -56,7 +56,7 @@ void sort_netlist (void);
@@ -224,10 +225,10 @@ index 64eba23..13e47b1 100644
  
  #ifndef HAS_ATEXIT
 diff --git a/src/global.h b/src/global.h
-index b7c9d0f..192e3fe 100644
+index 62be07f..cf983eb 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -263,6 +263,10 @@ struct polygon_st			/* holds information about a polygon */
+@@ -260,6 +260,10 @@ struct polygon_st			/* holds information about a polygon */
    PLINE *NoHoles;		/* the polygon broken into hole-less regions */
    int NoHolesValid;		/* Is the NoHoles polygon up to date? */
    PointTypePtr Points;		/* data */
@@ -239,7 +240,7 @@ index b7c9d0f..192e3fe 100644
  
  typedef struct			/* holds information about arcs */
 diff --git a/src/insert.c b/src/insert.c
-index 3d4a2f5..a16add5 100644
+index b4bcfe7..094e567 100644
 --- a/src/insert.c
 +++ b/src/insert.c
 @@ -174,10 +174,7 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
@@ -265,7 +266,7 @@ index 3d4a2f5..a16add5 100644
 +      Polygon->HoleIndex[n]++;
 +
    Polygon->Points[InsertAt] = save;
-   SetChangedFlag (True);
+   SetChangedFlag (true);
    AddObjectToInsertPointUndoList (POLYGONPOINT_TYPE, Layer, Polygon,
  				  &Polygon->Points[InsertAt]);
 +
@@ -273,7 +274,7 @@ index 3d4a2f5..a16add5 100644
    r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
    InitClip (PCB->Data, Layer, Polygon);
 diff --git a/src/mymem.c b/src/mymem.c
-index 4118cf0..7e39e68 100644
+index 46714bb..8117400 100644
 --- a/src/mymem.c
 +++ b/src/mymem.c
 @@ -459,6 +459,28 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
@@ -334,7 +335,7 @@ index b9d4de1..d3ac668 100644
  BoxTypePtr GetBoxMemory (BoxListTypePtr);
  ConnectionTypePtr GetConnectionMemory (NetTypePtr);
 diff --git a/src/parse_l.l b/src/parse_l.l
-index 2a9d589..3e718c8 100644
+index 0f3b72e..8aa754c 100644
 --- a/src/parse_l.l
 +++ b/src/parse_l.l
 @@ -129,6 +129,7 @@ Mark		{ return(T_MARK); }
@@ -346,7 +347,7 @@ index 2a9d589..3e718c8 100644
  NetList		{ return(T_NETLIST); }
  Net		{ return(T_NET); }
 diff --git a/src/parse_y.y b/src/parse_y.y
-index b76e689..b5a3fe3 100644
+index 1d64fe8..cc31358 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
 @@ -65,6 +65,7 @@ RCSID("$Id$");
@@ -469,7 +470,7 @@ index b76e689..b5a3fe3 100644
  		: polygonpoint
  		| polygonpoints polygonpoint
 diff --git a/src/polygon.c b/src/polygon.c
-index 1417e31..1604f55 100644
+index 234d1d8..dcf8978 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -124,6 +124,66 @@ static double circleVerticies[] = {
@@ -614,11 +615,11 @@ index 1417e31..1604f55 100644
  
 @@ -1145,6 +1221,7 @@ RemoveExcessPolygonPoints (LayerTypePtr Layer, PolygonTypePtr Polygon)
    LineType line;
-   Boolean changed = False;
+   bool changed = false;
  
 +#warning NEED TO TAKE HOLES INTO ACCOUNT
    if (Undoing ())
-     return (False);
+     return (false);
    /* there are always at least three points in a polygon */
 @@ -1181,8 +1258,7 @@ GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, LocationType X,
                                 LocationType Y)
@@ -677,7 +678,7 @@ index 1417e31..1604f55 100644
    for (i=0; i<p->PointN; i++)
      fprintf(stderr, "\t%d: %d, %d\n", i, p->Points[i].X, p->Points[i].Y);
 diff --git a/src/polygon.h b/src/polygon.h
-index ccf3164..0ad5989 100644
+index 5fc0cd5..444c061 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
 @@ -33,6 +33,8 @@
@@ -688,9 +689,9 @@ index ccf3164..0ad5989 100644
 +Cardinal next_contour_point (PolygonTypePtr polygon, Cardinal point);
  Cardinal GetLowestDistancePolygonPoint (PolygonTypePtr,
  					LocationType, LocationType);
- Boolean RemoveExcessPolygonPoints (LayerTypePtr, PolygonTypePtr);
+ bool RemoveExcessPolygonPoints (LayerTypePtr, PolygonTypePtr);
 diff --git a/src/remove.c b/src/remove.c
-index a82b478..20f9bea 100644
+index a537bc0..83efc06 100644
 --- a/src/remove.c
 +++ b/src/remove.c
 @@ -205,6 +205,7 @@ DestroyPolygonPoint (LayerTypePtr Layer,
@@ -710,7 +711,7 @@ index a82b478..20f9bea 100644
      return RemovePolygon (Layer, Polygon);
    if (Layer->On)
 diff --git a/src/report.c b/src/report.c
-index 2e80e66..35a9888 100644
+index 6a1c47b..bf43f21 100644
 --- a/src/report.c
 +++ b/src/report.c
 @@ -321,6 +321,7 @@ ReportDialog (int argc, char **argv, int x, int y)
@@ -722,7 +723,7 @@ index 2e80e66..35a9888 100644
  		 "Its bounding box is (%d,%d) (%d,%d)\n"
  		 "It has %d points and could store %d more\n"
 diff --git a/src/undo.c b/src/undo.c
-index cb8d180..c601fe7 100644
+index 50c6de5..d10b4b9 100644
 --- a/src/undo.c
 +++ b/src/undo.c
 @@ -778,6 +778,7 @@ UndoInsertPoint (UndoListTypePtr Entry)
