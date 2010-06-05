@@ -1226,6 +1226,8 @@ AddObjectToRemovePointUndoList (int Type,
 	    /* save the ID of the parent object; else it will be
 	     * impossible to recover the point
 	     */
+#warning WILL WE ALWAYS GET THE RIGHT CONTOUR BACK???
+#warning WHAT ABOUT COMPLETELY DELETED CONTOURS???
 	    undo =
 	      GetUndoSlot (UNDO_REMOVE_POINT, OBJECT_ID (polygon),
 			   POLYGON_TYPE);
