@@ -1,5 +1,5 @@
 Bottom: 2a28d3e68ce4df9802017d234f586e8553776063
-Top:    198fb06d8a0839ad905cbcb129d2836574544a38
+Top:    ad95850460ab7c01d19a729a8956af7d792269b1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-04 13:02:59 +0100
 
@@ -239,7 +239,7 @@ index b7c9d0f..192e3fe 100644
  
  typedef struct			/* holds information about arcs */
 diff --git a/src/insert.c b/src/insert.c
-index 3d4a2f5..a5ced0d 100644
+index 3d4a2f5..a16add5 100644
 --- a/src/insert.c
 +++ b/src/insert.c
 @@ -174,10 +174,7 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
@@ -254,15 +254,14 @@ index 3d4a2f5..a5ced0d 100644
        line.Point2 = Polygon->Points[InsertAt];
        if (IsPointOnLine ((float) InsertX, (float) InsertY, 0.0, &line))
  	return (NULL);
-@@ -190,10 +187,18 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -190,10 +187,17 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
    save = *CreateNewPointInPolygon (Polygon, InsertX, InsertY);
    for (n = Polygon->PointN - 1; n > InsertAt; n--)
      Polygon->Points[n] = Polygon->Points[n - 1];
 +
-+#warning "FIXME: How do we know which contour / hole the inserted item belongs to if it is on a boundary?"
 +  /* Shift up indices of any holes */
-+  for (n = Polygon->HoleIndexN - 1; n > 0; n--)
-+    if (Polygon->HoleIndex[n] >= InsertAt)
++  for (n = 0; n < Polygon->HoleIndexN; n++)
++    if (Polygon->HoleIndex[n] > InsertAt)
 +      Polygon->HoleIndex[n]++;
 +
    Polygon->Points[InsertAt] = save;
@@ -470,7 +469,7 @@ index b76e689..b5a3fe3 100644
  		: polygonpoint
  		| polygonpoints polygonpoint
 diff --git a/src/polygon.c b/src/polygon.c
-index 1417e31..17b5def 100644
+index 1417e31..1604f55 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -124,6 +124,66 @@ static double circleVerticies[] = {
@@ -621,7 +620,39 @@ index 1417e31..17b5def 100644
    if (Undoing ())
      return (False);
    /* there are always at least three points in a polygon */
-@@ -1248,6 +1325,7 @@ GoToPreviousPoint (void)
+@@ -1181,8 +1258,7 @@ GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, LocationType X,
+                                LocationType Y)
+ {
+   double mindistance = (double) MAX_COORD * MAX_COORD;
+-  PointTypePtr ptr1 = &Polygon->Points[Polygon->PointN - 1],
+-    ptr2 = &Polygon->Points[0];
++  PointTypePtr ptr1, ptr2;
+   Cardinal n, result = 0;
+ 
+   /* we calculate the distance to each segment and choose the
+@@ -1192,9 +1268,12 @@ GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, LocationType X,
+    * to the segment end point.
+    */
+ 
+-  for (n = 0; n < Polygon->PointN; n++, ptr2++)
++  for (n = 0; n < Polygon->PointN; n++)
+     {
+       register double u, dx, dy;
++      ptr1 = &Polygon->Points[prev_contour_point (Polygon, n)];
++      ptr2 = &Polygon->Points[n];
++
+       dx = ptr2->X - ptr1->X;
+       dy = ptr2->Y - ptr1->Y;
+       if (dx != 0.0 || dy != 0.0)
+@@ -1221,7 +1300,6 @@ GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, LocationType X,
+               result = n;
+             }
+         }
+-      ptr1 = ptr2;
+     }
+   return (result);
+ }
+@@ -1248,6 +1326,7 @@ GoToPreviousPoint (void)
        /* back-up one point */
      default:
        {
@@ -629,7 +660,7 @@ index 1417e31..17b5def 100644
          PointTypePtr points = Crosshair.AttachedPolygon.Points;
          Cardinal n = Crosshair.AttachedPolygon.PointN - 2;
  
-@@ -1267,6 +1345,7 @@ ClosePolygon (void)
+@@ -1267,6 +1346,7 @@ ClosePolygon (void)
  {
    Cardinal n = Crosshair.AttachedPolygon.PointN;
  
@@ -637,7 +668,7 @@ index 1417e31..17b5def 100644
    /* check number of points */
    if (n >= 3)
      {
-@@ -1795,6 +1874,7 @@ debug_polygon (PolygonType *p)
+@@ -1795,6 +1875,7 @@ debug_polygon (PolygonType *p)
  {
    int i;
    POLYAREA *pa;
