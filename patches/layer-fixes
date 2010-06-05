@@ -1,5 +1,5 @@
-Bottom: d961f205f95080b59e1fda1181a40c695bdb1950
-Top:    e73b07be1f9d6d0888a1c01587973aecc3e5f7c9
+Bottom: d125b60f10747a589e9d25a6530de903e31e65ea
+Top:    63b14a10048755c4379c23358dddea60f4f1c507
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-03 23:35:32 +0100
 
@@ -79,7 +79,7 @@ index a34bc91..b52a350 100644
  
    last_depth_computed = depth;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 3653716..4803b52 100644
+index e2db066..39ed655 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -1353,8 +1353,8 @@ DrawLayerGroup (int group, const BoxType * screen)
@@ -120,7 +120,7 @@ index 3653716..4803b52 100644
 +  int max_phys_group;
  
    extern char *current_color;
-   extern Boolean Gathering;
+   extern bool Gathering;
 @@ -1530,36 +1534,71 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    if (!global_view_2d && save_show_solder)
      reverse_layers = !reverse_layers;
