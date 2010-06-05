@@ -729,7 +729,6 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
     p->NoHolesValid = 0;
   return 1;
 #endif
->>>>>>> patched
 }
 
 /* find polygon holes in range, then call the callback function for
