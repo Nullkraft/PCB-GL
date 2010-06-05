@@ -1,5 +1,5 @@
 Bottom: 3e75ec67d1ff09ed80ecf4c7eb65209b09719be6
-Top:    5b03f3f48513c523fc196edd34da879c2adf6658
+Top:    aaab480366f995abe95b3f80e6641f6c642a896b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-05 13:57:55 +0100
 
@@ -16,7 +16,7 @@ Add strip hierarchy options to display refdes without any "..../" prefix
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 6f44683..e152d59 100644
+index 6f44683..eec75cb 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -3325,9 +3325,16 @@ ActionRenumber (int argc, char **argv, int x, int y)
@@ -57,7 +57,7 @@ index 6f44683..e152d59 100644
 +  char *function = ARG (0);
 +  if (function && PCB->ElementOn)
 +    {
-+      HideCrosshair (True);
++      HideCrosshair (true);
 +      switch (GetFunctionID (function))
 +	{
 +	case F_Object:
@@ -82,7 +82,7 @@ index 6f44683..e152d59 100644
 +	case F_SelectedElements:
 +	case F_Selected:
 +	  {
-+	    Boolean changed = False;
++	    bool changed = false;
 +	    ELEMENT_LOOP (PCB->Data);
 +	    {
 +	      if ((TEST_FLAG (SELECTEDFLAG, element) ||
@@ -96,7 +96,7 @@ index 6f44683..e152d59 100644
 +		  TOGGLE_FLAG (STRIPHIERFLAG, element);
 +/* TODO: 		   SetTextBoundingBox (&PCB->Font, new); */
 +		  DrawElementName (element, 0);
-+		  changed = True;
++		  changed = true;
 +		}
 +	    }
 +	    END_LOOP;
@@ -107,7 +107,7 @@ index 6f44683..e152d59 100644
 +	      }
 +	  }
 +	}
-+      RestoreCrosshair (True);
++      RestoreCrosshair (true);
 +    }
 +  return 0;
 +}
