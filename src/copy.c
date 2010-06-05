@@ -95,6 +95,7 @@ static ObjectFunctionType CopyFunctions = {
 PolygonTypePtr
 CopyPolygonLowLevel (PolygonTypePtr Dest, PolygonTypePtr Src)
 {
+#warning FIXME FOR HOLES
   /* copy all data */
   POLYGONPOINT_LOOP (Src);
   {

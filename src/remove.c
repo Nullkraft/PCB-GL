@@ -204,7 +204,7 @@ DestroyPolygonPoint (LayerTypePtr Layer,
 		     PolygonTypePtr Polygon, PointTypePtr Point)
 {
   PointTypePtr ptr;
-
+#warning Need to shift hole indices down
   if (Polygon->PointN <= 3)
     return RemovePolygon (Layer, Polygon);
   r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
@@ -481,6 +481,25 @@ RemovePolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 }
 
 /* ---------------------------------------------------------------------------
+ * removes a contour from a polygon.
+ * If removing the outer contour, it removes the whole polygon.
+ */
+static void *
+RemovePolygonContour (LayerTypePtr Layer,
+                      PolygonTypePtr Polygon,
+                      Cardinal contour)
+{
+  if (contour == 0)
+    return RemovePolygon (Layer, Polygon);
+
+  /* Remove the contour */
+  printf ("Need to remove hole contour from polygon\n");
+#warning Need to shift hole indices down
+#warning How do we provide an undo for this?
+  return NULL;
+}
+
+/* ---------------------------------------------------------------------------
  * removes a polygon-point from a polygon
  */
 static void *
@@ -488,30 +507,36 @@ RemovePolygonPoint (LayerTypePtr Layer,
 		    PolygonTypePtr Polygon, PointTypePtr Point)
 {
   PointTypePtr ptr;
-  Cardinal index = 0;
-  if (Polygon->PointN <= 3)
-    return RemovePolygon (Layer, Polygon);
+  Cardinal point_idx;
+  Cardinal i;
+  Cardinal contour;
+  Cardinal contour_start, contour_end, contour_points;
+
+  point_idx = polygon_point_idx (Polygon, Point);
+  contour = polygon_point_contour (Polygon, point_idx);
+  contour_start = (contour == 0) ? 0 : Polygon->HoleIndex[contour - 1];
+  contour_end = (contour == Polygon->HoleIndexN) ? Polygon->PointN :
+                                                   Polygon->HoleIndex[contour];
+  contour_points = contour_end - contour_start;
+
+  if (contour_points <= 3)
+    return RemovePolygonContour (Layer, Polygon, contour);
+
   if (Layer->On)
     ErasePolygon (Polygon);
   /* insert the polygon-point into the undo list */
-  POLYGONPOINT_LOOP (Polygon);
-  {
-    if (point == Point)
-      {
-	index = n;
-	break;
-      }
-  }
-  END_LOOP;
-  AddObjectToRemovePointUndoList (POLYGONPOINT_TYPE, Layer, Polygon, index);
+  AddObjectToRemovePointUndoList (POLYGONPOINT_TYPE, Layer, Polygon, point_idx);
   r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
   /* remove point from list, keep point order */
-  for (ptr = Point + 1; ptr != &Polygon->Points[Polygon->PointN]; ptr++)
-    {
-      *Point = *ptr;
-      Point = ptr;
-    }
+  for (ptr = Point; ptr < &Polygon->Points[Polygon->PointN]; ptr++)
+    *ptr = *(ptr + 1);
   Polygon->PointN--;
+
+  /* Shift down indices of any holes */
+  for (i = 0; i < Polygon->HoleIndexN; i++)
+    if (Polygon->HoleIndex[i] > point_idx)
+      Polygon->HoleIndex[i]--;
+
   SetPolygonBoundingBox (Polygon);
   r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
   RemoveExcessPolygonPoints (Layer, Polygon);
