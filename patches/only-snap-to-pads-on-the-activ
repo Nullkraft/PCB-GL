@@ -1,5 +1,5 @@
-Bottom: 366ec77800df52ebe9347103a91906b2b76d5344
-Top:    2639ed42fe5861d7c314c94a1f2977631be6c2f6
+Bottom: bb689525cd4e02881079182f1f05134944b9be5c
+Top:    67bd29400471e50aff716d04709580b7e2ecb68e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-03 23:35:14 +0100
 
@@ -17,7 +17,7 @@ Only snap to pads on the active layer
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index b7ae847..5f62e2c 100644
+index f8f83af..05cf38c 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -847,20 +847,53 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
