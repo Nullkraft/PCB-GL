@@ -1,0 +1,49 @@
+Bottom: 92c1065daae81b55834d7a31a742e8e29010036e
+Top:    546125c5fee2f8f95a764088c9450faaad98dd9b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-05 13:10:42 +0100
+
+Refresh of add-strip-hierarchy-options-to
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 14b00dc..46f45a0 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -4714,7 +4714,7 @@ ActionToggleStripHierarchy (int argc, char **argv, int x, int y)
+   char *function = ARG (0);
+   if (function && PCB->ElementOn)
+     {
+-      HideCrosshair (True);
++      HideCrosshair (true);
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_Object:
+@@ -4739,7 +4739,7 @@ ActionToggleStripHierarchy (int argc, char **argv, int x, int y)
+ 	case F_SelectedElements:
+ 	case F_Selected:
+ 	  {
+-	    Boolean changed = False;
++	    bool changed = false;
+ 	    ELEMENT_LOOP (PCB->Data);
+ 	    {
+ 	      if ((TEST_FLAG (SELECTEDFLAG, element) ||
+@@ -4753,7 +4753,7 @@ ActionToggleStripHierarchy (int argc, char **argv, int x, int y)
+ 		  TOGGLE_FLAG (STRIPHIERFLAG, element);
+ /* TODO: 		   SetTextBoundingBox (&PCB->Font, new); */
+ 		  DrawElementName (element, 0);
+-		  changed = True;
++		  changed = true;
+ 		}
+ 	    }
+ 	    END_LOOP;
+@@ -4764,7 +4764,7 @@ ActionToggleStripHierarchy (int argc, char **argv, int x, int y)
+ 	      }
+ 	  }
+ 	}
+-      RestoreCrosshair (True);
++      RestoreCrosshair (true);
+     }
+   return 0;
+ }
