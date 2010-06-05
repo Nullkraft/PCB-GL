@@ -1,5 +1,5 @@
 Bottom: b8f623e816d9de7dd542f66b2e052ebc45a781ea
-Top:    6d15870f09a26312e1164e60a5e708cf95e0b12a
+Top:    2451e6090da9ab68b1a32fa9b03ef136f8d1651c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-05 13:09:31 +0100
 
@@ -62,7 +62,7 @@ index ffa0ed3..ee594f3 100644
    POLYGONPOINT_LOOP (Src);
    {
 diff --git a/src/create.c b/src/create.c
-index d1bb3fb..3022db0 100644
+index d1bb3fb..cb0fb2c 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -637,6 +637,17 @@ CreateNewPointInPolygon (PolygonTypePtr Polygon, LocationType X,
@@ -75,7 +75,7 @@ index d1bb3fb..3022db0 100644
 +PolygonType *
 +CreateNewHoleInPolygon (PolygonType *Polygon)
 +{
-+  int *holeindex = GetHoleIndexMemoryInPolygon (Polygon);
++  Cardinal *holeindex = GetHoleIndexMemoryInPolygon (Polygon);
 +  *holeindex = Polygon->PointN;
 +  return Polygon;
 +}
@@ -96,10 +96,18 @@ index 5c50151..da95919 100644
  ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
  				 FontTypePtr, FlagType, char *, char *,
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 9d85373..75a29f8 100644
+index 9d85373..d1aa847 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -93,15 +93,16 @@ static void
+@@ -48,6 +48,7 @@
+ #include "misc.h"
+ #include "mymem.h"
+ #include "search.h"
++#include "polygon.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+@@ -93,15 +94,16 @@ static void
  XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
  {
    int i;
@@ -125,7 +133,7 @@ index 9d85373..75a29f8 100644
  }
  
  /*-----------------------------------------------------------
-@@ -473,35 +474,28 @@ XORDrawMoveOrCopyObject (void)
+@@ -473,35 +475,27 @@ XORDrawMoveOrCopyObject (void)
      case POLYGONPOINT_TYPE:
        {
  	PolygonTypePtr polygon;
@@ -135,8 +143,7 @@ index 9d85373..75a29f8 100644
  
  	polygon = (PolygonTypePtr) Crosshair.AttachedObject.Ptr2;
  	point = (PointTypePtr) Crosshair.AttachedObject.Ptr3;
-+	point_idx = ((char *)point - (char *)polygon->Points) /
-+		    sizeof (PointType);
++        point_idx = polygon_point_idx (polygon, point);
  
  	/* get previous and following point */
 -	if (point == polygon->Points)
@@ -274,7 +281,7 @@ index b4bcfe7..094e567 100644
    r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
    InitClip (PCB->Data, Layer, Polygon);
 diff --git a/src/mymem.c b/src/mymem.c
-index 46714bb..8117400 100644
+index 46714bb..bed0f9b 100644
 --- a/src/mymem.c
 +++ b/src/mymem.c
 @@ -459,6 +459,28 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
@@ -284,10 +291,10 @@ index 46714bb..8117400 100644
 + * gets the next slot for a point in a polygon struct, allocates memory
 + * if necessary
 + */
-+int *
++Cardinal *
 +GetHoleIndexMemoryInPolygon (PolygonTypePtr Polygon)
 +{
-+  int *holeindex = Polygon->HoleIndex;
++  Cardinal *holeindex = Polygon->HoleIndex;
 +
 +  /* realloc new memory if necessary and clear it */
 +  if (Polygon->HoleIndexN >= Polygon->HoleIndexMax)
@@ -315,7 +322,7 @@ index 46714bb..8117400 100644
  	poly_Free (&Polygon->Clipped);
        poly_FreeContours (&Polygon->NoHoles);
 diff --git a/src/mymem.h b/src/mymem.h
-index b9d4de1..d3ac668 100644
+index b9d4de1..81dff7a 100644
 --- a/src/mymem.h
 +++ b/src/mymem.h
 @@ -58,6 +58,7 @@
@@ -330,7 +337,7 @@ index b9d4de1..d3ac668 100644
  TextTypePtr GetTextMemory (LayerTypePtr);
  PolygonTypePtr GetPolygonMemory (LayerTypePtr);
  PointTypePtr GetPointMemoryInPolygon (PolygonTypePtr);
-+int *GetHoleIndexMemoryInPolygon (PolygonTypePtr);
++Cardinal *GetHoleIndexMemoryInPolygon (PolygonTypePtr);
  ElementTypePtr GetElementMemory (DataTypePtr);
  BoxTypePtr GetBoxMemory (BoxListTypePtr);
  ConnectionTypePtr GetConnectionMemory (NetTypePtr);
@@ -470,13 +477,21 @@ index 1d64fe8..cc31358 100644
  		: polygonpoint
  		| polygonpoints polygonpoint
 diff --git a/src/polygon.c b/src/polygon.c
-index 234d1d8..dcf8978 100644
+index 234d1d8..0b34842 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -124,6 +124,66 @@ static double circleVerticies[] = {
+@@ -124,6 +124,74 @@ static double circleVerticies[] = {
    0.98768834059513777, 0.15643446504023087,
  };
  
++Cardinal
++polygon_point_idx (PolygonTypePtr polygon, PointTypePtr point)
++{
++  assert (point >= polygon->Points);
++  assert (point <= polygon->Points + polygon->PointN);
++  return ((char *)point - (char *)polygon->Points) / sizeof (PointType);
++}
++
 +Cardinal
 +next_contour_point (PolygonTypePtr polygon, Cardinal point)
 +{
@@ -540,7 +555,7 @@ index 234d1d8..dcf8978 100644
  static void
  add_noholes_polyarea (PLINE *pline, void *user_data)
  {
-@@ -213,33 +273,49 @@ original_poly (PolygonType * p)
+@@ -213,33 +281,49 @@ original_poly (PolygonType * p)
  {
    PLINE *contour = NULL;
    POLYAREA *np = NULL;
@@ -613,7 +628,7 @@ index 234d1d8..dcf8978 100644
    return biggest (np);
  }
  
-@@ -1145,6 +1221,7 @@ RemoveExcessPolygonPoints (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -1145,6 +1229,7 @@ RemoveExcessPolygonPoints (LayerTypePtr Layer, PolygonTypePtr Polygon)
    LineType line;
    bool changed = false;
  
@@ -621,7 +636,7 @@ index 234d1d8..dcf8978 100644
    if (Undoing ())
      return (false);
    /* there are always at least three points in a polygon */
-@@ -1181,8 +1258,7 @@ GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, LocationType X,
+@@ -1181,8 +1266,7 @@ GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, LocationType X,
                                 LocationType Y)
  {
    double mindistance = (double) MAX_COORD * MAX_COORD;
@@ -631,7 +646,7 @@ index 234d1d8..dcf8978 100644
    Cardinal n, result = 0;
  
    /* we calculate the distance to each segment and choose the
-@@ -1192,9 +1268,12 @@ GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, LocationType X,
+@@ -1192,9 +1276,12 @@ GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, LocationType X,
     * to the segment end point.
     */
  
@@ -645,7 +660,7 @@ index 234d1d8..dcf8978 100644
        dx = ptr2->X - ptr1->X;
        dy = ptr2->Y - ptr1->Y;
        if (dx != 0.0 || dy != 0.0)
-@@ -1221,7 +1300,6 @@ GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, LocationType X,
+@@ -1221,7 +1308,6 @@ GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, LocationType X,
                result = n;
              }
          }
@@ -653,7 +668,7 @@ index 234d1d8..dcf8978 100644
      }
    return (result);
  }
-@@ -1248,6 +1326,7 @@ GoToPreviousPoint (void)
+@@ -1248,6 +1334,7 @@ GoToPreviousPoint (void)
        /* back-up one point */
      default:
        {
@@ -661,7 +676,7 @@ index 234d1d8..dcf8978 100644
          PointTypePtr points = Crosshair.AttachedPolygon.Points;
          Cardinal n = Crosshair.AttachedPolygon.PointN - 2;
  
-@@ -1267,6 +1346,7 @@ ClosePolygon (void)
+@@ -1267,6 +1354,7 @@ ClosePolygon (void)
  {
    Cardinal n = Crosshair.AttachedPolygon.PointN;
  
@@ -669,7 +684,7 @@ index 234d1d8..dcf8978 100644
    /* check number of points */
    if (n >= 3)
      {
-@@ -1795,6 +1875,7 @@ debug_polygon (PolygonType *p)
+@@ -1795,6 +1883,7 @@ debug_polygon (PolygonType *p)
  {
    int i;
    POLYAREA *pa;
@@ -678,20 +693,21 @@ index 234d1d8..dcf8978 100644
    for (i=0; i<p->PointN; i++)
      fprintf(stderr, "\t%d: %d, %d\n", i, p->Points[i].X, p->Points[i].Y);
 diff --git a/src/polygon.h b/src/polygon.h
-index 5fc0cd5..444c061 100644
+index 5fc0cd5..38777b1 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
-@@ -33,6 +33,8 @@
+@@ -33,6 +33,9 @@
  
  #include "global.h"
  
++Cardinal polygon_point_idx (PolygonTypePtr polygon, PointTypePtr point);
 +Cardinal prev_contour_point (PolygonTypePtr polygon, Cardinal point);
 +Cardinal next_contour_point (PolygonTypePtr polygon, Cardinal point);
  Cardinal GetLowestDistancePolygonPoint (PolygonTypePtr,
  					LocationType, LocationType);
  bool RemoveExcessPolygonPoints (LayerTypePtr, PolygonTypePtr);
 diff --git a/src/remove.c b/src/remove.c
-index a537bc0..83efc06 100644
+index a537bc0..1964dfb 100644
 --- a/src/remove.c
 +++ b/src/remove.c
 @@ -205,6 +205,7 @@ DestroyPolygonPoint (LayerTypePtr Layer,
@@ -702,7 +718,7 @@ index a537bc0..83efc06 100644
    if (Polygon->PointN <= 3)
      return RemovePolygon (Layer, Polygon);
    r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
-@@ -489,6 +490,7 @@ RemovePolygonPoint (LayerTypePtr Layer,
+@@ -489,20 +490,13 @@ RemovePolygonPoint (LayerTypePtr Layer,
  {
    PointTypePtr ptr;
    Cardinal index = 0;
@@ -710,6 +726,21 @@ index a537bc0..83efc06 100644
    if (Polygon->PointN <= 3)
      return RemovePolygon (Layer, Polygon);
    if (Layer->On)
+     ErasePolygon (Polygon);
+   /* insert the polygon-point into the undo list */
+-  POLYGONPOINT_LOOP (Polygon);
+-  {
+-    if (point == Point)
+-      {
+-	index = n;
+-	break;
+-      }
+-  }
+-  END_LOOP;
++  index = polygon_point_idx (Polygon, Point);
+   AddObjectToRemovePointUndoList (POLYGONPOINT_TYPE, Layer, Polygon, index);
+   r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
+   /* remove point from list, keep point order */
 diff --git a/src/report.c b/src/report.c
 index 6a1c47b..bf43f21 100644
 --- a/src/report.c
@@ -723,14 +754,24 @@ index 6a1c47b..bf43f21 100644
  		 "Its bounding box is (%d,%d) (%d,%d)\n"
  		 "It has %d points and could store %d more\n"
 diff --git a/src/undo.c b/src/undo.c
-index 50c6de5..d10b4b9 100644
+index 50c6de5..1117c7d 100644
 --- a/src/undo.c
 +++ b/src/undo.c
-@@ -778,6 +778,7 @@ UndoInsertPoint (UndoListTypePtr Entry)
+@@ -778,15 +778,8 @@ UndoInsertPoint (UndoListTypePtr Entry)
  	Entry->ID = polygon->ID;
  	Entry->Kind = POLYGON_TYPE;
  	Entry->Type = UNDO_REMOVE_POINT;
+-	POLYGONPOINT_LOOP (polygon);
+-	{
+-	  if (pnt == point)
+-	    {
+-	      Entry->Data.RemovedPoint.Index = n;
+-	      break;
+-	    }
+-	}
+-	END_LOOP;
 +#warning Any implication for holes? Do we need to store which contour the insert was in?
- 	POLYGONPOINT_LOOP (polygon);
- 	{
- 	  if (pnt == point)
++	Entry->Data.RemovedPoint.Index = polygon_point_idx (polygon, pnt);
+ 	DestroyObject (PCB->Data, POLYGONPOINT_TYPE, layer, polygon, pnt);
+ 	if (andDraw && layer->On)
+ 	  DrawPolygon (layer, polygon, 0);
