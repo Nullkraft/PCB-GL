@@ -124,6 +124,74 @@ static double circleVerticies[] = {
   0.98768834059513777, 0.15643446504023087,
 };
 
+Cardinal
+polygon_point_idx (PolygonTypePtr polygon, PointTypePtr point)
+{
+  assert (point >= polygon->Points);
+  assert (point <= polygon->Points + polygon->PointN);
+  return ((char *)point - (char *)polygon->Points) / sizeof (PointType);
+}
+
+Cardinal
+next_contour_point (PolygonTypePtr polygon, Cardinal point)
+{
+  int hole; /* Must be a signed type */
+  Cardinal this_contour_start;
+  Cardinal next_contour_start;
+
+  /* Find which contour / hole the specified point is in */
+  for (hole = polygon->HoleIndexN - 1; hole >= 0; hole--)
+    if (point >= polygon->HoleIndex[hole])
+      break;
+  hole++;
+
+  /* hole = 0 for an outer contour point */
+  /* hole = 1 for the first contour etc. */
+
+  this_contour_start = (hole == 0) ? 0 :
+                                     polygon->HoleIndex[hole - 1];
+  next_contour_start =
+    (hole == polygon->HoleIndexN) ? polygon->PointN :
+                                    polygon->HoleIndex[hole];
+
+  /* Wrap back to the start of the contour we're in if we pass the end */
+  if (++point == next_contour_start)
+    point = this_contour_start;
+
+  return point;
+}
+
+Cardinal
+prev_contour_point (PolygonTypePtr polygon, Cardinal point)
+{
+  int hole; /* Must be a signed type */
+  Cardinal prev_contour_end;
+  Cardinal this_contour_end;
+
+  /* Find which contour / hole the specified point is in */
+  for (hole = polygon->HoleIndexN - 1; hole >= 0; hole--)
+    if (point >= polygon->HoleIndex[hole])
+      break;
+  hole++;
+
+  /* hole = 0 for an outer contour point */
+  /* hole = 1 for the first contour etc. */
+
+  prev_contour_end = (hole == 0) ? 0 :
+                                   polygon->HoleIndex[hole - 1];
+  this_contour_end =
+    (hole == polygon->HoleIndexN) ? polygon->PointN - 1:
+                                    polygon->HoleIndex[hole] - 1;
+
+  /* Wrap back to the start of the contour we're in if we pass the end */
+  if (point == prev_contour_end)
+    point = this_contour_end;
+  else
+    point--;
+
+  return point;
+}
+
 static void
 add_noholes_polyarea (PLINE *pline, void *user_data)
 {
@@ -213,33 +281,49 @@ original_poly (PolygonType * p)
 {
   PLINE *contour = NULL;
   POLYAREA *np = NULL;
+  Cardinal n;
   Vector v;
+  int hole = 0;
 
-  /* first make initial polygon contour */
-  POLYGONPOINT_LOOP (p);
-  {
-    v[0] = point->X;
-    v[1] = point->Y;
-    if (contour == NULL)
-      {
-        if ((contour = poly_NewContour (v)) == NULL)
-          return NULL;
-      }
-    else
-      {
-        poly_InclVertex (contour->head.prev, poly_CreateNode (v));
-      }
-  }
-  END_LOOP;
-  poly_PreContour (contour, TRUE);
-  /* make sure it is a positive contour */
-  if ((contour->Flags.orient) != PLF_DIR)
-    poly_InvContour (contour);
-  assert ((contour->Flags.orient) == PLF_DIR);
   if ((np = poly_Create ()) == NULL)
     return NULL;
-  poly_InclContour (np, contour);
-  assert (poly_Valid (np));
+
+  /* first make initial polygon contour */
+  for (n = 0; n < p->PointN; n++)
+    {
+      /* No current contour? Make a new one starting at point */
+      /*   (or) Add point to existing contour */
+
+      v[0] = p->Points[n].X;
+      v[1] = p->Points[n].Y;
+      if (contour == NULL)
+        {
+          if ((contour = poly_NewContour (v)) == NULL)
+            return NULL;
+        }
+      else
+        {
+          poly_InclVertex (contour->head.prev, poly_CreateNode (v));
+        }
+
+      /* Is current point last in contour? If so process it. */
+      if (n == p->PointN - 1 ||
+          (hole < p->HoleIndexN && n == p->HoleIndex[hole] - 1))
+        {
+          poly_PreContour (contour, TRUE);
+
+          /* make sure it is a positive contour (outer) or negative (hole) */
+          if (contour->Flags.orient != (hole ? PLF_INV : PLF_DIR))
+            poly_InvContour (contour);
+          assert (contour->Flags.orient == (hole ? PLF_INV : PLF_DIR));
+
+          poly_InclContour (np, contour);
+          contour = NULL;
+          assert (poly_Valid (np));
+
+          hole++;
+        }
+  }
   return biggest (np);
 }
 
@@ -1145,6 +1229,7 @@ RemoveExcessPolygonPoints (LayerTypePtr Layer, PolygonTypePtr Polygon)
   LineType line;
   bool changed = false;
 
+#warning NEED TO TAKE HOLES INTO ACCOUNT
   if (Undoing ())
     return (false);
   /* there are always at least three points in a polygon */
@@ -1181,8 +1266,7 @@ GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, LocationType X,
                                LocationType Y)
 {
   double mindistance = (double) MAX_COORD * MAX_COORD;
-  PointTypePtr ptr1 = &Polygon->Points[Polygon->PointN - 1],
-    ptr2 = &Polygon->Points[0];
+  PointTypePtr ptr1, ptr2;
   Cardinal n, result = 0;
 
   /* we calculate the distance to each segment and choose the
@@ -1192,9 +1276,12 @@ GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, LocationType X,
    * to the segment end point.
    */
 
-  for (n = 0; n < Polygon->PointN; n++, ptr2++)
+  for (n = 0; n < Polygon->PointN; n++)
     {
       register double u, dx, dy;
+      ptr1 = &Polygon->Points[prev_contour_point (Polygon, n)];
+      ptr2 = &Polygon->Points[n];
+
       dx = ptr2->X - ptr1->X;
       dy = ptr2->Y - ptr1->Y;
       if (dx != 0.0 || dy != 0.0)
@@ -1221,7 +1308,6 @@ GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, LocationType X,
               result = n;
             }
         }
-      ptr1 = ptr2;
     }
   return (result);
 }
@@ -1248,6 +1334,7 @@ GoToPreviousPoint (void)
       /* back-up one point */
     default:
       {
+#warning Any implication for holes?
         PointTypePtr points = Crosshair.AttachedPolygon.Points;
         Cardinal n = Crosshair.AttachedPolygon.PointN - 2;
 
@@ -1267,6 +1354,7 @@ ClosePolygon (void)
 {
   Cardinal n = Crosshair.AttachedPolygon.PointN;
 
+#warning Any implication for holes?
   /* check number of points */
   if (n >= 3)
     {
@@ -1795,6 +1883,7 @@ debug_polygon (PolygonType *p)
 {
   int i;
   POLYAREA *pa;
+#warning Augment to display hole contours properly
   fprintf (stderr, "POLYGON %p  %d pts\n", p, p->PointN);
   for (i=0; i<p->PointN; i++)
     fprintf(stderr, "\t%d: %d, %d\n", i, p->Points[i].X, p->Points[i].Y);
