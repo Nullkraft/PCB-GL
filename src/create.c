@@ -637,6 +637,17 @@ CreateNewPointInPolygon (PolygonTypePtr Polygon, LocationType X,
   return (point);
 }
 
+/* ---------------------------------------------------------------------------
+ * creates a new hole in a polygon
+ */
+PolygonType *
+CreateNewHoleInPolygon (PolygonType *Polygon)
+{
+  int *holeindex = GetHoleIndexMemoryInPolygon (Polygon);
+  *holeindex = Polygon->PointN;
+  return Polygon;
+}
+
 static char *refdes_map_file = "refdes.map";
 static GHashTable *refdes_map_table = NULL;
 
