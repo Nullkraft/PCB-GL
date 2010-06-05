@@ -4717,7 +4717,7 @@ ActionToggleStripHierarchy (int argc, char **argv, int x, int y)
   char *function = ARG (0);
   if (function && PCB->ElementOn)
     {
-      HideCrosshair (True);
+      HideCrosshair (true);
       switch (GetFunctionID (function))
 	{
 	case F_Object:
@@ -4742,7 +4742,7 @@ ActionToggleStripHierarchy (int argc, char **argv, int x, int y)
 	case F_SelectedElements:
 	case F_Selected:
 	  {
-	    Boolean changed = False;
+	    bool changed = false;
 	    ELEMENT_LOOP (PCB->Data);
 	    {
 	      if ((TEST_FLAG (SELECTEDFLAG, element) ||
@@ -4756,7 +4756,7 @@ ActionToggleStripHierarchy (int argc, char **argv, int x, int y)
 		  TOGGLE_FLAG (STRIPHIERFLAG, element);
 /* TODO: 		   SetTextBoundingBox (&PCB->Font, new); */
 		  DrawElementName (element, 0);
-		  changed = True;
+		  changed = true;
 		}
 	    }
 	    END_LOOP;
@@ -4767,7 +4767,7 @@ ActionToggleStripHierarchy (int argc, char **argv, int x, int y)
 	      }
 	  }
 	}
-      RestoreCrosshair (True);
+      RestoreCrosshair (true);
     }
   return 0;
 }
