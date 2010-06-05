@@ -1,5 +1,5 @@
 Bottom: 04c873d4623b9fe28a18f90acb4c7e5f4f6b8ee6
-Top:    2e365fa98d52b5b26d7d1fcb913842a4c6f293b6
+Top:    3e284195875c201602d05798a8c7b6672a5a4fd0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-03 23:35:52 +0100
 
@@ -277,7 +277,7 @@ index d2431c5..a9ec320 100644
      {
        DrawPour (Layer, Pour, 0);
 diff --git a/src/pour.c b/src/pour.c
-index ec6c09f..176debd 100644
+index ec6c09f..9108506 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -66,7 +66,7 @@ RCSID ("$Id$");
@@ -471,7 +471,7 @@ index ec6c09f..176debd 100644
        InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
      }
 -  PlowPours (Data, type, ptr1, ptr2, add_plow);
-+  PlowPours (Data, type, ptr1, ptr2, add_plow, False);
++  PlowPours (Data, type, ptr1, ptr2, add_plow, false);
  }
  
  void
@@ -480,7 +480,7 @@ index ec6c09f..176debd 100644
        InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
      }
 -  PlowPours (Data, type, ptr1, ptr2, subtract_plow);
-+  PlowPours (Data, type, ptr1, ptr2, subtract_plow, False);
++  PlowPours (Data, type, ptr1, ptr2, subtract_plow, false);
  }
  
 +#warning FIXME Later: We could perhaps reduce un-necessary computation by using this function
@@ -489,7 +489,7 @@ index ec6c09f..176debd 100644
 +{
 +  if (!Data->ClipPours)
 +    return;
-+  PlowPours (Data, type, ptr1, ptr2, mark_islands, True);
++  PlowPours (Data, type, ptr1, ptr2, mark_islands, true);
 +}
 diff --git a/src/pour.h b/src/pour.h
 index 79bebc2..f51a071 100644
