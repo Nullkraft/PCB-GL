@@ -1,0 +1,145 @@
+Bottom: 87af98d6218ec759c03fe4901f17720c43fd922b
+Top:    ad8b077c228a6bbd2d63b8d672165f5c371ae981
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-05 17:12:23 +0100
+
+Refresh of support-holes-in-input-polygon
+
+---
+
+diff --git a/src/copy.c b/src/copy.c
+index ee594f3..58ce9df 100644
+--- a/src/copy.c
++++ b/src/copy.c
+@@ -95,13 +95,18 @@ static ObjectFunctionType CopyFunctions = {
+ PolygonTypePtr
+ CopyPolygonLowLevel (PolygonTypePtr Dest, PolygonTypePtr Src)
+ {
+-#warning FIXME FOR HOLES
+-  /* copy all data */
+-  POLYGONPOINT_LOOP (Src);
+-  {
+-    CreateNewPointInPolygon (Dest, point->X, point->Y);
+-  }
+-  END_LOOP;
++  Cardinal hole = 0;
++  Cardinal n;
++
++  for (n = 0; n < Src->PointN; n++)
++    {
++      if (hole < Src->HoleIndexN && n == Src->HoleIndex[hole])
++        {
++          CreateNewHoleInPolygon (Dest);
++          hole++;
++        }
++      CreateNewPointInPolygon (Dest, Src->Points[n].X, Src->Points[n].Y);
++    }
+   SetPolygonBoundingBox (Dest);
+   Dest->Flags = Src->Flags;
+   CLEAR_FLAG (FOUNDFLAG, Dest);
+diff --git a/src/file.c b/src/file.c
+index 79a28da..18abbd2 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -828,7 +828,7 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
+ 	{
+ 	  PolygonTypePtr polygon = &layer->Polygon[n];
+ 	  int p, i = 0;
+-	  int hole = 0;
++	  Cardinal hole = 0;
+ 	  fprintf (FP, "\tPolygon(%s)\n\t(", F2S (polygon, POLYGON_TYPE));
+ 	  for (p = 0; p < polygon->PointN; p++)
+ 	    {
+diff --git a/src/parse_y.y b/src/parse_y.y
+index cc31358..48d83dd 100644
+--- a/src/parse_y.y
++++ b/src/parse_y.y
+@@ -65,7 +65,6 @@ RCSID("$Id$");
+ 
+ static	LayerTypePtr	Layer;
+ static	PolygonTypePtr	Polygon;
+-static	PolygonTypePtr	Hole;
+ static	SymbolTypePtr	Symbol;
+ static	int		pin_num;
+ static	LibraryMenuTypePtr	Menu;
+@@ -1129,6 +1128,7 @@ polygon_format
+ 		  polygonholes ')'
+ 			{
+ 					/* ignore junk */
++#warning FIXME FOR HOLES AS WELL
+ 				if (Polygon->PointN >= 3)
+ 				  {
+ 				    SetPolygonBoundingBox (Polygon);
+@@ -1156,7 +1156,7 @@ polygonholes
+ polygonhole
+ 		: T_POLYGON_HOLE '('
+ 			{
+-				Hole = CreateNewHoleInPolygon (Polygon);
++				CreateNewHoleInPolygon (Polygon);
+ 			}
+ 		  polygonpoints ')'
+ 		;
+diff --git a/src/remove.c b/src/remove.c
+index ab16706..fd939fa 100644
+--- a/src/remove.c
++++ b/src/remove.c
+@@ -74,6 +74,7 @@ static void *DestroyElement (ElementTypePtr);
+ static void *RemoveVia (PinTypePtr);
+ static void *RemoveRat (RatTypePtr);
+ static void *DestroyPolygonPoint (LayerTypePtr, PolygonTypePtr, PointTypePtr);
++static void *RemovePolygonContour (LayerTypePtr, PolygonTypePtr, Cardinal);
+ static void *RemovePolygonPoint (LayerTypePtr, PolygonTypePtr, PointTypePtr);
+ static void *RemoveLinePoint (LayerTypePtr, LineTypePtr, PointTypePtr);
+ 
+@@ -219,6 +220,7 @@ DestroyPolygonPoint (LayerTypePtr Layer,
+     return RemovePolygonContour (Layer, Polygon, contour);
+ 
+   r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
++
+   /* remove point from list, keep point order */
+   for (i = point_idx; i < Polygon->PointN - 1; i++)
+     Polygon->Points[i] = Polygon->Points[i + 1];
+@@ -567,9 +569,11 @@ RemovePolygonPoint (LayerTypePtr Layer,
+ 
+   if (Layer->On)
+     ErasePolygon (Polygon);
++
+   /* insert the polygon-point into the undo list */
+   AddObjectToRemovePointUndoList (POLYGONPOINT_TYPE, Layer, Polygon, point_idx);
+   r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
++
+   /* remove point from list, keep point order */
+   for (i = point_idx; i < Polygon->PointN - 1; i++)
+     Polygon->Points[i] = Polygon->Points[i + 1];
+@@ -584,6 +588,7 @@ RemovePolygonPoint (LayerTypePtr Layer,
+   r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
+   RemoveExcessPolygonPoints (Layer, Polygon);
+   InitClip (PCB->Data, Layer, Polygon);
++
+   /* redraw polygon if necessary */
+   if (Layer->On)
+     {
+diff --git a/src/report.c b/src/report.c
+index bf43f21..dc01153 100644
+--- a/src/report.c
++++ b/src/report.c
+@@ -321,17 +321,17 @@ ReportDialog (int argc, char **argv, int x, int y)
+ #endif
+ 	Polygon = (PolygonTypePtr) ptr2;
+ 
+-#warning Report about holes as well?
+ 	sprintf (&report[0], "POLYGON ID# %ld   Flags:%s\n"
+ 		 "Its bounding box is (%d,%d) (%d,%d)\n"
+ 		 "It has %d points and could store %d more\n"
+ 		 "without using more memory.\n"
+-		 "It resides on layer %d\n"
++		 "It has %d holes and resides on layer %d\n"
+ 		 "%s", Polygon->ID,
+ 		 flags_to_string (Polygon->Flags, POLYGON_TYPE),
+ 		 Polygon->BoundingBox.X1, Polygon->BoundingBox.Y1,
+ 		 Polygon->BoundingBox.X2, Polygon->BoundingBox.Y2,
+ 		 Polygon->PointN, Polygon->PointMax - Polygon->PointN,
++		 Polygon->HoleIndexN,
+ 		 GetLayerNumber (PCB->Data, (LayerTypePtr) ptr1),
+ 		 TEST_FLAG (LOCKFLAG, Polygon) ? "It is LOCKED\n" : "");
+ 	break;
