@@ -1884,7 +1884,7 @@ debug_polygon (PolygonType *p)
         fprintf(stderr, "\t%d: %d\n", i, p->HoleIndex[i]);
     }
   else
-    fprintf (stderr, "it hs no holes\n");
+    fprintf (stderr, "it has no holes\n");
   pa = p->Clipped;
   while (pa)
     {
