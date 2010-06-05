@@ -1,5 +1,5 @@
-Bottom: 39ad01a8f09e7957bec6fdcd52893d78e9966160
-Top:    525fc9a1a5a941989abeaf096b23523314ccc0e4
+Bottom: 31da5598b70aab97ecc1de4e5413283b8edd0475
+Top:    eb2748402cd5024c83576b62490298f61c414326
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-06 19:45:38 +0000
 
@@ -16,7 +16,7 @@ Try clipping polygons to the screen using our own algebra, not GL
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index e6a7993..8846608 100644
+index d814c6d..e3f8dff 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -103,7 +103,7 @@ static void DrawPolygonLowLevel (PolygonTypePtr);
@@ -27,7 +27,7 @@ index e6a7993..8846608 100644
 +static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *);
  static void AddPart (void *);
  static void SetPVColor (PinTypePtr, int);
- /* static */ void DrawEMark (ElementTypePtr, LocationType, LocationType, Boolean);
+ /* static */ void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
 @@ -697,7 +697,7 @@ poly_callback (const BoxType * b, void *cl)
    struct pin_info *i = (struct pin_info *) cl;
  
@@ -152,7 +152,7 @@ index e6a7993..8846608 100644
  }
  
 diff --git a/src/polygon.c b/src/polygon.c
-index 2792144..b39649f 100644
+index e7dab26..1b13a19 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -700,7 +700,7 @@ PinPoly (PinType * pin, BDimension thick, BDimension clear)
@@ -165,7 +165,7 @@ index 2792144..b39649f 100644
    return RectPoly (box->X1 - bloat, box->X2 + bloat,
                     box->Y1 - bloat, box->Y2 + bloat);
 diff --git a/src/polygon.h b/src/polygon.h
-index 15223c0..0fc704a 100644
+index 05a6fec..73d4b2d 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
 @@ -51,7 +51,7 @@ POLYAREA * LinePoly(LineType *l, BDimension thick);
@@ -178,7 +178,7 @@ index 15223c0..0fc704a 100644
  int InitClip(DataType *d, LayerType *l, PolygonType *p);
  void RestoreToPolygon(DataType *, int, void *, void *);
 diff --git a/src/pour.c b/src/pour.c
-index 99b6d9c..c3e19e3 100644
+index cf51bd9..729f06a 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -351,7 +351,7 @@ unite_poly (POLYAREA * np, POLYAREA ** pg)
