@@ -1,5 +1,5 @@
 Bottom: b8f623e816d9de7dd542f66b2e052ebc45a781ea
-Top:    dfdcc12cc3ea169e94d288c2c01032cef7fec174
+Top:    8ca3e6cda19ad9d7d3f2e76365998529e3ca4f4b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-05 13:09:31 +0100
 
@@ -706,7 +706,7 @@ index 5fc0cd5..6b23e4d 100644
  					LocationType, LocationType);
  bool RemoveExcessPolygonPoints (LayerTypePtr, PolygonTypePtr);
 diff --git a/src/remove.c b/src/remove.c
-index a537bc0..ba7cf28 100644
+index a537bc0..a5857d3 100644
 --- a/src/remove.c
 +++ b/src/remove.c
 @@ -204,7 +204,7 @@ DestroyPolygonPoint (LayerTypePtr Layer,
@@ -718,7 +718,7 @@ index a537bc0..ba7cf28 100644
    if (Polygon->PointN <= 3)
      return RemovePolygon (Layer, Polygon);
    r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
-@@ -481,6 +481,25 @@ RemovePolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -481,37 +481,75 @@ RemovePolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -726,17 +726,31 @@ index a537bc0..ba7cf28 100644
 + * If removing the outer contour, it removes the whole polygon.
 + */
 +static void *
-+RemovePolygonContour (LayerTypePtr Layer,
-+                      PolygonTypePtr Polygon,
++RemovePolygonContour (LayerTypePtr layer,
++                      PolygonTypePtr polygon,
 +                      Cardinal contour)
 +{
-+  if (contour == 0)
-+    return RemovePolygon (Layer, Polygon);
++  Cardinal contour_start, contour_end, contour_points;
++  Cardinal i;
 +
-+  /* Remove the contour */
-+  printf ("Need to remove hole contour from polygon\n");
-+#warning Need to shift hole indices down
-+#warning How do we provide an undo for this?
++  if (contour == 0)
++    return RemovePolygon (layer, polygon);
++
++  contour_start = (contour == 0) ? 0 : polygon->HoleIndex[contour - 1];
++  contour_end = (contour == polygon->HoleIndexN) ? polygon->PointN :
++                                                   polygon->HoleIndex[contour];
++  contour_points = contour_end - contour_start;
++
++  /* remove points from list, keep point order */
++  for (i = contour_start; i < polygon->PointN - contour_points; i++)
++    polygon->Points[i] = polygon->Points[i + contour_points];
++  polygon->PointN -= contour_points;
++
++  /* remove hole from list and shift down remaining indices */
++  for (i = contour; i < polygon->HoleIndexN; i++)
++    polygon->HoleIndex[i - 1] = polygon->HoleIndex[i] - contour_points;
++  polygon->HoleIndexN--;
++
 +  return NULL;
 +}
 +
@@ -744,10 +758,10 @@ index a537bc0..ba7cf28 100644
   * removes a polygon-point from a polygon
   */
  static void *
-@@ -488,30 +507,36 @@ RemovePolygonPoint (LayerTypePtr Layer,
+ RemovePolygonPoint (LayerTypePtr Layer,
  		    PolygonTypePtr Polygon, PointTypePtr Point)
  {
-   PointTypePtr ptr;
+-  PointTypePtr ptr;
 -  Cardinal index = 0;
 -  if (Polygon->PointN <= 3)
 -    return RemovePolygon (Layer, Polygon);
@@ -787,8 +801,8 @@ index a537bc0..ba7cf28 100644
 -      *Point = *ptr;
 -      Point = ptr;
 -    }
-+  for (ptr = Point; ptr < &Polygon->Points[Polygon->PointN]; ptr++)
-+    *ptr = *(ptr + 1);
++  for (i = point_idx; i < Polygon->PointN - 1; i++)
++    Polygon->Points[i] = Polygon->Points[i + 1];
    Polygon->PointN--;
 +
 +  /* Shift down indices of any holes */
