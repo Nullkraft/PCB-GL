@@ -962,11 +962,11 @@ ghid_screen_update (void)
 #endif
 }
 
-void DrawAttached (Boolean);
+void DrawAttached (bool);
 
 struct pin_info
 {
-  Boolean arg;
+  bool arg;
   LayerTypePtr Layer;
   const BoxType *drawn_area;
 };
@@ -1065,7 +1065,7 @@ static int
 pin_inlayer_callback (const BoxType * b, void *cl)
 {
   SetPVColor_inlayer ((PinTypePtr) b, cl, PIN_TYPE);
-  DrawPinOrViaLowLevel ((PinTypePtr) b, False);
+  DrawPinOrViaLowLevel ((PinTypePtr) b, false);
   return 1;
 }
 
@@ -1073,14 +1073,14 @@ static int
 via_inlayer_callback (const BoxType * b, void *cl)
 {
   SetPVColor_inlayer ((PinTypePtr) b, cl, VIA_TYPE);
-  DrawPinOrViaLowLevel ((PinTypePtr) b, False);
+  DrawPinOrViaLowLevel ((PinTypePtr) b, false);
   return 1;
 }
 
 static int
 pin_callback (const BoxType * b, void *cl)
 {
-  DrawPlainPin ((PinTypePtr) b, False);
+  DrawPlainPin ((PinTypePtr) b, false);
   return 1;
 }
 
@@ -1123,7 +1123,7 @@ static int
 via_callback (const BoxType * b, void *cl)
 {
   PinTypePtr via = (PinTypePtr) b;
-  DrawPlainVia (via, False);
+  DrawPlainVia (via, false);
   return 1;
 }
 
@@ -1195,7 +1195,7 @@ poly_callback (const BoxType * b, void *cl)
 }
 
 static void
-DrawPadLowLevelSolid (hidGC gc, PadTypePtr Pad, Boolean clear, Boolean mask)
+DrawPadLowLevelSolid (hidGC gc, PadTypePtr Pad, bool clear, bool mask)
 {
   int w = clear ? (mask ? Pad->Mask : Pad->Thickness + Pad->Clearance)
 		: Pad->Thickness;
@@ -1231,13 +1231,13 @@ DrawPadLowLevelSolid (hidGC gc, PadTypePtr Pad, Boolean clear, Boolean mask)
 }
 
 static void
-ClearPadSolid (PadTypePtr Pad, Boolean mask)
+ClearPadSolid (PadTypePtr Pad, bool mask)
 {
-  DrawPadLowLevelSolid(Output.pmGC, Pad, True, mask);
+  DrawPadLowLevelSolid(Output.pmGC, Pad, true, mask);
 }
 
 static void
-ClearOnlyPinSolid (PinTypePtr Pin, Boolean mask)
+ClearOnlyPinSolid (PinTypePtr Pin, bool mask)
 {
   BDimension half =
     (mask ? Pin->Mask / 2 : (Pin->Thickness + Pin->Clearance) / 2);
@@ -1261,7 +1261,7 @@ ClearOnlyPinSolid (PinTypePtr Pin, Boolean mask)
     }
   else if (TEST_FLAG (OCTAGONFLAG, Pin))
     {
-      DrawSpecialPolygon (Output.pmGC, Pin->X, Pin->Y, half * 2, False);
+      DrawSpecialPolygon (Output.pmGC, Pin->X, Pin->Y, half * 2, false);
     }
   else
     {
@@ -1275,7 +1275,7 @@ clearPin_callback_solid (const BoxType * b, void *cl)
   PinTypePtr pin = (PinTypePtr) b;
   struct pin_info *i = (struct pin_info *) cl;
   if (i->arg)
-    ClearOnlyPinSolid (pin, True);
+    ClearOnlyPinSolid (pin, true);
   return 1;
 }
 
@@ -1284,7 +1284,7 @@ clearPad_callback_solid (const BoxType * b, void *cl)
 {
   PadTypePtr pad = (PadTypePtr) b;
   if (!XOR (TEST_FLAG (ONSOLDERFLAG, pad), SWAP_IDENT))
-    ClearPadSolid (pad, True);
+    ClearPadSolid (pad, true);
   return 1;
 }
 
@@ -1300,7 +1300,7 @@ DrawMask (BoxType * screen)
 
   OutputType *out = &Output;
 
-  info.arg = True;
+  info.arg = true;
   info.drawn_area = screen;
 
   if (thin)
@@ -1487,10 +1487,10 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   int save_show_solder;
 
   extern char *current_color;
-  extern Boolean Gathering;
+  extern bool Gathering;
 
   current_color = NULL;
-  Gathering = False;
+  Gathering = false;
 
   /* Test direction of rendering */
   /* Look at sign of eye coordinate system z-coord when projecting a
@@ -1620,7 +1620,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   if (PCB->RatOn && gui->set_layer ("rats", SL (RATS, 0), 0))
     DrawRats(drawn_area);
 
-  Gathering = True;
+  Gathering = true;
 
   Settings.ShowSolderSide = save_show_solder;
 }

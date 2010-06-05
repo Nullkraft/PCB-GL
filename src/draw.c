@@ -76,7 +76,7 @@ FloatPolyType, *FloatPolyTypePtr;
  * some local identifiers
  */
 static BoxType Block;
-/* static */ Boolean Gathering = true;
+/* static */ bool Gathering = true;
 static int Erasing = false;
 
 static int doing_pinout = false;
