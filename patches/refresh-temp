@@ -1,0 +1,84 @@
+Bottom: 2451e6090da9ab68b1a32fa9b03ef136f8d1651c
+Top:    6c30bc51c82b267038ff63a398e6518d7ed6db61
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-05 15:32:38 +0100
+
+Refresh of support-holes-in-input-polygon
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index d1aa847..e8542e0 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -93,11 +93,10 @@ static void XORDrawAttachedArc (BDimension);
+ static void
+ XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
+ {
+-  int i;
+-  int next;
++  Cardinal i
+   for (i = 0; i < polygon->PointN; i++)
+     {
+-      next = next_contour_point (polygon, i);
++      Cardinal next = next_contour_point (polygon, i);
+       gui->draw_line (Crosshair.GC,
+                       polygon->Points[i].X + dx,
+                       polygon->Points[i].Y + dy,
+@@ -474,28 +473,21 @@ XORDrawMoveOrCopyObject (void)
+ 
+     case POLYGONPOINT_TYPE:
+       {
+-	PolygonTypePtr polygon;
+-	PointTypePtr point;
+-	int point_idx, prev, next;
+-
+-	polygon = (PolygonTypePtr) Crosshair.AttachedObject.Ptr2;
+-	point = (PointTypePtr) Crosshair.AttachedObject.Ptr3;
+-        point_idx = polygon_point_idx (polygon, point);
++	PolygonTypePtr polygon = (PolygonTypePtr) Crosshair.AttachedObject.Ptr2;
++	PointTypePtr point = (PointTypePtr) Crosshair.AttachedObject.Ptr3;
++	Cadinal point_idx = point_idx = polygon_point_idx (polygon, point);
+ 
+ 	/* get previous and following point */
+-	prev = prev_contour_point (polygon, point_idx);
+-	next = next_contour_point (polygon, point_idx);
++	Cardinal prev = prev_contour_point (polygon, point_idx);
++	Cardinal next = next_contour_point (polygon, point_idx);
+ 
+ 	/* draw the two segments */
+ 	gui->draw_line (Crosshair.GC,
+-			polygon->Points[prev].X,
+-			polygon->Points[prev].Y,
++			polygon->Points[prev].X, polygon->Points[prev].Y,
+ 			point->X + dx, point->Y + dy);
+ 	gui->draw_line (Crosshair.GC,
+-			point->X + dx,
+-			point->Y + dy,
+-			polygon->Points[next].X,
+-			polygon->Points[next].Y);
++			point->X + dx, point->Y + dy,
++			polygon->Points[next].X, polygon->Points[next].Y);
+ 	break;
+       }
+ 
+diff --git a/src/remove.c b/src/remove.c
+index 1964dfb..0e73f38 100644
+--- a/src/remove.c
++++ b/src/remove.c
+@@ -494,6 +494,7 @@ RemovePolygonPoint (LayerTypePtr Layer,
+   if (Polygon->PointN <= 3)
+     return RemovePolygon (Layer, Polygon);
+   if (Layer->On)
++////////////////////////////////////////////////////////////////////////////////////////////
+     ErasePolygon (Polygon);
+   /* insert the polygon-point into the undo list */
+   index = polygon_point_idx (Polygon, Point);
+@@ -506,6 +507,7 @@ RemovePolygonPoint (LayerTypePtr Layer,
+       Point = ptr;
+     }
+   Polygon->PointN--;
++////////////////////////////////////////////////////////////////////////////////////////////
+   SetPolygonBoundingBox (Polygon);
+   r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
+   RemoveExcessPolygonPoints (Layer, Polygon);
