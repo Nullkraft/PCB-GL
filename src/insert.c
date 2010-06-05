@@ -188,10 +188,9 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
   for (n = Polygon->PointN - 1; n > InsertAt; n--)
     Polygon->Points[n] = Polygon->Points[n - 1];
 
-#warning "FIXME: How do we know which contour / hole the inserted item belongs to if it is on a boundary?"
   /* Shift up indices of any holes */
-  for (n = Polygon->HoleIndexN - 1; n > 0; n--)
-    if (Polygon->HoleIndex[n] >= InsertAt)
+  for (n = 0; n < Polygon->HoleIndexN; n++)
+    if (Polygon->HoleIndex[n] > InsertAt)
       Polygon->HoleIndex[n]++;
 
   Polygon->Points[InsertAt] = save;

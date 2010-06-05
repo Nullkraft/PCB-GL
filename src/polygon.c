@@ -1258,8 +1258,7 @@ GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, LocationType X,
                                LocationType Y)
 {
   double mindistance = (double) MAX_COORD * MAX_COORD;
-  PointTypePtr ptr1 = &Polygon->Points[Polygon->PointN - 1],
-    ptr2 = &Polygon->Points[0];
+  PointTypePtr ptr1, ptr2;
   Cardinal n, result = 0;
 
   /* we calculate the distance to each segment and choose the
@@ -1269,9 +1268,12 @@ GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, LocationType X,
    * to the segment end point.
    */
 
-  for (n = 0; n < Polygon->PointN; n++, ptr2++)
+  for (n = 0; n < Polygon->PointN; n++)
     {
       register double u, dx, dy;
+      ptr1 = &Polygon->Points[prev_contour_point (Polygon, n)];
+      ptr2 = &Polygon->Points[n];
+
       dx = ptr2->X - ptr1->X;
       dy = ptr2->Y - ptr1->Y;
       if (dx != 0.0 || dy != 0.0)
@@ -1298,7 +1300,6 @@ GetLowestDistancePolygonPoint (PolygonTypePtr Polygon, LocationType X,
               result = n;
             }
         }
-      ptr1 = ptr2;
     }
   return (result);
 }
