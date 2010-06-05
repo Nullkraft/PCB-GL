@@ -1,5 +1,5 @@
 Bottom: b8f623e816d9de7dd542f66b2e052ebc45a781ea
-Top:    6c30bc51c82b267038ff63a398e6518d7ed6db61
+Top:    0aee08b9ccb8fc0226b456d52e61f343d4e4999a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-05 13:09:31 +0100
 
@@ -96,7 +96,7 @@ index 5c50151..da95919 100644
  ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
  				 FontTypePtr, FlagType, char *, char *,
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 9d85373..e8542e0 100644
+index 9d85373..a56a2ed 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -48,6 +48,7 @@
@@ -121,7 +121,7 @@ index 9d85373..e8542e0 100644
 -    gui->draw_line (Crosshair.GC,
 -		    polygon->Points[i].X + dx, polygon->Points[i].Y + dy,
 -		    polygon->Points[0].X + dx, polygon->Points[0].Y + dy);
-+  Cardinal i
++  Cardinal i;
 +  for (i = 0; i < polygon->PointN; i++)
 +    {
 +      Cardinal next = next_contour_point (polygon, i);
@@ -134,18 +134,17 @@ index 9d85373..e8542e0 100644
  }
  
  /*-----------------------------------------------------------
-@@ -472,36 +473,21 @@ XORDrawMoveOrCopyObject (void)
- 
+@@ -473,35 +474,24 @@ XORDrawMoveOrCopyObject (void)
      case POLYGONPOINT_TYPE:
        {
--	PolygonTypePtr polygon;
+ 	PolygonTypePtr polygon;
 -	PointTypePtr point, previous, following;
--
--	polygon = (PolygonTypePtr) Crosshair.AttachedObject.Ptr2;
--	point = (PointTypePtr) Crosshair.AttachedObject.Ptr3;
-+	PolygonTypePtr polygon = (PolygonTypePtr) Crosshair.AttachedObject.Ptr2;
-+	PointTypePtr point = (PointTypePtr) Crosshair.AttachedObject.Ptr3;
-+	Cadinal point_idx = point_idx = polygon_point_idx (polygon, point);
++	PointTypePtr point;
++	Cardinal point_idx, prev, next;
+ 
+ 	polygon = (PolygonTypePtr) Crosshair.AttachedObject.Ptr2;
+ 	point = (PointTypePtr) Crosshair.AttachedObject.Ptr3;
++	point_idx = polygon_point_idx (polygon, point);
  
  	/* get previous and following point */
 -	if (point == polygon->Points)
@@ -163,8 +162,8 @@ index 9d85373..e8542e0 100644
 -	    previous = point - 1;
 -	    following = point + 1;
 -	  }
-+	Cardinal prev = prev_contour_point (polygon, point_idx);
-+	Cardinal next = next_contour_point (polygon, point_idx);
++	prev = prev_contour_point (polygon, point_idx);
++	next = next_contour_point (polygon, point_idx);
  
  	/* draw the two segments */
  	gui->draw_line (Crosshair.GC,
