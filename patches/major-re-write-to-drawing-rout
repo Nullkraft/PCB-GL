@@ -1,5 +1,5 @@
 Bottom: befab836617b6d1751517d2040de095211061109
-Top:    e575e23f797899208f94aa9b0a9bbdc299f46c12
+Top:    325a105558bbf3283570812cdd5a2615cce0ffc4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-03 23:35:27 +0100
 
@@ -157,7 +157,7 @@ index c713965..aa7f0b9 100644
  {
    int min_silk_line;
 diff --git a/src/draw.h b/src/draw.h
-index c0e23a3..a1f6d4a 100644
+index c0e23a3..bb38c20 100644
 --- a/src/draw.h
 +++ b/src/draw.h
 @@ -74,6 +74,19 @@ void EraseObject (int, void *, void *);
@@ -165,11 +165,11 @@ index c0e23a3..a1f6d4a 100644
  void UpdateAll (void);
  
 +/* TEMPORARY */
-+void DrawPinOrViaLowLevel (PinTypePtr, Boolean);
-+void DrawPlainPin (PinTypePtr, Boolean);
-+void DrawPlainVia (PinTypePtr, Boolean);
++void DrawPinOrViaLowLevel (PinTypePtr, bool);
++void DrawPlainPin (PinTypePtr, Booleab);
++void DrawPlainVia (PinTypePtr, bool);
 +void DrawRegularText (LayerTypePtr, TextTypePtr, int);
-+void DrawEMark (ElementTypePtr, LocationType, LocationType, Boolean);
++void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
 +void DrawHole (PinTypePtr);
 +void DrawRats (BoxType *);
 +void DrawSilk (int, int, const BoxType *);
