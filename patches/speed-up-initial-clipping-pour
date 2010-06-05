@@ -1,5 +1,5 @@
-Bottom: c8a66e2f39446ff706b4b9723dc3c0a58e34f73b
-Top:    e1bd1b72384531bfd9593fa5b976d78395de8446
+Bottom: 6ddb54f27f5d5e161da54366daf63c9cbba0ed9b
+Top:    817b23403ce7415e58ad95ca437319d5e74b2012
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-03 23:35:49 +0100
 
@@ -9,7 +9,7 @@ Speed up initial clipping (pours version of what we had before)
 ---
 
 diff --git a/src/pour.c b/src/pour.c
-index 84fb231..d1099cd 100644
+index 400787c..7967c68 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -67,6 +67,8 @@ RCSID ("$Id$");
@@ -22,7 +22,7 @@ index 84fb231..d1099cd 100644
  /* ---------------------------------------------------------------------------
   * local prototypes
 @@ -458,9 +460,22 @@ struct cpInfo
-   Boolean solder;
+   bool solder;
    POLYAREA *pg;
    BoxType *region;
 +  POLYAREA *accumulate;
