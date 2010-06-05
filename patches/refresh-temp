@@ -1,0 +1,113 @@
+Bottom: 8ca3e6cda19ad9d7d3f2e76365998529e3ca4f4b
+Top:    87af98d6218ec759c03fe4901f17720c43fd922b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-05 16:54:07 +0100
+
+Refresh of support-holes-in-input-polygon
+
+---
+
+diff --git a/src/remove.c b/src/remove.c
+index a5857d3..ab16706 100644
+--- a/src/remove.c
++++ b/src/remove.c
+@@ -203,17 +203,32 @@ static void *
+ DestroyPolygonPoint (LayerTypePtr Layer,
+ 		     PolygonTypePtr Polygon, PointTypePtr Point)
+ {
+-  PointTypePtr ptr;
+-#warning Need to shift hole indices down
+-  if (Polygon->PointN <= 3)
+-    return RemovePolygon (Layer, Polygon);
++  Cardinal point_idx;
++  Cardinal i;
++  Cardinal contour;
++  Cardinal contour_start, contour_end, contour_points;
++
++  point_idx = polygon_point_idx (Polygon, Point);
++  contour = polygon_point_contour (Polygon, point_idx);
++  contour_start = (contour == 0) ? 0 : Polygon->HoleIndex[contour - 1];
++  contour_end = (contour == Polygon->HoleIndexN) ? Polygon->PointN :
++                                                   Polygon->HoleIndex[contour];
++  contour_points = contour_end - contour_start;
++
++  if (contour_points <= 3)
++    return RemovePolygonContour (Layer, Polygon, contour);
++
+   r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
+-  for (ptr = Point + 1; ptr != &Polygon->Points[Polygon->PointN]; ptr++)
+-    {
+-      *Point = *ptr;
+-      Point = ptr;
+-    }
++  /* remove point from list, keep point order */
++  for (i = point_idx; i < Polygon->PointN - 1; i++)
++    Polygon->Points[i] = Polygon->Points[i + 1];
+   Polygon->PointN--;
++
++  /* Shift down indices of any holes */
++  for (i = 0; i < Polygon->HoleIndexN; i++)
++    if (Polygon->HoleIndex[i] > point_idx)
++      Polygon->HoleIndex[i]--;
++
+   SetPolygonBoundingBox (Polygon);
+   r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
+   InitClip (PCB->Data, Layer, Polygon);
+@@ -485,31 +500,46 @@ RemovePolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+  * If removing the outer contour, it removes the whole polygon.
+  */
+ static void *
+-RemovePolygonContour (LayerTypePtr layer,
+-                      PolygonTypePtr polygon,
++RemovePolygonContour (LayerTypePtr Layer,
++                      PolygonTypePtr Polygon,
+                       Cardinal contour)
+ {
+   Cardinal contour_start, contour_end, contour_points;
+   Cardinal i;
+ 
+   if (contour == 0)
+-    return RemovePolygon (layer, polygon);
++    return RemovePolygon (Layer, Polygon);
++
++  if (Layer->On)
++    {
++      ErasePolygon (Polygon);
++      if (!Bulk)
++        Draw ();
++    }
+ 
+-  contour_start = (contour == 0) ? 0 : polygon->HoleIndex[contour - 1];
+-  contour_end = (contour == polygon->HoleIndexN) ? polygon->PointN :
+-                                                   polygon->HoleIndex[contour];
++  contour_start = (contour == 0) ? 0 : Polygon->HoleIndex[contour - 1];
++  contour_end = (contour == Polygon->HoleIndexN) ? Polygon->PointN :
++                                                   Polygon->HoleIndex[contour];
+   contour_points = contour_end - contour_start;
+ 
+   /* remove points from list, keep point order */
+-  for (i = contour_start; i < polygon->PointN - contour_points; i++)
+-    polygon->Points[i] = polygon->Points[i + contour_points];
+-  polygon->PointN -= contour_points;
++  for (i = contour_start; i < Polygon->PointN - contour_points; i++)
++    Polygon->Points[i] = Polygon->Points[i + contour_points];
++  Polygon->PointN -= contour_points;
+ 
+   /* remove hole from list and shift down remaining indices */
+-  for (i = contour; i < polygon->HoleIndexN; i++)
+-    polygon->HoleIndex[i - 1] = polygon->HoleIndex[i] - contour_points;
+-  polygon->HoleIndexN--;
++  for (i = contour; i < Polygon->HoleIndexN; i++)
++    Polygon->HoleIndex[i - 1] = Polygon->HoleIndex[i] - contour_points;
++  Polygon->HoleIndexN--;
+ 
++  InitClip (PCB->Data, Layer, Polygon);
++  /* redraw polygon if necessary */
++  if (Layer->On)
++    {
++      DrawPolygon (Layer, Polygon, 0);
++      if (!Bulk)
++        Draw ();
++    }
+   return NULL;
+ }
