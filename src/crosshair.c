@@ -865,7 +865,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
       LayerType *desired_layer;
       Cardinal desired_group;
       Cardinal SLayer, CLayer;
-      int found_our_layer = False;
+      int found_our_layer = false;
 
       desired_layer = CURRENT;
       if (Settings.Mode == MOVE_MODE &&
@@ -883,13 +883,13 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
       {
         if (layer == desired_layer)
           {
-            found_our_layer = True;
+            found_our_layer = true;
             break;
           }
       }
       END_LOOP;
 
-      if (found_our_layer == False)
+      if (found_our_layer == false)
         ans = NO_TYPE;
     }
 
