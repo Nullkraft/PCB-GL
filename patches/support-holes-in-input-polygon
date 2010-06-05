@@ -1,5 +1,5 @@
-Bottom: 81d9c8171ee1d9c57724576f676a1fa549faeaa6
-Top:    a82b4637de08ef67d60c7271e8b0e82d8e098f1a
+Bottom: b8f623e816d9de7dd542f66b2e052ebc45a781ea
+Top:    6d15870f09a26312e1164e60a5e708cf95e0b12a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-05 13:09:31 +0100
 
@@ -9,7 +9,7 @@ Support holes in input polygons (incl. file-format addition)
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 14b00dc..eac07a7 100644
+index 46f45a0..9d96edb 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1641,9 +1641,8 @@ NotifyMode (void)
