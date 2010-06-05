@@ -1,5 +1,5 @@
-Bottom: e1bd1b72384531bfd9593fa5b976d78395de8446
-Top:    1ad89e2b8c3d19fafc85fd94ce1c724664f9116d
+Bottom: 817b23403ce7415e58ad95ca437319d5e74b2012
+Top:    f8f75e6293a02afa15cbdea4f53cdba8f9614f8c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-03 23:35:50 +0100
 
@@ -9,7 +9,7 @@ Fixup gtk hid drawing routines for pour support
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index b95aa6f..f42ef3d 100644
+index 46c2208..33c707a 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -1169,6 +1169,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *dra
@@ -44,7 +44,7 @@ index b95aa6f..f42ef3d 100644
 +}
 +
  static void
- DrawPadLowLevelSolid (hidGC gc, PadTypePtr Pad, Boolean clear, Boolean mask)
+ DrawPadLowLevelSolid (hidGC gc, PadTypePtr Pad, bool clear, bool mask)
  {
 @@ -1402,10 +1422,10 @@ DrawLayerGroup (int group, const BoxType * screen)
        }
