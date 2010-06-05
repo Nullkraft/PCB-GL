@@ -205,6 +205,7 @@ DestroyPolygonPoint (LayerTypePtr Layer,
 {
   PointTypePtr ptr;
 
+#warning Need to shift hole indices down
   if (Polygon->PointN <= 3)
     return RemovePolygon (Layer, Polygon);
   r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
@@ -489,20 +490,14 @@ RemovePolygonPoint (LayerTypePtr Layer,
 {
   PointTypePtr ptr;
   Cardinal index = 0;
+#warning Need to shift hole indices down
   if (Polygon->PointN <= 3)
     return RemovePolygon (Layer, Polygon);
   if (Layer->On)
+////////////////////////////////////////////////////////////////////////////////////////////
     ErasePolygon (Polygon);
   /* insert the polygon-point into the undo list */
-  POLYGONPOINT_LOOP (Polygon);
-  {
-    if (point == Point)
-      {
-	index = n;
-	break;
-      }
-  }
-  END_LOOP;
+  index = polygon_point_idx (Polygon, Point);
   AddObjectToRemovePointUndoList (POLYGONPOINT_TYPE, Layer, Polygon, index);
   r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
   /* remove point from list, keep point order */
@@ -512,6 +507,7 @@ RemovePolygonPoint (LayerTypePtr Layer,
       Point = ptr;
     }
   Polygon->PointN--;
+////////////////////////////////////////////////////////////////////////////////////////////
   SetPolygonBoundingBox (Polygon);
   r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
   RemoveExcessPolygonPoints (Layer, Polygon);
