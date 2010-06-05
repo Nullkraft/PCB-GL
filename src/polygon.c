@@ -132,27 +132,33 @@ polygon_point_idx (PolygonTypePtr polygon, PointTypePtr point)
   return ((char *)point - (char *)polygon->Points) / sizeof (PointType);
 }
 
+/* Find contour number: 0 for outer, 1 for first hole etc.. */
+Cardinal
+polygon_point_contour (PolygonTypePtr polygon, Cardinal point)
+{
+  Cardinal i;
+  Cardinal contour = 0;
+
+  for (i = 0; i < polygon->HoleIndexN; i++)
+    if (point >= polygon->HoleIndex[i])
+      contour = i + 1;
+  return contour;
+}
+
 Cardinal
 next_contour_point (PolygonTypePtr polygon, Cardinal point)
 {
-  int hole; /* Must be a signed type */
+  Cardinal contour;
   Cardinal this_contour_start;
   Cardinal next_contour_start;
 
-  /* Find which contour / hole the specified point is in */
-  for (hole = polygon->HoleIndexN - 1; hole >= 0; hole--)
-    if (point >= polygon->HoleIndex[hole])
-      break;
-  hole++;
+  contour = polygon_point_contour (polygon, point);
 
-  /* hole = 0 for an outer contour point */
-  /* hole = 1 for the first contour etc. */
-
-  this_contour_start = (hole == 0) ? 0 :
-                                     polygon->HoleIndex[hole - 1];
+  this_contour_start = (contour == 0) ? 0 :
+                                        polygon->HoleIndex[contour - 1];
   next_contour_start =
-    (hole == polygon->HoleIndexN) ? polygon->PointN :
-                                    polygon->HoleIndex[hole];
+    (contour == polygon->HoleIndexN) ? polygon->PointN :
+                                       polygon->HoleIndex[contour];
 
   /* Wrap back to the start of the contour we're in if we pass the end */
   if (++point == next_contour_start)
@@ -164,24 +170,17 @@ next_contour_point (PolygonTypePtr polygon, Cardinal point)
 Cardinal
 prev_contour_point (PolygonTypePtr polygon, Cardinal point)
 {
-  int hole; /* Must be a signed type */
+  Cardinal contour;
   Cardinal prev_contour_end;
   Cardinal this_contour_end;
 
-  /* Find which contour / hole the specified point is in */
-  for (hole = polygon->HoleIndexN - 1; hole >= 0; hole--)
-    if (point >= polygon->HoleIndex[hole])
-      break;
-  hole++;
+  contour = polygon_point_contour (polygon, point);
 
-  /* hole = 0 for an outer contour point */
-  /* hole = 1 for the first contour etc. */
-
-  prev_contour_end = (hole == 0) ? 0 :
-                                   polygon->HoleIndex[hole - 1];
+  prev_contour_end = (contour == 0) ? 0 :
+                                      polygon->HoleIndex[contour - 1];
   this_contour_end =
-    (hole == polygon->HoleIndexN) ? polygon->PointN - 1:
-                                    polygon->HoleIndex[hole] - 1;
+    (contour == polygon->HoleIndexN) ? polygon->PointN - 1:
+                                       polygon->HoleIndex[contour] - 1;
 
   /* Wrap back to the start of the contour we're in if we pass the end */
   if (point == prev_contour_end)
