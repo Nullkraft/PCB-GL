@@ -1223,32 +1223,26 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
 bool
 RemoveExcessPolygonPoints (LayerTypePtr Layer, PolygonTypePtr Polygon)
 {
-  PointTypePtr pt1, pt2, pt3;
-  Cardinal n;
+  PointTypePtr p;
+  Cardinal n, prev, next;
   LineType line;
   bool changed = false;
 
-#warning NEED TO TAKE HOLES INTO ACCOUNT
   if (Undoing ())
     return (false);
-  /* there are always at least three points in a polygon */
-  pt1 = &Polygon->Points[Polygon->PointN - 1];
-  pt2 = &Polygon->Points[0];
-  pt3 = &Polygon->Points[1];
-  for (n = 0; n < Polygon->PointN; n++, pt1++, pt2++, pt3++)
+
+  for (n = 0; n < Polygon->PointN; n++)
     {
-      /* wrap around polygon */
-      if (n == 1)
-        pt1 = &Polygon->Points[0];
-      if (n == Polygon->PointN - 1)
-        pt3 = &Polygon->Points[0];
-      line.Point1 = *pt1;
-      line.Point2 = *pt3;
+      prev = prev_contour_point (Polygon, n);
+      next = next_contour_point (Polygon, n);
+      p = &Polygon->Points[n];
+
+      line.Point1 = Polygon->Points[prev];
+      line.Point2 = Polygon->Points[next];
       line.Thickness = 0;
-      if (IsPointOnLine ((float) pt2->X, (float) pt2->Y, 0.0, &line))
+      if (IsPointOnLine ((float) p->X, (float) p->Y, 0.0, &line))
         {
-          RemoveObject (POLYGONPOINT_TYPE, (void *) Layer, (void *) Polygon,
-                        (void *) pt2);
+          RemoveObject (POLYGONPOINT_TYPE, Layer, Polygon, p);
           changed = true;
         }
     }
@@ -1333,7 +1327,6 @@ GoToPreviousPoint (void)
       /* back-up one point */
     default:
       {
-#warning Any implication for holes?
         PointTypePtr points = Crosshair.AttachedPolygon.Points;
         Cardinal n = Crosshair.AttachedPolygon.PointN - 2;
 
@@ -1353,7 +1346,6 @@ ClosePolygon (void)
 {
   Cardinal n = Crosshair.AttachedPolygon.PointN;
 
-#warning Any implication for holes?
   /* check number of points */
   if (n >= 3)
     {
@@ -1880,12 +1872,19 @@ debug_polyarea (POLYAREA *p)
 void
 debug_polygon (PolygonType *p)
 {
-  int i;
+  Cardinal i;
   POLYAREA *pa;
-#warning Augment to display hole contours properly
   fprintf (stderr, "POLYGON %p  %d pts\n", p, p->PointN);
   for (i=0; i<p->PointN; i++)
     fprintf(stderr, "\t%d: %d, %d\n", i, p->Points[i].X, p->Points[i].Y);
+  if (p->HoleIndexN)
+    {
+      fprintf (stderr, "%d holes, starting at indices\n", p->HoleIndexN);
+      for (i=0; i<p->HoleIndexN; i++)
+        fprintf(stderr, "\t%d: %d\n", i, p->HoleIndex[i]);
+    }
+  else
+    fprintf (stderr, "it hs no holes\n");
   pa = p->Clipped;
   while (pa)
     {
