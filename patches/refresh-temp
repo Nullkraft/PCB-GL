@@ -1,0 +1,37 @@
+Bottom: 67bd29400471e50aff716d04709580b7e2ecb68e
+Top:    93769d628a66b3baa78d251893033f53574cc053
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-05 12:59:55 +0100
+
+Refresh of only-snap-to-pads-on-the-activ
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 05cf38c..d4e4867 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -865,7 +865,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+       LayerType *desired_layer;
+       Cardinal desired_group;
+       Cardinal SLayer, CLayer;
+-      int found_our_layer = False;
++      int found_our_layer = false;
+ 
+       desired_layer = CURRENT;
+       if (Settings.Mode == MOVE_MODE &&
+@@ -883,13 +883,13 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+       {
+         if (layer == desired_layer)
+           {
+-            found_our_layer = True;
++            found_our_layer = true;
+             break;
+           }
+       }
+       END_LOOP;
+ 
+-      if (found_our_layer == False)
++      if (found_our_layer == false)
+         ans = NO_TYPE;
+     }
