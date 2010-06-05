@@ -1342,7 +1342,7 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
 //      printf ("Calling InitPourClip from RestoreToPour\n");
       InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
     }
-  PlowPours (Data, type, ptr1, ptr2, add_plow, False);
+  PlowPours (Data, type, ptr1, ptr2, add_plow, false);
 }
 
 void
@@ -1356,7 +1356,7 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
 //      printf ("Calling InitPourClip from ClearFromPour\n");
       InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
     }
-  PlowPours (Data, type, ptr1, ptr2, subtract_plow, False);
+  PlowPours (Data, type, ptr1, ptr2, subtract_plow, false);
 }
 
 #warning FIXME Later: We could perhaps reduce un-necessary computation by using this function
@@ -1365,5 +1365,5 @@ MarkPourIslands (DataType * Data, int type, void *ptr1, void *ptr2)
 {
   if (!Data->ClipPours)
     return;
-  PlowPours (Data, type, ptr1, ptr2, mark_islands, True);
+  PlowPours (Data, type, ptr1, ptr2, mark_islands, true);
 }
