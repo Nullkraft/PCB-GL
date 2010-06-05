@@ -828,7 +828,7 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
 	{
 	  PolygonTypePtr polygon = &layer->Polygon[n];
 	  int p, i = 0;
-	  int hole = 0;
+	  Cardinal hole = 0;
 	  fprintf (FP, "\tPolygon(%s)\n\t(", F2S (polygon, POLYGON_TYPE));
 	  for (p = 0; p < polygon->PointN; p++)
 	    {

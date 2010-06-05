@@ -65,7 +65,6 @@ RCSID("$Id$");
 
 static	LayerTypePtr	Layer;
 static	PolygonTypePtr	Polygon;
-static	PolygonTypePtr	Hole;
 static	SymbolTypePtr	Symbol;
 static	int		pin_num;
 static	LibraryMenuTypePtr	Menu;
@@ -1129,6 +1128,7 @@ polygon_format
 		  polygonholes ')'
 			{
 					/* ignore junk */
+#warning FIXME FOR HOLES AS WELL
 				if (Polygon->PointN >= 3)
 				  {
 				    SetPolygonBoundingBox (Polygon);
@@ -1156,7 +1156,7 @@ polygonholes
 polygonhole
 		: T_POLYGON_HOLE '('
 			{
-				Hole = CreateNewHoleInPolygon (Polygon);
+				CreateNewHoleInPolygon (Polygon);
 			}
 		  polygonpoints ')'
 		;

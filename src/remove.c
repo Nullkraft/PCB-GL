@@ -74,6 +74,7 @@ static void *DestroyElement (ElementTypePtr);
 static void *RemoveVia (PinTypePtr);
 static void *RemoveRat (RatTypePtr);
 static void *DestroyPolygonPoint (LayerTypePtr, PolygonTypePtr, PointTypePtr);
+static void *RemovePolygonContour (LayerTypePtr, PolygonTypePtr, Cardinal);
 static void *RemovePolygonPoint (LayerTypePtr, PolygonTypePtr, PointTypePtr);
 static void *RemoveLinePoint (LayerTypePtr, LineTypePtr, PointTypePtr);
 
@@ -219,6 +220,7 @@ DestroyPolygonPoint (LayerTypePtr Layer,
     return RemovePolygonContour (Layer, Polygon, contour);
 
   r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
+
   /* remove point from list, keep point order */
   for (i = point_idx; i < Polygon->PointN - 1; i++)
     Polygon->Points[i] = Polygon->Points[i + 1];
@@ -567,9 +569,11 @@ RemovePolygonPoint (LayerTypePtr Layer,
 
   if (Layer->On)
     ErasePolygon (Polygon);
+
   /* insert the polygon-point into the undo list */
   AddObjectToRemovePointUndoList (POLYGONPOINT_TYPE, Layer, Polygon, point_idx);
   r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
+
   /* remove point from list, keep point order */
   for (i = point_idx; i < Polygon->PointN - 1; i++)
     Polygon->Points[i] = Polygon->Points[i + 1];
@@ -584,6 +588,7 @@ RemovePolygonPoint (LayerTypePtr Layer,
   r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
   RemoveExcessPolygonPoints (Layer, Polygon);
   InitClip (PCB->Data, Layer, Polygon);
+
   /* redraw polygon if necessary */
   if (Layer->On)
     {
