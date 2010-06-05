@@ -1,5 +1,5 @@
-Bottom: 7b4fe99777985bcaeeacfb2b475c92dfbe4a0670
-Top:    5acbc3101bfc33c9850bcfefb205a9908e83ced7
+Bottom: 31e42ada83318c5e09bda759d5a16743aa23de06
+Top:    3e71dba0e163a5e864dfee8324b568f44c61c7a0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-03 23:35:34 +0100
 
@@ -12,7 +12,7 @@ FIXME: Make this work with the GL masking polygon drawing routines, rather
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 4118b47..4e69c74 100644
+index 11f52db..44acaa1 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -45,6 +45,7 @@
@@ -51,7 +51,7 @@ index 4118b47..4e69c74 100644
  
    gui->use_mask (HID_MASK_OFF);
 diff --git a/src/polygon.c b/src/polygon.c
-index 40adc08..af92d10 100644
+index 8fdd3ff..504bc34 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -81,6 +81,7 @@ dicer output is used for HIDs which cannot render things with holes
@@ -235,11 +235,11 @@ index 40adc08..af92d10 100644
 +  return clipped;
 +}
 diff --git a/src/polygon.h b/src/polygon.h
-index 2faaa20..ccf3164 100644
+index 1eb5757..5fc0cd5 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
-@@ -66,4 +66,5 @@ Boolean isects (POLYAREA *, PolygonTypePtr, Boolean);
- Boolean MorphPolygon (LayerTypePtr, PolygonTypePtr);
+@@ -66,4 +66,5 @@ bool isects (POLYAREA *, PolygonTypePtr, bool);
+ bool MorphPolygon (LayerTypePtr, PolygonTypePtr);
  void NoHolesPolygonDicer (PolygonType *p, const BoxType *clip,
                            void (*emit) (PLINE *, void *), void *user_data);
 +POLYAREA *board_outline_poly ();

@@ -1,5 +1,5 @@
-Bottom: 5acbc3101bfc33c9850bcfefb205a9908e83ced7
-Top:    a77d213374ac50c2f72dbf7097437d4fa9c164ce
+Bottom: 3e71dba0e163a5e864dfee8324b568f44c61c7a0
+Top:    2cc598df066f564badadc70397b0ea37716a5e1c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-03 23:35:35 +0100
 
@@ -11,7 +11,7 @@ This was already supported for vias, lets be consistent.
 ---
 
 diff --git a/src/change.c b/src/change.c
-index 2fedc52..059b06f 100644
+index 5546f1f..0c55c69 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -532,7 +532,13 @@ ChangePinClearSize (ElementTypePtr Element, PinTypePtr Pin)
@@ -71,7 +71,7 @@ index 2fedc52..059b06f 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/find.c b/src/find.c
-index 6fb62b6..b1b0211 100644
+index 593be70..039bdfa 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -3844,7 +3844,7 @@ drc_callback (DataTypePtr data, LayerTypePtr layer, PolygonTypePtr polygon,
