@@ -778,15 +778,8 @@ UndoInsertPoint (UndoListTypePtr Entry)
 	Entry->ID = polygon->ID;
 	Entry->Kind = POLYGON_TYPE;
 	Entry->Type = UNDO_REMOVE_POINT;
-	POLYGONPOINT_LOOP (polygon);
-	{
-	  if (pnt == point)
-	    {
-	      Entry->Data.RemovedPoint.Index = n;
-	      break;
-	    }
-	}
-	END_LOOP;
+#warning Any implication for holes? Do we need to store which contour the insert was in?
+	Entry->Data.RemovedPoint.Index = polygon_point_idx (polygon, pnt);
 	DestroyObject (PCB->Data, POLYGONPOINT_TYPE, layer, polygon, pnt);
 	if (andDraw && layer->On)
 	  DrawPolygon (layer, polygon, 0);
@@ -1233,6 +1226,8 @@ AddObjectToRemovePointUndoList (int Type,
 	    /* save the ID of the parent object; else it will be
 	     * impossible to recover the point
 	     */
+#warning WILL WE ALWAYS GET THE RIGHT CONTOUR BACK???
+#warning WHAT ABOUT COMPLETELY DELETED CONTOURS???
 	    undo =
 	      GetUndoSlot (UNDO_REMOVE_POINT, OBJECT_ID (polygon),
 			   POLYGON_TYPE);
