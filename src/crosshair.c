@@ -98,7 +98,8 @@ XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
     {
       Cardinal next = next_contour_point (polygon, i);
       gui->draw_line (Crosshair.GC,
-                      polygon->Points[i].X + dx, polygon->Points[i].Y + dy,
+                      polygon->Points[i].X + dx,
+                      polygon->Points[i].Y + dy,
                       polygon->Points[next].X + dx,
                       polygon->Points[next].Y + dy);
     }
