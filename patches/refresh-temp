@@ -1,0 +1,22 @@
+Bottom: cba30b8265a0f1fded9a3221d59724b99a139d3c
+Top:    9bb0089ad8ea63881932854d11182a076d48bbe4
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-05 13:51:22 +0100
+
+Refresh of add-support-for-a-poured-objec-I
+
+---
+
+diff --git a/src/pour.h b/src/pour.h
+index f04e342..79bebc2 100644
+--- a/src/pour.h
++++ b/src/pour.h
+@@ -35,7 +35,7 @@
+ 
+ Cardinal GetLowestDistancePourPoint (PourTypePtr,
+ 					LocationType, LocationType);
+-Boolean RemoveExcessPourPoints (LayerTypePtr, PourTypePtr);
++bool RemoveExcessPourPoints (LayerTypePtr, PourTypePtr);
+ void GoToPreviousPourPoint (void);
+ void ClosePour (void);
+ void CopyAttachedPourToLayer (void);
