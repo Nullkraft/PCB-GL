@@ -33,6 +33,7 @@
 
 #include "global.h"
 
+Cardinal polygon_point_idx (PolygonTypePtr polygon, PointTypePtr point);
 Cardinal prev_contour_point (PolygonTypePtr polygon, Cardinal point);
 Cardinal next_contour_point (PolygonTypePtr polygon, Cardinal point);
 Cardinal GetLowestDistancePolygonPoint (PolygonTypePtr,

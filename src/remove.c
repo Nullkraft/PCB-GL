@@ -496,15 +496,7 @@ RemovePolygonPoint (LayerTypePtr Layer,
   if (Layer->On)
     ErasePolygon (Polygon);
   /* insert the polygon-point into the undo list */
-  POLYGONPOINT_LOOP (Polygon);
-  {
-    if (point == Point)
-      {
-	index = n;
-	break;
-      }
-  }
-  END_LOOP;
+  index = polygon_point_idx (Polygon, Point);
   AddObjectToRemovePointUndoList (POLYGONPOINT_TYPE, Layer, Polygon, index);
   r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
   /* remove point from list, keep point order */

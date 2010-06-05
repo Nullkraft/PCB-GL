@@ -643,7 +643,7 @@ CreateNewPointInPolygon (PolygonTypePtr Polygon, LocationType X,
 PolygonType *
 CreateNewHoleInPolygon (PolygonType *Polygon)
 {
-  int *holeindex = GetHoleIndexMemoryInPolygon (Polygon);
+  Cardinal *holeindex = GetHoleIndexMemoryInPolygon (Polygon);
   *holeindex = Polygon->PointN;
   return Polygon;
 }

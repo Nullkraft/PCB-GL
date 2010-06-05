@@ -462,10 +462,10 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
  * gets the next slot for a point in a polygon struct, allocates memory
  * if necessary
  */
-int *
+Cardinal *
 GetHoleIndexMemoryInPolygon (PolygonTypePtr Polygon)
 {
-  int *holeindex = Polygon->HoleIndex;
+  Cardinal *holeindex = Polygon->HoleIndex;
 
   /* realloc new memory if necessary and clear it */
   if (Polygon->HoleIndexN >= Polygon->HoleIndexMax)

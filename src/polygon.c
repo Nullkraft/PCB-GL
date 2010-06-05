@@ -125,6 +125,14 @@ static double circleVerticies[] = {
 };
 
 Cardinal
+polygon_point_idx (PolygonTypePtr polygon, PointTypePtr point)
+{
+  assert (point >= polygon->Points);
+  assert (point <= polygon->Points + polygon->PointN);
+  return ((char *)point - (char *)polygon->Points) / sizeof (PointType);
+}
+
+Cardinal
 next_contour_point (PolygonTypePtr polygon, Cardinal point)
 {
   int hole; /* Must be a signed type */

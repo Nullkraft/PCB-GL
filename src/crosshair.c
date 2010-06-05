@@ -48,6 +48,7 @@
 #include "misc.h"
 #include "mymem.h"
 #include "search.h"
+#include "polygon.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
@@ -479,8 +480,7 @@ XORDrawMoveOrCopyObject (void)
 
 	polygon = (PolygonTypePtr) Crosshair.AttachedObject.Ptr2;
 	point = (PointTypePtr) Crosshair.AttachedObject.Ptr3;
-	point_idx = ((char *)point - (char *)polygon->Points) /
-		    sizeof (PointType);
+        point_idx = polygon_point_idx (polygon, point);
 
 	/* get previous and following point */
 	prev = prev_contour_point (polygon, point_idx);
