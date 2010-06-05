@@ -1,0 +1,28 @@
+Bottom: 291014435e906551bc43e1720027865014cbc7f6
+Top:    89552ef3de09c3f2fe804817ef92c90cc92594bf
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-05 13:37:05 +0100
+
+Refresh of add-support-for-a-poured-objec-I
+
+---
+
+diff --git a/src/search.c b/src/search.c
+index 9e8c005..69f260f 100644
+--- a/src/search.c
++++ b/src/search.c
+@@ -492,12 +492,12 @@ SearchPourByLocation (int locked, LayerTypePtr * Layer,
+   if (setjmp (info.env) == 0)
+     {
+       r_search (SearchLayer->pour_tree, &SearchBox, NULL, pour_polygon_callback, &info);
+-      return False;
++      return false;
+     }
+ 
+   /* Make sure we return the pour, not the polygon */
+   *info.ptr2 = *info.ptr3 = ((PolygonTypePtr)*info.ptr2)->ParentPour;
+-  return (True);
++  return (true);
+ }
+ 
+ static int
