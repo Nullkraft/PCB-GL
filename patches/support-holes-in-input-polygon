@@ -1,5 +1,5 @@
 Bottom: b8f623e816d9de7dd542f66b2e052ebc45a781ea
-Top:    db57b709633f31c5e3249fa80208c068ca54606e
+Top:    d5bdc4719e6fa6d97cb112adce59a1b3d2a72c79
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-05 13:09:31 +0100
 
@@ -486,7 +486,7 @@ index 1d64fe8..48d83dd 100644
  		: polygonpoint
  		| polygonpoints polygonpoint
 diff --git a/src/polygon.c b/src/polygon.c
-index 234d1d8..2a95758 100644
+index 234d1d8..971481f 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -124,6 +124,73 @@ static double circleVerticies[] = {
@@ -729,7 +729,7 @@ index 234d1d8..2a95758 100644
 +        fprintf(stderr, "\t%d: %d\n", i, p->HoleIndex[i]);
 +    }
 +  else
-+    fprintf (stderr, "it hs no holes\n");
++    fprintf (stderr, "it has no holes\n");
    pa = p->Clipped;
    while (pa)
      {
