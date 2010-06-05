@@ -1,0 +1,29 @@
+Bottom: e575e23f797899208f94aa9b0a9bbdc299f46c12
+Top:    325a105558bbf3283570812cdd5a2615cce0ffc4
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-05 13:04:47 +0100
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/draw.h b/src/draw.h
+index a1f6d4a..bb38c20 100644
+--- a/src/draw.h
++++ b/src/draw.h
+@@ -75,11 +75,11 @@ void LoadBackgroundImage (char *);
+ void UpdateAll (void);
+ 
+ /* TEMPORARY */
+-void DrawPinOrViaLowLevel (PinTypePtr, Boolean);
+-void DrawPlainPin (PinTypePtr, Boolean);
+-void DrawPlainVia (PinTypePtr, Boolean);
++void DrawPinOrViaLowLevel (PinTypePtr, bool);
++void DrawPlainPin (PinTypePtr, Booleab);
++void DrawPlainVia (PinTypePtr, bool);
+ void DrawRegularText (LayerTypePtr, TextTypePtr, int);
+-void DrawEMark (ElementTypePtr, LocationType, LocationType, Boolean);
++void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
+ void DrawHole (PinTypePtr);
+ void DrawRats (BoxType *);
+ void DrawSilk (int, int, const BoxType *);
