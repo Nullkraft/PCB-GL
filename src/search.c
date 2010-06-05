@@ -477,7 +477,7 @@ pour_callback (const BoxType * box, void *cl)
 /* ---------------------------------------------------------------------------
  * searches a pour on the SearchLayer 
  */
-static Boolean
+static bool
 SearchPourByLocation (int locked, LayerTypePtr * Layer,
                       PourTypePtr * Pour, PourTypePtr * Dummy)
 {
