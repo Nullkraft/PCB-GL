@@ -1,5 +1,5 @@
 Bottom: e12e2dc6ed6daf2c9899c77f84e3f98eb0b7accc
-Top:    4da96da1e1b8e854d8c8e28fc72c2bdee82df699
+Top:    3e75ec67d1ff09ed80ecf4c7eb65209b09719be6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-03 23:36:00 +0100
 
@@ -21,7 +21,7 @@ Use r-trees to find and remove touched polygons
 ---
 
 diff --git a/src/pour.c b/src/pour.c
-index 956e644..e5c232f 100644
+index 956e644..cf51bd9 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -719,12 +719,64 @@ mark_islands (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
@@ -43,7 +43,7 @@ index 956e644..e5c232f 100644
 +  PolygonType *polygon = (PolygonType *) b;
 +
 +  /* Do we actually intersect? */
-+  if (isects (touched->np, polygon, False))
++  if (isects (touched->np, polygon, false))
 +    {
 +      /* Steal the clipped contours, the delete the polygon. */
 +      /* Add contour to local list to fiddle about with */
