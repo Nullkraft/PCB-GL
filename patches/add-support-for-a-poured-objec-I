@@ -1,5 +1,5 @@
 Bottom: 2921b62fc6456ccdd7a4c721700ea6327c87a370
-Top:    89552ef3de09c3f2fe804817ef92c90cc92594bf
+Top:    b1483242052e0a265e1ae367e928b937a33f9e27
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-05 13:14:16 +0100
 
@@ -2753,6 +2753,19 @@ index 37e141d..e2acdf0 100644
         {"Buffer" checked=pastebuffermode,1 Mode(PasteBuffer) a={"F7" "<Key>F7"}}
         {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
         {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
+diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
+index c3c2e4e..86bac04 100644
+--- a/src/hid/gcode/gcode.c
++++ b/src/hid/gcode/gcode.c
+@@ -281,7 +281,7 @@ gcode_choose_groups ()
+     {
+       layer = &PCB->Data->Layer[n];
+ 
+-      if (layer->LineN || layer->TextN || layer->ArcN || layer->PolygonN)
++      if (layer->LineN || layer->TextN || layer->ArcN || layer->PourN)
+ 	{
+ 	  /* layer isn't empty */
+ 
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
 index 8a46c3c..e235349 100644
 --- a/src/hid/gerber/gerber.c
