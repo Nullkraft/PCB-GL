@@ -1,5 +1,5 @@
 Bottom: 2921b62fc6456ccdd7a4c721700ea6327c87a370
-Top:    6ddb54f27f5d5e161da54366daf63c9cbba0ed9b
+Top:    f6ccd17e23ac399cd4c50553197c40209aeee0fa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-05 13:14:16 +0100
 
@@ -4076,7 +4076,7 @@ index cbdcd2d..84eb1ed 100644
     {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
     {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/polygon.c b/src/polygon.c
-index 50e3b3a..66c2706 100644
+index 50e3b3a..45a2103 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -32,6 +32,8 @@
@@ -4673,7 +4673,7 @@ index 50e3b3a..66c2706 100644
    if (inhibit)
      return 0;
    if (p->Clipped)
-@@ -1193,205 +728,8 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
+@@ -1193,205 +728,7 @@ InitClip (DataTypePtr Data, LayerTypePtr layer, PolygonType * p)
    else
      p->NoHolesValid = 0;
    return 1;
@@ -4877,11 +4877,10 @@ index 50e3b3a..66c2706 100644
 -  AddObjectToCreateUndoList (POLYGON_TYPE, CURRENT, polygon, polygon);
 -  IncrementUndoSerialNumber ();
 +#endif
-+>>>>>>> patched
  }
  
  /* find polygon holes in range, then call the callback function for
-@@ -1435,68 +773,14 @@ struct plow_info
+@@ -1435,68 +772,14 @@ struct plow_info
  };
  
  static int
@@ -4956,7 +4955,7 @@ index 50e3b3a..66c2706 100644
    return 0;
  }
  
-@@ -1504,12 +788,10 @@ static int
+@@ -1504,12 +787,10 @@ static int
  plow_callback (const BoxType * b, void *cl)
  {
    struct plow_info *plow = (struct plow_info *) cl;
@@ -4972,7 +4971,7 @@ index 50e3b3a..66c2706 100644
  }
  
  int
-@@ -1536,8 +818,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1536,8 +817,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
            LAYER_LOOP (Data, max_layer);
            {
              info.layer = layer;
@@ -4982,7 +4981,7 @@ index 50e3b3a..66c2706 100644
            }
            END_LOOP;
          }
-@@ -1547,8 +828,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1547,8 +827,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
                                                                           ((LayerTypePtr) ptr1))));
            {
              info.layer = layer;
@@ -4992,7 +4991,7 @@ index 50e3b3a..66c2706 100644
            }
            END_LOOP;
          }
-@@ -1567,7 +847,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1567,7 +846,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
                                                                       ((LayerTypePtr) ptr1))));
        {
          info.layer = layer;
@@ -5001,7 +5000,7 @@ index 50e3b3a..66c2706 100644
        }
        END_LOOP;
        break;
-@@ -1581,7 +861,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1581,7 +860,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
          {
            info.layer = layer;
            r +=
@@ -5010,7 +5009,7 @@ index 50e3b3a..66c2706 100644
          }
          END_LOOP;
        }
-@@ -1605,21 +885,6 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1605,21 +884,6 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
    return r;
  }
  
@@ -5032,7 +5031,7 @@ index 50e3b3a..66c2706 100644
  
  bool
  isects (POLYAREA * a, PolygonTypePtr p, bool fr)
-@@ -1769,6 +1034,9 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
+@@ -1769,6 +1033,9 @@ NoHolesPolygonDicer (PolygonTypePtr p, const BoxType * clip,
  bool
  MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
  {
@@ -5042,7 +5041,7 @@ index 50e3b3a..66c2706 100644
    POLYAREA *p, *start;
    bool many = false;
    FlagType flags;
-@@ -1832,6 +1100,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+@@ -1832,6 +1099,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
    inhibit = false;
    IncrementUndoSerialNumber ();
    return many;
@@ -5050,7 +5049,7 @@ index 50e3b3a..66c2706 100644
  }
  
  void debug_pline (PLINE *pl)
-@@ -1864,9 +1133,9 @@ debug_polygon (PolygonType *p)
+@@ -1864,9 +1132,9 @@ debug_polygon (PolygonType *p)
  {
    int i;
    POLYAREA *pa;
