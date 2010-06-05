@@ -1,7 +1,7 @@
-Bottom: a77d213374ac50c2f72dbf7097437d4fa9c164ce
-Top:    19d105c112a8c91cc520490d43e7f949e3b8e867
+Bottom: 4df45dd136cf94e3e6ccc62a347413a76b5eea7e
+Top:    70d141cb72271cf6442986bc8972eacf356fd6e6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-03 23:35:44 +0100
+Date:   2010-06-05 13:11:34 +0100
 
 Attempt lesstif GL support
 
@@ -66,7 +66,7 @@ index 7628e9d..3474dbc 100644
  
        gtk )
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 1613547..ac64e3b 100644
+index 3280032..d1250c2 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -28,10 +28,14 @@
@@ -339,7 +339,7 @@ index 1613547..ac64e3b 100644
    display = XtDisplay (appwidget);
    screen_s = XtScreen (appwidget);
 @@ -2384,7 +2573,8 @@ static int need_redraw = 0;
- static Boolean
+ static bool
  idle_proc (XtPointer dummy)
  {
 -  if (need_redraw)
@@ -355,7 +355,7 @@ index 1613547..ac64e3b 100644
 -  show_crosshair (1);
 +//  show_crosshair (1);
    idle_proc_set = 0;
-   return True;
+   return true;
  }
 @@ -2786,11 +2976,22 @@ lesstif_need_idle_proc ()
  static void
