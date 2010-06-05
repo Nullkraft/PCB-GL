@@ -494,6 +494,7 @@ RemovePolygonPoint (LayerTypePtr Layer,
   if (Polygon->PointN <= 3)
     return RemovePolygon (Layer, Polygon);
   if (Layer->On)
+////////////////////////////////////////////////////////////////////////////////////////////
     ErasePolygon (Polygon);
   /* insert the polygon-point into the undo list */
   index = polygon_point_idx (Polygon, Point);
@@ -506,6 +507,7 @@ RemovePolygonPoint (LayerTypePtr Layer,
       Point = ptr;
     }
   Polygon->PointN--;
+////////////////////////////////////////////////////////////////////////////////////////////
   SetPolygonBoundingBox (Polygon);
   r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
   RemoveExcessPolygonPoints (Layer, Polygon);
