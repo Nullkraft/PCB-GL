@@ -1,0 +1,22 @@
+Bottom: ccdbddf24f14ce1b9c91f31f173db71cbc5764ea
+Top:    aedb7e972dc82482f131e5211f756240fc14c830
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-05 12:36:29 +0100
+
+Refresh of use-rtree-of-countours-when-co-I
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 6437b98..bdefa0a 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -783,7 +783,7 @@ subtract_accumulated (struct cpInfo *info, PolygonTypePtr polygon)
+ {
+   if (info->accumulate == NULL)
+     return;
+-  Subtract (info->accumulate, polygon, True);
++  Subtract (info->accumulate, polygon, true);
+   info->accumulate = NULL;
+   info->batch_size = 0;
+ }
