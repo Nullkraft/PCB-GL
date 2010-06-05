@@ -1641,9 +1641,8 @@ NotifyMode (void)
 			GetLowestDistancePolygonPoint (fake.poly, Note.X,
 						       Note.Y);
 		      fake.line.Point1 = fake.poly->Points[polyIndex];
-		      fake.line.Point2 = (polyIndex) ?
-			fake.poly->Points[polyIndex - 1]
-			: fake.poly->Points[fake.poly->PointN - 1];
+		      fake.line.Point2 = fake.poly->Points[
+			  prev_contour_point (fake.poly, polyIndex)];
 		      Crosshair.AttachedObject.Ptr2 = &fake.line;
 
 		    }
