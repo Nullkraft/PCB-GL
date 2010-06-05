@@ -35,7 +35,7 @@
 
 Cardinal GetLowestDistancePourPoint (PourTypePtr,
 					LocationType, LocationType);
-Boolean RemoveExcessPourPoints (LayerTypePtr, PourTypePtr);
+bool RemoveExcessPourPoints (LayerTypePtr, PourTypePtr);
 void GoToPreviousPourPoint (void);
 void ClosePour (void);
 void CopyAttachedPourToLayer (void);
