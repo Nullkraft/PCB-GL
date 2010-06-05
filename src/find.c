@@ -4028,17 +4028,17 @@ IsPolygonAnIsland (LayerType *layer, PolygonType *polygon)
    */
   TheFlag = FOUNDFLAG | DRCFLAG;
 
-  ResetConnections (False);
+  ResetConnections (false);
 
   /* Let the search stop if we find something we haven't yet seen */
-  drc = True;
-  User = False;
+  drc = true;
+  User = false;
 
   ListStart (POLYGON_TYPE, layer, polygon, polygon);
 
   do
     {
-      any_more = DoIt (False, False);
+      any_more = DoIt (false, false);
 
       /* Check if we got any useful hits */
       connected_count = 0;
@@ -4057,8 +4057,8 @@ IsPolygonAnIsland (LayerType *layer, PolygonType *polygon)
     }
   while (any_more);
 
-  drc = False;
-  ResetConnections (False);
+  drc = false;
+  ResetConnections (false);
   FreeConnectionLookupMemory ();
 
   return (connected_count == 0);
