@@ -47,6 +47,50 @@ Hole contours should not intersect or self-intersect (although this
 isn't checked for at load time). Hole contours must not intersect
 the polygon's outer contour.
 
+Technical details:
+
+The PolygonType structure has a number of new fields, the critical
+ones being an array of indices defining the start of hole contours.
+
+(PolygonType *)->HoleIndex[n]
+
+The number of hole contours is stored in (PolygonType *)->HoleIndexN,
+and the maximum allocated memory for indices in (...)->HoleIndexMax.
+The first hole contour starts at the point given by
+(...)->Points[(...)->HoleIndex[0]], and continues until the start of
+the next contour, or the last point defined.
+
+By storing all polygon points (including holes) in the existing array
+(...)->Points[], existing code which operates on the polygon as a
+whole, e.g. translation and rotation, can operate without change.
+
+For other operations, determining wrap-around to operate within the
+same contour requires more computation. Some helper functions have
+been introduced in polygon.c to aid this, next_contour_point() and
+prev_contour_point(). Where applicable, these have been used to
+simplify existing code which used ad-hoc wrap-around code.
+
+polygon_point_idx() computes the array index of a point in a polygon
+from its PointTypePtr address. This is used to replace a search idiom
+used in a number of places. polygon_point_contour() returns the
+number of the contour a given point index belongs in, 0 for the outer
+contour, 1 for the first hole etc..
+
+Undo:
+
+Undo with holes has become a little more complex. The undo for a point
+removal must now record which contour the point came from. This is
+determined by the index of the removed point, and a new boolean flag
+"last_in_contour", indicating if the point was at the end of its contour.
+This flag is passed to InsertPointIntoObject(), which uses it to
+disambiguate inserting a point at an index on the boundary of two
+contours.
+
+Undo operations for removing hole contours "cheat" by saving a copy of
+the whole polygon into the undo buffer rather than attempting to
+describe the operation as a delta change to an existing polygon. When
+undoing, the object IDs are swapped to keep them consistent.
+
 
 ---
 
