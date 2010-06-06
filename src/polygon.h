@@ -50,6 +50,7 @@ int PlowsPolygon (DataType *, int, void *, void *,
 		  int (*callback) (DataTypePtr, LayerTypePtr, PolygonTypePtr, int, void *, void *));
 void ComputeNoHoles (PolygonType *poly);
 POLYAREA * ContourToPoly (PLINE *);
+POLYAREA * PolygonToPoly (PolygonType *);
 POLYAREA * RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2);
 POLYAREA * CirclePoly(LocationType x, LocationType y, BDimension radius);
 POLYAREA * OctagonPoly(LocationType x, LocationType y, BDimension radius);
@@ -70,5 +71,6 @@ bool isects (POLYAREA *, PolygonTypePtr, bool);
 bool MorphPolygon (LayerTypePtr, PolygonTypePtr);
 void NoHolesPolygonDicer (PolygonType *p, const BoxType *clip,
                           void (*emit) (PLINE *, void *), void *user_data);
+void PolyToPolygonsOnLayer (DataType *, LayerType *, POLYAREA *, FlagType);
 POLYAREA *board_outline_poly ();
 #endif
