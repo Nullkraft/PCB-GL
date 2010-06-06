@@ -1,5 +1,5 @@
 Bottom: b8f623e816d9de7dd542f66b2e052ebc45a781ea
-Top:    11a7ec5b992566cfa5e0cd6a57b69c0a4252c975
+Top:    e65308ef732fd863b5cabada1017ed6f09c109d8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-05 13:09:31 +0100
 
@@ -1054,7 +1054,7 @@ index 6a1c47b..dc01153 100644
  		 TEST_FLAG (LOCKFLAG, Polygon) ? "It is LOCKED\n" : "");
  	break;
 diff --git a/src/undo.c b/src/undo.c
-index 50c6de5..29228d0 100644
+index 50c6de5..0699aee 100644
 --- a/src/undo.c
 +++ b/src/undo.c
 @@ -97,6 +97,7 @@ typedef struct			/* information about removed polygon points */
@@ -1099,7 +1099,7 @@ index 50c6de5..29228d0 100644
    int type;
 +  Cardinal point_idx;
 +  Cardinal hole;
-+  bool last_in_contour;
++  bool last_in_contour = false;
  
    assert (Entry->Kind == POLYGONPOINT_TYPE);
    /* lookup entry by it's ID */
@@ -1139,7 +1139,7 @@ index 50c6de5..29228d0 100644
  	DestroyObject (PCB->Data, POLYGONPOINT_TYPE, layer, polygon, pnt);
  	if (andDraw && layer->On)
  	  DrawPolygon (layer, polygon, 0);
-@@ -799,6 +813,93 @@ UndoInsertPoint (UndoListTypePtr Entry)
+@@ -799,6 +813,96 @@ UndoInsertPoint (UndoListTypePtr Entry)
  }
  
  /* ---------------------------------------------------------------------------
@@ -1196,7 +1196,7 @@ index 50c6de5..29228d0 100644
 +{
 +  void *ptr1, *ptr2, *ptr3;
 +  void *ptr1b, *ptr2b, *ptr3b;
-+  PolygonType *polygon;
++  PolygonType *poly, *poly2;
 +  int type;
 +  long int swap_id;
 +
@@ -1204,7 +1204,7 @@ index 50c6de5..29228d0 100644
 +
 +  /* lookup entry by it's ID */
 +  type =
-+    SearchObjectByID (RemoveList, &ptr1, &ptr2, &ptr3, Entry->ID,
++    SearchObjectByID (RemoveList, &ptr1, &ptr2, &ptr3, Entry->Data.CopyID,
 +		      Entry->Kind);
 +  if (type == NO_TYPE)
 +    return false;
@@ -1212,20 +1212,23 @@ index 50c6de5..29228d0 100644
 +  type =
 +    SearchObjectByID (PCB->Data, &ptr1b, &ptr2b, &ptr3b, Entry->ID,
 +		      Entry->Kind);
-+  if (type != NO_TYPE)
-+    {
-+      MoveObjectToBuffer (RemoveList, PCB->Data, type, ptr1b, ptr2b, ptr3b);
-+      swap_id = Entry->Data.CopyID;
-+      Entry->Data.CopyID = Entry->ID;
-+      Entry->ID = swap_id;
-+      Entry->Type = UNDO_REMOVE_CONTOUR;
-+    }
++  if (type == NO_TYPE)
++    return FALSE;
++
++  poly = ptr2;
++  poly2 = ptr2b;
++
++  swap_id = poly->ID;
++  poly->ID = poly2->ID;
++  poly2->ID = swap_id;
++
++  MoveObjectToBuffer (RemoveList, PCB->Data, type, ptr1b, ptr2b, ptr3b);
 +
 +  if (andDraw)
 +    DrawRecoveredObject (Entry->Kind, ptr1, ptr2, ptr3);
 +
-+  polygon = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
-+  InitClip (PCB->Data, ptr1, polygon);
++  poly = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
++  InitClip (PCB->Data, ptr1b, poly);
 +  return (true);
 +}
 +
@@ -1233,7 +1236,7 @@ index 50c6de5..29228d0 100644
   * undo a layer change
   * returns true on success
   */
-@@ -969,6 +1070,16 @@ PerformUndo (UndoListTypePtr ptr)
+@@ -969,6 +1073,16 @@ PerformUndo (UndoListTypePtr ptr)
  	return (UNDO_INSERT_POINT);
        break;
  
@@ -1250,7 +1253,7 @@ index 50c6de5..29228d0 100644
      case UNDO_ROTATE:
        if (UndoRotate (ptr))
  	return (UNDO_ROTATE);
-@@ -1223,6 +1334,8 @@ AddObjectToRemovePointUndoList (int Type,
+@@ -1223,6 +1337,8 @@ AddObjectToRemovePointUndoList (int Type,
  {
    UndoListTypePtr undo;
    PolygonTypePtr polygon = (PolygonTypePtr) Ptr2;
@@ -1259,7 +1262,7 @@ index 50c6de5..29228d0 100644
  
    if (!Locked)
      {
-@@ -1240,6 +1353,17 @@ AddObjectToRemovePointUndoList (int Type,
+@@ -1240,6 +1356,17 @@ AddObjectToRemovePointUndoList (int Type,
  	    undo->Data.RemovedPoint.Y = polygon->Points[index].Y;
  	    undo->Data.RemovedPoint.ID = polygon->Points[index].ID;
  	    undo->Data.RemovedPoint.Index = index;
@@ -1277,7 +1280,7 @@ index 50c6de5..29228d0 100644
  	  }
  	  break;
  	}
-@@ -1259,6 +1383,50 @@ AddObjectToInsertPointUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
+@@ -1259,6 +1386,50 @@ AddObjectToInsertPointUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
  }
  
  /* ---------------------------------------------------------------------------
