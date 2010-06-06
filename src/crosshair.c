@@ -85,7 +85,7 @@ static void XORDrawMoveOrCopyObject (void);
 static void XORDrawAttachedLine (LocationType, LocationType, LocationType,
 				 LocationType, BDimension);
 static void XORDrawAttachedArc (BDimension);
-static void DrawAttached (bool);
+/*static*/ void DrawAttached (bool);
 
 /* ---------------------------------------------------------------------------
  * creates a tmp polygon with coordinates converted to screen system
@@ -566,7 +566,7 @@ XORDrawMoveOrCopyObject (void)
 /* ---------------------------------------------------------------------------
  * draws additional stuff that follows the crosshair
  */
-static void
+/*static*/ void
 DrawAttached (bool BlockToo)
 {
   BDimension s;
@@ -738,7 +738,7 @@ HideCrosshair (bool BlockToo)
   CrosshairStack[CrosshairStackLocation] = Crosshair.On;
   CrosshairStackLocation++;
 
-  CrosshairOff (BlockToo);
+//  CrosshairOff (BlockToo);
 }
 
 /* ---------------------------------------------------------------------------
@@ -758,11 +758,11 @@ RestoreCrosshair (bool BlockToo)
 
   if (CrosshairStack[CrosshairStackLocation])
     {
-      CrosshairOn (BlockToo);
+//      CrosshairOn (BlockToo);
     }
   else
     {
-      CrosshairOff (BlockToo);
+//      CrosshairOff (BlockToo);
     }
 }
 
