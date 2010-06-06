@@ -1,7 +1,7 @@
-Bottom: befab836617b6d1751517d2040de095211061109
-Top:    150fd9829ce15dffda6f82a07f9d55743b299ff4
+Bottom: 253207cf5d4364b3564c09f668c3864245106b4d
+Top:    848c85b5171d0707b62f4ee51b969851feb1a908
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-03 23:35:27 +0100
+Date:   2010-06-06 23:39:44 +0100
 
 Major re-write to drawing routines
 
@@ -338,7 +338,7 @@ index 404a969..a34bc91 100644
  }
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 04a4016..a5c4dfb 100644
+index fabe334..88cf644 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -49,6 +49,7 @@
@@ -349,7 +349,7 @@ index 04a4016..a5c4dfb 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -961,7 +962,14 @@ ghid_screen_update (void)
+@@ -962,7 +963,14 @@ ghid_screen_update (void)
  #endif
  }
  
@@ -365,7 +365,7 @@ index 04a4016..a5c4dfb 100644
  
  void
  ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata)
-@@ -993,6 +1001,631 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
+@@ -994,6 +1002,631 @@ ghid_port_rotate (void *ball, float *quarternion, gpointer userdata)
    ghid_invalidate_all ();
  }
  
@@ -997,7 +997,7 @@ index 04a4016..a5c4dfb 100644
  
  #define Z_NEAR 3.0
  gboolean
-@@ -1068,8 +1701,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1069,8 +1702,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1008,7 +1008,7 @@ index 04a4016..a5c4dfb 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1162,7 +1795,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1163,7 +1796,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
  
@@ -1018,7 +1018,7 @@ index 04a4016..a5c4dfb 100644
  
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
-@@ -1201,6 +1835,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1202,6 +1836,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
  

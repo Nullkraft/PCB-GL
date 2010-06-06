@@ -1,7 +1,7 @@
-Bottom: ca0d9a13c667c435dc2716d782a7714953e7efe7
-Top:    ee81cd513798137aa8609776b4184ee2a8965fce
+Bottom: 7fd9bbbafc8d093f65f2cd45f7a400f92fd93f63
+Top:    9bdda2c47ac318a1201157e6e8033683d6973c69
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-03 23:35:17 +0100
+Date:   2010-06-06 23:39:37 +0100
 
 Drop in PCB+GL code + various mess. Needs splitting up?
 
@@ -68,10 +68,10 @@ index e719268..f66cca7 100644
  # desktop and application toolbar
  if WIN32
 diff --git a/src/crosshair.c b/src/crosshair.c
-index d4e4867..9d85373 100644
+index d54fad7..ac22277 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -84,7 +84,7 @@ static void XORDrawMoveOrCopyObject (void);
+@@ -85,7 +85,7 @@ static void XORDrawMoveOrCopyObject (void);
  static void XORDrawAttachedLine (LocationType, LocationType, LocationType,
  				 LocationType, BDimension);
  static void XORDrawAttachedArc (BDimension);
@@ -80,7 +80,7 @@ index d4e4867..9d85373 100644
  
  /* ---------------------------------------------------------------------------
   * creates a tmp polygon with coordinates converted to screen system
-@@ -576,7 +576,7 @@ XORDrawMoveOrCopyObject (void)
+@@ -566,7 +566,7 @@ XORDrawMoveOrCopyObject (void)
  /* ---------------------------------------------------------------------------
   * draws additional stuff that follows the crosshair
   */
@@ -89,7 +89,7 @@ index d4e4867..9d85373 100644
  DrawAttached (bool BlockToo)
  {
    BDimension s;
-@@ -747,7 +747,7 @@ HideCrosshair (bool BlockToo)
+@@ -738,7 +738,7 @@ HideCrosshair (bool BlockToo)
    CrosshairStack[CrosshairStackLocation] = Crosshair.On;
    CrosshairStackLocation++;
  
@@ -98,7 +98,7 @@ index d4e4867..9d85373 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -767,11 +767,11 @@ RestoreCrosshair (bool BlockToo)
+@@ -758,11 +758,11 @@ RestoreCrosshair (bool BlockToo)
  
    if (CrosshairStack[CrosshairStackLocation])
      {
@@ -1463,10 +1463,10 @@ index 05b2c91..738636a 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index c82e067..d5cc514 100644
+index 7230aa3..4942fc0 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -302,16 +302,16 @@ have_crosshair_attachments (void)
+@@ -303,16 +303,16 @@ have_crosshair_attachments (void)
  #define VCD		8
  
  static void
@@ -1489,7 +1489,7 @@ index c82e067..d5cc514 100644
  {
    gint x0, y0, x1, y1;
  
-@@ -323,8 +323,9 @@ draw_slanted_cross (GdkGC *xor_gc, gint x, gint y)
+@@ -324,8 +324,9 @@ draw_slanted_cross (GdkGC *xor_gc, gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - x;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -1501,7 +1501,7 @@ index c82e067..d5cc514 100644
    x0 = x - (gport->height - y);
    x0 = MAX(0, MIN (x0, gport->width));
    x1 = x + y;
-@@ -333,12 +334,12 @@ draw_slanted_cross (GdkGC *xor_gc, gint x, gint y)
+@@ -334,12 +335,12 @@ draw_slanted_cross (GdkGC *xor_gc, gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - (gport->width - x);
    y1 = MAX(0, MIN (y1, gport->height));
@@ -1517,7 +1517,7 @@ index c82e067..d5cc514 100644
  {
    gint x0, y0, x1, y1;
    gdouble tan60 = sqrt (3);
-@@ -351,8 +352,8 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
+@@ -352,8 +353,8 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - x * tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -1528,7 +1528,7 @@ index c82e067..d5cc514 100644
  
    x0 = x + (gport->height - y) * tan60;
    x0 = MAX(0, MIN (x0, gport->width));
-@@ -362,8 +363,8 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
+@@ -363,8 +364,8 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - x / tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -1539,7 +1539,7 @@ index c82e067..d5cc514 100644
  
    x0 = x - (gport->height - y) / tan60;
    x0 = MAX(0, MIN (x0, gport->width));
-@@ -373,8 +374,8 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
+@@ -374,8 +375,8 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - (gport->width - x) * tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -1550,7 +1550,7 @@ index c82e067..d5cc514 100644
  
    x0 = x - (gport->height - y) * tan60;
    x0 = MAX(0, MIN (x0, gport->width));
-@@ -384,20 +385,20 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
+@@ -385,20 +386,20 @@ draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - (gport->width - x) / tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -1577,7 +1577,7 @@ index c82e067..d5cc514 100644
    prev = Crosshair.shape;
  }
  
-@@ -406,60 +407,106 @@ ghid_show_crosshair (gboolean show)
+@@ -407,60 +408,106 @@ ghid_show_crosshair (gboolean show)
  {
    gint x, y;
    static gint x_prev = -1, y_prev = -1;
@@ -1715,7 +1715,7 @@ index c82e067..d5cc514 100644
  }
  
  static gboolean
-@@ -697,53 +744,151 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -698,53 +745,151 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
    if (!first_time_done)
      {
        gport->colormap = gtk_widget_get_colormap (gport->top_window);
@@ -1881,7 +1881,7 @@ index c82e067..d5cc514 100644
    return FALSE;
  }
  
-@@ -876,6 +1021,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -877,6 +1022,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    gdouble dx, dy;
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
@@ -1896,7 +1896,7 @@ index c82e067..d5cc514 100644
  
    if (out->panning)
      {
-@@ -899,6 +1052,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -900,6 +1053,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    ghid_show_crosshair (TRUE);
    if (moved && have_crosshair_attachments ())
      ghid_draw_area_update (gport, NULL);
@@ -1911,7 +1911,7 @@ index c82e067..d5cc514 100644
    return FALSE;
  }
  
-@@ -938,7 +1099,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -939,7 +1100,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        RestoreCrosshair (TRUE);
        cursor_in_viewport = TRUE;
      }
@@ -2194,10 +2194,10 @@ index b24e6c9..4caddf2 100644
    gport->width = save_width;
    gport->height = save_height;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 4d4ba7c..4a541fb 100644
+index 4c00c13..ea263db 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -2296,6 +2296,11 @@ ghid_build_pcb_top_window (void)
+@@ -2297,6 +2297,11 @@ ghid_build_pcb_top_window (void)
    gtk_box_pack_start (GTK_BOX (hbox), viewport, TRUE, TRUE, 0);
  
    gport->drawing_area = gtk_drawing_area_new ();
@@ -2209,7 +2209,7 @@ index 4d4ba7c..4a541fb 100644
  
    gtk_widget_add_events (gport->drawing_area, GDK_EXPOSURE_MASK
  			 | GDK_LEAVE_NOTIFY_MASK | GDK_ENTER_NOTIFY_MASK
-@@ -2658,11 +2663,22 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -2659,11 +2664,22 @@ ghid_parse_arguments (int *argc, char ***argv)
    gtk_disable_setlocale ();
  
    gtk_init (argc, argv);

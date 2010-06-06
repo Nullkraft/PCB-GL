@@ -1,7 +1,7 @@
-Bottom: e9d60c7d2bea18aee11c57915fe80eefdac32e82
-Top:    f1f1d71ea23231bca5875868188b38c00d659f7f
+Bottom: 8a208ffbff231e151f697f42309b1d64a96026ad
+Top:    b0086f17944f224c87aaf95ffdf959f0bc7a3ab7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-03 23:35:20 +0100
+Date:   2010-06-06 23:39:39 +0100
 
 Work in progress on subcompositing / stencil buffers
 
@@ -521,7 +521,7 @@ index d92d7ec..a6d3f92 100644
  	    return PCB->ElementOn;
  	  return 0;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 5ee5259..a647677 100644
+index 76de7af..db1fb31 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -35,6 +35,7 @@
@@ -532,7 +532,7 @@ index 5ee5259..a647677 100644
  
  #include <gdk/gdkkeysyms.h>
  
-@@ -796,6 +797,17 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -797,6 +798,17 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
      return FALSE;
    }
  
@@ -550,7 +550,7 @@ index 5ee5259..a647677 100644
    ghid_show_crosshair (FALSE);
  
    glEnable (GL_BLEND);
-@@ -818,12 +830,20 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -819,12 +831,20 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -571,7 +571,7 @@ index 5ee5259..a647677 100644
  
    region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
    region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-@@ -849,6 +869,12 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -850,6 +870,12 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
@@ -615,10 +615,10 @@ index 4caddf2..faa09fe 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 4a541fb..bfe5a73 100644
+index ea263db..d2f339c 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -2669,6 +2669,7 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -2670,6 +2670,7 @@ ghid_parse_arguments (int *argc, char ***argv)
    gport->zoom = 300.0;
    pixel_slop = 300;
  
@@ -626,7 +626,7 @@ index 4a541fb..bfe5a73 100644
    /* setup GL-context */
    gport->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
                                                 GDK_GL_MODE_STENCIL |
-@@ -2678,6 +2679,7 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -2679,6 +2680,7 @@ ghid_parse_arguments (int *argc, char ***argv)
      printf("Could not setup GL-context!\n");
      return; /* Should we abort? */
    }

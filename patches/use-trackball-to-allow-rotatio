@@ -1,7 +1,7 @@
-Bottom: 9b07e2a3993dc64a4927deb4295b7c393906b104
-Top:    91cc2e6474a14f5cdfc2e4929d30bf65cda78c20
+Bottom: ba10f0e27296b33d7b505194a7f925b5b3e84ab1
+Top:    7dc5edb00d0cc0aea7244012983b206bfb70161d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-03 23:35:24 +0100
+Date:   2010-06-06 23:39:42 +0100
 
 Use trackball to allow rotation of 3D view
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index a647677..7b992b3 100644
+index db1fb31..4693e5d 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -36,6 +36,7 @@
@@ -219,7 +219,7 @@ index a647677..7b992b3 100644
    gport->view_x = event_x * gport->zoom + gport->view_x0;
    gport->view_y = event_y * gport->zoom + gport->view_y0;
  
-@@ -781,6 +960,37 @@ ghid_screen_update (void)
+@@ -782,6 +961,37 @@ ghid_screen_update (void)
  
  void DrawAttached (Boolean);
  
@@ -257,7 +257,7 @@ index a647677..7b992b3 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
-@@ -791,6 +1001,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -792,6 +1002,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    extern HID ghid_hid;
    GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
    GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
@@ -269,7 +269,7 @@ index a647677..7b992b3 100644
  
    /* make GL-context "current" */
    if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
-@@ -825,10 +1040,14 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -826,10 +1041,14 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -286,7 +286,7 @@ index a647677..7b992b3 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (gport->offlimits_color.red / 65535.,
-@@ -845,10 +1064,66 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -846,10 +1065,66 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glDisable (GL_STENCIL_TEST);
    glStencilFunc (GL_ALWAYS, 0, 0);
  
@@ -357,7 +357,7 @@ index a647677..7b992b3 100644
  
    eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
    etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
-@@ -858,10 +1133,10 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -859,10 +1134,10 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
               gport->bg_color.blue / 65535.);
  
    glBegin (GL_QUADS);
@@ -372,7 +372,7 @@ index a647677..7b992b3 100644
    glEnd ();
  
    /* TODO: Background image */
-@@ -883,7 +1158,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -884,7 +1159,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                               -gport->view_x0,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
@@ -382,7 +382,7 @@ index a647677..7b992b3 100644
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
-@@ -907,6 +1184,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -908,6 +1185,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  
    hidgl_flush_triangles (&buffer);
  
@@ -417,7 +417,7 @@ index faa09fe..15412ea 100644
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index bfe5a73..be9cb20 100644
+index d2f339c..247c8f9 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -122,6 +122,7 @@ a zoom in/out.
@@ -428,7 +428,7 @@ index bfe5a73..be9cb20 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -2155,6 +2156,7 @@ ghid_build_pcb_top_window (void)
+@@ -2156,6 +2157,7 @@ ghid_build_pcb_top_window (void)
    GtkWidget *vbox_main, *vbox_left, *hbox_middle, *hbox = NULL;
    GtkWidget *viewport, *ebox, *vbox, *frame;
    GtkWidget *label;
@@ -436,7 +436,7 @@ index bfe5a73..be9cb20 100644
    GHidPort *port = &ghid_port;
    gchar *s;
    GtkWidget *scrolled;
-@@ -2263,6 +2265,13 @@ ghid_build_pcb_top_window (void)
+@@ -2264,6 +2266,13 @@ ghid_build_pcb_top_window (void)
        GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
    make_layer_buttons(vbox, port);
  

@@ -1,7 +1,7 @@
-Bottom: 90ee68e77197d5f5f3c6fa1fa3db9ebb2bf51629
-Top:    f399ee3ea5c3c73d4284daa93c902fe21d7a96ba
+Bottom: 95641b972560716b601c97ee6f9e30ca1c5c25c7
+Top:    d5d9bab5ccee47296487af236cadda7c6e3b96ae
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-03 23:35:29 +0100
+Date:   2010-06-06 23:39:47 +0100
 
 Play with display lists
 
@@ -9,10 +9,10 @@ Play with display lists
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 2d80c82..e2db066 100644
+index 211e3e6..ae4bc48 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1649,13 +1649,13 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1650,13 +1650,13 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    Settings.ShowSolderSide = save_show_solder;
  }
  
@@ -28,7 +28,7 @@ index 2d80c82..e2db066 100644
    BoxType region;
    int eleft, eright, etop, ebottom;
    extern HID ghid_hid;
-@@ -1709,6 +1709,13 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1710,6 +1710,13 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
@@ -42,7 +42,7 @@ index 2d80c82..e2db066 100644
    glEnable (GL_STENCIL_TEST);
    glClearColor (gport->offlimits_color.red / 65535.,
                  gport->offlimits_color.green / 65535.,
-@@ -1846,6 +1853,15 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1847,6 +1854,15 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  

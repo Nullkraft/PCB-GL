@@ -1,7 +1,7 @@
-Bottom: 150fd9829ce15dffda6f82a07f9d55743b299ff4
-Top:    acdeccb17e398af2f7348d26355f16b67994164a
+Bottom: 848c85b5171d0707b62f4ee51b969851feb1a908
+Top:    5a3b6b13263f5790704c1c29e545b6b3591d10b7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-03 23:35:27 +0100
+Date:   2010-06-06 23:39:45 +0100
 
 Silly space navigator interface to allow funky views
 
@@ -27,7 +27,7 @@ index f21c807..2ce0991 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index a5c4dfb..bb121b4 100644
+index 88cf644..82dc295 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -50,6 +50,8 @@
@@ -39,7 +39,7 @@ index a5c4dfb..bb121b4 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -2038,6 +2040,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -2039,6 +2041,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        /* Make sure drawing area has keyboard focus when we are in it.
         */
        gtk_widget_grab_focus (out->drawing_area);
@@ -48,7 +48,7 @@ index a5c4dfb..bb121b4 100644
      }
    ghidgui->in_popup = FALSE;
  
-@@ -2145,6 +2149,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -2146,6 +2150,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
  	    }
  	  g_idle_add (ghid_pan_idle_cb, NULL);
  	}
@@ -57,7 +57,7 @@ index a5c4dfb..bb121b4 100644
      }
  
    if(cursor_in_viewport)
-@@ -2193,3 +2199,29 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+@@ -2194,3 +2200,29 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  
    return TRUE;
  }
@@ -88,7 +88,7 @@ index a5c4dfb..bb121b4 100644
 +}
 +
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index be9cb20..9ba50ce 100644
+index 247c8f9..5d16fb6 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -123,6 +123,7 @@ a zoom in/out.
@@ -99,7 +99,7 @@ index be9cb20..9ba50ce 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -2266,6 +2267,7 @@ ghid_build_pcb_top_window (void)
+@@ -2267,6 +2268,7 @@ ghid_build_pcb_top_window (void)
    make_layer_buttons(vbox, port);
  
    trackball = ghid_trackball_new ();
@@ -107,7 +107,7 @@ index be9cb20..9ba50ce 100644
    g_signal_connect (trackball, "rotation-changed",
                      G_CALLBACK (ghid_port_rotate), NULL);
    g_signal_connect (trackball, "view-2d-changed",
-@@ -2737,6 +2739,12 @@ ghid_do_export (HID_Attr_Val * options)
+@@ -2738,6 +2740,12 @@ ghid_do_export (HID_Attr_Val * options)
    if (stdin_listen)
      ghid_create_listener ();
  
