@@ -1508,12 +1508,6 @@ NotifyMode (void)
 		  Flags = ((PolygonType *)Crosshair.AttachedObject.Ptr1)->Flags;
 		  PolyToPolygonsOnLayer (PCB->Data, Crosshair.AttachedObject.Ptr1,
 					 result, Flags);
-#if 0
-		  DestroyObject (PCB->Data, POLYGON_TYPE,
-				 Crosshair.AttachedObject.Ptr1,
-				 Crosshair.AttachedObject.Ptr2,
-				 Crosshair.AttachedObject.Ptr3);
-#endif
 		  RemoveObject (POLYGON_TYPE,
 				Crosshair.AttachedObject.Ptr1,
 				Crosshair.AttachedObject.Ptr2,
