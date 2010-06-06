@@ -1,0 +1,26 @@
+Bottom: f3a3b0fdee532e5579f53e6d74adcedb8c8f1570
+Top:    ca817f059e0163bbdb24e03f50521b1b0c742f67
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-06 21:45:34 +0100
+
+Refresh of introduce-polygonhole_mode-for
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index f43ce9e..1cc189f 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -1508,12 +1508,6 @@ NotifyMode (void)
+ 		  Flags = ((PolygonType *)Crosshair.AttachedObject.Ptr1)->Flags;
+ 		  PolyToPolygonsOnLayer (PCB->Data, Crosshair.AttachedObject.Ptr1,
+ 					 result, Flags);
+-#if 0
+-		  DestroyObject (PCB->Data, POLYGON_TYPE,
+-				 Crosshair.AttachedObject.Ptr1,
+-				 Crosshair.AttachedObject.Ptr2,
+-				 Crosshair.AttachedObject.Ptr3);
+-#endif
+ 		  RemoveObject (POLYGON_TYPE,
+ 				Crosshair.AttachedObject.Ptr1,
+ 				Crosshair.AttachedObject.Ptr2,
