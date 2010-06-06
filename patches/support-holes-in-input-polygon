@@ -1,5 +1,5 @@
 Bottom: b8f623e816d9de7dd542f66b2e052ebc45a781ea
-Top:    6101ebeea836128d2a756ee49190ba981817927d
+Top:    11a7ec5b992566cfa5e0cd6a57b69c0a4252c975
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-05 13:09:31 +0100
 
@@ -9,7 +9,7 @@ Support holes in input polygons (incl. file-format addition)
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 46f45a0..9d96edb 100644
+index 46f45a0..7655a8d 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1641,9 +1641,8 @@ NotifyMode (void)
@@ -24,6 +24,22 @@ index 46f45a0..9d96edb 100644
  		      Crosshair.AttachedObject.Ptr2 = &fake.line;
  
  		    }
+@@ -1659,13 +1658,13 @@ NotifyMode (void)
+ 	    InsertPointIntoObject (POLYGON_TYPE,
+ 				   Crosshair.AttachedObject.Ptr1, fake.poly,
+ 				   &polyIndex,
+-				   InsertedPoint.X, InsertedPoint.Y, false);
++				   InsertedPoint.X, InsertedPoint.Y, false, false);
+ 	  else
+ 	    InsertPointIntoObject (Crosshair.AttachedObject.Type,
+ 				   Crosshair.AttachedObject.Ptr1,
+ 				   Crosshair.AttachedObject.Ptr2,
+ 				   &polyIndex,
+-				   InsertedPoint.X, InsertedPoint.Y, false);
++				   InsertedPoint.X, InsertedPoint.Y, false, false);
+ 	  SetChangedFlag (true);
+ 
+ 	  /* reset identifiers */
 diff --git a/src/autoroute.c b/src/autoroute.c
 index b6bf91d..7fb7443 100644
 --- a/src/autoroute.c
@@ -37,9 +53,18 @@ index b6bf91d..7fb7443 100644
         polygon->Points[0].Y == polygon->Points[1].Y) &&
        (polygon->Points[1].X == polygon->Points[2].X ||
 diff --git a/src/buffer.c b/src/buffer.c
-index e04ae2a..b776aac 100644
+index e04ae2a..7b8bce8 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
+@@ -194,7 +194,7 @@ AddPolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
+   LayerTypePtr layer = &Dest->Layer[GetLayerNumber (Source, Layer)];
+   PolygonTypePtr polygon;
+ 
+-  polygon = GetPolygonMemory (layer);
++  polygon = CreateNewPolygon (layer, Polygon->Flags);
+   CopyPolygonLowLevel (polygon, Polygon);
+   CLEAR_FLAG (FOUNDFLAG | ExtraFlag, polygon);
+   return (polygon);
 @@ -1001,7 +1001,7 @@ polygon_is_rectangle (PolygonTypePtr poly)
  {
    int i, best;
@@ -298,10 +323,18 @@ index 62be07f..bb78abc 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/insert.c b/src/insert.c
-index b4bcfe7..094e567 100644
+index b4bcfe7..5e62463 100644
 --- a/src/insert.c
 +++ b/src/insert.c
-@@ -174,10 +174,7 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -74,6 +74,7 @@ static void *InsertPointIntoRat (RatTypePtr);
+ static LocationType InsertX,	/* used by local routines as offset */
+   InsertY;
+ static Cardinal InsertAt;
++static bool InsertLast;
+ static bool Forcible;
+ static ObjectFunctionType InsertFunctions = {
+   InsertPointIntoLine,
+@@ -174,10 +175,7 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
         * first make sure adding the point is sensible
         */
        line.Thickness = 0;
@@ -313,14 +346,15 @@ index b4bcfe7..094e567 100644
        line.Point2 = Polygon->Points[InsertAt];
        if (IsPointOnLine ((float) InsertX, (float) InsertY, 0.0, &line))
  	return (NULL);
-@@ -190,10 +187,17 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -190,10 +188,18 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
    save = *CreateNewPointInPolygon (Polygon, InsertX, InsertY);
    for (n = Polygon->PointN - 1; n > InsertAt; n--)
      Polygon->Points[n] = Polygon->Points[n - 1];
 +
 +  /* Shift up indices of any holes */
 +  for (n = 0; n < Polygon->HoleIndexN; n++)
-+    if (Polygon->HoleIndex[n] > InsertAt)
++    if (Polygon->HoleIndex[n] > InsertAt ||
++	(InsertLast && Polygon->HoleIndex[n] == InsertAt))
 +      Polygon->HoleIndex[n]++;
 +
    Polygon->Points[InsertAt] = save;
@@ -331,6 +365,37 @@ index b4bcfe7..094e567 100644
    SetPolygonBoundingBox (Polygon);
    r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
    InitClip (PCB->Data, Layer, Polygon);
+@@ -210,7 +216,8 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+  */
+ void *
+ InsertPointIntoObject (int Type, void *Ptr1, void *Ptr2, Cardinal * Ptr3,
+-		       LocationType DX, LocationType DY, bool Force)
++		       LocationType DX, LocationType DY, bool Force,
++		       bool insert_last)
+ {
+   void *ptr;
+ 
+@@ -218,6 +225,7 @@ InsertPointIntoObject (int Type, void *Ptr1, void *Ptr2, Cardinal * Ptr3,
+   InsertX = DX;
+   InsertY = DY;
+   InsertAt = *Ptr3;
++  InsertLast = insert_last;
+   Forcible = Force;
+ 
+   /* the operation insert the points to the undo-list */
+diff --git a/src/insert.h b/src/insert.h
+index 87b6cbb..350a0de 100644
+--- a/src/insert.h
++++ b/src/insert.h
+@@ -39,7 +39,7 @@
+  * prototypes
+  */
+ void *InsertPointIntoObject (int, void *, void *, Cardinal *, LocationType,
+-			     LocationType, bool);
++			     LocationType, bool, bool);
+ PointTypePtr AdjustInsertPoint (void);
+ 
+ #endif
 diff --git a/src/mymem.c b/src/mymem.c
 index 46714bb..bed0f9b 100644
 --- a/src/mymem.c
@@ -989,10 +1054,26 @@ index 6a1c47b..dc01153 100644
  		 TEST_FLAG (LOCKFLAG, Polygon) ? "It is LOCKED\n" : "");
  	break;
 diff --git a/src/undo.c b/src/undo.c
-index 50c6de5..d836fd4 100644
+index 50c6de5..29228d0 100644
 --- a/src/undo.c
 +++ b/src/undo.c
-@@ -184,6 +184,8 @@ static bool UndoMove (UndoListTypePtr);
+@@ -97,6 +97,7 @@ typedef struct			/* information about removed polygon points */
+   LocationType X, Y;		/* data */
+   int ID;
+   Cardinal Index;		/* index in a polygons array of points */
++  bool last_in_contour;		/* Whether the point was the last in its contour */
+ }
+ RemovedPointType, *RemovedPointTypePtr;
+ 
+@@ -153,6 +154,7 @@ typedef struct			/* holds information about an operation */
+     LayerChangeType LayerChange;
+     ClearPolyType ClearPoly;
+     NetlistChangeType NetlistChange;
++    long int CopyID;
+   }
+   Data;
+ }
+@@ -184,6 +186,8 @@ static bool UndoMove (UndoListTypePtr);
  static bool UndoRemove (UndoListTypePtr);
  static bool UndoRemovePoint (UndoListTypePtr);
  static bool UndoInsertPoint (UndoListTypePtr);
@@ -1001,7 +1082,47 @@ index 50c6de5..d836fd4 100644
  static bool UndoMoveToLayer (UndoListTypePtr);
  static bool UndoFlag (UndoListTypePtr);
  static bool UndoMirror (UndoListTypePtr);
-@@ -778,15 +780,7 @@ UndoInsertPoint (UndoListTypePtr Entry)
+@@ -731,7 +735,9 @@ UndoRemovePoint (UndoListTypePtr Entry)
+ 	InsertPointIntoObject (POLYGON_TYPE, layer, polygon,
+ 			       &Entry->Data.RemovedPoint.Index,
+ 			       Entry->Data.RemovedPoint.X,
+-			       Entry->Data.RemovedPoint.Y, true);
++			       Entry->Data.RemovedPoint.Y, true,
++			       Entry->Data.RemovedPoint.last_in_contour);
++
+ 	polygon->Points[Entry->Data.RemovedPoint.Index].ID =
+ 	  Entry->Data.RemovedPoint.ID;
+ 	if (andDraw && layer->On)
+@@ -758,6 +764,9 @@ UndoInsertPoint (UndoListTypePtr Entry)
+   PolygonTypePtr polygon;
+   PointTypePtr pnt;
+   int type;
++  Cardinal point_idx;
++  Cardinal hole;
++  bool last_in_contour;
+ 
+   assert (Entry->Kind == POLYGONPOINT_TYPE);
+   /* lookup entry by it's ID */
+@@ -772,21 +781,26 @@ UndoInsertPoint (UndoListTypePtr Entry)
+ 	  return (false);
+ 	if (andDraw && layer->On)
+ 	  ErasePolygon (polygon);
++
++	/* Check whether this point was at the end of its contour.
++	 * If so, we need to flag as such when re-adding the point
++	 * so it goes back in the correct place
++	 */
++	point_idx = polygon_point_idx (polygon, pnt);
++	for (hole = 0; hole < polygon->HoleIndexN; hole++)
++	  if (point_idx == polygon->HoleIndex[hole] - 1)
++	    last_in_contour = true;
++	if (point_idx == polygon->PointN - 1)
++	  last_in_contour = true;
++	Entry->Data.RemovedPoint.last_in_contour = last_in_contour;
++
+ 	Entry->Data.RemovedPoint.X = pnt->X;
+ 	Entry->Data.RemovedPoint.Y = pnt->Y;
+ 	Entry->Data.RemovedPoint.ID = pnt->ID;
  	Entry->ID = polygon->ID;
  	Entry->Kind = POLYGON_TYPE;
  	Entry->Type = UNDO_REMOVE_POINT;
@@ -1014,11 +1135,11 @@ index 50c6de5..d836fd4 100644
 -	    }
 -	}
 -	END_LOOP;
-+	Entry->Data.RemovedPoint.Index = polygon_point_idx (polygon, pnt);
++	Entry->Data.RemovedPoint.Index = point_idx;
  	DestroyObject (PCB->Data, POLYGONPOINT_TYPE, layer, polygon, pnt);
  	if (andDraw && layer->On)
  	  DrawPolygon (layer, polygon, 0);
-@@ -799,6 +793,80 @@ UndoInsertPoint (UndoListTypePtr Entry)
+@@ -799,6 +813,93 @@ UndoInsertPoint (UndoListTypePtr Entry)
  }
  
  /* ---------------------------------------------------------------------------
@@ -1030,14 +1151,15 @@ index 50c6de5..d836fd4 100644
 +{
 +  void *ptr1, *ptr2, *ptr3;
 +  void *ptr1b, *ptr2b, *ptr3b;
-+  PolygonType *polygon;
++  PolygonType *poly, *poly2;
 +  int type;
++  long int swap_id;
 +
 +  assert (Entry->Kind == POLYGON_TYPE);
 +
 +  /* lookup entry by it's ID */
 +  type =
-+    SearchObjectByID (RemoveList, &ptr1, &ptr2, &ptr3, Entry->ID,
++    SearchObjectByID (RemoveList, &ptr1, &ptr2, &ptr3, Entry->Data.CopyID,
 +		      Entry->Kind);
 +  if (type == NO_TYPE)
 +    return false;
@@ -1045,16 +1167,23 @@ index 50c6de5..d836fd4 100644
 +  type =
 +    SearchObjectByID (PCB->Data, &ptr1b, &ptr2b, &ptr3b, Entry->ID,
 +		      Entry->Kind);
-+  if (type != NO_TYPE)
-+    MoveObjectToBuffer (RemoveList, PCB->Data, type, ptr1b, ptr2b, ptr3b);
++  if (type == NO_TYPE)
++    return FALSE;
++
++  poly = ptr2;
++  poly2 = ptr2b;
++
++  swap_id = poly->ID;
++  poly->ID = poly2->ID;
++  poly2->ID = swap_id;
++
++  MoveObjectToBuffer (RemoveList, PCB->Data, type, ptr1b, ptr2b, ptr3b);
 +
 +  if (andDraw)
 +    DrawRecoveredObject (Entry->Kind, ptr1, ptr2, ptr3);
 +
-+  polygon = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
-+#warning WHY IS INITCLIP NEEDED HERE?
-+  InitClip (PCB->Data, ptr1, polygon);
-+  Entry->Type = UNDO_INSERT_CONTOUR;
++  poly = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
++  InitClip (PCB->Data, ptr1b, poly);
 +  return (true);
 +}
 +
@@ -1069,6 +1198,7 @@ index 50c6de5..d836fd4 100644
 +  void *ptr1b, *ptr2b, *ptr3b;
 +  PolygonType *polygon;
 +  int type;
++  long int swap_id;
 +
 +  assert (Entry->Kind == POLYGON_TYPE);
 +
@@ -1083,15 +1213,19 @@ index 50c6de5..d836fd4 100644
 +    SearchObjectByID (PCB->Data, &ptr1b, &ptr2b, &ptr3b, Entry->ID,
 +		      Entry->Kind);
 +  if (type != NO_TYPE)
-+    MoveObjectToBuffer (RemoveList, PCB->Data, type, ptr1b, ptr2b, ptr3b);
++    {
++      MoveObjectToBuffer (RemoveList, PCB->Data, type, ptr1b, ptr2b, ptr3b);
++      swap_id = Entry->Data.CopyID;
++      Entry->Data.CopyID = Entry->ID;
++      Entry->ID = swap_id;
++      Entry->Type = UNDO_REMOVE_CONTOUR;
++    }
 +
 +  if (andDraw)
 +    DrawRecoveredObject (Entry->Kind, ptr1, ptr2, ptr3);
 +
 +  polygon = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
-+#warning WHY IS INITCLIP NEEDED HERE?
 +  InitClip (PCB->Data, ptr1, polygon);
-+  Entry->Type = UNDO_REMOVE_CONTOUR;
 +  return (true);
 +}
 +
@@ -1099,7 +1233,7 @@ index 50c6de5..d836fd4 100644
   * undo a layer change
   * returns true on success
   */
-@@ -969,6 +1037,16 @@ PerformUndo (UndoListTypePtr ptr)
+@@ -969,6 +1070,16 @@ PerformUndo (UndoListTypePtr ptr)
  	return (UNDO_INSERT_POINT);
        break;
  
@@ -1116,16 +1250,34 @@ index 50c6de5..d836fd4 100644
      case UNDO_ROTATE:
        if (UndoRotate (ptr))
  	return (UNDO_ROTATE);
-@@ -1233,6 +1311,8 @@ AddObjectToRemovePointUndoList (int Type,
- 	    /* save the ID of the parent object; else it will be
- 	     * impossible to recover the point
- 	     */
-+#warning WILL WE ALWAYS GET THE RIGHT CONTOUR BACK???
-+#warning WHAT ABOUT COMPLETELY DELETED CONTOURS???
- 	    undo =
- 	      GetUndoSlot (UNDO_REMOVE_POINT, OBJECT_ID (polygon),
- 			   POLYGON_TYPE);
-@@ -1259,6 +1339,50 @@ AddObjectToInsertPointUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
+@@ -1223,6 +1334,8 @@ AddObjectToRemovePointUndoList (int Type,
+ {
+   UndoListTypePtr undo;
+   PolygonTypePtr polygon = (PolygonTypePtr) Ptr2;
++  Cardinal hole;
++  bool last_in_contour = false;
+ 
+   if (!Locked)
+     {
+@@ -1240,6 +1353,17 @@ AddObjectToRemovePointUndoList (int Type,
+ 	    undo->Data.RemovedPoint.Y = polygon->Points[index].Y;
+ 	    undo->Data.RemovedPoint.ID = polygon->Points[index].ID;
+ 	    undo->Data.RemovedPoint.Index = index;
++
++	    /* Check whether this point was at the end of its contour.
++	     * If so, we need to flag as such when re-adding the point
++	     * so it goes back in the correct place
++	     */
++	    for (hole = 0; hole < polygon->HoleIndexN; hole++)
++	      if (index == polygon->HoleIndex[hole] - 1)
++		last_in_contour = true;
++	    if (index == polygon->PointN - 1)
++	      last_in_contour = true;
++	    undo->Data.RemovedPoint.last_in_contour = last_in_contour;
+ 	  }
+ 	  break;
+ 	}
+@@ -1259,6 +1383,50 @@ AddObjectToInsertPointUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
  }
  
  /* ---------------------------------------------------------------------------
@@ -1147,8 +1299,7 @@ index 50c6de5..d836fd4 100644
 +
 +  undo = GetUndoSlot (UNDO_REMOVE_CONTOUR, OBJECT_ID (Polygon), POLYGON_TYPE);
 +  copy = CopyObjectToBuffer (RemoveList, PCB->Data, Type, Layer, Polygon, NULL);
-+  copy->ID = Polygon->ID;
-+  copy->Flags = Polygon->Flags;
++  undo->Data.CopyID = copy->ID;
 +}
 +
 +/* ---------------------------------------------------------------------------
@@ -1160,6 +1311,7 @@ index 50c6de5..d836fd4 100644
 +				  LayerType *Layer, PolygonType *Polygon)
 +{
 +  UndoListTypePtr undo;
++  PolygonType *copy;
 +
 +  if (Locked)
 +    return;
@@ -1168,8 +1320,8 @@ index 50c6de5..d836fd4 100644
 +    RemoveList = CreateNewBuffer ();
 +
 +  undo = GetUndoSlot (UNDO_REMOVE_CONTOUR, OBJECT_ID (Polygon), POLYGON_TYPE);
-+  CopyObjectToBuffer (RemoveList, PCB->Data, Type, Layer, Polygon, NULL);
-+  /* Copy thing to ... */
++  copy = CopyObjectToBuffer (RemoveList, PCB->Data, Type, Layer, Polygon, NULL);
++  undo->Data.CopyID = copy->ID;
 +}
 +
 +/* ---------------------------------------------------------------------------
