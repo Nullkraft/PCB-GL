@@ -1,5 +1,5 @@
 Bottom: 04f65ddf71b35703fa480ad40eec903a8e592306
-Top:    98ec37c1a5fc7c3e764481f293bb05ed99c6560e
+Top:    f3a3b0fdee532e5579f53e6d74adcedb8c8f1570
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-06 20:27:01 +0100
 
@@ -9,7 +9,7 @@ Introduce POLYGONHOLE_MODE for creating holes in polygons
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 7655a8d..3ceda45 100644
+index 7655a8d..f43ce9e 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -145,6 +145,7 @@ typedef enum
@@ -36,7 +36,7 @@ index 7655a8d..3ceda45 100644
        AdjustAttachedLine ();
        break;
        /* line creation mode */
-@@ -1448,6 +1451,104 @@ NotifyMode (void)
+@@ -1448,6 +1451,106 @@ NotifyMode (void)
  	break;
        }
  
@@ -93,6 +93,7 @@ index 7655a8d..3ceda45 100644
 +		  /* Convert the resulting polygon(s) into a new set of nodes
 +		   * and place them on the page. Delete the original polygon.
 +		   */
++		  SaveUndoSerialNumber ();
 +		  Flags = ((PolygonType *)Crosshair.AttachedObject.Ptr1)->Flags;
 +		  PolyToPolygonsOnLayer (PCB->Data, Crosshair.AttachedObject.Ptr1,
 +					 result, Flags);
@@ -106,6 +107,7 @@ index 7655a8d..3ceda45 100644
 +				Crosshair.AttachedObject.Ptr1,
 +				Crosshair.AttachedObject.Ptr2,
 +				Crosshair.AttachedObject.Ptr3);
++		  RestoreUndoSerialNumber ();
 +		  IncrementUndoSerialNumber ();
 +		  Draw ();
 +
@@ -141,7 +143,7 @@ index 7655a8d..3ceda45 100644
      case PASTEBUFFER_MODE:
        {
  	TextType estr[MAX_ELEMENTNAMES];
-@@ -3022,6 +3123,16 @@ ActionMode (int argc, char **argv, int x, int y)
+@@ -3022,6 +3125,16 @@ ActionMode (int argc, char **argv, int x, int y)
  		  }
  		break;
  
@@ -158,7 +160,7 @@ index 7655a8d..3ceda45 100644
  	      case ARC_MODE:
  		if (Crosshair.AttachedBox.State == STATE_FIRST)
  		  SetMode (ARROW_MODE);
-@@ -3050,6 +3161,9 @@ ActionMode (int argc, char **argv, int x, int y)
+@@ -3050,6 +3163,9 @@ ActionMode (int argc, char **argv, int x, int y)
  	case F_Polygon:
  	  SetMode (POLYGON_MODE);
  	  break;
@@ -331,7 +333,7 @@ index cbdcd2d..e9ed58b 100644
     {"Command" Command() a={":" "<Key>:"}}
    }
 diff --git a/src/polygon.c b/src/polygon.c
-index 971481f..57d8df6 100644
+index 971481f..186f0f5 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -275,7 +275,7 @@ ContourToPoly (PLINE * contour)
@@ -356,7 +358,7 @@ index 971481f..57d8df6 100644
  RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2)
  {
    PLINE *contour = NULL;
-@@ -1955,6 +1961,63 @@ delete_piece_cb (gpointer data, gpointer userdata)
+@@ -1955,6 +1961,62 @@ delete_piece_cb (gpointer data, gpointer userdata)
    poly_Free (&piece);
  }
  
@@ -413,7 +415,6 @@ index 971481f..57d8df6 100644
 +    }
 +  while ((pa = pa->f) != Input);
 +
-+  IncrementUndoSerialNumber ();
 +  SetChangedFlag (true);
 +}
 +
