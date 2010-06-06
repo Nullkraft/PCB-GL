@@ -1,0 +1,40 @@
+Bottom: 98ec37c1a5fc7c3e764481f293bb05ed99c6560e
+Top:    f3a3b0fdee532e5579f53e6d74adcedb8c8f1570
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-06 21:45:25 +0100
+
+Refresh of introduce-polygonhole_mode-for
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 3ceda45..f43ce9e 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -1504,6 +1504,7 @@ NotifyMode (void)
+ 		  /* Convert the resulting polygon(s) into a new set of nodes
+ 		   * and place them on the page. Delete the original polygon.
+ 		   */
++		  SaveUndoSerialNumber ();
+ 		  Flags = ((PolygonType *)Crosshair.AttachedObject.Ptr1)->Flags;
+ 		  PolyToPolygonsOnLayer (PCB->Data, Crosshair.AttachedObject.Ptr1,
+ 					 result, Flags);
+@@ -1517,6 +1518,7 @@ NotifyMode (void)
+ 				Crosshair.AttachedObject.Ptr1,
+ 				Crosshair.AttachedObject.Ptr2,
+ 				Crosshair.AttachedObject.Ptr3);
++		  RestoreUndoSerialNumber ();
+ 		  IncrementUndoSerialNumber ();
+ 		  Draw ();
+ 
+diff --git a/src/polygon.c b/src/polygon.c
+index 57d8df6..186f0f5 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -2014,7 +2014,6 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
+     }
+   while ((pa = pa->f) != Input);
+ 
+-  IncrementUndoSerialNumber ();
+   SetChangedFlag (true);
+ }
