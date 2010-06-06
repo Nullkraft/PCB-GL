@@ -519,6 +519,9 @@ RemovePolygonContour (LayerTypePtr Layer,
         Draw ();
     }
 
+  /* Copy the polygon to the undo list */
+  AddObjectToRemoveContourUndoList (POLYGON_TYPE, Layer, Polygon);
+
   contour_start = (contour == 0) ? 0 : Polygon->HoleIndex[contour - 1];
   contour_end = (contour == Polygon->HoleIndexN) ? Polygon->PointN :
                                                    Polygon->HoleIndex[contour];

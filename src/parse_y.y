@@ -1127,23 +1127,35 @@ polygon_format
 		  polygonpoints
 		  polygonholes ')'
 			{
-					/* ignore junk */
-#warning FIXME FOR HOLES AS WELL
-				if (Polygon->PointN >= 3)
+				Cardinal contour, contour_start, contour_end;
+				bool bad_contour_found = false;
+				/* ignore junk */
+				for (contour = 0; contour <= Polygon->HoleIndexN; contour++)
+				  {
+				    contour_start = (contour == 0) ?
+						      0 : Polygon->HoleIndex[contour - 1];
+				    contour_end = (contour == Polygon->HoleIndexN) ?
+						 Polygon->PointN :
+						 Polygon->HoleIndex[contour];
+				    if (contour_end - contour_start < 3)
+				      bad_contour_found = true;
+				  }
+
+				if (bad_contour_found)
+				  {
+				    Message("WARNING parsing file '%s'\n"
+					    "    line:        %i\n"
+					    "    description: 'ignored polygon (< 3 points in a contour)'\n",
+					    yyfilename, yylineno);
+				    DestroyObject(yyData, POLYGON_TYPE, Layer, Polygon, Polygon);
+				  }
+				else
 				  {
 				    SetPolygonBoundingBox (Polygon);
 				    if (!Layer->polygon_tree)
 				      Layer->polygon_tree = r_create_tree (NULL, 0, 0);
 				    r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
 				  }
-				else
-				{
-					Message("WARNING parsing file '%s'\n"
-						"    line:        %i\n"
-						"    description: 'ignored polygon (< 3 points)'\n",
-						yyfilename, yylineno);
-					DestroyObject(yyData, POLYGON_TYPE, Layer, Polygon, Polygon);
-				}
 			}
 		;
 

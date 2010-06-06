@@ -184,6 +184,8 @@ static bool UndoMove (UndoListTypePtr);
 static bool UndoRemove (UndoListTypePtr);
 static bool UndoRemovePoint (UndoListTypePtr);
 static bool UndoInsertPoint (UndoListTypePtr);
+static bool UndoRemoveContour (UndoListTypePtr);
+static bool UndoInsertContour (UndoListTypePtr);
 static bool UndoMoveToLayer (UndoListTypePtr);
 static bool UndoFlag (UndoListTypePtr);
 static bool UndoMirror (UndoListTypePtr);
@@ -778,7 +780,6 @@ UndoInsertPoint (UndoListTypePtr Entry)
 	Entry->ID = polygon->ID;
 	Entry->Kind = POLYGON_TYPE;
 	Entry->Type = UNDO_REMOVE_POINT;
-#warning Any implication for holes? Do we need to store which contour the insert was in?
 	Entry->Data.RemovedPoint.Index = polygon_point_idx (polygon, pnt);
 	DestroyObject (PCB->Data, POLYGONPOINT_TYPE, layer, polygon, pnt);
 	if (andDraw && layer->On)
@@ -789,6 +790,80 @@ UndoInsertPoint (UndoListTypePtr Entry)
     default:
       return (false);
     }
+}
+
+/* ---------------------------------------------------------------------------
+ * recovers an removed polygon point
+ * returns true on success
+ */
+static bool
+UndoRemoveContour (UndoListTypePtr Entry)
+{
+  void *ptr1, *ptr2, *ptr3;
+  void *ptr1b, *ptr2b, *ptr3b;
+  PolygonType *polygon;
+  int type;
+
+  assert (Entry->Kind == POLYGON_TYPE);
+
+  /* lookup entry by it's ID */
+  type =
+    SearchObjectByID (RemoveList, &ptr1, &ptr2, &ptr3, Entry->ID,
+		      Entry->Kind);
+  if (type == NO_TYPE)
+    return false;
+
+  type =
+    SearchObjectByID (PCB->Data, &ptr1b, &ptr2b, &ptr3b, Entry->ID,
+		      Entry->Kind);
+  if (type != NO_TYPE)
+    MoveObjectToBuffer (RemoveList, PCB->Data, type, ptr1b, ptr2b, ptr3b);
+
+  if (andDraw)
+    DrawRecoveredObject (Entry->Kind, ptr1, ptr2, ptr3);
+
+  polygon = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
+#warning WHY IS INITCLIP NEEDED HERE?
+  InitClip (PCB->Data, ptr1, polygon);
+  Entry->Type = UNDO_INSERT_CONTOUR;
+  return (true);
+}
+
+/* ---------------------------------------------------------------------------
+ * recovers an inserted polygon point
+ * returns true on success
+ */
+static bool
+UndoInsertContour (UndoListTypePtr Entry)
+{
+  void *ptr1, *ptr2, *ptr3;
+  void *ptr1b, *ptr2b, *ptr3b;
+  PolygonType *polygon;
+  int type;
+
+  assert (Entry->Kind == POLYGON_TYPE);
+
+  /* lookup entry by it's ID */
+  type =
+    SearchObjectByID (RemoveList, &ptr1, &ptr2, &ptr3, Entry->ID,
+		      Entry->Kind);
+  if (type == NO_TYPE)
+    return false;
+
+  type =
+    SearchObjectByID (PCB->Data, &ptr1b, &ptr2b, &ptr3b, Entry->ID,
+		      Entry->Kind);
+  if (type != NO_TYPE)
+    MoveObjectToBuffer (RemoveList, PCB->Data, type, ptr1b, ptr2b, ptr3b);
+
+  if (andDraw)
+    DrawRecoveredObject (Entry->Kind, ptr1, ptr2, ptr3);
+
+  polygon = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
+#warning WHY IS INITCLIP NEEDED HERE?
+  InitClip (PCB->Data, ptr1, polygon);
+  Entry->Type = UNDO_REMOVE_CONTOUR;
+  return (true);
 }
 
 /* ---------------------------------------------------------------------------
@@ -960,6 +1035,16 @@ PerformUndo (UndoListTypePtr ptr)
     case UNDO_INSERT_POINT:
       if (UndoInsertPoint (ptr))
 	return (UNDO_INSERT_POINT);
+      break;
+
+    case UNDO_REMOVE_CONTOUR:
+      if (UndoRemoveContour (ptr))
+	return (UNDO_REMOVE_CONTOUR);
+      break;
+
+    case UNDO_INSERT_CONTOUR:
+      if (UndoInsertContour (ptr))
+	return (UNDO_INSERT_CONTOUR);
       break;
 
     case UNDO_ROTATE:
@@ -1251,6 +1336,50 @@ AddObjectToInsertPointUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
 
   if (!Locked)
     undo = GetUndoSlot (UNDO_INSERT_POINT, OBJECT_ID (Ptr3), Type);
+}
+
+/* ---------------------------------------------------------------------------
+ * adds an object to the list of removed contours
+ * (Actually just takes a copy of the whole polygon to restore)
+ */
+void
+AddObjectToRemoveContourUndoList (int Type,
+				  LayerType *Layer, PolygonType *Polygon)
+{
+  UndoListTypePtr undo;
+  PolygonType *copy;
+
+  if (Locked)
+    return;
+
+  if (!RemoveList)
+    RemoveList = CreateNewBuffer ();
+
+  undo = GetUndoSlot (UNDO_REMOVE_CONTOUR, OBJECT_ID (Polygon), POLYGON_TYPE);
+  copy = CopyObjectToBuffer (RemoveList, PCB->Data, Type, Layer, Polygon, NULL);
+  copy->ID = Polygon->ID;
+  copy->Flags = Polygon->Flags;
+}
+
+/* ---------------------------------------------------------------------------
+ * adds an object to the list of insert contours
+ * (Actually just takes a copy of the whole polygon to restore)
+ */
+void
+AddObjectToInsertContourUndoList (int Type,
+				  LayerType *Layer, PolygonType *Polygon)
+{
+  UndoListTypePtr undo;
+
+  if (Locked)
+    return;
+
+  if (!RemoveList)
+    RemoveList = CreateNewBuffer ();
+
+  undo = GetUndoSlot (UNDO_REMOVE_CONTOUR, OBJECT_ID (Polygon), POLYGON_TYPE);
+  CopyObjectToBuffer (RemoveList, PCB->Data, Type, Layer, Polygon, NULL);
+  /* Copy thing to ... */
 }
 
 /* ---------------------------------------------------------------------------
