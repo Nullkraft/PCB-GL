@@ -184,6 +184,7 @@ MainMenu =
    {"Copy" checked=copymode,1 Mode(Copy)}
    {"Lock" checked=lockmode,1 Mode(Lock) a={"F12" "<Key>F12"}}
    {"Cancel" Mode(Cancel) a={"Esc" "<Key>Escape"}}
+   {"PolygonHole" checked=polygonholemode,1 Mode(PolygonHole)}
    -
    {"Command" Command() a={":" "<Key>:"}}
   }
