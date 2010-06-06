@@ -1,5 +1,5 @@
-Bottom: a3398c0d5040d2471418f1396092733c6a512004
-Top:    fafd414f7d29dbb77349ddcc203b6344e37829ef
+Bottom: dded0f9bb53cb6e1a58169b97d17e3345bde897b
+Top:    2a3928f763d901a2641313530c3e5d8b9f88941c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-15 23:31:11 +0000
 
@@ -30,7 +30,7 @@ index 76dcccf..10dbb7f 100644
  #endif
  
 diff --git a/src/polygon.c b/src/polygon.c
-index 6b46915..adf6995 100644
+index e8abcdc..6fb4f86 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -120,7 +120,7 @@ RCSID ("$Id$");
@@ -41,8 +41,8 @@ index 6b46915..adf6995 100644
 +  cos(2. * M_PI / CIRC_SEGS), sin (2. * M_PI / CIRC_SEGS),
  };
  
- static void
-@@ -786,8 +786,16 @@ struct cpInfo
+ Cardinal
+@@ -875,8 +875,16 @@ struct cpInfo
  static void
  subtract_accumulated (struct cpInfo *info, PolygonTypePtr polygon)
  {
@@ -59,7 +59,7 @@ index 6b46915..adf6995 100644
    Subtract (info->accumulate, polygon, true);
    info->accumulate = NULL;
    info->batch_size = 0;
-@@ -824,7 +832,9 @@ pin_sub_callback (const BoxType * b, void *cl)
+@@ -913,7 +921,9 @@ pin_sub_callback (const BoxType * b, void *cl)
          longjmp (info->env, 1);
      }
  
