@@ -1,5 +1,5 @@
 Bottom: 6f10f99b2cc08c5202f4821524011353a205c2b2
-Top:    92efe862e074254f5fdca04862f8b37d5730be9f
+Top:    6f10f99b2cc08c5202f4821524011353a205c2b2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-06 22:02:12 +0100
 
@@ -12,70 +12,4 @@ those linked to it into discrete PolygonType objects on the board.
 
 ---
 
-diff --git a/src/polygon.c b/src/polygon.c
-index 774c987..ed3eb66 100644
---- a/src/polygon.c
-+++ b/src/polygon.c
-@@ -2018,6 +2018,62 @@ delete_piece_cb (gpointer data, gpointer userdata)
-   poly_Free (&piece);
- }
- 
-+/* Convert a POLYAREA (and all linked POLYAREA) to
-+ * raw PCB polygons on the given layer.
-+ */
-+void
-+PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
-+                       POLYAREA *Input, FlagType Flags)
-+{
-+  PolygonType *Polygon;
-+  POLYAREA *pa;
-+  PLINE *pline;
-+  VNODE *node;
-+  bool outer;
-+
-+  if (Input == NULL)
-+    return;
-+
-+  pa = Input;
-+  do
-+    {
-+      Polygon = CreateNewPolygon (Layer, Flags);
-+
-+      pline = pa->contours;
-+      outer = true;
-+
-+      do
-+        {
-+          if (!outer)
-+            CreateNewHoleInPolygon (Polygon);
-+          outer = false;
-+
-+          node = &pline->head;
-+          do
-+            {
-+              CreateNewPointInPolygon (Polygon, node->point[0],
-+                                                node->point[1]);
-+            }
-+          while ((node = node->next) != &pline->head);
-+
-+        }
-+      while ((pline = pline->next) != NULL);
-+
-+      InitClip (Destination, Layer, Polygon);
-+      SetPolygonBoundingBox (Polygon);
-+      if (!Layer->polygon_tree)
-+        Layer->polygon_tree = r_create_tree (NULL, 0, 0);
-+      r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
-+
-+      DrawPolygon (Layer, Polygon, 0);
-+      /* add to undo list */
-+      AddObjectToCreateUndoList (POLYGON_TYPE, Layer, Polygon, Polygon);
-+    }
-+  while ((pa = pa->f) != Input);
-+
-+  SetChangedFlag (true);
-+}
-+
- POLYAREA *board_outline_poly ()
- {
-   int i;
+
