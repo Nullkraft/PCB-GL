@@ -1,7 +1,7 @@
-Bottom: 59354f1d3aa16f538d85d39f7fcedecd299357a3
-Top:    820f7e7183fd14c5b9bc00f3f43e1d66d607f109
+Bottom: 2eb7e1defb3686d48a461fc6223f01a49d3d3381
+Top:    f9e8dd4770901a20b2cb7a5f44cbdc6605d2ec45
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-05 12:51:10 +0100
+Date:   2010-06-06 23:38:28 +0100
 
 polygon.c: Accumulate vias and lines into batches before subtracting them
 
@@ -37,7 +37,7 @@ constructed.
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 97164ab..6437b98 100644
+index f2745ed..ec3db7e 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -109,6 +109,8 @@ RCSID ("$Id$");
@@ -49,7 +49,7 @@ index 97164ab..6437b98 100644
  
  /* ---------------------------------------------------------------------------
   * local prototypes
-@@ -771,22 +773,60 @@ struct cpInfo
+@@ -860,22 +862,60 @@ struct cpInfo
    LayerType *layer;
    PolygonType *polygon;
    bool solder;
@@ -112,7 +112,7 @@ index 97164ab..6437b98 100644
    return 1;
  }
  
-@@ -836,6 +876,8 @@ line_sub_callback (const BoxType * b, void *cl)
+@@ -925,6 +965,8 @@ line_sub_callback (const BoxType * b, void *cl)
    LineTypePtr line = (LineTypePtr) b;
    struct cpInfo *info = (struct cpInfo *) cl;
    PolygonTypePtr polygon;
@@ -121,7 +121,7 @@ index 97164ab..6437b98 100644
  
    /* don't subtract the object that was put back! */
    if (b == info->other)
-@@ -843,8 +885,17 @@ line_sub_callback (const BoxType * b, void *cl)
+@@ -932,8 +974,17 @@ line_sub_callback (const BoxType * b, void *cl)
    if (!TEST_FLAG (CLEARLINEFLAG, line))
      return 0;
    polygon = info->polygon;
@@ -140,7 +140,7 @@ index 97164ab..6437b98 100644
    return 1;
  }
  
-@@ -903,21 +954,26 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
+@@ -992,21 +1043,26 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
  
    if (setjmp (info.env) == 0)
      {

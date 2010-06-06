@@ -1,7 +1,7 @@
-Bottom: 820f7e7183fd14c5b9bc00f3f43e1d66d607f109
-Top:    85cfa37fbb54bb4a4e41184be80778b792ad764c
+Bottom: f9e8dd4770901a20b2cb7a5f44cbdc6605d2ec45
+Top:    4d15dcd579487b525b6f4093f65594b80bcab3af
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-05 12:51:11 +0100
+Date:   2010-06-06 23:38:28 +0100
 
 Use rtree of countours when computing an intersection
 
@@ -15,10 +15,10 @@ NOTE: This is more complex than the existing code, and on its own,
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 6437b98..bdefa0a 100644
+index ec3db7e..474474e 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -783,7 +783,7 @@ subtract_accumulated (struct cpInfo *info, PolygonTypePtr polygon)
+@@ -872,7 +872,7 @@ subtract_accumulated (struct cpInfo *info, PolygonTypePtr polygon)
  {
    if (info->accumulate == NULL)
      return;

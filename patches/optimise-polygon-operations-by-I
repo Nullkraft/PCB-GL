@@ -1,7 +1,7 @@
-Bottom: 85cfa37fbb54bb4a4e41184be80778b792ad764c
-Top:    747b61c42650e4fa0a057c806d3fc21a1e95ec55
+Bottom: 4d15dcd579487b525b6f4093f65594b80bcab3af
+Top:    1b25aa26c28e8086455f4338f5fa149f7449d93e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-05 12:51:11 +0100
+Date:   2010-06-06 23:38:29 +0100
 
 Optimise polygon operations by keeping an rtree of POLYAREA contours
 
@@ -27,10 +27,10 @@ index 958498b..ce427ad 100644
  
  BOOLp poly_M_Copy0(POLYAREA ** dst, const POLYAREA * srcfst);
 diff --git a/src/polygon.c b/src/polygon.c
-index bdefa0a..8fdd3ff 100644
+index 474474e..eac9390 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -148,6 +148,7 @@ biggest (POLYAREA * p)
+@@ -215,6 +215,7 @@ biggest (POLYAREA * p)
  {
    POLYAREA *n, *top = NULL;
    PLINE *pl;
@@ -38,7 +38,7 @@ index bdefa0a..8fdd3ff 100644
    double big = -1;
    if (!p)
      return NULL;
-@@ -181,8 +182,11 @@ biggest (POLYAREA * p)
+@@ -248,8 +249,11 @@ biggest (POLYAREA * p)
    if (top == p)
      return p;
    pl = top->contours;
@@ -50,7 +50,7 @@ index bdefa0a..8fdd3ff 100644
    assert (pl);
    assert (p->f);
    assert (p->b);
-@@ -1610,6 +1614,8 @@ r_NoHolesPolygonDicer (POLYAREA * pa,
+@@ -1695,6 +1699,8 @@ r_NoHolesPolygonDicer (POLYAREA * pa,
    if (!pa->contours->next)                 /* no holes */
      {
        pa->contours = NULL; /* The callback now owns the contour */
