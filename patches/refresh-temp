@@ -1,0 +1,30 @@
+Bottom: 648117c782bfcdf07d483b0080c0b61b303d3ce5
+Top:    131e68cbb31def1a4861a0f40453bc11a145f594
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-06 23:55:05 +0100
+
+Refresh of workaround-crash-where-contour
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 48e2e4a..e92e1f7 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -308,6 +308,16 @@ original_poly (PolygonType * p)
+       if (n == p->PointN - 1 ||
+           (hole < p->HoleIndexN && n == p->HoleIndex[hole] - 1))
+         {
++          if (contour == NULL)
++            {
++              printf ("How did that escape - did the loop iterate zero times??\n");
++              POLYGONPOINT_LOOP (p);
++                {
++                  printf ("Hello\n");
++                }
++              END_LOOP;
++              return NULL;
++            }
+           poly_PreContour (contour, TRUE);
+ 
+           /* make sure it is a positive contour (outer) or negative (hole) */
