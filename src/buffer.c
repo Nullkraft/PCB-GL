@@ -194,7 +194,7 @@ AddPolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
   LayerTypePtr layer = &Dest->Layer[GetLayerNumber (Source, Layer)];
   PolygonTypePtr polygon;
 
-  polygon = GetPolygonMemory (layer);
+  polygon = CreateNewPolygon (layer, Polygon->Flags);
   CopyPolygonLowLevel (polygon, Polygon);
   CLEAR_FLAG (FOUNDFLAG | ExtraFlag, polygon);
   return (polygon);

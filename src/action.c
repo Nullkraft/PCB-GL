@@ -1658,13 +1658,13 @@ NotifyMode (void)
 	    InsertPointIntoObject (POLYGON_TYPE,
 				   Crosshair.AttachedObject.Ptr1, fake.poly,
 				   &polyIndex,
-				   InsertedPoint.X, InsertedPoint.Y, false);
+				   InsertedPoint.X, InsertedPoint.Y, false, false);
 	  else
 	    InsertPointIntoObject (Crosshair.AttachedObject.Type,
 				   Crosshair.AttachedObject.Ptr1,
 				   Crosshair.AttachedObject.Ptr2,
 				   &polyIndex,
-				   InsertedPoint.X, InsertedPoint.Y, false);
+				   InsertedPoint.X, InsertedPoint.Y, false, false);
 	  SetChangedFlag (true);
 
 	  /* reset identifiers */

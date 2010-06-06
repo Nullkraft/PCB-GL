@@ -74,6 +74,7 @@ static void *InsertPointIntoRat (RatTypePtr);
 static LocationType InsertX,	/* used by local routines as offset */
   InsertY;
 static Cardinal InsertAt;
+static bool InsertLast;
 static bool Forcible;
 static ObjectFunctionType InsertFunctions = {
   InsertPointIntoLine,
@@ -190,7 +191,8 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 
   /* Shift up indices of any holes */
   for (n = 0; n < Polygon->HoleIndexN; n++)
-    if (Polygon->HoleIndex[n] > InsertAt)
+    if (Polygon->HoleIndex[n] > InsertAt ||
+	(InsertLast && Polygon->HoleIndex[n] == InsertAt))
       Polygon->HoleIndex[n]++;
 
   Polygon->Points[InsertAt] = save;
@@ -214,7 +216,8 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  */
 void *
 InsertPointIntoObject (int Type, void *Ptr1, void *Ptr2, Cardinal * Ptr3,
-		       LocationType DX, LocationType DY, bool Force)
+		       LocationType DX, LocationType DY, bool Force,
+		       bool insert_last)
 {
   void *ptr;
 
@@ -222,6 +225,7 @@ InsertPointIntoObject (int Type, void *Ptr1, void *Ptr2, Cardinal * Ptr3,
   InsertX = DX;
   InsertY = DY;
   InsertAt = *Ptr3;
+  InsertLast = insert_last;
   Forcible = Force;
 
   /* the operation insert the points to the undo-list */
