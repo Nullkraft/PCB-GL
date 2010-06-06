@@ -1504,6 +1504,7 @@ NotifyMode (void)
 		  /* Convert the resulting polygon(s) into a new set of nodes
 		   * and place them on the page. Delete the original polygon.
 		   */
+		  SaveUndoSerialNumber ();
 		  Flags = ((PolygonType *)Crosshair.AttachedObject.Ptr1)->Flags;
 		  PolyToPolygonsOnLayer (PCB->Data, Crosshair.AttachedObject.Ptr1,
 					 result, Flags);
@@ -1517,6 +1518,7 @@ NotifyMode (void)
 				Crosshair.AttachedObject.Ptr1,
 				Crosshair.AttachedObject.Ptr2,
 				Crosshair.AttachedObject.Ptr3);
+		  RestoreUndoSerialNumber ();
 		  IncrementUndoSerialNumber ();
 		  Draw ();
 

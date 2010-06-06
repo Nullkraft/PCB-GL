@@ -2014,7 +2014,6 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
     }
   while ((pa = pa->f) != Input);
 
-  IncrementUndoSerialNumber ();
   SetChangedFlag (true);
 }
 
