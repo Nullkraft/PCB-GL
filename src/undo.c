@@ -766,7 +766,7 @@ UndoInsertPoint (UndoListTypePtr Entry)
   int type;
   Cardinal point_idx;
   Cardinal hole;
-  bool last_in_contour;
+  bool last_in_contour = false;
 
   assert (Entry->Kind == POLYGONPOINT_TYPE);
   /* lookup entry by it's ID */
@@ -866,7 +866,7 @@ UndoInsertContour (UndoListTypePtr Entry)
 {
   void *ptr1, *ptr2, *ptr3;
   void *ptr1b, *ptr2b, *ptr3b;
-  PolygonType *polygon;
+  PolygonType *poly, *poly2;
   int type;
   long int swap_id;
 
@@ -874,7 +874,7 @@ UndoInsertContour (UndoListTypePtr Entry)
 
   /* lookup entry by it's ID */
   type =
-    SearchObjectByID (RemoveList, &ptr1, &ptr2, &ptr3, Entry->ID,
+    SearchObjectByID (RemoveList, &ptr1, &ptr2, &ptr3, Entry->Data.CopyID,
 		      Entry->Kind);
   if (type == NO_TYPE)
     return false;
@@ -882,20 +882,23 @@ UndoInsertContour (UndoListTypePtr Entry)
   type =
     SearchObjectByID (PCB->Data, &ptr1b, &ptr2b, &ptr3b, Entry->ID,
 		      Entry->Kind);
-  if (type != NO_TYPE)
-    {
-      MoveObjectToBuffer (RemoveList, PCB->Data, type, ptr1b, ptr2b, ptr3b);
-      swap_id = Entry->Data.CopyID;
-      Entry->Data.CopyID = Entry->ID;
-      Entry->ID = swap_id;
-      Entry->Type = UNDO_REMOVE_CONTOUR;
-    }
+  if (type == NO_TYPE)
+    return FALSE;
+
+  poly = ptr2;
+  poly2 = ptr2b;
+
+  swap_id = poly->ID;
+  poly->ID = poly2->ID;
+  poly2->ID = swap_id;
+
+  MoveObjectToBuffer (RemoveList, PCB->Data, type, ptr1b, ptr2b, ptr3b);
 
   if (andDraw)
     DrawRecoveredObject (Entry->Kind, ptr1, ptr2, ptr3);
 
-  polygon = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
-  InitClip (PCB->Data, ptr1, polygon);
+  poly = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
+  InitClip (PCB->Data, ptr1b, poly);
   return (true);
 }
 
