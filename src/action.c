@@ -1505,7 +1505,7 @@ NotifyMode (void)
 		   * and place them on the page. Delete the original polygon.
 		   */
 		  SaveUndoSerialNumber ();
-		  Flags = ((PolygonType *)Crosshair.AttachedObject.Ptr1)->Flags;
+		  Flags = ((PolygonType *)Crosshair.AttachedObject.Ptr2)->Flags;
 		  PolyToPolygonsOnLayer (PCB->Data, Crosshair.AttachedObject.Ptr1,
 					 result, Flags);
 		  RemoveObject (POLYGON_TYPE,
@@ -1517,6 +1517,7 @@ NotifyMode (void)
 		  Draw ();
 
 		/* reset state of attached line */
+		memset (&Crosshair.AttachedPolygon, 0, sizeof (PolygonType));
 		Crosshair.AttachedLine.State = STATE_FIRST;
 		addedLines = 0;
 
@@ -6288,7 +6289,8 @@ ActionUndo (int argc, char **argv, int x, int y)
   if (!function || !*function)
     {
       /* don't allow undo in the middle of an operation */
-      if (Crosshair.AttachedObject.State != STATE_FIRST)
+      if (Settings.Mode != POLYGONHOLE_MODE &&
+	  Crosshair.AttachedObject.State != STATE_FIRST)
 	return 1;
       if (Crosshair.AttachedBox.State != STATE_FIRST
 	  && Settings.Mode != ARC_MODE)
@@ -6296,7 +6298,9 @@ ActionUndo (int argc, char **argv, int x, int y)
       /* undo the last operation */
 
       HideCrosshair (true);
-      if (Settings.Mode == POLYGON_MODE && Crosshair.AttachedPolygon.PointN)
+      if ((Settings.Mode == POLYGON_MODE ||
+           Settings.Mode == POLYGONHOLE_MODE) &&
+          Crosshair.AttachedPolygon.PointN)
 	{
 	  GoToPreviousPoint ();
 	  RestoreCrosshair (true);
@@ -6458,7 +6462,8 @@ three "undone" lines.
 static int
 ActionRedo (int argc, char **argv, int x, int y)
 {
-  if ((Settings.Mode == POLYGON_MODE &&
+  if (((Settings.Mode == POLYGON_MODE ||
+        Settings.Mode == POLYGONHOLE_MODE) &&
        Crosshair.AttachedPolygon.PointN) ||
       Crosshair.AttachedLine.State == STATE_SECOND)
     return 1;
