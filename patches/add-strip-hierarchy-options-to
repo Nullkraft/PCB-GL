@@ -1,7 +1,7 @@
-Bottom: 4df45dd136cf94e3e6ccc62a347413a76b5eea7e
-Top:    546125c5fee2f8f95a764088c9450faaad98dd9b
+Bottom: d54a506377994ab6f494c89c8181bd7a0eea4db7
+Top:    07d90e99037bf36c4633e627a2da597c4d48201c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-05 13:09:29 +0100
+Date:   2010-06-06 23:41:41 +0100
 
 Add strip hierarchy options to display refdes without any "..../" prefix
 
@@ -17,10 +17,10 @@ Add strip hierarchy options to display refdes without any "..../" prefix
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 6546be1..46f45a0 100644
+index 5f1c7a1..1ffd57b 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -3326,9 +3326,16 @@ ActionRenumber (int argc, char **argv, int x, int y)
+@@ -3436,9 +3436,16 @@ ActionRenumber (int argc, char **argv, int x, int y)
        /* If there is no refdes, maybe just spit out a warning */
        if (NAMEONPCB_NAME (element_list[i]))
  	{
@@ -38,7 +38,7 @@ index 6546be1..46f45a0 100644
  	  while (tmps[j] && (tmps[j] < '0' || tmps[j] > '9')
  		 && tmps[j] != '?')
  	    j++;
-@@ -4691,6 +4698,79 @@ ActionToggleHideName (int argc, char **argv, int x, int y)
+@@ -4801,6 +4808,79 @@ ActionToggleHideName (int argc, char **argv, int x, int y)
  
  /* --------------------------------------------------------------------------- */
  
@@ -118,7 +118,7 @@ index 6546be1..46f45a0 100644
  static const char changejoin_syntax[] =
    "ChangeJoin(ToggleObject|SelectedLines|SelectedArcs|Selected)";
  
-@@ -7861,6 +7941,9 @@ HID_Action action_action_list[] = {
+@@ -7975,6 +8055,9 @@ HID_Action action_action_list[] = {
    {"ToggleHideName", 0, ActionToggleHideName,
     togglehidename_help, togglehidename_syntax}
    ,
@@ -129,10 +129,10 @@ index 6546be1..46f45a0 100644
     undo_help, undo_syntax}
    ,
 diff --git a/src/const.h b/src/const.h
-index 2f97d4e..0cbfd0e 100644
+index 676a6f0..684d237 100644
 --- a/src/const.h
 +++ b/src/const.h
-@@ -169,6 +169,8 @@ Marker used internally to avoid revisiting an object.
+@@ -170,6 +170,8 @@ Marker used internally to avoid revisiting an object.
  @item 0x10000 nopaste
  For pads, set to prevent a solderpaste stencil opening for the
  pad.  Primarily used for pads used as fiducials.
@@ -141,7 +141,7 @@ index 2f97d4e..0cbfd0e 100644
  @end table
  %end-doc */
  
-@@ -205,6 +207,7 @@ pad.  Primarily used for pads used as fiducials.
+@@ -206,6 +208,7 @@ pad.  Primarily used for pads used as fiducials.
  #define EDGE2FLAG               0x4000	/* Padr.Point2 is closer to outside edge */
  					/* also pinout text for pins is vertical */
  #define VISITFLAG		0x8000  /* marker to avoid re-visiting an object */
