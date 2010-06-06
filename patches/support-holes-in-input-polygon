@@ -5,6 +5,48 @@ Date:   2010-06-05 13:09:31 +0100
 
 Support holes in input polygons (incl. file-format addition)
 
+PCB file-format date is now 20100606, and files saved with this
+or greater PCB versionw will not load with older versions of PCB.
+
+If the board doesn't make use of the polygon hole feature, the
+PCB revision date in the file can be manually reset to 20070407.
+
+The file-format addition is as follows. Previously, a polygon would
+be specified as a series of coordinates, such as:
+
+Layer(1 "component")
+(
+  Polygon("clearpoly")
+  (
+    [6000 6000] [81000 6000] [81000 59000] [6000 59000]
+  )
+)
+
+This commit introduces the ability to specify negative contours
+which form holes in the polygon shape, e.g.:
+
+Layer(1 "component")
+(
+  Polygon("thermal(8t)")
+  (
+    [6000 6000] [81000 6000] [81000 59000] [6000 59000]
+    Hole (
+      [76000 55000] [76000 38000] [58000 38000] [58000 55000]
+    )
+    Hole (
+      [10000 10000] [10000 28000] [27000 28000] [27000 10000]
+    )
+  )
+)
+
+The winding order of the contours specified in the file does not
+matter, since PCB will automatically invert the order of the points
+as necessary (as it always did with the outer contour).
+
+Hole contours should not intersect or self-intersect (although this
+isn't checked for at load time). Hole contours must not intersect
+the polygon's outer contour.
+
 
 ---
 
