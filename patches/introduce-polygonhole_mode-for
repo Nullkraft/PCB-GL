@@ -5,6 +5,23 @@ Date:   2010-06-06 20:27:01 +0100
 
 Introduce POLYGONHOLE_MODE for creating holes in polygons
 
+Having selected polygon hole mode, the first click selects which
+polygon to cut a hole in. A second click defines the start point of
+the hole contour. The tool then behaves in a similar way to the
+polygon drawing tool, with the hole ending when the start point is
+re-clicked.
+
+To avoid creating illegal polygons, the hole drawn is subtracted from
+a representation of the original polygon with the poly_Boolean_free().
+This consolidates any contours it intersects with and prevents the user
+defining contours which intersect each other. (Although we don't
+currently prevent the the user drawing self-intersecting contours).
+
+The resulting POLYAREA is re-processed into PolygonType objects,
+potentially more than one - if the hole drawn bisects the original
+polygon. To keep undo operations simple, these are added as completely
+new objects and the original polygon is deleted - along with its ID.
+
 
 ---
 
