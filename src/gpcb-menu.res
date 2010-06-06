@@ -516,6 +516,7 @@ PopupMenus =
        {"Copy" checked=copymode,1 Mode(Copy)}
        {"Lock" checked=lockmode,1 Mode(Lock)}
        {"Cancel" Mode(Escape) a={"Esc" "<Key>Escape"}}
+       {"PolygonHole" checked=polygonholemode,1 Mode(PolygonHole)}
       }
     }
   }
