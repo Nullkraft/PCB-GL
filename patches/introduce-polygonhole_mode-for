@@ -1,5 +1,5 @@
 Bottom: 1878654fc938fe8a800bbfc9486c5423756d24f2
-Top:    1d69a85e74e590a37441e65b8c829905e5157241
+Top:    1b779c603a5c2ecd607b6381f9e8b85811583918
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-06 20:27:01 +0100
 
@@ -26,7 +26,7 @@ new objects and the original polygon is deleted - along with its ID.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 7655a8d..1cc189f 100644
+index 7655a8d..1ffd57b 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -145,6 +145,7 @@ typedef enum
@@ -53,7 +53,7 @@ index 7655a8d..1cc189f 100644
        AdjustAttachedLine ();
        break;
        /* line creation mode */
-@@ -1448,6 +1451,100 @@ NotifyMode (void)
+@@ -1448,6 +1451,101 @@ NotifyMode (void)
  	break;
        }
  
@@ -111,7 +111,7 @@ index 7655a8d..1cc189f 100644
 +		   * and place them on the page. Delete the original polygon.
 +		   */
 +		  SaveUndoSerialNumber ();
-+		  Flags = ((PolygonType *)Crosshair.AttachedObject.Ptr1)->Flags;
++		  Flags = ((PolygonType *)Crosshair.AttachedObject.Ptr2)->Flags;
 +		  PolyToPolygonsOnLayer (PCB->Data, Crosshair.AttachedObject.Ptr1,
 +					 result, Flags);
 +		  RemoveObject (POLYGON_TYPE,
@@ -123,6 +123,7 @@ index 7655a8d..1cc189f 100644
 +		  Draw ();
 +
 +		/* reset state of attached line */
++		memset (&Crosshair.AttachedPolygon, 0, sizeof (PolygonType));
 +		Crosshair.AttachedLine.State = STATE_FIRST;
 +		addedLines = 0;
 +
@@ -154,7 +155,7 @@ index 7655a8d..1cc189f 100644
      case PASTEBUFFER_MODE:
        {
  	TextType estr[MAX_ELEMENTNAMES];
-@@ -3022,6 +3119,16 @@ ActionMode (int argc, char **argv, int x, int y)
+@@ -3022,6 +3120,16 @@ ActionMode (int argc, char **argv, int x, int y)
  		  }
  		break;
  
@@ -171,7 +172,7 @@ index 7655a8d..1cc189f 100644
  	      case ARC_MODE:
  		if (Crosshair.AttachedBox.State == STATE_FIRST)
  		  SetMode (ARROW_MODE);
-@@ -3050,6 +3157,9 @@ ActionMode (int argc, char **argv, int x, int y)
+@@ -3050,6 +3158,9 @@ ActionMode (int argc, char **argv, int x, int y)
  	case F_Polygon:
  	  SetMode (POLYGON_MODE);
  	  break;
@@ -181,6 +182,37 @@ index 7655a8d..1cc189f 100644
  #ifndef HAVE_LIBSTROKE
  	case F_Release:
  	  ReleaseMode ();
+@@ -6178,7 +6289,8 @@ ActionUndo (int argc, char **argv, int x, int y)
+   if (!function || !*function)
+     {
+       /* don't allow undo in the middle of an operation */
+-      if (Crosshair.AttachedObject.State != STATE_FIRST)
++      if (Settings.Mode != POLYGONHOLE_MODE &&
++	  Crosshair.AttachedObject.State != STATE_FIRST)
+ 	return 1;
+       if (Crosshair.AttachedBox.State != STATE_FIRST
+ 	  && Settings.Mode != ARC_MODE)
+@@ -6186,7 +6298,9 @@ ActionUndo (int argc, char **argv, int x, int y)
+       /* undo the last operation */
+ 
+       HideCrosshair (true);
+-      if (Settings.Mode == POLYGON_MODE && Crosshair.AttachedPolygon.PointN)
++      if ((Settings.Mode == POLYGON_MODE ||
++           Settings.Mode == POLYGONHOLE_MODE) &&
++          Crosshair.AttachedPolygon.PointN)
+ 	{
+ 	  GoToPreviousPoint ();
+ 	  RestoreCrosshair (true);
+@@ -6348,7 +6462,8 @@ three "undone" lines.
+ static int
+ ActionRedo (int argc, char **argv, int x, int y)
+ {
+-  if ((Settings.Mode == POLYGON_MODE &&
++  if (((Settings.Mode == POLYGON_MODE ||
++        Settings.Mode == POLYGONHOLE_MODE) &&
+        Crosshair.AttachedPolygon.PointN) ||
+       Crosshair.AttachedLine.State == STATE_SECOND)
+     return 1;
 diff --git a/src/const.h b/src/const.h
 index 0cbfd0e..684d237 100644
 --- a/src/const.h
