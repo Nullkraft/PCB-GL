@@ -1,5 +1,5 @@
-Bottom: 86fa4e4337ca70b88584a7d6989ffdac081bc2bf
-Top:    1878654fc938fe8a800bbfc9486c5423756d24f2
+Bottom: 6f10f99b2cc08c5202f4821524011353a205c2b2
+Top:    92efe862e074254f5fdca04862f8b37d5730be9f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-06 22:02:12 +0100
 
@@ -13,23 +13,10 @@ those linked to it into discrete PolygonType objects on the board.
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 971481f..b45ae4d 100644
+index 774c987..ed3eb66 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -327,6 +327,12 @@ original_poly (PolygonType * p)
- }
- 
- POLYAREA *
-+PolygonToPoly (PolygonType *p)
-+{
-+  return original_poly (p);
-+}
-+
-+POLYAREA *
- RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2)
- {
-   PLINE *contour = NULL;
-@@ -1955,6 +1961,62 @@ delete_piece_cb (gpointer data, gpointer userdata)
+@@ -2018,6 +2018,62 @@ delete_piece_cb (gpointer data, gpointer userdata)
    poly_Free (&piece);
  }
  
@@ -92,22 +79,3 @@ index 971481f..b45ae4d 100644
  POLYAREA *board_outline_poly ()
  {
    int i;
-diff --git a/src/polygon.h b/src/polygon.h
-index 6b23e4d..5b3baf6 100644
---- a/src/polygon.h
-+++ b/src/polygon.h
-@@ -50,6 +50,7 @@ int PlowsPolygon (DataType *, int, void *, void *,
- 		  int (*callback) (DataTypePtr, LayerTypePtr, PolygonTypePtr, int, void *, void *));
- void ComputeNoHoles (PolygonType *poly);
- POLYAREA * ContourToPoly (PLINE *);
-+POLYAREA * PolygonToPoly (PolygonType *);
- POLYAREA * RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2);
- POLYAREA * CirclePoly(LocationType x, LocationType y, BDimension radius);
- POLYAREA * OctagonPoly(LocationType x, LocationType y, BDimension radius);
-@@ -70,5 +71,6 @@ bool isects (POLYAREA *, PolygonTypePtr, bool);
- bool MorphPolygon (LayerTypePtr, PolygonTypePtr);
- void NoHolesPolygonDicer (PolygonType *p, const BoxType *clip,
-                           void (*emit) (PLINE *, void *), void *user_data);
-+void PolyToPolygonsOnLayer (DataType *, LayerType *, POLYAREA *, FlagType);
- POLYAREA *board_outline_poly ();
- #endif
