@@ -1,0 +1,22 @@
+Bottom: 04f65ddf71b35703fa480ad40eec903a8e592306
+Top:    86fa4e4337ca70b88584a7d6989ffdac081bc2bf
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-06 22:32:45 +0100
+
+Refresh of support-holes-in-input-polygon
+
+---
+
+diff --git a/src/file.h b/src/file.h
+index e124c4d..4b9ecf2 100644
+--- a/src/file.h
++++ b/src/file.h
+@@ -56,7 +56,7 @@ void sort_netlist (void);
+  * guidance to the user as to what the minimum version of pcb required
+  * is.
+  */
+-#define PCB_FILE_VERSION 20100603
++#define PCB_FILE_VERSION 20100606
+ 
+ 
+ #ifndef HAS_ATEXIT
