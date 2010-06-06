@@ -1,5 +1,5 @@
 Bottom: b8f623e816d9de7dd542f66b2e052ebc45a781ea
-Top:    d5bdc4719e6fa6d97cb112adce59a1b3d2a72c79
+Top:    6101ebeea836128d2a756ee49190ba981817927d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-05 13:09:31 +0100
 
@@ -248,7 +248,7 @@ index 5791dda..e124c4d 100644
  
  #ifndef HAS_ATEXIT
 diff --git a/src/global.h b/src/global.h
-index 62be07f..cf983eb 100644
+index 62be07f..bb78abc 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -260,6 +260,10 @@ struct polygon_st			/* holds information about a polygon */
@@ -262,6 +262,41 @@ index 62be07f..cf983eb 100644
  };
  
  typedef struct			/* holds information about arcs */
+@@ -779,19 +783,21 @@ struct drc_violation_st
+ #define	UNDO_REMOVE			0x0004	/* removing objects */
+ #define	UNDO_REMOVE_POINT		0x0008	/* removing polygon/... points */
+ #define	UNDO_INSERT_POINT		0x0010	/* inserting polygon/... points */
+-#define	UNDO_ROTATE			0x0020	/* rotations */
+-#define	UNDO_CREATE			0x0040	/* creation of objects */
+-#define	UNDO_MOVETOLAYER		0x0080	/* moving objects to */
+-#define UNDO_FLAG			0x0100	/* toggling SELECTED flag */
+-#define UNDO_CHANGESIZE			0x0200	/* change size of object */
+-#define UNDO_CHANGE2NDSIZE		0x0400	/* change 2ndSize of object */
+-#define UNDO_MIRROR			0x0800	/* change side of board */
+-#define UNDO_CHANGECLEARSIZE		0x1000	/* change clearance size */
+-#define UNDO_CHANGEMASKSIZE		0x2000	/* change mask size */
+-#define UNDO_CHANGEANGLES		0x4000	/* change arc angles */
+-#define UNDO_LAYERCHANGE		0x8000	/* layer new/delete/move */
+-#define UNDO_CLEAR		       0x10000  /* clear/restore to polygons */
+-#define UNDO_NETLISTCHANGE     	       0x20000	/* netlist change */
++#define	UNDO_REMOVE_CONTOUR		0x0020	/* removing a contour from a polygon */
++#define	UNDO_INSERT_CONTOUR		0x0040	/* inserting a contour from a polygon */
++#define	UNDO_ROTATE			0x0080	/* rotations */
++#define	UNDO_CREATE			0x0100	/* creation of objects */
++#define	UNDO_MOVETOLAYER		0x0200	/* moving objects to */
++#define	UNDO_FLAG			0x0400	/* toggling SELECTED flag */
++#define	UNDO_CHANGESIZE			0x0800	/* change size of object */
++#define	UNDO_CHANGE2NDSIZE		0x1000	/* change 2ndSize of object */
++#define	UNDO_MIRROR			0x2000	/* change side of board */
++#define	UNDO_CHANGECLEARSIZE		0x4000	/* change clearance size */
++#define	UNDO_CHANGEMASKSIZE		0x8000	/* change mask size */
++#define	UNDO_CHANGEANGLES	       0x10000	/* change arc angles */
++#define	UNDO_LAYERCHANGE	       0x20000	/* layer new/delete/move */
++#define	UNDO_CLEAR		       0x40000	/* clear/restore to polygons */
++#define	UNDO_NETLISTCHANGE	       0x80000	/* netlist change */
+ 
+ 
+ /* ---------------------------------------------------------------------------
 diff --git a/src/insert.c b/src/insert.c
 index b4bcfe7..094e567 100644
 --- a/src/insert.c
@@ -370,7 +405,7 @@ index 0f3b72e..8aa754c 100644
  NetList		{ return(T_NETLIST); }
  Net		{ return(T_NET); }
 diff --git a/src/parse_y.y b/src/parse_y.y
-index 1d64fe8..48d83dd 100644
+index 1d64fe8..a5b2d23 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
 @@ -102,9 +102,8 @@ static int check_file_version (int);
@@ -429,7 +464,7 @@ index 1d64fe8..48d83dd 100644
  )
  @end syntax
  
-@@ -1132,10 +1112,55 @@ Polygon (SFlags) (
+@@ -1132,10 +1112,67 @@ Polygon (SFlags) (
  Symbolic or numeric flags.
  @item X Y
  Coordinates of each vertex.  You must list at least three coordinates.
@@ -448,23 +483,35 @@ index 1d64fe8..48d83dd 100644
 +		  polygonpoints
 +		  polygonholes ')'
 +			{
-+					/* ignore junk */
-+#warning FIXME FOR HOLES AS WELL
-+				if (Polygon->PointN >= 3)
++				Cardinal contour, contour_start, contour_end;
++				bool bad_contour_found = false;
++				/* ignore junk */
++				for (contour = 0; contour <= Polygon->HoleIndexN; contour++)
++				  {
++				    contour_start = (contour == 0) ?
++						      0 : Polygon->HoleIndex[contour - 1];
++				    contour_end = (contour == Polygon->HoleIndexN) ?
++						 Polygon->PointN :
++						 Polygon->HoleIndex[contour];
++				    if (contour_end - contour_start < 3)
++				      bad_contour_found = true;
++				  }
++
++				if (bad_contour_found)
++				  {
++				    Message("WARNING parsing file '%s'\n"
++					    "    line:        %i\n"
++					    "    description: 'ignored polygon (< 3 points in a contour)'\n",
++					    yyfilename, yylineno);
++				    DestroyObject(yyData, POLYGON_TYPE, Layer, Polygon, Polygon);
++				  }
++				else
 +				  {
 +				    SetPolygonBoundingBox (Polygon);
 +				    if (!Layer->polygon_tree)
 +				      Layer->polygon_tree = r_create_tree (NULL, 0, 0);
 +				    r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
 +				  }
-+				else
-+				{
-+					Message("WARNING parsing file '%s'\n"
-+						"    line:        %i\n"
-+						"    description: 'ignored polygon (< 3 points)'\n",
-+						yyfilename, yylineno);
-+					DestroyObject(yyData, POLYGON_TYPE, Layer, Polygon, Polygon);
-+				}
 +			}
 +		;
 +
@@ -749,7 +796,7 @@ index 5fc0cd5..6b23e4d 100644
  					LocationType, LocationType);
  bool RemoveExcessPolygonPoints (LayerTypePtr, PolygonTypePtr);
 diff --git a/src/remove.c b/src/remove.c
-index a537bc0..fd939fa 100644
+index a537bc0..98b9ade 100644
 --- a/src/remove.c
 +++ b/src/remove.c
 @@ -74,6 +74,7 @@ static void *DestroyElement (ElementTypePtr);
@@ -802,7 +849,7 @@ index a537bc0..fd939fa 100644
    SetPolygonBoundingBox (Polygon);
    r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
    InitClip (PCB->Data, Layer, Polygon);
-@@ -481,41 +498,97 @@ RemovePolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -481,41 +498,100 @@ RemovePolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -826,6 +873,9 @@ index a537bc0..fd939fa 100644
 +      if (!Bulk)
 +        Draw ();
 +    }
++
++  /* Copy the polygon to the undo list */
++  AddObjectToRemoveContourUndoList (POLYGON_TYPE, Layer, Polygon);
 +
 +  contour_start = (contour == 0) ? 0 : Polygon->HoleIndex[contour - 1];
 +  contour_end = (contour == Polygon->HoleIndexN) ? Polygon->PointN :
@@ -939,10 +989,19 @@ index 6a1c47b..dc01153 100644
  		 TEST_FLAG (LOCKFLAG, Polygon) ? "It is LOCKED\n" : "");
  	break;
 diff --git a/src/undo.c b/src/undo.c
-index 50c6de5..2483975 100644
+index 50c6de5..d836fd4 100644
 --- a/src/undo.c
 +++ b/src/undo.c
-@@ -778,15 +778,8 @@ UndoInsertPoint (UndoListTypePtr Entry)
+@@ -184,6 +184,8 @@ static bool UndoMove (UndoListTypePtr);
+ static bool UndoRemove (UndoListTypePtr);
+ static bool UndoRemovePoint (UndoListTypePtr);
+ static bool UndoInsertPoint (UndoListTypePtr);
++static bool UndoRemoveContour (UndoListTypePtr);
++static bool UndoInsertContour (UndoListTypePtr);
+ static bool UndoMoveToLayer (UndoListTypePtr);
+ static bool UndoFlag (UndoListTypePtr);
+ static bool UndoMirror (UndoListTypePtr);
+@@ -778,15 +780,7 @@ UndoInsertPoint (UndoListTypePtr Entry)
  	Entry->ID = polygon->ID;
  	Entry->Kind = POLYGON_TYPE;
  	Entry->Type = UNDO_REMOVE_POINT;
@@ -955,12 +1014,109 @@ index 50c6de5..2483975 100644
 -	    }
 -	}
 -	END_LOOP;
-+#warning Any implication for holes? Do we need to store which contour the insert was in?
 +	Entry->Data.RemovedPoint.Index = polygon_point_idx (polygon, pnt);
  	DestroyObject (PCB->Data, POLYGONPOINT_TYPE, layer, polygon, pnt);
  	if (andDraw && layer->On)
  	  DrawPolygon (layer, polygon, 0);
-@@ -1233,6 +1226,8 @@ AddObjectToRemovePointUndoList (int Type,
+@@ -799,6 +793,80 @@ UndoInsertPoint (UndoListTypePtr Entry)
+ }
+ 
+ /* ---------------------------------------------------------------------------
++ * recovers an removed polygon point
++ * returns true on success
++ */
++static bool
++UndoRemoveContour (UndoListTypePtr Entry)
++{
++  void *ptr1, *ptr2, *ptr3;
++  void *ptr1b, *ptr2b, *ptr3b;
++  PolygonType *polygon;
++  int type;
++
++  assert (Entry->Kind == POLYGON_TYPE);
++
++  /* lookup entry by it's ID */
++  type =
++    SearchObjectByID (RemoveList, &ptr1, &ptr2, &ptr3, Entry->ID,
++		      Entry->Kind);
++  if (type == NO_TYPE)
++    return false;
++
++  type =
++    SearchObjectByID (PCB->Data, &ptr1b, &ptr2b, &ptr3b, Entry->ID,
++		      Entry->Kind);
++  if (type != NO_TYPE)
++    MoveObjectToBuffer (RemoveList, PCB->Data, type, ptr1b, ptr2b, ptr3b);
++
++  if (andDraw)
++    DrawRecoveredObject (Entry->Kind, ptr1, ptr2, ptr3);
++
++  polygon = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
++#warning WHY IS INITCLIP NEEDED HERE?
++  InitClip (PCB->Data, ptr1, polygon);
++  Entry->Type = UNDO_INSERT_CONTOUR;
++  return (true);
++}
++
++/* ---------------------------------------------------------------------------
++ * recovers an inserted polygon point
++ * returns true on success
++ */
++static bool
++UndoInsertContour (UndoListTypePtr Entry)
++{
++  void *ptr1, *ptr2, *ptr3;
++  void *ptr1b, *ptr2b, *ptr3b;
++  PolygonType *polygon;
++  int type;
++
++  assert (Entry->Kind == POLYGON_TYPE);
++
++  /* lookup entry by it's ID */
++  type =
++    SearchObjectByID (RemoveList, &ptr1, &ptr2, &ptr3, Entry->ID,
++		      Entry->Kind);
++  if (type == NO_TYPE)
++    return false;
++
++  type =
++    SearchObjectByID (PCB->Data, &ptr1b, &ptr2b, &ptr3b, Entry->ID,
++		      Entry->Kind);
++  if (type != NO_TYPE)
++    MoveObjectToBuffer (RemoveList, PCB->Data, type, ptr1b, ptr2b, ptr3b);
++
++  if (andDraw)
++    DrawRecoveredObject (Entry->Kind, ptr1, ptr2, ptr3);
++
++  polygon = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
++#warning WHY IS INITCLIP NEEDED HERE?
++  InitClip (PCB->Data, ptr1, polygon);
++  Entry->Type = UNDO_REMOVE_CONTOUR;
++  return (true);
++}
++
++/* ---------------------------------------------------------------------------
+  * undo a layer change
+  * returns true on success
+  */
+@@ -969,6 +1037,16 @@ PerformUndo (UndoListTypePtr ptr)
+ 	return (UNDO_INSERT_POINT);
+       break;
+ 
++    case UNDO_REMOVE_CONTOUR:
++      if (UndoRemoveContour (ptr))
++	return (UNDO_REMOVE_CONTOUR);
++      break;
++
++    case UNDO_INSERT_CONTOUR:
++      if (UndoInsertContour (ptr))
++	return (UNDO_INSERT_CONTOUR);
++      break;
++
+     case UNDO_ROTATE:
+       if (UndoRotate (ptr))
+ 	return (UNDO_ROTATE);
+@@ -1233,6 +1311,8 @@ AddObjectToRemovePointUndoList (int Type,
  	    /* save the ID of the parent object; else it will be
  	     * impossible to recover the point
  	     */
@@ -969,3 +1125,67 @@ index 50c6de5..2483975 100644
  	    undo =
  	      GetUndoSlot (UNDO_REMOVE_POINT, OBJECT_ID (polygon),
  			   POLYGON_TYPE);
+@@ -1259,6 +1339,50 @@ AddObjectToInsertPointUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
+ }
+ 
+ /* ---------------------------------------------------------------------------
++ * adds an object to the list of removed contours
++ * (Actually just takes a copy of the whole polygon to restore)
++ */
++void
++AddObjectToRemoveContourUndoList (int Type,
++				  LayerType *Layer, PolygonType *Polygon)
++{
++  UndoListTypePtr undo;
++  PolygonType *copy;
++
++  if (Locked)
++    return;
++
++  if (!RemoveList)
++    RemoveList = CreateNewBuffer ();
++
++  undo = GetUndoSlot (UNDO_REMOVE_CONTOUR, OBJECT_ID (Polygon), POLYGON_TYPE);
++  copy = CopyObjectToBuffer (RemoveList, PCB->Data, Type, Layer, Polygon, NULL);
++  copy->ID = Polygon->ID;
++  copy->Flags = Polygon->Flags;
++}
++
++/* ---------------------------------------------------------------------------
++ * adds an object to the list of insert contours
++ * (Actually just takes a copy of the whole polygon to restore)
++ */
++void
++AddObjectToInsertContourUndoList (int Type,
++				  LayerType *Layer, PolygonType *Polygon)
++{
++  UndoListTypePtr undo;
++
++  if (Locked)
++    return;
++
++  if (!RemoveList)
++    RemoveList = CreateNewBuffer ();
++
++  undo = GetUndoSlot (UNDO_REMOVE_CONTOUR, OBJECT_ID (Polygon), POLYGON_TYPE);
++  CopyObjectToBuffer (RemoveList, PCB->Data, Type, Layer, Polygon, NULL);
++  /* Copy thing to ... */
++}
++
++/* ---------------------------------------------------------------------------
+  * adds an object to the list of moved objects
+  */
+ void
+diff --git a/src/undo.h b/src/undo.h
+index c7a0288..0a4601f 100644
+--- a/src/undo.h
++++ b/src/undo.h
+@@ -47,6 +47,8 @@ void ClearUndoList (bool);
+ void MoveObjectToRemoveUndoList (int, void *, void *, void *);
+ void AddObjectToRemovePointUndoList (int, void *, void *, Cardinal);
+ void AddObjectToInsertPointUndoList (int, void *, void *, void *);
++void AddObjectToRemoveContourUndoList (int, LayerType *, PolygonType *);
++void AddObjectToInsertContourUndoList (int, LayerType *, PolygonType *);
+ void AddObjectToMoveUndoList (int, void *, void *, void *,
+ 			      LocationType, LocationType);
+ void AddObjectToChangeNameUndoList (int, void *, void *, void *, char *);
