@@ -1,0 +1,452 @@
+Bottom: 04f65ddf71b35703fa480ad40eec903a8e592306
+Top:    98ec37c1a5fc7c3e764481f293bb05ed99c6560e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-06 20:27:12 +0100
+
+Refresh of introduce-polygonhole_mode-for
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 7655a8d..3ceda45 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -145,6 +145,7 @@ typedef enum
+   F_PinOrPadName,
+   F_Pinout,
+   F_Polygon,
++  F_PolygonHole,
+   F_PreviousPoint,
+   F_RatsNest,
+   F_Rectangle,
+@@ -380,6 +381,7 @@ static FunctionType Functions[] = {
+   {"PinOrPadName", F_PinOrPadName},
+   {"Pinout", F_Pinout},
+   {"Polygon", F_Polygon},
++  {"PolygonHole", F_PolygonHole},
+   {"PreviousPoint", F_PreviousPoint},
+   {"RatsNest", F_RatsNest},
+   {"Rectangle", F_Rectangle},
+@@ -843,6 +845,7 @@ AdjustAttachedObjects (void)
+ 
+       /* polygon creation mode */
+     case POLYGON_MODE:
++    case POLYGONHOLE_MODE:
+       AdjustAttachedLine ();
+       break;
+       /* line creation mode */
+@@ -1448,6 +1451,104 @@ NotifyMode (void)
+ 	break;
+       }
+ 
++    case POLYGONHOLE_MODE:
++      {
++	switch (Crosshair.AttachedObject.State)
++	  {
++	    /* first notify, lookup object */
++	  case STATE_FIRST:
++	    Crosshair.AttachedObject.Type =
++	      SearchScreen (Note.X, Note.Y, POLYGON_TYPE,
++			    &Crosshair.AttachedObject.Ptr1,
++			    &Crosshair.AttachedObject.Ptr2,
++			    &Crosshair.AttachedObject.Ptr3);
++
++	    if (Crosshair.AttachedObject.Type != NO_TYPE)
++	      {
++		if (TEST_FLAG (LOCKFLAG, (PolygonTypePtr)
++			       Crosshair.AttachedObject.Ptr2))
++		  {
++		    Message (_("Sorry, the object is locked\n"));
++		    Crosshair.AttachedObject.Type = NO_TYPE;
++		    break;
++		  }
++		else
++		  Crosshair.AttachedObject.State = STATE_SECOND;
++	      }
++	    break;
++
++            /* second notify, insert new point into object */
++          case STATE_SECOND:
++            {
++	      PointTypePtr points = Crosshair.AttachedPolygon.Points;
++	      Cardinal n = Crosshair.AttachedPolygon.PointN;
++	      POLYAREA *original, *new_hole, *result;
++	      FlagType Flags;
++
++	      /* do update of position; use the 'LINE_MODE' mechanism */
++	      NotifyLine ();
++
++	      /* check if this is the last point of a polygon */
++	      if (n >= 3 &&
++		  points->X == Crosshair.AttachedLine.Point2.X &&
++		  points->Y == Crosshair.AttachedLine.Point2.Y)
++		{
++		  /* Create POLYAREAs from the original polygon
++		   * and the new hole polygon */
++		  original = PolygonToPoly (Crosshair.AttachedObject.Ptr2);
++		  new_hole = PolygonToPoly (&Crosshair.AttachedPolygon);
++
++		  /* Subtract the hole from the original polygon shape */
++		  poly_Boolean_free (original, new_hole, &result, PBO_SUB);
++
++		  /* Convert the resulting polygon(s) into a new set of nodes
++		   * and place them on the page. Delete the original polygon.
++		   */
++		  Flags = ((PolygonType *)Crosshair.AttachedObject.Ptr1)->Flags;
++		  PolyToPolygonsOnLayer (PCB->Data, Crosshair.AttachedObject.Ptr1,
++					 result, Flags);
++#if 0
++		  DestroyObject (PCB->Data, POLYGON_TYPE,
++				 Crosshair.AttachedObject.Ptr1,
++				 Crosshair.AttachedObject.Ptr2,
++				 Crosshair.AttachedObject.Ptr3);
++#endif
++		  RemoveObject (POLYGON_TYPE,
++				Crosshair.AttachedObject.Ptr1,
++				Crosshair.AttachedObject.Ptr2,
++				Crosshair.AttachedObject.Ptr3);
++		  IncrementUndoSerialNumber ();
++		  Draw ();
++
++		/* reset state of attached line */
++		Crosshair.AttachedLine.State = STATE_FIRST;
++		addedLines = 0;
++
++		  break;
++		}
++
++	      /* create new point if it's the first one or if it's
++	       * different to the last one
++	       */
++	      if (!n ||
++		  points[n - 1].X != Crosshair.AttachedLine.Point2.X ||
++		  points[n - 1].Y != Crosshair.AttachedLine.Point2.Y)
++		{
++		  CreateNewPointInPolygon (&Crosshair.AttachedPolygon,
++					   Crosshair.AttachedLine.Point2.X,
++					   Crosshair.AttachedLine.Point2.Y);
++
++		  /* copy the coordinates */
++		  Crosshair.AttachedLine.Point1.X = Crosshair.AttachedLine.Point2.X;
++		  Crosshair.AttachedLine.Point1.Y = Crosshair.AttachedLine.Point2.Y;
++		}
++	      break;
++	    }
++	  }
++
++	break;
++      }
++
+     case PASTEBUFFER_MODE:
+       {
+ 	TextType estr[MAX_ELEMENTNAMES];
+@@ -3022,6 +3123,16 @@ ActionMode (int argc, char **argv, int x, int y)
+ 		  }
+ 		break;
+ 
++	      case POLYGONHOLE_MODE:
++		if (Crosshair.AttachedLine.State == STATE_FIRST)
++		  SetMode (ARROW_MODE);
++		else
++		  {
++		    SetMode (NO_MODE);
++		    SetMode (POLYGONHOLE_MODE);
++		  }
++		break;
++
+ 	      case ARC_MODE:
+ 		if (Crosshair.AttachedBox.State == STATE_FIRST)
+ 		  SetMode (ARROW_MODE);
+@@ -3050,6 +3161,9 @@ ActionMode (int argc, char **argv, int x, int y)
+ 	case F_Polygon:
+ 	  SetMode (POLYGON_MODE);
+ 	  break;
++	case F_PolygonHole:
++	  SetMode (POLYGONHOLE_MODE);
++	  break;
+ #ifndef HAVE_LIBSTROKE
+ 	case F_Release:
+ 	  ReleaseMode ();
+diff --git a/src/const.h b/src/const.h
+index 0cbfd0e..684d237 100644
+--- a/src/const.h
++++ b/src/const.h
+@@ -92,6 +92,7 @@
+ #define ARROW_MODE		110	/* selection with arrow mode */
+ #define PAN_MODE                0	/* same as no mode */
+ #define LOCK_MODE               111	/* lock/unlock objects */
++#define	POLYGONHOLE_MODE	112	/* cut holes in filled polygons */
+ 
+ /* ---------------------------------------------------------------------------
+  * object flags
+diff --git a/src/crosshair.c b/src/crosshair.c
+index a56a2ed..ac22277 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -588,8 +588,9 @@ DrawAttached (bool BlockToo)
+ 	}
+       break;
+ 
+-      /* the attached line is used by both LINEMODE and POLYGON_MODE */
++      /* the attached line is used by both LINEMODE, POLYGON_MODE and POLYGONHOLE_MODE*/
+     case POLYGON_MODE:
++    case POLYGONHOLE_MODE:
+       /* draw only if starting point is set */
+       if (Crosshair.AttachedLine.State != STATE_FIRST)
+ 	gui->draw_line (Crosshair.GC,
+@@ -598,7 +599,7 @@ DrawAttached (bool BlockToo)
+ 			Crosshair.AttachedLine.Point2.X,
+ 			Crosshair.AttachedLine.Point2.Y);
+ 
+-      /* draw attached polygon only if in POLYGON_MODE */
++      /* draw attached polygon only if in POLYGON_MODE or POLYGONHOLE_MODE */
+       if (Crosshair.AttachedPolygon.PointN > 1)
+ 	{
+ 	  XORPolygon (&Crosshair.AttachedPolygon, 0, 0);
+diff --git a/src/flags.c b/src/flags.c
+index 41e0b55..60688dd 100644
+--- a/src/flags.c
++++ b/src/flags.c
+@@ -192,6 +192,7 @@ HID_Flag flags_flag_list[] = {
+   {"movemode", FlagMode, MOVE_MODE},
+   {"pastebuffermode", FlagMode, PASTEBUFFER_MODE},
+   {"polygonmode", FlagMode, POLYGON_MODE},
++  {"polygonholemode", FlagMode, POLYGONHOLE_MODE},
+   {"rectanglemode", FlagMode, RECTANGLE_MODE},
+   {"removemode", FlagMode, REMOVE_MODE},
+   {"rotatemode", FlagMode, ROTATE_MODE},
+diff --git a/src/gpcb-menu.res b/src/gpcb-menu.res
+index 1237607..e6f7a12 100644
+--- a/src/gpcb-menu.res
++++ b/src/gpcb-menu.res
+@@ -516,6 +516,7 @@ PopupMenus =
+        {"Copy" checked=copymode,1 Mode(Copy)}
+        {"Lock" checked=lockmode,1 Mode(Lock)}
+        {"Cancel" Mode(Escape) a={"Esc" "<Key>Escape"}}
++       {"PolygonHole" checked=polygonholemode,1 Mode(PolygonHole)}
+       }
+     }
+   }
+diff --git a/src/hid/gtk/gui-icons-mode-buttons.data b/src/hid/gtk/gui-icons-mode-buttons.data
+index 1938ee2..be040f1 100644
+--- a/src/hid/gtk/gui-icons-mode-buttons.data
++++ b/src/hid/gtk/gui-icons-mode-buttons.data
+@@ -283,6 +283,34 @@ static char *poly[] = {
+ "ooooooooooooooooooooo"
+ };
+ 
++/* XPM */
++static char * polyhole[] = {
++"21 21 3 1",
++" 	c None",
++".	c #6EA5D7",
++"+	c #000000",
++"        ..           ",
++"       ...           ",
++"      .....          ",
++"     .......         ",
++"    .........        ",
++"  ....+++++...       ",
++"  ....+   +....      ",
++"  ...+    +.....     ",
++"  ...++++++......    ",
++"  ................   ",
++"  .................  ",
++"                     ",
++"  +  +  ++  +   +++  ",
++"  +  + +  + +   +    ",
++"  +  + +  + +   +    ",
++"  ++++ +  + +   +++  ",
++"  +  + +  + +   +    ",
++"  +  + +  + +   +    ",
++"  +  + +  + +   +    ",
++"  +  +  ++  +++ +++  ",
++"                     "
++};
+ 
+ /* XPM */
+ static char *rect[] = {
+diff --git a/src/hid/gtk/gui-misc.c b/src/hid/gtk/gui-misc.c
+index 32ca1c9..a607a69 100644
+--- a/src/hid/gtk/gui-misc.c
++++ b/src/hid/gtk/gui-misc.c
+@@ -220,6 +220,7 @@ ghid_mode_cursor (int Mode)
+       break;
+ 
+     case POLYGON_MODE:
++    case POLYGONHOLE_MODE:
+       gport_set_cursor (GDK_SB_UP_ARROW);
+       break;
+ 
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 17f8162..322e37d 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -461,6 +461,7 @@ have_crosshair_attachments (void)
+       result = TRUE;
+       break;
+     case POLYGON_MODE:
++    case POLYGONHOLE_MODE:
+       if (Crosshair.AttachedLine.State != STATE_FIRST)
+ 	result = TRUE;
+       break;
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 9ba50ce..5d16fb6 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -1985,6 +1985,7 @@ static ModeButton mode_buttons[] = {
+   {NULL, NULL, NULL, "text", TEXT_MODE, text},
+   {NULL, NULL, NULL, "rectangle", RECTANGLE_MODE, rect},
+   {NULL, NULL, NULL, "polygon", POLYGON_MODE, poly},
++  {NULL, NULL, NULL, "polygonhole", POLYGONHOLE_MODE, polyhole},
+   {NULL, NULL, NULL, "buffer", PASTEBUFFER_MODE, buf},
+   {NULL, NULL, NULL, "remove", REMOVE_MODE, del},
+   {NULL, NULL, NULL, "rotate", ROTATE_MODE, rot},
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 3280032..e16397e 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -2631,6 +2631,10 @@ idle_proc (XtPointer dummy)
+ 	    s = "Polygon";
+ 	    cursor = XC_sb_up_arrow;
+ 	    break;
++	  case POLYGONHOLE_MODE:
++	    s = "Polygon Hole";
++	    cursor = XC_sb_up_arrow;
++	    break;
+ 	  case PASTEBUFFER_MODE:
+ 	    s = "Paste";
+ 	    cursor = XC_hand1;
+diff --git a/src/pcb-menu.res b/src/pcb-menu.res
+index cbdcd2d..e9ed58b 100644
+--- a/src/pcb-menu.res
++++ b/src/pcb-menu.res
+@@ -184,6 +184,7 @@ MainMenu =
+    {"Copy" checked=copymode,1 Mode(Copy)}
+    {"Lock" checked=lockmode,1 Mode(Lock)}
+    {"Cancel" Mode(Cancel) a={"Esc" "<Key>Escape"}}
++   {"PolygonHole" checked=polygonholemode,1 Mode(PolygonHole)}
+    -
+    {"Command" Command() a={":" "<Key>:"}}
+   }
+diff --git a/src/polygon.c b/src/polygon.c
+index 971481f..57d8df6 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -275,7 +275,7 @@ ContourToPoly (PLINE * contour)
+   return p;
+ }
+ 
+-static POLYAREA *
++POLYAREA *
+ original_poly (PolygonType * p)
+ {
+   PLINE *contour = NULL;
+@@ -327,6 +327,12 @@ original_poly (PolygonType * p)
+ }
+ 
+ POLYAREA *
++PolygonToPoly (PolygonType *p)
++{
++  return original_poly (p);
++}
++
++POLYAREA *
+ RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2)
+ {
+   PLINE *contour = NULL;
+@@ -1955,6 +1961,63 @@ delete_piece_cb (gpointer data, gpointer userdata)
+   poly_Free (&piece);
+ }
+ 
++/* Convert a POLYAREA (and all linked POLYAREA) to
++ * raw PCB polygons on the given layer.
++ */
++void
++PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
++                       POLYAREA *Input, FlagType Flags)
++{
++  PolygonType *Polygon;
++  POLYAREA *pa;
++  PLINE *pline;
++  VNODE *node;
++  bool outer;
++
++  if (Input == NULL)
++    return;
++
++  pa = Input;
++  do
++    {
++      Polygon = CreateNewPolygon (Layer, Flags);
++
++      pline = pa->contours;
++      outer = true;
++
++      do
++        {
++          if (!outer)
++            CreateNewHoleInPolygon (Polygon);
++          outer = false;
++
++          node = &pline->head;
++          do
++            {
++              CreateNewPointInPolygon (Polygon, node->point[0],
++                                                node->point[1]);
++            }
++          while ((node = node->next) != &pline->head);
++
++        }
++      while ((pline = pline->next) != NULL);
++
++      InitClip (Destination, Layer, Polygon);
++      SetPolygonBoundingBox (Polygon);
++      if (!Layer->polygon_tree)
++        Layer->polygon_tree = r_create_tree (NULL, 0, 0);
++      r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
++
++      DrawPolygon (Layer, Polygon, 0);
++      /* add to undo list */
++      AddObjectToCreateUndoList (POLYGON_TYPE, Layer, Polygon, Polygon);
++    }
++  while ((pa = pa->f) != Input);
++
++  IncrementUndoSerialNumber ();
++  SetChangedFlag (true);
++}
++
+ POLYAREA *board_outline_poly ()
+ {
+   int i;
+diff --git a/src/polygon.h b/src/polygon.h
+index 6b23e4d..5b3baf6 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -50,6 +50,7 @@ int PlowsPolygon (DataType *, int, void *, void *,
+ 		  int (*callback) (DataTypePtr, LayerTypePtr, PolygonTypePtr, int, void *, void *));
+ void ComputeNoHoles (PolygonType *poly);
+ POLYAREA * ContourToPoly (PLINE *);
++POLYAREA * PolygonToPoly (PolygonType *);
+ POLYAREA * RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2);
+ POLYAREA * CirclePoly(LocationType x, LocationType y, BDimension radius);
+ POLYAREA * OctagonPoly(LocationType x, LocationType y, BDimension radius);
+@@ -70,5 +71,6 @@ bool isects (POLYAREA *, PolygonTypePtr, bool);
+ bool MorphPolygon (LayerTypePtr, PolygonTypePtr);
+ void NoHolesPolygonDicer (PolygonType *p, const BoxType *clip,
+                           void (*emit) (PLINE *, void *), void *user_data);
++void PolyToPolygonsOnLayer (DataType *, LayerType *, POLYAREA *, FlagType);
+ POLYAREA *board_outline_poly ();
+ #endif
+diff --git a/src/set.c b/src/set.c
+index 48d704d..7a41f73 100644
+--- a/src/set.c
++++ b/src/set.c
+@@ -253,6 +253,7 @@ SetMode (int Mode)
+     {
+       if (Mode == ARC_MODE || Mode == RECTANGLE_MODE ||
+ 	  Mode == VIA_MODE || Mode == POLYGON_MODE ||
++	  Mode == POLYGONHOLE_MODE ||
+ 	  Mode == TEXT_MODE || Mode == INSERTPOINT_MODE ||
+ 	  Mode == THERMAL_MODE)
+ 	{
