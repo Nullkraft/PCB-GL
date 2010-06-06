@@ -812,20 +812,14 @@ UndoInsertPoint (UndoListTypePtr Entry)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * recovers an removed polygon point
- * returns true on success
- */
 static bool
-UndoRemoveContour (UndoListTypePtr Entry)
+UndoSwapCopiedObject (UndoListTypePtr Entry)
 {
   void *ptr1, *ptr2, *ptr3;
   void *ptr1b, *ptr2b, *ptr3b;
-  PolygonType *poly, *poly2;
+  AnyObjectType *obj, *obj2;
   int type;
   long int swap_id;
-
-  assert (Entry->Kind == POLYGON_TYPE);
 
   /* lookup entry by it's ID */
   type =
@@ -840,21 +834,33 @@ UndoRemoveContour (UndoListTypePtr Entry)
   if (type == NO_TYPE)
     return FALSE;
 
-  poly = ptr2;
-  poly2 = ptr2b;
+  obj = ptr2;
+  obj2 = ptr2b;
 
-  swap_id = poly->ID;
-  poly->ID = poly2->ID;
-  poly2->ID = swap_id;
+  swap_id = obj->ID;
+  obj->ID = obj2->ID;
+  obj2->ID = swap_id;
 
   MoveObjectToBuffer (RemoveList, PCB->Data, type, ptr1b, ptr2b, ptr3b);
 
   if (andDraw)
     DrawRecoveredObject (Entry->Kind, ptr1, ptr2, ptr3);
 
-  poly = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
-  InitClip (PCB->Data, ptr1b, poly);
+  obj = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
+  if (Entry->Kind == POLYGON_TYPE)
+    InitClip (PCB->Data, ptr1b, (PolygonType *)obj);
   return (true);
+}
+
+/* ---------------------------------------------------------------------------
+ * recovers an removed polygon point
+ * returns true on success
+ */
+static bool
+UndoRemoveContour (UndoListTypePtr Entry)
+{
+  assert (Entry->Kind == POLYGON_TYPE);
+  return UndoSwapCopiedObject (Entry);
 }
 
 /* ---------------------------------------------------------------------------
@@ -864,42 +870,8 @@ UndoRemoveContour (UndoListTypePtr Entry)
 static bool
 UndoInsertContour (UndoListTypePtr Entry)
 {
-  void *ptr1, *ptr2, *ptr3;
-  void *ptr1b, *ptr2b, *ptr3b;
-  PolygonType *poly, *poly2;
-  int type;
-  long int swap_id;
-
   assert (Entry->Kind == POLYGON_TYPE);
-
-  /* lookup entry by it's ID */
-  type =
-    SearchObjectByID (RemoveList, &ptr1, &ptr2, &ptr3, Entry->Data.CopyID,
-		      Entry->Kind);
-  if (type == NO_TYPE)
-    return false;
-
-  type =
-    SearchObjectByID (PCB->Data, &ptr1b, &ptr2b, &ptr3b, Entry->ID,
-		      Entry->Kind);
-  if (type == NO_TYPE)
-    return FALSE;
-
-  poly = ptr2;
-  poly2 = ptr2b;
-
-  swap_id = poly->ID;
-  poly->ID = poly2->ID;
-  poly2->ID = swap_id;
-
-  MoveObjectToBuffer (RemoveList, PCB->Data, type, ptr1b, ptr2b, ptr3b);
-
-  if (andDraw)
-    DrawRecoveredObject (Entry->Kind, ptr1, ptr2, ptr3);
-
-  poly = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
-  InitClip (PCB->Data, ptr1b, poly);
-  return (true);
+  return UndoSwapCopiedObject (Entry);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1385,6 +1357,23 @@ AddObjectToInsertPointUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
     undo = GetUndoSlot (UNDO_INSERT_POINT, OBJECT_ID (Ptr3), Type);
 }
 
+static void
+CopyObjectToUndoList (int undo_type, int Type, void *Ptr1, void *Ptr2, void *Ptr3)
+{
+  UndoListTypePtr undo;
+  AnyObjectType *copy;
+
+  if (Locked)
+    return;
+
+  if (!RemoveList)
+    RemoveList = CreateNewBuffer ();
+
+  undo = GetUndoSlot (undo_type, OBJECT_ID (Ptr2), Type);
+  copy = CopyObjectToBuffer (RemoveList, PCB->Data, Type, Ptr1, Ptr2, Ptr3);
+  undo->Data.CopyID = copy->ID;
+}
+
 /* ---------------------------------------------------------------------------
  * adds an object to the list of removed contours
  * (Actually just takes a copy of the whole polygon to restore)
@@ -1393,18 +1382,7 @@ void
 AddObjectToRemoveContourUndoList (int Type,
 				  LayerType *Layer, PolygonType *Polygon)
 {
-  UndoListTypePtr undo;
-  PolygonType *copy;
-
-  if (Locked)
-    return;
-
-  if (!RemoveList)
-    RemoveList = CreateNewBuffer ();
-
-  undo = GetUndoSlot (UNDO_REMOVE_CONTOUR, OBJECT_ID (Polygon), POLYGON_TYPE);
-  copy = CopyObjectToBuffer (RemoveList, PCB->Data, Type, Layer, Polygon, NULL);
-  undo->Data.CopyID = copy->ID;
+  CopyObjectToUndoList (UNDO_REMOVE_CONTOUR, Type, Layer, Polygon, NULL);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1415,18 +1393,7 @@ void
 AddObjectToInsertContourUndoList (int Type,
 				  LayerType *Layer, PolygonType *Polygon)
 {
-  UndoListTypePtr undo;
-  PolygonType *copy;
-
-  if (Locked)
-    return;
-
-  if (!RemoveList)
-    RemoveList = CreateNewBuffer ();
-
-  undo = GetUndoSlot (UNDO_REMOVE_CONTOUR, OBJECT_ID (Polygon), POLYGON_TYPE);
-  copy = CopyObjectToBuffer (RemoveList, PCB->Data, Type, Layer, Polygon, NULL);
-  undo->Data.CopyID = copy->ID;
+  CopyObjectToUndoList (UNDO_INSERT_CONTOUR, Type, Layer, Polygon, NULL);
 }
 
 /* ---------------------------------------------------------------------------
