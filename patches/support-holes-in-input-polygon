@@ -6,10 +6,9 @@ Date:   2010-06-06 23:19:08 +0100
 Support holes in input polygons (incl. file-format addition)
 
 PCB file-format date is now 20100606, and files saved with this
-or greater PCB versionw will not load with older versions of PCB.
-
-If the board doesn't make use of the polygon hole feature, the
-PCB revision date in the file can be manually reset to 20070407.
+or greater PCB version will not load with older versions of PCB.
+If a particular board doesn't make use of the polygon hole feature,
+the PCB revision date in the file can be manually reset to 20070407.
 
 The file-format addition is as follows. Previously, a polygon would
 be specified as a series of coordinates, such as:
