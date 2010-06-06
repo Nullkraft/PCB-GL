@@ -1,5 +1,5 @@
 Bottom: 816c58735bfc728e0a92441bf17729bcd06e96ad
-Top:    ca817f059e0163bbdb24e03f50521b1b0c742f67
+Top:    a2d6a1f7cd5807bd0263c37c224c42c13c2cbbc9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-06 20:27:01 +0100
 
@@ -326,19 +326,6 @@ index cbdcd2d..e9ed58b 100644
     -
     {"Command" Command() a={":" "<Key>:"}}
    }
-diff --git a/src/polygon.c b/src/polygon.c
-index b45ae4d..186f0f5 100644
---- a/src/polygon.c
-+++ b/src/polygon.c
-@@ -275,7 +275,7 @@ ContourToPoly (PLINE * contour)
-   return p;
- }
- 
--static POLYAREA *
-+POLYAREA *
- original_poly (PolygonType * p)
- {
-   PLINE *contour = NULL;
 diff --git a/src/set.c b/src/set.c
 index 48d704d..7a41f73 100644
 --- a/src/set.c
