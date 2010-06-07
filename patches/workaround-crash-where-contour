@@ -1,5 +1,5 @@
 Bottom: d54a506377994ab6f494c89c8181bd7a0eea4db7
-Top:    d54a506377994ab6f494c89c8181bd7a0eea4db7
+Top:    8a469f5ffddcc9ca40d0b1335f0427b926e9e597
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-05 13:40:16 +0100
 
@@ -20,4 +20,24 @@ Workaround crash where contour is passed as NULL to poly_PreContour
 
 ---
 
-
+diff --git a/src/polygon.c b/src/polygon.c
+index 1a3d319..15b3534 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -308,6 +308,16 @@ original_poly (PolygonType * p)
+       if (n == p->PointN - 1 ||
+           (hole < p->HoleIndexN && n == p->HoleIndex[hole] - 1))
+         {
++          if (contour == NULL)
++            {
++              printf ("How did that escape - did the loop iterate zero times??\n");
++              POLYGONPOINT_LOOP (p);
++                {
++                  printf ("Hello\n");
++                }
++              END_LOOP;
++              return NULL;
++            }
+           poly_PreContour (contour, TRUE);
+ 
+           /* make sure it is a positive contour (outer) or negative (hole) */
