@@ -1,0 +1,22 @@
+Bottom: a25c07ec90bdc75704fe1f0a3bdc81f2fc6d18da
+Top:    100bb215e713c2ebf7ec9d377f22d6942cf24b01
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-07 01:23:40 +0100
+
+Refresh of add-support-for-a-poured-objec-I
+
+---
+
+diff --git a/src/pour.c b/src/pour.c
+index a65848f..f878e6c 100644
+--- a/src/pour.c
++++ b/src/pour.c
+@@ -968,7 +968,7 @@ original_pour_poly (PourType * p)
+           if (contour == NULL)
+             {
+               printf ("How did that escape - did the loop iterate zero times??\n");
+-              POLYGONPOINT_LOOP (p);
++              POURPOINT_LOOP (p);
+                 {
+                   printf ("Hello\n");
+                 }
