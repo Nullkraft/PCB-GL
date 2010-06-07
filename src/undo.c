@@ -273,7 +273,7 @@ GetUndoSlot (int CommandType, int ID, int Kind)
 static void
 DrawRecoveredObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
 {
-  if (Type & (LINE_TYPE | TEXT_TYPE | POLYGON_TYPE | ARC_TYPE))
+  if (Type & (LINE_TYPE | TEXT_TYPE | POLYGON_TYPE | POUR_TYPE | ARC_TYPE))
     {
       LayerTypePtr layer;
 
@@ -848,8 +848,8 @@ UndoSwapCopiedObject (UndoListTypePtr Entry)
     DrawRecoveredObject (Entry->Kind, ptr1, ptr2, ptr3);
 
   obj = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
-  if (Entry->Kind == POLYGON_TYPE)
-    InitClip (PCB->Data, ptr1b, (PolygonType *)obj);
+  if (Entry->Kind == POUR_TYPE)
+    InitPourClip (PCB->Data, ptr1b, (PolygonType *)obj);
   return (true);
 }
 
@@ -860,7 +860,7 @@ UndoSwapCopiedObject (UndoListTypePtr Entry)
 static bool
 UndoRemoveContour (UndoListTypePtr Entry)
 {
-  assert (Entry->Kind == POLYGON_TYPE);
+  assert (Entry->Kind == POUR_TYPE);
   return UndoSwapCopiedObject (Entry);
 }
 
@@ -871,7 +871,7 @@ UndoRemoveContour (UndoListTypePtr Entry)
 static bool
 UndoInsertContour (UndoListTypePtr Entry)
 {
-  assert (Entry->Kind == POLYGON_TYPE);
+  assert (Entry->Kind == POUR_TYPE);
   return UndoSwapCopiedObject (Entry);
 }
 
