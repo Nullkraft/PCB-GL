@@ -1,0 +1,21 @@
+Bottom: d561dfc8c70a5f3ad790f9a496c0733d3a25d10e
+Top:    091e09074d260e60eef37a39c23e3d1967bf8066
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-07 02:00:23 +0100
+
+Refresh of off-to-find-burried-treasure-o
+
+---
+
+diff --git a/src/pour.c b/src/pour.c
+index 25f25b0..7bcd9c3 100644
+--- a/src/pour.c
++++ b/src/pour.c
+@@ -1451,7 +1451,6 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
+   PlowPours (Data, type, ptr1, ptr2, subtract_plow, false);
+ }
+ 
+-<<<<<<< current
+ /* Convert a POLYAREA (and all linked POLYAREA) to
+  * raw PCB pours on the given layer.
+  */
