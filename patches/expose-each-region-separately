@@ -1,5 +1,5 @@
-Bottom: 7fd4f4f91b0e14e375754d65bb05e07a9a315759
-Top:    d710e050841f39c4fc714904c04394e0c6b84e45
+Bottom: 3974bbd708464df5250d2cb20e3f3daa5f257985
+Top:    6cfda34d1b6fad5c7c19d2aa024a47c1f1ff864b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-04 22:57:16 +0000
 
@@ -13,10 +13,10 @@ BUG: Won't work properly, since we set the sciscor region for the
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 287a0a7..a0f0511 100644
+index dabfce0..cc04448 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1733,6 +1733,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1734,6 +1734,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  {
    static int one_shot = 1;
    static int display_list;
@@ -26,7 +26,7 @@ index 287a0a7..a0f0511 100644
    BoxType region;
    int eleft, eright, etop, ebottom;
    extern HID ghid_hid;
-@@ -1927,8 +1930,24 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1928,8 +1931,24 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
      glEnd ();
    }
  

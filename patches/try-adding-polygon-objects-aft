@@ -1,5 +1,5 @@
-Bottom: a39b93f1c131547b381da38af934eb857894d121
-Top:    7fd4f4f91b0e14e375754d65bb05e07a9a315759
+Bottom: 0b197a0e389e25e1cbdf296a8a185d5f1313d3ae
+Top:    3974bbd708464df5250d2cb20e3f3daa5f257985
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-04 22:56:59 +0000
 
@@ -16,7 +16,7 @@ Try adding polygon objects after each clipping stage. rtree->faster??
 ---
 
 diff --git a/src/pour.c b/src/pour.c
-index 729f06a..e693f04 100644
+index fd66d66..e8002da 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -74,6 +74,8 @@ RCSID ("$Id$");
@@ -26,9 +26,9 @@ index 729f06a..e693f04 100644
 +static int subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour, int type, void *ptr1, void *ptr2);
 +
  
- /* --------------------------------------------------------------------------
-  * remove redundant polygon points. Any point that lies on the straight
-@@ -460,8 +462,14 @@ struct cpInfo
+ Cardinal
+ pour_point_idx (PourTypePtr pour, PointTypePtr point)
+@@ -528,8 +530,14 @@ struct cpInfo
    bool solder;
    POLYAREA *pg;
    BoxType *region;
@@ -43,7 +43,7 @@ index 729f06a..e693f04 100644
    jmp_buf env;
  };
  
-@@ -477,6 +485,7 @@ subtract_accumulated (struct cpInfo *info)
+@@ -545,6 +553,7 @@ subtract_accumulated (struct cpInfo *info)
  }
  
  static int
@@ -51,7 +51,7 @@ index 729f06a..e693f04 100644
  pin_sub_callback (const BoxType * b, void *cl)
  {
    PinTypePtr pin = (PinTypePtr) b;
-@@ -573,74 +582,36 @@ line_sub_callback (const BoxType * b, void *cl)
+@@ -641,74 +650,36 @@ line_sub_callback (const BoxType * b, void *cl)
  
  static int
  text_sub_callback (const BoxType * b, void *cl)
@@ -141,7 +141,7 @@ index 729f06a..e693f04 100644
  {
    int r = 0;
    BoxType region;
-@@ -656,7 +627,6 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
+@@ -724,7 +695,6 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
    info.other = here;
    info.layer = Layer;
    info.pour = pour;
@@ -149,7 +149,7 @@ index 729f06a..e693f04 100644
    if (here)
      region = clip_box (here, &pour->BoundingBox);
    else
-@@ -673,6 +643,7 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
+@@ -741,6 +711,7 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
          r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
        GROUP_LOOP (Data, group);
        {
@@ -157,7 +157,7 @@ index 729f06a..e693f04 100644
          r += r_search (layer->line_tree, &region, NULL, line_sub_callback, &info);
          subtract_accumulated (&info);
          r += r_search (layer->arc_tree,  &region, NULL, arc_sub_callback,  &info);
-@@ -683,10 +654,29 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
+@@ -751,10 +722,29 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
        r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
        r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
        subtract_accumulated (&info);
@@ -189,7 +189,7 @@ index 729f06a..e693f04 100644
    return r;
  }
  
-@@ -807,8 +797,12 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -875,8 +865,12 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
  
    if (np == NULL)
      {
@@ -202,7 +202,7 @@ index 729f06a..e693f04 100644
        return 0;
      }
  
-@@ -857,7 +851,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -925,7 +919,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
  
    if (pg == NULL)
      {
@@ -211,7 +211,7 @@ index 729f06a..e693f04 100644
        poly_Free (&np);
        mark_islands (Data, layer, pour, type, ptr1, ptr2);
        return -1;
-@@ -872,21 +866,10 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -940,21 +934,10 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
  
    if (pg == NULL)
      {
@@ -234,7 +234,7 @@ index 729f06a..e693f04 100644
    count_all = count_added = 0;
    /* For each piece of the clipped up polygon, create a new child */
    start_pg = pg;
-@@ -920,7 +903,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -988,7 +971,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
      }
    while ((pg = tmp) != start_pg);
  
@@ -243,7 +243,7 @@ index 729f06a..e693f04 100644
  
    return 0;
  }
-@@ -1135,19 +1118,6 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -1227,19 +1210,6 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
    unite_poly (np, &pg);
  
  
@@ -263,7 +263,7 @@ index 729f06a..e693f04 100644
    if (pg == NULL)
      {
        printf ("Poly killed to death somehow\n");
-@@ -1187,9 +1157,9 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -1279,9 +1249,9 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
      }
    while ((pg = tmp) != start_pg);
  
@@ -275,7 +275,7 @@ index 729f06a..e693f04 100644
  
    return 0;
  }
-@@ -1199,8 +1169,7 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -1291,8 +1261,7 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
  int
  InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
  {
@@ -285,7 +285,7 @@ index 729f06a..e693f04 100644
  
    /* Free any children we might have */
    if (pour->PolygonN)
-@@ -1220,51 +1189,38 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
+@@ -1312,51 +1281,38 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
        printf ("Clipping returned NULL - can that be good?\n");
        return 0;
      }
@@ -357,11 +357,11 @@ index 729f06a..e693f04 100644
  
    POURPOLYGON_LOOP (pour);
    {
-@@ -1418,6 +1374,7 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1510,6 +1466,7 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
        InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
      }
    PlowPours (Data, type, ptr1, ptr2, subtract_plow, false);
 +  MarkPourIslands (Data, type, ptr1, ptr2);
  }
  
- #warning FIXME Later: We could perhaps reduce un-necessary computation by using this function
+ /* Convert a POLYAREA (and all linked POLYAREA) to
