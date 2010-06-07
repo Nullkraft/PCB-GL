@@ -1,5 +1,5 @@
-Bottom: ac48701ba572e456ac563ff953c0ba86435c849e
-Top:    b976e64de597138aabad8fb3cd7bef88325c2bda
+Bottom: 091e09074d260e60eef37a39c23e3d1967bf8066
+Top:    c228fc0a7605a73ceccaef31099626639d1bcace
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-03 23:35:59 +0100
 
@@ -11,7 +11,7 @@ Kept separate for now because they might have unknown side-effects.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 280a82e..1348118 100644
+index d5d1f06..56e8868 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -249,8 +249,8 @@ MoveViaToBuffer (PinTypePtr Via)
@@ -174,10 +174,10 @@ index 5b05c64..eb297a0 100644
    *new = *Text;
    *Text = Source->Text[--Source->TextN];
 diff --git a/src/pour.c b/src/pour.c
-index d94ec87..956e644 100644
+index 7bcd9c3..1103ec4 100644
 --- a/src/pour.c
 +++ b/src/pour.c
-@@ -755,7 +755,8 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -823,7 +823,8 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
  
    if (np == NULL)
      {
@@ -187,7 +187,7 @@ index d94ec87..956e644 100644
        return 0;
      }
  
-@@ -805,6 +806,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -873,6 +874,7 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
      {
        printf ("Hmm, got pg == NULL in subtract_plow\n");
        poly_Free (&np);
@@ -195,7 +195,7 @@ index d94ec87..956e644 100644
        return -1;
      }
  
-@@ -1006,6 +1008,7 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -1098,6 +1100,7 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
    if (np == NULL)
      {
        printf ("Didn't get a POLYAREA to add, so bailing\n");
@@ -203,7 +203,7 @@ index d94ec87..956e644 100644
        return 0;
      }
  
-@@ -1016,6 +1019,7 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
+@@ -1108,6 +1111,7 @@ add_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
    if (np == NULL)
      {
        printf ("POLYAREA to add got clipped away, so bailing\n");
@@ -211,7 +211,7 @@ index d94ec87..956e644 100644
        return 0;
      }
  
-@@ -1284,9 +1288,10 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1376,9 +1380,10 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
      case POLYGON_TYPE:
      case POUR_TYPE:
        /* the cast works equally well for lines and arcs */
