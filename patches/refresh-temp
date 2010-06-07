@@ -1,0 +1,50 @@
+Bottom: 4f1179d185906956378554c72fd235ae4737c04f
+Top:    07b686e339ab3c8d1dcf52a0d590cab1cb22b6a0
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-08 00:46:59 +0100
+
+Refresh of add-support-for-a-poured-objec-I
+
+---
+
+diff --git a/src/undo.c b/src/undo.c
+index 32ae262..70c8401 100644
+--- a/src/undo.c
++++ b/src/undo.c
+@@ -273,7 +273,7 @@ GetUndoSlot (int CommandType, int ID, int Kind)
+ static void
+ DrawRecoveredObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
+ {
+-  if (Type & (LINE_TYPE | TEXT_TYPE | POLYGON_TYPE | ARC_TYPE))
++  if (Type & (LINE_TYPE | TEXT_TYPE | POLYGON_TYPE | POUR_TYPE | ARC_TYPE))
+     {
+       LayerTypePtr layer;
+ 
+@@ -848,8 +848,8 @@ UndoSwapCopiedObject (UndoListTypePtr Entry)
+     DrawRecoveredObject (Entry->Kind, ptr1, ptr2, ptr3);
+ 
+   obj = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
+-  if (Entry->Kind == POLYGON_TYPE)
+-    InitClip (PCB->Data, ptr1b, (PolygonType *)obj);
++  if (Entry->Kind == POUR_TYPE)
++    InitPourClip (PCB->Data, ptr1b, (PolygonType *)obj);
+   return (true);
+ }
+ 
+@@ -860,7 +860,7 @@ UndoSwapCopiedObject (UndoListTypePtr Entry)
+ static bool
+ UndoRemoveContour (UndoListTypePtr Entry)
+ {
+-  assert (Entry->Kind == POLYGON_TYPE);
++  assert (Entry->Kind == POUR_TYPE);
+   return UndoSwapCopiedObject (Entry);
+ }
+ 
+@@ -871,7 +871,7 @@ UndoRemoveContour (UndoListTypePtr Entry)
+ static bool
+ UndoInsertContour (UndoListTypePtr Entry)
+ {
+-  assert (Entry->Kind == POLYGON_TYPE);
++  assert (Entry->Kind == POUR_TYPE);
+   return UndoSwapCopiedObject (Entry);
+ }
