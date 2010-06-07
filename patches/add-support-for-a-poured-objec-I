@@ -1,5 +1,5 @@
 Bottom: 8a469f5ffddcc9ca40d0b1335f0427b926e9e597
-Top:    4f1179d185906956378554c72fd235ae4737c04f
+Top:    07b686e339ab3c8d1dcf52a0d590cab1cb22b6a0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-05 13:40:17 +0100
 
@@ -8164,7 +8164,7 @@ index ac1fdcc..26a2405 100644
  };
  
 diff --git a/src/undo.c b/src/undo.c
-index 68ea8ff..32ae262 100644
+index 68ea8ff..70c8401 100644
 --- a/src/undo.c
 +++ b/src/undo.c
 @@ -62,6 +62,7 @@
@@ -8202,6 +8202,15 @@ index 68ea8ff..32ae262 100644
  static int PerformUndo (UndoListTypePtr);
  
  /* ---------------------------------------------------------------------------
+@@ -272,7 +273,7 @@ GetUndoSlot (int CommandType, int ID, int Kind)
+ static void
+ DrawRecoveredObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
+ {
+-  if (Type & (LINE_TYPE | TEXT_TYPE | POLYGON_TYPE | ARC_TYPE))
++  if (Type & (LINE_TYPE | TEXT_TYPE | POLYGON_TYPE | POUR_TYPE | ARC_TYPE))
+     {
+       LayerTypePtr layer;
+ 
 @@ -314,7 +315,7 @@ UndoRotate (UndoListTypePtr Entry)
   * returns true if anything has been recovered
   */
@@ -8375,6 +8384,35 @@ index 68ea8ff..32ae262 100644
 +	  DrawPour (layer, pour, 0);
  	return (true);
        }
+ 
+@@ -847,8 +848,8 @@ UndoSwapCopiedObject (UndoListTypePtr Entry)
+     DrawRecoveredObject (Entry->Kind, ptr1, ptr2, ptr3);
+ 
+   obj = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
+-  if (Entry->Kind == POLYGON_TYPE)
+-    InitClip (PCB->Data, ptr1b, (PolygonType *)obj);
++  if (Entry->Kind == POUR_TYPE)
++    InitPourClip (PCB->Data, ptr1b, (PolygonType *)obj);
+   return (true);
+ }
+ 
+@@ -859,7 +860,7 @@ UndoSwapCopiedObject (UndoListTypePtr Entry)
+ static bool
+ UndoRemoveContour (UndoListTypePtr Entry)
+ {
+-  assert (Entry->Kind == POLYGON_TYPE);
++  assert (Entry->Kind == POUR_TYPE);
+   return UndoSwapCopiedObject (Entry);
+ }
+ 
+@@ -870,7 +871,7 @@ UndoRemoveContour (UndoListTypePtr Entry)
+ static bool
+ UndoInsertContour (UndoListTypePtr Entry)
+ {
+-  assert (Entry->Kind == POLYGON_TYPE);
++  assert (Entry->Kind == POUR_TYPE);
+   return UndoSwapCopiedObject (Entry);
+ }
  
 @@ -1061,7 +1062,7 @@ PerformUndo (UndoListTypePtr ptr)
        break;
