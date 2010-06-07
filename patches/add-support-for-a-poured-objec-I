@@ -1,5 +1,5 @@
 Bottom: 131e68cbb31def1a4861a0f40453bc11a145f594
-Top:    a25c07ec90bdc75704fe1f0a3bdc81f2fc6d18da
+Top:    100bb215e713c2ebf7ec9d377f22d6942cf24b01
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-06 23:55:36 +0100
 
@@ -5675,7 +5675,7 @@ index 4a761d5..95c47bb 100644
    return FALSE;
 diff --git a/src/pour.c b/src/pour.c
 new file mode 100644
-index 0000000..a65848f
+index 0000000..f878e6c
 --- /dev/null
 +++ b/src/pour.c
 @@ -0,0 +1,1427 @@
@@ -6649,7 +6649,7 @@ index 0000000..a65848f
 +          if (contour == NULL)
 +            {
 +              printf ("How did that escape - did the loop iterate zero times??\n");
-+              POLYGONPOINT_LOOP (p);
++              POURPOINT_LOOP (p);
 +                {
 +                  printf ("Hello\n");
 +                }
