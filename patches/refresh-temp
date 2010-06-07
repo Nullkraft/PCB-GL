@@ -1,0 +1,63 @@
+Bottom: 093d235294d83864ab548e34921f2d1e0728c2df
+Top:    9b71e10d922bb264aad0073453fd9bc210395682
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-08 00:46:17 +0100
+
+Refresh of add-support-for-a-poured-objec-I
+
+---
+
+diff --git a/src/remove.c b/src/remove.c
+index b4d45c9..a2d05cb 100644
+--- a/src/remove.c
++++ b/src/remove.c
+@@ -593,7 +593,7 @@ RemovePourPoint (LayerTypePtr Layer,
+   SetPourBoundingBox (Pour);
+   r_insert_entry (Layer->pour_tree, (BoxType *) Pour, 0);
+   RemoveExcessPourPoints (Layer, Pour);
+-  InitClip (PCB->Data, Layer, Pour);
++  InitPourClip (PCB->Data, Layer, Pour);
+ 
+   /* redraw pour if necessary */
+   if (Layer->On)
+diff --git a/src/undo.c b/src/undo.c
+index 32ae262..70c8401 100644
+--- a/src/undo.c
++++ b/src/undo.c
+@@ -273,7 +273,7 @@ GetUndoSlot (int CommandType, int ID, int Kind)
+ static void
+ DrawRecoveredObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
+ {
+-  if (Type & (LINE_TYPE | TEXT_TYPE | POLYGON_TYPE | ARC_TYPE))
++  if (Type & (LINE_TYPE | TEXT_TYPE | POLYGON_TYPE | POUR_TYPE | ARC_TYPE))
+     {
+       LayerTypePtr layer;
+ 
+@@ -848,8 +848,8 @@ UndoSwapCopiedObject (UndoListTypePtr Entry)
+     DrawRecoveredObject (Entry->Kind, ptr1, ptr2, ptr3);
+ 
+   obj = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
+-  if (Entry->Kind == POLYGON_TYPE)
+-    InitClip (PCB->Data, ptr1b, (PolygonType *)obj);
++  if (Entry->Kind == POUR_TYPE)
++    InitPourClip (PCB->Data, ptr1b, (PolygonType *)obj);
+   return (true);
+ }
+ 
+@@ -860,7 +860,7 @@ UndoSwapCopiedObject (UndoListTypePtr Entry)
+ static bool
+ UndoRemoveContour (UndoListTypePtr Entry)
+ {
+-  assert (Entry->Kind == POLYGON_TYPE);
++  assert (Entry->Kind == POUR_TYPE);
+   return UndoSwapCopiedObject (Entry);
+ }
+ 
+@@ -871,7 +871,7 @@ UndoRemoveContour (UndoListTypePtr Entry)
+ static bool
+ UndoInsertContour (UndoListTypePtr Entry)
+ {
+-  assert (Entry->Kind == POLYGON_TYPE);
++  assert (Entry->Kind == POUR_TYPE);
+   return UndoSwapCopiedObject (Entry);
+ }
