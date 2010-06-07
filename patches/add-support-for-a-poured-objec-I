@@ -1,5 +1,5 @@
 Bottom: 131e68cbb31def1a4861a0f40453bc11a145f594
-Top:    faa90441447d6650382ab3fb8f5800a7ac51b2b2
+Top:    a25c07ec90bdc75704fe1f0a3bdc81f2fc6d18da
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-06 23:55:36 +0100
 
@@ -5675,10 +5675,10 @@ index 4a761d5..95c47bb 100644
    return FALSE;
 diff --git a/src/pour.c b/src/pour.c
 new file mode 100644
-index 0000000..004ef2e
+index 0000000..a65848f
 --- /dev/null
 +++ b/src/pour.c
-@@ -0,0 +1,1408 @@
+@@ -0,0 +1,1427 @@
 +/* $Id$ */
 +
 +/*
@@ -6616,41 +6616,60 @@ index 0000000..004ef2e
 +{
 +  PLINE *contour = NULL;
 +  POLYAREA *np = NULL;
++  Cardinal n;
 +  Vector v;
++  int hole = 0;
 +
-+  /* first make initial polygon contour */
-+  POURPOINT_LOOP (p);
-+  {
-+    v[0] = point->X;
-+    v[1] = point->Y;
-+    if (contour == NULL)
-+      {
-+        if ((contour = poly_NewContour (v)) == NULL)
-+          return NULL;
-+      }
-+    else
-+      poly_InclVertex (contour->head.prev, poly_CreateNode (v));
-+  }
-+  END_LOOP;
-+  if (contour == NULL)
-+    {
-+      printf ("How did that escape - did the loop iterate zero times??\n");
-+      POURPOINT_LOOP (p);
-+        {
-+          printf ("Hello\n");
-+        }
-+      END_LOOP;
-+      return NULL;
-+    }
-+  poly_PreContour (contour, TRUE);
-+  /* make sure it is a positive contour */
-+  if ((contour->Flags.orient) != PLF_DIR)
-+    poly_InvContour (contour);
-+  assert ((contour->Flags.orient) == PLF_DIR);
 +  if ((np = poly_Create ()) == NULL)
 +    return NULL;
-+  poly_InclContour (np, contour);
-+  assert (poly_Valid (np));
++
++  /* first make initial pour contour */
++  /* first make initial pour contour */
++  for (n = 0; n < p->PointN; n++)
++    {
++      /* No current contour? Make a new one starting at point */
++      /*   (or) Add point to existing contour */
++
++      v[0] = p->Points[n].X;
++      v[1] = p->Points[n].Y;
++      if (contour == NULL)
++        {
++          if ((contour = poly_NewContour (v)) == NULL)
++            return NULL;
++        }
++      else
++        {
++          poly_InclVertex (contour->head.prev, poly_CreateNode (v));
++        }
++
++      /* Is current point last in contour? If so process it. */
++      if (n == p->PointN - 1 ||
++          (hole < p->HoleIndexN && n == p->HoleIndex[hole] - 1))
++        {
++          if (contour == NULL)
++            {
++              printf ("How did that escape - did the loop iterate zero times??\n");
++              POLYGONPOINT_LOOP (p);
++                {
++                  printf ("Hello\n");
++                }
++              END_LOOP;
++              return NULL;
++            }
++          poly_PreContour (contour, TRUE);
++
++          /* make sure it is a positive contour (outer) or negative (hole) */
++          if (contour->Flags.orient != (hole ? PLF_INV : PLF_DIR))
++            poly_InvContour (contour);
++          assert (contour->Flags.orient == (hole ? PLF_INV : PLF_DIR));
++
++          poly_InclContour (np, contour);
++          contour = NULL;
++          assert (poly_Valid (np));
++
++          hole++;
++        }
++  }
 +  return np;
 +}
 +
