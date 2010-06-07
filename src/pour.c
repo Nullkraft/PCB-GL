@@ -968,7 +968,7 @@ original_pour_poly (PourType * p)
           if (contour == NULL)
             {
               printf ("How did that escape - did the loop iterate zero times??\n");
-              POLYGONPOINT_LOOP (p);
+              POURPOINT_LOOP (p);
                 {
                   printf ("Hello\n");
                 }
