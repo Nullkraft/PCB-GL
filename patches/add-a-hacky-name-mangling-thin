@@ -1,5 +1,5 @@
 Bottom: 46f787eef07347d4030f4090d36f1a11c8c56f64
-Top:    46f787eef07347d4030f4090d36f1a11c8c56f64
+Top:    7cbf247760226268f4a7a7fbe9139c5826964e6d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-07 02:01:02 +0100
 
@@ -17,4 +17,127 @@ Add a hacky name-mangling thingy for loading boards
 
 ---
 
-
+diff --git a/src/create.c b/src/create.c
+index 3d879ff..8b8e972 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -37,6 +37,7 @@
+ #include <memory.h>
+ #include <setjmp.h>
+ #include <stdlib.h>
++#include <stdio.h>
+ 
+ #include "global.h"
+ 
+@@ -54,6 +55,8 @@
+ #include "undo.h"
+ #include "vendor.h"
+ 
++#include <glib.h>
++
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+ #endif
+@@ -668,6 +671,57 @@ CreateNewHoleInPour (PourType *Pour)
+   return Pour;
+ }
+ 
++static char *refdes_map_file = "refdes.map";
++static GHashTable *refdes_map_table = NULL;
++
++void RefdesMapInit (void)
++{
++  FILE *mapfile;
++  char *from = NULL;
++  char *to = NULL;
++
++  refdes_map_table = g_hash_table_new_full (g_str_hash, g_str_equal,
++                                            g_free, g_free);
++
++  if (refdes_map_file == NULL)
++    return;
++
++  printf ("Refdes map file %s\n", refdes_map_file);
++
++  mapfile = fopen (refdes_map_file, "rb");
++
++  if (mapfile == NULL) {
++    fprintf(stderr, "Could not open [%s]\n", refdes_map_file);
++    return;
++  }
++
++  while (!feof(mapfile) && !ferror(mapfile)) {
++    free (from);
++    free (to);
++
++    from = NULL;
++    to = NULL;
++
++    fscanf (mapfile, "%ms %ms\n", &from, &to);
++
++    if (from == NULL || to == NULL)
++      continue;
++
++    g_hash_table_insert (refdes_map_table, g_strdup (from), g_strdup (to));
++
++    printf ("Stashing rename command: %s to %s\n", from, to);
++  }
++
++  free (to);
++  free (from);
++}
++
++
++char *RefdesMapMap (char *from)
++{
++  return g_hash_table_lookup (refdes_map_table, from);
++}
++
+ /* ---------------------------------------------------------------------------
+  * creates an new element
+  * memory is allocated if needed
+@@ -684,6 +738,18 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
+   printf("Entered CreateNewElement.....\n");
+ #endif
+ 
++  /* HACK: Mapping between refdes */
++  if (NameOnPCB != NULL) {
++    char *to;
++    to = RefdesMapMap (NameOnPCB);
++    if (to != NULL) {
++//      free (NameOnPCB);
++      printf ("Mapping name from %s to %s\n", NameOnPCB, to);
++      NameOnPCB = malloc (sizeof (char) * (strlen (to) + 1));
++      strcpy (NameOnPCB, to);
++    }
++  }
++
+   if (!Element)
+     Element = GetElementMemory (Data);
+ 
+diff --git a/src/create.h b/src/create.h
+index af7ace4..ac3f623 100644
+--- a/src/create.h
++++ b/src/create.h
+@@ -64,6 +64,7 @@ PourTypePtr CreateNewPour (LayerTypePtr, FlagType);
+ PointTypePtr CreateNewPointInPour (PourTypePtr,
+ 				      LocationType, LocationType);
+ PourType *CreateNewHoleInPour (PourType *);
++void RefdesMapInit (void);
+ ElementTypePtr CreateNewElement (DataTypePtr, ElementTypePtr,
+ 				 FontTypePtr, FlagType, char *, char *,
+ 				 char *, LocationType, LocationType, BYTE,
+diff --git a/src/file.c b/src/file.c
+index d44c3bb..97a884b 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -356,6 +356,9 @@ LoadPCB (char *Filename)
+ 
+   start = clock ();
+ 
++  /* Hack, load the mapping file */
++  RefdesMapInit ();
++
+   /* new data isn't added to the undo list */
+   if (!ParsePCB (newPCB, Filename))
+     {
