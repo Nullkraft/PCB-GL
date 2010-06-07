@@ -1,5 +1,5 @@
 Bottom: 131e68cbb31def1a4861a0f40453bc11a145f594
-Top:    100bb215e713c2ebf7ec9d377f22d6942cf24b01
+Top:    093d235294d83864ab548e34921f2d1e0728c2df
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-06 23:55:36 +0100
 
@@ -48,7 +48,7 @@ index b709c27..452e325 100644
  	print.c \
  	print.h \
 diff --git a/src/action.c b/src/action.c
-index 5f1c7a1..ea40c9f 100644
+index 5f1c7a1..1d2a8a5 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -57,6 +57,7 @@
@@ -168,7 +168,7 @@ index 5f1c7a1..ea40c9f 100644
  
  	    /* copy the coordinates */
  	    Crosshair.AttachedLine.Point1.X = Crosshair.AttachedLine.Point2.X;
-@@ -1451,7 +1452,7 @@ NotifyMode (void)
+@@ -1451,14 +1452,14 @@ NotifyMode (void)
  	break;
        }
  
@@ -177,6 +177,14 @@ index 5f1c7a1..ea40c9f 100644
        {
  	switch (Crosshair.AttachedObject.State)
  	  {
+ 	    /* first notify, lookup object */
+ 	  case STATE_FIRST:
+ 	    Crosshair.AttachedObject.Type =
+-	      SearchScreen (Note.X, Note.Y, POLYGON_TYPE,
++	      SearchScreen (Note.X, Note.Y, POUR_TYPE,
+ 			    &Crosshair.AttachedObject.Ptr1,
+ 			    &Crosshair.AttachedObject.Ptr2,
+ 			    &Crosshair.AttachedObject.Ptr3);
 @@ -1480,8 +1481,8 @@ NotifyMode (void)
              /* second notify, insert new point into object */
            case STATE_SECOND:
@@ -199,17 +207,19 @@ index 5f1c7a1..ea40c9f 100644
  
  		  /* Subtract the hole from the original polygon shape */
  		  poly_Boolean_free (original, new_hole, &result, PBO_SUB);
-@@ -1506,8 +1507,8 @@ NotifyMode (void)
+@@ -1506,9 +1507,9 @@ NotifyMode (void)
  		   */
  		  SaveUndoSerialNumber ();
  		  Flags = ((PolygonType *)Crosshair.AttachedObject.Ptr2)->Flags;
 -		  PolyToPolygonsOnLayer (PCB->Data, Crosshair.AttachedObject.Ptr1,
 -					 result, Flags);
+-		  RemoveObject (POLYGON_TYPE,
 +		  PolyToPoursOnLayer (PCB->Data, Crosshair.AttachedObject.Ptr1,
 +				      result, Flags);
- 		  RemoveObject (POLYGON_TYPE,
++		  RemoveObject (POUR_TYPE,
  				Crosshair.AttachedObject.Ptr1,
  				Crosshair.AttachedObject.Ptr2,
+ 				Crosshair.AttachedObject.Ptr3);
 @@ -1517,7 +1518,7 @@ NotifyMode (void)
  		  Draw ();
  
