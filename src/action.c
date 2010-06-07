@@ -1459,7 +1459,7 @@ NotifyMode (void)
 	    /* first notify, lookup object */
 	  case STATE_FIRST:
 	    Crosshair.AttachedObject.Type =
-	      SearchScreen (Note.X, Note.Y, POLYGON_TYPE,
+	      SearchScreen (Note.X, Note.Y, POUR_TYPE,
 			    &Crosshair.AttachedObject.Ptr1,
 			    &Crosshair.AttachedObject.Ptr2,
 			    &Crosshair.AttachedObject.Ptr3);
@@ -1509,7 +1509,7 @@ NotifyMode (void)
 		  Flags = ((PolygonType *)Crosshair.AttachedObject.Ptr2)->Flags;
 		  PolyToPoursOnLayer (PCB->Data, Crosshair.AttachedObject.Ptr1,
 				      result, Flags);
-		  RemoveObject (POLYGON_TYPE,
+		  RemoveObject (POUR_TYPE,
 				Crosshair.AttachedObject.Ptr1,
 				Crosshair.AttachedObject.Ptr2,
 				Crosshair.AttachedObject.Ptr3);
