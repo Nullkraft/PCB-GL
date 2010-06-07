@@ -593,7 +593,7 @@ RemovePourPoint (LayerTypePtr Layer,
   SetPourBoundingBox (Pour);
   r_insert_entry (Layer->pour_tree, (BoxType *) Pour, 0);
   RemoveExcessPourPoints (Layer, Pour);
-  InitClip (PCB->Data, Layer, Pour);
+  InitPourClip (PCB->Data, Layer, Pour);
 
   /* redraw pour if necessary */
   if (Layer->On)
