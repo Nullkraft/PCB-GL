@@ -1,49 +1,11 @@
-Bottom: 37584208ab3f20d923c355891f0de73bf8f894b7
+Bottom: 6472f1a68e0c21c7cb966213bc8d5315d9b9b217
 Top:    6472f1a68e0c21c7cb966213bc8d5315d9b9b217
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-08 00:43:18 +0100
+Date:   2010-06-08 01:30:15 +0100
 
 Debug GL calls out of context
 
 
 ---
 
-diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 1fa2640..efce5ec 100644
---- a/src/hid/gtk/gui-output-events.c
-+++ b/src/hid/gtk/gui-output-events.c
-@@ -73,6 +73,7 @@ static GLfloat last_modelview_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
-                                               {0.0, 0.0, 0.0, 1.0}};
- static int global_view_2d = 1;
- 
-+static bool check_gl_drawing_ok_hack = false;
- 
- /* Set to true if cursor is currently in viewport. This is a hack to prevent
-  * Crosshair stack corruption due to unmatching window enter / leave events */
-@@ -596,6 +597,9 @@ ghid_show_crosshair (gboolean show)
-   static GdkColor cross_color;
-   extern float global_depth;
- 
-+  if (!check_gl_drawing_ok_hack)
-+    return;
-+
-   if (gport->x_crosshair < 0 || ghidgui->creating) {// || !gport->has_entered) {
-     printf ("Returning\n");
-     return;
-@@ -1752,6 +1756,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
- 
-   hidgl_init ();
- 
-+  check_gl_drawing_ok_hack = true;
-+
-   /* If we don't have any stencil bits available,
-      we can't use the hidgl polygon drawing routine */
-   /* TODO: We could use the GLU tessellator though */
-@@ -1974,6 +1980,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
-   else
-     glFlush ();
- 
-+  check_gl_drawing_ok_hack = false;
-+
-   /* end drawing to current GL-context */
-   gdk_gl_drawable_gl_end (pGlDrawable);
+
