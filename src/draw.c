@@ -49,6 +49,7 @@
 #include "search.h"
 #include "select.h"
 #include "print.h"
+#include "pour.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
@@ -1710,11 +1711,11 @@ DrawPourLowLevel (PourTypePtr Pour)
     {
       gui->set_line_width (Output.fgGC, 2);
 //      gui->set_line_width (Output.fgGC, 1);
-      for (i = 0; i < n - 1; i++)
+      for (i = 0; i < n; i++)
         {
-          gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
+          Cardinal next = next_contour_point (Pour, i);
+          gui->draw_line (Output.fgGC, x[i], y[i], x[next], y[next]);
         }
-      gui->draw_line (Output.fgGC, x[n - 1], y[n - 1], x[0], y[0]);
     }
   else
     gui->fill_polygon (Output.fgGC, n, x, y);
