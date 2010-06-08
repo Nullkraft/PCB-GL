@@ -1,5 +1,5 @@
 Bottom: 131e68cbb31def1a4861a0f40453bc11a145f594
-Top:    9b71e10d922bb264aad0073453fd9bc210395682
+Top:    5650c98e1961635f23c05754016604bc3632c74e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-06 23:55:36 +0100
 
@@ -2186,10 +2186,18 @@ index ac22277..90fcd66 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index a43aeef..382ea63 100644
+index a43aeef..8c6affc 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -100,6 +100,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
+@@ -49,6 +49,7 @@
+ #include "search.h"
+ #include "select.h"
+ #include "print.h"
++#include "pour.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+@@ -100,6 +101,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
  static void DrawLineLowLevel (LineTypePtr, bool);
  /* static */ void DrawRegularText (LayerTypePtr, TextTypePtr, int);
  static void DrawPolygonLowLevel (PolygonTypePtr);
@@ -2197,7 +2205,7 @@ index a43aeef..382ea63 100644
  static void DrawArcLowLevel (ArcTypePtr);
  static void DrawElementPackageLowLevel (ElementTypePtr Element, int);
  static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
-@@ -677,6 +678,7 @@ struct pin_info
+@@ -677,6 +679,7 @@ struct pin_info
  {
    bool arg;
    LayerTypePtr Layer;
@@ -2205,7 +2213,7 @@ index a43aeef..382ea63 100644
  };
  
  /* static */ int
-@@ -688,12 +690,32 @@ clearPin_callback (const BoxType * b, void *cl)
+@@ -688,12 +691,32 @@ clearPin_callback (const BoxType * b, void *cl)
      ClearOnlyPin (pin, true);
    return 1;
  }
@@ -2238,7 +2246,7 @@ index a43aeef..382ea63 100644
    return 1;
  }
  
-@@ -769,6 +791,7 @@ DrawMask (BoxType * screen)
+@@ -769,6 +792,7 @@ DrawMask (BoxType * screen)
    OutputType *out = &Output;
  
    info.arg = true;
@@ -2246,7 +2254,7 @@ index a43aeef..382ea63 100644
  
    if (thin)
      gui->set_color (Output.pmGC, PCB->MaskColor);
-@@ -867,8 +890,9 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
+@@ -867,8 +891,9 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
    /* print the non-clearing polys */
    info.Layer = Layer;
    info.arg = false;
@@ -2257,7 +2265,7 @@ index a43aeef..382ea63 100644
  
    /* draw all visible lines this layer */
    r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
-@@ -906,13 +930,13 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -906,13 +931,13 @@ DrawLayerGroup (int group, const BoxType * screen)
  	rv = 0;
        if (layernum < max_layer && Layer->On)
  	{
@@ -2275,7 +2283,7 @@ index a43aeef..382ea63 100644
  	      info.arg = false;
  
  	      /* HACK: Subcomposite polygons separately from other layer primitives */
-@@ -1657,6 +1681,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
+@@ -1657,6 +1682,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2308,11 +2316,11 @@ index a43aeef..382ea63 100644
 +    {
 +      gui->set_line_width (Output.fgGC, 2);
 +//      gui->set_line_width (Output.fgGC, 1);
-+      for (i = 0; i < n - 1; i++)
++      for (i = 0; i < n; i++)
 +        {
-+          gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
++          Cardinal next = next_contour_point (Pour, i);
++          gui->draw_line (Output.fgGC, x[i], y[i], x[next], y[next]);
 +        }
-+      gui->draw_line (Output.fgGC, x[n - 1], y[n - 1], x[0], y[0]);
 +    }
 +  else
 +    gui->fill_polygon (Output.fgGC, n, x, y);
@@ -2324,7 +2332,7 @@ index a43aeef..382ea63 100644
   * lowlevel routine to element arcs
   */
  static void
-@@ -1975,6 +2041,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+@@ -1975,6 +2042,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
    DrawPolygonLowLevel (Polygon);
  }
  
@@ -2362,7 +2370,7 @@ index a43aeef..382ea63 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -2280,6 +2377,18 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2280,6 +2378,18 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2381,7 +2389,7 @@ index a43aeef..382ea63 100644
   * erases an element
   */
  void
-@@ -2360,6 +2469,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -2360,6 +2470,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2391,7 +2399,7 @@ index a43aeef..382ea63 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -2407,6 +2519,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
+@@ -2407,6 +2520,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2, 0);
        break;
