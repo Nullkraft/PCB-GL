@@ -1,7 +1,7 @@
-Bottom: 51614d1de3ddada828c490d80d58762dc328ca7c
-Top:    ff47ac6cca5a7222fa040f7730c6f3858b74dbe7
+Bottom: 6472f1a68e0c21c7cb966213bc8d5315d9b9b217
+Top:    1d3f6f11d0ef9c3316c0002831ddd5a77fd479f4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-08 00:47:29 +0100
+Date:   2010-06-08 01:30:25 +0100
 
 Add strip hierarchy options to display refdes without any "..../" prefix
 
@@ -149,10 +149,10 @@ index 6d34ce8..f1b4c3d 100644
   * PCB flags
   */
 diff --git a/src/draw.c b/src/draw.c
-index d814c6d..e07952a 100644
+index 951ab18..5706947 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2162,6 +2162,32 @@ DrawElement (ElementTypePtr Element, int unused)
+@@ -2163,6 +2163,32 @@ DrawElement (ElementTypePtr Element, int unused)
    DrawElementPinsAndPads (Element, unused);
  }
  
@@ -185,7 +185,7 @@ index d814c6d..e07952a 100644
  /* ---------------------------------------------------------------------------
   * draws the name of an element
   */
-@@ -2180,7 +2206,7 @@ DrawElementName (ElementTypePtr Element, int unused)
+@@ -2181,7 +2207,7 @@ DrawElementName (ElementTypePtr Element, int unused)
      gui->set_color (Output.fgGC, PCB->ElementColor);
    else
      gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
@@ -194,7 +194,7 @@ index d814c6d..e07952a 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -2411,7 +2437,7 @@ EraseElement (ElementTypePtr Element)
+@@ -2412,7 +2438,7 @@ EraseElement (ElementTypePtr Element)
    }
    END_LOOP;
    if (!TEST_FLAG (HIDENAMEFLAG, Element))
@@ -203,7 +203,7 @@ index d814c6d..e07952a 100644
    EraseElementPinsAndPads (Element);
    Erasing--;
  }
-@@ -2451,7 +2477,7 @@ EraseElementName (ElementTypePtr Element)
+@@ -2452,7 +2478,7 @@ EraseElementName (ElementTypePtr Element)
      return;
    Erasing++;
    gui->set_color (Output.fgGC, Settings.BackgroundColor);
