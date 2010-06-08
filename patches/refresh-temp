@@ -1,0 +1,36 @@
+Bottom: 07b686e339ab3c8d1dcf52a0d590cab1cb22b6a0
+Top:    3fd5b946b77c279430239be9f737acec20d9b514
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-08 01:10:38 +0100
+
+Refresh of add-support-for-a-poured-objec-I
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 163dcbc..a1316f2 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -49,6 +49,7 @@
+ #include "search.h"
+ #include "select.h"
+ #include "print.h"
++#include "pour.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+@@ -1710,11 +1711,11 @@ DrawPourLowLevel (PourTypePtr Pour)
+     {
+       gui->set_line_width (Output.fgGC, 2);
+ //      gui->set_line_width (Output.fgGC, 1);
+-      for (i = 0; i < n - 1; i++)
++      for (i = 0; i < n; i++)
+         {
+-          gui->draw_line (Output.fgGC, x[i], y[i], x[i + 1], y[i + 1]);
++          Cardinal next = next_contour_point (Pour, i);
++          gui->draw_line (Output.fgGC, x[i], y[i], x[next], y[next]);
+         }
+-      gui->draw_line (Output.fgGC, x[n - 1], y[n - 1], x[0], y[0]);
+     }
+   else
+     gui->fill_polygon (Output.fgGC, n, x, y);
