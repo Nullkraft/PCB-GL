@@ -1734,9 +1734,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
     return FALSE;
   }
 
-  hidgl_init ();
+  hidgl_in_context (true);
 
+  hidgl_init ();
   check_gl_drawing_ok_hack = true;
+
 
   /* If we don't have any stencil bits available,
      we can't use the hidgl polygon drawing routine */
@@ -1961,6 +1963,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
     glFlush ();
 
   check_gl_drawing_ok_hack = false;
+  hidgl_in_context (false);
 
   /* end drawing to current GL-context */
   gdk_gl_drawable_gl_end (pGlDrawable);
