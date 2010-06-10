@@ -714,6 +714,7 @@ MovePourToLayerLowLevel (LayerTypePtr Source, PourTypePtr Pour,
 			    LayerTypePtr Destination)
 {
   PourTypePtr new = GetPourMemory (Destination);
+  Cardinal i;
 
   r_delete_entry (Source->pour_tree, (BoxType *) Pour);
   /* copy the data and remove it from the former layer */
@@ -722,6 +723,8 @@ MovePourToLayerLowLevel (LayerTypePtr Source, PourTypePtr Pour,
   r_substitute (Source->pour_tree,
 		(BoxType *) & Source->Pour[Source->PourN],
 		(BoxType *) Pour);
+  for (i = 0; i < Pour->PolygonN; i++)
+    Pour->Polygons[i].ParentPour = Pour;
   memset (&Source->Pour[Source->PourN], 0, sizeof (PourType));
   if (!Destination->pour_tree)
     Destination->pour_tree = r_create_tree (NULL, 0, 0);

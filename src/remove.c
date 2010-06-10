@@ -187,6 +187,8 @@ DestroyArc (LayerTypePtr Layer, ArcTypePtr Arc)
 static void *
 DestroyPour (LayerTypePtr Layer, PourTypePtr Pour)
 {
+  Cardinal i;
+
   r_delete_entry (Layer->pour_tree, (BoxTypePtr) Pour);
   FreePourMemory (Pour);
   if (Pour != &Layer->Pour[--Layer->PourN])
@@ -195,6 +197,8 @@ DestroyPour (LayerTypePtr Layer, PourTypePtr Pour)
       r_substitute (Layer->pour_tree,
                     (BoxType *) & Layer->Pour[Layer->PourN],
                     (BoxType *) Pour);
+      for (i = 0; i < Pour->PolygonN; i++)
+        Pour->Polygons[i].ParentPour = Pour;
     }
   memset (&Layer->Pour[Layer->PourN], 0, sizeof (PourType));
   return (NULL);
