@@ -1,5 +1,5 @@
-Bottom: 9876a81b1616992193573434357bf05d13fa9e0f
-Top:    cce01be515df19b5a04284e6a3150e6fa163116c
+Bottom: 800ece8df0dc2186e307cf76e018d5d847c3d96a
+Top:    0c04f8c9a074782378a667a38d062a5f9d453d20
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-03 23:35:52 +0100
 
@@ -11,7 +11,7 @@ Kept separate for now because they might have unknown side-effects.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index cb9b80d..0f74a9f 100644
+index b70655a..67e910c 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -249,8 +249,8 @@ MoveViaToBuffer (PinTypePtr Via)
@@ -44,9 +44,9 @@ index cb9b80d..0f74a9f 100644
    lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
    arc = GetArcMemory (lay);
    *arc = *Arc;
-@@ -390,8 +390,8 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
-   LayerTypePtr lay;
+@@ -391,8 +391,8 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
    PourTypePtr pour;
+   Cardinal i;
  
 -  RestoreToPours (Source, POUR_TYPE, Layer, Pour);
    r_delete_entry (Layer->pour_tree, (BoxTypePtr) Pour);
@@ -130,7 +130,7 @@ index ada4878..65caaca 100644
    a->StartAngle = new_sa;
    a->Delta = new_da;
 diff --git a/src/move.c b/src/move.c
-index a9ec320..1f8a6f8 100644
+index 8e4d32c..dc5150f 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -282,8 +282,8 @@ MoveLine (LayerTypePtr Layer, LineTypePtr Line)
@@ -204,7 +204,7 @@ index a9ec320..1f8a6f8 100644
    *new = *Text;
    *Text = Source->Text[--Source->TextN];
 diff --git a/src/pour.c b/src/pour.c
-index 7124243..237b870 100644
+index 05bfba2..91d4cb6 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -823,7 +823,8 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
@@ -241,7 +241,7 @@ index 7124243..237b870 100644
        return 0;
      }
  
-@@ -1377,9 +1381,10 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1390,9 +1394,10 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
      case POLYGON_TYPE:
      case POUR_TYPE:
        /* the cast works equally well for lines and arcs */

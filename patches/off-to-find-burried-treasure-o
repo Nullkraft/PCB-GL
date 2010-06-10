@@ -1,5 +1,5 @@
-Bottom: 0e4bfeac6b56533ddfe6c28f319d39044d3938f4
-Top:    9876a81b1616992193573434357bf05d13fa9e0f
+Bottom: 5cb072cdf2b219541497c7eeab6946422295c7d1
+Top:    800ece8df0dc2186e307cf76e018d5d847c3d96a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-03 23:35:52 +0100
 
@@ -17,19 +17,19 @@ of a selection will re-create the polygon.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index e6b530f..cb9b80d 100644
+index 783671e..b70655a 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
-@@ -390,7 +390,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
-   LayerTypePtr lay;
+@@ -391,7 +391,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
    PourTypePtr pour;
+   Cardinal i;
  
 -  RestoreToPours (Source, POLYGON_TYPE, Layer, Pour);
 +  RestoreToPours (Source, POUR_TYPE, Layer, Pour);
    r_delete_entry (Layer->pour_tree, (BoxTypePtr) Pour);
    lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
    pour = GetPourMemory (lay);
-@@ -407,7 +407,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
+@@ -410,7 +410,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
    if (!lay->pour_tree)
      lay->pour_tree = r_create_tree (NULL, 0, 0);
    r_insert_entry (lay->pour_tree, (BoxTypePtr) pour, 0);
@@ -226,7 +226,7 @@ index f93fca1..0e0e1c9 100644
  bool lineClear (LineTypePtr, Cardinal);
  bool IsLineInPolygon (LineTypePtr, PolygonTypePtr);
 diff --git a/src/move.c b/src/move.c
-index d2431c5..a9ec320 100644
+index 4b7b54a..8e4d32c 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -366,12 +366,12 @@ MovePour (LayerTypePtr Layer, PourTypePtr Pour)
@@ -277,7 +277,7 @@ index d2431c5..a9ec320 100644
      {
        DrawPour (Layer, Pour, 0);
 diff --git a/src/pour.c b/src/pour.c
-index abcca9f..7124243 100644
+index 92de400..05bfba2 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -66,7 +66,7 @@ RCSID ("$Id$");
@@ -416,7 +416,7 @@ index abcca9f..7124243 100644
  //  printf ("ClearPour counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
  
    return 0;
-@@ -1258,6 +1299,12 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
+@@ -1271,6 +1312,12 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
      }
    while ((pg = tmp) != start_pg);
  
@@ -429,7 +429,7 @@ index abcca9f..7124243 100644
    return 1;
  }
  
-@@ -1287,7 +1334,8 @@ int
+@@ -1300,7 +1347,8 @@ int
  PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
             int (*call_back) (DataTypePtr data, LayerTypePtr lay,
                               PourTypePtr poly, int type,
@@ -439,7 +439,7 @@ index abcca9f..7124243 100644
  {
    BoxType sb = ((PinTypePtr) ptr2)->BoundingBox;
    int r = 0;
-@@ -1327,8 +1375,10 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1340,8 +1388,10 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
      case ARC_TYPE:
      case TEXT_TYPE:
      case POLYGON_TYPE:
@@ -451,7 +451,7 @@ index abcca9f..7124243 100644
          return 0;
        /* silk doesn't plow */
        if (GetLayerNumber (Data, ptr1) >= max_layer)
-@@ -1360,12 +1410,12 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1373,12 +1423,12 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
        {
          PIN_LOOP ((ElementType *) ptr1);
          {
@@ -466,7 +466,7 @@ index abcca9f..7124243 100644
          }
          END_LOOP;
        }
-@@ -1385,7 +1435,7 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1398,7 +1448,7 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
  //      printf ("Calling InitPourClip from RestoreToPour\n");
        InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
      }
@@ -475,7 +475,7 @@ index abcca9f..7124243 100644
  }
  
  void
-@@ -1399,9 +1449,10 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1412,9 +1462,10 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
  //      printf ("Calling InitPourClip from ClearFromPour\n");
        InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
      }
@@ -487,7 +487,7 @@ index abcca9f..7124243 100644
  
  /* Convert a POLYAREA (and all linked POLYAREA) to
   * raw PCB pours on the given layer.
-@@ -1457,3 +1508,12 @@ PolyToPoursOnLayer (DataType *Destination, LayerType *Layer,
+@@ -1470,3 +1521,12 @@ PolyToPoursOnLayer (DataType *Destination, LayerType *Layer,
  
    SetChangedFlag (true);
  }

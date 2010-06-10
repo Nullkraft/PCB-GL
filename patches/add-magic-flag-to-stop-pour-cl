@@ -1,5 +1,5 @@
-Bottom: 8414fff8ea9233faae5432d33b0399fd35a3e652
-Top:    0e4bfeac6b56533ddfe6c28f319d39044d3938f4
+Bottom: 039e6470261be1d8e4f26d8ac9f166e7ac23668b
+Top:    5cb072cdf2b219541497c7eeab6946422295c7d1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-03 23:35:51 +0100
 
@@ -48,10 +48,10 @@ index 3d5f28f..20f6cf1 100644
  
  typedef struct			/* holds drill information */
 diff --git a/src/pour.c b/src/pour.c
-index 79bd4f6..abcca9f 100644
+index 801a7b5..92de400 100644
 --- a/src/pour.c
 +++ b/src/pour.c
-@@ -1377,6 +1377,8 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1390,6 +1390,8 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
  void
  RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
  {
@@ -60,7 +60,7 @@ index 79bd4f6..abcca9f 100644
    if (type == POUR_TYPE)
      {
  #warning FIXME Later: Why do we need to do this?
-@@ -1389,6 +1391,8 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1402,6 +1404,8 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
  void
  ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
  {
