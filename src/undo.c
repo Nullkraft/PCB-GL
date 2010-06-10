@@ -849,7 +849,7 @@ UndoSwapCopiedObject (UndoListTypePtr Entry)
 
   obj = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
   if (Entry->Kind == POUR_TYPE)
-    InitPourClip (PCB->Data, ptr1b, (PolygonType *)obj);
+    InitPourClip (PCB->Data, ptr1b, (PourType *)obj);
   return (true);
 }
 
