@@ -1,5 +1,5 @@
-Bottom: 8f828c2e94414d0b297253ddde7ef0647af031d4
-Top:    a66cdc8b0c5cb04915102196f5a7b60a0e4e3463
+Bottom: 02e4c5a2a20ff6845b143455f40b42f1e1c0a0b8
+Top:    0554698a33450424953cee78d0933ee1103226b2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-08 01:30:14 +0100
 
@@ -187,7 +187,7 @@ index f93fca1..0e0e1c9 100644
  bool lineClear (LineTypePtr, Cardinal);
  bool IsLineInPolygon (LineTypePtr, PolygonTypePtr);
 diff --git a/src/move.c b/src/move.c
-index 162cccd..5b05c64 100644
+index bf9670e..640955e 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -393,7 +393,10 @@ MoveLinePoint (LayerTypePtr Layer, LineTypePtr Line, PointTypePtr Point)
@@ -203,7 +203,7 @@ index 162cccd..5b05c64 100644
  	{
  	  DrawLine (Layer, Line, 0);
 diff --git a/src/pour.c b/src/pour.c
-index 15eb672..7bcd9c3 100644
+index d45a690..1d0558c 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -66,7 +66,7 @@ RCSID ("$Id$");
@@ -342,7 +342,7 @@ index 15eb672..7bcd9c3 100644
  //  printf ("ClearPour counted %i polygon pieces, and added the biggest %i\n", count_all, count_added);
  
    return 0;
-@@ -1257,6 +1298,12 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
+@@ -1270,6 +1311,12 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
      }
    while ((pg = tmp) != start_pg);
  
@@ -355,7 +355,7 @@ index 15eb672..7bcd9c3 100644
    return 1;
  }
  
-@@ -1286,7 +1333,8 @@ int
+@@ -1299,7 +1346,8 @@ int
  PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
             int (*call_back) (DataTypePtr data, LayerTypePtr lay,
                               PourTypePtr poly, int type,
@@ -365,7 +365,7 @@ index 15eb672..7bcd9c3 100644
  {
    BoxType sb = ((PinTypePtr) ptr2)->BoundingBox;
    int r = 0;
-@@ -1326,8 +1374,10 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1339,8 +1387,10 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
      case ARC_TYPE:
      case TEXT_TYPE:
      case POLYGON_TYPE:
@@ -377,7 +377,7 @@ index 15eb672..7bcd9c3 100644
          return 0;
        /* silk doesn't plow */
        if (GetLayerNumber (Data, ptr1) >= max_layer)
-@@ -1359,12 +1409,12 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1372,12 +1422,12 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
        {
          PIN_LOOP ((ElementType *) ptr1);
          {
@@ -392,7 +392,7 @@ index 15eb672..7bcd9c3 100644
          }
          END_LOOP;
        }
-@@ -1384,7 +1434,7 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1397,7 +1447,7 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
  //      printf ("Calling InitPourClip from RestoreToPour\n");
        InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
      }
@@ -401,7 +401,7 @@ index 15eb672..7bcd9c3 100644
  }
  
  void
-@@ -1398,7 +1448,7 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1411,7 +1461,7 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
  //      printf ("Calling InitPourClip from ClearFromPour\n");
        InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
      }
@@ -410,7 +410,7 @@ index 15eb672..7bcd9c3 100644
  }
  
  /* Convert a POLYAREA (and all linked POLYAREA) to
-@@ -1455,3 +1505,12 @@ PolyToPoursOnLayer (DataType *Destination, LayerType *Layer,
+@@ -1468,3 +1518,12 @@ PolyToPoursOnLayer (DataType *Destination, LayerType *Layer,
  
    SetChangedFlag (true);
  }

@@ -1,5 +1,5 @@
-Bottom: a66cdc8b0c5cb04915102196f5a7b60a0e4e3463
-Top:    f09266395e1c671a94fa482ca44ef68f1ca9645b
+Bottom: 0554698a33450424953cee78d0933ee1103226b2
+Top:    a41905754c177be58f8cd6e6973ba8e0b1a1aafc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-06-08 01:30:15 +0100
 
@@ -11,7 +11,7 @@ Kept separate for now because they might have unknown side-effects.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index d5d1f06..56e8868 100644
+index 6e7f128..0817cb4 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -249,8 +249,8 @@ MoveViaToBuffer (PinTypePtr Via)
@@ -120,7 +120,7 @@ index ada4878..65caaca 100644
    a->StartAngle = new_sa;
    a->Delta = new_da;
 diff --git a/src/move.c b/src/move.c
-index 5b05c64..eb297a0 100644
+index 640955e..64858f0 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -282,8 +282,8 @@ MoveLine (LayerTypePtr Layer, LineTypePtr Line)
@@ -174,7 +174,7 @@ index 5b05c64..eb297a0 100644
    *new = *Text;
    *Text = Source->Text[--Source->TextN];
 diff --git a/src/pour.c b/src/pour.c
-index 7bcd9c3..1103ec4 100644
+index 1d0558c..5e66d98 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -823,7 +823,8 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
@@ -211,7 +211,7 @@ index 7bcd9c3..1103ec4 100644
        return 0;
      }
  
-@@ -1376,9 +1380,10 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1389,9 +1393,10 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
      case POLYGON_TYPE:
      case POUR_TYPE:
        /* the cast works equally well for lines and arcs */
