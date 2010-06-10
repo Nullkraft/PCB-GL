@@ -1,0 +1,164 @@
+Bottom: 2a5d8ed8ebb8ca9fa4595c6a65c29e0f32ec3ef1
+Top:    cb80f2110d69f2d7694e5947dd4ab35fbb0c42d3
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-06-11 00:20:21 +0100
+
+Refresh of attempt-to-debug-islandness-af
+
+---
+
+diff --git a/src/buffer.c b/src/buffer.c
+index 56e8868..0817cb4 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -389,6 +389,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
+ {
+   LayerTypePtr lay;
+   PourTypePtr pour;
++  Cardinal i;
+ 
+   r_delete_entry (Layer->pour_tree, (BoxTypePtr) Pour);
+   lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
+@@ -396,12 +397,14 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
+   *pour = *Pour;
+   CLEAR_FLAG (FOUNDFLAG, pour);
+   if (Pour != &Layer->Pour[--Layer->PourN])
+-  {
+-  *Pour = Layer->Pour[Layer->PourN];
+-  r_substitute (Layer->pour_tree,
+-		(BoxTypePtr) & Layer->Pour[Layer->PourN],
+-		(BoxTypePtr) Pour);
+-  }
++    {
++      *Pour = Layer->Pour[Layer->PourN];
++      r_substitute (Layer->pour_tree,
++                    (BoxTypePtr) & Layer->Pour[Layer->PourN],
++                    (BoxTypePtr) Pour);
++      for (i = 0; i < Pour->PolygonN; i++)
++        Pour->Polygons[i].ParentPour = Pour;
++    }
+   memset (&Layer->Pour[Layer->PourN], 0, sizeof (PourType));
+   if (!lay->pour_tree)
+     lay->pour_tree = r_create_tree (NULL, 0, 0);
+diff --git a/src/move.c b/src/move.c
+index eb297a0..64858f0 100644
+--- a/src/move.c
++++ b/src/move.c
+@@ -717,6 +717,7 @@ MovePourToLayerLowLevel (LayerTypePtr Source, PourTypePtr Pour,
+ 			    LayerTypePtr Destination)
+ {
+   PourTypePtr new = GetPourMemory (Destination);
++  Cardinal i;
+ 
+   r_delete_entry (Source->pour_tree, (BoxType *) Pour);
+   /* copy the data and remove it from the former layer */
+@@ -725,6 +726,8 @@ MovePourToLayerLowLevel (LayerTypePtr Source, PourTypePtr Pour,
+   r_substitute (Source->pour_tree,
+ 		(BoxType *) & Source->Pour[Source->PourN],
+ 		(BoxType *) Pour);
++  for (i = 0; i < Pour->PolygonN; i++)
++    Pour->Polygons[i].ParentPour = Pour;
+   memset (&Source->Pour[Source->PourN], 0, sizeof (PourType));
+   if (!Destination->pour_tree)
+     Destination->pour_tree = r_create_tree (NULL, 0, 0);
+diff --git a/src/pour.c b/src/pour.c
+index 884813c..2100377 100644
+--- a/src/pour.c
++++ b/src/pour.c
+@@ -1105,7 +1105,7 @@ original_pour_poly (PourType * p)
+ 
+           hole++;
+         }
+-  }
++    }
+   return np;
+ }
+ 
+@@ -1312,6 +1312,12 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
+       printf ("Clipping returned NULL - can that be good?\n");
+       return 0;
+     }
++  if (!pg->contours)
++    {
++      printf ("Clipping returned NULL contours - can that be good?\n");
++      printf ("Pour was %ld, %p\n", pour->ID, pour);
++      return 0;
++    }
+ //  assert (poly_Valid (clipped));
+   if (TEST_FLAG (CLEARPOLYFLAG, pour))
+     {
+@@ -1325,6 +1331,13 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
+       return 0;
+     }
+ 
++  if (pg->contours == NULL)
++    {
++      printf ("Got pg->contours == NULL for some reason\n");
++      printf ("Pour was %ld, %p\n", pour->ID, pour);
++      return 0;
++    }
++
+   count_all = count_added = 0;
+   /* For each piece of the clipped up polygon, create a new child */
+   start_pg = pg;
+@@ -1358,8 +1371,12 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
+     }
+   while ((pg = tmp) != start_pg);
+ 
++  printf ("Checking islandiness\n");
+   POURPOLYGON_LOOP (pour);
+   {
++    printf ("Checking polygon from pour, %s\n",
++            IsPolygonAnIsland (layer, polygon) ? "is an island" :
++                                                 "connected");
+     ASSIGN_FLAG (HOLEFLAG, IsPolygonAnIsland (layer, polygon), polygon);
+   }
+   END_LOOP;
+@@ -1552,12 +1569,12 @@ PolyToPoursOnLayer (DataType *Destination, LayerType *Layer,
+         }
+       while ((pline = pline->next) != NULL);
+ 
+-      InitPourClip (Destination, Layer, Pour);
+       SetPourBoundingBox (Pour);
+       if (!Layer->pour_tree)
+         Layer->pour_tree = r_create_tree (NULL, 0, 0);
+       r_insert_entry (Layer->pour_tree, (BoxType *) Pour, 0);
+ 
++      InitPourClip (Destination, Layer, Pour);
+       DrawPour (Layer, Pour, 0);
+       /* add to undo list */
+       AddObjectToCreateUndoList (POLYGON_TYPE, Layer, Pour, Pour);
+diff --git a/src/remove.c b/src/remove.c
+index a2d05cb..d124284 100644
+--- a/src/remove.c
++++ b/src/remove.c
+@@ -187,6 +187,8 @@ DestroyArc (LayerTypePtr Layer, ArcTypePtr Arc)
+ static void *
+ DestroyPour (LayerTypePtr Layer, PourTypePtr Pour)
+ {
++  Cardinal i;
++
+   r_delete_entry (Layer->pour_tree, (BoxTypePtr) Pour);
+   FreePourMemory (Pour);
+   if (Pour != &Layer->Pour[--Layer->PourN])
+@@ -195,6 +197,8 @@ DestroyPour (LayerTypePtr Layer, PourTypePtr Pour)
+       r_substitute (Layer->pour_tree,
+                     (BoxType *) & Layer->Pour[Layer->PourN],
+                     (BoxType *) Pour);
++      for (i = 0; i < Pour->PolygonN; i++)
++        Pour->Polygons[i].ParentPour = Pour;
+     }
+   memset (&Layer->Pour[Layer->PourN], 0, sizeof (PourType));
+   return (NULL);
+diff --git a/src/undo.c b/src/undo.c
+index 70c8401..2dacee3 100644
+--- a/src/undo.c
++++ b/src/undo.c
+@@ -849,7 +849,7 @@ UndoSwapCopiedObject (UndoListTypePtr Entry)
+ 
+   obj = MoveObjectToBuffer (PCB->Data, RemoveList, type, ptr1, ptr2, ptr3);
+   if (Entry->Kind == POUR_TYPE)
+-    InitPourClip (PCB->Data, ptr1b, (PolygonType *)obj);
++    InitPourClip (PCB->Data, ptr1b, (PourType *)obj);
+   return (true);
+ }
