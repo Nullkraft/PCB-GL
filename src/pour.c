@@ -988,7 +988,7 @@ original_pour_poly (PourType * p)
 
           hole++;
         }
-  }
+    }
   return np;
 }
 
@@ -1184,6 +1184,12 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
       printf ("Clipping returned NULL - can that be good?\n");
       return 0;
     }
+  if (!pg->contours)
+    {
+      printf ("Clipping returned NULL contours - can that be good?\n");
+      printf ("Pour was %ld, %p\n", pour->ID, pour);
+      return 0;
+    }
 //  assert (poly_Valid (clipped));
   if (TEST_FLAG (CLEARPOLYFLAG, pour))
     {
@@ -1194,6 +1200,13 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
   if (pg == NULL)
     {
       printf ("Got pg == NULL for some reason\n");
+      return 0;
+    }
+
+  if (pg->contours == NULL)
+    {
+      printf ("Got pg->contours == NULL for some reason\n");
+      printf ("Pour was %ld, %p\n", pour->ID, pour);
       return 0;
     }
 
@@ -1411,12 +1424,12 @@ PolyToPoursOnLayer (DataType *Destination, LayerType *Layer,
         }
       while ((pline = pline->next) != NULL);
 
-      InitPourClip (Destination, Layer, Pour);
       SetPourBoundingBox (Pour);
       if (!Layer->pour_tree)
         Layer->pour_tree = r_create_tree (NULL, 0, 0);
       r_insert_entry (Layer->pour_tree, (BoxType *) Pour, 0);
 
+      InitPourClip (Destination, Layer, Pour);
       DrawPour (Layer, Pour, 0);
       /* add to undo list */
       AddObjectToCreateUndoList (POLYGON_TYPE, Layer, Pour, Pour);

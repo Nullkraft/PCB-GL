@@ -389,6 +389,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
 {
   LayerTypePtr lay;
   PourTypePtr pour;
+  Cardinal i;
 
   RestoreToPours (Source, POLYGON_TYPE, Layer, Pour);
   r_delete_entry (Layer->pour_tree, (BoxTypePtr) Pour);
@@ -397,12 +398,14 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
   *pour = *Pour;
   CLEAR_FLAG (FOUNDFLAG, pour);
   if (Pour != &Layer->Pour[--Layer->PourN])
-  {
-  *Pour = Layer->Pour[Layer->PourN];
-  r_substitute (Layer->pour_tree,
-		(BoxTypePtr) & Layer->Pour[Layer->PourN],
-		(BoxTypePtr) Pour);
-  }
+    {
+      *Pour = Layer->Pour[Layer->PourN];
+      r_substitute (Layer->pour_tree,
+                    (BoxTypePtr) & Layer->Pour[Layer->PourN],
+                    (BoxTypePtr) Pour);
+      for (i = 0; i < Pour->PolygonN; i++)
+        Pour->Polygons[i].ParentPour = Pour;
+    }
   memset (&Layer->Pour[Layer->PourN], 0, sizeof (PourType));
   if (!lay->pour_tree)
     lay->pour_tree = r_create_tree (NULL, 0, 0);
