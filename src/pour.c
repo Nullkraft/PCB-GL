@@ -1371,12 +1371,8 @@ InitPourClip (DataTypePtr Data, LayerTypePtr layer, PourType * pour)
     }
   while ((pg = tmp) != start_pg);
 
-  printf ("Checking islandiness\n");
   POURPOLYGON_LOOP (pour);
   {
-    printf ("Checking polygon from pour, %s\n",
-            IsPolygonAnIsland (layer, polygon) ? "is an island" :
-                                                 "connected");
     ASSIGN_FLAG (HOLEFLAG, IsPolygonAnIsland (layer, polygon), polygon);
   }
   END_LOOP;
