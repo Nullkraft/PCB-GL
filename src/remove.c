@@ -45,7 +45,8 @@
 #include "misc.h"
 #include "move.h"
 #include "mymem.h"
-#include "polygon.h"
+//#include "polygon.h"
+#include "pour.h"
 #include "rats.h"
 #include "remove.h"
 #include "rtree.h"
@@ -69,13 +70,13 @@ static void *DestroyRat (RatTypePtr);
 static void *DestroyLine (LayerTypePtr, LineTypePtr);
 static void *DestroyArc (LayerTypePtr, ArcTypePtr);
 static void *DestroyText (LayerTypePtr, TextTypePtr);
-static void *DestroyPolygon (LayerTypePtr, PolygonTypePtr);
+static void *DestroyPour (LayerTypePtr, PourTypePtr);
 static void *DestroyElement (ElementTypePtr);
 static void *RemoveVia (PinTypePtr);
 static void *RemoveRat (RatTypePtr);
-static void *DestroyPolygonPoint (LayerTypePtr, PolygonTypePtr, PointTypePtr);
-static void *RemovePolygonContour (LayerTypePtr, PolygonTypePtr, Cardinal);
-static void *RemovePolygonPoint (LayerTypePtr, PolygonTypePtr, PointTypePtr);
+static void *DestroyPourPoint (LayerTypePtr, PourTypePtr, PointTypePtr);
+static void *RemovePourContour (LayerTypePtr, PourTypePtr, Cardinal);
+static void *RemovePourPoint (LayerTypePtr, PourTypePtr, PointTypePtr);
 static void *RemoveLinePoint (LayerTypePtr, LineTypePtr, PointTypePtr);
 
 /* ---------------------------------------------------------------------------
@@ -84,28 +85,30 @@ static void *RemoveLinePoint (LayerTypePtr, LineTypePtr, PointTypePtr);
 static ObjectFunctionType RemoveFunctions = {
   RemoveLine,
   RemoveText,
-  RemovePolygon,
+  NULL,
+  RemovePour,
   RemoveVia,
   RemoveElement,
   NULL,
   NULL,
   NULL,
   RemoveLinePoint,
-  RemovePolygonPoint,
+  RemovePourPoint,
   RemoveArc,
   RemoveRat
 };
 static ObjectFunctionType DestroyFunctions = {
   DestroyLine,
   DestroyText,
-  DestroyPolygon,
+  NULL, //DestroyPolygon,
+  DestroyPour,
   DestroyVia,
   DestroyElement,
   NULL,
   NULL,
   NULL,
   NULL,
-  DestroyPolygonPoint,
+  DestroyPourPoint,
   DestroyArc,
   DestroyRat
 };
@@ -179,62 +182,66 @@ DestroyArc (LayerTypePtr Layer, ArcTypePtr Arc)
 }
 
 /* ---------------------------------------------------------------------------
- * destroys a polygon from a layer
+ * destroys a pour from a layer
  */
 static void *
-DestroyPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+DestroyPour (LayerTypePtr Layer, PourTypePtr Pour)
 {
-  r_delete_entry (Layer->polygon_tree, (BoxTypePtr) Polygon);
-  FreePolygonMemory (Polygon);
-  if (Polygon != &Layer->Polygon[--Layer->PolygonN])
+  Cardinal i;
+
+  r_delete_entry (Layer->pour_tree, (BoxTypePtr) Pour);
+  FreePourMemory (Pour);
+  if (Pour != &Layer->Pour[--Layer->PourN])
     {
-      *Polygon = Layer->Polygon[Layer->PolygonN];
-      r_substitute (Layer->polygon_tree,
-		    (BoxType *) & Layer->Polygon[Layer->PolygonN],
-		    (BoxType *) Polygon);
+      *Pour = Layer->Pour[Layer->PourN];
+      r_substitute (Layer->pour_tree,
+                    (BoxType *) & Layer->Pour[Layer->PourN],
+                    (BoxType *) Pour);
+      for (i = 0; i < Pour->PolygonN; i++)
+        Pour->Polygons[i].ParentPour = Pour;
     }
-  memset (&Layer->Polygon[Layer->PolygonN], 0, sizeof (PolygonType));
+  memset (&Layer->Pour[Layer->PourN], 0, sizeof (PourType));
   return (NULL);
 }
 
 /* ---------------------------------------------------------------------------
- * removes a polygon-point from a polygon and destroys the data
+ * removes a pour-point from a pour and destroys the data
  */
 static void *
-DestroyPolygonPoint (LayerTypePtr Layer,
-		     PolygonTypePtr Polygon, PointTypePtr Point)
+DestroyPourPoint (LayerTypePtr Layer,
+                  PourTypePtr Pour, PointTypePtr Point)
 {
   Cardinal point_idx;
   Cardinal i;
   Cardinal contour;
   Cardinal contour_start, contour_end, contour_points;
 
-  point_idx = polygon_point_idx (Polygon, Point);
-  contour = polygon_point_contour (Polygon, point_idx);
-  contour_start = (contour == 0) ? 0 : Polygon->HoleIndex[contour - 1];
-  contour_end = (contour == Polygon->HoleIndexN) ? Polygon->PointN :
-                                                   Polygon->HoleIndex[contour];
+  point_idx = pour_point_idx (Pour, Point);
+  contour = pour_point_contour (Pour, point_idx);
+  contour_start = (contour == 0) ? 0 : Pour->HoleIndex[contour - 1];
+  contour_end = (contour == Pour->HoleIndexN) ? Pour->PointN :
+                                                Pour->HoleIndex[contour];
   contour_points = contour_end - contour_start;
 
   if (contour_points <= 3)
-    return RemovePolygonContour (Layer, Polygon, contour);
+    return RemovePourContour (Layer, Pour, contour);
 
-  r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
+  r_delete_entry (Layer->pour_tree, (BoxType *) Pour);
 
   /* remove point from list, keep point order */
-  for (i = point_idx; i < Polygon->PointN - 1; i++)
-    Polygon->Points[i] = Polygon->Points[i + 1];
-  Polygon->PointN--;
+  for (i = point_idx; i < Pour->PointN - 1; i++)
+    Pour->Points[i] = Pour->Points[i + 1];
+  Pour->PointN--;
 
   /* Shift down indices of any holes */
-  for (i = 0; i < Polygon->HoleIndexN; i++)
-    if (Polygon->HoleIndex[i] > point_idx)
-      Polygon->HoleIndex[i]--;
+  for (i = 0; i < Pour->HoleIndexN; i++)
+    if (Pour->HoleIndex[i] > point_idx)
+      Pour->HoleIndex[i]--;
 
-  SetPolygonBoundingBox (Polygon);
-  r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
-  InitClip (PCB->Data, Layer, Polygon);
-  return (Polygon);
+  SetPourBoundingBox (Pour);
+  r_insert_entry (Layer->pour_tree, (BoxType *) Pour, 0);
+  InitPourClip (PCB->Data, Layer, Pour);
+  return (Pour);
 }
 
 /* ---------------------------------------------------------------------------
@@ -481,67 +488,67 @@ RemoveText (LayerTypePtr Layer, TextTypePtr Text)
 }
 
 /* ---------------------------------------------------------------------------
- * removes a polygon from a layer
+ * removes a pour from a layer
  */
 void *
-RemovePolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+RemovePour (LayerTypePtr Layer, PourTypePtr Pour)
 {
   /* erase from screen */
   if (Layer->On)
     {
-      ErasePolygon (Polygon);
+      ErasePour (Pour);
       if (!Bulk)
 	Draw ();
     }
-  MoveObjectToRemoveUndoList (POLYGON_TYPE, Layer, Polygon, Polygon);
+  MoveObjectToRemoveUndoList (POUR_TYPE, Layer, Pour, Pour);
   return (NULL);
 }
 
 /* ---------------------------------------------------------------------------
- * removes a contour from a polygon.
- * If removing the outer contour, it removes the whole polygon.
+ * removes a contour from a pour.
+ * If removing the outer contour, it removes the whole pour.
  */
 static void *
-RemovePolygonContour (LayerTypePtr Layer,
-                      PolygonTypePtr Polygon,
-                      Cardinal contour)
+RemovePourContour (LayerTypePtr Layer,
+                   PourTypePtr Pour,
+                   Cardinal contour)
 {
   Cardinal contour_start, contour_end, contour_points;
   Cardinal i;
 
   if (contour == 0)
-    return RemovePolygon (Layer, Polygon);
+    return RemovePour (Layer, Pour);
 
   if (Layer->On)
     {
-      ErasePolygon (Polygon);
+      ErasePour (Pour);
       if (!Bulk)
         Draw ();
     }
 
-  /* Copy the polygon to the undo list */
-  AddObjectToRemoveContourUndoList (POLYGON_TYPE, Layer, Polygon);
+  /* Copy the pour to the undo list */
+  AddObjectToRemoveContourUndoList (POUR_TYPE, Layer, Pour);
 
-  contour_start = (contour == 0) ? 0 : Polygon->HoleIndex[contour - 1];
-  contour_end = (contour == Polygon->HoleIndexN) ? Polygon->PointN :
-                                                   Polygon->HoleIndex[contour];
+  contour_start = (contour == 0) ? 0 : Pour->HoleIndex[contour - 1];
+  contour_end = (contour == Pour->HoleIndexN) ? Pour->PointN :
+                                                Pour->HoleIndex[contour];
   contour_points = contour_end - contour_start;
 
   /* remove points from list, keep point order */
-  for (i = contour_start; i < Polygon->PointN - contour_points; i++)
-    Polygon->Points[i] = Polygon->Points[i + contour_points];
-  Polygon->PointN -= contour_points;
+  for (i = contour_start; i < Pour->PointN - contour_points; i++)
+    Pour->Points[i] = Pour->Points[i + contour_points];
+  Pour->PointN -= contour_points;
 
   /* remove hole from list and shift down remaining indices */
-  for (i = contour; i < Polygon->HoleIndexN; i++)
-    Polygon->HoleIndex[i - 1] = Polygon->HoleIndex[i] - contour_points;
-  Polygon->HoleIndexN--;
+  for (i = contour; i < Pour->HoleIndexN; i++)
+    Pour->HoleIndex[i - 1] = Pour->HoleIndex[i] - contour_points;
+  Pour->HoleIndexN--;
 
-  InitClip (PCB->Data, Layer, Polygon);
-  /* redraw polygon if necessary */
+  InitPourClip (PCB->Data, Layer, Pour);
+  /* redraw pour if necessary */
   if (Layer->On)
     {
-      DrawPolygon (Layer, Polygon, 0);
+      DrawPour (Layer, Pour, 0);
       if (!Bulk)
         Draw ();
     }
@@ -549,53 +556,53 @@ RemovePolygonContour (LayerTypePtr Layer,
 }
 
 /* ---------------------------------------------------------------------------
- * removes a polygon-point from a polygon
+ * removes a pour-point from a pour
  */
 static void *
-RemovePolygonPoint (LayerTypePtr Layer,
-		    PolygonTypePtr Polygon, PointTypePtr Point)
+RemovePourPoint (LayerTypePtr Layer,
+                 PourTypePtr Pour, PointTypePtr Point)
 {
   Cardinal point_idx;
   Cardinal i;
   Cardinal contour;
   Cardinal contour_start, contour_end, contour_points;
 
-  point_idx = polygon_point_idx (Polygon, Point);
-  contour = polygon_point_contour (Polygon, point_idx);
-  contour_start = (contour == 0) ? 0 : Polygon->HoleIndex[contour - 1];
-  contour_end = (contour == Polygon->HoleIndexN) ? Polygon->PointN :
-                                                   Polygon->HoleIndex[contour];
+  point_idx = pour_point_idx (Pour, Point);
+  contour = pour_point_contour (Pour, point_idx);
+  contour_start = (contour == 0) ? 0 : Pour->HoleIndex[contour - 1];
+  contour_end = (contour == Pour->HoleIndexN) ? Pour->PointN :
+                                                Pour->HoleIndex[contour];
   contour_points = contour_end - contour_start;
 
   if (contour_points <= 3)
-    return RemovePolygonContour (Layer, Polygon, contour);
+    return RemovePourContour (Layer, Pour, contour);
 
   if (Layer->On)
-    ErasePolygon (Polygon);
+    ErasePour (Pour);
 
-  /* insert the polygon-point into the undo list */
-  AddObjectToRemovePointUndoList (POLYGONPOINT_TYPE, Layer, Polygon, point_idx);
-  r_delete_entry (Layer->polygon_tree, (BoxType *) Polygon);
+  /* insert the pour-point into the undo list */
+  AddObjectToRemovePointUndoList (POURPOINT_TYPE, Layer, Pour, point_idx);
+  r_delete_entry (Layer->pour_tree, (BoxType *) Pour);
 
   /* remove point from list, keep point order */
-  for (i = point_idx; i < Polygon->PointN - 1; i++)
-    Polygon->Points[i] = Polygon->Points[i + 1];
-  Polygon->PointN--;
+  for (i = point_idx; i < Pour->PointN - 1; i++)
+    Pour->Points[i] = Pour->Points[i + 1];
+  Pour->PointN--;
 
   /* Shift down indices of any holes */
-  for (i = 0; i < Polygon->HoleIndexN; i++)
-    if (Polygon->HoleIndex[i] > point_idx)
-      Polygon->HoleIndex[i]--;
+  for (i = 0; i < Pour->HoleIndexN; i++)
+    if (Pour->HoleIndex[i] > point_idx)
+      Pour->HoleIndex[i]--;
 
-  SetPolygonBoundingBox (Polygon);
-  r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
-  RemoveExcessPolygonPoints (Layer, Polygon);
-  InitClip (PCB->Data, Layer, Polygon);
+  SetPourBoundingBox (Pour);
+  r_insert_entry (Layer->pour_tree, (BoxType *) Pour, 0);
+  RemoveExcessPourPoints (Layer, Pour);
+  InitPourClip (PCB->Data, Layer, Pour);
 
-  /* redraw polygon if necessary */
+  /* redraw pour if necessary */
   if (Layer->On)
     {
-      DrawPolygon (Layer, Polygon, 0);
+      DrawPour (Layer, Pour, 0);
       if (!Bulk)
 	Draw ();
     }
