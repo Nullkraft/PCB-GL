@@ -196,6 +196,8 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
     return FALSE;
   }
 
+  hidgl_in_context (true);
+
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -241,6 +243,8 @@ ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev)
     gdk_gl_drawable_swap_buffers (pGlDrawable);
   else
     glFlush ();
+
+  hidgl_in_context (false);
 
   /* end drawing to current GL-context */
   gdk_gl_drawable_gl_end (pGlDrawable);
