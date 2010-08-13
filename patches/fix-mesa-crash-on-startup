@@ -1,5 +1,5 @@
-Bottom: a676a0674eeccfe1c824d95075da13ff6fccb05f
-Top:    e4830778fdf80c34ddf221a8898db1d6615f24d4
+Bottom: 2fa435f9a212c1ef1e67f17f89976d5680fbd472
+Top:    2fa435f9a212c1ef1e67f17f89976d5680fbd472
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-13 01:11:25 +0100
 
@@ -13,58 +13,4 @@ gtk_widget_show_all()
 
 ---
 
-diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 5d16fb6..c657c24 100644
---- a/src/hid/gtk/gui-top-window.c
-+++ b/src/hid/gtk/gui-top-window.c
-@@ -2145,7 +2145,21 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
-   gtk_main_quit ();
- }
- 
-+static void
-+ghid_port_drawing_realize_cb (GtkWidget *widget, gpointer data)
-+{
-+  GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
-+  GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
-+
-+  /*** OpenGL BEGIN ***/
-+  if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
-+    return;
- 
-+  gdk_gl_drawable_gl_end (gldrawable);
-+  /*** OpenGL END ***/
-+
-+  return;
-+}
- 
- /* 
-  * Create the top_window contents.  The config settings should be loaded
-@@ -2368,6 +2382,9 @@ ghid_build_pcb_top_window (void)
-      |  the user does a command entry.
-    */
- 
-+  g_signal_connect (G_OBJECT (gport->drawing_area), "realize",
-+		    G_CALLBACK (ghid_port_drawing_realize_cb),
-+		    port);
-   g_signal_connect (G_OBJECT (gport->drawing_area), "expose_event",
- 		    G_CALLBACK (ghid_port_drawing_area_expose_event_cb),
- 		    port);
-@@ -2403,10 +2420,6 @@ ghid_build_pcb_top_window (void)
-   ghidgui->creating = FALSE;
- 
-   gtk_widget_show_all (gport->top_window);
--  gtk_widget_realize (vbox_main);
--  gtk_widget_realize (hbox_middle);
--  gtk_widget_realize (viewport);
--  gtk_widget_realize (gport->drawing_area);
-   gdk_window_set_back_pixmap (gport->drawing_area->window, NULL, FALSE);
- 
-   ghid_route_style_temp_buttons_hide ();
-@@ -2721,8 +2734,6 @@ ghid_parse_arguments (int *argc, char ***argv)
-   if (Settings.AutoPlace)
-     gtk_widget_set_uposition (GTK_WIDGET (window), 10, 10);
- 
--  gtk_widget_realize (gport->top_window);
--  gtk_widget_show_all (gport->top_window);
-   ghidgui->creating = TRUE;
- }
+
