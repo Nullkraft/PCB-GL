@@ -1,7 +1,7 @@
-Bottom: 1e1397ae367fe714f62e64d2777ce73da6592706
-Top:    15f34361a5b49b19e8309bcf5e51f8aca57cfba9
+Bottom: bacdf1b555c4ab13c123b1fa0349aa39ce822bcc
+Top:    cd0b2a080e2d8ad6b3afc7b228b10c483b806fc9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-06-08 01:30:12 +0100
+Date:   2010-08-13 01:46:08 +0100
 
 Add support for a "poured" object.
 
@@ -440,7 +440,7 @@ index ee116e8..7529e8a 100644
  void ActionMovePointer (char *, char *);
  void ActionAdjustStyle (char *);
 diff --git a/src/autoroute.c b/src/autoroute.c
-index 7fb7443..ec1cab7 100644
+index 3361f79..9b90e61 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -74,6 +74,7 @@
@@ -490,7 +490,7 @@ index 7fb7443..ec1cab7 100644
        }
        END_LOOP;
        /* add all copper text */
-@@ -5056,20 +5064,18 @@ IronDownAllUnfixedPaths (routedata_t * rd)
+@@ -5069,20 +5077,18 @@ IronDownAllUnfixedPaths (routedata_t * rd)
  	  int type = FindPin (&p->box, &pin);
  	  if (pin)
  	    {
@@ -2095,7 +2095,7 @@ index ac22277..90fcd66 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index 602b499..a1316f2 100644
+index a27c0dc..bcc1300 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -49,6 +49,7 @@
@@ -2279,7 +2279,7 @@ index 602b499..a1316f2 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -2279,6 +2377,18 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2268,6 +2366,18 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2298,7 +2298,7 @@ index 602b499..a1316f2 100644
   * erases an element
   */
  void
-@@ -2359,6 +2469,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -2344,6 +2454,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2308,7 +2308,7 @@ index 602b499..a1316f2 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -2406,6 +2519,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
+@@ -2391,6 +2504,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2, 0);
        break;
@@ -2974,7 +2974,7 @@ index 37c2e48..7f58605 100644
  	result = TRUE;
        break;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 5d16fb6..09d2837 100644
+index c657c24..d47e0b6 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -1984,8 +1984,9 @@ static ModeButton mode_buttons[] = {
@@ -7974,7 +7974,7 @@ index add5661..25d8103 100644
  #define	ELEMENT_IN_BOX(e,b)	\
  	(BOX_IN_BOX(&((e)->BoundingBox), (b)))
 diff --git a/src/select.c b/src/select.c
-index 5240837..e9fe54d 100644
+index aa65f36..9467931 100644
 --- a/src/select.c
 +++ b/src/select.c
 @@ -182,6 +182,7 @@ SelectObject (void)
@@ -8005,7 +8005,7 @@ index 5240837..e9fe54d 100644
  
      case PIN_TYPE:
        AddObjectToFlagUndoList (PIN_TYPE, ptr1, ptr2, ptr2);
-@@ -340,8 +354,20 @@ SelectBlock (BoxTypePtr Box, bool Flag)
+@@ -351,8 +365,20 @@ SelectBlock (BoxTypePtr Box, bool Flag)
  	}
      }
      END_LOOP;
@@ -8027,7 +8027,7 @@ index 5240837..e9fe54d 100644
        if (POLYGON_IN_BOX (polygon, Box)
  	  && !TEST_FLAG (LOCKFLAG, polygon)
  	  && TEST_FLAG (SELECTEDFLAG, polygon) != Flag)
-@@ -352,6 +378,7 @@ SelectBlock (BoxTypePtr Box, bool Flag)
+@@ -363,6 +389,7 @@ SelectBlock (BoxTypePtr Box, bool Flag)
  	    DrawPolygon (layer, polygon, 0);
  	  changed = true;
  	}
@@ -8035,7 +8035,7 @@ index 5240837..e9fe54d 100644
      }
      END_LOOP;
    }
-@@ -512,9 +539,14 @@ ObjectOperation (ObjectFunctionTypePtr F,
+@@ -523,9 +550,14 @@ ObjectOperation (ObjectFunctionTypePtr F,
  	return (F->Polygon ((LayerTypePtr) Ptr1, (PolygonTypePtr) Ptr2));
        break;
  
@@ -8053,7 +8053,7 @@ index 5240837..e9fe54d 100644
  			  (PointTypePtr) Ptr3));
        break;
  
-@@ -613,21 +645,44 @@ SelectedOperation (ObjectFunctionTypePtr F, bool Reset, int type)
+@@ -624,21 +656,44 @@ SelectedOperation (ObjectFunctionTypePtr F, bool Reset, int type)
    }
    ENDALL_LOOP;
  
@@ -8109,7 +8109,7 @@ index 5240837..e9fe54d 100644
    ENDALL_LOOP;
  
    /* elements silkscreen */
-@@ -789,17 +844,23 @@ SelectConnection (bool Flag)
+@@ -800,17 +855,23 @@ SelectConnection (bool Flag)
        }
    }
    ENDALL_LOOP;
