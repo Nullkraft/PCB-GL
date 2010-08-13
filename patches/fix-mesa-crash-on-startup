@@ -1,0 +1,16 @@
+Bottom: a676a0674eeccfe1c824d95075da13ff6fccb05f
+Top:    a676a0674eeccfe1c824d95075da13ff6fccb05f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-13 01:11:25 +0100
+
+Fix mesa crash on startup
+
+I'm not sure why it crashed, but it seems that providing a realize
+handler which fiddles with the GL context solves it. I've also
+removed a number of superfluous gtk_widget_realize() and an un-warraned
+gtk_widget_show_all()
+
+
+---
+
+
