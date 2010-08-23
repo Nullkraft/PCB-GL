@@ -1093,7 +1093,7 @@ HID ghid_hid = {
   ghid_draw_rect,
   ghid_fill_circle,
   ghid_fill_polygon,
-  common_fill_pcb_polygon,
+  ghid_fill_pcb_polygon,
   common_thindraw_pcb_polygon,
   ghid_fill_rect,
 
