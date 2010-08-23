@@ -1,7 +1,7 @@
-Bottom: e40a867448c59f427985fef4082aba7d00b169a3
-Top:    df55532c6aeed9e3655871da88b48a00eb9618d0
+Bottom: 9e3a7c3247f1443a49a20115cd0da3d0fd46c3c1
+Top:    12d2628b62811c815b561c7a84997ef191dbd9c7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-08-13 01:46:04 +0100
+Date:   2010-08-24 00:48:33 +0100
 
 Island removal fixes
 
@@ -11,7 +11,7 @@ Kept separate for now because they might have unknown side-effects.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index b70655a..67e910c 100644
+index 838b806..617ebd4 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -249,8 +249,8 @@ MoveViaToBuffer (PinTypePtr Via)
