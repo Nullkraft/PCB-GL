@@ -1,7 +1,7 @@
-Bottom: 5ed8115a2c8fe668e5c2aba93f39d4f228c5f9fc
-Top:    6b78546cbfdf28d134595463c2976a97ae98e5f4
+Bottom: 617d0fd58c4ac14bda8d52ee296ae2e723de58c1
+Top:    4f496aefae37f4b7c1d955c153ba1ace7ce434fa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-08-13 01:45:51 +0100
+Date:   2010-08-24 00:48:19 +0100
 
 Fix mesa crash on startup
 
@@ -14,7 +14,7 @@ gtk_widget_show_all()
 ---
 
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 5d16fb6..c657c24 100644
+index a3898cb..26f29b4 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2145,7 +2145,21 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
@@ -60,7 +60,7 @@ index 5d16fb6..c657c24 100644
    gdk_window_set_back_pixmap (gport->drawing_area->window, NULL, FALSE);
  
    ghid_route_style_temp_buttons_hide ();
-@@ -2721,8 +2734,6 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -2734,8 +2747,6 @@ ghid_parse_arguments (int *argc, char ***argv)
    if (Settings.AutoPlace)
      gtk_widget_set_uposition (GTK_WIDGET (window), 10, 10);
  

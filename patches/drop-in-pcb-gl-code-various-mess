@@ -1,7 +1,7 @@
-Bottom: cb7822a6c55396085b87146715b4c1c0c72cd3ff
-Top:    a0749fe5a36b5fde6c0df8651b5210d85c3b5228
+Bottom: e8d45dee5963865b51d0a05cce83437f7e8d50da
+Top:    d0cde1c00572e3048db6c49b6b4d81139e36f31b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-08-13 01:45:40 +0100
+Date:   2010-08-24 00:48:07 +0100
 
 Drop in PCB+GL code + various mess. Needs splitting up?
 
@@ -1307,7 +1307,7 @@ index 0000000..3e41c35
 +  hidgl_fill_rect (x1, y1, x2, y2);
 +}
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 05b2c91..738636a 100644
+index 8c3ff67..31fa88a 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -17,9 +17,15 @@
@@ -1335,7 +1335,7 @@ index 05b2c91..738636a 100644
  
  static void zoom_to (double factor, int x, int y);
  static void zoom_by (double factor, int x, int y);
-@@ -326,67 +333,10 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
+@@ -320,67 +327,10 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
  void
  ghid_invalidate_all ()
  {
@@ -1404,7 +1404,7 @@ index 05b2c91..738636a 100644
  }
  
  
-@@ -397,8 +347,10 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -391,8 +341,10 @@ ghid_set_layer (const char *name, int group, int empty)
  	     && group <
  	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
  
@@ -1416,7 +1416,7 @@ index 05b2c91..738636a 100644
    if (idx < 0)
      {
        switch (SL_TYPE (idx))
-@@ -410,6 +362,8 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -404,6 +356,8 @@ ghid_set_layer (const char *name, int group, int empty)
  	    return TEST_FLAG (SHOWMASKFLAG, PCB);
  	  return 0;
  	case SL_SILK:
@@ -1425,7 +1425,7 @@ index 05b2c91..738636a 100644
  	  if (SL_MYSIDE (idx) /*|| pinout */ )
  	    return PCB->ElementOn;
  	  return 0;
-@@ -419,6 +373,8 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -413,6 +367,8 @@ ghid_set_layer (const char *name, int group, int empty)
  	case SL_UDRILL:
  	  return 1;
  	case SL_RATS:
@@ -1434,7 +1434,7 @@ index 05b2c91..738636a 100644
  	  return PCB->RatOn;
  	}
      }
-@@ -431,8 +387,6 @@ ghid_calibrate (double xval, double yval)
+@@ -425,8 +381,6 @@ ghid_calibrate (double xval, double yval)
    printf (_("ghid_calibrate() -- not implemented\n"));
  }
  
@@ -1443,7 +1443,7 @@ index 05b2c91..738636a 100644
  void
  ghid_notify_gui_is_up ()
  {
-@@ -1135,7 +1089,7 @@ HID ghid_hid = {
+@@ -1131,7 +1085,7 @@ HID ghid_hid = {
    1,				/* gui */
    0,				/* printer */
    0,				/* exporter */
@@ -1452,7 +1452,7 @@ index 05b2c91..738636a 100644
    1,				/* poly after */
    0,				/* poly dicer */
  
-@@ -1718,7 +1672,8 @@ Benchmark (int argc, char **argv, int x, int y)
+@@ -1714,7 +1668,8 @@ Benchmark (int argc, char **argv, int x, int y)
    time (&start);
    do
      {
@@ -2194,7 +2194,7 @@ index b24e6c9..4caddf2 100644
    gport->width = save_width;
    gport->height = save_height;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 4c00c13..ea263db 100644
+index 3d3896f..197e886 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2297,6 +2297,11 @@ ghid_build_pcb_top_window (void)
@@ -2209,7 +2209,7 @@ index 4c00c13..ea263db 100644
  
    gtk_widget_add_events (gport->drawing_area, GDK_EXPOSURE_MASK
  			 | GDK_LEAVE_NOTIFY_MASK | GDK_ENTER_NOTIFY_MASK
-@@ -2659,11 +2664,22 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -2672,11 +2677,22 @@ ghid_parse_arguments (int *argc, char ***argv)
    gtk_disable_setlocale ();
  
    gtk_init (argc, argv);

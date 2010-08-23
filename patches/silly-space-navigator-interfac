@@ -1,7 +1,7 @@
-Bottom: 833364a207f2aedbb354d151b1bb49b50c64020c
-Top:    a01775385c30b666adc7238d599f59d0a8721ba8
+Bottom: 390b9cb282b6e5360f28e24022d740e7600dede2
+Top:    7508ab1c0d6c9cf2751804ce82a4bce67a59c15c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-08-13 01:45:45 +0100
+Date:   2010-08-24 00:48:13 +0100
 
 Silly space navigator interface to allow funky views
 
@@ -88,7 +88,7 @@ index 88cf644..82dc295 100644
 +}
 +
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 247c8f9..5d16fb6 100644
+index 038ba6c..a3898cb 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -123,6 +123,7 @@ a zoom in/out.
@@ -107,7 +107,7 @@ index 247c8f9..5d16fb6 100644
    g_signal_connect (trackball, "rotation-changed",
                      G_CALLBACK (ghid_port_rotate), NULL);
    g_signal_connect (trackball, "view-2d-changed",
-@@ -2738,6 +2740,12 @@ ghid_do_export (HID_Attr_Val * options)
+@@ -2751,6 +2753,12 @@ ghid_do_export (HID_Attr_Val * options)
    if (stdin_listen)
      ghid_create_listener ();
  

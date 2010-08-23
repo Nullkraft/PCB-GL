@@ -1,7 +1,7 @@
-Bottom: 0993971b895596fb8c398268fef72231bde8adf8
-Top:    7a765212e1a762ca754f84f088147a8003037a17
+Bottom: e71ca6f30d7a9dfd170d0b1d3304ee0ea398cf23
+Top:    8ce8cd70db17d2e89eec2c7abd4ceb6b24e075da
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-08-13 01:45:42 +0100
+Date:   2010-08-24 00:48:08 +0100
 
 Work in progress on subcompositing / stencil buffers
 
@@ -466,10 +466,10 @@ index 430059b..fec839e 100644
        break;
      }
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index d92d7ec..a6d3f92 100644
+index aae34fc..668da46 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -339,14 +339,39 @@ ghid_invalidate_all ()
+@@ -333,14 +333,39 @@ ghid_invalidate_all ()
    gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
  }
  
@@ -510,7 +510,7 @@ index d92d7ec..a6d3f92 100644
    if (idx >= 0 && idx < max_layer + 2) {
      gport->trans_lines = TRUE;
      return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
-@@ -362,8 +387,7 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -356,8 +381,7 @@ ghid_set_layer (const char *name, int group, int empty)
  	    return TEST_FLAG (SHOWMASKFLAG, PCB);
  	  return 0;
  	case SL_SILK:
@@ -615,10 +615,10 @@ index 4caddf2..faa09fe 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index ea263db..d2f339c 100644
+index 197e886..70f82a3 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -2670,6 +2670,7 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -2683,6 +2683,7 @@ ghid_parse_arguments (int *argc, char ***argv)
    gport->zoom = 300.0;
    pixel_slop = 300;
  
@@ -626,7 +626,7 @@ index ea263db..d2f339c 100644
    /* setup GL-context */
    gport->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
                                                 GDK_GL_MODE_STENCIL |
-@@ -2679,6 +2680,7 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -2692,6 +2693,7 @@ ghid_parse_arguments (int *argc, char ***argv)
      printf("Could not setup GL-context!\n");
      return; /* Should we abort? */
    }
