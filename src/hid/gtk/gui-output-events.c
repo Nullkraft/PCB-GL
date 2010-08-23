@@ -1173,7 +1173,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   gui->set_layer (NULL, GetLayerGroupNumberByNumber (INDEXOFCURRENT), 0);
   gui->set_layer (NULL, SL_FINISHED, 0);
 
-  ghid_draw_grid ();
+  ghid_draw_grid (&region);
 
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
