@@ -35,6 +35,7 @@ RCSID ("$Id$");
 
 extern HID ghid_hid;
 
+int ghid_gui_is_up = 0;
 
 static void zoom_to (double factor, int x, int y);
 static void zoom_by (double factor, int x, int y);
@@ -319,7 +320,10 @@ ghid_set_layer (const char *name, int group, int empty)
 	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
 
   if (idx >= 0 && idx < max_layer + 2)
-    return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
+    {
+      gport->trans_lines = TRUE;
+      return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
+    }
   if (idx < 0)
     {
       switch (SL_TYPE (idx))
@@ -331,6 +335,8 @@ ghid_set_layer (const char *name, int group, int empty)
 	    return TEST_FLAG (SHOWMASKFLAG, PCB);
 	  return 0;
 	case SL_SILK:
+//          gport->trans_lines = TRUE;
+          gport->trans_lines = FALSE;
 	  if (SL_MYSIDE (idx) /*|| pinout */ )
 	    return PCB->ElementOn;
 	  return 0;
@@ -340,6 +346,8 @@ ghid_set_layer (const char *name, int group, int empty)
 	case SL_UDRILL:
 	  return 1;
 	case SL_RATS:
+	  if (PCB->RatOn)
+	    gport->trans_lines = TRUE;
 	  return PCB->RatOn;
 	}
     }
@@ -351,8 +359,6 @@ ghid_calibrate (double xval, double yval)
 {
   printf (_("ghid_calibrate() -- not implemented\n"));
 }
-
-static int ghid_gui_is_up = 0;
 
 void
 ghid_notify_gui_is_up ()
@@ -1058,7 +1064,7 @@ HID ghid_hid = {
   1,				/* gui */
   0,				/* printer */
   0,				/* exporter */
-  0,				/* poly before */
+  1,				/* poly before */
   1,				/* poly after */
   0,				/* poly dicer */
 
@@ -1641,7 +1647,8 @@ Benchmark (int argc, char **argv, int x, int y)
   time (&start);
   do
     {
-      hid_expose_callback (&ghid_hid, &region, 0);
+      gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
+      gdk_window_process_updates (gport->drawing_area->window, FALSE);
       gdk_display_sync (display);
       time (&end);
       i++;
