@@ -38,6 +38,8 @@ extern int ghid_gui_is_up;
 
 static hidGC current_gc = NULL;
 
+static void ghid_draw_grid (BoxTypePtr);
+
 /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
 */
 #define USE_GC(gc) if (!use_gc(gc)) return
@@ -302,7 +304,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   gui->set_layer (NULL, GetLayerGroupNumberByNumber (INDEXOFCURRENT), 0);
   gui->set_layer (NULL, SL_FINISHED, 0);
 
-  ghid_draw_grid ();
+  ghid_draw_grid (&region);
 
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
@@ -609,8 +611,8 @@ ghid_make_gc (void)
   return rv;
 }
 
-void
-ghid_draw_grid ()
+static void
+ghid_draw_grid (BoxTypePtr drawn_area)
 {
   static GLfloat *points = 0;
   static int npoints = 0;
@@ -639,10 +641,10 @@ ghid_draw_grid ()
              gport->grid_color.green / 65535.,
              gport->grid_color.blue / 65535.);
 
-  x1 = GRIDFIT_X (SIDE_X (gport->view_x0), PCB->Grid);
-  y1 = GRIDFIT_Y (SIDE_Y (gport->view_y0), PCB->Grid);
-  x2 = GRIDFIT_X (SIDE_X (gport->view_x0 + gport->view_width - 1), PCB->Grid);
-  y2 = GRIDFIT_Y (SIDE_Y (gport->view_y0 + gport->view_height - 1), PCB->Grid);
+  x1 = GRIDFIT_X (MAX (0, drawn_area->X1), PCB->Grid);
+  y1 = GRIDFIT_Y (MAX (0, drawn_area->Y1), PCB->Grid);
+  x2 = GRIDFIT_X (MIN (PCB->MaxWidth, drawn_area->X2), PCB->Grid);
+  y2 = GRIDFIT_Y (MIN (PCB->MaxHeight, drawn_area->Y2), PCB->Grid);
   if (x1 > x2)
     {
       int tmp = x1;
