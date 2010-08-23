@@ -1,7 +1,7 @@
-Bottom: bacdf1b555c4ab13c123b1fa0349aa39ce822bcc
-Top:    cd0b2a080e2d8ad6b3afc7b228b10c483b806fc9
+Bottom: 85f19161328175c42ff489fadfde23de810e8a03
+Top:    b7be54ae8e16754bb0660b6a6961930e180b5512
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-08-13 01:46:08 +0100
+Date:   2010-08-24 00:48:36 +0100
 
 Add support for a "poured" object.
 
@@ -60,7 +60,7 @@ index b709c27..452e325 100644
  	print.c \
  	print.h \
 diff --git a/src/action.c b/src/action.c
-index 5f1c7a1..1d2a8a5 100644
+index 0a85391..6121665 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -57,6 +57,7 @@
@@ -516,7 +516,7 @@ index 3361f79..9b90e61 100644
  	    }
  	}
 diff --git a/src/buffer.c b/src/buffer.c
-index 7b8bce8..6e7f128 100644
+index b6d1e2b..ece6fb7 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -50,6 +50,7 @@
@@ -918,7 +918,7 @@ index 7b8bce8..6e7f128 100644
  
    SetBufferBoundingBox (Buffer);
  }
-@@ -1513,6 +1559,8 @@ MirrorBuffer (BufferTypePtr Buffer)
+@@ -1523,6 +1569,8 @@ MirrorBuffer (BufferTypePtr Buffer)
      SetArcBoundingBox (arc);
    }
    ENDALL_LOOP;
@@ -927,7 +927,7 @@ index 7b8bce8..6e7f128 100644
    ALLPOLYGON_LOOP (Buffer->Data);
    {
      POLYGONPOINT_LOOP (polygon);
-@@ -1524,6 +1572,7 @@ MirrorBuffer (BufferTypePtr Buffer)
+@@ -1534,6 +1582,7 @@ MirrorBuffer (BufferTypePtr Buffer)
      SetPolygonBoundingBox (polygon);
    }
    ENDALL_LOOP;
@@ -935,7 +935,7 @@ index 7b8bce8..6e7f128 100644
    SetBufferBoundingBox (Buffer);
  }
  
-@@ -1578,6 +1627,8 @@ SwapBuffer (BufferTypePtr Buffer)
+@@ -1588,6 +1637,8 @@ SwapBuffer (BufferTypePtr Buffer)
      r_insert_entry (layer->arc_tree, (BoxTypePtr) arc, 0);
    }
    ENDALL_LOOP;
@@ -944,7 +944,7 @@ index 7b8bce8..6e7f128 100644
    ALLPOLYGON_LOOP (Buffer->Data);
    {
      r_delete_entry (layer->polygon_tree, (BoxTypePtr) polygon);
-@@ -1592,6 +1643,7 @@ SwapBuffer (BufferTypePtr Buffer)
+@@ -1602,6 +1653,7 @@ SwapBuffer (BufferTypePtr Buffer)
      /* hmmm, how to handle clip */
    }
    ENDALL_LOOP;
@@ -2849,10 +2849,10 @@ index bb78abc..3d5f28f 100644
    void *(*Rat) (RatTypePtr);
  } ObjectFunctionType, *ObjectFunctionTypePtr;
 diff --git a/src/gpcb-menu.res b/src/gpcb-menu.res
-index 0db5aad..21ce39f 100644
+index e92a59a..01d2dab 100644
 --- a/src/gpcb-menu.res
 +++ b/src/gpcb-menu.res
-@@ -507,8 +507,8 @@ PopupMenus =
+@@ -508,8 +508,8 @@ PopupMenus =
         {"Arc" checked=arcmode,1 Mode(Arc) a={"F3" "<Key>F3"}}
         {"Text" checked=textmode,1 Mode(Text) a={"F4" "<Key>F4"}}
         {"Rectangle" checked=rectanglemode,1 Mode(Rectangle) a={"F5" "<Key>F5"}}
@@ -2974,7 +2974,7 @@ index 37c2e48..7f58605 100644
  	result = TRUE;
        break;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index c657c24..d47e0b6 100644
+index 26f29b4..dbe0be5 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -1984,8 +1984,9 @@ static ModeButton mode_buttons[] = {
@@ -4267,7 +4267,7 @@ index a5b2d23..4d2b236 100644
  		|
  		;
 diff --git a/src/pcb-menu.res b/src/pcb-menu.res
-index 0df4b7f..3fcfe5d 100644
+index 1166439..dcf8a8a 100644
 --- a/src/pcb-menu.res
 +++ b/src/pcb-menu.res
 @@ -173,8 +173,8 @@ MainMenu =
