@@ -698,6 +698,9 @@ ghid_show_crosshair (gboolean show)
   static GdkColor cross_color;
   extern float global_depth;
 
+  if (!check_gl_drawing_ok_hack)
+    return;
+
   if (gport->x_crosshair < 0 || ghidgui->creating) {// || !gport->has_entered) {
     printf ("Returning\n");
     return;
