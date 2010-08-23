@@ -953,6 +953,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
 
+  /* Just prod the drawing code so the current depth gets set to
+     the right value for the layer we are editing */
+  gui->set_layer (NULL, GetLayerGroupNumberByNumber (INDEXOFCURRENT), 0);
+  gui->set_layer (NULL, SL_FINISHED, 0);
+
   ghid_draw_grid ();
 
   hidgl_init_triangle_array (&buffer);
