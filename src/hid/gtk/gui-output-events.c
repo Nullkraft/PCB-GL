@@ -48,6 +48,20 @@
 #include "search.h"
 #include "rats.h"
 
+/* TEMPORARY HACK WHILST THERE IS SOME GL STUFF IN THE WRONG PLACE! */
+/* The Linux OpenGL ABI 1.0 spec requires that we define
+ * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
+ * in order to get prototypes:
+ *   http://www.opengl.org/registry/ABI/
+ */
+#ifdef ENABLE_GL
+#  define GL_GLEXT_PROTOTYPES 1
+#  include <GL/gl.h>
+#  include <gtk/gtkgl.h>
+#  include "hid/common/hidgl.h"
+#endif
+/* END TEMPORARY HACK WHILST THERE IS SOME GL STUFF IN THE WRONG PLACE! */
+
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
@@ -249,7 +263,7 @@ ghid_note_event_location (GdkEventButton * ev)
     }
 
   /* Unproject event_x and event_y to world coordinates of the plane we are on */
-  ghid_unproject_to_z_plane (event_x, event_y, 0,
+  ghid_unproject_to_z_plane (event_x, event_y, global_depth,
                              &event_x, &event_y);
 
   gport->view_x = event_x * gport->zoom + gport->view_x0;
