@@ -1,5 +1,5 @@
-Bottom: 75e930111330299b34ef815e1a3fa44b57b0e0aa
-Top:    d1777b661a7f4016d8da58ba074fbd240a7d5da3
+Bottom: 5a6385ff3f991cc9fc3105089499c9dc54634cbf
+Top:    0529223f0d78de70397dacfac68e9b10bff46520
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:19 +0100
 
@@ -14,10 +14,10 @@ gtk_widget_show_all()
 ---
 
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index a3898cb..26f29b4 100644
+index 68090b7..c4b2c97 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -2145,7 +2145,21 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
+@@ -2143,7 +2143,21 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
    gtk_main_quit ();
  }
  
@@ -39,7 +39,7 @@ index a3898cb..26f29b4 100644
  
  /* 
   * Create the top_window contents.  The config settings should be loaded
-@@ -2368,6 +2382,9 @@ ghid_build_pcb_top_window (void)
+@@ -2352,6 +2366,9 @@ ghid_build_pcb_top_window (void)
       |  the user does a command entry.
     */
  
@@ -47,9 +47,9 @@ index a3898cb..26f29b4 100644
 +		    G_CALLBACK (ghid_port_drawing_realize_cb),
 +		    port);
    g_signal_connect (G_OBJECT (gport->drawing_area), "expose_event",
- 		    G_CALLBACK (ghid_port_drawing_area_expose_event_cb),
+ 		    G_CALLBACK (ghid_drawing_area_expose_cb),
  		    port);
-@@ -2403,10 +2420,6 @@ ghid_build_pcb_top_window (void)
+@@ -2387,10 +2404,6 @@ ghid_build_pcb_top_window (void)
    ghidgui->creating = FALSE;
  
    gtk_widget_show_all (gport->top_window);
@@ -60,7 +60,7 @@ index a3898cb..26f29b4 100644
    gdk_window_set_back_pixmap (gport->drawing_area->window, NULL, FALSE);
  
    ghid_route_style_temp_buttons_hide ();
-@@ -2734,8 +2747,6 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -2707,8 +2720,6 @@ ghid_parse_arguments (int *argc, char ***argv)
    if (Settings.AutoPlace)
      gtk_widget_set_uposition (GTK_WIDGET (window), 10, 10);
  
