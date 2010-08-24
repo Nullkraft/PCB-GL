@@ -1,5 +1,5 @@
 Bottom: 5c5cfcad27124334c1abd2e2d4c4ed62d642ab44
-Top:    0ce3ac0fb486fcfbaba8663ba4c8b1e26a74c229
+Top:    7581385df0b4e50b19e464bc4f5f6ff071a9c205
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 17:16:16 +0100
 
@@ -11,14 +11,14 @@ For correctness - this doesn't necessarily fix any rendering bugs.
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 7230aa3..2a66baf 100644
+index 7230aa3..7cc764e 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -407,6 +407,7 @@ ghid_show_crosshair (gboolean show)
  {
    gint x, y;
    static gint x_prev = -1, y_prev = -1;
-+  static gboolean hca, hca_prev = FALSE;
++  static gboolean draw_markers, draw_markers_prev = FALSE;
    static GdkGC *xor_gc;
    static GdkColor cross_color;
  
@@ -27,7 +27,7 @@ index 7230aa3..2a66baf 100644
      {
        draw_crosshair (xor_gc, x_prev, y_prev);
 -      if (ghidgui->auto_pan_on && have_crosshair_attachments ())
-+      if (ghidgui->auto_pan_on && hca_prev)
++      if (draw_markers_prev)
  	{
  	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
  			      0, y_prev - VCD, VCD, VCW);
@@ -36,16 +36,23 @@ index 7230aa3..2a66baf 100644
      {
        draw_crosshair (xor_gc, x, y);
 -      if (ghidgui->auto_pan_on && have_crosshair_attachments ())
-+      hca = have_crosshair_attachments ();
-+      if (ghidgui->auto_pan_on && hca)
++      draw_markers = ghidgui->auto_pan_on && have_crosshair_attachments ();
++      if (draw_markers)
  	{
  	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
  			      0, y - VCD, VCD, VCW);
-@@ -458,6 +460,7 @@ ghid_show_crosshair (gboolean show)
+@@ -458,9 +460,13 @@ ghid_show_crosshair (gboolean show)
  	}
        x_prev = x;
        y_prev = y;
-+      hca_prev = hca;
++      draw_markers_prev = draw_markers;
      }
    else
-     x_prev = y_prev = -1;
+-    x_prev = y_prev = -1;
++    {
++      x_prev = y_prev = -1;
++      draw_markers_prev = FALSE;
++    }
+ }
+ 
+ static gboolean
