@@ -543,29 +543,20 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
       else
 	gdk_color_white (gport->colormap, &gport->offlimits_color);
       first_time_done = TRUE;
+      ghid_drawing_area_configure_hook (out);
       PCBChanged (0, NULL, 0, 0);
     }
-//  if (gport->mask)
-//    {
-//      gdk_pixmap_unref (gport->mask);
-//      gport->mask = gdk_pixmap_new (0, gport->width, gport->height, 1);
-//    }
+  else
+    {
+      ghid_drawing_area_configure_hook (out);
+    }
+
   ghid_port_ranges_scale (FALSE);
   ghid_invalidate_all ();
   RestoreCrosshair (TRUE);
   return 0;
 }
 
-void
-ghid_screen_update (void)
-{
-#if 0
-  ghid_show_crosshair (FALSE);
-  gdk_draw_drawable (gport->drawing_area->window, gport->bg_gc, gport->pixmap,
-		     0, 0, 0, 0, gport->width, gport->height);
-  ghid_show_crosshair (TRUE);
-#endif
-}
 
 #if GTK_CHECK_VERSION(2,12,0)
 # define ENABLE_TOOLTIPS 1

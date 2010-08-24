@@ -101,6 +101,16 @@ ghid_end_drawing (GHidPort *port)
   gdk_gl_drawable_gl_end (pGlDrawable);
 }
 
+void
+ghid_drawing_area_configure_hook (GHidPort *port)
+{
+}
+
+void
+ghid_screen_update (void)
+{
+}
+
 void DrawAttached (bool);
 
 #define Z_NEAR 3.0

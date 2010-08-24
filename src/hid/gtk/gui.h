@@ -498,6 +498,8 @@ void ghid_init_renderer (int *, char ***, GHidPort *);
 GtkWidget *ghid_drawing_area_new (GHidPort *port);
 gboolean ghid_start_drawing (GHidPort *port);
 void ghid_end_drawing (GHidPort *port);
+void ghid_drawing_area_configure_hook (GHidPort *port);
+void ghid_screen_update (void);
 gboolean ghid_drawing_area_expose_cb (GtkWidget *, GdkEventExpose *, GHidPort *);
 void ghid_pinout_preview_init (GhidPinoutPreview *preview);
 gboolean ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev);
