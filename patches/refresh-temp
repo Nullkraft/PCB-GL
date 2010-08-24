@@ -1,0 +1,31 @@
+Bottom: db0be11df618b0bc5838ac54420cdf828d8cc2de
+Top:    8ff8b3f444c130d5e5d653b95eff03f72eeeb1a2
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-24 21:23:46 +0100
+
+Refresh of use-motion-hints-when-processi
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index b442f73..8dcae4c 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1084,7 +1084,7 @@ ghid_show_crosshair (gboolean show)
+ 
+   glBegin (GL_LINES);
+ 
+-#if 1
++#if 0
+   if (x_prev >= 0)
+     draw_crosshair (x_prev, y_prev);
+ #endif
+@@ -1097,7 +1097,7 @@ ghid_show_crosshair (gboolean show)
+ 
+   glBegin (GL_QUADS);
+ 
+-#if 1
++#if 0
+   if (x_prev >= 0 && draw_markers_prev)
+     {
+       glVertex2i (0,                  y_prev - VCD);
