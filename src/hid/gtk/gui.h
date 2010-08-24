@@ -284,11 +284,10 @@ void ghid_port_ranges_zoom (gdouble zoom);
 gboolean ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative);
 void ghid_port_ranges_scale (gboolean emit_changed);
 void ghid_port_ranges_update_ranges (void);
-void ghid_show_crosshair (gboolean show);
 void ghid_screen_update (void);
 
 gboolean ghid_note_event_location (GdkEventButton * ev);
-
+gboolean have_crosshair_attachments (void);
 gboolean ghid_port_key_press_cb (GtkWidget * drawing_area,
 				 GdkEventKey * kev, GtkUIManager * ui);
 gboolean ghid_port_key_release_cb (GtkWidget * drawing_area,
@@ -507,9 +506,11 @@ void ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2);
 void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
 void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
 void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
+void ghid_invalidate_lr ();
+void ghid_invalidate_all ();
+void ghid_show_crosshair (gboolean show);
 
 /* gtkhid-main.c */
-void ghid_invalidate_all ();
 void ghid_get_coords (const char *msg, int *x, int *y);
 gint PCBChanged (int argc, char **argv, int x, int y);
 
