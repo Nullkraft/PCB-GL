@@ -1,5 +1,5 @@
-Bottom: 902e158c43ad212e0178882190cf6a7f706471c5
-Top:    654a7ca2c5b29a0b75ca250ca42dbe5304e9fbef
+Bottom: eedc8d4963bb426abdbe37f0a20405cd00127950
+Top:    f4404c221608fe1adf442b2b0844bb8e8ac7787c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:10 +0100
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index db1fb31..4693e5d 100644
+index 1fd9e58..dc6e738 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -36,6 +36,7 @@
@@ -219,9 +219,9 @@ index db1fb31..4693e5d 100644
    gport->view_x = event_x * gport->zoom + gport->view_x0;
    gport->view_y = event_y * gport->zoom + gport->view_y0;
  
-@@ -782,6 +961,37 @@ ghid_screen_update (void)
+@@ -570,6 +749,37 @@ ghid_screen_update (void)
  
- void DrawAttached (Boolean);
+ void DrawAttached (bool);
  
 +void
 +ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata)
@@ -257,7 +257,7 @@ index db1fb31..4693e5d 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
-@@ -792,6 +1002,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -580,6 +790,11 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    extern HID ghid_hid;
    GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
    GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
@@ -269,7 +269,7 @@ index db1fb31..4693e5d 100644
  
    /* make GL-context "current" */
    if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
-@@ -826,10 +1041,14 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -614,10 +829,14 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -286,7 +286,7 @@ index db1fb31..4693e5d 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (gport->offlimits_color.red / 65535.,
-@@ -846,10 +1065,66 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -634,10 +853,66 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    glDisable (GL_STENCIL_TEST);
    glStencilFunc (GL_ALWAYS, 0, 0);
  
@@ -357,7 +357,7 @@ index db1fb31..4693e5d 100644
  
    eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
    etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
-@@ -859,10 +1134,10 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -647,10 +922,10 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
               gport->bg_color.blue / 65535.);
  
    glBegin (GL_QUADS);
@@ -372,7 +372,7 @@ index db1fb31..4693e5d 100644
    glEnd ();
  
    /* TODO: Background image */
-@@ -884,7 +1159,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -672,7 +947,9 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                               -gport->view_x0,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
@@ -382,7 +382,7 @@ index db1fb31..4693e5d 100644
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
-@@ -908,6 +1185,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -696,6 +973,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
  
    hidgl_flush_triangles (&buffer);
  
@@ -451,10 +451,10 @@ index 70f82a3..038ba6c 100644
    gtk_box_pack_start(GTK_BOX(vbox_left), vbox, FALSE, FALSE, 0);
    ghidgui->mode_buttons0_frame_vbox = vbox;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 4dd32a3..dad9dea 100644
+index 37dbb9f..888a7a7 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -326,6 +326,8 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -324,6 +324,8 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
  gint ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  				       GdkEventScroll * ev, GHidPort * out);
  
