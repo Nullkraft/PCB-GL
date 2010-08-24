@@ -284,7 +284,6 @@ void ghid_port_ranges_zoom (gdouble zoom);
 gboolean ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative);
 void ghid_port_ranges_scale (gboolean emit_changed);
 void ghid_port_ranges_update_ranges (void);
-void ghid_show_crosshair (gboolean show);
 void ghid_screen_update (void);
 
 gboolean ghid_note_event_location (GdkEventButton * ev);
@@ -509,6 +508,7 @@ void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
 void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
 void ghid_invalidate_lr ();
 void ghid_invalidate_all ();
+void ghid_show_crosshair (gboolean show);
 
 /* gtkhid-main.c */
 void ghid_get_coords (const char *msg, int *x, int *y);
