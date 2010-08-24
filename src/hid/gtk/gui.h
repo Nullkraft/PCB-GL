@@ -535,6 +535,7 @@ void ghid_invalidate_all ();
 void ghid_show_crosshair (gboolean show);
 
 /* gtkhid-main.c */
+void ghid_global_alpha_mult (hidGC gc, double alpha_mult);
 void ghid_invalidate_current_gc ();
 void ghid_get_coords (const char *msg, int *x, int *y);
 gint PCBChanged (int argc, char **argv, int x, int y);
