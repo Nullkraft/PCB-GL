@@ -1,5 +1,5 @@
 Bottom: 95c001ad7ae0eaeaf1456ebe0aa349072d1e9c1c
-Top:    95c001ad7ae0eaeaf1456ebe0aa349072d1e9c1c
+Top:    526d038575c1c55e3d2e116a3f0e07a2802ee092
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 16:46:57 +0100
 
@@ -11,4 +11,26 @@ gdk_window_invalidate_rect() which will invalidate the whole area.
 
 ---
 
-
+diff --git a/src/hid/gtk/gui-utils.c b/src/hid/gtk/gui-utils.c
+index 5b85111..840e7a9 100644
+--- a/src/hid/gtk/gui-utils.c
++++ b/src/hid/gtk/gui-utils.c
+@@ -152,19 +152,7 @@ ghid_button_state (GdkModifierType * state)
+ void
+ ghid_draw_area_update (GHidPort * port, GdkRectangle * rect)
+ {
+-  GdkRectangle update_rect;
+-
+-  if (rect)
+-    update_rect = *rect;
+-  else
+-    {
+-      update_rect.x = 0;
+-      update_rect.y = 0;
+-      update_rect.width = port->width;
+-      update_rect.height = port->height;
+-    }
+-  gdk_window_invalidate_rect (port->drawing_area->window, &update_rect,
+-			      FALSE);
++  gdk_window_invalidate_rect (port->drawing_area->window, rect, FALSE);
+ }
