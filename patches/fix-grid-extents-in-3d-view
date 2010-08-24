@@ -1,5 +1,5 @@
-Bottom: c6656083a7dff2261b77193135963bdc25e84cde
-Top:    078aaa5a00ea77a27956f6a4df600528e8058f0c
+Bottom: 068ec0ea1584a272dc49d72a490100b40ae073b3
+Top:    41f3955ee27ec10585d4cdcf9fc2807c706c9659
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:12 +0100
 
@@ -9,7 +9,7 @@ Fix grid extents in 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ae58cbb..87daf19 100644
+index af53895..f077df9 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -62,7 +62,7 @@ ghid_make_gc (void)
@@ -37,10 +37,10 @@ index ae58cbb..87daf19 100644
      {
        int tmp = x1;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 3295f23..fabe334 100644
+index d49a93d..746e69c 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1173,7 +1173,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -958,7 +958,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
    gui->set_layer (NULL, GetLayerGroupNumberByNumber (INDEXOFCURRENT), 0);
    gui->set_layer (NULL, SL_FINISHED, 0);
  
@@ -50,10 +50,10 @@ index 3295f23..fabe334 100644
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index dad9dea..e676b43 100644
+index 888a7a7..180a82e 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -517,7 +517,8 @@ GdkPixmap *ghid_render_pixmap (int cx,
+@@ -509,7 +509,8 @@ GdkPixmap *ghid_render_pixmap (int cx,
  /* gtkhid-gdk.c OR gtkhid-gl.c */
  hidGC ghid_make_gc (void);
  void ghid_destroy_gc (hidGC);
