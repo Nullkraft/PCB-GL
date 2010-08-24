@@ -7,7 +7,7 @@ Don't make GUI drawing calls to erase objects
 
 Changing the colour here is unnecessary (as drawing is deferred).
 Delete the gui->set_color() calls, and additionally, comment out
-all real-time drawing frmo the autorouter. This hasn't been ported
+all real-time drawing from the autorouter. This hasn't been ported
 to be compatible with the GL code, which requires specific setup
 and teardown around drawing.
 
