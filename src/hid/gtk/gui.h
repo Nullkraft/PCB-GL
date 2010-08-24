@@ -507,10 +507,9 @@ void ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2);
 void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
 void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
 void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
-void ghid_invalidate_lr ();
-void ghid_invalidate_all ();
 
 /* gtkhid-main.c */
+void ghid_invalidate_all ();
 void ghid_get_coords (const char *msg, int *x, int *y);
 gint PCBChanged (int argc, char **argv, int x, int y);
 
