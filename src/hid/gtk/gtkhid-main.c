@@ -318,22 +318,6 @@ zoom_by (double factor, int x, int y)
 
 /* ------------------------------------------------------------ */
 
-void
-ghid_invalidate_lr (int left, int right, int top, int bottom)
-{
-  ghid_invalidate_all ();
-}
-
-void
-ghid_invalidate_all ()
-{
-  if (ghidgui->need_restore_crosshair)
-    RestoreCrosshair (FALSE);
-  ghidgui->need_restore_crosshair = FALSE;
-  gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
-}
-
-
 int
 ghid_set_layer (const char *name, int group, int empty)
 {
