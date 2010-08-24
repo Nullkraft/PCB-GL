@@ -1,0 +1,33 @@
+Bottom: e8d45dee5963865b51d0a05cce83437f7e8d50da
+Top:    95c001ad7ae0eaeaf1456ebe0aa349072d1e9c1c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-24 16:46:16 +0100
+
+Refresh of remove-unused-ghid_draw_area_c
+
+---
+
+diff --git a/src/hid/gtk/gui-utils.c b/src/hid/gtk/gui-utils.c
+index b72b82d..5b85111 100644
+--- a/src/hid/gtk/gui-utils.c
++++ b/src/hid/gtk/gui-utils.c
+@@ -149,19 +149,6 @@ ghid_button_state (GdkModifierType * state)
+   return bs;
+ }
+ 
+-#ifdef FIXME
+-void
+-ghid_draw_area_clear (GHidPort * out, gboolean to_screen)
+-{
+-  gdk_gc_set_foreground (out->bgGC, &Settings.BackgroundColor);
+-  gdk_draw_rectangle (out->pixmap, out->bgGC, TRUE,
+-		      0, 0, out->Width, out->Height);
+-  if (to_screen)
+-    gdk_draw_rectangle (out->drawing_area->window, out->bgGC, TRUE,
+-			0, 0, out->Width, out->Height);
+-}
+-#endif /* FIXME */
+-
+ void
+ ghid_draw_area_update (GHidPort * port, GdkRectangle * rect)
+ {
