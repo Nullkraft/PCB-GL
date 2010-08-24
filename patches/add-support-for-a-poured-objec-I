@@ -1,7 +1,7 @@
-Bottom: 85f19161328175c42ff489fadfde23de810e8a03
-Top:    b7be54ae8e16754bb0660b6a6961930e180b5512
+Bottom: 77fa2f5e392421526a0d88bf370b295da242200d
+Top:    569bf41f62b30ed8e7dd08baf5e6223c0e561771
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-08-24 00:48:36 +0100
+Date:   2010-08-24 18:55:29 +0100
 
 Add support for a "poured" object.
 
@@ -2959,10 +2959,10 @@ index a607a69..f36c400 100644
        break;
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 37c2e48..7f58605 100644
+index 381125b..45aa02e 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -461,8 +461,8 @@ have_crosshair_attachments (void)
+@@ -460,8 +460,8 @@ have_crosshair_attachments (void)
      case VIA_MODE:
        result = TRUE;
        break;
