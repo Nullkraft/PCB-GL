@@ -1,0 +1,46 @@
+Bottom: 1c4d300359355bd1a05a20c7fad014aec8341d05
+Top:    b4bd52a64a411f0aee5369810291ff1601b23591
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-24 17:09:51 +0100
+
+Refresh of move-more-gdk-specific-drawing
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 1a9811f..ab83cad 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -21,7 +21,6 @@ RCSID ("$Id$");
+ 
+ extern HID ghid_hid;
+ 
+-
+ /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
+ */
+ #define USE_GC(gc) if (!use_gc(gc)) return
+@@ -817,6 +816,9 @@ draw_crosshair (GdkGC *xor_gc, gint x, gint y)
+   prev = Crosshair.shape;
+ }
+ 
++#define VCW 16
++#define VCD 8
++
+ void
+ ghid_show_crosshair (gboolean show)
+ {
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 8746be8..08de596 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -298,10 +298,6 @@ have_crosshair_attachments (void)
+   return result;
+ }
+ 
+-
+-#define	VCW		16
+-#define VCD		8
+-
+ static gboolean
+ ghid_idle_cb (gpointer data)
+ {
