@@ -1,0 +1,84 @@
+Bottom: 98432ef1dddbaac00de5fb3105378fdb8c9550a1
+Top:    52dec1d3bd5c82a5342ca6fee6abd7904e41865e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-24 16:59:11 +0100
+
+Refresh of hid-gtk-remove-unused-function
+
+---
+
+diff --git a/src/hid/gtk/gui-utils.c b/src/hid/gtk/gui-utils.c
+index 840e7a9..3d93d19 100644
+--- a/src/hid/gtk/gui-utils.c
++++ b/src/hid/gtk/gui-utils.c
+@@ -156,42 +156,6 @@ ghid_draw_area_update (GHidPort * port, GdkRectangle * rect)
+ }
+ 
+ 
+-void
+-ghid_string_markup_extents (PangoFontDescription * font_desc, gchar * string,
+-			    gint * width, gint * height)
+-{
+-  PangoLayout *layout;
+-  gint w, h;
+-  GHidPort *out = &ghid_port;
+-
+-  layout = gtk_widget_create_pango_layout (out->top_window, NULL);
+-  pango_layout_set_font_description (layout, font_desc);
+-  pango_layout_set_markup (layout, string, strlen (string));
+-  pango_layout_get_pixel_size (layout, &w, &h);
+-  g_object_unref (layout);
+-
+-  if (*width)
+-    *width = w;
+-  if (*height)
+-    *height = h;
+-}
+-
+-void
+-ghid_draw_string_markup (GdkDrawable * drawable,
+-			 PangoFontDescription * font_desc,
+-			 GdkGC * gc, gint x, gint y, gchar * string)
+-{
+-  PangoLayout *layout;
+-  GHidPort *out = &ghid_port;
+-
+-  layout = gtk_widget_create_pango_layout (out->top_window, NULL);
+-  pango_layout_set_font_description (layout, font_desc);
+-  pango_layout_set_markup (layout, string, strlen (string));
+-  gdk_draw_layout (drawable, gc, x, y, layout);
+-  g_object_unref (layout);
+-}
+-
+-
+ gchar *
+ ghid_get_color_name (GdkColor * color)
+ {
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 0a2e747..58136b6 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -377,12 +377,6 @@ gboolean ghid_mod1_is_pressed (void);
+ gboolean ghid_shift_is_pressed (void);
+ 
+ void ghid_draw_area_update (GHidPort * out, GdkRectangle * rect);
+-void ghid_string_markup_extents (PangoFontDescription * font_desc,
+-				 gchar * string, gint * width, gint * height);
+-void ghid_draw_string_markup (GdkDrawable * drawable,
+-			      PangoFontDescription * font_desc,
+-			      GdkGC * gc, gint x, gint y, gchar * string);
+-
+ gchar *ghid_get_color_name (GdkColor * color);
+ void ghid_map_color_string (gchar * color_string, GdkColor * color);
+ void ghid_button_set_text (GtkWidget * button, gchar * text);
+@@ -513,9 +507,10 @@ void ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2);
+ void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
+ void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
+ void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
++void ghid_invalidate_lr ();
++void ghid_invalidate_all ();
+ 
+ /* gtkhid-main.c */
+-void ghid_invalidate_all ();
+ void ghid_get_coords (const char *msg, int *x, int *y);
+ gint PCBChanged (int argc, char **argv, int x, int y);
