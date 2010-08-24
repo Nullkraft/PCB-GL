@@ -1,4 +1,4 @@
-Bottom: e6b47da90daa626c29b6f291dc6f8dc83de3ea7a
+Bottom: 079c75dfa42402c57c96920aeafb72a827ed4344
 Top:    535e298f0bcabe6f107bdb1f82393b046ff0a672
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:07 +0100
@@ -1533,7 +1533,7 @@ index 0000000..df90d8c
 +  glDisable (GL_COLOR_LOGIC_OP);
 +}
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 8c3ff67..01d3f46 100644
+index 89cdb20..01d3f46 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -17,9 +17,15 @@
@@ -1561,87 +1561,7 @@ index 8c3ff67..01d3f46 100644
  
  static void zoom_to (double factor, int x, int y);
  static void zoom_by (double factor, int x, int y);
-@@ -311,79 +318,6 @@ zoom_by (double factor, int x, int y)
- 
- /* ------------------------------------------------------------ */
- 
--void
--ghid_invalidate_lr (int left, int right, int top, int bottom)
--{
--  ghid_invalidate_all ();
--}
--
--void
--ghid_invalidate_all ()
--{
--  int eleft, eright, etop, ebottom;
--  BoxType region;
--
--  if (!gport->pixmap)
--    return;
--
--  region.X1 = MIN(Px(0), Px(gport->width + 1));
--  region.Y1 = MIN(Py(0), Py(gport->height + 1));
--  region.X2 = MAX(Px(0), Px(gport->width + 1));
--  region.Y2 = MAX(Py(0), Py(gport->height + 1));
--
--  eleft = Vx (0);
--  eright = Vx (PCB->MaxWidth);
--  etop = Vy (0);
--  ebottom = Vy (PCB->MaxHeight);
--  if (eleft > eright)
--    {
--      int tmp = eleft;
--      eleft = eright;
--      eright = tmp;
--    }
--  if (etop > ebottom)
--    {
--      int tmp = etop;
--      etop = ebottom;
--      ebottom = tmp;
--    }
--
--  if (eleft > 0)
--    gdk_draw_rectangle (gport->drawable, gport->offlimits_gc,
--			1, 0, 0, eleft, gport->height);
--  else
--    eleft = 0;
--  if (eright < gport->width)
--    gdk_draw_rectangle (gport->drawable, gport->offlimits_gc,
--			1, eright, 0, gport->width - eright, gport->height);
--  else
--    eright = gport->width;
--  if (etop > 0)
--    gdk_draw_rectangle (gport->drawable, gport->offlimits_gc,
--			1, eleft, 0, eright - eleft + 1, etop);
--  else
--    etop = 0;
--  if (ebottom < gport->height)
--    gdk_draw_rectangle (gport->drawable, gport->offlimits_gc,
--			1, eleft, ebottom, eright - eleft + 1,
--			gport->height - ebottom);
--  else
--    ebottom = gport->height;
--
--  gdk_draw_rectangle (gport->drawable, gport->bg_gc, 1,
--		      eleft, etop, eright - eleft + 1, ebottom - etop + 1);
--
--  ghid_draw_bg_image();
--
--  hid_expose_callback (&ghid_hid, &region, 0);
--  ghid_draw_grid ();
--  if (ghidgui->need_restore_crosshair)
--    RestoreCrosshair (FALSE);
--  ghidgui->need_restore_crosshair = FALSE;
--  ghid_screen_update ();
--}
--
--
- int
- ghid_set_layer (const char *name, int group, int empty)
- {
-@@ -391,8 +325,10 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -318,8 +325,10 @@ ghid_set_layer (const char *name, int group, int empty)
  	     && group <
  	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
  
@@ -1653,7 +1573,7 @@ index 8c3ff67..01d3f46 100644
    if (idx < 0)
      {
        switch (SL_TYPE (idx))
-@@ -404,6 +340,8 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -331,6 +340,8 @@ ghid_set_layer (const char *name, int group, int empty)
  	    return TEST_FLAG (SHOWMASKFLAG, PCB);
  	  return 0;
  	case SL_SILK:
@@ -1662,7 +1582,7 @@ index 8c3ff67..01d3f46 100644
  	  if (SL_MYSIDE (idx) /*|| pinout */ )
  	    return PCB->ElementOn;
  	  return 0;
-@@ -413,6 +351,8 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -340,6 +351,8 @@ ghid_set_layer (const char *name, int group, int empty)
  	case SL_UDRILL:
  	  return 1;
  	case SL_RATS:
@@ -1671,7 +1591,7 @@ index 8c3ff67..01d3f46 100644
  	  return PCB->RatOn;
  	}
      }
-@@ -425,8 +365,6 @@ ghid_calibrate (double xval, double yval)
+@@ -352,8 +365,6 @@ ghid_calibrate (double xval, double yval)
    printf (_("ghid_calibrate() -- not implemented\n"));
  }
  
@@ -1680,7 +1600,7 @@ index 8c3ff67..01d3f46 100644
  void
  ghid_notify_gui_is_up ()
  {
-@@ -1131,7 +1069,7 @@ HID ghid_hid = {
+@@ -1058,7 +1069,7 @@ HID ghid_hid = {
    1,				/* gui */
    0,				/* printer */
    0,				/* exporter */
@@ -1689,7 +1609,7 @@ index 8c3ff67..01d3f46 100644
    1,				/* poly after */
    0,				/* poly dicer */
  
-@@ -1714,7 +1652,8 @@ Benchmark (int argc, char **argv, int x, int y)
+@@ -1641,7 +1652,8 @@ Benchmark (int argc, char **argv, int x, int y)
    time (&start);
    do
      {
@@ -1700,188 +1620,10 @@ index 8c3ff67..01d3f46 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index a5c4239..6f54d82 100644
+index d2349a8..6f54d82 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -298,177 +298,6 @@ have_crosshair_attachments (void)
-   return result;
- }
- 
--
--#define	VCW		16
--#define VCD		8
--
--static void
--draw_right_cross (GdkGC *xor_gc, gint x, gint y)
--{
--  gdk_draw_line (gport->drawing_area->window, xor_gc,
--		 x, 0, x, gport->height);
--  gdk_draw_line (gport->drawing_area->window, xor_gc,
--		 0, y, gport->width, y);
--}
--
--static void
--draw_slanted_cross (GdkGC *xor_gc, gint x, gint y)
--{
--  gint x0, y0, x1, y1;
--
--  x0 = x + (gport->height - y);
--  x0 = MAX(0, MIN (x0, gport->width));
--  x1 = x - y;
--  x1 = MAX(0, MIN (x1, gport->width));
--  y0 = y + (gport->width - x);
--  y0 = MAX(0, MIN (y0, gport->height));
--  y1 = y - x;
--  y1 = MAX(0, MIN (y1, gport->height));
--  gdk_draw_line (gport->drawing_area->window, xor_gc,
--		 x0, y0, x1, y1);
--  x0 = x - (gport->height - y);
--  x0 = MAX(0, MIN (x0, gport->width));
--  x1 = x + y;
--  x1 = MAX(0, MIN (x1, gport->width));
--  y0 = y + x;
--  y0 = MAX(0, MIN (y0, gport->height));
--  y1 = y - (gport->width - x);
--  y1 = MAX(0, MIN (y1, gport->height));
--  gdk_draw_line (gport->drawing_area->window, xor_gc,
--		 x0, y0, x1, y1);
--}
--
--static void
--draw_dozen_cross (GdkGC *xor_gc, gint x, gint y)
--{
--  gint x0, y0, x1, y1;
--  gdouble tan60 = sqrt (3);
--
--  x0 = x + (gport->height - y) / tan60;
--  x0 = MAX(0, MIN (x0, gport->width));
--  x1 = x - y / tan60;
--  x1 = MAX(0, MIN (x1, gport->width));
--  y0 = y + (gport->width - x) * tan60;
--  y0 = MAX(0, MIN (y0, gport->height));
--  y1 = y - x * tan60;
--  y1 = MAX(0, MIN (y1, gport->height));
--  gdk_draw_line (gport->drawing_area->window, xor_gc,
--		 x0, y0, x1, y1);
--
--  x0 = x + (gport->height - y) * tan60;
--  x0 = MAX(0, MIN (x0, gport->width));
--  x1 = x - y * tan60;
--  x1 = MAX(0, MIN (x1, gport->width));
--  y0 = y + (gport->width - x) / tan60;
--  y0 = MAX(0, MIN (y0, gport->height));
--  y1 = y - x / tan60;
--  y1 = MAX(0, MIN (y1, gport->height));
--  gdk_draw_line (gport->drawing_area->window, xor_gc,
--		 x0, y0, x1, y1);
--
--  x0 = x - (gport->height - y) / tan60;
--  x0 = MAX(0, MIN (x0, gport->width));
--  x1 = x + y / tan60;
--  x1 = MAX(0, MIN (x1, gport->width));
--  y0 = y + x * tan60;
--  y0 = MAX(0, MIN (y0, gport->height));
--  y1 = y - (gport->width - x) * tan60;
--  y1 = MAX(0, MIN (y1, gport->height));
--  gdk_draw_line (gport->drawing_area->window, xor_gc,
--		 x0, y0, x1, y1);
--
--  x0 = x - (gport->height - y) * tan60;
--  x0 = MAX(0, MIN (x0, gport->width));
--  x1 = x + y * tan60;
--  x1 = MAX(0, MIN (x1, gport->width));
--  y0 = y + x / tan60;
--  y0 = MAX(0, MIN (y0, gport->height));
--  y1 = y - (gport->width - x) / tan60;
--  y1 = MAX(0, MIN (y1, gport->height));
--  gdk_draw_line (gport->drawing_area->window, xor_gc,
--		 x0, y0, x1, y1);
--}
--
--static void
--draw_crosshair (GdkGC *xor_gc, gint x, gint y)
--{
--  static enum crosshair_shape prev = Basic_Crosshair_Shape;
--
--  draw_right_cross (xor_gc, x, y);
--  if (prev == Union_Jack_Crosshair_Shape)
--    draw_slanted_cross (xor_gc, x, y);
--  if (prev == Dozen_Crosshair_Shape)
--    draw_dozen_cross (xor_gc, x, y);
--  prev = Crosshair.shape;
--}
--
--void
--ghid_show_crosshair (gboolean show)
--{
--  gint x, y;
--  static gint x_prev = -1, y_prev = -1;
--  static gboolean draw_markers, draw_markers_prev = FALSE;
--  static GdkGC *xor_gc;
--  static GdkColor cross_color;
--
--  if (gport->x_crosshair < 0 || ghidgui->creating || !gport->has_entered)
--    return;
--
--  if (!xor_gc)
--    {
--      xor_gc = gdk_gc_new (ghid_port.drawing_area->window);
--      gdk_gc_copy (xor_gc, ghid_port.drawing_area->style->white_gc);
--      gdk_gc_set_function (xor_gc, GDK_XOR);
--      /* FIXME: when CrossColor changed from config */
--      ghid_map_color_string (Settings.CrossColor, &cross_color);
--    }
--  x = DRAW_X (gport->x_crosshair);
--  y = DRAW_Y (gport->y_crosshair);
--
--  gdk_gc_set_foreground (xor_gc, &cross_color);
--
--  if (x_prev >= 0)
--    {
--      draw_crosshair (xor_gc, x_prev, y_prev);
--      if (draw_markers_prev)
--	{
--	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
--			      0, y_prev - VCD, VCD, VCW);
--	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
--			      gport->width - VCD, y_prev - VCD, VCD, VCW);
--	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
--			      x_prev - VCD, 0, VCW, VCD);
--	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
--			      x_prev - VCD, gport->height - VCD, VCW, VCD);
--	}
--    }
--
--  if (x >= 0 && show)
--    {
--      draw_crosshair (xor_gc, x, y);
--      draw_markers = ghidgui->auto_pan_on && have_crosshair_attachments ();
--      if (draw_markers)
--	{
--	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
--			      0, y - VCD, VCD, VCW);
--	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
--			      gport->width - VCD, y - VCD, VCD, VCW);
--	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
--			      x - VCD, 0, VCW, VCD);
--	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
--			      x - VCD, gport->height - VCD, VCW, VCD);
--	}
--      x_prev = x;
--      y_prev = y;
--      draw_markers_prev = draw_markers;
--    }
--  else
--    {
--      x_prev = y_prev = -1;
--      draw_markers_prev = FALSE;
--    }
--}
--
- static gboolean
- ghid_idle_cb (gpointer data)
- {
-@@ -704,53 +533,151 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -533,53 +533,151 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
    if (!first_time_done)
      {
        gport->colormap = gtk_widget_get_colormap (gport->top_window);
@@ -2047,7 +1789,7 @@ index a5c4239..6f54d82 100644
    return FALSE;
  }
  
-@@ -883,6 +810,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -712,6 +810,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    gdouble dx, dy;
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
@@ -2062,7 +1804,7 @@ index a5c4239..6f54d82 100644
  
    if (out->panning)
      {
-@@ -906,6 +841,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -735,6 +841,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    ghid_show_crosshair (TRUE);
    if (moved && have_crosshair_attachments ())
      ghid_draw_area_update (gport, NULL);
@@ -2077,7 +1819,7 @@ index a5c4239..6f54d82 100644
    return FALSE;
  }
  
-@@ -945,7 +888,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -774,7 +888,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        RestoreCrosshair (TRUE);
        cursor_in_viewport = TRUE;
      }
