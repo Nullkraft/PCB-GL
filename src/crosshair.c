@@ -694,8 +694,10 @@ CrosshairOn (bool BlockToo)
   if (!Crosshair.On)
     {
       Crosshair.On = true;
+#if 0
       DrawAttached (BlockToo);
       DrawMark (true);
+#endif
     }
 }
 
@@ -708,8 +710,10 @@ CrosshairOff (bool BlockToo)
   if (Crosshair.On)
     {
       Crosshair.On = false;
+#if 0
       DrawAttached (BlockToo);
       DrawMark (true);
+#endif
     }
 }
 
@@ -738,7 +742,7 @@ HideCrosshair (bool BlockToo)
   CrosshairStack[CrosshairStackLocation] = Crosshair.On;
   CrosshairStackLocation++;
 
-//  CrosshairOff (BlockToo);
+  CrosshairOff (BlockToo);
 }
 
 /* ---------------------------------------------------------------------------
@@ -758,11 +762,11 @@ RestoreCrosshair (bool BlockToo)
 
   if (CrosshairStack[CrosshairStackLocation])
     {
-//      CrosshairOn (BlockToo);
+      CrosshairOn (BlockToo);
     }
   else
     {
-//      CrosshairOff (BlockToo);
+      CrosshairOff (BlockToo);
     }
 }
 
