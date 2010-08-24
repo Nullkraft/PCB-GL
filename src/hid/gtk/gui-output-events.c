@@ -1515,6 +1515,7 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
     return FALSE;
   }
 
+  hidgl_in_context (true);
   hidgl_init ();
 
   /* If we don't have any stencil bits available,
@@ -1738,6 +1739,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
     gdk_gl_drawable_swap_buffers (pGlDrawable);
   else
     glFlush ();
+
+  hidgl_in_context (false);
 
   /* end drawing to current GL-context */
   gdk_gl_drawable_gl_end (pGlDrawable);

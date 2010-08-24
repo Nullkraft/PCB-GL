@@ -95,6 +95,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
     return NULL;
   }
 
+  hidgl_in_context (true);
+
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -137,6 +139,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   glPopMatrix ();
 
   glFlush ();
+
+  hidgl_in_context (false);
 
   /* end drawing to current GL-context */
   gdk_gl_drawable_gl_end (gldrawable);
