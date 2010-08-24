@@ -1,0 +1,52 @@
+Bottom: 5263a1afde2e702a9005cd0a08792c67bbe4d8c6
+Top:    e541c0effaf5a9f1efc66ec4ce714e0817902186
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-24 18:24:20 +0100
+
+Refresh of debug-gl-calls-out-of-context
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index c0cc39b..1b35c95 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -698,6 +698,9 @@ ghid_show_crosshair (gboolean show)
+   static GdkColor cross_color;
+   extern float global_depth;
+ 
++  if (!check_gl_drawing_ok_hack)
++    return;
++
+   if (gport->x_crosshair < 0 || ghidgui->creating) {// || !gport->has_entered) {
+     printf ("Returning\n");
+     return;
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 381125b..ae011c0 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -73,6 +73,7 @@ static GLfloat last_modelview_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
+                                               {0.0, 0.0, 0.0, 1.0}};
+ static int global_view_2d = 1;
+ 
++static bool check_gl_drawing_ok_hack = false;
+ 
+ /* Set to true if cursor is currently in viewport. This is a hack to prevent
+  * Crosshair stack corruption due to unmatching window enter / leave events */
+@@ -1517,6 +1518,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+ 
+   hidgl_init ();
+ 
++  check_gl_drawing_ok_hack = true;
++
+   /* If we don't have any stencil bits available,
+      we can't use the hidgl polygon drawing routine */
+   /* TODO: We could use the GLU tessellator though */
+@@ -1739,6 +1742,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+   else
+     glFlush ();
+ 
++  check_gl_drawing_ok_hack = false;
++
+   /* end drawing to current GL-context */
+   gdk_gl_drawable_gl_end (pGlDrawable);
