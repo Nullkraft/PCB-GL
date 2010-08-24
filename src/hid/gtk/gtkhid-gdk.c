@@ -21,7 +21,6 @@ RCSID ("$Id$");
 
 extern HID ghid_hid;
 
-
 /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
 */
 #define USE_GC(gc) if (!use_gc(gc)) return
@@ -816,6 +815,9 @@ draw_crosshair (GdkGC *xor_gc, gint x, gint y)
     draw_dozen_cross (xor_gc, x, y);
   prev = Crosshair.shape;
 }
+
+#define VCW 16
+#define VCD 8
 
 void
 ghid_show_crosshair (gboolean show)

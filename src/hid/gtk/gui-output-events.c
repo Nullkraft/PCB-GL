@@ -298,10 +298,6 @@ have_crosshair_attachments (void)
   return result;
 }
 
-
-#define	VCW		16
-#define VCD		8
-
 static gboolean
 ghid_idle_cb (gpointer data)
 {
