@@ -1084,7 +1084,7 @@ ghid_show_crosshair (gboolean show)
 
   glBegin (GL_LINES);
 
-#if 1
+#if 0
   if (x_prev >= 0)
     draw_crosshair (x_prev, y_prev);
 #endif
@@ -1097,7 +1097,7 @@ ghid_show_crosshair (gboolean show)
 
   glBegin (GL_QUADS);
 
-#if 1
+#if 0
   if (x_prev >= 0 && draw_markers_prev)
     {
       glVertex2i (0,                  y_prev - VCD);
