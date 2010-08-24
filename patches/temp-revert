@@ -1,5 +1,5 @@
 Bottom: 079c75dfa42402c57c96920aeafb72a827ed4344
-Top:    a5242286de68c59203722c2960434d8f40a1a1bc
+Top:    e6b47da90daa626c29b6f291dc6f8dc83de3ea7a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 17:23:32 +0100
 
@@ -93,10 +93,10 @@ index 89cdb20..8c3ff67 100644
  ghid_set_layer (const char *name, int group, int empty)
  {
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index d2349a8..813998e 100644
+index d2349a8..a5c4239 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -298,6 +298,174 @@ have_crosshair_attachments (void)
+@@ -298,6 +298,177 @@ have_crosshair_attachments (void)
    return result;
  }
  
@@ -209,7 +209,7 @@ index d2349a8..813998e 100644
 +{
 +  gint x, y;
 +  static gint x_prev = -1, y_prev = -1;
-+  static gboolean hca, hca_prev = FALSE;
++  static gboolean draw_markers, draw_markers_prev = FALSE;
 +  static GdkGC *xor_gc;
 +  static GdkColor cross_color;
 +
@@ -232,7 +232,7 @@ index d2349a8..813998e 100644
 +  if (x_prev >= 0)
 +    {
 +      draw_crosshair (xor_gc, x_prev, y_prev);
-+      if (ghidgui->auto_pan_on && hca_prev)
++      if (draw_markers_prev)
 +	{
 +	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
 +			      0, y_prev - VCD, VCD, VCW);
@@ -248,8 +248,8 @@ index d2349a8..813998e 100644
 +  if (x >= 0 && show)
 +    {
 +      draw_crosshair (xor_gc, x, y);
-+      hca = have_crosshair_attachments ();
-+      if (ghidgui->auto_pan_on && hca)
++      draw_markers = ghidgui->auto_pan_on && have_crosshair_attachments ();
++      if (draw_markers)
 +	{
 +	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
 +			      0, y - VCD, VCD, VCW);
@@ -262,10 +262,13 @@ index d2349a8..813998e 100644
 +	}
 +      x_prev = x;
 +      y_prev = y;
-+      hca_prev = hca;
++      draw_markers_prev = draw_markers;
 +    }
 +  else
-+    x_prev = y_prev = -1;
++    {
++      x_prev = y_prev = -1;
++      draw_markers_prev = FALSE;
++    }
 +}
 +
  static gboolean
