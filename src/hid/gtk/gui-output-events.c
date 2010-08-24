@@ -567,120 +567,6 @@ ghid_screen_update (void)
 #endif
 }
 
-void DrawAttached (bool);
-
-#define Z_NEAR 3.0
-gboolean
-ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
-					GdkEventExpose * ev, GHidPort * port)
-{
-  BoxType region;
-  int eleft, eright, etop, ebottom;
-  extern HID ghid_hid;
-  GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
-  GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
-
-  /* make GL-context "current" */
-  if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
-    return FALSE;
-  }
-
-  ghid_show_crosshair (FALSE);
-
-  glEnable (GL_BLEND);
-  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-//  glEnable(GL_POLYGON_SMOOTH);
-//  glHint(GL_POLYGON_SMOOTH_HINT, [GL_FASTEST, GL_NICEST, or GL_DONT_CARE]);
-
-  glViewport (0, 0, widget->allocation.width, widget->allocation.height);
-
-  glEnable (GL_SCISSOR_TEST);
-  glScissor (ev->area.x,
-             widget->allocation.height - ev->area.height - ev->area.y,
-             ev->area.width, ev->area.height);
-
-  glMatrixMode (GL_PROJECTION);
-  glLoadIdentity ();
-  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, 0, 100);
-  glMatrixMode (GL_MODELVIEW);
-  glLoadIdentity ();
-  glTranslatef (0.0f, 0.0f, -Z_NEAR);
-
-  glClearColor (gport->offlimits_color.red / 65535.,
-                gport->offlimits_color.green / 65535.,
-                gport->offlimits_color.blue / 65535.,
-                1.);
-
-  glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-  region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-  region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-  region.Y1 = MIN (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
-  region.Y2 = MAX (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
-
-  eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
-  etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
-
-  glColor3f (gport->bg_color.red / 65535.,
-             gport->bg_color.green / 65535.,
-             gport->bg_color.blue / 65535.);
-
-  glBegin (GL_QUADS);
-  glVertex3i (eleft,  etop,    0);
-  glVertex3i (eright, etop,    0);
-  glVertex3i (eright, ebottom, 0);
-  glVertex3i (eleft,  ebottom, 0);
-  glEnd ();
-
-  /* TODO: Background image */
-
-  hidgl_init_triangle_array (&buffer);
-  ghid_invalidate_current_gc ();
-
-  glPushMatrix ();
-  glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
-            (ghid_flip_y ? -1. : 1.) / gport->zoom,
-            (ghid_flip_x == ghid_flip_y) ? 1. : -1.);
-  glTranslatef (ghid_flip_x ? gport->view_x0 - PCB->MaxWidth  :
-                             -gport->view_x0,
-                ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
-                             -gport->view_y0, 0);
-  hid_expose_callback (&ghid_hid, &region, 0);
-  hidgl_flush_triangles (&buffer);
-  glPopMatrix ();
-
-  ghid_draw_grid ();
-
-  hidgl_init_triangle_array (&buffer);
-  ghid_invalidate_current_gc ();
-  glPushMatrix ();
-  glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
-            (ghid_flip_y ? -1. : 1.) / gport->zoom, 1);
-  glTranslatef (ghid_flip_x ? gport->view_x0 - PCB->MaxWidth  :
-                             -gport->view_x0,
-                ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
-                             -gport->view_y0, 0);
-  DrawAttached (TRUE);
-  DrawMark (TRUE);
-  hidgl_flush_triangles (&buffer);
-  glPopMatrix ();
-
-  ghid_show_crosshair (TRUE);
-
-  hidgl_flush_triangles (&buffer);
-
-  if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
-    gdk_gl_drawable_swap_buffers (pGlDrawable);
-  else
-    glFlush ();
-
-  /* end drawing to current GL-context */
-  gdk_gl_drawable_gl_end (pGlDrawable);
-
-  return FALSE;
-}
-
 #if GTK_CHECK_VERSION(2,12,0)
 # define ENABLE_TOOLTIPS 1
 #else
@@ -810,14 +696,9 @@ ghid_port_window_motion_cb (GtkWidget * widget,
   gdouble dx, dy;
   static gint x_prev = -1, y_prev = -1;
   gboolean moved;
-  GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
-  GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
 
-  /* make GL-context "current" */
-  if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
-    printf ("GL THingy returned\n");
+  if (!ghid_start_drawing (out))
     return FALSE;
-  }
 
   if (out->panning)
     {
@@ -842,13 +723,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
   if (moved && have_crosshair_attachments ())
     ghid_draw_area_update (gport, NULL);
 
-  if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
-    gdk_gl_drawable_swap_buffers (pGlDrawable);
-  else
-    glFlush ();
-
-  /* end drawing to current GL-context */
-  gdk_gl_drawable_gl_end (pGlDrawable);
+  ghid_end_drawing (out);
   return FALSE;
 }
 
