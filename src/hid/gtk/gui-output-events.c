@@ -407,7 +407,7 @@ ghid_show_crosshair (gboolean show)
 {
   gint x, y;
   static gint x_prev = -1, y_prev = -1;
-  static gboolean hca, hca_prev = FALSE;
+  static gboolean draw_markers, draw_markers_prev = FALSE;
   static GdkGC *xor_gc;
   static GdkColor cross_color;
 
@@ -430,7 +430,7 @@ ghid_show_crosshair (gboolean show)
   if (x_prev >= 0)
     {
       draw_crosshair (xor_gc, x_prev, y_prev);
-      if (ghidgui->auto_pan_on && hca_prev)
+      if (draw_markers_prev)
 	{
 	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
 			      0, y_prev - VCD, VCD, VCW);
@@ -446,8 +446,8 @@ ghid_show_crosshair (gboolean show)
   if (x >= 0 && show)
     {
       draw_crosshair (xor_gc, x, y);
-      hca = have_crosshair_attachments ();
-      if (ghidgui->auto_pan_on && hca)
+      draw_markers = ghidgui->auto_pan_on && have_crosshair_attachments ();
+      if (draw_markers)
 	{
 	  gdk_draw_rectangle (gport->drawing_area->window, xor_gc, TRUE,
 			      0, y - VCD, VCD, VCW);
@@ -460,10 +460,13 @@ ghid_show_crosshair (gboolean show)
 	}
       x_prev = x;
       y_prev = y;
-      hca_prev = hca;
+      draw_markers_prev = draw_markers;
     }
   else
-    x_prev = y_prev = -1;
+    {
+      x_prev = y_prev = -1;
+      draw_markers_prev = FALSE;
+    }
 }
 
 static gboolean
