@@ -1,0 +1,14 @@
+Bottom: 95c001ad7ae0eaeaf1456ebe0aa349072d1e9c1c
+Top:    95c001ad7ae0eaeaf1456ebe0aa349072d1e9c1c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-24 16:46:57 +0100
+
+Simplify ghid_draw_area_update()
+
+If the rect passed is NULL, we can simply pass that on to
+gdk_window_invalidate_rect() which will invalidate the whole area.
+
+
+---
+
+
