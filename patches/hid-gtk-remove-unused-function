@@ -1,5 +1,5 @@
 Bottom: 526d038575c1c55e3d2e116a3f0e07a2802ee092
-Top:    2ce544984cec31aa168f50bc1e7e8c8263785118
+Top:    5c5cfcad27124334c1abd2e2d4c4ed62d642ab44
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 16:59:08 +0100
 
@@ -58,7 +58,7 @@ index 840e7a9..3d93d19 100644
  ghid_get_color_name (GdkColor * color)
  {
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 0a2e747..58136b6 100644
+index 0a2e747..7686106 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -377,12 +377,6 @@ gboolean ghid_mod1_is_pressed (void);
@@ -74,14 +74,3 @@ index 0a2e747..58136b6 100644
  gchar *ghid_get_color_name (GdkColor * color);
  void ghid_map_color_string (gchar * color_string, GdkColor * color);
  void ghid_button_set_text (GtkWidget * button, gchar * text);
-@@ -513,9 +507,10 @@ void ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2);
- void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
- void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
- void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
-+void ghid_invalidate_lr ();
-+void ghid_invalidate_all ();
- 
- /* gtkhid-main.c */
--void ghid_invalidate_all ();
- void ghid_get_coords (const char *msg, int *x, int *y);
- gint PCBChanged (int argc, char **argv, int x, int y);
