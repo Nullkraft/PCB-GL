@@ -377,12 +377,6 @@ gboolean ghid_mod1_is_pressed (void);
 gboolean ghid_shift_is_pressed (void);
 
 void ghid_draw_area_update (GHidPort * out, GdkRectangle * rect);
-void ghid_string_markup_extents (PangoFontDescription * font_desc,
-				 gchar * string, gint * width, gint * height);
-void ghid_draw_string_markup (GdkDrawable * drawable,
-			      PangoFontDescription * font_desc,
-			      GdkGC * gc, gint x, gint y, gchar * string);
-
 gchar *ghid_get_color_name (GdkColor * color);
 void ghid_map_color_string (gchar * color_string, GdkColor * color);
 void ghid_button_set_text (GtkWidget * button, gchar * text);
@@ -513,9 +507,10 @@ void ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2);
 void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
 void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
 void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
+void ghid_invalidate_lr ();
+void ghid_invalidate_all ();
 
 /* gtkhid-main.c */
-void ghid_invalidate_all ();
 void ghid_get_coords (const char *msg, int *x, int *y);
 gint PCBChanged (int argc, char **argv, int x, int y);
 
