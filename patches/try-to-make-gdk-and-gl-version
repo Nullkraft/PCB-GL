@@ -1,5 +1,5 @@
 Bottom: 05a0eb32edc286b12f857deab71e245408f68cb0
-Top:    5a6385ff3f991cc9fc3105089499c9dc54634cbf
+Top:    4584dc90fb90d84f50a233ca76127ac63112a35c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 20:44:30 +0100
 
@@ -21,10 +21,10 @@ index f66cca7..bb52a45 100644
  	hid/gtk/gui-utils.c
  libgtk_a_SOURCES = ${LIBGTK_SRCS} hid/gtk/gtk_lists.h
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 957e2aa..91fa5cc 100644
+index 957e2aa..ea2c783 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -21,15 +21,125 @@ RCSID ("$Id$");
+@@ -21,15 +21,258 @@ RCSID ("$Id$");
  
  extern HID ghid_hid;
  
@@ -70,11 +70,53 @@ index 957e2aa..91fa5cc 100644
 +{
 +}
 +
++void
++ghid_drawing_area_configure_hook (GHidPort *port)
++{
++  static int done_once = 0;
++  struct render_priv *priv = port->render_priv;
++
++  if (!done_once)
++    {
++      priv->bg_gc = gdk_gc_new (port->drawable);
++      gdk_gc_set_foreground (priv->bg_gc, &port->bg_color);
++
++      priv->offlimits_gc = gdk_gc_new (port->drawable);
++      gdk_gc_set_foreground (priv->offlimits_gc, &port->offlimits_color);
++      done_once = 1;
++    }
++
++  if (port->mask)
++    {
++      gdk_pixmap_unref (port->mask);
++      port->mask = gdk_pixmap_new (0, port->width, port->height, 1);
++    }
++}
++
++void
++ghid_screen_update (void)
++{
++  struct render_priv *priv = gport->render_priv;
++
++  ghid_show_crosshair (FALSE);
++  gdk_draw_drawable (gport->drawing_area->window, priv->bg_gc, gport->pixmap,
++		     0, 0, 0, 0, gport->width, gport->height);
++  ghid_show_crosshair (TRUE);
++}
++
 +gboolean
 +ghid_drawing_area_expose_cb (GtkWidget *widget,
 +                             GdkEventExpose *ev,
 +                             GHidPort *port)
 +{
++  struct render_priv *priv = port->render_priv;
++
++  ghid_show_crosshair (FALSE);
++  gdk_draw_drawable (widget->window, priv->bg_gc, port->pixmap,
++                    ev->area.x, ev->area.y, ev->area.x, ev->area.y,
++                    ev->area.width, ev->area.height);
++  ghid_show_crosshair (TRUE);
++  return FALSE;
 +}
 +
 +void
@@ -86,6 +128,97 @@ index 957e2aa..91fa5cc 100644
 +ghid_pinout_preview_expose (GtkWidget *widget,
 +                            GdkEventExpose *ev)
 +{
++  extern HID ghid_hid;
++  GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
++  GdkDrawable *save_drawable;
++  double save_zoom;
++  int da_w, da_h;
++  int save_left, save_top;
++  int save_width, save_height;
++  int save_view_width, save_view_height;
++  double xz, yz;
++  struct render_priv *priv = gport->render_priv;
++
++  save_zoom = gport->zoom;
++  save_width = gport->width;
++  save_height = gport->height;
++  save_left = gport->view_x0;
++  save_top = gport->view_y0;
++  save_view_width = gport->view_width;
++  save_view_height = gport->view_height;
++
++  /* Setup drawable and zoom factor for drawing routines
++   */
++  save_drawable = gport->drawable;
++
++  gdk_window_get_geometry (widget->window, 0, 0, &da_w, &da_h, 0);
++  xz = (double) pinout->x_max / da_w;
++  yz = (double) pinout->y_max / da_h;
++  if (xz > yz)
++    gport->zoom = xz;
++  else
++    gport->zoom = yz;
++
++  gport->drawable = widget->window;
++  gport->width = da_w;
++  gport->height = da_h;
++  gport->view_width = da_w * gport->zoom;
++  gport->view_height = da_h * gport->zoom;
++  gport->view_x0 = (pinout->x_max - gport->view_width) / 2;
++  gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
++
++  /* clear background */
++  gdk_draw_rectangle (widget->window, priv->bg_gc, TRUE, 0, 0, da_w, da_h);
++
++  /* call the drawing routine */
++  hid_expose_callback (&ghid_hid, NULL, &pinout->element);
++
++  gport->drawable = save_drawable;
++  gport->zoom = save_zoom;
++  gport->width = save_width;
++  gport->height = save_height;
++  gport->view_x0 = save_left;
++  gport->view_y0 = save_top;
++  save_top = gport->view_y0;
++  save_view_width = gport->view_width;
++  save_view_height = gport->view_height;
++
++  /* Setup drawable and zoom factor for drawing routines
++   */
++  save_drawable = gport->drawable;
++
++  gdk_window_get_geometry (widget->window, 0, 0, &da_w, &da_h, 0);
++  xz = (double) pinout->x_max / da_w;
++  yz = (double) pinout->y_max / da_h;
++  if (xz > yz)
++    gport->zoom = xz;
++  else
++    gport->zoom = yz;
++
++  gport->drawable = widget->window;
++  gport->width = da_w;
++  gport->height = da_h;
++  gport->view_width = da_w * gport->zoom;
++  gport->view_height = da_h * gport->zoom;
++  gport->view_x0 = (pinout->x_max - gport->view_width) / 2;
++  gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
++
++  /* clear background */
++  gdk_draw_rectangle (widget->window, priv->bg_gc, TRUE, 0, 0, da_w, da_h);
++
++  /* call the drawing routine */
++  hid_expose_callback (&ghid_hid, NULL, &pinout->element);
++
++  gport->drawable = save_drawable;
++  gport->zoom = save_zoom;
++  gport->width = save_width;
++  gport->height = save_height;
++  gport->view_x0 = save_left;
++  gport->view_y0 = save_top;
++  gport->view_width = save_view_width;
++  gport->view_height = save_view_height;
++
++  return FALSE;
 +}
 +
 +GdkPixmap *
@@ -151,7 +284,7 @@ index 957e2aa..91fa5cc 100644
  static inline int
  Vx2 (int x)
  {
-@@ -85,12 +195,13 @@ ghid_draw_grid (void)
+@@ -85,12 +328,13 @@ ghid_draw_grid (void)
    static int npoints = 0;
    int x1, y1, x2, y2, n, i;
    double x, y;
@@ -166,7 +299,7 @@ index 957e2aa..91fa5cc 100644
      {
        if (gdk_color_parse (Settings.GridColor, &gport->grid_color))
  	{
-@@ -99,9 +210,9 @@ ghid_draw_grid (void)
+@@ -99,9 +343,9 @@ ghid_draw_grid (void)
  	  gport->grid_color.blue ^= gport->bg_color.blue;
  	  gdk_color_alloc (gport->colormap, &gport->grid_color);
  	}
@@ -179,7 +312,7 @@ index 957e2aa..91fa5cc 100644
      }
    x1 = GRIDFIT_X (SIDE_X (gport->view_x0), PCB->Grid);
    y1 = GRIDFIT_Y (SIDE_Y (gport->view_y0), PCB->Grid);
-@@ -148,7 +259,7 @@ ghid_draw_grid (void)
+@@ -148,7 +392,7 @@ ghid_draw_grid (void)
        int vy = Vy (y);
        for (i = 0; i < n; i++)
  	points[i].y = vy;
@@ -188,7 +321,7 @@ index 957e2aa..91fa5cc 100644
      }
  }
  
-@@ -160,6 +271,7 @@ ghid_draw_bg_image (void)
+@@ -160,6 +404,7 @@ ghid_draw_bg_image (void)
    GdkInterpType interp_type;
    gint x, y, w, h, w_src, h_src;
    static gint w_scaled, h_scaled;
@@ -196,7 +329,7 @@ index 957e2aa..91fa5cc 100644
  
    if (!ghidgui->bg_pixbuf)
      return;
-@@ -187,12 +299,12 @@ ghid_draw_bg_image (void)
+@@ -187,12 +432,12 @@ ghid_draw_bg_image (void)
        h_scaled = h;
      }
    if (pixbuf)
@@ -211,7 +344,7 @@ index 957e2aa..91fa5cc 100644
  
  void
  ghid_use_mask (int use_it)
-@@ -200,6 +312,7 @@ ghid_use_mask (int use_it)
+@@ -200,6 +445,7 @@ ghid_use_mask (int use_it)
    static int mask_seq_id = 0;
    static GdkDrawable *old;
    GdkColor color;
@@ -219,7 +352,7 @@ index 957e2aa..91fa5cc 100644
  
    if (use_it == HID_FLUSH_DRAW_Q)
      {
-@@ -238,16 +351,16 @@ ghid_use_mask (int use_it)
+@@ -238,16 +484,16 @@ ghid_use_mask (int use_it)
  	gport->mask = gdk_pixmap_new (0, gport->width, gport->height, 1);
        gport->drawable = gport->mask;
        mask_seq = 0;
@@ -241,7 +374,7 @@ index 957e2aa..91fa5cc 100644
        break;
  
      case HID_MASK_AFTER:
-@@ -279,33 +392,37 @@ typedef struct
+@@ -279,33 +525,37 @@ typedef struct
  static void
  set_special_grid_color (void)
  {
@@ -286,7 +419,7 @@ index 957e2aa..91fa5cc 100644
      {
        ghid_map_color_string (*(char **) ha->value, &gport->grid_color);
        set_special_grid_color ();
-@@ -386,6 +503,7 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -386,6 +636,7 @@ ghid_set_color (hidGC gc, const char *name)
  void
  ghid_set_line_cap (hidGC gc, EndCapStyle style)
  {
@@ -294,7 +427,7 @@ index 957e2aa..91fa5cc 100644
  
    switch (style)
      {
-@@ -409,6 +527,7 @@ ghid_set_line_cap (hidGC gc, EndCapStyle style)
+@@ -409,6 +660,7 @@ ghid_set_line_cap (hidGC gc, EndCapStyle style)
  void
  ghid_set_line_width (hidGC gc, int width)
  {
@@ -302,7 +435,7 @@ index 957e2aa..91fa5cc 100644
  
    gc->width = width;
    if (gc->gc)
-@@ -442,6 +561,7 @@ ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2)
+@@ -442,6 +694,7 @@ ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2)
  static int
  use_gc (hidGC gc)
  {
@@ -310,7 +443,7 @@ index 957e2aa..91fa5cc 100644
  
    if (gc->me_pointer != &ghid_hid)
      {
-@@ -467,7 +587,7 @@ use_gc (hidGC gc)
+@@ -467,7 +720,7 @@ use_gc (hidGC gc)
  	gdk_gc_set_clip_mask (gc->gc, NULL);
        gc->mask_seq = mask_seq;
      }
@@ -319,7 +452,7 @@ index 957e2aa..91fa5cc 100644
    return 1;
  }
  
-@@ -475,6 +595,7 @@ void
+@@ -475,6 +728,7 @@ void
  ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
  {
    double dx1, dy1, dx2, dy2;
@@ -327,7 +460,7 @@ index 957e2aa..91fa5cc 100644
  
    dx1 = Vx ((double) x1);
    dy1 = Vy ((double) y1);
-@@ -486,7 +607,7 @@ ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
+@@ -486,7 +740,7 @@ ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
      return;
  
    USE_GC (gc);
@@ -336,7 +469,7 @@ index 957e2aa..91fa5cc 100644
  }
  
  void
-@@ -495,6 +616,7 @@ ghid_draw_arc (hidGC gc, int cx, int cy,
+@@ -495,6 +749,7 @@ ghid_draw_arc (hidGC gc, int cx, int cy,
  {
    gint vrx, vry;
    gint w, h, radius;
@@ -344,7 +477,7 @@ index 957e2aa..91fa5cc 100644
  
    w = gport->width * gport->zoom;
    h = gport->height * gport->zoom;
-@@ -522,7 +644,7 @@ ghid_draw_arc (hidGC gc, int cx, int cy,
+@@ -522,7 +777,7 @@ ghid_draw_arc (hidGC gc, int cx, int cy,
    /* make sure we fall in the -180 to +180 range */
    start_angle = (start_angle + 360 + 180) % 360 - 180;
  
@@ -353,7 +486,7 @@ index 957e2aa..91fa5cc 100644
  		Vx (cx) - vrx, Vy (cy) - vry,
  		vrx * 2, vry * 2, (start_angle + 180) * 64, delta_angle * 64);
  }
-@@ -531,6 +653,7 @@ void
+@@ -531,6 +786,7 @@ void
  ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
  {
    gint w, h, lw;
@@ -361,7 +494,7 @@ index 957e2aa..91fa5cc 100644
  
    lw = gc->width;
    w = gport->width * gport->zoom;
-@@ -565,7 +688,7 @@ ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
+@@ -565,7 +821,7 @@ ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
      }
  
    USE_GC (gc);
@@ -370,7 +503,7 @@ index 957e2aa..91fa5cc 100644
  		      x1, y1, x2 - x1 + 1, y2 - y1 + 1);
  }
  
-@@ -574,6 +697,7 @@ void
+@@ -574,6 +830,7 @@ void
  ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
  {
    gint w, h, vr;
@@ -378,7 +511,7 @@ index 957e2aa..91fa5cc 100644
  
    w = gport->width * gport->zoom;
    h = gport->height * gport->zoom;
-@@ -585,7 +709,7 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
+@@ -585,7 +842,7 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
  
    USE_GC (gc);
    vr = Vz (radius);
@@ -387,7 +520,7 @@ index 957e2aa..91fa5cc 100644
  		Vx (cx) - vr, Vy (cy) - vr, vr * 2, vr * 2, 0, 360 * 64);
  }
  
-@@ -595,6 +719,7 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
+@@ -595,6 +852,7 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
    static GdkPoint *points = 0;
    static int npoints = 0;
    int i;
@@ -395,7 +528,7 @@ index 957e2aa..91fa5cc 100644
    USE_GC (gc);
  
    if (npoints < n_coords)
-@@ -608,13 +733,14 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
+@@ -608,13 +866,14 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
        points[i].x = Vx (x[i]);
        points[i].y = Vy (y[i]);
      }
@@ -411,7 +544,7 @@ index 957e2aa..91fa5cc 100644
  
    lw = gc->width;
    w = gport->width * gport->zoom;
-@@ -647,7 +773,7 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
+@@ -647,7 +906,7 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
        y2 = yy;
      }
    USE_GC (gc);
@@ -420,7 +553,7 @@ index 957e2aa..91fa5cc 100644
  		      x1, y1, x2 - x1 + 1, y2 - y1 + 1);
  }
  
-@@ -662,6 +788,7 @@ ghid_invalidate_all ()
+@@ -662,6 +921,7 @@ ghid_invalidate_all ()
  {
    int eleft, eright, etop, ebottom;
    BoxType region;
@@ -428,7 +561,7 @@ index 957e2aa..91fa5cc 100644
  
    if (!gport->pixmap)
      return;
-@@ -689,28 +816,28 @@ ghid_invalidate_all ()
+@@ -689,28 +949,28 @@ ghid_invalidate_all ()
      }
  
    if (eleft > 0)
@@ -463,7 +596,7 @@ index 957e2aa..91fa5cc 100644
  
    ghid_draw_bg_image();
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index df90d8c..b442f73 100644
+index df90d8c..14030a9 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,7 @@
@@ -474,7 +607,7 @@ index df90d8c..b442f73 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -31,6 +32,407 @@ static hidGC current_gc = NULL;
+@@ -31,6 +32,417 @@ static hidGC current_gc = NULL;
  static int cur_mask = -1;
  
  
@@ -545,6 +678,16 @@ index df90d8c..b442f73 100644
 +
 +  /* end drawing to current GL-context */
 +  gdk_gl_drawable_gl_end (pGlDrawable);
++}
++
++void
++ghid_drawing_area_configure_hook (GHidPort *port)
++{
++}
++
++void
++ghid_screen_update (void)
++{
 +}
 +
 +void DrawAttached (bool);
@@ -883,13 +1026,43 @@ index df90d8c..b442f73 100644
  {
    HID *me_pointer;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 6f54d82..bc1af84 100644
+index 6f54d82..0952462 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -567,120 +567,6 @@ ghid_screen_update (void)
- #endif
+@@ -543,143 +543,20 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+       else
+ 	gdk_color_white (gport->colormap, &gport->offlimits_color);
+       first_time_done = TRUE;
++      ghid_drawing_area_configure_hook (out);
+       PCBChanged (0, NULL, 0, 0);
+     }
+-//  if (gport->mask)
+-//    {
+-//      gdk_pixmap_unref (gport->mask);
+-//      gport->mask = gdk_pixmap_new (0, gport->width, gport->height, 1);
+-//    }
++  else
++    {
++      ghid_drawing_area_configure_hook (out);
++    }
++
+   ghid_port_ranges_scale (FALSE);
+   ghid_invalidate_all ();
+   RestoreCrosshair (TRUE);
+   return 0;
  }
  
+-void
+-ghid_screen_update (void)
+-{
+-#if 0
+-  ghid_show_crosshair (FALSE);
+-  gdk_draw_drawable (gport->drawing_area->window, gport->bg_gc, gport->pixmap,
+-		     0, 0, 0, 0, gport->width, gport->height);
+-  ghid_show_crosshair (TRUE);
+-#endif
+-}
+-
 -void DrawAttached (bool);
 -
 -#define Z_NEAR 3.0
@@ -1003,11 +1176,10 @@ index 6f54d82..bc1af84 100644
 -
 -  return FALSE;
 -}
--
+ 
  #if GTK_CHECK_VERSION(2,12,0)
  # define ENABLE_TOOLTIPS 1
- #else
-@@ -810,14 +696,9 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -810,14 +687,9 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    gdouble dx, dy;
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
@@ -1023,7 +1195,7 @@ index 6f54d82..bc1af84 100644
  
    if (out->panning)
      {
-@@ -842,13 +723,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -842,13 +714,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    if (moved && have_crosshair_attachments ())
      ghid_draw_area_update (gport, NULL);
  
@@ -1339,7 +1511,7 @@ index 197e886..68090b7 100644
    ghid_config_files_read (argc, argv);
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 680d74a..906fdef 100644
+index 680d74a..6838743 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -36,6 +36,7 @@
@@ -1365,7 +1537,7 @@ index 680d74a..906fdef 100644
  
    GdkColor bg_color, offlimits_color, grid_color;
  
-@@ -496,15 +493,15 @@ void ghid_logv (const char *fmt, va_list args);
+@@ -496,15 +493,17 @@ void ghid_logv (const char *fmt, va_list args);
  /* gui-pinout-window.c */
  void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
  
@@ -1382,6 +1554,8 @@ index 680d74a..906fdef 100644
 +GtkWidget *ghid_drawing_area_new (GHidPort *port);
 +gboolean ghid_start_drawing (GHidPort *port);
 +void ghid_end_drawing (GHidPort *port);
++void ghid_drawing_area_configure_hook (GHidPort *port);
++void ghid_screen_update (void);
 +gboolean ghid_drawing_area_expose_cb (GtkWidget *, GdkEventExpose *, GHidPort *);
 +void ghid_pinout_preview_init (GhidPinoutPreview *preview);
 +gboolean ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev);
