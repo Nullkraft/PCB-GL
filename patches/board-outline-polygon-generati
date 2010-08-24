@@ -1,5 +1,5 @@
-Bottom: 324d0c765b940d14e9d5ec60aec06ee67f54d68b
-Top:    394b3c4bae0dd16f75c8b461caf4dc5931cf7b37
+Bottom: fd457c4455867698ee7dd68acb8b7ff8d26ad02b
+Top:    4b871be3d7b73a54aeb5cc66d68ef32eb50b4419
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:17 +0100
 
@@ -12,7 +12,7 @@ FIXME: Make this work with the GL masking polygon drawing routines, rather
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index f6e7758..322e37d 100644
+index 9cbef25..381125b 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -45,6 +45,7 @@
@@ -23,7 +23,7 @@ index f6e7758..322e37d 100644
  #include "set.h"
  #include "find.h"
  #include "search.h"
-@@ -1310,6 +1311,7 @@ DrawMask (BoxType * screen)
+@@ -1095,6 +1096,7 @@ DrawMask (BoxType * screen)
  {
    struct pin_info info;
    int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
@@ -31,7 +31,7 @@ index f6e7758..322e37d 100644
  
    OutputType *out = &Output;
  
-@@ -1338,7 +1340,17 @@ DrawMask (BoxType * screen)
+@@ -1123,7 +1125,17 @@ DrawMask (BoxType * screen)
    gui->use_mask (HID_MASK_AFTER);
    gui->set_color (out->fgGC, PCB->MaskColor);
    ghid_global_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);

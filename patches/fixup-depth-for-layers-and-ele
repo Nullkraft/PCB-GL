@@ -1,5 +1,5 @@
-Bottom: 76bd6d993eced3ff804d3a14ddc5dad567ed7b12
-Top:    324d0c765b940d14e9d5ec60aec06ee67f54d68b
+Bottom: 68f6b6710db66097efb043d68bef811c78315077
+Top:    fd457c4455867698ee7dd68acb8b7ff8d26ad02b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:17 +0100
 
@@ -9,10 +9,10 @@ Fixup depth for layers and element marks
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 89e21d0..3b96103 100644
+index f76b133..76aa9d7 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -359,7 +359,7 @@ int compute_depth (int group)
+@@ -344,7 +344,7 @@ int compute_depth (int group)
    if (group >= 0 && group < max_layer) {
      newgroup = group;
  
@@ -22,10 +22,10 @@ index 89e21d0..3b96103 100644
      if (SL_SIDE (idx) == SL_TOP_SIDE) {
        depth = (max_depth + 3) * 200 / gport->zoom;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 7ebc25f..f6e7758 100644
+index dcf6d8a..9cbef25 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -1670,12 +1670,14 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1455,12 +1455,14 @@ ghid_draw_everything (BoxTypePtr drawn_area)
      gui->set_layer (NULL, SL (FINISHED, 0), 0);
    }
    /* Draw top silkscreen */
@@ -42,7 +42,7 @@ index 7ebc25f..f6e7758 100644
      DrawSilk (1, SOLDER_LAYER, drawn_area);
      gui->set_layer (NULL, SL (FINISHED, 0), 0);
    }
-@@ -1843,13 +1845,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1628,13 +1630,6 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
               gport->bg_color.green / 65535.,
               gport->bg_color.blue / 65535.);
  
@@ -56,7 +56,7 @@ index 7ebc25f..f6e7758 100644
    /* TODO: Background image */
  
    hidgl_init_triangle_array (&buffer);
-@@ -1870,6 +1865,37 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+@@ -1655,6 +1650,37 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
  

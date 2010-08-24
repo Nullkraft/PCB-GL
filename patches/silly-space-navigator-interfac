@@ -1,5 +1,5 @@
-Bottom: 390b9cb282b6e5360f28e24022d740e7600dede2
-Top:    7508ab1c0d6c9cf2751804ce82a4bce67a59c15c
+Bottom: e4a57be531cdde11266b5626edbc7e133b49bad6
+Top:    4e94a939ad03e8637f98c728f0feea7870dc2ba0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:13 +0100
 
@@ -27,7 +27,7 @@ index f21c807..2ce0991 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 88cf644..82dc295 100644
+index 898bd98..d4ec3e8 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -50,6 +50,8 @@
@@ -39,7 +39,7 @@ index 88cf644..82dc295 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -2039,6 +2041,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -1824,6 +1826,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        /* Make sure drawing area has keyboard focus when we are in it.
         */
        gtk_widget_grab_focus (out->drawing_area);
@@ -48,7 +48,7 @@ index 88cf644..82dc295 100644
      }
    ghidgui->in_popup = FALSE;
  
-@@ -2146,6 +2150,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -1931,6 +1935,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
  	    }
  	  g_idle_add (ghid_pan_idle_cb, NULL);
  	}
@@ -57,7 +57,7 @@ index 88cf644..82dc295 100644
      }
  
    if(cursor_in_viewport)
-@@ -2194,3 +2200,29 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+@@ -1979,3 +1985,29 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  
    return TRUE;
  }
@@ -176,7 +176,7 @@ index d6bd03c..3af647e 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 38f2148..af281b3 100644
+index c5ca1e3..be978a2 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -159,6 +159,8 @@ typedef struct
@@ -196,7 +196,7 @@ index 38f2148..af281b3 100644
    GdkPixmap *pixmap, *mask;
    GdkDrawable *drawable;	/* Current drawable for drawing routines */
    gint width, height;
-@@ -336,6 +339,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -334,6 +337,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
  
