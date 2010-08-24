@@ -1,5 +1,5 @@
 Bottom: 079c75dfa42402c57c96920aeafb72a827ed4344
-Top:    535e298f0bcabe6f107bdb1f82393b046ff0a672
+Top:    05a0eb32edc286b12f857deab71e245408f68cb0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:07 +0100
 
@@ -2141,7 +2141,7 @@ index 3d3896f..197e886 100644
  
    Settings.AutoPlace = 0;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 03d8f72..ece3723 100644
+index 03d8f72..680d74a 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -37,6 +37,17 @@
@@ -2177,15 +2177,7 @@ index 03d8f72..ece3723 100644
  
    GdkColor bg_color, offlimits_color, grid_color;
  
-@@ -279,6 +296,7 @@ void ghid_get_pointer (gint *, gint *);
- 
- /* gui-output-events.c function prototypes.
- */
-+
- void ghid_port_ranges_changed (void);
- void ghid_port_ranges_zoom (gdouble zoom);
- gboolean ghid_port_ranges_pan (gdouble x, gdouble y, gboolean relative);
-@@ -487,7 +505,7 @@ GdkPixmap *ghid_render_pixmap (int cx,
+@@ -487,7 +504,7 @@ GdkPixmap *ghid_render_pixmap (int cx,
  			       int height,
  			       int depth);
  
@@ -2194,7 +2186,7 @@ index 03d8f72..ece3723 100644
  hidGC ghid_make_gc (void);
  void ghid_destroy_gc (hidGC);
  void ghid_draw_grid (void);
-@@ -511,6 +529,7 @@ void ghid_invalidate_all ();
+@@ -511,6 +528,7 @@ void ghid_invalidate_all ();
  void ghid_show_crosshair (gboolean show);
  
  /* gtkhid-main.c */
