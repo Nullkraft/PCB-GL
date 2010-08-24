@@ -73,6 +73,7 @@ static GLfloat last_modelview_matrix[4][4] = {{1.0, 0.0, 0.0, 0.0},
                                               {0.0, 0.0, 0.0, 1.0}};
 static int global_view_2d = 1;
 
+static bool check_gl_drawing_ok_hack = false;
 
 /* Set to true if cursor is currently in viewport. This is a hack to prevent
  * Crosshair stack corruption due to unmatching window enter / leave events */
@@ -1517,6 +1518,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
 
   hidgl_init ();
 
+  check_gl_drawing_ok_hack = true;
+
   /* If we don't have any stencil bits available,
      we can't use the hidgl polygon drawing routine */
   /* TODO: We could use the GLU tessellator though */
@@ -1738,6 +1741,8 @@ ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
     gdk_gl_drawable_swap_buffers (pGlDrawable);
   else
     glFlush ();
+
+  check_gl_drawing_ok_hack = false;
 
   /* end drawing to current GL-context */
   gdk_gl_drawable_gl_end (pGlDrawable);
