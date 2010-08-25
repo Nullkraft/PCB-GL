@@ -218,8 +218,6 @@ static ToggleFlagType *tflags = 0;
 static int n_tflags = 0;
 static int max_tflags = 0;
 
-extern HID ghid_hid;
-
 GhidGui _ghidgui, *ghidgui = NULL;
 
 GHidPort ghid_port, *gport;
@@ -2297,6 +2295,7 @@ ghid_build_pcb_top_window (void)
   gtk_box_pack_start (GTK_BOX (hbox), viewport, TRUE, TRUE, 0);
 
   gport->drawing_area = gtk_drawing_area_new ();
+  ghid_init_drawing_widget (gport->drawing_area, gport);
 
   gtk_widget_add_events (gport->drawing_area, GDK_EXPOSURE_MASK
 			 | GDK_LEAVE_NOTIFY_MASK | GDK_ENTER_NOTIFY_MASK
