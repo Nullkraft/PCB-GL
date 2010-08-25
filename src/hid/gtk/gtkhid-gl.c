@@ -41,6 +41,10 @@ static hidGC current_gc = NULL;
 
 static int cur_mask = -1;
 
+typedef struct render_priv {
+  GdkGLConfig *glconfig;
+} render_priv;
+
 
 typedef struct hid_gc_struct
 {
@@ -767,6 +771,76 @@ ghid_show_crosshair (gboolean show)
 }
 
 void
+ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+{
+  render_priv *priv;
+
+  port->render_priv = priv = g_new0 (render_priv, 1);
+
+  gtk_gl_init(argc, argv);
+
+  /* setup GL-context */
+  priv->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
+                                              GDK_GL_MODE_STENCIL |
+                                           // GDK_GL_MODE_DEPTH   |
+                                              GDK_GL_MODE_DOUBLE);
+  if (!priv->glconfig)
+    {
+      printf ("Could not setup GL-context!\n");
+      return; /* Should we abort? */
+    }
+}
+
+GtkWidget *
+ghid_drawing_area_new (GHidPort *port)
+{
+  GtkWidget *drawing_area;
+  render_priv *priv = port->render_priv;
+
+  drawing_area = gtk_drawing_area_new ();
+  gtk_widget_set_gl_capability (drawing_area,
+                                priv->glconfig,
+                                NULL,
+                                TRUE,
+                                GDK_GL_RGBA_TYPE);
+  return drawing_area;
+}
+
+gboolean
+ghid_start_drawing (GHidPort *port)
+{
+  GtkWidget *widget = port->drawing_area;
+  GdkGLContext *pGlContext = gtk_widget_get_gl_context (widget);
+  GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
+
+  /* make GL-context "current" */
+  if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext))
+    return FALSE;
+
+  return TRUE;
+}
+
+void
+ghid_end_drawing (GHidPort *port)
+{
+  GtkWidget *widget = port->drawing_area;
+  GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
+
+  if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
+    gdk_gl_drawable_swap_buffers (pGlDrawable);
+  else
+    glFlush ();
+
+  /* end drawing to current GL-context */
+  gdk_gl_drawable_gl_end (pGlDrawable);
+}
+
+void
+ghid_drawing_area_configure_hook (GHidPort *port)
+{
+}
+
+void
 ghid_screen_update (void)
 {
 }
@@ -868,6 +942,18 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   ghid_end_drawing (port);
 
   return FALSE;
+}
+
+void
+ghid_pinout_preview_init (GhidPinoutPreview *preview)
+{
+  render_priv *priv = gport->render_priv;
+
+  gtk_widget_set_gl_capability (GTK_WIDGET (preview),
+                                priv->glconfig,
+                                NULL,
+                                TRUE,
+                                GDK_GL_RGBA_TYPE);
 }
 
 gboolean
