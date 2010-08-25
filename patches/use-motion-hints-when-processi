@@ -1,5 +1,5 @@
-Bottom: bb46541a266307389f09048c4accc6f895ef5351
-Top:    bba51d8e26002aef4cb9831b489f95c706a626f3
+Bottom: d853f7b1bb7c4fd3c5a0031c3820f317913742fe
+Top:    beade5c89b9663bbeac4cda18152c1feeb183eca
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 21:13:12 +0100
 
@@ -9,10 +9,10 @@ Use motion hints when processing pointer motion over the drawing area
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 0ebb64d..46f9b83 100644
+index 53d8ffd..1dc08bd 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1120,7 +1120,7 @@ ghid_show_crosshair (gboolean show)
+@@ -1118,7 +1118,7 @@ ghid_show_crosshair (gboolean show)
  
    glBegin (GL_LINES);
  
@@ -21,7 +21,7 @@ index 0ebb64d..46f9b83 100644
    if (x_prev >= 0)
      draw_crosshair (x_prev, y_prev);
  #endif
-@@ -1133,7 +1133,7 @@ ghid_show_crosshair (gboolean show)
+@@ -1131,7 +1131,7 @@ ghid_show_crosshair (gboolean show)
  
    glBegin (GL_QUADS);
  
@@ -31,10 +31,10 @@ index 0ebb64d..46f9b83 100644
      {
        glVertex2i (0,                  y_prev - VCD);
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 4d9cb3a..b1b4034 100644
+index 16e1be8..6c9ccbf 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -686,12 +686,14 @@ queue_tooltip_update (GHidPort *out)
+@@ -684,12 +684,14 @@ queue_tooltip_update (GHidPort *out)
  
  gint
  ghid_port_window_motion_cb (GtkWidget * widget,
@@ -50,7 +50,7 @@ index 4d9cb3a..b1b4034 100644
  #if 0
    if (!ghid_start_drawing (out))
      return FALSE;
-@@ -700,7 +702,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -698,7 +700,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    if (out->panning)
      {
  /* Not sure this really matters, since we're using invalidate to get a redraw */
@@ -59,7 +59,7 @@ index 4d9cb3a..b1b4034 100644
        if (gtk_events_pending ())
  	return FALSE;
  #endif
-@@ -713,7 +715,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -711,7 +713,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
        return FALSE;
      }
    x_prev = y_prev = -1;
