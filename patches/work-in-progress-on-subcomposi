@@ -1,5 +1,5 @@
-Bottom: 787192286e65fdc12ce937b41e2e2c528d8035b6
-Top:    4812867a6773f5d4e7d76d837366acfa8457baff
+Bottom: 87b6025be944a2de55f0fb35eea1414d10dacbbf
+Top:    47b3b289c8eccc475a0eb40bc4331770d8246065
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:08 +0100
 
@@ -414,7 +414,7 @@ index fa908ce..8a46c3c 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 088c14e..bf57527 100644
+index c90b30b..864955d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,6 +21,7 @@
@@ -425,7 +425,7 @@ index 088c14e..bf57527 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -135,6 +136,17 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -133,6 +134,17 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_start_drawing (port);
  
@@ -443,7 +443,7 @@ index 088c14e..bf57527 100644
    ghid_show_crosshair (FALSE);
  
    glEnable (GL_BLEND);
-@@ -154,12 +166,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -152,12 +164,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -464,7 +464,7 @@ index 088c14e..bf57527 100644
  
    region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
    region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-@@ -185,6 +205,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -183,6 +203,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
@@ -477,7 +477,7 @@ index 088c14e..bf57527 100644
    glPushMatrix ();
    glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
              (ghid_flip_y ? -1. : 1.) / gport->zoom,
-@@ -316,9 +342,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -314,9 +340,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  gport->bg_color.green / 65535.,
                  gport->bg_color.blue / 65535.,
                  1.);
@@ -491,7 +491,7 @@ index 088c14e..bf57527 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
-@@ -425,8 +454,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -423,8 +452,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                  gport->bg_color.green / 65535.,
                  gport->bg_color.blue / 65535.,
                  1.);
@@ -502,7 +502,7 @@ index 088c14e..bf57527 100644
  
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
-@@ -653,6 +684,7 @@ ghid_draw_bg_image (void)
+@@ -651,6 +682,7 @@ ghid_draw_bg_image (void)
  void
  ghid_use_mask (int use_it)
  {
@@ -510,7 +510,7 @@ index 088c14e..bf57527 100644
  
    /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
    if (use_it == HID_LIVE_DRAWING ||
-@@ -664,6 +696,7 @@ ghid_use_mask (int use_it)
+@@ -662,6 +694,7 @@ ghid_use_mask (int use_it)
    if (use_it == cur_mask)
      return;
  
@@ -518,7 +518,7 @@ index 088c14e..bf57527 100644
    hidgl_flush_triangles (&buffer);
  
    switch (use_it)
-@@ -672,25 +705,28 @@ ghid_use_mask (int use_it)
+@@ -670,25 +703,28 @@ ghid_use_mask (int use_it)
        /* Write '1' to the stencil buffer where the solder-mask is drawn. */
        glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
        glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
