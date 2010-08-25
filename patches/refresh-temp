@@ -1,0 +1,53 @@
+Bottom: 91d62dbfa593842aa4d165df6e5f792d1a613be6
+Top:    92bc377975d26de1bc8d4eabdd6a58ad60568aa1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-25 01:57:57 +0100
+
+Refresh of try-to-make-gdk-and-gl-version
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 14030a9..9a3fb8a 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -12,6 +12,16 @@
+ #include "gui.h"
+ #include "gui-pinout-preview.h"
+ 
++/* The Linux OpenGL ABI 1.0 spec requires that we define
++ * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
++ * in order to get prototypes:
++ *   http://www.opengl.org/registry/ABI/
++ */
++#define GL_GLEXT_PROTOTYPES 1
++#include <GL/gl.h>
++#include <gtk/gtkgl.h>
++#include "hid/common/hidgl.h"
++
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+ #endif
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 6838743..1550003 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -38,18 +38,6 @@
+ #include <gtk/gtk.h>
+ #include "gui-pinout-preview.h"
+ 
+-/* The Linux OpenGL ABI 1.0 spec requires that we define
+- * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
+- * in order to get prototypes:
+- *   http://www.opengl.org/registry/ABI/
+- */
+-#ifdef ENABLE_GL
+-#  define GL_GLEXT_PROTOTYPES 1
+-#  include <GL/gl.h>
+-#  include <gtk/gtkgl.h>
+-#  include "hid/common/hidgl.h"
+-#endif
+-
+ 
+   /* Silk and rats lines are the two additional selectable to draw on.
+      |  gui code in gui-top-window.c and group code in misc.c must agree
