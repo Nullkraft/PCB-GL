@@ -543,13 +543,14 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
       else
 	gdk_color_white (gport->colormap, &gport->offlimits_color);
       first_time_done = TRUE;
+      ghid_drawing_area_configure_hook (out);
       PCBChanged (0, NULL, 0, 0);
     }
-//  if (gport->mask)
-//    {
-//      gdk_pixmap_unref (gport->mask);
-//      gport->mask = gdk_pixmap_new (0, gport->width, gport->height, 1);
-//    }
+  else
+    {
+      ghid_drawing_area_configure_hook (out);
+    }
+
   ghid_port_ranges_scale (FALSE);
   ghid_invalidate_all ();
   RestoreCrosshair (TRUE);
@@ -686,14 +687,9 @@ ghid_port_window_motion_cb (GtkWidget * widget,
   gdouble dx, dy;
   static gint x_prev = -1, y_prev = -1;
   gboolean moved;
-  GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
-  GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
 
-  /* make GL-context "current" */
-  if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
-    printf ("GL THingy returned\n");
+  if (!ghid_start_drawing (out))
     return FALSE;
-  }
 
   if (out->panning)
     {
@@ -718,13 +714,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
   if (moved && have_crosshair_attachments ())
     ghid_draw_area_update (gport, NULL);
 
-  if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
-    gdk_gl_drawable_swap_buffers (pGlDrawable);
-  else
-    glFlush ();
-
-  /* end drawing to current GL-context */
-  gdk_gl_drawable_gl_end (pGlDrawable);
+  ghid_end_drawing (out);
   return FALSE;
 }
 
