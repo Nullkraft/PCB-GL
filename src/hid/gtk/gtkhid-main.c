@@ -17,15 +17,9 @@
 #include "crosshair.h"
 #include "error.h"
 #include "../hidint.h"
+#include "gui.h"
 #include "hid/common/draw_helpers.h"
 
-#ifdef ENABLE_GL
-#  include <gtk/gtkgl.h>
-#  include <GL/gl.h>
-#  include "hid/common/hidgl.h"
-#endif
-
-#include "gui.h"
 
 #if !GTK_CHECK_VERSION(2,8,0) && defined(HAVE_GDK_GDKX_H)
 #include <gdk/gdkx.h>
