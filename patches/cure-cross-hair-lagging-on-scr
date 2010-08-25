@@ -1,5 +1,5 @@
-Bottom: a3b5f57917d2d9b6d0343421f7a67ecba9e9d260
-Top:    b9c92537587d1dccfe0aab3322d981381517377a
+Bottom: 68e77cf1173ac67e41f6c8c46334b19059b2e47a
+Top:    3e06c6c936eeed8c71d867fa5a5d5acdef1a182a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:07 +0100
 
@@ -11,10 +11,10 @@ FIXME: SHOULD NOT RE-WRITE THE GTK HID
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 3c7f950..4d9cb3a 100644
+index 0952462..7cd464a 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -692,13 +692,18 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -688,13 +688,18 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
  
@@ -33,7 +33,7 @@ index 3c7f950..4d9cb3a 100644
        dx = gport->zoom * (x_prev - ev->x);
        dy = gport->zoom * (y_prev - ev->y);
        if (x_prev > 0)
-@@ -714,11 +719,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -710,11 +715,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    queue_tooltip_update (out);
  #endif
  
