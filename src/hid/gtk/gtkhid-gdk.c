@@ -916,6 +916,8 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
   ghid_invalidate_all ();
 }
 
+void DrawAttached (bool);
+
 void
 ghid_invalidate_all ()
 {
@@ -977,8 +979,10 @@ ghid_invalidate_all ()
 
   hid_expose_callback (&ghid_hid, &region, 0);
   ghid_draw_grid ();
-  if (ghidgui->need_restore_crosshair)
+  if (ghidgui->need_restore_crosshair) {
     RestoreCrosshair (FALSE);
+    DrawAttached (FALSE);
+  }
   ghidgui->need_restore_crosshair = FALSE;
   ghid_screen_update ();
 }
