@@ -20,6 +20,20 @@
 #include "gui.h"
 #include "hid/common/draw_helpers.h"
 
+/* TEMPORARY HACK WHILST THERE IS SOME GL STUFF IN THE WRONG PLACE! */
+/* The Linux OpenGL ABI 1.0 spec requires that we define
+ * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
+ * in order to get prototypes:
+ *   http://www.opengl.org/registry/ABI/
+ */
+#ifdef ENABLE_GL
+#  define GL_GLEXT_PROTOTYPES 1
+#  include <GL/gl.h>
+#  include <gtk/gtkgl.h>
+#  include "hid/common/hidgl.h"
+#endif
+/* END TEMPORARY HACK WHILST THERE IS SOME GL STUFF IN THE WRONG PLACE! */
+
 
 #if !GTK_CHECK_VERSION(2,8,0) && defined(HAVE_GDK_GDKX_H)
 #include <gdk/gdkx.h>
