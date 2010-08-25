@@ -533,27 +533,23 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
   if (!first_time_done)
     {
       gport->colormap = gtk_widget_get_colormap (gport->top_window);
-      gport->bg_gc = gdk_gc_new (gport->drawable);
       if (gdk_color_parse (Settings.BackgroundColor, &gport->bg_color))
 	gdk_color_alloc (gport->colormap, &gport->bg_color);
       else
 	gdk_color_white (gport->colormap, &gport->bg_color);
-      gdk_gc_set_foreground (gport->bg_gc, &gport->bg_color);
 
-      gport->offlimits_gc = gdk_gc_new (gport->drawable);
       if (gdk_color_parse (Settings.OffLimitColor, &gport->offlimits_color))
 	gdk_color_alloc (gport->colormap, &gport->offlimits_color);
       else
 	gdk_color_white (gport->colormap, &gport->offlimits_color);
-      gdk_gc_set_foreground (gport->offlimits_gc, &gport->offlimits_color);
       first_time_done = TRUE;
       PCBChanged (0, NULL, 0, 0);
     }
-  if (gport->mask)
-    {
-      gdk_pixmap_unref (gport->mask);
-      gport->mask = gdk_pixmap_new (0, gport->width, gport->height, 1);
-    }
+//  if (gport->mask)
+//    {
+//      gdk_pixmap_unref (gport->mask);
+//      gport->mask = gdk_pixmap_new (0, gport->width, gport->height, 1);
+//    }
   ghid_port_ranges_scale (FALSE);
   ghid_invalidate_all ();
   RestoreCrosshair (TRUE);
@@ -690,6 +686,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
   gdouble dx, dy;
   static gint x_prev = -1, y_prev = -1;
   gboolean moved;
+  GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
+  GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
+
+  /* make GL-context "current" */
+  if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
+    printf ("GL THingy returned\n");
+    return FALSE;
+  }
 
   if (out->panning)
     {
@@ -713,6 +717,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
   ghid_show_crosshair (TRUE);
   if (moved && have_crosshair_attachments ())
     ghid_draw_area_update (gport, NULL);
+
+  if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
+    gdk_gl_drawable_swap_buffers (pGlDrawable);
+  else
+    glFlush ();
+
+  /* end drawing to current GL-context */
+  gdk_gl_drawable_gl_end (pGlDrawable);
   return FALSE;
 }
 
@@ -752,7 +764,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
       RestoreCrosshair (TRUE);
       cursor_in_viewport = TRUE;
     }
-	  
+
   return FALSE;
 }
 
