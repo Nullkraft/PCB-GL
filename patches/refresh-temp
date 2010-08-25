@@ -1,0 +1,34 @@
+Bottom: 3196cd2c73a14022369b4beadfeaa0d0e9360834
+Top:    11103f12d688cf53fcd4a719b4a4c63e7f323619
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-25 03:21:41 +0100
+
+Refresh of add-support-for-depth-to-trian
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index dbcff1b..f616c5b 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -48,6 +48,20 @@
+ #include "search.h"
+ #include "rats.h"
+ 
++/* TEMPORARY HACK WHILST THERE IS SOME GL STUFF IN THE WRONG PLACE! */
++/* The Linux OpenGL ABI 1.0 spec requires that we define
++ * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
++ * in order to get prototypes:
++ *   http://www.opengl.org/registry/ABI/
++ */
++#ifdef ENABLE_GL
++#  define GL_GLEXT_PROTOTYPES 1
++#  include <GL/gl.h>
++#  include <gtk/gtkgl.h>
++#  include "hid/common/hidgl.h"
++#endif
++/* END TEMPORARY HACK WHILST THERE IS SOME GL STUFF IN THE WRONG PLACE! */
++
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+ #endif
