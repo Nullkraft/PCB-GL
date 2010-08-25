@@ -1,5 +1,5 @@
 Bottom: 079c75dfa42402c57c96920aeafb72a827ed4344
-Top:    079c75dfa42402c57c96920aeafb72a827ed4344
+Top:    29c777933cef90fc6facc04e30bb880fe71f52b8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 15:49:31 +0100
 
@@ -15,4 +15,37 @@ it would previously have called the drawing routines directly.
 
 ---
 
-
+diff --git a/src/crosshair.c b/src/crosshair.c
+index d54fad7..a154652 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -85,7 +85,6 @@ static void XORDrawMoveOrCopyObject (void);
+ static void XORDrawAttachedLine (LocationType, LocationType, LocationType,
+ 				 LocationType, BDimension);
+ static void XORDrawAttachedArc (BDimension);
+-static void DrawAttached (bool);
+ 
+ /* ---------------------------------------------------------------------------
+  * creates a tmp polygon with coordinates converted to screen system
+@@ -566,7 +565,7 @@ XORDrawMoveOrCopyObject (void)
+ /* ---------------------------------------------------------------------------
+  * draws additional stuff that follows the crosshair
+  */
+-static void
++void
+ DrawAttached (bool BlockToo)
+ {
+   BDimension s;
+diff --git a/src/crosshair.h b/src/crosshair.h
+index 8299778..77a418f 100644
+--- a/src/crosshair.h
++++ b/src/crosshair.h
+@@ -46,7 +46,7 @@
+ #define	STATE_SECOND	1
+ #define	STATE_THIRD		2
+ 
+-
++void DrawAttached (bool);
+ void CrosshairOn (bool);
+ void CrosshairOff (bool);
+ void HideCrosshair (bool);
