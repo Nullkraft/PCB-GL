@@ -1,5 +1,5 @@
 Bottom: 079c75dfa42402c57c96920aeafb72a827ed4344
-Top:    40c997c7a416141f18f67a6a0e3f46260212efab
+Top:    9b32809ce290ae9dfabc8c0d24c3fc647aeb25c3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:07 +0100
 
@@ -68,7 +68,7 @@ index e719268..f66cca7 100644
  # desktop and application toolbar
  if WIN32
 diff --git a/src/crosshair.c b/src/crosshair.c
-index d54fad7..ac22277 100644
+index d54fad7..aaa46ae 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -85,7 +85,7 @@ static void XORDrawMoveOrCopyObject (void);
@@ -89,26 +89,25 @@ index d54fad7..ac22277 100644
  DrawAttached (bool BlockToo)
  {
    BDimension s;
-@@ -738,7 +738,7 @@ HideCrosshair (bool BlockToo)
-   CrosshairStack[CrosshairStackLocation] = Crosshair.On;
-   CrosshairStackLocation++;
- 
--  CrosshairOff (BlockToo);
-+//  CrosshairOff (BlockToo);
+@@ -694,8 +694,10 @@ CrosshairOn (bool BlockToo)
+   if (!Crosshair.On)
+     {
+       Crosshair.On = true;
++#if 0
+       DrawAttached (BlockToo);
+       DrawMark (true);
++#endif
+     }
  }
  
- /* ---------------------------------------------------------------------------
-@@ -758,11 +758,11 @@ RestoreCrosshair (bool BlockToo)
- 
-   if (CrosshairStack[CrosshairStackLocation])
+@@ -708,8 +710,10 @@ CrosshairOff (bool BlockToo)
+   if (Crosshair.On)
      {
--      CrosshairOn (BlockToo);
-+//      CrosshairOn (BlockToo);
-     }
-   else
-     {
--      CrosshairOff (BlockToo);
-+//      CrosshairOff (BlockToo);
+       Crosshair.On = false;
++#if 0
+       DrawAttached (BlockToo);
+       DrawMark (true);
++#endif
      }
  }
  
