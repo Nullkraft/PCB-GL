@@ -1,0 +1,18 @@
+Bottom: 079c75dfa42402c57c96920aeafb72a827ed4344
+Top:    079c75dfa42402c57c96920aeafb72a827ed4344
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-25 15:49:31 +0100
+
+Place drawing of crosshair attached objects under the control of the HID
+
+This allows GUIs which have defined setup and tear-down requirements
+before drawing to manage when these objects are drawn.
+
+Expose some API from crosshair.c to perform the actual drawing on
+demand, and add a hook to the HID structure to notify the GUI when
+it would previously have called the drawing routines directly.
+
+
+---
+
+
