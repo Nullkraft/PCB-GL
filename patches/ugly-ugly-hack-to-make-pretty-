@@ -1,5 +1,5 @@
-Bottom: 66a676cb4e7eeaa705dc9e991082b44078df2b9e
-Top:    44b7131c0e33c646a6936d515e267c21b8f48d9e
+Bottom: 0f9ad8bd91bace7b3112ef4d5a2746e4715c502f
+Top:    5c6c0e7b6b16284c0dde266b3563ee2736bf3a3e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:09 +0100
 
@@ -15,10 +15,10 @@ way to turn it off would also be useful.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index bf57527..6c18efa 100644
+index 864955d..a0d6385 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -780,25 +780,30 @@ typedef struct
+@@ -778,25 +778,30 @@ typedef struct
    double blue;
  } ColorCache;
  
@@ -54,7 +54,7 @@ index bf57527..6c18efa 100644
  
    if (name == NULL)
      {
-@@ -872,6 +877,7 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -870,6 +875,7 @@ ghid_set_color (hidGC gc, const char *name)
      }
    if (1) {
      double maxi, mult;
@@ -62,7 +62,7 @@ index bf57527..6c18efa 100644
      if (gport->trans_lines)
        a = a * alpha_mult;
      maxi = r;
-@@ -893,6 +899,16 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -891,6 +897,16 @@ ghid_set_color (hidGC gc, const char *name)
  }
  
  void
@@ -79,7 +79,7 @@ index bf57527..6c18efa 100644
  ghid_set_line_cap (hidGC gc, EndCapStyle style)
  {
    gc->cap = style;
-@@ -1004,6 +1020,15 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+@@ -1002,6 +1018,15 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  }
  
  void
