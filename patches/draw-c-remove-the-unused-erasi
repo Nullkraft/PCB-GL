@@ -1,0 +1,14 @@
+Bottom: 6e4242fe8f667d354585e0808d777e36673cb13d
+Top:    6e4242fe8f667d354585e0808d777e36673cb13d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-25 18:45:49 +0100
+
+draw.c: Remove the unused "Erasing" flag / counter
+
+This variable tracks whether the object being drawn is to be erased.
+It is never actually tested, so remove it.
+
+
+---
+
+
