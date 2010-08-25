@@ -2297,6 +2297,11 @@ ghid_build_pcb_top_window (void)
   gtk_box_pack_start (GTK_BOX (hbox), viewport, TRUE, TRUE, 0);
 
   gport->drawing_area = gtk_drawing_area_new ();
+  gtk_widget_set_gl_capability (gport->drawing_area,
+                                gport->glconfig,
+                                NULL,
+                                TRUE,
+                                GDK_GL_RGBA_TYPE);
 
   gtk_widget_add_events (gport->drawing_area, GDK_EXPOSURE_MASK
 			 | GDK_LEAVE_NOTIFY_MASK | GDK_ENTER_NOTIFY_MASK
@@ -2676,6 +2681,8 @@ ghid_parse_arguments (int *argc, char ***argv)
   gport = &ghid_port;
   gport->zoom = 300.0;
   pixel_slop = 300;
+
+  ghid_init_renderer (argc, argv, gport);
 
   ghid_config_files_read (argc, argv);
 
