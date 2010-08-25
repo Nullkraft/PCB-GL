@@ -1,5 +1,5 @@
-Bottom: ebe2a8e04681c0de82b4c1f3fff9f316a6e9205c
-Top:    0e0ae942b6d49e58d1dfaa451d08949dfbc6ec1b
+Bottom: 68e77cf1173ac67e41f6c8c46334b19059b2e47a
+Top:    a3b5f57917d2d9b6d0343421f7a67ecba9e9d260
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 01:40:33 +0100
 
@@ -11,10 +11,10 @@ THESE CHANGES ARE NOT WANTED, JUST A QUICK HACK TO EXPERIMENT WITH
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index ea2c783..a3a0321 100644
+index 5b52b9a..66c5241 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -916,6 +916,8 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
+@@ -923,6 +923,8 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
    ghid_invalidate_all ();
  }
  
@@ -23,7 +23,7 @@ index ea2c783..a3a0321 100644
  void
  ghid_invalidate_all ()
  {
-@@ -977,8 +979,10 @@ ghid_invalidate_all ()
+@@ -984,8 +986,10 @@ ghid_invalidate_all ()
  
    hid_expose_callback (&ghid_hid, &region, 0);
    ghid_draw_grid ();
