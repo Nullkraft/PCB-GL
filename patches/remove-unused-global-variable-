@@ -1,5 +1,5 @@
 Bottom: 91905fec3daffd32cde1247c71e3b0ece58cabf7
-Top:    91905fec3daffd32cde1247c71e3b0ece58cabf7
+Top:    153e8f90b50379b7999fc591d05b2be4d204779a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:19:50 +0100
 
@@ -10,4 +10,66 @@ The "render" variable was set and reset, but was not used anywhere.
 
 ---
 
-
+diff --git a/src/data.c b/src/data.c
+index d07413f..73e53f2 100644
+--- a/src/data.c
++++ b/src/data.c
+@@ -56,7 +56,6 @@ int LayerStack[MAX_LAYER];	/* determines the layer draw order */
+ BufferType Buffers[MAX_BUFFER];	/* my buffers */
+ LibraryType Library;		/* the library */
+ bool Bumped;			/* if the undo serial number has changed */
+-bool render;			/* whether or not to re-render the pixmap */
+ 
+ LocationType Xorig, Yorig;	/* origin offset for drawing in pixmap */
+ 
+diff --git a/src/data.h b/src/data.h
+index 101e3db..ce27339 100644
+--- a/src/data.h
++++ b/src/data.h
+@@ -68,8 +68,6 @@ extern char *InputTranslations;
+ extern int addedLines;
+ extern int LayerStack[MAX_LAYER];
+ 
+-extern bool RedrawOnEnter;
+-extern bool render;
+ extern bool Bumped;
+ 
+ extern FlagType no_flags;
+diff --git a/src/draw.c b/src/draw.c
+index 1bbbaa1..7311fb6 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -187,9 +187,6 @@ UpdateAll (void)
+ void
+ Draw (void)
+ {
+-
+-  render = true;
+-
+   HideCrosshair (true);
+ 
+   /* clear and create event if not drawing to a pixmap
+@@ -217,7 +214,6 @@ RedrawOutput (BoxTypePtr area)
+ void
+ ClearAndRedrawOutput (void)
+ {
+-  render = true;
+   Gathering = false;
+   UpdateAll ();
+ }
+@@ -235,7 +231,6 @@ Redraw (bool ClearWindow, BoxTypePtr screen_area)
+ {
+   gui->invalidate_all ();
+   Gathering = true;
+-  render = false;
+ }
+ 
+ static int
+@@ -2420,7 +2415,6 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
+   Output.bgGC = gui->make_gc ();
+   Output.pmGC = gui->make_gc ();
+ 
+-  render = true;
+   Gathering = false;
+ 
+   /*printf("\033[32mhid_expose_callback, s=%p %d\033[0m\n", &(SWAP_IDENT), SWAP_IDENT); */
