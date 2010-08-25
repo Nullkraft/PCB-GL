@@ -228,8 +228,6 @@ ghid_get_coords (const char *msg, int *x, int *y)
     }
 }
 
-void DrawAttached (bool);
-
 gboolean
 ghid_note_event_location (GdkEventButton * ev)
 {

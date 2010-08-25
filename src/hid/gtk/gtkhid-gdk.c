@@ -923,8 +923,6 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
   ghid_invalidate_all ();
 }
 
-void DrawAttached (bool);
-
 void
 ghid_invalidate_all ()
 {
