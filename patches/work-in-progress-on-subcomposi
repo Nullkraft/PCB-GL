@@ -1,5 +1,5 @@
-Bottom: 87b6025be944a2de55f0fb35eea1414d10dacbbf
-Top:    47b3b289c8eccc475a0eb40bc4331770d8246065
+Bottom: bb7f4a62c2377c140f8ad1a566f94b8210ad5afc
+Top:    5601f1d78158326bed94ac304f3c9125ec7aa878
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:08 +0100
 
@@ -14,10 +14,10 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 1bbbaa1..c713965 100644
+index 1a576bc..4f82639 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -420,6 +420,7 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -414,6 +414,7 @@ DrawEverything (BoxTypePtr drawn_area)
  		    backN_callback, NULL);
  	  DrawLayer (&(PCB->Data->BACKSILKLAYER), drawn_area);
  	}
@@ -25,7 +25,7 @@ index 1bbbaa1..c713965 100644
      }
  
    /* draw all layers in layerstack order */
-@@ -458,6 +459,7 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -452,6 +453,7 @@ DrawEverything (BoxTypePtr drawn_area)
  			    &plated);
  		}
  	    }
@@ -33,7 +33,7 @@ index 1bbbaa1..c713965 100644
  	}
      }
    if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
-@@ -498,6 +500,7 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -492,6 +494,7 @@ DrawEverything (BoxTypePtr drawn_area)
        SWAP_IDENT = 0;
        DrawMask (drawn_area);
        SWAP_IDENT = save_swap;
@@ -41,7 +41,7 @@ index 1bbbaa1..c713965 100644
      }
    if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
      {
-@@ -505,12 +508,21 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -499,12 +502,21 @@ DrawEverything (BoxTypePtr drawn_area)
        SWAP_IDENT = 1;
        DrawMask (drawn_area);
        SWAP_IDENT = save_swap;
@@ -65,7 +65,7 @@ index 1bbbaa1..c713965 100644
    if (gui->gui)
      {
        /* Draw element Marks */
-@@ -553,19 +565,30 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -547,19 +559,30 @@ DrawEverything (BoxTypePtr drawn_area)
  		DrawPadLowLevel (Output.fgGC, pad, false, false);
  	  }
  	  ENDALL_LOOP;
@@ -99,7 +99,7 @@ index 1bbbaa1..c713965 100644
  }
  
  static void
-@@ -873,7 +896,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -867,7 +890,8 @@ DrawLayerGroup (int group, const BoxType * screen)
    Cardinal *layers = PCB->LayerGroups.Entries[group];
  
    clip_box = screen;
@@ -109,7 +109,7 @@ index 1bbbaa1..c713965 100644
      {
        layernum = layers[i];
        Layer = PCB->Data->Layer + layers[i];
-@@ -890,6 +914,10 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -884,6 +908,10 @@ DrawLayerGroup (int group, const BoxType * screen)
  	      r_search (Layer->polygon_tree, screen, NULL, poly_callback,
  			&info);
  	      info.arg = false;
