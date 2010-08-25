@@ -1,4 +1,4 @@
-Bottom: 19142d23bdfeea6667405e34a42cb1004b596528
+Bottom: 787192286e65fdc12ce937b41e2e2c528d8035b6
 Top:    4812867a6773f5d4e7d76d837366acfa8457baff
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:08 +0100
@@ -551,31 +551,10 @@ index 088c14e..bf57527 100644
        break;
      }
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 0c76240..4f63d21 100644
+index 78df7b5..4f63d21 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -20,6 +20,20 @@
- #include "gui.h"
- #include "hid/common/draw_helpers.h"
- 
-+/* TEMPORARY HACK WHILST THERE IS SOME GL STUFF IN THE WRONG PLACE! */
-+/* The Linux OpenGL ABI 1.0 spec requires that we define
-+ * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
-+ * in order to get prototypes:
-+ *   http://www.opengl.org/registry/ABI/
-+ */
-+#ifdef ENABLE_GL
-+#  define GL_GLEXT_PROTOTYPES 1
-+#  include <GL/gl.h>
-+#  include <gtk/gtkgl.h>
-+#  include "hid/common/hidgl.h"
-+#endif
-+/* END TEMPORARY HACK WHILST THERE IS SOME GL STUFF IN THE WRONG PLACE! */
-+
- 
- #if !GTK_CHECK_VERSION(2,8,0) && defined(HAVE_GDK_GDKX_H)
- #include <gdk/gdkx.h>
-@@ -315,10 +329,36 @@ zoom_by (double factor, int x, int y)
+@@ -329,10 +329,36 @@ zoom_by (double factor, int x, int y)
  int
  ghid_set_layer (const char *name, int group, int empty)
  {
@@ -612,7 +591,7 @@ index 0c76240..4f63d21 100644
    if (idx >= 0 && idx < max_layer + 2)
      {
        gport->trans_lines = TRUE;
-@@ -335,8 +375,7 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -349,8 +375,7 @@ ghid_set_layer (const char *name, int group, int empty)
  	    return TEST_FLAG (SHOWMASKFLAG, PCB);
  	  return 0;
  	case SL_SILK:
