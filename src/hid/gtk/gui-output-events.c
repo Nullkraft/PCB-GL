@@ -228,6 +228,8 @@ ghid_get_coords (const char *msg, int *x, int *y)
     }
 }
 
+void DrawAttached (bool);
+
 gboolean
 ghid_note_event_location (GdkEventButton * ev)
 {
@@ -248,6 +250,7 @@ ghid_note_event_location (GdkEventButton * ev)
   gport->view_x = event_x * gport->zoom + gport->view_x0;
   gport->view_y = event_y * gport->zoom + gport->view_y0;
 
+  DrawAttached (false);
   moved = MoveCrosshairAbsolute (SIDE_X (gport->view_x), 
 				 SIDE_Y (gport->view_y));
   if (moved)
@@ -255,6 +258,7 @@ ghid_note_event_location (GdkEventButton * ev)
       AdjustAttachedObjects ();
       RestoreCrosshair (false);
     }
+  DrawAttached (false);
   ghid_set_cursor_position_labels ();
   return moved;
 }
