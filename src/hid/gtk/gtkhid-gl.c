@@ -223,6 +223,22 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 }
 
 void
+ghid_port_drawing_realize_cb (GtkWidget *widget, gpointer data)
+{
+  GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
+  GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
+
+  /*** OpenGL BEGIN ***/
+  if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
+    return;
+
+  gdk_gl_drawable_gl_end (gldrawable);
+  /*** OpenGL END ***/
+
+  return;
+}
+
+void
 ghid_pinout_preview_init (GhidPinoutPreview *preview)
 {
   struct render_priv *priv = gport->render_priv;

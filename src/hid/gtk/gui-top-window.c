@@ -2143,22 +2143,6 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
   gtk_main_quit ();
 }
 
-static void
-ghid_port_drawing_realize_cb (GtkWidget *widget, gpointer data)
-{
-  GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
-  GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
-
-  /*** OpenGL BEGIN ***/
-  if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
-    return;
-
-  gdk_gl_drawable_gl_end (gldrawable);
-  /*** OpenGL END ***/
-
-  return;
-}
-
 /* 
  * Create the top_window contents.  The config settings should be loaded
  * before this is called.
