@@ -1,4 +1,4 @@
-Bottom: e75ed33d792694b85704308e0f1e3c8d55b396fa
+Bottom: a00ffd2f4ac67f80ee071b761910364c0fdda71a
 Top:    11103f12d688cf53fcd4a719b4a4c63e7f323619
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:11 +0100
@@ -124,31 +124,10 @@ index b956a65..aa2985e 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index fd688e1..f616c5b 100644
+index 23a7d9a..f616c5b 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -48,6 +48,20 @@
- #include "search.h"
- #include "rats.h"
- 
-+/* TEMPORARY HACK WHILST THERE IS SOME GL STUFF IN THE WRONG PLACE! */
-+/* The Linux OpenGL ABI 1.0 spec requires that we define
-+ * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
-+ * in order to get prototypes:
-+ *   http://www.opengl.org/registry/ABI/
-+ */
-+#ifdef ENABLE_GL
-+#  define GL_GLEXT_PROTOTYPES 1
-+#  include <GL/gl.h>
-+#  include <gtk/gtkgl.h>
-+#  include "hid/common/hidgl.h"
-+#endif
-+/* END TEMPORARY HACK WHILST THERE IS SOME GL STUFF IN THE WRONG PLACE! */
-+
- #ifdef HAVE_LIBDMALLOC
- #include <dmalloc.h>
- #endif
-@@ -249,7 +263,7 @@ ghid_note_event_location (GdkEventButton * ev)
+@@ -263,7 +263,7 @@ ghid_note_event_location (GdkEventButton * ev)
      }
  
    /* Unproject event_x and event_y to world coordinates of the plane we are on */
