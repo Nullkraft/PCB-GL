@@ -310,9 +310,6 @@ gint ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
 				       GdkEventScroll * ev, GHidPort * out);
 
 
-gint ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
-					     GdkEventExpose * ev,
-					     GHidPort * out);
 gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
 						GdkEventConfigure * ev,
 						GHidPort * out);
