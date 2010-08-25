@@ -1,5 +1,5 @@
 Bottom: 9b32809ce290ae9dfabc8c0d24c3fc647aeb25c3
-Top:    b879bb68f09a79f76a5b59c736bc3753c31f111e
+Top:    e73d0563209adf43ca0c6b7c7003ba71bd30c72c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 20:44:30 +0100
 
@@ -1563,7 +1563,7 @@ index 197e886..68090b7 100644
    ghid_config_files_read (argc, argv);
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 680d74a..1550003 100644
+index 680d74a..2b498b8 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -36,18 +36,7 @@
@@ -1601,7 +1601,17 @@ index 680d74a..1550003 100644
  
    GdkColor bg_color, offlimits_color, grid_color;
  
-@@ -496,15 +481,17 @@ void ghid_logv (const char *fmt, va_list args);
+@@ -325,9 +310,6 @@ gint ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+ 				       GdkEventScroll * ev, GHidPort * out);
+ 
+ 
+-gint ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
+-					     GdkEventExpose * ev,
+-					     GHidPort * out);
+ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+ 						GdkEventConfigure * ev,
+ 						GHidPort * out);
+@@ -496,15 +478,17 @@ void ghid_logv (const char *fmt, va_list args);
  /* gui-pinout-window.c */
  void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
  
