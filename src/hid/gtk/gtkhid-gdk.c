@@ -959,6 +959,11 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 }
 
 void
+ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
+{
+}
+
+void
 ghid_drawing_area_configure_hook (GHidPort *port)
 {
   static bool done_once = false;
@@ -993,6 +998,17 @@ ghid_drawing_area_configure_hook (GHidPort *port)
     }
 }
 
+gboolean
+ghid_start_drawing (GHidPort *port)
+{
+  return TRUE;
+}
+
+void
+ghid_end_drawing (GHidPort *port)
+{
+}
+
 void
 ghid_screen_update (void)
 {
@@ -1023,7 +1039,6 @@ gboolean
 ghid_pinout_preview_expose (GtkWidget *widget,
                             GdkEventExpose *ev)
 {
-  extern HID ghid_hid;
   GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
   GdkDrawable *save_drawable;
   double save_zoom;
@@ -1119,7 +1134,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
 GdkPixmap *
 ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int depth)
 {
-  extern HID ghid_hid;
   GdkPixmap *pixmap;
   GdkDrawable *save_drawable;
   double save_zoom;
