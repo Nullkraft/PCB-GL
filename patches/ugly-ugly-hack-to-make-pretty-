@@ -1,5 +1,5 @@
-Bottom: e88436f660d02a3c79b704fd4499801acbd15ece
-Top:    31e8d51d71d3f99fdfd106ff5eb5449fdd6e835c
+Bottom: 66a676cb4e7eeaa705dc9e991082b44078df2b9e
+Top:    44b7131c0e33c646a6936d515e267c21b8f48d9e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:09 +0100
 
@@ -15,10 +15,10 @@ way to turn it off would also be useful.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ec147e3..ab0ec73 100644
+index bf57527..6c18efa 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -311,25 +311,30 @@ typedef struct
+@@ -780,25 +780,30 @@ typedef struct
    double blue;
  } ColorCache;
  
@@ -54,7 +54,7 @@ index ec147e3..ab0ec73 100644
  
    if (name == NULL)
      {
-@@ -403,6 +408,7 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -872,6 +877,7 @@ ghid_set_color (hidGC gc, const char *name)
      }
    if (1) {
      double maxi, mult;
@@ -62,7 +62,7 @@ index ec147e3..ab0ec73 100644
      if (gport->trans_lines)
        a = a * alpha_mult;
      maxi = r;
-@@ -424,6 +430,16 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -893,6 +899,16 @@ ghid_set_color (hidGC gc, const char *name)
  }
  
  void
@@ -79,7 +79,7 @@ index ec147e3..ab0ec73 100644
  ghid_set_line_cap (hidGC gc, EndCapStyle style)
  {
    gc->cap = style;
-@@ -535,6 +551,15 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+@@ -1004,6 +1020,15 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  }
  
  void
@@ -96,10 +96,10 @@ index ec147e3..ab0ec73 100644
  {
    USE_GC (gc);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 5d16c9f..318f5e0 100644
+index 4f63d21..7da2611 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -1119,7 +1119,7 @@ HID ghid_hid = {
+@@ -1128,7 +1128,7 @@ HID ghid_hid = {
    ghid_fill_circle,
    ghid_fill_polygon,
    ghid_fill_pcb_polygon,
@@ -109,10 +109,10 @@ index 5d16c9f..318f5e0 100644
  
    ghid_calibrate,
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 5370d93..37dbb9f 100644
+index 04a5616..63abef8 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -524,6 +524,8 @@ void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
+@@ -509,6 +509,8 @@ void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
  void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
  void ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly,
                              const BoxType *clip_box); /* GL ONLY */
