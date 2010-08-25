@@ -567,8 +567,6 @@ ghid_screen_update (void)
 #endif
 }
 
-void DrawAttached (bool);
-
 #define Z_NEAR 3.0
 gboolean
 ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
