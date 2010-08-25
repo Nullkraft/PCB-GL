@@ -36,18 +36,7 @@
 #include <sys/stat.h>
 
 #include <gtk/gtk.h>
-
-/* The Linux OpenGL ABI 1.0 spec requires that we define
- * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
- * in order to get prototypes:
- *   http://www.opengl.org/registry/ABI/
- */
-#ifdef ENABLE_GL
-#  define GL_GLEXT_PROTOTYPES 1
-#  include <GL/gl.h>
-#  include <gtk/gtkgl.h>
-#  include "hid/common/hidgl.h"
-#endif
+#include "gui-pinout-preview.h"
 
 
   /* Silk and rats lines are the two additional selectable to draw on.
@@ -175,13 +164,9 @@ typedef struct
   GdkDrawable *drawable;	/* Current drawable for drawing routines */
   gint width, height;
 
-#ifdef ENABLE_GL
-  GdkGLConfig *glconfig;
-#endif
-
   gint trans_lines;
 
-//  GdkGC *bg_gc, *offlimits_gc, *mask_gc, *u_gc, *grid_gc;
+  struct render_priv *render_priv;
 
   GdkColor bg_color, offlimits_color, grid_color;
 
@@ -325,9 +310,6 @@ gint ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
 				       GdkEventScroll * ev, GHidPort * out);
 
 
-gint ghid_port_drawing_area_expose_event_cb (GtkWidget * widget,
-					     GdkEventExpose * ev,
-					     GHidPort * out);
 gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
 						GdkEventConfigure * ev,
 						GHidPort * out);
@@ -496,15 +478,17 @@ void ghid_logv (const char *fmt, va_list args);
 /* gui-pinout-window.c */
 void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
 
-/* gui-render-pixmap.c */
-GdkPixmap *ghid_render_pixmap (int cx,
-			       int cy,
-			       double zoom,
-			       int width,
-			       int height,
-			       int depth);
-
 /* gtkhid-gdk.c OR gtkhid-gl.c */
+void ghid_init_renderer (int *, char ***, GHidPort *);
+GtkWidget *ghid_drawing_area_new (GHidPort *port);
+gboolean ghid_start_drawing (GHidPort *port);
+void ghid_end_drawing (GHidPort *port);
+void ghid_drawing_area_configure_hook (GHidPort *port);
+void ghid_screen_update (void);
+gboolean ghid_drawing_area_expose_cb (GtkWidget *, GdkEventExpose *, GHidPort *);
+void ghid_pinout_preview_init (GhidPinoutPreview *preview);
+gboolean ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev);
+GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int depth);
 hidGC ghid_make_gc (void);
 void ghid_destroy_gc (hidGC);
 void ghid_draw_bg_image (void);
