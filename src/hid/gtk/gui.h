@@ -166,6 +166,8 @@ typedef struct
 
   struct render_priv *render_priv;
 
+  gint trans_lines;
+
   GdkColor bg_color, offlimits_color, grid_color;
 
   GdkColormap *colormap;
@@ -476,7 +478,7 @@ void ghid_logv (const char *fmt, va_list args);
 /* gui-pinout-window.c */
 void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
 
-/* gtkhid-gdk.c */
+/* gtkhid-gdk.c AND gtkhid-gl.c */
 hidGC ghid_make_gc (void);
 void ghid_destroy_gc (hidGC);
 void ghid_use_mask (int use_it);
@@ -506,6 +508,7 @@ GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
                                int width, int height, int depth);
 
 /* gtkhid-main.c */
+void ghid_invalidate_current_gc ();
 void ghid_get_coords (const char *msg, int *x, int *y);
 gint PCBChanged (int argc, char **argv, int x, int y);
 
