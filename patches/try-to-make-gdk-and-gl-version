@@ -1,5 +1,5 @@
 Bottom: 40c997c7a416141f18f67a6a0e3f46260212efab
-Top:    91d62dbfa593842aa4d165df6e5f792d1a613be6
+Top:    92bc377975d26de1bc8d4eabdd6a58ad60568aa1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 20:44:30 +0100
 
@@ -596,18 +596,28 @@ index 957e2aa..ea2c783 100644
  
    ghid_draw_bg_image();
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index df90d8c..14030a9 100644
+index df90d8c..9a3fb8a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -10,6 +10,7 @@
+@@ -10,6 +10,17 @@
  #include "clip.h"
  #include "../hidint.h"
  #include "gui.h"
 +#include "gui-pinout-preview.h"
++
++/* The Linux OpenGL ABI 1.0 spec requires that we define
++ * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
++ * in order to get prototypes:
++ *   http://www.opengl.org/registry/ABI/
++ */
++#define GL_GLEXT_PROTOTYPES 1
++#include <GL/gl.h>
++#include <gtk/gtkgl.h>
++#include "hid/common/hidgl.h"
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -31,6 +32,417 @@ static hidGC current_gc = NULL;
+@@ -31,6 +42,417 @@ static hidGC current_gc = NULL;
  static int cur_mask = -1;
  
  
@@ -1511,18 +1521,30 @@ index 197e886..68090b7 100644
    ghid_config_files_read (argc, argv);
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 680d74a..6838743 100644
+index 680d74a..1550003 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -36,6 +36,7 @@
+@@ -36,18 +36,7 @@
  #include <sys/stat.h>
  
  #include <gtk/gtk.h>
+-
+-/* The Linux OpenGL ABI 1.0 spec requires that we define
+- * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
+- * in order to get prototypes:
+- *   http://www.opengl.org/registry/ABI/
+- */
+-#ifdef ENABLE_GL
+-#  define GL_GLEXT_PROTOTYPES 1
+-#  include <GL/gl.h>
+-#  include <gtk/gtkgl.h>
+-#  include "hid/common/hidgl.h"
+-#endif
 +#include "gui-pinout-preview.h"
  
- /* The Linux OpenGL ABI 1.0 spec requires that we define
-  * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
-@@ -175,13 +176,9 @@ typedef struct
+ 
+   /* Silk and rats lines are the two additional selectable to draw on.
+@@ -175,13 +164,9 @@ typedef struct
    GdkDrawable *drawable;	/* Current drawable for drawing routines */
    gint width, height;
  
@@ -1537,7 +1559,7 @@ index 680d74a..6838743 100644
  
    GdkColor bg_color, offlimits_color, grid_color;
  
-@@ -496,15 +493,17 @@ void ghid_logv (const char *fmt, va_list args);
+@@ -496,15 +481,17 @@ void ghid_logv (const char *fmt, va_list args);
  /* gui-pinout-window.c */
  void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
  
