@@ -1,0 +1,30 @@
+Bottom: a918281d137f1e8f809067df6a5ae2527c768011
+Top:    8df482d7f71a14081edf319084bf0e24d9acf7ca
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-25 18:33:58 +0100
+
+draw.c: Initialise integer counters with 0, not "false".
+
+For the "doing_assy" flag, fix its type to "bool" rather than "int".
+
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 03724f5..a763d3c 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -77,10 +77,10 @@ FloatPolyType, *FloatPolyTypePtr;
+  */
+ static BoxType Block;
+ static bool Gathering = true;
+-static int Erasing = false;
++static int Erasing = 0;
+ 
+-static int doing_pinout = false;
+-static int doing_assy = false;
++static int doing_pinout = 0;
++static bool doing_assy = false;
+ static const BoxType *clip_box = NULL;
+ 
+ /* ---------------------------------------------------------------------------
