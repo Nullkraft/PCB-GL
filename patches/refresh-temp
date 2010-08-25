@@ -1,0 +1,35 @@
+Bottom: 9e47d9db772fae5edec4874d273bd925400c688a
+Top:    d853f7b1bb7c4fd3c5a0031c3820f317913742fe
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-25 16:06:54 +0100
+
+Refresh of hack-play-with-where-the-gdk-v
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 66c5241..56b7aee 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -923,8 +923,6 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
+   ghid_invalidate_all ();
+ }
+ 
+-void DrawAttached (bool);
+-
+ void
+ ghid_invalidate_all ()
+ {
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 4d9cb3a..16e1be8 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -228,8 +228,6 @@ ghid_get_coords (const char *msg, int *x, int *y)
+     }
+ }
+ 
+-void DrawAttached (bool);
+-
+ gboolean
+ ghid_note_event_location (GdkEventButton * ev)
+ {
