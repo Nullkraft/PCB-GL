@@ -1,0 +1,14 @@
+Bottom: 153e8f90b50379b7999fc591d05b2be4d204779a
+Top:    153e8f90b50379b7999fc591d05b2be4d204779a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-25 18:25:39 +0100
+
+Remove "HaveGathered" parameter from DrawLineLowLevel()
+
+This is superflous, as it is only passed as TRUE when the Gathering
+variable it overrides is known to be FALSE anyway.
+
+
+---
+
+
