@@ -1,5 +1,5 @@
 Bottom: 8f6ed539a0c17690cf54f2e721316a25596480d7
-Top:    8f6ed539a0c17690cf54f2e721316a25596480d7
+Top:    b5aaecc56170101c9784f2cd29d5b1521ce6fc0e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-26 03:53:13 +0100
 
@@ -8,4 +8,59 @@ Comment out some calls which can trigger an out-of-context redraw
 
 ---
 
-
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 2b88a9d..ca82059 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -269,7 +269,6 @@ ghid_note_event_location (GdkEventButton * ev)
+   gport->view_x = event_x * gport->zoom + gport->view_x0;
+   gport->view_y = event_y * gport->zoom + gport->view_y0;
+ 
+-  DrawAttached (false);
+   moved = MoveCrosshairAbsolute (SIDE_X (gport->view_x), 
+ 				 SIDE_Y (gport->view_y));
+   if (moved)
+@@ -277,7 +276,6 @@ ghid_note_event_location (GdkEventButton * ev)
+       AdjustAttachedObjects ();
+       RestoreCrosshair (false);
+     }
+-  DrawAttached (false);
+   ghid_set_cursor_position_labels ();
+   return moved;
+ }
+@@ -382,7 +380,7 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
+   state = (GdkModifierType) (kev->state);
+   mk = ghid_modifier_keys_state (&state);
+ 
+-  ghid_show_crosshair (FALSE);
++  //ghid_show_crosshair (FALSE);
+ 
+   handled = TRUE;		/* Start off assuming we handle it */
+   switch (ksym)
+@@ -488,7 +486,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+   ghid_note_event_location (ev);
+   state = (GdkModifierType) (ev->state);
+   mk = ghid_modifier_keys_state (&state);
+-  ghid_show_crosshair (FALSE);
++  //ghid_show_crosshair (FALSE);
+   HideCrosshair (TRUE);
+   drag = have_crosshair_attachments ();
+ 
+@@ -497,7 +495,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+   ghid_invalidate_all ();
+   RestoreCrosshair (TRUE);
+   ghid_set_status_line_label ();
+-  ghid_show_crosshair (TRUE);
++  //ghid_show_crosshair (TRUE);
+   if (!gport->panning)
+     g_idle_add (ghid_idle_cb, NULL);
+   return TRUE;
+@@ -888,7 +886,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+       cursor_in_viewport = FALSE;
+     }
+ 
+-  ghid_show_crosshair (FALSE);
++  //ghid_show_crosshair (FALSE);
+   out->has_entered = FALSE;
+ 
+   ghid_screen_update ();
