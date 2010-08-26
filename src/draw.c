@@ -2245,7 +2245,6 @@ ErasePolygon (PolygonTypePtr Polygon)
 void
 EraseElement (ElementTypePtr Element)
 {
-  /* set color and draw lines, arcs, text and pins */
   ELEMENTLINE_LOOP (Element);
   {
     DrawLineLowLevel (line);
