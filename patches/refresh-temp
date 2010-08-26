@@ -1,0 +1,30 @@
+Bottom: 44cffb5c43275e2d34befa2d99100af973b990ce
+Top:    08b28246b8e37258607e2643687349551d5cf765
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-26 02:22:03 +0100
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 4b902dc..a2d4f7e 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -772,8 +772,6 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+   Settings.ShowSolderSide = save_show_solder;
+ }
+ 
+-static int one_shot = 1;
+-
+ #define Z_NEAR 3.0
+ gboolean
+ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -965,8 +963,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ 
+   ghid_end_drawing (port);
+ 
+-  one_shot = 0;
+-
+   return FALSE;
+ }
