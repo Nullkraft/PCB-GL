@@ -1,5 +1,5 @@
 Bottom: e9bf479b3b09aeb0a39c81a8159b1a711f406b57
-Top:    fb245bace086a47b298557d21950e33906192964
+Top:    d276687008f7391014027e262ebb77a17f028dc0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:19 +0100
 
@@ -173,7 +173,7 @@ index 7fb7443..3361f79 100644
      {
        SaveUndoSerialNumber ();
 diff --git a/src/draw.c b/src/draw.c
-index 8911a4f..18947dc 100644
+index 8911a4f..cef971d 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -2119,7 +2119,6 @@ DrawElementPinsAndPads (ElementTypePtr Element, int unused)
@@ -264,15 +264,16 @@ index 8911a4f..18947dc 100644
    DrawPolygonLowLevel (Polygon);
  }
  
-@@ -2257,7 +2246,6 @@ void
+@@ -2256,8 +2245,6 @@ ErasePolygon (PolygonTypePtr Polygon)
+ void
  EraseElement (ElementTypePtr Element)
  {
-   /* set color and draw lines, arcs, text and pins */
+-  /* set color and draw lines, arcs, text and pins */
 -  gui->set_color (Output.fgGC, Settings.BackgroundColor);
    ELEMENTLINE_LOOP (Element);
    {
      DrawLineLowLevel (line);
-@@ -2279,7 +2267,6 @@ EraseElement (ElementTypePtr Element)
+@@ -2279,7 +2266,6 @@ EraseElement (ElementTypePtr Element)
  void
  EraseElementPinsAndPads (ElementTypePtr Element)
  {
@@ -280,7 +281,7 @@ index 8911a4f..18947dc 100644
    PIN_LOOP (Element);
    {
      DrawPinOrViaLowLevel (pin, false);
-@@ -2304,7 +2291,6 @@ EraseElementName (ElementTypePtr Element)
+@@ -2304,7 +2290,6 @@ EraseElementName (ElementTypePtr Element)
  {
    if (TEST_FLAG (HIDENAMEFLAG, Element))
      return;
