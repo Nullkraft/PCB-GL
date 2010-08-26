@@ -1,7 +1,7 @@
-Bottom: 77fa2f5e392421526a0d88bf370b295da242200d
-Top:    569bf41f62b30ed8e7dd08baf5e6223c0e561771
+Bottom: 243db52e79649dafa0b03eeab3de3769b72bfbda
+Top:    ab3830bace8b133c9ed3476e9fe404d46134828a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-08-24 18:55:29 +0100
+Date:   2010-08-26 03:40:30 +0100
 
 Add support for a "poured" object.
 
@@ -47,7 +47,7 @@ index 8db0918..5faaf6d 100644
  src/report.c
  src/res_parse.c
 diff --git a/src/Makefile.am b/src/Makefile.am
-index b709c27..452e325 100644
+index 8c49295..9593153 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -121,6 +121,8 @@ PCB_SRCS = \
@@ -60,7 +60,7 @@ index b709c27..452e325 100644
  	print.c \
  	print.h \
 diff --git a/src/action.c b/src/action.c
-index 0a85391..6121665 100644
+index 274fd55..dc5542d 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -57,6 +57,7 @@
@@ -1926,7 +1926,7 @@ index 8086b1e..af7ace4 100644
  				 FontTypePtr, FlagType, char *, char *,
  				 char *, LocationType, LocationType, BYTE,
 diff --git a/src/crosshair.c b/src/crosshair.c
-index ac22277..90fcd66 100644
+index 2c17911..e12a7d7 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -48,7 +48,7 @@
@@ -1946,7 +1946,7 @@ index ac22277..90fcd66 100644
  static void XORDrawElement (ElementTypePtr, LocationType, LocationType);
  static void XORDrawBuffer (BufferTypePtr);
  static void XORDrawInsertPointObject (void);
-@@ -93,6 +94,8 @@ static void XORDrawAttachedArc (BDimension);
+@@ -92,6 +93,8 @@ static void XORDrawAttachedArc (BDimension);
  static void
  XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
  {
@@ -1955,7 +1955,7 @@ index ac22277..90fcd66 100644
    Cardinal i;
    for (i = 0; i < polygon->PointN; i++)
      {
-@@ -103,6 +106,25 @@ XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
+@@ -102,6 +105,25 @@ XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
                        polygon->Points[next].X + dx,
                        polygon->Points[next].Y + dy);
      }
@@ -1981,7 +1981,7 @@ index ac22277..90fcd66 100644
  }
  
  /*-----------------------------------------------------------
-@@ -351,9 +373,11 @@ XORDrawBuffer (BufferTypePtr Buffer)
+@@ -350,9 +372,11 @@ XORDrawBuffer (BufferTypePtr Buffer)
  	/* the tmp polygon has n+1 points because the first
  	 * and the last one are set to the same coordinates
  	 */
@@ -1995,7 +1995,7 @@ index ac22277..90fcd66 100644
  	}
  	END_LOOP;
        }
-@@ -453,6 +477,18 @@ XORDrawMoveOrCopyObject (void)
+@@ -452,6 +476,18 @@ XORDrawMoveOrCopyObject (void)
  	break;
        }
  
@@ -2014,7 +2014,7 @@ index ac22277..90fcd66 100644
      case LINEPOINT_TYPE:
        {
  	LineTypePtr line;
-@@ -471,27 +507,27 @@ XORDrawMoveOrCopyObject (void)
+@@ -470,27 +506,27 @@ XORDrawMoveOrCopyObject (void)
  	break;
        }
  
@@ -2050,7 +2050,7 @@ index ac22277..90fcd66 100644
  	break;
        }
  
-@@ -588,9 +624,9 @@ DrawAttached (bool BlockToo)
+@@ -587,9 +623,9 @@ DrawAttached (bool BlockToo)
  	}
        break;
  
@@ -2063,7 +2063,7 @@ index ac22277..90fcd66 100644
        /* draw only if starting point is set */
        if (Crosshair.AttachedLine.State != STATE_FIRST)
  	gui->draw_line (Crosshair.GC,
-@@ -599,10 +635,10 @@ DrawAttached (bool BlockToo)
+@@ -598,10 +634,10 @@ DrawAttached (bool BlockToo)
  			Crosshair.AttachedLine.Point2.X,
  			Crosshair.AttachedLine.Point2.Y);
  
@@ -2077,7 +2077,7 @@ index ac22277..90fcd66 100644
  	}
        break;
  
-@@ -979,7 +1015,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+@@ -982,7 +1018,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
  
    if (TEST_FLAG (SNAPPINFLAG, PCB))
      ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
@@ -2086,7 +2086,7 @@ index ac22277..90fcd66 100644
    else
      ans = NO_TYPE;
  
-@@ -1154,6 +1190,6 @@ void
+@@ -1157,6 +1193,6 @@ void
  DestroyCrosshair (void)
  {
    CrosshairOff (true);
@@ -2095,7 +2095,7 @@ index ac22277..90fcd66 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index a27c0dc..bcc1300 100644
+index cef971d..903cb04 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -49,6 +49,7 @@
@@ -2106,15 +2106,15 @@ index a27c0dc..bcc1300 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -100,6 +101,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
- static void DrawLineLowLevel (LineTypePtr, bool);
+@@ -99,6 +100,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
+ static void DrawLineLowLevel (LineTypePtr);
  /* static */ void DrawRegularText (LayerTypePtr, TextTypePtr, int);
  static void DrawPolygonLowLevel (PolygonTypePtr);
 +static void DrawPourLowLevel (PourTypePtr);
  static void DrawArcLowLevel (ArcTypePtr);
  static void DrawElementPackageLowLevel (ElementTypePtr Element, int);
  static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
-@@ -677,6 +679,7 @@ struct pin_info
+@@ -671,6 +673,7 @@ struct pin_info
  {
    bool arg;
    LayerTypePtr Layer;
@@ -2122,7 +2122,7 @@ index a27c0dc..bcc1300 100644
  };
  
  /* static */ int
-@@ -688,12 +691,32 @@ clearPin_callback (const BoxType * b, void *cl)
+@@ -682,12 +685,32 @@ clearPin_callback (const BoxType * b, void *cl)
      ClearOnlyPin (pin, true);
    return 1;
  }
@@ -2155,7 +2155,7 @@ index a27c0dc..bcc1300 100644
    return 1;
  }
  
-@@ -769,6 +792,7 @@ DrawMask (BoxType * screen)
+@@ -763,6 +786,7 @@ DrawMask (BoxType * screen)
    OutputType *out = &Output;
  
    info.arg = true;
@@ -2163,7 +2163,7 @@ index a27c0dc..bcc1300 100644
  
    if (thin)
      gui->set_color (Output.pmGC, PCB->MaskColor);
-@@ -867,8 +891,9 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
+@@ -861,8 +885,9 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
    /* print the non-clearing polys */
    info.Layer = Layer;
    info.arg = false;
@@ -2174,7 +2174,7 @@ index a27c0dc..bcc1300 100644
  
    /* draw all visible lines this layer */
    r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
-@@ -906,13 +931,13 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -900,13 +925,13 @@ DrawLayerGroup (int group, const BoxType * screen)
  	rv = 0;
        if (layernum < max_layer && Layer->On)
  	{
@@ -2192,7 +2192,7 @@ index a27c0dc..bcc1300 100644
  	      info.arg = false;
  
  	      /* HACK: Subcomposite polygons separately from other layer primitives */
-@@ -1657,6 +1682,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
+@@ -1651,6 +1676,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2241,7 +2241,7 @@ index a27c0dc..bcc1300 100644
   * lowlevel routine to element arcs
   */
  static void
-@@ -1975,6 +2042,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+@@ -1969,6 +2036,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
    DrawPolygonLowLevel (Polygon);
  }
  
@@ -2279,7 +2279,7 @@ index a27c0dc..bcc1300 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -2268,6 +2366,18 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2240,6 +2338,18 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2298,7 +2298,7 @@ index a27c0dc..bcc1300 100644
   * erases an element
   */
  void
-@@ -2344,6 +2454,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -2310,6 +2420,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2308,7 +2308,7 @@ index a27c0dc..bcc1300 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -2391,6 +2504,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
+@@ -2357,6 +2470,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2, 0);
        break;
@@ -2959,10 +2959,10 @@ index a607a69..f36c400 100644
        break;
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 381125b..45aa02e 100644
+index 2b88a9d..68c515d 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -460,8 +460,8 @@ have_crosshair_attachments (void)
+@@ -299,8 +299,8 @@ have_crosshair_attachments (void)
      case VIA_MODE:
        result = TRUE;
        break;
@@ -2974,7 +2974,7 @@ index 381125b..45aa02e 100644
  	result = TRUE;
        break;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 26f29b4..dbe0be5 100644
+index 16c26d2..fc862d6 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -1984,8 +1984,9 @@ static ModeButton mode_buttons[] = {
