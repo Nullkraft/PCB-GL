@@ -772,8 +772,6 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   Settings.ShowSolderSide = save_show_solder;
 }
 
-static int one_shot = 1;
-
 #define Z_NEAR 3.0
 gboolean
 ghid_drawing_area_expose_cb (GtkWidget *widget,
@@ -964,8 +962,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   hidgl_flush_triangles (&buffer);
 
   ghid_end_drawing (port);
-
-  one_shot = 0;
 
   return FALSE;
 }
