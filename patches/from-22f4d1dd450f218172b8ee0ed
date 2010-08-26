@@ -3,8 +3,14 @@ Top:    d430754a0349024f06a584487a2080d8c0be8845
 Author: Bert Timmerman <bert.timmerman@xs4all.nl>
 Date:   2010-08-24 00:48:13 +0100
 
-From 22f4d1dd450f218172b8ee0edf9a2aaef6c20f2f Mon Sep 17 00:00:00 2001
-Subject: [PATCH] Additional defines for a 3D joystick for (older) linux versions which do not have these defines in <linux/input.h>
+Additional defines for a 3D joystick for (older) linux versions
+
+Older versions of linux do not have these defines in <linux/input.h>
+
+#define REL_RX  0x03
+#define REL_RY  0x04
+#define REL_RZ  0x05
+
 
 
 ---
