@@ -1,5 +1,5 @@
-Bottom: 65ac7d424931bde8422c2dcdfbae1562b9235098
-Top:    1f946dd1682cb18777f196a43b2683da953fa451
+Bottom: c665e17ffdf3e486d975c1f9846baf138f9025c2
+Top:    c665e17ffdf3e486d975c1f9846baf138f9025c2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-07 10:34:58 +0000
 
@@ -18,24 +18,4 @@ Workaround crash where contour is passed as NULL to poly_PreContour
 
 ---
 
-diff --git a/src/polygon.c b/src/polygon.c
-index 03e8bdd..2f82405 100644
---- a/src/polygon.c
-+++ b/src/polygon.c
-@@ -246,6 +246,16 @@ original_poly (PolygonType * p)
-       }
-   }
-   END_LOOP;
-+  if (contour == NULL)
-+    {
-+      printf ("How did that escape - did the loop iterate zero times??\n");
-+      POLYGONPOINT_LOOP (p);
-+        {
-+          printf ("Hello\n");
-+        }
-+      END_LOOP;
-+      return NULL;
-+    }
-   poly_PreContour (contour, TRUE);
-   /* make sure it is a positive contour */
-   if ((contour->Flags.orient) != PLF_DIR)
+
