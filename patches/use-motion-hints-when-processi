@@ -1,5 +1,5 @@
-Bottom: 2f831db0d7c4d5daf8eba4acb1426ea5d6105419
-Top:    be91c9d10c84cb6410ce177c4c1acd0e72ead781
+Bottom: da890d35bb968ba3d6c80202522ea73e53e9572e
+Top:    014a47cc9249eeac36d924b3ed10efaecf53e58e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 21:13:12 +0100
 
@@ -31,10 +31,10 @@ index 53d8ffd..1dc08bd 100644
      {
        glVertex2i (0,                  y_prev - VCD);
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 16e1be8..6c9ccbf 100644
+index 7cd464a..0b1f72a 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -684,12 +684,14 @@ queue_tooltip_update (GHidPort *out)
+@@ -682,12 +682,14 @@ queue_tooltip_update (GHidPort *out)
  
  gint
  ghid_port_window_motion_cb (GtkWidget * widget,
@@ -50,7 +50,7 @@ index 16e1be8..6c9ccbf 100644
  #if 0
    if (!ghid_start_drawing (out))
      return FALSE;
-@@ -698,7 +700,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -696,7 +698,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    if (out->panning)
      {
  /* Not sure this really matters, since we're using invalidate to get a redraw */
@@ -59,7 +59,7 @@ index 16e1be8..6c9ccbf 100644
        if (gtk_events_pending ())
  	return FALSE;
  #endif
-@@ -711,7 +713,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -709,7 +711,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
        return FALSE;
      }
    x_prev = y_prev = -1;

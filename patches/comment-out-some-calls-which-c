@@ -1,5 +1,5 @@
-Bottom: 8a6a915fa75fbd776f1cb9c8201623102065d0e8
-Top:    5d6ff71101d6b9eccdcc0eb8292458551afa7e34
+Bottom: d48a16420c2b2625713eabff1055f3eb5d81ca4e
+Top:    56104a0b0a2b993f9c90f77cd9a7207819192124
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-26 03:59:14 +0100
 
@@ -9,26 +9,10 @@ Comment out some calls which can trigger an out-of-context redraw
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 2b88a9d..ca82059 100644
+index bb956ff..ca82059 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -269,7 +269,6 @@ ghid_note_event_location (GdkEventButton * ev)
-   gport->view_x = event_x * gport->zoom + gport->view_x0;
-   gport->view_y = event_y * gport->zoom + gport->view_y0;
- 
--  DrawAttached (false);
-   moved = MoveCrosshairAbsolute (SIDE_X (gport->view_x), 
- 				 SIDE_Y (gport->view_y));
-   if (moved)
-@@ -277,7 +276,6 @@ ghid_note_event_location (GdkEventButton * ev)
-       AdjustAttachedObjects ();
-       RestoreCrosshair (false);
-     }
--  DrawAttached (false);
-   ghid_set_cursor_position_labels ();
-   return moved;
- }
-@@ -382,7 +380,7 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
+@@ -380,7 +380,7 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
    state = (GdkModifierType) (kev->state);
    mk = ghid_modifier_keys_state (&state);
  
@@ -37,7 +21,7 @@ index 2b88a9d..ca82059 100644
  
    handled = TRUE;		/* Start off assuming we handle it */
    switch (ksym)
-@@ -488,7 +486,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+@@ -486,7 +486,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
    ghid_note_event_location (ev);
    state = (GdkModifierType) (ev->state);
    mk = ghid_modifier_keys_state (&state);
@@ -46,7 +30,7 @@ index 2b88a9d..ca82059 100644
    HideCrosshair (TRUE);
    drag = have_crosshair_attachments ();
  
-@@ -497,7 +495,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+@@ -495,7 +495,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
    ghid_invalidate_all ();
    RestoreCrosshair (TRUE);
    ghid_set_status_line_label ();
@@ -55,7 +39,7 @@ index 2b88a9d..ca82059 100644
    if (!gport->panning)
      g_idle_add (ghid_idle_cb, NULL);
    return TRUE;
-@@ -888,7 +886,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -886,7 +886,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
        cursor_in_viewport = FALSE;
      }
  

@@ -1,6 +1,6 @@
 Version: 1
-Previous: 21367b982fdfa56467ab88e48c85faeb077b52e1
-Head: 96b980dbb58041aa3610e1689c3b374dc152766c
+Previous: 0cd06b9ac2968cad66f90c41b908aad8798a2e73
+Head: b769887ea82d80d6dd18ec3d35bc382abb975283
 Applied:
   improve-grid-snapping-heuristi: 8a31211fd911762a97e26e18d1b8643fa06aef90
   only-snap-to-pads-on-the-activ: e313f7847739add4c9c7cfccee271a474b020e8e
@@ -12,33 +12,33 @@ Applied:
   try-to-make-gdk-and-gl-version: 49a64b4f4b3e0418cc602ed7df5c69e8377051e3
   fix-mesa-crash-on-startup: 213d2cf9f19f7c0d71e354dac82535a9749615b8
   cure-cross-hair-lagging-on-scr: 96b980dbb58041aa3610e1689c3b374dc152766c
+  use-motion-hints-when-processi: e2501dc01b84e64dbfd94b70f4c2b692d8f644b2
+  add-raw-polygons-support-for-t: b8b096bca3d8b04d5b274773fb27c9ded8d17244
+  temporary-gl-includes-for-gtkh: 4a0d4486fb3e5b3e36dd4ee18a95bbe43f1e7c96
+  work-in-progress-on-subcomposi: 10fe95347b477a67e0e3e2ebd2d7f0f55334b49b
+  use-tags-on-circular-contours-: c64e723f83ddd6fc8434964d7ba762d7650e52cd
+  ugly-ugly-hack-to-make-pretty-: 5bd7eb8a67984d432d7a2d276d75de3e6b2c945f
+  add-virtual-trackball-code: cbf924fffb396cbd271125d49398318a2e20cadb
+  use-trackball-to-allow-rotatio: 009ea85f285a61308d01616ffedae6f4cc63516d
+  temp-hack-to-include-gl-header: 34e7ca940e93085f09eb979f47a8e3b31a4a53bd
+  add-support-for-depth-to-trian: 71b610adf8d0a3516b0d25f6449b57caac9a6845
+  shiny-3d-eye-candy: 0ec3f1fa63a378cff1b7f8a295e0679ae08f4425
+  fix-grid-extents-in-3d-view: d5aebb0b1a545d793f41078b5d86c8dab749ebb2
+  major-re-write-to-drawing-rout: d9914a0188a699554659d111c536b7ad759824f5
+  silly-space-navigator-interfac: 0384d41251e675af8eb2ed48a6213a3b074b5e81
+  from-22f4d1dd450f218172b8ee0ed: aebb70c3d71b2679106e1e9934c6d8f9c51c4ed9
+  playing-with-stack-rendering: 113ea765a924a8dbcfd6b92d843fb3fd1b314d12
+  play-with-display-lists: e72997b37d88629c71cc364785193b5c1e6c4ef3
+  bentley-ottann-test-implementa: f5717e56840045543eb930412fc4f69d41ce4e66
+  remove-unused-intersection-rou: d2ad9672875f7a512e8379afd912785d9ce7113a
+  add-routines-to-render-just-a-: e6208fe8e03e1911a347915fd19d7154f08011bc
+  layer-fixes: 231df5d7fa4836f4b131a8467c45cb2f30c0c44c
+  fixup-depth-for-layers-and-ele: bbb80b2411d7d7849ef88893943f19d192999ec7
+  board-outline-polygon-generati: 8e3d688ae81294d6d61b852666381eb8b06e4ddf
+  allow-zero-clearance-pads-and-: 622b57776553f0af5e08ede4e3f52ced015cf174
+  don-t-make-gui-drawing-calls-t: 4b9c937cc9ab2ad2ac9a065fa4264dbc17d7770b
+  temporary-comment-out-some-dra: c65da6f9b9e0819e77c07cdcb06d32cc9cb6e91b
+  debug-gl-calls-out-of-context: 7ee2ab8d7a84849764673d061c1b9554f578e0e9
+  comment-out-some-calls-which-c: b769887ea82d80d6dd18ec3d35bc382abb975283
 Unapplied:
-  use-motion-hints-when-processi: a684f03e74a770c42011daa70c96a855f3eb8225
-  add-raw-polygons-support-for-t: a64c96f5c66c52e1023be4525a45b11441b0d586
-  temporary-gl-includes-for-gtkh: 34ff44a60c53a6c6ce7b1895767c3301fc467217
-  work-in-progress-on-subcomposi: 04491fa67a9e4aadee0937743571447f87fc57c4
-  use-tags-on-circular-contours-: b7fce43a377921473a352b3a9bdd5efaea65fdb5
-  ugly-ugly-hack-to-make-pretty-: cfb7b0fe1980bd5662ba4d638ab9ff29bffd93de
-  add-virtual-trackball-code: 3b2142960dda6ebeed27ef852b3eac7592bafd71
-  use-trackball-to-allow-rotatio: 63ac1fe32551d7dc6d01ad6c75ba658a44988f92
-  temp-hack-to-include-gl-header: 13e6600c3b153d767588c1edbc9f53cb98e96964
-  add-support-for-depth-to-trian: 7e1d675f75d255c7c90890c116aad273716bcacf
-  shiny-3d-eye-candy: c5bc01f4ec48916460439279eb4d84e7a4f3a35d
-  fix-grid-extents-in-3d-view: 201894d8db72edf1978178b6754e698280fd9df8
-  major-re-write-to-drawing-rout: bffdc838ab672840fcaa2db09b83ba02aa364beb
-  silly-space-navigator-interfac: 3dabb09dd57d7a0e0dc9c9c431f0be1b267a895b
-  from-22f4d1dd450f218172b8ee0ed: f48c1cf330ad002a94d8438d6a4f7bbd4f6d18f3
-  playing-with-stack-rendering: e9182b849b488cbc026d5d8c3852b120f93385cc
-  play-with-display-lists: 1135be40e8966f712ea32ee7767e799f98529459
-  bentley-ottann-test-implementa: 1e5a94e982ed7b7631d8ccc7922943716b5004d6
-  remove-unused-intersection-rou: 104df2f6606777ca5736502e97f055be4e2ec81b
-  add-routines-to-render-just-a-: 370f669f81a4f70e3cbc704f17ac52ed628a2a4a
-  layer-fixes: c2e00f2654248b8bd78ae77375c1edc75a30f481
-  fixup-depth-for-layers-and-ele: 296188cfaea40716b693c56dbad41323cc3224ea
-  board-outline-polygon-generati: 489294e062b6d94f4fd4838ffce8c2a5ac14e241
-  allow-zero-clearance-pads-and-: 7d61b96dbff94cb263d657e1969d8e63ad29412a
-  don-t-make-gui-drawing-calls-t: dd62c6677e2a8eccc227a2017c2130b01108321a
-  temporary-comment-out-some-dra: 31d26c1f940acd3ed40813ab0675ffb41bde533f
-  debug-gl-calls-out-of-context: 737a005d5618011bf6ee4a996290784c09bc9e84
-  comment-out-some-calls-which-c: 0a30bf530dc8cdaa12b69857155fff3e154f6084
 Hidden:
