@@ -1,5 +1,5 @@
 Bottom: eaddd7476156a451ca9bc141733aa6beaa78b4b9
-Top:    44cffb5c43275e2d34befa2d99100af973b990ce
+Top:    08b28246b8e37258607e2643687349551d5cf765
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:12 +0100
 
@@ -181,7 +181,7 @@ index c0e23a3..077c575 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f40bce1..4b902dc 100644
+index f40bce1..a2d4f7e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -207,7 +207,7 @@ index f40bce1..4b902dc 100644
  
  /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
  */
-@@ -133,6 +141,639 @@ ghid_screen_update (void)
+@@ -133,6 +141,637 @@ ghid_screen_update (void)
  {
  }
  
@@ -842,12 +842,10 @@ index f40bce1..4b902dc 100644
 +  Settings.ShowSolderSide = save_show_solder;
 +}
 +
-+static int one_shot = 1;
-+
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -141,7 +782,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -141,7 +780,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  {
    BoxType region;
    int eleft, eright, etop, ebottom;
@@ -855,7 +853,7 @@ index f40bce1..4b902dc 100644
    int min_x, min_y;
    int max_x, max_y;
    int new_x, new_y;
-@@ -200,8 +840,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -200,8 +838,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -866,7 +864,7 @@ index f40bce1..4b902dc 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -293,7 +933,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -293,7 +931,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -gport->view_x0,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
@@ -876,16 +874,7 @@ index f40bce1..4b902dc 100644
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
-@@ -324,6 +965,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
- 
-   ghid_end_drawing (port);
- 
-+  one_shot = 0;
-+
-   return FALSE;
- }
- 
-@@ -359,7 +1002,6 @@ gboolean
+@@ -359,7 +998,6 @@ gboolean
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
  {
@@ -893,7 +882,7 @@ index f40bce1..4b902dc 100644
    GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
    GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
    GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
-@@ -464,7 +1106,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -464,7 +1102,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
  GdkPixmap *
  ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int depth)
  {
@@ -901,7 +890,7 @@ index f40bce1..4b902dc 100644
    GdkGLConfig *glconfig;
    GdkPixmap *pixmap;
    GdkGLPixmap *glpixmap;
-@@ -861,10 +1502,6 @@ typedef struct
+@@ -861,10 +1498,6 @@ typedef struct
    double blue;
  } ColorCache;
  
@@ -912,7 +901,7 @@ index f40bce1..4b902dc 100644
  void
  ghid_set_color (hidGC gc, const char *name)
  {
-@@ -979,7 +1616,7 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -979,7 +1612,7 @@ ghid_set_color (hidGC gc, const char *name)
    glColor4d (r, g, b, a);
  }
  
