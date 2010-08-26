@@ -1,0 +1,21 @@
+Bottom: abcd69d25c2542b22c21a2c51cb4ebbcefed5c0c
+Top:    d79519e6305918f5af5050a31018916e83944138
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-26 02:03:22 +0100
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 8bef0aa..600e109 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -520,7 +520,6 @@ void ghid_port_rotate (void *ball, float *quarternion, gpointer userdata);
+ void ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata);
+ 
+ /* gtkhid-main.c */
+-void ghid_global_alpha_mult (hidGC gc, double alpha_mult);
+ void ghid_invalidate_current_gc ();
+ void ghid_get_coords (const char *msg, int *x, int *y);
+ gint PCBChanged (int argc, char **argv, int x, int y);
