@@ -1,5 +1,5 @@
 Bottom: fb245bace086a47b298557d21950e33906192964
-Top:    fb245bace086a47b298557d21950e33906192964
+Top:    efea75c4d9306414a39a820f7ea80748759762cf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-26 02:36:39 +0100
 
@@ -10,4 +10,48 @@ Should fix this properly with notificatons to the GUI
 
 ---
 
-
+diff --git a/src/action.c b/src/action.c
+index 0a85391..274fd55 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -4021,7 +4021,7 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
+     {
+       if (Marked.status)
+ 	{
+-	  DrawMark (true);
++//	  DrawMark (true);
+ 	  Marked.status = false;
+ 	}
+       else
+@@ -4029,16 +4029,16 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
+ 	  Marked.status = true;
+ 	  Marked.X = Crosshair.X;
+ 	  Marked.Y = Crosshair.Y;
+-	  DrawMark (false);
++//	  DrawMark (false);
+ 	}
+     }
+   else if (GetFunctionID (function) == F_Center)
+     {
+-      DrawMark (true);
++//      DrawMark (true);
+       Marked.status = true;
+       Marked.X = Crosshair.X;
+       Marked.Y = Crosshair.Y;
+-      DrawMark (false);
++//      DrawMark (false);
+     }
+   return 0;
+ }
+diff --git a/src/draw.c b/src/draw.c
+index 18947dc..cef971d 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -2245,7 +2245,6 @@ ErasePolygon (PolygonTypePtr Polygon)
+ void
+ EraseElement (ElementTypePtr Element)
+ {
+-  /* set color and draw lines, arcs, text and pins */
+   ELEMENTLINE_LOOP (Element);
+   {
+     DrawLineLowLevel (line);
