@@ -1,0 +1,34 @@
+Bottom: 07ed619a16c59487ed189a72734e8ae2e8b5a1ed
+Top:    ba18472abe517ff539297ca7f7438c67b37b714c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-27 11:15:56 +0100
+
+Refresh of move-more-gdk-specific-drawing
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 957e2aa..5d66221 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -78,7 +78,7 @@ ghid_make_gc (void)
+   return rv;
+ }
+ 
+-void
++static void
+ ghid_draw_grid (void)
+ {
+   static GdkPoint *points = 0;
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 03d8f72..e8e01da 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -490,7 +490,6 @@ GdkPixmap *ghid_render_pixmap (int cx,
+ /* gtkhid-gdk.c */
+ hidGC ghid_make_gc (void);
+ void ghid_destroy_gc (hidGC);
+-void ghid_draw_grid (void);
+ void ghid_draw_bg_image (void);
+ void ghid_use_mask (int use_it);
+ void ghid_set_color (hidGC gc, const char *name);
