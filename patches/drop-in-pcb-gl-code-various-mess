@@ -1,5 +1,5 @@
-Bottom: 4dc1c8c50953b555af597ad8f70147c6cb2ffd56
-Top:    5e995325f36c62694bb28e2a3e17eb906a83047c
+Bottom: e24a6618a716347164fbf77a2abc578b7917a4a4
+Top:    67c6110d053dbf9ee71a499f21cdf8a2dcaa8102
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:49:23 +0100
 
@@ -2103,7 +2103,7 @@ index 3d3896f..197e886 100644
  
    Settings.AutoPlace = 0;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index e8e01da..00f5f73 100644
+index 4ebaea0..5bce051 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -37,6 +37,17 @@
@@ -2147,8 +2147,8 @@ index e8e01da..00f5f73 100644
 +/* gtkhid-gdk.c OR gtkhid-gl.c */
  hidGC ghid_make_gc (void);
  void ghid_destroy_gc (hidGC);
- void ghid_draw_bg_image (void);
-@@ -510,6 +527,7 @@ void ghid_invalidate_all ();
+ void ghid_use_mask (int use_it);
+@@ -509,6 +526,7 @@ void ghid_invalidate_all ();
  void ghid_show_crosshair (gboolean show);
  
  /* gtkhid-main.c */
