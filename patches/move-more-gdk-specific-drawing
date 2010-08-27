@@ -1,5 +1,5 @@
 Bottom: 4b50e20ae9a7dd88ece7539357ba215fd6f47f1f
-Top:    07ed619a16c59487ed189a72734e8ae2e8b5a1ed
+Top:    ba18472abe517ff539297ca7f7438c67b37b714c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:49:22 +0100
 
@@ -9,7 +9,7 @@ hid/gtk: Move more gdk specific drawing routines to gtkhid-gdk.c
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 461b779..957e2aa 100644
+index 461b779..5d66221 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -21,7 +21,6 @@ RCSID ("$Id$");
@@ -20,6 +20,15 @@ index 461b779..957e2aa 100644
  /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
  */
  #define USE_GC(gc) if (!use_gc(gc)) return
+@@ -79,7 +78,7 @@ ghid_make_gc (void)
+   return rv;
+ }
+ 
+-void
++static void
+ ghid_draw_grid (void)
+ {
+   static GdkPoint *points = 0;
 @@ -651,3 +650,238 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
    gdk_draw_rectangle (gport->drawable, gport->u_gc, TRUE,
  		      x1, y1, x2 - x1 + 1, y2 - y1 + 1);
@@ -535,7 +544,7 @@ index 7cc764e..d2349a8 100644
  ghid_idle_cb (gpointer data)
  {
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 7686106..03d8f72 100644
+index 7686106..e8e01da 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -284,11 +284,10 @@ void ghid_port_ranges_zoom (gdouble zoom);
@@ -551,7 +560,15 @@ index 7686106..03d8f72 100644
  gboolean ghid_port_key_press_cb (GtkWidget * drawing_area,
  				 GdkEventKey * kev, GtkUIManager * ui);
  gboolean ghid_port_key_release_cb (GtkWidget * drawing_area,
-@@ -507,9 +506,11 @@ void ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2);
+@@ -491,7 +490,6 @@ GdkPixmap *ghid_render_pixmap (int cx,
+ /* gtkhid-gdk.c */
+ hidGC ghid_make_gc (void);
+ void ghid_destroy_gc (hidGC);
+-void ghid_draw_grid (void);
+ void ghid_draw_bg_image (void);
+ void ghid_use_mask (int use_it);
+ void ghid_set_color (hidGC gc, const char *name);
+@@ -507,9 +505,11 @@ void ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2);
  void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
  void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
  void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
