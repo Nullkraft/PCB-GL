@@ -1,5 +1,5 @@
 Bottom: ebdacea1ccd7f25c3dbfe19789bb1a225cb85451
-Top:    b75d7017886e54384b8a47cb07fd2ca0e7ccb603
+Top:    f1130c4077b57c0a049f2b4da3624a10cf2eda0e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:49:23 +0100
 
@@ -9,7 +9,7 @@ Try to make GDK and GL versions coexist a little more!
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index c6172e3..9445075 100644
+index c6172e3..d4e1746 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -21,13 +21,21 @@ RCSID ("$Id$");
@@ -346,10 +346,10 @@ index c6172e3..9445075 100644
  		      eleft, etop, eright - eleft + 1, ebottom - etop + 1);
  
    ghid_draw_bg_image();
-@@ -886,18 +911,42 @@ ghid_show_crosshair (gboolean show)
-     }
+@@ -887,17 +912,42 @@ ghid_show_crosshair (gboolean show)
  }
  
+ void
 +ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 +{
 +  /* Init any GC's required */
@@ -373,7 +373,7 @@ index c6172e3..9445075 100644
 +{
 +}
 +
- void
++void
  ghid_drawing_area_configure_hook (GHidPort *port)
  {
    static int done_once = 0;
@@ -393,7 +393,7 @@ index c6172e3..9445075 100644
        done_once = 1;
      }
  
-@@ -911,8 +960,10 @@ ghid_drawing_area_configure_hook (GHidPort *port)
+@@ -911,8 +961,10 @@ ghid_drawing_area_configure_hook (GHidPort *port)
  void
  ghid_screen_update (void)
  {
@@ -405,7 +405,7 @@ index c6172e3..9445075 100644
  		     0, 0, 0, 0, gport->width, gport->height);
    ghid_show_crosshair (TRUE);
  }
-@@ -922,14 +973,21 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -922,14 +974,21 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               GdkEventExpose *ev,
                               GHidPort *port)
  {
@@ -428,7 +428,7 @@ index c6172e3..9445075 100644
  gboolean
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
-@@ -943,6 +1001,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -943,6 +1002,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    int save_width, save_height;
    int save_view_width, save_view_height;
    double xz, yz;
@@ -436,7 +436,7 @@ index c6172e3..9445075 100644
  
    save_zoom = gport->zoom;
    save_width = gport->width;
-@@ -973,7 +1032,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -973,7 +1033,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
  
    /* clear background */
@@ -445,7 +445,7 @@ index c6172e3..9445075 100644
  
    /* call the drawing routine */
    hid_expose_callback (&ghid_hid, NULL, &pinout->element);
-@@ -1009,7 +1068,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1009,7 +1069,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
  
    /* clear background */
@@ -454,7 +454,7 @@ index c6172e3..9445075 100644
  
    /* call the drawing routine */
    hid_expose_callback (&ghid_hid, NULL, &pinout->element);
-@@ -1037,6 +1096,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1037,6 +1097,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    int save_width, save_height;
    int save_view_width, save_view_height;
    BoxType region;
@@ -462,7 +462,7 @@ index c6172e3..9445075 100644
  
    save_drawable = gport->drawable;
    save_zoom = gport->zoom;
-@@ -1064,7 +1124,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1064,7 +1125,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    gport->view_y0 -= gport->view_width  / 2;
  
    /* clear background */
