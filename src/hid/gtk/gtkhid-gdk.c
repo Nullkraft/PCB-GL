@@ -28,250 +28,15 @@ extern HID ghid_hid;
 static int cur_mask = -1;
 static int mask_seq = 0;
 
-struct render_priv {
+typedef struct render_priv {
   GdkGC *bg_gc;
   GdkGC *offlimits_gc;
   GdkGC *mask_gc;
   GdkGC *u_gc;
   GdkGC *grid_gc;
-};
+} render_priv;
 
 /* ------------------------------------------------------------ */
-
-void
-ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
-{
-  /* Init any GC's required */
-  port->render_priv = g_new0 (struct render_priv, 1);
-}
-
-GtkWidget *
-ghid_drawing_area_new (GHidPort *port)
-{
-  return gtk_drawing_area_new ();
-}
-
-gboolean
-ghid_start_drawing (GHidPort *port)
-{
-  return TRUE;
-}
-
-void
-ghid_end_drawing (GHidPort *port)
-{
-}
-
-void
-ghid_drawing_area_configure_hook (GHidPort *port)
-{
-  static int done_once = 0;
-  struct render_priv *priv = port->render_priv;
-
-  if (!done_once)
-    {
-      priv->bg_gc = gdk_gc_new (port->drawable);
-      gdk_gc_set_foreground (priv->bg_gc, &port->bg_color);
-
-      priv->offlimits_gc = gdk_gc_new (port->drawable);
-      gdk_gc_set_foreground (priv->offlimits_gc, &port->offlimits_color);
-      done_once = 1;
-    }
-
-  if (port->mask)
-    {
-      gdk_pixmap_unref (port->mask);
-      port->mask = gdk_pixmap_new (0, port->width, port->height, 1);
-    }
-}
-
-void
-ghid_screen_update (void)
-{
-  struct render_priv *priv = gport->render_priv;
-
-  ghid_show_crosshair (FALSE);
-  gdk_draw_drawable (gport->drawing_area->window, priv->bg_gc, gport->pixmap,
-		     0, 0, 0, 0, gport->width, gport->height);
-  ghid_show_crosshair (TRUE);
-}
-
-gboolean
-ghid_drawing_area_expose_cb (GtkWidget *widget,
-                             GdkEventExpose *ev,
-                             GHidPort *port)
-{
-  struct render_priv *priv = port->render_priv;
-
-  ghid_show_crosshair (FALSE);
-  gdk_draw_drawable (widget->window, priv->bg_gc, port->pixmap,
-                    ev->area.x, ev->area.y, ev->area.x, ev->area.y,
-                    ev->area.width, ev->area.height);
-  ghid_show_crosshair (TRUE);
-  return FALSE;
-}
-
-void
-ghid_pinout_preview_init (GhidPinoutPreview *preview)
-{
-}
-
-gboolean
-ghid_pinout_preview_expose (GtkWidget *widget,
-                            GdkEventExpose *ev)
-{
-  extern HID ghid_hid;
-  GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
-  GdkDrawable *save_drawable;
-  double save_zoom;
-  int da_w, da_h;
-  int save_left, save_top;
-  int save_width, save_height;
-  int save_view_width, save_view_height;
-  double xz, yz;
-  struct render_priv *priv = gport->render_priv;
-
-  save_zoom = gport->zoom;
-  save_width = gport->width;
-  save_height = gport->height;
-  save_left = gport->view_x0;
-  save_top = gport->view_y0;
-  save_view_width = gport->view_width;
-  save_view_height = gport->view_height;
-
-  /* Setup drawable and zoom factor for drawing routines
-   */
-  save_drawable = gport->drawable;
-
-  gdk_window_get_geometry (widget->window, 0, 0, &da_w, &da_h, 0);
-  xz = (double) pinout->x_max / da_w;
-  yz = (double) pinout->y_max / da_h;
-  if (xz > yz)
-    gport->zoom = xz;
-  else
-    gport->zoom = yz;
-
-  gport->drawable = widget->window;
-  gport->width = da_w;
-  gport->height = da_h;
-  gport->view_width = da_w * gport->zoom;
-  gport->view_height = da_h * gport->zoom;
-  gport->view_x0 = (pinout->x_max - gport->view_width) / 2;
-  gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
-
-  /* clear background */
-  gdk_draw_rectangle (widget->window, priv->bg_gc, TRUE, 0, 0, da_w, da_h);
-
-  /* call the drawing routine */
-  hid_expose_callback (&ghid_hid, NULL, &pinout->element);
-
-  gport->drawable = save_drawable;
-  gport->zoom = save_zoom;
-  gport->width = save_width;
-  gport->height = save_height;
-  gport->view_x0 = save_left;
-  gport->view_y0 = save_top;
-  save_top = gport->view_y0;
-  save_view_width = gport->view_width;
-  save_view_height = gport->view_height;
-
-  /* Setup drawable and zoom factor for drawing routines
-   */
-  save_drawable = gport->drawable;
-
-  gdk_window_get_geometry (widget->window, 0, 0, &da_w, &da_h, 0);
-  xz = (double) pinout->x_max / da_w;
-  yz = (double) pinout->y_max / da_h;
-  if (xz > yz)
-    gport->zoom = xz;
-  else
-    gport->zoom = yz;
-
-  gport->drawable = widget->window;
-  gport->width = da_w;
-  gport->height = da_h;
-  gport->view_width = da_w * gport->zoom;
-  gport->view_height = da_h * gport->zoom;
-  gport->view_x0 = (pinout->x_max - gport->view_width) / 2;
-  gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
-
-  /* clear background */
-  gdk_draw_rectangle (widget->window, priv->bg_gc, TRUE, 0, 0, da_w, da_h);
-
-  /* call the drawing routine */
-  hid_expose_callback (&ghid_hid, NULL, &pinout->element);
-
-  gport->drawable = save_drawable;
-  gport->zoom = save_zoom;
-  gport->width = save_width;
-  gport->height = save_height;
-  gport->view_x0 = save_left;
-  gport->view_y0 = save_top;
-  gport->view_width = save_view_width;
-  gport->view_height = save_view_height;
-
-  return FALSE;
-}
-
-GdkPixmap *
-ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int depth)
-{
-  extern HID ghid_hid;
-  GdkPixmap *pixmap;
-  GdkDrawable *save_drawable;
-  double save_zoom;
-  int save_left, save_top;
-  int save_width, save_height;
-  int save_view_width, save_view_height;
-  BoxType region;
-  struct render_priv *priv = gport->render_priv;
-
-  save_drawable = gport->drawable;
-  save_zoom = gport->zoom;
-  save_width = gport->width;
-  save_height = gport->height;
-  save_left = gport->view_x0;
-  save_top = gport->view_y0;
-  save_view_width = gport->view_width;
-  save_view_height = gport->view_height;
-
-  pixmap = gdk_pixmap_new (NULL, width, height, depth);
-
-  /* Setup drawable and zoom factor for drawing routines
-   */
-
-  gport->drawable = pixmap;
-  gport->zoom = zoom;
-  gport->width = width;
-  gport->height = height;
-  gport->view_width = width * gport->zoom;
-  gport->view_height = height * gport->zoom;
-  gport->view_x0 = ghid_flip_x ? PCB->MaxWidth - cx : cx;
-  gport->view_x0 -= gport->view_height / 2;
-  gport->view_y0 = ghid_flip_y ? PCB->MaxHeight - cy : cy;
-  gport->view_y0 -= gport->view_width  / 2;
-
-  /* clear background */
-  gdk_draw_rectangle (pixmap, priv->bg_gc, TRUE, 0, 0, width, height);
-
-  /* call the drawing routine */
-  region.X1 = MIN(Px(0), Px(gport->width + 1));
-  region.Y1 = MIN(Py(0), Py(gport->height + 1));
-  region.X2 = MAX(Px(0), Px(gport->width + 1));
-  region.Y2 = MAX(Py(0), Py(gport->height + 1));
-  hid_expose_callback (&ghid_hid, &region, NULL);
-
-  gport->drawable = save_drawable;
-  gport->zoom = save_zoom;
-  gport->width = save_width;
-  gport->height = save_height;
-  gport->view_x0 = save_left;
-  gport->view_y0 = save_top;
-  gport->view_width = save_view_width;
-  gport->view_height = save_view_height;
-
-  return pixmap;
-}
 
 static inline int
 Vx2 (int x)
@@ -328,7 +93,7 @@ ghid_draw_grid (void)
   static int npoints = 0;
   int x1, y1, x2, y2, n, i;
   double x, y;
-  struct render_priv *priv = gport->render_priv;
+  render_priv *priv = gport->render_priv;
 
   if (!Settings.DrawGrid)
     return;
@@ -404,7 +169,7 @@ ghid_draw_bg_image (void)
   GdkInterpType interp_type;
   gint x, y, w, h, w_src, h_src;
   static gint w_scaled, h_scaled;
-  struct render_priv *priv = gport->render_priv;
+  render_priv *priv = gport->render_priv;
 
   if (!ghidgui->bg_pixbuf)
     return;
@@ -445,7 +210,7 @@ ghid_use_mask (int use_it)
   static int mask_seq_id = 0;
   static GdkDrawable *old;
   GdkColor color;
-  struct render_priv *priv = gport->render_priv;
+  render_priv *priv = gport->render_priv;
 
   if (use_it == HID_FLUSH_DRAW_Q)
     {
@@ -525,7 +290,7 @@ typedef struct
 static void
 set_special_grid_color (void)
 {
-  struct render_priv *priv = gport->render_priv;
+  render_priv *priv = gport->render_priv;
 
   if (!gport->colormap)
     return;
@@ -540,7 +305,7 @@ set_special_grid_color (void)
 void
 ghid_set_special_colors (HID_Attribute * ha)
 {
-  struct render_priv *priv = gport->render_priv;
+  render_priv *priv = gport->render_priv;
 
   if (!ha->name || !ha->value)
     return;
@@ -636,7 +401,7 @@ ghid_set_color (hidGC gc, const char *name)
 void
 ghid_set_line_cap (hidGC gc, EndCapStyle style)
 {
-  struct render_priv *priv = gport->render_priv;
+  render_priv *priv = gport->render_priv;
 
   switch (style)
     {
@@ -660,7 +425,7 @@ ghid_set_line_cap (hidGC gc, EndCapStyle style)
 void
 ghid_set_line_width (hidGC gc, int width)
 {
-  struct render_priv *priv = gport->render_priv;
+  render_priv *priv = gport->render_priv;
 
   gc->width = width;
   if (gc->gc)
@@ -694,7 +459,7 @@ ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2)
 static int
 use_gc (hidGC gc)
 {
-  struct render_priv *priv = gport->render_priv;
+  render_priv *priv = gport->render_priv;
 
   if (gc->me_pointer != &ghid_hid)
     {
@@ -728,7 +493,7 @@ void
 ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
 {
   double dx1, dy1, dx2, dy2;
-  struct render_priv *priv = gport->render_priv;
+  render_priv *priv = gport->render_priv;
 
   dx1 = Vx ((double) x1);
   dy1 = Vy ((double) y1);
@@ -749,7 +514,7 @@ ghid_draw_arc (hidGC gc, int cx, int cy,
 {
   gint vrx, vry;
   gint w, h, radius;
-  struct render_priv *priv = gport->render_priv;
+  render_priv *priv = gport->render_priv;
 
   w = gport->width * gport->zoom;
   h = gport->height * gport->zoom;
@@ -786,7 +551,7 @@ void
 ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
 {
   gint w, h, lw;
-  struct render_priv *priv = gport->render_priv;
+  render_priv *priv = gport->render_priv;
 
   lw = gc->width;
   w = gport->width * gport->zoom;
@@ -830,7 +595,7 @@ void
 ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
 {
   gint w, h, vr;
-  struct render_priv *priv = gport->render_priv;
+  render_priv *priv = gport->render_priv;
 
   w = gport->width * gport->zoom;
   h = gport->height * gport->zoom;
@@ -852,7 +617,7 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
   static GdkPoint *points = 0;
   static int npoints = 0;
   int i;
-  struct render_priv *priv = gport->render_priv;
+  render_priv *priv = gport->render_priv;
   USE_GC (gc);
 
   if (npoints < n_coords)
@@ -873,7 +638,7 @@ void
 ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
 {
   gint w, h, lw, xx, yy;
-  struct render_priv *priv = gport->render_priv;
+  render_priv *priv = gport->render_priv;
 
   lw = gc->width;
   w = gport->width * gport->zoom;
@@ -921,7 +686,7 @@ ghid_invalidate_all ()
 {
   int eleft, eright, etop, ebottom;
   BoxType region;
-  struct render_priv *priv = gport->render_priv;
+  render_priv *priv = gport->render_priv;
 
   if (!gport->pixmap)
     return;
@@ -1144,4 +909,239 @@ ghid_show_crosshair (gboolean show)
       x_prev = y_prev = -1;
       draw_markers_prev = FALSE;
     }
+}
+
+void
+ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+{
+  /* Init any GC's required */
+  port->render_priv = g_new0 (render_priv, 1);
+}
+
+GtkWidget *
+ghid_drawing_area_new (GHidPort *port)
+{
+  return gtk_drawing_area_new ();
+}
+
+gboolean
+ghid_start_drawing (GHidPort *port)
+{
+  return TRUE;
+}
+
+void
+ghid_end_drawing (GHidPort *port)
+{
+}
+
+void
+ghid_drawing_area_configure_hook (GHidPort *port)
+{
+  static int done_once = 0;
+  render_priv *priv = port->render_priv;
+
+  if (!done_once)
+    {
+      priv->bg_gc = gdk_gc_new (port->drawable);
+      gdk_gc_set_foreground (priv->bg_gc, &port->bg_color);
+
+      priv->offlimits_gc = gdk_gc_new (port->drawable);
+      gdk_gc_set_foreground (priv->offlimits_gc, &port->offlimits_color);
+      done_once = 1;
+    }
+
+  if (port->mask)
+    {
+      gdk_pixmap_unref (port->mask);
+      port->mask = gdk_pixmap_new (0, port->width, port->height, 1);
+    }
+}
+
+void
+ghid_screen_update (void)
+{
+  render_priv *priv = gport->render_priv;
+
+  ghid_show_crosshair (FALSE);
+  gdk_draw_drawable (gport->drawing_area->window, priv->bg_gc, gport->pixmap,
+		     0, 0, 0, 0, gport->width, gport->height);
+  ghid_show_crosshair (TRUE);
+}
+
+gboolean
+ghid_drawing_area_expose_cb (GtkWidget *widget,
+                             GdkEventExpose *ev,
+                             GHidPort *port)
+{
+  render_priv *priv = port->render_priv;
+
+  ghid_show_crosshair (FALSE);
+  gdk_draw_drawable (widget->window, priv->bg_gc, port->pixmap,
+                    ev->area.x, ev->area.y, ev->area.x, ev->area.y,
+                    ev->area.width, ev->area.height);
+  ghid_show_crosshair (TRUE);
+  return FALSE;
+}
+
+void
+ghid_pinout_preview_init (GhidPinoutPreview *preview)
+{
+}
+
+gboolean
+ghid_pinout_preview_expose (GtkWidget *widget,
+                            GdkEventExpose *ev)
+{
+  extern HID ghid_hid;
+  GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
+  GdkDrawable *save_drawable;
+  double save_zoom;
+  int da_w, da_h;
+  int save_left, save_top;
+  int save_width, save_height;
+  int save_view_width, save_view_height;
+  double xz, yz;
+  render_priv *priv = gport->render_priv;
+
+  save_zoom = gport->zoom;
+  save_width = gport->width;
+  save_height = gport->height;
+  save_left = gport->view_x0;
+  save_top = gport->view_y0;
+  save_view_width = gport->view_width;
+  save_view_height = gport->view_height;
+
+  /* Setup drawable and zoom factor for drawing routines
+   */
+  save_drawable = gport->drawable;
+
+  gdk_window_get_geometry (widget->window, 0, 0, &da_w, &da_h, 0);
+  xz = (double) pinout->x_max / da_w;
+  yz = (double) pinout->y_max / da_h;
+  if (xz > yz)
+    gport->zoom = xz;
+  else
+    gport->zoom = yz;
+
+  gport->drawable = widget->window;
+  gport->width = da_w;
+  gport->height = da_h;
+  gport->view_width = da_w * gport->zoom;
+  gport->view_height = da_h * gport->zoom;
+  gport->view_x0 = (pinout->x_max - gport->view_width) / 2;
+  gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
+
+  /* clear background */
+  gdk_draw_rectangle (widget->window, priv->bg_gc, TRUE, 0, 0, da_w, da_h);
+
+  /* call the drawing routine */
+  hid_expose_callback (&ghid_hid, NULL, &pinout->element);
+
+  gport->drawable = save_drawable;
+  gport->zoom = save_zoom;
+  gport->width = save_width;
+  gport->height = save_height;
+  gport->view_x0 = save_left;
+  gport->view_y0 = save_top;
+  save_top = gport->view_y0;
+  save_view_width = gport->view_width;
+  save_view_height = gport->view_height;
+
+  /* Setup drawable and zoom factor for drawing routines
+   */
+  save_drawable = gport->drawable;
+
+  gdk_window_get_geometry (widget->window, 0, 0, &da_w, &da_h, 0);
+  xz = (double) pinout->x_max / da_w;
+  yz = (double) pinout->y_max / da_h;
+  if (xz > yz)
+    gport->zoom = xz;
+  else
+    gport->zoom = yz;
+
+  gport->drawable = widget->window;
+  gport->width = da_w;
+  gport->height = da_h;
+  gport->view_width = da_w * gport->zoom;
+  gport->view_height = da_h * gport->zoom;
+  gport->view_x0 = (pinout->x_max - gport->view_width) / 2;
+  gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
+
+  /* clear background */
+  gdk_draw_rectangle (widget->window, priv->bg_gc, TRUE, 0, 0, da_w, da_h);
+
+  /* call the drawing routine */
+  hid_expose_callback (&ghid_hid, NULL, &pinout->element);
+
+  gport->drawable = save_drawable;
+  gport->zoom = save_zoom;
+  gport->width = save_width;
+  gport->height = save_height;
+  gport->view_x0 = save_left;
+  gport->view_y0 = save_top;
+  gport->view_width = save_view_width;
+  gport->view_height = save_view_height;
+
+  return FALSE;
+}
+
+GdkPixmap *
+ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int depth)
+{
+  extern HID ghid_hid;
+  GdkPixmap *pixmap;
+  GdkDrawable *save_drawable;
+  double save_zoom;
+  int save_left, save_top;
+  int save_width, save_height;
+  int save_view_width, save_view_height;
+  BoxType region;
+  render_priv *priv = gport->render_priv;
+
+  save_drawable = gport->drawable;
+  save_zoom = gport->zoom;
+  save_width = gport->width;
+  save_height = gport->height;
+  save_left = gport->view_x0;
+  save_top = gport->view_y0;
+  save_view_width = gport->view_width;
+  save_view_height = gport->view_height;
+
+  pixmap = gdk_pixmap_new (NULL, width, height, depth);
+
+  /* Setup drawable and zoom factor for drawing routines
+   */
+
+  gport->drawable = pixmap;
+  gport->zoom = zoom;
+  gport->width = width;
+  gport->height = height;
+  gport->view_width = width * gport->zoom;
+  gport->view_height = height * gport->zoom;
+  gport->view_x0 = ghid_flip_x ? PCB->MaxWidth - cx : cx;
+  gport->view_x0 -= gport->view_height / 2;
+  gport->view_y0 = ghid_flip_y ? PCB->MaxHeight - cy : cy;
+  gport->view_y0 -= gport->view_width  / 2;
+
+  /* clear background */
+  gdk_draw_rectangle (pixmap, priv->bg_gc, TRUE, 0, 0, width, height);
+
+  /* call the drawing routine */
+  region.X1 = MIN(Px(0), Px(gport->width + 1));
+  region.Y1 = MIN(Py(0), Py(gport->height + 1));
+  region.X2 = MAX(Px(0), Px(gport->width + 1));
+  region.Y2 = MAX(Py(0), Py(gport->height + 1));
+  hid_expose_callback (&ghid_hid, &region, NULL);
+
+  gport->drawable = save_drawable;
+  gport->zoom = save_zoom;
+  gport->width = save_width;
+  gport->height = save_height;
+  gport->view_x0 = save_left;
+  gport->view_y0 = save_top;
+  gport->view_width = save_view_width;
+  gport->view_height = save_view_height;
+
+  return pixmap;
 }
