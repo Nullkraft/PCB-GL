@@ -1,4 +1,4 @@
-Bottom: c10fb3055e8ab5734c387534621b986449fd6996
+Bottom: 13bb73e6d5fffb24e2af12520bbe2fb35a12eef7
 Top:    0fd7c247c5040cdd82ac0ed3c10320b7f52da119
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-27 15:27:57 +0100
@@ -655,7 +655,7 @@ index aa1c9cc..68090b7 100644
    ghid_config_files_read (argc, argv);
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 525dd93..054f304 100644
+index 5b05e36..054f304 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -38,18 +38,6 @@
@@ -692,15 +692,6 @@ index 525dd93..054f304 100644
  
    GdkColor bg_color, offlimits_color, grid_color;
  
-@@ -494,7 +478,7 @@ void ghid_logv (const char *fmt, va_list args);
- /* gui-pinout-window.c */
- void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
- 
--/* gtkhid-gdk.c OR gtkhid-gl.c */
-+/* gtkhid-gdk.c AND gtkhid-gl.c */
- hidGC ghid_make_gc (void);
- void ghid_destroy_gc (hidGC);
- void ghid_use_mask (int use_it);
 @@ -514,6 +498,12 @@ void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
  void ghid_invalidate_lr ();
  void ghid_invalidate_all ();
