@@ -1,0 +1,21 @@
+Bottom: 562899b584309a00068e25d7093b69b9e37dbca6
+Top:    562899b584309a00068e25d7093b69b9e37dbca6
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-27 11:55:48 +0100
+
+Draw pin / pad names first, so they don't get masked by the pad
+
+Since we use stencil masking to ensure we don't redraw an area
+multiple times, confusingly, we need to draw the text first to
+ensure it isn't occluded by the pad its-self.
+
+HACK:
+
+We probably draw the names multiple times - as we still use the
+common draw.c code which assumes it can draw labels on top of
+the pads.
+
+
+---
+
+
