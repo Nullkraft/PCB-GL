@@ -1,5 +1,5 @@
-Bottom: ec9178e1f83e1e6cab33a20ed2f6efb3fbb87b30
-Top:    4dd5c9b787b411fa1a8916950b5f332a9777ff96
+Bottom: 5e995325f36c62694bb28e2a3e17eb906a83047c
+Top:    56f111a2eb0510b0e47c288d8cd0008839b2267b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:49:23 +0100
 
@@ -21,7 +21,7 @@ index f66cca7..bb52a45 100644
  	hid/gtk/gui-utils.c
  libgtk_a_SOURCES = ${LIBGTK_SRCS} hid/gtk/gtk_lists.h
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 957e2aa..ea2c783 100644
+index 5d66221..68dd6fa 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -21,15 +21,258 @@ RCSID ("$Id$");
@@ -596,7 +596,7 @@ index 957e2aa..ea2c783 100644
  
    ghid_draw_bg_image();
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index df90d8c..de67bc3 100644
+index 0a8461e..851f847 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,17 @@
@@ -1559,7 +1559,7 @@ index 197e886..68090b7 100644
    ghid_config_files_read (argc, argv);
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 680d74a..2b498b8 100644
+index 00f5f73..3c99f1d 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -36,18 +36,7 @@
@@ -1632,4 +1632,4 @@ index 680d74a..2b498b8 100644
 +GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int depth);
  hidGC ghid_make_gc (void);
  void ghid_destroy_gc (hidGC);
- void ghid_draw_grid (void);
+ void ghid_draw_bg_image (void);
