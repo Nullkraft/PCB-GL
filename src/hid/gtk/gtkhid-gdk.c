@@ -153,7 +153,7 @@ ghid_draw_grid (void)
 }
 
 /* ------------------------------------------------------------ */
-void
+static void
 ghid_draw_bg_image (void)
 {
   static GdkPixbuf *pixbuf;
