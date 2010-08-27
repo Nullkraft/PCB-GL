@@ -1,5 +1,5 @@
-Bottom: 2a1773ccacbc0702bd740ffd9cead31ba4db9c99
-Top:    9df4867237b71b7d2def4391459ff6a9fdc3d6f5
+Bottom: 90d5421c003917df441346d28a0d401411fd9a4a
+Top:    b225b066555f777830bb4d7113e774fb9a5f6f93
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:12 +0100
 
@@ -181,7 +181,7 @@ index c0e23a3..077c575 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d9e2d62..458097f 100644
+index b743cb9..92d1add 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -207,7 +207,7 @@ index d9e2d62..458097f 100644
  
  /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
  */
-@@ -71,6 +79,47 @@ typedef struct hid_gc_struct
+@@ -72,6 +80,47 @@ typedef struct hid_gc_struct
  hid_gc_struct;
  
  
@@ -255,7 +255,7 @@ index d9e2d62..458097f 100644
  int
  ghid_set_layer (const char *name, int group, int empty)
  {
-@@ -78,48 +127,30 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -80,48 +129,30 @@ ghid_set_layer (const char *name, int group, int empty)
    int idx = (group >= 0 && group < max_layer) ?
  	      PCB->LayerGroups.Entries[group][0] : group;
  
@@ -310,14 +310,14 @@ index d9e2d62..458097f 100644
 -
    if (idx >= 0 && idx < max_layer + 2)
      {
-       gport->trans_lines = TRUE;
+       priv->trans_lines = true;
        return PCB->Data->Layer[idx].On;
      }
 +
    if (idx < 0)
      {
        switch (SL_TYPE (idx))
-@@ -418,10 +449,6 @@ typedef struct
+@@ -420,10 +451,6 @@ typedef struct
    double blue;
  } ColorCache;
  
@@ -328,7 +328,7 @@ index d9e2d62..458097f 100644
  void
  ghid_set_color (hidGC gc, const char *name)
  {
-@@ -536,7 +563,7 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -539,7 +566,7 @@ ghid_set_color (hidGC gc, const char *name)
    glColor4d (r, g, b, a);
  }
  
@@ -337,7 +337,7 @@ index d9e2d62..458097f 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -975,6 +1002,635 @@ ghid_screen_update (void)
+@@ -978,6 +1005,635 @@ ghid_screen_update (void)
  {
  }
  
@@ -973,7 +973,7 @@ index d9e2d62..458097f 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -983,7 +1639,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -986,7 +1642,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  {
    BoxType region;
    int eleft, eright, etop, ebottom;
@@ -981,7 +981,7 @@ index d9e2d62..458097f 100644
    int min_x, min_y;
    int max_x, max_y;
    int new_x, new_y;
-@@ -1042,8 +1697,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1045,8 +1700,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -992,7 +992,7 @@ index d9e2d62..458097f 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1135,7 +1790,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1138,7 +1793,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -gport->view_x0,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
@@ -1002,7 +1002,7 @@ index d9e2d62..458097f 100644
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
-@@ -1189,7 +1845,6 @@ gboolean
+@@ -1192,7 +1848,6 @@ gboolean
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
  {
@@ -1010,7 +1010,7 @@ index d9e2d62..458097f 100644
    GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
    GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
    GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
-@@ -1294,7 +1949,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1297,7 +1952,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
  GdkPixmap *
  ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int depth)
  {

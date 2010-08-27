@@ -1,5 +1,5 @@
-Bottom: 9df4867237b71b7d2def4391459ff6a9fdc3d6f5
-Top:    841234cbce66e899c99a38689251b93d80e92c18
+Bottom: b225b066555f777830bb4d7113e774fb9a5f6f93
+Top:    6e39e8ae748154a9dd1400c61097d5156d63ac41
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:13 +0100
 
@@ -175,7 +175,7 @@ index d6bd03c..3af647e 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index f0d9fbb..94aad0f 100644
+index 9deb443..e7a12c4 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -148,6 +148,8 @@ typedef struct
@@ -195,7 +195,7 @@ index f0d9fbb..94aad0f 100644
    GdkPixmap *pixmap, *mask;
    GdkDrawable *drawable;	/* Current drawable for drawing routines */
    gint width, height;
-@@ -313,6 +316,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -311,6 +314,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
  
