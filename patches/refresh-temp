@@ -1,0 +1,22 @@
+Bottom: f4589f3bf0127413b871c5fcf706e27cdeef9957
+Top:    459c8065548f5e58895baaf024ecabb5e7675615
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-27 15:03:05 +0100
+
+Refresh of drop-in-pcb-gl-code-various-mess
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 0a8461e..54b4ba0 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -144,7 +144,7 @@ ghid_draw_grid ()
+ }
+ 
+ #if 0
+-void
++static void
+ ghid_draw_bg_image (void)
+ {
+   static GdkPixbuf *pixbuf = NULL;
