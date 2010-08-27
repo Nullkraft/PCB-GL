@@ -840,6 +840,11 @@ ghid_drawing_area_configure_hook (GHidPort *port)
 {
 }
 
+void
+ghid_screen_update (void)
+{
+}
+
 #define Z_NEAR 3.0
 gboolean
 ghid_drawing_area_expose_cb (GtkWidget *widget,
