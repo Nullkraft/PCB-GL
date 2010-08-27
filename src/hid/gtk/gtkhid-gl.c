@@ -770,35 +770,6 @@ ghid_show_crosshair (gboolean show)
   glDisable (GL_COLOR_LOGIC_OP);
 }
 
-gboolean
-ghid_start_drawing (GHidPort *port)
-{
-  GtkWidget *widget = port->drawing_area;
-  GdkGLContext *pGlContext = gtk_widget_get_gl_context (widget);
-  GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
-
-  /* make GL-context "current" */
-  if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext))
-    return FALSE;
-
-  return TRUE;
-}
-
-void
-ghid_end_drawing (GHidPort *port)
-{
-  GtkWidget *widget = port->drawing_area;
-  GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
-
-  if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
-    gdk_gl_drawable_swap_buffers (pGlDrawable);
-  else
-    glFlush ();
-
-  /* end drawing to current GL-context */
-  gdk_gl_drawable_gl_end (pGlDrawable);
-}
-
 void
 ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 {
@@ -833,6 +804,18 @@ ghid_drawing_area_new (GHidPort *port)
                                 TRUE,
                                 GDK_GL_RGBA_TYPE);
   return drawing_area;
+}
+
+void
+ghid_pinout_preview_init (GhidPinoutPreview *preview)
+{
+  render_priv *priv = gport->render_priv;
+
+  gtk_widget_set_gl_capability (GTK_WIDGET (preview),
+                                priv->glconfig,
+                                NULL,
+                                TRUE,
+                                GDK_GL_RGBA_TYPE);
 }
 
 gboolean
@@ -971,18 +954,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   ghid_end_drawing (port);
 
   return FALSE;
-}
-
-void
-ghid_pinout_preview_init (GhidPinoutPreview *preview)
-{
-  render_priv *priv = gport->render_priv;
-
-  gtk_widget_set_gl_capability (GTK_WIDGET (preview),
-                                priv->glconfig,
-                                NULL,
-                                TRUE,
-                                GDK_GL_RGBA_TYPE);
 }
 
 gboolean
