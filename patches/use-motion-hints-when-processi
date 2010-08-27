@@ -1,5 +1,5 @@
-Bottom: abc63d478c44d37b4d192f5981937b56824cc5cf
-Top:    08100ebab4e3cb7868902f31e46442bdcd419692
+Bottom: 0f8f351cc0a3c05d445b1c287078a415df4e750f
+Top:    27bf1d2e80be078a3ff55d42d36fab71e18c3d1b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 21:13:12 +0100
 
@@ -9,10 +9,10 @@ Use motion hints when processing pointer motion over the drawing area
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9cdd78b..4076e96 100644
+index d0d86e4..adcde27 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -738,7 +738,7 @@ ghid_show_crosshair (gboolean show)
+@@ -737,7 +737,7 @@ ghid_show_crosshair (gboolean show)
  
    glBegin (GL_LINES);
  
@@ -21,7 +21,7 @@ index 9cdd78b..4076e96 100644
    if (x_prev >= 0)
      draw_crosshair (x_prev, y_prev);
  #endif
-@@ -751,7 +751,7 @@ ghid_show_crosshair (gboolean show)
+@@ -750,7 +750,7 @@ ghid_show_crosshair (gboolean show)
  
    glBegin (GL_QUADS);
  
