@@ -1,5 +1,5 @@
 Bottom: c10fb3055e8ab5734c387534621b986449fd6996
-Top:    8747e136893cbae47a628f7ac36c798d5e24a15e
+Top:    0fd7c247c5040cdd82ac0ed3c10320b7f52da119
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-27 15:27:57 +0100
 
@@ -8,7 +8,7 @@ Try to make GDK and GL versions coexist a little more!
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 50ac011..d4e1746 100644
+index 50ac011..36f4f39 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -21,13 +21,21 @@ RCSID ("$Id$");
@@ -345,7 +345,7 @@ index 50ac011..d4e1746 100644
  		      eleft, etop, eright - eleft + 1, ebottom - etop + 1);
  
    ghid_draw_bg_image();
-@@ -887,10 +912,59 @@ ghid_show_crosshair (gboolean show)
+@@ -887,10 +912,64 @@ ghid_show_crosshair (gboolean show)
  }
  
  void
@@ -361,14 +361,8 @@ index 50ac011..d4e1746 100644
 +  return gtk_drawing_area_new ();
 +}
 +
-+gboolean
-+ghid_start_drawing (GHidPort *port)
-+{
-+  return TRUE;
-+}
-+
 +void
-+ghid_end_drawing (GHidPort *port)
++ghid_pinout_preview_init (GhidPinoutPreview *preview)
 +{
 +}
 +
@@ -395,6 +389,17 @@ index 50ac011..d4e1746 100644
 +    }
 +}
 +
++gboolean
++ghid_start_drawing (GHidPort *port)
++{
++  return TRUE;
++}
++
++void
++ghid_end_drawing (GHidPort *port)
++{
++}
++
 +void
  ghid_screen_update (void)
  {
@@ -406,7 +411,7 @@ index 50ac011..d4e1746 100644
  		     0, 0, 0, 0, gport->width, gport->height);
    ghid_show_crosshair (TRUE);
  }
-@@ -900,14 +974,21 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -900,8 +979,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               GdkEventExpose *ev,
                               GHidPort *port)
  {
@@ -418,17 +423,6 @@ index 50ac011..d4e1746 100644
                      ev->area.x, ev->area.y, ev->area.x, ev->area.y,
                      ev->area.width, ev->area.height);
    ghid_show_crosshair (TRUE);
-   return FALSE;
- }
- 
-+void
-+ghid_pinout_preview_init (GhidPinoutPreview *preview)
-+{
-+}
-+
- gboolean
- ghid_pinout_preview_expose (GtkWidget *widget,
-                             GdkEventExpose *ev)
 @@ -921,6 +1002,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    int save_width, save_height;
    int save_view_width, save_view_height;
@@ -473,7 +467,7 @@ index 50ac011..d4e1746 100644
    /* call the drawing routine */
    region.X1 = MIN(Px(0), Px(gport->width + 1));
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e4b909b..c6ab190 100644
+index e4b909b..02c592b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -41,6 +41,10 @@ static hidGC current_gc = NULL;
@@ -487,7 +481,7 @@ index e4b909b..c6ab190 100644
  
  typedef struct hid_gc_struct
  {
-@@ -766,6 +770,54 @@ ghid_show_crosshair (gboolean show)
+@@ -766,6 +770,59 @@ ghid_show_crosshair (gboolean show)
    glDisable (GL_COLOR_LOGIC_OP);
  }
  
@@ -539,21 +533,14 @@ index e4b909b..c6ab190 100644
 +                                GDK_GL_RGBA_TYPE);
 +}
 +
- gboolean
- ghid_start_drawing (GHidPort *port)
- {
-@@ -796,6 +848,11 @@ ghid_end_drawing (GHidPort *port)
- }
- 
- void
++void
 +ghid_drawing_area_configure_hook (GHidPort *port)
 +{
 +}
 +
-+void
- ghid_screen_update (void)
+ gboolean
+ ghid_start_drawing (GHidPort *port)
  {
- }
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
 index 15d64b7..0952462 100644
 --- a/src/hid/gtk/gui-output-events.c
@@ -668,7 +655,7 @@ index aa1c9cc..68090b7 100644
    ghid_config_files_read (argc, argv);
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 525dd93..2487b2e 100644
+index 525dd93..054f304 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -38,18 +38,6 @@
@@ -705,19 +692,25 @@ index 525dd93..2487b2e 100644
  
    GdkColor bg_color, offlimits_color, grid_color;
  
-@@ -514,9 +498,15 @@ void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
+@@ -494,7 +478,7 @@ void ghid_logv (const char *fmt, va_list args);
+ /* gui-pinout-window.c */
+ void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
+ 
+-/* gtkhid-gdk.c OR gtkhid-gl.c */
++/* gtkhid-gdk.c AND gtkhid-gl.c */
+ hidGC ghid_make_gc (void);
+ void ghid_destroy_gc (hidGC);
+ void ghid_use_mask (int use_it);
+@@ -514,6 +498,12 @@ void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
  void ghid_invalidate_lr ();
  void ghid_invalidate_all ();
  void ghid_show_crosshair (gboolean show);
 +void ghid_init_renderer (int *, char ***, GHidPort *);
 +GtkWidget *ghid_drawing_area_new (GHidPort *port);
++void ghid_pinout_preview_init (GhidPinoutPreview *preview);
++void ghid_drawing_area_configure_hook (GHidPort *port);
 +gboolean ghid_start_drawing (GHidPort *port);
 +void ghid_end_drawing (GHidPort *port);
-+void ghid_drawing_area_configure_hook (GHidPort *port);
  void ghid_screen_update (void);
  gboolean ghid_drawing_area_expose_cb (GtkWidget *, GdkEventExpose *,
                                        GHidPort *);
-+void ghid_pinout_preview_init (GhidPinoutPreview *preview);
- gboolean ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev);
- GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
-                                int width, int height, int depth);
