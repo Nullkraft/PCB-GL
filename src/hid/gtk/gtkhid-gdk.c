@@ -887,6 +887,28 @@ ghid_show_crosshair (gboolean show)
 }
 
 void
+ghid_drawing_area_configure_hook (GHidPort *port)
+{
+  static int done_once = 0;
+
+  if (!done_once)
+    {
+      port->bg_gc = gdk_gc_new (port->drawable);
+      gdk_gc_set_foreground (port->bg_gc, &port->bg_color);
+
+      port->offlimits_gc = gdk_gc_new (port->drawable);
+      gdk_gc_set_foreground (port->offlimits_gc, &port->offlimits_color);
+      done_once = 1;
+    }
+
+  if (port->mask)
+    {
+      gdk_pixmap_unref (port->mask);
+      port->mask = gdk_pixmap_new (0, port->width, port->height, 1);
+    }
+}
+
+void
 ghid_screen_update (void)
 {
   ghid_show_crosshair (FALSE);
