@@ -1,5 +1,5 @@
-Bottom: 4bea3041c3bf764c5e7acd2d779a5fb001fcbc82
-Top:    21a3b211006e153f14f7ebe59059c5f3dfd5fafb
+Bottom: 0f400143f9e0eff2e898f4a255f394cbb7df2cb2
+Top:    daece084adeaa932d80188b07fd18eb5c1e4a30d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:08 +0100
 
@@ -414,7 +414,7 @@ index fa908ce..8a46c3c 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 1f2489b..899a525 100644
+index 3afc984..bdfbbce 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,6 +21,7 @@
@@ -425,84 +425,7 @@ index 1f2489b..899a525 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -134,6 +135,17 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
- 
-   ghid_start_drawing (port);
- 
-+  hidgl_init ();
-+
-+  /* If we don't have any stencil bits available,
-+     we can't use the hidgl polygon drawing routine */
-+  /* TODO: We could use the GLU tessellator though */
-+  if (hidgl_stencil_bits() == 0)
-+    {
-+      ghid_hid.fill_pcb_polygon = common_fill_pcb_polygon;
-+      ghid_hid.poly_dicer = 1;
-+    }
-+
-   ghid_show_crosshair (FALSE);
- 
-   glEnable (GL_BLEND);
-@@ -153,12 +165,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-   glLoadIdentity ();
-   glTranslatef (0.0f, 0.0f, -Z_NEAR);
- 
-+  glEnable (GL_STENCIL_TEST);
-   glClearColor (gport->offlimits_color.red / 65535.,
-                 gport->offlimits_color.green / 65535.,
-                 gport->offlimits_color.blue / 65535.,
-                 1.);
- 
-+  glStencilMask (~0);
-+  glClearStencil (0);
-   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-+  hidgl_reset_stencil_usage ();
-+
-+  /* Disable the stencil test until we need it - otherwise it gets dirty */
-+  glDisable (GL_STENCIL_TEST);
-+  glStencilFunc (GL_ALWAYS, 0, 0);
- 
-   region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-   region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-@@ -184,6 +204,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-   hidgl_init_triangle_array (&buffer);
-   ghid_invalidate_current_gc ();
- 
-+  /* Setup stenciling */
-+  /* Drawing operations set the stencil buffer to '1' */
-+  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
-+  /* Drawing operations as masked to areas where the stencil buffer is '0' */
-+//  glStencilFunc (GL_GREATER, 1, 1);             // Draw only where stencil buffer is 0
-+
-   glPushMatrix ();
-   glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
-             (ghid_flip_y ? -1. : 1.) / gport->zoom,
-@@ -315,9 +341,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
-                 gport->bg_color.green / 65535.,
-                 gport->bg_color.blue / 65535.,
-                 1.);
--
-+  glStencilMask (~0);
-+  glClearStencil (0);
-   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
- 
-+  hidgl_reset_stencil_usage ();
-+
-   /* call the drawing routine */
-   hidgl_init_triangle_array (&buffer);
-   ghid_invalidate_current_gc ();
-@@ -424,8 +453,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
-                 gport->bg_color.green / 65535.,
-                 gport->bg_color.blue / 65535.,
-                 1.);
-+  glStencilMask (~0);
-   glClearStencil (0);
-   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-+  hidgl_reset_stencil_usage ();
- 
-   /* call the drawing routine */
-   hidgl_init_triangle_array (&buffer);
-@@ -652,6 +683,7 @@ ghid_draw_bg_image (void)
+@@ -230,6 +231,7 @@ ghid_draw_bg_image (void)
  void
  ghid_use_mask (int use_it)
  {
@@ -510,7 +433,7 @@ index 1f2489b..899a525 100644
  
    /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
    if (use_it == HID_LIVE_DRAWING ||
-@@ -663,6 +695,7 @@ ghid_use_mask (int use_it)
+@@ -241,6 +243,7 @@ ghid_use_mask (int use_it)
    if (use_it == cur_mask)
      return;
  
@@ -518,7 +441,7 @@ index 1f2489b..899a525 100644
    hidgl_flush_triangles (&buffer);
  
    switch (use_it)
-@@ -671,25 +704,28 @@ ghid_use_mask (int use_it)
+@@ -249,25 +252,28 @@ ghid_use_mask (int use_it)
        /* Write '1' to the stencil buffer where the solder-mask is drawn. */
        glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
        glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
@@ -550,6 +473,83 @@ index 1f2489b..899a525 100644
        glDisable (GL_STENCIL_TEST);                // Disable Stencil test
        break;
      }
+@@ -865,6 +871,17 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ 
+   ghid_start_drawing (port);
+ 
++  hidgl_init ();
++
++  /* If we don't have any stencil bits available,
++     we can't use the hidgl polygon drawing routine */
++  /* TODO: We could use the GLU tessellator though */
++  if (hidgl_stencil_bits() == 0)
++    {
++      ghid_hid.fill_pcb_polygon = common_fill_pcb_polygon;
++      ghid_hid.poly_dicer = 1;
++    }
++
+   ghid_show_crosshair (FALSE);
+ 
+   glEnable (GL_BLEND);
+@@ -884,12 +901,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   glLoadIdentity ();
+   glTranslatef (0.0f, 0.0f, -Z_NEAR);
+ 
++  glEnable (GL_STENCIL_TEST);
+   glClearColor (gport->offlimits_color.red / 65535.,
+                 gport->offlimits_color.green / 65535.,
+                 gport->offlimits_color.blue / 65535.,
+                 1.);
+ 
++  glStencilMask (~0);
++  glClearStencil (0);
+   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
++  hidgl_reset_stencil_usage ();
++
++  /* Disable the stencil test until we need it - otherwise it gets dirty */
++  glDisable (GL_STENCIL_TEST);
++  glStencilFunc (GL_ALWAYS, 0, 0);
+ 
+   region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
+   region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
+@@ -915,6 +940,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   hidgl_init_triangle_array (&buffer);
+   ghid_invalidate_current_gc ();
+ 
++  /* Setup stenciling */
++  /* Drawing operations set the stencil buffer to '1' */
++  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
++  /* Drawing operations as masked to areas where the stencil buffer is '0' */
++//  glStencilFunc (GL_GREATER, 1, 1);             // Draw only where stencil buffer is 0
++
+   glPushMatrix ();
+   glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
+             (ghid_flip_y ? -1. : 1.) / gport->zoom,
+@@ -1046,9 +1077,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+                 gport->bg_color.green / 65535.,
+                 gport->bg_color.blue / 65535.,
+                 1.);
+-
++  glStencilMask (~0);
++  glClearStencil (0);
+   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+ 
++  hidgl_reset_stencil_usage ();
++
+   /* call the drawing routine */
+   hidgl_init_triangle_array (&buffer);
+   ghid_invalidate_current_gc ();
+@@ -1155,8 +1189,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+                 gport->bg_color.green / 65535.,
+                 gport->bg_color.blue / 65535.,
+                 1.);
++  glStencilMask (~0);
+   glClearStencil (0);
+   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
++  hidgl_reset_stencil_usage ();
+ 
+   /* call the drawing routine */
+   hidgl_init_triangle_array (&buffer);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
 index 78df7b5..4f63d21 100644
 --- a/src/hid/gtk/gtkhid-main.c
