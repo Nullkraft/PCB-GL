@@ -1,5 +1,5 @@
 Bottom: c10fb3055e8ab5734c387534621b986449fd6996
-Top:    a9879431ee1e9ca4f7d757df61d01fe3f00be55e
+Top:    8747e136893cbae47a628f7ac36c798d5e24a15e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-27 15:27:57 +0100
 
@@ -473,7 +473,7 @@ index 50ac011..d4e1746 100644
    /* call the drawing routine */
    region.X1 = MIN(Px(0), Px(gport->width + 1));
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e4b909b..70cfa35 100644
+index e4b909b..c6ab190 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -41,6 +41,10 @@ static hidGC current_gc = NULL;
@@ -487,10 +487,11 @@ index e4b909b..70cfa35 100644
  
  typedef struct hid_gc_struct
  {
-@@ -796,6 +800,76 @@ ghid_end_drawing (GHidPort *port)
+@@ -766,6 +770,54 @@ ghid_show_crosshair (gboolean show)
+   glDisable (GL_COLOR_LOGIC_OP);
  }
  
- void
++void
 +ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 +{
 +  render_priv *priv;
@@ -526,48 +527,6 @@ index e4b909b..70cfa35 100644
 +  return drawing_area;
 +}
 +
-+gboolean
-+ghid_start_drawing (GHidPort *port)
-+{
-+  GtkWidget *widget = port->drawing_area;
-+  GdkGLContext *pGlContext = gtk_widget_get_gl_context (widget);
-+  GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
-+
-+  /* make GL-context "current" */
-+  if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext))
-+    return FALSE;
-+
-+  return TRUE;
-+}
-+
-+void
-+ghid_end_drawing (GHidPort *port)
-+{
-+  GtkWidget *widget = port->drawing_area;
-+  GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
-+
-+  if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
-+    gdk_gl_drawable_swap_buffers (pGlDrawable);
-+  else
-+    glFlush ();
-+
-+  /* end drawing to current GL-context */
-+  gdk_gl_drawable_gl_end (pGlDrawable);
-+}
-+
-+void
-+ghid_drawing_area_configure_hook (GHidPort *port)
-+{
-+}
-+
-+void
- ghid_screen_update (void)
- {
- }
-@@ -899,6 +973,18 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-   return FALSE;
- }
- 
 +void
 +ghid_pinout_preview_init (GhidPinoutPreview *preview)
 +{
@@ -581,8 +540,20 @@ index e4b909b..70cfa35 100644
 +}
 +
  gboolean
- ghid_pinout_preview_expose (GtkWidget *widget,
-                             GdkEventExpose *ev)
+ ghid_start_drawing (GHidPort *port)
+ {
+@@ -796,6 +848,11 @@ ghid_end_drawing (GHidPort *port)
+ }
+ 
+ void
++ghid_drawing_area_configure_hook (GHidPort *port)
++{
++}
++
++void
+ ghid_screen_update (void)
+ {
+ }
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
 index 15d64b7..0952462 100644
 --- a/src/hid/gtk/gui-output-events.c
