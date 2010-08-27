@@ -1,4 +1,4 @@
-Bottom: cbd81b2790ffe2326d9326c63e5a272c3f172ba1
+Bottom: 4ba810928c534b97666dff271e7fb3c3e7fa98c4
 Top:    1de0a2ae7c91d424867717712aa0f4a58f99da71
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:49:23 +0100
@@ -2072,7 +2072,7 @@ index c75a0d3..1a1c8f4 100644
    gobject_class->set_property = ghid_pinout_preview_set_property;
    gobject_class->get_property = ghid_pinout_preview_get_property;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index f783ecc..04336cc 100644
+index 9641a25..04336cc 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2297,6 +2297,11 @@ ghid_build_pcb_top_window (void)
@@ -2087,15 +2087,6 @@ index f783ecc..04336cc 100644
  
    gtk_widget_add_events (gport->drawing_area, GDK_EXPOSURE_MASK
  			 | GDK_LEAVE_NOTIFY_MASK | GDK_ENTER_NOTIFY_MASK
-@@ -2677,6 +2682,8 @@ ghid_parse_arguments (int *argc, char ***argv)
-   gport->zoom = 300.0;
-   pixel_slop = 300;
- 
-+  ghid_init_renderer (argc, argv, gport);
-+
-   ghid_config_files_read (argc, argv);
- 
-   Settings.AutoPlace = 0;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
 index c4d71b4..cff82b4 100644
 --- a/src/hid/gtk/gui.h
