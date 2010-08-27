@@ -1,5 +1,5 @@
-Bottom: dbec8d96504b666b2670f20593d4cde2de86395b
-Top:    a08ef8587af8873c2a56f7b0df289477c2766364
+Bottom: baddd59acf7707c2cdb65fb10bc091540d43ea5e
+Top:    8676488303af6a75958bd044a8a0c043cfd34578
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-26 03:54:51 +0100
 
@@ -9,7 +9,7 @@ Debug GL calls out of context
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 0826a9a..794caef 100644
+index 719a948..ac22b7a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -45,6 +45,7 @@ static hidGC current_gc = NULL;
