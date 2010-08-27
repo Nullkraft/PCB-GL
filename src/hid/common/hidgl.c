@@ -635,10 +635,11 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
 
   global_scale = scale;
 
-  if (poly->Clipped == NULL) {
-    fprintf (stderr, "hidgl_fill_pcb_polygon: poly->Clipped == NULL\n");
-    return;
-  }
+  if (poly->Clipped == NULL)
+    {
+      fprintf (stderr, "hidgl_fill_pcb_polygon: poly->Clipped == NULL\n");
+      return;
+    }
 
   /* TODO: Just draw our triangles, no need to flush the buffer */
   hidgl_flush_triangles (&buffer);
