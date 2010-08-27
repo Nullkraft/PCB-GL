@@ -911,6 +911,7 @@ ghid_show_crosshair (gboolean show)
     }
 }
 
+void
 ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 {
   /* Init any GC's required */
