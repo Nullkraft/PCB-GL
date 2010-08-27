@@ -1,5 +1,5 @@
 Bottom: 4b50e20ae9a7dd88ece7539357ba215fd6f47f1f
-Top:    15d2a6f069e8ff3cba94b4a64915ae07423d98f4
+Top:    d5dec81480b27d0164631d8f1a77b5882bdbe69d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:49:22 +0100
 
@@ -9,7 +9,7 @@ hid/gtk: Move more gdk specific drawing routines to gtkhid-gdk.c
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 461b779..5d66221 100644
+index 461b779..eb94ed8 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -21,7 +21,6 @@ RCSID ("$Id$");
@@ -29,6 +29,15 @@ index 461b779..5d66221 100644
  ghid_draw_grid (void)
  {
    static GdkPoint *points = 0;
+@@ -154,7 +153,7 @@ ghid_draw_grid (void)
+ }
+ 
+ /* ------------------------------------------------------------ */
+-void
++static void
+ ghid_draw_bg_image (void)
+ {
+   static GdkPixbuf *pixbuf;
 @@ -651,3 +650,238 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
    gdk_draw_rectangle (gport->drawable, gport->u_gc, TRUE,
  		      x1, y1, x2 - x1 + 1, y2 - y1 + 1);
