@@ -1,0 +1,43 @@
+Bottom: c54d9484857bc6f799302c81d57022493363ba02
+Top:    3a18ce023807b326824a02c018bd3a27d6bc53ce
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-27 16:00:08 +0100
+
+Refresh of create-a-private-structure-for
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 8814c68..b7346de 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -547,13 +547,14 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+ 	gdk_color_white (gport->colormap, &gport->offlimits_color);
+       gdk_gc_set_foreground (gport->offlimits_gc, &gport->offlimits_color);
+       first_time_done = TRUE;
++      ghid_drawing_area_configure_hook (out);
+       PCBChanged (0, NULL, 0, 0);
+     }
+-  if (gport->mask)
++  else
+     {
+-      gdk_pixmap_unref (gport->mask);
+-      gport->mask = gdk_pixmap_new (0, gport->width, gport->height, 1);
++      ghid_drawing_area_configure_hook (out);
+     }
++
+   ghid_port_ranges_scale (FALSE);
+   ghid_invalidate_all ();
+   RestoreCrosshair (TRUE);
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index d19f37f..c4d71b4 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -497,6 +497,7 @@ void ghid_invalidate_lr ();
+ void ghid_invalidate_all ();
+ void ghid_show_crosshair (gboolean show);
+ void ghid_init_renderer (int *, char ***, GHidPort *);
++void ghid_drawing_area_configure_hook (GHidPort *port);
+ void ghid_screen_update (void);
+ gboolean ghid_drawing_area_expose_cb (GtkWidget *, GdkEventExpose *,
+                                       GHidPort *);
