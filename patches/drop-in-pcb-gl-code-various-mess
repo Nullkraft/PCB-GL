@@ -1,5 +1,5 @@
 Bottom: 31f28abfda458d0c7a97fe7395a7024a23a8fe24
-Top:    999ac345e1234c515d6533a24097f073a5a42524
+Top:    16dbeff1db2758661d8132a4ffedb9518d02627f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:49:23 +0100
 
@@ -787,10 +787,10 @@ index 28b6379..87e7dd0 100644
  {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..eca9e81
+index 0000000..283450a
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -0,0 +1,1201 @@
+@@ -0,0 +1,1200 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -855,28 +855,27 @@ index 0000000..eca9e81
 +int
 +ghid_set_layer (const char *name, int group, int empty)
 +{
-+  int idx = (group >= 0
-+	     && group <
-+	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
++  int idx = (group >= 0 && group < max_layer) ?
++	      PCB->LayerGroups.Entries[group][0] : group;
 +
 +  if (idx >= 0 && idx < max_layer + 2)
 +    {
 +      gport->trans_lines = TRUE;
-+      return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
++      return PCB->Data->Layer[idx].On;
 +    }
 +  if (idx < 0)
 +    {
 +      switch (SL_TYPE (idx))
 +	{
 +	case SL_INVISIBLE:
-+	  return /* pinout ? 0 : */ PCB->InvisibleObjectsOn;
++	  return PCB->InvisibleObjectsOn;
 +	case SL_MASK:
-+	  if (SL_MYSIDE (idx) /*&& !pinout */ )
++	  if (SL_MYSIDE (idx))
 +	    return TEST_FLAG (SHOWMASKFLAG, PCB);
 +	  return 0;
 +	case SL_SILK:
 +	  gport->trans_lines = FALSE;
-+	  if (SL_MYSIDE (idx) /*|| pinout */ )
++	  if (SL_MYSIDE (idx))
 +	    return PCB->ElementOn;
 +	  return 0;
 +	case SL_ASSY:
