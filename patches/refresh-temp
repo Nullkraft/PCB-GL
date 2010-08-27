@@ -1,0 +1,21 @@
+Bottom: ba18472abe517ff539297ca7f7438c67b37b714c
+Top:    15d2a6f069e8ff3cba94b4a64915ae07423d98f4
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-27 12:19:46 +0100
+
+Refresh of move-more-gdk-specific-drawing
+
+---
+
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index e8e01da..4ebaea0 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -490,7 +490,6 @@ GdkPixmap *ghid_render_pixmap (int cx,
+ /* gtkhid-gdk.c */
+ hidGC ghid_make_gc (void);
+ void ghid_destroy_gc (hidGC);
+-void ghid_draw_bg_image (void);
+ void ghid_use_mask (int use_it);
+ void ghid_set_color (hidGC gc, const char *name);
+ void ghid_set_line_cap (hidGC gc, EndCapStyle style);
