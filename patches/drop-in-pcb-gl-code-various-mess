@@ -1,5 +1,5 @@
 Bottom: e4f744502d141513375ab1604138821c6e30e3a9
-Top:    c10fb3055e8ab5734c387534621b986449fd6996
+Top:    13bb73e6d5fffb24e2af12520bbe2fb35a12eef7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:49:23 +0100
 
@@ -2114,7 +2114,7 @@ index f783ecc..aa1c9cc 100644
  
    Settings.AutoPlace = 0;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 49e2aef..525dd93 100644
+index 49e2aef..5b05e36 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -38,6 +38,18 @@
@@ -2156,7 +2156,7 @@ index 49e2aef..525dd93 100644
  void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
  
 -/* gtkhid-gdk.c */
-+/* gtkhid-gdk.c OR gtkhid-gl.c */
++/* gtkhid-gdk.c AND gtkhid-gl.c */
  hidGC ghid_make_gc (void);
  void ghid_destroy_gc (hidGC);
  void ghid_use_mask (int use_it);
