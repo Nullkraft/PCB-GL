@@ -61,7 +61,7 @@ ghid_make_gc (void)
   return rv;
 }
 
-void
+static void
 ghid_draw_grid ()
 {
   static GLfloat *points = 0;
