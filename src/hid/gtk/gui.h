@@ -478,7 +478,7 @@ void ghid_logv (const char *fmt, va_list args);
 /* gui-pinout-window.c */
 void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
 
-/* gtkhid-gdk.c OR gtkhid-gl.c */
+/* gtkhid-gdk.c AND gtkhid-gl.c */
 hidGC ghid_make_gc (void);
 void ghid_destroy_gc (hidGC);
 void ghid_use_mask (int use_it);
@@ -500,13 +500,13 @@ void ghid_invalidate_all ();
 void ghid_show_crosshair (gboolean show);
 void ghid_init_renderer (int *, char ***, GHidPort *);
 GtkWidget *ghid_drawing_area_new (GHidPort *port);
+void ghid_pinout_preview_init (GhidPinoutPreview *preview);
+void ghid_drawing_area_configure_hook (GHidPort *port);
 gboolean ghid_start_drawing (GHidPort *port);
 void ghid_end_drawing (GHidPort *port);
-void ghid_drawing_area_configure_hook (GHidPort *port);
 void ghid_screen_update (void);
 gboolean ghid_drawing_area_expose_cb (GtkWidget *, GdkEventExpose *,
                                       GHidPort *);
-void ghid_pinout_preview_init (GhidPinoutPreview *preview);
 gboolean ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev);
 GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
                                int width, int height, int depth);

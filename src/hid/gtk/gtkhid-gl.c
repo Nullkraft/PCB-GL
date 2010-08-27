@@ -818,6 +818,11 @@ ghid_pinout_preview_init (GhidPinoutPreview *preview)
                                 GDK_GL_RGBA_TYPE);
 }
 
+void
+ghid_drawing_area_configure_hook (GHidPort *port)
+{
+}
+
 gboolean
 ghid_start_drawing (GHidPort *port)
 {
@@ -845,11 +850,6 @@ ghid_end_drawing (GHidPort *port)
 
   /* end drawing to current GL-context */
   gdk_gl_drawable_gl_end (pGlDrawable);
-}
-
-void
-ghid_drawing_area_configure_hook (GHidPort *port)
-{
 }
 
 void

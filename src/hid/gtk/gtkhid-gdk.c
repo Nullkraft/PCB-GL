@@ -924,14 +924,8 @@ ghid_drawing_area_new (GHidPort *port)
   return gtk_drawing_area_new ();
 }
 
-gboolean
-ghid_start_drawing (GHidPort *port)
-{
-  return TRUE;
-}
-
 void
-ghid_end_drawing (GHidPort *port)
+ghid_pinout_preview_init (GhidPinoutPreview *preview)
 {
 }
 
@@ -958,6 +952,17 @@ ghid_drawing_area_configure_hook (GHidPort *port)
     }
 }
 
+gboolean
+ghid_start_drawing (GHidPort *port)
+{
+  return TRUE;
+}
+
+void
+ghid_end_drawing (GHidPort *port)
+{
+}
+
 void
 ghid_screen_update (void)
 {
@@ -982,11 +987,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                     ev->area.width, ev->area.height);
   ghid_show_crosshair (TRUE);
   return FALSE;
-}
-
-void
-ghid_pinout_preview_init (GhidPinoutPreview *preview)
-{
 }
 
 gboolean
