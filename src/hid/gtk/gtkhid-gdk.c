@@ -918,6 +918,17 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
   port->render_priv = g_new0 (render_priv, 1);
 }
 
+GtkWidget *
+ghid_drawing_area_new (GHidPort *port)
+{
+  return gtk_drawing_area_new ();
+}
+
+void
+ghid_pinout_preview_init (GhidPinoutPreview *preview)
+{
+}
+
 void
 ghid_drawing_area_configure_hook (GHidPort *port)
 {
@@ -939,6 +950,17 @@ ghid_drawing_area_configure_hook (GHidPort *port)
       gdk_pixmap_unref (port->mask);
       port->mask = gdk_pixmap_new (0, port->width, port->height, 1);
     }
+}
+
+gboolean
+ghid_start_drawing (GHidPort *port)
+{
+  return TRUE;
+}
+
+void
+ghid_end_drawing (GHidPort *port)
+{
 }
 
 void
