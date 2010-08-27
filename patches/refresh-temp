@@ -1,0 +1,22 @@
+Bottom: ebdacea1ccd7f25c3dbfe19789bb1a225cb85451
+Top:    6292aeac790956d1e4b0a2b4b867a089550c076d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-27 15:02:53 +0100
+
+Refresh of move-some-more-gdk-routines-aw
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 0a8461e..54b4ba0 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -144,7 +144,7 @@ ghid_draw_grid ()
+ }
+ 
+ #if 0
+-void
++static void
+ ghid_draw_bg_image (void)
+ {
+   static GdkPixbuf *pixbuf = NULL;
