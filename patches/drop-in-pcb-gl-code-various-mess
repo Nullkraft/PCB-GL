@@ -1,5 +1,5 @@
 Bottom: e4f744502d141513375ab1604138821c6e30e3a9
-Top:    018262739e91950baa26d6cb28174602492d4d1e
+Top:    c10fb3055e8ab5734c387534621b986449fd6996
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:49:23 +0100
 
@@ -753,10 +753,10 @@ index 0000000..73d9a34
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..5c5bfdb
+index 0000000..e4b909b
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -0,0 +1,1089 @@
+@@ -0,0 +1,1118 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -1523,6 +1523,35 @@ index 0000000..5c5bfdb
 +    }
 +
 +  glDisable (GL_COLOR_LOGIC_OP);
++}
++
++gboolean
++ghid_start_drawing (GHidPort *port)
++{
++  GtkWidget *widget = port->drawing_area;
++  GdkGLContext *pGlContext = gtk_widget_get_gl_context (widget);
++  GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
++
++  /* make GL-context "current" */
++  if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext))
++    return FALSE;
++
++  return TRUE;
++}
++
++void
++ghid_end_drawing (GHidPort *port)
++{
++  GtkWidget *widget = port->drawing_area;
++  GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
++
++  if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
++    gdk_gl_drawable_swap_buffers (pGlDrawable);
++  else
++    glFlush ();
++
++  /* end drawing to current GL-context */
++  gdk_gl_drawable_gl_end (pGlDrawable);
 +}
 +
 +void
