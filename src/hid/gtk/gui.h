@@ -38,18 +38,6 @@
 #include <gtk/gtk.h>
 #include "gui-pinout-preview.h"
 
-/* The Linux OpenGL ABI 1.0 spec requires that we define
- * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
- * in order to get prototypes:
- *   http://www.opengl.org/registry/ABI/
- */
-#ifdef ENABLE_GL
-#  define GL_GLEXT_PROTOTYPES 1
-#  include <GL/gl.h>
-#  include <gtk/gtkgl.h>
-#  include "hid/common/hidgl.h"
-#endif
-
 
   /* Silk and rats lines are the two additional selectable to draw on.
      |  gui code in gui-top-window.c and group code in misc.c must agree
@@ -176,13 +164,9 @@ typedef struct
   GdkDrawable *drawable;	/* Current drawable for drawing routines */
   gint width, height;
 
-#ifdef ENABLE_GL
-  GdkGLConfig *glconfig;
-#endif
-
   gint trans_lines;
 
-//  GdkGC *bg_gc, *offlimits_gc, *mask_gc, *u_gc, *grid_gc;
+  struct render_priv *render_priv;
 
   GdkColor bg_color, offlimits_color, grid_color;
 
@@ -494,7 +478,7 @@ void ghid_logv (const char *fmt, va_list args);
 /* gui-pinout-window.c */
 void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
 
-/* gtkhid-gdk.c OR gtkhid-gl.c */
+/* gtkhid-gdk.c AND gtkhid-gl.c */
 hidGC ghid_make_gc (void);
 void ghid_destroy_gc (hidGC);
 void ghid_use_mask (int use_it);
@@ -514,6 +498,12 @@ void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
 void ghid_invalidate_lr ();
 void ghid_invalidate_all ();
 void ghid_show_crosshair (gboolean show);
+void ghid_init_renderer (int *, char ***, GHidPort *);
+GtkWidget *ghid_drawing_area_new (GHidPort *port);
+void ghid_pinout_preview_init (GhidPinoutPreview *preview);
+void ghid_drawing_area_configure_hook (GHidPort *port);
+gboolean ghid_start_drawing (GHidPort *port);
+void ghid_end_drawing (GHidPort *port);
 void ghid_screen_update (void);
 gboolean ghid_drawing_area_expose_cb (GtkWidget *, GdkEventExpose *,
                                       GHidPort *);
