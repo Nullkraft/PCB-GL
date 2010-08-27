@@ -1,5 +1,5 @@
 Bottom: dfb7899b21d1f67c2d97c849256deafc335be1ab
-Top:    f4589f3bf0127413b871c5fcf706e27cdeef9957
+Top:    459c8065548f5e58895baaf024ecabb5e7675615
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:49:23 +0100
 
@@ -753,7 +753,7 @@ index 0000000..73d9a34
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..0a8461e
+index 0000000..54b4ba0
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -0,0 +1,756 @@
@@ -903,7 +903,7 @@ index 0000000..0a8461e
 +}
 +
 +#if 0
-+void
++static void
 +ghid_draw_bg_image (void)
 +{
 +  static GdkPixbuf *pixbuf = NULL;
