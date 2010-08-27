@@ -1,0 +1,22 @@
+Bottom: 15d2a6f069e8ff3cba94b4a64915ae07423d98f4
+Top:    d5dec81480b27d0164631d8f1a77b5882bdbe69d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-27 12:20:04 +0100
+
+Refresh of move-more-gdk-specific-drawing
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 5d66221..eb94ed8 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -153,7 +153,7 @@ ghid_draw_grid (void)
+ }
+ 
+ /* ------------------------------------------------------------ */
+-void
++static void
+ ghid_draw_bg_image (void)
+ {
+   static GdkPixbuf *pixbuf;
