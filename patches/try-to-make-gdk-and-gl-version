@@ -1,15 +1,14 @@
-Bottom: 34a6a4f3b77ea5850591aa3ed5012178173e45f7
+Bottom: 018262739e91950baa26d6cb28174602492d4d1e
 Top:    f1130c4077b57c0a049f2b4da3624a10cf2eda0e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-08-25 18:49:23 +0100
+Date:   2010-08-27 15:27:57 +0100
 
 Try to make GDK and GL versions coexist a little more!
-
 
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index c6172e3..d4e1746 100644
+index 50ac011..d4e1746 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -21,13 +21,21 @@ RCSID ("$Id$");
@@ -346,7 +345,7 @@ index c6172e3..d4e1746 100644
  		      eleft, etop, eright - eleft + 1, ebottom - etop + 1);
  
    ghid_draw_bg_image();
-@@ -887,17 +912,42 @@ ghid_show_crosshair (gboolean show)
+@@ -887,10 +912,59 @@ ghid_show_crosshair (gboolean show)
  }
  
  void
@@ -374,27 +373,29 @@ index c6172e3..d4e1746 100644
 +}
 +
 +void
- ghid_drawing_area_configure_hook (GHidPort *port)
- {
-   static int done_once = 0;
++ghid_drawing_area_configure_hook (GHidPort *port)
++{
++  static int done_once = 0;
 +  render_priv *priv = port->render_priv;
- 
-   if (!done_once)
-     {
--      port->bg_gc = gdk_gc_new (port->drawable);
--      gdk_gc_set_foreground (port->bg_gc, &port->bg_color);
++
++  if (!done_once)
++    {
 +      priv->bg_gc = gdk_gc_new (port->drawable);
 +      gdk_gc_set_foreground (priv->bg_gc, &port->bg_color);
- 
--      port->offlimits_gc = gdk_gc_new (port->drawable);
--      gdk_gc_set_foreground (port->offlimits_gc, &port->offlimits_color);
++
 +      priv->offlimits_gc = gdk_gc_new (port->drawable);
 +      gdk_gc_set_foreground (priv->offlimits_gc, &port->offlimits_color);
-       done_once = 1;
-     }
- 
-@@ -911,8 +961,10 @@ ghid_drawing_area_configure_hook (GHidPort *port)
- void
++      done_once = 1;
++    }
++
++  if (port->mask)
++    {
++      gdk_pixmap_unref (port->mask);
++      port->mask = gdk_pixmap_new (0, port->width, port->height, 1);
++    }
++}
++
++void
  ghid_screen_update (void)
  {
 +  render_priv *priv = gport->render_priv;
@@ -405,7 +406,7 @@ index c6172e3..d4e1746 100644
  		     0, 0, 0, 0, gport->width, gport->height);
    ghid_show_crosshair (TRUE);
  }
-@@ -922,14 +974,21 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -900,14 +974,21 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               GdkEventExpose *ev,
                               GHidPort *port)
  {
@@ -428,7 +429,7 @@ index c6172e3..d4e1746 100644
  gboolean
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
-@@ -943,6 +1002,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -921,6 +1002,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    int save_width, save_height;
    int save_view_width, save_view_height;
    double xz, yz;
@@ -436,7 +437,7 @@ index c6172e3..d4e1746 100644
  
    save_zoom = gport->zoom;
    save_width = gport->width;
-@@ -973,7 +1033,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -951,7 +1033,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
  
    /* clear background */
@@ -445,7 +446,7 @@ index c6172e3..d4e1746 100644
  
    /* call the drawing routine */
    hid_expose_callback (&ghid_hid, NULL, &pinout->element);
-@@ -1009,7 +1069,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -987,7 +1069,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
  
    /* clear background */
@@ -454,7 +455,7 @@ index c6172e3..d4e1746 100644
  
    /* call the drawing routine */
    hid_expose_callback (&ghid_hid, NULL, &pinout->element);
-@@ -1037,6 +1097,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1015,6 +1097,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    int save_width, save_height;
    int save_view_width, save_view_height;
    BoxType region;
@@ -462,7 +463,7 @@ index c6172e3..d4e1746 100644
  
    save_drawable = gport->drawable;
    save_zoom = gport->zoom;
-@@ -1064,7 +1125,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1042,7 +1125,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    gport->view_y0 -= gport->view_width  / 2;
  
    /* clear background */
@@ -696,7 +697,7 @@ index aa1c9cc..68090b7 100644
    ghid_config_files_read (argc, argv);
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 18c0b73..2487b2e 100644
+index 525dd93..2487b2e 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -38,18 +38,6 @@
@@ -733,7 +734,7 @@ index 18c0b73..2487b2e 100644
  
    GdkColor bg_color, offlimits_color, grid_color;
  
-@@ -514,10 +498,15 @@ void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
+@@ -514,9 +498,15 @@ void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
  void ghid_invalidate_lr ();
  void ghid_invalidate_all ();
  void ghid_show_crosshair (gboolean show);
@@ -741,7 +742,7 @@ index 18c0b73..2487b2e 100644
 +GtkWidget *ghid_drawing_area_new (GHidPort *port);
 +gboolean ghid_start_drawing (GHidPort *port);
 +void ghid_end_drawing (GHidPort *port);
- void ghid_drawing_area_configure_hook (GHidPort *port);
++void ghid_drawing_area_configure_hook (GHidPort *port);
  void ghid_screen_update (void);
  gboolean ghid_drawing_area_expose_cb (GtkWidget *, GdkEventExpose *,
                                        GHidPort *);
