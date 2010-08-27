@@ -1,5 +1,5 @@
-Bottom: f263e52827bb562df52560f0c3073ca04b6b5b88
-Top:    f83115dad6df79f1a6cae3176465a2756eb1e80d
+Bottom: 7c4fea7458d2710583b351266cf2e06de50158d3
+Top:    a33fef7511c654e5c01fbd1fd3f1d5d73c5d70c4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:11 +0100
 
@@ -11,10 +11,10 @@ Experiments in progress - don't expect this to work yet!
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e27f393..35a0847 100644
+index f6fd945..3bc518c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -297,6 +297,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -298,6 +298,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
@@ -26,7 +26,7 @@ index e27f393..35a0847 100644
    ghid_draw_grid ();
  
    hidgl_init_triangle_array (&buffer);
-@@ -611,6 +616,7 @@ ghid_draw_grid ()
+@@ -612,6 +617,7 @@ ghid_draw_grid ()
    static int npoints = 0;
    int x1, y1, x2, y2, n, i;
    double x, y;
@@ -34,7 +34,7 @@ index e27f393..35a0847 100644
  
    if (!Settings.DrawGrid)
      return;
-@@ -662,23 +668,24 @@ ghid_draw_grid ()
+@@ -663,23 +669,24 @@ ghid_draw_grid ()
      {
        npoints = n + 10;
        points =
@@ -63,7 +63,7 @@ index e27f393..35a0847 100644
        glDrawArrays (GL_POINTS, 0, n);
      }
  
-@@ -1126,16 +1133,16 @@ ghid_invalidate_all ()
+@@ -1127,16 +1134,16 @@ ghid_invalidate_all ()
  }
  
  static void
@@ -86,7 +86,7 @@ index e27f393..35a0847 100644
  {
    gint x0, y0, x1, y1;
  
-@@ -1147,8 +1154,8 @@ draw_slanted_cross (gint x, gint y)
+@@ -1148,8 +1155,8 @@ draw_slanted_cross (gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - x;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -97,7 +97,7 @@ index e27f393..35a0847 100644
  
    x0 = x - (gport->height - y);
    x0 = MAX(0, MIN (x0, gport->width));
-@@ -1158,12 +1165,12 @@ draw_slanted_cross (gint x, gint y)
+@@ -1159,12 +1166,12 @@ draw_slanted_cross (gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - (gport->width - x);
    y1 = MAX(0, MIN (y1, gport->height));
@@ -113,7 +113,7 @@ index e27f393..35a0847 100644
  {
    gint x0, y0, x1, y1;
    gdouble tan60 = sqrt (3);
-@@ -1176,8 +1183,8 @@ draw_dozen_cross (gint x, gint y)
+@@ -1177,8 +1184,8 @@ draw_dozen_cross (gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - x * tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -124,7 +124,7 @@ index e27f393..35a0847 100644
  
    x0 = x + (gport->height - y) * tan60;
    x0 = MAX(0, MIN (x0, gport->width));
-@@ -1187,8 +1194,8 @@ draw_dozen_cross (gint x, gint y)
+@@ -1188,8 +1195,8 @@ draw_dozen_cross (gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - x / tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -135,7 +135,7 @@ index e27f393..35a0847 100644
  
    x0 = x - (gport->height - y) / tan60;
    x0 = MAX(0, MIN (x0, gport->width));
-@@ -1198,8 +1205,8 @@ draw_dozen_cross (gint x, gint y)
+@@ -1199,8 +1206,8 @@ draw_dozen_cross (gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - (gport->width - x) * tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -146,7 +146,7 @@ index e27f393..35a0847 100644
  
    x0 = x - (gport->height - y) * tan60;
    x0 = MAX(0, MIN (x0, gport->width));
-@@ -1209,20 +1216,20 @@ draw_dozen_cross (gint x, gint y)
+@@ -1210,20 +1217,20 @@ draw_dozen_cross (gint x, gint y)
    y0 = MAX(0, MIN (y0, gport->height));
    y1 = y - (gport->width - x) / tan60;
    y1 = MAX(0, MIN (y1, gport->height));
@@ -173,7 +173,7 @@ index e27f393..35a0847 100644
    prev = Crosshair.shape;
  }
  
-@@ -1232,11 +1239,12 @@ draw_crosshair (gint x, gint y)
+@@ -1233,11 +1240,12 @@ draw_crosshair (gint x, gint y)
  void
  ghid_show_crosshair (gboolean show)
  {
@@ -188,7 +188,7 @@ index e27f393..35a0847 100644
  
    if (gport->x_crosshair < 0 || ghidgui->creating) {// || !gport->has_entered) {
      printf ("Returning\n");
-@@ -1251,6 +1259,7 @@ ghid_show_crosshair (gboolean show)
+@@ -1252,6 +1260,7 @@ ghid_show_crosshair (gboolean show)
      }
    x = DRAW_X (gport->x_crosshair);
    y = DRAW_Y (gport->y_crosshair);
@@ -196,7 +196,7 @@ index e27f393..35a0847 100644
  
    glEnable (GL_COLOR_LOGIC_OP);
    glLogicOp (GL_XOR);
-@@ -1265,11 +1274,11 @@ ghid_show_crosshair (gboolean show)
+@@ -1266,11 +1275,11 @@ ghid_show_crosshair (gboolean show)
  
  #if 0
    if (x_prev >= 0)
@@ -210,7 +210,7 @@ index e27f393..35a0847 100644
  
    glEnd ();
  
-@@ -1279,44 +1288,44 @@ ghid_show_crosshair (gboolean show)
+@@ -1280,44 +1289,44 @@ ghid_show_crosshair (gboolean show)
  #if 0
    if (x_prev >= 0 && draw_markers_prev)
      {
@@ -287,7 +287,7 @@ index e27f393..35a0847 100644
      }
  
    glEnd ();
-@@ -1325,11 +1334,12 @@ ghid_show_crosshair (gboolean show)
+@@ -1326,11 +1335,12 @@ ghid_show_crosshair (gboolean show)
      {
        x_prev = x;
        y_prev = y;
