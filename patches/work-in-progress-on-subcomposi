@@ -1,5 +1,5 @@
-Bottom: 0f400143f9e0eff2e898f4a255f394cbb7df2cb2
-Top:    daece084adeaa932d80188b07fd18eb5c1e4a30d
+Bottom: 6cdbadedcb4ae5018bd7204c3eca5ec8f0d78654
+Top:    9d6b217bbeebefdbed5a135e49eacdc07bba8e99
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:08 +0100
 
@@ -414,7 +414,7 @@ index fa908ce..8a46c3c 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 3afc984..bdfbbce 100644
+index b9aa05d..4f3c44d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,6 +21,7 @@
@@ -473,7 +473,7 @@ index 3afc984..bdfbbce 100644
        glDisable (GL_STENCIL_TEST);                // Disable Stencil test
        break;
      }
-@@ -865,6 +871,17 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -862,6 +868,17 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_start_drawing (port);
  
@@ -491,7 +491,7 @@ index 3afc984..bdfbbce 100644
    ghid_show_crosshair (FALSE);
  
    glEnable (GL_BLEND);
-@@ -884,12 +901,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -881,12 +898,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -512,7 +512,7 @@ index 3afc984..bdfbbce 100644
  
    region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
    region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-@@ -915,6 +940,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -912,6 +937,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
@@ -525,7 +525,7 @@ index 3afc984..bdfbbce 100644
    glPushMatrix ();
    glScalef ((ghid_flip_x ? -1. : 1.) / gport->zoom,
              (ghid_flip_y ? -1. : 1.) / gport->zoom,
-@@ -1046,9 +1077,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1031,9 +1062,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  gport->bg_color.green / 65535.,
                  gport->bg_color.blue / 65535.,
                  1.);
@@ -539,7 +539,7 @@ index 3afc984..bdfbbce 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
-@@ -1155,8 +1189,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1140,8 +1174,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                  gport->bg_color.green / 65535.,
                  gport->bg_color.blue / 65535.,
                  1.);

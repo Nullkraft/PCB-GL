@@ -1,5 +1,5 @@
-Bottom: 21da09d50129b82f554a6a55f00a42e31dab0355
-Top:    d5447a9396363cada2b0cbb3519b293f5dbb2850
+Bottom: 880165fafcd10106831a3c4f0687468cb0af28b1
+Top:    7183253130714f4fa00ed8837664f33210cb4012
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-26 03:54:51 +0100
 
@@ -9,7 +9,7 @@ Debug GL calls out of context
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7367456..b5bcb54 100644
+index 1a3c402..11cf6b7 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -45,6 +45,7 @@ static hidGC current_gc = NULL;
@@ -30,7 +30,7 @@ index 7367456..b5bcb54 100644
    if (gport->x_crosshair < 0 || ghidgui->creating) {// || !gport->has_entered) {
      printf ("Returning\n");
      return;
-@@ -1647,6 +1651,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1644,6 +1648,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    ghid_start_drawing (port);
  
    hidgl_init ();
@@ -38,7 +38,7 @@ index 7367456..b5bcb54 100644
  
    /* If we don't have any stencil bits available,
       we can't use the hidgl polygon drawing routine */
-@@ -1860,6 +1865,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1857,6 +1862,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    hidgl_flush_triangles (&buffer);
  

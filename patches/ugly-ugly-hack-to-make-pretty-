@@ -1,5 +1,5 @@
-Bottom: d8bf526650464d3b303159217bc8d8496fcf4ed6
-Top:    b8dd9ca673cb73238e90b45982b2c8640df4b31a
+Bottom: e665f346da5f0b27dfc4b56f173a6b23f2ac442e
+Top:    b2cf23a13c7542300c5b37ccfbf6db2eaa2b8745
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:09 +0100
 
@@ -15,7 +15,7 @@ way to turn it off would also be useful.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index bdfbbce..70f171a 100644
+index 4f3c44d..ddfebc8 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -327,25 +327,30 @@ typedef struct
@@ -109,7 +109,7 @@ index 4f63d21..7da2611 100644
  
    ghid_calibrate,
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index f2e75fc..6c0cf7c 100644
+index 0ba492e..31f7728 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -496,6 +496,8 @@ void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);

@@ -1,5 +1,5 @@
-Bottom: 936d024e2bd67c2b4f19e99a14a6de62309d1fa7
-Top:    a9bc604fec2cb375aaf4ae0dfde3e195f0424d7d
+Bottom: a35825e0bab026f4a879df8dbcfdf48f7533bdaa
+Top:    ad42644586d30924fef4654fec6e7faacb0f88b7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:12 +0100
 
@@ -181,7 +181,7 @@ index c0e23a3..077c575 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 0518e29..544528a 100644
+index 7595300..68cdf13 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -227,7 +227,7 @@ index 0518e29..544528a 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -900,6 +904,637 @@ ghid_screen_update (void)
+@@ -897,6 +901,637 @@ ghid_screen_update (void)
  {
  }
  
@@ -865,7 +865,7 @@ index 0518e29..544528a 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -908,7 +1543,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -905,7 +1540,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  {
    BoxType region;
    int eleft, eright, etop, ebottom;
@@ -873,7 +873,7 @@ index 0518e29..544528a 100644
    int min_x, min_y;
    int max_x, max_y;
    int new_x, new_y;
-@@ -967,8 +1601,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -964,8 +1598,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -884,7 +884,7 @@ index 0518e29..544528a 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1060,7 +1694,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1057,7 +1691,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -gport->view_x0,
                  ghid_flip_y ? gport->view_y0 - PCB->MaxHeight :
                               -gport->view_y0, 0);
@@ -894,7 +894,7 @@ index 0518e29..544528a 100644
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
-@@ -1126,7 +1761,6 @@ gboolean
+@@ -1111,7 +1746,6 @@ gboolean
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
  {
@@ -902,7 +902,7 @@ index 0518e29..544528a 100644
    GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
    GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
    GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
-@@ -1231,7 +1865,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1216,7 +1850,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
  GdkPixmap *
  ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int depth)
  {

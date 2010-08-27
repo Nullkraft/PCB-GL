@@ -1,5 +1,5 @@
-Bottom: a9bc604fec2cb375aaf4ae0dfde3e195f0424d7d
-Top:    62c4573c6a65755bf8fcd5405265a233dfcdb777
+Bottom: ad42644586d30924fef4654fec6e7faacb0f88b7
+Top:    bd9a2622dd20554d0def9bc6dec6c9af8a5ee222
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:13 +0100
 
@@ -87,7 +87,7 @@ index 902e736..bb956ff 100644
 +    hid_actionl ("SwapSides", (button == 0) ? "V" : "H", NULL);
 +}
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 997a569..16c26d2 100644
+index 247c395..0b1e311 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -123,6 +123,7 @@ a zoom in/out.
@@ -106,7 +106,7 @@ index 997a569..16c26d2 100644
    g_signal_connect (trackball, "rotation-changed",
                      G_CALLBACK (ghid_port_rotate), NULL);
    g_signal_connect (trackball, "view-2d-changed",
-@@ -2731,6 +2733,12 @@ ghid_do_export (HID_Attr_Val * options)
+@@ -2732,6 +2734,12 @@ ghid_do_export (HID_Attr_Val * options)
    if (stdin_listen)
      ghid_create_listener ();
  
@@ -175,7 +175,7 @@ index d6bd03c..3af647e 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 4780381..d4b0bd5 100644
+index 74935d1..d1f40fa 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -148,6 +148,8 @@ typedef struct
