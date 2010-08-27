@@ -939,8 +939,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   return FALSE;
 }
 
-<<<<<<< current
-=======
 void
 ghid_pinout_preview_init (GhidPinoutPreview *preview)
 {
@@ -953,7 +951,6 @@ ghid_pinout_preview_init (GhidPinoutPreview *preview)
                                 GDK_GL_RGBA_TYPE);
 }
 
->>>>>>> patched
 gboolean
 ghid_pinout_preview_expose (GtkWidget *widget,
                             GdkEventExpose *ev)
