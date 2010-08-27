@@ -1,5 +1,5 @@
 Bottom: 31f28abfda458d0c7a97fe7395a7024a23a8fe24
-Top:    16dbeff1db2758661d8132a4ffedb9518d02627f
+Top:    9c90354bfe2dc00afda76ced6dcf8a043c9c5ff2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:49:23 +0100
 
@@ -787,10 +787,10 @@ index 28b6379..87e7dd0 100644
  {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..283450a
+index 0000000..acbb842
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -0,0 +1,1200 @@
+@@ -0,0 +1,1203 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -836,6 +836,7 @@ index 0000000..283450a
 +
 +typedef struct render_priv {
 +  GdkGLConfig *glconfig;
++  bool trans_lines;
 +} render_priv;
 +
 +
@@ -855,12 +856,13 @@ index 0000000..283450a
 +int
 +ghid_set_layer (const char *name, int group, int empty)
 +{
++  render_priv *priv = port->render_priv;
 +  int idx = (group >= 0 && group < max_layer) ?
 +	      PCB->LayerGroups.Entries[group][0] : group;
 +
 +  if (idx >= 0 && idx < max_layer + 2)
 +    {
-+      gport->trans_lines = TRUE;
++      priv->trans_lines = true;
 +      return PCB->Data->Layer[idx].On;
 +    }
 +  if (idx < 0)
@@ -874,7 +876,7 @@ index 0000000..283450a
 +	    return TEST_FLAG (SHOWMASKFLAG, PCB);
 +	  return 0;
 +	case SL_SILK:
-+	  gport->trans_lines = FALSE;
++	  priv->trans_lines = false;
 +	  if (SL_MYSIDE (idx))
 +	    return PCB->ElementOn;
 +	  return 0;
@@ -885,7 +887,7 @@ index 0000000..283450a
 +	  return 1;
 +	case SL_RATS:
 +	  if (PCB->RatOn)
-+	    gport->trans_lines = TRUE;
++	    priv->trans_lines = true;
 +	  return PCB->RatOn;
 +	}
 +    }
@@ -1157,6 +1159,7 @@ index 0000000..283450a
 +void
 +ghid_set_color (hidGC gc, const char *name)
 +{
++  render_priv *priv = gport->priv;
 +  static void *cache = NULL;
 +  static char *old_name = NULL;
 +  hidval cval;
@@ -1246,7 +1249,7 @@ index 0000000..283450a
 +    }
 +  if (1) {
 +    double maxi, mult;
-+    if (gport->trans_lines)
++    if (priv->trans_lines)
 +      a = a * alpha_mult;
 +    maxi = r;
 +    if (g > maxi) maxi = g;
@@ -2125,19 +2128,10 @@ index 9641a25..29959a4 100644
    gtk_widget_add_events (gport->drawing_area, GDK_EXPOSURE_MASK
  			 | GDK_LEAVE_NOTIFY_MASK | GDK_ENTER_NOTIFY_MASK
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 2966609..3f1d0df 100644
+index 2966609..77adf39 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -166,6 +166,8 @@ typedef struct
- 
-   struct render_priv *render_priv;
- 
-+  gint trans_lines;
-+
-   GdkColor bg_color, offlimits_color, grid_color;
- 
-   GdkColormap *colormap;
-@@ -476,7 +478,7 @@ void ghid_logv (const char *fmt, va_list args);
+@@ -476,7 +476,7 @@ void ghid_logv (const char *fmt, va_list args);
  /* gui-pinout-window.c */
  void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
  
@@ -2146,7 +2140,7 @@ index 2966609..3f1d0df 100644
  int ghid_set_layer (const char *name, int group, int empty);
  hidGC ghid_make_gc (void);
  void ghid_destroy_gc (hidGC);
-@@ -498,7 +500,10 @@ void ghid_invalidate_lr ();
+@@ -498,7 +498,10 @@ void ghid_invalidate_lr ();
  void ghid_invalidate_all ();
  void ghid_show_crosshair (gboolean show);
  void ghid_init_renderer (int *, char ***, GHidPort *);
@@ -2157,7 +2151,7 @@ index 2966609..3f1d0df 100644
  void ghid_screen_update (void);
  gboolean ghid_drawing_area_expose_cb (GtkWidget *, GdkEventExpose *,
                                        GHidPort *);
-@@ -507,6 +512,7 @@ GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
+@@ -507,6 +510,7 @@ GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
                                 int width, int height, int depth);
  
  /* gtkhid-main.c */
