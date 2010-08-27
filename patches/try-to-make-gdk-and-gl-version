@@ -1,5 +1,5 @@
-Bottom: 018262739e91950baa26d6cb28174602492d4d1e
-Top:    f1130c4077b57c0a049f2b4da3624a10cf2eda0e
+Bottom: c10fb3055e8ab5734c387534621b986449fd6996
+Top:    a9879431ee1e9ca4f7d757df61d01fe3f00be55e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-27 15:27:57 +0100
 
@@ -473,7 +473,7 @@ index 50ac011..d4e1746 100644
    /* call the drawing routine */
    region.X1 = MIN(Px(0), Px(gport->width + 1));
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5c5bfdb..97b3573 100644
+index e4b909b..70cfa35 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -41,6 +41,10 @@ static hidGC current_gc = NULL;
@@ -487,7 +487,7 @@ index 5c5bfdb..97b3573 100644
  
  typedef struct hid_gc_struct
  {
-@@ -767,6 +771,76 @@ ghid_show_crosshair (gboolean show)
+@@ -796,6 +800,76 @@ ghid_end_drawing (GHidPort *port)
  }
  
  void
@@ -564,7 +564,7 @@ index 5c5bfdb..97b3573 100644
  ghid_screen_update (void)
  {
  }
-@@ -870,6 +944,18 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -899,6 +973,18 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    return FALSE;
  }
  
