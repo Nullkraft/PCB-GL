@@ -166,8 +166,6 @@ typedef struct
 
   struct render_priv *render_priv;
 
-  gint trans_lines;
-
   GdkColor bg_color, offlimits_color, grid_color;
 
   GdkColormap *colormap;

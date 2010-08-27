@@ -43,6 +43,7 @@ static int cur_mask = -1;
 
 typedef struct render_priv {
   GdkGLConfig *glconfig;
+  bool trans_lines;
 } render_priv;
 
 
@@ -62,12 +63,13 @@ hid_gc_struct;
 int
 ghid_set_layer (const char *name, int group, int empty)
 {
+  render_priv *priv = port->render_priv;
   int idx = (group >= 0 && group < max_layer) ?
 	      PCB->LayerGroups.Entries[group][0] : group;
 
   if (idx >= 0 && idx < max_layer + 2)
     {
-      gport->trans_lines = TRUE;
+      priv->trans_lines = true;
       return PCB->Data->Layer[idx].On;
     }
   if (idx < 0)
@@ -81,7 +83,7 @@ ghid_set_layer (const char *name, int group, int empty)
 	    return TEST_FLAG (SHOWMASKFLAG, PCB);
 	  return 0;
 	case SL_SILK:
-	  gport->trans_lines = FALSE;
+	  priv->trans_lines = false;
 	  if (SL_MYSIDE (idx))
 	    return PCB->ElementOn;
 	  return 0;
@@ -92,7 +94,7 @@ ghid_set_layer (const char *name, int group, int empty)
 	  return 1;
 	case SL_RATS:
 	  if (PCB->RatOn)
-	    gport->trans_lines = TRUE;
+	    priv->trans_lines = true;
 	  return PCB->RatOn;
 	}
     }
@@ -364,6 +366,7 @@ typedef struct
 void
 ghid_set_color (hidGC gc, const char *name)
 {
+  render_priv *priv = gport->priv;
   static void *cache = NULL;
   static char *old_name = NULL;
   hidval cval;
@@ -453,7 +456,7 @@ ghid_set_color (hidGC gc, const char *name)
     }
   if (1) {
     double maxi, mult;
-    if (gport->trans_lines)
+    if (priv->trans_lines)
       a = a * alpha_mult;
     maxi = r;
     if (g > maxi) maxi = g;
