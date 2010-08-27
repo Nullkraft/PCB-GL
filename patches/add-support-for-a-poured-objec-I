@@ -1,7 +1,7 @@
-Bottom: c2384113f5720de8da69646a3e3a0c36f4892ce7
-Top:    cfeeb2bb2aa1a04d558b9ec9eb1a412e22f2c162
+Bottom: a5eef1dd553c67354d36e1698556a21d062a47d8
+Top:    a8611afc70f40f2eb1e27afc877ef29e61f62b95
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-08-26 03:37:16 +0100
+Date:   2010-08-27 16:29:55 +0100
 
 Add support for a "poured" object.
 
@@ -3055,10 +3055,10 @@ index a607a69..f36c400 100644
        break;
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 2b88a9d..68c515d 100644
+index ca82059..3c22eb5 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -299,8 +299,8 @@ have_crosshair_attachments (void)
+@@ -297,8 +297,8 @@ have_crosshair_attachments (void)
      case VIA_MODE:
        result = TRUE;
        break;
@@ -3070,7 +3070,7 @@ index 2b88a9d..68c515d 100644
  	result = TRUE;
        break;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 16c26d2..fc862d6 100644
+index 0b1e311..a625444 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -1984,8 +1984,9 @@ static ModeButton mode_buttons[] = {
