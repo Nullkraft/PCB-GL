@@ -1,5 +1,5 @@
-Bottom: 0555f1ae6200fb63b8e250c16ef95e65cfbb4328
-Top:    efccbe59fd450ad932b26a3d663b20189112c750
+Bottom: b502d4a421071b7b8bbd1a0dc53cfe11d5e99992
+Top:    d585fdb18bde625356b865c1029b46df0c58d043
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:09 +0100
 
@@ -15,10 +15,10 @@ way to turn it off would also be useful.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 864955d..a0d6385 100644
+index 899a525..419245a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -778,25 +778,30 @@ typedef struct
+@@ -779,25 +779,30 @@ typedef struct
    double blue;
  } ColorCache;
  
@@ -54,7 +54,7 @@ index 864955d..a0d6385 100644
  
    if (name == NULL)
      {
-@@ -870,6 +875,7 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -871,6 +876,7 @@ ghid_set_color (hidGC gc, const char *name)
      }
    if (1) {
      double maxi, mult;
@@ -62,7 +62,7 @@ index 864955d..a0d6385 100644
      if (gport->trans_lines)
        a = a * alpha_mult;
      maxi = r;
-@@ -891,6 +897,16 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -892,6 +898,16 @@ ghid_set_color (hidGC gc, const char *name)
  }
  
  void
@@ -79,7 +79,7 @@ index 864955d..a0d6385 100644
  ghid_set_line_cap (hidGC gc, EndCapStyle style)
  {
    gc->cap = style;
-@@ -1002,6 +1018,15 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+@@ -1003,6 +1019,15 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  }
  
  void
@@ -109,10 +109,10 @@ index 4f63d21..7da2611 100644
  
    ghid_calibrate,
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 04a5616..63abef8 100644
+index 3239c93..22f12aa 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -509,6 +509,8 @@ void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
+@@ -508,6 +508,8 @@ void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
  void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
  void ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly,
                              const BoxType *clip_box); /* GL ONLY */
