@@ -1,4 +1,4 @@
-Bottom: 3a18ce023807b326824a02c018bd3a27d6bc53ce
+Bottom: cbd81b2790ffe2326d9326c63e5a272c3f172ba1
 Top:    824adecd7fe2bf48a40f2be45186775bea391fdf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:49:23 +0100
@@ -1946,30 +1946,10 @@ index 89cdb20..bd2be04 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index b7346de..8367175 100644
+index 6da4291..8367175 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -533,19 +533,15 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
-   if (!first_time_done)
-     {
-       gport->colormap = gtk_widget_get_colormap (gport->top_window);
--      gport->bg_gc = gdk_gc_new (gport->drawable);
-       if (gdk_color_parse (Settings.BackgroundColor, &gport->bg_color))
- 	gdk_color_alloc (gport->colormap, &gport->bg_color);
-       else
- 	gdk_color_white (gport->colormap, &gport->bg_color);
--      gdk_gc_set_foreground (gport->bg_gc, &gport->bg_color);
- 
--      gport->offlimits_gc = gdk_gc_new (gport->drawable);
-       if (gdk_color_parse (Settings.OffLimitColor, &gport->offlimits_color))
- 	gdk_color_alloc (gport->colormap, &gport->offlimits_color);
-       else
- 	gdk_color_white (gport->colormap, &gport->offlimits_color);
--      gdk_gc_set_foreground (gport->offlimits_gc, &gport->offlimits_color);
-       first_time_done = TRUE;
-       ghid_drawing_area_configure_hook (out);
-       PCBChanged (0, NULL, 0, 0);
-@@ -691,6 +687,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -687,6 +687,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    gdouble dx, dy;
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
@@ -1984,7 +1964,7 @@ index b7346de..8367175 100644
  
    if (out->panning)
      {
-@@ -714,6 +718,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -710,6 +718,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    ghid_show_crosshair (TRUE);
    if (moved && have_crosshair_attachments ())
      ghid_draw_area_update (gport, NULL);
@@ -1999,7 +1979,7 @@ index b7346de..8367175 100644
    return FALSE;
  }
  
-@@ -753,7 +765,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -749,7 +765,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        RestoreCrosshair (TRUE);
        cursor_in_viewport = TRUE;
      }
