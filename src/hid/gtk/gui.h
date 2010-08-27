@@ -499,7 +499,10 @@ void ghid_invalidate_lr ();
 void ghid_invalidate_all ();
 void ghid_show_crosshair (gboolean show);
 void ghid_init_renderer (int *, char ***, GHidPort *);
+void ghid_init_drawing_widget (GtkWidget *widget, GHidPort *);
 void ghid_drawing_area_configure_hook (GHidPort *port);
+gboolean ghid_start_drawing (GHidPort *port);
+void ghid_end_drawing (GHidPort *port);
 void ghid_screen_update (void);
 gboolean ghid_drawing_area_expose_cb (GtkWidget *, GdkEventExpose *,
                                       GHidPort *);

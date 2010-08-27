@@ -792,6 +792,18 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 }
 
 void
+ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
+{
+  render_priv *priv = port->render_priv;
+
+  gtk_widget_set_gl_capability (widget,
+                                priv->glconfig,
+                                NULL,
+                                TRUE,
+                                GDK_GL_RGBA_TYPE);
+}
+
+void
 ghid_drawing_area_configure_hook (GHidPort *port)
 {
 }

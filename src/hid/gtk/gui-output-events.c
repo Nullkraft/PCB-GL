@@ -687,14 +687,9 @@ ghid_port_window_motion_cb (GtkWidget * widget,
   gdouble dx, dy;
   static gint x_prev = -1, y_prev = -1;
   gboolean moved;
-  GdkGLContext* pGlContext = gtk_widget_get_gl_context (widget);
-  GdkGLDrawable* pGlDrawable = gtk_widget_get_gl_drawable (widget);
 
-  /* make GL-context "current" */
-  if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
-    printf ("GL THingy returned\n");
+  if (!ghid_start_drawing (out))
     return FALSE;
-  }
 
   if (out->panning)
     {
@@ -719,13 +714,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
   if (moved && have_crosshair_attachments ())
     ghid_draw_area_update (gport, NULL);
 
-  if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
-    gdk_gl_drawable_swap_buffers (pGlDrawable);
-  else
-    glFlush ();
-
-  /* end drawing to current GL-context */
-  gdk_gl_drawable_gl_end (pGlDrawable);
+  ghid_end_drawing (out);
   return FALSE;
 }
 
