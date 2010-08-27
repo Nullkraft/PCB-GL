@@ -1,5 +1,5 @@
-Bottom: 27bf1d2e80be078a3ff55d42d36fab71e18c3d1b
-Top:    a7bb593c0dde4cd859c040c61437102cbe1405f6
+Bottom: 68a182f9603db92f3091bfc023fa02dc2132c15f
+Top:    be4c42e64b2939853492f390b9ace5e391a30fdf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:08 +0100
 
@@ -223,10 +223,10 @@ index e60a2ff..1d60e96 100644
  ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
  {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index adcde27..9681c96 100644
+index 8bd0440..bd8a571 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -577,6 +577,14 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
+@@ -580,6 +580,14 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
  }
  
  void
@@ -255,10 +255,10 @@ index 2a78c75..6986d16 100644
    ghid_fill_rect,
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 7802a16..3d42a85 100644
+index c0d80b8..1f84c56 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -495,6 +495,8 @@ void ghid_draw_arc (hidGC gc, int cx, int cy, int xradius, int yradius,
+@@ -493,6 +493,8 @@ void ghid_draw_arc (hidGC gc, int cx, int cy, int xradius, int yradius,
  void ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2);
  void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
  void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
