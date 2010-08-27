@@ -41,6 +41,10 @@ static hidGC current_gc = NULL;
 
 static int cur_mask = -1;
 
+typedef struct render_priv {
+  GdkGLConfig *glconfig;
+} render_priv;
+
 
 typedef struct hid_gc_struct
 {
@@ -764,6 +768,59 @@ ghid_show_crosshair (gboolean show)
     }
 
   glDisable (GL_COLOR_LOGIC_OP);
+}
+
+void
+ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+{
+  render_priv *priv;
+
+  port->render_priv = priv = g_new0 (render_priv, 1);
+
+  gtk_gl_init(argc, argv);
+
+  /* setup GL-context */
+  priv->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
+                                              GDK_GL_MODE_STENCIL |
+                                           // GDK_GL_MODE_DEPTH   |
+                                              GDK_GL_MODE_DOUBLE);
+  if (!priv->glconfig)
+    {
+      printf ("Could not setup GL-context!\n");
+      return; /* Should we abort? */
+    }
+}
+
+GtkWidget *
+ghid_drawing_area_new (GHidPort *port)
+{
+  GtkWidget *drawing_area;
+  render_priv *priv = port->render_priv;
+
+  drawing_area = gtk_drawing_area_new ();
+  gtk_widget_set_gl_capability (drawing_area,
+                                priv->glconfig,
+                                NULL,
+                                TRUE,
+                                GDK_GL_RGBA_TYPE);
+  return drawing_area;
+}
+
+void
+ghid_pinout_preview_init (GhidPinoutPreview *preview)
+{
+  render_priv *priv = gport->render_priv;
+
+  gtk_widget_set_gl_capability (GTK_WIDGET (preview),
+                                priv->glconfig,
+                                NULL,
+                                TRUE,
+                                GDK_GL_RGBA_TYPE);
+}
+
+void
+ghid_drawing_area_configure_hook (GHidPort *port)
+{
 }
 
 gboolean
