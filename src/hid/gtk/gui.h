@@ -490,7 +490,6 @@ GdkPixmap *ghid_render_pixmap (int cx,
 /* gtkhid-gdk.c */
 hidGC ghid_make_gc (void);
 void ghid_destroy_gc (hidGC);
-void ghid_draw_grid (void);
 void ghid_draw_bg_image (void);
 void ghid_use_mask (int use_it);
 void ghid_set_color (hidGC gc, const char *name);
