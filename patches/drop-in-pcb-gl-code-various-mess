@@ -1,5 +1,5 @@
 Bottom: cbd81b2790ffe2326d9326c63e5a272c3f172ba1
-Top:    824adecd7fe2bf48a40f2be45186775bea391fdf
+Top:    1de0a2ae7c91d424867717712aa0f4a58f99da71
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:49:23 +0100
 
@@ -753,10 +753,10 @@ index 0000000..73d9a34
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..e4b909b
+index 0000000..f953786
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -0,0 +1,1118 @@
+@@ -0,0 +1,1148 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -799,6 +799,10 @@ index 0000000..e4b909b
 +#define USE_GC(gc) if (!use_gc(gc)) return
 +
 +static int cur_mask = -1;
++
++typedef struct render_priv {
++  GdkGLConfig *glconfig;
++} render_priv;
 +
 +
 +typedef struct hid_gc_struct
@@ -1525,6 +1529,32 @@ index 0000000..e4b909b
 +  glDisable (GL_COLOR_LOGIC_OP);
 +}
 +
++void
++ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
++{
++  render_priv *priv;
++
++  port->render_priv = priv = g_new0 (render_priv, 1);
++
++  gtk_gl_init(argc, argv);
++
++  /* setup GL-context */
++  priv->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
++                                              GDK_GL_MODE_STENCIL |
++                                           // GDK_GL_MODE_DEPTH   |
++                                              GDK_GL_MODE_DOUBLE);
++  if (!priv->glconfig)
++    {
++      printf ("Could not setup GL-context!\n");
++      return; /* Should we abort? */
++    }
++}
++
++void
++ghid_drawing_area_configure_hook (GHidPort *port)
++{
++}
++
 +gboolean
 +ghid_start_drawing (GHidPort *port)
 +{
@@ -2042,7 +2072,7 @@ index c75a0d3..1a1c8f4 100644
    gobject_class->set_property = ghid_pinout_preview_set_property;
    gobject_class->get_property = ghid_pinout_preview_get_property;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index f783ecc..aa1c9cc 100644
+index f783ecc..04336cc 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2297,6 +2297,11 @@ ghid_build_pcb_top_window (void)
@@ -2057,66 +2087,29 @@ index f783ecc..aa1c9cc 100644
  
    gtk_widget_add_events (gport->drawing_area, GDK_EXPOSURE_MASK
  			 | GDK_LEAVE_NOTIFY_MASK | GDK_ENTER_NOTIFY_MASK
-@@ -2672,11 +2677,22 @@ ghid_parse_arguments (int *argc, char ***argv)
-   gtk_disable_setlocale ();
- 
-   gtk_init (argc, argv);
-+  gtk_gl_init(argc, argv);
- 
-   gport = &ghid_port;
+@@ -2677,6 +2682,8 @@ ghid_parse_arguments (int *argc, char ***argv)
    gport->zoom = 300.0;
    pixel_slop = 300;
  
-+  /* setup GL-context */
-+  gport->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
-+                                               GDK_GL_MODE_STENCIL |
-+//                                               GDK_GL_MODE_DEPTH   |
-+                                               GDK_GL_MODE_DOUBLE);
-+  if (!gport->glconfig) {
-+    printf("Could not setup GL-context!\n");
-+    return; /* Should we abort? */
-+  }
++  ghid_init_renderer (argc, argv, gport);
 +
    ghid_config_files_read (argc, argv);
  
    Settings.AutoPlace = 0;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index c4d71b4..ed5f907 100644
+index c4d71b4..cff82b4 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -38,6 +38,18 @@
- #include <gtk/gtk.h>
- #include "gui-pinout-preview.h"
- 
-+/* The Linux OpenGL ABI 1.0 spec requires that we define
-+ * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
-+ * in order to get prototypes:
-+ *   http://www.opengl.org/registry/ABI/
-+ */
-+#ifdef ENABLE_GL
-+#  define GL_GLEXT_PROTOTYPES 1
-+#  include <GL/gl.h>
-+#  include <gtk/gtkgl.h>
-+#  include "hid/common/hidgl.h"
-+#endif
-+
- 
-   /* Silk and rats lines are the two additional selectable to draw on.
-      |  gui code in gui-top-window.c and group code in misc.c must agree
-@@ -166,6 +178,12 @@ typedef struct
+@@ -166,6 +166,8 @@ typedef struct
  
    struct render_priv *render_priv;
  
-+#ifdef ENABLE_GL
-+  GdkGLConfig *glconfig;
-+#endif
-+
 +  gint trans_lines;
 +
    GdkColor bg_color, offlimits_color, grid_color;
  
    GdkColormap *colormap;
-@@ -476,7 +494,7 @@ void ghid_logv (const char *fmt, va_list args);
+@@ -476,7 +478,7 @@ void ghid_logv (const char *fmt, va_list args);
  /* gui-pinout-window.c */
  void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
  
@@ -2125,7 +2118,7 @@ index c4d71b4..ed5f907 100644
  hidGC ghid_make_gc (void);
  void ghid_destroy_gc (hidGC);
  void ghid_use_mask (int use_it);
-@@ -506,6 +524,7 @@ GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
+@@ -506,6 +508,7 @@ GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
                                 int width, int height, int depth);
  
  /* gtkhid-main.c */
