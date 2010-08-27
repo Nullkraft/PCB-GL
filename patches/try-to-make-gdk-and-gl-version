@@ -1,4 +1,4 @@
-Bottom: ebdacea1ccd7f25c3dbfe19789bb1a225cb85451
+Bottom: 6292aeac790956d1e4b0a2b4b867a089550c076d
 Top:    f1130c4077b57c0a049f2b4da3624a10cf2eda0e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:49:23 +0100
@@ -472,7 +472,7 @@ index c6172e3..d4e1746 100644
    /* call the drawing routine */
    region.X1 = MIN(Px(0), Px(gport->width + 1));
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 0a8461e..97b3573 100644
+index 54b4ba0..97b3573 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,17 @@
@@ -504,15 +504,6 @@ index 0a8461e..97b3573 100644
  
  typedef struct hid_gc_struct
  {
-@@ -144,7 +159,7 @@ ghid_draw_grid ()
- }
- 
- #if 0
--void
-+static void
- ghid_draw_bg_image (void)
- {
-   static GdkPixbuf *pixbuf = NULL;
 @@ -754,3 +769,407 @@ ghid_show_crosshair (gboolean show)
  
    glDisable (GL_COLOR_LOGIC_OP);
