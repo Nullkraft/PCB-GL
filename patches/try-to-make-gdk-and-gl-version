@@ -1,5 +1,5 @@
 Bottom: 34a6a4f3b77ea5850591aa3ed5012178173e45f7
-Top:    0851770222279ac71011d07cf5f830cc2b849493
+Top:    f8df6cf62156ed2b2b668cccf939b72c759568ef
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:49:23 +0100
 
@@ -472,7 +472,7 @@ index c6172e3..d4e1746 100644
    /* call the drawing routine */
    region.X1 = MIN(Px(0), Px(gport->width + 1));
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5c5bfdb..2617f89 100644
+index 5c5bfdb..69bd21d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -41,6 +41,10 @@ static hidGC current_gc = NULL;
@@ -560,12 +560,10 @@ index 5c5bfdb..2617f89 100644
  {
  }
  
-@@ -870,6 +939,21 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -870,6 +939,18 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    return FALSE;
  }
  
-+<<<<<<< current
-+=======
 +void
 +ghid_pinout_preview_init (GhidPinoutPreview *preview)
 +{
@@ -578,7 +576,6 @@ index 5c5bfdb..2617f89 100644
 +                                GDK_GL_RGBA_TYPE);
 +}
 +
-+>>>>>>> patched
  gboolean
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
