@@ -766,6 +766,35 @@ ghid_show_crosshair (gboolean show)
   glDisable (GL_COLOR_LOGIC_OP);
 }
 
+gboolean
+ghid_start_drawing (GHidPort *port)
+{
+  GtkWidget *widget = port->drawing_area;
+  GdkGLContext *pGlContext = gtk_widget_get_gl_context (widget);
+  GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
+
+  /* make GL-context "current" */
+  if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext))
+    return FALSE;
+
+  return TRUE;
+}
+
+void
+ghid_end_drawing (GHidPort *port)
+{
+  GtkWidget *widget = port->drawing_area;
+  GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
+
+  if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
+    gdk_gl_drawable_swap_buffers (pGlDrawable);
+  else
+    glFlush ();
+
+  /* end drawing to current GL-context */
+  gdk_gl_drawable_gl_end (pGlDrawable);
+}
+
 void
 ghid_screen_update (void)
 {
