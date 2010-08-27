@@ -62,28 +62,27 @@ hid_gc_struct;
 int
 ghid_set_layer (const char *name, int group, int empty)
 {
-  int idx = (group >= 0
-	     && group <
-	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
+  int idx = (group >= 0 && group < max_layer) ?
+	      PCB->LayerGroups.Entries[group][0] : group;
 
   if (idx >= 0 && idx < max_layer + 2)
     {
       gport->trans_lines = TRUE;
-      return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
+      return PCB->Data->Layer[idx].On;
     }
   if (idx < 0)
     {
       switch (SL_TYPE (idx))
 	{
 	case SL_INVISIBLE:
-	  return /* pinout ? 0 : */ PCB->InvisibleObjectsOn;
+	  return PCB->InvisibleObjectsOn;
 	case SL_MASK:
-	  if (SL_MYSIDE (idx) /*&& !pinout */ )
+	  if (SL_MYSIDE (idx))
 	    return TEST_FLAG (SHOWMASKFLAG, PCB);
 	  return 0;
 	case SL_SILK:
 	  gport->trans_lines = FALSE;
-	  if (SL_MYSIDE (idx) /*|| pinout */ )
+	  if (SL_MYSIDE (idx))
 	    return PCB->ElementOn;
 	  return 0;
 	case SL_ASSY:
