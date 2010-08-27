@@ -1,5 +1,5 @@
-Bottom: da890d35bb968ba3d6c80202522ea73e53e9572e
-Top:    014a47cc9249eeac36d924b3ed10efaecf53e58e
+Bottom: 0cd46cd29151031f3fc5b362bd6952b5e0e118b1
+Top:    27b6c66d45477c7d29a4a35934d9283f68cdd81c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 21:13:12 +0100
 
@@ -9,10 +9,10 @@ Use motion hints when processing pointer motion over the drawing area
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 53d8ffd..1dc08bd 100644
+index 4d03127..ae03222 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1118,7 +1118,7 @@ ghid_show_crosshair (gboolean show)
+@@ -1119,7 +1119,7 @@ ghid_show_crosshair (gboolean show)
  
    glBegin (GL_LINES);
  
@@ -21,7 +21,7 @@ index 53d8ffd..1dc08bd 100644
    if (x_prev >= 0)
      draw_crosshair (x_prev, y_prev);
  #endif
-@@ -1131,7 +1131,7 @@ ghid_show_crosshair (gboolean show)
+@@ -1132,7 +1132,7 @@ ghid_show_crosshair (gboolean show)
  
    glBegin (GL_QUADS);
  
@@ -83,7 +83,7 @@ index 7c5823f..168fd1a 100644
    /*
     * This is required to get the drawing_area key-press-event.  Also the
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 62b2d68..2d7f2ee 100644
+index 743ccf5..8dec6da 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -305,7 +305,7 @@ gint ghid_port_window_enter_cb (GtkWidget * widget,
