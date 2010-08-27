@@ -547,13 +547,14 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
 	gdk_color_white (gport->colormap, &gport->offlimits_color);
       gdk_gc_set_foreground (gport->offlimits_gc, &gport->offlimits_color);
       first_time_done = TRUE;
+      ghid_drawing_area_configure_hook (out);
       PCBChanged (0, NULL, 0, 0);
     }
-  if (gport->mask)
+  else
     {
-      gdk_pixmap_unref (gport->mask);
-      gport->mask = gdk_pixmap_new (0, gport->width, gport->height, 1);
+      ghid_drawing_area_configure_hook (out);
     }
+
   ghid_port_ranges_scale (FALSE);
   ghid_invalidate_all ();
   RestoreCrosshair (TRUE);
