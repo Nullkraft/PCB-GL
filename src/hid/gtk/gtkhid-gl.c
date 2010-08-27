@@ -38,6 +38,8 @@ extern int ghid_gui_is_up;
 
 static hidGC current_gc = NULL;
 
+static void ghid_draw_grid (BoxTypePtr);
+
 /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
 */
 #define USE_GC(gc) if (!use_gc(gc)) return
@@ -609,7 +611,7 @@ ghid_make_gc (void)
   return rv;
 }
 
-void
+static void
 ghid_draw_grid (BoxTypePtr drawn_area)
 {
   static GLfloat *points = 0;

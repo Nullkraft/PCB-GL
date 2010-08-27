@@ -491,8 +491,6 @@ gboolean ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev);
 GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int depth);
 hidGC ghid_make_gc (void);
 void ghid_destroy_gc (hidGC);
-//void ghid_draw_grid (void);                /* FIXME: GDK AND GL DIFFERENT */
-void ghid_draw_grid (BoxTypePtr drawn_area); /* FIXME: GDK AND GL DIFFERENT */
 void ghid_draw_bg_image (void);
 void ghid_use_mask (int use_it);
 void ghid_set_color (hidGC gc, const char *name);
