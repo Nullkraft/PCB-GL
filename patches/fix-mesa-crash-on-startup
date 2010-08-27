@@ -1,5 +1,5 @@
 Bottom: f1130c4077b57c0a049f2b4da3624a10cf2eda0e
-Top:    f1130c4077b57c0a049f2b4da3624a10cf2eda0e
+Top:    a3ca448c627d5298487be0bb1d5eca8fb621e0a5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:49:24 +0100
 
@@ -13,4 +13,101 @@ gtk_widget_show_all()
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index d4e1746..6a41c74 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -985,6 +985,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ }
+ 
+ void
++ghid_port_drawing_realize_cb (GtkWidget *widget, gpointer data)
++{
++}
++
++void
+ ghid_pinout_preview_init (GhidPinoutPreview *preview)
+ {
+ }
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 97b3573..68f39c8 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -945,6 +945,22 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ }
+ 
+ void
++ghid_port_drawing_realize_cb (GtkWidget *widget, gpointer data)
++{
++  GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
++  GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
++
++  /*** OpenGL BEGIN ***/
++  if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
++    return;
++
++  gdk_gl_drawable_gl_end (gldrawable);
++  /*** OpenGL END ***/
++
++  return;
++}
++
++void
+ ghid_pinout_preview_init (GhidPinoutPreview *preview)
+ {
+   render_priv *priv = gport->render_priv;
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 68090b7..7c5823f 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -2143,8 +2143,6 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
+   gtk_main_quit ();
+ }
+ 
+-
+-
+ /* 
+  * Create the top_window contents.  The config settings should be loaded
+  * before this is called.
+@@ -2352,6 +2350,9 @@ ghid_build_pcb_top_window (void)
+      |  the user does a command entry.
+    */
+ 
++  g_signal_connect (G_OBJECT (gport->drawing_area), "realize",
++		    G_CALLBACK (ghid_port_drawing_realize_cb),
++		    port);
+   g_signal_connect (G_OBJECT (gport->drawing_area), "expose_event",
+ 		    G_CALLBACK (ghid_drawing_area_expose_cb),
+ 		    port);
+@@ -2387,10 +2388,6 @@ ghid_build_pcb_top_window (void)
+   ghidgui->creating = FALSE;
+ 
+   gtk_widget_show_all (gport->top_window);
+-  gtk_widget_realize (vbox_main);
+-  gtk_widget_realize (hbox_middle);
+-  gtk_widget_realize (viewport);
+-  gtk_widget_realize (gport->drawing_area);
+   gdk_window_set_back_pixmap (gport->drawing_area->window, NULL, FALSE);
+ 
+   ghid_route_style_temp_buttons_hide ();
+@@ -2707,8 +2704,6 @@ ghid_parse_arguments (int *argc, char ***argv)
+   if (Settings.AutoPlace)
+     gtk_widget_set_uposition (GTK_WIDGET (window), 10, 10);
+ 
+-  gtk_widget_realize (gport->top_window);
+-  gtk_widget_show_all (gport->top_window);
+   ghidgui->creating = TRUE;
+ }
+ 
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 2487b2e..7ea38c5 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -506,6 +506,7 @@ void ghid_drawing_area_configure_hook (GHidPort *port);
+ void ghid_screen_update (void);
+ gboolean ghid_drawing_area_expose_cb (GtkWidget *, GdkEventExpose *,
+                                       GHidPort *);
++void ghid_port_drawing_realize_cb (GtkWidget *, gpointer);
+ void ghid_pinout_preview_init (GhidPinoutPreview *preview);
+ gboolean ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev);
+ GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
