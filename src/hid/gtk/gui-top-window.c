@@ -2677,21 +2677,12 @@ ghid_parse_arguments (int *argc, char ***argv)
   gtk_disable_setlocale ();
 
   gtk_init (argc, argv);
-  gtk_gl_init(argc, argv);
 
   gport = &ghid_port;
   gport->zoom = 300.0;
   pixel_slop = 300;
 
-  /* setup GL-context */
-  gport->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
-                                               GDK_GL_MODE_STENCIL |
-//                                               GDK_GL_MODE_DEPTH   |
-                                               GDK_GL_MODE_DOUBLE);
-  if (!gport->glconfig) {
-    printf("Could not setup GL-context!\n");
-    return; /* Should we abort? */
-  }
+  ghid_init_renderer (argc, argv, gport);
 
   ghid_config_files_read (argc, argv);
 

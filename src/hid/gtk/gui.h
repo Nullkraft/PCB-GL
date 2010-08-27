@@ -38,18 +38,6 @@
 #include <gtk/gtk.h>
 #include "gui-pinout-preview.h"
 
-/* The Linux OpenGL ABI 1.0 spec requires that we define
- * GL_GLEXT_PROTOTYPES before including gl.h or glx.h for extensions
- * in order to get prototypes:
- *   http://www.opengl.org/registry/ABI/
- */
-#ifdef ENABLE_GL
-#  define GL_GLEXT_PROTOTYPES 1
-#  include <GL/gl.h>
-#  include <gtk/gtkgl.h>
-#  include "hid/common/hidgl.h"
-#endif
-
 
   /* Silk and rats lines are the two additional selectable to draw on.
      |  gui code in gui-top-window.c and group code in misc.c must agree
@@ -177,10 +165,6 @@ typedef struct
   gint width, height;
 
   struct render_priv *render_priv;
-
-#ifdef ENABLE_GL
-  GdkGLConfig *glconfig;
-#endif
 
   gint trans_lines;
 
