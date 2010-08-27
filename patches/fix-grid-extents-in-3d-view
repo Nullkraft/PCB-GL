@@ -1,5 +1,5 @@
-Bottom: f83115dad6df79f1a6cae3176465a2756eb1e80d
-Top:    79930dbaba2d52f920a3fc5c6eec33c7d5d4bf5d
+Bottom: a33fef7511c654e5c01fbd1fd3f1d5d73c5d70c4
+Top:    a33fef7511c654e5c01fbd1fd3f1d5d73c5d70c4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:12 +0100
 
@@ -8,76 +8,4 @@ Fix grid extents in 3D view
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 5b52b9a..0d1f7e0 100644
---- a/src/hid/gtk/gtkhid-gdk.c
-+++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -328,7 +328,7 @@ ghid_make_gc (void)
-   return rv;
- }
- 
--void
-+static void
- ghid_draw_grid (void)
- {
-   static GdkPoint *points = 0;
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 35a0847..a5179ee 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -38,6 +38,8 @@ extern int ghid_gui_is_up;
- 
- static hidGC current_gc = NULL;
- 
-+static void ghid_draw_grid (BoxTypePtr);
-+
- /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
- */
- #define USE_GC(gc) if (!use_gc(gc)) return
-@@ -302,7 +304,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-   gui->set_layer (NULL, GetLayerGroupNumberByNumber (INDEXOFCURRENT), 0);
-   gui->set_layer (NULL, SL_FINISHED, 0);
- 
--  ghid_draw_grid ();
-+  ghid_draw_grid (&region);
- 
-   hidgl_init_triangle_array (&buffer);
-   ghid_invalidate_current_gc ();
-@@ -609,8 +611,8 @@ ghid_make_gc (void)
-   return rv;
- }
- 
--void
--ghid_draw_grid ()
-+static void
-+ghid_draw_grid (BoxTypePtr drawn_area)
- {
-   static GLfloat *points = 0;
-   static int npoints = 0;
-@@ -639,10 +641,10 @@ ghid_draw_grid ()
-              gport->grid_color.green / 65535.,
-              gport->grid_color.blue / 65535.);
- 
--  x1 = GRIDFIT_X (SIDE_X (gport->view_x0), PCB->Grid);
--  y1 = GRIDFIT_Y (SIDE_Y (gport->view_y0), PCB->Grid);
--  x2 = GRIDFIT_X (SIDE_X (gport->view_x0 + gport->view_width - 1), PCB->Grid);
--  y2 = GRIDFIT_Y (SIDE_Y (gport->view_y0 + gport->view_height - 1), PCB->Grid);
-+  x1 = GRIDFIT_X (MAX (0, drawn_area->X1), PCB->Grid);
-+  y1 = GRIDFIT_Y (MAX (0, drawn_area->Y1), PCB->Grid);
-+  x2 = GRIDFIT_X (MIN (PCB->MaxWidth, drawn_area->X2), PCB->Grid);
-+  y2 = GRIDFIT_Y (MIN (PCB->MaxHeight, drawn_area->Y2), PCB->Grid);
-   if (x1 > x2)
-     {
-       int tmp = x1;
-diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 53fa3fb..0834ce6 100644
---- a/src/hid/gtk/gui.h
-+++ b/src/hid/gtk/gui.h
-@@ -491,7 +491,6 @@ gboolean ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev);
- GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int depth);
- hidGC ghid_make_gc (void);
- void ghid_destroy_gc (hidGC);
--void ghid_draw_grid (void);
- void ghid_draw_bg_image (void);
- void ghid_use_mask (int use_it);
- void ghid_set_color (hidGC gc, const char *name);
+
