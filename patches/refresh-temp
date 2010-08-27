@@ -1,0 +1,25 @@
+Bottom: f8df6cf62156ed2b2b668cccf939b72c759568ef
+Top:    f1130c4077b57c0a049f2b4da3624a10cf2eda0e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-27 15:25:05 +0100
+
+Refresh of try-to-make-gdk-and-gl-version
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 69bd21d..97b3573 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -840,6 +840,11 @@ ghid_drawing_area_configure_hook (GHidPort *port)
+ {
+ }
+ 
++void
++ghid_screen_update (void)
++{
++}
++
+ #define Z_NEAR 3.0
+ gboolean
+ ghid_drawing_area_expose_cb (GtkWidget *widget,
