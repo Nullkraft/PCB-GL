@@ -1,5 +1,5 @@
 Bottom: 4b50e20ae9a7dd88ece7539357ba215fd6f47f1f
-Top:    ba18472abe517ff539297ca7f7438c67b37b714c
+Top:    15d2a6f069e8ff3cba94b4a64915ae07423d98f4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:49:22 +0100
 
@@ -544,7 +544,7 @@ index 7cc764e..d2349a8 100644
  ghid_idle_cb (gpointer data)
  {
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 7686106..e8e01da 100644
+index 7686106..4ebaea0 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -284,11 +284,10 @@ void ghid_port_ranges_zoom (gdouble zoom);
@@ -560,15 +560,16 @@ index 7686106..e8e01da 100644
  gboolean ghid_port_key_press_cb (GtkWidget * drawing_area,
  				 GdkEventKey * kev, GtkUIManager * ui);
  gboolean ghid_port_key_release_cb (GtkWidget * drawing_area,
-@@ -491,7 +490,6 @@ GdkPixmap *ghid_render_pixmap (int cx,
+@@ -491,8 +490,6 @@ GdkPixmap *ghid_render_pixmap (int cx,
  /* gtkhid-gdk.c */
  hidGC ghid_make_gc (void);
  void ghid_destroy_gc (hidGC);
 -void ghid_draw_grid (void);
- void ghid_draw_bg_image (void);
+-void ghid_draw_bg_image (void);
  void ghid_use_mask (int use_it);
  void ghid_set_color (hidGC gc, const char *name);
-@@ -507,9 +505,11 @@ void ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2);
+ void ghid_set_line_cap (hidGC gc, EndCapStyle style);
+@@ -507,9 +504,11 @@ void ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2);
  void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
  void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
  void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
