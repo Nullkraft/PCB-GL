@@ -1,5 +1,5 @@
-Bottom: ed3a8cf082d2e65dd5ffd3d33a488dd87470ee2a
-Top:    b7de5ca8b0326ee7422505b5ac00f365e53e8286
+Bottom: 23de850660d0eaaa5f61908439ef08c396af6eba
+Top:    db0de17ca9725663926764b83d7615c58027301d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-07 10:16:09 +0000
 
@@ -9,10 +9,10 @@ Play with perspective rendering
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index c71c430..a78c5fb 100644
+index 428906d..8ed14b4 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -914,13 +914,26 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1696,13 +1696,26 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
