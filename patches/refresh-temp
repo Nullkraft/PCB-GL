@@ -1,0 +1,87 @@
+Bottom: a9879431ee1e9ca4f7d757df61d01fe3f00be55e
+Top:    8747e136893cbae47a628f7ac36c798d5e24a15e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-27 15:42:35 +0100
+
+Refresh of try-to-make-gdk-and-gl-version
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 70cfa35..c6ab190 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -770,35 +770,6 @@ ghid_show_crosshair (gboolean show)
+   glDisable (GL_COLOR_LOGIC_OP);
+ }
+ 
+-gboolean
+-ghid_start_drawing (GHidPort *port)
+-{
+-  GtkWidget *widget = port->drawing_area;
+-  GdkGLContext *pGlContext = gtk_widget_get_gl_context (widget);
+-  GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
+-
+-  /* make GL-context "current" */
+-  if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext))
+-    return FALSE;
+-
+-  return TRUE;
+-}
+-
+-void
+-ghid_end_drawing (GHidPort *port)
+-{
+-  GtkWidget *widget = port->drawing_area;
+-  GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
+-
+-  if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
+-    gdk_gl_drawable_swap_buffers (pGlDrawable);
+-  else
+-    glFlush ();
+-
+-  /* end drawing to current GL-context */
+-  gdk_gl_drawable_gl_end (pGlDrawable);
+-}
+-
+ void
+ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+ {
+@@ -835,6 +806,18 @@ ghid_drawing_area_new (GHidPort *port)
+   return drawing_area;
+ }
+ 
++void
++ghid_pinout_preview_init (GhidPinoutPreview *preview)
++{
++  render_priv *priv = gport->render_priv;
++
++  gtk_widget_set_gl_capability (GTK_WIDGET (preview),
++                                priv->glconfig,
++                                NULL,
++                                TRUE,
++                                GDK_GL_RGBA_TYPE);
++}
++
+ gboolean
+ ghid_start_drawing (GHidPort *port)
+ {
+@@ -973,18 +956,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   return FALSE;
+ }
+ 
+-void
+-ghid_pinout_preview_init (GhidPinoutPreview *preview)
+-{
+-  render_priv *priv = gport->render_priv;
+-
+-  gtk_widget_set_gl_capability (GTK_WIDGET (preview),
+-                                priv->glconfig,
+-                                NULL,
+-                                TRUE,
+-                                GDK_GL_RGBA_TYPE);
+-}
+-
+ gboolean
+ ghid_pinout_preview_expose (GtkWidget *widget,
+                             GdkEventExpose *ev)
