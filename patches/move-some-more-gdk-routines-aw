@@ -1,5 +1,5 @@
 Bottom: f4589f3bf0127413b871c5fcf706e27cdeef9957
-Top:    ebdacea1ccd7f25c3dbfe19789bb1a225cb85451
+Top:    6292aeac790956d1e4b0a2b4b867a089550c076d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-27 13:33:23 +0100
 
@@ -41,6 +41,19 @@ index 50ac011..c6172e3 100644
  ghid_screen_update (void)
  {
    ghid_show_crosshair (FALSE);
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 0a8461e..54b4ba0 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -144,7 +144,7 @@ ghid_draw_grid ()
+ }
+ 
+ #if 0
+-void
++static void
+ ghid_draw_bg_image (void)
+ {
+   static GdkPixbuf *pixbuf = NULL;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
 index ace594a..15d64b7 100644
 --- a/src/hid/gtk/gui-output-events.c
