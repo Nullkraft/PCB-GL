@@ -144,7 +144,7 @@ ghid_draw_grid ()
 }
 
 #if 0
-void
+static void
 ghid_draw_bg_image (void)
 {
   static GdkPixbuf *pixbuf = NULL;
