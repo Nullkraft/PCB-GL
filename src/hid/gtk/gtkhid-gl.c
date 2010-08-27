@@ -41,6 +41,7 @@ static hidGC current_gc = NULL;
 
 static int cur_mask = -1;
 
+static void ghid_draw_grid ();
 
 struct render_priv {
   GdkGLConfig *glconfig;
