@@ -1,5 +1,5 @@
-Bottom: 5f9940f32ad4d760227ac6ee00697558cf643dfb
-Top:    040693fbf4d889c0507ee4f29321220d039e6ff0
+Bottom: 999ac345e1234c515d6533a24097f073a5a42524
+Top:    7f432c49271a82c74e07c56d45fcbdfba3f7d9b2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:49:24 +0100
 
@@ -14,10 +14,10 @@ gtk_widget_show_all()
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 40d1ebb..e839509 100644
+index 87e7dd0..e60a2ff 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -983,6 +983,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1018,6 +1018,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    return FALSE;
  }
  
@@ -30,10 +30,10 @@ index 40d1ebb..e839509 100644
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 42d2efb..101cc9e 100644
+index eca9e81..9cdd78b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -941,6 +941,22 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -982,6 +982,22 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    return FALSE;
  }
  
@@ -100,10 +100,10 @@ index 29959a4..f93e8d4 100644
  }
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index c3a8177..52c1326 100644
+index 3f1d0df..1b6103f 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -506,6 +506,7 @@ void ghid_end_drawing (GHidPort *port);
+@@ -507,6 +507,7 @@ void ghid_end_drawing (GHidPort *port);
  void ghid_screen_update (void);
  gboolean ghid_drawing_area_expose_cb (GtkWidget *, GdkEventExpose *,
                                        GHidPort *);
