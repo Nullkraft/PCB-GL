@@ -182,11 +182,7 @@ ghid_pinout_preview_constructor (GType type,
   object = G_OBJECT_CLASS (ghid_pinout_preview_parent_class)->
     constructor (type, n_construct_properties, construct_properties);
 
-  gtk_widget_set_gl_capability (GTK_WIDGET (object),
-                                gport->glconfig,
-                                NULL,
-                                TRUE,
-                                GDK_GL_RGBA_TYPE);
+  ghid_pinout_preview_init (GHID_PINOUT_PREVIEW (object));
 
   return object;
 }
