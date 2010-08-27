@@ -1,5 +1,5 @@
 Bottom: e4f744502d141513375ab1604138821c6e30e3a9
-Top:    3a18ce023807b326824a02c018bd3a27d6bc53ce
+Top:    cbd81b2790ffe2326d9326c63e5a272c3f172ba1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-27 15:51:03 +0100
 
@@ -446,12 +446,26 @@ index 50ac011..28fcd8a 100644
    /* call the drawing routine */
    region.X1 = MIN(Px(0), Px(gport->width + 1));
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 8814c68..b7346de 100644
+index 8814c68..6da4291 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -547,13 +547,14 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -533,27 +533,24 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+   if (!first_time_done)
+     {
+       gport->colormap = gtk_widget_get_colormap (gport->top_window);
+-      gport->bg_gc = gdk_gc_new (gport->drawable);
+       if (gdk_color_parse (Settings.BackgroundColor, &gport->bg_color))
+ 	gdk_color_alloc (gport->colormap, &gport->bg_color);
+       else
+ 	gdk_color_white (gport->colormap, &gport->bg_color);
+-      gdk_gc_set_foreground (gport->bg_gc, &gport->bg_color);
+ 
+-      gport->offlimits_gc = gdk_gc_new (gport->drawable);
+       if (gdk_color_parse (Settings.OffLimitColor, &gport->offlimits_color))
+ 	gdk_color_alloc (gport->colormap, &gport->offlimits_color);
+       else
  	gdk_color_white (gport->colormap, &gport->offlimits_color);
-       gdk_gc_set_foreground (gport->offlimits_gc, &gport->offlimits_color);
+-      gdk_gc_set_foreground (gport->offlimits_gc, &gport->offlimits_color);
        first_time_done = TRUE;
 +      ghid_drawing_area_configure_hook (out);
        PCBChanged (0, NULL, 0, 0);
