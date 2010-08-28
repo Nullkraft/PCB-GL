@@ -1,5 +1,5 @@
-Bottom: 0c7fa4108f1d3127f8e8aeed449c90500fda0fa2
-Top:    aa49a6e99b3187d8872c64740948828028d575a8
+Bottom: 108b17cf64b6c64cb1207c755fda3417a6985fd2
+Top:    6b72f8804d92209e19db16ae11b0d5ecb4e7e8b5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-28 04:06:23 +0100
 
@@ -9,10 +9,10 @@ Fix scissor tests?
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e4caa18..980358f 100644
+index 9c068bf..7df6c8a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -903,11 +903,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -911,11 +911,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glViewport (0, 0, widget->allocation.width, widget->allocation.height);
  
@@ -24,7 +24,7 @@ index e4caa18..980358f 100644
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
    glOrtho (0, widget->allocation.width, widget->allocation.height, 0, 0, 100);
-@@ -920,8 +915,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -928,8 +923,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                  port->offlimits_color.blue / 65535.,
                  1.);
  
@@ -39,7 +39,7 @@ index e4caa18..980358f 100644
    region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
    region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
    region.Y1 = MIN (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
-@@ -1048,11 +1049,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1056,11 +1057,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
  
    glViewport (0, 0, widget->allocation.width, widget->allocation.height);
  
@@ -51,7 +51,7 @@ index e4caa18..980358f 100644
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
    glOrtho (0, widget->allocation.width, widget->allocation.height, 0, 0, 100);
-@@ -1065,8 +1061,14 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1073,8 +1069,14 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  gport->bg_color.blue / 65535.,
                  1.);
  
@@ -66,7 +66,7 @@ index e4caa18..980358f 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
-@@ -1158,9 +1160,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1166,9 +1168,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glViewport (0, 0, width, height);
  
@@ -76,7 +76,7 @@ index e4caa18..980358f 100644
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
    glOrtho (0, width, height, 0, 0, 100);
-@@ -1173,8 +1172,12 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1181,8 +1180,12 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                  gport->bg_color.blue / 65535.,
                  1.);
    glClearStencil (0);
