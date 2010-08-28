@@ -1,5 +1,5 @@
-Bottom: ee3622447ef4824f5a3e55c35dd83f9d6e202762
-Top:    0e95092209730e885cce9d261b72c5223402bbef
+Bottom: 438e75cf2c9ede664898e95e2002fb0ca7c4a6d9
+Top:    fb289b5942cce9ffe83dac15728ef0b4251349f8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:13 +0100
 
@@ -27,7 +27,7 @@ index 6333f45..ec65a6b 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 1f25f94..dba75b5 100644
+index 3ba39d8..28a56cf 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -47,6 +47,8 @@
@@ -37,9 +37,9 @@ index 1f25f94..dba75b5 100644
 +#include "snavi.h"
 +#include "gui-trackball.h"
  
- /* TEMPORARY HACK WHILST THERE IS SOME GL STUFF IN THE WRONG PLACE! */
- /* The Linux OpenGL ABI 1.0 spec requires that we define
-@@ -765,6 +767,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+@@ -751,6 +753,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        /* Make sure drawing area has keyboard focus when we are in it.
         */
        gtk_widget_grab_focus (out->drawing_area);
@@ -48,7 +48,7 @@ index 1f25f94..dba75b5 100644
      }
    ghidgui->in_popup = FALSE;
  
-@@ -872,6 +876,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -858,6 +862,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
  	    }
  	  g_idle_add (ghid_pan_idle_cb, NULL);
  	}
@@ -57,7 +57,7 @@ index 1f25f94..dba75b5 100644
      }
  
    if(cursor_in_viewport)
-@@ -920,3 +926,28 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+@@ -906,3 +912,28 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  
    return TRUE;
  }
