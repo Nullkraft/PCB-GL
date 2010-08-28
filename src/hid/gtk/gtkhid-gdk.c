@@ -29,6 +29,10 @@ static int cur_mask = -1;
 static int mask_seq = 0;
 
 typedef struct render_priv {
+  GdkColormap *colormap;
+  GdkColor bg_color;
+  GdkColor offlimits_color;
+  GdkColor grid_color;
   GdkGC *bg_gc;
   GdkGC *offlimits_gc;
   GdkGC *mask_gc;
@@ -136,16 +140,16 @@ ghid_draw_grid (void)
     return;
   if (!priv->grid_gc)
     {
-      if (gdk_color_parse (Settings.GridColor, &gport->grid_color))
+      if (gdk_color_parse (Settings.GridColor, &priv->grid_color))
 	{
-	  gport->grid_color.red ^= gport->bg_color.red;
-	  gport->grid_color.green ^= gport->bg_color.green;
-	  gport->grid_color.blue ^= gport->bg_color.blue;
-	  gdk_color_alloc (gport->colormap, &gport->grid_color);
+	  priv->grid_color.red ^= priv->bg_color.red;
+	  priv->grid_color.green ^= priv->bg_color.green;
+	  priv->grid_color.blue ^= priv->bg_color.blue;
+	  gdk_color_alloc (priv->colormap, &priv->grid_color);
 	}
       priv->grid_gc = gdk_gc_new (gport->drawable);
       gdk_gc_set_function (priv->grid_gc, GDK_XOR);
-      gdk_gc_set_foreground (priv->grid_gc, &gport->grid_color);
+      gdk_gc_set_foreground (priv->grid_gc, &priv->grid_color);
     }
   x1 = GRIDFIT_X (SIDE_X (gport->view_x0), PCB->Grid);
   y1 = GRIDFIT_Y (SIDE_Y (gport->view_y0), PCB->Grid);
@@ -327,14 +331,14 @@ set_special_grid_color (void)
 {
   render_priv *priv = gport->render_priv;
 
-  if (!gport->colormap)
+  if (!priv->colormap)
     return;
-  gport->grid_color.red ^= gport->bg_color.red;
-  gport->grid_color.green ^= gport->bg_color.green;
-  gport->grid_color.blue ^= gport->bg_color.blue;
-  gdk_color_alloc (gport->colormap, &gport->grid_color);
+  priv->grid_color.red ^= priv->bg_color.red;
+  priv->grid_color.green ^= priv->bg_color.green;
+  priv->grid_color.blue ^= priv->bg_color.blue;
+  gdk_color_alloc (priv->colormap, &priv->grid_color);
   if (priv->grid_gc)
-    gdk_gc_set_foreground (priv->grid_gc, &gport->grid_color);
+    gdk_gc_set_foreground (priv->grid_gc, &priv->grid_color);
 }
 
 void
@@ -346,18 +350,18 @@ ghid_set_special_colors (HID_Attribute * ha)
     return;
   if (!strcmp (ha->name, "background-color") && priv->bg_gc)
     {
-      ghid_map_color_string (*(char **) ha->value, &gport->bg_color);
-      gdk_gc_set_foreground (priv->bg_gc, &gport->bg_color);
+      ghid_map_color_string (*(char **) ha->value, &priv->bg_color);
+      gdk_gc_set_foreground (priv->bg_gc, &priv->bg_color);
       set_special_grid_color ();
     }
   else if (!strcmp (ha->name, "off-limit-color") && priv->offlimits_gc)
     {
-      ghid_map_color_string (*(char **) ha->value, &gport->offlimits_color);
-      gdk_gc_set_foreground (priv->offlimits_gc, &gport->offlimits_color);
+      ghid_map_color_string (*(char **) ha->value, &priv->offlimits_color);
+      gdk_gc_set_foreground (priv->offlimits_gc, &priv->offlimits_color);
     }
   else if (!strcmp (ha->name, "grid-color") && priv->grid_gc)
     {
-      ghid_map_color_string (*(char **) ha->value, &gport->grid_color);
+      ghid_map_color_string (*(char **) ha->value, &priv->grid_color);
       set_special_grid_color ();
     }
 }
@@ -365,6 +369,7 @@ ghid_set_special_colors (HID_Attribute * ha)
 void
 ghid_set_color (hidGC gc, const char *name)
 {
+  render_priv *priv = gport->render_priv;
   static void *cache = 0;
   hidval cval;
 
@@ -378,17 +383,17 @@ ghid_set_color (hidGC gc, const char *name)
   gc->colorname = (char *) name;
   if (!gc->gc)
     return;
-  if (gport->colormap == 0)
-    gport->colormap = gtk_widget_get_colormap (gport->top_window);
+  if (priv->colormap == NULL)
+    priv->colormap = gtk_widget_get_colormap (gport->top_window);
 
   if (strcmp (name, "erase") == 0)
     {
-      gdk_gc_set_foreground (gc->gc, &gport->bg_color);
+      gdk_gc_set_foreground (gc->gc, &priv->bg_color);
       gc->erase = 1;
     }
   else if (strcmp (name, "drill") == 0)
     {
-      gdk_gc_set_foreground (gc->gc, &gport->offlimits_color);
+      gdk_gc_set_foreground (gc->gc, &priv->offlimits_color);
       gc->erase = 0;
     }
   else
@@ -407,19 +412,19 @@ ghid_set_color (hidGC gc, const char *name)
       if (!cc->color_set)
 	{
 	  if (gdk_color_parse (name, &cc->color))
-	    gdk_color_alloc (gport->colormap, &cc->color);
+	    gdk_color_alloc (priv->colormap, &cc->color);
 	  else
-	    gdk_color_white (gport->colormap, &cc->color);
+	    gdk_color_white (priv->colormap, &cc->color);
 	  cc->color_set = 1;
 	}
       if (gc->xor)
 	{
 	  if (!cc->xor_set)
 	    {
-	      cc->xor_color.red = cc->color.red ^ gport->bg_color.red;
-	      cc->xor_color.green = cc->color.green ^ gport->bg_color.green;
-	      cc->xor_color.blue = cc->color.blue ^ gport->bg_color.blue;
-	      gdk_color_alloc (gport->colormap, &cc->xor_color);
+	      cc->xor_color.red = cc->color.red ^ priv->bg_color.red;
+	      cc->xor_color.green = cc->color.green ^ priv->bg_color.green;
+	      cc->xor_color.blue = cc->color.blue ^ priv->bg_color.blue;
+	      gdk_color_alloc (priv->colormap, &cc->xor_color);
 	      cc->xor_set = 1;
 	    }
 	  gdk_gc_set_foreground (gc->gc, &cc->xor_color);
@@ -961,17 +966,29 @@ ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
 void
 ghid_drawing_area_configure_hook (GHidPort *port)
 {
-  static int done_once = 0;
+  static bool done_once = false;
   render_priv *priv = port->render_priv;
 
   if (!done_once)
     {
+      priv->colormap = gtk_widget_get_colormap (port->top_window);
+
+      if (gdk_color_parse (Settings.BackgroundColor, &priv->bg_color))
+	gdk_color_alloc (priv->colormap, &priv->bg_color);
+      else
+	gdk_color_white (priv->colormap, &priv->bg_color);
+
+      if (gdk_color_parse (Settings.OffLimitColor, &priv->offlimits_color))
+	gdk_color_alloc (priv->colormap, &priv->offlimits_color);
+      else
+	gdk_color_white (priv->colormap, &priv->offlimits_color);
+
       priv->bg_gc = gdk_gc_new (port->drawable);
-      gdk_gc_set_foreground (priv->bg_gc, &port->bg_color);
+      gdk_gc_set_foreground (priv->bg_gc, &priv->bg_color);
 
       priv->offlimits_gc = gdk_gc_new (port->drawable);
-      gdk_gc_set_foreground (priv->offlimits_gc, &port->offlimits_color);
-      done_once = 1;
+      gdk_gc_set_foreground (priv->offlimits_gc, &priv->offlimits_color);
+      done_once = true;
     }
 
   if (port->mask)
