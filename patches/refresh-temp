@@ -1,0 +1,49 @@
+Bottom: e11f1e2fcf6efdc0065762c7d71b003e67d1c601
+Top:    8134ad19335748667092a7462fb3f3fe7b4da5a8
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-28 03:38:35 +0100
+
+Refresh of draw-pin-pad-names-first-so-th
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 6b217d9..bc9d850 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1097,7 +1097,10 @@ SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
+ static int
+ pin_name_callback (const BoxType * b, void *cl)
+ {
+-  DrawPinName ((PinTypePtr) b, 0);
++  PinTypePtr pin = (PinTypePtr) b;
++
++  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
++    DrawPinName (pin, 0);
+   return 1;
+ }
+ 
+@@ -1120,8 +1123,11 @@ via_inlayer_callback (const BoxType * b, void *cl)
+ static int
+ pin_callback (const BoxType * b, void *cl)
+ {
+-  DrawPinName ((PinTypePtr) b, 0);
+-  DrawPlainPin ((PinTypePtr) b, false);
++  PinTypePtr pin = (PinTypePtr) b;
++
++  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
++    DrawPinName (pin, 0);
++  DrawPlainPin (pin, false);
+   return 1;
+ }
+ 
+@@ -1131,7 +1137,8 @@ pad_callback (const BoxType * b, void *cl)
+   PadTypePtr pad = (PadTypePtr) b;
+   if (FRONT (pad))
+   {
+-    DrawPadName (pad, 0);
++    if (TEST_FLAG (DISPLAYNAMEFLAG, pad))
++      DrawPadName (pad, 0);
+     DrawPad (pad, 0);
+   }
+   return 1;
