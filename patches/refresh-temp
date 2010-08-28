@@ -1,0 +1,26 @@
+Bottom: 92ba51f779273f42b69a5be6499f75a3c09b32e7
+Top:    e0ff5df33457ac3ae7b3e64cf104b7421c6127e0
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-28 03:04:18 +0100
+
+Refresh of ugly-ugly-hack-to-make-pretty-
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 4e1c29a..7669d03 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -677,6 +677,12 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ }
+ 
+ void
++ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
++{
++  common_thindraw_pcb_polygon (gc, poly, clip_box);
++}
++
++void
+ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
+ {
+   gint w, h, lw, xx, yy;
