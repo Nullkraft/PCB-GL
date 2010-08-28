@@ -1,7 +1,7 @@
-Bottom: fea8563297e9ad7cf4701116841a83d5a547191c
-Top:    4fe63c841b5f966d7d4699c018beafb92b899cff
+Bottom: 5d791f66448172f59819108f2cd61d0c88a7e838
+Top:    60a6c5b9369f4345d3934059d472a930138327ef
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-08-27 16:30:01 +0100
+Date:   2010-08-28 03:20:03 +0100
 
 Add support for a "poured" object.
 
@@ -47,7 +47,7 @@ index 8db0918..5faaf6d 100644
  src/report.c
  src/res_parse.c
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 8c49295..9593153 100644
+index 3f3c291..8a66eff 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -121,6 +121,8 @@ PCB_SRCS = \
@@ -2959,10 +2959,10 @@ index a607a69..f36c400 100644
        break;
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index ca82059..3c22eb5 100644
+index 2da5137..e340ca5 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -297,8 +297,8 @@ have_crosshair_attachments (void)
+@@ -290,8 +290,8 @@ have_crosshair_attachments (void)
      case VIA_MODE:
        result = TRUE;
        break;
@@ -2974,10 +2974,10 @@ index ca82059..3c22eb5 100644
  	result = TRUE;
        break;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 0b1e311..a625444 100644
+index fa25836..5a2361c 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -1984,8 +1984,9 @@ static ModeButton mode_buttons[] = {
+@@ -1982,8 +1982,9 @@ static ModeButton mode_buttons[] = {
    {NULL, NULL, NULL, "arc", ARC_MODE, arc},
    {NULL, NULL, NULL, "text", TEXT_MODE, text},
    {NULL, NULL, NULL, "rectangle", RECTANGLE_MODE, rect},
