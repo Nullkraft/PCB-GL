@@ -5,6 +5,10 @@ Date:   2010-08-27 15:51:03 +0100
 
 Create a private structure for the render to isolate some of its internals
 
+Also create a hook for configure events on the main drawing area to
+allow the renderer to reconfigure its-self as necessary as the area
+changes in size.
+
 
 ---
 
