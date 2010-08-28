@@ -688,13 +688,18 @@ ghid_port_window_motion_cb (GtkWidget * widget,
   static gint x_prev = -1, y_prev = -1;
   gboolean moved;
 
+#if 0
   if (!ghid_start_drawing (out))
     return FALSE;
+#endif
 
   if (out->panning)
     {
+/* Not sure this really matters, since we're using invalidate to get a redraw */
+#if 1
       if (gtk_events_pending ())
 	return FALSE;
+#endif
       dx = gport->zoom * (x_prev - ev->x);
       dy = gport->zoom * (y_prev - ev->y);
       if (x_prev > 0)
@@ -710,11 +715,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
   queue_tooltip_update (out);
 #endif
 
-  ghid_show_crosshair (TRUE);
-  if (moved && have_crosshair_attachments ())
+//  ghid_show_crosshair (TRUE);
+  if (moved) // && have_crosshair_attachments ())
     ghid_draw_area_update (gport, NULL);
 
+#if 0
   ghid_end_drawing (out);
+#endif
+
   return FALSE;
 }
 
