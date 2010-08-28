@@ -1,0 +1,23 @@
+Bottom: ec1e66d5714c16125b304ccd847e88ef289f999f
+Top:    dead2cd90ed7f3fce49820569c5290989162beb1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-28 03:29:36 +0100
+
+Refresh of drop-in-pcb-gl-code-various-mess
+
+---
+
+diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
+index adcc346..54d95c8 100644
+--- a/src/hid/gtk/gui-pinout-preview.c
++++ b/src/hid/gtk/gui-pinout-preview.c
+@@ -171,7 +171,8 @@ static void
+ ghid_pinout_preview_constructed (GObject *object)
+ {
+   /* chain up to the parent class */
+-  G_OBJECT_CLASS (ghid_pinout_preview_parent_class)->constructed (object);
++  if (G_OBJECT_CLASS (ghid_pinout_preview_parent_class)->constructed != NULL)
++    G_OBJECT_CLASS (ghid_pinout_preview_parent_class)->constructed (object);
+ 
+   ghid_init_drawing_widget (GTK_WIDGET (object), gport);
+ }
