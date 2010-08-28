@@ -1,5 +1,5 @@
 Bottom: 31f28abfda458d0c7a97fe7395a7024a23a8fe24
-Top:    9c90354bfe2dc00afda76ced6dcf8a043c9c5ff2
+Top:    2f9645698cf5e47d80dcdcddbf8ca4bf9df1a538
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:49:23 +0100
 
@@ -2035,7 +2035,7 @@ index c213d95..2a78c75 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 6da4291..0952462 100644
+index 6da4291..3f9e08e 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -688,6 +688,9 @@ ghid_port_window_motion_cb (GtkWidget * widget,
@@ -2054,15 +2054,6 @@ index 6da4291..0952462 100644
      ghid_draw_area_update (gport, NULL);
 +
 +  ghid_end_drawing (out);
-   return FALSE;
- }
- 
-@@ -749,7 +754,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
-       RestoreCrosshair (TRUE);
-       cursor_in_viewport = TRUE;
-     }
--	  
-+
    return FALSE;
  }
  
