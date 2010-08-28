@@ -912,7 +912,6 @@ gboolean
 ghid_pinout_preview_expose (GtkWidget *widget,
                             GdkEventExpose *ev)
 {
-  extern HID ghid_hid;
   GhidPinoutPreview *pinout = GHID_PINOUT_PREVIEW (widget);
   GdkDrawable *save_drawable;
   double save_zoom;
@@ -1007,7 +1006,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
 GdkPixmap *
 ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int depth)
 {
-  extern HID ghid_hid;
   GdkPixmap *pixmap;
   GdkDrawable *save_drawable;
   double save_zoom;
