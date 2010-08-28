@@ -161,7 +161,9 @@ LIBGTK_GDK_SRCS= \
 	hid/gtk/gtkhid-gdk.c
 
 LIBGTK_GL_SRCS= \
-	hid/gtk/gtkhid-gl.c
+	hid/gtk/gtkhid-gl.c \
+	hid/gtk/gui-trackball.c \
+	hid/gtk/gui-trackball.h
 
 GL_SRCS= \
 	hid/common/hidgl.c \
@@ -277,8 +279,6 @@ LIBGTK_SRCS = \
 	hid/gtk/gui-pinout-preview.h \
 	hid/gtk/gui-pinout-window.c \
 	hid/gtk/gui-top-window.c \
-	hid/gtk/gui-trackball.c \
-	hid/gtk/gui-trackball.h \
 	hid/gtk/gui-utils.c
 libgtk_a_SOURCES = ${LIBGTK_SRCS} hid/gtk/gtk_lists.h
 
