@@ -1,5 +1,5 @@
 Bottom: ab3eb0aea287c2559abeb185cd6b6cea6ed8b181
-Top:    1423235415e5586a3c521b1bbc64515c34e23468
+Top:    3fe28dc3a2706c0d7ff02f8d170d6760cb351ce7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:49:22 +0100
 
@@ -278,10 +278,20 @@ index 461b779..eb94ed8 100644
 +    }
 +}
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 8c3ff67..89cdb20 100644
+index 8c3ff67..8f10492 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -311,79 +311,6 @@ zoom_by (double factor, int x, int y)
+@@ -33,9 +33,6 @@
+ RCSID ("$Id$");
+ 
+ 
+-extern HID ghid_hid;
+-
+-
+ static void zoom_to (double factor, int x, int y);
+ static void zoom_by (double factor, int x, int y);
+ 
+@@ -311,79 +308,6 @@ zoom_by (double factor, int x, int y)
  
  /* ------------------------------------------------------------ */
  
