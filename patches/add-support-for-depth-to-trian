@@ -1,5 +1,5 @@
-Bottom: 3cf5d033d877cded24910877fc4ea5e4531ee340
-Top:    869adbe1882b9961fe5e3b071ff4e0acb12865c6
+Bottom: 5ec1a23b32d8c72dbd906a244c299ca6a3c47c9b
+Top:    94d6641a0a4f1abb240ba15e51c6318abc79a582
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:11 +0100
 
@@ -124,7 +124,7 @@ index b956a65..aa2985e 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index df9383b..e50628b 100644
+index 9ba6009..67784e0 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -231,6 +231,7 @@ ghid_get_coords (const char *msg, int *x, int *y)
@@ -135,12 +135,11 @@ index df9383b..e50628b 100644
    gint x, y;
    gboolean moved;
  
-@@ -247,7 +248,7 @@ ghid_note_event_location (GdkEventButton * ev)
-     }
- 
+@@ -249,7 +250,7 @@ ghid_note_event_location (GdkEventButton * ev)
+   /* FIXME: IFDEF HACK */
+ #ifdef ENABLE_GL
    /* Unproject event_x and event_y to world coordinates of the plane we are on */
 -  ghid_unproject_to_z_plane (event_x, event_y, 0,
 +  ghid_unproject_to_z_plane (event_x, event_y, global_depth,
                               &event_x, &event_y);
- 
-   gport->view_x = event_x * gport->zoom + gport->view_x0;
+ #endif
