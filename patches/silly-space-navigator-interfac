@@ -1,5 +1,5 @@
 Bottom: 34fad347d43af229c3a18e5428d1a1254353025c
-Top:    926fbe2f9bd9d3c2a3d5053e7515f6f02ff193c6
+Top:    308d521e5353b9e2237da8a4fb703169bb5fc8c3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:13 +0100
 
@@ -27,7 +27,7 @@ index 6a0c335..82a05aa 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 60f9a3d..f5ac4fb 100644
+index 60f9a3d..b121795 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -47,6 +47,8 @@
@@ -57,7 +57,7 @@ index 60f9a3d..f5ac4fb 100644
      }
  
    if(cursor_in_viewport)
-@@ -913,3 +919,28 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+@@ -913,3 +919,31 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  
    return TRUE;
  }
@@ -73,8 +73,11 @@ index 60f9a3d..f5ac4fb 100644
 +
 +void ndof_roll_cb (int dx, int dy, int dz, gpointer data)
 +{
++  /* FIXME: IFDEF HACK */
++#ifdef ENABLE_GL
 +  ghid_trackball_external_rotate (GHID_TRACKBALL (gport->trackball),
 +                                  dy / 100., dx / 100., dz / 100.);
++#endif
 +}
 +
 +void ndof_done_cb (gpointer data)
