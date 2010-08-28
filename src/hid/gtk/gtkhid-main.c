@@ -33,9 +33,6 @@
 RCSID ("$Id$");
 
 
-extern HID ghid_hid;
-
-
 static void zoom_to (double factor, int x, int y);
 static void zoom_by (double factor, int x, int y);
 
