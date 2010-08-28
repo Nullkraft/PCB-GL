@@ -1,5 +1,5 @@
-Bottom: 17c28ba4d4a05e02569b09c8774ad5bcaa3689eb
-Top:    e60d4338e567e15a35e7a63388906bc1e938279b
+Bottom: ce1a9e5c084af3ecd2d44c5a73711954205bca01
+Top:    a02dc804bbe0aecf79c19e7ea5059744ead2f655
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:09 +0100
 
@@ -15,7 +15,7 @@ way to turn it off would also be useful.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 3837f81..0a60625 100644
+index 3ea1c38..68cc860 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -395,26 +395,31 @@ typedef struct
@@ -29,7 +29,7 @@ index 3837f81..0a60625 100644
  void
  ghid_set_color (hidGC gc, const char *name)
  {
-   render_priv *priv = gport->priv;
+   render_priv *priv = gport->render_priv;
    static void *cache = NULL;
 -  static char *old_name = NULL;
    hidval cval;
@@ -97,10 +97,10 @@ index 3837f81..0a60625 100644
  {
    USE_GC (gc);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 4eaf8c2..ca72102 100644
+index 2900225..031c5ac 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -1061,7 +1061,7 @@ HID ghid_hid = {
+@@ -1058,7 +1058,7 @@ HID ghid_hid = {
    ghid_fill_circle,
    ghid_fill_polygon,
    ghid_fill_pcb_polygon,
