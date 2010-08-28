@@ -166,10 +166,6 @@ typedef struct
 
   struct render_priv *render_priv;
 
-  GdkColor bg_color, offlimits_color, grid_color;
-
-  GdkColormap *colormap;
-
   GdkCursor *X_cursor;		/* used X cursor */
   GdkCursorType X_cursor_shape;	/* and its shape */
 
