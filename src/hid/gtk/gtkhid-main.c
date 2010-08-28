@@ -33,8 +33,6 @@
 RCSID ("$Id$");
 
 
-extern HID ghid_hid;
-
 int ghid_gui_is_up = 0;
 
 static void zoom_to (double factor, int x, int y);
