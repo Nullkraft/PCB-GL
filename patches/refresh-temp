@@ -1,0 +1,22 @@
+Bottom: dead2cd90ed7f3fce49820569c5290989162beb1
+Top:    aabbd34b0217f7a33523ed23df57d9b0ff5bad1b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-28 04:11:07 +0100
+
+Refresh of tmp
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 80a8d95..71ecca1 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -906,7 +906,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   glEnable (GL_SCISSOR_TEST);
+   glScissor (ev->area.x,
+              widget->allocation.height - ev->area.height - ev->area.y,
+-             ev->area.width, ev->area.height);
++             ev->area.width/2, ev->area.height);
+ 
+   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity ();
