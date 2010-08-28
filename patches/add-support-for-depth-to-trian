@@ -1,5 +1,5 @@
 Bottom: 5ec1a23b32d8c72dbd906a244c299ca6a3c47c9b
-Top:    94d6641a0a4f1abb240ba15e51c6318abc79a582
+Top:    d47cf7e79908cd101d27676648d63c44cbc20fd2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:11 +0100
 
@@ -124,18 +124,21 @@ index b956a65..aa2985e 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 9ba6009..67784e0 100644
+index 9ba6009..60f9a3d 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -231,6 +231,7 @@ ghid_get_coords (const char *msg, int *x, int *y)
+@@ -231,6 +231,10 @@ ghid_get_coords (const char *msg, int *x, int *y)
  gboolean
  ghid_note_event_location (GdkEventButton * ev)
  {
++  /* FIXME: IFDEF HACK */
++#ifdef ENABLE_GL
 +  extern float global_depth; /* FIXME: REMOVE THIS HACK! */
++#endif
    gint x, y;
    gboolean moved;
  
-@@ -249,7 +250,7 @@ ghid_note_event_location (GdkEventButton * ev)
+@@ -249,7 +253,7 @@ ghid_note_event_location (GdkEventButton * ev)
    /* FIXME: IFDEF HACK */
  #ifdef ENABLE_GL
    /* Unproject event_x and event_y to world coordinates of the plane we are on */
