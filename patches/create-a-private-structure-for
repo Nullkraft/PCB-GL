@@ -1,5 +1,5 @@
-Bottom: e4f744502d141513375ab1604138821c6e30e3a9
-Top:    4ba810928c534b97666dff271e7fb3c3e7fa98c4
+Bottom: 9b0b412eb6512b8a6a62d02b83d63db385b53214
+Top:    2afaa1087fcbeb2b7f3848b938c15f2557cf4674
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-27 15:51:03 +0100
 
@@ -13,7 +13,7 @@ changes in size.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 50ac011..28fcd8a 100644
+index e3d305c..34e52fa 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -21,13 +21,21 @@ RCSID ("$Id$");
@@ -406,7 +406,7 @@ index 50ac011..28fcd8a 100644
                      ev->area.x, ev->area.y, ev->area.x, ev->area.y,
                      ev->area.width, ev->area.height);
    ghid_show_crosshair (TRUE);
-@@ -921,6 +980,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -920,6 +979,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    int save_width, save_height;
    int save_view_width, save_view_height;
    double xz, yz;
@@ -414,7 +414,7 @@ index 50ac011..28fcd8a 100644
  
    save_zoom = gport->zoom;
    save_width = gport->width;
-@@ -951,7 +1011,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -950,7 +1010,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
  
    /* clear background */
@@ -423,7 +423,7 @@ index 50ac011..28fcd8a 100644
  
    /* call the drawing routine */
    hid_expose_callback (&ghid_hid, NULL, &pinout->element);
-@@ -987,7 +1047,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -986,7 +1046,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    gport->view_y0 = (pinout->y_max - gport->view_height) / 2;
  
    /* clear background */
@@ -432,7 +432,7 @@ index 50ac011..28fcd8a 100644
  
    /* call the drawing routine */
    hid_expose_callback (&ghid_hid, NULL, &pinout->element);
-@@ -1015,6 +1075,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1013,6 +1073,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    int save_width, save_height;
    int save_view_width, save_view_height;
    BoxType region;
@@ -440,7 +440,7 @@ index 50ac011..28fcd8a 100644
  
    save_drawable = gport->drawable;
    save_zoom = gport->zoom;
-@@ -1042,7 +1103,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1040,7 +1101,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    gport->view_y0 -= gport->view_width  / 2;
  
    /* clear background */
@@ -486,10 +486,10 @@ index 8814c68..6da4291 100644
    ghid_invalidate_all ();
    RestoreCrosshair (TRUE);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index f783ecc..9641a25 100644
+index 6848d29..aaf7237 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -2677,6 +2677,8 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -2674,6 +2674,8 @@ ghid_parse_arguments (int *argc, char ***argv)
    gport->zoom = 300.0;
    pixel_slop = 300;
  
