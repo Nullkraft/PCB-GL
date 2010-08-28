@@ -1,0 +1,22 @@
+Bottom: 1423235415e5586a3c521b1bbc64515c34e23468
+Top:    3fe28dc3a2706c0d7ff02f8d170d6760cb351ce7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-28 02:29:16 +0100
+
+Refresh of move-more-gdk-specific-drawing
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 89cdb20..8f10492 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -33,9 +33,6 @@
+ RCSID ("$Id$");
+ 
+ 
+-extern HID ghid_hid;
+-
+-
+ static void zoom_to (double factor, int x, int y);
+ static void zoom_by (double factor, int x, int y);
