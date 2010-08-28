@@ -670,6 +670,7 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
   gdk_draw_polygon (gport->drawable, priv->u_gc, 1, points, n_coords);
 }
 
+void
 ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
   common_fill_pcb_polygon (gc, poly, clip_box);
