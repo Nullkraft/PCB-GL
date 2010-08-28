@@ -171,7 +171,8 @@ static void
 ghid_pinout_preview_constructed (GObject *object)
 {
   /* chain up to the parent class */
-  G_OBJECT_CLASS (ghid_pinout_preview_parent_class)->constructed (object);
+  if (G_OBJECT_CLASS (ghid_pinout_preview_parent_class)->constructed != NULL)
+    G_OBJECT_CLASS (ghid_pinout_preview_parent_class)->constructed (object);
 
   ghid_init_drawing_widget (GTK_WIDGET (object), gport);
 }
