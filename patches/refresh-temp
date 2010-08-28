@@ -1,0 +1,20 @@
+Bottom: 067acfe944b4084cec1f4c46fbc277a6e4205edd
+Top:    869adbe1882b9961fe5e3b071ff4e0acb12865c6
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-28 02:56:08 +0100
+
+Refresh of add-support-for-depth-to-trian
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 3ba39d8..e50628b 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -231,6 +231,7 @@ ghid_get_coords (const char *msg, int *x, int *y)
+ gboolean
+ ghid_note_event_location (GdkEventButton * ev)
+ {
++  extern float global_depth; /* FIXME: REMOVE THIS HACK! */
+   gint x, y;
+   gboolean moved;
