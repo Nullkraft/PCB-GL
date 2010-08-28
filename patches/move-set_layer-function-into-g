@@ -1,5 +1,5 @@
-Bottom: 4ba810928c534b97666dff271e7fb3c3e7fa98c4
-Top:    31f28abfda458d0c7a97fe7395a7024a23a8fe24
+Bottom: 2b39d46b71674250e1299daf67c9a54dd51802b7
+Top:    89b85b741a038a449ab16ed003095aa89121eef0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-27 17:33:34 +0100
 
@@ -12,10 +12,10 @@ version coming shortly does some extra work.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 28fcd8a..28b6379 100644
+index 1dfab53..106c321 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -67,6 +67,41 @@ typedef struct hid_gc_struct
+@@ -71,6 +71,41 @@ typedef struct hid_gc_struct
  hid_gc_struct;
  
  
@@ -104,10 +104,10 @@ index 89cdb20..c213d95 100644
  ghid_calibrate (double xval, double yval)
  {
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index c4d71b4..2966609 100644
+index dd647c7..bd1edc0 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -477,6 +477,7 @@ void ghid_logv (const char *fmt, va_list args);
+@@ -473,6 +473,7 @@ void ghid_logv (const char *fmt, va_list args);
  void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
  
  /* gtkhid-gdk.c */
