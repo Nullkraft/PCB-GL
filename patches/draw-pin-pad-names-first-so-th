@@ -1,5 +1,5 @@
 Bottom: 3c7020e7faa2be1123485447910d81bea5de262f
-Top:    e11f1e2fcf6efdc0065762c7d71b003e67d1c601
+Top:    8134ad19335748667092a7462fb3f3fe7b4da5a8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-28 03:19:43 +0100
 
@@ -19,16 +19,19 @@ the pads.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 156952c..6b217d9 100644
+index 156952c..bc9d850 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1095,6 +1095,13 @@ SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
+@@ -1095,6 +1095,16 @@ SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
  
  
  static int
 +pin_name_callback (const BoxType * b, void *cl)
 +{
-+  DrawPinName ((PinTypePtr) b, 0);
++  PinTypePtr pin = (PinTypePtr) b;
++
++  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
++    DrawPinName (pin, 0);
 +  return 1;
 +}
 +
@@ -36,26 +39,32 @@ index 156952c..6b217d9 100644
  pin_inlayer_callback (const BoxType * b, void *cl)
  {
    SetPVColor_inlayer ((PinTypePtr) b, cl, PIN_TYPE);
-@@ -1113,6 +1120,7 @@ via_inlayer_callback (const BoxType * b, void *cl)
+@@ -1113,7 +1123,11 @@ via_inlayer_callback (const BoxType * b, void *cl)
  static int
  pin_callback (const BoxType * b, void *cl)
  {
-+  DrawPinName ((PinTypePtr) b, 0);
-   DrawPlainPin ((PinTypePtr) b, false);
+-  DrawPlainPin ((PinTypePtr) b, false);
++  PinTypePtr pin = (PinTypePtr) b;
++
++  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
++    DrawPinName (pin, 0);
++  DrawPlainPin (pin, false);
    return 1;
  }
-@@ -1122,7 +1130,10 @@ pad_callback (const BoxType * b, void *cl)
+ 
+@@ -1122,7 +1136,11 @@ pad_callback (const BoxType * b, void *cl)
  {
    PadTypePtr pad = (PadTypePtr) b;
    if (FRONT (pad))
 +  {
-+    DrawPadName (pad, 0);
++    if (TEST_FLAG (DISPLAYNAMEFLAG, pad))
++      DrawPadName (pad, 0);
      DrawPad (pad, 0);
 +  }
    return 1;
  }
  
-@@ -1435,6 +1446,9 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1435,6 +1453,9 @@ DrawLayerGroup (int group, const BoxType * screen)
  
        /* Draw pins, vias and pads on this layer */
        if (!global_view_2d && rv) {
