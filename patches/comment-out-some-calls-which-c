@@ -1,5 +1,5 @@
-Bottom: 00dbb7ec7aee03a3df03fccc0484418ce689dacf
-Top:    345d6a5c766e7f9a091c5b846a36e64479e10abc
+Bottom: e5ace9888afeea175276506f7a008f47451fa76f
+Top:    06140fe45f707ae74bfc13611cddcc982dce3366
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-26 03:59:14 +0100
 
@@ -9,10 +9,10 @@ Comment out some calls which can trigger an out-of-context redraw
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 28a56cf..9e7938f 100644
+index 9e4741b..0700837 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -366,7 +366,7 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
+@@ -367,7 +367,7 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
    state = (GdkModifierType) (kev->state);
    mk = ghid_modifier_keys_state (&state);
  
@@ -21,7 +21,7 @@ index 28a56cf..9e7938f 100644
  
    handled = TRUE;		/* Start off assuming we handle it */
    switch (ksym)
-@@ -472,7 +472,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+@@ -473,7 +473,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
    ghid_note_event_location (ev);
    state = (GdkModifierType) (ev->state);
    mk = ghid_modifier_keys_state (&state);
@@ -30,7 +30,7 @@ index 28a56cf..9e7938f 100644
    HideCrosshair (TRUE);
    drag = have_crosshair_attachments ();
  
-@@ -481,7 +481,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+@@ -482,7 +482,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
    ghid_invalidate_all ();
    RestoreCrosshair (TRUE);
    ghid_set_status_line_label ();
@@ -39,7 +39,7 @@ index 28a56cf..9e7938f 100644
    if (!gport->panning)
      g_idle_add (ghid_idle_cb, NULL);
    return TRUE;
-@@ -872,7 +872,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -873,7 +873,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
        cursor_in_viewport = FALSE;
      }
  
