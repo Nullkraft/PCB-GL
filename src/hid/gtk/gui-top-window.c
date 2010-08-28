@@ -224,7 +224,7 @@ GhidGui _ghidgui, *ghidgui = NULL;
 
 GHidPort ghid_port, *gport;
 
-static GdkColor WhitePixel, BlackPixel;
+static GdkColor WhitePixel;
 
 static gchar		*bg_image_file;
 
@@ -2504,7 +2504,6 @@ ghid_create_pcb_widgets (void)
   GError	*err = NULL;
 
   gdk_color_parse ("white", &WhitePixel);
-  gdk_color_parse ("black", &BlackPixel);
 
   if (bg_image_file)
     ghidgui->bg_pixbuf = gdk_pixbuf_new_from_file(bg_image_file, &err);
