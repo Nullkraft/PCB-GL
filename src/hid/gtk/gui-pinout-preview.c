@@ -159,32 +159,21 @@ enum
 static GObjectClass *ghid_pinout_preview_parent_class = NULL;
 
 
-/*! \brief GObject constructor
+/*! \brief GObject constructed
  *
  *  \par Function Description
- *  Chain up and construct the object, then setup the
- *  necessary state for our widget now it is constructed.
+ *  Initialise the pinout preview object once it is constructed.
+ *  Chain up in case the parent class wants to do anything too.
  *
- *  \param [in] type                    The GType of object to be constructed
- *  \param [in] n_construct_properties  Number of construct properties
- *  \param [in] contruct_params         The construct properties
- *
- *  \returns The GObject having just been constructed.
+ *  \param [in] object  The pinout preview object
  */
-static GObject *
-ghid_pinout_preview_constructor (GType type,
-                                 guint n_construct_properties,
-                                 GObjectConstructParam *construct_properties)
+static void
+ghid_pinout_preview_constructed (GObject *object)
 {
-  GObject *object;
-
-  /* chain up to constructor of parent class */
-  object = G_OBJECT_CLASS (ghid_pinout_preview_parent_class)->
-    constructor (type, n_construct_properties, construct_properties);
+  /* chain up to the parent class */
+  G_OBJECT_CLASS (ghid_pinout_preview_parent_class)->constructed (object);
 
   ghid_init_drawing_widget (GTK_WIDGET (object), gport);
-
-  return object;
 }
 
 
@@ -280,10 +269,10 @@ ghid_pinout_preview_class_init (GhidPinoutPreviewClass * klass)
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *gtk_widget_class = GTK_WIDGET_CLASS (klass);
 
-  gobject_class->constructor = ghid_pinout_preview_constructor;
   gobject_class->finalize = ghid_pinout_preview_finalize;
   gobject_class->set_property = ghid_pinout_preview_set_property;
   gobject_class->get_property = ghid_pinout_preview_get_property;
+  gobject_class->constructed = ghid_pinout_preview_constructed;
 
   gtk_widget_class->expose_event = ghid_pinout_preview_expose;
 
