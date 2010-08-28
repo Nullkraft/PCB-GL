@@ -931,8 +931,11 @@ void ndof_pan_cb (int dx, int dy, int dz, gpointer data)
 
 void ndof_roll_cb (int dx, int dy, int dz, gpointer data)
 {
+  /* FIXME: IFDEF HACK */
+#ifdef ENABLE_GL
   ghid_trackball_external_rotate (GHID_TRACKBALL (gport->trackball),
                                   dy / 100., dx / 100., dz / 100.);
+#endif
 }
 
 void ndof_done_cb (gpointer data)
