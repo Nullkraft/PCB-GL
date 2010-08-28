@@ -1,5 +1,5 @@
-Bottom: 9c90354bfe2dc00afda76ced6dcf8a043c9c5ff2
-Top:    77485358bb1bd8f3a0d6ab643518f192df00f2a6
+Bottom: ec1e66d5714c16125b304ccd847e88ef289f999f
+Top:    32fc5397936f4810863c16677e22d650d97fc965
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-25 18:49:24 +0100
 
@@ -14,7 +14,7 @@ gtk_widget_show_all()
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 87e7dd0..e60a2ff 100644
+index 9bada21..9ddb5d2 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -1018,6 +1018,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
@@ -30,10 +30,10 @@ index 87e7dd0..e60a2ff 100644
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index acbb842..95cd9e1 100644
+index 80a8d95..e4caa18 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -984,6 +984,22 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -983,6 +983,22 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    return FALSE;
  }
  
@@ -57,10 +57,10 @@ index acbb842..95cd9e1 100644
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 29959a4..f93e8d4 100644
+index 614f2bf..9f9e43f 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -2143,8 +2143,6 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
+@@ -2141,8 +2141,6 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
    gtk_main_quit ();
  }
  
@@ -69,7 +69,7 @@ index 29959a4..f93e8d4 100644
  /* 
   * Create the top_window contents.  The config settings should be loaded
   * before this is called.
-@@ -2353,6 +2351,9 @@ ghid_build_pcb_top_window (void)
+@@ -2351,6 +2349,9 @@ ghid_build_pcb_top_window (void)
       |  the user does a command entry.
     */
  
@@ -79,7 +79,7 @@ index 29959a4..f93e8d4 100644
    g_signal_connect (G_OBJECT (gport->drawing_area), "expose_event",
  		    G_CALLBACK (ghid_drawing_area_expose_cb),
  		    port);
-@@ -2388,10 +2389,6 @@ ghid_build_pcb_top_window (void)
+@@ -2386,10 +2387,6 @@ ghid_build_pcb_top_window (void)
    ghidgui->creating = FALSE;
  
    gtk_widget_show_all (gport->top_window);
@@ -90,7 +90,7 @@ index 29959a4..f93e8d4 100644
    gdk_window_set_back_pixmap (gport->drawing_area->window, NULL, FALSE);
  
    ghid_route_style_temp_buttons_hide ();
-@@ -2708,8 +2705,6 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -2705,8 +2702,6 @@ ghid_parse_arguments (int *argc, char ***argv)
    if (Settings.AutoPlace)
      gtk_widget_set_uposition (GTK_WIDGET (window), 10, 10);
  
