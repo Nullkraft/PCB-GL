@@ -1803,11 +1803,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   glViewport (0, 0, widget->allocation.width, widget->allocation.height);
 
-  glEnable (GL_SCISSOR_TEST);
-  glScissor (ev->area.x,
-             widget->allocation.height - ev->area.height - ev->area.y,
-             ev->area.width, ev->area.height);
-
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
   glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
@@ -1834,6 +1829,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   glStencilMask (~0);
   glClearStencil (0);
+  glDisable (GL_SCISSOR_TEST);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
   hidgl_reset_stencil_usage ();
 
@@ -1901,6 +1897,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   region.X2 = MAX (Px (min_x), Px (max_x + 1));
   region.Y1 = MIN (Py (min_y), Py (max_y + 1));
   region.Y2 = MAX (Py (min_y), Py (max_y + 1));
+
+
+  glEnable (GL_SCISSOR_TEST);
+  glScissor (ev->area.x,
+             widget->allocation.height - ev->area.height - ev->area.y,
+             ev->area.width, ev->area.height);
 
   eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
   etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
@@ -2070,11 +2072,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
 
   glViewport (0, 0, widget->allocation.width, widget->allocation.height);
 
-  glEnable (GL_SCISSOR_TEST);
-  glScissor (ev->area.x,
-             widget->allocation.height - ev->area.height - ev->area.y,
-             ev->area.width, ev->area.height);
-
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
   glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
@@ -2088,9 +2085,15 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                 1.);
   glStencilMask (~0);
   glClearStencil (0);
+  glDisable (GL_SCISSOR_TEST);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
   hidgl_reset_stencil_usage ();
+
+  glEnable (GL_SCISSOR_TEST);
+  glScissor (ev->area.x,
+             widget->allocation.height - ev->area.height - ev->area.y,
+             ev->area.width, ev->area.height);
 
   /* call the drawing routine */
   hidgl_init_triangle_array (&buffer);
@@ -2183,9 +2186,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
 
   glViewport (0, 0, width, height);
 
-  glEnable (GL_SCISSOR_TEST);
-  glScissor (0, 0, width, height);
-
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
   glOrtho (0, width, height, 0, -100000, 100000);
@@ -2199,8 +2199,12 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                 1.);
   glStencilMask (~0);
   glClearStencil (0);
+  glDisable (GL_SCISSOR_TEST);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
   hidgl_reset_stencil_usage ();
+
+  glEnable (GL_SCISSOR_TEST);
+  glScissor (0, 0, width, height);
 
   /* call the drawing routine */
   hidgl_init_triangle_array (&buffer);
