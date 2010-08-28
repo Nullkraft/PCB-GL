@@ -1,5 +1,5 @@
-Bottom: 4ba810928c534b97666dff271e7fb3c3e7fa98c4
-Top:    ddf5846a4356fb0b547b7f39c3290cd66247a036
+Bottom: 44e8ba48cb74ca3d3dccedb62d936abe1b9561d0
+Top:    b8057cc7e211c06c3a904a85e6633c650de526c3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-28 02:15:03 +0100
 
@@ -9,10 +9,10 @@ hid/gtk: Remove unused colour allocation for "BlackPixel"
 ---
 
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 9641a25..beef690 100644
+index 9fd146e..76ac977 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -224,7 +224,7 @@ GhidGui _ghidgui, *ghidgui = NULL;
+@@ -222,7 +222,7 @@ GhidGui _ghidgui, *ghidgui = NULL;
  
  GHidPort ghid_port, *gport;
  
@@ -21,7 +21,7 @@ index 9641a25..beef690 100644
  
  static gchar		*bg_image_file;
  
-@@ -2504,7 +2504,6 @@ ghid_create_pcb_widgets (void)
+@@ -2502,7 +2502,6 @@ ghid_create_pcb_widgets (void)
    GError	*err = NULL;
  
    gdk_color_parse ("white", &WhitePixel);
