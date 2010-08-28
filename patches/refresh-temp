@@ -1,0 +1,25 @@
+Bottom: 926fbe2f9bd9d3c2a3d5053e7515f6f02ff193c6
+Top:    308d521e5353b9e2237da8a4fb703169bb5fc8c3
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-28 03:14:29 +0100
+
+Refresh of silly-space-navigator-interfac
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index f5ac4fb..b121795 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -931,8 +931,11 @@ void ndof_pan_cb (int dx, int dy, int dz, gpointer data)
+ 
+ void ndof_roll_cb (int dx, int dy, int dz, gpointer data)
+ {
++  /* FIXME: IFDEF HACK */
++#ifdef ENABLE_GL
+   ghid_trackball_external_rotate (GHID_TRACKBALL (gport->trackball),
+                                   dy / 100., dx / 100., dz / 100.);
++#endif
+ }
+ 
+ void ndof_done_cb (gpointer data)
