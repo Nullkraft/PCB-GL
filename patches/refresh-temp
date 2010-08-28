@@ -1,0 +1,21 @@
+Bottom: 9c90354bfe2dc00afda76ced6dcf8a043c9c5ff2
+Top:    2f9645698cf5e47d80dcdcddbf8ca4bf9df1a538
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-28 01:15:52 +0100
+
+Refresh of drop-in-pcb-gl-code-various-mess
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 0952462..3f9e08e 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -754,7 +754,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+       RestoreCrosshair (TRUE);
+       cursor_in_viewport = TRUE;
+     }
+-
++	  
+   return FALSE;
+ }
