@@ -906,7 +906,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glEnable (GL_SCISSOR_TEST);
   glScissor (ev->area.x,
              widget->allocation.height - ev->area.height - ev->area.y,
-             ev->area.width, ev->area.height);
+             ev->area.width/2, ev->area.height);
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
