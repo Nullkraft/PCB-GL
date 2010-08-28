@@ -1,0 +1,22 @@
+Bottom: 6cba22724e7db5a405169dc915fea03aa224410b
+Top:    0c7fa4108f1d3127f8e8aeed449c90500fda0fa2
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-28 04:12:47 +0100
+
+Refresh of fix-mesa-crash-on-startup
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index de0a779..e4caa18 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -906,7 +906,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   glEnable (GL_SCISSOR_TEST);
+   glScissor (ev->area.x,
+              widget->allocation.height - ev->area.height - ev->area.y,
+-             ev->area.width/2, ev->area.height);
++             ev->area.width, ev->area.height);
+ 
+   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity ();
