@@ -1,0 +1,26 @@
+Bottom: 2e79d20139324c50c900d139fd2d8ab24468751e
+Top:    c3591150157fa6f26cd0bcbcc0a5c81a392a74de
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-08-28 03:50:55 +0100
+
+Refresh of more-hack-to-avoid-gl-calls-wh
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 2131107..dce4a2f 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -475,6 +475,12 @@ ghid_set_color (hidGC gc, const char *name)
+   double r, g, b, a;
+   a = 1.0;
+ 
++  if (!check_gl_drawing_ok_hack)
++    {
++      current_color = NULL;
++      return;
++    }
++
+   if (!alpha_changed && current_color != NULL)
+     {
+       if (strcmp (name, current_color) == 0)
