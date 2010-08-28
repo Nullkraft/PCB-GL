@@ -966,16 +966,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glLoadIdentity ();
   glTranslatef (0.0f, 0.0f, -Z_NEAR);
 
-<<<<<<< current
+  glEnable (GL_STENCIL_TEST);
   glClearColor (port->offlimits_color.red / 65535.,
                 port->offlimits_color.green / 65535.,
                 port->offlimits_color.blue / 65535.,
-=======
-  glEnable (GL_STENCIL_TEST);
-  glClearColor (gport->offlimits_color.red / 65535.,
-                gport->offlimits_color.green / 65535.,
-                gport->offlimits_color.blue / 65535.,
->>>>>>> patched
                 1.);
 
   glStencilMask (~0);
