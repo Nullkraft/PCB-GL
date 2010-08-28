@@ -754,7 +754,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
       RestoreCrosshair (TRUE);
       cursor_in_viewport = TRUE;
     }
-
+	  
   return FALSE;
 }
 
