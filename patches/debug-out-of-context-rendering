@@ -1,4 +1,4 @@
-Bottom: 4cba46e1da814179a78897bfbdfb390a85a0916d
+Bottom: 71c51074e16fd9a054335cd28ab5c7593832e4f9
 Top:    d0e1071b03b264b6c7d39391a123834af36988ee
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-28 03:30:31 +0100
@@ -155,46 +155,10 @@ index aa2985e..1ed8eb3 100644
  void hidgl_flush_triangles (triangle_buffer *buffer);
  void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index c526c7f..081f928 100644
+index 19bc81b..081f928 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1098,7 +1098,10 @@ SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
- static int
- pin_name_callback (const BoxType * b, void *cl)
- {
--  DrawPinName ((PinTypePtr) b, 0);
-+  PinTypePtr pin = (PinTypePtr) b;
-+
-+  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
-+    DrawPinName (pin, 0);
-   return 1;
- }
- 
-@@ -1121,8 +1124,11 @@ via_inlayer_callback (const BoxType * b, void *cl)
- static int
- pin_callback (const BoxType * b, void *cl)
- {
--  DrawPinName ((PinTypePtr) b, 0);
--  DrawPlainPin ((PinTypePtr) b, false);
-+  PinTypePtr pin = (PinTypePtr) b;
-+
-+  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
-+    DrawPinName (pin, 0);
-+  DrawPlainPin (pin, false);
-   return 1;
- }
- 
-@@ -1132,7 +1138,8 @@ pad_callback (const BoxType * b, void *cl)
-   PadTypePtr pad = (PadTypePtr) b;
-   if (FRONT (pad))
-   {
--    DrawPadName (pad, 0);
-+    if (TEST_FLAG (DISPLAYNAMEFLAG, pad))
-+      DrawPadName (pad, 0);
-     DrawPad (pad, 0);
-   }
-   return 1;
-@@ -1756,6 +1763,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1763,6 +1763,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_start_drawing (port);
  
@@ -202,7 +166,7 @@ index c526c7f..081f928 100644
    hidgl_init ();
  
    /* If we don't have any stencil bits available,
-@@ -1970,6 +1978,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1977,6 +1978,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    hidgl_flush_triangles (&buffer);
  
@@ -210,7 +174,7 @@ index c526c7f..081f928 100644
    ghid_end_drawing (port);
  
    return FALSE;
-@@ -2035,6 +2044,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2042,6 +2044,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
      return FALSE;
    }
  
@@ -219,7 +183,7 @@ index c526c7f..081f928 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
-@@ -2081,6 +2092,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2088,6 +2092,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    else
      glFlush ();
  
@@ -228,7 +192,7 @@ index c526c7f..081f928 100644
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
  
-@@ -2148,6 +2161,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2155,6 +2161,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
      return NULL;
    }
  
@@ -237,7 +201,7 @@ index c526c7f..081f928 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
-@@ -2192,6 +2207,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2199,6 +2207,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glFlush ();
  
