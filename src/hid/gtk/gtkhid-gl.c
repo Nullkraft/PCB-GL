@@ -1098,7 +1098,10 @@ SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
 static int
 pin_name_callback (const BoxType * b, void *cl)
 {
-  DrawPinName ((PinTypePtr) b, 0);
+  PinTypePtr pin = (PinTypePtr) b;
+
+  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
+    DrawPinName (pin, 0);
   return 1;
 }
 
@@ -1121,8 +1124,11 @@ via_inlayer_callback (const BoxType * b, void *cl)
 static int
 pin_callback (const BoxType * b, void *cl)
 {
-  DrawPinName ((PinTypePtr) b, 0);
-  DrawPlainPin ((PinTypePtr) b, false);
+  PinTypePtr pin = (PinTypePtr) b;
+
+  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
+    DrawPinName (pin, 0);
+  DrawPlainPin (pin, false);
   return 1;
 }
 
@@ -1132,7 +1138,8 @@ pad_callback (const BoxType * b, void *cl)
   PadTypePtr pad = (PadTypePtr) b;
   if (FRONT (pad))
   {
-    DrawPadName (pad, 0);
+    if (TEST_FLAG (DISPLAYNAMEFLAG, pad))
+      DrawPadName (pad, 0);
     DrawPad (pad, 0);
   }
   return 1;
@@ -1756,6 +1763,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   ghid_start_drawing (port);
 
+  hidgl_in_context (true);
   hidgl_init ();
 
   /* If we don't have any stencil bits available,
@@ -1970,6 +1978,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   hidgl_flush_triangles (&buffer);
 
+  hidgl_in_context (false);
   ghid_end_drawing (port);
 
   return FALSE;
@@ -2035,6 +2044,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
     return FALSE;
   }
 
+  hidgl_in_context (true);
+
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -2080,6 +2091,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
     gdk_gl_drawable_swap_buffers (pGlDrawable);
   else
     glFlush ();
+
+  hidgl_in_context (false);
 
   /* end drawing to current GL-context */
   gdk_gl_drawable_gl_end (pGlDrawable);
@@ -2148,6 +2161,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
     return NULL;
   }
 
+  hidgl_in_context (true);
+
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -2191,6 +2206,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   glPopMatrix ();
 
   glFlush ();
+
+  hidgl_in_context (false);
 
   /* end drawing to current GL-context */
   gdk_gl_drawable_gl_end (gldrawable);
