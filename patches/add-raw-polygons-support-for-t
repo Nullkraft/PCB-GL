@@ -1,5 +1,5 @@
 Bottom: 51b2a6013eed1891c218ce197d0b32b0e4db452c
-Top:    5069e6b8649c3e6d525165294f10e197978fc688
+Top:    20520676136d20af4114f8d6b4bec8449d4e3b0a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-24 00:48:08 +0100
 
@@ -199,7 +199,7 @@ index 73d9a34..bb1383c 100644
  
  
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 9ddb5d2..9460091 100644
+index 9ddb5d2..4e1c29a 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -10,6 +10,7 @@
@@ -210,18 +210,19 @@ index 9ddb5d2..9460091 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -669,6 +670,11 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
-   gdk_draw_polygon (gport->drawable, priv->u_gc, 1, points, n_coords);
+@@ -670,6 +671,12 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
  }
  
+ void
 +ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 +{
 +  common_fill_pcb_polygon (gc, poly, clip_box);
 +}
 +
- void
++void
  ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
  {
+   gint w, h, lw, xx, yy;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 index 9d9b573..9c068bf 100644
 --- a/src/hid/gtk/gtkhid-gl.c
