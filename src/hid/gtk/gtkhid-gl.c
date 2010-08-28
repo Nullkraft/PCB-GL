@@ -906,7 +906,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glEnable (GL_SCISSOR_TEST);
   glScissor (ev->area.x,
              widget->allocation.height - ev->area.height - ev->area.y,
-             ev->area.width/2, ev->area.height);
+             ev->area.width, ev->area.height);
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
@@ -981,6 +981,22 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   ghid_end_drawing (port);
 
   return FALSE;
+}
+
+void
+ghid_port_drawing_realize_cb (GtkWidget *widget, gpointer data)
+{
+  GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
+  GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
+
+  /*** OpenGL BEGIN ***/
+  if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
+    return;
+
+  gdk_gl_drawable_gl_end (gldrawable);
+  /*** OpenGL END ***/
+
+  return;
 }
 
 gboolean
