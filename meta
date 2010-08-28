@@ -1,47 +1,47 @@
 Version: 1
-Previous: 59b12d6c5cbfff1abbebb45fe1d6bcaee0fa1a3c
-Head: 659d7ca4007382f109f238c6b46735c6f65b97e1
+Previous: df94097b87da9004be4f0c03119720ec30956964
+Head: 73acd0ea186608f2621d2ea841faed82fe3bb8c5
 Applied:
   hid-gtk-remove-unused-extern-h: c136162bd489655a8b05fc26eafec4059fbce2fe
   hid-gtk-remove-unused-colour-a: 659d7ca4007382f109f238c6b46735c6f65b97e1
+  improve-grid-snapping-heuristi: c18011e3f13f9a171f8ffbe3c71e96e45d19f72b
+  only-snap-to-pads-on-the-activ: e694194f41dd6b9184e0adc6eacf7cca0ce0ca33
+  add-configure-checks-for-gtkgl: 757e759d7f9260320ff7b875c0ee4303564e924c
+  make-enable-gl-default: 1e9726459511f4a0dabe16c0e013766ea0dc2e99
+  move-more-gdk-specific-drawing: 92da50a343e0c7004989f73f1d76c78320cf4eb1
+  place-drawing-of-crosshair-att: 38e1c471c84a77126db24e277827773a16d68f8f
+  test-remove-some-more-gdk-stuf: 22fc493d56dda5cddb395e73b458b914c61e597e
+  create-a-private-structure-for: 4367b79c0e93c51a608296cb9d25b5023d459c92
+  move-set_layer-function-into-g: 86cafc4be2722fa277815fc40bd0465eead9093f
+  drop-in-pcb-gl-code-various-mess: 22bdfb05e83cf4327ddccd7d0229066d10fac336
+  fix-mesa-crash-on-startup: 09eda6c597923bfe05e23575ae4aef3a55f997d9
+  cure-cross-hair-lagging-on-scr: 2f261f77bb0ee45d1132b156ebd6c6a556f70871
+  use-motion-hints-when-processi: a4909e44f3f24b83f23705c986ccb737ac0594a7
+  add-raw-polygons-support-for-t: 0969e2ea45f952766807ca32307b94f6d498913f
+  work-in-progress-on-subcomposi: 8dd0533a3c977714ab748320b2885ffc827c4a37
+  use-tags-on-circular-contours-: c26d89446a357e85a2b22ae39beaf10fcc2eace2
+  ugly-ugly-hack-to-make-pretty-: 453afb25f4dd99e6f4086c73d87c55f0dc3791bd
+  add-virtual-trackball-code: ecad28168451f3ba65965d56aed1a1f8edc07bda
+  use-trackball-to-allow-rotatio: 7bb0320ef0bb489d21b2f06d3d94ffe801a53676
+  add-support-for-depth-to-trian: 299ae0d40c239670aec892269b1112094e78e67e
+  shiny-3d-eye-candy: 8487fdb6c917acfd5e646c548528f9b6cb08c2ca
+  fix-grid-extents-in-3d-view: 5a9456ebb0e0a6d7d3d6de18acdb2fee0162d91d
+  major-re-write-to-drawing-rout: f84c987aa21bbd7cfc7cc8d3cea0cbc558d91a5b
+  silly-space-navigator-interfac: 93ee11646227aa2ad60738f3ac782fb50e66bb65
+  from-22f4d1dd450f218172b8ee0ed: a2fb9b87e7e6547f5131470bd17da76437d5cc15
+  playing-with-stack-rendering: 134106d9c48b5f35bf365033855e5ba15101bf26
+  play-with-display-lists: 3b9d483642e23550d4c5d3015c09db05458fa810
+  bentley-ottann-test-implementa: 40b2f92d4a4fb7c469b9e0af0e6f09c63623c12c
+  remove-unused-intersection-rou: b6d45b884a5a7dbb6073cb70f37f7097b226cc48
+  add-routines-to-render-just-a-: ab373561edb7944449136c90c14014e8f506a261
+  layer-fixes: a5ce26bd5bd6fda3cf5785a31e76d5264135c0ea
+  fixup-depth-for-layers-and-ele: b321853aabf9e40761bb77a96f2796e503aa9dc2
+  draw-pin-pad-names-first-so-th: b68d232d202f4b0e1bd7bf732939f4ea30770372
+  board-outline-polygon-generati: 36600a0ae63b3bcd9f4e54524195b5731510e347
+  allow-zero-clearance-pads-and-: f89091a0472a2ccb5d4274decfaa5a3e86f20874
+  don-t-make-gui-drawing-calls-t: 166d7fab91c3919fd711debf9ba54cef5835aea9
+  temporary-comment-out-some-dra: b4d88129078c6d425f2939efd0f1650ef3b71508
+  comment-out-some-calls-which-c: 87e72c91a61cf7443601cc7dd6870558acff6c22
+  debug-gl-calls-out-of-context: 73acd0ea186608f2621d2ea841faed82fe3bb8c5
 Unapplied:
-  improve-grid-snapping-heuristi: 41bbcb7193713c9d7c65321b1d10b312c903fc81
-  only-snap-to-pads-on-the-activ: b51d226ad3ac926a0bfc7c19ff9ab8af91eb321a
-  add-configure-checks-for-gtkgl: a19b5535b3c95025f9fd0edbf5f86977d7c71c85
-  make-enable-gl-default: ddf8ef31e367334b75c61fff29c0f84624547e0c
-  move-more-gdk-specific-drawing: acd3d30b2d15ec22df6dfd27dac2509d690098a9
-  place-drawing-of-crosshair-att: 65500087c1bc4558c0f5e7081e43a7e9934ed6a3
-  test-remove-some-more-gdk-stuf: 83c579f02c37d56dc561c2eb13e93128e24109d7
-  create-a-private-structure-for: bf0e0a84087bfbc47d2e19c0689d5c5e5e460eae
-  move-set_layer-function-into-g: e289a62d9abd5aee3db03d4ec3015fa70e5b24b1
-  drop-in-pcb-gl-code-various-mess: 1b7ca6d359c68d5a1c210d48efced94d83183746
-  fix-mesa-crash-on-startup: 21efeda442c87cf2d62f5f33aa037dce43059c0c
-  cure-cross-hair-lagging-on-scr: 0944f51dc1b517a4c141c407048b2eba3493be8a
-  use-motion-hints-when-processi: d52befa0e24c7f46870d2c698887276a6fecc53c
-  add-raw-polygons-support-for-t: 040821523112f71952f21c68a340dcf5c826cc31
-  work-in-progress-on-subcomposi: 8e209541198dbb3c5ef7644f66140513752bf799
-  use-tags-on-circular-contours-: a263b1a95f59524b44a55dd802802608f1fd011b
-  ugly-ugly-hack-to-make-pretty-: 88ee174d366fffa39b445304349c355e640fc9fc
-  add-virtual-trackball-code: a3a13daf3dbca9587ecc17b35c02e0edfb1471ed
-  use-trackball-to-allow-rotatio: b38512fa6275797b0e0ed7cbb919658e76a12563
-  add-support-for-depth-to-trian: d9cc65275711087881beccfce83f810302c757b9
-  shiny-3d-eye-candy: a6a085836939cdadbe3b14dc7c2edea1124ac268
-  fix-grid-extents-in-3d-view: 911c89257b7a887fced69f66e97402ea11e9f54e
-  major-re-write-to-drawing-rout: 581061b031a92fce1ce2bcb36f50e6a1f5704dff
-  silly-space-navigator-interfac: ee024296eff0b0ea993f549da0d27e89baec0c92
-  from-22f4d1dd450f218172b8ee0ed: cf9de8960cf3ee2beb1c621bec8a6a529b20a49d
-  playing-with-stack-rendering: e003e6d64ff5edfb34a0a300e03432d63efd70f9
-  play-with-display-lists: fb5b62d1652fb825c77215844a1197b6a225845b
-  bentley-ottann-test-implementa: 56f547d900bee55d14c99f203d97ab50e14b8a0a
-  remove-unused-intersection-rou: 65cfd1c4632dbb926ee486fbfb758a70560f6bbf
-  add-routines-to-render-just-a-: 3136485fe90225db73414539c08dda08d926fe67
-  layer-fixes: 4531004ae03968c8c55ea54a03d4244b3842a549
-  fixup-depth-for-layers-and-ele: 94d6591b845b583b9433c3207d3faddc2fab5959
-  draw-pin-pad-names-first-so-th: 19a55635d8ca89ce01e7584a37c666f8c7ef7c22
-  board-outline-polygon-generati: 0e14e2e8325af795d2aad4109a996343ef445a3e
-  allow-zero-clearance-pads-and-: fe7122da30c73337b4e24d4aef7703591894b142
-  don-t-make-gui-drawing-calls-t: 60d71af2b01d73bb4ee1f163d7ca7ebf9c181463
-  temporary-comment-out-some-dra: 43c5eb2c163d261bbb2ebfad9703e0857a251b4b
-  comment-out-some-calls-which-c: b323355f7fd30bd5e5fc2dc07644fa2ca7e8cc5f
-  debug-gl-calls-out-of-context: 533c30018274436dfa88b86060e38ca1784f124f
 Hidden:
