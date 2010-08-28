@@ -1,5 +1,5 @@
-Bottom: ddf5846a4356fb0b547b7f39c3290cd66247a036
-Top:    a43e516255b3b925abedc4097b919e451d407575
+Bottom: 2afaa1087fcbeb2b7f3848b938c15f2557cf4674
+Top:    4ba985e108adc3edf8ea4214e2b879c7d2a76cbd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-27 17:33:34 +0100
 
@@ -12,7 +12,7 @@ version coming shortly does some extra work.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 28fcd8a..28b6379 100644
+index 34e52fa..102989d 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -67,6 +67,41 @@ typedef struct hid_gc_struct
@@ -58,10 +58,10 @@ index 28fcd8a..28b6379 100644
  ghid_destroy_gc (hidGC gc)
  {
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 89cdb20..c213d95 100644
+index 8f10492..55a8c65 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -311,41 +311,6 @@ zoom_by (double factor, int x, int y)
+@@ -308,41 +308,6 @@ zoom_by (double factor, int x, int y)
  
  /* ------------------------------------------------------------ */
  
