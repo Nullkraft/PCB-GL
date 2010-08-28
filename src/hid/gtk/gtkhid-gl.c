@@ -911,11 +911,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   glViewport (0, 0, widget->allocation.width, widget->allocation.height);
 
-  glEnable (GL_SCISSOR_TEST);
-  glScissor (ev->area.x,
-             widget->allocation.height - ev->area.height - ev->area.y,
-             ev->area.width, ev->area.height);
-
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
   glOrtho (0, widget->allocation.width, widget->allocation.height, 0, 0, 100);
@@ -928,7 +923,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                 port->offlimits_color.blue / 65535.,
                 1.);
 
+  glDisable (GL_SCISSOR_TEST);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+  glEnable (GL_SCISSOR_TEST);
+  glScissor (ev->area.x,
+             widget->allocation.height - ev->area.height - ev->area.y,
+             ev->area.width, ev->area.height);
 
   region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
   region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
@@ -1056,11 +1057,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
 
   glViewport (0, 0, widget->allocation.width, widget->allocation.height);
 
-  glEnable (GL_SCISSOR_TEST);
-  glScissor (ev->area.x,
-             widget->allocation.height - ev->area.height - ev->area.y,
-             ev->area.width, ev->area.height);
-
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
   glOrtho (0, widget->allocation.width, widget->allocation.height, 0, 0, 100);
@@ -1073,7 +1069,13 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                 gport->bg_color.blue / 65535.,
                 1.);
 
+  glDisable (GL_SCISSOR_TEST);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+  glEnable (GL_SCISSOR_TEST);
+  glScissor (ev->area.x,
+             widget->allocation.height - ev->area.height - ev->area.y,
+             ev->area.width, ev->area.height);
 
   /* call the drawing routine */
   hidgl_init_triangle_array (&buffer);
@@ -1166,9 +1168,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
 
   glViewport (0, 0, width, height);
 
-  glEnable (GL_SCISSOR_TEST);
-  glScissor (0, 0, width, height);
-
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
   glOrtho (0, width, height, 0, 0, 100);
@@ -1181,7 +1180,11 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                 gport->bg_color.blue / 65535.,
                 1.);
   glClearStencil (0);
+  glDisable (GL_SCISSOR_TEST);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+  glEnable (GL_SCISSOR_TEST);
+  glScissor (0, 0, width, height);
 
   /* call the drawing routine */
   hidgl_init_triangle_array (&buffer);
