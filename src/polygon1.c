@@ -39,6 +39,7 @@
       are marked
 */
 
+#undef NDEBUG
 #include	<assert.h>
 #include	<stdlib.h>
 #include	<stdio.h>
@@ -105,7 +106,7 @@ if (UNLIKELY (((ptr) = malloc(sizeof(type))) == NULL)) \
 #undef DEBUG_JUMP
 #undef DEBUG_GATHER
 #undef DEBUG_ANGLE
-#undef DEBUG
+#define DEBUG
 #ifdef DEBUG
 #define DEBUGP(...) fprintf(stderr, ## __VA_ARGS__)
 #else
