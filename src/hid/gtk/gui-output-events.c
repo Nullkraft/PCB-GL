@@ -530,25 +530,12 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
 				  gport->width, gport->height, -1);
   gport->drawable = gport->pixmap;
 
+  ghid_drawing_area_configure_hook (out);
+
   if (!first_time_done)
     {
-      gport->colormap = gtk_widget_get_colormap (gport->top_window);
-      if (gdk_color_parse (Settings.BackgroundColor, &gport->bg_color))
-	gdk_color_alloc (gport->colormap, &gport->bg_color);
-      else
-	gdk_color_white (gport->colormap, &gport->bg_color);
-
-      if (gdk_color_parse (Settings.OffLimitColor, &gport->offlimits_color))
-	gdk_color_alloc (gport->colormap, &gport->offlimits_color);
-      else
-	gdk_color_white (gport->colormap, &gport->offlimits_color);
       first_time_done = TRUE;
-      ghid_drawing_area_configure_hook (out);
       PCBChanged (0, NULL, 0, 0);
-    }
-  else
-    {
-      ghid_drawing_area_configure_hook (out);
     }
 
   ghid_port_ranges_scale (FALSE);
