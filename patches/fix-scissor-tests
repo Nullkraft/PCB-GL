@@ -1,5 +1,5 @@
-Bottom: 108b17cf64b6c64cb1207c755fda3417a6985fd2
-Top:    6b72f8804d92209e19db16ae11b0d5ecb4e7e8b5
+Bottom: fe14f2e9945a7d6695d2e06307b67234e56c482c
+Top:    fe14f2e9945a7d6695d2e06307b67234e56c482c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-28 04:06:23 +0100
 
@@ -8,84 +8,4 @@ Fix scissor tests?
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9c068bf..7df6c8a 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -911,11 +911,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
- 
-   glViewport (0, 0, widget->allocation.width, widget->allocation.height);
- 
--  glEnable (GL_SCISSOR_TEST);
--  glScissor (ev->area.x,
--             widget->allocation.height - ev->area.height - ev->area.y,
--             ev->area.width, ev->area.height);
--
-   glMatrixMode (GL_PROJECTION);
-   glLoadIdentity ();
-   glOrtho (0, widget->allocation.width, widget->allocation.height, 0, 0, 100);
-@@ -928,8 +923,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-                 port->offlimits_color.blue / 65535.,
-                 1.);
- 
-+  glDisable (GL_SCISSOR_TEST);
-   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
- 
-+  glEnable (GL_SCISSOR_TEST);
-+  glScissor (ev->area.x,
-+             widget->allocation.height - ev->area.height - ev->area.y,
-+             ev->area.width, ev->area.height);
-+
-   region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-   region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-   region.Y1 = MIN (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
-@@ -1056,11 +1057,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
- 
-   glViewport (0, 0, widget->allocation.width, widget->allocation.height);
- 
--  glEnable (GL_SCISSOR_TEST);
--  glScissor (ev->area.x,
--             widget->allocation.height - ev->area.height - ev->area.y,
--             ev->area.width, ev->area.height);
--
-   glMatrixMode (GL_PROJECTION);
-   glLoadIdentity ();
-   glOrtho (0, widget->allocation.width, widget->allocation.height, 0, 0, 100);
-@@ -1073,8 +1069,14 @@ ghid_pinout_preview_expose (GtkWidget *widget,
-                 gport->bg_color.blue / 65535.,
-                 1.);
- 
-+  glDisable (GL_SCISSOR_TEST);
-   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
- 
-+  glEnable (GL_SCISSOR_TEST);
-+  glScissor (ev->area.x,
-+             widget->allocation.height - ev->area.height - ev->area.y,
-+             ev->area.width, ev->area.height);
-+
-   /* call the drawing routine */
-   hidgl_init_triangle_array (&buffer);
-   ghid_invalidate_current_gc ();
-@@ -1166,9 +1168,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
- 
-   glViewport (0, 0, width, height);
- 
--  glEnable (GL_SCISSOR_TEST);
--  glScissor (0, 0, width, height);
--
-   glMatrixMode (GL_PROJECTION);
-   glLoadIdentity ();
-   glOrtho (0, width, height, 0, 0, 100);
-@@ -1181,8 +1180,12 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
-                 gport->bg_color.blue / 65535.,
-                 1.);
-   glClearStencil (0);
-+  glDisable (GL_SCISSOR_TEST);
-   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
- 
-+  glEnable (GL_SCISSOR_TEST);
-+  glScissor (0, 0, width, height);
-+
-   /* call the drawing routine */
-   hidgl_init_triangle_array (&buffer);
-   ghid_invalidate_current_gc ();
+
