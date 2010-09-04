@@ -1,5 +1,5 @@
 Bottom: c99700402617340ec8a0e81de4a7694337c2bcea
-Top:    27bb6ec3459f3aa50e17c80c5b864343f26d7825
+Top:    afcefaba8f327e8fc4bd8ff25643f5aaa2b5a99d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-28 03:19:40 +0100
 
@@ -181,7 +181,7 @@ index c0e23a3..077c575 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b4ce23c..994f006 100644
+index b4ce23c..7d1a5b8 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -700,8 +700,8 @@ index b4ce23c..994f006 100644
 +    layernum = layers[i];
 +    Layer = PCB->Data->Layer + layers[i];
 +
-+    if (strcasecmp (Layer->Name, "outline") == 0 ||
-+        strcasecmp (Layer->Name, "route") == 0)
++    if (strcmp (Layer->Name, "outline") == 0 ||
++        strcmp (Layer->Name, "route") == 0)
 +      rv = 0;
 +
 +    if (layernum < max_layer /*&& Layer->On*/) {
