@@ -2040,8 +2040,8 @@ POLYAREA *board_outline_poly ()
     {
       Layer = PCB->Data->Layer + i;
 
-      if (strcasecmp (Layer->Name, "outline") == 0 ||
-          strcasecmp (Layer->Name, "route") == 0)
+      if (strcmp (Layer->Name, "outline") == 0 ||
+          strcmp (Layer->Name, "route") == 0)
         {
           found_outline = 1;
           break;
