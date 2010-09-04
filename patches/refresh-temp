@@ -1,0 +1,24 @@
+Bottom: 52074df62a7e817c0818171426273c16ce685703
+Top:    544704acd71c56d4399716156df1aee3ceaf4ace
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-09-04 12:23:19 +0100
+
+Refresh of board-outline-polygon-generati
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index 1a3d319..d379a6b 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -2040,8 +2040,8 @@ POLYAREA *board_outline_poly ()
+     {
+       Layer = PCB->Data->Layer + i;
+ 
+-      if (strcasecmp (Layer->Name, "outline") == 0 ||
+-          strcasecmp (Layer->Name, "route") == 0)
++      if (strcmp (Layer->Name, "outline") == 0 ||
++          strcmp (Layer->Name, "route") == 0)
+         {
+           found_outline = 1;
+           break;
