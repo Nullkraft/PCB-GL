@@ -475,12 +475,6 @@ ghid_set_color (hidGC gc, const char *name)
   double r, g, b, a;
   a = 1.0;
 
-  if (!check_gl_drawing_ok_hack)
-    {
-      current_color = NULL;
-      return;
-    }
-
   if (!alpha_changed && current_color != NULL)
     {
       if (strcmp (name, current_color) == 0)
@@ -500,6 +494,12 @@ ghid_set_color (hidGC gc, const char *name)
     }
 
   gc->colorname = (char *) name;
+
+  if (!check_gl_drawing_ok_hack)
+    {
+      current_color = NULL;
+      return;
+    }
 
   if (gport->colormap == NULL)
     gport->colormap = gtk_widget_get_colormap (gport->top_window);
