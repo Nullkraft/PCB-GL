@@ -1,5 +1,5 @@
 Bottom: 0eafd583d6b966047f082798254d8f6cb2d1331d
-Top:    35aac141c2713fbeb8df48e2953824e8b986df8e
+Top:    7aa2c658e8fa8152dc761e7b585775befdc71b1f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-04 12:26:46 +0100
 
@@ -9,12 +9,12 @@ More hack to avoid GL calls when we're out of context
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 45b38eb..3ea1e05 100644
+index 45b38eb..8ba7e76 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -475,6 +475,12 @@ ghid_set_color (hidGC gc, const char *name)
-   double r, g, b, a;
-   a = 1.0;
+@@ -495,6 +495,12 @@ ghid_set_color (hidGC gc, const char *name)
+ 
+   gc->colorname = (char *) name;
  
 +  if (!check_gl_drawing_ok_hack)
 +    {
@@ -22,6 +22,6 @@ index 45b38eb..3ea1e05 100644
 +      return;
 +    }
 +
-   if (!alpha_changed && current_color != NULL)
-     {
-       if (strcmp (name, current_color) == 0)
+   if (gport->colormap == NULL)
+     gport->colormap = gtk_widget_get_colormap (gport->top_window);
+   if (strcmp (name, "erase") == 0)
