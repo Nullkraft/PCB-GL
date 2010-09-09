@@ -1549,12 +1549,12 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     reverse_layers = !reverse_layers;
 
   memset (do_group, 0, sizeof (do_group));
-  for (ngroups = 0, i = 0; i < max_group; i++) {
+  for (ngroups = 0, i = 0; i < max_copper_layer; i++) {
     LayerType *l;
     int group;
     int orderi;
 
-    orderi = reverse_layers ? max_group - i - 1 : i;
+    orderi = reverse_layers ? max_copper_layer - i - 1 : i;
 
     // Draw in numerical order when in 3D view
     l = global_view_2d ? LAYER_ON_STACK (i) : LAYER_PTR (orderi);
