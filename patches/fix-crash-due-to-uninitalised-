@@ -11,7 +11,6 @@ if the object type was not encountered. A subsequent call to
 free() in DRCFind() would then cause memory corruption.
 
 The issue was originally reported by Ineiev:
-
 http://archives.seul.org/geda/user/Nov-2009/msg00456.html
 
 That patch addresses the lack of a RATLINE_TYPE in the BuildObjectType
