@@ -1,5 +1,5 @@
 Bottom: ceab64fd0acdbfcc98eb3ba8a2cd020566fec086
-Top:    ceab64fd0acdbfcc98eb3ba8a2cd020566fec086
+Top:    7720d6bd46f16de7a1c7fbe0a614f436ff4dafe5
 Author: Ineiev <ineiev@gmail.com>
 Date:   2010-09-09 16:12:13 +0100
 
@@ -13,4 +13,25 @@ Modified-by: Peter Clifton <pcjc2@cam.ac.uk>
 
 ---
 
-
+diff --git a/src/find.c b/src/find.c
+index f682fd8..e00e2ad 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -4493,6 +4493,7 @@ BuildObjectList (int *object_count, long int **object_id_list, int **object_type
+     case VIA_TYPE:
+     case PAD_TYPE:
+     case ELEMENT_TYPE:
++    case RATLINE_TYPE:
+       *object_count = 1;
+       *object_id_list = malloc (sizeof (long int));
+       *object_type_list = malloc (sizeof (int));
+@@ -4501,7 +4502,9 @@ BuildObjectList (int *object_count, long int **object_id_list, int **object_type
+       return;
+ 
+     default:
+-      return;
++      fprintf (stderr,
++	       _("Internal error in BuildObjectList: unknown object type %i\n"),
++	       thing_type);
+     }
+ }
