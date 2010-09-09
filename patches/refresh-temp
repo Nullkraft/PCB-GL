@@ -1,0 +1,410 @@
+Bottom: e7a05f5f16fd0ac75dd42ea209eea0bfbc3bdf75
+Top:    f84e519693f92b20d85b36f153affb7132b2aede
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-09-09 14:17:33 +0100
+
+Refresh of crazy-stuff
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 58c8580..52072d1 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -1396,7 +1396,7 @@ NotifyMode (void)
+ 		int flag = NOFLAG;
+ 
+ 		if (GetLayerGroupNumberByNumber (INDEXOFCURRENT) ==
+-		    GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER))
++		    GetLayerGroupNumberByNumber (max_copper_layer + SOLDER_LAYER))
+ 		  flag = ONSOLDERFLAG;
+ 		if ((text = CreateNewText (CURRENT, &PCB->Font, Note.X,
+ 					   Note.Y, 0, Settings.TextScale,
+@@ -8003,7 +8003,7 @@ ActionAttributes (int argc, char **argv, int x, int y)
+ 	  {
+ 	    int i;
+ 	    layer = NULL;
+-	    for (i=0; i<max_layer; i++)
++	    for (i=0; i<max_copper_layer; i++)
+ 	      if (strcmp (PCB->Data->Layer[i].Name, layername) == 0)
+ 		{
+ 		  layer = & (PCB->Data->Layer[i]);
+diff --git a/src/data.h b/src/data.h
+index ce27339..843a366 100644
+--- a/src/data.h
++++ b/src/data.h
+@@ -46,7 +46,8 @@ extern OutputType Output;
+ 
+ extern PCBTypePtr PCB;
+ 
+-#define max_layer (PCB->Data->LayerN)
++#define max_copper_layer (PCB->Data->LayerN)
++#define max_group (PCB->Data->LayerN)
+ 
+ extern SettingType Settings;
+ 
+diff --git a/src/draw.c b/src/draw.c
+index d5a0a57..3810567 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -384,7 +384,7 @@ DrawEverything (BoxTypePtr drawn_area)
+   PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
+ 
+   memset (do_group, 0, sizeof (do_group));
+-  for (ngroups = 0, i = 0; i < max_layer; i++)
++  for (ngroups = 0, i = 0; i < max_copper_layer; i++)
+     {
+       LayerType *l = LAYER_ON_STACK (i);
+       int group = GetLayerGroupNumberByNumber (LayerStack[i]);
+@@ -395,8 +395,8 @@ DrawEverything (BoxTypePtr drawn_area)
+ 	}
+     }
+ 
+-  component = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+-  solder = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
++  component = GetLayerGroupNumberByNumber (max_copper_layer + COMPONENT_LAYER);
++  solder = GetLayerGroupNumberByNumber (max_copper_layer + SOLDER_LAYER);
+ 
+   /*
+    * first draw all 'invisible' stuff
+@@ -721,7 +721,7 @@ DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
+     {
+       gui->use_mask (HID_MASK_BEFORE);
+ #endif
+-      DrawLayer (LAYER_PTR (max_layer + layer), drawn_area);
++      DrawLayer (LAYER_PTR (max_copper_layer + layer), drawn_area);
+       /* draw package */
+       r_search (PCB->Data->element_tree, drawn_area, NULL, frontE_callback,
+ 		NULL);
+@@ -739,7 +739,7 @@ DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
+   if (gui->poly_after)
+     {
+       gui->use_mask (HID_MASK_AFTER);
+-      DrawLayer (LAYER_PTR (max_layer + layer), drawn_area);
++      DrawLayer (LAYER_PTR (max_copper_layer + layer), drawn_area);
+       /* draw package */
+       r_search (PCB->Data->element_tree, drawn_area, NULL, frontE_callback,
+ 		NULL);
+@@ -898,7 +898,7 @@ DrawLayerGroup (int group, const BoxType * screen)
+       if (strcmp (Layer->Name, "outline") == 0 ||
+ 	  strcmp (Layer->Name, "route") == 0)
+ 	rv = 0;
+-      if (layernum < max_layer && Layer->On)
++      if (layernum < max_copper_layer && Layer->On)
+ 	{
+ 	  /* draw all polygons on this layer */
+ 	  if (Layer->PolygonN)
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index fe87ad0..f83b3d0 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -71,44 +71,46 @@ hid_gc_struct;
+ int
+ ghid_set_layer (const char *name, int group, int empty)
+ {
+-  int idx = group;
+-  if (idx >= 0 && idx < max_layer)
++  if (group >= 0 && group < max_group)
+     {
+-      int n = PCB->LayerGroups.Number[group];
+-      for (idx = 0; idx < n-1; idx ++)
++      int layer_idx;
++      int entry;
++      for (entry = 0; entry < PCB->LayerGroups.Number[group]; entry ++)
+ 	{
+-	  int ni = PCB->LayerGroups.Entries[group][idx];
+-	  if (ni >= 0 && ni < max_layer + 2
+-	      && PCB->Data->Layer[ni].On)
+-	    break;
++	  layer_idx = PCB->LayerGroups.Entries[group][entry];
++	  /* Only return TRUE for visible non-silk layers.
++	   * NB: Silk layers ocupy layer_idx
++	   * max_copper_layer and max_copper_layer + 1
++	   */
++	  if (layer_idx >= 0 && layer_idx < max_copper_layer &&
++	      PCB->Data->Layer[layer_idx].On)
++	    return TRUE;
+ 	}
+-      idx = PCB->LayerGroups.Entries[group][idx];
++      return FALSE;
+     }
+ 
+-  if (idx >= 0 && idx < max_layer + 2)
+-    return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
+-  if (idx < 0)
++  /* If we didn't hit a match above, group is being used as a
++     special symbolic layer type, and will be negative. */
++
++  switch (SL_TYPE (group))
+     {
+-      switch (SL_TYPE (idx))
+-	{
+-	case SL_INVISIBLE:
+-	  return /* pinout ? 0 : */ PCB->InvisibleObjectsOn;
+-	case SL_MASK:
+-	  if (SL_MYSIDE (idx) /*&& !pinout */ )
+-	    return TEST_FLAG (SHOWMASKFLAG, PCB);
+-	  return 0;
+-	case SL_SILK:
+-	  if (SL_MYSIDE (idx) /*|| pinout */ )
+-	    return PCB->ElementOn;
+-	  return 0;
+-	case SL_ASSY:
+-	  return 0;
+-	case SL_PDRILL:
+-	case SL_UDRILL:
+-	  return 1;
+-	case SL_RATS:
+-	  return PCB->RatOn;
+-	}
++    case SL_INVISIBLE:
++      return /* pinout ? 0 : */ PCB->InvisibleObjectsOn;
++    case SL_MASK:
++      if (SL_MYSIDE (idx) /*&& !pinout */ )
++        return TEST_FLAG (SHOWMASKFLAG, PCB);
++      return 0;
++    case SL_SILK:
++      if (SL_MYSIDE (idx) /*|| pinout */ )
++        return PCB->ElementOn;
++      return 0;
++    case SL_ASSY:
++      return 0;
++    case SL_PDRILL:
++    case SL_UDRILL:
++      return 1;
++    case SL_RATS:
++      return PCB->RatOn;
+     }
+   return 0;
+ }
+diff --git a/src/macro.h b/src/macro.h
+index 819d202..84748d9 100644
+--- a/src/macro.h
++++ b/src/macro.h
+@@ -161,18 +161,18 @@
+  */
+ #define	LAYER_ON_STACK(n)	(&PCB->Data->Layer[LayerStack[(n)]])
+ #define LAYER_PTR(n)            (&PCB->Data->Layer[(n)])
+-#define	CURRENT			(PCB->SilkActive ? &PCB->Data->Layer[max_layer + \
++#define	CURRENT			(PCB->SilkActive ? &PCB->Data->Layer[max_copper_layer + \
+ 				(Settings.ShowSolderSide ? SOLDER_LAYER : COMPONENT_LAYER)] \
+ 				: LAYER_ON_STACK(0))
+-#define	INDEXOFCURRENT		(PCB->SilkActive ? max_layer + \
++#define	INDEXOFCURRENT		(PCB->SilkActive ? max_copper_layer + \
+ 				(Settings.ShowSolderSide ? SOLDER_LAYER : COMPONENT_LAYER) \
+ 				: LayerStack[0])
+-#define SILKLAYER		Layer[max_layer + \
++#define SILKLAYER		Layer[max_copper_layer + \
+ 				(Settings.ShowSolderSide ? SOLDER_LAYER : COMPONENT_LAYER)]
+-#define BACKSILKLAYER		Layer[max_layer + \
++#define BACKSILKLAYER		Layer[max_copper_layer + \
+ 				(Settings.ShowSolderSide ? COMPONENT_LAYER : SOLDER_LAYER)]
+ 
+-#define TEST_SILK_LAYER(layer)	(GetLayerNumber (PCB->Data, layer) >= max_layer)
++#define TEST_SILK_LAYER(layer)	(GetLayerNumber (PCB->Data, layer) >= max_copper_layer)
+ 
+ 
+ /* ---------------------------------------------------------------------------
+@@ -418,49 +418,49 @@ extern int mem_any_set (unsigned char *, int);
+ #define	ALLLINE_LOOP(top) do	{		\
+ 	Cardinal		l;			\
+ 	LayerTypePtr	layer = (top)->Layer;		\
+-	for (l = 0; l < max_layer + 2; l++, layer++)	\
++	for (l = 0; l < max_copper_layer + 2; l++, layer++)	\
+ 	{ \
+ 		LINE_LOOP(layer)
+ 
+ #define ALLARC_LOOP(top) do {		\
+ 	Cardinal		l;			\
+ 	LayerTypePtr	layer = (top)->Layer;		\
+-	for (l =0; l < max_layer + 2; l++, layer++)		\
++	for (l =0; l < max_copper_layer + 2; l++, layer++)		\
+ 	{ \
+ 		ARC_LOOP(layer)
+ 
+ #define	ALLPOLYGON_LOOP(top)	do {		\
+ 	Cardinal		l;			\
+ 	LayerTypePtr	layer = (top)->Layer;		\
+-	for (l = 0; l < max_layer + 2; l++, layer++)	\
++	for (l = 0; l < max_copper_layer + 2; l++, layer++)	\
+ 	{ \
+ 		POLYGON_LOOP(layer)
+ 
+ #define	COPPERLINE_LOOP(top) do	{		\
+ 	Cardinal		l;			\
+ 	LayerTypePtr	layer = (top)->Layer;		\
+-	for (l = 0; l < max_layer; l++, layer++)	\
++	for (l = 0; l < max_copper_layer; l++, layer++)	\
+ 	{ \
+ 		LINE_LOOP(layer)
+ 
+ #define COPPERARC_LOOP(top) do	{		\
+ 	Cardinal		l;			\
+ 	LayerTypePtr	layer = (top)->Layer;		\
+-	for (l =0; l < max_layer; l++, layer++)		\
++	for (l =0; l < max_copper_layer; l++, layer++)		\
+ 	{ \
+ 		ARC_LOOP(layer)
+ 
+ #define	COPPERPOLYGON_LOOP(top) do	{		\
+ 	Cardinal		l;			\
+ 	LayerTypePtr	layer = (top)->Layer;		\
+-	for (l = 0; l < max_layer; l++, layer++)	\
++	for (l = 0; l < max_copper_layer; l++, layer++)	\
+ 	{ \
+ 		POLYGON_LOOP(layer)
+ 
+ #define	SILKLINE_LOOP(top) do	{		\
+ 	Cardinal		l;			\
+ 	LayerTypePtr	layer = (top)->Layer;		\
+-	layer += max_layer;				\
++	layer += max_copper_layer;			\
+ 	for (l = 0; l < 2; l++, layer++)		\
+ 	{ \
+ 		LINE_LOOP(layer)
+@@ -468,7 +468,7 @@ extern int mem_any_set (unsigned char *, int);
+ #define SILKARC_LOOP(top) do	{		\
+ 	Cardinal		l;			\
+ 	LayerTypePtr	layer = (top)->Layer;		\
+-	layer += max_layer;				\
++	layer += max_copper_layer;			\
+ 	for (l = 0; l < 2; l++, layer++)		\
+ 	{ \
+ 		ARC_LOOP(layer)
+@@ -476,7 +476,7 @@ extern int mem_any_set (unsigned char *, int);
+ #define	SILKPOLYGON_LOOP(top) do	{		\
+ 	Cardinal		l;			\
+ 	LayerTypePtr	layer = (top)->Layer;		\
+-	layer += max_layer;				\
++	layer += max_copper_layer;			\
+ 	for (l = 0; l < 2; l++, layer++)		\
+ 	{ \
+ 		POLYGON_LOOP(layer)
+@@ -484,14 +484,14 @@ extern int mem_any_set (unsigned char *, int);
+ #define	ALLTEXT_LOOP(top)	do {		\
+ 	Cardinal		l;			\
+ 	LayerTypePtr	layer = (top)->Layer;		\
+-	for (l = 0; l < max_layer + 2; l++, layer++)	\
++	for (l = 0; l < max_copper_layer + 2; l++, layer++)	\
+ 	{ \
+ 		TEXT_LOOP(layer)
+ 
+ #define	VISIBLELINE_LOOP(top) do	{		\
+ 	Cardinal		l;			\
+ 	LayerTypePtr	layer = (top)->Layer;		\
+-	for (l = 0; l < max_layer + 2; l++, layer++)	\
++	for (l = 0; l < max_copper_layer + 2; l++, layer++)	\
+ 	{ \
+ 		if (layer->On)				\
+ 			LINE_LOOP(layer)
+@@ -499,7 +499,7 @@ extern int mem_any_set (unsigned char *, int);
+ #define	VISIBLEARC_LOOP(top) do	{		\
+ 	Cardinal		l;			\
+ 	LayerTypePtr	layer = (top)->Layer;		\
+-	for (l = 0; l < max_layer + 2; l++, layer++)	\
++	for (l = 0; l < max_copper_layer + 2; l++, layer++)	\
+ 	{ \
+ 		if (layer->On)				\
+ 			ARC_LOOP(layer)
+@@ -507,7 +507,7 @@ extern int mem_any_set (unsigned char *, int);
+ #define	VISIBLETEXT_LOOP(board) do	{		\
+ 	Cardinal		l;			\
+ 	LayerTypePtr	layer = (board)->Data->Layer;		\
+-	for (l = 0; l < max_layer + 2; l++, layer++)	\
++	for (l = 0; l < max_copper_layer + 2; l++, layer++)	\
+ 	{ \
+                 TEXT_LOOP(layer);                                      \
+                   if (TEXT_IS_VISIBLE((board), layer, text))
+@@ -515,7 +515,7 @@ extern int mem_any_set (unsigned char *, int);
+ #define	VISIBLEPOLYGON_LOOP(top) do	{	\
+ 	Cardinal		l;			\
+ 	LayerTypePtr	layer = (top)->Layer;		\
+-	for (l = 0; l < max_layer + 2; l++, layer++)	\
++	for (l = 0; l < max_copper_layer + 2; l++, layer++)	\
+ 	{ \
+ 		if (layer->On)				\
+ 			POLYGON_LOOP(layer)
+@@ -548,7 +548,7 @@ extern int mem_any_set (unsigned char *, int);
+ 		LayerTypePtr layer;		\
+ 		Cardinal number; 		\
+ 		number = ((PCBTypePtr)(data->pcb))->LayerGroups.Entries[(group)][entry]; \
+-		if (number >= max_layer)	\
++		if (number >= max_copper_layer)	\
+ 		  continue;			\
+ 		layer = &data->Layer[number];
+ 
+diff --git a/src/polygon.c b/src/polygon.c
+index d379a6b..8c61abf 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -1015,7 +1015,7 @@ static int
+ Group (DataTypePtr Data, Cardinal layer)
+ {
+   Cardinal i, j;
+-  for (i = 0; i < max_layer; i++)
++  for (i = 0; i < max_group; i++)
+     for (j = 0; j < ((PCBType *) (Data->pcb))->LayerGroups.Number[i]; j++)
+       if (layer == ((PCBType *) (Data->pcb))->LayerGroups.Entries[i][j])
+         return i;
+@@ -1032,10 +1032,10 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
+   Cardinal group;
+ 
+   if (!TEST_FLAG (CLEARPOLYFLAG, polygon)
+-      || GetLayerNumber (Data, Layer) >= max_layer)
++      || GetLayerNumber (Data, Layer) >= max_copper_layer)
+     return 0;
+   group = Group (Data, GetLayerNumber (Data, Layer));
+-  info.solder = (group == Group (Data, max_layer + SOLDER_LAYER));
++  info.solder = (group == Group (Data, max_copper_layer + SOLDER_LAYER));
+   info.data = Data;
+   info.other = here;
+   info.layer = Layer;
+@@ -1051,7 +1051,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
+       r = 0;
+       info.accumulate = NULL;
+       info.batch_size = 0;
+-      if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
++      if (info.solder || group == Group (Data, max_copper_layer + COMPONENT_LAYER))
+ 	r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
+       GROUP_LOOP (Data, group);
+       {
+@@ -1547,7 +1547,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+     case VIA_TYPE:
+       if (type == PIN_TYPE || ptr1 == ptr2 || ptr1 == NULL)
+         {
+-          LAYER_LOOP (Data, max_layer);
++          LAYER_LOOP (Data, max_copper_layer);
+           {
+             info.layer = layer;
+             r +=
+@@ -1574,7 +1574,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+       if (!TEST_FLAG (CLEARLINEFLAG, (LineTypePtr) ptr2))
+         return 0;
+       /* silk doesn't plow */
+-      if (GetLayerNumber (Data, ptr1) >= max_layer)
++      if (GetLayerNumber (Data, ptr1) >= max_copper_layer)
+         return 0;
+       GROUP_LOOP (Data, GetLayerGroupNumberByNumber (GetLayerNumber (Data,
+                                                                      ((LayerTypePtr) ptr1))));
+@@ -1586,10 +1586,9 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
+       break;
+     case PAD_TYPE:
+       {
+-        Cardinal group = TEST_FLAG (ONSOLDERFLAG,
+-                                    (PadType *) ptr2) ? SOLDER_LAYER :
+-          COMPONENT_LAYER;
+-        group = GetLayerGroupNumberByNumber (max_layer + group);
++        Cardinal group = GetLayerGroupNumberByNumber (max_copper_layer +
++                            TEST_FLAG (ONSOLDERFLAG, (PadType *) ptr2) ?
++                              SOLDER_LAYER : COMPONENT_LAYER);
+         GROUP_LOOP (Data, group);
+         {
+           info.layer = layer;
+@@ -2036,7 +2035,7 @@ POLYAREA *board_outline_poly ()
+   whole_world = RectPoly (-BLOAT_WORLD, BLOAT_WORLD + PCB->MaxWidth,
+                           -BLOAT_WORLD, BLOAT_WORLD + PCB->MaxHeight);
+ 
+-  for (i = 0; i < max_layer; i++)
++  for (i = 0; i < max_copper_layer; i++)
+     {
+       Layer = PCB->Data->Layer + i;
