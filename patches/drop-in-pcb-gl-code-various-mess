@@ -1,5 +1,5 @@
-Bottom: 0f67d3070f174eddb3066f17cdca7d6a5628fd69
-Top:    53d87dd743698b5dbb2b7bd7af946b3250e1b130
+Bottom: 2e3ccb39fc5a1af4feb4532513d8d24e7c6fd51c
+Top:    e836907fcec225009bf0de5cf6be58182bb1b755
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-04 12:26:35 +0100
 
@@ -755,10 +755,10 @@ index 0000000..73d9a34
 +
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 102989d..9bada21 100644
+index 32d2618..ad1d0ad 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -954,6 +954,11 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -964,6 +964,11 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
  }
  
  void
@@ -770,7 +770,7 @@ index 102989d..9bada21 100644
  ghid_drawing_area_configure_hook (GHidPort *port)
  {
    static int done_once = 0;
-@@ -976,6 +981,17 @@ ghid_drawing_area_configure_hook (GHidPort *port)
+@@ -986,6 +991,17 @@ ghid_drawing_area_configure_hook (GHidPort *port)
      }
  }
  
