@@ -1,0 +1,34 @@
+Bottom: 2f076f4fd6f80052f87ede57d9bde9c7d8102f12
+Top:    ceab64fd0acdbfcc98eb3ba8a2cd020566fec086
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-09-09 16:05:12 +0100
+
+Fix crash due to uninitalised variable in DRC check Bug #3033772
+
+Andrew Armenia  noted that the second pointer returned from
+BuildObjectList(), "object_type_list" would be left uninitialised
+if the object type was not encountered. A subsequent call to
+free() in DRCFind() would then cause memory corruption.
+
+The issue was originally reported by Ineiev:
+
+http://archives.seul.org/geda/user/Nov-2009/msg00456.html
+
+That patch addresses the lack of a RATLINE_TYPE in the BuildObjectType
+function, but does not prevent a segfault for other unknown types.
+
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 593be70..f682fd8 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -4482,6 +4482,7 @@ BuildObjectList (int *object_count, long int **object_id_list, int **object_type
+ {
+   *object_count = 0;
+   *object_id_list = NULL;
++  *object_type_list = NULL;
+ 
+   switch (thing_type)
+     {
