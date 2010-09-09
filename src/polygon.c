@@ -1015,7 +1015,7 @@ static int
 Group (DataTypePtr Data, Cardinal layer)
 {
   Cardinal i, j;
-  for (i = 0; i < max_layer; i++)
+  for (i = 0; i < max_group; i++)
     for (j = 0; j < ((PCBType *) (Data->pcb))->LayerGroups.Number[i]; j++)
       if (layer == ((PCBType *) (Data->pcb))->LayerGroups.Entries[i][j])
         return i;
@@ -1032,10 +1032,10 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
   Cardinal group;
 
   if (!TEST_FLAG (CLEARPOLYFLAG, polygon)
-      || GetLayerNumber (Data, Layer) >= max_layer)
+      || GetLayerNumber (Data, Layer) >= max_copper_layer)
     return 0;
   group = Group (Data, GetLayerNumber (Data, Layer));
-  info.solder = (group == Group (Data, max_layer + SOLDER_LAYER));
+  info.solder = (group == Group (Data, max_copper_layer + SOLDER_LAYER));
   info.data = Data;
   info.other = here;
   info.layer = Layer;
@@ -1051,7 +1051,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
       r = 0;
       info.accumulate = NULL;
       info.batch_size = 0;
-      if (info.solder || group == Group (Data, max_layer + COMPONENT_LAYER))
+      if (info.solder || group == Group (Data, max_copper_layer + COMPONENT_LAYER))
 	r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
       GROUP_LOOP (Data, group);
       {
@@ -1547,7 +1547,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
     case VIA_TYPE:
       if (type == PIN_TYPE || ptr1 == ptr2 || ptr1 == NULL)
         {
-          LAYER_LOOP (Data, max_layer);
+          LAYER_LOOP (Data, max_copper_layer);
           {
             info.layer = layer;
             r +=
@@ -1574,7 +1574,7 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
       if (!TEST_FLAG (CLEARLINEFLAG, (LineTypePtr) ptr2))
         return 0;
       /* silk doesn't plow */
-      if (GetLayerNumber (Data, ptr1) >= max_layer)
+      if (GetLayerNumber (Data, ptr1) >= max_copper_layer)
         return 0;
       GROUP_LOOP (Data, GetLayerGroupNumberByNumber (GetLayerNumber (Data,
                                                                      ((LayerTypePtr) ptr1))));
@@ -1586,10 +1586,9 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
       break;
     case PAD_TYPE:
       {
-        Cardinal group = TEST_FLAG (ONSOLDERFLAG,
-                                    (PadType *) ptr2) ? SOLDER_LAYER :
-          COMPONENT_LAYER;
-        group = GetLayerGroupNumberByNumber (max_layer + group);
+        Cardinal group = GetLayerGroupNumberByNumber (max_copper_layer +
+                            TEST_FLAG (ONSOLDERFLAG, (PadType *) ptr2) ?
+                              SOLDER_LAYER : COMPONENT_LAYER);
         GROUP_LOOP (Data, group);
         {
           info.layer = layer;
@@ -2036,7 +2035,7 @@ POLYAREA *board_outline_poly ()
   whole_world = RectPoly (-BLOAT_WORLD, BLOAT_WORLD + PCB->MaxWidth,
                           -BLOAT_WORLD, BLOAT_WORLD + PCB->MaxHeight);
 
-  for (i = 0; i < max_layer; i++)
+  for (i = 0; i < max_copper_layer; i++)
     {
       Layer = PCB->Data->Layer + i;
 
