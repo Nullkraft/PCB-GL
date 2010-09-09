@@ -1,0 +1,133 @@
+Bottom: bae53a3abaa0d2cea17bd11ff1ddce15738c342b
+Top:    2e3ccb39fc5a1af4feb4532513d8d24e7c6fd51c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-09-09 11:22:52 +0100
+
+Refresh of move-set_layer-function-into-g
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 34e52fa..32d2618 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -67,6 +67,51 @@ typedef struct hid_gc_struct
+ hid_gc_struct;
+ 
+ 
++int
++ghid_set_layer (const char *name, int group, int empty)
++{
++  int idx = group;
++  if (idx >= 0 && idx < max_layer)
++    {
++      int n = PCB->LayerGroups.Number[group];
++      for (idx = 0; idx < n-1; idx ++)
++	{
++	  int ni = PCB->LayerGroups.Entries[group][idx];
++	  if (ni >= 0 && ni < max_layer + 2
++	      && PCB->Data->Layer[ni].On)
++	    break;
++	}
++      idx = PCB->LayerGroups.Entries[group][idx];
++    }
++
++  if (idx >= 0 && idx < max_layer + 2)
++    return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
++  if (idx < 0)
++    {
++      switch (SL_TYPE (idx))
++	{
++	case SL_INVISIBLE:
++	  return /* pinout ? 0 : */ PCB->InvisibleObjectsOn;
++	case SL_MASK:
++	  if (SL_MYSIDE (idx) /*&& !pinout */ )
++	    return TEST_FLAG (SHOWMASKFLAG, PCB);
++	  return 0;
++	case SL_SILK:
++	  if (SL_MYSIDE (idx) /*|| pinout */ )
++	    return PCB->ElementOn;
++	  return 0;
++	case SL_ASSY:
++	  return 0;
++	case SL_PDRILL:
++	case SL_UDRILL:
++	  return 1;
++	case SL_RATS:
++	  return PCB->RatOn;
++	}
++    }
++  return 0;
++}
++
+ void
+ ghid_destroy_gc (hidGC gc)
+ {
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 03cf2b2..55a8c65 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -308,51 +308,6 @@ zoom_by (double factor, int x, int y)
+ 
+ /* ------------------------------------------------------------ */
+ 
+-int
+-ghid_set_layer (const char *name, int group, int empty)
+-{
+-  int idx = group;
+-  if (idx >= 0 && idx < max_layer)
+-    {
+-      int n = PCB->LayerGroups.Number[group];
+-      for (idx = 0; idx < n-1; idx ++)
+-	{
+-	  int ni = PCB->LayerGroups.Entries[group][idx];
+-	  if (ni >= 0 && ni < max_layer + 2
+-	      && PCB->Data->Layer[ni].On)
+-	    break;
+-	}
+-      idx = PCB->LayerGroups.Entries[group][idx];
+-    }
+-
+-  if (idx >= 0 && idx < max_layer + 2)
+-    return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
+-  if (idx < 0)
+-    {
+-      switch (SL_TYPE (idx))
+-	{
+-	case SL_INVISIBLE:
+-	  return /* pinout ? 0 : */ PCB->InvisibleObjectsOn;
+-	case SL_MASK:
+-	  if (SL_MYSIDE (idx) /*&& !pinout */ )
+-	    return TEST_FLAG (SHOWMASKFLAG, PCB);
+-	  return 0;
+-	case SL_SILK:
+-	  if (SL_MYSIDE (idx) /*|| pinout */ )
+-	    return PCB->ElementOn;
+-	  return 0;
+-	case SL_ASSY:
+-	  return 0;
+-	case SL_PDRILL:
+-	case SL_UDRILL:
+-	  return 1;
+-	case SL_RATS:
+-	  return PCB->RatOn;
+-	}
+-    }
+-  return 0;
+-}
+-
+ void
+ ghid_calibrate (double xval, double yval)
+ {
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index c4d71b4..2966609 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -477,6 +477,7 @@ void ghid_logv (const char *fmt, va_list args);
+ void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
+ 
+ /* gtkhid-gdk.c */
++int ghid_set_layer (const char *name, int group, int empty);
+ hidGC ghid_make_gc (void);
+ void ghid_destroy_gc (hidGC);
+ void ghid_use_mask (int use_it);
