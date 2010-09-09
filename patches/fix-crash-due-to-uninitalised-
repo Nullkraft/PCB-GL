@@ -1,5 +1,5 @@
 Bottom: e7a05f5f16fd0ac75dd42ea209eea0bfbc3bdf75
-Top:    e7a05f5f16fd0ac75dd42ea209eea0bfbc3bdf75
+Top:    1511a181d60661f93911efa5851066e0b4ffc474
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:04:51 +0100
 
@@ -20,4 +20,15 @@ function, but does not prevent a segfault for other unknown types.
 
 ---
 
-
+diff --git a/src/find.c b/src/find.c
+index 039bdfa..f38f151 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -4482,6 +4482,7 @@ BuildObjectList (int *object_count, long int **object_id_list, int **object_type
+ {
+   *object_count = 0;
+   *object_id_list = NULL;
++  *object_type_list = NULL;
+ 
+   switch (thing_type)
+     {
