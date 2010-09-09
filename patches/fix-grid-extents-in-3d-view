@@ -1,5 +1,5 @@
-Bottom: 710d4c1c2b54d4f6cfe74560e6db21198766130b
-Top:    8deb2fce476994c8536af8718379b0df3e95301a
+Bottom: 7b9fa6bd05634af783626e8863da25daa0938a18
+Top:    4b4fe27590d628b17980c7d1e95b30c142ad8784
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-04 12:26:40 +0100
 
@@ -9,10 +9,10 @@ Fix grid extents in 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 8458fea..b4ce23c 100644
+index 1f6cde7..66b16e7 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -169,7 +169,7 @@ ghid_make_gc (void)
+@@ -180,7 +180,7 @@ ghid_make_gc (void)
  }
  
  static void
@@ -21,7 +21,7 @@ index 8458fea..b4ce23c 100644
  {
    static GLfloat *points = 0;
    static int npoints = 0;
-@@ -198,10 +198,10 @@ ghid_draw_grid ()
+@@ -209,10 +209,10 @@ ghid_draw_grid ()
               gport->grid_color.green / 65535.,
               gport->grid_color.blue / 65535.);
  
@@ -36,7 +36,7 @@ index 8458fea..b4ce23c 100644
    if (x1 > x2)
      {
        int tmp = x1;
-@@ -1146,7 +1146,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1157,7 +1157,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    gui->set_layer (NULL, GetLayerGroupNumberByNumber (INDEXOFCURRENT), 0);
    gui->set_layer (NULL, SL_FINISHED, 0);
  

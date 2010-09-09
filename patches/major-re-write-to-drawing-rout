@@ -1,5 +1,5 @@
-Bottom: 8deb2fce476994c8536af8718379b0df3e95301a
-Top:    38fe6b6866e4877aa94008cd9083c9a0df489f5c
+Bottom: 4b4fe27590d628b17980c7d1e95b30c142ad8784
+Top:    619d2839bd9a03efe9aaac885f5b8f966472a47e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-04 12:26:40 +0100
 
@@ -181,7 +181,7 @@ index c0e23a3..077c575 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b4ce23c..7d1a5b8 100644
+index 66b16e7..ecc02ff 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -255,9 +255,9 @@ index b4ce23c..7d1a5b8 100644
  int
  ghid_set_layer (const char *name, int group, int empty)
  {
-@@ -80,48 +129,30 @@ ghid_set_layer (const char *name, int group, int empty)
-   int idx = (group >= 0 && group < max_layer) ?
- 	      PCB->LayerGroups.Entries[group][0] : group;
+@@ -91,48 +140,30 @@ ghid_set_layer (const char *name, int group, int empty)
+       idx = PCB->LayerGroups.Entries[group][idx];
+     }
  
 -#define SUBCOMPOSITE_LAYERS
 -#ifdef SUBCOMPOSITE_LAYERS
@@ -317,7 +317,7 @@ index b4ce23c..7d1a5b8 100644
    if (idx < 0)
      {
        switch (SL_TYPE (idx))
-@@ -420,10 +451,6 @@ typedef struct
+@@ -431,10 +462,6 @@ typedef struct
    double blue;
  } ColorCache;
  
@@ -328,7 +328,7 @@ index b4ce23c..7d1a5b8 100644
  void
  ghid_set_color (hidGC gc, const char *name)
  {
-@@ -539,7 +566,7 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -550,7 +577,7 @@ ghid_set_color (hidGC gc, const char *name)
    glColor4d (r, g, b, a);
  }
  
@@ -337,7 +337,7 @@ index b4ce23c..7d1a5b8 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -978,6 +1005,635 @@ ghid_screen_update (void)
+@@ -989,6 +1016,635 @@ ghid_screen_update (void)
  {
  }
  
@@ -973,7 +973,7 @@ index b4ce23c..7d1a5b8 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1044,8 +1700,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1055,8 +1711,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -984,7 +984,7 @@ index b4ce23c..7d1a5b8 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1137,7 +1793,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1148,7 +1804,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_x0,
                  ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                               -port->view_y0, 0);

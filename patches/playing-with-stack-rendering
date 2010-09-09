@@ -1,5 +1,5 @@
-Bottom: d8688e75631fac2a2ed0fe987350389ea32b49cd
-Top:    a18bfb78f7840da422e897f22d4f17c6313d1cf8
+Bottom: 747799b8d30f90b9444877a0baefb8b5d8db5c98
+Top:    d9e0d59cb03861193c1ac7cb81a902f789c176b2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-04 12:26:42 +0100
 
@@ -9,10 +9,10 @@ Playing with stack rendering
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7d1a5b8..63cd7c9 100644
+index ecc02ff..554e80b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1067,7 +1067,17 @@ SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
+@@ -1078,7 +1078,17 @@ SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
    else if (TEST_FLAG (FOUNDFLAG, Pin))
      color = PCB->ConnectedColor;
    else
@@ -31,7 +31,7 @@ index 7d1a5b8..63cd7c9 100644
  
    gui->set_color (Output.fgGC, color);
  }
-@@ -1353,6 +1363,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1364,6 +1374,8 @@ DrawLayerGroup (int group, const BoxType * screen)
    int n_entries = PCB->LayerGroups.Number[group];
    Cardinal *layers = PCB->LayerGroups.Entries[group];
    int first_run = 1;
@@ -40,7 +40,7 @@ index 7d1a5b8..63cd7c9 100644
  
    if (!gui->set_layer (0, group, 0)) {
      gui->set_layer (NULL, SL (FINISHED, 0), 0);
-@@ -1410,10 +1422,18 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1421,10 +1433,18 @@ DrawLayerGroup (int group, const BoxType * screen)
          }
        }
  
@@ -60,7 +60,7 @@ index 7d1a5b8..63cd7c9 100644
        }
  
        if (TEST_FLAG (CHECKPLANESFLAG, PCB))
-@@ -1540,7 +1560,8 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1551,7 +1571,8 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     */
    if (!TEST_FLAG (CHECKPLANESFLAG, PCB) &&
        gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
@@ -70,7 +70,7 @@ index 7d1a5b8..63cd7c9 100644
      if (PCB->ElementOn) {
        r_search (PCB->Data->element_tree, drawn_area, NULL, backE_callback, NULL);
        r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, backN_callback, NULL);
-@@ -1578,20 +1599,21 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1589,20 +1610,21 @@ ghid_draw_everything (BoxTypePtr drawn_area)
      gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0);
  //  gui->set_layer (NULL, SL (FINISHED, 0), 0);
  
