@@ -7,6 +7,28 @@ Revert "We can just delete kicked out holes"
 
 This reverts commit 6400e974907264b9a0524a0dbdd7dfb9eb623f8b.
 
+We can't (although I'm not 100% sure why).
+
+Basically, deleting a series of polygons which creates a hole
+in a certain way causes problems with this commit.
+ __________
+|    ___   |
+|   |___|  |
+|__________|
+
+These lines represent line polygons which are deleted one by one
+from a larger "world" polygon in the GL version's mask rendering.
+
+The order is such that three of the outer polygons are removed first,
+leaving a mirrored C shaped hole in the world polygon:
+ __________
+           |
+           |
+ __________|
+
+When subtracing some of the inner polygons, they are erronously
+discarded with this patch applied.
+
 
 ---
 
