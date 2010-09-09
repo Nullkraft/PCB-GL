@@ -138,7 +138,8 @@ int
 ghid_set_layer (const char *name, int group, int empty)
 {
   render_priv *priv = gport->render_priv;
-  static int stencil_bit = 0;
+  GLenum errCode;
+  const GLubyte *errString;
   int idx = group;
   if (idx >= 0 && idx < max_layer)
     {
@@ -158,17 +159,53 @@ ghid_set_layer (const char *name, int group, int empty)
 
   hidgl_set_depth (compute_depth (group));
 
-  glEnable (GL_STENCIL_TEST);                   // Enable Stencil test
-  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);   // Stencil pass => replace stencil value (with 1)
-  hidgl_return_stencil_bit (stencil_bit);       // Relinquish any bitplane we previously used
-  if (SL_TYPE (idx) != SL_FINISHED) {
-    stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
-    glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
-    glStencilFunc (GL_GREATER, stencil_bit, stencil_bit); // Pass stencil test if our assigned bit is clear
-  } else {
-    stencil_bit = 0;
-    glStencilMask (0);
-    glStencilFunc (GL_ALWAYS, 0, 0);  // Always pass stencil test
+  /* Composite out existing texture data */
+  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
+  glBindTexture (GL_TEXTURE_2D, tex_name);
+
+  glPushMatrix ();
+  glLoadIdentity ();
+
+  glEnable (GL_BLEND);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  /* Use the texture on a big quad, onto the window */
+  glEnable (GL_TEXTURE_2D);
+  glBegin (GL_QUADS);
+//  glColor4f (1.0f, 1.0f, 1.0f, 1.0f);
+  glTexCoord2f (  0,   1);
+  glVertex2f   (  0, 0);
+  glTexCoord2f (  0,   0);
+  glVertex2f   (  0,   gport->drawing_area->allocation.height);
+  glTexCoord2f (  1,   0);
+  glVertex2f   (  gport->drawing_area->allocation.width,   gport->drawing_area->allocation.height);
+  glTexCoord2f (  1,   1);
+  glVertex2f   (  gport->drawing_area->allocation.width,   0);
+  glEnd ();
+  glDisable (GL_TEXTURE_2D);
+  glBindTexture (GL_TEXTURE_2D, 0);
+
+  glPopMatrix ();
+
+  glBlendFunc (GL_ONE, GL_ZERO);
+//  glDisable (GL_BLEND);
+
+  if ((errCode = glGetError()) != GL_NO_ERROR) {
+      errString = gluErrorString(errCode);
+     fprintf (stderr, "5OpenGL Error: %s\n", errString);
+  }
+
+  /* Setup for the next layer */
+  if (group != -99) {
+    glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, fbo_name);
+    glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, tex_name, 0);
+    glClear (GL_COLOR_BUFFER_BIT);
+  } else
+    return 0;
+
+  if ((errCode = glGetError()) != GL_NO_ERROR) {
+      errString = gluErrorString(errCode);
+     fprintf (stderr, "6OpenGL Error: %s\n", errString);
   }
 
   if (idx >= 0 && idx < max_layer + 2)
@@ -1766,14 +1803,32 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   Settings.ShowSolderSide = save_show_solder;
 }
 
+int ghid_set_layer (const char *name, int group, int empty);
+
+#define CHECK_FRAMEBUFFER_STATUS()                            \
+  do {                                                        \
+    GLenum status;                                            \
+    status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT); \
+    switch(status) {                                          \
+      case GL_FRAMEBUFFER_COMPLETE_EXT:                       \
+        break;                                                \
+      case GL_FRAMEBUFFER_UNSUPPORTED_EXT:                    \
+        /* choose different formats */                        \
+        break;                                                \
+      default:                                                \
+        /* programming error; will fail on all hardware */    \
+        exit (1);                                             \
+    }                                                         \
+  } while (0);
+
 #define Z_NEAR 3.0
 gboolean
 ghid_drawing_area_expose_cb (GtkWidget *widget,
                              GdkEventExpose *ev,
                              GHidPort *port)
 {
-  static int one_shot = 1;
-  static int display_list;
+  GLenum errCode;
+  const GLubyte *errString;
   BoxType region;
   int eleft, eright, etop, ebottom;
   int min_x, min_y;
@@ -1800,7 +1855,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   ghid_show_crosshair (FALSE);
 
   glEnable (GL_BLEND);
-  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glBlendFunc (GL_ONE, GL_ZERO);
+//  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   glViewport (0, 0, widget->allocation.width, widget->allocation.height);
 
@@ -1819,13 +1875,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glMultMatrixf ((GLfloat *)view_matrix);
   glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
   glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
-
-#if 0
-  if (one_shot) {
-
-    display_list = glGenLists(1);
-    glNewList (display_list, GL_COMPILE);
-#endif
 
   glEnable (GL_STENCIL_TEST);
   glClearColor (port->offlimits_color.red / 65535.,
@@ -1903,14 +1952,64 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   region.Y1 = MIN (Py (min_y), Py (max_y + 1));
   region.Y2 = MAX (Py (min_y), Py (max_y + 1));
 
-  eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
-  etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
+//  eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
+//  etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
+
+  eleft = ev->area.x; eright = ev->area.x + ev->area.width;
+  etop = ev->area.y; ebottom = ev->area.y + ev->area.height;
 
   glColor3f (port->bg_color.red / 65535.,
              port->bg_color.green / 65535.,
              port->bg_color.blue / 65535.);
 
   /* TODO: Background image */
+
+  /* Setup a texture for playing each layer into */
+  glGenFramebuffersEXT (1, &fbo_name);
+  glGenTextures (1, &tex_name);
+  glBindTexture (GL_TEXTURE_2D, tex_name);
+
+  glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+  glTexImage2D (GL_TEXTURE_2D,
+                0, /* Level */
+                GL_RGBA8, /* Int. format */
+                widget->allocation.width, /* Width */
+                widget->allocation.height, /* Height */
+                0,      /* Border */
+                GL_RGBA, /* Format */
+                GL_UNSIGNED_BYTE, /* Type */
+                NULL);  /* Pixels */
+
+  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, fbo_name);
+  glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, tex_name, 0);
+  if ((errCode = glGetError()) != GL_NO_ERROR) {
+      errString = gluErrorString(errCode);
+     fprintf (stderr, "4OpenGL Error: %s\n", errString);
+  }
+  CHECK_FRAMEBUFFER_STATUS ()
+  glBindTexture (GL_TEXTURE_2D, 0);
+
+  glClearColor (1., 1., 1., 0.);
+  glClear (GL_COLOR_BUFFER_BIT);
+
+//  glDisable (GL_BLEND);
+  glEnable (GL_BLEND);
+
+
+//  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
+#if 0
+  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, fbo_name);
+  /* RTT */
+  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
+
+  /* Composite */
+  glBindTexture (GL_TEXTURE_2D, tex_name);
+  /* Use the texture on a big quad, onto the window */
+  glBindTexture (GL_TEXTURE_2D, 0);
+#endif
+
+  /* End texture setup */
 
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
@@ -1971,6 +2070,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   gui->set_layer (NULL, GetLayerGroupNumberByNumber (INDEXOFCURRENT), 0);
   gui->set_layer (NULL, SL_FINISHED, 0);
 
+  /* Hack to finish compositing */
+  ghid_set_layer ("HACK", -99, 0);
+
   ghid_draw_grid (&region);
 
   hidgl_init_triangle_array (&buffer);
@@ -1987,20 +2089,16 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
 
-#if 0
-    glEndList ();
-    one_shot = 0;
-  } else {
-    /* Second and subsequent times */
-    glCallList (display_list);
-  }
-#endif
-
   ghid_show_crosshair (TRUE);
 
   hidgl_flush_triangles (&buffer);
 
   check_gl_drawing_ok_hack = false;
+
+  /* Tear down texture buffer */
+  glDeleteTextures (1, &tex_name);
+  glDeleteFramebuffersEXT (1, &fbo_name);
+
   hidgl_in_context (false);
   ghid_end_drawing (port);
 
