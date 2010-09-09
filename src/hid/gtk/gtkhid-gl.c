@@ -1379,7 +1379,7 @@ DrawLayerGroup (int group, const BoxType * screen)
         strcmp (Layer->Name, "route") == 0)
       rv = 0;
 
-    if (layernum < max_layer /*&& Layer->On*/) {
+    if (layernum < max_layer && Layer->On) {
 
       if (!first_run)
         gui->set_layer (0, group, 0);
@@ -1540,7 +1540,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     l = global_view_2d ? LAYER_ON_STACK (i) : LAYER_PTR (orderi);
     group = GetLayerGroupNumberByNumber (global_view_2d ? LayerStack[i] : orderi);
 
-    if (/*l->On && */!do_group[group]) {
+    if (!do_group[group]) {
       do_group[group] = 1;
       drawn_groups[ngroups++] = group;
     }
