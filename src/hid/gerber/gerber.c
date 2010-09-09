@@ -383,7 +383,7 @@ gerber_do_export (HID_Attr_Val * options)
   for (i = 0; i < max_layer; i++)
     {
       LayerType *layer = PCB->Data->Layer + i;
-      if (layer->LineN || layer->TextN || layer->ArcN || layer->PolygonN)
+      if (layer->LineN || layer->TextN || layer->ArcN || layer->PourN)
 	print_group[GetLayerGroupNumberByNumber (i)] = 1;
     }
   print_group[GetLayerGroupNumberByNumber (max_layer)] = 1;
