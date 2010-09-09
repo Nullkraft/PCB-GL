@@ -1,7 +1,7 @@
-Bottom: bd5c596a97160da00ef839e90d3c9fdec495785a
-Top:    195093052d15f8e7454460237ad69fe55fc7c4dc
+Bottom: 8674340a8537eff295733052b0545fe6652ed308
+Top:    dfbfd00c46f55a6c3647b5696a25deca732ab7fa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-09-06 00:01:13 +0100
+Date:   2010-09-09 11:25:07 +0100
 
 Add support for a "poured" object.
 
@@ -3392,7 +3392,7 @@ index 7ef7d41..1b76e88 100644
 +  ClearFromPours (Data, ELEMENT_TYPE, Element, Element);
  }
 diff --git a/src/misc.c b/src/misc.c
-index 5599d82..d967d84 100644
+index 34d103c..54d8bbb 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -66,6 +66,7 @@
@@ -3501,7 +3501,7 @@ index 5599d82..d967d84 100644
      case LINEPOINT_TYPE:
        return (BoxType *)Ptr3;
      default:
-@@ -1509,14 +1530,14 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
+@@ -1500,14 +1521,14 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
        new_da = 360;
        new_sa = 0;
      }
@@ -3518,7 +3518,7 @@ index 5599d82..d967d84 100644
  }
  
  static char *
-@@ -1601,13 +1622,8 @@ GetGridLockCoordinates (int type, void *ptr1,
+@@ -1592,13 +1613,8 @@ GetGridLockCoordinates (int type, void *ptr1,
        *x = ((ElementTypePtr) ptr2)->MarkX;
        *y = ((ElementTypePtr) ptr2)->MarkY;
        break;
@@ -4256,7 +4256,7 @@ index 81dff7a..bbd7897 100644
  void FreePCBMemory (PCBTypePtr);
  void FreeBoxListMemory (BoxListTypePtr);
 diff --git a/src/parse_y.y b/src/parse_y.y
-index a5b2d23..4d2b236 100644
+index f4fc367..7c837f2 100644
 --- a/src/parse_y.y
 +++ b/src/parse_y.y
 @@ -52,6 +52,7 @@
@@ -4287,7 +4287,7 @@ index a5b2d23..4d2b236 100644
  			PCB = pcb_save;
  			}
  			   
-@@ -887,7 +888,7 @@ layerdefinition
+@@ -885,7 +886,7 @@ layerdefinition
  			/* x1, y1, x2, y2, flags */
  		| T_RECTANGLE '(' NUMBER NUMBER NUMBER NUMBER NUMBER ')'
  			{
@@ -4296,7 +4296,7 @@ index a5b2d23..4d2b236 100644
  					$3*100, $4*100, ($3+$5)*100, ($4+$6)*100, OldFlags($7));
  			}
  		| text_hi_format
-@@ -1122,7 +1123,7 @@ polygon_format
+@@ -1120,7 +1121,7 @@ polygon_format
  		: /* flags are passed in */
  		T_POLYGON '(' flags ')' '('
  			{
@@ -4305,7 +4305,7 @@ index a5b2d23..4d2b236 100644
  			}
  		  polygonpoints
  		  polygonholes ')'
-@@ -1130,13 +1131,13 @@ polygon_format
+@@ -1128,13 +1129,13 @@ polygon_format
  				Cardinal contour, contour_start, contour_end;
  				bool bad_contour_found = false;
  				/* ignore junk */
@@ -4324,7 +4324,7 @@ index a5b2d23..4d2b236 100644
  				    if (contour_end - contour_start < 3)
  				      bad_contour_found = true;
  				  }
-@@ -1145,16 +1146,16 @@ polygon_format
+@@ -1143,16 +1144,16 @@ polygon_format
  				  {
  				    Message("WARNING parsing file '%s'\n"
  					    "    line:        %i\n"
@@ -4347,7 +4347,7 @@ index a5b2d23..4d2b236 100644
  				  }
  			}
  		;
-@@ -1168,7 +1169,7 @@ polygonholes
+@@ -1166,7 +1167,7 @@ polygonholes
  polygonhole
  		: T_POLYGON_HOLE '('
  			{
@@ -4356,7 +4356,7 @@ index a5b2d23..4d2b236 100644
  			}
  		  polygonpoints ')'
  		;
-@@ -1182,11 +1183,11 @@ polygonpoint
+@@ -1180,11 +1181,11 @@ polygonpoint
  			/* xcoord ycoord */
  		: '(' NUMBER NUMBER ')'
  			{
