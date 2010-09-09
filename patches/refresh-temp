@@ -1,0 +1,22 @@
+Bottom: 7b3f2f72d6d89dc38bcafed49d419c43e222d827
+Top:    4a5347ad8e0c8d8f2b64835f1ae7848d594d9efb
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-09-09 13:13:39 +0100
+
+Refresh of fix-layer-on-off-rendering
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index f8e4426..0d746cd 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1540,7 +1540,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+     l = global_view_2d ? LAYER_ON_STACK (i) : LAYER_PTR (orderi);
+     group = GetLayerGroupNumberByNumber (global_view_2d ? LayerStack[i] : orderi);
+ 
+-    if (!do_group[group]) {
++    if (/*l->On && */!do_group[group]) {
+       do_group[group] = 1;
+       drawn_groups[ngroups++] = group;
+     }
