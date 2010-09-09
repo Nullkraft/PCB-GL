@@ -1959,6 +1959,7 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
 
 struct clip_outline_info {
   POLYAREA *poly;
+  int line_count;
 };
 
 #define ROUTER_THICKNESS 1000
@@ -1987,8 +1988,12 @@ line_outline_callback (const BoxType * b, void *cl)
   struct clip_outline_info *info = cl;
   POLYAREA *np, *res;
 
+  info->line_count++;
+
   if (!(np = LinePoly (line, ROUTER_THICKNESS)))
     return 0;
+
+  printf ("Subtracting a line\n");
 
   poly_Boolean_free (info->poly, np, &res, PBO_SUB);
   info->poly = res;
@@ -2082,9 +2087,11 @@ POLYAREA *board_outline_poly ()
   region.Y1 = 0;
   region.X2 = PCB->MaxWidth;
   region.Y2 = PCB->MaxHeight;
-
+printf ("start\n");
+  info.line_count = 0;
   r_search (Layer->line_tree, &region, NULL, line_outline_callback, &info);
   r_search (Layer->arc_tree,  &region, NULL, arc_outline_callback, &info);
+printf ("end\n");
 
   clipped = info.poly;
 
@@ -2099,6 +2106,7 @@ POLYAREA *board_outline_poly ()
    *          pieces, hopefully the outline layer isn't too complex!
    */
 
+#if 0
   piece = clipped;
   do { /* LOOP OVER POLYGON PIECES */
 
@@ -2121,6 +2129,7 @@ POLYAREA *board_outline_poly ()
   } while ((piece = piece->f) != clipped);
 
   g_list_foreach (pieces_to_delete, delete_piece_cb, &clipped);
+#endif
 
   return clipped;
 }
