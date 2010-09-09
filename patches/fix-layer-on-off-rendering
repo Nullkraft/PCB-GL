@@ -1,5 +1,5 @@
 Bottom: fd1d725d2676eb9abe694b4034a8afc2edd36081
-Top:    7b3f2f72d6d89dc38bcafed49d419c43e222d827
+Top:    4a5347ad8e0c8d8f2b64835f1ae7848d594d9efb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 12:59:48 +0100
 
@@ -24,7 +24,7 @@ This fix is almost certainly WRONG.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ecc02ff..f8e4426 100644
+index ecc02ff..0d746cd 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1379,7 +1379,7 @@ DrawLayerGroup (int group, const BoxType * screen)
@@ -36,12 +36,3 @@ index ecc02ff..f8e4426 100644
  
        if (!first_run)
          gui->set_layer (0, group, 0);
-@@ -1540,7 +1540,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
-     l = global_view_2d ? LAYER_ON_STACK (i) : LAYER_PTR (orderi);
-     group = GetLayerGroupNumberByNumber (global_view_2d ? LayerStack[i] : orderi);
- 
--    if (/*l->On && */!do_group[group]) {
-+    if (!do_group[group]) {
-       do_group[group] = 1;
-       drawn_groups[ngroups++] = group;
-     }
