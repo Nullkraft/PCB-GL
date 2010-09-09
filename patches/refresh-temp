@@ -1,0 +1,35 @@
+Bottom: e836907fcec225009bf0de5cf6be58182bb1b755
+Top:    c589f2a29facbd55eecdd5a234db3d51386a2204
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-09-09 11:23:43 +0100
+
+Refresh of drop-in-pcb-gl-code-various-mess
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 80a8d95..07b1d99 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -64,8 +64,19 @@ int
+ ghid_set_layer (const char *name, int group, int empty)
+ {
+   render_priv *priv = gport->render_priv;
+-  int idx = (group >= 0 && group < max_layer) ?
+-	      PCB->LayerGroups.Entries[group][0] : group;
++  int idx = group;
++  if (idx >= 0 && idx < max_layer)
++    {
++      int n = PCB->LayerGroups.Number[group];
++      for (idx = 0; idx < n-1; idx ++)
++	{
++	  int ni = PCB->LayerGroups.Entries[group][idx];
++	  if (ni >= 0 && ni < max_layer + 2
++	      && PCB->Data->Layer[ni].On)
++	    break;
++	}
++      idx = PCB->LayerGroups.Entries[group][idx];
++    }
+ 
+   if (idx >= 0 && idx < max_layer + 2)
+     {
