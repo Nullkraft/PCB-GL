@@ -96,17 +96,17 @@ compute_depth (int group)
   int newgroup;
   int idx = (group >= 0
              && group <
-             max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
+             max_group) ? PCB->LayerGroups.Entries[group][0] : group;
 
-  solder_group = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
-  component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+  solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
+  component_group = GetLayerGroupNumberByNumber (component_silk_layer);
 
   min_phys_group = MIN (solder_group, component_group);
   max_phys_group = MAX (solder_group, component_group);
 
   max_depth = (1 + max_phys_group - min_phys_group) * 10;
 
-  if (group >= 0 && group < max_layer) {
+  if (group >= 0 && group < group) {
     newgroup = group;
 
     depth = (max_depth - (newgroup - min_phys_group) * 10) * 200 / gport->zoom;
@@ -140,13 +140,13 @@ ghid_set_layer (const char *name, int group, int empty)
   render_priv *priv = gport->render_priv;
   static int stencil_bit = 0;
   int idx = group;
-  if (idx >= 0 && idx < max_layer)
+  if (idx >= 0 && idx < max_group)
     {
       int n = PCB->LayerGroups.Number[group];
       for (idx = 0; idx < n-1; idx ++)
 	{
 	  int ni = PCB->LayerGroups.Entries[group][idx];
-	  if (ni >= 0 && ni < max_layer + 2
+	  if (ni >= 0 && ni < max_copper_layer + 2
 	      && PCB->Data->Layer[ni].On)
 	    break;
 	}
@@ -171,7 +171,7 @@ ghid_set_layer (const char *name, int group, int empty)
     glStencilFunc (GL_ALWAYS, 0, 0);  // Always pass stencil test
   }
 
-  if (idx >= 0 && idx < max_layer + 2)
+  if (idx >= 0 && idx < max_copper_layer + 2)
     {
       priv->trans_lines = true;
       return PCB->Data->Layer[idx].On;
@@ -1101,8 +1101,8 @@ SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
     color = PCB->ConnectedColor;
   else
     {
-      int component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
-      int solder_group    = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
+      int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
+      int solder_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
       int this_group      = GetLayerGroupNumberByPointer (Layer);
 
       if (this_group == component_group || this_group == solder_group)
@@ -1425,8 +1425,8 @@ DrawLayerGroup (int group, const BoxType * screen)
   int n_entries = PCB->LayerGroups.Number[group];
   Cardinal *layers = PCB->LayerGroups.Entries[group];
   int first_run = 1;
-  int component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
-  int solder_group    = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
+  int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
+  int solder_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
 
   if (!gui->set_layer (0, group, 0)) {
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
@@ -1442,7 +1442,7 @@ DrawLayerGroup (int group, const BoxType * screen)
         strcmp (Layer->Name, "route") == 0)
       rv = 0;
 
-    if (layernum < max_layer && Layer->On) {
+    if (layernum < max_copper_layer && Layer->On) {
 
       if (!first_run)
         gui->set_layer (0, group, 0);
@@ -1609,27 +1609,43 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   PCB->Data->SILKLAYER.Color = PCB->ElementColor;
   PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
 
-  solder_group = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
-  component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+  solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
+  component_group = GetLayerGroupNumberByNumber (component_silk_layer);
 
   min_phys_group = MIN (solder_group, component_group);
   max_phys_group = MAX (solder_group, component_group);
 
   memset (do_group, 0, sizeof (do_group));
-  for (ngroups = 0, i = 0; i < max_layer; i++) {
-    int group;
-    int orderi;
+  if (global_view_2d)
+    { // Draw in layer stack order when in 2D view
+      int group;
+      int orderi;
+      for (ngroups = 0, i = 0; i < max_copper_layer; i++)
+        {
+          group = GetLayerGroupNumberByNumber (LayerStack[i]);
 
-    orderi = reverse_layers ? max_layer - i - 1 : i;
-
-    // Draw in numerical order when in 3D view
-    group = global_view_2d ? GetLayerGroupNumberByNumber (LayerStack[i]) : orderi;
-
-    if (!do_group[group]) {
-      do_group[group] = 1;
-      drawn_groups[ngroups++] = group;
+          if (!do_group[group])
+            {
+              do_group[group] = 1;
+              drawn_groups[ngroups++] = group;
+            }
+        }
     }
-  }
+  else
+    { // Draw in numerical order when in 3D view
+      int group;
+      int orderi;
+      for (ngroups = 0, i = 0; i < max_group; i++)
+        {
+          group = reverse_layers ? max_group -1 - i : i;
+
+          if (!do_group[group])
+            {
+              do_group[group] = 1;
+              drawn_groups[ngroups++] = group;
+            }
+        }
+    }
 
   /*
    * first draw all 'invisible' stuff
@@ -1742,13 +1758,13 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   /* Draw top silkscreen */
   if (!Settings.ShowSolderSide &&
       gui->set_layer ("topsilk", SL (SILK, TOP), 0)) {
-    DrawSilk (0, COMPONENT_LAYER, drawn_area);
+    DrawSilk (0, component_silk_layer, drawn_area);
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
   }
 
   if (Settings.ShowSolderSide &&
       gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0)) {
-    DrawSilk (1, SOLDER_LAYER, drawn_area);
+    DrawSilk (1, solder_silk_layer, drawn_area);
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
   }
 
@@ -1842,8 +1858,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glStencilFunc (GL_ALWAYS, 0, 0);
 
   /* Test the 8 corners of a cube spanning the event */
-  min_depth = -50 + compute_depth (0);         /* FIXME */
-  max_depth =  50 + compute_depth (max_layer); /* FIXME */
+  min_depth = -50 + compute_depth (0);                /* FIXME */
+  max_depth =  50 + compute_depth (max_copper_layer); /* FIXME */
 
   ghid_unproject_to_z_plane (ev->area.x,
                              ev->area.y,
@@ -1943,8 +1959,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
     int max_phys_group;
     int i;
 
-    solder_group = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
-    component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+    solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
+    component_group = GetLayerGroupNumberByNumber (component_silk_layer);
 
     min_phys_group = MIN (solder_group, component_group);
     max_phys_group = MAX (solder_group, component_group);
