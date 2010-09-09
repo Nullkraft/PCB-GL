@@ -1521,8 +1521,8 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
       new_da = 360;
       new_sa = 0;
     }
-  RestoreToPours (PCB->Data, ARC_TYPE, Layer, a);
   r_delete_entry (Layer->arc_tree, (BoxTypePtr) a);
+  RestoreToPours (PCB->Data, ARC_TYPE, Layer, a);
   AddObjectToChangeAnglesUndoList (ARC_TYPE, a, a, a);
   a->StartAngle = new_sa;
   a->Delta = new_da;
