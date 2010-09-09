@@ -71,6 +71,7 @@ dicer output is used for HIDs which cannot render things with holes
 /* special polygon editing routines
  */
 
+#undef NDEBUG
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
