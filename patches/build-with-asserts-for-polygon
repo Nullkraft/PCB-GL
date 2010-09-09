@@ -1,7 +1,7 @@
-Bottom: 1eefe3cda03df6d4561ff24000932c3ea0d4e8f3
-Top:    bc5160faaddab9938b5b1391cf949a8ce57484a5
+Bottom: bda9915a38b4d58521745f850f85b6227623f91a
+Top:    a5453d49dce540575509ffdc0847d6454baf10d0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-08-28 03:19:50 +0100
+Date:   2010-09-09 12:23:48 +0100
 
 Build with asserts for polygons
 
@@ -21,7 +21,7 @@ index 0040ec2..f9689c6 100644
  #include "config.h"
  #endif
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 4a761d5..03b02cd 100644
+index 1127fbd..902a06e 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -39,6 +39,7 @@
@@ -32,7 +32,7 @@ index 4a761d5..03b02cd 100644
  #include	<assert.h>
  #include	<stdlib.h>
  #include	<stdio.h>
-@@ -105,7 +106,7 @@ if (UNLIKELY (((ptr) = malloc(sizeof(type))) == NULL)) \
+@@ -103,7 +104,7 @@ if (UNLIKELY (((ptr) = malloc(sizeof(type))) == NULL)) \
  #undef DEBUG_JUMP
  #undef DEBUG_GATHER
  #undef DEBUG_ANGLE
