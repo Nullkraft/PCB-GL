@@ -1,7 +1,7 @@
-Bottom: 5f0fa4db3e4c25b942247a81dfc804885e009308
-Top:    dc3cebca13a25b5dc1993715513ba646a2d2aaa9
+Bottom: 2b576ce839cfb5f2d636947448cc71dee8b3de80
+Top:    a1f821486a7449839444c83f1637dc7e0cb3b68c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-09-09 12:36:39 +0100
+Date:   2010-09-09 16:17:16 +0100
 
 Allow zero clearance pads and pins to touch polygons
 
@@ -71,7 +71,7 @@ index 5546f1f..0c55c69 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/find.c b/src/find.c
-index 593be70..039bdfa 100644
+index e00e2ad..f473788 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -3844,7 +3844,7 @@ drc_callback (DataTypePtr data, LayerTypePtr layer, PolygonTypePtr polygon,
