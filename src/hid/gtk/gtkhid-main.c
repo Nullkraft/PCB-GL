@@ -1398,8 +1398,8 @@ SwapSides (int argc, char **argv, int x, int y)
   gint flipd;
   int do_flip_x = 0;
   int do_flip_y = 0;
-  int comp_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
-  int solder_group = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
+  int comp_group = GetLayerGroupNumberByNumber (component_silk_layer);
+  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
   int active_group = GetLayerGroupNumberByNumber (LayerStack[0]);
   int comp_showing =
     PCB->Data->Layer[PCB->LayerGroups.Entries[comp_group][0]].On;
