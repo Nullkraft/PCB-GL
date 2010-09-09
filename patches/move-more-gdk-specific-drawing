@@ -1,7 +1,7 @@
-Bottom: 36801916388418b0c3cc9eca3e8f8cbdcefa32a1
-Top:    bc3aa99c2f63cd31e048780a4db0dde51eedfdb1
+Bottom: 812e33ed56adf55e7ba997e0f18c76e4a3af7e73
+Top:    51c40d9b27e789559ffca69a41714ab6257af815
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-09-04 12:26:33 +0100
+Date:   2010-09-09 10:43:22 +0100
 
 hid/gtk: Move more gdk specific drawing routines to gtkhid-gdk.c
 
@@ -278,7 +278,7 @@ index 461b779..eb94ed8 100644
 +    }
 +}
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 8c3ff67..8f10492 100644
+index 58c2635..03cf2b2 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -33,9 +33,6 @@
