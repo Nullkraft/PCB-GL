@@ -1,5 +1,5 @@
 Bottom: 5a1e7e91fbc4a5e2fac3414a38d2d62c6e02680b
-Top:    36a12fe5001a4ce3c272d3eab395600bead6f1bf
+Top:    9d98b040ab3f637cacece4a2a4f16cdc67a04d3b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 12:36:38 +0100
 
@@ -14,7 +14,7 @@ Fix rendering depths for silk and mask layers
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index a434fdb..e45de03 100644
+index a434fdb..bd38db8 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -85,36 +85,47 @@ compute_depth (int group)
@@ -89,6 +89,15 @@ index a434fdb..e45de03 100644
  
    if (!gui->set_layer (0, group, 0)) {
      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+@@ -1391,7 +1402,7 @@ DrawLayerGroup (int group, const BoxType * screen)
+         strcmp (Layer->Name, "route") == 0)
+       rv = 0;
+ 
+-    if (layernum < max_layer /*&& Layer->On*/) {
++    if (layernum < max_layer && Layer->On) {
+ 
+       if (!first_run)
+         gui->set_layer (0, group, 0);
 @@ -1437,12 +1448,12 @@ DrawLayerGroup (int group, const BoxType * screen)
        if (!global_view_2d && rv) {
          if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
@@ -117,7 +126,7 @@ index a434fdb..e45de03 100644
  
    extern bool Gathering;
  
-@@ -1548,36 +1563,72 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1548,19 +1563,26 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    if (!global_view_2d && save_show_solder)
      reverse_layers = !reverse_layers;
  
@@ -143,16 +152,12 @@ index a434fdb..e45de03 100644
 -    group = GetLayerGroupNumberByNumber (global_view_2d ? LayerStack[i] : orderi);
 +    group = global_view_2d ? GetLayerGroupNumberByNumber (LayerStack[i]) : orderi;
  
-+//    if (!do_group[group]) {
-     if (l->On && !do_group[group]) {
+-    if (l->On && !do_group[group]) {
++    if (!do_group[group]) {
        do_group[group] = 1;
        drawn_groups[ngroups++] = group;
      }
-   }
- 
-+
-   /*
-    * first draw all 'invisible' stuff
+@@ -1571,13 +1593,40 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     */
    if (!TEST_FLAG (CHECKPLANESFLAG, PCB) &&
        gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
@@ -196,7 +201,7 @@ index a434fdb..e45de03 100644
      gui->set_layer (NULL, SL (FINISHED, 0), 0);
    }
  
-@@ -1586,7 +1637,11 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1586,7 +1635,11 @@ ghid_draw_everything (BoxTypePtr drawn_area)
      DrawLayerGroup (drawn_groups [i], drawn_area);
  
  #if 1
