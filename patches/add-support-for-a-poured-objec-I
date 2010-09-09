@@ -1,7 +1,7 @@
-Bottom: 2d051ccf552897d9ff1f6a6bf84ae7199f2cfad4
-Top:    8cb99e16bfdd6baea7bbbeef4b597b95abb82fb8
+Bottom: 7679836f6b16ea8666b73c3ddfcce812eb5b25b4
+Top:    1805def650ef1a94e7c73ae92dc47bc0e2f052d8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-09-09 15:50:13 +0100
+Date:   2010-09-09 16:17:38 +0100
 
 Add support for a "poured" object.
 
@@ -2387,7 +2387,7 @@ index a61d53f..d44c3bb 100644
  		  if (hole > 0)
  		    fputs ("\n\t\t)", FP);
 diff --git a/src/find.c b/src/find.c
-index 039bdfa..848edc9 100644
+index f473788..73402a2 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -628,6 +628,7 @@ void
