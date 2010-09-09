@@ -1,5 +1,5 @@
-Bottom: 160dd3c03340f7680513691194e376f105f33784
-Top:    a952df88f501ff406cbef217346597cae3fdb444
+Bottom: 9220358d2eec7bb98da18347327d6856e054208a
+Top:    256e8104e7e80850c7adda5b8f1ba04149983cbb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-04 12:26:37 +0100
 
@@ -199,7 +199,7 @@ index 73d9a34..bb1383c 100644
  
  
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 9ddb5d2..4e1c29a 100644
+index d5f3f36..b368195 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -10,6 +10,7 @@
@@ -210,7 +210,7 @@ index 9ddb5d2..4e1c29a 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -670,6 +671,12 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
+@@ -680,6 +681,12 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
  }
  
  void
@@ -224,10 +224,10 @@ index 9ddb5d2..4e1c29a 100644
  {
    gint w, h, lw, xx, yy;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9d9b573..9c068bf 100644
+index 89b8e38..2af7744 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -580,6 +580,14 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
+@@ -591,6 +591,14 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
  }
  
  void
