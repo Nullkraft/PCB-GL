@@ -1402,7 +1402,7 @@ DrawLayerGroup (int group, const BoxType * screen)
         strcmp (Layer->Name, "route") == 0)
       rv = 0;
 
-    if (layernum < max_layer /*&& Layer->On*/) {
+    if (layernum < max_layer && Layer->On) {
 
       if (!first_run)
         gui->set_layer (0, group, 0);
@@ -1582,13 +1582,11 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     // Draw in numerical order when in 3D view
     group = global_view_2d ? GetLayerGroupNumberByNumber (LayerStack[i]) : orderi;
 
-//    if (!do_group[group]) {
-    if (l->On && !do_group[group]) {
+    if (!do_group[group]) {
       do_group[group] = 1;
       drawn_groups[ngroups++] = group;
     }
   }
-
 
   /*
    * first draw all 'invisible' stuff
