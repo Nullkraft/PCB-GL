@@ -46,7 +46,8 @@ extern OutputType Output;
 
 extern PCBTypePtr PCB;
 
-#define max_layer (PCB->Data->LayerN)
+#define max_copper_layer (PCB->Data->LayerN)
+#define max_group (PCB->Data->LayerN)
 
 extern SettingType Settings;
 
