@@ -1,7 +1,7 @@
-Bottom: 9b8f58dab3c0ba66a9cea9d260657415a9c807a4
-Top:    0f67d3070f174eddb3066f17cdca7d6a5628fd69
+Bottom: bae53a3abaa0d2cea17bd11ff1ddce15738c342b
+Top:    bae53a3abaa0d2cea17bd11ff1ddce15738c342b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-09-04 12:26:35 +0100
+Date:   2010-09-09 10:43:24 +0100
 
 Move set_layer function into GDK specific code.
 
@@ -11,107 +11,4 @@ version coming shortly does some extra work.
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 34e52fa..102989d 100644
---- a/src/hid/gtk/gtkhid-gdk.c
-+++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -67,6 +67,41 @@ typedef struct hid_gc_struct
- hid_gc_struct;
- 
- 
-+int
-+ghid_set_layer (const char *name, int group, int empty)
-+{
-+  int idx = (group >= 0
-+	     && group <
-+	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
-+
-+  if (idx >= 0 && idx < max_layer + 2)
-+    return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
-+  if (idx < 0)
-+    {
-+      switch (SL_TYPE (idx))
-+	{
-+	case SL_INVISIBLE:
-+	  return /* pinout ? 0 : */ PCB->InvisibleObjectsOn;
-+	case SL_MASK:
-+	  if (SL_MYSIDE (idx) /*&& !pinout */ )
-+	    return TEST_FLAG (SHOWMASKFLAG, PCB);
-+	  return 0;
-+	case SL_SILK:
-+	  if (SL_MYSIDE (idx) /*|| pinout */ )
-+	    return PCB->ElementOn;
-+	  return 0;
-+	case SL_ASSY:
-+	  return 0;
-+	case SL_PDRILL:
-+	case SL_UDRILL:
-+	  return 1;
-+	case SL_RATS:
-+	  return PCB->RatOn;
-+	}
-+    }
-+  return 0;
-+}
-+
- void
- ghid_destroy_gc (hidGC gc)
- {
-diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 8f10492..55a8c65 100644
---- a/src/hid/gtk/gtkhid-main.c
-+++ b/src/hid/gtk/gtkhid-main.c
-@@ -308,41 +308,6 @@ zoom_by (double factor, int x, int y)
- 
- /* ------------------------------------------------------------ */
- 
--int
--ghid_set_layer (const char *name, int group, int empty)
--{
--  int idx = (group >= 0
--	     && group <
--	     max_layer) ? PCB->LayerGroups.Entries[group][0] : group;
--
--  if (idx >= 0 && idx < max_layer + 2)
--    return /*pinout ? 1 : */ PCB->Data->Layer[idx].On;
--  if (idx < 0)
--    {
--      switch (SL_TYPE (idx))
--	{
--	case SL_INVISIBLE:
--	  return /* pinout ? 0 : */ PCB->InvisibleObjectsOn;
--	case SL_MASK:
--	  if (SL_MYSIDE (idx) /*&& !pinout */ )
--	    return TEST_FLAG (SHOWMASKFLAG, PCB);
--	  return 0;
--	case SL_SILK:
--	  if (SL_MYSIDE (idx) /*|| pinout */ )
--	    return PCB->ElementOn;
--	  return 0;
--	case SL_ASSY:
--	  return 0;
--	case SL_PDRILL:
--	case SL_UDRILL:
--	  return 1;
--	case SL_RATS:
--	  return PCB->RatOn;
--	}
--    }
--  return 0;
--}
--
- void
- ghid_calibrate (double xval, double yval)
- {
-diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index c4d71b4..2966609 100644
---- a/src/hid/gtk/gui.h
-+++ b/src/hid/gtk/gui.h
-@@ -477,6 +477,7 @@ void ghid_logv (const char *fmt, va_list args);
- void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
- 
- /* gtkhid-gdk.c */
-+int ghid_set_layer (const char *name, int group, int empty);
- hidGC ghid_make_gc (void);
- void ghid_destroy_gc (hidGC);
- void ghid_use_mask (int use_it);
+
