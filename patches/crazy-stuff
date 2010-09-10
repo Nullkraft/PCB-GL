@@ -1,5 +1,5 @@
 Bottom: e0d80c7c3275af70212a64eab77d6584d71f746a
-Top:    d2aa94fb9237205488b30f5087ed8a076403f679
+Top:    5b86ad49afa05a078c8d23774d2f49ebad627d9a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 14:17:31 +0100
 
@@ -397,7 +397,7 @@ index 58ce9df..c8244ed 100644
        LayerTypePtr sourcelayer = &PASTEBUFFER->Data->Layer[i],
  	destlayer = LAYER_PTR (i);
 diff --git a/src/create.c b/src/create.c
-index cb0fb2c..14996ff 100644
+index cb0fb2c..d7ad2a1 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -117,15 +117,15 @@ pcb_colors_from_settings (PCBTypePtr ptr)
@@ -409,7 +409,7 @@ index cb0fb2c..14996ff 100644
      Settings.ShowSolderSide ?
      Settings.InvisibleObjectsColor : Settings.ElementColor;
 -  ptr->Data->Layer[max_layer + COMPONENT_LAYER].SelectedColor =
-+  ptr->Data->Layer[component_silk_color].SelectedColor =
++  ptr->Data->Layer[component_silk_layer].SelectedColor =
      Settings.ElementSelectedColor;
 -  ptr->Data->Layer[max_layer + SOLDER_LAYER].Color =
 +  ptr->Data->Layer[solder_silk_layer].Color =
@@ -1005,7 +1005,7 @@ index 3915c7a..e4a566d 100644
        else if (PCB->LayerGroups.Number[group] == 1
  	       && (strcmp (PCB->Data->Layer[idx].Name, "route") == 0 ||
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index c3c2e4e..452bd0f 100644
+index c3c2e4e..7a52a7c 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
 @@ -277,7 +277,7 @@ gcode_choose_groups ()
@@ -1028,7 +1028,7 @@ index c3c2e4e..452bd0f 100644
  	  is_solder =
  	    (GetLayerGroupNumberByNumber (idx) ==
 -	     GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER)) ? 1 : 0;
-+	     GetLayerGroupNumberByNumber (solder_silk_layer) ? 1 : 0;
++	     GetLayerGroupNumberByNumber (solder_silk_layer)) ? 1 : 0;
  	  save_drill = is_solder;	/* save drills for one layer only */
  	  gcode_start_png (gcode_basename, layer_type_to_file_name (idx));
  	  hid_save_and_show_layer_ons (save_ons);
@@ -2615,7 +2615,7 @@ index 34d103c..faeefa8 100644
                  *cp++ = 's';
                }
 diff --git a/src/move.c b/src/move.c
-index cd23253..29b2d65 100644
+index cd23253..cce6e19 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -654,7 +654,7 @@ MoveTextToLayerLowLevel (LayerTypePtr Source, TextTypePtr Text,
@@ -2632,7 +2632,7 @@ index cd23253..29b2d65 100644
    IncrementUndoSerialNumber ();
  
 -  if (old_index < -1 || old_index >= max_layer)
-+  if (old_index < -1 || old_index >= max_copperlayer)
++  if (old_index < -1 || old_index >= max_copper_layer)
      {
        Message ("Invalid old layer %d for move: must be -1..%d\n",
 -	       old_index, max_layer - 1);
