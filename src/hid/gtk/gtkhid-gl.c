@@ -1079,8 +1079,8 @@ SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
     color = PCB->ConnectedColor;
   else
     {
-      int component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
-      int solder_group    = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
+      int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
+      int solder_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
       int this_group      = GetLayerGroupNumberByPointer (Layer);
 
       if (this_group == component_group || this_group == solder_group)
@@ -1374,8 +1374,8 @@ DrawLayerGroup (int group, const BoxType * screen)
   int n_entries = PCB->LayerGroups.Number[group];
   Cardinal *layers = PCB->LayerGroups.Entries[group];
   int first_run = 1;
-  int component = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
-  int solder    = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
+  int component = GetLayerGroupNumberByNumber (component_silk_layer);
+  int solder    = GetLayerGroupNumberByNumber (solder_silk_layer);
 
   if (!gui->set_layer (0, group, 0)) {
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
