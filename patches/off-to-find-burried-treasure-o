@@ -1,5 +1,5 @@
 Bottom: 33872c0c06d26b7ceacf43987dc0176856d43072
-Top:    b94ee75efadec8f0079d5d6a164577f02ba1a01f
+Top:    903744aef45bf34fb2d78a79b06648360e39d196
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:17:40 +0100
 
@@ -92,7 +92,7 @@ index ca05dc5..e5209d7 100644
      {
        AddPart (Polygon);
 diff --git a/src/find.c b/src/find.c
-index a81bb0f..9682266 100644
+index a81bb0f..272c205 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -2649,6 +2649,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
@@ -148,7 +148,7 @@ index a81bb0f..9682266 100644
 +
 +      /* Check if we got any useful hits */
 +      connected_count = 0;
-+      for (i = 0; i < max_layer; i++)
++      for (i = 0; i < max_copper_layer; i++)
 +        {
 +          connected_count += LineList[ i ].Number;
 +          /* No need to search all layers when one will do */
