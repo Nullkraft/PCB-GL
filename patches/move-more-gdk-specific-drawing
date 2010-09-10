@@ -1,7 +1,7 @@
-Bottom: 923de87ab859bd756c97be619c284666c50d9fd4
-Top:    8ef2490d787bb2473088eb02179d463a69b3cd2d
+Bottom: 909739e96da90d0a08c5bb311c31aee782272762
+Top:    a4b6caf7622ac4fd087071e8d3aa11f27e71c5e7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-09-09 16:16:46 +0100
+Date:   2010-09-10 15:33:06 +0100
 
 hid/gtk: Move more gdk specific drawing routines to gtkhid-gdk.c
 
@@ -278,7 +278,7 @@ index 461b779..eb94ed8 100644
 +    }
 +}
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 58c2635..03cf2b2 100644
+index 7d59672..f4402c9 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -33,9 +33,6 @@
@@ -372,7 +372,7 @@ index 58c2635..03cf2b2 100644
  ghid_set_layer (const char *name, int group, int empty)
  {
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 7cc764e..d2349a8 100644
+index 6164415..4ca6040 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -259,7 +259,7 @@ ghid_note_event_location (GdkEventButton * ev)

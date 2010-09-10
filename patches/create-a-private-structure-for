@@ -1,7 +1,7 @@
-Bottom: 0c03de452814fd7abb57eb1729970a09c7a7b873
-Top:    16ec08471884085f5d387f09f7206a880f2d45c1
+Bottom: d525e47d5370d6c4d8b1e51db4431753591617b8
+Top:    84335b777858c66633a1fc254b33291ec39cb160
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-09-09 16:16:51 +0100
+Date:   2010-09-10 15:33:08 +0100
 
 Create a private structure for the render to isolate some of its internals
 
@@ -450,7 +450,7 @@ index e3d305c..34e52fa 100644
    /* call the drawing routine */
    region.X1 = MIN(Px(0), Px(gport->width + 1));
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 8814c68..6da4291 100644
+index 5bb60c8..ed5e445 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -533,27 +533,24 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
@@ -486,7 +486,7 @@ index 8814c68..6da4291 100644
    ghid_invalidate_all ();
    RestoreCrosshair (TRUE);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 6848d29..aaf7237 100644
+index f9ca099..dcd624f 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2674,6 +2674,8 @@ ghid_parse_arguments (int *argc, char ***argv)
