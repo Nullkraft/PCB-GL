@@ -1616,20 +1616,36 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   max_phys_group = MAX (solder_group, component_group);
 
   memset (do_group, 0, sizeof (do_group));
-  for (ngroups = 0, i = 0; i < max_group; i++) {
-    int group;
-    int orderi;
+  if (global_view_2d)
+    { // Draw in layer stack order when in 2D view
+      int group;
+      int orderi;
+      for (ngroups = 0, i = 0; i < max_copper_layer; i++)
+        {
+          group = GetLayerGroupNumberByNumber (LayerStack[i]);
 
-    orderi = reverse_layers ? max_group - i - 1 : i;
-
-    // Draw in numerical order when in 3D view
-    group = global_view_2d ? GetLayerGroupNumberByNumber (LayerStack[i]) : orderi;
-
-    if (!do_group[group]) {
-      do_group[group] = 1;
-      drawn_groups[ngroups++] = group;
+          if (!do_group[group])
+            {
+              do_group[group] = 1;
+              drawn_groups[ngroups++] = group;
+            }
+        }
     }
-  }
+  else
+    { // Draw in numerical order when in 3D view
+      int group;
+      int orderi;
+      for (ngroups = 0, i = 0; i < max_group; i++)
+        {
+          group = reverse_layers ? max_group -1 - i : i;
+
+          if (!do_group[group])
+            {
+              do_group[group] = 1;
+              drawn_groups[ngroups++] = group;
+            }
+        }
+    }
 
   /*
    * first draw all 'invisible' stuff
@@ -1742,13 +1758,13 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   /* Draw top silkscreen */
   if (!Settings.ShowSolderSide &&
       gui->set_layer ("topsilk", SL (SILK, TOP), 0)) {
-    DrawSilk (0, COMPONENT_LAYER, drawn_area);
+    DrawSilk (0, component_silk_layer, drawn_area);
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
   }
 
   if (Settings.ShowSolderSide &&
       gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0)) {
-    DrawSilk (1, SOLDER_LAYER, drawn_area);
+    DrawSilk (1, solder_silk_layer, drawn_area);
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
   }
 
@@ -1943,8 +1959,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
     int max_phys_group;
     int i;
 
-    solder_group = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
-    component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+    solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
+    component_group = GetLayerGroupNumberByNumber (component_silk_layer);
 
     min_phys_group = MIN (solder_group, component_group);
     max_phys_group = MAX (solder_group, component_group);
