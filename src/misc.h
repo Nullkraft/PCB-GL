@@ -42,6 +42,7 @@ void SetPointBoundingBox (PointTypePtr);
 void SetPinBoundingBox (PinTypePtr);
 void SetPadBoundingBox (PadTypePtr);
 void SetPolygonBoundingBox (PolygonTypePtr);
+void SetPourBoundingBox (PourTypePtr);
 void SetElementBoundingBox (DataTypePtr, ElementTypePtr, FontTypePtr);
 bool IsDataEmpty (DataTypePtr);
 BoxTypePtr GetDataBoundingBox (DataTypePtr);

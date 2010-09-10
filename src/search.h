@@ -59,7 +59,12 @@
 #define	TEXT_IN_BOX(t,b)	\
 	(BOX_IN_BOX(&((t)->BoundingBox), (b)))
 
+#if 0 // NOT USED
 #define	POLYGON_IN_BOX(p,b)	\
+	(BOX_IN_BOX(&((p)->BoundingBox), (b)))
+#endif
+
+#define	POUR_IN_BOX(p,b)	\
 	(BOX_IN_BOX(&((p)->BoundingBox), (b)))
 
 #define	ELEMENT_IN_BOX(e,b)	\
