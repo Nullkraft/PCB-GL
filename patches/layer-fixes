@@ -1,5 +1,5 @@
 Bottom: 7802e12d3dc707cd2b944ba0133411d47b586ca8
-Top:    25e79538538cdb24ff7213aef6168ba7a003a93b
+Top:    4a40db1203c52db1d78c2ba0131a9f1b63ad6fa9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:17:13 +0100
 
@@ -14,7 +14,7 @@ Fix rendering depths for silk and mask layers
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 8e20630..202010c 100644
+index 8e20630..c8c47db 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -85,36 +85,47 @@ compute_depth (int group)
@@ -108,6 +108,9 @@ index 8e20630..202010c 100644
 +  min_phys_group = MIN (solder_group, component_group);
 +  max_phys_group = MAX (solder_group, component_group);
  
+-    // Draw in numerical order when in 3D view
+-    l = global_view_2d ? LAYER_ON_STACK (i) : LAYER_PTR (orderi);
+-    group = GetLayerGroupNumberByNumber (global_view_2d ? LayerStack[i] : orderi);
 +  memset (do_group, 0, sizeof (do_group));
 +  if (global_view_2d) {
 +    // Draw in layer stack order when in 2D view
@@ -120,9 +123,7 @@ index 8e20630..202010c 100644
 +      }
 +    }
 +  } else {
-     // Draw in numerical order when in 3D view
--    l = global_view_2d ? LAYER_ON_STACK (i) : LAYER_PTR (orderi);
--    group = GetLayerGroupNumberByNumber (global_view_2d ? LayerStack[i] : orderi);
++    // Draw in group order when in 3D view
 +    for (ngroups = 0, i = 0; i < max_group; i++) {
 +      int group = reverse_layers ? max_group - 1 - i : i;
  
