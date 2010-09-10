@@ -1,5 +1,5 @@
 Bottom: 3f81303ee392dc44804c82325d87c120f9174296
-Top:    1965425b91bd69ac4973e511a85f99a5137da5ee
+Top:    65e5876d017a4d2251ca06cbae9980c932e4a3db
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:17:14 +0100
 
@@ -9,7 +9,7 @@ Fixup depth for layers and element marks
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 4543bc2..ec3957e 100644
+index 4543bc2..4fcd961 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -107,7 +107,7 @@ compute_depth (int group)
@@ -71,8 +71,8 @@ index 4543bc2..ec3957e 100644
 +    int max_phys_group;
 +    int i;
 +
-+    solder_group = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
-+    component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
++    solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
++    component_group = GetLayerGroupNumberByNumber (component_silk_layer);
 +
 +    min_phys_group = MIN (solder_group, component_group);
 +    max_phys_group = MAX (solder_group, component_group);
