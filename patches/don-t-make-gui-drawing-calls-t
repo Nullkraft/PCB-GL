@@ -1,5 +1,5 @@
-Bottom: a1f821486a7449839444c83f1637dc7e0cb3b68c
-Top:    71b18d10baacd4ec4faf895800451ef69dc2b5e0
+Bottom: 481ffcebde095250666a3431aea69aca08aa3e50
+Top:    b811833fe8d6fae19c329ee58ef1014ec69e8303
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:17:16 +0100
 
@@ -15,7 +15,7 @@ and teardown around drawing.
 ---
 
 diff --git a/src/autoroute.c b/src/autoroute.c
-index 7fb7443..3361f79 100644
+index ea97d01..f7421ca 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -1421,9 +1421,11 @@ bloat_routebox (routebox_t * rb)
@@ -173,7 +173,7 @@ index 7fb7443..3361f79 100644
      {
        SaveUndoSerialNumber ();
 diff --git a/src/draw.c b/src/draw.c
-index 8911a4f..cef971d 100644
+index f9312b0..56054e2 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -2119,7 +2119,6 @@ DrawElementPinsAndPads (ElementTypePtr Element, int unused)
