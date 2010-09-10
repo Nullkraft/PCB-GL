@@ -1,5 +1,5 @@
-Bottom: 55bb5ab929c8c79ca68aa34a83da2b34af8628ac
-Top:    bf68dff888534495d8de6d38b9caacad12e098a5
+Bottom: 7309b1948bcd712c2a40a425e2b19efd2fcb07ba
+Top:    4251370f391695b33642dc4d43bc13876bfc1368
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-28 04:06:23 +0100
 
@@ -9,10 +9,10 @@ Fix scissor tests?
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 4772fa0..054b201 100644
+index 56d70c1..6ea51f2 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1809,11 +1809,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1808,11 +1808,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glViewport (0, 0, widget->allocation.width, widget->allocation.height);
  
@@ -24,7 +24,7 @@ index 4772fa0..054b201 100644
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
    glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
-@@ -1840,6 +1835,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1839,6 +1834,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glStencilMask (~0);
    glClearStencil (0);
@@ -32,7 +32,7 @@ index 4772fa0..054b201 100644
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
    hidgl_reset_stencil_usage ();
  
-@@ -1908,6 +1904,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1907,6 +1903,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    region.Y1 = MIN (Py (min_y), Py (max_y + 1));
    region.Y2 = MAX (Py (min_y), Py (max_y + 1));
  
@@ -45,7 +45,7 @@ index 4772fa0..054b201 100644
    eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
    etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
  
-@@ -2076,11 +2078,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2075,11 +2077,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
  
    glViewport (0, 0, widget->allocation.width, widget->allocation.height);
  
@@ -57,7 +57,7 @@ index 4772fa0..054b201 100644
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
    glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
-@@ -2094,10 +2091,16 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2093,10 +2090,16 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -74,7 +74,7 @@ index 4772fa0..054b201 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
-@@ -2189,9 +2192,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2188,9 +2191,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glViewport (0, 0, width, height);
  
@@ -84,7 +84,7 @@ index 4772fa0..054b201 100644
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
    glOrtho (0, width, height, 0, -100000, 100000);
-@@ -2205,9 +2205,13 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2204,9 +2204,13 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
