@@ -1616,20 +1616,36 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   max_phys_group = MAX (solder_group, component_group);
 
   memset (do_group, 0, sizeof (do_group));
-  for (ngroups = 0, i = 0; i < max_group; i++) {
-    int group;
-    int orderi;
+  if (global_view_2d)
+    { // Draw in layer stack order when in 2D view
+      int group;
+      int orderi;
+      for (ngroups = 0, i = 0; i < max_copper_layer; i++)
+        {
+          group = GetLayerGroupNumberByNumber (LayerStack[i]);
 
-    orderi = reverse_layers ? max_group - i - 1 : i;
-
-    // Draw in numerical order when in 3D view
-    group = global_view_2d ? GetLayerGroupNumberByNumber (LayerStack[i]) : orderi;
-
-    if (!do_group[group]) {
-      do_group[group] = 1;
-      drawn_groups[ngroups++] = group;
+          if (!do_group[group])
+            {
+              do_group[group] = 1;
+              drawn_groups[ngroups++] = group;
+            }
+        }
     }
-  }
+  else
+    { // Draw in numerical order when in 3D view
+      int group;
+      int orderi;
+      for (ngroups = 0, i = 0; i < max_group; i++)
+        {
+          group = reverse_layers ? max_group -1 - i : i;
+
+          if (!do_group[group])
+            {
+              do_group[group] = 1;
+              drawn_groups[ngroups++] = group;
+            }
+        }
+    }
 
   /*
    * first draw all 'invisible' stuff
