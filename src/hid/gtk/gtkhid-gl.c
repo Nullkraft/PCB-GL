@@ -1898,8 +1898,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
     int max_phys_group;
     int i;
 
-    solder_group = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
-    component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+    solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
+    component_group = GetLayerGroupNumberByNumber (component_silk_layer);
 
     min_phys_group = MIN (solder_group, component_group);
     max_phys_group = MAX (solder_group, component_group);
