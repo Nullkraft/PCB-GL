@@ -1,7 +1,7 @@
-Bottom: 9809e2c20a28c52e97c1cfbeaa8a00339ca3a4ba
+Bottom: d3863558910d63085138fb67858b255ceb89a788
 Top:    28ef4c26e1189bf501da6a3156c19db3b404285e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-09-10 15:55:51 +0100
+Date:   2010-09-10 16:02:49 +0100
 
 Crazy stuff
 
@@ -92,7 +92,7 @@ index 4ae8242..f83b3d0 100644
    return 0;
  }
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 0edaa38..9612429 100644
+index a444071..9612429 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1616,20 +1616,36 @@ ghid_draw_everything (BoxTypePtr drawn_area)
@@ -143,42 +143,3 @@ index 0edaa38..9612429 100644
  
    /*
     * first draw all 'invisible' stuff
-@@ -1742,13 +1758,13 @@ ghid_draw_everything (BoxTypePtr drawn_area)
-   /* Draw top silkscreen */
-   if (!Settings.ShowSolderSide &&
-       gui->set_layer ("topsilk", SL (SILK, TOP), 0)) {
--    DrawSilk (0, COMPONENT_LAYER, drawn_area);
-+    DrawSilk (0, component_silk_layer, drawn_area);
-     gui->set_layer (NULL, SL (FINISHED, 0), 0);
-   }
- 
-   if (Settings.ShowSolderSide &&
-       gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0)) {
--    DrawSilk (1, SOLDER_LAYER, drawn_area);
-+    DrawSilk (1, solder_silk_layer, drawn_area);
-     gui->set_layer (NULL, SL (FINISHED, 0), 0);
-   }
- 
-@@ -1943,8 +1959,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-     int max_phys_group;
-     int i;
- 
--    solder_group = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
--    component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
-+    solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
-+    component_group = GetLayerGroupNumberByNumber (component_silk_layer);
- 
-     min_phys_group = MIN (solder_group, component_group);
-     max_phys_group = MAX (solder_group, component_group);
-diff --git a/src/polygon.c b/src/polygon.c
-index d72befd..96c9218 100644
---- a/src/polygon.c
-+++ b/src/polygon.c
-@@ -2035,7 +2035,7 @@ POLYAREA *board_outline_poly ()
-   whole_world = RectPoly (-BLOAT_WORLD, BLOAT_WORLD + PCB->MaxWidth,
-                           -BLOAT_WORLD, BLOAT_WORLD + PCB->MaxHeight);
- 
--  for (i = 0; i < max_layer; i++)
-+  for (i = 0; i < max_copper_layer; i++)
-     {
-       Layer = PCB->Data->Layer + i;
