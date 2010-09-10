@@ -1,5 +1,5 @@
-Bottom: 179580fff174ced2c421beeb4bdfc6344c7fad11
-Top:    2d3e76f9a031305a9519893ce2a4addd7ede5659
+Bottom: 3f81303ee392dc44804c82325d87c120f9174296
+Top:    1965425b91bd69ac4973e511a85f99a5137da5ee
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:17:14 +0100
 
@@ -9,11 +9,11 @@ Fixup depth for layers and element marks
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index bd38db8..644d93f 100644
+index 4543bc2..ec3957e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -107,7 +107,7 @@ compute_depth (int group)
-   if (group >= 0 && group < max_layer) {
+   if (group >= 0 && group < max_group) {
      newgroup = group;
  
 -    depth = (max_depth - newgroup * 10) * 200 / gport->zoom;
