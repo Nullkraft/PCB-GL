@@ -1,0 +1,22 @@
+Bottom: f43d6a7094ae1c4fa99aa590fa78867669b7e154
+Top:    068403fb06def83a8fd4773798838c0b817e47ae
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-09-10 15:31:21 +0100
+
+Refresh of split-usage-of-max_layer-into-
+
+---
+
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 0fa191c..5caec02 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -551,7 +551,7 @@ group_showing (int g, int *c)
+   for (i=0; i<PCB->LayerGroups.Number[g]; i++)
+     {
+       l = PCB->LayerGroups.Entries[g][i];
+-      if (l >= 0 && l < max_layer)
++      if (l >= 0 && l < max_copper_layer)
+ 	{
+ 	  *c = l;
+ 	  if (PCB->Data->Layer[l].On)
