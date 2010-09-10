@@ -1,0 +1,27 @@
+Bottom: 943115af7e85979a92d8a18648a2cf0d0ccac93c
+Top:    416731e3a74dbbc6525bc8fd8d96b1de9fed7498
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-09-10 16:01:35 +0100
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 120aab9..273649a 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1623,12 +1623,12 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+   }
+   /* Draw top silkscreen */
+   if (gui->set_layer ("topsilk", SL (SILK, TOP), 0)) {
+-    DrawSilk (0, COMPONENT_LAYER, drawn_area);
++    DrawSilk (0, component_silk_layer, drawn_area);
+     gui->set_layer (NULL, SL (FINISHED, 0), 0);
+   }
+ 
+   if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0)) {
+-    DrawSilk (1, SOLDER_LAYER, drawn_area);
++    DrawSilk (1, solder_silk_layer, drawn_area);
+     gui->set_layer (NULL, SL (FINISHED, 0), 0);
+   }
