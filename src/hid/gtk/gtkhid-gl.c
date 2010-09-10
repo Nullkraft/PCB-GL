@@ -1374,8 +1374,8 @@ DrawLayerGroup (int group, const BoxType * screen)
   int n_entries = PCB->LayerGroups.Number[group];
   Cardinal *layers = PCB->LayerGroups.Entries[group];
   int first_run = 1;
-  int component = GetLayerGroupNumberByNumber (component_silk_layer);
-  int solder    = GetLayerGroupNumberByNumber (solder_silk_layer);
+  int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
+  int solder_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
 
   if (!gui->set_layer (0, group, 0)) {
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
@@ -1437,12 +1437,12 @@ DrawLayerGroup (int group, const BoxType * screen)
       if (!global_view_2d && rv) {
         if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
         if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
-        if ((layernum == component && !SWAP_IDENT) ||
-            (layernum == solder    &&  SWAP_IDENT))
+        if ((layernum == component_group && !SWAP_IDENT) ||
+            (layernum == solder_group    &&  SWAP_IDENT))
           if (PCB->PinOn)
             r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, Layer);
-        if ((layernum == solder    && !SWAP_IDENT) ||
-            (layernum == component &&  SWAP_IDENT))
+        if ((layernum == solder_group    && !SWAP_IDENT) ||
+            (layernum == component_group &&  SWAP_IDENT))
           if (PCB->PinOn)
             r_search (PCB->Data->pad_tree, screen, NULL, backPad_callback, Layer);
       }
