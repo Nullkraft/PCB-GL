@@ -1,5 +1,5 @@
-Bottom: 755b9b0c0755279a6eadd5666a543db2007227b8
-Top:    336c9feb0c8561fdd158b608103190455447c564
+Bottom: c6098ed8beec3815a268c789c851cfc6091c8081
+Top:    d8f18fae643822349e87fa35a2361bc4964fe30a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-08-28 04:06:23 +0100
 
@@ -9,7 +9,7 @@ Fix scissor tests?
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 32e530a..75c07a5 100644
+index b37476e..45c357a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1802,11 +1802,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
