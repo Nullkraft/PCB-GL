@@ -1,5 +1,5 @@
-Bottom: 33005d4460e51f49886da596fe214a08267fa758
-Top:    f964a280449c7c3732f16e00e4ff5589e721b45e
+Bottom: b384fea946b9c4bb23e82a570785d0ddb6ddbad9
+Top:    65cfecba6e3da4aefa897e1d5a26bd2eee433dd7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:16:54 +0100
 
@@ -71,7 +71,7 @@ index 3167f4f..bb52a45 100644
  # desktop and application toolbar
  if WIN32
 diff --git a/src/crosshair.c b/src/crosshair.c
-index a154652..2c17911 100644
+index 2ba41ba..0ff1a23 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -693,8 +693,10 @@ CrosshairOn (bool BlockToo)
@@ -755,7 +755,7 @@ index 0000000..73d9a34
 +
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 32d2618..ad1d0ad 100644
+index 59a9894..882460c 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -964,6 +964,11 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
@@ -2006,7 +2006,7 @@ index 0000000..07b1d99
 +  return pixmap;
 +}
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 55a8c65..0072d88 100644
+index c481007..3db3a0a 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -36,6 +36,7 @@ RCSID ("$Id$");
@@ -2046,7 +2046,7 @@ index 55a8c65..0072d88 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 6da4291..3f9e08e 100644
+index ed5e445..c4dad0f 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -688,6 +688,9 @@ ghid_port_window_motion_cb (GtkWidget * widget,
@@ -2108,7 +2108,7 @@ index c75a0d3..54d95c8 100644
    gtk_widget_class->expose_event = ghid_pinout_preview_expose;
  
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index aaf7237..614f2bf 100644
+index dcd624f..56c2374 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2295,6 +2295,7 @@ ghid_build_pcb_top_window (void)

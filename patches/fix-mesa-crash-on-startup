@@ -1,5 +1,5 @@
-Bottom: f964a280449c7c3732f16e00e4ff5589e721b45e
-Top:    ebdf1059a3881afc1c5bfa42adeb66fd9d4f2373
+Bottom: 65cfecba6e3da4aefa897e1d5a26bd2eee433dd7
+Top:    123752e2f98b24bf3c2f75a8e6b1da9ede387b18
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:16:55 +0100
 
@@ -14,7 +14,7 @@ gtk_widget_show_all()
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index ad1d0ad..d5f3f36 100644
+index 882460c..01d537f 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -1028,6 +1028,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
@@ -57,7 +57,7 @@ index 07b1d99..bad95f9 100644
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 614f2bf..9f9e43f 100644
+index 56c2374..bd3ca34 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2141,8 +2141,6 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
