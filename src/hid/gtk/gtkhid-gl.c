@@ -1635,7 +1635,6 @@ ghid_draw_everything (BoxTypePtr drawn_area)
         drawn_groups[ngroups++] = group;
       }
     }
-  }
 
   /*
    * first draw all 'invisible' stuff
