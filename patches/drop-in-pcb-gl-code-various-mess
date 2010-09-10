@@ -1,5 +1,5 @@
 Bottom: b10a0575d5386afd446f0a29ee6cfb140a93defb
-Top:    58c22893007093a416fe472a2c7fc2e0b64de36e
+Top:    f04f1ae7336755f20bd81b5a8c57c235e80a911b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:16:54 +0100
 
@@ -790,7 +790,7 @@ index 59a9894..882460c 100644
  {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..07b1d99
+index 0000000..89ee1e8
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -0,0 +1,1211 @@
@@ -861,20 +861,20 @@ index 0000000..07b1d99
 +{
 +  render_priv *priv = gport->render_priv;
 +  int idx = group;
-+  if (idx >= 0 && idx < max_layer)
++  if (idx >= 0 && idx < max_group)
 +    {
 +      int n = PCB->LayerGroups.Number[group];
 +      for (idx = 0; idx < n-1; idx ++)
 +	{
 +	  int ni = PCB->LayerGroups.Entries[group][idx];
-+	  if (ni >= 0 && ni < max_layer + 2
++	  if (ni >= 0 && ni < max_copper_layer + 2
 +	      && PCB->Data->Layer[ni].On)
 +	    break;
 +	}
 +      idx = PCB->LayerGroups.Entries[group][idx];
 +    }
 +
-+  if (idx >= 0 && idx < max_layer + 2)
++  if (idx >= 0 && idx < max_copper_layer + 2)
 +    {
 +      priv->trans_lines = true;
 +      return PCB->Data->Layer[idx].On;
