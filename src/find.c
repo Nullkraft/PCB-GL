@@ -4042,7 +4042,7 @@ IsPolygonAnIsland (LayerType *layer, PolygonType *polygon)
 
       /* Check if we got any useful hits */
       connected_count = 0;
-      for (i = 0; i < max_layer; i++)
+      for (i = 0; i < max_copper_layer; i++)
         {
           connected_count += LineList[ i ].Number;
           /* No need to search all layers when one will do */
