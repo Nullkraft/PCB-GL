@@ -1437,12 +1437,12 @@ DrawLayerGroup (int group, const BoxType * screen)
       if (!global_view_2d && rv) {
         if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
         if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
-        if ((layernum == component_group && !SWAP_IDENT) ||
-            (layernum == solder_group    &&  SWAP_IDENT))
+        if ((group == component_group && !SWAP_IDENT) ||
+            (group == solder_group    &&  SWAP_IDENT))
           if (PCB->PinOn)
             r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, Layer);
-        if ((layernum == solder_group    && !SWAP_IDENT) ||
-            (layernum == component_group &&  SWAP_IDENT))
+        if ((group == solder_group    && !SWAP_IDENT) ||
+            (group == component_group &&  SWAP_IDENT))
           if (PCB->PinOn)
             r_search (PCB->Data->pad_tree, screen, NULL, backPad_callback, Layer);
       }
