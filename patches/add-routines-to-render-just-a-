@@ -1,5 +1,5 @@
-Bottom: 8be54bf73291938c829a06aba4c59352c9402408
-Top:    76f46ccf72183083ecbd5bec0f830269b11780bf
+Bottom: 9697a959ad6e454b94915f601752d7958b1740ad
+Top:    41ba5c55ce094e62bd4d2f572978c2a43f170a4c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:17:13 +0100
 
@@ -122,22 +122,3 @@ index 360aa83..6931651 100644
  }
  
  void
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 588106a..c99459b 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1549,12 +1549,12 @@ ghid_draw_everything (BoxTypePtr drawn_area)
-     reverse_layers = !reverse_layers;
- 
-   memset (do_group, 0, sizeof (do_group));
--  for (ngroups = 0, i = 0; i < max_group; i++) {
-+  for (ngroups = 0, i = 0; i < max_copper_layer; i++) {
-     LayerType *l;
-     int group;
-     int orderi;
- 
--    orderi = reverse_layers ? max_group - i - 1 : i;
-+    orderi = reverse_layers ? max_copper_layer - i - 1 : i;
- 
-     // Draw in numerical order when in 3D view
-     l = global_view_2d ? LAYER_ON_STACK (i) : LAYER_PTR (orderi);
