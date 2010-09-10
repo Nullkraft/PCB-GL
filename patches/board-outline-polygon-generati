@@ -1,5 +1,5 @@
-Bottom: 9f1d0baf9053c66c98cb38dd2fcb4f1292432a17
-Top:    2b576ce839cfb5f2d636947448cc71dee8b3de80
+Bottom: a5ad176d5de94e2a90c086b76db05bb0c347f5f8
+Top:    8878208c67c2d6da97340c6044b87c49c3591f37
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:17:15 +0100
 
@@ -12,7 +12,7 @@ FIXME: Make this work with the GL masking polygon drawing routines, rather
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 355aada..4649ef1 100644
+index 0c39e04..cef7b1e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -12,6 +12,7 @@
@@ -51,7 +51,7 @@ index 355aada..4649ef1 100644
  
    gui->use_mask (HID_MASK_OFF);
 diff --git a/src/polygon.c b/src/polygon.c
-index eac9390..d379a6b 100644
+index 74d4bc4..d72befd 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -81,6 +81,7 @@ dicer output is used for HIDs which cannot render things with holes
@@ -62,7 +62,7 @@ index eac9390..d379a6b 100644
  
  #include "global.h"
  #include "box.h"
-@@ -1954,3 +1955,172 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
+@@ -1953,3 +1954,172 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
  
    SetChangedFlag (true);
  }
