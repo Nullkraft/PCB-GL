@@ -2035,7 +2035,7 @@ POLYAREA *board_outline_poly ()
   whole_world = RectPoly (-BLOAT_WORLD, BLOAT_WORLD + PCB->MaxWidth,
                           -BLOAT_WORLD, BLOAT_WORLD + PCB->MaxHeight);
 
-  for (i = 0; i < max_layer; i++)
+  for (i = 0; i < max_copper_layer; i++)
     {
       Layer = PCB->Data->Layer + i;
 
