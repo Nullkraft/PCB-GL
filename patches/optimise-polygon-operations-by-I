@@ -1,5 +1,5 @@
-Bottom: ace7727ccd9b1a89c53ea797525326a12bff90f8
-Top:    60a62e2ce63c40ebab7cc2b059942f5c5d7ec7a8
+Bottom: 1af81bd129ff13963017288198fb44989af08747
+Top:    4e9ffd60503151654ecacb64f350dd20b96abd01
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:16:14 +0100
 
@@ -27,7 +27,7 @@ index 958498b..ce427ad 100644
  
  BOOLp poly_M_Copy0(POLYAREA ** dst, const POLYAREA * srcfst);
 diff --git a/src/polygon.c b/src/polygon.c
-index 474474e..eac9390 100644
+index 65879c8..74d4bc4 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -215,6 +215,7 @@ biggest (POLYAREA * p)
@@ -50,7 +50,7 @@ index 474474e..eac9390 100644
    assert (pl);
    assert (p->f);
    assert (p->b);
-@@ -1695,6 +1699,8 @@ r_NoHolesPolygonDicer (POLYAREA * pa,
+@@ -1694,6 +1698,8 @@ r_NoHolesPolygonDicer (POLYAREA * pa,
    if (!pa->contours->next)                 /* no holes */
      {
        pa->contours = NULL; /* The callback now owns the contour */
