@@ -1,5 +1,5 @@
 Bottom: 8690ed36e674a28404679668b1ce936eda92de70
-Top:    f43d6a7094ae1c4fa99aa590fa78867669b7e154
+Top:    068403fb06def83a8fd4773798838c0b817e47ae
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-10 15:30:23 +0100
 
@@ -1596,9 +1596,18 @@ index 6ab4b78..544a718 100644
  	}
  #endif
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 390e128..0fa191c 100644
+index 390e128..5caec02 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
+@@ -551,7 +551,7 @@ group_showing (int g, int *c)
+   for (i=0; i<PCB->LayerGroups.Number[g]; i++)
+     {
+       l = PCB->LayerGroups.Entries[g][i];
+-      if (l >= 0 && l < max_layer)
++      if (l >= 0 && l < max_copper_layer)
+ 	{
+ 	  *c = l;
+ 	  if (PCB->Data->Layer[l].On)
 @@ -565,8 +565,8 @@ static int
  SwapSides (int argc, char **argv, int x, int y)
  {
