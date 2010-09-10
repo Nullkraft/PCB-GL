@@ -1,0 +1,48 @@
+Bottom: d2aa94fb9237205488b30f5087ed8a076403f679
+Top:    5b86ad49afa05a078c8d23774d2f49ebad627d9a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-09-10 14:48:53 +0100
+
+Refresh of crazy-stuff
+
+---
+
+diff --git a/src/create.c b/src/create.c
+index 14996ff..d7ad2a1 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -120,7 +120,7 @@ pcb_colors_from_settings (PCBTypePtr ptr)
+   ptr->Data->Layer[component_silk_layer].Color =
+     Settings.ShowSolderSide ?
+     Settings.InvisibleObjectsColor : Settings.ElementColor;
+-  ptr->Data->Layer[component_silk_color].SelectedColor =
++  ptr->Data->Layer[component_silk_layer].SelectedColor =
+     Settings.ElementSelectedColor;
+   ptr->Data->Layer[solder_silk_layer].Color =
+     Settings.ShowSolderSide ?
+diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
+index 452bd0f..7a52a7c 100644
+--- a/src/hid/gcode/gcode.c
++++ b/src/hid/gcode/gcode.c
+@@ -463,7 +463,7 @@ gcode_do_export (HID_Attr_Val * options)
+ 	  printf ("idx=%d %s\n", idx, layer_type_to_file_name (idx));
+ 	  is_solder =
+ 	    (GetLayerGroupNumberByNumber (idx) ==
+-	     GetLayerGroupNumberByNumber (solder_silk_layer) ? 1 : 0;
++	     GetLayerGroupNumberByNumber (solder_silk_layer)) ? 1 : 0;
+ 	  save_drill = is_solder;	/* save drills for one layer only */
+ 	  gcode_start_png (gcode_basename, layer_type_to_file_name (idx));
+ 	  hid_save_and_show_layer_ons (save_ons);
+diff --git a/src/move.c b/src/move.c
+index 29b2d65..cce6e19 100644
+--- a/src/move.c
++++ b/src/move.c
+@@ -932,7 +932,7 @@ MoveLayer (int old_index, int new_index)
+   AddLayerChangeToUndoList (old_index, new_index);
+   IncrementUndoSerialNumber ();
+ 
+-  if (old_index < -1 || old_index >= max_copperlayer)
++  if (old_index < -1 || old_index >= max_copper_layer)
+     {
+       Message ("Invalid old layer %d for move: must be -1..%d\n",
+ 	       old_index, max_copper_layer - 1);
