@@ -1,5 +1,5 @@
 Bottom: 0e6c217e2bac84eece237074043cf9af3137dccd
-Top:    943115af7e85979a92d8a18648a2cf0d0ccac93c
+Top:    416731e3a74dbbc6525bc8fd8d96b1de9fed7498
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:17:07 +0100
 
@@ -181,7 +181,7 @@ index c0e23a3..077c575 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e85848d..120aab9 100644
+index e85848d..273649a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -948,12 +948,12 @@ index e85848d..120aab9 100644
 +  }
 +  /* Draw top silkscreen */
 +  if (gui->set_layer ("topsilk", SL (SILK, TOP), 0)) {
-+    DrawSilk (0, COMPONENT_LAYER, drawn_area);
++    DrawSilk (0, component_silk_layer, drawn_area);
 +    gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +  }
 +
 +  if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0)) {
-+    DrawSilk (1, SOLDER_LAYER, drawn_area);
++    DrawSilk (1, solder_silk_layer, drawn_area);
 +    gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +  }
 +
