@@ -1,5 +1,5 @@
-Bottom: 6a7692468718647289b283288332185bdc21a4c1
-Top:    d6ee8848904c06e6b09ecb3cfcfa03d63e10a5e6
+Bottom: b94ee75efadec8f0079d5d6a164577f02ba1a01f
+Top:    53af5f6c954e298e2d2253eb6e3166b72569b393
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:17:41 +0100
 
@@ -11,7 +11,7 @@ Kept separate for now because they might have unknown side-effects.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index ece6fb7..79b25a7 100644
+index f215bac..8d496ab 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -249,8 +249,8 @@ MoveViaToBuffer (PinTypePtr Via)
@@ -106,10 +106,10 @@ index a6d0ecf..ab59413 100644
        if (Line->Clearance == 0)
  	{
 diff --git a/src/misc.c b/src/misc.c
-index 54d8bbb..eac9ff2 100644
+index 0c5d487..2dfcc04 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -1521,8 +1521,8 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
+@@ -1522,8 +1522,8 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
        new_da = 360;
        new_sa = 0;
      }
@@ -120,7 +120,7 @@ index 54d8bbb..eac9ff2 100644
    a->StartAngle = new_sa;
    a->Delta = new_da;
 diff --git a/src/move.c b/src/move.c
-index 640955e..64858f0 100644
+index f9eb611..2003a7a 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -282,8 +282,8 @@ MoveLine (LayerTypePtr Layer, LineTypePtr Line)
@@ -174,7 +174,7 @@ index 640955e..64858f0 100644
    *new = *Text;
    *Text = Source->Text[--Source->TextN];
 diff --git a/src/pour.c b/src/pour.c
-index 1d0558c..5e66d98 100644
+index 943e511..3f1a989 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -823,7 +823,8 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
@@ -223,7 +223,7 @@ index 1d0558c..5e66d98 100644
 +//          !TEST_FLAG (CLEARLINEFLAG, (LineTypePtr) ptr2))
 +//        return 0;
        /* silk doesn't plow */
-       if (GetLayerNumber (Data, ptr1) >= max_layer)
+       if (GetLayerNumber (Data, ptr1) >= max_copper_layer)
          return 0;
 diff --git a/src/rotate.c b/src/rotate.c
 index 229e705..406e025 100644

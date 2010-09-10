@@ -1,5 +1,5 @@
-Bottom: b6fc5e7485eb34624a7f0cb9145d691205bc723c
-Top:    6a7692468718647289b283288332185bdc21a4c1
+Bottom: 33872c0c06d26b7ceacf43987dc0176856d43072
+Top:    b94ee75efadec8f0079d5d6a164577f02ba1a01f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:17:40 +0100
 
@@ -77,7 +77,7 @@ index 3733071..a6d0ecf 100644
    DrawVia (Via, 0);
    Draw ();
 diff --git a/src/draw.c b/src/draw.c
-index 903cb04..a19358c 100644
+index ca05dc5..e5209d7 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -2107,6 +2107,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
@@ -92,7 +92,7 @@ index 903cb04..a19358c 100644
      {
        AddPart (Polygon);
 diff --git a/src/find.c b/src/find.c
-index 65eea18..af9e01d 100644
+index a81bb0f..9682266 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -2649,6 +2649,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
@@ -187,7 +187,7 @@ index f93fca1..0e0e1c9 100644
  bool lineClear (LineTypePtr, Cardinal);
  bool IsLineInPolygon (LineTypePtr, PolygonTypePtr);
 diff --git a/src/move.c b/src/move.c
-index bf9670e..640955e 100644
+index e1cbd62..f9eb611 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -393,7 +393,10 @@ MoveLinePoint (LayerTypePtr Layer, LineTypePtr Line, PointTypePtr Point)
@@ -203,7 +203,7 @@ index bf9670e..640955e 100644
  	{
  	  DrawLine (Layer, Line, 0);
 diff --git a/src/pour.c b/src/pour.c
-index d45a690..1d0558c 100644
+index b8d9562..943e511 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -66,7 +66,7 @@ RCSID ("$Id$");
@@ -376,8 +376,8 @@ index d45a690..1d0558c 100644
 +          !TEST_FLAG (CLEARLINEFLAG, (LineTypePtr) ptr2))
          return 0;
        /* silk doesn't plow */
-       if (GetLayerNumber (Data, ptr1) >= max_layer)
-@@ -1372,12 +1422,12 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+       if (GetLayerNumber (Data, ptr1) >= max_copper_layer)
+@@ -1371,12 +1421,12 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
        {
          PIN_LOOP ((ElementType *) ptr1);
          {
@@ -392,7 +392,7 @@ index d45a690..1d0558c 100644
          }
          END_LOOP;
        }
-@@ -1397,7 +1447,7 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1396,7 +1446,7 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
  //      printf ("Calling InitPourClip from RestoreToPour\n");
        InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
      }
@@ -401,7 +401,7 @@ index d45a690..1d0558c 100644
  }
  
  void
-@@ -1411,7 +1461,7 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1410,7 +1460,7 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
  //      printf ("Calling InitPourClip from ClearFromPour\n");
        InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
      }
@@ -410,7 +410,7 @@ index d45a690..1d0558c 100644
  }
  
  /* Convert a POLYAREA (and all linked POLYAREA) to
-@@ -1468,3 +1518,12 @@ PolyToPoursOnLayer (DataType *Destination, LayerType *Layer,
+@@ -1467,3 +1517,12 @@ PolyToPoursOnLayer (DataType *Destination, LayerType *Layer,
  
    SetChangedFlag (true);
  }
@@ -436,7 +436,7 @@ index 4711da7..c2b1385 100644
  POLYAREA * PourToPoly (PourType *);
  void PolyToPoursOnLayer (DataType *, LayerType *, POLYAREA *, FlagType);
 diff --git a/src/search.c b/src/search.c
-index 200cc89..bb20f05 100644
+index 584fbeb..bef35eb 100644
 --- a/src/search.c
 +++ b/src/search.c
 @@ -454,7 +454,7 @@ SearchPolygonByLocation (int locked, LayerTypePtr * Layer,
