@@ -1,5 +1,5 @@
-Bottom: 0b08214a784bd647889f65ed87b552f45cbe16a3
-Top:    4467e5ac57fee5e9ff6ba9bdb0dcbc0d0c47c194
+Bottom: ca5d727f2b1280d47938ccca88c3b7b31e2c5b3f
+Top:    0e6c217e2bac84eece237074043cf9af3137dccd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:17:06 +0100
 
@@ -9,7 +9,7 @@ Fix grid extents in 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 1f6cde7..66b16e7 100644
+index a5ca9ae..e85848d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -180,7 +180,7 @@ ghid_make_gc (void)
