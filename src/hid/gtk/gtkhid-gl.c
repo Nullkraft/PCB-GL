@@ -1623,12 +1623,12 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   }
   /* Draw top silkscreen */
   if (gui->set_layer ("topsilk", SL (SILK, TOP), 0)) {
-    DrawSilk (0, COMPONENT_LAYER, drawn_area);
+    DrawSilk (0, component_silk_layer, drawn_area);
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
   }
 
   if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0)) {
-    DrawSilk (1, SOLDER_LAYER, drawn_area);
+    DrawSilk (1, solder_silk_layer, drawn_area);
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
   }
 
