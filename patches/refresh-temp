@@ -1,0 +1,24 @@
+Bottom: 9fceaf2254afc20611bc3a04f916cfd21780d270
+Top:    de2f1cf121a5b02ff3d56251901c3942a4664c4c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-09-10 15:37:53 +0100
+
+Refresh of only-snap-to-pads-on-the-activ
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index f12d94e..e765399 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -866,8 +866,8 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+         }
+ 
+       /* find layer groups of the component side and solder side */
+-      SLayer = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
+-      CLayer = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
++      SLayer = GetLayerGroupNumberByNumber (solder_silk_layer);
++      CLayer = GetLayerGroupNumberByNumber (component_silk_layer);
+       desired_group = TEST_FLAG (ONSOLDERFLAG, pad) ? SLayer : CLayer;
+ 
+       GROUP_LOOP (PCB->Data, desired_group);
