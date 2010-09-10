@@ -1,7 +1,7 @@
-Bottom: 7720d6bd46f16de7a1c7fbe0a614f436ff4dafe5
-Top:    abda461f1d77e8902b47382d7590f129bc15fafe
+Bottom: 8690ed36e674a28404679668b1ce936eda92de70
+Top:    f43d6a7094ae1c4fa99aa590fa78867669b7e154
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-09-10 15:27:12 +0100
+Date:   2010-09-10 15:30:23 +0100
 
 Split usage of "max_layer" into max_copper_layer and max_group
 
@@ -1596,10 +1596,10 @@ index 6ab4b78..544a718 100644
  	}
  #endif
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index c270992..c73a26e 100644
+index 390e128..0fa191c 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -547,8 +547,8 @@ static int
+@@ -565,8 +565,8 @@ static int
  SwapSides (int argc, char **argv, int x, int y)
  {
    int old_shown_side = Settings.ShowSolderSide;
@@ -1608,9 +1608,9 @@ index c270992..c73a26e 100644
 +  int comp_group = GetLayerGroupNumberByNumber (component_silk_layer);
 +  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
    int active_group = GetLayerGroupNumberByNumber (LayerStack[0]);
-   int comp_showing =
-     PCB->Data->Layer[PCB->LayerGroups.Entries[comp_group][0]].On;
-@@ -2812,13 +2812,13 @@ static int
+   int comp_layer;
+   int solder_layer;
+@@ -2826,13 +2826,13 @@ static int
  lesstif_set_layer (const char *name, int group, int empty)
  {
    int idx = group;
@@ -1626,7 +1626,7 @@ index c270992..c73a26e 100644
  	      && PCB->Data->Layer[ni].On)
  	    break;
  	}
-@@ -2836,7 +2836,7 @@ lesstif_set_layer (const char *name, int group, int empty)
+@@ -2850,7 +2850,7 @@ lesstif_set_layer (const char *name, int group, int empty)
    else
      autofade = 0;
  #endif
