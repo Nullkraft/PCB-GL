@@ -1583,7 +1583,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
       }
     }
   } else {
-    // Draw in numerical order when in 3D view
+    // Draw in group order when in 3D view
     for (ngroups = 0, i = 0; i < max_group; i++) {
       int group = reverse_layers ? max_group - 1 - i : i;
 
