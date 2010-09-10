@@ -1,7 +1,7 @@
-Bottom: 5784bb3dc38960318e4ff8df059bf09535bdf01b
-Top:    d235f2426e3dc163dd1505f4267573d652e43ccb
+Bottom: bf14a74f5130f302c1a19d5aacc333981dcfc0d1
+Top:    3a2b1d42e4a2411256a06c189aed3362ecc88f03
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-09-09 16:17:23 +0100
+Date:   2010-09-10 15:55:49 +0100
 
 Add strip hierarchy options to display refdes without any "..../" prefix
 
@@ -17,7 +17,7 @@ Add strip hierarchy options to display refdes without any "..../" prefix
 ---
 
 diff --git a/src/action.c b/src/action.c
-index edd79ba..58c8580 100644
+index c568f4e..2738bee 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -3436,9 +3436,16 @@ ActionRenumber (int argc, char **argv, int x, int y)
@@ -150,7 +150,7 @@ index 676a6f0..684d237 100644
   * PCB flags
   */
 diff --git a/src/draw.c b/src/draw.c
-index cef971d..d5a0a57 100644
+index 56054e2..c1f7ec0 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -2055,6 +2055,32 @@ DrawElement (ElementTypePtr Element, int unused)
