@@ -314,7 +314,7 @@ XORDrawBuffer (BufferTypePtr Buffer)
   y = Crosshair.Y - Buffer->Y;
 
   /* draw all visible layers */
-  for (i = 0; i < max_layer + 2; i++)
+  for (i = 0; i < max_copper_layer + 2; i++)
     if (PCB->Data->Layer[i].On)
       {
 	LayerTypePtr layer = &Buffer->Data->Layer[i];
@@ -869,8 +869,8 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
         }
 
       /* find layer groups of the component side and solder side */
-      SLayer = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
-      CLayer = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+      SLayer = GetLayerGroupNumberByNumber (solder_silk_layer);
+      CLayer = GetLayerGroupNumberByNumber (component_silk_layer);
       desired_group = TEST_FLAG (ONSOLDERFLAG, pad) ? SLayer : CLayer;
 
       GROUP_LOOP (PCB->Data, desired_group);

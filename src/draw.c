@@ -361,7 +361,7 @@ PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
 
   /* draw package */
   DrawSilk (swap_ident,
-	    swap_ident ? SOLDER_LAYER : COMPONENT_LAYER,
+	    swap_ident ? solder_silk_layer : component_silk_layer,
 	    drawn_area);
   SWAP_IDENT = save_swap;
 }
@@ -395,8 +395,8 @@ DrawEverything (BoxTypePtr drawn_area)
 	}
     }
 
-  component = GetLayerGroupNumberByNumber (max_copper_layer + COMPONENT_LAYER);
-  solder = GetLayerGroupNumberByNumber (max_copper_layer + SOLDER_LAYER);
+  component = GetLayerGroupNumberByNumber (component_silk_layer);
+  solder = GetLayerGroupNumberByNumber (solder_silk_layer);
 
   /*
    * first draw all 'invisible' stuff
@@ -507,13 +507,13 @@ DrawEverything (BoxTypePtr drawn_area)
   /* Draw top silkscreen */
   if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
     {
-      DrawSilk (0, COMPONENT_LAYER, drawn_area);
+      DrawSilk (0, component_silk_layer, drawn_area);
       gui->set_layer (NULL, SL (FINISHED, 0), 0);
     }
 
   if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
     {
-      DrawSilk (1, SOLDER_LAYER, drawn_area);
+      DrawSilk (1, solder_silk_layer, drawn_area);
       gui->set_layer (NULL, SL (FINISHED, 0), 0);
     }
 
@@ -721,7 +721,7 @@ DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
     {
       gui->use_mask (HID_MASK_BEFORE);
 #endif
-      DrawLayer (LAYER_PTR (max_copper_layer + layer), drawn_area);
+      DrawLayer (LAYER_PTR (layer), drawn_area);
       /* draw package */
       r_search (PCB->Data->element_tree, drawn_area, NULL, frontE_callback,
 		NULL);

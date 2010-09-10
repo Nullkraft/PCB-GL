@@ -161,16 +161,16 @@
  */
 #define	LAYER_ON_STACK(n)	(&PCB->Data->Layer[LayerStack[(n)]])
 #define LAYER_PTR(n)            (&PCB->Data->Layer[(n)])
-#define	CURRENT			(PCB->SilkActive ? &PCB->Data->Layer[max_copper_layer + \
-				(Settings.ShowSolderSide ? SOLDER_LAYER : COMPONENT_LAYER)] \
+#define	CURRENT			(PCB->SilkActive ? &PCB->Data->Layer[ \
+				(Settings.ShowSolderSide ? solder_silk_layer : component_silk_layer)] \
 				: LAYER_ON_STACK(0))
-#define	INDEXOFCURRENT		(PCB->SilkActive ? max_copper_layer + \
-				(Settings.ShowSolderSide ? SOLDER_LAYER : COMPONENT_LAYER) \
+#define	INDEXOFCURRENT		(PCB->SilkActive ? \
+				(Settings.ShowSolderSide ? solder_silk_layer : component_silk_layer) \
 				: LayerStack[0])
-#define SILKLAYER		Layer[max_copper_layer + \
-				(Settings.ShowSolderSide ? SOLDER_LAYER : COMPONENT_LAYER)]
-#define BACKSILKLAYER		Layer[max_copper_layer + \
-				(Settings.ShowSolderSide ? COMPONENT_LAYER : SOLDER_LAYER)]
+#define SILKLAYER		Layer[ \
+				(Settings.ShowSolderSide ? solder_silk_layer : component_silk_layer)]
+#define BACKSILKLAYER		Layer[ \
+				(Settings.ShowSolderSide ? component_silk_layer : solder_silk_layer)]
 
 #define TEST_SILK_LAYER(layer)	(GetLayerNumber (PCB->Data, layer) >= max_copper_layer)
 

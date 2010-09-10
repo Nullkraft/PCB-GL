@@ -1035,7 +1035,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
       || GetLayerNumber (Data, Layer) >= max_copper_layer)
     return 0;
   group = Group (Data, GetLayerNumber (Data, Layer));
-  info.solder = (group == Group (Data, max_copper_layer + SOLDER_LAYER));
+  info.solder = (group == Group (Data, solder_silk_layer));
   info.data = Data;
   info.other = here;
   info.layer = Layer;
@@ -1051,7 +1051,7 @@ clearPoly (DataTypePtr Data, LayerTypePtr Layer, PolygonType * polygon,
       r = 0;
       info.accumulate = NULL;
       info.batch_size = 0;
-      if (info.solder || group == Group (Data, max_copper_layer + COMPONENT_LAYER))
+      if (info.solder || group == Group (Data, component_silk_layer))
 	r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
       GROUP_LOOP (Data, group);
       {
@@ -1586,9 +1586,9 @@ PlowsPolygon (DataType * Data, int type, void *ptr1, void *ptr2,
       break;
     case PAD_TYPE:
       {
-        Cardinal group = GetLayerGroupNumberByNumber (max_copper_layer +
+        Cardinal group = GetLayerGroupNumberByNumber (
                             TEST_FLAG (ONSOLDERFLAG, (PadType *) ptr2) ?
-                              SOLDER_LAYER : COMPONENT_LAYER);
+                              solder_silk_layer : component_silk_layer);
         GROUP_LOOP (Data, group);
         {
           info.layer = layer;
