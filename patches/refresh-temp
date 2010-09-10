@@ -1,0 +1,22 @@
+Bottom: 943115af7e85979a92d8a18648a2cf0d0ccac93c
+Top:    37c53b236acd22cdf57df768a0857ea34a1201f2
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-09-10 15:44:00 +0100
+
+Refresh of fix-layer-on-off-rendering
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 120aab9..bebc576 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1379,7 +1379,7 @@ DrawLayerGroup (int group, const BoxType * screen)
+         strcmp (Layer->Name, "route") == 0)
+       rv = 0;
+ 
+-    if (layernum < max_copper_layer /*&& Layer->On*/) {
++    if (layernum < max_copper_layer && Layer->On) {
+ 
+       if (!first_run)
+         gui->set_layer (0, group, 0);
