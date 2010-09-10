@@ -932,7 +932,7 @@ MoveLayer (int old_index, int new_index)
   AddLayerChangeToUndoList (old_index, new_index);
   IncrementUndoSerialNumber ();
 
-  if (old_index < -1 || old_index >= max_copperlayer)
+  if (old_index < -1 || old_index >= max_copper_layer)
     {
       Message ("Invalid old layer %d for move: must be -1..%d\n",
 	       old_index, max_copper_layer - 1);

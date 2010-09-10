@@ -463,7 +463,7 @@ gcode_do_export (HID_Attr_Val * options)
 	  printf ("idx=%d %s\n", idx, layer_type_to_file_name (idx));
 	  is_solder =
 	    (GetLayerGroupNumberByNumber (idx) ==
-	     GetLayerGroupNumberByNumber (solder_silk_layer) ? 1 : 0;
+	     GetLayerGroupNumberByNumber (solder_silk_layer)) ? 1 : 0;
 	  save_drill = is_solder;	/* save drills for one layer only */
 	  gcode_start_png (gcode_basename, layer_type_to_file_name (idx));
 	  hid_save_and_show_layer_ons (save_ons);

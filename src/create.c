@@ -120,7 +120,7 @@ pcb_colors_from_settings (PCBTypePtr ptr)
   ptr->Data->Layer[component_silk_layer].Color =
     Settings.ShowSolderSide ?
     Settings.InvisibleObjectsColor : Settings.ElementColor;
-  ptr->Data->Layer[component_silk_color].SelectedColor =
+  ptr->Data->Layer[component_silk_layer].SelectedColor =
     Settings.ElementSelectedColor;
   ptr->Data->Layer[solder_silk_layer].Color =
     Settings.ShowSolderSide ?
