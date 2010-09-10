@@ -1,0 +1,21 @@
+Bottom: bcb8a2e8050d863ed9ca4af468ae7381db064042
+Top:    5f0c477bd71e33ee062873e839f79631fff7f252
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-09-10 16:00:18 +0100
+
+Refresh of board-outline-polygon-generati
+
+---
+
+diff --git a/src/polygon.c b/src/polygon.c
+index d72befd..96c9218 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -2035,7 +2035,7 @@ POLYAREA *board_outline_poly ()
+   whole_world = RectPoly (-BLOAT_WORLD, BLOAT_WORLD + PCB->MaxWidth,
+                           -BLOAT_WORLD, BLOAT_WORLD + PCB->MaxHeight);
+ 
+-  for (i = 0; i < max_layer; i++)
++  for (i = 0; i < max_copper_layer; i++)
+     {
+       Layer = PCB->Data->Layer + i;
