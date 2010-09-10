@@ -1,0 +1,22 @@
+Bottom: b94ee75efadec8f0079d5d6a164577f02ba1a01f
+Top:    903744aef45bf34fb2d78a79b06648360e39d196
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-09-10 17:44:39 +0100
+
+Refresh of off-to-find-burried-treasure-o
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 9682266..272c205 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -4042,7 +4042,7 @@ IsPolygonAnIsland (LayerType *layer, PolygonType *polygon)
+ 
+       /* Check if we got any useful hits */
+       connected_count = 0;
+-      for (i = 0; i < max_layer; i++)
++      for (i = 0; i < max_copper_layer; i++)
+         {
+           connected_count += LineList[ i ].Number;
+           /* No need to search all layers when one will do */
