@@ -1,0 +1,48 @@
+Bottom: c537554f593ca5376917023ccfa369f754bdf50b
+Top:    65262e007e94421f939e59c29a11bf8f082ea046
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-09-10 16:49:01 +0100
+
+Refresh of layer-fixes
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 5e8bb12..3239f0d 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1573,18 +1573,25 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+   max_phys_group = MAX (solder_group, component_group);
+ 
+   memset (do_group, 0, sizeof (do_group));
+-  for (ngroups = 0, i = 0; i < max_group; i++) {
+-    int group;
+-    int orderi;
+-
+-    orderi = reverse_layers ? max_group - i - 1 : i;
+-
++  if (global_view_2d) {
++    // Draw in layer stack order when in 2D view
++    for (ngroups = 0, i = 0; i < max_copper_layer; i++) {
++      int group = GetLayerGroupNumberByNumber (LayerStack[i]);
++
++      if (!do_group[group]) {
++        do_group[group] = 1;
++        drawn_groups[ngroups++] = group;
++      }
++    }
++  } else {
+     // Draw in numerical order when in 3D view
+-    group = global_view_2d ? GetLayerGroupNumberByNumber (LayerStack[i]) : orderi;
++    for (ngroups = 0, i = 0; i < max_group; i++) {
++      int group = reverse_layers ? max_group - 1 - i : i;
+ 
+-    if (!do_group[group]) {
+-      do_group[group] = 1;
+-      drawn_groups[ngroups++] = group;
++      if (!do_group[group]) {
++        do_group[group] = 1;
++        drawn_groups[ngroups++] = group;
++      }
+     }
+   }
