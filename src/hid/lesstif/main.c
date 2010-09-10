@@ -551,7 +551,7 @@ group_showing (int g, int *c)
   for (i=0; i<PCB->LayerGroups.Number[g]; i++)
     {
       l = PCB->LayerGroups.Entries[g][i];
-      if (l >= 0 && l < max_layer)
+      if (l >= 0 && l < max_copper_layer)
 	{
 	  *c = l;
 	  if (PCB->Data->Layer[l].On)
