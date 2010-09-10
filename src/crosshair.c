@@ -866,8 +866,8 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
         }
 
       /* find layer groups of the component side and solder side */
-      SLayer = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
-      CLayer = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
+      SLayer = GetLayerGroupNumberByNumber (solder_silk_layer);
+      CLayer = GetLayerGroupNumberByNumber (component_silk_layer);
       desired_group = TEST_FLAG (ONSOLDERFLAG, pad) ? SLayer : CLayer;
 
       GROUP_LOOP (PCB->Data, desired_group);
