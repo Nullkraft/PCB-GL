@@ -1,5 +1,5 @@
-Bottom: 29ba4e42da4b3007bf1cf88c7484a915b177119b
-Top:    48bb345edbc84ccf9773c1b5d7157dead25de598
+Bottom: 30de6864b51b564a74a023a61233d25ade28539a
+Top:    8d34f042c4a610df1615db0887cab4137db011df
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:17:18 +0100
 
@@ -9,7 +9,7 @@ Comment out some calls which can trigger an out-of-context redraw
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index b121795..2da5137 100644
+index a0f4469..476b196 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -373,7 +373,7 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
