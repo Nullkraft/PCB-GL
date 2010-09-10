@@ -1,5 +1,5 @@
 Bottom: 833c5d973dfa7d85d508d2ab39baf625cdc16d66
-Top:    bcb8a2e8050d863ed9ca4af468ae7381db064042
+Top:    5f0c477bd71e33ee062873e839f79631fff7f252
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:17:15 +0100
 
@@ -51,7 +51,7 @@ index 1406656..d9e0084 100644
  
    gui->use_mask (HID_MASK_OFF);
 diff --git a/src/polygon.c b/src/polygon.c
-index 74d4bc4..d72befd 100644
+index 74d4bc4..96c9218 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -81,6 +81,7 @@ dicer output is used for HIDs which cannot render things with holes
@@ -147,7 +147,7 @@ index 74d4bc4..d72befd 100644
 +  whole_world = RectPoly (-BLOAT_WORLD, BLOAT_WORLD + PCB->MaxWidth,
 +                          -BLOAT_WORLD, BLOAT_WORLD + PCB->MaxHeight);
 +
-+  for (i = 0; i < max_layer; i++)
++  for (i = 0; i < max_copper_layer; i++)
 +    {
 +      Layer = PCB->Data->Layer + i;
 +
