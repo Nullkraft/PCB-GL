@@ -1,5 +1,5 @@
 Bottom: f2fe5b3cc1b92a13f486d7852fb536ceddaf1b4a
-Top:    19271e553f8356e277d89e7290eed1fd687e74fa
+Top:    86c891af5fc2a9d159e5295e4828dccf64512894
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:17:10 +0100
 
@@ -9,7 +9,7 @@ Playing with stack rendering
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index bebc576..e3652dd 100644
+index bebc576..e5bfd30 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1078,7 +1078,17 @@ SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
@@ -18,8 +18,8 @@ index bebc576..e3652dd 100644
    else
 -    color = Layer->Color;
 +    {
-+      int component_group = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
-+      int solder_group    = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
++      int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
++      int solder_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
 +      int this_group      = GetLayerGroupNumberByPointer (Layer);
 +
 +      if (this_group == component_group || this_group == solder_group)
@@ -35,8 +35,8 @@ index bebc576..e3652dd 100644
    int n_entries = PCB->LayerGroups.Number[group];
    Cardinal *layers = PCB->LayerGroups.Entries[group];
    int first_run = 1;
-+  int component = GetLayerGroupNumberByNumber (max_layer + COMPONENT_LAYER);
-+  int solder    = GetLayerGroupNumberByNumber (max_layer + SOLDER_LAYER);
++  int component = GetLayerGroupNumberByNumber (component_silk_layer);
++  int solder    = GetLayerGroupNumberByNumber (solder_silk_layer);
  
    if (!gui->set_layer (0, group, 0)) {
      gui->set_layer (NULL, SL (FINISHED, 0), 0);
