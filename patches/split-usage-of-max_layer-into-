@@ -1,0 +1,32 @@
+Bottom: 7720d6bd46f16de7a1c7fbe0a614f436ff4dafe5
+Top:    7720d6bd46f16de7a1c7fbe0a614f436ff4dafe5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-09-10 15:27:12 +0100
+
+Split usage of "max_layer" into max_copper_layer and max_group
+
+ PCB has an equal number of layer groups as copper layers, so the
+"max_layer" #define'd variable has been used throught the codebase to
+delimit iteration over both layer groups, and layers.
+
+This makes it hard for people reading the codebase to identify whether
+a given loop is over layers or layer groups (since the counter variable
+is often fairly terse or indescript). Confusingly, in some of the code,
+layer groups indexes are stored in a variable called "layer".
+
+To aid understanding of the code, this commit removes the max_layer
+variable (#define'd to (PCB->Data->LayerN)), and replaces it with
+two similarly #define'd variables, "max_copper_layer" and "max_group".
+
+This commit also introduces convenience macros:
+
+  #define solder_silk_layer (max_copper_layer + SOLDER_LAYER)
+  #define component_silk_layer (max_copper_layer + COMPONENT_LAYER)
+
+Which make the code intention much clearer for a common case of the
+old max_layer variable usage.
+
+
+---
+
+
