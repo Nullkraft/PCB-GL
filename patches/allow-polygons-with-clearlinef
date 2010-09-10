@@ -1,7 +1,7 @@
-Bottom: 5784bb3dc38960318e4ff8df059bf09535bdf01b
-Top:    4024914bb43ee0861151b91445b2351224d53ada
+Bottom: 98125d1d19ca1957fd9d8cb9a55879dcc7d9d637
+Top:    3b06f243d6d42b009f4b20773e8d9a97174c1f76
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-09-09 16:17:31 +0100
+Date:   2010-09-10 17:27:22 +0100
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -28,7 +28,7 @@ polygon fill.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index b6d1e2b..f802962 100644
+index 1b2d27c..7991270 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -381,6 +381,7 @@ MovePolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
@@ -170,7 +170,7 @@ index 7bae706..420f780 100644
  #define CHANGETHERMAL_TYPES	\
  	(PIN_TYPE | VIA_TYPE)
 diff --git a/src/draw.c b/src/draw.c
-index cef971d..2d6bb32 100644
+index 56054e2..51523f0 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -2025,7 +2025,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
@@ -184,7 +184,7 @@ index cef971d..2d6bb32 100644
    else
      gui->fill_pcb_polygon (Output.fgGC, Polygon, clip_box);
 diff --git a/src/move.c b/src/move.c
-index cd23253..9ba8303 100644
+index cce6e19..1a1da55 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -355,10 +355,12 @@ MovePolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
@@ -216,7 +216,7 @@ index cd23253..9ba8303 100644
      {
        DrawPolygon (Layer, Polygon, 0);
 diff --git a/src/polygon.c b/src/polygon.c
-index d379a6b..341007a 100644
+index 96c9218..bb52616 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -860,6 +860,20 @@ SubtractPad (PadType * pad, PolygonType * p)
@@ -330,7 +330,7 @@ index d379a6b..341007a 100644
        /* the cast works equally well for lines and arcs */
        if (!TEST_FLAG (CLEARLINEFLAG, (LineTypePtr) ptr2))
          return 0;
-@@ -1623,8 +1685,7 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1622,8 +1684,7 @@ RestoreToPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
  {
    if (type == POLYGON_TYPE)
      InitClip (PCB->Data, (LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
@@ -340,7 +340,7 @@ index d379a6b..341007a 100644
  }
  
  void
-@@ -1632,8 +1693,7 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1631,8 +1692,7 @@ ClearFromPolygon (DataType * Data, int type, void *ptr1, void *ptr2)
  {
    if (type == POLYGON_TYPE)
      InitClip (PCB->Data, (LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
