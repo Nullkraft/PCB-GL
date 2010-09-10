@@ -1,5 +1,5 @@
-Bottom: c13c670fffb16af4df63f621e0e138b081eb3dc3
-Top:    3758dfc210539cb3c0803ef33a30147a6b04a942
+Bottom: 454da84e78c13fa138d081e2fb3cb0b3414d8b7e
+Top:    45f72158db1793480935bad28a8c91c6323880fc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:17:35 +0100
 
@@ -24,7 +24,7 @@ Add magic flag to stop pour clipping for off-screen buffers
 ---
 
 diff --git a/src/create.c b/src/create.c
-index b1f7004..f01fb6e 100644
+index 87c9d7a..661c082 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -139,6 +139,7 @@ CreateNewPCB (bool SetDefaultNames)
@@ -48,10 +48,10 @@ index 3d5f28f..20f6cf1 100644
  
  typedef struct			/* holds drill information */
 diff --git a/src/pour.c b/src/pour.c
-index 801a7b5..92de400 100644
+index 32b06ac..0e8906a 100644
 --- a/src/pour.c
 +++ b/src/pour.c
-@@ -1390,6 +1390,8 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+@@ -1389,6 +1389,8 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
  void
  RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
  {
@@ -60,7 +60,7 @@ index 801a7b5..92de400 100644
    if (type == POUR_TYPE)
      {
  #warning FIXME Later: Why do we need to do this?
-@@ -1402,6 +1404,8 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1401,6 +1403,8 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
  void
  ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
  {

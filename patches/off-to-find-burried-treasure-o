@@ -1,5 +1,5 @@
-Bottom: 3758dfc210539cb3c0803ef33a30147a6b04a942
-Top:    eb3049a8e643ec45020fdf3bf0fd619927e32c42
+Bottom: 45f72158db1793480935bad28a8c91c6323880fc
+Top:    018959b0417977cc7bf55f309331d69539ab37b3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:17:35 +0100
 
@@ -17,7 +17,7 @@ of a selection will re-create the polygon.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 9d24d35..838b806 100644
+index f01dbd4..6ad4fcf 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -391,7 +391,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
@@ -116,7 +116,7 @@ index 3c4f926..2d45c7f 100644
    DrawVia (Via, 0);
    Draw ();
 diff --git a/src/draw.c b/src/draw.c
-index b0c71cf..eebb868 100644
+index 08c699d..332169f 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -2107,6 +2107,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
@@ -131,7 +131,7 @@ index b0c71cf..eebb868 100644
      {
        AddPart (Polygon);
 diff --git a/src/find.c b/src/find.c
-index 65eea18..af9e01d 100644
+index a81bb0f..9682266 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -2649,6 +2649,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
@@ -226,7 +226,7 @@ index f93fca1..0e0e1c9 100644
  bool lineClear (LineTypePtr, Cardinal);
  bool IsLineInPolygon (LineTypePtr, PolygonTypePtr);
 diff --git a/src/move.c b/src/move.c
-index 4b7b54a..8e4d32c 100644
+index e229430..f988ab2 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -366,12 +366,12 @@ MovePour (LayerTypePtr Layer, PourTypePtr Pour)
@@ -277,7 +277,7 @@ index 4b7b54a..8e4d32c 100644
      {
        DrawPour (Layer, Pour, 0);
 diff --git a/src/pour.c b/src/pour.c
-index 92de400..05bfba2 100644
+index 0e8906a..2fcd65e 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -66,7 +66,7 @@ RCSID ("$Id$");
@@ -450,8 +450,8 @@ index 92de400..05bfba2 100644
 +          !TEST_FLAG (CLEARLINEFLAG, (LineTypePtr) ptr2))
          return 0;
        /* silk doesn't plow */
-       if (GetLayerNumber (Data, ptr1) >= max_layer)
-@@ -1373,12 +1423,12 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+       if (GetLayerNumber (Data, ptr1) >= max_copper_layer)
+@@ -1372,12 +1422,12 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
        {
          PIN_LOOP ((ElementType *) ptr1);
          {
@@ -466,7 +466,7 @@ index 92de400..05bfba2 100644
          }
          END_LOOP;
        }
-@@ -1398,7 +1448,7 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1397,7 +1447,7 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
  //      printf ("Calling InitPourClip from RestoreToPour\n");
        InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
      }
@@ -475,7 +475,7 @@ index 92de400..05bfba2 100644
  }
  
  void
-@@ -1412,9 +1462,10 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1411,9 +1461,10 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
  //      printf ("Calling InitPourClip from ClearFromPour\n");
        InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
      }
@@ -487,7 +487,7 @@ index 92de400..05bfba2 100644
  
  /* Convert a POLYAREA (and all linked POLYAREA) to
   * raw PCB pours on the given layer.
-@@ -1470,3 +1521,12 @@ PolyToPoursOnLayer (DataType *Destination, LayerType *Layer,
+@@ -1469,3 +1520,12 @@ PolyToPoursOnLayer (DataType *Destination, LayerType *Layer,
  
    SetChangedFlag (true);
  }
@@ -513,7 +513,7 @@ index 4711da7..c2b1385 100644
  POLYAREA * PourToPoly (PourType *);
  void PolyToPoursOnLayer (DataType *, LayerType *, POLYAREA *, FlagType);
 diff --git a/src/search.c b/src/search.c
-index 69f260f..b61b008 100644
+index d027494..e01f130 100644
 --- a/src/search.c
 +++ b/src/search.c
 @@ -454,7 +454,7 @@ SearchPolygonByLocation (int locked, LayerTypePtr * Layer,
