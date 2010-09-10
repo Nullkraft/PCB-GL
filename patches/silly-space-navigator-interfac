@@ -1,5 +1,5 @@
-Bottom: c00a8512e1c334bfcd27a23741345919d674a991
-Top:    57be3bc992dca42875b276dffb8848ae1d76d8aa
+Bottom: 37c53b236acd22cdf57df768a0857ea34a1201f2
+Top:    c88d1c14e1f8e0f438ad6de814d0eab2b386083a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:17:08 +0100
 
@@ -27,7 +27,7 @@ index 6a0c335..82a05aa 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 60f9a3d..b121795 100644
+index 364e273..a0f4469 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -47,6 +47,8 @@
@@ -90,7 +90,7 @@ index 60f9a3d..b121795 100644
 +    hid_actionl ("SwapSides", (button == 0) ? "V" : "H", NULL);
 +}
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index faf7406..fa25836 100644
+index 657529b..f0456ea 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -123,6 +123,7 @@ a zoom in/out.
