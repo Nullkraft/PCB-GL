@@ -1,0 +1,21 @@
+Bottom: 54d51b0bf28f393fe1fd8913f44c8993c62a490c
+Top:    d36f2f7b90dfdfb28fe10ab558a34b3f49fb5d0b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-09-11 23:52:51 +0100
+
+Refresh of thermal-c-initialise-the-flags
+
+---
+
+diff --git a/src/thermal.c b/src/thermal.c
+index 4fdcb1c..f9dd369 100644
+--- a/src/thermal.c
++++ b/src/thermal.c
+@@ -204,6 +204,7 @@ square_therm (PinTypePtr pin, Cardinal style)
+     case 4:
+       {
+         LineType l;
++        l.Flags = NoFlags ();
+         d = pin->Thickness / 2 - pcb->ThermScale * pin->Clearance;
+         out = pin->Thickness / 2 + pin->Clearance / 4;
+         in = pin->Clearance / 2;
