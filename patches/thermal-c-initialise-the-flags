@@ -1,0 +1,14 @@
+Bottom: 54d51b0bf28f393fe1fd8913f44c8993c62a490c
+Top:    54d51b0bf28f393fe1fd8913f44c8993c62a490c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-09-11 23:51:04 +0100
+
+thermal.c: Initialise the flags of the LinePoly object
+
+Keeps valgrind quiet about conditionals based upon uninitialised
+variables.. must be a good thing.
+
+
+---
+
+
