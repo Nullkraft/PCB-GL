@@ -1,0 +1,25 @@
+Bottom: 068403fb06def83a8fd4773798838c0b817e47ae
+Top:    55dd34c2612ae74263e6260f4db5a036484b92a4
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-09-11 23:54:46 +0100
+
+thermal.c: Initialise flags of the LineType object in square_therm()
+
+Keeps valgrind quiet about conditionals based upon uninitialised
+variables.. must be a good thing.
+
+
+---
+
+diff --git a/src/thermal.c b/src/thermal.c
+index 4fdcb1c..f9dd369 100644
+--- a/src/thermal.c
++++ b/src/thermal.c
+@@ -204,6 +204,7 @@ square_therm (PinTypePtr pin, Cardinal style)
+     case 4:
+       {
+         LineType l;
++        l.Flags = NoFlags ();
+         d = pin->Thickness / 2 - pcb->ThermScale * pin->Clearance;
+         out = pin->Thickness / 2 + pin->Clearance / 4;
+         in = pin->Clearance / 2;
