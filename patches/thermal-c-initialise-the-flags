@@ -3,7 +3,7 @@ Top:    d36f2f7b90dfdfb28fe10ab558a34b3f49fb5d0b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-11 23:51:04 +0100
 
-thermal.c: Initialise the flags of the LineType object in square_therm
+thermal.c: Initialise flags of the LineType object in square_therm()
 
 Keeps valgrind quiet about conditionals based upon uninitialised
 variables.. must be a good thing.
