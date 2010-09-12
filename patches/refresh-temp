@@ -1,4 +1,4 @@
-Bottom: d36f2f7b90dfdfb28fe10ab558a34b3f49fb5d0b
+Bottom: 52f8d291c823f67270660ecba4d06b172ae066dc
 Top:    52f8d291c823f67270660ecba4d06b172ae066dc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-12 01:22:12 +0100
@@ -7,30 +7,4 @@ Refresh of debug-attempt-to-fix-drc-crash
 
 ---
 
-diff --git a/src/find.c b/src/find.c
-index c478f7f..cbe23d3 100644
---- a/src/find.c
-+++ b/src/find.c
-@@ -2677,6 +2677,10 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
-        BDimension wid = (Line->Thickness + Bloat + 1) / 2;
-        LocationType x1, x2, y1, y2;
- 
-+       printf ("Line thickness is %i, Bloat is %i\n",
-+               Line->Thickness, Bloat);
-+       printf ("Testing with wid=%i\n", wid);
-+
-        x1 = MIN (Line->Point1.X, Line->Point2.X) - wid;
-        y1 = MIN (Line->Point1.Y, Line->Point2.Y) - wid;
-        x2 = MAX (Line->Point1.X, Line->Point2.X) + wid;
-diff --git a/src/polygon.c b/src/polygon.c
-index 3e7b3e5..3b302c3 100644
---- a/src/polygon.c
-+++ b/src/polygon.c
-@@ -1683,6 +1683,7 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
-                       LocationType Y2, PolygonTypePtr p)
- {
-   POLYAREA *s;
-+  printf ("X1=%i, X2=%i, Y1=%i, Y2=%i\n", X1, X2, Y1, Y2);
-   if (!
-       (s = RectPoly (min (X1, X2), max (X1, X2), min (Y1, Y2), max (Y1, Y2))))
-     return false;
+
