@@ -1,5 +1,5 @@
 Bottom: 59ce1d5bbed78d14681f8c70dc174a59433eb6a7
-Top:    c552cc8985b909af482dbd335e482fa53bc75e7f
+Top:    3e324a438a6f4e1c00e8ad1fbdccce580fa4aa13
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-10 17:27:26 +0100
 
@@ -2191,7 +2191,7 @@ index 6da0ea2..65a5423 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index 51523f0..08c699d 100644
+index 51523f0..0c3aded 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -49,6 +49,7 @@
@@ -2375,7 +2375,7 @@ index 51523f0..08c699d 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -2241,6 +2339,18 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2241,6 +2339,16 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2384,17 +2384,15 @@ index 51523f0..08c699d 100644
 +void
 +ErasePour (PourTypePtr Pour)
 +{
-+  Erasing++;
 +  gui->set_color (Output.fgGC, Settings.BackgroundColor);
 +  DrawPourLowLevel (Pour);
-+  Erasing--;
 +}
 +
 +/* ---------------------------------------------------------------------------
   * erases an element
   */
  void
-@@ -2311,6 +2421,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -2311,6 +2419,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2404,7 +2402,7 @@ index 51523f0..08c699d 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -2358,6 +2471,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
+@@ -2358,6 +2469,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2, 0);
        break;
