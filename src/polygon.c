@@ -1683,6 +1683,7 @@ IsRectangleInPolygon (LocationType X1, LocationType Y1, LocationType X2,
                       LocationType Y2, PolygonTypePtr p)
 {
   POLYAREA *s;
+  printf ("X1=%i, X2=%i, Y1=%i, Y2=%i\n", X1, X2, Y1, Y2);
   if (!
       (s = RectPoly (min (X1, X2), max (X1, X2), min (Y1, Y2), max (Y1, Y2))))
     return false;
