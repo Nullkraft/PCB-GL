@@ -1,7 +1,7 @@
-Bottom: f90bdf4cc18572bedc165b98d1b4370d7648f7b4
-Top:    2eb255202754d482f4dda0575e9c08d10c3ff2a3
+Bottom: 84a1371e6250d1f899c68a3346094e9093761f2d
+Top:    4056e84b2b1b1a21b46ee5490ebe32df89c4c43e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-09-10 17:45:06 +0100
+Date:   2010-09-12 01:25:58 +0100
 
 Add strip hierarchy options to display refdes without any "..../" prefix
 
@@ -149,7 +149,7 @@ index 6d34ce8..f1b4c3d 100644
   * PCB flags
   */
 diff --git a/src/draw.c b/src/draw.c
-index e5209d7..6332467 100644
+index af1a34b..09f010a 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -2157,6 +2157,32 @@ DrawElement (ElementTypePtr Element, int unused)
@@ -194,7 +194,7 @@ index e5209d7..6332467 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -2370,7 +2396,7 @@ EraseElement (ElementTypePtr Element)
+@@ -2368,7 +2394,7 @@ EraseElement (ElementTypePtr Element)
    }
    END_LOOP;
    if (!TEST_FLAG (HIDENAMEFLAG, Element))
@@ -203,7 +203,7 @@ index e5209d7..6332467 100644
    EraseElementPinsAndPads (Element);
  }
  
-@@ -2404,7 +2430,7 @@ EraseElementName (ElementTypePtr Element)
+@@ -2402,7 +2428,7 @@ EraseElementName (ElementTypePtr Element)
  {
    if (TEST_FLAG (HIDENAMEFLAG, Element))
      return;
