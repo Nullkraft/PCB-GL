@@ -2677,6 +2677,10 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
        BDimension wid = (Line->Thickness + Bloat + 1) / 2;
        LocationType x1, x2, y1, y2;
 
+       printf ("Line thickness is %i, Bloat is %i\n",
+               Line->Thickness, Bloat);
+       printf ("Testing with wid=%i\n", wid);
+
        x1 = MIN (Line->Point1.X, Line->Point2.X) - wid;
        y1 = MIN (Line->Point1.Y, Line->Point2.Y) - wid;
        x2 = MAX (Line->Point1.X, Line->Point2.X) + wid;
