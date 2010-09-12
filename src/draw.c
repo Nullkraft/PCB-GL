@@ -2343,10 +2343,8 @@ ErasePolygon (PolygonTypePtr Polygon)
 void
 ErasePour (PourTypePtr Pour)
 {
-  Erasing++;
   gui->set_color (Output.fgGC, Settings.BackgroundColor);
   DrawPourLowLevel (Pour);
-  Erasing--;
 }
 
 /* ---------------------------------------------------------------------------
