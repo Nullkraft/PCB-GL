@@ -1,0 +1,24 @@
+Bottom: c552cc8985b909af482dbd335e482fa53bc75e7f
+Top:    3e324a438a6f4e1c00e8ad1fbdccce580fa4aa13
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-09-12 01:24:23 +0100
+
+Refresh of add-support-for-a-poured-objec-I
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 08c699d..0c3aded 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -2344,10 +2344,8 @@ ErasePolygon (PolygonTypePtr Polygon)
+ void
+ ErasePour (PourTypePtr Pour)
+ {
+-  Erasing++;
+   gui->set_color (Output.fgGC, Settings.BackgroundColor);
+   DrawPourLowLevel (Pour);
+-  Erasing--;
+ }
+ 
+ /* ---------------------------------------------------------------------------
