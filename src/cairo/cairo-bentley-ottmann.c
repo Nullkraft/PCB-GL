@@ -1451,9 +1451,21 @@ bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps)
       hidgl_ensure_triangle_space (&buffer, 1);
       hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
     } else {
+#if 0
       hidgl_ensure_triangle_space (&buffer, 2);
       hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
       hidgl_add_triangle (&buffer, x3, y3, x4, y4, x1, y1);
+#endif
+      hidgl_ensure_vertex_space (&buffer, 6);
+
+      /* NB: Repeated first virtex to separate from other tri-strip */
+      hidgl_add_vertex_tex (&buffer, x2, y2, 0.0, 0.0);
+      hidgl_add_vertex_tex (&buffer, x2, y2, 0.0, 0.0);
+      hidgl_add_vertex_tex (&buffer, x1, y1, 0.0, 0.0);
+      hidgl_add_vertex_tex (&buffer, x3, y3, 0.0, 0.0);
+      hidgl_add_vertex_tex (&buffer, x4, y4, 0.0, 0.0);
+      hidgl_add_vertex_tex (&buffer, x4, y4, 0.0, 0.0);
+      /* NB: Repeated last virtex to separate from other tri-strip */
     }
 #else
     glBegin (GL_LINES);
