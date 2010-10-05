@@ -80,7 +80,13 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
 {
   CHECK_IS_IN_CONTEXT ();
   glEnableClientState (GL_VERTEX_ARRAY);
-  glVertexPointer (3, GL_FLOAT, 0, buffer->triangle_array);
+  glVertexPointer (3, GL_FLOAT, 5 * sizeof (GLfloat),
+                   buffer->triangle_array);
+
+  glEnableClientState (GL_TEXTURE_COORD_ARRAY);
+  glTexCoordPointer (2, GL_FLOAT, 5 * sizeof (GLfloat),
+                     buffer->triangle_array + 3);
+
   buffer->triangle_count = 0;
   buffer->coord_comp_count = 0;
 }
@@ -215,34 +221,25 @@ int calc_slices (float pix_radius, float sweep_angle)
   return (int)ceilf (slices);
 }
 
-#define MIN_TRIANGLES_PER_CAP 3
-#define MAX_TRIANGLES_PER_CAP 90
-static void draw_cap (double width, int x, int y, double angle, double scale)
+static void draw_cap (double width, int x, int y, double angle)
 {
-  float last_capx, last_capy;
-  float capx, capy;
   float radius = width / 2.;
-  int slices = calc_slices (radius / scale, M_PI);
-  int i;
 
   CHECK_IS_IN_CONTEXT ();
-  if (slices < MIN_TRIANGLES_PER_CAP)
-    slices = MIN_TRIANGLES_PER_CAP;
 
-  if (slices > MAX_TRIANGLES_PER_CAP)
-    slices = MAX_TRIANGLES_PER_CAP;
+  hidgl_ensure_triangle_space (&buffer, 2);
 
-  hidgl_ensure_triangle_space (&buffer, slices);
+  /* FIXME: Should draw an offset rectangle at the appropriate angle,
+   *        avoiding relying on the subcompositing between layers to
+   *        stop us creatign an artaefact by drawing a full circle.
+   */
+  hidgl_add_triangle_tex (&buffer, x - radius, y - radius, -1., -1.,
+                                   x - radius, y + radius, -1.,  1.,
+                                   x + radius, y + radius,  1.,  1.);
 
-  last_capx =  radius * cosf (angle * M_PI / 180.) + x;
-  last_capy = -radius * sinf (angle * M_PI / 180.) + y;
-  for (i = 0; i < slices; i++) {
-    capx =  radius * cosf (angle * M_PI / 180. + ((float)(i + 1)) * M_PI / (float)slices) + x;
-    capy = -radius * sinf (angle * M_PI / 180. + ((float)(i + 1)) * M_PI / (float)slices) + y;
-    hidgl_add_triangle (&buffer, last_capx, last_capy, capx, capy, x, y);
-    last_capx = capx;
-    last_capy = capy;
-  }
+  hidgl_add_triangle_tex (&buffer, x + radius, y - radius,  1., -1.,
+                                   x + radius, y + radius,  1.,  1.,
+                                   x - radius, y - radius, -1., -1.);
 }
 
 void
@@ -313,8 +310,8 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
   /* Don't bother capping hairlines */
   if (circular_caps && !hairline)
     {
-      draw_cap (width, x1, y1, angle, scale);
-      draw_cap (width, x2, y2, angle + 180., scale);
+      draw_cap (width, x1, y1, angle);
+      draw_cap (width, x2, y2, angle + 180.);
     }
 }
 
@@ -393,10 +390,10 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
 
   draw_cap (width, x + rx * -cosf (start_angle_rad),
                    y + rx *  sinf (start_angle_rad),
-                   start_angle, scale);
+                   start_angle);
   draw_cap (width, x + rx * -cosf (start_angle_rad + delta_angle_rad),
                    y + rx *  sinf (start_angle_rad + delta_angle_rad),
-                   start_angle + delta_angle + 180., scale);
+                   start_angle + delta_angle + 180.);
 }
 
 void
@@ -413,37 +410,24 @@ hidgl_draw_rect (int x1, int y1, int x2, int y2)
 
 
 void
-hidgl_fill_circle (int vx, int vy, int vr, double scale)
+hidgl_fill_circle (int vx, int vy, int vr)
 {
-#define MIN_TRIANGLES_PER_CIRCLE 6
-#define MAX_TRIANGLES_PER_CIRCLE 360
   float last_x, last_y;
   float radius = vr;
   int slices;
   int i;
 
   CHECK_IS_IN_CONTEXT ();
-  slices = calc_slices (vr / scale, 2 * M_PI);
 
-  if (slices < MIN_TRIANGLES_PER_CIRCLE)
-    slices = MIN_TRIANGLES_PER_CIRCLE;
+  hidgl_ensure_triangle_space (&buffer, 2);
 
-  if (slices > MAX_TRIANGLES_PER_CIRCLE)
-    slices = MAX_TRIANGLES_PER_CIRCLE;
+  hidgl_add_triangle_tex (&buffer, vx - radius, vy - radius, -1., -1.,
+                                   vx - radius, vy + radius, -1.,  1.,
+                                   vx + radius, vy + radius,  1.,  1.);
 
-  hidgl_ensure_triangle_space (&buffer, slices);
-
-  last_x = vx + vr;
-  last_y = vy;
-
-  for (i = 0; i < slices; i++) {
-    float x, y;
-    x = radius * cosf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
-    y = radius * sinf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
-    hidgl_add_triangle (&buffer, vx, vy, last_x, last_y, x, y);
-    last_x = x;
-    last_y = y;
-  }
+  hidgl_add_triangle_tex (&buffer, vx + radius, vy - radius,  1., -1.,
+                                   vx + radius, vy + radius,  1.,  1.,
+                                   vx - radius, vy - radius, -1., -1.);
 }
 
 #define MAX_COMBINED_MALLOCS 2500
@@ -629,16 +613,12 @@ do_hole (const BoxType *b, void *cl)
     return 0;
   }
 
-  /* If the contour is round, and hidgl_fill_circle would use
-   * less slices than we have vertices to draw it, then call
+  /* If the contour is round, then call
    * hidgl_fill_circle to draw this contour.
    */
   if (curc->is_round) {
-    double slices = calc_slices (curc->radius / info->scale, 2 * M_PI);
-    if (slices < curc->Count) {
-      hidgl_fill_circle (curc->cx, curc->cy, curc->radius, info->scale);
-      return 1;
-    }
+    hidgl_fill_circle (curc->cx, curc->cy, curc->radius);
+    return 1;
   }
 
   _cairo_traps_init (&traps);
@@ -654,15 +634,13 @@ static int assigned_bits = 0;
 
 /* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
 void
-hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
+hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
 {
   struct do_hole_info info;
   int stencil_bit;
   cairo_traps_t traps;
 
   CHECK_IS_IN_CONTEXT ();
-  info.scale = scale;
-  global_scale = scale;
 
   if (poly->Clipped == NULL)
     {
@@ -728,9 +706,127 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
   hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
 }
 
+/* From http://gpwiki.org/index.php/OpenGL:Codes:Simple_GLSL_example */
+static void
+printLog(GLuint obj)
+{
+  int infologLength = 0;
+  int maxLength;
+  char infoLog[maxLength];
+
+  if (glIsShader (obj))
+    glGetShaderiv (obj, GL_INFO_LOG_LENGTH, &maxLength);
+  else
+    glGetProgramiv (obj, GL_INFO_LOG_LENGTH, &maxLength);
+
+  if (glIsShader (obj))
+    glGetShaderInfoLog (obj, maxLength, &infologLength, infoLog);
+  else
+    glGetProgramInfoLog (obj, maxLength, &infologLength, infoLog);
+
+  if (infologLength > 0)
+    printf ("%s\n", infoLog);
+}
+
+/* From http://gpwiki.org/index.php/OpenGL:Codes:Simple_GLSL_example */
+char *
+file2string (const char *path)
+{
+  FILE *fd;
+  long len, r;
+  char *str;
+
+  if (!(fd = fopen (path, "r")))
+    {
+      fprintf (stderr, "Can't open file '%s' for reading\n", path);
+      return NULL;
+    }
+
+  fseek (fd, 0, SEEK_END);
+  len = ftell(fd);
+
+  printf ("File '%s' is %ld long\n", path, len);
+
+  fseek (fd, 0, SEEK_SET);
+
+  if (!(str = malloc (len * sizeof(char))))
+    {
+      fprintf (stderr, "Can't malloc space for '%s'\n", path);
+      return NULL;
+    }
+
+  r = fread (str, sizeof(char), len, fd);
+
+  str[r - 1] = '\0'; /* Shader sources have to term with null */
+
+  fclose (fd);
+
+  return str;
+}
+
+GLuint sp;
+
+void
+hidgl_load_frag_shader (void)
+{
+  char *vs_source;
+  char *fs_source;
+
+  /* Compile and load the program */
+
+  GLuint vs; /* Vertex Shader */
+  GLuint fs; /* Fragment Shader */
+//  GLuint sp; /* Shader Program */
+
+#if 0
+  vs_source = file2string ("circular.vert");
+  vs = glCreateShader (GL_VERTEX_SHADER);
+  glShaderSource (vs, 1, &vs_source, NULL);
+  glCompileShader (vs);
+//  printLog (vs);
+  free (vs_source);
+#endif
+
+  fs_source = file2string ("circular.frag");
+  if (fs_source == NULL)
+    return;
+  fs = glCreateShader (GL_FRAGMENT_SHADER);
+  glShaderSource (fs, 1, &fs_source, NULL);
+  glCompileShader (fs);
+//  printLog (fs);
+  free (fs_source);
+
+  sp = glCreateProgram ();
+//  glAttachShader (sp, vs);
+  glAttachShader (sp, fs);
+  glLinkProgram (sp);
+//  printLog (sp);
+
+  glUseProgram (sp);
+
+  {
+  GLfloat waveTime = 0,
+          waveWidth = 0.00001,
+          waveHeight = 10;
+  GLint waveTimeLoc = glGetUniformLocation(sp, "waveTime");
+  GLint waveWidthLoc = glGetUniformLocation(sp, "waveWidth");
+  GLint waveHeightLoc = glGetUniformLocation(sp, "waveHeight");
+  /* Change time */
+  glUniform1f(waveTimeLoc, waveTime);
+  glUniform1f(waveWidthLoc, waveWidth);
+  glUniform1f(waveHeightLoc, waveHeight);
+
+  }
+}
+
 void
 hidgl_init (void)
 {
+  static bool done_once = false;
+
+  if (done_once)
+    return;
+
   CHECK_IS_IN_CONTEXT ();
   glGetIntegerv (GL_STENCIL_BITS, &stencil_bits);
 
@@ -746,6 +842,9 @@ hidgl_init (void)
               "Cannot use stencil buffer to sub-composite layers.\n");
       /* Do we need to disable that somewhere? */
     }
+
+  hidgl_load_frag_shader ();
+  done_once = true;
 }
 
 int

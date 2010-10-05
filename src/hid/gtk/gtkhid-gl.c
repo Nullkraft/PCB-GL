@@ -697,7 +697,7 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
 {
   USE_GC (gc);
 
-  hidgl_fill_circle (cx, cy, radius, gport->zoom);
+  hidgl_fill_circle (cx, cy, radius);
 }
 
 
@@ -714,7 +714,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
   USE_GC (gc);
 
-  hidgl_fill_pcb_polygon (poly, clip_box, gport->zoom);
+  hidgl_fill_pcb_polygon (poly, clip_box);
 }
 
 void
@@ -1014,6 +1014,8 @@ ghid_start_drawing (GHidPort *port)
   /* make GL-context "current" */
   if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext))
     return FALSE;
+
+//  hidgl_load_frag_shader ();
 
   return TRUE;
 }
@@ -1786,12 +1788,18 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   int new_x, new_y;
   int min_depth;
   int max_depth;
+  static float wavetime = 0;
+  extern GLuint sp;
+  GLint waveTimeLoc = glGetUniformLocation (sp, "waveTime");
 
   ghid_start_drawing (port);
 
   hidgl_in_context (true);
   hidgl_init ();
   check_gl_drawing_ok_hack = true;
+
+  wavetime += 0.1;
+  glUniform1f (waveTimeLoc, wavetime);
 
   /* If we don't have any stencil bits available,
      we can't use the hidgl polygon drawing routine */
