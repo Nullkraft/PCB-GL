@@ -29,6 +29,8 @@ typedef struct {
   GLfloat triangle_array [3 * (3 + 2) * TRIANGLE_ARRAY_SIZE];
   unsigned int triangle_count;
   unsigned int coord_comp_count;
+  unsigned int vertex_count;
+  unsigned int total_triangles;
 } triangle_buffer;
 
 extern triangle_buffer buffer;
@@ -37,33 +39,46 @@ extern float global_depth;
 void hidgl_in_context (bool is_in_context);
 void hidgl_init_triangle_array (triangle_buffer *buffer);
 void hidgl_flush_triangles (triangle_buffer *buffer);
+void hidgl_ensure_vertex_space (triangle_buffer *buffer, int count);
 void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
+
+inline void
+hidgl_add_vertex_3D_tex (triangle_buffer *buffer,
+                         GLfloat x, GLfloat y, GLfloat z,
+                         GLfloat s, GLfloat t)
+{
+  buffer->triangle_array [buffer->coord_comp_count++] = x;
+  buffer->triangle_array [buffer->coord_comp_count++] = y;
+  buffer->triangle_array [buffer->coord_comp_count++] = z;
+  buffer->triangle_array [buffer->coord_comp_count++] = s;
+  buffer->triangle_array [buffer->coord_comp_count++] = t;
+  buffer->vertex_count++;
+}
+
+inline void
+hidgl_add_vertex_tex (triangle_buffer *buffer,
+                      GLfloat x, GLfloat y,
+                      GLfloat s, GLfloat t)
+{
+  hidgl_add_vertex_3D_tex (buffer, x, y, global_depth, s, t);
+}
+
 
 static inline void
 hidgl_add_triangle_3D_tex (triangle_buffer *buffer,
-                           GLfloat x1, GLfloat y1, GLfloat z1, GLfloat u1, GLfloat v1,
-                           GLfloat x2, GLfloat y2, GLfloat z2, GLfloat u2, GLfloat v2,
-                           GLfloat x3, GLfloat y3, GLfloat z3, GLfloat u3, GLfloat v3)
+                           GLfloat x1, GLfloat y1, GLfloat z1, GLfloat s1, GLfloat t1,
+                           GLfloat x2, GLfloat y2, GLfloat z2, GLfloat s2, GLfloat t2,
+                           GLfloat x3, GLfloat y3, GLfloat z3, GLfloat s3, GLfloat t3)
 {
-  buffer->triangle_array [buffer->coord_comp_count++] = x1;
-  buffer->triangle_array [buffer->coord_comp_count++] = y1;
-  buffer->triangle_array [buffer->coord_comp_count++] = z1;
-  buffer->triangle_array [buffer->coord_comp_count++] = u1;
-  buffer->triangle_array [buffer->coord_comp_count++] = v1;
-
-  buffer->triangle_array [buffer->coord_comp_count++] = x2;
-  buffer->triangle_array [buffer->coord_comp_count++] = y2;
-  buffer->triangle_array [buffer->coord_comp_count++] = z2;
-  buffer->triangle_array [buffer->coord_comp_count++] = u2;
-  buffer->triangle_array [buffer->coord_comp_count++] = v2;
-
-  buffer->triangle_array [buffer->coord_comp_count++] = x3;
-  buffer->triangle_array [buffer->coord_comp_count++] = y3;
-  buffer->triangle_array [buffer->coord_comp_count++] = z3;
-  buffer->triangle_array [buffer->coord_comp_count++] = u3;
-  buffer->triangle_array [buffer->coord_comp_count++] = v3;
-
+  /* NB: Repeated first virtex to separate from other tri-strip */
+  hidgl_add_vertex_3D_tex (buffer, x1, y1, z1, s1, t1);
+  hidgl_add_vertex_3D_tex (buffer, x1, y1, z1, s1, t1);
+  hidgl_add_vertex_3D_tex (buffer, x2, y2, z2, s2, t2);
+  hidgl_add_vertex_3D_tex (buffer, x3, y3, z3, s3, t3);
+  hidgl_add_vertex_3D_tex (buffer, x3, y3, z3, s3, t3);
+  /* NB: Repeated last virtex to separate from other tri-strip */
   buffer->triangle_count++;
+  buffer->total_triangles++;
 }
 
 static inline void
@@ -79,13 +94,13 @@ hidgl_add_triangle_3D (triangle_buffer *buffer,
 
 static inline void
 hidgl_add_triangle_tex (triangle_buffer *buffer,
-                        GLfloat x1, GLfloat y1, GLfloat u1, GLfloat v1,
-                        GLfloat x2, GLfloat y2, GLfloat u2, GLfloat v2,
-                        GLfloat x3, GLfloat y3, GLfloat u3, GLfloat v3)
+                        GLfloat x1, GLfloat y1, GLfloat s1, GLfloat t1,
+                        GLfloat x2, GLfloat y2, GLfloat s2, GLfloat t2,
+                        GLfloat x3, GLfloat y3, GLfloat s3, GLfloat t3)
 {
-  hidgl_add_triangle_3D_tex (buffer, x1, y1, global_depth, u1, v1,
-                                     x2, y2, global_depth, u2, v2,
-                                     x3, y3, global_depth, u3, v3);
+  hidgl_add_triangle_3D_tex (buffer, x1, y1, global_depth, s1, t1,
+                                     x2, y2, global_depth, s2, t2,
+                                     x3, y3, global_depth, s3, t3);
 }
 
 static inline void

@@ -246,8 +246,8 @@ ghid_draw_grid (BoxTypePtr drawn_area)
 
   hidgl_flush_triangles (&buffer);
 
-  glEnable (GL_COLOR_LOGIC_OP);
-  glLogicOp (GL_XOR);
+//  glEnable (GL_COLOR_LOGIC_OP);
+//  glLogicOp (GL_XOR);
 
   glColor3f (gport->grid_color.red / 65535.,
              gport->grid_color.green / 65535.,
@@ -285,6 +285,8 @@ ghid_draw_grid (BoxTypePtr drawn_area)
 	MyRealloc (points, npoints * 3 * sizeof (GLfloat), "gtk_draw_grid");
     }
 
+  glDisableClientState (GL_TEXTURE_COORD_ARRAY);
+  glTexCoord2f (0., 0.);
   glEnableClientState (GL_VERTEX_ARRAY);
   glVertexPointer (3, GL_FLOAT, 0, points);
 
@@ -304,7 +306,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
     }
 
   glDisableClientState (GL_VERTEX_ARRAY);
-  glDisable (GL_COLOR_LOGIC_OP);
+//  glDisable (GL_COLOR_LOGIC_OP);
 }
 
 #if 0
@@ -881,8 +883,8 @@ ghid_show_crosshair (gboolean show)
   y = DRAW_Y (gport->y_crosshair);
   z = global_depth;
 
-  glEnable (GL_COLOR_LOGIC_OP);
-  glLogicOp (GL_XOR);
+//  glEnable (GL_COLOR_LOGIC_OP);
+//  glLogicOp (GL_XOR);
 
   hidgl_flush_triangles (&buffer);
 
@@ -963,7 +965,7 @@ ghid_show_crosshair (gboolean show)
       draw_markers_prev = FALSE;
     }
 
-  glDisable (GL_COLOR_LOGIC_OP);
+//  glDisable (GL_COLOR_LOGIC_OP);
 }
 
 void
@@ -1524,9 +1526,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
 #define MIN_FACES_PER_CYL 6
 #define MAX_FACES_PER_CYL 360
   float radius = vr;
-  float x1, y1;
-  float x2, y2;
-  float z1, z2;
+  float x, y, z1, z2;
   int i;
   int slices;
 
@@ -1541,19 +1541,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
   z1 = compute_depth (from_layer);
   z2 = compute_depth (to_layer);
 
-  x1 = vx + vr;
-  y1 = vy;
+  x = vx + vr;
+  y = vy;
 
-  hidgl_ensure_triangle_space (&buffer, 2 * slices);
+  hidgl_ensure_vertex_space (&buffer, 2 * slices + 2 + 2);
+
+  /* NB: Repeated first virtex to separate from other tri-strip */
+  hidgl_add_vertex_3D_tex (&buffer, x, y, z1, 0.0, 0.0);
+  hidgl_add_vertex_3D_tex (&buffer, x, y, z1, 0.0, 0.0);
+  hidgl_add_vertex_3D_tex (&buffer, x, y, z2, 0.0, 0.0);
+
   for (i = 0; i < slices; i++)
     {
-      x2 = radius * cosf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
-      y2 = radius * sinf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
-      hidgl_add_triangle_3D (&buffer, x1, y1, z1,  x2, y2, z1,  x1, y1, z2);
-      hidgl_add_triangle_3D (&buffer, x2, y2, z1,  x1, y1, z2,  x2, y2, z2);
-      x1 = x2;
-      y1 = y2;
+      x = radius * cosf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
+      y = radius * sinf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
+
+      hidgl_add_vertex_3D_tex (&buffer, x, y, z1, 0.0, 0.0);
+      hidgl_add_vertex_3D_tex (&buffer, x, y, z2, 0.0, 0.0);
     }
+
+  /* NB: Repeated last virtex to separate from other tri-strip */
+  hidgl_add_vertex_3D_tex (&buffer, x, y, z2, 0.0, 0.0);
 }
 
 struct cyl_info {
@@ -1792,6 +1800,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   extern GLuint sp;
   GLint waveTimeLoc = glGetUniformLocation (sp, "waveTime");
 
+  buffer.total_triangles = 0;
+
   ghid_start_drawing (port);
 
   hidgl_in_context (true);
@@ -1840,6 +1850,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
     glNewList (display_list, GL_COMPILE);
 #endif
 
+#if 1
   glEnable (GL_STENCIL_TEST);
   glClearColor (port->offlimits_color.red / 65535.,
                 port->offlimits_color.green / 65535.,
@@ -1943,14 +1954,19 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                 ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                              -port->view_y0, 0);
 
+#endif
   if (global_view_2d) {
+    int count = 0;
     glBegin (GL_QUADS);
-    glVertex3i (0,             0,              0);
-    glVertex3i (PCB->MaxWidth, 0,              0);
-    glVertex3i (PCB->MaxWidth, PCB->MaxHeight, 0);
-    glVertex3i (0,             PCB->MaxHeight, 0);
+//    for (count = 0; count < 30; count++) {
+      glVertex3i (0,             0,              0);
+      glVertex3i (PCB->MaxWidth, 0,              0);
+      glVertex3i (PCB->MaxWidth, PCB->MaxHeight, 0);
+      glVertex3i (0,             PCB->MaxHeight, 0);
+//    }
     glEnd ();
   } else {
+#if 1
     int solder_group;
     int component_group;
     int min_phys_group;
@@ -1972,6 +1988,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
       glVertex3i (0,             PCB->MaxHeight, depth);
     }
     glEnd ();
+#endif
   }
 
   // hid_expose_callback (&ghid_hid, &region, 0);
@@ -1986,6 +2003,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   ghid_draw_grid (&region);
 
+#if 1
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
   glPushMatrix ();
@@ -1999,14 +2017,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   DrawMark (TRUE);
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
+#endif
 
 #if 0
     glEndList ();
     one_shot = 0;
-  } else {
-    /* Second and subsequent times */
-    glCallList (display_list);
   }
+
+  glCallList (display_list);
 #endif
 
   ghid_show_crosshair (TRUE);
@@ -2016,6 +2034,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   check_gl_drawing_ok_hack = false;
   hidgl_in_context (false);
   ghid_end_drawing (port);
+
+//  printf ("Triangle count was %i\n", buffer.total_triangles);
 
   return FALSE;
 }
