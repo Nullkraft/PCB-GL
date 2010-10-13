@@ -32,6 +32,8 @@
 #include <dmalloc.h>
 #endif
 
+#undef ONE_SHOT
+#define ONE_SHOT
 
 RCSID ("$Id$");
 
@@ -980,8 +982,9 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
   /* setup GL-context */
   priv->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
                                               GDK_GL_MODE_STENCIL |
+                                              GDK_GL_MODE_DEPTH  );// |
                                            // GDK_GL_MODE_DEPTH   |
-                                              GDK_GL_MODE_DOUBLE);
+//                                              GDK_GL_MODE_DOUBLE);
   if (!priv->glconfig)
     {
       printf ("Could not setup GL-context!\n");
@@ -1088,7 +1091,7 @@ EMark_callback (const BoxType * b, void *cl)
 {
   ElementTypePtr element = (ElementTypePtr) b;
 
-  DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
+//  DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
   return 1;
 }
 
@@ -1787,8 +1790,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                              GdkEventExpose *ev,
                              GHidPort *port)
 {
+#ifdef ONE_SHOT
   static int one_shot = 1;
   static int display_list;
+#endif
   BoxType region;
   int eleft, eright, etop, ebottom;
   int min_x, min_y;
@@ -1801,6 +1806,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   GLint waveTimeLoc = glGetUniformLocation (sp, "waveTime");
 
   buffer.total_triangles = 0;
+  buffer.total_vertices = 0;
 
   ghid_start_drawing (port);
 
@@ -1843,7 +1849,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
   glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
 
-#if 0
+#ifdef ONE_SHOT
   if (one_shot) {
 
     display_list = glGenLists(1);
@@ -1956,7 +1962,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
 #endif
   if (global_view_2d) {
-    int count = 0;
+//    int count = 0;
     glBegin (GL_QUADS);
 //    for (count = 0; count < 30; count++) {
       glVertex3i (0,             0,              0);
@@ -2004,7 +2010,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   ghid_draw_grid (&region);
 
 #if 1
-  hidgl_init_triangle_array (&buffer);
+//  hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
   glPushMatrix ();
   glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
@@ -2019,7 +2025,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glPopMatrix ();
 #endif
 
-#if 0
+#ifdef ONE_SHOT
     glEndList ();
     one_shot = 0;
   }
@@ -2030,12 +2036,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   ghid_show_crosshair (TRUE);
 
   hidgl_flush_triangles (&buffer);
+  hidgl_finish_triangle_array (&buffer);
 
   check_gl_drawing_ok_hack = false;
   hidgl_in_context (false);
   ghid_end_drawing (port);
 
 //  printf ("Triangle count was %i\n", buffer.total_triangles);
+//  printf ("Vertex count was %i\n", buffer.total_vertices);
 
   return FALSE;
 }
@@ -2192,6 +2200,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
 
   glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                         GDK_GL_MODE_STENCIL |
+                                        GDK_GL_MODE_DEPTH   |
 //                                        GDK_GL_MODE_DEPTH   |
                                         GDK_GL_MODE_SINGLE);
 

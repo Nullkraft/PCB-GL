@@ -24,13 +24,20 @@
 #define __HIDGL_INCLUDED__
 
 //#define TRIANGLE_ARRAY_SIZE 5461
-#define TRIANGLE_ARRAY_SIZE 2740
+//#define TRIANGLE_ARRAY_SIZE 2740
+//#define TRIANGLE_ARRAY_SIZE 8738
+#define TRIANGLE_ARRAY_SIZE 30000
 typedef struct {
-  GLfloat triangle_array [3 * (3 + 2) * TRIANGLE_ARRAY_SIZE];
+//  GLfloat triangle_array [3 * (3 + 2) * TRIANGLE_ARRAY_SIZE];
+  GLfloat *triangle_array;
   unsigned int triangle_count;
   unsigned int coord_comp_count;
   unsigned int vertex_count;
   unsigned int total_triangles;
+  unsigned int total_vertices;
+  GLuint primary_vbo_id;
+  GLuint secondary_vbo_id;
+  bool use_primary;
 } triangle_buffer;
 
 extern triangle_buffer buffer;
@@ -38,6 +45,7 @@ extern float global_depth;
 
 void hidgl_in_context (bool is_in_context);
 void hidgl_init_triangle_array (triangle_buffer *buffer);
+void hidgl_finish_triangle_array (triangle_buffer *buffer);
 void hidgl_flush_triangles (triangle_buffer *buffer);
 void hidgl_ensure_vertex_space (triangle_buffer *buffer, int count);
 void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
@@ -53,6 +61,7 @@ hidgl_add_vertex_3D_tex (triangle_buffer *buffer,
   buffer->triangle_array [buffer->coord_comp_count++] = s;
   buffer->triangle_array [buffer->coord_comp_count++] = t;
   buffer->vertex_count++;
+  buffer->total_vertices++;
 }
 
 inline void
