@@ -1,5 +1,5 @@
 Bottom: a4b80c19d5401828470ec1dbf211eefa558433ec
-Top:    a65980063ca9a833497701364ad5097a8bf4cf2d
+Top:    7da2b7ee5b4ad21ebd267a6cfaa60f6ae58e643c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-10-04 22:46:40 +0100
 
@@ -996,7 +996,7 @@ index 1ed8eb3..88a9120 100644
  
  void hidgl_init (void);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 81c684f..cf60d71 100644
+index 81c684f..459d561 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -32,6 +32,8 @@
@@ -1004,7 +1004,7 @@ index 81c684f..cf60d71 100644
  #endif
  
 +#undef ONE_SHOT
-+#define ONE_SHOT
++//#define ONE_SHOT
  
  RCSID ("$Id$");
  
