@@ -1,0 +1,626 @@
+Bottom: 3e4100afd9d5f0ea26f7f3d685f7185be00942ce
+Top:    a65980063ca9a833497701364ad5097a8bf4cf2d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-10-13 16:42:07 +0100
+
+Refresh of play-with-glsl-shader-for-rend
+
+---
+
+diff --git a/src/cairo/cairo-bentley-ottmann.c b/src/cairo/cairo-bentley-ottmann.c
+index fe07598..9c9d43e 100644
+--- a/src/cairo/cairo-bentley-ottmann.c
++++ b/src/cairo/cairo-bentley-ottmann.c
+@@ -126,7 +126,7 @@ typedef struct _cairo_bo_sweep_line {
+ } cairo_bo_sweep_line_t;
+ 
+ 
+-static cairo_fixed_t
++/*static*/ cairo_fixed_t
+ _line_compute_intersection_x_for_y (const cairo_line_t *line,
+                                     cairo_fixed_t y)
+ {
+@@ -1489,7 +1489,6 @@ bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps)
+   return CAIRO_STATUS_SUCCESS;
+ }
+ 
+-
+ cairo_status_t
+ bo_contour_to_traps (PLINE *contour, cairo_traps_t *traps)
+ {
+@@ -1579,3 +1578,57 @@ bo_contour_to_traps (PLINE *contour, cairo_traps_t *traps)
+ 
+   return CAIRO_STATUS_SUCCESS;
+ }
++
++
++cairo_status_t
++bo_contour_to_traps_no_draw (PLINE *contour, cairo_traps_t *traps)
++{
++  int intersections;
++  cairo_status_t status;
++  cairo_bo_start_event_t stack_events[CAIRO_STACK_ARRAY_LENGTH (cairo_bo_start_event_t)];
++  cairo_bo_start_event_t *events;
++  cairo_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
++  cairo_bo_event_t **event_ptrs;
++  int num_events = 0;
++  int i;
++
++  num_events = contour->Count;
++
++  if (unlikely (0 == num_events))
++      return CAIRO_STATUS_SUCCESS;
++
++  events = stack_events;
++  event_ptrs = stack_event_ptrs;
++  if (num_events > ARRAY_LENGTH (stack_events)) {
++      events = _cairo_malloc_ab_plus_c (num_events,
++                                        sizeof (cairo_bo_start_event_t) +
++                                        sizeof (cairo_bo_event_t *),
++                                        sizeof (cairo_bo_event_t *));
++      if (unlikely (events == NULL))
++          return CAIRO_STATUS_NO_MEMORY;
++
++      event_ptrs = (cairo_bo_event_t **) (events + num_events);
++  }
++
++  i = 0;
++
++  contour_to_start_events (contour, events, event_ptrs, &i, 1);
++
++  /* XXX: This would be the convenient place to throw in multiple
++   * passes of the Bentley-Ottmann algorithm. It would merely
++   * require storing the results of each pass into a temporary
++   * cairo_traps_t. */
++  status = _cairo_bentley_ottmann_tessellate_bo_edges (event_ptrs,
++                                                       num_events,
++                                                       traps,
++                                                       &intersections);
++
++#if DEBUG_TRAPS
++  dump_traps (traps, "bo-polygon-out.txt");
++#endif
++
++  if (events != stack_events)
++      free (events);
++
++  return CAIRO_STATUS_SUCCESS;
++}
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index d7eab24..dacc45e 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -75,17 +75,30 @@ hidgl_new_triangle_array (void)
+ }
+ #endif
+ 
++#define NUM_BUF_GLFLOATS (3 * (3 + 2) * TRIANGLE_ARRAY_SIZE)
++#define USE_TWO_VBO
++//#undef USE_TWO_VBO
++
+ void
+ hidgl_init_triangle_array (triangle_buffer *buffer)
+ {
+   CHECK_IS_IN_CONTEXT ();
+-  glEnableClientState (GL_VERTEX_ARRAY);
+-  glVertexPointer (3, GL_FLOAT, 5 * sizeof (GLfloat),
+-                   buffer->triangle_array);
+ 
+-  glEnableClientState (GL_TEXTURE_COORD_ARRAY);
+-  glTexCoordPointer (2, GL_FLOAT, 5 * sizeof (GLfloat),
+-                     buffer->triangle_array + 3);
++  glGenBuffers (1, &buffer->primary_vbo_id);
++  glBindBuffer (GL_ARRAY_BUFFER, buffer->primary_vbo_id);
++  glBufferData (GL_ARRAY_BUFFER, NUM_BUF_GLFLOATS * sizeof (GLfloat), NULL, GL_STREAM_DRAW);
++
++#ifdef USE_TWO_VBO
++  glGenBuffers (1, &buffer->secondary_vbo_id);
++  glBindBuffer (GL_ARRAY_BUFFER, buffer->secondary_vbo_id);
++  glBufferData (GL_ARRAY_BUFFER, NUM_BUF_GLFLOATS * sizeof (GLfloat), NULL, GL_STREAM_DRAW);
++#endif
++
++  buffer->use_primary = true;
++
++  glBindBuffer (GL_ARRAY_BUFFER, buffer->use_primary ? buffer->primary_vbo_id :
++                                                       buffer->secondary_vbo_id);
++  buffer->triangle_array = glMapBuffer (GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+ 
+   buffer->triangle_count = 0;
+   buffer->coord_comp_count = 0;
+@@ -93,13 +106,52 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
+ }
+ 
+ void
++hidgl_finish_triangle_array (triangle_buffer *buffer)
++{
++  glUnmapBuffer (GL_ARRAY_BUFFER);
++  glBindBuffer (GL_ARRAY_BUFFER, 0);
++
++  glDeleteBuffers (1, &buffer->primary_vbo_id);
++  buffer->primary_vbo_id = 0;
++
++#ifdef USE_TWO_VBO
++  glDeleteBuffers (1, &buffer->secondary_vbo_id);
++  buffer->secondary_vbo_id = 0;
++#endif
++}
++
++#define BUF_OFFSET(x) (&((GLfloat *)NULL)[x])
++
++void
+ hidgl_flush_triangles (triangle_buffer *buffer)
+ {
+   CHECK_IS_IN_CONTEXT ();
+   if (buffer->vertex_count == 0)
+     return;
+ 
++  glUnmapBuffer (GL_ARRAY_BUFFER);
++  buffer->triangle_array = NULL;
++
++  glEnableClientState (GL_VERTEX_ARRAY);
++  glVertexPointer (3, GL_FLOAT, 5 * sizeof (GLfloat),
++                   BUF_OFFSET (0) /*buffer->triangle_array*/);
++
++  glEnableClientState (GL_TEXTURE_COORD_ARRAY);
++  glTexCoordPointer (2, GL_FLOAT, 5 * sizeof (GLfloat),
++                     BUF_OFFSET (3) /*buffer->triangle_array + 3*/);
++
+   glDrawArrays (GL_TRIANGLE_STRIP, 0, buffer->vertex_count);
++
++  glDisableClientState (GL_VERTEX_ARRAY);
++  glDisableClientState (GL_TEXTURE_COORD_ARRAY);
++
++#ifdef USE_TWO_VBO
++  buffer->use_primary = !buffer->use_primary;
++#endif
++  glBindBuffer (GL_ARRAY_BUFFER, buffer->use_primary ? buffer->primary_vbo_id :
++                                                       buffer->secondary_vbo_id);
++  buffer->triangle_array = glMapBuffer (GL_ARRAY_BUFFER, GL_WRITE_ONLY);
++
+   buffer->triangle_count = 0;
+   buffer->vertex_count = 0;
+   buffer->coord_comp_count = 0;
+@@ -618,29 +670,197 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+   free (vertices);
+ }
+ 
++static void
++fill_contour (PLINE *contour)
++{
++  int i;
++  int vertex_comp;
++  cairo_traps_t traps;
++
++  /* If the contour is round, then call hidgl_fill_circle to draw it. */
++  if (contour->is_round) {
++    hidgl_fill_circle (contour->cx, contour->cy, contour->radius);
++    return;
++  }
++
++  /* If we don't have a cached set of tri-strips, compute them */
++  if (contour->tristrip_vertices == NULL) {
++    int tristrip_space;
++    int x1, x2, x3, x4, y_top, y_bot;
++
++    _cairo_traps_init (&traps);
++    bo_contour_to_traps_no_draw (contour, &traps);
++
++    tristrip_space = 0;
++
++    for (i = 0; i < traps.num_traps; i++) {
++
++      y_top = traps.traps[i].top;
++      y_bot = traps.traps[i].bottom;
++
++      x1 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_top);
++      x2 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_top);
++      x3 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_bot);
++      x4 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
++
++      if ((x1 == x2) || (x3 == x4)) {
++        tristrip_space += 5; /* Three vertices + repeated start and end */
++      } else {
++        tristrip_space += 6; /* Four vertices + repeated start and end */
++      }
++    }
++
++    if (tristrip_space == 0) {
++      printf ("Strange, contour didn't tesselate\n");
++      return;
++    }
++
++//    contour->tristrip_vertices = malloc (sizeof (float) * 2 * tristrip_space);
++    contour->tristrip_vertices = malloc (sizeof (float) * 5 * tristrip_space);
++    contour->tristrip_num_vertices = 0;
++
++    vertex_comp = 0;
++    for (i = 0; i < traps.num_traps; i++) {
++
++      y_top = traps.traps[i].top;
++      y_bot = traps.traps[i].bottom;
++
++      x1 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_top);
++      x2 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_top);
++      x3 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_bot);
++      x4 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
++
++      if (x1 == x2) {
++        /* NB: Repeated first virtex to separate from other tri-strip */
++        contour->tristrip_vertices[vertex_comp++] = x1;
++        contour->tristrip_vertices[vertex_comp++] = y_top;
++        contour->tristrip_vertices[vertex_comp++] = global_depth;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = x1;
++        contour->tristrip_vertices[vertex_comp++] = y_top;
++        contour->tristrip_vertices[vertex_comp++] = global_depth;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = x3;
++        contour->tristrip_vertices[vertex_comp++] = y_bot;
++        contour->tristrip_vertices[vertex_comp++] = global_depth;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = x4;
++        contour->tristrip_vertices[vertex_comp++] = y_bot;
++        contour->tristrip_vertices[vertex_comp++] = global_depth;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = x4;
++        contour->tristrip_vertices[vertex_comp++] = y_bot;
++        contour->tristrip_vertices[vertex_comp++] = global_depth;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        /* NB: Repeated last virtex to separate from other tri-strip */
++        contour->tristrip_num_vertices += 5;
++      } else if (x3 == x4) {
++        /* NB: Repeated first virtex to separate from other tri-strip */
++        contour->tristrip_vertices[vertex_comp++] = x1;
++        contour->tristrip_vertices[vertex_comp++] = y_top;
++        contour->tristrip_vertices[vertex_comp++] = global_depth;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = x1;
++        contour->tristrip_vertices[vertex_comp++] = y_top;
++        contour->tristrip_vertices[vertex_comp++] = global_depth;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = x2;
++        contour->tristrip_vertices[vertex_comp++] = y_top;
++        contour->tristrip_vertices[vertex_comp++] = global_depth;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = x3;
++        contour->tristrip_vertices[vertex_comp++] = y_bot;
++        contour->tristrip_vertices[vertex_comp++] = global_depth;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = x3;
++        contour->tristrip_vertices[vertex_comp++] = y_bot;
++        contour->tristrip_vertices[vertex_comp++] = global_depth;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        /* NB: Repeated last virtex to separate from other tri-strip */
++        contour->tristrip_num_vertices += 5;
++      } else {
++        /* NB: Repeated first virtex to separate from other tri-strip */
++        contour->tristrip_vertices[vertex_comp++] = x2;
++        contour->tristrip_vertices[vertex_comp++] = y_top;
++        contour->tristrip_vertices[vertex_comp++] = global_depth;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = x2;
++        contour->tristrip_vertices[vertex_comp++] = y_top;
++        contour->tristrip_vertices[vertex_comp++] = global_depth;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = x3;
++        contour->tristrip_vertices[vertex_comp++] = y_bot;
++        contour->tristrip_vertices[vertex_comp++] = global_depth;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = x1;
++        contour->tristrip_vertices[vertex_comp++] = y_top;
++        contour->tristrip_vertices[vertex_comp++] = global_depth;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = x4;
++        contour->tristrip_vertices[vertex_comp++] = y_bot;
++        contour->tristrip_vertices[vertex_comp++] = global_depth;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = x4;
++        contour->tristrip_vertices[vertex_comp++] = y_bot;
++        contour->tristrip_vertices[vertex_comp++] = global_depth;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        contour->tristrip_vertices[vertex_comp++] = 0.0;
++        /* NB: Repeated last virtex to separate from other tri-strip */
++        contour->tristrip_num_vertices += 6;
++      }
++    }
++
++    _cairo_traps_fini (&traps);
++  }
++
++  if (contour->tristrip_num_vertices == 0)
++    return;
++
++  hidgl_ensure_vertex_space (&buffer, contour->tristrip_num_vertices);
++  memcpy (&buffer.triangle_array[buffer.coord_comp_count],
++          contour->tristrip_vertices,
++          sizeof (float) * 5 * contour->tristrip_num_vertices);
++  buffer.coord_comp_count += 5 * contour->tristrip_num_vertices;
++  buffer.vertex_count += contour->tristrip_num_vertices;
++
++#if 0
++  vertex_comp = 0;
++  for (i = 0; i < contour->tristrip_num_vertices; i++) {
++    int x, y;
++    x = contour->tristrip_vertices[vertex_comp++];
++    y = contour->tristrip_vertices[vertex_comp++];
++    hidgl_add_vertex_tex (&buffer, x, y, 0.0, 0.0);
++  }
++#endif
++
++}
++
+ static int
+ do_hole (const BoxType *b, void *cl)
+ {
+   PLINE *curc = (PLINE *) b;
+-  cairo_traps_t traps;
+ 
+   /* Ignore the outer contour - we draw it first explicitly*/
+   if (curc->Flags.orient == PLF_DIR) {
+     return 0;
+   }
+ 
+-  /* If the contour is round, then call
+-   * hidgl_fill_circle to draw this contour.
+-   */
+-  if (curc->is_round) {
+-    hidgl_fill_circle (curc->cx, curc->cy, curc->radius);
+-    return 1;
+-  }
+-
+-  _cairo_traps_init (&traps);
+-  bo_contour_to_traps (curc, &traps);
+-  _cairo_traps_fini (&traps);
+-
++  fill_contour (curc);
+   return 1;
+ }
+ 
+@@ -653,7 +873,6 @@ void
+ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+ {
+   int stencil_bit;
+-  cairo_traps_t traps;
+ 
+   CHECK_IS_IN_CONTEXT ();
+ 
+@@ -701,9 +920,12 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+                                                               // any bits permitted by the stencil writemask
+ 
+   /* Draw the polygon outer */
++  fill_contour (poly->Clipped->contours);
++#if 0
+   _cairo_traps_init (&traps);
+   bo_contour_to_traps (poly->Clipped->contours, &traps);
+   _cairo_traps_fini (&traps);
++#endif
+   hidgl_flush_triangles (&buffer);
+ 
+   /* Unassign our stencil buffer bit */
+diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
+index b7a8d79..88a9120 100644
+--- a/src/hid/common/hidgl.h
++++ b/src/hid/common/hidgl.h
+@@ -24,13 +24,20 @@
+ #define __HIDGL_INCLUDED__
+ 
+ //#define TRIANGLE_ARRAY_SIZE 5461
+-#define TRIANGLE_ARRAY_SIZE 2740
++//#define TRIANGLE_ARRAY_SIZE 2740
++//#define TRIANGLE_ARRAY_SIZE 8738
++#define TRIANGLE_ARRAY_SIZE 30000
+ typedef struct {
+-  GLfloat triangle_array [3 * (3 + 2) * TRIANGLE_ARRAY_SIZE];
++//  GLfloat triangle_array [3 * (3 + 2) * TRIANGLE_ARRAY_SIZE];
++  GLfloat *triangle_array;
+   unsigned int triangle_count;
+   unsigned int coord_comp_count;
+   unsigned int vertex_count;
+   unsigned int total_triangles;
++  unsigned int total_vertices;
++  GLuint primary_vbo_id;
++  GLuint secondary_vbo_id;
++  bool use_primary;
+ } triangle_buffer;
+ 
+ extern triangle_buffer buffer;
+@@ -38,6 +45,7 @@ extern float global_depth;
+ 
+ void hidgl_in_context (bool is_in_context);
+ void hidgl_init_triangle_array (triangle_buffer *buffer);
++void hidgl_finish_triangle_array (triangle_buffer *buffer);
+ void hidgl_flush_triangles (triangle_buffer *buffer);
+ void hidgl_ensure_vertex_space (triangle_buffer *buffer, int count);
+ void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
+@@ -53,6 +61,7 @@ hidgl_add_vertex_3D_tex (triangle_buffer *buffer,
+   buffer->triangle_array [buffer->coord_comp_count++] = s;
+   buffer->triangle_array [buffer->coord_comp_count++] = t;
+   buffer->vertex_count++;
++  buffer->total_vertices++;
+ }
+ 
+ inline void
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 4fc1048..cf60d71 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -32,6 +32,8 @@
+ #include <dmalloc.h>
+ #endif
+ 
++#undef ONE_SHOT
++#define ONE_SHOT
+ 
+ RCSID ("$Id$");
+ 
+@@ -980,8 +982,9 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+   /* setup GL-context */
+   priv->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
+                                               GDK_GL_MODE_STENCIL |
++                                              GDK_GL_MODE_DEPTH  );// |
+                                            // GDK_GL_MODE_DEPTH   |
+-                                              GDK_GL_MODE_DOUBLE);
++//                                              GDK_GL_MODE_DOUBLE);
+   if (!priv->glconfig)
+     {
+       printf ("Could not setup GL-context!\n");
+@@ -1088,7 +1091,7 @@ EMark_callback (const BoxType * b, void *cl)
+ {
+   ElementTypePtr element = (ElementTypePtr) b;
+ 
+-  DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
++//  DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
+   return 1;
+ }
+ 
+@@ -1787,8 +1790,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+                              GdkEventExpose *ev,
+                              GHidPort *port)
+ {
++#ifdef ONE_SHOT
+   static int one_shot = 1;
+   static int display_list;
++#endif
+   BoxType region;
+   int eleft, eright, etop, ebottom;
+   int min_x, min_y;
+@@ -1801,6 +1806,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   GLint waveTimeLoc = glGetUniformLocation (sp, "waveTime");
+ 
+   buffer.total_triangles = 0;
++  buffer.total_vertices = 0;
+ 
+   ghid_start_drawing (port);
+ 
+@@ -1843,7 +1849,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
+   glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
+ 
+-#if 0
++#ifdef ONE_SHOT
+   if (one_shot) {
+ 
+     display_list = glGenLists(1);
+@@ -1956,7 +1962,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ 
+ #endif
+   if (global_view_2d) {
+-    int count = 0;
++//    int count = 0;
+     glBegin (GL_QUADS);
+ //    for (count = 0; count < 30; count++) {
+       glVertex3i (0,             0,              0);
+@@ -2004,7 +2010,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   ghid_draw_grid (&region);
+ 
+ #if 1
+-  hidgl_init_triangle_array (&buffer);
++//  hidgl_init_triangle_array (&buffer);
+   ghid_invalidate_current_gc ();
+   glPushMatrix ();
+   glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
+@@ -2019,7 +2025,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   glPopMatrix ();
+ #endif
+ 
+-#if 0
++#ifdef ONE_SHOT
+     glEndList ();
+     one_shot = 0;
+   }
+@@ -2030,12 +2036,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   ghid_show_crosshair (TRUE);
+ 
+   hidgl_flush_triangles (&buffer);
++  hidgl_finish_triangle_array (&buffer);
+ 
+   check_gl_drawing_ok_hack = false;
+   hidgl_in_context (false);
+   ghid_end_drawing (port);
+ 
+ //  printf ("Triangle count was %i\n", buffer.total_triangles);
++//  printf ("Vertex count was %i\n", buffer.total_vertices);
+ 
+   return FALSE;
+ }
+@@ -2192,6 +2200,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+ 
+   glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
+                                         GDK_GL_MODE_STENCIL |
++                                        GDK_GL_MODE_DEPTH   |
+ //                                        GDK_GL_MODE_DEPTH   |
+                                         GDK_GL_MODE_SINGLE);
+ 
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index e5418af..98a49d0 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -1604,7 +1604,7 @@ Benchmark (int argc, char **argv, int x, int y)
+     {
+       gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
+       gdk_window_process_updates (gport->drawing_area->window, FALSE);
+-      gdk_display_sync (display);
++//      gdk_display_sync (display);
+       time (&end);
+       i++;
+     }
+diff --git a/src/polyarea.h b/src/polyarea.h
+index ce427ad..62a1125 100644
+--- a/src/polyarea.h
++++ b/src/polyarea.h
+@@ -107,6 +107,8 @@ struct PLINE
+       unsigned int status:3;
+       unsigned int orient:1;
+     } Flags;
++    int tristrip_num_vertices;
++    float *tristrip_vertices;
+ };
+ 
+ PLINE *poly_NewContour(Vector v);
+diff --git a/src/polygon1.c b/src/polygon1.c
+index e7642c9..466d739 100644
+--- a/src/polygon1.c
++++ b/src/polygon1.c
+@@ -2583,6 +2583,9 @@ poly_ClrContour (PLINE * c)
+       poly_ExclVertex (cur);
+       free (cur);
+     }
++  free (c->tristrip_vertices);
++  c->tristrip_vertices = NULL;
++  c->tristrip_num_vertices = 0;
+   poly_IniContour (c);
+ }
+ 
+@@ -2614,6 +2617,7 @@ poly_DelContour (PLINE ** c)
+       rtree_t *r = (*c)->tree;
+       r_destroy_tree (&r);
+     }
++  free ((*c)->tristrip_vertices);
+   free (*c), *c = NULL;
+ }
+ 
+diff --git a/src/sweep.h b/src/sweep.h
+index 257664f..92fdd71 100644
+--- a/src/sweep.h
++++ b/src/sweep.h
+@@ -2,3 +2,5 @@
+ 
+ cairo_status_t bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps);
+ cairo_status_t bo_contour_to_traps (PLINE *contour, cairo_traps_t *traps);
++cairo_status_t bo_contour_to_traps_no_draw (PLINE *contour, cairo_traps_t *traps);
++cairo_fixed_t _line_compute_intersection_x_for_y (const cairo_line_t *line, cairo_fixed_t y);
