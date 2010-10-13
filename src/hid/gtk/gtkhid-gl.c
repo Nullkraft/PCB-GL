@@ -33,7 +33,7 @@
 #endif
 
 #undef ONE_SHOT
-#define ONE_SHOT
+//#define ONE_SHOT
 
 RCSID ("$Id$");
 
