@@ -1,0 +1,21 @@
+Bottom: a65980063ca9a833497701364ad5097a8bf4cf2d
+Top:    7da2b7ee5b4ad21ebd267a6cfaa60f6ae58e643c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-10-13 16:43:36 +0100
+
+Refresh of play-with-glsl-shader-for-rend
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index cf60d71..459d561 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -33,7 +33,7 @@
+ #endif
+ 
+ #undef ONE_SHOT
+-#define ONE_SHOT
++//#define ONE_SHOT
+ 
+ RCSID ("$Id$");
