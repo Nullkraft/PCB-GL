@@ -982,9 +982,9 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
   /* setup GL-context */
   priv->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
                                               GDK_GL_MODE_STENCIL |
-                                              GDK_GL_MODE_DEPTH  );// |
+                                              GDK_GL_MODE_DEPTH   |
                                            // GDK_GL_MODE_DEPTH   |
-//                                              GDK_GL_MODE_DOUBLE);
+                                              GDK_GL_MODE_DOUBLE);
   if (!priv->glconfig)
     {
       printf ("Could not setup GL-context!\n");

@@ -831,19 +831,20 @@ fill_contour (PLINE *contour)
   if (contour->tristrip_num_vertices == 0)
     return;
 
+#if 0
   hidgl_ensure_vertex_space (&buffer, contour->tristrip_num_vertices);
   memcpy (&buffer.triangle_array[buffer.coord_comp_count],
           contour->tristrip_vertices,
           sizeof (float) * 5 * contour->tristrip_num_vertices);
   buffer.coord_comp_count += 5 * contour->tristrip_num_vertices;
   buffer.vertex_count += contour->tristrip_num_vertices;
-
-#if 0
+#else
   vertex_comp = 0;
   for (i = 0; i < contour->tristrip_num_vertices; i++) {
     int x, y;
     x = contour->tristrip_vertices[vertex_comp++];
     y = contour->tristrip_vertices[vertex_comp++];
+    vertex_comp += 3;
     hidgl_add_vertex_tex (&buffer, x, y, 0.0, 0.0);
   }
 #endif
