@@ -831,8 +831,8 @@ fill_contour (PLINE *contour)
   if (contour->tristrip_num_vertices == 0)
     return;
 
-#if 0
   hidgl_ensure_vertex_space (&buffer, contour->tristrip_num_vertices);
+#if 0
   memcpy (&buffer.triangle_array[buffer.coord_comp_count],
           contour->tristrip_vertices,
           sizeof (float) * 5 * contour->tristrip_num_vertices);
@@ -1020,7 +1020,14 @@ void
 hidgl_load_frag_shader (void)
 {
 //  char *vs_source;
-  char *fs_source;
+  char *fs_source = "void main()\n"
+                    "{\n"
+                    "  float sqdist;\n"
+                    "  sqdist = dot (gl_TexCoord[0].st, gl_TexCoord[0].st);\n"
+                    "  if (sqdist > 1.0)\n"
+                    "    discard;\n"
+                    "  gl_FragColor = gl_Color;\n"
+                    "}\n";
 
   /* Compile and load the program */
 
@@ -1036,14 +1043,14 @@ hidgl_load_frag_shader (void)
   free (vs_source);
 #endif
 
-  fs_source = file2string ("circular.frag");
+//  fs_source = file2string ("circular.frag");
   if (fs_source == NULL)
     return;
   fs = glCreateShader (GL_FRAGMENT_SHADER);
   glShaderSource (fs, 1, &fs_source, NULL);
   glCompileShader (fs);
   printLog (fs);
-  free (fs_source);
+//  free (fs_source);
 
   sp = glCreateProgram ();
 //  glAttachShader (sp, vs);
