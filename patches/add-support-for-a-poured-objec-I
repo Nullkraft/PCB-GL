@@ -1,7 +1,7 @@
-Bottom: b309e53c7f60805e5fd48a1db7846c82a444f5ab
-Top:    9851fa57a3e6fee5ae07a0fedec30d25fa3145fb
+Bottom: 3ec56fcf8e36fa27b96f8fd1e8505fae93ce7e30
+Top:    17022e09e5e645a16bd8ed8c5c634321808c1e55
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-09-12 01:25:48 +0100
+Date:   2010-10-24 19:02:58 +0100
 
 Add support for a "poured" object.
 
@@ -48,7 +48,7 @@ index 3f3c291..8a66eff 100644
  	print.c \
  	print.h \
 diff --git a/src/action.c b/src/action.c
-index c568f4e..4336658 100644
+index ba0cf3f..ba78f63 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -57,6 +57,7 @@
@@ -2434,7 +2434,7 @@ index 077c575..5b4d73a 100644
  void EraseElementPinsAndPads (ElementTypePtr);
  void EraseElementName (ElementTypePtr);
 diff --git a/src/file.c b/src/file.c
-index 97412b2..c5c594f 100644
+index 6893379..68bcc67 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -89,7 +89,6 @@
@@ -2445,7 +2445,7 @@ index 97412b2..c5c594f 100644
  #include "rats.h"
  #include "remove.h"
  #include "set.h"
-@@ -786,7 +785,7 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
+@@ -790,7 +789,7 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
  {
    int n;
    /* write information about non empty layers */
@@ -2454,7 +2454,7 @@ index 97412b2..c5c594f 100644
        (layer->Name && *layer->Name))
      {
        fprintf (FP, "Layer(%i ", (int) Number + 1);
-@@ -821,18 +820,18 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
+@@ -825,18 +824,18 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
  	  PrintQuotedString (FP, EMPTY (text->TextString));
  	  fprintf (FP, " %s]\n", F2S (text, TEXT_TYPE));
  	}
@@ -3097,10 +3097,10 @@ index 4a323f5..96ca00f 100644
  
  			/*
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 666d893..fa61bfa 100644
+index f42e8fd..c2c76ed 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
-@@ -333,7 +333,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -340,7 +340,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
    for (i = 0; i < max_copper_layer; i++)
      {
        LayerType *layer = PCB->Data->Layer + i;
