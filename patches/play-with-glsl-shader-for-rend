@@ -1,5 +1,5 @@
 Bottom: a4b80c19d5401828470ec1dbf211eefa558433ec
-Top:    d89ff5f7873fbe1cf14d93ee24ce3e3fea286bb6
+Top:    24ccc8ebcc3bdcfa167e1d7e348f4003acb96e5d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-10-04 22:46:40 +0100
 
@@ -110,7 +110,7 @@ index fcc0e66..9c9d43e 100644
 +  return CAIRO_STATUS_SUCCESS;
 +}
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 238e61d..daee7bf 100644
+index 238e61d..b7274d3 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -75,43 +75,111 @@ hidgl_new_triangle_array (void)
@@ -626,8 +626,8 @@ index 238e61d..daee7bf 100644
 +  if (contour->tristrip_num_vertices == 0)
 +    return;
 +
-+#if 0
 +  hidgl_ensure_vertex_space (&buffer, contour->tristrip_num_vertices);
++#if 0
 +  memcpy (&buffer.triangle_array[buffer.coord_comp_count],
 +          contour->tristrip_vertices,
 +          sizeof (float) * 5 * contour->tristrip_num_vertices);
@@ -717,7 +717,7 @@ index 238e61d..daee7bf 100644
    hidgl_flush_triangles (&buffer);
  
    /* Unassign our stencil buffer bit */
-@@ -723,14 +939,143 @@ void
+@@ -723,14 +939,150 @@ void
  hidgl_fill_rect (int x1, int y1, int x2, int y2)
  {
    CHECK_IS_IN_CONTEXT ();
@@ -805,7 +805,14 @@ index 238e61d..daee7bf 100644
 +hidgl_load_frag_shader (void)
 +{
 +//  char *vs_source;
-+  char *fs_source;
++  char *fs_source = "void main()\n"
++                    "{\n"
++                    "  float sqdist;\n"
++                    "  sqdist = dot (gl_TexCoord[0].st, gl_TexCoord[0].st);\n"
++                    "  if (sqdist > 1.0)\n"
++                    "    discard;\n"
++                    "  gl_FragColor = gl_Color;\n"
++                    "}\n";
 +
 +  /* Compile and load the program */
 +
@@ -821,14 +828,14 @@ index 238e61d..daee7bf 100644
 +  free (vs_source);
 +#endif
 +
-+  fs_source = file2string ("circular.frag");
++//  fs_source = file2string ("circular.frag");
 +  if (fs_source == NULL)
 +    return;
 +  fs = glCreateShader (GL_FRAGMENT_SHADER);
 +  glShaderSource (fs, 1, &fs_source, NULL);
 +  glCompileShader (fs);
 +  printLog (fs);
-+  free (fs_source);
++//  free (fs_source);
 +
 +  sp = glCreateProgram ();
 +//  glAttachShader (sp, vs);
@@ -864,7 +871,7 @@ index 238e61d..daee7bf 100644
    CHECK_IS_IN_CONTEXT ();
    glGetIntegerv (GL_STENCIL_BITS, &stencil_bits);
  
-@@ -746,6 +1091,9 @@ hidgl_init (void)
+@@ -746,6 +1098,9 @@ hidgl_init (void)
                "Cannot use stencil buffer to sub-composite layers.\n");
        /* Do we need to disable that somewhere? */
      }
@@ -997,7 +1004,7 @@ index 1ed8eb3..88a9120 100644
  
  void hidgl_init (void);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 81c684f..f803fc3 100644
+index 81c684f..69d2ffa 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -32,6 +32,8 @@
@@ -1102,7 +1109,15 @@ index 81c684f..f803fc3 100644
    return 1;
  }
  
-@@ -1522,9 +1529,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
+@@ -1403,6 +1410,7 @@ DrawMask (BoxType * screen)
+   polygon.Clipped = board_outline_poly ();
+   polygon.NoHoles = NULL;
+   polygon.NoHolesValid = 0;
++  polygon.BoundingBox = *screen;
+   SET_FLAG (FULLPOLYFLAG, &polygon);
+   common_fill_pcb_polygon (out->fgGC, &polygon, screen);
+   poly_Free (&polygon.Clipped);
+@@ -1522,9 +1530,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
  #define MIN_FACES_PER_CYL 6
  #define MAX_FACES_PER_CYL 360
    float radius = vr;
@@ -1113,7 +1128,7 @@ index 81c684f..f803fc3 100644
    int i;
    int slices;
  
-@@ -1539,19 +1544,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
+@@ -1539,19 +1545,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
    z1 = compute_depth (from_layer);
    z2 = compute_depth (to_layer);
  
@@ -1150,7 +1165,7 @@ index 81c684f..f803fc3 100644
  }
  
  struct cyl_info {
-@@ -1777,8 +1790,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1777,8 +1791,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               GdkEventExpose *ev,
                               GHidPort *port)
  {
@@ -1161,7 +1176,7 @@ index 81c684f..f803fc3 100644
    BoxType region;
    int eleft, eright, etop, ebottom;
    int min_x, min_y;
-@@ -1786,6 +1801,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1786,6 +1802,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    int new_x, new_y;
    int min_depth;
    int max_depth;
@@ -1174,7 +1189,7 @@ index 81c684f..f803fc3 100644
  
    ghid_start_drawing (port);
  
-@@ -1793,6 +1814,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1793,6 +1815,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_init ();
    check_gl_drawing_ok_hack = true;
  
@@ -1184,7 +1199,7 @@ index 81c684f..f803fc3 100644
    /* If we don't have any stencil bits available,
       we can't use the hidgl polygon drawing routine */
    /* TODO: We could use the GLU tessellator though */
-@@ -1825,13 +1849,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1825,13 +1850,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
@@ -1200,7 +1215,7 @@ index 81c684f..f803fc3 100644
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->offlimits_color.red / 65535.,
                  port->offlimits_color.green / 65535.,
-@@ -1935,14 +1960,19 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1935,14 +1961,19 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                  ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                               -port->view_y0, 0);
  
@@ -1224,7 +1239,7 @@ index 81c684f..f803fc3 100644
      int solder_group;
      int component_group;
      int min_phys_group;
-@@ -1964,6 +1994,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1964,6 +1995,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
        glVertex3i (0,             PCB->MaxHeight, depth);
      }
      glEnd ();
@@ -1232,7 +1247,7 @@ index 81c684f..f803fc3 100644
    }
  
    // hid_expose_callback (&ghid_hid, &region, 0);
-@@ -1978,7 +2009,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1978,7 +2010,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_draw_grid (&region);
  
@@ -1242,7 +1257,7 @@ index 81c684f..f803fc3 100644
    ghid_invalidate_current_gc ();
    glPushMatrix ();
    glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
-@@ -1991,24 +2023,28 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1991,24 +2024,28 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    DrawMark (TRUE);
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
@@ -1275,7 +1290,7 @@ index 81c684f..f803fc3 100644
    return FALSE;
  }
  
-@@ -2164,6 +2200,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2164,6 +2201,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                          GDK_GL_MODE_STENCIL |
