@@ -47,6 +47,8 @@ RCSID ("$Id: $");
 
 triangle_buffer buffer;
 float global_depth = 0;
+hidgl_shader *circular_program = NULL;
+hidgl_shader *resistor_program = NULL;
 
 static bool in_context = false;
 
@@ -75,41 +77,148 @@ hidgl_new_triangle_array (void)
 }
 #endif
 
+#define BUFFER_STRIDE (5 * sizeof (GLfloat))
+#define BUFFER_SIZE (BUFFER_STRIDE * 3 * TRIANGLE_ARRAY_SIZE)
+
+/* NB: If using VBOs, the caller must ensure the VBO is bound to the GL_ARRAY_BUFFER */
+static void
+hidgl_reset_triangle_array (triangle_buffer *buffer)
+{
+  if (buffer->use_map) {
+    /* Hint to the driver that we're done with the previous buffer contents */
+    glBufferData (GL_ARRAY_BUFFER, BUFFER_SIZE, NULL, GL_STREAM_DRAW);
+    /* Map the new memory to upload vertices into. */
+    buffer->triangle_array = glMapBuffer (GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+  }
+
+  /* If mapping the VBO fails (or if we aren't using VBOs) fall back to
+   * local storage.
+   */
+  if (buffer->triangle_array == NULL) {
+    buffer->triangle_array = malloc (BUFFER_SIZE);
+    buffer->use_map = false;
+  }
+
+  /* Don't want this bound for now */
+  glBindBuffer (GL_ARRAY_BUFFER, 0);
+
+  buffer->triangle_count = 0;
+  buffer->coord_comp_count = 0;
+  buffer->vertex_count = 0;
+}
+
 void
 hidgl_init_triangle_array (triangle_buffer *buffer)
 {
   CHECK_IS_IN_CONTEXT ();
-  glEnableClientState (GL_VERTEX_ARRAY);
-  glVertexPointer (3, GL_FLOAT, 0, buffer->triangle_array);
-  buffer->triangle_count = 0;
-  buffer->coord_comp_count = 0;
+
+  buffer->use_vbo = true;
+  // buffer->use_vbo = false;
+
+  if (buffer->use_vbo) {
+    glGenBuffers (1, &buffer->vbo_id);
+    glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
+  }
+
+  if (buffer->vbo_id == 0)
+    buffer->use_vbo = false;
+
+  buffer->use_map = buffer->use_vbo;
+
+  /* NB: Mapping the whole buffer can be expensive since we ask the driver
+   *     to discard previous data and give us a "new" buffer to write into
+   *     each time. If it is still rendering from previous buffer, we end
+   *     up causing a lot of unnecessary allocation in the driver this way.
+   *
+   *     On intel drivers at least, glBufferSubData does not block. It uploads
+   *     into a temporary buffer and queues a GPU copy of the uploaded data
+   *     for when the "main" buffer has finished rendering.
+   */
+  buffer->use_map = false;
+
+  /* If using VBOs (but not mapping), we only need to this once */
+  if (buffer->use_vbo && !buffer->use_map)
+    glBufferData (GL_ARRAY_BUFFER, BUFFER_SIZE, NULL, GL_STREAM_DRAW);
+
+  buffer->triangle_array = NULL;
+  hidgl_reset_triangle_array (buffer);
+}
+
+void
+hidgl_finish_triangle_array (triangle_buffer *buffer)
+{
+  if (buffer->use_map) {
+    glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
+    glUnmapBuffer (GL_ARRAY_BUFFER);
+    glBindBuffer (GL_ARRAY_BUFFER, 0);
+  } else {
+    free (buffer->triangle_array);
+  }
+
+  if (buffer->use_vbo) {
+    glDeleteBuffers (1, &buffer->vbo_id);
+    buffer->vbo_id = 0;
+  }
 }
 
 void
 hidgl_flush_triangles (triangle_buffer *buffer)
 {
+  GLfloat *data_pointer = NULL;
+
   CHECK_IS_IN_CONTEXT ();
-  if (buffer->triangle_count == 0)
+  if (buffer->vertex_count == 0)
     return;
 
-  glDrawArrays (GL_TRIANGLES, 0, buffer->triangle_count * 3);
-  buffer->triangle_count = 0;
-  buffer->coord_comp_count = 0;
+  if (buffer->use_vbo) {
+    glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
+
+    if (buffer->use_map) {
+      glUnmapBuffer (GL_ARRAY_BUFFER);
+      buffer->triangle_array = NULL;
+    } else {
+      /* NB: We only upload the portion of the buffer we've used */
+      glBufferSubData (GL_ARRAY_BUFFER, 0,
+                       BUFFER_STRIDE * buffer->vertex_count,
+                       buffer->triangle_array);
+    }
+  } else {
+    data_pointer = buffer->triangle_array;
+  }
+
+  glTexCoordPointer (2, GL_FLOAT, BUFFER_STRIDE, data_pointer + 3);
+  glVertexPointer   (3, GL_FLOAT, BUFFER_STRIDE, data_pointer + 0);
+
+  glEnableClientState (GL_TEXTURE_COORD_ARRAY);
+  glEnableClientState (GL_VERTEX_ARRAY);
+  glDrawArrays (GL_TRIANGLE_STRIP, 0, buffer->vertex_count);
+  glDisableClientState (GL_VERTEX_ARRAY);
+  glDisableClientState (GL_TEXTURE_COORD_ARRAY);
+
+  hidgl_reset_triangle_array (buffer);
+}
+
+void
+hidgl_ensure_vertex_space (triangle_buffer *buffer, int count)
+{
+  CHECK_IS_IN_CONTEXT ();
+  if (count > 3 * TRIANGLE_ARRAY_SIZE)
+    {
+      fprintf (stderr, "Not enough space in vertex buffer\n");
+      fprintf (stderr, "Requested %i vertices, %i available\n",
+                       count, 3 * TRIANGLE_ARRAY_SIZE);
+      exit (1);
+    }
+  if (count > 3 * TRIANGLE_ARRAY_SIZE - buffer->vertex_count)
+    hidgl_flush_triangles (buffer);
 }
 
 void
 hidgl_ensure_triangle_space (triangle_buffer *buffer, int count)
 {
   CHECK_IS_IN_CONTEXT ();
-  if (count > TRIANGLE_ARRAY_SIZE)
-    {
-      fprintf (stderr, "Not enough space in vertex buffer\n");
-      fprintf (stderr, "Requested %i triangles, %i available\n",
-                       count, TRIANGLE_ARRAY_SIZE);
-      exit (1);
-    }
-  if (count > TRIANGLE_ARRAY_SIZE - buffer->triangle_count)
-    hidgl_flush_triangles (buffer);
+  /* NB: 5 = 3 + 2 extra vertices to separate from other triangle strips */
+  hidgl_ensure_vertex_space (buffer, count * 5);
 }
 
 //static int cur_mask = -1;
@@ -215,42 +324,34 @@ int calc_slices (float pix_radius, float sweep_angle)
   return (int)ceilf (slices);
 }
 
-#define MIN_TRIANGLES_PER_CAP 3
-#define MAX_TRIANGLES_PER_CAP 90
-static void draw_cap (double width, int x, int y, double angle, double scale)
+static void draw_cap (double width, int x, int y, double angle)
 {
-  float last_capx, last_capy;
-  float capx, capy;
   float radius = width / 2.;
-  int slices = calc_slices (radius / scale, M_PI);
-  int i;
 
   CHECK_IS_IN_CONTEXT ();
-  if (slices < MIN_TRIANGLES_PER_CAP)
-    slices = MIN_TRIANGLES_PER_CAP;
 
-  if (slices > MAX_TRIANGLES_PER_CAP)
-    slices = MAX_TRIANGLES_PER_CAP;
+  hidgl_ensure_vertex_space (&buffer, 6);
 
-  hidgl_ensure_triangle_space (&buffer, slices);
-
-  last_capx =  radius * cosf (angle * M_PI / 180.) + x;
-  last_capy = -radius * sinf (angle * M_PI / 180.) + y;
-  for (i = 0; i < slices; i++) {
-    capx =  radius * cosf (angle * M_PI / 180. + ((float)(i + 1)) * M_PI / (float)slices) + x;
-    capy = -radius * sinf (angle * M_PI / 180. + ((float)(i + 1)) * M_PI / (float)slices) + y;
-    hidgl_add_triangle (&buffer, last_capx, last_capy, capx, capy, x, y);
-    last_capx = capx;
-    last_capy = capy;
-  }
+  /* FIXME: Should draw an offset rectangle at the appropriate angle,
+   *        avoiding relying on the subcompositing between layers to
+   *        stop us creatign an artaefact by drawing a full circle.
+   */
+  /* NB: Repeated first virtex to separate from other tri-strip */
+  hidgl_add_vertex_tex (&buffer, x - radius, y - radius, -1.0, -1.0);
+  hidgl_add_vertex_tex (&buffer, x - radius, y - radius, -1.0, -1.0);
+  hidgl_add_vertex_tex (&buffer, x - radius, y + radius, -1.0,  1.0);
+  hidgl_add_vertex_tex (&buffer, x + radius, y - radius,  1.0, -1.0);
+  hidgl_add_vertex_tex (&buffer, x + radius, y + radius,  1.0,  1.0);
+  hidgl_add_vertex_tex (&buffer, x + radius, y + radius,  1.0,  1.0);
+  /* NB: Repeated last virtex to separate from other tri-strip */
 }
 
 void
 hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double scale)
 {
-  double angle;
   float deltax, deltay, length;
   float wdx, wdy;
+  float cosine, sine;
   int circular_caps = 0;
   int hairline = 0;
 
@@ -263,29 +364,19 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
 
   deltax = x2 - x1;
   deltay = y2 - y1;
-
   length = sqrt (deltax * deltax + deltay * deltay);
 
   if (length == 0) {
     /* Assume the orientation of the line is horizontal */
-    angle = 0;
-    wdx = -width / 2.;
-    wdy = 0;
-    length = 1.;
-    deltax = 1.;
-    deltay = 0.;
+    cosine = 1.0;
+    sine   = 0.0;
   } else {
-    wdy = deltax * width / 2. / length;
-    wdx = -deltay * width / 2. / length;
-
-    if (deltay == 0.)
-      angle = (deltax < 0) ? 270. : 90.;
-    else
-      angle = 180. / M_PI * atanl (deltax / deltay);
-
-    if (deltay < 0)
-      angle += 180.;
+    cosine = deltax / length;
+    sine   = deltay / length;
   }
+
+  wdy =  width / 2. * cosine;
+  wdx = -width / 2. * sine;
 
   switch (cap) {
     case Trace_Cap:
@@ -295,26 +386,50 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
 
     case Square_Cap:
     case Beveled_Cap:
-      x1 -= deltax * width / 2. / length;
-      y1 -= deltay * width / 2. / length;
-      x2 += deltax * width / 2. / length;
-      y2 += deltay * width / 2. / length;
+      /* Use wdx and wdy (which already have the correct numbers), just in
+       * case the compiler doesn't spot it can avoid recomputing these. */
+      x1 -= wdy; /* x1 -= width / 2. * cosine;   */
+      y1 += wdx; /* y1 -= width / 2. * sine;     */
+      x2 += wdy; /* x2 += width / 2. * cosine;   */
+      y2 -= wdx; /* y2 += width / 2. / sine;     */
       break;
   }
-
-  hidgl_ensure_triangle_space (&buffer, 2);
-  hidgl_add_triangle (&buffer, x1 - wdx, y1 - wdy,
-                               x2 - wdx, y2 - wdy,
-                               x2 + wdx, y2 + wdy);
-  hidgl_add_triangle (&buffer, x1 - wdx, y1 - wdy,
-                               x2 + wdx, y2 + wdy,
-                               x1 + wdx, y1 + wdy);
 
   /* Don't bother capping hairlines */
   if (circular_caps && !hairline)
     {
-      draw_cap (width, x1, y1, angle, scale);
-      draw_cap (width, x2, y2, angle + 180., scale);
+      float capx = deltax * width / 2. / length;
+      float capy = deltay * width / 2. / length;
+
+      hidgl_ensure_vertex_space (&buffer, 10);
+
+      /* NB: Repeated first virtex to separate from other tri-strip */
+      hidgl_add_vertex_tex (&buffer, x1 - wdx - capx, y1 - wdy - capy, -1.0, -1.0);
+      hidgl_add_vertex_tex (&buffer, x1 - wdx - capx, y1 - wdy - capy, -1.0, -1.0);
+      hidgl_add_vertex_tex (&buffer, x1 + wdx - capx, y1 + wdy - capy, -1.0,  1.0);
+      hidgl_add_vertex_tex (&buffer, x1 - wdx,        y1 - wdy,         0.0, -1.0);
+      hidgl_add_vertex_tex (&buffer, x1 + wdx,        y1 + wdy,         0.0,  1.0);
+
+      hidgl_add_vertex_tex (&buffer, x2 - wdx,        y2 - wdy,         0.0, -1.0);
+      hidgl_add_vertex_tex (&buffer, x2 + wdx,        y2 + wdy,         0.0,  1.0);
+      hidgl_add_vertex_tex (&buffer, x2 - wdx + capx, y2 - wdy + capy,  1.0, -1.0);
+      hidgl_add_vertex_tex (&buffer, x2 + wdx + capx, y2 + wdy + capy,  1.0,  1.0);
+      hidgl_add_vertex_tex (&buffer, x2 + wdx + capx, y2 + wdy + capy,  1.0,  1.0);
+      /* NB: Repeated last virtex to separate from other tri-strip */
+    }
+  else
+    {
+      hidgl_ensure_vertex_space (&buffer, 6);
+
+      /* NB: Repeated first virtex to separate from other tri-strip */
+      hidgl_add_vertex_tex (&buffer, x1 - wdx, y1 - wdy, 0.0, -1.0);
+      hidgl_add_vertex_tex (&buffer, x1 - wdx, y1 - wdy, 0.0, -1.0);
+      hidgl_add_vertex_tex (&buffer, x1 + wdx, y1 + wdy, 0.0,  1.0);
+
+      hidgl_add_vertex_tex (&buffer, x2 - wdx, y2 - wdy, 0.0, -1.0);
+      hidgl_add_vertex_tex (&buffer, x2 + wdx, y2 + wdy, 0.0,  1.0);
+      hidgl_add_vertex_tex (&buffer, x2 + wdx, y2 + wdy, 0.0,  1.0);
+      /* NB: Repeated last virtex to separate from other tri-strip */
     }
 }
 
@@ -393,15 +508,16 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
 
   draw_cap (width, x + rx * -cosf (start_angle_rad),
                    y + rx *  sinf (start_angle_rad),
-                   start_angle, scale);
+                   start_angle);
   draw_cap (width, x + rx * -cosf (start_angle_rad + delta_angle_rad),
                    y + rx *  sinf (start_angle_rad + delta_angle_rad),
-                   start_angle + delta_angle + 180., scale);
+                   start_angle + delta_angle + 180.);
 }
 
 void
 hidgl_draw_rect (int x1, int y1, int x2, int y2)
 {
+  return;
   CHECK_IS_IN_CONTEXT ();
   glBegin (GL_LINE_LOOP);
   glVertex3f (x1, y1, global_depth);
@@ -413,37 +529,20 @@ hidgl_draw_rect (int x1, int y1, int x2, int y2)
 
 
 void
-hidgl_fill_circle (int vx, int vy, int vr, double scale)
+hidgl_fill_circle (int x, int y, int radius)
 {
-#define MIN_TRIANGLES_PER_CIRCLE 6
-#define MAX_TRIANGLES_PER_CIRCLE 360
-  float last_x, last_y;
-  float radius = vr;
-  int slices;
-  int i;
-
   CHECK_IS_IN_CONTEXT ();
-  slices = calc_slices (vr / scale, 2 * M_PI);
 
-  if (slices < MIN_TRIANGLES_PER_CIRCLE)
-    slices = MIN_TRIANGLES_PER_CIRCLE;
+  hidgl_ensure_vertex_space (&buffer, 6);
 
-  if (slices > MAX_TRIANGLES_PER_CIRCLE)
-    slices = MAX_TRIANGLES_PER_CIRCLE;
-
-  hidgl_ensure_triangle_space (&buffer, slices);
-
-  last_x = vx + vr;
-  last_y = vy;
-
-  for (i = 0; i < slices; i++) {
-    float x, y;
-    x = radius * cosf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
-    y = radius * sinf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
-    hidgl_add_triangle (&buffer, vx, vy, last_x, last_y, x, y);
-    last_x = x;
-    last_y = y;
-  }
+  /* NB: Repeated first virtex to separate from other tri-strip */
+  hidgl_add_vertex_tex (&buffer, x - radius, y - radius, -1.0, -1.0);
+  hidgl_add_vertex_tex (&buffer, x - radius, y - radius, -1.0, -1.0);
+  hidgl_add_vertex_tex (&buffer, x - radius, y + radius, -1.0,  1.0);
+  hidgl_add_vertex_tex (&buffer, x + radius, y - radius,  1.0, -1.0);
+  hidgl_add_vertex_tex (&buffer, x + radius, y + radius,  1.0,  1.0);
+  hidgl_add_vertex_tex (&buffer, x + radius, y + radius,  1.0,  1.0);
+  /* NB: Repeated last virtex to separate from other tri-strip */
 }
 
 #define MAX_COMBINED_MALLOCS 2500
@@ -507,8 +606,6 @@ myBegin (GLenum type)
   triangle_comp_idx = 0;
 }
 
-static double global_scale;
-
 static void
 myVertex (GLdouble *vertex_data)
 {
@@ -525,23 +622,11 @@ myVertex (GLdouble *vertex_data)
         }
       else
         {
-#if 1
           hidgl_ensure_triangle_space (&buffer, 1);
           hidgl_add_triangle (&buffer,
                               triangle_vertices [0], triangle_vertices [1],
                               triangle_vertices [2], triangle_vertices [3],
                               vertex_data [0], vertex_data [1]);
-#else
-          hidgl_draw_line (Square_Cap, global_scale,
-                           triangle_vertices [0], triangle_vertices [1],
-                           triangle_vertices [2], triangle_vertices [3], global_scale);
-          hidgl_draw_line (Square_Cap, global_scale,
-                           triangle_vertices [2], triangle_vertices [3],
-                           vertex_data [0],       vertex_data [1],       global_scale);
-          hidgl_draw_line (Square_Cap, global_scale,
-                           vertex_data [0],       vertex_data [1],
-                           triangle_vertices [0], triangle_vertices [1], global_scale);
-#endif
 
           if (tessVertexType == GL_TRIANGLE_STRIP)
             {
@@ -613,38 +698,148 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
   free (vertices);
 }
 
-struct do_hole_info {
-  double scale;
-};
+static inline void
+stash_vertex (PLINE *contour, int *vertex_comp,
+              float x, float y, float z, float r, float s)
+{
+  contour->tristrip_vertices[(*vertex_comp)++] = x;
+  contour->tristrip_vertices[(*vertex_comp)++] = y;
+#if MEMCPY_VERTEX_DATA
+  contour->tristrip_vertices[(*vertex_comp)++] = z;
+  contour->tristrip_vertices[(*vertex_comp)++] = r;
+  contour->tristrip_vertices[(*vertex_comp)++] = s;
+#endif
+  contour->tristrip_num_vertices ++;
+}
+
+static void
+fill_contour (PLINE *contour)
+{
+  int i;
+  int vertex_comp;
+  cairo_traps_t traps;
+
+  /* If the contour is round, then call hidgl_fill_circle to draw it. */
+  if (contour->is_round) {
+    hidgl_fill_circle (contour->cx, contour->cy, contour->radius);
+    return;
+  }
+
+  /* If we don't have a cached set of tri-strips, compute them */
+  if (contour->tristrip_vertices == NULL) {
+    int tristrip_space;
+    int x1, x2, x3, x4, y_top, y_bot;
+
+    _cairo_traps_init (&traps);
+    bo_contour_to_traps_no_draw (contour, &traps);
+
+    tristrip_space = 0;
+
+    for (i = 0; i < traps.num_traps; i++) {
+      y_top = traps.traps[i].top;
+      y_bot = traps.traps[i].bottom;
+
+      x1 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_top);
+      x2 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_top);
+      x3 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_bot);
+      x4 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
+
+      if ((x1 == x2) || (x3 == x4)) {
+        tristrip_space += 5; /* Three vertices + repeated start and end */
+      } else {
+        tristrip_space += 6; /* Four vertices + repeated start and end */
+      }
+    }
+
+    if (tristrip_space == 0) {
+      printf ("Strange, contour didn't tesselate\n");
+      return;
+    }
+
+#if MEMCPY_VERTEX_DATA
+    /* NB: MEMCPY of vertex data causes a problem with depth being cached at the wrong level! */
+    contour->tristrip_vertices = malloc (sizeof (float) * 5 * tristrip_space);
+#else
+    contour->tristrip_vertices = malloc (sizeof (float) * 2 * tristrip_space);
+#endif
+    contour->tristrip_num_vertices = 0;
+
+    vertex_comp = 0;
+    for (i = 0; i < traps.num_traps; i++) {
+      y_top = traps.traps[i].top;
+      y_bot = traps.traps[i].bottom;
+
+      x1 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_top);
+      x2 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_top);
+      x3 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_bot);
+      x4 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
+
+      if (x1 == x2) {
+        /* NB: Repeated first virtex to separate from other tri-strip */
+        stash_vertex (contour, &vertex_comp, x1, y_top, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x1, y_top, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x3, y_bot, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x4, y_bot, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x4, y_bot, global_depth, 0.0, 0.0);
+        /* NB: Repeated last virtex to separate from other tri-strip */
+      } else if (x3 == x4) {
+        /* NB: Repeated first virtex to separate from other tri-strip */
+        stash_vertex (contour, &vertex_comp, x1, y_top, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x1, y_top, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x2, y_top, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x3, y_bot, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x3, y_bot, global_depth, 0.0, 0.0);
+        /* NB: Repeated last virtex to separate from other tri-strip */
+      } else {
+        /* NB: Repeated first virtex to separate from other tri-strip */
+        stash_vertex (contour, &vertex_comp, x2, y_top, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x2, y_top, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x3, y_bot, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x1, y_top, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x4, y_bot, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x4, y_bot, global_depth, 0.0, 0.0);
+        /* NB: Repeated last virtex to separate from other tri-strip */
+      }
+    }
+
+    _cairo_traps_fini (&traps);
+  }
+
+  if (contour->tristrip_num_vertices == 0)
+    return;
+
+  hidgl_ensure_vertex_space (&buffer, contour->tristrip_num_vertices);
+
+#if MEMCPY_VERTEX_DATA
+  memcpy (&buffer.triangle_array[buffer.coord_comp_count],
+          contour->tristrip_vertices,
+          sizeof (float) * 5 * contour->tristrip_num_vertices);
+  buffer.coord_comp_count += 5 * contour->tristrip_num_vertices;
+  buffer.vertex_count += contour->tristrip_num_vertices;
+
+#else
+  vertex_comp = 0;
+  for (i = 0; i < contour->tristrip_num_vertices; i++) {
+    int x, y;
+    x = contour->tristrip_vertices[vertex_comp++];
+    y = contour->tristrip_vertices[vertex_comp++];
+    hidgl_add_vertex_tex (&buffer, x, y, 0.0, 0.0);
+  }
+#endif
+
+}
 
 static int
 do_hole (const BoxType *b, void *cl)
 {
-  struct do_hole_info *info = cl;
   PLINE *curc = (PLINE *) b;
-  cairo_traps_t traps;
 
   /* Ignore the outer contour - we draw it first explicitly*/
   if (curc->Flags.orient == PLF_DIR) {
     return 0;
   }
 
-  /* If the contour is round, and hidgl_fill_circle would use
-   * less slices than we have vertices to draw it, then call
-   * hidgl_fill_circle to draw this contour.
-   */
-  if (curc->is_round) {
-    double slices = calc_slices (curc->radius / info->scale, 2 * M_PI);
-    if (slices < curc->Count) {
-      hidgl_fill_circle (curc->cx, curc->cy, curc->radius, info->scale);
-      return 1;
-    }
-  }
-
-  _cairo_traps_init (&traps);
-  bo_contour_to_traps (curc, &traps);
-  _cairo_traps_fini (&traps);
-
+  fill_contour (curc);
   return 1;
 }
 
@@ -654,15 +849,11 @@ static int assigned_bits = 0;
 
 /* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
 void
-hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
+hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
 {
-  struct do_hole_info info;
   int stencil_bit;
-  cairo_traps_t traps;
 
   CHECK_IS_IN_CONTEXT ();
-  info.scale = scale;
-  global_scale = scale;
 
   if (poly->Clipped == NULL)
     {
@@ -692,7 +883,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    */
   /* Drawing operations now set our reference bit in the stencil buffer */
 
-  r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
+  r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, NULL);
   hidgl_flush_triangles (&buffer);
 
   /* Drawing operations as masked to areas where the stencil buffer is '0' */
@@ -708,9 +899,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
                                                               // any bits permitted by the stencil writemask
 
   /* Draw the polygon outer */
-  _cairo_traps_init (&traps);
-  bo_contour_to_traps (poly->Clipped->contours, &traps);
-  _cairo_traps_fini (&traps);
+  fill_contour (poly->Clipped->contours);
   hidgl_flush_triangles (&buffer);
 
   /* Unassign our stencil buffer bit */
@@ -723,14 +912,71 @@ void
 hidgl_fill_rect (int x1, int y1, int x2, int y2)
 {
   CHECK_IS_IN_CONTEXT ();
-  hidgl_ensure_triangle_space (&buffer, 2);
-  hidgl_add_triangle (&buffer, x1, y1, x1, y2, x2, y2);
-  hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
+  hidgl_ensure_vertex_space (&buffer, 6);
+
+  /* NB: Repeated first virtex to separate from other tri-strip */
+  hidgl_add_vertex_tex (&buffer, x1, y1, 0.0, 0.0);
+  hidgl_add_vertex_tex (&buffer, x1, y1, 0.0, 0.0);
+  hidgl_add_vertex_tex (&buffer, x1, y2, 0.0, 0.0);
+  hidgl_add_vertex_tex (&buffer, x2, y1, 0.0, 0.0);
+  hidgl_add_vertex_tex (&buffer, x2, y2, 0.0, 0.0);
+  hidgl_add_vertex_tex (&buffer, x2, y2, 0.0, 0.0);
+  /* NB: Repeated last virtex to separate from other tri-strip */
+}
+
+static void
+load_built_in_shaders (void)
+{
+  char *circular_fs_source =
+          "void main()\n"
+          "{\n"
+          "  float sqdist;\n"
+          "  sqdist = dot (gl_TexCoord[0].st, gl_TexCoord[0].st);\n"
+          "  if (sqdist > 1.0)\n"
+          "    discard;\n"
+          "  gl_FragColor = gl_Color;\n"
+          "}\n";
+
+  char *resistor_fs_source =
+          "uniform sampler1D detail_tex;\n"
+          "uniform sampler2D bump_tex;\n"
+          "\n"
+          "void main()\n"
+          "{\n"
+          "  vec3 bumpNormal = texture2D (bump_tex, gl_TexCoord[1].st).rgb;\n"
+          "  vec3 detailColor = texture1D (detail_tex, gl_TexCoord[0].s).rgb;\n"
+          "\n"
+          "  /* Uncompress vectors ([0, 1] -> [-1, 1]) */\n"
+          "  vec3 lightVectorFinal = -1.0 + 2.0 * gl_Color.rgb;\n"
+          "  vec3 halfVectorFinal = -1.0 + 2.0 * gl_TexCoord[2].xyz;\n"
+          "  vec3 bumpNormalVectorFinal = -1.0 + 2.0 * bumpNormal;\n"
+          "\n"
+          "  /* Compute diffuse factor */\n"
+          "  float diffuse = clamp(dot(bumpNormalVectorFinal,\n"
+          "                            lightVectorFinal),0.0, 1.0);\n"
+          "  float specular = pow(clamp(dot(bumpNormalVectorFinal,\n"
+          "                                 halfVectorFinal), 0.0, 1.0),\n"
+          "                       2.0);\n"
+          "  specular *= 0.4;\n"
+          "\n"
+          "   gl_FragColor = vec4(detailColor * (0.3 + 0.7 * diffuse) + \n"
+          "                    vec3(specular, specular, specular), 1.0);\n"
+          "}\n";
+
+  circular_program = hidgl_shader_new ("circular_rendering", NULL, circular_fs_source);
+  resistor_program = hidgl_shader_new ("resistor_rendering", NULL, resistor_fs_source);
+
+  hidgl_shader_activate (circular_program);
 }
 
 void
 hidgl_init (void)
 {
+  static bool done_once = false;
+
+  if (done_once)
+    return;
+
   CHECK_IS_IN_CONTEXT ();
   glGetIntegerv (GL_STENCIL_BITS, &stencil_bits);
 
@@ -746,6 +992,16 @@ hidgl_init (void)
               "Cannot use stencil buffer to sub-composite layers.\n");
       /* Do we need to disable that somewhere? */
     }
+
+  if (!hidgl_shader_init_shaders ()) {
+    printf ("Failed to initialise shader support\n");
+    goto done;
+  }
+
+  load_built_in_shaders ();
+
+done:
+  done_once = true;
 }
 
 int
