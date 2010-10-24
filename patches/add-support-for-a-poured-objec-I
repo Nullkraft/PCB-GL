@@ -1,7 +1,7 @@
-Bottom: 96ce5fe8677bddab508ca6f951aec77b2445cbe6
-Top:    561d2d51d3e2ea2c31aee2e39e7f763edfc96f79
+Bottom: 6144695c2e6942273fbb4927853cc4e5d57c0bc4
+Top:    aaa08aa9245c705a934394889e020805bf7f0d6c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-09-12 01:25:53 +0100
+Date:   2010-10-24 19:03:03 +0100
 
 Add support for a "poured" object.
 
@@ -35,12 +35,12 @@ index cd6f4f9..4ab3813 100755
  						/* an element */
  #define	MAX_LIBRARY_LINE_LENGTH		255	/* maximum line length in the */
 diff --git a/po/POTFILES.in b/po/POTFILES.in
-index 8db0918..5faaf6d 100644
+index f83167f..55f3f34 100644
 --- a/po/POTFILES.in
 +++ b/po/POTFILES.in
-@@ -40,6 +40,7 @@ src/netlist.c
+@@ -41,6 +41,7 @@ src/netlist.c
  src/parse_y.c
- src/pcb-menu.res.h
+ src/pcb-menu.res
  src/polygon.c
 +src/pour.c
  src/rats.c
@@ -60,7 +60,7 @@ index 3f3c291..8a66eff 100644
  	print.c \
  	print.h \
 diff --git a/src/action.c b/src/action.c
-index c568f4e..4336658 100644
+index ba0cf3f..ba78f63 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -57,6 +57,7 @@
@@ -2338,7 +2338,7 @@ index 077c575..5b4d73a 100644
  void EraseElementPinsAndPads (ElementTypePtr);
  void EraseElementName (ElementTypePtr);
 diff --git a/src/file.c b/src/file.c
-index 97412b2..c5c594f 100644
+index 6893379..68bcc67 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -89,7 +89,6 @@
@@ -2349,7 +2349,7 @@ index 97412b2..c5c594f 100644
  #include "rats.h"
  #include "remove.h"
  #include "set.h"
-@@ -786,7 +785,7 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
+@@ -790,7 +789,7 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
  {
    int n;
    /* write information about non empty layers */
@@ -2358,7 +2358,7 @@ index 97412b2..c5c594f 100644
        (layer->Name && *layer->Name))
      {
        fprintf (FP, "Layer(%i ", (int) Number + 1);
-@@ -821,18 +820,18 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
+@@ -825,18 +824,18 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
  	  PrintQuotedString (FP, EMPTY (text->TextString));
  	  fprintf (FP, " %s]\n", F2S (text, TEXT_TYPE));
  	}
@@ -3001,10 +3001,10 @@ index 4a323f5..96ca00f 100644
  
  			/*
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 666d893..fa61bfa 100644
+index f42e8fd..c2c76ed 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
-@@ -333,7 +333,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -340,7 +340,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
    for (i = 0; i < max_copper_layer; i++)
      {
        LayerType *layer = PCB->Data->Layer + i;
