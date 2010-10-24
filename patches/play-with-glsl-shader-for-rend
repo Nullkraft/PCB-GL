@@ -1,7 +1,7 @@
-Bottom: a4b80c19d5401828470ec1dbf211eefa558433ec
-Top:    24ccc8ebcc3bdcfa167e1d7e348f4003acb96e5d
+Bottom: 7b871169cacfbe3939c3bf4f9b17351af8113b47
+Top:    54ad002788d92c0804932fca214a8b42a64be59e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-10-04 22:46:40 +0100
+Date:   2010-10-24 19:02:53 +0100
 
 Play with GLSL shader for rendering line caps and circles
 
@@ -1004,7 +1004,7 @@ index 1ed8eb3..88a9120 100644
  
  void hidgl_init (void);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 81c684f..69d2ffa 100644
+index c7c2ac2..69d2ffa 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -32,6 +32,8 @@
@@ -1109,15 +1109,7 @@ index 81c684f..69d2ffa 100644
    return 1;
  }
  
-@@ -1403,6 +1410,7 @@ DrawMask (BoxType * screen)
-   polygon.Clipped = board_outline_poly ();
-   polygon.NoHoles = NULL;
-   polygon.NoHolesValid = 0;
-+  polygon.BoundingBox = *screen;
-   SET_FLAG (FULLPOLYFLAG, &polygon);
-   common_fill_pcb_polygon (out->fgGC, &polygon, screen);
-   poly_Free (&polygon.Clipped);
-@@ -1522,9 +1530,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
+@@ -1523,9 +1530,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
  #define MIN_FACES_PER_CYL 6
  #define MAX_FACES_PER_CYL 360
    float radius = vr;
@@ -1128,7 +1120,7 @@ index 81c684f..69d2ffa 100644
    int i;
    int slices;
  
-@@ -1539,19 +1545,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
+@@ -1540,19 +1545,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
    z1 = compute_depth (from_layer);
    z2 = compute_depth (to_layer);
  
@@ -1165,7 +1157,7 @@ index 81c684f..69d2ffa 100644
  }
  
  struct cyl_info {
-@@ -1777,8 +1791,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1778,8 +1791,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               GdkEventExpose *ev,
                               GHidPort *port)
  {
@@ -1176,7 +1168,7 @@ index 81c684f..69d2ffa 100644
    BoxType region;
    int eleft, eright, etop, ebottom;
    int min_x, min_y;
-@@ -1786,6 +1802,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1787,6 +1802,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    int new_x, new_y;
    int min_depth;
    int max_depth;
@@ -1189,7 +1181,7 @@ index 81c684f..69d2ffa 100644
  
    ghid_start_drawing (port);
  
-@@ -1793,6 +1815,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1794,6 +1815,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_init ();
    check_gl_drawing_ok_hack = true;
  
@@ -1199,7 +1191,7 @@ index 81c684f..69d2ffa 100644
    /* If we don't have any stencil bits available,
       we can't use the hidgl polygon drawing routine */
    /* TODO: We could use the GLU tessellator though */
-@@ -1825,13 +1850,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1826,13 +1850,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
@@ -1215,7 +1207,7 @@ index 81c684f..69d2ffa 100644
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->offlimits_color.red / 65535.,
                  port->offlimits_color.green / 65535.,
-@@ -1935,14 +1961,19 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1936,14 +1961,19 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                  ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                               -port->view_y0, 0);
  
@@ -1239,7 +1231,7 @@ index 81c684f..69d2ffa 100644
      int solder_group;
      int component_group;
      int min_phys_group;
-@@ -1964,6 +1995,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1965,6 +1995,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
        glVertex3i (0,             PCB->MaxHeight, depth);
      }
      glEnd ();
@@ -1247,7 +1239,7 @@ index 81c684f..69d2ffa 100644
    }
  
    // hid_expose_callback (&ghid_hid, &region, 0);
-@@ -1978,7 +2010,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1979,7 +2010,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_draw_grid (&region);
  
@@ -1257,7 +1249,7 @@ index 81c684f..69d2ffa 100644
    ghid_invalidate_current_gc ();
    glPushMatrix ();
    glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
-@@ -1991,24 +2024,28 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1992,24 +2024,28 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    DrawMark (TRUE);
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
@@ -1290,7 +1282,7 @@ index 81c684f..69d2ffa 100644
    return FALSE;
  }
  
-@@ -2164,6 +2201,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2165,6 +2201,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                          GDK_GL_MODE_STENCIL |
