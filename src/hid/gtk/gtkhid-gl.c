@@ -982,7 +982,6 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
   /* setup GL-context */
   priv->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
                                               GDK_GL_MODE_STENCIL |
-                                              GDK_GL_MODE_DEPTH   |
                                            // GDK_GL_MODE_DEPTH   |
                                               GDK_GL_MODE_DOUBLE);
   if (!priv->glconfig)
@@ -1834,10 +1833,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   glViewport (0, 0, widget->allocation.width, widget->allocation.height);
 
+#if 0
   glEnable (GL_SCISSOR_TEST);
   glScissor (ev->area.x,
              widget->allocation.height - ev->area.height - ev->area.y,
              ev->area.width, ev->area.height);
+#endif
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
@@ -1863,7 +1864,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                 port->offlimits_color.green / 65535.,
                 port->offlimits_color.blue / 65535.,
                 1.);
-
   glStencilMask (~0);
   glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -2135,7 +2135,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   glStencilMask (~0);
   glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
   hidgl_reset_stencil_usage ();
 
   /* call the drawing routine */
@@ -2201,7 +2200,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
 
   glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                         GDK_GL_MODE_STENCIL |
-                                        GDK_GL_MODE_DEPTH   |
 //                                        GDK_GL_MODE_DEPTH   |
                                         GDK_GL_MODE_SINGLE);
 

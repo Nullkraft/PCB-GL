@@ -670,6 +670,20 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
   free (vertices);
 }
 
+static inline void
+stash_vertex (PLINE *contour, int *vertex_comp,
+              float x, float y, float z, float r, float s)
+{
+  contour->tristrip_vertices[(*vertex_comp)++] = x;
+  contour->tristrip_vertices[(*vertex_comp)++] = y;
+#if MEMCPY_VERTEX_DATA
+  contour->tristrip_vertices[(*vertex_comp)++] = z;
+  contour->tristrip_vertices[(*vertex_comp)++] = r;
+  contour->tristrip_vertices[(*vertex_comp)++] = s;
+#endif
+  contour->tristrip_num_vertices ++;
+}
+
 static void
 fill_contour (PLINE *contour)
 {
@@ -694,7 +708,6 @@ fill_contour (PLINE *contour)
     tristrip_space = 0;
 
     for (i = 0; i < traps.num_traps; i++) {
-
       y_top = traps.traps[i].top;
       y_bot = traps.traps[i].bottom;
 
@@ -715,13 +728,16 @@ fill_contour (PLINE *contour)
       return;
     }
 
-//    contour->tristrip_vertices = malloc (sizeof (float) * 2 * tristrip_space);
+#if MEMCPY_VERTEX_DATA
+    /* NB: MEMCPY of vertex data causes a problem with depth being cached at the wrong level! */
     contour->tristrip_vertices = malloc (sizeof (float) * 5 * tristrip_space);
+#else
+    contour->tristrip_vertices = malloc (sizeof (float) * 2 * tristrip_space);
+#endif
     contour->tristrip_num_vertices = 0;
 
     vertex_comp = 0;
     for (i = 0; i < traps.num_traps; i++) {
-
       y_top = traps.traps[i].top;
       y_bot = traps.traps[i].bottom;
 
@@ -732,96 +748,29 @@ fill_contour (PLINE *contour)
 
       if (x1 == x2) {
         /* NB: Repeated first virtex to separate from other tri-strip */
-        contour->tristrip_vertices[vertex_comp++] = x1;
-        contour->tristrip_vertices[vertex_comp++] = y_top;
-        contour->tristrip_vertices[vertex_comp++] = global_depth;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = x1;
-        contour->tristrip_vertices[vertex_comp++] = y_top;
-        contour->tristrip_vertices[vertex_comp++] = global_depth;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = x3;
-        contour->tristrip_vertices[vertex_comp++] = y_bot;
-        contour->tristrip_vertices[vertex_comp++] = global_depth;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = x4;
-        contour->tristrip_vertices[vertex_comp++] = y_bot;
-        contour->tristrip_vertices[vertex_comp++] = global_depth;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = x4;
-        contour->tristrip_vertices[vertex_comp++] = y_bot;
-        contour->tristrip_vertices[vertex_comp++] = global_depth;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
+        stash_vertex (contour, &vertex_comp, x1, y_top, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x1, y_top, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x3, y_bot, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x4, y_bot, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x4, y_bot, global_depth, 0.0, 0.0);
         /* NB: Repeated last virtex to separate from other tri-strip */
-        contour->tristrip_num_vertices += 5;
       } else if (x3 == x4) {
         /* NB: Repeated first virtex to separate from other tri-strip */
-        contour->tristrip_vertices[vertex_comp++] = x1;
-        contour->tristrip_vertices[vertex_comp++] = y_top;
-        contour->tristrip_vertices[vertex_comp++] = global_depth;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = x1;
-        contour->tristrip_vertices[vertex_comp++] = y_top;
-        contour->tristrip_vertices[vertex_comp++] = global_depth;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = x2;
-        contour->tristrip_vertices[vertex_comp++] = y_top;
-        contour->tristrip_vertices[vertex_comp++] = global_depth;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = x3;
-        contour->tristrip_vertices[vertex_comp++] = y_bot;
-        contour->tristrip_vertices[vertex_comp++] = global_depth;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = x3;
-        contour->tristrip_vertices[vertex_comp++] = y_bot;
-        contour->tristrip_vertices[vertex_comp++] = global_depth;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
+        stash_vertex (contour, &vertex_comp, x1, y_top, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x1, y_top, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x2, y_top, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x3, y_bot, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x3, y_bot, global_depth, 0.0, 0.0);
         /* NB: Repeated last virtex to separate from other tri-strip */
-        contour->tristrip_num_vertices += 5;
       } else {
         /* NB: Repeated first virtex to separate from other tri-strip */
-        contour->tristrip_vertices[vertex_comp++] = x2;
-        contour->tristrip_vertices[vertex_comp++] = y_top;
-        contour->tristrip_vertices[vertex_comp++] = global_depth;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = x2;
-        contour->tristrip_vertices[vertex_comp++] = y_top;
-        contour->tristrip_vertices[vertex_comp++] = global_depth;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = x3;
-        contour->tristrip_vertices[vertex_comp++] = y_bot;
-        contour->tristrip_vertices[vertex_comp++] = global_depth;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = x1;
-        contour->tristrip_vertices[vertex_comp++] = y_top;
-        contour->tristrip_vertices[vertex_comp++] = global_depth;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = x4;
-        contour->tristrip_vertices[vertex_comp++] = y_bot;
-        contour->tristrip_vertices[vertex_comp++] = global_depth;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = x4;
-        contour->tristrip_vertices[vertex_comp++] = y_bot;
-        contour->tristrip_vertices[vertex_comp++] = global_depth;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
-        contour->tristrip_vertices[vertex_comp++] = 0.0;
+        stash_vertex (contour, &vertex_comp, x2, y_top, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x2, y_top, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x3, y_bot, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x1, y_top, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x4, y_bot, global_depth, 0.0, 0.0);
+        stash_vertex (contour, &vertex_comp, x4, y_bot, global_depth, 0.0, 0.0);
         /* NB: Repeated last virtex to separate from other tri-strip */
-        contour->tristrip_num_vertices += 6;
       }
     }
 
@@ -832,19 +781,20 @@ fill_contour (PLINE *contour)
     return;
 
   hidgl_ensure_vertex_space (&buffer, contour->tristrip_num_vertices);
-#if 0
+
+#if MEMCPY_VERTEX_DATA
   memcpy (&buffer.triangle_array[buffer.coord_comp_count],
           contour->tristrip_vertices,
           sizeof (float) * 5 * contour->tristrip_num_vertices);
   buffer.coord_comp_count += 5 * contour->tristrip_num_vertices;
   buffer.vertex_count += contour->tristrip_num_vertices;
+
 #else
   vertex_comp = 0;
   for (i = 0; i < contour->tristrip_num_vertices; i++) {
     int x, y;
     x = contour->tristrip_vertices[vertex_comp++];
     y = contour->tristrip_vertices[vertex_comp++];
-    vertex_comp += 3;
     hidgl_add_vertex_tex (&buffer, x, y, 0.0, 0.0);
   }
 #endif
@@ -922,11 +872,6 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
 
   /* Draw the polygon outer */
   fill_contour (poly->Clipped->contours);
-#if 0
-  _cairo_traps_init (&traps);
-  bo_contour_to_traps (poly->Clipped->contours, &traps);
-  _cairo_traps_fini (&traps);
-#endif
   hidgl_flush_triangles (&buffer);
 
   /* Unassign our stencil buffer bit */
@@ -1115,6 +1060,9 @@ hidgl_clean_unassigned_stencil (void)
   CHECK_IS_IN_CONTEXT ();
   glPushAttrib (GL_STENCIL_BUFFER_BIT);
   glStencilMask (~assigned_bits);
+//  if (assigned_bits != 0) {
+//    printf ("Doing masked stencil clear :(\n");
+//  }
   glClearStencil (0);
   glClear (GL_STENCIL_BUFFER_BIT);
   glPopAttrib ();
