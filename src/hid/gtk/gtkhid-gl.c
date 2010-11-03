@@ -35,6 +35,8 @@
 #undef ONE_SHOT
 //#define ONE_SHOT
 
+//#define VIEW_ORTHO
+
 RCSID ("$Id$");
 
 
@@ -1416,7 +1418,8 @@ DrawMask (BoxType * screen)
   polygon.Clipped = board_outline_poly ();
   polygon.NoHoles = NULL;
   polygon.NoHolesValid = 0;
-  polygon.BoundingBox = *screen;
+  if (screen)
+    polygon.BoundingBox = *screen;
   SET_FLAG (FULLPOLYFLAG, &polygon);
   common_fill_pcb_polygon (out->fgGC, &polygon, screen);
   poly_Free (&polygon.Clipped);
@@ -1842,20 +1845,41 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
-  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
+#ifdef VIEW_ORTHO
+  glOrtho (-1, 1, 1, -1, 1, 24);
+#else
+  glFrustum (-1, 1, 1, -1, 1, 24);
+#endif
   glMatrixMode (GL_MODELVIEW);
   glLoadIdentity ();
 
-  glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
+#ifndef VIEW_ORTHO
+  /* TEST HACK */
+  glScalef (10., 10., 1.);
+#endif
+
+  /* Push the space coordinates board back into the middle of the z-view volume */
+  glTranslatef (0., 0., -11.);
+
+  /* Rotate about the center of the board space */
   glMultMatrixf ((GLfloat *)view_matrix);
-  glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
-  glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
-            (ghid_flip_y ? -1. : 1.) / port->zoom,
-            ((ghid_flip_x == ghid_flip_y) ? 1. : -1.) / port->zoom);
-  glTranslatef (ghid_flip_x ? port->view_x0 - PCB->MaxWidth  :
-                             -port->view_x0,
-                ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
-                             -port->view_y0, 0);
+
+  /* Flip about the center of the viewed area */
+  glScalef ((ghid_flip_x ? -1. : 1.),
+            (ghid_flip_y ? -1. : 1.),
+            ((ghid_flip_x == ghid_flip_y) ? 1. : -1.));
+
+  /* Scale board coordiantes to (-1,-1)-(1,1) coordiantes */
+  glScalef (2. / port->zoom / widget->allocation.width,
+            2. / port->zoom / widget->allocation.height,
+            2. / port->zoom / widget->allocation.width); /* Not sure about the z-scaling */
+
+  /* Translate to the center of the board space view */
+  glTranslatef (-(port->view_x0 + PCB->MaxWidth / 2),
+                -(port->view_y0 + PCB->MaxHeight / 2),
+                0.);
+
+  /* Stash the model view matrix so we can work out the screen coordinate -> board coordinate mapping */
   glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
 
 #ifdef ONE_SHOT
@@ -1987,7 +2011,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 #endif
 
   // hid_expose_callback (&ghid_hid, &region, 0);
-  ghid_draw_everything (&region);
+  // ghid_draw_everything (&region);
+  ghid_draw_everything (NULL);
   hidgl_flush_triangles (&buffer);
 
   /* Just prod the drawing code so the current depth gets set to
@@ -2371,6 +2396,11 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
   float mat[2][2];
   float inv_mat[2][2];
   float x, y;
+  float vpx, vpy;
+  GtkWidget *widget = gport->drawing_area;
+
+  vpx = (float)ex / (float)widget->allocation.width * 2. - 1.;
+  vpy = (float)ey / (float)widget->allocation.height * 2. - 1.;
 
   /*
     ex = view_matrix[0][0] * vx +
@@ -2398,11 +2428,11 @@ ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
   */
 
   /* NB: last_modelview_matrix is transposed in memory! */
-  x = (float)ex - last_modelview_matrix[3][0] * 1
-                - last_modelview_matrix[2][0] * vz;
+  x = vpx - last_modelview_matrix[3][0] * 1
+          - last_modelview_matrix[2][0] * vz;
 
-  y = (float)ey - last_modelview_matrix[3][1] * 1
-                - last_modelview_matrix[2][1] * vz;
+  y = vpy - last_modelview_matrix[3][1] * 1
+          - last_modelview_matrix[2][1] * vz;
 
   /*
     x = view_matrix[0][0] * vx +
