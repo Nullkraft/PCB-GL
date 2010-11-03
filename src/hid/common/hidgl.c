@@ -110,6 +110,7 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
   glGenBuffers (1, &buffer->vbo_id);
   glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
 
+  buffer->triangle_array = NULL;
   buffer->local = false;
   hidgl_reset_triangle_array (buffer);
 }
