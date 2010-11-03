@@ -173,7 +173,6 @@ ghid_set_layer (const char *name, int group, int empty)
 
   hidgl_set_depth (compute_depth (group));
 
-//  glFlush ();
   glEnable (GL_STENCIL_TEST);                   // Enable Stencil test
   glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);   // Stencil pass => replace stencil value (with 1)
   hidgl_return_stencil_bit (stencil_bit);       // Relinquish any bitplane we previously used
@@ -186,7 +185,6 @@ ghid_set_layer (const char *name, int group, int empty)
     glStencilMask (0);
     glStencilFunc (GL_ALWAYS, 0, 0);  // Always pass stencil test
   }
-
 
   if (idx >= 0 && idx < max_copper_layer + 2)
     {
@@ -1034,8 +1032,6 @@ ghid_start_drawing (GHidPort *port)
   /* make GL-context "current" */
   if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext))
     return FALSE;
-
-//  hidgl_load_frag_shader ();
 
   return TRUE;
 }
