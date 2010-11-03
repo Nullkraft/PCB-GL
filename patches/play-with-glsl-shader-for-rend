@@ -5,6 +5,16 @@ Date:   2010-10-24 19:02:53 +0100
 
 Play with GLSL shader for rendering line caps and circles
 
+And of course.. typically, a million other little fixes:
+
+ - Space navigator joystick support fixes against later kernels
+ - Rendering using mapped VBOs rather than just arrays
+ - Updated layer depth code, so we render with "z" in world coordinates
+
+Bugs:
+ - Layer depths will be wrong for reversed layer group numbering
+ - Pixel shader ought to be switched off for polygon fill?
+
 
 ---
 
