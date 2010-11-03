@@ -88,7 +88,7 @@ hidgl_reset_triangle_array (triangle_buffer *buffer)
     buffer->triangle_array = glMapBuffer (GL_ARRAY_BUFFER, GL_WRITE_ONLY);
   }
 
-  /* If using VBOs fails, fall back to an allocated array */
+  /* If mapping the VBO fails, fall back to an allocated array */
   if (buffer->triangle_array == NULL) {
     buffer->triangle_array = malloc (NUM_BUF_GLFLOATS * sizeof (GLfloat));
     buffer->local = true;
@@ -120,6 +120,7 @@ hidgl_finish_triangle_array (triangle_buffer *buffer)
   if (buffer->local) {
     free (buffer->triangle_array);
   } else {
+    glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
     glUnmapBuffer (GL_ARRAY_BUFFER);
   }
   glBindBuffer (GL_ARRAY_BUFFER, 0);
@@ -138,11 +139,10 @@ hidgl_flush_triangles (triangle_buffer *buffer)
     return;
 
   if (!buffer->local) {
+    glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
     glUnmapBuffer (GL_ARRAY_BUFFER);
     buffer->triangle_array = NULL;
   }
-
-  glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
 
   glEnableClientState (GL_VERTEX_ARRAY);
   glVertexPointer (3, GL_FLOAT, 5 * sizeof (GLfloat), buffer->local ?
