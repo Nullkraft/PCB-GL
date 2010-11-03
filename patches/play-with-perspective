@@ -1,5 +1,5 @@
 Bottom: e84588ff9b376b7b0be62cf7d4be0fde827308f4
-Top:    fdd16824a1d23bca63d8371a89538e26f4616062
+Top:    b6ee65f1e77f2d334d40e1654480edc81e971270
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-03 02:23:24 +0000
 
@@ -9,10 +9,20 @@ Play with perspective
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index afd0b86..ee92e0a 100644
+index afd0b86..b4d616f 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1853,10 +1853,18 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1421,7 +1421,8 @@ DrawMask (BoxType * screen)
+   polygon.Clipped = board_outline_poly ();
+   polygon.NoHoles = NULL;
+   polygon.NoHolesValid = 0;
+-  polygon.BoundingBox = *screen;
++  if (screen)
++    polygon.BoundingBox = *screen;
+   SET_FLAG (FULLPOLYFLAG, &polygon);
+   common_fill_pcb_polygon (out->fgGC, &polygon, screen);
+   poly_Free (&polygon.Clipped);
+@@ -1853,10 +1854,18 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -32,7 +42,7 @@ index afd0b86..ee92e0a 100644
    glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
    glMultMatrixf ((GLfloat *)view_matrix);
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
-@@ -2010,7 +2018,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2010,7 +2019,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
  
    // hid_expose_callback (&ghid_hid, &region, 0);
