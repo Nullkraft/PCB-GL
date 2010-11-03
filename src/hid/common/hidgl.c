@@ -1064,9 +1064,6 @@ hidgl_clean_unassigned_stencil (void)
   CHECK_IS_IN_CONTEXT ();
   glPushAttrib (GL_STENCIL_BUFFER_BIT);
   glStencilMask (~assigned_bits);
-//  if (assigned_bits != 0) {
-//    printf ("Doing masked stencil clear :(\n");
-//  }
   glClearStencil (0);
   glClear (GL_STENCIL_BUFFER_BIT);
   glPopAttrib ();
