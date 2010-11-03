@@ -76,29 +76,26 @@ hidgl_new_triangle_array (void)
 #endif
 
 #define NUM_BUF_GLFLOATS (3 * (3 + 2) * TRIANGLE_ARRAY_SIZE)
-#define USE_TWO_VBO
-//#undef USE_TWO_VBO
 
-void
-hidgl_init_triangle_array (triangle_buffer *buffer)
+
+/* NB: Caller must ensure the desired GL_ARRAY_BUFFER is bound */
+static void
+hidgl_reset_triangle_array (triangle_buffer *buffer)
 {
-  CHECK_IS_IN_CONTEXT ();
+  if (!buffer->local) {
+    /* Map some new memory to upload vertices into. */
+    glBufferData (GL_ARRAY_BUFFER, NUM_BUF_GLFLOATS * sizeof (GLfloat), NULL, GL_STREAM_DRAW);
+    buffer->triangle_array = glMapBuffer (GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+  }
 
-  glGenBuffers (1, &buffer->primary_vbo_id);
-  glBindBuffer (GL_ARRAY_BUFFER, buffer->primary_vbo_id);
-  glBufferData (GL_ARRAY_BUFFER, NUM_BUF_GLFLOATS * sizeof (GLfloat), NULL, GL_STREAM_DRAW);
+  /* If using VBOs fails, fall back to an allocated array */
+  if (buffer->triangle_array == NULL) {
+    buffer->triangle_array = malloc (NUM_BUF_GLFLOATS * sizeof (GLfloat));
+    buffer->local = true;
+  }
 
-#ifdef USE_TWO_VBO
-  glGenBuffers (1, &buffer->secondary_vbo_id);
-  glBindBuffer (GL_ARRAY_BUFFER, buffer->secondary_vbo_id);
-  glBufferData (GL_ARRAY_BUFFER, NUM_BUF_GLFLOATS * sizeof (GLfloat), NULL, GL_STREAM_DRAW);
-#endif
-
-  buffer->use_primary = true;
-
-  glBindBuffer (GL_ARRAY_BUFFER, buffer->use_primary ? buffer->primary_vbo_id :
-                                                       buffer->secondary_vbo_id);
-  buffer->triangle_array = glMapBuffer (GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+  /* Don't want this bound for now */
+  glBindBuffer (GL_ARRAY_BUFFER, 0);
 
   buffer->triangle_count = 0;
   buffer->coord_comp_count = 0;
@@ -106,18 +103,29 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
 }
 
 void
+hidgl_init_triangle_array (triangle_buffer *buffer)
+{
+  CHECK_IS_IN_CONTEXT ();
+
+  glGenBuffers (1, &buffer->vbo_id);
+  glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
+
+  buffer->local = false;
+  hidgl_reset_triangle_array (buffer);
+}
+
+void
 hidgl_finish_triangle_array (triangle_buffer *buffer)
 {
-  glUnmapBuffer (GL_ARRAY_BUFFER);
+  if (buffer->local) {
+    free (buffer->triangle_array);
+  } else {
+    glUnmapBuffer (GL_ARRAY_BUFFER);
+  }
   glBindBuffer (GL_ARRAY_BUFFER, 0);
 
-  glDeleteBuffers (1, &buffer->primary_vbo_id);
-  buffer->primary_vbo_id = 0;
-
-#ifdef USE_TWO_VBO
-  glDeleteBuffers (1, &buffer->secondary_vbo_id);
-  buffer->secondary_vbo_id = 0;
-#endif
+  glDeleteBuffers (1, &buffer->vbo_id);
+  buffer->vbo_id = 0;
 }
 
 #define BUF_OFFSET(x) (&((GLfloat *)NULL)[x])
@@ -129,32 +137,26 @@ hidgl_flush_triangles (triangle_buffer *buffer)
   if (buffer->vertex_count == 0)
     return;
 
-  glUnmapBuffer (GL_ARRAY_BUFFER);
-  buffer->triangle_array = NULL;
+  if (!buffer->local) {
+    glUnmapBuffer (GL_ARRAY_BUFFER);
+    buffer->triangle_array = NULL;
+  }
+
+  glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
 
   glEnableClientState (GL_VERTEX_ARRAY);
-  glVertexPointer (3, GL_FLOAT, 5 * sizeof (GLfloat),
-                   BUF_OFFSET (0) /*buffer->triangle_array*/);
+  glVertexPointer (3, GL_FLOAT, 5 * sizeof (GLfloat), buffer->local ?
+                     buffer->triangle_array : BUF_OFFSET (0));
 
   glEnableClientState (GL_TEXTURE_COORD_ARRAY);
-  glTexCoordPointer (2, GL_FLOAT, 5 * sizeof (GLfloat),
-                     BUF_OFFSET (3) /*buffer->triangle_array + 3*/);
+  glTexCoordPointer (2, GL_FLOAT, 5 * sizeof (GLfloat), buffer->local ?
+                       buffer->triangle_array + 3 : BUF_OFFSET (3));
 
   glDrawArrays (GL_TRIANGLE_STRIP, 0, buffer->vertex_count);
-
   glDisableClientState (GL_VERTEX_ARRAY);
   glDisableClientState (GL_TEXTURE_COORD_ARRAY);
 
-#ifdef USE_TWO_VBO
-  buffer->use_primary = !buffer->use_primary;
-#endif
-  glBindBuffer (GL_ARRAY_BUFFER, buffer->use_primary ? buffer->primary_vbo_id :
-                                                       buffer->secondary_vbo_id);
-  buffer->triangle_array = glMapBuffer (GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-
-  buffer->triangle_count = 0;
-  buffer->vertex_count = 0;
-  buffer->coord_comp_count = 0;
+  hidgl_reset_triangle_array (buffer);
 }
 
 void
@@ -476,6 +478,7 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
 void
 hidgl_draw_rect (int x1, int y1, int x2, int y2)
 {
+  return;
   CHECK_IS_IN_CONTEXT ();
   glBegin (GL_LINE_LOOP);
   glVertex3f (x1, y1, global_depth);
@@ -900,6 +903,7 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
 static void
 printLog(GLuint obj)
 {
+  return;
   int infologLength = 0;
   int maxLength;
   char *infoLog;

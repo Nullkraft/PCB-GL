@@ -35,9 +35,8 @@ typedef struct {
   unsigned int vertex_count;
   unsigned int total_triangles;
   unsigned int total_vertices;
-  GLuint primary_vbo_id;
-  GLuint secondary_vbo_id;
-  bool use_primary;
+  GLuint vbo_id;
+  bool local;
 } triangle_buffer;
 
 extern triangle_buffer buffer;
