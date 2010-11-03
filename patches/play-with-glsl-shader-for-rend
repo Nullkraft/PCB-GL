@@ -7,9 +7,10 @@ Play with GLSL shader for rendering line caps and circles
 
 And of course.. typically, a million other little fixes:
 
- - Space navigator joystick support fixes against later kernels
+ - Primitive rendering object changed from GL_TRIANGLES to GL_TRIANGLE_STRIP
  - Rendering using mapped VBOs rather than just arrays
  - Updated layer depth code, so we render with "z" in world coordinates
+ - Space navigator joystick support fixes against later kernels
 
 Bugs:
  - Layer depths will be wrong for reversed layer group numbering
