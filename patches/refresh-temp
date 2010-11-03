@@ -1,0 +1,68 @@
+Bottom: 78ece325cc2b0be2d9e14e8d0017901ae0146a47
+Top:    b7d3f982b9cd8f33c042550c04f1e3fdb298ce5d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-11-03 18:30:08 +0000
+
+Refresh of play-with-perspective
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index b4d616f..1406d14 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1854,28 +1854,37 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ 
+   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity ();
+-//  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
+-  glFrustum (-1, 1, -1, 1, 10, 10000);
++#ifdef VIEW_ORTHO
++  glOrtho (-1, 1, 1, -1, 10, 12);
++#else
++  glFrustum (-1, 1, 1, -1, 1, 24);
++#endif
+   glMatrixMode (GL_MODELVIEW);
+   glLoadIdentity ();
+ 
+-  glScalef (2, 2, 1);
+-  glTranslatef (-1., 1., 0.);
+-  glScalef ( 2. / (float)widget->allocation.width,
+-            -2. / (float)widget->allocation.height,
+-             1. / 100.);
+-  glTranslatef (0., 0., -2000.);
++  /* TEST HACK */
++  glScalef (10., 10., 1.);
+ 
+-  glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
++  /* Push the space coordinates board back into the middle of the z-view volume */
++  glTranslatef (0., 0., -11.);
++
++  /* Rotate about the center of the board space */
+   glMultMatrixf ((GLfloat *)view_matrix);
+-  glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
+-  glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
+-            (ghid_flip_y ? -1. : 1.) / port->zoom,
+-            ((ghid_flip_x == ghid_flip_y) ? 1. : -1.) / port->zoom);
+-  glTranslatef (ghid_flip_x ? port->view_x0 - PCB->MaxWidth  :
+-                             -port->view_x0,
+-                ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
+-                             -port->view_y0, 0);
++
++  /* Flip about the center of the viewed area */
++  glScalef ((ghid_flip_x ? -1. : 1.), (ghid_flip_y ? -1. : 1.), ((ghid_flip_x == ghid_flip_y) ? 1. : -1.));
++
++  /* Scale board coordiantes to (-1,-1)-(1,1) coordiantes */
++  glScalef (2. / port->zoom / widget->allocation.width,
++            2. / port->zoom / widget->allocation.height,
++            2. / port->zoom / widget->allocation.width); /* Not sure about the z-scaling */
++
++  /* Translate to the center of the board space view */
++  glTranslatef (ghid_flip_x ? port->view_x0 - PCB->MaxWidth / 2  : port->view_x0 - PCB->MaxWidth / 2  ,
++                ghid_flip_y ? port->view_y0 - PCB->MaxHeight / 2 : port->view_y0 - PCB->MaxHeight / 2 ,
++                0);
++
++  /* Stash the model view matrix so we can work out the screen coordinate -> board coordinate mapping */
+   glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
+ 
+ #ifdef ONE_SHOT
