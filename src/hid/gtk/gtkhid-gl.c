@@ -1421,7 +1421,8 @@ DrawMask (BoxType * screen)
   polygon.Clipped = board_outline_poly ();
   polygon.NoHoles = NULL;
   polygon.NoHolesValid = 0;
-  polygon.BoundingBox = *screen;
+  if (screen)
+    polygon.BoundingBox = *screen;
   SET_FLAG (FULLPOLYFLAG, &polygon);
   common_fill_pcb_polygon (out->fgGC, &polygon, screen);
   poly_Free (&polygon.Clipped);
@@ -1853,9 +1854,17 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
-  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
+//  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
+  glFrustum (-1, 1, -1, 1, 10, 10000);
   glMatrixMode (GL_MODELVIEW);
   glLoadIdentity ();
+
+  glScalef (2, 2, 1);
+  glTranslatef (-1., 1., 0.);
+  glScalef ( 2. / (float)widget->allocation.width,
+            -2. / (float)widget->allocation.height,
+             1. / 100.);
+  glTranslatef (0., 0., -2000.);
 
   glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
   glMultMatrixf ((GLfloat *)view_matrix);
@@ -2010,7 +2019,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
 
   // hid_expose_callback (&ghid_hid, &region, 0);
-  ghid_draw_everything (&region);
+  // ghid_draw_everything (&region);
+  ghid_draw_everything (NULL);
   hidgl_flush_triangles (&buffer);
 
   /* Just prod the drawing code so the current depth gets set to
