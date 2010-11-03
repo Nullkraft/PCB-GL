@@ -23,12 +23,8 @@
 #ifndef __HIDGL_INCLUDED__
 #define __HIDGL_INCLUDED__
 
-//#define TRIANGLE_ARRAY_SIZE 5461
-//#define TRIANGLE_ARRAY_SIZE 2740
-//#define TRIANGLE_ARRAY_SIZE 8738
 #define TRIANGLE_ARRAY_SIZE 30000
 typedef struct {
-//  GLfloat triangle_array [3 * (3 + 2) * TRIANGLE_ARRAY_SIZE];
   GLfloat *triangle_array;
   unsigned int triangle_count;
   unsigned int coord_comp_count;
