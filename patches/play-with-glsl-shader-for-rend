@@ -8,6 +8,7 @@ Play with GLSL shader for rendering line caps and circles
 And of course.. typically, a million other little fixes:
 
  - Primitive rendering object changed from GL_TRIANGLES to GL_TRIANGLE_STRIP
+ - Cache of tristrip data per contour (HACK: in the core)
  - Rendering using mapped VBOs rather than just arrays
  - Updated layer depth code, so we render with "z" in world coordinates
  - Space navigator joystick support fixes against later kernels
@@ -15,7 +16,9 @@ And of course.. typically, a million other little fixes:
 Bugs:
  - Layer depths will be wrong for reversed layer group numbering
  - Pixel shader ought to be switched off for polygon fill?
- - hidgl_draw_rect stubbed out for now (for benchmarking)
+ - hidgl_draw_rect stubbed out (for benchmarking)
+ - Draw Element mark stubbed out (for benchmarking)
+
 
 
 ---
