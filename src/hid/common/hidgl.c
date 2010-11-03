@@ -186,6 +186,12 @@ hidgl_flush_triangles (triangle_buffer *buffer)
   glEnableClientState (GL_TEXTURE_COORD_ARRAY);
   glEnableClientState (GL_VERTEX_ARRAY);
   glDrawArrays (GL_TRIANGLE_STRIP, 0, buffer->vertex_count);
+#if 0
+  glPushAttrib (GL_CURRENT_BIT);
+  glColor4f (1., 1., 1., 1.);
+  glDrawArrays (GL_LINE_STRIP, 0, buffer->vertex_count);
+  glPopAttrib ();
+#endif
   glDisableClientState (GL_VERTEX_ARRAY);
   glDisableClientState (GL_TEXTURE_COORD_ARRAY);
 
@@ -392,24 +398,31 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
   /* Don't bother capping hairlines */
   if (circular_caps && !hairline)
     {
-      float capx = deltax * width / 2. / length;
-      float capy = deltay * width / 2. / length;
+      if (length == 0)
+        {
+          hidgl_fill_circle (x1, y1, width / 2.);
+        }
+      else
+        {
+          float capx = deltax * width / 2. / length;
+          float capy = deltay * width / 2. / length;
 
-      hidgl_ensure_vertex_space (&buffer, 10);
+          hidgl_ensure_vertex_space (&buffer, 10);
 
-      /* NB: Repeated first virtex to separate from other tri-strip */
-      hidgl_add_vertex_tex (&buffer, x1 - wdx - capx, y1 - wdy - capy, -1.0, -1.0);
-      hidgl_add_vertex_tex (&buffer, x1 - wdx - capx, y1 - wdy - capy, -1.0, -1.0);
-      hidgl_add_vertex_tex (&buffer, x1 + wdx - capx, y1 + wdy - capy, -1.0,  1.0);
-      hidgl_add_vertex_tex (&buffer, x1 - wdx,        y1 - wdy,         0.0, -1.0);
-      hidgl_add_vertex_tex (&buffer, x1 + wdx,        y1 + wdy,         0.0,  1.0);
+          /* NB: Repeated first virtex to separate from other tri-strip */
+          hidgl_add_vertex_tex (&buffer, x1 - wdx - capx, y1 - wdy - capy, -1.0, -1.0);
+          hidgl_add_vertex_tex (&buffer, x1 - wdx - capx, y1 - wdy - capy, -1.0, -1.0);
+          hidgl_add_vertex_tex (&buffer, x1 + wdx - capx, y1 + wdy - capy, -1.0,  1.0);
+          hidgl_add_vertex_tex (&buffer, x1 - wdx,        y1 - wdy,         0.0, -1.0);
+          hidgl_add_vertex_tex (&buffer, x1 + wdx,        y1 + wdy,         0.0,  1.0);
 
-      hidgl_add_vertex_tex (&buffer, x2 - wdx,        y2 - wdy,         0.0, -1.0);
-      hidgl_add_vertex_tex (&buffer, x2 + wdx,        y2 + wdy,         0.0,  1.0);
-      hidgl_add_vertex_tex (&buffer, x2 - wdx + capx, y2 - wdy + capy,  1.0, -1.0);
-      hidgl_add_vertex_tex (&buffer, x2 + wdx + capx, y2 + wdy + capy,  1.0,  1.0);
-      hidgl_add_vertex_tex (&buffer, x2 + wdx + capx, y2 + wdy + capy,  1.0,  1.0);
-      /* NB: Repeated last virtex to separate from other tri-strip */
+          hidgl_add_vertex_tex (&buffer, x2 - wdx,        y2 - wdy,         0.0, -1.0);
+          hidgl_add_vertex_tex (&buffer, x2 + wdx,        y2 + wdy,         0.0,  1.0);
+          hidgl_add_vertex_tex (&buffer, x2 - wdx + capx, y2 - wdy + capy,  1.0, -1.0);
+          hidgl_add_vertex_tex (&buffer, x2 + wdx + capx, y2 + wdy + capy,  1.0,  1.0);
+          hidgl_add_vertex_tex (&buffer, x2 + wdx + capx, y2 + wdy + capy,  1.0,  1.0);
+          /* NB: Repeated last virtex to separate from other tri-strip */
+        }
     }
   else
     {
@@ -881,10 +894,12 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
 
   glPushAttrib (GL_STENCIL_BUFFER_BIT);                   // Save the write mask etc.. for final restore
   glPushAttrib (GL_STENCIL_BUFFER_BIT |                   // Resave the stencil write-mask etc.., and
-                GL_COLOR_BUFFER_BIT);                     // the colour buffer write mask etc.. for part way restore
+                GL_COLOR_BUFFER_BIT |                     // the colour buffer write mask etc.., and
+                GL_DEPTH_BUFFER_BIT);                     // the depth write-mask etc.. for part way restore
   glStencilMask (stencil_bit);                            // Only write to our stencil bit
   glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);    // Always pass stencil test, ref value is our bit
   glColorMask (0, 0, 0, 0);                               // Disable writting in color buffer
+  glDepthMask (GL_FALSE);
 
   /* It will already be setup like this (so avoid prodding the state-machine):
    * glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value
