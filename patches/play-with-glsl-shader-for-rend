@@ -1,5 +1,5 @@
 Bottom: 7b871169cacfbe3939c3bf4f9b17351af8113b47
-Top:    85da29bafe028daa3c36cba080c34c4669d4af9d
+Top:    471aba4b7cfa2c7039a9d7ae6ddc7b5b0280d18f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-10-24 19:02:53 +0100
 
@@ -855,21 +855,17 @@ index 238e61d..e3a0d6f 100644
  
  int
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index 1ed8eb3..1e289dc 100644
+index 1ed8eb3..d5f745a 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
-@@ -23,11 +23,20 @@
+@@ -23,11 +23,16 @@
  #ifndef __HIDGL_INCLUDED__
  #define __HIDGL_INCLUDED__
  
 -#define TRIANGLE_ARRAY_SIZE 5461
-+//#define TRIANGLE_ARRAY_SIZE 5461
-+//#define TRIANGLE_ARRAY_SIZE 2740
-+//#define TRIANGLE_ARRAY_SIZE 8738
 +#define TRIANGLE_ARRAY_SIZE 30000
  typedef struct {
 -  GLfloat triangle_array [3 * 3 * TRIANGLE_ARRAY_SIZE];
-+//  GLfloat triangle_array [3 * (3 + 2) * TRIANGLE_ARRAY_SIZE];
 +  GLfloat *triangle_array;
    unsigned int triangle_count;
    unsigned int coord_comp_count;
@@ -881,7 +877,7 @@ index 1ed8eb3..1e289dc 100644
  } triangle_buffer;
  
  extern triangle_buffer buffer;
-@@ -35,25 +44,71 @@ extern float global_depth;
+@@ -35,25 +40,71 @@ extern float global_depth;
  
  void hidgl_in_context (bool is_in_context);
  void hidgl_init_triangle_array (triangle_buffer *buffer);
@@ -963,7 +959,7 @@ index 1ed8eb3..1e289dc 100644
  }
  
  static inline void
-@@ -71,9 +126,9 @@ hidgl_add_triangle (triangle_buffer *buffer,
+@@ -71,9 +122,9 @@ hidgl_add_triangle (triangle_buffer *buffer,
  void hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double scale);
  void hidgl_draw_arc (double width, int vx, int vy, int vrx, int vry, int start_angle, int delta_angle, double scale);
  void hidgl_draw_rect (int x1, int y1, int x2, int y2);
