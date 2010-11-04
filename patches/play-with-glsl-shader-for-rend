@@ -1,5 +1,5 @@
 Bottom: 7b871169cacfbe3939c3bf4f9b17351af8113b47
-Top:    6abde974ccca532794f5d6e4b7c6cb6cc8c2ee8a
+Top:    a06cca4299256200b8539c791eaed27c80ae95f2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-10-24 19:02:53 +0100
 
@@ -126,10 +126,10 @@ index fcc0e66..9c9d43e 100644
 +  return CAIRO_STATUS_SUCCESS;
 +}
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 238e61d..3ab77c6 100644
+index 238e61d..9f24340 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -75,43 +75,114 @@ hidgl_new_triangle_array (void)
+@@ -75,43 +75,115 @@ hidgl_new_triangle_array (void)
  }
  #endif
  
@@ -140,7 +140,7 @@ index 238e61d..3ab77c6 100644
 +static void
 +hidgl_reset_triangle_array (triangle_buffer *buffer)
 +{
-+  if (!buffer->local) {
++  if (buffer->use_vbo) {
 +    /* Map some new memory to upload vertices into. */
 +    glBufferData (GL_ARRAY_BUFFER, NUM_BUF_GLFLOATS * sizeof (GLfloat), NULL, GL_STREAM_DRAW);
 +    buffer->triangle_array = glMapBuffer (GL_ARRAY_BUFFER, GL_WRITE_ONLY);
@@ -149,7 +149,7 @@ index 238e61d..3ab77c6 100644
 +  /* If mapping the VBO fails, fall back to an allocated array */
 +  if (buffer->triangle_array == NULL) {
 +    buffer->triangle_array = malloc (NUM_BUF_GLFLOATS * sizeof (GLfloat));
-+    buffer->local = true;
++    buffer->use_vbo = false;
 +  }
 +
 +  /* Don't want this bound for now */
@@ -173,19 +173,20 @@ index 238e61d..3ab77c6 100644
 +  glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
 +
 +  buffer->triangle_array = NULL;
-+  buffer->local = false;
++  buffer->use_vbo = true;
 +  hidgl_reset_triangle_array (buffer);
  }
  
  void
 +hidgl_finish_triangle_array (triangle_buffer *buffer)
 +{
-+  if (buffer->local) {
++  if (!buffer->use_vbo) {
 +    free (buffer->triangle_array);
 +  } else {
 +    glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
 +    glUnmapBuffer (GL_ARRAY_BUFFER);
 +  }
++
 +  glBindBuffer (GL_ARRAY_BUFFER, 0);
 +
 +  glDeleteBuffers (1, &buffer->vbo_id);
@@ -205,19 +206,19 @@ index 238e61d..3ab77c6 100644
 -  glDrawArrays (GL_TRIANGLES, 0, buffer->triangle_count * 3);
 -  buffer->triangle_count = 0;
 -  buffer->coord_comp_count = 0;
-+  if (!buffer->local) {
++  if (buffer->use_vbo) {
 +    glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
 +    glUnmapBuffer (GL_ARRAY_BUFFER);
 +    buffer->triangle_array = NULL;
 +  }
 +
 +  glEnableClientState (GL_VERTEX_ARRAY);
-+  glVertexPointer (3, GL_FLOAT, 5 * sizeof (GLfloat), buffer->local ?
-+                     buffer->triangle_array : BUF_OFFSET (0));
++  glVertexPointer (3, GL_FLOAT, 5 * sizeof (GLfloat), buffer->use_vbo ?
++                     BUF_OFFSET (0) : buffer->triangle_array + 0);
 +
 +  glEnableClientState (GL_TEXTURE_COORD_ARRAY);
-+  glTexCoordPointer (2, GL_FLOAT, 5 * sizeof (GLfloat), buffer->local ?
-+                       buffer->triangle_array + 3 : BUF_OFFSET (3));
++  glTexCoordPointer (2, GL_FLOAT, 5 * sizeof (GLfloat), buffer->use_vbo ?
++                       BUF_OFFSET (3) : buffer->triangle_array + 3);
 +
 +  glDrawArrays (GL_TRIANGLE_STRIP, 0, buffer->vertex_count);
 +  glDisableClientState (GL_VERTEX_ARRAY);
@@ -257,7 +258,7 @@ index 238e61d..3ab77c6 100644
  //static int cur_mask = -1;
  
  
-@@ -215,42 +286,34 @@ int calc_slices (float pix_radius, float sweep_angle)
+@@ -215,42 +287,34 @@ int calc_slices (float pix_radius, float sweep_angle)
    return (int)ceilf (slices);
  }
  
@@ -317,7 +318,7 @@ index 238e61d..3ab77c6 100644
    int circular_caps = 0;
    int hairline = 0;
  
-@@ -263,30 +326,20 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
+@@ -263,30 +327,20 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
  
    deltax = x2 - x1;
    deltay = y2 - y1;
@@ -355,7 +356,7 @@ index 238e61d..3ab77c6 100644
    switch (cap) {
      case Trace_Cap:
      case Round_Cap:
-@@ -295,26 +348,50 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
+@@ -295,26 +349,50 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
  
      case Square_Cap:
      case Beveled_Cap:
@@ -420,7 +421,7 @@ index 238e61d..3ab77c6 100644
      }
  }
  
-@@ -393,15 +470,16 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
+@@ -393,15 +471,16 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
  
    draw_cap (width, x + rx * -cosf (start_angle_rad),
                     y + rx *  sinf (start_angle_rad),
@@ -439,7 +440,7 @@ index 238e61d..3ab77c6 100644
    CHECK_IS_IN_CONTEXT ();
    glBegin (GL_LINE_LOOP);
    glVertex3f (x1, y1, global_depth);
-@@ -413,37 +491,20 @@ hidgl_draw_rect (int x1, int y1, int x2, int y2)
+@@ -413,37 +492,20 @@ hidgl_draw_rect (int x1, int y1, int x2, int y2)
  
  
  void
@@ -461,13 +462,13 @@ index 238e61d..3ab77c6 100644
 -
 -  if (slices > MAX_TRIANGLES_PER_CIRCLE)
 -    slices = MAX_TRIANGLES_PER_CIRCLE;
--
+ 
 -  hidgl_ensure_triangle_space (&buffer, slices);
++  hidgl_ensure_vertex_space (&buffer, 6);
  
 -  last_x = vx + vr;
 -  last_y = vy;
-+  hidgl_ensure_vertex_space (&buffer, 6);
- 
+-
 -  for (i = 0; i < slices; i++) {
 -    float x, y;
 -    x = radius * cosf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
@@ -487,7 +488,7 @@ index 238e61d..3ab77c6 100644
  }
  
  #define MAX_COMBINED_MALLOCS 2500
-@@ -613,38 +674,148 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -613,38 +675,148 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
    free (vertices);
  }
  
@@ -657,7 +658,7 @@ index 238e61d..3ab77c6 100644
    return 1;
  }
  
-@@ -654,15 +825,11 @@ static int assigned_bits = 0;
+@@ -654,15 +826,11 @@ static int assigned_bits = 0;
  
  /* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
  void
@@ -674,7 +675,7 @@ index 238e61d..3ab77c6 100644
  
    if (poly->Clipped == NULL)
      {
-@@ -692,7 +859,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -692,7 +860,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
     */
    /* Drawing operations now set our reference bit in the stencil buffer */
  
@@ -683,7 +684,7 @@ index 238e61d..3ab77c6 100644
    hidgl_flush_triangles (&buffer);
  
    /* Drawing operations as masked to areas where the stencil buffer is '0' */
-@@ -708,9 +875,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -708,9 +876,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
                                                                // any bits permitted by the stencil writemask
  
    /* Draw the polygon outer */
@@ -694,7 +695,7 @@ index 238e61d..3ab77c6 100644
    hidgl_flush_triangles (&buffer);
  
    /* Unassign our stencil buffer bit */
-@@ -723,14 +888,151 @@ void
+@@ -723,14 +889,151 @@ void
  hidgl_fill_rect (int x1, int y1, int x2, int y2)
  {
    CHECK_IS_IN_CONTEXT ();
@@ -849,7 +850,7 @@ index 238e61d..3ab77c6 100644
    CHECK_IS_IN_CONTEXT ();
    glGetIntegerv (GL_STENCIL_BITS, &stencil_bits);
  
-@@ -746,6 +1048,9 @@ hidgl_init (void)
+@@ -746,6 +1049,9 @@ hidgl_init (void)
                "Cannot use stencil buffer to sub-composite layers.\n");
        /* Do we need to disable that somewhere? */
      }
@@ -860,7 +861,7 @@ index 238e61d..3ab77c6 100644
  
  int
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index 1ed8eb3..d5f745a 100644
+index 1ed8eb3..67fec46 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
 @@ -23,11 +23,16 @@
@@ -878,7 +879,7 @@ index 1ed8eb3..d5f745a 100644
 +  unsigned int total_triangles;
 +  unsigned int total_vertices;
 +  GLuint vbo_id;
-+  bool local;
++  bool use_vbo;
  } triangle_buffer;
  
  extern triangle_buffer buffer;
