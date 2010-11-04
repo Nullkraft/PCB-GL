@@ -1,5 +1,5 @@
 Bottom: edd9933bd25568b854d8cbc13ea2fcb53868757b
-Top:    edd9933bd25568b854d8cbc13ea2fcb53868757b
+Top:    e7223ebb893fe4523fc53804c170f4943791b25b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-04 02:53:45 +0000
 
@@ -16,4 +16,26 @@ do all that work for each gl*Pointer call, rather than once at the end.
 
 ---
 
-
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 38bb75e..ba2659b 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -146,14 +146,14 @@ hidgl_flush_triangles (triangle_buffer *buffer)
+     buffer->triangle_array = NULL;
+   }
+ 
+-  glVertexPointer (3, GL_FLOAT, 5 * sizeof (GLfloat), buffer->use_vbo ?
+-                     BUF_OFFSET (0) : buffer->triangle_array + 0);
+-
+   glTexCoordPointer (2, GL_FLOAT, 5 * sizeof (GLfloat), buffer->use_vbo ?
+                        BUF_OFFSET (3) : buffer->triangle_array + 3);
+ 
+-  glEnableClientState (GL_VERTEX_ARRAY);
++  glVertexPointer (3, GL_FLOAT, 5 * sizeof (GLfloat), buffer->use_vbo ?
++                     BUF_OFFSET (0) : buffer->triangle_array + 0);
++
+   glEnableClientState (GL_TEXTURE_COORD_ARRAY);
++  glEnableClientState (GL_VERTEX_ARRAY);
+   glDrawArrays (GL_TRIANGLE_STRIP, 0, buffer->vertex_count);
+   glDisableClientState (GL_VERTEX_ARRAY);
+   glDisableClientState (GL_TEXTURE_COORD_ARRAY);
