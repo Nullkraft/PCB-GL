@@ -32,7 +32,7 @@ typedef struct {
   unsigned int total_triangles;
   unsigned int total_vertices;
   GLuint vbo_id;
-  bool local;
+  bool use_vbo;
 } triangle_buffer;
 
 extern triangle_buffer buffer;

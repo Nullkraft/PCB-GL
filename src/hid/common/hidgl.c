@@ -82,7 +82,7 @@ hidgl_new_triangle_array (void)
 static void
 hidgl_reset_triangle_array (triangle_buffer *buffer)
 {
-  if (!buffer->local) {
+  if (buffer->use_vbo) {
     /* Map some new memory to upload vertices into. */
     glBufferData (GL_ARRAY_BUFFER, NUM_BUF_GLFLOATS * sizeof (GLfloat), NULL, GL_STREAM_DRAW);
     buffer->triangle_array = glMapBuffer (GL_ARRAY_BUFFER, GL_WRITE_ONLY);
@@ -91,7 +91,7 @@ hidgl_reset_triangle_array (triangle_buffer *buffer)
   /* If mapping the VBO fails, fall back to an allocated array */
   if (buffer->triangle_array == NULL) {
     buffer->triangle_array = malloc (NUM_BUF_GLFLOATS * sizeof (GLfloat));
-    buffer->local = true;
+    buffer->use_vbo = false;
   }
 
   /* Don't want this bound for now */
@@ -111,19 +111,20 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
   glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
 
   buffer->triangle_array = NULL;
-  buffer->local = false;
+  buffer->use_vbo = true;
   hidgl_reset_triangle_array (buffer);
 }
 
 void
 hidgl_finish_triangle_array (triangle_buffer *buffer)
 {
-  if (buffer->local) {
+  if (!buffer->use_vbo) {
     free (buffer->triangle_array);
   } else {
     glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
     glUnmapBuffer (GL_ARRAY_BUFFER);
   }
+
   glBindBuffer (GL_ARRAY_BUFFER, 0);
 
   glDeleteBuffers (1, &buffer->vbo_id);
@@ -139,19 +140,19 @@ hidgl_flush_triangles (triangle_buffer *buffer)
   if (buffer->vertex_count == 0)
     return;
 
-  if (!buffer->local) {
+  if (buffer->use_vbo) {
     glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
     glUnmapBuffer (GL_ARRAY_BUFFER);
     buffer->triangle_array = NULL;
   }
 
   glEnableClientState (GL_VERTEX_ARRAY);
-  glVertexPointer (3, GL_FLOAT, 5 * sizeof (GLfloat), buffer->local ?
-                     buffer->triangle_array : BUF_OFFSET (0));
+  glVertexPointer (3, GL_FLOAT, 5 * sizeof (GLfloat), buffer->use_vbo ?
+                     BUF_OFFSET (0) : buffer->triangle_array + 0);
 
   glEnableClientState (GL_TEXTURE_COORD_ARRAY);
-  glTexCoordPointer (2, GL_FLOAT, 5 * sizeof (GLfloat), buffer->local ?
-                       buffer->triangle_array + 3 : BUF_OFFSET (3));
+  glTexCoordPointer (2, GL_FLOAT, 5 * sizeof (GLfloat), buffer->use_vbo ?
+                       BUF_OFFSET (3) : buffer->triangle_array + 3);
 
   glDrawArrays (GL_TRIANGLE_STRIP, 0, buffer->vertex_count);
   glDisableClientState (GL_VERTEX_ARRAY);
