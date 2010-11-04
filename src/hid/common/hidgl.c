@@ -75,23 +75,26 @@ hidgl_new_triangle_array (void)
 }
 #endif
 
-#define NUM_BUF_GLFLOATS (3 * (3 + 2) * TRIANGLE_ARRAY_SIZE)
+#define BUFFER_STRIDE (5 * sizeof (GLfloat))
+#define BUFFER_SIZE (BUFFER_STRIDE * 3 * TRIANGLE_ARRAY_SIZE)
 
-
-/* NB: Caller must ensure the desired GL_ARRAY_BUFFER is bound */
+/* NB: If using VBOs, the caller must ensure the VBO is bound to the GL_ARRAY_BUFFER */
 static void
 hidgl_reset_triangle_array (triangle_buffer *buffer)
 {
-  if (buffer->use_vbo) {
-    /* Map some new memory to upload vertices into. */
-    glBufferData (GL_ARRAY_BUFFER, NUM_BUF_GLFLOATS * sizeof (GLfloat), NULL, GL_STREAM_DRAW);
+  if (buffer->use_map) {
+    /* Hint to the driver that we're done with the previous buffer contents */
+    glBufferData (GL_ARRAY_BUFFER, BUFFER_SIZE, NULL, GL_STREAM_DRAW);
+    /* Map the new memory to upload vertices into. */
     buffer->triangle_array = glMapBuffer (GL_ARRAY_BUFFER, GL_WRITE_ONLY);
   }
 
-  /* If mapping the VBO fails, fall back to an allocated array */
+  /* If mapping the VBO fails (or if we aren't using VBOs) fall back a
+   * local array.
+   */
   if (buffer->triangle_array == NULL) {
-    buffer->triangle_array = malloc (NUM_BUF_GLFLOATS * sizeof (GLfloat));
-    buffer->use_vbo = false;
+    buffer->triangle_array = malloc (BUFFER_SIZE);
+    buffer->use_map = false;
   }
 
   /* Don't want this bound for now */
@@ -107,50 +110,82 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
 {
   CHECK_IS_IN_CONTEXT ();
 
-  glGenBuffers (1, &buffer->vbo_id);
-  glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
+  buffer->use_vbo = true;
+  // buffer->use_vbo = false;
+
+  if (buffer->use_vbo) {
+    glGenBuffers (1, &buffer->vbo_id);
+    glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
+  }
+
+  if (buffer->vbo_id == 0)
+    buffer->use_vbo = false;
+
+  buffer->use_map = buffer->use_vbo;
+
+  /* NB: Mapping the whole buffer can be expensive since we ask the driver
+   *     to discard previous data and give us a "new" buffer to write into
+   *     each time. If it is still rendering from previous buffer, we end
+   *     up causing a lot of unnecessary allocation in the driver this way.
+   *
+   *     On intel drivers at least, glBufferSubData does not block. It uploads
+   *     into a temporary buffer and queues a GPU copy of the uploaded data
+   *     for when the "main" buffer has finished rendering.
+   */
+  buffer->use_map = false;
+
+  /* If using VBOs (but not mapping), we only need to this once */
+  if (buffer->use_vbo && !buffer->use_map)
+    glBufferData (GL_ARRAY_BUFFER, BUFFER_SIZE, NULL, GL_STREAM_DRAW);
 
   buffer->triangle_array = NULL;
-  buffer->use_vbo = true;
   hidgl_reset_triangle_array (buffer);
 }
 
 void
 hidgl_finish_triangle_array (triangle_buffer *buffer)
 {
-  if (!buffer->use_vbo) {
-    free (buffer->triangle_array);
-  } else {
+  if (buffer->use_map) {
     glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
     glUnmapBuffer (GL_ARRAY_BUFFER);
+    glBindBuffer (GL_ARRAY_BUFFER, 0);
+  } else {
+    free (buffer->triangle_array);
   }
 
-  glBindBuffer (GL_ARRAY_BUFFER, 0);
-
-  glDeleteBuffers (1, &buffer->vbo_id);
-  buffer->vbo_id = 0;
+  if (buffer->use_vbo) {
+    glDeleteBuffers (1, &buffer->vbo_id);
+    buffer->vbo_id = 0;
+  }
 }
-
-#define BUF_OFFSET(x) (&((GLfloat *)NULL)[x])
 
 void
 hidgl_flush_triangles (triangle_buffer *buffer)
 {
+  GLfloat *data_pointer = NULL;
+
   CHECK_IS_IN_CONTEXT ();
   if (buffer->vertex_count == 0)
     return;
 
   if (buffer->use_vbo) {
     glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
-    glUnmapBuffer (GL_ARRAY_BUFFER);
-    buffer->triangle_array = NULL;
+
+    if (buffer->use_map) {
+      glUnmapBuffer (GL_ARRAY_BUFFER);
+      buffer->triangle_array = NULL;
+    } else {
+      /* NB: We only upload the portion of the buffer we've used */
+      glBufferSubData (GL_ARRAY_BUFFER, 0,
+                       BUFFER_STRIDE * buffer->vertex_count,
+                       buffer->triangle_array);
+    }
+  } else {
+    data_pointer = buffer->triangle_array;
   }
 
-  glTexCoordPointer (2, GL_FLOAT, 5 * sizeof (GLfloat), buffer->use_vbo ?
-                       BUF_OFFSET (3) : buffer->triangle_array + 3);
-
-  glVertexPointer (3, GL_FLOAT, 5 * sizeof (GLfloat), buffer->use_vbo ?
-                     BUF_OFFSET (0) : buffer->triangle_array + 0);
+  glTexCoordPointer (2, GL_FLOAT, BUFFER_STRIDE, data_pointer + 3);
+  glVertexPointer   (3, GL_FLOAT, BUFFER_STRIDE, data_pointer + 0);
 
   glEnableClientState (GL_TEXTURE_COORD_ARRAY);
   glEnableClientState (GL_VERTEX_ARRAY);
