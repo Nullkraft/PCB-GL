@@ -84,7 +84,7 @@ hidgl_reset_triangle_array (triangle_buffer *buffer)
 {
   /* Hint to the driver that we're done with the previous buffer contents */
   if (buffer->use_vbo)
-    glBufferData (GL_ARRAY_BUFFER, NUM_BUF_GLFLOATS * sizeof (GLfloat), NULL, GL_DYNAMIC_DRAW);
+    glBufferData (GL_ARRAY_BUFFER, NUM_BUF_GLFLOATS * sizeof (GLfloat), NULL, GL_STREAM_DRAW);
 
   /* Map the new memory to upload vertices into. */
   if (buffer->use_map)
@@ -109,6 +109,7 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
 {
   CHECK_IS_IN_CONTEXT ();
 
+  buffer->use_vbo = true;
   buffer->use_vbo = false;
 
   if (buffer->use_vbo) {
@@ -120,7 +121,7 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
     buffer->use_vbo = false;
 
   buffer->use_map = buffer->use_vbo;
-  buffer->use_map = false;
+  // buffer->use_map = false;
 
   buffer->triangle_array = NULL;
   hidgl_reset_triangle_array (buffer);
@@ -129,18 +130,18 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
 void
 hidgl_finish_triangle_array (triangle_buffer *buffer)
 {
-  if (!buffer->use_map)
+  if (buffer->use_map) {
+    glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
+    glUnmapBuffer (GL_ARRAY_BUFFER);
+    glBindBuffer (GL_ARRAY_BUFFER, 0);
+  } else {
     free (buffer->triangle_array);
+  }
 
-  if (!buffer->use_vbo)
-    return;
-
-  glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
-  glUnmapBuffer (GL_ARRAY_BUFFER);
-  glBindBuffer (GL_ARRAY_BUFFER, 0);
-
-  glDeleteBuffers (1, &buffer->vbo_id);
-  buffer->vbo_id = 0;
+  if (buffer->use_vbo) {
+    glDeleteBuffers (1, &buffer->vbo_id);
+    buffer->vbo_id = 0;
+  }
 }
 
 #define BUF_OFFSET(x) (&((GLfloat *)NULL)[x])
