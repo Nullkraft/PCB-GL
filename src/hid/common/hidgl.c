@@ -146,14 +146,14 @@ hidgl_flush_triangles (triangle_buffer *buffer)
     buffer->triangle_array = NULL;
   }
 
-  glVertexPointer (3, GL_FLOAT, 5 * sizeof (GLfloat), buffer->use_vbo ?
-                     BUF_OFFSET (0) : buffer->triangle_array + 0);
-
   glTexCoordPointer (2, GL_FLOAT, 5 * sizeof (GLfloat), buffer->use_vbo ?
                        BUF_OFFSET (3) : buffer->triangle_array + 3);
 
-  glEnableClientState (GL_VERTEX_ARRAY);
+  glVertexPointer (3, GL_FLOAT, 5 * sizeof (GLfloat), buffer->use_vbo ?
+                     BUF_OFFSET (0) : buffer->triangle_array + 0);
+
   glEnableClientState (GL_TEXTURE_COORD_ARRAY);
+  glEnableClientState (GL_VERTEX_ARRAY);
   glDrawArrays (GL_TRIANGLE_STRIP, 0, buffer->vertex_count);
   glDisableClientState (GL_VERTEX_ARRAY);
   glDisableClientState (GL_TEXTURE_COORD_ARRAY);
