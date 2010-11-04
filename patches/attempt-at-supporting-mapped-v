@@ -1,5 +1,5 @@
 Bottom: e7223ebb893fe4523fc53804c170f4943791b25b
-Top:    e7223ebb893fe4523fc53804c170f4943791b25b
+Top:    11f1da764219a92120ad3086f5e777eb50421572
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-04 03:28:40 +0000
 
@@ -8,4 +8,109 @@ Attempt at supporting Mapped VBO / VBO / Arrays neatly
 
 ---
 
-
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index ba2659b..3754401 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -78,20 +78,22 @@ hidgl_new_triangle_array (void)
+ #define NUM_BUF_GLFLOATS (3 * (3 + 2) * TRIANGLE_ARRAY_SIZE)
+ 
+ 
+-/* NB: Caller must ensure the desired GL_ARRAY_BUFFER is bound */
++/* NB: If using VBOs, the caller must ensure the VBO is bound to the GL_ARRAY_BUFFER */
+ static void
+ hidgl_reset_triangle_array (triangle_buffer *buffer)
+ {
+-  if (buffer->use_vbo) {
+-    /* Map some new memory to upload vertices into. */
+-    glBufferData (GL_ARRAY_BUFFER, NUM_BUF_GLFLOATS * sizeof (GLfloat), NULL, GL_STREAM_DRAW);
++  /* Hint to the driver that we're done with the previous buffer contents */
++  if (buffer->use_vbo)
++    glBufferData (GL_ARRAY_BUFFER, NUM_BUF_GLFLOATS * sizeof (GLfloat), NULL, GL_DYNAMIC_DRAW);
++
++  /* Map the new memory to upload vertices into. */
++  if (buffer->use_map)
+     buffer->triangle_array = glMapBuffer (GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+-  }
+ 
+-  /* If mapping the VBO fails, fall back to an allocated array */
++  /* If mapping the VBO fails (or if we aren't using VBOs) fall back a local array */
+   if (buffer->triangle_array == NULL) {
+     buffer->triangle_array = malloc (NUM_BUF_GLFLOATS * sizeof (GLfloat));
+-    buffer->use_vbo = false;
++    buffer->use_map = false;
+   }
+ 
+   /* Don't want this bound for now */
+@@ -107,24 +109,34 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
+ {
+   CHECK_IS_IN_CONTEXT ();
+ 
+-  glGenBuffers (1, &buffer->vbo_id);
+-  glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
++  buffer->use_vbo = false;
++
++  if (buffer->use_vbo) {
++    glGenBuffers (1, &buffer->vbo_id);
++    glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
++  }
++
++  if (buffer->vbo_id == 0)
++    buffer->use_vbo = false;
++
++  buffer->use_map = buffer->use_vbo;
++  buffer->use_map = false;
+ 
+   buffer->triangle_array = NULL;
+-  buffer->use_vbo = true;
+   hidgl_reset_triangle_array (buffer);
+ }
+ 
+ void
+ hidgl_finish_triangle_array (triangle_buffer *buffer)
+ {
+-  if (!buffer->use_vbo) {
++  if (!buffer->use_map)
+     free (buffer->triangle_array);
+-  } else {
+-    glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
+-    glUnmapBuffer (GL_ARRAY_BUFFER);
+-  }
+ 
++  if (!buffer->use_vbo)
++    return;
++
++  glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
++  glUnmapBuffer (GL_ARRAY_BUFFER);
+   glBindBuffer (GL_ARRAY_BUFFER, 0);
+ 
+   glDeleteBuffers (1, &buffer->vbo_id);
+@@ -142,8 +154,14 @@ hidgl_flush_triangles (triangle_buffer *buffer)
+ 
+   if (buffer->use_vbo) {
+     glBindBuffer (GL_ARRAY_BUFFER, buffer->vbo_id);
+-    glUnmapBuffer (GL_ARRAY_BUFFER);
+-    buffer->triangle_array = NULL;
++
++    if (buffer->use_map) {
++      glUnmapBuffer (GL_ARRAY_BUFFER);
++      buffer->triangle_array = NULL;
++    } else {
++      glBufferSubData (GL_ARRAY_BUFFER, 0, NUM_BUF_GLFLOATS * sizeof (GLfloat),
++                       buffer->triangle_array);
++    }
+   }
+ 
+   glTexCoordPointer (2, GL_FLOAT, 5 * sizeof (GLfloat), buffer->use_vbo ?
+diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
+index 67fec46..0a7b68e 100644
+--- a/src/hid/common/hidgl.h
++++ b/src/hid/common/hidgl.h
+@@ -33,6 +33,7 @@ typedef struct {
+   unsigned int total_vertices;
+   GLuint vbo_id;
+   bool use_vbo;
++  bool use_map;
+ } triangle_buffer;
+ 
+ extern triangle_buffer buffer;
