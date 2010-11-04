@@ -1,5 +1,5 @@
 Bottom: b7d3f982b9cd8f33c042550c04f1e3fdb298ce5d
-Top:    b7d3f982b9cd8f33c042550c04f1e3fdb298ce5d
+Top:    1f624b446b10a04d35c33a6e3f37902efcc783a5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-04 02:06:28 +0000
 
@@ -10,4 +10,24 @@ This might be better? Set up the pointers before enabling the state.
 
 ---
 
-
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 3ab77c6..aad818c 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -145,14 +145,14 @@ hidgl_flush_triangles (triangle_buffer *buffer)
+     buffer->triangle_array = NULL;
+   }
+ 
+-  glEnableClientState (GL_VERTEX_ARRAY);
+   glVertexPointer (3, GL_FLOAT, 5 * sizeof (GLfloat), buffer->local ?
+                      buffer->triangle_array : BUF_OFFSET (0));
+ 
+-  glEnableClientState (GL_TEXTURE_COORD_ARRAY);
+   glTexCoordPointer (2, GL_FLOAT, 5 * sizeof (GLfloat), buffer->local ?
+                        buffer->triangle_array + 3 : BUF_OFFSET (3));
+ 
++  glEnableClientState (GL_VERTEX_ARRAY);
++  glEnableClientState (GL_TEXTURE_COORD_ARRAY);
+   glDrawArrays (GL_TRIANGLE_STRIP, 0, buffer->vertex_count);
+   glDisableClientState (GL_VERTEX_ARRAY);
+   glDisableClientState (GL_TEXTURE_COORD_ARRAY);
