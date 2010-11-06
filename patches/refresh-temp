@@ -1,0 +1,64 @@
+Bottom: c4f042ee811cb855915884f8f9fabf56b2e42b2a
+Top:    388c1b9342b470942c72ed9b28da4d07e4b6329b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-11-06 01:32:19 +0000
+
+Refresh of try-a-new-different-sized-vbo-
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 88f8373..5ed9400 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -89,8 +89,8 @@ hidgl_reset_triangle_array (triangle_buffer *buffer)
+     buffer->triangle_array = glMapBuffer (GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+   }
+ 
+-  /* If mapping the VBO fails (or if we aren't using VBOs) fall back a
+-   * local array.
++  /* If mapping the VBO fails (or if we aren't using VBOs) fall back to
++   * local storage.
+    */
+   if (buffer->triangle_array == NULL) {
+     buffer->triangle_array = malloc (BUFFER_SIZE);
+@@ -135,8 +135,8 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
+   buffer->use_map = false;
+ 
+   /* If using VBOs (but not mapping), we only need to this once */
+-  if (buffer->use_vbo && !buffer->use_map)
+-    glBufferData (GL_ARRAY_BUFFER, BUFFER_SIZE, NULL, GL_STREAM_DRAW);
++//  if (buffer->use_vbo && !buffer->use_map)
++//    glBufferData (GL_ARRAY_BUFFER, BUFFER_SIZE, NULL, GL_STREAM_DRAW);
+ 
+   buffer->triangle_array = NULL;
+   hidgl_reset_triangle_array (buffer);
+@@ -176,9 +176,15 @@ hidgl_flush_triangles (triangle_buffer *buffer)
+       buffer->triangle_array = NULL;
+     } else {
+       /* NB: We only upload the portion of the buffer we've used */
++#if 0
+       glBufferSubData (GL_ARRAY_BUFFER, 0,
+                        BUFFER_STRIDE * buffer->vertex_count,
+                        buffer->triangle_array);
++#endif
++      glBufferData (GL_ARRAY_BUFFER,
++                    BUFFER_STRIDE * buffer->vertex_count,
++                    buffer->triangle_array,
++                    GL_STREAM_DRAW);
+     }
+   } else {
+     data_pointer = buffer->triangle_array;
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index afd0b86..ff8841d 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1047,6 +1047,8 @@ ghid_end_drawing (GHidPort *port)
+   else
+     glFlush ();
+ 
++  gdk_gl_drawable_wait_gl (pGlDrawable);
++
+   /* end drawing to current GL-context */
+   gdk_gl_drawable_gl_end (pGlDrawable);
+ }
