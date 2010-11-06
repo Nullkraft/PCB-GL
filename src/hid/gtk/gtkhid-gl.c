@@ -1047,6 +1047,8 @@ ghid_end_drawing (GHidPort *port)
   else
     glFlush ();
 
+  gdk_gl_drawable_wait_gl (pGlDrawable);
+
   /* end drawing to current GL-context */
   gdk_gl_drawable_gl_end (pGlDrawable);
 }
