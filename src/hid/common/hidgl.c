@@ -89,8 +89,8 @@ hidgl_reset_triangle_array (triangle_buffer *buffer)
     buffer->triangle_array = glMapBuffer (GL_ARRAY_BUFFER, GL_WRITE_ONLY);
   }
 
-  /* If mapping the VBO fails (or if we aren't using VBOs) fall back a
-   * local array.
+  /* If mapping the VBO fails (or if we aren't using VBOs) fall back to
+   * local storage.
    */
   if (buffer->triangle_array == NULL) {
     buffer->triangle_array = malloc (BUFFER_SIZE);
