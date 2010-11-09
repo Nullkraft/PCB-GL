@@ -1,5 +1,5 @@
 Bottom: a06cca4299256200b8539c791eaed27c80ae95f2
-Top:    a06cca4299256200b8539c791eaed27c80ae95f2
+Top:    cefdd35d172882092a04a67cd6e438b0766ac974
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-09 19:05:31 +0000
 
@@ -8,4 +8,28 @@ Tmp
 
 ---
 
-
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 9f24340..b9b1e94 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -318,6 +318,7 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
+   int circular_caps = 0;
+   int hairline = 0;
+ 
++  return;
+   CHECK_IS_IN_CONTEXT ();
+   if (width == 0.0)
+     hairline = 1;
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index afd0b86..46ac706 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1862,7 +1862,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
+   glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
+             (ghid_flip_y ? -1. : 1.) / port->zoom,
+-            ((ghid_flip_x == ghid_flip_y) ? 1. : -1.) / port->zoom);
++            ((ghid_flip_x == ghid_flip_y) ? 1. :  1.) / port->zoom);
+   glTranslatef (ghid_flip_x ? port->view_x0 - PCB->MaxWidth  :
+                              -port->view_x0,
+                 ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
