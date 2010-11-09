@@ -1,5 +1,5 @@
 Bottom: 7b871169cacfbe3939c3bf4f9b17351af8113b47
-Top:    9861974f0847ccc83bae4425cd5ab35a9c29223f
+Top:    8b7c6ff67864229e7b70ce37dbc5115db6909e7a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-09 22:33:12 +0000
 
@@ -9,7 +9,7 @@ Move more rendering to world coordinates
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index c7c2ac2..20d2770 100644
+index c7c2ac2..21cc13a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -81,7 +81,9 @@ typedef struct hid_gc_struct
@@ -161,36 +161,217 @@ index c7c2ac2..20d2770 100644
  }
  
  #if 0
-@@ -863,6 +877,8 @@ ghid_show_crosshair (gboolean show)
-   static GdkColor cross_color;
-   extern float global_depth;
- 
-+  return;
-+
-   if (!check_gl_drawing_ok_hack)
-     return;
- 
-@@ -881,8 +897,8 @@ ghid_show_crosshair (gboolean show)
-   y = DRAW_Y (gport->y_crosshair);
-   z = global_depth;
- 
--  glEnable (GL_COLOR_LOGIC_OP);
--  glLogicOp (GL_XOR);
-+//  glEnable (GL_COLOR_LOGIC_OP);
-+//  glLogicOp (GL_XOR);
- 
-   hidgl_flush_triangles (&buffer);
- 
-@@ -963,7 +979,7 @@ ghid_show_crosshair (gboolean show)
-       draw_markers_prev = FALSE;
-     }
- 
--  glDisable (GL_COLOR_LOGIC_OP);
-+//  glDisable (GL_COLOR_LOGIC_OP);
+@@ -753,9 +767,9 @@ static void
+ draw_right_cross (gint x, gint y, gint z)
+ {
+   glVertex3i (x, 0, z);
+-  glVertex3i (x, gport->height, z);
++  glVertex3i (x, PCB->MaxHeight, z);
+   glVertex3i (0, y, z);
+-  glVertex3i (gport->width, y, z);
++  glVertex3i (PCB->MaxWidth, y, z);
  }
  
- void
-@@ -1594,18 +1610,14 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+ static void
+@@ -763,25 +777,25 @@ draw_slanted_cross (gint x, gint y, gint z)
+ {
+   gint x0, y0, x1, y1;
+ 
+-  x0 = x + (gport->height - y);
+-  x0 = MAX(0, MIN (x0, gport->width));
++  x0 = x + (PCB->MaxHeight - y);
++  x0 = MAX(0, MIN (x0, PCB->MaxWidth));
+   x1 = x - y;
+-  x1 = MAX(0, MIN (x1, gport->width));
+-  y0 = y + (gport->width - x);
+-  y0 = MAX(0, MIN (y0, gport->height));
++  x1 = MAX(0, MIN (x1, PCB->MaxWidth));
++  y0 = y + (PCB->MaxWidth - x);
++  y0 = MAX(0, MIN (y0, PCB->MaxHeight));
+   y1 = y - x;
+-  y1 = MAX(0, MIN (y1, gport->height));
++  y1 = MAX(0, MIN (y1, PCB->MaxHeight));
+   glVertex3i (x0, y0, z);
+   glVertex3i (x1, y1, z);
+ 
+-  x0 = x - (gport->height - y);
+-  x0 = MAX(0, MIN (x0, gport->width));
++  x0 = x - (PCB->MaxHeight - y);
++  x0 = MAX(0, MIN (x0, PCB->MaxWidth));
+   x1 = x + y;
+-  x1 = MAX(0, MIN (x1, gport->width));
++  x1 = MAX(0, MIN (x1, PCB->MaxWidth));
+   y0 = y + x;
+-  y0 = MAX(0, MIN (y0, gport->height));
+-  y1 = y - (gport->width - x);
+-  y1 = MAX(0, MIN (y1, gport->height));
++  y0 = MAX(0, MIN (y0, PCB->MaxHeight));
++  y1 = y - (PCB->MaxWidth - x);
++  y1 = MAX(0, MIN (y1, PCB->MaxHeight));
+   glVertex3i (x0, y0, z);
+   glVertex3i (x1, y1, z);
+ }
+@@ -792,47 +806,47 @@ draw_dozen_cross (gint x, gint y, gint z)
+   gint x0, y0, x1, y1;
+   gdouble tan60 = sqrt (3);
+ 
+-  x0 = x + (gport->height - y) / tan60;
+-  x0 = MAX(0, MIN (x0, gport->width));
++  x0 = x + (PCB->MaxHeight - y) / tan60;
++  x0 = MAX(0, MIN (x0, PCB->MaxWidth));
+   x1 = x - y / tan60;
+-  x1 = MAX(0, MIN (x1, gport->width));
+-  y0 = y + (gport->width - x) * tan60;
+-  y0 = MAX(0, MIN (y0, gport->height));
++  x1 = MAX(0, MIN (x1, PCB->MaxWidth));
++  y0 = y + (PCB->MaxWidth - x) * tan60;
++  y0 = MAX(0, MIN (y0, PCB->MaxHeight));
+   y1 = y - x * tan60;
+-  y1 = MAX(0, MIN (y1, gport->height));
++  y1 = MAX(0, MIN (y1, PCB->MaxHeight));
+   glVertex3i (x0, y0, z);
+   glVertex3i (x1, y1, z);
+ 
+-  x0 = x + (gport->height - y) * tan60;
+-  x0 = MAX(0, MIN (x0, gport->width));
++  x0 = x + (PCB->MaxHeight - y) * tan60;
++  x0 = MAX(0, MIN (x0, PCB->MaxWidth));
+   x1 = x - y * tan60;
+-  x1 = MAX(0, MIN (x1, gport->width));
+-  y0 = y + (gport->width - x) / tan60;
+-  y0 = MAX(0, MIN (y0, gport->height));
++  x1 = MAX(0, MIN (x1, PCB->MaxWidth));
++  y0 = y + (PCB->MaxWidth - x) / tan60;
++  y0 = MAX(0, MIN (y0, PCB->MaxHeight));
+   y1 = y - x / tan60;
+-  y1 = MAX(0, MIN (y1, gport->height));
++  y1 = MAX(0, MIN (y1, PCB->MaxHeight));
+   glVertex3i (x0, y0, z);
+   glVertex3i (x1, y1, z);
+ 
+-  x0 = x - (gport->height - y) / tan60;
+-  x0 = MAX(0, MIN (x0, gport->width));
++  x0 = x - (PCB->MaxHeight - y) / tan60;
++  x0 = MAX(0, MIN (x0, PCB->MaxWidth));
+   x1 = x + y / tan60;
+-  x1 = MAX(0, MIN (x1, gport->width));
++  x1 = MAX(0, MIN (x1, PCB->MaxWidth));
+   y0 = y + x * tan60;
+-  y0 = MAX(0, MIN (y0, gport->height));
+-  y1 = y - (gport->width - x) * tan60;
+-  y1 = MAX(0, MIN (y1, gport->height));
++  y0 = MAX(0, MIN (y0, PCB->MaxHeight));
++  y1 = y - (PCB->MaxWidth - x) * tan60;
++  y1 = MAX(0, MIN (y1, PCB->MaxHeight));
+   glVertex3i (x0, y0, z);
+   glVertex3i (x1, y1, z);
+ 
+-  x0 = x - (gport->height - y) * tan60;
+-  x0 = MAX(0, MIN (x0, gport->width));
++  x0 = x - (PCB->MaxHeight - y) * tan60;
++  x0 = MAX(0, MIN (x0, PCB->MaxWidth));
+   x1 = x + y * tan60;
+-  x1 = MAX(0, MIN (x1, gport->width));
++  x1 = MAX(0, MIN (x1, PCB->MaxWidth));
+   y0 = y + x / tan60;
+-  y0 = MAX(0, MIN (y0, gport->height));
+-  y1 = y - (gport->width - x) / tan60;
+-  y1 = MAX(0, MIN (y1, gport->height));
++  y0 = MAX(0, MIN (y0, PCB->MaxHeight));
++  y1 = y - (PCB->MaxWidth - x) / tan60;
++  y1 = MAX(0, MIN (y1, PCB->MaxHeight));
+   glVertex3i (x0, y0, z);
+   glVertex3i (x1, y1, z);
+ }
+@@ -877,8 +891,8 @@ ghid_show_crosshair (gboolean show)
+       /* FIXME: when CrossColor changed from config */
+       ghid_map_color_string (Settings.CrossColor, &cross_color);
+     }
+-  x = DRAW_X (gport->x_crosshair);
+-  y = DRAW_Y (gport->y_crosshair);
++  x = gport->x_crosshair;
++  y = gport->y_crosshair;
+   z = global_depth;
+ 
+   glEnable (GL_COLOR_LOGIC_OP);
+@@ -908,44 +922,44 @@ ghid_show_crosshair (gboolean show)
+ #if 0
+   if (x_prev >= 0 && draw_markers_prev)
+     {
+-      glVertex3i (0,                  y_prev - VCD,        z_prev);
+-      glVertex3i (0,                  y_prev - VCD + VCW,  z_prev);
+-      glVertex3i (VCD,                y_prev - VCD + VCW,  z_prev);
+-      glVertex3i (VCD,                y_prev - VCD,        z_prev);
+-      glVertex3i (gport->width,       y_prev - VCD,        z_prev);
+-      glVertex3i (gport->width,       y_prev - VCD + VCW,  z_prev);
+-      glVertex3i (gport->width - VCD, y_prev - VCD + VCW,  z_prev);
+-      glVertex3i (gport->width - VCD, y_prev - VCD,        z_prev);
+-      glVertex3i (x_prev - VCD,       0,                   z_prev);
+-      glVertex3i (x_prev - VCD,       VCD,                 z_prev);
+-      glVertex3i (x_prev - VCD + VCW, VCD,                 z_prev);
+-      glVertex3i (x_prev - VCD + VCW, 0,                   z_prev);
+-      glVertex3i (x_prev - VCD,       gport->height - VCD, z_prev);
+-      glVertex3i (x_prev - VCD,       gport->height,       z_prev);
+-      glVertex3i (x_prev - VCD + VCW, gport->height,       z_prev);
+-      glVertex3i (x_prev - VCD + VCW, gport->height - VCD, z_prev);
++      glVertex3i (0,                       y_prev - VCD,             z_prev);
++      glVertex3i (0,                       y_prev - VCD + VCW,       z_prev);
++      glVertex3i (VCD,                     y_prev - VCD + VCW,       z_prev);
++      glVertex3i (VCD,                     y_prev - VCD,             z_prev);
++      glVertex3i (gport->view_width,       y_prev - VCD,             z_prev);
++      glVertex3i (gport->view_width,       y_prev - VCD + VCW,       z_prev);
++      glVertex3i (gport->view_width - VCD, y_prev - VCD + VCW,       z_prev);
++      glVertex3i (gport->view_width - VCD, y_prev - VCD,             z_prev);
++      glVertex3i (x_prev - VCD,            0,                        z_prev);
++      glVertex3i (x_prev - VCD,            VCD,                      z_prev);
++      glVertex3i (x_prev - VCD + VCW,      VCD,                      z_prev);
++      glVertex3i (x_prev - VCD + VCW,      0,                        z_prev);
++      glVertex3i (x_prev - VCD,            gport->view_height - VCD, z_prev);
++      glVertex3i (x_prev - VCD,            gport->view_height,       z_prev);
++      glVertex3i (x_prev - VCD + VCW,      gport->view_height,       z_prev);
++      glVertex3i (x_prev - VCD + VCW,      gport->view_height - VCD, z_prev);
+     }
+ #endif
+ 
+   draw_markers = ghidgui->auto_pan_on && have_crosshair_attachments ();
+   if (x >= 0 && show && draw_markers)
+     {
+-      glVertex3i (0,                  y - VCD,             z);
+-      glVertex3i (0,                  y - VCD + VCW,       z);
+-      glVertex3i (VCD,                y - VCD + VCW,       z);
+-      glVertex3i (VCD,                y - VCD,             z);
+-      glVertex3i (gport->width,       y - VCD,             z);
+-      glVertex3i (gport->width,       y - VCD + VCW,       z);
+-      glVertex3i (gport->width - VCD, y - VCD + VCW,       z);
+-      glVertex3i (gport->width - VCD, y - VCD,             z);
+-      glVertex3i (x - VCD,            0,                   z);
+-      glVertex3i (x - VCD,            VCD,                 z);
+-      glVertex3i (x - VCD + VCW,      VCD,                 z);
+-      glVertex3i (x - VCD + VCW,      0,                   z);
+-      glVertex3i (x - VCD,            gport->height - VCD, z);
+-      glVertex3i (x - VCD,            gport->height,       z);
+-      glVertex3i (x - VCD + VCW,      gport->height,       z);
+-      glVertex3i (x - VCD + VCW,      gport->height - VCD, z);
++      glVertex3i (0,                       y - VCD,                  z);
++      glVertex3i (0,                       y - VCD + VCW,            z);
++      glVertex3i (VCD,                     y - VCD + VCW,            z);
++      glVertex3i (VCD,                     y - VCD,                  z);
++      glVertex3i (gport->view_width,       y - VCD,                  z);
++      glVertex3i (gport->view_width,       y - VCD + VCW,            z);
++      glVertex3i (gport->view_width - VCD, y - VCD + VCW,            z);
++      glVertex3i (gport->view_width - VCD, y - VCD,                  z);
++      glVertex3i (x - VCD,                 0,                        z);
++      glVertex3i (x - VCD,                 VCD,                      z);
++      glVertex3i (x - VCD + VCW,           VCD,                      z);
++      glVertex3i (x - VCD + VCW,           0,                        z);
++      glVertex3i (x - VCD,                 gport->view_height - VCD, z);
++      glVertex3i (x - VCD,                 gport->view_height,       z);
++      glVertex3i (x - VCD + VCW,           gport->view_height,       z);
++      glVertex3i (x - VCD + VCW,           gport->view_height - VCD, z);
+     }
+ 
+   glEnd ();
+@@ -1594,18 +1608,14 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    /* Test direction of rendering */
    /* Look at sign of eye coordinate system z-coord when projecting a
       world vector along +ve Z axis, (0, 0, 1). */
@@ -212,7 +393,7 @@ index c7c2ac2..20d2770 100644
    PCB->Data->SILKLAYER.Color = PCB->ElementColor;
    PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
  
-@@ -1824,6 +1836,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1824,6 +1834,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
    glMultMatrixf ((GLfloat *)view_matrix);
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
@@ -226,7 +407,7 @@ index c7c2ac2..20d2770 100644
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
  #if 0
-@@ -1838,7 +1857,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1838,7 +1855,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                  port->offlimits_color.green / 65535.,
                  port->offlimits_color.blue / 65535.,
                  1.);
@@ -234,7 +415,7 @@ index c7c2ac2..20d2770 100644
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-@@ -1849,8 +1867,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1849,8 +1865,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -245,7 +426,7 @@ index c7c2ac2..20d2770 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1904,13 +1922,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1904,13 +1920,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
    min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
  
@@ -261,7 +442,7 @@ index c7c2ac2..20d2770 100644
  
    glColor3f (port->bg_color.red / 65535.,
               port->bg_color.green / 65535.,
-@@ -1927,15 +1940,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1927,15 +1938,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    /* Drawing operations as masked to areas where the stencil buffer is '0' */
  //  glStencilFunc (GL_GREATER, 1, 1);             // Draw only where stencil buffer is 0
  
@@ -277,7 +458,7 @@ index c7c2ac2..20d2770 100644
    if (global_view_2d) {
      glBegin (GL_QUADS);
      glVertex3i (0,             0,              0);
-@@ -1967,31 +1971,21 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1967,31 +1969,21 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      glEnd ();
    }
  
@@ -311,14 +492,6 @@ index c7c2ac2..20d2770 100644
  
  #if 0
      glEndList ();
-@@ -2002,6 +1996,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-   }
- #endif
- 
-+  /* FIXME MATRIX ?? */
-   ghid_show_crosshair (TRUE);
- 
-   hidgl_flush_triangles (&buffer);
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
 index 476b196..490ccc4 100644
 --- a/src/hid/gtk/gui-output-events.c
