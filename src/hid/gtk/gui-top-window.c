@@ -1843,6 +1843,8 @@ ghid_do_export (HID_Attr_Val * options)
 
   ghid_notify_gui_is_up ();
 
+  hid_actionl ("Benchmark", NULL);
+
   gtk_main ();
   ghid_config_files_write ();
 
