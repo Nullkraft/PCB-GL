@@ -1,5 +1,5 @@
 Bottom: ab4df904c348d799e4ffa18d7bff9afe0ab50d62
-Top:    460ac712802228518e3dc95117e949f741245168
+Top:    524a8a31657b2cd98a8e4d0a54ca0187f6ce86f6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-06 01:32:12 +0000
 
@@ -39,16 +39,3 @@ index cdc01ce..5ed9400 100644
      }
    } else {
      data_pointer = buffer->triangle_array;
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e5cbc4a..02199da 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1045,6 +1045,8 @@ ghid_end_drawing (GHidPort *port)
-   else
-     glFlush ();
- 
-+  gdk_gl_drawable_wait_gl (pGlDrawable);
-+
-   /* end drawing to current GL-context */
-   gdk_gl_drawable_gl_end (pGlDrawable);
- }
