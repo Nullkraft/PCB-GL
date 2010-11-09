@@ -1,4 +1,4 @@
-Bottom: 2d980b5f1cdab913f03a89238a2ecbc0afc508c4
+Bottom: dbe49115a5d644d7d7dc686ed8891dca3e055f02
 Top:    dbe49115a5d644d7d7dc686ed8891dca3e055f02
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-09 23:34:06 +0000
@@ -8,72 +8,4 @@ Ensure we throttle redraws from the trackball / joystick
 
 ---
 
-diff --git a/src/hid/gtk/gui-trackball.c b/src/hid/gtk/gui-trackball.c
-index 33b8c81..6a42f59 100644
---- a/src/hid/gtk/gui-trackball.c
-+++ b/src/hid/gtk/gui-trackball.c
-@@ -76,6 +76,7 @@ button_press_cb (GtkWidget *widget, GdkEventButton *ev, gpointer userdata)
-     {
-       axis[0] = 1.; axis[1] = 0.; axis[2] = 0.;
-       axis_to_quat (axis, 0, ball->quart1);
-+      axis_to_quat (axis, 0, ball->quart2);
-       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (ball->view_2d), FALSE);
-     }
- 
-@@ -139,8 +140,10 @@ motion_notify_cb (GtkWidget *widget, GdkEventMotion *ev, gpointer userdata)
-   double x2, y2;
-   float q[4];
- 
--  if (!ball->dragging)
-+  if (!ball->dragging) {
-+    gdk_event_request_motions (ev);
-     return TRUE;
-+  }
- 
-   x1 = ball->x1;
-   y1 = ball->y1;
-@@ -155,6 +158,7 @@ motion_notify_cb (GtkWidget *widget, GdkEventMotion *ev, gpointer userdata)
-   g_signal_emit (ball, ghid_trackball_signals[ROTATION_CHANGED], 0,
-                  ball->quart2);
- 
-+  gdk_event_request_motions (ev);
-   return TRUE;
- }
- 
-@@ -245,7 +249,8 @@ ghid_trackball_constructor (GType type,
- 
-   gtk_widget_add_events (ball->drawing_area, GDK_BUTTON_PRESS_MASK   |
-                                              GDK_BUTTON_RELEASE_MASK |
--                                             GDK_POINTER_MOTION_MASK);
-+                                             GDK_POINTER_MOTION_MASK |
-+                                             GDK_POINTER_MOTION_HINT_MASK);
- 
-   return G_OBJECT (ball);
- }
-@@ -263,8 +268,6 @@ ghid_trackball_constructor (GType type,
- static void
- ghid_trackball_finalize (GObject * object)
- {
--//  GhidTrackball *pinout = GHID_TRACKBALL (object);
--
-   G_OBJECT_CLASS (ghid_trackball_parent_class)->finalize (object);
- }
- 
-@@ -285,8 +288,6 @@ static void
- ghid_trackball_set_property (GObject * object, guint property_id,
- 				  const GValue * value, GParamSpec * pspec)
- {
--//  GhidTrackball *pinout = GHID_TRACKBALL (object);
--
-   switch (property_id)
-     {
-     default:
-@@ -405,7 +406,7 @@ ghid_trackball_get_type ()
- }
- 
- 
--/*! \brief Convenience function to create a new pinout preview
-+/*! \brief Convenience function to create a new trackball widget
-  *
-  *  \par Function Description
-  *  Convenience function which creates a GhidTrackball.
+
