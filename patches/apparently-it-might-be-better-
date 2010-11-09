@@ -1,5 +1,5 @@
-Bottom: 08c26a514d917875e37088f2cdb9ed05d2ad9bfa
-Top:    8e5c670f5ad1265ed4e6f00f201d43e2f66f1a49
+Bottom: be363292394095bbd8b408bcaea3b34e8acf845f
+Top:    a1e17f175f5792855a56ec839ba2b3b0f871f935
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-04 02:53:45 +0000
 
@@ -17,7 +17,7 @@ do all that work for each gl*Pointer call, rather than once at the end.
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 335e47d..74bfc9d 100644
+index 38bb75e..ba2659b 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -146,14 +146,14 @@ hidgl_flush_triangles (triangle_buffer *buffer)
