@@ -1,5 +1,5 @@
 Bottom: a06cca4299256200b8539c791eaed27c80ae95f2
-Top:    a06cca4299256200b8539c791eaed27c80ae95f2
+Top:    12ba785edec238cfac26a08b513cc5c063771890
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-09 20:43:39 +0000
 
@@ -8,4 +8,15 @@ Benchmark on load
 
 ---
 
-
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index f0456ea..e6d844b 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -2745,6 +2745,8 @@ ghid_do_export (HID_Attr_Val * options)
+ 
+   ghid_notify_gui_is_up ();
+ 
++  hid_actionl ("Benchmark", NULL);
++
+   gtk_main ();
+   ghid_config_files_write ();
