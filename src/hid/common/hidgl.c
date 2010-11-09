@@ -175,12 +175,6 @@ hidgl_flush_triangles (triangle_buffer *buffer)
       glUnmapBuffer (GL_ARRAY_BUFFER);
       buffer->triangle_array = NULL;
     } else {
-      /* NB: We only upload the portion of the buffer we've used */
-#if 0
-      glBufferSubData (GL_ARRAY_BUFFER, 0,
-                       BUFFER_STRIDE * buffer->vertex_count,
-                       buffer->triangle_array);
-#endif
       glBufferData (GL_ARRAY_BUFFER,
                     BUFFER_STRIDE * buffer->vertex_count,
                     buffer->triangle_array,
