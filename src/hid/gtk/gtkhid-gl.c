@@ -879,8 +879,6 @@ ghid_show_crosshair (gboolean show)
   static GdkColor cross_color;
   extern float global_depth;
 
-  return;
-
   if (!check_gl_drawing_ok_hack)
     return;
 
@@ -899,8 +897,8 @@ ghid_show_crosshair (gboolean show)
   y = gport->y_crosshair;
   z = global_depth;
 
-//  glEnable (GL_COLOR_LOGIC_OP);
-//  glLogicOp (GL_XOR);
+  glEnable (GL_COLOR_LOGIC_OP);
+  glLogicOp (GL_XOR);
 
   hidgl_flush_triangles (&buffer);
 
@@ -981,7 +979,7 @@ ghid_show_crosshair (gboolean show)
       draw_markers_prev = FALSE;
     }
 
-//  glDisable (GL_COLOR_LOGIC_OP);
+  glDisable (GL_COLOR_LOGIC_OP);
 }
 
 void
@@ -1840,12 +1838,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   glViewport (0, 0, widget->allocation.width, widget->allocation.height);
 
-#if 1
   glEnable (GL_SCISSOR_TEST);
   glScissor (ev->area.x,
              widget->allocation.height - ev->area.height - ev->area.y,
              ev->area.width, ev->area.height);
-#endif
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
@@ -1872,15 +1868,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
     glNewList (display_list, GL_COMPILE);
 #endif
 
-#if 1
   glEnable (GL_STENCIL_TEST);
-//  glClearColor (port->offlimits_color.red / 65535.,
-//                port->offlimits_color.green / 65535.,
-//                port->offlimits_color.blue / 65535.,
-//                1.);
-  glClearColor (gport->bg_color.red / 65535.,
-                gport->bg_color.green / 65535.,
-                gport->bg_color.blue / 65535.,
+  glClearColor (port->offlimits_color.red / 65535.,
+                port->offlimits_color.green / 65535.,
+                port->offlimits_color.blue / 65535.,
                 1.);
   glStencilMask (~0);
   glClearStencil (0);
@@ -1965,20 +1956,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   /* Drawing operations as masked to areas where the stencil buffer is '0' */
 //  glStencilFunc (GL_GREATER, 1, 1);             // Draw only where stencil buffer is 0
 
-#endif
-#if 0
   if (global_view_2d) {
-//    int count = 0;
     glBegin (GL_QUADS);
-//    for (count = 0; count < 30; count++) {
-      glVertex3i (0,             0,              0);
-      glVertex3i (PCB->MaxWidth, 0,              0);
-      glVertex3i (PCB->MaxWidth, PCB->MaxHeight, 0);
-      glVertex3i (0,             PCB->MaxHeight, 0);
-//    }
+    glVertex3i (0,             0,              0);
+    glVertex3i (PCB->MaxWidth, 0,              0);
+    glVertex3i (PCB->MaxWidth, PCB->MaxHeight, 0);
+    glVertex3i (0,             PCB->MaxHeight, 0);
     glEnd ();
   } else {
-#if 1
     int solder_group;
     int component_group;
     int min_phys_group;
@@ -2000,11 +1985,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
       glVertex3i (0,             PCB->MaxHeight, depth);
     }
     glEnd ();
-#endif
   }
-#endif
-
-
 
   // hid_expose_callback (&ghid_hid, &region, 0);
   ghid_draw_everything (&region);
@@ -2015,13 +1996,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   hidgl_set_depth (compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT)));
   ghid_draw_grid (&region);
 
-#if 1
-//  hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
   DrawAttached (TRUE);
   DrawMark (TRUE);
   hidgl_flush_triangles (&buffer);
-#endif
 
 #ifdef ONE_SHOT
     glEndList ();
@@ -2031,7 +2009,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glCallList (display_list);
 #endif
 
-  /* FIXME MATRIX ?? */
   ghid_show_crosshair (TRUE);
 
   hidgl_flush_triangles (&buffer);
