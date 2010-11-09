@@ -318,6 +318,7 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
   int circular_caps = 0;
   int hairline = 0;
 
+  return;
   CHECK_IS_IN_CONTEXT ();
   if (width == 0.0)
     hairline = 1;
