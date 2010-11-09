@@ -268,8 +268,6 @@ ghid_trackball_constructor (GType type,
 static void
 ghid_trackball_finalize (GObject * object)
 {
-//  GhidTrackball *pinout = GHID_TRACKBALL (object);
-
   G_OBJECT_CLASS (ghid_trackball_parent_class)->finalize (object);
 }
 
@@ -290,8 +288,6 @@ static void
 ghid_trackball_set_property (GObject * object, guint property_id,
 				  const GValue * value, GParamSpec * pspec)
 {
-//  GhidTrackball *pinout = GHID_TRACKBALL (object);
-
   switch (property_id)
     {
     default:
@@ -410,7 +406,7 @@ ghid_trackball_get_type ()
 }
 
 
-/*! \brief Convenience function to create a new pinout preview
+/*! \brief Convenience function to create a new trackball widget
  *
  *  \par Function Description
  *  Convenience function which creates a GhidTrackball.
