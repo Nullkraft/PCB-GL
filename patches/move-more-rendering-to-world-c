@@ -1,5 +1,5 @@
 Bottom: 7b871169cacfbe3939c3bf4f9b17351af8113b47
-Top:    87f6aee8192f34847b51c57a8befbee847e3841a
+Top:    9861974f0847ccc83bae4425cd5ab35a9c29223f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-09 22:33:12 +0000
 
@@ -9,7 +9,7 @@ Move more rendering to world coordinates
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index c7c2ac2..0bfc728 100644
+index c7c2ac2..20d2770 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -81,7 +81,9 @@ typedef struct hid_gc_struct
@@ -190,7 +190,29 @@ index c7c2ac2..0bfc728 100644
  }
  
  void
-@@ -1824,6 +1840,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1594,18 +1610,14 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+   /* Test direction of rendering */
+   /* Look at sign of eye coordinate system z-coord when projecting a
+      world vector along +ve Z axis, (0, 0, 1). */
+-  /* FIXME: This isn't strictly correct, as I've ignored the matrix
+-            elements for homogeneous coordinates. */
++  /* XXX: This isn't strictly correct, as I've ignored the matrix
++          elements for homogeneous coordinates. */
+   /* NB: last_modelview_matrix is transposed in memory! */
+   reverse_layers = (last_modelview_matrix[2][2] < 0);
+ 
+   save_show_solder = Settings.ShowSolderSide;
++  Settings.ShowSolderSide = reverse_layers;
+ 
+-  if (reverse_layers)
+-    Settings.ShowSolderSide = !Settings.ShowSolderSide;
+-
+-  if (!global_view_2d && save_show_solder)
+-    reverse_layers = !reverse_layers;
+   PCB->Data->SILKLAYER.Color = PCB->ElementColor;
+   PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
+ 
+@@ -1824,6 +1836,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
    glMultMatrixf ((GLfloat *)view_matrix);
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
@@ -204,7 +226,7 @@ index c7c2ac2..0bfc728 100644
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
  #if 0
-@@ -1838,7 +1861,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1838,7 +1857,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                  port->offlimits_color.green / 65535.,
                  port->offlimits_color.blue / 65535.,
                  1.);
@@ -212,7 +234,7 @@ index c7c2ac2..0bfc728 100644
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-@@ -1849,8 +1871,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1849,8 +1867,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -223,7 +245,7 @@ index c7c2ac2..0bfc728 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1904,13 +1926,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1904,13 +1922,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
    min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
  
@@ -239,7 +261,7 @@ index c7c2ac2..0bfc728 100644
  
    glColor3f (port->bg_color.red / 65535.,
               port->bg_color.green / 65535.,
-@@ -1927,15 +1944,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1927,15 +1940,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    /* Drawing operations as masked to areas where the stencil buffer is '0' */
  //  glStencilFunc (GL_GREATER, 1, 1);             // Draw only where stencil buffer is 0
  
@@ -255,7 +277,7 @@ index c7c2ac2..0bfc728 100644
    if (global_view_2d) {
      glBegin (GL_QUADS);
      glVertex3i (0,             0,              0);
-@@ -1967,31 +1975,21 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1967,31 +1971,21 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      glEnd ();
    }
  
@@ -289,7 +311,7 @@ index c7c2ac2..0bfc728 100644
  
  #if 0
      glEndList ();
-@@ -2002,6 +2000,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2002,6 +1996,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    }
  #endif
  
