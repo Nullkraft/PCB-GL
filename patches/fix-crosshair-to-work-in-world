@@ -1,5 +1,5 @@
-Bottom: bc5318168355469fbd8da8aa4dcda1f8c5bfe2c8
-Top:    b8e7160556281fb55563d83f7525c6de5bfbfb46
+Bottom: 9861974f0847ccc83bae4425cd5ab35a9c29223f
+Top:    8b7c6ff67864229e7b70ce37dbc5115db6909e7a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-09 00:19:29 +0000
 
@@ -9,10 +9,10 @@ Fix crosshair to work in world coordinates
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 46ac706..c4ba622 100644
+index 20d2770..21cc13a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -769,9 +769,9 @@ static void
+@@ -767,9 +767,9 @@ static void
  draw_right_cross (gint x, gint y, gint z)
  {
    glVertex3i (x, 0, z);
@@ -24,7 +24,7 @@ index 46ac706..c4ba622 100644
  }
  
  static void
-@@ -779,25 +779,25 @@ draw_slanted_cross (gint x, gint y, gint z)
+@@ -777,25 +777,25 @@ draw_slanted_cross (gint x, gint y, gint z)
  {
    gint x0, y0, x1, y1;
  
@@ -62,7 +62,7 @@ index 46ac706..c4ba622 100644
    glVertex3i (x0, y0, z);
    glVertex3i (x1, y1, z);
  }
-@@ -808,47 +808,47 @@ draw_dozen_cross (gint x, gint y, gint z)
+@@ -806,47 +806,47 @@ draw_dozen_cross (gint x, gint y, gint z)
    gint x0, y0, x1, y1;
    gdouble tan60 = sqrt (3);
  
@@ -134,7 +134,7 @@ index 46ac706..c4ba622 100644
    glVertex3i (x0, y0, z);
    glVertex3i (x1, y1, z);
  }
-@@ -879,8 +879,6 @@ ghid_show_crosshair (gboolean show)
+@@ -877,8 +877,6 @@ ghid_show_crosshair (gboolean show)
    static GdkColor cross_color;
    extern float global_depth;
  
@@ -143,7 +143,7 @@ index 46ac706..c4ba622 100644
    if (!check_gl_drawing_ok_hack)
      return;
  
-@@ -895,12 +893,12 @@ ghid_show_crosshair (gboolean show)
+@@ -893,12 +891,12 @@ ghid_show_crosshair (gboolean show)
        /* FIXME: when CrossColor changed from config */
        ghid_map_color_string (Settings.CrossColor, &cross_color);
      }
@@ -160,7 +160,7 @@ index 46ac706..c4ba622 100644
  
    hidgl_flush_triangles (&buffer);
  
-@@ -926,44 +924,44 @@ ghid_show_crosshair (gboolean show)
+@@ -924,44 +922,44 @@ ghid_show_crosshair (gboolean show)
  #if 0
    if (x_prev >= 0 && draw_markers_prev)
      {
@@ -237,7 +237,7 @@ index 46ac706..c4ba622 100644
      }
  
    glEnd ();
-@@ -981,7 +979,7 @@ ghid_show_crosshair (gboolean show)
+@@ -979,7 +977,7 @@ ghid_show_crosshair (gboolean show)
        draw_markers_prev = FALSE;
      }
  
@@ -246,8 +246,8 @@ index 46ac706..c4ba622 100644
  }
  
  void
-@@ -2039,7 +2037,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-   glCallList (display_list);
+@@ -1996,7 +1994,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   }
  #endif
  
 -  /* FIXME MATRIX ?? */
