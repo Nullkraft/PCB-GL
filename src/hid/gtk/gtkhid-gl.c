@@ -1618,15 +1618,13 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   /* Test direction of rendering */
   /* Look at sign of eye coordinate system z-coord when projecting a
      world vector along +ve Z axis, (0, 0, 1). */
-  /* FIXME: This isn't strictly correct, as I've ignored the matrix
-            elements for homogeneous coordinates. */
+  /* XXX: This isn't strictly correct, as I've ignored the matrix
+          elements for homogeneous coordinates. */
   /* NB: last_modelview_matrix is transposed in memory! */
   reverse_layers = (last_modelview_matrix[2][2] < 0);
 
   save_show_solder = Settings.ShowSolderSide;
-
-  if (!global_view_2d)
-    Settings.ShowSolderSide = reverse_layers;
+  Settings.ShowSolderSide = reverse_layers;
 
   PCB->Data->SILKLAYER.Color = PCB->ElementColor;
   PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
