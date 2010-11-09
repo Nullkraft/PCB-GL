@@ -1862,7 +1862,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
   glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
             (ghid_flip_y ? -1. : 1.) / port->zoom,
-            ((ghid_flip_x == ghid_flip_y) ? 1. : -1.) / port->zoom);
+            ((ghid_flip_x == ghid_flip_y) ? 1. :  1.) / port->zoom);
   glTranslatef (ghid_flip_x ? port->view_x0 - PCB->MaxWidth  :
                              -port->view_x0,
                 ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
