@@ -1,5 +1,5 @@
-Bottom: bfe1ed33f15871cc1be2bf0b53b3c3d7f9c99d81
-Top:    a28aed160b4bda1fe569fc7a51fd77088efa2c68
+Bottom: bc5318168355469fbd8da8aa4dcda1f8c5bfe2c8
+Top:    b8e7160556281fb55563d83f7525c6de5bfbfb46
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-09 00:19:29 +0000
 
@@ -9,7 +9,7 @@ Fix crosshair to work in world coordinates
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index afd0b86..d9420e7 100644
+index 46ac706..c4ba622 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -769,9 +769,9 @@ static void
