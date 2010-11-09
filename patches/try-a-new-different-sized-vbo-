@@ -1,5 +1,5 @@
-Bottom: a28aed160b4bda1fe569fc7a51fd77088efa2c68
-Top:    d72f7db240fa874512ae9ef17fcb18a2808e7116
+Bottom: b8e7160556281fb55563d83f7525c6de5bfbfb46
+Top:    d89ee9e41953088625083abf59a356be51449b94
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-06 01:32:12 +0000
 
@@ -9,7 +9,7 @@ Try a new, different sized VBO buffer for each upload.
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index cdc01ce..5ed9400 100644
+index 359d6f3..29cdbf3 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -135,8 +135,8 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
@@ -40,7 +40,7 @@ index cdc01ce..5ed9400 100644
    } else {
      data_pointer = buffer->triangle_array;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d9420e7..79619aa 100644
+index c4ba622..6db2c66 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1045,6 +1045,8 @@ ghid_end_drawing (GHidPort *port)
