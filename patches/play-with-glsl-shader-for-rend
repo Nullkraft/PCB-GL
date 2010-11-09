@@ -21,6 +21,28 @@ Bugs:
  - Draw crosshair stubbed out (for benchmarking)
  - Draw crosshair not updated to render in world coordinates
 
+Notes:
+ - Apparently it can be better to do glVertexPointer last (so we do):
+    From: http://sdickinson.com/wordpress/?p=122
+    ""
+    Make sure you put glVertexPointer at the end as there is a lot of work that
+    goes on behind the scenes with it, and if it's set at the start, it has to
+    do all that work for each gl*Pointer call, rather than once at the end.
+    ""
+
+ - We set up the array pointers before calling glEnableClientState():
+    I'm not sure, but if we do this the other way around, it might cause
+    the driver to hang onto our old buffers longer, or perform state setup,
+    only to have to discard that work shortly after.
+
+ - DARN: Seems that using VBOs is not a win, even on Intel 965:
+    Certainly seems to fail miserably (v. low FPS) on my NVidia card.
+
+    On Intel, sysprof shows a huge amount of time spent clflushing
+    buffers, or copying to the graphics card (uncached).
+
+    Set to use glBufferSubData by default for now.
+
 
 ---
 
