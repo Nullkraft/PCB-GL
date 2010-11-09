@@ -1625,11 +1625,9 @@ ghid_draw_everything (BoxTypePtr drawn_area)
 
   save_show_solder = Settings.ShowSolderSide;
 
-  if (reverse_layers)
-    Settings.ShowSolderSide = !Settings.ShowSolderSide;
+  if (!global_view_2d)
+    Settings.ShowSolderSide = reverse_layers;
 
-  if (!global_view_2d && save_show_solder)
-    reverse_layers = !reverse_layers;
   PCB->Data->SILKLAYER.Color = PCB->ElementColor;
   PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
 
