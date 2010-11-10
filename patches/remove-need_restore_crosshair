@@ -1,5 +1,5 @@
 Bottom: dbe49115a5d644d7d7dc686ed8891dca3e055f02
-Top:    dbe49115a5d644d7d7dc686ed8891dca3e055f02
+Top:    666ed99db41c82fad2061adf38ade17b944b7ba8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-10 00:05:16 +0000
 
@@ -8,4 +8,65 @@ Remove need_restore_crosshair
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 4ae8242..36ced33 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -800,9 +800,6 @@ ghid_invalidate_all ()
+ 
+   hid_expose_callback (&ghid_hid, &region, 0);
+   ghid_draw_grid ();
+-  if (ghidgui->need_restore_crosshair)
+-    RestoreCrosshair (FALSE);
+-  ghidgui->need_restore_crosshair = FALSE;
+   ghid_screen_update ();
+ }
+ 
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 7da3fa6..e87d4ec 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -759,9 +759,6 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
+ void
+ ghid_invalidate_all ()
+ {
+-  if (ghidgui->need_restore_crosshair)
+-    RestoreCrosshair (FALSE);
+-  ghidgui->need_restore_crosshair = FALSE;
+   ghid_draw_area_update (gport, NULL);
+ }
+ 
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 490ccc4..b12d8cc 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -69,16 +69,12 @@ ghid_port_ranges_changed (void)
+ {
+   GtkAdjustment *h_adj, *v_adj;
+ 
+-  if (!ghidgui->combine_adjustments)
+-    HideCrosshair (FALSE);
+   if (ghidgui->combine_adjustments)
+     {
+       ghidgui->combine_adjustments = FALSE;
+       return;
+     }
+ 
+-  ghidgui->need_restore_crosshair = TRUE;
+-
+   h_adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->h_range));
+   v_adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->v_range));
+   gport->view_x0 = h_adj->value;
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index e7a12c4..3ddf43b 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -134,7 +134,7 @@ typedef struct
+     small_label_markup,
+     compact_horizontal,
+     compact_vertical,
+-    ghid_title_window, use_command_window, need_restore_crosshair, creating;
++    ghid_title_window, use_command_window, creating;
+ 
+   gint n_mode_button_columns,
+     top_window_width,
