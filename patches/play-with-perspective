@@ -1,5 +1,5 @@
-Bottom: 4b1d32b688ebca2c383e8dfb4951918b9cea8b89
-Top:    855e272c361f4d6b8fb6d7ed7758cafd0d4d5fd9
+Bottom: 666ed99db41c82fad2061adf38ade17b944b7ba8
+Top:    ff4aa0a7e9494975c72a65c104efec3474ab336d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-03 02:23:24 +0000
 
@@ -9,10 +9,10 @@ Play with perspective
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e5cbc4a..7eea86f 100644
+index e87d4ec..d91e245 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1419,7 +1419,8 @@ DrawMask (BoxType * screen)
+@@ -1416,7 +1416,8 @@ DrawMask (BoxType * screen)
    polygon.Clipped = board_outline_poly ();
    polygon.NoHoles = NULL;
    polygon.NoHolesValid = 0;
@@ -22,7 +22,7 @@ index e5cbc4a..7eea86f 100644
    SET_FLAG (FULLPOLYFLAG, &polygon);
    common_fill_pcb_polygon (out->fgGC, &polygon, screen);
    poly_Free (&polygon.Clipped);
-@@ -1845,20 +1846,37 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1842,20 +1843,37 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -70,8 +70,8 @@ index e5cbc4a..7eea86f 100644
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
  #ifdef ONE_SHOT
-@@ -1988,7 +2006,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-   }
+@@ -1987,7 +2005,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ #endif
  
    // hid_expose_callback (&ghid_hid, &region, 0);
 -  ghid_draw_everything (&region);
