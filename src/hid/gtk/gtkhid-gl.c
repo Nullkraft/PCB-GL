@@ -2462,7 +2462,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   if (1) {
     GLfloat global_ambient[] = {0.0f, 0.0f, 0.0f, 1.0f};
     glLightModelfv (GL_LIGHT_MODEL_AMBIENT, global_ambient);
-    glLightModeli (GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+    glLightModeli (GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
   }
   if (1) {
     GLfloat diffuse[] =  {0.3, 0.3, 0.3, 1.0};
