@@ -432,7 +432,6 @@ ghid_draw_acy_resistor (ElementType *element)
     float z;
     float r;
 
-
     z = -resistor_width / 2.;
     r = resistor_pin_radius;
     /* repeat first vertex */
