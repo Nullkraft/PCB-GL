@@ -186,6 +186,12 @@ hidgl_flush_triangles (triangle_buffer *buffer)
   glEnableClientState (GL_TEXTURE_COORD_ARRAY);
   glEnableClientState (GL_VERTEX_ARRAY);
   glDrawArrays (GL_TRIANGLE_STRIP, 0, buffer->vertex_count);
+#if 0
+  glPushAttrib (GL_CURRENT_BIT);
+  glColor4f (1., 1., 1., 1.);
+  glDrawArrays (GL_LINE_STRIP, 0, buffer->vertex_count);
+  glPopAttrib ();
+#endif
   glDisableClientState (GL_VERTEX_ARRAY);
   glDisableClientState (GL_TEXTURE_COORD_ARRAY);
 
