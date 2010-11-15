@@ -111,7 +111,7 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
   CHECK_IS_IN_CONTEXT ();
 
   buffer->use_vbo = true;
-  buffer->use_vbo = false;
+  // buffer->use_vbo = false;
 
   if (buffer->use_vbo) {
     glGenBuffers (1, &buffer->vbo_id);
