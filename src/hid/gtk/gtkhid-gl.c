@@ -2224,8 +2224,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glScalef (myzoom, myzoom, myzoom);
 
   /* Translate to the center of the board space view */
-  glTranslatef (-(port->view_x0 + PCB->MaxWidth / 2),
-                -(port->view_y0 + PCB->MaxHeight / 2),
+  glTranslatef (-(port->view_x0 + port->view_width / 2),
+                -(port->view_y0 + port->view_height / 2),
                 0.);
 
   /* Stash the model view matrix so we can work out the screen coordinate -> board coordinate mapping */
