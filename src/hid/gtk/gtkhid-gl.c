@@ -361,7 +361,7 @@ ghid_draw_acy_resistor (ElementType *element)
   int no_rings = NUM_PIN_RINGS;
   int end;
 
-  GLuint sp;
+  GLint sp;
 
   /* XXX: Hard-coded magic */
   float resistor_bulge_radius = 45. * MIL_TO_INTERNAL;
@@ -397,7 +397,7 @@ ghid_draw_acy_resistor (ElementType *element)
   /* XXX: TEXTURE SETUP */
 
   setup_resistor_texture ();
-  glEnable (GL_TEXTURE_1D);
+//  glEnable (GL_TEXTURE_1D);
   glGetIntegerv (GL_CURRENT_PROGRAM, &sp);
   glUseProgram (0);
 
@@ -412,10 +412,20 @@ ghid_draw_acy_resistor (ElementType *element)
   /* XXX: COLOR SETUP */
 
   glPushAttrib (GL_CURRENT_BIT);
-//  glColor4f (0.5, 0.5, 1.0, 1.);
-  glColor4f (1., 1., 1., 1.);
+  glColor4f (0.5, 0.5, 1.0, 1.);
+//  glColor4f (1., 1., 1., 1.);
 
 //  hidgl_ensure_vertex_space (&buffer, no_strips * (20 + 2));
+
+  if (0) {
+    GLfloat pos[3];
+    glNormal3f (0., 0., -1.);
+    glPushMatrix ();
+    glLoadIdentity ();
+    glGetFloatv (GL_CURRENT_NORMAL, pos);
+    glPopMatrix ();
+    printf ("Last normal position was %f %f %f\n", pos[0], pos[1], pos[2]);
+  }
 
   glTexCoord1f (0.);
   glBegin (GL_TRIANGLE_STRIP);
@@ -436,102 +446,102 @@ ghid_draw_acy_resistor (ElementType *element)
     r = resistor_pin_radius;
     /* repeat first vertex */
     glTexCoord1f (0.);
-    glNormal3f (0., 0., -1. / 2. / gport->zoom);
+    glNormal3f (0., 0., -1.);
     glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
     glTexCoord1f (0.);
-    glNormal3f (0., 0., -1. / 2. / gport->zoom);
+    glNormal3f (0., 0., -1.);
     glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
     glTexCoord1f (0.);
-    glNormal3f (0., 0., -1. / 2. / gport->zoom);
+    glNormal3f (0., 0., -1.);
     glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
 
     z = -resistor_width / 2. + resistor_bulge_offset;
     r = resistor_barrel_radius;
     glTexCoord1f (0.);
-    glNormal3f (x_strip_edge1 / 2. / gport->zoom, y_strip_edge1 / 2. / gport->zoom, 0.);
+    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
     glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
     glTexCoord1f (0.);
-    glNormal3f (x_strip_edge2 / 2. / gport->zoom, y_strip_edge2 / 2. / gport->zoom, 0.);
+    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
     glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
 
     z = -resistor_width / 2. + resistor_bulge_offset + resistor_bulge_width * 1. / 4.;
     r = resistor_bulge_radius;
     glTexCoord1f (0.);
-    glNormal3f (x_strip_edge1 / 2. / gport->zoom, y_strip_edge1 / 2. / gport->zoom, 0.);
+    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
     glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
     glTexCoord1f (0.);
-    glNormal3f (x_strip_edge2 / 2. / gport->zoom, y_strip_edge2 / 2. / gport->zoom, 0.);
+    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
     glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
 
     z = -resistor_width / 2. + resistor_bulge_offset + resistor_bulge_width * 3. / 4.;
     r = resistor_bulge_radius;
     glTexCoord1f (0.);
-    glNormal3f (x_strip_edge1 / 2. / gport->zoom, y_strip_edge1 / 2. / gport->zoom, 0.);
+//    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
     glNormal3f (0., 0., 1.);
     glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
     glTexCoord1f (0.);
-    glNormal3f (x_strip_edge2 / 2. / gport->zoom, y_strip_edge2 / 2. / gport->zoom, 0.);
+//    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
     glNormal3f (0., 0., 1.);
     glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
 
     z = -resistor_width / 2. + resistor_bulge_offset + resistor_bulge_width;
     r = resistor_barrel_radius;
     glTexCoord1f (0.);
-    glNormal3f (x_strip_edge1 / 2. / gport->zoom, y_strip_edge1 / 2. / gport->zoom, 0.);
+    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
     glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
     glTexCoord1f (0.);
-    glNormal3f (x_strip_edge2 / 2. / gport->zoom, y_strip_edge2 / 2. / gport->zoom, 0.);
+    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
     glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
 
     z = resistor_width / 2. - resistor_bulge_offset - resistor_bulge_width;
     r = resistor_barrel_radius;
     glTexCoord1f (1.);
-    glNormal3f (x_strip_edge1 / 2. / gport->zoom, y_strip_edge1 / 2. / gport->zoom, 0.);
+    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
     glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
     glTexCoord1f (1.);
-    glNormal3f (x_strip_edge2 / 2. / gport->zoom, y_strip_edge2 / 2. / gport->zoom, 0.);
+    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
     glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
 
     z = resistor_width / 2. - resistor_bulge_offset - resistor_bulge_width * 3. / 4.;
     r = resistor_bulge_radius;
     glTexCoord1f (1.);
-    glNormal3f (x_strip_edge1 / 2. / gport->zoom, y_strip_edge1 / 2. / gport->zoom, 0.);
+//    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
     glNormal3f (0., 0., -1.);
     glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
     glTexCoord1f (1.);
-    glNormal3f (x_strip_edge2 / 2. / gport->zoom, y_strip_edge2 / 2. / gport->zoom, 0.);
+//    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
     glNormal3f (0., 0., -1.);
     glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
 
     z = resistor_width / 2. - resistor_bulge_offset - resistor_bulge_width * 1. / 4.;
     r = resistor_bulge_radius;
     glTexCoord1f (1.);
-    glNormal3f (x_strip_edge1 / 2. / gport->zoom, y_strip_edge1 / 2. / gport->zoom, 0.);
+    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
     glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
     glTexCoord1f (1.);
-    glNormal3f (x_strip_edge2 / 2. / gport->zoom, y_strip_edge2 / 2. / gport->zoom, 0.);
+    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
     glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
 
     z = resistor_width / 2. - resistor_bulge_offset;
     r = resistor_barrel_radius;
     glTexCoord1f (1.);
-    glNormal3f (x_strip_edge1 / 2. / gport->zoom, y_strip_edge1 / 2. / gport->zoom, 0.);
+    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
     glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
     glTexCoord1f (1.);
-    glNormal3f (x_strip_edge2 / 2. / gport->zoom, y_strip_edge2 / 2. / gport->zoom, 0.);
+    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
     glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
 
     z = resistor_width / 2.;
     r = resistor_pin_radius;
     glTexCoord1f (1.);
-    glNormal3f (0., 0., 1. / 2. / gport->zoom);
+    glNormal3f (0., 0., 1.);
     glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
     glTexCoord1f (1.);
-    glNormal3f (0., 0., 1. / 2. / gport->zoom);
+    glNormal3f (0., 0., 1.);
     glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
     /* repeat last vertex */
     glTexCoord1f (1.);
-    glNormal3f (0., 0., 1. / 2. / gport->zoom);
+    glNormal3f (0., 0., 1.);
     glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
 
   }
@@ -632,9 +642,109 @@ ghid_draw_acy_resistor (ElementType *element)
 
 //  hidgl_flush_triangles (&buffer);
 
+  glDisable (GL_LIGHTING);
+  glColor4f (1., 1., 1., 1.);
+
+  glBegin (GL_LINES);
+
+#define NORM_LEN 5000
+
+  for (strip = 0; strip < no_strips; strip++) {
+
+    float angle_strip_edge1 = strip * 2. * M_PI / no_strips;
+    float angle_strip_edge2 = (strip + 1) * 2. * M_PI / no_strips;
+
+    float x_strip_edge1 = cosf (angle_strip_edge1);
+    float y_strip_edge1 = sinf (angle_strip_edge1);
+    float x_strip_edge2 = cosf (angle_strip_edge2);
+    float y_strip_edge2 = sinf (angle_strip_edge2);
+    float z;
+    float r;
+
+    z = -resistor_width / 2.;
+    r = resistor_pin_radius;
+    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
+    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z - 1. * NORM_LEN);
+    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
+    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z - 1. * NORM_LEN);
+
+    z = -resistor_width / 2. + resistor_bulge_offset;
+    r = resistor_barrel_radius;
+    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
+    glVertex3f (r * x_strip_edge1 + x_strip_edge1 * NORM_LEN, r * y_strip_edge1 + y_strip_edge1 * NORM_LEN, z);
+    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
+    glVertex3f (r * x_strip_edge2 + x_strip_edge2 * NORM_LEN, r * y_strip_edge2 + y_strip_edge2 * NORM_LEN, z);
+
+    z = -resistor_width / 2. + resistor_bulge_offset + resistor_bulge_width * 1. / 4.;
+    r = resistor_bulge_radius;
+    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
+    glVertex3f (r * x_strip_edge1 + x_strip_edge1 * NORM_LEN, r * y_strip_edge1 + y_strip_edge1 * NORM_LEN, z);
+    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
+    glVertex3f (r * x_strip_edge2 + x_strip_edge2 * NORM_LEN, r * y_strip_edge2 + y_strip_edge2 * NORM_LEN, z);
+
+    z = -resistor_width / 2. + resistor_bulge_offset + resistor_bulge_width * 3. / 4.;
+    r = resistor_bulge_radius;
+    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
+    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z + 1. * NORM_LEN);
+    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
+    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z + 1. * NORM_LEN);
+
+    z = -resistor_width / 2. + resistor_bulge_offset + resistor_bulge_width;
+    r = resistor_barrel_radius;
+    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
+    glVertex3f (r * x_strip_edge1 + x_strip_edge1 * NORM_LEN, r * y_strip_edge1 + y_strip_edge1 * NORM_LEN, z);
+    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
+    glVertex3f (r * x_strip_edge2 + x_strip_edge2 * NORM_LEN, r * y_strip_edge2 + y_strip_edge2 * NORM_LEN, z);
+
+    z = resistor_width / 2. - resistor_bulge_offset - resistor_bulge_width;
+    r = resistor_barrel_radius;
+    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
+    glVertex3f (r * x_strip_edge1 + x_strip_edge1 * NORM_LEN, r * y_strip_edge1 + y_strip_edge1 * NORM_LEN, z);
+    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
+    glVertex3f (r * x_strip_edge2 + x_strip_edge2 * NORM_LEN, r * y_strip_edge2 + y_strip_edge2 * NORM_LEN, z);
+
+    z = resistor_width / 2. - resistor_bulge_offset - resistor_bulge_width * 3. / 4.;
+    r = resistor_bulge_radius;
+    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
+    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z - 1. * NORM_LEN);
+    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
+    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z - 1. * NORM_LEN);
+
+    z = resistor_width / 2. - resistor_bulge_offset - resistor_bulge_width * 1. / 4.;
+    r = resistor_bulge_radius;
+    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
+    glVertex3f (r * x_strip_edge1 + x_strip_edge1 * NORM_LEN, r * y_strip_edge1 + y_strip_edge1 * NORM_LEN, z);
+    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
+    glVertex3f (r * x_strip_edge2 + x_strip_edge2 * NORM_LEN, r * y_strip_edge2 + y_strip_edge2 * NORM_LEN, z);
+
+    z = resistor_width / 2. - resistor_bulge_offset;
+    r = resistor_barrel_radius;
+    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
+    glVertex3f (r * x_strip_edge1 + x_strip_edge1 * NORM_LEN, r * y_strip_edge1 + y_strip_edge1 * NORM_LEN, z);
+    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
+    glVertex3f (r * x_strip_edge2 + x_strip_edge2 * NORM_LEN, r * y_strip_edge2 + y_strip_edge2 * NORM_LEN, z);
+
+    z = resistor_width / 2.;
+    r = resistor_pin_radius;
+    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
+    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z + 1. * NORM_LEN);
+    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
+    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z + 1. * NORM_LEN);
+  }
+
+  glEnd ();
+  glEnable (GL_LIGHTING);
+
+
   glPopAttrib ();
   glPopMatrix ();
   glUseProgram (sp);
+
+  if (0) {
+    GLfloat pos[4];
+    glGetLightfv (GL_LIGHT0, GL_POSITION, pos);
+    printf ("Light is at %f %f %f %f\n", pos[0], pos[1], pos[2], pos[3]);
+  }
 }
 
 #if 0
@@ -1714,16 +1824,18 @@ DrawMask (BoxType * screen)
       gui->set_color (Output.pmGC, "erase");
     }
 
-  gui->use_mask (HID_MASK_BEFORE);
-  gui->set_color (out->fgGC, PCB->MaskColor);
+//  gui->use_mask (HID_MASK_BEFORE);
+//  gui->set_color (out->fgGC, PCB->MaskColor);
   gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
 
-  gui->use_mask (HID_MASK_CLEAR);
+#if 0
+
+//  gui->use_mask (HID_MASK_CLEAR);
   r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback_solid, &info);
   r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback_solid, &info);
   r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback_solid, &info);
 
-  gui->use_mask (HID_MASK_AFTER);
+//  gui->use_mask (HID_MASK_AFTER);
   gui->set_color (out->fgGC, PCB->MaskColor);
   ghid_global_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
 
@@ -1742,6 +1854,7 @@ DrawMask (BoxType * screen)
   ghid_global_alpha_mult (out->fgGC, 1.0);
 
   gui->use_mask (HID_MASK_OFF);
+#endif
 }
 
 static int
@@ -2006,6 +2119,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
 #if 1
     if (!global_view_2d) {
       /* Draw the solder mask if turned on */
+#if 0
       if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0)) {
         int save_swap = SWAP_IDENT;
         gui->set_layer (NULL, SL (FINISHED, 0), 0);
@@ -2016,15 +2130,16 @@ ghid_draw_everything (BoxTypePtr drawn_area)
         SWAP_IDENT = save_swap;
         gui->set_layer (NULL, SL (FINISHED, 0), 0);
       }
+#endif
       if (gui->set_layer ("componentmask", SL (MASK, TOP), 0)) {
         int save_swap = SWAP_IDENT;
-        gui->set_layer (NULL, SL (FINISHED, 0), 0);
-        gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0);
+//        gui->set_layer (NULL, SL (FINISHED, 0), 0);
+//        gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0);
         //^__ HACK, THE GUI DOESNT WANT US TO DRAW THIS!
         SWAP_IDENT = 1;
         DrawMask (drawn_area);
         SWAP_IDENT = save_swap;
-        gui->set_layer (NULL, SL (FINISHED, 0), 0);
+//        gui->set_layer (NULL, SL (FINISHED, 0), 0);
       }
       gui->set_layer ("invisible", SL (INVISIBLE, 0), 0);
     }
@@ -2035,6 +2150,8 @@ ghid_draw_everything (BoxTypePtr drawn_area)
       r_search (PCB->Data->element_tree, drawn_area, NULL, backE_callback, NULL);
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
   }
+
+#if 0
 
   /* draw all layers in layerstack order */
   for (i = ngroups - 1; i >= 0; i--) {
@@ -2124,6 +2241,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   if (PCB->RatOn && gui->set_layer ("rats", SL (RATS, 0), 0))
     DrawRats(drawn_area);
 
+#endif
   Gathering = true;
 
   Settings.ShowSolderSide = save_show_solder;
@@ -2173,7 +2291,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
       ghid_hid.poly_dicer = 1;
     }
 
-  ghid_show_crosshair (FALSE);
+//  ghid_show_crosshair (FALSE);
 
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -2200,7 +2318,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glFrustum (-1. * aspect, 1 * aspect, 1., -1., 1., 24.);
 #endif
 
-    glMatrixMode (GL_MODELVIEW);
+  glMatrixMode (GL_MODELVIEW);
   glLoadIdentity ();
 
 #ifndef VIEW_ORTHO
@@ -2240,7 +2358,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glEnable (GL_DEPTH_TEST);
   glDepthFunc (GL_ALWAYS);
   glEnable (GL_STENCIL_TEST);
-  glClearColor (port->bg_color.red / 65535.,
+  glClearColor (1.,
                 port->bg_color.green / 65535.,
                 port->bg_color.blue / 65535.,
                 1.);
@@ -2251,7 +2369,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   /* Disable the stencil test until we need it - otherwise it gets dirty */
   glDisable (GL_STENCIL_TEST);
-  glStencilFunc (GL_ALWAYS, 0, 0);
+//  glStencilFunc (GL_ALWAYS, 0, 0);
 
   /* Test the 8 corners of a cube spanning the event */
   min_depth = -50 + compute_depth (0);                    /* FIXME: NEED TO USE PHYSICAL GROUPS */
@@ -2327,18 +2445,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   region.X1 = min_x;  region.X2 = max_x + 1;
   region.Y1 = min_y;  region.Y2 = max_y + 1;
 
+#if 0
   glColor3f (port->bg_color.red / 65535.,
              port->bg_color.green / 65535.,
              port->bg_color.blue / 65535.);
+#endif
 
   /* TODO: Background image */
 
-  hidgl_init_triangle_array (&buffer);
+//  hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
 
   /* Setup stenciling */
   /* Drawing operations set the stencil buffer to '1' */
-  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
+//  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
   /* Drawing operations as masked to areas where the stencil buffer is '0' */
 //  glStencilFunc (GL_GREATER, 1, 1);             // Draw only where stencil buffer is 0
 
@@ -2376,8 +2496,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 #endif
 
   // hid_expose_callback (&ghid_hid, &region, 0);
-  ghid_draw_everything (&region);
-  hidgl_flush_triangles (&buffer);
+//  ghid_draw_everything (&region);
+//  hidgl_flush_triangles (&buffer);
+#if 0
 
   glTexCoord2f (0., 0.);
   glColor3f (1., 1., 1.);
@@ -2418,29 +2539,31 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
     glEnd ();
   }
+#endif
 
   /* Just prod the drawing code so the current depth gets set to
      the right value for the layer we are editing */
-  hidgl_set_depth (compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT)));
-  ghid_draw_grid (&region);
+//  hidgl_set_depth (compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT)));
+//  ghid_draw_grid (&region);
 
   ghid_invalidate_current_gc ();
-  DrawAttached (TRUE);
-  DrawMark (TRUE);
-  hidgl_flush_triangles (&buffer);
+//  DrawAttached (TRUE);
+//  DrawMark (TRUE);
+//  hidgl_flush_triangles (&buffer);
 
+  glMatrixMode (GL_MODELVIEW);
   glEnable (GL_LIGHTING);
 
+  glColor4f (1., 1., 1., 1.);
 
   glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
   glEnable (GL_COLOR_MATERIAL);
 
   glShadeModel (GL_SMOOTH);
 
-  glEnable (GL_LIGHT0);
-
   /* XXX: FIX OUR NORMALS */
   glEnable (GL_NORMALIZE);
+  glEnable (GL_RESCALE_NORMAL);
 
   glDepthFunc (GL_LESS);
   glDisable (GL_STENCIL_TEST);
@@ -2450,7 +2573,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   if (1) {
     GLfloat emission[] = {0.0f, 0.0f, 0.0f, 1.0f};
-    GLfloat specular[] = {0.1f, 0.1f, 0.1f, 1.0f};
+//    GLfloat specular[] = {0.1f, 0.1f, 0.1f, 1.0f};
+    GLfloat specular[] = {0.0f, 0.0f, 0.0f, 1.0f};
     glMaterialfv (GL_FRONT_AND_BACK, GL_EMISSION, emission);
     glMaterialfv (GL_FRONT_AND_BACK, GL_SPECULAR, specular);
   }
@@ -2461,7 +2585,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   }
   if (1) {
     GLfloat diffuse[] =  {0.7, 0.7, 0.7, 1.0};
-    GLfloat ambient[] =  {0.3, 0.3, 0.3, 1.0};
+//    GLfloat ambient[] =  {0.3, 0.3, 0.3, 1.0};
+    GLfloat ambient[] =  {0.0, 0.0, 0.0, 1.0};
     GLfloat specular[] = {1.0, 1.0, 1.0, 1.0};
     glLightfv (GL_LIGHT0, GL_DIFFUSE,  diffuse);
     glLightfv (GL_LIGHT0, GL_AMBIENT,  ambient);
@@ -2472,8 +2597,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
     glPushMatrix ();
     glLoadIdentity ();
     glLightfv (GL_LIGHT0, GL_POSITION, position);
+    glEnable (GL_LIGHT0);
     glPopMatrix ();
   }
+
 
   ghid_draw_packages (&region);
 
@@ -2491,10 +2618,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glCallList (display_list);
 #endif
 
-  ghid_show_crosshair (TRUE);
+//  ghid_show_crosshair (TRUE);
 
-  hidgl_flush_triangles (&buffer);
-  hidgl_finish_triangle_array (&buffer);
+//  hidgl_flush_triangles (&buffer);
+//  hidgl_finish_triangle_array (&buffer);
 
   check_gl_drawing_ok_hack = false;
   hidgl_in_context (false);
