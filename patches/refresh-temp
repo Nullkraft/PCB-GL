@@ -1,0 +1,24 @@
+Bottom: b4dca57aed8ae1c55601d324c8788fd317f9558b
+Top:    b1b3d52468db9813f5033165f6b2bb6db8ab202d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-11-15 02:57:42 +0000
+
+Refresh of play-with-perspective
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 4a4f2ee..74499a1 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -2224,8 +2224,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   glScalef (myzoom, myzoom, myzoom);
+ 
+   /* Translate to the center of the board space view */
+-  glTranslatef (-(port->view_x0 + PCB->MaxWidth / 2),
+-                -(port->view_y0 + PCB->MaxHeight / 2),
++  glTranslatef (-(port->view_x0 + port->view_width / 2),
++                -(port->view_y0 + port->view_height / 2),
+                 0.);
+ 
+   /* Stash the model view matrix so we can work out the screen coordinate -> board coordinate mapping */
