@@ -1,5 +1,5 @@
 Bottom: 666ed99db41c82fad2061adf38ade17b944b7ba8
-Top:    b1b3d52468db9813f5033165f6b2bb6db8ab202d
+Top:    35a15924968b5943184f1504b81e79e8d23d3a55
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-03 02:23:24 +0000
 
@@ -26,7 +26,7 @@ index 25bbd9f..6c55c54 100644
    glDisableClientState (GL_TEXTURE_COORD_ARRAY);
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e87d4ec..74499a1 100644
+index e87d4ec..9635e46 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -35,6 +35,8 @@
@@ -47,7 +47,7 @@ index e87d4ec..74499a1 100644
    middle_copper_group = min_copper_group + num_copper_groups / 2;
  
    if (group >= 0 && group < max_group) {
-@@ -323,6 +325,319 @@ ghid_draw_grid (BoxTypePtr drawn_area)
+@@ -323,6 +325,318 @@ ghid_draw_grid (BoxTypePtr drawn_area)
    glEnable (GL_STENCIL_TEST);
  }
  
@@ -157,7 +157,6 @@ index e87d4ec..74499a1 100644
 +    float y_strip_edge2 = sinf (angle_strip_edge2);
 +    float z;
 +    float r;
-+
 +
 +    z = -resistor_width / 2.;
 +    r = resistor_pin_radius;
@@ -367,7 +366,7 @@ index e87d4ec..74499a1 100644
  #if 0
  static void
  ghid_draw_bg_image (void)
-@@ -991,7 +1306,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -991,7 +1305,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
    /* setup GL-context */
    priv->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
                                                GDK_GL_MODE_STENCIL |
@@ -376,7 +375,7 @@ index e87d4ec..74499a1 100644
                                                GDK_GL_MODE_DOUBLE);
    if (!priv->glconfig)
      {
-@@ -1095,7 +1410,7 @@ backPad_callback (const BoxType * b, void *cl)
+@@ -1095,7 +1409,7 @@ backPad_callback (const BoxType * b, void *cl)
  static int
  EMark_callback (const BoxType * b, void *cl)
  {
@@ -385,7 +384,7 @@ index e87d4ec..74499a1 100644
  
  //  DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
    return 1;
-@@ -1416,7 +1731,8 @@ DrawMask (BoxType * screen)
+@@ -1416,7 +1730,8 @@ DrawMask (BoxType * screen)
    polygon.Clipped = board_outline_poly ();
    polygon.NoHoles = NULL;
    polygon.NoHolesValid = 0;
@@ -395,7 +394,7 @@ index e87d4ec..74499a1 100644
    SET_FLAG (FULLPOLYFLAG, &polygon);
    common_fill_pcb_polygon (out->fgGC, &polygon, screen);
    poly_Free (&polygon.Clipped);
-@@ -1466,8 +1782,9 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1466,8 +1781,9 @@ DrawLayerGroup (int group, const BoxType * screen)
        if (rv) {
          /* Mask out drilled holes on this layer */
          hidgl_flush_triangles (&buffer);
@@ -406,7 +405,7 @@ index e87d4ec..74499a1 100644
          gui->set_color (Output.bgGC, PCB->MaskColor);
          if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
          if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
-@@ -1488,8 +1805,9 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1488,8 +1804,9 @@ DrawLayerGroup (int group, const BoxType * screen)
  
          if (rv) {
            hidgl_flush_triangles (&buffer);
@@ -417,7 +416,7 @@ index e87d4ec..74499a1 100644
            /* Mask out drilled holes on this layer */
            if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
            if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
-@@ -1589,6 +1907,30 @@ hole_cyl_callback (const BoxType * b, void *cl)
+@@ -1589,6 +1906,30 @@ hole_cyl_callback (const BoxType * b, void *cl)
    return 0;
  }
  
@@ -448,7 +447,7 @@ index e87d4ec..74499a1 100644
  void
  ghid_draw_everything (BoxTypePtr drawn_area)
  {
-@@ -1614,7 +1956,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1614,7 +1955,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    /* Look at sign of eye coordinate system z-coord when projecting a
       world vector along +ve Z axis, (0, 0, 1). */
    /* XXX: This isn't strictly correct, as I've ignored the matrix
@@ -457,7 +456,7 @@ index e87d4ec..74499a1 100644
    /* NB: last_modelview_matrix is transposed in memory! */
    reverse_layers = (last_modelview_matrix[2][2] < 0);
  
-@@ -1708,7 +2050,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1708,7 +2049,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
        cyl_info.from_layer = drawn_groups[i];
        cyl_info.to_layer = drawn_groups[i - 1];
        cyl_info.scale = gport->zoom;
@@ -466,7 +465,7 @@ index e87d4ec..74499a1 100644
        gui->set_color (Output.fgGC, "drill");
        ghid_global_alpha_mult (Output.fgGC, 0.75);
        if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_cyl_callback, &cyl_info);
-@@ -1726,23 +2068,24 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1726,23 +2067,24 @@ ghid_draw_everything (BoxTypePtr drawn_area)
      gui->set_layer ("topsilk", SL (SILK, TOP), 0);
    else
      gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0);
@@ -506,7 +505,7 @@ index e87d4ec..74499a1 100644
  
    gui->set_layer (NULL, SL (FINISHED, 0), 0);
  
-@@ -1806,6 +2149,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1806,6 +2148,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    static float wavetime = 0;
    extern GLuint sp;
    GLint waveTimeLoc = glGetUniformLocation (sp, "waveTime");
@@ -516,7 +515,7 @@ index e87d4ec..74499a1 100644
  
    buffer.total_triangles = 0;
    buffer.total_vertices = 0;
-@@ -1842,20 +2188,47 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1842,20 +2187,47 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -575,7 +574,7 @@ index e87d4ec..74499a1 100644
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
  #ifdef ONE_SHOT
-@@ -1865,6 +2238,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1865,6 +2237,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      glNewList (display_list, GL_COMPILE);
  #endif
  
@@ -584,7 +583,7 @@ index e87d4ec..74499a1 100644
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->bg_color.red / 65535.,
                  port->bg_color.green / 65535.,
-@@ -1872,7 +2247,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1872,7 +2246,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -593,7 +592,7 @@ index e87d4ec..74499a1 100644
    hidgl_reset_stencil_usage ();
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
-@@ -1883,58 +2258,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1883,58 +2257,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_depth = -50 + compute_depth (0);                    /* FIXME: NEED TO USE PHYSICAL GROUPS */
    max_depth =  50 + compute_depth (max_copper_layer - 1); /* FIXME: NEED TO USE PHYSICAL GROUPS */
  
@@ -692,7 +691,7 @@ index e87d4ec..74499a1 100644
    region.X1 = min_x;  region.X2 = max_x + 1;
    region.Y1 = min_y;  region.Y2 = max_y + 1;
  
-@@ -1990,6 +2380,46 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1990,6 +2379,46 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    ghid_draw_everything (&region);
    hidgl_flush_triangles (&buffer);
  
@@ -739,7 +738,7 @@ index e87d4ec..74499a1 100644
    /* Just prod the drawing code so the current depth gets set to
       the right value for the layer we are editing */
    hidgl_set_depth (compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT)));
-@@ -2000,6 +2430,60 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2000,6 +2429,60 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    DrawMark (TRUE);
    hidgl_flush_triangles (&buffer);
  
@@ -800,7 +799,7 @@ index e87d4ec..74499a1 100644
  #ifdef ONE_SHOT
      glEndList ();
      one_shot = 0;
-@@ -2108,7 +2592,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2108,7 +2591,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -809,7 +808,7 @@ index e87d4ec..74499a1 100644
    hidgl_reset_stencil_usage ();
  
    /* call the drawing routine */
-@@ -2174,7 +2658,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2174,7 +2657,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                          GDK_GL_MODE_STENCIL |
@@ -818,7 +817,7 @@ index e87d4ec..74499a1 100644
                                          GDK_GL_MODE_SINGLE);
  
    pixmap = gdk_pixmap_new (NULL, width, height, depth);
-@@ -2222,7 +2706,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2222,7 +2705,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -827,7 +826,7 @@ index e87d4ec..74499a1 100644
    hidgl_reset_stencil_usage ();
  
    /* call the drawing routine */
-@@ -2267,10 +2751,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2267,10 +2750,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    return pixmap;
  }
  
@@ -841,7 +840,7 @@ index e87d4ec..74499a1 100644
    det = m[0][0] * m[1][1] -
          m[0][1] * m[1][0];
    return det;
-@@ -2298,9 +2782,9 @@ determinant_4x4 (float m[4][4])
+@@ -2298,9 +2781,9 @@ determinant_4x4 (float m[4][4])
  #endif
  
  static void
@@ -853,7 +852,7 @@ index e87d4ec..74499a1 100644
    out[0][0] =  m[1][1] * scale;
    out[0][1] = -m[0][1] * scale;
    out[1][0] = -m[1][0] * scale;
-@@ -2365,68 +2849,104 @@ invert_4x4 (float m[4][4], float out[4][4])
+@@ -2365,68 +2848,104 @@ invert_4x4 (float m[4][4], float out[4][4])
  #endif
  
  
