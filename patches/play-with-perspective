@@ -1,5 +1,5 @@
 Bottom: 666ed99db41c82fad2061adf38ade17b944b7ba8
-Top:    35a15924968b5943184f1504b81e79e8d23d3a55
+Top:    ab61a57f579078a33440e17d5bd8f2e57ed9d4ec
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-03 02:23:24 +0000
 
@@ -9,7 +9,7 @@ Play with perspective
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 25bbd9f..6c55c54 100644
+index 25bbd9f..911099f 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -186,6 +186,12 @@ hidgl_flush_triangles (triangle_buffer *buffer)
@@ -25,8 +25,58 @@ index 25bbd9f..6c55c54 100644
    glDisableClientState (GL_VERTEX_ARRAY);
    glDisableClientState (GL_TEXTURE_COORD_ARRAY);
  
+@@ -392,24 +398,31 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
+   /* Don't bother capping hairlines */
+   if (circular_caps && !hairline)
+     {
+-      float capx = deltax * width / 2. / length;
+-      float capy = deltay * width / 2. / length;
+-
+-      hidgl_ensure_vertex_space (&buffer, 10);
+-
+-      /* NB: Repeated first virtex to separate from other tri-strip */
+-      hidgl_add_vertex_tex (&buffer, x1 - wdx - capx, y1 - wdy - capy, -1.0, -1.0);
+-      hidgl_add_vertex_tex (&buffer, x1 - wdx - capx, y1 - wdy - capy, -1.0, -1.0);
+-      hidgl_add_vertex_tex (&buffer, x1 + wdx - capx, y1 + wdy - capy, -1.0,  1.0);
+-      hidgl_add_vertex_tex (&buffer, x1 - wdx,        y1 - wdy,         0.0, -1.0);
+-      hidgl_add_vertex_tex (&buffer, x1 + wdx,        y1 + wdy,         0.0,  1.0);
+-
+-      hidgl_add_vertex_tex (&buffer, x2 - wdx,        y2 - wdy,         0.0, -1.0);
+-      hidgl_add_vertex_tex (&buffer, x2 + wdx,        y2 + wdy,         0.0,  1.0);
+-      hidgl_add_vertex_tex (&buffer, x2 - wdx + capx, y2 - wdy + capy,  1.0, -1.0);
+-      hidgl_add_vertex_tex (&buffer, x2 + wdx + capx, y2 + wdy + capy,  1.0,  1.0);
+-      hidgl_add_vertex_tex (&buffer, x2 + wdx + capx, y2 + wdy + capy,  1.0,  1.0);
+-      /* NB: Repeated last virtex to separate from other tri-strip */
++      if (length == 0)
++        {
++          hidgl_fill_circle (x1, y1, width / 2.);
++        }
++      else
++        {
++          float capx = deltax * width / 2. / length;
++          float capy = deltay * width / 2. / length;
++
++          hidgl_ensure_vertex_space (&buffer, 10);
++
++          /* NB: Repeated first virtex to separate from other tri-strip */
++          hidgl_add_vertex_tex (&buffer, x1 - wdx - capx, y1 - wdy - capy, -1.0, -1.0);
++          hidgl_add_vertex_tex (&buffer, x1 - wdx - capx, y1 - wdy - capy, -1.0, -1.0);
++          hidgl_add_vertex_tex (&buffer, x1 + wdx - capx, y1 + wdy - capy, -1.0,  1.0);
++          hidgl_add_vertex_tex (&buffer, x1 - wdx,        y1 - wdy,         0.0, -1.0);
++          hidgl_add_vertex_tex (&buffer, x1 + wdx,        y1 + wdy,         0.0,  1.0);
++
++          hidgl_add_vertex_tex (&buffer, x2 - wdx,        y2 - wdy,         0.0, -1.0);
++          hidgl_add_vertex_tex (&buffer, x2 + wdx,        y2 + wdy,         0.0,  1.0);
++          hidgl_add_vertex_tex (&buffer, x2 - wdx + capx, y2 - wdy + capy,  1.0, -1.0);
++          hidgl_add_vertex_tex (&buffer, x2 + wdx + capx, y2 + wdy + capy,  1.0,  1.0);
++          hidgl_add_vertex_tex (&buffer, x2 + wdx + capx, y2 + wdy + capy,  1.0,  1.0);
++          /* NB: Repeated last virtex to separate from other tri-strip */
++        }
+     }
+   else
+     {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e87d4ec..9635e46 100644
+index e87d4ec..a48751b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -35,6 +35,8 @@
@@ -47,7 +97,7 @@ index e87d4ec..9635e46 100644
    middle_copper_group = min_copper_group + num_copper_groups / 2;
  
    if (group >= 0 && group < max_group) {
-@@ -323,6 +325,318 @@ ghid_draw_grid (BoxTypePtr drawn_area)
+@@ -323,6 +325,323 @@ ghid_draw_grid (BoxTypePtr drawn_area)
    glEnable (GL_STENCIL_TEST);
  }
  
@@ -71,8 +121,8 @@ index e87d4ec..9635e46 100644
 +  glTexImage1D (GL_TEXTURE_1D, 0, GL_RGB, 10, 1, GL_RGB, GL_FLOAT, tex_data);
 +}
 +
-+#define NUM_RESISTOR_STRIPS 20
-+#define NUM_PIN_RINGS 20
++#define NUM_RESISTOR_STRIPS 30
++#define NUM_PIN_RINGS 15
 +#define MIL_TO_INTERNAL 100.
 +static void
 +ghid_draw_acy_resistor (ElementType *element)
@@ -87,7 +137,7 @@ index e87d4ec..9635e46 100644
 +  int no_rings = NUM_PIN_RINGS;
 +  int end;
 +
-+  GLuint sp;
++  GLint sp;
 +
 +  /* XXX: Hard-coded magic */
 +  float resistor_bulge_radius = 45. * MIL_TO_INTERNAL;
@@ -112,38 +162,37 @@ index e87d4ec..9635e46 100644
 +  angle = atan2f (element->Pin[1].Y - element->Pin[0].Y,
 +                  element->Pin[1].X - element->Pin[0].X);
 +
-+//  hidgl_flush_triangles (&buffer);
-+
-+  /* XXX: TRANSFORM MATRIX */
++  /* TRANSFORM MATRIX */
 +  glPushMatrix ();
 +  glTranslatef (center_x, center_y, surface_depth + resistor_pin_bend_radius);
 +  glRotatef (angle * 180. / M_PI + 90, 0., 0., 1.);
 +  glRotatef (90, 1., 0., 0.);
 +
-+  /* XXX: TEXTURE SETUP */
-+
-+  setup_resistor_texture ();
-+  glEnable (GL_TEXTURE_1D);
++  /* TEXTURE SETUP */
 +  glGetIntegerv (GL_CURRENT_PROGRAM, &sp);
 +  glUseProgram (0);
++  setup_resistor_texture ();
++  glEnable (GL_TEXTURE_1D);
 +
 +  glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-+//  glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 +  glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 +  glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-+
-+  // the texture wraps over at the edges (repeat)
 +  glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 +
-+  /* XXX: COLOR SETUP */
++  /* COLOR / MATERIAL SETUP */
++  glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
++  glEnable (GL_COLOR_MATERIAL);
 +
 +  glPushAttrib (GL_CURRENT_BIT);
-+//  glColor4f (0.5, 0.5, 1.0, 1.);
 +  glColor4f (1., 1., 1., 1.);
 +
-+//  hidgl_ensure_vertex_space (&buffer, no_strips * (20 + 2));
++  if (1) {
++    GLfloat emission[] = {0.0f, 0.0f, 0.0f, 1.0f};
++    GLfloat specular[] = {0.0f, 0.0f, 0.0f, 1.0f};
++    glMaterialfv (GL_FRONT_AND_BACK, GL_EMISSION, emission);
++    glMaterialfv (GL_FRONT_AND_BACK, GL_SPECULAR, specular);
++  }
 +
-+  glTexCoord1f (0.);
 +  glBegin (GL_TRIANGLE_STRIP);
 +
 +  for (strip = 0; strip < no_strips; strip++) {
@@ -162,102 +211,102 @@ index e87d4ec..9635e46 100644
 +    r = resistor_pin_radius;
 +    /* repeat first vertex */
 +    glTexCoord1f (0.);
-+    glNormal3f (0., 0., -1. / 2. / gport->zoom);
++    glNormal3f (0., 0., -1.);
 +    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
 +    glTexCoord1f (0.);
-+    glNormal3f (0., 0., -1. / 2. / gport->zoom);
++    glNormal3f (0., 0., -1.);
 +    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
 +    glTexCoord1f (0.);
-+    glNormal3f (0., 0., -1. / 2. / gport->zoom);
++    glNormal3f (0., 0., -1.);
 +    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
 +
 +    z = -resistor_width / 2. + resistor_bulge_offset;
 +    r = resistor_barrel_radius;
 +    glTexCoord1f (0.);
-+    glNormal3f (x_strip_edge1 / 2. / gport->zoom, y_strip_edge1 / 2. / gport->zoom, 0.);
++    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
 +    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
 +    glTexCoord1f (0.);
-+    glNormal3f (x_strip_edge2 / 2. / gport->zoom, y_strip_edge2 / 2. / gport->zoom, 0.);
++    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
 +    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
 +
 +    z = -resistor_width / 2. + resistor_bulge_offset + resistor_bulge_width * 1. / 4.;
 +    r = resistor_bulge_radius;
 +    glTexCoord1f (0.);
-+    glNormal3f (x_strip_edge1 / 2. / gport->zoom, y_strip_edge1 / 2. / gport->zoom, 0.);
++    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
 +    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
 +    glTexCoord1f (0.);
-+    glNormal3f (x_strip_edge2 / 2. / gport->zoom, y_strip_edge2 / 2. / gport->zoom, 0.);
++    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
 +    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
 +
 +    z = -resistor_width / 2. + resistor_bulge_offset + resistor_bulge_width * 3. / 4.;
 +    r = resistor_bulge_radius;
 +    glTexCoord1f (0.);
-+    glNormal3f (x_strip_edge1 / 2. / gport->zoom, y_strip_edge1 / 2. / gport->zoom, 0.);
++//    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
 +    glNormal3f (0., 0., 1.);
 +    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
 +    glTexCoord1f (0.);
-+    glNormal3f (x_strip_edge2 / 2. / gport->zoom, y_strip_edge2 / 2. / gport->zoom, 0.);
++//    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
 +    glNormal3f (0., 0., 1.);
 +    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
 +
 +    z = -resistor_width / 2. + resistor_bulge_offset + resistor_bulge_width;
 +    r = resistor_barrel_radius;
 +    glTexCoord1f (0.);
-+    glNormal3f (x_strip_edge1 / 2. / gport->zoom, y_strip_edge1 / 2. / gport->zoom, 0.);
++    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
 +    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
 +    glTexCoord1f (0.);
-+    glNormal3f (x_strip_edge2 / 2. / gport->zoom, y_strip_edge2 / 2. / gport->zoom, 0.);
++    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
 +    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
 +
 +    z = resistor_width / 2. - resistor_bulge_offset - resistor_bulge_width;
 +    r = resistor_barrel_radius;
 +    glTexCoord1f (1.);
-+    glNormal3f (x_strip_edge1 / 2. / gport->zoom, y_strip_edge1 / 2. / gport->zoom, 0.);
++    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
 +    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
 +    glTexCoord1f (1.);
-+    glNormal3f (x_strip_edge2 / 2. / gport->zoom, y_strip_edge2 / 2. / gport->zoom, 0.);
++    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
 +    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
 +
 +    z = resistor_width / 2. - resistor_bulge_offset - resistor_bulge_width * 3. / 4.;
 +    r = resistor_bulge_radius;
 +    glTexCoord1f (1.);
-+    glNormal3f (x_strip_edge1 / 2. / gport->zoom, y_strip_edge1 / 2. / gport->zoom, 0.);
++//    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
 +    glNormal3f (0., 0., -1.);
 +    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
 +    glTexCoord1f (1.);
-+    glNormal3f (x_strip_edge2 / 2. / gport->zoom, y_strip_edge2 / 2. / gport->zoom, 0.);
++//    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
 +    glNormal3f (0., 0., -1.);
 +    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
 +
 +    z = resistor_width / 2. - resistor_bulge_offset - resistor_bulge_width * 1. / 4.;
 +    r = resistor_bulge_radius;
 +    glTexCoord1f (1.);
-+    glNormal3f (x_strip_edge1 / 2. / gport->zoom, y_strip_edge1 / 2. / gport->zoom, 0.);
++    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
 +    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
 +    glTexCoord1f (1.);
-+    glNormal3f (x_strip_edge2 / 2. / gport->zoom, y_strip_edge2 / 2. / gport->zoom, 0.);
++    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
 +    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
 +
 +    z = resistor_width / 2. - resistor_bulge_offset;
 +    r = resistor_barrel_radius;
 +    glTexCoord1f (1.);
-+    glNormal3f (x_strip_edge1 / 2. / gport->zoom, y_strip_edge1 / 2. / gport->zoom, 0.);
++    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
 +    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
 +    glTexCoord1f (1.);
-+    glNormal3f (x_strip_edge2 / 2. / gport->zoom, y_strip_edge2 / 2. / gport->zoom, 0.);
++    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
 +    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
 +
 +    z = resistor_width / 2.;
 +    r = resistor_pin_radius;
 +    glTexCoord1f (1.);
-+    glNormal3f (0., 0., 1. / 2. / gport->zoom);
++    glNormal3f (0., 0., 1.);
 +    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
 +    glTexCoord1f (1.);
-+    glNormal3f (0., 0., 1. / 2. / gport->zoom);
++    glNormal3f (0., 0., 1.);
 +    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
 +    /* repeat last vertex */
 +    glTexCoord1f (1.);
-+    glNormal3f (0., 0., 1. / 2. / gport->zoom);
++    glNormal3f (0., 0., 1.);
 +    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
 +
 +  }
@@ -266,7 +315,14 @@ index e87d4ec..9635e46 100644
 +
 +  glDisable (GL_TEXTURE_1D);
 +
-+  glColor4f (0.8, 0.8, 0.8, 1.);
++  glColor4f (0.5, 0.5, 0.5, 1.);
++
++  if (1) {
++    GLfloat specular[] = {0.5, 0.5, 0.5, 1.0};
++    GLfloat shininess = 5.;
++    glMaterialfv (GL_FRONT_AND_BACK, GL_SPECULAR, specular);
++    glMaterialfv (GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
++  }
 +
 +  for (end = 0; end < 2; end++) {
 +    float end_sign = (end == 0) ? 1. : -1.;
@@ -355,18 +411,33 @@ index e87d4ec..9635e46 100644
 +    }
 +  }
 +
-+
-+//  hidgl_flush_triangles (&buffer);
-+
 +  glPopAttrib ();
 +  glPopMatrix ();
 +  glUseProgram (sp);
++
++  glDisable (GL_COLOR_MATERIAL);
 +}
 +
  #if 0
  static void
  ghid_draw_bg_image (void)
-@@ -991,7 +1305,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -415,6 +734,7 @@ ghid_use_mask (int use_it)
+     case HID_MASK_BEFORE:
+       /* Write '1' to the stencil buffer where the solder-mask is drawn. */
+       glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
++      glDepthMask (GL_FALSE);
+       glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
+       stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
+       glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  // Always pass stencil test, write stencil_bit
+@@ -431,6 +751,7 @@ ghid_use_mask (int use_it)
+     case HID_MASK_AFTER:
+       /* Drawing operations as masked to areas where the stencil buffer is '1' */
+       glColorMask (1, 1, 1, 1);                   // Enable drawing of r, g, b & a
++      glDepthMask (GL_TRUE);
+       glStencilFunc (GL_LEQUAL, stencil_bit, stencil_bit);   // Draw only where our bit of the stencil buffer is set
+       glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    // Stencil buffer read only
+       break;
+@@ -991,7 +1312,7 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
    /* setup GL-context */
    priv->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
                                                GDK_GL_MODE_STENCIL |
@@ -375,7 +446,7 @@ index e87d4ec..9635e46 100644
                                                GDK_GL_MODE_DOUBLE);
    if (!priv->glconfig)
      {
-@@ -1095,7 +1409,7 @@ backPad_callback (const BoxType * b, void *cl)
+@@ -1095,7 +1416,7 @@ backPad_callback (const BoxType * b, void *cl)
  static int
  EMark_callback (const BoxType * b, void *cl)
  {
@@ -384,7 +455,7 @@ index e87d4ec..9635e46 100644
  
  //  DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
    return 1;
-@@ -1416,7 +1730,8 @@ DrawMask (BoxType * screen)
+@@ -1416,7 +1737,8 @@ DrawMask (BoxType * screen)
    polygon.Clipped = board_outline_poly ();
    polygon.NoHoles = NULL;
    polygon.NoHolesValid = 0;
@@ -394,7 +465,7 @@ index e87d4ec..9635e46 100644
    SET_FLAG (FULLPOLYFLAG, &polygon);
    common_fill_pcb_polygon (out->fgGC, &polygon, screen);
    poly_Free (&polygon.Clipped);
-@@ -1466,8 +1781,9 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1466,8 +1788,9 @@ DrawLayerGroup (int group, const BoxType * screen)
        if (rv) {
          /* Mask out drilled holes on this layer */
          hidgl_flush_triangles (&buffer);
@@ -405,7 +476,7 @@ index e87d4ec..9635e46 100644
          gui->set_color (Output.bgGC, PCB->MaskColor);
          if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
          if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
-@@ -1488,8 +1804,9 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1488,8 +1811,9 @@ DrawLayerGroup (int group, const BoxType * screen)
  
          if (rv) {
            hidgl_flush_triangles (&buffer);
@@ -416,7 +487,7 @@ index e87d4ec..9635e46 100644
            /* Mask out drilled holes on this layer */
            if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
            if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
-@@ -1589,6 +1906,30 @@ hole_cyl_callback (const BoxType * b, void *cl)
+@@ -1589,6 +1913,30 @@ hole_cyl_callback (const BoxType * b, void *cl)
    return 0;
  }
  
@@ -447,7 +518,7 @@ index e87d4ec..9635e46 100644
  void
  ghid_draw_everything (BoxTypePtr drawn_area)
  {
-@@ -1614,7 +1955,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1614,7 +1962,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    /* Look at sign of eye coordinate system z-coord when projecting a
       world vector along +ve Z axis, (0, 0, 1). */
    /* XXX: This isn't strictly correct, as I've ignored the matrix
@@ -456,7 +527,7 @@ index e87d4ec..9635e46 100644
    /* NB: last_modelview_matrix is transposed in memory! */
    reverse_layers = (last_modelview_matrix[2][2] < 0);
  
-@@ -1708,7 +2049,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1708,7 +2056,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
        cyl_info.from_layer = drawn_groups[i];
        cyl_info.to_layer = drawn_groups[i - 1];
        cyl_info.scale = gport->zoom;
@@ -465,7 +536,7 @@ index e87d4ec..9635e46 100644
        gui->set_color (Output.fgGC, "drill");
        ghid_global_alpha_mult (Output.fgGC, 0.75);
        if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_cyl_callback, &cyl_info);
-@@ -1726,23 +2067,24 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1726,23 +2074,24 @@ ghid_draw_everything (BoxTypePtr drawn_area)
      gui->set_layer ("topsilk", SL (SILK, TOP), 0);
    else
      gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0);
@@ -505,28 +576,26 @@ index e87d4ec..9635e46 100644
  
    gui->set_layer (NULL, SL (FINISHED, 0), 0);
  
-@@ -1806,6 +2148,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1806,6 +2155,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    static float wavetime = 0;
    extern GLuint sp;
    GLint waveTimeLoc = glGetUniformLocation (sp, "waveTime");
 +  float aspect;
-+  float myzoom;
++  GLfloat scale[] = {1, 0, 0, 0,
++                     0, 1, 0, 0,
++                     0, 0, 1, 0,
++                     0, 0, 0, 1};
 +  bool horizon_problem = false;
  
    buffer.total_triangles = 0;
    buffer.total_vertices = 0;
-@@ -1842,20 +2187,47 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1842,20 +2197,51 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
 -  glOrtho (0, widget->allocation.width, widget->allocation.height, 0, -100000, 100000);
--  glMatrixMode (GL_MODELVIEW);
 +
 +  aspect = (float)widget->allocation.width / (float)widget->allocation.height;
-+  /* XXX: Need to choose which to uuse (width or height) based on the aspect of the window
-+   *      AND the aspect of the board!
-+   */
-+  myzoom = 2. / (float)port->zoom / (float)MIN (widget->allocation.width, widget->allocation.height);
 +
 +#ifdef VIEW_ORTHO
 +  glOrtho (-1. * aspect, 1. * aspect, 1., -1., 1., 24.);
@@ -534,7 +603,7 @@ index e87d4ec..9635e46 100644
 +  glFrustum (-1. * aspect, 1 * aspect, 1., -1., 1., 24.);
 +#endif
 +
-+    glMatrixMode (GL_MODELVIEW);
+   glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
  
 -  glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
@@ -563,7 +632,15 @@ index e87d4ec..9635e46 100644
 +            ((ghid_flip_x == ghid_flip_y) ? 1. : -1.));
 +
 +  /* Scale board coordiantes to (-1,-1)-(1,1) coordiantes */
-+  glScalef (myzoom, myzoom, myzoom);
++  /* Adjust the "w" coordinate of our homogeneous coodinates. We coulld in
++   * theory just use glScalef to transform, but on mesa this produces errors
++   * as the resulting modelview matrix has a very small determinant.
++   */
++  scale[15] = (float)port->zoom * (float)MIN (widget->allocation.width, widget->allocation.height) / 2.;
++  /* XXX: Need to choose which to use (width or height) based on the aspect of the window
++   *      AND the aspect of the board!
++   */
++  glMultMatrixf (scale);
 +
 +  /* Translate to the center of the board space view */
 +  glTranslatef (-(port->view_x0 + port->view_width / 2),
@@ -574,7 +651,7 @@ index e87d4ec..9635e46 100644
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
  #ifdef ONE_SHOT
-@@ -1865,6 +2237,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1865,6 +2251,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      glNewList (display_list, GL_COMPILE);
  #endif
  
@@ -583,7 +660,7 @@ index e87d4ec..9635e46 100644
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->bg_color.red / 65535.,
                  port->bg_color.green / 65535.,
-@@ -1872,7 +2246,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1872,7 +2260,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -592,7 +669,7 @@ index e87d4ec..9635e46 100644
    hidgl_reset_stencil_usage ();
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
-@@ -1883,58 +2257,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1883,58 +2271,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_depth = -50 + compute_depth (0);                    /* FIXME: NEED TO USE PHYSICAL GROUPS */
    max_depth =  50 + compute_depth (max_copper_layer - 1); /* FIXME: NEED TO USE PHYSICAL GROUPS */
  
@@ -691,7 +768,7 @@ index e87d4ec..9635e46 100644
    region.X1 = min_x;  region.X2 = max_x + 1;
    region.Y1 = min_y;  region.Y2 = max_y + 1;
  
-@@ -1990,6 +2379,46 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1990,6 +2393,46 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    ghid_draw_everything (&region);
    hidgl_flush_triangles (&buffer);
  
@@ -738,15 +815,11 @@ index e87d4ec..9635e46 100644
    /* Just prod the drawing code so the current depth gets set to
       the right value for the layer we are editing */
    hidgl_set_depth (compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT)));
-@@ -2000,6 +2429,60 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2000,6 +2443,52 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    DrawMark (TRUE);
    hidgl_flush_triangles (&buffer);
  
 +  glEnable (GL_LIGHTING);
-+
-+
-+  glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-+  glEnable (GL_COLOR_MATERIAL);
 +
 +  glShadeModel (GL_SMOOTH);
 +
@@ -754,6 +827,7 @@ index e87d4ec..9635e46 100644
 +
 +  /* XXX: FIX OUR NORMALS */
 +  glEnable (GL_NORMALIZE);
++//  glEnable (GL_RESCALE_NORMAL);
 +
 +  glDepthFunc (GL_LESS);
 +  glDisable (GL_STENCIL_TEST);
@@ -762,26 +836,21 @@ index e87d4ec..9635e46 100644
 +  glCullFace (GL_BACK);
 +
 +  if (1) {
-+    GLfloat emission[] = {0.0f, 0.0f, 0.0f, 1.0f};
-+    GLfloat specular[] = {0.1f, 0.1f, 0.1f, 1.0f};
-+    glMaterialfv (GL_FRONT_AND_BACK, GL_EMISSION, emission);
-+    glMaterialfv (GL_FRONT_AND_BACK, GL_SPECULAR, specular);
-+  }
-+
-+  if (1) {
 +    GLfloat global_ambient[] = {0.0f, 0.0f, 0.0f, 1.0f};
 +    glLightModelfv (GL_LIGHT_MODEL_AMBIENT, global_ambient);
++    glLightModeli (GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
 +  }
 +  if (1) {
-+    GLfloat diffuse[] =  {0.7, 0.7, 0.7, 1.0};
-+    GLfloat ambient[] =  {0.3, 0.3, 0.3, 1.0};
++    GLfloat diffuse[] =  {0.3, 0.3, 0.3, 1.0};
++    GLfloat ambient[] =  {0.7, 0.7, 0.7, 1.0};
 +    GLfloat specular[] = {1.0, 1.0, 1.0, 1.0};
 +    glLightfv (GL_LIGHT0, GL_DIFFUSE,  diffuse);
 +    glLightfv (GL_LIGHT0, GL_AMBIENT,  ambient);
 +    glLightfv (GL_LIGHT0, GL_SPECULAR, specular);
 +  }
 +  if (1) {
-+    GLfloat position[] = {1., -1., 1., 0.};
++//    GLfloat position[] = {1., -1., 1., 0.};
++    GLfloat position[] = {1., -0.5, 1., 0.};
 +    glPushMatrix ();
 +    glLoadIdentity ();
 +    glLightfv (GL_LIGHT0, GL_POSITION, position);
@@ -799,7 +868,7 @@ index e87d4ec..9635e46 100644
  #ifdef ONE_SHOT
      glEndList ();
      one_shot = 0;
-@@ -2108,7 +2591,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2108,7 +2597,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -808,7 +877,7 @@ index e87d4ec..9635e46 100644
    hidgl_reset_stencil_usage ();
  
    /* call the drawing routine */
-@@ -2174,7 +2657,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2174,7 +2663,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                          GDK_GL_MODE_STENCIL |
@@ -817,7 +886,7 @@ index e87d4ec..9635e46 100644
                                          GDK_GL_MODE_SINGLE);
  
    pixmap = gdk_pixmap_new (NULL, width, height, depth);
-@@ -2222,7 +2705,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2222,7 +2711,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -826,7 +895,7 @@ index e87d4ec..9635e46 100644
    hidgl_reset_stencil_usage ();
  
    /* call the drawing routine */
-@@ -2267,10 +2750,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2267,10 +2756,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    return pixmap;
  }
  
@@ -840,7 +909,7 @@ index e87d4ec..9635e46 100644
    det = m[0][0] * m[1][1] -
          m[0][1] * m[1][0];
    return det;
-@@ -2298,9 +2781,9 @@ determinant_4x4 (float m[4][4])
+@@ -2298,9 +2787,9 @@ determinant_4x4 (float m[4][4])
  #endif
  
  static void
@@ -852,7 +921,7 @@ index e87d4ec..9635e46 100644
    out[0][0] =  m[1][1] * scale;
    out[0][1] = -m[0][1] * scale;
    out[1][0] = -m[1][0] * scale;
-@@ -2365,68 +2848,104 @@ invert_4x4 (float m[4][4], float out[4][4])
+@@ -2365,68 +2854,104 @@ invert_4x4 (float m[4][4], float out[4][4])
  #endif
  
  
