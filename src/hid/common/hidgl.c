@@ -951,7 +951,6 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
 static void
 printLog(GLuint obj)
 {
-  return;
   int infologLength = 0;
   int maxLength;
   char *infoLog;
@@ -1012,11 +1011,13 @@ file2string (const char *path)
 }
 
 GLuint sp; /* Shader Program */
+GLuint sp2; /* Shader Program2 */
 
 void
 hidgl_load_frag_shader (void)
 {
 //  char *vs_source;
+
   char *fs_source = "void main()\n"
                     "{\n"
                     "  float sqdist;\n"
@@ -1024,6 +1025,31 @@ hidgl_load_frag_shader (void)
                     "  if (sqdist > 1.0)\n"
                     "    discard;\n"
                     "  gl_FragColor = gl_Color;\n"
+                    "}\n";
+
+  char *fs2_source =
+                    "uniform sampler1D detail_tex;\n"
+                    "uniform sampler2D bump_tex;\n"
+                    "\n"
+                    "void main()\n"
+                    "{\n"
+                    "  vec3 detailColor = texture1D (detail_tex, gl_TexCoord[0].s).rgb;\n"
+                    "  vec3 bumpHeight = texture2D (bump_tex, gl_TexCoord[1].st).rgb;\n"
+                    "\n"
+                    "  /* Uncompress vectors ([0, 1] -> [-1, 1]) */\n"
+                    "  vec3 lightVectorFinal = 2.0 * (gl_Color.rgb - 0.5);\n"
+                    "  vec3 bumpNormalVectorFinal = 2.0 * (bumpHeight - 0.5);\n"
+                    "\n"
+                    "  /* Compute diffuse factor */\n"
+//                    "  float diffuse = clamp(dot(bumpNormalVectorFinal, lightVectorFinal),0.0, 1.0);\n"
+                    "  float diffuse = pow(clamp(dot(bumpNormalVectorFinal, lightVectorFinal),0.0, 1.0), 70);\n"
+                    "\n"
+//                    "  vec3 eye_light = vec3 (0.0, -0.5, 1.0);\n"
+//                    "  vec3 
+//                    ""
+                    "\n"
+//                    "  gl_FragColor = vec4(clamp((diffuse * 1.0 + 0.0) * detailColor, 0.0, 1.0), 1.0);\n"
+                    "   gl_FragColor = vec4(detailColor + vec3(diffuse, diffuse, diffuse), 1.0);\n"
                     "}\n";
 
   /* Compile and load the program */
@@ -1070,6 +1096,16 @@ hidgl_load_frag_shader (void)
   glUniform1f(waveHeightLoc, waveHeight);
 
   }
+
+  fs = glCreateShader (GL_FRAGMENT_SHADER);
+  glShaderSource (fs, 1, &fs2_source, NULL);
+  glCompileShader (fs);
+  printLog (fs);
+  sp2 = glCreateProgram ();
+  glAttachShader (sp2, fs);
+  glLinkProgram (sp2);
+  glUseProgram (sp2);
+
 }
 
 void
