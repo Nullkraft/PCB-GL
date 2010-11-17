@@ -185,6 +185,7 @@ LIBGTK_GL_SRCS= \
 GL_SRCS= \
 	hid/common/hidgl.c \
 	hid/common/hidgl.h \
+	hid/common/hidgl_package_acy_resistor.c \
 	hid/common/trackball.c \
 	hid/common/trackball.h
 
