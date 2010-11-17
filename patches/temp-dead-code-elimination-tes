@@ -1,5 +1,5 @@
 Bottom: c5882c19beacfd53f5ad72082476dde4ab6a0093
-Top:    c5882c19beacfd53f5ad72082476dde4ab6a0093
+Top:    5507d44d9c3c8df1dcb99586e5a1f41b3bbfe4ee
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-17 04:05:08 +0000
 
@@ -8,4 +8,57 @@ Temp dead code elimination testing
 
 ---
 
-
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index d8cae7f..6fe8dcf 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -1033,16 +1033,16 @@ hidgl_load_frag_shader (void)
+                     "\n"
+                     "void main()\n"
+                     "{\n"
+-                    "  vec3 detailColor = texture1D (detail_tex, gl_TexCoord[0].s).rgb;\n"
+-                    "  vec3 bumpHeight = texture2D (bump_tex, gl_TexCoord[1].st).rgb;\n"
++                    "  vec3 bumpNormal = texture2D (bump_tex, gl_TexCoord[1].st).rgb;\n"
+                     "\n"
+                     "  /* Uncompress vectors ([0, 1] -> [-1, 1]) */\n"
+-                    "  vec3 lightVectorFinal = 2.0 * (gl_Color.rgb - 0.5);\n"
+-                    "  vec3 bumpNormalVectorFinal = 2.0 * (bumpHeight - 0.5);\n"
++                    "  vec3 lightVectorFinal = -1.0 + 2.0 * gl_Color.rgb;\n"
++                    "  vec3 bumpNormalVectorFinal = -1.0 + 2.0 * bumpNormal;\n"
+                     "\n"
+                     "  /* Compute diffuse factor */\n"
+ //                    "  float diffuse = clamp(dot(bumpNormalVectorFinal, lightVectorFinal),0.0, 1.0);\n"
+-                    "  float diffuse = pow(clamp(dot(bumpNormalVectorFinal, lightVectorFinal),0.0, 1.0), 70);\n"
++                    "  float diffuse = pow(clamp(dot(bumpNormalVectorFinal, lightVectorFinal), 0.0, 1.0), 70);\n"
++                    "  vec3 detailColor = texture1D (detail_tex, gl_TexCoord[0].s).xyz;\n"
+                     "\n"
+ //                    "  vec3 eye_light = vec3 (0.0, -0.5, 1.0);\n"
+ //                    "  vec3 
+@@ -1067,6 +1067,8 @@ hidgl_load_frag_shader (void)
+ #endif
+ 
+ //  fs_source = file2string ("circular.frag");
++
++#if 0
+   if (fs_source == NULL)
+     return;
+   fs = glCreateShader (GL_FRAGMENT_SHADER);
+@@ -1082,7 +1084,7 @@ hidgl_load_frag_shader (void)
+   printLog (sp);
+ 
+   glUseProgram (sp);
+-
++#endif
+   {
+   GLfloat waveTime = 0,
+           waveWidth = 0.00001,
+@@ -1104,8 +1106,8 @@ hidgl_load_frag_shader (void)
+   sp2 = glCreateProgram ();
+   glAttachShader (sp2, fs);
+   glLinkProgram (sp2);
+-  glUseProgram (sp2);
+ 
++  glUseProgram (sp2);
+ }
+ 
+ void
