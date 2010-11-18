@@ -334,7 +334,7 @@ compute_offset (int x, int y, int width, int height)
 }
 
 static void
-load_texture_from_png (char *filename)
+load_texture_from_png (char *filename, bool bumpmap)
 {
   GError *error = NULL;
   GdkPixbuf *pixbuf;
@@ -372,37 +372,44 @@ load_texture_from_png (char *filename)
   new_pixels = malloc (width * height * 4);
 
   /* XXX: Move computing bump map out of the texture loading function */
-  for (y = 0; y < height; y++)
-    for (x = 0; x < width; x++) {
-      float r, g, b;
-      float lenvec;
+  if (bumpmap) {
+    for (y = 0; y < height; y++)
+      for (x = 0; x < width; x++) {
+        float r, g, b;
+        float lenvec;
 
-      float dx = (pixels[compute_offset (x + 1, y, width, height)] - pixels[compute_offset (x - 1, y, width, height)]) / 255.;
-      float dy = (pixels[compute_offset (x, y + 1, width, height)] - pixels[compute_offset (x, y - 1, width, height)]) / 255.;
+        float dx = (pixels[compute_offset (x + 1, y, width, height)] - pixels[compute_offset (x - 1, y, width, height)]) / 255.;
+        float dy = (pixels[compute_offset (x, y + 1, width, height)] - pixels[compute_offset (x, y - 1, width, height)]) / 255.;
 
-      r = -dx;
-      g = -dy;
-      b = 1.;
-      lenvec = sqrt (r * r + g * g + b * b);
+#if 0
+        dx *= 10.;
+        dy *= 10.;
+#endif
 
-      r /= lenvec;
-      g /= lenvec;
-      b /= lenvec;
+        r = -dx;
+        g = -dy;
+        b = 1.;
+        lenvec = sqrt (r * r + g * g + b * b);
 
-      new_pixels [compute_offset (x, y, width, height) + 0] =
-        (unsigned char)((r / 2. + 0.5) * 255.);
-      new_pixels [compute_offset (x, y, width, height) + 1] =
-        (unsigned char)((g / 2. + 0.5) * 255.);
-      new_pixels [compute_offset (x, y, width, height) + 2] =
-        (unsigned char)((b / 2. + 0.5) * 255.);
-      new_pixels [compute_offset (x, y, width, height) + 3] = 255;
-    }
+        r /= lenvec;
+        g /= lenvec;
+        b /= lenvec;
 
-  memcpy (pixels, new_pixels, width * height * 4);
-  gdk_pixbuf_save (pixbuf, "debug_bumps.png", "png", NULL, NULL);
+        new_pixels [compute_offset (x, y, width, height) + 0] =
+          (unsigned char)((r / 2. + 0.5) * 255.);
+        new_pixels [compute_offset (x, y, width, height) + 1] =
+          (unsigned char)((g / 2. + 0.5) * 255.);
+        new_pixels [compute_offset (x, y, width, height) + 2] =
+          (unsigned char)((b / 2. + 0.5) * 255.);
+        new_pixels [compute_offset (x, y, width, height) + 3] = 255;
+      }
+
+    memcpy (pixels, new_pixels, width * height * 4);
+    gdk_pixbuf_save (pixbuf, "debug_bumps.png", "png", NULL, NULL);
+  }
 
   glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,
-                (n_channels == 4) ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, new_pixels);
+                (n_channels == 4) ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, pixels);
 
   free (new_pixels);
   g_object_unref (pixbuf);
@@ -426,27 +433,133 @@ setup_resistor_texture (GLfloat *body_color, float value)
 
 //  glGenTextures (1, &texture);
 //  glBindTexture (GL_TEXTURE_1D, texture);
-  glTexImage1D (GL_TEXTURE_1D, 0, GL_RGB, 10, 1, GL_RGB, GL_FLOAT, tex_data);
+  glTexImage1D (GL_TEXTURE_1D, 0, GL_RGB, 10, 0, GL_RGB, GL_FLOAT, tex_data);
 }
 
 static void invert_4x4 (float m[4][4], float out[4][4]);
+
+static GLfloat *debug_lines = NULL;
+static int no_debug_lines = 0;
+static int max_debug_lines = 0;
+
+#define LENG 1000
+#define STRIDE_FLOATS 6
+static void
+debug_basis_vector (float x,   float y,   float z,
+                    float b1x, float b1y, float b1z,
+                    float b2x, float b2y, float b2z,
+                    float b3x, float b3y, float b3z)
+{
+  int comp_count;
+  float lenb1, lenb2, lenb3;
+
+  if (no_debug_lines + 3 > max_debug_lines) {
+    max_debug_lines += 10;
+    debug_lines = realloc (debug_lines, max_debug_lines * sizeof (GLfloat) * 2 * STRIDE_FLOATS);
+  }
+
+  b3x = -b1y * b2z + b1z * b2y;
+  b3y = -b1z * b2x + b1x * b2z;
+  b3z = -b1x * b2y + b1y * b2x;
+
+  lenb1 = sqrt (b1x * b1x + b1y * b1y + b1z * b1z);
+  lenb2 = sqrt (b2x * b2x + b2y * b2y + b2z * b2z);
+  lenb3 = sqrt (b3x * b3x + b3y * b3y + b3z * b3z);
+  b1x /= lenb1;  b1y /= lenb1;  b1z /= lenb1;
+  b2x /= lenb2;  b2y /= lenb2;  b2z /= lenb2;
+  b3x /= lenb3;  b3y /= lenb3;  b3z /= lenb3;
+
+  comp_count = 0;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = x;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = y;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = z;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 1.;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = x + b1x * LENG;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = y + b1y * LENG;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = z + b1z * LENG;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 1.;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
+  no_debug_lines++;
+
+  comp_count = 0;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = x;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = y;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = z;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 1.;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = x + b2x * LENG;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = y + b2y * LENG;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = z + b2z * LENG;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 1.;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
+  no_debug_lines++;
+
+  comp_count = 0;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = x;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = y;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = z;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 1.;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = x + b3x * LENG;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = y + b3y * LENG;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = z + b3z * LENG;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
+  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 1.;
+  no_debug_lines++;
+}
+
+static void
+debug_basis_display ()
+{
+  if (no_debug_lines == 0)
+    return;
+
+#if 0
+  glPushAttrib (GL_CURRENT_BIT);
+  glColor4f (1., 1., 1., 1.);
+  glVertexPointer (3, GL_FLOAT, STRIDE_FLOATS * sizeof (GLfloat), &debug_lines[0]);
+  glColorPointer (3, GL_FLOAT, STRIDE_FLOATS * sizeof (GLfloat), &debug_lines[3]);
+  glEnableClientState (GL_VERTEX_ARRAY);
+  glEnableClientState (GL_COLOR_ARRAY);
+  glDrawArrays (GL_LINES, 0, no_debug_lines * 2);
+  glDisableClientState (GL_COLOR_ARRAY);
+  glDisableClientState (GL_VERTEX_ARRAY);
+  glPopAttrib ();
+#endif
+
+  free (debug_lines);
+  debug_lines = NULL;
+  no_debug_lines = 0;
+  max_debug_lines = 0;
+}
 
 /* b1{x,y,z} is the basis vector along "s" texture space */
 /* b2{x,y,z} is the basis vector along "t" texture space */
 static void
 compute_light_vector (float b1x, float b1y, float b1z,
                       float b2x, float b2y, float b2z,
-                      float *lx, float *ly, float *lz)
+                      float *lx, float *ly, float *lz,
+                      float x,   float y,   float z)
 {
   float tb1x, tb1y, tb1z;
   float tb2x, tb2y, tb2z;
   float tb3x, tb3y, tb3z;
   float mvm[16]; /* NB: TRANSPOSED IN MEMORY */
-  float light_direction[] = {0., 0.5, -1. /* + 1.0 */}; /* XXX: HARDCODEED! */
+//  float light_direction[] = {-0.5, 1., -1.}; /* XXX: HARDCODEED! */
+  float light_direction[] = {0., 0.5, -1.}; /* XXX: HARDCODEED! */
   float texspace_to_eye[4][4];
   float eye_to_texspace[4][4];
-  float lenb1, lenb2;
+  float lenb1, lenb2, lenb3;
 
+  debug_basis_vector (x, y, z, b1x, b1y, b1z, b2x, b2y, b2z, 0., 0., 0.);
+#if 1
   float len_light;
   len_light = sqrt (light_direction[0] * light_direction[0] + light_direction[1] * light_direction[1] + light_direction[2] * light_direction[2]);
   light_direction[0] /= len_light;
@@ -460,31 +573,34 @@ compute_light_vector (float b1x, float b1y, float b1z,
   light_direction[0] += 0. / 2.;
   light_direction[1] += 0. / 2.;
   light_direction[2] += -1. / 2.;
+#endif
 
   /* XXX: Should cache this ourselves */
   glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)mvm);
 
   /* Transform the S, T texture space bases into eye coordinates */
-  tb1x = mvm[0] * b1x + mvm[4] * b1y + mvm[ 8] * b1z;// + mvm[12] * 1;
-  tb1y = mvm[1] * b1x + mvm[5] * b1y + mvm[ 9] * b1z;// + mvm[13] * 1;
-  tb1z = mvm[2] * b1x + mvm[6] * b1y + mvm[10] * b1z;// + mvm[14] * 1;
+  tb1x = mvm[0] * b1x + mvm[4] * b1y + mvm[ 8] * b1z; // + mvm[12] * 1;
+  tb1y = mvm[1] * b1x + mvm[5] * b1y + mvm[ 9] * b1z; // + mvm[13] * 1;
+  tb1z = mvm[2] * b1x + mvm[6] * b1y + mvm[10] * b1z; // + mvm[14] * 1;
   // tb1w = mvm[3] * b1x + mvm[7] * b1y + mvm[11] * b1z + mvm[15] * 1;
 
-  tb2x = mvm[0] * b2x + mvm[4] * b2y + mvm[ 8] * b2z;// + mvm[12] * 1;
-  tb2y = mvm[1] * b2x + mvm[5] * b2y + mvm[ 9] * b2z;// + mvm[13] * 1;
-  tb2z = mvm[2] * b2x + mvm[6] * b2y + mvm[10] * b2z;// + mvm[14] * 1;
+  tb2x = mvm[0] * b2x + mvm[4] * b2y + mvm[ 8] * b2z; // + mvm[12] * 1;
+  tb2y = mvm[1] * b2x + mvm[5] * b2y + mvm[ 9] * b2z; // + mvm[13] * 1;
+  tb2z = mvm[2] * b2x + mvm[6] * b2y + mvm[10] * b2z; // + mvm[14] * 1;
   // tb2w = mvm[3] * b2x + mvm[7] * b2y + mvm[11] * b2z + mvm[15] * 1;
-
-  /* Normalise tb1 and tb2 */
-  lenb1 = sqrt (tb1x * tb1x + tb1y * tb1y + tb1z * tb1z);
-  lenb2 = sqrt (tb2x * tb2x + tb2y * tb2y + tb2z * tb2z);
-  tb1x /= lenb1;  tb1y /= lenb1;  tb1z /= lenb1;
-  tb2x /= lenb2;  tb2y /= lenb2;  tb2z /= lenb2;
 
   /* Third basis vector is the cross product of tb1 and tb2 */
   tb3x = tb1y * tb2z - tb1z * tb2y;
   tb3y = tb1z * tb2x - tb1x * tb2z;
   tb3z = tb1x * tb2y - tb1y * tb2x;
+
+  /* Normalise tb1, tb2 and tb3 */
+  lenb1 = sqrt (tb1x * tb1x + tb1y * tb1y + tb1z * tb1z);
+  lenb2 = sqrt (tb2x * tb2x + tb2y * tb2y + tb2z * tb2z);
+  lenb3 = sqrt (tb3x * tb3x + tb3y * tb3y + tb3z * tb3z);
+  tb1x /= lenb1;  tb1y /= lenb1;  tb1z /= lenb1;
+  tb2x /= lenb2;  tb2y /= lenb2;  tb2z /= lenb2;
+  tb3x /= lenb3;  tb3y /= lenb3;  tb3z /= lenb3;
 
   texspace_to_eye[0][0] = tb1x; texspace_to_eye[0][1] = tb2x; texspace_to_eye[0][2] = tb3x;  texspace_to_eye[0][3] = 0.0;
   texspace_to_eye[1][0] = tb1y; texspace_to_eye[1][1] = tb2y; texspace_to_eye[1][2] = tb3y;  texspace_to_eye[1][3] = 0.0;
@@ -526,12 +642,57 @@ compute_light_vector (float b1x, float b1y, float b1z,
   }
 }
 
+static void
+emit_vertex (float x,   float y,   float z,
+             float b1x, float b1y, float b1z,
+             float b2x, float b2y, float b2z,
+             float tex0_s, float tex1_s, float tex1_t)
+{
+  GLfloat lx, ly, lz;
+  compute_light_vector (b1x, b1y, b1z, b2x, b2y, b2z, &lx, &ly, &lz, x, y, z);
+  glColor3f (lx, ly, lz);
+  glMultiTexCoord1f (GL_TEXTURE0, tex0_s);
+  glMultiTexCoord2f (GL_TEXTURE1, tex1_s, tex1_t);
+  glVertex3f (x, y, z);
+}
+
+enum geom_pos {
+  FIRST,
+  MIDDLE,
+  LAST
+};
+
+#define REPS 4.
+#define REPT 4.
+
+static void
+emit_pair (float ang_edge1, float cos_edge1, float sin_edge1,
+           float ang_edge2, float cos_edge2, float sin_edge2,
+           float prev_r, float prev_z,
+           float      r, float      z,
+           float next_r, float next_z,
+           float tex0_s, float resistor_width,
+           enum geom_pos pos)
+{
+  int repeat;
+
+  for (repeat = 0; repeat < ((pos == FIRST) ? 2 : 1); repeat++)
+    emit_vertex (r * cos_edge1, r * sin_edge1, z,
+                 sin_edge1, -cos_edge1, 0,
+                 cos_edge1 * (next_r - prev_r) / 2., sin_edge1 * (next_r - prev_r) / 2., (next_z - prev_z) / 2.,
+                 tex0_s, (z / resistor_width + 0.5) * REPS, (ang_edge1 / 2. / M_PI) * REPT);
+
+  for (repeat = 0; repeat < ((pos == LAST) ? 2 : 1); repeat++)
+    emit_vertex (r * cos_edge2, r * sin_edge2, z,
+                 sin_edge2, -cos_edge2, 0,
+                 cos_edge2 * (next_r - prev_r) / 2., sin_edge2 * (next_r - prev_r) / 2., (next_z - prev_z) / 2.,
+                 tex0_s, (z / resistor_width + 0.5) * REPS, (ang_edge2 / 2. / M_PI) * REPT);
+}
+
 
 #define NUM_RESISTOR_STRIPS 100
 #define NUM_PIN_RINGS 15
 #define MIL_TO_INTERNAL 100.
-#define REPS 4.
-#define REPT 4.
 
 static void
 ghid_draw_acy_resistor (ElementType *element)
@@ -550,8 +711,8 @@ ghid_draw_acy_resistor (ElementType *element)
 //  float lx, ly, lz;
 
   static bool first_run = true;
-  static int texture1;
-  static int texture2;
+  static GLuint texture1;
+  static GLuint texture2;
 
   extern GLuint sp;
   extern GLuint sp2;
@@ -615,7 +776,7 @@ ghid_draw_acy_resistor (ElementType *element)
   if (first_run) {
     glGenTextures (1, &texture2);
     glBindTexture (GL_TEXTURE_2D, texture2);
-    load_texture_from_png ("bumps.png");
+    load_texture_from_png ("bumps.png", true);
   } else {
     glBindTexture (GL_TEXTURE_2D, texture2);
   }
@@ -624,6 +785,7 @@ ghid_draw_acy_resistor (ElementType *element)
   glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glEnable (GL_TEXTURE_2D);
+  glActiveTextureARB (GL_TEXTURE0_ARB);
 
   /* COLOR / MATERIAL SETUP */
 //  glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -644,305 +806,55 @@ ghid_draw_acy_resistor (ElementType *element)
     glMaterialfv (GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
   }
 
-#if 0
-#define WIDTH 4000
-#define LENGTH 10000
-
-  glBegin (GL_TRIANGLE_STRIP);
-    compute_light_vector (1, 0, 0, 0, 0, 1, &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 0.);
-    glMultiTexCoord2f (GL_TEXTURE1, REPS, -REPT);
-    glVertex3f (WIDTH, 0., -LENGTH);
-
-    compute_light_vector (1, 0, 0, 0, 0, 1, &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 1.);
-    glMultiTexCoord2f (GL_TEXTURE1, REPS, REPT);
-    glVertex3f (WIDTH, 0., LENGTH);
-
-    compute_light_vector (1, 0, 0, 0, 0, 1, &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 0.);
-    glMultiTexCoord2f (GL_TEXTURE1, -REPS, -REPT);
-    glVertex3f (-WIDTH, 0., -LENGTH);
-
-    compute_light_vector (1, 0, 0, 0, 0, 1, &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 1.);
-    glMultiTexCoord2f (GL_TEXTURE1, -REPS, REPT);
-    glVertex3f (-WIDTH, 0., LENGTH);
-#endif
-
 #if 1
   glBegin (GL_TRIANGLE_STRIP);
 
   for (strip = 0; strip < no_strips; strip++) {
 
-    float angle_strip_edge1 = strip * 2. * M_PI / no_strips;
-    float angle_strip_edge2 = (strip + 1) * 2. * M_PI / no_strips;
+    int ring;
+    int no_rings;
+    float angle_edge1 = strip * 2. * M_PI / no_strips;
+    float angle_edge2 = (strip + 1) * 2. * M_PI / no_strips;
 
-    float x_strip_edge1 = cosf (angle_strip_edge1);
-    float y_strip_edge1 = sinf (angle_strip_edge1);
-    float x_strip_edge2 = cosf (angle_strip_edge2);
-    float y_strip_edge2 = sinf (angle_strip_edge2);
-    float z;
-    float r;
+    float cos_edge1 = cosf (angle_edge1);
+    float sin_edge1 = sinf (angle_edge1);
+    float cos_edge2 = cosf (angle_edge2);
+    float sin_edge2 = sinf (angle_edge2);
 
-    float lx, ly, lz;
+    struct strip_item {
+      GLfloat z;
+      GLfloat r;
+      GLfloat tex0_s;
+    } strip_data[] = {
+      {-resistor_width / 2. - 1.,                                                     resistor_pin_radius,     0.}, /* DUMMY */
+      {-resistor_width / 2.,                                                          resistor_pin_radius,     0.},
+      {-resistor_width / 2. + resistor_bulge_offset,                                  resistor_barrel_radius,  0.},
+      {-resistor_width / 2. + resistor_bulge_offset + resistor_bulge_width * 1. / 4.,   resistor_bulge_radius, 0.},
+      {-resistor_width / 2. + resistor_bulge_offset + resistor_bulge_width * 3. / 4.,   resistor_bulge_radius, 0.},
+      {-resistor_width / 2. + resistor_bulge_offset + resistor_bulge_width,           resistor_barrel_radius,  0.},
+                                                                                      /*********************/
+                                                                                      /*********************/
+      { resistor_width / 2. - resistor_bulge_offset - resistor_bulge_width,           resistor_barrel_radius,  1.},
+      { resistor_width / 2. - resistor_bulge_offset - resistor_bulge_width * 3. / 4.,   resistor_bulge_radius, 1.},
+      { resistor_width / 2. - resistor_bulge_offset - resistor_bulge_width * 1. / 4.,   resistor_bulge_radius, 1.},
+      { resistor_width / 2. - resistor_bulge_offset,                                  resistor_barrel_radius,  1.},
+      { resistor_width / 2.,                                                          resistor_pin_radius,     1.},
+      { resistor_width / 2. + 1.,                                                     resistor_pin_radius,     1.}, /* DUMMY */
+    };
 
-    z = -resistor_width / 2.;
-    r = resistor_pin_radius;
-    /* repeat first vertex */
-    compute_light_vector (y_strip_edge1, -x_strip_edge1, 0,
-                          y_strip_edge1 * (resistor_barrel_radius - resistor_pin_radius), -x_strip_edge1 * (resistor_barrel_radius - resistor_pin_radius), resistor_bulge_offset,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 0.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge1 / 2. / M_PI) * REPT);
-    glNormal3f (0., 0., -1.);
-    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
-    compute_light_vector (y_strip_edge1, -x_strip_edge1, 0,
-                          y_strip_edge1 * (resistor_barrel_radius - resistor_pin_radius), -x_strip_edge1 * (resistor_barrel_radius - resistor_pin_radius), resistor_bulge_offset,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 0.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge1 / 2. / M_PI) * REPT);
-    glNormal3f (0., 0., -1.);
-    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
-    compute_light_vector (y_strip_edge2, -x_strip_edge2, 0,
-                          y_strip_edge2 * (resistor_barrel_radius - resistor_pin_radius), -x_strip_edge2 * (resistor_barrel_radius - resistor_pin_radius), resistor_bulge_offset,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 0.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge2 / 2. / M_PI) * REPT);
-    glNormal3f (0., 0., -1.);
-    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
+    no_rings = sizeof (strip_data) / sizeof (struct strip_item);
+    for (ring = 1; ring < no_rings - 1; ring++) {
+      enum geom_pos pos = MIDDLE;
+      if (ring == 1)            pos = FIRST;
+      if (ring == no_rings - 2) pos = LAST;
 
-
-
-    z = -resistor_width / 2. + resistor_bulge_offset;
-    r = resistor_barrel_radius;
-    compute_light_vector (y_strip_edge1, -x_strip_edge1, 0,
-                          y_strip_edge1 * (resistor_bulge_radius - resistor_barrel_radius), -x_strip_edge1 * (resistor_bulge_radius - resistor_barrel_radius), resistor_bulge_width * 1. / 4.,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 0.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge1 / 2. / M_PI) * REPT);
-    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
-    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
-    compute_light_vector (y_strip_edge2, -x_strip_edge2, 0,
-                          y_strip_edge2 * (resistor_bulge_radius - resistor_barrel_radius), -x_strip_edge2 * (resistor_bulge_radius - resistor_barrel_radius), resistor_bulge_width * 1. / 4.,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 0.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge2 / 2. / M_PI) * REPT);
-    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
-    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
-
-
-
-    z = -resistor_width / 2. + resistor_bulge_offset + resistor_bulge_width * 1. / 4.;
-    r = resistor_bulge_radius;
-    compute_light_vector (y_strip_edge1, -x_strip_edge1, 0,
-                          0, 0, 1,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 0.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge1 / 2. / M_PI) * REPT);
-    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
-    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
-    compute_light_vector (y_strip_edge2, -x_strip_edge2, 0,
-                          0, 0, 1,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 0.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge2 / 2. / M_PI) * REPT);
-    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
-    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
-
-
-
-    z = -resistor_width / 2. + resistor_bulge_offset + resistor_bulge_width * 3. / 4.;
-    r = resistor_bulge_radius;
-    compute_light_vector (y_strip_edge1, -x_strip_edge1, 0,
-                          y_strip_edge1 * (resistor_barrel_radius - resistor_bulge_radius), -x_strip_edge2 * (resistor_barrel_radius - resistor_bulge_radius), resistor_bulge_width * 1. / 4.,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 0.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge1 / 2. / M_PI) * REPT);
-//    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
-    glNormal3f (0., 0., 1.);
-    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
-    compute_light_vector (y_strip_edge2, -x_strip_edge2, 0,
-                          y_strip_edge2 * (resistor_barrel_radius - resistor_bulge_radius), -x_strip_edge2 * (resistor_barrel_radius - resistor_bulge_radius), resistor_bulge_width * 1. / 4.,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 0.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge2 / 2. / M_PI) * REPT);
-//    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
-    glNormal3f (0., 0., 1.);
-    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
-
-
-
-    z = -resistor_width / 2. + resistor_bulge_offset + resistor_bulge_width;
-    r = resistor_barrel_radius;
-    compute_light_vector (y_strip_edge1, -x_strip_edge1, 0,
-                          0, 0, 1,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 0.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge1 / 2. / M_PI) * REPT);
-    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
-    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
-    compute_light_vector (y_strip_edge2, -x_strip_edge2, 0,
-                          0, 0, 1,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 0.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge2 / 2. / M_PI) * REPT);
-    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
-    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
-
-
-
-    z = resistor_width / 2. - resistor_bulge_offset - resistor_bulge_width;
-    r = resistor_barrel_radius;
-    compute_light_vector (y_strip_edge1, -x_strip_edge1, 0,
-                          y_strip_edge1 * (resistor_bulge_radius - resistor_barrel_radius), -x_strip_edge1 * (resistor_bulge_radius - resistor_barrel_radius), resistor_bulge_width * 1. / 4.,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 1.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge1 / 2. / M_PI) * REPT);
-    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
-    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
-    compute_light_vector (y_strip_edge2, -x_strip_edge2, 0,
-                          y_strip_edge2 * (resistor_bulge_radius - resistor_barrel_radius), -x_strip_edge2 * (resistor_bulge_radius - resistor_barrel_radius), resistor_bulge_width * 1. / 4.,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 1.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge2 / 2. / M_PI) * REPT);
-    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
-    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
-
-
-
-    z = resistor_width / 2. - resistor_bulge_offset - resistor_bulge_width * 3. / 4.;
-    r = resistor_bulge_radius;
-    compute_light_vector (y_strip_edge1, -x_strip_edge1, 0,
-                          0, 0, 1,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 1.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge1 / 2. / M_PI) * REPT);
-//    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
-    glNormal3f (0., 0., -1.);
-    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
-    compute_light_vector (y_strip_edge2, -x_strip_edge2, 0,
-                          0, 0, 1,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 1.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge2 / 2. / M_PI) * REPT);
-//    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
-    glNormal3f (0., 0., -1.);
-    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
-
-
-
-    z = resistor_width / 2. - resistor_bulge_offset - resistor_bulge_width * 1. / 4.;
-    r = resistor_bulge_radius;
-    compute_light_vector (y_strip_edge1, -x_strip_edge1, 0,
-                          y_strip_edge1 * (resistor_barrel_radius - resistor_bulge_radius), -x_strip_edge1 * (resistor_barrel_radius - resistor_bulge_radius), resistor_bulge_width * 1. / 4.,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 1.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge1 / 2. / M_PI) * REPT);
-    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
-    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
-    compute_light_vector (y_strip_edge2, -x_strip_edge2, 0,
-                          y_strip_edge2 * (resistor_barrel_radius - resistor_bulge_radius), -x_strip_edge2 * (resistor_barrel_radius - resistor_bulge_radius), resistor_bulge_width * 1. / 4.,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 1.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge2 / 2. / M_PI) * REPT);
-    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
-    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
-
-
-
-    z = resistor_width / 2. - resistor_bulge_offset;
-    r = resistor_barrel_radius;
-    compute_light_vector (y_strip_edge1, -x_strip_edge1, 0,
-                          y_strip_edge1 * (resistor_pin_radius - resistor_barrel_radius), -x_strip_edge1 * (resistor_pin_radius - resistor_barrel_radius), resistor_bulge_offset,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 1.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge1 / 2. / M_PI) * REPT);
-    glNormal3f (x_strip_edge1, y_strip_edge1, 0.);
-    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
-    compute_light_vector (y_strip_edge2, -x_strip_edge2, 0,
-                          y_strip_edge2 * (resistor_pin_radius - resistor_barrel_radius), -x_strip_edge2 * (resistor_pin_radius - resistor_barrel_radius), resistor_bulge_offset,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 1.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge2 / 2. / M_PI) * REPT);
-    glNormal3f (x_strip_edge2, y_strip_edge2, 0.);
-    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
-
-
-
-    z = resistor_width / 2.;
-    r = resistor_pin_radius;
-    compute_light_vector (y_strip_edge1, -x_strip_edge1, 0,
-                          y_strip_edge1 * (resistor_pin_radius - resistor_barrel_radius), -x_strip_edge1 * (resistor_pin_radius - resistor_barrel_radius), resistor_bulge_offset,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 1.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge1 / 2. / M_PI) * REPT);
-    glNormal3f (0., 0., 1.);
-    glVertex3f (r * x_strip_edge1, r * y_strip_edge1, z);
-    compute_light_vector (y_strip_edge2, -x_strip_edge2, 0,
-                          y_strip_edge2 * (resistor_pin_radius - resistor_barrel_radius), -x_strip_edge2 * (resistor_pin_radius - resistor_barrel_radius), resistor_bulge_offset,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 1.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge2 / 2. / M_PI) * REPT);
-    glNormal3f (0., 0., 1.);
-    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
-    /* repeat last vertex */
-    compute_light_vector (y_strip_edge2, -x_strip_edge2, 0,
-                          y_strip_edge2 * (resistor_pin_radius - resistor_barrel_radius), -x_strip_edge2 * (resistor_pin_radius - resistor_barrel_radius), resistor_bulge_offset,
-                          &lx, &ly, &lz);
-    glColor3f (lx, ly, lz);
-    glMultiTexCoord1f (GL_TEXTURE0, 1.);
-    glMultiTexCoord2f (GL_TEXTURE1, (z / resistor_width + 0.5) * REPS,
-                                    (angle_strip_edge2 / 2. / M_PI) * REPT);
-    glNormal3f (0., 0., 1.);
-    glVertex3f (r * x_strip_edge2, r * y_strip_edge2, z);
-
+      emit_pair (angle_edge1, cos_edge1, sin_edge1,
+                 angle_edge2, cos_edge2, sin_edge2,
+                 strip_data[ring - 1].r, strip_data[ring - 1].z,
+                 strip_data[ring    ].r, strip_data[ring    ].z,
+                 strip_data[ring + 1].r, strip_data[ring + 1].z,
+                 strip_data[ring    ].tex0_s, resistor_width, pos);
+    }
   }
 #endif
 
@@ -958,13 +870,18 @@ ghid_draw_acy_resistor (ElementType *element)
 
   glUseProgram (0);
 
-  glColor3f (resistor_pin_color[0],
-             resistor_pin_color[1],
-             resistor_pin_color[2]);
+  glColor3f (resistor_pin_color[0] / 1.3,
+             resistor_pin_color[1] / 1.3,
+             resistor_pin_color[2] / 1.3);
+
+  /* COLOR / MATERIAL SETUP */
+  glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+  glEnable (GL_COLOR_MATERIAL);
 
   if (1) {
+//    GLfloat ambient[] = {0.0, 0.0, 0.0, 1.0};
     GLfloat specular[] = {0.5, 0.5, 0.5, 1.0};
-    GLfloat shininess = 5.;
+    GLfloat shininess = 20.;
     glMaterialfv (GL_FRONT_AND_BACK, GL_SPECULAR, specular);
     glMaterialfv (GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
   }
@@ -1056,11 +973,17 @@ ghid_draw_acy_resistor (ElementType *element)
     }
   }
 
+  glDisable (GL_COLOR_MATERIAL);
   glPopAttrib ();
+
+  glDisable (GL_LIGHTING);
+//  glDisable (GL_DEPTH_TEST);
+  debug_basis_display ();
+//  glEnable (GL_DEPTH_TEST);
+
   glPopMatrix ();
   glUseProgram (sp);
 
-  glDisable (GL_COLOR_MATERIAL);
 
   first_run = false;
 }
@@ -2125,6 +2048,10 @@ int clearPad_callback (const BoxType * b, void *cl);
 static void
 DrawMask (BoxType * screen)
 {
+  static bool first_run = true;
+  static GLuint texture;
+  extern GLuint sp;
+
   struct pin_info info;
   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
   PolygonType polygon;
@@ -2157,6 +2084,34 @@ DrawMask (BoxType * screen)
   gui->set_color (out->fgGC, PCB->MaskColor);
   ghid_global_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
 
+  if (first_run) {
+    glGenTextures (1, &texture);
+    glBindTexture (GL_TEXTURE_2D, texture);
+    load_texture_from_png ("board_texture.png", false);
+  } else {
+    glBindTexture (GL_TEXTURE_2D, texture);
+  }
+  glUseProgram (0);
+
+  if (1) {
+    GLfloat s_params[] = {0.0001, 0., 0., 0.};
+    GLfloat t_params[] = {0., 0.0001, 0., 0.};
+    GLint obj_lin = GL_OBJECT_LINEAR;
+    glTexGeniv (GL_S, GL_TEXTURE_GEN_MODE, &obj_lin);
+    glTexGeniv (GL_T, GL_TEXTURE_GEN_MODE, &obj_lin);
+    glTexGenfv (GL_S, GL_OBJECT_PLANE, s_params);
+    glTexGenfv (GL_T, GL_OBJECT_PLANE, t_params);
+    glEnable (GL_TEXTURE_GEN_S);
+    glEnable (GL_TEXTURE_GEN_T);
+  }
+
+  glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glEnable (GL_TEXTURE_2D);
+
   polygon.Clipped = board_outline_poly ();
   polygon.NoHoles = NULL;
   polygon.NoHolesValid = 0;
@@ -2170,8 +2125,16 @@ DrawMask (BoxType * screen)
 //  gui->fill_pcb_polygon (out->fgGC, &polygon, screen);
 //  gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
   ghid_global_alpha_mult (out->fgGC, 1.0);
+  hidgl_flush_triangles (&buffer);
+  glDisable (GL_TEXTURE_GEN_S);
+  glDisable (GL_TEXTURE_GEN_T);
+  glBindTexture (GL_TEXTURE_2D, 0);
+  glDisable (GL_TEXTURE_2D);
+  glUseProgram (sp);
 
   gui->use_mask (HID_MASK_OFF);
+
+  first_run = false;
 }
 
 static int
@@ -2873,7 +2836,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glEnable (GL_LIGHT0);
 
   /* XXX: FIX OUR NORMALS */
-//  glEnable (GL_NORMALIZE);
+  glEnable (GL_NORMALIZE);
 //  glEnable (GL_RESCALE_NORMAL);
 
   glDepthFunc (GL_LESS);
@@ -2899,7 +2862,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   if (1) {
 //    GLfloat position[] = {1., -1., 1., 0.};
 //    GLfloat position[] = {1., -0.5, 1., 0.};
-    GLfloat position[] = {0., -0.5, 1., 0.};
+//    GLfloat position[] = {0., -1., 1., 0.};
+//    GLfloat position[] = {0.5, -1., 1., 0.};
+    GLfloat position[] = {0.0, -0.5, 1., 0.};
     GLfloat abspos = sqrt (position[0] * position[0] +
                            position[1] * position[1] +
                            position[2] * position[2]);

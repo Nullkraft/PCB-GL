@@ -1034,22 +1034,21 @@ hidgl_load_frag_shader (void)
                     "void main()\n"
                     "{\n"
                     "  vec3 bumpNormal = texture2D (bump_tex, gl_TexCoord[1].st).rgb;\n"
+                    "  vec3 detailColor = texture1D (detail_tex, gl_TexCoord[0].s).rgb;\n"
                     "\n"
                     "  /* Uncompress vectors ([0, 1] -> [-1, 1]) */\n"
                     "  vec3 lightVectorFinal = -1.0 + 2.0 * gl_Color.rgb;\n"
                     "  vec3 bumpNormalVectorFinal = -1.0 + 2.0 * bumpNormal;\n"
+//                    "vec3 bumpNormalVectorFinal = vec3(0., 0., 1.);\n"
                     "\n"
                     "  /* Compute diffuse factor */\n"
 //                    "  float diffuse = clamp(dot(bumpNormalVectorFinal, lightVectorFinal),0.0, 1.0);\n"
-                    "  float diffuse = pow(clamp(dot(bumpNormalVectorFinal, lightVectorFinal), 0.0, 1.0), 70);\n"
-                    "  vec3 detailColor = texture1D (detail_tex, gl_TexCoord[0].s).xyz;\n"
-                    "\n"
-//                    "  vec3 eye_light = vec3 (0.0, -0.5, 1.0);\n"
-//                    "  vec3 
-//                    ""
+                    "  float diffuse = pow(clamp(dot(bumpNormalVectorFinal, lightVectorFinal), 0.0, 1.0), 100.0);\n"
                     "\n"
 //                    "  gl_FragColor = vec4(clamp((diffuse * 1.0 + 0.0) * detailColor, 0.0, 1.0), 1.0);\n"
-                    "   gl_FragColor = vec4(detailColor + vec3(diffuse, diffuse, diffuse), 1.0);\n"
+                    "  gl_FragColor = vec4(detailColor + vec3(diffuse, diffuse, diffuse), 1.0);\n"
+//                    "   gl_FragColor = vec4(detailColor * (0.6 + 0.4 * diffuse), 1.0);\n"
+//                    "   gl_FragColor =vec4(gl_Color.rgb, 1);\n"
                     "}\n";
 
   /* Compile and load the program */
@@ -1068,7 +1067,7 @@ hidgl_load_frag_shader (void)
 
 //  fs_source = file2string ("circular.frag");
 
-#if 0
+#if 1
   if (fs_source == NULL)
     return;
   fs = glCreateShader (GL_FRAGMENT_SHADER);
@@ -1106,8 +1105,6 @@ hidgl_load_frag_shader (void)
   sp2 = glCreateProgram ();
   glAttachShader (sp2, fs);
   glLinkProgram (sp2);
-
-  glUseProgram (sp2);
 }
 
 void
