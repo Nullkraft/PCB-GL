@@ -662,7 +662,7 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
   glRotatef (90, 1., 0., 0.);
 
   /* TEXTURE SETUP */
-  glGetIntegerv (GL_CURRENT_PROGRAM, &restore_sp);
+  glGetIntegerv (GL_CURRENT_PROGRAM, (GLint*)&restore_sp);
   glUseProgram (sp2);
 
   {
