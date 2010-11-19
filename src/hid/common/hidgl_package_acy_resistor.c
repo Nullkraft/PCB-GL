@@ -19,6 +19,9 @@
 #define GL_GLEXT_PROTOTYPES 1
 #include <GL/gl.h>
 
+#include "hidgl.h"
+#include "hidgl_material.h"
+
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
@@ -614,8 +617,8 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
 
   float center_x, center_y;
   float angle;
-  GLfloat resistor_body_color[] = {0.31, 0.47, 0.64};
-  GLfloat resistor_pin_color[] = {0.82, 0.82, 0.82};
+  GLfloat resistor_body_color[] = {0.31, 0.47, 0.64, 1.0};
+  GLfloat resistor_pin_color[] = {0.55, 0.55, 0.55, 1.0};
 
   int strip;
   int no_strips = NUM_RESISTOR_STRIPS;
@@ -630,7 +633,6 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
   static GLuint texture2_zero_ohms;
 
   GLuint restore_sp;
-  extern GLuint sp2;
 
   /* XXX: Hard-coded magic */
   float resistor_pin_radius = 12. * MIL_TO_INTERNAL;
@@ -663,11 +665,12 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
 
   /* TEXTURE SETUP */
   glGetIntegerv (GL_CURRENT_PROGRAM, (GLint*)&restore_sp);
-  glUseProgram (sp2);
+  hidgl_shader_activate (resistor_program);
 
   {
-    int tex0_location = glGetUniformLocation (sp2, "detail_tex");
-    int tex1_location = glGetUniformLocation (sp2, "bump_tex");
+    GLuint program = hidgl_shader_get_program (resistor_program);
+    int tex0_location = glGetUniformLocation (program, "detail_tex");
+    int tex1_location = glGetUniformLocation (program, "bump_tex");
     glUniform1i (tex0_location, 0);
     glUniform1i (tex1_location, 1);
   }
@@ -721,10 +724,15 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
   if (1) {
     GLfloat emission[] = {0.0f, 0.0f, 0.0f, 1.0f};
     GLfloat specular[] = {0.5f, 0.5f, 0.5f, 1.0f};
-    GLfloat shininess = 20.;
-    glMaterialfv (GL_FRONT_AND_BACK, GL_EMISSION, emission);
-    glMaterialfv (GL_FRONT_AND_BACK, GL_SPECULAR, specular);
-    glMaterialfv (GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
+    hidgl_material *material;
+
+    material = hidgl_material_new ("resistor_body");
+    hidgl_material_set_emission_color (material, emission);
+    hidgl_material_set_specular_color (material, specular);
+    hidgl_material_set_shininess (material, 20.0f);
+    hidgl_material_set_shader (material, resistor_program);
+    hidgl_material_activate (material);
+    hidgl_material_free (material);
   }
 
 #if 1
@@ -797,22 +805,20 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
 
   glEnable (GL_LIGHTING);
 
-  glUseProgram (0);
-
-  glColor3f (resistor_pin_color[0] / 1.5,
-             resistor_pin_color[1] / 1.5,
-             resistor_pin_color[2] / 1.5);
-
   /* COLOR / MATERIAL SETUP */
-  glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-  glEnable (GL_COLOR_MATERIAL);
-
   if (1) {
-//    GLfloat ambient[] = {0.0, 0.0, 0.0, 1.0};
-    GLfloat specular[] = {0.5, 0.5, 0.5, 1.0};
-    GLfloat shininess = 120.;
-    glMaterialfv (GL_FRONT_AND_BACK, GL_SPECULAR, specular);
-    glMaterialfv (GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
+    GLfloat emission[] = {0.0f, 0.0f, 0.0f, 1.0f};
+    GLfloat specular[] = {0.5f, 0.5f, 0.5f, 1.0f};
+    hidgl_material *material;
+
+    material = hidgl_material_new ("resistor_pin");
+    hidgl_material_set_ambient_color (material, resistor_pin_color);
+    hidgl_material_set_diffuse_color (material, resistor_pin_color);
+    hidgl_material_set_emission_color (material, emission);
+    hidgl_material_set_specular_color (material, specular);
+    hidgl_material_set_shininess (material, 120.0f);
+    hidgl_material_activate (material);
+    hidgl_material_free (material);
   }
 
   for (end = 0; end < 2; end++) {
