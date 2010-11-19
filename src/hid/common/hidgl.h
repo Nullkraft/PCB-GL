@@ -135,4 +135,7 @@ void hidgl_return_stencil_bit (int bit);
 void hidgl_reset_stencil_usage (void);
 void hidgl_set_depth (float depth);
 
+/* hidgl_pacakge_acy_resistor.c */
+void hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_thickness);
+
 #endif /* __HIDGL_INCLUDED__  */

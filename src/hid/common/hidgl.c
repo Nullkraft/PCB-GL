@@ -894,10 +894,12 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
 
   glPushAttrib (GL_STENCIL_BUFFER_BIT);                   // Save the write mask etc.. for final restore
   glPushAttrib (GL_STENCIL_BUFFER_BIT |                   // Resave the stencil write-mask etc.., and
-                GL_COLOR_BUFFER_BIT);                     // the colour buffer write mask etc.. for part way restore
+                GL_COLOR_BUFFER_BIT |                     // the colour buffer write mask etc.., and
+                GL_DEPTH_BUFFER_BIT);                     // the depth write-mask etc.. for part way restore
   glStencilMask (stencil_bit);                            // Only write to our stencil bit
   glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);    // Always pass stencil test, ref value is our bit
   glColorMask (0, 0, 0, 0);                               // Disable writting in color buffer
+  glDepthMask (GL_FALSE);
 
   /* It will already be setup like this (so avoid prodding the state-machine):
    * glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value
@@ -949,7 +951,6 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
 static void
 printLog(GLuint obj)
 {
-  return;
   int infologLength = 0;
   int maxLength;
   char *infoLog;
@@ -1010,18 +1011,48 @@ file2string (const char *path)
 }
 
 GLuint sp; /* Shader Program */
+GLuint sp2; /* Shader Program2 */
 
 void
 hidgl_load_frag_shader (void)
 {
 //  char *vs_source;
-  char *fs_source = "void main()\n"
+
+  const char *fs_source = "void main()\n"
                     "{\n"
                     "  float sqdist;\n"
                     "  sqdist = dot (gl_TexCoord[0].st, gl_TexCoord[0].st);\n"
                     "  if (sqdist > 1.0)\n"
                     "    discard;\n"
                     "  gl_FragColor = gl_Color;\n"
+                    "}\n";
+
+  const char *fs2_source =
+                    "uniform sampler1D detail_tex;\n"
+                    "uniform sampler2D bump_tex;\n"
+                    "\n"
+                    "void main()\n"
+                    "{\n"
+                    "  vec3 bumpNormal = texture2D (bump_tex, gl_TexCoord[1].st).rgb;\n"
+                    "  vec3 detailColor = texture1D (detail_tex, gl_TexCoord[0].s).rgb;\n"
+                    "\n"
+                    "  /* Uncompress vectors ([0, 1] -> [-1, 1]) */\n"
+                    "  vec3 lightVectorFinal = -1.0 + 2.0 * gl_Color.rgb;\n"
+                    "  vec3 halfVectorFinal = -1.0 + 2.0 * gl_TexCoord[2].xyz;\n"
+                    "  vec3 bumpNormalVectorFinal = -1.0 + 2.0 * bumpNormal;\n"
+//                    "vec3 bumpNormalVectorFinal = vec3(0., 0., 1.);\n"
+                    "\n"
+                    "  /* Compute diffuse factor */\n"
+                    "  float diffuse = clamp(dot(bumpNormalVectorFinal, lightVectorFinal),0.0, 1.0);\n"
+                    "  float specular = pow(clamp(dot(bumpNormalVectorFinal, halfVectorFinal), 0.0, 1.0), 2.0);\n"
+                    "  specular *= 0.4;\n"
+//                    "  float specular = pow(clamp(dot(bumpNormalVectorFinal, lightVectorFinal), 0.0, 1.0), 5.0);\n"
+                    "\n"
+//                    "  gl_FragColor = vec4(clamp((diffuse * 1.0 + 0.0) * detailColor, 0.0, 1.0), 1.0);\n"
+//                    "  gl_FragColor = vec4(detailColor + vec3(specular, specular, specular), 1.0);\n"
+                    "   gl_FragColor = vec4(detailColor * (0.3 + 0.7 * diffuse) + vec3(specular, specular, specular), 1.0);\n"
+//                    "   gl_FragColor =vec4(gl_Color.rgb, 1);\n"
+//                    "   gl_FragColor =vec4(gl_Color.r, gl_Color.r, gl_Color.r, 1.0);\n"
                     "}\n";
 
   /* Compile and load the program */
@@ -1039,6 +1070,8 @@ hidgl_load_frag_shader (void)
 #endif
 
 //  fs_source = file2string ("circular.frag");
+
+#if 1
   if (fs_source == NULL)
     return;
   fs = glCreateShader (GL_FRAGMENT_SHADER);
@@ -1054,7 +1087,7 @@ hidgl_load_frag_shader (void)
   printLog (sp);
 
   glUseProgram (sp);
-
+#endif
   {
   GLfloat waveTime = 0,
           waveWidth = 0.00001,
@@ -1068,6 +1101,14 @@ hidgl_load_frag_shader (void)
   glUniform1f(waveHeightLoc, waveHeight);
 
   }
+
+  fs = glCreateShader (GL_FRAGMENT_SHADER);
+  glShaderSource (fs, 1, &fs2_source, NULL);
+  glCompileShader (fs);
+  printLog (fs);
+  sp2 = glCreateProgram ();
+  glAttachShader (sp2, fs);
+  glLinkProgram (sp2);
 }
 
 void
