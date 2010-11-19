@@ -19,9 +19,34 @@
 #define GL_GLEXT_PROTOTYPES 1
 #include <GL/gl.h>
 
+#include "hidgl.h"
+#include "hidgl_material.h"
+#include "hidgl_geometry.h"
+
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
+
+/* Static data we initialise for the model */
+typedef struct {
+  hidgl_material *resistor_body_mat;
+  hidgl_material *resistor_pin_mat;
+  hidgl_material *resistor_pin_selected_mat;
+  hidgl_geometry *resistor_body_geom;
+  hidgl_geometry *resistor_pin_geom;
+  GLuint resistor_body_bump_texture;
+  GLuint zero_ohm_body_bump_texture;
+} model_data;
+
+static model_data model = {
+    .resistor_body_mat = NULL,
+    .resistor_pin_mat = NULL,
+    .resistor_pin_selected_mat = NULL,
+    .resistor_body_geom = NULL,
+    .resistor_pin_geom = NULL,
+    .resistor_body_bump_texture = 0,
+    .zero_ohm_body_bump_texture = 0
+};
 
 static int
 compute_offset (int x, int y, int width, int height)
@@ -600,6 +625,39 @@ emit_pair (float ang_edge1, float cos_edge1, float sin_edge1,
                  tex0_s, ang_edge2 / 2. / M_PI, tex0_s);
 }
 
+void
+hidgl_init_acy_resistor (void)
+{
+  GLfloat emission[] = {0.0f, 0.0f, 0.0f, 1.0f};
+  GLfloat specular[] = {0.5f, 0.5f, 0.5f, 1.0f};
+  GLfloat resistor_pin_color[] = {0.55, 0.55, 0.55, 1.0};
+
+  /* Define the resistor body material */
+  model.resistor_body_mat = hidgl_material_new ("resistor_body");
+  hidgl_material_set_emission_color (model.resistor_body_mat, emission);
+  hidgl_material_set_specular_color (model.resistor_body_mat, specular);
+  hidgl_material_set_shininess (model.resistor_body_mat, 20.0f);
+  hidgl_material_set_shader (model.resistor_body_mat, resistor_program);
+
+  /* Define the resistor pin material */
+  model.resistor_pin_mat = hidgl_material_new ("resistor_pin");
+  hidgl_material_set_ambient_color (model.resistor_pin_mat, resistor_pin_color);
+  hidgl_material_set_diffuse_color (model.resistor_pin_mat, resistor_pin_color);
+  hidgl_material_set_emission_color (model.resistor_pin_mat, emission);
+  hidgl_material_set_specular_color (model.resistor_pin_mat, specular);
+  hidgl_material_set_shininess (model.resistor_pin_mat, 120.0f);
+
+  /* Load bump mapping textures */
+  glGenTextures (1, &model.resistor_body_bump_texture);
+  glBindTexture (GL_TEXTURE_2D, model.resistor_body_bump_texture);
+  load_texture_from_png ("resistor_bump.png", true);
+
+  glGenTextures (1, &model.zero_ohm_body_bump_texture);
+  glBindTexture (GL_TEXTURE_2D, model.zero_ohm_body_bump_texture);
+  load_texture_from_png ("zero_ohm_bump.png", true);
+
+  glBindTexture (GL_TEXTURE_2D, 0);
+}
 
 #define NUM_RESISTOR_STRIPS 100
 #define NUM_PIN_RINGS 15
@@ -614,8 +672,7 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
 
   float center_x, center_y;
   float angle;
-  GLfloat resistor_body_color[] = {0.31, 0.47, 0.64};
-  GLfloat resistor_pin_color[] = {0.82, 0.82, 0.82};
+  GLfloat resistor_body_color[] = {0.31, 0.47, 0.64, 1.0};
 
   int strip;
   int no_strips = NUM_RESISTOR_STRIPS;
@@ -626,11 +683,8 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
 
   static bool first_run = true;
   static GLuint texture1;
-  static GLuint texture2_resistor;
-  static GLuint texture2_zero_ohm;
 
   GLuint restore_sp;
-  extern GLuint sp2;
 
   /* XXX: Hard-coded magic */
   float resistor_pin_radius = 12. * MIL_TO_INTERNAL;
@@ -663,23 +717,21 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
 
   /* TEXTURE SETUP */
   glGetIntegerv (GL_CURRENT_PROGRAM, (GLint*)&restore_sp);
-  glUseProgram (sp2);
+  hidgl_shader_activate (resistor_program);
 
   {
-    int tex0_location = glGetUniformLocation (sp2, "detail_tex");
-    int tex1_location = glGetUniformLocation (sp2, "bump_tex");
+    GLuint program = hidgl_shader_get_program (resistor_program);
+    int tex0_location = glGetUniformLocation (program, "detail_tex");
+    int tex1_location = glGetUniformLocation (program, "bump_tex");
     glUniform1i (tex0_location, 0);
     glUniform1i (tex1_location, 1);
   }
 
   glActiveTextureARB (GL_TEXTURE0_ARB);
-//  if (first_run) {
-    glGenTextures (1, &texture1);
-    glBindTexture (GL_TEXTURE_1D, texture1);
-    zero_ohm = setup_resistor_texture (element, resistor_body_color);
-//  } else {
-//    glBindTexture (GL_TEXTURE_1D, texture1);
-//  }
+  glGenTextures (1, &texture1);
+  glBindTexture (GL_TEXTURE_1D, texture1);
+  zero_ohm = setup_resistor_texture (element, resistor_body_color);
+
   glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
   glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -687,19 +739,10 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
   glEnable (GL_TEXTURE_1D);
 
   glActiveTextureARB (GL_TEXTURE1_ARB);
-  if (first_run) {
-    glGenTextures (1, &texture2_resistor);
-    glBindTexture (GL_TEXTURE_2D, texture2_resistor);
-    load_texture_from_png ("resistor_bump.png", true);
-
-    glGenTextures (1, &texture2_zero_ohm);
-    glBindTexture (GL_TEXTURE_2D, texture2_zero_ohm);
-    load_texture_from_png ("zero_ohm_bump.png", true);
-  }
   if (zero_ohm)
-    glBindTexture (GL_TEXTURE_2D, texture2_zero_ohm);
+    glBindTexture (GL_TEXTURE_2D, model.zero_ohm_body_bump_texture);
   else
-    glBindTexture (GL_TEXTURE_2D, texture2_resistor);
+    glBindTexture (GL_TEXTURE_2D, model.resistor_body_bump_texture);
 
   glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -718,14 +761,7 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
 
   glDisable (GL_LIGHTING);
 
-  if (1) {
-    GLfloat emission[] = {0.0f, 0.0f, 0.0f, 1.0f};
-    GLfloat specular[] = {0.5f, 0.5f, 0.5f, 1.0f};
-    GLfloat shininess = 20.;
-    glMaterialfv (GL_FRONT_AND_BACK, GL_EMISSION, emission);
-    glMaterialfv (GL_FRONT_AND_BACK, GL_SPECULAR, specular);
-    glMaterialfv (GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
-  }
+  hidgl_material_activate (model.resistor_body_mat);
 
 #if 1
   glBegin (GL_TRIANGLE_STRIP);
@@ -797,23 +833,8 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
 
   glEnable (GL_LIGHTING);
 
-  glUseProgram (0);
-
-  glColor3f (resistor_pin_color[0] / 1.5,
-             resistor_pin_color[1] / 1.5,
-             resistor_pin_color[2] / 1.5);
-
   /* COLOR / MATERIAL SETUP */
-  glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-  glEnable (GL_COLOR_MATERIAL);
-
-  if (1) {
-//    GLfloat ambient[] = {0.0, 0.0, 0.0, 1.0};
-    GLfloat specular[] = {0.5, 0.5, 0.5, 1.0};
-    GLfloat shininess = 120.;
-    glMaterialfv (GL_FRONT_AND_BACK, GL_SPECULAR, specular);
-    glMaterialfv (GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
-  }
+  hidgl_material_activate (model.resistor_pin_mat);
 
   for (end = 0; end < 2; end++) {
     float end_sign = (end == 0) ? 1. : -1.;
