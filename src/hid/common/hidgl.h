@@ -143,4 +143,7 @@ void hidgl_set_depth (float depth);
 /* hidgl_pacakge_acy_resistor.c */
 void hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_thickness);
 
+/* hidgl_pacakge_vrml.c */
+void hidgl_draw_vrml (ElementType *element, float surface_depth, float board_thickness, char *vrml_file);
+
 #endif /* __HIDGL_INCLUDED__  */
