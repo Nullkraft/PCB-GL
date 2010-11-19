@@ -894,12 +894,10 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
 
   glPushAttrib (GL_STENCIL_BUFFER_BIT);                   // Save the write mask etc.. for final restore
   glPushAttrib (GL_STENCIL_BUFFER_BIT |                   // Resave the stencil write-mask etc.., and
-                GL_COLOR_BUFFER_BIT |                     // the colour buffer write mask etc.., and
-                GL_DEPTH_BUFFER_BIT);                     // the depth write-mask etc.. for part way restore
+                GL_COLOR_BUFFER_BIT);                     // the colour buffer write mask etc.. for part way restore
   glStencilMask (stencil_bit);                            // Only write to our stencil bit
   glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);    // Always pass stencil test, ref value is our bit
   glColorMask (0, 0, 0, 0);                               // Disable writting in color buffer
-  glDepthMask (GL_FALSE);
 
   /* It will already be setup like this (so avoid prodding the state-machine):
    * glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value
