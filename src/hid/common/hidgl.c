@@ -1071,6 +1071,7 @@ hidgl_init (void)
   }
 
   load_built_in_shaders ();
+  hidgl_init_acy_resistor ();
 
 done:
   done_once = true;
