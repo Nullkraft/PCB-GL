@@ -186,6 +186,9 @@ GL_SRCS= \
 	hid/common/hidgl.c \
 	hid/common/hidgl.h \
 	hid/common/hidgl_package_acy_resistor.c \
+	hid/common/hidgl_package_vrml.c \
+	hid/common/hidgl_package_vrml_y.y \
+	hid/common/hidgl_package_vrml_l.l \
 	hid/common/trackball.c \
 	hid/common/trackball.h
 

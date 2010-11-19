@@ -1692,6 +1692,11 @@ frontE_package_callback (const BoxType * b, void *cl)
         int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
         hidgl_draw_acy_resistor (element, compute_depth (layer_group), BOARD_THICKNESS);
       }
+
+      if (strcmp (element->Name[DESCRIPTION_INDEX].TextString, "VRML_TEST") == 0) {
+        int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
+        hidgl_draw_vrml (element, compute_depth (layer_group), BOARD_THICKNESS, "dummy_filename.wrl");
+      }
     }
   return 1;
 }
