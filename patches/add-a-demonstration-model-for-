@@ -1,5 +1,5 @@
 Bottom: 39a94cd074f2d24507b74b4bb606a2264527799a
-Top:    8899349b7aa7c754234f8de8f19686fcb4234c3c
+Top:    d5c53064b65607ba84eebf6f3b4f58c7377d22a7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 00:32:30 +0000
 
@@ -554,7 +554,7 @@ index 0a7b68e..7c76b42 100644
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
 new file mode 100644
-index 0000000..63e8af3
+index 0000000..17eb17c
 --- /dev/null
 +++ b/src/hid/common/hidgl_package_acy_resistor.c
 @@ -0,0 +1,995 @@
@@ -1222,7 +1222,7 @@ index 0000000..63e8af3
 +  glRotatef (90, 1., 0., 0.);
 +
 +  /* TEXTURE SETUP */
-+  glGetIntegerv (GL_CURRENT_PROGRAM, &restore_sp);
++  glGetIntegerv (GL_CURRENT_PROGRAM, (GLint*)&restore_sp);
 +  glUseProgram (sp2);
 +
 +  {
