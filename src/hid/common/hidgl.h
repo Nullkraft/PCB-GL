@@ -23,6 +23,8 @@
 #ifndef __HIDGL_INCLUDED__
 #define __HIDGL_INCLUDED__
 
+#include "hidgl_shaders.h"
+
 #define TRIANGLE_ARRAY_SIZE 30000
 typedef struct {
   GLfloat *triangle_array;
@@ -38,6 +40,9 @@ typedef struct {
 
 extern triangle_buffer buffer;
 extern float global_depth;
+
+extern hidgl_shader *circular_program;
+extern hidgl_shader *resistor_program;
 
 void hidgl_in_context (bool is_in_context);
 void hidgl_init_triangle_array (triangle_buffer *buffer);
@@ -137,5 +142,8 @@ void hidgl_set_depth (float depth);
 
 /* hidgl_pacakge_acy_resistor.c */
 void hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_thickness);
+
+/* hidgl_pacakge_vrml.c */
+void hidgl_draw_vrml (ElementType *element, float surface_depth, float board_thickness, char *vrml_file);
 
 #endif /* __HIDGL_INCLUDED__  */
