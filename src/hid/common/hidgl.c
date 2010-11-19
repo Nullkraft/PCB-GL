@@ -1018,7 +1018,7 @@ hidgl_load_frag_shader (void)
 {
 //  char *vs_source;
 
-  char *fs_source = "void main()\n"
+  const char *fs_source = "void main()\n"
                     "{\n"
                     "  float sqdist;\n"
                     "  sqdist = dot (gl_TexCoord[0].st, gl_TexCoord[0].st);\n"
@@ -1027,7 +1027,7 @@ hidgl_load_frag_shader (void)
                     "  gl_FragColor = gl_Color;\n"
                     "}\n";
 
-  char *fs2_source =
+  const char *fs2_source =
                     "uniform sampler1D detail_tex;\n"
                     "uniform sampler2D bump_tex;\n"
                     "\n"
@@ -1038,17 +1038,21 @@ hidgl_load_frag_shader (void)
                     "\n"
                     "  /* Uncompress vectors ([0, 1] -> [-1, 1]) */\n"
                     "  vec3 lightVectorFinal = -1.0 + 2.0 * gl_Color.rgb;\n"
+                    "  vec3 halfVectorFinal = -1.0 + 2.0 * gl_TexCoord[2].xyz;\n"
                     "  vec3 bumpNormalVectorFinal = -1.0 + 2.0 * bumpNormal;\n"
 //                    "vec3 bumpNormalVectorFinal = vec3(0., 0., 1.);\n"
                     "\n"
                     "  /* Compute diffuse factor */\n"
-//                    "  float diffuse = clamp(dot(bumpNormalVectorFinal, lightVectorFinal),0.0, 1.0);\n"
-                    "  float diffuse = pow(clamp(dot(bumpNormalVectorFinal, lightVectorFinal), 0.0, 1.0), 100.0);\n"
+                    "  float diffuse = clamp(dot(bumpNormalVectorFinal, lightVectorFinal),0.0, 1.0);\n"
+                    "  float specular = pow(clamp(dot(bumpNormalVectorFinal, halfVectorFinal), 0.0, 1.0), 2.0);\n"
+                    "  specular *= 0.4;\n"
+//                    "  float specular = pow(clamp(dot(bumpNormalVectorFinal, lightVectorFinal), 0.0, 1.0), 5.0);\n"
                     "\n"
 //                    "  gl_FragColor = vec4(clamp((diffuse * 1.0 + 0.0) * detailColor, 0.0, 1.0), 1.0);\n"
-                    "  gl_FragColor = vec4(detailColor + vec3(diffuse, diffuse, diffuse), 1.0);\n"
-//                    "   gl_FragColor = vec4(detailColor * (0.6 + 0.4 * diffuse), 1.0);\n"
+//                    "  gl_FragColor = vec4(detailColor + vec3(specular, specular, specular), 1.0);\n"
+                    "   gl_FragColor = vec4(detailColor * (0.3 + 0.7 * diffuse) + vec3(specular, specular, specular), 1.0);\n"
 //                    "   gl_FragColor =vec4(gl_Color.rgb, 1);\n"
+//                    "   gl_FragColor =vec4(gl_Color.r, gl_Color.r, gl_Color.r, 1.0);\n"
                     "}\n";
 
   /* Compile and load the program */

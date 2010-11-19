@@ -325,16 +325,9 @@ ghid_draw_grid (BoxTypePtr drawn_area)
   glEnable (GL_STENCIL_TEST);
 }
 
-static int
-compute_offset (int x, int y, int width, int height)
-{
-  x = (x + width) % width;
-  y = (y + height) % height;
-  return (y * width + x) * 4;
-}
-
+/* XXX: Refactor this into hidgl common routines */
 static void
-load_texture_from_png (char *filename, bool bumpmap)
+load_texture_from_png (char *filename)
 {
   GError *error = NULL;
   GdkPixbuf *pixbuf;
@@ -345,8 +338,6 @@ load_texture_from_png (char *filename, bool bumpmap)
   int bits_per_sample;
   int n_channels;
   unsigned char *pixels;
-  unsigned char *new_pixels;
-  int x, y;
 
   pixbuf = gdk_pixbuf_new_from_file (filename, &error);
 
@@ -369,624 +360,12 @@ load_texture_from_png (char *filename, bool bumpmap)
   g_warn_if_fail (n_channels == 4);
   g_warn_if_fail (rowstride == width * n_channels);
 
-  new_pixels = malloc (width * height * 4);
-
-  /* XXX: Move computing bump map out of the texture loading function */
-  if (bumpmap) {
-    for (y = 0; y < height; y++)
-      for (x = 0; x < width; x++) {
-        float r, g, b;
-        float lenvec;
-
-        float dx = (pixels[compute_offset (x + 1, y, width, height)] - pixels[compute_offset (x - 1, y, width, height)]) / 255.;
-        float dy = (pixels[compute_offset (x, y + 1, width, height)] - pixels[compute_offset (x, y - 1, width, height)]) / 255.;
-
-#if 0
-        dx *= 10.;
-        dy *= 10.;
-#endif
-
-        r = -dx;
-        g = -dy;
-        b = 1.;
-        lenvec = sqrt (r * r + g * g + b * b);
-
-        r /= lenvec;
-        g /= lenvec;
-        b /= lenvec;
-
-        new_pixels [compute_offset (x, y, width, height) + 0] =
-          (unsigned char)((r / 2. + 0.5) * 255.);
-        new_pixels [compute_offset (x, y, width, height) + 1] =
-          (unsigned char)((g / 2. + 0.5) * 255.);
-        new_pixels [compute_offset (x, y, width, height) + 2] =
-          (unsigned char)((b / 2. + 0.5) * 255.);
-        new_pixels [compute_offset (x, y, width, height) + 3] = 255;
-      }
-
-    memcpy (pixels, new_pixels, width * height * 4);
-    gdk_pixbuf_save (pixbuf, "debug_bumps.png", "png", NULL, NULL);
-  }
-
   glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,
                 (n_channels == 4) ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, pixels);
 
-  free (new_pixels);
   g_object_unref (pixbuf);
 }
 
-
-static void
-setup_resistor_texture (GLfloat *body_color, float value)
-{
-//  GLuint texture;
-  GLfloat tex_data[] = {body_color[0], body_color[1], body_color[2],
-                        body_color[0], body_color[1], body_color[2],
-                        body_color[0], body_color[1], body_color[2],
-                        0.0, 0.0, 0.0,
-                        body_color[0], body_color[1], body_color[2],
-                        1.0, 0.0, 0.0,
-                        body_color[0], body_color[1], body_color[2],
-                        0.0, 1.0, 0.0,
-                        body_color[0], body_color[1], body_color[2],
-                        body_color[0], body_color[1], body_color[2]};
-
-//  glGenTextures (1, &texture);
-//  glBindTexture (GL_TEXTURE_1D, texture);
-  glTexImage1D (GL_TEXTURE_1D, 0, GL_RGB, 10, 0, GL_RGB, GL_FLOAT, tex_data);
-}
-
-static void invert_4x4 (float m[4][4], float out[4][4]);
-
-static GLfloat *debug_lines = NULL;
-static int no_debug_lines = 0;
-static int max_debug_lines = 0;
-
-#define LENG 1000
-#define STRIDE_FLOATS 6
-static void
-debug_basis_vector (float x,   float y,   float z,
-                    float b1x, float b1y, float b1z,
-                    float b2x, float b2y, float b2z,
-                    float b3x, float b3y, float b3z)
-{
-  int comp_count;
-  float lenb1, lenb2, lenb3;
-
-  if (no_debug_lines + 3 > max_debug_lines) {
-    max_debug_lines += 10;
-    debug_lines = realloc (debug_lines, max_debug_lines * sizeof (GLfloat) * 2 * STRIDE_FLOATS);
-  }
-
-  b3x = -b1y * b2z + b1z * b2y;
-  b3y = -b1z * b2x + b1x * b2z;
-  b3z = -b1x * b2y + b1y * b2x;
-
-  lenb1 = sqrt (b1x * b1x + b1y * b1y + b1z * b1z);
-  lenb2 = sqrt (b2x * b2x + b2y * b2y + b2z * b2z);
-  lenb3 = sqrt (b3x * b3x + b3y * b3y + b3z * b3z);
-  b1x /= lenb1;  b1y /= lenb1;  b1z /= lenb1;
-  b2x /= lenb2;  b2y /= lenb2;  b2z /= lenb2;
-  b3x /= lenb3;  b3y /= lenb3;  b3z /= lenb3;
-
-  comp_count = 0;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = x;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = y;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = z;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 1.;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = x + b1x * LENG;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = y + b1y * LENG;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = z + b1z * LENG;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 1.;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
-  no_debug_lines++;
-
-  comp_count = 0;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = x;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = y;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = z;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 1.;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = x + b2x * LENG;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = y + b2y * LENG;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = z + b2z * LENG;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 1.;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
-  no_debug_lines++;
-
-  comp_count = 0;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = x;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = y;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = z;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 1.;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = x + b3x * LENG;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = y + b3y * LENG;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = z + b3z * LENG;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 0.;
-  debug_lines [no_debug_lines * 2 * STRIDE_FLOATS + comp_count++] = 1.;
-  no_debug_lines++;
-}
-
-static void
-debug_basis_display ()
-{
-  if (no_debug_lines == 0)
-    return;
-
-#if 0
-  glPushAttrib (GL_CURRENT_BIT);
-  glColor4f (1., 1., 1., 1.);
-  glVertexPointer (3, GL_FLOAT, STRIDE_FLOATS * sizeof (GLfloat), &debug_lines[0]);
-  glColorPointer (3, GL_FLOAT, STRIDE_FLOATS * sizeof (GLfloat), &debug_lines[3]);
-  glEnableClientState (GL_VERTEX_ARRAY);
-  glEnableClientState (GL_COLOR_ARRAY);
-  glDrawArrays (GL_LINES, 0, no_debug_lines * 2);
-  glDisableClientState (GL_COLOR_ARRAY);
-  glDisableClientState (GL_VERTEX_ARRAY);
-  glPopAttrib ();
-#endif
-
-  free (debug_lines);
-  debug_lines = NULL;
-  no_debug_lines = 0;
-  max_debug_lines = 0;
-}
-
-/* b1{x,y,z} is the basis vector along "s" texture space */
-/* b2{x,y,z} is the basis vector along "t" texture space */
-static void
-compute_light_vector (float b1x, float b1y, float b1z,
-                      float b2x, float b2y, float b2z,
-                      float *lx, float *ly, float *lz,
-                      float x,   float y,   float z)
-{
-  float tb1x, tb1y, tb1z;
-  float tb2x, tb2y, tb2z;
-  float tb3x, tb3y, tb3z;
-  float mvm[16]; /* NB: TRANSPOSED IN MEMORY */
-//  float light_direction[] = {-0.5, 1., -1.}; /* XXX: HARDCODEED! */
-  float light_direction[] = {0., 0.5, -1.}; /* XXX: HARDCODEED! */
-  float texspace_to_eye[4][4];
-  float eye_to_texspace[4][4];
-  float lenb1, lenb2, lenb3;
-
-  debug_basis_vector (x, y, z, b1x, b1y, b1z, b2x, b2y, b2z, 0., 0., 0.);
-#if 1
-  float len_light;
-  len_light = sqrt (light_direction[0] * light_direction[0] + light_direction[1] * light_direction[1] + light_direction[2] * light_direction[2]);
-  light_direction[0] /= len_light;
-  light_direction[1] /= len_light;
-  light_direction[2] /= len_light;
-
-  light_direction[0] /= 2.;
-  light_direction[1] /= 2.;
-  light_direction[2] /= 2.;
-
-  light_direction[0] += 0. / 2.;
-  light_direction[1] += 0. / 2.;
-  light_direction[2] += -1. / 2.;
-#endif
-
-  /* XXX: Should cache this ourselves */
-  glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)mvm);
-
-  /* Transform the S, T texture space bases into eye coordinates */
-  tb1x = mvm[0] * b1x + mvm[4] * b1y + mvm[ 8] * b1z; // + mvm[12] * 1;
-  tb1y = mvm[1] * b1x + mvm[5] * b1y + mvm[ 9] * b1z; // + mvm[13] * 1;
-  tb1z = mvm[2] * b1x + mvm[6] * b1y + mvm[10] * b1z; // + mvm[14] * 1;
-  // tb1w = mvm[3] * b1x + mvm[7] * b1y + mvm[11] * b1z + mvm[15] * 1;
-
-  tb2x = mvm[0] * b2x + mvm[4] * b2y + mvm[ 8] * b2z; // + mvm[12] * 1;
-  tb2y = mvm[1] * b2x + mvm[5] * b2y + mvm[ 9] * b2z; // + mvm[13] * 1;
-  tb2z = mvm[2] * b2x + mvm[6] * b2y + mvm[10] * b2z; // + mvm[14] * 1;
-  // tb2w = mvm[3] * b2x + mvm[7] * b2y + mvm[11] * b2z + mvm[15] * 1;
-
-  /* Third basis vector is the cross product of tb1 and tb2 */
-  tb3x = tb1y * tb2z - tb1z * tb2y;
-  tb3y = tb1z * tb2x - tb1x * tb2z;
-  tb3z = tb1x * tb2y - tb1y * tb2x;
-
-  /* Normalise tb1, tb2 and tb3 */
-  lenb1 = sqrt (tb1x * tb1x + tb1y * tb1y + tb1z * tb1z);
-  lenb2 = sqrt (tb2x * tb2x + tb2y * tb2y + tb2z * tb2z);
-  lenb3 = sqrt (tb3x * tb3x + tb3y * tb3y + tb3z * tb3z);
-  tb1x /= lenb1;  tb1y /= lenb1;  tb1z /= lenb1;
-  tb2x /= lenb2;  tb2y /= lenb2;  tb2z /= lenb2;
-  tb3x /= lenb3;  tb3y /= lenb3;  tb3z /= lenb3;
-
-  texspace_to_eye[0][0] = tb1x; texspace_to_eye[0][1] = tb2x; texspace_to_eye[0][2] = tb3x;  texspace_to_eye[0][3] = 0.0;
-  texspace_to_eye[1][0] = tb1y; texspace_to_eye[1][1] = tb2y; texspace_to_eye[1][2] = tb3y;  texspace_to_eye[1][3] = 0.0;
-  texspace_to_eye[2][0] = tb1z; texspace_to_eye[2][1] = tb2z; texspace_to_eye[2][2] = tb3z;  texspace_to_eye[2][3] = 0.0;
-  texspace_to_eye[3][0] = 0.0;  texspace_to_eye[3][1] = 0.0;  texspace_to_eye[3][2] = 0.0;   texspace_to_eye[3][3] = 1.0;
-
-  invert_4x4 (texspace_to_eye, eye_to_texspace);
-
-  /* light_direction is in eye space, we need to transform this into texture space */
-  *lx = eye_to_texspace[0][0] * light_direction[0] +
-        eye_to_texspace[0][1] * light_direction[1] +
-        eye_to_texspace[0][2] * light_direction[2];// +
-//        eye_to_texspace[0][3];
-  *ly = eye_to_texspace[1][0] * light_direction[0] +
-        eye_to_texspace[1][1] * light_direction[1] +
-        eye_to_texspace[1][2] * light_direction[2];// +
-//        eye_to_texspace[1][3];
-  *lz = eye_to_texspace[2][0] * light_direction[0] +
-        eye_to_texspace[2][1] * light_direction[1] +
-        eye_to_texspace[2][2] * light_direction[2];// +
-//        eye_to_texspace[2][3];
-  /* Could assert the lw coordinate ends up as 1, but can't be bothered */
-
-  /* Light comes FROM the direction above, flip the vector */
-//  *lx = -*lx;
-//  *ly = -*ly;
-//  *lz = -*lz;
-
-  {
-    float lenvec;
-    lenvec = sqrt (*lx * *lx + *ly * *ly + *lz * *lz);
-    *lx /= lenvec;
-    *ly /= lenvec;
-    *lz /= lenvec;
-
-    *lx = *lx / 2. + 0.5;
-    *ly = *ly / 2. + 0.5;
-    *lz = *lz / 2. + 0.5;
-  }
-}
-
-static void
-emit_vertex (float x,   float y,   float z,
-             float b1x, float b1y, float b1z,
-             float b2x, float b2y, float b2z,
-             float tex0_s, float tex1_s, float tex1_t)
-{
-  GLfloat lx, ly, lz;
-  compute_light_vector (b1x, b1y, b1z, b2x, b2y, b2z, &lx, &ly, &lz, x, y, z);
-  glColor3f (lx, ly, lz);
-  glMultiTexCoord1f (GL_TEXTURE0, tex0_s);
-  glMultiTexCoord2f (GL_TEXTURE1, tex1_s, tex1_t);
-  glVertex3f (x, y, z);
-}
-
-enum geom_pos {
-  FIRST,
-  MIDDLE,
-  LAST
-};
-
-#define REPS 4.
-#define REPT 4.
-
-static void
-emit_pair (float ang_edge1, float cos_edge1, float sin_edge1,
-           float ang_edge2, float cos_edge2, float sin_edge2,
-           float prev_r, float prev_z,
-           float      r, float      z,
-           float next_r, float next_z,
-           float tex0_s, float resistor_width,
-           enum geom_pos pos)
-{
-  int repeat;
-
-  for (repeat = 0; repeat < ((pos == FIRST) ? 2 : 1); repeat++)
-    emit_vertex (r * cos_edge1, r * sin_edge1, z,
-                 sin_edge1, -cos_edge1, 0,
-                 cos_edge1 * (next_r - prev_r) / 2., sin_edge1 * (next_r - prev_r) / 2., (next_z - prev_z) / 2.,
-                 tex0_s, (z / resistor_width + 0.5) * REPS, (ang_edge1 / 2. / M_PI) * REPT);
-
-  for (repeat = 0; repeat < ((pos == LAST) ? 2 : 1); repeat++)
-    emit_vertex (r * cos_edge2, r * sin_edge2, z,
-                 sin_edge2, -cos_edge2, 0,
-                 cos_edge2 * (next_r - prev_r) / 2., sin_edge2 * (next_r - prev_r) / 2., (next_z - prev_z) / 2.,
-                 tex0_s, (z / resistor_width + 0.5) * REPS, (ang_edge2 / 2. / M_PI) * REPT);
-}
-
-
-#define NUM_RESISTOR_STRIPS 100
-#define NUM_PIN_RINGS 15
-#define MIL_TO_INTERNAL 100.
-
-static void
-ghid_draw_acy_resistor (ElementType *element)
-{
-
-  float center_x, center_y, surface_depth;
-  float angle;
-  GLfloat resistor_body_color[] = {0.31, 0.47, 0.64};
-  GLfloat resistor_pin_color[] = {0.82, 0.82, 0.82};
-
-  int strip;
-  int no_strips = NUM_RESISTOR_STRIPS;
-  int ring;
-  int no_rings = NUM_PIN_RINGS;
-  int end;
-//  float lx, ly, lz;
-
-  static bool first_run = true;
-  static GLuint texture1;
-  static GLuint texture2;
-
-  extern GLuint sp;
-  extern GLuint sp2;
-
-  /* XXX: Hard-coded magic */
-  float resistor_bulge_radius = 45. * MIL_TO_INTERNAL;
-  float resistor_barrel_radius = 35. * MIL_TO_INTERNAL;
-  float resistor_pin_radius = 12. * MIL_TO_INTERNAL;
-  float resistor_bulge_width = 65. * MIL_TO_INTERNAL;
-  float resistor_bulge_offset = 15. * MIL_TO_INTERNAL;
-  float resistor_pin_spacing = 400. * MIL_TO_INTERNAL;
-
-  float pin_penetration_depth = 30. * MIL_TO_INTERNAL + BOARD_THICKNESS;
-
-  float resistor_pin_bend_radius = resistor_bulge_radius;
-  float resistor_width = resistor_pin_spacing - 2. * resistor_pin_bend_radius;
-
-  if (FRONT (element))
-    surface_depth = compute_depth (0); /* XXX: FIXME */
-  else
-    surface_depth = compute_depth (max_copper_layer - 1); /* XXX: FIXME */
-
-  center_x = (element->Pin[0].X + element->Pin[1].X) / 2.;
-  center_y = (element->Pin[0].Y + element->Pin[1].Y) / 2.;
-  angle = atan2f (element->Pin[1].Y - element->Pin[0].Y,
-                  element->Pin[1].X - element->Pin[0].X);
-
-  /* TRANSFORM MATRIX */
-  glPushMatrix ();
-  glTranslatef (center_x, center_y, surface_depth + resistor_pin_bend_radius);
-  glRotatef (angle * 180. / M_PI + 90, 0., 0., 1.);
-  glRotatef (90, 1., 0., 0.);
-
-  /* TEXTURE SETUP */
-  //glGetIntegerv (GL_CURRENT_PROGRAM, &sp);
-  //glUseProgram (0);
-  glUseProgram (sp2);
-
-  {
-    int tex0_location = glGetUniformLocation (sp2, "detail_tex");
-    int tex1_location = glGetUniformLocation (sp2, "bump_tex");
-    glUniform1i (tex0_location, 0);
-    glUniform1i (tex1_location, 1);
-  }
-
-  glActiveTextureARB (GL_TEXTURE0_ARB);
-  if (first_run) {
-    glGenTextures (1, &texture1);
-    glBindTexture (GL_TEXTURE_1D, texture1);
-    setup_resistor_texture (resistor_body_color, 0);
-  } else {
-    glBindTexture (GL_TEXTURE_1D, texture1);
-  }
-  glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-  glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-  glEnable (GL_TEXTURE_1D);
-
-  glActiveTextureARB (GL_TEXTURE1_ARB);
-  if (first_run) {
-    glGenTextures (1, &texture2);
-    glBindTexture (GL_TEXTURE_2D, texture2);
-    load_texture_from_png ("bumps.png", true);
-  } else {
-    glBindTexture (GL_TEXTURE_2D, texture2);
-  }
-  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glEnable (GL_TEXTURE_2D);
-  glActiveTextureARB (GL_TEXTURE0_ARB);
-
-  /* COLOR / MATERIAL SETUP */
-//  glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-//  glEnable (GL_COLOR_MATERIAL);
-
-  glPushAttrib (GL_CURRENT_BIT);
-//  glColor4f (1., 1., 1., 1.);
-  glColor4f (0., 0., 1., 0.);
-
-  glDisable (GL_LIGHTING);
-
-  if (1) {
-    GLfloat emission[] = {0.0f, 0.0f, 0.0f, 1.0f};
-    GLfloat specular[] = {0.5f, 0.5f, 0.5f, 1.0f};
-    GLfloat shininess = 20.;
-    glMaterialfv (GL_FRONT_AND_BACK, GL_EMISSION, emission);
-    glMaterialfv (GL_FRONT_AND_BACK, GL_SPECULAR, specular);
-    glMaterialfv (GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
-  }
-
-#if 1
-  glBegin (GL_TRIANGLE_STRIP);
-
-  for (strip = 0; strip < no_strips; strip++) {
-
-    int ring;
-    int no_rings;
-    float angle_edge1 = strip * 2. * M_PI / no_strips;
-    float angle_edge2 = (strip + 1) * 2. * M_PI / no_strips;
-
-    float cos_edge1 = cosf (angle_edge1);
-    float sin_edge1 = sinf (angle_edge1);
-    float cos_edge2 = cosf (angle_edge2);
-    float sin_edge2 = sinf (angle_edge2);
-
-    struct strip_item {
-      GLfloat z;
-      GLfloat r;
-      GLfloat tex0_s;
-    } strip_data[] = {
-      {-resistor_width / 2. - 1.,                                                     resistor_pin_radius,     0.}, /* DUMMY */
-      {-resistor_width / 2.,                                                          resistor_pin_radius,     0.},
-      {-resistor_width / 2. + resistor_bulge_offset,                                  resistor_barrel_radius,  0.},
-      {-resistor_width / 2. + resistor_bulge_offset + resistor_bulge_width * 1. / 4.,   resistor_bulge_radius, 0.},
-      {-resistor_width / 2. + resistor_bulge_offset + resistor_bulge_width * 3. / 4.,   resistor_bulge_radius, 0.},
-      {-resistor_width / 2. + resistor_bulge_offset + resistor_bulge_width,           resistor_barrel_radius,  0.},
-                                                                                      /*********************/
-                                                                                      /*********************/
-      { resistor_width / 2. - resistor_bulge_offset - resistor_bulge_width,           resistor_barrel_radius,  1.},
-      { resistor_width / 2. - resistor_bulge_offset - resistor_bulge_width * 3. / 4.,   resistor_bulge_radius, 1.},
-      { resistor_width / 2. - resistor_bulge_offset - resistor_bulge_width * 1. / 4.,   resistor_bulge_radius, 1.},
-      { resistor_width / 2. - resistor_bulge_offset,                                  resistor_barrel_radius,  1.},
-      { resistor_width / 2.,                                                          resistor_pin_radius,     1.},
-      { resistor_width / 2. + 1.,                                                     resistor_pin_radius,     1.}, /* DUMMY */
-    };
-
-    no_rings = sizeof (strip_data) / sizeof (struct strip_item);
-    for (ring = 1; ring < no_rings - 1; ring++) {
-      enum geom_pos pos = MIDDLE;
-      if (ring == 1)            pos = FIRST;
-      if (ring == no_rings - 2) pos = LAST;
-
-      emit_pair (angle_edge1, cos_edge1, sin_edge1,
-                 angle_edge2, cos_edge2, sin_edge2,
-                 strip_data[ring - 1].r, strip_data[ring - 1].z,
-                 strip_data[ring    ].r, strip_data[ring    ].z,
-                 strip_data[ring + 1].r, strip_data[ring + 1].z,
-                 strip_data[ring    ].tex0_s, resistor_width, pos);
-    }
-  }
-#endif
-
-  glEnd ();
-
-  glActiveTextureARB (GL_TEXTURE1_ARB);
-  glDisable (GL_TEXTURE_2D);
-
-  glActiveTextureARB (GL_TEXTURE0_ARB);
-  glDisable (GL_TEXTURE_1D);
-
-  glEnable (GL_LIGHTING);
-
-  glUseProgram (0);
-
-  glColor3f (resistor_pin_color[0] / 1.3,
-             resistor_pin_color[1] / 1.3,
-             resistor_pin_color[2] / 1.3);
-
-  /* COLOR / MATERIAL SETUP */
-  glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-  glEnable (GL_COLOR_MATERIAL);
-
-  if (1) {
-//    GLfloat ambient[] = {0.0, 0.0, 0.0, 1.0};
-    GLfloat specular[] = {0.5, 0.5, 0.5, 1.0};
-    GLfloat shininess = 20.;
-    glMaterialfv (GL_FRONT_AND_BACK, GL_SPECULAR, specular);
-    glMaterialfv (GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
-  }
-
-  for (end = 0; end < 2; end++) {
-    float end_sign = (end == 0) ? 1. : -1.;
-
-    for (ring = 0; ring < no_rings; ring++) {
-
-      float angle_ring_edge1 = ring * M_PI / 2. / no_rings + ((end == 0) ? 0. : -M_PI / 2.);
-      float angle_ring_edge2 = (ring + 1) * M_PI / 2. / no_rings + ((end == 0) ? 0. : -M_PI / 2.);
-      float y_strip_edge1 = cosf (angle_ring_edge1);
-      float z_strip_edge1 = sinf (angle_ring_edge1);
-      float y_strip_edge2 = cosf (angle_ring_edge2);
-      float z_strip_edge2 = sinf (angle_ring_edge2);
-      float r = resistor_pin_bend_radius;
-
-      glBegin (GL_TRIANGLE_STRIP);
-
-      /* NB: We wrap back around to complete the last segment, so in effect
-       *     we draw no_strips + 1 strips.
-       */
-      for (strip = 0; strip < no_strips + 1; strip++) {
-        float strip_angle = strip * 2. * M_PI / no_strips;
-
-        float x1 = resistor_pin_radius * cos (strip_angle);
-        float y1 = resistor_pin_radius * sin (strip_angle) * y_strip_edge1 + r * y_strip_edge1 - r;
-        float z1 = resistor_pin_radius * sin (strip_angle) * z_strip_edge1 + r * z_strip_edge1 + resistor_width / 2. * end_sign;
-
-        float x2 = resistor_pin_radius * cos (strip_angle);
-        float y2 = resistor_pin_radius * sin (strip_angle) * y_strip_edge2 + r * y_strip_edge2 - r;
-        float z2 = resistor_pin_radius * sin (strip_angle) * z_strip_edge2 + r * z_strip_edge2 + resistor_width / 2. * end_sign;
-
-        glNormal3f (cos (strip_angle), sin (strip_angle) * y_strip_edge1, sin (strip_angle) * z_strip_edge1);
-        glVertex3f (x1, y1, z1);
-        glNormal3f (cos (strip_angle), sin (strip_angle) * y_strip_edge2, sin (strip_angle) * z_strip_edge2);
-        glVertex3f (x2, y2, z2);
-      }
-      glEnd ();
-    }
-
-    if (1) {
-      float r = resistor_pin_bend_radius;
-      glBegin (GL_TRIANGLE_STRIP);
-
-      /* NB: We wrap back around to complete the last segment, so in effect
-       *     we draw no_strips + 1 strips.
-       */
-      for (strip = 0; strip < no_strips + 1; strip++) {
-        float strip_angle = strip * 2. * M_PI / no_strips;
-
-        float x1 = resistor_pin_radius * cos (strip_angle);
-        float y1 = -r;
-        float z1 = resistor_pin_radius * sin (strip_angle) + (r + resistor_width / 2.) * end_sign;
-
-        float x2 = resistor_pin_radius * cos (strip_angle);
-        float y2 = -r - pin_penetration_depth;
-        float z2 = resistor_pin_radius * sin (strip_angle) + (r + resistor_width / 2.) * end_sign;
-
-        glNormal3f (cos (strip_angle), 0., sin (strip_angle));
-        glVertex3f (x1, y1, z1);
-        glNormal3f (cos (strip_angle), 0., sin (strip_angle));
-        glVertex3f (x2, y2, z2);
-      }
-      glEnd ();
-    }
-
-    if (1) {
-      float r = resistor_pin_bend_radius;
-      glBegin (GL_TRIANGLE_FAN);
-
-      glNormal3f (0, 0., -1.);
-      glVertex3f (0, -r - pin_penetration_depth - resistor_pin_radius / 2., (r + resistor_width / 2.) * end_sign);
-
-      /* NB: We wrap back around to complete the last segment, so in effect
-       *     we draw no_strips + 1 strips.
-       */
-      for (strip = no_strips + 1; strip > 0; strip--) {
-        float strip_angle = strip * 2. * M_PI / no_strips;
-
-        float x = resistor_pin_radius * cos (strip_angle);
-        float y = -r - pin_penetration_depth;
-        float z = resistor_pin_radius * sin (strip_angle) + (r + resistor_width / 2.) * end_sign;
-
-        glNormal3f (cos (strip_angle), 0., sin (strip_angle));
-        glVertex3f (x, y, z);
-      }
-      glEnd ();
-    }
-  }
-
-  glDisable (GL_COLOR_MATERIAL);
-  glPopAttrib ();
-
-  glDisable (GL_LIGHTING);
-//  glDisable (GL_DEPTH_TEST);
-  debug_basis_display ();
-//  glEnable (GL_DEPTH_TEST);
-
-  glPopMatrix ();
-  glUseProgram (sp);
-
-
-  first_run = false;
-}
 
 #if 0
 static void
@@ -2087,7 +1466,7 @@ DrawMask (BoxType * screen)
   if (first_run) {
     glGenTextures (1, &texture);
     glBindTexture (GL_TEXTURE_2D, texture);
-    load_texture_from_png ("board_texture.png", false);
+    load_texture_from_png ("board_texture.png");
   } else {
     glBindTexture (GL_TEXTURE_2D, texture);
   }
@@ -2309,8 +1688,10 @@ frontE_package_callback (const BoxType * b, void *cl)
       if (element->Name[DESCRIPTION_INDEX].TextString == NULL)
         return 0;
 
-      if (strcmp (element->Name[DESCRIPTION_INDEX].TextString, "ACY400") == 0)
-        ghid_draw_acy_resistor (element);
+      if (strcmp (element->Name[DESCRIPTION_INDEX].TextString, "ACY400") == 0) {
+        int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
+        hidgl_draw_acy_resistor (element, compute_depth (layer_group), BOARD_THICKNESS);
+      }
     }
   return 1;
 }
@@ -2614,7 +1995,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   /* Scale board coordiantes to (-1,-1)-(1,1) coordiantes */
   /* Adjust the "w" coordinate of our homogeneous coodinates. We coulld in
    * theory just use glScalef to transform, but on mesa this produces errors
-   * as the resulting modelview matrix has a very small determinant.
+   * as the resulting modelview matrix has a very smalldeterminant.
    */
   scale[15] = (float)port->zoom * (float)MIN (widget->allocation.width, widget->allocation.height) / 2.;
   /* XXX: Need to choose which to use (width or height) based on the aspect of the window
@@ -2864,7 +2245,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 //    GLfloat position[] = {1., -0.5, 1., 0.};
 //    GLfloat position[] = {0., -1., 1., 0.};
 //    GLfloat position[] = {0.5, -1., 1., 0.};
-    GLfloat position[] = {0.0, -0.5, 1., 0.};
+//    GLfloat position[] = {0.0, -0.5, 1., 0.};
+    GLfloat position[] = {0.0, 0.0, 1., 0.};
     GLfloat abspos = sqrt (position[0] * position[0] +
                            position[1] * position[1] +
                            position[2] * position[2]);
@@ -3161,6 +2543,7 @@ determinant_2x2 (double m[2][2])
   return det;
 }
 
+#if 0
 static float
 determinant_4x4 (float m[4][4])
 {
@@ -3179,6 +2562,7 @@ determinant_4x4 (float m[4][4])
         m[0][1] * m[1][0] * m[2][2] * m[3][3]+m[0][0] * m[1][1] * m[2][2] * m[3][3];
    return det;
 }
+#endif
 
 static void
 invert_2x2 (double m[2][2], double out[2][2])
@@ -3190,6 +2574,7 @@ invert_2x2 (double m[2][2], double out[2][2])
   out[1][1] =  m[0][0] * scale;
 }
 
+#if 0
 static void
 invert_4x4 (float m[4][4], float out[4][4])
 {
@@ -3244,6 +2629,7 @@ invert_4x4 (float m[4][4], float out[4][4])
                m[0][2] * m[1][0] * m[2][1] - m[0][0] * m[1][2] * m[2][1] -
                m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * scale;
 }
+#endif
 
 
 bool
