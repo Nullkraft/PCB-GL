@@ -1,5 +1,5 @@
 Bottom: 29da79daaf759e58be84795e6752db2b35c964c8
-Top:    270cecff2a1c2dad348f16e988de14fdec05ef86
+Top:    d7edc2e9cba7e2defcbba3320d6caf288b1610d7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-10-25 20:59:51 +0100
 
@@ -9,7 +9,7 @@ Play with render to texture stuff
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e1b30f5..86da162 100644
+index e1b30f5..b404b35 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -70,6 +70,15 @@ static int global_view_2d = 1;
@@ -355,30 +355,7 @@ index e1b30f5..86da162 100644
      if (!global_view_2d && i > 0 &&
          drawn_groups[i] >= min_phys_group &&
          drawn_groups[i] <= max_phys_group &&
-@@ -1841,11 +2055,22 @@ ghid_draw_everything (BoxTypePtr drawn_area)
-     return;
- 
-   /* Draw pins, pads, vias below silk */
-+<<<<<<< current
-   if (!Settings.ShowSolderSide)
-     gui->set_layer ("topsilk", SL (SILK, TOP), 0);
-   else
-     gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0);
-   //  gui->set_layer (NULL, SL (FINISHED, 0), 0);
-+=======
-+  if (!Settings.ShowSolderSide) {
-+    if (!gui->set_layer ("topsilk", SL (SILK, TOP), 0))
-+      gui->set_layer ("drill", SL (PDRILL, TOP), 0);
-+  } else {
-+    if (!gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
-+      gui->set_layer ("drill", SL (PDRILL, TOP), 0);
-+  }
-+//  gui->set_layer (NULL, SL (FINISHED, 0), 0);
-+>>>>>>> patched
- 
-   if (global_view_2d)
-   {
-@@ -1905,6 +2130,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1905,6 +2119,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    Gathering = true;
  
    Settings.ShowSolderSide = save_show_solder;
@@ -386,28 +363,16 @@ index e1b30f5..86da162 100644
  }
  
  #define Z_NEAR 3.0
-@@ -1923,18 +2149,48 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-   int new_x, new_y;
-   int min_depth;
-   int max_depth;
-+<<<<<<< current
-   float aspect;
-   GLfloat scale[] = {1, 0, 0, 0,
-                      0, 1, 0, 0,
+@@ -1929,12 +2144,36 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                       0, 0, 1, 0,
                       0, 0, 0, 1};
    bool horizon_problem = false;
-+=======
-+  static float wavetime = 0;
-+  extern GLuint sp;
-+  GLint waveTimeLoc = glGetUniformLocation (sp, "waveTime");
 +  int fbo_width;
 +  int fbo_height;
 +  int no_layers;
 +  static int old_fbo_width = -1;
 +  static int old_fbo_height = -1;
 +  static int old_no_layers = -1;
-+>>>>>>> patched
  
    buffer.total_triangles = 0;
    buffer.total_vertices = 0;
@@ -435,7 +400,7 @@ index e1b30f5..86da162 100644
    hidgl_in_context (true);
    hidgl_init ();
    check_gl_drawing_ok_hack = true;
-@@ -2278,6 +2534,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2278,6 +2517,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_flush_triangles (&buffer);
    hidgl_finish_triangle_array (&buffer);
  
