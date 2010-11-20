@@ -1,5 +1,5 @@
 Bottom: 464db2931e8fa6ecb66459ad1bbba9b8ce49f3b5
-Top:    c4b4cd275b201c3ea9f4d1c5a0d009759cc6794f
+Top:    f8f325dd0ee304b736e054c4eefcb819cc09f5c9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 00:32:30 +0000
 
@@ -11,17 +11,17 @@ Play with shaders and lighting goodness
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 70e759d..6b83665 100644
+index 70e759d..9f3ef52 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -187,6 +187,7 @@ GL_SRCS= \
+@@ -185,6 +185,7 @@ LIBGTK_GL_SRCS= \
+ GL_SRCS= \
+ 	hid/common/hidgl.c \
  	hid/common/hidgl.h \
++	hid/common/hidgl_package_acy_resistor.c \
  	hid/common/hidgl_shaders.c \
  	hid/common/hidgl_shaders.h \
-+	hid/common/hidgl_package_acy_resistor.c \
  	hid/common/trackball.c \
- 	hid/common/trackball.h
- 
 diff --git a/src/board_texture.png b/src/board_texture.png
 new file mode 100644
 index 0000000000000000000000000000000000000000..30e477ad2545b67e4d3d499dc7eaab53e5a2ea89
