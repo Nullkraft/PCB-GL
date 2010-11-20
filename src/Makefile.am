@@ -185,6 +185,8 @@ LIBGTK_GL_SRCS= \
 GL_SRCS= \
 	hid/common/hidgl.c \
 	hid/common/hidgl.h \
+	hid/common/hidgl_geometry.c \
+	hid/common/hidgl_geometry.h \
 	hid/common/hidgl_material.c \
 	hid/common/hidgl_material.h \
 	hid/common/hidgl_package_acy_resistor.c \
