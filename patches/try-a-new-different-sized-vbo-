@@ -1,5 +1,5 @@
-Bottom: 3e3724434caedf6f286d2f8dd54bdc4526664733
-Top:    208c73022597033c63dafd5694938e8d4f2ab0a5
+Bottom: 4a7dab2b01b7aaaed4b23c5e3e3713745e6e7124
+Top:    fdd0dc3ef80259ec330b88a1ab40f07555a5cdda
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-06 01:32:12 +0000
 
@@ -9,10 +9,10 @@ Try a new, different sized VBO buffer for each upload.
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 0a45934..7b2408f 100644
+index 3448565..def03a0 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -136,10 +136,6 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
+@@ -135,10 +135,6 @@ hidgl_init_triangle_array (triangle_buffer *buffer)
     */
    buffer->use_map = false;
  
@@ -23,7 +23,7 @@ index 0a45934..7b2408f 100644
    buffer->triangle_array = NULL;
    hidgl_reset_triangle_array (buffer);
  }
-@@ -177,10 +173,10 @@ hidgl_flush_triangles (triangle_buffer *buffer)
+@@ -176,10 +172,10 @@ hidgl_flush_triangles (triangle_buffer *buffer)
        glUnmapBuffer (GL_ARRAY_BUFFER);
        buffer->triangle_array = NULL;
      } else {
