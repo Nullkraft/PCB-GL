@@ -2055,22 +2055,11 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     return;
 
   /* Draw pins, pads, vias below silk */
-<<<<<<< current
   if (!Settings.ShowSolderSide)
     gui->set_layer ("topsilk", SL (SILK, TOP), 0);
   else
     gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0);
   //  gui->set_layer (NULL, SL (FINISHED, 0), 0);
-=======
-  if (!Settings.ShowSolderSide) {
-    if (!gui->set_layer ("topsilk", SL (SILK, TOP), 0))
-      gui->set_layer ("drill", SL (PDRILL, TOP), 0);
-  } else {
-    if (!gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
-      gui->set_layer ("drill", SL (PDRILL, TOP), 0);
-  }
-//  gui->set_layer (NULL, SL (FINISHED, 0), 0);
->>>>>>> patched
 
   if (global_view_2d)
   {
@@ -2149,24 +2138,18 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   int new_x, new_y;
   int min_depth;
   int max_depth;
-<<<<<<< current
   float aspect;
   GLfloat scale[] = {1, 0, 0, 0,
                      0, 1, 0, 0,
                      0, 0, 1, 0,
                      0, 0, 0, 1};
   bool horizon_problem = false;
-=======
-  static float wavetime = 0;
-  extern GLuint sp;
-  GLint waveTimeLoc = glGetUniformLocation (sp, "waveTime");
   int fbo_width;
   int fbo_height;
   int no_layers;
   static int old_fbo_width = -1;
   static int old_fbo_height = -1;
   static int old_no_layers = -1;
->>>>>>> patched
 
   buffer.total_triangles = 0;
   buffer.total_vertices = 0;
