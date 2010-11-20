@@ -23,6 +23,8 @@
 #ifndef __HIDGL_INCLUDED__
 #define __HIDGL_INCLUDED__
 
+#include "hidgl_shaders.h"
+
 #define TRIANGLE_ARRAY_SIZE 30000
 typedef struct {
   GLfloat *triangle_array;
@@ -38,6 +40,8 @@ typedef struct {
 
 extern triangle_buffer buffer;
 extern float global_depth;
+
+extern hidgl_shader *circular_program;
 
 void hidgl_in_context (bool is_in_context);
 void hidgl_init_triangle_array (triangle_buffer *buffer);
