@@ -47,6 +47,8 @@ RCSID ("$Id: $");
 
 triangle_buffer buffer;
 float global_depth = 0;
+hidgl_shader *circular_program = NULL;
+hidgl_shader *resistor_program = NULL;
 
 static bool in_context = false;
 
@@ -604,8 +606,6 @@ myBegin (GLenum type)
   triangle_comp_idx = 0;
 }
 
-static double global_scale;
-
 static void
 myVertex (GLdouble *vertex_data)
 {
@@ -622,23 +622,11 @@ myVertex (GLdouble *vertex_data)
         }
       else
         {
-#if 1
           hidgl_ensure_triangle_space (&buffer, 1);
           hidgl_add_triangle (&buffer,
                               triangle_vertices [0], triangle_vertices [1],
                               triangle_vertices [2], triangle_vertices [3],
                               vertex_data [0], vertex_data [1]);
-#else
-          hidgl_draw_line (Square_Cap, global_scale,
-                           triangle_vertices [0], triangle_vertices [1],
-                           triangle_vertices [2], triangle_vertices [3], global_scale);
-          hidgl_draw_line (Square_Cap, global_scale,
-                           triangle_vertices [2], triangle_vertices [3],
-                           vertex_data [0],       vertex_data [1],       global_scale);
-          hidgl_draw_line (Square_Cap, global_scale,
-                           vertex_data [0],       vertex_data [1],
-                           triangle_vertices [0], triangle_vertices [1], global_scale);
-#endif
 
           if (tessVertexType == GL_TRIANGLE_STRIP)
             {
@@ -936,129 +924,49 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
   /* NB: Repeated last virtex to separate from other tri-strip */
 }
 
-/* From http://gpwiki.org/index.php/OpenGL:Codes:Simple_GLSL_example */
 static void
-printLog(GLuint obj)
+load_built_in_shaders (void)
 {
-  return;
-  int infologLength = 0;
-  int maxLength;
-  char *infoLog;
+  char *circular_fs_source =
+          "void main()\n"
+          "{\n"
+          "  float sqdist;\n"
+          "  sqdist = dot (gl_TexCoord[0].st, gl_TexCoord[0].st);\n"
+          "  if (sqdist > 1.0)\n"
+          "    discard;\n"
+          "  gl_FragColor = gl_Color;\n"
+          "}\n";
 
-  if (glIsShader (obj))
-    glGetShaderiv (obj, GL_INFO_LOG_LENGTH, &maxLength);
-  else
-    glGetProgramiv (obj, GL_INFO_LOG_LENGTH, &maxLength);
+  char *resistor_fs_source =
+          "uniform sampler1D detail_tex;\n"
+          "uniform sampler2D bump_tex;\n"
+          "\n"
+          "void main()\n"
+          "{\n"
+          "  vec3 bumpNormal = texture2D (bump_tex, gl_TexCoord[1].st).rgb;\n"
+          "  vec3 detailColor = texture1D (detail_tex, gl_TexCoord[0].s).rgb;\n"
+          "\n"
+          "  /* Uncompress vectors ([0, 1] -> [-1, 1]) */\n"
+          "  vec3 lightVectorFinal = -1.0 + 2.0 * gl_Color.rgb;\n"
+          "  vec3 halfVectorFinal = -1.0 + 2.0 * gl_TexCoord[2].xyz;\n"
+          "  vec3 bumpNormalVectorFinal = -1.0 + 2.0 * bumpNormal;\n"
+          "\n"
+          "  /* Compute diffuse factor */\n"
+          "  float diffuse = clamp(dot(bumpNormalVectorFinal,\n"
+          "                            lightVectorFinal),0.0, 1.0);\n"
+          "  float specular = pow(clamp(dot(bumpNormalVectorFinal,\n"
+          "                                 halfVectorFinal), 0.0, 1.0),\n"
+          "                       2.0);\n"
+          "  specular *= 0.4;\n"
+          "\n"
+          "   gl_FragColor = vec4(detailColor * (0.3 + 0.7 * diffuse) + \n"
+          "                    vec3(specular, specular, specular), 1.0);\n"
+          "}\n";
 
-  infoLog = malloc (maxLength);
+  circular_program = hidgl_shader_new ("circular_rendering", NULL, circular_fs_source);
+  resistor_program = hidgl_shader_new ("resistor_rendering", NULL, resistor_fs_source);
 
-  if (glIsShader (obj))
-    glGetShaderInfoLog (obj, maxLength, &infologLength, infoLog);
-  else
-    glGetProgramInfoLog (obj, maxLength, &infologLength, infoLog);
-
-  if (infologLength > 0)
-    printf ("%s\n", infoLog);
-
-  free (infoLog);
-}
-
-/* From http://gpwiki.org/index.php/OpenGL:Codes:Simple_GLSL_example */
-/* FIXED not to be completely brain-dead with memory allocation! - PCJC2*/
-char *
-file2string (const char *path)
-{
-  FILE *fd;
-  long len, r;
-  char *str;
-
-  if (!(fd = fopen (path, "r")))
-    {
-      fprintf (stderr, "Can't open file '%s' for reading\n", path);
-      return NULL;
-    }
-
-  fseek (fd, 0, SEEK_END);
-  len = ftell(fd);
-
-  printf ("File '%s' is %ld long\n", path, len);
-
-  fseek (fd, 0, SEEK_SET);
-
-  if (!(str = malloc (len * sizeof(char))))
-    {
-      fprintf (stderr, "Can't malloc space for '%s'\n", path);
-      return NULL;
-    }
-
-  r = fread (str, sizeof(char), len, fd);
-
-  str[r - 1] = '\0'; /* Shader sources have to term with null */
-
-  fclose (fd);
-
-  return str;
-}
-
-GLuint sp; /* Shader Program */
-
-void
-hidgl_load_frag_shader (void)
-{
-//  char *vs_source;
-  char *fs_source = "void main()\n"
-                    "{\n"
-                    "  float sqdist;\n"
-                    "  sqdist = dot (gl_TexCoord[0].st, gl_TexCoord[0].st);\n"
-                    "  if (sqdist > 1.0)\n"
-                    "    discard;\n"
-                    "  gl_FragColor = gl_Color;\n"
-                    "}\n";
-
-  /* Compile and load the program */
-
-//  GLuint vs; /* Vertex Shader */
-  GLuint fs; /* Fragment Shader */
-
-#if 0
-  vs_source = file2string ("circular.vert");
-  vs = glCreateShader (GL_VERTEX_SHADER);
-  glShaderSource (vs, 1, &vs_source, NULL);
-  glCompileShader (vs);
-  printLog (vs);
-  free (vs_source);
-#endif
-
-//  fs_source = file2string ("circular.frag");
-  if (fs_source == NULL)
-    return;
-  fs = glCreateShader (GL_FRAGMENT_SHADER);
-  glShaderSource (fs, 1, &fs_source, NULL);
-  glCompileShader (fs);
-  printLog (fs);
-//  free (fs_source);
-
-  sp = glCreateProgram ();
-//  glAttachShader (sp, vs);
-  glAttachShader (sp, fs);
-  glLinkProgram (sp);
-  printLog (sp);
-
-  glUseProgram (sp);
-
-  {
-  GLfloat waveTime = 0,
-          waveWidth = 0.00001,
-          waveHeight = 10;
-  GLint waveTimeLoc = glGetUniformLocation(sp, "waveTime");
-  GLint waveWidthLoc = glGetUniformLocation(sp, "waveWidth");
-  GLint waveHeightLoc = glGetUniformLocation(sp, "waveHeight");
-  /* Change time */
-  glUniform1f(waveTimeLoc, waveTime);
-  glUniform1f(waveWidthLoc, waveWidth);
-  glUniform1f(waveHeightLoc, waveHeight);
-
-  }
+  hidgl_shader_activate (circular_program);
 }
 
 void
@@ -1085,7 +993,14 @@ hidgl_init (void)
       /* Do we need to disable that somewhere? */
     }
 
-  hidgl_load_frag_shader ();
+  if (!hidgl_shader_init_shaders ()) {
+    printf ("Failed to initialise shader support\n");
+    goto done;
+  }
+
+  load_built_in_shaders ();
+
+done:
   done_once = true;
 }
 
