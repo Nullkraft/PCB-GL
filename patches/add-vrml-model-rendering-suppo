@@ -1,5 +1,5 @@
 Bottom: 72f93b9a4465a764835944fc7e60f50c3793340c
-Top:    32b152de1b69013712b78337cd7b8e88ff669dc0
+Top:    00ad0524f7341b2347d1f9562ce879d830490c09
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 05:07:13 +0000
 
@@ -9,13 +9,15 @@ Add VRML model rendering support
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 9f3ef52..71e3d0c 100644
+index 9f3ef52..355aea5 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -185,7 +185,12 @@ LIBGTK_GL_SRCS= \
+@@ -185,7 +185,14 @@ LIBGTK_GL_SRCS= \
  GL_SRCS= \
  	hid/common/hidgl.c \
  	hid/common/hidgl.h \
++	hid/common/hidgl_geometry.c \
++	hid/common/hidgl_geometry.h \
 +	hid/common/hidgl_material.c \
 +	hid/common/hidgl_material.h \
  	hid/common/hidgl_package_acy_resistor.c \
