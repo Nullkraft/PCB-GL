@@ -1,4 +1,4 @@
-Bottom: f8f325dd0ee304b736e054c4eefcb819cc09f5c9
+Bottom: 72f93b9a4465a764835944fc7e60f50c3793340c
 Top:    8014ab00da11b4e8f475a4425148bee042d907ca
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 05:07:13 +0000
@@ -26,29 +26,10 @@ index 9f3ef52..71e3d0c 100644
  	hid/common/hidgl_shaders.h \
  	hid/common/trackball.c \
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index 7c76b42..834f606 100644
+index 3ad57e4..834f606 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
-@@ -23,6 +23,8 @@
- #ifndef __HIDGL_INCLUDED__
- #define __HIDGL_INCLUDED__
- 
-+#include "hidgl_shaders.h"
-+
- #define TRIANGLE_ARRAY_SIZE 30000
- typedef struct {
-   GLfloat *triangle_array;
-@@ -39,6 +41,9 @@ typedef struct {
- extern triangle_buffer buffer;
- extern float global_depth;
- 
-+extern hidgl_shader *circular_program;
-+extern hidgl_shader *resistor_program;
-+
- void hidgl_in_context (bool is_in_context);
- void hidgl_init_triangle_array (triangle_buffer *buffer);
- void hidgl_finish_triangle_array (triangle_buffer *buffer);
-@@ -138,4 +143,7 @@ void hidgl_set_depth (float depth);
+@@ -143,4 +143,7 @@ void hidgl_set_depth (float depth);
  /* hidgl_pacakge_acy_resistor.c */
  void hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_thickness);
  
