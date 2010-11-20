@@ -1429,7 +1429,6 @@ DrawMask (BoxType * screen)
 {
   static bool first_run = true;
   static GLuint texture;
-  extern GLuint sp;
 
   struct pin_info info;
   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
@@ -1470,7 +1469,7 @@ DrawMask (BoxType * screen)
   } else {
     glBindTexture (GL_TEXTURE_2D, texture);
   }
-  glUseProgram (0);
+  hidgl_shader_activate (NULL);
 
   if (1) {
     GLfloat s_params[] = {0.0001, 0., 0., 0.};
@@ -1509,7 +1508,7 @@ DrawMask (BoxType * screen)
   glDisable (GL_TEXTURE_GEN_T);
   glBindTexture (GL_TEXTURE_2D, 0);
   glDisable (GL_TEXTURE_2D);
-  glUseProgram (sp);
+  hidgl_shader_activate (circular_program);
 
   gui->use_mask (HID_MASK_OFF);
 
@@ -1924,9 +1923,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   int new_x, new_y;
   int min_depth;
   int max_depth;
-  static float wavetime = 0;
-  extern GLuint sp;
-  GLint waveTimeLoc = glGetUniformLocation (sp, "waveTime");
   float aspect;
   GLfloat scale[] = {1, 0, 0, 0,
                      0, 1, 0, 0,
@@ -1942,9 +1938,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   hidgl_in_context (true);
   hidgl_init ();
   check_gl_drawing_ok_hack = true;
-
-  wavetime += 0.1;
-  glUniform1f (waveTimeLoc, wavetime);
 
   /* If we don't have any stencil bits available,
      we can't use the hidgl polygon drawing routine */

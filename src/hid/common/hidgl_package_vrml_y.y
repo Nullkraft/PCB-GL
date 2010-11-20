@@ -29,18 +29,6 @@
 #endif
 
 #include "global.h"
-#include "create.h"
-#include "data.h"
-#include "error.h"
-#include "file.h"
-#include "mymem.h"
-#include "misc.h"
-#include "parse_l.h"
-#include "polygon.h"
-#include "remove.h"
-#include "rtree.h"
-#include "strflags.h"
-#include "thermal.h"
 
 #ifdef HAVE_LIBDMALLOC
 # include <dmalloc.h> /* see http://dmalloc.com */
@@ -59,10 +47,9 @@ extern char *vrml_yyfilename;
 
 %union									/* define YYSTACK type */
 {
-	int		number;
+	int		int32;
 	double		floating;
 	char		*string;
-	FlagType	flagtype;
 }
 
 %token T_DEF
@@ -79,8 +66,6 @@ extern char *vrml_yyfilename;
 %token T_EVENTOUT
 %token T_EXPOSEDFIELD
 %token T_FIELD
-
-%token T_SCRIPT
 
 %token MFColor
 %token MFFloat
@@ -103,24 +88,94 @@ extern char *vrml_yyfilename;
 %token SFVec2f
 %token SFVec3f
 
+%token T_VRMLHEADER
+%token T_SCRIPT
 %token T_ID
 %token T_FIELDTYPE
 
-%token <floating>      FLOAT
-%token <floating>      DOUBLE
+
+/* Fields for any grouping node */
+%token T_children
+
+/* Transform node and its fields */
+%token T_TRANSFORM
+%token T_center
+%token T_rotation
+%token T_scale
+%token T_scale_orientation
+%token T_translation
+%token T_bbox_center
+%token T_bbox_size
+
+/* Shape node and its fields */
+%token T_SHAPE
+%token T_appearance
+%token T_geometry
+
+/* Appearance node and its fields */
+%token T_APPEARANCE
+%token T_material
+%token T_texture
+%token T_texture_transform
+
+/* Material node and its fields */
+%token T_MATERIAL
+%token T_ambient_intensity
+%token T_diffuse_color
+%token T_emissive_color
+%token T_shininess
+%token T_specular_color
+%token T_transparency
+
+/* IndexedFaceSet node and its fields */
+%token T_INDEXED_FACE_SET
+%token T_color
+%token T_coord
+%token T_normal
+%token T_tex_coord
+%token T_ccw
+%token T_color_index
+%token T_color_per_vertex
+%token T_convex
+%token T_coord_index
+%token T_crease_angle
+%token T_normal_index
+%token T_normal_per_vertex
+%token T_solid
+%token T_tex_coord_index
+
+/* Coordinate node and its field */
+%token T_COORDINATE
+%token T_point
+
+/* Normal node and its field */
+%token T_NORMAL
+%token T_vector
+
+
+%token <floating>      FLOATING
 %token <number>        INT32
 
 %token <string>        STRING
-%token <string>        IDFIRSTCHAR
-%token <string>        IDRESTCHARS
+//%token <string>        IDFIRSTCHAR
+//%token <string>        IDRESTCHARS
 
 %%
 
 /* General VRML stuff */
 
-parse				: vrmlScene
-				| { printf ("HELLO\n"); }
+parse				: vrmlHeader
+				  vrmlScene
 				| error { YYABORT; }
+				;
+
+vrmlHeader			: T_VRMLHEADER { printf ("Got header\n"); }
+				  vrmlHeaderComment
+				;
+
+vrmlHeaderComment		: sfstringValues
+				| empty
+				;
 
 vrmlScene			: statements
 				;
@@ -131,17 +186,18 @@ statements			: statement
 				;
 
 statement			: nodeStatement
-				| protoStatement
-				| routeStatement
+//				| protoStatement
+//				| routeStatement
 				;
 
 nodeStatement			: node
-				| T_DEF nodeNameId { printf ("Hello world\n");} node
+				| T_DEF nodeNameId node
 				| T_USE nodeNameId
 				;
 
+/*
 rootNodeStatement		: node
-				| T_DEF nodeNameId node
+				| T_DEF nodeNameId node { printf ("Got a root Node Statement\n"); }
 				;
 
 protoStatement			: proto
@@ -192,6 +248,7 @@ routeStatement			: T_ROUTE nodeNameId '.' eventOutId T_TO nodeNameId '.' eventIn
 
 URLList				: mfstringValue
 				;
+*/
 
 empty				:
 				;
@@ -199,20 +256,134 @@ empty				:
 
 /* NODES */
 
+/*
 node				: nodeTypeId '{' nodeBody '}'
 				| T_SCRIPT '{' scriptBody '}'
 				;
+*/
 
+node				: T_TRANSFORM        '{' Transform_nodeBody      '}' { printf ("Got a transform node\n");}
+				| T_SHAPE            '{' Shape_nodeBody          '}' { printf ("Got a shape node\n");}
+				| T_APPEARANCE       '{' Appearance_nodeBody     '}' { printf ("Got an appearance node\n");}
+				| T_MATERIAL         '{' Material_nodeBody       '}' { printf ("Got a material node\n");}
+				| T_INDEXED_FACE_SET '{' IndexedFaceSet_nodeBody '}' { printf ("Got an indexed face set node\n");}
+				| T_COORDINATE       '{' Coordinate_nodeBody     '}' { printf ("Got a coordinate node\n");}
+				| T_NORMAL           '{' Normal_nodeBody         '}' { printf ("Got a normal node\n");}
+				| T_SCRIPT           '{' scriptBody '}'
+				;
+
+/* NORMAL NODE ------------------------------------------------------------- */
+Transform_nodeBody		: Transform_nodeBodyElements
+				| empty;
+
+Transform_nodeBodyElements	: Transform_nodeBodyElement
+				| Transform_nodeBodyElement Transform_nodeBodyElements;
+
+Transform_nodeBodyElement	: T_center sfvec3fValue
+				| T_children '[' statements ']'
+				| T_rotation sfvec3fValue
+				| T_scale sfvec3fValue
+				| T_scale_orientation sfrotationValue
+				| T_translation sfvec3fValue
+				| T_bbox_center sfvec3fValue
+				| T_bbox_size sfvec3fValue
+				;
+
+/* SHAPE NODE -------------------------------------------------------------- */
+Shape_nodeBody			: Shape_nodeBodyElements
+				| empty;
+
+Shape_nodeBodyElements		: Shape_nodeBodyElement
+				| Shape_nodeBodyElement Shape_nodeBodyElements;
+
+Shape_nodeBodyElement		: T_appearance statements
+				| T_geometry statements
+				;
+
+/* APPEARANCE NODE --------------------------------------------------------- */
+Appearance_nodeBody		: Appearance_nodeBodyElements
+				| empty;
+
+Appearance_nodeBodyElements	: Appearance_nodeBodyElement
+				| Appearance_nodeBodyElement Appearance_nodeBodyElements;
+
+Appearance_nodeBodyElement	: T_material statements
+				| T_texture statements
+				| T_texture_transform statements
+				;
+
+/* MATERIAL NODE ----------------------------------------------------------- */
+Material_nodeBody		: Material_nodeBodyElements
+				| empty;
+
+Material_nodeBodyElements	: Material_nodeBodyElement
+				| Material_nodeBodyElement Material_nodeBodyElements;
+
+Material_nodeBodyElement	: T_ambient_intensity sffloatValue
+				| T_diffuse_color sfcolorValue
+				| T_emissive_color sfcolorValue
+				| T_shininess sffloatValue
+				| T_specular_color sfcolorValue
+				| T_transparency sffloatValue
+				;
+
+/* INDEXED_FACE_SET NODE --------------------------------------------------- */
+IndexedFaceSet_nodeBody		: IndexedFaceSet_nodeBodyElements
+				| empty;
+
+IndexedFaceSet_nodeBodyElements	: IndexedFaceSet_nodeBodyElement
+				| IndexedFaceSet_nodeBodyElement IndexedFaceSet_nodeBodyElements;
+
+IndexedFaceSet_nodeBodyElement	: T_color statement
+				| T_coord statement
+				| T_normal statement
+				| T_tex_coord statement
+				| T_ccw sfboolValue
+				| T_color_index mfint32Value
+				| T_color_per_vertex sfboolValue
+				| T_convex sfboolValue
+				| T_coord_index mfint32Value
+				| T_crease_angle sffloatValue
+				| T_normal_index mfint32Value
+				| T_normal_per_vertex sfboolValue
+				| T_solid sfboolValue
+				| T_tex_coord_index mfint32Value
+				;
+
+/* COORDINATE NODE --------------------------------------------------------- */
+Coordinate_nodeBody		: Coordinate_nodeBodyElements
+				| empty;
+
+Coordinate_nodeBodyElements	: Coordinate_nodeBodyElement
+				| Coordinate_nodeBodyElement Coordinate_nodeBodyElements;
+
+Coordinate_nodeBodyElement	: T_point mfvec3fValue
+				;
+
+/* NORMAL NODE ------------------------------------------------------------- */
+Normal_nodeBody			: Normal_nodeBodyElements
+				| empty;
+
+Normal_nodeBodyElements		: Normal_nodeBodyElement
+				| Normal_nodeBodyElement Normal_nodeBodyElements;
+
+Normal_nodeBodyElement		: T_vector mfvec3fValue
+				;
+
+/* GENERIC NODE ------------------------------------------------------------ */
+/*
 nodeBody			: nodeBodyElement
 				| nodeBodyElement nodeBody
 				| empty
 				;
+*/
 
-scriptBody			: scriptBodyElement
-				| scriptBodyElement scriptBody
-				| empty
+scriptBody			: // scriptBodyElement
+//				| scriptBodyElement scriptBody
+/*				| */ empty
 				;
 
+/*
 scriptBodyElement		: nodeBodyElement
 				| restrictedInterfaceDeclaration
 				| T_EVENTIN fieldType eventInId T_IS eventInId
@@ -220,17 +391,19 @@ scriptBodyElement		: nodeBodyElement
 				| T_FIELD fieldType fieldId T_IS fieldId
 				;
 
-nodeBodyElement			: fieldId fieldValue
-				| fieldId T_IS fieldId
-				| eventInId T_IS eventInId
-				| eventOutId T_IS eventOutId
-				| routeStatement
-				| protoStatement
+nodeBodyElement			: //fieldId fieldValue
+//				| fieldId T_IS fieldId
+//				| eventInId T_IS eventInId
+//				| eventOutId T_IS eventOutId
+//				| routeStatement
+//				| protoStatement
 				;
+*/
 
 nodeNameId			: Id
 				;
 
+/*
 nodeTypeId			: Id
 				;
 
@@ -242,13 +415,20 @@ eventInId			: Id
 
 eventOutId			: Id
 				;
+*/
 
+/*
 Id				: IDFIRSTCHAR
 				| IDFIRSTCHAR IDRESTCHARS
+				;
+*/
+
+Id				: STRING
 				;
 
 /* FIELDS */
 
+/*
 fieldType			: MFColor
 				| MFFloat
 				| MFInt32
@@ -293,44 +473,44 @@ fieldValue			:
 				| mfvec2fValue
 				| mfvec3fValue
 				;
+*/
 
 sfboolValue			: T_TRUE
 				| T_FALSE
 				;
 
-sfcolorValue			: FLOAT FLOAT FLOAT
+sfcolorValue			: FLOATING FLOATING FLOATING
 				;
 
-sffloatValue			: FLOAT
+sffloatValue			: FLOATING
 				;
 
+/*
 sfimageValue			: image_data
 				;
 
 image_data			: INT32
 				| image_data INT32
 				;
+*/
 
 sfint32Value			: INT32
 				;
 
+/*
 sfnodeValue			: nodeStatement
 				| T_NULL
 				;
+*/
 
-sfrotationValue			: FLOAT FLOAT FLOAT FLOAT
+sfrotationValue			: FLOATING FLOATING FLOATING FLOATING
 				;
 
-sfstringValue			: string
+sfstringValue			: STRING
 				;
 
-string				: STRING
-				;
-
-sftimeValue			: double
-				;
-
-double				: DOUBLE
+/*
+sftimeValue			: DOUBLE
 				;
 
 mftimeValue			: sftimeValue
@@ -342,12 +522,14 @@ sftimeValues			: sftimeValue
 				| sftimeValue sftimeValues
 				;
 
-sfvec2fValue			: FLOAT FLOAT
+sfvec2fValue			: FLOATING FLOATING
+				;
+*/
+
+sfvec3fValue			: FLOATING FLOATING FLOATING
 				;
 
-sfvec3fValue			: FLOAT FLOAT FLOAT
-				;
-
+/*
 mfcolorValue			: sfcolorValue
 				| '[' ']'
 				| '[' sfcolorValues ']'
@@ -365,6 +547,7 @@ mffloatValue			: sffloatValue
 sffloatValues			: sffloatValue
 				| sffloatValue sffloatValues
 				;
+*/
 
 mfint32Value			: sfint32Value
 				| '[' ']'
@@ -375,6 +558,7 @@ sfint32Values			: sfint32Value
 				| sfint32Value sfint32Values
 				;
 
+/*
 mfnodeValue			: nodeStatement
 				| '[' ']'
 				| '[' nodeStatements ']'
@@ -392,16 +576,20 @@ mfrotationValue			: sfrotationValue
 sfrotationValues		: sfrotationValue
 				| sfrotationValue sfrotationValues
 				;
+*/
 
+/*
 mfstringValue			: sfstringValue
 				| '[' ']'
 				| '[' sfstringValues ']'
 				;
+*/
 
 sfstringValues			: sfstringValue
 				| sfstringValue sfstringValues
 				;
 
+/*
 mfvec2fValue			: sfvec2fValue
 				| '[' ']'
 				| '[' sfvec2fValues ']'
@@ -410,6 +598,7 @@ mfvec2fValue			: sfvec2fValue
 sfvec2fValues			: sfvec2fValue
 				| sfvec2fValue sfvec2fValues
 				;
+*/
 
 mfvec3fValue			: sfvec3fValue
 				| '[' ']'
@@ -429,7 +618,7 @@ sfvec3fValues			: sfvec3fValue
 int vrml_yyerror(s)
 const char *s;
 {
-	Message("ERROR parsing file (%s)\n"
+	printf("ERROR parsing file (%s)\n"
 		"    line number: %i\n"
 		"    description: '%s'\n",
 		vrml_yyfilename, vrml_yylineno, s);

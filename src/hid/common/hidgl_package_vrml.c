@@ -355,9 +355,14 @@ extern int hidgl_parse_vrml (char *filename);
 void
 hidgl_draw_vrml (ElementType *element, float surface_depth, float board_thickness, char *vrml_file)
 {
+  static bool one_shot = true;
+
+  if (!one_shot)
+    return;
+
   printf ("hidgl_draw_vrml\n");
   hidgl_parse_vrml ("test.wrl");
-  return;
+  one_shot = false;
 }
 
 static float
