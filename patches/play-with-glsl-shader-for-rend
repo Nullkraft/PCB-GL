@@ -1,5 +1,5 @@
 Bottom: 8b7c6ff67864229e7b70ce37dbc5115db6909e7a
-Top:    1704bb412fc06d970f1387e4926764133395b57b
+Top:    3e3724434caedf6f286d2f8dd54bdc4526664733
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-10-24 19:02:53 +0100
 
@@ -161,7 +161,7 @@ index fcc0e66..9c9d43e 100644
 +  return CAIRO_STATUS_SUCCESS;
 +}
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 238e61d..abedaad 100644
+index 238e61d..0a45934 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -47,6 +47,8 @@ RCSID ("$Id: $");
@@ -807,7 +807,7 @@ index 238e61d..abedaad 100644
    hidgl_flush_triangles (&buffer);
  
    /* Unassign our stencil buffer bit */
-@@ -723,14 +912,71 @@ void
+@@ -723,14 +912,44 @@ void
  hidgl_fill_rect (int x1, int y1, int x2, int y2)
  {
    CHECK_IS_IN_CONTEXT ();
@@ -839,34 +839,7 @@ index 238e61d..abedaad 100644
 +          "  gl_FragColor = gl_Color;\n"
 +          "}\n";
 +
-+  char *resistor_fs_source =
-+          "uniform sampler1D detail_tex;\n"
-+          "uniform sampler2D bump_tex;\n"
-+          "\n"
-+          "void main()\n"
-+          "{\n"
-+          "  vec3 bumpNormal = texture2D (bump_tex, gl_TexCoord[1].st).rgb;\n"
-+          "  vec3 detailColor = texture1D (detail_tex, gl_TexCoord[0].s).rgb;\n"
-+          "\n"
-+          "  /* Uncompress vectors ([0, 1] -> [-1, 1]) */\n"
-+          "  vec3 lightVectorFinal = -1.0 + 2.0 * gl_Color.rgb;\n"
-+          "  vec3 halfVectorFinal = -1.0 + 2.0 * gl_TexCoord[2].xyz;\n"
-+          "  vec3 bumpNormalVectorFinal = -1.0 + 2.0 * bumpNormal;\n"
-+          "\n"
-+          "  /* Compute diffuse factor */\n"
-+          "  float diffuse = clamp(dot(bumpNormalVectorFinal,\n"
-+          "                            lightVectorFinal),0.0, 1.0);\n"
-+          "  float specular = pow(clamp(dot(bumpNormalVectorFinal,\n"
-+          "                                 halfVectorFinal), 0.0, 1.0),\n"
-+          "                       2.0);\n"
-+          "  specular *= 0.4;\n"
-+          "\n"
-+          "   gl_FragColor = vec4(detailColor * (0.3 + 0.7 * diffuse) + \n"
-+          "                    vec3(specular, specular, specular), 1.0);\n"
-+          "}\n";
-+
 +  circular_program = hidgl_shader_new ("circular_rendering", NULL, circular_fs_source);
-+  resistor_program = hidgl_shader_new ("resistor_rendering", NULL, resistor_fs_source);
 +
 +  hidgl_shader_activate (circular_program);
  }
@@ -882,7 +855,7 @@ index 238e61d..abedaad 100644
    CHECK_IS_IN_CONTEXT ();
    glGetIntegerv (GL_STENCIL_BITS, &stencil_bits);
  
-@@ -746,6 +992,16 @@ hidgl_init (void)
+@@ -746,6 +965,16 @@ hidgl_init (void)
                "Cannot use stencil buffer to sub-composite layers.\n");
        /* Do we need to disable that somewhere? */
      }
