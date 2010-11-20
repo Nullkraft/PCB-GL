@@ -1,0 +1,32 @@
+Bottom: f8f325dd0ee304b736e054c4eefcb819cc09f5c9
+Top:    72f93b9a4465a764835944fc7e60f50c3793340c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-11-20 00:55:06 +0000
+
+Refresh of add-a-demonstration-model-for-
+
+---
+
+diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
+index 7c76b42..3ad57e4 100644
+--- a/src/hid/common/hidgl.h
++++ b/src/hid/common/hidgl.h
+@@ -23,6 +23,8 @@
+ #ifndef __HIDGL_INCLUDED__
+ #define __HIDGL_INCLUDED__
+ 
++#include "hidgl_shaders.h"
++
+ #define TRIANGLE_ARRAY_SIZE 30000
+ typedef struct {
+   GLfloat *triangle_array;
+@@ -39,6 +41,9 @@ typedef struct {
+ extern triangle_buffer buffer;
+ extern float global_depth;
+ 
++extern hidgl_shader *circular_program;
++extern hidgl_shader *resistor_program;
++
+ void hidgl_in_context (bool is_in_context);
+ void hidgl_init_triangle_array (triangle_buffer *buffer);
+ void hidgl_finish_triangle_array (triangle_buffer *buffer);
