@@ -1,0 +1,22 @@
+Bottom: 32b152de1b69013712b78337cd7b8e88ff669dc0
+Top:    00ad0524f7341b2347d1f9562ce879d830490c09
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-11-20 22:57:29 +0000
+
+Refresh of add-vrml-model-rendering-suppo
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 71e3d0c..355aea5 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -185,6 +185,8 @@ LIBGTK_GL_SRCS= \
+ GL_SRCS= \
+ 	hid/common/hidgl.c \
+ 	hid/common/hidgl.h \
++	hid/common/hidgl_geometry.c \
++	hid/common/hidgl_geometry.h \
+ 	hid/common/hidgl_material.c \
+ 	hid/common/hidgl_material.h \
+ 	hid/common/hidgl_package_acy_resistor.c \
