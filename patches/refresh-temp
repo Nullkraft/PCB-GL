@@ -1,0 +1,23 @@
+Bottom: c4b4cd275b201c3ea9f4d1c5a0d009759cc6794f
+Top:    f8f325dd0ee304b736e054c4eefcb819cc09f5c9
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-11-20 00:53:54 +0000
+
+Refresh of add-a-demonstration-model-for-
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 6b83665..9f3ef52 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -185,9 +185,9 @@ LIBGTK_GL_SRCS= \
+ GL_SRCS= \
+ 	hid/common/hidgl.c \
+ 	hid/common/hidgl.h \
++	hid/common/hidgl_package_acy_resistor.c \
+ 	hid/common/hidgl_shaders.c \
+ 	hid/common/hidgl_shaders.h \
+-	hid/common/hidgl_package_acy_resistor.c \
+ 	hid/common/trackball.c \
+ 	hid/common/trackball.h
