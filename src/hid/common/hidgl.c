@@ -48,7 +48,6 @@ RCSID ("$Id: $");
 triangle_buffer buffer;
 float global_depth = 0;
 hidgl_shader *circular_program = NULL;
-hidgl_shader *resistor_program = NULL;
 
 static bool in_context = false;
 
