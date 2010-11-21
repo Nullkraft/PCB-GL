@@ -1,0 +1,47 @@
+Bottom: c2026836a73d21e64883808f0ee1dd464cfd8f94
+Top:    a013172680e0c2236db3a39cb38e04ea25e72fe8
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-11-21 22:45:32 +0000
+
+Refresh of add-vrml-model-rendering-suppo
+
+---
+
+diff --git a/src/hid/common/hidgl_geometry.c b/src/hid/common/hidgl_geometry.c
+index 7f775ea..610a2f2 100644
+--- a/src/hid/common/hidgl_geometry.c
++++ b/src/hid/common/hidgl_geometry.c
+@@ -46,6 +46,7 @@
+ struct _hidgl_geometry {
+   char *name;
+ 
++  hidgl_geometry_class *klass;
+ };
+ 
+ 
+@@ -60,6 +61,7 @@ hidgl_geometry_new (char *name)
+     return NULL;
+ 
+   geometry->name = strdup (name);
++  geometry->klass = NULL; /* To be filled in by the subclass */
+ 
+   return geometry;
+ }
+@@ -69,6 +71,9 @@ hidgl_geometry_new (char *name)
+ void
+ hidgl_geometry_free (hidgl_geometry *geometry)
+ {
++  if (geometry->class != NULL)
++    geometry->class->free (geometry);
++
+   free (geometry->name);
+   free (geometry);
+ }
+@@ -78,4 +83,7 @@ hidgl_geometry_free (hidgl_geometry *geometry)
+ void
+ hidgl_geometry_draw (hidgl_geometry *geometry)
+ {
++  g_return_if_fail (geometry->klass != NULL);
++
++  geometry->klass->draw (geometry);
+ }
