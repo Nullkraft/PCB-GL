@@ -1,5 +1,5 @@
-Bottom: f93ceed4bc22c0daeedab5d713e104eab4234604
-Top:    e602010c973b88514c7cc53d5301c3bc92c244e0
+Bottom: f9be09829a239d5c2ed8a1a436419421cdd54231
+Top:    0cf4f2e6eb98986edd732d30aba13a73a7d743e4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 05:07:13 +0000
 
@@ -692,7 +692,7 @@ index 0000000..5a8bc27
 +
 +#endif /* __HIDGL_MATRIX_INCLUDED__  */
 diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
-index e88b371..f0325cd 100644
+index f9746f1..2d4fdab 100644
 --- a/src/hid/common/hidgl_package_acy_resistor.c
 +++ b/src/hid/common/hidgl_package_acy_resistor.c
 @@ -20,11 +20,46 @@
@@ -804,12 +804,10 @@ index e88b371..f0325cd 100644
 -  glDisable (GL_TEXTURE_1D);
 -  glBindTexture (GL_TEXTURE_1D, 0);
 -  glDeleteTextures (1, &texture1);
--
--  glEnable (GL_LIGHTING);
 +  return geometry;
 +}
  
--  glUseProgram (0);
+-  glEnable (GL_LIGHTING);
 +static hidgl_geometry *
 +pins_geometry (float resistor_pin_spacing, float board_thickness)
 +{
@@ -820,20 +818,22 @@ index e88b371..f0325cd 100644
 +  int no_rings = NUM_PIN_RINGS;
 +  int end;
  
--  glColor3f (resistor_pin_color[0] / 1.5,
--             resistor_pin_color[1] / 1.5,
--             resistor_pin_color[2] / 1.5);
+-  glUseProgram (0);
 +  /* XXX: Hard-coded magic */
 +  float resistor_pin_radius = 12. * MIL_TO_INTERNAL;
 +  float pin_penetration_depth = 30. * MIL_TO_INTERNAL + board_thickness;
  
--  /* COLOR / MATERIAL SETUP */
--  glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
--  glEnable (GL_COLOR_MATERIAL);
+-  glColor3f (resistor_pin_color[0] / 1.5,
+-             resistor_pin_color[1] / 1.5,
+-             resistor_pin_color[2] / 1.5);
 +  float resistor_bulge_radius = 43. * MIL_TO_INTERNAL;
 +  float resistor_pin_bend_radius = resistor_bulge_radius;
 +  float resistor_width = resistor_pin_spacing - 2. * resistor_pin_bend_radius;
  
+-  /* COLOR / MATERIAL SETUP */
+-  glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+-  glEnable (GL_COLOR_MATERIAL);
+-
 -  if (1) {
 -//    GLfloat ambient[] = {0.0, 0.0, 0.0, 1.0};
 -    GLfloat specular[] = {0.5, 0.5, 0.5, 1.0};
@@ -996,7 +996,7 @@ index e88b371..f0325cd 100644
 +  hidgl_transform_add_child (model.root, body_shape);
 +  hidgl_transform_add_child (model.root, pins_shape);
 +}
-+
+ 
 +void
 +hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_thickness)
 +{
@@ -1011,7 +1011,7 @@ index e88b371..f0325cd 100644
 +  center_y = (element->Pin[0].Y + element->Pin[1].Y) / 2.;
 +  angle = atan2f (element->Pin[1].Y - element->Pin[0].Y,
 +                  element->Pin[1].X - element->Pin[0].X);
- 
++
 +  /* TRANSFORM MATRIX */
    glPushMatrix ();
 -  glLoadIdentity ();
