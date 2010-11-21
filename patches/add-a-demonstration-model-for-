@@ -1,5 +1,5 @@
 Bottom: f27e2ae4b5a8136a4ed5617f33cbb6767184b124
-Top:    8ec01fb06590569ac4eba1298a6ce3ec4593939f
+Top:    f93ceed4bc22c0daeedab5d713e104eab4234604
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 00:32:30 +0000
 
@@ -513,10 +513,10 @@ index c6bc7de..3ad57e4 100644
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
 new file mode 100644
-index 0000000..ee5799d
+index 0000000..e88b371
 --- /dev/null
 +++ b/src/hid/common/hidgl_package_acy_resistor.c
-@@ -0,0 +1,995 @@
+@@ -0,0 +1,997 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -537,6 +537,8 @@ index 0000000..ee5799d
 + */
 +#define GL_GLEXT_PROTOTYPES 1
 +#include <GL/gl.h>
++
++#include "hidgl.h"
 +
 +#ifdef HAVE_LIBDMALLOC
 +#include <dmalloc.h>
@@ -1149,7 +1151,6 @@ index 0000000..ee5799d
 +  static GLuint texture2_zero_ohm;
 +
 +  GLuint restore_sp;
-+  extern GLuint sp2;
 +
 +  /* XXX: Hard-coded magic */
 +  float resistor_pin_radius = 12. * MIL_TO_INTERNAL;
@@ -1182,11 +1183,12 @@ index 0000000..ee5799d
 +
 +  /* TEXTURE SETUP */
 +  glGetIntegerv (GL_CURRENT_PROGRAM, (GLint*)&restore_sp);
-+  glUseProgram (sp2);
++  hidgl_shader_activate (resistor_program);
 +
 +  {
-+    int tex0_location = glGetUniformLocation (sp2, "detail_tex");
-+    int tex1_location = glGetUniformLocation (sp2, "bump_tex");
++    GLuint sp = hidgl_shader_get_program (resistor_program);
++    int tex0_location = glGetUniformLocation (sp, "detail_tex");
++    int tex1_location = glGetUniformLocation (sp, "bump_tex");
 +    glUniform1i (tex0_location, 0);
 +    glUniform1i (tex1_location, 1);
 +  }
@@ -1513,7 +1515,7 @@ index 0000000..ee5799d
 +               m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * scale;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index be3252d..7587840 100644
+index be3252d..eff0353 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -325,6 +325,48 @@ ghid_draw_grid (BoxTypePtr drawn_area)
@@ -1590,18 +1592,17 @@ index be3252d..7587840 100644
                                                GDK_GL_MODE_DOUBLE);
    if (!priv->glconfig)
      {
-@@ -1383,6 +1427,10 @@ int clearPad_callback (const BoxType * b, void *cl);
+@@ -1383,6 +1427,9 @@ int clearPad_callback (const BoxType * b, void *cl);
  static void
  DrawMask (BoxType * screen)
  {
 +  static bool first_run = true;
 +  static GLuint texture;
-+  extern GLuint sp;
 +
    struct pin_info info;
    int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
    PolygonType polygon;
-@@ -1415,6 +1463,34 @@ DrawMask (BoxType * screen)
+@@ -1415,6 +1462,34 @@ DrawMask (BoxType * screen)
    gui->set_color (out->fgGC, PCB->MaskColor);
    ghid_global_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
  
@@ -1636,7 +1637,7 @@ index be3252d..7587840 100644
    polygon.Clipped = board_outline_poly ();
    polygon.NoHoles = NULL;
    polygon.NoHolesValid = 0;
-@@ -1428,8 +1504,16 @@ DrawMask (BoxType * screen)
+@@ -1428,8 +1503,16 @@ DrawMask (BoxType * screen)
  //  gui->fill_pcb_polygon (out->fgGC, &polygon, screen);
  //  gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
    ghid_global_alpha_mult (out->fgGC, 1.0);
@@ -1645,7 +1646,7 @@ index be3252d..7587840 100644
 +  glDisable (GL_TEXTURE_GEN_T);
 +  glBindTexture (GL_TEXTURE_2D, 0);
 +  glDisable (GL_TEXTURE_2D);
-+  glUseProgram (sp);
++  hidgl_shader_activate (circular_program);
  
    gui->use_mask (HID_MASK_OFF);
 +
@@ -1653,7 +1654,7 @@ index be3252d..7587840 100644
  }
  
  static int
-@@ -1469,8 +1553,9 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1469,8 +1552,9 @@ DrawLayerGroup (int group, const BoxType * screen)
        if (rv) {
          /* Mask out drilled holes on this layer */
          hidgl_flush_triangles (&buffer);
@@ -1664,7 +1665,7 @@ index be3252d..7587840 100644
          gui->set_color (Output.bgGC, PCB->MaskColor);
          if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
          if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
-@@ -1491,8 +1576,9 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1491,8 +1575,9 @@ DrawLayerGroup (int group, const BoxType * screen)
  
          if (rv) {
            hidgl_flush_triangles (&buffer);
@@ -1675,7 +1676,7 @@ index be3252d..7587840 100644
            /* Mask out drilled holes on this layer */
            if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
            if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
-@@ -1592,6 +1678,32 @@ hole_cyl_callback (const BoxType * b, void *cl)
+@@ -1592,6 +1677,32 @@ hole_cyl_callback (const BoxType * b, void *cl)
    return 0;
  }
  
@@ -1708,7 +1709,7 @@ index be3252d..7587840 100644
  void
  ghid_draw_everything (BoxTypePtr drawn_area)
  {
-@@ -1729,23 +1841,24 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1729,23 +1840,24 @@ ghid_draw_everything (BoxTypePtr drawn_area)
      gui->set_layer ("topsilk", SL (SILK, TOP), 0);
    else
      gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0);
@@ -1748,7 +1749,7 @@ index be3252d..7587840 100644
  
    gui->set_layer (NULL, SL (FINISHED, 0), 0);
  
-@@ -1876,7 +1989,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1876,7 +1988,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    /* Scale board coordiantes to (-1,-1)-(1,1) coordiantes */
    /* Adjust the "w" coordinate of our homogeneous coodinates. We coulld in
     * theory just use glScalef to transform, but on mesa this produces errors
@@ -1757,7 +1758,7 @@ index be3252d..7587840 100644
     */
    scale[15] = (float)port->zoom * (float)MIN (widget->allocation.width, widget->allocation.height) / 2.;
    /* XXX: Need to choose which to use (width or height) based on the aspect of the window
-@@ -1899,6 +2012,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1899,6 +2011,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      glNewList (display_list, GL_COMPILE);
  #endif
  
@@ -1766,7 +1767,7 @@ index be3252d..7587840 100644
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->bg_color.red / 65535.,
                  port->bg_color.green / 65535.,
-@@ -2039,6 +2154,46 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2039,6 +2153,46 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    ghid_draw_everything (&region);
    hidgl_flush_triangles (&buffer);
  
@@ -1813,7 +1814,7 @@ index be3252d..7587840 100644
    /* Just prod the drawing code so the current depth gets set to
       the right value for the layer we are editing */
    hidgl_set_depth (compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT)));
-@@ -2049,6 +2204,63 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2049,6 +2203,63 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    DrawMark (TRUE);
    hidgl_flush_triangles (&buffer);
  
@@ -1877,7 +1878,7 @@ index be3252d..7587840 100644
  #ifdef ONE_SHOT
      glEndList ();
      one_shot = 0;
-@@ -2157,7 +2369,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2157,7 +2368,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -1886,7 +1887,7 @@ index be3252d..7587840 100644
    hidgl_reset_stencil_usage ();
  
    /* call the drawing routine */
-@@ -2223,7 +2435,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2223,7 +2434,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                          GDK_GL_MODE_STENCIL |
@@ -1895,7 +1896,7 @@ index be3252d..7587840 100644
                                          GDK_GL_MODE_SINGLE);
  
    pixmap = gdk_pixmap_new (NULL, width, height, depth);
-@@ -2271,7 +2483,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2271,7 +2482,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
