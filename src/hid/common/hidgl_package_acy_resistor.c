@@ -344,8 +344,6 @@ setup_resistor_texture (ElementType *element, GLfloat *res_body_color)
   return false;
 }
 
-static void invert_4x4 (float m[4][4], float out[4][4]);
-
 static GLfloat *debug_lines = NULL;
 static int no_debug_lines = 0;
 static int max_debug_lines = 0;

@@ -2535,24 +2535,24 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
 bool
 ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
 {
-  double mat[2][2];
-  double inv_mat[2][2];
-  double x, y;
-  double fvz;
-  double vpx, vpy;
-  double fvx, fvy;
+  float mat[2][2];
+  float inv_mat[2][2];
+  float x, y;
+  float fvz;
+  float vpx, vpy;
+  float fvx, fvy;
   GtkWidget *widget = gport->drawing_area;
 
   /* FIXME: Dirty kludge.. I know what our view parameters are here */
-  double aspect = (double)widget->allocation.width / (double)widget->allocation.height;
-  double width = 2. * aspect;
-  double height = 2.;
-  double near = 1.;
-  // double far = 24.;
+  float aspect = (float)widget->allocation.width / (float)widget->allocation.height;
+  float width = 2. * aspect;
+  float height = 2.;
+  float near = 1.;
+  // float far = 24.;
 
   /* This is nasty beyond words, but I'm lazy and translating directly
    * from some untested maths I derived which used this notation */
-  double A, B, C, D, E, F, G, H, I, J, K, L;
+  float A, B, C, D, E, F, G, H, I, J, K, L;
 
   /* NB: last_modelview_matrix is transposed in memory! */
   A = last_modelview_matrix[0][0];
