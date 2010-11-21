@@ -1,5 +1,5 @@
 Bottom: a7bc9b53ebe256038ebc6f4dba9f9a96696cde65
-Top:    6d2629509e5b2f917f2eec2973b136c8b0615fb4
+Top:    2efb98e05a79f0359cff1ef728721591ec32e57f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 05:07:13 +0000
 
@@ -692,7 +692,7 @@ index 0000000..5a8bc27
 +
 +#endif /* __HIDGL_MATRIX_INCLUDED__  */
 diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
-index ee5799d..33b4273 100644
+index ee5799d..060b21a 100644
 --- a/src/hid/common/hidgl_package_acy_resistor.c
 +++ b/src/hid/common/hidgl_package_acy_resistor.c
 @@ -19,10 +19,35 @@
@@ -731,7 +731,16 @@ index ee5799d..33b4273 100644
  static int
  compute_offset (int x, int y, int width, int height)
  {
-@@ -600,6 +625,39 @@ emit_pair (float ang_edge1, float cos_edge1, float sin_edge1,
+@@ -319,8 +344,6 @@ setup_resistor_texture (ElementType *element, GLfloat *res_body_color)
+   return false;
+ }
+ 
+-static void invert_4x4 (float m[4][4], float out[4][4]);
+-
+ static GLfloat *debug_lines = NULL;
+ static int no_debug_lines = 0;
+ static int max_debug_lines = 0;
+@@ -600,6 +623,39 @@ emit_pair (float ang_edge1, float cos_edge1, float sin_edge1,
                   tex0_s, ang_edge2 / 2. / M_PI, tex0_s);
  }
  
@@ -771,7 +780,7 @@ index ee5799d..33b4273 100644
  
  #define NUM_RESISTOR_STRIPS 100
  #define NUM_PIN_RINGS 15
-@@ -614,8 +672,7 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -614,8 +670,7 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
  
    float center_x, center_y;
    float angle;
@@ -781,7 +790,7 @@ index ee5799d..33b4273 100644
  
    int strip;
    int no_strips = NUM_RESISTOR_STRIPS;
-@@ -626,11 +683,8 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -626,11 +681,8 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
  
    static bool first_run = true;
    static GLuint texture1;
@@ -793,7 +802,7 @@ index ee5799d..33b4273 100644
  
    /* XXX: Hard-coded magic */
    float resistor_pin_radius = 12. * MIL_TO_INTERNAL;
-@@ -663,23 +717,21 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -663,23 +715,21 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
  
    /* TEXTURE SETUP */
    glGetIntegerv (GL_CURRENT_PROGRAM, (GLint*)&restore_sp);
@@ -825,7 +834,7 @@ index ee5799d..33b4273 100644
    glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
    glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
    glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-@@ -687,19 +739,10 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -687,19 +737,10 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
    glEnable (GL_TEXTURE_1D);
  
    glActiveTextureARB (GL_TEXTURE1_ARB);
@@ -847,7 +856,7 @@ index ee5799d..33b4273 100644
  
    glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
    glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-@@ -718,14 +761,7 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -718,14 +759,7 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
  
    glDisable (GL_LIGHTING);
  
@@ -863,7 +872,7 @@ index ee5799d..33b4273 100644
  
  #if 1
    glBegin (GL_TRIANGLE_STRIP);
-@@ -797,23 +833,8 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -797,23 +831,8 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
  
    glEnable (GL_LIGHTING);
  
@@ -888,7 +897,7 @@ index ee5799d..33b4273 100644
  
    for (end = 0; end < 2; end++) {
      float end_sign = (end == 0) ? 1. : -1.;
-@@ -919,77 +940,3 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -919,77 +938,3 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
  
    first_run = false;
  }
@@ -2332,7 +2341,7 @@ index 0000000..0a59fbe
 +  return 1;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index cabe705..663647b 100644
+index cabe705..dc3522b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1429,7 +1429,6 @@ DrawMask (BoxType * screen)
@@ -2393,7 +2402,7 @@ index cabe705..663647b 100644
    /* If we don't have any stencil bits available,
       we can't use the hidgl polygon drawing routine */
    /* TODO: We could use the GLU tessellator though */
-@@ -2534,104 +2532,6 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2534,125 +2532,27 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    return pixmap;
  }
  
@@ -2498,3 +2507,36 @@ index cabe705..663647b 100644
  bool
  ghid_unproject_to_z_plane (int ex, int ey, int vz, int *vx, int *vy)
  {
+-  double mat[2][2];
+-  double inv_mat[2][2];
+-  double x, y;
+-  double fvz;
+-  double vpx, vpy;
+-  double fvx, fvy;
++  float mat[2][2];
++  float inv_mat[2][2];
++  float x, y;
++  float fvz;
++  float vpx, vpy;
++  float fvx, fvy;
+   GtkWidget *widget = gport->drawing_area;
+ 
+   /* FIXME: Dirty kludge.. I know what our view parameters are here */
+-  double aspect = (double)widget->allocation.width / (double)widget->allocation.height;
+-  double width = 2. * aspect;
+-  double height = 2.;
+-  double near = 1.;
+-  // double far = 24.;
++  float aspect = (float)widget->allocation.width / (float)widget->allocation.height;
++  float width = 2. * aspect;
++  float height = 2.;
++  float near = 1.;
++  // float far = 24.;
+ 
+   /* This is nasty beyond words, but I'm lazy and translating directly
+    * from some untested maths I derived which used this notation */
+-  double A, B, C, D, E, F, G, H, I, J, K, L;
++  float A, B, C, D, E, F, G, H, I, J, K, L;
+ 
+   /* NB: last_modelview_matrix is transposed in memory! */
+   A = last_modelview_matrix[0][0];
