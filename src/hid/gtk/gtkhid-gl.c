@@ -1806,9 +1806,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   int new_x, new_y;
   int min_depth;
   int max_depth;
-  static float wavetime = 0;
-  extern GLuint sp;
-  GLint waveTimeLoc = glGetUniformLocation (sp, "waveTime");
 
   buffer.total_triangles = 0;
   buffer.total_vertices = 0;
@@ -1818,9 +1815,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   hidgl_in_context (true);
   hidgl_init ();
   check_gl_drawing_ok_hack = true;
-
-  wavetime += 0.1;
-  glUniform1f (waveTimeLoc, wavetime);
 
   /* If we don't have any stencil bits available,
      we can't use the hidgl polygon drawing routine */
