@@ -1,5 +1,5 @@
 Bottom: 72f93b9a4465a764835944fc7e60f50c3793340c
-Top:    c4145ef56f22eae8c4d23df2b77ed6b314e6ed45
+Top:    0d5872f2afb6d3593535b2d47f0c4906fc629e2d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 05:07:13 +0000
 
@@ -41,7 +41,7 @@ index 3ad57e4..834f606 100644
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/common/hidgl_geometry.c b/src/hid/common/hidgl_geometry.c
 new file mode 100644
-index 0000000..003af8e
+index 0000000..7f775ea
 --- /dev/null
 +++ b/src/hid/common/hidgl_geometry.c
 @@ -0,0 +1,81 @@
@@ -83,14 +83,14 @@ index 0000000..003af8e
 +#define GL_GLEXT_PROTOTYPES 1
 +#include <GL/gl.h>
 +#include <GL/glu.h>
-+#include "hidgl_material.h"
++#include "hidgl_geometry.h"
 +
 +#ifdef HAVE_LIBDMALLOC
 +#include <dmalloc.h>
 +#endif
 +
 +/* Opaque data-structure keeping a geometry object */
-+struct _hidgl_material {
++struct _hidgl_geometry {
 +  char *name;
 +
 +};
@@ -128,10 +128,10 @@ index 0000000..003af8e
 +}
 diff --git a/src/hid/common/hidgl_geometry.h b/src/hid/common/hidgl_geometry.h
 new file mode 100644
-index 0000000..9673d87
+index 0000000..cf8b60a
 --- /dev/null
 +++ b/src/hid/common/hidgl_geometry.h
-@@ -0,0 +1,34 @@
+@@ -0,0 +1,67 @@
 +/*
 + *                            COPYRIGHT
 + *
@@ -156,10 +156,43 @@ index 0000000..9673d87
 +
 +#ifndef __HIDGL_GEOMETRY_INCLUDED__
 +#define __HIDGL_GEOMETRY_INCLUDED__
++typedef struct _hidgl_geometry hidgl_geometry;
 +
-+#include "hidgl_shaders.h"
++struct geometry_class {
++  void create (void); /* How do we create a geometry without some concrete data? */
++  void draw (void);   /* What assumptions are made about the GL state prior to calling this? */
++  void free (void);   /* Clean up any internal state and delete */
++};
 +
-+typedef struct _hidgl_material hidgl_material;
++/* Subclasses required / planned / thought of :
++ *
++ * hidgl_tristrip_geometry
++ * hidgl_triangle_geometry
++ * hidgl_mesh_geometry (EXAMPLE)
++ * hidgl_brep_geometry (EXAMPLE)
++ */
++
++"tristrip_geometry and traiangle geometry probably share some common data-storage stuff?"
++"Should we do like VRML and keep data-definition separate from the defining geometry?"
++"Should we create a data-storage class for reading the meshes / vertex data into?"
++""
++
++Need something which looks a little like the following:
++
++Group / transform node
++  (Transform properties)
++  (Children)-+------------> Shape -+-> Appearance / material
++             |                     `-> Geometry
++             |------------> Shape -+-> Appearance / material
++             |                     `-> Geometry
++             |------------> Shape -+-> Appearance / material
++             |                     `-> Geometry
++             `---------> Transform
++                            (Children)-+---> Shape -+-> Appearance / material
++                                       |            `-> Geometry
++                                       `---> Shape -+-> Appearance / material
++                                                    `-> Geometry
++
 +
 +hidgl_geometry *hidgl_geometry_new (char *name);
 +void hidgl_geometry_free (hidgl_geometry *geometry);
