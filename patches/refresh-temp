@@ -1,0 +1,113 @@
+Bottom: 6ac25bb02b8a060db06e33a45f98fbb7ab5d1d76
+Top:    0a7f7995823924c2a42f3c5b64c273d4cfe3d331
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-11-21 19:16:05 +0000
+
+Refresh of add-vrml-model-rendering-suppo
+
+---
+
+diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
+index 50f966b..7e6e664 100644
+--- a/src/hid/common/hidgl_package_acy_resistor.c
++++ b/src/hid/common/hidgl_package_acy_resistor.c
+@@ -44,44 +44,10 @@ static model_data model = {
+     .resistor_pin_selected_mat = NULL,
+     .resistor_body_geom = NULL,
+     .resistor_pin_geom = NULL,
+-    .resistor_body_bump_texture = 0;
+-    .zero_ohm_body_bump_texture = 0;
++    .resistor_body_bump_texture = 0,
++    .zero_ohm_body_bump_texture = 0
+ };
+ 
+-void
+-hidgl_init_acy_resistor (void)
+-{
+-  GLfloat emission[] = {0.0f, 0.0f, 0.0f, 1.0f};
+-  GLfloat specular[] = {0.5f, 0.5f, 0.5f, 1.0f};
+-  GLfloat resistor_pin_color[] = {0.55, 0.55, 0.55, 1.0};
+-
+-  /* Define the resistor body material */
+-  model.resistor_body_mat = hidgl_material_new ("resistor_body");
+-  hidgl_material_set_emission_color (model.resistor_body_mat, emission);
+-  hidgl_material_set_specular_color (model.resistor_body_mat, specular);
+-  hidgl_material_set_shininess (model.resistor_body_mat, 20.0f);
+-  hidgl_material_set_shader (model.resistor_body_mat, resistor_program);
+-
+-  /* Define the resistor pin material */
+-  model.resistor_pin_mat = hidgl_material_new ("resistor_pin");
+-  hidgl_material_set_ambient_color (model.resistor_pin_mat, resistor_pin_color);
+-  hidgl_material_set_diffuse_color (model.resistor_pin_mat, resistor_pin_color);
+-  hidgl_material_set_emission_color (model.resistor_pin_mat, emission);
+-  hidgl_material_set_specular_color (model.resistor_pin_mat, specular);
+-  hidgl_material_set_shininess (model.resistor_pin_mat, 120.0f);
+-
+-  /* Load bump mapping textures */
+-  glGenTextures (1, &model.resistor_body_bump_texture);
+-  glBindTexture (GL_TEXTURE_2D, model.resistor_body_bump_texture);
+-  load_texture_from_png ("resistor_bump.png", true);
+-
+-  glGenTextures (1, &model.resistor_body_bump_texture);
+-  glBindTexture (GL_TEXTURE_2D, model.zero_ohm_body_bump_texture);
+-  load_texture_from_png ("zero_ohm_bump.png", true);
+-
+-  glBindTexture (GL_TEXTURE_2D, 0);
+-}
+-
+ static int
+ compute_offset (int x, int y, int width, int height)
+ {
+@@ -659,6 +625,39 @@ emit_pair (float ang_edge1, float cos_edge1, float sin_edge1,
+                  tex0_s, ang_edge2 / 2. / M_PI, tex0_s);
+ }
+ 
++void
++hidgl_init_acy_resistor (void)
++{
++  GLfloat emission[] = {0.0f, 0.0f, 0.0f, 1.0f};
++  GLfloat specular[] = {0.5f, 0.5f, 0.5f, 1.0f};
++  GLfloat resistor_pin_color[] = {0.55, 0.55, 0.55, 1.0};
++
++  /* Define the resistor body material */
++  model.resistor_body_mat = hidgl_material_new ("resistor_body");
++  hidgl_material_set_emission_color (model.resistor_body_mat, emission);
++  hidgl_material_set_specular_color (model.resistor_body_mat, specular);
++  hidgl_material_set_shininess (model.resistor_body_mat, 20.0f);
++  hidgl_material_set_shader (model.resistor_body_mat, resistor_program);
++
++  /* Define the resistor pin material */
++  model.resistor_pin_mat = hidgl_material_new ("resistor_pin");
++  hidgl_material_set_ambient_color (model.resistor_pin_mat, resistor_pin_color);
++  hidgl_material_set_diffuse_color (model.resistor_pin_mat, resistor_pin_color);
++  hidgl_material_set_emission_color (model.resistor_pin_mat, emission);
++  hidgl_material_set_specular_color (model.resistor_pin_mat, specular);
++  hidgl_material_set_shininess (model.resistor_pin_mat, 120.0f);
++
++  /* Load bump mapping textures */
++  glGenTextures (1, &model.resistor_body_bump_texture);
++  glBindTexture (GL_TEXTURE_2D, model.resistor_body_bump_texture);
++  load_texture_from_png ("resistor_bump.png", true);
++
++  glGenTextures (1, &model.zero_ohm_body_bump_texture);
++  glBindTexture (GL_TEXTURE_2D, model.zero_ohm_body_bump_texture);
++  load_texture_from_png ("zero_ohm_bump.png", true);
++
++  glBindTexture (GL_TEXTURE_2D, 0);
++}
+ 
+ #define NUM_RESISTOR_STRIPS 100
+ #define NUM_PIN_RINGS 15
+diff --git a/src/hid/common/hidgl_package_vrml_l.l b/src/hid/common/hidgl_package_vrml_l.l
+index b308527..eda9a78 100644
+--- a/src/hid/common/hidgl_package_vrml_l.l
++++ b/src/hid/common/hidgl_package_vrml_l.l
+@@ -158,7 +158,7 @@ creaseAngle		{ return T_crease_angle; }
+ normalIndex		{ return T_normal_index; }
+ normalPerVertex		{ return T_normal_per_vertex; }
+ solid			{ return T_solid; }
+-texCoord		{ return T_tex_coord_index; }
++texCoordIndex		{ return T_tex_coord_index; }
+ 
+ %{ /* Coordinate node and its field */ %}
+ Coordinate		{ return T_COORDINATE; }
