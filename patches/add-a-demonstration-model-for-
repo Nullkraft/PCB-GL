@@ -1,5 +1,5 @@
 Bottom: f27e2ae4b5a8136a4ed5617f33cbb6767184b124
-Top:    f93ceed4bc22c0daeedab5d713e104eab4234604
+Top:    f9be09829a239d5c2ed8a1a436419421cdd54231
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 00:32:30 +0000
 
@@ -513,7 +513,7 @@ index c6bc7de..3ad57e4 100644
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
 new file mode 100644
-index 0000000..e88b371
+index 0000000..f9746f1
 --- /dev/null
 +++ b/src/hid/common/hidgl_package_acy_resistor.c
 @@ -0,0 +1,997 @@
@@ -1186,9 +1186,9 @@ index 0000000..e88b371
 +  hidgl_shader_activate (resistor_program);
 +
 +  {
-+    GLuint sp = hidgl_shader_get_program (resistor_program);
-+    int tex0_location = glGetUniformLocation (sp, "detail_tex");
-+    int tex1_location = glGetUniformLocation (sp, "bump_tex");
++    GLuint program = hidgl_shader_get_program (resistor_program);
++    int tex0_location = glGetUniformLocation (program, "detail_tex");
++    int tex1_location = glGetUniformLocation (program, "bump_tex");
 +    glUniform1i (tex0_location, 0);
 +    glUniform1i (tex1_location, 1);
 +  }
