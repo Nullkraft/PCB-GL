@@ -22,12 +22,13 @@
 
 #ifndef __HIDGL_GEOMETRY_INCLUDED__
 #define __HIDGL_GEOMETRY_INCLUDED__
-typedef struct _hidgl_geometry hidgl_geometry;
 
-struct geometry_class {
-  void (*create) (void); /* How do we create a geometry without some concrete data? */
-  void (*draw) (void);   /* What assumptions are made about the GL state prior to calling this? */
-  void (*free) (void);   /* Clean up any internal state and delete */
+typedef struct _hidgl_geometry hidgl_geometry;
+typedef struct _hidgl_geometry_class hidgl_geometry_class;
+
+struct _geometry_class {
+  void (*draw) (hidgl_geometry *geometry);   /* What assumptions are made about the GL state prior to calling this? */
+  void (*free) (hidgl_geometry *geometry);   /* Clean up any internal state and delete */
 };
 
 /* Subclasses required / planned / thought of :
