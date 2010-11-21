@@ -1,5 +1,5 @@
 Bottom: 32325845fa7b53543fd32147e7c8a403ff5f13f9
-Top:    121e56a99e83160186986a5d93e2b407ee35e4ac
+Top:    a7bc9b53ebe256038ebc6f4dba9f9a96696cde65
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 00:32:30 +0000
 
@@ -513,7 +513,7 @@ index c6bc7de..3ad57e4 100644
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
 new file mode 100644
-index 0000000..17eb17c
+index 0000000..ee5799d
 --- /dev/null
 +++ b/src/hid/common/hidgl_package_acy_resistor.c
 @@ -0,0 +1,995 @@
@@ -1141,12 +1141,12 @@ index 0000000..17eb17c
 +  int ring;
 +  int no_rings = NUM_PIN_RINGS;
 +  int end;
-+  bool zero_ohms;
++  bool zero_ohm;
 +
 +  static bool first_run = true;
 +  static GLuint texture1;
 +  static GLuint texture2_resistor;
-+  static GLuint texture2_zero_ohms;
++  static GLuint texture2_zero_ohm;
 +
 +  GLuint restore_sp;
 +  extern GLuint sp2;
@@ -1195,7 +1195,7 @@ index 0000000..17eb17c
 +//  if (first_run) {
 +    glGenTextures (1, &texture1);
 +    glBindTexture (GL_TEXTURE_1D, texture1);
-+    zero_ohms = setup_resistor_texture (element, resistor_body_color);
++    zero_ohm = setup_resistor_texture (element, resistor_body_color);
 +//  } else {
 +//    glBindTexture (GL_TEXTURE_1D, texture1);
 +//  }
@@ -1211,12 +1211,12 @@ index 0000000..17eb17c
 +    glBindTexture (GL_TEXTURE_2D, texture2_resistor);
 +    load_texture_from_png ("resistor_bump.png", true);
 +
-+    glGenTextures (1, &texture2_zero_ohms);
-+    glBindTexture (GL_TEXTURE_2D, texture2_zero_ohms);
-+    load_texture_from_png ("zero_ohms_bump.png", true);
++    glGenTextures (1, &texture2_zero_ohm);
++    glBindTexture (GL_TEXTURE_2D, texture2_zero_ohm);
++    load_texture_from_png ("zero_ohm_bump.png", true);
 +  }
-+  if (zero_ohms)
-+    glBindTexture (GL_TEXTURE_2D, texture2_zero_ohms);
++  if (zero_ohm)
++    glBindTexture (GL_TEXTURE_2D, texture2_zero_ohm);
 +  else
 +    glBindTexture (GL_TEXTURE_2D, texture2_resistor);
 +
