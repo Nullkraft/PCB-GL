@@ -22,10 +22,43 @@
 
 #ifndef __HIDGL_GEOMETRY_INCLUDED__
 #define __HIDGL_GEOMETRY_INCLUDED__
+typedef struct _hidgl_geometry hidgl_geometry;
 
-#include "hidgl_shaders.h"
+struct geometry_class {
+  void create (void); /* How do we create a geometry without some concrete data? */
+  void draw (void);   /* What assumptions are made about the GL state prior to calling this? */
+  void free (void);   /* Clean up any internal state and delete */
+};
 
-typedef struct _hidgl_material hidgl_material;
+/* Subclasses required / planned / thought of :
+ *
+ * hidgl_tristrip_geometry
+ * hidgl_triangle_geometry
+ * hidgl_mesh_geometry (EXAMPLE)
+ * hidgl_brep_geometry (EXAMPLE)
+ */
+
+"tristrip_geometry and traiangle geometry probably share some common data-storage stuff?"
+"Should we do like VRML and keep data-definition separate from the defining geometry?"
+"Should we create a data-storage class for reading the meshes / vertex data into?"
+""
+
+Need something which looks a little like the following:
+
+Group / transform node
+  (Transform properties)
+  (Children)-+------------> Shape -+-> Appearance / material
+             |                     `-> Geometry
+             |------------> Shape -+-> Appearance / material
+             |                     `-> Geometry
+             |------------> Shape -+-> Appearance / material
+             |                     `-> Geometry
+             `---------> Transform
+                            (Children)-+---> Shape -+-> Appearance / material
+                                       |            `-> Geometry
+                                       `---> Shape -+-> Appearance / material
+                                                    `-> Geometry
+
 
 hidgl_geometry *hidgl_geometry_new (char *name);
 void hidgl_geometry_free (hidgl_geometry *geometry);

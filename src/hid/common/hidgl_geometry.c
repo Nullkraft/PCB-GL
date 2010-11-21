@@ -36,14 +36,14 @@
 #define GL_GLEXT_PROTOTYPES 1
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include "hidgl_material.h"
+#include "hidgl_geometry.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
 
 /* Opaque data-structure keeping a geometry object */
-struct _hidgl_material {
+struct _hidgl_geometry {
   char *name;
 
 };
