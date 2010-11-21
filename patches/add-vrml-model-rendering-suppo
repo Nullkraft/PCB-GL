@@ -1,5 +1,5 @@
 Bottom: 72f93b9a4465a764835944fc7e60f50c3793340c
-Top:    0d5872f2afb6d3593535b2d47f0c4906fc629e2d
+Top:    451c4b6897be5a902ce9231dcb3828fb319f1b64
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 05:07:13 +0000
 
@@ -128,10 +128,10 @@ index 0000000..7f775ea
 +}
 diff --git a/src/hid/common/hidgl_geometry.h b/src/hid/common/hidgl_geometry.h
 new file mode 100644
-index 0000000..cf8b60a
+index 0000000..92a722a
 --- /dev/null
 +++ b/src/hid/common/hidgl_geometry.h
-@@ -0,0 +1,67 @@
+@@ -0,0 +1,70 @@
 +/*
 + *                            COPYRIGHT
 + *
@@ -159,9 +159,9 @@ index 0000000..cf8b60a
 +typedef struct _hidgl_geometry hidgl_geometry;
 +
 +struct geometry_class {
-+  void create (void); /* How do we create a geometry without some concrete data? */
-+  void draw (void);   /* What assumptions are made about the GL state prior to calling this? */
-+  void free (void);   /* Clean up any internal state and delete */
++  void (*create) (void); /* How do we create a geometry without some concrete data? */
++  void (*draw) (void);   /* What assumptions are made about the GL state prior to calling this? */
++  void (*free) (void);   /* Clean up any internal state and delete */
 +};
 +
 +/* Subclasses required / planned / thought of :
@@ -172,11 +172,13 @@ index 0000000..cf8b60a
 + * hidgl_brep_geometry (EXAMPLE)
 + */
 +
++char *notes =
 +"tristrip_geometry and traiangle geometry probably share some common data-storage stuff?"
 +"Should we do like VRML and keep data-definition separate from the defining geometry?"
 +"Should we create a data-storage class for reading the meshes / vertex data into?"
-+""
++;
 +
++#if 0
 +Need something which looks a little like the following:
 +
 +Group / transform node
@@ -192,6 +194,7 @@ index 0000000..cf8b60a
 +                                       |            `-> Geometry
 +                                       `---> Shape -+-> Appearance / material
 +                                                    `-> Geometry
++#endif
 +
 +
 +hidgl_geometry *hidgl_geometry_new (char *name);
