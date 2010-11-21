@@ -23,6 +23,7 @@
 #ifndef __HIDGL_INCLUDED__
 #define __HIDGL_INCLUDED__
 
+#include "hidgl_matrix.h"
 #include "hidgl_shaders.h"
 
 #define TRIANGLE_ARRAY_SIZE 30000

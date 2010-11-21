@@ -189,6 +189,8 @@ GL_SRCS= \
 	hid/common/hidgl_geometry.h \
 	hid/common/hidgl_material.c \
 	hid/common/hidgl_material.h \
+	hid/common/hidgl_matrix.c \
+	hid/common/hidgl_matrix.h \
 	hid/common/hidgl_package_acy_resistor.c \
 	hid/common/hidgl_package_vrml.c \
 	hid/common/hidgl_package_vrml_y.y \
