@@ -66,7 +66,6 @@ struct _hidgl_material {
 };
 
 
-/* If either vs or fs is NULL, used the fixed function pipeline for that */
 hidgl_material *
 hidgl_material_new (char *name)
 {
