@@ -1,0 +1,26 @@
+Bottom: f93ceed4bc22c0daeedab5d713e104eab4234604
+Top:    f9be09829a239d5c2ed8a1a436419421cdd54231
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-11-21 21:14:30 +0000
+
+Refresh of add-a-demonstration-model-for-
+
+---
+
+diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
+index e88b371..f9746f1 100644
+--- a/src/hid/common/hidgl_package_acy_resistor.c
++++ b/src/hid/common/hidgl_package_acy_resistor.c
+@@ -667,9 +667,9 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+   hidgl_shader_activate (resistor_program);
+ 
+   {
+-    GLuint sp = hidgl_shader_get_program (resistor_program);
+-    int tex0_location = glGetUniformLocation (sp, "detail_tex");
+-    int tex1_location = glGetUniformLocation (sp, "bump_tex");
++    GLuint program = hidgl_shader_get_program (resistor_program);
++    int tex0_location = glGetUniformLocation (program, "detail_tex");
++    int tex1_location = glGetUniformLocation (program, "bump_tex");
+     glUniform1i (tex0_location, 0);
+     glUniform1i (tex1_location, 1);
+   }
