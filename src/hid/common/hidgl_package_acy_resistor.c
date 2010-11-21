@@ -648,17 +648,6 @@ body_geometry (float resistor_pin_spacing)
   hidgl_geometry *geometry = hidgl_tristrip_geometry_new ();
   int strip;
   int no_strips = NUM_RESISTOR_STRIPS;
-  int ring;
-  int no_rings = NUM_PIN_RINGS;
-  int end;
-  bool zero_ohm;
-
-  static bool first_run = true;
-  static GLuint texture1;
-  static GLuint texture2_resistor;
-  static GLuint texture2_zero_ohm;
-
-  GLuint restore_sp;
 
   /* XXX: Hard-coded magic */
   float resistor_pin_radius = 12. * MIL_TO_INTERNAL;
@@ -675,85 +664,6 @@ body_geometry (float resistor_pin_spacing)
   float resistor_pin_bend_radius = resistor_bulge_radius;
   float resistor_width = resistor_pin_spacing - 2. * resistor_pin_bend_radius;
 
-  center_x = (element->Pin[0].X + element->Pin[1].X) / 2.;
-  center_y = (element->Pin[0].Y + element->Pin[1].Y) / 2.;
-  angle = atan2f (element->Pin[1].Y - element->Pin[0].Y,
-                  element->Pin[1].X - element->Pin[0].X);
-
-  /* TRANSFORM MATRIX */
-  glPushMatrix ();
-  glTranslatef (center_x, center_y, surface_depth + resistor_pin_bend_radius);
-  glRotatef (angle * 180. / M_PI + 90, 0., 0., 1.);
-  glRotatef (90, 1., 0., 0.);
-
-  /* TEXTURE SETUP */
-  glGetIntegerv (GL_CURRENT_PROGRAM, (GLint*)&restore_sp);
-  hidgl_shader_activate (resistor_program);
-
-  {
-    GLuint program = hidgl_shader_get_program (resistor_program);
-    int tex0_location = glGetUniformLocation (program, "detail_tex");
-    int tex1_location = glGetUniformLocation (program, "bump_tex");
-    glUniform1i (tex0_location, 0);
-    glUniform1i (tex1_location, 1);
-  }
-
-  glActiveTextureARB (GL_TEXTURE0_ARB);
-//  if (first_run) {
-    glGenTextures (1, &texture1);
-    glBindTexture (GL_TEXTURE_1D, texture1);
-    zero_ohm = setup_resistor_texture (element, resistor_body_color);
-//  } else {
-//    glBindTexture (GL_TEXTURE_1D, texture1);
-//  }
-  glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-  glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-  glEnable (GL_TEXTURE_1D);
-
-  glActiveTextureARB (GL_TEXTURE1_ARB);
-  if (first_run) {
-    glGenTextures (1, &texture2_resistor);
-    glBindTexture (GL_TEXTURE_2D, texture2_resistor);
-    load_texture_from_png ("resistor_bump.png", true);
-
-    glGenTextures (1, &texture2_zero_ohm);
-    glBindTexture (GL_TEXTURE_2D, texture2_zero_ohm);
-    load_texture_from_png ("zero_ohm_bump.png", true);
-  }
-  if (zero_ohm)
-    glBindTexture (GL_TEXTURE_2D, texture2_zero_ohm);
-  else
-    glBindTexture (GL_TEXTURE_2D, texture2_resistor);
-
-  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-  glEnable (GL_TEXTURE_2D);
-  glActiveTextureARB (GL_TEXTURE0_ARB);
-
-  /* COLOR / MATERIAL SETUP */
-//  glColorMaterial (GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-//  glEnable (GL_COLOR_MATERIAL);
-
-  glPushAttrib (GL_CURRENT_BIT);
-//  glColor4f (1., 1., 1., 1.);
-  glColor4f (0., 0., 1., 0.);
-
-  glDisable (GL_LIGHTING);
-
-  if (1) {
-    GLfloat emission[] = {0.0f, 0.0f, 0.0f, 1.0f};
-    GLfloat specular[] = {0.5f, 0.5f, 0.5f, 1.0f};
-    GLfloat shininess = 20.;
-    glMaterialfv (GL_FRONT_AND_BACK, GL_EMISSION, emission);
-    glMaterialfv (GL_FRONT_AND_BACK, GL_SPECULAR, specular);
-    glMaterialfv (GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
-  }
-
-#if 1
   glBegin (GL_TRIANGLE_STRIP);
 
   for (strip = 0; strip < no_strips; strip++) {
@@ -985,6 +895,10 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
   bool zero_ohm;
   static GLuint texture1;
   GLuint restore_sp;
+
+  /* XXX: Hard-coded magic */
+  float resistor_bulge_radius = 43. * MIL_TO_INTERNAL;
+  float resistor_pin_bend_radius = resistor_bulge_radius;
 
   center_x = (element->Pin[0].X + element->Pin[1].X) / 2.;
   center_y = (element->Pin[0].Y + element->Pin[1].Y) / 2.;
