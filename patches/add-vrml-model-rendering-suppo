@@ -1,5 +1,5 @@
 Bottom: f9be09829a239d5c2ed8a1a436419421cdd54231
-Top:    c2026836a73d21e64883808f0ee1dd464cfd8f94
+Top:    a013172680e0c2236db3a39cb38e04ea25e72fe8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 05:07:13 +0000
 
@@ -66,10 +66,10 @@ index 3ad57e4..10005e8 100644
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/common/hidgl_geometry.c b/src/hid/common/hidgl_geometry.c
 new file mode 100644
-index 0000000..7f775ea
+index 0000000..610a2f2
 --- /dev/null
 +++ b/src/hid/common/hidgl_geometry.c
-@@ -0,0 +1,81 @@
+@@ -0,0 +1,89 @@
 +/*
 + *                            COPYRIGHT
 + *
@@ -118,6 +118,7 @@ index 0000000..7f775ea
 +struct _hidgl_geometry {
 +  char *name;
 +
++  hidgl_geometry_class *klass;
 +};
 +
 +
@@ -132,6 +133,7 @@ index 0000000..7f775ea
 +    return NULL;
 +
 +  geometry->name = strdup (name);
++  geometry->klass = NULL; /* To be filled in by the subclass */
 +
 +  return geometry;
 +}
@@ -141,6 +143,9 @@ index 0000000..7f775ea
 +void
 +hidgl_geometry_free (hidgl_geometry *geometry)
 +{
++  if (geometry->class != NULL)
++    geometry->class->free (geometry);
++
 +  free (geometry->name);
 +  free (geometry);
 +}
@@ -150,6 +155,9 @@ index 0000000..7f775ea
 +void
 +hidgl_geometry_draw (hidgl_geometry *geometry)
 +{
++  g_return_if_fail (geometry->klass != NULL);
++
++  geometry->klass->draw (geometry);
 +}
 diff --git a/src/hid/common/hidgl_geometry.h b/src/hid/common/hidgl_geometry.h
 new file mode 100644
