@@ -38,13 +38,11 @@ struct geometry_class {
  * hidgl_brep_geometry (EXAMPLE)
  */
 
-char *notes =
-"tristrip_geometry and traiangle geometry probably share some common data-storage stuff?"
-"Should we do like VRML and keep data-definition separate from the defining geometry?"
-"Should we create a data-storage class for reading the meshes / vertex data into?"
-;
-
 #if 0
+tristrip_geometry and traiangle geometry probably share some common data-storage stuff?
+Should we do like VRML and keep data-definition separate from the defining geometry?
+Should we create a data-storage class for reading the meshes / vertex data into?
+
 Need something which looks a little like the following:
 
 Group / transform node
