@@ -1,5 +1,5 @@
 Bottom: 8b7c6ff67864229e7b70ce37dbc5115db6909e7a
-Top:    4a7dab2b01b7aaaed4b23c5e3e3713745e6e7124
+Top:    8b615ed183c15b7cbb0a58b9a6872be5e52cefc6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-10-24 19:02:53 +0100
 
@@ -1206,7 +1206,7 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 21cc13a..e5cbc4a 100644
+index 21cc13a..36727d0 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -32,6 +32,8 @@
@@ -1293,7 +1293,7 @@ index 21cc13a..e5cbc4a 100644
  }
  
  struct cyl_info {
-@@ -1788,15 +1796,22 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1788,16 +1796,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               GdkEventExpose *ev,
                               GHidPort *port)
  {
@@ -1308,26 +1308,14 @@ index 21cc13a..e5cbc4a 100644
    int new_x, new_y;
    int min_depth;
    int max_depth;
-+  static float wavetime = 0;
-+  extern GLuint sp;
-+  GLint waveTimeLoc = glGetUniformLocation (sp, "waveTime");
-+
+ 
 +  buffer.total_triangles = 0;
 +  buffer.total_vertices = 0;
- 
++
    ghid_start_drawing (port);
  
-@@ -1804,6 +1819,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-   hidgl_init ();
-   check_gl_drawing_ok_hack = true;
- 
-+  wavetime += 0.1;
-+  glUniform1f (waveTimeLoc, wavetime);
-+
-   /* If we don't have any stencil bits available,
-      we can't use the hidgl polygon drawing routine */
-   /* TODO: We could use the GLU tessellator though */
-@@ -1843,7 +1861,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   hidgl_in_context (true);
+@@ -1843,7 +1855,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_y0, 0);
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
@@ -1336,7 +1324,7 @@ index 21cc13a..e5cbc4a 100644
    if (one_shot) {
  
      display_list = glGenLists(1);
-@@ -1969,7 +1987,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1969,7 +1981,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      glEnd ();
    }
  
@@ -1344,7 +1332,7 @@ index 21cc13a..e5cbc4a 100644
    // hid_expose_callback (&ghid_hid, &region, 0);
    ghid_draw_everything (&region);
    hidgl_flush_triangles (&buffer);
-@@ -1979,29 +1996,31 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1979,29 +1990,31 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_set_depth (compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT)));
    ghid_draw_grid (&region);
  
@@ -1381,7 +1369,7 @@ index 21cc13a..e5cbc4a 100644
    return FALSE;
  }
  
-@@ -2091,7 +2110,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2091,7 +2104,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
