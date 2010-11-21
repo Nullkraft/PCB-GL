@@ -1,0 +1,52 @@
+Bottom: 02c431ea610f05b72e9a3e2c4a64783b75b42a5b
+Top:    b97cb90e47451f1bfe1f26fdb0cdc44ec553aadc
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-11-21 23:28:52 +0000
+
+Refresh of add-vrml-model-rendering-suppo
+
+---
+
+diff --git a/src/hid/common/hidgl_geometry.c b/src/hid/common/hidgl_geometry.c
+index 610a2f2..9fdcf1f 100644
+--- a/src/hid/common/hidgl_geometry.c
++++ b/src/hid/common/hidgl_geometry.c
+@@ -71,8 +71,8 @@ hidgl_geometry_new (char *name)
+ void
+ hidgl_geometry_free (hidgl_geometry *geometry)
+ {
+-  if (geometry->class != NULL)
+-    geometry->class->free (geometry);
++  if (geometry->klass != NULL)
++    geometry->klass->free (geometry);
+ 
+   free (geometry->name);
+   free (geometry);
+@@ -83,7 +83,6 @@ hidgl_geometry_free (hidgl_geometry *geometry)
+ void
+ hidgl_geometry_draw (hidgl_geometry *geometry)
+ {
+-  g_return_if_fail (geometry->klass != NULL);
+-
+-  geometry->klass->draw (geometry);
++  if (geometry->klass != NULL)
++    geometry->klass->draw (geometry);
+ }
+diff --git a/src/hid/common/hidgl_geometry.h b/src/hid/common/hidgl_geometry.h
+index 4b392e7..3c603b3 100644
+--- a/src/hid/common/hidgl_geometry.h
++++ b/src/hid/common/hidgl_geometry.h
+@@ -23,10 +23,10 @@
+ #ifndef __HIDGL_GEOMETRY_INCLUDED__
+ #define __HIDGL_GEOMETRY_INCLUDED__
+ 
+-typedef struct _hidgl_geometry hidgl_geometry;
+-typedef struct _hidgl_geometry_class hidgl_geometry_class;
++typedef struct _hidgl_geometry        hidgl_geometry;
++typedef struct _hidgl_geometry_class  hidgl_geometry_class;
+ 
+-struct _geometry_class {
++struct _hidgl_geometry_class {
+   void (*draw) (hidgl_geometry *geometry);   /* What assumptions are made about the GL state prior to calling this? */
+   void (*free) (hidgl_geometry *geometry);   /* Clean up any internal state and delete */
+ };
