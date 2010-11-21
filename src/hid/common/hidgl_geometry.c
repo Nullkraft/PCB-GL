@@ -46,6 +46,7 @@
 struct _hidgl_geometry {
   char *name;
 
+  hidgl_geometry_class *klass;
 };
 
 
@@ -60,6 +61,7 @@ hidgl_geometry_new (char *name)
     return NULL;
 
   geometry->name = strdup (name);
+  geometry->klass = NULL; /* To be filled in by the subclass */
 
   return geometry;
 }
@@ -69,6 +71,9 @@ hidgl_geometry_new (char *name)
 void
 hidgl_geometry_free (hidgl_geometry *geometry)
 {
+  if (geometry->class != NULL)
+    geometry->class->free (geometry);
+
   free (geometry->name);
   free (geometry);
 }
@@ -78,4 +83,7 @@ hidgl_geometry_free (hidgl_geometry *geometry)
 void
 hidgl_geometry_draw (hidgl_geometry *geometry)
 {
+  g_return_if_fail (geometry->klass != NULL);
+
+  geometry->klass->draw (geometry);
 }
