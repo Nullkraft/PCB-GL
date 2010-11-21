@@ -667,9 +667,9 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
   hidgl_shader_activate (resistor_program);
 
   {
-    GLuint sp = hidgl_shader_get_program (resistor_program);
-    int tex0_location = glGetUniformLocation (sp, "detail_tex");
-    int tex1_location = glGetUniformLocation (sp, "bump_tex");
+    GLuint program = hidgl_shader_get_program (resistor_program);
+    int tex0_location = glGetUniformLocation (program, "detail_tex");
+    int tex1_location = glGetUniformLocation (program, "bump_tex");
     glUniform1i (tex0_location, 0);
     glUniform1i (tex1_location, 1);
   }
