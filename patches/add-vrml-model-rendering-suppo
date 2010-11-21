@@ -1,5 +1,5 @@
 Bottom: a7bc9b53ebe256038ebc6f4dba9f9a96696cde65
-Top:    6ac25bb02b8a060db06e33a45f98fbb7ab5d1d76
+Top:    0a7f7995823924c2a42f3c5b64c273d4cfe3d331
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 05:07:13 +0000
 
@@ -538,10 +538,10 @@ index 0000000..79638f4
 +
 +#endif /* __HIDGL_MATERIAL_INCLUDED__  */
 diff --git a/src/hid/common/hidgl_package_acy_resistor.c b/src/hid/common/hidgl_package_acy_resistor.c
-index ee5799d..50f966b 100644
+index ee5799d..7e6e664 100644
 --- a/src/hid/common/hidgl_package_acy_resistor.c
 +++ b/src/hid/common/hidgl_package_acy_resistor.c
-@@ -19,10 +19,69 @@
+@@ -19,10 +19,35 @@
  #define GL_GLEXT_PROTOTYPES 1
  #include <GL/gl.h>
  
@@ -570,10 +570,17 @@ index ee5799d..50f966b 100644
 +    .resistor_pin_selected_mat = NULL,
 +    .resistor_body_geom = NULL,
 +    .resistor_pin_geom = NULL,
-+    .resistor_body_bump_texture = 0;
-+    .zero_ohm_body_bump_texture = 0;
++    .resistor_body_bump_texture = 0,
++    .zero_ohm_body_bump_texture = 0
 +};
 +
+ static int
+ compute_offset (int x, int y, int width, int height)
+ {
+@@ -600,6 +625,39 @@ emit_pair (float ang_edge1, float cos_edge1, float sin_edge1,
+                  tex0_s, ang_edge2 / 2. / M_PI, tex0_s);
+ }
+ 
 +void
 +hidgl_init_acy_resistor (void)
 +{
@@ -601,17 +608,16 @@ index ee5799d..50f966b 100644
 +  glBindTexture (GL_TEXTURE_2D, model.resistor_body_bump_texture);
 +  load_texture_from_png ("resistor_bump.png", true);
 +
-+  glGenTextures (1, &model.resistor_body_bump_texture);
++  glGenTextures (1, &model.zero_ohm_body_bump_texture);
 +  glBindTexture (GL_TEXTURE_2D, model.zero_ohm_body_bump_texture);
 +  load_texture_from_png ("zero_ohm_bump.png", true);
 +
 +  glBindTexture (GL_TEXTURE_2D, 0);
 +}
-+
- static int
- compute_offset (int x, int y, int width, int height)
- {
-@@ -614,8 +673,7 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+ 
+ #define NUM_RESISTOR_STRIPS 100
+ #define NUM_PIN_RINGS 15
+@@ -614,8 +672,7 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
  
    float center_x, center_y;
    float angle;
@@ -621,7 +627,7 @@ index ee5799d..50f966b 100644
  
    int strip;
    int no_strips = NUM_RESISTOR_STRIPS;
-@@ -626,11 +684,8 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -626,11 +683,8 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
  
    static bool first_run = true;
    static GLuint texture1;
@@ -633,7 +639,7 @@ index ee5799d..50f966b 100644
  
    /* XXX: Hard-coded magic */
    float resistor_pin_radius = 12. * MIL_TO_INTERNAL;
-@@ -663,23 +718,21 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -663,23 +717,21 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
  
    /* TEXTURE SETUP */
    glGetIntegerv (GL_CURRENT_PROGRAM, (GLint*)&restore_sp);
@@ -665,7 +671,7 @@ index ee5799d..50f966b 100644
    glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
    glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
    glTexParameterf (GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-@@ -687,19 +740,10 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -687,19 +739,10 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
    glEnable (GL_TEXTURE_1D);
  
    glActiveTextureARB (GL_TEXTURE1_ARB);
@@ -687,7 +693,7 @@ index ee5799d..50f966b 100644
  
    glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
    glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-@@ -718,14 +762,7 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -718,14 +761,7 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
  
    glDisable (GL_LIGHTING);
  
@@ -703,7 +709,7 @@ index ee5799d..50f966b 100644
  
  #if 1
    glBegin (GL_TRIANGLE_STRIP);
-@@ -797,23 +834,8 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
+@@ -797,23 +833,8 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
  
    glEnable (GL_LIGHTING);
  
@@ -1176,7 +1182,7 @@ index 0000000..5ae16ad
 +}
 diff --git a/src/hid/common/hidgl_package_vrml_l.l b/src/hid/common/hidgl_package_vrml_l.l
 new file mode 100644
-index 0000000..b308527
+index 0000000..eda9a78
 --- /dev/null
 +++ b/src/hid/common/hidgl_package_vrml_l.l
 @@ -0,0 +1,276 @@
@@ -1340,7 +1346,7 @@ index 0000000..b308527
 +normalIndex		{ return T_normal_index; }
 +normalPerVertex		{ return T_normal_per_vertex; }
 +solid			{ return T_solid; }
-+texCoord		{ return T_tex_coord_index; }
++texCoordIndex		{ return T_tex_coord_index; }
 +
 +%{ /* Coordinate node and its field */ %}
 +Coordinate		{ return T_COORDINATE; }
