@@ -25,9 +25,9 @@
 typedef struct _hidgl_geometry hidgl_geometry;
 
 struct geometry_class {
-  void create (void); /* How do we create a geometry without some concrete data? */
-  void draw (void);   /* What assumptions are made about the GL state prior to calling this? */
-  void free (void);   /* Clean up any internal state and delete */
+  void (*create) (void); /* How do we create a geometry without some concrete data? */
+  void (*draw) (void);   /* What assumptions are made about the GL state prior to calling this? */
+  void (*free) (void);   /* Clean up any internal state and delete */
 };
 
 /* Subclasses required / planned / thought of :
@@ -38,11 +38,13 @@ struct geometry_class {
  * hidgl_brep_geometry (EXAMPLE)
  */
 
+char *notes =
 "tristrip_geometry and traiangle geometry probably share some common data-storage stuff?"
 "Should we do like VRML and keep data-definition separate from the defining geometry?"
 "Should we create a data-storage class for reading the meshes / vertex data into?"
-""
+;
 
+#if 0
 Need something which looks a little like the following:
 
 Group / transform node
@@ -58,6 +60,7 @@ Group / transform node
                                        |            `-> Geometry
                                        `---> Shape -+-> Appearance / material
                                                     `-> Geometry
+#endif
 
 
 hidgl_geometry *hidgl_geometry_new (char *name);
