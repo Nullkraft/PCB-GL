@@ -622,12 +622,12 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
   int ring;
   int no_rings = NUM_PIN_RINGS;
   int end;
-  bool zero_ohms;
+  bool zero_ohm;
 
   static bool first_run = true;
   static GLuint texture1;
   static GLuint texture2_resistor;
-  static GLuint texture2_zero_ohms;
+  static GLuint texture2_zero_ohm;
 
   GLuint restore_sp;
   extern GLuint sp2;
@@ -676,7 +676,7 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
 //  if (first_run) {
     glGenTextures (1, &texture1);
     glBindTexture (GL_TEXTURE_1D, texture1);
-    zero_ohms = setup_resistor_texture (element, resistor_body_color);
+    zero_ohm = setup_resistor_texture (element, resistor_body_color);
 //  } else {
 //    glBindTexture (GL_TEXTURE_1D, texture1);
 //  }
@@ -692,12 +692,12 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
     glBindTexture (GL_TEXTURE_2D, texture2_resistor);
     load_texture_from_png ("resistor_bump.png", true);
 
-    glGenTextures (1, &texture2_zero_ohms);
-    glBindTexture (GL_TEXTURE_2D, texture2_zero_ohms);
-    load_texture_from_png ("zero_ohms_bump.png", true);
+    glGenTextures (1, &texture2_zero_ohm);
+    glBindTexture (GL_TEXTURE_2D, texture2_zero_ohm);
+    load_texture_from_png ("zero_ohm_bump.png", true);
   }
-  if (zero_ohms)
-    glBindTexture (GL_TEXTURE_2D, texture2_zero_ohms);
+  if (zero_ohm)
+    glBindTexture (GL_TEXTURE_2D, texture2_zero_ohm);
   else
     glBindTexture (GL_TEXTURE_2D, texture2_resistor);
 
