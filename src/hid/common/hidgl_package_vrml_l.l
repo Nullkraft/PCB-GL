@@ -158,7 +158,7 @@ creaseAngle		{ return T_crease_angle; }
 normalIndex		{ return T_normal_index; }
 normalPerVertex		{ return T_normal_per_vertex; }
 solid			{ return T_solid; }
-texCoord		{ return T_tex_coord_index; }
+texCoordIndex		{ return T_tex_coord_index; }
 
 %{ /* Coordinate node and its field */ %}
 Coordinate		{ return T_COORDINATE; }
