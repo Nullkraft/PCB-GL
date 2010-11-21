@@ -1,5 +1,5 @@
 Bottom: 72f93b9a4465a764835944fc7e60f50c3793340c
-Top:    00ad0524f7341b2347d1f9562ce879d830490c09
+Top:    976a2828c389f5dc01ab86fca3d303547c33e8a1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 05:07:13 +0000
 
@@ -41,10 +41,10 @@ index 3ad57e4..834f606 100644
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/common/hidgl_material.c b/src/hid/common/hidgl_material.c
 new file mode 100644
-index 0000000..766ae8d
+index 0000000..7709a44
 --- /dev/null
 +++ b/src/hid/common/hidgl_material.c
-@@ -0,0 +1,253 @@
+@@ -0,0 +1,252 @@
 +/*
 + *                            COPYRIGHT
 + *
@@ -113,7 +113,6 @@ index 0000000..766ae8d
 +};
 +
 +
-+/* If either vs or fs is NULL, used the fixed function pipeline for that */
 +hidgl_material *
 +hidgl_material_new (char *name)
 +{
