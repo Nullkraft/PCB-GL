@@ -19,6 +19,8 @@
 #define GL_GLEXT_PROTOTYPES 1
 #include <GL/gl.h>
 
+#include "hidgl.h"
+
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
@@ -630,7 +632,6 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
   static GLuint texture2_zero_ohm;
 
   GLuint restore_sp;
-  extern GLuint sp2;
 
   /* XXX: Hard-coded magic */
   float resistor_pin_radius = 12. * MIL_TO_INTERNAL;
@@ -663,11 +664,12 @@ hidgl_draw_acy_resistor (ElementType *element, float surface_depth, float board_
 
   /* TEXTURE SETUP */
   glGetIntegerv (GL_CURRENT_PROGRAM, (GLint*)&restore_sp);
-  glUseProgram (sp2);
+  hidgl_shader_activate (resistor_program);
 
   {
-    int tex0_location = glGetUniformLocation (sp2, "detail_tex");
-    int tex1_location = glGetUniformLocation (sp2, "bump_tex");
+    GLuint sp = hidgl_shader_get_program (resistor_program);
+    int tex0_location = glGetUniformLocation (sp, "detail_tex");
+    int tex1_location = glGetUniformLocation (sp, "bump_tex");
     glUniform1i (tex0_location, 0);
     glUniform1i (tex1_location, 1);
   }

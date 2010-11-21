@@ -1429,7 +1429,6 @@ DrawMask (BoxType * screen)
 {
   static bool first_run = true;
   static GLuint texture;
-  extern GLuint sp;
 
   struct pin_info info;
   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
@@ -1509,7 +1508,7 @@ DrawMask (BoxType * screen)
   glDisable (GL_TEXTURE_GEN_T);
   glBindTexture (GL_TEXTURE_2D, 0);
   glDisable (GL_TEXTURE_2D);
-  glUseProgram (sp);
+  hidgl_shader_activate (circular_program);
 
   gui->use_mask (HID_MASK_OFF);
 
