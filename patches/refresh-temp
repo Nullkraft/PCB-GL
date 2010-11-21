@@ -1,0 +1,31 @@
+Bottom: a013172680e0c2236db3a39cb38e04ea25e72fe8
+Top:    02c431ea610f05b72e9a3e2c4a64783b75b42a5b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-11-21 22:46:03 +0000
+
+Refresh of add-vrml-model-rendering-suppo
+
+---
+
+diff --git a/src/hid/common/hidgl_geometry.h b/src/hid/common/hidgl_geometry.h
+index 2658e1e..4b392e7 100644
+--- a/src/hid/common/hidgl_geometry.h
++++ b/src/hid/common/hidgl_geometry.h
+@@ -22,12 +22,13 @@
+ 
+ #ifndef __HIDGL_GEOMETRY_INCLUDED__
+ #define __HIDGL_GEOMETRY_INCLUDED__
++
+ typedef struct _hidgl_geometry hidgl_geometry;
++typedef struct _hidgl_geometry_class hidgl_geometry_class;
+ 
+-struct geometry_class {
+-  void (*create) (void); /* How do we create a geometry without some concrete data? */
+-  void (*draw) (void);   /* What assumptions are made about the GL state prior to calling this? */
+-  void (*free) (void);   /* Clean up any internal state and delete */
++struct _geometry_class {
++  void (*draw) (hidgl_geometry *geometry);   /* What assumptions are made about the GL state prior to calling this? */
++  void (*free) (hidgl_geometry *geometry);   /* Clean up any internal state and delete */
+ };
+ 
+ /* Subclasses required / planned / thought of :
