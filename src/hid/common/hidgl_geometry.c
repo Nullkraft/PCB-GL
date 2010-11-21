@@ -71,8 +71,8 @@ hidgl_geometry_new (char *name)
 void
 hidgl_geometry_free (hidgl_geometry *geometry)
 {
-  if (geometry->class != NULL)
-    geometry->class->free (geometry);
+  if (geometry->klass != NULL)
+    geometry->klass->free (geometry);
 
   free (geometry->name);
   free (geometry);
@@ -83,7 +83,6 @@ hidgl_geometry_free (hidgl_geometry *geometry)
 void
 hidgl_geometry_draw (hidgl_geometry *geometry)
 {
-  g_return_if_fail (geometry->klass != NULL);
-
-  geometry->klass->draw (geometry);
+  if (geometry->klass != NULL)
+    geometry->klass->draw (geometry);
 }
