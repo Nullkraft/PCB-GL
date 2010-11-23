@@ -138,6 +138,8 @@ char * GetInfoString (void);
    comparing two similar footprints.  */
 int ElementOrientation (ElementType *e);
 
+bool is_layer_mechanical (LayerType *layer);
+
 /* These are in netlist.c */
 
 void NetlistChanged (int force_unfreeze);
