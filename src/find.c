@@ -728,11 +728,10 @@ LookupLOConnectionsToPVList (int flag, bool AndRats)
         {
           LayerType *layer = LAYER_PTR (layer_no);
 
-          if (layer->no_drc)
-             continue;
+          if (layer->no_drc || is_layer_mechanical (layer))
+            continue;
 
           info.layer = layer_no;
-
           /* add touching lines */
           if (setjmp (info.env) == 0)
             r_search (layer->line_tree, &search_box,
@@ -3635,6 +3634,9 @@ DRCAll (void)
     {
       COPPERLINE_LOOP (PCB->Data);
       {
+        if (is_layer_mechanical (layer))
+          continue;
+
         /* check line clearances in polygons */
         if (PlowsPolygon (PCB->Data, LINE_TYPE, layer, line, drc_callback, &info))
           {
@@ -3680,6 +3682,8 @@ DRCAll (void)
     {
       COPPERARC_LOOP (PCB->Data);
       {
+        if (is_layer_mechanical (layer))
+          continue;
         if (PlowsPolygon (PCB->Data, ARC_TYPE, layer, arc, drc_callback, &info))
           {
             IsBad = true;
