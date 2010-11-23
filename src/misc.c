@@ -2419,6 +2419,14 @@ ElementOrientation (ElementType *e)
   return dy > 0 ? 3 : 1;
 }
 
+bool is_layer_mechanical (LayerType *layer)
+{
+  if (strcmp (layer->Name, "outline") == 0 ||
+      strcmp (layer->Name, "route") == 0)
+    return true;
+  return false;
+}
+
 int
 ActionListRotations(int argc, char **argv, Coord x, Coord y)
 {
