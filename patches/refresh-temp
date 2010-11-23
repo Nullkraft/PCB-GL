@@ -1,0 +1,74 @@
+Bottom: f27e2ae4b5a8136a4ed5617f33cbb6767184b124
+Top:    da35c00a562a9834e882fd977b8de108f612a1a2
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-11-23 15:53:06 +0000
+
+Refresh of disable-drc-checks-on-outline-
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index c478f7f..efd3ebf 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -826,6 +826,9 @@ LookupLOConnectionsToPVList (bool AndRats)
+       /* now all lines, arcs and polygons of the several layers */
+       for (layer = 0; layer < max_copper_layer; layer++)
+         {
++          if (is_layer_mechanical (LAYER_PTR (layer)))
++            continue;
++
+           info.layer = layer;
+           /* add touching lines */
+           if (setjmp (info.env) == 0)
+@@ -3994,6 +3997,9 @@ DRCAll (void)
+     {
+       COPPERLINE_LOOP (PCB->Data);
+       {
++        if (is_layer_mechanical (layer))
++          continue;
++
+         /* check line clearances in polygons */
+         PlowsPolygon (PCB->Data, LINE_TYPE, layer, line, drc_callback);
+         if (IsBad)
+@@ -4039,6 +4045,8 @@ DRCAll (void)
+     {
+       COPPERARC_LOOP (PCB->Data);
+       {
++        if (is_layer_mechanical (layer))
++          continue;
+         PlowsPolygon (PCB->Data, ARC_TYPE, layer, arc, drc_callback);
+         if (IsBad)
+           break;
+diff --git a/src/misc.c b/src/misc.c
+index faeefa8..86866b2 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -2214,6 +2214,14 @@ ElementOrientation (ElementType *e)
+   return dy > 0 ? 3 : 1;
+ }
+ 
++bool is_layer_mechanical (LayerType *layer)
++{
++  if (strcmp (layer->Name, "outline") == 0 ||
++      strcmp (layer->Name, "route") == 0)
++    return true;
++  return false;
++}
++
+ int
+ ActionListRotations(int argc, char **argv, int x, int y)
+ {
+diff --git a/src/misc.h b/src/misc.h
+index bb88a21..b11db0b 100644
+--- a/src/misc.h
++++ b/src/misc.h
+@@ -123,6 +123,8 @@ char * GetInfoString (void);
+    comparing two similar footprints.  */
+ int ElementOrientation (ElementType *e);
+ 
++bool is_layer_mechanical (LayerType *layer);
++
+ /* These are in netlist.c */
+ 
+ void NetlistChanged (int force_unfreeze);
