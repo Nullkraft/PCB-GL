@@ -826,6 +826,9 @@ LookupLOConnectionsToPVList (bool AndRats)
       /* now all lines, arcs and polygons of the several layers */
       for (layer = 0; layer < max_copper_layer; layer++)
         {
+          if (is_layer_mechanical (LAYER_PTR (layer)))
+            continue;
+
           info.layer = layer;
           /* add touching lines */
           if (setjmp (info.env) == 0)
@@ -3994,6 +3997,9 @@ DRCAll (void)
     {
       COPPERLINE_LOOP (PCB->Data);
       {
+        if (is_layer_mechanical (layer))
+          continue;
+
         /* check line clearances in polygons */
         PlowsPolygon (PCB->Data, LINE_TYPE, layer, line, drc_callback);
         if (IsBad)
@@ -4039,6 +4045,8 @@ DRCAll (void)
     {
       COPPERARC_LOOP (PCB->Data);
       {
+        if (is_layer_mechanical (layer))
+          continue;
         PlowsPolygon (PCB->Data, ARC_TYPE, layer, arc, drc_callback);
         if (IsBad)
           break;
