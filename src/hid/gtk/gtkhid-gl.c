@@ -1012,6 +1012,13 @@ ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
                                 NULL,
                                 TRUE,
                                 GDK_GL_RGBA_TYPE);
+
+  /* HACK TEST */
+  gtk_widget_realize (widget);
+  gdk_window_set_back_pixmap (widget->window, NULL, FALSE);
+
+  /* HACK TEST 2 */
+  gtk_widget_set_double_buffered (widget, FALSE);
 }
 
 void
@@ -1818,6 +1825,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   ghid_start_drawing (port);
 
+/* TEMP */
+  glClearColor (1., 0., 0., 1.);
+  glClear (GL_COLOR_BUFFER_BIT);
+/* TEMP */
+#if 0
+
   hidgl_in_context (true);
   hidgl_init ();
   check_gl_drawing_ok_hack = true;
@@ -2035,14 +2048,22 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   }
 #endif
 
+  {
+    float save_zoom = gport->zoom;
+  /* HACK, FIX GEOMETRY LOD */
+  gport->zoom = 1643;
+
   // hid_expose_callback (&ghid_hid, &region, 0);
-  ghid_draw_everything (&region);
-  hidgl_flush_triangles (&buffer);
+  //ghid_draw_everything (&region);
+  //hidgl_flush_triangles (&buffer);
+
+  gport->zoom = save_zoom;
+  }
 
   /* Just prod the drawing code so the current depth gets set to
      the right value for the layer we are editing */
   hidgl_set_depth (compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT)));
-  ghid_draw_grid (&region);
+//  ghid_draw_grid (&region);
 
   ghid_invalidate_current_gc ();
   DrawAttached (TRUE);
@@ -2064,6 +2085,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   check_gl_drawing_ok_hack = false;
   hidgl_in_context (false);
+
+#endif
   ghid_end_drawing (port);
 
 //  printf ("Triangle count was %i\n", buffer.total_triangles);
