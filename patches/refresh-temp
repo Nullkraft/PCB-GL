@@ -1,0 +1,102 @@
+Bottom: 4d4e6e8057602f470890f8a43d424451ed8b9630
+Top:    b018f9e8fc1664b91954437424587d8187d1a10c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-11-24 03:11:19 +0000
+
+Refresh of major-stencil-rework
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 262d3e1..32002c2 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -884,6 +884,8 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+     /* Save the stencil setup */
+     glPushAttrib (GL_STENCIL_BUFFER_BIT);
+ 
++#if 0
++
+     /*   ___________________________________________________
+      *  |   __________                                      |
+      *  |  |          |                             < n     |
+@@ -971,6 +973,79 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+      *
+      * DONE (just cleanup left)
+      */
++#else
++
++    /*   ___________________________________________________
++     *  |   __________                                      |
++     *  |  |          |                             < n     |
++     *  |  | n        |                                     |
++     *  |  |      ....|....                                 |
++     *  |  |      : n |< n:                                 |
++     *  |  |______:___|   :                                 |
++     *  |         :.......: <-Hole we're about to mask      |
++     *  |                                                   |
++     *  |   Existing geometry on this layer is tagged "n"   |
++     *  |   Anywhere else, the stencil value is "< n"       |
++     *  |                                                   |
++     *  |___________________________________________________|
++     *
++     * NEXT: Mask out the holes:
++     *
++     *    The stencil test is "< n". It fails for any existing masked regions.
++     *    For these areas, (stencil fail), we GL_INCR-ement the stencil to
++     *    "n + 1". For other areas (stencil pass) we GL_REPLACE the stencil
++     *    with the test value, "n". We don't write holes to the colour buffer.
++     */
++
++    glPushAttrib (GL_COLOR_BUFFER_BIT);
++    glColorMask (0, 0, 0, 0);
++
++    glStencilOp (GL_INCR, GL_KEEP, GL_KEEP);
++    fill_contour (poly->Clipped->contours);
++    hidgl_flush_triangles (&buffer);
++
++    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);
++    r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, NULL);
++    hidgl_flush_triangles (&buffer);
++
++    glPopAttrib ();
++    /*   ___________________________________________________
++     *  |   __________                                      |
++     *  |  |    ......|...........                  < n     |
++     *  |  | n  : n+1 |          :                          |
++     *  |  |    :  ...|...       :                          |
++     *  |  |    : :n+1|   :      :                          |
++     *  |  |____:_:___| n :      :                          |
++     *  |       : :.......:      :                          |
++     *  |       :            < n :                          |
++     *  |       :................: <-Polygon outer          |
++     *  |___________________________________________________|
++     *
++     * NEXT: Draw the polygon:
++     *
++     *    We draw our polygon where the stencil test passes ("< n")
++     *    Where we draw we GL_REPLACE the stencil buffer with "n".
++     */
++
++    glStencilOp (GL_DECR, GL_KEEP, GL_REPLACE);
++    fill_contour (poly->Clipped->contours);
++    hidgl_flush_triangles (&buffer);
++
++    /*   ___________________________________________________
++     *  |   __________                                      |
++     *  |  |     .....|__________                           |
++     *  |  | n  :   n |          |                          |
++     *  |  |    :  ...|___       |                          |
++     *  |  |    : : n |n-1|      |                          |
++     *  |  |____:_:___|   |      |                          |
++     *  |       | |_______|      |                          |
++     *  |       |             n  |                          |
++     *  |       |________________|                          |
++     *  |___________________________________________________|
++     *
++     * DONE (just cleanup left)
++     */
++#endif
+ 
+     /* Restore the stencil buffer setup */
+     glPopAttrib ();
