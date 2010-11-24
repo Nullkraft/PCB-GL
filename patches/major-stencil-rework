@@ -1,5 +1,5 @@
 Bottom: 3747cac2ad00fa6b5f87b1ac1be247882c4c5cbe
-Top:    3747cac2ad00fa6b5f87b1ac1be247882c4c5cbe
+Top:    4d4e6e8057602f470890f8a43d424451ed8b9630
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-24 02:59:29 +0000
 
@@ -8,4 +8,250 @@ Major stencil rework
 
 ---
 
-
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 3ca7387..262d3e1 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -855,6 +855,8 @@ static GLint stencil_bits;
+ static int dirty_bits = 0;
+ static int assigned_bits = 0;
+ 
++int debug_holey_polygon_count = 0;
++
+ /* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
+ void
+ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+@@ -870,53 +872,108 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+     }
+ 
+   if (poly->Clipped->contour_tree->size > 1) {
++
+     /* Polygon has holes */
++    debug_holey_polygon_count++;
+ 
+-    stencil_bit = hidgl_assign_clear_stencil_bit ();
+-    if (!stencil_bit)
+-      {
+-        printf ("hidgl_fill_pcb_polygon: No free stencil bits, aborting polygon\n");
+-        /* XXX: Could use the GLU tesselator or the full BO polygon tesselator */
+-        return;
+-      }
++    /* XXX: Need to assert() that there is room to increment the stencil counter value */
+ 
+     /* Flush out any existing geoemtry to be rendered */
+     hidgl_flush_triangles (&buffer);
+ 
+-    glPushAttrib (GL_STENCIL_BUFFER_BIT |                   // Resave the stencil write-mask etc.., and
+-                  GL_COLOR_BUFFER_BIT);                     // the colour buffer write mask etc.. for part way restore
+-    glStencilMask (stencil_bit);                            // Only write to our stencil bit
+-    glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);    // Always pass stencil test, ref value is our bit
+-    glColorMask (0, 0, 0, 0);                               // Disable writting in color buffer
+-
+-    /* It will already be setup like this (so avoid prodding the state-machine):
+-     * glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value
++    /* Save the stencil setup */
++    glPushAttrib (GL_STENCIL_BUFFER_BIT);
++
++    /*   ___________________________________________________
++     *  |   __________                                      |
++     *  |  |          |                             < n     |
++     *  |  | n        |                                     |
++     *  |  |      ....|....                                 |
++     *  |  |      : n |< n:                                 |
++     *  |  |______:___|   :                                 |
++     *  |         :.......: <-Hole we're about to mask      |
++     *  |                                                   |
++     *  |   Existing geometry on this layer is tagged "n"   |
++     *  |   Anywhere else, the stencil value is "< n"       |
++     *  |                                                   |
++     *  |___________________________________________________|
++     *
++     * NEXT: Mask out the holes:
++     *
++     *    The stencil test is "< n". It fails for any existing masked regions.
++     *    For these areas, (stencil fail), we GL_INCR-ement the stencil to
++     *    "n + 1". For other areas (stencil pass) we GL_REPLACE the stencil
++     *    with the test value, "n". We don't write holes to the colour buffer.
+      */
+-    /* Drawing operations now set our reference bit in the stencil buffer */
+ 
++    glStencilOp (GL_INCR, GL_KEEP, GL_REPLACE);
++    glPushAttrib (GL_COLOR_BUFFER_BIT);
++    glColorMask (0, 0, 0, 0);
+     r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, NULL);
+     hidgl_flush_triangles (&buffer);
++    glPopAttrib ();
++
++    /*   ___________________________________________________
++     *  |   __________                                      |
++     *  |  |    ......|...........                  < n     |
++     *  |  | n  :   n |          :                          |
++     *  |  |    :  ...|...       :                          |
++     *  |  |    : :n+1| n :      :                          |
++     *  |  |____:_:___|   :      :                          |
++     *  |       : :.......:      :                          |
++     *  |       :            < n :                          |
++     *  |       :................: <-Polygon outer          |
++     *  |___________________________________________________|
++     *
++     * NEXT: Draw the polygon:
++     *
++     *    We draw our polygon where the stencil test passes ("< n")
++     *    Where we draw we GL_REPLACE the stencil buffer with "n".
++     */
+ 
+-    /* Drawing operations as masked to areas where the stencil buffer is '0' */
++    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);
++    fill_contour (poly->Clipped->contours);
++    hidgl_flush_triangles (&buffer);
+ 
+-    glPopAttrib ();                                             // Restore the colour and stencil buffer write-mask etc..
+-    glPushAttrib (GL_STENCIL_BUFFER_BIT);                       // Save the stencil op and function
++    /*   ___________________________________________________
++     *  |   __________                                      |
++     *  |  |     .....|__________                           |
++     *  |  | n  :   n |          |                          |
++     *  |  |    :  ...|___       |                          |
++     *  |  |    : :n+1| n |      |                          |
++     *  |  |____:_:___|   |      |                          |
++     *  |       | |_______|      |                          |
++     *  |       |             n  |                          |
++     *  |       |________________|                          |
++     *  |___________________________________________________|
++     *
++     * NEXT: Remove the hole masking:
++     *
++     *    We draw remove our masking by GL_DECR-ementing the hole regions.
++     *    Ex-"Hole" areas still allowed for drawing now have the value "n-1".
++     */
+ 
+-    glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT); // This allows us to toggle the bit on the subcompositing bitplane
+-                                               // If the stencil test has passed, we know that bit is 0, so we're
+-                                               // effectively just setting it to 1.
+-    glStencilFunc (GL_GEQUAL, 0, assigned_bits);
+-  //  glStencilFunc (GL_GREATER, assigned_bits, assigned_bits);   // Pass stencil test if all assigned bits clear,
+-                                                                // reference is all assigned bits so we set
+-                                                                // any bits permitted by the stencil writemask
+-    /* Draw the polygon outer */
+-    fill_contour (poly->Clipped->contours);
++    glStencilOp (GL_DECR, GL_KEEP, GL_DECR);
++    r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, NULL);
+     hidgl_flush_triangles (&buffer);
+ 
+-    /* Unassign our stencil buffer bit */
+-    hidgl_return_stencil_bit (stencil_bit);
++    /*   ___________________________________________________
++     *  |   __________                                      |
++     *  |  |     .....|__________                           |
++     *  |  | n  :   n |          |                          |
++     *  |  |    :  ...|___       |                          |
++     *  |  |    : : n |n-1|      |                          |
++     *  |  |____:_:___|   |      |                          |
++     *  |       | |_______|      |                          |
++     *  |       |             n  |                          |
++     *  |       |________________|                          |
++     *  |___________________________________________________|
++     *
++     * DONE (just cleanup left)
++     */
+ 
+-    glPopAttrib ();                                             // Restore the stencil buffer op and function
++    /* Restore the stencil buffer setup */
++    glPopAttrib ();
+ 
+   } else {
+     /* Polygon does not have holes */
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index a8165c7..8d08b9f 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -151,11 +151,13 @@ compute_depth (int group)
+   return depth;
+ }
+ 
++static int stencil_value = 0;
++
+ int
+ ghid_set_layer (const char *name, int group, int empty)
+ {
+   render_priv *priv = gport->render_priv;
+-  static int stencil_bit = 0;
++//  static int stencil_bit = 0;
+   int idx = group;
+   if (idx >= 0 && idx < max_group)
+     {
+@@ -177,14 +179,17 @@ ghid_set_layer (const char *name, int group, int empty)
+ 
+   glEnable (GL_STENCIL_TEST);                   // Enable Stencil test
+   glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);   // Stencil pass => replace stencil value (with 1)
+-  hidgl_return_stencil_bit (stencil_bit);       // Relinquish any bitplane we previously used
++//  hidgl_return_stencil_bit (stencil_bit);       // Relinquish any bitplane we previously used
+   if (SL_TYPE (idx) != SL_FINISHED) {
+-    stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
+-    glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
+-    glStencilFunc (GL_GREATER, stencil_bit, stencil_bit); // Pass stencil test if our assigned bit is clear
++    // stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
++    stencil_value++;
++    if (stencil_value == 254)
++      printf ("STENCIL FUBAR\n");
++//    glStencilMask (stencil_bit);                // Only write to our subcompositing stencil bitplane
++    glStencilFunc(GL_GREATER, stencil_value, ~0);    // Pass stencil test if our counter is greater than the buffer value
+   } else {
+-    stencil_bit = 0;
+-    glStencilMask (0);
++//    stencil_bit = 0;
++//    glStencilMask (0);
+     glStencilFunc (GL_ALWAYS, 0, 0);  // Always pass stencil test
+   }
+ 
+@@ -397,6 +402,9 @@ ghid_draw_bg_image (void)
+ void
+ ghid_use_mask (int use_it)
+ {
++  printf ("use_mask FUBAR\n");
++  return;
++#if 0
+   static int stencil_bit = 0;
+ 
+   /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
+@@ -444,6 +452,7 @@ ghid_use_mask (int use_it)
+       break;
+     }
+   cur_mask = use_it;
++#endif
+ }
+ 
+ 
+@@ -1444,6 +1453,7 @@ DrawLayerGroup (int group, const BoxType * screen)
+   int first_run = 1;
+   int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
+   int solder_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
++  extern int debug_holey_polygon_count;
+ 
+   if (!gui->set_layer (0, group, 0)) {
+     gui->set_layer (NULL, SL (FINISHED, 0), 0);
+@@ -1460,6 +1470,7 @@ DrawLayerGroup (int group, const BoxType * screen)
+       rv = 0;
+ 
+     if (layernum < max_copper_layer && Layer->On) {
++      debug_holey_polygon_count = 0;
+ 
+       if (!first_run)
+         gui->set_layer (0, group, 0);
+@@ -1524,6 +1535,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+       r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
+       r_search (Layer->arc_tree, screen, NULL, arc_callback, Layer);
+       r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
++
++      //printf ("Layer %s had %i holey polygons\n", Layer->Name, debug_holey_polygon_count);
+     }
+   }
+ 
+@@ -1909,6 +1922,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   glStencilMask (~0);
+   glClearStencil (0);
+   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
++  stencil_value = 0;
+   hidgl_reset_stencil_usage ();
+ 
+   /* Disable the stencil test until we need it - otherwise it gets dirty */
