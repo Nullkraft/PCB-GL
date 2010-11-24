@@ -855,6 +855,8 @@ static GLint stencil_bits;
 static int dirty_bits = 0;
 static int assigned_bits = 0;
 
+int debug_holey_polygon_count = 0;
+
 /* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
 void
 hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
@@ -870,53 +872,183 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
     }
 
   if (poly->Clipped->contour_tree->size > 1) {
-    /* Polygon has holes */
 
-    stencil_bit = hidgl_assign_clear_stencil_bit ();
-    if (!stencil_bit)
-      {
-        printf ("hidgl_fill_pcb_polygon: No free stencil bits, aborting polygon\n");
-        /* XXX: Could use the GLU tesselator or the full BO polygon tesselator */
-        return;
-      }
+    /* Polygon has holes */
+    debug_holey_polygon_count++;
+
+    /* XXX: Need to assert() that there is room to increment the stencil counter value */
 
     /* Flush out any existing geoemtry to be rendered */
     hidgl_flush_triangles (&buffer);
 
-    glPushAttrib (GL_STENCIL_BUFFER_BIT |                   // Resave the stencil write-mask etc.., and
-                  GL_COLOR_BUFFER_BIT);                     // the colour buffer write mask etc.. for part way restore
-    glStencilMask (stencil_bit);                            // Only write to our stencil bit
-    glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);    // Always pass stencil test, ref value is our bit
-    glColorMask (0, 0, 0, 0);                               // Disable writting in color buffer
+    /* Save the stencil setup */
+    glPushAttrib (GL_STENCIL_BUFFER_BIT);
 
-    /* It will already be setup like this (so avoid prodding the state-machine):
-     * glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value
+#if 0
+
+    /*   ___________________________________________________
+     *  |   __________                                      |
+     *  |  |          |                             < n     |
+     *  |  | n        |                                     |
+     *  |  |      ....|....                                 |
+     *  |  |      : n |< n:                                 |
+     *  |  |______:___|   :                                 |
+     *  |         :.......: <-Hole we're about to mask      |
+     *  |                                                   |
+     *  |   Existing geometry on this layer is tagged "n"   |
+     *  |   Anywhere else, the stencil value is "< n"       |
+     *  |                                                   |
+     *  |___________________________________________________|
+     *
+     * NEXT: Mask out the holes:
+     *
+     *    The stencil test is "< n". It fails for any existing masked regions.
+     *    For these areas, (stencil fail), we GL_INCR-ement the stencil to
+     *    "n + 1". For other areas (stencil pass) we GL_REPLACE the stencil
+     *    with the test value, "n". We don't write holes to the colour buffer.
      */
-    /* Drawing operations now set our reference bit in the stencil buffer */
 
+    glStencilOp (GL_INCR, GL_KEEP, GL_REPLACE);
+    glPushAttrib (GL_COLOR_BUFFER_BIT);
+    glColorMask (0, 0, 0, 0);
     r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, NULL);
     hidgl_flush_triangles (&buffer);
+    glPopAttrib ();
 
-    /* Drawing operations as masked to areas where the stencil buffer is '0' */
+    /*   ___________________________________________________
+     *  |   __________                                      |
+     *  |  |    ......|...........                  < n     |
+     *  |  | n  :   n |          :                          |
+     *  |  |    :  ...|...       :                          |
+     *  |  |    : :n+1| n :      :                          |
+     *  |  |____:_:___|   :      :                          |
+     *  |       : :.......:      :                          |
+     *  |       :            < n :                          |
+     *  |       :................: <-Polygon outer          |
+     *  |___________________________________________________|
+     *
+     * NEXT: Draw the polygon:
+     *
+     *    We draw our polygon where the stencil test passes ("< n")
+     *    Where we draw we GL_REPLACE the stencil buffer with "n".
+     */
 
-    glPopAttrib ();                                             // Restore the colour and stencil buffer write-mask etc..
-    glPushAttrib (GL_STENCIL_BUFFER_BIT);                       // Save the stencil op and function
-
-    glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT); // This allows us to toggle the bit on the subcompositing bitplane
-                                               // If the stencil test has passed, we know that bit is 0, so we're
-                                               // effectively just setting it to 1.
-    glStencilFunc (GL_GEQUAL, 0, assigned_bits);
-  //  glStencilFunc (GL_GREATER, assigned_bits, assigned_bits);   // Pass stencil test if all assigned bits clear,
-                                                                // reference is all assigned bits so we set
-                                                                // any bits permitted by the stencil writemask
-    /* Draw the polygon outer */
+    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);
     fill_contour (poly->Clipped->contours);
     hidgl_flush_triangles (&buffer);
 
-    /* Unassign our stencil buffer bit */
-    hidgl_return_stencil_bit (stencil_bit);
+    /*   ___________________________________________________
+     *  |   __________                                      |
+     *  |  |     .....|__________                           |
+     *  |  | n  :   n |          |                          |
+     *  |  |    :  ...|___       |                          |
+     *  |  |    : :n+1| n |      |                          |
+     *  |  |____:_:___|   |      |                          |
+     *  |       | |_______|      |                          |
+     *  |       |             n  |                          |
+     *  |       |________________|                          |
+     *  |___________________________________________________|
+     *
+     * NEXT: Remove the hole masking:
+     *
+     *    We draw remove our masking by GL_DECR-ementing the hole regions.
+     *    Ex-"Hole" areas still allowed for drawing now have the value "n-1".
+     */
 
-    glPopAttrib ();                                             // Restore the stencil buffer op and function
+    glStencilOp (GL_DECR, GL_KEEP, GL_DECR);
+    r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, NULL);
+    hidgl_flush_triangles (&buffer);
+
+    /*   ___________________________________________________
+     *  |   __________                                      |
+     *  |  |     .....|__________                           |
+     *  |  | n  :   n |          |                          |
+     *  |  |    :  ...|___       |                          |
+     *  |  |    : : n |n-1|      |                          |
+     *  |  |____:_:___|   |      |                          |
+     *  |       | |_______|      |                          |
+     *  |       |             n  |                          |
+     *  |       |________________|                          |
+     *  |___________________________________________________|
+     *
+     * DONE (just cleanup left)
+     */
+#else
+
+    /*   ___________________________________________________
+     *  |   __________                                      |
+     *  |  |          |                             < n     |
+     *  |  | n        |                                     |
+     *  |  |      ....|....                                 |
+     *  |  |      : n |< n:                                 |
+     *  |  |______:___|   :                                 |
+     *  |         :.......: <-Hole we're about to mask      |
+     *  |                                                   |
+     *  |   Existing geometry on this layer is tagged "n"   |
+     *  |   Anywhere else, the stencil value is "< n"       |
+     *  |                                                   |
+     *  |___________________________________________________|
+     *
+     * NEXT: Mask out the holes:
+     *
+     *    The stencil test is "< n". It fails for any existing masked regions.
+     *    For these areas, (stencil fail), we GL_INCR-ement the stencil to
+     *    "n + 1". For other areas (stencil pass) we GL_REPLACE the stencil
+     *    with the test value, "n". We don't write holes to the colour buffer.
+     */
+
+    glPushAttrib (GL_COLOR_BUFFER_BIT);
+    glColorMask (0, 0, 0, 0);
+
+    glStencilOp (GL_INCR, GL_KEEP, GL_KEEP);
+    fill_contour (poly->Clipped->contours);
+    hidgl_flush_triangles (&buffer);
+
+    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);
+    r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, NULL);
+    hidgl_flush_triangles (&buffer);
+
+    glPopAttrib ();
+    /*   ___________________________________________________
+     *  |   __________                                      |
+     *  |  |    ......|...........                  < n     |
+     *  |  | n  : n+1 |          :                          |
+     *  |  |    :  ...|...       :                          |
+     *  |  |    : :n+1|   :      :                          |
+     *  |  |____:_:___| n :      :                          |
+     *  |       : :.......:      :                          |
+     *  |       :            < n :                          |
+     *  |       :................: <-Polygon outer          |
+     *  |___________________________________________________|
+     *
+     * NEXT: Draw the polygon:
+     *
+     *    We draw our polygon where the stencil test passes ("< n")
+     *    Where we draw we GL_REPLACE the stencil buffer with "n".
+     */
+
+    glStencilOp (GL_DECR, GL_KEEP, GL_REPLACE);
+    fill_contour (poly->Clipped->contours);
+    hidgl_flush_triangles (&buffer);
+
+    /*   ___________________________________________________
+     *  |   __________                                      |
+     *  |  |     .....|__________                           |
+     *  |  | n  :   n |          |                          |
+     *  |  |    :  ...|___       |                          |
+     *  |  |    : : n |n-1|      |                          |
+     *  |  |____:_:___|   |      |                          |
+     *  |       | |_______|      |                          |
+     *  |       |             n  |                          |
+     *  |       |________________|                          |
+     *  |___________________________________________________|
+     *
+     * DONE (just cleanup left)
+     */
+#endif
+
+    /* Restore the stencil buffer setup */
+    glPopAttrib ();
 
   } else {
     /* Polygon does not have holes */
