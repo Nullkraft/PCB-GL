@@ -890,7 +890,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
     glStencilMask (stencil_bit);                            // Only write to our stencil bit
     glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);    // Always pass stencil test, ref value is our bit
     glColorMask (0, 0, 0, 0);                               // Disable writting in color buffer
-    glDepthTest (GL_ALWAYS);
+    glDepthFunc (GL_ALWAYS);
     glDepthMask (GL_FALSE);
 
     /* It will already be setup like this (so avoid prodding the state-machine):
