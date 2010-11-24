@@ -1,5 +1,5 @@
 Bottom: 3747cac2ad00fa6b5f87b1ac1be247882c4c5cbe
-Top:    6e3c0c83ae162e914fd887cc05431b0bbd4cf65d
+Top:    b931cea5dadd305b300bd7532d21a6603d85cc74
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 00:32:30 +0000
 
@@ -431,7 +431,7 @@ literal 0
 HcmV?d00001
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 3ca7387..4703d7f 100644
+index 3ca7387..6780c9e 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -48,6 +48,7 @@ RCSID ("$Id: $");
@@ -452,7 +452,7 @@ index 3ca7387..4703d7f 100644
      glStencilMask (stencil_bit);                            // Only write to our stencil bit
      glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);    // Always pass stencil test, ref value is our bit
      glColorMask (0, 0, 0, 0);                               // Disable writting in color buffer
-+    glDepthTest (GL_ALWAYS);
++    glDepthFunc (GL_ALWAYS);
 +    glDepthMask (GL_FALSE);
  
      /* It will already be setup like this (so avoid prodding the state-machine):
