@@ -151,7 +151,8 @@ compute_depth (int group)
   return depth;
 }
 
-static int stencil_value = 0;
+//static int stencil_value = 0;
+int layer_stencil_bit = 0;
 
 int
 ghid_set_layer (const char *name, int group, int empty)
@@ -178,18 +179,20 @@ ghid_set_layer (const char *name, int group, int empty)
   hidgl_set_depth (compute_depth (group));
 
   glEnable (GL_STENCIL_TEST);                   // Enable Stencil test
-  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);   // Stencil pass => replace stencil value (with 1)
-//  hidgl_return_stencil_bit (stencil_bit);       // Relinquish any bitplane we previously used
+  glStencilOp (GL_KEEP, GL_KEEP, GL_ZERO);   // Stencil pass => replace stencil value (with 1)
+  hidgl_return_stencil_bit (layer_stencil_bit);       // Relinquish any bitplane we previously used
+  layer_stencil_bit = 0;
   if (SL_TYPE (idx) != SL_FINISHED) {
-    // stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
-    stencil_value++;
-    if (stencil_value == 254)
-      printf ("STENCIL FUBAR\n");
-//    glStencilMask (stencil_bit);                // Only write to our subcompositing stencil bitplane
-    glStencilFunc(GL_GREATER, stencil_value, ~0);    // Pass stencil test if our counter is greater than the buffer value
+    layer_stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
+//    stencil_value++;
+//    if (stencil_value == 254)
+//      printf ("STENCIL FUBAR\n");
+    glStencilMask (layer_stencil_bit | 1);                // Only write to our subcompositing stencil bitplane
+    glStencilFunc(GL_EQUAL, layer_stencil_bit, layer_stencil_bit | 1);
+//    glStencilFunc(GL_GREATER, stencil_value, ~0);    // Pass stencil test if our counter is greater than the buffer value
   } else {
 //    stencil_bit = 0;
-//    glStencilMask (0);
+    glStencilMask (0);
     glStencilFunc (GL_ALWAYS, 0, 0);  // Always pass stencil test
   }
 
@@ -1914,15 +1917,16 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
     glNewList (display_list, GL_COMPILE);
 #endif
 
-  glEnable (GL_STENCIL_TEST);
+//  glEnable (GL_STENCIL_TEST);
+  glDisable (GL_STENCIL_TEST);
   glClearColor (port->bg_color.red / 65535.,
                 port->bg_color.green / 65535.,
                 port->bg_color.blue / 65535.,
                 1.);
   glStencilMask (~0);
-  glClearStencil (0);
+  glClearStencil (0xfe); /* Would have used ~1, but mesa is buggy */
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  stencil_value = 0;
+//  stencil_value = 0;
   hidgl_reset_stencil_usage ();
 
   /* Disable the stencil test until we need it - otherwise it gets dirty */
@@ -2014,7 +2018,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   /* Setup stenciling */
   /* Drawing operations set the stencil buffer to '1' */
-  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
+  glStencilOp (GL_KEEP, GL_KEEP, GL_ZERO); // Stencil pass => replace stencil value (with 1)
   /* Drawing operations as masked to areas where the stencil buffer is '0' */
 //  glStencilFunc (GL_GREATER, 1, 1);             // Draw only where stencil buffer is 0
 
