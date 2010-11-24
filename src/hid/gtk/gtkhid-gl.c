@@ -151,11 +151,13 @@ compute_depth (int group)
   return depth;
 }
 
+static int stencil_value = 0;
+
 int
 ghid_set_layer (const char *name, int group, int empty)
 {
   render_priv *priv = gport->render_priv;
-  static int stencil_bit = 0;
+//  static int stencil_bit = 0;
   int idx = group;
   if (idx >= 0 && idx < max_group)
     {
@@ -177,14 +179,17 @@ ghid_set_layer (const char *name, int group, int empty)
 
   glEnable (GL_STENCIL_TEST);                   // Enable Stencil test
   glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);   // Stencil pass => replace stencil value (with 1)
-  hidgl_return_stencil_bit (stencil_bit);       // Relinquish any bitplane we previously used
+//  hidgl_return_stencil_bit (stencil_bit);       // Relinquish any bitplane we previously used
   if (SL_TYPE (idx) != SL_FINISHED) {
-    stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
-    glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
-    glStencilFunc (GL_GREATER, stencil_bit, stencil_bit); // Pass stencil test if our assigned bit is clear
+    // stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
+    stencil_value++;
+    if (stencil_value == 254)
+      printf ("STENCIL FUBAR\n");
+//    glStencilMask (stencil_bit);                // Only write to our subcompositing stencil bitplane
+    glStencilFunc(GL_GREATER, stencil_value, ~0);    // Pass stencil test if our counter is greater than the buffer value
   } else {
-    stencil_bit = 0;
-    glStencilMask (0);
+//    stencil_bit = 0;
+//    glStencilMask (0);
     glStencilFunc (GL_ALWAYS, 0, 0);  // Always pass stencil test
   }
 
@@ -397,6 +402,9 @@ ghid_draw_bg_image (void)
 void
 ghid_use_mask (int use_it)
 {
+  printf ("use_mask FUBAR\n");
+  return;
+#if 0
   static int stencil_bit = 0;
 
   /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
@@ -444,6 +452,7 @@ ghid_use_mask (int use_it)
       break;
     }
   cur_mask = use_it;
+#endif
 }
 
 
@@ -1444,6 +1453,7 @@ DrawLayerGroup (int group, const BoxType * screen)
   int first_run = 1;
   int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
   int solder_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
+  extern int debug_holey_polygon_count;
 
   if (!gui->set_layer (0, group, 0)) {
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
@@ -1460,6 +1470,7 @@ DrawLayerGroup (int group, const BoxType * screen)
       rv = 0;
 
     if (layernum < max_copper_layer && Layer->On) {
+      debug_holey_polygon_count = 0;
 
       if (!first_run)
         gui->set_layer (0, group, 0);
@@ -1524,6 +1535,8 @@ DrawLayerGroup (int group, const BoxType * screen)
       r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
       r_search (Layer->arc_tree, screen, NULL, arc_callback, Layer);
       r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
+
+      //printf ("Layer %s had %i holey polygons\n", Layer->Name, debug_holey_polygon_count);
     }
   }
 
@@ -1909,6 +1922,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glStencilMask (~0);
   glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  stencil_value = 0;
   hidgl_reset_stencil_usage ();
 
   /* Disable the stencil test until we need it - otherwise it gets dirty */
