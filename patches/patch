@@ -1,5 +1,5 @@
 Bottom: b966b261ccd1a82255f83c5c47acfcde1f604e7f
-Top:    dcc3afa9708f65b64f13687eb147ea5fc3bbb3de
+Top:    867712ea8853622f71c69e8c4c77d7060e806b05
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-25 20:09:33 +0000
 
@@ -8,20 +8,6 @@ FBOs differently
 
 ---
 
-diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 3ca7387..59279d0 100644
---- a/src/hid/common/hidgl.c
-+++ b/src/hid/common/hidgl.c
-@@ -946,8 +946,7 @@ load_built_in_shaders (void)
-   char *circular_fs_source =
-           "void main()\n"
-           "{\n"
--          "  float sqdist;\n"
--          "  sqdist = dot (gl_TexCoord[0].st, gl_TexCoord[0].st);\n"
-+          "  float sqdist = dot (gl_TexCoord[0].st, gl_TexCoord[0].st);\n"
-           "  if (sqdist > 1.0)\n"
-           "    discard;\n"
-           "  gl_FragColor = gl_Color;\n"
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 index 3f02ff7..9c55b3a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
