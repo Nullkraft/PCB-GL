@@ -946,8 +946,7 @@ load_built_in_shaders (void)
   char *circular_fs_source =
           "void main()\n"
           "{\n"
-          "  float sqdist;\n"
-          "  sqdist = dot (gl_TexCoord[0].st, gl_TexCoord[0].st);\n"
+          "  float sqdist = dot (gl_TexCoord[0].st, gl_TexCoord[0].st);\n"
           "  if (sqdist > 1.0)\n"
           "    discard;\n"
           "  gl_FragColor = gl_Color;\n"
