@@ -214,7 +214,6 @@ ghid_set_layer (const char *name, int group, int empty)
   glEnable (GL_STENCIL_TEST);                   // Enable Stencil test
   glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);   // Stencil pass => replace stencil value (with 1)
   hidgl_return_stencil_bit (stencil_bit);       // Relinquish any bitplane we previously used
-//  if (SL_TYPE (idx) != SL_FINISHED) {
   if (group_visible) {
     stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
     glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
