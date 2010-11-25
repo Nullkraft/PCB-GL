@@ -1,0 +1,217 @@
+Bottom: 3747cac2ad00fa6b5f87b1ac1be247882c4c5cbe
+Top:    61c44e75267848111d521a10af27ac959ca6e920
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-11-25 16:26:45 +0000
+
+Refresh of gl-try-rendering-to-textures-f
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index a8165c7..0dd79e8 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -51,6 +51,8 @@ static double global_alpha_mult = 1.0;
+ static int alpha_changed = 0;
+ static bool check_gl_drawing_ok_hack = false;
+ 
++static GLuint fbo_name;
++static GLuint tex_name;
+ 
+ /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
+ */
+@@ -155,7 +157,8 @@ int
+ ghid_set_layer (const char *name, int group, int empty)
+ {
+   render_priv *priv = gport->render_priv;
+-  static int stencil_bit = 0;
++  GLenum errCode;
++  const GLubyte *errString;
+   int idx = group;
+   if (idx >= 0 && idx < max_group)
+     {
+@@ -175,17 +178,53 @@ ghid_set_layer (const char *name, int group, int empty)
+ 
+   hidgl_set_depth (compute_depth (group));
+ 
+-  glEnable (GL_STENCIL_TEST);                   // Enable Stencil test
+-  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);   // Stencil pass => replace stencil value (with 1)
+-  hidgl_return_stencil_bit (stencil_bit);       // Relinquish any bitplane we previously used
+-  if (SL_TYPE (idx) != SL_FINISHED) {
+-    stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
+-    glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
+-    glStencilFunc (GL_GREATER, stencil_bit, stencil_bit); // Pass stencil test if our assigned bit is clear
+-  } else {
+-    stencil_bit = 0;
+-    glStencilMask (0);
+-    glStencilFunc (GL_ALWAYS, 0, 0);  // Always pass stencil test
++  /* Composite out existing texture data */
++  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
++  glBindTexture (GL_TEXTURE_2D, tex_name);
++
++  glPushMatrix ();
++  glLoadIdentity ();
++
++  glEnable (GL_BLEND);
++  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
++
++  /* Use the texture on a big quad, onto the window */
++  glEnable (GL_TEXTURE_2D);
++  glBegin (GL_QUADS);
++//  glColor4f (1.0f, 1.0f, 1.0f, 1.0f);
++  glTexCoord2f (  0,   1);
++  glVertex2f   (  0, 0);
++  glTexCoord2f (  0,   0);
++  glVertex2f   (  0,   gport->drawing_area->allocation.height);
++  glTexCoord2f (  1,   0);
++  glVertex2f   (  gport->drawing_area->allocation.width,   gport->drawing_area->allocation.height);
++  glTexCoord2f (  1,   1);
++  glVertex2f   (  gport->drawing_area->allocation.width,   0);
++  glEnd ();
++  glDisable (GL_TEXTURE_2D);
++  glBindTexture (GL_TEXTURE_2D, 0);
++
++  glPopMatrix ();
++
++  glBlendFunc (GL_ONE, GL_ZERO);
++//  glDisable (GL_BLEND);
++
++  if ((errCode = glGetError()) != GL_NO_ERROR) {
++      errString = gluErrorString(errCode);
++     fprintf (stderr, "5OpenGL Error: %s\n", errString);
++  }
++
++  /* Setup for the next layer */
++  if (group != -99) {
++    glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, fbo_name);
++    glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, tex_name, 0);
++    glClear (GL_COLOR_BUFFER_BIT);
++  } else
++    return 0;
++
++  if ((errCode = glGetError()) != GL_NO_ERROR) {
++      errString = gluErrorString(errCode);
++     fprintf (stderr, "6OpenGL Error: %s\n", errString);
+   }
+ 
+   if (idx >= 0 && idx < max_copper_layer + 2)
+@@ -1790,6 +1829,24 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+   Settings.ShowSolderSide = save_show_solder;
+ }
+ 
++int ghid_set_layer (const char *name, int group, int empty);
++
++#define CHECK_FRAMEBUFFER_STATUS()                            \
++  do {                                                        \
++    GLenum status;                                            \
++    status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT); \
++    switch(status) {                                          \
++      case GL_FRAMEBUFFER_COMPLETE_EXT:                       \
++        break;                                                \
++      case GL_FRAMEBUFFER_UNSUPPORTED_EXT:                    \
++        /* choose different formats */                        \
++        break;                                                \
++      default:                                                \
++        /* programming error; will fail on all hardware */    \
++        exit (1);                                             \
++    }                                                         \
++  } while (0);
++
+ #define Z_NEAR 3.0
+ gboolean
+ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1800,6 +1857,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   static int one_shot = 1;
+   static int display_list;
+ #endif
++  GLenum errCode;
++  const GLubyte *errString;
+   BoxType region;
+   int min_x, min_y;
+   int max_x, max_y;
+@@ -1836,7 +1895,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   ghid_show_crosshair (FALSE);
+ 
+   glEnable (GL_BLEND);
+-  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
++  glBlendFunc (GL_ONE, GL_ZERO);
++//  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+ 
+   glViewport (0, 0, widget->allocation.width, widget->allocation.height);
+ 
+@@ -1995,6 +2055,53 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ 
+   /* TODO: Background image */
+ 
++  /* Setup a texture for playing each layer into */
++  glGenFramebuffersEXT (1, &fbo_name);
++  glGenTextures (1, &tex_name);
++  glBindTexture (GL_TEXTURE_2D, tex_name);
++
++  glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
++
++  glTexImage2D (GL_TEXTURE_2D,
++                0, /* Level */
++                GL_RGBA8, /* Int. format */
++                widget->allocation.width, /* Width */
++                widget->allocation.height, /* Height */
++                0,      /* Border */
++                GL_RGBA, /* Format */
++                GL_UNSIGNED_BYTE, /* Type */
++                NULL);  /* Pixels */
++
++  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, fbo_name);
++  glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, tex_name, 0);
++  if ((errCode = glGetError()) != GL_NO_ERROR) {
++      errString = gluErrorString(errCode);
++     fprintf (stderr, "4OpenGL Error: %s\n", errString);
++  }
++  CHECK_FRAMEBUFFER_STATUS ()
++  glBindTexture (GL_TEXTURE_2D, 0);
++
++  glClearColor (1., 1., 1., 0.);
++  glClear (GL_COLOR_BUFFER_BIT);
++
++//  glDisable (GL_BLEND);
++  glEnable (GL_BLEND);
++
++
++//  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
++#if 0
++  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, fbo_name);
++  /* RTT */
++  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
++
++  /* Composite */
++  glBindTexture (GL_TEXTURE_2D, tex_name);
++  /* Use the texture on a big quad, onto the window */
++  glBindTexture (GL_TEXTURE_2D, 0);
++#endif
++
++  /* End texture setup */
++
+   hidgl_init_triangle_array (&buffer);
+   ghid_invalidate_current_gc ();
+ 
+@@ -2044,6 +2151,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   /* Just prod the drawing code so the current depth gets set to
+      the right value for the layer we are editing */
+   hidgl_set_depth (compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT)));
++
++  /* Hack to finish compositing */
++  ghid_set_layer ("HACK", -99, 0);
++
+   ghid_draw_grid (&region);
+ 
+   ghid_invalidate_current_gc ();
+@@ -2065,6 +2176,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   hidgl_finish_triangle_array (&buffer);
+ 
+   check_gl_drawing_ok_hack = false;
++
++  /* Tear down texture buffer */
++  glDeleteTextures (1, &tex_name);
++  glDeleteFramebuffersEXT (1, &fbo_name);
++
+   hidgl_in_context (false);
+   ghid_end_drawing (port);
