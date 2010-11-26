@@ -618,11 +618,12 @@ seg_in_seg (const BoxType * b, void *cl)
   int cnt;
   VNODE *new_node;
 
+  /* When new nodes are added at the end of a pass due to an intersection
+   * the segments may be altered. If either segment we're looking at has
+   * already been intersected this pass, skip it until the next pass.
+   */
   if (s->intersected || i->s->intersected)
-    {
-      i->need_restart = 1;
-      return 0;
-    }
+    return 0;
 
   cnt = vect_inters2 (s->v->point, s->v->next->point,
 		      i->v->point, i->v->next->point, s1, s2);
@@ -634,34 +635,36 @@ seg_in_seg (const BoxType * b, void *cl)
   s->p->Flags.status = ISECTED;
   for (; cnt; cnt--)
     {
-      int done_insert = 0;
+      bool done_insert_on_i = false;
       new_node = node_add_single_point (i->v, cnt > 1 ? s2 : s1);
       if (new_node != NULL)
 	{
+#ifdef DEBUG_INTERSECT
+	  DEBUGP ("new intersection on segment \"i\" at (%d, %d)\n",
+	          cnt > 1 ? s2[0] : s1[0], cnt > 1 ? s2[1] : s1[1]);
+#endif
 	  i->node_insert_list =
 	    prepend_insert_node_task (i->node_insert_list, i->s, new_node);
 	  i->s->intersected = 1;
-	  done_insert = 1;
+	  done_insert_on_i = true;
 	}
       new_node = node_add_single_point (s->v, cnt > 1 ? s2 : s1);
       if (new_node != NULL)
 	{
+#ifdef DEBUG_INTERSECT
+	  DEBUGP ("new intersection on segment \"s\" at (%d, %d)\n",
+	          cnt > 1 ? s2[0] : s1[0], cnt > 1 ? s2[1] : s1[1]);
+#endif
 	  i->node_insert_list =
 	    prepend_insert_node_task (i->node_insert_list, s, new_node);
 	  s->intersected = 1;
-	  return 0;		/* Don't do any more processing */
+	  return 0; /* Keep looking for intersections with segment "i" */
 	}
-      if (done_insert)
-	{
-	  longjmp (*i->env, 1);	/* Skip this contour if we intersected on i */
-	  /* XXX: CODE BELOW NOT REACHED!!
-	   *      Why did I add these following two lines?
-	   *      Is it a piece of dead code left over from a point when I
-	   *      tried _not_ skipping the contour?
-	   */
-	  i->need_restart = 1;	/* If we skip some processing, we definately need a restart */
-	  return 0;
-	}
+      /* Skip any remaining r_search hits against segment i, as any futher
+       * intersections will be rejected until the next pass anyway.
+       */
+      if (done_insert_on_i)
+	longjmp (*i->env, 1);
     }
   return 0;
 }
