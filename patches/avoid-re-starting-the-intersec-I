@@ -1,5 +1,5 @@
 Bottom: dbb67b88b5e3b5475f675431ebb034fd4d9fe6f6
-Top:    4d3154c078bf804ba2a56c0a9edb52c190a9e7d2
+Top:    aaca9cd6b42bb251ebc856fdb5da83cc401f0656
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-10-24 19:02:21 +0100
 
@@ -31,7 +31,7 @@ stops after an iteration when no new nodes are added
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 1127fbd..3ca4d00 100644
+index 1127fbd..468c139 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -180,26 +180,20 @@ node_add
@@ -170,7 +170,7 @@ index 1127fbd..3ca4d00 100644
  /*
   * seg_in_seg()
   * (C) 2006 harry eaton
-@@ -594,7 +615,14 @@ seg_in_seg (const BoxType * b, void *cl)
+@@ -594,7 +615,15 @@ seg_in_seg (const BoxType * b, void *cl)
    struct info *i = (struct info *) cl;
    struct seg *s = (struct seg *) b;
    Vector s1, s2;
@@ -178,15 +178,16 @@ index 1127fbd..3ca4d00 100644
 +  int cnt;
 +  VNODE *new_node;
 +
++  /* When new nodes are added at the end of a pass due to an intersection
++   * the segments may be altered. If either segment we're looking at has
++   * already been intersected this pass, skip it until the next pass.
++   */
 +  if (s->intersected || i->s->intersected)
-+    {
-+      i->need_restart = 1;
-+      return 0;
-+    }
++    return 0;
  
    cnt = vect_inters2 (s->v->point, s->v->next->point,
  		      i->v->point, i->v->next->point, s1, s2);
-@@ -606,30 +634,33 @@ seg_in_seg (const BoxType * b, void *cl)
+@@ -606,31 +635,36 @@ seg_in_seg (const BoxType * b, void *cl)
    s->p->Flags.status = ISECTED;
    for (; cnt; cnt--)
      {
@@ -195,51 +196,54 @@ index 1127fbd..3ca4d00 100644
 -	return 1;		/* error */
 -      /* adjust the bounding box and tree if necessary */
 -      if (res & 2)
-+      int done_insert = 0;
-+      new_node = node_add_single_point (i->v, cnt > 1 ? s2 : s1);
-+      if (new_node != NULL)
- 	{
+-	{
 -	  cntrbox_adjust (i->s->p, cnt > 1 ? s2 : s1);
 -	  if (adjust_tree (i->s->p->tree, i->s))
 -	    return 1;
-+	  i->node_insert_list =
-+	    prepend_insert_node_task (i->node_insert_list, i->s, new_node);
-+	  i->s->intersected = 1;
-+	  done_insert = 1;
- 	}
+-	}
 -      /* if we added a node in the tree we need to change the tree */
 -      if (res & 1)
-+      new_node = node_add_single_point (s->v, cnt > 1 ? s2 : s1);
++      bool done_insert_on_i = false;
++      new_node = node_add_single_point (i->v, cnt > 1 ? s2 : s1);
 +      if (new_node != NULL)
  	{
 -	  cntrbox_adjust (s->p, cnt > 1 ? s2 : s1);
 -	  if (adjust_tree (i->tree, s))
 -	    return 1;
++#ifdef DEBUG_INTERSECT
++	  DEBUGP ("new intersection on segment \"i\" at (%d, %d)\n",
++	          cnt > 1 ? s2[0] : s1[0], cnt > 1 ? s2[1] : s1[1]);
++#endif
++	  i->node_insert_list =
++	    prepend_insert_node_task (i->node_insert_list, i->s, new_node);
++	  i->s->intersected = 1;
++	  done_insert_on_i = true;
+ 	}
+-      if (res & 3)		/* if a point was inserted start over */
++      new_node = node_add_single_point (s->v, cnt > 1 ? s2 : s1);
++      if (new_node != NULL)
+ 	{
+ #ifdef DEBUG_INTERSECT
+-	  DEBUGP ("new intersection at (%d, %d)\n", cnt > 1 ? s2[0] : s1[0],
+-		  cnt > 1 ? s2[1] : s1[1]);
++	  DEBUGP ("new intersection on segment \"s\" at (%d, %d)\n",
++	          cnt > 1 ? s2[0] : s1[0], cnt > 1 ? s2[1] : s1[1]);
+ #endif
+-	  longjmp (*i->env, 1);
 +	  i->node_insert_list =
 +	    prepend_insert_node_task (i->node_insert_list, s, new_node);
 +	  s->intersected = 1;
-+	  return 0;		/* Don't do any more processing */
++	  return 0; /* Keep looking for intersections with segment "i" */
  	}
--      if (res & 3)		/* if a point was inserted start over */
-+      if (done_insert)
- 	{
--#ifdef DEBUG_INTERSECT
--	  DEBUGP ("new intersection at (%d, %d)\n", cnt > 1 ? s2[0] : s1[0],
--		  cnt > 1 ? s2[1] : s1[1]);
--#endif
--	  longjmp (*i->env, 1);
-+	  longjmp (*i->env, 1);	/* Skip this contour if we intersected on i */
-+	  /* XXX: CODE BELOW NOT REACHED!!
-+	   *      Why did I add these following two lines?
-+	   *      Is it a piece of dead code left over from a point when I
-+	   *      tried _not_ skipping the contour?
-+	   */
-+	  i->need_restart = 1;	/* If we skip some processing, we definately need a restart */
-+	  return 0;
- 	}
++      /* Skip any remaining r_search hits against segment i, as any futher
++       * intersections will be rejected until the next pass anyway.
++       */
++      if (done_insert_on_i)
++	longjmp (*i->env, 1);
      }
    return 0;
-@@ -645,6 +676,7 @@ make_edge_tree (PLINE * pb)
+ }
+@@ -645,6 +679,7 @@ make_edge_tree (PLINE * pb)
    do
      {
        s = malloc (sizeof (struct seg));
@@ -247,7 +251,7 @@ index 1127fbd..3ca4d00 100644
        if (bv->point[0] < bv->next->point[0])
  	{
  	  s->box.X1 = bv->point[0];
-@@ -715,10 +747,13 @@ contour_bounds_touch (const BoxType * b, void *cl)
+@@ -715,10 +750,13 @@ contour_bounds_touch (const BoxType * b, void *cl)
    VNODE *av;			/* node iterators */
    struct info info;
    BoxType box;
@@ -262,7 +266,7 @@ index 1127fbd..3ca4d00 100644
  
    /* Pick which contour has the fewer points, and do the loop
     * over that. The r_tree makes hit-testing against a contour
-@@ -760,23 +795,38 @@ contour_bounds_touch (const BoxType * b, void *cl)
+@@ -760,23 +798,38 @@ contour_bounds_touch (const BoxType * b, void *cl)
  	  assert (0);
  	}
  
@@ -303,7 +307,7 @@ index 1127fbd..3ca4d00 100644
  
    /* Search the r-tree of the object with most contours
     * We loop over the contours of "a". Swap if necessary.
-@@ -788,8 +838,6 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -788,8 +841,6 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
        a = t;
      }
  
@@ -312,14 +316,14 @@ index 1127fbd..3ca4d00 100644
    for (pa = a->contours; pa; pa = pa->next)	/* Loop over the contours of POLYAREA "a" */
      {
        BoxType sb;
-@@ -817,8 +865,42 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
+@@ -817,8 +868,42 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
        sb.Y2 = pa->ymax + 1;
  
        r_search (b->contour_tree, &sb, NULL, contour_bounds_touch, &c_info);
 +      if (c_info.need_restart)
 +	need_restart = 1;
-+    }
-+
+     }
+ 
 +  /* Process any deferred node insersions */
 +  task = c_info.node_insert_list;
 +  while (task != NULL)
@@ -341,8 +345,8 @@ index 1127fbd..3ca4d00 100644
 +
 +      free (task);
 +      task = next;
-     }
- 
++    }
++
 +  return need_restart;
 +}
 +
