@@ -6,26 +6,23 @@ Date:   2010-10-24 19:02:21 +0100
 polygon1.c: Avoid re-starting the intersection routine for each new node
 
 This seems to have a nice performance win for the NoHoles dicer, which
-may have suffered due to other polygon changes.
+may have suffered due to other polygon changes which increased operation
+overhead. (The NoHoles dicer deliberately causes intersections, so
+will benefit from speed improvements in the intersection routine).
 
 Rather than inserting nodes when we find intersections in seg_in_seg(),
 (which requires an immediate restart of the intersection search), build
 a queue of deferred work to be executed at the end of each iteration.
+The intersected segments will be split at end of this search pass.
 
-A new search iteration is forced immediately if the seg_in_seg rountine
-finds an intersection with a segment which already has deferred work
-queued. The segment will be removed and split by the deferred node
-insersion so futher intersection processing must be after that task.
+Once a segment has been queued for splitting, further intersections
+detected with that segment must be ignored until the next pass
+(after the segment has been split at the new node). The current pass
+can continue to calculate intersections between _other_ segments.
 
-Once a contour has enountered an intersection on one of its segments,
-we skip that contour for the rest of the search iteration. This avoids
-spending too much effort searching for things we are likely to skip
-until the next iteration.
-
-Whenever an ineration finishes and nodes are added by deferred work,
+Whenever an iteration finishes and nodes are added by deferred work,
 another iteration of the intersection loop is required. Processing
 stops after an iteration when no new nodes are added
-
 
 
 ---
