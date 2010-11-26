@@ -605,6 +605,7 @@ void tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices)
 struct do_hole_info {
   GLUtesselator *tobj;
   GLdouble *vertices;
+  double scale;
 };
 
 static int
@@ -617,6 +618,19 @@ do_hole (const BoxType *b, void *cl)
   if (curc->Flags.orient == PLF_DIR) {
     return 0;
   }
+
+  /* If the contour is round, and hidgl_fill_circle would use
+   * less slices than we have vertices to draw it, then call
+   * hidgl_fill_circle to draw this contour.
+   */
+  if (curc->is_round) {
+    double slices = calc_slices (curc->radius / info->scale, 2 * M_PI);
+    if (slices < curc->Count) {
+      hidgl_fill_circle (curc->cx, curc->cy, curc->radius, info->scale);
+      return 1;
+    }
+  }
+
   tesselate_contour (info->tobj, &curc->head, info->vertices);
   return 1;
 }
@@ -634,6 +648,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
   struct do_hole_info info;
   int stencil_bit;
 
+  info.scale = scale;
   global_scale = scale;
 
   if (poly->Clipped == NULL)
