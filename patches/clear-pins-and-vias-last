@@ -1,5 +1,5 @@
 Bottom: ac6f9bb71d013b6805351fc0425e425bd8fe2d2f
-Top:    dd9f1256dd06403294e07aed0a73df0499d092e3
+Top:    bb5903f98b0d885b3500e797d94b1d11985625c2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-10-24 19:02:18 +0100
 
@@ -37,7 +37,7 @@ constructed.
 ---
 
 diff --git a/src/polygon.c b/src/polygon.c
-index 586e8cc..08ce69d 100644
+index 586e8cc..65879c8 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -109,6 +109,8 @@ RCSID ("$Id$");
@@ -63,7 +63,7 @@ index 586e8cc..08ce69d 100644
 +{
 +  if (info->accumulate == NULL)
 +    return;
-+  Subtract (info->accumulate, polygon, True);
++  Subtract (info->accumulate, polygon, true);
 +  info->accumulate = NULL;
 +  info->batch_size = 0;
 +}
