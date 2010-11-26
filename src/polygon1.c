@@ -193,12 +193,6 @@ node_add_single (VNODE * dest, Vector po)
   p = poly_CreateNode (po);
   if (p == NULL)
     return NULL;
-#if 0
-  p->prev = dest;
-  p->next = dest->next;
-  dest->next->prev = p;
-  dest->next = p;
-#endif
   p->cvc_prev = p->cvc_next = NULL;
   p->Flags.status = UNKNWN;
   return p;
@@ -372,9 +366,7 @@ node_add_single_point (VNODE * a, Vector p)
   next_a = a->next;
 
   new_node = node_add_single (a, p);
-
-  if (new_node == NULL)
-    exit (0);
+  assert (new_node != NULL);
 
   new_node->cvc_prev = new_node->cvc_next = (CVCList *) - 1;
 
@@ -615,12 +607,8 @@ seg_in_seg (const BoxType * b, void *cl)
   int cnt;
   VNODE *new_node;
 
-//  printf ("Looking at intersection between %p(%i) and %p(%i)\n",
-//          s->v, s->v->Flags.intersected, i->v, i->v->Flags.intersected);
-
   if (s->intersected || i->s->intersected)
     {
-//    printf ("Need to restart intersection\n");
       i->need_restart = 1;
       return 0;
     }
@@ -646,8 +634,6 @@ seg_in_seg (const BoxType * b, void *cl)
 	  i->node_insert_list = g_list_prepend (i->node_insert_list, task);
 	  done_insert = 1;
 	}
-//      else
-//        printf (".");
       new_node = node_add_single_point (s->v, cnt > 1 ? s2 : s1);
       if (new_node != NULL)
 	{
@@ -658,11 +644,8 @@ seg_in_seg (const BoxType * b, void *cl)
 	  i->node_insert_list = g_list_prepend (i->node_insert_list, task);
 	  return 0;		/* Don't do any more processing */
 	}
-//      else
-//        printf (":");
       if (done_insert)
 	{
-//        printf ("Long-jmping back, since we intersected on i\n");
 	  longjmp (*i->env, 1);	/* Skip this contour if we intersected on i */
 	  i->need_restart = 1;	/* If we skip some processing, we definately need a restart */
 	  return 0;
@@ -755,7 +738,6 @@ contour_bounds_touch (const BoxType * b, void *cl)
   jmp_buf restart;
 
   /* Have seg_in_seg return to our desired location if it touches */
-//  info.env = &c_info->restart;
   info.env = &restart;
   info.touch = c_info->getout;
   info.need_restart = 0;
@@ -781,17 +763,6 @@ contour_bounds_touch (const BoxType * b, void *cl)
     {
       /* check this edge for any insertions */
       double dx;
-
-#if 0
-      /* We know we will just reject any intersections found until
-         the next pass anyway */
-      if (av->Flags.intersected)
-	{
-//        printf ("skip\n");
-	  continue;
-	}
-#endif
-
       info.v = av;
       /* compute the slant for region trimming */
       dx = av->next->point[0] - av->point[0];
@@ -824,17 +795,13 @@ contour_bounds_touch (const BoxType * b, void *cl)
       if (info.tree)
 	if (UNLIKELY (r_search (info.tree, &info.s->box,
 				seg_in_region, seg_in_seg, &info)))
-	  exit (0);
-//            return err_no_memory;     /* error */
+	  assert (0); /* XXX: Memory allocation failure */
     }
   while ((av = av->next) != &looping_over->head);
 
   c_info->node_insert_list = info.node_insert_list;
   if (info.need_restart)
-    {
-//    printf ("info.needs_restart says we need to restart\n");
-      c_info->need_restart = 1;
-    }
+    c_info->need_restart = 1;
   return 0;
 }
 
@@ -842,10 +809,8 @@ static void
 insert_new_nodes_cb (gpointer data, gpointer userdata)
 {
   insert_task *task = data;
-  /* Do insersion */
-  // task->new_node, inserted before task->parent into PLINE task->owner
 
-//  printf ("Seg affected: %p\n", task->seg);
+  /* Do insersion */
   task->new_node->prev = task->seg->v;
   task->new_node->next = task->seg->v->next;
   task->seg->v->next->prev = task->new_node;
@@ -854,7 +819,7 @@ insert_new_nodes_cb (gpointer data, gpointer userdata)
 
   cntrbox_adjust (task->seg->p, task->new_node->point);
   if (adjust_tree (task->seg->p->tree, task->seg))
-    exit (0);
+    assert (0); /* XXX: Memory allocation failure */
   g_free (task);
 }
 
@@ -877,8 +842,6 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
       b = a;
       a = t;
     }
-
-//  setjmp (c_info.restart);            /* we loop back here whenever a vertex is inserted */
 
   for (pa = a->contours; pa; pa = pa->next)	/* Loop over the contours of POLYAREA "a" */
     {
@@ -908,22 +871,13 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
 
       r_search (b->contour_tree, &sb, NULL, contour_bounds_touch, &c_info);
       if (c_info.need_restart)
-	{
-	  need_restart = 1;
-//        printf ("contour_bounds_touch: need_restart\n");
-//        break;
-	}
+	need_restart = 1;
     }
 
-//  printf ("----\n");
   if (c_info.node_insert_list != NULL)
-    {
-//    printf ("Processing %i new nodes\n", g_list_length (c_info.node_insert_list));
-      need_restart = 1;		/* Any new nodes could intersect */
-    }
+    need_restart = 1; /* Any new nodes could intersect */
   g_list_foreach (c_info.node_insert_list, insert_new_nodes_cb, NULL);
   g_list_free (c_info.node_insert_list);
-//  printf ("====\n");
 
   return need_restart;
 }
