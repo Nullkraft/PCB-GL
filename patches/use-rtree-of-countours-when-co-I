@@ -1,4 +1,4 @@
-Bottom: dd9f1256dd06403294e07aed0a73df0499d092e3
+Bottom: bb5903f98b0d885b3500e797d94b1d11985625c2
 Top:    fd5e3d1b743911513da70f691ff4f5128c6f5727
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-10-24 19:02:19 +0100
@@ -14,19 +14,6 @@ NOTE: This is more complex than the existing code, and on its own,
 
 ---
 
-diff --git a/src/polygon.c b/src/polygon.c
-index 08ce69d..65879c8 100644
---- a/src/polygon.c
-+++ b/src/polygon.c
-@@ -872,7 +872,7 @@ subtract_accumulated (struct cpInfo *info, PolygonTypePtr polygon)
- {
-   if (info->accumulate == NULL)
-     return;
--  Subtract (info->accumulate, polygon, True);
-+  Subtract (info->accumulate, polygon, true);
-   info->accumulate = NULL;
-   info->batch_size = 0;
- }
 diff --git a/src/polygon1.c b/src/polygon1.c
 index 329058e..d2c0798 100644
 --- a/src/polygon1.c
