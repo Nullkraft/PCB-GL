@@ -28,6 +28,10 @@ PASS 3b. Draw all polygons which have user-defined holes.
          each of these polygons. Both are masked against. After each
          polygon drawn, a new "S" stencil bit is required.
 
+NB: In this version. PASS 2 and 3 are carried out concurrently, although
+    for boards with heavily overlapping polygons, it may be faster to
+    mask out clearance for everything at once.
+
 
 ---
 
