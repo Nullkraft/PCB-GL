@@ -1691,10 +1691,20 @@ struct cyl_info {
 };
 
 static int
-hole_cyl_callback (const BoxType * b, void *cl)
+draw_hole_cyl (PinType *Pin, struct cyl_info *info, int Type)
 {
-  PinTypePtr Pin = (PinTypePtr) b;
-  struct cyl_info *info = cl;
+  char *color;
+
+  if (TEST_FLAG (WARNFLAG, Pin))
+    color = PCB->WarnColor;
+  else if (TEST_FLAG (SELECTEDFLAG, Pin))
+    color = (Type == VIA_TYPE) ? PCB->ViaSelectedColor : PCB->PinSelectedColor;
+  else if (TEST_FLAG (FOUNDFLAG, Pin))
+    color = PCB->ConnectedColor;
+  else
+    color = "drill";
+
+  gui->set_color (Output.fgGC, color);
   DrawDrillChannel (Pin->X, Pin->Y, Pin->DrillingHole / 2, info->from_layer, info->to_layer, info->scale);
   return 0;
 }
@@ -1730,9 +1740,21 @@ ghid_draw_packages (BoxTypePtr drawn_area)
 
 }
 
+pin_hole_cyl_callback (const BoxType * b, void *cl)
+{
+  return draw_hole_cyl ((PinType *)b, (struct cyl_info *)cl, PIN_TYPE);
+}
+
+static int
+via_hole_cyl_callback (const BoxType * b, void *cl)
+{
+  return draw_hole_cyl ((PinType *)b, (struct cyl_info *)cl, VIA_TYPE);
+}
+
 void
 ghid_draw_everything (BoxTypePtr drawn_area)
 {
+  render_priv *priv = gport->render_priv;
   int i, ngroups;
   /* This is the list of layer groups we will draw.  */
   int do_group[MAX_LAYER];
@@ -1852,8 +1874,8 @@ ghid_draw_everything (BoxTypePtr drawn_area)
       //      gui->set_color (Output.fgGC, PCB->MaskColor);
       gui->set_color (Output.fgGC, "drill");
       ghid_global_alpha_mult (Output.fgGC, 0.75);
-      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_cyl_callback, &cyl_info);
-      if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_cyl_callback, &cyl_info);
+      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_cyl_callback, &cyl_info);
+      if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_hole_cyl_callback, &cyl_info);
       ghid_global_alpha_mult (Output.fgGC, 1.0);
     }
 #endif
