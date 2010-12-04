@@ -1,5 +1,5 @@
-Bottom: bd94c3376144192b3c2c724bcf81a3c48b84c1a3
-Top:    2b435a64310089808c97c82919357a8cb4a639b9
+Bottom: d61f8b416f0784acb4d3a2f24b332e221e772dba
+Top:    1792f10644ea6c1a4e71ec8fa1c3941d3aff6bbc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-26 04:04:57 +0000
 
@@ -9,7 +9,7 @@ FBOs differently
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 1959c81..63389b0 100644
+index 64a17e8..b96b405 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -56,6 +56,9 @@ static bool check_gl_drawing_ok_hack = false;
@@ -310,7 +310,7 @@ index 1959c81..63389b0 100644
    DrawDrillChannel (Pin->X, Pin->Y, Pin->DrillingHole / 2, info->from_layer, info->to_layer, info->scale);
    return 0;
  }
-@@ -1725,9 +1792,176 @@ ghid_draw_packages (BoxTypePtr drawn_area)
+@@ -1730,9 +1797,176 @@ ghid_draw_packages (BoxTypePtr drawn_area)
  
  }
  
@@ -487,7 +487,7 @@ index 1959c81..63389b0 100644
    int i, ngroups;
    /* This is the list of layer groups we will draw.  */
    int do_group[MAX_LAYER];
-@@ -1794,11 +2028,11 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1799,11 +2033,11 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     */
    if (!TEST_FLAG (CHECKPLANESFLAG, PCB) &&
        gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
@@ -500,7 +500,7 @@ index 1959c81..63389b0 100644
      if (!global_view_2d) {
        /* Draw the solder mask if turned on */
        if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0)) {
-@@ -1833,7 +2067,64 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1838,7 +2072,64 @@ ghid_draw_everything (BoxTypePtr drawn_area)
  
    /* draw all layers in layerstack order */
    for (i = ngroups - 1; i >= 0; i--) {
@@ -566,7 +566,7 @@ index 1959c81..63389b0 100644
  
  #if 1
      if (!global_view_2d && i > 0 &&
-@@ -1847,13 +2138,85 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1852,13 +2143,85 @@ ghid_draw_everything (BoxTypePtr drawn_area)
        //      gui->set_color (Output.fgGC, PCB->MaskColor);
        gui->set_color (Output.fgGC, "drill");
        ghid_global_alpha_mult (Output.fgGC, 0.75);
@@ -654,7 +654,7 @@ index 1959c81..63389b0 100644
    if (TEST_FLAG (CHECKPLANESFLAG, PCB))
      return;
  
-@@ -1865,21 +2228,20 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1870,21 +2233,20 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    //  gui->set_layer (NULL, SL (FINISHED, 0), 0);
  
    if (global_view_2d)
@@ -690,7 +690,7 @@ index 1959c81..63389b0 100644
  
    gui->set_layer (NULL, SL (FINISHED, 0), 0);
  
-@@ -1922,6 +2284,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1927,6 +2289,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    Gathering = true;
  
    Settings.ShowSolderSide = save_show_solder;
@@ -698,7 +698,7 @@ index 1959c81..63389b0 100644
  }
  
  #define Z_NEAR 3.0
-@@ -1930,8 +2293,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1935,8 +2298,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               GdkEventExpose *ev,
                               GHidPort *port)
  {
@@ -708,7 +708,7 @@ index 1959c81..63389b0 100644
    static int display_list;
  #endif
    BoxType region;
-@@ -1947,14 +2310,43 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1952,14 +2315,43 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                       0, 0, 0, 1};
    bool horizon_problem = false;
    extern int debug_stencil_clears;
@@ -752,7 +752,7 @@ index 1959c81..63389b0 100644
    check_gl_drawing_ok_hack = true;
    debug_stencil_clears = 0;
  
-@@ -2035,9 +2427,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2040,9 +2432,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      glNewList (display_list, GL_COMPILE);
  #endif
  
@@ -765,7 +765,7 @@ index 1959c81..63389b0 100644
    glClearColor (port->bg_color.red / 65535.,
                  port->bg_color.green / 65535.,
                  port->bg_color.blue / 65535.,
-@@ -2286,7 +2678,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2291,7 +2683,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
  #ifdef ONE_SHOT
      glEndList ();
@@ -773,7 +773,7 @@ index 1959c81..63389b0 100644
    }
  
    glCallList (display_list);
-@@ -2297,6 +2688,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2302,6 +2693,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_flush_triangles (&buffer);
    hidgl_finish_triangle_array (&buffer);
  
@@ -782,7 +782,7 @@ index 1959c81..63389b0 100644
    check_gl_drawing_ok_hack = false;
    hidgl_in_context (false);
    ghid_end_drawing (port);
-@@ -2305,6 +2698,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2310,6 +2703,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  //  printf ("Vertex count was %i\n", buffer.total_vertices);
  //  printf ("Stencil clears in frame: %i\n", debug_stencil_clears);
  
