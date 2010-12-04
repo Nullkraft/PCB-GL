@@ -95,7 +95,7 @@ static FlagBitsType object_flagbits[] = {
   { HOLEFLAG, N ("hole"), PIN_TYPES },
   { RATFLAG, N ("rat"), RATLINE_TYPE },
   { PININPOLYFLAG, N ("pininpoly"), PIN_TYPES | PAD_TYPE },
-  { CLEARPOLYFLAG, N ("clearpoly"), POLYGON_TYPE },
+  { CLEARPOLYFLAG, N ("clearpoly"), POUR_TYPE },
   { HIDENAMEFLAG, N ("hidename"), ELEMENT_TYPE },
   { DISPLAYNAMEFLAG, N ("showname"), ELEMENT_TYPE },
   { CLEARLINEFLAG, N ("clearline"), LINE_TYPE | ARC_TYPE | TEXT_TYPE },
@@ -110,7 +110,7 @@ static FlagBitsType object_flagbits[] = {
   { DRCFLAG, N ("drc"), ALL_TYPES },
   { LOCKFLAG, N ("lock"), ALL_TYPES },
   { EDGE2FLAG, N ("edge2"), ALL_TYPES },
-  { FULLPOLYFLAG, N ("fullpoly"), POLYGON_TYPE},
+  { FULLPOLYFLAG, N ("fullpoly"), POUR_TYPE},
   { NOPASTEFLAG, N ("nopaste"), PAD_TYPE }
 };
 
