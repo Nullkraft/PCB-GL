@@ -1965,6 +1965,7 @@ cleanup_fbo_layer (GHidPort *port)
 void
 ghid_draw_everything (BoxTypePtr drawn_area)
 {
+  render_priv *priv = gport->render_priv;
   int i, ngroups;
   /* This is the list of layer groups we will draw.  */
   int do_group[MAX_LAYER];
