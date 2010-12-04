@@ -1,5 +1,5 @@
 Bottom: c7b657d5e7350b1ed287b4b1c717c07c29362175
-Top:    dddd30816304d3f21909efd33a68e20957706ab4
+Top:    722ef0ca779f199cfe7be2ef23e6ab2b1c1768eb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-04 17:52:05 +0000
 
@@ -36,7 +36,7 @@ NB: In this version. PASS 2 and 3 are carried out concurrently, although
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 3ca7387..b2e0e0d 100644
+index 3ca7387..24131d4 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -851,14 +851,23 @@ do_hole (const BoxType *b, void *cl)
@@ -44,7 +44,7 @@ index 3ca7387..b2e0e0d 100644
  }
  
 +static bool
-+polygon_get_contains_user_holes (PolygonType *polygon)
++polygon_contains_user_holes (PolygonType *polygon)
 +{
 +  return (polygon->HoleIndexN > 0);
 +}
@@ -87,7 +87,7 @@ index 3ca7387..b2e0e0d 100644
 +  /* Polygon has holes.. does it have any user-drawn holes?
 +   * If so, it must be masked with a _new_ stencil bit.
 +   */
-+  use_new_stencil = force_new_stencil | polygon_get_contains_user_holes (poly);
++  use_new_stencil = force_new_stencil | polygon_contains_user_holes (poly);
  
 -    /* Flush out any existing geoemtry to be rendered */
 -    hidgl_flush_triangles (&buffer);
@@ -177,3 +177,48 @@ index 3ca7387..b2e0e0d 100644
  }
  
  void
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 3f02ff7..cd6f188 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1278,11 +1278,28 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *dra
+ }
+ 
+ static int
+-poly_callback (const BoxType * b, void *cl)
++poly_callback_no_clear (const BoxType * b, void *cl)
+ {
+   struct pin_info *i = (struct pin_info *) cl;
++  PolygonType *polygon = (PolygonType *) b;
+ 
+-  DrawPlainPolygon (i->Layer, (PolygonTypePtr) b, i->drawn_area);
++  if (TEST_FLAG (CLEARPOLYFLAG, polygon))
++    return 0;
++
++  DrawPlainPolygon (i->Layer, polygon, i->drawn_area);
++  return 1;
++}
++
++static int
++poly_callback_clearing (const BoxType * b, void *cl)
++{
++  struct pin_info *i = (struct pin_info *) cl;
++  PolygonType *polygon = (PolygonType *) b;
++
++  if (!TEST_FLAG (CLEARPOLYFLAG, polygon))
++    return 0;
++
++  DrawPlainPolygon (i->Layer, polygon, i->drawn_area);
+   return 1;
+ }
+ 
+@@ -1486,7 +1503,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+       if (Layer->PolygonN) {
+         info.Layer = Layer;
+         info.drawn_area = screen;
+-        r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
++        r_search (Layer->polygon_tree, screen, NULL, poly_callback_no_clear, &info);
++        r_search (Layer->polygon_tree, screen, NULL, poly_callback_clearing, &info);
+ 
+         /* HACK: Subcomposite polygons separately from other layer primitives */
+         /* Reset the compositing */
