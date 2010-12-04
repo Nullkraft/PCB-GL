@@ -7,19 +7,22 @@ Draw polygons in a more intelligent order
 
 Require a sub-compositing bit to avoid overlapping polygons. Call this "S"
 
-PASS 1a. Draw all non holed "SOLID" polygons which don't clear other geometry.
-PASS 2b. Draw all "SOLID" polygons with holes. A SECOND stencil bit, "H" is
-         required for each of these polygons (in addition to "S".) After
-         each polygon drawn here, flag that a new stencil bit is required.
+PASS 1a. Draw all non holed "SOLID" polygons which don't clear other
+         geometry.
+
+PASS 2b. Draw all "SOLID" polygons with holes. A SECOND stencil bit, "H"
+         is required for each of these polygons (in addition to "S").
+         After each polygon drawn, flag that a new stencil bit is required.
 
 PASS 2.  Mask out all clearance holes from other geometry. As this is a
-         polygon ONLY layer being subcomposited, this masking can be done
-         directly on the "S" bit-plane.
+         polygon ONLY layer being subcomposited, this masking can be
+         done directly on the "S" bit-plane.
 
 PASS 3a. Draw all polygons which only feature clearance holes
-PASS 3b. Draw all polygons which have user-defined holes. A SECOND stencil
-         bit, "H" is required for each of these polygons (in addition to "S".)
-         After each polygon drawn, a new "S" stencil bit is required.
+PASS 3b. Draw all polygons which have user-defined holes.
+         A SECOND stencil bit, "H" is required for each of these polygons
+         (in addition to "S"). After each polygon drawn, a new "S"
+         stencil bit is required.
 
 
 ---
