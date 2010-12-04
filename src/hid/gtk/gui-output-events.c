@@ -373,7 +373,7 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
   state = (GdkModifierType) (kev->state);
   mk = ghid_modifier_keys_state (&state);
 
-  ghid_show_crosshair (FALSE);
+  //ghid_show_crosshair (FALSE);
 
   handled = TRUE;		/* Start off assuming we handle it */
   switch (ksym)
@@ -479,7 +479,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
   ghid_note_event_location (ev);
   state = (GdkModifierType) (ev->state);
   mk = ghid_modifier_keys_state (&state);
-  ghid_show_crosshair (FALSE);
+  //ghid_show_crosshair (FALSE);
   HideCrosshair (TRUE);
   drag = have_crosshair_attachments ();
 
@@ -488,7 +488,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
   ghid_invalidate_all ();
   RestoreCrosshair (TRUE);
   ghid_set_status_line_label ();
-  ghid_show_crosshair (TRUE);
+  //ghid_show_crosshair (TRUE);
   if (!gport->panning)
     g_idle_add (ghid_idle_cb, NULL);
   return TRUE;
@@ -879,7 +879,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
       cursor_in_viewport = FALSE;
     }
 
-  ghid_show_crosshair (FALSE);
+  //ghid_show_crosshair (FALSE);
   out->has_entered = FALSE;
 
   ghid_screen_update ();
