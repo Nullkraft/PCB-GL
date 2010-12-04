@@ -5,7 +5,7 @@ Date:   2010-12-04 17:52:05 +0000
 
 Draw polygons in a more intelligent order
 
-Require a sub-compositing bit to avoid overlapping polygons. Call this "S"
+A sub-compositing stencil bit "S" is used to avoid overlapping polygons.
 
 PASS 1a. Draw all non holed "SOLID" polygons which don't clear other
          geometry.
