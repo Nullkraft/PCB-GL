@@ -10,7 +10,7 @@ A sub-compositing stencil bit "S" is used to avoid overlapping polygons.
 PASS 1a. Draw all non holed "SOLID" polygons which don't clear other
          geometry.
 
-PASS 2b. Draw all "SOLID" polygons with holes.
+PASS 1b. Draw all "SOLID" polygons with holes.
          --
          In addition to "S", A second stencil bit, "H" is required for
          each of these polygons. Both are masked against. After each
