@@ -1,5 +1,5 @@
-Bottom: 883bbe03c4b6b57b2ff24024ecaf831cee468f05
-Top:    e89dc8dcddb09e8a0b7748537b495508ea1a1aea
+Bottom: c02a3fe189d6ee943a063df10643a3de3cb3981c
+Top:    a56fe4c92daf9c8b8f01cbb8dc65d6d53f7f2582
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 00:32:30 +0000
 
@@ -1515,7 +1515,7 @@ index 0000000..f9746f1
 +               m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * scale;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 6b6d318..18109fa 100644
+index 3294a24..25d2b43 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -329,6 +329,48 @@ ghid_draw_grid (BoxTypePtr drawn_area)
@@ -1708,7 +1708,7 @@ index 6b6d318..18109fa 100644
  void
  ghid_draw_everything (BoxTypePtr drawn_area)
  {
-@@ -1773,23 +1883,24 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1772,23 +1882,24 @@ ghid_draw_everything (BoxTypePtr drawn_area)
      gui->set_layer ("topsilk", SL (SILK, TOP), 0);
    else
      gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0);
@@ -1748,7 +1748,7 @@ index 6b6d318..18109fa 100644
  
    gui->set_layer (NULL, SL (FINISHED, 0), 0);
  
-@@ -1922,7 +2033,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1921,7 +2032,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    /* Scale board coordiantes to (-1,-1)-(1,1) coordiantes */
    /* Adjust the "w" coordinate of our homogeneous coodinates. We coulld in
     * theory just use glScalef to transform, but on mesa this produces errors
@@ -1757,7 +1757,7 @@ index 6b6d318..18109fa 100644
     */
    scale[15] = (float)port->zoom * (float)MIN (widget->allocation.width, widget->allocation.height) / 2.;
    /* XXX: Need to choose which to use (width or height) based on the aspect of the window
-@@ -1946,6 +2057,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1945,6 +2056,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  #endif
  
    glEnable (GL_STENCIL_TEST);
@@ -1766,7 +1766,7 @@ index 6b6d318..18109fa 100644
    glClearColor (port->bg_color.red / 65535.,
                  port->bg_color.green / 65535.,
                  port->bg_color.blue / 65535.,
-@@ -2085,6 +2198,46 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2084,6 +2197,46 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    ghid_draw_everything (&region);
    hidgl_flush_triangles (&buffer);
  
@@ -1813,7 +1813,7 @@ index 6b6d318..18109fa 100644
    /* Just prod the drawing code so the current depth gets set to
       the right value for the layer we are editing */
    hidgl_set_depth (compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT)));
-@@ -2095,6 +2248,63 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2094,6 +2247,63 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    DrawMark (TRUE);
    hidgl_flush_triangles (&buffer);
  
@@ -1877,7 +1877,7 @@ index 6b6d318..18109fa 100644
  #ifdef ONE_SHOT
      glEndList ();
      one_shot = 0;
-@@ -2204,7 +2414,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2203,7 +2413,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -1886,7 +1886,7 @@ index 6b6d318..18109fa 100644
    hidgl_reset_stencil_usage ();
  
    /* call the drawing routine */
-@@ -2270,7 +2480,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2269,7 +2479,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                          GDK_GL_MODE_STENCIL |
@@ -1895,7 +1895,7 @@ index 6b6d318..18109fa 100644
                                          GDK_GL_MODE_SINGLE);
  
    pixmap = gdk_pixmap_new (NULL, width, height, depth);
-@@ -2318,7 +2528,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2317,7 +2527,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
