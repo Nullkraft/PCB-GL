@@ -1,5 +1,5 @@
-Bottom: 721a276bc544754d5e583d2dd5685f958d5d019f
-Top:    bf4eb60c3ef22f3f2a2b303ef1d2a3fdd3c34675
+Bottom: 081d4c447b3c4d079cfde94efe06281207e7a774
+Top:    77fd856a9fb13e80a84821318179f3185796eece
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-04 23:45:10 +0000
 
@@ -9,7 +9,7 @@ Playing with stack rendering
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 47830f4..8e20630 100644
+index b72eb96..1693363 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1078,7 +1078,17 @@ SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
@@ -60,7 +60,7 @@ index 47830f4..8e20630 100644
        }
  
        if (TEST_FLAG (CHECKPLANESFLAG, PCB))
-@@ -1551,7 +1571,8 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1572,7 +1592,8 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     */
    if (!TEST_FLAG (CHECKPLANESFLAG, PCB) &&
        gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
@@ -70,7 +70,7 @@ index 47830f4..8e20630 100644
      if (PCB->ElementOn) {
        r_search (PCB->Data->element_tree, drawn_area, NULL, backE_callback, NULL);
        r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, backN_callback, NULL);
-@@ -1589,20 +1610,21 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1610,20 +1631,21 @@ ghid_draw_everything (BoxTypePtr drawn_area)
      gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0);
  //  gui->set_layer (NULL, SL (FINISHED, 0), 0);
  
