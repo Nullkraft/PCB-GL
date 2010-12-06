@@ -1,7 +1,7 @@
-Bottom: e7753d74c8bb625754b0ebcad06e406d072c8d47
-Top:    f013204e9129caf62e7b4f26fa9eb049dde4adbe
+Bottom: 275b4117c3dc420462f88c744e353a883bbe439b
+Top:    f3c0dd7009ad8b79d900a45959dddad67ec27c68
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-04 23:45:23 +0000
+Date:   2010-12-06 19:23:52 +0000
 
 Use the stencil buffer more cleverly
 
@@ -125,10 +125,10 @@ index cf34132..3ca7387 100644
  
  int
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 22ae73b..3f02ff7 100644
+index 556a4a4..d36ffa0 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1816,6 +1816,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1837,6 +1837,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                       0, 0, 1, 0,
                       0, 0, 0, 1};
    bool horizon_problem = false;
@@ -136,7 +136,7 @@ index 22ae73b..3f02ff7 100644
  
    buffer.total_triangles = 0;
    buffer.total_vertices = 0;
-@@ -1825,6 +1826,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1846,6 +1847,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_in_context (true);
    hidgl_init ();
    check_gl_drawing_ok_hack = true;
@@ -144,7 +144,7 @@ index 22ae73b..3f02ff7 100644
  
    /* If we don't have any stencil bits available,
       we can't use the hidgl polygon drawing routine */
-@@ -2072,6 +2074,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2093,6 +2095,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
  //  printf ("Triangle count was %i\n", buffer.total_triangles);
  //  printf ("Vertex count was %i\n", buffer.total_vertices);

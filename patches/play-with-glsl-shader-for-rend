@@ -1,7 +1,7 @@
-Bottom: 5b76a7145d1fbbc835279d3296d05e3a6834e313
-Top:    ad35cf7d4a4285bf7d3bc8b45c1a015ccaf18d23
+Bottom: 15755344c2a22356fa6103f563bb423d6921d7fe
+Top:    7b3e1535331d35fc852465f89ac8e0b9f4035e1b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-04 23:45:20 +0000
+Date:   2010-12-06 19:23:49 +0000
 
 Play with GLSL shader for rendering line caps and circles
 
@@ -1206,7 +1206,7 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 21cc13a..36727d0 100644
+index 453ddd0..fdfb2a9 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -32,6 +32,8 @@
@@ -1293,7 +1293,7 @@ index 21cc13a..36727d0 100644
  }
  
  struct cyl_info {
-@@ -1788,16 +1796,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1809,16 +1817,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               GdkEventExpose *ev,
                               GHidPort *port)
  {
@@ -1315,7 +1315,7 @@ index 21cc13a..36727d0 100644
    ghid_start_drawing (port);
  
    hidgl_in_context (true);
-@@ -1843,7 +1855,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1864,7 +1876,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_y0, 0);
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
@@ -1324,7 +1324,7 @@ index 21cc13a..36727d0 100644
    if (one_shot) {
  
      display_list = glGenLists(1);
-@@ -1969,7 +1981,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1990,7 +2002,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      glEnd ();
    }
  
@@ -1332,7 +1332,7 @@ index 21cc13a..36727d0 100644
    // hid_expose_callback (&ghid_hid, &region, 0);
    ghid_draw_everything (&region);
    hidgl_flush_triangles (&buffer);
-@@ -1979,29 +1990,31 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2000,29 +2011,31 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_set_depth (compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT)));
    ghid_draw_grid (&region);
  
@@ -1369,7 +1369,7 @@ index 21cc13a..36727d0 100644
    return FALSE;
  }
  
-@@ -2091,7 +2104,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2112,7 +2125,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);

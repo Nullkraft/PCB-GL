@@ -1,7 +1,7 @@
-Bottom: f013204e9129caf62e7b4f26fa9eb049dde4adbe
-Top:    53c1709d83a985db7cad22403707700f9e79a913
+Bottom: f3c0dd7009ad8b79d900a45959dddad67ec27c68
+Top:    e80ffdcbeb1cfb5b2b48ac20bd2e559b2645223d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-04 23:45:23 +0000
+Date:   2010-12-06 19:23:52 +0000
 
 Draw polygons in a more intelligent order
 
@@ -178,7 +178,7 @@ index 3ca7387..24131d4 100644
  
  void
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 3f02ff7..cd6f188 100644
+index d36ffa0..3294a24 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1278,11 +1278,28 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *dra
