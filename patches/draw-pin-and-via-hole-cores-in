@@ -1,5 +1,5 @@
-Bottom: 436be4ba303d09aac30fa1494034a5e401604b81
-Top:    26d9a6e94b29d82ab066f09e2d826e3001072608
+Bottom: 1358033380c5e43174c372875fcbdc2069844138
+Top:    c584fb2406363a4b4500ecc9520a6391fd3c7746
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-06 19:20:35 +0000
 
@@ -9,10 +9,10 @@ Draw pin and via hole cores in the appropriate colour
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index a152fae..b28f6da 100644
+index 1e1393b..a6dccfd 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1562,14 +1562,35 @@ struct cyl_info {
+@@ -1487,14 +1487,35 @@ struct cyl_info {
  };
  
  static int
@@ -51,7 +51,7 @@ index a152fae..b28f6da 100644
  void
  ghid_draw_everything (BoxTypePtr drawn_area)
  {
-@@ -1696,8 +1717,8 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1572,8 +1593,8 @@ ghid_draw_everything (BoxTypePtr drawn_area)
  //      gui->set_color (Output.fgGC, PCB->MaskColor);
        gui->set_color (Output.fgGC, "drill");
        ghid_global_alpha_mult (Output.fgGC, 0.75);
