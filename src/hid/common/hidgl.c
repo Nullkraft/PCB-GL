@@ -697,148 +697,38 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
   free (vertices);
 }
 
-static inline void
-stash_vertex (PLINE *contour, int *vertex_comp,
-              float x, float y, float z, float r, float s)
-{
-  contour->tristrip_vertices[(*vertex_comp)++] = x;
-  contour->tristrip_vertices[(*vertex_comp)++] = y;
-#if MEMCPY_VERTEX_DATA
-  contour->tristrip_vertices[(*vertex_comp)++] = z;
-  contour->tristrip_vertices[(*vertex_comp)++] = r;
-  contour->tristrip_vertices[(*vertex_comp)++] = s;
-#endif
-  contour->tristrip_num_vertices ++;
-}
-
-static void
-fill_contour (PLINE *contour)
-{
-  int i;
-  int vertex_comp;
-  cairo_traps_t traps;
-
-  /* If the contour is round, then call hidgl_fill_circle to draw it. */
-  if (contour->is_round) {
-    hidgl_fill_circle (contour->cx, contour->cy, contour->radius);
-    return;
-  }
-
-  /* If we don't have a cached set of tri-strips, compute them */
-  if (contour->tristrip_vertices == NULL) {
-    int tristrip_space;
-    int x1, x2, x3, x4, y_top, y_bot;
-
-    _cairo_traps_init (&traps);
-    bo_contour_to_traps_no_draw (contour, &traps);
-
-    tristrip_space = 0;
-
-    for (i = 0; i < traps.num_traps; i++) {
-      y_top = traps.traps[i].top;
-      y_bot = traps.traps[i].bottom;
-
-      x1 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_top);
-      x2 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_top);
-      x3 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_bot);
-      x4 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
-
-      if ((x1 == x2) || (x3 == x4)) {
-        tristrip_space += 5; /* Three vertices + repeated start and end */
-      } else {
-        tristrip_space += 6; /* Four vertices + repeated start and end */
-      }
-    }
-
-    if (tristrip_space == 0) {
-      printf ("Strange, contour didn't tesselate\n");
-      return;
-    }
-
-#if MEMCPY_VERTEX_DATA
-    /* NB: MEMCPY of vertex data causes a problem with depth being cached at the wrong level! */
-    contour->tristrip_vertices = malloc (sizeof (float) * 5 * tristrip_space);
-#else
-    contour->tristrip_vertices = malloc (sizeof (float) * 2 * tristrip_space);
-#endif
-    contour->tristrip_num_vertices = 0;
-
-    vertex_comp = 0;
-    for (i = 0; i < traps.num_traps; i++) {
-      y_top = traps.traps[i].top;
-      y_bot = traps.traps[i].bottom;
-
-      x1 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_top);
-      x2 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_top);
-      x3 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_bot);
-      x4 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
-
-      if (x1 == x2) {
-        /* NB: Repeated first virtex to separate from other tri-strip */
-        stash_vertex (contour, &vertex_comp, x1, y_top, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x1, y_top, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x3, y_bot, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x4, y_bot, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x4, y_bot, global_depth, 0.0, 0.0);
-        /* NB: Repeated last virtex to separate from other tri-strip */
-      } else if (x3 == x4) {
-        /* NB: Repeated first virtex to separate from other tri-strip */
-        stash_vertex (contour, &vertex_comp, x1, y_top, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x1, y_top, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x2, y_top, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x3, y_bot, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x3, y_bot, global_depth, 0.0, 0.0);
-        /* NB: Repeated last virtex to separate from other tri-strip */
-      } else {
-        /* NB: Repeated first virtex to separate from other tri-strip */
-        stash_vertex (contour, &vertex_comp, x2, y_top, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x2, y_top, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x3, y_bot, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x1, y_top, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x4, y_bot, global_depth, 0.0, 0.0);
-        stash_vertex (contour, &vertex_comp, x4, y_bot, global_depth, 0.0, 0.0);
-        /* NB: Repeated last virtex to separate from other tri-strip */
-      }
-    }
-
-    _cairo_traps_fini (&traps);
-  }
-
-  if (contour->tristrip_num_vertices == 0)
-    return;
-
-  hidgl_ensure_vertex_space (&buffer, contour->tristrip_num_vertices);
-
-#if MEMCPY_VERTEX_DATA
-  memcpy (&buffer.triangle_array[buffer.coord_comp_count],
-          contour->tristrip_vertices,
-          sizeof (float) * 5 * contour->tristrip_num_vertices);
-  buffer.coord_comp_count += 5 * contour->tristrip_num_vertices;
-  buffer.vertex_count += contour->tristrip_num_vertices;
-
-#else
-  vertex_comp = 0;
-  for (i = 0; i < contour->tristrip_num_vertices; i++) {
-    int x, y;
-    x = contour->tristrip_vertices[vertex_comp++];
-    y = contour->tristrip_vertices[vertex_comp++];
-    hidgl_add_vertex_tex (&buffer, x, y, 0.0, 0.0);
-  }
-#endif
-
-}
+struct do_hole_info {
+  double scale;
+};
 
 static int
 do_hole (const BoxType *b, void *cl)
 {
+  struct do_hole_info *info = cl;
   PLINE *curc = (PLINE *) b;
+  cairo_traps_t traps;
 
   /* Ignore the outer contour - we draw it first explicitly*/
   if (curc->Flags.orient == PLF_DIR) {
     return 0;
   }
 
-  fill_contour (curc);
+  /* If the contour is round, and hidgl_fill_circle would use
+   * less slices than we have vertices to draw it, then call
+   * hidgl_fill_circle to draw this contour.
+   */
+  if (curc->is_round) {
+    double slices = calc_slices (curc->radius / info->scale, 2 * M_PI);
+    if (slices < curc->Count) {
+      hidgl_fill_circle (curc->cx, curc->cy, curc->radius, info->scale);
+      return 1;
+    }
+  }
+
+  _cairo_traps_init (&traps);
+  bo_contour_to_traps (curc, &traps);
+  _cairo_traps_fini (&traps);
+
   return 1;
 }
 
@@ -848,11 +738,15 @@ static int assigned_bits = 0;
 
 /* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
 void
-hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
 {
+  struct do_hole_info info;
   int stencil_bit;
+  cairo_traps_t traps;
 
   CHECK_IS_IN_CONTEXT ();
+  info.scale = scale;
+  global_scale = scale;
 
   if (poly->Clipped == NULL)
     {
@@ -882,7 +776,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
    */
   /* Drawing operations now set our reference bit in the stencil buffer */
 
-  r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, NULL);
+  r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
   hidgl_flush_triangles (&buffer);
 
   /* Drawing operations as masked to areas where the stencil buffer is '0' */
@@ -898,7 +792,9 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
                                                               // any bits permitted by the stencil writemask
 
   /* Draw the polygon outer */
-  fill_contour (poly->Clipped->contours);
+  _cairo_traps_init (&traps);
+  bo_contour_to_traps (poly->Clipped->contours, &traps);
+  _cairo_traps_fini (&traps);
   hidgl_flush_triangles (&buffer);
 
   /* Unassign our stencil buffer bit */

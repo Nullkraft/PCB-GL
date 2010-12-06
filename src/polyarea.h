@@ -107,8 +107,6 @@ struct PLINE
       unsigned int status:3;
       unsigned int orient:1;
     } Flags;
-    int tristrip_num_vertices;
-    float *tristrip_vertices;
 };
 
 PLINE *poly_NewContour(Vector v);
