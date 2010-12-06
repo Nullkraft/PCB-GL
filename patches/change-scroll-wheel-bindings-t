@@ -1,7 +1,7 @@
-Bottom: bb05e575bbe8af7f770cab05a633b44ed275c993
-Top:    03e06d826add1a06458102b5caa5e959f938582d
+Bottom: 719b883b225599f7d13b475d7160ab29b131cd8f
+Top:    719b883b225599f7d13b475d7160ab29b131cd8f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-06 19:32:04 +0000
+Date:   2010-12-06 19:37:11 +0000
 
 Change scroll-wheel bindings to match more GTK applications
 
@@ -16,34 +16,4 @@ Change scroll-wheel bindings to match more GTK applications
 
 ---
 
-diff --git a/src/gpcb-menu.res b/src/gpcb-menu.res
-index bd9acac..59a9a29 100644
---- a/src/gpcb-menu.res
-+++ b/src/gpcb-menu.res
-@@ -25,18 +25,18 @@ Mouse =
-     up-shift-ctrl = { Mode(Notify) Mode(Restore) Display(ToggleRubberbandMode) }
-   }
-   Up = {
--    Zoom(0.8)
--    shift = Scroll(up)
--    ctrl = Scroll(left)
-+    Scroll(up)
-+    shift = Scroll(left)
-+    ctrl = Zoom(0.8)
-   }
-   Down = {
--    Zoom(1.25)
--    shift = Scroll(down)
--    ctrl = Scroll(right)
-+    Scroll(down)
-+    shift = Scroll(right)
-+    ctrl = Zoom(1.25)
-   }
- # If you want zoom to center, do this instead.
--  #Up = { {Zoom(0.8) Center()} }
--  #Down = { {Zoom(1.25) Center()} }
-+  #Up = { ctrl = {Zoom(0.8) Center()} }
-+  #Down = { ctrl = {Zoom(1.25) Center()} }
- }
- 
- MainMenu =
+
