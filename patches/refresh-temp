@@ -1,0 +1,87 @@
+Bottom: 9298726d6f9cb2cc3d5664c56feac316aa7a3eda
+Top:    2feb799ea332857eedb6531e48916115a0e7338b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-06 20:49:00 +0000
+
+Refresh of noop-drawing-hack
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 556ab99..9fbbbea 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1114,6 +1114,13 @@ ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
+                                 NULL,
+                                 TRUE,
+                                 GDK_GL_RGBA_TYPE);
++
++  /* HACK TEST */
++  gtk_widget_realize (widget);
++  gdk_window_set_back_pixmap (widget->window, NULL, FALSE);
++
++  /* HACK TEST 2 */
++  gtk_widget_set_double_buffered (widget, FALSE);
+ }
+ 
+ void
+@@ -2326,6 +2333,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ 
+   ghid_start_drawing (port);
+ 
++<<<<<<< current
+   /* Compute the size we're going to use for the layer textures */
+ //  fbo_width  = PCB->MaxWidth  / gport->zoom;
+ //  fbo_height = PCB->MaxHeight / gport->zoom;
+@@ -2345,6 +2353,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+     old_fbo_height = fbo_height;
+     old_no_layers = no_layers;
+   }
++=======
++/* TEMP */
++  glClearColor (1., 0., 0., 1.);
++  glClear (GL_COLOR_BUFFER_BIT);
++/* TEMP */
++#if 0
++>>>>>>> patched
+ 
+   hidgl_in_context (true);
+   hidgl_init ();
+@@ -2569,9 +2584,17 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   }
+ #endif
+ 
++  {
++    float save_zoom = gport->zoom;
++  /* HACK, FIX GEOMETRY LOD */
++  gport->zoom = 1643;
++
+   // hid_expose_callback (&ghid_hid, &region, 0);
+-  ghid_draw_everything (&region);
+-  hidgl_flush_triangles (&buffer);
++  //ghid_draw_everything (&region);
++  //hidgl_flush_triangles (&buffer);
++
++  gport->zoom = save_zoom;
++  }
+ 
+   glTexCoord2f (0., 0.);
+   glColor3f (1., 1., 1.);
+@@ -2616,7 +2639,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   /* Just prod the drawing code so the current depth gets set to
+      the right value for the layer we are editing */
+   hidgl_set_depth (compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT)));
+-  ghid_draw_grid (&region);
++//  ghid_draw_grid (&region);
+ 
+   ghid_invalidate_current_gc ();
+   DrawAttached (TRUE);
+@@ -2696,6 +2719,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ 
+   check_gl_drawing_ok_hack = false;
+   hidgl_in_context (false);
++
++#endif
+   ghid_end_drawing (port);
+ 
+ //  printf ("Triangle count was %i\n", buffer.total_triangles);
