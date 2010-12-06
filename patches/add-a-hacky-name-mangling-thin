@@ -1,5 +1,5 @@
-Bottom: f8ce43993c8c158fc593d7388cbddb5555ecc7b1
-Top:    808f125085129021bb1871915cad7dad6df6fea8
+Bottom: 62d8d8f763f3512ff8a67d6b3f17157cf302d47c
+Top:    97aace0ace891745c4de7294ed76da1ed7c5d4a5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-09 16:17:44 +0100
 
@@ -18,7 +18,7 @@ Add a hacky name-mangling thingy for loading boards
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 3d879ff..8b8e972 100644
+index 022f050..d623859 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -37,6 +37,7 @@
@@ -128,12 +128,12 @@ index af7ace4..ac3f623 100644
  				 FontTypePtr, FlagType, char *, char *,
  				 char *, LocationType, LocationType, BYTE,
 diff --git a/src/file.c b/src/file.c
-index d44c3bb..97a884b 100644
+index 68bcc67..04e4b22 100644
 --- a/src/file.c
 +++ b/src/file.c
-@@ -356,6 +356,9 @@ LoadPCB (char *Filename)
- 
+@@ -358,6 +358,9 @@ LoadPCB (char *Filename)
    start = clock ();
+ #endif
  
 +  /* Hack, load the mapping file */
 +  RefdesMapInit ();
