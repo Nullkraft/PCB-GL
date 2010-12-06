@@ -38,16 +38,20 @@ int snavi_set_led (GIOChannel *snavi, int led_state)
   GError      *error = NULL;
   gsize        bytes_written;
 
+  event.time.tv_sec = 0;
+  event.time.tv_usec = 0;
   event.type  = EV_LED;
   event.code  = LED_MISC;
   event.value = led_state;
 
+#if 0
   g_io_channel_seek_position (snavi, 0, G_SEEK_END, &error);
   if (error) {
     g_printerr ("Error: %s\n", error->message);
     /* FIXME: FREE THE ERROR??? */
     return FALSE;
   }
+#endif
 
   g_io_channel_write_chars (snavi,
                             (gchar *) &event,
@@ -61,6 +65,7 @@ int snavi_set_led (GIOChannel *snavi, int led_state)
     return FALSE;
   }
 
+#if 0
   g_io_channel_flush (snavi, &error);
 
   if (error) {
@@ -68,6 +73,7 @@ int snavi_set_led (GIOChannel *snavi, int led_state)
     /* FIXME: FREE THE ERROR??? */
     return FALSE;
   }
+#endif
 
   return bytes_written < sizeof (struct input_event);
 }
@@ -101,6 +107,12 @@ gboolean snavi_event (GIOChannel   *source,
 
   switch (event.type)
     {
+      case EV_ABS:
+        if (event.code <= ABS_RZ)
+          axes[event.code - ABS_X] = event.value;
+        break;
+
+        /* I'm not sure, but previously the SpaceNavigator reported as relative events */
       case EV_REL:
         if (event.code <= REL_RZ)
           axes[event.code - REL_X] = event.value;
@@ -127,12 +139,12 @@ gboolean snavi_event (GIOChannel   *source,
             axes[i] = 0;
         }
 
-        update_pan_cb (axes[0] / 100.0,
-                       axes[2] / 100.0,
-                       axes[1] / 100.0, cb_userdata);
-        update_roll_cb (axes[5] / 100.0,
-                        axes[3] / 100.0,
-                        axes[4] / 100.0, cb_userdata);
+        update_pan_cb (axes[0] / 70.0,
+                       axes[2] / 70.0,
+                       axes[1] / 70.0, cb_userdata);
+        update_roll_cb (axes[5] / 60.0,
+                        axes[3] / 60.0,
+                        axes[4] / 60.0, cb_userdata);
         update_done_cb (cb_userdata);
 
         axes[0] = axes[1] = axes[2] = axes[3] = axes[4] = axes[5] = 0;
@@ -162,11 +174,22 @@ setup_snavi (void (*update_pan)(int, int, int, gpointer),
   update_done_cb = update_done;
   button_cb = button;
   cb_userdata = data;
+#if 0
+  int fd;
+  int grab = 1;
 
+  fd = open("/dev/input/spacenavigator", O_RDWR);
+  ioctl (fd, EVIOCGRAB, &grab);
+
+  snavi = g_io_channel_unix_new (fd);
+#else
   snavi = g_io_channel_new_file ("/dev/input/spacenavigator", "r+", NULL);
+#endif
+
   if (snavi)
     {
       g_io_channel_set_encoding (snavi, NULL, NULL);
+      g_io_channel_set_buffered (snavi, FALSE);
       event_id = g_io_add_watch (snavi, G_IO_IN, snavi_event, NULL);
     }
 
