@@ -1,10 +1,9 @@
 Bottom: bd57982db80577a086972e7504b4cb3ae5909088
-Top:    18132fef8301b3eb278a22738bef17a0b6c4a06b
+Top:    e05f261b23b80cb44e61e67d0b73b0703289b33c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-04 23:45:06 +0000
+Date:   2010-12-06 19:31:37 +0000
 
 Add virtual trackball code
-
 
 ---
 
@@ -459,10 +458,10 @@ index 0000000..ed0c267
 +
 diff --git a/src/hid/gtk/gui-trackball.c b/src/hid/gtk/gui-trackball.c
 new file mode 100644
-index 0000000..26440bb
+index 0000000..4f65084
 --- /dev/null
 +++ b/src/hid/gtk/gui-trackball.c
-@@ -0,0 +1,391 @@
+@@ -0,0 +1,392 @@
 +/* $Id$ */
 +
 +/*
@@ -541,6 +540,7 @@ index 0000000..26440bb
 +    {
 +      axis[0] = 1.; axis[1] = 0.; axis[2] = 0.;
 +      axis_to_quat (axis, 0, ball->quart1);
++      axis_to_quat (axis, 0, ball->quart2);
 +      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (ball->view_2d), FALSE);
 +    }
 +
@@ -572,8 +572,10 @@ index 0000000..26440bb
 +  double x2, y2;
 +  float q[4];
 +
-+  if (!ball->dragging)
++  if (!ball->dragging) {
++    gdk_event_request_motions (ev);
 +    return TRUE;
++  }
 +
 +  x1 = ball->x1;
 +  y1 = ball->y1;
@@ -588,6 +590,7 @@ index 0000000..26440bb
 +  g_signal_emit (ball, ghid_trackball_signals[ROTATION_CHANGED], 0,
 +                 ball->quart2);
 +
++  gdk_event_request_motions (ev);
 +  return TRUE;
 +}
 +
@@ -678,7 +681,8 @@ index 0000000..26440bb
 +
 +  gtk_widget_add_events (ball->drawing_area, GDK_BUTTON_PRESS_MASK   |
 +                                             GDK_BUTTON_RELEASE_MASK |
-+                                             GDK_POINTER_MOTION_MASK);
++                                             GDK_POINTER_MOTION_MASK |
++                                             GDK_POINTER_MOTION_HINT_MASK);
 +
 +  return G_OBJECT (ball);
 +}
@@ -696,8 +700,6 @@ index 0000000..26440bb
 +static void
 +ghid_trackball_finalize (GObject * object)
 +{
-+//  GhidTrackball *pinout = GHID_TRACKBALL (object);
-+
 +  G_OBJECT_CLASS (ghid_trackball_parent_class)->finalize (object);
 +}
 +
@@ -718,8 +720,6 @@ index 0000000..26440bb
 +ghid_trackball_set_property (GObject * object, guint property_id,
 +				  const GValue * value, GParamSpec * pspec)
 +{
-+//  GhidTrackball *pinout = GHID_TRACKBALL (object);
-+
 +  switch (property_id)
 +    {
 +    default:
@@ -838,7 +838,7 @@ index 0000000..26440bb
 +}
 +
 +
-+/*! \brief Convenience function to create a new pinout preview
++/*! \brief Convenience function to create a new trackball widget
 + *
 + *  \par Function Description
 + *  Convenience function which creates a GhidTrackball.
