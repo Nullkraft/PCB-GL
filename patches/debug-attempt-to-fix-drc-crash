@@ -1,5 +1,5 @@
-Bottom: d36f2f7b90dfdfb28fe10ab558a34b3f49fb5d0b
-Top:    52f8d291c823f67270660ecba4d06b172ae066dc
+Bottom: 726bcb92d78f82893fbcfb516d2f8f5a30411a96
+Top:    19b7cd20e9a755de1e4bdae35871abe2daa4650d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-09-12 01:22:10 +0100
 
@@ -9,10 +9,10 @@ Debug / attempt to fix DRC crash
 ---
 
 diff --git a/src/find.c b/src/find.c
-index c478f7f..cbe23d3 100644
+index efd3ebf..b84c8b7 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -2677,6 +2677,10 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
+@@ -2680,6 +2680,10 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
         BDimension wid = (Line->Thickness + Bloat + 1) / 2;
         LocationType x1, x2, y1, y2;
  
