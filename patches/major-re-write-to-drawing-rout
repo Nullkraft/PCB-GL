@@ -1,10 +1,12 @@
 Bottom: 6c7dc24308c42489aca41fc6ec556482023cbfaf
-Top:    1358033380c5e43174c372875fcbdc2069844138
+Top:    c584fb2406363a4b4500ecc9520a6391fd3c7746
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-04 23:45:08 +0000
+Date:   2010-12-06 19:23:21 +0000
 
 Major re-write to drawing routines
 
+Notes from squashed patches:
+  Pin and via hole cores are drawn in the appropriate colour
 
 ---
 
@@ -181,7 +183,7 @@ index c0e23a3..077c575 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e85848d..1e1393b 100644
+index e85848d..a6dccfd 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -337,7 +339,7 @@ index e85848d..1e1393b 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -989,6 +1016,635 @@ ghid_screen_update (void)
+@@ -989,6 +1016,656 @@ ghid_screen_update (void)
  {
  }
  
@@ -812,12 +814,33 @@ index e85848d..1e1393b 100644
 +};
 +
 +static int
-+hole_cyl_callback (const BoxType * b, void *cl)
++draw_hole_cyl (PinType *Pin, struct cyl_info *info, int Type)
 +{
-+  PinTypePtr Pin = (PinTypePtr) b;
-+  struct cyl_info *info = cl;
++  char *color;
++
++  if (TEST_FLAG (WARNFLAG, Pin))
++    color = PCB->WarnColor;
++  else if (TEST_FLAG (SELECTEDFLAG, Pin))
++    color = (Type == VIA_TYPE) ? PCB->ViaSelectedColor : PCB->PinSelectedColor;
++  else if (TEST_FLAG (FOUNDFLAG, Pin))
++    color = PCB->ConnectedColor;
++  else
++    color = "drill";
++
++  gui->set_color (Output.fgGC, color);
 +  DrawDrillChannel (Pin->X, Pin->Y, Pin->DrillingHole / 2, info->from_layer, info->to_layer, info->scale);
 +  return 0;
++}
++
++pin_hole_cyl_callback (const BoxType * b, void *cl)
++{
++  return draw_hole_cyl ((PinType *)b, (struct cyl_info *)cl, PIN_TYPE);
++}
++
++static int
++via_hole_cyl_callback (const BoxType * b, void *cl)
++{
++  return draw_hole_cyl ((PinType *)b, (struct cyl_info *)cl, VIA_TYPE);
 +}
 +
 +void
@@ -897,8 +920,8 @@ index e85848d..1e1393b 100644
 +//      gui->set_color (Output.fgGC, PCB->MaskColor);
 +      gui->set_color (Output.fgGC, "drill");
 +      ghid_global_alpha_mult (Output.fgGC, 0.75);
-+      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_cyl_callback, &cyl_info);
-+      if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_cyl_callback, &cyl_info);
++      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_cyl_callback, &cyl_info);
++      if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_hole_cyl_callback, &cyl_info);
 +      ghid_global_alpha_mult (Output.fgGC, 1.0);
 +    }
 +#endif
@@ -973,7 +996,7 @@ index e85848d..1e1393b 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1055,8 +1711,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1055,8 +1732,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -984,7 +1007,7 @@ index e85848d..1e1393b 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1148,7 +1804,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1148,7 +1825,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_x0,
                  ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                               -port->view_y0, 0);
