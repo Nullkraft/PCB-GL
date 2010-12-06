@@ -1,7 +1,7 @@
-Bottom: f80afbc9491aa1148ff07e7a6e999ae5b13395f7
-Top:    fca2d5559738cefabd8af1699064859bffd1c5f6
+Bottom: 86fe7138fdae94f0a864daa037f04e687bd8ffe1
+Top:    71ecdc7df399dfeb76518a8f26c840909585a15f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-04 23:45:33 +0000
+Date:   2010-12-06 20:46:58 +0000
 
 Fixup gtk hid drawing routines for pour support
 
@@ -9,7 +9,7 @@ Fixup gtk hid drawing routines for pour support
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index a152fae..ef78b1a 100644
+index b28f6da..d91bd98 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1229,6 +1229,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *dra
