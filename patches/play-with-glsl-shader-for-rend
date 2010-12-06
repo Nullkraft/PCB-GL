@@ -1,5 +1,5 @@
 Bottom: d6b824a879c66b6fa07d532e342cce2042ac015e
-Top:    8ee3ce9e11e8d76d8c779652286edb75f7b72869
+Top:    fbf2316d16c16c0bb461c48cacb1b64f55a8966b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-06 20:44:26 +0000
 
@@ -60,7 +60,7 @@ index 3f3c291..70e759d 100644
  	hid/common/trackball.h
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 238e61d..a4ffc0a 100644
+index 238e61d..e961912 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -47,6 +47,7 @@ RCSID ("$Id: $");
@@ -439,13 +439,13 @@ index 238e61d..a4ffc0a 100644
 -
 -  if (slices > MAX_TRIANGLES_PER_CIRCLE)
 -    slices = MAX_TRIANGLES_PER_CIRCLE;
- 
+-
 -  hidgl_ensure_triangle_space (&buffer, slices);
-+  hidgl_ensure_vertex_space (&buffer, 6);
  
 -  last_x = vx + vr;
 -  last_y = vy;
--
++  hidgl_ensure_vertex_space (&buffer, 6);
+ 
 -  for (i = 0; i < slices; i++) {
 -    float x, y;
 -    x = radius * cosf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
@@ -498,7 +498,99 @@ index 238e61d..a4ffc0a 100644
  
            if (tessVertexType == GL_TRIANGLE_STRIP)
              {
-@@ -723,14 +807,44 @@ void
+@@ -613,38 +697,33 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+   free (vertices);
+ }
+ 
+-struct do_hole_info {
+-  double scale;
+-};
++static void
++fill_contour (PLINE *contour)
++{
++  cairo_traps_t traps;
++
++  /* If the contour is round, then call hidgl_fill_circle to draw it. */
++  if (contour->is_round) {
++    hidgl_fill_circle (contour->cx, contour->cy, contour->radius);
++    return;
++  }
++
++  _cairo_traps_init (&traps);
++  bo_contour_to_traps (contour, &traps);
++  _cairo_traps_fini (&traps);
++}
+ 
+ static int
+ do_hole (const BoxType *b, void *cl)
+ {
+-  struct do_hole_info *info = cl;
+   PLINE *curc = (PLINE *) b;
+-  cairo_traps_t traps;
+ 
+   /* Ignore the outer contour - we draw it first explicitly*/
+   if (curc->Flags.orient == PLF_DIR) {
+     return 0;
+   }
+ 
+-  /* If the contour is round, and hidgl_fill_circle would use
+-   * less slices than we have vertices to draw it, then call
+-   * hidgl_fill_circle to draw this contour.
+-   */
+-  if (curc->is_round) {
+-    double slices = calc_slices (curc->radius / info->scale, 2 * M_PI);
+-    if (slices < curc->Count) {
+-      hidgl_fill_circle (curc->cx, curc->cy, curc->radius, info->scale);
+-      return 1;
+-    }
+-  }
+-
+-  _cairo_traps_init (&traps);
+-  bo_contour_to_traps (curc, &traps);
+-  _cairo_traps_fini (&traps);
+-
++  fill_contour (curc);
+   return 1;
+ }
+ 
+@@ -654,15 +733,11 @@ static int assigned_bits = 0;
+ 
+ /* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
+ void
+-hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale)
++hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+ {
+-  struct do_hole_info info;
+   int stencil_bit;
+-  cairo_traps_t traps;
+ 
+   CHECK_IS_IN_CONTEXT ();
+-  info.scale = scale;
+-  global_scale = scale;
+ 
+   if (poly->Clipped == NULL)
+     {
+@@ -692,7 +767,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+    */
+   /* Drawing operations now set our reference bit in the stencil buffer */
+ 
+-  r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, &info);
++  r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, NULL);
+   hidgl_flush_triangles (&buffer);
+ 
+   /* Drawing operations as masked to areas where the stencil buffer is '0' */
+@@ -708,9 +783,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+                                                               // any bits permitted by the stencil writemask
+ 
+   /* Draw the polygon outer */
+-  _cairo_traps_init (&traps);
+-  bo_contour_to_traps (poly->Clipped->contours, &traps);
+-  _cairo_traps_fini (&traps);
++  fill_contour (poly->Clipped->contours);
+   hidgl_flush_triangles (&buffer);
+ 
+   /* Unassign our stencil buffer bit */
+@@ -723,14 +796,44 @@ void
  hidgl_fill_rect (int x1, int y1, int x2, int y2)
  {
    CHECK_IS_IN_CONTEXT ();
@@ -546,7 +638,7 @@ index 238e61d..a4ffc0a 100644
    CHECK_IS_IN_CONTEXT ();
    glGetIntegerv (GL_STENCIL_BITS, &stencil_bits);
  
-@@ -746,6 +860,16 @@ hidgl_init (void)
+@@ -746,6 +849,16 @@ hidgl_init (void)
                "Cannot use stencil buffer to sub-composite layers.\n");
        /* Do we need to disable that somewhere? */
      }
