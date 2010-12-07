@@ -1,0 +1,14 @@
+Bottom: 9fa5f34eb56abc934a4e38545687fa773c0fadc5
+Top:    9fa5f34eb56abc934a4e38545687fa773c0fadc5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-07 16:58:35 +0000
+
+Convet some "safe" usage of MyStrdup to plain strdup
+
+These cases are ones where we know the caller will not risk
+passing a NULL string to duplicate.
+
+
+---
+
+
