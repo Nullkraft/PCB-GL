@@ -101,6 +101,9 @@ compute_depth (int group)
   int middle_copper_group;
   int depth;
 
+  if (global_view_2d)
+    return 0;
+
   solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
   component_group = GetLayerGroupNumberByNumber (component_silk_layer);
 
