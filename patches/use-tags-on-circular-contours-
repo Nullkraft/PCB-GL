@@ -1,5 +1,5 @@
 Bottom: 9411359384e109b538ea9229492a116050ebab33
-Top:    7e13df89f7d32e32714432faab58491d69d1a1ff
+Top:    21a9c44f62e4279bdfae35f30b25fba706bb054f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-04 23:45:06 +0000
 
@@ -9,15 +9,14 @@ Use tags on circular contours to render them faster
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index c8014bb..9af1946 100644
+index c8014bb..26fff1b 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -573,11 +573,25 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -573,11 +573,24 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
  }
  
  void
 -tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices)
-+<<<<<<< current
 +tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices,
 +                   double scale)
  {
@@ -39,7 +38,7 @@ index c8014bb..9af1946 100644
    gluTessBeginPolygon (tobj, NULL);
    gluTessBeginContour (tobj);
    do {
-@@ -594,6 +608,7 @@ tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices)
+@@ -594,6 +607,7 @@ tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices)
  struct do_hole_info {
    GLUtesselator *tobj;
    GLdouble *vertices;
@@ -47,7 +46,7 @@ index c8014bb..9af1946 100644
  };
  
  static int
-@@ -607,7 +622,7 @@ do_hole (const BoxType *b, void *cl)
+@@ -607,7 +621,7 @@ do_hole (const BoxType *b, void *cl)
      return 0;
    }
  
@@ -56,7 +55,7 @@ index c8014bb..9af1946 100644
    return 1;
  }
  
-@@ -624,6 +639,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -624,6 +638,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    struct do_hole_info info;
    int stencil_bit;
  
@@ -64,7 +63,7 @@ index c8014bb..9af1946 100644
    global_scale = scale;
  
    if (poly->Clipped == NULL)
-@@ -683,7 +699,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -683,7 +698,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
                                                                // any bits permitted by the stencil writemask
  
    /* Draw the polygon outer */
