@@ -618,7 +618,10 @@ fill_contour (PLINE *contour, double scale)
 {
   cairo_traps_t traps;
 
-  /* If the contour is round, then call hidgl_fill_circle to draw it. */
+  /* If the contour is round, and hidgl_fill_circle would use
+   * less slices than we have vertices to draw it, then call
+   * hidgl_fill_circle to draw this contour.
+   */
   if (contour->is_round) {
     double slices = calc_slices (contour->radius / scale, 2 * M_PI);
     if (slices < contour->Count) {
