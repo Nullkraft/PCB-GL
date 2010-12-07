@@ -587,7 +587,7 @@ CreateNewText (LayerTypePtr Layer, FontTypePtr PCBFont,
   text->Direction = Direction;
   text->Flags = Flags;
   text->Scale = Scale;
-  text->TextString = strdup (TextString);
+  Text->TextString = (TextString && *TextString) ? strdup (TextString) : NULL;
 
   /* calculate size of the bounding box */
   SetTextBoundingBox (PCBFont, text);
