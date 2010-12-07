@@ -497,23 +497,11 @@ myVertex (GLdouble *vertex_data)
         }
       else
         {
-#if 1
           hidgl_ensure_triangle_space (&buffer, 1);
           hidgl_add_triangle (&buffer,
                               triangle_vertices [0], triangle_vertices [1],
                               triangle_vertices [2], triangle_vertices [3],
                               vertex_data [0], vertex_data [1]);
-#else
-          hidgl_draw_line (Square_Cap, global_scale,
-                           triangle_vertices [0], triangle_vertices [1],
-                           triangle_vertices [2], triangle_vertices [3], global_scale);
-          hidgl_draw_line (Square_Cap, global_scale,
-                           triangle_vertices [2], triangle_vertices [3],
-                           vertex_data [0],       vertex_data [1],       global_scale);
-          hidgl_draw_line (Square_Cap, global_scale,
-                           vertex_data [0],       vertex_data [1],
-                           triangle_vertices [0], triangle_vertices [1], global_scale);
-#endif
 
           if (tessVertexType == GL_TRIANGLE_STRIP)
             {
@@ -584,8 +572,9 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
   free (vertices);
 }
 
-void tesselate_contour (GLUtesselator *tobj, VNODE *vnode,
-                        GLdouble *vertices, int *i)
+void
+tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices,
+                   int *i)
 {
   VNODE *vn = vnode;
   int offset = *i * 3;
