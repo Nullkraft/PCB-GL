@@ -1,5 +1,5 @@
 Bottom: 70629481ed7dda410d0bf63e17ead7d5f6c5c56f
-Top:    f4a4b1614f002b1220371a07a5ca3fe079865049
+Top:    274ce70b9b4edb6ffbb58a7ec9a85d6a9bae277d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-07 02:06:39 +0000
 
@@ -9,10 +9,10 @@ Refactor polygon contour drawing
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 238e61d..12f3778 100644
+index 238e61d..f097562 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -613,6 +613,25 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -613,6 +613,28 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
    free (vertices);
  }
  
@@ -21,7 +21,10 @@ index 238e61d..12f3778 100644
 +{
 +  cairo_traps_t traps;
 +
-+  /* If the contour is round, then call hidgl_fill_circle to draw it. */
++  /* If the contour is round, and hidgl_fill_circle would use
++   * less slices than we have vertices to draw it, then call
++   * hidgl_fill_circle to draw this contour.
++   */
 +  if (contour->is_round) {
 +    double slices = calc_slices (contour->radius / scale, 2 * M_PI);
 +    if (slices < contour->Count) {
@@ -38,7 +41,7 @@ index 238e61d..12f3778 100644
  struct do_hole_info {
    double scale;
  };
-@@ -622,29 +641,13 @@ do_hole (const BoxType *b, void *cl)
+@@ -622,29 +644,13 @@ do_hole (const BoxType *b, void *cl)
  {
    struct do_hole_info *info = cl;
    PLINE *curc = (PLINE *) b;
@@ -69,7 +72,7 @@ index 238e61d..12f3778 100644
    return 1;
  }
  
-@@ -658,7 +661,6 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -658,7 +664,6 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
  {
    struct do_hole_info info;
    int stencil_bit;
@@ -77,7 +80,7 @@ index 238e61d..12f3778 100644
  
    CHECK_IS_IN_CONTEXT ();
    info.scale = scale;
-@@ -708,9 +710,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -708,9 +713,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
                                                                // any bits permitted by the stencil writemask
  
    /* Draw the polygon outer */
