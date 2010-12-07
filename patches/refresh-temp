@@ -1,0 +1,22 @@
+Bottom: c0f6866e675c43bbb29b0afe7742f4a920b1d80a
+Top:    6f8c105c7e2d5fcbb2fc58a02b51e84286844111
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-07 02:46:54 +0000
+
+Refresh of play-with-perspective
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index a254cc7..ec3a836 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -101,6 +101,9 @@ compute_depth (int group)
+   int middle_copper_group;
+   int depth;
+ 
++  if (global_view_2d)
++    return 0;
++
+   solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
+   component_group = GetLayerGroupNumberByNumber (component_silk_layer);
