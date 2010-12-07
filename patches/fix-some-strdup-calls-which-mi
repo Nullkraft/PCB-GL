@@ -8,6 +8,8 @@ Fix some strdup calls which might be called with a NULL pointer
 ***** DOES NOT YET FIX ALL POSSIBLE CASES WHERE MyStrdup() WAS
       PREVIOUSLY USED AND WOULD PROVIDE THIS SAFE BEHAVIOUR
 
+Addresses 5 out of ~51 cases
+
 
 ---
 
