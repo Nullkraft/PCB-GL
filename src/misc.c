@@ -723,7 +723,7 @@ ParseRouteString (char *s, RouteStyleTypePtr routeStyle, int scale)
       for (i = 0; *s && *s != ','; i++)
         Name[i] = *s++;
       Name[i] = '\0';
-      routeStyle->Name = MyStrdup (Name, "ParseRouteString()");
+      routeStyle->Name = strdup (Name);
       if (!isdigit ((int) *++s))
         goto error;
       GetNum (&s, &routeStyle->Thick);
@@ -937,7 +937,7 @@ EvaluateFilename (char *Template, char *Path, char *Filename, char *Parameter)
   if (Settings.verbose)
     printf ("EvaluateFilename: \033[32m%s\033[0m\n", command.Data);
 
-  return (MyStrdup (command.Data, "EvaluateFilename()"));
+  return strdup (command.Data);
 }
 
 /* ---------------------------------------------------------------------------
@@ -956,13 +956,13 @@ ExpandFilename (char *Dirname, char *Filename)
   DSClearString (&answer);
   if (Dirname)
     {
-      command = MyCalloc (strlen (Filename) + strlen (Dirname) + 7,
-                          sizeof (char), "ExpandFilename()");
+      command = calloc (strlen (Filename) + strlen (Dirname) + 7,
+                        sizeof (char));
       sprintf (command, "echo %s/%s", Dirname, Filename);
     }
   else
     {
-      command = MyCalloc (strlen (Filename) + 6, sizeof (char), "Expand()");
+      command = calloc (strlen (Filename) + 6, sizeof (char));
       sprintf (command, "echo %s", Filename);
     }
 
@@ -978,13 +978,13 @@ ExpandFilename (char *Dirname, char *Filename)
             DSAddCharacter (&answer, c);
         }
 
-      SaveFree (command);
+      free (command);
       return (pclose (pipe) ? NULL : answer.Data);
     }
 
   /* couldn't be expanded by the shell */
   PopenErrorMessage (command);
-  SaveFree (command);
+  free (command);
   return (NULL);
 }
 
@@ -1898,7 +1898,7 @@ AttributePutToList (AttributeListType *list, char *name, char *value, int replac
 	if (strcmp (name, list->List[i].name) == 0)
 	  {
 	    free (list->List[i].value);
-	    list->List[i].value = MyStrdup (value, "AttributePutToList");
+	    list->List[i].value = strdup (value);
 	    return 1;
 	  }
     }
@@ -1914,8 +1914,8 @@ AttributePutToList (AttributeListType *list, char *name, char *value, int replac
 
   /* Now add the new attribute.  */
   i = list->Number;
-  list->List[i].name = MyStrdup (name, "AttributePutToList");
-  list->List[i].value = MyStrdup (value, "AttributePutToList");
+  list->List[i].name = strdup (name);
+  list->List[i].value = strdup (value);
   list->Number ++;
   return 0;
 }

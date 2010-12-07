@@ -5730,8 +5730,8 @@ ActionSaveTo (int argc, char **argv, int x, int y)
 
   if (strcasecmp (function, "LayoutAs") == 0)
     {
-      MYFREE (PCB->Filename);
-      PCB->Filename = MyStrdup (name, __FUNCTION__);
+      free (PCB->Filename);
+      PCB->Filename = strdup (name);
       SavePCB (PCB->Filename);
       return 0;
     }
@@ -5890,7 +5890,7 @@ ActionLoadFrom (int argc, char **argv, int x, int y)
   else if (strcasecmp (function, "Netlist") == 0)
     {
       if (PCB->Netlistname)
-	SaveFree (PCB->Netlistname);
+	free (PCB->Netlistname);
       PCB->Netlistname = StripWhiteSpaceAndDup (name);
       FreeLibraryMemory (&PCB->NetlistLib);
       if (!ImportNetlist (PCB->Netlistname))
@@ -5929,7 +5929,7 @@ ActionNew (int argc, char **argv, int x, int y)
   if (!PCB->Changed || gui->confirm_dialog (_("OK to clear layout data?"), 0))
     {
       if (name)
-	name = MyStrdup (name, "ActionNew");
+	name = strdup (name);
       else
 	name = gui->prompt_for (_("Enter the layout name:"), "");
 
@@ -7237,8 +7237,8 @@ ActionElementSetAttr (int argc, char **argv, int x, int y)
 
   if (attr && value)
     {
-      MYFREE (attr->value);
-      attr->value = MyStrdup (value, "ElementSetAttr");
+      free (attr->value);
+      attr->value = strdup (value);
     }
   if (attr && ! value)
     {
