@@ -1,0 +1,31 @@
+Bottom: 198b389fc36237d4b4d2a842679b03e8fca50537
+Top:    769a4a2ed3542a0c704b6ae9dbdb4ac112fd174d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-07 13:49:41 +0000
+
+Refresh of remove-my-memory-allocation-ro
+
+---
+
+diff --git a/src/mymem.c b/src/mymem.c
+index 6afb1d3..09cb6ab 100644
+--- a/src/mymem.c
++++ b/src/mymem.c
+@@ -795,14 +795,14 @@ FreeDataMemory (DataTypePtr Data)
+ 	free (via->Name);
+       }
+       END_LOOP;
+-      MYFREE (Data->Via);
++      free (Data->Via);
+       ELEMENT_LOOP (Data);
+       {
+ 	FreeElementMemory (element);
+       }
+       END_LOOP;
+-      MYFREE (Data->Element);
+-      MYFREE (Data->Rat);
++      free (Data->Element);
++      free (Data->Rat);
+ 
+       for (layer = Data->Layer, i = 0; i < MAX_LAYER + 2; layer++, i++)
+ 	{
