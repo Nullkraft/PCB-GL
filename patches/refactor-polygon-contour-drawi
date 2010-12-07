@@ -1,5 +1,5 @@
-Bottom: 70629481ed7dda410d0bf63e17ead7d5f6c5c56f
-Top:    274ce70b9b4edb6ffbb58a7ec9a85d6a9bae277d
+Bottom: 6d41e3d0032c07f307905c76acc1a14281fcb536
+Top:    862ae482ab11e5d4690947bf4741ac081a8fb1c1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-07 02:06:39 +0000
 
@@ -9,10 +9,10 @@ Refactor polygon contour drawing
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 238e61d..f097562 100644
+index 6931651..9e3b9ed 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -613,6 +613,28 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -585,6 +585,28 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
    free (vertices);
  }
  
@@ -41,7 +41,7 @@ index 238e61d..f097562 100644
  struct do_hole_info {
    double scale;
  };
-@@ -622,29 +644,13 @@ do_hole (const BoxType *b, void *cl)
+@@ -594,29 +616,13 @@ do_hole (const BoxType *b, void *cl)
  {
    struct do_hole_info *info = cl;
    PLINE *curc = (PLINE *) b;
@@ -72,15 +72,15 @@ index 238e61d..f097562 100644
    return 1;
  }
  
-@@ -658,7 +664,6 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -630,7 +636,6 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
  {
    struct do_hole_info info;
    int stencil_bit;
 -  cairo_traps_t traps;
  
-   CHECK_IS_IN_CONTEXT ();
    info.scale = scale;
-@@ -708,9 +713,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+   global_scale = scale;
+@@ -679,9 +684,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
                                                                // any bits permitted by the stencil writemask
  
    /* Draw the polygon outer */
