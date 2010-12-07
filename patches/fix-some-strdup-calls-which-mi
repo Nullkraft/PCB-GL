@@ -1,5 +1,5 @@
 Bottom: 80030bd40717882e2e7a42b1ed2d4817f4e7b95e
-Top:    299b2ebfc4379ee74e2b36335f88586ebcd3926a
+Top:    c33afdcca73949284834ef4c66bbed62911b9218
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-07 01:55:57 +0000
 
@@ -14,7 +14,7 @@ Addresses 5 out of ~51 cases
 ---
 
 diff --git a/src/create.c b/src/create.c
-index c965ac3..5262c92 100644
+index c965ac3..4eef584 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -259,7 +259,7 @@ CreateNewVia (DataTypePtr Data,
@@ -26,6 +26,15 @@ index c965ac3..5262c92 100644
    Via->Flags = Flags;
    CLEAR_FLAG (WARNFLAG, Via);
    SET_FLAG (VIAFLAG, Via);
+@@ -587,7 +587,7 @@ CreateNewText (LayerTypePtr Layer, FontTypePtr PCBFont,
+   text->Direction = Direction;
+   text->Flags = Flags;
+   text->Scale = Scale;
+-  text->TextString = strdup (TextString);
++  Text->TextString = (TextString && *TextString) ? strdup (TextString) : NULL;
+ 
+   /* calculate size of the bounding box */
+   SetTextBoundingBox (PCBFont, text);
 @@ -780,8 +780,8 @@ CreateNewPin (ElementTypePtr Element,
    pin->Thickness = Thickness;
    pin->Clearance = Clearance;
