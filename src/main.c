@@ -224,7 +224,7 @@ usage_hid (HID * h)
       exporter = NULL;
     }
 
-  note = (UsageNotes *) MyMalloc (sizeof (UsageNotes), "usage_hid");
+  note = malloc (sizeof (UsageNotes));
   note->next = usage_notes;
   note->seen = attributes;
   usage_notes = note;
@@ -957,7 +957,7 @@ main (int argc, char *argv[])
     {
       char buf[20];
       sprintf (buf, "signal%d", i + 1);
-      Settings.DefaultLayerName[i] = MyStrdup (buf, "DefaultLayerNames");
+      Settings.DefaultLayerName[i] = strdup (buf);
       Settings.LayerColor[i] = "#c49350";
       Settings.LayerSelectedColor[i] = "#00ffff";
     }
@@ -1018,7 +1018,7 @@ main (int argc, char *argv[])
        * file might not exist
        */
       if (LoadPCB (command_line_pcb))
-	PCB->Filename = MyStrdup (command_line_pcb, "main()");
+	PCB->Filename = strdup (command_line_pcb);
     }
 
   if (Settings.InitialLayerStack

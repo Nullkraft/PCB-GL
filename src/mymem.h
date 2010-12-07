@@ -95,12 +95,6 @@ ElementTypeHandle GetDrillElementMemory (DrillTypePtr);
 PinTypeHandle GetDrillPinMemory (DrillTypePtr);
 DrillTypePtr GetDrillInfoDrillMemory (DrillInfoTypePtr);
 void **GetPointerMemory (PointerListTypePtr);
-void *MyCalloc (size_t, size_t, const char *);
-void *MyMalloc (size_t, const char *);
-void *MyRealloc (void *, size_t, const char *);
-char *MyStrdup (char *s, const char *);
-/* void MyFree (void **); */
-#define MYFREE(x) do { SaveFree(x); (x)=NULL; } while (0)
 void FreePolygonMemory (PolygonTypePtr);
 void FreeElementMemory (ElementTypePtr);
 void FreePCBMemory (PCBTypePtr);
@@ -111,7 +105,6 @@ void FreeNetMemory (NetTypePtr);
 void FreeDataMemory (DataTypePtr);
 void FreeLibraryMemory (LibraryTypePtr);
 void FreePointerListMemory (PointerListTypePtr);
-void SaveFree (void *);
 void DSAddCharacter (DynamicStringTypePtr, char);
 void DSAddString (DynamicStringTypePtr, const char *);
 void DSClearString (DynamicStringTypePtr);
