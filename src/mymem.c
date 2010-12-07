@@ -795,14 +795,14 @@ FreeDataMemory (DataTypePtr Data)
 	free (via->Name);
       }
       END_LOOP;
-      MYFREE (Data->Via);
+      free (Data->Via);
       ELEMENT_LOOP (Data);
       {
 	FreeElementMemory (element);
       }
       END_LOOP;
-      MYFREE (Data->Element);
-      MYFREE (Data->Rat);
+      free (Data->Element);
+      free (Data->Rat);
 
       for (layer = Data->Layer, i = 0; i < MAX_LAYER + 2; layer++, i++)
 	{
