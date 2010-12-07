@@ -228,15 +228,14 @@ ProcNetlist (LibraryTypePtr net_menu)
   if (!net_menu->MenuN)
     return (NULL);
   FreeNetListMemory (Wantlist);
-  SaveFree (Wantlist);
-  /*  MYFREE (Wantlist); *//* awkward */
+  free (Wantlist);
   badnet = false;
 
   /* find layer groups of the component side and solder side */
   SLayer = GetLayerGroupNumberByNumber (solder_silk_layer);
   CLayer = GetLayerGroupNumberByNumber (component_silk_layer);
 
-  Wantlist = MyCalloc (1, sizeof (NetListType), "ProcNetlist()");
+  Wantlist = calloc (1, sizeof (NetListType));
   if (Wantlist)
     {
       ALLPIN_LOOP (PCB->Data);
@@ -361,8 +360,7 @@ static bool
 CheckShorts (LibraryMenuTypePtr theNet)
 {
   bool new, warn = false;
-  PointerListTypePtr generic = MyCalloc (1, sizeof (PointerListType),
-					 "CheckShorts");
+  PointerListTypePtr generic = calloc (1, sizeof (PointerListType));
   /* the first connection was starting point so
    * the menu is always non-null
    */
@@ -442,7 +440,7 @@ CheckShorts (LibraryMenuTypePtr theNet)
   }
   ENDALL_LOOP;
   FreePointerListMemory (generic);
-  SaveFree (generic);
+  free (generic);
   return (warn);
 }
 
@@ -695,7 +693,7 @@ AddAllRats (bool SelectedOnly, void (*funcp) ())
   /* initialize finding engine */
   InitConnectionLookup ();
   SaveFindFlag (DRCFLAG);
-  Nets = MyCalloc (1, sizeof (NetListType), "AddAllRats()");
+  Nets = calloc (1, sizeof (NetListType));
   /* now we build another netlist (Nets) for each
    * net in Wantlist that shows how it actually looks now,
    * then fill in any missing connections with rat lines.
@@ -728,7 +726,8 @@ AddAllRats (bool SelectedOnly, void (*funcp) ())
   }
   END_LOOP;
   FreeNetListMemory (Nets);
-  MYFREE (Nets);
+  free (Nets);
+  Nets = NULL;
   FreeConnectionLookupMemory ();
   RestoreFindFlag ();
   if (funcp)
@@ -912,7 +911,7 @@ AddNet (void)
 	  return (NULL);
 	}
       entry = GetLibraryEntryMemory (menu);
-      entry->ListEntry = MyStrdup (name2, "AddNet");
+      entry->ListEntry = strdup (name2);
       netnode_to_netname (name2);
       goto ratIt;
     }
@@ -921,7 +920,7 @@ AddNet (void)
   if (menu)
     {
       entry = GetLibraryEntryMemory (menu);
-      entry->ListEntry = MyStrdup (name1, "AddNet");
+      entry->ListEntry = strdup (name1);
       netnode_to_netname (name1);
       goto ratIt;
     }
@@ -939,11 +938,11 @@ AddNet (void)
     }
 
   menu = GetLibraryMenuMemory (&PCB->NetlistLib);
-  menu->Name = MyStrdup (ratname, "AddNet");
+  menu->Name = strdup (ratname);
   entry = GetLibraryEntryMemory (menu);
-  entry->ListEntry = MyStrdup (name1, "AddNet");
+  entry->ListEntry = strdup (name1);
   entry = GetLibraryEntryMemory (menu);
-  entry->ListEntry = MyStrdup (name2, "AddNet");
+  entry->ListEntry = strdup (name2);
   menu->flag = 1;
 
 ratIt:

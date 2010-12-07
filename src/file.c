@@ -318,8 +318,8 @@ SavePCB (char *Filename)
        * first of all make a copy of the passed filename because
        * it might be identical to 'PCB->Filename'
        */
-      copy = MyStrdup (Filename, "SavePCB()");
-      SaveFree (PCB->Filename);
+      copy = strdup (Filename);
+      free (PCB->Filename);
       PCB->Filename = copy;
       SetChangedFlag (false);
     }
@@ -390,7 +390,7 @@ LoadPCB (char *Filename)
 
       /* clear 'changed flag' */
       SetChangedFlag (false);
-      PCB->Filename = MyStrdup (Filename, "LoadPCB()");
+      PCB->Filename = strdup (Filename);
       /* just in case a bad file saved file is loaded */
 
       units_mm = (PCB->Grid != (int) PCB->Grid) ? true : false;
@@ -1166,7 +1166,7 @@ LoadNewlibFootprintsFromDir(char *libpath, char *toppath)
   /* Get pointer to memory holding menu */
   menu = GetLibraryMenuMemory (&Library);
   /* Populate menuname and path vars */
-  menu->Name = MyStrdup (pcb_basename(subdir), "Newlib");
+  menu->Name = strdup (pcb_basename(subdir));
   menu->directory = strdup (pcb_basename(toppath));
 
   /* Now loop over files in this directory looking for files.
@@ -1204,7 +1204,7 @@ LoadNewlibFootprintsFromDir(char *libpath, char *toppath)
 	 * entry->ListEntry points to fp name itself.
 	 */
 	len = strlen(subdir) + strlen("/") + strlen(subdirentry->d_name) + 1;
-	entry->AllocatedMemory = MyCalloc (1, len, "ParseLibraryTree()");
+	entry->AllocatedMemory = calloc (1, len);
 	strcat (entry->AllocatedMemory, subdir);
 	strcat (entry->AllocatedMemory, PCB_DIR_SEPARATOR_S);
 
@@ -1257,7 +1257,7 @@ ParseLibraryTree (void)
   /* Additional loop to allow for multiple 'newlib' style library directories 
    * called out in Settings.LibraryTree
    */
-  libpaths = MyStrdup (Settings.LibraryTree, "ParseLibraryTree");
+  libpaths = strdup (Settings.LibraryTree);
   for (p = strtok (libpaths, PCB_PATH_DELIMETER); p && *p; p = strtok (NULL, PCB_PATH_DELIMETER))
     {
       /* remove trailing path delimeter */
@@ -1343,7 +1343,7 @@ ReadLibraryContents (void)
   /*  First load the M4 stuff.  The variable Settings.LibraryPath
    *  points to it.
    */
-  MYFREE (command);
+  free (command);
   command = EvaluateFilename (Settings.LibraryContentsCommand,
 			      Settings.LibraryPath, Settings.LibraryFilename,
 			      NULL);
@@ -1383,8 +1383,7 @@ ReadLibraryContents (void)
       if (!strncmp (inputline, "TYPE=", 5))
 	{
 	  menu = GetLibraryMenuMemory (&Library);
-	  menu->Name = MyStrdup (UNKNOWN (&inputline[5]),
-				 "ReadLibraryDescription()");
+	  menu->Name = strdup (UNKNOWN (&inputline[5]));
 	  menu->directory = strdup (Settings.LibraryFilename);
 	}
       else
@@ -1393,13 +1392,11 @@ ReadLibraryContents (void)
 	  if (!menu)
 	    {
 	      menu = GetLibraryMenuMemory (&Library);
-	      menu->Name = MyStrdup (UNKNOWN ((char *) NULL),
-				     "ReadLibraryDescription()");
+	      menu->Name = strdup (UNKNOWN ((char *) NULL));
 	      menu->directory = strdup (Settings.LibraryFilename);
 	    }
 	  entry = GetLibraryEntryMemory (menu);
-	  entry->AllocatedMemory = MyStrdup (inputline,
-					     "ReadLibraryDescription()");
+	  entry->AllocatedMemory = strdup (inputline);
 
 	  /* now break the line into pieces separated by colons */
 	  if ((entry->Template = strtok (entry->AllocatedMemory, ":")) !=
@@ -1411,8 +1408,7 @@ ReadLibraryContents (void)
 	  /* create the list entry */
 	  len = strlen (EMPTY (entry->Value)) +
 	    strlen (EMPTY (entry->Description)) + 4;
-	  entry->ListEntry = MyCalloc (len, sizeof (char),
-				       "ReadLibraryDescription()");
+	  entry->ListEntry = calloc (len, sizeof (char));
 	  sprintf (entry->ListEntry,
 		   "%s, %s", EMPTY (entry->Value),
 		   EMPTY (entry->Description));
@@ -1471,7 +1467,7 @@ ReadNetlist (char *filename)
   else
     {
       used_popen = 1;
-      MYFREE (command);
+      free (command);
       command = EvaluateFilename (Settings.RatCommand,
 				  Settings.RatPath, filename, NULL);
 
@@ -1526,7 +1522,7 @@ ReadNetlist (char *filename)
 	  if (kind == 0)
 	    {
 	      menu = GetLibraryMenuMemory (&PCB->NetlistLib);
-	      menu->Name = MyStrdup (temp, "ReadNetlist()");
+	      menu->Name = strdup (temp);
 	      menu->flag = 1;
 	      kind++;
 	    }
@@ -1535,12 +1531,12 @@ ReadNetlist (char *filename)
 	      if (kind == 1 && strchr (temp, '-') == NULL)
 		{
 		  kind++;
-		  menu->Style = MyStrdup (temp, "ReadNetlist()");
+		  menu->Style = strdup (temp);
 		}
 	      else
 		{
 		  entry = GetLibraryEntryMemory (menu);
-		  entry->ListEntry = MyStrdup (temp, "ReadNetlist()");
+		  entry->ListEntry = strdup (temp);
 		}
 	    }
 	}

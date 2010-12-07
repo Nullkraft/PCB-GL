@@ -153,7 +153,7 @@ AddLineToBuffer (LayerTypePtr Layer, LineTypePtr Line)
 			       MaskFlags (Line->Flags,
 					  FOUNDFLAG | ExtraFlag));
   if (line && Line->Number)
-    line->Number = MyStrdup (Line->Number, "AddLineToBuffer");
+    line->Number = strdup (Line->Number);
   return (line);
 }
 
@@ -943,7 +943,7 @@ SmashBufferElement (BufferTypePtr Buffer)
 			  line->Point2.X, line->Point2.Y,
 			  line->Thickness, 0, NoFlags ());
     if (line)
-      line->Number = MyStrdup (NAMEONPCB_NAME (element), "SmashBuffer");
+      line->Number = strdup (NAMEONPCB_NAME (element));
   }
   END_LOOP;
   ARC_LOOP (element);
@@ -981,11 +981,11 @@ SmashBufferElement (BufferTypePtr Buffer)
 				 pad->Point2.X, pad->Point2.Y,
 				 pad->Thickness, pad->Clearance, NoFlags ());
     if (line)
-      line->Number = MyStrdup (pad->Number, "SmashBuffer");
+      line->Number = strdup (pad->Number);
   }
   END_LOOP;
   FreeElementMemory (element);
-  SaveFree (element);
+  free (element);
   return (true);
 }
 
@@ -1154,8 +1154,7 @@ ConvertBufferToElement (BufferTypePtr Buffer)
   LINE_LOOP (&Buffer->Data->SILKLAYER);
   {
     if (line->Number && !NAMEONPCB_NAME (Element))
-      NAMEONPCB_NAME (Element) = MyStrdup (line->Number,
-					   "ConvertBufferToElement");
+      NAMEONPCB_NAME (Element) = strdup (line->Number);
     CreateNewLineInElement (Element, line->Point1.X,
 			    line->Point1.Y, line->Point2.X,
 			    line->Point2.Y, line->Thickness);
@@ -1207,7 +1206,7 @@ LoadLayoutToBuffer (BufferTypePtr Buffer, char *Filename)
     {
       /* clear data area and replace pointer */
       ClearBuffer (Buffer);
-      SaveFree (Buffer->Data);
+      free (Buffer->Data);
       Buffer->Data = newPCB->Data;
       newPCB->Data = NULL;
       Buffer->X = newPCB->CursorX;
