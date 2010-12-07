@@ -1,5 +1,5 @@
 Bottom: 80030bd40717882e2e7a42b1ed2d4817f4e7b95e
-Top:    80030bd40717882e2e7a42b1ed2d4817f4e7b95e
+Top:    299b2ebfc4379ee74e2b36335f88586ebcd3926a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-07 01:55:57 +0000
 
@@ -11,4 +11,38 @@ Fix some strdup calls which might be called with a NULL pointer
 
 ---
 
-
+diff --git a/src/create.c b/src/create.c
+index c965ac3..5262c92 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -259,7 +259,7 @@ CreateNewVia (DataTypePtr Data,
+ 	       0.01 * Via->DrillingHole, 0.01 * DrillingHole);
+     }
+ 
+-  Via->Name = strdup (Name);
++  Via->Name = (Name != NULL) ? strdup (Name) : NULL;
+   Via->Flags = Flags;
+   CLEAR_FLAG (WARNFLAG, Via);
+   SET_FLAG (VIAFLAG, Via);
+@@ -780,8 +780,8 @@ CreateNewPin (ElementTypePtr Element,
+   pin->Thickness = Thickness;
+   pin->Clearance = Clearance;
+   pin->Mask = Mask;
+-  pin->Name = strdup (Name);
+-  pin->Number = strdup (Number);
++  pin->Name = (Name != NULL) ? strdup (Name) : NULL;
++  pin->Number = (Number != NULL) ? strdup (Number) : NULL;
+   pin->Flags = Flags;
+   CLEAR_FLAG (WARNFLAG, pin);
+   SET_FLAG (PINFLAG, pin);
+@@ -867,8 +867,8 @@ CreateNewPad (ElementTypePtr Element,
+   pad->Thickness = Thickness;
+   pad->Clearance = Clearance;
+   pad->Mask = Mask;
+-  pad->Name = strdup (Name);
+-  pad->Number = strdup (Number);
++  pad->Name = (Name != NULL) ? strdup (Name) : NULL;
++  pad->Number = (Number != NULL) ? strdup (Number) : NULL;
+   pad->Flags = Flags;
+   CLEAR_FLAG (WARNFLAG, pad);
+   pad->ID = ID++;
