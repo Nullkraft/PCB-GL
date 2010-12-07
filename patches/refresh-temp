@@ -1,0 +1,25 @@
+Bottom: f4a4b1614f002b1220371a07a5ca3fe079865049
+Top:    274ce70b9b4edb6ffbb58a7ec9a85d6a9bae277d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-07 02:12:22 +0000
+
+Refresh of refactor-polygon-contour-drawi
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 12f3778..f097562 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -618,7 +618,10 @@ fill_contour (PLINE *contour, double scale)
+ {
+   cairo_traps_t traps;
+ 
+-  /* If the contour is round, then call hidgl_fill_circle to draw it. */
++  /* If the contour is round, and hidgl_fill_circle would use
++   * less slices than we have vertices to draw it, then call
++   * hidgl_fill_circle to draw this contour.
++   */
+   if (contour->is_round) {
+     double slices = calc_slices (contour->radius / scale, 2 * M_PI);
+     if (slices < contour->Count) {
