@@ -1,5 +1,5 @@
 Bottom: 80030bd40717882e2e7a42b1ed2d4817f4e7b95e
-Top:    c33afdcca73949284834ef4c66bbed62911b9218
+Top:    74780731b8bd3e375e587f810cd406ecb64248cd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-07 01:55:57 +0000
 
@@ -16,7 +16,7 @@ Addresses 6 out of ~51 cases
 ---
 
 diff --git a/src/create.c b/src/create.c
-index c965ac3..4eef584 100644
+index c965ac3..76a5478 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -259,7 +259,7 @@ CreateNewVia (DataTypePtr Data,
@@ -33,7 +33,7 @@ index c965ac3..4eef584 100644
    text->Flags = Flags;
    text->Scale = Scale;
 -  text->TextString = strdup (TextString);
-+  Text->TextString = (TextString && *TextString) ? strdup (TextString) : NULL;
++  text->TextString = (TextString && *TextString) ? strdup (TextString) : NULL;
  
    /* calculate size of the bounding box */
    SetTextBoundingBox (PCBFont, text);
