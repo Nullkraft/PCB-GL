@@ -3,9 +3,43 @@ Top:    a3bd52441d4287dd0d35f707b264b5a71fb8e0c5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-07 01:47:28 +0000
 
-Remove My* memory allocation routines
+Remove My* memory allocation routines. Just use the standard APIs directly
 
-Lets just use the standard APIs directly
+This means the following changes:
+
+  1.  Replace all calls to MyCalloc()  with calls to calloc()
+  2.  Replace all calls to MyMalloc()  with calls to malloc()
+  3.  Replace all calls to MyRealloc() with calls to realloc()
+  4.  Replace all calls to SaveFree()  with calls to free()
+
+  5a. Where the MYFREE(x) macro is used and its pointer clearing side-
+      effect is required, call free (x); and (x) = NULL; directly.
+  5b. Where the MYFREE(x) macro is used, and (x) is immediately re-
+      assigned, or its location free'd or zero'd, skip the (x) = NULL;
+
+  6. Replace all calls to MyStrdup() with calls to the STRDUP(x) macro,
+     which expands to (((x) != NULL) ? strdup (x) : NULL).
+
+NB: The previous commit already replaced various known "safe" calls of
+    MyStrdup() with strdup(), when the argument is known to be non-NULL.
+
+  1,2,3 and 6. mean that we discard the following features of the
+  mymem.c allocators:
+
+    7. Logging messages when MEM_DEBUF defined
+    8. Logic to assign 1 unit of memory if 0 is requested
+    9. Allocation failure handling via MyFatal() -> EmergencySave()
+
+
+Notes from Stephen Ecob <silicon.on.inspiration@gmail.com>
+
+7. Is old debug code which is rarely (if ever) used. Current debug tools
+   such as Valgrind can do a much better job of memory debugging now.
+
+8. This is really papering over the possibility of a caller bug, and
+   should never have been included in the first place.
+
+9. This is unlikely to actually ever save someone from loosing their PCB.
 
 
 ---
