@@ -1,5 +1,5 @@
 Bottom: 274ce70b9b4edb6ffbb58a7ec9a85d6a9bae277d
-Top:    a03a062ee7619f1787b71f96adf2d9568b41645f
+Top:    fbf2316d16c16c0bb461c48cacb1b64f55a8966b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-06 21:28:30 +0000
 
@@ -60,7 +60,7 @@ index 3f3c291..70e759d 100644
  	hid/common/trackball.h
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index f097562..1a5bf13 100644
+index f097562..e961912 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -47,6 +47,7 @@ RCSID ("$Id: $");
@@ -433,16 +433,16 @@ index f097562..1a5bf13 100644
 -
    CHECK_IS_IN_CONTEXT ();
 -  slices = calc_slices (vr / scale, 2 * M_PI);
--
+ 
 -  if (slices < MIN_TRIANGLES_PER_CIRCLE)
 -    slices = MIN_TRIANGLES_PER_CIRCLE;
--
--  if (slices > MAX_TRIANGLES_PER_CIRCLE)
--    slices = MAX_TRIANGLES_PER_CIRCLE;
- 
--  hidgl_ensure_triangle_space (&buffer, slices);
 +  hidgl_ensure_vertex_space (&buffer, 6);
  
+-  if (slices > MAX_TRIANGLES_PER_CIRCLE)
+-    slices = MAX_TRIANGLES_PER_CIRCLE;
+-
+-  hidgl_ensure_triangle_space (&buffer, slices);
+-
 -  last_x = vx + vr;
 -  last_y = vy;
 -
@@ -498,7 +498,7 @@ index f097562..1a5bf13 100644
  
            if (tessVertexType == GL_TRIANGLE_STRIP)
              {
-@@ -614,7 +698,7 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -614,20 +698,14 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
  }
  
  static void
@@ -507,9 +507,11 @@ index f097562..1a5bf13 100644
  {
    cairo_traps_t traps;
  
-@@ -623,11 +707,8 @@ fill_contour (PLINE *contour, double scale)
-    * hidgl_fill_circle to draw this contour.
-    */
+-  /* If the contour is round, and hidgl_fill_circle would use
+-   * less slices than we have vertices to draw it, then call
+-   * hidgl_fill_circle to draw this contour.
+-   */
++  /* If the contour is round, then call hidgl_fill_circle to draw it. */
    if (contour->is_round) {
 -    double slices = calc_slices (contour->radius / scale, 2 * M_PI);
 -    if (slices < contour->Count) {
@@ -521,7 +523,7 @@ index f097562..1a5bf13 100644
    }
  
    _cairo_traps_init (&traps);
-@@ -635,14 +716,9 @@ fill_contour (PLINE *contour, double scale)
+@@ -635,14 +713,9 @@ fill_contour (PLINE *contour, double scale)
    _cairo_traps_fini (&traps);
  }
  
@@ -536,7 +538,7 @@ index f097562..1a5bf13 100644
    PLINE *curc = (PLINE *) b;
  
    /* Ignore the outer contour - we draw it first explicitly*/
-@@ -650,7 +726,7 @@ do_hole (const BoxType *b, void *cl)
+@@ -650,7 +723,7 @@ do_hole (const BoxType *b, void *cl)
      return 0;
    }
  
@@ -545,7 +547,7 @@ index f097562..1a5bf13 100644
    return 1;
  }
  
-@@ -660,14 +736,11 @@ static int assigned_bits = 0;
+@@ -660,14 +733,11 @@ static int assigned_bits = 0;
  
  /* FIXME: JUST DRAWS THE FIRST PIECE.. TODO: SUPPORT FOR FULLPOLY POLYGONS */
  void
@@ -561,7 +563,7 @@ index f097562..1a5bf13 100644
  
    if (poly->Clipped == NULL)
      {
-@@ -697,7 +770,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -697,7 +767,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
     */
    /* Drawing operations now set our reference bit in the stencil buffer */
  
@@ -570,7 +572,7 @@ index f097562..1a5bf13 100644
    hidgl_flush_triangles (&buffer);
  
    /* Drawing operations as masked to areas where the stencil buffer is '0' */
-@@ -713,7 +786,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -713,7 +783,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
                                                                // any bits permitted by the stencil writemask
  
    /* Draw the polygon outer */
@@ -579,7 +581,7 @@ index f097562..1a5bf13 100644
    hidgl_flush_triangles (&buffer);
  
    /* Unassign our stencil buffer bit */
-@@ -726,14 +799,44 @@ void
+@@ -726,14 +796,44 @@ void
  hidgl_fill_rect (int x1, int y1, int x2, int y2)
  {
    CHECK_IS_IN_CONTEXT ();
@@ -627,7 +629,7 @@ index f097562..1a5bf13 100644
    CHECK_IS_IN_CONTEXT ();
    glGetIntegerv (GL_STENCIL_BITS, &stencil_bits);
  
-@@ -749,6 +852,16 @@ hidgl_init (void)
+@@ -749,6 +849,16 @@ hidgl_init (void)
                "Cannot use stencil buffer to sub-composite layers.\n");
        /* Do we need to disable that somewhere? */
      }
