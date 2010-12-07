@@ -243,9 +243,7 @@ static void
 netlist_style (LibraryMenuType *net, const char *style)
 {
   free (net->Style);
-  net->Style = NULL;
-  if (style)
-    net->Style = strdup ((char *)style);
+  net->Style = STRDUP ((char *)style);
 }
 
 /* The primary purpose of this action is to rebuild a netlist from a
