@@ -259,7 +259,7 @@ CreateNewVia (DataTypePtr Data,
 	       0.01 * Via->DrillingHole, 0.01 * DrillingHole);
     }
 
-  Via->Name = strdup (Name);
+  Via->Name = (Name != NULL) ? strdup (Name) : NULL;
   Via->Flags = Flags;
   CLEAR_FLAG (WARNFLAG, Via);
   SET_FLAG (VIAFLAG, Via);
@@ -587,7 +587,7 @@ CreateNewText (LayerTypePtr Layer, FontTypePtr PCBFont,
   text->Direction = Direction;
   text->Flags = Flags;
   text->Scale = Scale;
-  text->TextString = strdup (TextString);
+  Text->TextString = (TextString && *TextString) ? strdup (TextString) : NULL;
 
   /* calculate size of the bounding box */
   SetTextBoundingBox (PCBFont, text);
@@ -780,8 +780,8 @@ CreateNewPin (ElementTypePtr Element,
   pin->Thickness = Thickness;
   pin->Clearance = Clearance;
   pin->Mask = Mask;
-  pin->Name = strdup (Name);
-  pin->Number = strdup (Number);
+  pin->Name = (Name != NULL) ? strdup (Name) : NULL;
+  pin->Number = (Number != NULL) ? strdup (Number) : NULL;
   pin->Flags = Flags;
   CLEAR_FLAG (WARNFLAG, pin);
   SET_FLAG (PINFLAG, pin);
@@ -867,8 +867,8 @@ CreateNewPad (ElementTypePtr Element,
   pad->Thickness = Thickness;
   pad->Clearance = Clearance;
   pad->Mask = Mask;
-  pad->Name = strdup (Name);
-  pad->Number = strdup (Number);
+  pad->Name = (Name != NULL) ? strdup (Name) : NULL;
+  pad->Number = (Number != NULL) ? strdup (Number) : NULL;
   pad->Flags = Flags;
   CLEAR_FLAG (WARNFLAG, pad);
   pad->ID = ID++;
