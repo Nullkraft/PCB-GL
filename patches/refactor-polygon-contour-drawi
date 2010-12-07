@@ -1,5 +1,5 @@
 Bottom: 70629481ed7dda410d0bf63e17ead7d5f6c5c56f
-Top:    70629481ed7dda410d0bf63e17ead7d5f6c5c56f
+Top:    0aec70fbd8ab98e9ea2100d0f09b4f4ec459b280
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-07 02:06:39 +0000
 
@@ -8,4 +8,83 @@ Refactor polygon contour drawing
 
 ---
 
-
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 238e61d..bbae50e 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -613,6 +613,25 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+   free (vertices);
+ }
+ 
++static void
++fill_contour (PLINE *contour, double scale)
++{
++  cairo_traps_t traps;
++
++  /* If the contour is round, then call hidgl_fill_circle to draw it. */
++  if (contour->is_round) {
++    double slices = calc_slices (contour->radius / scale, 2 * M_PI);
++    if (slices < curc->Count) {
++      hidgl_fill_circle (contour->cx, contour->cy, contour->radius, scale);
++      return;
++    }
++  }
++
++  _cairo_traps_init (&traps);
++  bo_contour_to_traps (contour, &traps);
++  _cairo_traps_fini (&traps);
++}
++
+ struct do_hole_info {
+   double scale;
+ };
+@@ -622,29 +641,13 @@ do_hole (const BoxType *b, void *cl)
+ {
+   struct do_hole_info *info = cl;
+   PLINE *curc = (PLINE *) b;
+-  cairo_traps_t traps;
+ 
+   /* Ignore the outer contour - we draw it first explicitly*/
+   if (curc->Flags.orient == PLF_DIR) {
+     return 0;
+   }
+ 
+-  /* If the contour is round, and hidgl_fill_circle would use
+-   * less slices than we have vertices to draw it, then call
+-   * hidgl_fill_circle to draw this contour.
+-   */
+-  if (curc->is_round) {
+-    double slices = calc_slices (curc->radius / info->scale, 2 * M_PI);
+-    if (slices < curc->Count) {
+-      hidgl_fill_circle (curc->cx, curc->cy, curc->radius, info->scale);
+-      return 1;
+-    }
+-  }
+-
+-  _cairo_traps_init (&traps);
+-  bo_contour_to_traps (curc, &traps);
+-  _cairo_traps_fini (&traps);
+-
++  fill_contour (curc, info->scale);
+   return 1;
+ }
+ 
+@@ -658,7 +661,6 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+ {
+   struct do_hole_info info;
+   int stencil_bit;
+-  cairo_traps_t traps;
+ 
+   CHECK_IS_IN_CONTEXT ();
+   info.scale = scale;
+@@ -708,9 +710,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+                                                               // any bits permitted by the stencil writemask
+ 
+   /* Draw the polygon outer */
+-  _cairo_traps_init (&traps);
+-  bo_contour_to_traps (poly->Clipped->contours, &traps);
+-  _cairo_traps_fini (&traps);
++  fill_contour (poly->Clipped->contours, scale);
+   hidgl_flush_triangles (&buffer);
+ 
+   /* Unassign our stencil buffer bit */
