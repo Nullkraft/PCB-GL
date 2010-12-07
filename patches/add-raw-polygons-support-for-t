@@ -1,5 +1,5 @@
 Bottom: 91da65eb5e125d521aa5c06027c697ac17f1c9fc
-Top:    89daebb1987446e517e4b707af9fdc7397719a74
+Top:    ba1a9d3ae72101eccddab4a163b523cb88669cec
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-04 23:45:05 +0000
 
@@ -26,7 +26,7 @@ For now, we don't use polygons on the mask, so its not a a problem (?).
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index b0a5049..405c519 100644
+index b0a5049..ab757a9 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -36,6 +36,7 @@
@@ -50,10 +50,10 @@ index b0a5049..405c519 100644
  }
  
  void
-+tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices,
++tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices,
 +                   int *i)
 +{
-+  VNODE *vn = vnode;
++  VNODE *vn = &contour->head;
 +  int offset = *i * 3;
 +
 +  gluTessBeginContour (tobj);
@@ -64,7 +64,7 @@ index b0a5049..405c519 100644
 +    gluTessVertex (tobj, &vertices [offset], &vertices [offset]);
 +    (*i)++;
 +    offset += 3;
-+  } while ((vn = vn->next) != vnode);
++  } while ((vn = vn->next) != &contour->head);
 +  gluTessEndContour (tobj);
 +}
 +
@@ -85,7 +85,7 @@ index b0a5049..405c519 100644
 +    return 0;
 +  }
 +  gluTessBeginPolygon (info->tobj, NULL);
-+  tesselate_contour (info->tobj, &curc->head, info->vertices, info->i);
++  tesselate_contour (info->tobj, curc, info->vertices, info->i);
 +  gluTessEndPolygon (info->tobj);
 +  return 1;
 +}
@@ -147,7 +147,7 @@ index b0a5049..405c519 100644
 +
 +  /* Draw the polygon outer */
 +  gluTessBeginPolygon (info.tobj, NULL);
-+  tesselate_contour (info.tobj, &poly->Clipped->contours->head, info.vertices, &i);
++  tesselate_contour (info.tobj, poly->Clipped->contours, info.vertices, &i);
 +  gluTessEndPolygon (info.tobj);
 +  hidgl_flush_triangles (&buffer);
 +
