@@ -1,5 +1,5 @@
-Bottom: 73109d51e2035898a8f2dc7039ef8ea4b0976cf8
-Top:    e3ae4888facfc120d3677127028e3195dcce834c
+Bottom: 010ad248f76a8dc2605041205e1b8f45778ed6db
+Top:    a51e0aac8f1b1fb1ec2ca66dd921046e2c90dcf9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-04 23:45:07 +0000
 
@@ -11,7 +11,7 @@ Nasty global depth_state variable should be replaced!
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index faf27c7..cb53763 100644
+index 26fff1b..dd6f89e 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -46,6 +46,7 @@
@@ -46,7 +46,7 @@ index faf27c7..cb53763 100644
    glEnd ();
  }
  
-@@ -814,6 +815,12 @@ hidgl_reset_stencil_usage (void)
+@@ -804,6 +805,12 @@ hidgl_reset_stencil_usage (void)
    dirty_bits = 0;
  }
  
