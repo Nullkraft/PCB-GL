@@ -1,0 +1,14 @@
+Bottom: 80030bd40717882e2e7a42b1ed2d4817f4e7b95e
+Top:    80030bd40717882e2e7a42b1ed2d4817f4e7b95e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-07 01:55:57 +0000
+
+Fix some strdup calls which might be called with a NULL pointer
+
+***** DOES NOT YET FIX ALL POSSIBLE CASES WHERE MyStrdup() WAS
+      PREVIOUSLY USED AND WOULD PROVIDE THIS SAFE BEHAVIOUR
+
+
+---
+
+
