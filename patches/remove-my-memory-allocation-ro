@@ -1,5 +1,5 @@
-Bottom: e8f9104a657a2f81e74d0c8467d2842a115331b6
-Top:    80030bd40717882e2e7a42b1ed2d4817f4e7b95e
+Bottom: 9fa5f34eb56abc934a4e38545687fa773c0fadc5
+Top:    198b389fc36237d4b4d2a842679b03e8fca50537
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-07 01:47:28 +0000
 
@@ -827,7 +827,7 @@ index ba8c959..190fb5a 100644
  
    if (Settings.InitialLayerStack
 diff --git a/src/misc.c b/src/misc.c
-index faeefa8..63c3ea6 100644
+index 76b05c0..79d9e90 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -723,7 +723,7 @@ ParseRouteString (char *s, RouteStyleTypePtr routeStyle, int scale)
@@ -839,7 +839,7 @@ index faeefa8..63c3ea6 100644
        if (!isdigit ((int) *++s))
          goto error;
        GetNum (&s, &routeStyle->Thick);
-@@ -937,7 +937,7 @@ EvaluateFilename (char *Template, char *Path, char *Filename, char *Parameter)
+@@ -943,7 +943,7 @@ EvaluateFilename (char *Template, char *Path, char *Filename, char *Parameter)
    if (Settings.verbose)
      printf ("EvaluateFilename: \033[32m%s\033[0m\n", command.Data);
  
@@ -848,7 +848,7 @@ index faeefa8..63c3ea6 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -956,13 +956,13 @@ ExpandFilename (char *Dirname, char *Filename)
+@@ -962,13 +962,13 @@ ExpandFilename (char *Dirname, char *Filename)
    DSClearString (&answer);
    if (Dirname)
      {
@@ -865,7 +865,7 @@ index faeefa8..63c3ea6 100644
        sprintf (command, "echo %s", Filename);
      }
  
-@@ -978,13 +978,13 @@ ExpandFilename (char *Dirname, char *Filename)
+@@ -984,13 +984,13 @@ ExpandFilename (char *Dirname, char *Filename)
              DSAddCharacter (&answer, c);
          }
  
@@ -881,7 +881,7 @@ index faeefa8..63c3ea6 100644
    return (NULL);
  }
  
-@@ -1898,7 +1898,7 @@ AttributePutToList (AttributeListType *list, char *name, char *value, int replac
+@@ -1904,7 +1904,7 @@ AttributePutToList (AttributeListType *list, char *name, char *value, int replac
  	if (strcmp (name, list->List[i].name) == 0)
  	  {
  	    free (list->List[i].value);
@@ -890,7 +890,7 @@ index faeefa8..63c3ea6 100644
  	    return 1;
  	  }
      }
-@@ -1914,8 +1914,8 @@ AttributePutToList (AttributeListType *list, char *name, char *value, int replac
+@@ -1920,8 +1920,8 @@ AttributePutToList (AttributeListType *list, char *name, char *value, int replac
  
    /* Now add the new attribute.  */
    i = list->Number;
@@ -915,7 +915,7 @@ index cce6e19..cbb2e3d 100644
        lp->SelectedColor = Settings.LayerSelectedColor[new_index];
        for (l = 0; l < max_copper_layer; l++)
 diff --git a/src/mymem.c b/src/mymem.c
-index bed0f9b..74261d3 100644
+index 59f8f8d..6afb1d3 100644
 --- a/src/mymem.c
 +++ b/src/mymem.c
 @@ -69,9 +69,8 @@ GetRubberbandMemory (void)
@@ -1391,8 +1391,8 @@ index bed0f9b..74261d3 100644
 +	free (via->Name);
        }
        END_LOOP;
-       ELEMENT_LOOP (Data);
-@@ -934,26 +806,26 @@ FreeDataMemory (DataTypePtr Data)
+       MYFREE (Data->Via);
+@@ -937,26 +809,26 @@ FreeDataMemory (DataTypePtr Data)
  	  FreeAttributeListMemory (&layer->Attributes);
  	  TEXT_LOOP (layer);
  	  {
@@ -1426,7 +1426,7 @@ index bed0f9b..74261d3 100644
  	  if (layer->line_tree)
  	    r_destroy_tree (&layer->line_tree);
  	  if (layer->arc_tree)
-@@ -996,36 +868,21 @@ FreeLibraryMemory (LibraryTypePtr lib)
+@@ -999,36 +871,21 @@ FreeLibraryMemory (LibraryTypePtr lib)
    {
      ENTRY_LOOP (menu);
      {
@@ -1468,7 +1468,7 @@ index bed0f9b..74261d3 100644
   * reallocates memory for a dynamic length string if necessary
   */
  static void
-@@ -1035,7 +892,7 @@ DSRealloc (DynamicStringTypePtr Ptr, size_t Length)
+@@ -1038,7 +895,7 @@ DSRealloc (DynamicStringTypePtr Ptr, size_t Length)
    if (input_null || Length >= Ptr->MaxLength)
      {
        Ptr->MaxLength = Length + 512;
@@ -1477,7 +1477,7 @@ index bed0f9b..74261d3 100644
        if (input_null)
  	Ptr->Data[0] = '\0';
      }
-@@ -1103,7 +960,7 @@ StripWhiteSpaceAndDup (char *S)
+@@ -1106,7 +963,7 @@ StripWhiteSpaceAndDup (char *S)
    /* string is not empty -> allocate memory */
    if (length)
      {
