@@ -1383,8 +1383,7 @@ ReadLibraryContents (void)
       if (!strncmp (inputline, "TYPE=", 5))
 	{
 	  menu = GetLibraryMenuMemory (&Library);
-	  menu->Name = MyStrdup (UNKNOWN (&inputline[5]),
-				 "ReadLibraryDescription()");
+	  menu->Name = strdup (UNKNOWN (&inputline[5]));
 	  menu->directory = strdup (Settings.LibraryFilename);
 	}
       else
@@ -1393,13 +1392,11 @@ ReadLibraryContents (void)
 	  if (!menu)
 	    {
 	      menu = GetLibraryMenuMemory (&Library);
-	      menu->Name = MyStrdup (UNKNOWN ((char *) NULL),
-				     "ReadLibraryDescription()");
+	      menu->Name = strdup (UNKNOWN ((char *) NULL));
 	      menu->directory = strdup (Settings.LibraryFilename);
 	    }
 	  entry = GetLibraryEntryMemory (menu);
-	  entry->AllocatedMemory = MyStrdup (inputline,
-					     "ReadLibraryDescription()");
+	  entry->AllocatedMemory = strdup (inputline);
 
 	  /* now break the line into pieces separated by colons */
 	  if ((entry->Template = strtok (entry->AllocatedMemory, ":")) !=
@@ -1526,7 +1523,7 @@ ReadNetlist (char *filename)
 	  if (kind == 0)
 	    {
 	      menu = GetLibraryMenuMemory (&PCB->NetlistLib);
-	      menu->Name = MyStrdup (temp, "ReadNetlist()");
+	      menu->Name = strdup (temp);
 	      menu->flag = 1;
 	      kind++;
 	    }
@@ -1535,12 +1532,12 @@ ReadNetlist (char *filename)
 	      if (kind == 1 && strchr (temp, '-') == NULL)
 		{
 		  kind++;
-		  menu->Style = MyStrdup (temp, "ReadNetlist()");
+		  menu->Style = strdup (temp);
 		}
 	      else
 		{
 		  entry = GetLibraryEntryMemory (menu);
-		  entry->ListEntry = MyStrdup (temp, "ReadNetlist()");
+		  entry->ListEntry = strdup (temp);
 		}
 	    }
 	}

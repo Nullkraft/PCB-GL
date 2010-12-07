@@ -5731,7 +5731,7 @@ ActionSaveTo (int argc, char **argv, int x, int y)
   if (strcasecmp (function, "LayoutAs") == 0)
     {
       MYFREE (PCB->Filename);
-      PCB->Filename = MyStrdup (name, __FUNCTION__);
+      PCB->Filename = strdup (name);
       SavePCB (PCB->Filename);
       return 0;
     }
@@ -5929,7 +5929,7 @@ ActionNew (int argc, char **argv, int x, int y)
   if (!PCB->Changed || gui->confirm_dialog (_("OK to clear layout data?"), 0))
     {
       if (name)
-	name = MyStrdup (name, "ActionNew");
+	name = strdup (name);
       else
 	name = gui->prompt_for (_("Enter the layout name:"), "");
 
@@ -7238,7 +7238,7 @@ ActionElementSetAttr (int argc, char **argv, int x, int y)
   if (attr && value)
     {
       MYFREE (attr->value);
-      attr->value = MyStrdup (value, "ElementSetAttr");
+      attr->value = strdup (value);
     }
   if (attr && ! value)
     {
