@@ -1,0 +1,25 @@
+Bottom: a03a062ee7619f1787b71f96adf2d9568b41645f
+Top:    fbf2316d16c16c0bb461c48cacb1b64f55a8966b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-07 02:12:46 +0000
+
+Refresh of play-with-glsl-shader-for-rend
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 1a5bf13..e961912 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -702,10 +702,7 @@ fill_contour (PLINE *contour)
+ {
+   cairo_traps_t traps;
+ 
+-  /* If the contour is round, and hidgl_fill_circle would use
+-   * less slices than we have vertices to draw it, then call
+-   * hidgl_fill_circle to draw this contour.
+-   */
++  /* If the contour is round, then call hidgl_fill_circle to draw it. */
+   if (contour->is_round) {
+     hidgl_fill_circle (contour->cx, contour->cy, contour->radius);
+     return;
