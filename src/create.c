@@ -80,7 +80,7 @@ DataTypePtr
 CreateNewBuffer (void)
 {
   DataTypePtr data;
-  data = (DataTypePtr) MyCalloc (1, sizeof (DataType), "CreateNewBuffer()");
+  data = (DataTypePtr) calloc (1, sizeof (DataType));
   data->pcb = (void *) PCB;
   return data;
 }
@@ -136,7 +136,7 @@ CreateNewPCB (bool SetDefaultNames)
   int i;
 
   /* allocate memory, switch all layers on and copy resources */
-  ptr = MyCalloc (1, sizeof (PCBType), "CreateNewPCB()");
+  ptr = calloc (1, sizeof (PCBType));
   ptr->Data = CreateNewBuffer ();
   ptr->Data->pcb = (void *) ptr;
 
@@ -193,8 +193,7 @@ CreateNewPCB (bool SetDefaultNames)
   ptr->minRing = Settings.minRing;
 
   for (i = 0; i < MAX_LAYER; i++)
-    ptr->Data->Layer[i].Name = MyStrdup (Settings.DefaultLayerName[i],
-					 "CreateNewPCB()");
+    ptr->Data->Layer[i].Name = STRDUP (Settings.DefaultLayerName[i]);
 
   return (ptr);
 }
@@ -260,7 +259,7 @@ CreateNewVia (DataTypePtr Data,
 	       0.01 * Via->DrillingHole, 0.01 * DrillingHole);
     }
 
-  Via->Name = MyStrdup (Name, "CreateNewVia()");
+  Via->Name = STRDUP (Name);
   Via->Flags = Flags;
   CLEAR_FLAG (WARNFLAG, Via);
   SET_FLAG (VIAFLAG, Via);
@@ -588,7 +587,7 @@ CreateNewText (LayerTypePtr Layer, FontTypePtr PCBFont,
   text->Direction = Direction;
   text->Flags = Flags;
   text->Scale = Scale;
-  text->TextString = MyStrdup (TextString, "CreateNewText()");
+  text->TextString = STRDUP (TextString);
 
   /* calculate size of the bounding box */
   SetTextBoundingBox (PCBFont, text);
@@ -700,8 +699,7 @@ CreateNewArcInElement (ElementTypePtr Element,
   if (Element->ArcN >= Element->ArcMax)
     {
       Element->ArcMax += STEP_ELEMENTARC;
-      arc = MyRealloc (arc, Element->ArcMax * sizeof (ArcType),
-		       "CreateNewArcInElement()");
+      arc = realloc (arc, Element->ArcMax * sizeof (ArcType));
       Element->Arc = arc;
       memset (arc + Element->ArcN, 0, STEP_ELEMENTARC * sizeof (ArcType));
     }
@@ -747,8 +745,7 @@ CreateNewLineInElement (ElementTypePtr Element,
   if (Element->LineN >= Element->LineMax)
     {
       Element->LineMax += STEP_ELEMENTLINE;
-      line = MyRealloc (line, Element->LineMax * sizeof (LineType),
-			"CreateNewLineInElement()");
+      line = realloc (line, Element->LineMax * sizeof (LineType));
       Element->Line = line;
       memset (line + Element->LineN, 0, STEP_ELEMENTLINE * sizeof (LineType));
     }
@@ -783,8 +780,8 @@ CreateNewPin (ElementTypePtr Element,
   pin->Thickness = Thickness;
   pin->Clearance = Clearance;
   pin->Mask = Mask;
-  pin->Name = MyStrdup (Name, "CreateNewPin()");
-  pin->Number = MyStrdup (Number, "CreateNewPin()");
+  pin->Name = STRDUP (Name);
+  pin->Number = STRDUP (Number);
   pin->Flags = Flags;
   CLEAR_FLAG (WARNFLAG, pin);
   SET_FLAG (PINFLAG, pin);
@@ -870,8 +867,8 @@ CreateNewPad (ElementTypePtr Element,
   pad->Thickness = Thickness;
   pad->Clearance = Clearance;
   pad->Mask = Mask;
-  pad->Name = MyStrdup (Name, "CreateNewPad()");
-  pad->Number = MyStrdup (Number, "CreateNewPad()");
+  pad->Name = STRDUP (Name);
+  pad->Number = STRDUP (Number);
   pad->Flags = Flags;
   CLEAR_FLAG (WARNFLAG, pad);
   pad->ID = ID++;
@@ -888,13 +885,13 @@ AddTextToElement (TextTypePtr Text, FontTypePtr PCBFont,
 		  LocationType X, LocationType Y,
 		  BYTE Direction, char *TextString, int Scale, FlagType Flags)
 {
-  MYFREE (Text->TextString);
+  free (Text->TextString);
+  Text->TextString = (TextString && *TextString) ? STRDUP (TextString) : NULL;
   Text->X = X;
   Text->Y = Y;
   Text->Direction = Direction;
   Text->Flags = Flags;
   Text->Scale = Scale;
-  Text->TextString = (TextString && *TextString) ? strdup (TextString) : NULL;
 
   /* calculate size of the bounding box */
   SetTextBoundingBox (PCBFont, Text);
@@ -915,8 +912,7 @@ CreateNewLineInSymbol (SymbolTypePtr Symbol,
   if (Symbol->LineN >= Symbol->LineMax)
     {
       Symbol->LineMax += STEP_SYMBOLLINE;
-      line = MyRealloc (line, Symbol->LineMax * sizeof (LineType),
-			"CreateNewLineInSymbol()");
+      line = realloc (line, Symbol->LineMax * sizeof (LineType));
       Symbol->Line = line;
       memset (line + Symbol->LineN, 0, STEP_SYMBOLLINE * sizeof (LineType));
     }
@@ -990,7 +986,7 @@ CreateNewConnection (LibraryMenuTypePtr net, char *conn)
 {
   LibraryEntryTypePtr entry = GetLibraryEntryMemory (net);
 
-  entry->ListEntry = MyStrdup (conn, "CreateNewConnection()");
+  entry->ListEntry = STRDUP (conn);
   return (entry);
 }
 
@@ -1003,12 +999,10 @@ CreateNewAttribute (AttributeListTypePtr list, char *name, char *value)
   if (list->Number >= list->Max)
     {
       list->Max += 10;
-      list->List = MyRealloc (list->List,
-			      list->Max * sizeof (AttributeType),
-			      "CreateNewAttribute");
+      list->List = realloc (list->List, list->Max * sizeof (AttributeType));
     }
-  list->List[list->Number].name = MyStrdup (name, "CreateNewAttribute");
-  list->List[list->Number].value = MyStrdup (value, "CreateNewAttribute");
+  list->List[list->Number].name = STRDUP (name);
+  list->List[list->Number].value = STRDUP (value);
   list->Number++;
   return &list->List[list->Number - 1];
 }
