@@ -621,7 +621,7 @@ fill_contour (PLINE *contour, double scale)
   /* If the contour is round, then call hidgl_fill_circle to draw it. */
   if (contour->is_round) {
     double slices = calc_slices (contour->radius / scale, 2 * M_PI);
-    if (slices < curc->Count) {
+    if (slices < contour->Count) {
       hidgl_fill_circle (contour->cx, contour->cy, contour->radius, scale);
       return;
     }
