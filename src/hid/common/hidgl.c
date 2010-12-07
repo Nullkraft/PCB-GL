@@ -573,8 +573,9 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
 }
 
 void
-tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices)
+tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices)
 {
+  VNODE *vnode = &contour->head;
   VNODE *vn = vnode;
   int offset = 0;
 
@@ -606,7 +607,8 @@ do_hole (const BoxType *b, void *cl)
   if (curc->Flags.orient == PLF_DIR) {
     return 0;
   }
-  tesselate_contour (info->tobj, &curc->head, info->vertices);
+
+  tesselate_contour (info->tobj, curc, info->vertices);
   return 1;
 }
 
@@ -682,7 +684,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
                                                               // any bits permitted by the stencil writemask
 
   /* Draw the polygon outer */
-  tesselate_contour (info.tobj, &poly->Clipped->contours->head, info.vertices);
+  tesselate_contour (info.tobj, poly->Clipped->contours, info.vertices);
   hidgl_flush_triangles (&buffer);
 
   /* Unassign our stencil buffer bit */
