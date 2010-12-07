@@ -1,0 +1,52 @@
+Bottom: 89daebb1987446e517e4b707af9fdc7397719a74
+Top:    ba1a9d3ae72101eccddab4a163b523cb88669cec
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-07 02:35:47 +0000
+
+Refresh of add-raw-polygons-support-for-t
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 405c519..ab757a9 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -573,10 +573,10 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+ }
+ 
+ void
+-tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices,
++tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices,
+                    int *i)
+ {
+-  VNODE *vn = vnode;
++  VNODE *vn = &contour->head;
+   int offset = *i * 3;
+ 
+   gluTessBeginContour (tobj);
+@@ -587,7 +587,7 @@ tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices,
+     gluTessVertex (tobj, &vertices [offset], &vertices [offset]);
+     (*i)++;
+     offset += 3;
+-  } while ((vn = vn->next) != vnode);
++  } while ((vn = vn->next) != &contour->head);
+   gluTessEndContour (tobj);
+ }
+ 
+@@ -608,7 +608,7 @@ do_hole (const BoxType *b, void *cl)
+     return 0;
+   }
+   gluTessBeginPolygon (info->tobj, NULL);
+-  tesselate_contour (info->tobj, &curc->head, info->vertices, info->i);
++  tesselate_contour (info->tobj, curc, info->vertices, info->i);
+   gluTessEndPolygon (info->tobj);
+   return 1;
+ }
+@@ -670,7 +670,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+ 
+   /* Draw the polygon outer */
+   gluTessBeginPolygon (info.tobj, NULL);
+-  tesselate_contour (info.tobj, &poly->Clipped->contours->head, info.vertices, &i);
++  tesselate_contour (info.tobj, poly->Clipped->contours, info.vertices, &i);
+   gluTessEndPolygon (info.tobj);
+   hidgl_flush_triangles (&buffer);
