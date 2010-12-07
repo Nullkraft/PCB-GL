@@ -1,5 +1,5 @@
 Bottom: 89daebb1987446e517e4b707af9fdc7397719a74
-Top:    216618c4dba995033d1e29dbfea4d4b91ad8c1df
+Top:    d9902cfa88803cff05db90da2312971121cc5a34
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-04 23:45:05 +0000
 
@@ -133,17 +133,18 @@ index dd34b8e..073dbae 100644
  #define SL(type,side) (~0xfff | SL_##type | SL_##side##_SIDE)
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 405c519..a5b0d00 100644
+index 405c519..7222d3f 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -573,28 +573,27 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -573,28 +573,28 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
  }
  
  void
 -tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices,
 -                   int *i)
-+tesselate_contour (GLUtesselator *tobj, VNODE *vnode, GLdouble *vertices)
++tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices)
  {
++  VNODE *vnode = &contour->head;
    VNODE *vn = vnode;
 -  int offset = *i * 3;
 +  int offset = 0;
@@ -169,14 +170,15 @@ index 405c519..a5b0d00 100644
  };
  
  static int
-@@ -607,20 +606,22 @@ do_hole (const BoxType *b, void *cl)
+@@ -607,20 +607,23 @@ do_hole (const BoxType *b, void *cl)
    if (curc->Flags.orient == PLF_DIR) {
      return 0;
    }
 -  gluTessBeginPolygon (info->tobj, NULL);
 -  tesselate_contour (info->tobj, &curc->head, info->vertices, info->i);
 -  gluTessEndPolygon (info->tobj);
-+  tesselate_contour (info->tobj, &curc->head, info->vertices);
++
++  tesselate_contour (info->tobj, curc, info->vertices);
    return 1;
  }
  
@@ -197,7 +199,7 @@ index 405c519..a5b0d00 100644
  
    global_scale = scale;
  
-@@ -630,52 +631,64 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -630,52 +633,64 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
        return;
      }
  
@@ -232,6 +234,9 @@ index 405c519..a5b0d00 100644
 -  glClear (GL_STENCIL_BUFFER_BIT);
 -  glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
 -  glEnable (GL_STENCIL_TEST);
+-
+-  i = 0;
+-  cc = 1;
 +  glPushAttrib (GL_STENCIL_BUFFER_BIT);                   // Save the write mask etc.. for final restore
 +  glPushAttrib (GL_STENCIL_BUFFER_BIT |                   // Resave the stencil write-mask etc.., and
 +                GL_COLOR_BUFFER_BIT);                     // the colour buffer write mask etc.. for part way restore
@@ -239,9 +244,6 @@ index 405c519..a5b0d00 100644
 +  glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);    // Always pass stencil test, ref value is our bit
 +  glColorMask (0, 0, 0, 0);                               // Disable writting in color buffer
  
--  i = 0;
--  cc = 1;
--
 -  /* Drawing operations set the stencil buffer to '1' */
 -  glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
 -  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
@@ -273,7 +275,7 @@ index 405c519..a5b0d00 100644
 -  gluTessBeginPolygon (info.tobj, NULL);
 -  tesselate_contour (info.tobj, &poly->Clipped->contours->head, info.vertices, &i);
 -  gluTessEndPolygon (info.tobj);
-+  tesselate_contour (info.tobj, &poly->Clipped->contours->head, info.vertices);
++  tesselate_contour (info.tobj, poly->Clipped->contours, info.vertices);
    hidgl_flush_triangles (&buffer);
  
 -  glClear (GL_STENCIL_BUFFER_BIT);
@@ -285,7 +287,7 @@ index 405c519..a5b0d00 100644
  
    gluDeleteTess (info.tobj);
    myFreeCombined ();
-@@ -690,6 +703,92 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
+@@ -690,6 +705,92 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
    hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
  }
  
