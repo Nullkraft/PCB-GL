@@ -573,7 +573,6 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
 }
 
 void
-<<<<<<< current
 tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices,
                    double scale)
 {
