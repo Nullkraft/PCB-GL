@@ -934,7 +934,7 @@ SmashBufferElement (BufferTypePtr Buffer)
       return (false);
     }
   /*
-   * At this point the buffer should contain just a single element.  
+   * At this point the buffer should contain just a single element.
    * Now we detach the single element from the buffer and then clear the
    * buffer, ready to receive the smashed elements.  As a result of detaching
    * it the single element is orphaned from the buffer and thus will not be
