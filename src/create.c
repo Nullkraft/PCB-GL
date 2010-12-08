@@ -587,7 +587,7 @@ CreateNewText (LayerTypePtr Layer, FontTypePtr PCBFont,
   text->Direction = Direction;
   text->Flags = Flags;
   text->Scale = Scale;
-  text->TextString = MyStrdup (TextString, "CreateNewText()");
+  text->TextString = strdup (TextString);
 
   /* calculate size of the bounding box */
   SetTextBoundingBox (PCBFont, text);
@@ -783,7 +783,7 @@ CreateNewPin (ElementTypePtr Element,
   pin->Clearance = Clearance;
   pin->Mask = Mask;
   pin->Name = MyStrdup (Name, "CreateNewPin()");
-  pin->Number = MyStrdup (Number, "CreateNewPin()");
+  pin->Number = strdup (Number);
   pin->Flags = Flags;
   CLEAR_FLAG (WARNFLAG, pin);
   SET_FLAG (PINFLAG, pin);
@@ -870,7 +870,7 @@ CreateNewPad (ElementTypePtr Element,
   pad->Clearance = Clearance;
   pad->Mask = Mask;
   pad->Name = MyStrdup (Name, "CreateNewPad()");
-  pad->Number = MyStrdup (Number, "CreateNewPad()");
+  pad->Number = strdup (Number);
   pad->Flags = Flags;
   CLEAR_FLAG (WARNFLAG, pad);
   pad->ID = ID++;
@@ -893,7 +893,7 @@ AddTextToElement (TextTypePtr Text, FontTypePtr PCBFont,
   Text->Direction = Direction;
   Text->Flags = Flags;
   Text->Scale = Scale;
-  Text->TextString = (TextString && *TextString) ? strdup (TextString) : NULL;
+  Text->TextString = strdup (TextString);
 
   /* calculate size of the bounding box */
   SetTextBoundingBox (PCBFont, Text);
