@@ -1,5 +1,5 @@
 Bottom: 9fa5f34eb56abc934a4e38545687fa773c0fadc5
-Top:    df93c501d6eda8afecfc7e5a466da2223351a067
+Top:    866bd7287bf3b7e46f8327be46acee87b6e8bba0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-07 16:58:35 +0000
 
@@ -65,6 +65,19 @@ index 1b2d27c..944a8ed 100644
      CreateNewLineInElement (Element, line->Point1.X,
  			    line->Point1.Y, line->Point2.X,
  			    line->Point2.Y, line->Thickness);
+diff --git a/src/copy.c b/src/copy.c
+index c8244ed..ee831b9 100644
+--- a/src/copy.c
++++ b/src/copy.c
+@@ -220,7 +220,7 @@ CopyLine (LayerTypePtr Layer, LineTypePtr Line)
+   if (!line)
+     return (line);
+   if (Line->Number)
+-    line->Number = MyStrdup (Line->Number, "CopyLine");
++    line->Number = strdup (Line->Number);
+   DrawLine (Layer, line, 0);
+   AddObjectToCreateUndoList (LINE_TYPE, Layer, line, line);
+   return (line);
 diff --git a/src/create.c b/src/create.c
 index bf3b688..d92e6e8 100644
 --- a/src/create.c
