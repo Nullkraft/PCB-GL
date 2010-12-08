@@ -1006,8 +1006,8 @@ CreateNewAttribute (AttributeListTypePtr list, char *name, char *value)
 			      list->Max * sizeof (AttributeType),
 			      "CreateNewAttribute");
     }
-  list->List[list->Number].name = MyStrdup (name, "CreateNewAttribute");
-  list->List[list->Number].value = MyStrdup (value, "CreateNewAttribute");
+  list->List[list->Number].name = strdup (name);
+  list->List[list->Number].value = strdup (value);
   list->Number++;
   return &list->List[list->Number - 1];
 }
