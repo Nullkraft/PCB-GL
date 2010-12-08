@@ -1,7 +1,7 @@
-Bottom: 67524003cbe44bdf5f6da3f817208adf95b802b8
-Top:    69f6be1183dbdd50c43d8d888a5093f7be243c00
+Bottom: e28b0f26fb28b0ffc8ddc0b6f99c5c2eecb98736
+Top:    af7ab948c47821e97c8a93253d90ef8599d089b3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-06 21:28:29 +0000
+Date:   2010-12-08 13:14:10 +0000
 
 Debug out of context rendering
 
@@ -9,7 +9,7 @@ Debug out of context rendering
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 2bb81ba..2ce1298 100644
+index e91e8b5..cb29320 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -48,6 +48,25 @@ RCSID ("$Id: $");
@@ -62,7 +62,7 @@ index 2bb81ba..2ce1298 100644
    if (count > TRIANGLE_ARRAY_SIZE)
      {
        fprintf (stderr, "Not enough space in vertex buffer\n");
-@@ -203,6 +225,7 @@ static void draw_cap (double width, int x, int y, double angle, double scale)
+@@ -202,6 +224,7 @@ static void draw_cap (double width, int x, int y, double angle, double scale)
    int slices = calc_slices (radius / scale, M_PI);
    int i;
  
@@ -70,7 +70,7 @@ index 2bb81ba..2ce1298 100644
    if (slices < MIN_TRIANGLES_PER_CAP)
      slices = MIN_TRIANGLES_PER_CAP;
  
-@@ -231,6 +254,7 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
+@@ -230,6 +253,7 @@ hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double s
    int circular_caps = 0;
    int hairline = 0;
  
@@ -78,7 +78,7 @@ index 2bb81ba..2ce1298 100644
    if (width == 0.0)
      hairline = 1;
  
-@@ -314,6 +338,7 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
+@@ -313,6 +337,7 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
    int i;
    int hairline = 0;
  
@@ -86,7 +86,7 @@ index 2bb81ba..2ce1298 100644
    if (width == 0.0)
      hairline = 1;
  
-@@ -377,6 +402,7 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
+@@ -376,6 +401,7 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
  void
  hidgl_draw_rect (int x1, int y1, int x2, int y2)
  {
@@ -94,7 +94,7 @@ index 2bb81ba..2ce1298 100644
    glBegin (GL_LINE_LOOP);
    glVertex3f (x1, y1, global_depth);
    glVertex3f (x1, y2, global_depth);
-@@ -396,6 +422,7 @@ hidgl_fill_circle (int vx, int vy, int vr, double scale)
+@@ -395,6 +421,7 @@ hidgl_fill_circle (int vx, int vy, int vr, double scale)
    int slices;
    int i;
  
@@ -102,7 +102,7 @@ index 2bb81ba..2ce1298 100644
    slices = calc_slices (vr / scale, 2 * M_PI);
  
    if (slices < MIN_TRIANGLES_PER_CIRCLE)
-@@ -542,6 +569,7 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -541,6 +568,7 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
    GLUtesselator *tobj;
    GLdouble *vertices;
  
@@ -110,7 +110,7 @@ index 2bb81ba..2ce1298 100644
  //  return;
  
    assert (n_coords > 0);
-@@ -625,6 +653,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -624,6 +652,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    struct do_hole_info info;
    int stencil_bit;
  
@@ -118,7 +118,7 @@ index 2bb81ba..2ce1298 100644
    info.scale = scale;
    global_scale = scale;
  
-@@ -684,6 +713,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -683,6 +712,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
  void
  hidgl_fill_rect (int x1, int y1, int x2, int y2)
  {
@@ -126,7 +126,7 @@ index 2bb81ba..2ce1298 100644
    hidgl_ensure_triangle_space (&buffer, 2);
    hidgl_add_triangle (&buffer, x1, y1, x1, y2, x2, y2);
    hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
-@@ -692,6 +722,7 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
+@@ -691,6 +721,7 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
  void
  hidgl_init (void)
  {
@@ -134,7 +134,7 @@ index 2bb81ba..2ce1298 100644
    glGetIntegerv (GL_STENCIL_BITS, &stencil_bits);
  
    if (stencil_bits == 0)
-@@ -717,6 +748,7 @@ hidgl_stencil_bits (void)
+@@ -716,6 +747,7 @@ hidgl_stencil_bits (void)
  static void
  hidgl_clean_unassigned_stencil (void)
  {
@@ -155,10 +155,10 @@ index aa2985e..1ed8eb3 100644
  void hidgl_flush_triangles (triangle_buffer *buffer);
  void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b28f6da..a3fada5 100644
+index f43e619..b95da92 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1811,6 +1811,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1810,6 +1810,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_start_drawing (port);
  
@@ -166,7 +166,7 @@ index b28f6da..a3fada5 100644
    hidgl_init ();
    check_gl_drawing_ok_hack = true;
  
-@@ -2027,6 +2028,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2026,6 +2027,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_flush_triangles (&buffer);
  
    check_gl_drawing_ok_hack = false;
@@ -174,7 +174,7 @@ index b28f6da..a3fada5 100644
    ghid_end_drawing (port);
  
    return FALSE;
-@@ -2092,6 +2094,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2091,6 +2093,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
      return FALSE;
    }
  
@@ -183,7 +183,7 @@ index b28f6da..a3fada5 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
-@@ -2138,6 +2142,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2137,6 +2141,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    else
      glFlush ();
  
@@ -192,7 +192,7 @@ index b28f6da..a3fada5 100644
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
  
-@@ -2205,6 +2211,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2204,6 +2210,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
      return NULL;
    }
  
@@ -201,7 +201,7 @@ index b28f6da..a3fada5 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
-@@ -2249,6 +2257,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2248,6 +2256,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glFlush ();
  
