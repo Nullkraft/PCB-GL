@@ -1,5 +1,5 @@
 Bottom: 9fa5f34eb56abc934a4e38545687fa773c0fadc5
-Top:    b2b6a041ee145342b984b483472f7d9152ffb4c4
+Top:    9d8848694260d40f75154e420bf6ad217d107290
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-07 16:58:35 +0000
 
@@ -66,7 +66,7 @@ index 1b2d27c..944a8ed 100644
  			    line->Point1.Y, line->Point2.X,
  			    line->Point2.Y, line->Thickness);
 diff --git a/src/create.c b/src/create.c
-index bf3b688..4f51b63 100644
+index bf3b688..d92e6e8 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -193,8 +193,7 @@ CreateNewPCB (bool SetDefaultNames)
@@ -117,6 +117,17 @@ index bf3b688..4f51b63 100644
    return (menu);
  }
  
+@@ -1010,8 +1006,8 @@ CreateNewAttribute (AttributeListTypePtr list, char *name, char *value)
+ 			      list->Max * sizeof (AttributeType),
+ 			      "CreateNewAttribute");
+     }
+-  list->List[list->Number].name = MyStrdup (name, "CreateNewAttribute");
+-  list->List[list->Number].value = MyStrdup (value, "CreateNewAttribute");
++  list->List[list->Number].name = strdup (name);
++  list->List[list->Number].value = strdup (value);
+   list->Number++;
+   return &list->List[list->Number - 1];
+ }
 diff --git a/src/file.c b/src/file.c
 index 6893379..654f5a1 100644
 --- a/src/file.c
