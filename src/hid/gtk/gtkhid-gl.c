@@ -281,8 +281,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
   if (n > npoints)
     {
       npoints = n + 10;
-      points =
-	MyRealloc (points, npoints * 3 * sizeof (GLfloat), "gtk_draw_grid");
+      points = realloc (points, npoints * 3 * sizeof (GLfloat));
     }
 
   glEnableClientState (GL_VERTEX_ARRAY);
