@@ -1,0 +1,24 @@
+Bottom: b2b6a041ee145342b984b483472f7d9152ffb4c4
+Top:    9d8848694260d40f75154e420bf6ad217d107290
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-08 02:08:41 +0000
+
+Refresh of convet-some-safe-usage-of-myst
+
+---
+
+diff --git a/src/create.c b/src/create.c
+index 4f51b63..d92e6e8 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -1006,8 +1006,8 @@ CreateNewAttribute (AttributeListTypePtr list, char *name, char *value)
+ 			      list->Max * sizeof (AttributeType),
+ 			      "CreateNewAttribute");
+     }
+-  list->List[list->Number].name = MyStrdup (name, "CreateNewAttribute");
+-  list->List[list->Number].value = MyStrdup (value, "CreateNewAttribute");
++  list->List[list->Number].name = strdup (name);
++  list->List[list->Number].value = strdup (value);
+   list->Number++;
+   return &list->List[list->Number - 1];
+ }
