@@ -1,0 +1,22 @@
+Bottom: c7916d40a1b5b18603b4f2f11b828e31e50d8d0f
+Top:    b346d4dac514724d17d4b603aaa8c0e62d17d374
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-08 02:11:18 +0000
+
+Refresh of not-so-sure-about-these-mystrd
+
+---
+
+diff --git a/src/buffer.c b/src/buffer.c
+index 944a8ed..cc5d23c 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -981,7 +981,7 @@ SmashBufferElement (BufferTypePtr Buffer)
+ 				 pad->Point2.X, pad->Point2.Y,
+ 				 pad->Thickness, pad->Clearance, NoFlags ());
+     if (line)
+-      line->Number = MyStrdup (pad->Number, "SmashBuffer");
++      line->Number = strdup (pad->Number);
+   }
+   END_LOOP;
+   FreeElementMemory (element);
