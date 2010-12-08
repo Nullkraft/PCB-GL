@@ -1,5 +1,5 @@
 Bottom: 9fa5f34eb56abc934a4e38545687fa773c0fadc5
-Top:    9d8848694260d40f75154e420bf6ad217d107290
+Top:    df93c501d6eda8afecfc7e5a466da2223351a067
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-07 16:58:35 +0000
 
@@ -260,7 +260,7 @@ index ba8c959..65141bb 100644
  
    if (Settings.InitialLayerStack
 diff --git a/src/misc.c b/src/misc.c
-index 76b05c0..b87a6a6 100644
+index 76b05c0..af8cf52 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -723,7 +723,7 @@ ParseRouteString (char *s, RouteStyleTypePtr routeStyle, int scale)
@@ -281,6 +281,15 @@ index 76b05c0..b87a6a6 100644
  }
  
  /* ---------------------------------------------------------------------------
+@@ -1920,7 +1920,7 @@ AttributePutToList (AttributeListType *list, char *name, char *value, int replac
+ 
+   /* Now add the new attribute.  */
+   i = list->Number;
+-  list->List[i].name = MyStrdup (name, "AttributePutToList");
++  list->List[i].name = strdup (name);
+   list->List[i].value = MyStrdup (value, "AttributePutToList");
+   list->Number ++;
+   return 0;
 diff --git a/src/move.c b/src/move.c
 index cce6e19..cbb2e3d 100644
 --- a/src/move.c
