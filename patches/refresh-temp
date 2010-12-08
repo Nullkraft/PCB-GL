@@ -1,0 +1,22 @@
+Bottom: 61c8fe355e7086f14c84163d9d3312ddb2678dc2
+Top:    dc32ff99131de5431b04110b924f7a2e24730430
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-08 23:20:04 +0000
+
+Refresh of FixSmash.patch
+
+---
+
+diff --git a/src/buffer.c b/src/buffer.c
+index 1f43a5f..bec918f 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -934,7 +934,7 @@ SmashBufferElement (BufferTypePtr Buffer)
+       return (false);
+     }
+   /*
+-   * At this point the buffer should contain just a single element.  
++   * At this point the buffer should contain just a single element.
+    * Now we detach the single element from the buffer and then clear the
+    * buffer, ready to receive the smashed elements.  As a result of detaching
+    * it the single element is orphaned from the buffer and thus will not be
