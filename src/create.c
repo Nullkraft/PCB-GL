@@ -193,8 +193,7 @@ CreateNewPCB (bool SetDefaultNames)
   ptr->minRing = Settings.minRing;
 
   for (i = 0; i < MAX_LAYER; i++)
-    ptr->Data->Layer[i].Name = MyStrdup (Settings.DefaultLayerName[i],
-					 "CreateNewPCB()");
+    ptr->Data->Layer[i].Name = strdup (Settings.DefaultLayerName[i]);
 
   return (ptr);
 }
