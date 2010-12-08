@@ -1,7 +1,7 @@
-Bottom: efcf35476345a7ec0c0a8876e6b495fe2ca2fa32
-Top:    010ad248f76a8dc2605041205e1b8f45778ed6db
+Bottom: 75f821143cd92d6d153ff480960fb4d27a755404
+Top:    150ed1622bb36b5bfcfa954f38ddc8ad4118c89c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-04 23:45:07 +0000
+Date:   2010-12-08 13:12:21 +0000
 
 Use trackball to allow rotation of 3D view
 
@@ -396,7 +396,7 @@ index bf3021e..2446aa7 100644
  # define ENABLE_TOOLTIPS 1
  #else
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index d0e32df..657529b 100644
+index 2eafbf9..ecfa1f4 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -122,6 +122,7 @@ a zoom in/out.
@@ -407,7 +407,7 @@ index d0e32df..657529b 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -2152,6 +2153,10 @@ ghid_build_pcb_top_window (void)
+@@ -2150,6 +2151,10 @@ ghid_build_pcb_top_window (void)
    GtkWidget *vbox_main, *vbox_left, *hbox_middle, *hbox = NULL;
    GtkWidget *viewport, *ebox, *vbox, *frame;
    GtkWidget *label;
@@ -418,7 +418,7 @@ index d0e32df..657529b 100644
    GHidPort *port = &ghid_port;
    gchar *s;
    GtkWidget *scrolled;
-@@ -2260,6 +2265,16 @@ ghid_build_pcb_top_window (void)
+@@ -2258,6 +2263,16 @@ ghid_build_pcb_top_window (void)
        GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
    make_layer_buttons(vbox, port);
  

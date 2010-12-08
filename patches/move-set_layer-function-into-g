@@ -1,7 +1,7 @@
-Bottom: c8209e05d1f2009d529d65cde447f01447de54bb
-Top:    78d25a8073d7fed1558d3d74f711604bf677f4f6
+Bottom: 476d264a998e3eadb64e60fa7b26df2e1a71f133
+Top:    e9690964b577ba479714ed2456718cb739a28d58
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-04 23:45:03 +0000
+Date:   2010-12-08 13:12:16 +0000
 
 Move set_layer function into GDK specific code.
 
@@ -12,7 +12,7 @@ version coming shortly does some extra work.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 34e52fa..59a9894 100644
+index 78c382e..06b7257 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -67,6 +67,51 @@ typedef struct hid_gc_struct

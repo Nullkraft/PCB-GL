@@ -1,7 +1,7 @@
-Bottom: 06eaff5c95e2f667e529b8cf05a344836c88658a
-Top:    e048f7f2ae72e593de0c768b7f0d16624bb6dd46
+Bottom: f99c8b590caf284a2a1e87cea04bf592794bc0b3
+Top:    d5d6f8c16c2a3dbfbd4e125f0917c0b53e9037fd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-04 23:45:13 +0000
+Date:   2010-12-08 13:12:28 +0000
 
 TEMPORARY: Comment out some DrawMark calls which might be out of context
 
@@ -11,7 +11,7 @@ Should fix this properly with notificatons to the GUI
 ---
 
 diff --git a/src/action.c b/src/action.c
-index f52fcf4..ba0cf3f 100644
+index e03026f..91eb8be 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -4021,7 +4021,7 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)

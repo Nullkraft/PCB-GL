@@ -1,7 +1,7 @@
-Bottom: 21a9c44f62e4279bdfae35f30b25fba706bb054f
-Top:    7dd848c58ea6158989ace36608dd58974daf3cd3
+Bottom: 18342964983fa21246a2c8a9b5056fe773f8d26a
+Top:    c1568d9b354e41da91ba2003b12225b6fceb4d07
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-04 23:45:06 +0000
+Date:   2010-12-08 13:12:20 +0000
 
 Hack to make pretty translucent polygons in thindraw-poly mode
 
@@ -15,10 +15,10 @@ way to turn it off would also be useful.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 2b425ed..4ae8242 100644
+index b1dfc1c..b465467 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -687,6 +687,12 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+@@ -685,6 +685,12 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  }
  
  void

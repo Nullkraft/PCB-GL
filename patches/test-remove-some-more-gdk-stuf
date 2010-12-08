@@ -1,7 +1,7 @@
-Bottom: 0821ae5e76378d0cd9aac4c1e121c565f44fa426
-Top:    55b5eefea35ec988b279ea418ee28d7a4465b5f0
+Bottom: 34314cbc2583bed6976149d0b37ffb85cdd52cd5
+Top:    b7c93d54a8fda30565fd22f39f9f85d61f9d14a3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-04 23:45:03 +0000
+Date:   2010-12-08 13:12:15 +0000
 
 TEST REMOVE SOME MORE GDK STUFF
 
@@ -21,10 +21,10 @@ index e719268..3167f4f 100644
  	hid/gtk/gui-utils.c
  libgtk_a_SOURCES = ${LIBGTK_SRCS} hid/gtk/gtk_lists.h
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index eb94ed8..e3d305c 100644
+index b1dc11d..5b94733 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -885,3 +885,178 @@ ghid_show_crosshair (gboolean show)
+@@ -883,3 +883,178 @@ ghid_show_crosshair (gboolean show)
        draw_markers_prev = FALSE;
      }
  }
@@ -413,10 +413,10 @@ index b24e6c9..0000000
 -  return pixmap;
 -}
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 9c30a93..f9ca099 100644
+index 90977e2..02c1fd4 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -2351,7 +2351,7 @@ ghid_build_pcb_top_window (void)
+@@ -2349,7 +2349,7 @@ ghid_build_pcb_top_window (void)
     */
  
    g_signal_connect (G_OBJECT (gport->drawing_area), "expose_event",

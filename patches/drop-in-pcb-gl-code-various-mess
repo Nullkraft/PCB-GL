@@ -1,7 +1,7 @@
-Bottom: 78d25a8073d7fed1558d3d74f711604bf677f4f6
-Top:    bebe0bd872bc85ee3abfc780206c217a566a4f6e
+Bottom: e9690964b577ba479714ed2456718cb739a28d58
+Top:    0bdea0de54e456d374fb370460d9254eb74984d5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-04 23:45:04 +0000
+Date:   2010-12-08 13:12:17 +0000
 
 Drop in PCB+GL code + various mess. Needs splitting up?
 
@@ -755,10 +755,10 @@ index 0000000..73d9a34
 +
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 59a9894..882460c 100644
+index 06b7257..e45e28d 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -964,6 +964,11 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -962,6 +962,11 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
  }
  
  void
@@ -770,7 +770,7 @@ index 59a9894..882460c 100644
  ghid_drawing_area_configure_hook (GHidPort *port)
  {
    static int done_once = 0;
-@@ -986,6 +991,17 @@ ghid_drawing_area_configure_hook (GHidPort *port)
+@@ -984,6 +989,17 @@ ghid_drawing_area_configure_hook (GHidPort *port)
      }
  }
  
@@ -2108,10 +2108,10 @@ index c75a0d3..54d95c8 100644
    gtk_widget_class->expose_event = ghid_pinout_preview_expose;
  
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index dcd624f..56c2374 100644
+index bb32cd1..a87bd0b 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -2295,6 +2295,7 @@ ghid_build_pcb_top_window (void)
+@@ -2293,6 +2293,7 @@ ghid_build_pcb_top_window (void)
    gtk_box_pack_start (GTK_BOX (hbox), viewport, TRUE, TRUE, 0);
  
    gport->drawing_area = gtk_drawing_area_new ();
