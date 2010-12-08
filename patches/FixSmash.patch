@@ -1,0 +1,35 @@
+Bottom: 9fa5f34eb56abc934a4e38545687fa773c0fadc5
+Top:    61c8fe355e7086f14c84163d9d3312ddb2678dc2
+Author: Stephen Ecob <silicon.on.inspiration@gmail.com>
+Date:   2010-12-09 09:32:28 +1100
+
+Fixes SmashBufferElement() which was broken by commit 466b0183758ef3ca44623c43de60a233b175d2ad
+That commit broke SmashBufferElement() by changing FreeDataMemory() (which
+SmashBufferElement() calls via ClearBuffer()).  SmashBufferElement() depended on the memory
+leak of Data->Element in FreeDataMemory().  This patch removes the dependence on the leak.
+
+
+---
+
+diff --git a/src/buffer.c b/src/buffer.c
+index 1b2d27c..1f43a5f 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -933,7 +933,17 @@ SmashBufferElement (BufferTypePtr Buffer)
+       Message (_("Error!  Buffer doesn't contain a single element\n"));
+       return (false);
+     }
++  /*
++   * At this point the buffer should contain just a single element.  
++   * Now we detach the single element from the buffer and then clear the
++   * buffer, ready to receive the smashed elements.  As a result of detaching
++   * it the single element is orphaned from the buffer and thus will not be
++   * free()'d by FreeDataMemory (called via ClearBuffer).  This leaves it
++   * around for us to smash bits off it.  It then becomes our responsibility,
++   * however, to free the single element when we're finished with it.
++   */
+   element = &Buffer->Data->Element[0];
++  Buffer->Data->Element = NULL;
+   Buffer->Data->ElementN = 0;
+   ClearBuffer (Buffer);
+   ELEMENTLINE_LOOP (element);
