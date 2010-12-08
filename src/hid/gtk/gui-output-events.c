@@ -69,15 +69,11 @@ ghid_port_ranges_changed (void)
 {
   GtkAdjustment *h_adj, *v_adj;
 
-  if (!ghidgui->combine_adjustments)
-    HideCrosshair (FALSE);
   if (ghidgui->combine_adjustments)
     {
       ghidgui->combine_adjustments = FALSE;
       return;
     }
-
-  ghidgui->need_restore_crosshair = TRUE;
 
   h_adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->h_range));
   v_adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->v_range));
