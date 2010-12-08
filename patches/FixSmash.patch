@@ -3,10 +3,16 @@ Top:    61c8fe355e7086f14c84163d9d3312ddb2678dc2
 Author: Stephen Ecob <silicon.on.inspiration@gmail.com>
 Date:   2010-12-09 09:32:28 +1100
 
-Fixes SmashBufferElement() which was broken by commit 466b0183758ef3ca44623c43de60a233b175d2ad
-That commit broke SmashBufferElement() by changing FreeDataMemory() (which
-SmashBufferElement() calls via ClearBuffer()).  SmashBufferElement() depended on the memory
-leak of Data->Element in FreeDataMemory().  This patch removes the dependence on the leak.
+Fix SmashBufferElement(), broken by fixing a memory leak in FreeDataMemory()
+
+Commit 466b0183758ef3ca44623c43de60a233b175d2ad broke SmashBufferElement()
+by changing FreeDataMemory() (which SmashBufferElement() calls via
+ClearBuffer()).  SmashBufferElement() depended on the memory leak of
+Data->Element in FreeDataMemory().
+
+This patch removes the dependence on the leak.
+
+Commit-message-reformatted-by: Peter Clifton <pcjc2@cam.ac.uk>
 
 
 ---
