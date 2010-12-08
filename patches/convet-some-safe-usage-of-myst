@@ -1,5 +1,5 @@
 Bottom: 9fa5f34eb56abc934a4e38545687fa773c0fadc5
-Top:    0ebeae5b72642f87929729f96b87e48967513259
+Top:    b2b6a041ee145342b984b483472f7d9152ffb4c4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-07 16:58:35 +0000
 
@@ -66,10 +66,20 @@ index 1b2d27c..944a8ed 100644
  			    line->Point1.Y, line->Point2.X,
  			    line->Point2.Y, line->Thickness);
 diff --git a/src/create.c b/src/create.c
-index bf3b688..b2b9af4 100644
+index bf3b688..4f51b63 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -213,10 +213,8 @@ CreateNewPCBPost (PCBTypePtr pcb, int use_defaults)
+@@ -193,8 +193,7 @@ CreateNewPCB (bool SetDefaultNames)
+   ptr->minRing = Settings.minRing;
+ 
+   for (i = 0; i < MAX_LAYER; i++)
+-    ptr->Data->Layer[i].Name = MyStrdup (Settings.DefaultLayerName[i],
+-					 "CreateNewPCB()");
++    ptr->Data->Layer[i].Name = strdup (Settings.DefaultLayerName[i]);
+ 
+   return (ptr);
+ }
+@@ -213,10 +212,8 @@ CreateNewPCBPost (PCBTypePtr pcb, int use_defaults)
        if (ParseGroupString (Settings.Groups, &pcb->LayerGroups, DEF_LAYER))
  	return 1;
  
@@ -82,7 +92,7 @@ index bf3b688..b2b9af4 100644
      }
    return 0;
  }
-@@ -896,8 +894,7 @@ AddTextToElement (TextTypePtr Text, FontTypePtr PCBFont,
+@@ -896,8 +893,7 @@ AddTextToElement (TextTypePtr Text, FontTypePtr PCBFont,
    Text->Direction = Direction;
    Text->Flags = Flags;
    Text->Scale = Scale;
@@ -92,7 +102,7 @@ index bf3b688..b2b9af4 100644
  
    /* calculate size of the bounding box */
    SetTextBoundingBox (PCBFont, Text);
-@@ -976,12 +973,12 @@ CreateNewNet (LibraryTypePtr lib, char *name, char *style)
+@@ -976,12 +972,12 @@ CreateNewNet (LibraryTypePtr lib, char *name, char *style)
  
    sprintf (temp, "  %s", name);
    menu = GetLibraryMenuMemory (lib);
@@ -108,9 +118,45 @@ index bf3b688..b2b9af4 100644
  }
  
 diff --git a/src/file.c b/src/file.c
-index 6893379..13a8444 100644
+index 6893379..654f5a1 100644
 --- a/src/file.c
 +++ b/src/file.c
+@@ -318,7 +318,7 @@ SavePCB (char *Filename)
+        * first of all make a copy of the passed filename because
+        * it might be identical to 'PCB->Filename'
+        */
+-      copy = MyStrdup (Filename, "SavePCB()");
++      copy = strdup (Filename);
+       SaveFree (PCB->Filename);
+       PCB->Filename = copy;
+       SetChangedFlag (false);
+@@ -390,7 +390,7 @@ LoadPCB (char *Filename)
+ 
+       /* clear 'changed flag' */
+       SetChangedFlag (false);
+-      PCB->Filename = MyStrdup (Filename, "LoadPCB()");
++      PCB->Filename = strdup (Filename);
+       /* just in case a bad file saved file is loaded */
+ 
+       units_mm = (PCB->Grid != (int) PCB->Grid) ? true : false;
+@@ -1166,7 +1166,7 @@ LoadNewlibFootprintsFromDir(char *libpath, char *toppath)
+   /* Get pointer to memory holding menu */
+   menu = GetLibraryMenuMemory (&Library);
+   /* Populate menuname and path vars */
+-  menu->Name = MyStrdup (pcb_basename(subdir), "Newlib");
++  menu->Name = strdup (pcb_basename(subdir));
+   menu->directory = strdup (pcb_basename(toppath));
+ 
+   /* Now loop over files in this directory looking for files.
+@@ -1257,7 +1257,7 @@ ParseLibraryTree (void)
+   /* Additional loop to allow for multiple 'newlib' style library directories 
+    * called out in Settings.LibraryTree
+    */
+-  libpaths = MyStrdup (Settings.LibraryTree, "ParseLibraryTree");
++  libpaths = strdup (Settings.LibraryTree);
+   for (p = strtok (libpaths, PCB_PATH_DELIMETER); p && *p; p = strtok (NULL, PCB_PATH_DELIMETER))
+     {
+       /* remove trailing path delimeter */
 @@ -1383,8 +1383,7 @@ ReadLibraryContents (void)
        if (!strncmp (inputline, "TYPE=", 5))
  	{
@@ -250,3 +296,40 @@ index ade8326..459b08a 100644
  }
  
  /* The primary purpose of this action is to rebuild a netlist from a
+diff --git a/src/rats.c b/src/rats.c
+index 46a18c8..67a0efc 100644
+--- a/src/rats.c
++++ b/src/rats.c
+@@ -912,7 +912,7 @@ AddNet (void)
+ 	  return (NULL);
+ 	}
+       entry = GetLibraryEntryMemory (menu);
+-      entry->ListEntry = MyStrdup (name2, "AddNet");
++      entry->ListEntry = strdup (name2);
+       netnode_to_netname (name2);
+       goto ratIt;
+     }
+@@ -921,7 +921,7 @@ AddNet (void)
+   if (menu)
+     {
+       entry = GetLibraryEntryMemory (menu);
+-      entry->ListEntry = MyStrdup (name1, "AddNet");
++      entry->ListEntry = strdup (name1);
+       netnode_to_netname (name1);
+       goto ratIt;
+     }
+@@ -939,11 +939,11 @@ AddNet (void)
+     }
+ 
+   menu = GetLibraryMenuMemory (&PCB->NetlistLib);
+-  menu->Name = MyStrdup (ratname, "AddNet");
++  menu->Name = strdup (ratname);
+   entry = GetLibraryEntryMemory (menu);
+-  entry->ListEntry = MyStrdup (name1, "AddNet");
++  entry->ListEntry = strdup (name1);
+   entry = GetLibraryEntryMemory (menu);
+-  entry->ListEntry = MyStrdup (name2, "AddNet");
++  entry->ListEntry = strdup (name2);
+   menu->flag = 1;
+ 
+ ratIt:
