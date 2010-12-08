@@ -991,7 +991,7 @@ SmashBufferElement (BufferTypePtr Buffer)
 				 pad->Point2.X, pad->Point2.Y,
 				 pad->Thickness, pad->Clearance, NoFlags ());
     if (line)
-      line->Number = MyStrdup (pad->Number, "SmashBuffer");
+      line->Number = strdup (pad->Number);
   }
   END_LOOP;
   FreeElementMemory (element);
