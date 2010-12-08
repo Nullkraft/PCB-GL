@@ -1,0 +1,37 @@
+Bottom: 6b83ce791fe24d99fc2b1785055cb23b0e47379c
+Top:    e28b0f26fb28b0ffc8ddc0b6f99c5c2eecb98736
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-08 13:13:56 +0000
+
+Refresh of fix-my-breakage-temporarily-he
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 2bb81ba..e91e8b5 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -152,8 +152,7 @@ draw_grid ()
+   if (n > npoints)
+     {
+       npoints = n + 10;
+-      points =
+-        MyRealloc (points, npoints * 2 * sizeof (GLfloat), "gtk_draw_grid");
++      points = Realloc (points, npoints * 2 * sizeof (GLfloat));
+     }
+ 
+   glEnableClientState (GL_VERTEX_ARRAY);
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index b28f6da..f43e619 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -281,8 +281,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
+   if (n > npoints)
+     {
+       npoints = n + 10;
+-      points =
+-	MyRealloc (points, npoints * 3 * sizeof (GLfloat), "gtk_draw_grid");
++      points = realloc (points, npoints * 3 * sizeof (GLfloat));
+     }
+ 
+   glEnableClientState (GL_VERTEX_ARRAY);
