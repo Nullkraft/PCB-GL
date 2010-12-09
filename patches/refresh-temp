@@ -1,0 +1,411 @@
+Bottom: 8ab05755f359a7795fcb7a5a793866cad03d1855
+Top:    51cfb338f452fa7f5817bcfeb086a3efcf3c730d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-09 18:06:08 +0000
+
+Refresh of convert-argument-in-hid_flags-
+
+---
+
+diff --git a/src/djopt.c b/src/djopt.c
+index 800e574..64f6fcb 100644
+--- a/src/djopt.c
++++ b/src/djopt.c
+@@ -146,13 +146,13 @@ djopt_set_auto_only (int argc, char **argv, int x, int y)
+ }
+ 
+ static int
+-djopt_get_auto_only (int dummy)
++djopt_get_auto_only (void *data)
+ {
+   return autorouted_only;
+ }
+ 
+ HID_Flag djopt_flag_list[] = {
+-  {"optautoonly", djopt_get_auto_only, 0}
++  {"optautoonly", djopt_get_auto_only, NULL}
+ };
+ 
+ REGISTER_FLAGS (djopt_flag_list)
+diff --git a/src/flags.c b/src/flags.c
+index c33cfb6..41d8d01 100644
+--- a/src/flags.c
++++ b/src/flags.c
+@@ -37,6 +37,8 @@
+ #include "global.h"
+ #include "data.h"
+ 
++#include <glib.h>
++
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+ #endif
+@@ -44,7 +46,7 @@
+ RCSID ("$Id$");
+ 
+ static int
+-FlagCurrentStyle (int dummy)
++FlagCurrentStyle (void *data)
+ {
+   STYLE_LOOP (PCB);
+   {
+@@ -59,25 +61,25 @@ FlagCurrentStyle (int dummy)
+ }
+ 
+ static int
+-FlagGrid (int dummy)
++FlagGrid (void *data)
+ {
+   return PCB->Grid > 1.0;
+ }
+ 
+ static int
+-FlagGridSize (int dummy)
++FlagGridSize (void *data)
+ {
+   return (int) (PCB->Grid + 0.5);
+ }
+ 
+ static int
+-FlagBuffer (int dummy)
++FlagBuffer (void *data)
+ {
+   return (int) (Settings.BufferNumber + 1);
+ }
+ 
+ static int
+-FlagElementName (int dummy)
++FlagElementName (void  *data)
+ {
+   if (TEST_FLAG (NAMEONPCBFLAG, PCB))
+     return 2;
+@@ -87,27 +89,30 @@ FlagElementName (int dummy)
+ }
+ 
+ static int
+-FlagTESTFLAG (int bit)
++FlagTESTFLAG (void *data)
+ {
++  int bit = GPOINTER_TO_INT (data);
+   return TEST_FLAG (bit, PCB) ? 1 : 0;
+ }
+ 
+ static int
+-FlagSETTINGS (int ofs)
++FlagSETTINGS (void *data)
+ {
+-  return *(bool *) ((char *) (&Settings) + ofs);
++  size_t ofs = (size_t)data;
++  return *(bool *) ((char *)(&Settings) + ofs);
+ }
+ 
+ static int
+-FlagMode (int x)
++FlagMode (void *data)
+ {
++  int x = GPOINTER_TO_INT (data);
+   if (x == -1)
+     return Settings.Mode;
+   return Settings.Mode == x;
+ }
+ 
+ static int
+-FlagHaveRegex (int x)
++FlagHaveRegex (void *data)
+ {
+ #if defined(HAVE_REGCOMP) || defined(HAVE_RE_COMP)
+   return 1;
+@@ -126,8 +131,9 @@ enum {
+ };
+ 
+ static int
+-FlagLayerShown (int n)
++FlagLayerShown (void *data)
+ {
++  int n = GPOINTER_TO_INT (data);
+   switch (n)
+     {
+     case FL_SILK:
+@@ -150,8 +156,9 @@ FlagLayerShown (int n)
+ }
+ 
+ static int
+-FlagLayerActive (int n)
++FlagLayerActive (void *data)
+ {
++  int test_layer = GPOINTER_TO_INT (data);
+   int current_layer;
+   if (PCB->RatDraw)
+     current_layer = FL_RATS;
+@@ -160,92 +167,89 @@ FlagLayerActive (int n)
+   else
+     return 0;
+ 
+-  return current_layer == n;
++  return current_layer == test_layer;
+ }
+ 
+-#define OffsetOf(a,b) (int)(&(((a *)0)->b))
++#define OFFSET_POINTER(a, b) (&(((a *)0)->b))
+ 
+ HID_Flag flags_flag_list[] = {
+-  {"style", FlagCurrentStyle, 0},
+-  {"grid", FlagGrid, 0},
+-  {"gridsize", FlagGridSize, 0},
+-  {"elementname", FlagElementName, 0},
+-  {"have_regex", FlagHaveRegex, 0},
+-
+-  {"silk_shown", FlagLayerShown, FL_SILK},
+-  {"pins_shown", FlagLayerShown, FL_PINS},
+-  {"rats_shown", FlagLayerShown, FL_RATS},
+-  {"vias_shown", FlagLayerShown, FL_VIAS},
+-  {"back_shown", FlagLayerShown, FL_BACK},
+-  {"mask_shown", FlagLayerShown, FL_MASK},
+-  {"silk_active", FlagLayerActive, FL_SILK},
+-  {"rats_active", FlagLayerActive, FL_RATS},
+-
+-  {"mode", FlagMode, -1},
+-  {"nomode", FlagMode, NO_MODE},
+-  {"arcmode", FlagMode, ARC_MODE},
+-  {"arrowmode", FlagMode, ARROW_MODE},
+-  {"copymode", FlagMode, COPY_MODE},
+-  {"insertpointmode", FlagMode, INSERTPOINT_MODE},
+-  {"linemode", FlagMode, LINE_MODE},
+-  {"lockmode", FlagMode, LOCK_MODE},
+-  {"movemode", FlagMode, MOVE_MODE},
+-  {"pastebuffermode", FlagMode, PASTEBUFFER_MODE},
+-  {"polygonmode", FlagMode, POLYGON_MODE},
+-  {"polygonholemode", FlagMode, POLYGONHOLE_MODE},
+-  {"rectanglemode", FlagMode, RECTANGLE_MODE},
+-  {"removemode", FlagMode, REMOVE_MODE},
+-  {"rotatemode", FlagMode, ROTATE_MODE},
+-  {"rubberbandmovemode", FlagMode, RUBBERBANDMOVE_MODE},
+-  {"textmode", FlagMode, TEXT_MODE},
+-  {"thermalmode", FlagMode, THERMAL_MODE},
+-  {"viamode", FlagMode, VIA_MODE},
+-
+-  {"shownumber", FlagTESTFLAG, SHOWNUMBERFLAG},
+-  {"localref", FlagTESTFLAG, LOCALREFFLAG},
+-  {"checkplanes", FlagTESTFLAG, CHECKPLANESFLAG},
+-  {"showdrc", FlagTESTFLAG, SHOWDRCFLAG},
+-  {"rubberband", FlagTESTFLAG, RUBBERBANDFLAG},
+-  {"description", FlagTESTFLAG, DESCRIPTIONFLAG},
+-  {"nameonpcb", FlagTESTFLAG, NAMEONPCBFLAG},
+-  {"autodrc", FlagTESTFLAG, AUTODRCFLAG},
+-  {"alldirection", FlagTESTFLAG, ALLDIRECTIONFLAG},
+-  {"swapstartdir", FlagTESTFLAG, SWAPSTARTDIRFLAG},
+-  {"uniquename", FlagTESTFLAG, UNIQUENAMEFLAG},
+-  {"clearnew", FlagTESTFLAG, CLEARNEWFLAG},
+-  {"snappin", FlagTESTFLAG, SNAPPINFLAG},
+-  {"showmask", FlagTESTFLAG, SHOWMASKFLAG},
+-  {"thindraw", FlagTESTFLAG, THINDRAWFLAG},
+-  {"orthomove", FlagTESTFLAG, ORTHOMOVEFLAG},
+-  {"liveroute", FlagTESTFLAG, LIVEROUTEFLAG},
+-  {"thindrawpoly", FlagTESTFLAG, THINDRAWPOLYFLAG},
+-  {"locknames", FlagTESTFLAG, LOCKNAMESFLAG},
+-  {"onlynames", FlagTESTFLAG, ONLYNAMESFLAG},
+-  {"newfullpoly", FlagTESTFLAG, NEWFULLPOLYFLAG},
+-  {"hidenames", FlagTESTFLAG, HIDENAMESFLAG},
+-
+-  {"fullpoly", FlagSETTINGS, OffsetOf (SettingType, FullPoly)},
+-  {"grid_units_mm", FlagSETTINGS, OffsetOf (SettingType, grid_units_mm)},
+-  {"clearline", FlagSETTINGS, OffsetOf (SettingType, ClearLine)},
+-  {"uniquenames", FlagSETTINGS, OffsetOf (SettingType, UniqueNames)},
+-  {"showsolderside", FlagSETTINGS, OffsetOf (SettingType, ShowSolderSide)},
+-  {"savelastcommand", FlagSETTINGS, OffsetOf (SettingType, SaveLastCommand)},
+-  {"saveintmp", FlagSETTINGS, OffsetOf (SettingType, SaveInTMP)},
+-  {"drawgrid", FlagSETTINGS, OffsetOf (SettingType, DrawGrid)},
+-  {"ratwarn", FlagSETTINGS, OffsetOf (SettingType, RatWarn)},
+-  {"stipplepolygons", FlagSETTINGS, OffsetOf (SettingType, StipplePolygons)},
+-  {"alldirectionlines", FlagSETTINGS,
+-	OffsetOf (SettingType, AllDirectionLines)},
+-  {"rubberbandmode", FlagSETTINGS, OffsetOf (SettingType, RubberBandMode)},
+-  {"swapstartdirection", FlagSETTINGS,
+-	OffsetOf (SettingType, SwapStartDirection)},
+-  {"showdrcmode", FlagSETTINGS, OffsetOf (SettingType, ShowDRC)},
+-  {"resetafterelement", FlagSETTINGS,
+-	OffsetOf (SettingType, ResetAfterElement)},
+-  {"ringbellwhenfinished", FlagSETTINGS,
+-	OffsetOf (SettingType, RingBellWhenFinished)},
+-
+-  {"buffer", FlagBuffer, 0},
++  {"style",                FlagCurrentStyle, NULL},
++  {"grid",                 FlagGrid,         NULL},
++  {"gridsize",             FlagGridSize,     NULL},
++  {"elementname",          FlagElementName,  NULL},
++  {"have_regex",           FlagHaveRegex,    NULL},
++
++  {"silk_shown",           FlagLayerShown,   GINT_TO_POINTER (FL_SILK)},
++  {"pins_shown",           FlagLayerShown,   GINT_TO_POINTER (FL_PINS)},
++  {"rats_shown",           FlagLayerShown,   GINT_TO_POINTER (FL_RATS)},
++  {"vias_shown",           FlagLayerShown,   GINT_TO_POINTER (FL_VIAS)},
++  {"back_shown",           FlagLayerShown,   GINT_TO_POINTER (FL_BACK)},
++  {"mask_shown",           FlagLayerShown,   GINT_TO_POINTER (FL_MASK)},
++
++  {"silk_active",          FlagLayerActive,  GINT_TO_POINTER (FL_SILK)},
++  {"rats_active",          FlagLayerActive,  GINT_TO_POINTER (FL_RATS)},
++
++  {"mode",                 FlagMode,         GINT_TO_POINTER (-1)},
++  {"nomode",               FlagMode,         GINT_TO_POINTER (NO_MODE)},
++  {"arcmode",              FlagMode,         GINT_TO_POINTER (ARC_MODE)},
++  {"arrowmode",            FlagMode,         GINT_TO_POINTER (ARROW_MODE)},
++  {"copymode",             FlagMode,         GINT_TO_POINTER (COPY_MODE)},
++  {"insertpointmode",      FlagMode,         GINT_TO_POINTER (INSERTPOINT_MODE)},
++  {"linemode",             FlagMode,         GINT_TO_POINTER (LINE_MODE)},
++  {"lockmode",             FlagMode,         GINT_TO_POINTER (LOCK_MODE)},
++  {"movemode",             FlagMode,         GINT_TO_POINTER (MOVE_MODE)},
++  {"pastebuffermode",      FlagMode,         GINT_TO_POINTER (PASTEBUFFER_MODE)},
++  {"polygonmode",          FlagMode,         GINT_TO_POINTER (POLYGON_MODE)},
++  {"polygonholemode",      FlagMode,         GINT_TO_POINTER (POLYGONHOLE_MODE)},
++  {"rectanglemode",        FlagMode,         GINT_TO_POINTER (RECTANGLE_MODE)},
++  {"removemode",           FlagMode,         GINT_TO_POINTER (REMOVE_MODE)},
++  {"rotatemode",           FlagMode,         GINT_TO_POINTER (ROTATE_MODE)},
++  {"rubberbandmovemode",   FlagMode,         GINT_TO_POINTER (RUBBERBANDMOVE_MODE)},
++  {"textmode",             FlagMode,         GINT_TO_POINTER (TEXT_MODE)},
++  {"thermalmode",          FlagMode,         GINT_TO_POINTER (THERMAL_MODE)},
++  {"viamode",              FlagMode,         GINT_TO_POINTER (VIA_MODE)},
++
++  {"shownumber",           FlagTESTFLAG,     GINT_TO_POINTER (SHOWNUMBERFLAG)},
++  {"localref",             FlagTESTFLAG,     GINT_TO_POINTER (LOCALREFFLAG)},
++  {"checkplanes",          FlagTESTFLAG,     GINT_TO_POINTER (CHECKPLANESFLAG)},
++  {"showdrc",              FlagTESTFLAG,     GINT_TO_POINTER (SHOWDRCFLAG)},
++  {"rubberband",           FlagTESTFLAG,     GINT_TO_POINTER (RUBBERBANDFLAG)},
++  {"description",          FlagTESTFLAG,     GINT_TO_POINTER (DESCRIPTIONFLAG)},
++  {"nameonpcb",            FlagTESTFLAG,     GINT_TO_POINTER (NAMEONPCBFLAG)},
++  {"autodrc",              FlagTESTFLAG,     GINT_TO_POINTER (AUTODRCFLAG)},
++  {"alldirection",         FlagTESTFLAG,     GINT_TO_POINTER (ALLDIRECTIONFLAG)},
++  {"swapstartdir",         FlagTESTFLAG,     GINT_TO_POINTER (SWAPSTARTDIRFLAG)},
++  {"uniquename",           FlagTESTFLAG,     GINT_TO_POINTER (UNIQUENAMEFLAG)},
++  {"clearnew",             FlagTESTFLAG,     GINT_TO_POINTER (CLEARNEWFLAG)},
++  {"snappin",              FlagTESTFLAG,     GINT_TO_POINTER (SNAPPINFLAG)},
++  {"showmask",             FlagTESTFLAG,     GINT_TO_POINTER (SHOWMASKFLAG)},
++  {"thindraw",             FlagTESTFLAG,     GINT_TO_POINTER (THINDRAWFLAG)},
++  {"orthomove",            FlagTESTFLAG,     GINT_TO_POINTER (ORTHOMOVEFLAG)},
++  {"liveroute",            FlagTESTFLAG,     GINT_TO_POINTER (LIVEROUTEFLAG)},
++  {"thindrawpoly",         FlagTESTFLAG,     GINT_TO_POINTER (THINDRAWPOLYFLAG)},
++  {"locknames",            FlagTESTFLAG,     GINT_TO_POINTER (LOCKNAMESFLAG)},
++  {"onlynames",            FlagTESTFLAG,     GINT_TO_POINTER (ONLYNAMESFLAG)},
++  {"newfullpoly",          FlagTESTFLAG,     GINT_TO_POINTER (NEWFULLPOLYFLAG)},
++  {"hidenames",            FlagTESTFLAG,     GINT_TO_POINTER (HIDENAMESFLAG)},
++
++  {"fullpoly",             FlagSETTINGS,     OFFSET_POINTER (SettingType, FullPoly)},
++  {"grid_units_mm",        FlagSETTINGS,     OFFSET_POINTER (SettingType, grid_units_mm)},
++  {"clearline",            FlagSETTINGS,     OFFSET_POINTER (SettingType, ClearLine)},
++  {"uniquenames",          FlagSETTINGS,     OFFSET_POINTER (SettingType, UniqueNames)},
++  {"showsolderside",       FlagSETTINGS,     OFFSET_POINTER (SettingType, ShowSolderSide)},
++  {"savelastcommand",      FlagSETTINGS,     OFFSET_POINTER (SettingType, SaveLastCommand)},
++  {"saveintmp",            FlagSETTINGS,     OFFSET_POINTER (SettingType, SaveInTMP)},
++  {"drawgrid",             FlagSETTINGS,     OFFSET_POINTER (SettingType, DrawGrid)},
++  {"ratwarn",              FlagSETTINGS,     OFFSET_POINTER (SettingType, RatWarn)},
++  {"stipplepolygons",      FlagSETTINGS,     OFFSET_POINTER (SettingType, StipplePolygons)},
++  {"alldirectionlines",    FlagSETTINGS,     OFFSET_POINTER (SettingType, AllDirectionLines)},
++  {"rubberbandmode",       FlagSETTINGS,     OFFSET_POINTER (SettingType, RubberBandMode)},
++  {"swapstartdirection",   FlagSETTINGS,     OFFSET_POINTER (SettingType, SwapStartDirection)},
++  {"showdrcmode",          FlagSETTINGS,     OFFSET_POINTER (SettingType, ShowDRC)},
++  {"resetafterelement",    FlagSETTINGS,     OFFSET_POINTER (SettingType, ResetAfterElement)},
++  {"ringbellwhenfinished", FlagSETTINGS,     OFFSET_POINTER (SettingType, RingBellWhenFinished)},
++
++  {"buffer",               FlagBuffer,       NULL},
+ 
+ };
+ 
+diff --git a/src/hid.h b/src/hid.h
+index dd34b8e..030f4c2 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -136,9 +136,9 @@ extern "C"
+     /* Name of the flag */
+     char *name;
+     /* Function to call to get the value of the flag.  */
+-    int (*function) (int);
++    int (*function) (void *);
+     /* Additional parameter to pass to that function.  */
+-    int parm;
++    void *parm;
+   } HID_Flag;
+ 
+   extern void hid_register_flags (HID_Flag *, int);
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 7d59672..569c4ab 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -2309,20 +2309,20 @@ REGISTER_ACTIONS (ghid_main_action_list)
+ 
+ 
+ static int
+-flag_flipx (int x)
+-{ 
++flag_flipx (void *data)
++{
+   return ghid_flip_x;
+-} 
+-static int  
+-flag_flipy (int x)
+-{ 
++}
++static int
++flag_flipy (void *data)
++{
+   return ghid_flip_y;
+-} 
++}
+ 
+ HID_Flag ghid_main_flag_list[] = {
+-  {"flip_x", flag_flipx, 0},
+-  {"flip_y", flag_flipy, 0}
+-};  
++  {"flip_x", flag_flipx, NULL},
++  {"flip_y", flag_flipy, NULL}
++};
+ 
+ REGISTER_FLAGS (ghid_main_flag_list)
+ 
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 5caec02..57713b1 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -138,19 +138,19 @@ static int flip_x = 0, flip_y = 0;
+ static int autofade = 0;
+ 
+ static int
+-flag_flipx (int x)
++flag_flipx (void *)
+ {
+   return flip_x;
+ }
+ static int
+-flag_flipy (int x)
++flag_flipy (void *)
+ {
+   return flip_y;
+ }
+ 
+ HID_Flag lesstif_main_flag_list[] = {
+-  {"flip_x", flag_flipx, 0},
+-  {"flip_y", flag_flipy, 0}
++  {"flip_x", flag_flipx, NULL},
++  {"flip_y", flag_flipy, NULL}
+ };
+ 
+ REGISTER_FLAGS (lesstif_main_flag_list)
+diff --git a/src/vendor.c b/src/vendor.c
+index 39359cc..167c195 100644
+--- a/src/vendor.c
++++ b/src/vendor.c
+@@ -969,13 +969,14 @@ HID_Action vendor_action_list[] = {
+ };
+ 
+ REGISTER_ACTIONS (vendor_action_list)
+-     static int vendor_get_enabled (int unused)
++
++static int vendor_get_enabled (void *data)
+ {
+   return vendorMapEnable;
+ }
+ 
+ HID_Flag vendor_flag_list[] = {
+-  {"VendorMapOn", vendor_get_enabled, 0}
++  {"VendorMapOn", vendor_get_enabled, NULL}
+ };
+ 
+ REGISTER_FLAGS (vendor_flag_list)
