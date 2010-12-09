@@ -1,5 +1,5 @@
 Bottom: dc32ff99131de5431b04110b924f7a2e24730430
-Top:    dc32ff99131de5431b04110b924f7a2e24730430
+Top:    84a0fb18eec8ebe414e35d03393f8464a31d2457
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 15:58:47 +0000
 
@@ -11,4 +11,34 @@ MyStrdup call with a simple strdup.
 
 ---
 
-
+diff --git a/src/create.c b/src/create.c
+index bf3b688..15c0099 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -578,9 +578,14 @@ CreateNewText (LayerTypePtr Layer, FontTypePtr PCBFont,
+ 	       LocationType X, LocationType Y,
+ 	       BYTE Direction, int Scale, char *TextString, FlagType Flags)
+ {
+-  TextTypePtr text = GetTextMemory (Layer);
+-  if (!text)
+-    return (text);
++  TextType *text;
++
++  if (TextString == NULL)
++    return NULL;
++
++  text = GetTextMemory (Layer);
++  if (text == NULL)
++    return NULL;
+ 
+   /* copy values, width and height are set by drawing routine
+    * because at this point we don't know which symbols are available
+@@ -590,7 +595,7 @@ CreateNewText (LayerTypePtr Layer, FontTypePtr PCBFont,
+   text->Direction = Direction;
+   text->Flags = Flags;
+   text->Scale = Scale;
+-  text->TextString = MyStrdup (TextString, "CreateNewText()");
++  text->TextString = strdup (TextString);
+ 
+   /* calculate size of the bounding box */
+   SetTextBoundingBox (PCBFont, text);
