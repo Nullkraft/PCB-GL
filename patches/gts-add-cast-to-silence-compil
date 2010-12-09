@@ -1,5 +1,5 @@
 Bottom: dc32ff99131de5431b04110b924f7a2e24730430
-Top:    dc32ff99131de5431b04110b924f7a2e24730430
+Top:    5413e6387efb561a6d35b785465f2bcd5d154b0e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 16:14:03 +0000
 
@@ -8,4 +8,16 @@ gts: Add cast to silence compiler warning
 
 ---
 
-
+diff --git a/src/gts/edge.c b/src/gts/edge.c
+index 47754de..fde7d87 100644
+--- a/src/gts/edge.c
++++ b/src/gts/edge.c
+@@ -100,7 +100,7 @@ void gts_edge_remove(GtsEdge *edge)
+ {
+   edge->segment.v1->segments = g_slist_remove(edge->segment.v1->segments, &edge->segment);
+   edge->segment.v2->segments = g_slist_remove(edge->segment.v2->segments, &edge->segment);
+-  edge_destroy(edge); 
++  edge_destroy(GTS_OBJECT (edge));
+ }
+ 
+ /**
