@@ -1,5 +1,5 @@
-Bottom: b8538c94bdd141fcd437e46be51ab9f5bf5c84f8
-Top:    fbe5c02ccf6099a9713fe1ce88cac01f66e9b39c
+Bottom: 8ba682a0c3c33065ac98b25eb7d89e6bd3692e6a
+Top:    4295d28a925ab575732e7acc2019c109ebf2fba1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 19:57:31 +0000
 
@@ -9,7 +9,7 @@ hid/batch: Add some missing header files for prototypes
 ---
 
 diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
-index 2c2b926..558f9fb 100644
+index 8d53d8c..e4f3311 100644
 --- a/src/hid/batch/batch.c
 +++ b/src/hid/batch/batch.c
 @@ -12,6 +12,8 @@
@@ -20,4 +20,4 @@ index 2c2b926..558f9fb 100644
 +#include "hid.h"
  
  #include "hid/common/actions.h"
- #include "hid/common/hidint.h"
+ #include "hid/common/hidinit.h"
