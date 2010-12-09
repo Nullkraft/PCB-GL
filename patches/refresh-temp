@@ -1,0 +1,56 @@
+Bottom: 39f965483932865e0dd4d42437b6a102073ac6e8
+Top:    060f8678ad22fdd49ef31614d90bc0efdc7abaf9
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-09 19:34:40 +0000
+
+Refresh of fix-function-prototypes-for-ba
+
+---
+
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index 7db8a54..cfa4e5a 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -237,12 +237,12 @@ batch_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
+ }
+ 
+ static void
+-batch_fill_pcb_polygon (hidGC gc, PolygonType *poly)
++batch_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ {
+ }
+ 
+ static void
+-batch_thindraw_pcb_polygon (hidGC gc, PolygonType *poly)
++batch_thindraw_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ {
+ }
+ 
+@@ -393,10 +393,11 @@ batch_fileselect (const char *title, const char *descr,
+ }
+ 
+ static int
+-batch_attribute_dialog (HID_Attribute * attrs,
+-			int n_attrs, HID_Attr_Val * results,
+-			const char *descr)
++batch_attribute_dialog (HID_Attribute * attrs_,
++			int n_attrs_, HID_Attr_Val * results_,
++			const char *title_, const char *descr_)
+ {
++  return 0;
+ }
+ 
+ static void
+@@ -411,9 +412,10 @@ batch_beep (void)
+   fflush (stdout);
+ }
+ 
+-static void
+-batch_progress (int so_far, int total, const char *message)
++static int
++batch_progress (int so_far_, int total_, const char *message_)
+ {
++  return 0;
+ }
+ 
+ HID batch_gui = {
