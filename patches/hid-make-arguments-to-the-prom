@@ -1,0 +1,13 @@
+Bottom: b99fc633c6a2295539fa958c41f38acbda1f9873
+Top:    b99fc633c6a2295539fa958c41f38acbda1f9873
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-09 19:27:35 +0000
+
+HID: Make arguments to the prompt_for method const char *, not char *
+
+Avoids compiler warnings calling gui->prompt_for() with a const char *
+
+
+---
+
+
