@@ -146,13 +146,13 @@ djopt_set_auto_only (int argc, char **argv, int x, int y)
 }
 
 static int
-djopt_get_auto_only (int dummy)
+djopt_get_auto_only (void *data)
 {
   return autorouted_only;
 }
 
 HID_Flag djopt_flag_list[] = {
-  {"optautoonly", djopt_get_auto_only, 0}
+  {"optautoonly", djopt_get_auto_only, NULL}
 };
 
 REGISTER_FLAGS (djopt_flag_list)
