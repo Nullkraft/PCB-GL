@@ -1,5 +1,5 @@
 Bottom: 7f2d3754d560f9ebe0491f8cda0ad1d5efcfa1a9
-Top:    312e328820c2f9d8b5ca9eee07b9519546877640
+Top:    8ba682a0c3c33065ac98b25eb7d89e6bd3692e6a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 19:52:10 +0000
 
@@ -23,14 +23,14 @@ index ef72012..a0f1c50 100644
  	hid/common/extents.c \
  	hid/common/draw_helpers.c \
 diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
-index 6bc0e58..2c2b926 100644
+index 6bc0e58..8d53d8c 100644
 --- a/src/hid/batch/batch.c
 +++ b/src/hid/batch/batch.c
 @@ -14,6 +14,7 @@
  #include "data.h"
  
  #include "hid/common/actions.h"
-+#include "hid/common/hidint.h"
++#include "hid/common/hidinit.h"
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
@@ -47,14 +47,14 @@ index 0000000..bd1174f
 +
 +#endif
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index 7a52a7c..842e73b 100644
+index 7a52a7c..f1bdcea 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
 @@ -60,6 +60,8 @@
  #include "trace.h"
  #include "decompose.h"
  
-+#include "hid/common/hidint.h"
++#include "hid/common/hidinit.h"
 +
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
@@ -69,14 +69,14 @@ index 7a52a7c..842e73b 100644
  gcode_parse_arguments (int *argc, char ***argv)
  {
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index e2d9c57..8168e7a 100644
+index e2d9c57..1f6341b 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -29,6 +29,7 @@
  #include "hid.h"
  #include "../hidint.h"
  #include "hid/common/draw_helpers.h"
-+#include "hid/common/hidint.h"
++#include "hid/common/hidinit.h"
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
@@ -111,14 +111,14 @@ index aa696be..ac3e2db 100644
  lpr_parse_arguments (int *argc, char ***argv)
  {
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index c53ce05..40f8e97 100644
+index c53ce05..5f6ebc7 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -75,6 +75,8 @@
  
  #include <gd.h>
  
-+#include "hid/common/hidint.h"
++#include "hid/common/hidinit.h"
 +
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
@@ -133,14 +133,14 @@ index c53ce05..40f8e97 100644
  nelma_parse_arguments(int *argc, char ***argv)
  {
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 5c52768..9e0de7f 100644
+index 5c52768..32639c8 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -47,6 +47,8 @@
  /* the gd library which makes this all so easy */
  #include <gd.h>
  
-+#include "hid/common/hidint.h"
++#include "hid/common/hidinit.h"
 +
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
@@ -155,14 +155,14 @@ index 5c52768..9e0de7f 100644
  png_parse_arguments (int *argc, char ***argv)
  {
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index 1b85b7d..39a600d 100644
+index 1b85b7d..83ce780 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
 @@ -18,6 +18,7 @@
  #include "../hidint.h"
  #include "hid/common/draw_helpers.h"
  #include "../ps/ps.h"
-+#include "hid/common/hidint.h"
++#include "hid/common/hidinit.h"
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
@@ -176,14 +176,14 @@ index 1b85b7d..39a600d 100644
  eps_parse_arguments (int *argc, char ***argv)
  {
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 3e72b81..282cc6c 100644
+index 3e72b81..814e23e 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -22,6 +22,7 @@
  #include "hid/common/draw_helpers.h"
  #include "../ps/ps.h"
  #include "../../print.h"
-+#include "hid/common/hidint.h"
++#include "hid/common/hidinit.h"
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
