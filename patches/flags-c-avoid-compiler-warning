@@ -1,5 +1,5 @@
 Bottom: 8ab05755f359a7795fcb7a5a793866cad03d1855
-Top:    8e1e555675ee4f1ed8e6a0ecaf14dcd53dfc3b04
+Top:    2af77d22bdea44f7c9674ec722530d8ab6de44c2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 18:13:45 +0000
 
@@ -14,14 +14,19 @@ Since we know our structures are small, this is safe - if a bit ugly.
 ---
 
 diff --git a/src/flags.c b/src/flags.c
-index c33cfb6..fdaef44 100644
+index c33cfb6..499e59e 100644
 --- a/src/flags.c
 +++ b/src/flags.c
-@@ -163,7 +163,7 @@ FlagLayerActive (int n)
+@@ -163,7 +163,12 @@ FlagLayerActive (int n)
    return current_layer == n;
  }
  
 -#define OffsetOf(a,b) (int)(&(((a *)0)->b))
++/* The cast to (int) is ONLY valid because we know we are
++ * taking offsets on structures where the offset will fit
++ * in an integer variable. It silences compile warnings on
++ * 64bit machines.
++ */
 +#define OffsetOf(a,b) (int)(size_t)(&(((a *)0)->b))
  
  HID_Flag flags_flag_list[] = {
