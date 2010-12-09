@@ -1,5 +1,5 @@
-Bottom: dc32ff99131de5431b04110b924f7a2e24730430
-Top:    90a0551dae655bc5f32f2c86eb6633795d6d8051
+Bottom: 84a0fb18eec8ebe414e35d03393f8464a31d2457
+Top:    33901f78772c386304e56b71518ffbdd8ed78a60
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-07 16:58:35 +0000
 
@@ -79,7 +79,7 @@ index c8244ed..ee831b9 100644
    AddObjectToCreateUndoList (LINE_TYPE, Layer, line, line);
    return (line);
 diff --git a/src/create.c b/src/create.c
-index bf3b688..d92e6e8 100644
+index 15c0099..a1c30bb 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -193,8 +193,7 @@ CreateNewPCB (bool SetDefaultNames)
@@ -105,7 +105,7 @@ index bf3b688..d92e6e8 100644
      }
    return 0;
  }
-@@ -896,8 +893,7 @@ AddTextToElement (TextTypePtr Text, FontTypePtr PCBFont,
+@@ -901,8 +898,7 @@ AddTextToElement (TextTypePtr Text, FontTypePtr PCBFont,
    Text->Direction = Direction;
    Text->Flags = Flags;
    Text->Scale = Scale;
@@ -115,7 +115,7 @@ index bf3b688..d92e6e8 100644
  
    /* calculate size of the bounding box */
    SetTextBoundingBox (PCBFont, Text);
-@@ -976,12 +972,12 @@ CreateNewNet (LibraryTypePtr lib, char *name, char *style)
+@@ -981,12 +977,12 @@ CreateNewNet (LibraryTypePtr lib, char *name, char *style)
  
    sprintf (temp, "  %s", name);
    menu = GetLibraryMenuMemory (lib);
@@ -130,7 +130,7 @@ index bf3b688..d92e6e8 100644
    return (menu);
  }
  
-@@ -1010,8 +1006,8 @@ CreateNewAttribute (AttributeListTypePtr list, char *name, char *value)
+@@ -1015,8 +1011,8 @@ CreateNewAttribute (AttributeListTypePtr list, char *name, char *value)
  			      list->Max * sizeof (AttributeType),
  			      "CreateNewAttribute");
      }
