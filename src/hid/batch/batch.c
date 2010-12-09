@@ -12,8 +12,6 @@
 #include "global.h"
 #include "hid.h"
 #include "data.h"
-#include "misc.h"
-#include "hid.h"
 
 #include "hid/common/actions.h"
 #include "hid/common/hidint.h"
