@@ -351,9 +351,13 @@ static int
 batch_confirm_dialog (char *msg, ...)
 {
   int rv;
-  printf ("%s ? 0=cancel 1=ok : ", msg);
-  fflush (stdout);
-  scanf ("%d", &rv);
+
+  do
+    {
+      printf ("%s ? 0=cancel 1=ok : ", msg);
+      fflush (stdout);
+    }
+  while (scanf ("%d", &rv) != 1);
   return rv;
 }
 
