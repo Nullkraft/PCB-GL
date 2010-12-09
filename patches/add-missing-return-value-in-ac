@@ -1,5 +1,5 @@
 Bottom: fa77700df8cef5dc42340272b4c0d039961d3783
-Top:    ea1fde9dd4827e5c7a089c41ea14b3b172ce5b83
+Top:    f9c37fd54ce593907a69c5885324347e0802844a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 18:38:57 +0000
 
@@ -9,10 +9,26 @@ Add missing return value in ActionImport()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index f52fcf4..ba9ca44 100644
+index f52fcf4..8d5931a 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -7643,7 +7643,7 @@ ActionImport (int argc, char **argv, int x, int y)
+@@ -7095,7 +7095,6 @@ ActionElementList (int argc, char **argv, int x, int y)
+   if (!e)
+     {
+       int nx, ny, d;
+-      char *as;
+ 
+ #ifdef DEBUG
+       printf("  ... Footprint not on board, need to add it.\n");
+@@ -7605,7 +7604,6 @@ ActionImport (int argc, char **argv, int x, int y)
+   if (mode && strcasecmp (mode, "setdisperse") == 0)
+     {
+       const char *ds, *units;
+-      int d, r;
+       char buf[50];
+ 
+       ds = ARG (1);
+@@ -7643,7 +7641,7 @@ ActionImport (int argc, char **argv, int x, int y)
  	{
  	  AttributeRemove (PCB, "import::newX");
  	  AttributeRemove (PCB, "import::newY");
