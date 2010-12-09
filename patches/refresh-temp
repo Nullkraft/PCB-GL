@@ -1,0 +1,28 @@
+Bottom: 4295d28a925ab575732e7acc2019c109ebf2fba1
+Top:    c4c9513c12a6d487875d8f4d2a1837ce06d96488
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-09 20:08:24 +0000
+
+Refresh of hid-batch-add-some-missing-hea
+
+---
+
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index e4f3311..9715c09 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -8,12 +8,14 @@
+ #include <stdarg.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <unistd.h>
+ 
+ #include "global.h"
+ #include "hid.h"
+ #include "data.h"
+ #include "misc.h"
+ #include "hid.h"
++#include "../hidint.h"
+ 
+ #include "hid/common/actions.h"
+ #include "hid/common/hidinit.h"
