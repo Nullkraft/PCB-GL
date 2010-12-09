@@ -1,5 +1,5 @@
-Bottom: 84a0fb18eec8ebe414e35d03393f8464a31d2457
-Top:    33901f78772c386304e56b71518ffbdd8ed78a60
+Bottom: 0eefcd0fcdb1ccddefb494206ba15d8974712d63
+Top:    134c19afef413edd3e44b640ec50f29423462710
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-07 16:58:35 +0000
 
@@ -12,10 +12,10 @@ passing a NULL string to duplicate.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index f52fcf4..3eb8574 100644
+index 07b2752..0eaaf39 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -5731,7 +5731,7 @@ ActionSaveTo (int argc, char **argv, int x, int y)
+@@ -5732,7 +5732,7 @@ ActionSaveTo (int argc, char **argv, int x, int y)
    if (strcasecmp (function, "LayoutAs") == 0)
      {
        MYFREE (PCB->Filename);
@@ -24,7 +24,7 @@ index f52fcf4..3eb8574 100644
        SavePCB (PCB->Filename);
        return 0;
      }
-@@ -5929,7 +5929,7 @@ ActionNew (int argc, char **argv, int x, int y)
+@@ -5930,7 +5930,7 @@ ActionNew (int argc, char **argv, int x, int y)
    if (!PCB->Changed || gui->confirm_dialog (_("OK to clear layout data?"), 0))
      {
        if (name)
@@ -33,7 +33,7 @@ index f52fcf4..3eb8574 100644
        else
  	name = gui->prompt_for (_("Enter the layout name:"), "");
  
-@@ -7238,7 +7238,7 @@ ActionElementSetAttr (int argc, char **argv, int x, int y)
+@@ -7239,7 +7239,7 @@ ActionElementSetAttr (int argc, char **argv, int x, int y)
    if (attr && value)
      {
        MYFREE (attr->value);
@@ -43,7 +43,7 @@ index f52fcf4..3eb8574 100644
    if (attr && ! value)
      {
 diff --git a/src/buffer.c b/src/buffer.c
-index bec918f..6b81f53 100644
+index f9d6f5a..c69fc39 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -153,7 +153,7 @@ AddLineToBuffer (LayerTypePtr Layer, LineTypePtr Line)
@@ -142,7 +142,7 @@ index 15c0099..a1c30bb 100644
    return &list->List[list->Number - 1];
  }
 diff --git a/src/file.c b/src/file.c
-index 6893379..654f5a1 100644
+index aff5073..153cdce 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -318,7 +318,7 @@ SavePCB (char *Filename)
@@ -251,10 +251,10 @@ index bd9fcee..4f7f5b8 100644
    hid_action ("LayersChanged");
  
 diff --git a/src/main.c b/src/main.c
-index ba8c959..65141bb 100644
+index 923e0ee..c23ae8b 100644
 --- a/src/main.c
 +++ b/src/main.c
-@@ -957,7 +957,7 @@ main (int argc, char *argv[])
+@@ -955,7 +955,7 @@ main (int argc, char *argv[])
      {
        char buf[20];
        sprintf (buf, "signal%d", i + 1);
@@ -263,7 +263,7 @@ index ba8c959..65141bb 100644
        Settings.LayerColor[i] = "#c49350";
        Settings.LayerSelectedColor[i] = "#00ffff";
      }
-@@ -1018,7 +1018,7 @@ main (int argc, char *argv[])
+@@ -1016,7 +1016,7 @@ main (int argc, char *argv[])
         * file might not exist
         */
        if (LoadPCB (command_line_pcb))
@@ -273,7 +273,7 @@ index ba8c959..65141bb 100644
  
    if (Settings.InitialLayerStack
 diff --git a/src/misc.c b/src/misc.c
-index 76b05c0..af8cf52 100644
+index 34b18cb..40c6460 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -723,7 +723,7 @@ ParseRouteString (char *s, RouteStyleTypePtr routeStyle, int scale)
@@ -294,7 +294,7 @@ index 76b05c0..af8cf52 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1920,7 +1920,7 @@ AttributePutToList (AttributeListType *list, char *name, char *value, int replac
+@@ -1920,7 +1920,7 @@ AttributePutToList (AttributeListType *list, const char *name, const char *value
  
    /* Now add the new attribute.  */
    i = list->Number;
