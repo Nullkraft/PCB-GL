@@ -1,5 +1,5 @@
 Bottom: 060f8678ad22fdd49ef31614d90bc0efdc7abaf9
-Top:    e1c8e687ff0612621def9ab3a55bfaefac34116c
+Top:    7f2d3754d560f9ebe0491f8cda0ad1d5efcfa1a9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 19:44:59 +0000
 
@@ -35,6 +35,19 @@ index cfa4e5a..6bc0e58 100644
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
  #endif
+diff --git a/src/hid/common/actions.h b/src/hid/common/actions.h
+new file mode 100644
+index 0000000..1cc6f24
+--- /dev/null
++++ b/src/hid/common/actions.h
+@@ -0,0 +1,7 @@
++
++#ifndef __HID_ACTIONS_INCLUDED__
++#define __HID_ACTIONS_INCLUDED__
++
++void print_actions (void);
++
++#endif
 diff --git a/src/main.c b/src/main.c
 index ba8c959..923e0ee 100644
 --- a/src/main.c
