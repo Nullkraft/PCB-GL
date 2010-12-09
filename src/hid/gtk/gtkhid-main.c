@@ -2309,20 +2309,20 @@ REGISTER_ACTIONS (ghid_main_action_list)
 
 
 static int
-flag_flipx (int x)
-{ 
+flag_flipx (void *data)
+{
   return ghid_flip_x;
-} 
-static int  
-flag_flipy (int x)
-{ 
+}
+static int
+flag_flipy (void *data)
+{
   return ghid_flip_y;
-} 
+}
 
 HID_Flag ghid_main_flag_list[] = {
-  {"flip_x", flag_flipx, 0},
-  {"flip_y", flag_flipy, 0}
-};  
+  {"flip_x", flag_flipx, NULL},
+  {"flip_y", flag_flipy, NULL}
+};
 
 REGISTER_FLAGS (ghid_main_flag_list)
 

@@ -138,19 +138,19 @@ static int flip_x = 0, flip_y = 0;
 static int autofade = 0;
 
 static int
-flag_flipx (int x)
+flag_flipx (void *)
 {
   return flip_x;
 }
 static int
-flag_flipy (int x)
+flag_flipy (void *)
 {
   return flip_y;
 }
 
 HID_Flag lesstif_main_flag_list[] = {
-  {"flip_x", flag_flipx, 0},
-  {"flip_y", flag_flipy, 0}
+  {"flip_x", flag_flipx, NULL},
+  {"flip_y", flag_flipy, NULL}
 };
 
 REGISTER_FLAGS (lesstif_main_flag_list)
