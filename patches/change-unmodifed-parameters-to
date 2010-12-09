@@ -1,5 +1,5 @@
 Bottom: 7169246c1dcdabd9c359682283ebe77b7f4baf40
-Top:    35addde75bd544888b32441bf03effff7b0fb979
+Top:    4dd125a021e086b82e6d26117b6cb498fcc3b9e8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 19:06:05 +0000
 
@@ -10,6 +10,29 @@ Silences some compiler warnings in action.c
 
 ---
 
+diff --git a/src/action.c b/src/action.c
+index 8d5931a..b8707d1 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -7012,7 +7012,8 @@ static int
+ parse_layout_attribute_units (char *name, int def)
+ {
+   const char *as, *units = NULL;
+-  int n = 0, v, r;
++  int n = 0, v;
++  bool r;
+ 
+   as = AttributeGet (PCB, name);
+   if (!as)
+@@ -7653,7 +7654,7 @@ ActionImport (int argc, char **argv, int x, int y)
+ 	}
+       else if (ys)
+ 	{
+-	  int r;
++	  bool r;
+ 	  x = GetValue (xs, units, &r);
+ 	  y = GetValue (ys, units, &r);
+ 	}
 diff --git a/src/misc.c b/src/misc.c
 index 76b05c0..b1d4304 100644
 --- a/src/misc.c
