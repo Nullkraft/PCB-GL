@@ -1,5 +1,5 @@
-Bottom: 866bd7287bf3b7e46f8327be46acee87b6e8bba0
-Top:    63ad6bfed110f72e5d027a2d37d046073ea66538
+Bottom: 90a0551dae655bc5f32f2c86eb6633795d6d8051
+Top:    38688ed77f7e5ade4a44e301d94fc8b20532b559
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-08 02:05:42 +0000
 
@@ -9,10 +9,10 @@ Not so sure about these MyStrdup calls
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 944a8ed..cc5d23c 100644
+index 6b81f53..044796d 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
-@@ -981,7 +981,7 @@ SmashBufferElement (BufferTypePtr Buffer)
+@@ -991,7 +991,7 @@ SmashBufferElement (BufferTypePtr Buffer)
  				 pad->Point2.X, pad->Point2.Y,
  				 pad->Thickness, pad->Clearance, NoFlags ());
      if (line)
