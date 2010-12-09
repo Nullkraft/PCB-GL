@@ -1,5 +1,5 @@
 Bottom: 7f2d3754d560f9ebe0491f8cda0ad1d5efcfa1a9
-Top:    7f2d3754d560f9ebe0491f8cda0ad1d5efcfa1a9
+Top:    d3f940b86185134f7f9eff021b9d46c1078b155d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 19:52:10 +0000
 
@@ -10,4 +10,40 @@ Avoids having each caller having to pull it in with an extern declaration.
 
 ---
 
-
+diff --git a/src/Makefile.am b/src/Makefile.am
+index ef72012..a0f1c50 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -143,6 +143,7 @@ PCB_SRCS = \
+ 	hid/common/actions.h \
+ 	hid/common/flags.c \
+ 	hid/common/hidinit.c \
++	hid/common/hidinit.h \
+ 	hid/common/hidnogui.c \
+ 	hid/common/extents.c \
+ 	hid/common/draw_helpers.c \
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index 6bc0e58..ac9522d 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -12,6 +12,8 @@
+ #include "global.h"
+ #include "hid.h"
+ #include "data.h"
++#include "misc.h"
++#include "hid.h"
+ 
+ #include "hid/common/actions.h"
+ 
+diff --git a/src/hid/common/hidinit.h b/src/hid/common/hidinit.h
+new file mode 100644
+index 0000000..bd1174f
+--- /dev/null
++++ b/src/hid/common/hidinit.h
+@@ -0,0 +1,6 @@
++#ifndef __HID_INIT_INCLUDED__
++#define __HID_INIT_INCLUDED__
++
++void hid_parse_command_line (int *argc, char ***argv);
++
++#endif
