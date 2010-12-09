@@ -1,0 +1,31 @@
+Bottom: e244c4b791084bbae0b78207d1fd633d23db0cc8
+Top:    90a0551dae655bc5f32f2c86eb6633795d6d8051
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-09 15:57:23 +0000
+
+Refresh of not-so-sure-about-these-mystrd
+
+---
+
+diff --git a/src/create.c b/src/create.c
+index 9fb305b..d92e6e8 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -587,7 +587,7 @@ CreateNewText (LayerTypePtr Layer, FontTypePtr PCBFont,
+   text->Direction = Direction;
+   text->Flags = Flags;
+   text->Scale = Scale;
+-  text->TextString = strdup (TextString);
++  text->TextString = MyStrdup (TextString, "CreateNewText()");
+ 
+   /* calculate size of the bounding box */
+   SetTextBoundingBox (PCBFont, text);
+@@ -893,7 +893,7 @@ AddTextToElement (TextTypePtr Text, FontTypePtr PCBFont,
+   Text->Direction = Direction;
+   Text->Flags = Flags;
+   Text->Scale = Scale;
+-  Text->TextString = strdup (TextString);
++  Text->TextString = (TextString && *TextString) ? strdup (TextString) : NULL;
+ 
+   /* calculate size of the bounding box */
+   SetTextBoundingBox (PCBFont, Text);
