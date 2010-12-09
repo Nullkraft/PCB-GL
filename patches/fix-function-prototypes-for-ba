@@ -3,7 +3,13 @@ Top:    39f965483932865e0dd4d42437b6a102073ac6e8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 19:29:29 +0000
 
-Fix function prototypes for batch HID
+Fix function prototypes and dummy return values for batch HID
+
+Most of these are dummy functions, but we should get the prototypes
+right! Also, return 0 from dummy functions which are supposed to return
+an integer.
+
+Fixes various compiler warnings.
 
 
 ---
