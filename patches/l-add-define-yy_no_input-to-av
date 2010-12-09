@@ -1,5 +1,5 @@
 Bottom: 68ab956fe27c2cfef62665fbf7b5845d8ce483b1
-Top:    fe1d01c353992b61fcdc1a0ab729805c12e9592f
+Top:    180f7c1c55f5decd8030de457d82d654c2d88073
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 16:22:11 +0000
 
@@ -23,3 +23,15 @@ index b1b67a8..c9d96c8 100644
  /* ---------------------------------------------------------------------------
   * some shared parser identifiers
   */
+diff --git a/src/res_lex.l b/src/res_lex.l
+index 0525aed..5e08666 100644
+--- a/src/res_lex.l
++++ b/src/res_lex.l
+@@ -20,6 +20,7 @@
+ 
+ RCSID("$Id$");
+ 
++#define YY_NO_INPUT
+ #define YY_INPUT(buf,result,max_size) { result = res_parse_getchars(buf, max_size); }
+  
+ #ifdef FLEX_SCANNER
