@@ -1,0 +1,29 @@
+Bottom: d0f45a2bb0d4979efd0a1589fd079f77dd865535
+Top:    dbe25949bbbf2ce84e889234850e484e34abf082
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-09 23:09:20 +0000
+
+Refresh of read-the-return-value-from-sca
+
+---
+
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index 9715c09..9f743fd 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -351,9 +351,13 @@ static int
+ batch_confirm_dialog (char *msg, ...)
+ {
+   int rv;
+-  printf ("%s ? 0=cancel 1=ok : ", msg);
+-  fflush (stdout);
+-  scanf ("%d", &rv);
++
++  do
++    {
++      printf ("%s ? 0=cancel 1=ok : ", msg);
++      fflush (stdout);
++    }
++  while (scanf ("%d", &rv) != 1);
+   return rv;
+ }
