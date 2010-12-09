@@ -1,5 +1,5 @@
 Bottom: 503cb42debb02a4139637566d6b699eafdb84bbf
-Top:    503cb42debb02a4139637566d6b699eafdb84bbf
+Top:    e9d7eea7b85cf0207c7125053a42f3e7f1d96579
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 23:08:11 +0000
 
@@ -8,4 +8,29 @@ WORK IN PROGRESS
 
 ---
 
-
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index 6111ec3..abde105 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -290,13 +290,19 @@ static char *
+ nogui_prompt_for (const char *msg, const char *default_string)
+ {
+   static char buf[1024];
++  char *s;
++
+   if (default_string)
+     printf ("%s [%s] : ", msg, default_string);
+   else
+     printf ("%s : ", msg);
+-  fgets (buf, 1024, stdin);
+-  if (buf[0] == 0 && default_string)
+-    strcpy (buf, default_string);
++
++  s = fgets (buf, 1024, stdin);
++  if (default_string && (s == NULL || buf[0] == 0))
++    {
++      strncpy (buf, default_string);
++    }
++
+   return buf;
+ }
