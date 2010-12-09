@@ -9,10 +9,9 @@ void * allows us to pass pointers on all platforms, 64bit or
 otherwise. We can still use casting macros to safely pass integer
 values via this pointer.
 
-Silences compiler warnings on 64 bit build relating to the size
-of field we're attempting to fit a size_t sized offset_of value
-into. Due to the size of our structures, this did not cause
-any actual bugs, but was not good practice.
+Avoids the ugliness of castnig a size_t sized offset_of value into
+an int. Due to the size of our structures, this did not cause any
+actual bugs, but was not good practice.
 
 
 ---
