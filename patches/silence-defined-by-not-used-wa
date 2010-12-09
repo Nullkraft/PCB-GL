@@ -1,0 +1,18 @@
+Bottom: 21bacc1278ddfad2ef83bc85b1c6421287f21955
+Top:    21bacc1278ddfad2ef83bc85b1c6421287f21955
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-09 18:33:26 +0000
+
+Silence defined by not used warning for __r_tree_is_good
+
+__r_tree_is_good() and its helper functions are only used when debugging,
+and are called from assert() macros. If "NDEBUG" is defined, these expand
+to nothing, and the function is not called.
+
+Wrap __r_tree_is_good() and its helper, __r_tree_node_is_good() with
+#ifndef NDEBUG
+
+
+---
+
+
