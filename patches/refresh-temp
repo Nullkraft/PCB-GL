@@ -1,0 +1,100 @@
+Bottom: 312e328820c2f9d8b5ca9eee07b9519546877640
+Top:    8ba682a0c3c33065ac98b25eb7d89e6bd3692e6a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-09 20:00:44 +0000
+
+Refresh of hid-common-provide-a-header-fi-0
+
+---
+
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index 2c2b926..8d53d8c 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -14,7 +14,7 @@
+ #include "data.h"
+ 
+ #include "hid/common/actions.h"
+-#include "hid/common/hidint.h"
++#include "hid/common/hidinit.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
+index 842e73b..f1bdcea 100644
+--- a/src/hid/gcode/gcode.c
++++ b/src/hid/gcode/gcode.c
+@@ -60,7 +60,7 @@
+ #include "trace.h"
+ #include "decompose.h"
+ 
+-#include "hid/common/hidint.h"
++#include "hid/common/hidinit.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 8168e7a..1f6341b 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -29,7 +29,7 @@
+ #include "hid.h"
+ #include "../hidint.h"
+ #include "hid/common/draw_helpers.h"
+-#include "hid/common/hidint.h"
++#include "hid/common/hidinit.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
+index 40f8e97..5f6ebc7 100644
+--- a/src/hid/nelma/nelma.c
++++ b/src/hid/nelma/nelma.c
+@@ -75,7 +75,7 @@
+ 
+ #include <gd.h>
+ 
+-#include "hid/common/hidint.h"
++#include "hid/common/hidinit.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 9e0de7f..32639c8 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -47,7 +47,7 @@
+ /* the gd library which makes this all so easy */
+ #include <gd.h>
+ 
+-#include "hid/common/hidint.h"
++#include "hid/common/hidinit.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index 39a600d..83ce780 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -18,7 +18,7 @@
+ #include "../hidint.h"
+ #include "hid/common/draw_helpers.h"
+ #include "../ps/ps.h"
+-#include "hid/common/hidint.h"
++#include "hid/common/hidinit.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 282cc6c..814e23e 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -22,7 +22,7 @@
+ #include "hid/common/draw_helpers.h"
+ #include "../ps/ps.h"
+ #include "../../print.h"
+-#include "hid/common/hidint.h"
++#include "hid/common/hidinit.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
