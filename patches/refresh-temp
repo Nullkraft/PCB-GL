@@ -1,0 +1,171 @@
+Bottom: d3f940b86185134f7f9eff021b9d46c1078b155d
+Top:    fbe5c02ccf6099a9713fe1ce88cac01f66e9b39c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-09 19:56:32 +0000
+
+Refresh of hid-common-provide-a-header-fi-0
+
+---
+
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index ac9522d..558f9fb 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -16,6 +16,7 @@
+ #include "hid.h"
+ 
+ #include "hid/common/actions.h"
++#include "hid/common/hidint.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
+index 7a52a7c..842e73b 100644
+--- a/src/hid/gcode/gcode.c
++++ b/src/hid/gcode/gcode.c
+@@ -60,6 +60,8 @@
+ #include "trace.h"
+ #include "decompose.h"
+ 
++#include "hid/common/hidint.h"
++
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+ #endif
+@@ -238,8 +240,6 @@ sort_drill (struct drill_struct *drill, int n_drill)
+ 
+ /* *** Main export callback ************************************************ */
+ 
+-extern void hid_parse_command_line (int *argc, char ***argv);
+-
+ static void
+ gcode_parse_arguments (int *argc, char ***argv)
+ {
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index e2d9c57..8168e7a 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -29,6 +29,7 @@
+ #include "hid.h"
+ #include "../hidint.h"
+ #include "hid/common/draw_helpers.h"
++#include "hid/common/hidint.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+@@ -424,8 +425,6 @@ gerber_do_export (HID_Attr_Val * options)
+   PCB->Flags = save_thindraw;
+ }
+ 
+-extern void hid_parse_command_line (int *argc, char ***argv);
+-
+ static void
+ gerber_parse_arguments (int *argc, char ***argv)
+ {
+diff --git a/src/hid/lpr/lpr.c b/src/hid/lpr/lpr.c
+index aa696be..01b8119 100644
+--- a/src/hid/lpr/lpr.c
++++ b/src/hid/lpr/lpr.c
+@@ -17,6 +17,7 @@
+ #include "hid.h"
+ #include "../hidint.h"
+ #include "../ps/ps.h"
++#include "hid/common/hidint.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+@@ -97,8 +98,6 @@ lpr_do_export (HID_Attr_Val * options)
+   fclose (f);
+ }
+ 
+-extern void hid_parse_command_line (int *argc, char ***argv);
+-
+ static void
+ lpr_parse_arguments (int *argc, char ***argv)
+ {
+diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
+index c53ce05..40f8e97 100644
+--- a/src/hid/nelma/nelma.c
++++ b/src/hid/nelma/nelma.c
+@@ -75,6 +75,8 @@
+ 
+ #include <gd.h>
+ 
++#include "hid/common/hidint.h"
++
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+ #endif
+@@ -484,8 +486,6 @@ nelma_write_objects(FILE * out)
+ 
+ /* *** Main export callback ************************************************ */
+ 
+-extern void     hid_parse_command_line(int *argc, char ***argv);
+-
+ static void 
+ nelma_parse_arguments(int *argc, char ***argv)
+ {
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 5c52768..9e0de7f 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -47,6 +47,8 @@
+ /* the gd library which makes this all so easy */
+ #include <gd.h>
+ 
++#include "hid/common/hidint.h"
++
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+ #endif
+@@ -876,8 +878,6 @@ png_do_export (HID_Attr_Val * options)
+   gdImageDestroy (im);
+ }
+ 
+-extern void hid_parse_command_line (int *argc, char ***argv);
+-
+ static void
+ png_parse_arguments (int *argc, char ***argv)
+ {
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index 1b85b7d..39a600d 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -18,6 +18,7 @@
+ #include "../hidint.h"
+ #include "hid/common/draw_helpers.h"
+ #include "../ps/ps.h"
++#include "hid/common/hidint.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+@@ -292,8 +293,6 @@ eps_do_export (HID_Attr_Val * options)
+   fclose (f);
+ }
+ 
+-extern void hid_parse_command_line (int *argc, char ***argv);
+-
+ static void
+ eps_parse_arguments (int *argc, char ***argv)
+ {
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 3e72b81..282cc6c 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -22,6 +22,7 @@
+ #include "hid/common/draw_helpers.h"
+ #include "../ps/ps.h"
+ #include "../../print.h"
++#include "hid/common/hidint.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+@@ -582,8 +583,6 @@ ps_do_export (HID_Attr_Val * options)
+     }
+ }
+ 
+-extern void hid_parse_command_line (int *argc, char ***argv);
+-
+ static void
+ ps_parse_arguments (int *argc, char ***argv)
+ {
