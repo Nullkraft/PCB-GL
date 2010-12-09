@@ -783,7 +783,7 @@ CreateNewPin (ElementTypePtr Element,
   pin->Clearance = Clearance;
   pin->Mask = Mask;
   pin->Name = MyStrdup (Name, "CreateNewPin()");
-  pin->Number = strdup (Number);
+  pin->Number = MyStrdup (Number, "CreateNewPin()");
   pin->Flags = Flags;
   CLEAR_FLAG (WARNFLAG, pin);
   SET_FLAG (PINFLAG, pin);
@@ -870,7 +870,7 @@ CreateNewPad (ElementTypePtr Element,
   pad->Clearance = Clearance;
   pad->Mask = Mask;
   pad->Name = MyStrdup (Name, "CreateNewPad()");
-  pad->Number = strdup (Number);
+  pad->Number = MyStrdup (Number, "CreateNewPad()");
   pad->Flags = Flags;
   CLEAR_FLAG (WARNFLAG, pad);
   pad->ID = ID++;
