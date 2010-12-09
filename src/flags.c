@@ -163,7 +163,7 @@ FlagLayerActive (int n)
   return current_layer == n;
 }
 
-#define OffsetOf(a,b) (int)(&(((a *)0)->b))
+#define OffsetOf(a,b) (int)(size_t)(&(((a *)0)->b))
 
 HID_Flag flags_flag_list[] = {
   {"style", FlagCurrentStyle, 0},
