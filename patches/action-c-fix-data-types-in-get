@@ -1,0 +1,14 @@
+Bottom: 4dd125a021e086b82e6d26117b6cb498fcc3b9e8
+Top:    4dd125a021e086b82e6d26117b6cb498fcc3b9e8
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-09 19:11:06 +0000
+
+action.c: Fix data types in GetValue calls
+
+We passed an (int *) rather than a (bool *) in ActionImport() and
+parse_layout_attribute_units()
+
+
+---
+
+
