@@ -1,0 +1,13 @@
+Bottom: 2af77d22bdea44f7c9674ec722530d8ab6de44c2
+Top:    2af77d22bdea44f7c9674ec722530d8ab6de44c2
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-09 18:27:52 +0000
+
+file.c: The "elapsed" variable in LoadPCB is debugging only
+
+Silence compiler warning by moving it inside the #ifdef DEBUG
+
+
+---
+
+
