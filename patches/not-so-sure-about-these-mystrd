@@ -1,5 +1,5 @@
 Bottom: 90a0551dae655bc5f32f2c86eb6633795d6d8051
-Top:    38688ed77f7e5ade4a44e301d94fc8b20532b559
+Top:    e244c4b791084bbae0b78207d1fd633d23db0cc8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-08 02:05:42 +0000
 
@@ -8,21 +8,8 @@ Not so sure about these MyStrdup calls
 
 ---
 
-diff --git a/src/buffer.c b/src/buffer.c
-index 6b81f53..044796d 100644
---- a/src/buffer.c
-+++ b/src/buffer.c
-@@ -991,7 +991,7 @@ SmashBufferElement (BufferTypePtr Buffer)
- 				 pad->Point2.X, pad->Point2.Y,
- 				 pad->Thickness, pad->Clearance, NoFlags ());
-     if (line)
--      line->Number = MyStrdup (pad->Number, "SmashBuffer");
-+      line->Number = strdup (pad->Number);
-   }
-   END_LOOP;
-   FreeElementMemory (element);
 diff --git a/src/create.c b/src/create.c
-index d92e6e8..16b4047 100644
+index d92e6e8..9fb305b 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -587,7 +587,7 @@ CreateNewText (LayerTypePtr Layer, FontTypePtr PCBFont,
@@ -34,24 +21,6 @@ index d92e6e8..16b4047 100644
  
    /* calculate size of the bounding box */
    SetTextBoundingBox (PCBFont, text);
-@@ -783,7 +783,7 @@ CreateNewPin (ElementTypePtr Element,
-   pin->Clearance = Clearance;
-   pin->Mask = Mask;
-   pin->Name = MyStrdup (Name, "CreateNewPin()");
--  pin->Number = MyStrdup (Number, "CreateNewPin()");
-+  pin->Number = strdup (Number);
-   pin->Flags = Flags;
-   CLEAR_FLAG (WARNFLAG, pin);
-   SET_FLAG (PINFLAG, pin);
-@@ -870,7 +870,7 @@ CreateNewPad (ElementTypePtr Element,
-   pad->Clearance = Clearance;
-   pad->Mask = Mask;
-   pad->Name = MyStrdup (Name, "CreateNewPad()");
--  pad->Number = MyStrdup (Number, "CreateNewPad()");
-+  pad->Number = strdup (Number);
-   pad->Flags = Flags;
-   CLEAR_FLAG (WARNFLAG, pad);
-   pad->ID = ID++;
 @@ -893,7 +893,7 @@ AddTextToElement (TextTypePtr Text, FontTypePtr PCBFont,
    Text->Direction = Direction;
    Text->Flags = Flags;
