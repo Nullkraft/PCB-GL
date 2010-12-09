@@ -1,0 +1,38 @@
+Bottom: 21bacc1278ddfad2ef83bc85b1c6421287f21955
+Top:    fa77700df8cef5dc42340272b4c0d039961d3783
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-09 18:33:32 +0000
+
+Refresh of silence-defined-by-not-used-wa
+
+---
+
+diff --git a/src/rtree.c b/src/rtree.c
+index a6fe712..f44672c 100644
+--- a/src/rtree.c
++++ b/src/rtree.c
+@@ -104,6 +104,7 @@ struct rtree_node
+   } u;
+ };
+ 
++#ifndef NDEBUG
+ #ifdef SLOW_ASSERTS
+ static int
+ __r_node_is_good (struct rtree_node *node)
+@@ -197,7 +198,6 @@ __r_node_is_good (struct rtree_node *node)
+   return 1;
+ }
+ 
+-
+ /* check the whole tree from this node down for consistency */
+ static bool
+ __r_tree_is_good (struct rtree_node *node)
+@@ -218,6 +218,8 @@ __r_tree_is_good (struct rtree_node *node)
+   return 1;
+ }
+ #endif
++#endif
++
+ #ifndef NDEBUG
+ /* print out the tree */
+ void
