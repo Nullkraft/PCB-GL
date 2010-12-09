@@ -1,0 +1,15 @@
+Bottom: f5c3d6f4c537e73e679e11bb747cf25492430357
+Top:    f5c3d6f4c537e73e679e11bb747cf25492430357
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-09 20:27:46 +0000
+
+hid/lesstif: Use an intervening size_t casts to aovid compiler warnigns
+
+This is to avoid the compiler warning us what we already know.. that we
+are passing an integer value cast into what might be a different sized
+pointer. (On 64 bit builds).
+
+
+---
+
+
