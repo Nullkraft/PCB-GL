@@ -1,5 +1,5 @@
 Bottom: f9c37fd54ce593907a69c5885324347e0802844a
-Top:    f9c37fd54ce593907a69c5885324347e0802844a
+Top:    53458a416f4330c1d13afb03e2804060c013f272
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 18:48:52 +0000
 
@@ -8,4 +8,16 @@ change.c: Remove unused variable in ChangeElementText()
 
 ---
 
-
+diff --git a/src/change.c b/src/change.c
+index 5546f1f..df7f454 100644
+--- a/src/change.c
++++ b/src/change.c
+@@ -1034,8 +1034,6 @@ ChangeElementText (PCBType *pcb, DataType *data, ElementTypePtr Element, int whi
+ static void *
+ ChangeElementName (ElementTypePtr Element)
+ {
+-  char *old = ELEMENT_NAME (PCB, Element);
+-
+   if (TEST_FLAG (LOCKFLAG, &Element->Name[0]))
+     return (NULL);
+   if (NAME_INDEX (PCB) == NAMEONPCB_INDEX)
