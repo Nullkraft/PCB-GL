@@ -75,7 +75,7 @@
 
 #include <gd.h>
 
-#include "hid/common/hidint.h"
+#include "hid/common/hidinit.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>

@@ -22,7 +22,7 @@
 #include "hid/common/draw_helpers.h"
 #include "../ps/ps.h"
 #include "../../print.h"
-#include "hid/common/hidint.h"
+#include "hid/common/hidinit.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
