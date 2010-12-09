@@ -1,0 +1,44 @@
+Bottom: 38688ed77f7e5ade4a44e301d94fc8b20532b559
+Top:    e244c4b791084bbae0b78207d1fd633d23db0cc8
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-09 15:55:16 +0000
+
+Refresh of not-so-sure-about-these-mystrd
+
+---
+
+diff --git a/src/buffer.c b/src/buffer.c
+index 044796d..6b81f53 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -991,7 +991,7 @@ SmashBufferElement (BufferTypePtr Buffer)
+ 				 pad->Point2.X, pad->Point2.Y,
+ 				 pad->Thickness, pad->Clearance, NoFlags ());
+     if (line)
+-      line->Number = strdup (pad->Number);
++      line->Number = MyStrdup (pad->Number, "SmashBuffer");
+   }
+   END_LOOP;
+   FreeElementMemory (element);
+diff --git a/src/create.c b/src/create.c
+index 16b4047..9fb305b 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -783,7 +783,7 @@ CreateNewPin (ElementTypePtr Element,
+   pin->Clearance = Clearance;
+   pin->Mask = Mask;
+   pin->Name = MyStrdup (Name, "CreateNewPin()");
+-  pin->Number = strdup (Number);
++  pin->Number = MyStrdup (Number, "CreateNewPin()");
+   pin->Flags = Flags;
+   CLEAR_FLAG (WARNFLAG, pin);
+   SET_FLAG (PINFLAG, pin);
+@@ -870,7 +870,7 @@ CreateNewPad (ElementTypePtr Element,
+   pad->Clearance = Clearance;
+   pad->Mask = Mask;
+   pad->Name = MyStrdup (Name, "CreateNewPad()");
+-  pad->Number = strdup (Number);
++  pad->Number = MyStrdup (Number, "CreateNewPad()");
+   pad->Flags = Flags;
+   CLEAR_FLAG (WARNFLAG, pad);
+   pad->ID = ID++;
