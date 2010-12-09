@@ -1,5 +1,5 @@
 Bottom: 060f8678ad22fdd49ef31614d90bc0efdc7abaf9
-Top:    060f8678ad22fdd49ef31614d90bc0efdc7abaf9
+Top:    e1c8e687ff0612621def9ab3a55bfaefac34116c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 19:44:59 +0000
 
@@ -10,4 +10,52 @@ Avoids having each caller having to pull it in with an extern declaration.
 
 ---
 
-
+diff --git a/src/Makefile.am b/src/Makefile.am
+index e719268..ef72012 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -140,6 +140,7 @@ PCB_SRCS = \
+ 	vendor.c \
+ 	vendor.h \
+ 	hid/common/actions.c \
++	hid/common/actions.h \
+ 	hid/common/flags.c \
+ 	hid/common/hidinit.c \
+ 	hid/common/hidnogui.c \
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index cfa4e5a..6bc0e58 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -13,6 +13,8 @@
+ #include "hid.h"
+ #include "data.h"
+ 
++#include "hid/common/actions.h"
++
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+ #endif
+diff --git a/src/main.c b/src/main.c
+index ba8c959..923e0ee 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -54,6 +54,8 @@
+ #include "misc.h"
+ #include "lrealpath.h"
+ 
++#include "hid/common/actions.h"
++
+ /* This next one is so we can print the help messages. */
+ #include "hid/hidint.h"
+ 
+@@ -372,10 +374,6 @@ print_defaults ()
+   exit (1);
+ }
+ 
+-/* in hid/common/actions.c */
+-extern void print_actions ();
+-
+-
+ #define SSET(F,D,N,H) { N, H, \
+ 	HID_String,  0, 0, { 0, D, 0 }, 0, &Settings.F }
+ #define ISET(F,D,N,H) { N, H, \
