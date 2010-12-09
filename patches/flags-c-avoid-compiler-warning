@@ -5,10 +5,11 @@ Date:   2010-12-09 18:13:45 +0000
 
 flags.c: Avoid compiler warning when casting our OffsetOf value
 
-Strictly, OffsetOf "could" return a number as large as the pointer size on
-the system - so the compiler will complain when we squash it into an int.
+Strictly, our OffsetOf calculation "could" return a number as large as the
+pointer size on the system - so the compiler will complain when we squash
+it directly into an int. Casting via a size_t will avoid the warning.
 
-Since we know our structures are small, this is safe - if a bit ugly.
+We know our structure offsets are small, so this is safe - if somewhat ugly.
 
 
 ---
