@@ -294,13 +294,19 @@ static char *
 nogui_prompt_for (const char *msg, const char *default_string)
 {
   static char buf[1024];
+  char *s;
+
   if (default_string)
     printf ("%s [%s] : ", msg, default_string);
   else
     printf ("%s : ", msg);
-  fgets (buf, 1024, stdin);
-  if (buf[0] == 0 && default_string)
-    strcpy (buf, default_string);
+
+  s = fgets (buf, 1024, stdin);
+  if (default_string && (s == NULL || buf[0] == 0))
+    {
+      strncpy (buf, default_string);
+    }
+
   return buf;
 }
 
