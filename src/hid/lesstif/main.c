@@ -138,12 +138,12 @@ static int flip_x = 0, flip_y = 0;
 static int autofade = 0;
 
 static int
-flag_flipx (void *)
+flag_flipx (void *data)
 {
   return flip_x;
 }
 static int
-flag_flipy (void *)
+flag_flipy (void *data)
 {
   return flip_y;
 }
