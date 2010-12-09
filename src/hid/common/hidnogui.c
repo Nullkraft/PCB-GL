@@ -294,13 +294,16 @@ static char *
 nogui_prompt_for (const char *msg, const char *default_string)
 {
   static char buf[1024];
+  char *s;
+
   if (default_string)
     printf ("%s [%s] : ", msg, default_string);
   else
     printf ("%s : ", msg);
-  fgets (buf, 1024, stdin);
-  if (buf[0] == 0 && default_string)
-    strcpy (buf, default_string);
+
+  s = fgets (buf, 1024, stdin);
+  if (default_string && (s == NULL || buf[0] == 0))
+    strncpy (buf, default_string);
   return buf;
 }
 
@@ -312,13 +315,16 @@ nogui_fileselect (const char *title, const char *descr,
 		  const char *history_tag, int flags)
 {
   static char buf[1024];
+  char *s;
+
   if (default_file)
     printf ("%s [%s] : ", title, default_file);
   else
     printf ("%s : ", title);
-  fgets (buf, 1024, stdin);
-  if (buf[0] == 0 && default_file)
-    strcpy (buf, default_file);
+
+  s = fgets (buf, 1024, stdin);
+  if (default_string && (s == NULL || buf[0] == 0))
+    strncpy (buf, default_string);
   return buf;
 }
 
