@@ -1,5 +1,5 @@
 Bottom: fa77700df8cef5dc42340272b4c0d039961d3783
-Top:    fa77700df8cef5dc42340272b4c0d039961d3783
+Top:    ea1fde9dd4827e5c7a089c41ea14b3b172ce5b83
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 18:38:57 +0000
 
@@ -8,4 +8,16 @@ Add missing return value in ActionImport()
 
 ---
 
-
+diff --git a/src/action.c b/src/action.c
+index f52fcf4..ba9ca44 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -7643,7 +7643,7 @@ ActionImport (int argc, char **argv, int x, int y)
+ 	{
+ 	  AttributeRemove (PCB, "import::newX");
+ 	  AttributeRemove (PCB, "import::newY");
+-	  return;
++	  return 0;
+ 	}
+       else if (strcasecmp (xs, "mark") == 0)
+ 	{
