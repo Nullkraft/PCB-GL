@@ -544,7 +544,7 @@ lesstif_fileselect (const char *title, const char *descr,
 		    const char *history_tag, int flags)
 {
 
-  return lesstif_prompt_for ((char *)title, default_file);
+  return lesstif_prompt_for (title, default_file);
 }
 
 /* ------------------------------------------------------------ */
@@ -553,7 +553,7 @@ static Widget prompt_dialog = 0;
 static Widget prompt_label, prompt_text;
 
 char *
-lesstif_prompt_for (char *msg, char *default_string)
+lesstif_prompt_for (const char *msg, const char *default_string)
 {
   char *rv;
   XmString xs;
