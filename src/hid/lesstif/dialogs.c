@@ -592,7 +592,7 @@ lesstif_prompt_for (const char *msg, const char *default_string)
   xs = XmStringCreateLocalized ((char *)msg);
   stdarg (XmNlabelString, xs);
   XtSetValues (prompt_label, args, n);
-  XmTextSetString (prompt_text, default_string);
+  XmTextSetString (prompt_text, (char *)default_string);
   XmTextSetCursorPosition (prompt_text, strlen (default_string));
   wait_for_dialog (prompt_dialog);
   rv = XmTextGetString (prompt_text);
