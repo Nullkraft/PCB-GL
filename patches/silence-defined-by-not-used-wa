@@ -3,7 +3,7 @@ Top:    fa77700df8cef5dc42340272b4c0d039961d3783
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 18:33:26 +0000
 
-Silence used function warning for __r_tree_is_good (non-debug builds)
+Silence used function warning for __r_tree_is_good() (Non-debug builds)
 
 __r_tree_is_good() and its helper functions are only used when debugging,
 and are called from assert() macros. If "NDEBUG" is defined, these expand
