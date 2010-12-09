@@ -1,5 +1,5 @@
-Bottom: 9fa5f34eb56abc934a4e38545687fa773c0fadc5
-Top:    866bd7287bf3b7e46f8327be46acee87b6e8bba0
+Bottom: dc32ff99131de5431b04110b924f7a2e24730430
+Top:    90a0551dae655bc5f32f2c86eb6633795d6d8051
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-07 16:58:35 +0000
 
@@ -43,7 +43,7 @@ index f52fcf4..3eb8574 100644
    if (attr && ! value)
      {
 diff --git a/src/buffer.c b/src/buffer.c
-index 1b2d27c..944a8ed 100644
+index bec918f..6b81f53 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -153,7 +153,7 @@ AddLineToBuffer (LayerTypePtr Layer, LineTypePtr Line)
@@ -55,7 +55,7 @@ index 1b2d27c..944a8ed 100644
    return (line);
  }
  
-@@ -1154,8 +1154,7 @@ ConvertBufferToElement (BufferTypePtr Buffer)
+@@ -1164,8 +1164,7 @@ ConvertBufferToElement (BufferTypePtr Buffer)
    LINE_LOOP (&Buffer->Data->SILKLAYER);
    {
      if (line->Number && !NAMEONPCB_NAME (Element))
