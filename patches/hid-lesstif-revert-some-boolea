@@ -7,6 +7,8 @@ hid/lesstif: Revert some Boolean->bool type changes as required by Xt* APIs
 
 This is a partial revert of commit ad5eb5a165442be38624aa622beeb57dc1d2afbd
 
+For consistency, I have also reverted the changes of True->true and
+False->false when calling  X11 APIs.
 
 
 ---
