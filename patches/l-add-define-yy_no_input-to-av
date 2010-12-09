@@ -1,4 +1,4 @@
-Bottom: 5413e6387efb561a6d35b785465f2bcd5d154b0e
+Bottom: 68ab956fe27c2cfef62665fbf7b5845d8ce483b1
 Top:    fe1d01c353992b61fcdc1a0ab729805c12e9592f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 16:22:11 +0000
@@ -10,21 +10,6 @@ Silences compiler warnings
 
 ---
 
-diff --git a/src/gts/pgraph.c b/src/gts/pgraph.c
-index 2c13c1e..6d1f619 100644
---- a/src/gts/pgraph.c
-+++ b/src/gts/pgraph.c
-@@ -30,8 +30,8 @@ static void gnode_split_destroy (GtsObject * object)
-     gts_object_destroy (GTS_OBJECT (ns->n));
-   }
-   else {
--    GtsGNode * n1 = GTS_GNODE_SPLIT_N1 (ns);
--    GtsGNode * n2 = GTS_GNODE_SPLIT_N2 (ns);
-+    /* GtsGNode * n1 = GTS_GNODE_SPLIT_N1 (ns); */
-+    /* GtsGNode * n2 = GTS_GNODE_SPLIT_N2 (ns); */
- 
-     g_warning ("Memory deallocation for GtsGNodeSplit not fully implemented yet: memory leak!");
-   }
 diff --git a/src/parse_l.l b/src/parse_l.l
 index b1b67a8..c9d96c8 100644
 --- a/src/parse_l.l
