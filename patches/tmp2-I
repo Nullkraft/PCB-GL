@@ -1,7 +1,7 @@
-Bottom: 8334c0d4db2538945ec17f9685480454be773d91
-Top:    7453b19edd0ddb7679e96cd7954e625f27de80a2
+Bottom: 3f795d2cc70e106f0a0f473cf1507e3320ad3f85
+Top:    9986654616b4b6868a126713085c682476d232aa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-04 23:44:55 +0000
+Date:   2010-12-10 03:01:37 +0000
 
 TMP2
 
@@ -570,7 +570,7 @@ index 303dab1..23d653f 100644
  /*
   * 128-bit datatypes.  Again, provide two implementations in
 diff --git a/src/main.c b/src/main.c
-index 014ee9b..7fc9565 100644
+index 8484204..2b2320f 100644
 --- a/src/main.c
 +++ b/src/main.c
 @@ -53,6 +53,7 @@
@@ -580,8 +580,8 @@ index 014ee9b..7fc9565 100644
 +#include "setjmp.h"
  #include "sweep.h"
  
- /* This next one is so we can print the help messages. */
-@@ -1093,7 +1094,7 @@ main (int argc, char *argv[])
+ #include "hid/common/actions.h"
+@@ -1091,7 +1092,7 @@ main (int argc, char *argv[])
    // bos_test_intersections ();
    my_cairo_test ();
  
