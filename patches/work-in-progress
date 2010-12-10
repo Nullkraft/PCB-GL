@@ -3,7 +3,20 @@ Top:    2a7c9bb5600112f68a6f3f8ed162e6f985ca8a4b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 23:08:11 +0000
 
-WORK IN PROGRESS
+hid/common: Fix nogui_prompt_for() and nogui_fileselect() in various ways:
+
+1. These functions must return allocated memory, strdup will do nicely.
+
+2. fgets will insert the newline character into the buffer, so we need
+   to check if we just got a '\r' or '\n' as our first character, not
+    just '\0' when deciding whether to return the default string or not.
+
+3. DO NOT strcpy a the default string...
+   we don't know if it will overflow our buffer
+
+4. For the "fileselect" case, return NULL if the user didn't give us a
+   filename, and the caller didn't specify a default string. Prompt for
+   will return strdup (""), equivalent to what it previously did.
 
 
 ---
