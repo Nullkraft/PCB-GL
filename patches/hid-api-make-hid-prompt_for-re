@@ -1,4 +1,4 @@
-Bottom: f383bfd7608fc07f20de0e4d6a779842268bbf33
+Bottom: 14c7bcfd24a1bb54eeb51dc3d806d2ddb4515d0d
 Top:    f60f9e71e02f55dcdd1a0b5b59045d1ae7d96adc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 23:23:26 +0000
@@ -134,46 +134,3 @@ index cfc1ed4..b7f9eea 100644
  }
  
  static int
-diff --git a/src/vendor.c b/src/vendor.c
-index 39359cc..a296aa1 100644
---- a/src/vendor.c
-+++ b/src/vendor.c
-@@ -269,11 +269,12 @@ int
- ActionLoadVendorFrom (int argc, char **argv, int x, int y)
- {
-   int i;
--  char *fname = NULL, *name = NULL;
-+  char *fname = NULL;
-   static char *default_file = NULL;
-   char *sval;
-   Resource *res, *drcres, *drlres;
-   int type;
-+  bool free_fname = false;
- 
-   cached_drill = -1;
- 
-@@ -291,11 +292,10 @@ ActionLoadVendorFrom (int argc, char **argv, int x, int y)
-       if (fname == NULL)
- 	AFAIL (load_vendor);
- 
--      if (default_file != NULL)
--	{
--	  free (default_file);
--	  default_file = NULL;
--	}
-+      free_fname = true;
-+
-+      free (default_file);
-+      default_file = NULL;
- 
-       if (fname && *fname)
- 	default_file = strdup (fname);
-@@ -459,7 +459,8 @@ ActionLoadVendorFrom (int argc, char **argv, int x, int y)
- 
-   vendorMapEnable = true;
-   apply_vendor_map ();
--  free (name);
-+  if (free_fname)
-+    free (fname);
-   return 0;
- }
