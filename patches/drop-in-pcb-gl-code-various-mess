@@ -1,5 +1,5 @@
 Bottom: 3d3428d25c830b6d9ab568eae1252ead9ef6581a
-Top:    037021a01cafa5aac2e930da6b981f6f8fbfa64c
+Top:    2f040d53918661e457291f7211fc083e572ffcd0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-10 03:01:48 +0000
 
@@ -98,7 +98,7 @@ index a885a63..6da0ea2 100644
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
 new file mode 100644
-index 0000000..35fc720
+index 0000000..9b35674
 --- /dev/null
 +++ b/src/hid/common/hidgl.c
 @@ -0,0 +1,582 @@
@@ -563,7 +563,7 @@ index 0000000..35fc720
 +      if (combined_num_to_free < MAX_COMBINED_MALLOCS)
 +        combined_to_free [combined_num_to_free ++] = new_vertex;
 +      else
-+        printf ("myCombine leaking %i bytes of memory\n", 3 * sizeof (GLdouble));
++        printf ("myCombine leaking %lu bytes of memory\n", 3 * sizeof (GLdouble));
 +    }
 +
 +  new_vertex[0] = coords[0];
