@@ -1,5 +1,5 @@
 Bottom: 886da80df621f9be1f8dbea96857580283a24a27
-Top:    a40603939d80c56d51154f76cac45f787f28fec1
+Top:    d5099c914091430c11100e08af89a30fd3df9720
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-10 03:02:00 +0000
 
@@ -15,9 +15,18 @@ and teardown around drawing.
 ---
 
 diff --git a/src/autoroute.c b/src/autoroute.c
-index 9ccab97..1b8b82f 100644
+index 9ccab97..e53587c 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
+@@ -103,7 +103,7 @@ RCSID ("$Id$");
+ //#define DEBUG_SHOW_ZIGZAG
+ */
+ 
+-static hidGC ar_gc = 0;
++//static hidGC ar_gc = 0;
+ 
+ #define EXPENSIVE 3e28
+ /* round up "half" thicknesses */
 @@ -1421,9 +1421,11 @@ bloat_routebox (routebox_t * rb)
  void
  fillbox (const BoxType * b)
