@@ -96,12 +96,12 @@ ghid_set_layer (const char *name, int group, int empty)
   /* Flush out any existing geoemtry to be rendered */
   hidgl_flush_triangles (&buffer);
 
-  if (group >= 0 && group < max_layer) {
-    hidgl_set_depth ((max_layer - group) * 10);
+  if (group >= 0 && group < max_group) {
+    hidgl_set_depth ((max_group - group) * 10);
   } else {
     if (SL_TYPE (idx) == SL_SILK) {
       if (SL_SIDE (idx) == SL_TOP_SIDE && !Settings.ShowSolderSide) {
-        hidgl_set_depth (max_layer * 10 + 3);
+        hidgl_set_depth (max_group * 10 + 3);
       } else {
         hidgl_set_depth (10 - 3);
       }
