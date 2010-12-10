@@ -1,7 +1,7 @@
-Bottom: fcaecc29d419c4df96512fe936a187002cbd88d6
-Top:    3d8d47febd4e4012c39f548aef19a484774e028f
+Bottom: e5e9a658d7fc933bfbc8663ea5ad6afe40fe0035
+Top:    5832bf79e6d9b7978be0318872a6219558ce1c53
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-06 20:46:49 +0000
+Date:   2010-12-10 03:02:16 +0000
 
 Attempt lesstif GL support
 
@@ -66,7 +66,7 @@ index 7628e9d..3474dbc 100644
  
        gtk )
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 5caec02..a6a9279 100644
+index 5f497a8..667b01e 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -28,10 +28,14 @@
@@ -338,8 +338,8 @@ index 5caec02..a6a9279 100644
  
    display = XtDisplay (appwidget);
    screen_s = XtScreen (appwidget);
-@@ -2403,7 +2592,8 @@ static int need_redraw = 0;
- static bool
+@@ -2402,7 +2591,8 @@ static int need_redraw = 0;
+ static Boolean
  idle_proc (XtPointer dummy)
  {
 -  if (need_redraw)
@@ -348,16 +348,16 @@ index 5caec02..a6a9279 100644
      {
        int mx, my;
        BoxType region;
-@@ -2792,7 +2982,7 @@ idle_proc (XtPointer dummy)
+@@ -2791,7 +2981,7 @@ idle_proc (XtPointer dummy)
  
    lesstif_update_widget_flags ();
  
 -  show_crosshair (1);
 +//  show_crosshair (1);
    idle_proc_set = 0;
-   return true;
+   return True;
  }
-@@ -2809,11 +2999,22 @@ lesstif_need_idle_proc ()
+@@ -2808,11 +2998,22 @@ lesstif_need_idle_proc ()
  static void
  lesstif_invalidate_lr (int l, int r, int t, int b)
  {
@@ -380,7 +380,7 @@ index 5caec02..a6a9279 100644
  }
  
  void
-@@ -3024,6 +3225,7 @@ lesstif_set_color (hidGC gc, const char *name)
+@@ -3023,6 +3224,7 @@ lesstif_set_color (hidGC gc, const char *name)
      }
  }
  
@@ -388,7 +388,7 @@ index 5caec02..a6a9279 100644
  static void
  set_gc (hidGC gc)
  {
-@@ -3087,252 +3289,469 @@ set_gc (hidGC gc)
+@@ -3086,252 +3288,469 @@ set_gc (hidGC gc)
  			  join);
      }
  }
@@ -1051,7 +1051,7 @@ index 5caec02..a6a9279 100644
  }
  
  static void
-@@ -3758,21 +4177,21 @@ HID lesstif_gui = {
+@@ -3757,21 +4176,21 @@ HID lesstif_gui = {
    lesstif_set_layer,
    lesstif_make_gc,
    lesstif_destroy_gc,
