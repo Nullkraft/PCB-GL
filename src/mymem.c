@@ -408,8 +408,7 @@ GetPourMemory (LayerTypePtr Layer)
       Layer->PourMax += STEP_POUR;
       if (Layer->pour_tree)
 	r_destroy_tree (&Layer->pour_tree);
-      pour = MyRealloc (pour, Layer->PourMax * sizeof (PourType),
-			   "GetPourMemory()");
+      pour = realloc (pour, Layer->PourMax * sizeof (PourType));
       Layer->Pour = pour;
       memset (pour + Layer->PourN, 0,
 	      STEP_POUR * sizeof (PourType));
@@ -489,8 +488,7 @@ GetPointMemoryInPour (PourTypePtr Pour)
   if (Pour->PointN >= Pour->PointMax)
     {
       Pour->PointMax += STEP_POLYGONPOINT;
-      points = MyRealloc (points, Pour->PointMax * sizeof (PointType),
-			  "GetPointMemoryInPour()");
+      points = realloc (points, Pour->PointMax * sizeof (PointType));
       Pour->Points = points;
       memset (points + Pour->PointN, 0,
 	      STEP_POLYGONPOINT * sizeof (PointType));
@@ -699,8 +697,8 @@ FreePourMemory (PourTypePtr Pour)
 {
   if (Pour)
     {
-      MYFREE (Pour->Points);
-      MYFREE (Pour->HoleIndex);
+      free (Pour->Points);
+      free (Pour->HoleIndex);
 #define FIXME Later
 #if 0
       if (Pour->Clipped)
