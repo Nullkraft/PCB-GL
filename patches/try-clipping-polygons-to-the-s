@@ -1,5 +1,5 @@
-Bottom: eeb63e15dd5a3ca49272edc857466f9a50928109
-Top:    0b197a0e389e25e1cbdf296a8a185d5f1313d3ae
+Bottom: 1c512875536dbc2728ba1435db3b8f5ea81a7514
+Top:    e41bc2f7cfca1df669d883fbb90d8d436f20c4ac
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-02-06 19:45:38 +0000
 
@@ -16,7 +16,7 @@ Try clipping polygons to the screen using our own algebra, not GL
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index d814c6d..e3f8dff 100644
+index af1a34b..7e5b079 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -103,7 +103,7 @@ static void DrawPolygonLowLevel (PolygonTypePtr);
@@ -28,7 +28,7 @@ index d814c6d..e3f8dff 100644
  static void AddPart (void *);
  static void SetPVColor (PinTypePtr, int);
  /* static */ void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
-@@ -697,7 +697,7 @@ poly_callback (const BoxType * b, void *cl)
+@@ -692,7 +692,7 @@ poly_callback (const BoxType * b, void *cl)
    struct pin_info *i = (struct pin_info *) cl;
  
  //  printf ("Got one poly callback, %p\n", b);
@@ -37,7 +37,7 @@ index d814c6d..e3f8dff 100644
  
    return 1;
  }
-@@ -2105,7 +2105,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
+@@ -2100,7 +2100,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
   * draws a polygon
   */
  static void
@@ -46,7 +46,7 @@ index d814c6d..e3f8dff 100644
  {
    static char *color;
  
-@@ -2118,8 +2118,15 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2113,8 +2113,15 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  
    if (Gathering)
      {
@@ -62,7 +62,7 @@ index d814c6d..e3f8dff 100644
      }
  
    if (TEST_FLAG (SELECTEDFLAG, Polygon))
-@@ -2127,6 +2134,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2122,6 +2129,7 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
    else if (TEST_FLAG (FOUNDFLAG, Polygon))
      color = PCB->ConnectedColor;
    else
@@ -70,7 +70,7 @@ index d814c6d..e3f8dff 100644
      color = Layer->Color;
    gui->set_color (Output.fgGC, color);
  
-@@ -2148,6 +2156,80 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2143,6 +2151,80 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
             poly.Clipped != Polygon->Clipped;
             poly.Clipped = poly.Clipped->f)
          gui->thindraw_pcb_polygon (Output.fgGC, &poly, clip_box);
@@ -152,7 +152,7 @@ index d814c6d..e3f8dff 100644
  }
  
 diff --git a/src/polygon.c b/src/polygon.c
-index ca36271..254defb 100644
+index 82f3caf..50bfd4e 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -716,7 +716,7 @@ PinPoly (PinType * pin, BDimension thick, BDimension clear)
@@ -178,7 +178,7 @@ index b8a3202..2b35088 100644
  int InitClip(DataType *d, LayerType *l, PolygonType *p);
  void RestoreToPolygon(DataType *, int, void *, void *);
 diff --git a/src/pour.c b/src/pour.c
-index 884813c..fd66d66 100644
+index 06f8a2c..26a7554 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -419,7 +419,7 @@ unite_poly (POLYAREA * np, POLYAREA ** pg)
