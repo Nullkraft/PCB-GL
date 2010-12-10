@@ -1,5 +1,5 @@
-Bottom: 58e9ab96226f49ddf77d34001b2c0576f62bff0f
-Top:    b199a707a4c1bdc03173792acd1e2c4a780d29ee
+Bottom: e6e25568e81f13d3fb987c4401ce3560af4c4c1a
+Top:    a2bd67e3575278f7fdc1835f996bdef721e841b6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 05:07:13 +0000
 
@@ -9,10 +9,10 @@ Add VRML model rendering support
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 9f3ef52..a7e38f9 100644
+index 6eb1c3b..341f40e 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -185,7 +185,16 @@ LIBGTK_GL_SRCS= \
+@@ -187,7 +187,16 @@ LIBGTK_GL_SRCS= \
  GL_SRCS= \
  	hid/common/hidgl.c \
  	hid/common/hidgl.h \
@@ -30,10 +30,10 @@ index 9f3ef52..a7e38f9 100644
  	hid/common/hidgl_shaders.h \
  	hid/common/trackball.c \
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 964a566..09815f5 100644
+index 6ad5917..8cc3488 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -1039,6 +1039,7 @@ hidgl_init (void)
+@@ -1038,6 +1038,7 @@ hidgl_init (void)
    }
  
    load_built_in_shaders ();
@@ -2564,10 +2564,10 @@ index 0000000..0a59fbe
 +  return 1;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 25d2b43..01e56a6 100644
+index 66b9123..7d948fa 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1490,7 +1490,7 @@ DrawMask (BoxType * screen)
+@@ -1492,7 +1492,7 @@ DrawMask (BoxType * screen)
    } else {
      glBindTexture (GL_TEXTURE_2D, texture);
    }
@@ -2576,7 +2576,7 @@ index 25d2b43..01e56a6 100644
  
    if (1) {
      GLfloat s_params[] = {0.0001, 0., 0., 0.};
-@@ -1734,6 +1734,11 @@ frontE_package_callback (const BoxType * b, void *cl)
+@@ -1737,6 +1737,11 @@ frontE_package_callback (const BoxType * b, void *cl)
          int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
          hidgl_draw_acy_resistor (element, compute_depth (layer_group), BOARD_THICKNESS);
        }
@@ -2588,7 +2588,7 @@ index 25d2b43..01e56a6 100644
      }
    return 1;
  }
-@@ -2572,125 +2577,27 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2575,125 +2580,27 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    return pixmap;
  }
  
