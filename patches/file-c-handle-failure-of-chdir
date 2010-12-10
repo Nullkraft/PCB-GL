@@ -9,6 +9,9 @@ Report the error to the user if any GetWorkingDirectory or chdir call
 fails. Add attempts to change back to the original working directory
 on error paths.
 
+Ideally, these functions would be re-implemented to operate without
+changing the current working directory at all.
+
 
 ---
 
