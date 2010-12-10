@@ -1,5 +1,5 @@
-Bottom: 76977a3542409376ea30b88c35f4d1bac588ff7b
-Top:    e5e9a658d7fc933bfbc8663ea5ad6afe40fe0035
+Bottom: a1902e75c2832bc22da0884ed1ad105985e23da7
+Top:    a1902e75c2832bc22da0884ed1ad105985e23da7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-10 03:02:02 +0000
 
@@ -8,31 +8,4 @@ FIX My* breakage temporarily here until it is pushed
 
 ---
 
-diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 2bb81ba..e91e8b5 100644
---- a/src/hid/common/hidgl.c
-+++ b/src/hid/common/hidgl.c
-@@ -152,8 +152,7 @@ draw_grid ()
-   if (n > npoints)
-     {
-       npoints = n + 10;
--      points =
--        MyRealloc (points, npoints * 2 * sizeof (GLfloat), "gtk_draw_grid");
-+      points = Realloc (points, npoints * 2 * sizeof (GLfloat));
-     }
- 
-   glEnableClientState (GL_VERTEX_ARRAY);
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b28f6da..f43e619 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -281,8 +281,7 @@ ghid_draw_grid (BoxTypePtr drawn_area)
-   if (n > npoints)
-     {
-       npoints = n + 10;
--      points =
--	MyRealloc (points, npoints * 3 * sizeof (GLfloat), "gtk_draw_grid");
-+      points = realloc (points, npoints * 3 * sizeof (GLfloat));
-     }
- 
-   glEnableClientState (GL_VERTEX_ARRAY);
+
