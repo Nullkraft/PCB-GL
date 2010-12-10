@@ -3,7 +3,9 @@ Top:    14c7bcfd24a1bb54eeb51dc3d806d2ddb4515d0d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-10 00:31:01 +0000
 
-Fix memory leak and unused variable in vendor.c
+vendor.c: Fix memory leak and unused variable in ActionLoadVendorFrom()
+
+Also, don't bother testing x != NULL before calling free (x).
 
 
 ---
