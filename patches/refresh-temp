@@ -1,0 +1,21 @@
+Bottom: 09029a7e8e733e7efb4e9331394162c83d96d8f1
+Top:    ea54ff4c38f4439ae9593928d3af8e9083bb1f8d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-10 01:11:01 +0000
+
+Refresh of hid-common-fix-nogui_confirm_d
+
+---
+
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index bc04528..7aa73c5 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -286,7 +286,7 @@ nogui_confirm_dialog (char *msg, ...)
+ 
+       if (answer[0] == '0' && answer[1] == '\0')
+         {
+-          ret = 1;
++          ret = 0;
+           valid_answer = true;
+         }
