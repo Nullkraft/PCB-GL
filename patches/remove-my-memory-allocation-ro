@@ -1,5 +1,5 @@
 Bottom: 72fccdc018c6f9ede117dd65d21b625ef83e3c6a
-Top:    13014b1e4d2262487b0a09c993a6551bee9b30d2
+Top:    6f155a817b55a1d4380c1dc69dd45314d1499f68
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-07 01:47:28 +0000
 
@@ -1621,7 +1621,7 @@ index f4fc367..7aa7b80 100644
  		;
  
 diff --git a/src/rats.c b/src/rats.c
-index 67a0efc..2ada575 100644
+index 67a0efc..3c5ede1 100644
 --- a/src/rats.c
 +++ b/src/rats.c
 @@ -228,15 +228,14 @@ ProcNetlist (LibraryTypePtr net_menu)
@@ -1670,13 +1670,12 @@ index 67a0efc..2ada575 100644
    /* now we build another netlist (Nets) for each
     * net in Wantlist that shows how it actually looks now,
     * then fill in any missing connections with rat lines.
-@@ -728,7 +726,8 @@ AddAllRats (bool SelectedOnly, void (*funcp) ())
+@@ -728,7 +726,7 @@ AddAllRats (bool SelectedOnly, void (*funcp) ())
    }
    END_LOOP;
    FreeNetListMemory (Nets);
 -  MYFREE (Nets);
 +  free (Nets);
-+  Nets = NULL;
    FreeConnectionLookupMemory ();
    RestoreFindFlag ();
    if (funcp)
