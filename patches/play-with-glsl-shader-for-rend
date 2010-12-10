@@ -1,5 +1,5 @@
 Bottom: 1bd01662a27e7b2c8a942fb11a48b501532e989f
-Top:    722fa8e64b1cb7894896b5e8984f32c7682647e0
+Top:    96d771394d5a5cee532a8d1fdda011206e8be409
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-10 03:42:12 +0000
 
@@ -957,7 +957,7 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7d81d23..f59b065 100644
+index 7d81d23..ef524ef 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -32,6 +32,8 @@
@@ -987,15 +987,6 @@ index 7d81d23..f59b065 100644
  }
  
  void
-@@ -1097,7 +1099,7 @@ EMark_callback (const BoxType * b, void *cl)
- {
-   ElementTypePtr element = (ElementTypePtr) b;
- 
--  DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
-+//  DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
-   return 1;
- }
- 
 @@ -1536,9 +1538,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
  #define MIN_FACES_PER_CYL 6
  #define MAX_FACES_PER_CYL 360
