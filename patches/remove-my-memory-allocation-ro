@@ -1,5 +1,5 @@
 Bottom: 72fccdc018c6f9ede117dd65d21b625ef83e3c6a
-Top:    6f155a817b55a1d4380c1dc69dd45314d1499f68
+Top:    f60ef76093d0c5e4d7e11e61cf21a733e79cc0e0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-07 01:47:28 +0000
 
@@ -125,7 +125,7 @@ index b41263b..5c2b985 100644
    free (name);
    return (0);
 diff --git a/src/create.c b/src/create.c
-index a1c30bb..18928d3 100644
+index a1c30bb..538ea0d 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -80,7 +80,7 @@ DataTypePtr
@@ -232,7 +232,7 @@ index a1c30bb..18928d3 100644
    return (entry);
  }
  
-@@ -1007,9 +1004,7 @@ CreateNewAttribute (AttributeListTypePtr list, char *name, char *value)
+@@ -1007,12 +1004,10 @@ CreateNewAttribute (AttributeListTypePtr list, char *name, char *value)
    if (list->Number >= list->Max)
      {
        list->Max += 10;
@@ -241,8 +241,13 @@ index a1c30bb..18928d3 100644
 -			      "CreateNewAttribute");
 +      list->List = realloc (list->List, list->Max * sizeof (AttributeType));
      }
-   list->List[list->Number].name = strdup (name);
-   list->List[list->Number].value = strdup (value);
+-  list->List[list->Number].name = strdup (name);
+-  list->List[list->Number].value = strdup (value);
++  list->List[list->Number].name = STRDUP (name);
++  list->List[list->Number].value = STRDUP (value);
+   list->Number++;
+   return &list->List[list->Number - 1];
+ }
 diff --git a/src/drill.c b/src/drill.c
 index 738ed18..1f1d770 100644
 --- a/src/drill.c
@@ -310,7 +315,7 @@ index 738ed18..1f1d770 100644
 +  free (Drills);
  }
 diff --git a/src/file.c b/src/file.c
-index 5a926f8..bfe0de0 100644
+index 5a926f8..ecfd71d 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -319,7 +319,7 @@ SavePCB (char *Filename)
@@ -322,6 +327,15 @@ index 5a926f8..bfe0de0 100644
        PCB->Filename = copy;
        SetChangedFlag (false);
      }
+@@ -390,7 +390,7 @@ LoadPCB (char *Filename)
+ 
+       /* clear 'changed flag' */
+       SetChangedFlag (false);
+-      PCB->Filename = strdup (Filename);
++      PCB->Filename = STRDUP (Filename);
+       /* just in case a bad file saved file is loaded */
+ 
+       units_mm = (PCB->Grid != (int) PCB->Grid) ? true : false;
 @@ -1223,7 +1223,7 @@ LoadNewlibFootprintsFromDir(char *libpath, char *toppath)
  	 * entry->ListEntry points to fp name itself.
  	 */
@@ -647,7 +661,7 @@ index c23ae8b..462285d 100644
    note->seen = attributes;
    usage_notes = note;
 diff --git a/src/misc.c b/src/misc.c
-index 40c6460..75fd377 100644
+index 40c6460..2e471d0 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -962,13 +962,13 @@ ExpandFilename (char *Dirname, char *Filename)
@@ -692,11 +706,13 @@ index 40c6460..75fd377 100644
  	    return 1;
  	  }
      }
-@@ -1921,7 +1921,7 @@ AttributePutToList (AttributeListType *list, const char *name, const char *value
+@@ -1920,8 +1920,8 @@ AttributePutToList (AttributeListType *list, const char *name, const char *value
+ 
    /* Now add the new attribute.  */
    i = list->Number;
-   list->List[i].name = strdup (name);
+-  list->List[i].name = strdup (name);
 -  list->List[i].value = MyStrdup (value, "AttributePutToList");
++  list->List[i].name = STRDUP (name);
 +  list->List[i].value = STRDUP (value);
    list->Number ++;
    return 0;
