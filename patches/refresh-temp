@@ -1,0 +1,22 @@
+Bottom: 037021a01cafa5aac2e930da6b981f6f8fbfa64c
+Top:    2f040d53918661e457291f7211fc083e572ffcd0
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-10 03:30:30 +0000
+
+Refresh of drop-in-pcb-gl-code-various-mess
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 35fc720..9b35674 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -459,7 +459,7 @@ myCombine ( GLdouble coords[3], void *vertex_data[4], GLfloat weight[4], void **
+       if (combined_num_to_free < MAX_COMBINED_MALLOCS)
+         combined_to_free [combined_num_to_free ++] = new_vertex;
+       else
+-        printf ("myCombine leaking %i bytes of memory\n", 3 * sizeof (GLdouble));
++        printf ("myCombine leaking %lu bytes of memory\n", 3 * sizeof (GLdouble));
+     }
+ 
+   new_vertex[0] = coords[0];
