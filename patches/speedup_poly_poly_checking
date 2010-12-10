@@ -1,5 +1,5 @@
-Bottom: 71ecdc7df399dfeb76518a8f26c840909585a15f
-Top:    27c02f315f28b6d071d35f3c4937ce6e82deaf38
+Bottom: cd29dba547bba7b6cc83c323c0cf1493fcdf8ba6
+Top:    9af747b4116245f0fed9949d1555b1fc814eccdb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-06 20:46:58 +0000
 
@@ -26,7 +26,7 @@ Use the r_trees to avoid needing to check so many polygons all the time
 ---
 
 diff --git a/src/find.c b/src/find.c
-index fc164a8..a81bb0f 100644
+index fb381e6..40b3c23 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -33,8 +33,6 @@
@@ -38,7 +38,7 @@ index fc164a8..a81bb0f 100644
   * - the maximum distance between line and pin ... would depend on the angle
   *   between them. To speed up computation the limit is set to one half
   *   of the thickness of the objects (cause of square pins).
-@@ -1978,6 +1976,7 @@ LookupLOConnectionsToArc (ArcTypePtr Arc, Cardinal LayerGroup)
+@@ -1975,6 +1973,7 @@ LookupLOConnectionsToArc (ArcTypePtr Arc, Cardinal LayerGroup)
              return true;
  
            /* now check all polygons */
@@ -46,7 +46,7 @@ index fc164a8..a81bb0f 100644
            POUR_LOOP (LAYER_PTR (layer));
            {
              POURPOLYGON_LOOP (pour);
-@@ -2059,6 +2058,30 @@ LOCtoLineRat_callback (const BoxType * b, void *cl)
+@@ -2056,6 +2055,30 @@ LOCtoLineRat_callback (const BoxType * b, void *cl)
  }
  
  static int
@@ -77,7 +77,7 @@ index fc164a8..a81bb0f 100644
  LOCtoLinePad_callback (const BoxType * b, void *cl)
  {
    PadTypePtr pad = (PadTypePtr) b;
-@@ -2121,18 +2144,11 @@ LookupLOConnectionsToLine (LineTypePtr Line, Cardinal LayerGroup,
+@@ -2118,18 +2141,11 @@ LookupLOConnectionsToLine (LineTypePtr Line, Cardinal LayerGroup,
            /* now check all polygons */
            if (PolysTo)
              {
@@ -101,7 +101,7 @@ index fc164a8..a81bb0f 100644
              }
          }
        else
-@@ -2220,6 +2236,7 @@ LOTouchesLine (LineTypePtr Line, Cardinal LayerGroup)
+@@ -2217,6 +2233,7 @@ LOTouchesLine (LineTypePtr Line, Cardinal LayerGroup)
              return (true);
  
            /* now check all polygons */
@@ -109,7 +109,7 @@ index fc164a8..a81bb0f 100644
            POUR_LOOP (LAYER_PTR (layer));
            {
              POURPOLYGON_LOOP (pour);
-@@ -2596,6 +2613,29 @@ LOCtoPolyRat_callback (const BoxType * b, void *cl)
+@@ -2593,6 +2610,29 @@ LOCtoPolyRat_callback (const BoxType * b, void *cl)
    return 0;
  }
  
@@ -139,7 +139,7 @@ index fc164a8..a81bb0f 100644
  
  /* ---------------------------------------------------------------------------
   * looks up LOs that are connected to the given polygon
-@@ -2631,19 +2671,12 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
+@@ -2628,19 +2668,12 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
            info.layer = layer;
  
            /* check all polygons */
