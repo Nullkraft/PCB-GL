@@ -962,6 +962,11 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 }
 
 void
+ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
+{
+}
+
+void
 ghid_drawing_area_configure_hook (GHidPort *port)
 {
   static int done_once = 0;
@@ -982,6 +987,17 @@ ghid_drawing_area_configure_hook (GHidPort *port)
       gdk_pixmap_unref (port->mask);
       port->mask = gdk_pixmap_new (0, port->width, port->height, 1);
     }
+}
+
+gboolean
+ghid_start_drawing (GHidPort *port)
+{
+  return TRUE;
+}
+
+void
+ghid_end_drawing (GHidPort *port)
+{
 }
 
 void
