@@ -1,0 +1,22 @@
+Bottom: f60ef76093d0c5e4d7e11e61cf21a733e79cc0e0
+Top:    d102f7c742cf5b60bb7b8df1ef0a167e144d9c7a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-10 02:54:25 +0000
+
+Refresh of remove-my-memory-allocation-ro
+
+---
+
+diff --git a/src/file.c b/src/file.c
+index ecfd71d..bfe0de0 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -390,7 +390,7 @@ LoadPCB (char *Filename)
+ 
+       /* clear 'changed flag' */
+       SetChangedFlag (false);
+-      PCB->Filename = STRDUP (Filename);
++      PCB->Filename = strdup (Filename);
+       /* just in case a bad file saved file is loaded */
+ 
+       units_mm = (PCB->Grid != (int) PCB->Grid) ? true : false;
