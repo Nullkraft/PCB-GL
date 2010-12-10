@@ -1,5 +1,5 @@
 Bottom: ca7e9cfe2c5c9c76c2477569047c8430973713a9
-Top:    ea54ff4c38f4439ae9593928d3af8e9083bb1f8d
+Top:    066d8b7391337729582838bc7647e8fefa050330
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-10 01:08:26 +0000
 
@@ -9,14 +9,42 @@ hid/common: Fix nogui_confirm_dialog()
 ---
 
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
-index 18bc637..7aa73c5 100644
+index 18bc637..074121f 100644
 --- a/src/hid/common/hidnogui.c
 +++ b/src/hid/common/hidnogui.c
-@@ -267,15 +267,41 @@ nogui_logv (const char *fmt, va_list ap)
- static int
- nogui_confirm_dialog (char *msg, ...)
- {
+@@ -264,26 +264,6 @@ nogui_logv (const char *fmt, va_list ap)
+   vprintf (fmt, ap);
+ }
+ 
+-static int
+-nogui_confirm_dialog (char *msg, ...)
+-{
 -  int rv;
+-
+-  do
+-    {
+-      printf ("%s ? 0=cancel 1=ok : ", msg);
+-      fflush (stdout);
+-    }
+-  while (scanf ("%d", &rv) != 1);
+-  return rv;
+-}
+-
+-static int
+-nogui_close_confirm_dialog ()
+-{
+-  return nogui_confirm_dialog (_("OK to lose data ?"), NULL);
+-}
+-
+ static void
+ nogui_report_dialog (char *title, char *msg)
+ {
+@@ -341,6 +321,52 @@ nogui_fileselect (const char *title, const char *descr,
+ }
+ 
+ static int
++nogui_confirm_dialog (char *msg, ...)
++{
 +  char *extra_msg = " ? 0=cancel 1 = ok";
 +  char *prompt;
 +  char *answer;
@@ -26,11 +54,9 @@ index 18bc637..7aa73c5 100644
 +  prompt = malloc ((strlen (msg) + strlen (extra_msg) + 1) * sizeof (char));
 +  strcpy (prompt, msg);
 +  strcat (prompt, extra_msg);
- 
-   do
-     {
--      printf ("%s ? 0=cancel 1=ok : ", msg);
--      fflush (stdout);
++
++  do
++    {
 +      answer = nogui_prompt_for (prompt, NULL);
 +
 +      if (answer == NULL)
@@ -49,13 +75,20 @@ index 18bc637..7aa73c5 100644
 +        }
 +
 +      free (answer);
-     }
--  while (scanf ("%d", &rv) != 1);
--  return rv;
++    }
 +  while (!valid_answer);
 +
 +  free (prompt);
 +  return ret;
- }
- 
- static int
++}
++
++static int
++nogui_close_confirm_dialog ()
++{
++  return nogui_confirm_dialog (_("OK to lose data ?"), NULL);
++}
++
++static int
+ nogui_attribute_dialog (HID_Attribute * attrs,
+ 			int n_attrs, HID_Attr_Val * results,
+ 			const char * title, const char * descr)
