@@ -1,0 +1,29 @@
+Bottom: c833a25b63b56c564b6222d9c4c995f627571c78
+Top:    4c0754349aa9a534958dfcb547d662ee21cccc21
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-10 00:29:58 +0000
+
+Refresh of read-the-return-value-from-sca
+
+---
+
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index 6111ec3..2b98a75 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -268,9 +268,13 @@ static int
+ nogui_confirm_dialog (char *msg, ...)
+ {
+   int rv;
+-  printf ("%s ? 0=cancel 1=ok : ", msg);
+-  fflush (stdout);
+-  scanf ("%d", &rv);
++
++  do
++    {
++      printf ("%s ? 0=cancel 1=ok : ", msg);
++      fflush (stdout);
++    }
++  while (scanf ("%d", &rv) != 1);
+   return rv;
+ }
