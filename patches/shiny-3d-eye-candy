@@ -1,5 +1,5 @@
 Bottom: 64ee53195ed18c773291191e7312877409f5c737
-Top:    c2044950b00020006e29f9d3191366686cd443d4
+Top:    4a2ae2a18b40077bbff2fe4fafe941c23deaeca1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-10 03:01:53 +0000
 
@@ -11,19 +11,19 @@ Experiments in progress - don't expect this to work yet!
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index a6779c7..88e4071 100644
+index a6779c7..5d1b528 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -96,6 +96,18 @@ ghid_set_layer (const char *name, int group, int empty)
    /* Flush out any existing geoemtry to be rendered */
    hidgl_flush_triangles (&buffer);
  
-+  if (group >= 0 && group < max_layer) {
-+    hidgl_set_depth ((max_layer - group) * 10);
++  if (group >= 0 && group < max_group) {
++    hidgl_set_depth ((max_group - group) * 10);
 +  } else {
 +    if (SL_TYPE (idx) == SL_SILK) {
 +      if (SL_SIDE (idx) == SL_TOP_SIDE && !Settings.ShowSolderSide) {
-+        hidgl_set_depth (max_layer * 10 + 3);
++        hidgl_set_depth (max_group * 10 + 3);
 +      } else {
 +        hidgl_set_depth (10 - 3);
 +      }
