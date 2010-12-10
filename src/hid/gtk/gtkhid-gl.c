@@ -1099,7 +1099,7 @@ EMark_callback (const BoxType * b, void *cl)
 {
   ElementTypePtr element = (ElementTypePtr) b;
 
-//  DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
+  DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
   return 1;
 }
 
