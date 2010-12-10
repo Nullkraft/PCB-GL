@@ -1168,15 +1168,19 @@ LoadNewlibFootprintsFromDir(char *libpath, char *toppath)
   if (GetWorkingDirectory (subdir) == NULL)
     {
       Message (_("LoadNewlibFootprintsFromDir: Could not determine new working directory\n"));
+      if (chdir (olddir))
+        ChdirErrorMessage (olddir);
       return 0;
     }
 
   /* First try opening the directory specified by path */
   if ( (subdirobj = opendir (subdir)) == NULL )
-  {
+    {
       OpendirErrorMessage (subdir);
+      if (chdir (olddir))
+        ChdirErrorMessage (olddir);
       return 0;
-  }
+    }
 
   /* Get pointer to memory holding menu */
   menu = GetLibraryMenuMemory (&Library);
