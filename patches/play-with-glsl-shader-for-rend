@@ -1,4 +1,4 @@
-Bottom: 5e3dfa4eef463df8483be3c628492965efea2a26
+Bottom: 1bd01662a27e7b2c8a942fb11a48b501532e989f
 Top:    722fa8e64b1cb7894896b5e8984f32c7682647e0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-10 03:42:12 +0000
@@ -957,7 +957,7 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 62e2044..f59b065 100644
+index 7d81d23..f59b065 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -32,6 +32,8 @@
@@ -1044,7 +1044,7 @@ index 62e2044..f59b065 100644
  }
  
  struct cyl_info {
-@@ -1809,18 +1817,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1809,7 +1817,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               GdkEventExpose *ev,
                               GHidPort *port)
  {
@@ -1053,11 +1053,7 @@ index 62e2044..f59b065 100644
    static int one_shot = 1;
    static int display_list;
  #endif
-   BoxType region;
--  int eleft, eright, etop, ebottom;
-   int min_x, min_y;
-   int max_x, max_y;
-   int new_x, new_y;
+@@ -1820,6 +1828,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    int min_depth;
    int max_depth;
  
@@ -1067,7 +1063,7 @@ index 62e2044..f59b065 100644
    ghid_start_drawing (port);
  
    hidgl_in_context (true);
-@@ -1866,7 +1876,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1865,7 +1876,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_y0, 0);
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
@@ -1076,7 +1072,7 @@ index 62e2044..f59b065 100644
    if (one_shot) {
  
      display_list = glGenLists(1);
-@@ -1992,7 +2002,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1991,7 +2002,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      glEnd ();
    }
  
@@ -1084,7 +1080,7 @@ index 62e2044..f59b065 100644
    // hid_expose_callback (&ghid_hid, &region, 0);
    ghid_draw_everything (&region);
    hidgl_flush_triangles (&buffer);
-@@ -2002,29 +2011,31 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2001,29 +2011,31 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_set_depth (compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT)));
    ghid_draw_grid (&region);
  
@@ -1121,7 +1117,7 @@ index 62e2044..f59b065 100644
    return FALSE;
  }
  
-@@ -2114,7 +2125,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2113,7 +2125,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
