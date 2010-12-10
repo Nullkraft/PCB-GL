@@ -1010,6 +1010,8 @@ main (int argc, char *argv[])
   InitBuffers ();
   SetMode (ARROW_MODE);
 
+  gui->confirm_dialog ("This is a test");
+
   if (command_line_pcb)
     {
       /* keep filename even if initial load command failed;

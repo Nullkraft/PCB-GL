@@ -264,78 +264,53 @@ nogui_logv (const char *fmt, va_list ap)
   vprintf (fmt, ap);
 }
 
-static void
-nogui_report_dialog (char *title, char *msg)
-{
-  printf ("--- %s ---\n%s\n", title, msg);
-}
-
+/* Return a line of user input text, stripped of any newline characters.
+ * Returns NULL if the user simply presses enter, or otherwise gives no input.
+ */
+#define MAX_LINE_LENGTH 1024
 static char *
-nogui_prompt_for (const char *msg, const char *default_string)
+read_stdin_line (void)
 {
-  static char buf[1024];
+  static char buf[MAX_LINE_LENGTH];
   char *s;
+  int i;
 
-  if (default_string)
-    printf ("%s [%s] : ", msg, default_string);
-  else
-    printf ("%s : ", msg);
-
-  s = fgets (buf, 1024, stdin);
-  if (s == NULL || buf[0] == '\0' || buf[0] == '\r' || buf[0] == '\n')
+  s = fgets (buf, MAX_LINE_LENGTH, stdin);
+  if (s == NULL)
     {
-      if (default_string != NULL)
-        return strdup (default_string);
-      else
-        return strdup ("");
+      printf ("\n");
+      return NULL;
     }
-  else
-    return strdup (buf);
+
+  /* Strip any trailing newline characters */
+  for (i = strlen (s) - 1; i >= 0; i--)
+    if (s[i] == '\r' || s[i] == '\n')
+      s[i] = '\0';
+
+  if (s[0] == '\0')
+    return NULL;
+
+  return strdup (s);
 }
-
-/* FIXME - this could use some enhancement to actually use the other
-   args */
-static char *
-nogui_fileselect (const char *title, const char *descr,
-		  char *default_file, char *default_ext,
-		  const char *history_tag, int flags)
-{
-  static char buf[1024];
-  char *s;
-
-  if (default_file)
-    printf ("%s [%s] : ", title, default_file);
-  else
-    printf ("%s : ", title);
-
-  s = fgets (buf, 1024, stdin);
-  if (s == NULL || buf[0] == '\0' || buf[0] == '\r' || buf[0] == '\n')
-    {
-      if (default_file != NULL)
-        return strdup (default_file);
-      else
-        return NULL;
-    }
-  else
-    return strdup (buf);
-}
+#undef MAX_LINE_LENGTH
 
 static int
 nogui_confirm_dialog (char *msg, ...)
 {
-  char *extra_msg = " ? 0=cancel 1 = ok";
-  char *prompt;
   char *answer;
   int ret = 0;
   bool valid_answer = false;
-
-  prompt = malloc ((strlen (msg) + strlen (extra_msg) + 1) * sizeof (char));
-  strcpy (prompt, msg);
-  strcat (prompt, extra_msg);
+  va_list args;
 
   do
     {
-      answer = nogui_prompt_for (prompt, NULL);
+      va_start (args, msg);
+      vprintf (msg, args);
+      va_end (args);
+
+      printf (" ? 0=cancel 1 = ok : ");
+
+      answer = read_stdin_line ();
 
       if (answer == NULL)
         continue;
@@ -355,8 +330,6 @@ nogui_confirm_dialog (char *msg, ...)
       free (answer);
     }
   while (!valid_answer);
-
-  free (prompt);
   return ret;
 }
 
@@ -364,6 +337,50 @@ static int
 nogui_close_confirm_dialog ()
 {
   return nogui_confirm_dialog (_("OK to lose data ?"), NULL);
+}
+
+static void
+nogui_report_dialog (char *title, char *msg)
+{
+  printf ("--- %s ---\n%s\n", title, msg);
+}
+
+static char *
+nogui_prompt_for (const char *msg, const char *default_string)
+{
+  char *answer;
+
+  if (default_string)
+    printf ("%s [%s] : ", msg, default_string);
+  else
+    printf ("%s : ", msg);
+
+  answer = read_stdin_line ();
+  if (answer == NULL)
+    return strdup ((default_string != NULL) ? default_string : "");
+  else
+    return strdup (answer);
+}
+
+/* FIXME - this could use some enhancement to actually use the other
+   args */
+static char *
+nogui_fileselect (const char *title, const char *descr,
+		  char *default_file, char *default_ext,
+		  const char *history_tag, int flags)
+{
+  char *answer;
+
+  if (default_file)
+    printf ("%s [%s] : ", title, default_file);
+  else
+    printf ("%s : ", title);
+
+  answer = read_stdin_line ();
+  if (answer == NULL)
+    return (default_file != NULL) ? strdup (default_file) : NULL;
+  else
+    return strdup (answer);
 }
 
 static int
