@@ -1,0 +1,21 @@
+Bottom: 722fa8e64b1cb7894896b5e8984f32c7682647e0
+Top:    96d771394d5a5cee532a8d1fdda011206e8be409
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-10 03:45:06 +0000
+
+Refresh of play-with-glsl-shader-for-rend
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index f59b065..ef524ef 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1099,7 +1099,7 @@ EMark_callback (const BoxType * b, void *cl)
+ {
+   ElementTypePtr element = (ElementTypePtr) b;
+ 
+-//  DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
++  DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
+   return 1;
+ }
