@@ -1920,7 +1920,7 @@ AttributePutToList (AttributeListType *list, const char *name, const char *value
 
   /* Now add the new attribute.  */
   i = list->Number;
-  list->List[i].name = strdup (name);
+  list->List[i].name = MyStrdup (name, "AttributePutToList");
   list->List[i].value = MyStrdup (value, "AttributePutToList");
   list->Number ++;
   return 0;
