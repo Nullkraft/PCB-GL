@@ -1,5 +1,5 @@
 Bottom: 0c211e35d9384c3beffc757a49a3862efeca6faf
-Top:    e1245977c7a970626861042dda38a4b79124538f
+Top:    5e9ef1928cf9298856f3e88150740291c4a212cc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-10 03:02:10 +0000
 
@@ -76,7 +76,7 @@ index b037a7a..6b7684a 100644
    else
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 6c1ec48..cf69906 100644
+index 6c1ec48..a4d8e13 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -35,6 +35,8 @@
@@ -105,15 +105,6 @@ index 6c1ec48..cf69906 100644
    middle_copper_group = min_copper_group + num_copper_groups / 2;
  
    if (group >= 0 && group < max_group) {
-@@ -1094,7 +1099,7 @@ backPad_callback (const BoxType * b, void *cl)
- static int
- EMark_callback (const BoxType * b, void *cl)
- {
--  ElementTypePtr element = (ElementTypePtr) b;
-+//  ElementTypePtr element = (ElementTypePtr) b;
- 
-   DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
-   return 1;
 @@ -1415,7 +1420,8 @@ DrawMask (BoxType * screen)
    polygon.Clipped = board_outline_poly ();
    polygon.NoHoles = NULL;
