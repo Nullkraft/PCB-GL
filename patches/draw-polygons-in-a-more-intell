@@ -1,5 +1,5 @@
-Bottom: f08b710c75ad59facb0dfecce94d45cae8302839
-Top:    4c3cbfdcd9d8e98d238add1a835563d1d1c9ea52
+Bottom: 95757e55f2b79a6b37f3b6a36d57231cf8a54f90
+Top:    86b9383b8ce54755cab7484952738b9c6cab08b1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-10 03:02:11 +0000
 
@@ -36,7 +36,7 @@ NB: In this version. PASS 2 and 3 are carried out concurrently, although
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 49c010c..cf1967e 100644
+index a4a9aa9..ad816d3 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -850,14 +850,23 @@ do_hole (const BoxType *b, void *cl)
@@ -178,7 +178,7 @@ index 49c010c..cf1967e 100644
  
  void
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b3d51c7..bf0761b 100644
+index 940d6eb..98b56b8 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1280,11 +1280,28 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *dra
