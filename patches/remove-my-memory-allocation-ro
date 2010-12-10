@@ -1,5 +1,5 @@
-Bottom: 134c19afef413edd3e44b640ec50f29423462710
-Top:    bdc0129cdcb44b00e899e167effabcf1689e5c58
+Bottom: 72fccdc018c6f9ede117dd65d21b625ef83e3c6a
+Top:    13014b1e4d2262487b0a09c993a6551bee9b30d2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-07 01:47:28 +0000
 
@@ -45,7 +45,7 @@ With feedback from Stephen Ecob <silicon.on.inspiration@gmail.com>
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 0eaaf39..09e65d7 100644
+index f5e043a..0e035a6 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -5731,7 +5731,7 @@ ActionSaveTo (int argc, char **argv, int x, int y)
@@ -66,7 +66,7 @@ index 0eaaf39..09e65d7 100644
        PCB->Netlistname = StripWhiteSpaceAndDup (name);
        FreeLibraryMemory (&PCB->NetlistLib);
        if (!ImportNetlist (PCB->Netlistname))
-@@ -7238,7 +7238,7 @@ ActionElementSetAttr (int argc, char **argv, int x, int y)
+@@ -7239,7 +7239,7 @@ ActionElementSetAttr (int argc, char **argv, int x, int y)
  
    if (attr && value)
      {
@@ -310,7 +310,7 @@ index 738ed18..1f1d770 100644
 +  free (Drills);
  }
 diff --git a/src/file.c b/src/file.c
-index 153cdce..91c99a5 100644
+index 5a926f8..bfe0de0 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -319,7 +319,7 @@ SavePCB (char *Filename)
@@ -322,7 +322,7 @@ index 153cdce..91c99a5 100644
        PCB->Filename = copy;
        SetChangedFlag (false);
      }
-@@ -1204,7 +1204,7 @@ LoadNewlibFootprintsFromDir(char *libpath, char *toppath)
+@@ -1223,7 +1223,7 @@ LoadNewlibFootprintsFromDir(char *libpath, char *toppath)
  	 * entry->ListEntry points to fp name itself.
  	 */
  	len = strlen(subdir) + strlen("/") + strlen(subdirentry->d_name) + 1;
@@ -331,7 +331,7 @@ index 153cdce..91c99a5 100644
  	strcat (entry->AllocatedMemory, subdir);
  	strcat (entry->AllocatedMemory, PCB_DIR_SEPARATOR_S);
  
-@@ -1343,7 +1343,7 @@ ReadLibraryContents (void)
+@@ -1382,7 +1382,7 @@ ReadLibraryContents (void)
    /*  First load the M4 stuff.  The variable Settings.LibraryPath
     *  points to it.
     */
@@ -340,7 +340,7 @@ index 153cdce..91c99a5 100644
    command = EvaluateFilename (Settings.LibraryContentsCommand,
  			      Settings.LibraryPath, Settings.LibraryFilename,
  			      NULL);
-@@ -1408,8 +1408,7 @@ ReadLibraryContents (void)
+@@ -1447,8 +1447,7 @@ ReadLibraryContents (void)
  	  /* create the list entry */
  	  len = strlen (EMPTY (entry->Value)) +
  	    strlen (EMPTY (entry->Description)) + 4;
@@ -350,7 +350,7 @@ index 153cdce..91c99a5 100644
  	  sprintf (entry->ListEntry,
  		   "%s, %s", EMPTY (entry->Value),
  		   EMPTY (entry->Description));
-@@ -1468,7 +1467,7 @@ ReadNetlist (char *filename)
+@@ -1507,7 +1506,7 @@ ReadNetlist (char *filename)
    else
      {
        used_popen = 1;
