@@ -1,0 +1,60 @@
+Bottom: ca7e9cfe2c5c9c76c2477569047c8430973713a9
+Top:    09029a7e8e733e7efb4e9331394162c83d96d8f1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-10 01:08:36 +0000
+
+Refresh of hid-common-fix-nogui_confirm_d
+
+---
+
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index 18bc637..bc04528 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -267,15 +267,41 @@ nogui_logv (const char *fmt, va_list ap)
+ static int
+ nogui_confirm_dialog (char *msg, ...)
+ {
+-  int rv;
++  char *extra_msg = " ? 0=cancel 1 = ok";
++  char *prompt;
++  char *answer;
++  int ret = 0;
++  bool valid_answer = false;
++
++  prompt = malloc ((strlen (msg) + strlen (extra_msg) + 1) * sizeof (char));
++  strcpy (prompt, msg);
++  strcat (prompt, extra_msg);
+ 
+   do
+     {
+-      printf ("%s ? 0=cancel 1=ok : ", msg);
+-      fflush (stdout);
++      answer = nogui_prompt_for (prompt, NULL);
++
++      if (answer == NULL)
++        continue;
++
++      if (answer[0] == '0' && answer[1] == '\0')
++        {
++          ret = 1;
++          valid_answer = true;
++        }
++
++      if (answer[0] == '1' && answer[1] == '\0')
++        {
++          ret = 1;
++          valid_answer = true;
++        }
++
++      free (answer);
+     }
+-  while (scanf ("%d", &rv) != 1);
+-  return rv;
++  while (!valid_answer);
++
++  free (prompt);
++  return ret;
+ }
+ 
+ static int
