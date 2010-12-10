@@ -1,5 +1,5 @@
-Bottom: 2e6e9854cb1e4fd5d909a7c9bc1918a81cbf42d1
-Top:    91aaccc8cee2aedecc7775c970373be78bf32f41
+Bottom: a6561ab6da6cbc6551dfc59cd071d6b099facc14
+Top:    25fa57b53dffb57bdfad1a406c41636daeb86af5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-10 03:01:56 +0000
 
@@ -9,10 +9,10 @@ Playing with stack rendering
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b72eb96..1693363 100644
+index 2ba56c4..70e03a7 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1078,7 +1078,17 @@ SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
+@@ -1077,7 +1077,17 @@ SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
    else if (TEST_FLAG (FOUNDFLAG, Pin))
      color = PCB->ConnectedColor;
    else
@@ -31,7 +31,7 @@ index b72eb96..1693363 100644
  
    gui->set_color (Output.fgGC, color);
  }
-@@ -1364,6 +1374,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1363,6 +1373,8 @@ DrawLayerGroup (int group, const BoxType * screen)
    int n_entries = PCB->LayerGroups.Number[group];
    Cardinal *layers = PCB->LayerGroups.Entries[group];
    int first_run = 1;
@@ -40,7 +40,7 @@ index b72eb96..1693363 100644
  
    if (!gui->set_layer (0, group, 0)) {
      gui->set_layer (NULL, SL (FINISHED, 0), 0);
-@@ -1421,10 +1433,18 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1420,10 +1432,18 @@ DrawLayerGroup (int group, const BoxType * screen)
          }
        }
  
