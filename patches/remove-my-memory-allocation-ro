@@ -1,5 +1,5 @@
 Bottom: 936dc641ef8c19b0c9639d402a531e0c85cc05e9
-Top:    f60ef76093d0c5e4d7e11e61cf21a733e79cc0e0
+Top:    d102f7c742cf5b60bb7b8df1ef0a167e144d9c7a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-07 01:47:28 +0000
 
@@ -315,7 +315,7 @@ index 738ed18..1f1d770 100644
 +  free (Drills);
  }
 diff --git a/src/file.c b/src/file.c
-index 5a926f8..ecfd71d 100644
+index 5a926f8..bfe0de0 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -319,7 +319,7 @@ SavePCB (char *Filename)
@@ -327,15 +327,6 @@ index 5a926f8..ecfd71d 100644
        PCB->Filename = copy;
        SetChangedFlag (false);
      }
-@@ -390,7 +390,7 @@ LoadPCB (char *Filename)
- 
-       /* clear 'changed flag' */
-       SetChangedFlag (false);
--      PCB->Filename = strdup (Filename);
-+      PCB->Filename = STRDUP (Filename);
-       /* just in case a bad file saved file is loaded */
- 
-       units_mm = (PCB->Grid != (int) PCB->Grid) ? true : false;
 @@ -1223,7 +1223,7 @@ LoadNewlibFootprintsFromDir(char *libpath, char *toppath)
  	 * entry->ListEntry points to fp name itself.
  	 */
