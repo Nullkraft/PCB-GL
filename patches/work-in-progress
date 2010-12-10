@@ -1,5 +1,5 @@
 Bottom: 4c0754349aa9a534958dfcb547d662ee21cccc21
-Top:    4c0754349aa9a534958dfcb547d662ee21cccc21
+Top:    f383bfd7608fc07f20de0e4d6a779842268bbf33
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 23:08:11 +0000
 
@@ -8,4 +8,43 @@ WORK IN PROGRESS
 
 ---
 
-
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index 2b98a75..cfc1ed4 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -294,12 +294,15 @@ static char *
+ nogui_prompt_for (const char *msg, const char *default_string)
+ {
+   static char buf[1024];
++  char *s;
++
+   if (default_string)
+     printf ("%s [%s] : ", msg, default_string);
+   else
+     printf ("%s : ", msg);
+-  fgets (buf, 1024, stdin);
+-  if (buf[0] == 0 && default_string)
++
++  s = fgets (buf, 1024, stdin);
++  if (default_string && (s == NULL || buf[0] == 0))
+     strcpy (buf, default_string);
+   return buf;
+ }
+@@ -312,12 +315,15 @@ nogui_fileselect (const char *title, const char *descr,
+ 		  const char *history_tag, int flags)
+ {
+   static char buf[1024];
++  char *s;
++
+   if (default_file)
+     printf ("%s [%s] : ", title, default_file);
+   else
+     printf ("%s : ", title);
+-  fgets (buf, 1024, stdin);
+-  if (buf[0] == 0 && default_file)
++
++  s = fgets (buf, 1024, stdin);
++  if (default_file && (s == NULL || buf[0] == 0))
+     strcpy (buf, default_file);
+   return buf;
+ }
