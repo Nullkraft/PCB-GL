@@ -1,7 +1,7 @@
-Bottom: fcaecc29d419c4df96512fe936a187002cbd88d6
-Top:    6fd75a25a40452ee7d4e8dfafc5ce67a4cedec6a
+Bottom: e5e9a658d7fc933bfbc8663ea5ad6afe40fe0035
+Top:    05255691cf0c31d3f882460462d01bc902f4396f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-06 20:46:50 +0000
+Date:   2010-12-10 03:02:17 +0000
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -28,7 +28,7 @@ polygon fill.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 1b2d27c..7991270 100644
+index 4447c30..7a3fb68 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -381,6 +381,7 @@ MovePolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
@@ -48,7 +48,7 @@ index 1b2d27c..7991270 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index 0c55c69..3641493 100644
+index 9a2e80b..8b130bd 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -124,6 +124,9 @@ static void *ChangeTextJoin (LayerTypePtr, TextTypePtr);
@@ -184,7 +184,7 @@ index 56054e2..51523f0 100644
    else
      gui->fill_pcb_polygon (Output.fgGC, Polygon, clip_box);
 diff --git a/src/move.c b/src/move.c
-index cce6e19..1a1da55 100644
+index cbb2e3d..618d5c5 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -355,10 +355,12 @@ MovePolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
