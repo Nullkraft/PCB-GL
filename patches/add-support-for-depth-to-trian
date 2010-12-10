@@ -1,5 +1,5 @@
-Bottom: 1460e7d678db208b727a1cbb914109c6a8980b55
-Top:    47a0eef2295cba2d90bdd447132e5f4579ea9bea
+Bottom: 49b13f1e6089362adf83d586bc8cc72338b82cbb
+Top:    64ee53195ed18c773291191e7312877409f5c737
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-10 03:01:53 +0000
 
@@ -11,7 +11,7 @@ Nasty global depth_state variable should be replaced!
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 26fff1b..dd6f89e 100644
+index 4baf861..b8c4867 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -46,6 +46,7 @@
@@ -31,7 +31,7 @@ index 26fff1b..dd6f89e 100644
    buffer->triangle_count = 0;
    buffer->coord_comp_count = 0;
  }
-@@ -377,10 +378,10 @@ void
+@@ -376,10 +377,10 @@ void
  hidgl_draw_rect (int x1, int y1, int x2, int y2)
  {
    glBegin (GL_LINE_LOOP);
@@ -46,7 +46,7 @@ index 26fff1b..dd6f89e 100644
    glEnd ();
  }
  
-@@ -804,6 +805,12 @@ hidgl_reset_stencil_usage (void)
+@@ -803,6 +804,12 @@ hidgl_reset_stencil_usage (void)
    dirty_bits = 0;
  }
  
