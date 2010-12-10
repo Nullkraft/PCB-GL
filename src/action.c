@@ -7606,7 +7606,7 @@ ActionImport (int argc, char **argv, int x, int y)
 
   if (mode && strcasecmp (mode, "setdisperse") == 0)
     {
-      const char *ds, *units;
+      char *ds, *units;
       char buf[50];
 
       ds = ARG (1);
