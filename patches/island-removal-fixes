@@ -1,5 +1,5 @@
-Bottom: 187ba55d10741044a94f3757c355b5c160dce412
-Top:    f3787f9b5e3b99c68c813ce2611215f00077a296
+Bottom: f7ccb70d79ed606e43601923ad280fd1dc94ab5c
+Top:    643c9f09658d40ce4ff66224c6ceedc65080ba89
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-06 20:46:54 +0000
 
@@ -11,7 +11,7 @@ Kept separate for now because they might have unknown side-effects.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 6ad4fcf..05d05f9 100644
+index 370e294..cc8f7a6 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -249,8 +249,8 @@ MoveViaToBuffer (PinTypePtr Via)
@@ -55,7 +55,7 @@ index 6ad4fcf..05d05f9 100644
    pour = GetPourMemory (lay);
    *pour = *Pour;
 diff --git a/src/change.c b/src/change.c
-index 2d45c7f..47da989 100644
+index c7c66e7..76cbbca 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -495,10 +495,10 @@ ChangeViaClearSize (PinTypePtr Via)
@@ -116,10 +116,10 @@ index 2d45c7f..47da989 100644
        if (Line->Clearance == 0)
  	{
 diff --git a/src/misc.c b/src/misc.c
-index 0c5d487..2dfcc04 100644
+index be6e2ea..eb1ccf7 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -1522,8 +1522,8 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
+@@ -1528,8 +1528,8 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
        new_da = 360;
        new_sa = 0;
      }
@@ -130,7 +130,7 @@ index 0c5d487..2dfcc04 100644
    a->StartAngle = new_sa;
    a->Delta = new_da;
 diff --git a/src/move.c b/src/move.c
-index f988ab2..4f8a0e9 100644
+index 6b821e7..9a47afd 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -282,8 +282,8 @@ MoveLine (LayerTypePtr Layer, LineTypePtr Line)

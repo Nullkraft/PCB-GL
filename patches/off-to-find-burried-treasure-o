@@ -1,5 +1,5 @@
-Bottom: dedc75755e41e197487517b57c485281aa3244c4
-Top:    187ba55d10741044a94f3757c355b5c160dce412
+Bottom: 9ee339892b56d69deac14e59717ad9534ae45fad
+Top:    f7ccb70d79ed606e43601923ad280fd1dc94ab5c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-06 20:46:54 +0000
 
@@ -17,7 +17,7 @@ of a selection will re-create the polygon.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index f01dbd4..6ad4fcf 100644
+index 5821956..370e294 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -391,7 +391,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
@@ -39,7 +39,7 @@ index f01dbd4..6ad4fcf 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index 3c4f926..2d45c7f 100644
+index d3499e5..c7c66e7 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -1180,10 +1180,12 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
@@ -131,10 +131,10 @@ index 0c3aded..06b38b2 100644
      {
        AddPart (Polygon);
 diff --git a/src/find.c b/src/find.c
-index a81bb0f..272c205 100644
+index 40b3c23..b1394b3 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -2649,6 +2649,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
+@@ -2646,6 +2646,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
  
    if (!Polygon->Clipped)
      return false;
@@ -142,7 +142,7 @@ index a81bb0f..272c205 100644
    info.polygon = *Polygon;
    EXPAND_BOUNDS (&info.polygon);
    info.layer = LayerGroup;
-@@ -4000,6 +4001,70 @@ doIsBad:
+@@ -3997,6 +3998,70 @@ doIsBad:
  }
  
  /*-----------------------------------------------------------------------------
@@ -226,7 +226,7 @@ index f93fca1..0e0e1c9 100644
  bool lineClear (LineTypePtr, Cardinal);
  bool IsLineInPolygon (LineTypePtr, PolygonTypePtr);
 diff --git a/src/move.c b/src/move.c
-index e229430..f988ab2 100644
+index 8f5cbad..6b821e7 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -366,12 +366,12 @@ MovePour (LayerTypePtr Layer, PourTypePtr Pour)
