@@ -1,18 +1,32 @@
-Bottom: 453f5bac79bc10c4d0664076d2610bb1659a9bb1
+Bottom: c833a25b63b56c564b6222d9c4c995f627571c78
 Top:    24cf666d0f53370c43bdc86d5023950640b139ad
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-10 01:44:55 +0000
+Date:   2010-12-10 01:47:20 +0000
 
-FIX
+hid/common: Fix / re-write nogui_{prompt_for,fileselect,confirm_dialog}()
 
+Fixes some pretty nasty bugs in these functions:
+
+1. These functions must return allocated memory, strdup will do nicely.
+
+2. fgets will insert the newline character into the buffer, so we need
+   to check if we just got a '\r' or '\n' as our first character, not
+    just '\0' when deciding whether to return the default string or not.
+
+3. DO NOT strcpy a the default string...
+   we don't know if it will overflow our buffer
+
+4. For the "fileselect" case, return NULL if the user didn't give us a
+   filename, and the caller didn't specify a default string. Prompt for
+   will return strdup (""), equivalent to what it previously did.
 
 ---
 
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
-index 18bc637..08adb26 100644
+index 6111ec3..08adb26 100644
 --- a/src/hid/common/hidnogui.c
 +++ b/src/hid/common/hidnogui.c
-@@ -264,18 +264,73 @@ nogui_logv (const char *fmt, va_list ap)
+@@ -264,14 +264,73 @@ nogui_logv (const char *fmt, va_list ap)
    vprintf (fmt, ap);
  }
  
@@ -50,15 +64,17 @@ index 18bc637..08adb26 100644
  nogui_confirm_dialog (char *msg, ...)
  {
 -  int rv;
+-  printf ("%s ? 0=cancel 1=ok : ", msg);
+-  fflush (stdout);
+-  scanf ("%d", &rv);
+-  return rv;
 +  char *answer;
 +  int ret = 0;
 +  bool valid_answer = false;
 +  va_list args;
- 
-   do
-     {
--      printf ("%s ? 0=cancel 1=ok : ", msg);
--      fflush (stdout);
++
++  do
++    {
 +      va_start (args, msg);
 +      vprintf (msg, args);
 +      va_end (args);
@@ -83,70 +99,56 @@ index 18bc637..08adb26 100644
 +        }
 +
 +      free (answer);
-     }
--  while (scanf ("%d", &rv) != 1);
--  return rv;
++    }
 +  while (!valid_answer);
 +  return ret;
  }
  
  static int
-@@ -293,24 +348,18 @@ nogui_report_dialog (char *title, char *msg)
+@@ -289,15 +348,18 @@ nogui_report_dialog (char *title, char *msg)
  static char *
  nogui_prompt_for (const char *msg, const char *default_string)
  {
 -  static char buf[1024];
--  char *s;
 +  char *answer;
- 
++
    if (default_string)
      printf ("%s [%s] : ", msg, default_string);
    else
      printf ("%s : ", msg);
- 
--  s = fgets (buf, 1024, stdin);
--  if (s == NULL || buf[0] == '\0' || buf[0] == '\r' || buf[0] == '\n')
--    {
--      if (default_string != NULL)
--        return strdup (default_string);
--      else
--        return strdup ("");
--    }
+-  fgets (buf, 1024, stdin);
+-  if (buf[0] == 0 && default_string)
+-    strcpy (buf, default_string);
+-  return buf;
++
 +  answer = read_stdin_line ();
 +  if (answer == NULL)
 +    return strdup ((default_string != NULL) ? default_string : "");
-   else
--    return strdup (buf);
++  else
 +    return strdup (answer);
  }
  
  /* FIXME - this could use some enhancement to actually use the other
-@@ -320,24 +369,18 @@ nogui_fileselect (const char *title, const char *descr,
+@@ -307,15 +369,18 @@ nogui_fileselect (const char *title, const char *descr,
  		  char *default_file, char *default_ext,
  		  const char *history_tag, int flags)
  {
 -  static char buf[1024];
--  char *s;
 +  char *answer;
- 
++
    if (default_file)
      printf ("%s [%s] : ", title, default_file);
    else
      printf ("%s : ", title);
- 
--  s = fgets (buf, 1024, stdin);
--  if (s == NULL || buf[0] == '\0' || buf[0] == '\r' || buf[0] == '\n')
--    {
--      if (default_file != NULL)
--        return strdup (default_file);
--      else
--        return NULL;
--    }
+-  fgets (buf, 1024, stdin);
+-  if (buf[0] == 0 && default_file)
+-    strcpy (buf, default_file);
+-  return buf;
++
 +  answer = read_stdin_line ();
 +  if (answer == NULL)
 +    return (default_file != NULL) ? strdup (default_file) : NULL;
-   else
--    return strdup (buf);
++  else
 +    return strdup (answer);
  }
  
