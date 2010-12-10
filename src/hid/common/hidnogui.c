@@ -286,7 +286,7 @@ nogui_confirm_dialog (char *msg, ...)
 
       if (answer[0] == '0' && answer[1] == '\0')
         {
-          ret = 1;
+          ret = 0;
           valid_answer = true;
         }
 
