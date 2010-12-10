@@ -1,5 +1,5 @@
 Bottom: 9ce160a2af08ef878c2aa540bf0aed1ef3f4531d
-Top:    d92697d7884e202d012aed7b605612cdf1aa4f84
+Top:    70042bad4857d04d6a3ec8011e40d4411d0ef063
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-10 01:53:37 +0000
 
@@ -13,10 +13,10 @@ on error paths.
 ---
 
 diff --git a/src/file.c b/src/file.c
-index aff5073..40308f3 100644
+index aff5073..8cbd95d 100644
 --- a/src/file.c
 +++ b/src/file.c
-@@ -1151,10 +1151,25 @@ LoadNewlibFootprintsFromDir(char *libpath, char *toppath)
+@@ -1151,17 +1151,36 @@ LoadNewlibFootprintsFromDir(char *libpath, char *toppath)
    /* Cache old dir, then cd into subdir because stat is given relative file names. */
    memset (subdir, 0, sizeof subdir);
    memset (olddir, 0, sizeof olddir);
@@ -40,12 +40,25 @@ index aff5073..40308f3 100644
 +  if (GetWorkingDirectory (subdir) == NULL)
 +    {
 +      Message (_("LoadNewlibFootprintsFromDir: Could not determine new working directory\n"));
++      if (chdir (olddir))
++        ChdirErrorMessage (olddir);
 +      return 0;
 +    }
  
    /* First try opening the directory specified by path */
    if ( (subdirobj = opendir (subdir)) == NULL )
-@@ -1221,7 +1236,8 @@ LoadNewlibFootprintsFromDir(char *libpath, char *toppath)
+-  {
++    {
+       OpendirErrorMessage (subdir);
++      if (chdir (olddir))
++        ChdirErrorMessage (olddir);
+       return 0;
+-  }
++    }
+ 
+   /* Get pointer to memory holding menu */
+   menu = GetLibraryMenuMemory (&Library);
+@@ -1221,7 +1240,8 @@ LoadNewlibFootprintsFromDir(char *libpath, char *toppath)
    }
    /* Done.  Clean up, cd back into old dir, and return */
    closedir (subdirobj);
@@ -55,7 +68,7 @@ index aff5073..40308f3 100644
    return n_footprints;
  }
  
-@@ -1252,7 +1268,11 @@ ParseLibraryTree (void)
+@@ -1252,7 +1272,11 @@ ParseLibraryTree (void)
    /* Save the current working directory as an absolute path.
     * This fcn writes the abs path into the memory pointed to by the input arg.
     */
@@ -68,7 +81,7 @@ index aff5073..40308f3 100644
  
    /* Additional loop to allow for multiple 'newlib' style library directories 
     * called out in Settings.LibraryTree
-@@ -1266,14 +1286,28 @@ ParseLibraryTree (void)
+@@ -1266,14 +1290,28 @@ ParseLibraryTree (void)
        /* start out in the working directory in case the path is a
         * relative path 
         */
@@ -100,7 +113,7 @@ index aff5073..40308f3 100644
  
  #ifdef DEBUG
        printf("In ParseLibraryTree, looking for newlib footprints inside top level directory %s ... \n", 
-@@ -1316,7 +1350,8 @@ ParseLibraryTree (void)
+@@ -1316,7 +1354,8 @@ ParseLibraryTree (void)
      }
  
    /* restore the original working directory */
