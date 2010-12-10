@@ -1,7 +1,7 @@
-Bottom: 589dec2ad161bb58c0440ed1ef3009f5188db36f
-Top:    e7222c2a4d65741748dceef0a76ad9fd7dd1c93c
+Bottom: 76ab3fba6e48a09a02047789a58c693d3ebbc0a5
+Top:    48d7f79a5b7b2e5100e04f356df7f1b16a3077f0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-06 20:47:02 +0000
+Date:   2010-12-10 04:01:46 +0000
 
 Add a hacky name-mangling thingy for loading boards
 
@@ -18,7 +18,7 @@ Add a hacky name-mangling thingy for loading boards
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 022f050..d623859 100644
+index 7830a85..e175427 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -37,6 +37,7 @@
@@ -38,7 +38,7 @@ index 022f050..d623859 100644
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
  #endif
-@@ -668,6 +671,57 @@ CreateNewHoleInPour (PourType *Pour)
+@@ -670,6 +673,57 @@ CreateNewHoleInPour (PourType *Pour)
    return Pour;
  }
  
@@ -96,7 +96,7 @@ index 022f050..d623859 100644
  /* ---------------------------------------------------------------------------
   * creates an new element
   * memory is allocated if needed
-@@ -684,6 +738,18 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
+@@ -686,6 +740,18 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
    printf("Entered CreateNewElement.....\n");
  #endif
  
@@ -128,7 +128,7 @@ index af7ace4..ac3f623 100644
  				 FontTypePtr, FlagType, char *, char *,
  				 char *, LocationType, LocationType, BYTE,
 diff --git a/src/file.c b/src/file.c
-index 68bcc67..04e4b22 100644
+index 7e9b8f2..c541eb6 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -358,6 +358,9 @@ LoadPCB (char *Filename)
