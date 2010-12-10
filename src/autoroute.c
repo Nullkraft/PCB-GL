@@ -103,7 +103,7 @@ RCSID ("$Id$");
 //#define DEBUG_SHOW_ZIGZAG
 */
 
-static hidGC ar_gc = 0;
+//static hidGC ar_gc = 0;
 
 #define EXPENSIVE 3e28
 /* round up "half" thicknesses */
