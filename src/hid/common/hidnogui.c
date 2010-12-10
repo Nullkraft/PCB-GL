@@ -302,9 +302,15 @@ nogui_prompt_for (const char *msg, const char *default_string)
     printf ("%s : ", msg);
 
   s = fgets (buf, 1024, stdin);
-  if (default_string && (s == NULL || buf[0] == 0))
-    strcpy (buf, default_string);
-  return buf;
+  if (s == NULL || buf[0] == '\0' || buf[0] == '\r' || buf[0] == '\n')
+    {
+      if (default_string != NULL)
+        return strdup (default_string);
+      else
+        return strdup ("");
+    }
+  else
+    return strdup (buf);
 }
 
 /* FIXME - this could use some enhancement to actually use the other
@@ -322,10 +328,15 @@ nogui_fileselect (const char *title, const char *descr,
   else
     printf ("%s : ", title);
 
-  s = fgets (buf, 1024, stdin);
-  if (default_file && (s == NULL || buf[0] == 0))
-    strcpy (buf, default_file);
-  return buf;
+  if (s == NULL || buf[0] == '\0' || buf[0] == '\r' || buf[0] == '\n')
+    {
+      if (default_file != NULL)
+        return strdup (default_file);
+      else
+        return NULL;
+    }
+  else
+    return strdup (buf);
 }
 
 static int
