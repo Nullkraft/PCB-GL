@@ -1,5 +1,5 @@
-Bottom: fefca3387ee64a62237995671a6b284652739f43
-Top:    03fa356e7eff83d7568c94e3090f7020f6b177b0
+Bottom: 224df6b6c2eec5e67003c4581156a240b20b131e
+Top:    6aa66bf1300091d9aa14273776cbeb84630ffa38
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-10 03:01:57 +0000
 
@@ -5897,7 +5897,7 @@ index 0000000..4b6d20b
 +
 +#endif
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index dd6f89e..9f9fd2a 100644
+index b8c4867..da6b4a0 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -37,7 +37,7 @@
@@ -5909,7 +5909,7 @@ index dd6f89e..9f9fd2a 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -638,6 +638,13 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -637,6 +637,13 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
    PLINE *contour;
    struct do_hole_info info;
    int stencil_bit;
