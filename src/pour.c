@@ -1464,7 +1464,6 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
   PlowPours (Data, type, ptr1, ptr2, subtract_plow, false);
 }
 
-<<<<<<< current
 
 /* Convert a POLYAREA (and all linked POLYAREA) to
  * raw PCB pours on the given layer.
