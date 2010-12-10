@@ -1,5 +1,5 @@
 Bottom: 9f6771782dc2d6cd503d87ef220017de53490a38
-Top:    ea89543f219259f5b07315546585a501f14a9642
+Top:    315f6b270477e69b42e7c9462b74b91ac2ea5bb2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-10 03:02:20 +0000
 
@@ -3990,10 +3990,10 @@ index c4a844b..9a65143 100644
  
  /* index is 0..MAX_LAYER-1.  If old_index is -1, a new layer is
 diff --git a/src/mymem.c b/src/mymem.c
-index 09cb6ab..e76bfa9 100644
+index 09cb6ab..a3a6161 100644
 --- a/src/mymem.c
 +++ b/src/mymem.c
-@@ -395,31 +395,60 @@ GetTextMemory (LayerTypePtr Layer)
+@@ -395,31 +395,59 @@ GetTextMemory (LayerTypePtr Layer)
  }
  
  /* ---------------------------------------------------------------------------
@@ -4010,8 +4010,7 @@ index 09cb6ab..e76bfa9 100644
 +      Layer->PourMax += STEP_POUR;
 +      if (Layer->pour_tree)
 +	r_destroy_tree (&Layer->pour_tree);
-+      pour = MyRealloc (pour, Layer->PourMax * sizeof (PourType),
-+			   "GetPourMemory()");
++      pour = realloc (pour, Layer->PourMax * sizeof (PourType));
 +      Layer->Pour = pour;
 +      memset (pour + Layer->PourN, 0,
 +	      STEP_POUR * sizeof (PourType));
@@ -4069,7 +4068,7 @@ index 09cb6ab..e76bfa9 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -429,6 +458,9 @@ GetPolygonMemory (LayerTypePtr Layer)
+@@ -429,6 +457,9 @@ GetPolygonMemory (LayerTypePtr Layer)
  PointTypePtr
  GetPointMemoryInPolygon (PolygonTypePtr Polygon)
  {
@@ -4079,7 +4078,7 @@ index 09cb6ab..e76bfa9 100644
    PointTypePtr points = Polygon->Points;
  
    /* realloc new memory if necessary and clear it */
-@@ -441,6 +473,29 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
+@@ -441,6 +472,28 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
  	      STEP_POLYGONPOINT * sizeof (PointType));
      }
    return (points + Polygon->PointN++);
@@ -4099,8 +4098,7 @@ index 09cb6ab..e76bfa9 100644
 +  if (Pour->PointN >= Pour->PointMax)
 +    {
 +      Pour->PointMax += STEP_POLYGONPOINT;
-+      points = MyRealloc (points, Pour->PointMax * sizeof (PointType),
-+			  "GetPointMemoryInPour()");
++      points = realloc (points, Pour->PointMax * sizeof (PointType));
 +      Pour->Points = points;
 +      memset (points + Pour->PointN, 0,
 +	      STEP_POLYGONPOINT * sizeof (PointType));
@@ -4109,7 +4107,7 @@ index 09cb6ab..e76bfa9 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -448,20 +503,20 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
+@@ -448,20 +501,20 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
   * if necessary
   */
  Cardinal *
@@ -4138,7 +4136,7 @@ index 09cb6ab..e76bfa9 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -627,8 +682,8 @@ FreePolygonMemory (PolygonTypePtr Polygon)
+@@ -627,8 +680,8 @@ FreePolygonMemory (PolygonTypePtr Polygon)
  {
    if (Polygon)
      {
@@ -4149,7 +4147,7 @@ index 09cb6ab..e76bfa9 100644
        if (Polygon->Clipped)
  	poly_Free (&Polygon->Clipped);
        poly_FreeContours (&Polygon->NoHoles);
-@@ -637,6 +692,27 @@ FreePolygonMemory (PolygonTypePtr Polygon)
+@@ -637,6 +690,27 @@ FreePolygonMemory (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -4160,8 +4158,8 @@ index 09cb6ab..e76bfa9 100644
 +{
 +  if (Pour)
 +    {
-+      MYFREE (Pour->Points);
-+      MYFREE (Pour->HoleIndex);
++      free (Pour->Points);
++      free (Pour->HoleIndex);
 +#define FIXME Later
 +#if 0
 +      if (Pour->Clipped)
@@ -4177,7 +4175,7 @@ index 09cb6ab..e76bfa9 100644
   * frees memory used by a box list
   */
  void
-@@ -823,20 +899,31 @@ FreeDataMemory (DataTypePtr Data)
+@@ -823,20 +897,31 @@ FreeDataMemory (DataTypePtr Data)
  	  free (layer->Line);
  	  free (layer->Arc);
  	  free (layer->Text);
