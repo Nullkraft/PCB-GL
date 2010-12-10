@@ -1,5 +1,5 @@
-Bottom: 6165dd87063c4b7c681eb0d428657588f9a01150
-Top:    927575b9285af2f830a8d42e5d8491dc2cba94b7
+Bottom: 0c211e35d9384c3beffc757a49a3862efeca6faf
+Top:    e1245977c7a970626861042dda38a4b79124538f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-10 03:02:10 +0000
 
@@ -9,7 +9,7 @@ Play with perspective
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index bf94889..a2c0546 100644
+index b037a7a..6b7684a 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -187,6 +187,12 @@ hidgl_flush_triangles (triangle_buffer *buffer)
@@ -76,7 +76,7 @@ index bf94889..a2c0546 100644
    else
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9415a7e..54cee5e 100644
+index 6c1ec48..cf69906 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -35,6 +35,8 @@
@@ -112,7 +112,7 @@ index 9415a7e..54cee5e 100644
 -  ElementTypePtr element = (ElementTypePtr) b;
 +//  ElementTypePtr element = (ElementTypePtr) b;
  
- //  DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
+   DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
    return 1;
 @@ -1415,7 +1420,8 @@ DrawMask (BoxType * screen)
    polygon.Clipped = board_outline_poly ();
@@ -124,7 +124,7 @@ index 9415a7e..54cee5e 100644
    SET_FLAG (FULLPOLYFLAG, &polygon);
    common_fill_pcb_polygon (out->fgGC, &polygon, screen);
    poly_Free (&polygon.Clipped);
-@@ -1634,7 +1640,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1635,7 +1641,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    /* Look at sign of eye coordinate system z-coord when projecting a
       world vector along +ve Z axis, (0, 0, 1). */
    /* XXX: This isn't strictly correct, as I've ignored the matrix
@@ -133,7 +133,7 @@ index 9415a7e..54cee5e 100644
    /* NB: last_modelview_matrix is transposed in memory! */
    reverse_layers = (last_modelview_matrix[2][2] < 0);
  
-@@ -1728,7 +1734,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1729,7 +1735,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
        cyl_info.from_layer = drawn_groups[i];
        cyl_info.to_layer = drawn_groups[i - 1];
        cyl_info.scale = gport->zoom;
@@ -142,7 +142,7 @@ index 9415a7e..54cee5e 100644
        gui->set_color (Output.fgGC, "drill");
        ghid_global_alpha_mult (Output.fgGC, 0.75);
        if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_cyl_callback, &cyl_info);
-@@ -1823,6 +1829,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1824,6 +1830,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    int new_x, new_y;
    int min_depth;
    int max_depth;
@@ -155,7 +155,7 @@ index 9415a7e..54cee5e 100644
  
    buffer.total_triangles = 0;
    buffer.total_vertices = 0;
-@@ -1856,20 +1868,51 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1857,20 +1869,51 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -217,7 +217,7 @@ index 9415a7e..54cee5e 100644
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
  #ifdef ONE_SHOT
-@@ -1886,7 +1929,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1887,7 +1930,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -226,7 +226,7 @@ index 9415a7e..54cee5e 100644
    hidgl_reset_stencil_usage ();
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
-@@ -1897,58 +1940,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1898,58 +1941,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_depth = -50 + compute_depth (0);                    /* FIXME: NEED TO USE PHYSICAL GROUPS */
    max_depth =  50 + compute_depth (max_copper_layer - 1); /* FIXME: NEED TO USE PHYSICAL GROUPS */
  
@@ -325,7 +325,7 @@ index 9415a7e..54cee5e 100644
    region.X1 = min_x;  region.X2 = max_x + 1;
    region.Y1 = min_y;  region.Y2 = max_y + 1;
  
-@@ -2281,10 +2339,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2282,10 +2340,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    return pixmap;
  }
  
@@ -339,7 +339,7 @@ index 9415a7e..54cee5e 100644
    det = m[0][0] * m[1][1] -
          m[0][1] * m[1][0];
    return det;
-@@ -2312,9 +2370,9 @@ determinant_4x4 (float m[4][4])
+@@ -2313,9 +2371,9 @@ determinant_4x4 (float m[4][4])
  #endif
  
  static void
@@ -351,7 +351,7 @@ index 9415a7e..54cee5e 100644
    out[0][0] =  m[1][1] * scale;
    out[0][1] = -m[0][1] * scale;
    out[1][0] = -m[1][0] * scale;
-@@ -2379,68 +2437,104 @@ invert_4x4 (float m[4][4], float out[4][4])
+@@ -2380,68 +2438,104 @@ invert_4x4 (float m[4][4], float out[4][4])
  #endif
  
  
