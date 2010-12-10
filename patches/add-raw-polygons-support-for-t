@@ -1,5 +1,5 @@
-Bottom: dff3a43916aa901b7bd782a742f400ccf147c98b
-Top:    aefdcdfd4546a555552051a5fff4f2b61c74efc5
+Bottom: 4652d99e5a49c94c35f32d37fa36cecb35a2ea56
+Top:    cb27e6530faf080ade91249dcad2e8bdce7f8081
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-10 03:01:50 +0000
 
@@ -26,7 +26,7 @@ For now, we don't use polygons on the mask, so its not a a problem (?).
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index b0a5049..ab757a9 100644
+index 9b35674..70c3caa 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -36,6 +36,7 @@
@@ -37,7 +37,7 @@ index b0a5049..ab757a9 100644
  
  
  #ifdef HAVE_LIBDMALLOC
-@@ -478,6 +479,8 @@ myBegin (GLenum type)
+@@ -477,6 +478,8 @@ myBegin (GLenum type)
    triangle_comp_idx = 0;
  }
  
@@ -46,7 +46,7 @@ index b0a5049..ab757a9 100644
  static void
  myVertex (GLdouble *vertex_data)
  {
-@@ -570,6 +573,116 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -569,6 +572,116 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
  }
  
  void
@@ -201,10 +201,10 @@ index b265b66..b1dfc1c 100644
  {
    gint w, h, lw, xx, yy;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 3d13ae5..aee8993 100644
+index aeff85a..d12a98a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -591,6 +591,14 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
+@@ -590,6 +590,14 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
  }
  
  void
