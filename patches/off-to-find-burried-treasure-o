@@ -1,5 +1,5 @@
 Bottom: eaac3d58cf7a16b6170e1f034267a997c014d519
-Top:    507622b49320e1c82767522e2ca8bc86309072a3
+Top:    568f26e1205b894feca44ef813f18c41d3406bc2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-06 20:46:54 +0000
 
@@ -277,7 +277,7 @@ index 8f5cbad..6b821e7 100644
      {
        DrawPour (Layer, Pour, 0);
 diff --git a/src/pour.c b/src/pour.c
-index 0e8906a..2fcd65e 100644
+index 0e8906a..c8bafa2 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -66,7 +66,7 @@ RCSID ("$Id$");
@@ -475,7 +475,7 @@ index 0e8906a..2fcd65e 100644
  }
  
  void
-@@ -1411,9 +1461,10 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
+@@ -1411,7 +1461,7 @@ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
  //      printf ("Calling InitPourClip from ClearFromPour\n");
        InitPourClip (PCB->Data, (LayerTypePtr) ptr1, (PourTypePtr) ptr2);
      }
@@ -483,11 +483,8 @@ index 0e8906a..2fcd65e 100644
 +  PlowPours (Data, type, ptr1, ptr2, subtract_plow, false);
  }
  
-+<<<<<<< current
  
- /* Convert a POLYAREA (and all linked POLYAREA) to
-  * raw PCB pours on the given layer.
-@@ -1469,3 +1520,12 @@ PolyToPoursOnLayer (DataType *Destination, LayerType *Layer,
+@@ -1469,3 +1519,12 @@ PolyToPoursOnLayer (DataType *Destination, LayerType *Layer,
  
    SetChangedFlag (true);
  }
