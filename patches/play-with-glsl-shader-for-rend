@@ -1,7 +1,7 @@
-Bottom: 227dcc931e4d74eb4e927155db3216b2a4e7dbae
-Top:    b39dc3a3a71f52e222b6d18e61e651da1ec390ca
+Bottom: f4ba77e1d82d4402cbb6046e90a339ae31131e83
+Top:    33dc16f1c3f8bc2f09b238fd95efc61db6f72820
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-08 13:14:11 +0000
+Date:   2010-12-10 03:02:07 +0000
 
 Play with GLSL shader for rendering line caps and circles
 
@@ -47,10 +47,10 @@ Notes:
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 3f3c291..70e759d 100644
+index b7857bd..2efb5e6 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -185,6 +185,8 @@ LIBGTK_GL_SRCS= \
+@@ -187,6 +187,8 @@ LIBGTK_GL_SRCS= \
  GL_SRCS= \
  	hid/common/hidgl.c \
  	hid/common/hidgl.h \
@@ -1129,7 +1129,7 @@ index d9c1395..914dfb4 100644
  
    /* call the drawing routine */
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index e5418af..1a14478 100644
+index 4306bde..51cc402 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -1604,7 +1604,8 @@ Benchmark (int argc, char **argv, int x, int y)

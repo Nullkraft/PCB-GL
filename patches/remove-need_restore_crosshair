@@ -1,7 +1,7 @@
-Bottom: 2ac08672170fd86f64ba10e30cf408ca9ba10338
-Top:    8d0d8c3965bf235a1884915d08c6335d62147d46
+Bottom: c722809baa85a3192d33827ece1d16242686add4
+Top:    6165dd87063c4b7c681eb0d428657588f9a01150
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-08 13:14:12 +0000
+Date:   2010-12-10 03:02:09 +0000
 
 Remove need_restore_crosshair
 
@@ -58,7 +58,7 @@ index 490ccc4..b12d8cc 100644
    v_adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->v_range));
    gport->view_x0 = h_adj->value;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index e7a12c4..3ddf43b 100644
+index 809d0ac..d8cf3f8 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -134,7 +134,7 @@ typedef struct
