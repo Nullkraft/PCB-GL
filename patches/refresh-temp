@@ -1,0 +1,21 @@
+Bottom: 5e3dfa4eef463df8483be3c628492965efea2a26
+Top:    1bd01662a27e7b2c8a942fb11a48b501532e989f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-10 03:44:47 +0000
+
+Refresh of move-more-rendering-to-world-c
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 62e2044..7d81d23 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1814,7 +1814,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   static int display_list;
+ #endif
+   BoxType region;
+-  int eleft, eright, etop, ebottom;
+   int min_x, min_y;
+   int max_x, max_y;
+   int new_x, new_y;
