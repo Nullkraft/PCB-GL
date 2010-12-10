@@ -152,8 +152,7 @@ draw_grid ()
   if (n > npoints)
     {
       npoints = n + 10;
-      points =
-        MyRealloc (points, npoints * 2 * sizeof (GLfloat), "gtk_draw_grid");
+      points = Realloc (points, npoints * 2 * sizeof (GLfloat));
     }
 
   glEnableClientState (GL_VERTEX_ARRAY);
