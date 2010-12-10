@@ -1,7 +1,7 @@
-Bottom: 0100bb5f7879474aa9f57a201bb3e0645ada7d38
-Top:    113f7399e063f97face8e6cc0e203ba1613d414b
+Bottom: 32a5f36ca01b491b563dfd6f22c1d9b2be03c505
+Top:    50f0d7d17eb4cf1f5d16eb2dd4eba1c7a49d74ec
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-10 03:42:03 +0000
+Date:   2010-12-10 04:01:11 +0000
 
 Add configure checks for GtkGLEext, add to CFLAGS and LIBS
 
@@ -24,7 +24,7 @@ Add configure checks for GtkGLEext, add to CFLAGS and LIBS
 ---
 
 diff --git a/configure.ac b/configure.ac
-index a220a82..964e235 100644
+index abdd8a1..230b8e5 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -388,6 +388,45 @@ $DBUS_PKG_ERRORS])]
@@ -73,7 +73,7 @@ index a220a82..964e235 100644
  AC_MSG_CHECKING([for which printer to use])
  AC_ARG_WITH([printer],
  [  --with-printer= 	  Specify the printer: lpr [[default=lpr]]],
-@@ -728,6 +767,17 @@ $GTK_PKG_ERRORS])]
+@@ -731,6 +770,17 @@ $GTK_PKG_ERRORS])]
  	fi
  
  	GLIB_VERSION=`$PKG_CONFIG glib-2.0 --modversion`
@@ -91,7 +91,7 @@ index a220a82..964e235 100644
  	;;
  
        gcode|nelma|png )
-@@ -1015,8 +1065,8 @@ AM_CONDITIONAL(DEBUG_BUILD, test x$enable_debug = xyes)
+@@ -1018,8 +1068,8 @@ AM_CONDITIONAL(DEBUG_BUILD, test x$enable_debug = xyes)
  
  # ------------- Complete set of CFLAGS and LIBS -------------------
  
