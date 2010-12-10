@@ -1,7 +1,7 @@
-Bottom: c64d553127825a23d0d737d924187f71da4a36a2
-Top:    7cb99d8e2f0e1a3a320bf2e8d56b982d1e41d28f
+Bottom: ed22a5316e5668797ae0d5999c9ed590f022396a
+Top:    dff3a43916aa901b7bd782a742f400ccf147c98b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-08 13:12:18 +0000
+Date:   2010-12-10 03:01:49 +0000
 
 Use motion hints when processing pointer motion over the drawing area
 
@@ -83,7 +83,7 @@ index 3baff02..2eafbf9 100644
    /*
     * This is required to get the drawing_area key-press-event.  Also the
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index dec007f..c0d80b8 100644
+index 2ad0adc..38424e9 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -303,7 +303,7 @@ gint ghid_port_window_enter_cb (GtkWidget * widget,

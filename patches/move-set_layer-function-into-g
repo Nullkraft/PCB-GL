@@ -1,7 +1,7 @@
-Bottom: 476d264a998e3eadb64e60fa7b26df2e1a71f133
-Top:    e9690964b577ba479714ed2456718cb739a28d58
+Bottom: 6488754d17a08f3a3b7df92c24c303ffedaae73b
+Top:    3d3428d25c830b6d9ab568eae1252ead9ef6581a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-08 13:12:16 +0000
+Date:   2010-12-10 03:01:47 +0000
 
 Move set_layer function into GDK specific code.
 
@@ -68,7 +68,7 @@ index 78c382e..06b7257 100644
  ghid_destroy_gc (hidGC gc)
  {
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index f4402c9..c481007 100644
+index e91b68c..668ee55 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -308,51 +308,6 @@ zoom_by (double factor, int x, int y)
@@ -124,7 +124,7 @@ index f4402c9..c481007 100644
  ghid_calibrate (double xval, double yval)
  {
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index c4d71b4..2966609 100644
+index f7fe9fd..1114e7e 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -477,6 +477,7 @@ void ghid_logv (const char *fmt, va_list args);

@@ -1,7 +1,7 @@
-Bottom: 025ae28c00b32093aac0b0c98090622794d26a7a
-Top:    b68aed5b2b164462756eafa97320711b8abc404c
+Bottom: d2f2f6f6bec42962d7b10eac798da0da463d84db
+Top:    e886368899ee1c1e0adda74a6931d74987502757
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-08 13:12:24 +0000
+Date:   2010-12-10 03:01:55 +0000
 
 Silly space navigator interface to allow funky views
 
@@ -12,10 +12,10 @@ Silly space navigator interface to allow funky views
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 6a0c335..82a05aa 100644
+index c144b33..44355a5 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -279,7 +279,9 @@ LIBGTK_SRCS = \
+@@ -281,7 +281,9 @@ LIBGTK_SRCS = \
  	hid/gtk/gui-pinout-preview.h \
  	hid/gtk/gui-pinout-window.c \
  	hid/gtk/gui-top-window.c \
@@ -178,7 +178,7 @@ index d6bd03c..3af647e 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 9deb443..e7a12c4 100644
+index 93a1970..809d0ac 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -148,6 +148,8 @@ typedef struct

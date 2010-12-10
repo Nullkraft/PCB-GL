@@ -1,7 +1,7 @@
-Bottom: 5d53b531d97edae8b8b72d00a9222f9cb412291c
-Top:    21f903709e4e206520706994ff640f5e8c5808d4
+Bottom: 7322136917cf08c1496927383a638f7611d37012
+Top:    911f070f6a3e358fff349d3915364569a2ecc2ad
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-08 13:12:15 +0000
+Date:   2010-12-10 03:01:45 +0000
 
 hid/gtk: Move more gdk specific drawing routines to gtkhid-gdk.c
 
@@ -278,7 +278,7 @@ index 5cd969c..b1dc11d 100644
 +    }
 +}
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 7d59672..f4402c9 100644
+index a3947d0..e91b68c 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -33,9 +33,6 @@
@@ -563,7 +563,7 @@ index 6164415..4ca6040 100644
  ghid_idle_cb (gpointer data)
  {
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 7686106..4ebaea0 100644
+index 4ad6cdc..d67db1a 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -284,11 +284,10 @@ void ghid_port_ranges_zoom (gdouble zoom);

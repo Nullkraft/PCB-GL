@@ -1,7 +1,7 @@
-Bottom: e5e32ca990365bc7df95248ff626b29944c9a1f0
-Top:    f99c8b590caf284a2a1e87cea04bf592794bc0b3
+Bottom: fb541ff9ff65254d7608f78a18a782b170aab95c
+Top:    f502b17c7793b0ce37e0adde07214ce0b8416028
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-08 13:12:28 +0000
+Date:   2010-12-10 03:02:00 +0000
 
 Don't make GUI drawing calls to erase objects
 
@@ -15,7 +15,7 @@ and teardown around drawing.
 ---
 
 diff --git a/src/autoroute.c b/src/autoroute.c
-index ea97d01..f7421ca 100644
+index 9ccab97..1b8b82f 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -1421,9 +1421,11 @@ bloat_routebox (routebox_t * rb)
@@ -105,7 +105,7 @@ index ea97d01..f7421ca 100644
  
    /* and to the via space structures */
    if (AutoRouteParameters.use_vias)
-@@ -3650,8 +3661,10 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
+@@ -3652,8 +3663,10 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
    while (!path->flags.source);
    /* flush the line queue */
    RD_DrawLine (rd, -1, 0, 0, 0, 0, 0, NULL, false, false);
@@ -116,7 +116,7 @@ index ea97d01..f7421ca 100644
  }
  
  /* create a fake "edge" used to defer via site searching. */
-@@ -3950,8 +3963,8 @@ __show_tree (const BoxType * b, void *cl)
+@@ -3952,8 +3965,8 @@ __show_tree (const BoxType * b, void *cl)
  static void
  show_tree (rtree_t * tree, int even_odd)
  {
@@ -127,7 +127,7 @@ index ea97d01..f7421ca 100644
  }
  
  #endif
-@@ -4730,8 +4743,8 @@ RouteAll (routedata_t * rd)
+@@ -4732,8 +4745,8 @@ RouteAll (routedata_t * rd)
  		    }
  		}
  	      END_LOOP;
@@ -138,7 +138,7 @@ index ea97d01..f7421ca 100644
  	      /* reset to original connectivity */
  	      if (rip)
  		{
-@@ -5089,16 +5102,20 @@ AutoRoute (bool selected)
+@@ -5091,16 +5104,20 @@ AutoRoute (bool selected)
  
    total_wire_length = 0;
    total_via_count = 0;
@@ -159,7 +159,7 @@ index ea97d01..f7421ca 100644
  
    for (i = 0; i < NUM_STYLES; i++)
      {
-@@ -5258,10 +5275,12 @@ donerouting:
+@@ -5260,10 +5277,12 @@ donerouting:
    Message ("Total added wire length = %f inches, %d vias added\n",
  	   total_wire_length / 1.e5, total_via_count);
    DestroyRouteData (&rd);

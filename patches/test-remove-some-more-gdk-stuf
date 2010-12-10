@@ -1,7 +1,7 @@
-Bottom: 34314cbc2583bed6976149d0b37ffb85cdd52cd5
-Top:    b7c93d54a8fda30565fd22f39f9f85d61f9d14a3
+Bottom: 9135f0bdca999c7ea487628fddbbf5e1e04d1b3a
+Top:    7c88dee5b653e80ff746828ea780b74758c3b520
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-08 13:12:15 +0000
+Date:   2010-12-10 03:01:46 +0000
 
 TEST REMOVE SOME MORE GDK STUFF
 
@@ -9,10 +9,10 @@ TEST REMOVE SOME MORE GDK STUFF
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index e719268..3167f4f 100644
+index a0f1c50..5308780 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -264,7 +264,6 @@ LIBGTK_SRCS = \
+@@ -266,7 +266,6 @@ LIBGTK_SRCS = \
  	hid/gtk/gui-pinout-preview.c \
  	hid/gtk/gui-pinout-preview.h \
  	hid/gtk/gui-pinout-window.c \
@@ -426,7 +426,7 @@ index 90977e2..02c1fd4 100644
    g_signal_connect (G_OBJECT (gport->top_window), "configure_event",
  		    G_CALLBACK (top_window_configure_event_cb), port);
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 4ebaea0..49e2aef 100644
+index d67db1a..21afcfb 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -36,7 +36,7 @@
