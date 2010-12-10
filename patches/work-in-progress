@@ -1,5 +1,5 @@
 Bottom: f46e3dd8dfe1f6b1863cabb7c6d91898fb376f83
-Top:    27f0c58a00a5a686ad609bff77ae7e1ff8087a44
+Top:    2a7c9bb5600112f68a6f3f8ed162e6f985ca8a4b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 23:08:11 +0000
 
@@ -9,7 +9,7 @@ WORK IN PROGRESS
 ---
 
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
-index 2b98a75..b7f9eea 100644
+index 2b98a75..18bc637 100644
 --- a/src/hid/common/hidnogui.c
 +++ b/src/hid/common/hidnogui.c
 @@ -294,14 +294,23 @@ static char *
@@ -40,7 +40,7 @@ index 2b98a75..b7f9eea 100644
  }
  
  /* FIXME - this could use some enhancement to actually use the other
-@@ -312,14 +321,22 @@ nogui_fileselect (const char *title, const char *descr,
+@@ -312,14 +321,23 @@ nogui_fileselect (const char *title, const char *descr,
  		  const char *history_tag, int flags)
  {
    static char buf[1024];
@@ -55,6 +55,7 @@ index 2b98a75..b7f9eea 100644
 -    strcpy (buf, default_file);
 -  return buf;
 +
++  s = fgets (buf, 1024, stdin);
 +  if (s == NULL || buf[0] == '\0' || buf[0] == '\r' || buf[0] == '\n')
 +    {
 +      if (default_file != NULL)
