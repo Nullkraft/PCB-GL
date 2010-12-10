@@ -264,26 +264,6 @@ nogui_logv (const char *fmt, va_list ap)
   vprintf (fmt, ap);
 }
 
-static int
-nogui_confirm_dialog (char *msg, ...)
-{
-  int rv;
-
-  do
-    {
-      printf ("%s ? 0=cancel 1=ok : ", msg);
-      fflush (stdout);
-    }
-  while (scanf ("%d", &rv) != 1);
-  return rv;
-}
-
-static int
-nogui_close_confirm_dialog ()
-{
-  return nogui_confirm_dialog (_("OK to lose data ?"), NULL);
-}
-
 static void
 nogui_report_dialog (char *title, char *msg)
 {
@@ -338,6 +318,52 @@ nogui_fileselect (const char *title, const char *descr,
     }
   else
     return strdup (buf);
+}
+
+static int
+nogui_confirm_dialog (char *msg, ...)
+{
+  char *extra_msg = " ? 0=cancel 1 = ok";
+  char *prompt;
+  char *answer;
+  int ret = 0;
+  bool valid_answer = false;
+
+  prompt = malloc ((strlen (msg) + strlen (extra_msg) + 1) * sizeof (char));
+  strcpy (prompt, msg);
+  strcat (prompt, extra_msg);
+
+  do
+    {
+      answer = nogui_prompt_for (prompt, NULL);
+
+      if (answer == NULL)
+        continue;
+
+      if (answer[0] == '0' && answer[1] == '\0')
+        {
+          ret = 0;
+          valid_answer = true;
+        }
+
+      if (answer[0] == '1' && answer[1] == '\0')
+        {
+          ret = 1;
+          valid_answer = true;
+        }
+
+      free (answer);
+    }
+  while (!valid_answer);
+
+  free (prompt);
+  return ret;
+}
+
+static int
+nogui_close_confirm_dialog ()
+{
+  return nogui_confirm_dialog (_("OK to lose data ?"), NULL);
 }
 
 static int
