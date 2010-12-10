@@ -3,7 +3,10 @@ Top:    d92697d7884e202d012aed7b605612cdf1aa4f84
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-10 01:53:37 +0000
 
-file.c Handle failure of chdir() calls
+file.c: c Attempt to handle failure of GetWorkingDirectory() and chdir()
+
+Report the error to the user if any GetWorkingDirectory or chdir call
+fails.
 
 
 ---
