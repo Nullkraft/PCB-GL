@@ -1,5 +1,5 @@
-Bottom: 0eefcd0fcdb1ccddefb494206ba15d8974712d63
-Top:    134c19afef413edd3e44b640ec50f29423462710
+Bottom: fbfa7c0155cb594f67b1e78cd943a19e69809702
+Top:    72fccdc018c6f9ede117dd65d21b625ef83e3c6a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-07 16:58:35 +0000
 
@@ -12,7 +12,7 @@ passing a NULL string to duplicate.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 07b2752..0eaaf39 100644
+index 9e1370b..f5e043a 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -5732,7 +5732,7 @@ ActionSaveTo (int argc, char **argv, int x, int y)
@@ -33,7 +33,7 @@ index 07b2752..0eaaf39 100644
        else
  	name = gui->prompt_for (_("Enter the layout name:"), "");
  
-@@ -7239,7 +7239,7 @@ ActionElementSetAttr (int argc, char **argv, int x, int y)
+@@ -7240,7 +7240,7 @@ ActionElementSetAttr (int argc, char **argv, int x, int y)
    if (attr && value)
      {
        MYFREE (attr->value);
@@ -142,7 +142,7 @@ index 15c0099..a1c30bb 100644
    return &list->List[list->Number - 1];
  }
 diff --git a/src/file.c b/src/file.c
-index aff5073..153cdce 100644
+index 8cbd95d..5a926f8 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -318,7 +318,7 @@ SavePCB (char *Filename)
@@ -163,7 +163,7 @@ index aff5073..153cdce 100644
        /* just in case a bad file saved file is loaded */
  
        units_mm = (PCB->Grid != (int) PCB->Grid) ? true : false;
-@@ -1166,7 +1166,7 @@ LoadNewlibFootprintsFromDir(char *libpath, char *toppath)
+@@ -1185,7 +1185,7 @@ LoadNewlibFootprintsFromDir(char *libpath, char *toppath)
    /* Get pointer to memory holding menu */
    menu = GetLibraryMenuMemory (&Library);
    /* Populate menuname and path vars */
@@ -172,7 +172,7 @@ index aff5073..153cdce 100644
    menu->directory = strdup (pcb_basename(toppath));
  
    /* Now loop over files in this directory looking for files.
-@@ -1257,7 +1257,7 @@ ParseLibraryTree (void)
+@@ -1281,7 +1281,7 @@ ParseLibraryTree (void)
    /* Additional loop to allow for multiple 'newlib' style library directories 
     * called out in Settings.LibraryTree
     */
@@ -181,7 +181,7 @@ index aff5073..153cdce 100644
    for (p = strtok (libpaths, PCB_PATH_DELIMETER); p && *p; p = strtok (NULL, PCB_PATH_DELIMETER))
      {
        /* remove trailing path delimeter */
-@@ -1383,8 +1383,7 @@ ReadLibraryContents (void)
+@@ -1422,8 +1422,7 @@ ReadLibraryContents (void)
        if (!strncmp (inputline, "TYPE=", 5))
  	{
  	  menu = GetLibraryMenuMemory (&Library);
@@ -191,7 +191,7 @@ index aff5073..153cdce 100644
  	  menu->directory = strdup (Settings.LibraryFilename);
  	}
        else
-@@ -1393,13 +1392,11 @@ ReadLibraryContents (void)
+@@ -1432,13 +1431,11 @@ ReadLibraryContents (void)
  	  if (!menu)
  	    {
  	      menu = GetLibraryMenuMemory (&Library);
@@ -207,7 +207,7 @@ index aff5073..153cdce 100644
  
  	  /* now break the line into pieces separated by colons */
  	  if ((entry->Template = strtok (entry->AllocatedMemory, ":")) !=
-@@ -1526,7 +1523,7 @@ ReadNetlist (char *filename)
+@@ -1565,7 +1562,7 @@ ReadNetlist (char *filename)
  	  if (kind == 0)
  	    {
  	      menu = GetLibraryMenuMemory (&PCB->NetlistLib);
@@ -216,7 +216,7 @@ index aff5073..153cdce 100644
  	      menu->flag = 1;
  	      kind++;
  	    }
-@@ -1535,12 +1532,12 @@ ReadNetlist (char *filename)
+@@ -1574,12 +1571,12 @@ ReadNetlist (char *filename)
  	      if (kind == 1 && strchr (temp, '-') == NULL)
  		{
  		  kind++;
