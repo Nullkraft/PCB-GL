@@ -1,0 +1,35 @@
+Bottom: d92697d7884e202d012aed7b605612cdf1aa4f84
+Top:    70042bad4857d04d6a3ec8011e40d4411d0ef063
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-10 02:19:21 +0000
+
+Refresh of file-c-handle-failure-of-chdir
+
+---
+
+diff --git a/src/file.c b/src/file.c
+index 40308f3..8cbd95d 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -1168,15 +1168,19 @@ LoadNewlibFootprintsFromDir(char *libpath, char *toppath)
+   if (GetWorkingDirectory (subdir) == NULL)
+     {
+       Message (_("LoadNewlibFootprintsFromDir: Could not determine new working directory\n"));
++      if (chdir (olddir))
++        ChdirErrorMessage (olddir);
+       return 0;
+     }
+ 
+   /* First try opening the directory specified by path */
+   if ( (subdirobj = opendir (subdir)) == NULL )
+-  {
++    {
+       OpendirErrorMessage (subdir);
++      if (chdir (olddir))
++        ChdirErrorMessage (olddir);
+       return 0;
+-  }
++    }
+ 
+   /* Get pointer to memory holding menu */
+   menu = GetLibraryMenuMemory (&Library);
