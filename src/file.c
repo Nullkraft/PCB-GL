@@ -390,7 +390,7 @@ LoadPCB (char *Filename)
 
       /* clear 'changed flag' */
       SetChangedFlag (false);
-      PCB->Filename = strdup (Filename);
+      PCB->Filename = STRDUP (Filename);
       /* just in case a bad file saved file is loaded */
 
       units_mm = (PCB->Grid != (int) PCB->Grid) ? true : false;

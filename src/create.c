@@ -1006,8 +1006,8 @@ CreateNewAttribute (AttributeListTypePtr list, char *name, char *value)
       list->Max += 10;
       list->List = realloc (list->List, list->Max * sizeof (AttributeType));
     }
-  list->List[list->Number].name = strdup (name);
-  list->List[list->Number].value = strdup (value);
+  list->List[list->Number].name = STRDUP (name);
+  list->List[list->Number].value = STRDUP (value);
   list->Number++;
   return &list->List[list->Number - 1];
 }
