@@ -81,7 +81,9 @@ typedef struct hid_gc_struct
 }
 hid_gc_struct;
 
-
+#define BOARD_THICKNESS 6300
+#define MASK_COPPER_SPACING 200
+#define SILK_MASK_SPACING 50
 static int
 compute_depth (int group)
 {
@@ -89,45 +91,56 @@ compute_depth (int group)
 
   int solder_group;
   int component_group;
-  int min_phys_group;
-  int max_phys_group;
-  int max_depth;
-  int depth = last_depth_computed;
-  int newgroup;
-  int idx = (group >= 0
-             && group <
-             max_group) ? PCB->LayerGroups.Entries[group][0] : group;
+  int min_copper_group;
+  int max_copper_group;
+  int num_copper_groups;
+  int middle_copper_group;
+  int depth;
 
   solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
   component_group = GetLayerGroupNumberByNumber (component_silk_layer);
 
-  min_phys_group = MIN (solder_group, component_group);
-  max_phys_group = MAX (solder_group, component_group);
-
-  max_depth = (1 + max_phys_group - min_phys_group) * 10;
+  min_copper_group = MIN (solder_group, component_group);
+  max_copper_group = MAX (solder_group, component_group);
+  num_copper_groups = max_copper_group - min_copper_group + 1;
+  middle_copper_group = min_copper_group + num_copper_groups / 2;
 
   if (group >= 0 && group < max_group) {
-    newgroup = group;
+    if (group >= min_copper_group && group <= max_copper_group) {
+      /* XXX: IS THIS INCORRECT FOR REVERSED GROUP ORDERINGS? */
+      depth = -(group - middle_copper_group) * BOARD_THICKNESS / num_copper_groups;
+    } else {
+      depth = 0;
+    }
 
-    depth = (max_depth - (newgroup - min_phys_group) * 10) * 200 / gport->zoom;
-  } else if (SL_TYPE (idx) == SL_MASK) {
-    if (SL_SIDE (idx) == SL_TOP_SIDE) {
-      depth = (max_depth + 3) * 200 / gport->zoom;
+  } else if (SL_TYPE (group) == SL_MASK) {
+    if (SL_SIDE (group) == SL_TOP_SIDE) {
+      depth = -((min_copper_group - middle_copper_group) * BOARD_THICKNESS / num_copper_groups - MASK_COPPER_SPACING);
     } else {
-      depth = (10 - 3) * 200 / gport->zoom;
+      depth = -((max_copper_group - middle_copper_group) * BOARD_THICKNESS / num_copper_groups + MASK_COPPER_SPACING);
     }
-  } else if (SL_TYPE (idx) == SL_SILK) {
-    if (SL_SIDE (idx) == SL_TOP_SIDE) {
-      depth = (max_depth + 5) * 200 / gport->zoom;
+  } else if (SL_TYPE (group) == SL_SILK) {
+    if (SL_SIDE (group) == SL_TOP_SIDE) {
+      depth = -((min_copper_group - middle_copper_group) * BOARD_THICKNESS / num_copper_groups - MASK_COPPER_SPACING - SILK_MASK_SPACING);
     } else {
-      depth = (10 - 5) * 200 / gport->zoom;
+      depth = -((max_copper_group - middle_copper_group) * BOARD_THICKNESS / num_copper_groups + MASK_COPPER_SPACING + SILK_MASK_SPACING);
     }
-  } else if (SL_TYPE (idx) == SL_INVISIBLE) {
+
+  } else if (SL_TYPE (group) == SL_INVISIBLE) {
+    /* Same as silk, but for the back-side layer */
     if (Settings.ShowSolderSide) {
-      depth = (max_depth + 5) * 200 / gport->zoom;
+      depth = -((min_copper_group - middle_copper_group) * BOARD_THICKNESS / num_copper_groups - MASK_COPPER_SPACING - SILK_MASK_SPACING);
     } else {
-      depth = (10 - 5) * 200 / gport->zoom;
+      depth = -((max_copper_group - middle_copper_group) * BOARD_THICKNESS / num_copper_groups + MASK_COPPER_SPACING + SILK_MASK_SPACING);
     }
+  } else if (SL_TYPE (group) == SL_RATS) {
+    depth = last_depth_computed;
+  } else if (SL_TYPE (group) == SL_FINISHED) {
+    depth = last_depth_computed;
+  } else {
+    /* DEFAULT CASE */
+    printf ("Unknown layer group to set depth for: %i\n", group);
+    depth = last_depth_computed;
   }
 
   last_depth_computed = depth;
@@ -244,15 +257,6 @@ ghid_draw_grid (BoxTypePtr drawn_area)
       gport->grid_color.blue ^= gport->bg_color.blue;
     }
 
-  hidgl_flush_triangles (&buffer);
-
-  glEnable (GL_COLOR_LOGIC_OP);
-  glLogicOp (GL_XOR);
-
-  glColor3f (gport->grid_color.red / 65535.,
-             gport->grid_color.green / 65535.,
-             gport->grid_color.blue / 65535.);
-
   x1 = GRIDFIT_X (MAX (0, drawn_area->X1), PCB->Grid);
   y1 = GRIDFIT_Y (MAX (0, drawn_area->Y1), PCB->Grid);
   x2 = GRIDFIT_X (MIN (PCB->MaxWidth, drawn_area->X2), PCB->Grid);
@@ -284,26 +288,36 @@ ghid_draw_grid (BoxTypePtr drawn_area)
       points = realloc (points, npoints * 3 * sizeof (GLfloat));
     }
 
+  hidgl_flush_triangles (&buffer);
+
+  glColor3f (gport->grid_color.red / 65535.,
+             gport->grid_color.green / 65535.,
+             gport->grid_color.blue / 65535.);
+  glTexCoord2f (0., 0.);
+
+  glDisable (GL_STENCIL_TEST);
+  glEnable (GL_COLOR_LOGIC_OP);
+  glLogicOp (GL_XOR);
   glEnableClientState (GL_VERTEX_ARRAY);
   glVertexPointer (3, GL_FLOAT, 0, points);
 
   n = 0;
   for (x = x1; x <= x2; x += PCB->Grid)
     {
-      points[3 * n] = Vx (x);
+      points[3 * n] = x;
       points[3 * n + 2] = global_depth;
       n++;
     }
   for (y = y1; y <= y2; y += PCB->Grid)
     {
-      int vy = Vy (y);
       for (i = 0; i < n; i++)
-	points[3 * i + 1] = vy;
+	points[3 * i + 1] = y;
       glDrawArrays (GL_POINTS, 0, n);
     }
 
   glDisableClientState (GL_VERTEX_ARRAY);
   glDisable (GL_COLOR_LOGIC_OP);
+  glEnable (GL_STENCIL_TEST);
 }
 
 #if 0
@@ -752,9 +766,9 @@ static void
 draw_right_cross (gint x, gint y, gint z)
 {
   glVertex3i (x, 0, z);
-  glVertex3i (x, gport->height, z);
+  glVertex3i (x, PCB->MaxHeight, z);
   glVertex3i (0, y, z);
-  glVertex3i (gport->width, y, z);
+  glVertex3i (PCB->MaxWidth, y, z);
 }
 
 static void
@@ -762,25 +776,25 @@ draw_slanted_cross (gint x, gint y, gint z)
 {
   gint x0, y0, x1, y1;
 
-  x0 = x + (gport->height - y);
-  x0 = MAX(0, MIN (x0, gport->width));
+  x0 = x + (PCB->MaxHeight - y);
+  x0 = MAX(0, MIN (x0, PCB->MaxWidth));
   x1 = x - y;
-  x1 = MAX(0, MIN (x1, gport->width));
-  y0 = y + (gport->width - x);
-  y0 = MAX(0, MIN (y0, gport->height));
+  x1 = MAX(0, MIN (x1, PCB->MaxWidth));
+  y0 = y + (PCB->MaxWidth - x);
+  y0 = MAX(0, MIN (y0, PCB->MaxHeight));
   y1 = y - x;
-  y1 = MAX(0, MIN (y1, gport->height));
+  y1 = MAX(0, MIN (y1, PCB->MaxHeight));
   glVertex3i (x0, y0, z);
   glVertex3i (x1, y1, z);
 
-  x0 = x - (gport->height - y);
-  x0 = MAX(0, MIN (x0, gport->width));
+  x0 = x - (PCB->MaxHeight - y);
+  x0 = MAX(0, MIN (x0, PCB->MaxWidth));
   x1 = x + y;
-  x1 = MAX(0, MIN (x1, gport->width));
+  x1 = MAX(0, MIN (x1, PCB->MaxWidth));
   y0 = y + x;
-  y0 = MAX(0, MIN (y0, gport->height));
-  y1 = y - (gport->width - x);
-  y1 = MAX(0, MIN (y1, gport->height));
+  y0 = MAX(0, MIN (y0, PCB->MaxHeight));
+  y1 = y - (PCB->MaxWidth - x);
+  y1 = MAX(0, MIN (y1, PCB->MaxHeight));
   glVertex3i (x0, y0, z);
   glVertex3i (x1, y1, z);
 }
@@ -791,47 +805,47 @@ draw_dozen_cross (gint x, gint y, gint z)
   gint x0, y0, x1, y1;
   gdouble tan60 = sqrt (3);
 
-  x0 = x + (gport->height - y) / tan60;
-  x0 = MAX(0, MIN (x0, gport->width));
+  x0 = x + (PCB->MaxHeight - y) / tan60;
+  x0 = MAX(0, MIN (x0, PCB->MaxWidth));
   x1 = x - y / tan60;
-  x1 = MAX(0, MIN (x1, gport->width));
-  y0 = y + (gport->width - x) * tan60;
-  y0 = MAX(0, MIN (y0, gport->height));
+  x1 = MAX(0, MIN (x1, PCB->MaxWidth));
+  y0 = y + (PCB->MaxWidth - x) * tan60;
+  y0 = MAX(0, MIN (y0, PCB->MaxHeight));
   y1 = y - x * tan60;
-  y1 = MAX(0, MIN (y1, gport->height));
+  y1 = MAX(0, MIN (y1, PCB->MaxHeight));
   glVertex3i (x0, y0, z);
   glVertex3i (x1, y1, z);
 
-  x0 = x + (gport->height - y) * tan60;
-  x0 = MAX(0, MIN (x0, gport->width));
+  x0 = x + (PCB->MaxHeight - y) * tan60;
+  x0 = MAX(0, MIN (x0, PCB->MaxWidth));
   x1 = x - y * tan60;
-  x1 = MAX(0, MIN (x1, gport->width));
-  y0 = y + (gport->width - x) / tan60;
-  y0 = MAX(0, MIN (y0, gport->height));
+  x1 = MAX(0, MIN (x1, PCB->MaxWidth));
+  y0 = y + (PCB->MaxWidth - x) / tan60;
+  y0 = MAX(0, MIN (y0, PCB->MaxHeight));
   y1 = y - x / tan60;
-  y1 = MAX(0, MIN (y1, gport->height));
+  y1 = MAX(0, MIN (y1, PCB->MaxHeight));
   glVertex3i (x0, y0, z);
   glVertex3i (x1, y1, z);
 
-  x0 = x - (gport->height - y) / tan60;
-  x0 = MAX(0, MIN (x0, gport->width));
+  x0 = x - (PCB->MaxHeight - y) / tan60;
+  x0 = MAX(0, MIN (x0, PCB->MaxWidth));
   x1 = x + y / tan60;
-  x1 = MAX(0, MIN (x1, gport->width));
+  x1 = MAX(0, MIN (x1, PCB->MaxWidth));
   y0 = y + x * tan60;
-  y0 = MAX(0, MIN (y0, gport->height));
-  y1 = y - (gport->width - x) * tan60;
-  y1 = MAX(0, MIN (y1, gport->height));
+  y0 = MAX(0, MIN (y0, PCB->MaxHeight));
+  y1 = y - (PCB->MaxWidth - x) * tan60;
+  y1 = MAX(0, MIN (y1, PCB->MaxHeight));
   glVertex3i (x0, y0, z);
   glVertex3i (x1, y1, z);
 
-  x0 = x - (gport->height - y) * tan60;
-  x0 = MAX(0, MIN (x0, gport->width));
+  x0 = x - (PCB->MaxHeight - y) * tan60;
+  x0 = MAX(0, MIN (x0, PCB->MaxWidth));
   x1 = x + y * tan60;
-  x1 = MAX(0, MIN (x1, gport->width));
+  x1 = MAX(0, MIN (x1, PCB->MaxWidth));
   y0 = y + x / tan60;
-  y0 = MAX(0, MIN (y0, gport->height));
-  y1 = y - (gport->width - x) / tan60;
-  y1 = MAX(0, MIN (y1, gport->height));
+  y0 = MAX(0, MIN (y0, PCB->MaxHeight));
+  y1 = y - (PCB->MaxWidth - x) / tan60;
+  y1 = MAX(0, MIN (y1, PCB->MaxHeight));
   glVertex3i (x0, y0, z);
   glVertex3i (x1, y1, z);
 }
@@ -876,8 +890,8 @@ ghid_show_crosshair (gboolean show)
       /* FIXME: when CrossColor changed from config */
       ghid_map_color_string (Settings.CrossColor, &cross_color);
     }
-  x = DRAW_X (gport->x_crosshair);
-  y = DRAW_Y (gport->y_crosshair);
+  x = gport->x_crosshair;
+  y = gport->y_crosshair;
   z = global_depth;
 
   glEnable (GL_COLOR_LOGIC_OP);
@@ -907,44 +921,44 @@ ghid_show_crosshair (gboolean show)
 #if 0
   if (x_prev >= 0 && draw_markers_prev)
     {
-      glVertex3i (0,                  y_prev - VCD,        z_prev);
-      glVertex3i (0,                  y_prev - VCD + VCW,  z_prev);
-      glVertex3i (VCD,                y_prev - VCD + VCW,  z_prev);
-      glVertex3i (VCD,                y_prev - VCD,        z_prev);
-      glVertex3i (gport->width,       y_prev - VCD,        z_prev);
-      glVertex3i (gport->width,       y_prev - VCD + VCW,  z_prev);
-      glVertex3i (gport->width - VCD, y_prev - VCD + VCW,  z_prev);
-      glVertex3i (gport->width - VCD, y_prev - VCD,        z_prev);
-      glVertex3i (x_prev - VCD,       0,                   z_prev);
-      glVertex3i (x_prev - VCD,       VCD,                 z_prev);
-      glVertex3i (x_prev - VCD + VCW, VCD,                 z_prev);
-      glVertex3i (x_prev - VCD + VCW, 0,                   z_prev);
-      glVertex3i (x_prev - VCD,       gport->height - VCD, z_prev);
-      glVertex3i (x_prev - VCD,       gport->height,       z_prev);
-      glVertex3i (x_prev - VCD + VCW, gport->height,       z_prev);
-      glVertex3i (x_prev - VCD + VCW, gport->height - VCD, z_prev);
+      glVertex3i (0,                       y_prev - VCD,             z_prev);
+      glVertex3i (0,                       y_prev - VCD + VCW,       z_prev);
+      glVertex3i (VCD,                     y_prev - VCD + VCW,       z_prev);
+      glVertex3i (VCD,                     y_prev - VCD,             z_prev);
+      glVertex3i (gport->view_width,       y_prev - VCD,             z_prev);
+      glVertex3i (gport->view_width,       y_prev - VCD + VCW,       z_prev);
+      glVertex3i (gport->view_width - VCD, y_prev - VCD + VCW,       z_prev);
+      glVertex3i (gport->view_width - VCD, y_prev - VCD,             z_prev);
+      glVertex3i (x_prev - VCD,            0,                        z_prev);
+      glVertex3i (x_prev - VCD,            VCD,                      z_prev);
+      glVertex3i (x_prev - VCD + VCW,      VCD,                      z_prev);
+      glVertex3i (x_prev - VCD + VCW,      0,                        z_prev);
+      glVertex3i (x_prev - VCD,            gport->view_height - VCD, z_prev);
+      glVertex3i (x_prev - VCD,            gport->view_height,       z_prev);
+      glVertex3i (x_prev - VCD + VCW,      gport->view_height,       z_prev);
+      glVertex3i (x_prev - VCD + VCW,      gport->view_height - VCD, z_prev);
     }
 #endif
 
   draw_markers = ghidgui->auto_pan_on && have_crosshair_attachments ();
   if (x >= 0 && show && draw_markers)
     {
-      glVertex3i (0,                  y - VCD,             z);
-      glVertex3i (0,                  y - VCD + VCW,       z);
-      glVertex3i (VCD,                y - VCD + VCW,       z);
-      glVertex3i (VCD,                y - VCD,             z);
-      glVertex3i (gport->width,       y - VCD,             z);
-      glVertex3i (gport->width,       y - VCD + VCW,       z);
-      glVertex3i (gport->width - VCD, y - VCD + VCW,       z);
-      glVertex3i (gport->width - VCD, y - VCD,             z);
-      glVertex3i (x - VCD,            0,                   z);
-      glVertex3i (x - VCD,            VCD,                 z);
-      glVertex3i (x - VCD + VCW,      VCD,                 z);
-      glVertex3i (x - VCD + VCW,      0,                   z);
-      glVertex3i (x - VCD,            gport->height - VCD, z);
-      glVertex3i (x - VCD,            gport->height,       z);
-      glVertex3i (x - VCD + VCW,      gport->height,       z);
-      glVertex3i (x - VCD + VCW,      gport->height - VCD, z);
+      glVertex3i (0,                       y - VCD,                  z);
+      glVertex3i (0,                       y - VCD + VCW,            z);
+      glVertex3i (VCD,                     y - VCD + VCW,            z);
+      glVertex3i (VCD,                     y - VCD,                  z);
+      glVertex3i (gport->view_width,       y - VCD,                  z);
+      glVertex3i (gport->view_width,       y - VCD + VCW,            z);
+      glVertex3i (gport->view_width - VCD, y - VCD + VCW,            z);
+      glVertex3i (gport->view_width - VCD, y - VCD,                  z);
+      glVertex3i (x - VCD,                 0,                        z);
+      glVertex3i (x - VCD,                 VCD,                      z);
+      glVertex3i (x - VCD + VCW,           VCD,                      z);
+      glVertex3i (x - VCD + VCW,           0,                        z);
+      glVertex3i (x - VCD,                 gport->view_height - VCD, z);
+      glVertex3i (x - VCD,                 gport->view_height,       z);
+      glVertex3i (x - VCD + VCW,           gport->view_height,       z);
+      glVertex3i (x - VCD + VCW,           gport->view_height - VCD, z);
     }
 
   glEnd ();
@@ -1614,18 +1628,14 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   /* Test direction of rendering */
   /* Look at sign of eye coordinate system z-coord when projecting a
      world vector along +ve Z axis, (0, 0, 1). */
-  /* FIXME: This isn't strictly correct, as I've ignored the matrix
-            elements for homogeneous coordinates. */
+  /* XXX: This isn't strictly correct, as I've ignored the matrix
+          elements for homogeneous coordinates. */
   /* NB: last_modelview_matrix is transposed in memory! */
   reverse_layers = (last_modelview_matrix[2][2] < 0);
 
   save_show_solder = Settings.ShowSolderSide;
+  Settings.ShowSolderSide = reverse_layers;
 
-  if (reverse_layers)
-    Settings.ShowSolderSide = !Settings.ShowSolderSide;
-
-  if (!global_view_2d && save_show_solder)
-    reverse_layers = !reverse_layers;
   PCB->Data->SILKLAYER.Color = PCB->ElementColor;
   PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
 
@@ -1844,6 +1854,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
   glMultMatrixf ((GLfloat *)view_matrix);
   glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
+  glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
+            (ghid_flip_y ? -1. : 1.) / port->zoom,
+            ((ghid_flip_x == ghid_flip_y) ? 1. : -1.) / port->zoom);
+  glTranslatef (ghid_flip_x ? port->view_x0 - PCB->MaxWidth  :
+                             -port->view_x0,
+                ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
+                             -port->view_y0, 0);
   glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
 
 #if 0
@@ -1858,7 +1875,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                 port->offlimits_color.green / 65535.,
                 port->offlimits_color.blue / 65535.,
                 1.);
-
   glStencilMask (~0);
   glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -1869,8 +1885,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glStencilFunc (GL_ALWAYS, 0, 0);
 
   /* Test the 8 corners of a cube spanning the event */
-  min_depth = -50 + compute_depth (0);                /* FIXME */
-  max_depth =  50 + compute_depth (max_copper_layer); /* FIXME */
+  min_depth = -50 + compute_depth (0);                    /* FIXME: NEED TO USE PHYSICAL GROUPS */
+  max_depth =  50 + compute_depth (max_copper_layer - 1); /* FIXME: NEED TO USE PHYSICAL GROUPS */
 
   ghid_unproject_to_z_plane (ev->area.x,
                              ev->area.y,
@@ -1924,13 +1940,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
   min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
 
-  region.X1 = MIN (Px (min_x), Px (max_x + 1));
-  region.X2 = MAX (Px (min_x), Px (max_x + 1));
-  region.Y1 = MIN (Py (min_y), Py (max_y + 1));
-  region.Y2 = MAX (Py (min_y), Py (max_y + 1));
-
-  eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
-  etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
+  region.X1 = min_x;  region.X2 = max_x + 1;
+  region.Y1 = min_y;  region.Y2 = max_y + 1;
 
   glColor3f (port->bg_color.red / 65535.,
              port->bg_color.green / 65535.,
@@ -1946,15 +1957,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
   /* Drawing operations as masked to areas where the stencil buffer is '0' */
 //  glStencilFunc (GL_GREATER, 1, 1);             // Draw only where stencil buffer is 0
-
-  glPushMatrix ();
-  glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
-            (ghid_flip_y ? -1. : 1.) / port->zoom,
-            (ghid_flip_x == ghid_flip_y) ? 1. : -1.);
-  glTranslatef (ghid_flip_x ? port->view_x0 - PCB->MaxWidth  :
-                             -port->view_x0,
-                ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
-                             -port->view_y0, 0);
 
   if (global_view_2d) {
     glBegin (GL_QUADS);
@@ -1987,31 +1989,21 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
     glEnd ();
   }
 
+
   // hid_expose_callback (&ghid_hid, &region, 0);
   ghid_draw_everything (&region);
   hidgl_flush_triangles (&buffer);
-  glPopMatrix ();
 
   /* Just prod the drawing code so the current depth gets set to
      the right value for the layer we are editing */
-  gui->set_layer (NULL, GetLayerGroupNumberByNumber (INDEXOFCURRENT), 0);
-  gui->set_layer (NULL, SL_FINISHED, 0);
-
+  hidgl_set_depth (compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT)));
   ghid_draw_grid (&region);
 
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
-  glPushMatrix ();
-  glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
-            (ghid_flip_y ? -1. : 1.) / port->zoom, 1);
-  glTranslatef (ghid_flip_x ? port->view_x0 - PCB->MaxWidth  :
-                             -port->view_x0,
-                ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
-                             -port->view_y0, 0);
   DrawAttached (TRUE);
   DrawMark (TRUE);
   hidgl_flush_triangles (&buffer);
-  glPopMatrix ();
 
 #if 0
     glEndList ();
