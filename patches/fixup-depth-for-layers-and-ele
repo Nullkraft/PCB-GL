@@ -1,5 +1,5 @@
-Bottom: ffc561158393a92647f22e8425436d285a4a9058
-Top:    90f3a6fc9d0dd2fe71bd161f97decbca76fd53fd
+Bottom: 1a6a3b6f8e12ea7dd8fec5a9393b0f27ad0c9cdb
+Top:    00a5351bb782aabce73309be6b9ea8c83526adec
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-10 03:01:58 +0000
 
@@ -9,7 +9,7 @@ Fixup depth for layers and element marks
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 499c045..bfaec96 100644
+index 28a1975..16c0d35 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -107,7 +107,7 @@ compute_depth (int group)
@@ -38,7 +38,7 @@ index 499c045..bfaec96 100644
      DrawSilk (1, solder_silk_layer, drawn_area);
      gui->set_layer (NULL, SL (FINISHED, 0), 0);
    }
-@@ -1889,13 +1891,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1891,13 +1893,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -52,7 +52,7 @@ index 499c045..bfaec96 100644
    /* TODO: Background image */
  
    hidgl_init_triangle_array (&buffer);
-@@ -1915,6 +1910,38 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1917,6 +1912,38 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_x0,
                  ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                               -port->view_y0, 0);
