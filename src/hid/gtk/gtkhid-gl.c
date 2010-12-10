@@ -1814,7 +1814,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   static int display_list;
 #endif
   BoxType region;
-  int eleft, eright, etop, ebottom;
   int min_x, min_y;
   int max_x, max_y;
   int new_x, new_y;
