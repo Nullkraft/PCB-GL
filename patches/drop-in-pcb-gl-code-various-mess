@@ -1,5 +1,5 @@
 Bottom: 3d3428d25c830b6d9ab568eae1252ead9ef6581a
-Top:    8ad44f2990b35cb444d49d0eadb14789d6eac1e4
+Top:    037021a01cafa5aac2e930da6b981f6f8fbfa64c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-10 03:01:48 +0000
 
@@ -98,10 +98,10 @@ index a885a63..6da0ea2 100644
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
 new file mode 100644
-index 0000000..b0a5049
+index 0000000..35fc720
 --- /dev/null
 +++ b/src/hid/common/hidgl.c
-@@ -0,0 +1,583 @@
+@@ -0,0 +1,582 @@
 +/* $Id: */
 +
 +#if 1 /* DISABLE EVERYTHING! */
@@ -254,8 +254,7 @@ index 0000000..b0a5049
 +  if (n > npoints)
 +    {
 +      npoints = n + 10;
-+      points =
-+        MyRealloc (points, npoints * 2 * sizeof (GLfloat), "gtk_draw_grid");
++      points = realloc (points, npoints * 2 * sizeof (GLfloat));
 +    }
 +
 +  glEnableClientState (GL_VERTEX_ARRAY);
@@ -790,10 +789,10 @@ index 06b7257..e45e28d 100644
  {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..89ee1e8
+index 0000000..e75d36b
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -0,0 +1,1211 @@
+@@ -0,0 +1,1210 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -982,8 +981,7 @@ index 0000000..89ee1e8
 +  if (n > npoints)
 +    {
 +      npoints = n + 10;
-+      points =
-+	MyRealloc (points, npoints * 2 * sizeof (GLfloat), "gtk_draw_grid");
++      points = realloc (points, npoints * 2 * sizeof (GLfloat));
 +    }
 +
 +  glEnableClientState (GL_VERTEX_ARRAY);
