@@ -1,5 +1,5 @@
 Bottom: f46e3dd8dfe1f6b1863cabb7c6d91898fb376f83
-Top:    14c7bcfd24a1bb54eeb51dc3d806d2ddb4515d0d
+Top:    27f0c58a00a5a686ad609bff77ae7e1ff8087a44
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 23:08:11 +0000
 
@@ -9,10 +9,10 @@ WORK IN PROGRESS
 ---
 
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
-index 2b98a75..cfc1ed4 100644
+index 2b98a75..b7f9eea 100644
 --- a/src/hid/common/hidnogui.c
 +++ b/src/hid/common/hidnogui.c
-@@ -294,12 +294,15 @@ static char *
+@@ -294,14 +294,23 @@ static char *
  nogui_prompt_for (const char *msg, const char *default_string)
  {
    static char buf[1024];
@@ -24,13 +24,23 @@ index 2b98a75..cfc1ed4 100644
      printf ("%s : ", msg);
 -  fgets (buf, 1024, stdin);
 -  if (buf[0] == 0 && default_string)
+-    strcpy (buf, default_string);
+-  return buf;
 +
 +  s = fgets (buf, 1024, stdin);
-+  if (default_string && (s == NULL || buf[0] == 0))
-     strcpy (buf, default_string);
-   return buf;
++  if (s == NULL || buf[0] == '\0' || buf[0] == '\r' || buf[0] == '\n')
++    {
++      if (default_string != NULL)
++        return strdup (default_string);
++      else
++        return strdup ("");
++    }
++  else
++    return strdup (buf);
  }
-@@ -312,12 +315,15 @@ nogui_fileselect (const char *title, const char *descr,
+ 
+ /* FIXME - this could use some enhancement to actually use the other
+@@ -312,14 +321,22 @@ nogui_fileselect (const char *title, const char *descr,
  		  const char *history_tag, int flags)
  {
    static char buf[1024];
@@ -42,9 +52,18 @@ index 2b98a75..cfc1ed4 100644
      printf ("%s : ", title);
 -  fgets (buf, 1024, stdin);
 -  if (buf[0] == 0 && default_file)
+-    strcpy (buf, default_file);
+-  return buf;
 +
-+  s = fgets (buf, 1024, stdin);
-+  if (default_file && (s == NULL || buf[0] == 0))
-     strcpy (buf, default_file);
-   return buf;
++  if (s == NULL || buf[0] == '\0' || buf[0] == '\r' || buf[0] == '\n')
++    {
++      if (default_file != NULL)
++        return strdup (default_file);
++      else
++        return NULL;
++    }
++  else
++    return strdup (buf);
  }
+ 
+ static int
