@@ -1,5 +1,5 @@
 Bottom: 2a7c9bb5600112f68a6f3f8ed162e6f985ca8a4b
-Top:    3c14299067df708af8917cb56dd67e309d06b679
+Top:    ca7e9cfe2c5c9c76c2477569047c8430973713a9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-09 23:23:26 +0000
 
@@ -11,7 +11,7 @@ The callers should free this string free()
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 07b2752..75d56ad 100644
+index 07b2752..9e1370b 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1408,8 +1408,6 @@ NotifyMode (void)
@@ -53,6 +53,15 @@ index 07b2752..75d56ad 100644
  
        ResetStackAndVisibility ();
        CreateDefaultFont ();
+@@ -7605,7 +7606,7 @@ ActionImport (int argc, char **argv, int x, int y)
+ 
+   if (mode && strcasecmp (mode, "setdisperse") == 0)
+     {
+-      const char *ds, *units;
++      char *ds, *units;
+       char buf[50];
+ 
+       ds = ARG (1);
 @@ -7622,6 +7623,8 @@ ActionImport (int argc, char **argv, int x, int y)
  	}
        else
