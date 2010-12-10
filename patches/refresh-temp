@@ -1,0 +1,22 @@
+Bottom: e1245977c7a970626861042dda38a4b79124538f
+Top:    5e9ef1928cf9298856f3e88150740291c4a212cc
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-10 03:46:31 +0000
+
+Refresh of play-with-perspective
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index cf69906..a4d8e13 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1099,7 +1099,7 @@ backPad_callback (const BoxType * b, void *cl)
+ static int
+ EMark_callback (const BoxType * b, void *cl)
+ {
+-//  ElementTypePtr element = (ElementTypePtr) b;
++  ElementTypePtr element = (ElementTypePtr) b;
+ 
+   DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
+   return 1;
