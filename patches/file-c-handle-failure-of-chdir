@@ -6,7 +6,8 @@ Date:   2010-12-10 01:53:37 +0000
 file.c: c Attempt to handle failure of GetWorkingDirectory() and chdir()
 
 Report the error to the user if any GetWorkingDirectory or chdir call
-fails.
+fails. Add attempts to change back to the original working directory
+on error paths.
 
 
 ---
