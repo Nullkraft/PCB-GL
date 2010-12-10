@@ -1753,8 +1753,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                              GdkEventExpose *ev,
                              GHidPort *port)
 {
+#if 0
   static int one_shot = 1;
   static int display_list;
+#endif
   BoxType region;
   int eleft, eright, etop, ebottom;
   int min_x, min_y;
