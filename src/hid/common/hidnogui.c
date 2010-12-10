@@ -328,6 +328,7 @@ nogui_fileselect (const char *title, const char *descr,
   else
     printf ("%s : ", title);
 
+  s = fgets (buf, 1024, stdin);
   if (s == NULL || buf[0] == '\0' || buf[0] == '\r' || buf[0] == '\n')
     {
       if (default_file != NULL)
