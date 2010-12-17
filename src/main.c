@@ -53,6 +53,7 @@
 #include "action.h"
 #include "misc.h"
 #include "lrealpath.h"
+#include "setjmp.h"
 #include "sweep.h"
 
 #include "hid/common/actions.h"
@@ -1091,7 +1092,7 @@ main (int argc, char *argv[])
   // bos_test_intersections ();
   my_cairo_test ();
 
-  // gui->do_export (0);
+  gui->do_export (0);
 
 #if HAVE_DBUS
   pcb_dbus_finish();
