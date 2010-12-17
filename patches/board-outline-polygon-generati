@@ -1,7 +1,7 @@
-Bottom: 502124fa1a27c3bc18e63558ae7446ca91d62b50
-Top:    2c4a91f42de2fefae11a56941d1dd56174357ad6
+Bottom: 431d1acb4b4f3cc3aba962d5e06c762bc9d515df
+Top:    d37fbf6f37e8e57ccdf2839b0ca3279402fa4b4d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-10 04:01:22 +0000
+Date:   2010-12-17 01:59:03 +0000
 
 Board outline polygon generation
 
@@ -52,10 +52,10 @@ index 3e01985..0a0fe59 100644
  
    gui->use_mask (HID_MASK_OFF);
 diff --git a/src/polygon.c b/src/polygon.c
-index 74d4bc4..96c9218 100644
+index 72d92c9..c77ee2c 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -81,6 +81,7 @@ dicer output is used for HIDs which cannot render things with holes
+@@ -79,6 +79,7 @@ dicer output is used for HIDs which cannot render things with holes
  #include <math.h>
  #include <memory.h>
  #include <setjmp.h>
@@ -63,7 +63,7 @@ index 74d4bc4..96c9218 100644
  
  #include "global.h"
  #include "box.h"
-@@ -1953,3 +1954,172 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
+@@ -1963,3 +1964,172 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
  
    SetChangedFlag (true);
  }
