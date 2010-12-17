@@ -1,5 +1,5 @@
 Bottom: 4494b6430c28a0bdc1dfe997bebcfd3ac38916a2
-Top:    4494b6430c28a0bdc1dfe997bebcfd3ac38916a2
+Top:    17d9176e66aa6382b512b4e38ca425e5d094dc2d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-17 01:57:49 +0000
 
@@ -8,4 +8,40 @@ Fix
 
 ---
 
-
+diff --git a/src/rats.c b/src/rats.c
+index 0ed87dd..29211bc 100644
+--- a/src/rats.c
++++ b/src/rats.c
+@@ -563,13 +563,10 @@ DrawShortestRats (NetListTypePtr Netl, void (*funcp) ())
+   register ConnectionTypePtr conn1, conn2, firstpoint, secondpoint;
+   PolygonTypePtr polygon;
+   bool changed = false;
+-  bool havepoints = false;
++  bool havepoints = true;
+   Cardinal n, m, j;
+   NetTypePtr next, subnet, theSubnet = NULL;
+ 
+-  if (Netl->Net[0].ConnectionN < 2)
+-    return false;
+-
+   /*
+    * Everything inside the NetList Netl should be connected together.
+    * Each Net in Netl is a group of Connections which are already
+@@ -580,7 +577,7 @@ DrawShortestRats (NetListTypePtr Netl, void (*funcp) ())
+    * one big blob.
+    */
+   distance = 0.0;
+-  do
++  while (Netl->NetN > 1 && havepoints);
+     {
+       firstpoint = secondpoint = NULL;
+       havepoints = false;
+@@ -664,7 +661,7 @@ DrawShortestRats (NetListTypePtr Netl, void (*funcp) ())
+ 	  /* copy theSubnet into the current subnet */
+ 	  TransferNet (Netl, theSubnet, subnet);
+ 	}
+-    } while (Netl->NetN > 1 && havepoints);
++    }
+ 
+   /* presently nothing to do with the new subnet */
+   /* so we throw it away and free the space */
