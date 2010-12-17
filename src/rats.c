@@ -341,6 +341,11 @@ TransferNet (NetListTypePtr Netl, NetTypePtr SourceNet, NetTypePtr DestNet)
 {
   ConnectionTypePtr conn;
 
+  if (SourceNet == NULL) {
+    printf ("FOOBAR\n");
+    return;
+  }
+
   /* It would be worth checking if SourceNet is NULL here to avoid a segfault. Seb James. */
   CONNECTION_LOOP (SourceNet);
   {
@@ -657,10 +662,10 @@ DrawShortestRats (NetListTypePtr Netl, void (*funcp) ())
 		  changed = true;
 		}
 	    }
-
-	  /* copy theSubnet into the current subnet */
-	  TransferNet (Netl, theSubnet, subnet);
 	}
+
+        /* copy theSubnet into the current subnet */
+        TransferNet (Netl, theSubnet, subnet);
     }
 
   /* presently nothing to do with the new subnet */
