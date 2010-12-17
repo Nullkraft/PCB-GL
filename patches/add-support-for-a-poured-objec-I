@@ -1,7 +1,7 @@
-Bottom: deac90fd7be1c88ecf1ac2f403cc66dd5a37be36
-Top:    3802aef0ac944555dac43a3a5d034c43f386b863
+Bottom: d62d37e3543b83ac5c24c149c17ee9999ba96e9a
+Top:    b1ab5546140d1972664a9571f0a9974cb48ed9ee
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-17 01:59:19 +0000
+Date:   2010-12-17 02:20:44 +0000
 
 Add support for a "poured" object.
 
@@ -7237,7 +7237,7 @@ index 66a5a03..d74a0ca 100644
    r_search(PCB->Data->via_tree, &box, NULL, gp_pin_cb, 0);
    r_search(PCB->Data->pad_tree, &box, NULL, gp_pad_cb, 0);
 diff --git a/src/rats.c b/src/rats.c
-index 29211bc..84e41fa 100644
+index 5fe86cd..cc3d1ec 100644
 --- a/src/rats.c
 +++ b/src/rats.c
 @@ -512,20 +512,24 @@ GatherSubnets (NetListTypePtr Netl, bool NoWarn, bool AndRats)
