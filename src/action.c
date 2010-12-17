@@ -1505,12 +1505,19 @@ NotifyMode (void)
 		   */
 		  SaveUndoSerialNumber ();
 		  Flags = ((PolygonType *)Crosshair.AttachedObject.Ptr2)->Flags;
-		  PolyToPoursOnLayer (PCB->Data, Crosshair.AttachedObject.Ptr1,
-				      result, Flags);
+#warning FIXME: Removing a pour should force a re-check of islanding!
+                  /* For now, do this before PolyToPours() which re-inits the
+                   * clipping for the pour(s) affected (?). Ideally RemoveObject
+                   * should fix any island response its self. Anyway.. removing
+                   * the old thing first saves us doing twice the work by
+                   * recomputing islands when it gets deleted.
+                   */
 		  RemoveObject (POUR_TYPE,
 				Crosshair.AttachedObject.Ptr1,
 				Crosshair.AttachedObject.Ptr2,
 				Crosshair.AttachedObject.Ptr3);
+		  PolyToPoursOnLayer (PCB->Data, Crosshair.AttachedObject.Ptr1,
+				      result, Flags);
 		  RestoreUndoSerialNumber ();
 		  IncrementUndoSerialNumber ();
 		  Draw ();
