@@ -563,12 +563,9 @@ DrawShortestRats (NetListTypePtr Netl, void (*funcp) ())
   register ConnectionTypePtr conn1, conn2, firstpoint, secondpoint;
   PolygonTypePtr polygon;
   bool changed = false;
-  bool havepoints = false;
+  bool havepoints = true;
   Cardinal n, m, j;
   NetTypePtr next, subnet, theSubnet = NULL;
-
-  if (Netl->Net[0].ConnectionN < 2)
-    return false;
 
   /*
    * Everything inside the NetList Netl should be connected together.
@@ -580,7 +577,7 @@ DrawShortestRats (NetListTypePtr Netl, void (*funcp) ())
    * one big blob.
    */
   distance = 0.0;
-  do
+  while (Netl->NetN > 1 && havepoints);
     {
       firstpoint = secondpoint = NULL;
       havepoints = false;
@@ -664,7 +661,7 @@ DrawShortestRats (NetListTypePtr Netl, void (*funcp) ())
 	  /* copy theSubnet into the current subnet */
 	  TransferNet (Netl, theSubnet, subnet);
 	}
-    } while (Netl->NetN > 1 && havepoints);
+    }
 
   /* presently nothing to do with the new subnet */
   /* so we throw it away and free the space */
