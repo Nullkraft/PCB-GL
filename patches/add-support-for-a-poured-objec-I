@@ -1,7 +1,7 @@
-Bottom: d62d37e3543b83ac5c24c149c17ee9999ba96e9a
-Top:    b1ab5546140d1972664a9571f0a9974cb48ed9ee
+Bottom: 94512d8a57b88a62251cfbd91a181657fc879c0a
+Top:    f8f3c60b57dbbcb245fd7d7e247373600bdac432
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-17 02:26:18 +0000
+Date:   2010-12-20 14:02:56 +0000
 
 Add support for a "poured" object.
 
@@ -1870,10 +1870,10 @@ index ac50e2c..6a59832 100644
  				    ElementTypePtr, bool, LocationType, LocationType);
  bool CopyPastebufferToLayout (LocationType, LocationType);
 diff --git a/src/create.c b/src/create.c
-index 538ea0d..9c959af 100644
+index 07de918..f30ca9d 100644
 --- a/src/create.c
 +++ b/src/create.c
-@@ -542,29 +542,28 @@ CreateNewArcOnLayer (LayerTypePtr Layer,
+@@ -557,29 +557,28 @@ CreateNewArcOnLayer (LayerTypePtr Layer,
    return (Arc);
  }
  
@@ -1919,7 +1919,7 @@ index 538ea0d..9c959af 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -607,9 +606,9 @@ CreateNewText (LayerTypePtr Layer, FontTypePtr PCBFont,
+@@ -622,9 +621,9 @@ CreateNewText (LayerTypePtr Layer, FontTypePtr PCBFont,
   * creates a new polygon on a layer
   */
  PolygonTypePtr
@@ -1931,7 +1931,7 @@ index 538ea0d..9c959af 100644
  
    /* copy values */
    polygon->Flags = Flags;
-@@ -617,17 +616,40 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
+@@ -632,17 +631,40 @@ CreateNewPolygon (LayerTypePtr Layer, FlagType Flags)
    polygon->Clipped = NULL;
    polygon->NoHoles = NULL;
    polygon->NoHolesValid = 0;
@@ -1975,7 +1975,7 @@ index 538ea0d..9c959af 100644
  
    /* copy values */
    point->X = X;
-@@ -637,14 +659,14 @@ CreateNewPointInPolygon (PolygonTypePtr Polygon, LocationType X,
+@@ -652,14 +674,14 @@ CreateNewPointInPolygon (PolygonTypePtr Polygon, LocationType X,
  }
  
  /* ---------------------------------------------------------------------------
@@ -1997,10 +1997,10 @@ index 538ea0d..9c959af 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/create.h b/src/create.h
-index 8086b1e..2bf496a 100644
+index 521f60e..8b44d7b 100644
 --- a/src/create.h
 +++ b/src/create.h
-@@ -54,15 +54,16 @@ RatTypePtr CreateNewRat (DataTypePtr, LocationType, LocationType,
+@@ -59,15 +59,16 @@ RatTypePtr CreateNewRat (DataTypePtr, LocationType, LocationType,
  ArcTypePtr CreateNewArcOnLayer (LayerTypePtr, LocationType, LocationType,
  				BDimension, BDimension, int, int, BDimension, BDimension,
  				FlagType);
@@ -2022,7 +2022,7 @@ index 8086b1e..2bf496a 100644
  				 FontTypePtr, FlagType, char *, char *,
  				 char *, LocationType, LocationType, BYTE,
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 6da0ea2..65a5423 100644
+index 1e94c8b..90bc19d 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -48,7 +48,7 @@
@@ -2182,7 +2182,7 @@ index 6da0ea2..65a5423 100644
    else
      ans = NO_TYPE;
  
-@@ -1157,6 +1193,6 @@ void
+@@ -1156,6 +1192,6 @@ void
  DestroyCrosshair (void)
  {
    CrosshairOff (true);
