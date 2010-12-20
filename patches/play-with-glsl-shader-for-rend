@@ -1,5 +1,5 @@
-Bottom: f17a3e15c9e2b6fef4dc2719567d57bb6b7e3348
-Top:    eb804bafd466ba533d8308c1aaeb69dcef02d801
+Bottom: 8a6a16419009fe7f6ea98593def9c67d5ee46d25
+Top:    987e7c01898412680a89a615effe610cd4c656d4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-20 14:02:47 +0000
 
@@ -957,7 +957,7 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7d81d23..ef524ef 100644
+index 8be761f..828aaaf 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -32,6 +32,8 @@
@@ -1108,7 +1108,7 @@ index 7d81d23..ef524ef 100644
    return FALSE;
  }
  
-@@ -2113,7 +2125,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2114,7 +2126,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);

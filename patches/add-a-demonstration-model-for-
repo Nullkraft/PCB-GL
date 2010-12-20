@@ -1,5 +1,5 @@
-Bottom: 86b9383b8ce54755cab7484952738b9c6cab08b1
-Top:    e6e25568e81f13d3fb987c4401ce3560af4c4c1a
+Bottom: 88749ead87e8a14b9280b873f0a9e01ae8c35ab2
+Top:    1ba3fe13369b61ad1bb76089848ddcf52b0fd92e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 00:32:30 +0000
 
@@ -1515,7 +1515,7 @@ index 0000000..f9746f1
 +               m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * scale;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 98b56b8..66b9123 100644
+index 840c36d..df83cdf 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -331,6 +331,48 @@ ghid_draw_grid (BoxTypePtr drawn_area)
@@ -1877,7 +1877,7 @@ index 98b56b8..66b9123 100644
  #ifdef ONE_SHOT
      glEndList ();
      one_shot = 0;
-@@ -2206,7 +2416,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2207,7 +2417,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -1886,7 +1886,7 @@ index 98b56b8..66b9123 100644
    hidgl_reset_stencil_usage ();
  
    /* call the drawing routine */
-@@ -2272,7 +2482,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2275,7 +2485,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                          GDK_GL_MODE_STENCIL |
@@ -1895,7 +1895,7 @@ index 98b56b8..66b9123 100644
                                          GDK_GL_MODE_SINGLE);
  
    pixmap = gdk_pixmap_new (NULL, width, height, depth);
-@@ -2320,7 +2530,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2325,7 +2535,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
