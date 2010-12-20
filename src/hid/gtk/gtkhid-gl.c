@@ -505,6 +505,12 @@ ghid_set_color (hidGC gc, const char *name)
 
   gc->colorname = (char *) name;
 
+  if (!check_gl_drawing_ok_hack)
+    {
+      current_color = NULL;
+      return;
+    }
+
   if (gport->colormap == NULL)
     gport->colormap = gtk_widget_get_colormap (gport->top_window);
   if (strcmp (name, "erase") == 0)
@@ -2162,6 +2168,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   int save_width, save_height;
   int save_view_width, save_view_height;
   BoxType region;
+  bool save_check_gl_drawing_ok_hack;
 
   save_zoom = gport->zoom;
   save_width = gport->width;
@@ -2200,6 +2207,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext)) {
     return NULL;
   }
+
+  save_check_gl_drawing_ok_hack = check_gl_drawing_ok_hack;
+  check_gl_drawing_ok_hack = true;
 
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -2244,6 +2254,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   glPopMatrix ();
 
   glFlush ();
+
+  check_gl_drawing_ok_hack = save_check_gl_drawing_ok_hack;
 
   /* end drawing to current GL-context */
   gdk_gl_drawable_gl_end (gldrawable);
