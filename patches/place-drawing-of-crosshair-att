@@ -1,7 +1,7 @@
-Bottom: 98fd7fdd39fb858b549ec3c3501a41180423b821
-Top:    f63f42cb1b8db20d90256b1645a7c5bd65823357
+Bottom: f6fc24500ee6db57aa4fa4cdd4511d55bcdb5093
+Top:    182b5d1c4a107158c73e3b7ff43fb250d62e7e7d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-17 02:26:01 +0000
+Date:   2010-12-20 14:02:31 +0000
 
 Place drawing of crosshair attached objects under the control of the HID
 
@@ -16,7 +16,7 @@ it would previously have called the drawing routines directly.
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index e765399..a885a63 100644
+index 4c94889..f3dcab3 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -85,7 +85,6 @@ static void XORDrawMoveOrCopyObject (void);
