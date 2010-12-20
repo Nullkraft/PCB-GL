@@ -231,6 +231,10 @@ ghid_get_coords (const char *msg, int *x, int *y)
 gboolean
 ghid_note_event_location (GdkEventButton * ev)
 {
+  /* FIXME: IFDEF HACK */
+#ifdef ENABLE_GL
+  extern float global_depth; /* FIXME: REMOVE THIS HACK! */
+#endif
   gint x, y;
   gboolean moved;
 
@@ -249,7 +253,7 @@ ghid_note_event_location (GdkEventButton * ev)
   /* FIXME: IFDEF HACK */
 #ifdef ENABLE_GL
   /* Unproject event_x and event_y to world coordinates of the plane we are on */
-  ghid_unproject_to_z_plane (event_x, event_y, 0,
+  ghid_unproject_to_z_plane (event_x, event_y, global_depth,
                              &event_x, &event_y);
 #endif
 
