@@ -2088,6 +2088,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
     return FALSE;
   }
 
+  check_gl_drawing_ok_hack = true;
+
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -2133,6 +2135,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
     gdk_gl_drawable_swap_buffers (pGlDrawable);
   else
     glFlush ();
+
+  check_gl_drawing_ok_hack = false;
 
   /* end drawing to current GL-context */
   gdk_gl_drawable_gl_end (pGlDrawable);
