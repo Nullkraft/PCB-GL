@@ -1,5 +1,5 @@
 Bottom: 192c3eafd911bb6206ec51d24ea98c2bcfc2b592
-Top:    ad1819f79ea1bc285bc5de8280974077e1d1c19c
+Top:    3ee6b9248deddcaf4777922ff14862586cbbcdc5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-20 14:02:42 +0000
 
@@ -9,7 +9,7 @@ Debug GL calls out of context
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 0a0fe59..748af2c 100644
+index 0a0fe59..fe9d444 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -45,6 +45,7 @@ static hidGC current_gc = NULL;
@@ -46,3 +46,30 @@ index 0a0fe59..748af2c 100644
    ghid_end_drawing (port);
  
    return FALSE;
+@@ -2156,6 +2162,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   int save_width, save_height;
+   int save_view_width, save_view_height;
+   BoxType region;
++  bool save_check_gl_drawing_ok_hack;
+ 
+   save_zoom = gport->zoom;
+   save_width = gport->width;
+@@ -2195,6 +2202,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+     return NULL;
+   }
+ 
++  save_check_gl_drawing_ok_hack = check_gl_drawing_ok_hack;
++  check_gl_drawing_ok_hack = true;
++
+   glEnable (GL_BLEND);
+   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+ 
+@@ -2239,6 +2249,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+ 
+   glFlush ();
+ 
++  check_gl_drawing_ok_hack = save_check_gl_drawing_ok_hack;
++
+   /* end drawing to current GL-context */
+   gdk_gl_drawable_gl_end (gldrawable);
+ //  gdk_gl_context_destroy (glcontext);
