@@ -1,0 +1,30 @@
+Bottom: 3ee6b9248deddcaf4777922ff14862586cbbcdc5
+Top:    e57404f1346c6349b8ca684119e8415e5d455cdd
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-20 20:30:48 +0000
+
+Refresh of debug-gl-calls-out-of-context
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index fe9d444..76095fe 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -2088,6 +2088,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+     return FALSE;
+   }
+ 
++  check_gl_drawing_ok_hack = true;
++
+   glEnable (GL_BLEND);
+   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+ 
+@@ -2134,6 +2136,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+   else
+     glFlush ();
+ 
++  check_gl_drawing_ok_hack = false;
++
+   /* end drawing to current GL-context */
+   gdk_gl_drawable_gl_end (pGlDrawable);
