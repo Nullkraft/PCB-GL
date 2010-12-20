@@ -1,7 +1,7 @@
-Bottom: ba4b41fafe5b40ba9737b3332286a570fae8ef0e
-Top:    579d84f5552313950d78da0ced70afb804f2273f
+Bottom: 94a76df5211861e9571f0cb53b8153079c15288d
+Top:    ba0c96291917bfa05bf25c7723e6812cac9e3e46
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-17 02:26:24 +0000
+Date:   2010-12-20 14:03:06 +0000
 
 Add a hacky name-mangling thingy for loading boards
 
@@ -18,7 +18,7 @@ Add a hacky name-mangling thingy for loading boards
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 7830a85..e175427 100644
+index 8d08913..f10263d 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -37,6 +37,7 @@
@@ -38,7 +38,7 @@ index 7830a85..e175427 100644
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
  #endif
-@@ -670,6 +673,57 @@ CreateNewHoleInPour (PourType *Pour)
+@@ -685,6 +688,57 @@ CreateNewHoleInPour (PourType *Pour)
    return Pour;
  }
  
@@ -96,7 +96,7 @@ index 7830a85..e175427 100644
  /* ---------------------------------------------------------------------------
   * creates an new element
   * memory is allocated if needed
-@@ -686,6 +740,18 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
+@@ -701,6 +755,18 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
    printf("Entered CreateNewElement.....\n");
  #endif
  
@@ -116,10 +116,10 @@ index 7830a85..e175427 100644
      Element = GetElementMemory (Data);
  
 diff --git a/src/create.h b/src/create.h
-index af7ace4..ac3f623 100644
+index 308698c..55022ec 100644
 --- a/src/create.h
 +++ b/src/create.h
-@@ -64,6 +64,7 @@ PourTypePtr CreateNewPour (LayerTypePtr, FlagType);
+@@ -69,6 +69,7 @@ PourTypePtr CreateNewPour (LayerTypePtr, FlagType);
  PointTypePtr CreateNewPointInPour (PourTypePtr,
  				      LocationType, LocationType);
  PourType *CreateNewHoleInPour (PourType *);
