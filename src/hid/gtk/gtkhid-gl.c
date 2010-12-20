@@ -32,6 +32,8 @@
 #include <dmalloc.h>
 #endif
 
+#undef ONE_SHOT
+//#define ONE_SHOT
 
 RCSID ("$Id$");
 
@@ -710,7 +712,7 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
 {
   USE_GC (gc);
 
-  hidgl_fill_circle (cx, cy, radius, gport->zoom);
+  hidgl_fill_circle (cx, cy, radius);
 }
 
 
@@ -727,7 +729,7 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
 {
   USE_GC (gc);
 
-  hidgl_fill_pcb_polygon (poly, clip_box, gport->zoom);
+  hidgl_fill_pcb_polygon (poly, clip_box);
 }
 
 void
@@ -1536,9 +1538,7 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
 #define MIN_FACES_PER_CYL 6
 #define MAX_FACES_PER_CYL 360
   float radius = vr;
-  float x1, y1;
-  float x2, y2;
-  float z1, z2;
+  float x, y, z1, z2;
   int i;
   int slices;
 
@@ -1553,19 +1553,27 @@ DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double s
   z1 = compute_depth (from_layer);
   z2 = compute_depth (to_layer);
 
-  x1 = vx + vr;
-  y1 = vy;
+  x = vx + vr;
+  y = vy;
 
-  hidgl_ensure_triangle_space (&buffer, 2 * slices);
+  hidgl_ensure_vertex_space (&buffer, 2 * slices + 2 + 2);
+
+  /* NB: Repeated first virtex to separate from other tri-strip */
+  hidgl_add_vertex_3D_tex (&buffer, x, y, z1, 0.0, 0.0);
+  hidgl_add_vertex_3D_tex (&buffer, x, y, z1, 0.0, 0.0);
+  hidgl_add_vertex_3D_tex (&buffer, x, y, z2, 0.0, 0.0);
+
   for (i = 0; i < slices; i++)
     {
-      x2 = radius * cosf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
-      y2 = radius * sinf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
-      hidgl_add_triangle_3D (&buffer, x1, y1, z1,  x2, y2, z1,  x1, y1, z2);
-      hidgl_add_triangle_3D (&buffer, x2, y2, z1,  x1, y1, z2,  x2, y2, z2);
-      x1 = x2;
-      y1 = y2;
+      x = radius * cosf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
+      y = radius * sinf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
+
+      hidgl_add_vertex_3D_tex (&buffer, x, y, z1, 0.0, 0.0);
+      hidgl_add_vertex_3D_tex (&buffer, x, y, z2, 0.0, 0.0);
     }
+
+  /* NB: Repeated last virtex to separate from other tri-strip */
+  hidgl_add_vertex_3D_tex (&buffer, x, y, z2, 0.0, 0.0);
 }
 
 struct cyl_info {
@@ -1809,7 +1817,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                              GdkEventExpose *ev,
                              GHidPort *port)
 {
-#if 0
+#ifdef ONE_SHOT
   static int one_shot = 1;
   static int display_list;
 #endif
@@ -1819,6 +1827,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   int new_x, new_y;
   int min_depth;
   int max_depth;
+
+  buffer.total_triangles = 0;
+  buffer.total_vertices = 0;
 
   ghid_start_drawing (port);
 
@@ -1865,7 +1876,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                              -port->view_y0, 0);
   glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
 
-#if 0
+#ifdef ONE_SHOT
   if (one_shot) {
 
     display_list = glGenLists(1);
@@ -1991,7 +2002,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
     glEnd ();
   }
 
-
   // hid_expose_callback (&ghid_hid, &region, 0);
   ghid_draw_everything (&region);
   hidgl_flush_triangles (&buffer);
@@ -2001,28 +2011,30 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   hidgl_set_depth (compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT)));
   ghid_draw_grid (&region);
 
-  hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
   DrawAttached (TRUE);
   DrawMark (TRUE);
   hidgl_flush_triangles (&buffer);
 
-#if 0
+#ifdef ONE_SHOT
     glEndList ();
     one_shot = 0;
-  } else {
-    /* Second and subsequent times */
-    glCallList (display_list);
   }
+
+  glCallList (display_list);
 #endif
 
   ghid_show_crosshair (TRUE);
 
   hidgl_flush_triangles (&buffer);
+  hidgl_finish_triangle_array (&buffer);
 
   check_gl_drawing_ok_hack = false;
   hidgl_in_context (false);
   ghid_end_drawing (port);
+
+//  printf ("Triangle count was %i\n", buffer.total_triangles);
+//  printf ("Vertex count was %i\n", buffer.total_vertices);
 
   return FALSE;
 }
@@ -2113,7 +2125,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   glStencilMask (~0);
   glClearStencil (0);
   glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
   hidgl_reset_stencil_usage ();
 
   /* call the drawing routine */
