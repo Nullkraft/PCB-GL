@@ -1,7 +1,7 @@
-Bottom: 6224ab7adcd1a94ad402f4229b060f0328aefa9d
-Top:    96af76323843f8bd828da60b38b06714f949927e
+Bottom: 4ffe533307b40725103c373bc3e48a86d7e870a8
+Top:    2302fa726d5037b93955279f3c94a5c9869bcc3f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-17 02:26:14 +0000
+Date:   2010-12-20 14:02:52 +0000
 
 Add a hacky name-mangling thingy for loading boards
 
@@ -20,7 +20,7 @@ Add a hacky name-mangling thingy for loading boards
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 538ea0d..8e54bfa 100644
+index 07de918..6895847 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -37,6 +37,7 @@
@@ -40,7 +40,7 @@ index 538ea0d..8e54bfa 100644
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
  #endif
-@@ -647,6 +650,57 @@ CreateNewHoleInPolygon (PolygonType *Polygon)
+@@ -662,6 +665,57 @@ CreateNewHoleInPolygon (PolygonType *Polygon)
    return Polygon;
  }
  
@@ -98,7 +98,7 @@ index 538ea0d..8e54bfa 100644
  /* ---------------------------------------------------------------------------
   * creates an new element
   * memory is allocated if needed
-@@ -663,6 +717,18 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
+@@ -678,6 +732,18 @@ CreateNewElement (DataTypePtr Data, ElementTypePtr Element,
    printf("Entered CreateNewElement.....\n");
  #endif
  
@@ -118,10 +118,10 @@ index 538ea0d..8e54bfa 100644
      Element = GetElementMemory (Data);
  
 diff --git a/src/create.h b/src/create.h
-index 8086b1e..da95919 100644
+index 521f60e..ce17b20 100644
 --- a/src/create.h
 +++ b/src/create.h
-@@ -63,6 +63,7 @@ PolygonTypePtr CreateNewPolygon (LayerTypePtr, FlagType);
+@@ -68,6 +68,7 @@ PolygonTypePtr CreateNewPolygon (LayerTypePtr, FlagType);
  PointTypePtr CreateNewPointInPolygon (PolygonTypePtr,
  				      LocationType, LocationType);
  PolygonType *CreateNewHoleInPolygon (PolygonType *polygon);
