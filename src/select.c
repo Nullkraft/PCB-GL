@@ -1025,7 +1025,7 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
         Cardinal i;
         LibraryEntryType *entry;
         ConnectionType conn;
-	
+
         if (menu->Name && REGEXEC (menu->Name))
           {
             for (i = menu->EntryN, entry = menu->Entry; i; i--, entry++)
