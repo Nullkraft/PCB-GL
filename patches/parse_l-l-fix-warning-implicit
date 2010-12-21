@@ -5,8 +5,7 @@ Date:   2010-12-21 13:04:11 +0000
 
 parse_l.l: Fix warning implicit definition of function ‘CreateBeLenient’
 
-This warning was introduced in commit
-e8dd18a2f7b83c6108d2c9398903d4be92e22d4c
+Warning was introduced in commit e8dd18a2f7b83c6108d2c9398903d4be92e22d4c
 The required prototype was added to create.h, but create.h
 was not included in parse_l.l
 
