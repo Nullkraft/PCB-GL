@@ -1,0 +1,19 @@
+Bottom: a68ab8a917668a647e0e91bdcdfa709068548aee
+Top:    a68ab8a917668a647e0e91bdcdfa709068548aee
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-21 13:04:11 +0000
+
+parse_l.l: Fix warning implicit definition of function ‘CreateBeLenient’
+
+Fixes warning introduced in commit e8dd18a2f7b83c6108d2c9398903d4be92e22d4c
+
+Note to developers:
+
+Please "make clean" and build with "make -s" before pushing changes.
+This kind of bug is really easy to catch, and I just recently spent
+a log of effort cleaning up PCB's compile so we can catch real bugs!
+
+
+---
+
+
