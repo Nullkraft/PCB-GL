@@ -2139,8 +2139,6 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
   gtk_main_quit ();
 }
 
-
-
 /* 
  * Create the top_window contents.  The config settings should be loaded
  * before this is called.
@@ -2349,6 +2347,9 @@ ghid_build_pcb_top_window (void)
      |  the user does a command entry.
    */
 
+  g_signal_connect (G_OBJECT (gport->drawing_area), "realize",
+		    G_CALLBACK (ghid_port_drawing_realize_cb),
+		    port);
   g_signal_connect (G_OBJECT (gport->drawing_area), "expose_event",
 		    G_CALLBACK (ghid_drawing_area_expose_cb),
 		    port);
@@ -2384,10 +2385,6 @@ ghid_build_pcb_top_window (void)
   ghidgui->creating = FALSE;
 
   gtk_widget_show_all (gport->top_window);
-  gtk_widget_realize (vbox_main);
-  gtk_widget_realize (hbox_middle);
-  gtk_widget_realize (viewport);
-  gtk_widget_realize (gport->drawing_area);
   gdk_window_set_back_pixmap (gport->drawing_area->window, NULL, FALSE);
 
   ghid_route_style_temp_buttons_hide ();
@@ -2703,8 +2700,6 @@ ghid_parse_arguments (int *argc, char ***argv)
   if (Settings.AutoPlace)
     gtk_widget_set_uposition (GTK_WIDGET (window), 10, 10);
 
-  gtk_widget_realize (gport->top_window);
-  gtk_widget_show_all (gport->top_window);
   ghidgui->creating = TRUE;
 }
 
