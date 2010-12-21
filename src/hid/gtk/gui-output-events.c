@@ -258,12 +258,12 @@ ghid_note_event_location (GdkEventButton * ev)
   ghid_unproject_to_z_plane (event_x, event_y, global_depth,
                              &gport->view_x, &gport->view_y);
 #else
-  gport->view_x = event_x * gport->zoom + gport->view_x0;
-  gport->view_y = event_y * gport->zoom + gport->view_y0;
+  gport->view_x = SIDE_X (event_x * gport->zoom + gport->view_x0);
+  gport->view_y = SIDE_Y (event_y * gport->zoom + gport->view_y0);
 #endif
 
-  moved = MoveCrosshairAbsolute (SIDE_X (gport->view_x), 
-				 SIDE_Y (gport->view_y));
+  moved = MoveCrosshairAbsolute (gport->view_x,
+				 gport->view_y);
   if (moved)
     {
       AdjustAttachedObjects ();
