@@ -1,0 +1,145 @@
+Bottom: 304589d06a5222da0b9612dc0a08f1bcac062b8a
+Top:    ec2abae37f0c911e055070a16ee91e1236725cb1
+Author: Martin Kupec <martin.kupec@kupson.cz>
+Date:   2010-12-20 21:47:33 +0100
+
+From 3740ababab6d74271d7d5434e22c86753120fece Mon Sep 17 00:00:00 2001
+Subject: [PATCH] Add NetByName to the select action options
+
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index e3576bf..fd5edc8 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -135,6 +135,7 @@ typedef enum
+   F_Move,
+   F_NameOnPCB,
+   F_Netlist,
++  F_NetByName,
+   F_None,
+   F_Notify,
+   F_Object,
+@@ -371,6 +372,7 @@ static FunctionType Functions[] = {
+   {"Move", F_Move},
+   {"NameOnPCB", F_NameOnPCB},
+   {"Netlist", F_Netlist},
++  {"NetByName", F_NetByName},
+   {"None", F_None},
+   {"Notify", F_Notify},
+   {"Object", F_Object},
+@@ -5345,8 +5347,9 @@ static const char select_syntax[] =
+   "Select(All|Block|Connection)\n"
+   "Select(ElementByName|ObjectByName|PadByName|PinByName)\n"
+   "Select(ElementByName|ObjectByName|PadByName|PinByName, Name)\n"
+-  "Select(TextByName|ViaByName)\n"
+-  "Select(TextByName|ViaByName, Name)\n" "Select(Convert)";
++  "Select(TextByName|ViaByName|NetByName)\n"
++  "Select(TextByName|ViaByName|NetByName, Name)\n"
++  "Select(Convert)";
+ 
+ static const char select_help[] = "Toggles or sets the selection";
+ 
+@@ -5360,6 +5363,7 @@ static const char select_help[] = "Toggles or sets the selection";
+ @item PinByName
+ @item TextByName
+ @item ViaByName
++@item NetByName
+ 
+ These all rely on having a regular expression parser built into
+ @code{pcb}.  If the name is not specified then the user is prompted
+@@ -5393,7 +5397,6 @@ ActionSelect (int argc, char **argv, int x, int y)
+   char *function = ARG (0);
+   if (function)
+     {
+-
+       HideCrosshair (true);
+       switch (GetFunctionID (function))
+ 	{
+@@ -5418,6 +5421,9 @@ ActionSelect (int argc, char **argv, int x, int y)
+ 	case F_ViaByName:
+ 	  type = VIA_TYPE;
+ 	  goto commonByName;
++	case F_NetByName:
++	  type = NET_TYPE;
++	  goto commonByName;
+ 
+ 	commonByName:
+ 	  {
+@@ -5574,7 +5580,6 @@ static int
+ ActionUnselect (int argc, char **argv, int x, int y)
+ {
+   char *function = ARG (0);
+-
+   if (function)
+     {
+       HideCrosshair (true);
+@@ -5601,6 +5606,9 @@ ActionUnselect (int argc, char **argv, int x, int y)
+ 	case F_ViaByName:
+ 	  type = VIA_TYPE;
+ 	  goto commonByName;
++	case F_NetByName:
++	  type = NET_TYPE;
++	  goto commonByName;
+ 
+ 	commonByName:
+ 	  {
+diff --git a/src/const.h b/src/const.h
+index 676a6f0..e4a1d31 100644
+--- a/src/const.h
++++ b/src/const.h
+@@ -310,6 +310,7 @@ When set, element names are not drawn.
+ #define ELEMENTARC_TYPE		0x08000
+ 
+ #define LOCKED_TYPE 		0x10000	/* used to tell search to include locked items. */
++#define NET_TYPE		0x20000 /* used to select whole net. */
+ 
+ #define PIN_TYPES     (VIA_TYPE | PIN_TYPE)
+ #define LOCK_TYPES    (VIA_TYPE | LINE_TYPE | ARC_TYPE | POLYGON_TYPE | ELEMENT_TYPE \
+diff --git a/src/select.c b/src/select.c
+index c4b5e17..b85d9e3 100644
+--- a/src/select.c
++++ b/src/select.c
+@@ -44,6 +44,7 @@
+ #include "undo.h"
+ #include "rats.h"
+ #include "misc.h"
++#include "find.h"
+ 
+ #include <sys/types.h>
+ #ifdef HAVE_REGEX_H
+@@ -1012,6 +1013,33 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+       }
+   }
+   END_LOOP;
++  if (Type & NET_TYPE)
++    {
++      InitConnectionLookup ();
++      ResetFoundPinsViasAndPads (false);
++      ResetFoundLinesAndPolygons (false);
++      SaveUndoSerialNumber ();
++
++      MENU_LOOP (&PCB->NetlistLib);
++      {
++        Cardinal i;
++        LibraryEntryType *entry;
++        ConnectionType conn;
++	
++        if (menu->Name && REGEXEC (menu->Name))
++          {
++            for (i = menu->EntryN, entry = menu->Entry; i; i--, entry++)
++              if (SeekPad (entry, &conn, false))
++                RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, true);
++          }
++      }
++      END_LOOP;
++      RestoreUndoSerialNumber ();
++      SelectConnection (Flag);
++      ResetFoundPinsViasAndPads (false);
++      ResetFoundLinesAndPolygons (false);
++      FreeConnectionLookupMemory ();
++    }
+ 
+ #if defined(HAVE_REGCOMP)
+ #if !defined(sgi)
