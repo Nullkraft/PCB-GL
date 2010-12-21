@@ -1,0 +1,43 @@
+Bottom: 304589d06a5222da0b9612dc0a08f1bcac062b8a
+Top:    a68ab8a917668a647e0e91bdcdfa709068548aee
+Author: Martin Kupec <martin.kupec@kupson.cz>
+Date:   2010-12-20 21:48:48 +0100
+
+From 95bcaddeb10ed9863e56d372bf513ae5cd96b07c Mon Sep 17 00:00:00 2001
+Subject: [PATCH] Change macro ARG, to return NULL instead of 0
+ The macro is checking if the argument requested exist.
+
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index e3576bf..ba1fbed 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -462,7 +462,7 @@ extern int stroke_trans (char *s);
+ #endif
+ static void ChangeFlag (char *, char *, int, char *);
+ 
+-#define ARG(n) (argc > (n) ? argv[n] : 0)
++#define ARG(n) (argc > (n) ? argv[n] : NULL)
+ 
+ #ifdef HAVE_LIBSTROKE
+ 
+@@ -5429,7 +5429,7 @@ ActionSelect (int argc, char **argv, int x, int y)
+ 	      {
+ 		if (SelectObjectByName (type, pattern, true))
+ 		  SetChangedFlag (true);
+-		if (ARG (1) == 0)
++		if (ARG (1) == NULL)
+ 		  free (pattern);
+ 	      }
+ 	    break;
+@@ -5612,7 +5612,7 @@ ActionUnselect (int argc, char **argv, int x, int y)
+ 	      {
+ 		if (SelectObjectByName (type, pattern, false))
+ 		  SetChangedFlag (true);
+-		if (ARG (1) == 0)
++		if (ARG (1) == NULL)
+ 		  free (pattern);
+ 	      }
+ 	    break;
