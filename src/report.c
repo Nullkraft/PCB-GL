@@ -343,10 +343,41 @@ ReportDialog (int argc, char **argv, int x, int y)
 		 prec, units(Polygon->BoundingBox.Y1),
 		 prec, units(Polygon->BoundingBox.X2),
 		 prec, UNIT(Polygon->BoundingBox.Y2),
+     0, 0, 0,
+#warning FIXME Later
+#if 0
 		 Polygon->PointN, Polygon->PointMax - Polygon->PointN,
 		 Polygon->HoleIndexN,
+#endif
 		 GetLayerNumber (PCB->Data, (LayerTypePtr) ptr1),
 		 TEST_FLAG (LOCKFLAG, Polygon) ? "It is LOCKED.\n" : "");
+	break;
+      }
+    case POUR_TYPE:
+      {
+	PourTypePtr Pour;
+#ifndef NDEBUG
+	if (gui->shift_is_pressed ())
+	  {
+	    LayerTypePtr layer = (LayerTypePtr) ptr1;
+	    __r_dump_tree (layer->pour_tree->root, 0);
+	    return;
+	  }
+#endif
+	Pour = (PourTypePtr) ptr2;
+
+	sprintf (&report[0], "POUR ID# %ld   Flags:%s\n"
+		 "Its bounding box is (%d,%d) (%d,%d)\n"
+		 "It has %d points and could store %d more\n"
+		 "without using more memory.\n"
+		 "It resides on layer %d\n"
+		 "%s", Pour->ID,
+		 flags_to_string (Pour->Flags, POUR_TYPE),
+		 Pour->BoundingBox.X1, Pour->BoundingBox.Y1,
+		 Pour->BoundingBox.X2, Pour->BoundingBox.Y2,
+		 Pour->PointN, Pour->PointMax - Pour->PointN,
+		 GetLayerNumber (PCB->Data, (LayerTypePtr) ptr1),
+		 TEST_FLAG (LOCKFLAG, Pour) ? "It is LOCKED\n" : "");
 	break;
       }
     case PAD_TYPE:
@@ -489,14 +520,14 @@ ReportDialog (int argc, char **argv, int x, int y)
 	break;
       }
     case LINEPOINT_TYPE:
-    case POLYGONPOINT_TYPE:
+    case POURPOINT_TYPE:
       {
 	PointTypePtr point = (PointTypePtr) ptr2;
 	sprintf (&report[0], "POINT ID# %ld.\n"
 		 "Located at (X,Y) = (%.*f,%.*f) %s.\n"
 		 "It belongs to a %s on layer %d.\n", point->ID,
 		 prec, units (point->X), prec, UNIT (point->Y),
-		 (type == LINEPOINT_TYPE) ? "line" : "polygon",
+		 (type == LINEPOINT_TYPE) ? "line" : "pour",
 		 GetLayerNumber (PCB->Data, (LayerTypePtr) ptr1));
 	break;
       }
