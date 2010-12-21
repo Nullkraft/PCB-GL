@@ -1,5 +1,5 @@
 Bottom: a68ab8a917668a647e0e91bdcdfa709068548aee
-Top:    a68ab8a917668a647e0e91bdcdfa709068548aee
+Top:    4c20a9f28f13787ad0f47477c9dc613dfb0f6080
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-21 13:04:11 +0000
 
@@ -20,4 +20,14 @@ Pretty please?
 
 ---
 
-
+diff --git a/src/parse_l.l b/src/parse_l.l
+index 4ed5741..9799250 100644
+--- a/src/parse_l.l
++++ b/src/parse_l.l
+@@ -61,6 +61,7 @@ RCSID("$Id$");
+ #include "strflags.h"
+ #include "parse_l.h"
+ #include "parse_y.h"
++#include "create.h"
+ 
+ #define YY_NO_INPUT
