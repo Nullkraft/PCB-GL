@@ -5,7 +5,10 @@ Date:   2010-12-20 21:48:48 +0100
 
 action.c: Change macro ARG, to return NULL instead of 0
 
-The macro is checking if the argument requested exist.
+When the argument number requested does not exist, return NULL, not 0,
+as this is more in keeping with the type (char *) normally returned.
+
+Commit message modified by Peter Clifton <pcjc2@cam.ac.uk>
 
 
 ---
