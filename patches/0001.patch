@@ -1,5 +1,5 @@
 Bottom: 304589d06a5222da0b9612dc0a08f1bcac062b8a
-Top:    ec2abae37f0c911e055070a16ee91e1236725cb1
+Top:    dcb6e21860214e7e40045b90d84a349de2618227
 Author: Martin Kupec <martin.kupec@kupson.cz>
 Date:   2010-12-20 21:47:33 +0100
 
@@ -97,7 +97,7 @@ index 676a6f0..e4a1d31 100644
  #define PIN_TYPES     (VIA_TYPE | PIN_TYPE)
  #define LOCK_TYPES    (VIA_TYPE | LINE_TYPE | ARC_TYPE | POLYGON_TYPE | ELEMENT_TYPE \
 diff --git a/src/select.c b/src/select.c
-index c4b5e17..b85d9e3 100644
+index c4b5e17..94069b0 100644
 --- a/src/select.c
 +++ b/src/select.c
 @@ -44,6 +44,7 @@
@@ -124,7 +124,7 @@ index c4b5e17..b85d9e3 100644
 +        Cardinal i;
 +        LibraryEntryType *entry;
 +        ConnectionType conn;
-+	
++
 +        if (menu->Name && REGEXEC (menu->Name))
 +          {
 +            for (i = menu->EntryN, entry = menu->Entry; i; i--, entry++)
