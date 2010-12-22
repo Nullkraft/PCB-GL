@@ -282,8 +282,8 @@ MoveLine (LayerTypePtr Layer, LineTypePtr Line)
 {
   if (Layer->On)
     EraseLine (Line);
-  RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
   r_delete_entry (Layer->line_tree, (BoxTypePtr) Line);
+  RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
   MOVE_LINE_LOWLEVEL (Line, DeltaX, DeltaY);
   r_insert_entry (Layer->line_tree, (BoxTypePtr) Line, 0);
   ClearFromPours (PCB->Data, LINE_TYPE, Layer, Line);
@@ -301,8 +301,8 @@ MoveLine (LayerTypePtr Layer, LineTypePtr Line)
 static void *
 MoveArc (LayerTypePtr Layer, ArcTypePtr Arc)
 {
-  RestoreToPours (PCB->Data, ARC_TYPE, Layer, Arc);
   r_delete_entry (Layer->arc_tree, (BoxTypePtr) Arc);
+  RestoreToPours (PCB->Data, ARC_TYPE, Layer, Arc);
   if (Layer->On)
     {
       EraseArc (Arc);
@@ -325,8 +325,8 @@ MoveArc (LayerTypePtr Layer, ArcTypePtr Arc)
 static void *
 MoveText (LayerTypePtr Layer, TextTypePtr Text)
 {
-  RestoreToPours (PCB->Data, TEXT_TYPE, Layer, Text);
   r_delete_entry (Layer->text_tree, (BoxTypePtr) Text);
+  RestoreToPours (PCB->Data, TEXT_TYPE, Layer, Text);
   if (Layer->On)
     {
       EraseText (Layer, Text);
@@ -388,8 +388,8 @@ MoveLinePoint (LayerTypePtr Layer, LineTypePtr Line, PointTypePtr Point)
     {
       if (Layer->On)
 	EraseLine (Line);
-      RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
       r_delete_entry (Layer->line_tree, &Line->BoundingBox);
+      RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
       MOVE (Point->X, Point->Y, DeltaX, DeltaY);
       SetLineBoundingBox (Line);
       r_insert_entry (Layer->line_tree, &Line->BoundingBox, 0);
@@ -659,8 +659,8 @@ MoveTextToLayerLowLevel (LayerTypePtr Source, TextTypePtr Text,
 {
   TextTypePtr new = GetTextMemory (Destination);
 
-  RestoreToPours (PCB->Data, TEXT_TYPE, Source, Text);
   r_delete_entry (Source->text_tree, (BoxTypePtr) Text);
+  RestoreToPours (PCB->Data, TEXT_TYPE, Source, Text);
   /* copy the data and remove it from the former layer */
   *new = *Text;
   *Text = Source->Text[--Source->TextN];
