@@ -119,6 +119,7 @@ a zoom in/out.
 #include "set.h"
 #include "undo.h"
 #include "vendor.h"
+#include "free_atexit.h"
 
 #include "gui-icons-mode-buttons.data"
 #include "gui-icons-misc.data"
