@@ -56,6 +56,15 @@ void *leaky_malloc (size_t size)
   return new_memory + sizeof(leaky_admin_t);
 }
 
+void *leaky_calloc (size_t nmemb, size_t size)
+{
+  size_t size_ = size * nmemb;
+  void *new_memory = leaky_malloc (size_);
+
+  memset (new_memory, 0, size_);
+  return new_memory;
+}
+
 void *leaky_realloc (void* old_memory, size_t size)
 {
   void *new_memory;
