@@ -1,7 +1,7 @@
-Bottom: f5002a4a89906bb47719c4942e0da250fe0cab80
-Top:    07926788619a081f394345a47d4c4f4571962460
+Bottom: 47560d75f7e6b1e62ca9551b5f3f009ec7005b4d
+Top:    689ad8b0359545b97c91050f11cb18d1bd9fef89
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-21 13:08:16 +0000
+Date:   2010-12-22 12:00:56 +0000
 
 TEMPORARY: Comment out some DrawMark calls which might be out of context
 
@@ -11,10 +11,10 @@ Should fix this properly with notificatons to the GUI
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 77b105d..036a4bf 100644
+index ba1fbed..003e918 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -4022,7 +4022,7 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
+@@ -4020,7 +4020,7 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
      {
        if (Marked.status)
  	{
@@ -23,7 +23,7 @@ index 77b105d..036a4bf 100644
  	  Marked.status = false;
  	}
        else
-@@ -4030,16 +4030,16 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
+@@ -4028,16 +4028,16 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
  	  Marked.status = true;
  	  Marked.X = Crosshair.X;
  	  Marked.Y = Crosshair.Y;
