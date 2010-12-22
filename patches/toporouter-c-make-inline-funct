@@ -1,0 +1,16 @@
+Bottom: 1b99b1603bf9f6b59371fb80b81a4ba6404ad4c3
+Top:    1b99b1603bf9f6b59371fb80b81a4ba6404ad4c3
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-22 14:52:45 +0000
+
+toporouter.c: Make inline functions "static inline"
+
+gcc builds break for CFLAGS="-g" only builds (no -O2). Inlineing is only
+performed when optimisation is enabled, and unless we make all local
+inlined functions "static inline", it does not emit the non-inlined
+assembly for them, resulting in undefined symbols at link time.
+
+
+---
+
+
