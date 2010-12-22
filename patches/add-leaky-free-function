@@ -13,6 +13,8 @@ The leaky_*() functions store the addresses of all memory they allocate,
 and for debugging builds, free it upon exit of the program, thus allowing
 leak detectors such as valgrind to ignore our deliberate "leaks".
 
+The memory returned by leaky_*() must not be free'd.
+
 Build integration and leaky_atexit.c reindenting by
 Peter Clifton <pcjc2@cam.ac.uk>
 
