@@ -5,11 +5,13 @@ Date:   2010-12-22 09:33:27 +0000
 
 Add leaky_{malloc,realloc} functions for deliberate non-free'd allocations
 
-These are to be used for allocations made and deliberately cached
-for the lifetime of the program. The leaky_*() functions store the
-addresses of all memory they allocate, and for debugging builds,
-free it upon exit of the program, thus allowing leak detectors such
-as valgrind to ignore our deliberate "leaks".
+These are to be used for local allocations made and cached for
+the lifetime of the program (never free'd). Typically, these are stored
+in a static char * variable (or similar) within a function.
+
+The leaky_*() functions store the addresses of all memory they allocate,
+and for debugging builds, free it upon exit of the program, thus allowing
+leak detectors such as valgrind to ignore our deliberate "leaks".
 
 Build integration and leaky_atexit.c reindenting by
 Peter Clifton <pcjc2@cam.ac.uk>
