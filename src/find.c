@@ -33,8 +33,6 @@
  * - lists for pins and vias, lines, arcs, pads and for polygons are created.
  *   Every object that has to be checked is added to its list.
  *   Coarse searching is accomplished with the data rtrees.
- * - there's no 'speed-up' mechanism for polygons because they are not used
- *   as often as other objects 
  * - the maximum distance between line and pin ... would depend on the angle
  *   between them. To speed up computation the limit is set to one half
  *   of the thickness of the objects (cause of square pins).
@@ -1975,6 +1973,7 @@ LookupLOConnectionsToArc (ArcTypePtr Arc, Cardinal LayerGroup)
             return true;
 
           /* now check all polygons */
+          printf ("Slow pour path for arcs\n");
           POUR_LOOP (LAYER_PTR (layer));
           {
             POURPOLYGON_LOOP (pour);
@@ -2056,6 +2055,30 @@ LOCtoLineRat_callback (const BoxType * b, void *cl)
 }
 
 static int
+LOCtoLinePolygon_callback (const BoxType * b, void *cl)
+{
+  PolygonTypePtr polygon = (PolygonTypePtr) b;
+  struct lo_info *i = (struct lo_info *) cl;
+
+  if (!TEST_FLAG (TheFlag, polygon) &&
+      IsLineInPolygon (&i->line, polygon) &&
+      ADD_POLYGON_TO_LIST (i->layer, polygon))
+    longjmp (i->env, 1);
+
+  return 0;
+}
+
+static int
+LOCtoLinePourPolygon_callback (const BoxType * b, void *cl)
+{
+  PourTypePtr pour = (PourTypePtr) b;
+  struct lo_info *i = (struct lo_info *) cl;
+
+  return r_search (pour->polygon_tree, (BoxType *) &i->line,
+                   NULL, LOCtoLinePolygon_callback, i);
+}
+
+static int
 LOCtoLinePad_callback (const BoxType * b, void *cl)
 {
   PadTypePtr pad = (PadTypePtr) b;
@@ -2118,18 +2141,11 @@ LookupLOConnectionsToLine (LineTypePtr Line, Cardinal LayerGroup,
           /* now check all polygons */
           if (PolysTo)
             {
-              POUR_LOOP (LAYER_PTR (layer));
-              {
-                POURPOLYGON_LOOP (pour);
-                {
-                  if (!TEST_FLAG (TheFlag, polygon) &&
-                      IsLineInPolygon (Line, polygon) &&
-                      ADD_POLYGON_TO_LIST (layer, polygon))
-                    return true;
-                }
-                END_LOOP;
-              }
-              END_LOOP;
+              if (setjmp (info.env) == 0)
+                r_search (LAYER_PTR (layer)->pour_tree, (BoxType *) & info.line,
+                          NULL, LOCtoLinePourPolygon_callback, &info);
+              else
+                return true;
             }
         }
       else
@@ -2217,6 +2233,7 @@ LOTouchesLine (LineTypePtr Line, Cardinal LayerGroup)
             return (true);
 
           /* now check all polygons */
+          printf ("Slow pour path for lines (LOTouchesLine)\n");
           POUR_LOOP (LAYER_PTR (layer));
           {
             POURPOLYGON_LOOP (pour);
@@ -2593,6 +2610,29 @@ LOCtoPolyRat_callback (const BoxType * b, void *cl)
   return 0;
 }
 
+static int
+LOCtoPolyPolygon_callback (const BoxType * b, void *cl)
+{
+  PolygonTypePtr polygon = (PolygonTypePtr) b;
+  struct lo_info *i = (struct lo_info *) cl;
+
+  if (!TEST_FLAG (TheFlag, polygon) &&
+      IsPolygonInPolygon (polygon, &i->polygon) &&
+      ADD_POLYGON_TO_LIST (i->layer, polygon))
+    longjmp (i->env, 1);
+
+  return 0;
+}
+
+static int
+LOCtoPolyPourPolygon_callback (const BoxType * b, void *cl)
+{
+  PourTypePtr pour = (PourTypePtr) b;
+  struct lo_info *i = (struct lo_info *) cl;
+
+  return r_search (pour->polygon_tree, (BoxType *) &i->polygon,
+                   NULL, LOCtoPolyPolygon_callback, i);
+}
 
 /* ---------------------------------------------------------------------------
  * looks up LOs that are connected to the given polygon
@@ -2628,19 +2668,12 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
           info.layer = layer;
 
           /* check all polygons */
-
-          POUR_LOOP (LAYER_PTR (layer));
-          {
-            POURPOLYGON_LOOP (pour);
-            {
-              if (!TEST_FLAG (TheFlag, polygon) &&
-                  IsPolygonInPolygon (polygon, Polygon) &&
-                  ADD_POLYGON_TO_LIST (layer, polygon))
-                return true;
-            }
-            END_LOOP;
-          }
-          END_LOOP;
+          if (setjmp (info.env) == 0)
+            r_search (LAYER_PTR (layer)->pour_tree,
+                      (BoxType *) & info.polygon, NULL,
+                      LOCtoPolyPourPolygon_callback, &info);
+          else
+            return true;
 
           /* check all lines */
           if (setjmp (info.env) == 0)
