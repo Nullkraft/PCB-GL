@@ -22,8 +22,8 @@
  *
  */
 
-
 #include <stdlib.h>
+#include <string.h>
 
 /* we need one ID per context - short int with 64k IDs should be enough */
 typedef unsigned int leaky_idx_t;
