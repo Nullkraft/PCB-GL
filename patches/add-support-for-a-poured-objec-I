@@ -1,7 +1,7 @@
-Bottom: 27fbf071385a3268c4160db5145d4e89b3c83c48
-Top:    c4c843c19a0ae7de9389422ba041558edf575fbc
+Bottom: 915fc7bbc0ada477b7775aeca495fd0dab467a1a
+Top:    26b57a4608897fdc43f6d2c108a0a317a6e56e0e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-22 18:00:04 +0000
+Date:   2010-12-22 21:55:31 +0000
 
 Add support for a "poured" object.
 
@@ -3067,10 +3067,10 @@ index 476b196..63178a1 100644
  	result = TRUE;
        break;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 9daecc6..02d617e 100644
+index 103bea2..d2406cc 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -1980,8 +1980,9 @@ static ModeButton mode_buttons[] = {
+@@ -1981,8 +1981,9 @@ static ModeButton mode_buttons[] = {
    {NULL, NULL, NULL, "arc", ARC_MODE, arc},
    {NULL, NULL, NULL, "text", TEXT_MODE, text},
    {NULL, NULL, NULL, "rectangle", RECTANGLE_MODE, rect},
@@ -7635,7 +7635,7 @@ index 9fd4625..07e158b 100644
  void *RemoveElement (ElementTypePtr);
  void ClearRemoveList (void);
 diff --git a/src/report.c b/src/report.c
-index be6d1e6..a975e1c 100644
+index a9c429d..ea90559 100644
 --- a/src/report.c
 +++ b/src/report.c
 @@ -343,12 +343,43 @@ ReportDialog (int argc, char **argv, int x, int y)
@@ -8130,7 +8130,7 @@ index add5661..25d8103 100644
  #define	ELEMENT_IN_BOX(e,b)	\
  	(BOX_IN_BOX(&((e)->BoundingBox), (b)))
 diff --git a/src/select.c b/src/select.c
-index 94069b0..6de18c9 100644
+index bd4f373..8b69d5e 100644
 --- a/src/select.c
 +++ b/src/select.c
 @@ -183,6 +183,7 @@ SelectObject (void)
