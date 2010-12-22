@@ -1,9 +1,12 @@
 Bottom: f36ac99c2b81360c21d3a88ffbf8d6ee9369d66e
 Top:    faf4f18530583aa764148a24cbc80dfb881ae3c7
-Author: Peter Clifton <pcjc2@cam.ac.uk>
+Author: Tibor Palinkas <geda@igor2.repo.hu>
 Date:   2010-12-22 21:04:17 +0000
 
+hid/gtk: Use leaky_* functions for deliberate leaks in ghid_ui_info_append
 
+Allocate cached temporary memory with the leak_* memory allocation wrapers
+which allow these to be freed at exit.
 
 
 ---
