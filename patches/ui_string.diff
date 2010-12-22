@@ -1,5 +1,5 @@
 Bottom: f36ac99c2b81360c21d3a88ffbf8d6ee9369d66e
-Top:    16d6e3339ece757bcc8d807072013e5f3692c6ec
+Top:    9f495f3d357be2d1afd6ad65f2763b15b3386f07
 Author: Tibor Palinkas <geda@igor2.repo.hu>
 Date:   2010-12-22 21:04:17 +0000
 
@@ -12,10 +12,18 @@ which allow these to be freed at exit.
 ---
 
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 90977e2..b1b75fa 100644
+index 90977e2..817c453 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -3679,7 +3679,7 @@ ghid_ui_info_append (const gchar * new)
+@@ -119,6 +119,7 @@ a zoom in/out.
+ #include "set.h"
+ #include "undo.h"
+ #include "vendor.h"
++#include "free_atexit.h"
+ 
+ #include "gui-icons-mode-buttons.data"
+ #include "gui-icons-misc.data"
+@@ -3679,7 +3680,7 @@ ghid_ui_info_append (const gchar * new)
    if (new_ui_info_sz == 0) 
      {
        new_ui_info_sz = 1024;
@@ -24,7 +32,7 @@ index 90977e2..b1b75fa 100644
      }
  
    while (strlen (new_ui_info) + strlen (new) + 1 > new_ui_info_sz)
-@@ -3688,7 +3688,7 @@ ghid_ui_info_append (const gchar * new)
+@@ -3688,7 +3689,7 @@ ghid_ui_info_append (const gchar * new)
        gchar * np;
  
        n = new_ui_info_sz + 1024;
