@@ -3,9 +3,17 @@ Top:    4c20a9f28f13787ad0f47477c9dc613dfb0f6080
 Author: Tibor Palinkas <igor2@inno.bme.hu>
 Date:   2010-12-22 09:33:27 +0000
 
-Add leaky free functions
+Add leaky_{malloc,realloc} functions for deliberate non-free'd allocations
 
-Automake stuff by Peter Clifton <pcjc2@cam.ac.uk>
+These are to be used for allocations made and deliberately cached
+for the lifetime of the program. The leaky_*() functions store the
+addresses of all memory they allocate, and for debugging builds,
+free it upon exit of the program, thus allowing leak detectors such
+as valgrind to ignore our deliberate "leaks".
+
+Build integration and leaky_atexit.c reindenting by
+Peter Clifton <pcjc2@cam.ac.uk>
+
 
 
 ---
