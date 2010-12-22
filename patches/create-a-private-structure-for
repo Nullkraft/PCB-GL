@@ -1,7 +1,7 @@
-Bottom: cf190d8f542f469d8fc8ad95119be5997b990bf8
-Top:    f4308e528d5c4f6bb602dec978166d6db8b8b1c0
+Bottom: 14ef63f384940763e7ebbf93fb317607afba68b1
+Top:    3759b8ea0ba6ea13a2585f945c49d500de8de0e7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-22 12:18:38 +0000
+Date:   2010-12-22 21:55:00 +0000
 
 Create a private structure for the render to isolate some of its internals
 
@@ -486,10 +486,10 @@ index 5bb60c8..ed5e445 100644
    ghid_invalidate_all ();
    RestoreCrosshair (TRUE);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 02c1fd4..bb32cd1 100644
+index 752ad98..b79f432 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -2672,6 +2672,8 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -2673,6 +2673,8 @@ ghid_parse_arguments (int *argc, char ***argv)
    gport->zoom = 300.0;
    pixel_slop = 300;
  

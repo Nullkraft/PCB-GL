@@ -1,7 +1,7 @@
-Bottom: bc3eda51c10d1e3c0d7089aeceab8e7c72f440a2
-Top:    7e08f7cca7c22c36e60d234d51a4e907ae7c37f0
+Bottom: df705e30525986f615cb94ea7f739b79714571ec
+Top:    e880053437910b8942cabdd5ec1714f55af4ce5a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-22 12:18:39 +0000
+Date:   2010-12-22 21:55:03 +0000
 
 Use motion hints when processing pointer motion over the drawing area
 
@@ -69,10 +69,10 @@ index cd21ef3..bf3021e 100644
  #if ENABLE_TOOLTIPS
    queue_tooltip_update (out);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 3baff02..2eafbf9 100644
+index 729b368..d794b1b 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -2297,7 +2297,8 @@ ghid_build_pcb_top_window (void)
+@@ -2298,7 +2298,8 @@ ghid_build_pcb_top_window (void)
  			 | GDK_LEAVE_NOTIFY_MASK | GDK_ENTER_NOTIFY_MASK
  			 | GDK_BUTTON_RELEASE_MASK | GDK_BUTTON_PRESS_MASK
  			 | GDK_KEY_RELEASE_MASK | GDK_KEY_PRESS_MASK

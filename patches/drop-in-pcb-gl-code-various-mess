@@ -1,7 +1,7 @@
-Bottom: c69be97cb7c69bbbb56899d08d1862a857e0a249
-Top:    376b41934a971979a54c655d94c44de75d9483cc
+Bottom: 6a5eec254495c2c08f4c3b54a3b37c0c598c7842
+Top:    c3179614f18c1ef5bfbdb7bdd8e32552050c3983
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-22 12:18:38 +0000
+Date:   2010-12-22 21:55:02 +0000
 
 Drop in PCB+GL code + various mess. Needs splitting up?
 
@@ -2106,10 +2106,10 @@ index c75a0d3..54d95c8 100644
    gtk_widget_class->expose_event = ghid_pinout_preview_expose;
  
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index bb32cd1..a87bd0b 100644
+index b79f432..d6b52e2 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -2293,6 +2293,7 @@ ghid_build_pcb_top_window (void)
+@@ -2294,6 +2294,7 @@ ghid_build_pcb_top_window (void)
    gtk_box_pack_start (GTK_BOX (hbox), viewport, TRUE, TRUE, 0);
  
    gport->drawing_area = gtk_drawing_area_new ();
