@@ -1,0 +1,31 @@
+Bottom: faf4f18530583aa764148a24cbc80dfb881ae3c7
+Top:    16d6e3339ece757bcc8d807072013e5f3692c6ec
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-22 21:38:12 +0000
+
+Refresh of ui_string.diff
+
+---
+
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 4390210..b1b75fa 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -3679,7 +3679,7 @@ ghid_ui_info_append (const gchar * new)
+   if (new_ui_info_sz == 0) 
+     {
+       new_ui_info_sz = 1024;
+-      new_ui_info = (gchar *) leaky_calloc ( new_ui_info_sz, sizeof (gchar));
++      new_ui_info = leaky_calloc (new_ui_info_sz, sizeof (gchar));
+     }
+ 
+   while (strlen (new_ui_info) + strlen (new) + 1 > new_ui_info_sz)
+@@ -3688,7 +3688,7 @@ ghid_ui_info_append (const gchar * new)
+       gchar * np;
+ 
+       n = new_ui_info_sz + 1024;
+-      if ( (np = leaky_realloc (new_ui_info, n)) == NULL)
++      if ((np = leaky_realloc (new_ui_info, n)) == NULL)
+ 	{
+ 	  fprintf (stderr, "ghid_ui_info_append():  realloc of size %ld failed\n",
+ 		   (long int) n);
