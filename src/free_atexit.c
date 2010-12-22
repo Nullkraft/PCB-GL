@@ -58,10 +58,10 @@ void *leaky_malloc (size_t size)
 
 void *leaky_calloc (size_t nmemb, size_t size)
 {
-	size_t size_ = size * nmemb;
-  void *new_memory = leaky_malloc(size_);
+  size_t size_ = size * nmemb;
+  void *new_memory = leaky_malloc (size_);
 
-	memset(new_memory, 0, size_);
+  memset (new_memory, 0, size_);
   return new_memory;
 }
 
