@@ -1,5 +1,5 @@
 Bottom: fdee14444e99d6503463cabe41c9264a2807b185
-Top:    84d4864d99f15408e57cb36e1a2ca9eabf15e549
+Top:    c14a481100376feff50d71ccf263128da56e8d60
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-22 18:18:42 +0000
 
@@ -98,7 +98,7 @@ index 676a6f0..e4a1d31 100644
  #define PIN_TYPES     (VIA_TYPE | PIN_TYPE)
  #define LOCK_TYPES    (VIA_TYPE | LINE_TYPE | ARC_TYPE | POLYGON_TYPE | ELEMENT_TYPE \
 diff --git a/src/select.c b/src/select.c
-index c4b5e17..96d2fb9 100644
+index c4b5e17..bd4f373 100644
 --- a/src/select.c
 +++ b/src/select.c
 @@ -44,6 +44,7 @@
@@ -109,7 +109,7 @@ index c4b5e17..96d2fb9 100644
  
  #include <sys/types.h>
  #ifdef HAVE_REGEX_H
-@@ -1012,6 +1013,34 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+@@ -1012,6 +1013,35 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
        }
    }
    END_LOOP;
@@ -122,17 +122,18 @@ index c4b5e17..96d2fb9 100644
 +
 +      MENU_LOOP (&PCB->NetlistLib);
 +      {
-+        Cardinal i;
-+        LibraryEntryType *entry;
-+        ConnectionType conn;
++	Cardinal i;
++	LibraryEntryType *entry;
++	ConnectionType conn;
 +
 +	/* Name[0] and Name[1] are special purpose, not the actual name*/
-+        if (menu->Name && REGEXEC (menu->Name + 2))
-+          {
-+            for (i = menu->EntryN, entry = menu->Entry; i; i--, entry++)
-+              if (SeekPad (entry, &conn, false))
-+                RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, true);
-+          }
++	if (menu->Name && menu->Name[0] != '\0' && menu->Name[1] != '\0' &&
++	    REGEXEC (menu->Name + 2))
++	  {
++	    for (i = menu->EntryN, entry = menu->Entry; i; i--, entry++)
++	      if (SeekPad (entry, &conn, false))
++		RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, true);
++	  }
 +      }
 +      END_LOOP;
 +      RestoreUndoSerialNumber ();
