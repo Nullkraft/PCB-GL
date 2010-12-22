@@ -1026,7 +1026,8 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
         LibraryEntryType *entry;
         ConnectionType conn;
 
-        if (menu->Name && REGEXEC (menu->Name))
+	/* Name[0] and Name[1] are special purpose, not the actual name*/
+        if (menu->Name && REGEXEC (menu->Name + 2))
           {
             for (i = menu->EntryN, entry = menu->Entry; i; i--, entry++)
               if (SeekPad (entry, &conn, false))
