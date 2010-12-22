@@ -3679,7 +3679,7 @@ ghid_ui_info_append (const gchar * new)
   if (new_ui_info_sz == 0) 
     {
       new_ui_info_sz = 1024;
-      new_ui_info = (gchar *) calloc ( new_ui_info_sz, sizeof (gchar));
+      new_ui_info = leaky_calloc (new_ui_info_sz, sizeof (gchar));
     }
 
   while (strlen (new_ui_info) + strlen (new) + 1 > new_ui_info_sz)
@@ -3688,7 +3688,7 @@ ghid_ui_info_append (const gchar * new)
       gchar * np;
 
       n = new_ui_info_sz + 1024;
-      if ( (np = realloc (new_ui_info, n)) == NULL)
+      if ((np = leaky_realloc (new_ui_info, n)) == NULL)
 	{
 	  fprintf (stderr, "ghid_ui_info_append():  realloc of size %ld failed\n",
 		   (long int) n);
