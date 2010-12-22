@@ -1,5 +1,5 @@
 Bottom: f36ac99c2b81360c21d3a88ffbf8d6ee9369d66e
-Top:    faf4f18530583aa764148a24cbc80dfb881ae3c7
+Top:    16d6e3339ece757bcc8d807072013e5f3692c6ec
 Author: Tibor Palinkas <geda@igor2.repo.hu>
 Date:   2010-12-22 21:04:17 +0000
 
@@ -12,7 +12,7 @@ which allow these to be freed at exit.
 ---
 
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 90977e2..4390210 100644
+index 90977e2..b1b75fa 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -3679,7 +3679,7 @@ ghid_ui_info_append (const gchar * new)
@@ -20,7 +20,7 @@ index 90977e2..4390210 100644
      {
        new_ui_info_sz = 1024;
 -      new_ui_info = (gchar *) calloc ( new_ui_info_sz, sizeof (gchar));
-+      new_ui_info = (gchar *) leaky_calloc ( new_ui_info_sz, sizeof (gchar));
++      new_ui_info = leaky_calloc (new_ui_info_sz, sizeof (gchar));
      }
  
    while (strlen (new_ui_info) + strlen (new) + 1 > new_ui_info_sz)
@@ -29,7 +29,7 @@ index 90977e2..4390210 100644
  
        n = new_ui_info_sz + 1024;
 -      if ( (np = realloc (new_ui_info, n)) == NULL)
-+      if ( (np = leaky_realloc (new_ui_info, n)) == NULL)
++      if ((np = leaky_realloc (new_ui_info, n)) == NULL)
  	{
  	  fprintf (stderr, "ghid_ui_info_append():  realloc of size %ld failed\n",
  		   (long int) n);
