@@ -1,0 +1,140 @@
+Bottom: 0667e82c7c834831823a37d9003b019dbe75d946
+Top:    8857a29118b34e2ed3de96cf5023ad94c8a7c0e7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-23 17:48:37 +0000
+
+Refresh of remove-draw-call-from-resetfou
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index fe28c84..997e29e 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -2365,17 +2365,26 @@ ActionConnection (int argc, char **argv, int x, int y)
+ 
+ 	case F_ResetLinesAndPolygons:
+ 	  if (ResetFoundLinesAndPolygons (true, true))
+-	    IncrementUndoSerialNumber ();
++	    {
++	      IncrementUndoSerialNumber ();
++	      Draw ();
++	    }
+ 	  break;
+ 
+ 	case F_ResetPinsViasAndPads:
+ 	  if (ResetFoundPinsViasAndPads (true, true))
+-	    IncrementUndoSerialNumber ();
++	    {
++	      IncrementUndoSerialNumber ();
++	      Draw ();
++	    }
+ 	  break;
+ 
+ 	case F_Reset:
+ 	  if (ResetConnections (true, true))
+-	    IncrementUndoSerialNumber ();
++	    {
++	      IncrementUndoSerialNumber ();
++	      Draw ();
++	    }
+ 	  break;
+ 	}
+       RestoreCrosshair (true);
+@@ -2789,7 +2798,10 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+ 	  if (TEST_FLAG (AUTODRCFLAG, PCB) && Settings.Mode == LINE_MODE)
+ 	    {
+ 	      if (ResetConnections (true, true))
+-		IncrementUndoSerialNumber ();
++		{
++		  IncrementUndoSerialNumber ();
++		  Draw ();
++		}
+ 	      if (Crosshair.AttachedLine.State != STATE_FIRST)
+ 		LookupConnection (Crosshair.AttachedLine.Point1.X,
+ 				  Crosshair.AttachedLine.Point1.Y, true, 1,
+diff --git a/src/find.c b/src/find.c
+index 107b651..a8650b8 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -3490,11 +3490,7 @@ ResetFoundPinsViasAndPads (bool save_undo, bool redraw)
+   }
+   END_LOOP;
+   if (change)
+-    {
+-      SetChangedFlag (true);
+-      if (redraw)
+-        Draw ();
+-    }
++    SetChangedFlag (true);
+   return change;
+ }
+ 
+@@ -3559,11 +3555,7 @@ ResetFoundLinesAndPolygons (bool save_undo, bool redraw)
+   }
+   ENDALL_LOOP;
+   if (change)
+-    {
+-      SetChangedFlag (true);
+-      if (redraw)
+-        Draw ();
+-    }
++    SetChangedFlag (true);
+   return change;
+ }
+ 
+@@ -3926,7 +3918,10 @@ DRCAll (void)
+   TheFlag = FOUNDFLAG | DRCFLAG | SELECTEDFLAG;
+ 
+   if (ResetConnections (true, true))
+-    IncrementUndoSerialNumner ();
++    {
++      IncrementUndoSerialNumner ();
++      Draw (); /* XXX: Not sure if this is required */
++    }
+ 
+   User = false;
+ 
+diff --git a/src/report.c b/src/report.c
+index da4b600..486ebf4 100644
+--- a/src/report.c
++++ b/src/report.c
+@@ -689,7 +689,10 @@ ReportAllNetLengths (int argc, char **argv, int x, int y)
+ 
+     got_one:
+       if (ResetConnections (true, true))
+-        IncrementUndoSerialNumber ();
++	{
++	  IncrementUndoSerialNumber ();
++	  Draw ();
++	}
+       length = XYtoNetLength (x, y, &found);
+ 
+       gui->log("Net %s length %.*f %s\n", netname, prec, length*scale, units_name);
+@@ -705,7 +708,10 @@ ReportNetLength (int argc, char **argv, int x, int y)
+   int found = 0;
+ 
+   if (ResetConnections (true, true))
+-    IncrementUndoSerialNumber ();
++    {
++      IncrementUndoSerialNumber ();
++      Draw ();
++    }
+   gui->get_coords ("Click on a connection", &x, &y);
+ 
+   length = XYtoNetLength (x, y, &found);
+diff --git a/src/set.c b/src/set.c
+index 837b786..84c37f5 100644
+--- a/src/set.c
++++ b/src/set.c
+@@ -293,7 +293,10 @@ SetMode (int Mode)
+       if (Mode == LINE_MODE && TEST_FLAG (AUTODRCFLAG, PCB))
+ 	{
+ 	  if (ResetConnections (true, true))
+-	    IncrementUndoSerialNumber ();
++	    {
++	      IncrementUndoSerialNumber ();
++	      Draw ();
++	    }
+ 	}
+     }
