@@ -6,7 +6,8 @@ Date:   2010-12-23 11:37:09 +0000
 select.c: Remove Draw() call from SelectConnection
 
 Make callers responsible for calling the final Draw(), to avoid
-multiple redraws if other operations are to occur.
+multiple redraws if other operations are to occur, such as changing
+"FOUND" flags on objects after making the selection.
 
 
 ---
