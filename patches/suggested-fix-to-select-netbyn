@@ -1,5 +1,5 @@
-Bottom: f5bea57fbf958bf8040d2b2caf4fca773b03a305
-Top:    7655233f2f581f084c661197bc4441ce346679dd
+Bottom: 7556dbf7e749e854ef7ae66a8aaf42140e1f08d4
+Top:    b2a2f9c3fc752c3fcbf383cddc91b01bdd3f9b6f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-23 10:38:29 +0000
 
@@ -9,10 +9,10 @@ Suggested fix to Select(NetByName,...)
 ---
 
 diff --git a/src/select.c b/src/select.c
-index bd4f373..71277b5 100644
+index c28da80..ce18b64 100644
 --- a/src/select.c
 +++ b/src/select.c
-@@ -1018,7 +1018,6 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+@@ -1017,7 +1017,6 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
        InitConnectionLookup ();
        ResetFoundPinsViasAndPads (false);
        ResetFoundLinesAndPolygons (false);
@@ -20,7 +20,7 @@ index bd4f373..71277b5 100644
  
        MENU_LOOP (&PCB->NetlistLib);
        {
-@@ -1036,8 +1035,7 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+@@ -1035,8 +1034,7 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
  	  }
        }
        END_LOOP;
