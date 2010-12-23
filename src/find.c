@@ -3220,7 +3220,7 @@ LookupElementConnections (ElementTypePtr Element, FILE * FP)
   /* reset all currently marked connections */
   User = true;
   TheFlag = FOUNDFLAG;
-  ResetConnections (true);
+  ResetConnections (true, true);
   InitConnectionLookup ();
   PrintElementConnections (Element, FP, true);
   SetChangedFlag (true);
@@ -3241,7 +3241,7 @@ LookupConnectionsToAllElements (FILE * FP)
   /* reset all currently marked connections */
   User = false;
   TheFlag = FOUNDFLAG;
-  ResetConnections (false);
+  ResetConnections (false, false);
   InitConnectionLookup ();
 
   ELEMENT_LOOP (PCB->Data);
@@ -3251,12 +3251,12 @@ LookupConnectionsToAllElements (FILE * FP)
       break;
     SEPARATE (FP);
     if (Settings.ResetAfterElement && n != 1)
-      ResetConnections (false);
+      ResetConnections (false, false);
   }
   END_LOOP;
   if (Settings.RingBellWhenFinished)
     gui->beep ();
-  ResetConnections (false);
+  ResetConnections (false, false);
   FreeConnectionLookupMemory ();
   ClearAndRedrawOutput ();
 }
@@ -3418,7 +3418,7 @@ LookupUnusedPins (FILE * FP)
   /* reset all currently marked connections */
   User = true;
   SaveUndoSerialNumber ();
-  ResetConnections (true);
+  ResetConnections (true, true);
   RestoreUndoSerialNumber ();
   InitConnectionLookup ();
 
@@ -3572,7 +3572,7 @@ ResetFoundLinesAndPolygons (bool save_undo, bool redraw)
 /* ---------------------------------------------------------------------------
  * resets all found connections
  */
-static void
+bool
 ResetConnections (bool save_undo, bool redraw)
 {
   bool change = false;
@@ -3582,6 +3582,8 @@ ResetConnections (bool save_undo, bool redraw)
 
   if (change && save_undo)
     IncrementUndoSerialNumber ();
+
+  return change;
 }
 
 /*----------------------------------------------------------------------------
@@ -3651,7 +3653,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
           DumpList ();
           /* make the flag changes undoable */
           TheFlag = FOUNDFLAG | SELECTEDFLAG;
-          ResetConnections (false);
+          ResetConnections (false, false);
           User = true;
           drc = false;
           Bloat = -PCB->Shrink;
@@ -3700,7 +3702,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
     }
   /* now check the bloated condition */
   drc = false;
-  ResetConnections (false);
+  ResetConnections (false, false);
   TheFlag = FOUNDFLAG;
   ListStart (What, ptr1, ptr2, ptr3);
   Bloat = PCB->Bloat;
@@ -3711,7 +3713,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
       DumpList ();
       /* make the flag changes undoable */
       TheFlag = FOUNDFLAG | SELECTEDFLAG;
-      ResetConnections (false);
+      ResetConnections (false, false);
       User = true;
       drc = false;
       Bloat = 0;
@@ -3769,7 +3771,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
   drc = false;
   DumpList ();
   TheFlag = FOUNDFLAG | SELECTEDFLAG;
-  ResetConnections (false);
+  ResetConnections (false, false);
   return (false);
 }
 
@@ -3928,7 +3930,7 @@ DRCAll (void)
 
   TheFlag = FOUNDFLAG | DRCFLAG | SELECTEDFLAG;
 
-  ResetConnections (true);
+  ResetConnections (true, true);
 
   User = false;
 
@@ -3978,7 +3980,7 @@ DRCAll (void)
   END_LOOP;
 
   TheFlag = (IsBad) ? DRCFLAG : (FOUNDFLAG | DRCFLAG | SELECTEDFLAG);
-  ResetConnections (false);
+  ResetConnections (false, false);
   TheFlag = SELECTEDFLAG;
   /* check minimum widths and polygon clearances */
   if (!IsBad)
