@@ -1,5 +1,5 @@
-Bottom: f6d8360c5c876d38f88cbf68b33c7b482474eb33
-Top:    f5bea57fbf958bf8040d2b2caf4fca773b03a305
+Bottom: cf3945762ae7656f74d823af7746002b238077e1
+Top:    7556dbf7e749e854ef7ae66a8aaf42140e1f08d4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-22 18:18:42 +0000
 
@@ -10,7 +10,7 @@ v2: Check Net name appropriately
 ---
 
 diff --git a/src/action.c b/src/action.c
-index ba1fbed..77b105d 100644
+index 7a9c3f0..8c5bcf2 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -135,6 +135,7 @@ typedef enum
@@ -67,7 +67,7 @@ index ba1fbed..77b105d 100644
  
  	commonByName:
  	  {
-@@ -5574,7 +5580,6 @@ static int
+@@ -5575,7 +5581,6 @@ static int
  ActionUnselect (int argc, char **argv, int x, int y)
  {
    char *function = ARG (0);
@@ -75,7 +75,7 @@ index ba1fbed..77b105d 100644
    if (function)
      {
        HideCrosshair (true);
-@@ -5601,6 +5606,9 @@ ActionUnselect (int argc, char **argv, int x, int y)
+@@ -5602,6 +5607,9 @@ ActionUnselect (int argc, char **argv, int x, int y)
  	case F_ViaByName:
  	  type = VIA_TYPE;
  	  goto commonByName;
@@ -98,7 +98,7 @@ index 676a6f0..e4a1d31 100644
  #define PIN_TYPES     (VIA_TYPE | PIN_TYPE)
  #define LOCK_TYPES    (VIA_TYPE | LINE_TYPE | ARC_TYPE | POLYGON_TYPE | ELEMENT_TYPE \
 diff --git a/src/select.c b/src/select.c
-index c4b5e17..bd4f373 100644
+index 87dc661..c28da80 100644
 --- a/src/select.c
 +++ b/src/select.c
 @@ -44,6 +44,7 @@
@@ -109,7 +109,7 @@ index c4b5e17..bd4f373 100644
  
  #include <sys/types.h>
  #ifdef HAVE_REGEX_H
-@@ -1012,6 +1013,35 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+@@ -1011,6 +1012,35 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
        }
    }
    END_LOOP;
