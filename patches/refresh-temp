@@ -1,0 +1,42 @@
+Bottom: b5ba01a6f86e9daad8f40e783f9e7df6d63a19fb
+Top:    017707f6d893ed71bdffd64f8034ec0a23e7cad4
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-23 17:25:28 +0000
+
+Refresh of fix-broken-undo-handling-for-r
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 8229868..107b651 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -3417,9 +3417,7 @@ LookupUnusedPins (FILE * FP)
+ {
+   /* reset all currently marked connections */
+   User = true;
+-  SaveUndoSerialNumber ();
+   ResetConnections (true, true);
+-  RestoreUndoSerialNumber ();
+   InitConnectionLookup ();
+ 
+   ELEMENT_LOOP (PCB->Data);
+@@ -3580,9 +3578,6 @@ ResetConnections (bool save_undo, bool redraw)
+   change = ResetFoundPinsViasAndPads  (save_undo, redraw) || change;
+   change = ResetFoundLinesAndPolygons (save_undo, redraw) || change;
+ 
+-  if (change && save_undo)
+-    IncrementUndoSerialNumber ();
+-
+   return change;
+ }
+ 
+@@ -3930,7 +3925,8 @@ DRCAll (void)
+ 
+   TheFlag = FOUNDFLAG | DRCFLAG | SELECTEDFLAG;
+ 
+-  ResetConnections (true, true);
++  if (ResetConnections (true, true))
++    IncrementUndoSerialNumner ();
+ 
+   User = false;
