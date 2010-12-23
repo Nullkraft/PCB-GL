@@ -1,5 +1,5 @@
 Bottom: cf3945762ae7656f74d823af7746002b238077e1
-Top:    b5ba01a6f86e9daad8f40e783f9e7df6d63a19fb
+Top:    017707f6d893ed71bdffd64f8034ec0a23e7cad4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-23 17:19:44 +0000
 
@@ -103,7 +103,7 @@ index 9ccab97..2c86270 100644
    {
      routebox_t *last_net = NULL;
 diff --git a/src/find.c b/src/find.c
-index 3176357..8229868 100644
+index 3176357..107b651 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -345,7 +345,6 @@ static void PrintPinConnections (FILE *, bool);
@@ -147,16 +147,18 @@ index 3176357..8229868 100644
    FreeConnectionLookupMemory ();
    ClearAndRedrawOutput ();
  }
-@@ -3419,7 +3418,7 @@ LookupUnusedPins (FILE * FP)
+@@ -3418,9 +3417,7 @@ LookupUnusedPins (FILE * FP)
+ {
    /* reset all currently marked connections */
    User = true;
-   SaveUndoSerialNumber ();
+-  SaveUndoSerialNumber ();
 -  ResetConnections (true);
+-  RestoreUndoSerialNumber ();
 +  ResetConnections (true, true);
-   RestoreUndoSerialNumber ();
    InitConnectionLookup ();
  
-@@ -3444,20 +3443,19 @@ LookupUnusedPins (FILE * FP)
+   ELEMENT_LOOP (PCB->Data);
+@@ -3444,20 +3441,19 @@ LookupUnusedPins (FILE * FP)
  /* ---------------------------------------------------------------------------
   * resets all used flags of pins and vias
   */
@@ -181,7 +183,7 @@ index 3176357..8229868 100644
            DrawVia (via, 0);
          change = true;
        }
-@@ -3469,10 +3467,10 @@ ResetFoundPinsViasAndPads (bool AndDraw)
+@@ -3469,10 +3465,10 @@ ResetFoundPinsViasAndPads (bool AndDraw)
      {
        if (TEST_FLAG (TheFlag, pin))
          {
@@ -194,7 +196,7 @@ index 3176357..8229868 100644
              DrawPin (pin, 0);
            change = true;
          }
-@@ -3482,10 +3480,10 @@ ResetFoundPinsViasAndPads (bool AndDraw)
+@@ -3482,10 +3478,10 @@ ResetFoundPinsViasAndPads (bool AndDraw)
      {
        if (TEST_FLAG (TheFlag, pad))
          {
@@ -207,7 +209,7 @@ index 3176357..8229868 100644
              DrawPad (pad, 0);
            change = true;
          }
-@@ -3496,31 +3494,28 @@ ResetFoundPinsViasAndPads (bool AndDraw)
+@@ -3496,31 +3492,28 @@ ResetFoundPinsViasAndPads (bool AndDraw)
    if (change)
      {
        SetChangedFlag (true);
@@ -246,7 +248,7 @@ index 3176357..8229868 100644
            DrawRat (line, 0);
          change = true;
        }
-@@ -3530,10 +3525,10 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+@@ -3530,10 +3523,10 @@ ResetFoundLinesAndPolygons (bool AndDraw)
    {
      if (TEST_FLAG (TheFlag, line))
        {
@@ -259,7 +261,7 @@ index 3176357..8229868 100644
            DrawLine (layer, line, 0);
          change = true;
        }
-@@ -3543,10 +3538,10 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+@@ -3543,10 +3536,10 @@ ResetFoundLinesAndPolygons (bool AndDraw)
    {
      if (TEST_FLAG (TheFlag, arc))
        {
@@ -272,7 +274,7 @@ index 3176357..8229868 100644
            DrawArc (layer, arc, 0);
          change = true;
        }
-@@ -3556,10 +3551,10 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+@@ -3556,10 +3549,10 @@ ResetFoundLinesAndPolygons (bool AndDraw)
    {
      if (TEST_FLAG (TheFlag, polygon))
        {
@@ -285,7 +287,7 @@ index 3176357..8229868 100644
            DrawPolygon (layer, polygon, 0);
          change = true;
        }
-@@ -3568,26 +3563,27 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+@@ -3568,26 +3561,24 @@ ResetFoundLinesAndPolygons (bool AndDraw)
    if (change)
      {
        SetChangedFlag (true);
@@ -319,14 +321,11 @@ index 3176357..8229868 100644
 +  change = ResetFoundPinsViasAndPads  (save_undo, redraw) || change;
 +  change = ResetFoundLinesAndPolygons (save_undo, redraw) || change;
 +
-+  if (change && save_undo)
-+    IncrementUndoSerialNumber ();
-+
 +  return change;
  }
  
  /*----------------------------------------------------------------------------
-@@ -3657,7 +3653,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3657,7 +3648,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
            DumpList ();
            /* make the flag changes undoable */
            TheFlag = FOUNDFLAG | SELECTEDFLAG;
@@ -335,7 +334,7 @@ index 3176357..8229868 100644
            User = true;
            drc = false;
            Bloat = -PCB->Shrink;
-@@ -3706,7 +3702,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3706,7 +3697,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
      }
    /* now check the bloated condition */
    drc = false;
@@ -344,7 +343,7 @@ index 3176357..8229868 100644
    TheFlag = FOUNDFLAG;
    ListStart (What, ptr1, ptr2, ptr3);
    Bloat = PCB->Bloat;
-@@ -3717,7 +3713,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3717,7 +3708,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
        DumpList ();
        /* make the flag changes undoable */
        TheFlag = FOUNDFLAG | SELECTEDFLAG;
@@ -353,7 +352,7 @@ index 3176357..8229868 100644
        User = true;
        drc = false;
        Bloat = 0;
-@@ -3775,7 +3771,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+@@ -3775,7 +3766,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
    drc = false;
    DumpList ();
    TheFlag = FOUNDFLAG | SELECTEDFLAG;
@@ -362,16 +361,17 @@ index 3176357..8229868 100644
    return (false);
  }
  
-@@ -3934,7 +3930,7 @@ DRCAll (void)
+@@ -3934,7 +3925,8 @@ DRCAll (void)
  
    TheFlag = FOUNDFLAG | DRCFLAG | SELECTEDFLAG;
  
 -  ResetConnections (true);
-+  ResetConnections (true, true);
++  if (ResetConnections (true, true))
++    IncrementUndoSerialNumner ();
  
    User = false;
  
-@@ -3984,7 +3980,7 @@ DRCAll (void)
+@@ -3984,7 +3976,7 @@ DRCAll (void)
    END_LOOP;
  
    TheFlag = (IsBad) ? DRCFLAG : (FOUNDFLAG | DRCFLAG | SELECTEDFLAG);
