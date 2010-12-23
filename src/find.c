@@ -345,7 +345,6 @@ static void PrintPinConnections (FILE *, bool);
 static bool PrintAndSelectUnusedPinsAndPadsOfElement (ElementTypePtr,
                                                          FILE *);
 static void DrawNewConnections (void);
-static void ResetConnections (bool);
 static void DumpList (void);
 static void LocateError (LocationType *, LocationType *);
 static void BuildObjectList (int *, long int **, int **);

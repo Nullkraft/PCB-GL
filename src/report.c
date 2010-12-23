@@ -689,9 +689,7 @@ ReportAllNetLengths (int argc, char **argv, int x, int y)
 
     got_one:
       SaveUndoSerialNumber ();
-      ResetFoundPinsViasAndPads (true);
-      RestoreUndoSerialNumber ();
-      ResetFoundLinesAndPolygons (true);
+      ResetConnections (true);
       RestoreUndoSerialNumber ();
       length = XYtoNetLength (x, y, &found);
 
@@ -708,9 +706,7 @@ ReportNetLength (int argc, char **argv, int x, int y)
   int found = 0;
 
   SaveUndoSerialNumber ();
-  ResetFoundPinsViasAndPads (true);
-  RestoreUndoSerialNumber ();
-  ResetFoundLinesAndPolygons (true);
+  ResetConnections (true);
   RestoreUndoSerialNumber ();
   gui->get_coords ("Click on a connection", &x, &y);
 
