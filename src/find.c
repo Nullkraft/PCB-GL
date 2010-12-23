@@ -345,7 +345,6 @@ static void PrintPinConnections (FILE *, bool);
 static bool PrintAndSelectUnusedPinsAndPadsOfElement (ElementTypePtr,
                                                          FILE *);
 static void DrawNewConnections (void);
-static void ResetConnections (bool);
 static void DumpList (void);
 static void LocateError (LocationType *, LocationType *);
 static void BuildObjectList (int *, long int **, int **);
@@ -3221,7 +3220,7 @@ LookupElementConnections (ElementTypePtr Element, FILE * FP)
   /* reset all currently marked connections */
   User = true;
   TheFlag = FOUNDFLAG;
-  ResetConnections (true);
+  ResetConnections (true, true);
   InitConnectionLookup ();
   PrintElementConnections (Element, FP, true);
   SetChangedFlag (true);
@@ -3242,7 +3241,7 @@ LookupConnectionsToAllElements (FILE * FP)
   /* reset all currently marked connections */
   User = false;
   TheFlag = FOUNDFLAG;
-  ResetConnections (false);
+  ResetConnections (false, false);
   InitConnectionLookup ();
 
   ELEMENT_LOOP (PCB->Data);
@@ -3252,12 +3251,12 @@ LookupConnectionsToAllElements (FILE * FP)
       break;
     SEPARATE (FP);
     if (Settings.ResetAfterElement && n != 1)
-      ResetConnections (false);
+      ResetConnections (false, false);
   }
   END_LOOP;
   if (Settings.RingBellWhenFinished)
     gui->beep ();
-  ResetConnections (false);
+  ResetConnections (false, false);
   FreeConnectionLookupMemory ();
   ClearAndRedrawOutput ();
 }
@@ -3418,9 +3417,7 @@ LookupUnusedPins (FILE * FP)
 {
   /* reset all currently marked connections */
   User = true;
-  SaveUndoSerialNumber ();
-  ResetConnections (true);
-  RestoreUndoSerialNumber ();
+  ResetConnections (true, true);
   InitConnectionLookup ();
 
   ELEMENT_LOOP (PCB->Data);
@@ -3444,20 +3441,19 @@ LookupUnusedPins (FILE * FP)
 /* ---------------------------------------------------------------------------
  * resets all used flags of pins and vias
  */
-void
-ResetFoundPinsViasAndPads (bool AndDraw)
+bool
+ResetFoundPinsViasAndPads (bool save_undo, bool redraw)
 {
   bool change = false;
-
 
   VIA_LOOP (PCB->Data);
   {
     if (TEST_FLAG (TheFlag, via))
       {
-        if (AndDraw)
+        if (save_undo)
           AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
         CLEAR_FLAG (TheFlag, via);
-        if (AndDraw)
+        if (redraw)
           DrawVia (via, 0);
         change = true;
       }
@@ -3469,10 +3465,10 @@ ResetFoundPinsViasAndPads (bool AndDraw)
     {
       if (TEST_FLAG (TheFlag, pin))
         {
-          if (AndDraw)
+          if (save_undo)
             AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
           CLEAR_FLAG (TheFlag, pin);
-          if (AndDraw)
+          if (redraw)
             DrawPin (pin, 0);
           change = true;
         }
@@ -3482,10 +3478,10 @@ ResetFoundPinsViasAndPads (bool AndDraw)
     {
       if (TEST_FLAG (TheFlag, pad))
         {
-          if (AndDraw)
+          if (save_undo)
             AddObjectToFlagUndoList (PAD_TYPE, element, pad, pad);
           CLEAR_FLAG (TheFlag, pad);
-          if (AndDraw)
+          if (redraw)
             DrawPad (pad, 0);
           change = true;
         }
@@ -3496,31 +3492,28 @@ ResetFoundPinsViasAndPads (bool AndDraw)
   if (change)
     {
       SetChangedFlag (true);
-      if (AndDraw)
-        {
-          IncrementUndoSerialNumber ();
-          Draw ();
-        }
+      if (redraw)
+        Draw ();
     }
+  return change;
 }
 
 /* ---------------------------------------------------------------------------
  * resets all used flags of LOs
  */
-void
-ResetFoundLinesAndPolygons (bool AndDraw)
+bool
+ResetFoundLinesAndPolygons (bool save_undo, bool redraw)
 {
   bool change = false;
-
 
   RAT_LOOP (PCB->Data);
   {
     if (TEST_FLAG (TheFlag, line))
       {
-        if (AndDraw)
+        if (save_undo)
           AddObjectToFlagUndoList (RATLINE_TYPE, line, line, line);
         CLEAR_FLAG (TheFlag, line);
-        if (AndDraw)
+        if (redraw)
           DrawRat (line, 0);
         change = true;
       }
@@ -3530,10 +3523,10 @@ ResetFoundLinesAndPolygons (bool AndDraw)
   {
     if (TEST_FLAG (TheFlag, line))
       {
-        if (AndDraw)
+        if (save_undo)
           AddObjectToFlagUndoList (LINE_TYPE, layer, line, line);
         CLEAR_FLAG (TheFlag, line);
-        if (AndDraw)
+        if (redraw)
           DrawLine (layer, line, 0);
         change = true;
       }
@@ -3543,10 +3536,10 @@ ResetFoundLinesAndPolygons (bool AndDraw)
   {
     if (TEST_FLAG (TheFlag, arc))
       {
-        if (AndDraw)
+        if (save_undo)
           AddObjectToFlagUndoList (ARC_TYPE, layer, arc, arc);
         CLEAR_FLAG (TheFlag, arc);
-        if (AndDraw)
+        if (redraw)
           DrawArc (layer, arc, 0);
         change = true;
       }
@@ -3556,10 +3549,10 @@ ResetFoundLinesAndPolygons (bool AndDraw)
   {
     if (TEST_FLAG (TheFlag, polygon))
       {
-        if (AndDraw)
+        if (save_undo)
           AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
         CLEAR_FLAG (TheFlag, polygon);
-        if (AndDraw)
+        if (redraw)
           DrawPolygon (layer, polygon, 0);
         change = true;
       }
@@ -3568,26 +3561,24 @@ ResetFoundLinesAndPolygons (bool AndDraw)
   if (change)
     {
       SetChangedFlag (true);
-      if (AndDraw)
-        {
-          IncrementUndoSerialNumber ();
-          Draw ();
-        }
+      if (redraw)
+        Draw ();
     }
+  return change;
 }
 
 /* ---------------------------------------------------------------------------
  * resets all found connections
  */
-static void
-ResetConnections (bool AndDraw)
+bool
+ResetConnections (bool save_undo, bool redraw)
 {
-  if (AndDraw)
-    SaveUndoSerialNumber ();
-  ResetFoundPinsViasAndPads (AndDraw);
-  if (AndDraw)
-    RestoreUndoSerialNumber ();
-  ResetFoundLinesAndPolygons (AndDraw);
+  bool change = false;
+
+  change = ResetFoundPinsViasAndPads  (save_undo, redraw) || change;
+  change = ResetFoundLinesAndPolygons (save_undo, redraw) || change;
+
+  return change;
 }
 
 /*----------------------------------------------------------------------------
@@ -3657,7 +3648,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
           DumpList ();
           /* make the flag changes undoable */
           TheFlag = FOUNDFLAG | SELECTEDFLAG;
-          ResetConnections (false);
+          ResetConnections (false, false);
           User = true;
           drc = false;
           Bloat = -PCB->Shrink;
@@ -3706,7 +3697,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
     }
   /* now check the bloated condition */
   drc = false;
-  ResetConnections (false);
+  ResetConnections (false, false);
   TheFlag = FOUNDFLAG;
   ListStart (What, ptr1, ptr2, ptr3);
   Bloat = PCB->Bloat;
@@ -3717,7 +3708,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
       DumpList ();
       /* make the flag changes undoable */
       TheFlag = FOUNDFLAG | SELECTEDFLAG;
-      ResetConnections (false);
+      ResetConnections (false, false);
       User = true;
       drc = false;
       Bloat = 0;
@@ -3775,7 +3766,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
   drc = false;
   DumpList ();
   TheFlag = FOUNDFLAG | SELECTEDFLAG;
-  ResetConnections (false);
+  ResetConnections (false, false);
   return (false);
 }
 
@@ -3934,7 +3925,8 @@ DRCAll (void)
 
   TheFlag = FOUNDFLAG | DRCFLAG | SELECTEDFLAG;
 
-  ResetConnections (true);
+  if (ResetConnections (true, true))
+    IncrementUndoSerialNumner ();
 
   User = false;
 
@@ -3984,7 +3976,7 @@ DRCAll (void)
   END_LOOP;
 
   TheFlag = (IsBad) ? DRCFLAG : (FOUNDFLAG | DRCFLAG | SELECTEDFLAG);
-  ResetConnections (false);
+  ResetConnections (false, false);
   TheFlag = SELECTEDFLAG;
   /* check minimum widths and polygon clearances */
   if (!IsBad)
