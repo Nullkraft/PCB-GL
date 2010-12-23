@@ -26,6 +26,13 @@ let the callers increment the serial number if desired. To facilitate
 this, return a boolean value from these functions to indicate whether
 any changes were made which could be undone.
 
+Add an additional argument to the Reset* functions separating conditional
+execution of drawing updates and undo related processing.
+
+For convenience, expose previously static find.c function
+ResetConnections() in order to avoid repeating Undo handling in each
+caller to the two ResetFound* functions which are often called together.
+
 
 ---
 
