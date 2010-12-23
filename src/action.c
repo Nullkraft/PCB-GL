@@ -57,6 +57,7 @@
 #include "misc.h"
 #include "move.h"
 #include "polygon.h"
+#include "pour.h"
 /*#include "print.h"*/
 #include "rats.h"
 #include "remove.h"
@@ -145,8 +146,8 @@ typedef enum
   F_PinByName,
   F_PinOrPadName,
   F_Pinout,
-  F_Polygon,
-  F_PolygonHole,
+  F_Pour,
+  F_PourHole,
   F_PreviousPoint,
   F_RatsNest,
   F_Rectangle,
@@ -298,7 +299,7 @@ static PointType InsertedPoint;
 static LayerTypePtr lastLayer;
 static struct
 {
-  PolygonTypePtr poly;
+  PourTypePtr pour;
   LineType line;
 }
 fake;
@@ -382,8 +383,8 @@ static FunctionType Functions[] = {
   {"PinByName", F_PinByName},
   {"PinOrPadName", F_PinOrPadName},
   {"Pinout", F_Pinout},
-  {"Polygon", F_Polygon},
-  {"PolygonHole", F_PolygonHole},
+  {"Pour", F_Pour},
+  {"PourHole", F_PourHole},
   {"PreviousPoint", F_PreviousPoint},
   {"RatsNest", F_RatsNest},
   {"Rectangle", F_Rectangle},
@@ -845,9 +846,9 @@ AdjustAttachedObjects (void)
       AdjustAttachedBox ();
       break;
 
-      /* polygon creation mode */
-    case POLYGON_MODE:
-    case POLYGONHOLE_MODE:
+      /* pour creation mode */
+    case POUR_MODE:
+    case POURHOLE_MODE:
       AdjustAttachedLine ();
       break;
       /* line creation mode */
@@ -1356,12 +1357,12 @@ NotifyMode (void)
 	  Crosshair.AttachedBox.Point1.X != Crosshair.AttachedBox.Point2.X &&
 	  Crosshair.AttachedBox.Point1.Y != Crosshair.AttachedBox.Point2.Y)
 	{
-	  PolygonTypePtr polygon;
+	  PourTypePtr pour;
 
 	  int flags = CLEARPOLYFLAG;
 	  if (TEST_FLAG (NEWFULLPOLYFLAG, PCB))
 	    flags |= FULLPOLYFLAG;
-	  if ((polygon = CreateNewPolygonFromRectangle (CURRENT,
+	  if ((pour = CreateNewPourFromRectangle (CURRENT,
 							Crosshair.
 							AttachedBox.Point1.X,
 							Crosshair.
@@ -1374,10 +1375,10 @@ NotifyMode (void)
 							(flags))) !=
 	      NULL)
 	    {
-	      AddObjectToCreateUndoList (POLYGON_TYPE, CURRENT,
-					 polygon, polygon);
+	      AddObjectToCreateUndoList (POUR_TYPE, CURRENT,
+					 pour, pour);
 	      IncrementUndoSerialNumber ();
-	      DrawPolygon (CURRENT, polygon, 0);
+	      DrawPour (CURRENT, pour, 0);
 	      Draw ();
 	    }
 
@@ -1415,10 +1416,10 @@ NotifyMode (void)
 	break;
       }
 
-    case POLYGON_MODE:
+    case POUR_MODE:
       {
-	PointTypePtr points = Crosshair.AttachedPolygon.Points;
-	Cardinal n = Crosshair.AttachedPolygon.PointN;
+	PointTypePtr points = Crosshair.AttachedPour.Points;
+	Cardinal n = Crosshair.AttachedPour.PointN;
 
 	/* do update of position; use the 'LINE_MODE' mechanism */
 	NotifyLine ();
@@ -1428,7 +1429,7 @@ NotifyMode (void)
 	    points->X == Crosshair.AttachedLine.Point2.X &&
 	    points->Y == Crosshair.AttachedLine.Point2.Y)
 	  {
-	    CopyAttachedPolygonToLayer ();
+	    CopyAttachedPourToLayer ();
 	    Draw ();
 	    break;
 	  }
@@ -1440,9 +1441,9 @@ NotifyMode (void)
 	    points[n - 1].X != Crosshair.AttachedLine.Point2.X ||
 	    points[n - 1].Y != Crosshair.AttachedLine.Point2.Y)
 	  {
-	    CreateNewPointInPolygon (&Crosshair.AttachedPolygon,
-				     Crosshair.AttachedLine.Point2.X,
-				     Crosshair.AttachedLine.Point2.Y);
+	    CreateNewPointInPour (&Crosshair.AttachedPour,
+				  Crosshair.AttachedLine.Point2.X,
+				  Crosshair.AttachedLine.Point2.Y);
 
 	    /* copy the coordinates */
 	    Crosshair.AttachedLine.Point1.X = Crosshair.AttachedLine.Point2.X;
@@ -1451,14 +1452,14 @@ NotifyMode (void)
 	break;
       }
 
-    case POLYGONHOLE_MODE:
+    case POURHOLE_MODE:
       {
 	switch (Crosshair.AttachedObject.State)
 	  {
 	    /* first notify, lookup object */
 	  case STATE_FIRST:
 	    Crosshair.AttachedObject.Type =
-	      SearchScreen (Note.X, Note.Y, POLYGON_TYPE,
+	      SearchScreen (Note.X, Note.Y, POUR_TYPE,
 			    &Crosshair.AttachedObject.Ptr1,
 			    &Crosshair.AttachedObject.Ptr2,
 			    &Crosshair.AttachedObject.Ptr3);
@@ -1480,8 +1481,8 @@ NotifyMode (void)
             /* second notify, insert new point into object */
           case STATE_SECOND:
             {
-	      PointTypePtr points = Crosshair.AttachedPolygon.Points;
-	      Cardinal n = Crosshair.AttachedPolygon.PointN;
+	      PointTypePtr points = Crosshair.AttachedPour.Points;
+	      Cardinal n = Crosshair.AttachedPour.PointN;
 	      POLYAREA *original, *new_hole, *result;
 	      FlagType Flags;
 
@@ -1495,8 +1496,8 @@ NotifyMode (void)
 		{
 		  /* Create POLYAREAs from the original polygon
 		   * and the new hole polygon */
-		  original = PolygonToPoly (Crosshair.AttachedObject.Ptr2);
-		  new_hole = PolygonToPoly (&Crosshair.AttachedPolygon);
+		  original = PourToPoly (Crosshair.AttachedObject.Ptr2);
+		  new_hole = PourToPoly (&Crosshair.AttachedPour);
 
 		  /* Subtract the hole from the original polygon shape */
 		  poly_Boolean_free (original, new_hole, &result, PBO_SUB);
@@ -1506,9 +1507,9 @@ NotifyMode (void)
 		   */
 		  SaveUndoSerialNumber ();
 		  Flags = ((PolygonType *)Crosshair.AttachedObject.Ptr2)->Flags;
-		  PolyToPolygonsOnLayer (PCB->Data, Crosshair.AttachedObject.Ptr1,
-					 result, Flags);
-		  RemoveObject (POLYGON_TYPE,
+		  PolyToPoursOnLayer (PCB->Data, Crosshair.AttachedObject.Ptr1,
+				      result, Flags);
+		  RemoveObject (POUR_TYPE,
 				Crosshair.AttachedObject.Ptr1,
 				Crosshair.AttachedObject.Ptr2,
 				Crosshair.AttachedObject.Ptr3);
@@ -1517,7 +1518,7 @@ NotifyMode (void)
 		  Draw ();
 
 		/* reset state of attached line */
-		memset (&Crosshair.AttachedPolygon, 0, sizeof (PolygonType));
+		memset (&Crosshair.AttachedPour, 0, sizeof (PourType));
 		Crosshair.AttachedLine.State = STATE_FIRST;
 		addedLines = 0;
 
@@ -1531,9 +1532,9 @@ NotifyMode (void)
 		  points[n - 1].X != Crosshair.AttachedLine.Point2.X ||
 		  points[n - 1].Y != Crosshair.AttachedLine.Point2.Y)
 		{
-		  CreateNewPointInPolygon (&Crosshair.AttachedPolygon,
-					   Crosshair.AttachedLine.Point2.X,
-					   Crosshair.AttachedLine.Point2.Y);
+		  CreateNewPointInPour (&Crosshair.AttachedPour,
+					Crosshair.AttachedLine.Point2.X,
+					Crosshair.AttachedLine.Point2.Y);
 
 		  /* copy the coordinates */
 		  Crosshair.AttachedLine.Point1.X = Crosshair.AttachedLine.Point2.X;
@@ -1731,16 +1732,15 @@ NotifyMode (void)
 	      else
 		{
 		  /* get starting point of nearest segment */
-		  if (Crosshair.AttachedObject.Type == POLYGON_TYPE)
+		  if (Crosshair.AttachedObject.Type == POUR_TYPE)
 		    {
-		      fake.poly =
-			(PolygonTypePtr) Crosshair.AttachedObject.Ptr2;
+		      fake.pour = (PourTypePtr) Crosshair.AttachedObject.Ptr2;
 		      polyIndex =
-			GetLowestDistancePolygonPoint (fake.poly, Note.X,
+			GetLowestDistancePourPoint (fake.pour, Note.X,
 						       Note.Y);
-		      fake.line.Point1 = fake.poly->Points[polyIndex];
-		      fake.line.Point2 = fake.poly->Points[
-			  prev_contour_point (fake.poly, polyIndex)];
+		      fake.line.Point1 = fake.pour->Points[polyIndex];
+		      fake.line.Point2 = fake.pour->Points[
+			  prev_contour_point (fake.pour, polyIndex)];
 		      Crosshair.AttachedObject.Ptr2 = &fake.line;
 
 		    }
@@ -1752,9 +1752,9 @@ NotifyMode (void)
 
 	  /* second notify, insert new point into object */
 	case STATE_SECOND:
-	  if (Crosshair.AttachedObject.Type == POLYGON_TYPE)
-	    InsertPointIntoObject (POLYGON_TYPE,
-				   Crosshair.AttachedObject.Ptr1, fake.poly,
+	  if (Crosshair.AttachedObject.Type == POUR_TYPE)
+	    InsertPointIntoObject (POUR_TYPE,
+				   Crosshair.AttachedObject.Ptr1, fake.pour,
 				   &polyIndex,
 				   InsertedPoint.X, InsertedPoint.Y, false, false);
 	  else
@@ -3111,23 +3111,23 @@ ActionMode (int argc, char **argv, int x, int y)
 		  }
 		break;
 	  
-	      case POLYGON_MODE:
+	      case POUR_MODE:
 		if (Crosshair.AttachedLine.State == STATE_FIRST)
 		  SetMode (ARROW_MODE);
 		else
 		  {
 		    SetMode (NO_MODE);
-		    SetMode (POLYGON_MODE);
+		    SetMode (POUR_MODE);
 		  }
 		break;
 
-	      case POLYGONHOLE_MODE:
+	      case POURHOLE_MODE:
 		if (Crosshair.AttachedLine.State == STATE_FIRST)
 		  SetMode (ARROW_MODE);
 		else
 		  {
 		    SetMode (NO_MODE);
-		    SetMode (POLYGONHOLE_MODE);
+		    SetMode (POURHOLE_MODE);
 		  }
 		break;
 
@@ -3156,11 +3156,11 @@ ActionMode (int argc, char **argv, int x, int y)
 	case F_PasteBuffer:
 	  SetMode (PASTEBUFFER_MODE);
 	  break;
-	case F_Polygon:
-	  SetMode (POLYGON_MODE);
+	case F_Pour:
+	  SetMode (POUR_MODE);
 	  break;
-	case F_PolygonHole:
-	  SetMode (POLYGONHOLE_MODE);
+	case F_PourHole:
+	  SetMode (POURHOLE_MODE);
 	  break;
 #ifndef HAVE_LIBSTROKE
 	case F_Release:
@@ -3204,9 +3204,9 @@ ActionMode (int argc, char **argv, int x, int y)
 	  else if (Settings.Mode == RECTANGLE_MODE
 		   && Crosshair.AttachedBox.State != STATE_FIRST)
 	    SetMode (RECTANGLE_MODE);
-	  else if (Settings.Mode == POLYGON_MODE
+	  else if (Settings.Mode == POUR_MODE
 		   && Crosshair.AttachedLine.State != STATE_FIRST)
-	    SetMode (POLYGON_MODE);
+	    SetMode (POUR_MODE);
 	  else
 	    {
 	      SaveMode ();
@@ -4691,6 +4691,9 @@ off are automatically deleted.
 static int
 ActionMorphPolygon (int argc, char **argv, int x, int y)
 {
+#warning FIXME Later
+  Message ("Morph polygon not implemented. Pours are nice though!\n");
+#if 0
   char *function = ARG (0);
   if (function)
     {
@@ -4725,6 +4728,7 @@ ActionMorphPolygon (int argc, char **argv, int x, int y)
 	  break;
 	}
     }
+#endif
   return 0;
 }
 
@@ -6219,7 +6223,7 @@ ActionUndo (int argc, char **argv, int x, int y)
   if (!function || !*function)
     {
       /* don't allow undo in the middle of an operation */
-      if (Settings.Mode != POLYGONHOLE_MODE &&
+      if (Settings.Mode != POURHOLE_MODE &&
 	  Crosshair.AttachedObject.State != STATE_FIRST)
 	return 1;
       if (Crosshair.AttachedBox.State != STATE_FIRST
@@ -6228,11 +6232,11 @@ ActionUndo (int argc, char **argv, int x, int y)
       /* undo the last operation */
 
       HideCrosshair (true);
-      if ((Settings.Mode == POLYGON_MODE ||
-           Settings.Mode == POLYGONHOLE_MODE) &&
-          Crosshair.AttachedPolygon.PointN)
+      if ((Settings.Mode == POUR_MODE ||
+           Settings.Mode == POURHOLE_MODE) &&
+          Crosshair.AttachedPour.PointN)
 	{
-	  GoToPreviousPoint ();
+	  GoToPreviousPourPoint ();
 	  RestoreCrosshair (true);
 	  return 0;
 	}
@@ -6392,9 +6396,9 @@ three "undone" lines.
 static int
 ActionRedo (int argc, char **argv, int x, int y)
 {
-  if (((Settings.Mode == POLYGON_MODE ||
-        Settings.Mode == POLYGONHOLE_MODE) &&
-       Crosshair.AttachedPolygon.PointN) ||
+  if (((Settings.Mode == POUR_MODE ||
+        Settings.Mode == POURHOLE_MODE) &&
+       Crosshair.AttachedPour.PointN) ||
       Crosshair.AttachedLine.State == STATE_SECOND)
     return 1;
   HideCrosshair (true);
@@ -6444,19 +6448,19 @@ static int
 ActionPolygon (int argc, char **argv, int x, int y)
 {
   char *function = ARG (0);
-  if (function && Settings.Mode == POLYGON_MODE)
+  if (function && Settings.Mode == POUR_MODE)
     {
       HideCrosshair (true);
       switch (GetFunctionID (function))
 	{
-	  /* close open polygon if possible */
+	  /* close open pour if possible */
 	case F_Close:
-	  ClosePolygon ();
+	  ClosePour ();
 	  break;
 
 	  /* go back to the previous point */
 	case F_PreviousPoint:
-	  GoToPreviousPoint ();
+	  GoToPreviousPourPoint ();
 	  break;
 	}
       RestoreCrosshair (true);
