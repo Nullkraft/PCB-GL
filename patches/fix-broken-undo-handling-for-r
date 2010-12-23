@@ -1,0 +1,32 @@
+Bottom: cf3945762ae7656f74d823af7746002b238077e1
+Top:    cf3945762ae7656f74d823af7746002b238077e1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-23 15:30:00 +0000
+
+Fix broken undo handling for ResetFound*() and ResetConnections()
+
+Many callers have this idiom:
+
+  SaveUndoSerialNumber ();
+  ResetFoundPinsViasAndPads (AndDraw);
+  RestoreUndoSerialNumber ();
+  ResetFoundLinesAndPolygons (AndDraw);
+
+The intent is to squash the two operations into one undo operation. The
+ResetFound* functions DO increment the Undo serial number but ONLY if
+that particular function makes a change.
+
+Assume for the example that the first ResetFound* call makes some change
+and increments the serial number. This is then reset by the caller. If
+the second ResetFound* call doesn't find anything, there is no overall
+increment to the serial number.
+
+Move the undo serial number handling out of the ResetFound* calls, and
+let the callers increment the serial number if desired. To facilitate
+this, return a boolean value from these functions to indicate whether
+any changes were made which could be undone.
+
+
+---
+
+
