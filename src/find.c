@@ -3417,9 +3417,7 @@ LookupUnusedPins (FILE * FP)
 {
   /* reset all currently marked connections */
   User = true;
-  SaveUndoSerialNumber ();
   ResetConnections (true, true);
-  RestoreUndoSerialNumber ();
   InitConnectionLookup ();
 
   ELEMENT_LOOP (PCB->Data);
@@ -3579,9 +3577,6 @@ ResetConnections (bool save_undo, bool redraw)
 
   change = ResetFoundPinsViasAndPads  (save_undo, redraw) || change;
   change = ResetFoundLinesAndPolygons (save_undo, redraw) || change;
-
-  if (change && save_undo)
-    IncrementUndoSerialNumber ();
 
   return change;
 }
@@ -3930,7 +3925,8 @@ DRCAll (void)
 
   TheFlag = FOUNDFLAG | DRCFLAG | SELECTEDFLAG;
 
-  ResetConnections (true, true);
+  if (ResetConnections (true, true))
+    IncrementUndoSerialNumner ();
 
   User = false;
 
