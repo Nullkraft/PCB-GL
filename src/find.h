@@ -56,6 +56,7 @@ void LookupConnection (LocationType, LocationType, bool, BDimension, int);
 void LookupUnusedPins (FILE *);
 void ResetFoundLinesAndPolygons (bool);
 void ResetFoundPinsViasAndPads (bool);
+void ResetConnections (bool);
 void InitConnectionLookup (void);
 void InitComponentLookup (void);
 void InitLayoutLookup (void);
