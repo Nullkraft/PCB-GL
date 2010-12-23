@@ -516,7 +516,7 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
     node_selected_net = NULL;
 
   InitConnectionLookup ();
-  ResetConnections (false, false);
+  ResetConnections (true, true);
 
   SaveUndoSerialNumber ();
   for (i = selected_net->EntryN, entry = selected_net->Entry; i; i--, entry++)
@@ -525,7 +525,7 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
   RestoreUndoSerialNumber ();
 
   SelectConnection (select_flag);
-  ResetConnections (false, false);
+  ResetConnections (true, true);
   FreeConnectionLookupMemory ();
   IncrementUndoSerialNumber ();
   Draw ();
