@@ -1,0 +1,28 @@
+Bottom: 6639fa3faa36a30897a12f5c9c5948162a0f0ce9
+Top:    added3e2a39a61362f3172130e3be258a87ea756
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-23 17:34:34 +0000
+
+Refresh of fix-broken-undo-handling-for-r
+
+---
+
+diff --git a/src/hid/lesstif/netlist.c b/src/hid/lesstif/netlist.c
+index 649269e..92d3ac6 100644
+--- a/src/hid/lesstif/netlist.c
++++ b/src/hid/lesstif/netlist.c
+@@ -137,12 +137,13 @@ nbcb_select_common (LibraryMenuTypePtr net, int pos, int select_flag)
+ 
+   InitConnectionLookup ();
+   ResetConnections (false, false);
+-  SaveUndoSerialNumber ();
+ 
++  SaveUndoSerialNumber ();
+   for (i = net->EntryN, entry = net->Entry; i; i--, entry++)
+     if (SeekPad (entry, &conn, false))
+       RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, true);
+   RestoreUndoSerialNumber ();
++
+   SelectConnection (select_flag);
+   ResetConncetions (false, false);
+   FreeConnectionLookupMemory ();
