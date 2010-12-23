@@ -3926,7 +3926,7 @@ DRCAll (void)
   TheFlag = FOUNDFLAG | DRCFLAG | SELECTEDFLAG;
 
   if (ResetConnections (true, true))
-    IncrementUndoSerialNumner ();
+    IncrementUndoSerialNumber ();
 
   User = false;
 
