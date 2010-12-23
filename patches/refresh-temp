@@ -1,0 +1,204 @@
+Bottom: cf3945762ae7656f74d823af7746002b238077e1
+Top:    d2f60c5e6217e9beb6caeef3b940b8b7ad7782b0
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-23 16:19:46 +0000
+
+Refresh of fix-broken-undo-handling-for-r
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 3176357..d628b36 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -345,7 +345,6 @@ static void PrintPinConnections (FILE *, bool);
+ static bool PrintAndSelectUnusedPinsAndPadsOfElement (ElementTypePtr,
+                                                          FILE *);
+ static void DrawNewConnections (void);
+-static void ResetConnections (bool);
+ static void DumpList (void);
+ static void LocateError (LocationType *, LocationType *);
+ static void BuildObjectList (int *, long int **, int **);
+@@ -3444,20 +3443,19 @@ LookupUnusedPins (FILE * FP)
+ /* ---------------------------------------------------------------------------
+  * resets all used flags of pins and vias
+  */
+-void
+-ResetFoundPinsViasAndPads (bool AndDraw)
++bool
++ResetFoundPinsViasAndPads (bool save_undo, bool redraw)
+ {
+   bool change = false;
+ 
+-
+   VIA_LOOP (PCB->Data);
+   {
+     if (TEST_FLAG (TheFlag, via))
+       {
+-        if (AndDraw)
++        if (save_undo)
+           AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
+         CLEAR_FLAG (TheFlag, via);
+-        if (AndDraw)
++        if (redraw)
+           DrawVia (via, 0);
+         change = true;
+       }
+@@ -3469,10 +3467,10 @@ ResetFoundPinsViasAndPads (bool AndDraw)
+     {
+       if (TEST_FLAG (TheFlag, pin))
+         {
+-          if (AndDraw)
++          if (save_undo)
+             AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
+           CLEAR_FLAG (TheFlag, pin);
+-          if (AndDraw)
++          if (redraw)
+             DrawPin (pin, 0);
+           change = true;
+         }
+@@ -3482,10 +3480,10 @@ ResetFoundPinsViasAndPads (bool AndDraw)
+     {
+       if (TEST_FLAG (TheFlag, pad))
+         {
+-          if (AndDraw)
++          if (save_undo)
+             AddObjectToFlagUndoList (PAD_TYPE, element, pad, pad);
+           CLEAR_FLAG (TheFlag, pad);
+-          if (AndDraw)
++          if (redraw)
+             DrawPad (pad, 0);
+           change = true;
+         }
+@@ -3496,31 +3494,28 @@ ResetFoundPinsViasAndPads (bool AndDraw)
+   if (change)
+     {
+       SetChangedFlag (true);
+-      if (AndDraw)
+-        {
+-          IncrementUndoSerialNumber ();
+-          Draw ();
+-        }
++      if (redraw)
++        Draw ();
+     }
++  return change;
+ }
+ 
+ /* ---------------------------------------------------------------------------
+  * resets all used flags of LOs
+  */
+-void
+-ResetFoundLinesAndPolygons (bool AndDraw)
++bool
++ResetFoundLinesAndPolygons (bool save_undo, bool redraw)
+ {
+   bool change = false;
+ 
+-
+   RAT_LOOP (PCB->Data);
+   {
+     if (TEST_FLAG (TheFlag, line))
+       {
+-        if (AndDraw)
++        if (save_undo)
+           AddObjectToFlagUndoList (RATLINE_TYPE, line, line, line);
+         CLEAR_FLAG (TheFlag, line);
+-        if (AndDraw)
++        if (redraw)
+           DrawRat (line, 0);
+         change = true;
+       }
+@@ -3530,10 +3525,10 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+   {
+     if (TEST_FLAG (TheFlag, line))
+       {
+-        if (AndDraw)
++        if (save_undo)
+           AddObjectToFlagUndoList (LINE_TYPE, layer, line, line);
+         CLEAR_FLAG (TheFlag, line);
+-        if (AndDraw)
++        if (redraw)
+           DrawLine (layer, line, 0);
+         change = true;
+       }
+@@ -3543,10 +3538,10 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+   {
+     if (TEST_FLAG (TheFlag, arc))
+       {
+-        if (AndDraw)
++        if (save_undo)
+           AddObjectToFlagUndoList (ARC_TYPE, layer, arc, arc);
+         CLEAR_FLAG (TheFlag, arc);
+-        if (AndDraw)
++        if (redraw)
+           DrawArc (layer, arc, 0);
+         change = true;
+       }
+@@ -3556,10 +3551,10 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+   {
+     if (TEST_FLAG (TheFlag, polygon))
+       {
+-        if (AndDraw)
++        if (save_undo)
+           AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
+         CLEAR_FLAG (TheFlag, polygon);
+-        if (AndDraw)
++        if (redraw)
+           DrawPolygon (layer, polygon, 0);
+         change = true;
+       }
+@@ -3568,26 +3563,25 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+   if (change)
+     {
+       SetChangedFlag (true);
+-      if (AndDraw)
+-        {
+-          IncrementUndoSerialNumber ();
+-          Draw ();
+-        }
++      if (redraw)
++        Draw ();
+     }
++  return change;
+ }
+ 
+ /* ---------------------------------------------------------------------------
+  * resets all found connections
+  */
+ static void
+-ResetConnections (bool AndDraw)
++ResetConnections (bool save_undo, bool redraw)
+ {
+-  if (AndDraw)
+-    SaveUndoSerialNumber ();
+-  ResetFoundPinsViasAndPads (AndDraw);
+-  if (AndDraw)
+-    RestoreUndoSerialNumber ();
+-  ResetFoundLinesAndPolygons (AndDraw);
++  bool change = false;
++
++  change = ResetFoundPinsViasAndPads  (save_undo, redraw) || change;
++  change = ResetFoundLinesAndPolygons (save_undo, redraw) || change;
++
++  if (change && save_undo)
++    IncrementUndoSerialNumber ();
+ }
+ 
+ /*----------------------------------------------------------------------------
+diff --git a/src/find.h b/src/find.h
+index 5b04980..5b92248 100644
+--- a/src/find.h
++++ b/src/find.h
+@@ -54,8 +54,9 @@ void LookupElementConnections (ElementTypePtr, FILE *);
+ void LookupConnectionsToAllElements (FILE *);
+ void LookupConnection (LocationType, LocationType, bool, BDimension, int);
+ void LookupUnusedPins (FILE *);
+-void ResetFoundLinesAndPolygons (bool);
+-void ResetFoundPinsViasAndPads (bool);
++bool ResetFoundLinesAndPolygons (bool save_undo, bool redraw);
++bool ResetFoundPinsViasAndPads (bool save_undo, bool redraw);
++bool ResetConnections (bool save_undo, bool redraw);
+ void InitConnectionLookup (void);
+ void InitComponentLookup (void);
+ void InitLayoutLookup (void);
