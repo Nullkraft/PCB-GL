@@ -1,0 +1,86 @@
+Bottom: 2a3935a31a78311a2ecf740db786d10e3ee60740
+Top:    f6d8360c5c876d38f88cbf68b33c7b482474eb33
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-23 09:45:43 +0000
+
+From geda-dev-bounces@moria.seul.org Thu Dec 23 09:35:12 2010
+Return-Path: <geda-dev-bounces@moria.seul.org>
+Received: from ppsw-41.csi.cam.ac.uk (ppsw-41-intramail.csi.cam.ac.uk
+ [192.168.128.141]) by cyrus-30.csi.private.cam.ac.uk (Cyrus v2.3.14) with
+ LMTPA; Thu, 23 Dec 2010 09:35:12 +0000
+X-Sieve: CMU Sieve 2.3
+X-Cam-AntiVirus: no malware found
+X-Cam-SpamDetails: score -2.2 from SpamAssassin-3.3.1-1051793  * -2.3
+ RCVD_IN_DNSWL_MED RBL: Sender listed at http://www.dnswl.org/, *
+ medium trust *      [128.31.0.34 listed in list.dnswl.dnsbl.ja.net] * -1.9
+ BAYES_00 BODY: Bayes spam probability is 0 to 1% *      [score: 0.0000] *
+ 0.0 CLAMAV ClamAV detected the following pattern *
+ [INetMsg.SpamDomain-2m.chez_com] *  2.0 CLAMAV_INETMSG Spam domain
+X-Cam-ScannerInfo: http://www.cam.ac.uk/cs/email/scanner/
+Received: from moria.csail.mit.edu ([128.31.0.34]:54029
+ helo=moria.seul.org) by ppsw-41.csi.cam.ac.uk (mx.cam.ac.uk
+ [131.111.8.146]:25) with esmtp (csa=unknown) id 1PVhZn-0006Zw-RH (Exim
+ 4.72) for pcjc2@cam.ac.uk (return-path <geda-dev-bounces@moria.seul.org>);
+ Thu, 23 Dec 2010 09:35:12 +0000
+Received: from moria.seul.org (localhost [127.0.0.1]) by moria.seul.org
+ (Postfix) with ESMTP id 9F958100751F2; Thu, 23 Dec 2010 04:35:09 -0500 (EST)
+X-Original-To: geda-dev@moria.seul.org
+Delivered-To: geda-dev@moria.seul.org
+X-Greylist: delayed 358 seconds by postgrey-1.31 at moria; Thu, 23 Dec 2010
+ 04:35:06 EST
+Received: from smtp-delay2.nerim.net (mailhost-p2-m2.netultra.net
+ [78.40.49.189]) by moria.seul.org (Postfix) with ESMTP id 0C60C10075070 for
+ <geda-dev@moria.seul.org>; Thu, 23 Dec 2010 04:35:05 -0500 (EST)
+Received: from maiev.nerim.net (smtp-154-thursday.nerim.net
+ [194.79.134.154]) by smtp-delay2.nerim.net (Postfix) with ESMTP id
+ 727A119D089B for <geda-dev@moria.seul.org>; Thu, 23 Dec 2010 10:25:04 +0100
+ (CET)
+Received: from vagabond.local (chrstn.pck.nerim.net [213.41.144.149]) by
+ maiev.nerim.net (Postfix) with ESMTPS id DB3822E015 for
+ <geda-dev@moria.seul.org>; Thu, 23 Dec 2010 10:29:04 +0100 (CET)
+Received: from localhost ([127.0.0.1] helo=vagabond.local) by
+ vagabond.local with esmtp (Exim 4.69) (envelope-from <patrickb@chez.com>)
+ id 1PVhYM-0001n0-FN for geda-dev@moria.seul.org; Thu, 23 Dec 2010 10:33:42
+ +0100
+From: Patrick Bernaud <patrickb@chez.com>
+To: gEDA developer mailing list <geda-dev@moria.seul.org>
+Date: Thu, 23 Dec 2010 10:33:41 +0100
+Message-ID: <20101223093340.6668.75329.stgit@vagabond.local>
+User-Agent: StGIT/0.14.3
+MIME-Version: 1.0
+Subject: gEDA-dev: [PATCH] Fix substitutions for leaky_*alloc functions
+ when debug is	disabled.
+X-BeenThere: geda-dev@moria.seul.org
+X-Mailman-Version: 2.1.11
+Precedence: list
+Reply-To: gEDA developer mailing list <geda-dev@moria.seul.org>
+List-Id: gEDA developer mailing list <geda-dev.moria.seul.org>
+List-Unsubscribe: <http://www.seul.org/cgi-bin/mailman/options/geda-dev>,
+ <mailto:geda-dev-request@moria.seul.org?subject=unsubscribe>
+List-Archive: <http://www.seul.org/pipermail/geda-dev>
+List-Post: <mailto:geda-dev@moria.seul.org>
+List-Help: <mailto:geda-dev-request@moria.seul.org?subject=help>
+List-Subscribe: <http://www.seul.org/cgi-bin/mailman/listinfo/geda-dev>,
+ <mailto:geda-dev-request@moria.seul.org?subject=subscribe>
+Content-Type: text/plain; charset="us-ascii"
+Sender: geda-dev-bounces@moria.seul.org
+Errors-To: geda-dev-bounces@moria.seul.org
+Content-Transfer-Encoding: 8bit
+
+
+---
+
+diff --git a/src/free_atexit.h b/src/free_atexit.h
+index 558b597..fb53b51 100644
+--- a/src/free_atexit.h
++++ b/src/free_atexit.h
+@@ -11,7 +11,8 @@
+ #define leaky_init()
+ #define leaky_uninit()
+ #define leaky_malloc(size) malloc(size)
+-#define leaky_realloc(ptr, size) malloc(ptr, size)
++#define leaky_calloc(nmemb, size) calloc(nmemb, size)
++#define leaky_realloc(old_memory, size) realloc(old_memory, size)
+ #else
+ 
+ /* set up atexit() hook - can be avoided if leaky_uninit() is called by hand */
