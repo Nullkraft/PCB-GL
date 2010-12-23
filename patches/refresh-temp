@@ -1,0 +1,55 @@
+Bottom: f360e1c867a4e30554fbeed7789ea9984c344d3a
+Top:    a55f2e57a5e34dd20177aa5740d1b7b100d12cbc
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-23 17:34:03 +0000
+
+Refresh of fix-netlist-selection-to-save-
+
+---
+
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index 6e129cc..ee8d23f 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -516,7 +516,7 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+     node_selected_net = NULL;
+ 
+   InitConnectionLookup ();
+-  ResetConnections (false, false);
++  ResetConnections (true, true);
+ 
+   SaveUndoSerialNumber ();
+   for (i = selected_net->EntryN, entry = selected_net->Entry; i; i--, entry++)
+@@ -525,7 +525,7 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+   RestoreUndoSerialNumber ();
+ 
+   SelectConnection (select_flag);
+-  ResetConnections (false, false);
++  ResetConnections (true, true);
+   FreeConnectionLookupMemory ();
+   IncrementUndoSerialNumber ();
+   Draw ();
+diff --git a/src/hid/lesstif/netlist.c b/src/hid/lesstif/netlist.c
+index 649269e..8b5cedb 100644
+--- a/src/hid/lesstif/netlist.c
++++ b/src/hid/lesstif/netlist.c
+@@ -136,15 +136,16 @@ nbcb_select_common (LibraryMenuTypePtr net, int pos, int select_flag)
+   int i;
+ 
+   InitConnectionLookup ();
+-  ResetConnections (false, false);
+-  SaveUndoSerialNumber ();
++  ResetConnections (true, true);
+ 
++  SaveUndoSerialNumber ();
+   for (i = net->EntryN, entry = net->Entry; i; i--, entry++)
+     if (SeekPad (entry, &conn, false))
+       RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, true);
+   RestoreUndoSerialNumber ();
++
+   SelectConnection (select_flag);
+-  ResetConncetions (false, false);
++  ResetConncetions (true, true);
+   FreeConnectionLookupMemory ();
+   IncrementUndoSerialNumber ();
+   Draw ();
