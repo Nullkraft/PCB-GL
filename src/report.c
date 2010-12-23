@@ -46,6 +46,7 @@
 #include "macro.h"
 #include "undo.h"
 #include "find.h"
+#include "draw.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
