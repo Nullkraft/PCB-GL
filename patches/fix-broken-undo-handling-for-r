@@ -1,5 +1,5 @@
 Bottom: cf3945762ae7656f74d823af7746002b238077e1
-Top:    added3e2a39a61362f3172130e3be258a87ea756
+Top:    02020065c5170632fec3eab7ef686eaaba762143
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-23 17:19:44 +0000
 
@@ -103,7 +103,7 @@ index 9ccab97..2c86270 100644
    {
      routebox_t *last_net = NULL;
 diff --git a/src/find.c b/src/find.c
-index 3176357..107b651 100644
+index 3176357..1c9e94a 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -345,7 +345,6 @@ static void PrintPinConnections (FILE *, bool);
@@ -367,7 +367,7 @@ index 3176357..107b651 100644
  
 -  ResetConnections (true);
 +  if (ResetConnections (true, true))
-+    IncrementUndoSerialNumner ();
++    IncrementUndoSerialNumber ();
  
    User = false;
  
