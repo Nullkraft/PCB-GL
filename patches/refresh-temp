@@ -1,0 +1,104 @@
+Bottom: cf125d905150147b1d192f033054ca01164268c1
+Top:    b5ba01a6f86e9daad8f40e783f9e7df6d63a19fb
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-23 17:18:21 +0000
+
+Refresh of expose-resetconnections-api-an
+
+---
+
+diff --git a/src/autoroute.c b/src/autoroute.c
+index 888220d..2c86270 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -985,11 +985,7 @@ CreateRouteData ()
+    * this saves on searching the trees to find the nets
+    */
+   /* use the DRCFLAG to mark objects as they are entered */
+-<<<<<<< current
+   ResetConnections (false, false);
+-=======
+-  ResetConnections (false);
+->>>>>>> patched
+   Nets = CollectSubnets (false);
+   {
+     routebox_t *last_net = NULL;
+diff --git a/src/rats.c b/src/rats.c
+index 55525d6..3f2a8fa 100644
+--- a/src/rats.c
++++ b/src/rats.c
+@@ -463,11 +463,7 @@ GatherSubnets (NetListTypePtr Netl, bool NoWarn, bool AndRats)
+   for (m = 0; Netl->NetN > 0 && m < Netl->NetN; m++)
+     {
+       a = &Netl->Net[m];
+-<<<<<<< current
+       ResetConnections (false, false);
+-=======
+-      ResetConnections (false);
+->>>>>>> patched
+       RatFindHook (a->Connection[0].type, a->Connection[0].ptr1,
+ 		   a->Connection[0].ptr2, a->Connection[0].ptr2, false,
+ 		   AndRats);
+@@ -548,11 +544,7 @@ GatherSubnets (NetListTypePtr Netl, bool NoWarn, bool AndRats)
+       if (!NoWarn)
+ 	Warned |= CheckShorts (a->Connection[0].menu);
+     }
+-<<<<<<< current
+   ResetConnections (false, false);
+-=======
+-  ResetConnections (false);
+->>>>>>> patched
+   return (Warned);
+ }
+ 
+diff --git a/src/report.c b/src/report.c
+index c48016f..7d9063a 100644
+--- a/src/report.c
++++ b/src/report.c
+@@ -688,14 +688,8 @@ ReportAllNetLengths (int argc, char **argv, int x, int y)
+       continue;
+ 
+     got_one:
+-<<<<<<< current
+       ResetConnections (true, true);
+       /* FIXME: Need a serial number increment?? */
+-=======
+-      SaveUndoSerialNumber ();
+-      ResetConnections (true);
+-      RestoreUndoSerialNumber ();
+->>>>>>> patched
+       length = XYtoNetLength (x, y, &found);
+ 
+       gui->log("Net %s length %.*f %s\n", netname, prec, length*scale, units_name);
+@@ -710,14 +704,8 @@ ReportNetLength (int argc, char **argv, int x, int y)
+   char *netname = 0;
+   int found = 0;
+ 
+-<<<<<<< current
+   ResetConnections (true, true);
+   /* FIXME: Need a serial number increment?? */
+-=======
+-  SaveUndoSerialNumber ();
+-  ResetConnections (true);
+-  RestoreUndoSerialNumber ();
+->>>>>>> patched
+   gui->get_coords ("Click on a connection", &x, &y);
+ 
+   length = XYtoNetLength (x, y, &found);
+diff --git a/src/set.c b/src/set.c
+index b05650f..837b786 100644
+--- a/src/set.c
++++ b/src/set.c
+@@ -292,13 +292,8 @@ SetMode (int Mode)
+       Crosshair.AttachedLine.State = STATE_FIRST;
+       if (Mode == LINE_MODE && TEST_FLAG (AUTODRCFLAG, PCB))
+ 	{
+-<<<<<<< current
+ 	  if (ResetConnections (true, true))
+ 	    IncrementUndoSerialNumber ();
+-=======
+-	  ResetFoundConnections (true);
+-	  IncrementUndoSerialNumber ();
+->>>>>>> patched
+ 	}
+     }
