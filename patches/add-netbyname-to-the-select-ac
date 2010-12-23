@@ -1,5 +1,5 @@
 Bottom: c1ad8ae7bb363ad18459c21f2a72be90de3c2aa8
-Top:    2e9e1930a7f2e7fec0d942f3df2c8a1243f33917
+Top:    ba135df5fbb211e5f7512baa261f38dd06d9b5a0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-23 11:41:14 +0000
 
@@ -99,7 +99,7 @@ index 676a6f0..e4a1d31 100644
  #define PIN_TYPES     (VIA_TYPE | PIN_TYPE)
  #define LOCK_TYPES    (VIA_TYPE | LINE_TYPE | ARC_TYPE | POLYGON_TYPE | ELEMENT_TYPE \
 diff --git a/src/select.c b/src/select.c
-index 87dc661..ce18b64 100644
+index 87dc661..007ff9d 100644
 --- a/src/select.c
 +++ b/src/select.c
 @@ -44,6 +44,7 @@
@@ -110,15 +110,14 @@ index 87dc661..ce18b64 100644
  
  #include <sys/types.h>
  #ifdef HAVE_REGEX_H
-@@ -1011,6 +1012,33 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+@@ -1011,6 +1012,31 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
        }
    }
    END_LOOP;
 +  if (Type & NET_TYPE)
 +    {
 +      InitConnectionLookup ();
-+      ResetFoundPinsViasAndPads (false);
-+      ResetFoundLinesAndPolygons (false);
++      changed = ResetConnections (true, true) || changed;
 +
 +      MENU_LOOP (&PCB->NetlistLib);
 +      {
@@ -136,9 +135,8 @@ index 87dc661..ce18b64 100644
 +	  }
 +      }
 +      END_LOOP;
-+      changed = SelectConnection (Flag);
-+      ResetFoundPinsViasAndPads (false);
-+      ResetFoundLinesAndPolygons (false);
++      changed = SelectConnection (Flag) || changed;
++      changed = ResetConnections (true, true) || changed;
 +      FreeConnectionLookupMemory ();
 +    }
  
