@@ -1,7 +1,7 @@
-Bottom: c9b165b647a4350d684b229b962af3e51dbc8619
-Top:    bb59d916cedfd0f086014200409503a4e8dd1153
+Bottom: 6a6295dd8184e68c1e8ae2284e69611585d387a5
+Top:    03616ad00eb8cfccd052f6c220a2eb5d3f21cb4c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-22 21:56:31 +0000
+Date:   2010-12-23 10:39:16 +0000
 
 Add support for a "poured" object.
 
@@ -7965,7 +7965,7 @@ index add5661..25d8103 100644
  #define	ELEMENT_IN_BOX(e,b)	\
  	(BOX_IN_BOX(&((e)->BoundingBox), (b)))
 diff --git a/src/select.c b/src/select.c
-index bd4f373..8b69d5e 100644
+index 71277b5..418f135 100644
 --- a/src/select.c
 +++ b/src/select.c
 @@ -183,6 +183,7 @@ SelectObject (void)
