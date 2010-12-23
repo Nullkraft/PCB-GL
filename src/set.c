@@ -292,10 +292,7 @@ SetMode (int Mode)
       Crosshair.AttachedLine.State = STATE_FIRST;
       if (Mode == LINE_MODE && TEST_FLAG (AUTODRCFLAG, PCB))
 	{
-	  SaveUndoSerialNumber ();
-	  ResetFoundPinsViasAndPads (true);
-	  RestoreUndoSerialNumber ();
-	  ResetFoundLinesAndPolygons (true);
+	  ResetFoundConnections (true);
 	  IncrementUndoSerialNumber ();
 	}
     }
