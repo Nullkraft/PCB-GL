@@ -1,7 +1,7 @@
 Bottom: cf3945762ae7656f74d823af7746002b238077e1
 Top:    b5ba01a6f86e9daad8f40e783f9e7df6d63a19fb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-23 15:30:00 +0000
+Date:   2010-12-23 17:19:44 +0000
 
 Fix broken undo handling for ResetFound*() and ResetConnections()
 
@@ -29,10 +29,20 @@ any changes were made which could be undone.
 Add an additional argument to the Reset* functions separating conditional
 execution of drawing updates and undo related processing.
 
+-----
+
+Expose ResetConnections() API and use to simplify existing code
+
 For convenience, expose previously static find.c function
 ResetConnections() in order to avoid repeating Undo handling in each
 caller to the two ResetFound* functions which are often called together.
 
+-----
+
+Remove redundant IncrementSerialNumber() from report.c
+
+The ResetFound*() functions already increment the undo serial number
+when called with true as an argument, and any changes are made.
 
 ---
 
