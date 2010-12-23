@@ -688,7 +688,7 @@ ReportAllNetLengths (int argc, char **argv, int x, int y)
       continue;
 
     got_one:
-      ResetConnections (true);
+      ResetConnections (true, true);
       /* FIXME: Need a serial number increment?? */
       length = XYtoNetLength (x, y, &found);
 
@@ -704,7 +704,7 @@ ReportNetLength (int argc, char **argv, int x, int y)
   char *netname = 0;
   int found = 0;
 
-  ResetConnections (true);
+  ResetConnections (true, true);
   /* FIXME: Need a serial number increment?? */
   gui->get_coords ("Click on a connection", &x, &y);
 
