@@ -1,5 +1,5 @@
 Bottom: a55f2e57a5e34dd20177aa5740d1b7b100d12cbc
-Top:    6e2dafa62c254449c1b64b4b7e5d00e6fb7c4539
+Top:    0667e82c7c834831823a37d9003b019dbe75d946
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-23 11:41:14 +0000
 
@@ -99,7 +99,7 @@ index 676a6f0..e4a1d31 100644
  #define PIN_TYPES     (VIA_TYPE | PIN_TYPE)
  #define LOCK_TYPES    (VIA_TYPE | LINE_TYPE | ARC_TYPE | POLYGON_TYPE | ELEMENT_TYPE \
 diff --git a/src/select.c b/src/select.c
-index 87dc661..007ff9d 100644
+index 87dc661..eb5598b 100644
 --- a/src/select.c
 +++ b/src/select.c
 @@ -44,6 +44,7 @@
@@ -110,7 +110,7 @@ index 87dc661..007ff9d 100644
  
  #include <sys/types.h>
  #ifdef HAVE_REGEX_H
-@@ -1011,6 +1012,31 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+@@ -1011,6 +1012,34 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
        }
    }
    END_LOOP;
@@ -119,6 +119,7 @@ index 87dc661..007ff9d 100644
 +      InitConnectionLookup ();
 +      changed = ResetConnections (true, true) || changed;
 +
++      SaveUndoSerialNumber ();
 +      MENU_LOOP (&PCB->NetlistLib);
 +      {
 +	Cardinal i;
@@ -135,6 +136,8 @@ index 87dc661..007ff9d 100644
 +	  }
 +      }
 +      END_LOOP;
++      RestoreUndoSerialNumber ();
++
 +      changed = SelectConnection (Flag) || changed;
 +      changed = ResetConnections (true, true) || changed;
 +      FreeConnectionLookupMemory ();
