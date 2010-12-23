@@ -3490,11 +3490,7 @@ ResetFoundPinsViasAndPads (bool save_undo, bool redraw)
   }
   END_LOOP;
   if (change)
-    {
-      SetChangedFlag (true);
-      if (redraw)
-        Draw ();
-    }
+    SetChangedFlag (true);
   return change;
 }
 
@@ -3559,11 +3555,7 @@ ResetFoundLinesAndPolygons (bool save_undo, bool redraw)
   }
   ENDALL_LOOP;
   if (change)
-    {
-      SetChangedFlag (true);
-      if (redraw)
-        Draw ();
-    }
+    SetChangedFlag (true);
   return change;
 }
 
@@ -3926,7 +3918,10 @@ DRCAll (void)
   TheFlag = FOUNDFLAG | DRCFLAG | SELECTEDFLAG;
 
   if (ResetConnections (true, true))
-    IncrementUndoSerialNumber ();
+    {
+      IncrementUndoSerialNumber ();
+      Draw (); /* XXX: Not sure if this is required */
+    }
 
   User = false;
 
