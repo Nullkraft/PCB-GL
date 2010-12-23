@@ -1,0 +1,14 @@
+Bottom: f6d8360c5c876d38f88cbf68b33c7b482474eb33
+Top:    f6d8360c5c876d38f88cbf68b33c7b482474eb33
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-23 11:37:09 +0000
+
+select.c: Remove Draw() call from SelectConnection
+
+Make callers responsible for calling the final Draw(), to avoid
+multiple redraws if other operations are to occur.
+
+
+---
+
+
