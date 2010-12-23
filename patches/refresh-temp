@@ -1,0 +1,34 @@
+Bottom: 2e9e1930a7f2e7fec0d942f3df2c8a1243f33917
+Top:    ba135df5fbb211e5f7512baa261f38dd06d9b5a0
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-23 17:31:33 +0000
+
+Refresh of add-netbyname-to-the-select-ac
+
+---
+
+diff --git a/src/select.c b/src/select.c
+index ce18b64..007ff9d 100644
+--- a/src/select.c
++++ b/src/select.c
+@@ -1015,8 +1015,7 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+   if (Type & NET_TYPE)
+     {
+       InitConnectionLookup ();
+-      ResetFoundPinsViasAndPads (false);
+-      ResetFoundLinesAndPolygons (false);
++      changed = ResetConnections (true, true) || changed;
+ 
+       MENU_LOOP (&PCB->NetlistLib);
+       {
+@@ -1034,9 +1033,8 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+ 	  }
+       }
+       END_LOOP;
+-      changed = SelectConnection (Flag);
+-      ResetFoundPinsViasAndPads (false);
+-      ResetFoundLinesAndPolygons (false);
++      changed = SelectConnection (Flag) || changed;
++      changed = ResetConnections (true, true) || changed;
+       FreeConnectionLookupMemory ();
+     }
