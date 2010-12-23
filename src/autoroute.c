@@ -74,6 +74,7 @@
 #include "misc.h"
 #include "mtspace.h"
 #include "mymem.h"
+#include "pour.h"
 #include "polygon.h"
 #include "rats.h"
 #include "remove.h"
@@ -767,6 +768,8 @@ AddPolygon (PointerListType layergroupboxes[], Cardinal layer,
 			     polygon->BoundingBox.X2,
 			     polygon->BoundingBox.Y2,
 			     layergroup, polygon, style);
+#warning FIXME LATER
+#if 0
   if (polygon->PointN == 4 &&
       polygon->HoleIndexN == 0 &&
       (polygon->Points[0].X == polygon->Points[1].X ||
@@ -778,6 +781,7 @@ AddPolygon (PointerListType layergroupboxes[], Cardinal layer,
       (polygon->Points[3].X == polygon->Points[0].X ||
        polygon->Points[3].Y == polygon->Points[0].Y))
     is_not_rectangle = 0;
+#endif
   rb->flags.nonstraight = is_not_rectangle;
   rb->layer = layer;
   rb->came_from = ALL;
@@ -1182,12 +1186,16 @@ CreateRouteData ()
       }
       END_LOOP;
       /* add all polygons */
-      POLYGON_LOOP (LAYER_PTR (i));
+      POUR_LOOP (LAYER_PTR (i));
       {
-	if (TEST_FLAG (DRCFLAG, polygon))
-	  CLEAR_FLAG (DRCFLAG, polygon);
-	else
-	  AddPolygon (layergroupboxes, i, polygon, rd->styles[NUM_STYLES]);
+        POURPOLYGON_LOOP (pour);
+        {
+          if (TEST_FLAG (DRCFLAG, polygon))
+            CLEAR_FLAG (DRCFLAG, polygon);
+          else
+            AddPolygon (layergroupboxes, i, polygon, rd->styles[NUM_STYLES]);
+        }
+        END_LOOP;
       }
       END_LOOP;
       /* add all copper text */
@@ -5070,20 +5078,18 @@ IronDownAllUnfixedPaths (routedata_t * rd)
 	  int type = FindPin (&p->box, &pin);
 	  if (pin)
 	    {
-	      AddObjectToClearPolyUndoList (type,
+	      AddObjectToClearPourUndoList (type,
 					    pin->Element ? pin->Element : pin,
 					    pin, pin, false);
-	      RestoreToPolygon (PCB->Data, VIA_TYPE, LAYER_PTR (p->layer),
-				pin);
+	      RestoreToPours (PCB->Data, VIA_TYPE, LAYER_PTR (p->layer), pin);
 	      AddObjectToFlagUndoList (type,
 				       pin->Element ? pin->Element : pin, pin,
 				       pin);
 	      ASSIGN_THERM (p->layer, PCB->ThermStyle, pin);
-	      AddObjectToClearPolyUndoList (type,
+	      AddObjectToClearPourUndoList (type,
 					    pin->Element ? pin->Element : pin,
 					    pin, pin, true);
-	      ClearFromPolygon (PCB->Data, VIA_TYPE, LAYER_PTR (p->layer),
-				pin);
+	      ClearFromPours (PCB->Data, VIA_TYPE, LAYER_PTR (p->layer), pin);
 	      changed = true;
 	    }
 	}
