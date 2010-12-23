@@ -1,5 +1,5 @@
 Bottom: df4460d78f61e2b742a336d7f0bd69e2473f4510
-Top:    c50ad436d83038f2d2b263b932641a68f09e44b2
+Top:    6ec6f4295040240d58ed944438d15cbf847a4c65
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-23 17:41:30 +0000
 
@@ -100,10 +100,18 @@ index 1c9e94a..696d510 100644
    User = false;
  
 diff --git a/src/report.c b/src/report.c
-index da4b600..486ebf4 100644
+index da4b600..5dfb3d9 100644
 --- a/src/report.c
 +++ b/src/report.c
-@@ -689,7 +689,10 @@ ReportAllNetLengths (int argc, char **argv, int x, int y)
+@@ -46,6 +46,7 @@
+ #include "macro.h"
+ #include "undo.h"
+ #include "find.h"
++#include "draw.h"
+ 
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+@@ -689,7 +690,10 @@ ReportAllNetLengths (int argc, char **argv, int x, int y)
  
      got_one:
        if (ResetConnections (true, true))
@@ -115,7 +123,7 @@ index da4b600..486ebf4 100644
        length = XYtoNetLength (x, y, &found);
  
        gui->log("Net %s length %.*f %s\n", netname, prec, length*scale, units_name);
-@@ -705,7 +708,10 @@ ReportNetLength (int argc, char **argv, int x, int y)
+@@ -705,7 +709,10 @@ ReportNetLength (int argc, char **argv, int x, int y)
    int found = 0;
  
    if (ResetConnections (true, true))
