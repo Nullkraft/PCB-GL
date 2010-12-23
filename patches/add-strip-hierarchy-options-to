@@ -1,7 +1,7 @@
-Bottom: 093e1943c3b260af874386494a9b36857ba4d410
-Top:    bf9401bce5a330009233a3c7104ed321e66654de
+Bottom: 47d924a36fa688dde39f5f7677080909eecf87b2
+Top:    8800f71ec8addb31bb11f0682e025dbc6ae3c83f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-23 10:39:20 +0000
+Date:   2010-12-23 22:09:42 +0000
 
 Add strip hierarchy options to display refdes without any "..../" prefix
 
@@ -16,10 +16,10 @@ Add strip hierarchy options to display refdes without any "..../" prefix
 ---
 
 diff --git a/src/action.c b/src/action.c
-index b5e263c..114d78b 100644
+index 20e2db7..af2b210 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -3444,9 +3444,16 @@ ActionRenumber (int argc, char **argv, int x, int y)
+@@ -3454,9 +3454,16 @@ ActionRenumber (int argc, char **argv, int x, int y)
        /* If there is no refdes, maybe just spit out a warning */
        if (NAMEONPCB_NAME (element_list[i]))
  	{
@@ -37,7 +37,7 @@ index b5e263c..114d78b 100644
  	  while (tmps[j] && (tmps[j] < '0' || tmps[j] > '9')
  		 && tmps[j] != '?')
  	    j++;
-@@ -4815,6 +4822,79 @@ ActionToggleHideName (int argc, char **argv, int x, int y)
+@@ -4825,6 +4832,79 @@ ActionToggleHideName (int argc, char **argv, int x, int y)
  
  /* --------------------------------------------------------------------------- */
  
@@ -117,7 +117,7 @@ index b5e263c..114d78b 100644
  static const char changejoin_syntax[] =
    "ChangeJoin(ToggleObject|SelectedLines|SelectedArcs|Selected)";
  
-@@ -8173,6 +8253,9 @@ HID_Action action_action_list[] = {
+@@ -8185,6 +8265,9 @@ HID_Action action_action_list[] = {
    {"ToggleHideName", 0, ActionToggleHideName,
     togglehidename_help, togglehidename_syntax}
    ,
