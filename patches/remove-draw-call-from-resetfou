@@ -5,8 +5,8 @@ Date:   2010-12-23 17:41:30 +0000
 
 Remove Draw() call from ResetFound*() Let the caller do it
 
-This potentially allows to caller to group multiple on-screen
-updates into one repaint operation.
+This potentially allows multiple changes to be grouped into one
+repaint operation.
 
 
 ---
