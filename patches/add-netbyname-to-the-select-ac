@@ -1,5 +1,5 @@
-Bottom: cf3945762ae7656f74d823af7746002b238077e1
-Top:    b2a2f9c3fc752c3fcbf383cddc91b01bdd3f9b6f
+Bottom: c1ad8ae7bb363ad18459c21f2a72be90de3c2aa8
+Top:    2e9e1930a7f2e7fec0d942f3df2c8a1243f33917
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-23 11:41:14 +0000
 
@@ -11,7 +11,7 @@ v3: Ensure we set the changed flag, fiddle with undo logic
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 7a9c3f0..8c5bcf2 100644
+index fde1e7c..fe28c84 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -135,6 +135,7 @@ typedef enum
@@ -30,7 +30,7 @@ index 7a9c3f0..8c5bcf2 100644
    {"None", F_None},
    {"Notify", F_Notify},
    {"Object", F_Object},
-@@ -5345,8 +5347,9 @@ static const char select_syntax[] =
+@@ -5343,8 +5345,9 @@ static const char select_syntax[] =
    "Select(All|Block|Connection)\n"
    "Select(ElementByName|ObjectByName|PadByName|PinByName)\n"
    "Select(ElementByName|ObjectByName|PadByName|PinByName, Name)\n"
@@ -42,7 +42,7 @@ index 7a9c3f0..8c5bcf2 100644
  
  static const char select_help[] = "Toggles or sets the selection";
  
-@@ -5360,6 +5363,7 @@ static const char select_help[] = "Toggles or sets the selection";
+@@ -5358,6 +5361,7 @@ static const char select_help[] = "Toggles or sets the selection";
  @item PinByName
  @item TextByName
  @item ViaByName
@@ -50,7 +50,7 @@ index 7a9c3f0..8c5bcf2 100644
  
  These all rely on having a regular expression parser built into
  @code{pcb}.  If the name is not specified then the user is prompted
-@@ -5393,7 +5397,6 @@ ActionSelect (int argc, char **argv, int x, int y)
+@@ -5391,7 +5395,6 @@ ActionSelect (int argc, char **argv, int x, int y)
    char *function = ARG (0);
    if (function)
      {
@@ -58,7 +58,7 @@ index 7a9c3f0..8c5bcf2 100644
        HideCrosshair (true);
        switch (GetFunctionID (function))
  	{
-@@ -5418,6 +5421,9 @@ ActionSelect (int argc, char **argv, int x, int y)
+@@ -5416,6 +5419,9 @@ ActionSelect (int argc, char **argv, int x, int y)
  	case F_ViaByName:
  	  type = VIA_TYPE;
  	  goto commonByName;
@@ -68,7 +68,7 @@ index 7a9c3f0..8c5bcf2 100644
  
  	commonByName:
  	  {
-@@ -5575,7 +5581,6 @@ static int
+@@ -5573,7 +5579,6 @@ static int
  ActionUnselect (int argc, char **argv, int x, int y)
  {
    char *function = ARG (0);
@@ -76,7 +76,7 @@ index 7a9c3f0..8c5bcf2 100644
    if (function)
      {
        HideCrosshair (true);
-@@ -5602,6 +5607,9 @@ ActionUnselect (int argc, char **argv, int x, int y)
+@@ -5600,6 +5605,9 @@ ActionUnselect (int argc, char **argv, int x, int y)
  	case F_ViaByName:
  	  type = VIA_TYPE;
  	  goto commonByName;
