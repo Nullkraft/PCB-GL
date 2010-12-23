@@ -1018,7 +1018,6 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
       InitConnectionLookup ();
       ResetFoundPinsViasAndPads (false);
       ResetFoundLinesAndPolygons (false);
-      SaveUndoSerialNumber ();
 
       MENU_LOOP (&PCB->NetlistLib);
       {
@@ -1036,8 +1035,7 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
 	  }
       }
       END_LOOP;
-      RestoreUndoSerialNumber ();
-      SelectConnection (Flag);
+      changed = SelectConnection (Flag);
       ResetFoundPinsViasAndPads (false);
       ResetFoundLinesAndPolygons (false);
       FreeConnectionLookupMemory ();
