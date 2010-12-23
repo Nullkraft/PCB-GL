@@ -516,14 +516,14 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
     node_selected_net = NULL;
 
   InitConnectionLookup ();
-  ResetConnections (true);
+  ResetConnections (true, true);
 
   for (i = selected_net->EntryN, entry = selected_net->Entry; i; i--, entry++)
     if (SeekPad (entry, &conn, false))
       RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true);
 
   SelectConnection (select_flag);
-  ResetConnections (false);
+  ResetConnections (false, false);
   FreeConnectionLookupMemory ();
   IncrementUndoSerialNumber ();
   Draw ();

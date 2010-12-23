@@ -1015,7 +1015,7 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
   if (Type & NET_TYPE)
     {
       InitConnectionLookup ();
-      changed = ResetConnections (true) || changed;
+      changed = ResetConnections (true, true) || changed;
 
       MENU_LOOP (&PCB->NetlistLib);
       {
@@ -1035,7 +1035,7 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
       END_LOOP;
 
       changed = SelectConnection (Flag) || changed;
-      changed = ResetConnections (false) || changed;
+      changed = ResetConnections (false, false) || changed;
       FreeConnectionLookupMemory ();
     }
 
