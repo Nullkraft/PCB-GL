@@ -1,5 +1,5 @@
 Bottom: cf3945762ae7656f74d823af7746002b238077e1
-Top:    6639fa3faa36a30897a12f5c9c5948162a0f0ce9
+Top:    added3e2a39a61362f3172130e3be258a87ea756
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-23 17:19:44 +0000
 
@@ -423,22 +423,24 @@ index cee63da..6e129cc 100644
    IncrementUndoSerialNumber ();
    Draw ();
 diff --git a/src/hid/lesstif/netlist.c b/src/hid/lesstif/netlist.c
-index 3438b33..649269e 100644
+index 3438b33..92d3ac6 100644
 --- a/src/hid/lesstif/netlist.c
 +++ b/src/hid/lesstif/netlist.c
-@@ -136,8 +136,7 @@ nbcb_select_common (LibraryMenuTypePtr net, int pos, int select_flag)
+@@ -136,17 +136,16 @@ nbcb_select_common (LibraryMenuTypePtr net, int pos, int select_flag)
    int i;
  
    InitConnectionLookup ();
 -  ResetFoundPinsViasAndPads (false);
 -  ResetFoundLinesAndPolygons (false);
+-  SaveUndoSerialNumber ();
 +  ResetConnections (false, false);
-   SaveUndoSerialNumber ();
  
++  SaveUndoSerialNumber ();
    for (i = net->EntryN, entry = net->Entry; i; i--, entry++)
-@@ -145,8 +144,7 @@ nbcb_select_common (LibraryMenuTypePtr net, int pos, int select_flag)
+     if (SeekPad (entry, &conn, false))
        RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, true);
    RestoreUndoSerialNumber ();
++
    SelectConnection (select_flag);
 -  ResetFoundPinsViasAndPads (false);
 -  ResetFoundLinesAndPolygons (false);
