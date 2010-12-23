@@ -1,0 +1,65 @@
+Bottom: f6d8360c5c876d38f88cbf68b33c7b482474eb33
+Top:    cf3945762ae7656f74d823af7746002b238077e1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-23 11:39:55 +0000
+
+Refresh of select-c-remove-draw-call-from
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index ba1fbed..7a9c3f0 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -5484,6 +5484,7 @@ ActionSelect (int argc, char **argv, int x, int y)
+ 	case F_Connection:
+ 	  if (SelectConnection (true))
+ 	    {
++              Draw ();
+ 	      IncrementUndoSerialNumber ();
+ 	      SetChangedFlag (true);
+ 	    }
+@@ -5660,6 +5661,7 @@ ActionUnselect (int argc, char **argv, int x, int y)
+ 	case F_Connection:
+ 	  if (SelectConnection (false))
+ 	    {
++              Draw ();
+ 	      IncrementUndoSerialNumber ();
+ 	      SetChangedFlag (true);
+ 	    }
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index 1d8e939..cee63da 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -529,7 +529,7 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+   ResetFoundLinesAndPolygons (false);
+   FreeConnectionLookupMemory ();
+   IncrementUndoSerialNumber ();
+-  ghid_invalidate_all ();
++  Draw ();
+ }
+ 
+ static void
+diff --git a/src/hid/lesstif/netlist.c b/src/hid/lesstif/netlist.c
+index ee6d723..3438b33 100644
+--- a/src/hid/lesstif/netlist.c
++++ b/src/hid/lesstif/netlist.c
+@@ -149,6 +149,7 @@ nbcb_select_common (LibraryMenuTypePtr net, int pos, int select_flag)
+   ResetFoundLinesAndPolygons (false);
+   FreeConnectionLookupMemory ();
+   IncrementUndoSerialNumber ();
++  Draw ();
+ }
+ 
+ static void
+diff --git a/src/select.c b/src/select.c
+index c4b5e17..87dc661 100644
+--- a/src/select.c
++++ b/src/select.c
+@@ -850,7 +850,6 @@ SelectConnection (bool Flag)
+       }
+   }
+   END_LOOP;
+-  Draw ();
+   return (changed);
+ }
