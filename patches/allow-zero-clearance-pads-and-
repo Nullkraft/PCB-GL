@@ -1,7 +1,7 @@
-Bottom: b42a040aaa1efdcaf8b3e823be6f5bd262e45f97
-Top:    507ca54be8acde168725ff32042cb4da224af9d7
+Bottom: 90f4bdd33cbc83fc5b7fd5e8edc7bb6d32ada781
+Top:    b905fc6c6bdf8aa5d73aef99d3c491880d4db391
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-23 10:38:55 +0000
+Date:   2010-12-23 17:55:21 +0000
 
 Allow zero clearance pads and pins to touch polygons
 
@@ -71,10 +71,10 @@ index 2545d84..9a2e80b 100644
  
  /* ---------------------------------------------------------------------------
 diff --git a/src/find.c b/src/find.c
-index 3176357..1cb15dd 100644
+index 696d510..e84a0ed 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -3841,7 +3841,7 @@ drc_callback (DataTypePtr data, LayerTypePtr layer, PolygonTypePtr polygon,
+@@ -3824,7 +3824,7 @@ drc_callback (DataTypePtr data, LayerTypePtr layer, PolygonTypePtr polygon,
          }
        break;
      case PAD_TYPE:
@@ -83,7 +83,7 @@ index 3176357..1cb15dd 100644
  	if (IsPadInPolygon(pad,polygon))
  	  {
  	    AddObjectToFlagUndoList (type, ptr1, ptr2, ptr2);
-@@ -3851,7 +3851,7 @@ drc_callback (DataTypePtr data, LayerTypePtr layer, PolygonTypePtr polygon,
+@@ -3834,7 +3834,7 @@ drc_callback (DataTypePtr data, LayerTypePtr layer, PolygonTypePtr polygon,
  	  }
        break;
      case PIN_TYPE:

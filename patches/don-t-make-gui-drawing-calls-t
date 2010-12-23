@@ -1,7 +1,7 @@
-Bottom: 507ca54be8acde168725ff32042cb4da224af9d7
-Top:    937fb52c93f8cf15392407b5587c5dbae379879a
+Bottom: b905fc6c6bdf8aa5d73aef99d3c491880d4db391
+Top:    944cd184367141b4007cf387935a53ed1614eb84
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-23 10:38:55 +0000
+Date:   2010-12-23 17:55:21 +0000
 
 Don't make GUI drawing calls to erase objects
 
@@ -15,7 +15,7 @@ and teardown around drawing.
 ---
 
 diff --git a/src/autoroute.c b/src/autoroute.c
-index 9ccab97..e53587c 100644
+index 2c86270..ac294de 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -103,7 +103,7 @@ RCSID ("$Id$");
@@ -27,7 +27,7 @@ index 9ccab97..e53587c 100644
  
  #define EXPENSIVE 3e28
  /* round up "half" thicknesses */
-@@ -1421,9 +1421,11 @@ bloat_routebox (routebox_t * rb)
+@@ -1420,9 +1420,11 @@ bloat_routebox (routebox_t * rb)
  void
  fillbox (const BoxType * b)
  {
@@ -39,7 +39,7 @@ index 9ccab97..e53587c 100644
  }
  
  /* makes a line on the solder layer silk surrounding the box */
-@@ -1437,7 +1439,7 @@ showbox (BoxType b, Dimension thickness, int group)
+@@ -1436,7 +1438,7 @@ showbox (BoxType b, Dimension thickness, int group)
    if (showboxen != -1 && showboxen != group)
      return;
  
@@ -48,7 +48,7 @@ index 9ccab97..e53587c 100644
    gui->set_line_width (Output.fgGC, thickness);
    gui->set_line_cap (Output.fgGC, Trace_Cap);
    gui->set_color (Output.fgGC, SLayer->Color);
-@@ -1447,6 +1449,7 @@ showbox (BoxType b, Dimension thickness, int group)
+@@ -1446,6 +1448,7 @@ showbox (BoxType b, Dimension thickness, int group)
    gui->draw_line (Output.fgGC, b.X1, b.Y1, b.X1, b.Y2);
    gui->draw_line (Output.fgGC, b.X2, b.Y1, b.X2, b.Y2);
    gui->use_mask (HID_FLUSH_DRAW_Q);
@@ -56,7 +56,7 @@ index 9ccab97..e53587c 100644
  
  #if 1
    if (b.Y1 == b.Y2 || b.X1 == b.X2)
-@@ -1491,6 +1494,7 @@ showedge (edge_t * e)
+@@ -1490,6 +1493,7 @@ showedge (edge_t * e)
  {
    BoxType *b = (BoxType *) e->rb;
  
@@ -64,7 +64,7 @@ index 9ccab97..e53587c 100644
    gui->set_line_cap (Output.fgGC, Trace_Cap);
    gui->set_line_width (Output.fgGC, 1);
    gui->set_color (Output.fgGC, Settings.MaskColor);
-@@ -1512,6 +1516,7 @@ showedge (edge_t * e)
+@@ -1511,6 +1515,7 @@ showedge (edge_t * e)
      default:
        break;
      }
@@ -72,7 +72,7 @@ index 9ccab97..e53587c 100644
  }
  #endif
  
-@@ -1545,9 +1550,11 @@ EraseRouteBox (routebox_t * rb)
+@@ -1544,9 +1549,11 @@ EraseRouteBox (routebox_t * rb)
        X2 = rb->box.X2 - thick / 2;
      }
  
@@ -84,7 +84,7 @@ index 9ccab97..e53587c 100644
  }
  
  /* return a "parent" of this edge which immediately precedes it in the route.*/
-@@ -3235,11 +3242,13 @@ RD_DrawVia (routedata_t * rd, LocationType X, LocationType Y,
+@@ -3234,11 +3241,13 @@ RD_DrawVia (routedata_t * rd, LocationType X, LocationType Y,
        r_insert_entry (rd->layergrouptree[rb->group], &rb->box, 1);
        rb->flags.homeless = 0;	/* not homeless anymore */
  
@@ -98,7 +98,7 @@ index 9ccab97..e53587c 100644
      }
  }
  static void
-@@ -3327,6 +3336,7 @@ RD_DrawLine (routedata_t * rd,
+@@ -3326,6 +3335,7 @@ RD_DrawLine (routedata_t * rd,
    /* and add it to the r-tree! */
    r_insert_entry (rd->layergrouptree[rb->group], &rb->box, 1);
  
@@ -106,7 +106,7 @@ index 9ccab97..e53587c 100644
    if (TEST_FLAG (LIVEROUTEFLAG, PCB))
      {
        LayerTypePtr layp = LAYER_PTR (PCB->LayerGroups.Entries[rb->group][0]);
-@@ -3335,6 +3345,7 @@ RD_DrawLine (routedata_t * rd,
+@@ -3334,6 +3344,7 @@ RD_DrawLine (routedata_t * rd,
        gui->set_color (ar_gc, layp->Color);
        gui->draw_line (ar_gc, qX1, qY1, qX2, qY2);
      }
@@ -114,7 +114,7 @@ index 9ccab97..e53587c 100644
  
    /* and to the via space structures */
    if (AutoRouteParameters.use_vias)
-@@ -3652,8 +3663,10 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
+@@ -3651,8 +3662,10 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
    while (!path->flags.source);
    /* flush the line queue */
    RD_DrawLine (rd, -1, 0, 0, 0, 0, 0, NULL, false, false);
@@ -125,7 +125,7 @@ index 9ccab97..e53587c 100644
  }
  
  /* create a fake "edge" used to defer via site searching. */
-@@ -3952,8 +3965,8 @@ __show_tree (const BoxType * b, void *cl)
+@@ -3951,8 +3964,8 @@ __show_tree (const BoxType * b, void *cl)
  static void
  show_tree (rtree_t * tree, int even_odd)
  {
@@ -136,7 +136,7 @@ index 9ccab97..e53587c 100644
  }
  
  #endif
-@@ -4732,8 +4745,8 @@ RouteAll (routedata_t * rd)
+@@ -4731,8 +4744,8 @@ RouteAll (routedata_t * rd)
  		    }
  		}
  	      END_LOOP;
@@ -147,7 +147,7 @@ index 9ccab97..e53587c 100644
  	      /* reset to original connectivity */
  	      if (rip)
  		{
-@@ -5091,16 +5104,20 @@ AutoRoute (bool selected)
+@@ -5090,16 +5103,20 @@ AutoRoute (bool selected)
  
    total_wire_length = 0;
    total_via_count = 0;
@@ -168,7 +168,7 @@ index 9ccab97..e53587c 100644
  
    for (i = 0; i < NUM_STYLES; i++)
      {
-@@ -5260,10 +5277,12 @@ donerouting:
+@@ -5259,10 +5276,12 @@ donerouting:
    Message ("Total added wire length = %f inches, %d vias added\n",
  	   total_wire_length / 1.e5, total_via_count);
    DestroyRouteData (&rd);
