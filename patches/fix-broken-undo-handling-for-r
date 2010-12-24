@@ -1,7 +1,7 @@
 Bottom: cf3945762ae7656f74d823af7746002b238077e1
-Top:    ca11630e9238f84d73e151cd9ee145a342f16329
+Top:    1203552e0323bbff82207498c9c26c1c3f05f56b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-24 11:06:25 +0000
+Date:   2010-12-24 11:48:13 +0000
 
 Fix broken undo handling for ResetFound*() and ResetConnections()
 
@@ -29,7 +29,6 @@ any changes were made which could be undone.
 For convenience, expose previously static find.c function
 ResetConnections() in order to avoid repeating Undo handling in each
 caller to the two ResetFound* functions which are often called together.
-
 
 ---
 
@@ -289,10 +288,10 @@ index 5fe86cd..3e9d6ee 100644
  }
  
 diff --git a/src/report.c b/src/report.c
-index a9c429d..44cba19 100644
+index a9c429d..07ff6b8 100644
 --- a/src/report.c
 +++ b/src/report.c
-@@ -688,11 +688,8 @@ ReportAllNetLengths (int argc, char **argv, int x, int y)
+@@ -688,11 +688,10 @@ ReportAllNetLengths (int argc, char **argv, int x, int y)
        continue;
  
      got_one:
@@ -302,11 +301,13 @@ index a9c429d..44cba19 100644
 -      ResetFoundLinesAndPolygons (true);
 -      RestoreUndoSerialNumber ();
 +      ResetConnections (true);
-+      /* XXX: Might need a serial number increment?? */
++      /* NB: XYtoNetLength calls LookupConnection, which performs an undo
++       *     serial number update, so we don't need to add one here.
++       */
        length = XYtoNetLength (x, y, &found);
  
        gui->log("Net %s length %.*f %s\n", netname, prec, length*scale, units_name);
-@@ -707,11 +704,8 @@ ReportNetLength (int argc, char **argv, int x, int y)
+@@ -707,11 +706,10 @@ ReportNetLength (int argc, char **argv, int x, int y)
    char *netname = 0;
    int found = 0;
  
@@ -316,7 +317,9 @@ index a9c429d..44cba19 100644
 -  ResetFoundLinesAndPolygons (true);
 -  RestoreUndoSerialNumber ();
 +  ResetConnections (true);
-+  /* XXX: Might need a serial number increment?? */
++  /* NB: XYtoNetLength calls LookupConnection, which performs an undo
++   *     serial number update, so we don't need to add one here.
++   */
    gui->get_coords ("Click on a connection", &x, &y);
  
    length = XYtoNetLength (x, y, &found);
