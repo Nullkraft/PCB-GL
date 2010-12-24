@@ -1,0 +1,49 @@
+Bottom: ba82ce8ea586748e11b92bb2e4379b5a92313823
+Top:    1203552e0323bbff82207498c9c26c1c3f05f56b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-24 11:47:46 +0000
+
+Refresh of proposed-fixes
+
+---
+
+diff --git a/src/report.c b/src/report.c
+index 8ded42c..07ff6b8 100644
+--- a/src/report.c
++++ b/src/report.c
+@@ -689,12 +689,10 @@ ReportAllNetLengths (int argc, char **argv, int x, int y)
+ 
+     got_one:
+       ResetConnections (true);
+-      length = XYtoNetLength (x, y, &found);
+-
+-      /* In case XYtoNetLength did not increment the serial number, we should
+-       * do it anyway in case ResetConnections (true) above changed something.
++      /* NB: XYtoNetLength calls LookupConnection, which performs an undo
++       *     serial number update, so we don't need to add one here.
+        */
+-      IncrementUndoSerialNumber ();
++      length = XYtoNetLength (x, y, &found);
+ 
+       gui->log("Net %s length %.*f %s\n", netname, prec, length*scale, units_name);
+     }
+@@ -709,16 +707,13 @@ ReportNetLength (int argc, char **argv, int x, int y)
+   int found = 0;
+ 
+   ResetConnections (true);
+-
++  /* NB: XYtoNetLength calls LookupConnection, which performs an undo
++   *     serial number update, so we don't need to add one here.
++   */
+   gui->get_coords ("Click on a connection", &x, &y);
+ 
+   length = XYtoNetLength (x, y, &found);
+ 
+-  /* In case XYtoNetLength did not increment the serial number, we should
+-   * do it anyway in case ResetConnections (true) above changed something.
+-   */
+-  IncrementUndoSerialNumber ();
+-
+   if (!found)
+     {
+       gui->log ("No net under cursor.\n");
