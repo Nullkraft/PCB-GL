@@ -1,5 +1,5 @@
 Bottom: 21a8de45730e66f3829ce77c7030707a035af55a
-Top:    f78652901d43a6a999f1860d0bcbdc4962dfdfe2
+Top:    2a936a45449c7001ad32809dad5b9aacb1989ad5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-23 17:31:50 +0000
 
@@ -9,10 +9,10 @@ Fix netlist selection to save undo properly
 ---
 
 diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
-index 22799b6..70a8fd7 100644
+index 22799b6..99d3881 100644
 --- a/src/hid/gtk/gui-netlist-window.c
 +++ b/src/hid/gtk/gui-netlist-window.c
-@@ -516,14 +516,14 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+@@ -516,7 +516,7 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
      node_selected_net = NULL;
  
    InitConnectionLookup ();
@@ -21,19 +21,11 @@ index 22799b6..70a8fd7 100644
  
    for (i = selected_net->EntryN, entry = selected_net->Entry; i; i--, entry++)
      if (SeekPad (entry, &conn, false))
-       RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, true);
- 
-   SelectConnection (select_flag);
--  ResetConnections (false, false);
-+  ResetConnections (true, true);
-   FreeConnectionLookupMemory ();
-   IncrementUndoSerialNumber ();
-   Draw ();
 diff --git a/src/hid/lesstif/netlist.c b/src/hid/lesstif/netlist.c
-index 6d7420b..7c0064c 100644
+index 6d7420b..ef4b3e1 100644
 --- a/src/hid/lesstif/netlist.c
 +++ b/src/hid/lesstif/netlist.c
-@@ -136,14 +136,14 @@ nbcb_select_common (LibraryMenuTypePtr net, int pos, int select_flag)
+@@ -136,7 +136,7 @@ nbcb_select_common (LibraryMenuTypePtr net, int pos, int select_flag)
    int i;
  
    InitConnectionLookup ();
@@ -42,11 +34,3 @@ index 6d7420b..7c0064c 100644
  
    for (i = net->EntryN, entry = net->Entry; i; i--, entry++)
      if (SeekPad (entry, &conn, false))
-       RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, true);
- 
-   SelectConnection (select_flag);
--  ResetConncetions (false, false);
-+  ResetConncetions (true, true);
-   FreeConnectionLookupMemory ();
-   IncrementUndoSerialNumber ();
-   Draw ();
