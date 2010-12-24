@@ -1,5 +1,5 @@
-Bottom: 8a8ca482c7f878ea85893c1a8ef692ed2598b626
-Top:    9f140e920904af6b8c3b761518e0959b4ee14683
+Bottom: 5847f526b7eeb14641dbb9a5b072730a3e5249f0
+Top:    f3cbe6b985e8e342fc85502c72b730ba314b4333
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-23 10:39:13 +0000
 
@@ -131,7 +131,7 @@ index 0c3aded..06b38b2 100644
      {
        AddPart (Polygon);
 diff --git a/src/find.c b/src/find.c
-index 84216f8..6a00e8b 100644
+index 283f37d..cdf4faa 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -2645,6 +2645,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
@@ -142,7 +142,7 @@ index 84216f8..6a00e8b 100644
    info.polygon = *Polygon;
    EXPAND_BOUNDS (&info.polygon);
    info.layer = LayerGroup;
-@@ -3980,6 +3981,70 @@ doIsBad:
+@@ -3976,6 +3977,70 @@ doIsBad:
  }
  
  /*-----------------------------------------------------------------------------
@@ -214,11 +214,11 @@ index 84216f8..6a00e8b 100644
   * see if the connectivity changes when everything is bloated, or shrunk
   */
 diff --git a/src/find.h b/src/find.h
-index df5289d..f2b8b6b 100644
+index d91cc3a..402cf34 100644
 --- a/src/find.h
 +++ b/src/find.h
 @@ -66,6 +66,7 @@ void FreeLayoutLookupMemory (void);
- void RatFindHook (int, void *, void *, void *, bool, bool);
+ void RatFindHook (int, void *, void *, void *, bool);
  void SaveFindFlag (int);
  void RestoreFindFlag (void);
 +int IsPolygonAnIsland (LayerTypePtr, PolygonTypePtr);
