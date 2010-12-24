@@ -3,14 +3,14 @@ Top:    e57f430f9971f424906cefd5361eb7bd9430387c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-24 10:41:48 +0000
 
-We don't need the RatFindHook to save undo state
+find.c: Remove "undo" parameter to RatFindHook
 
-We already save undo information to get to a known state when
-resetting the FOUND flags. Since we later reset back to this state,
-we don't need to save undo data.
+Since all callers pass false for the "undo" parameter since the
+last commit, remove it from the function prototype.
 
-Since all callers would pass false for the "undo" parameter after
-this fix, remove it from the function prototype.
+NB: The file-global variable "User", which it previously set can be
+assumed to be false, as it defaults to false - and is restored after
+any code which temporarily sets it to true.
 
 
 ---
