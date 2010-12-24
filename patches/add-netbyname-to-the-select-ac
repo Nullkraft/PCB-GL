@@ -1,5 +1,5 @@
 Bottom: a7cc86eb888a37b9bf9fc1a64b4c88d494feb925
-Top:    df4460d78f61e2b742a336d7f0bd69e2473f4510
+Top:    736fc0a082efd215f025e71472f8e570c525fcf2
 Author: Martin Kupec <martin.kupec@kupson.cz>
 Date:   2010-12-23 11:41:14 +0000
 
@@ -103,7 +103,7 @@ index 676a6f0..e4a1d31 100644
  #define PIN_TYPES     (VIA_TYPE | PIN_TYPE)
  #define LOCK_TYPES    (VIA_TYPE | LINE_TYPE | ARC_TYPE | POLYGON_TYPE | ELEMENT_TYPE \
 diff --git a/src/select.c b/src/select.c
-index 87dc661..eb5598b 100644
+index 87dc661..ebada31 100644
 --- a/src/select.c
 +++ b/src/select.c
 @@ -44,6 +44,7 @@
@@ -114,7 +114,7 @@ index 87dc661..eb5598b 100644
  
  #include <sys/types.h>
  #ifdef HAVE_REGEX_H
-@@ -1011,6 +1012,34 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+@@ -1011,6 +1012,35 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
        }
    }
    END_LOOP;
@@ -126,18 +126,19 @@ index 87dc661..eb5598b 100644
 +      SaveUndoSerialNumber ();
 +      MENU_LOOP (&PCB->NetlistLib);
 +      {
-+	Cardinal i;
-+	LibraryEntryType *entry;
-+	ConnectionType conn;
++        Cardinal i;
++        LibraryEntryType *entry;
++        ConnectionType conn;
 +
-+	/* Name[0] and Name[1] are special purpose, not the actual name*/
-+	if (menu->Name && menu->Name[0] != '\0' && menu->Name[1] != '\0' &&
-+	    REGEXEC (menu->Name + 2))
-+	  {
-+	    for (i = menu->EntryN, entry = menu->Entry; i; i--, entry++)
-+	      if (SeekPad (entry, &conn, false))
-+		RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, true);
-+	  }
++        /* Name[0] and Name[1] are special purpose, not the actual name*/
++        if (menu->Name && menu->Name[0] != '\0' && menu->Name[1] != '\0' &&
++            REGEXEC (menu->Name + 2))
++          {
++            for (i = menu->EntryN, entry = menu->Entry; i; i--, entry++)
++              if (SeekPad (entry, &conn, false))
++                RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2,
++                             true, true);
++          }
 +      }
 +      END_LOOP;
 +      RestoreUndoSerialNumber ();
