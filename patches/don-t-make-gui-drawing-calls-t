@@ -1,7 +1,7 @@
-Bottom: b905fc6c6bdf8aa5d73aef99d3c491880d4db391
-Top:    944cd184367141b4007cf387935a53ed1614eb84
+Bottom: 7c5dffebe5b4a1bc6c65f4745381cee0cd3740e9
+Top:    267bb7c9350a614e5fd85ad10dbc1c61c5e6aad3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-23 17:55:21 +0000
+Date:   2010-12-24 11:58:03 +0000
 
 Don't make GUI drawing calls to erase objects
 
@@ -15,7 +15,7 @@ and teardown around drawing.
 ---
 
 diff --git a/src/autoroute.c b/src/autoroute.c
-index 2c86270..ac294de 100644
+index 976ef09..2ff2352 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -103,7 +103,7 @@ RCSID ("$Id$");
