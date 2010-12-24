@@ -1,0 +1,50 @@
+Bottom: af450ea8705d50810ad343aa4db0b0b324ed4128
+Top:    ba82ce8ea586748e11b92bb2e4379b5a92313823
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-24 11:42:39 +0000
+
+Refresh of proposed-fixes
+
+---
+
+diff --git a/src/report.c b/src/report.c
+index 3d74a26..8ded42c 100644
+--- a/src/report.c
++++ b/src/report.c
+@@ -688,10 +688,14 @@ ReportAllNetLengths (int argc, char **argv, int x, int y)
+       continue;
+ 
+     got_one:
+-      if (ResetConnections (true))
+-        IncrementUndoSerialNumber ();
++      ResetConnections (true);
+       length = XYtoNetLength (x, y, &found);
+ 
++      /* In case XYtoNetLength did not increment the serial number, we should
++       * do it anyway in case ResetConnections (true) above changed something.
++       */
++      IncrementUndoSerialNumber ();
++
+       gui->log("Net %s length %.*f %s\n", netname, prec, length*scale, units_name);
+     }
+   return 0;
+@@ -704,12 +708,17 @@ ReportNetLength (int argc, char **argv, int x, int y)
+   char *netname = 0;
+   int found = 0;
+ 
+-  if (ResetConnections (true))
+-    IncrementUndoSerialNumber ();
++  ResetConnections (true);
++
+   gui->get_coords ("Click on a connection", &x, &y);
+ 
+   length = XYtoNetLength (x, y, &found);
+ 
++  /* In case XYtoNetLength did not increment the serial number, we should
++   * do it anyway in case ResetConnections (true) above changed something.
++   */
++  IncrementUndoSerialNumber ();
++
+   if (!found)
+     {
+       gui->log ("No net under cursor.\n");
