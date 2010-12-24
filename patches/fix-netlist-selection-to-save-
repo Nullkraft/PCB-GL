@@ -3,7 +3,7 @@ Top:    2a936a45449c7001ad32809dad5b9aacb1989ad5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-23 17:31:50 +0000
 
-Fix netlist selection to save undo properly
+Fix netlist selection to save undo information for wiped "FOUND" flags
 
 When we wipe the found flags on objects, we should also queue them
 for redraw - fix that too.
