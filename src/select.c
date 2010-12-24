@@ -1020,18 +1020,19 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
       SaveUndoSerialNumber ();
       MENU_LOOP (&PCB->NetlistLib);
       {
-	Cardinal i;
-	LibraryEntryType *entry;
-	ConnectionType conn;
+        Cardinal i;
+        LibraryEntryType *entry;
+        ConnectionType conn;
 
-	/* Name[0] and Name[1] are special purpose, not the actual name*/
-	if (menu->Name && menu->Name[0] != '\0' && menu->Name[1] != '\0' &&
-	    REGEXEC (menu->Name + 2))
-	  {
-	    for (i = menu->EntryN, entry = menu->Entry; i; i--, entry++)
-	      if (SeekPad (entry, &conn, false))
-		RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, true);
-	  }
+        /* Name[0] and Name[1] are special purpose, not the actual name*/
+        if (menu->Name && menu->Name[0] != '\0' && menu->Name[1] != '\0' &&
+            REGEXEC (menu->Name + 2))
+          {
+            for (i = menu->EntryN, entry = menu->Entry; i; i--, entry++)
+              if (SeekPad (entry, &conn, false))
+                RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2,
+                             true, true);
+          }
       }
       END_LOOP;
       RestoreUndoSerialNumber ();
