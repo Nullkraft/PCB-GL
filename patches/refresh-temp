@@ -1,0 +1,30 @@
+Bottom: 34d1684ae238546ef46bd2057f8d9fefbc9d12a5
+Top:    2070b40f2d9a6404eedbdf781749b1db3c0b0077
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-24 10:52:00 +0000
+
+Refresh of we-don-t-need-the-ratfindhook-
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 1c9e94a..d9637c6 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -3398,15 +3398,11 @@ LookupConnection (LocationType X, LocationType Y, bool AndDraw,
+  * assumes InitConnectionLookup() has already been done
+  */
+ void
+-  RatFindHook
+-  (int type, void *ptr1, void *ptr2, void *ptr3, bool undo,
+-   bool AndRats)
++RatFindHook (int type, void *ptr1, void *ptr2, void *ptr3, bool AndRats)
+ {
+-  User = undo;
+   DumpList ();
+   ListStart (type, ptr1, ptr2, ptr3);
+   DoIt (AndRats, false);
+-  User = false;
+ }
+ 
+ /* ---------------------------------------------------------------------------
