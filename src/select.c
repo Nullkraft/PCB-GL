@@ -1015,7 +1015,7 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
   if (Type & NET_TYPE)
     {
       InitConnectionLookup ();
-      changed = ResetConnections (true, true) || changed;
+      changed = ResetConnections (true) || changed;
 
       MENU_LOOP (&PCB->NetlistLib);
       {
@@ -1029,14 +1029,13 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
           {
             for (i = menu->EntryN, entry = menu->Entry; i; i--, entry++)
               if (SeekPad (entry, &conn, false))
-                RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2,
-                             true, true);
+                RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true);
           }
       }
       END_LOOP;
 
       changed = SelectConnection (Flag) || changed;
-      changed = ResetConnections (true, true) || changed;
+      changed = ResetConnections (false) || changed;
       FreeConnectionLookupMemory ();
     }
 
