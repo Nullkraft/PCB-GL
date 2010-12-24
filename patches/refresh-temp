@@ -1,0 +1,35 @@
+Bottom: f78652901d43a6a999f1860d0bcbdc4962dfdfe2
+Top:    2a936a45449c7001ad32809dad5b9aacb1989ad5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-24 10:53:34 +0000
+
+Refresh of fix-netlist-selection-to-save-
+
+---
+
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index 70a8fd7..99d3881 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -523,7 +523,7 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+       RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, true);
+ 
+   SelectConnection (select_flag);
+-  ResetConnections (true, true);
++  ResetConnections (false, false);
+   FreeConnectionLookupMemory ();
+   IncrementUndoSerialNumber ();
+   Draw ();
+diff --git a/src/hid/lesstif/netlist.c b/src/hid/lesstif/netlist.c
+index 7c0064c..ef4b3e1 100644
+--- a/src/hid/lesstif/netlist.c
++++ b/src/hid/lesstif/netlist.c
+@@ -143,7 +143,7 @@ nbcb_select_common (LibraryMenuTypePtr net, int pos, int select_flag)
+       RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, true);
+ 
+   SelectConnection (select_flag);
+-  ResetConncetions (true, true);
++  ResetConncetions (false, false);
+   FreeConnectionLookupMemory ();
+   IncrementUndoSerialNumber ();
+   Draw ();
