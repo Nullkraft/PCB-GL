@@ -1105,6 +1105,16 @@ SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
 
 
 static int
+pin_name_callback (const BoxType * b, void *cl)
+{
+  PinTypePtr pin = (PinTypePtr) b;
+
+  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
+    DrawPinName (pin, 0);
+  return 1;
+}
+
+static int
 pin_inlayer_callback (const BoxType * b, void *cl)
 {
   SetPVColor_inlayer ((PinTypePtr) b, cl, PIN_TYPE);
@@ -1123,7 +1133,11 @@ via_inlayer_callback (const BoxType * b, void *cl)
 static int
 pin_callback (const BoxType * b, void *cl)
 {
-  DrawPlainPin ((PinTypePtr) b, false);
+  PinTypePtr pin = (PinTypePtr) b;
+
+  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
+    DrawPinName (pin, 0);
+  DrawPlainPin (pin, false);
   return 1;
 }
 
@@ -1132,7 +1146,11 @@ pad_callback (const BoxType * b, void *cl)
 {
   PadTypePtr pad = (PadTypePtr) b;
   if (FRONT (pad))
+  {
+    if (TEST_FLAG (DISPLAYNAMEFLAG, pad))
+      DrawPadName (pad, 0);
     DrawPad (pad, 0);
+  }
   return 1;
 }
 
@@ -1445,6 +1463,9 @@ DrawLayerGroup (int group, const BoxType * screen)
 
       /* Draw pins, vias and pads on this layer */
       if (!global_view_2d && rv) {
+        if (PCB->PinOn &&
+            (group == solder_group || group == component_group))
+          r_search (PCB->Data->pin_tree, screen, NULL, pin_name_callback, Layer);
         if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
         if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
         if ((group == component_group && !SWAP_IDENT) ||
