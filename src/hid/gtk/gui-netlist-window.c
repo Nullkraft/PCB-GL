@@ -523,7 +523,7 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
       RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, true);
 
   SelectConnection (select_flag);
-  ResetConnections (true, true);
+  ResetConnections (false, false);
   FreeConnectionLookupMemory ();
   IncrementUndoSerialNumber ();
   Draw ();
