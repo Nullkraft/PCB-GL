@@ -1,5 +1,5 @@
 Bottom: cf3945762ae7656f74d823af7746002b238077e1
-Top:    732ab08ff48903715f93018c340ad02b85402f89
+Top:    59074b56c01b575a3f95b9af30c17084b1e6d940
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-24 11:06:25 +0000
 
@@ -214,7 +214,7 @@ index cee63da..96315b4 100644
    IncrementUndoSerialNumber ();
    Draw ();
 diff --git a/src/hid/lesstif/netlist.c b/src/hid/lesstif/netlist.c
-index 3438b33..20a0a51 100644
+index 3438b33..bf48b09 100644
 --- a/src/hid/lesstif/netlist.c
 +++ b/src/hid/lesstif/netlist.c
 @@ -136,17 +136,16 @@ nbcb_select_common (LibraryMenuTypePtr net, int pos, int select_flag)
@@ -235,7 +235,7 @@ index 3438b33..20a0a51 100644
    SelectConnection (select_flag);
 -  ResetFoundPinsViasAndPads (false);
 -  ResetFoundLinesAndPolygons (false);
-+  ResetConncetions (false, false);
++  ResetConncetions (false);
    FreeConnectionLookupMemory ();
    IncrementUndoSerialNumber ();
    Draw ();
