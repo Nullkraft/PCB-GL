@@ -1,5 +1,5 @@
-Bottom: 2a936a45449c7001ad32809dad5b9aacb1989ad5
-Top:    e57f430f9971f424906cefd5361eb7bd9430387c
+Bottom: 15a03462253ca3167d5097b032b99fb86759588a
+Top:    a40b217d225f002890a03b8bbb3f7f10d4ab98d2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-24 10:57:08 +0000
 
@@ -13,7 +13,7 @@ we don't need to save undo data.
 ---
 
 diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
-index 99d3881..040c013 100644
+index ce3e2ff..e780aa4 100644
 --- a/src/hid/gtk/gui-netlist-window.c
 +++ b/src/hid/gtk/gui-netlist-window.c
 @@ -520,7 +520,7 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
@@ -24,9 +24,9 @@ index 99d3881..040c013 100644
 +      RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, false, true);
  
    SelectConnection (select_flag);
-   ResetConnections (false, false);
+   ResetConnections (false);
 diff --git a/src/hid/lesstif/netlist.c b/src/hid/lesstif/netlist.c
-index ef4b3e1..4eb65ba 100644
+index 4ddc240..0bc4389 100644
 --- a/src/hid/lesstif/netlist.c
 +++ b/src/hid/lesstif/netlist.c
 @@ -140,7 +140,7 @@ nbcb_select_common (LibraryMenuTypePtr net, int pos, int select_flag)
@@ -37,4 +37,4 @@ index ef4b3e1..4eb65ba 100644
 +      RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, false, true);
  
    SelectConnection (select_flag);
-   ResetConncetions (false, false);
+   ResetConncetions (false);
