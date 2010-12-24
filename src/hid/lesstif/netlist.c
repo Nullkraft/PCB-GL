@@ -145,7 +145,7 @@ nbcb_select_common (LibraryMenuTypePtr net, int pos, int select_flag)
   RestoreUndoSerialNumber ();
 
   SelectConnection (select_flag);
-  ResetConncetions (false, false);
+  ResetConncetions (false);
   FreeConnectionLookupMemory ();
   IncrementUndoSerialNumber ();
   Draw ();
