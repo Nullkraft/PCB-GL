@@ -1,5 +1,5 @@
 Bottom: 59074b56c01b575a3f95b9af30c17084b1e6d940
-Top:    59074b56c01b575a3f95b9af30c17084b1e6d940
+Top:    af450ea8705d50810ad343aa4db0b0b324ed4128
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-23 17:20:19 +0000
 
@@ -8,4 +8,29 @@ Proposed fixes
 
 ---
 
-
+diff --git a/src/report.c b/src/report.c
+index 79b7ced..3d74a26 100644
+--- a/src/report.c
++++ b/src/report.c
+@@ -688,8 +688,8 @@ ReportAllNetLengths (int argc, char **argv, int x, int y)
+       continue;
+ 
+     got_one:
+-      ResetConnections (true);
+-      /* FIXME: Need a serial number increment?? */
++      if (ResetConnections (true))
++        IncrementUndoSerialNumber ();
+       length = XYtoNetLength (x, y, &found);
+ 
+       gui->log("Net %s length %.*f %s\n", netname, prec, length*scale, units_name);
+@@ -704,8 +704,8 @@ ReportNetLength (int argc, char **argv, int x, int y)
+   char *netname = 0;
+   int found = 0;
+ 
+-  ResetConnections (true);
+-  /* FIXME: Need a serial number increment?? */
++  if (ResetConnections (true))
++    IncrementUndoSerialNumber ();
+   gui->get_coords ("Click on a connection", &x, &y);
+ 
+   length = XYtoNetLength (x, y, &found);
