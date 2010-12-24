@@ -9,8 +9,8 @@ We already save undo information to get to a known state when
 resetting the FOUND flags. Since we later reset back to this state,
 we don't need to save undo data.
 
-Since all callers now pass false for the "undo" parameter to
-RatFindHook, remove it from the function prototype.
+Since all callers would pass false for the "undo" parameter after
+this fix, remove it from the function prototype.
 
 
 ---
