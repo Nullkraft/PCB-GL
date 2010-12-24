@@ -1,0 +1,22 @@
+Bottom: 0928e91c8abf8b8c0c9ad777bf7cf68c45fef9cf
+Top:    c74437ac8dd25512027e13ac4a8e6bcf7d9a21e6
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-24 11:51:16 +0000
+
+Refresh of remove-draw-call-from-resetfou
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 748431e..f2f9a92 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -3916,7 +3916,7 @@ DRCAll (void)
+   if (ResetConnections (true))
+     {
+       IncrementUndoSerialNumber ();
+-      Draw (); /* XXX: Not sure if this is required */
++      Draw ();
+     }
+ 
+   User = false;
