@@ -1,5 +1,5 @@
-Bottom: ca60414fd8ae42ce0248dbd82193726269ec2ba9
-Top:    2b0bd0609967c5da748683ff56ef50a6464ac295
+Bottom: 7fdd8303aaa5995fb3983bc718b89cc65483f021
+Top:    959828a080354d083ac3f93398c050e0ca865f9d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-23 17:41:30 +0000
 
@@ -58,10 +58,10 @@ index fe28c84..997e29e 100644
  		LookupConnection (Crosshair.AttachedLine.Point1.X,
  				  Crosshair.AttachedLine.Point1.Y, true, 1,
 diff --git a/src/find.c b/src/find.c
-index 1c9e94a..696d510 100644
+index d9637c6..79d851f 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -3490,11 +3490,7 @@ ResetFoundPinsViasAndPads (bool save_undo, bool redraw)
+@@ -3486,11 +3486,7 @@ ResetFoundPinsViasAndPads (bool save_undo, bool redraw)
    }
    END_LOOP;
    if (change)
@@ -74,7 +74,7 @@ index 1c9e94a..696d510 100644
    return change;
  }
  
-@@ -3559,11 +3555,7 @@ ResetFoundLinesAndPolygons (bool save_undo, bool redraw)
+@@ -3555,11 +3551,7 @@ ResetFoundLinesAndPolygons (bool save_undo, bool redraw)
    }
    ENDALL_LOOP;
    if (change)
@@ -87,7 +87,7 @@ index 1c9e94a..696d510 100644
    return change;
  }
  
-@@ -3926,7 +3918,10 @@ DRCAll (void)
+@@ -3922,7 +3914,10 @@ DRCAll (void)
    TheFlag = FOUNDFLAG | DRCFLAG | SELECTEDFLAG;
  
    if (ResetConnections (true, true))
