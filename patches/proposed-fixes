@@ -3,7 +3,9 @@ Top:    ba82ce8ea586748e11b92bb2e4379b5a92313823
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-23 17:20:19 +0000
 
-report.c: Fix missing undo serial increment in Report[All]NetLength[s]
+report.c: Add paranoid undo serial increment in Report[All]NetLength[s]
+
+This is unlikely to be a problem unless a conneciton is not found.
 
 
 ---
