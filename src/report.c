@@ -688,9 +688,13 @@ ReportAllNetLengths (int argc, char **argv, int x, int y)
       continue;
 
     got_one:
-      if (ResetConnections (true))
-        IncrementUndoSerialNumber ();
+      ResetConnections (true);
       length = XYtoNetLength (x, y, &found);
+
+      /* In case XYtoNetLength did not increment the serial number, we should
+       * do it anyway in case ResetConnections (true) above changed something.
+       */
+      IncrementUndoSerialNumber ();
 
       gui->log("Net %s length %.*f %s\n", netname, prec, length*scale, units_name);
     }
@@ -704,11 +708,16 @@ ReportNetLength (int argc, char **argv, int x, int y)
   char *netname = 0;
   int found = 0;
 
-  if (ResetConnections (true))
-    IncrementUndoSerialNumber ();
+  ResetConnections (true);
+
   gui->get_coords ("Click on a connection", &x, &y);
 
   length = XYtoNetLength (x, y, &found);
+
+  /* In case XYtoNetLength did not increment the serial number, we should
+   * do it anyway in case ResetConnections (true) above changed something.
+   */
+  IncrementUndoSerialNumber ();
 
   if (!found)
     {
