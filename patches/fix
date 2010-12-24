@@ -1,5 +1,5 @@
 Bottom: cf3945762ae7656f74d823af7746002b238077e1
-Top:    59074b56c01b575a3f95b9af30c17084b1e6d940
+Top:    ca11630e9238f84d73e151cd9ee145a342f16329
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-24 11:06:25 +0000
 
@@ -289,7 +289,7 @@ index 5fe86cd..3e9d6ee 100644
  }
  
 diff --git a/src/report.c b/src/report.c
-index a9c429d..79b7ced 100644
+index a9c429d..44cba19 100644
 --- a/src/report.c
 +++ b/src/report.c
 @@ -688,11 +688,8 @@ ReportAllNetLengths (int argc, char **argv, int x, int y)
@@ -302,7 +302,7 @@ index a9c429d..79b7ced 100644
 -      ResetFoundLinesAndPolygons (true);
 -      RestoreUndoSerialNumber ();
 +      ResetConnections (true);
-+      /* FIXME: Need a serial number increment?? */
++      /* XXX: Might need a serial number increment?? */
        length = XYtoNetLength (x, y, &found);
  
        gui->log("Net %s length %.*f %s\n", netname, prec, length*scale, units_name);
@@ -316,7 +316,7 @@ index a9c429d..79b7ced 100644
 -  ResetFoundLinesAndPolygons (true);
 -  RestoreUndoSerialNumber ();
 +  ResetConnections (true);
-+  /* FIXME: Need a serial number increment?? */
++  /* XXX: Might need a serial number increment?? */
    gui->get_coords ("Click on a connection", &x, &y);
  
    length = XYtoNetLength (x, y, &found);
