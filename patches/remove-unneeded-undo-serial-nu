@@ -1,5 +1,5 @@
-Bottom: 0b9b7d5f729031c71dce79ba92a686df91eebfdc
-Top:    21a8de45730e66f3829ce77c7030707a035af55a
+Bottom: af450ea8705d50810ad343aa4db0b0b324ed4128
+Top:    37c9e11e2b4c40caad10d02654b6718cc85237f1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-24 10:38:59 +0000
 
@@ -12,12 +12,12 @@ the Undo serial number, so the save / restore calls are not required.
 ---
 
 diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
-index 6e129cc..22799b6 100644
+index 96315b4..addb0d0 100644
 --- a/src/hid/gtk/gui-netlist-window.c
 +++ b/src/hid/gtk/gui-netlist-window.c
 @@ -518,11 +518,9 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
    InitConnectionLookup ();
-   ResetConnections (false, false);
+   ResetConnections (false);
  
 -  SaveUndoSerialNumber ();
    for (i = selected_net->EntryN, entry = selected_net->Entry; i; i--, entry++)
@@ -26,14 +26,14 @@ index 6e129cc..22799b6 100644
 -  RestoreUndoSerialNumber ();
  
    SelectConnection (select_flag);
-   ResetConnections (false, false);
+   ResetConnections (false);
 diff --git a/src/hid/lesstif/netlist.c b/src/hid/lesstif/netlist.c
-index 92d3ac6..6d7420b 100644
+index bf48b09..a2d3507 100644
 --- a/src/hid/lesstif/netlist.c
 +++ b/src/hid/lesstif/netlist.c
 @@ -138,11 +138,9 @@ nbcb_select_common (LibraryMenuTypePtr net, int pos, int select_flag)
    InitConnectionLookup ();
-   ResetConnections (false, false);
+   ResetConnections (false);
  
 -  SaveUndoSerialNumber ();
    for (i = net->EntryN, entry = net->Entry; i; i--, entry++)
@@ -42,4 +42,4 @@ index 92d3ac6..6d7420b 100644
 -  RestoreUndoSerialNumber ();
  
    SelectConnection (select_flag);
-   ResetConncetions (false, false);
+   ResetConncetions (false);
