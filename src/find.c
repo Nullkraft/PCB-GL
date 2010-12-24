@@ -3916,7 +3916,7 @@ DRCAll (void)
   if (ResetConnections (true))
     {
       IncrementUndoSerialNumber ();
-      Draw (); /* XXX: Not sure if this is required */
+      Draw ();
     }
 
   User = false;
