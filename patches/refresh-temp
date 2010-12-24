@@ -1,0 +1,38 @@
+Bottom: 4593a25c44d145b0eef08aa2216c23692e1cd195
+Top:    a160a764d0290a1741b1c900a3dd0139368d391e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-24 11:22:19 +0000
+
+Refresh of add-netbyname-to-the-select-ac
+
+---
+
+diff --git a/src/select.c b/src/select.c
+index b8d6081..27a590b 100644
+--- a/src/select.c
++++ b/src/select.c
+@@ -1015,7 +1015,7 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+   if (Type & NET_TYPE)
+     {
+       InitConnectionLookup ();
+-      changed = ResetConnections (true, true) || changed;
++      changed = ResetConnections (true) || changed;
+ 
+       MENU_LOOP (&PCB->NetlistLib);
+       {
+@@ -1029,14 +1029,13 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+           {
+             for (i = menu->EntryN, entry = menu->Entry; i; i--, entry++)
+               if (SeekPad (entry, &conn, false))
+-                RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2,
+-                             true, true);
++                RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true);
+           }
+       }
+       END_LOOP;
+ 
+       changed = SelectConnection (Flag) || changed;
+-      changed = ResetConnections (true, true) || changed;
++      changed = ResetConnections (false) || changed;
+       FreeConnectionLookupMemory ();
+     }
