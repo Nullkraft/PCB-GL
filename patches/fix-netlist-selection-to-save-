@@ -1,5 +1,5 @@
-Bottom: 21a8de45730e66f3829ce77c7030707a035af55a
-Top:    2a936a45449c7001ad32809dad5b9aacb1989ad5
+Bottom: 37c9e11e2b4c40caad10d02654b6718cc85237f1
+Top:    37c9e11e2b4c40caad10d02654b6718cc85237f1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-23 17:31:50 +0000
 
@@ -11,29 +11,4 @@ for redraw - fix that too.
 
 ---
 
-diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
-index 22799b6..99d3881 100644
---- a/src/hid/gtk/gui-netlist-window.c
-+++ b/src/hid/gtk/gui-netlist-window.c
-@@ -516,7 +516,7 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
-     node_selected_net = NULL;
- 
-   InitConnectionLookup ();
--  ResetConnections (false, false);
-+  ResetConnections (true, true);
- 
-   for (i = selected_net->EntryN, entry = selected_net->Entry; i; i--, entry++)
-     if (SeekPad (entry, &conn, false))
-diff --git a/src/hid/lesstif/netlist.c b/src/hid/lesstif/netlist.c
-index 6d7420b..ef4b3e1 100644
---- a/src/hid/lesstif/netlist.c
-+++ b/src/hid/lesstif/netlist.c
-@@ -136,7 +136,7 @@ nbcb_select_common (LibraryMenuTypePtr net, int pos, int select_flag)
-   int i;
- 
-   InitConnectionLookup ();
--  ResetConnections (false, false);
-+  ResetConnections (true, true);
- 
-   for (i = net->EntryN, entry = net->Entry; i; i--, entry++)
-     if (SeekPad (entry, &conn, false))
+
