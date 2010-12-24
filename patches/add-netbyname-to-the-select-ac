@@ -1,5 +1,5 @@
 Bottom: 75bd8b2b1ea28004547cbaf648e8741a1243e0d3
-Top:    4593a25c44d145b0eef08aa2216c23692e1cd195
+Top:    a160a764d0290a1741b1c900a3dd0139368d391e
 Author: Martin Kupec <martin.kupec@kupson.cz>
 Date:   2010-12-23 11:41:14 +0000
 
@@ -102,7 +102,7 @@ index 676a6f0..e4a1d31 100644
  #define PIN_TYPES     (VIA_TYPE | PIN_TYPE)
  #define LOCK_TYPES    (VIA_TYPE | LINE_TYPE | ARC_TYPE | POLYGON_TYPE | ELEMENT_TYPE \
 diff --git a/src/select.c b/src/select.c
-index 87dc661..b8d6081 100644
+index 87dc661..27a590b 100644
 --- a/src/select.c
 +++ b/src/select.c
 @@ -44,6 +44,7 @@
@@ -113,14 +113,14 @@ index 87dc661..b8d6081 100644
  
  #include <sys/types.h>
  #ifdef HAVE_REGEX_H
-@@ -1011,6 +1012,33 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+@@ -1011,6 +1012,32 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
        }
    }
    END_LOOP;
 +  if (Type & NET_TYPE)
 +    {
 +      InitConnectionLookup ();
-+      changed = ResetConnections (true, true) || changed;
++      changed = ResetConnections (true) || changed;
 +
 +      MENU_LOOP (&PCB->NetlistLib);
 +      {
@@ -134,14 +134,13 @@ index 87dc661..b8d6081 100644
 +          {
 +            for (i = menu->EntryN, entry = menu->Entry; i; i--, entry++)
 +              if (SeekPad (entry, &conn, false))
-+                RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2,
-+                             true, true);
++                RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true);
 +          }
 +      }
 +      END_LOOP;
 +
 +      changed = SelectConnection (Flag) || changed;
-+      changed = ResetConnections (true, true) || changed;
++      changed = ResetConnections (false) || changed;
 +      FreeConnectionLookupMemory ();
 +    }
  
