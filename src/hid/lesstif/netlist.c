@@ -136,14 +136,14 @@ nbcb_select_common (LibraryMenuTypePtr net, int pos, int select_flag)
   int i;
 
   InitConnectionLookup ();
-  ResetConnections (true);
+  ResetConnections (true, true);
 
   for (i = net->EntryN, entry = net->Entry; i; i--, entry++)
     if (SeekPad (entry, &conn, false))
       RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true);
 
   SelectConnection (select_flag);
-  ResetConncetions (false);
+  ResetConncetions (false, false);
   FreeConnectionLookupMemory ();
   IncrementUndoSerialNumber ();
   Draw ();
