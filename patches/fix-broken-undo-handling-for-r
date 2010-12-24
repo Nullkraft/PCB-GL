@@ -44,6 +44,7 @@ Remove redundant IncrementSerialNumber() from report.c
 The ResetFound*() functions already increment the undo serial number
 when called with true as an argument, and any changes are made.
 
+
 ---
 
 diff --git a/src/action.c b/src/action.c
