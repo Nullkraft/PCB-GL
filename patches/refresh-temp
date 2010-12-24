@@ -1,0 +1,35 @@
+Bottom: 37c9e11e2b4c40caad10d02654b6718cc85237f1
+Top:    15a03462253ca3167d5097b032b99fb86759588a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-24 11:21:07 +0000
+
+Refresh of fix-netlist-selection-to-save-
+
+---
+
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index addb0d0..ce3e2ff 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -516,7 +516,7 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+     node_selected_net = NULL;
+ 
+   InitConnectionLookup ();
+-  ResetConnections (false);
++  ResetConnections (true);
+ 
+   for (i = selected_net->EntryN, entry = selected_net->Entry; i; i--, entry++)
+     if (SeekPad (entry, &conn, false))
+diff --git a/src/hid/lesstif/netlist.c b/src/hid/lesstif/netlist.c
+index a2d3507..4ddc240 100644
+--- a/src/hid/lesstif/netlist.c
++++ b/src/hid/lesstif/netlist.c
+@@ -136,7 +136,7 @@ nbcb_select_common (LibraryMenuTypePtr net, int pos, int select_flag)
+   int i;
+ 
+   InitConnectionLookup ();
+-  ResetConnections (false);
++  ResetConnections (true);
+ 
+   for (i = net->EntryN, entry = net->Entry; i; i--, entry++)
+     if (SeekPad (entry, &conn, false))
