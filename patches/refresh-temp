@@ -1,0 +1,430 @@
+Bottom: af450ea8705d50810ad343aa4db0b0b324ed4128
+Top:    0b9b7d5f729031c71dce79ba92a686df91eebfdc
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-24 11:19:31 +0000
+
+Refresh of fix-broken-undo-handling-for-r
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 8e01180..fde1e7c 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -2362,17 +2362,17 @@ ActionConnection (int argc, char **argv, int x, int y)
+ 	  }
+ 
+ 	case F_ResetLinesAndPolygons:
+-	  if (ResetFoundLinesAndPolygons (true))
++	  if (ResetFoundLinesAndPolygons (true, true))
+ 	    IncrementUndoSerialNumber ();
+ 	  break;
+ 
+ 	case F_ResetPinsViasAndPads:
+-	  if (ResetFoundPinsViasAndPads (true))
++	  if (ResetFoundPinsViasAndPads (true, true))
+ 	    IncrementUndoSerialNumber ();
+ 	  break;
+ 
+ 	case F_Reset:
+-	  if (ResetConnections (true))
++	  if (ResetConnections (true, true))
+ 	    IncrementUndoSerialNumber ();
+ 	  break;
+ 	}
+@@ -2786,7 +2786,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+ 	  TOGGLE_FLAG (AUTODRCFLAG, PCB);
+ 	  if (TEST_FLAG (AUTODRCFLAG, PCB) && Settings.Mode == LINE_MODE)
+ 	    {
+-	      if (ResetConnections (true))
++	      if (ResetConnections (true, true))
+ 		IncrementUndoSerialNumber ();
+ 	      if (Crosshair.AttachedLine.State != STATE_FIRST)
+ 		LookupConnection (Crosshair.AttachedLine.Point1.X,
+diff --git a/src/autoroute.c b/src/autoroute.c
+index 976ef09..2c86270 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -985,7 +985,7 @@ CreateRouteData ()
+    * this saves on searching the trees to find the nets
+    */
+   /* use the DRCFLAG to mark objects as they are entered */
+-  ResetConnections (false);
++  ResetConnections (false, false);
+   Nets = CollectSubnets (false);
+   {
+     routebox_t *last_net = NULL;
+diff --git a/src/find.c b/src/find.c
+index 519d0ba..1c9e94a 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -3220,7 +3220,7 @@ LookupElementConnections (ElementTypePtr Element, FILE * FP)
+   /* reset all currently marked connections */
+   User = true;
+   TheFlag = FOUNDFLAG;
+-  ResetConnections (true);
++  ResetConnections (true, true);
+   InitConnectionLookup ();
+   PrintElementConnections (Element, FP, true);
+   SetChangedFlag (true);
+@@ -3241,7 +3241,7 @@ LookupConnectionsToAllElements (FILE * FP)
+   /* reset all currently marked connections */
+   User = false;
+   TheFlag = FOUNDFLAG;
+-  ResetConnections (false);
++  ResetConnections (false, false);
+   InitConnectionLookup ();
+ 
+   ELEMENT_LOOP (PCB->Data);
+@@ -3251,12 +3251,12 @@ LookupConnectionsToAllElements (FILE * FP)
+       break;
+     SEPARATE (FP);
+     if (Settings.ResetAfterElement && n != 1)
+-      ResetConnections (false);
++      ResetConnections (false, false);
+   }
+   END_LOOP;
+   if (Settings.RingBellWhenFinished)
+     gui->beep ();
+-  ResetConnections (false);
++  ResetConnections (false, false);
+   FreeConnectionLookupMemory ();
+   ClearAndRedrawOutput ();
+ }
+@@ -3417,7 +3417,7 @@ LookupUnusedPins (FILE * FP)
+ {
+   /* reset all currently marked connections */
+   User = true;
+-  ResetConnections (true);
++  ResetConnections (true, true);
+   InitConnectionLookup ();
+ 
+   ELEMENT_LOOP (PCB->Data);
+@@ -3442,7 +3442,7 @@ LookupUnusedPins (FILE * FP)
+  * resets all used flags of pins and vias
+  */
+ bool
+-ResetFoundPinsViasAndPads (bool AndDraw)
++ResetFoundPinsViasAndPads (bool save_undo, bool redraw)
+ {
+   bool change = false;
+ 
+@@ -3450,10 +3450,10 @@ ResetFoundPinsViasAndPads (bool AndDraw)
+   {
+     if (TEST_FLAG (TheFlag, via))
+       {
+-        if (AndDraw)
++        if (save_undo)
+           AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
+         CLEAR_FLAG (TheFlag, via);
+-        if (AndDraw)
++        if (redraw)
+           DrawVia (via, 0);
+         change = true;
+       }
+@@ -3465,10 +3465,10 @@ ResetFoundPinsViasAndPads (bool AndDraw)
+     {
+       if (TEST_FLAG (TheFlag, pin))
+         {
+-          if (AndDraw)
++          if (save_undo)
+             AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
+           CLEAR_FLAG (TheFlag, pin);
+-          if (AndDraw)
++          if (redraw)
+             DrawPin (pin, 0);
+           change = true;
+         }
+@@ -3478,10 +3478,10 @@ ResetFoundPinsViasAndPads (bool AndDraw)
+     {
+       if (TEST_FLAG (TheFlag, pad))
+         {
+-          if (AndDraw)
++          if (save_undo)
+             AddObjectToFlagUndoList (PAD_TYPE, element, pad, pad);
+           CLEAR_FLAG (TheFlag, pad);
+-          if (AndDraw)
++          if (redraw)
+             DrawPad (pad, 0);
+           change = true;
+         }
+@@ -3492,7 +3492,7 @@ ResetFoundPinsViasAndPads (bool AndDraw)
+   if (change)
+     {
+       SetChangedFlag (true);
+-      if (AndDraw)
++      if (redraw)
+         Draw ();
+     }
+   return change;
+@@ -3502,7 +3502,7 @@ ResetFoundPinsViasAndPads (bool AndDraw)
+  * resets all used flags of LOs
+  */
+ bool
+-ResetFoundLinesAndPolygons (bool AndDraw)
++ResetFoundLinesAndPolygons (bool save_undo, bool redraw)
+ {
+   bool change = false;
+ 
+@@ -3510,10 +3510,10 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+   {
+     if (TEST_FLAG (TheFlag, line))
+       {
+-        if (AndDraw)
++        if (save_undo)
+           AddObjectToFlagUndoList (RATLINE_TYPE, line, line, line);
+         CLEAR_FLAG (TheFlag, line);
+-        if (AndDraw)
++        if (redraw)
+           DrawRat (line, 0);
+         change = true;
+       }
+@@ -3523,10 +3523,10 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+   {
+     if (TEST_FLAG (TheFlag, line))
+       {
+-        if (AndDraw)
++        if (save_undo)
+           AddObjectToFlagUndoList (LINE_TYPE, layer, line, line);
+         CLEAR_FLAG (TheFlag, line);
+-        if (AndDraw)
++        if (redraw)
+           DrawLine (layer, line, 0);
+         change = true;
+       }
+@@ -3536,10 +3536,10 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+   {
+     if (TEST_FLAG (TheFlag, arc))
+       {
+-        if (AndDraw)
++        if (save_undo)
+           AddObjectToFlagUndoList (ARC_TYPE, layer, arc, arc);
+         CLEAR_FLAG (TheFlag, arc);
+-        if (AndDraw)
++        if (redraw)
+           DrawArc (layer, arc, 0);
+         change = true;
+       }
+@@ -3549,10 +3549,10 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+   {
+     if (TEST_FLAG (TheFlag, polygon))
+       {
+-        if (AndDraw)
++        if (save_undo)
+           AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
+         CLEAR_FLAG (TheFlag, polygon);
+-        if (AndDraw)
++        if (redraw)
+           DrawPolygon (layer, polygon, 0);
+         change = true;
+       }
+@@ -3561,7 +3561,7 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+   if (change)
+     {
+       SetChangedFlag (true);
+-      if (AndDraw)
++      if (redraw)
+         Draw ();
+     }
+   return change;
+@@ -3571,12 +3571,12 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+  * resets all found connections
+  */
+ bool
+-ResetConnections (bool AndDraw)
++ResetConnections (bool save_undo, bool redraw)
+ {
+   bool change = false;
+ 
+-  change = ResetFoundPinsViasAndPads  (AndDraw) || change;
+-  change = ResetFoundLinesAndPolygons (AndDraw) || change;
++  change = ResetFoundPinsViasAndPads  (save_undo, redraw) || change;
++  change = ResetFoundLinesAndPolygons (save_undo, redraw) || change;
+ 
+   return change;
+ }
+@@ -3648,7 +3648,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+           DumpList ();
+           /* make the flag changes undoable */
+           TheFlag = FOUNDFLAG | SELECTEDFLAG;
+-          ResetConnections (false);
++          ResetConnections (false, false);
+           User = true;
+           drc = false;
+           Bloat = -PCB->Shrink;
+@@ -3697,7 +3697,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+     }
+   /* now check the bloated condition */
+   drc = false;
+-  ResetConnections (false);
++  ResetConnections (false, false);
+   TheFlag = FOUNDFLAG;
+   ListStart (What, ptr1, ptr2, ptr3);
+   Bloat = PCB->Bloat;
+@@ -3708,7 +3708,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+       DumpList ();
+       /* make the flag changes undoable */
+       TheFlag = FOUNDFLAG | SELECTEDFLAG;
+-      ResetConnections (false);
++      ResetConnections (false, false);
+       User = true;
+       drc = false;
+       Bloat = 0;
+@@ -3766,7 +3766,7 @@ DRCFind (int What, void *ptr1, void *ptr2, void *ptr3)
+   drc = false;
+   DumpList ();
+   TheFlag = FOUNDFLAG | SELECTEDFLAG;
+-  ResetConnections (false);
++  ResetConnections (false, false);
+   return (false);
+ }
+ 
+@@ -3925,7 +3925,7 @@ DRCAll (void)
+ 
+   TheFlag = FOUNDFLAG | DRCFLAG | SELECTEDFLAG;
+ 
+-  if (ResetConnections (true))
++  if (ResetConnections (true, true))
+     IncrementUndoSerialNumber ();
+ 
+   User = false;
+@@ -3976,7 +3976,7 @@ DRCAll (void)
+   END_LOOP;
+ 
+   TheFlag = (IsBad) ? DRCFLAG : (FOUNDFLAG | DRCFLAG | SELECTEDFLAG);
+-  ResetConnections (false);
++  ResetConnections (false, false);
+   TheFlag = SELECTEDFLAG;
+   /* check minimum widths and polygon clearances */
+   if (!IsBad)
+diff --git a/src/find.h b/src/find.h
+index 892c7ef..5b92248 100644
+--- a/src/find.h
++++ b/src/find.h
+@@ -54,9 +54,9 @@ void LookupElementConnections (ElementTypePtr, FILE *);
+ void LookupConnectionsToAllElements (FILE *);
+ void LookupConnection (LocationType, LocationType, bool, BDimension, int);
+ void LookupUnusedPins (FILE *);
+-bool ResetFoundLinesAndPolygons (bool);
+-bool ResetFoundPinsViasAndPads (bool);
+-bool ResetConnections (bool);
++bool ResetFoundLinesAndPolygons (bool save_undo, bool redraw);
++bool ResetFoundPinsViasAndPads (bool save_undo, bool redraw);
++bool ResetConnections (bool save_undo, bool redraw);
+ void InitConnectionLookup (void);
+ void InitComponentLookup (void);
+ void InitLayoutLookup (void);
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index 96315b4..6e129cc 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -516,7 +516,7 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+     node_selected_net = NULL;
+ 
+   InitConnectionLookup ();
+-  ResetConnections (false);
++  ResetConnections (false, false);
+ 
+   SaveUndoSerialNumber ();
+   for (i = selected_net->EntryN, entry = selected_net->Entry; i; i--, entry++)
+@@ -525,7 +525,7 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+   RestoreUndoSerialNumber ();
+ 
+   SelectConnection (select_flag);
+-  ResetConnections (false);
++  ResetConnections (false, false);
+   FreeConnectionLookupMemory ();
+   IncrementUndoSerialNumber ();
+   Draw ();
+diff --git a/src/hid/lesstif/netlist.c b/src/hid/lesstif/netlist.c
+index bf48b09..92d3ac6 100644
+--- a/src/hid/lesstif/netlist.c
++++ b/src/hid/lesstif/netlist.c
+@@ -136,7 +136,7 @@ nbcb_select_common (LibraryMenuTypePtr net, int pos, int select_flag)
+   int i;
+ 
+   InitConnectionLookup ();
+-  ResetConnections (false);
++  ResetConnections (false, false);
+ 
+   SaveUndoSerialNumber ();
+   for (i = net->EntryN, entry = net->Entry; i; i--, entry++)
+@@ -145,7 +145,7 @@ nbcb_select_common (LibraryMenuTypePtr net, int pos, int select_flag)
+   RestoreUndoSerialNumber ();
+ 
+   SelectConnection (select_flag);
+-  ResetConncetions (false);
++  ResetConncetions (false, false);
+   FreeConnectionLookupMemory ();
+   IncrementUndoSerialNumber ();
+   Draw ();
+diff --git a/src/rats.c b/src/rats.c
+index 3e9d6ee..3f2a8fa 100644
+--- a/src/rats.c
++++ b/src/rats.c
+@@ -463,7 +463,7 @@ GatherSubnets (NetListTypePtr Netl, bool NoWarn, bool AndRats)
+   for (m = 0; Netl->NetN > 0 && m < Netl->NetN; m++)
+     {
+       a = &Netl->Net[m];
+-      ResetConnections (false);
++      ResetConnections (false, false);
+       RatFindHook (a->Connection[0].type, a->Connection[0].ptr1,
+ 		   a->Connection[0].ptr2, a->Connection[0].ptr2, false,
+ 		   AndRats);
+@@ -544,7 +544,7 @@ GatherSubnets (NetListTypePtr Netl, bool NoWarn, bool AndRats)
+       if (!NoWarn)
+ 	Warned |= CheckShorts (a->Connection[0].menu);
+     }
+-  ResetConnections (false);
++  ResetConnections (false, false);
+   return (Warned);
+ }
+ 
+diff --git a/src/report.c b/src/report.c
+index 3d74a26..da4b600 100644
+--- a/src/report.c
++++ b/src/report.c
+@@ -688,7 +688,7 @@ ReportAllNetLengths (int argc, char **argv, int x, int y)
+       continue;
+ 
+     got_one:
+-      if (ResetConnections (true))
++      if (ResetConnections (true, true))
+         IncrementUndoSerialNumber ();
+       length = XYtoNetLength (x, y, &found);
+ 
+@@ -704,7 +704,7 @@ ReportNetLength (int argc, char **argv, int x, int y)
+   char *netname = 0;
+   int found = 0;
+ 
+-  if (ResetConnections (true))
++  if (ResetConnections (true, true))
+     IncrementUndoSerialNumber ();
+   gui->get_coords ("Click on a connection", &x, &y);
+ 
+diff --git a/src/set.c b/src/set.c
+index c5d34eb..837b786 100644
+--- a/src/set.c
++++ b/src/set.c
+@@ -292,7 +292,7 @@ SetMode (int Mode)
+       Crosshair.AttachedLine.State = STATE_FIRST;
+       if (Mode == LINE_MODE && TEST_FLAG (AUTODRCFLAG, PCB))
+ 	{
+-	  if (ResetConnections (true))
++	  if (ResetConnections (true, true))
+ 	    IncrementUndoSerialNumber ();
+ 	}
+     }
+diff --git a/src/toporouter.c b/src/toporouter.c
+index bfd494a..7b44ec4 100644
+--- a/src/toporouter.c
++++ b/src/toporouter.c
+@@ -2799,7 +2799,7 @@ void
+ import_clusters(toporouter_t *r)
+ {
+   NetListListType nets;
+-  ResetConnections (false);
++  ResetConnections (false, false);
+   nets = CollectSubnets(false);
+   NETLIST_LOOP(&nets);
+   {
