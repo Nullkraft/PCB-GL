@@ -1017,7 +1017,6 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
       InitConnectionLookup ();
       changed = ResetConnections (true, true) || changed;
 
-      SaveUndoSerialNumber ();
       MENU_LOOP (&PCB->NetlistLib);
       {
         Cardinal i;
@@ -1035,7 +1034,6 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
           }
       }
       END_LOOP;
-      RestoreUndoSerialNumber ();
 
       changed = SelectConnection (Flag) || changed;
       changed = ResetConnections (true, true) || changed;
