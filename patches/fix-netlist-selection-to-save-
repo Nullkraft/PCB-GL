@@ -5,6 +5,9 @@ Date:   2010-12-23 17:31:50 +0000
 
 Fix netlist selection to save undo properly
 
+When we wipe the found flags on objects, we should also queue them
+for redraw - fix that too.
+
 
 ---
 
