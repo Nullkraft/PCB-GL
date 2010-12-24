@@ -1,0 +1,14 @@
+Bottom: 0b9b7d5f729031c71dce79ba92a686df91eebfdc
+Top:    0b9b7d5f729031c71dce79ba92a686df91eebfdc
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-24 10:38:59 +0000
+
+Remove unneeded Undo serial number save / restore in netlist lookup
+
+The RatFindHook function does not call anything which will increment
+the Undo serial number, so the save / restore calls are not required.
+
+
+---
+
+
