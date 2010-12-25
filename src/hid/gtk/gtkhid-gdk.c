@@ -1026,6 +1026,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   return FALSE;
 }
 
+void
+ghid_port_drawing_realize_cb (GtkWidget *widget, gpointer data)
+{
+}
+
 gboolean
 ghid_pinout_preview_expose (GtkWidget *widget,
                             GdkEventExpose *ev)
