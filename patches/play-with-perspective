@@ -1,7 +1,7 @@
-Bottom: 307bfd22a0b14f64c7126cf0a11d8336e1d37de6
-Top:    fb319e3ed66e5e9a529695f964ecc5c4e74bf4e0
+Bottom: 78dc3869b14c43702abfab32532dbc00a897e0e7
+Top:    7fd51206c56c9432e93c2f1f84f0de5791eda942
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-25 17:56:14 +0000
+Date:   2010-12-25 19:51:26 +0000
 
 Play with perspective
 
@@ -76,19 +76,19 @@ index b037a7a..6b7684a 100644
    else
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f0a40ff..cd75416 100644
+index 103bd4f..3f9d2bf 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -35,6 +35,8 @@
- #undef ONE_SHOT
- //#define ONE_SHOT
+@@ -33,6 +33,8 @@
+ #endif
+ 
  
 +//#define VIEW_ORTHO
 +
  RCSID ("$Id$");
  
  
-@@ -99,12 +101,15 @@ compute_depth (int group)
+@@ -97,12 +99,15 @@ compute_depth (int group)
    int middle_copper_group;
    int depth;
  
@@ -105,7 +105,7 @@ index f0a40ff..cd75416 100644
    middle_copper_group = min_copper_group + num_copper_groups / 2;
  
    if (group >= 0 && group < max_group) {
-@@ -1415,7 +1420,8 @@ DrawMask (BoxType * screen)
+@@ -1413,7 +1418,8 @@ DrawMask (BoxType * screen)
    polygon.Clipped = board_outline_poly ();
    polygon.NoHoles = NULL;
    polygon.NoHolesValid = 0;
@@ -115,7 +115,7 @@ index f0a40ff..cd75416 100644
    SET_FLAG (FULLPOLYFLAG, &polygon);
    common_fill_pcb_polygon (out->fgGC, &polygon, screen);
    poly_Free (&polygon.Clipped);
-@@ -1635,7 +1641,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1633,7 +1639,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    /* Look at sign of eye coordinate system z-coord when projecting a
       world vector along +ve Z axis, (0, 0, 1). */
    /* XXX: This isn't strictly correct, as I've ignored the matrix
@@ -124,7 +124,7 @@ index f0a40ff..cd75416 100644
    /* NB: last_modelview_matrix is transposed in memory! */
    reverse_layers = (last_modelview_matrix[2][2] < 0);
  
-@@ -1729,7 +1735,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1727,7 +1733,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
        cyl_info.from_layer = drawn_groups[i];
        cyl_info.to_layer = drawn_groups[i - 1];
        cyl_info.scale = gport->zoom;
@@ -133,7 +133,7 @@ index f0a40ff..cd75416 100644
        gui->set_color (Output.fgGC, "drill");
        ghid_global_alpha_mult (Output.fgGC, 0.75);
        if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_cyl_callback, &cyl_info);
-@@ -1824,6 +1830,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1818,6 +1824,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    int new_x, new_y;
    int min_depth;
    int max_depth;
@@ -146,7 +146,7 @@ index f0a40ff..cd75416 100644
  
    buffer.total_triangles = 0;
    buffer.total_vertices = 0;
-@@ -1857,20 +1869,51 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1851,20 +1863,51 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -207,8 +207,8 @@ index f0a40ff..cd75416 100644
 +  /* Stash the model view matrix so we can work out the screen coordinate -> board coordinate mapping */
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
- #ifdef ONE_SHOT
-@@ -1887,7 +1930,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   glEnable (GL_STENCIL_TEST);
+@@ -1874,7 +1917,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -217,7 +217,7 @@ index f0a40ff..cd75416 100644
    hidgl_reset_stencil_usage ();
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
-@@ -1898,58 +1941,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1885,58 +1928,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_depth = -50 + compute_depth (0);                    /* FIXME: NEED TO USE PHYSICAL GROUPS */
    max_depth =  50 + compute_depth (max_copper_layer - 1); /* FIXME: NEED TO USE PHYSICAL GROUPS */
  
@@ -316,7 +316,7 @@ index f0a40ff..cd75416 100644
    region.X1 = min_x;  region.X2 = max_x + 1;
    region.Y1 = min_y;  region.Y2 = max_y + 1;
  
-@@ -2288,10 +2346,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2267,10 +2325,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    return pixmap;
  }
  
@@ -330,7 +330,7 @@ index f0a40ff..cd75416 100644
    det = m[0][0] * m[1][1] -
          m[0][1] * m[1][0];
    return det;
-@@ -2319,9 +2377,9 @@ determinant_4x4 (float m[4][4])
+@@ -2298,9 +2356,9 @@ determinant_4x4 (float m[4][4])
  #endif
  
  static void
@@ -342,7 +342,7 @@ index f0a40ff..cd75416 100644
    out[0][0] =  m[1][1] * scale;
    out[0][1] = -m[0][1] * scale;
    out[1][0] = -m[1][0] * scale;
-@@ -2386,68 +2444,104 @@ invert_4x4 (float m[4][4], float out[4][4])
+@@ -2365,68 +2423,104 @@ invert_4x4 (float m[4][4], float out[4][4])
  #endif
  
  
