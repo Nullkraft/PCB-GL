@@ -36,6 +36,7 @@ RCSID ("$Id$");
 static void zoom_to (double factor, int x, int y);
 static void zoom_by (double factor, int x, int y);
 
+int ghid_gui_is_up = 0;
 int ghid_flip_x = 0, ghid_flip_y = 0;
 
 /* ------------------------------------------------------------ */
@@ -313,8 +314,6 @@ ghid_calibrate (double xval, double yval)
 {
   printf (_("ghid_calibrate() -- not implemented\n"));
 }
-
-static int ghid_gui_is_up = 0;
 
 void
 ghid_notify_gui_is_up ()
@@ -1020,7 +1019,7 @@ HID ghid_hid = {
   1,				/* gui */
   0,				/* printer */
   0,				/* exporter */
-  0,				/* poly before */
+  1,				/* poly before */
   1,				/* poly after */
   0,				/* poly dicer */
 
@@ -1603,7 +1602,8 @@ Benchmark (int argc, char **argv, int x, int y)
   time (&start);
   do
     {
-      hid_expose_callback (&ghid_hid, &region, 0);
+      gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
+      gdk_window_process_updates (gport->drawing_area->window, FALSE);
       gdk_display_sync (display);
       time (&end);
       i++;
