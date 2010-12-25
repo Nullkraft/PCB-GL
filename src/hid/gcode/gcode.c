@@ -281,7 +281,7 @@ gcode_choose_groups ()
     {
       layer = &PCB->Data->Layer[n];
 
-      if (layer->LineN || layer->TextN || layer->ArcN || layer->PolygonN)
+      if (layer->LineN || layer->TextN || layer->ArcN || layer->PourN)
 	{
 	  /* layer isn't empty */
 
