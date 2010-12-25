@@ -1,5 +1,5 @@
 Bottom: ab9816c27fb5274d7d32a006be164c9ff9533a8f
-Top:    ddba5ace1a797199250802695ad7e79d8361a92b
+Top:    02a7e9ea13d2850a2131d9ed612517962ed903ce
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 01:43:49 +0000
 
@@ -14,17 +14,16 @@ made since the above commits, which use the RatFindHook API.
 ---
 
 diff --git a/src/find.c b/src/find.c
-index a428ac5..f5d91d0 100644
+index a428ac5..74586a3 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -3398,11 +3398,15 @@ LookupConnection (LocationType X, LocationType Y, bool AndDraw,
+@@ -3398,11 +3398,14 @@ LookupConnection (LocationType X, LocationType Y, bool AndDraw,
   * assumes InitConnectionLookup() has already been done
   */
  void
 -RatFindHook (int type, void *ptr1, void *ptr2, void *ptr3, bool AndRats)
-+  RatFindHook
-+  (int type, void *ptr1, void *ptr2, void *ptr3, bool undo,
-+   bool AndRats)
++RatFindHook (int type, void *ptr1, void *ptr2, void *ptr3,
++             bool undo, bool AndRats)
  {
 +  User = undo;
    DumpList ();
@@ -88,7 +87,7 @@ index 061f9aa..3e9d6ee 100644
        /* so move those to this subnet */
        CLEAR_FLAG (DRCFLAG, (PinTypePtr) a->Connection[0].ptr2);
 diff --git a/src/select.c b/src/select.c
-index 27a590b..0461778 100644
+index 27a590b..5d44b4f 100644
 --- a/src/select.c
 +++ b/src/select.c
 @@ -1029,7 +1029,8 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
@@ -96,7 +95,7 @@ index 27a590b..0461778 100644
              for (i = menu->EntryN, entry = menu->Entry; i; i--, entry++)
                if (SeekPad (entry, &conn, false))
 -                RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true);
-+                RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2,  
++                RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2,
 +                             true, true);
            }
        }
