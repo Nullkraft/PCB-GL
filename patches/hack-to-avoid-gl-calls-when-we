@@ -1,5 +1,5 @@
-Bottom: 7d92bb0b1f73077f55d8d76b54ef4dfa6fd99313
-Top:    d5d12947dff44ccd3521ee424888c6736ce1bbee
+Bottom: bde3de2c9965c5377519564ef882b8a87210e284
+Top:    9c0c1bdc9077da39f2cb310be1134866fc72f517
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 19:46:29 +0000
 
@@ -8,10 +8,10 @@ Hack to avoid GL calls when we're out of context
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d7f1734..175edce 100644
+index 8ff5fa4..e5802ad 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -47,6 +47,7 @@ static hidGC current_gc = NULL;
+@@ -45,6 +45,7 @@ static hidGC current_gc = NULL;
  static char *current_color = NULL;
  static double global_alpha_mult = 1.0;
  static int alpha_changed = 0;
@@ -19,7 +19,7 @@ index d7f1734..175edce 100644
  
  
  /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
-@@ -506,6 +507,12 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -504,6 +505,12 @@ ghid_set_color (hidGC gc, const char *name)
  
    gc->colorname = (char *) name;
  
@@ -32,7 +32,7 @@ index d7f1734..175edce 100644
    if (gport->colormap == NULL)
      gport->colormap = gtk_widget_get_colormap (gport->top_window);
    if (strcmp (name, "erase") == 0)
-@@ -857,6 +864,9 @@ ghid_show_crosshair (gboolean show)
+@@ -855,6 +862,9 @@ ghid_show_crosshair (gboolean show)
    static GdkColor cross_color;
    extern float global_depth;
  
@@ -42,7 +42,7 @@ index d7f1734..175edce 100644
    if (gport->x_crosshair < 0 || ghidgui->creating) {// || !gport->has_entered) {
      printf ("Returning\n");
      return;
-@@ -1806,6 +1816,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1800,6 +1810,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    ghid_start_drawing (port);
  
    hidgl_init ();
@@ -50,7 +50,7 @@ index d7f1734..175edce 100644
  
    /* If we don't have any stencil bits available,
       we can't use the hidgl polygon drawing routine */
-@@ -2018,6 +2029,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1997,6 +2008,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    hidgl_flush_triangles (&buffer);
  
@@ -58,7 +58,7 @@ index d7f1734..175edce 100644
    ghid_end_drawing (port);
  
    return FALSE;
-@@ -2083,6 +2095,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2062,6 +2074,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
      return FALSE;
    }
  
@@ -67,7 +67,7 @@ index d7f1734..175edce 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
-@@ -2129,6 +2143,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2108,6 +2122,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    else
      glFlush ();
  
@@ -76,7 +76,7 @@ index d7f1734..175edce 100644
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
  
-@@ -2157,6 +2173,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2136,6 +2152,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    int save_width, save_height;
    int save_view_width, save_view_height;
    BoxType region;
@@ -84,7 +84,7 @@ index d7f1734..175edce 100644
  
    save_zoom = gport->zoom;
    save_width = gport->width;
-@@ -2196,6 +2213,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2175,6 +2192,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
      return NULL;
    }
  
@@ -94,7 +94,7 @@ index d7f1734..175edce 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
-@@ -2240,6 +2260,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2219,6 +2239,8 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glFlush ();
  
