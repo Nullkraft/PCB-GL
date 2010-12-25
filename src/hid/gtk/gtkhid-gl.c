@@ -505,6 +505,12 @@ ghid_set_color (hidGC gc, const char *name)
 
   gc->colorname = (char *) name;
 
+  if (!check_gl_drawing_ok_hack)
+    {
+      current_color = NULL;
+      return;
+    }
+
   if (gport->colormap == NULL)
     gport->colormap = gtk_widget_get_colormap (gport->top_window);
   if (strcmp (name, "erase") == 0)
