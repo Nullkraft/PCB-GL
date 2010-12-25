@@ -32,6 +32,8 @@
 #include <dmalloc.h>
 #endif
 
+#undef ONE_SHOT
+//#define ONE_SHOT
 
 RCSID ("$Id$");
 
@@ -1799,6 +1801,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                              GdkEventExpose *ev,
                              GHidPort *port)
 {
+#ifdef ONE_SHOT
+  static int one_shot = 1;
+  static int display_list;
+#endif
   BoxType region;
   int eleft, eright, etop, ebottom;
   int min_x, min_y;
@@ -1843,6 +1849,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glMultMatrixf ((GLfloat *)view_matrix);
   glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
   glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
+
+#ifdef ONE_SHOT
+  if (one_shot) {
+
+    display_list = glGenLists(1);
+    glNewList (display_list, GL_COMPILE);
+#endif
 
   glEnable (GL_STENCIL_TEST);
   glClearColor (port->offlimits_color.red / 65535.,
@@ -2003,6 +2016,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   DrawMark (TRUE);
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
+
+#ifdef ONE_SHOT
+    glEndList ();
+    one_shot = 0;
+  }
+
+  glCallList (display_list);
+#endif
 
   ghid_show_crosshair (TRUE);
 
