@@ -758,9 +758,6 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
 void
 ghid_invalidate_all ()
 {
-  if (ghidgui->need_restore_crosshair)
-    RestoreCrosshair (FALSE);
-  ghidgui->need_restore_crosshair = FALSE;
   ghid_draw_area_update (gport, NULL);
 }
 
