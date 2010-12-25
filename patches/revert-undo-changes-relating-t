@@ -1,14 +1,15 @@
 Bottom: ab9816c27fb5274d7d32a006be164c9ff9533a8f
-Top:    bccfdad6491fa081f2d2f895fd829434d3894273
+Top:    ddba5ace1a797199250802695ad7e79d8361a92b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-25 01:35:48 +0000
+Date:   2010-12-25 01:43:49 +0000
 
-Revert "find.c: Remove "undo" parameter to RatFindHook"
+Revert undo changes relating to RatFindHook calls
 
 This reverts commit 1aac06b665330507ca42f380e38f32875a979cd9.
+This reverts commit d3b508ca272b7d89aa27f552ab78943f9bed27f9.
 
-Revert modified to include changes to select.c
-
+Revert modified to add required changes to select.c, which had additions
+made since the above commits, which use the RatFindHook API.
 
 ---
 
@@ -47,7 +48,7 @@ index 11f23e3..892c7ef 100644
  void RestoreFindFlag (void);
  int DRCAll (void);
 diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
-index 3d88554..e780aa4 100644
+index 3d88554..ce3e2ff 100644
 --- a/src/hid/gtk/gui-netlist-window.c
 +++ b/src/hid/gtk/gui-netlist-window.c
 @@ -520,7 +520,7 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
@@ -55,12 +56,12 @@ index 3d88554..e780aa4 100644
    for (i = selected_net->EntryN, entry = selected_net->Entry; i; i--, entry++)
      if (SeekPad (entry, &conn, false))
 -      RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true);
-+      RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, false, true);
++      RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, true);
  
    SelectConnection (select_flag);
    ResetConnections (false);
 diff --git a/src/hid/lesstif/netlist.c b/src/hid/lesstif/netlist.c
-index 906eda7..0bc4389 100644
+index 906eda7..4ddc240 100644
 --- a/src/hid/lesstif/netlist.c
 +++ b/src/hid/lesstif/netlist.c
 @@ -140,7 +140,7 @@ nbcb_select_common (LibraryMenuTypePtr net, int pos, int select_flag)
@@ -68,7 +69,7 @@ index 906eda7..0bc4389 100644
    for (i = net->EntryN, entry = net->Entry; i; i--, entry++)
      if (SeekPad (entry, &conn, false))
 -      RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true);
-+      RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, false, true);
++      RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, true);
  
    SelectConnection (select_flag);
    ResetConncetions (false);
