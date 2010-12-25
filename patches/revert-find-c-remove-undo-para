@@ -1,5 +1,5 @@
 Bottom: ab9816c27fb5274d7d32a006be164c9ff9533a8f
-Top:    35f4c9c7575599a63f2ef81b09754b2704c731bf
+Top:    bccfdad6491fa081f2d2f895fd829434d3894273
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 01:35:48 +0000
 
@@ -86,3 +86,17 @@ index 061f9aa..3e9d6ee 100644
        /* now anybody connected to the first point has DRCFLAG set */
        /* so move those to this subnet */
        CLEAR_FLAG (DRCFLAG, (PinTypePtr) a->Connection[0].ptr2);
+diff --git a/src/select.c b/src/select.c
+index 27a590b..0461778 100644
+--- a/src/select.c
++++ b/src/select.c
+@@ -1029,7 +1029,8 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+           {
+             for (i = menu->EntryN, entry = menu->Entry; i; i--, entry++)
+               if (SeekPad (entry, &conn, false))
+-                RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true);
++                RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2,  
++                             true, true);
+           }
+       }
+       END_LOOP;
