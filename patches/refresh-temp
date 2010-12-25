@@ -1,0 +1,31 @@
+Bottom: 36d530623fbf2abb605d56427385bc0b7a6082e1
+Top:    28605431fffd63c44408e02caef0b254490d1507
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-25 23:35:04 +0000
+
+Refresh of off-to-find-burried-treasure-o
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index 6ecec61..45c6cd3 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -4007,7 +4007,7 @@ IsPolygonAnIsland (LayerType *layer, PolygonType *polygon)
+    */
+   TheFlag = FOUNDFLAG | DRCFLAG;
+ 
+-  ResetConnections (false, false);
++  ResetConnections (false);
+ 
+   /* Let the search stop if we find something we haven't yet seen */
+   drc = true;
+@@ -4037,7 +4037,7 @@ IsPolygonAnIsland (LayerType *layer, PolygonType *polygon)
+   while (any_more);
+ 
+   drc = false;
+-  ResetConnections (false, false);
++  ResetConnections (false);
+   FreeConnectionLookupMemory ();
+ 
+   return (connected_count == 0);
