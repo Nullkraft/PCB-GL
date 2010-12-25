@@ -1,5 +1,5 @@
 Bottom: f0b8cd423b67d4099b38fa63e5c0909da4a4746c
-Top:    c18c00c3e0b6b6cc491a11474000b6c2eb29cbca
+Top:    7f274776efcc8f7ddea01b700216f49e5c41bd1e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 02:14:14 +0000
 
@@ -9,25 +9,34 @@ Play with display lists
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index c689ce1..16c0d35 100644
+index c689ce1..393982e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1755,6 +1755,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -31,6 +31,8 @@
+ #include <dmalloc.h>
+ #endif
+ 
++#undef ONE_SHOT
++//#define ONE_SHOT
+ 
+ RCSID ("$Id$");
+ 
+@@ -1755,6 +1757,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               GdkEventExpose *ev,
                               GHidPort *port)
  {
-+#if 0
++#ifdef ONE_SHOT
 +  static int one_shot = 1;
 +  static int display_list;
 +#endif
    BoxType region;
    int eleft, eright, etop, ebottom;
    int min_x, min_y;
-@@ -1799,6 +1803,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1799,6 +1805,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
-+#if 0
++#ifdef ONE_SHOT
 +  if (one_shot) {
 +
 +    display_list = glGenLists(1);
@@ -37,17 +46,16 @@ index c689ce1..16c0d35 100644
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->offlimits_color.red / 65535.,
                  port->offlimits_color.green / 65535.,
-@@ -1959,6 +1970,15 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1959,6 +1972,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
-+#if 0
++#ifdef ONE_SHOT
 +    glEndList ();
 +    one_shot = 0;
-+  } else {
-+    /* Second and subsequent times */
-+    glCallList (display_list);
 +  }
++
++  glCallList (display_list);
 +#endif
 +
    ghid_show_crosshair (TRUE);
