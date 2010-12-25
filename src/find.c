@@ -3398,9 +3398,8 @@ LookupConnection (LocationType X, LocationType Y, bool AndDraw,
  * assumes InitConnectionLookup() has already been done
  */
 void
-  RatFindHook
-  (int type, void *ptr1, void *ptr2, void *ptr3, bool undo,
-   bool AndRats)
+RatFindHook (int type, void *ptr1, void *ptr2, void *ptr3,
+             bool undo, bool AndRats)
 {
   User = undo;
   DumpList ();
