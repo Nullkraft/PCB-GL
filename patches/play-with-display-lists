@@ -1,5 +1,5 @@
-Bottom: f0280df3142b1977e38b04cfde3b26a374a9c839
-Top:    783283f5c4ea27a54985ea17961653e0b045cbc9
+Bottom: f0b8cd423b67d4099b38fa63e5c0909da4a4746c
+Top:    c18c00c3e0b6b6cc491a11474000b6c2eb29cbca
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 02:14:14 +0000
 
@@ -9,10 +9,10 @@ Play with display lists
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 61666c5..28a1975 100644
+index c689ce1..16c0d35 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1753,6 +1753,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1755,6 +1755,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               GdkEventExpose *ev,
                               GHidPort *port)
  {
@@ -23,7 +23,7 @@ index 61666c5..28a1975 100644
    BoxType region;
    int eleft, eright, etop, ebottom;
    int min_x, min_y;
-@@ -1797,6 +1801,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1799,6 +1803,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
@@ -37,7 +37,7 @@ index 61666c5..28a1975 100644
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->offlimits_color.red / 65535.,
                  port->offlimits_color.green / 65535.,
-@@ -1932,6 +1943,15 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1959,6 +1970,15 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
