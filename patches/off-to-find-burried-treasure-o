@@ -1,5 +1,5 @@
 Bottom: 8576f98ec22dcba3748cf979a5e5a524a2bb2211
-Top:    36d530623fbf2abb605d56427385bc0b7a6082e1
+Top:    28605431fffd63c44408e02caef0b254490d1507
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 18:05:34 +0000
 
@@ -92,7 +92,7 @@ index a1914d1..af1a34b 100644
      {
        AddPart (Polygon);
 diff --git a/src/find.c b/src/find.c
-index f37ad34..6ecec61 100644
+index f37ad34..45c6cd3 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -2645,6 +2645,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
@@ -134,7 +134,7 @@ index f37ad34..6ecec61 100644
 +   */
 +  TheFlag = FOUNDFLAG | DRCFLAG;
 +
-+  ResetConnections (false, false);
++  ResetConnections (false);
 +
 +  /* Let the search stop if we find something we haven't yet seen */
 +  drc = true;
@@ -164,7 +164,7 @@ index f37ad34..6ecec61 100644
 +  while (any_more);
 +
 +  drc = false;
-+  ResetConnections (false, false);
++  ResetConnections (false);
 +  FreeConnectionLookupMemory ();
 +
 +  return (connected_count == 0);
