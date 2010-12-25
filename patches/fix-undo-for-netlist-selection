@@ -1,5 +1,5 @@
-Bottom: ab9816c27fb5274d7d32a006be164c9ff9533a8f
-Top:    9b55475bd519587143eb06530e806934578094e4
+Bottom: 3f27ccad23899fdb7fcaad3e73e0de8d9afb3a52
+Top:    393e180c0cd927513742ea2abc28d3837733d38a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 01:24:23 +0000
 
@@ -11,18 +11,18 @@ Oops.. broke this before. Should test more before committing!
 ---
 
 diff --git a/src/find.c b/src/find.c
-index a428ac5..b51105c 100644
+index f5d91d0..82b3aa8 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -3402,6 +3402,7 @@ RatFindHook (int type, void *ptr1, void *ptr2, void *ptr3, bool AndRats)
- {
+@@ -3405,6 +3405,7 @@ void
+   User = undo;
    DumpList ();
    ListStart (type, ptr1, ptr2, ptr3);
 +  printf ("RatFindHook, user=%s\n", User ? "true" : "false");
    DoIt (AndRats, false);
+   User = false;
  }
- 
-@@ -3566,6 +3567,8 @@ ResetConnections (bool AndDraw)
+@@ -3570,6 +3571,8 @@ ResetConnections (bool AndDraw)
    change = ResetFoundPinsViasAndPads  (AndDraw) || change;
    change = ResetFoundLinesAndPolygons (AndDraw) || change;
  
