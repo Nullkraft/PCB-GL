@@ -1,15 +1,15 @@
 Bottom: 20d7facb1ee93cce90f90f51abdb7bf9936b1763
-Top:    aea13d54f64b195af5fcf6cd46075287835a59cc
+Top:    bb31a22f1265979b894bd25d7373f6ec68373fe3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-25 02:14:12 +0000
+Date:   2010-12-25 17:49:26 +0000
 
 Major re-write to drawing routines
 
 Notes from squashed patches:
   Pin and via hole cores are drawn in the appropriate colour
+  Playing with stack rendering order
 
 FULLY OF NASTY API HACKS TO draw.c
-
 
 ---
 
@@ -186,7 +186,7 @@ index c0e23a3..077c575 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e4b6ff9..54e4a64 100644
+index e4b6ff9..2c488f0 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -342,7 +342,7 @@ index e4b6ff9..54e4a64 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -988,6 +1015,657 @@ ghid_screen_update (void)
+@@ -988,6 +1015,679 @@ ghid_screen_update (void)
  {
  }
  
@@ -408,7 +408,17 @@ index e4b6ff9..54e4a64 100644
 +  else if (TEST_FLAG (FOUNDFLAG, Pin))
 +    color = PCB->ConnectedColor;
 +  else
-+    color = Layer->Color;
++    {
++      int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
++      int solder_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
++      int this_group      = GetLayerGroupNumberByPointer (Layer);
++
++      if (this_group == component_group || this_group == solder_group)
++        color = (SWAP_IDENT == (this_group == solder_group))
++                  ? PCB->ViaColor : PCB->InvisibleObjectsColor;
++      else
++        color = Layer->Color;
++    }
 +
 +  gui->set_color (Output.fgGC, color);
 +}
@@ -694,6 +704,8 @@ index e4b6ff9..54e4a64 100644
 +  int n_entries = PCB->LayerGroups.Number[group];
 +  Cardinal *layers = PCB->LayerGroups.Entries[group];
 +  int first_run = 1;
++  int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
++  int solder_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
 +
 +  if (!gui->set_layer (0, group, 0)) {
 +    gui->set_layer (NULL, SL (FINISHED, 0), 0);
@@ -751,10 +763,18 @@ index e4b6ff9..54e4a64 100644
 +        }
 +      }
 +
-+      /* Draw pins and vias on this layer */
++      /* Draw pins, vias and pads on this layer */
 +      if (!global_view_2d && rv) {
 +        if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
 +        if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
++        if ((group == component_group && !SWAP_IDENT) ||
++            (group == solder_group    &&  SWAP_IDENT))
++          if (PCB->PinOn)
++            r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, Layer);
++        if ((group == solder_group    && !SWAP_IDENT) ||
++            (group == component_group &&  SWAP_IDENT))
++          if (PCB->PinOn)
++            r_search (PCB->Data->pad_tree, screen, NULL, backPad_callback, Layer);
 +      }
 +
 +      if (TEST_FLAG (CHECKPLANESFLAG, PCB))
@@ -903,7 +923,8 @@ index e4b6ff9..54e4a64 100644
 +   */
 +  if (!TEST_FLAG (CHECKPLANESFLAG, PCB) &&
 +      gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
-+    r_search (PCB->Data->pad_tree, drawn_area, NULL, backPad_callback, NULL);
++    if (global_view_2d)
++      r_search (PCB->Data->pad_tree, drawn_area, NULL, backPad_callback, NULL);
 +    if (PCB->ElementOn) {
 +      r_search (PCB->Data->element_tree, drawn_area, NULL, backE_callback, NULL);
 +      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, backN_callback, NULL);
@@ -941,20 +962,21 @@ index e4b6ff9..54e4a64 100644
 +    gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0);
 +//  gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +
-+#if 1
-+  /* Mask out drilled holes */
-+  hidgl_flush_triangles (&buffer);
-+  glPushAttrib (GL_COLOR_BUFFER_BIT);
-+  glColorMask (0, 0, 0, 0);
-+  if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
-+  if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
-+  hidgl_flush_triangles (&buffer);
-+  glPopAttrib ();
++  if (global_view_2d)
++    {
++      /* Mask out drilled holes */
++      hidgl_flush_triangles (&buffer);
++      glPushAttrib (GL_COLOR_BUFFER_BIT);
++      glColorMask (0, 0, 0, 0);
++      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
++      if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
++      hidgl_flush_triangles (&buffer);
++      glPopAttrib ();
 +
-+  if (PCB->PinOn) r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, NULL);
-+  if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
-+  if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
-+#endif
++      if (PCB->PinOn) r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, NULL);
++      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
++      if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
++    }
 +
 +  gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +
@@ -1000,7 +1022,7 @@ index e4b6ff9..54e4a64 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1054,8 +1732,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1054,8 +1754,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1011,7 +1033,7 @@ index e4b6ff9..54e4a64 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1147,7 +1825,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1147,7 +1847,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_x0,
                  ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                               -port->view_y0, 0);
