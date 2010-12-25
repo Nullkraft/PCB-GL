@@ -1,7 +1,7 @@
 Bottom: 20d7facb1ee93cce90f90f51abdb7bf9936b1763
-Top:    a096c84b2530a59e0925afa045fbacce5cc40be6
+Top:    a38827e0e15fb58e580ceb022cc56ab1e403b352
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-25 17:51:27 +0000
+Date:   2010-12-25 17:54:22 +0000
 
 Major re-write to drawing routines
 
@@ -12,6 +12,7 @@ Notes from squashed patches:
   Playing with stack rendering order
   Fix mask display in 3D (Allow both side masks to display at once)
   Fix rendering depths for silk and mask layers
+  Fixup depth for layers and element marks
 
 ---
 
@@ -188,7 +189,7 @@ index c0e23a3..077c575 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e4b6ff9..e610419 100644
+index e4b6ff9..8301158 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -245,7 +246,7 @@ index e4b6ff9..e610419 100644
 +  if (group >= 0 && group < max_group) {
 +    newgroup = group;
 +
-+    depth = (max_depth - newgroup * 10) * 200 / gport->zoom;
++    depth = (max_depth - (newgroup - min_phys_group) * 10) * 200 / gport->zoom;
 +  } else if (SL_TYPE (idx) == SL_MASK) {
 +    if (SL_SIDE (idx) == SL_TOP_SIDE) {
 +      depth = (max_depth + 3) * 200 / gport->zoom;
@@ -355,7 +356,7 @@ index e4b6ff9..e610419 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -988,6 +1026,727 @@ ghid_screen_update (void)
+@@ -988,6 +1026,729 @@ ghid_screen_update (void)
  {
  }
  
@@ -1057,12 +1058,14 @@ index e4b6ff9..e610419 100644
 +    gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +  }
 +  /* Draw top silkscreen */
-+  if (gui->set_layer ("topsilk", SL (SILK, TOP), 0)) {
++  if (!Settings.ShowSolderSide &&
++      gui->set_layer ("topsilk", SL (SILK, TOP), 0)) {
 +    DrawSilk (0, component_silk_layer, drawn_area);
 +    gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +  }
 +
-+  if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0)) {
++  if (Settings.ShowSolderSide &&
++      gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0)) {
 +    DrawSilk (1, solder_silk_layer, drawn_area);
 +    gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +  }
@@ -1083,7 +1086,7 @@ index e4b6ff9..e610419 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1054,8 +1813,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1054,8 +1815,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1094,11 +1097,57 @@ index e4b6ff9..e610419 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1147,7 +1906,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1121,13 +1882,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+              port->bg_color.green / 65535.,
+              port->bg_color.blue / 65535.);
+ 
+-  glBegin (GL_QUADS);
+-  glVertex3i (eleft,  etop,    -50);
+-  glVertex3i (eright, etop,    -50);
+-  glVertex3i (eright, ebottom, -50);
+-  glVertex3i (eleft,  ebottom, -50);
+-  glEnd ();
+-
+   /* TODO: Background image */
+ 
+   hidgl_init_triangle_array (&buffer);
+@@ -1147,7 +1901,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_x0,
                  ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                               -port->view_y0, 0);
 -  hid_expose_callback (&ghid_hid, &region, 0);
++
++  if (global_view_2d) {
++    glBegin (GL_QUADS);
++    glVertex3i (0,             0,              0);
++    glVertex3i (PCB->MaxWidth, 0,              0);
++    glVertex3i (PCB->MaxWidth, PCB->MaxHeight, 0);
++    glVertex3i (0,             PCB->MaxHeight, 0);
++    glEnd ();
++  } else {
++    int solder_group;
++    int component_group;
++    int min_phys_group;
++    int max_phys_group;
++    int i;
++
++    solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
++    component_group = GetLayerGroupNumberByNumber (component_silk_layer);
++
++    min_phys_group = MIN (solder_group, component_group);
++    max_phys_group = MAX (solder_group, component_group);
++
++    glBegin (GL_QUADS);
++    for (i = min_phys_group; i <= max_phys_group; i++) {
++      int depth = compute_depth (i);
++      glVertex3i (0,             0,              depth);
++      glVertex3i (PCB->MaxWidth, 0,              depth);
++      glVertex3i (PCB->MaxWidth, PCB->MaxHeight, depth);
++      glVertex3i (0,             PCB->MaxHeight, depth);
++    }
++    glEnd ();
++  }
++
 +  // hid_expose_callback (&ghid_hid, &region, 0);
 +  ghid_draw_everything (&region);
    hidgl_flush_triangles (&buffer);
