@@ -1840,6 +1840,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                      0, 0, 1, 0,
                      0, 0, 0, 1};
   bool horizon_problem = false;
+  extern int debug_stencil_clears;
 
   buffer.total_triangles = 0;
   buffer.total_vertices = 0;
@@ -1849,6 +1850,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   hidgl_in_context (true);
   hidgl_init ();
   check_gl_drawing_ok_hack = true;
+  debug_stencil_clears = 0;
 
   /* If we don't have any stencil bits available,
      we can't use the hidgl polygon drawing routine */
@@ -2096,6 +2098,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
 //  printf ("Triangle count was %i\n", buffer.total_triangles);
 //  printf ("Vertex count was %i\n", buffer.total_vertices);
+//  printf ("Stencil clears in frame: %i\n", debug_stencil_clears);
 
   return FALSE;
 }
