@@ -1,7 +1,7 @@
-Bottom: 8a57cd51c74b82f2a1ff12e1f5ba6d99d8e1f24f
-Top:    e97acd877897aa38b0bb7b1383dd268fd17b4267
+Bottom: e61cf04d214075ac1d1c0006ea72dade86ca390f
+Top:    b22dbc372966355af9d8c3565c26a0bb7c4c9dad
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-25 02:14:04 +0000
+Date:   2010-12-25 20:08:29 +0000
 
 TEST REMOVE SOME MORE GDK STUFF
 
@@ -204,7 +204,7 @@ index b1dc11d..5b94733 100644
 +  return pixmap;
 +}
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 4ca6040..5bb60c8 100644
+index 569a09b..9c1c78f 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -561,28 +561,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
@@ -413,10 +413,10 @@ index b24e6c9..0000000
 -  return pixmap;
 -}
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 817c453..752ad98 100644
+index 828c524..4ce9121 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -2350,7 +2350,7 @@ ghid_build_pcb_top_window (void)
+@@ -2351,7 +2351,7 @@ ghid_build_pcb_top_window (void)
     */
  
    g_signal_connect (G_OBJECT (gport->drawing_area), "expose_event",
@@ -426,7 +426,7 @@ index 817c453..752ad98 100644
    g_signal_connect (G_OBJECT (gport->top_window), "configure_event",
  		    G_CALLBACK (top_window_configure_event_cb), port);
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index d67db1a..21afcfb 100644
+index b814366..f308aae 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -36,7 +36,7 @@

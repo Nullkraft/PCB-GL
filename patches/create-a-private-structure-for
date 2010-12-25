@@ -1,7 +1,7 @@
-Bottom: e97acd877897aa38b0bb7b1383dd268fd17b4267
-Top:    d188a6054739e501749f901c5dfa3974d0c3de17
+Bottom: b22dbc372966355af9d8c3565c26a0bb7c4c9dad
+Top:    dfe007fa712bd53f659b4ea4a672dcb16a194e0e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-25 02:14:04 +0000
+Date:   2010-12-25 20:08:30 +0000
 
 Create a private structure for the render to isolate some of its internals
 
@@ -450,7 +450,7 @@ index 5b94733..78c382e 100644
    /* call the drawing routine */
    region.X1 = MIN(Px(0), Px(gport->width + 1));
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 5bb60c8..ed5e445 100644
+index 9c1c78f..a4302c5 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -533,27 +533,24 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
@@ -486,10 +486,10 @@ index 5bb60c8..ed5e445 100644
    ghid_invalidate_all ();
    RestoreCrosshair (TRUE);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 752ad98..b79f432 100644
+index 4ce9121..10a1799 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -2673,6 +2673,8 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -2674,6 +2674,8 @@ ghid_parse_arguments (int *argc, char ***argv)
    gport->zoom = 300.0;
    pixel_slop = 300;
  
@@ -499,7 +499,7 @@ index 752ad98..b79f432 100644
  
    Settings.AutoPlace = 0;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 21afcfb..f7fe9fd 100644
+index f308aae..c194beb 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -164,7 +164,7 @@ typedef struct

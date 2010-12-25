@@ -1,7 +1,7 @@
-Bottom: d188a6054739e501749f901c5dfa3974d0c3de17
-Top:    c14bb5c4c0f6ee96ab893b41602440f5b57cf170
+Bottom: dfe007fa712bd53f659b4ea4a672dcb16a194e0e
+Top:    b9125e977257bac8c0d42b9eb3fed21cabf977d3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-25 02:14:05 +0000
+Date:   2010-12-25 20:08:30 +0000
 
 Move set_layer function into GDK specific code.
 
@@ -124,7 +124,7 @@ index e91b68c..668ee55 100644
  ghid_calibrate (double xval, double yval)
  {
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index f7fe9fd..1114e7e 100644
+index c194beb..75e7b49 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -477,6 +477,7 @@ void ghid_logv (const char *fmt, va_list args);
