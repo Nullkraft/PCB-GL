@@ -1,5 +1,5 @@
-Bottom: 968532d41605c1af7b37db18a833abc213e094e4
-Top:    4d0f1a98b340ed967db341a95d5e3a8bde88c96b
+Bottom: dba4a9519931264c898197484aa2c359bbb3feae
+Top:    dba4a9519931264c898197484aa2c359bbb3feae
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 02:14:07 +0000
 
@@ -8,89 +8,4 @@ Use motion hints when processing pointer motion over the drawing area
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e2db060..aeff85a 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -750,7 +750,7 @@ ghid_show_crosshair (gboolean show)
- 
-   glBegin (GL_LINES);
- 
--#if 1
-+#if 0
-   if (x_prev >= 0)
-     draw_crosshair (x_prev, y_prev);
- #endif
-@@ -763,7 +763,7 @@ ghid_show_crosshair (gboolean show)
- 
-   glBegin (GL_QUADS);
- 
--#if 1
-+#if 0
-   if (x_prev >= 0 && draw_markers_prev)
-     {
-       glVertex2i (0,                  y_prev - VCD);
-diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index cd21ef3..bf3021e 100644
---- a/src/hid/gtk/gui-output-events.c
-+++ b/src/hid/gtk/gui-output-events.c
-@@ -682,12 +682,14 @@ queue_tooltip_update (GHidPort *out)
- 
- gint
- ghid_port_window_motion_cb (GtkWidget * widget,
--			    GdkEventButton * ev, GHidPort * out)
-+			    GdkEventMotion * ev, GHidPort * out)
- {
-   gdouble dx, dy;
-   static gint x_prev = -1, y_prev = -1;
-   gboolean moved;
- 
-+  gdk_event_request_motions (ev);
-+
- #if 0
-   if (!ghid_start_drawing (out))
-     return FALSE;
-@@ -696,7 +698,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
-   if (out->panning)
-     {
- /* Not sure this really matters, since we're using invalidate to get a redraw */
--#if 1
-+#if 0
-       if (gtk_events_pending ())
- 	return FALSE;
- #endif
-@@ -709,7 +711,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
-       return FALSE;
-     }
-   x_prev = y_prev = -1;
--  moved = ghid_note_event_location (ev);
-+  moved = ghid_note_event_location ((GdkEventButton *)ev);
- 
- #if ENABLE_TOOLTIPS
-   queue_tooltip_update (out);
-diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 729b368..d794b1b 100644
---- a/src/hid/gtk/gui-top-window.c
-+++ b/src/hid/gtk/gui-top-window.c
-@@ -2298,7 +2298,8 @@ ghid_build_pcb_top_window (void)
- 			 | GDK_LEAVE_NOTIFY_MASK | GDK_ENTER_NOTIFY_MASK
- 			 | GDK_BUTTON_RELEASE_MASK | GDK_BUTTON_PRESS_MASK
- 			 | GDK_KEY_RELEASE_MASK | GDK_KEY_PRESS_MASK
--			 | GDK_FOCUS_CHANGE_MASK | GDK_POINTER_MOTION_MASK);
-+			 | GDK_FOCUS_CHANGE_MASK | GDK_POINTER_MOTION_MASK
-+			 | GDK_POINTER_MOTION_HINT_MASK);
- 
-   /*
-    * This is required to get the drawing_area key-press-event.  Also the
-diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 2ad0adc..38424e9 100644
---- a/src/hid/gtk/gui.h
-+++ b/src/hid/gtk/gui.h
-@@ -303,7 +303,7 @@ gint ghid_port_window_enter_cb (GtkWidget * widget,
- gint ghid_port_window_leave_cb (GtkWidget * widget, 
-                            GdkEventCrossing * ev, GHidPort * out);
- gint ghid_port_window_motion_cb (GtkWidget * widget,
--				 GdkEventButton * ev, GHidPort * out);
-+				 GdkEventMotion * ev, GHidPort * out);
- gint ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
- 				       GdkEventScroll * ev, GHidPort * out);
+
