@@ -1604,7 +1604,8 @@ Benchmark (int argc, char **argv, int x, int y)
     {
       gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
       gdk_window_process_updates (gport->drawing_area->window, FALSE);
-      gdk_display_sync (display);
+//      gdk_display_sync (display);
+//      usleep (100000);
       time (&end);
       i++;
     }
