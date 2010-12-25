@@ -1,7 +1,7 @@
-Bottom: 90821282a0000d226792a526294150bc86b8277d
-Top:    2f94e5c7ababeb912f2afe24a8036b2eb09035a3
+Bottom: 453016c59522e4e44d335f568a95c477feba47e9
+Top:    257f01717cbe77570fe3976e0e1e5bf97057b210
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-25 17:56:13 +0000
+Date:   2010-12-25 18:04:46 +0000
 
 Move more rendering to world coordinates
 
@@ -9,10 +9,10 @@ Move more rendering to world coordinates
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 07ead58..8be761f 100644
+index 50ef682..25e04bf 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -81,7 +81,9 @@ typedef struct hid_gc_struct
+@@ -83,7 +83,9 @@ typedef struct hid_gc_struct
  }
  hid_gc_struct;
  
@@ -23,7 +23,7 @@ index 07ead58..8be761f 100644
  static int
  compute_depth (int group)
  {
-@@ -89,45 +91,56 @@ compute_depth (int group)
+@@ -91,45 +93,56 @@ compute_depth (int group)
  
    int solder_group;
    int component_group;
@@ -105,7 +105,7 @@ index 07ead58..8be761f 100644
    }
  
    last_depth_computed = depth;
-@@ -244,15 +257,6 @@ ghid_draw_grid (BoxTypePtr drawn_area)
+@@ -246,15 +259,6 @@ ghid_draw_grid (BoxTypePtr drawn_area)
        gport->grid_color.blue ^= gport->bg_color.blue;
      }
  
@@ -121,7 +121,7 @@ index 07ead58..8be761f 100644
    x1 = GRIDFIT_X (MAX (0, drawn_area->X1), PCB->Grid);
    y1 = GRIDFIT_Y (MAX (0, drawn_area->Y1), PCB->Grid);
    x2 = GRIDFIT_X (MIN (PCB->MaxWidth, drawn_area->X2), PCB->Grid);
-@@ -284,26 +288,36 @@ ghid_draw_grid (BoxTypePtr drawn_area)
+@@ -286,26 +290,36 @@ ghid_draw_grid (BoxTypePtr drawn_area)
        points = realloc (points, npoints * 3 * sizeof (GLfloat));
      }
  
@@ -161,7 +161,7 @@ index 07ead58..8be761f 100644
  }
  
  #if 0
-@@ -752,9 +766,9 @@ static void
+@@ -754,9 +768,9 @@ static void
  draw_right_cross (gint x, gint y, gint z)
  {
    glVertex3i (x, 0, z);
@@ -173,7 +173,7 @@ index 07ead58..8be761f 100644
  }
  
  static void
-@@ -762,25 +776,25 @@ draw_slanted_cross (gint x, gint y, gint z)
+@@ -764,25 +778,25 @@ draw_slanted_cross (gint x, gint y, gint z)
  {
    gint x0, y0, x1, y1;
  
@@ -211,7 +211,7 @@ index 07ead58..8be761f 100644
    glVertex3i (x0, y0, z);
    glVertex3i (x1, y1, z);
  }
-@@ -791,47 +805,47 @@ draw_dozen_cross (gint x, gint y, gint z)
+@@ -793,47 +807,47 @@ draw_dozen_cross (gint x, gint y, gint z)
    gint x0, y0, x1, y1;
    gdouble tan60 = sqrt (3);
  
@@ -283,7 +283,7 @@ index 07ead58..8be761f 100644
    glVertex3i (x0, y0, z);
    glVertex3i (x1, y1, z);
  }
-@@ -876,8 +890,8 @@ ghid_show_crosshair (gboolean show)
+@@ -878,8 +892,8 @@ ghid_show_crosshair (gboolean show)
        /* FIXME: when CrossColor changed from config */
        ghid_map_color_string (Settings.CrossColor, &cross_color);
      }
@@ -294,7 +294,7 @@ index 07ead58..8be761f 100644
    z = global_depth;
  
    glEnable (GL_COLOR_LOGIC_OP);
-@@ -907,44 +921,44 @@ ghid_show_crosshair (gboolean show)
+@@ -909,44 +923,44 @@ ghid_show_crosshair (gboolean show)
  #if 0
    if (x_prev >= 0 && draw_markers_prev)
      {
@@ -371,7 +371,7 @@ index 07ead58..8be761f 100644
      }
  
    glEnd ();
-@@ -1615,18 +1629,14 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1617,18 +1631,14 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    /* Test direction of rendering */
    /* Look at sign of eye coordinate system z-coord when projecting a
       world vector along +ve Z axis, (0, 0, 1). */
@@ -393,7 +393,7 @@ index 07ead58..8be761f 100644
    PCB->Data->SILKLAYER.Color = PCB->ElementColor;
    PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
  
-@@ -1804,7 +1814,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1806,7 +1816,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    static int display_list;
  #endif
    BoxType region;
@@ -401,7 +401,7 @@ index 07ead58..8be761f 100644
    int min_x, min_y;
    int max_x, max_y;
    int new_x, new_y;
-@@ -1847,6 +1856,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1849,6 +1858,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
    glMultMatrixf ((GLfloat *)view_matrix);
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
@@ -414,8 +414,8 @@ index 07ead58..8be761f 100644
 +                             -port->view_y0, 0);
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
- #if 0
-@@ -1861,7 +1877,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ #ifdef ONE_SHOT
+@@ -1863,7 +1879,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                  port->offlimits_color.green / 65535.,
                  port->offlimits_color.blue / 65535.,
                  1.);
@@ -423,7 +423,7 @@ index 07ead58..8be761f 100644
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-@@ -1872,8 +1887,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1874,8 +1889,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -434,7 +434,7 @@ index 07ead58..8be761f 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1927,13 +1942,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1929,13 +1944,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
    min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
  
@@ -450,7 +450,7 @@ index 07ead58..8be761f 100644
  
    glColor3f (port->bg_color.red / 65535.,
               port->bg_color.green / 65535.,
-@@ -1950,15 +1960,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1952,15 +1962,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    /* Drawing operations as masked to areas where the stencil buffer is '0' */
  //  glStencilFunc (GL_GREATER, 1, 1);             // Draw only where stencil buffer is 0
  
@@ -466,7 +466,7 @@ index 07ead58..8be761f 100644
    if (global_view_2d) {
      glBegin (GL_QUADS);
      glVertex3i (0,             0,              0);
-@@ -1990,31 +1991,21 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1992,31 +1993,21 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      glEnd ();
    }
  
@@ -498,7 +498,7 @@ index 07ead58..8be761f 100644
    hidgl_flush_triangles (&buffer);
 -  glPopMatrix ();
  
- #if 0
+ #ifdef ONE_SHOT
      glEndList ();
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
 index 476b196..431b722 100644
