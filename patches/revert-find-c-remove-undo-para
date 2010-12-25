@@ -1,0 +1,86 @@
+Bottom: ab9816c27fb5274d7d32a006be164c9ff9533a8f
+Top:    35f4c9c7575599a63f2ef81b09754b2704c731bf
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-25 01:35:48 +0000
+
+Revert "find.c: Remove "undo" parameter to RatFindHook"
+
+This reverts commit 1aac06b665330507ca42f380e38f32875a979cd9.
+
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index a428ac5..f5d91d0 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -3398,11 +3398,15 @@ LookupConnection (LocationType X, LocationType Y, bool AndDraw,
+  * assumes InitConnectionLookup() has already been done
+  */
+ void
+-RatFindHook (int type, void *ptr1, void *ptr2, void *ptr3, bool AndRats)
++  RatFindHook
++  (int type, void *ptr1, void *ptr2, void *ptr3, bool undo,
++   bool AndRats)
+ {
++  User = undo;
+   DumpList ();
+   ListStart (type, ptr1, ptr2, ptr3);
+   DoIt (AndRats, false);
++  User = false;
+ }
+ 
+ /* ---------------------------------------------------------------------------
+diff --git a/src/find.h b/src/find.h
+index 11f23e3..892c7ef 100644
+--- a/src/find.h
++++ b/src/find.h
+@@ -63,7 +63,7 @@ void InitLayoutLookup (void);
+ void FreeConnectionLookupMemory (void);
+ void FreeComponentLookupMemory (void);
+ void FreeLayoutLookupMemory (void);
+-void RatFindHook (int, void *, void *, void *, bool);
++void RatFindHook (int, void *, void *, void *, bool, bool);
+ void SaveFindFlag (int);
+ void RestoreFindFlag (void);
+ int DRCAll (void);
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index 3d88554..e780aa4 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -520,7 +520,7 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+ 
+   for (i = selected_net->EntryN, entry = selected_net->Entry; i; i--, entry++)
+     if (SeekPad (entry, &conn, false))
+-      RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true);
++      RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, false, true);
+ 
+   SelectConnection (select_flag);
+   ResetConnections (false);
+diff --git a/src/hid/lesstif/netlist.c b/src/hid/lesstif/netlist.c
+index 906eda7..0bc4389 100644
+--- a/src/hid/lesstif/netlist.c
++++ b/src/hid/lesstif/netlist.c
+@@ -140,7 +140,7 @@ nbcb_select_common (LibraryMenuTypePtr net, int pos, int select_flag)
+ 
+   for (i = net->EntryN, entry = net->Entry; i; i--, entry++)
+     if (SeekPad (entry, &conn, false))
+-      RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true);
++      RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, false, true);
+ 
+   SelectConnection (select_flag);
+   ResetConncetions (false);
+diff --git a/src/rats.c b/src/rats.c
+index 061f9aa..3e9d6ee 100644
+--- a/src/rats.c
++++ b/src/rats.c
+@@ -465,7 +465,8 @@ GatherSubnets (NetListTypePtr Netl, bool NoWarn, bool AndRats)
+       a = &Netl->Net[m];
+       ResetConnections (false);
+       RatFindHook (a->Connection[0].type, a->Connection[0].ptr1,
+-		   a->Connection[0].ptr2, a->Connection[0].ptr2, AndRats);
++		   a->Connection[0].ptr2, a->Connection[0].ptr2, false,
++		   AndRats);
+       /* now anybody connected to the first point has DRCFLAG set */
+       /* so move those to this subnet */
+       CLEAR_FLAG (DRCFLAG, (PinTypePtr) a->Connection[0].ptr2);
