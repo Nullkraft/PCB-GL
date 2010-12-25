@@ -1,0 +1,43 @@
+Bottom: 170faa051757394d59b0b0377a7fb77b27fbed3b
+Top:    dba4a9519931264c898197484aa2c359bbb3feae
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-25 20:12:49 +0000
+
+Refresh of cure-cross-hair-lagging-on-scr
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 26b1bb4..a1ea9ef 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -688,11 +688,12 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+   static gint x_prev = -1, y_prev = -1;
+   gboolean moved;
+ 
+-
+   gdk_event_request_motions (ev);
+ 
++#if 0
+   if (!ghid_start_drawing (out))
+     return FALSE;
++#endif
+ 
+ 
+   if (out->panning)
+@@ -712,11 +713,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+   queue_tooltip_update (out);
+ #endif
+ 
+-  ghid_show_crosshair (TRUE);
+-  if (moved && have_crosshair_attachments ())
++//  ghid_show_crosshair (TRUE);
++  if (moved) // && have_crosshair_attachments ())
+     ghid_draw_area_update (gport, NULL);
+ 
++#if 0
+   ghid_end_drawing (out);
++#endif
++
+   return FALSE;
+ }
