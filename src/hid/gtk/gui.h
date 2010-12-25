@@ -474,7 +474,7 @@ void ghid_logv (const char *fmt, va_list args);
 /* gui-pinout-window.c */
 void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
 
-/* gtkhid-gdk.c */
+/* gtkhid-gdk.c AND gtkhid-gl.c */
 int ghid_set_layer (const char *name, int group, int empty);
 hidGC ghid_make_gc (void);
 void ghid_destroy_gc (hidGC);
@@ -485,6 +485,7 @@ void ghid_set_line_width (hidGC gc, int width);
 void ghid_set_draw_xor (hidGC gc, int xor);
 void ghid_set_draw_faded (hidGC gc, int faded);
 void ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2);
+void ghid_invalidate_current_gc (void);
 void ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2);
 void ghid_draw_arc (hidGC gc, int cx, int cy, int xradius, int yradius,
                     int start_angle, int delta_angle);
@@ -496,7 +497,10 @@ void ghid_invalidate_lr ();
 void ghid_invalidate_all ();
 void ghid_show_crosshair (gboolean show);
 void ghid_init_renderer (int *, char ***, GHidPort *);
+void ghid_init_drawing_widget (GtkWidget *widget, GHidPort *);
 void ghid_drawing_area_configure_hook (GHidPort *port);
+gboolean ghid_start_drawing (GHidPort *port);
+void ghid_end_drawing (GHidPort *port);
 void ghid_screen_update (void);
 gboolean ghid_drawing_area_expose_cb (GtkWidget *, GdkEventExpose *,
                                       GHidPort *);
