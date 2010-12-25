@@ -1,5 +1,5 @@
-Bottom: 136b23529893f0ea4e12ea574e5accfac52673df
-Top:    968532d41605c1af7b37db18a833abc213e094e4
+Bottom: 170faa051757394d59b0b0377a7fb77b27fbed3b
+Top:    170faa051757394d59b0b0377a7fb77b27fbed3b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 02:14:07 +0000
 
@@ -10,42 +10,4 @@ FIXME: SHOULD NOT RE-WRITE THE GTK HID
 
 ---
 
-diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index c4dad0f..cd21ef3 100644
---- a/src/hid/gtk/gui-output-events.c
-+++ b/src/hid/gtk/gui-output-events.c
-@@ -688,13 +688,18 @@ ghid_port_window_motion_cb (GtkWidget * widget,
-   static gint x_prev = -1, y_prev = -1;
-   gboolean moved;
- 
-+#if 0
-   if (!ghid_start_drawing (out))
-     return FALSE;
-+#endif
- 
-   if (out->panning)
-     {
-+/* Not sure this really matters, since we're using invalidate to get a redraw */
-+#if 1
-       if (gtk_events_pending ())
- 	return FALSE;
-+#endif
-       dx = gport->zoom * (x_prev - ev->x);
-       dy = gport->zoom * (y_prev - ev->y);
-       if (x_prev > 0)
-@@ -710,11 +715,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
-   queue_tooltip_update (out);
- #endif
- 
--  ghid_show_crosshair (TRUE);
--  if (moved && have_crosshair_attachments ())
-+//  ghid_show_crosshair (TRUE);
-+  if (moved) // && have_crosshair_attachments ())
-     ghid_draw_area_update (gport, NULL);
- 
-+#if 0
-   ghid_end_drawing (out);
-+#endif
-+
-   return FALSE;
- }
+
