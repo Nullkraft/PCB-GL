@@ -707,16 +707,16 @@ queue_tooltip_update (GHidPort *out)
 
 gint
 ghid_port_window_motion_cb (GtkWidget * widget,
-			    GdkEventButton * ev, GHidPort * out)
+			    GdkEventMotion * ev, GHidPort * out)
 {
   gdouble dx, dy;
   static gint x_prev = -1, y_prev = -1;
   gboolean moved;
 
+  gdk_event_request_motions (ev);
+
   if (out->panning)
     {
-      if (gtk_events_pending ())
-	return FALSE;
       dx = gport->zoom * (x_prev - ev->x);
       dy = gport->zoom * (y_prev - ev->y);
       if (x_prev > 0)
@@ -726,7 +726,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
       return FALSE;
     }
   x_prev = y_prev = -1;
-  moved = ghid_note_event_location (ev);
+  moved = ghid_note_event_location ((GdkEventButton *)ev);
 
 #if ENABLE_TOOLTIPS
   queue_tooltip_update (out);
