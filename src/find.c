@@ -4007,7 +4007,7 @@ IsPolygonAnIsland (LayerType *layer, PolygonType *polygon)
    */
   TheFlag = FOUNDFLAG | DRCFLAG;
 
-  ResetConnections (false, false);
+  ResetConnections (false);
 
   /* Let the search stop if we find something we haven't yet seen */
   drc = true;
@@ -4037,7 +4037,7 @@ IsPolygonAnIsland (LayerType *layer, PolygonType *polygon)
   while (any_more);
 
   drc = false;
-  ResetConnections (false, false);
+  ResetConnections (false);
   FreeConnectionLookupMemory ();
 
   return (connected_count == 0);
