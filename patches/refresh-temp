@@ -1,0 +1,22 @@
+Bottom: 5f5e467f446b115dd4c33018764159f3ac62daea
+Top:    30e47bb432ba2747d0cd23e8fa722d2f86f084ff
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-25 20:15:12 +0000
+
+Refresh of hid-gtk-use-motion-notify-even
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 569a09b..a216dd7 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -717,6 +717,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+ 
+   if (out->panning)
+     {
++      if (gtk_events_pending ())
++	return FALSE;
+       dx = gport->zoom * (x_prev - ev->x);
+       dy = gport->zoom * (y_prev - ev->y);
+       if (x_prev > 0)
