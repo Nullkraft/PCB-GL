@@ -1,5 +1,5 @@
 Bottom: 30e47bb432ba2747d0cd23e8fa722d2f86f084ff
-Top:    30e47bb432ba2747d0cd23e8fa722d2f86f084ff
+Top:    5f5e467f446b115dd4c33018764159f3ac62daea
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 20:13:59 +0000
 
@@ -8,4 +8,16 @@ Don't use... since we don't draw immediately
 
 ---
 
-
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index a216dd7..569a09b 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -717,8 +717,6 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+ 
+   if (out->panning)
+     {
+-      if (gtk_events_pending ())
+-	return FALSE;
+       dx = gport->zoom * (x_prev - ev->x);
+       dy = gport->zoom * (y_prev - ev->y);
+       if (x_prev > 0)
