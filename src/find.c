@@ -3405,6 +3405,7 @@ void
   User = undo;
   DumpList ();
   ListStart (type, ptr1, ptr2, ptr3);
+  printf ("RatFindHook, user=%s\n", User ? "true" : "false");
   DoIt (AndRats, false);
   User = false;
 }
@@ -3569,6 +3570,8 @@ ResetConnections (bool AndDraw)
 
   change = ResetFoundPinsViasAndPads  (AndDraw) || change;
   change = ResetFoundLinesAndPolygons (AndDraw) || change;
+
+  printf ("flag = %i\n", TheFlag);
 
   return change;
 }
