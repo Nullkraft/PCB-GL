@@ -1,5 +1,5 @@
 Bottom: ab9816c27fb5274d7d32a006be164c9ff9533a8f
-Top:    ab9816c27fb5274d7d32a006be164c9ff9533a8f
+Top:    9b55475bd519587143eb06530e806934578094e4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 01:24:23 +0000
 
@@ -10,4 +10,47 @@ Oops.. broke this before. Should test more before committing!
 
 ---
 
-
+diff --git a/src/find.c b/src/find.c
+index a428ac5..b51105c 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -3402,6 +3402,7 @@ RatFindHook (int type, void *ptr1, void *ptr2, void *ptr3, bool AndRats)
+ {
+   DumpList ();
+   ListStart (type, ptr1, ptr2, ptr3);
++  printf ("RatFindHook, user=%s\n", User ? "true" : "false");
+   DoIt (AndRats, false);
+ }
+ 
+@@ -3566,6 +3567,8 @@ ResetConnections (bool AndDraw)
+   change = ResetFoundPinsViasAndPads  (AndDraw) || change;
+   change = ResetFoundLinesAndPolygons (AndDraw) || change;
+ 
++  printf ("flag = %i\n", TheFlag);
++
+   return change;
+ }
+ 
+diff --git a/src/select.c b/src/select.c
+index 27a590b..4a5b415 100644
+--- a/src/select.c
++++ b/src/select.c
+@@ -1015,7 +1015,7 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+   if (Type & NET_TYPE)
+     {
+       InitConnectionLookup ();
+-      changed = ResetConnections (true) || changed;
++      if (ResetConnections (true)) changed = true;
+ 
+       MENU_LOOP (&PCB->NetlistLib);
+       {
+@@ -1034,8 +1034,8 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+       }
+       END_LOOP;
+ 
+-      changed = SelectConnection (Flag) || changed;
+-      changed = ResetConnections (false) || changed;
++      if (SelectConnection (Flag)) changed = true;
++      if (ResetConnections (false)) changed = true;
+       FreeConnectionLookupMemory ();
+     }
