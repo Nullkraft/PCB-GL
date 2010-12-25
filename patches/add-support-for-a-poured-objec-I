@@ -1,7 +1,7 @@
-Bottom: 78017a4eeb8169b9d957905e25b0804386cb4345
-Top:    9f1d61053ff857fc2d26ce35d9dc03fe557a7bd2
+Bottom: acf22d548df9fa608124e4e00db58db919e4e5d9
+Top:    477273823eaaec773d6fcb884c0a5b29cdf5edb6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-24 11:59:24 +0000
+Date:   2010-12-25 02:14:39 +0000
 
 Add support for a "poured" object.
 
@@ -2386,7 +2386,7 @@ index 4e4d55d..a7a3489 100644
  		  if (hole > 0)
  		    fputs ("\n\t\t)", FP);
 diff --git a/src/find.c b/src/find.c
-index a428ac5..a383786 100644
+index 74586a3..301cd9d 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -632,6 +632,7 @@ void
@@ -2659,7 +2659,7 @@ index a428ac5..a383786 100644
            /* check all lines */
            if (setjmp (info.env) == 0)
              r_search (LAYER_PTR (layer)->line_tree,
-@@ -3537,17 +3588,21 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+@@ -3540,17 +3591,21 @@ ResetFoundLinesAndPolygons (bool AndDraw)
        }
    }
    ENDALL_LOOP;
@@ -2692,7 +2692,7 @@ index a428ac5..a383786 100644
    ENDALL_LOOP;
    if (change)
 diff --git a/src/find.h b/src/find.h
-index 11f23e3..d91cc3a 100644
+index 892c7ef..5b51df5 100644
 --- a/src/find.h
 +++ b/src/find.h
 @@ -42,7 +42,7 @@
@@ -7073,10 +7073,10 @@ index 66a5a03..d74a0ca 100644
    r_search(PCB->Data->via_tree, &box, NULL, gp_pin_cb, 0);
    r_search(PCB->Data->pad_tree, &box, NULL, gp_pad_cb, 0);
 diff --git a/src/rats.c b/src/rats.c
-index 061f9aa..110dfe0 100644
+index 3e9d6ee..1855d21 100644
 --- a/src/rats.c
 +++ b/src/rats.c
-@@ -510,20 +510,24 @@ GatherSubnets (NetListTypePtr Netl, bool NoWarn, bool AndRats)
+@@ -511,20 +511,24 @@ GatherSubnets (NetListTypePtr Netl, bool NoWarn, bool AndRats)
        }
        ENDALL_LOOP;
        /* add polygons so the auto-router can see them as targets */
@@ -7965,7 +7965,7 @@ index add5661..25d8103 100644
  #define	ELEMENT_IN_BOX(e,b)	\
  	(BOX_IN_BOX(&((e)->BoundingBox), (b)))
 diff --git a/src/select.c b/src/select.c
-index 27a590b..7ee3f02 100644
+index 5d44b4f..4d9aa4f 100644
 --- a/src/select.c
 +++ b/src/select.c
 @@ -183,6 +183,7 @@ SelectObject (void)
