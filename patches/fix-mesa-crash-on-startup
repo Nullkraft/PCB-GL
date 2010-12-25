@@ -1,5 +1,5 @@
-Bottom: 8b1303f027688329b3d8e3b9c81005adb5f339fe
-Top:    136b23529893f0ea4e12ea574e5accfac52673df
+Bottom: 93213f94e48fabd27e8e9ed2edcbcf82765da3b1
+Top:    170faa051757394d59b0b0377a7fb77b27fbed3b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 02:14:07 +0000
 
@@ -59,7 +59,7 @@ index e75d36b..e2db060 100644
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index d6b52e2..729b368 100644
+index adbf1a4..d794b1b 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2140,8 +2140,6 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
@@ -71,7 +71,7 @@ index d6b52e2..729b368 100644
  /* 
   * Create the top_window contents.  The config settings should be loaded
   * before this is called.
-@@ -2350,6 +2348,9 @@ ghid_build_pcb_top_window (void)
+@@ -2351,6 +2349,9 @@ ghid_build_pcb_top_window (void)
       |  the user does a command entry.
     */
  
@@ -81,7 +81,7 @@ index d6b52e2..729b368 100644
    g_signal_connect (G_OBJECT (gport->drawing_area), "expose_event",
  		    G_CALLBACK (ghid_drawing_area_expose_cb),
  		    port);
-@@ -2385,10 +2386,6 @@ ghid_build_pcb_top_window (void)
+@@ -2386,10 +2387,6 @@ ghid_build_pcb_top_window (void)
    ghidgui->creating = FALSE;
  
    gtk_widget_show_all (gport->top_window);
@@ -92,7 +92,7 @@ index d6b52e2..729b368 100644
    gdk_window_set_back_pixmap (gport->drawing_area->window, NULL, FALSE);
  
    ghid_route_style_temp_buttons_hide ();
-@@ -2704,8 +2701,6 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -2705,8 +2702,6 @@ ghid_parse_arguments (int *argc, char ***argv)
    if (Settings.AutoPlace)
      gtk_widget_set_uposition (GTK_WIDGET (window), 10, 10);
  
@@ -102,7 +102,7 @@ index d6b52e2..729b368 100644
  }
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index d34af6c..2ad0adc 100644
+index 8b389f8..38424e9 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -505,6 +505,7 @@ void ghid_end_drawing (GHidPort *port);
