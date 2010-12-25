@@ -1,0 +1,38 @@
+Bottom: 35f4c9c7575599a63f2ef81b09754b2704c731bf
+Top:    3f27ccad23899fdb7fcaad3e73e0de8d9afb3a52
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-25 01:36:16 +0000
+
+Revert "We don't need the RatFindHook to save undo state when doing netlist lookup"
+
+This reverts commit d3b508ca272b7d89aa27f552ab78943f9bed27f9.
+
+
+---
+
+diff --git a/src/hid/gtk/gui-netlist-window.c b/src/hid/gtk/gui-netlist-window.c
+index e780aa4..ce3e2ff 100644
+--- a/src/hid/gtk/gui-netlist-window.c
++++ b/src/hid/gtk/gui-netlist-window.c
+@@ -520,7 +520,7 @@ netlist_select_cb (GtkWidget * widget, gpointer data)
+ 
+   for (i = selected_net->EntryN, entry = selected_net->Entry; i; i--, entry++)
+     if (SeekPad (entry, &conn, false))
+-      RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, false, true);
++      RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, true);
+ 
+   SelectConnection (select_flag);
+   ResetConnections (false);
+diff --git a/src/hid/lesstif/netlist.c b/src/hid/lesstif/netlist.c
+index 0bc4389..4ddc240 100644
+--- a/src/hid/lesstif/netlist.c
++++ b/src/hid/lesstif/netlist.c
+@@ -140,7 +140,7 @@ nbcb_select_common (LibraryMenuTypePtr net, int pos, int select_flag)
+ 
+   for (i = net->EntryN, entry = net->Entry; i; i--, entry++)
+     if (SeekPad (entry, &conn, false))
+-      RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, false, true);
++      RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2, true, true);
+ 
+   SelectConnection (select_flag);
+   ResetConncetions (false);
