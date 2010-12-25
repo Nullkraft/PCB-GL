@@ -1,0 +1,38 @@
+Bottom: ddba5ace1a797199250802695ad7e79d8361a92b
+Top:    02a7e9ea13d2850a2131d9ed612517962ed903ce
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-25 01:45:15 +0000
+
+Refresh of revert-undo-changes-relating-t
+
+---
+
+diff --git a/src/find.c b/src/find.c
+index f5d91d0..74586a3 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -3398,9 +3398,8 @@ LookupConnection (LocationType X, LocationType Y, bool AndDraw,
+  * assumes InitConnectionLookup() has already been done
+  */
+ void
+-  RatFindHook
+-  (int type, void *ptr1, void *ptr2, void *ptr3, bool undo,
+-   bool AndRats)
++RatFindHook (int type, void *ptr1, void *ptr2, void *ptr3,
++             bool undo, bool AndRats)
+ {
+   User = undo;
+   DumpList ();
+diff --git a/src/select.c b/src/select.c
+index 0461778..5d44b4f 100644
+--- a/src/select.c
++++ b/src/select.c
+@@ -1029,7 +1029,7 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+           {
+             for (i = menu->EntryN, entry = menu->Entry; i; i--, entry++)
+               if (SeekPad (entry, &conn, false))
+-                RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2,  
++                RatFindHook (conn.type, conn.ptr1, conn.ptr2, conn.ptr2,
+                              true, true);
+           }
+       }
