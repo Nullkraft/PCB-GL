@@ -1,0 +1,25 @@
+Bottom: 5f5e467f446b115dd4c33018764159f3ac62daea
+Top:    341e836cd8e8a6148ef9f6e06ebe9856e3c2a45c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-26 22:21:57 +0000
+
+Refresh of hid-gtk-remove-unused-draw_z-v
+
+---
+
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index b814366..ba8b601 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -70,11 +70,9 @@ extern int ghid_flip_x, ghid_flip_y;
+ 
+ #define	DRAW_X(x)	(gint)((SIDE_X(x) - gport->view_x0) / gport->zoom)
+ #define	DRAW_Y(y)	(gint)((SIDE_Y(y) - gport->view_y0) / gport->zoom)
+-#define	DRAW_Z(z)	(gint)((z) / gport->zoom)
+ 
+ #define	VIEW_X(x)	SIDE_X((gint)((x) * gport->zoom + gport->view_x0))
+ #define	VIEW_Y(y)	SIDE_Y((gint)((y) * gport->zoom + gport->view_y0))
+-#define	VIEW_Z(z)	(gint)((z) * gport->zoom)
+ 
+ /*
+  * Used to intercept "special" hotkeys that gtk doesn't usually pass
