@@ -1683,8 +1683,8 @@ Center(int argc, char **argv, int x, int y)
   if (argc != 0)
     AFAIL (center);
 
-  x = GRIDFIT_X (SIDE_X (x), PCB->Grid);
-  y = GRIDFIT_Y (SIDE_Y (y), PCB->Grid);
+  x = GRIDFIT_X (x, PCB->Grid);
+  y = GRIDFIT_Y (y, PCB->Grid);
 
   w2 = gport->view_width / 2;
   h2 = gport->view_height / 2;
@@ -1703,7 +1703,7 @@ Center(int argc, char **argv, int x, int y)
       y = y0 + w2;
     }
 
-  dx = (x0 - gport->view_x0) / gport->zoom ;
+  dx = (x0 - gport->view_x0) / gport->zoom;
   dy = (y0 - gport->view_y0) / gport->zoom;
   gport->view_x0 = x0;
   gport->view_y0 = y0;
