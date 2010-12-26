@@ -1,0 +1,14 @@
+Bottom: 341e836cd8e8a6148ef9f6e06ebe9856e3c2a45c
+Top:    341e836cd8e8a6148ef9f6e06ebe9856e3c2a45c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-26 23:29:46 +0000
+
+hid/gtk: Refactor storage semantics of view_x, view_y coordinates
+
+They now directly represent actual cursor coordinates, and don't require
+passing through SIDE_{X,Y} before use.
+
+
+---
+
+
