@@ -1669,6 +1669,9 @@ Center(int argc, char **argv, int x, int y)
 //      y = y0 + h2;
 //    }
 
+//  dx = (x0 - gport->view_x0) / gport->zoom;
+//  dy = (y0 - gport->view_y0) / gport->zoom;
+
   gport->view_x0 = x0;
   gport->view_y0 = y0;
 
