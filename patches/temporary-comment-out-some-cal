@@ -1,5 +1,5 @@
-Bottom: 593688b460b62faa742d40355cecdf8e2ea307cb
-Top:    bde3de2c9965c5377519564ef882b8a87210e284
+Bottom: 2e04c6feb5c0e929feab83bc8d2aae142b68544e
+Top:    66866dca874c2eaf54da08667bd8af7dff6f5776
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 19:44:29 +0000
 
@@ -46,7 +46,7 @@ index d8e631f..3dbb178 100644
    return 0;
  }
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index a0f4469..476b196 100644
+index 5cb6e16..b196f1c 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -373,7 +373,7 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
@@ -76,7 +76,7 @@ index a0f4469..476b196 100644
    if (!gport->panning)
      g_idle_add (ghid_idle_cb, NULL);
    return TRUE;
-@@ -879,7 +879,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -875,7 +875,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
        cursor_in_viewport = FALSE;
      }
  
