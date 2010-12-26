@@ -244,28 +244,30 @@ zoom_to (double new_zoom, int x, int y)
       gdouble xtmp, ytmp;
       gint x0, y0;
 
-      xtmp = (gport->view_x - gport->view_x0) / (gdouble) gport->view_width;
-      ytmp = (gport->view_y - gport->view_y0) / (gdouble) gport->view_height;
-      
+      xtmp = (SIDE_X (gport->view_x) - gport->view_x0) /
+                (gdouble) gport->view_width;
+      ytmp = (SIDE_Y (gport->view_y) - gport->view_y0) /
+                (gdouble) gport->view_height;
+
       gport->zoom = new_zoom;
       pixel_slop = new_zoom;
       ghid_port_ranges_scale(FALSE);
 
       x0 = gport->view_x - xtmp * gport->view_width;
       if (x0 < 0)
-	x0 = 0;
+        x0 = 0;
       gport->view_x0 = x0;
 
       y0 = gport->view_y - ytmp * gport->view_height;
       if (y0 < 0)
-	y0 = 0;
+        y0 = 0;
       gport->view_y0 = y0;
-      
+
       ghidgui->adjustment_changed_holdoff = TRUE;
       gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
       gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view_y0);
       ghidgui->adjustment_changed_holdoff = FALSE;
-      
+
       ghid_port_ranges_changed();
     }
 
