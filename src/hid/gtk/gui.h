@@ -65,14 +65,15 @@
 								((v) / 0.000254 + 0.5) : ((v) * 100.0 + 0.5))
 
 extern int ghid_flip_x, ghid_flip_y;
-#define SIDE_X(x)   ((ghid_flip_x ? PCB->MaxWidth - (x) : (x)))
-#define SIDE_Y(y)   ((ghid_flip_y ? PCB->MaxHeight - (y) : (y)))
+#define FLIP_X(x)   ((ghid_flip_x ? -(x) : (x)))
+#define FLIP_Y(y)   ((ghid_flip_y ? -(y) : (y)))
 
-#define	DRAW_X(x)	(gint)((SIDE_X(x) - gport->view_x0) / gport->zoom)
-#define	DRAW_Y(y)	(gint)((SIDE_Y(y) - gport->view_y0) / gport->zoom)
+#define	DRAW_X(x)	(gint)(FLIP_X(x - gport->view_x0) / gport->zoom)
+#define	DRAW_Y(y)	(gint)(FLIP_Y(y - gport->view_y0) / gport->zoom)
 
-#define	VIEW_X(x)	SIDE_X((gint)((x) * gport->zoom + gport->view_x0))
-#define	VIEW_Y(y)	SIDE_Y((gint)((y) * gport->zoom + gport->view_y0))
+#define	VIEW_X(x)	(FLIP_X(x) * gport->zoom + gport->view_x0)
+#define	VIEW_Y(y)	(FLIP_Y(y) * gport->zoom + gport->view_y0)
+
 
 /*
  * Used to intercept "special" hotkeys that gtk doesn't usually pass
@@ -525,9 +526,9 @@ Vx (int x)
 {
   int rv;
   if (ghid_flip_x)
-    rv = (PCB->MaxWidth - x - gport->view_x0) / gport->zoom + 0.5;
+    rv = -(x - gport->view_x0) / gport->zoom + 0.5;
   else
-    rv = (x - gport->view_x0) / gport->zoom + 0.5;
+    rv =  (x - gport->view_x0) / gport->zoom + 0.5;
   return rv;
 }
 
@@ -536,9 +537,9 @@ Vy (int y)
 {
   int rv;
   if (ghid_flip_y)
-    rv = (PCB->MaxHeight - y - gport->view_y0) / gport->zoom + 0.5;
+    rv = -(y - gport->view_y0) / gport->zoom + 0.5;
   else
-    rv = (y - gport->view_y0) / gport->zoom + 0.5;
+    rv =  (y - gport->view_y0) / gport->zoom + 0.5;
   return rv;
 }
 
@@ -553,7 +554,7 @@ Px (int x)
 {
   int rv = x * gport->zoom + gport->view_x0;
   if (ghid_flip_x)
-    rv = PCB->MaxWidth - (x * gport->zoom + gport->view_x0);
+    rv = -x * gport->zoom + gport->view_x0;
   return  rv;
 }
 
@@ -562,7 +563,7 @@ Py (int y)
 {
   int rv = y * gport->zoom + gport->view_y0;
   if (ghid_flip_y)
-    rv = PCB->MaxHeight - (y * gport->zoom + gport->view_y0);
+    rv = -y * gport->zoom + gport->view_y0;
   return  rv;
 }
 
