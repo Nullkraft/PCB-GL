@@ -140,7 +140,6 @@ ghid_draw_grid (void)
   int x1, y1, x2, y2, n, i;
   double x, y;
   render_priv *priv = gport->render_priv;
-  return;
 
   if (!Settings.DrawGrid)
     return;
@@ -163,8 +162,8 @@ ghid_draw_grid (void)
     }
   x1 = GRIDFIT_X (gport->view_x0, PCB->Grid);
   y1 = GRIDFIT_Y (gport->view_y0, PCB->Grid);
-  x2 = GRIDFIT_X (gport->view_x0 + FLIP_X (gport->view_width)  - 1, PCB->Grid);
-  y2 = GRIDFIT_Y (gport->view_y0 + FLIP_Y (gport->view_height) - 1, PCB->Grid);
+  x2 = GRIDFIT_X (gport->view_x0 + gport->view_width  - 1, PCB->Grid);
+  y2 = GRIDFIT_Y (gport->view_y0 + gport->view_height - 1, PCB->Grid);
   if (x1 > x2)
     {
       int tmp = x1;
