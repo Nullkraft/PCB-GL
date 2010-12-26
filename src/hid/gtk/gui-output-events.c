@@ -214,8 +214,6 @@ ghid_port_ranges_zoom (gdouble zoom)
  * handles all events from PCB drawing area
  */
 
-static gint event_x, event_y;
-
 void
 ghid_get_coords (const char *msg, int *x, int *y)
 {
@@ -223,33 +221,31 @@ ghid_get_coords (const char *msg, int *x, int *y)
     ghid_get_user_xy (msg);
   if (ghid_port.has_entered)
     {
-      *x = SIDE_X (gport->view_x);
-      *y = SIDE_Y (gport->view_y);
+      *x = gport->view_x;
+      *y = gport->view_y;
     }
 }
 
 gboolean
 ghid_note_event_location (GdkEventButton * ev)
 {
-  gint x, y;
+  gint event_x, event_y;
   gboolean moved;
 
   if (!ev)
     {
-      gdk_window_get_pointer (ghid_port.drawing_area->window, &x, &y, NULL);
-      event_x = x;
-      event_y = y;
+      gdk_window_get_pointer (ghid_port.drawing_area->window,
+                              &event_x, &event_y, NULL);
     }
   else
     {
       event_x = ev->x;
       event_y = ev->y;
     }
-  gport->view_x = event_x * gport->zoom + gport->view_x0;
-  gport->view_y = event_y * gport->zoom + gport->view_y0;
+  gport->view_x = VIEW_X (event_x);
+  gport->view_y = VIEW_Y (event_y);
 
-  moved = MoveCrosshairAbsolute (SIDE_X (gport->view_x), 
-				 SIDE_Y (gport->view_y));
+  moved = MoveCrosshairAbsolute (gport->view_x, gport->view_y);
   if (moved)
     {
       AdjustAttachedObjects ();
