@@ -1,7 +1,7 @@
-Bottom: 8d6b803b50667985bdca896284420557b44ff6af
-Top:    4e2648a1f0badbac047f335a9a576e20407a0739
+Bottom: bec925306043992da8cdfbe87affd5506d3063d3
+Top:    74877713875f05c97b93cd332945cbadcc212835
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-26 00:11:41 +0000
+Date:   2010-12-26 00:41:01 +0000
 
 Add support for a "poured" object.
 
@@ -47,7 +47,7 @@ index f83167f..55f3f34 100644
  src/report.c
  src/res_parse.c
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 085d022..657ff84 100644
+index c236479..0792f17 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -123,6 +123,8 @@ PCB_SRCS = \
@@ -2956,10 +2956,10 @@ index a607a69..f36c400 100644
        break;
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index b196f1c..10e6dd0 100644
+index bacebf7..db33e82 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -290,8 +290,8 @@ have_crosshair_attachments (void)
+@@ -286,8 +286,8 @@ have_crosshair_attachments (void)
      case VIA_MODE:
        result = TRUE;
        break;
@@ -5415,7 +5415,7 @@ index 5b3baf6..b8a3202 100644
  POLYAREA *board_outline_poly ();
  #endif
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 468c139..c80e761 100644
+index 5419863..236ec23 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -908,6 +908,45 @@ intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
@@ -5483,7 +5483,7 @@ index 468c139..c80e761 100644
  
        if (M_POLYAREA_label (a, b, TRUE))
  	return TRUE;
-@@ -3168,15 +3208,19 @@ inside_sector (VNODE * pn, Vector p2)
+@@ -3172,15 +3212,19 @@ inside_sector (VNODE * pn, Vector p2)
  BOOLp
  poly_ChkContour (PLINE * a)
  {
@@ -5505,7 +5505,7 @@ index 468c139..c80e761 100644
        do
  	{
  	  if (!node_neighbours (a1, a2) &&
-@@ -3186,9 +3230,11 @@ poly_ChkContour (PLINE * a)
+@@ -3190,9 +3234,11 @@ poly_ChkContour (PLINE * a)
  	      if (icnt > 1)
  		return TRUE;
  
@@ -5519,7 +5519,7 @@ index 468c139..c80e761 100644
  		hit1 = a1->next;
  	      else
  		hit1 = NULL;
-@@ -3232,7 +3278,7 @@ poly_ChkContour (PLINE * a)
+@@ -3236,7 +3282,7 @@ poly_ChkContour (PLINE * a)
  		}
  	    }
  	}
