@@ -290,8 +290,8 @@ have_crosshair_attachments (void)
     case VIA_MODE:
       result = TRUE;
       break;
-    case POLYGON_MODE:
-    case POLYGONHOLE_MODE:
+    case POUR_MODE:
+    case POURHOLE_MODE:
       if (Crosshair.AttachedLine.State != STATE_FIRST)
 	result = TRUE;
       break;
