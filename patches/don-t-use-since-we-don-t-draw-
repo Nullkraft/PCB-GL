@@ -3,7 +3,10 @@ Top:    5f5e467f446b115dd4c33018764159f3ac62daea
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 20:13:59 +0000
 
-Don't use... since we don't draw immediately
+hid/gtk: Don't avoid panning when further X11 events are pending
+
+Since we are using motion hints, we should not get bogged down with
+motion events, so we should probably just act upon them.
 
 
 ---
