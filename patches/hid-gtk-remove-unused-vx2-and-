@@ -1,5 +1,5 @@
 Bottom: 6e91ec767324a366bae91e40d27cb5330fb19361
-Top:    6e91ec767324a366bae91e40d27cb5330fb19361
+Top:    b03f76a7afdc87f05da25f06034947421f402b53
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-27 00:23:23 +0000
 
@@ -8,4 +8,29 @@ hid/gtk: Remove unused Vx2 and Vy2 functions
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index b1dc11d..0a2cc59 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -28,21 +28,6 @@ extern HID ghid_hid;
+ static int cur_mask = -1;
+ static int mask_seq = 0;
+ 
+-/* ------------------------------------------------------------ */
+-
+-static inline int
+-Vx2 (int x)
+-{
+-  return (x - gport->view_x0) / gport->zoom + 0.5;
+-}
+-
+-static inline int
+-Vy2 (int y)
+-{
+-  return (y - gport->view_y0) / gport->zoom + 0.5;
+-}
+-
+-/* ------------------------------------------------------------ */
+ 
+ typedef struct hid_gc_struct
+ {
