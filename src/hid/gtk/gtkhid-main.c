@@ -82,6 +82,14 @@ ghid_pan_fixup ()
       return;
     }
 
+  /* if we can see the entire board and some, then zoom to fit */
+  if (gport->view_width > PCB->MaxWidth &&
+      gport->view_height > PCB->MaxHeight)
+    {
+      zoom_by (1, 0, 0);
+      return;
+    }
+
   ghidgui->adjustment_changed_holdoff = TRUE;
   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
   gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view_y0);
@@ -497,12 +505,6 @@ ghid_set_crosshair (int x, int y, int action)
        * but the value we've been given is relative to your drawing area
        */
       gdk_window_get_origin (gport->drawing_area->window, &xofs, &yofs);
-
-      /*
-       * Note that under X11, gdk_display_warp_pointer is just a wrapper around XWarpPointer, but
-       * hopefully by avoiding the direct call to an X function we might still work under windows
-       * and other non-X11 based gdk's
-       */
       gdk_display_warp_pointer (display, screen, xofs + Vx (x), yofs + Vy (y));
     }
 }
@@ -1658,10 +1660,10 @@ currently within the window already.
 static int
 Center(int argc, char **argv, int x, int y)
 {
-  int x0, y0, w2, h2, dx, dy;
+  int x0, y0, w2, h2;
   GdkDisplay *display;
   GdkScreen *screen;
-  gint cx, cy;
+  int xofs, yofs;
 
   if (argc != 0)
     AFAIL (center);
@@ -1686,8 +1688,6 @@ Center(int argc, char **argv, int x, int y)
       y = y0 + h2;
     }
 
-  dx = (x0 - gport->view_x0) / gport->zoom ;
-  dy = (y0 - gport->view_y0) / gport->zoom;
   gport->view_x0 = x0;
   gport->view_y0 = y0;
 
@@ -1700,15 +1700,13 @@ Center(int argc, char **argv, int x, int y)
   display = gdk_display_get_default ();
   screen = gdk_display_get_default_screen (display);
 
-  /* figure out where the pointer is and then move it from there by the specified delta */
-  gdk_display_get_pointer (display, NULL, &cx, &cy, NULL);
-  gdk_display_warp_pointer (display, screen, cx - dx, cy - dy);
-
   /*
-   * Note that under X11, gdk_display_warp_pointer is just a wrapper around XWarpPointer, but
-   * hopefully by avoiding the direct call to an X function we might still work under windows
-   * and other non-X11 based gdk's
+   * Figure out where the drawing area is on the screen because
+   * gdk_display_warp_pointer will warp relative to the whole display
+   * but the value we've been given is relative to your drawing area
    */
+  gdk_window_get_origin (gport->drawing_area->window, &xofs, &yofs);
+  gdk_display_warp_pointer (display, screen, xofs + Vx (x), yofs + Vy (y));
 
   return 0;
 }
