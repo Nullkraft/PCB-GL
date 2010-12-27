@@ -1,0 +1,188 @@
+Bottom: b164e1cc3fab650a344b2b7a052d1e8e3d6552e4
+Top:    829573e696ae5676b486d689cd6b27a7afe68b52
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-27 16:10:20 +0000
+
+Refresh of hid-gtk-clean-up-mouse-warping
+
+---
+
+diff --git a/configure.ac b/configure.ac
+index f606faa..cf685a7 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -721,15 +721,6 @@ Please review the following errors:
+ $GTK_PKG_ERRORS])]
+ 	)
+ 	GTK_VERSION=`$PKG_CONFIG gtk+-2.0 --modversion`
+-	
+-	# if we are building for gtk >= 2.8.0, we can use gdk_display_warp_pointer()
+-	# otherwise we need XWarpPointer and we'll pull in the required headers with
+-	# gdk/gdkx.h and we'll need to link with X11
+-	if ! $PKG_CONFIG gtk+-2.0 --atleast-version=2.8.0 ; then
+-		CPPFLAGS="$CFLAGS $GTK_CFLAGS"
+-		AC_CHECK_HEADERS([gdk/gdkx.h])
+-	fi
+-
+ 	GLIB_VERSION=`$PKG_CONFIG glib-2.0 --modversion`
+ 	;;
+ 
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index e91b68c..3bb2321 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -20,11 +20,6 @@
+ #include "gui.h"
+ #include "hid/common/draw_helpers.h"
+ 
+-
+-#if !GTK_CHECK_VERSION(2,8,0) && defined(HAVE_GDK_GDKX_H)
+-#include <gdk/gdkx.h>
+-#endif
+-
+ #ifdef HAVE_LIBDMALLOC
+ #include <dmalloc.h>
+ #endif
+@@ -489,41 +484,26 @@ ghid_set_crosshair (int x, int y, int action)
+ 
+   if (action == HID_SC_WARP_POINTER)
+     {
+-#if GTK_CHECK_VERSION(2,8,0)
+-    gint xofs, yofs;
+-    GdkDisplay *display;
+-    GdkScreen *screen;
+-
+-    display = gdk_display_get_default ();
+-    screen = gdk_display_get_default_screen (display); 
+-
+-    /*
+-     * Figure out where the drawing area is on the screen because
+-     * gdk_display_warp_pointer will warp relative to the whole display
+-     * but the value we've been given is relative to your drawing area
+-     */ 
+-    gdk_window_get_origin (gport->drawing_area->window, &xofs, &yofs);
++      gint xofs, yofs;
++      GdkDisplay *display;
++      GdkScreen *screen;
+ 
+-    /* 
+-     * Note that under X11, gdk_display_warp_pointer is just a wrapper around XWarpPointer, but
+-     * hopefully by avoiding the direct call to an X function we might still work under windows
+-     * and other non-X11 based gdk's
+-     */
+-    gdk_display_warp_pointer (display, screen, xofs + Vx (x), yofs + Vy (y));
++      display = gdk_display_get_default ();
++      screen = gdk_display_get_default_screen (display);
+ 
++      /*
++       * Figure out where the drawing area is on the screen because
++       * gdk_display_warp_pointer will warp relative to the whole display
++       * but the value we've been given is relative to your drawing area
++       */
++      gdk_window_get_origin (gport->drawing_area->window, &xofs, &yofs);
+ 
+-#else
+-#  ifdef HAVE_GDK_GDKX_H
+-    gint xofs, yofs;
+-    gdk_window_get_origin (gport->drawing_area->window, &xofs, &yofs);
+-    XWarpPointer (GDK_DRAWABLE_XDISPLAY (gport->drawing_area->window),
+-		  None, GDK_WINDOW_XID (gport->drawing_area->window),
+-		  0, 0, 0, 0,
+-		  xofs + Vx (x), yofs + Vy (y));
+-#  else
+-#    error  "sorry.  You need gtk+>=2.8.0 unless you are on X windows"
+-#  endif
+-#endif
++      /*
++       * Note that under X11, gdk_display_warp_pointer is just a wrapper around XWarpPointer, but
++       * hopefully by avoiding the direct call to an X function we might still work under windows
++       * and other non-X11 based gdk's
++       */
++      gdk_display_warp_pointer (display, screen, xofs + Vx (x), yofs + Vy (y));
+     }
+ }
+ 
+@@ -1679,7 +1659,10 @@ static int
+ Center(int argc, char **argv, int x, int y)
+ {
+   int x0, y0, w2, h2, dx, dy;
+- 
++  GdkDisplay *display;
++  GdkScreen *screen;
++  gint cx, cy;
++
+   if (argc != 0)
+     AFAIL (center);
+ 
+@@ -1708,61 +1691,24 @@ Center(int argc, char **argv, int x, int y)
+   gport->view_x0 = x0;
+   gport->view_y0 = y0;
+ 
+-
+   ghid_pan_fixup ();
+ 
+   /* Move the pointer to the center of the window, but only if it's
+      currently within the window already.  Watch out for edges,
+      though.  */
+ 
+-#if GTK_CHECK_VERSION(2,8,0)
+-  {
+-    GdkDisplay *display;
+-    GdkScreen *screen;
+-    gint cx, cy;
+-
+-    display = gdk_display_get_default ();
+-    screen = gdk_display_get_default_screen (display); 
+-
+-    /* figure out where the pointer is and then move it from there by the specified delta */
+-    gdk_display_get_pointer (display, NULL, &cx, &cy, NULL); 
+-    gdk_display_warp_pointer (display, screen, cx - dx, cy - dy);
+-
+-    /* 
+-     * Note that under X11, gdk_display_warp_pointer is just a wrapper around XWarpPointer, but
+-     * hopefully by avoiding the direct call to an X function we might still work under windows
+-     * and other non-X11 based gdk's
+-     */
+-  }
+-#else  
+-#  ifdef HAVE_GDK_GDKX_H
+-  {
++  display = gdk_display_get_default ();
++  screen = gdk_display_get_default_screen (display);
+ 
+-    Window w_src, w_dst; 
+-    w_src = GDK_WINDOW_XID (gport->drawing_area->window);
+-    w_dst = w_src;
++  /* figure out where the pointer is and then move it from there by the specified delta */
++  gdk_display_get_pointer (display, NULL, &cx, &cy, NULL);
++  gdk_display_warp_pointer (display, screen, cx - dx, cy - dy);
+ 
+-    /* don't warp with the auto drc - that creates auto-scroll chaos */
+-    if (TEST_FLAG (AUTODRCFLAG, PCB) && Settings.Mode == LINE_MODE
+-	&& Crosshair.AttachedLine.State != STATE_FIRST)
+-      return 0;
+-    
+-    XWarpPointer (GDK_DRAWABLE_XDISPLAY (gport->drawing_area->window),
+-		 w_src, w_dst,
+-		 0, 0, 0, 0,
+-		 Vx2 (x), Vy2 (y));
+-    
+-    /* XWarpPointer creates Motion events normally bound to
+-     *  EventMoveCrosshair.
+-     *  We don't do any updates when EventMoveCrosshair
+-     *  is called the next time to prevent from rounding errors
+-     */
+-    /* FIXME?
+-     * IgnoreMotionEvents = ignore;
+-     */
+-  }
+-#  endif
+-#endif
++  /*
++   * Note that under X11, gdk_display_warp_pointer is just a wrapper around XWarpPointer, but
++   * hopefully by avoiding the direct call to an X function we might still work under windows
++   * and other non-X11 based gdk's
++   */
+ 
+   return 0;
+ }
