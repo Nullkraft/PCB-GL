@@ -1,5 +1,5 @@
 Bottom: 7503b9ee0757c55ed3da6b526b9fd44188f4f56f
-Top:    61bb8e31bc7ec14d352ba45da31568d51ba5d812
+Top:    8c4e8595773517a9e21fcd7b76989bb8995d3e3a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-27 16:09:36 +0000
 
@@ -33,7 +33,7 @@ index f606faa..cf685a7 100644
  	;;
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index e91b68c..3bb2321 100644
+index e91b68c..991c97d 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -20,11 +20,6 @@
@@ -48,7 +48,7 @@ index e91b68c..3bb2321 100644
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
  #endif
-@@ -489,41 +484,26 @@ ghid_set_crosshair (int x, int y, int action)
+@@ -489,41 +484,20 @@ ghid_set_crosshair (int x, int y, int action)
  
    if (action == HID_SC_WARP_POINTER)
      {
@@ -66,25 +66,19 @@ index e91b68c..3bb2321 100644
 -     * but the value we've been given is relative to your drawing area
 -     */ 
 -    gdk_window_get_origin (gport->drawing_area->window, &xofs, &yofs);
-+      gint xofs, yofs;
-+      GdkDisplay *display;
-+      GdkScreen *screen;
- 
+-
 -    /* 
 -     * Note that under X11, gdk_display_warp_pointer is just a wrapper around XWarpPointer, but
 -     * hopefully by avoiding the direct call to an X function we might still work under windows
 -     * and other non-X11 based gdk's
 -     */
 -    gdk_display_warp_pointer (display, screen, xofs + Vx (x), yofs + Vy (y));
++      gint xofs, yofs;
++      GdkDisplay *display;
++      GdkScreen *screen;
+ 
 +      display = gdk_display_get_default ();
 +      screen = gdk_display_get_default_screen (display);
- 
-+      /*
-+       * Figure out where the drawing area is on the screen because
-+       * gdk_display_warp_pointer will warp relative to the whole display
-+       * but the value we've been given is relative to your drawing area
-+       */
-+      gdk_window_get_origin (gport->drawing_area->window, &xofs, &yofs);
  
 -#else
 -#  ifdef HAVE_GDK_GDKX_H
@@ -99,15 +93,16 @@ index e91b68c..3bb2321 100644
 -#  endif
 -#endif
 +      /*
-+       * Note that under X11, gdk_display_warp_pointer is just a wrapper around XWarpPointer, but
-+       * hopefully by avoiding the direct call to an X function we might still work under windows
-+       * and other non-X11 based gdk's
++       * Figure out where the drawing area is on the screen because
++       * gdk_display_warp_pointer will warp relative to the whole display
++       * but the value we've been given is relative to your drawing area
 +       */
++      gdk_window_get_origin (gport->drawing_area->window, &xofs, &yofs);
 +      gdk_display_warp_pointer (display, screen, xofs + Vx (x), yofs + Vy (y));
      }
  }
  
-@@ -1679,7 +1659,10 @@ static int
+@@ -1679,7 +1653,10 @@ static int
  Center(int argc, char **argv, int x, int y)
  {
    int x0, y0, w2, h2, dx, dy;
@@ -119,7 +114,7 @@ index e91b68c..3bb2321 100644
    if (argc != 0)
      AFAIL (center);
  
-@@ -1708,61 +1691,24 @@ Center(int argc, char **argv, int x, int y)
+@@ -1708,61 +1685,18 @@ Center(int argc, char **argv, int x, int y)
    gport->view_x0 = x0;
    gport->view_y0 = y0;
  
@@ -152,15 +147,12 @@ index e91b68c..3bb2321 100644
 -#else  
 -#  ifdef HAVE_GDK_GDKX_H
 -  {
-+  display = gdk_display_get_default ();
-+  screen = gdk_display_get_default_screen (display);
- 
+-
 -    Window w_src, w_dst; 
 -    w_src = GDK_WINDOW_XID (gport->drawing_area->window);
 -    w_dst = w_src;
-+  /* figure out where the pointer is and then move it from there by the specified delta */
-+  gdk_display_get_pointer (display, NULL, &cx, &cy, NULL);
-+  gdk_display_warp_pointer (display, screen, cx - dx, cy - dy);
++  display = gdk_display_get_default ();
++  screen = gdk_display_get_default_screen (display);
  
 -    /* don't warp with the auto drc - that creates auto-scroll chaos */
 -    if (TEST_FLAG (AUTODRCFLAG, PCB) && Settings.Mode == LINE_MODE
@@ -183,11 +175,9 @@ index e91b68c..3bb2321 100644
 -  }
 -#  endif
 -#endif
-+  /*
-+   * Note that under X11, gdk_display_warp_pointer is just a wrapper around XWarpPointer, but
-+   * hopefully by avoiding the direct call to an X function we might still work under windows
-+   * and other non-X11 based gdk's
-+   */
++  /* figure out where the pointer is and then move it from there by the specified delta */
++  gdk_display_get_pointer (display, NULL, &cx, &cy, NULL);
++  gdk_display_warp_pointer (display, screen, cx - dx, cy - dy);
  
    return 0;
  }
