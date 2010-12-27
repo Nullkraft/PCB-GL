@@ -1,5 +1,5 @@
 Bottom: 9a23395c90d18b744fbbdfbfe1ffae0ad6a88d8a
-Top:    d714d0130a01ee14eac519e6d349f09cb04a581a
+Top:    4a94f0a0a0345f134da23d76e34447998bd3437c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-27 16:14:28 +0000
 
@@ -14,25 +14,10 @@ relevant to explain why we previously had too implementations.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 08ec16b..a0804cb 100644
+index 08ec16b..6b2dd87 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -82,6 +82,14 @@ ghid_pan_fixup ()
-       return;
-     }
- 
-+  /* if we can see the entire board and some, then zoom to fit */
-+  if (gport->view_width > PCB->MaxWidth &&
-+      gport->view_height > PCB->MaxHeight)
-+    {
-+      zoom_by (1, 0, 0);
-+      return;
-+    }
-+
-   ghidgui->adjustment_changed_holdoff = TRUE;
-   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
-   gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view_y0);
-@@ -497,12 +505,6 @@ ghid_set_crosshair (int x, int y, int action)
+@@ -497,12 +497,6 @@ ghid_set_crosshair (int x, int y, int action)
         * but the value we've been given is relative to your drawing area
         */
        gdk_window_get_origin (gport->drawing_area->window, &xofs, &yofs);
@@ -45,7 +30,7 @@ index 08ec16b..a0804cb 100644
        gdk_display_warp_pointer (display, screen, xofs + Vx (x), yofs + Vy (y));
      }
  }
-@@ -1658,10 +1660,10 @@ currently within the window already.
+@@ -1658,10 +1652,10 @@ currently within the window already.
  static int
  Center(int argc, char **argv, int x, int y)
  {
@@ -58,7 +43,7 @@ index 08ec16b..a0804cb 100644
  
    if (argc != 0)
      AFAIL (center);
-@@ -1686,8 +1688,6 @@ Center(int argc, char **argv, int x, int y)
+@@ -1686,8 +1680,6 @@ Center(int argc, char **argv, int x, int y)
        y = y0 + h2;
      }
  
@@ -67,7 +52,7 @@ index 08ec16b..a0804cb 100644
    gport->view_x0 = x0;
    gport->view_y0 = y0;
  
-@@ -1700,15 +1700,13 @@ Center(int argc, char **argv, int x, int y)
+@@ -1700,15 +1692,13 @@ Center(int argc, char **argv, int x, int y)
    display = gdk_display_get_default ();
    screen = gdk_display_get_default_screen (display);
  
