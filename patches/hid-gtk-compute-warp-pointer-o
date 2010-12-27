@@ -7,7 +7,8 @@ hid/gtk: Compute warp pointer offset without reading current position
 
 This is closer to the way the old code which used the an XWarpPointer
 call worked, and makes the two code-paths where we warp the pointer
-consistent.
+consistent. Also, remove some unnecessary comments which were more
+relevant to explain why we previously had too implementations.
 
 
 ---
