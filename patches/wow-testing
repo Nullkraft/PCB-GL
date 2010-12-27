@@ -1,5 +1,5 @@
 Bottom: cb7a3efb1abc2ca77ddae567b1bf0b5bb7270b18
-Top:    cb7a3efb1abc2ca77ddae567b1bf0b5bb7270b18
+Top:    4bc3442d80fe36ba7e33548fe714bdb755e6efaf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-27 00:22:57 +0000
 
@@ -8,4 +8,201 @@ WOW.. TESTING
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 0a2cc59..bb00996 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -88,11 +88,10 @@ ghid_draw_grid (void)
+       gdk_gc_set_function (gport->grid_gc, GDK_XOR);
+       gdk_gc_set_foreground (gport->grid_gc, &gport->grid_color);
+     }
+-  x1 = GRIDFIT_X (SIDE_X (gport->view_x0), PCB->Grid);
+-  y1 = GRIDFIT_Y (SIDE_Y (gport->view_y0), PCB->Grid);
+-  x2 = GRIDFIT_X (SIDE_X (gport->view_x0 + gport->view_width - 1), PCB->Grid);
+-  y2 =
+-    GRIDFIT_Y (SIDE_Y (gport->view_y0 + gport->view_height - 1), PCB->Grid);
++  x1 = GRIDFIT_X (gport->view_x0, PCB->Grid);
++  y1 = GRIDFIT_Y (gport->view_y0, PCB->Grid);
++  x2 = GRIDFIT_X (gport->view_x0 + FLIP_X (gport->view_width)  - 1, PCB->Grid);
++  y2 = GRIDFIT_Y (gport->view_y0 + FLIP_Y (gport->view_height) - 1, PCB->Grid);
+   if (x1 > x2)
+     {
+       int tmp = x1;
+@@ -483,11 +482,13 @@ ghid_draw_arc (hidGC gc, int cx, int cy,
+   w = gport->width * gport->zoom;
+   h = gport->height * gport->zoom;
+   radius = (xradius > yradius) ? xradius : yradius;
++#if 0
+   if (SIDE_X (cx) < gport->view_x0 - radius
+       || SIDE_X (cx) > gport->view_x0 + w + radius
+       || SIDE_Y (cy) < gport->view_y0 - radius
+       || SIDE_Y (cy) > gport->view_y0 + h + radius)
+     return;
++#endif
+ 
+   USE_GC (gc);
+   vrx = Vz (xradius);
+@@ -520,6 +521,7 @@ ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
+   w = gport->width * gport->zoom;
+   h = gport->height * gport->zoom;
+ 
++#if 0
+   if ((SIDE_X (x1) < gport->view_x0 - lw
+        && SIDE_X (x2) < gport->view_x0 - lw)
+       || (SIDE_X (x1) > gport->view_x0 + w + lw
+@@ -529,6 +531,7 @@ ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
+       || (SIDE_Y (y1) > gport->view_y0 + h + lw
+ 	  && SIDE_Y (y2) > gport->view_y0 + h + lw))
+     return;
++#endif
+ 
+   x1 = Vx (x1);
+   y1 = Vy (y1);
+@@ -561,11 +564,13 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
+ 
+   w = gport->width * gport->zoom;
+   h = gport->height * gport->zoom;
++#if 0
+   if (SIDE_X (cx) < gport->view_x0 - radius
+       || SIDE_X (cx) > gport->view_x0 + w + radius
+       || SIDE_Y (cy) < gport->view_y0 - radius
+       || SIDE_Y (cy) > gport->view_y0 + h + radius)
+     return;
++#endif
+ 
+   USE_GC (gc);
+   vr = Vz (radius);
+@@ -603,6 +608,7 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
+   w = gport->width * gport->zoom;
+   h = gport->height * gport->zoom;
+ 
++#if 0
+   if ((SIDE_X (x1) < gport->view_x0 - lw
+        && SIDE_X (x2) < gport->view_x0 - lw)
+       || (SIDE_X (x1) > gport->view_x0 + w + lw
+@@ -612,6 +618,7 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
+       || (SIDE_Y (y1) > gport->view_y0 + h + lw
+ 	  && SIDE_Y (y2) > gport->view_y0 + h + lw))
+     return;
++#endif
+ 
+   x1 = Vx (x1);
+   y1 = Vy (y1);
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index e91b68c..cba96f7 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -1683,8 +1683,8 @@ Center(int argc, char **argv, int x, int y)
+   if (argc != 0)
+     AFAIL (center);
+ 
+-  x = GRIDFIT_X (SIDE_X (x), PCB->Grid);
+-  y = GRIDFIT_Y (SIDE_Y (y), PCB->Grid);
++  x = GRIDFIT_X (x, PCB->Grid);
++  y = GRIDFIT_Y (y, PCB->Grid);
+ 
+   w2 = gport->view_width / 2;
+   h2 = gport->view_height / 2;
+@@ -1703,8 +1703,8 @@ Center(int argc, char **argv, int x, int y)
+       y = y0 + w2;
+     }
+ 
+-  dx = (x0 - gport->view_x0) / gport->zoom ;
+-  dy = (y0 - gport->view_y0) / gport->zoom;
++  dx = (x0 - gport->view_x0) / FLIP_X (gport->zoom);
++  dy = (y0 - gport->view_y0) / FLIP_Y (gport->zoom);
+   gport->view_x0 = x0;
+   gport->view_y0 = y0;
+ 
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index ba8b601..d369623 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -65,14 +65,15 @@
+ 								((v) / 0.000254 + 0.5) : ((v) * 100.0 + 0.5))
+ 
+ extern int ghid_flip_x, ghid_flip_y;
+-#define SIDE_X(x)   ((ghid_flip_x ? PCB->MaxWidth - (x) : (x)))
+-#define SIDE_Y(y)   ((ghid_flip_y ? PCB->MaxHeight - (y) : (y)))
++#define FLIP_X(x) (ghid_flip_x ? -(x) : (x))
++#define FLIP_Y(y) (ghid_flip_y ? -(y) : (y))
+ 
+-#define	DRAW_X(x)	(gint)((SIDE_X(x) - gport->view_x0) / gport->zoom)
+-#define	DRAW_Y(y)	(gint)((SIDE_Y(y) - gport->view_y0) / gport->zoom)
++#define DRAW_X(x) (int)((double)((x) - gport->view_x0) / FLIP_X (gport->zoom) + 0.5)
++#define DRAW_Y(y) (int)((double)((y) - gport->view_y0) / FLIP_Y (gport->zoom) + 0.5)
++#define DRAW_R(r) (int)((double)(r) * gport->zoom + 0.5)
+ 
+-#define	VIEW_X(x)	SIDE_X((gint)((x) * gport->zoom + gport->view_x0))
+-#define	VIEW_Y(y)	SIDE_Y((gint)((y) * gport->zoom + gport->view_y0))
++#define VIEW_X(x) (int)((double)(x) * FLIP_X (gport->zoom) + gport->view_x0)
++#define VIEW_Y(y) (int)((double)(y) * FLIP_Y (gport->zoom) + gport->view_y0)
+ 
+ /*
+  * Used to intercept "special" hotkeys that gtk doesn't usually pass
+@@ -511,65 +512,8 @@ void ghid_get_coords (const char *msg, int *x, int *y);
+ gint PCBChanged (int argc, char **argv, int x, int y);
+ 
+ 
+-
+-
+ extern GdkPixmap *XC_hand_source, *XC_hand_mask;
+ extern GdkPixmap *XC_lock_source, *XC_lock_mask;
+ extern GdkPixmap *XC_clock_source, *XC_clock_mask;
+ 
+-
+-/* Coordinate conversions */
+-/* Px converts view->pcb, Vx converts pcb->view */
+-static inline int
+-Vx (int x)
+-{
+-  int rv;
+-  if (ghid_flip_x)
+-    rv = (PCB->MaxWidth - x - gport->view_x0) / gport->zoom + 0.5;
+-  else
+-    rv = (x - gport->view_x0) / gport->zoom + 0.5;
+-  return rv;
+-}
+-
+-static inline int
+-Vy (int y)
+-{
+-  int rv;
+-  if (ghid_flip_y)
+-    rv = (PCB->MaxHeight - y - gport->view_y0) / gport->zoom + 0.5;
+-  else
+-    rv = (y - gport->view_y0) / gport->zoom + 0.5;
+-  return rv;
+-}
+-
+-static inline int
+-Vz (int z)
+-{
+-  return z / gport->zoom + 0.5;
+-}
+-
+-static inline int
+-Px (int x)
+-{
+-  int rv = x * gport->zoom + gport->view_x0;
+-  if (ghid_flip_x)
+-    rv = PCB->MaxWidth - (x * gport->zoom + gport->view_x0);
+-  return  rv;
+-}
+-
+-static inline int
+-Py (int y)
+-{
+-  int rv = y * gport->zoom + gport->view_y0;
+-  if (ghid_flip_y)
+-    rv = PCB->MaxHeight - (y * gport->zoom + gport->view_y0);
+-  return  rv;
+-}
+-
+-static inline int
+-Pz (int z)
+-{
+-  return (z * gport->zoom);
+-}
+-
+ #endif /* __GHID_INCLUDED__  */
