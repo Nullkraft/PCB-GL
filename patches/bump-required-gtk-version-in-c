@@ -1,5 +1,5 @@
 Bottom: 341e836cd8e8a6148ef9f6e06ebe9856e3c2a45c
-Top:    341e836cd8e8a6148ef9f6e06ebe9856e3c2a45c
+Top:    b164e1cc3fab650a344b2b7a052d1e8e3d6552e4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-27 15:59:35 +0000
 
@@ -12,4 +12,18 @@ NB: GTK+ 2.12.0 was released in September 2007
 
 ---
 
-
+diff --git a/configure.ac b/configure.ac
+index abdd8a1..f606faa 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -715,8 +715,8 @@ for e in $HIDLIST; do
+ 		AC_MSG_ERROR([Cannot find pkg-config, make sure it is installed and in your PATH])
+ 	fi
+ 
+-	PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.4.0, , 
+-		[AC_MSG_ERROR([Cannot find gtk+ >= 2.4.0, install it and rerun ./configure
++	PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.12.0, ,
++		[AC_MSG_ERROR([Cannot find gtk+ >= 2.12.0, install it and rerun ./configure
+ Please review the following errors:
+ $GTK_PKG_ERRORS])]
+ 	)
