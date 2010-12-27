@@ -8,6 +8,8 @@ hid/gtk: Refactor storage semantics of view_x, view_y coordinates
 They now directly represent actual cursor coordinates, and don't require
 passing through SIDE_{X,Y} before use.
 
+NB: FUBAR ON ITS OWN.. TOO MANY PLACES ASSUME THE OLD WAY!
+
 
 ---
 
