@@ -1022,10 +1022,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glStencilMask (0);
   glStencilFunc (GL_ALWAYS, 0, 0);
 
-  region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-  region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-  region.Y1 = MIN (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
-  region.Y2 = MAX (Py (ev->area.y), Py (ev->area.y + ev->area.height + 1));
+  region.X1 = MIN (PCB_X (ev->area.x), PCB_X (ev->area.x + ev->area.width  + 1));
+  region.Y1 = MIN (PCB_Y (ev->area.y), PCB_Y (ev->area.y + ev->area.height + 1));
+  region.X2 = MAX (PCB_X (ev->area.x), PCB_X (ev->area.x + ev->area.width  + 1));
+  region.Y2 = MAX (PCB_Y (ev->area.y), PCB_Y (ev->area.y + ev->area.height + 1));
 
   glColor3f (port->bg_color.red / 65535.,
              port->bg_color.green / 65535.,
