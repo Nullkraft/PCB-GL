@@ -125,10 +125,10 @@ ghid_port_ranges_scale (gboolean emit_changed)
   gport->view_width = gport->width * gport->zoom;
   gport->view_height = gport->height * gport->zoom;
 
-  if (gport->view_width >= PCB->MaxWidth)
-    gport->view_width = PCB->MaxWidth;
-  if (gport->view_height >= PCB->MaxHeight)
-    gport->view_height = PCB->MaxHeight;
+//  if (gport->view_width >= PCB->MaxWidth)
+//    gport->view_width = PCB->MaxWidth;
+//  if (gport->view_height >= PCB->MaxHeight)
+//    gport->view_height = PCB->MaxHeight;
 
   adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->h_range));
   adj->page_size = gport->view_width;
@@ -156,33 +156,31 @@ ghid_port_ranges_zoom (gdouble zoom)
   /* figure out zoom values in that would just make the width fit and
    * that would just make the height fit
    */
-  xtmp = (gdouble) PCB->MaxWidth / gport->width;
-  ytmp = (gdouble) PCB->MaxHeight / gport->height;
+//  xtmp = (gdouble) PCB->MaxWidth / gport->width;
+//  ytmp = (gdouble) PCB->MaxHeight / gport->height;
 
   /* if we've tried to zoom further out than what would make the
    * entire board fit or we passed 0, then pick a zoom that just makes
    * the board fit.
    */
-  if ((zoom > xtmp && zoom > ytmp) || zoom == 0.0)
-    zoom = (xtmp > ytmp) ? xtmp : ytmp;
+//  if ((zoom > xtmp && zoom > ytmp) || zoom == 0.0)
+//    zoom = (xtmp > ytmp) ? xtmp : ytmp;
 
-  xtmp = (SIDE_X (gport->pcb_x) - gport->view_x0) /
-            (gdouble) gport->view_width;
-  ytmp = (SIDE_Y (gport->pcb_y) - gport->view_y0) /
-            (gdouble) gport->view_height;
+  xtmp = (gport->pcb_x - gport->view_x0) / (double) FLIP_X (gport->view_width);
+  ytmp = (gport->pcb_y - gport->view_y0) / (double) FLIP_Y (gport->view_height);
 
   gport->zoom = zoom;
   pixel_slop = zoom;
   ghid_port_ranges_scale(FALSE);
 
-  x0 = SIDE_X (gport->pcb_x) - xtmp * gport->view_width;
-  if (x0 < 0)
-    x0 = 0;
+  x0 = gport->pcb_x - xtmp * gport->view_width;
+//  if (x0 < 0)
+//    x0 = 0;
   gport->view_x0 = x0;
 
-  y0 = SIDE_Y (gport->pcb_y) - ytmp * gport->view_height;
-  if (y0 < 0)
-    y0 = 0;
+  y0 = gport->pcb_y - ytmp * gport->view_height;
+//  if (y0 < 0)
+//    y0 = 0;
   gport->view_y0 = y0;
 
   ghidgui->adjustment_changed_holdoff = TRUE;
@@ -226,8 +224,8 @@ ghid_note_event_location (GdkEventButton * ev)
       event_x = ev->x;
       event_y = ev->y;
     }
-  gport->pcb_x = VIEW_X (event_x);
-  gport->pcb_y = VIEW_Y (event_y);
+  gport->pcb_x = PCB_X (event_x);
+  gport->pcb_y = PCB_Y (event_y);
 
   moved = MoveCrosshairAbsolute (gport->pcb_x, gport->pcb_y);
   if (moved)
@@ -737,8 +735,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
 	  w = ghid_port.width * gport->zoom;
 	  h = ghid_port.height * gport->zoom;
 
-	  x0 = VIEW_X (0);
-	  y0 = VIEW_Y (0);
+	  x0 = PCB_X (0);
+	  y0 = PCB_Y (0);
 	  ghid_get_coords (NULL, &x, &y);
 	  x -= x0;
 	  y -= y0;

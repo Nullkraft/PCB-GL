@@ -43,30 +43,30 @@ ghid_pan_fixup ()
    * don't pan so far to the right that we see way past the right 
    * edge of the board.
    */
-  if (gport->view_x0 > PCB->MaxWidth - gport->view_width)
-    gport->view_x0 = PCB->MaxWidth - gport->view_width;
+//  if (gport->view_x0 > PCB->MaxWidth - gport->view_width)
+//    gport->view_x0 = PCB->MaxWidth - gport->view_width;
 
   /*
    * don't pan so far down that we see way past the bottom edge of
    * the board.
    */
-  if (gport->view_y0 > PCB->MaxHeight - gport->view_height)
-    gport->view_y0 = PCB->MaxHeight - gport->view_height;
+//  if (gport->view_y0 > PCB->MaxHeight - gport->view_height)
+//    gport->view_y0 = PCB->MaxHeight - gport->view_height;
 
   /* don't view above or to the left of the board... ever */
-  if (gport->view_x0 < 0)
-    gport->view_x0 = 0;
+//  if (gport->view_x0 < 0)
+//    gport->view_x0 = 0;
 
-   if (gport->view_y0 < 0)
-    gport->view_y0 = 0;
+//   if (gport->view_y0 < 0)
+//    gport->view_y0 = 0;
 
   /* if we can see the entire board and some, then zoom to fit */
-  if (gport->view_width > PCB->MaxWidth &&
-      gport->view_height > PCB->MaxHeight)
-    {
-      zoom_by (1, 0, 0);
-      return;
-    }
+//  if (gport->view_width > PCB->MaxWidth &&
+//      gport->view_height > PCB->MaxHeight)
+//    {
+//      zoom_by (1, 0, 0);
+//      return;
+//    }
 
   ghidgui->adjustment_changed_holdoff = TRUE;
   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
@@ -138,12 +138,6 @@ Zoom (int argc, char **argv, int x, int y)
       x = gport->view_width / 2;
       y = gport->view_height / 2;
     }
-  else
-    {
-      /* Px converts view->pcb, Vx converts pcb->view */
-      x = Vx (x);
-      y = Vy (y);
-    }
 
   if (argc < 1)
     {
@@ -179,10 +173,7 @@ Zoom (int argc, char **argv, int x, int y)
 static void
 zoom_to (double new_zoom, int x, int y)
 {
-  double max_zoom, xfrac, yfrac;
-#ifdef DEBUG
-  int cx, cy;
-#endif
+//  double max_zoom;
 
   /* gport->zoom:
    * zoom value is PCB units per screen pixel.  Larger numbers mean zooming
@@ -193,71 +184,42 @@ zoom_to (double new_zoom, int x, int y)
    * gport->view_width and gport->view_height are in PCB coordinates
    */
 
-#ifdef DEBUG
-  pcb_printf ("\nzoom_to( %g, %#mS, %#mS)\n", new_zoom, x, y);
-#endif
-
-  xfrac = (double) x / (double) gport->view_width;
-  yfrac = (double) y / (double) gport->view_height;
-
-  if (ghid_flip_x)
-    xfrac = 1-xfrac;
-  if (ghid_flip_y)
-    yfrac = 1-yfrac;
-
   /* Find the zoom that would just make the entire board fit */
-  max_zoom = PCB->MaxWidth / gport->width;
-  if (max_zoom < PCB->MaxHeight / gport->height)
-    max_zoom = PCB->MaxHeight / gport->height;
+//  max_zoom = PCB->MaxWidth / gport->width;
+//  if (max_zoom < PCB->MaxHeight / gport->height)
+//    max_zoom = PCB->MaxHeight / gport->height;
 
-#ifdef DEBUG
-  printf ("zoom_to():  max_zoom = %g\n", max_zoom);
-#endif
-
-  /* 
+  /*
    * clip the zooming so we can never have more than 1 pixel per PCB
    * unit and never zoom out more than viewing the entire board
    */
-     
-  if (new_zoom < 1)
-    new_zoom = 1;
-  if (new_zoom > max_zoom)
-    new_zoom = max_zoom;
 
-#ifdef DEBUG
-  printf ("max_zoom = %g, xfrac = %g, yfrac = %g, new_zoom = %g\n", 
-	  max_zoom, xfrac, yfrac, new_zoom);
+//  if (new_zoom < 1)
+//    new_zoom = 1;
+//  if (new_zoom > max_zoom)
+//    new_zoom = max_zoom;
 
-  /* find center x and y */
-  cx = gport->view_x0 + gport->view_width * xfrac * gport->zoom;
-  cy = gport->view_y0 + gport->view_height * yfrac * gport->zoom;
-
-  pcb_printf ("zoom_to():  x0 = %#mS, cx = %#mS\n", gport->view_x0, cx);
-  pcb_printf ("zoom_to():  y0 = %#mS, cy = %#mS\n", gport->view_y0, cy);
-#endif
-
-  if (gport->zoom != new_zoom)
+//  if (gport->zoom != new_zoom)
+  if (1)
     {
       gdouble xtmp, ytmp;
       gint x0, y0;
 
-      xtmp = (SIDE_X (gport->pcb_x) - gport->view_x0) /
-                (gdouble) gport->view_width;
-      ytmp = (SIDE_Y (gport->pcb_y) - gport->view_y0) /
-                (gdouble) gport->view_height;
+      xtmp = (x - gport->view_x0) / (double) FLIP_X (gport->view_width);
+      ytmp = (y - gport->view_y0) / (double) FLIP_Y (gport->view_height);
 
       gport->zoom = new_zoom;
       pixel_slop = new_zoom;
       ghid_port_ranges_scale(FALSE);
 
-      x0 = SIDE_X (gport->pcb_x) - xtmp * gport->view_width;
-      if (x0 < 0)
-        x0 = 0;
+      x0 = gport->pcb_x - xtmp * gport->view_width;
+//      if (x0 < 0)
+//	x0 = 0;
       gport->view_x0 = x0;
 
-      y0 = SIDE_Y (gport->pcb_y) - ytmp * gport->view_height;
-      if (y0 < 0)
-        y0 = 0;
+      y0 = gport->pcb_y - ytmp * gport->view_height;
+//      if (y0 < 0)
+//	y0 = 0;
       gport->view_y0 = y0;
 
       ghidgui->adjustment_changed_holdoff = TRUE;
@@ -268,10 +230,6 @@ zoom_to (double new_zoom, int x, int y)
       ghid_port_ranges_changed();
     }
 
-#ifdef DEBUG
-  printf ("zoom_to():  new x0 = %d\n", gport->view_x0);
-  printf ("zoom_to():  new y0 = %d\n", gport->view_y0);
-#endif
   ghid_set_status_line_label ();
 }
 
@@ -434,7 +392,8 @@ ghid_set_crosshair (int x, int y, int action)
        * but the value we've been given is relative to your drawing area
        */
       gdk_window_get_origin (gport->drawing_area->window, &xofs, &yofs);
-      gdk_display_warp_pointer (display, screen, xofs + Vx (x), yofs + Vy (y));
+      gdk_display_warp_pointer (display, screen, xofs + SCREEN_X (x),
+                                                 yofs + SCREEN_Y (y));
     }
 }
 
@@ -1690,25 +1649,25 @@ Center(int argc, char **argv, int x, int y)
   if (argc != 0)
     AFAIL (center);
 
-  x = GRIDFIT_X (SIDE_X (x), PCB->Grid);
-  y = GRIDFIT_Y (SIDE_Y (y), PCB->Grid);
+  x = GRIDFIT_X (x, PCB->Grid);
+  y = GRIDFIT_Y (y, PCB->Grid);
 
-  w2 = gport->view_width / 2;
-  h2 = gport->view_height / 2;
+  w2 = FLIP_X (gport->view_width) / 2;
+  h2 = FLIP_Y (gport->view_height) / 2;
   x0 = x - w2;
   y0 = y - h2;
 
-  if (x0 < 0)
-    {
-      x0 = 0;
-      x = x0 + w2;
-    }
+//  if (x0 < 0)
+//    {
+//      x0 = 0;
+//      x = x0 + w2;
+//    }
 
-  if (y0 < 0)
-    {
-      y0 = 0;
-      y = y0 + h2;
-    }
+//  if (y0 < 0)
+//    {
+//      y0 = 0;
+//      y = y0 + h2;
+//    }
 
   gport->view_x0 = x0;
   gport->view_y0 = y0;
@@ -1728,7 +1687,8 @@ Center(int argc, char **argv, int x, int y)
    * but the value we've been given is relative to your drawing area
    */
   gdk_window_get_origin (gport->drawing_area->window, &xofs, &yofs);
-  gdk_display_warp_pointer (display, screen, xofs + Vx (x), yofs + Vy (y));
+  gdk_display_warp_pointer (display, screen, xofs + SCREEN_X (x),
+                                             yofs + SCREEN_Y (y));
 
   return 0;
 }
