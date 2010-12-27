@@ -1,0 +1,28 @@
+Bottom: 829573e696ae5676b486d689cd6b27a7afe68b52
+Top:    61bb8e31bc7ec14d352ba45da31568d51ba5d812
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-27 16:12:58 +0000
+
+Refresh of cleanup-conditional-code-now-w
+
+---
+
+diff --git a/src/hid/gtk/gui-dialog.c b/src/hid/gtk/gui-dialog.c
+index 1f6b11a..80c1157 100644
+--- a/src/hid/gtk/gui-dialog.c
++++ b/src/hid/gtk/gui-dialog.c
+@@ -229,14 +229,12 @@ ghid_dialog_close_confirm ()
+                           GTK_STOCK_SAVE,            GTK_RESPONSE_YES,
+                           NULL);
+ 
+-#if GTK_CHECK_VERSION (2,6,0)
+   /* Set the alternative button order (ok, cancel, help) for other systems */
+   gtk_dialog_set_alternative_button_order(GTK_DIALOG(dialog),
+                                           GTK_RESPONSE_YES,
+                                           GTK_RESPONSE_NO,
+                                           GTK_RESPONSE_CANCEL,
+                                           -1);
+-#endif
+ 
+   switch (gtk_dialog_run (GTK_DIALOG (dialog)))
+     {
