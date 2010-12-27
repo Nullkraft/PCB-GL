@@ -1,5 +1,5 @@
 Bottom: d3ec6b8ac4e21608b10cc1493a58f76330c2aad7
-Top:    639709a8c0fdaa7815be10507f8efa3a53cd4bb0
+Top:    170bd5a990ef76c111a06c974a5d93d8325ac0fd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-27 00:23:23 +0000
 
@@ -34,3 +34,29 @@ index b1dc11d..0a2cc59 100644
  
  typedef struct hid_gc_struct
  {
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 6b2dd87..9fd781c 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -33,21 +33,6 @@ static void zoom_by (double factor, int x, int y);
+ 
+ int ghid_flip_x = 0, ghid_flip_y = 0;
+ 
+-/* ------------------------------------------------------------ */
+-
+-static inline int 
+-Vx2 (int x)
+-{     
+-  return (x - gport->view_x0) / gport->zoom + 0.5;
+-}       
+-        
+-static inline int 
+-Vy2 (int y)
+-{     
+-  return (y - gport->view_y0) / gport->zoom + 0.5;
+-}       
+-
+-/* ------------------------------------------------------------ */
+ 
+ static void
+ ghid_pan_fixup ()
