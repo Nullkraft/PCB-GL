@@ -1,0 +1,16 @@
+Bottom: 61bb8e31bc7ec14d352ba45da31568d51ba5d812
+Top:    61bb8e31bc7ec14d352ba45da31568d51ba5d812
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-27 17:12:34 +0000
+
+hid/gtk: Fix "Center" action in a couple of ways
+
+We need to update the adjustments together otherwise the center
+action will only work on one axis at a time.
+
+Fix typo for out-of bounds check which mixed width and height.
+
+
+---
+
+
