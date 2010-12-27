@@ -497,12 +497,6 @@ ghid_set_crosshair (int x, int y, int action)
        * but the value we've been given is relative to your drawing area
        */
       gdk_window_get_origin (gport->drawing_area->window, &xofs, &yofs);
-
-      /*
-       * Note that under X11, gdk_display_warp_pointer is just a wrapper around XWarpPointer, but
-       * hopefully by avoiding the direct call to an X function we might still work under windows
-       * and other non-X11 based gdk's
-       */
       gdk_display_warp_pointer (display, screen, xofs + Vx (x), yofs + Vy (y));
     }
 }
@@ -1703,12 +1697,6 @@ Center(int argc, char **argv, int x, int y)
   /* figure out where the pointer is and then move it from there by the specified delta */
   gdk_display_get_pointer (display, NULL, &cx, &cy, NULL);
   gdk_display_warp_pointer (display, screen, cx - dx, cy - dy);
-
-  /*
-   * Note that under X11, gdk_display_warp_pointer is just a wrapper around XWarpPointer, but
-   * hopefully by avoiding the direct call to an X function we might still work under windows
-   * and other non-X11 based gdk's
-   */
 
   return 0;
 }
