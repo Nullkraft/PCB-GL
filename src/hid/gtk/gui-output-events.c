@@ -125,10 +125,10 @@ ghid_port_ranges_scale (gboolean emit_changed)
   gport->view_width = gport->width * gport->zoom;
   gport->view_height = gport->height * gport->zoom;
 
-  if (gport->view_width >= PCB->MaxWidth)
-    gport->view_width = PCB->MaxWidth;
-  if (gport->view_height >= PCB->MaxHeight)
-    gport->view_height = PCB->MaxHeight;
+//  if (gport->view_width >= PCB->MaxWidth)
+//    gport->view_width = PCB->MaxWidth;
+//  if (gport->view_height >= PCB->MaxHeight)
+//    gport->view_height = PCB->MaxHeight;
 
   adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->h_range));
   adj->page_size = gport->view_width;
@@ -691,8 +691,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
 	  w = ghid_port.width * gport->zoom;
 	  h = ghid_port.height * gport->zoom;
 
-	  x0 = EVENT_TO_PCB_X (0);
-	  y0 = EVENT_TO_PCB_Y (0);
+	  x0 = PCB_X (0);
+	  y0 = PCB_Y (0);
 	  ghid_get_coords (NULL, &x, &y);
 	  x -= x0;
 	  y -= y0;

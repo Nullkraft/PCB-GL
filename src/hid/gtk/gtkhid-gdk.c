@@ -140,10 +140,11 @@ ghid_draw_grid (void)
   int x1, y1, x2, y2, n, i;
   double x, y;
   render_priv *priv = gport->render_priv;
+  return;
 
   if (!Settings.DrawGrid)
     return;
-  if (Vz (PCB->Grid) < MIN_GRID_DISTANCE)
+  if (SCREEN_R (PCB->Grid) < MIN_GRID_DISTANCE)
     return;
   if (!priv->grid_gc)
     {
@@ -160,11 +161,10 @@ ghid_draw_grid (void)
       gdk_gc_set_clip_origin (priv->grid_gc, 0, 0);
       set_clip (priv, priv->grid_gc);
     }
-  x1 = GRIDFIT_X (SIDE_X (gport->view_x0), PCB->Grid);
-  y1 = GRIDFIT_Y (SIDE_Y (gport->view_y0), PCB->Grid);
-  x2 = GRIDFIT_X (SIDE_X (gport->view_x0 + gport->view_width - 1), PCB->Grid);
-  y2 =
-    GRIDFIT_Y (SIDE_Y (gport->view_y0 + gport->view_height - 1), PCB->Grid);
+  x1 = GRIDFIT_X (gport->view_x0, PCB->Grid);
+  y1 = GRIDFIT_Y (gport->view_y0, PCB->Grid);
+  x2 = GRIDFIT_X (gport->view_x0 + FLIP_X (gport->view_width)  - 1, PCB->Grid);
+  y2 = GRIDFIT_Y (gport->view_y0 + FLIP_Y (gport->view_height) - 1, PCB->Grid);
   if (x1 > x2)
     {
       int tmp = x1;
@@ -177,13 +177,13 @@ ghid_draw_grid (void)
       y1 = y2;
       y2 = tmp;
     }
-  if (Vx (x1) < 0)
+  if (SCREEN_X (x1) < 0)
     x1 += PCB->Grid;
-  if (Vy (y1) < 0)
+  if (SCREEN_Y (y1) < 0)
     y1 += PCB->Grid;
-  if (Vx (x2) >= gport->width)
+  if (SCREEN_X (x2) >= gport->width)
     x2 -= PCB->Grid;
-  if (Vy (y2) >= gport->height)
+  if (SCREEN_Y (y2) >= gport->height)
     y2 -= PCB->Grid;
   n = (int) ((x2 - x1) / PCB->Grid + 0.5) + 1;
   if (n > npoints)
@@ -194,14 +194,14 @@ ghid_draw_grid (void)
   n = 0;
   for (x = x1; x <= x2; x += PCB->Grid)
     {
-      points[n].x = Vx (x);
+      points[n].x = SCREEN_X (x);
       n++;
     }
   if (n == 0)
     return;
   for (y = y1; y <= y2; y += PCB->Grid)
     {
-      int vy = Vy (y);
+      int vy = SCREEN_Y (y);
       for (i = 0; i < n; i++)
 	points[i].y = vy;
       gdk_draw_points (gport->drawable, priv->grid_gc, points, n);
@@ -445,7 +445,7 @@ ghid_set_line_cap (hidGC gc, EndCapStyle style)
     }
   if (gc->gc)
     gdk_gc_set_line_attributes (WHICH_GC (gc),
-				Vz (gc->width), GDK_LINE_SOLID,
+				SCREEN_R (gc->width), GDK_LINE_SOLID,
 				(GdkCapStyle)gc->cap, (GdkJoinStyle)gc->join);
 }
 
@@ -457,7 +457,7 @@ ghid_set_line_width (hidGC gc, int width)
   gc->width = width;
   if (gc->gc)
     gdk_gc_set_line_attributes (WHICH_GC (gc),
-				Vz (gc->width), GDK_LINE_SOLID,
+				SCREEN_R (gc->width), GDK_LINE_SOLID,
 				(GdkCapStyle)gc->cap, (GdkJoinStyle)gc->join);
 }
 
@@ -511,10 +511,10 @@ ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2)
   double dx1, dy1, dx2, dy2;
   render_priv *priv = gport->render_priv;
 
-  dx1 = Vx ((double) x1);
-  dy1 = Vy ((double) y1);
-  dx2 = Vx ((double) x2);
-  dy2 = Vy ((double) y2);
+  dx1 = SCREEN_X ((double) x1);
+  dy1 = SCREEN_Y ((double) y1);
+  dx2 = SCREEN_X ((double) x2);
+  dy2 = SCREEN_Y ((double) y2);
 
   if (!ClipLine (0, 0, gport->width, gport->height,
 		 &dx1, &dy1, &dx2, &dy2, gc->width / gport->zoom))
@@ -535,15 +535,17 @@ ghid_draw_arc (hidGC gc, int cx, int cy,
   w = gport->width * gport->zoom;
   h = gport->height * gport->zoom;
   radius = (xradius > yradius) ? xradius : yradius;
+#if 0
   if (SIDE_X (cx) < gport->view_x0 - radius
       || SIDE_X (cx) > gport->view_x0 + w + radius
       || SIDE_Y (cy) < gport->view_y0 - radius
       || SIDE_Y (cy) > gport->view_y0 + h + radius)
     return;
+#endif
 
   USE_GC (gc);
-  vrx = Vz (xradius);
-  vry = Vz (yradius);
+  vrx = SCREEN_R (xradius);
+  vry = SCREEN_R (yradius);
 
   if (ghid_flip_x)
     {
@@ -559,7 +561,7 @@ ghid_draw_arc (hidGC gc, int cx, int cy,
   start_angle = (start_angle + 360 + 180) % 360 - 180;
 
   gdk_draw_arc (gport->drawable, priv->u_gc, 0,
-		Vx (cx) - vrx, Vy (cy) - vry,
+		SCREEN_X (cx) - vrx, SCREEN_Y (cy) - vry,
 		vrx * 2, vry * 2, (start_angle + 180) * 64, delta_angle * 64);
 }
 
@@ -573,6 +575,7 @@ ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
   w = gport->width * gport->zoom;
   h = gport->height * gport->zoom;
 
+#if 0
   if ((SIDE_X (x1) < gport->view_x0 - lw
        && SIDE_X (x2) < gport->view_x0 - lw)
       || (SIDE_X (x1) > gport->view_x0 + w + lw
@@ -582,11 +585,12 @@ ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
       || (SIDE_Y (y1) > gport->view_y0 + h + lw
 	  && SIDE_Y (y2) > gport->view_y0 + h + lw))
     return;
+#endif
 
-  x1 = Vx (x1);
-  y1 = Vy (y1);
-  x2 = Vx (x2);
-  y2 = Vy (y2);
+  x1 = SCREEN_X (x1);
+  y1 = SCREEN_Y (y1);
+  x2 = SCREEN_X (x2);
+  y2 = SCREEN_Y (y2);
 
   if (x1 > x2)
     {
@@ -615,16 +619,18 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
 
   w = gport->width * gport->zoom;
   h = gport->height * gport->zoom;
+#if 0
   if (SIDE_X (cx) < gport->view_x0 - radius
       || SIDE_X (cx) > gport->view_x0 + w + radius
       || SIDE_Y (cy) < gport->view_y0 - radius
       || SIDE_Y (cy) > gport->view_y0 + h + radius)
     return;
+#endif
 
   USE_GC (gc);
-  vr = Vz (radius);
+  vr = SCREEN_R (radius);
   gdk_draw_arc (gport->drawable, priv->u_gc, TRUE,
-		Vx (cx) - vr, Vy (cy) - vr, vr * 2, vr * 2, 0, 360 * 64);
+		SCREEN_X (cx) - vr, SCREEN_Y (cy) - vr, vr * 2, vr * 2, 0, 360 * 64);
 }
 
 void
@@ -643,8 +649,8 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
     }
   for (i = 0; i < n_coords; i++)
     {
-      points[i].x = Vx (x[i]);
-      points[i].y = Vy (y[i]);
+      points[i].x = SCREEN_X (x[i]);
+      points[i].y = SCREEN_Y (y[i]);
     }
   gdk_draw_polygon (gport->drawable, priv->u_gc, 1, points, n_coords);
 }
@@ -659,6 +665,7 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
   w = gport->width * gport->zoom;
   h = gport->height * gport->zoom;
 
+#if 0
   if ((SIDE_X (x1) < gport->view_x0 - lw
        && SIDE_X (x2) < gport->view_x0 - lw)
       || (SIDE_X (x1) > gport->view_x0 + w + lw
@@ -668,11 +675,12 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
       || (SIDE_Y (y1) > gport->view_y0 + h + lw
 	  && SIDE_Y (y2) > gport->view_y0 + h + lw))
     return;
+#endif
 
-  x1 = Vx (x1);
-  y1 = Vy (y1);
-  x2 = Vx (x2);
-  y2 = Vy (y2);
+  x1 = SCREEN_X (x1);
+  y1 = SCREEN_Y (y1);
+  x2 = SCREEN_X (x2);
+  y2 = SCREEN_Y (y2);
   if (x2 < x1)
     {
       xx = x1;
@@ -719,19 +727,15 @@ redraw_region (GdkRectangle *rect)
   set_clip (priv, priv->mask_gc);
   set_clip (priv, priv->grid_gc);
 
-  region.X1 = MIN(Px(priv->clip_rect.x),
-                  Px(priv->clip_rect.x + priv->clip_rect.width + 1));
-  region.Y1 = MIN(Py(priv->clip_rect.y),
-                  Py(priv->clip_rect.y + priv->clip_rect.height + 1));
-  region.X2 = MAX(Px(priv->clip_rect.x),
-                  Px(priv->clip_rect.x + priv->clip_rect.width + 1));
-  region.Y2 = MAX(Py(priv->clip_rect.y),
-                  Py(priv->clip_rect.y + priv->clip_rect.height + 1));
+  region.X1 = MIN (PCB_X (0), PCB_X (gport->width  + 1));
+  region.Y1 = MIN (PCB_Y (0), PCB_Y (gport->height + 1));
+  region.X2 = MAX (PCB_X (0), PCB_X (gport->width  + 1));
+  region.Y2 = MAX (PCB_Y (0), PCB_Y (gport->height + 1));
 
-  eleft = Vx (0);
-  eright = Vx (PCB->MaxWidth);
-  etop = Vy (0);
-  ebottom = Vy (PCB->MaxHeight);
+  eleft =   SCREEN_X (0);
+  eright =  SCREEN_X (PCB->MaxWidth);
+  etop =    SCREEN_Y (0);
+  ebottom = SCREEN_Y (PCB->MaxHeight);
   if (eleft > eright)
     {
       int tmp = eleft;
@@ -1018,8 +1022,8 @@ show_crosshair (gboolean paint_new_location)
       /* FIXME: when CrossColor changed from config */
       ghid_map_color_string (Settings.CrossColor, &cross_color);
     }
-  x = DRAW_X (gport->crosshair_x);
-  y = DRAW_Y (gport->crosshair_y);
+  x = SCREEN_X (gport->crosshair_x);
+  y = SCREEN_Y (gport->crosshair_y);
 
   gdk_gc_set_foreground (xor_gc, &cross_color);
 
@@ -1268,10 +1272,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   gdk_draw_rectangle (pixmap, priv->bg_gc, TRUE, 0, 0, width, height);
 
   /* call the drawing routine */
-  region.X1 = MIN(Px(0), Px(gport->width + 1));
-  region.Y1 = MIN(Py(0), Py(gport->height + 1));
-  region.X2 = MAX(Px(0), Px(gport->width + 1));
-  region.Y2 = MAX(Py(0), Py(gport->height + 1));
+  region.X1 = MIN (PCB_X (0), PCB_X (gport->width  + 1));
+  region.Y1 = MIN (PCB_Y (0), PCB_Y (gport->height + 1));
+  region.X2 = MAX (PCB_X (0), PCB_X (gport->width  + 1));
+  region.Y2 = MAX (PCB_Y (0), PCB_Y (gport->height + 1));
   hid_expose_callback (&ghid_hid, &region, NULL);
 
   gport->drawable = save_drawable;
