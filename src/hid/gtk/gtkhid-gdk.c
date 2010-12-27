@@ -88,11 +88,10 @@ ghid_draw_grid (void)
       gdk_gc_set_function (gport->grid_gc, GDK_XOR);
       gdk_gc_set_foreground (gport->grid_gc, &gport->grid_color);
     }
-  x1 = GRIDFIT_X (SIDE_X (gport->view_x0), PCB->Grid);
-  y1 = GRIDFIT_Y (SIDE_Y (gport->view_y0), PCB->Grid);
-  x2 = GRIDFIT_X (SIDE_X (gport->view_x0 + gport->view_width - 1), PCB->Grid);
-  y2 =
-    GRIDFIT_Y (SIDE_Y (gport->view_y0 + gport->view_height - 1), PCB->Grid);
+  x1 = GRIDFIT_X (gport->view_x0, PCB->Grid);
+  y1 = GRIDFIT_Y (gport->view_y0, PCB->Grid);
+  x2 = GRIDFIT_X (gport->view_x0 + FLIP_X (gport->view_width)  - 1, PCB->Grid);
+  y2 = GRIDFIT_Y (gport->view_y0 + FLIP_Y (gport->view_height) - 1, PCB->Grid);
   if (x1 > x2)
     {
       int tmp = x1;
@@ -483,11 +482,13 @@ ghid_draw_arc (hidGC gc, int cx, int cy,
   w = gport->width * gport->zoom;
   h = gport->height * gport->zoom;
   radius = (xradius > yradius) ? xradius : yradius;
+#if 0
   if (SIDE_X (cx) < gport->view_x0 - radius
       || SIDE_X (cx) > gport->view_x0 + w + radius
       || SIDE_Y (cy) < gport->view_y0 - radius
       || SIDE_Y (cy) > gport->view_y0 + h + radius)
     return;
+#endif
 
   USE_GC (gc);
   vrx = Vz (xradius);
@@ -520,6 +521,7 @@ ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
   w = gport->width * gport->zoom;
   h = gport->height * gport->zoom;
 
+#if 0
   if ((SIDE_X (x1) < gport->view_x0 - lw
        && SIDE_X (x2) < gport->view_x0 - lw)
       || (SIDE_X (x1) > gport->view_x0 + w + lw
@@ -529,6 +531,7 @@ ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2)
       || (SIDE_Y (y1) > gport->view_y0 + h + lw
 	  && SIDE_Y (y2) > gport->view_y0 + h + lw))
     return;
+#endif
 
   x1 = Vx (x1);
   y1 = Vy (y1);
@@ -561,11 +564,13 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
 
   w = gport->width * gport->zoom;
   h = gport->height * gport->zoom;
+#if 0
   if (SIDE_X (cx) < gport->view_x0 - radius
       || SIDE_X (cx) > gport->view_x0 + w + radius
       || SIDE_Y (cy) < gport->view_y0 - radius
       || SIDE_Y (cy) > gport->view_y0 + h + radius)
     return;
+#endif
 
   USE_GC (gc);
   vr = Vz (radius);
@@ -603,6 +608,7 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
   w = gport->width * gport->zoom;
   h = gport->height * gport->zoom;
 
+#if 0
   if ((SIDE_X (x1) < gport->view_x0 - lw
        && SIDE_X (x2) < gport->view_x0 - lw)
       || (SIDE_X (x1) > gport->view_x0 + w + lw
@@ -612,6 +618,7 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
       || (SIDE_Y (y1) > gport->view_y0 + h + lw
 	  && SIDE_Y (y2) > gport->view_y0 + h + lw))
     return;
+#endif
 
   x1 = Vx (x1);
   y1 = Vy (y1);
