@@ -82,14 +82,6 @@ ghid_pan_fixup ()
       return;
     }
 
-  /* if we can see the entire board and some, then zoom to fit */
-  if (gport->view_width > PCB->MaxWidth &&
-      gport->view_height > PCB->MaxHeight)
-    {
-      zoom_by (1, 0, 0);
-      return;
-    }
-
   ghidgui->adjustment_changed_holdoff = TRUE;
   gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
   gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view_y0);
