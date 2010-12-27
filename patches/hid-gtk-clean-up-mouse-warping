@@ -5,6 +5,10 @@ Date:   2010-12-27 16:09:36 +0000
 
 hid/gtk: Clean up mouse warping code now we require a later GTK version
 
+Remove the X11 specific implementation and remove some comments in the
+GDK one which were more relevant to explain why we previously had two
+implementations.
+
 
 ---
 
