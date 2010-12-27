@@ -1,5 +1,5 @@
-Bottom: 61bb8e31bc7ec14d352ba45da31568d51ba5d812
-Top:    9a23395c90d18b744fbbdfbfe1ffae0ad6a88d8a
+Bottom: 8c4e8595773517a9e21fcd7b76989bb8995d3e3a
+Top:    157331c3f3aed7a859db71852aed81d2fc653c5b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-27 17:12:34 +0000
 
@@ -14,7 +14,7 @@ Fix typo for out-of bounds check which mixed width and height.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 3bb2321..08ec16b 100644
+index 991c97d..d3df2f9 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -53,14 +53,14 @@ static void
@@ -67,7 +67,7 @@ index 3bb2321..08ec16b 100644
  }
  
  /* ------------------------------------------------------------ */
-@@ -1674,7 +1674,7 @@ Center(int argc, char **argv, int x, int y)
+@@ -1668,7 +1668,7 @@ Center(int argc, char **argv, int x, int y)
    x0 = x - w2;
    y0 = y - h2;
  
@@ -76,7 +76,7 @@ index 3bb2321..08ec16b 100644
      {
        x0 = 0;
        x = x0 + w2;
-@@ -1683,7 +1683,7 @@ Center(int argc, char **argv, int x, int y)
+@@ -1677,7 +1677,7 @@ Center(int argc, char **argv, int x, int y)
    if (y0 < 0)
      {
        y0 = 0;
