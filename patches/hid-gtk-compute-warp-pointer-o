@@ -1,0 +1,15 @@
+Bottom: 61bb8e31bc7ec14d352ba45da31568d51ba5d812
+Top:    61bb8e31bc7ec14d352ba45da31568d51ba5d812
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-27 16:14:28 +0000
+
+hid/gtk: Compute warp pointer offset without reading current position
+
+This is closer to the way the old code which used the an XWarpPointer
+call worked, and makes the two code-paths where we warp the pointer
+consistent.
+
+
+---
+
+
