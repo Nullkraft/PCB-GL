@@ -1,7 +1,7 @@
-Bottom: e61cf04d214075ac1d1c0006ea72dade86ca390f
-Top:    b22dbc372966355af9d8c3565c26a0bb7c4c9dad
+Bottom: 669aff1e3527b4f99ab0e80dbf439e765dede3d2
+Top:    a6c7872e45fd7c5bf973accf89d3ce3f12183158
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-26 00:11:19 +0000
+Date:   2010-12-28 01:41:24 +0000
 
 TEST REMOVE SOME MORE GDK STUFF
 
@@ -21,10 +21,10 @@ index e287ae7..de221b7 100644
  	hid/gtk/gui-utils.c
  libgtk_a_SOURCES = ${LIBGTK_SRCS} hid/gtk/gtk_lists.h
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index b1dc11d..5b94733 100644
+index 0a2cc59..5420360 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -883,3 +883,178 @@ ghid_show_crosshair (gboolean show)
+@@ -868,3 +868,178 @@ ghid_show_crosshair (gboolean show)
        draw_markers_prev = FALSE;
      }
  }
@@ -204,10 +204,10 @@ index b1dc11d..5b94733 100644
 +  return pixmap;
 +}
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 569a09b..9c1c78f 100644
+index e0120b6..c698cff 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -561,28 +561,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -558,28 +558,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  }
  
  
@@ -426,7 +426,7 @@ index 828c524..4ce9121 100644
    g_signal_connect (G_OBJECT (gport->top_window), "configure_event",
  		    G_CALLBACK (top_window_configure_event_cb), port);
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index b814366..f308aae 100644
+index d2a76ce..55cdcd9 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -36,7 +36,7 @@
@@ -438,7 +438,7 @@ index b814366..f308aae 100644
  
  
    /* Silk and rats lines are the two additional selectable to draw on.
-@@ -308,9 +308,6 @@ gint ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+@@ -306,9 +306,6 @@ gint ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  				       GdkEventScroll * ev, GHidPort * out);
  
  
@@ -448,7 +448,7 @@ index b814366..f308aae 100644
  gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
-@@ -479,14 +476,6 @@ void ghid_logv (const char *fmt, va_list args);
+@@ -477,14 +474,6 @@ void ghid_logv (const char *fmt, va_list args);
  /* gui-pinout-window.c */
  void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
  
@@ -463,7 +463,7 @@ index b814366..f308aae 100644
  /* gtkhid-gdk.c */
  hidGC ghid_make_gc (void);
  void ghid_destroy_gc (hidGC);
-@@ -507,6 +496,12 @@ void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
+@@ -505,6 +494,12 @@ void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
  void ghid_invalidate_lr ();
  void ghid_invalidate_all ();
  void ghid_show_crosshair (gboolean show);
@@ -475,4 +475,4 @@ index b814366..f308aae 100644
 +                               int width, int height, int depth);
  
  /* gtkhid-main.c */
- void ghid_get_coords (const char *msg, int *x, int *y);
+ void ghid_pan_fixup (void);
