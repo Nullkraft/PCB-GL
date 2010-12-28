@@ -1,5 +1,5 @@
-Bottom: 2e04c6feb5c0e929feab83bc8d2aae142b68544e
-Top:    66866dca874c2eaf54da08667bd8af7dff6f5776
+Bottom: d29309cabb2c8ea426c3ffeaa9c6f7a7babd81ff
+Top:    2ddcd1e00dae199343ca27a7bcb52ca05bd2a5fc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 19:44:29 +0000
 
@@ -47,10 +47,10 @@ index d8e631f..3dbb178 100644
    return 0;
  }
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 5cb6e16..b196f1c 100644
+index 69e5f40..15454d3 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -373,7 +373,7 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
+@@ -370,7 +370,7 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
    state = (GdkModifierType) (kev->state);
    mk = ghid_modifier_keys_state (&state);
  
@@ -59,7 +59,7 @@ index 5cb6e16..b196f1c 100644
  
    handled = TRUE;		/* Start off assuming we handle it */
    switch (ksym)
-@@ -479,7 +479,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+@@ -476,7 +476,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
    ghid_note_event_location (ev);
    state = (GdkModifierType) (ev->state);
    mk = ghid_modifier_keys_state (&state);
@@ -68,7 +68,7 @@ index 5cb6e16..b196f1c 100644
    HideCrosshair (TRUE);
    drag = have_crosshair_attachments ();
  
-@@ -488,7 +488,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+@@ -485,7 +485,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
    ghid_invalidate_all ();
    RestoreCrosshair (TRUE);
    ghid_set_status_line_label ();
@@ -77,7 +77,7 @@ index 5cb6e16..b196f1c 100644
    if (!gport->panning)
      g_idle_add (ghid_idle_cb, NULL);
    return TRUE;
-@@ -875,7 +875,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -872,7 +872,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
        cursor_in_viewport = FALSE;
      }
  

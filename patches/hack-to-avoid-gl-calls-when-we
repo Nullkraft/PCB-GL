@@ -1,5 +1,5 @@
-Bottom: 66866dca874c2eaf54da08667bd8af7dff6f5776
-Top:    ce05e2c0c78c8011061be0350094a983f7f250ec
+Bottom: 2ddcd1e00dae199343ca27a7bcb52ca05bd2a5fc
+Top:    b0903ff38bdbe1b5d15cf2cca8ab9cef6b2cc314
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 19:46:29 +0000
 
@@ -9,7 +9,7 @@ Hack to avoid GL calls when we're out of context
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 8ff5fa4..e5802ad 100644
+index 1afea9e..ee2eaff 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -45,6 +45,7 @@ static hidGC current_gc = NULL;

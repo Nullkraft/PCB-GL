@@ -1,5 +1,5 @@
-Bottom: 0211cf62200b2a84be47424447b6fe502e1b8882
-Top:    9c2e3ffa7a13b196b373cb9feb3bcbe111d5c9d6
+Bottom: 4840875e14bbd0dd8940b28dd32eb5e5b0e19e26
+Top:    236aaa3e29e13647f8252bf4bb5528245bc228a8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 02:14:12 +0000
 
@@ -27,7 +27,7 @@ index 4fc60b6..720ed7d 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index f518914..5cb6e16 100644
+index 35a2ec7..69e5f40 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -47,6 +47,8 @@
@@ -39,7 +39,7 @@ index f518914..5cb6e16 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -754,6 +756,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -751,6 +753,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        /* Make sure drawing area has keyboard focus when we are in it.
         */
        gtk_widget_grab_focus (out->drawing_area);
@@ -48,7 +48,7 @@ index f518914..5cb6e16 100644
      }
    ghidgui->in_popup = FALSE;
  
-@@ -861,6 +865,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -858,6 +862,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
  	    }
  	  g_idle_add (ghid_pan_idle_cb, NULL);
  	}
@@ -57,7 +57,7 @@ index f518914..5cb6e16 100644
      }
  
    if(cursor_in_viewport)
-@@ -909,3 +915,31 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+@@ -906,3 +912,31 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  
    return TRUE;
  }
@@ -178,10 +178,10 @@ index d6bd03c..3af647e 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 93a1970..809d0ac 100644
+index c9c5883..8918482 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -148,6 +148,8 @@ typedef struct
+@@ -146,6 +146,8 @@ typedef struct
      library_window_width,
      library_window_height,
      netlist_window_height, history_size, settings_mode, auto_pan_speed;
@@ -190,7 +190,7 @@ index 93a1970..809d0ac 100644
  }
  GhidGui;
  
-@@ -160,6 +162,7 @@ typedef struct
+@@ -158,6 +160,7 @@ typedef struct
  {
    GtkWidget *top_window,	/* toplevel widget              */
     *drawing_area;		/* and its drawing area */
@@ -198,7 +198,7 @@ index 93a1970..809d0ac 100644
    GdkPixmap *pixmap, *mask;
    GdkDrawable *drawable;	/* Current drawable for drawing routines */
    gint width, height;
-@@ -311,6 +314,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -309,6 +312,10 @@ gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
  
