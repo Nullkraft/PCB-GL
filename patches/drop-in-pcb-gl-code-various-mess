@@ -1,5 +1,5 @@
 Bottom: b795bd3de91d8ff19f0bfc480b6ee3e91366661c
-Top:    b7ed844e934a2a1e5c9e53f78ff7264c835a5a0d
+Top:    b3a8c67d2f2c90112f117382aa7feefa68c61efe
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 20:08:31 +0000
 
@@ -790,7 +790,7 @@ index a5664b6..3e3ac50 100644
  {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..e75d36b
+index 0000000..332deb5
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -0,0 +1,1210 @@
@@ -1317,7 +1317,7 @@ index 0000000..e75d36b
 +  printf ("ghid_set_line_cap_angle() -- not implemented\n");
 +}
 +
-+void
++static void
 +ghid_invalidate_current_gc (void)
 +{
 +  current_gc = NULL;
@@ -2123,7 +2123,7 @@ index 10a1799..adbf1a4 100644
    gtk_widget_add_events (gport->drawing_area, GDK_EXPOSURE_MASK
  			 | GDK_LEAVE_NOTIFY_MASK | GDK_ENTER_NOTIFY_MASK
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index b2b2ce4..77e4369 100644
+index b2b2ce4..d8befcf 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -474,7 +474,7 @@ void ghid_logv (const char *fmt, va_list args);
@@ -2135,15 +2135,7 @@ index b2b2ce4..77e4369 100644
  int ghid_set_layer (const char *name, int group, int empty);
  hidGC ghid_make_gc (void);
  void ghid_destroy_gc (hidGC);
-@@ -485,6 +485,7 @@ void ghid_set_line_width (hidGC gc, int width);
- void ghid_set_draw_xor (hidGC gc, int xor);
- void ghid_set_draw_faded (hidGC gc, int faded);
- void ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2);
-+void ghid_invalidate_current_gc (void);
- void ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2);
- void ghid_draw_arc (hidGC gc, int cx, int cy, int xradius, int yradius,
-                     int start_angle, int delta_angle);
-@@ -496,7 +497,10 @@ void ghid_invalidate_lr ();
+@@ -496,7 +496,10 @@ void ghid_invalidate_lr ();
  void ghid_invalidate_all ();
  void ghid_show_crosshair (gboolean show);
  void ghid_init_renderer (int *, char ***, GHidPort *);
