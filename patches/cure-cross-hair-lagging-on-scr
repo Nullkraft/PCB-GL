@@ -1,5 +1,5 @@
-Bottom: 170faa051757394d59b0b0377a7fb77b27fbed3b
-Top:    dba4a9519931264c898197484aa2c359bbb3feae
+Bottom: 38b82d8933c42d6e7e2e32d0343b2df151e38353
+Top:    38ae23b71e961b2c7263ee8d6a612ffeeb37ef73
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 02:14:07 +0000
 
@@ -11,10 +11,10 @@ FIXME: SHOULD NOT RE-WRITE THE GTK HID
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 26b1bb4..a1ea9ef 100644
+index 1047af1..2d2e2e0 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -688,11 +688,12 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -685,11 +685,12 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
  
@@ -28,7 +28,7 @@ index 26b1bb4..a1ea9ef 100644
  
  
    if (out->panning)
-@@ -712,11 +713,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -709,11 +710,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    queue_tooltip_update (out);
  #endif
  

@@ -1,5 +1,5 @@
-Bottom: 3b35e8a3e70c0f3cd112e8ae848de90fcc778216
-Top:    45fda9d2b29016f97f3d22680585eb6df7186a16
+Bottom: 69dd938e32565ccdd83bb94417c09ed9746d03b1
+Top:    7b18f4a8d8d4f08364ce187b07cbe695481e7eff
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 02:14:10 +0000
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 20fd67b..a6779c7 100644
+index c3df6f8..4a64d5b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,7 +21,9 @@
@@ -369,10 +369,10 @@ index 20fd67b..a6779c7 100644
 +  ghid_invalidate_all ();
 +}
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index a1ea9ef..8bac602 100644
+index 2d2e2e0..c0677ea 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -245,6 +245,14 @@ ghid_note_event_location (GdkEventButton * ev)
+@@ -242,6 +242,14 @@ ghid_note_event_location (GdkEventButton * ev)
        event_x = ev->x;
        event_y = ev->y;
      }
@@ -387,7 +387,7 @@ index a1ea9ef..8bac602 100644
    gport->view_x = event_x * gport->zoom + gport->view_x0;
    gport->view_y = event_y * gport->zoom + gport->view_y0;
  
-@@ -557,7 +565,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -554,7 +562,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
    return 0;
  }
  
@@ -436,10 +436,10 @@ index d794b1b..fcb44f2 100644
    gtk_box_pack_start(GTK_BOX(vbox_left), vbox, FALSE, FALSE, 0);
    ghidgui->mode_buttons0_frame_vbox = vbox;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 3f0d1e6..93a1970 100644
+index a213a3a..c9c5883 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -307,7 +307,6 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -305,7 +305,6 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
  gint ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  				       GdkEventScroll * ev, GHidPort * out);
  
@@ -447,7 +447,7 @@ index 3f0d1e6..93a1970 100644
  gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
-@@ -513,6 +512,9 @@ void ghid_port_drawing_realize_cb (GtkWidget *, gpointer);
+@@ -511,6 +510,9 @@ void ghid_port_drawing_realize_cb (GtkWidget *, gpointer);
  gboolean ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev);
  GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
                                 int width, int height, int depth);
@@ -456,4 +456,4 @@ index 3f0d1e6..93a1970 100644
 +void ghid_view_2d (void *ball, gboolean view_2d, gpointer userdata);
  
  /* gtkhid-main.c */
- void ghid_invalidate_current_gc ();
+ void ghid_pan_fixup (void);

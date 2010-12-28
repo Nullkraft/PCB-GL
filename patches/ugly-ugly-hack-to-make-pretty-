@@ -1,5 +1,5 @@
-Bottom: 23c8fc34d196bd681c42a856443cf2d04a966dc6
-Top:    ed243ec06b198ecc06d8eed9f4593e25b5a9429f
+Bottom: 5f189d73671d24691254a60c63665e49bdb092f1
+Top:    5c04548117172f77ac48ef8198a4f4e11c3e1dee
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 02:14:09 +0000
 
@@ -15,10 +15,10 @@ way to turn it off would also be useful.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index b1dfc1c..b465467 100644
+index d455c09..11879f2 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -685,6 +685,12 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+@@ -670,6 +670,12 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  }
  
  void
@@ -32,7 +32,7 @@ index b1dfc1c..b465467 100644
  {
    gint w, h, lw, xx, yy;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 10a4f2f..20fd67b 100644
+index 0a696d6..c3df6f8 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -405,26 +405,31 @@ typedef struct
@@ -114,10 +114,10 @@ index 10a4f2f..20fd67b 100644
  {
    USE_GC (gc);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index ac931c0..4306bde 100644
+index 62cf8e9..585362d 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -1044,7 +1044,7 @@ HID ghid_hid = {
+@@ -1003,7 +1003,7 @@ HID ghid_hid = {
    ghid_fill_circle,
    ghid_fill_polygon,
    ghid_fill_pcb_polygon,
@@ -127,10 +127,10 @@ index ac931c0..4306bde 100644
  
    ghid_calibrate,
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index f99ef72..3f0d1e6 100644
+index 2bd4cc2..a213a3a 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -495,6 +495,8 @@ void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
+@@ -493,6 +493,8 @@ void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
  void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
  void ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly,
                              const BoxType *clip_box); /* GL ONLY */

@@ -1,5 +1,5 @@
-Bottom: 93213f94e48fabd27e8e9ed2edcbcf82765da3b1
-Top:    170faa051757394d59b0b0377a7fb77b27fbed3b
+Bottom: b3a8c67d2f2c90112f117382aa7feefa68c61efe
+Top:    38b82d8933c42d6e7e2e32d0343b2df151e38353
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 02:14:07 +0000
 
@@ -16,10 +16,10 @@ The underlying problem appears to have been fixed in later mesa versions.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index e45e28d..b265b66 100644
+index 3e3ac50..a47e391 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -1026,6 +1026,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1011,6 +1011,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    return FALSE;
  }
  
@@ -32,7 +32,7 @@ index e45e28d..b265b66 100644
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e75d36b..e2db060 100644
+index 332deb5..e8dd61a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -993,6 +993,22 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
@@ -102,10 +102,10 @@ index adbf1a4..d794b1b 100644
  }
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 8b389f8..38424e9 100644
+index d8befcf..381e451 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -505,6 +505,7 @@ void ghid_end_drawing (GHidPort *port);
+@@ -503,6 +503,7 @@ void ghid_end_drawing (GHidPort *port);
  void ghid_screen_update (void);
  gboolean ghid_drawing_area_expose_cb (GtkWidget *, GdkEventExpose *,
                                        GHidPort *);

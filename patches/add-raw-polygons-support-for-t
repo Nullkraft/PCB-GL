@@ -1,5 +1,5 @@
-Bottom: bc32ec5e623d5141516d06e3555ca3d5092bfca2
-Top:    ad562194334d2d6b6fcbae9a2f86ad8d625a3d7e
+Bottom: 1fe5c8921c8c6bccba5cf1dfdb02f6765ab75525
+Top:    ccf552329cfbd2cde3ac4400b8d9637eba08a1c8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-25 02:14:08 +0000
 
@@ -176,7 +176,7 @@ index 73d9a34..bb1383c 100644
  
  
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index b265b66..b1dfc1c 100644
+index a47e391..d455c09 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -10,6 +10,7 @@
@@ -187,7 +187,7 @@ index b265b66..b1dfc1c 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -678,6 +679,12 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
+@@ -663,6 +664,12 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
  }
  
  void
@@ -201,7 +201,7 @@ index b265b66..b1dfc1c 100644
  {
    gint w, h, lw, xx, yy;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index aeff85a..d12a98a 100644
+index b4aac54..2ff1037 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -590,6 +590,14 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
@@ -220,10 +220,10 @@ index aeff85a..d12a98a 100644
  {
    USE_GC (gc);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 30ed4ad..ac931c0 100644
+index 5c72e02..62cf8e9 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -1043,7 +1043,7 @@ HID ghid_hid = {
+@@ -1002,7 +1002,7 @@ HID ghid_hid = {
    ghid_draw_rect,
    ghid_fill_circle,
    ghid_fill_polygon,
@@ -233,10 +233,10 @@ index 30ed4ad..ac931c0 100644
    ghid_fill_rect,
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 38424e9..f99ef72 100644
+index 381e451..2bd4cc2 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -493,6 +493,8 @@ void ghid_draw_arc (hidGC gc, int cx, int cy, int xradius, int yradius,
+@@ -491,6 +491,8 @@ void ghid_draw_arc (hidGC gc, int cx, int cy, int xradius, int yradius,
  void ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2);
  void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
  void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
