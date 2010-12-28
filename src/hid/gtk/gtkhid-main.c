@@ -253,12 +253,12 @@ zoom_to (double new_zoom, int x, int y)
       pixel_slop = new_zoom;
       ghid_port_ranges_scale(FALSE);
 
-      x0 = gport->view_x - xtmp * gport->view_width;
+      x0 = SIDE_X (gport->view_x) - xtmp * gport->view_width;
       if (x0 < 0)
         x0 = 0;
       gport->view_x0 = x0;
 
-      y0 = gport->view_y - ytmp * gport->view_height;
+      y0 = SIDE_Y (gport->view_y) - ytmp * gport->view_height;
       if (y0 < 0)
         y0 = 0;
       gport->view_y0 = y0;
@@ -1469,12 +1469,12 @@ SwapSides (int argc, char **argv, int x, int y)
      location */
   if (do_flip_x)
     {
-	flipd = PCB->MaxWidth / 2 - gport->view_x;
+	flipd = PCB->MaxWidth / 2 - SIDE_X (gport->view_x);
 	ghid_port_ranges_pan (2 * flipd, 0, TRUE);
     }
   if (do_flip_y)
     {
-	flipd = PCB->MaxHeight / 2 - gport->view_y;
+	flipd = PCB->MaxHeight / 2 - SIDE_Y (gport->view_y);
 	ghid_port_ranges_pan (0, 2 * flipd, TRUE);
     }
 
