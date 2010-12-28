@@ -50,6 +50,7 @@
 #include "misc.h"
 #include "mirror.h"
 #include "polygon.h"
+#include "pour.h"
 #include "rats.h"
 #include "remove.h"
 #include "rtree.h"
@@ -83,6 +84,7 @@ static void *ChangeViaMaskSize (PinTypePtr);
 static void *ChangeLineSize (LayerTypePtr, LineTypePtr);
 static void *ChangeLineClearSize (LayerTypePtr, LineTypePtr);
 static void *ChangePolygonClearSize (LayerTypePtr, PolygonTypePtr);
+static void *ChangePourClearSize (LayerTypePtr, PourTypePtr);
 static void *ChangeArcSize (LayerTypePtr, ArcTypePtr);
 static void *ChangeArcClearSize (LayerTypePtr, ArcTypePtr);
 static void *ChangeTextSize (LayerTypePtr, TextTypePtr);
@@ -123,10 +125,10 @@ static void *ClrArcJoin (LayerTypePtr, ArcTypePtr);
 static void *ChangeTextJoin (LayerTypePtr, TextTypePtr);
 static void *SetTextJoin (LayerTypePtr, TextTypePtr);
 static void *ClrTextJoin (LayerTypePtr, TextTypePtr);
-static void *ChangePolyClear (LayerTypePtr, PolygonTypePtr);
-static void *ChangePolyJoin (LayerTypePtr, PolygonTypePtr);
-static void *SetPolyJoin (LayerTypePtr, PolygonTypePtr);
-static void *ClrPolyJoin (LayerTypePtr, PolygonTypePtr);
+static void *ChangePourClear (LayerTypePtr, PourTypePtr);
+static void *ChangePourJoin (LayerTypePtr, PourTypePtr);
+static void *SetPourJoin (LayerTypePtr, PourTypePtr);
+static void *ClrPourJoin (LayerTypePtr, PourTypePtr);
 
 /* ---------------------------------------------------------------------------
  * some local identifiers
@@ -137,7 +139,8 @@ static char *NewName;		/* new name */
 static ObjectFunctionType ChangeSizeFunctions = {
   ChangeLineSize,
   ChangeTextSize,
-  ChangePolyClear,
+  NULL,
+  ChangePourClear,
   ChangeViaSize,
   ChangeElementSize,		/* changes silk screen line width */
   ChangeElementNameSize,
@@ -149,6 +152,7 @@ static ObjectFunctionType ChangeSizeFunctions = {
   NULL
 };
 static ObjectFunctionType Change2ndSizeFunctions = {
+  NULL,
   NULL,
   NULL,
   NULL,
@@ -166,6 +170,7 @@ static ObjectFunctionType ChangeThermalFunctions = {
   NULL,
   NULL,
   NULL,
+  NULL,
   ChangeViaThermal,
   NULL,
   NULL,
@@ -180,6 +185,7 @@ static ObjectFunctionType ChangeClearSizeFunctions = {
   ChangeLineClearSize,
   NULL,
   ChangePolygonClearSize, /* just to tell the user not to :-) */
+  ChangePourClearSize, /* just to tell the user not to :-) */
   ChangeViaClearSize,
   NULL,
   NULL,
@@ -193,6 +199,7 @@ static ObjectFunctionType ChangeClearSizeFunctions = {
 static ObjectFunctionType ChangeNameFunctions = {
   ChangeLineName,
   ChangeTextName,
+  NULL,
   NULL,
   ChangeViaName,
   ChangeElementName,
@@ -209,6 +216,7 @@ static ObjectFunctionType ChangeSquareFunctions = {
   NULL,
   NULL,
   NULL,
+  NULL,
   ChangeElementSquare,
   NULL,
   ChangePinSquare,
@@ -221,7 +229,8 @@ static ObjectFunctionType ChangeSquareFunctions = {
 static ObjectFunctionType ChangeJoinFunctions = {
   ChangeLineJoin,
   ChangeTextJoin,
-  ChangePolyJoin,
+  NULL,
+  ChangePourJoin,
   NULL,
   NULL,
   NULL,
@@ -236,6 +245,7 @@ static ObjectFunctionType ChangeOctagonFunctions = {
   NULL,
   NULL,
   NULL,
+  NULL,
   ChangeViaOctagon,
   ChangeElementOctagon,
   NULL,
@@ -247,6 +257,7 @@ static ObjectFunctionType ChangeOctagonFunctions = {
   NULL
 };
 static ObjectFunctionType ChangeMaskSizeFunctions = {
+  NULL,
   NULL,
   NULL,
   NULL,
@@ -269,6 +280,7 @@ static ObjectFunctionType SetSquareFunctions = {
   NULL,
   NULL,
   NULL,
+  NULL,
   SetElementSquare,
   NULL,
   SetPinSquare,
@@ -281,7 +293,8 @@ static ObjectFunctionType SetSquareFunctions = {
 static ObjectFunctionType SetJoinFunctions = {
   SetLineJoin,
   SetTextJoin,
-  SetPolyJoin,
+  NULL,
+  SetPourJoin,
   NULL,
   NULL,
   NULL,
@@ -293,6 +306,7 @@ static ObjectFunctionType SetJoinFunctions = {
   NULL
 };
 static ObjectFunctionType SetOctagonFunctions = {
+  NULL,
   NULL,
   NULL,
   NULL,
@@ -311,6 +325,7 @@ static ObjectFunctionType ClrSquareFunctions = {
   NULL,
   NULL,
   NULL,
+  NULL,
   ClrElementSquare,
   NULL,
   ClrPinSquare,
@@ -323,7 +338,8 @@ static ObjectFunctionType ClrSquareFunctions = {
 static ObjectFunctionType ClrJoinFunctions = {
   ClrLineJoin,
   ClrTextJoin,
-  ClrPolyJoin,
+  NULL,
+  ClrPourJoin,
   NULL,
   NULL,
   NULL,
@@ -335,6 +351,7 @@ static ObjectFunctionType ClrJoinFunctions = {
   NULL
 };
 static ObjectFunctionType ClrOctagonFunctions = {
+  NULL,
   NULL,
   NULL,
   NULL,
@@ -356,15 +373,15 @@ static ObjectFunctionType ClrOctagonFunctions = {
 static void *
 ChangeViaThermal (PinTypePtr Via)
 {
-  AddObjectToClearPolyUndoList (VIA_TYPE, Via, Via, Via, false);
-  RestoreToPolygon (PCB->Data, VIA_TYPE, CURRENT, Via);
+  AddObjectToClearPourUndoList (VIA_TYPE, Via, Via, Via, false);
+  RestoreToPours (PCB->Data, VIA_TYPE, CURRENT, Via);
   AddObjectToFlagUndoList (VIA_TYPE, Via, Via, Via);
   if (!Delta)			/* remove the thermals */
     CLEAR_THERM (INDEXOFCURRENT, Via);
   else
     ASSIGN_THERM (INDEXOFCURRENT, Delta, Via);
-  AddObjectToClearPolyUndoList (VIA_TYPE, Via, Via, Via, true);
-  ClearFromPolygon (PCB->Data, VIA_TYPE, CURRENT, Via);
+  AddObjectToClearPourUndoList (VIA_TYPE, Via, Via, Via, true);
+  ClearFromPours (PCB->Data, VIA_TYPE, CURRENT, Via);
   DrawVia (Via, 0);
   return Via;
 }
@@ -376,15 +393,15 @@ ChangeViaThermal (PinTypePtr Via)
 static void *
 ChangePinThermal (ElementTypePtr element, PinTypePtr Pin)
 {
-  AddObjectToClearPolyUndoList (PIN_TYPE, element, Pin, Pin, false);
-  RestoreToPolygon (PCB->Data, VIA_TYPE, CURRENT, Pin);
+  AddObjectToClearPourUndoList (PIN_TYPE, element, Pin, Pin, false);
+  RestoreToPours (PCB->Data, VIA_TYPE, CURRENT, Pin);
   AddObjectToFlagUndoList (PIN_TYPE, element, Pin, Pin);
   if (!Delta)			/* remove the thermals */
     CLEAR_THERM (INDEXOFCURRENT, Pin);
   else
     ASSIGN_THERM (INDEXOFCURRENT, Delta, Pin);
-  AddObjectToClearPolyUndoList (PIN_TYPE, element, Pin, Pin, true);
-  ClearFromPolygon (PCB->Data, VIA_TYPE, CURRENT, Pin);
+  AddObjectToClearPourUndoList (PIN_TYPE, element, Pin, Pin, true);
+  ClearFromPours (PCB->Data, VIA_TYPE, CURRENT, Pin);
   DrawPin (Pin, 0);
   return Pin;
 }
@@ -408,7 +425,7 @@ ChangeViaSize (PinTypePtr Via)
       AddObjectToSizeUndoList (VIA_TYPE, Via, Via, Via);
       EraseVia (Via);
       r_delete_entry (PCB->Data->via_tree, (BoxType *) Via);
-      RestoreToPolygon (PCB->Data, PIN_TYPE, Via, Via);
+      RestoreToPours (PCB->Data, PIN_TYPE, Via, Via);
       if (Via->Mask)
 	{
 	  AddObjectToMaskSizeUndoList (VIA_TYPE, Via, Via, Via);
@@ -417,7 +434,7 @@ ChangeViaSize (PinTypePtr Via)
       Via->Thickness = value;
       SetPinBoundingBox (Via);
       r_insert_entry (PCB->Data->via_tree, (BoxType *) Via, 0);
-      ClearFromPolygon (PCB->Data, VIA_TYPE, Via, Via);
+      ClearFromPours (PCB->Data, VIA_TYPE, Via, Via);
       DrawVia (Via, 0);
       return (Via);
     }
@@ -446,10 +463,10 @@ ChangeVia2ndSize (PinTypePtr Via)
       Via->DrillingHole = value;
       if (TEST_FLAG (HOLEFLAG, Via))
 	{
-	  RestoreToPolygon (PCB->Data, VIA_TYPE, Via, Via);
+	  RestoreToPours (PCB->Data, VIA_TYPE, Via, Via);
 	  AddObjectToSizeUndoList (VIA_TYPE, Via, Via, Via);
 	  Via->Thickness = value;
-	  ClearFromPolygon (PCB->Data, VIA_TYPE, Via, Via);
+	  ClearFromPours (PCB->Data, VIA_TYPE, Via, Via);
 	}
       DrawVia (Via, 0);
       return (Via);
@@ -478,14 +495,14 @@ ChangeViaClearSize (PinTypePtr Via)
     value = PCB->Bloat * 2 + 2;
   if (Via->Clearance == value)
     return NULL;
-  RestoreToPolygon (PCB->Data, VIA_TYPE, Via, Via);
+  RestoreToPours (PCB->Data, VIA_TYPE, Via, Via);
   AddObjectToClearSizeUndoList (VIA_TYPE, Via, Via, Via);
   EraseVia (Via);
   r_delete_entry (PCB->Data->via_tree, (BoxType *) Via);
   Via->Clearance = value;
   SetPinBoundingBox (Via);
   r_insert_entry (PCB->Data->via_tree, (BoxType *) Via, 0);
-  ClearFromPolygon (PCB->Data, VIA_TYPE, Via, Via);
+  ClearFromPours (PCB->Data, VIA_TYPE, Via, Via);
   DrawVia (Via, 0);
   Via->Element = NULL;
   return (Via);
@@ -512,12 +529,12 @@ ChangePinSize (ElementTypePtr Element, PinTypePtr Pin)
       AddObjectToMaskSizeUndoList (PIN_TYPE, Element, Pin, Pin);
       ErasePin (Pin);
       r_delete_entry (PCB->Data->pin_tree, &Pin->BoundingBox);
-      RestoreToPolygon (PCB->Data, PIN_TYPE, Element, Pin);
+      RestoreToPours (PCB->Data, PIN_TYPE, Element, Pin);
       Pin->Mask += value - Pin->Thickness;
       Pin->Thickness = value;
       /* SetElementBB updates all associated rtrees */
       SetElementBoundingBox (PCB->Data, Element, &PCB->Font);
-      ClearFromPolygon (PCB->Data, PIN_TYPE, Element, Pin);
+      ClearFromPours (PCB->Data, PIN_TYPE, Element, Pin);
       DrawPin (Pin, 0);
       return (Pin);
     }
@@ -544,14 +561,14 @@ ChangePinClearSize (ElementTypePtr Element, PinTypePtr Pin)
     value = PCB->Bloat * 2 + 2;
   if (Pin->Clearance == value)
     return NULL;
-  RestoreToPolygon (PCB->Data, PIN_TYPE, Element, Pin);
+  RestoreToPours (PCB->Data, PIN_TYPE, Element, Pin);
   AddObjectToClearSizeUndoList (PIN_TYPE, Element, Pin, Pin);
   ErasePin (Pin);
   r_delete_entry (PCB->Data->pin_tree, &Pin->BoundingBox);
   Pin->Clearance = value;
   /* SetElementBB updates all associated rtrees */
   SetElementBoundingBox (PCB->Data, Element, &PCB->Font);
-  ClearFromPolygon (PCB->Data, PIN_TYPE, Element, Pin);
+  ClearFromPours (PCB->Data, PIN_TYPE, Element, Pin);
   DrawPin (Pin, 0);
   return (Pin);
 }
@@ -571,14 +588,14 @@ ChangePadSize (ElementTypePtr Element, PadTypePtr Pad)
     {
       AddObjectToSizeUndoList (PAD_TYPE, Element, Pad, Pad);
       AddObjectToMaskSizeUndoList (PAD_TYPE, Element, Pad, Pad);
-      RestoreToPolygon (PCB->Data, PAD_TYPE, Element, Pad);
+      RestoreToPours (PCB->Data, PAD_TYPE, Element, Pad);
       ErasePad (Pad);
       r_delete_entry (PCB->Data->pad_tree, &Pad->BoundingBox);
       Pad->Mask += value - Pad->Thickness;
       Pad->Thickness = value;
       /* SetElementBB updates all associated rtrees */
       SetElementBoundingBox (PCB->Data, Element, &PCB->Font);
-      ClearFromPolygon (PCB->Data, PAD_TYPE, Element, Pad);
+      ClearFromPours (PCB->Data, PAD_TYPE, Element, Pad);
       DrawPad (Pad, 0);
       return (Pad);
     }
@@ -606,13 +623,13 @@ ChangePadClearSize (ElementTypePtr Element, PadTypePtr Pad)
   if (value == Pad->Clearance)
     return NULL;
   AddObjectToClearSizeUndoList (PAD_TYPE, Element, Pad, Pad);
-  RestoreToPolygon (PCB->Data, PAD_TYPE, Element, Pad);
+  RestoreToPours (PCB->Data, PAD_TYPE, Element, Pad);
   ErasePad (Pad);
   r_delete_entry (PCB->Data->pad_tree, &Pad->BoundingBox);
   Pad->Clearance = value;
   /* SetElementBB updates all associated rtrees */
   SetElementBoundingBox (PCB->Data, Element, &PCB->Font);
-  ClearFromPolygon (PCB->Data, PAD_TYPE, Element, Pad);
+  ClearFromPours (PCB->Data, PAD_TYPE, Element, Pad);
   DrawPad (Pad, 0);
   return Pad;
 }
@@ -646,10 +663,10 @@ ChangeElement2ndSize (ElementTypePtr Element)
 	DrawPin (pin, 0);
 	if (TEST_FLAG (HOLEFLAG, pin))
 	  {
-	    RestoreToPolygon (PCB->Data, PIN_TYPE, Element, pin);
+	    RestoreToPours (PCB->Data, PIN_TYPE, Element, pin);
 	    AddObjectToSizeUndoList (PIN_TYPE, Element, pin, pin);
 	    pin->Thickness = value;
-	    ClearFromPolygon (PCB->Data, PIN_TYPE, Element, pin);
+	    ClearFromPours (PCB->Data, PIN_TYPE, Element, pin);
 	  }
       }
   }
@@ -683,10 +700,10 @@ ChangePin2ndSize (ElementTypePtr Element, PinTypePtr Pin)
       DrawPin (Pin, 0);
       if (TEST_FLAG (HOLEFLAG, Pin))
 	{
-	  RestoreToPolygon (PCB->Data, PIN_TYPE, Element, Pin);
+	  RestoreToPours (PCB->Data, PIN_TYPE, Element, Pin);
 	  AddObjectToSizeUndoList (PIN_TYPE, Element, Pin, Pin);
 	  Pin->Thickness = value;
-	  ClearFromPolygon (PCB->Data, PIN_TYPE, Element, Pin);
+	  ClearFromPours (PCB->Data, PIN_TYPE, Element, Pin);
 	}
       return (Pin);
     }
@@ -710,11 +727,11 @@ ChangeLineSize (LayerTypePtr Layer, LineTypePtr Line)
       AddObjectToSizeUndoList (LINE_TYPE, Layer, Line, Line);
       EraseLine (Line);
       r_delete_entry (Layer->line_tree, (BoxTypePtr) Line);
-      RestoreToPolygon (PCB->Data, LINE_TYPE, Layer, Line);
+      RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
       Line->Thickness = value;
       SetLineBoundingBox (Line);
       r_insert_entry (Layer->line_tree, (BoxTypePtr) Line, 0);
-      ClearFromPolygon (PCB->Data, LINE_TYPE, Layer, Line);
+      ClearFromPours (PCB->Data, LINE_TYPE, Layer, Line);
       DrawLine (Layer, Line, 0);
       return (Line);
     }
@@ -736,7 +753,7 @@ ChangeLineClearSize (LayerTypePtr Layer, LineTypePtr Line)
   if (value != Line->Clearance)
     {
       AddObjectToClearSizeUndoList (LINE_TYPE, Layer, Line, Line);
-      RestoreToPolygon (PCB->Data, LINE_TYPE, Layer, Line);
+      RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
       EraseLine (Line);
       r_delete_entry (Layer->line_tree, (BoxTypePtr) Line);
       Line->Clearance = value;
@@ -747,7 +764,7 @@ ChangeLineClearSize (LayerTypePtr Layer, LineTypePtr Line)
 	}
       SetLineBoundingBox (Line);
       r_insert_entry (Layer->line_tree, (BoxTypePtr) Line, 0);
-      ClearFromPolygon (PCB->Data, LINE_TYPE, Layer, Line);
+      ClearFromPours (PCB->Data, LINE_TYPE, Layer, Line);
       DrawLine (Layer, Line, 0);
       return (Line);
     }
@@ -775,6 +792,26 @@ ChangePolygonClearSize (LayerTypePtr Layer, PolygonTypePtr poly)
 }
 
 /* ---------------------------------------------------------------------------
+ * Handle attepts to change the clearance of a pour.
+ */
+static void *
+ChangePourClearSize (LayerTypePtr Layer, PourTypePtr pour)
+{
+  static int shown_this_message = 0;
+  if (!shown_this_message)
+    {
+      gui->confirm_dialog ("To change the clearance of objects in a pour, "
+			   "change the objects, not the pour.\n"
+			   "Hint: To set a minimum clearance for a group of objects, "
+			   "select them all then :MinClearGap(Selected,=10,mil)",
+			   "Ok", NULL);
+      shown_this_message = 1;
+    }
+
+  return (NULL);
+}
+
+/* ---------------------------------------------------------------------------
  * changes the size of an arc
  * returns TRUE if changed
  */
@@ -791,11 +828,11 @@ ChangeArcSize (LayerTypePtr Layer, ArcTypePtr Arc)
       AddObjectToSizeUndoList (ARC_TYPE, Layer, Arc, Arc);
       EraseArc (Arc);
       r_delete_entry (Layer->arc_tree, (BoxTypePtr) Arc);
-      RestoreToPolygon (PCB->Data, ARC_TYPE, Layer, Arc);
+      RestoreToPours (PCB->Data, ARC_TYPE, Layer, Arc);
       Arc->Thickness = value;
       SetArcBoundingBox (Arc);
       r_insert_entry (Layer->arc_tree, (BoxTypePtr) Arc, 0);
-      ClearFromPolygon (PCB->Data, ARC_TYPE, Layer, Arc);
+      ClearFromPours (PCB->Data, ARC_TYPE, Layer, Arc);
       DrawArc (Layer, Arc, 0);
       return (Arc);
     }
@@ -819,7 +856,7 @@ ChangeArcClearSize (LayerTypePtr Layer, ArcTypePtr Arc)
       AddObjectToClearSizeUndoList (ARC_TYPE, Layer, Arc, Arc);
       EraseArc (Arc);
       r_delete_entry (Layer->arc_tree, (BoxTypePtr) Arc);
-      RestoreToPolygon (PCB->Data, ARC_TYPE, Layer, Arc);
+      RestoreToPours (PCB->Data, ARC_TYPE, Layer, Arc);
       Arc->Clearance = value;
       if (Arc->Clearance == 0)
 	{
@@ -828,7 +865,7 @@ ChangeArcClearSize (LayerTypePtr Layer, ArcTypePtr Arc)
 	}
       SetArcBoundingBox (Arc);
       r_insert_entry (Layer->arc_tree, (BoxTypePtr) Arc, 0);
-      ClearFromPolygon (PCB->Data, ARC_TYPE, Layer, Arc);
+      ClearFromPours (PCB->Data, ARC_TYPE, Layer, Arc);
       DrawArc (Layer, Arc, 0);
       return (Arc);
     }
@@ -852,11 +889,11 @@ ChangeTextSize (LayerTypePtr Layer, TextTypePtr Text)
       AddObjectToSizeUndoList (TEXT_TYPE, Layer, Text, Text);
       EraseText (Layer, Text);
       r_delete_entry (Layer->text_tree, (BoxTypePtr) Text);
-      RestoreToPolygon (PCB->Data, TEXT_TYPE, Layer, Text);
+      RestoreToPours (PCB->Data, TEXT_TYPE, Layer, Text);
       Text->Scale = value;
       SetTextBoundingBox (&PCB->Font, Text);
       r_insert_entry (Layer->text_tree, (BoxTypePtr) Text, 0);
-      ClearFromPolygon (PCB->Data, TEXT_TYPE, Layer, Text);
+      ClearFromPours (PCB->Data, TEXT_TYPE, Layer, Text);
       DrawText (Layer, Text, 0);
       return (Text);
     }
@@ -1076,12 +1113,12 @@ ChangeTextName (LayerTypePtr Layer, TextTypePtr Text)
   if (TEST_FLAG (LOCKFLAG, Text))
     return (NULL);
   EraseText (Layer, Text);
-  RestoreToPolygon (PCB->Data, TEXT_TYPE, Layer, Text);
+  RestoreToPours (PCB->Data, TEXT_TYPE, Layer, Text);
   Text->TextString = NewName;
 
   /* calculate size of the bounding box */
   SetTextBoundingBox (&PCB->Font, Text);
-  ClearFromPolygon (PCB->Data, TEXT_TYPE, Layer, Text);
+  ClearFromPours (PCB->Data, TEXT_TYPE, Layer, Text);
   DrawText (Layer, Text, 0);
   return (old);
 }
@@ -1137,15 +1174,15 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
   EraseLine (Line);
   if (TEST_FLAG(CLEARLINEFLAG, Line))
   {
-  AddObjectToClearPolyUndoList (LINE_TYPE, Layer, Line, Line, false);
-  RestoreToPolygon (PCB->Data, LINE_TYPE, Layer, Line);
+  AddObjectToClearPourUndoList (LINE_TYPE, Layer, Line, Line, false);
+  RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
   }
   AddObjectToFlagUndoList (LINE_TYPE, Layer, Line, Line);
   TOGGLE_FLAG (CLEARLINEFLAG, Line);
   if (TEST_FLAG(CLEARLINEFLAG, Line))
   {
-  AddObjectToClearPolyUndoList (LINE_TYPE, Layer, Line, Line, true);
-  ClearFromPolygon (PCB->Data, LINE_TYPE, Layer, Line);
+  AddObjectToClearPourUndoList (LINE_TYPE, Layer, Line, Line, true);
+  ClearFromPours (PCB->Data, LINE_TYPE, Layer, Line);
   }
   DrawLine (Layer, Line, 0);
   return (Line);
@@ -1183,17 +1220,17 @@ ChangeArcJoin (LayerTypePtr Layer, ArcTypePtr Arc)
     return (NULL);
   EraseArc (Arc);
   if (TEST_FLAG (CLEARLINEFLAG, Arc))
-  {
-    RestoreToPolygon (PCB->Data, ARC_TYPE, Layer, Arc);
-    AddObjectToClearPolyUndoList (ARC_TYPE, Layer, Arc, Arc, false);
+    {
+      RestoreToPours (PCB->Data, ARC_TYPE, Layer, Arc);
+      AddObjectToClearPourUndoList (ARC_TYPE, Layer, Arc, Arc, false);
     }
   AddObjectToFlagUndoList (ARC_TYPE, Layer, Arc, Arc);
   TOGGLE_FLAG (CLEARLINEFLAG, Arc);
   if (TEST_FLAG (CLEARLINEFLAG, Arc))
-  {
-    ClearFromPolygon (PCB->Data, ARC_TYPE, Layer, Arc);
-  AddObjectToClearPolyUndoList (ARC_TYPE, Layer, Arc, Arc, true);
-  }
+    {
+      ClearFromPours (PCB->Data, ARC_TYPE, Layer, Arc);
+      AddObjectToClearPourUndoList (ARC_TYPE, Layer, Arc, Arc, true);
+    }
   DrawArc (Layer, Arc, 0);
   return (Arc);
 }
@@ -1231,43 +1268,43 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
   EraseText (Layer, Text);
   if (TEST_FLAG(CLEARLINEFLAG, Text))
   {
-  AddObjectToClearPolyUndoList (TEXT_TYPE, Layer, Text, Text, false);
-  RestoreToPolygon (PCB->Data, TEXT_TYPE, Layer, Text);
+  AddObjectToClearPourUndoList (TEXT_TYPE, Layer, Text, Text, false);
+  RestoreToPours (PCB->Data, TEXT_TYPE, Layer, Text);
   }
   AddObjectToFlagUndoList (LINE_TYPE, Layer, Text, Text);
   TOGGLE_FLAG (CLEARLINEFLAG, Text);
   if (TEST_FLAG(CLEARLINEFLAG, Text))
   {
-  AddObjectToClearPolyUndoList (TEXT_TYPE, Layer, Text, Text, true);
-  ClearFromPolygon (PCB->Data, TEXT_TYPE, Layer, Text);
+  AddObjectToClearPourUndoList (TEXT_TYPE, Layer, Text, Text, true);
+  ClearFromPours (PCB->Data, TEXT_TYPE, Layer, Text);
   }
   DrawText (Layer, Text, 0);
   return (Text);
 }
 
 /* ---------------------------------------------------------------------------
- * changes the clearance flag of a polygon
+ * changes the clearance flag of a pour
  */
 static void *
-ChangePolyJoin (LayerTypePtr Layer, PolygonTypePtr poly)
+ChangePourJoin (LayerTypePtr Layer, PourTypePtr pour)
 {
-  if (TEST_FLAG (LOCKFLAG, poly))
+  if (TEST_FLAG (LOCKFLAG, pour))
     return (NULL);
-  ErasePolygon (poly);
-  if (TEST_FLAG(CLEARLINEFLAG, poly))
+  ErasePour (pour);
+  if (TEST_FLAG(CLEARLINEFLAG, pour))
   {
-  AddObjectToClearPolyUndoList (POLYGON_TYPE, Layer, poly, poly, false);
-  RestoreToPolygon (PCB->Data, POLYGON_TYPE, Layer, poly);
+  AddObjectToClearPourUndoList (POUR_TYPE, Layer, pour, pour, false);
+  RestoreToPours (PCB->Data, POUR_TYPE, Layer, pour);
   }
-  AddObjectToFlagUndoList (LINE_TYPE, Layer, poly, poly);
-  TOGGLE_FLAG (CLEARLINEFLAG, poly);
-  if (TEST_FLAG(CLEARLINEFLAG, poly))
+  AddObjectToFlagUndoList (LINE_TYPE, Layer, pour, pour);
+  TOGGLE_FLAG (CLEARLINEFLAG, pour);
+  if (TEST_FLAG(CLEARLINEFLAG, pour))
   {
-  AddObjectToClearPolyUndoList (POLYGON_TYPE, Layer, poly, poly, true);
-  ClearFromPolygon (PCB->Data, POLYGON_TYPE, Layer, poly);
+  AddObjectToClearPourUndoList (POUR_TYPE, Layer, pour, pour, true);
+  ClearFromPours (PCB->Data, POUR_TYPE, Layer, pour);
   }
-  DrawPolygon (Layer, poly, 0);
-  return (poly);
+  DrawPour (Layer, pour, 0);
+  return (pour);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1282,14 +1319,14 @@ SetTextJoin (LayerTypePtr Layer, TextTypePtr Text)
 }
 
 /* ---------------------------------------------------------------------------
- * sets the clearance flag of a polygon
+ * sets the clearance flag of a pour
  */
 static void *
-SetPolyJoin (LayerTypePtr Layer, PolygonTypePtr poly)
+SetPourJoin (LayerTypePtr Layer, PourTypePtr pour)
 {
-  if (TEST_FLAG (LOCKFLAG, poly) || TEST_FLAG (CLEARLINEFLAG, poly))
+  if (TEST_FLAG (LOCKFLAG, pour) || TEST_FLAG (CLEARLINEFLAG, pour))
     return (NULL);
-  return ChangePolyJoin (Layer, poly);
+  return ChangePourJoin (Layer, pour);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1304,14 +1341,14 @@ ClrTextJoin (LayerTypePtr Layer, TextTypePtr Text)
 }
 
 /* ---------------------------------------------------------------------------
- * clears the clearance flag of a polygon
+ * clears the clearance flag of a pour
  */
 static void *
-ClrPolyJoin (LayerTypePtr Layer, PolygonTypePtr poly)
+ClrPourJoin (LayerTypePtr Layer, PourTypePtr pour)
 {
-  if (TEST_FLAG (LOCKFLAG, poly) || !TEST_FLAG (CLEARLINEFLAG, poly))
+  if (TEST_FLAG (LOCKFLAG, pour) || !TEST_FLAG (CLEARLINEFLAG, pour))
     return (NULL);
-  return ChangePolyJoin (Layer, poly);
+  return ChangePourJoin (Layer, pour);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1449,12 +1486,12 @@ ChangePadSquare (ElementTypePtr Element, PadTypePtr Pad)
   if (TEST_FLAG (LOCKFLAG, Pad))
     return (NULL);
   ErasePad (Pad);
-  AddObjectToClearPolyUndoList (PAD_TYPE, Element, Pad, Pad, false);
-  RestoreToPolygon (PCB->Data, PAD_TYPE, Element, Pad);
+  AddObjectToClearPourUndoList (PAD_TYPE, Element, Pad, Pad, false);
+  RestoreToPours (PCB->Data, PAD_TYPE, Element, Pad);
   AddObjectToFlagUndoList (PAD_TYPE, Element, Pad, Pad);
   TOGGLE_FLAG (SQUAREFLAG, Pad);
-  AddObjectToClearPolyUndoList (PAD_TYPE, Element, Pad, Pad, true);
-  ClearFromPolygon (PCB->Data, PAD_TYPE, Element, Pad);
+  AddObjectToClearPourUndoList (PAD_TYPE, Element, Pad, Pad, true);
+  ClearFromPours (PCB->Data, PAD_TYPE, Element, Pad);
   DrawPad (Pad, 0);
   return (Pad);
 }
@@ -1496,12 +1533,12 @@ ChangePinSquare (ElementTypePtr Element, PinTypePtr Pin)
   if (TEST_FLAG (LOCKFLAG, Pin))
     return (NULL);
   ErasePin (Pin);
-  AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, false);
-  RestoreToPolygon (PCB->Data, PIN_TYPE, Element, Pin);
+  AddObjectToClearPourUndoList (PIN_TYPE, Element, Pin, Pin, false);
+  RestoreToPours (PCB->Data, PIN_TYPE, Element, Pin);
   AddObjectToFlagUndoList (PIN_TYPE, Element, Pin, Pin);
   TOGGLE_FLAG (SQUAREFLAG, Pin);
-  AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, true);
-  ClearFromPolygon (PCB->Data, PIN_TYPE, Element, Pin);
+  AddObjectToClearPourUndoList (PIN_TYPE, Element, Pin, Pin, true);
+  ClearFromPours (PCB->Data, PIN_TYPE, Element, Pin);
   DrawPin (Pin, 0);
   return (Pin);
 }
@@ -1539,12 +1576,12 @@ ChangeViaOctagon (PinTypePtr Via)
   if (TEST_FLAG (LOCKFLAG, Via))
     return (NULL);
   EraseVia (Via);
-  AddObjectToClearPolyUndoList (VIA_TYPE, Via, Via, Via, false);
-  RestoreToPolygon (PCB->Data, VIA_TYPE, Via, Via);
+  AddObjectToClearPourUndoList (VIA_TYPE, Via, Via, Via, false);
+  RestoreToPours (PCB->Data, VIA_TYPE, Via, Via);
   AddObjectToFlagUndoList (VIA_TYPE, Via, Via, Via);
   TOGGLE_FLAG (OCTAGONFLAG, Via);
-  AddObjectToClearPolyUndoList (VIA_TYPE, Via, Via, Via, true);
-  ClearFromPolygon (PCB->Data, VIA_TYPE, Via, Via);
+  AddObjectToClearPourUndoList (VIA_TYPE, Via, Via, Via, true);
+  ClearFromPours (PCB->Data, VIA_TYPE, Via, Via);
   DrawVia (Via, 0);
   return (Via);
 }
@@ -1582,12 +1619,12 @@ ChangePinOctagon (ElementTypePtr Element, PinTypePtr Pin)
   if (TEST_FLAG (LOCKFLAG, Pin))
     return (NULL);
   ErasePin (Pin);
-  AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, false);
-  RestoreToPolygon (PCB->Data, PIN_TYPE, Element, Pin);
+  AddObjectToClearPourUndoList (PIN_TYPE, Element, Pin, Pin, false);
+  RestoreToPours (PCB->Data, PIN_TYPE, Element, Pin);
   AddObjectToFlagUndoList (PIN_TYPE, Element, Pin, Pin);
   TOGGLE_FLAG (OCTAGONFLAG, Pin);
-  AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, true);
-  ClearFromPolygon (PCB->Data, PIN_TYPE, Element, Pin);
+  AddObjectToClearPourUndoList (PIN_TYPE, Element, Pin, Pin, true);
+  ClearFromPours (PCB->Data, PIN_TYPE, Element, Pin);
   DrawPin (Pin, 0);
   return (Pin);
 }
@@ -1629,10 +1666,10 @@ ChangeHole (PinTypePtr Via)
   TOGGLE_FLAG (HOLEFLAG, Via);
   if (TEST_FLAG (HOLEFLAG, Via))
     {
-      RestoreToPolygon (PCB->Data, VIA_TYPE, Via, Via);
+      RestoreToPours (PCB->Data, VIA_TYPE, Via, Via);
       AddObjectToSizeUndoList (VIA_TYPE, Via, Via, Via);
       Via->Thickness = Via->Mask = Via->DrillingHole;
-      ClearFromPolygon (PCB->Data, VIA_TYPE, Via, Via);
+      ClearFromPours (PCB->Data, VIA_TYPE, Via, Via);
     }
   else
     {
@@ -1661,19 +1698,19 @@ ChangePaste (PadTypePtr Pad)
 }
 
 /* ---------------------------------------------------------------------------
- * changes the CLEARPOLY flag of a polygon
+ * changes the CLEARPOLY flag of a pour
  */
 static void *
-ChangePolyClear (LayerTypePtr Layer, PolygonTypePtr Polygon)
+ChangePourClear (LayerTypePtr Layer, PourTypePtr Pour)
 {
-  if (TEST_FLAG (LOCKFLAG, Polygon))
+  if (TEST_FLAG (LOCKFLAG, Pour))
     return (NULL);
-  AddObjectToClearPolyUndoList (POLYGON_TYPE, Layer, Polygon, Polygon, true);
-  AddObjectToFlagUndoList (POLYGON_TYPE, Layer, Polygon, Polygon);
-  TOGGLE_FLAG (CLEARPOLYFLAG, Polygon);
-  InitClip (PCB->Data, Layer, Polygon);
-  DrawPolygon (Layer, Polygon, 0);
-  return (Polygon);
+  AddObjectToClearPourUndoList (POUR_TYPE, Layer, Pour, Pour, true);
+  AddObjectToFlagUndoList (POUR_TYPE, Layer, Pour, Pour);
+  TOGGLE_FLAG (CLEARPOLYFLAG, Pour);
+  InitPourClip (PCB->Data, Layer, Pour);
+  DrawPour (Layer, Pour, 0);
+  return (Pour);
 }
 
 /* ----------------------------------------------------------------------
