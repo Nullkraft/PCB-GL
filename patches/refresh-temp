@@ -1,0 +1,68 @@
+Bottom: b37ee3e86ea47e2ea4e3994d123b6dac4c1a082d
+Top:    5bdd18ff5a7b06a49e2bea23bea5fa0410e936c6
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-28 17:13:56 +0000
+
+Refresh of hid-gtk-refactor-storage-seman
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 8bbf3eb..cdfd5d4 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -244,28 +244,30 @@ zoom_to (double new_zoom, int x, int y)
+       gdouble xtmp, ytmp;
+       gint x0, y0;
+ 
+-      xtmp = (gport->view_x - gport->view_x0) / (gdouble) gport->view_width;
+-      ytmp = (gport->view_y - gport->view_y0) / (gdouble) gport->view_height;
+-      
++      xtmp = (SIDE_X (gport->view_x) - gport->view_x0) /
++                (gdouble) gport->view_width;
++      ytmp = (SIDE_Y (gport->view_y) - gport->view_y0) /
++                (gdouble) gport->view_height;
++
+       gport->zoom = new_zoom;
+       pixel_slop = new_zoom;
+       ghid_port_ranges_scale(FALSE);
+ 
+       x0 = gport->view_x - xtmp * gport->view_width;
+       if (x0 < 0)
+-	x0 = 0;
++        x0 = 0;
+       gport->view_x0 = x0;
+ 
+       y0 = gport->view_y - ytmp * gport->view_height;
+       if (y0 < 0)
+-	y0 = 0;
++        y0 = 0;
+       gport->view_y0 = y0;
+-      
++
+       ghidgui->adjustment_changed_holdoff = TRUE;
+       gtk_range_set_value (GTK_RANGE (ghidgui->h_range), gport->view_x0);
+       gtk_range_set_value (GTK_RANGE (ghidgui->v_range), gport->view_y0);
+       ghidgui->adjustment_changed_holdoff = FALSE;
+-      
++
+       ghid_port_ranges_changed();
+     }
+ 
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index e40f7d2..64c4112 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -184,8 +184,10 @@ ghid_port_ranges_zoom (gdouble zoom)
+   if ((zoom > xtmp && zoom > ytmp) || zoom == 0.0)
+     zoom = (xtmp > ytmp) ? xtmp : ytmp;
+ 
+-  xtmp = (gport->view_x - gport->view_x0) / (gdouble) gport->view_width;
+-  ytmp = (gport->view_y - gport->view_y0) / (gdouble) gport->view_height;
++  xtmp = (SIDE_X (gport->view_x) - gport->view_x0) /
++            (gdouble) gport->view_width;
++  ytmp = (SIDE_Y (gport->view_y) - gport->view_y0) /
++            (gdouble) gport->view_height;
+ 
+   gport->zoom = zoom;
+   pixel_slop = zoom;
