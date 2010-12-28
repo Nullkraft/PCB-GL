@@ -1,7 +1,7 @@
-Bottom: eed74ef2d983263a84cfa3816692595bdc2e34a2
-Top:    e3bcf98809659570e9aa97ed30f69eede2f19489
+Bottom: c5fa2a05d77fd64bbeed1c7a0c4c4531415aa25a
+Top:    dcd287886308bbfa740a325609a45c1122b68349
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-26 00:11:28 +0000
+Date:   2010-12-28 01:50:40 +0000
 
 Play with perspective
 
@@ -76,7 +76,7 @@ index b037a7a..6b7684a 100644
    else
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 103bd4f..3f9d2bf 100644
+index 9c90c99..bab3735 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -33,6 +33,8 @@
@@ -498,10 +498,10 @@ index 103bd4f..3f9d2bf 100644
  
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index d8cf3f8..56923e6 100644
+index cceab6d..7521426 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -519,7 +519,7 @@ void ghid_port_drawing_realize_cb (GtkWidget *, gpointer);
+@@ -517,7 +517,7 @@ void ghid_port_drawing_realize_cb (GtkWidget *, gpointer);
  gboolean ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev);
  GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
                                 int width, int height, int depth);

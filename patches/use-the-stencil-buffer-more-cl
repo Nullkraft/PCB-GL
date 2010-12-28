@@ -1,7 +1,7 @@
-Bottom: ccf478a0508c11e585af4242d039e982c6e76199
-Top:    9a17ce27988744aaffe806f78e5d200c6253a0ac
+Bottom: ab228ad8ae709dcee4d7f7d4de58792e0c8a4f19
+Top:    8f72499149195aeebb451470d924f9d4e8e4c1a7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-26 00:11:29 +0000
+Date:   2010-12-28 01:50:41 +0000
 
 Use the stencil buffer more cleverly
 
@@ -125,7 +125,7 @@ index 6b7684a..a4a9aa9 100644
  
  int
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 862e897..87285ab 100644
+index 71da3f7..de47914 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1834,6 +1834,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,

@@ -1,7 +1,7 @@
-Bottom: ce05e2c0c78c8011061be0350094a983f7f250ec
-Top:    490aadb9cd5e4b2d031d6e274607e728b2557fd0
+Bottom: b0903ff38bdbe1b5d15cf2cca8ab9cef6b2cc314
+Top:    a0ad7a98a311397f849000d67d3881afacb20e50
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-26 00:11:26 +0000
+Date:   2010-12-28 01:50:35 +0000
 
 Debug out of context rendering
 
@@ -155,7 +155,7 @@ index aa2985e..1ed8eb3 100644
  void hidgl_flush_triangles (triangle_buffer *buffer);
  void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e5802ad..f27a7fd 100644
+index ee2eaff..f26d384 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1809,6 +1809,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,

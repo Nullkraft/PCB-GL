@@ -1,7 +1,7 @@
-Bottom: 0b0b3972f63cb8a2fa10499ca6a11878436fc58e
-Top:    276c2865a08439eaa15896c9b91fef8f7662f97b
+Bottom: ebc82bad8aeff89b73622b67bbbd472a88a57d31
+Top:    bc6f25ab433e66921fa7d830233dd0d570d83429
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-26 00:11:26 +0000
+Date:   2010-12-28 01:50:36 +0000
 
 Play with GLSL shader for rendering line caps and circles
 
@@ -957,7 +957,7 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 4bc4930..1f4b288 100644
+index a779dec..c521bbc 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -710,7 +710,7 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
@@ -1077,10 +1077,10 @@ index 4bc4930..1f4b288 100644
  
    /* call the drawing routine */
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 4306bde..51cc402 100644
+index 585362d..91ec035 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -1604,7 +1604,8 @@ Benchmark (int argc, char **argv, int x, int y)
+@@ -1563,7 +1563,8 @@ Benchmark (int argc, char **argv, int x, int y)
      {
        gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
        gdk_window_process_updates (gport->drawing_area->window, FALSE);

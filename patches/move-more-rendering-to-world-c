@@ -1,7 +1,7 @@
-Bottom: 490aadb9cd5e4b2d031d6e274607e728b2557fd0
-Top:    0b0b3972f63cb8a2fa10499ca6a11878436fc58e
+Bottom: a0ad7a98a311397f849000d67d3881afacb20e50
+Top:    ebc82bad8aeff89b73622b67bbbd472a88a57d31
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-26 00:11:26 +0000
+Date:   2010-12-28 01:50:35 +0000
 
 Move more rendering to world coordinates
 
@@ -9,7 +9,7 @@ Move more rendering to world coordinates
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f27a7fd..4bc4930 100644
+index f26d384..a779dec 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -81,7 +81,9 @@ typedef struct hid_gc_struct
@@ -501,10 +501,10 @@ index f27a7fd..4bc4930 100644
    ghid_show_crosshair (TRUE);
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index b196f1c..608a5ee 100644
+index 15454d3..a0d4831 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -256,14 +256,14 @@ ghid_note_event_location (GdkEventButton * ev)
+@@ -253,14 +253,14 @@ ghid_note_event_location (GdkEventButton * ev)
  #ifdef ENABLE_GL
    /* Unproject event_x and event_y to world coordinates of the plane we are on */
    ghid_unproject_to_z_plane (event_x, event_y, global_depth,
