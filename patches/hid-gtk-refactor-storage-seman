@@ -1,5 +1,5 @@
 Bottom: a3765a73ce40f1edf6cb1f86d6ef55b86149b063
-Top:    5bdd18ff5a7b06a49e2bea23bea5fa0410e936c6
+Top:    96cc0d721f22ca5d4d0a9bfa2f3e14b8092e774d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-26 23:29:46 +0000
 
@@ -14,7 +14,7 @@ NB: FUBAR ON ITS OWN.. TOO MANY PLACES ASSUME THE OLD WAY!
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 8bbf3eb..cdfd5d4 100644
+index 8bbf3eb..7c0afa8 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -244,28 +244,30 @@ zoom_to (double new_zoom, int x, int y)
@@ -33,13 +33,15 @@ index 8bbf3eb..cdfd5d4 100644
        pixel_slop = new_zoom;
        ghid_port_ranges_scale(FALSE);
  
-       x0 = gport->view_x - xtmp * gport->view_width;
+-      x0 = gport->view_x - xtmp * gport->view_width;
++      x0 = SIDE_X (gport->view_x) - xtmp * gport->view_width;
        if (x0 < 0)
 -	x0 = 0;
 +        x0 = 0;
        gport->view_x0 = x0;
  
-       y0 = gport->view_y - ytmp * gport->view_height;
+-      y0 = gport->view_y - ytmp * gport->view_height;
++      y0 = SIDE_Y (gport->view_y) - ytmp * gport->view_height;
        if (y0 < 0)
 -	y0 = 0;
 +        y0 = 0;
@@ -55,11 +57,26 @@ index 8bbf3eb..cdfd5d4 100644
        ghid_port_ranges_changed();
      }
  
+@@ -1467,12 +1469,12 @@ SwapSides (int argc, char **argv, int x, int y)
+      location */
+   if (do_flip_x)
+     {
+-	flipd = PCB->MaxWidth / 2 - gport->view_x;
++	flipd = PCB->MaxWidth / 2 - SIDE_X (gport->view_x);
+ 	ghid_port_ranges_pan (2 * flipd, 0, TRUE);
+     }
+   if (do_flip_y)
+     {
+-	flipd = PCB->MaxHeight / 2 - gport->view_y;
++	flipd = PCB->MaxHeight / 2 - SIDE_Y (gport->view_y);
+ 	ghid_port_ranges_pan (0, 2 * flipd, TRUE);
+     }
+ 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index e0120b6..64c4112 100644
+index e0120b6..6d6fd69 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -184,8 +184,10 @@ ghid_port_ranges_zoom (gdouble zoom)
+@@ -184,19 +184,21 @@ ghid_port_ranges_zoom (gdouble zoom)
    if ((zoom > xtmp && zoom > ytmp) || zoom == 0.0)
      zoom = (xtmp > ytmp) ? xtmp : ytmp;
  
@@ -72,6 +89,19 @@ index e0120b6..64c4112 100644
  
    gport->zoom = zoom;
    pixel_slop = zoom;
+   ghid_port_ranges_scale(FALSE);
+ 
+-  x0 = gport->view_x - xtmp * gport->view_width;
++  x0 = SIDE_X (gport->view_x) - xtmp * gport->view_width;
+   if (x0 < 0)
+     x0 = 0;
+   gport->view_x0 = x0;
+ 
+-  y0 = gport->view_y - ytmp * gport->view_height;
++  y0 = SIDE_Y (gport->view_y) - ytmp * gport->view_height;
+   if (y0 < 0)
+     y0 = 0;
+   gport->view_y0 = y0;
 @@ -221,8 +223,8 @@ ghid_get_coords (const char *msg, int *x, int *y)
      ghid_get_user_xy (msg);
    if (ghid_port.has_entered)
