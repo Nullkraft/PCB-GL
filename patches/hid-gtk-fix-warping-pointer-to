@@ -1,0 +1,33 @@
+Bottom: 170bd5a990ef76c111a06c974a5d93d8325ac0fd
+Top:    170bd5a990ef76c111a06c974a5d93d8325ac0fd
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2010-12-28 01:39:55 +0000
+
+hid/gtk: Fix warping pointer to correct location from netlist window
+
+We weren't updating the pointer location after having panned the
+connection into the center of the screen.
+
+Also fixes the open-coded panning code to work for flipped views.
+The patch is pretty horrible at best, but appears to fix the issue.
+
+Unfortunately the locical call to use (the "Center" action) cannot be
+made through the generic action code as we need to specify the location
+explicitly. We could perhaps export the Centre action function, or
+refactor it as a wrapper around a helper function which we would then
+export and call.
+
+I aim to eventually rework the GTK HID's coordinate transforms
+(including flipped views), event handling, view panning and pointer
+warping in order to give greater sepeatation between the renderer
+agnostic parts of the HID and the renderer. This will be needed for the
+3D portions of the PCB+GL branch.
+
+It seems most sensible to start refactoring from a state where the
+existing code at least functions correctly (even if it isn't pretty),
+rather than work in fixes as I refactor.
+
+
+---
+
+
