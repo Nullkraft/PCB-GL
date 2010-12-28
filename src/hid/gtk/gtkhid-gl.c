@@ -521,7 +521,7 @@ ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2)
   printf ("ghid_set_line_cap_angle() -- not implemented\n");
 }
 
-void
+static void
 ghid_invalidate_current_gc (void)
 {
   current_gc = NULL;

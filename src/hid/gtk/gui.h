@@ -485,7 +485,6 @@ void ghid_set_line_width (hidGC gc, int width);
 void ghid_set_draw_xor (hidGC gc, int xor);
 void ghid_set_draw_faded (hidGC gc, int faded);
 void ghid_set_line_cap_angle (hidGC gc, int x1, int y1, int x2, int y2);
-void ghid_invalidate_current_gc (void);
 void ghid_draw_line (hidGC gc, int x1, int y1, int x2, int y2);
 void ghid_draw_arc (hidGC gc, int cx, int cy, int xradius, int yradius,
                     int start_angle, int delta_angle);
