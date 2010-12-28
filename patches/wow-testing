@@ -1,5 +1,5 @@
-Bottom: ccbb844e878a9e0775d96c7da39b9ee405996af8
-Top:    0ec1f3566ff3724bfc5c7549187bef8ded1d2e21
+Bottom: b37ee3e86ea47e2ea4e3994d123b6dac4c1a082d
+Top:    366e41e56e97214cbb9559bf946c0761ee92df89
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-12-27 00:22:57 +0000
 
@@ -256,7 +256,7 @@ index 0a2cc59..916119c 100644
    gdk_gc_set_foreground (xor_gc, &cross_color);
  
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 9fd781c..ca9d209 100644
+index 8bbf3eb..d3fe183 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -42,30 +42,30 @@ ghid_pan_fixup ()
@@ -595,7 +595,7 @@ index b24e6c9..623dc5a 100644
  
    gport->drawable = save_drawable;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index ba8b601..06a31ff 100644
+index d2a76ce..43f7c2c 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -65,14 +65,15 @@
@@ -620,7 +620,7 @@ index ba8b601..06a31ff 100644
  
  /*
   * Used to intercept "special" hotkeys that gtk doesn't usually pass
-@@ -511,65 +512,8 @@ void ghid_get_coords (const char *msg, int *x, int *y);
+@@ -512,65 +513,8 @@ void ghid_get_coords (const char *msg, int *x, int *y);
  gint PCBChanged (int argc, char **argv, int x, int y);
  
  
