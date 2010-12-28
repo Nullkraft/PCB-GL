@@ -184,8 +184,10 @@ ghid_port_ranges_zoom (gdouble zoom)
   if ((zoom > xtmp && zoom > ytmp) || zoom == 0.0)
     zoom = (xtmp > ytmp) ? xtmp : ytmp;
 
-  xtmp = (gport->view_x - gport->view_x0) / (gdouble) gport->view_width;
-  ytmp = (gport->view_y - gport->view_y0) / (gdouble) gport->view_height;
+  xtmp = (SIDE_X (gport->view_x) - gport->view_x0) /
+            (gdouble) gport->view_width;
+  ytmp = (SIDE_Y (gport->view_y) - gport->view_y0) /
+            (gdouble) gport->view_height;
 
   gport->zoom = zoom;
   pixel_slop = zoom;
