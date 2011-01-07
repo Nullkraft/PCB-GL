@@ -1,7 +1,7 @@
-Bottom: b4a032d2e46286f5aea2e1be4c672476ae5d1e2a
-Top:    e758e0c6c6ae02107f66812d39e3b7b2adef8969
+Bottom: d5cd28dbeb07ff1d377a3b9aac41b48332ef2ef5
+Top:    abfa65d2a2bb049377c99beaf2cc6c5d607d15cf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2010-12-28 01:50:50 +0000
+Date:   2011-01-07 23:08:05 +0000
 
 Add support for a "poured" object.
 
@@ -8130,7 +8130,7 @@ index add5661..25d8103 100644
  #define	ELEMENT_IN_BOX(e,b)	\
  	(BOX_IN_BOX(&((e)->BoundingBox), (b)))
 diff --git a/src/select.c b/src/select.c
-index 5d44b4f..4d9aa4f 100644
+index 3e978bb..aaf474f 100644
 --- a/src/select.c
 +++ b/src/select.c
 @@ -183,6 +183,7 @@ SelectObject (void)
@@ -8191,7 +8191,7 @@ index 5d44b4f..4d9aa4f 100644
      }
      END_LOOP;
    }
-@@ -524,9 +551,14 @@ ObjectOperation (ObjectFunctionTypePtr F,
+@@ -527,9 +554,14 @@ ObjectOperation (ObjectFunctionTypePtr F,
  	return (F->Polygon ((LayerTypePtr) Ptr1, (PolygonTypePtr) Ptr2));
        break;
  
@@ -8209,7 +8209,7 @@ index 5d44b4f..4d9aa4f 100644
  			  (PointTypePtr) Ptr3));
        break;
  
-@@ -625,21 +657,44 @@ SelectedOperation (ObjectFunctionTypePtr F, bool Reset, int type)
+@@ -628,21 +660,44 @@ SelectedOperation (ObjectFunctionTypePtr F, bool Reset, int type)
    }
    ENDALL_LOOP;
  
@@ -8265,7 +8265,7 @@ index 5d44b4f..4d9aa4f 100644
    ENDALL_LOOP;
  
    /* elements silkscreen */
-@@ -801,17 +856,23 @@ SelectConnection (bool Flag)
+@@ -804,17 +859,23 @@ SelectConnection (bool Flag)
        }
    }
    ENDALL_LOOP;
