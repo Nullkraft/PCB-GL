@@ -3,20 +3,22 @@ Top:    27f6112453ab2f5c2845a6599571ce12e16ef122
 Author: Felix Ruoff <Felix@posaunenmission.de>
 Date:   2010-12-28 21:46:30 +0100
 
-Modify window title (see Gnome HID-Guidelines)
+hid/gtk: Modify window title to match the GNOME Human Interface Guidelines
 
-Modifies the title of the main window as suggested in the gnome
-HID-Guidelines
+Modifies the title of the main window as suggested in the GNOME HIG:
 (http://library.gnome.org/devel/hig-book/nightly/windows-primary.html)
+
 The following will be shown there:
 
-  * A star (*) if the layout has unsaved changes (this patch also removes this sign from
-   the statusbar, where it actually is)
-  * The name of the layout, if set in the config-dialog ('Put layout name on the window title bar')
-  * The filename (in braces, if layout name is shown)
-  * The string " - PCB"
+ - A star (*) if the layout has unsaved changes (this patch also
+   removes this sign from the statusbar, where it currently is)
+ - The name of the layout, if set in the config-dialog
+   ('Put layout name on the window title bar')
+ - The filename (in braces, if layout name is shown)
+ - The string " - PCB"
 
 Reviewed-by: Peter Clifton <pcjc2@cam.ac.uk>
+(Also modified commit message)
 
 
 ---
