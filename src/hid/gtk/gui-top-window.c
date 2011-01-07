@@ -1612,7 +1612,7 @@ ghid_layer_buttons_color_update (void)
       lb = &layer_buttons[i];
 
       layer_process (&color_string, NULL, NULL, i);
-      active = gtk_toggle_button_get_active (lb);
+      active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lb));
       layer_button_set_color (lb, color_string, active);
     }
 }
