@@ -359,6 +359,9 @@ LoadPCB (char *Filename)
   start = clock ();
 #endif
 
+  /* Hack, load the mapping file */
+  RefdesMapInit ();
+
   /* new data isn't added to the undo list */
   if (!ParsePCB (newPCB, Filename))
     {
