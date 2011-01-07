@@ -1,0 +1,171 @@
+Bottom: 480704ce717c377dd298f9566519457a946c6327
+Top:    27f6112453ab2f5c2845a6599571ce12e16ef122
+Author: Felix Ruoff <Felix@posaunenmission.de>
+Date:   2010-12-28 21:46:30 +0100
+
+From f40c6bd3b5e35e7f9e4cf89d08054a866f47e565 Mon Sep 17 00:00:00 2001
+Subject: [PATCH] Modify window title (see Gnome HID-Guidelines)
+
+This patch modifies the title of the main window. As suggested in the gnome HID-Guidelines
+(http://library.gnome.org/devel/hig-book/nightly/windows-primary.html)
+The following will be shown there:
+ * A star (*) if the layout has unsaved changes (this patch also removes this sign from
+   the statusbar, where it actually is)
+ * The name of the layout, if set in the config-dialog ('Put layout name on the window title bar')
+ * The filename (in braces, if layout name is shown)
+ * The string " - PCB"
+
+
+---
+
+diff --git a/src/hid/gtk/gui-command-window.c b/src/hid/gtk/gui-command-window.c
+index ef2f637..b97ec0b 100644
+--- a/src/hid/gtk/gui-command-window.c
++++ b/src/hid/gtk/gui-command-window.c
+@@ -481,5 +481,6 @@ ghid_handle_user_command (gboolean raise)
+ 	}
+       RestoreCrosshair (true);
+     }
++  ghid_window_set_name_label (PCB->Name);
+   ghid_set_status_line_label ();
+ }
+diff --git a/src/hid/gtk/gui-dialog-size.c b/src/hid/gtk/gui-dialog-size.c
+index 16caff3..8409ba5 100644
+--- a/src/hid/gtk/gui-dialog-size.c
++++ b/src/hid/gtk/gui-dialog-size.c
+@@ -334,5 +334,6 @@ ghid_route_style_dialog (gint index, RouteStyleType * temp_rst)
+     }
+ 
+   gtk_widget_destroy (dialog);
++  ghid_window_set_name_label (PCB->Name);
+   ghid_set_status_line_label ();
+ }
+diff --git a/src/hid/gtk/gui-misc.c b/src/hid/gtk/gui-misc.c
+index a607a69..e3316aa 100644
+--- a/src/hid/gtk/gui-misc.c
++++ b/src/hid/gtk/gui-misc.c
+@@ -500,7 +500,7 @@ ghid_set_status_line_label (void)
+ 
+   if (!Settings.grid_units_mm)
+     snprintf (text, sizeof (text),
+-	      _("<b>%c  view</b>=%s  "
++	      _("<b>view</b>=%s  "
+ 		"<b>grid</b>=%.1f:%i  "
+ 		"%s%s  "
+ 		"<b>line</b>=%.1f  "
+@@ -508,7 +508,6 @@ ghid_set_status_line_label (void)
+ 		"<b>clearance</b>=%.1f  "
+ 		"<b>text</b>=%i%%  "
+ 		"<b>buffer</b>=#%i"),
+-	      PCB->Changed ? '*' : ' ',
+ 	      Settings.ShowSolderSide ? _("solder") : _("component"),
+ 	      PCB->Grid / 100.0,
+ 	      (int) Settings.GridFactor,
+@@ -524,7 +523,7 @@ ghid_set_status_line_label (void)
+ 	      Settings.TextScale, Settings.BufferNumber + 1);
+   else
+     snprintf (text, sizeof (text),
+-	      _("<b>%c  view</b>=%s  "
++	      _("<b>view</b>=%s  "
+ 		"<b>grid</b>=%5.3f:%i  "
+ 		"%s%s  "
+ 		"<b>line</b>=%5.3f  "
+@@ -532,7 +531,6 @@ ghid_set_status_line_label (void)
+ 		"<b>clearance</b>=%5.3f  "
+ 		"<b>text</b>=%i%%  "
+ 		"<b>buffer</b>=#%i"),
+-	      PCB->Changed ? '*' : ' ',
+ 	      Settings.ShowSolderSide ? _("solder") : _("component"),
+ 	      PCB->Grid * COOR_TO_MM, (int) Settings.GridFactor,
+ 	      TEST_FLAG (ALLDIRECTIONFLAG, PCB) ? "all" :
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index e0120b6..f55cabc 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -470,6 +470,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+ 
+   ghid_invalidate_all ();
+   RestoreCrosshair (TRUE);
++  ghid_window_set_name_label (PCB->Name);
+   ghid_set_status_line_label ();
+   ghid_show_crosshair (TRUE);
+   if (!gport->panning)
+@@ -503,6 +504,7 @@ ghid_port_button_release_cb (GtkWidget * drawing_area,
+       RestoreCrosshair (TRUE);
+       ghid_screen_update ();
+     }
++  ghid_window_set_name_label (PCB->Name);
+   ghid_set_status_line_label ();
+   g_idle_add (ghid_idle_cb, NULL);
+   return TRUE;
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 828c524..b4c8c42 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -661,6 +661,7 @@ ghid_menu_cb (GtkAction * action, gpointer data)
+       ghid_invalidate_all ();
+       RestoreCrosshair (TRUE);
+       ghid_screen_update ();
++      ghid_window_set_name_label (PCB->Name);
+       ghid_set_status_line_label ();
+ #ifdef FIXME
+       g_idle_add (ghid_idle_cb, NULL);
+@@ -876,6 +877,7 @@ ghid_sync_with_new_layout (void)
+   ghid_route_style_button_set_active (0);
+   ghid_config_handle_units_changed ();
+ 
++  ghid_window_set_name_label (PCB->Name);
+   ghid_set_status_line_label ();
+ }
+ 
+@@ -1199,12 +1201,14 @@ make_top_menubar (GtkWidget * hbox, GHidPort * port)
+ }
+ 
+ 
+-/* Set the PCB name on a label or on the window title bar.
++/* Refreshes the window title bar and sets the PCB name to the
++ * window title bar or to a seperate label
+  */
+ void
+ ghid_window_set_name_label (gchar * name)
+ {
+   gchar *str;
++  gchar *filename;
+ 
+   /* FIXME -- should this happen?  It does... */
+   /* This happens if we're calling an exporter from the command line */
+@@ -1218,21 +1222,29 @@ ghid_window_set_name_label (gchar * name)
+   if (!ghidgui->name_label)
+     return;
+ 
++  if (!PCB->Filename  || !*PCB->Filename)
++    filename = g_strdup(_("Unsaved.pcb"));
++  else
++    filename = g_strdup(PCB->Filename);
++
+   if (ghidgui->ghid_title_window)
+     {
+       gtk_widget_hide (ghidgui->label_hbox);
+-      str = g_strdup_printf ("PCB:  %s", ghidgui->name_label_string);
+-      gtk_window_set_title (GTK_WINDOW (gport->top_window), str);
++      str = g_strdup_printf ("%s%s (%s) - PCB", PCB->Changed ? "*": "",
++                             ghidgui->name_label_string, filename);
+     }
+   else
+     {
+-			gtk_widget_show (ghidgui->label_hbox);
++      gtk_widget_show (ghidgui->label_hbox);
+       str = g_strdup_printf (" <b><big>%s</big></b> ",
+-			     ghidgui->name_label_string);
++                             ghidgui->name_label_string);
+       gtk_label_set_markup (GTK_LABEL (ghidgui->name_label), str);
+-      gtk_window_set_title (GTK_WINDOW (gport->top_window), "PCB");
++      str = g_strdup_printf ("%s%s - PCB", PCB->Changed ? "*": "",
++                             filename);
+     }
++  gtk_window_set_title (GTK_WINDOW (gport->top_window), str);
+   g_free (str);
++  g_free (filename);
+ }
+ 
+ static void
