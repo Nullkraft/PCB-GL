@@ -1,0 +1,21 @@
+Bottom: 27f6112453ab2f5c2845a6599571ce12e16ef122
+Top:    27f6112453ab2f5c2845a6599571ce12e16ef122
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-01-07 23:44:06 +0000
+
+hid/gtk: Fix prelight state for layer button to show current status
+
+One of the ways we identify whether a layer is switched on or off is
+by changing the background colour of the GtkToggleButton representing
+that layer.
+
+Fix the prelight (mouse-over) background style to match the current
+button state, so as to give immediate feed-back when the user presses
+the button, and make the interface less confusing.
+
+Closes-bug: lp-699150
+
+
+---
+
+
