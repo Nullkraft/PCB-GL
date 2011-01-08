@@ -1,7 +1,7 @@
-Bottom: 8b5e98218e2729cc950002b86d2c032cc56553bf
-Top:    ce2a1ada8b67ea28999a0f3e1610cece1f27aa18
+Bottom: 42f1c8df76a23fd3e47e2c7455d1b155603fd1db
+Top:    437f630bdf3854e2dac3b66de44c5462c83949b9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-07 23:06:43 +0000
+Date:   2011-01-08 01:37:56 +0000
 
 Drop in PCB+GL code + various mess. Needs splitting up?
 
@@ -2045,10 +2045,10 @@ index 3eea09e..5c72e02 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index c07ca4a..1047af1 100644
+index e2383ff..184ccbb 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -685,8 +685,13 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -687,8 +687,13 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
  
@@ -2062,7 +2062,7 @@ index c07ca4a..1047af1 100644
    if (out->panning)
      {
        dx = gport->zoom * (x_prev - ev->x);
-@@ -707,6 +712,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -709,6 +714,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    ghid_show_crosshair (TRUE);
    if (moved && have_crosshair_attachments ())
      ghid_draw_area_update (gport, NULL);
@@ -2111,10 +2111,10 @@ index c75a0d3..54d95c8 100644
    gtk_widget_class->expose_event = ghid_pinout_preview_expose;
  
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 10a1799..adbf1a4 100644
+index 5412be3..3e1a98f 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -2294,6 +2294,7 @@ ghid_build_pcb_top_window (void)
+@@ -2313,6 +2313,7 @@ ghid_build_pcb_top_window (void)
    gtk_box_pack_start (GTK_BOX (hbox), viewport, TRUE, TRUE, 0);
  
    gport->drawing_area = gtk_drawing_area_new ();

@@ -1,7 +1,7 @@
-Bottom: ce2a1ada8b67ea28999a0f3e1610cece1f27aa18
-Top:    c1a3d637d00f446430c9e2d2282c6917169d4df0
+Bottom: 437f630bdf3854e2dac3b66de44c5462c83949b9
+Top:    0ed97109fbbfc2087c66525db8ba083732d867ae
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-07 23:06:43 +0000
+Date:   2011-01-08 01:37:56 +0000
 
 Fix mesa crash on startup (for some mesa versions)
 
@@ -59,10 +59,10 @@ index 332deb5..e8dd61a 100644
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index adbf1a4..d794b1b 100644
+index 3e1a98f..390316e 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -2140,8 +2140,6 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
+@@ -2159,8 +2159,6 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
    gtk_main_quit ();
  }
  
@@ -71,7 +71,7 @@ index adbf1a4..d794b1b 100644
  /* 
   * Create the top_window contents.  The config settings should be loaded
   * before this is called.
-@@ -2351,6 +2349,9 @@ ghid_build_pcb_top_window (void)
+@@ -2370,6 +2368,9 @@ ghid_build_pcb_top_window (void)
       |  the user does a command entry.
     */
  
@@ -81,7 +81,7 @@ index adbf1a4..d794b1b 100644
    g_signal_connect (G_OBJECT (gport->drawing_area), "expose_event",
  		    G_CALLBACK (ghid_drawing_area_expose_cb),
  		    port);
-@@ -2386,10 +2387,6 @@ ghid_build_pcb_top_window (void)
+@@ -2405,10 +2406,6 @@ ghid_build_pcb_top_window (void)
    ghidgui->creating = FALSE;
  
    gtk_widget_show_all (gport->top_window);
@@ -92,7 +92,7 @@ index adbf1a4..d794b1b 100644
    gdk_window_set_back_pixmap (gport->drawing_area->window, NULL, FALSE);
  
    ghid_route_style_temp_buttons_hide ();
-@@ -2705,8 +2702,6 @@ ghid_parse_arguments (int *argc, char ***argv)
+@@ -2724,8 +2721,6 @@ ghid_parse_arguments (int *argc, char ***argv)
    if (Settings.AutoPlace)
      gtk_widget_set_uposition (GTK_WIDGET (window), 10, 10);
  

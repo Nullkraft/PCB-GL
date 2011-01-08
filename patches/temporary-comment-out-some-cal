@@ -1,7 +1,7 @@
-Bottom: bb668c3dda2228820b281cfb6e555f9b60cff987
-Top:    57511a6759b3ab0177b1e221602303595881198c
+Bottom: d77a74ea97f976ee77a6f43025e3e727cded54e7
+Top:    db3ad9f988a48632974b70bc0d23a6b3c3d69a6b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-07 23:06:52 +0000
+Date:   2011-01-08 01:38:06 +0000
 
 TEMPORARY: Comment out some calls which can trigger an out-of-context redraw
 
@@ -14,7 +14,7 @@ Should fix this properly with notificatons to the GUI
 ---
 
 diff --git a/src/action.c b/src/action.c
-index d8e631f..3dbb178 100644
+index 5acd3fd..a3eda35 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -4032,7 +4032,7 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
@@ -47,7 +47,7 @@ index d8e631f..3dbb178 100644
    return 0;
  }
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 69e5f40..15454d3 100644
+index b6c9fb4..df92b0e 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -370,7 +370,7 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
@@ -68,16 +68,16 @@ index 69e5f40..15454d3 100644
    HideCrosshair (TRUE);
    drag = have_crosshair_attachments ();
  
-@@ -485,7 +485,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
-   ghid_invalidate_all ();
+@@ -486,7 +486,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
    RestoreCrosshair (TRUE);
+   ghid_window_set_name_label (PCB->Name);
    ghid_set_status_line_label ();
 -  ghid_show_crosshair (TRUE);
 +  //ghid_show_crosshair (TRUE);
    if (!gport->panning)
      g_idle_add (ghid_idle_cb, NULL);
    return TRUE;
-@@ -872,7 +872,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -874,7 +874,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
        cursor_in_viewport = FALSE;
      }
  

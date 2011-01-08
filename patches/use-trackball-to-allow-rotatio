@@ -1,7 +1,7 @@
-Bottom: 51030bb519e3786995268781aab27302bb0183bb
-Top:    a7073175c8373fa46352977aab017944d8e68c66
+Bottom: 1826096cd4c22d2b146740edb440b42d97b21522
+Top:    e10ab0646d6303433f4c2280e07c2e4d845c1f11
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-07 23:06:46 +0000
+Date:   2011-01-08 01:38:00 +0000
 
 Use trackball to allow rotation of 3D view
 
@@ -369,7 +369,7 @@ index c3df6f8..4a64d5b 100644
 +  ghid_invalidate_all ();
 +}
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 2d2e2e0..c0677ea 100644
+index 87b636e..5848f36 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -242,6 +242,14 @@ ghid_note_event_location (GdkEventButton * ev)
@@ -387,7 +387,7 @@ index 2d2e2e0..c0677ea 100644
    gport->view_x = event_x * gport->zoom + gport->view_x0;
    gport->view_y = event_y * gport->zoom + gport->view_y0;
  
-@@ -554,7 +562,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -556,7 +564,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
    return 0;
  }
  
@@ -396,7 +396,7 @@ index 2d2e2e0..c0677ea 100644
  # define ENABLE_TOOLTIPS 1
  #else
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index d794b1b..fcb44f2 100644
+index 390316e..6c29bbd 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -123,6 +123,7 @@ a zoom in/out.
@@ -407,7 +407,7 @@ index d794b1b..fcb44f2 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -2151,6 +2152,10 @@ ghid_build_pcb_top_window (void)
+@@ -2170,6 +2171,10 @@ ghid_build_pcb_top_window (void)
    GtkWidget *vbox_main, *vbox_left, *hbox_middle, *hbox = NULL;
    GtkWidget *viewport, *ebox, *vbox, *frame;
    GtkWidget *label;
@@ -418,7 +418,7 @@ index d794b1b..fcb44f2 100644
    GHidPort *port = &ghid_port;
    gchar *s;
    GtkWidget *scrolled;
-@@ -2259,6 +2264,16 @@ ghid_build_pcb_top_window (void)
+@@ -2278,6 +2283,16 @@ ghid_build_pcb_top_window (void)
        GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
    make_layer_buttons(vbox, port);
  
