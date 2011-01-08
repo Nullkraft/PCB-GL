@@ -687,11 +687,12 @@ ghid_port_window_motion_cb (GtkWidget * widget,
   static gint x_prev = -1, y_prev = -1;
   gboolean moved;
 
-
   gdk_event_request_motions (ev);
 
+#if 0
   if (!ghid_start_drawing (out))
     return FALSE;
+#endif
 
 
   if (out->panning)
@@ -711,11 +712,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
   queue_tooltip_update (out);
 #endif
 
-  ghid_show_crosshair (TRUE);
-  if (moved && have_crosshair_attachments ())
+//  ghid_show_crosshair (TRUE);
+  if (moved) // && have_crosshair_attachments ())
     ghid_draw_area_update (gport, NULL);
 
+#if 0
   ghid_end_drawing (out);
+#endif
+
   return FALSE;
 }
 
