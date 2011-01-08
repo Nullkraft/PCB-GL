@@ -1,7 +1,7 @@
-Bottom: d5cd28dbeb07ff1d377a3b9aac41b48332ef2ef5
-Top:    abfa65d2a2bb049377c99beaf2cc6c5d607d15cf
+Bottom: 8c6b6fa2f6cbe014d417a8b1404db4c24fd07077
+Top:    18f3181f193780f8c347107f179cf5541aecab5d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-07 23:08:05 +0000
+Date:   2011-01-08 01:38:22 +0000
 
 Add support for a "poured" object.
 
@@ -48,7 +48,7 @@ index 085d022..657ff84 100644
  	print.c \
  	print.h \
 diff --git a/src/action.c b/src/action.c
-index 3dbb178..53516c9 100644
+index a3eda35..0c95150 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -57,6 +57,7 @@
@@ -3037,7 +3037,7 @@ index be040f1..432d47f 100644
  " 	c None",
  ".	c #6EA5D7",
 diff --git a/src/hid/gtk/gui-misc.c b/src/hid/gtk/gui-misc.c
-index a607a69..f36c400 100644
+index e3316aa..3a1d5b3 100644
 --- a/src/hid/gtk/gui-misc.c
 +++ b/src/hid/gtk/gui-misc.c
 @@ -219,8 +219,8 @@ ghid_mode_cursor (int Mode)
@@ -3052,7 +3052,7 @@ index a607a69..f36c400 100644
        break;
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 15454d3..d51a857 100644
+index df92b0e..94dbc71 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -287,8 +287,8 @@ have_crosshair_attachments (void)
@@ -3067,10 +3067,10 @@ index 15454d3..d51a857 100644
  	result = TRUE;
        break;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 103bea2..d2406cc 100644
+index 3eff969..76a8ed2 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -1981,8 +1981,9 @@ static ModeButton mode_buttons[] = {
+@@ -2000,8 +2000,9 @@ static ModeButton mode_buttons[] = {
    {NULL, NULL, NULL, "arc", ARC_MODE, arc},
    {NULL, NULL, NULL, "text", TEXT_MODE, text},
    {NULL, NULL, NULL, "rectangle", RECTANGLE_MODE, rect},
