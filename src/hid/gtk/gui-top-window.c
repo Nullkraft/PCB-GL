@@ -1374,54 +1374,18 @@ layer_select_button_cb (GtkWidget * widget, LayerButtonSet * lb)
 }
 
 static void
-layer_button_set_color (LayerButtonSet * lb, gchar * color_string,
-                        bool set_prelight)
-{
-  GdkColor color;
-
-  if (!lb->layer_enable_ebox)
-    return;
-
-  color.red = color.green = color.blue = 0;
-  ghid_map_color_string (color_string, &color);
-  gtk_widget_modify_bg (lb->layer_enable_ebox, GTK_STATE_ACTIVE, &color);
-  gtk_widget_modify_bg (lb->layer_enable_ebox, GTK_STATE_PRELIGHT,
-                        set_prelight ? &color : NULL);
-
-  gtk_widget_modify_fg (lb->label, GTK_STATE_ACTIVE, &WhitePixel);
-}
-
-void
-layer_enable_button_set_label (GtkWidget * label, gchar * text)
-{
-  gchar *s;
-
-  if (ghidgui->small_label_markup)
-    s = g_strdup_printf ("<small>%s</small>", text);
-  else
-    s = g_strdup (text);
-  gtk_label_set_markup (GTK_LABEL (label), s);
-  g_free (s);
-}
-
-
-static void
 layer_enable_button_cb (GtkWidget * widget, gpointer data)
 {
-  GtkToggleButton *button = GTK_TOGGLE_BUTTON (widget);
-  char *color_string;
   LayerButtonSet *lb;
   gint i, group, layer = GPOINTER_TO_INT (data);
   gboolean active, redraw = FALSE;
 
-  lb = &layer_buttons[layer];
-  active = gtk_toggle_button_get_active (button);
-  layer_process (&color_string, NULL, NULL, layer);
-  layer_button_set_color (lb, color_string, active);
+  active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget));
 
   if (layer_enable_button_cb_hold_off)
     return;
 
+  lb = &layer_buttons[layer];
   switch (layer)
     {
     case LAYER_BUTTON_SILK:
@@ -1498,6 +1462,37 @@ layer_enable_button_cb (GtkWidget * widget, gpointer data)
 
   if (redraw)
     ghid_invalidate_all();
+}
+
+static void
+layer_button_set_color (LayerButtonSet * lb, gchar * color_string,
+                        bool set_prelight)
+{
+  GdkColor color;
+
+  if (!lb->layer_enable_ebox)
+    return;
+
+  color.red = color.green = color.blue = 0;
+  ghid_map_color_string (color_string, &color);
+  gtk_widget_modify_bg (lb->layer_enable_ebox, GTK_STATE_ACTIVE, &color);
+  gtk_widget_modify_bg (lb->layer_enable_ebox, GTK_STATE_PRELIGHT,
+                        set_prelight ? &color : NULL);
+
+  gtk_widget_modify_fg (lb->label, GTK_STATE_ACTIVE, &WhitePixel);
+}
+
+void
+layer_enable_button_set_label (GtkWidget * label, gchar * text)
+{
+  gchar *s;
+
+  if (ghidgui->small_label_markup)
+    s = g_strdup_printf ("<small>%s</small>", text);
+  else
+    s = g_strdup (text);
+  gtk_label_set_markup (GTK_LABEL (label), s);
+  g_free (s);
 }
 
 static void
@@ -1630,6 +1625,7 @@ ghid_layer_enable_buttons_update (void)
 {
   LayerButtonSet *lb;
   gchar *s;
+  gchar *color_string;
   gint i;
 
 #ifdef DEBUG_MENUS
@@ -1660,6 +1656,8 @@ ghid_layer_enable_buttons_update (void)
 	    printf ("ghid_layer_enable_buttons_update: active=%d new=%d\n",
 		    active, new);
 	}
+      layer_process (&color_string, NULL, NULL, i);
+      layer_button_set_color (lb, color_string, PCB->Data->Layer[i].On);
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON
 				    (lb->layer_enable_button),
 				    PCB->Data->Layer[i].On);
