@@ -1,7 +1,7 @@
-Bottom: 27f4634b6b982aa07952e573921ebd9171d61d51
-Top:    8b1e975aa45253e681f96e5db0ff7e02eb64a920
+Bottom: 9262dd6c2df0182b68bfcddfb7fee698b71ff837
+Top:    2f8c6f6d37a14a7ba9ff0197106cb707271d9b37
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-07 23:06:56 +0000
+Date:   2011-01-08 01:38:11 +0000
 
 Move more rendering to world coordinates
 
@@ -501,7 +501,7 @@ index f26d384..a779dec 100644
    ghid_show_crosshair (TRUE);
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 15454d3..a0d4831 100644
+index df92b0e..cfa58a8 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -253,14 +253,14 @@ ghid_note_event_location (GdkEventButton * ev)
