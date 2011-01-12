@@ -3,9 +3,10 @@ Top:    d0a0b66dff02dfa4876167fefdf76972499cc804
 Author: Ineiev <ineiev@users.sourceforge.net>
 Date:   2009-02-20 21:36:32 +0300
 
-misfix disappearing crosshair mark
+hid/gtk: Fix disappearing reference mark
 
-bug 1882970 (reported by Steven Michalske hardkrash)
+Fixes the following symptoms (Bug sf-1882970 reported
+by Steven Michalske):
 
 (0) when the cursor leaves the window,
   the mark disappears (with attached objects);
@@ -16,6 +17,13 @@ bug 1882970 (reported by Steven Michalske hardkrash)
   the mark disappears on button press, but is not
   redrawn again when button press and release form
   a click.
+
+(Commit message edited by Peter Clifton <pcjc2@cam.ac.uk>)
+
+Reviewed-by: Peter Clifton <pcjc2@cam.ac.uk>
+
+Closes-bug: lp-699244
+Closes-bug: lp-699453
 
 
 ---
