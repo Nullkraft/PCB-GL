@@ -1,7 +1,7 @@
-Bottom: 0ed97109fbbfc2087c66525db8ba083732d867ae
-Top:    f72f2a1fd924460bd1a971193270f9984924a65d
+Bottom: e71b039e086615c9502230abfccc493400f725d3
+Top:    e23c50e25bdf7b56c7ec575e1ecfc72d9f78a101
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-08 01:37:57 +0000
+Date:   2011-01-13 21:19:21 +0000
 
 Cure crosshair lagging on screen
 
@@ -11,10 +11,10 @@ FIXME: SHOULD NOT RE-WRITE THE GTK HID
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 184ccbb..87b636e 100644
+index 85528b8..e6859ae 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -687,11 +687,12 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -671,11 +671,12 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
  
@@ -28,7 +28,7 @@ index 184ccbb..87b636e 100644
  
  
    if (out->panning)
-@@ -711,11 +712,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -695,11 +696,14 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    queue_tooltip_update (out);
  #endif
  

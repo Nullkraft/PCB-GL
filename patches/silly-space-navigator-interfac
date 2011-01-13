@@ -1,7 +1,7 @@
-Bottom: ab8898ad8336d6b28b2a948c16c2d995802d06be
-Top:    7fbc3341d6a074175d398f466cc8ecff46abd0e6
+Bottom: 754767cc755df62cc7707f57bf7a32a9ea7cdffd
+Top:    6f56dac9858fe1bce6647b8cd38d9b829a0a41b3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-08 01:38:03 +0000
+Date:   2011-01-13 21:19:26 +0000
 
 Silly space navigator interface to allow funky views
 
@@ -12,10 +12,10 @@ Silly space navigator interface to allow funky views
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 4fc60b6..720ed7d 100644
+index dee60d9..253b5af 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -283,7 +283,9 @@ LIBGTK_SRCS = \
+@@ -285,7 +285,9 @@ LIBGTK_SRCS = \
  	hid/gtk/gui-pinout-preview.h \
  	hid/gtk/gui-pinout-window.c \
  	hid/gtk/gui-top-window.c \
@@ -27,10 +27,10 @@ index 4fc60b6..720ed7d 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 557ff36..b6c9fb4 100644
+index 6b610a1..4357d49 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -47,6 +47,8 @@
+@@ -45,6 +45,8 @@
  #include "find.h"
  #include "search.h"
  #include "rats.h"
@@ -39,7 +39,7 @@ index 557ff36..b6c9fb4 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -753,6 +755,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -737,6 +739,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        /* Make sure drawing area has keyboard focus when we are in it.
         */
        gtk_widget_grab_focus (out->drawing_area);
@@ -48,7 +48,7 @@ index 557ff36..b6c9fb4 100644
      }
    ghidgui->in_popup = FALSE;
  
-@@ -860,6 +864,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -838,6 +842,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
  	    }
  	  g_idle_add (ghid_pan_idle_cb, NULL);
  	}
@@ -56,8 +56,8 @@ index 557ff36..b6c9fb4 100644
 +        snavi_set_led (ghidgui->snavi, FALSE);
      }
  
-   if(cursor_in_viewport)
-@@ -908,3 +914,31 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+   ghid_show_crosshair (FALSE);
+@@ -880,3 +886,31 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  
    return TRUE;
  }

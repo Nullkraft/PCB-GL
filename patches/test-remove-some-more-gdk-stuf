@@ -1,7 +1,7 @@
-Bottom: d019de08364ee145c96bfe743af73a4117346e78
-Top:    23c9f1c3c7ac561cfb79a50ff698e4eb7a0fde98
+Bottom: a33613e8e2a6ab032bbc3048cb633b8806cb580f
+Top:    575b3d4a32c3db014e499e9cfb89c709a1fb2076
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-08 01:37:54 +0000
+Date:   2011-01-13 21:19:18 +0000
 
 TEST REMOVE SOME MORE GDK STUFF
 
@@ -9,10 +9,10 @@ TEST REMOVE SOME MORE GDK STUFF
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index e287ae7..de221b7 100644
+index 34c672d..1e4cf58 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -268,7 +268,6 @@ LIBGTK_SRCS = \
+@@ -270,7 +270,6 @@ LIBGTK_SRCS = \
  	hid/gtk/gui-pinout-preview.c \
  	hid/gtk/gui-pinout-preview.h \
  	hid/gtk/gui-pinout-window.c \
@@ -204,10 +204,10 @@ index 0a2cc59..5420360 100644
 +  return pixmap;
 +}
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index f55cabc..2ecbfe9 100644
+index 2e820a3..137265b 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -560,28 +560,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -544,28 +544,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  }
  
  

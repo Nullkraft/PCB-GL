@@ -1,7 +1,7 @@
-Bottom: 42f1c8df76a23fd3e47e2c7455d1b155603fd1db
-Top:    437f630bdf3854e2dac3b66de44c5462c83949b9
+Bottom: 3265206eac270b3645c0a251ee51e9ca71357e8a
+Top:    a5c98969ee91dfeacfc0f4f988e1843816ebd1d2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-08 01:37:56 +0000
+Date:   2011-01-13 21:19:20 +0000
 
 Drop in PCB+GL code + various mess. Needs splitting up?
 
@@ -20,10 +20,10 @@ FIXME: SHOULD NOT RE-WRITE THE GTK HID!
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index de221b7..589714a 100644
+index 1e4cf58..9429e18 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -154,13 +154,23 @@ PCB_SRCS = \
+@@ -157,13 +157,23 @@ PCB_SRCS = \
  	hid/common/hid_resource.h \
  	hid/hidint.h 
  
@@ -48,7 +48,7 @@ index de221b7..589714a 100644
  BUILT_SOURCES = \
  	core_lists.h \
  	gpcb-menu.h \
-@@ -248,7 +258,6 @@ LIBGTK_SRCS = \
+@@ -250,7 +260,6 @@ LIBGTK_SRCS = \
  	dolists.h \
  	hid/hidint.h \
  	hid/gtk/gtkhid-main.c \
@@ -56,7 +56,7 @@ index de221b7..589714a 100644
  	hid/gtk/gtkhid.h \
  	hid/gtk/gui.h \
  	hid/gtk/gui-command-window.c \
-@@ -292,6 +301,14 @@ BUILT_SOURCES+=	dbus-introspect.h
+@@ -294,6 +303,14 @@ BUILT_SOURCES+=	dbus-introspect.h
  
  endif
  
@@ -2045,10 +2045,10 @@ index 3eea09e..5c72e02 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index e2383ff..184ccbb 100644
+index e9c8450..85528b8 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -687,8 +687,13 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -671,8 +671,13 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
  
@@ -2062,7 +2062,7 @@ index e2383ff..184ccbb 100644
    if (out->panning)
      {
        dx = gport->zoom * (x_prev - ev->x);
-@@ -709,6 +714,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -693,6 +698,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    ghid_show_crosshair (TRUE);
    if (moved && have_crosshair_attachments ())
      ghid_draw_area_update (gport, NULL);

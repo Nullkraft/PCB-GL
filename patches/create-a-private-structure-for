@@ -1,7 +1,7 @@
-Bottom: 23c9f1c3c7ac561cfb79a50ff698e4eb7a0fde98
-Top:    7dcff74a5b347661648b58092d81d12749e4cb05
+Bottom: 575b3d4a32c3db014e499e9cfb89c709a1fb2076
+Top:    378d9b9ee75c665312752da0abc91afd40216c42
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-08 01:37:54 +0000
+Date:   2011-01-13 21:19:18 +0000
 
 Create a private structure for the render to isolate some of its internals
 
@@ -450,10 +450,10 @@ index 5420360..fb05d4b 100644
    /* call the drawing routine */
    region.X1 = MIN(Px(0), Px(gport->width + 1));
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 2ecbfe9..e2383ff 100644
+index 137265b..e9c8450 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -532,27 +532,24 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -516,27 +516,24 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
    if (!first_time_done)
      {
        gport->colormap = gtk_widget_get_colormap (gport->top_window);

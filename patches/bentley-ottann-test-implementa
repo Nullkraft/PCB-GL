@@ -1,7 +1,7 @@
-Bottom: c74518105a97ed4f6fdf7514f23695a900689366
-Top:    416055bc8da8b5a866bad3a95906296f61bbc1ea
+Bottom: 0eb73435ab0a599c65e70d8dd6a0011b6f42cdd7
+Top:    a5a5cfe6e2ee3eeec93d0daa0f6d738a9fa99e44
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-08 01:38:04 +0000
+Date:   2011-01-13 21:19:27 +0000
 
 Bentley-Ottann test implementation
 
@@ -9,7 +9,7 @@ Bentley-Ottann test implementation
 ---
 
 diff --git a/configure.ac b/configure.ac
-index aa72f35..b12bbe7 100644
+index e4b7660..d4971fa 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -7,6 +7,8 @@ AM_INIT_AUTOMAKE([1.9])
@@ -192,10 +192,10 @@ index 0000000..3f6ab7e
 +
 +AC_CHECK_FUNCS(fork waitpid raise)
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 720ed7d..085d022 100644
+index 253b5af..2b66db3 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -38,6 +38,22 @@ PCB_SRCS = \
+@@ -41,6 +41,22 @@ PCB_SRCS = \
  	box.h \
  	buffer.c \
  	buffer.h \
@@ -218,7 +218,7 @@ index 720ed7d..085d022 100644
  	change.c \
  	change.h \
  	clip.c \
-@@ -133,6 +149,7 @@ PCB_SRCS = \
+@@ -136,6 +152,7 @@ PCB_SRCS = \
  	set.h \
  	strflags.c \
  	strflags.h \

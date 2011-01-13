@@ -1,7 +1,7 @@
-Bottom: e10ab0646d6303433f4c2280e07c2e4d845c1f11
-Top:    32ce8f63240ebde3162e43ec72c8568c13d3c37e
+Bottom: 65153c4f12f0fe80d28d35cde9d8767b99e2132d
+Top:    521202ae73937b99fe0f758cec51010c26339678
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-08 01:38:00 +0000
+Date:   2011-01-13 21:19:24 +0000
 
 Add support for depth to triangle rendering routines.
 
@@ -124,10 +124,10 @@ index b956a65..aa2985e 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 5848f36..557ff36 100644
+index 34072a4..6b610a1 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -231,6 +231,10 @@ ghid_note_event_location (GdkEventButton * ev)
+@@ -222,6 +222,10 @@ ghid_note_event_location (GdkEventButton * ev)
  {
    gint event_x, event_y;
    gboolean moved;
@@ -138,7 +138,7 @@ index 5848f36..557ff36 100644
  
    if (!ev)
      {
-@@ -246,7 +250,7 @@ ghid_note_event_location (GdkEventButton * ev)
+@@ -237,7 +241,7 @@ ghid_note_event_location (GdkEventButton * ev)
    /* FIXME: IFDEF HACK */
  #ifdef ENABLE_GL
    /* Unproject event_x and event_y to world coordinates of the plane we are on */

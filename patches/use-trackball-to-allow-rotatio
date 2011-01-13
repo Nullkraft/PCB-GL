@@ -1,7 +1,7 @@
-Bottom: 1826096cd4c22d2b146740edb440b42d97b21522
-Top:    e10ab0646d6303433f4c2280e07c2e4d845c1f11
+Bottom: f673bd181cda01a0e384f788a1df01c9b1ed1caf
+Top:    65153c4f12f0fe80d28d35cde9d8767b99e2132d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-08 01:38:00 +0000
+Date:   2011-01-13 21:19:24 +0000
 
 Use trackball to allow rotation of 3D view
 
@@ -369,10 +369,10 @@ index c3df6f8..4a64d5b 100644
 +  ghid_invalidate_all ();
 +}
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 87b636e..5848f36 100644
+index e6859ae..34072a4 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -242,6 +242,14 @@ ghid_note_event_location (GdkEventButton * ev)
+@@ -233,6 +233,14 @@ ghid_note_event_location (GdkEventButton * ev)
        event_x = ev->x;
        event_y = ev->y;
      }
@@ -387,7 +387,7 @@ index 87b636e..5848f36 100644
    gport->view_x = event_x * gport->zoom + gport->view_x0;
    gport->view_y = event_y * gport->zoom + gport->view_y0;
  
-@@ -556,7 +564,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -540,7 +548,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
    return 0;
  }
  
