@@ -1,7 +1,7 @@
-Bottom: a8ecba13bc8870d657da7b763c68e3dc34df193c
-Top:    b462dc737d05a96359a5de19dde2620989e1f12f
+Bottom: f015265b564611299bdbb272b20744a37621fd5f
+Top:    7bba341f8baf112576b3994c4d95da0b83d8b6f4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-08 01:38:20 +0000
+Date:   2011-01-13 21:21:43 +0000
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -28,7 +28,7 @@ polygon fill.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 4447c30..7a3fb68 100644
+index 4442bbb..cb50248 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -381,6 +381,7 @@ MovePolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
