@@ -1,5 +1,5 @@
-Bottom: db3fe03895148087723682505daea996aa9cd97f
-Top:    8482f7cdd2e20d7fd1597091308ddf75c0c60620
+Bottom: ef421b56780c307c19186e54b89f8210077f616e
+Top:    938b15f0478eb2a53a0eaf015c1d87694491c6cf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-08 01:38:24 +0000
 
@@ -11,7 +11,7 @@ Kept separate for now because they might have unknown side-effects.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 370e294..cc8f7a6 100644
+index 4916eb2..233f905 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -249,8 +249,8 @@ MoveViaToBuffer (PinTypePtr Via)
@@ -116,10 +116,10 @@ index c7c66e7..76cbbca 100644
        if (Line->Clearance == 0)
  	{
 diff --git a/src/misc.c b/src/misc.c
-index be6e2ea..eb1ccf7 100644
+index 3eb4b63..45ade00 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -1528,8 +1528,8 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
+@@ -1568,8 +1568,8 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
        new_da = 360;
        new_sa = 0;
      }
