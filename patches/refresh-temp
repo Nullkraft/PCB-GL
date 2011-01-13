@@ -1,0 +1,82 @@
+Bottom: 990600184e7e1143bdf4c97293395c544a3a1b2e
+Top:    0995122a20aefda0c64eb76f28df544ad8f99aac
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-01-13 21:20:08 +0000
+
+Refresh of temporary-comment-out-some-cal
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 5acd3fd..a3eda35 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -4032,7 +4032,7 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
+     {
+       if (Marked.status)
+ 	{
+-	  DrawMark (true);
++//	  DrawMark (true);
+ 	  Marked.status = false;
+ 	}
+       else
+@@ -4040,16 +4040,16 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
+ 	  Marked.status = true;
+ 	  Marked.X = Crosshair.X;
+ 	  Marked.Y = Crosshair.Y;
+-	  DrawMark (false);
++//	  DrawMark (false);
+ 	}
+     }
+   else if (GetFunctionID (function) == F_Center)
+     {
+-      DrawMark (true);
++//      DrawMark (true);
+       Marked.status = true;
+       Marked.X = Crosshair.X;
+       Marked.Y = Crosshair.Y;
+-      DrawMark (false);
++//      DrawMark (false);
+     }
+   return 0;
+ }
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 4357d49..6a7ff24 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -361,7 +361,7 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
+   state = (GdkModifierType) (kev->state);
+   mk = ghid_modifier_keys_state (&state);
+ 
+-  ghid_show_crosshair (FALSE);
++  //ghid_show_crosshair (FALSE);
+ 
+   handled = TRUE;		/* Start off assuming we handle it */
+   switch (ksym)
+@@ -466,7 +466,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+   ghid_note_event_location (ev);
+   state = (GdkModifierType) (ev->state);
+   mk = ghid_modifier_keys_state (&state);
+-  ghid_show_crosshair (FALSE);
++  //ghid_show_crosshair (FALSE);
+   HideCrosshair (TRUE);
+ 
+   do_mouse_action(ev->button, mk);
+@@ -475,7 +475,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+   RestoreCrosshair (TRUE);
+   ghid_window_set_name_label (PCB->Name);
+   ghid_set_status_line_label ();
+-  ghid_show_crosshair (TRUE);
++  //ghid_show_crosshair (TRUE);
+   if (!gport->panning)
+     g_idle_add (ghid_idle_cb, NULL);
+   return TRUE;
+@@ -846,7 +846,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+         snavi_set_led (ghidgui->snavi, FALSE);
+     }
+ 
+-  ghid_show_crosshair (FALSE);
++  //ghid_show_crosshair (FALSE);
+   out->has_entered = FALSE;
+ 
+   ghid_screen_update ();
