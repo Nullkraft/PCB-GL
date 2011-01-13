@@ -1,7 +1,7 @@
-Bottom: 9262dd6c2df0182b68bfcddfb7fee698b71ff837
-Top:    2f8c6f6d37a14a7ba9ff0197106cb707271d9b37
+Bottom: 2666420a5f40b196a96f1dc90d0645a23fc56de3
+Top:    668d25173f38e6b9d6e31ea6bc536ca4da666e64
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-08 01:38:11 +0000
+Date:   2011-01-13 21:20:29 +0000
 
 Move more rendering to world coordinates
 
@@ -501,10 +501,10 @@ index f26d384..a779dec 100644
    ghid_show_crosshair (TRUE);
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index df92b0e..cfa58a8 100644
+index 6a7ff24..118cbac 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -253,14 +253,14 @@ ghid_note_event_location (GdkEventButton * ev)
+@@ -244,14 +244,14 @@ ghid_note_event_location (GdkEventButton * ev)
  #ifdef ENABLE_GL
    /* Unproject event_x and event_y to world coordinates of the plane we are on */
    ghid_unproject_to_z_plane (event_x, event_y, global_depth,

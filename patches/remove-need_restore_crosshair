@@ -1,7 +1,7 @@
-Bottom: 31be077d474eb991e36713e8cc16a4bd519d456f
-Top:    8e90317777c099d43780c9702cb9eaf670e153ec
+Bottom: b9f388c7c173be00ef8eba44710dc85ad0515114
+Top:    b01847ac62563ee051b58a2ae812065d0574fdea
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-08 01:38:13 +0000
+Date:   2011-01-13 21:20:31 +0000
 
 Remove need_restore_crosshair
 
@@ -37,10 +37,10 @@ index f8fb6ed..9c90c99 100644
  }
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index cfa58a8..92c52a1 100644
+index 118cbac..80ce108 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -69,16 +69,12 @@ ghid_port_ranges_changed (void)
+@@ -60,16 +60,12 @@ ghid_port_ranges_changed (void)
  {
    GtkAdjustment *h_adj, *v_adj;
  
