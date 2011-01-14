@@ -3,13 +3,16 @@ Top:    d687c2a7b298467031ac36a0a51054692cfcabad
 Author: Jared Casper <jaredcasper@gmail.com>
 Date:   2011-01-07 16:39:49 -0800
 
-From a02021e651701a0f78a0b3a519703155f63e5a3f Mon Sep 17 00:00:00 2001
-Subject: [PATCH] Heed and remove warning issues by autoconf 2.68.
+Heed and remove warning issued by autoconf 2.68.
 
 Starting in autoconf 2.68, "the macros AC_PREPROC_IFELSE,
 AC_COMPILE_IFELSE, AC_LINK_IFELSE, and AC_RUN_IFELSE now warn if the
 first argument failed to use AC_LANG_SOURCE or AC_LANG_PROGRAM to
 generate the conftest file contents."
+
+Closes-bug: lp-700180
+
+Reviewed-by: Peter Clifton <pcjc2@cam.ac>
 
 
 ---
