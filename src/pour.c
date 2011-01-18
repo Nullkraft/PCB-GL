@@ -67,6 +67,8 @@ RCSID ("$Id$");
 #define ROUND(x) ((long)(((x) >= 0 ? (x) + 0.5  : (x) - 0.5)))
 
 #define UNSUBTRACT_BLOAT 100
+#define SUBTRACT_PIN_VIA_BATCH_SIZE 100
+#define SUBTRACT_LINE_BATCH_SIZE 20
 
 /* ---------------------------------------------------------------------------
  * local prototypes
@@ -526,8 +528,21 @@ struct cpInfo
   bool solder;
   POLYAREA *pg;
   BoxType *region;
+  POLYAREA *accumulate;
+  int batch_size;
   jmp_buf env;
 };
+
+static void
+subtract_accumulated (struct cpInfo *info)
+{
+  if (info->accumulate == NULL)
+    return;
+  if (subtract_poly (info->accumulate, &info->pg) < 0)
+    longjmp (info->env, 1);
+  info->accumulate = NULL;
+  info->batch_size = 0;
+}
 
 static int
 pin_sub_callback (const BoxType * b, void *cl)
@@ -544,8 +559,12 @@ pin_sub_callback (const BoxType * b, void *cl)
   if (np == NULL)
     return 0;
 
-  if (subtract_poly (np, &info->pg) < 0)
-    longjmp (info->env, 1);
+  unite_poly (np, &info->accumulate);
+  info->batch_size ++;
+
+  if (info->batch_size == SUBTRACT_PIN_VIA_BATCH_SIZE)
+    subtract_accumulated (info);
+
   return 1;
 }
 
@@ -566,8 +585,12 @@ arc_sub_callback (const BoxType * b, void *cl)
   if (np == NULL)
     return 0;
 
-  if (subtract_poly (np, &info->pg) < 0)
-    longjmp (info->env, 1);
+  unite_poly (np, &info->accumulate);
+  info->batch_size ++;
+
+  if (info->batch_size == SUBTRACT_LINE_BATCH_SIZE)
+    subtract_accumulated (info);
+
   return 1;
 }
 
@@ -711,18 +734,23 @@ ClearPour (DataTypePtr Data, LayerTypePtr Layer, PourType * pour,
 
   if (setjmp (info.env) == 0)
     {
-      r  = r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
-      r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
+      r = 0;
+      info.accumulate = NULL;
+      info.batch_size = 0;
+      if (info.solder || group == Group (Data, component_silk_layer))
+        r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
       GROUP_LOOP (Data, group);
       {
         r += r_search (layer->line_tree, &region, NULL, line_sub_callback, &info);
+        subtract_accumulated (&info);
         r += r_search (layer->arc_tree,  &region, NULL, arc_sub_callback,  &info);
         r += r_search (layer->text_tree, &region, NULL, text_sub_callback, &info);
         r += r_search (layer->pour_tree, &region, NULL, pour_sub_callback, &info);
       }
       END_LOOP;
-      if (info.solder || group == Group (Data, component_silk_layer))
-        r += r_search (Data->pad_tree, &region, NULL, pad_sub_callback, &info);
+      r += r_search (Data->via_tree, &region, NULL, pin_sub_callback, &info);
+      r += r_search (Data->pin_tree, &region, NULL, pin_sub_callback, &info);
+      subtract_accumulated (&info);
     }
 
   *pg = info.pg;
