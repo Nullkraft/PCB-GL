@@ -1,5 +1,5 @@
-Bottom: 33ae0a5db4128fb64ef6e8f468829fc1cd5c8eb8
-Top:    f672f863c50cfcac25fa3532314312ad4e4d5e34
+Bottom: b1635f72b60eae9d2fc4e3f916a9d3a93d3db0c8
+Top:    9ccc6a44eed297c8e020fa786771ca93ac06819b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-18 16:14:23 +0000
 
@@ -39,10 +39,10 @@ index 1336a53..4916eb2 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index d3499e5..c7c66e7 100644
+index 2604faa..20232b0 100644
 --- a/src/change.c
 +++ b/src/change.c
-@@ -1180,10 +1180,12 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
+@@ -1179,10 +1179,12 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
    AddObjectToFlagUndoList (LINE_TYPE, Layer, Line, Line);
    TOGGLE_FLAG (CLEARLINEFLAG, Line);
    if (TEST_FLAG(CLEARLINEFLAG, Line))
@@ -59,7 +59,7 @@ index d3499e5..c7c66e7 100644
    DrawLine (Layer, Line, 0);
    return (Line);
  }
-@@ -1228,9 +1230,11 @@ ChangeArcJoin (LayerTypePtr Layer, ArcTypePtr Arc)
+@@ -1227,9 +1229,11 @@ ChangeArcJoin (LayerTypePtr Layer, ArcTypePtr Arc)
    TOGGLE_FLAG (CLEARLINEFLAG, Arc);
    if (TEST_FLAG (CLEARLINEFLAG, Arc))
      {
@@ -72,7 +72,7 @@ index d3499e5..c7c66e7 100644
    DrawArc (Layer, Arc, 0);
    return (Arc);
  }
-@@ -1274,10 +1278,12 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1273,10 +1277,12 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
    AddObjectToFlagUndoList (LINE_TYPE, Layer, Text, Text);
    TOGGLE_FLAG (CLEARLINEFLAG, Text);
    if (TEST_FLAG(CLEARLINEFLAG, Text))
@@ -89,7 +89,7 @@ index d3499e5..c7c66e7 100644
    DrawText (Layer, Text, 0);
    return (Text);
  }
-@@ -1299,10 +1305,12 @@ ChangePourJoin (LayerTypePtr Layer, PourTypePtr pour)
+@@ -1298,10 +1304,12 @@ ChangePourJoin (LayerTypePtr Layer, PourTypePtr pour)
    AddObjectToFlagUndoList (LINE_TYPE, Layer, pour, pour);
    TOGGLE_FLAG (CLEARLINEFLAG, pour);
    if (TEST_FLAG(CLEARLINEFLAG, pour))
@@ -106,7 +106,7 @@ index d3499e5..c7c66e7 100644
    DrawPour (Layer, pour, 0);
    return (pour);
  }
-@@ -1675,6 +1683,8 @@ ChangeHole (PinTypePtr Via)
+@@ -1674,6 +1682,8 @@ ChangeHole (PinTypePtr Via)
      {
        AddObjectTo2ndSizeUndoList (VIA_TYPE, Via, Via, Via);
        Via->DrillingHole = Via->Thickness - MIN_PINORVIACOPPER;

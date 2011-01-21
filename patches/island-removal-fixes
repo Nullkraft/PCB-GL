@@ -1,5 +1,5 @@
-Bottom: f672f863c50cfcac25fa3532314312ad4e4d5e34
-Top:    9d3691bdff9c688bc23075569424e045ad6e9be3
+Bottom: 9ccc6a44eed297c8e020fa786771ca93ac06819b
+Top:    4327d74e0c36e024a5bb963b205f2571143a5e1f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-18 16:14:23 +0000
 
@@ -55,10 +55,10 @@ index 4916eb2..233f905 100644
    pour = GetPourMemory (lay);
    *pour = *Pour;
 diff --git a/src/change.c b/src/change.c
-index c7c66e7..76cbbca 100644
+index 20232b0..18ad7a8 100644
 --- a/src/change.c
 +++ b/src/change.c
-@@ -495,10 +495,10 @@ ChangeViaClearSize (PinTypePtr Via)
+@@ -494,10 +494,10 @@ ChangeViaClearSize (PinTypePtr Via)
      value = PCB->Bloat * 2 + 2;
    if (Via->Clearance == value)
      return NULL;
@@ -70,7 +70,7 @@ index c7c66e7..76cbbca 100644
    Via->Clearance = value;
    SetPinBoundingBox (Via);
    r_insert_entry (PCB->Data->via_tree, (BoxType *) Via, 0);
-@@ -561,10 +561,10 @@ ChangePinClearSize (ElementTypePtr Element, PinTypePtr Pin)
+@@ -560,10 +560,10 @@ ChangePinClearSize (ElementTypePtr Element, PinTypePtr Pin)
      value = PCB->Bloat * 2 + 2;
    if (Pin->Clearance == value)
      return NULL;
@@ -82,7 +82,7 @@ index c7c66e7..76cbbca 100644
    Pin->Clearance = value;
    /* SetElementBB updates all associated rtrees */
    SetElementBoundingBox (PCB->Data, Element, &PCB->Font);
-@@ -588,9 +588,9 @@ ChangePadSize (ElementTypePtr Element, PadTypePtr Pad)
+@@ -587,9 +587,9 @@ ChangePadSize (ElementTypePtr Element, PadTypePtr Pad)
      {
        AddObjectToSizeUndoList (PAD_TYPE, Element, Pad, Pad);
        AddObjectToMaskSizeUndoList (PAD_TYPE, Element, Pad, Pad);
@@ -93,7 +93,7 @@ index c7c66e7..76cbbca 100644
        Pad->Mask += value - Pad->Thickness;
        Pad->Thickness = value;
        /* SetElementBB updates all associated rtrees */
-@@ -623,9 +623,9 @@ ChangePadClearSize (ElementTypePtr Element, PadTypePtr Pad)
+@@ -622,9 +622,9 @@ ChangePadClearSize (ElementTypePtr Element, PadTypePtr Pad)
    if (value == Pad->Clearance)
      return NULL;
    AddObjectToClearSizeUndoList (PAD_TYPE, Element, Pad, Pad);
@@ -104,7 +104,7 @@ index c7c66e7..76cbbca 100644
    Pad->Clearance = value;
    /* SetElementBB updates all associated rtrees */
    SetElementBoundingBox (PCB->Data, Element, &PCB->Font);
-@@ -753,9 +753,9 @@ ChangeLineClearSize (LayerTypePtr Layer, LineTypePtr Line)
+@@ -752,9 +752,9 @@ ChangeLineClearSize (LayerTypePtr Layer, LineTypePtr Line)
    if (value != Line->Clearance)
      {
        AddObjectToClearSizeUndoList (LINE_TYPE, Layer, Line, Line);
