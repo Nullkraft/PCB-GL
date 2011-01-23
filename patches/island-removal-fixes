@@ -1,5 +1,5 @@
-Bottom: f44cb4a9de2bf1acba3ef71948682693971c4ede
-Top:    8b9ce665e45adc8e80a2b3d0a8fae3c83356952f
+Bottom: b5df59b222e068d2a8510d1c3ed813952cb26279
+Top:    828747b2f1ff1edceceb4cbebf91c8e9198ecd4a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-18 16:14:28 +0000
 
@@ -45,7 +45,7 @@ index 41abe50..2d9267c 100644
    arc = GetArcMemory (lay);
    *arc = *Arc;
 diff --git a/src/change.c b/src/change.c
-index 33d9b03..fbdc6c0 100644
+index 14a4098..b57a750 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -492,10 +492,10 @@ ChangeViaClearSize (PinTypePtr Via)
@@ -106,7 +106,7 @@ index 33d9b03..fbdc6c0 100644
        if (Line->Clearance == 0)
  	{
 diff --git a/src/misc.c b/src/misc.c
-index 3eb4b63..45ade00 100644
+index 26d2a69..497f79c 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -1568,8 +1568,8 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
@@ -120,7 +120,7 @@ index 3eb4b63..45ade00 100644
    a->StartAngle = new_sa;
    a->Delta = new_da;
 diff --git a/src/move.c b/src/move.c
-index c64ad22..65cdb38 100644
+index 6a6e3a2..4488180 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -282,8 +282,8 @@ MoveLine (LayerTypePtr Layer, LineTypePtr Line)
@@ -165,13 +165,13 @@ index c64ad22..65cdb38 100644
        r_insert_entry (Layer->line_tree, &Line->BoundingBox, 0);
 @@ -659,8 +659,8 @@ MoveTextToLayerLowLevel (LayerTypePtr Source, TextTypePtr Text,
  {
-   TextTypePtr new = GetTextMemory (Destination);
+   TextTypePtr newone = GetTextMemory (Destination);
  
 -  RestoreToPours (PCB->Data, TEXT_TYPE, Source, Text);
    r_delete_entry (Source->text_tree, (BoxTypePtr) Text);
 +  RestoreToPours (PCB->Data, TEXT_TYPE, Source, Text);
    /* copy the data and remove it from the former layer */
-   *new = *Text;
+   *newone = *Text;
    *Text = Source->Text[--Source->TextN];
 diff --git a/src/pour.c b/src/pour.c
 index 943e511..3f1a989 100644
