@@ -1,7 +1,7 @@
-Bottom: 59532169b8fcd44b13824795c6f81308a8592033
-Top:    02e953bafd5880b2e803fcf5fa7ffd279b8e4c04
+Bottom: 47ddd3100462ec51da77427c2e6c6b4036d150e3
+Top:    1f8381aca957fc55b3af711c31dcc9175c45b0cc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-21 19:37:03 +0000
+Date:   2011-01-23 16:55:44 +0000
 
 Remove need_restore_crosshair
 
@@ -9,7 +9,7 @@ Remove need_restore_crosshair
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 11879f2..3d11aa3 100644
+index 245b0c8..c5b3cf2 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -783,9 +783,6 @@ ghid_invalidate_all ()
@@ -37,7 +37,7 @@ index f8fb6ed..9c90c99 100644
  }
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 118cbac..80ce108 100644
+index accfa34..9ccf0af 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -60,16 +60,12 @@ ghid_port_ranges_changed (void)
@@ -58,7 +58,7 @@ index 118cbac..80ce108 100644
    v_adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->v_range));
    gport->view_x0 = h_adj->value;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 8918482..cceab6d 100644
+index 4b7f3e6..3fba04f 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -132,7 +132,7 @@ typedef struct
