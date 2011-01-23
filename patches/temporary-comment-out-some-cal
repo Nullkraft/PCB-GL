@@ -1,5 +1,5 @@
-Bottom: 9e57132db0ae738a59f08924098845554be4c818
-Top:    3c9ef59e00a33375a62d239e2fc754492432359f
+Bottom: e9227c74dee563f9e4d58eea325df80a93af2e73
+Top:    73ec40be45e024d0a3c4b3245f3e46f22f00a159
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-21 19:36:57 +0000
 
@@ -14,10 +14,10 @@ Should fix this properly with notificatons to the GUI
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 5acd3fd..a3eda35 100644
+index de2738e..21e3bba 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -4032,7 +4032,7 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
+@@ -4054,7 +4054,7 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
      {
        if (Marked.status)
  	{
@@ -26,7 +26,7 @@ index 5acd3fd..a3eda35 100644
  	  Marked.status = false;
  	}
        else
-@@ -4040,16 +4040,16 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
+@@ -4062,16 +4062,16 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
  	  Marked.status = true;
  	  Marked.X = Crosshair.X;
  	  Marked.Y = Crosshair.Y;
@@ -47,7 +47,7 @@ index 5acd3fd..a3eda35 100644
    return 0;
  }
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 4357d49..6a7ff24 100644
+index 9243be8..8a561e9 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -361,7 +361,7 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
