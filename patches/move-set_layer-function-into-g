@@ -1,7 +1,7 @@
-Bottom: e570efa3ac5dfd68a680d1a4b31bcbcc0d7646ca
-Top:    a03712141b77e7c72cef1e5c65e0350d9d62eb85
+Bottom: 9f4497554ca9e978c5cf16ddcba5e3f9d924cbfd
+Top:    24873f798d296cbe02fdcb70284ae32516ec9025
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-21 19:36:48 +0000
+Date:   2011-01-23 16:53:56 +0000
 
 Move set_layer function into GDK specific code.
 
@@ -12,7 +12,7 @@ version coming shortly does some extra work.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index fb05d4b..a5664b6 100644
+index c8bac31..d5b2f82 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -52,6 +52,51 @@ typedef struct hid_gc_struct
@@ -68,7 +68,7 @@ index fb05d4b..a5664b6 100644
  ghid_destroy_gc (hidGC gc)
  {
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 8bbf3eb..3eea09e 100644
+index 169884e..c77faaf 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -288,51 +288,6 @@ zoom_by (double factor, int x, int y)
@@ -124,7 +124,7 @@ index 8bbf3eb..3eea09e 100644
  ghid_calibrate (double xval, double yval)
  {
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 0004f43..b2b2ce4 100644
+index 332239b..eb1e853 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -475,6 +475,7 @@ void ghid_logv (const char *fmt, va_list args);

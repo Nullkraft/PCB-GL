@@ -1,7 +1,7 @@
-Bottom: 256bdea76296ba0657967035cec62afa613b30b0
-Top:    672c1129bab31a924a3465174d3f792169acf9b6
+Bottom: 9495eae1feaff845354b7575a670a2616f625116
+Top:    173f356745d8b3d19afaf286cb792b9a173477f0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-21 19:36:47 +0000
+Date:   2011-01-23 16:53:56 +0000
 
 TEST REMOVE SOME MORE GDK STUFF
 
@@ -21,7 +21,7 @@ index 34c672d..1e4cf58 100644
  	hid/gtk/gui-utils.c
  libgtk_a_SOURCES = ${LIBGTK_SRCS} hid/gtk/gtk_lists.h
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 0a2cc59..5420360 100644
+index 6ea9f9b..5988a58 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -868,3 +868,178 @@ ghid_show_crosshair (gboolean show)
@@ -204,7 +204,7 @@ index 0a2cc59..5420360 100644
 +  return pixmap;
 +}
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 2e820a3..137265b 100644
+index 349f91b..6929c8a 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -544,28 +544,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
@@ -237,7 +237,7 @@ index 2e820a3..137265b 100644
  # define ENABLE_TOOLTIPS 1
  #else
 diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
-index 212d37a..c75a0d3 100644
+index fc69639..5b8d20a 100644
 --- a/src/hid/gtk/gui-pinout-preview.c
 +++ b/src/hid/gtk/gui-pinout-preview.c
 @@ -150,66 +150,6 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
@@ -413,7 +413,7 @@ index b24e6c9..0000000
 -  return pixmap;
 -}
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index f2cdb99..f66eb1d 100644
+index 4186d85..dd97d01 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2370,7 +2370,7 @@ ghid_build_pcb_top_window (void)
@@ -426,7 +426,7 @@ index f2cdb99..f66eb1d 100644
    g_signal_connect (G_OBJECT (gport->top_window), "configure_event",
  		    G_CALLBACK (top_window_configure_event_cb), port);
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index d2a76ce..55cdcd9 100644
+index df30955..cf45adf 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -36,7 +36,7 @@
@@ -464,7 +464,7 @@ index d2a76ce..55cdcd9 100644
  hidGC ghid_make_gc (void);
  void ghid_destroy_gc (hidGC);
 @@ -505,6 +494,12 @@ void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
- void ghid_invalidate_lr ();
+ void ghid_invalidate_lr (int left, int right, int top, int bottom);
  void ghid_invalidate_all ();
  void ghid_show_crosshair (gboolean show);
 +void ghid_screen_update (void);

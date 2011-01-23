@@ -1,7 +1,7 @@
-Bottom: ac3aa50accb76accd904b4ba5088955c2359bbe3
-Top:    9f3e8665558f9499d7ab1b6fdf3fc69d53e2b435
+Bottom: 72b5863777eb06dd7233283f8b69326f71b98be6
+Top:    6d6dfb8753822815c4941ee0edf535e4fa3c18e6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-21 19:36:50 +0000
+Date:   2011-01-23 16:53:59 +0000
 
 Cure crosshair lagging on screen
 
@@ -11,7 +11,7 @@ FIXME: SHOULD NOT RE-WRITE THE GTK HID
 ---
 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 85528b8..e6859ae 100644
+index 3b543cb..c838117 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -671,11 +671,12 @@ ghid_port_window_motion_cb (GtkWidget * widget,

@@ -1,7 +1,7 @@
-Bottom: 672c1129bab31a924a3465174d3f792169acf9b6
-Top:    e570efa3ac5dfd68a680d1a4b31bcbcc0d7646ca
+Bottom: 173f356745d8b3d19afaf286cb792b9a173477f0
+Top:    9f4497554ca9e978c5cf16ddcba5e3f9d924cbfd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-21 19:36:48 +0000
+Date:   2011-01-23 16:53:56 +0000
 
 Create a private structure for the render to isolate some of its internals
 
@@ -13,7 +13,7 @@ changes in size.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 5420360..fb05d4b 100644
+index 5988a58..c8bac31 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -21,13 +21,21 @@ RCSID ("$Id$");
@@ -450,7 +450,7 @@ index 5420360..fb05d4b 100644
    /* call the drawing routine */
    region.X1 = MIN(Px(0), Px(gport->width + 1));
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 137265b..e9c8450 100644
+index 6929c8a..10dd85b 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -516,27 +516,24 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
@@ -486,7 +486,7 @@ index 137265b..e9c8450 100644
    ghid_invalidate_all ();
    RestoreCrosshair (TRUE);
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index f66eb1d..5412be3 100644
+index dd97d01..ff6dfc0 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2693,6 +2693,8 @@ ghid_parse_arguments (int *argc, char ***argv)
@@ -499,7 +499,7 @@ index f66eb1d..5412be3 100644
  
    Settings.AutoPlace = 0;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 55cdcd9..0004f43 100644
+index cf45adf..332239b 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -162,7 +162,7 @@ typedef struct
@@ -512,7 +512,7 @@ index 55cdcd9..0004f43 100644
    GdkColor bg_color, offlimits_color, grid_color;
  
 @@ -494,6 +494,8 @@ void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
- void ghid_invalidate_lr ();
+ void ghid_invalidate_lr (int left, int right, int top, int bottom);
  void ghid_invalidate_all ();
  void ghid_show_crosshair (gboolean show);
 +void ghid_init_renderer (int *, char ***, GHidPort *);

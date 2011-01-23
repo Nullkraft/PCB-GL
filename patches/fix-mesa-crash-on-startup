@@ -1,7 +1,7 @@
-Bottom: f3e53732c84c605876998ec7804fb9c4f284ac15
-Top:    ac3aa50accb76accd904b4ba5088955c2359bbe3
+Bottom: ede71bd6b0066eb8103d1a6126f8d442208bc90a
+Top:    72b5863777eb06dd7233283f8b69326f71b98be6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-21 19:36:50 +0000
+Date:   2011-01-23 16:53:58 +0000
 
 Fix mesa crash on startup (for some mesa versions)
 
@@ -16,7 +16,7 @@ The underlying problem appears to have been fixed in later mesa versions.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 3e3ac50..a47e391 100644
+index 52d9990..5c8f062 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -1011,6 +1011,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
@@ -59,7 +59,7 @@ index 332deb5..e8dd61a 100644
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 3e1a98f..390316e 100644
+index 4ea3842..3570704 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2159,8 +2159,6 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)
@@ -102,7 +102,7 @@ index 3e1a98f..390316e 100644
  }
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index d8befcf..381e451 100644
+index 912e369..c5f57c7 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -503,6 +503,7 @@ void ghid_end_drawing (GHidPort *port);

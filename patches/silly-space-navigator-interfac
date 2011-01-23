@@ -1,7 +1,7 @@
-Bottom: fb6ee458824789d895da42cd45e0f981bc2a003e
-Top:    acc6cf57e73cf23ee961ab38edae69af7151da53
+Bottom: 46caf0508c75828c1d43300acf906cd22f58bf57
+Top:    727e548979715dbf6edcc95b8d640d58925c75d1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-21 19:36:55 +0000
+Date:   2011-01-23 16:54:04 +0000
 
 Silly space navigator interface to allow funky views
 
@@ -27,7 +27,7 @@ index dee60d9..253b5af 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 6b610a1..4357d49 100644
+index df0446f..9243be8 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -45,6 +45,8 @@
@@ -90,7 +90,7 @@ index 6b610a1..4357d49 100644
 +    hid_actionl ("SwapSides", (button == 0) ? "V" : "H", NULL);
 +}
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 6c29bbd..3eff969 100644
+index e4fd6d9..8a6b290 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -124,6 +124,7 @@ a zoom in/out.
@@ -178,7 +178,7 @@ index d6bd03c..3af647e 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index c9c5883..8918482 100644
+index dce9a30..4b7f3e6 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -146,6 +146,8 @@ typedef struct

@@ -1,7 +1,7 @@
-Bottom: bd606cd33f5e83914b315d4f4e02e1f83f615724
-Top:    8deb163927008eb3fc115a33e6bbdee7ea71a43f
+Bottom: 32a3bad03baa3d1d11c5eabf43d5a63661a7b585
+Top:    3792ed654073833c6f8c0d22a3f3ab7d7b9dee00
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-21 19:36:51 +0000
+Date:   2011-01-23 16:53:59 +0000
 
 Add raw polygons support for the GTK HID, bypassing the no-holes dicer
 
@@ -176,7 +176,7 @@ index 73d9a34..bb1383c 100644
  
  
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index a47e391..d455c09 100644
+index 5c8f062..8e05ace 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -10,6 +10,7 @@
@@ -220,7 +220,7 @@ index b4aac54..2ff1037 100644
  {
    USE_GC (gc);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 5c72e02..62cf8e9 100644
+index 004d06c..554ab77 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -1002,7 +1002,7 @@ HID ghid_hid = {
@@ -233,7 +233,7 @@ index 5c72e02..62cf8e9 100644
    ghid_fill_rect,
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 381e451..2bd4cc2 100644
+index c5f57c7..e3bf432 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -491,6 +491,8 @@ void ghid_draw_arc (hidGC gc, int cx, int cy, int xradius, int yradius,
@@ -243,5 +243,5 @@ index 381e451..2bd4cc2 100644
 +void ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly,
 +                            const BoxType *clip_box); /* GL ONLY */
  void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
- void ghid_invalidate_lr ();
+ void ghid_invalidate_lr (int left, int right, int top, int bottom);
  void ghid_invalidate_all ();

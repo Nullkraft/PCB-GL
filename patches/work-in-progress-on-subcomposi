@@ -1,7 +1,7 @@
-Bottom: 8deb163927008eb3fc115a33e6bbdee7ea71a43f
-Top:    869950f817907473e6b22a5cdfe6d50b636f9f46
+Bottom: 3792ed654073833c6f8c0d22a3f3ab7d7b9dee00
+Top:    4092cfc5c42be5cc9dac6f41496b9f14f8d0e158
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-21 19:36:51 +0000
+Date:   2011-01-23 16:54:00 +0000
 
 Work in progress on subcompositing / stencil buffers
 
@@ -14,7 +14,7 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index e0890da..2c4e353 100644
+index bb212e9..d181781 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -414,6 +414,7 @@ DrawEverything (BoxTypePtr drawn_area)
@@ -121,10 +121,10 @@ index e0890da..2c4e353 100644
  
  	  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
 diff --git a/src/hid.h b/src/hid.h
-index 94734ba..c3c5e2a 100644
+index b13e75b..b34a7d7 100644
 --- a/src/hid.h
 +++ b/src/hid.h
-@@ -205,6 +205,7 @@ extern "C"
+@@ -207,6 +207,7 @@ extern "C"
  #define SL_FAB		0x0070
  #define SL_ASSY		0x0080
  #define SL_RATS		0x0090
@@ -395,10 +395,10 @@ index bb1383c..b956a65 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 85e01f3..b9caf18 100644
+index 63344b3..7c8b986 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
-@@ -452,6 +452,9 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -529,6 +529,9 @@ gerber_set_layer (const char *name, int group, int empty)
  	     && group <
  	     max_group) ? PCB->LayerGroups.Entries[group][0] : group;
  
@@ -595,10 +595,10 @@ index 2ff1037..0a696d6 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index 5f6ebc7..5ce698a 100644
+index 0a1efef..8a81b4b 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
-@@ -704,6 +704,10 @@ nelma_set_layer(const char *name, int group, int empty)
+@@ -705,6 +705,10 @@ nelma_set_layer(const char *name, int group, int empty)
  	int             idx = (group >= 0 && group < max_group) ?
  	PCB->LayerGroups.Entries[group][0] : group;
  
@@ -610,7 +610,7 @@ index 5f6ebc7..5ce698a 100644
  		name = PCB->Data->Layer[idx].Name;
  	}
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 32639c8..ae824cc 100644
+index 06e22bb..8b3724a 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -897,6 +897,10 @@ png_set_layer (const char *name, int group, int empty)
@@ -625,10 +625,10 @@ index 32639c8..ae824cc 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index 83ce780..a931bcf 100644
+index 49a19c7..549d569 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
-@@ -312,6 +312,10 @@ eps_set_layer (const char *name, int group, int empty)
+@@ -391,6 +391,10 @@ eps_set_layer (const char *name, int group, int empty)
    int idx = (group >= 0
  	     && group <
  	     max_group) ? PCB->LayerGroups.Entries[group][0] : group;
@@ -640,7 +640,7 @@ index 83ce780..a931bcf 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index eacf826..8768052 100644
+index 7c286cc..8a6584e 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -651,6 +651,10 @@ ps_set_layer (const char *name, int group, int empty)

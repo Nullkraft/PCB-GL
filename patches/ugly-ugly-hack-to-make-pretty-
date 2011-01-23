@@ -1,7 +1,7 @@
-Bottom: ab94192b90a5beacada586619ba9887d7c0463c8
-Top:    ee907aafd3641d0963d68491bed839181463e689
+Bottom: 3f3e9fce0de82f65e2564ca196e01a738432c278
+Top:    6e953d6c5e32769baf4b2130f131b4e309d1f0b0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-21 19:36:52 +0000
+Date:   2011-01-23 16:54:01 +0000
 
 Hack to make pretty translucent polygons in thindraw-poly mode
 
@@ -15,7 +15,7 @@ way to turn it off would also be useful.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index d455c09..11879f2 100644
+index 8e05ace..245b0c8 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -670,6 +670,12 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
@@ -114,7 +114,7 @@ index 0a696d6..c3df6f8 100644
  {
    USE_GC (gc);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 62cf8e9..585362d 100644
+index 554ab77..503b935 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -1003,7 +1003,7 @@ HID ghid_hid = {
@@ -127,7 +127,7 @@ index 62cf8e9..585362d 100644
  
    ghid_calibrate,
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 2bd4cc2..a213a3a 100644
+index e3bf432..971f3eb 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -493,6 +493,8 @@ void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
@@ -137,5 +137,5 @@ index 2bd4cc2..a213a3a 100644
 +void ghid_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
 +                                const BoxType *clip_box); /* GL ONLY */
  void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
- void ghid_invalidate_lr ();
+ void ghid_invalidate_lr (int left, int right, int top, int bottom);
  void ghid_invalidate_all ();

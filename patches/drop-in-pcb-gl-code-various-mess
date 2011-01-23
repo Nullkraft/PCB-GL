@@ -1,7 +1,7 @@
-Bottom: 109d2d70ec66f234d25bd5e5a68c30ec87771013
-Top:    f3e53732c84c605876998ec7804fb9c4f284ac15
+Bottom: 0a3bf514159f982f33b82de83bf804a12f10e277
+Top:    ede71bd6b0066eb8103d1a6126f8d442208bc90a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-21 19:36:49 +0000
+Date:   2011-01-23 16:53:58 +0000
 
 Drop in PCB+GL code + various mess. Needs splitting up?
 
@@ -755,7 +755,7 @@ index 0000000..73d9a34
 +
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index a5664b6..3e3ac50 100644
+index d5b2f82..52d9990 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -947,6 +947,11 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
@@ -2005,7 +2005,7 @@ index 0000000..332deb5
 +  return pixmap;
 +}
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 3eea09e..5c72e02 100644
+index c77faaf..004d06c 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -31,6 +31,7 @@ RCSID ("$Id$");
@@ -2045,7 +2045,7 @@ index 3eea09e..5c72e02 100644
        time (&end);
        i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index e9c8450..85528b8 100644
+index 10dd85b..3b543cb 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -671,8 +671,13 @@ ghid_port_window_motion_cb (GtkWidget * widget,
@@ -2072,7 +2072,7 @@ index e9c8450..85528b8 100644
  }
  
 diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
-index c75a0d3..54d95c8 100644
+index 5b8d20a..6cd8069 100644
 --- a/src/hid/gtk/gui-pinout-preview.c
 +++ b/src/hid/gtk/gui-pinout-preview.c
 @@ -159,6 +159,26 @@ enum
@@ -2111,7 +2111,7 @@ index c75a0d3..54d95c8 100644
    gtk_widget_class->expose_event = ghid_pinout_preview_expose;
  
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 5412be3..3e1a98f 100644
+index ff6dfc0..4ea3842 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2313,6 +2313,7 @@ ghid_build_pcb_top_window (void)
@@ -2123,7 +2123,7 @@ index 5412be3..3e1a98f 100644
    gtk_widget_add_events (gport->drawing_area, GDK_EXPOSURE_MASK
  			 | GDK_LEAVE_NOTIFY_MASK | GDK_ENTER_NOTIFY_MASK
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index b2b2ce4..d8befcf 100644
+index eb1e853..912e369 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -474,7 +474,7 @@ void ghid_logv (const char *fmt, va_list args);
@@ -2135,7 +2135,7 @@ index b2b2ce4..d8befcf 100644
  int ghid_set_layer (const char *name, int group, int empty);
  hidGC ghid_make_gc (void);
  void ghid_destroy_gc (hidGC);
-@@ -496,7 +496,10 @@ void ghid_invalidate_lr ();
+@@ -496,7 +496,10 @@ void ghid_invalidate_lr (int left, int right, int top, int bottom);
  void ghid_invalidate_all ();
  void ghid_show_crosshair (gboolean show);
  void ghid_init_renderer (int *, char ***, GHidPort *);
