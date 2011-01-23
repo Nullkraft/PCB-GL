@@ -1,5 +1,5 @@
-Bottom: b1635f72b60eae9d2fc4e3f916a9d3a93d3db0c8
-Top:    9ccc6a44eed297c8e020fa786771ca93ac06819b
+Bottom: 330c6311da3bb65362d7046412140652e9e5f145
+Top:    77bd76324b8cb27dd82fb75a4c15c1682fb2ccaa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-18 16:14:23 +0000
 
@@ -39,7 +39,7 @@ index 1336a53..4916eb2 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index 2604faa..20232b0 100644
+index 8c07e45..d9d4f35 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -1179,10 +1179,12 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
@@ -116,7 +116,7 @@ index 2604faa..20232b0 100644
    DrawVia (Via, 0);
    Draw ();
 diff --git a/src/draw.c b/src/draw.c
-index 0c3aded..06b38b2 100644
+index 7099c4b..36e10e9 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -2107,6 +2107,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
@@ -131,7 +131,7 @@ index 0c3aded..06b38b2 100644
      {
        AddPart (Polygon);
 diff --git a/src/find.c b/src/find.c
-index f37ad34..45c6cd3 100644
+index 9298bf6..a64529d 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -2645,6 +2645,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
@@ -226,7 +226,7 @@ index 5b51df5..b054e31 100644
  bool lineClear (LineTypePtr, Cardinal);
  bool IsLineInPolygon (LineTypePtr, PolygonTypePtr);
 diff --git a/src/move.c b/src/move.c
-index 8f5cbad..6b821e7 100644
+index 71904fc..57970f2 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -366,12 +366,12 @@ MovePour (LayerTypePtr Layer, PourTypePtr Pour)
