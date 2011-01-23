@@ -1,0 +1,55 @@
+Bottom: 14527ca17a363672388e8f59ffe97687d1e6fac9
+Top:    330c6311da3bb65362d7046412140652e9e5f145
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-01-23 23:39:54 +0000
+
+Refresh of add-magic-flag-to-stop-pour-cl
+
+---
+
+diff --git a/src/create.c b/src/create.c
+index df2afc0..5aa4f95 100644
+--- a/src/create.c
++++ b/src/create.c
+@@ -151,6 +151,7 @@ CreateNewPCB (bool SetDefaultNames)
+   ptr = (PCBTypePtr)calloc (1, sizeof (PCBType));
+   ptr->Data = CreateNewBuffer ();
+   ptr->Data->pcb = (PCBTypePtr) ptr;
++  ptr->Data->ClipPours = 1;
+ 
+   ptr->ThermStyle = 4;
+   ptr->IsleArea = 2.e8;
+diff --git a/src/global.h b/src/global.h
+index 6779645..c0a7a70 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -417,6 +417,7 @@ typedef struct			/* holds all objects */
+    *rat_tree;
+   struct PCBType *pcb;
+   LayerType Layer[MAX_LAYER + 2];	/* add 2 silkscreen layers */
++  int ClipPours;
+ } DataType, *DataTypePtr;
+ 
+ typedef struct			/* holds drill information */
+diff --git a/src/pour.c b/src/pour.c
+index 32b06ac..0e8906a 100644
+--- a/src/pour.c
++++ b/src/pour.c
+@@ -1389,6 +1389,8 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
+ void
+ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
+ {
++  if (!Data->ClipPours)
++    return;
+   if (type == POUR_TYPE)
+     {
+ #warning FIXME Later: Why do we need to do this?
+@@ -1401,6 +1403,8 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
+ void
+ ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
+ {
++  if (!Data->ClipPours)
++    return;
+   if (type == POUR_TYPE)
+     {
+ #warning FIXME Later: Why do we need to do this?
