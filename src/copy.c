@@ -47,7 +47,7 @@
 #include "mirror.h"
 #include "misc.h"
 #include "move.h"
-#include "polygon.h"
+#include "pour.h"
 #include "rats.h"
 #include "rtree.h"
 #include "select.h"
@@ -66,7 +66,7 @@ static void *CopyVia (PinTypePtr);
 static void *CopyLine (LayerTypePtr, LineTypePtr);
 static void *CopyArc (LayerTypePtr, ArcTypePtr);
 static void *CopyText (LayerTypePtr, TextTypePtr);
-static void *CopyPolygon (LayerTypePtr, PolygonTypePtr);
+static void *CopyPour (LayerTypePtr, PourTypePtr);
 static void *CopyElement (ElementTypePtr);
 
 /* ---------------------------------------------------------------------------
@@ -76,7 +76,8 @@ static LocationType DeltaX, DeltaY;	/* movement vector */
 static ObjectFunctionType CopyFunctions = {
   CopyLine,
   CopyText,
-  CopyPolygon,
+  NULL,
+  CopyPour,
   CopyVia,
   CopyElement,
   NULL,
@@ -89,11 +90,11 @@ static ObjectFunctionType CopyFunctions = {
 };
 
 /* ---------------------------------------------------------------------------
- * copies data from one polygon to another
+ * copies data from one pour to another
  * 'Dest' has to exist
  */
-PolygonTypePtr
-CopyPolygonLowLevel (PolygonTypePtr Dest, PolygonTypePtr Src)
+PourTypePtr
+CopyPourLowLevel (PourTypePtr Dest, PourTypePtr Src)
 {
   Cardinal hole = 0;
   Cardinal n;
@@ -102,12 +103,12 @@ CopyPolygonLowLevel (PolygonTypePtr Dest, PolygonTypePtr Src)
     {
       if (hole < Src->HoleIndexN && n == Src->HoleIndex[hole])
         {
-          CreateNewHoleInPolygon (Dest);
+          CreateNewHoleInPour (Dest);
           hole++;
         }
-      CreateNewPointInPolygon (Dest, Src->Points[n].X, Src->Points[n].Y);
+      CreateNewPointInPour (Dest, Src->Points[n].X, Src->Points[n].Y);
     }
-  SetPolygonBoundingBox (Dest);
+  SetPourBoundingBox (Dest);
   Dest->Flags = Src->Flags;
   CLEAR_FLAG (FOUNDFLAG, Dest);
   return (Dest);
@@ -263,23 +264,23 @@ CopyText (LayerTypePtr Layer, TextTypePtr Text)
 }
 
 /* ---------------------------------------------------------------------------
- * copies a polygon 
+ * copies a pour
  */
 static void *
-CopyPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+CopyPour (LayerTypePtr Layer, PourTypePtr Pour)
 {
-  PolygonTypePtr polygon;
+  PourTypePtr pour;
 
-  polygon = CreateNewPolygon (Layer, NoFlags ());
-  CopyPolygonLowLevel (polygon, Polygon);
-  MovePolygonLowLevel (polygon, DeltaX, DeltaY);
-  if (!Layer->polygon_tree)
-    Layer->polygon_tree = r_create_tree (NULL, 0, 0);
-  r_insert_entry (Layer->polygon_tree, (BoxTypePtr) polygon, 0);
-  InitClip (PCB->Data, Layer, polygon);
-  DrawPolygon (Layer, polygon, 0);
-  AddObjectToCreateUndoList (POLYGON_TYPE, Layer, polygon, polygon);
-  return (polygon);
+  pour = CreateNewPour (Layer, NoFlags ());
+  CopyPourLowLevel (pour, Pour);
+  MovePourLowLevel (pour, DeltaX, DeltaY);
+  if (!Layer->pour_tree)
+    Layer->pour_tree = r_create_tree (NULL, 0, 0);
+  r_insert_entry (Layer->pour_tree, (BoxTypePtr) pour, 0);
+  InitPourClip (PCB->Data, Layer, pour);
+  DrawPour (Layer, pour, 0);
+  AddObjectToCreateUndoList (POUR_TYPE, Layer, pour, pour);
+  return (pour);
 }
 
 /* ---------------------------------------------------------------------------
@@ -348,7 +349,7 @@ CopyPastebufferToLayout (LocationType X, LocationType Y)
 	  changed = changed ||
 	    (sourcelayer->LineN != 0) ||
 	    (sourcelayer->ArcN != 0) ||
-	    (sourcelayer->PolygonN != 0) || (sourcelayer->TextN != 0);
+	    (sourcelayer->PourN != 0) || (sourcelayer->TextN != 0);
 	  LINE_LOOP (sourcelayer);
 	  {
 	    CopyLine (destlayer, line);
@@ -364,9 +365,9 @@ CopyPastebufferToLayout (LocationType X, LocationType Y)
 	    CopyText (destlayer, text);
 	  }
 	  END_LOOP;
-	  POLYGON_LOOP (sourcelayer);
+	  POUR_LOOP (sourcelayer);
 	  {
-	    CopyPolygon (destlayer, polygon);
+	    CopyPour (destlayer, pour);
 	  }
 	  END_LOOP;
 	}
