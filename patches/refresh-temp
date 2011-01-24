@@ -1,0 +1,22 @@
+Bottom: 12222975c7ba2dcc935eea83eb249ec8af75808c
+Top:    faf6b12702ddb7b04d2ba21a923720dc9df53a73
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-01-24 00:35:46 +0000
+
+Refresh of add-support-for-a-poured-objec-I
+
+---
+
+diff --git a/src/move.c b/src/move.c
+index 71904fc..c582507 100644
+--- a/src/move.c
++++ b/src/move.c
+@@ -609,7 +609,7 @@ MoveLineToLayer (LayerTypePtr Layer, LineTypePtr Line)
+   RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
+   newone = (LineTypePtr)MoveLineToLayerLowLevel (Layer, Line, Dest);
+   Line = NULL;
+-  ClearFromPours (PCB->Data, LINE_TYPE, Dest, new);
++  ClearFromPours (PCB->Data, LINE_TYPE, Dest, newone);
+   if (Dest->On)
+     DrawLine (Dest, newone, 0);
+   Draw ();
