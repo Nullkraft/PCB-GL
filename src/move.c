@@ -609,7 +609,7 @@ MoveLineToLayer (LayerTypePtr Layer, LineTypePtr Line)
   RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
   newone = (LineTypePtr)MoveLineToLayerLowLevel (Layer, Line, Dest);
   Line = NULL;
-  ClearFromPours (PCB->Data, LINE_TYPE, Dest, new);
+  ClearFromPours (PCB->Data, LINE_TYPE, Dest, newone);
   if (Dest->On)
     DrawLine (Dest, newone, 0);
   Draw ();
