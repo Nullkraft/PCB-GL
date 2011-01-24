@@ -1,5 +1,5 @@
-Bottom: 1d47ee4755dca83e6f05e66538d8c3a9f3fa0dbc
-Top:    b5df59b222e068d2a8510d1c3ed813952cb26279
+Bottom: 11062aa2111ae9e115b8f1064a32957e0fb6c96a
+Top:    a42104063e77ea2a350f5dc19f3f2537b6c7d57f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-18 16:14:28 +0000
 
@@ -17,10 +17,10 @@ of a selection will re-create the polygon.
 ---
 
 diff --git a/src/change.c b/src/change.c
-index 3791ccc..14a4098 100644
+index a6ee486..c6d5d8b 100644
 --- a/src/change.c
 +++ b/src/change.c
-@@ -1177,10 +1177,12 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
+@@ -1176,10 +1176,12 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
    AddObjectToFlagUndoList (LINE_TYPE, Layer, Line, Line);
    TOGGLE_FLAG (CLEARLINEFLAG, Line);
    if (TEST_FLAG(CLEARLINEFLAG, Line))
@@ -37,7 +37,7 @@ index 3791ccc..14a4098 100644
    DrawLine (Layer, Line, 0);
    return (Line);
  }
-@@ -1225,9 +1227,11 @@ ChangeArcJoin (LayerTypePtr Layer, ArcTypePtr Arc)
+@@ -1224,9 +1226,11 @@ ChangeArcJoin (LayerTypePtr Layer, ArcTypePtr Arc)
    TOGGLE_FLAG (CLEARLINEFLAG, Arc);
    if (TEST_FLAG (CLEARLINEFLAG, Arc))
      {
@@ -50,7 +50,7 @@ index 3791ccc..14a4098 100644
    DrawArc (Layer, Arc, 0);
    return (Arc);
  }
-@@ -1271,10 +1275,12 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1270,10 +1274,12 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
    AddObjectToFlagUndoList (LINE_TYPE, Layer, Text, Text);
    TOGGLE_FLAG (CLEARLINEFLAG, Text);
    if (TEST_FLAG(CLEARLINEFLAG, Text))
@@ -67,7 +67,7 @@ index 3791ccc..14a4098 100644
    DrawText (Layer, Text, 0);
    return (Text);
  }
-@@ -1625,6 +1631,8 @@ ChangeHole (PinTypePtr Via)
+@@ -1624,6 +1630,8 @@ ChangeHole (PinTypePtr Via)
      {
        AddObjectTo2ndSizeUndoList (VIA_TYPE, Via, Via, Via);
        Via->DrillingHole = Via->Thickness - MIN_PINORVIACOPPER;
