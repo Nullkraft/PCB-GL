@@ -457,7 +457,6 @@ ChangeVia2ndSize (PinTypePtr Via)
     {
       AddObjectTo2ndSizeUndoList (VIA_TYPE, Via, Via, Via);
       EraseVia (Via);
-      RestoreToPolygon (PCB->Data, VIA_TYPE, Via, Via);
       RestoreToPours (PCB->Data, VIA_TYPE, Via, Via);
       Via->DrillingHole = value;
       if (TEST_FLAG (HOLEFLAG, Via))
