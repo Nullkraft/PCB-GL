@@ -1,5 +1,5 @@
 Bottom: 12e3f209e4122ef0b2927f6968ce4e7eac252642
-Top:    12222975c7ba2dcc935eea83eb249ec8af75808c
+Top:    faf6b12702ddb7b04d2ba21a923720dc9df53a73
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-23 16:55:55 +0000
 
@@ -3566,7 +3566,7 @@ index 776e309..977e2b2 100644
  bool IsDataEmpty (DataTypePtr);
  BoxTypePtr GetDataBoundingBox (DataTypePtr);
 diff --git a/src/move.c b/src/move.c
-index 4e26359..71904fc 100644
+index 4e26359..c582507 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -48,6 +48,7 @@
@@ -3862,7 +3862,7 @@ index 4e26359..71904fc 100644
    newone = (LineTypePtr)MoveLineToLayerLowLevel (Layer, Line, Dest);
    Line = NULL;
 -  ClearFromPolygon (PCB->Data, LINE_TYPE, Dest, newone);
-+  ClearFromPours (PCB->Data, LINE_TYPE, Dest, new);
++  ClearFromPours (PCB->Data, LINE_TYPE, Dest, newone);
    if (Dest->On)
      DrawLine (Dest, newone, 0);
    Draw ();
