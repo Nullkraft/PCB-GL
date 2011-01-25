@@ -1,5 +1,5 @@
 Bottom: f6e5d722efdd096b7c1c146c7693eadc97050f0f
-Top:    f6e5d722efdd096b7c1c146c7693eadc97050f0f
+Top:    c9c7780dffc89e5413cf6ba5eb2d09a5b08b0875
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-25 20:52:47 +0000
 
@@ -8,4 +8,38 @@ FSAA test
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 2a9de6c..0e71e72 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -998,12 +998,18 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+   priv->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
+                                               GDK_GL_MODE_STENCIL |
+                                            // GDK_GL_MODE_DEPTH   |
+-                                              GDK_GL_MODE_DOUBLE);
++                                              GDK_GL_MODE_DOUBLE  |
++                                              GDK_GL_MODE_MULTISAMPLE |
++                                              /* 2x FSAA */
++                                              (2 << GDK_GL_MODE_SAMPLES_SHIFT)
++                                              );
+   if (!priv->glconfig)
+     {
+       printf ("Could not setup GL-context!\n");
+       return; /* Should we abort? */
+     }
++
++  printf ("Num samples: %i\n", gdk_gl_config_get_n_sample_buffers (priv->glconfig));
+ }
+ 
+ void
+@@ -2255,7 +2261,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+   glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
+                                         GDK_GL_MODE_STENCIL |
+ //                                        GDK_GL_MODE_DEPTH   |
+-                                        GDK_GL_MODE_SINGLE);
++                                        GDK_GL_MODE_SINGLE |
++                                        /* 2x FSAA */
++                                        (2 << GDK_GL_MODE_SAMPLES_SHIFT));
+ 
+   pixmap = gdk_pixmap_new (NULL, width, height, depth);
+   glpixmap = gdk_pixmap_set_gl_capability (pixmap, glconfig, NULL);
