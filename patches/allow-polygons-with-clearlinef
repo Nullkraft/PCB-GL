@@ -1,7 +1,7 @@
-Bottom: e58d9f1eb0ee5931986a3e3f89b90742bce842f3
-Top:    079ebf75b0e1115c9c9d789d2db48e3fea0faa41
+Bottom: 31aae10369dd52d93fc3ca9f605fa0680e43bc71
+Top:    78571ef64db55a2c9377d501b30f04be4820de72
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-21 19:37:10 +0000
+Date:   2011-01-23 16:55:52 +0000
 
 Allow polygons with CLEARLINEFLAG set to cut out other polygons
 
@@ -48,7 +48,7 @@ index 4442bbb..cb50248 100644
  }
  
 diff --git a/src/change.c b/src/change.c
-index 8e6ea63..ee96239 100644
+index 21e2bd9..504fdb5 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -124,6 +124,9 @@ static void *ChangeTextJoin (LayerTypePtr, TextTypePtr);
@@ -170,7 +170,7 @@ index 7bae706..420f780 100644
  #define CHANGETHERMAL_TYPES	\
  	(PIN_TYPE | VIA_TYPE)
 diff --git a/src/draw.c b/src/draw.c
-index 56054e2..51523f0 100644
+index e6c10fe..958f578 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -2025,7 +2025,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
@@ -184,7 +184,7 @@ index 56054e2..51523f0 100644
    else
      gui->fill_pcb_polygon (Output.fgGC, Polygon, clip_box);
 diff --git a/src/move.c b/src/move.c
-index cbb2e3d..618d5c5 100644
+index 5e3913c..4e26359 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -355,10 +355,12 @@ MovePolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
@@ -216,7 +216,7 @@ index cbb2e3d..618d5c5 100644
      {
        DrawPolygon (Layer, Polygon, 0);
 diff --git a/src/polygon.c b/src/polygon.c
-index c77ee2c..30f6623 100644
+index 88afa1b..d29d448 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -870,6 +870,20 @@ SubtractPad (PadType * pad, PolygonType * p)
