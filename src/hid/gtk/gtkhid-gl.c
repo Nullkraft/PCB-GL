@@ -998,12 +998,18 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
   priv->glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGBA    |
                                               GDK_GL_MODE_STENCIL |
                                            // GDK_GL_MODE_DEPTH   |
-                                              GDK_GL_MODE_DOUBLE);
+                                              GDK_GL_MODE_DOUBLE  |
+                                              GDK_GL_MODE_MULTISAMPLE |
+                                              /* 2x FSAA */
+                                              (2 << GDK_GL_MODE_SAMPLES_SHIFT)
+                                              );
   if (!priv->glconfig)
     {
       printf ("Could not setup GL-context!\n");
       return; /* Should we abort? */
     }
+
+  printf ("Num samples: %i\n", gdk_gl_config_get_n_sample_buffers (priv->glconfig));
 }
 
 void
@@ -1034,6 +1040,10 @@ ghid_start_drawing (GHidPort *port)
   if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext))
     return FALSE;
 
+  glEnable (GL_MULTISAMPLE);
+  glEnable (GL_SAMPLE_ALPHA_TO_COVERAGE);
+  glEnable (GL_SAMPLE_ALPHA_TO_ONE);
+
   return TRUE;
 }
 
@@ -1042,6 +1052,8 @@ ghid_end_drawing (GHidPort *port)
 {
   GtkWidget *widget = port->drawing_area;
   GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
+
+  glDisable (GL_MULTISAMPLE);
 
   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
     gdk_gl_drawable_swap_buffers (pGlDrawable);
@@ -2255,7 +2267,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                         GDK_GL_MODE_STENCIL |
 //                                        GDK_GL_MODE_DEPTH   |
-                                        GDK_GL_MODE_SINGLE);
+                                        GDK_GL_MODE_SINGLE |
+                                        /* 2x FSAA */
+                                        (2 << GDK_GL_MODE_SAMPLES_SHIFT));
 
   pixmap = gdk_pixmap_new (NULL, width, height, depth);
   glpixmap = gdk_pixmap_set_gl_capability (pixmap, glconfig, NULL);
