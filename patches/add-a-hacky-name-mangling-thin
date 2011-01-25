@@ -1,7 +1,7 @@
-Bottom: a79e172d638f34c1adb9b20d33d0a6a8aa0f11e0
-Top:    4465fe2264e7a9ec51e1b99d3c7b1f118d3d34b4
+Bottom: 409b6bd1c9e88d6f06ce12ec8587320db2998887
+Top:    16abe373726a3437b9a904120d265b1b74933e29
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-23 23:56:25 +0000
+Date:   2011-01-21 22:44:41 +0000
 
 Add a hacky name-mangling thingy for loading boards
 
@@ -18,7 +18,7 @@ Add a hacky name-mangling thingy for loading boards
 ---
 
 diff --git a/src/create.c b/src/create.c
-index 4cb1a08..fcfeeb4 100644
+index 8d08913..f10263d 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -37,6 +37,7 @@
@@ -128,7 +128,7 @@ index 308698c..55022ec 100644
  				 FontTypePtr, FlagType, char *, char *,
  				 char *, LocationType, LocationType, BYTE,
 diff --git a/src/file.c b/src/file.c
-index 9879582..e46364b 100644
+index 55c8286..8714b96 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -362,6 +362,9 @@ LoadPCB (char *Filename)
