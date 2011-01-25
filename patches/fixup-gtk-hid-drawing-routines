@@ -1,7 +1,7 @@
-Bottom: 02eb6584ec743f57d8a4d7d0f9d0fc08ae798810
-Top:    3a7cf2aba07307babfcad3b92af0755658b6ffe3
+Bottom: b69616115a41d4f314000bccdf667944fdcad958
+Top:    78dac93fa767414c79be0c15dcd4919b5d5f7805
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-18 16:14:27 +0000
+Date:   2011-01-25 21:21:26 +0000
 
 Fixup gtk hid drawing routines for pour support
 
@@ -9,10 +9,10 @@ Fixup gtk hid drawing routines for pour support
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2a9de6c..c939213 100644
+index 0e71e72..40859fd 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1248,6 +1248,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *dra
+@@ -1254,6 +1254,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *dra
    if (!Polygon->Clipped)
      return;
  
@@ -23,7 +23,7 @@ index 2a9de6c..c939213 100644
    if (TEST_FLAG (SELECTEDFLAG, Polygon))
      color = Layer->SelectedColor;
    else if (TEST_FLAG (FOUNDFLAG, Polygon))
-@@ -1303,6 +1307,38 @@ poly_callback_clearing (const BoxType * b, void *cl)
+@@ -1309,6 +1313,38 @@ poly_callback_clearing (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -62,7 +62,7 @@ index 2a9de6c..c939213 100644
  static void
  DrawPadLowLevelSolid (hidGC gc, PadTypePtr Pad, bool clear, bool mask)
  {
-@@ -1500,11 +1536,11 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1506,11 +1542,11 @@ DrawLayerGroup (int group, const BoxType * screen)
        }
  
        /* draw all polygons on this layer */
