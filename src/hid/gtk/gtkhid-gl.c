@@ -1040,6 +1040,8 @@ ghid_start_drawing (GHidPort *port)
   if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext))
     return FALSE;
 
+  glEnable (GL_MULTISAMPLE_ARB);
+
   return TRUE;
 }
 
@@ -1048,6 +1050,8 @@ ghid_end_drawing (GHidPort *port)
 {
   GtkWidget *widget = port->drawing_area;
   GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
+
+  glDisable (GL_MULTISAMPLE_ARB);
 
   if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
     gdk_gl_drawable_swap_buffers (pGlDrawable);
