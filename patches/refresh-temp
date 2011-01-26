@@ -1,0 +1,22 @@
+Bottom: 235cdb4363204f0e622859b1864ed1af9dc78cee
+Top:    10ccffc98739146f76f4a83da769fdb55e61f0f8
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-01-26 22:13:17 +0000
+
+Refresh of 0001-src-file.c-don-t-write-user-name-or-date-to-the-stor.patch
+
+---
+
+diff --git a/src/file.c b/src/file.c
+index 3bce269..e87aeea 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -497,7 +497,7 @@ WritePCBInfoHeader (FILE * FP)
+ {
+   /* write some useful comments */
+   fprintf (FP, "# release: %s " VERSION "\n", Progname);
+-  
++
+   /* avoid writing things like user name or date, as these cause merge
+    * conflicts in collaborative environments using version control systems
+    */
