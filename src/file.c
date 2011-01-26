@@ -497,7 +497,7 @@ WritePCBInfoHeader (FILE * FP)
 {
   /* write some useful comments */
   fprintf (FP, "# release: %s " VERSION "\n", Progname);
-  
+
   /* avoid writing things like user name or date, as these cause merge
    * conflicts in collaborative environments using version control systems
    */
