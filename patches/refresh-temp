@@ -1,0 +1,34 @@
+Bottom: f0627d4054c8c2a25509651615832b3bbede9b0d
+Top:    304d9ee38e03685181af1342f0cde82e1d27dec7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-01-26 13:21:16 +0000
+
+Refresh of add-configure-checks-for-gtkgl
+
+---
+
+diff --git a/configure.ac b/configure.ac
+index a9bd2d6..fdd074a 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -424,6 +424,9 @@ Either do not use --enable-gl or enable the gtk HID.])
+ 	  * ) ;;
+ 	esac
+ 
++	GLU_CFLAGS=
++	GLU_LIBS=-lGLU
++
+ 	AC_DEFINE([ENABLE_GL], 1,
+ 		[Define to 1 if GL support is to be compiled in])
+ fi
+@@ -1060,8 +1063,8 @@ AM_CONDITIONAL(DEBUG_BUILD, test x$enable_debug = xyes)
+ 
+ # ------------- Complete set of CFLAGS and LIBS -------------------
+ 
+-CFLAGS="$CFLAGS $X_CFLAGS $DBUS_CFLAGS $GLIB_CFLAGS $GTK_CFLAGS $CAIRO_CFLAGS $GTKGLEXT_CFLAGS"
+-LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GLIB_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_LIBS $INTLLIBS $CAIRO_LIBS $GTKGLEXT_LIBS"
++CFLAGS="$CFLAGS $X_CFLAGS $DBUS_CFLAGS $GLIB_CFLAGS $GTK_CFLAGS $CAIRO_CFLAGS $GTKGLEXT_CFLAGS $GLU_CFLAGS"
++LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GLIB_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_LIBS $INTLLIBS $CAIRO_LIBS $GTKGLEXT_LIBS $GLU_LIBS"
+ 
+ 
+ # if we have gcc then add -Wall
