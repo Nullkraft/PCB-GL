@@ -967,9 +967,12 @@ load_built_in_shaders (void)
           "{\n"
           "  float sqdist;\n"
           "  sqdist = dot (gl_TexCoord[0].st, gl_TexCoord[0].st);\n"
-          "  if (sqdist > 1.0)\n"
+          "  if (sqdist > 1.1) {\n"
           "    discard;\n"
-          "  gl_FragColor = gl_Color;\n"
+          "  } else {\n"
+          "   gl_Coverage = 1.0 - smoothstep(0.99, 1.01, sqdist);\n"
+          "   gl_FragColor = vec4(gl_Color.rgba);\n"
+          "  }\n"
           "}\n";
 
   circular_program = hidgl_shader_new ("circular_rendering", NULL, circular_fs_source);
