@@ -1,0 +1,23 @@
+Bottom: 0822b1247832f6d88d7d6f78879c93bd511bf4cf
+Top:    d0822be85c5a453583a009ff631a9c5095ce33f3
+Author: Markus Hitter <mah@jump-ing.de>
+Date:   2011-01-24 11:15:02 +0100
+
+From f27fd4b08480c70d38ec57cb7882f94a5dab2ecd Mon Sep 17 00:00:00 2001
+Subject: configure.ac: remove the now obsolete test for gethostname().
+
+
+---
+
+diff --git a/configure.ac b/configure.ac
+index e405819..8fde977 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -650,7 +650,7 @@ AC_CHECK_FUNCS(strerror)
+ AC_CHECK_FUNCS(regcomp re_comp)
+ AC_CHECK_FUNCS(logf expf rint)
+ AC_CHECK_FUNCS(vsnprintf)
+-AC_CHECK_FUNCS(getpwuid gethostname getcwd)
++AC_CHECK_FUNCS(getpwuid getcwd)
+ AC_CHECK_FUNCS(random)
+ AC_CHECK_FUNCS(stat)
