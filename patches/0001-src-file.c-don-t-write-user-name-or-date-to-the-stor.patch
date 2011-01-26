@@ -1,0 +1,64 @@
+Bottom: e4ca57150d9a40c6d8c0fade672d29168d1f950f
+Top:    235cdb4363204f0e622859b1864ed1af9dc78cee
+Author: Markus Hitter <mah@jump-ing.de>
+Date:   2011-01-23 23:29:21 +0100
+
+From 76dfc901ffa3f1b6e108e03c3249198cb2b97cfd Mon Sep 17 00:00:00 2001
+Subject: src/file.c: don't write user name or date to the stored layout file.
+
+
+---
+
+diff --git a/src/file.c b/src/file.c
+index 1df23d5..3bce269 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -491,44 +491,16 @@ WriteAttributeList (FILE * FP, AttributeListTypePtr list, char *prefix)
+ 
+ /* ---------------------------------------------------------------------------
+  * writes layout header information
+- * date, UID and name of user
+  */
+ static void
+ WritePCBInfoHeader (FILE * FP)
+ {
+-#ifdef HAVE_GETPWUID
+-  struct passwd *pwentry;
+-#endif
+-
+-#ifdef HAVE_GETHOSTNAME
+-  static struct hostent *hostentry = NULL;
+-  char hostname[256];
+-#endif
+-  time_t currenttime;
+-
+   /* write some useful comments */
+-  currenttime = time (NULL);
+   fprintf (FP, "# release: %s " VERSION "\n", Progname);
+-  fprintf (FP, "# date:    %s", asctime (localtime (&currenttime)));
+-
+-#ifdef HAVE_GETPWUID
+-  pwentry = getpwuid (getuid ());
+-  fprintf (FP, "# user:    %s (%s)\n", pwentry->pw_name, pwentry->pw_gecos);
+-#else
+-  fprintf (FP, "# user:    Unknown\n");
+-#endif
+-
+-#ifdef HAVE_GETHOSTNAME
+-  if (gethostname (hostname, 255) != -1)
+-    {
+-      if (hostentry == NULL)
+-	hostentry = gethostbyname (hostname);
+-      fprintf (FP, "# host:    %s\n",
+-	       hostentry ? hostentry->h_name : hostname);
+-    }
+-#else
+-  fprintf (FP, "# host:    Unknown\n");
+-#endif
++  
++  /* avoid writing things like user name or date, as these cause merge
++   * conflicts in collaborative environments using version control systems
++   */
+ }
+ 
+ /* ---------------------------------------------------------------------------
