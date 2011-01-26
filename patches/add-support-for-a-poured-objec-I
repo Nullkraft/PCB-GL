@@ -1,7 +1,7 @@
-Bottom: 6b83d1805f438a3f7bac4c91b07f65712e9a9116
-Top:    1aee2d90cc0e9025494603da73c2f778b788fde1
+Bottom: 22f2043b265075dfa3e604a58f5325adaf7a24e6
+Top:    283fb1aea9cbadd811781899b1eda51121f599d4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-26 13:21:44 +0000
+Date:   2011-01-26 22:18:04 +0000
 
 Add support for a "poured" object.
 
@@ -2434,7 +2434,7 @@ index 077c575..5b4d73a 100644
  void EraseElementPinsAndPads (ElementTypePtr);
  void EraseElementName (ElementTypePtr);
 diff --git a/src/file.c b/src/file.c
-index 1df23d5..9879582 100644
+index e87aeea..af2cfad 100644
 --- a/src/file.c
 +++ b/src/file.c
 @@ -89,7 +89,6 @@
@@ -2445,7 +2445,7 @@ index 1df23d5..9879582 100644
  #include "rats.h"
  #include "remove.h"
  #include "set.h"
-@@ -794,7 +793,7 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
+@@ -766,7 +765,7 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
  {
    int n;
    /* write information about non empty layers */
@@ -2454,7 +2454,7 @@ index 1df23d5..9879582 100644
        (layer->Name && *layer->Name))
      {
        fprintf (FP, "Layer(%i ", (int) Number + 1);
-@@ -829,18 +828,18 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
+@@ -801,18 +800,18 @@ WriteLayerData (FILE * FP, Cardinal Number, LayerTypePtr layer)
  	  PrintQuotedString (FP, (char *)EMPTY (text->TextString));
  	  fprintf (FP, " %s]\n", F2S (text, TEXT_TYPE));
  	}
