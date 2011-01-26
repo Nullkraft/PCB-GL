@@ -1,5 +1,5 @@
 Bottom: f6e5d722efdd096b7c1c146c7693eadc97050f0f
-Top:    2bc6cb096178e372d949d4049bbad45f93a2d518
+Top:    4a119f08c9fc33d4e3afe2c74f4e7440c41c8137
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-25 20:52:47 +0000
 
@@ -170,8 +170,27 @@ index 0000000..a1ec90f
 +-- 
 +1.7.2.3
 +
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index ad816d3..914f314 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -967,9 +967,12 @@ load_built_in_shaders (void)
+           "{\n"
+           "  float sqdist;\n"
+           "  sqdist = dot (gl_TexCoord[0].st, gl_TexCoord[0].st);\n"
+-          "  if (sqdist > 1.0)\n"
++          "  if (sqdist > 1.1) {\n"
+           "    discard;\n"
+-          "  gl_FragColor = gl_Color;\n"
++          "  } else {\n"
++          "   gl_Coverage = 1.0 - smoothstep(0.99, 1.01, sqdist);\n"
++          "   gl_FragColor = vec4(gl_Color.rgba);\n"
++          "  }\n"
+           "}\n";
+ 
+   circular_program = hidgl_shader_new ("circular_rendering", NULL, circular_fs_source);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2a9de6c..dd11c21 100644
+index 2a9de6c..f7463b9 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -998,12 +998,18 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
@@ -194,25 +213,27 @@ index 2a9de6c..dd11c21 100644
  }
  
  void
-@@ -1034,6 +1040,8 @@ ghid_start_drawing (GHidPort *port)
+@@ -1034,6 +1040,10 @@ ghid_start_drawing (GHidPort *port)
    if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext))
      return FALSE;
  
-+  glEnable (GL_MULTISAMPLE_ARB);
++  glEnable (GL_MULTISAMPLE);
++  glEnable (GL_SAMPLE_ALPHA_TO_COVERAGE);
++  glEnable (GL_SAMPLE_ALPHA_TO_ONE);
 +
    return TRUE;
  }
  
-@@ -1043,6 +1051,8 @@ ghid_end_drawing (GHidPort *port)
+@@ -1043,6 +1053,8 @@ ghid_end_drawing (GHidPort *port)
    GtkWidget *widget = port->drawing_area;
    GdkGLDrawable *pGlDrawable = gtk_widget_get_gl_drawable (widget);
  
-+  glDisable (GL_MULTISAMPLE_ARB);
++  glDisable (GL_MULTISAMPLE);
 +
    if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
      gdk_gl_drawable_swap_buffers (pGlDrawable);
    else
-@@ -2255,7 +2265,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2255,7 +2267,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                          GDK_GL_MODE_STENCIL |
  //                                        GDK_GL_MODE_DEPTH   |
