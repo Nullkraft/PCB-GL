@@ -3,8 +3,16 @@ Top:    235cdb4363204f0e622859b1864ed1af9dc78cee
 Author: Markus Hitter <mah@jump-ing.de>
 Date:   2011-01-23 23:29:21 +0100
 
-From 76dfc901ffa3f1b6e108e03c3249198cb2b97cfd Mon Sep 17 00:00:00 2001
-Subject: src/file.c: don't write user name or date to the stored layout file.
+src/file.c: don't write user name or date to the stored layout file.
+
+Notes from Peter Clifton:
+
+  The consensus from bug lp-703914 was that that recording the username,
+  data and host which produced the file is unnecessary and causes
+  version control clashes which are otherwise unnecessary.
+
+Reviewed-by: Peter Clifton <pcjc2@cam.ac.uk>
+Closes-bug: lp-703914
 
 
 ---
