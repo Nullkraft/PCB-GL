@@ -1,7 +1,7 @@
-Bottom: 304d9ee38e03685181af1342f0cde82e1d27dec7
-Top:    1722ff3537bd01ad0715169f0e6a6dd7fea9f5b3
+Bottom: d729525a1543b7ec4c0e09555a1b02ed6079e423
+Top:    222ead9ee8d99697c8894619e6c37eb8884759d0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-23 16:53:57 +0000
+Date:   2011-01-26 22:17:41 +0000
 
 Make --enable-gl default when building the GTK HID
 
@@ -9,7 +9,7 @@ Make --enable-gl default when building the GTK HID
 ---
 
 diff --git a/configure.ac b/configure.ac
-index fdd074a..a7a2972 100644
+index 281d029..260b3da 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -393,8 +393,12 @@ fi
