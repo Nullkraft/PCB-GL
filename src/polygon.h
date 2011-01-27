@@ -33,32 +33,27 @@
 
 #include "global.h"
 
-Cardinal polygon_point_idx (PolygonTypePtr polygon, PointTypePtr point);
-Cardinal polygon_point_contour (PolygonTypePtr polygon, Cardinal point);
-Cardinal prev_contour_point (PolygonTypePtr polygon, Cardinal point);
-Cardinal next_contour_point (PolygonTypePtr polygon, Cardinal point);
-Cardinal GetLowestDistancePolygonPoint (PolygonTypePtr,
-					LocationType, LocationType);
-bool RemoveExcessPolygonPoints (LayerTypePtr, PolygonTypePtr);
-void GoToPreviousPoint (void);
-void ClosePolygon (void);
-void CopyAttachedPolygonToLayer (void);
 int PolygonHoles (PolygonType *ptr, const BoxType *range,
 		  int (*callback) (PLINE *, void *user_data),
                   void *user_data);
 int PlowsPolygon (DataType *, int, void *, void *,
 		  int (*callback) (DataTypePtr, LayerTypePtr, PolygonTypePtr, int, void *, void *));
 void ComputeNoHoles (PolygonType *poly);
+
 POLYAREA * ContourToPoly (PLINE *);
 POLYAREA * PolygonToPoly (PolygonType *);
 POLYAREA * RectPoly (LocationType x1, LocationType x2, LocationType y1, LocationType y2);
-POLYAREA * CirclePoly(LocationType x, LocationType y, BDimension radius);
 POLYAREA * OctagonPoly(LocationType x, LocationType y, BDimension radius);
-POLYAREA * LinePoly(LineType *l, BDimension thick);
+void frac_circle (PLINE *, LocationType, LocationType, Vector, int);
+POLYAREA * CirclePoly(LocationType x, LocationType y, BDimension radius);
+POLYAREA * RoundRect (LocationType x1, LocationType x2, LocationType y1, LocationType y2, BDimension t);
 POLYAREA * ArcPoly(ArcType *l, BDimension thick);
+POLYAREA * LinePoly(LineType *l, BDimension thick);
+POLYAREA * SquarePadPoly (PadType * pad, BDimension clear);
+
 POLYAREA * PinPoly(PinType *l, BDimension thick, BDimension clear);
 POLYAREA * BoxPolyBloated (BoxType *box, BDimension radius);
-void frac_circle (PLINE *, LocationType, LocationType, Vector, int);
+
 int InitClip(DataType *d, LayerType *l, PolygonType *p);
 void RestoreToPolygon(DataType *, int, void *, void *);
 void ClearFromPolygon(DataType *, int, void *, void *);
@@ -71,6 +66,5 @@ bool isects (POLYAREA *, PolygonTypePtr, bool);
 bool MorphPolygon (LayerTypePtr, PolygonTypePtr);
 void NoHolesPolygonDicer (PolygonType *p, const BoxType *clip,
                           void (*emit) (PLINE *, void *), void *user_data);
-void PolyToPolygonsOnLayer (DataType *, LayerType *, POLYAREA *, FlagType);
 POLYAREA *board_outline_poly ();
 #endif
