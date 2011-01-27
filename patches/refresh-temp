@@ -1,0 +1,26 @@
+Bottom: 1063bcb0c968ad76d3d5a3c1c5e94a73d7b1620e
+Top:    d1fc149c6fd7efe8715df3b3af0162d57f738bd5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-01-27 05:08:29 +0000
+
+Refresh of play-with-perspective
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index bab3735..b02da82 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1910,6 +1910,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   /* Stash the model view matrix so we can work out the screen coordinate -> board coordinate mapping */
+   glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
+ 
++  /* Fix up matrix so the board Z coordinate does not affect world Z
++   * this lets us view each stacked layer without parallax effects.
++   */
++  last_modelview_matrix[2][2] = 0.;
++  glLoadMatrixf ((GLfloat *)last_modelview_matrix);
++
+   glEnable (GL_STENCIL_TEST);
+   glClearColor (port->bg_color.red / 65535.,
+                 port->bg_color.green / 65535.,
