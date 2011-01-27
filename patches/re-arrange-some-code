@@ -3,7 +3,11 @@ Top:    d0822be85c5a453583a009ff631a9c5095ce33f3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-27 21:49:26 +0000
 
-Re-arrange some code
+change.c: Restore and clear to polygons when changing hole sizes
+
+This is more consistent with other code-paths and is useful if the
+thermal gemoetry were to depend in on the hole size (which it doesn't
+currently, but used to do before the clipper branch).
 
 
 ---
