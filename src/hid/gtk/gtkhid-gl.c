@@ -1910,6 +1910,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   /* Stash the model view matrix so we can work out the screen coordinate -> board coordinate mapping */
   glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
 
+  /* Fix up matrix so the board Z coordinate does not affect world Z
+   * this lets us view each stacked layer without parallax effects.
+   */
+  last_modelview_matrix[2][2] = 0.;
+  glLoadMatrixf ((GLfloat *)last_modelview_matrix);
+
   glEnable (GL_STENCIL_TEST);
   glClearColor (port->bg_color.red / 65535.,
                 port->bg_color.green / 65535.,
