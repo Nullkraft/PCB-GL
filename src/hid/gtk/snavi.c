@@ -21,6 +21,19 @@
 
 #include <linux/types.h>
 #include <linux/input.h>
+/*
+Additional defines for a 3D joystick for (older) linux versions which do not
+have these defines in <linux/input.h>
+*/
+#ifndef REL_RX
+#define REL_RX                  0x03
+#endif
+#ifndef REL_RY
+#define REL_RY                  0x04
+#endif
+#ifndef REL_RZ
+#define REL_RZ                  0x05
+#endif
 
 #include <glib.h>
 
