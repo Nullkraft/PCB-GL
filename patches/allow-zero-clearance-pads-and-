@@ -1,7 +1,7 @@
-Bottom: 735cc7a4755df578ea40d40eeab5ba49cc7bad12
-Top:    4d51992cf24654a20c006c9728e34c31103671b3
+Bottom: 1b75d800372a26efe9500243e788c062f723d693
+Top:    f72d0b45815d7b6e8137037195045e7a5f113659
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-26 22:17:50 +0000
+Date:   2011-01-27 21:38:02 +0000
 
 Allow zero clearance pads and pins to touch polygons
 
@@ -11,10 +11,10 @@ This was already supported for vias, lets be consistent.
 ---
 
 diff --git a/src/change.c b/src/change.c
-index 95128d0..21e2bd9 100644
+index cb53b47..84e9d59 100644
 --- a/src/change.c
 +++ b/src/change.c
-@@ -531,7 +531,13 @@ ChangePinClearSize (ElementTypePtr Element, PinTypePtr Pin)
+@@ -532,7 +532,13 @@ ChangePinClearSize (ElementTypePtr Element, PinTypePtr Pin)
  
    if (TEST_FLAG (LOCKFLAG, Pin))
      return (NULL);
@@ -29,7 +29,7 @@ index 95128d0..21e2bd9 100644
    if (Pin->Clearance == value)
      return NULL;
    RestoreToPolygon (PCB->Data, PIN_TYPE, Element, Pin);
-@@ -586,21 +592,25 @@ ChangePadClearSize (ElementTypePtr Element, PadTypePtr Pad)
+@@ -587,21 +593,25 @@ ChangePadClearSize (ElementTypePtr Element, PadTypePtr Pad)
  
    if (TEST_FLAG (LOCKFLAG, Pad))
      return (NULL);
