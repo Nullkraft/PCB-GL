@@ -1,5 +1,5 @@
-Bottom: f6e5d722efdd096b7c1c146c7693eadc97050f0f
-Top:    4a119f08c9fc33d4e3afe2c74f4e7440c41c8137
+Bottom: 97fd89e85d1d6b45958683223f5fd148d15813f9
+Top:    98deeb7893811f8cfc7c4081e9f347f688e7dda3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-25 20:52:47 +0000
 
@@ -190,7 +190,7 @@ index ad816d3..914f314 100644
  
    circular_program = hidgl_shader_new ("circular_rendering", NULL, circular_fs_source);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2a9de6c..f7463b9 100644
+index d5ed024..0896d3e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -998,12 +998,18 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
@@ -233,7 +233,7 @@ index 2a9de6c..f7463b9 100644
    if (gdk_gl_drawable_is_double_buffered (pGlDrawable))
      gdk_gl_drawable_swap_buffers (pGlDrawable);
    else
-@@ -2255,7 +2267,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2261,7 +2273,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                          GDK_GL_MODE_STENCIL |
  //                                        GDK_GL_MODE_DEPTH   |
