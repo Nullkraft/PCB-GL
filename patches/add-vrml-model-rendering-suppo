@@ -1,5 +1,5 @@
-Bottom: e6e25568e81f13d3fb987c4401ce3560af4c4c1a
-Top:    a2bd67e3575278f7fdc1835f996bdef721e841b6
+Bottom: 3441fe64311eb2b8b0f4c9b083a5bfd2508139e2
+Top:    3faca011d06a334b16a3596ec6d1de8ffbcce75e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 05:07:13 +0000
 
@@ -9,10 +9,10 @@ Add VRML model rendering support
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 6eb1c3b..341f40e 100644
+index 98bc6be..f919244 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -187,7 +187,16 @@ LIBGTK_GL_SRCS= \
+@@ -192,7 +192,16 @@ LIBGTK_GL_SRCS= \
  GL_SRCS= \
  	hid/common/hidgl.c \
  	hid/common/hidgl.h \
@@ -2564,10 +2564,10 @@ index 0000000..0a59fbe
 +  return 1;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 66b9123..7d948fa 100644
+index 9f42d37..0f4679e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1492,7 +1492,7 @@ DrawMask (BoxType * screen)
+@@ -1490,7 +1490,7 @@ DrawMask (BoxType * screen)
    } else {
      glBindTexture (GL_TEXTURE_2D, texture);
    }
@@ -2576,7 +2576,7 @@ index 66b9123..7d948fa 100644
  
    if (1) {
      GLfloat s_params[] = {0.0001, 0., 0., 0.};
-@@ -1737,6 +1737,11 @@ frontE_package_callback (const BoxType * b, void *cl)
+@@ -1735,6 +1735,11 @@ frontE_package_callback (const BoxType * b, void *cl)
          int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
          hidgl_draw_acy_resistor (element, compute_depth (layer_group), BOARD_THICKNESS);
        }
@@ -2588,7 +2588,7 @@ index 66b9123..7d948fa 100644
      }
    return 1;
  }
-@@ -2575,125 +2580,27 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2574,125 +2579,27 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    return pixmap;
  }
  
