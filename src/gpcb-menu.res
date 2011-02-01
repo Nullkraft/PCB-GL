@@ -205,6 +205,7 @@ MainMenu =
    {"Hide Names" checked=hidenames Display(ToggleHideNames)}
    -
    {"Rubber band mode" checked=rubberband Display(ToggleRubberBandMode)}
+   {"All Directions Rubber band mode" checked=alldirectionsrubberband Display(ToggleAllDirectionsRubberBandMode)}
    {"Require unique element names" checked=uniquename Display(ToggleUniqueNames)}
    {"Auto-zero delta measurements" checked=localref Display(ToggleLocalRef)}
    {"New lines, arcs clear polygons" checked=clearnew Display(ToggleClearLine)}
