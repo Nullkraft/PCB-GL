@@ -1,0 +1,22 @@
+Bottom: 2c50fcfe7d08607a891a5b8ea79536bf601239e1
+Top:    197be7609cf3ddb86b94c2ed232f4dd542e6ecd6
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-02-19 14:47:16 +0000
+
+Refresh of fix-solder-mask-drawing-glitch
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index bb212e9..1d8d462 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -672,7 +672,7 @@ static int
+ clearPad_callback (const BoxType * b, void *cl)
+ {
+   PadTypePtr pad = (PadTypePtr) b;
+-  if (!XOR (TEST_FLAG (ONSOLDERFLAG, pad), SWAP_IDENT))
++  if (!XOR (TEST_FLAG (ONSOLDERFLAG, pad), SWAP_IDENT) && pad->Mask)
+     ClearPad (pad, true);
+   return 1;
+ }
