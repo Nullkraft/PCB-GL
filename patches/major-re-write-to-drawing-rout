@@ -1,5 +1,5 @@
 Bottom: 474816f1ff81c8d1d43124ea54ae7e09cef46262
-Top:    834cffa9709212668b8b51540ddd6924f3a4517d
+Top:    290a928f8c72ccc9c3c524f544c25d7ed2d2d320
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-02-19 14:59:29 +0000
 
@@ -190,7 +190,7 @@ index c0e23a3..077c575 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index b1b1de0..d43ab45 100644
+index b1b1de0..e32b64b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -661,7 +661,7 @@ index b1b1de0..d43ab45 100644
 +clearPad_callback_solid (const BoxType * b, void *cl)
 +{
 +  PadTypePtr pad = (PadTypePtr) b;
-+  if (!XOR (TEST_FLAG (ONSOLDERFLAG, pad), SWAP_IDENT) && pad->mask)
++  if (!XOR (TEST_FLAG (ONSOLDERFLAG, pad), SWAP_IDENT) && pad->Mask)
 +    ClearPadSolid (pad, true);
 +  return 1;
 +}
