@@ -1,7 +1,7 @@
-Bottom: 9b6e90c97c9ae5abe8f520381c7ea2a81996a0e4
-Top:    7386f5fb1be541c6d807e9a3002886a0ee295114
+Bottom: 804ff6eaacf5a534f37b819f1dc78f33f634f778
+Top:    892d5352101b07e8eaaf9a8b3c73ffcd8304c5b2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-31 22:21:01 +0000
+Date:   2011-02-19 14:59:53 +0000
 
 Add support for a "poured" object.
 
@@ -2119,7 +2119,7 @@ index 1e94c8b..90bc19d 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index e6c10fe..8f48194 100644
+index 1119745..4f4dec1 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -49,6 +49,7 @@
@@ -8189,7 +8189,7 @@ index 25267d8..8fbc6da 100644
  	  Mode == THERMAL_MODE)
  	{
 diff --git a/src/strflags.c b/src/strflags.c
-index ac1fdcc..26a2405 100644
+index 8f4912c..7869958 100644
 --- a/src/strflags.c
 +++ b/src/strflags.c
 @@ -95,7 +95,7 @@ static FlagBitsType object_flagbits[] = {
