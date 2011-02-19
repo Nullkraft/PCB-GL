@@ -207,6 +207,7 @@ extern "C"
 #define SL_FAB		0x0070
 #define SL_ASSY		0x0080
 #define SL_RATS		0x0090
+#define SL_FINISHED	0x00A0
 /* Callers should use this.  */
 #define SL(type,side) (~0xfff | SL_##type | SL_##side##_SIDE)
 
