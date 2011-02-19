@@ -1,7 +1,7 @@
-Bottom: 6297a6c9599300d9a35579143bcda2144b728df1
-Top:    f94f95c918cbc824b9138eb7513a76b7d4d120b6
+Bottom: 2d084fb0bc2dd05848987a46f70fed661f776063
+Top:    dfadfa4374c170a6de1d9196f3e36c86003e6fda
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-31 22:19:45 +0000
+Date:   2011-02-19 14:59:33 +0000
 
 Don't make GUI drawing calls to erase objects
 
@@ -182,7 +182,7 @@ index b2cbab4..53f5a50 100644
      {
        SaveUndoSerialNumber ();
 diff --git a/src/draw.c b/src/draw.c
-index 055843e..e6c10fe 100644
+index 53d8793..1119745 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -2119,7 +2119,6 @@ DrawElementPinsAndPads (ElementTypePtr Element, int unused)
