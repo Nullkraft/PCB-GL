@@ -926,6 +926,11 @@ ghid_init_toggle_states (void)
 				Settings.RubberBandMode);
 
   action = gtk_action_group_get_action (ghidgui->main_actions,
+					"ToggleAllDirectionsRubberBand");
+  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
+				Settings.AllDirectionsRubberBandMode);
+
+  action = gtk_action_group_get_action (ghidgui->main_actions,
 					"ToggleStartDirection");
   gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action),
 				Settings.SwapStartDirection);
