@@ -1,7 +1,7 @@
-Bottom: 55a4fcd0faa32cacfd3732be061787499bc71687
-Top:    3705140e8570fdc0bf91cc1156faa0113664287f
+Bottom: f6efc31d9f2c45e7687efd34215a3a4316882f27
+Top:    5ec09059cecbe0e99914e2da858394456636d129
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-01-31 22:21:06 +0000
+Date:   2011-02-19 14:59:58 +0000
 
 Add strip hierarchy options to display refdes without any "..../" prefix
 
@@ -149,7 +149,7 @@ index f762191..88f0580 100644
   * PCB flags
   */
 diff --git a/src/draw.c b/src/draw.c
-index 72099d5..937b325 100644
+index f98d37c..cd0cbdc 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -2157,6 +2157,32 @@ DrawElement (ElementTypePtr Element, int unused)
@@ -213,7 +213,7 @@ index 72099d5..937b325 100644
  
  
 diff --git a/src/strflags.c b/src/strflags.c
-index 26a2405..13ff9fe 100644
+index 7869958..810f593 100644
 --- a/src/strflags.c
 +++ b/src/strflags.c
 @@ -98,6 +98,7 @@ static FlagBitsType object_flagbits[] = {
@@ -223,4 +223,4 @@ index 26a2405..13ff9fe 100644
 +  { STRIPHIERFLAG, N ("striphierarchy"), ELEMENT_TYPE },
    { CLEARLINEFLAG, N ("clearline"), LINE_TYPE | ARC_TYPE | TEXT_TYPE },
    { SELECTEDFLAG, N ("selected"), ALL_TYPES },
-   { ONSOLDERFLAG, N ("onsolder"), ELEMENT_TYPE | PAD_TYPE },
+   { ONSOLDERFLAG, N ("onsolder"), ELEMENT_TYPE | PAD_TYPE | TEXT_TYPE },
