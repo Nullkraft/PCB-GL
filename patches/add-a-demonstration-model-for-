@@ -1,5 +1,5 @@
-Bottom: 7f5f1bf1deed50c1de49b970d3bb93985d330c31
-Top:    3441fe64311eb2b8b0f4c9b083a5bfd2508139e2
+Bottom: 6e9f87960977c1147e381b6d200e8d3dd6ac51e7
+Top:    7783065c977003ff01f824ab9b1a90ad05c9838f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-27 22:20:24 +0000
 
@@ -1515,7 +1515,7 @@ index 0000000..f9746f1
 +               m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * scale;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d5ed024..9f42d37 100644
+index ef68502..c2e6781 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -329,6 +329,48 @@ ghid_draw_grid (BoxTypePtr drawn_area)
@@ -1757,8 +1757,8 @@ index d5ed024..9f42d37 100644
     */
    scale[15] = (float)port->zoom * (float)MIN (widget->allocation.width, widget->allocation.height) / 2.;
    /* XXX: Need to choose which to use (width or height) based on the aspect of the window
-@@ -1941,6 +2052,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-   glLoadMatrixf ((GLfloat *)last_modelview_matrix);
+@@ -1947,6 +2058,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ #endif
  
    glEnable (GL_STENCIL_TEST);
 +  glEnable (GL_DEPTH_TEST);
@@ -1766,7 +1766,7 @@ index d5ed024..9f42d37 100644
    glClearColor (port->bg_color.red / 65535.,
                  port->bg_color.green / 65535.,
                  port->bg_color.blue / 65535.,
-@@ -2080,6 +2193,46 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2086,6 +2199,46 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    ghid_draw_everything (&region);
    hidgl_flush_triangles (&buffer);
  
@@ -1813,7 +1813,7 @@ index d5ed024..9f42d37 100644
    /* Just prod the drawing code so the current depth gets set to
       the right value for the layer we are editing */
    hidgl_set_depth (compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT)));
-@@ -2090,6 +2243,71 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2096,6 +2249,71 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    DrawMark (TRUE);
    hidgl_flush_triangles (&buffer);
  
@@ -1885,7 +1885,7 @@ index d5ed024..9f42d37 100644
    ghid_show_crosshair (TRUE);
  
    hidgl_flush_triangles (&buffer);
-@@ -2192,7 +2410,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2198,7 +2416,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -1894,7 +1894,7 @@ index d5ed024..9f42d37 100644
    hidgl_reset_stencil_usage ();
  
    /* call the drawing routine */
-@@ -2260,7 +2478,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2266,7 +2484,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                          GDK_GL_MODE_STENCIL |
@@ -1903,7 +1903,7 @@ index d5ed024..9f42d37 100644
                                          GDK_GL_MODE_SINGLE);
  
    pixmap = gdk_pixmap_new (NULL, width, height, depth);
-@@ -2310,7 +2528,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2316,7 +2534,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
