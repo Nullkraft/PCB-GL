@@ -1,5 +1,5 @@
-Bottom: acbd6bad951e69dc227437f3fd437aaf7999f105
-Top:    3b52ef28c9dd076d6948f6964a8e1d2457598cef
+Bottom: 6836f96fe2b304e7725b568baebfdfca884cf12a
+Top:    cdd9380b983eaf92f5e4996d04ff1cddf1270bad
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-02-19 15:30:29 +0000
 
@@ -125,7 +125,7 @@ index 6b7684a..a4a9aa9 100644
  
  int
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 659dc9b..9f7585e 100644
+index 22a7fbc..6d62c96 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1834,6 +1834,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
@@ -144,7 +144,7 @@ index 659dc9b..9f7585e 100644
  
    /* If we don't have any stencil bits available,
       we can't use the hidgl polygon drawing routine */
-@@ -2081,6 +2083,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2087,6 +2089,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
  //  printf ("Triangle count was %i\n", buffer.total_triangles);
  //  printf ("Vertex count was %i\n", buffer.total_vertices);
