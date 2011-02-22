@@ -1,3 +1,5 @@
+#undef NDEBUG
+#define DEBUG 1
 /*
        polygon clipping functions. harry eaton implemented the algorithm
        described in "A Closed Set of Algorithms for Performing Set
@@ -103,7 +105,7 @@ int vect_inters2 (Vector A, Vector B, Vector C, Vector D, Vector S1,
 #undef DEBUG_JUMP
 #undef DEBUG_GATHER
 #undef DEBUG_ANGLE
-#undef DEBUG
+//#undef DEBUG
 #ifdef DEBUG
 #define DEBUGP(...) fprintf(stderr, ## __VA_ARGS__)
 #else
