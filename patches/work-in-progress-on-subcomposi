@@ -1,7 +1,7 @@
-Bottom: 00947d782c5424618140d5cb264b41ce7143e565
-Top:    4cdd64e8bbb822da2ce9dbe07fb4fc8d30e944bd
+Bottom: 525e0c1f46324a650a62dcd94cb0c525ffb6349b
+Top:    9153786e6bc289803b72bcdb46c28ba9d9cdccde
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-02-25 00:04:22 +0000
+Date:   2011-02-28 21:57:30 +0000
 
 Work in progress on subcompositing / stencil buffers
 
@@ -14,7 +14,7 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 1d8d462..1182719 100644
+index 18d0dce..5dd43d6 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -414,6 +414,7 @@ DrawEverything (BoxTypePtr drawn_area)
@@ -65,8 +65,8 @@ index 1d8d462..1182719 100644
    if (gui->gui)
      {
        /* Draw element Marks */
-@@ -547,19 +559,30 @@ DrawEverything (BoxTypePtr drawn_area)
- 		DrawPadLowLevel (Output.fgGC, pad, false, false);
+@@ -552,19 +564,30 @@ DrawEverything (BoxTypePtr drawn_area)
+ 		}
  	  }
  	  ENDALL_LOOP;
 +	  gui->set_layer (NULL, SL (FINISHED, 0), 0);
@@ -99,7 +99,7 @@ index 1d8d462..1182719 100644
  }
  
  static void
-@@ -867,7 +890,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -872,7 +895,8 @@ DrawLayerGroup (int group, const BoxType * screen)
    Cardinal *layers = PCB->LayerGroups.Entries[group];
  
    clip_box = screen;
@@ -109,7 +109,7 @@ index 1d8d462..1182719 100644
      {
        layernum = layers[i];
        Layer = PCB->Data->Layer + layers[i];
-@@ -884,6 +908,10 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -889,6 +913,10 @@ DrawLayerGroup (int group, const BoxType * screen)
  	      r_search (Layer->polygon_tree, screen, NULL, poly_callback,
  			&info);
  	      info.arg = false;

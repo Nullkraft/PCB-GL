@@ -1,7 +1,7 @@
-Bottom: 76b557abe8f73947578bbd80f826a1ea2dfb6997
-Top:    4431671e500afb2aaaf49e5c331a9ad1062c0c56
+Bottom: b3ef393cd72e4615a3a919535cc106989d175542
+Top:    f09be0d51a700e83572e0e4e9bac042cb7018fc1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-02-25 00:04:25 +0000
+Date:   2011-02-28 21:57:33 +0000
 
 Major re-write to drawing routines
 
@@ -18,7 +18,7 @@ Notes from squashed patches:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 1182719..53d8793 100644
+index 5dd43d6..acf5031 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -76,7 +76,7 @@ FloatPolyType, *FloatPolyTypePtr;
@@ -66,7 +66,7 @@ index 1182719..53d8793 100644
  static int pin_callback (const BoxType * b, void *cl);
  static int pad_callback (const BoxType * b, void *cl);
  
-@@ -585,7 +585,7 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -590,7 +590,7 @@ DrawEverything (BoxTypePtr drawn_area)
      }
  }
  
@@ -75,7 +75,7 @@ index 1182719..53d8793 100644
  DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
  	   bool invisible)
  {
-@@ -673,7 +673,7 @@ struct pin_info
+@@ -678,7 +678,7 @@ struct pin_info
    LayerTypePtr Layer;
  };
  
@@ -84,7 +84,7 @@ index 1182719..53d8793 100644
  clearPin_callback (const BoxType * b, void *cl)
  {
    PinTypePtr pin = (PinTypePtr) b;
-@@ -691,7 +691,7 @@ poly_callback (const BoxType * b, void *cl)
+@@ -696,7 +696,7 @@ poly_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -93,7 +93,7 @@ index 1182719..53d8793 100644
  clearPad_callback (const BoxType * b, void *cl)
  {
    PadTypePtr pad = (PadTypePtr) b;
-@@ -704,7 +704,7 @@ clearPad_callback (const BoxType * b, void *cl)
+@@ -709,7 +709,7 @@ clearPad_callback (const BoxType * b, void *cl)
   * Draws silk layer.
   */
  
@@ -102,7 +102,7 @@ index 1182719..53d8793 100644
  DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
  {
  #if 0
-@@ -811,7 +811,7 @@ DrawMask (BoxType * screen)
+@@ -816,7 +816,7 @@ DrawMask (BoxType * screen)
  #endif
  }
  
@@ -111,7 +111,7 @@ index 1182719..53d8793 100644
  DrawRats (BoxTypePtr drawn_area)
  {
    /*
-@@ -946,7 +946,7 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -951,7 +951,7 @@ DrawLayerGroup (int group, const BoxType * screen)
   *         \       /
   *          2 --- 1
    */
@@ -120,7 +120,7 @@ index 1182719..53d8793 100644
  DrawSpecialPolygon (hidGC DrawGC,
  		    LocationType X, LocationType Y, int Thickness,
  		    int thin_draw)
-@@ -1010,7 +1010,7 @@ DrawSpecialPolygon (hidGC DrawGC,
+@@ -1015,7 +1015,7 @@ DrawSpecialPolygon (hidGC DrawGC,
  /* ---------------------------------------------------------------------------
   * lowlevel drawing routine for pins and vias
   */
@@ -129,7 +129,7 @@ index 1182719..53d8793 100644
  DrawPinOrViaLowLevel (PinTypePtr Ptr, bool drawHole)
  {
    if (Gathering)
-@@ -1094,7 +1094,7 @@ DrawPinOrViaLowLevel (PinTypePtr Ptr, bool drawHole)
+@@ -1099,7 +1099,7 @@ DrawPinOrViaLowLevel (PinTypePtr Ptr, bool drawHole)
  /**************************************************************
   * draw pin/via hole
   */
@@ -138,7 +138,7 @@ index 1182719..53d8793 100644
  DrawHole (PinTypePtr Ptr)
  {
    if (TEST_FLAG (THINDRAWFLAG, PCB))
-@@ -1709,7 +1709,7 @@ DrawVia (PinTypePtr Via, int unused)
+@@ -1714,7 +1714,7 @@ DrawVia (PinTypePtr Via, int unused)
  /* ---------------------------------------------------------------------------
   * draw a via without dealing with polygon clearance 
   */
@@ -147,7 +147,7 @@ index 1182719..53d8793 100644
  DrawPlainVia (PinTypePtr Via, bool holeToo)
  {
    if (!Gathering)
-@@ -1754,7 +1754,7 @@ DrawPin (PinTypePtr Pin, int unused)
+@@ -1759,7 +1759,7 @@ DrawPin (PinTypePtr Pin, int unused)
  /* ---------------------------------------------------------------------------
   * draw a pin without clearing around polygons 
   */
@@ -156,7 +156,7 @@ index 1182719..53d8793 100644
  DrawPlainPin (PinTypePtr Pin, bool holeToo)
  {
    if (!Gathering)
-@@ -1944,7 +1944,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
+@@ -1949,7 +1949,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
  /* ---------------------------------------------------------------------------
   * draws text on a layer
   */
