@@ -1,0 +1,26 @@
+Bottom: fa61d2aab07fd616345acf3148cb96c35d848873
+Top:    82c15ab61991fb8cdc0397c798d259d79cae4053
+Author: Markus Hitter <mah@jump-ing.de>
+Date:   2011-01-31 16:37:16 +0100
+
+From b76eaec4df2d8800fb4d21898e1ccab502187137 Mon Sep 17 00:00:00 2001
+Subject: Clean up "git status" output.
+
+
+---
+
+diff --git a/gts/.gitignore b/gts/.gitignore
+index 8e051a6..ab5a68e 100644
+--- a/gts/.gitignore
++++ b/gts/.gitignore
+@@ -1,2 +1,3 @@
++*.[oa]
+ .dirstamp
+ predicates_init.h
+diff --git a/tests/.gitignore b/tests/.gitignore
+new file mode 100644
+index 0000000..03567fc
+--- /dev/null
++++ b/tests/.gitignore
+@@ -0,0 +1 @@
++outputs
