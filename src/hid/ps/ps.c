@@ -652,8 +652,6 @@ ps_set_layer (const char *name, int group, int empty)
 	     && group <
 	     max_group) ? PCB->LayerGroups.Entries[group][0] : group;
 
-  printf ("set layer: %s, %i, %i (Type=%i)\n", name, group, empty, SL_TYPE (idx));
-
   if (SL_TYPE (idx) == SL_FINISHED)
     return 0;
 
