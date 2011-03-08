@@ -1,7 +1,7 @@
-Bottom: 7a852a8f80f33f29469bdba62e53133a0532569d
-Top:    eddd02cefe4b1caa514e9cc67fcefaac75f62e83
+Bottom: 51086951b965154a97792c4ffa71451de35828fd
+Top:    bb6817fb5e715d58bd8b71598c3c9c8bd15db54e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-02-28 21:57:54 +0000
+Date:   2011-03-08 18:28:44 +0000
 
 Add support for a "poured" object.
 
@@ -2191,7 +2191,7 @@ index 1e94c8b..90bc19d 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index 562f89d..f065879 100644
+index 933ae37..6c6fbae 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -49,6 +49,7 @@
@@ -2270,7 +2270,7 @@ index 562f89d..f065879 100644
  
    /* draw all visible lines this layer */
    r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
-@@ -905,13 +930,13 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -904,13 +929,13 @@ DrawLayerGroup (int group, const BoxType * screen)
  	rv = 0;
        if (layernum < max_copper_layer && Layer->On)
  	{
@@ -2286,9 +2286,9 @@ index 562f89d..f065879 100644
 +	      info.clip = screen;
 +	      r_search (Layer->pour_tree, screen, NULL, pour_callback, &info);
  	      info.arg = false;
+ 	    }
  
- 	      /* HACK: Subcomposite polygons separately from other layer primitives */
-@@ -1656,6 +1681,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
+@@ -1651,6 +1676,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2337,7 +2337,7 @@ index 562f89d..f065879 100644
   * lowlevel routine to element arcs
   */
  static void
-@@ -1974,6 +2041,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+@@ -1969,6 +2036,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
    DrawPolygonLowLevel (Polygon);
  }
  
@@ -2375,7 +2375,7 @@ index 562f89d..f065879 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -2245,6 +2343,16 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2240,6 +2338,16 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2392,7 +2392,7 @@ index 562f89d..f065879 100644
   * erases an element
   */
  void
-@@ -2315,6 +2423,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -2310,6 +2418,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2402,7 +2402,7 @@ index 562f89d..f065879 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -2362,6 +2473,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
+@@ -2357,6 +2468,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2, 0);
        break;
@@ -3121,7 +3121,7 @@ index 549d569..cb34bd8 100644
      }
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 8a6584e..24565c2 100644
+index f5388af..e64607f 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -500,7 +500,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)

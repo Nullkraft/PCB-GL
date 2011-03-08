@@ -1,7 +1,7 @@
-Bottom: 16e77a55325e0ee20c803a56e9544470641fc8d6
-Top:    2800991350f22af48d22b3f0f4ff05a6bf02d6a5
+Bottom: dfa6a22e88a43f3d162258eca1001e2192d29778
+Top:    016db759e25dfc4bd80437548a594a37bcddd74c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-02-28 21:57:56 +0000
+Date:   2011-03-08 18:28:46 +0000
 
 Off to find burried treasure on polygon island
 
@@ -116,10 +116,10 @@ index cfab1ca..72949d2 100644
    DrawVia (Via, 0);
    Draw ();
 diff --git a/src/draw.c b/src/draw.c
-index f065879..66e8bb8 100644
+index 6c6fbae..c03f657 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2112,6 +2112,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2107,6 +2107,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
    if (!Polygon->Clipped)
      return;
  
