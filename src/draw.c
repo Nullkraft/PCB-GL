@@ -895,8 +895,7 @@ DrawLayerGroup (int group, const BoxType * screen)
   Cardinal *layers = PCB->LayerGroups.Entries[group];
 
   clip_box = screen;
-  for (i = n_entries - 1; i >= 0;
-      i--, gui->set_layer (0, group, 0)) /* HACK: Subcomposite each layer in a layer group separately */
+  for (i = n_entries - 1; i >= 0; i--)
     {
       layernum = layers[i];
       Layer = PCB->Data->Layer + layers[i];
@@ -913,10 +912,6 @@ DrawLayerGroup (int group, const BoxType * screen)
 	      r_search (Layer->polygon_tree, screen, NULL, poly_callback,
 			&info);
 	      info.arg = false;
-
-	      /* HACK: Subcomposite polygons separately from other layer primitives */
-	      /* Reset the compositing */
-	      gui->set_layer (0, group, 0);
 	    }
 
 	  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
