@@ -1,0 +1,15 @@
+Bottom: 93c7700ba6929cfd5ee578192885c30bcc8ac400
+Top:    93c7700ba6929cfd5ee578192885c30bcc8ac400
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-08 18:26:45 +0000
+
+Remove hack in draw.c which broke PS (and probably other) output
+
+The set_layer call hacked into DrawLayerGroup to reset compositing tricked
+the PS exporter to re-open and overwrite output in the main layer output
+file during the fab drawing output.
+
+
+---
+
+
