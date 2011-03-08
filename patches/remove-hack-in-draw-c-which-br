@@ -1,0 +1,51 @@
+Bottom: 7a852a8f80f33f29469bdba62e53133a0532569d
+Top:    1ec6a333c0913d4ba2b4d337d6c114d03d7aac42
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-08 18:27:14 +0000
+
+Remove hack in draw.c which broke PS (and probably other) output
+
+The set_layer call hacked into DrawLayerGroup to reset compositing tricked
+the PS exporter to re-open and overwrite output in the main layer output
+file during the fab drawing output.
+
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 562f89d..933ae37 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -895,8 +895,7 @@ DrawLayerGroup (int group, const BoxType * screen)
+   Cardinal *layers = PCB->LayerGroups.Entries[group];
+ 
+   clip_box = screen;
+-  for (i = n_entries - 1; i >= 0;
+-      i--, gui->set_layer (0, group, 0)) /* HACK: Subcomposite each layer in a layer group separately */
++  for (i = n_entries - 1; i >= 0; i--)
+     {
+       layernum = layers[i];
+       Layer = PCB->Data->Layer + layers[i];
+@@ -913,10 +912,6 @@ DrawLayerGroup (int group, const BoxType * screen)
+ 	      r_search (Layer->polygon_tree, screen, NULL, poly_callback,
+ 			&info);
+ 	      info.arg = false;
+-
+-	      /* HACK: Subcomposite polygons separately from other layer primitives */
+-	      /* Reset the compositing */
+-	      gui->set_layer (0, group, 0);
+ 	    }
+ 
+ 	  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 8a6584e..f5388af 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -652,6 +652,8 @@ ps_set_layer (const char *name, int group, int empty)
+ 	     && group <
+ 	     max_group) ? PCB->LayerGroups.Entries[group][0] : group;
+ 
++  printf ("set layer: %s, %i, %i (Type=%i)\n", name, group, empty, SL_TYPE (idx));
++
+   if (SL_TYPE (idx) == SL_FINISHED)
+     return 0;
