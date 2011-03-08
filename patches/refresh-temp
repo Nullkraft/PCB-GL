@@ -1,0 +1,21 @@
+Bottom: 51086951b965154a97792c4ffa71451de35828fd
+Top:    d83884665bd77d1740487034d37e5fca720a69da
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-08 18:29:16 +0000
+
+Refresh of remove-hack-in-draw-c-which-br
+
+---
+
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index f5388af..8a6584e 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -652,8 +652,6 @@ ps_set_layer (const char *name, int group, int empty)
+ 	     && group <
+ 	     max_group) ? PCB->LayerGroups.Entries[group][0] : group;
+ 
+-  printf ("set layer: %s, %i, %i (Type=%i)\n", name, group, empty, SL_TYPE (idx));
+-
+   if (SL_TYPE (idx) == SL_FINISHED)
+     return 0;
