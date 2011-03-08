@@ -1,7 +1,7 @@
-Bottom: 51086951b965154a97792c4ffa71451de35828fd
-Top:    bb6817fb5e715d58bd8b71598c3c9c8bd15db54e
+Bottom: d83884665bd77d1740487034d37e5fca720a69da
+Top:    0c5d8cdc0e403228caed8f8bb1828d9bfdf15e8d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-08 18:28:44 +0000
+Date:   2011-03-08 18:29:34 +0000
 
 Add support for a "poured" object.
 
@@ -3121,7 +3121,7 @@ index 549d569..cb34bd8 100644
      }
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index f5388af..e64607f 100644
+index 8a6584e..24565c2 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -500,7 +500,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
