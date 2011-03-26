@@ -1,0 +1,15 @@
+Bottom: 1835ef413da81a4c084876f98e200094bb772503
+Top:    1835ef413da81a4c084876f98e200094bb772503
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-26 23:36:30 +0000
+
+hid/gtk: Make benchmark() implementation suit multiple drawing models
+
+Invalidate and process updates, rather than calling redraw directly.
+This suits the coming GL renderer which will use an invalidate/expose
+model.
+
+
+---
+
+
