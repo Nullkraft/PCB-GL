@@ -6,11 +6,10 @@ Date:   2011-03-26 16:13:03 +0000
 Fix mesa crash on startup (for some mesa versions)
 
 I'm not sure why it crashed, but it seems that providing a realize
-handler which fiddles with the GL context solves it. I've also
-removed a number of superfluous gtk_widget_realize() and an un-warraned
-gtk_widget_show_all()
+handler which fiddles with the GL context solves it. The underlying
+problem appears to have been fixed in later mesa versions.
 
-The underlying problem appears to have been fixed in later mesa versions.
+Leaving this commit for the benefit users of broken mesa versions.
 
 
 ---
