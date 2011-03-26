@@ -1,5 +1,5 @@
 Bottom: f219f538b0253f1bceae93b1c8f11dc6684dbc21
-Top:    f219f538b0253f1bceae93b1c8f11dc6684dbc21
+Top:    a94f9ec35b195954d291e346fe35b3f4d9f5e995
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 23:38:15 +0000
 
@@ -10,4 +10,15 @@ Also removed an unnecessary gtk_window_show_all() call.
 
 ---
 
-
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 1808065..857ef5b 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -2717,7 +2717,7 @@ ghid_parse_arguments (int *argc, char ***argv)
+   if (Settings.AutoPlace)
+     gtk_widget_set_uposition (GTK_WIDGET (window), 10, 10);
+ 
+-  gtk_widget_show_all (gport->top_window);
++  // gtk_widget_show_all (gport->top_window);
+   ghidgui->creating = TRUE;
+ }
