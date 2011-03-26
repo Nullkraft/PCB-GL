@@ -1,7 +1,7 @@
-Bottom: 01c8761a9fa7a3ed1aa4bd44241e867a73f0e78f
-Top:    404bdd20d3b3c133a8e22c9aa3114691f617c7b3
+Bottom: b313d95e071f70ad95534ac801587b70e42cf32a
+Top:    e72e8c85c8f0a2420106f5ba658bb494de9a4429
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-08 18:29:41 +0000
+Date:   2011-03-26 12:57:58 +0000
 
 Attempt to debug islandness after inserting hole bug
 
@@ -9,10 +9,10 @@ Attempt to debug islandness after inserting hole bug
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 5fc8a77..15dbb23 100644
+index f760ecf..5c9fc48 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -1507,12 +1507,19 @@ NotifyMode (void)
+@@ -1508,12 +1508,19 @@ NotifyMode (void)
  		   */
  		  SaveUndoSerialNumber ();
  		  Flags = ((PolygonType *)Crosshair.AttachedObject.Ptr2)->Flags;
