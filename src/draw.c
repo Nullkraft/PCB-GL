@@ -410,6 +410,7 @@ DrawEverything (BoxTypePtr drawn_area)
 		    backN_callback, NULL);
 	  DrawLayer (&(PCB->Data->BACKSILKLAYER), drawn_area);
 	}
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
     }
 
   /* draw all layers in layerstack order */
@@ -448,6 +449,7 @@ DrawEverything (BoxTypePtr drawn_area)
 			    &plated);
 		}
 	    }
+	  gui->set_layer (NULL, SL (FINISHED, 0), 0);
 	}
     }
   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
@@ -488,6 +490,7 @@ DrawEverything (BoxTypePtr drawn_area)
       SWAP_IDENT = 0;
       DrawMask (drawn_area);
       SWAP_IDENT = save_swap;
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
     }
   if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
     {
@@ -495,12 +498,21 @@ DrawEverything (BoxTypePtr drawn_area)
       SWAP_IDENT = 1;
       DrawMask (drawn_area);
       SWAP_IDENT = save_swap;
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
     }
   /* Draw top silkscreen */
   if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
-    DrawSilk (0, component_silk_layer, drawn_area);
+    {
+      DrawSilk (0, component_silk_layer, drawn_area);
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    }
+
   if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
-    DrawSilk (1, solder_silk_layer, drawn_area);
+    {
+      DrawSilk (1, solder_silk_layer, drawn_area);
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    }
+
   if (gui->gui)
     {
       /* Draw element Marks */
@@ -548,19 +560,30 @@ DrawEverything (BoxTypePtr drawn_area)
 		}
 	  }
 	  ENDALL_LOOP;
+	  gui->set_layer (NULL, SL (FINISHED, 0), 0);
 	}
     }
 
   doing_assy = true;
   if (gui->set_layer ("topassembly", SL (ASSY, TOP), 0))
-    PrintAssembly (drawn_area, component, 0);
+    {
+      PrintAssembly (drawn_area, component, 0);
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    }
 
   if (gui->set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
-    PrintAssembly (drawn_area, solder, 1);
+    {
+      PrintAssembly (drawn_area, solder, 1);
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    }
+
   doing_assy = false;
 
   if (gui->set_layer ("fab", SL (FAB, 0), 0))
-    PrintFab ();
+    {
+      PrintFab ();
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    }
 }
 
 static void
@@ -858,7 +881,8 @@ DrawLayerGroup (int group, const BoxType * screen)
   Cardinal *layers = PCB->LayerGroups.Entries[group];
 
   clip_box = screen;
-  for (i = n_entries - 1; i >= 0; i--)
+  for (i = n_entries - 1; i >= 0;
+      i--, gui->set_layer (0, group, 0)) /* HACK: Subcomposite each layer in a layer group separately */
     {
       layernum = layers[i];
       Layer = PCB->Data->Layer + layers[i];
@@ -875,6 +899,10 @@ DrawLayerGroup (int group, const BoxType * screen)
 	      r_search (Layer->polygon_tree, screen, NULL, poly_callback,
 			&info);
 	      info.arg = false;
+
+	      /* HACK: Subcomposite polygons separately from other layer primitives */
+	      /* Reset the compositing */
+	      gui->set_layer (0, group, 0);
 	    }
 
 	  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
