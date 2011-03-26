@@ -443,7 +443,6 @@ gerber_do_export (HID_Attr_Val * options)
   static int saved_layer_stack[MAX_LAYER];
   int save_ons[MAX_LAYER + 2];
   FlagType save_thindraw;
-  bool absolute;
 
   save_thindraw = PCB->Flags;
   CLEAR_FLAG(THINDRAWFLAG, PCB);
