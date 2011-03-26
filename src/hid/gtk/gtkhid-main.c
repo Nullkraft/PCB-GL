@@ -979,7 +979,7 @@ HID ghid_hid = {
   1,				/* gui */
   0,				/* printer */
   0,				/* exporter */
-  0,				/* poly before */
+  1,				/* poly before */
   1,				/* poly after */
   0,				/* poly dicer */
 
