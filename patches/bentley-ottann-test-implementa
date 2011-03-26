@@ -1,7 +1,7 @@
-Bottom: da6086a3680ea6af4d85493c7d6b56c468bdfedc
-Top:    66028ca87c596534abff12efd4332e325ae4dd7a
+Bottom: 02aeb4c8d874b0d2bffdd71f6b62c2321cc96aeb
+Top:    85dad97538fab5eca41be8edf6f1d42dadbf6008
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-08 18:28:13 +0000
+Date:   2011-03-26 12:57:07 +0000
 
 Bentley-Ottann test implementation
 
@@ -9,7 +9,7 @@ Bentley-Ottann test implementation
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 8fde977..2d0e583 100644
+index 87814cd..f5de7e3 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -7,6 +7,8 @@ AM_INIT_AUTOMAKE([1.9])
@@ -13833,10 +13833,10 @@ index 0000000..bb5ff35
 +
 +#endif /* __G_PQUEUE_H__ */
 diff --git a/src/main.c b/src/main.c
-index 3fff933..3ffe4e0 100644
+index a344596..8149298 100644
 --- a/src/main.c
 +++ b/src/main.c
-@@ -54,6 +54,7 @@
+@@ -55,6 +55,7 @@
  #include "misc.h"
  #include "lrealpath.h"
  #include "free_atexit.h"
@@ -13844,7 +13844,7 @@ index 3fff933..3ffe4e0 100644
  
  #include "hid/common/actions.h"
  
-@@ -883,6 +884,7 @@ char *program_directory = 0;
+@@ -884,6 +885,7 @@ char *program_directory = 0;
  
  #include "dolists.h"
  
@@ -13852,7 +13852,7 @@ index 3fff933..3ffe4e0 100644
  int
  main (int argc, char *argv[])
  {
-@@ -1094,11 +1096,16 @@ main (int argc, char *argv[])
+@@ -1097,11 +1099,16 @@ main (int argc, char *argv[])
            UNKNOWN (Settings.GnetlistProgram));
  #endif
  
