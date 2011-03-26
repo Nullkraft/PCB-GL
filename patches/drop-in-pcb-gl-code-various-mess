@@ -1,5 +1,5 @@
 Bottom: 1835ef413da81a4c084876f98e200094bb772503
-Top:    2b31234c716f1793713617d6fa7b634c63164508
+Top:    17d72c0bb4f02c422b581ecc989c47d0f9a01762
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:02 +0000
 
@@ -788,10 +788,10 @@ index d5b2f82..52d9990 100644
  {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..332deb5
+index 0000000..797b043
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -0,0 +1,1210 @@
+@@ -0,0 +1,1214 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -825,7 +825,6 @@ index 0000000..332deb5
 +
 +
 +extern HID ghid_hid;
-+extern int ghid_gui_is_up;
 +
 +static hidGC current_gc = NULL;
 +
@@ -838,6 +837,7 @@ index 0000000..332deb5
 +typedef struct render_priv {
 +  GdkGLConfig *glconfig;
 +  bool trans_lines;
++  bool in_context;
 +} render_priv;
 +
 +
@@ -1273,7 +1273,7 @@ index 0000000..332deb5
 +#endif
 +  }
 +
-+  if( ! ghid_gui_is_up )
++  if(!priv->in_context)
 +    return;
 +
 +  hidgl_flush_triangles (&buffer);
@@ -1666,6 +1666,8 @@ index 0000000..332deb5
 +  if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext))
 +    return FALSE;
 +
++  port->render_priv->in_context = true;
++
 +  return TRUE;
 +}
 +
@@ -1679,6 +1681,8 @@ index 0000000..332deb5
 +    gdk_gl_drawable_swap_buffers (pGlDrawable);
 +  else
 +    glFlush ();
++
++  port->render_priv->in_context = false;
 +
 +  /* end drawing to current GL-context */
 +  gdk_gl_drawable_gl_end (pGlDrawable);
@@ -2003,27 +2007,10 @@ index 0000000..332deb5
 +  return pixmap;
 +}
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index c77faaf..004d06c 100644
+index c77faaf..ad1120c 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -31,6 +31,7 @@ RCSID ("$Id$");
- static void zoom_to (double factor, int x, int y);
- static void zoom_by (double factor, int x, int y);
- 
-+int ghid_gui_is_up = 0;
- int ghid_flip_x = 0, ghid_flip_y = 0;
- 
- 
-@@ -294,8 +295,6 @@ ghid_calibrate (double xval, double yval)
-   printf (_("ghid_calibrate() -- not implemented\n"));
- }
- 
--static int ghid_gui_is_up = 0;
--
- void
- ghid_notify_gui_is_up ()
- {
-@@ -979,7 +978,7 @@ HID ghid_hid = {
+@@ -979,7 +979,7 @@ HID ghid_hid = {
    1,				/* gui */
    0,				/* printer */
    0,				/* exporter */
@@ -2032,7 +2019,7 @@ index c77faaf..004d06c 100644
    1,				/* poly after */
    0,				/* poly dicer */
  
-@@ -1562,7 +1561,8 @@ Benchmark (int argc, char **argv, int x, int y)
+@@ -1562,7 +1562,8 @@ Benchmark (int argc, char **argv, int x, int y)
    time (&start);
    do
      {
