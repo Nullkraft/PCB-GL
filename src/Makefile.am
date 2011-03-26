@@ -41,6 +41,22 @@ PCB_SRCS = \
 	box.h \
 	buffer.c \
 	buffer.h \
+	borast/cairo-minimal.h \
+	borast/cairoint-minimal.h \
+	borast/cairo-bentley-ottmann.c \
+	borast/cairo-combsort-private.h \
+	borast/cairo-compiler-private.h \
+	borast/cairo-fixed-private.h \
+	borast/cairo-fixed-type-private.h \
+	borast/cairo-freelist.c \
+	borast/cairo-freelist-private.h \
+	borast/cairo-malloc-private.h \
+	borast/cairo-traps.c \
+	borast/cairo-traps-private.h \
+	borast/cairo-types-private.h \
+	borast/cairo-wideint.c \
+	borast/cairo-wideint-private.h \
+	borast/cairo-wideint-type-private.h \
 	change.c \
 	change.h \
 	clip.c \
@@ -136,6 +152,7 @@ PCB_SRCS = \
 	set.h \
 	strflags.c \
 	strflags.h \
+	sweep.h \
 	thermal.c \
 	thermal.h \
 	undo.c \
