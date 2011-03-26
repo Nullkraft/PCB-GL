@@ -1,5 +1,5 @@
 Bottom: 6bd1a5d001a7a21780912b5409bace904e1bebd6
-Top:    322af7b2b0a2727c35fe7354a58f211b3b266b7a
+Top:    3959842e2b6b041fcf39deaf22ec9156bd8a551a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:03 +0000
 
@@ -31,26 +31,28 @@ index 52d9990..5c8f062 100644
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 797b043..b89b6e6 100644
+index 797b043..7e3c698 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -997,6 +997,22 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -997,6 +997,24 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    return FALSE;
  }
  
++/* This realize callback is used to work around a crash bug in some mesa
++ * versions (observed on a machine running the intel i965 driver. It isn't
++ * obvious why it helps, but somehow fiddling with the GL context here solves
++ * the issue. The problem appears to have been fixed in recent mesa versions.
++ */
 +void
 +ghid_port_drawing_realize_cb (GtkWidget *widget, gpointer data)
 +{
 +  GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
 +  GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
 +
-+  /*** OpenGL BEGIN ***/
 +  if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
 +    return;
 +
 +  gdk_gl_drawable_gl_end (gldrawable);
-+  /*** OpenGL END ***/
-+
 +  return;
 +}
 +
