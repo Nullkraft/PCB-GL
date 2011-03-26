@@ -1,0 +1,14 @@
+Bottom: e235274bb4c5790989dbe96d0182c67444a066b3
+Top:    e235274bb4c5790989dbe96d0182c67444a066b3
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-26 16:07:12 +0000
+
+src/print.c: Fix fab drawing width text annotation.
+
+The text hard-coded that the outline is 10mil, in fact it is not,
+the current #define sets it at 8 mil. Report the actual value used.
+
+
+---
+
+
