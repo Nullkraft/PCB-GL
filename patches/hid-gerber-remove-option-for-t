@@ -1,5 +1,5 @@
 Bottom: 33c23ef5ba1ef26ed1240d7ea14707d5df41c552
-Top:    c588e8ceae2b1e4b9184ab89c740bac7531d1ca7
+Top:    c97afeedd8a006bdce1213059d6fc399fdca20e2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 15:28:03 +0000
 
@@ -14,7 +14,7 @@ is a sensible default, and matches the outline used on the fab drawing.
 ---
 
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 2e6b954..e130cc5 100644
+index 2e6b954..b7e99bb 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -144,6 +144,12 @@ PendingDrills *pending_drills = 0;
@@ -23,7 +23,7 @@ index 2e6b954..e130cc5 100644
  /*----------------------------------------------------------------------------*/
 +/* Defined Constants                                                          */
 +/*----------------------------------------------------------------------------*/
-+#define AUTO_OUTLINE_WIDTH 1000     /* Auto-geneated outline width of 10 mils */
++#define AUTO_OUTLINE_WIDTH 800       /* Auto-geneated outline width of 8 mils */
 +
 +
 +/*----------------------------------------------------------------------------*/
