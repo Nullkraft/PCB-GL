@@ -1,7 +1,7 @@
-Bottom: 1464a2664cac6b3309b147251aab3794be2e8009
-Top:    757133e584668e489903e36479fabaacc33952bc
+Bottom: f32341ef7a4c83e5cb4aeec0d6ef28b956539440
+Top:    28b6a0df4ef03bdec287234275dc91ca8eb78064
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-08 18:28:20 +0000
+Date:   2011-03-26 12:57:17 +0000
 
 Drop in PCB+GL code + various mess. Needs splitting up?
 
@@ -72,7 +72,7 @@ index 1e4cf58..9429e18 100644
  # desktop and application toolbar
  if WIN32
 diff --git a/src/crosshair.c b/src/crosshair.c
-index f3dcab3..1e94c8b 100644
+index 2d4e26d..60318a5 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -693,8 +693,10 @@ CrosshairOn (bool BlockToo)
@@ -2111,7 +2111,7 @@ index 5b8d20a..6cd8069 100644
    gtk_widget_class->expose_event = ghid_pinout_preview_expose;
  
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index ff6dfc0..4ea3842 100644
+index dbc9808..3244837 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2313,6 +2313,7 @@ ghid_build_pcb_top_window (void)

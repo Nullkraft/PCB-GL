@@ -1,7 +1,7 @@
-Bottom: e63154a3f11a40c6eb844d32591f87ae32aaf746
-Top:    8431202996b03f3b76d431ce9651dee910b8d902
+Bottom: dffa16ea82dbe69d8aa1a81d667168e1a6b7abe8
+Top:    d2879042afe49e1895105e5e876a0df7c22f9467
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-08 18:28:19 +0000
+Date:   2011-03-26 12:57:16 +0000
 
 Add configure checks for GtkGLEext, add to CFLAGS and LIBS
 
@@ -24,7 +24,7 @@ Add configure checks for GtkGLEext, add to CFLAGS and LIBS
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 8fde977..281d029 100644
+index 87814cd..77b4509 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -389,6 +389,48 @@ $DBUS_PKG_ERRORS])]
@@ -94,7 +94,7 @@ index 8fde977..281d029 100644
  	;;
  
        gcode|nelma|png )
-@@ -1010,8 +1063,8 @@ AM_CONDITIONAL(DEBUG_BUILD, test x$enable_debug = xyes)
+@@ -1015,8 +1068,8 @@ AX_FUNC_MKDIR
  
  # ------------- Complete set of CFLAGS and LIBS -------------------
  

@@ -1,7 +1,7 @@
-Bottom: dfebab49f6991eb44b272a9c48ba595e2cb14801
-Top:    f3f0854b645ea9428e02df9051334519069a630e
+Bottom: f81c0c91a6cb6c696c8f3587273b06e87b795f32
+Top:    9b3ba2e51f610e8bedcd1e7b9d6a908032dc7b72
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-08 18:28:22 +0000
+Date:   2011-03-26 12:57:20 +0000
 
 Work in progress on subcompositing / stencil buffers
 
@@ -395,10 +395,10 @@ index bb1383c..b956a65 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 63344b3..7c8b986 100644
+index 2e6b954..9c8a055 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
-@@ -529,6 +529,9 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -569,6 +569,9 @@ gerber_set_layer (const char *name, int group, int empty)
  	     && group <
  	     max_group) ? PCB->LayerGroups.Entries[group][0] : group;
  
@@ -610,7 +610,7 @@ index 0a1efef..8a81b4b 100644
  		name = PCB->Data->Layer[idx].Name;
  	}
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 06e22bb..8b3724a 100644
+index 022da9c..e572da1 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -897,6 +897,10 @@ png_set_layer (const char *name, int group, int empty)

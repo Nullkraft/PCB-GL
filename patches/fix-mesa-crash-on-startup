@@ -1,7 +1,7 @@
-Bottom: 757133e584668e489903e36479fabaacc33952bc
-Top:    4b341e2e7c2dbf4003156a2c449a8087f7e0e8fa
+Bottom: 28b6a0df4ef03bdec287234275dc91ca8eb78064
+Top:    fec719fabbeff400f548e11926b3de0fc598e218
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-08 18:28:21 +0000
+Date:   2011-03-26 12:57:17 +0000
 
 Fix mesa crash on startup (for some mesa versions)
 
@@ -59,7 +59,7 @@ index 332deb5..e8dd61a 100644
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 4ea3842..3570704 100644
+index 3244837..cd0d9a9 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2159,8 +2159,6 @@ destroy_chart_cb (GtkWidget * widget, GHidPort * port)

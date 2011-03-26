@@ -1,7 +1,7 @@
-Bottom: fe9aad8268f81fae18ec306d84ba58cca9244558
-Top:    689fb7df65c7a444ee6e4074c7f9962a6c702f03
+Bottom: b24f92baa4940b097997a5c730834c7ec1ed1879
+Top:    6403a42bfcefd0c5a994818c2c0ec193f5e715f2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-08 18:28:28 +0000
+Date:   2011-03-26 12:57:30 +0000
 
 TEMPORARY: Comment out some calls which can trigger an out-of-context redraw
 
@@ -14,10 +14,10 @@ Should fix this properly with notificatons to the GUI
 ---
 
 diff --git a/src/action.c b/src/action.c
-index de2738e..21e3bba 100644
+index 7493659..27d8e60 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -4054,7 +4054,7 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
+@@ -4058,7 +4058,7 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
      {
        if (Marked.status)
  	{
@@ -26,7 +26,7 @@ index de2738e..21e3bba 100644
  	  Marked.status = false;
  	}
        else
-@@ -4062,16 +4062,16 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
+@@ -4066,16 +4066,16 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
  	  Marked.status = true;
  	  Marked.X = Crosshair.X;
  	  Marked.Y = Crosshair.Y;
