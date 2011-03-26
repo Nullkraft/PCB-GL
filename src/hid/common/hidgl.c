@@ -807,6 +807,12 @@ hidgl_reset_stencil_usage (void)
   dirty_bits = 0;
 }
 
+void
+hidgl_set_depth (float depth)
+{
+  global_depth = depth;
+}
+
 
 /* ---------------------------------------------------------------------- */
 
