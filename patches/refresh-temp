@@ -1,0 +1,77 @@
+Bottom: 2b31234c716f1793713617d6fa7b634c63164508
+Top:    17d72c0bb4f02c422b581ecc989c47d0f9a01762
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-26 23:34:13 +0000
+
+Refresh of drop-in-pcb-gl-code-various-mess
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 332deb5..797b043 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -31,7 +31,6 @@ RCSID ("$Id$");
+ 
+ 
+ extern HID ghid_hid;
+-extern int ghid_gui_is_up;
+ 
+ static hidGC current_gc = NULL;
+ 
+@@ -44,6 +43,7 @@ static int cur_mask = -1;
+ typedef struct render_priv {
+   GdkGLConfig *glconfig;
+   bool trans_lines;
++  bool in_context;
+ } render_priv;
+ 
+ 
+@@ -479,7 +479,7 @@ ghid_set_color (hidGC gc, const char *name)
+ #endif
+   }
+ 
+-  if( ! ghid_gui_is_up )
++  if(!priv->in_context)
+     return;
+ 
+   hidgl_flush_triangles (&buffer);
+@@ -872,6 +872,8 @@ ghid_start_drawing (GHidPort *port)
+   if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext))
+     return FALSE;
+ 
++  port->render_priv->in_context = true;
++
+   return TRUE;
+ }
+ 
+@@ -886,6 +888,8 @@ ghid_end_drawing (GHidPort *port)
+   else
+     glFlush ();
+ 
++  port->render_priv->in_context = false;
++
+   /* end drawing to current GL-context */
+   gdk_gl_drawable_gl_end (pGlDrawable);
+ }
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 004d06c..ad1120c 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -31,7 +31,6 @@ RCSID ("$Id$");
+ static void zoom_to (double factor, int x, int y);
+ static void zoom_by (double factor, int x, int y);
+ 
+-int ghid_gui_is_up = 0;
+ int ghid_flip_x = 0, ghid_flip_y = 0;
+ 
+ 
+@@ -295,6 +294,8 @@ ghid_calibrate (double xval, double yval)
+   printf (_("ghid_calibrate() -- not implemented\n"));
+ }
+ 
++static int ghid_gui_is_up = 0;
++
+ void
+ ghid_notify_gui_is_up ()
+ {
