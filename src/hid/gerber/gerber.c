@@ -93,7 +93,6 @@ static int is_drill;
 static int current_mask;
 static int flash_drills;
 static int copy_outline_mode;
-static int outline_trace_size;
 static LayerTypePtr outline_layer;
 
 enum ApertureShape
