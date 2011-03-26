@@ -565,7 +565,7 @@ XORDrawMoveOrCopyObject (void)
 /* ---------------------------------------------------------------------------
  * draws additional stuff that follows the crosshair
  */
-static void
+void
 DrawAttached (void)
 {
   BDimension s;
