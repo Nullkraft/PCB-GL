@@ -761,7 +761,7 @@ ghid_show_crosshair (gboolean paint_new_location)
 
   glBegin (GL_LINES);
 
-#if 1
+#if 0
   if (x_prev >= 0 && !paint_new_location)
     draw_crosshair (x_prev, y_prev);
 #endif
@@ -774,7 +774,7 @@ ghid_show_crosshair (gboolean paint_new_location)
 
   glBegin (GL_QUADS);
 
-#if 1
+#if 0
   if (x_prev >= 0 && draw_markers_prev & !paint_new_location)
     {
       glVertex2i (0,                  y_prev - VCD);
