@@ -1,7 +1,7 @@
-Bottom: f81c0c91a6cb6c696c8f3587273b06e87b795f32
-Top:    9b3ba2e51f610e8bedcd1e7b9d6a908032dc7b72
+Bottom: f7e3d305e586be2dbb01d5166cca5ef27503099d
+Top:    b55d4b239ee1d57c446e64e8dbd1c111e41a4bd5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-26 12:57:20 +0000
+Date:   2011-03-26 16:13:05 +0000
 
 Work in progress on subcompositing / stencil buffers
 
@@ -395,10 +395,10 @@ index bb1383c..b956a65 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 2e6b954..9c8a055 100644
+index b7e99bb..844c2ce 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
-@@ -569,6 +569,9 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -571,6 +571,9 @@ gerber_set_layer (const char *name, int group, int empty)
  	     && group <
  	     max_group) ? PCB->LayerGroups.Entries[group][0] : group;
  
