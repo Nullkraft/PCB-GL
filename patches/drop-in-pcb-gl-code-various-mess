@@ -1,4 +1,4 @@
-Bottom: 1835ef413da81a4c084876f98e200094bb772503
+Bottom: 3af97365c87b50f40f1aa6951332ccd5e74e39fa
 Top:    17d72c0bb4f02c422b581ecc989c47d0f9a01762
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:02 +0000
@@ -2007,7 +2007,7 @@ index 0000000..797b043
 +  return pixmap;
 +}
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index c77faaf..ad1120c 100644
+index 0b84548..ad1120c 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -979,7 +979,7 @@ HID ghid_hid = {
@@ -2019,16 +2019,6 @@ index c77faaf..ad1120c 100644
    1,				/* poly after */
    0,				/* poly dicer */
  
-@@ -1562,7 +1562,8 @@ Benchmark (int argc, char **argv, int x, int y)
-   time (&start);
-   do
-     {
--      hid_expose_callback (&ghid_hid, &region, 0);
-+      gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
-+      gdk_window_process_updates (gport->drawing_area->window, FALSE);
-       gdk_display_sync (display);
-       time (&end);
-       i++;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
 index 10dd85b..3b543cb 100644
 --- a/src/hid/gtk/gui-output-events.c
