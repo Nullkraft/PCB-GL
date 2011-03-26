@@ -1,5 +1,5 @@
-Bottom: 3af97365c87b50f40f1aa6951332ccd5e74e39fa
-Top:    17d72c0bb4f02c422b581ecc989c47d0f9a01762
+Bottom: 192630f21d4a161fad0c186736b40774a5017d9e
+Top:    6bd1a5d001a7a21780912b5409bace904e1bebd6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:02 +0000
 
@@ -2086,10 +2086,10 @@ index 5b8d20a..6cd8069 100644
    gtk_widget_class->expose_event = ghid_pinout_preview_expose;
  
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index dbc9808..3244837 100644
+index 1808065..2098c27 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -2313,6 +2313,7 @@ ghid_build_pcb_top_window (void)
+@@ -2311,6 +2311,7 @@ ghid_build_pcb_top_window (void)
    gtk_box_pack_start (GTK_BOX (hbox), viewport, TRUE, TRUE, 0);
  
    gport->drawing_area = gtk_drawing_area_new ();
