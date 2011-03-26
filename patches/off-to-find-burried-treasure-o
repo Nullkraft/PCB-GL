@@ -1,7 +1,7 @@
-Bottom: 0b7aef3be0a8e059503b516b50cb2d29d06509e0
-Top:    b021dd27d7d35c28177a124d4ea2642523c1748f
+Bottom: 7c77e25960e938251e1a59ca9d271435b6a542d8
+Top:    28da8c239766b29e86aef05bfe5b6ab4afe69e8f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-08 18:29:36 +0000
+Date:   2011-03-26 12:57:50 +0000
 
 Off to find burried treasure on polygon island
 
@@ -17,7 +17,7 @@ of a selection will re-create the polygon.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 1336a53..4916eb2 100644
+index cd4bb94..a3ca1d5 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -391,7 +391,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
@@ -226,7 +226,7 @@ index 5b51df5..b054e31 100644
  bool lineClear (LineTypePtr, Cardinal);
  bool IsLineInPolygon (LineTypePtr, PolygonTypePtr);
 diff --git a/src/move.c b/src/move.c
-index c582507..f0b42f2 100644
+index 6712d12..aa9cede 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -366,12 +366,12 @@ MovePour (LayerTypePtr Layer, PourTypePtr Pour)

@@ -1,7 +1,7 @@
-Bottom: b021dd27d7d35c28177a124d4ea2642523c1748f
-Top:    3cc99b634bd65ebf857b315992ce77f0560d787d
+Bottom: 28da8c239766b29e86aef05bfe5b6ab4afe69e8f
+Top:    1018ba78e700e75a3a02527c9e1bceb0f6e715a1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-08 18:29:36 +0000
+Date:   2011-03-26 12:57:51 +0000
 
 Island removal fixes
 
@@ -11,7 +11,7 @@ Kept separate for now because they might have unknown side-effects.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index 4916eb2..233f905 100644
+index a3ca1d5..32ce0a0 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -249,8 +249,8 @@ MoveViaToBuffer (PinTypePtr Via)
@@ -116,10 +116,10 @@ index 72949d2..ce57540 100644
        if (Line->Clearance == 0)
  	{
 diff --git a/src/misc.c b/src/misc.c
-index 26d2a69..497f79c 100644
+index 322725c..fdc2ee7 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -1568,8 +1568,8 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
+@@ -1571,8 +1571,8 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
        new_da = 360;
        new_sa = 0;
      }
@@ -130,7 +130,7 @@ index 26d2a69..497f79c 100644
    a->StartAngle = new_sa;
    a->Delta = new_da;
 diff --git a/src/move.c b/src/move.c
-index f0b42f2..de56245 100644
+index aa9cede..95d178e 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -282,8 +282,8 @@ MoveLine (LayerTypePtr Layer, LineTypePtr Line)
