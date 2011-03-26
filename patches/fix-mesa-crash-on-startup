@@ -1,5 +1,5 @@
 Bottom: 6bd1a5d001a7a21780912b5409bace904e1bebd6
-Top:    6bd1a5d001a7a21780912b5409bace904e1bebd6
+Top:    322af7b2b0a2727c35fe7354a58f211b3b266b7a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:03 +0000
 
@@ -15,4 +15,72 @@ The underlying problem appears to have been fixed in later mesa versions.
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 52d9990..5c8f062 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -1011,6 +1011,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   return FALSE;
+ }
+ 
++void
++ghid_port_drawing_realize_cb (GtkWidget *widget, gpointer data)
++{
++}
++
+ gboolean
+ ghid_pinout_preview_expose (GtkWidget *widget,
+                             GdkEventExpose *ev)
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 797b043..b89b6e6 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -997,6 +997,22 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   return FALSE;
+ }
+ 
++void
++ghid_port_drawing_realize_cb (GtkWidget *widget, gpointer data)
++{
++  GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
++  GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
++
++  /*** OpenGL BEGIN ***/
++  if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext))
++    return;
++
++  gdk_gl_drawable_gl_end (gldrawable);
++  /*** OpenGL END ***/
++
++  return;
++}
++
+ gboolean
+ ghid_pinout_preview_expose (GtkWidget *widget,
+                             GdkEventExpose *ev)
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 2098c27..9f9d59e 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -2368,6 +2368,9 @@ ghid_build_pcb_top_window (void)
+      |  the user does a command entry.
+    */
+ 
++  g_signal_connect (G_OBJECT (gport->drawing_area), "realize",
++		    G_CALLBACK (ghid_port_drawing_realize_cb),
++		    port);
+   g_signal_connect (G_OBJECT (gport->drawing_area), "expose_event",
+ 		    G_CALLBACK (ghid_drawing_area_expose_cb),
+ 		    port);
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 912e369..c5f57c7 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -503,6 +503,7 @@ void ghid_end_drawing (GHidPort *port);
+ void ghid_screen_update (void);
+ gboolean ghid_drawing_area_expose_cb (GtkWidget *, GdkEventExpose *,
+                                       GHidPort *);
++void ghid_port_drawing_realize_cb (GtkWidget *, gpointer);
+ gboolean ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev);
+ GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
+                                int width, int height, int depth);
