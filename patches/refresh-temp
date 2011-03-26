@@ -1,0 +1,22 @@
+Bottom: c588e8ceae2b1e4b9184ab89c740bac7531d1ca7
+Top:    c97afeedd8a006bdce1213059d6fc399fdca20e2
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-26 16:10:43 +0000
+
+Refresh of hid-gerber-remove-option-for-t
+
+---
+
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index e130cc5..b7e99bb 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -146,7 +146,7 @@ int n_pending_drills = 0, max_pending_drills = 0;
+ /*----------------------------------------------------------------------------*/
+ /* Defined Constants                                                          */
+ /*----------------------------------------------------------------------------*/
+-#define AUTO_OUTLINE_WIDTH 1000     /* Auto-geneated outline width of 10 mils */
++#define AUTO_OUTLINE_WIDTH 800       /* Auto-geneated outline width of 8 mils */
+ 
+ 
+ /*----------------------------------------------------------------------------*/
