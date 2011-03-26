@@ -1,5 +1,5 @@
 Bottom: 70a0ad699cd42d977e0ca1e36129ac5c58ef5771
-Top:    89c188b93e7fbc543e61884c297bbc1335ac369d
+Top:    c272de4e461873d17ab14b2b5df6703e15f6af05
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:02 +0000
 
@@ -9,10 +9,10 @@ Add configure checks for GL, glu and GtkGLEext, add to CFLAGS and LIBS
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 87814cd..77b4509 100644
+index 87814cd..bee58a6 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -389,6 +389,48 @@ $DBUS_PKG_ERRORS])]
+@@ -389,6 +389,46 @@ $DBUS_PKG_ERRORS])]
  
  fi
  
@@ -32,8 +32,6 @@ index 87814cd..77b4509 100644
 +Either do not use --enable-gl or enable the gtk HID.])
 +	;;
 +	esac
-+
-+# FIXME... what do we need to check for determining we have GL? Is it headers, API ?
 +
 +	AC_CHECK_HEADERS(GL/gl.h)
 +	case $ac_cv_header_GL_gl_h in
@@ -61,7 +59,7 @@ index 87814cd..77b4509 100644
  AC_MSG_CHECKING([for which printer to use])
  AC_ARG_WITH([printer],
  [  --with-printer= 	  Specify the printer: lpr [[default=lpr]]],
-@@ -723,6 +765,17 @@ $GTK_PKG_ERRORS])]
+@@ -723,6 +763,17 @@ $GTK_PKG_ERRORS])]
  	)
  	GTK_VERSION=`$PKG_CONFIG gtk+-2.0 --modversion`
  	GLIB_VERSION=`$PKG_CONFIG glib-2.0 --modversion`
@@ -79,7 +77,7 @@ index 87814cd..77b4509 100644
  	;;
  
        gcode|nelma|png )
-@@ -1015,8 +1068,8 @@ AX_FUNC_MKDIR
+@@ -1015,8 +1066,8 @@ AX_FUNC_MKDIR
  
  # ------------- Complete set of CFLAGS and LIBS -------------------
  
