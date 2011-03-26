@@ -572,10 +572,23 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
 }
 
 void
-tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices)
+tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices,
+                   double scale)
 {
   VNODE *vn = &contour->head;
   int offset = 0;
+
+  /* If the contour is round, and hidgl_fill_circle would use
+   * less slices than we have vertices to draw it, then call
+   * hidgl_fill_circle to draw this contour.
+   */
+  if (contour->is_round) {
+    double slices = calc_slices (contour->radius / scale, 2 * M_PI);
+    if (slices < contour->Count) {
+      hidgl_fill_circle (contour->cx, contour->cy, contour->radius, scale);
+      return;
+    }
+  }
 
   gluTessBeginPolygon (tobj, NULL);
   gluTessBeginContour (tobj);
@@ -593,6 +606,7 @@ tesselate_contour (GLUtesselator *tobj, PLINE *contour, GLdouble *vertices)
 struct do_hole_info {
   GLUtesselator *tobj;
   GLdouble *vertices;
+  double scale;
 };
 
 static int
@@ -606,7 +620,7 @@ do_hole (const BoxType *b, void *cl)
     return 0;
   }
 
-  tesselate_contour (info->tobj, curc, info->vertices);
+  tesselate_contour (info->tobj, curc, info->vertices, info->scale);
   return 1;
 }
 
@@ -623,6 +637,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
   struct do_hole_info info;
   int stencil_bit;
 
+  info.scale = scale;
   global_scale = scale;
 
   if (poly->Clipped == NULL)
@@ -682,7 +697,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
                                                               // any bits permitted by the stencil writemask
 
   /* Draw the polygon outer */
-  tesselate_contour (info.tobj, poly->Clipped->contours, info.vertices);
+  tesselate_contour (info.tobj, poly->Clipped->contours, info.vertices, scale);
   hidgl_flush_triangles (&buffer);
 
   /* Unassign our stencil buffer bit */
