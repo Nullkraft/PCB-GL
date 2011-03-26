@@ -31,7 +31,6 @@ RCSID ("$Id$");
 
 
 extern HID ghid_hid;
-extern int ghid_gui_is_up;
 
 static hidGC current_gc = NULL;
 
@@ -44,6 +43,7 @@ static int cur_mask = -1;
 typedef struct render_priv {
   GdkGLConfig *glconfig;
   bool trans_lines;
+  bool in_context;
 } render_priv;
 
 
@@ -479,7 +479,7 @@ ghid_set_color (hidGC gc, const char *name)
 #endif
   }
 
-  if( ! ghid_gui_is_up )
+  if(!priv->in_context)
     return;
 
   hidgl_flush_triangles (&buffer);
@@ -872,6 +872,8 @@ ghid_start_drawing (GHidPort *port)
   if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext))
     return FALSE;
 
+  port->render_priv->in_context = true;
+
   return TRUE;
 }
 
@@ -885,6 +887,8 @@ ghid_end_drawing (GHidPort *port)
     gdk_gl_drawable_swap_buffers (pGlDrawable);
   else
     glFlush ();
+
+  port->render_priv->in_context = false;
 
   /* end drawing to current GL-context */
   gdk_gl_drawable_gl_end (pGlDrawable);

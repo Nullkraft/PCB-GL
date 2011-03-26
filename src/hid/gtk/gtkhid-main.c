@@ -31,7 +31,6 @@ RCSID ("$Id$");
 static void zoom_to (double factor, int x, int y);
 static void zoom_by (double factor, int x, int y);
 
-int ghid_gui_is_up = 0;
 int ghid_flip_x = 0, ghid_flip_y = 0;
 
 
@@ -294,6 +293,8 @@ ghid_calibrate (double xval, double yval)
 {
   printf (_("ghid_calibrate() -- not implemented\n"));
 }
+
+static int ghid_gui_is_up = 0;
 
 void
 ghid_notify_gui_is_up ()
