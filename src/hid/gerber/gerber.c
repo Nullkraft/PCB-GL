@@ -146,7 +146,7 @@ int n_pending_drills = 0, max_pending_drills = 0;
 /*----------------------------------------------------------------------------*/
 /* Defined Constants                                                          */
 /*----------------------------------------------------------------------------*/
-#define AUTO_OUTLINE_WIDTH 1000     /* Auto-geneated outline width of 10 mils */
+#define AUTO_OUTLINE_WIDTH 800       /* Auto-geneated outline width of 8 mils */
 
 
 /*----------------------------------------------------------------------------*/
