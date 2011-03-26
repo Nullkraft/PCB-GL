@@ -1,7 +1,7 @@
-Bottom: 64befd6ab8cb98ae592c1740b19e20a971c911b1
-Top:    0a426fa54131c5812e964e717ba38e256d29ad34
+Bottom: 5dbdbf98085b713fe899518447c4975b155630e8
+Top:    cc6a2fcb54ea3f20fea8bfbf7e79e4f02035a02e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-26 12:57:48 +0000
+Date:   2011-03-26 16:13:30 +0000
 
 Add support for a "poured" object.
 
@@ -2969,10 +2969,10 @@ index d2dd717..544f4bc 100644
  	  /* layer isn't empty */
  
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 9c8a055..ce99ce3 100644
+index 844c2ce..74c8d0c 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
-@@ -498,7 +498,7 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -500,7 +500,7 @@ gerber_do_export (HID_Attr_Val * options)
    for (i = 0; i < max_copper_layer; i++)
      {
        LayerType *layer = PCB->Data->Layer + i;
