@@ -3,7 +3,10 @@ Top:    a21a03e5a6b97514fc037d06d48f207dd7008f5e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:01 +0000
 
-Create a private structure for the render to isolate some of its internals
+hid/gtk: Create a private structure for the gdk render backend
+
+This is in an effort to isolate some of its internals from the rest
+of the GTK hid.
 
 Also create a hook for configure events on the main drawing area to
 allow the renderer to reconfigure its-self as necessary as the area
