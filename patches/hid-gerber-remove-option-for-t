@@ -7,8 +7,10 @@ hid/gerber: Remove option for thickness of auto-generated outline layer
 
 We don't mess with the thickness of the user's hand-drawn outline, and
 this option implies that we do. I cannot think of a sensible way to
-present the option without confusing the user, so lets remove it. 8mil
-is a sensible default, and matches the outline used on the fab drawing.
+present the option without confusing the user, so lets remove it.
+
+Whilst the previous default of 10 mil was fine, 8 mil matches the outline
+width used on the fab drawing, so I have changed to that value.
 
 
 ---
