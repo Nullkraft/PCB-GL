@@ -4038,7 +4038,7 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
     {
       if (Marked.status)
 	{
-	  DrawMark ();
+//	  DrawMark ();
 	  Marked.status = false;
 	}
       else
@@ -4046,16 +4046,16 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
 	  Marked.status = true;
 	  Marked.X = Crosshair.X;
 	  Marked.Y = Crosshair.Y;
-	  DrawMark ();
+//	  DrawMark ();
 	}
     }
   else if (GetFunctionID (function) == F_Center)
     {
-      DrawMark ();
+//      DrawMark ();
       Marked.status = true;
       Marked.X = Crosshair.X;
       Marked.Y = Crosshair.Y;
-      DrawMark ();
+//      DrawMark ();
     }
   return 0;
 }
