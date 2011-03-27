@@ -1,5 +1,5 @@
-Bottom: d1db4389d20c52298990e7dc32914f9c5df3ac78
-Top:    aacdd71e6130f7035112005abd993cc4f140049a
+Bottom: 9205298d7e541b2d31c76d4c9dcc0718091a3f0d
+Top:    f7fc0ce1cf0844f98d82da1ca55e9a95fc629972
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:07 +0000
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index a9641c9..5dd8c04 100644
+index 081348a..3c4be17 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,7 +21,9 @@
@@ -38,7 +38,7 @@ index a9641c9..5dd8c04 100644
  
  typedef struct render_priv {
    GdkGLConfig *glconfig;
-@@ -970,6 +981,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -976,6 +987,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  {
    BoxType region;
    int eleft, eright, etop, ebottom;
@@ -50,7 +50,7 @@ index a9641c9..5dd8c04 100644
  
    ghid_start_drawing (port);
  
-@@ -998,10 +1014,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1004,10 +1020,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -67,7 +67,7 @@ index a9641c9..5dd8c04 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->offlimits_color.red / 65535.,
-@@ -1018,10 +1038,66 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1024,10 +1044,66 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_STENCIL_TEST);
    glStencilFunc (GL_ALWAYS, 0, 0);
  
@@ -138,7 +138,7 @@ index a9641c9..5dd8c04 100644
  
    eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
    etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
-@@ -1031,10 +1107,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1037,10 +1113,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.blue / 65535.);
  
    glBegin (GL_QUADS);
@@ -153,7 +153,7 @@ index a9641c9..5dd8c04 100644
    glEnd ();
  
    /* TODO: Background image */
-@@ -1159,7 +1235,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1165,7 +1241,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -162,7 +162,7 @@ index a9641c9..5dd8c04 100644
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
-@@ -1270,7 +1346,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1276,7 +1352,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -171,7 +171,7 @@ index a9641c9..5dd8c04 100644
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
-@@ -1323,3 +1399,196 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1329,3 +1405,196 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    return pixmap;
  }
@@ -369,10 +369,10 @@ index a9641c9..5dd8c04 100644
 +  ghid_invalidate_all ();
 +}
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 42b3533..cdbd0ac 100644
+index 8293b0c..1fef6d0 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -233,6 +233,14 @@ ghid_note_event_location (GdkEventButton * ev)
+@@ -229,6 +229,14 @@ ghid_note_event_location (GdkEventButton * ev)
        event_x = ev->x;
        event_y = ev->y;
      }
@@ -387,7 +387,7 @@ index 42b3533..cdbd0ac 100644
    gport->view_x = event_x * gport->zoom + gport->view_x0;
    gport->view_y = event_y * gport->zoom + gport->view_y0;
  
-@@ -540,7 +548,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -534,7 +542,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
    return 0;
  }
  
@@ -396,7 +396,7 @@ index 42b3533..cdbd0ac 100644
  # define ENABLE_TOOLTIPS 1
  #else
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index f241133..a9b15e9 100644
+index 1f54773..b1e4a9d 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -123,6 +123,7 @@ a zoom in/out.
@@ -436,7 +436,7 @@ index f241133..a9b15e9 100644
    gtk_box_pack_start(GTK_BOX(vbox_left), vbox, FALSE, FALSE, 0);
    ghidgui->mode_buttons0_frame_vbox = vbox;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 971f3eb..dce9a30 100644
+index ae10fac..df5c9ca 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -305,7 +305,6 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
@@ -447,7 +447,7 @@ index 971f3eb..dce9a30 100644
  gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
-@@ -511,6 +510,9 @@ void ghid_port_drawing_realize_cb (GtkWidget *, gpointer);
+@@ -510,6 +509,9 @@ void ghid_port_drawing_realize_cb (GtkWidget *, gpointer);
  gboolean ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev);
  GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
                                 int width, int height, int depth);

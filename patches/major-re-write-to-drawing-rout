@@ -1,5 +1,5 @@
-Bottom: 2e08b893cc082a3de133c02de9d57df547839e77
-Top:    4bfabad689cd4f9c40d4671d6ac191c5c0c78c68
+Bottom: 7e2c9fdbdf5d37e52ffd80833b62816a73ddda66
+Top:    27ef2a3233ea608b3b7f347bcc93db7755884301
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:09 +0000
 
@@ -18,7 +18,7 @@ Notes from squashed patches:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index e2f3c81..720cb91 100644
+index ffdb568..f7c1556 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -76,7 +76,7 @@ FloatPolyType, *FloatPolyTypePtr;
@@ -66,7 +66,7 @@ index e2f3c81..720cb91 100644
  static int pin_callback (const BoxType * b, void *cl);
  static int pad_callback (const BoxType * b, void *cl);
  
-@@ -590,7 +590,7 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -586,7 +586,7 @@ DrawEverything (BoxTypePtr drawn_area)
      }
  }
  
@@ -75,7 +75,7 @@ index e2f3c81..720cb91 100644
  DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
  	   bool invisible)
  {
-@@ -678,7 +678,7 @@ struct pin_info
+@@ -674,7 +674,7 @@ struct pin_info
    LayerTypePtr Layer;
  };
  
@@ -84,7 +84,7 @@ index e2f3c81..720cb91 100644
  clearPin_callback (const BoxType * b, void *cl)
  {
    PinTypePtr pin = (PinTypePtr) b;
-@@ -696,7 +696,7 @@ poly_callback (const BoxType * b, void *cl)
+@@ -692,7 +692,7 @@ poly_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -93,7 +93,7 @@ index e2f3c81..720cb91 100644
  clearPad_callback (const BoxType * b, void *cl)
  {
    PadTypePtr pad = (PadTypePtr) b;
-@@ -709,7 +709,7 @@ clearPad_callback (const BoxType * b, void *cl)
+@@ -705,7 +705,7 @@ clearPad_callback (const BoxType * b, void *cl)
   * Draws silk layer.
   */
  
@@ -102,7 +102,7 @@ index e2f3c81..720cb91 100644
  DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
  {
  #if 0
-@@ -806,7 +806,7 @@ DrawMask (BoxType * screen)
+@@ -802,7 +802,7 @@ DrawMask (BoxType * screen)
      }
  }
  
@@ -111,7 +111,7 @@ index e2f3c81..720cb91 100644
  DrawRats (BoxTypePtr drawn_area)
  {
    /*
-@@ -941,7 +941,7 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -937,7 +937,7 @@ DrawLayerGroup (int group, const BoxType * screen)
   *         \       /
   *          2 --- 1
    */
@@ -120,7 +120,7 @@ index e2f3c81..720cb91 100644
  DrawSpecialPolygon (hidGC DrawGC,
  		    LocationType X, LocationType Y, int Thickness,
  		    int thin_draw)
-@@ -1005,7 +1005,7 @@ DrawSpecialPolygon (hidGC DrawGC,
+@@ -1001,7 +1001,7 @@ DrawSpecialPolygon (hidGC DrawGC,
  /* ---------------------------------------------------------------------------
   * lowlevel drawing routine for pins and vias
   */
@@ -129,7 +129,7 @@ index e2f3c81..720cb91 100644
  DrawPinOrViaLowLevel (PinTypePtr Ptr, bool drawHole)
  {
    if (Gathering)
-@@ -1089,7 +1089,7 @@ DrawPinOrViaLowLevel (PinTypePtr Ptr, bool drawHole)
+@@ -1085,7 +1085,7 @@ DrawPinOrViaLowLevel (PinTypePtr Ptr, bool drawHole)
  /**************************************************************
   * draw pin/via hole
   */
@@ -138,7 +138,7 @@ index e2f3c81..720cb91 100644
  DrawHole (PinTypePtr Ptr)
  {
    if (TEST_FLAG (THINDRAWFLAG, PCB))
-@@ -1704,7 +1704,7 @@ DrawVia (PinTypePtr Via, int unused)
+@@ -1700,7 +1700,7 @@ DrawVia (PinTypePtr Via, int unused)
  /* ---------------------------------------------------------------------------
   * draw a via without dealing with polygon clearance 
   */
@@ -147,7 +147,7 @@ index e2f3c81..720cb91 100644
  DrawPlainVia (PinTypePtr Via, bool holeToo)
  {
    if (!Gathering)
-@@ -1749,7 +1749,7 @@ DrawPin (PinTypePtr Pin, int unused)
+@@ -1745,7 +1745,7 @@ DrawPin (PinTypePtr Pin, int unused)
  /* ---------------------------------------------------------------------------
   * draw a pin without clearing around polygons 
   */
@@ -156,7 +156,7 @@ index e2f3c81..720cb91 100644
  DrawPlainPin (PinTypePtr Pin, bool holeToo)
  {
    if (!Gathering)
-@@ -1939,7 +1939,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
+@@ -1935,7 +1935,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
  /* ---------------------------------------------------------------------------
   * draws text on a layer
   */
@@ -190,7 +190,7 @@ index c0e23a3..077c575 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ae7a6e1..43c9d18 100644
+index 836e440..84b314d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -357,7 +357,7 @@ index ae7a6e1..43c9d18 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -990,6 +1028,725 @@ ghid_screen_update (void)
+@@ -996,6 +1034,725 @@ ghid_screen_update (void)
  {
  }
  
@@ -1083,7 +1083,7 @@ index ae7a6e1..43c9d18 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1056,8 +1813,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1062,8 +1819,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1094,7 +1094,7 @@ index ae7a6e1..43c9d18 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1123,13 +1880,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1129,13 +1886,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -1108,7 +1108,7 @@ index ae7a6e1..43c9d18 100644
    /* TODO: Background image */
  
    hidgl_init_triangle_array (&buffer);
-@@ -1149,7 +1899,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1155,7 +1905,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_x0,
                  ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                               -port->view_y0, 0);

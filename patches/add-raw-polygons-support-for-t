@@ -1,5 +1,5 @@
-Bottom: 7afbdcbe4c47deb82be5d57c10b341324d42a64b
-Top:    12d99e3b539cc65d000dfec799695f714ffc0c0a
+Bottom: 7ee0936d1d5fa00f39673958ab5be17eec6addad
+Top:    47e84820c0fd9c630b0f12a901fcb6e69304266d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:04 +0000
 
@@ -176,7 +176,7 @@ index e69a6b7..99ffffc 100644
  
  
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 2675796..14747fd 100644
+index 94bf6f5..9327130 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -10,6 +10,7 @@
@@ -201,7 +201,7 @@ index 2675796..14747fd 100644
  {
    gint w, h, lw, xx, yy;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 3aea36e..7c4b9ea 100644
+index d337d35..36ca840 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -595,6 +595,14 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
@@ -220,10 +220,10 @@ index 3aea36e..7c4b9ea 100644
  {
    USE_GC (gc);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 266cf06..0901de0 100644
+index 57a1b37..7f71454 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -1003,7 +1003,7 @@ HID ghid_hid = {
+@@ -1004,7 +1004,7 @@ HID ghid_hid = {
    ghid_draw_rect,
    ghid_fill_circle,
    ghid_fill_polygon,
@@ -233,7 +233,7 @@ index 266cf06..0901de0 100644
    ghid_fill_rect,
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index c5f57c7..e3bf432 100644
+index 2061e40..c7839f6 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -491,6 +491,8 @@ void ghid_draw_arc (hidGC gc, int cx, int cy, int xradius, int yradius,

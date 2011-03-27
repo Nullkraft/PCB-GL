@@ -1,5 +1,5 @@
-Bottom: 0fb3b7257864e5d300410cffc521b67fc50a3ebd
-Top:    2bafe2eee448bb97a8de86981d79efca4ef8b092
+Bottom: c55e5f96612eb05980d6bd2a4a24e337a8985045
+Top:    5798bb83f7af89d8185f66bc6beb619872866d12
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:10 +0000
 
@@ -27,7 +27,7 @@ index dee60d9..253b5af 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 56d1e80..994afb6 100644
+index 5ce52ee..52a8234 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -45,6 +45,8 @@
@@ -39,7 +39,7 @@ index 56d1e80..994afb6 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -737,6 +739,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -719,6 +721,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        /* Make sure drawing area has keyboard focus when we are in it.
         */
        gtk_widget_grab_focus (out->drawing_area);
@@ -48,7 +48,7 @@ index 56d1e80..994afb6 100644
      }
    ghidgui->in_popup = FALSE;
  
-@@ -838,6 +842,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -820,6 +824,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
  	    }
  	  g_idle_add (ghid_pan_idle_cb, NULL);
  	}
@@ -57,7 +57,7 @@ index 56d1e80..994afb6 100644
      }
  
    ghid_show_crosshair (FALSE);
-@@ -880,3 +886,31 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+@@ -862,3 +868,31 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  
    return TRUE;
  }
@@ -90,7 +90,7 @@ index 56d1e80..994afb6 100644
 +    hid_actionl ("SwapSides", (button == 0) ? "V" : "H", NULL);
 +}
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index a9b15e9..7f2abe9 100644
+index b1e4a9d..411d7a6 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -124,6 +124,7 @@ a zoom in/out.
@@ -178,7 +178,7 @@ index d6bd03c..3af647e 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index dce9a30..4b7f3e6 100644
+index df5c9ca..cede64c 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -146,6 +146,8 @@ typedef struct
