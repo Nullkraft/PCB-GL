@@ -5,47 +5,56 @@ Date:   2011-03-27 19:54:15 +0100
 
 Remove BlockToo argument from various crosshair hide / restore functions
 
-Goodness knows what this was supposed to do, but everything works fine
-without it. The 23 places this argument was previously false are:
+Goodness knows what it is supposed to do, but everything appears to work
+fine without it. For the majority of cases, the argument passed is true.
+
+When passed as false, the effect is to surpress drawing an attached
+selection / rubberband rectangle in the AttachedBox.state == STATE_THIRD
+state.
+
+Digging through the version control history, this code appears to have
+been present since the project was initially placed under CVS control.
+
+The 23 places this argument was previously false are:
 
     ActionMovePointer
         -  HideCrosshair (false);
         -  RestoreCrosshair (false);
     EventMoveCrosshair
-        -   RestoreCrosshair (false);
+        -  RestoreCrosshair (false);
     ActionDisplay
-        -       RestoreCrosshair (false); /* was hidden by MoveCrosshairAbs */
+        -  RestoreCrosshair (false);
     ActionFreeRotateBuffer
         -  HideCrosshair(false);
         -  RestoreCrosshair(false);
     MoveCrosshairAbsolute
-        -      HideCrosshair (false);
-    ghid_invalidate_all()
-        -    RestoreCrosshair (FALSE);
+        -  HideCrosshair (false);
+    ghid_invalidate_all
+        -  RestoreCrosshair (FALSE);
     ScrollAction (GTK HID)
         -  HideCrosshair (FALSE);
         -  RestoreCrosshair (FALSE);
     ghid_port_ranges_changed
-        -    HideCrosshair (FALSE);
+        -  HideCrosshair (FALSE);
     ghid_note_event_location
-        -      RestoreCrosshair (false);
+        -  RestoreCrosshair (false);
     idle_proc (Lesstif HID)
-        -      CrosshairOn (0);
+        -  CrosshairOn (0);
     CenterDisplay
-        -          RestoreCrosshair(false);
+        -  RestoreCrosshair(false);
     ReportDialog
         -  HideCrosshair (false);
         -  RestoreCrosshair (false);
-    ReportFoundPnis
+    ReportFoundPins
         -  HideCrosshair (false);
         -  RestoreCrosshair (false);
     ReportNetLength
         -  HideCrosshair (false);
         -  RestoreCrosshair (false);
     SetLocalRef
-        -      RestoreCrosshair (false);
-        -      HideCrosshair (false);
-        -      RestoreCrosshair (false);
+        -  RestoreCrosshair (false);
+        -  HideCrosshair (false);
+        -  RestoreCrosshair (false);
 
 
 ---
