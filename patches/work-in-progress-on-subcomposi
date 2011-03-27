@@ -1,5 +1,5 @@
-Bottom: e306dee985584ec559b3b067a1ddfad988ecd4a6
-Top:    7195aef57578fdf6780559f94b67915c2b1c89d6
+Bottom: 1432953e512137987de2b80553b970632d5f4083
+Top:    ba0a57baa1e0925399aa52a00077908e23c895da
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:05 +0000
 
@@ -133,10 +133,10 @@ index b13e75b..b34a7d7 100644
  #define SL(type,side) (~0xfff | SL_##type | SL_##side##_SIDE)
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 70c3caa..d7bf6fb 100644
+index 2a6a749..3dc1991 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -572,28 +572,27 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -576,28 +576,27 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
  }
  
  void
@@ -169,7 +169,7 @@ index 70c3caa..d7bf6fb 100644
  };
  
  static int
-@@ -606,20 +605,23 @@ do_hole (const BoxType *b, void *cl)
+@@ -610,20 +609,23 @@ do_hole (const BoxType *b, void *cl)
    if (curc->Flags.orient == PLF_DIR) {
      return 0;
    }
@@ -198,7 +198,7 @@ index 70c3caa..d7bf6fb 100644
  
    global_scale = scale;
  
-@@ -629,52 +631,64 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
+@@ -633,52 +635,64 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
        return;
      }
  
@@ -286,7 +286,7 @@ index 70c3caa..d7bf6fb 100644
  
    gluDeleteTess (info.tobj);
    myFreeCombined ();
-@@ -689,6 +703,92 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
+@@ -693,6 +707,92 @@ hidgl_fill_rect (int x1, int y1, int x2, int y2)
    hidgl_add_triangle (&buffer, x2, y1, x2, y2, x1, y1);
  }
  
@@ -380,10 +380,10 @@ index 70c3caa..d7bf6fb 100644
  
  #endif /* DISABLE EVERYTHING! */
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index bb1383c..b956a65 100644
+index 99ffffc..9dd76e3 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
-@@ -60,5 +60,10 @@ void hidgl_fill_polygon (int n_coords, int *x, int *y);
+@@ -76,5 +76,10 @@ void hidgl_fill_polygon (int n_coords, int *x, int *y);
  void hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale);
  void hidgl_fill_rect (int x1, int y1, int x2, int y2);
  
