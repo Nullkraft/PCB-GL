@@ -1,5 +1,5 @@
-Bottom: e0105914fc20b70830ef78796ee92fd328be83cc
-Top:    73bf21819fe3fcc384905a4435fadac9966fa45c
+Bottom: 5d4282e90682cc1e32ba1a2c63af01ebc9279b60
+Top:    60fdc48f62159d774432e98290340ca148fd11e5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:08 +0000
 
@@ -11,42 +11,10 @@ Nasty global depth_state variable should be replaced!
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 4baf861..b8c4867 100644
+index 3e08fec..e090e11 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -46,6 +46,7 @@
- RCSID ("$Id: $");
- 
- triangle_buffer buffer;
-+float global_depth = 0;
- 
- #if 0
- triangle_array *
-@@ -59,7 +60,7 @@ void
- hidgl_init_triangle_array (triangle_buffer *buffer)
- {
-   glEnableClientState (GL_VERTEX_ARRAY);
--  glVertexPointer (2, GL_FLOAT, 0, buffer->triangle_array);
-+  glVertexPointer (3, GL_FLOAT, 0, buffer->triangle_array);
-   buffer->triangle_count = 0;
-   buffer->coord_comp_count = 0;
- }
-@@ -376,10 +377,10 @@ void
- hidgl_draw_rect (int x1, int y1, int x2, int y2)
- {
-   glBegin (GL_LINE_LOOP);
--  glVertex2f (x1, y1);
--  glVertex2f (x1, y2);
--  glVertex2f (x2, y2);
--  glVertex2f (x2, y1);
-+  glVertex3f (x1, y1, global_depth);
-+  glVertex3f (x1, y2, global_depth);
-+  glVertex3f (x2, y2, global_depth);
-+  glVertex3f (x2, y1, global_depth);
-   glEnd ();
- }
- 
-@@ -803,6 +804,12 @@ hidgl_reset_stencil_usage (void)
+@@ -807,6 +807,12 @@ hidgl_reset_stencil_usage (void)
    dirty_bits = 0;
  }
  
@@ -60,63 +28,10 @@ index 4baf861..b8c4867 100644
  /* ---------------------------------------------------------------------- */
  
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index b956a65..aa2985e 100644
+index 9dd76e3..a42e0be 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
-@@ -25,32 +25,47 @@
- 
- #define TRIANGLE_ARRAY_SIZE 5461
- typedef struct {
--  GLfloat triangle_array [2 * 3 * TRIANGLE_ARRAY_SIZE];
-+  GLfloat triangle_array [3 * 3 * TRIANGLE_ARRAY_SIZE];
-   unsigned int triangle_count;
-   unsigned int coord_comp_count;
- } triangle_buffer;
- 
- extern triangle_buffer buffer;
-+extern float global_depth;
- 
- void hidgl_init_triangle_array (triangle_buffer *buffer);
- void hidgl_flush_triangles (triangle_buffer *buffer);
- void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
- 
- static inline void
--hidgl_add_triangle (triangle_buffer *buffer,
--                    GLfloat x1, GLfloat y1,
--                    GLfloat x2, GLfloat y2,
--                    GLfloat x3, GLfloat y3)
-+hidgl_add_triangle_3D (triangle_buffer *buffer,
-+                       GLfloat x1, GLfloat y1, GLfloat z1,
-+                       GLfloat x2, GLfloat y2, GLfloat z2,
-+                       GLfloat x3, GLfloat y3, GLfloat z3)
- {
-   buffer->triangle_array [buffer->coord_comp_count++] = x1;
-   buffer->triangle_array [buffer->coord_comp_count++] = y1;
-+  buffer->triangle_array [buffer->coord_comp_count++] = z1;
-   buffer->triangle_array [buffer->coord_comp_count++] = x2;
-   buffer->triangle_array [buffer->coord_comp_count++] = y2;
-+  buffer->triangle_array [buffer->coord_comp_count++] = z2;
-   buffer->triangle_array [buffer->coord_comp_count++] = x3;
-   buffer->triangle_array [buffer->coord_comp_count++] = y3;
-+  buffer->triangle_array [buffer->coord_comp_count++] = z3;
-   buffer->triangle_count++;
- }
- 
-+static inline void
-+hidgl_add_triangle (triangle_buffer *buffer,
-+                    GLfloat x1, GLfloat y1,
-+                    GLfloat x2, GLfloat y2,
-+                    GLfloat x3, GLfloat y3)
-+{
-+  hidgl_add_triangle_3D (buffer, x1, y1, global_depth,
-+                                 x2, y2, global_depth,
-+                                 x3, y3, global_depth);
-+}
-+
- // void draw_grid ()
- void hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double scale);
- void hidgl_draw_arc (double width, int vx, int vy, int vrx, int vry, int start_angle, int delta_angle, double scale);
-@@ -65,5 +80,6 @@ int hidgl_stencil_bits (void);
+@@ -81,5 +81,6 @@ int hidgl_stencil_bits (void);
  int hidgl_assign_clear_stencil_bit (void);
  void hidgl_return_stencil_bit (int bit);
  void hidgl_reset_stencil_usage (void);
