@@ -112,12 +112,6 @@ gboolean snavi_event (GIOChannel   *source,
           axes[event.code - ABS_X] = event.value;
         break;
 
-        /* I'm not sure, but previously the SpaceNavigator reported as relative events */
-      case EV_REL:
-        if (event.code <= REL_RZ)
-          axes[event.code - REL_X] = event.value;
-        break;
-
       case EV_KEY:
         if (event.code >= BTN_0 && event.code <= BTN_1)
           buttons[event.code - BTN_0] = event.value;
@@ -128,7 +122,7 @@ gboolean snavi_event (GIOChannel   *source,
       case EV_SYN:
         /*
          * if multiple axes change simultaneously the linux
-         * input system sends multiple EV_REL events.
+         * input system sends multiple events.
          * EV_SYN indicates that all changes have been reported.
          */
 
