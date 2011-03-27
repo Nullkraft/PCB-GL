@@ -1,0 +1,22 @@
+Bottom: 61bff56900976a8b581811499ed36f17d8a01b10
+Top:    966687851f25171eaaf73f98251631974d3bba95
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-27 00:09:05 +0000
+
+Refresh of hid-gtk-add-hooks-to-tell-the-
+
+---
+
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 69bd992..97ebb1c 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -498,6 +498,8 @@ void ghid_show_crosshair (gboolean show);
+ void ghid_init_renderer (int *, char ***, GHidPort *);
+ void ghid_init_drawing_widget (GtkWidget *widget, GHidPort *);
+ void ghid_drawing_area_configure_hook (GHidPort *port);
++gboolean ghid_start_drawing (GHidPort *port);
++void ghid_end_drawing (GHidPort *port);
+ void ghid_screen_update (void);
+ gboolean ghid_drawing_area_expose_cb (GtkWidget *, GdkEventExpose *,
+                                       GHidPort *);
