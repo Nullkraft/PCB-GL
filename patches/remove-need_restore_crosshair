@@ -1,7 +1,7 @@
-Bottom: 61723f1339f3ed514c8f615ab88bdb20e8b0fa62
-Top:    4953d9d61ce3123de39d353114568e302cc27caa
+Bottom: 8a1333e889393895285be22885ff989e7444e2d1
+Top:    44af2083d2dd7d4ec53a128d1bd9edfd16280af8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-27 02:08:23 +0100
+Date:   2011-03-27 02:35:23 +0100
 
 Remove need_restore_crosshair
 
@@ -9,7 +9,7 @@ Remove need_restore_crosshair
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 245b0c8..c5b3cf2 100644
+index b089da5..906b97c 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -783,9 +783,6 @@ ghid_invalidate_all ()
