@@ -1,5 +1,5 @@
-Bottom: 8907c1c22c6521f3e74e119db2d1aec565b3d335
-Top:    475b9aaafc6b769971d28addb9d3bdb43260a9d4
+Bottom: 0f2d8fbc30f3bd77bf58e3e1c075b0d9246eb7b7
+Top:    0b5790f2db6b2c8880ffc768d5c6a264d71cefd7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 02:35:24 +0100
 
@@ -9,10 +9,10 @@ Use the stencil buffer more cleverly
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 4351772..142e1d0 100644
+index 4904d85..e2414d8 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -868,51 +868,59 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+@@ -871,51 +871,59 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
        return;
      }
  
@@ -107,7 +107,7 @@ index 4351772..142e1d0 100644
  }
  
  void
-@@ -990,6 +998,8 @@ hidgl_stencil_bits (void)
+@@ -993,6 +1001,8 @@ hidgl_stencil_bits (void)
    return stencil_bits;
  }
  
@@ -116,7 +116,7 @@ index 4351772..142e1d0 100644
  static void
  hidgl_clean_unassigned_stencil (void)
  {
-@@ -999,6 +1009,7 @@ hidgl_clean_unassigned_stencil (void)
+@@ -1002,6 +1012,7 @@ hidgl_clean_unassigned_stencil (void)
    glClearStencil (0);
    glClear (GL_STENCIL_BUFFER_BIT);
    glPopAttrib ();
@@ -125,10 +125,10 @@ index 4351772..142e1d0 100644
  
  int
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index afca91a..9e1b918 100644
+index 8284d08..375560c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1838,6 +1838,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1832,6 +1832,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                       0, 0, 1, 0,
                       0, 0, 0, 1};
    bool horizon_problem = false;
@@ -136,7 +136,7 @@ index afca91a..9e1b918 100644
  
    buffer.total_triangles = 0;
    buffer.total_vertices = 0;
-@@ -1847,6 +1848,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1841,6 +1842,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_in_context (true);
    hidgl_init ();
    check_gl_drawing_ok_hack = true;
@@ -144,7 +144,7 @@ index afca91a..9e1b918 100644
  
    /* If we don't have any stencil bits available,
       we can't use the hidgl polygon drawing routine */
-@@ -2091,6 +2093,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2085,6 +2087,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
  //  printf ("Triangle count was %i\n", buffer.total_triangles);
  //  printf ("Vertex count was %i\n", buffer.total_vertices);

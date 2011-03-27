@@ -1,5 +1,5 @@
-Bottom: 475b9aaafc6b769971d28addb9d3bdb43260a9d4
-Top:    9565442a878a430dfccf2c668e5d91d9e04a5e5a
+Bottom: 0b5790f2db6b2c8880ffc768d5c6a264d71cefd7
+Top:    d8a6ca62d8f16540dcf05f3425e6db3459281834
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 02:35:25 +0100
 
@@ -36,10 +36,10 @@ NB: In this version. PASS 2 and 3 are carried out concurrently, although
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 142e1d0..cf16fae 100644
+index e2414d8..52e894d 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -850,14 +850,23 @@ do_hole (const BoxType *b, void *cl)
+@@ -853,14 +853,23 @@ do_hole (const BoxType *b, void *cl)
    return 1;
  }
  
@@ -64,7 +64,7 @@ index 142e1d0..cf16fae 100644
    int stencil_bit;
  
    CHECK_IS_IN_CONTEXT ();
-@@ -868,59 +877,70 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
+@@ -871,59 +880,70 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
        return;
      }
  
@@ -178,10 +178,10 @@ index 142e1d0..cf16fae 100644
  
  void
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9e1b918..5991543 100644
+index 375560c..38e6bbd 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1282,11 +1282,28 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *dra
+@@ -1280,11 +1280,28 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *dra
  }
  
  static int
@@ -212,7 +212,7 @@ index 9e1b918..5991543 100644
    return 1;
  }
  
-@@ -1490,7 +1507,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1484,7 +1501,8 @@ DrawLayerGroup (int group, const BoxType * screen)
        if (Layer->PolygonN) {
          info.Layer = Layer;
          info.drawn_area = screen;
