@@ -1,5 +1,5 @@
-Bottom: 8a307ae29196b8c18c81f94d61cbba1c44686ea9
-Top:    3356ee0baf56ceca899a34e5426e7a634a8e824c
+Bottom: 5b4c3e404a08441e467c24a821f8913142d469fa
+Top:    86ca858aa2133237c085eb1326c449ab1cd7a5fd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:05 +0000
 
@@ -14,7 +14,7 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 18d0dce..5dd43d6 100644
+index c91a37e..58fd7b2 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -414,6 +414,7 @@ DrawEverything (BoxTypePtr drawn_area)
@@ -99,7 +99,7 @@ index 18d0dce..5dd43d6 100644
  }
  
  static void
-@@ -872,7 +895,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -862,7 +885,8 @@ DrawLayerGroup (int group, const BoxType * screen)
    Cardinal *layers = PCB->LayerGroups.Entries[group];
  
    clip_box = screen;
@@ -109,7 +109,7 @@ index 18d0dce..5dd43d6 100644
      {
        layernum = layers[i];
        Layer = PCB->Data->Layer + layers[i];
-@@ -889,6 +913,10 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -879,6 +903,10 @@ DrawLayerGroup (int group, const BoxType * screen)
  	      r_search (Layer->polygon_tree, screen, NULL, poly_callback,
  			&info);
  	      info.arg = false;

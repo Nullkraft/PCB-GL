@@ -1,5 +1,5 @@
-Bottom: 0338d5c3a7c74d3d57d8a324c196f4458881d5a3
-Top:    08612ac3378ef6a2eb92c83c9b3441d5f183dd50
+Bottom: 1a79c42df953cd610e7951668bc807e41c376c2b
+Top:    03048055b56881790159f2e6d357b389bc32eb09
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:13 +0000
 
@@ -182,10 +182,10 @@ index cecf9c0..3d1bc84 100644
      {
        SaveUndoSerialNumber ();
 diff --git a/src/draw.c b/src/draw.c
-index acf5031..562f89d 100644
+index 242029a..6c7a2f5 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2124,7 +2124,6 @@ DrawElementPinsAndPads (ElementTypePtr Element, int unused)
+@@ -2114,7 +2114,6 @@ DrawElementPinsAndPads (ElementTypePtr Element, int unused)
  void
  EraseVia (PinTypePtr Via)
  {
@@ -193,7 +193,7 @@ index acf5031..562f89d 100644
    DrawPinOrViaLowLevel (Via, false);
    if (TEST_FLAG (DISPLAYNAMEFLAG, Via))
      DrawPinOrViaNameLowLevel (Via);
-@@ -2136,7 +2135,6 @@ EraseVia (PinTypePtr Via)
+@@ -2126,7 +2125,6 @@ EraseVia (PinTypePtr Via)
  void
  EraseRat (RatTypePtr Rat)
  {
@@ -201,7 +201,7 @@ index acf5031..562f89d 100644
    if (TEST_FLAG(VIAFLAG, Rat))
      {
        int w = Rat->Thickness;
-@@ -2159,7 +2157,6 @@ EraseRat (RatTypePtr Rat)
+@@ -2149,7 +2147,6 @@ EraseRat (RatTypePtr Rat)
  void
  EraseViaName (PinTypePtr Via)
  {
@@ -209,7 +209,7 @@ index acf5031..562f89d 100644
    DrawPinOrViaNameLowLevel (Via);
  }
  
-@@ -2169,7 +2166,6 @@ EraseViaName (PinTypePtr Via)
+@@ -2159,7 +2156,6 @@ EraseViaName (PinTypePtr Via)
  void
  ErasePad (PadTypePtr Pad)
  {
@@ -217,7 +217,7 @@ index acf5031..562f89d 100644
    DrawPadLowLevel (Output.fgGC, Pad, false, false);
    if (TEST_FLAG (DISPLAYNAMEFLAG, Pad))
      DrawPadNameLowLevel (Pad);
-@@ -2181,7 +2177,6 @@ ErasePad (PadTypePtr Pad)
+@@ -2171,7 +2167,6 @@ ErasePad (PadTypePtr Pad)
  void
  ErasePadName (PadTypePtr Pad)
  {
@@ -225,7 +225,7 @@ index acf5031..562f89d 100644
    DrawPadNameLowLevel (Pad);
  }
  
-@@ -2191,7 +2186,6 @@ ErasePadName (PadTypePtr Pad)
+@@ -2181,7 +2176,6 @@ ErasePadName (PadTypePtr Pad)
  void
  ErasePin (PinTypePtr Pin)
  {
@@ -233,7 +233,7 @@ index acf5031..562f89d 100644
    DrawPinOrViaLowLevel (Pin, false);
    if (TEST_FLAG (DISPLAYNAMEFLAG, Pin))
      DrawPinOrViaNameLowLevel (Pin);
-@@ -2203,7 +2197,6 @@ ErasePin (PinTypePtr Pin)
+@@ -2193,7 +2187,6 @@ ErasePin (PinTypePtr Pin)
  void
  ErasePinName (PinTypePtr Pin)
  {
@@ -241,7 +241,7 @@ index acf5031..562f89d 100644
    DrawPinOrViaNameLowLevel (Pin);
  }
  
-@@ -2213,7 +2206,6 @@ ErasePinName (PinTypePtr Pin)
+@@ -2203,7 +2196,6 @@ ErasePinName (PinTypePtr Pin)
  void
  EraseLine (LineTypePtr Line)
  {
@@ -249,7 +249,7 @@ index acf5031..562f89d 100644
    DrawLineLowLevel (Line);
  }
  
-@@ -2225,7 +2217,6 @@ EraseArc (ArcTypePtr Arc)
+@@ -2215,7 +2207,6 @@ EraseArc (ArcTypePtr Arc)
  {
    if (!Arc->Thickness)
      return;
@@ -257,7 +257,7 @@ index acf5031..562f89d 100644
    DrawArcLowLevel (Arc);
  }
  
-@@ -2236,7 +2227,6 @@ void
+@@ -2226,7 +2217,6 @@ void
  EraseText (LayerTypePtr Layer, TextTypePtr Text)
  {
    int min_silk_line;
@@ -265,7 +265,7 @@ index acf5031..562f89d 100644
    if (Layer == & PCB->Data->SILKLAYER
        || Layer == & PCB->Data->BACKSILKLAYER)
      min_silk_line = PCB->minSlk;
-@@ -2251,7 +2241,6 @@ EraseText (LayerTypePtr Layer, TextTypePtr Text)
+@@ -2241,7 +2231,6 @@ EraseText (LayerTypePtr Layer, TextTypePtr Text)
  void
  ErasePolygon (PolygonTypePtr Polygon)
  {
@@ -273,7 +273,7 @@ index acf5031..562f89d 100644
    DrawPolygonLowLevel (Polygon);
  }
  
-@@ -2261,8 +2250,6 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2251,8 +2240,6 @@ ErasePolygon (PolygonTypePtr Polygon)
  void
  EraseElement (ElementTypePtr Element)
  {
@@ -282,7 +282,7 @@ index acf5031..562f89d 100644
    ELEMENTLINE_LOOP (Element);
    {
      DrawLineLowLevel (line);
-@@ -2284,7 +2271,6 @@ EraseElement (ElementTypePtr Element)
+@@ -2274,7 +2261,6 @@ EraseElement (ElementTypePtr Element)
  void
  EraseElementPinsAndPads (ElementTypePtr Element)
  {
@@ -290,7 +290,7 @@ index acf5031..562f89d 100644
    PIN_LOOP (Element);
    {
      DrawPinOrViaLowLevel (pin, false);
-@@ -2309,7 +2295,6 @@ EraseElementName (ElementTypePtr Element)
+@@ -2299,7 +2285,6 @@ EraseElementName (ElementTypePtr Element)
  {
    if (TEST_FLAG (HIDENAMEFLAG, Element))
      return;
