@@ -784,6 +784,7 @@ ghid_notify_crosshair_change (bool changes_complete)
     CrosshairOn ();
   else
     CrosshairOff ();
+  ghid_draw_area_update (gport, NULL);
 }
 
 static void
