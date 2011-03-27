@@ -1,5 +1,5 @@
 Bottom: 1ce657e21ebec0145323ef55078905d41743cc63
-Top:    1ce657e21ebec0145323ef55078905d41743cc63
+Top:    f2ca7c31a22bb68727b483960d75cd366e7968e7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 00:06:36 +0000
 
@@ -11,4 +11,51 @@ before its drawing calls can be operated.
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 3b012c3..52d9990 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -974,6 +974,17 @@ ghid_drawing_area_configure_hook (GHidPort *port)
+     }
+ }
+ 
++gboolean
++ghid_start_drawing (GHidPort *port)
++{
++  return TRUE;
++}
++
++void
++ghid_end_drawing (GHidPort *port)
++{
++}
++
+ void
+ ghid_screen_update (void)
+ {
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 10dd85b..3b543cb 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -671,8 +671,13 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+   static gint x_prev = -1, y_prev = -1;
+   gboolean moved;
+ 
++
+   gdk_event_request_motions (ev);
+ 
++  if (!ghid_start_drawing (out))
++    return FALSE;
++
++
+   if (out->panning)
+     {
+       dx = gport->zoom * (x_prev - ev->x);
+@@ -693,6 +698,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+   ghid_show_crosshair (TRUE);
+   if (moved && have_crosshair_attachments ())
+     ghid_draw_area_update (gport, NULL);
++
++  ghid_end_drawing (out);
+   return FALSE;
+ }
