@@ -1,5 +1,5 @@
 Bottom: c6413009c9cbfd356a75109b04a3a6880087288a
-Top:    d9257ee03dd1ab196d8b1cf5973fb1009e9ef6bb
+Top:    51f07d92a2b5d0906dfa40d05a1c21a80cdf1b26
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:09 +0000
 
@@ -190,7 +190,7 @@ index c0e23a3..077c575 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 03ea1d8..22d981c 100644
+index 03ea1d8..a16af92 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -357,7 +357,7 @@ index 03ea1d8..22d981c 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -990,6 +1028,729 @@ ghid_screen_update (void)
+@@ -990,6 +1028,725 @@ ghid_screen_update (void)
  {
  }
  
@@ -690,10 +690,6 @@ index 03ea1d8..22d981c 100644
 +      r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, &info);
 +      gui->set_color (Output.pmGC, "erase");
 +    }
-+
-+  gui->use_mask (HID_MASK_BEFORE);
-+  gui->set_color (out->fgGC, PCB->MaskColor);
-+  gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
 +
 +  gui->use_mask (HID_MASK_CLEAR);
 +  r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback_solid, &info);
@@ -1087,7 +1083,7 @@ index 03ea1d8..22d981c 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1056,8 +1817,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1056,8 +1813,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1098,7 +1094,7 @@ index 03ea1d8..22d981c 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1123,13 +1884,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1123,13 +1880,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -1112,7 +1108,7 @@ index 03ea1d8..22d981c 100644
    /* TODO: Background image */
  
    hidgl_init_triangle_array (&buffer);
-@@ -1149,7 +1903,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1149,7 +1899,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_x0,
                  ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                               -port->view_y0, 0);
