@@ -1,5 +1,5 @@
 Bottom: 5d4282e90682cc1e32ba1a2c63af01ebc9279b60
-Top:    0d299d4377e967f8503d747a129dfe55b9dedc71
+Top:    141529ed2a37cc6bcca798d16726424fbad9f6fc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:08 +0000
 
@@ -10,23 +10,6 @@ Nasty global depth_state variable should be replaced!
 
 ---
 
-diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 3e08fec..e090e11 100644
---- a/src/hid/common/hidgl.c
-+++ b/src/hid/common/hidgl.c
-@@ -807,6 +807,12 @@ hidgl_reset_stencil_usage (void)
-   dirty_bits = 0;
- }
- 
-+void
-+hidgl_set_depth (float depth)
-+{
-+  global_depth = depth;
-+}
-+
- 
- /* ---------------------------------------------------------------------- */
- 
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
 index eb63d93..df0446f 100644
 --- a/src/hid/gtk/gui-output-events.c
