@@ -1,5 +1,5 @@
 Bottom: a61da5dd4fb8e9001ac399ab473a13ecd527d81b
-Top:    98f3cf3eb8418e00367fa8de9c2cc4605d6e45fd
+Top:    b3d68627727f8c5cf7cc1b033b9fa5c00d9354a4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 02:12:27 +0100
 
@@ -11,6 +11,21 @@ to the ignore gui->use_mask (HID_MASK_BEFORE) calls it will now get.
 
 ---
 
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 52d9990..8213bd0 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -270,8 +270,8 @@ ghid_use_mask (int use_it)
+       break;
+ 
+     case HID_MASK_BEFORE:
+-      printf ("gtk doesn't support mask_before!\n");
+-      abort ();
++      /* Ignore, this renderer doesn't use it */
++      return;
+ 
+     case HID_MASK_CLEAR:
+       if (!gport->mask)
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
 index 28c10bc..4f16d8c 100644
 --- a/src/hid/gtk/gtkhid-main.c
