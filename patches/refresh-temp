@@ -1,0 +1,274 @@
+Bottom: 3bfb0757feb61d6d6462acb0255a3f943413176c
+Top:    68825892957931e68777a506fe181736f2eaf23a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-27 22:52:31 +0100
+
+Refresh of give-the-hids-control-over-att
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 296f999..6bac8f3 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -565,7 +565,7 @@ XORDrawMoveOrCopyObject (void)
+ /* ---------------------------------------------------------------------------
+  * draws additional stuff that follows the crosshair
+  */
+-static void
++void
+ DrawAttached (void)
+ {
+   BDimension s;
+@@ -684,6 +684,14 @@ DrawAttached (void)
+     }
+ }
+ 
++
++void
++notify_crosshair_changed (bool changes_complete)
++{
++  if (gui->notify_crosshair_change)
++    gui->notify_crosshair_change (changes_complete);
++}
++
+ /* ---------------------------------------------------------------------------
+  * switches crosshair on
+  */
+diff --git a/src/crosshair.h b/src/crosshair.h
+index 4573e98..2b9eed3 100644
+--- a/src/crosshair.h
++++ b/src/crosshair.h
+@@ -46,7 +46,7 @@
+ #define	STATE_SECOND	1
+ #define	STATE_THIRD		2
+ 
+-
++void DrawAttached (void);
+ void CrosshairOn (void);
+ void CrosshairOff (void);
+ void HideCrosshair (void);
+diff --git a/src/hid.h b/src/hid.h
+index b13e75b..1990f6e 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -298,6 +298,7 @@ typedef enum
+     /* This may be called to ask the GUI to force a redraw of a given area */
+     void (*invalidate_lr) (int left_, int right_, int top_, int bottom_);
+     void (*invalidate_all) (void);
++    void (*notify_crosshair_change) (bool changes_complete);
+ 
+     /* During redraw or print/export cycles, this is called once per
+        layer (or layer group, for copper layers).  If it returns false
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index ea75d99..96f73bf 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -355,6 +355,7 @@ HID batch_gui = {
+   batch_parse_arguments,
+   batch_invalidate_lr,
+   batch_invalidate_all,
++  0 /* batch_notify_crosshair_change */,
+   batch_set_layer,
+   batch_make_gc,
+   batch_destroy_gc,
+diff --git a/src/hid/bom/bom.c b/src/hid/bom/bom.c
+index 661b592..a693efb 100644
+--- a/src/hid/bom/bom.c
++++ b/src/hid/bom/bom.c
+@@ -546,6 +546,7 @@ HID bom_hid = {
+   bom_parse_arguments,
+   0,				/* bom_invalidate_lr */
+   0,				/* bom_invalidate_all */
++  0,				/* bom_notify_crosshair_change */
+   0,				/* bom_set_layer */
+   0,				/* bom_make_gc */
+   0,				/* bom_destroy_gc */
+diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
+index 0f51b47..124543d 100644
+--- a/src/hid/common/extents.c
++++ b/src/hid/common/extents.c
+@@ -186,6 +186,7 @@ static HID extents_hid = {
+   0 /* extents_parse_arguments */ ,
+   0 /* extents_invalidate_lr */ ,
+   0 /* extents_invalidate_all */ ,
++  0 /* extents_notify_crosshair_changed */ ,
+   extents_set_layer,
+   extents_make_gc,
+   extents_destroy_gc,
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index fd86b6a..0e1a966 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -420,6 +420,7 @@ HID hid_nogui = {
+   nogui_parse_arguments,
+   nogui_invalidate_lr,
+   nogui_invalidate_all,
++  0 /* nogui_notify_crosshair_change */ ,
+   nogui_set_layer,
+   nogui_make_gc,
+   nogui_destroy_gc,
+@@ -477,6 +478,7 @@ apply_default_hid (HID * d, HID * s)
+   AD (parse_arguments);
+   AD (invalidate_lr);
+   AD (invalidate_all);
++  AD (notify_crosshair_change);
+   AD (set_layer);
+   AD (make_gc);
+   AD (destroy_gc);
+diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
+index d2dd717..f3491bd 100644
+--- a/src/hid/gcode/gcode.c
++++ b/src/hid/gcode/gcode.c
+@@ -1043,6 +1043,7 @@ HID gcode_hid = {
+   gcode_parse_arguments,
+   0 /* gcode_invalidate_lr */ ,
+   0 /* gcode_invalidate_all */ ,
++  0 /* gcode_notify_crosshair_change */ ,
+   gcode_set_layer,
+   gcode_make_gc,
+   gcode_destroy_gc,
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 8f04180..b8587d6 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -287,6 +287,7 @@ static HID gerber_hid = {
+   gerber_parse_arguments,
+   0 /* gerber_invalidate_lr */ ,
+   0 /* gerber_invalidate_all */ ,
++  0 /* gerber_notify_crosshair_change */ ,
+   gerber_set_layer,
+   gerber_make_gc,
+   gerber_destroy_gc,
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 2ebb1a2..28c99fb 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -776,6 +776,15 @@ ghid_invalidate_all ()
+   ghid_screen_update ();
+ }
+ 
++void
++ghid_notify_crosshair_change (bool changes_complete)
++{
++  if (changes_complete)
++    CrosshairOn ();
++  else
++    CrosshairOff ();
++}
++
+ static void
+ draw_right_cross (GdkGC *xor_gc, gint x, gint y)
+ {
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 266cf06..1768cf8 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -988,6 +988,7 @@ HID ghid_hid = {
+   ghid_parse_arguments,
+   ghid_invalidate_lr,
+   ghid_invalidate_all,
++  ghid_notify_crosshair_change,
+   ghid_set_layer,
+   ghid_make_gc,
+   ghid_destroy_gc,
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 97ebb1c..64010cf 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -494,6 +494,7 @@ void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);
+ void ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2);
+ void ghid_invalidate_lr (int left, int right, int top, int bottom);
+ void ghid_invalidate_all ();
++void ghid_notify_crosshair_change (bool changes_complete);
+ void ghid_show_crosshair (gboolean show);
+ void ghid_init_renderer (int *, char ***, GHidPort *);
+ void ghid_init_drawing_widget (GtkWidget *widget, GHidPort *);
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 2f00577..a854d4c 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -2879,6 +2879,15 @@ lesstif_invalidate_all (void)
+   lesstif_invalidate_lr (0, PCB->MaxWidth, 0, PCB->MaxHeight);
+ }
+ 
++void
++lesstif_notify crosshair_change (bool changes_complete)
++{
++  if (changes_complete)
++    CrosshairOn ();
++  else
++    CrosshairOff ();
++}
++
+ static int
+ lesstif_set_layer (const char *name, int group, int empty)
+ {
+@@ -3812,6 +3821,7 @@ HID lesstif_gui = {
+   lesstif_parse_arguments,
+   lesstif_invalidate_lr,
+   lesstif_invalidate_all,
++  lesstif_notify_crosshair_change,
+   lesstif_set_layer,
+   lesstif_make_gc,
+   lesstif_destroy_gc,
+diff --git a/src/hid/lpr/lpr.c b/src/hid/lpr/lpr.c
+index a79af0a..fdcdb53 100644
+--- a/src/hid/lpr/lpr.c
++++ b/src/hid/lpr/lpr.c
+@@ -121,6 +121,7 @@ HID lpr_hid = {
+   lpr_parse_arguments,
+   0 /* lpr_invalidate_lr */ ,
+   0 /* lpr_invalidate_all */ ,
++  0 /* lpr_notify_crosshair_change */ ,
+   0 /* lpr_set_layer */ ,
+   0 /* lpr_make_gc */ ,
+   0 /* lpr_destroy_gc */ ,
+diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
+index 0a1efef..e20068e 100644
+--- a/src/hid/nelma/nelma.c
++++ b/src/hid/nelma/nelma.c
+@@ -1059,6 +1059,7 @@ HID             nelma_hid = {
+ 	nelma_parse_arguments,
+ 	0 /* nelma_invalidate_lr */ ,
+ 	0 /* nelma_invalidate_all */ ,
++	0 /* nelma_notify_crosshair_change */ ,
+ 	nelma_set_layer,
+ 	nelma_make_gc,
+ 	nelma_destroy_gc,
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 022da9c..017d517 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -1527,6 +1527,7 @@ HID png_hid = {
+   png_parse_arguments,
+   0 /* png_invalidate_lr */ ,
+   0 /* png_invalidate_all */ ,
++  0 /* png_notify_crosshair_change */ ,
+   png_set_layer,
+   png_make_gc,
+   png_destroy_gc,
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index 49a19c7..03cceb6 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -64,6 +64,7 @@ static HID eps_hid = {
+   eps_parse_arguments,
+   0 /* eps_invalidate_lr */ ,
+   0 /* eps_invalidate_all */ ,
++  0 /* eps_notify_crosshair_change */ ,
+   eps_set_layer,
+   eps_make_gc,
+   eps_destroy_gc,
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 7c286cc..85c3674 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -1353,6 +1353,7 @@ HID ps_hid = {
+   ps_parse_arguments,
+   0 /* ps_invalidate_lr */ ,
+   0 /* ps_invalidate_all */ ,
++  0 /* ps_notify_crosshair_change */ ,
+   ps_set_layer,
+   ps_make_gc,
+   ps_destroy_gc,
