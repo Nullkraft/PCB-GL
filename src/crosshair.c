@@ -692,8 +692,10 @@ CrosshairOn (void)
   if (!Crosshair.On)
     {
       Crosshair.On = true;
+#if 0
       DrawAttached ();
       DrawMark ();
+#endif
     }
 }
 
@@ -706,8 +708,10 @@ CrosshairOff (void)
   if (Crosshair.On)
     {
       Crosshair.On = false;
+#if 0
       DrawAttached ();
       DrawMark ();
+#endif
     }
 }
 
