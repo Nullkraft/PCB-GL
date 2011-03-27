@@ -3,7 +3,15 @@ Top:    6bd1a5d001a7a21780912b5409bace904e1bebd6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:02 +0000
 
-Drop in PCB+GL code + various mess. Needs splitting up?
+hid/gtk: Drop in GL renderer - WOOT!
+
+Much of the generic GL drawing stuff lives in a new common helper,
+hid/common/hidgl.[ch]. Unavoidably, there is a lot of GUI specific
+setup and teardown code.
+
+There are probably still bits of code in hid/gtk/gtkhid-gl.c which
+could be moved to a shared place if / when other HIDs wish to use
+GL rendering.
 
 Credits:
 
