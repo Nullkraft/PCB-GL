@@ -1,5 +1,5 @@
-Bottom: 0fcc1798a2ec792221657a36b21f24d3eaa75c9a
-Top:    71d5ecbf50720877e5e802cbc00c57e840479039
+Bottom: 42a124064cbe96585b4e76f2f802bd5a7cb7358b
+Top:    42a124064cbe96585b4e76f2f802bd5a7cb7358b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 23:54:25 +0000
 
@@ -15,29 +15,4 @@ it would previously have called the drawing routines directly.
 
 ---
 
-diff --git a/src/crosshair.c b/src/crosshair.c
-index 296f999..f733e11 100644
---- a/src/crosshair.c
-+++ b/src/crosshair.c
-@@ -565,7 +565,7 @@ XORDrawMoveOrCopyObject (void)
- /* ---------------------------------------------------------------------------
-  * draws additional stuff that follows the crosshair
-  */
--static void
-+void
- DrawAttached (void)
- {
-   BDimension s;
-diff --git a/src/crosshair.h b/src/crosshair.h
-index 4573e98..2b9eed3 100644
---- a/src/crosshair.h
-+++ b/src/crosshair.h
-@@ -46,7 +46,7 @@
- #define	STATE_SECOND	1
- #define	STATE_THIRD		2
- 
--
-+void DrawAttached (void);
- void CrosshairOn (void);
- void CrosshairOff (void);
- void HideCrosshair (void);
+
