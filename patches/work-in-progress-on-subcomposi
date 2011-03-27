@@ -1,5 +1,5 @@
-Bottom: 0bf3fdf36f09150093895091f95fdb7ca75908fa
-Top:    6e2724c9c0c47256d0b4addd7a2dd786e4930bfd
+Bottom: 12d99e3b539cc65d000dfec799695f714ffc0c0a
+Top:    8a23c94c805032535f6ff037bb6edae011eb03b3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:05 +0000
 
@@ -14,7 +14,7 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index e5a4d14..e4bf2d3 100644
+index 36bf1b9..e2f3c81 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -414,6 +414,7 @@ DrawEverything (BoxTypePtr drawn_area)
@@ -409,7 +409,7 @@ index 8f04180..be3dfd0 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index cb1ef6b..3f96b1b 100644
+index 7c4b9ea..a447b5b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,6 +21,7 @@
