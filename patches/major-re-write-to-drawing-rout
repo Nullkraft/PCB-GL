@@ -1,5 +1,5 @@
-Bottom: c6413009c9cbfd356a75109b04a3a6880087288a
-Top:    51f07d92a2b5d0906dfa40d05a1c21a80cdf1b26
+Bottom: 7fff447d7c0708c25a9100d6292430916eae40d6
+Top:    a78e23413ef69653d5d8f393474f4da2f34c6894
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:09 +0000
 
@@ -18,7 +18,7 @@ Notes from squashed patches:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 46367b5..40b11ec 100644
+index e4bf2d3..6c7a2f5 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -76,7 +76,7 @@ FloatPolyType, *FloatPolyTypePtr;
@@ -102,8 +102,8 @@ index 46367b5..40b11ec 100644
  DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
  {
  #if 0
-@@ -803,7 +803,7 @@ DrawMask (BoxType * screen)
-   gui->use_mask (HID_MASK_OFF);
+@@ -806,7 +806,7 @@ DrawMask (BoxType * screen)
+     }
  }
  
 -static void
@@ -111,7 +111,7 @@ index 46367b5..40b11ec 100644
  DrawRats (BoxTypePtr drawn_area)
  {
    /*
-@@ -938,7 +938,7 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -941,7 +941,7 @@ DrawLayerGroup (int group, const BoxType * screen)
   *         \       /
   *          2 --- 1
    */
@@ -120,7 +120,7 @@ index 46367b5..40b11ec 100644
  DrawSpecialPolygon (hidGC DrawGC,
  		    LocationType X, LocationType Y, int Thickness,
  		    int thin_draw)
-@@ -1002,7 +1002,7 @@ DrawSpecialPolygon (hidGC DrawGC,
+@@ -1005,7 +1005,7 @@ DrawSpecialPolygon (hidGC DrawGC,
  /* ---------------------------------------------------------------------------
   * lowlevel drawing routine for pins and vias
   */
@@ -129,7 +129,7 @@ index 46367b5..40b11ec 100644
  DrawPinOrViaLowLevel (PinTypePtr Ptr, bool drawHole)
  {
    if (Gathering)
-@@ -1086,7 +1086,7 @@ DrawPinOrViaLowLevel (PinTypePtr Ptr, bool drawHole)
+@@ -1089,7 +1089,7 @@ DrawPinOrViaLowLevel (PinTypePtr Ptr, bool drawHole)
  /**************************************************************
   * draw pin/via hole
   */
@@ -138,7 +138,7 @@ index 46367b5..40b11ec 100644
  DrawHole (PinTypePtr Ptr)
  {
    if (TEST_FLAG (THINDRAWFLAG, PCB))
-@@ -1701,7 +1701,7 @@ DrawVia (PinTypePtr Via, int unused)
+@@ -1704,7 +1704,7 @@ DrawVia (PinTypePtr Via, int unused)
  /* ---------------------------------------------------------------------------
   * draw a via without dealing with polygon clearance 
   */
@@ -147,7 +147,7 @@ index 46367b5..40b11ec 100644
  DrawPlainVia (PinTypePtr Via, bool holeToo)
  {
    if (!Gathering)
-@@ -1746,7 +1746,7 @@ DrawPin (PinTypePtr Pin, int unused)
+@@ -1749,7 +1749,7 @@ DrawPin (PinTypePtr Pin, int unused)
  /* ---------------------------------------------------------------------------
   * draw a pin without clearing around polygons 
   */
@@ -156,7 +156,7 @@ index 46367b5..40b11ec 100644
  DrawPlainPin (PinTypePtr Pin, bool holeToo)
  {
    if (!Gathering)
-@@ -1936,7 +1936,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
+@@ -1939,7 +1939,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
  /* ---------------------------------------------------------------------------
   * draws text on a layer
   */
@@ -190,7 +190,7 @@ index c0e23a3..077c575 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 03ea1d8..a16af92 100644
+index bfa7a1e..4f89173 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
