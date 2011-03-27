@@ -126,7 +126,7 @@ typedef struct _cairo_bo_sweep_line {
 } cairo_bo_sweep_line_t;
 
 
-static cairo_fixed_t
+/*static*/ cairo_fixed_t
 _line_compute_intersection_x_for_y (const cairo_line_t *line,
                                     cairo_fixed_t y)
 {
@@ -1451,9 +1451,21 @@ bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps)
       hidgl_ensure_triangle_space (&buffer, 1);
       hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
     } else {
+#if 0
       hidgl_ensure_triangle_space (&buffer, 2);
       hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
       hidgl_add_triangle (&buffer, x3, y3, x4, y4, x1, y1);
+#endif
+      hidgl_ensure_vertex_space (&buffer, 6);
+
+      /* NB: Repeated first virtex to separate from other tri-strip */
+      hidgl_add_vertex_tex (&buffer, x2, y2, 0.0, 0.0);
+      hidgl_add_vertex_tex (&buffer, x2, y2, 0.0, 0.0);
+      hidgl_add_vertex_tex (&buffer, x1, y1, 0.0, 0.0);
+      hidgl_add_vertex_tex (&buffer, x3, y3, 0.0, 0.0);
+      hidgl_add_vertex_tex (&buffer, x4, y4, 0.0, 0.0);
+      hidgl_add_vertex_tex (&buffer, x4, y4, 0.0, 0.0);
+      /* NB: Repeated last virtex to separate from other tri-strip */
     }
 #else
     glBegin (GL_LINES);
@@ -1476,7 +1488,6 @@ bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps)
 
   return CAIRO_STATUS_SUCCESS;
 }
-
 
 cairo_status_t
 bo_contour_to_traps (PLINE *contour, cairo_traps_t *traps)
@@ -1557,6 +1568,60 @@ bo_contour_to_traps (PLINE *contour, cairo_traps_t *traps)
     glEnd ();
 #endif
   }
+
+#if DEBUG_TRAPS
+  dump_traps (traps, "bo-polygon-out.txt");
+#endif
+
+  if (events != stack_events)
+      free (events);
+
+  return CAIRO_STATUS_SUCCESS;
+}
+
+
+cairo_status_t
+bo_contour_to_traps_no_draw (PLINE *contour, cairo_traps_t *traps)
+{
+  int intersections;
+  cairo_status_t status;
+  cairo_bo_start_event_t stack_events[CAIRO_STACK_ARRAY_LENGTH (cairo_bo_start_event_t)];
+  cairo_bo_start_event_t *events;
+  cairo_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
+  cairo_bo_event_t **event_ptrs;
+  int num_events = 0;
+  int i;
+
+  num_events = contour->Count;
+
+  if (unlikely (0 == num_events))
+      return CAIRO_STATUS_SUCCESS;
+
+  events = stack_events;
+  event_ptrs = stack_event_ptrs;
+  if (num_events > ARRAY_LENGTH (stack_events)) {
+      events = _cairo_malloc_ab_plus_c (num_events,
+                                        sizeof (cairo_bo_start_event_t) +
+                                        sizeof (cairo_bo_event_t *),
+                                        sizeof (cairo_bo_event_t *));
+      if (unlikely (events == NULL))
+          return CAIRO_STATUS_NO_MEMORY;
+
+      event_ptrs = (cairo_bo_event_t **) (events + num_events);
+  }
+
+  i = 0;
+
+  contour_to_start_events (contour, events, event_ptrs, &i, 1);
+
+  /* XXX: This would be the convenient place to throw in multiple
+   * passes of the Bentley-Ottmann algorithm. It would merely
+   * require storing the results of each pass into a temporary
+   * cairo_traps_t. */
+  status = _cairo_bentley_ottmann_tessellate_bo_edges (event_ptrs,
+                                                       num_events,
+                                                       traps,
+                                                       &intersections);
 
 #if DEBUG_TRAPS
   dump_traps (traps, "bo-polygon-out.txt");
