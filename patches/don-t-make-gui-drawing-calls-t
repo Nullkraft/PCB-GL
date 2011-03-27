@@ -3,13 +3,10 @@ Top:    510c0c784732b7ec31c432c87e97f82276b132b1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:13 +0000
 
-Don't make GUI drawing calls to erase objects
+draw.c: Don't make GUI drawing calls to erase objects
 
 Changing the colour here is unnecessary (as drawing is deferred).
-Delete the gui->set_color() calls, and additionally, comment out
-all real-time drawing from the autorouter. This hasn't been ported
-to be compatible with the GL code, which requires specific setup
-and teardown around drawing.
+Delete the gui->set_color() calls.
 
 
 ---
