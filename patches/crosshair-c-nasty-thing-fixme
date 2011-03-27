@@ -1,5 +1,5 @@
-Bottom: 71d5ecbf50720877e5e802cbc00c57e840479039
-Top:    0f09dd09a8e2073b7edd7aff646f146b36e241f2
+Bottom: 42a124064cbe96585b4e76f2f802bd5a7cb7358b
+Top:    f7c2b2dc7a5a1dd627be0e2d0ca7b9ffa9521d72
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 02:16:50 +0100
 
@@ -9,10 +9,10 @@ crosshair.c: Nasty thing FIXME
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index f733e11..6b55cbe 100644
+index ca51f4f..f10a250 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -693,8 +693,10 @@ CrosshairOn (void)
+@@ -692,8 +692,10 @@ CrosshairOn (void)
    if (!Crosshair.On)
      {
        Crosshair.On = true;
@@ -23,7 +23,7 @@ index f733e11..6b55cbe 100644
      }
  }
  
-@@ -707,8 +709,10 @@ CrosshairOff (void)
+@@ -706,8 +708,10 @@ CrosshairOff (void)
    if (Crosshair.On)
      {
        Crosshair.On = false;
