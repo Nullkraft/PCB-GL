@@ -671,7 +671,8 @@ DrawAttached (void)
     }
 
   /* an attached box does not depend on a special mode */
-  if (Crosshair.AttachedBox.State == STATE_SECOND)
+  if (Crosshair.AttachedBox.State == STATE_SECOND ||
+      Crosshair.AttachedBox.State == STATE_THIRD)
     {
       LocationType x1, y1, x2, y2;
 
