@@ -1,7 +1,7 @@
-Bottom: d6f515b5d4ce71f58ee8754962e944371cc3ad82
-Top:    f98fe5776ffc97cb4aabcc71f2e8ff94618d52e0
+Bottom: e459502edd88d7be2ae7d9028b1e6f9f249f124a
+Top:    8630613c630abdababbf3c43ec9ad2658fb89be5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-26 23:13:12 +0000
+Date:   2011-03-27 00:16:08 +0000
 
 Remove need_restore_crosshair
 
@@ -23,7 +23,7 @@ index 245b0c8..c5b3cf2 100644
  }
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 00622cf..43a8b80 100644
+index a010855..5a7f0f5 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -756,9 +756,6 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
