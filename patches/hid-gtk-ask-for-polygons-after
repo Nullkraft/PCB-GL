@@ -3,10 +3,11 @@ Top:    f46231530a1fd948e0a0887741c438107f50f468
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 02:12:27 +0100
 
-hid/gtk: Ask for polygons before masking as well as after
+hid/gtk: g_return_if_reached() for receipt of gui->use_mask(HID_MASK_BEFORE)
 
-The GL renderer will need both, so add both now. Teach the GDK renderer
-to the ignore gui->use_mask (HID_MASK_BEFORE) calls it will now get.
+This means one less untranslated printf which is never hit. If for some
+reason the core sends us one of these - logging a warning and continuing
+is probably better than a hard abort()
 
 
 ---
