@@ -1,5 +1,5 @@
 Bottom: 4cfe656698875df2bddcd5fd436e06b58845e1ce
-Top:    8dc12cd4681df7689c5369bcd6b901edb399d40b
+Top:    fa19ce8627c062bab64423c0a9f8cbf0d8498f77
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 15:31:28 +0100
 
@@ -12,22 +12,18 @@ into the core like this.
 ---
 
 diff --git a/src/borast/borast-bentley-ottmann.c b/src/borast/borast-bentley-ottmann.c
-index 76f8e87..2f692d7 100644
+index 76f8e87..8012817 100644
 --- a/src/borast/borast-bentley-ottmann.c
 +++ b/src/borast/borast-bentley-ottmann.c
-@@ -126,9 +126,9 @@ typedef struct _borast_bo_sweep_line {
+@@ -126,7 +126,7 @@ typedef struct _borast_bo_sweep_line {
  } borast_bo_sweep_line_t;
  
  
 -static borast_fixed_t
--_line_compute_intersection_x_for_y (const borast_line_t *line,
--                                    borast_fixed_t y)
 +/*static*/ borast_fixed_t
-+_line_compute_intersection_x_for_y (const cairo_line_t *line,
-+                                    cairo_fixed_t y)
+ _line_compute_intersection_x_for_y (const borast_line_t *line,
+                                     borast_fixed_t y)
  {
-     borast_fixed_t x, dy;
- 
 @@ -1452,9 +1452,21 @@ bo_poly_to_traps (POLYAREA *poly, borast_traps_t *traps)
        hidgl_ensure_triangle_space (&buffer, 1);
        hidgl_add_triangle (&buffer, x1, y1, x2, y2, x3, y3);
@@ -57,7 +53,7 @@ index 76f8e87..2f692d7 100644
 -
  borast_status_t
 -bo_contour_to_traps (PLINE *contour, borast_traps_t *traps)
-+bo_contour_to_traps (PLINE *contour, cairo_traps_t *traps)
++bo_contour_to_traps (PLINE *contour,  borast_traps_t *traps)
  {
    int intersections;
    borast_status_t status;
@@ -67,34 +63,34 @@ index 76f8e87..2f692d7 100644
  }
 +
 +
-+cairo_status_t
-+bo_contour_to_traps_no_draw (PLINE *contour, cairo_traps_t *traps)
++borast_status_t
++bo_contour_to_traps_no_draw (PLINE *contour, borast_traps_t *traps)
 +{
 +  int intersections;
-+  cairo_status_t status;
-+  cairo_bo_start_event_t stack_events[CAIRO_STACK_ARRAY_LENGTH (cairo_bo_start_event_t)];
-+  cairo_bo_start_event_t *events;
-+  cairo_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
-+  cairo_bo_event_t **event_ptrs;
++  borast_status_t status;
++  borast_bo_start_event_t stack_events[BORAST_STACK_ARRAY_LENGTH (borast_bo_start_event_t)];
++  borast_bo_start_event_t *events;
++  borast_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
++  borast_bo_event_t **event_ptrs;
 +  int num_events = 0;
 +  int i;
 +
 +  num_events = contour->Count;
 +
 +  if (unlikely (0 == num_events))
-+      return CAIRO_STATUS_SUCCESS;
++      return BORAST_STATUS_SUCCESS;
 +
 +  events = stack_events;
 +  event_ptrs = stack_event_ptrs;
 +  if (num_events > ARRAY_LENGTH (stack_events)) {
-+      events = _cairo_malloc_ab_plus_c (num_events,
-+                                        sizeof (cairo_bo_start_event_t) +
-+                                        sizeof (cairo_bo_event_t *),
-+                                        sizeof (cairo_bo_event_t *));
++      events = _borast_malloc_ab_plus_c (num_events,
++                                        sizeof (borast_bo_start_event_t) +
++                                        sizeof (borast_bo_event_t *),
++                                        sizeof (borast_bo_event_t *));
 +      if (unlikely (events == NULL))
-+          return CAIRO_STATUS_NO_MEMORY;
++          return BORAST_STATUS_NO_MEMORY;
 +
-+      event_ptrs = (cairo_bo_event_t **) (events + num_events);
++      event_ptrs = (borast_bo_event_t **) (events + num_events);
 +  }
 +
 +  i = 0;
@@ -104,8 +100,8 @@ index 76f8e87..2f692d7 100644
 +  /* XXX: This would be the convenient place to throw in multiple
 +   * passes of the Bentley-Ottmann algorithm. It would merely
 +   * require storing the results of each pass into a temporary
-+   * cairo_traps_t. */
-+  status = _cairo_bentley_ottmann_tessellate_bo_edges (event_ptrs,
++   * borast_traps_t. */
++  status = _borast_bentley_ottmann_tessellate_bo_edges (event_ptrs,
 +                                                       num_events,
 +                                                       traps,
 +                                                       &intersections);
@@ -117,7 +113,7 @@ index 76f8e87..2f692d7 100644
 +  if (events != stack_events)
 +      free (events);
 +
-+  return CAIRO_STATUS_SUCCESS;
++  return BORAST_STATUS_SUCCESS;
 +}
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
 index 4eb8e0b..1206275 100644
