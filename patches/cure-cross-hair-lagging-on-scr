@@ -1,5 +1,5 @@
 Bottom: 8e72cba693909a2e2febd7a6df95cfb71102996a
-Top:    8e72cba693909a2e2febd7a6df95cfb71102996a
+Top:    36a6e90f9ca82601770248005904774b0f9fa55f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:03 +0000
 
@@ -10,4 +10,18 @@ FIXME: SHOULD NOT RE-WRITE THE GTK HID
 
 ---
 
-
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 9272004..8293b0c 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -684,9 +684,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+   queue_tooltip_update (out);
+ #endif
+ 
+-  ghid_show_crosshair (FALSE);
+-  ghid_show_crosshair (TRUE);
+-  if (moved && have_crosshair_attachments ())
++  if (moved)
+     ghid_draw_area_update (gport, NULL);
+   return FALSE;
+ }
