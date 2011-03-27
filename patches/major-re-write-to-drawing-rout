@@ -1,5 +1,5 @@
-Bottom: 74fba5318f636e9bb0bbab04422d99d4522a92fd
-Top:    f4675fab1577784b51578dbf39e6a3609ec54888
+Bottom: c6413009c9cbfd356a75109b04a3a6880087288a
+Top:    d9257ee03dd1ab196d8b1cf5973fb1009e9ef6bb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:09 +0000
 
@@ -18,7 +18,7 @@ Notes from squashed patches:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index e4bf2d3..6c7a2f5 100644
+index 46367b5..40b11ec 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -76,7 +76,7 @@ FloatPolyType, *FloatPolyTypePtr;
@@ -102,8 +102,8 @@ index e4bf2d3..6c7a2f5 100644
  DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
  {
  #if 0
-@@ -806,7 +806,7 @@ DrawMask (BoxType * screen)
-     }
+@@ -803,7 +803,7 @@ DrawMask (BoxType * screen)
+   gui->use_mask (HID_MASK_OFF);
  }
  
 -static void
@@ -111,7 +111,7 @@ index e4bf2d3..6c7a2f5 100644
  DrawRats (BoxTypePtr drawn_area)
  {
    /*
-@@ -941,7 +941,7 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -938,7 +938,7 @@ DrawLayerGroup (int group, const BoxType * screen)
   *         \       /
   *          2 --- 1
    */
@@ -120,7 +120,7 @@ index e4bf2d3..6c7a2f5 100644
  DrawSpecialPolygon (hidGC DrawGC,
  		    LocationType X, LocationType Y, int Thickness,
  		    int thin_draw)
-@@ -1005,7 +1005,7 @@ DrawSpecialPolygon (hidGC DrawGC,
+@@ -1002,7 +1002,7 @@ DrawSpecialPolygon (hidGC DrawGC,
  /* ---------------------------------------------------------------------------
   * lowlevel drawing routine for pins and vias
   */
@@ -129,7 +129,7 @@ index e4bf2d3..6c7a2f5 100644
  DrawPinOrViaLowLevel (PinTypePtr Ptr, bool drawHole)
  {
    if (Gathering)
-@@ -1089,7 +1089,7 @@ DrawPinOrViaLowLevel (PinTypePtr Ptr, bool drawHole)
+@@ -1086,7 +1086,7 @@ DrawPinOrViaLowLevel (PinTypePtr Ptr, bool drawHole)
  /**************************************************************
   * draw pin/via hole
   */
@@ -138,7 +138,7 @@ index e4bf2d3..6c7a2f5 100644
  DrawHole (PinTypePtr Ptr)
  {
    if (TEST_FLAG (THINDRAWFLAG, PCB))
-@@ -1704,7 +1704,7 @@ DrawVia (PinTypePtr Via, int unused)
+@@ -1701,7 +1701,7 @@ DrawVia (PinTypePtr Via, int unused)
  /* ---------------------------------------------------------------------------
   * draw a via without dealing with polygon clearance 
   */
@@ -147,7 +147,7 @@ index e4bf2d3..6c7a2f5 100644
  DrawPlainVia (PinTypePtr Via, bool holeToo)
  {
    if (!Gathering)
-@@ -1749,7 +1749,7 @@ DrawPin (PinTypePtr Pin, int unused)
+@@ -1746,7 +1746,7 @@ DrawPin (PinTypePtr Pin, int unused)
  /* ---------------------------------------------------------------------------
   * draw a pin without clearing around polygons 
   */
@@ -156,7 +156,7 @@ index e4bf2d3..6c7a2f5 100644
  DrawPlainPin (PinTypePtr Pin, bool holeToo)
  {
    if (!Gathering)
-@@ -1939,7 +1939,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
+@@ -1936,7 +1936,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
  /* ---------------------------------------------------------------------------
   * draws text on a layer
   */
@@ -190,7 +190,7 @@ index c0e23a3..077c575 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 89d10d7..af08916 100644
+index 03ea1d8..22d981c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -337,7 +337,7 @@ index 89d10d7..af08916 100644
    if (idx < 0)
      {
        switch (SL_TYPE (idx))
-@@ -430,10 +472,6 @@ typedef struct
+@@ -428,10 +470,6 @@ typedef struct
    double blue;
  } ColorCache;
  
@@ -348,7 +348,7 @@ index 89d10d7..af08916 100644
  void
  ghid_set_color (hidGC gc, const char *name)
  {
-@@ -549,7 +587,7 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -547,7 +585,7 @@ ghid_set_color (hidGC gc, const char *name)
    glColor4d (r, g, b, a);
  }
  
@@ -357,7 +357,7 @@ index 89d10d7..af08916 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -992,6 +1030,729 @@ ghid_screen_update (void)
+@@ -990,6 +1028,729 @@ ghid_screen_update (void)
  {
  }
  
@@ -1087,7 +1087,7 @@ index 89d10d7..af08916 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1058,8 +1819,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1056,8 +1817,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1098,7 +1098,7 @@ index 89d10d7..af08916 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1125,13 +1886,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1123,13 +1884,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -1112,7 +1112,7 @@ index 89d10d7..af08916 100644
    /* TODO: Background image */
  
    hidgl_init_triangle_array (&buffer);
-@@ -1151,7 +1905,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1149,7 +1903,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_x0,
                  ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                               -port->view_y0, 0);
