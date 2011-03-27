@@ -1,5 +1,5 @@
 Bottom: 1432953e512137987de2b80553b970632d5f4083
-Top:    ba0a57baa1e0925399aa52a00077908e23c895da
+Top:    8bdd0a7c396b7191b2685e85239310890a20d23d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:05 +0000
 
@@ -409,7 +409,7 @@ index 8f04180..be3dfd0 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7a57d40..f0edbac 100644
+index 7a57d40..04672b2 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,6 +21,7 @@
@@ -477,7 +477,7 @@ index 7a57d40..f0edbac 100644
  
    /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
    if (use_it == HID_LIVE_DRAWING ||
-@@ -293,6 +321,7 @@ ghid_use_mask (int use_it)
+@@ -293,33 +321,35 @@ ghid_use_mask (int use_it)
    if (use_it == cur_mask)
      return;
  
@@ -485,39 +485,46 @@ index 7a57d40..f0edbac 100644
    hidgl_flush_triangles (&buffer);
  
    switch (use_it)
-@@ -301,25 +330,28 @@ ghid_use_mask (int use_it)
-       /* Write '1' to the stencil buffer where the solder-mask is drawn. */
-       glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
-       glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
+     {
+     case HID_MASK_BEFORE:
+-      /* Write '1' to the stencil buffer where the solder-mask is drawn. */
+-      glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
+-      glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
 -      glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
+-      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
+-      break;
++      /* Ignore, this renderer doesn't use it */
++      return;
+ 
+     case HID_MASK_CLEAR:
+-      /* Drawing operations clear the stencil buffer to '0' */
+-      glStencilFunc (GL_ALWAYS, 0, 1);            // Test always passes, value written 0
+-      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 0)
++      /* Write '1' to the stencil buffer where the solder-mask should not be drawn. */
++      glColorMask (0, 0, 0, 0);                             // Disable writting in color buffer
++      glEnable (GL_STENCIL_TEST);                           // Enable Stencil test
 +      stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
 +      glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  // Always pass stencil test, write stencil_bit
 +      glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
-       glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
-       break;
- 
-     case HID_MASK_CLEAR:
-       /* Drawing operations clear the stencil buffer to '0' */
--      glStencilFunc (GL_ALWAYS, 0, 1);            // Test always passes, value written 0
-+      glStencilFunc (GL_ALWAYS, 0, stencil_bit);  // Always pass stencil test, write 0
-       glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 0)
++      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);           // Stencil pass => replace stencil value (with 1)
        break;
  
      case HID_MASK_AFTER:
-       /* Drawing operations as masked to areas where the stencil buffer is '1' */
+-      /* Drawing operations as masked to areas where the stencil buffer is '1' */
++      /* Drawing operations as masked to areas where the stencil buffer is '0' */
        glColorMask (1, 1, 1, 1);                   // Enable drawing of r, g, b & a
 -      glStencilFunc (GL_EQUAL, 1, 1);             // Draw only where stencil buffer is 1
-+      glStencilFunc (GL_LEQUAL, stencil_bit, stencil_bit);   // Draw only where our bit of the stencil buffer is set
++      glStencilFunc (GL_GEQUAL, 0, stencil_bit);  // Draw only where our bit of the stencil buffer is clear
        glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    // Stencil buffer read only
        break;
  
      case HID_MASK_OFF:
        /* Disable stenciling */
-+      hidgl_return_stencil_bit (stencil_bit);               // Relinquish any bitplane we previously used
++      hidgl_return_stencil_bit (stencil_bit);     // Relinquish any bitplane we previously used
        glDisable (GL_STENCIL_TEST);                // Disable Stencil test
        break;
      }
-@@ -918,6 +950,17 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -918,6 +948,17 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_start_drawing (port);
  
@@ -535,7 +542,7 @@ index 7a57d40..f0edbac 100644
    ghid_show_crosshair (FALSE);
  
    glEnable (GL_BLEND);
-@@ -937,12 +980,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -937,12 +978,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -556,7 +563,7 @@ index 7a57d40..f0edbac 100644
  
    region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
    region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-@@ -968,6 +1019,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -968,6 +1017,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
@@ -569,7 +576,7 @@ index 7a57d40..f0edbac 100644
    glPushMatrix ();
    glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
              (ghid_flip_y ? -1. : 1.) / port->zoom,
-@@ -1088,9 +1145,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1088,9 +1143,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  gport->bg_color.green / 65535.,
                  gport->bg_color.blue / 65535.,
                  1.);
@@ -583,7 +590,7 @@ index 7a57d40..f0edbac 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
-@@ -1196,8 +1256,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1196,8 +1254,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                  gport->bg_color.green / 65535.,
                  gport->bg_color.blue / 65535.,
                  1.);
@@ -594,6 +601,19 @@ index 7a57d40..f0edbac 100644
  
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 2356ba1..ad335a3 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -979,7 +979,7 @@ HID ghid_hid = {
+   1,				/* gui */
+   0,				/* printer */
+   0,				/* exporter */
+-  1,				/* poly before */
++  0,				/* poly before */
+   1,				/* poly after */
+   0,				/* poly dicer */
+ 
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
 index 0a1efef..8a81b4b 100644
 --- a/src/hid/nelma/nelma.c
