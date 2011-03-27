@@ -1,5 +1,5 @@
 Bottom: a5e8c40900768e69807c0a84527c392b4a2d2a52
-Top:    a34badf15780633755bb426f23f7e1cf195eb9de
+Top:    98e44c728c4aa84e78e984692439dfbcf81abebd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:11 +0000
 
@@ -5486,11 +5486,11 @@ index b8c4867..da6b4a0 100644
    global_scale = scale;
 diff --git a/src/sweep.h b/src/sweep.h
 new file mode 100644
-index 0000000..257664f
+index 0000000..3af86b8
 --- /dev/null
 +++ b/src/sweep.h
 @@ -0,0 +1,4 @@
-+#include "cairo/cairo-traps-private.h"
++#include "borast/cairo-traps-private.h"
 +
 +cairo_status_t bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps);
 +cairo_status_t bo_contour_to_traps (PLINE *contour, cairo_traps_t *traps);
