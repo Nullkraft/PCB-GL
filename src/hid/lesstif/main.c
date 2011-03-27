@@ -2879,6 +2879,15 @@ lesstif_invalidate_all (void)
   lesstif_invalidate_lr (0, PCB->MaxWidth, 0, PCB->MaxHeight);
 }
 
+void
+lesstif_notify crosshair_change (bool changes_complete)
+{
+  if (changes_complete)
+    CrosshairOn ();
+  else
+    CrosshairOff ();
+}
+
 static int
 lesstif_set_layer (const char *name, int group, int empty)
 {
@@ -3812,6 +3821,7 @@ HID lesstif_gui = {
   lesstif_parse_arguments,
   lesstif_invalidate_lr,
   lesstif_invalidate_all,
+  lesstif_notify_crosshair_change,
   lesstif_set_layer,
   lesstif_make_gc,
   lesstif_destroy_gc,

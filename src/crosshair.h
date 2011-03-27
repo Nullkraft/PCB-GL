@@ -46,7 +46,7 @@
 #define	STATE_SECOND	1
 #define	STATE_THIRD		2
 
-
+void DrawAttached (void);
 void CrosshairOn (void);
 void CrosshairOff (void);
 void HideCrosshair (void);

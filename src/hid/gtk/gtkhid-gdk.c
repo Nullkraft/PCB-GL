@@ -776,6 +776,15 @@ ghid_invalidate_all ()
   ghid_screen_update ();
 }
 
+void
+ghid_notify_crosshair_change (bool changes_complete)
+{
+  if (changes_complete)
+    CrosshairOn ();
+  else
+    CrosshairOff ();
+}
+
 static void
 draw_right_cross (GdkGC *xor_gc, gint x, gint y)
 {

@@ -988,6 +988,7 @@ HID ghid_hid = {
   ghid_parse_arguments,
   ghid_invalidate_lr,
   ghid_invalidate_all,
+  ghid_notify_crosshair_change,
   ghid_set_layer,
   ghid_make_gc,
   ghid_destroy_gc,
