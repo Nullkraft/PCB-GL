@@ -1,5 +1,5 @@
 Bottom: 15dcb194f76023712c70da26fa1e8a1e294dbf2a
-Top:    5264db7d0cad23ca6f7c30aaa337f7c12d997aec
+Top:    2ba59e8b1c3f3b47b62f486eae93855c8d3403d2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 22:35:29 +0100
 
@@ -1034,7 +1034,7 @@ index 908b21e..75ab94a 100644
  }
  
 diff --git a/src/crosshair.c b/src/crosshair.c
-index a7942b6..af0b060 100644
+index a7942b6..ca51f4f 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -66,15 +66,6 @@ typedef struct
@@ -1172,6 +1172,15 @@ index a7942b6..af0b060 100644
    Crosshair.On = false;
  
    /* set initial shape */
+@@ -1144,7 +1100,7 @@ InitCrosshair (void)
+ void
+ DestroyCrosshair (void)
+ {
+-  CrosshairOff ();
++  //crosshairOff ();
+   FreePolygonMemory (&Crosshair.AttachedPolygon);
+   gui->destroy_gc (Crosshair.GC);
+ }
 diff --git a/src/crosshair.h b/src/crosshair.h
 index 4573e98..d413bbe 100644
 --- a/src/crosshair.h
@@ -1302,16 +1311,20 @@ index 8f04180..b8587d6 100644
    gerber_make_gc,
    gerber_destroy_gc,
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 2ebb1a2..c81ffbd 100644
+index 2ebb1a2..1ead6a9 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -770,12 +770,18 @@ ghid_invalidate_all ()
+@@ -770,12 +770,22 @@ ghid_invalidate_all ()
  
    hid_expose_callback (&ghid_hid, &region, 0);
    ghid_draw_grid ();
 -  if (ghidgui->need_restore_crosshair)
 -    RestoreCrosshair ();
 -  ghidgui->need_restore_crosshair = FALSE;
++
++  Crosshair.On = false;
++  CrosshairOn ();
++
    ghid_screen_update ();
  }
  
@@ -1327,7 +1340,7 @@ index 2ebb1a2..c81ffbd 100644
  static void
  draw_right_cross (GdkGC *xor_gc, gint x, gint y)
  {
-@@ -873,7 +879,7 @@ draw_crosshair (GdkGC *xor_gc, gint x, gint y)
+@@ -873,7 +883,7 @@ draw_crosshair (GdkGC *xor_gc, gint x, gint y)
  #define VCD 8
  
  void
@@ -1336,7 +1349,7 @@ index 2ebb1a2..c81ffbd 100644
  {
    gint x, y;
    static gint x_prev = -1, y_prev = -1;
-@@ -897,7 +903,7 @@ ghid_show_crosshair (gboolean show)
+@@ -897,7 +907,7 @@ ghid_show_crosshair (gboolean show)
  
    gdk_gc_set_foreground (xor_gc, &cross_color);
  
@@ -1345,7 +1358,7 @@ index 2ebb1a2..c81ffbd 100644
      {
        draw_crosshair (xor_gc, x_prev, y_prev);
        if (draw_markers_prev)
-@@ -913,7 +919,7 @@ ghid_show_crosshair (gboolean show)
+@@ -913,7 +923,7 @@ ghid_show_crosshair (gboolean show)
  	}
      }
  
@@ -1354,7 +1367,7 @@ index 2ebb1a2..c81ffbd 100644
      {
        draw_crosshair (xor_gc, x, y);
        draw_markers = ghidgui->auto_pan_on && have_crosshair_attachments ();
-@@ -990,7 +996,6 @@ ghid_screen_update (void)
+@@ -990,7 +1000,6 @@ ghid_screen_update (void)
  {
    render_priv *priv = gport->render_priv;
  
@@ -1362,7 +1375,7 @@ index 2ebb1a2..c81ffbd 100644
    gdk_draw_drawable (gport->drawing_area->window, priv->bg_gc, gport->pixmap,
  		     0, 0, 0, 0, gport->width, gport->height);
    ghid_show_crosshair (TRUE);
-@@ -1003,7 +1008,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1003,7 +1012,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  {
    render_priv *priv = port->render_priv;
  
