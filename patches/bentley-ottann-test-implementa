@@ -1,5 +1,5 @@
 Bottom: a5e8c40900768e69807c0a84527c392b4a2d2a52
-Top:    318d585ee6c067c88511329a327192879a086cee
+Top:    a34badf15780633755bb426f23f7e1cf195eb9de
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:11 +0000
 
@@ -194,29 +194,29 @@ index 0000000..3f6ab7e
 +
 +AC_CHECK_FUNCS(fork waitpid raise)
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 253b5af..2b66db3 100644
+index 253b5af..30360cc 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -41,6 +41,22 @@ PCB_SRCS = \
  	box.h \
  	buffer.c \
  	buffer.h \
-+	cairo/cairo-minimal.h \
-+	cairo/cairoint-minimal.h \
-+	cairo/cairo-bentley-ottmann.c \
-+	cairo/cairo-combsort-private.h \
-+	cairo/cairo-compiler-private.h \
-+	cairo/cairo-fixed-private.h \
-+	cairo/cairo-fixed-type-private.h \
-+	cairo/cairo-freelist.c \
-+	cairo/cairo-freelist-private.h \
-+	cairo/cairo-malloc-private.h \
-+	cairo/cairo-traps.c \
-+	cairo/cairo-traps-private.h \
-+	cairo/cairo-types-private.h \
-+	cairo/cairo-wideint.c \
-+	cairo/cairo-wideint-private.h \
-+	cairo/cairo-wideint-type-private.h \
++	borast/cairo-minimal.h \
++	borast/cairoint-minimal.h \
++	borast/cairo-bentley-ottmann.c \
++	borast/cairo-combsort-private.h \
++	borast/cairo-compiler-private.h \
++	borast/cairo-fixed-private.h \
++	borast/cairo-fixed-type-private.h \
++	borast/cairo-freelist.c \
++	borast/cairo-freelist-private.h \
++	borast/cairo-malloc-private.h \
++	borast/cairo-traps.c \
++	borast/cairo-traps-private.h \
++	borast/cairo-types-private.h \
++	borast/cairo-wideint.c \
++	borast/cairo-wideint-private.h \
++	borast/cairo-wideint-type-private.h \
  	change.c \
  	change.h \
  	clip.c \
