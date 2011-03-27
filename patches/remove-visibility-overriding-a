@@ -1,5 +1,5 @@
 Bottom: 02ad2e09f95b7ad807227f6b38e36cc5a5039fc8
-Top:    02ad2e09f95b7ad807227f6b38e36cc5a5039fc8
+Top:    0f09dd09a8e2073b7edd7aff646f146b36e241f2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 20:33:59 +0100
 
@@ -12,4 +12,83 @@ so doesn't need overriding.
 
 ---
 
-
+diff --git a/src/action.c b/src/action.c
+index 00eebc9..ea9a51f 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -4058,7 +4058,7 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
+     {
+       if (Marked.status)
+ 	{
+-	  DrawMark (true);
++	  DrawMark ();
+ 	  Marked.status = false;
+ 	}
+       else
+@@ -4066,16 +4066,16 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
+ 	  Marked.status = true;
+ 	  Marked.X = Crosshair.X;
+ 	  Marked.Y = Crosshair.Y;
+-	  DrawMark (false);
++	  DrawMark ();
+ 	}
+     }
+   else if (GetFunctionID (function) == F_Center)
+     {
+-      DrawMark (true);
++      DrawMark ();
+       Marked.status = true;
+       Marked.X = Crosshair.X;
+       Marked.Y = Crosshair.Y;
+-      DrawMark (false);
++      DrawMark ();
+     }
+   return 0;
+ }
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 792d9c2..6b55cbe 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -695,7 +695,7 @@ CrosshairOn (void)
+       Crosshair.On = true;
+ #if 0
+       DrawAttached ();
+-      DrawMark (true);
++      DrawMark ();
+ #endif
+     }
+ }
+@@ -711,7 +711,7 @@ CrosshairOff (void)
+       Crosshair.On = false;
+ #if 0
+       DrawAttached ();
+-      DrawMark (true);
++      DrawMark ();
+ #endif
+     }
+ }
+@@ -1104,9 +1104,9 @@ SetCrosshairRange (LocationType MinX, LocationType MinY, LocationType MaxX,
+  * if argument is true, draw only if it is visible, otherwise draw it regardless
+  */
+ void
+-DrawMark (bool ifvis)
++DrawMark (void)
+ {
+-  if (Marked.status || !ifvis)
++  if (Marked.status)
+     {
+       gui->draw_line (Crosshair.GC,
+ 		      Marked.X - MARK_SIZE,
+diff --git a/src/crosshair.h b/src/crosshair.h
+index 87cfed9..2b9eed3 100644
+--- a/src/crosshair.h
++++ b/src/crosshair.h
+@@ -57,7 +57,7 @@ void SetCrosshairRange (LocationType, LocationType, LocationType,
+ 			LocationType);
+ void InitCrosshair (void);
+ void DestroyCrosshair (void);
+-void DrawMark (bool);
++void DrawMark (void);
+ void FitCrosshairIntoGrid (LocationType, LocationType);
+ 
+ #endif
