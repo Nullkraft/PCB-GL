@@ -298,23 +298,21 @@ ghid_use_mask (int use_it)
   switch (use_it)
     {
     case HID_MASK_BEFORE:
-      /* Write '1' to the stencil buffer where the solder-mask is drawn. */
+      /* Ignore, this renderer doesn't use it */
+      return;
+
+    case HID_MASK_CLEAR:
+      /* Write '1' to the stencil buffer where the solder-mask should not be drawn. */
       glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
       glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
       glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
       glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
       break;
 
-    case HID_MASK_CLEAR:
-      /* Drawing operations clear the stencil buffer to '0' */
-      glStencilFunc (GL_ALWAYS, 0, 1);            // Test always passes, value written 0
-      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 0)
-      break;
-
     case HID_MASK_AFTER:
-      /* Drawing operations as masked to areas where the stencil buffer is '1' */
+      /* Drawing operations as masked to areas where the stencil buffer is '0' */
       glColorMask (1, 1, 1, 1);                   // Enable drawing of r, g, b & a
-      glStencilFunc (GL_EQUAL, 1, 1);             // Draw only where stencil buffer is 1
+      glStencilFunc (GL_EQUAL, 0, 1);             // Draw only where stencil buffer is 1
       glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    // Stencil buffer read only
       break;
 
