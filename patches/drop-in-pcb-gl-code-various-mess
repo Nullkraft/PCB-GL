@@ -1,5 +1,5 @@
 Bottom: 42a124064cbe96585b4e76f2f802bd5a7cb7358b
-Top:    f9ef4835cd7e2114c1ea350e11a451359964c503
+Top:    9d0416103b45249fd4d7c7c3aa9acfd40e66434a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:02 +0000
 
@@ -755,10 +755,10 @@ index 0000000..e69a6b7
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..5541056
+index 0000000..b2a77e0
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -0,0 +1,1219 @@
+@@ -0,0 +1,1225 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -1372,10 +1372,16 @@ index 0000000..5541056
 +void
 +ghid_invalidate_all ()
 +{
-+  if (ghidgui->need_restore_crosshair)
-+    RestoreCrosshair ();
-+  ghidgui->need_restore_crosshair = FALSE;
 +  ghid_draw_area_update (gport, NULL);
++}
++
++void
++ghid_notify_crosshair_change (bool changes_complete)
++{
++  /* FIXME: We could just invalidate the bounds of the crosshair attached objects? */
++  /* FIXME: Seems we're getting prodded before the GUI is up! */
++  if (gport->drawing_area)
++    ghid_invalidate_all ();
 +}
 +
 +static void
