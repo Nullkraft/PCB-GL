@@ -1,4 +1,4 @@
-Bottom: f2ca7c31a22bb68727b483960d75cd366e7968e7
+Bottom: 966687851f25171eaaf73f98251631974d3bba95
 Top:    6bd1a5d001a7a21780912b5409bace904e1bebd6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:02 +0000
@@ -1994,7 +1994,7 @@ index 0b84548..ad1120c 100644
    0,				/* poly dicer */
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index eb1e853..912e369 100644
+index 97ebb1c..912e369 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -474,7 +474,7 @@ void ghid_logv (const char *fmt, va_list args);
@@ -2006,14 +2006,3 @@ index eb1e853..912e369 100644
  int ghid_set_layer (const char *name, int group, int empty);
  hidGC ghid_make_gc (void);
  void ghid_destroy_gc (hidGC);
-@@ -496,7 +496,10 @@ void ghid_invalidate_lr (int left, int right, int top, int bottom);
- void ghid_invalidate_all ();
- void ghid_show_crosshair (gboolean show);
- void ghid_init_renderer (int *, char ***, GHidPort *);
-+void ghid_init_drawing_widget (GtkWidget *widget, GHidPort *);
- void ghid_drawing_area_configure_hook (GHidPort *port);
-+gboolean ghid_start_drawing (GHidPort *port);
-+void ghid_end_drawing (GHidPort *port);
- void ghid_screen_update (void);
- gboolean ghid_drawing_area_expose_cb (GtkWidget *, GdkEventExpose *,
-                                       GHidPort *);
