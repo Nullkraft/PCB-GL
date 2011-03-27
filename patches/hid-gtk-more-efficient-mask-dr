@@ -1,5 +1,5 @@
-Bottom: 08a68f7b8420049f4ba059832e3afd7666bc1f59
-Top:    ec5fd595dbc7ad2aa6e105e65257fb2c886f7c50
+Bottom: 9e292c45bfb3446c3684e19e3d503834a794798a
+Top:    dba829069ed456212141d039dad4c6fde92935b5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 17:25:04 +0100
 
@@ -9,7 +9,7 @@ hid/gtk: More efficient mask drawing
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index d5c498a..bed42e1 100644
+index 6c7a2f5..40b11ec 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -788,11 +788,9 @@ DrawMask (BoxType * screen)
@@ -41,10 +41,10 @@ index d5c498a..bed42e1 100644
  
  /* static */ void
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 72d588f..37a2ce6 100644
+index ad2bc03..df0f6e7 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -396,31 +396,29 @@ ghid_use_mask (int use_it)
+@@ -394,31 +394,29 @@ ghid_use_mask (int use_it)
    switch (use_it)
      {
      case HID_MASK_BEFORE:
@@ -87,7 +87,7 @@ index 72d588f..37a2ce6 100644
        glDisable (GL_STENCIL_TEST);                // Disable Stencil test
        break;
      }
-@@ -1390,10 +1388,6 @@ DrawMask (BoxType * screen)
+@@ -1378,10 +1376,6 @@ DrawMask (BoxType * screen)
        gui->set_color (Output.pmGC, "erase");
      }
  
