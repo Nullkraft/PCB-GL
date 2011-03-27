@@ -1,7 +1,7 @@
-Bottom: 4938ed78f99e81a4b007892f838cd112aa2bdbf4
-Top:    c8c7a28ebe1ca91a19568b5b512dd7a73f0a3d70
+Bottom: e4b23e4bbcf01fb63942db8699ad51522416c076
+Top:    6b2d2145f113b77bb860372034f88dfa47cd1fa7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-27 02:35:31 +0100
+Date:   2011-03-27 15:18:52 +0100
 
 Add support for a "poured" object.
 
@@ -35,7 +35,7 @@ index cd6f4f9..4ab3813 100755
  						/* an element */
  #define	MAX_LIBRARY_LINE_LENGTH		255	/* maximum line length in the */
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 2b66db3..6b6bb89 100644
+index 0ddac76..fabb0ff 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -126,6 +126,8 @@ PCB_SRCS = \
