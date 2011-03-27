@@ -1358,10 +1358,6 @@ DrawMask (BoxType * screen)
       gui->set_color (Output.pmGC, "erase");
     }
 
-  gui->use_mask (HID_MASK_BEFORE);
-  gui->set_color (out->fgGC, PCB->MaskColor);
-  gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
-
   gui->use_mask (HID_MASK_CLEAR);
   r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback_solid, &info);
   r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback_solid, &info);
