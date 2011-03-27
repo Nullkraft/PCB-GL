@@ -1,4 +1,4 @@
-Bottom: b3d68627727f8c5cf7cc1b033b9fa5c00d9354a4
+Bottom: eb6940eb952f9cdcfb768a51e3ff38ce5f14f2a5
 Top:    61ac419200218d5ab4d93e7b88de205fa26797e6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:02 +0000
@@ -77,32 +77,6 @@ index 1e4cf58..9429e18 100644
  # If we are building on win32, then compile in some icons for the
  # desktop and application toolbar
  if WIN32
-diff --git a/src/crosshair.c b/src/crosshair.c
-index 2d4e26d..60318a5 100644
---- a/src/crosshair.c
-+++ b/src/crosshair.c
-@@ -693,8 +693,10 @@ CrosshairOn (bool BlockToo)
-   if (!Crosshair.On)
-     {
-       Crosshair.On = true;
-+#if 0
-       DrawAttached (BlockToo);
-       DrawMark (true);
-+#endif
-     }
- }
- 
-@@ -707,8 +709,10 @@ CrosshairOff (bool BlockToo)
-   if (Crosshair.On)
-     {
-       Crosshair.On = false;
-+#if 0
-       DrawAttached (BlockToo);
-       DrawMark (true);
-+#endif
-     }
- }
- 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
 new file mode 100644
 index 0000000..9b35674
