@@ -1,0 +1,14 @@
+Bottom: 1ce657e21ebec0145323ef55078905d41743cc63
+Top:    1ce657e21ebec0145323ef55078905d41743cc63
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-27 00:06:36 +0000
+
+hid/gtk: Add hooks to tell the render when we start/stop drawing
+
+This is necessary if the renderer requires certain state to be configured
+before its drawing calls can be operated.
+
+
+---
+
+
