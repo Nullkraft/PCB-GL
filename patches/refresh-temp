@@ -1,0 +1,27 @@
+Bottom: 466ed2ce48fce496644194268b2087a30dc54834
+Top:    764bb404ee79a2864fbda50a2f1c8651d4b11063
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-27 17:58:50 +0100
+
+Refresh of drop-in-pcb-gl-code-various-mess
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index f1384d7..429fbf8 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -282,6 +282,13 @@ ghid_draw_bg_image (void)
+ void
+ ghid_use_mask (int use_it)
+ {
++  /* NOTE: We are assuming the stencil buffer bit plane is clear at the start
++   *       of a masked drawing operation.
++   *
++   *       For our current usage we know that it will start clean at the
++   *       beginning of the frame - and that the mask is only used at most
++   *       once during rendering (for the solder-mask layer).
++   */
+ 
+   /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
+   if (use_it == HID_LIVE_DRAWING ||
