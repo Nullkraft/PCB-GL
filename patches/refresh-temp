@@ -1,0 +1,76 @@
+Bottom: 192630f21d4a161fad0c186736b40774a5017d9e
+Top:    1ce657e21ebec0145323ef55078905d41743cc63
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-27 00:05:25 +0000
+
+Refresh of hid-gtk-add-hooks-for-the-rend
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index d5b2f82..3b012c3 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -947,6 +947,11 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+ }
+ 
+ void
++ghid_init_drawing_widget (GtkWidget *widget, GHidPort *port)
++{
++}
++
++void
+ ghid_drawing_area_configure_hook (GHidPort *port)
+ {
+   static int done_once = 0;
+diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
+index 5b8d20a..6cd8069 100644
+--- a/src/hid/gtk/gui-pinout-preview.c
++++ b/src/hid/gtk/gui-pinout-preview.c
+@@ -159,6 +159,26 @@ enum
+ static GObjectClass *ghid_pinout_preview_parent_class = NULL;
+ 
+ 
++/*! \brief GObject constructed
++ *
++ *  \par Function Description
++ *  Initialise the pinout preview object once it is constructed.
++ *  Chain up in case the parent class wants to do anything too.
++ *
++ *  \param [in] object  The pinout preview object
++ */
++static void
++ghid_pinout_preview_constructed (GObject *object)
++{
++  /* chain up to the parent class */
++  if (G_OBJECT_CLASS (ghid_pinout_preview_parent_class)->constructed != NULL)
++    G_OBJECT_CLASS (ghid_pinout_preview_parent_class)->constructed (object);
++
++  ghid_init_drawing_widget (GTK_WIDGET (object), gport);
++}
++
++
++
+ /*! \brief GObject finalise handler
+  *
+  *  \par Function Description
+@@ -253,6 +273,7 @@ ghid_pinout_preview_class_init (GhidPinoutPreviewClass * klass)
+   gobject_class->finalize = ghid_pinout_preview_finalize;
+   gobject_class->set_property = ghid_pinout_preview_set_property;
+   gobject_class->get_property = ghid_pinout_preview_get_property;
++  gobject_class->constructed = ghid_pinout_preview_constructed;
+ 
+   gtk_widget_class->expose_event = ghid_pinout_preview_expose;
+ 
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 1808065..2098c27 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -2311,6 +2311,7 @@ ghid_build_pcb_top_window (void)
+   gtk_box_pack_start (GTK_BOX (hbox), viewport, TRUE, TRUE, 0);
+ 
+   gport->drawing_area = gtk_drawing_area_new ();
++  ghid_init_drawing_widget (gport->drawing_area, gport);
+ 
+   gtk_widget_add_events (gport->drawing_area, GDK_EXPOSURE_MASK
+ 			 | GDK_LEAVE_NOTIFY_MASK | GDK_ENTER_NOTIFY_MASK
