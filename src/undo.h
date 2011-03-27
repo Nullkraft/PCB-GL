@@ -47,7 +47,7 @@ void ClearUndoList (bool);
 void MoveObjectToRemoveUndoList (int, void *, void *, void *);
 void AddObjectToRemovePointUndoList (int, void *, void *, Cardinal);
 void AddObjectToInsertPointUndoList (int, void *, void *, void *);
-void AddObjectToRemoveContourUndoList (int, LayerType *, PolygonType *);
+void AddObjectToRemoveContourUndoList (int, LayerType *, PourType *);
 void AddObjectToInsertContourUndoList (int, LayerType *, PolygonType *);
 void AddObjectToMoveUndoList (int, void *, void *, void *,
 			      LocationType, LocationType);
@@ -63,7 +63,7 @@ void AddObjectTo2ndSizeUndoList (int, void *, void *, void *);
 void AddObjectToClearSizeUndoList (int, void *, void *, void *);
 void AddObjectToMaskSizeUndoList (int, void *, void *, void *);
 void AddObjectToChangeAnglesUndoList (int, void *, void *, void *);
-void AddObjectToClearPolyUndoList (int, void *, void *, void *, bool);
+void AddObjectToClearPourUndoList (int, void *, void *, void *, bool);
 void AddLayerChangeToUndoList (int, int);
 void AddNetlistLibToUndoList (LibraryTypePtr);
 void LockUndo (void);
