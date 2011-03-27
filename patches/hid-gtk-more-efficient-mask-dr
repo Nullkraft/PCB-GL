@@ -1,5 +1,5 @@
 Bottom: 08a68f7b8420049f4ba059832e3afd7666bc1f59
-Top:    c3b8a9f7b4a4189fe883bb0c3b74924becad4c51
+Top:    ec5fd595dbc7ad2aa6e105e65257fb2c886f7c50
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 17:25:04 +0100
 
@@ -41,32 +41,33 @@ index d5c498a..bed42e1 100644
  
  /* static */ void
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 72d588f..a8cce90 100644
+index 72d588f..37a2ce6 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -396,31 +396,28 @@ ghid_use_mask (int use_it)
+@@ -396,31 +396,29 @@ ghid_use_mask (int use_it)
    switch (use_it)
      {
      case HID_MASK_BEFORE:
 -      /* Write '1' to the stencil buffer where the solder-mask is drawn. */
 -      glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
 -      glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
--      stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
--      glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  // Always pass stencil test, write stencil_bit
--      glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
--      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
-       break;
- 
-     case HID_MASK_CLEAR:
--      /* Drawing operations clear the stencil buffer to '0' */
--      glStencilFunc (GL_ALWAYS, 0, stencil_bit);  // Always pass stencil test, write 0
--      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 0)
++      /* Ignore, this renderer doesn't use it */
++      return;
++
++    case HID_MASK_CLEAR:
 +      /* Write '1' to the stencil buffer where the solder-mask should not be drawn. */
 +      glColorMask (0, 0, 0, 0);                             // Disable writting in color buffer
 +      glEnable (GL_STENCIL_TEST);                           // Enable Stencil test
-+      stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
-+      glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  // Always pass stencil test, write stencil_bit
-+      glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
+       stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
+       glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  // Always pass stencil test, write stencil_bit
+       glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
+-      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
+-      break;
+-
+-    case HID_MASK_CLEAR:
+-      /* Drawing operations clear the stencil buffer to '0' */
+-      glStencilFunc (GL_ALWAYS, 0, stencil_bit);  // Always pass stencil test, write 0
+-      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 0)
 +      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);           // Stencil pass => replace stencil value (with 1)
        break;
  
@@ -86,7 +87,7 @@ index 72d588f..a8cce90 100644
        glDisable (GL_STENCIL_TEST);                // Disable Stencil test
        break;
      }
-@@ -1390,10 +1387,6 @@ DrawMask (BoxType * screen)
+@@ -1390,10 +1388,6 @@ DrawMask (BoxType * screen)
        gui->set_color (Output.pmGC, "erase");
      }
  
