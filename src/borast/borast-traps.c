@@ -37,21 +37,21 @@
  * 2002-07-15: Converted from XRenderCompositeDoublePoly to #cairo_trap_t. Carl D. Worth
  */
 
-#include "cairoint-minimal.h"
-#include "cairo-malloc-private.h"
-#include "cairo-traps-private.h"
-#include "cairo-fixed-private.h"
+#include "borastint-minimal.h"
+#include "borast-malloc-private.h"
+#include "borast-traps-private.h"
+#include "borast-fixed-private.h"
 
-#define _cairo_error(x) (x)
+#define _borast_error(x) (x)
 
 /* private functions */
 
 void
-_cairo_traps_init (cairo_traps_t *traps)
+_borast_traps_init (borast_traps_t *traps)
 {
-    VG (VALGRIND_MAKE_MEM_UNDEFINED (traps, sizeof (cairo_traps_t)));
+    VG (VALGRIND_MAKE_MEM_UNDEFINED (traps, sizeof (borast_traps_t)));
 
-    traps->status = CAIRO_STATUS_SUCCESS;
+    traps->status = BORAST_STATUS_SUCCESS;
 
     traps->maybe_region = 1;
     traps->is_rectilinear = 0;
@@ -67,8 +67,8 @@ _cairo_traps_init (cairo_traps_t *traps)
 }
 
 void
-_cairo_traps_limit (cairo_traps_t	*traps,
-		    const cairo_box_t	*limits,
+_borast_traps_limit (borast_traps_t	*traps,
+		    const borast_box_t	*limits,
 		    int			 num_limits)
 {
     traps->limits = limits;
@@ -76,9 +76,9 @@ _cairo_traps_limit (cairo_traps_t	*traps,
 }
 
 void
-_cairo_traps_clear (cairo_traps_t *traps)
+_borast_traps_clear (borast_traps_t *traps)
 {
-    traps->status = CAIRO_STATUS_SUCCESS;
+    traps->status = BORAST_STATUS_SUCCESS;
 
     traps->maybe_region = 1;
     traps->is_rectilinear = 0;
@@ -89,32 +89,32 @@ _cairo_traps_clear (cairo_traps_t *traps)
 }
 
 void
-_cairo_traps_fini (cairo_traps_t *traps)
+_borast_traps_fini (borast_traps_t *traps)
 {
     if (traps->traps != traps->traps_embedded)
 	free (traps->traps);
 
-    VG (VALGRIND_MAKE_MEM_NOACCESS (traps, sizeof (cairo_traps_t)));
+    VG (VALGRIND_MAKE_MEM_NOACCESS (traps, sizeof (borast_traps_t)));
 }
 
 /* make room for at least one more trap */
-static cairo_bool_t
-_cairo_traps_grow (cairo_traps_t *traps)
+static borast_bool_t
+_borast_traps_grow (borast_traps_t *traps)
 {
-    cairo_trapezoid_t *new_traps;
+    borast_trapezoid_t *new_traps;
     int new_size = 4 * traps->traps_size;
 
     if (traps->traps == traps->traps_embedded) {
-	new_traps = _cairo_malloc_ab (new_size, sizeof (cairo_trapezoid_t));
+	new_traps = _borast_malloc_ab (new_size, sizeof (borast_trapezoid_t));
 	if (new_traps != NULL)
 	    memcpy (new_traps, traps->traps, sizeof (traps->traps_embedded));
     } else {
-	new_traps = _cairo_realloc_ab (traps->traps,
-	                               new_size, sizeof (cairo_trapezoid_t));
+	new_traps = _borast_realloc_ab (traps->traps,
+	                               new_size, sizeof (borast_trapezoid_t));
     }
 
     if (unlikely (new_traps == NULL)) {
-	traps->status = _cairo_error (CAIRO_STATUS_NO_MEMORY);
+	traps->status = _borast_error (BORAST_STATUS_NO_MEMORY);
 	return FALSE;
     }
 
@@ -124,14 +124,14 @@ _cairo_traps_grow (cairo_traps_t *traps)
 }
 
 void
-_cairo_traps_add_trap (cairo_traps_t *traps,
-		       cairo_fixed_t top, cairo_fixed_t bottom,
-		       cairo_line_t *left, cairo_line_t *right)
+_borast_traps_add_trap (borast_traps_t *traps,
+		       borast_fixed_t top, borast_fixed_t bottom,
+		       borast_line_t *left, borast_line_t *right)
 {
-    cairo_trapezoid_t *trap;
+    borast_trapezoid_t *trap;
 
     if (unlikely (traps->num_traps == traps->traps_size)) {
-	if (unlikely (! _cairo_traps_grow (traps)))
+	if (unlikely (! _borast_traps_grow (traps)))
 	    return;
     }
 
@@ -143,27 +143,27 @@ _cairo_traps_add_trap (cairo_traps_t *traps,
 }
 
 /**
- * _cairo_traps_init_box:
- * @traps: a #cairo_traps_t
+ * _borast_traps_init_box:
+ * @traps: a #borast_traps_t
  * @box: an array box that will each be converted to a single trapezoid
  *       to store in @traps.
  *
- * Initializes a #cairo_traps_t to contain an array of rectangular
+ * Initializes a #borast_traps_t to contain an array of rectangular
  * trapezoids.
  **/
-cairo_status_t
-_cairo_traps_init_boxes (cairo_traps_t	    *traps,
-		         const cairo_box_t  *boxes,
+borast_status_t
+_borast_traps_init_boxes (borast_traps_t	    *traps,
+		         const borast_box_t  *boxes,
 			 int		     num_boxes)
 {
-    cairo_trapezoid_t *trap;
+    borast_trapezoid_t *trap;
 
-    _cairo_traps_init (traps);
+    _borast_traps_init (traps);
 
     while (traps->traps_size < num_boxes) {
-	if (unlikely (! _cairo_traps_grow (traps))) {
-	    _cairo_traps_fini (traps);
-	    return _cairo_error (CAIRO_STATUS_NO_MEMORY);
+	if (unlikely (! _borast_traps_grow (traps))) {
+	    _borast_traps_fini (traps);
+	    return _borast_error (BORAST_STATUS_NO_MEMORY);
 	}
     }
 
@@ -185,32 +185,32 @@ _cairo_traps_init_boxes (cairo_traps_t	    *traps,
 	trap->right.p2   = boxes->p2;
 
 	if (traps->maybe_region) {
-	    traps->maybe_region  = _cairo_fixed_is_integer (boxes->p1.x) &&
-		                   _cairo_fixed_is_integer (boxes->p1.y) &&
-		                   _cairo_fixed_is_integer (boxes->p2.x) &&
-		                   _cairo_fixed_is_integer (boxes->p2.y);
+	    traps->maybe_region  = _borast_fixed_is_integer (boxes->p1.x) &&
+		                   _borast_fixed_is_integer (boxes->p1.y) &&
+		                   _borast_fixed_is_integer (boxes->p2.x) &&
+		                   _borast_fixed_is_integer (boxes->p2.y);
 	}
 
 	trap++, boxes++;
     }
 
-    return CAIRO_STATUS_SUCCESS;
+    return BORAST_STATUS_SUCCESS;
 }
 
-cairo_status_t
-_cairo_traps_tessellate_rectangle (cairo_traps_t *traps,
-				   const cairo_point_t *top_left,
-				   const cairo_point_t *bottom_right)
+borast_status_t
+_borast_traps_tessellate_rectangle (borast_traps_t *traps,
+				   const borast_point_t *top_left,
+				   const borast_point_t *bottom_right)
 {
-    cairo_line_t left;
-    cairo_line_t right;
-    cairo_fixed_t top, bottom;
+    borast_line_t left;
+    borast_line_t right;
+    borast_fixed_t top, bottom;
 
     if (top_left->y == bottom_right->y)
-	return CAIRO_STATUS_SUCCESS;
+	return BORAST_STATUS_SUCCESS;
 
     if (top_left->x == bottom_right->x)
-	return CAIRO_STATUS_SUCCESS;
+	return BORAST_STATUS_SUCCESS;
 
      left.p1.x =  left.p2.x = top_left->x;
      left.p1.y = right.p1.y = top_left->y;
@@ -221,7 +221,7 @@ _cairo_traps_tessellate_rectangle (cairo_traps_t *traps,
      bottom = bottom_right->y;
 
     if (traps->num_limits) {
-	cairo_bool_t reversed;
+	borast_bool_t reversed;
 	int n;
 
 	/* support counter-clockwise winding for rectangular tessellation */
@@ -232,9 +232,9 @@ _cairo_traps_tessellate_rectangle (cairo_traps_t *traps,
 	}
 
 	for (n = 0; n < traps->num_limits; n++) {
-	    const cairo_box_t *limits = &traps->limits[n];
-	    cairo_line_t _left, _right;
-	    cairo_fixed_t _top, _bottom;
+	    const borast_box_t *limits = &traps->limits[n];
+	    borast_line_t _left, _right;
+	    borast_fixed_t _top, _bottom;
 
 	    if (top >= limits->p2.y)
 		continue;
@@ -280,31 +280,31 @@ _cairo_traps_tessellate_rectangle (cairo_traps_t *traps,
 		continue;
 
 	    if (reversed)
-		_cairo_traps_add_trap (traps, _top, _bottom, &_right, &_left);
+		_borast_traps_add_trap (traps, _top, _bottom, &_right, &_left);
 	    else
-		_cairo_traps_add_trap (traps, _top, _bottom, &_left, &_right);
+		_borast_traps_add_trap (traps, _top, _bottom, &_left, &_right);
 	}
     } else {
-	_cairo_traps_add_trap (traps, top, bottom, &left, &right);
+	_borast_traps_add_trap (traps, top, bottom, &left, &right);
     }
 
     return traps->status;
 }
 
 void
-_cairo_traps_translate (cairo_traps_t *traps, int x, int y)
+_borast_traps_translate (borast_traps_t *traps, int x, int y)
 {
-    cairo_fixed_t xoff, yoff;
-    cairo_trapezoid_t *t;
+    borast_fixed_t xoff, yoff;
+    borast_trapezoid_t *t;
     int i;
 
-    /* Ugh. The cairo_composite/(Render) interface doesn't allow
+    /* Ugh. The borast_composite/(Render) interface doesn't allow
        an offset for the trapezoids. Need to manually shift all
        the coordinates to align with the offset origin of the
        intermediate surface. */
 
-    xoff = _cairo_fixed_from_int (x);
-    yoff = _cairo_fixed_from_int (y);
+    xoff = _borast_fixed_from_int (x);
+    yoff = _borast_fixed_from_int (y);
 
     for (i = 0, t = traps->traps; i < traps->num_traps; i++, t++) {
 	t->top += yoff;
@@ -321,15 +321,15 @@ _cairo_traps_translate (cairo_traps_t *traps, int x, int y)
 }
 
 void
-_cairo_trapezoid_array_translate_and_scale (cairo_trapezoid_t *offset_traps,
-                                            cairo_trapezoid_t *src_traps,
+_borast_trapezoid_array_translate_and_scale (borast_trapezoid_t *offset_traps,
+                                            borast_trapezoid_t *src_traps,
                                             int num_traps,
                                             double tx, double ty,
                                             double sx, double sy)
 {
     int i;
-    cairo_fixed_t xoff = _cairo_fixed_from_double (tx);
-    cairo_fixed_t yoff = _cairo_fixed_from_double (ty);
+    borast_fixed_t xoff = _borast_fixed_from_double (tx);
+    borast_fixed_t yoff = _borast_fixed_from_double (ty);
 
     if (sx == 1.0 && sy == 1.0) {
         for (i = 0; i < num_traps; i++) {
@@ -345,34 +345,34 @@ _cairo_trapezoid_array_translate_and_scale (cairo_trapezoid_t *offset_traps,
             offset_traps[i].right.p2.y = src_traps[i].right.p2.y + yoff;
         }
     } else {
-        cairo_fixed_t xsc = _cairo_fixed_from_double (sx);
-        cairo_fixed_t ysc = _cairo_fixed_from_double (sy);
+        borast_fixed_t xsc = _borast_fixed_from_double (sx);
+        borast_fixed_t ysc = _borast_fixed_from_double (sy);
 
         for (i = 0; i < num_traps; i++) {
-            offset_traps[i].top = _cairo_fixed_mul (src_traps[i].top + yoff, ysc);
-            offset_traps[i].bottom = _cairo_fixed_mul (src_traps[i].bottom + yoff, ysc);
-            offset_traps[i].left.p1.x = _cairo_fixed_mul (src_traps[i].left.p1.x + xoff, xsc);
-            offset_traps[i].left.p1.y = _cairo_fixed_mul (src_traps[i].left.p1.y + yoff, ysc);
-            offset_traps[i].left.p2.x = _cairo_fixed_mul (src_traps[i].left.p2.x + xoff, xsc);
-            offset_traps[i].left.p2.y = _cairo_fixed_mul (src_traps[i].left.p2.y + yoff, ysc);
-            offset_traps[i].right.p1.x = _cairo_fixed_mul (src_traps[i].right.p1.x + xoff, xsc);
-            offset_traps[i].right.p1.y = _cairo_fixed_mul (src_traps[i].right.p1.y + yoff, ysc);
-            offset_traps[i].right.p2.x = _cairo_fixed_mul (src_traps[i].right.p2.x + xoff, xsc);
-            offset_traps[i].right.p2.y = _cairo_fixed_mul (src_traps[i].right.p2.y + yoff, ysc);
+            offset_traps[i].top = _borast_fixed_mul (src_traps[i].top + yoff, ysc);
+            offset_traps[i].bottom = _borast_fixed_mul (src_traps[i].bottom + yoff, ysc);
+            offset_traps[i].left.p1.x = _borast_fixed_mul (src_traps[i].left.p1.x + xoff, xsc);
+            offset_traps[i].left.p1.y = _borast_fixed_mul (src_traps[i].left.p1.y + yoff, ysc);
+            offset_traps[i].left.p2.x = _borast_fixed_mul (src_traps[i].left.p2.x + xoff, xsc);
+            offset_traps[i].left.p2.y = _borast_fixed_mul (src_traps[i].left.p2.y + yoff, ysc);
+            offset_traps[i].right.p1.x = _borast_fixed_mul (src_traps[i].right.p1.x + xoff, xsc);
+            offset_traps[i].right.p1.y = _borast_fixed_mul (src_traps[i].right.p1.y + yoff, ysc);
+            offset_traps[i].right.p2.x = _borast_fixed_mul (src_traps[i].right.p2.x + xoff, xsc);
+            offset_traps[i].right.p2.y = _borast_fixed_mul (src_traps[i].right.p2.y + yoff, ysc);
         }
     }
 }
 
-static cairo_fixed_t
-_line_compute_intersection_x_for_y (const cairo_line_t *line,
-				    cairo_fixed_t y)
+static borast_fixed_t
+_line_compute_intersection_x_for_y (const borast_line_t *line,
+				    borast_fixed_t y)
 {
-    return _cairo_edge_compute_intersection_x_for_y (&line->p1, &line->p2, y);
+    return _borast_edge_compute_intersection_x_for_y (&line->p1, &line->p2, y);
 }
 
 void
-_cairo_traps_extents (const cairo_traps_t *traps,
-		      cairo_box_t *extents)
+_borast_traps_extents (const borast_traps_t *traps,
+		      borast_box_t *extents)
 {
     int i;
 
@@ -386,7 +386,7 @@ _cairo_traps_extents (const cairo_traps_t *traps,
     extents->p2.x = extents->p2.y = INT32_MIN;
 
     for (i = 0; i < traps->num_traps; i++) {
-	const cairo_trapezoid_t *trap =  &traps->traps[i];
+	const borast_trapezoid_t *trap =  &traps->traps[i];
 
 	if (trap->top < extents->p1.y)
 	    extents->p1.y = trap->top;
@@ -394,7 +394,7 @@ _cairo_traps_extents (const cairo_traps_t *traps,
 	    extents->p2.y = trap->bottom;
 
 	if (trap->left.p1.x < extents->p1.x) {
-	    cairo_fixed_t x = trap->left.p1.x;
+	    borast_fixed_t x = trap->left.p1.x;
 	    if (trap->top != trap->left.p1.y) {
 		x = _line_compute_intersection_x_for_y (&trap->left,
 							trap->top);
@@ -404,7 +404,7 @@ _cairo_traps_extents (const cairo_traps_t *traps,
 		extents->p1.x = x;
 	}
 	if (trap->left.p2.x < extents->p1.x) {
-	    cairo_fixed_t x = trap->left.p2.x;
+	    borast_fixed_t x = trap->left.p2.x;
 	    if (trap->bottom != trap->left.p2.y) {
 		x = _line_compute_intersection_x_for_y (&trap->left,
 							trap->bottom);
@@ -415,7 +415,7 @@ _cairo_traps_extents (const cairo_traps_t *traps,
 	}
 
 	if (trap->right.p1.x > extents->p2.x) {
-	    cairo_fixed_t x = trap->right.p1.x;
+	    borast_fixed_t x = trap->right.p1.x;
 	    if (trap->top != trap->right.p1.y) {
 		x = _line_compute_intersection_x_for_y (&trap->right,
 							trap->top);
@@ -425,7 +425,7 @@ _cairo_traps_extents (const cairo_traps_t *traps,
 		extents->p2.x = x;
 	}
 	if (trap->right.p2.x > extents->p2.x) {
-	    cairo_fixed_t x = trap->right.p2.x;
+	    borast_fixed_t x = trap->right.p2.x;
 	    if (trap->bottom != trap->right.p2.y) {
 		x = _line_compute_intersection_x_for_y (&trap->right,
 							trap->bottom);

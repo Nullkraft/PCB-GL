@@ -637,11 +637,11 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box, double scale
   PLINE *contour;
   struct do_hole_info info;
   int stencil_bit;
-  cairo_traps_t traps;
+  borast_traps_t traps;
 
-  _cairo_traps_init (&traps);
+  _borast_traps_init (&traps);
   bo_poly_to_traps (poly->Clipped, &traps);
-  _cairo_traps_fini (&traps);
+  _borast_traps_fini (&traps);
 
   return;
 

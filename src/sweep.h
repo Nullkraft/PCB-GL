@@ -1,4 +1,4 @@
-#include "borast/cairo-traps-private.h"
+#include "borast/borast-traps-private.h"
 
-cairo_status_t bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps);
-cairo_status_t bo_contour_to_traps (PLINE *contour, cairo_traps_t *traps);
+borast_status_t bo_poly_to_traps (POLYAREA *poly, borast_traps_t *traps);
+borast_status_t bo_contour_to_traps (PLINE *contour, borast_traps_t *traps);

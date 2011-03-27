@@ -43,19 +43,19 @@
  * existing published interfaces. cworth@cworth.org
  */
 
-#ifndef _CAIRO_TRAPS_PRIVATE_H_
-#define _CAIRO_TRAPS_PRIVATE_H_
+#ifndef _BORAST_TRAPS_PRIVATE_H_
+#define _BORAST_TRAPS_PRIVATE_H_
 
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#include "cairo-types-private.h"
+#include "borast-types-private.h"
 
-typedef struct _cairo_traps {
-    cairo_status_t status;
+typedef struct _borast_traps {
+    borast_status_t status;
 
-    const cairo_box_t *limits;
+    const borast_box_t *limits;
     int num_limits;
 
     unsigned int maybe_region : 1; /* hint: 0 implies that it cannot be */
@@ -65,86 +65,86 @@ typedef struct _cairo_traps {
 
     int num_traps;
     int traps_size;
-    cairo_trapezoid_t *traps;
-    cairo_trapezoid_t  traps_embedded[16];
-} cairo_traps_t;
+    borast_trapezoid_t *traps;
+    borast_trapezoid_t  traps_embedded[16];
+} borast_traps_t;
 
 
-/* cairo-traps.c */
-cairo_private void
-_cairo_traps_init (cairo_traps_t *traps);
+/* borast-traps.c */
+borast_private void
+_borast_traps_init (borast_traps_t *traps);
 
-cairo_private void
-_cairo_traps_limit (cairo_traps_t	*traps,
-		    const cairo_box_t	*boxes,
+borast_private void
+_borast_traps_limit (borast_traps_t	*traps,
+		    const borast_box_t	*boxes,
 		    int			 num_boxes);
 
-cairo_private cairo_status_t
-_cairo_traps_init_boxes (cairo_traps_t	    *traps,
-			 const cairo_box_t    *boxes,
+borast_private borast_status_t
+_borast_traps_init_boxes (borast_traps_t	    *traps,
+			 const borast_box_t    *boxes,
 			 int		     num_boxes);
 
-cairo_private void
-_cairo_traps_clear (cairo_traps_t *traps);
+borast_private void
+_borast_traps_clear (borast_traps_t *traps);
 
-cairo_private void
-_cairo_traps_fini (cairo_traps_t *traps);
+borast_private void
+_borast_traps_fini (borast_traps_t *traps);
 
-#define _cairo_traps_status(T) (T)->status
+#define _borast_traps_status(T) (T)->status
 
-cairo_private void
-_cairo_traps_translate (cairo_traps_t *traps, int x, int y);
+borast_private void
+_borast_traps_translate (borast_traps_t *traps, int x, int y);
 
-cairo_private cairo_status_t
-_cairo_traps_tessellate_rectangle (cairo_traps_t *traps,
-				   const cairo_point_t *top_left,
-				   const cairo_point_t *bottom_right);
+borast_private borast_status_t
+_borast_traps_tessellate_rectangle (borast_traps_t *traps,
+				   const borast_point_t *top_left,
+				   const borast_point_t *bottom_right);
 
-cairo_private void
-_cairo_traps_add_trap (cairo_traps_t *traps,
-		       cairo_fixed_t top, cairo_fixed_t bottom,
-		       cairo_line_t *left, cairo_line_t *right);
+borast_private void
+_borast_traps_add_trap (borast_traps_t *traps,
+		       borast_fixed_t top, borast_fixed_t bottom,
+		       borast_line_t *left, borast_line_t *right);
 
-cairo_private cairo_status_t
-_cairo_bentley_ottmann_tessellate_rectilinear_polygon (cairo_traps_t	 *traps,
-						       const cairo_polygon_t *polygon,
-						       cairo_fill_rule_t	  fill_rule);
+borast_private borast_status_t
+_borast_bentley_ottmann_tessellate_rectilinear_polygon (borast_traps_t	 *traps,
+						       const borast_polygon_t *polygon,
+						       borast_fill_rule_t	  fill_rule);
 
-cairo_private cairo_status_t
-_cairo_bentley_ottmann_tessellate_polygon (cairo_traps_t         *traps,
-					   const cairo_polygon_t *polygon);
+borast_private borast_status_t
+_borast_bentley_ottmann_tessellate_polygon (borast_traps_t         *traps,
+					   const borast_polygon_t *polygon);
 
-cairo_private cairo_status_t
-_cairo_bentley_ottmann_tessellate_traps (cairo_traps_t *traps,
-					 cairo_fill_rule_t fill_rule);
+borast_private borast_status_t
+_borast_bentley_ottmann_tessellate_traps (borast_traps_t *traps,
+					 borast_fill_rule_t fill_rule);
 
-cairo_private cairo_status_t
-_cairo_bentley_ottmann_tessellate_rectangular_traps (cairo_traps_t *traps,
-						     cairo_fill_rule_t fill_rule);
+borast_private borast_status_t
+_borast_bentley_ottmann_tessellate_rectangular_traps (borast_traps_t *traps,
+						     borast_fill_rule_t fill_rule);
 
-cairo_private cairo_status_t
-_cairo_bentley_ottmann_tessellate_rectilinear_traps (cairo_traps_t *traps,
-						     cairo_fill_rule_t fill_rule);
+borast_private borast_status_t
+_borast_bentley_ottmann_tessellate_rectilinear_traps (borast_traps_t *traps,
+						     borast_fill_rule_t fill_rule);
 
-cairo_private int
-_cairo_traps_contain (const cairo_traps_t *traps,
+borast_private int
+_borast_traps_contain (const borast_traps_t *traps,
 		      double x, double y);
 
-cairo_private void
-_cairo_traps_extents (const cairo_traps_t *traps,
-		      cairo_box_t         *extents);
+borast_private void
+_borast_traps_extents (const borast_traps_t *traps,
+		      borast_box_t         *extents);
 
-cairo_private cairo_int_status_t
-_cairo_traps_extract_region (cairo_traps_t  *traps,
-			     cairo_region_t **region);
+borast_private borast_int_status_t
+_borast_traps_extract_region (borast_traps_t  *traps,
+			     borast_region_t **region);
 
-cairo_private cairo_status_t
-_cairo_traps_path (const cairo_traps_t *traps,
-		   cairo_path_fixed_t  *path);
+borast_private borast_status_t
+_borast_traps_path (const borast_traps_t *traps,
+		   borast_path_fixed_t  *path);
 
-cairo_private void
-_cairo_trapezoid_array_translate_and_scale (cairo_trapezoid_t *offset_traps,
-					    cairo_trapezoid_t *src_traps,
+borast_private void
+_borast_trapezoid_array_translate_and_scale (borast_trapezoid_t *offset_traps,
+					    borast_trapezoid_t *src_traps,
 					    int num_traps,
 					    double tx, double ty,
 					    double sx, double sy);

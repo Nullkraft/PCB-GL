@@ -34,31 +34,31 @@
  *	Vladimir Vukicevic <vladimir@pobox.com>
  */
 
-#ifndef CAIRO_FIXED_PRIVATE_H
-#define CAIRO_FIXED_PRIVATE_H
+#ifndef BORAST_FIXED_PRIVATE_H
+#define BORAST_FIXED_PRIVATE_H
 
-#include "cairo-fixed-type-private.h"
+#include "borast-fixed-type-private.h"
 
-#include "cairo-wideint-private.h"
+#include "borast-wideint-private.h"
 
 /* Implementation */
 
-#if (CAIRO_FIXED_BITS != 32)
-# error CAIRO_FIXED_BITS must be 32, and the type must be a 32-bit type.
+#if (BORAST_FIXED_BITS != 32)
+# error BORAST_FIXED_BITS must be 32, and the type must be a 32-bit type.
 # error To remove this limitation, you will have to fix the tesselator.
 #endif
 
-#define CAIRO_FIXED_ONE        ((cairo_fixed_t)(1 << CAIRO_FIXED_FRAC_BITS))
-#define CAIRO_FIXED_ONE_DOUBLE ((double)(1 << CAIRO_FIXED_FRAC_BITS))
-#define CAIRO_FIXED_EPSILON    ((cairo_fixed_t)(1))
+#define BORAST_FIXED_ONE        ((borast_fixed_t)(1 << BORAST_FIXED_FRAC_BITS))
+#define BORAST_FIXED_ONE_DOUBLE ((double)(1 << BORAST_FIXED_FRAC_BITS))
+#define BORAST_FIXED_EPSILON    ((borast_fixed_t)(1))
 
-#define CAIRO_FIXED_FRAC_MASK  (((cairo_fixed_unsigned_t)(-1)) >> (CAIRO_FIXED_BITS - CAIRO_FIXED_FRAC_BITS))
-#define CAIRO_FIXED_WHOLE_MASK (~CAIRO_FIXED_FRAC_MASK)
+#define BORAST_FIXED_FRAC_MASK  (((borast_fixed_unsigned_t)(-1)) >> (BORAST_FIXED_BITS - BORAST_FIXED_FRAC_BITS))
+#define BORAST_FIXED_WHOLE_MASK (~BORAST_FIXED_FRAC_MASK)
 
-static inline cairo_fixed_t
-_cairo_fixed_from_int (int i)
+static inline borast_fixed_t
+_borast_fixed_from_int (int i)
 {
-    return i << CAIRO_FIXED_FRAC_BITS;
+    return i << BORAST_FIXED_FRAC_BITS;
 }
 
 /* This is the "magic number" approach to converting a double into fixed
@@ -98,21 +98,21 @@ _cairo_fixed_from_int (int i)
  */
 
 /* The 16.16 number must always be available */
-#define CAIRO_MAGIC_NUMBER_FIXED_16_16 (103079215104.0)
+#define BORAST_MAGIC_NUMBER_FIXED_16_16 (103079215104.0)
 
-#if CAIRO_FIXED_BITS <= 32
-#define CAIRO_MAGIC_NUMBER_FIXED ((1LL << (52 - CAIRO_FIXED_FRAC_BITS)) * 1.5)
+#if BORAST_FIXED_BITS <= 32
+#define BORAST_MAGIC_NUMBER_FIXED ((1LL << (52 - BORAST_FIXED_FRAC_BITS)) * 1.5)
 
 /* For 32-bit fixed point numbers */
-static inline cairo_fixed_t
-_cairo_fixed_from_double (double d)
+static inline borast_fixed_t
+_borast_fixed_from_double (double d)
 {
     union {
         double d;
         int32_t i[2];
     } u;
 
-    u.d = d + CAIRO_MAGIC_NUMBER_FIXED;
+    u.d = d + BORAST_MAGIC_NUMBER_FIXED;
 #ifdef FLOAT_WORDS_BIGENDIAN
     return u.i[1];
 #else
@@ -122,94 +122,94 @@ _cairo_fixed_from_double (double d)
 
 #else
 # error Please define a magic number for your fixed point type!
-# error See cairo-fixed-private.h for details.
+# error See borast-fixed-private.h for details.
 #endif
 
-static inline cairo_fixed_t
-_cairo_fixed_from_26_6 (uint32_t i)
+static inline borast_fixed_t
+_borast_fixed_from_26_6 (uint32_t i)
 {
-#if CAIRO_FIXED_FRAC_BITS > 6
-    return i << (CAIRO_FIXED_FRAC_BITS - 6);
+#if BORAST_FIXED_FRAC_BITS > 6
+    return i << (BORAST_FIXED_FRAC_BITS - 6);
 #else
-    return i >> (6 - CAIRO_FIXED_FRAC_BITS);
+    return i >> (6 - BORAST_FIXED_FRAC_BITS);
 #endif
 }
 
 static inline double
-_cairo_fixed_to_double (cairo_fixed_t f)
+_borast_fixed_to_double (borast_fixed_t f)
 {
-    return ((double) f) / CAIRO_FIXED_ONE_DOUBLE;
+    return ((double) f) / BORAST_FIXED_ONE_DOUBLE;
 }
 
 static inline int
-_cairo_fixed_is_integer (cairo_fixed_t f)
+_borast_fixed_is_integer (borast_fixed_t f)
 {
-    return (f & CAIRO_FIXED_FRAC_MASK) == 0;
+    return (f & BORAST_FIXED_FRAC_MASK) == 0;
 }
 
 static inline int
-_cairo_fixed_integer_part (cairo_fixed_t f)
+_borast_fixed_integer_part (borast_fixed_t f)
 {
-    return f >> CAIRO_FIXED_FRAC_BITS;
+    return f >> BORAST_FIXED_FRAC_BITS;
 }
 
 static inline int
-_cairo_fixed_integer_floor (cairo_fixed_t f)
+_borast_fixed_integer_floor (borast_fixed_t f)
 {
     if (f >= 0)
-        return f >> CAIRO_FIXED_FRAC_BITS;
+        return f >> BORAST_FIXED_FRAC_BITS;
     else
-        return -((-f - 1) >> CAIRO_FIXED_FRAC_BITS) - 1;
+        return -((-f - 1) >> BORAST_FIXED_FRAC_BITS) - 1;
 }
 
 static inline int
-_cairo_fixed_integer_ceil (cairo_fixed_t f)
+_borast_fixed_integer_ceil (borast_fixed_t f)
 {
     if (f > 0)
-	return ((f - 1)>>CAIRO_FIXED_FRAC_BITS) + 1;
+	return ((f - 1)>>BORAST_FIXED_FRAC_BITS) + 1;
     else
-	return - (-f >> CAIRO_FIXED_FRAC_BITS);
+	return - (-f >> BORAST_FIXED_FRAC_BITS);
 }
 
 /* A bunch of explicit 16.16 operators; we need these
  * to interface with pixman and other backends that require
  * 16.16 fixed point types.
  */
-static inline cairo_fixed_16_16_t
-_cairo_fixed_to_16_16 (cairo_fixed_t f)
+static inline borast_fixed_16_16_t
+_borast_fixed_to_16_16 (borast_fixed_t f)
 {
-#if (CAIRO_FIXED_FRAC_BITS == 16) && (CAIRO_FIXED_BITS == 32)
+#if (BORAST_FIXED_FRAC_BITS == 16) && (BORAST_FIXED_BITS == 32)
     return f;
-#elif CAIRO_FIXED_FRAC_BITS > 16
+#elif BORAST_FIXED_FRAC_BITS > 16
     /* We're just dropping the low bits, so we won't ever got over/underflow here */
-    return f >> (CAIRO_FIXED_FRAC_BITS - 16);
+    return f >> (BORAST_FIXED_FRAC_BITS - 16);
 #else
-    cairo_fixed_16_16_t x;
+    borast_fixed_16_16_t x;
 
     /* Handle overflow/underflow by clamping to the lowest/highest
      * value representable as 16.16
      */
-    if ((f >> CAIRO_FIXED_FRAC_BITS) < INT16_MIN) {
+    if ((f >> BORAST_FIXED_FRAC_BITS) < INT16_MIN) {
 	x = INT32_MIN;
-    } else if ((f >> CAIRO_FIXED_FRAC_BITS) > INT16_MAX) {
+    } else if ((f >> BORAST_FIXED_FRAC_BITS) > INT16_MAX) {
 	x = INT32_MAX;
     } else {
-	x = f << (16 - CAIRO_FIXED_FRAC_BITS);
+	x = f << (16 - BORAST_FIXED_FRAC_BITS);
     }
 
     return x;
 #endif
 }
 
-static inline cairo_fixed_16_16_t
-_cairo_fixed_16_16_from_double (double d)
+static inline borast_fixed_16_16_t
+_borast_fixed_16_16_from_double (double d)
 {
     union {
         double d;
         int32_t i[2];
     } u;
 
-    u.d = d + CAIRO_MAGIC_NUMBER_FIXED_16_16;
+    u.d = d + BORAST_MAGIC_NUMBER_FIXED_16_16;
 #ifdef FLOAT_WORDS_BIGENDIAN
     return u.i[1];
 #else
@@ -217,38 +217,38 @@ _cairo_fixed_16_16_from_double (double d)
 #endif
 }
 
-#if CAIRO_FIXED_BITS == 32
+#if BORAST_FIXED_BITS == 32
 
-static inline cairo_fixed_t
-_cairo_fixed_mul (cairo_fixed_t a, cairo_fixed_t b)
+static inline borast_fixed_t
+_borast_fixed_mul (borast_fixed_t a, borast_fixed_t b)
 {
-    cairo_int64_t temp = _cairo_int32x32_64_mul (a, b);
-    return _cairo_int64_to_int32(_cairo_int64_rsl (temp, CAIRO_FIXED_FRAC_BITS));
+    borast_int64_t temp = _borast_int32x32_64_mul (a, b);
+    return _borast_int64_to_int32(_borast_int64_rsl (temp, BORAST_FIXED_FRAC_BITS));
 }
 
 /* computes round (a * b / c) */
-static inline cairo_fixed_t
-_cairo_fixed_mul_div (cairo_fixed_t a, cairo_fixed_t b, cairo_fixed_t c)
+static inline borast_fixed_t
+_borast_fixed_mul_div (borast_fixed_t a, borast_fixed_t b, borast_fixed_t c)
 {
-    cairo_int64_t ab  = _cairo_int32x32_64_mul (a, b);
-    cairo_int64_t c64 = _cairo_int32_to_int64 (c);
-    return _cairo_int64_to_int32 (_cairo_int64_divrem (ab, c64).quo);
+    borast_int64_t ab  = _borast_int32x32_64_mul (a, b);
+    borast_int64_t c64 = _borast_int32_to_int64 (c);
+    return _borast_int64_to_int32 (_borast_int64_divrem (ab, c64).quo);
 }
 
 /* computes floor (a * b / c) */
-static inline cairo_fixed_t
-_cairo_fixed_mul_div_floor (cairo_fixed_t a, cairo_fixed_t b, cairo_fixed_t c)
+static inline borast_fixed_t
+_borast_fixed_mul_div_floor (borast_fixed_t a, borast_fixed_t b, borast_fixed_t c)
 {
-    return _cairo_int64_32_div (_cairo_int32x32_64_mul (a, b), c);
+    return _borast_int64_32_div (_borast_int32x32_64_mul (a, b), c);
 }
 
 
-static inline cairo_fixed_t
-_cairo_edge_compute_intersection_y_for_x (const cairo_point_t *p1,
-					  const cairo_point_t *p2,
-					  cairo_fixed_t x)
+static inline borast_fixed_t
+_borast_edge_compute_intersection_y_for_x (const borast_point_t *p1,
+					  const borast_point_t *p2,
+					  borast_fixed_t x)
 {
-    cairo_fixed_t y, dx;
+    borast_fixed_t y, dx;
 
     if (x == p1->x)
 	return p1->y;
@@ -258,17 +258,17 @@ _cairo_edge_compute_intersection_y_for_x (const cairo_point_t *p1,
     y = p1->y;
     dx = p2->x - p1->x;
     if (dx != 0)
-	y += _cairo_fixed_mul_div_floor (x - p1->x, p2->y - p1->y, dx);
+	y += _borast_fixed_mul_div_floor (x - p1->x, p2->y - p1->y, dx);
 
     return y;
 }
 
-static inline cairo_fixed_t
-_cairo_edge_compute_intersection_x_for_y (const cairo_point_t *p1,
-					  const cairo_point_t *p2,
-					  cairo_fixed_t y)
+static inline borast_fixed_t
+_borast_edge_compute_intersection_x_for_y (const borast_point_t *p1,
+					  const borast_point_t *p2,
+					  borast_fixed_t y)
 {
-    cairo_fixed_t x, dy;
+    borast_fixed_t x, dy;
 
     if (y == p1->y)
 	return p1->x;
@@ -278,7 +278,7 @@ _cairo_edge_compute_intersection_x_for_y (const cairo_point_t *p1,
     x = p1->x;
     dy = p2->y - p1->y;
     if (dy != 0)
-	x += _cairo_fixed_mul_div_floor (y - p1->y, p2->x - p1->x, dy);
+	x += _borast_fixed_mul_div_floor (y - p1->y, p2->x - p1->x, dy);
 
     return x;
 }
@@ -287,4 +287,4 @@ _cairo_edge_compute_intersection_x_for_y (const cairo_point_t *p1,
 # error Please define multiplication and other operands for your fixed-point type size
 #endif
 
-#endif /* CAIRO_FIXED_PRIVATE_H */
+#endif /* BORAST_FIXED_PRIVATE_H */

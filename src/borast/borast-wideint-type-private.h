@@ -98,26 +98,26 @@
 
 #if !HAVE_UINT64_T
 
-typedef struct _cairo_uint64 {
+typedef struct _borast_uint64 {
     uint32_t	lo, hi;
-} cairo_uint64_t, cairo_int64_t;
+} borast_uint64_t, borast_int64_t;
 
 #else
 
-typedef uint64_t    cairo_uint64_t;
-typedef int64_t	    cairo_int64_t;
+typedef uint64_t    borast_uint64_t;
+typedef int64_t	    borast_int64_t;
 
 #endif
 
-typedef struct _cairo_uquorem64 {
-    cairo_uint64_t	quo;
-    cairo_uint64_t	rem;
-} cairo_uquorem64_t;
+typedef struct _borast_uquorem64 {
+    borast_uint64_t	quo;
+    borast_uint64_t	rem;
+} borast_uquorem64_t;
 
-typedef struct _cairo_quorem64 {
-    cairo_int64_t	quo;
-    cairo_int64_t	rem;
-} cairo_quorem64_t;
+typedef struct _borast_quorem64 {
+    borast_int64_t	quo;
+    borast_int64_t	rem;
+} borast_quorem64_t;
 
 /* gcc has a non-standard name. */
 #if HAVE___UINT128_T && !HAVE_UINT128_T
@@ -128,26 +128,26 @@ typedef __int128_t int128_t;
 
 #if !HAVE_UINT128_T
 
-typedef struct cairo_uint128 {
-    cairo_uint64_t	lo, hi;
-} cairo_uint128_t, cairo_int128_t;
+typedef struct borast_uint128 {
+    borast_uint64_t	lo, hi;
+} borast_uint128_t, borast_int128_t;
 
 #else
 
-typedef uint128_t	cairo_uint128_t;
-typedef int128_t	cairo_int128_t;
+typedef uint128_t	borast_uint128_t;
+typedef int128_t	borast_int128_t;
 
 #endif
 
-typedef struct _cairo_uquorem128 {
-    cairo_uint128_t	quo;
-    cairo_uint128_t	rem;
-} cairo_uquorem128_t;
+typedef struct _borast_uquorem128 {
+    borast_uint128_t	quo;
+    borast_uint128_t	rem;
+} borast_uquorem128_t;
 
-typedef struct _cairo_quorem128 {
-    cairo_int128_t	quo;
-    cairo_int128_t	rem;
-} cairo_quorem128_t;
+typedef struct _borast_quorem128 {
+    borast_int128_t	quo;
+    borast_int128_t	rem;
+} borast_quorem128_t;
 
 
 #endif /* CAIRO_WIDEINT_H */

@@ -43,15 +43,15 @@
  * existing published interfaces. cworth@cworth.org
  */
 
-#ifndef _CAIROINT_H_
-#define _CAIROINT_H_
+#ifndef _BORASTINT_H_
+#define _BORASTINT_H_
 
 #if HAVE_CONFIG_H
 #include "config.h"
 #endif
 
 #ifdef _MSC_VER
-#define cairo_public __declspec(dllexport)
+#define borast_public __declspec(dllexport)
 #endif
 
 #include <assert.h>
@@ -67,16 +67,16 @@
 #include <limits.h>
 #include <stdio.h>
 
-#include "cairo-minimal.h"
+#include "borast-minimal.h"
 
-#include "cairo-compiler-private.h"
+#include "borast-compiler-private.h"
 
-CAIRO_BEGIN_DECLS
+BORAST_BEGIN_DECLS
 
 #if _WIN32 && !_WIN32_WCE /* Permissions on WinCE? No worries! */
-cairo_private FILE *
-_cairo_win32_tmpfile (void);
-#define tmpfile() _cairo_win32_tmpfile()
+borast_private FILE *
+_borast_win32_tmpfile (void);
+#define tmpfile() _borast_win32_tmpfile()
 #endif
 
 #undef MIN
@@ -114,12 +114,12 @@ _cairo_win32_tmpfile (void);
 #define STRINGIFY_ARG(contents)       #contents
 
 #if defined (__GNUC__)
-#define cairo_container_of(ptr, type, member) ({ \
+#define borast_container_of(ptr, type, member) ({ \
     const __typeof__ (((type *) 0)->member) *mptr__ = (ptr); \
     (type *) ((char *) mptr__ - offsetof (type, member)); \
 })
 #else
-#define cairo_container_of(ptr, type, member) \
+#define borast_container_of(ptr, type, member) \
     (type *)((char *) (ptr) - (char *) &((type *)0)->member)
 #endif
 
@@ -127,14 +127,14 @@ _cairo_win32_tmpfile (void);
 /* Size in bytes of buffer to use off the stack per functions.
  * Mostly used by text functions.  For larger allocations, they'll
  * malloc(). */
-#ifndef CAIRO_STACK_BUFFER_SIZE
-#define CAIRO_STACK_BUFFER_SIZE (512 * sizeof (int))
+#ifndef BORAST_STACK_BUFFER_SIZE
+#define BORAST_STACK_BUFFER_SIZE (512 * sizeof (int))
 #endif
 
-#define CAIRO_STACK_ARRAY_LENGTH(T) (CAIRO_STACK_BUFFER_SIZE / sizeof(T))
+#define BORAST_STACK_ARRAY_LENGTH(T) (BORAST_STACK_BUFFER_SIZE / sizeof(T))
 
 
-#include "cairo-types-private.h"
+#include "borast-types-private.h"
 
 #if HAVE_VALGRIND
 # include <memcheck.h>

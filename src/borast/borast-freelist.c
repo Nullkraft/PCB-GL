@@ -23,23 +23,23 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "cairo-freelist-private.h"
+#include "borast-freelist-private.h"
 
-#define _cairo_error(x) (x)
+#define _borast_error(x) (x)
 
 void
-_cairo_freelist_init (cairo_freelist_t *freelist, unsigned nodesize)
+_borast_freelist_init (borast_freelist_t *freelist, unsigned nodesize)
 {
-    memset (freelist, 0, sizeof (cairo_freelist_t));
+    memset (freelist, 0, sizeof (borast_freelist_t));
     freelist->nodesize = nodesize;
 }
 
 void
-_cairo_freelist_fini (cairo_freelist_t *freelist)
+_borast_freelist_fini (borast_freelist_t *freelist)
 {
-    cairo_freelist_node_t *node = freelist->first_free_node;
+    borast_freelist_node_t *node = freelist->first_free_node;
     while (node) {
-	cairo_freelist_node_t *next;
+	borast_freelist_node_t *next;
 
 	VG (VALGRIND_MAKE_MEM_DEFINED (node, sizeof (node->next)));
 	next = node->next;
@@ -50,10 +50,10 @@ _cairo_freelist_fini (cairo_freelist_t *freelist)
 }
 
 void *
-_cairo_freelist_alloc (cairo_freelist_t *freelist)
+_borast_freelist_alloc (borast_freelist_t *freelist)
 {
     if (freelist->first_free_node) {
-	cairo_freelist_node_t *node;
+	borast_freelist_node_t *node;
 
 	node = freelist->first_free_node;
 	VG (VALGRIND_MAKE_MEM_DEFINED (node, sizeof (node->next)));
@@ -67,18 +67,18 @@ _cairo_freelist_alloc (cairo_freelist_t *freelist)
 }
 
 void *
-_cairo_freelist_calloc (cairo_freelist_t *freelist)
+_borast_freelist_calloc (borast_freelist_t *freelist)
 {
-    void *node = _cairo_freelist_alloc (freelist);
+    void *node = _borast_freelist_alloc (freelist);
     if (node)
 	memset (node, 0, freelist->nodesize);
     return node;
 }
 
 void
-_cairo_freelist_free (cairo_freelist_t *freelist, void *voidnode)
+_borast_freelist_free (borast_freelist_t *freelist, void *voidnode)
 {
-    cairo_freelist_node_t *node = voidnode;
+    borast_freelist_node_t *node = voidnode;
     if (node) {
 	node->next = freelist->first_free_node;
 	freelist->first_free_node = node;
@@ -88,7 +88,7 @@ _cairo_freelist_free (cairo_freelist_t *freelist, void *voidnode)
 
 
 void
-_cairo_freepool_init (cairo_freepool_t *freepool, unsigned nodesize)
+_borast_freepool_init (borast_freepool_t *freepool, unsigned nodesize)
 {
     freepool->first_free_node = NULL;
     freepool->pools = &freepool->embedded_pool;
@@ -104,11 +104,11 @@ _cairo_freepool_init (cairo_freepool_t *freepool, unsigned nodesize)
 }
 
 void
-_cairo_freepool_fini (cairo_freepool_t *freepool)
+_borast_freepool_fini (borast_freepool_t *freepool)
 {
-    cairo_freelist_pool_t *pool = freepool->pools;
+    borast_freelist_pool_t *pool = freepool->pools;
     while (pool != &freepool->embedded_pool) {
-	cairo_freelist_pool_t *next = pool->next;
+	borast_freelist_pool_t *next = pool->next;
 	free (pool);
 	pool = next;
     }
@@ -116,16 +116,16 @@ _cairo_freepool_fini (cairo_freepool_t *freepool)
 }
 
 void *
-_cairo_freepool_alloc_from_new_pool (cairo_freepool_t *freepool)
+_borast_freepool_alloc_from_new_pool (borast_freepool_t *freepool)
 {
-    cairo_freelist_pool_t *pool;
+    borast_freelist_pool_t *pool;
     int poolsize;
 
     if (freepool->pools != &freepool->embedded_pool)
 	poolsize = 2 * freepool->pools->size;
     else
 	poolsize = (128 * freepool->nodesize + 8191) & -8192;
-    pool = malloc (sizeof (cairo_freelist_pool_t) + poolsize);
+    pool = malloc (sizeof (borast_freelist_pool_t) + poolsize);
     if (unlikely (pool == NULL))
 	return pool;
 
@@ -142,15 +142,15 @@ _cairo_freepool_alloc_from_new_pool (cairo_freepool_t *freepool)
     return pool + 1;
 }
 
-cairo_status_t
-_cairo_freepool_alloc_array (cairo_freepool_t *freepool,
+borast_status_t
+_borast_freepool_alloc_array (borast_freepool_t *freepool,
 			     int count,
 			     void **array)
 {
     int i;
 
     for (i = 0; i < count; i++) {
-	cairo_freelist_node_t *node;
+	borast_freelist_node_t *node;
 
 	node = freepool->first_free_node;
 	if (likely (node != NULL)) {
@@ -158,7 +158,7 @@ _cairo_freepool_alloc_array (cairo_freepool_t *freepool,
 	    freepool->first_free_node = node->next;
 	    VG (VALGRIND_MAKE_MEM_UNDEFINED (node, freepool->nodesize));
 	} else {
-	    node = _cairo_freepool_alloc_from_pool (freepool);
+	    node = _borast_freepool_alloc_from_pool (freepool);
 	    if (unlikely (node == NULL))
 		goto CLEANUP;
 	}
@@ -166,11 +166,11 @@ _cairo_freepool_alloc_array (cairo_freepool_t *freepool,
 	array[i] = node;
     }
 
-    return CAIRO_STATUS_SUCCESS;
+    return BORAST_STATUS_SUCCESS;
 
   CLEANUP:
     while (i--)
-	_cairo_freepool_free (freepool, array[i]);
+	_borast_freepool_free (freepool, array[i]);
 
-    return _cairo_error (CAIRO_STATUS_NO_MEMORY);
+    return _borast_error (BORAST_STATUS_NO_MEMORY);
 }
