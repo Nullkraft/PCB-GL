@@ -1,5 +1,5 @@
-Bottom: b40c8eb6d0757d4b5e59dd75d0f04db479e950ab
-Top:    7fff447d7c0708c25a9100d6292430916eae40d6
+Bottom: aacdd71e6130f7035112005abd993cc4f140049a
+Top:    2e08b893cc082a3de133c02de9d57df547839e77
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:08 +0000
 
@@ -14,7 +14,7 @@ Squashed:
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ff2e0bd..bfa7a1e 100644
+index 5dd8c04..ae7a6e1 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -96,6 +96,18 @@ ghid_set_layer (const char *name, int group, int empty)
@@ -348,7 +348,7 @@ index ff2e0bd..bfa7a1e 100644
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index eb63d93..df0446f 100644
+index cdbd0ac..56d1e80 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -222,6 +222,10 @@ ghid_note_event_location (GdkEventButton * ev)
