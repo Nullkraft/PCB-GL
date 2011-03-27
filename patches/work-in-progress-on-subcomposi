@@ -1,5 +1,5 @@
-Bottom: f7e3d305e586be2dbb01d5166cca5ef27503099d
-Top:    b55d4b239ee1d57c446e64e8dbd1c111e41a4bd5
+Bottom: bc183b7e4854c066d9765d8a2b4be6bdc45ee465
+Top:    3d07a3b924de6c87365d7654a2ce5b96d3595e9e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:05 +0000
 
@@ -395,10 +395,10 @@ index bb1383c..b956a65 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index b7e99bb..844c2ce 100644
+index 8f04180..be3dfd0 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
-@@ -571,6 +571,9 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -569,6 +569,9 @@ gerber_set_layer (const char *name, int group, int empty)
  	     && group <
  	     max_group) ? PCB->LayerGroups.Entries[group][0] : group;
  
@@ -409,7 +409,7 @@ index b7e99bb..844c2ce 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2ff1037..0a696d6 100644
+index 7a57d40..f0edbac 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,6 +21,7 @@
@@ -517,7 +517,7 @@ index 2ff1037..0a696d6 100644
        glDisable (GL_STENCIL_TEST);                // Disable Stencil test
        break;
      }
-@@ -914,6 +946,17 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -918,6 +950,17 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_start_drawing (port);
  
@@ -535,7 +535,7 @@ index 2ff1037..0a696d6 100644
    ghid_show_crosshair (FALSE);
  
    glEnable (GL_BLEND);
-@@ -933,12 +976,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -937,12 +980,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -556,7 +556,7 @@ index 2ff1037..0a696d6 100644
  
    region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
    region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-@@ -964,6 +1015,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -968,6 +1019,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
@@ -569,7 +569,7 @@ index 2ff1037..0a696d6 100644
    glPushMatrix ();
    glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
              (ghid_flip_y ? -1. : 1.) / port->zoom,
-@@ -1082,9 +1139,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1088,9 +1145,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  gport->bg_color.green / 65535.,
                  gport->bg_color.blue / 65535.,
                  1.);
@@ -583,7 +583,7 @@ index 2ff1037..0a696d6 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
-@@ -1190,8 +1250,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1196,8 +1256,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                  gport->bg_color.green / 65535.,
                  gport->bg_color.blue / 65535.,
                  1.);

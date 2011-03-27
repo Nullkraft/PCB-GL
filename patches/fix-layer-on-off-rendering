@@ -1,5 +1,5 @@
-Bottom: a47012f1ebcdb4a703741d0b9b8e20696ad7b58e
-Top:    6c8f33c3d1ae42ccb697025e828150cd767a6f34
+Bottom: f7b4144d19f5f82a16f5893a6307c2b394d0ac2e
+Top:    6c240c5b7a6ba407028fb75b9165ac503c166017
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:10 +0000
 
@@ -24,10 +24,10 @@ This fix is almost certainly WRONG.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 10f3bd0..6d1c842 100644
+index 216a23b..ad2bc03 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1419,7 +1419,7 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1423,7 +1423,7 @@ DrawLayerGroup (int group, const BoxType * screen)
          strcmp (Layer->Name, "route") == 0)
        rv = 0;
  

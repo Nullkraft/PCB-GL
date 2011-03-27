@@ -1,5 +1,5 @@
-Bottom: 0409d155248827623acb0b4b820da7ea0b450661
-Top:    4800fc3801b6f68fe74be16a0b2d8a79c801387c
+Bottom: 9dd443b9bd6a9f2dea4ed671da46ce6545de777e
+Top:    bf2791d9e0d1634f89e7b23ed16239f5fe3a05cb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:08 +0000
 
@@ -14,7 +14,7 @@ Squashed:
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 4a64d5b..b1b1de0 100644
+index 737385c..89d10d7 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -96,6 +96,18 @@ ghid_set_layer (const char *name, int group, int empty)
@@ -333,7 +333,7 @@ index 4a64d5b..b1b1de0 100644
        draw_markers_prev = FALSE;
      }
  
-@@ -1134,7 +1151,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1138,7 +1155,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_flush_triangles (&buffer);
    glPopMatrix ();
  
