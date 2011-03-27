@@ -1,0 +1,23 @@
+Bottom: c3b8a9f7b4a4189fe883bb0c3b74924becad4c51
+Top:    ec5fd595dbc7ad2aa6e105e65257fb2c886f7c50
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-27 17:26:54 +0100
+
+Refresh of hid-gtk-more-efficient-mask-dr
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index a8cce90..37a2ce6 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -396,7 +396,8 @@ ghid_use_mask (int use_it)
+   switch (use_it)
+     {
+     case HID_MASK_BEFORE:
+-      break;
++      /* Ignore, this renderer doesn't use it */
++      return;
+ 
+     case HID_MASK_CLEAR:
+       /* Write '1' to the stencil buffer where the solder-mask should not be drawn. */
