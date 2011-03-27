@@ -612,7 +612,7 @@ void
 ghid_invalidate_all ()
 {
   if (ghidgui->need_restore_crosshair)
-    RestoreCrosshair (FALSE);
+    RestoreCrosshair ();
   ghidgui->need_restore_crosshair = FALSE;
   ghid_draw_area_update (gport, NULL);
 }
@@ -988,7 +988,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                              -port->view_x0,
                 ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                              -port->view_y0, 0);
-  DrawAttached (TRUE);
+  DrawAttached ();
   DrawMark (TRUE);
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
