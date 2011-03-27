@@ -1,5 +1,5 @@
 Bottom: e63489ffb6e934918e4679f973d60598239e0cf1
-Top:    e63489ffb6e934918e4679f973d60598239e0cf1
+Top:    0f09dd09a8e2073b7edd7aff646f146b36e241f2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 19:54:15 +0100
 
@@ -50,4 +50,1528 @@ without it. The 23 places this argument was previously false are:
 
 ---
 
-
+diff --git a/src/action.c b/src/action.c
+index ad99e7a..ea9a51f 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -610,7 +610,7 @@ click_cb (hidval hv)
+       Note.Click = false;
+       if (Note.Moving && !gui->shift_is_pressed ())
+ 	{
+-	  HideCrosshair (true);
++	  HideCrosshair ();
+ 	  Note.Buffer = Settings.BufferNumber;
+ 	  SetBufferNumber (MAX_BUFFER - 1);
+ 	  ClearBuffer (PASTEBUFFER);
+@@ -620,11 +620,11 @@ click_cb (hidval hv)
+ 	  SaveMode ();
+ 	  saved_mode = true;
+ 	  SetMode (PASTEBUFFER_MODE);
+-	  RestoreCrosshair (true);
++	  RestoreCrosshair ();
+ 	}
+       else if (Note.Hit && !gui->shift_is_pressed ())
+ 	{
+-	  HideCrosshair (true);
++	  HideCrosshair ();
+ 	  SaveMode ();
+ 	  saved_mode = true;
+ 	  SetMode (gui->control_is_pressed ()? COPY_MODE : MOVE_MODE);
+@@ -633,7 +633,7 @@ click_cb (hidval hv)
+ 	  Crosshair.AttachedObject.Ptr3 = Note.ptr3;
+ 	  Crosshair.AttachedObject.Type = Note.Hit;
+ 	  AttachForCopy (Note.X, Note.Y);
+-	  RestoreCrosshair (true);
++	  RestoreCrosshair ();
+ 	}
+       else
+ 	{
+@@ -641,7 +641,7 @@ click_cb (hidval hv)
+ 
+ 	  Note.Hit = 0;
+ 	  Note.Moving = false;
+-	  HideCrosshair (true);
++	  HideCrosshair ();
+ 	  SaveUndoSerialNumber ();
+ 	  box.X1 = -MAX_COORD;
+ 	  box.Y1 = -MAX_COORD;
+@@ -653,7 +653,7 @@ click_cb (hidval hv)
+ 	  NotifyBlock ();
+ 	  Crosshair.AttachedBox.Point1.X = Note.X;
+ 	  Crosshair.AttachedBox.Point1.Y = Note.Y;
+-	  RestoreCrosshair (true);
++	  RestoreCrosshair ();
+ 	}
+     }
+ }
+@@ -949,7 +949,7 @@ NotifyLine (void)
+ static void
+ NotifyBlock (void)
+ {
+-  HideCrosshair (true);
++  HideCrosshair ();
+   switch (Crosshair.AttachedBox.State)
+     {
+     case STATE_FIRST:		/* setup first point */
+@@ -964,7 +964,7 @@ NotifyBlock (void)
+       Crosshair.AttachedBox.State = STATE_THIRD;
+       break;
+     }
+-  RestoreCrosshair (true);
++  RestoreCrosshair ();
+ }
+ 
+ 
+@@ -1871,7 +1871,7 @@ ActionDRCheck (int argc, char **argv, int x, int y)
+ 	       PCB->minDrill / 100, PCB->minDrill % 100,
+ 	       PCB->minRing / 100, PCB->minRing % 100);
+     }
+-  HideCrosshair (true);
++  HideCrosshair ();
+   count = DRCAll ();
+   if (gui->drc_gui == NULL || gui->drc_gui->log_drc_overview)
+     {
+@@ -1882,7 +1882,7 @@ ActionDRCheck (int argc, char **argv, int x, int y)
+       else
+ 	Message (_("Aborted DRC after %d design rule errors.\n"), -count);
+     }
+-  RestoreCrosshair (true);
++  RestoreCrosshair ();
+   return 0;
+ }
+ 
+@@ -1967,7 +1967,7 @@ ActionFlip (int argc, char **argv, int x, int y)
+ 
+   if (function)
+     {
+-      HideCrosshair (true);
++      HideCrosshair ();
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_Object:
+@@ -1988,7 +1988,7 @@ ActionFlip (int argc, char **argv, int x, int y)
+ 	  err = 1;
+ 	  break;
+ 	}
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+       if (!err)
+ 	return 0;
+     }
+@@ -2075,7 +2075,7 @@ ActionSetThermal (int argc, char **argv, int x, int y)
+       bool absolute;
+ 
+       kind = GetValue (style, NULL, &absolute);
+-      HideCrosshair (true);
++      HideCrosshair ();
+       if (absolute)
+ 	switch (GetFunctionID (function))
+ 	  {
+@@ -2105,7 +2105,7 @@ ActionSetThermal (int argc, char **argv, int x, int y)
+ 	  }
+       else
+ 	err = 1;
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+       if (!err)
+ 	return 0;
+     }
+@@ -2132,11 +2132,11 @@ ActionMovePointer (char *deltax, char *deltay)
+   /* restore crosshair for erasure */
+   Crosshair.X = x;
+   Crosshair.Y = y;
+-  HideCrosshair (false);
++  HideCrosshair ();
+   MoveCrosshairRelative (TO_SCREEN_SIGN_X (dx), TO_SCREEN_SIGN_Y (dy));
+   /* update object position and cursor location */
+   AdjustAttachedObjects ();
+-  RestoreCrosshair (false);
++  RestoreCrosshair ();
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -2165,7 +2165,7 @@ EventMoveCrosshair (int ev_x, int ev_y)
+ 
+ 	  /* update object position and cursor location */
+ 	  AdjustAttachedObjects ();
+-	  RestoreCrosshair (false);
++	  RestoreCrosshair ();
+ 	}
+     }
+   else
+@@ -2218,7 +2218,7 @@ ActionSetValue (int argc, char **argv, int x, int y)
+ 
+   if (function && val)
+     {
+-      HideCrosshair (true);
++      HideCrosshair ();
+       value = GetValue (val, units, &absolute);
+       switch (GetFunctionID (function))
+ 	{
+@@ -2277,7 +2277,7 @@ ActionSetValue (int argc, char **argv, int x, int y)
+ 	  err = 1;
+ 	  break;
+ 	}
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+       if (!err)
+ 	return 0;
+     }
+@@ -2350,7 +2350,7 @@ ActionConnection (int argc, char **argv, int x, int y)
+   char *function = ARG (0);
+   if (function)
+     {
+-      HideCrosshair (true);
++      HideCrosshair ();
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_Find:
+@@ -2384,7 +2384,7 @@ ActionConnection (int argc, char **argv, int x, int y)
+ 	    }
+ 	  break;
+ 	}
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+       return 0;
+     }
+ 
+@@ -2689,7 +2689,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+ 
+   if (function && (!str_dir || !*str_dir))
+     {
+-      HideCrosshair (true);
++      HideCrosshair ();
+       switch (id = GetFunctionID (function))
+ 	{
+ 
+@@ -2868,7 +2868,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+ 	    oldGrid = PCB->Grid;
+ 	    PCB->Grid = 1.0;
+ 	    if (MoveCrosshairAbsolute (Crosshair.X, Crosshair.Y))
+-	      RestoreCrosshair (false);	/* was hidden by MoveCrosshairAbs */
++	      RestoreCrosshair ();	/* was hidden by MoveCrosshairAbs */
+ 	    SetGrid (oldGrid, true);
+ 	  }
+ 	  break;
+@@ -2973,7 +2973,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+ 	default:
+ 	  err = 1;
+ 	}
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+     }
+   else if (function && str_dir)
+     {
+@@ -3073,7 +3073,7 @@ ActionMode (int argc, char **argv, int x, int y)
+     {
+       Note.X = Crosshair.X;
+       Note.Y = Crosshair.Y;
+-      HideCrosshair (true);
++      HideCrosshair ();
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_Arc:
+@@ -3269,7 +3269,7 @@ ActionMode (int argc, char **argv, int x, int y)
+ 	  SaveMode ();
+ 	  break;
+ 	}
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+       return 0;
+     }
+ 
+@@ -3289,10 +3289,10 @@ static const char removeselected_help[] = "Removes any selected objects.";
+ static int
+ ActionRemoveSelected (int argc, char **argv, int x, int y)
+ {
+-  HideCrosshair (true);
++  HideCrosshair ();
+   if (RemoveSelected ())
+     SetChangedFlag (true);
+-  RestoreCrosshair (true);
++  RestoreCrosshair ();
+   return 0;
+ }
+ 
+@@ -3687,7 +3687,7 @@ ActionRipUp (int argc, char **argv, int x, int y)
+ 
+   if (function)
+     {
+-      HideCrosshair (true);
++      HideCrosshair ();
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_All:
+@@ -3770,7 +3770,7 @@ ActionRipUp (int argc, char **argv, int x, int y)
+ 	  }
+ 	  break;
+ 	}
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+     }
+   return 0;
+ }
+@@ -3811,7 +3811,7 @@ ActionAddRats (int argc, char **argv, int x, int y)
+     {
+       if (Settings.RatWarn)
+ 	ClearWarnings ();
+-      HideCrosshair (true);
++      HideCrosshair ();
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_AllRats:
+@@ -3851,7 +3851,7 @@ ActionAddRats (int argc, char **argv, int x, int y)
+ 	    }
+ 	  break;
+ 	}
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+     }
+   return 0;
+ }
+@@ -3883,7 +3883,7 @@ ActionDelete (int argc, char **argv, int x, int y)
+ 	id = F_Object;
+     }
+ 
+-  HideCrosshair (true);
++  HideCrosshair ();
+   switch (id)
+     {
+     case F_Object:
+@@ -3905,7 +3905,7 @@ ActionDelete (int argc, char **argv, int x, int y)
+       break;
+     }
+ 
+-  RestoreCrosshair (true);
++  RestoreCrosshair ();
+   return 0;
+ }
+ 
+@@ -3928,7 +3928,7 @@ ActionDeleteRats (int argc, char **argv, int x, int y)
+     {
+       if (Settings.RatWarn)
+ 	ClearWarnings ();
+-      HideCrosshair (true);
++      HideCrosshair ();
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_AllRats:
+@@ -3941,7 +3941,7 @@ ActionDeleteRats (int argc, char **argv, int x, int y)
+ 	    SetChangedFlag (true);
+ 	  break;
+ 	}
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+     }
+   return 0;
+ }
+@@ -3966,10 +3966,10 @@ ActionAutoPlaceSelected (int argc, char **argv, int x, int y)
+   if (gui->confirm_dialog (_("Auto-placement can NOT be undone.\n"
+ 			     "Do you want to continue anyway?\n"), 0))
+     {
+-      HideCrosshair (true);
++      HideCrosshair ();
+       if (AutoPlaceSelected ())
+ 	SetChangedFlag (true);
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+     }
+   return 0;
+ }
+@@ -4010,7 +4010,7 @@ ActionAutoRoute (int argc, char **argv, int x, int y)
+   hid_action("Busy");
+   if (function)			/* one parameter */
+     {
+-      HideCrosshair (true);
++      HideCrosshair ();
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_AllRats:
+@@ -4023,7 +4023,7 @@ ActionAutoRoute (int argc, char **argv, int x, int y)
+ 	    SetChangedFlag (true);
+ 	  break;
+ 	}
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+     }
+   return 0;
+ }
+@@ -4113,7 +4113,7 @@ ActionChangeSize (int argc, char **argv, int x, int y)
+   if (function && delta)
+     {
+       value = GetValue (delta, units, &absolute);
+-      HideCrosshair (true);
++      HideCrosshair ();
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_Object:
+@@ -4177,7 +4177,7 @@ ActionChangeSize (int argc, char **argv, int x, int y)
+ 	    SetChangedFlag (true);
+ 	  break;
+ 	}
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+     }
+   return 0;
+ }
+@@ -4207,7 +4207,7 @@ ActionChange2ndSize (int argc, char **argv, int x, int y)
+   if (function && delta)
+     {
+       value = GetValue (delta, units, &absolute);
+-      HideCrosshair (true);
++      HideCrosshair ();
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_Object:
+@@ -4240,7 +4240,7 @@ ActionChange2ndSize (int argc, char **argv, int x, int y)
+ 	    SetChangedFlag (true);
+ 	  break;
+ 	}
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+     }
+   return 0;
+ }
+@@ -4276,7 +4276,7 @@ ActionChangeClearSize (int argc, char **argv, int x, int y)
+   if (function && delta)
+     {
+       value = 2 * GetValue (delta, units, &absolute);
+-      HideCrosshair (true);
++      HideCrosshair ();
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_Object:
+@@ -4319,7 +4319,7 @@ ActionChangeClearSize (int argc, char **argv, int x, int y)
+ 	    SetChangedFlag (true);
+ 	  break;
+ 	}
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+     }
+   return 0;
+ }
+@@ -4363,7 +4363,7 @@ ActionMinMaskGap (int argc, char **argv, int x, int y)
+     }
+   value = 2 * GetValue (delta, units, &absolute);
+ 
+-  HideCrosshair (true);
++  HideCrosshair ();
+   SaveUndoSerialNumber ();
+   ELEMENT_LOOP (PCB->Data);
+   {
+@@ -4448,7 +4448,7 @@ ActionMinClearGap (int argc, char **argv, int x, int y)
+     }
+   value = 2 * GetValue (delta, units, &absolute);
+ 
+-  HideCrosshair (true);
++  HideCrosshair ();
+   SaveUndoSerialNumber ();
+   ELEMENT_LOOP (PCB->Data);
+   {
+@@ -4642,7 +4642,7 @@ ActionChangeName (int argc, char **argv, int x, int y)
+ 
+   if (function)
+     {
+-      HideCrosshair (true);
++      HideCrosshair ();
+       switch (GetFunctionID (function))
+ 	{
+ 	  /* change the name of an object */
+@@ -4704,7 +4704,7 @@ ActionChangeName (int argc, char **argv, int x, int y)
+ 	    SetChangedFlag (true);
+ 	  break;
+ 	}
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+     }
+   return 0;
+ }
+@@ -4733,7 +4733,7 @@ ActionMorphPolygon (int argc, char **argv, int x, int y)
+   char *function = ARG (0);
+   if (function)
+     {
+-      HideCrosshair (true);
++      HideCrosshair ();
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_Object:
+@@ -4788,7 +4788,7 @@ ActionToggleHideName (int argc, char **argv, int x, int y)
+   char *function = ARG (0);
+   if (function && PCB->ElementOn)
+     {
+-      HideCrosshair (true);
++      HideCrosshair ();
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_Object:
+@@ -4836,7 +4836,7 @@ ActionToggleHideName (int argc, char **argv, int x, int y)
+ 	      }
+ 	  }
+ 	}
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+     }
+   return 0;
+ }
+@@ -4865,7 +4865,7 @@ ActionChangeJoin (int argc, char **argv, int x, int y)
+   char *function = ARG (0);
+   if (function)
+     {
+-      HideCrosshair (true);
++      HideCrosshair ();
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_ToggleObject:
+@@ -4899,7 +4899,7 @@ ActionChangeJoin (int argc, char **argv, int x, int y)
+ 	    SetChangedFlag (true);
+ 	  break;
+ 	}
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+     }
+   return 0;
+ }
+@@ -4928,7 +4928,7 @@ ActionChangeSquare (int argc, char **argv, int x, int y)
+   char *function = ARG (0);
+   if (function)
+     {
+-      HideCrosshair (true);
++      HideCrosshair ();
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_ToggleObject:
+@@ -4962,7 +4962,7 @@ ActionChangeSquare (int argc, char **argv, int x, int y)
+ 	    SetChangedFlag (true);
+ 	  break;
+ 	}
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+     }
+   return 0;
+ }
+@@ -4988,7 +4988,7 @@ ActionSetSquare (int argc, char **argv, int x, int y)
+   char *function = ARG (0);
+   if (function && *function)
+     {
+-      /* HideCrosshair (true); */
++      /* HideCrosshair (); */
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_ToggleObject:
+@@ -5022,7 +5022,7 @@ ActionSetSquare (int argc, char **argv, int x, int y)
+ 	    SetChangedFlag (true);
+ 	  break;
+ 	}
+-      /* RestoreCrosshair (true); */
++      /* RestoreCrosshair (); */
+     }
+   return 0;
+ }
+@@ -5049,7 +5049,7 @@ ActionClearSquare (int argc, char **argv, int x, int y)
+   char *function = ARG (0);
+   if (function && *function)
+     {
+-      /* HideCrosshair (true); */
++      /* HideCrosshair (); */
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_ToggleObject:
+@@ -5083,7 +5083,7 @@ ActionClearSquare (int argc, char **argv, int x, int y)
+ 	    SetChangedFlag (true);
+ 	  break;
+ 	}
+-      /* RestoreCrosshair (true); */
++      /* RestoreCrosshair (); */
+     }
+   return 0;
+ }
+@@ -5109,7 +5109,7 @@ ActionChangeOctagon (int argc, char **argv, int x, int y)
+   char *function = ARG (0);
+   if (function)
+     {
+-      /* HideCrosshair (true); */
++      /* HideCrosshair (); */
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_ToggleObject:
+@@ -5148,7 +5148,7 @@ ActionChangeOctagon (int argc, char **argv, int x, int y)
+ 	    SetChangedFlag (true);
+ 	  break;
+ 	}
+-      /* RestoreCrosshair (true); */
++      /* RestoreCrosshair (); */
+     }
+   return 0;
+ }
+@@ -5172,7 +5172,7 @@ ActionSetOctagon (int argc, char **argv, int x, int y)
+   char *function = ARG (0);
+   if (function)
+     {
+-      /* HideCrosshair (true); */
++      /* HideCrosshair (); */
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_ToggleObject:
+@@ -5211,7 +5211,7 @@ ActionSetOctagon (int argc, char **argv, int x, int y)
+ 	    SetChangedFlag (true);
+ 	  break;
+ 	}
+-      /* RestoreCrosshair (true); */
++      /* RestoreCrosshair (); */
+     }
+   return 0;
+ }
+@@ -5237,7 +5237,7 @@ ActionClearOctagon (int argc, char **argv, int x, int y)
+   char *function = ARG (0);
+   if (function)
+     {
+-      /* HideCrosshair (true); */
++      /* HideCrosshair (); */
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_ToggleObject:
+@@ -5276,7 +5276,7 @@ ActionClearOctagon (int argc, char **argv, int x, int y)
+ 	    SetChangedFlag (true);
+ 	  break;
+ 	}
+-      /* RestoreCrosshair (true); */
++      /* RestoreCrosshair (); */
+     }
+   return 0;
+ }
+@@ -5301,7 +5301,7 @@ ActionChangeHole (int argc, char **argv, int x, int y)
+   char *function = ARG (0);
+   if (function)
+     {
+-      /* HideCrosshair (true); */
++      /* HideCrosshair (); */
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_ToggleObject:
+@@ -5324,7 +5324,7 @@ ActionChangeHole (int argc, char **argv, int x, int y)
+ 	    SetChangedFlag (true);
+ 	  break;
+ 	}
+-      /* RestoreCrosshair (true); */
++      /* RestoreCrosshair (); */
+     }
+   return 0;
+ }
+@@ -5351,7 +5351,7 @@ ActionChangePaste (int argc, char **argv, int x, int y)
+   char *function = ARG (0);
+   if (function)
+     {
+-      /* HideCrosshair (true); */
++      /* HideCrosshair (); */
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_ToggleObject:
+@@ -5374,7 +5374,7 @@ ActionChangePaste (int argc, char **argv, int x, int y)
+ 	    SetChangedFlag (true);
+ 	  break;
+ 	}
+-      /* RestoreCrosshair (true); */
++      /* RestoreCrosshair (); */
+     }
+   return 0;
+ }
+@@ -5436,7 +5436,7 @@ ActionSelect (int argc, char **argv, int x, int y)
+   char *function = ARG (0);
+   if (function)
+     {
+-      HideCrosshair (true);
++      HideCrosshair ();
+       switch (GetFunctionID (function))
+ 	{
+ #if defined(HAVE_REGCOMP) || defined(HAVE_RE_COMP)
+@@ -5555,11 +5555,11 @@ ActionSelect (int argc, char **argv, int x, int y)
+ 	  break;
+ 
+ 	default:
+-	  RestoreCrosshair (true);
++	  RestoreCrosshair ();
+ 	  AFAIL (select);
+ 	  break;
+ 	}
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+     }
+   return 0;
+ }
+@@ -5623,7 +5623,7 @@ ActionUnselect (int argc, char **argv, int x, int y)
+   char *function = ARG (0);
+   if (function)
+     {
+-      HideCrosshair (true);
++      HideCrosshair ();
+       switch (GetFunctionID (function))
+ 	{
+ #if defined(HAVE_REGCOMP) || defined(HAVE_RE_COMP)
+@@ -5716,12 +5716,12 @@ ActionUnselect (int argc, char **argv, int x, int y)
+ 	  break;
+ 
+ 	default:
+-	  RestoreCrosshair (true);
++	  RestoreCrosshair ();
+ 	  AFAIL (unselect);
+ 	  break;
+ 
+ 	}
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+     }
+   return 0;
+ }
+@@ -5918,7 +5918,7 @@ ActionLoadFrom (int argc, char **argv, int x, int y)
+   function = argv[0];
+   name = argv[1];
+ 
+-  HideCrosshair (true);
++  HideCrosshair ();
+ 
+   if (strcasecmp (function, "ElementToBuffer") == 0)
+     {
+@@ -5956,7 +5956,7 @@ ActionLoadFrom (int argc, char **argv, int x, int y)
+       LoadPCB (fname);
+     }
+ 
+-  RestoreCrosshair (true);
++  RestoreCrosshair ();
+   return 0;
+ }
+ 
+@@ -5977,7 +5977,7 @@ ActionNew (int argc, char **argv, int x, int y)
+ {
+   char *name = ARG (0);
+ 
+-  HideCrosshair (true);
++  HideCrosshair ();
+   if (!PCB->Changed || gui->confirm_dialog (_("OK to clear layout data?"), 0))
+     {
+       if (name)
+@@ -5987,7 +5987,7 @@ ActionNew (int argc, char **argv, int x, int y)
+ 
+       if (!name)
+ 	{
+-	  RestoreCrosshair(true);
++	  RestoreCrosshair ();
+ 	  return 1;
+ 	}
+ 
+@@ -6012,10 +6012,10 @@ ActionNew (int argc, char **argv, int x, int y)
+       ClearAndRedrawOutput ();
+ 
+       hid_action ("PCBChanged");
+-      RestoreCrosshair(true);
++      RestoreCrosshair ();
+       return 0;
+     }
+-  RestoreCrosshair (true);
++  RestoreCrosshair ();
+   return 1;
+ }
+ 
+@@ -6100,7 +6100,7 @@ ActionPasteBuffer (int argc, char **argv, int x, int y)
+   static char *default_file = NULL;
+   int free_name = 0;
+ 
+-  HideCrosshair (true);
++  HideCrosshair ();
+   if (function)
+     {
+       switch (GetFunctionID (function))
+@@ -6207,7 +6207,7 @@ ActionPasteBuffer (int argc, char **argv, int x, int y)
+ 	      }
+ 	    else
+ 	      {
+-		RestoreCrosshair (true);
++		RestoreCrosshair ();
+ 		AFAIL (pastebuffer);
+ 	      }
+ 
+@@ -6230,7 +6230,7 @@ ActionPasteBuffer (int argc, char **argv, int x, int y)
+ 	}
+     }
+ 
+-  RestoreCrosshair (true);
++  RestoreCrosshair ();
+   return 0;
+ }
+ 
+@@ -6271,13 +6271,13 @@ ActionUndo (int argc, char **argv, int x, int y)
+ 	return 1;
+       /* undo the last operation */
+ 
+-      HideCrosshair (true);
++      HideCrosshair ();
+       if ((Settings.Mode == POLYGON_MODE ||
+            Settings.Mode == POLYGONHOLE_MODE) &&
+           Crosshair.AttachedPolygon.PointN)
+ 	{
+ 	  GoToPreviousPoint ();
+-	  RestoreCrosshair (true);
++	  RestoreCrosshair ();
+ 	  return 0;
+ 	}
+       /* move anchor point if undoing during line creation */
+@@ -6289,7 +6289,7 @@ ActionUndo (int argc, char **argv, int x, int y)
+ 		Undo (true);	/* undo the connection find */
+ 	      Crosshair.AttachedLine.State = STATE_FIRST;
+ 	      SetLocalRef (0, 0, false);
+-	      RestoreCrosshair (true);
++	      RestoreCrosshair ();
+ 	      return 0;
+ 	    }
+ 	  if (Crosshair.AttachedLine.State == STATE_THIRD)
+@@ -6317,7 +6317,7 @@ ActionUndo (int argc, char **argv, int x, int y)
+ 		    Crosshair.AttachedLine.Point1.X;
+ 		  Crosshair.AttachedLine.Point2.Y =
+ 		    Crosshair.AttachedLine.Point1.Y;
+-		  RestoreCrosshair (true);
++		  RestoreCrosshair ();
+ 		  return 0;
+ 		}
+ 	      /* move to new anchor */
+@@ -6364,7 +6364,7 @@ ActionUndo (int argc, char **argv, int x, int y)
+ 		  ptr2 = (LineTypePtr) ptrtmp;
+ 		  lastLayer = (LayerTypePtr) ptr1;
+ 		}
+-	      RestoreCrosshair (true);
++	      RestoreCrosshair ();
+ 	      return 0;
+ 	    }
+ 	}
+@@ -6373,7 +6373,7 @@ ActionUndo (int argc, char **argv, int x, int y)
+ 	  if (Crosshair.AttachedBox.State == STATE_SECOND)
+ 	    {
+ 	      Crosshair.AttachedBox.State = STATE_FIRST;
+-	      RestoreCrosshair (true);
++	      RestoreCrosshair ();
+ 	      return 0;
+ 	    }
+ 	  if (Crosshair.AttachedBox.State == STATE_THIRD)
+@@ -6408,7 +6408,7 @@ ActionUndo (int argc, char **argv, int x, int y)
+ 	  break;
+ 	}
+     }
+-  RestoreCrosshair (true);
++  RestoreCrosshair ();
+   return 0;
+ }
+ 
+@@ -6441,7 +6441,7 @@ ActionRedo (int argc, char **argv, int x, int y)
+        Crosshair.AttachedPolygon.PointN) ||
+       Crosshair.AttachedLine.State == STATE_SECOND)
+     return 1;
+-  HideCrosshair (true);
++  HideCrosshair ();
+   if (Redo (true))
+     {
+       SetChangedFlag (true);
+@@ -6456,7 +6456,7 @@ ActionRedo (int argc, char **argv, int x, int y)
+ 	  addedLines++;
+ 	}
+     }
+-  RestoreCrosshair (true);
++  RestoreCrosshair ();
+   return 0;
+ }
+ 
+@@ -6490,7 +6490,7 @@ ActionPolygon (int argc, char **argv, int x, int y)
+   char *function = ARG (0);
+   if (function && Settings.Mode == POLYGON_MODE)
+     {
+-      HideCrosshair (true);
++      HideCrosshair ();
+       switch (GetFunctionID (function))
+ 	{
+ 	  /* close open polygon if possible */
+@@ -6503,7 +6503,7 @@ ActionPolygon (int argc, char **argv, int x, int y)
+ 	  GoToPreviousPoint ();
+ 	  break;
+ 	}
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+     }
+   return 0;
+ }
+@@ -6615,7 +6615,7 @@ ActionMoveToCurrentLayer (int argc, char **argv, int x, int y)
+   char *function = ARG (0);
+   if (function)
+     {
+-      HideCrosshair (true);
++      HideCrosshair ();
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_Object:
+@@ -6638,7 +6638,7 @@ ActionMoveToCurrentLayer (int argc, char **argv, int x, int y)
+ 	    SetChangedFlag (true);
+ 	  break;
+ 	}
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+     }
+   return 0;
+ }
+@@ -6669,24 +6669,24 @@ ActionSetSame (int argc, char **argv, int x, int y)
+   switch (type)
+     {
+     case LINE_TYPE:
+-      HideCrosshair (true);
++      HideCrosshair ();
+       Settings.LineThickness = ((LineTypePtr) ptr2)->Thickness;
+       Settings.Keepaway = ((LineTypePtr) ptr2)->Clearance / 2;
+       layer = (LayerTypePtr) ptr1;
+       if (Settings.Mode != LINE_MODE)
+ 	SetMode (LINE_MODE);
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+       hid_action ("RouteStylesChanged");
+       break;
+ 
+     case ARC_TYPE:
+-      HideCrosshair (true);
++      HideCrosshair ();
+       Settings.LineThickness = ((ArcTypePtr) ptr2)->Thickness;
+       Settings.Keepaway = ((ArcTypePtr) ptr2)->Clearance / 2;
+       layer = (LayerTypePtr) ptr1;
+       if (Settings.Mode != ARC_MODE)
+ 	SetMode (ARC_MODE);
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+       hid_action ("RouteStylesChanged");
+       break;
+ 
+@@ -6695,13 +6695,13 @@ ActionSetSame (int argc, char **argv, int x, int y)
+       break;
+ 
+     case VIA_TYPE:
+-      HideCrosshair (true);
++      HideCrosshair ();
+       Settings.ViaThickness = ((PinTypePtr) ptr2)->Thickness;
+       Settings.ViaDrillingHole = ((PinTypePtr) ptr2)->DrillingHole;
+       Settings.Keepaway = ((PinTypePtr) ptr2)->Clearance / 2;
+       if (Settings.Mode != VIA_MODE)
+ 	SetMode (VIA_MODE);
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+       hid_action ("RouteStylesChanged");
+       break;
+ 
+@@ -6843,7 +6843,7 @@ ChangeFlag (char *what, char *flag_name, int value, char *cmd_name)
+       return;
+     }
+ 
+-  HideCrosshair (true);
++  HideCrosshair ();
+   switch (GetFunctionID (what))
+     {
+     case F_Object:
+@@ -6902,7 +6902,7 @@ ChangeFlag (char *what, char *flag_name, int value, char *cmd_name)
+ 	SetChangedFlag (true);
+       break;
+     }
+-  RestoreCrosshair (true);
++  RestoreCrosshair ();
+ 
+ }
+ 
+diff --git a/src/buffer.c b/src/buffer.c
+index 110914c..908b21e 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -526,7 +526,7 @@ AddSelectedToBuffer (BufferTypePtr Buffer, LocationType X, LocationType Y,
+    */
+   if (!LeaveSelected)
+     ExtraFlag = SELECTEDFLAG;
+-  HideCrosshair (true);
++  HideCrosshair ();
+   Source = PCB->Data;
+   Dest = Buffer->Data;
+   SelectedOperation (&AddBufferFunctions, false, ALL_TYPES);
+@@ -542,7 +542,7 @@ AddSelectedToBuffer (BufferTypePtr Buffer, LocationType X, LocationType Y,
+       Buffer->X = Crosshair.X;
+       Buffer->Y = Crosshair.Y;
+     }
+-  RestoreCrosshair (true);
++  RestoreCrosshair ();
+   ExtraFlag = 0;
+ }
+ 
+@@ -1452,7 +1452,7 @@ ActionFreeRotateBuffer(int argc, char **argv, int x, int y)
+ {
+   char *angle_s;
+ 
+-  HideCrosshair(false);
++  HideCrosshair ();
+ 
+   if (argc < 1)
+     angle_s = gui->prompt_for ("Enter Rotation (degrees, CCW):", "0");
+@@ -1460,7 +1460,7 @@ ActionFreeRotateBuffer(int argc, char **argv, int x, int y)
+     angle_s = argv[0];
+ 
+   FreeRotateBuffer(PASTEBUFFER, strtod(angle_s, 0));
+-  RestoreCrosshair(false);
++  RestoreCrosshair ();
+   return 0;
+ }
+ 
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 79e188d..6b55cbe 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -566,7 +566,7 @@ XORDrawMoveOrCopyObject (void)
+  * draws additional stuff that follows the crosshair
+  */
+ void
+-DrawAttached (bool BlockToo)
++DrawAttached (void)
+ {
+   BDimension s;
+   switch (Settings.Mode)
+@@ -672,7 +672,7 @@ DrawAttached (bool BlockToo)
+ 
+   /* an attached box does not depend on a special mode */
+   if (Crosshair.AttachedBox.State == STATE_SECOND ||
+-      (BlockToo && Crosshair.AttachedBox.State == STATE_THIRD))
++      Crosshair.AttachedBox.State == STATE_THIRD)
+     {
+       LocationType x1, y1, x2, y2;
+ 
+@@ -688,13 +688,13 @@ DrawAttached (bool BlockToo)
+  * switches crosshair on
+  */
+ void
+-CrosshairOn (bool BlockToo)
++CrosshairOn (void)
+ {
+   if (!Crosshair.On)
+     {
+       Crosshair.On = true;
+ #if 0
+-      DrawAttached (BlockToo);
++      DrawAttached ();
+       DrawMark ();
+ #endif
+     }
+@@ -704,13 +704,13 @@ CrosshairOn (bool BlockToo)
+  * switches crosshair off
+  */
+ void
+-CrosshairOff (bool BlockToo)
++CrosshairOff (void)
+ {
+   if (Crosshair.On)
+     {
+       Crosshair.On = false;
+ #if 0
+-      DrawAttached (BlockToo);
++      DrawAttached ();
+       DrawMark ();
+ #endif
+     }
+@@ -729,9 +729,9 @@ CrosshairOff (bool BlockToo)
+  * saves crosshair state (on/off) and hides him
+  */
+ void
+-HideCrosshair (bool BlockToo)
++HideCrosshair ()
+ {
+-  /* fprintf(stderr, "HideCrosshair %d stack %d\n", BlockToo ? 1 : 0, CrosshairStackLocation); */
++  /* fprintf(stderr, "HideCrosshair stack %d\n", CrosshairStackLocation); */
+   if (CrosshairStackLocation >= MAX_CROSSHAIRSTACK_DEPTH)
+     {
+       fprintf(stderr, "Error: CrosshairStackLocation overflow\n");
+@@ -741,16 +741,16 @@ HideCrosshair (bool BlockToo)
+   CrosshairStack[CrosshairStackLocation] = Crosshair.On;
+   CrosshairStackLocation++;
+ 
+-  CrosshairOff (BlockToo);
++  CrosshairOff ();
+ }
+ 
+ /* ---------------------------------------------------------------------------
+  * restores last crosshair state
+  */
+ void
+-RestoreCrosshair (bool BlockToo)
++RestoreCrosshair (void)
+ {
+-  /* fprintf(stderr, "RestoreCrosshair %d stack %d\n", BlockToo ? 1 : 0, CrosshairStackLocation); */
++  /* fprintf(stderr, "RestoreCrosshair stack %d\n", CrosshairStackLocation); */
+   if (CrosshairStackLocation <= 0)
+     {
+       fprintf(stderr, "Error: CrosshairStackLocation underflow\n");
+@@ -760,13 +760,9 @@ RestoreCrosshair (bool BlockToo)
+   CrosshairStackLocation--;
+ 
+   if (CrosshairStack[CrosshairStackLocation])
+-    {
+-      CrosshairOn (BlockToo);
+-    }
++    CrosshairOn ();
+   else
+-    {
+-      CrosshairOff (BlockToo);
+-    }
++    CrosshairOff ();
+ }
+ 
+ static double
+@@ -1078,7 +1074,7 @@ MoveCrosshairAbsolute (LocationType X, LocationType Y)
+       x = z;
+       z = Crosshair.Y;
+       Crosshair.Y = y;
+-      HideCrosshair (false);
++      HideCrosshair ();
+       /* now move forward again */
+       Crosshair.X = x;
+       Crosshair.Y = z;
+@@ -1161,7 +1157,7 @@ InitCrosshair (void)
+ void
+ DestroyCrosshair (void)
+ {
+-  CrosshairOff (true);
++  CrosshairOff ();
+   FreePolygonMemory (&Crosshair.AttachedPolygon);
+   gui->destroy_gc (Crosshair.GC);
+ }
+diff --git a/src/crosshair.h b/src/crosshair.h
+index b4f2a71..2b9eed3 100644
+--- a/src/crosshair.h
++++ b/src/crosshair.h
+@@ -46,11 +46,11 @@
+ #define	STATE_SECOND	1
+ #define	STATE_THIRD		2
+ 
+-void DrawAttached (bool);
+-void CrosshairOn (bool);
+-void CrosshairOff (bool);
+-void HideCrosshair (bool);
+-void RestoreCrosshair (bool);
++void DrawAttached (void);
++void CrosshairOn (void);
++void CrosshairOff (void);
++void HideCrosshair (void);
++void RestoreCrosshair (void);
+ void MoveCrosshairRelative (LocationType, LocationType);
+ bool MoveCrosshairAbsolute (LocationType, LocationType);
+ void SetCrosshairRange (LocationType, LocationType, LocationType,
+diff --git a/src/draw.c b/src/draw.c
+index e5a4d14..36bf1b9 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -186,13 +186,13 @@ UpdateAll (void)
+ void
+ Draw (void)
+ {
+-  HideCrosshair (true);
++  HideCrosshair ();
+ 
+   /* clear and create event if not drawing to a pixmap
+    */
+   gui->invalidate_lr (Block.X1, Block.X2, Block.Y1, Block.Y2);
+ 
+-  RestoreCrosshair (true);
++  RestoreCrosshair ();
+ 
+   /* shrink the update block */
+   Block.X1 = Block.Y1 = Block.X2 = Block.Y2 = 0;
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 76e7659..2ebb1a2 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -771,7 +771,7 @@ ghid_invalidate_all ()
+   hid_expose_callback (&ghid_hid, &region, 0);
+   ghid_draw_grid ();
+   if (ghidgui->need_restore_crosshair)
+-    RestoreCrosshair (FALSE);
++    RestoreCrosshair ();
+   ghidgui->need_restore_crosshair = FALSE;
+   ghid_screen_update ();
+ }
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 28c10bc..266cf06 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -1900,11 +1900,11 @@ ScrollAction (int argc, char **argv, int x, int y)
+   else
+     AFAIL (scroll);
+ 
+-  HideCrosshair (FALSE);
++  HideCrosshair ();
+   ghid_port_ranges_pan (dx, dy, TRUE);
+   MoveCrosshairRelative (dx, dy);
+   AdjustAttachedObjects ();
+-  RestoreCrosshair (FALSE);
++  RestoreCrosshair ();
+ 
+   return 0;
+ }
+diff --git a/src/hid/gtk/gui-command-window.c b/src/hid/gtk/gui-command-window.c
+index d865dee..28877fd 100644
+--- a/src/hid/gtk/gui-command-window.c
++++ b/src/hid/gtk/gui-command-window.c
+@@ -211,9 +211,9 @@ command_entry_activate_cb (GtkWidget * widget, gpointer data)
+ 
+   if (ghidgui->use_command_window)
+     {
+-      HideCrosshair (true);
++      HideCrosshair ();
+       hid_parse_command (command);
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+       g_free (command);
+     }
+   else
+@@ -462,7 +462,7 @@ ghid_handle_user_command (gboolean raise)
+     ghid_command_window_show (raise);
+   else
+     {
+-      HideCrosshair (true);
++      HideCrosshair ();
+       command = ghid_command_entry_get (_("Enter command:"),
+ 					(Settings.SaveLastCommand && previous) ? previous : (gchar *)"");
+       if (command != NULL)
+@@ -479,7 +479,7 @@ ghid_handle_user_command (gboolean raise)
+ 	  hid_parse_command (command);
+ 	  g_free (command);
+ 	}
+-      RestoreCrosshair (true);
++      RestoreCrosshair ();
+     }
+   ghid_window_set_name_label (PCB->Name);
+   ghid_set_status_line_label ();
+diff --git a/src/hid/gtk/gui-misc.c b/src/hid/gtk/gui-misc.c
+index b619dd0..8bda96d 100644
+--- a/src/hid/gtk/gui-misc.c
++++ b/src/hid/gtk/gui-misc.c
+@@ -403,12 +403,12 @@ run_get_location_loop (const gchar * message)
+   oldObjState = Crosshair.AttachedObject.State;
+   oldLineState = Crosshair.AttachedLine.State;
+   oldBoxState = Crosshair.AttachedBox.State;
+-  HideCrosshair (true);
++  HideCrosshair ();
+   Crosshair.AttachedObject.State = STATE_FIRST;
+   Crosshair.AttachedLine.State = STATE_FIRST;
+   Crosshair.AttachedBox.State = STATE_FIRST;
+   ghid_hand_cursor ();
+-  RestoreCrosshair (true);
++  RestoreCrosshair ();
+ 
+   /* Stop the top level GMainLoop from getting user input from keyboard
+      |  and mouse so we can install our own handlers here.  Also set the
+@@ -439,11 +439,11 @@ run_get_location_loop (const gchar * message)
+   ghid_interface_input_signals_connect ();	/* return to normal */
+   ghid_interface_set_sensitive (TRUE);
+ 
+-  HideCrosshair (true);
++  HideCrosshair ();
+   Crosshair.AttachedObject.State = oldObjState;
+   Crosshair.AttachedLine.State = oldLineState;
+   Crosshair.AttachedBox.State = oldBoxState;
+-  RestoreCrosshair (true);
++  RestoreCrosshair ();
+   ghid_restore_cursor ();
+ 
+   ghid_set_status_line_label ();
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 3b543cb..c71af06 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -59,7 +59,7 @@ ghid_port_ranges_changed (void)
+   GtkAdjustment *h_adj, *v_adj;
+ 
+   if (!ghidgui->combine_adjustments)
+-    HideCrosshair (FALSE);
++    HideCrosshair ();
+   if (ghidgui->combine_adjustments)
+     {
+       ghidgui->combine_adjustments = FALSE;
+@@ -241,7 +241,7 @@ ghid_note_event_location (GdkEventButton * ev)
+   if (moved)
+     {
+       AdjustAttachedObjects ();
+-      RestoreCrosshair (false);
++      RestoreCrosshair ();
+     }
+   ghid_set_cursor_position_labels ();
+   return moved;
+@@ -311,10 +311,10 @@ ghid_port_key_release_cb (GtkWidget * drawing_area, GdkEventKey * kev,
+   if (ghid_is_modifier_key_sym (ksym))
+     ghid_note_event_location (NULL);
+ 
+-  HideCrosshair (TRUE);
++  HideCrosshair ();
+   AdjustAttachedObjects ();
+   ghid_invalidate_all ();
+-  RestoreCrosshair (TRUE);
++  RestoreCrosshair ();
+   ghid_screen_update ();
+   g_idle_add (ghid_idle_cb, NULL);
+   return FALSE;
+@@ -453,12 +453,12 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+   state = (GdkModifierType) (ev->state);
+   mk = ghid_modifier_keys_state (&state);
+   ghid_show_crosshair (FALSE);
+-  HideCrosshair (TRUE);
++  HideCrosshair ();
+ 
+   do_mouse_action(ev->button, mk);
+ 
+   ghid_invalidate_all ();
+-  RestoreCrosshair (TRUE);
++  RestoreCrosshair ();
+   ghid_window_set_name_label (PCB->Name);
+   ghid_set_status_line_label ();
+   ghid_show_crosshair (TRUE);
+@@ -479,13 +479,13 @@ ghid_port_button_release_cb (GtkWidget * drawing_area,
+   state = (GdkModifierType) (ev->state);
+   mk = ghid_modifier_keys_state (&state);
+ 
+-  HideCrosshair (TRUE);
++  HideCrosshair ();
+ 
+   do_mouse_action(ev->button, mk + M_Release);
+ 
+   AdjustAttachedObjects ();
+   ghid_invalidate_all ();
+-  RestoreCrosshair (TRUE);
++  RestoreCrosshair ();
+   ghid_screen_update ();
+ 
+   ghid_window_set_name_label (PCB->Name);
+@@ -502,7 +502,7 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+ {
+   static gboolean first_time_done;
+ 
+-  HideCrosshair (TRUE);
++  HideCrosshair ();
+   gport->width = ev->width;
+   gport->height = ev->height;
+ 
+@@ -536,7 +536,7 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+ 
+   ghid_port_ranges_scale (FALSE);
+   ghid_invalidate_all ();
+-  RestoreCrosshair (TRUE);
++  RestoreCrosshair ();
+   return 0;
+ }
+ 
+@@ -733,7 +733,7 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+     {
+       ghid_screen_update ();
+     }
+-  CrosshairOn (TRUE);
++  CrosshairOn ();
+   return FALSE;
+ }
+ 
+diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
+index 2098c27..074ef9b 100644
+--- a/src/hid/gtk/gui-top-window.c
++++ b/src/hid/gtk/gui-top-window.c
+@@ -656,10 +656,10 @@ ghid_menu_cb (GtkAction * action, gpointer data)
+    */
+   if (ghidgui->toggle_holdoff == FALSE) 
+     {
+-      HideCrosshair (TRUE);
++      HideCrosshair ();
+       AdjustAttachedObjects ();
+       ghid_invalidate_all ();
+-      RestoreCrosshair (TRUE);
++      RestoreCrosshair ();
+       ghid_screen_update ();
+       ghid_window_set_name_label (PCB->Name);
+       ghid_set_status_line_label ();
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 1f5b7b0..2f00577 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -1311,12 +1311,12 @@ mod_changed (XKeyEvent * e, int set)
+       return;
+     }
+   in_move_event = 1;
+-  HideCrosshair (1);
++  HideCrosshair ();
+   if (panning)
+     Pan (2, e->x, e->y);
+   EventMoveCrosshair (Px (e->x), Py (e->y));
+   AdjustAttachedObjects ();
+-  RestoreCrosshair (1);
++  RestoreCrosshair ();
+   in_move_event = 0;
+ }
+ 
+@@ -1352,7 +1352,7 @@ work_area_input (Widget w, XtPointer v, XEvent * e, Boolean * ctd)
+ 	}
+         ignore_release = 0;
+ 
+-        HideCrosshair (true);
++        HideCrosshair ();
+         pressed_button = e->xbutton.button;
+         mods = ((e->xbutton.state & ShiftMask) ? M_Shift : 0)
+           + ((e->xbutton.state & ControlMask) ? M_Ctrl : 0)
+@@ -1362,7 +1362,7 @@ work_area_input (Widget w, XtPointer v, XEvent * e, Boolean * ctd)
+           + ((e->xbutton.state & Mod1Mask) ? M_Alt : 0);
+ #endif
+         do_mouse_action(e->xbutton.button, mods);
+-        RestoreCrosshair (true);
++        RestoreCrosshair ();
+         break;
+       }
+ 
+@@ -1372,7 +1372,7 @@ work_area_input (Widget w, XtPointer v, XEvent * e, Boolean * ctd)
+         if (e->xbutton.button != pressed_button)
+           return;
+         lesstif_button_event (w, e);
+-        HideCrosshair (true);
++        HideCrosshair ();
+         pressed_button = 0;
+         mods = ((e->xbutton.state & ShiftMask) ? M_Shift : 0)
+           + ((e->xbutton.state & ControlMask) ? M_Ctrl : 0)
+@@ -1383,7 +1383,7 @@ work_area_input (Widget w, XtPointer v, XEvent * e, Boolean * ctd)
+ #endif
+           + M_Release;
+         do_mouse_action (e->xbutton.button, mods);
+-        RestoreCrosshair (true);
++        RestoreCrosshair ();
+         break;
+       }
+ 
+@@ -1414,7 +1414,7 @@ work_area_input (Widget w, XtPointer v, XEvent * e, Boolean * ctd)
+ 
+     case LeaveNotify:
+       crosshair_in_window = 0;
+-      CrosshairOff (1);
++      CrosshairOff ();
+       need_idle_proc ();
+       break;
+ 
+@@ -1422,7 +1422,7 @@ work_area_input (Widget w, XtPointer v, XEvent * e, Boolean * ctd)
+       crosshair_in_window = 1;
+       in_move_event = 1;
+       EventMoveCrosshair (Px (e->xcrossing.x), Py (e->xcrossing.y));
+-      CrosshairOn (1);
++      CrosshairOn ();
+       in_move_event = 0;
+       need_idle_proc ();
+       break;
+@@ -2520,7 +2520,7 @@ idle_proc (XtPointer dummy)
+       XCopyArea (display, main_pixmap, window, my_gc, 0, 0, view_width,
+ 		 view_height, 0, 0);
+       pixmap = window;
+-      CrosshairOn (0);
++      CrosshairOn ();
+       need_redraw = 0;
+     }
+ 
+diff --git a/src/misc.c b/src/misc.c
+index a8e08ea..a7704f4 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -661,7 +661,7 @@ CenterDisplay (LocationType X, LocationType Y, bool Delta)
+     {
+       if (MoveCrosshairAbsolute (X, Y))
+         {
+-          RestoreCrosshair(false);
++          RestoreCrosshair ();
+         }
+     }
+   gui->set_crosshair (Crosshair.X, Crosshair.Y, HID_SC_WARP_POINTER);
+diff --git a/src/report.c b/src/report.c
+index 9135e0d..c0a4ab0 100644
+--- a/src/report.c
++++ b/src/report.c
+@@ -515,11 +515,11 @@ ReportDialog (int argc, char **argv, int x, int y)
+       Message (_("Nothing found to report on\n"));
+       return 1;
+     }
+-  HideCrosshair (false);
++  HideCrosshair ();
+   /* create dialog box */
+   gui->report_dialog ("Report", &report[0]);
+ 
+-  RestoreCrosshair (false);
++  RestoreCrosshair ();
+   return 0;
+ }
+ 
+@@ -560,9 +560,9 @@ ReportFoundPins (int argc, char **argv, int x, int y)
+   }
+   END_LOOP;
+ 
+-  HideCrosshair (false);
++  HideCrosshair ();
+   gui->report_dialog ("Report", list.Data);
+-  RestoreCrosshair (false);
++  RestoreCrosshair ();
+   return 0;
+ }
+ 
+@@ -779,7 +779,7 @@ ReportNetLength (int argc, char **argv, int x, int y)
+   END_LOOP;
+  got_net_name:
+ 
+-  HideCrosshair (false);
++  HideCrosshair ();
+   {
+     int prec = Settings.grid_units_mm? 4: 2;
+     if (netname)
+@@ -787,7 +787,7 @@ ReportNetLength (int argc, char **argv, int x, int y)
+     else
+       gui->log ("Net length: %.*f %s\n", prec, UNIT (length));
+   }
+-  RestoreCrosshair (false);
++  RestoreCrosshair ();
+   return 0;
+ }
+ /* ---------------------------------------------------------------------------
+diff --git a/src/set.c b/src/set.c
+index 188203a..17f7583 100644
+--- a/src/set.c
++++ b/src/set.c
+@@ -244,7 +244,7 @@ SetMode (int Mode)
+   if (recursing)
+     return;
+   recursing = true;
+-  HideCrosshair (true);
++  HideCrosshair ();
+   addedLines = 0;
+   Crosshair.AttachedObject.Type = NO_TYPE;
+   Crosshair.AttachedObject.State = STATE_FIRST;
+@@ -314,7 +314,7 @@ SetMode (int Mode)
+    * may have changed
+    */
+   MoveCrosshairRelative (0, 0);
+-  RestoreCrosshair (true);
++  RestoreCrosshair ();
+ }
+ 
+ void
+@@ -342,20 +342,20 @@ SetLocalRef (LocationType X, LocationType Y, bool Showing)
+ 
+   if (Showing)
+     {
+-      HideCrosshair (true);
++      HideCrosshair ();
+       if (count == 0)
+ 	old = Marked;
+       Marked.X = X;
+       Marked.Y = Y;
+       Marked.status = true;
+       count++;
+-      RestoreCrosshair (false);
++      RestoreCrosshair ();
+     }
+   else if (count > 0)
+     {
+-      HideCrosshair (false);
++      HideCrosshair ();
+       count = 0;
+       Marked = old;
+-      RestoreCrosshair (false);
++      RestoreCrosshair ();
+     }
+ }
