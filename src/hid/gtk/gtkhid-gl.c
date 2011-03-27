@@ -396,7 +396,8 @@ ghid_use_mask (int use_it)
   switch (use_it)
     {
     case HID_MASK_BEFORE:
-      break;
+      /* Ignore, this renderer doesn't use it */
+      return;
 
     case HID_MASK_CLEAR:
       /* Write '1' to the stencil buffer where the solder-mask should not be drawn. */
