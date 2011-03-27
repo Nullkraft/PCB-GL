@@ -1,0 +1,18 @@
+Bottom: e051118b72c991929e67e95ce0826cf9accbbfb0
+Top:    e051118b72c991929e67e95ce0826cf9accbbfb0
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-27 02:05:06 +0100
+
+draw.c: Fix mask drawing at high zooms (only draw the bit on-screen)
+
+This probably papers over a bug in the GTK hid's fill_rect routine, as the
+only reason this should fix anything is because it avoids coordinate overflow
+at high zoom.
+
+The GTK hid really ought to clip coords to the screen before transforming them
+for rendering.
+
+
+---
+
+
