@@ -282,6 +282,13 @@ ghid_draw_bg_image (void)
 void
 ghid_use_mask (int use_it)
 {
+  /* NOTE: We are assuming the stencil buffer bit plane is clear at the start
+   *       of a masked drawing operation.
+   *
+   *       For our current usage we know that it will start clean at the
+   *       beginning of the frame - and that the mask is only used at most
+   *       once during rendering (for the solder-mask layer).
+   */
 
   /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
   if (use_it == HID_LIVE_DRAWING ||
