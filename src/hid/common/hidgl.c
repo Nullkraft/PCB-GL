@@ -45,6 +45,7 @@
 RCSID ("$Id: $");
 
 triangle_buffer buffer;
+float global_depth = 0;
 
 #if 0
 triangle_array *
@@ -58,7 +59,7 @@ void
 hidgl_init_triangle_array (triangle_buffer *buffer)
 {
   glEnableClientState (GL_VERTEX_ARRAY);
-  glVertexPointer (2, GL_FLOAT, 0, buffer->triangle_array);
+  glVertexPointer (3, GL_FLOAT, 0, buffer->triangle_array);
   buffer->triangle_count = 0;
   buffer->coord_comp_count = 0;
 }
@@ -88,8 +89,11 @@ hidgl_ensure_triangle_space (triangle_buffer *buffer, int count)
     hidgl_flush_triangles (buffer);
 }
 
-//static int cur_mask = -1;
-
+void
+hidgl_set_depth (float depth)
+{
+  global_depth = depth;
+}
 
 /* ------------------------------------------------------------ */
 #if 0
@@ -375,10 +379,10 @@ void
 hidgl_draw_rect (int x1, int y1, int x2, int y2)
 {
   glBegin (GL_LINE_LOOP);
-  glVertex2f (x1, y1);
-  glVertex2f (x1, y2);
-  glVertex2f (x2, y2);
-  glVertex2f (x2, y1);
+  glVertex3f (x1, y1, global_depth);
+  glVertex3f (x1, y2, global_depth);
+  glVertex3f (x2, y2, global_depth);
+  glVertex3f (x2, y1, global_depth);
   glEnd ();
 }
 
