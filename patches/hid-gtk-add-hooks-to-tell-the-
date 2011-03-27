@@ -1,5 +1,5 @@
-Bottom: 1929f90c38776e2f78f0264ee9c4421adf5dedc7
-Top:    3534ea00fe9d5385873ac43728156da14197618c
+Bottom: 7033e2e07cc77b23578359e60c2d7a9cad98da06
+Top:    90db70df14e28ad763756000e266e4c9593b9783
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 00:06:36 +0000
 
@@ -12,10 +12,10 @@ before its drawing calls can be operated.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 3b012c3..52d9990 100644
+index e8d3b73..62e2333 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -974,6 +974,17 @@ ghid_drawing_area_configure_hook (GHidPort *port)
+@@ -929,6 +929,17 @@ ghid_drawing_area_configure_hook (GHidPort *port)
      }
  }
  
@@ -61,10 +61,10 @@ index 10dd85b..3b543cb 100644
  }
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 69bd992..97ebb1c 100644
+index 838b5fa..29c98f8 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -498,6 +498,8 @@ void ghid_show_crosshair (gboolean show);
+@@ -497,6 +497,8 @@ void ghid_show_crosshair (gboolean show);
  void ghid_init_renderer (int *, char ***, GHidPort *);
  void ghid_init_drawing_widget (GtkWidget *widget, GHidPort *);
  void ghid_drawing_area_configure_hook (GHidPort *port);

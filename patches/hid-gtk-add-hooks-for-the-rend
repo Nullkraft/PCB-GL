@@ -1,5 +1,5 @@
-Bottom: 7abcd5c16a46ab4f07c0744e97e36ff3aefc82bd
-Top:    1929f90c38776e2f78f0264ee9c4421adf5dedc7
+Bottom: c765f0aea0276281fcd6d5d6b78181cb8714690d
+Top:    7033e2e07cc77b23578359e60c2d7a9cad98da06
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 00:04:23 +0000
 
@@ -9,10 +9,10 @@ hid/gtk: Add hooks for the renderer to initalise drawing widgets
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index d5b2f82..3b012c3 100644
+index c8bac31..e8d3b73 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -947,6 +947,11 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+@@ -902,6 +902,11 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
  }
  
  void
@@ -76,10 +76,10 @@ index 1808065..2098c27 100644
    gtk_widget_add_events (gport->drawing_area, GDK_EXPOSURE_MASK
  			 | GDK_LEAVE_NOTIFY_MASK | GDK_ENTER_NOTIFY_MASK
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index eb1e853..69bd992 100644
+index 332239b..838b5fa 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -496,6 +496,7 @@ void ghid_invalidate_lr (int left, int right, int top, int bottom);
+@@ -495,6 +495,7 @@ void ghid_invalidate_lr (int left, int right, int top, int bottom);
  void ghid_invalidate_all ();
  void ghid_show_crosshair (gboolean show);
  void ghid_init_renderer (int *, char ***, GHidPort *);

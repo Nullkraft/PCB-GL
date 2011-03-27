@@ -1,5 +1,5 @@
-Bottom: c765f0aea0276281fcd6d5d6b78181cb8714690d
-Top:    7abcd5c16a46ab4f07c0744e97e36ff3aefc82bd
+Bottom: 90db70df14e28ad763756000e266e4c9593b9783
+Top:    3534ea00fe9d5385873ac43728156da14197618c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 23:54:25 +0000
 
@@ -12,7 +12,7 @@ renderer hopefully coming soon needs to do some extra work.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index c8bac31..d5b2f82 100644
+index 62e2333..52d9990 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -52,6 +52,51 @@ typedef struct hid_gc_struct
@@ -124,7 +124,7 @@ index 169884e..c77faaf 100644
  ghid_calibrate (double xval, double yval)
  {
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 332239b..eb1e853 100644
+index 29c98f8..97ebb1c 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -475,6 +475,7 @@ void ghid_logv (const char *fmt, va_list args);
