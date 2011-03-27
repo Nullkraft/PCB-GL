@@ -1,0 +1,74 @@
+Bottom: 15dcb194f76023712c70da26fa1e8a1e294dbf2a
+Top:    f2726cd4ac1ba0a0057bc881bb4f54a5db0568ca
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-28 00:57:29 +0100
+
+Revert "hid/gtk: Add hooks to tell the render when we start/stop drawing"
+
+This reverts commit 332cb8ddc1cc032ac29c7d2b9a0051ccc228b6da.
+
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 2ebb1a2..e10dc6e 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -974,17 +974,6 @@ ghid_drawing_area_configure_hook (GHidPort *port)
+     }
+ }
+ 
+-gboolean
+-ghid_start_drawing (GHidPort *port)
+-{
+-  return TRUE;
+-}
+-
+-void
+-ghid_end_drawing (GHidPort *port)
+-{
+-}
+-
+ void
+ ghid_screen_update (void)
+ {
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index c71af06..50f8e5e 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -671,13 +671,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+   static gint x_prev = -1, y_prev = -1;
+   gboolean moved;
+ 
+-
+   gdk_event_request_motions (ev);
+ 
+-  if (!ghid_start_drawing (out))
+-    return FALSE;
+-
+-
+   if (out->panning)
+     {
+       dx = gport->zoom * (x_prev - ev->x);
+@@ -698,8 +693,6 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+   ghid_show_crosshair (TRUE);
+   if (moved && have_crosshair_attachments ())
+     ghid_draw_area_update (gport, NULL);
+-
+-  ghid_end_drawing (out);
+   return FALSE;
+ }
+ 
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 97ebb1c..69bd992 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -498,8 +498,6 @@ void ghid_show_crosshair (gboolean show);
+ void ghid_init_renderer (int *, char ***, GHidPort *);
+ void ghid_init_drawing_widget (GtkWidget *widget, GHidPort *);
+ void ghid_drawing_area_configure_hook (GHidPort *port);
+-gboolean ghid_start_drawing (GHidPort *port);
+-void ghid_end_drawing (GHidPort *port);
+ void ghid_screen_update (void);
+ gboolean ghid_drawing_area_expose_cb (GtkWidget *, GdkEventExpose *,
+                                       GHidPort *);
