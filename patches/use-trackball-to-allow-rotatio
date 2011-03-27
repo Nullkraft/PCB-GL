@@ -1,5 +1,5 @@
-Bottom: 71053d3826408765ff08e83c44456a817d599db2
-Top:    b40c8eb6d0757d4b5e59dd75d0f04db479e950ab
+Bottom: d1db4389d20c52298990e7dc32914f9c5df3ac78
+Top:    aacdd71e6130f7035112005abd993cc4f140049a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:07 +0000
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 1a6fc1a..ff2e0bd 100644
+index a9641c9..5dd8c04 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,7 +21,9 @@
@@ -369,7 +369,7 @@ index 1a6fc1a..ff2e0bd 100644
 +  ghid_invalidate_all ();
 +}
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index c838117..eb63d93 100644
+index 42b3533..cdbd0ac 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -233,6 +233,14 @@ ghid_note_event_location (GdkEventButton * ev)
@@ -396,7 +396,7 @@ index c838117..eb63d93 100644
  # define ENABLE_TOOLTIPS 1
  #else
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 9f9d59e..9974c8c 100644
+index f241133..a9b15e9 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -123,6 +123,7 @@ a zoom in/out.
