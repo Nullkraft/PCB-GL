@@ -1,5 +1,5 @@
 Bottom: 0f09dd09a8e2073b7edd7aff646f146b36e241f2
-Top:    7a32a0378394a9e58f0d2f3428278786a58a02cd
+Top:    ba829d5a57a092bf755f1c54e83f7732a4edda0b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:02 +0000
 
@@ -755,7 +755,7 @@ index 0000000..e69a6b7
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..1d5773b
+index 0000000..5541056
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -0,0 +1,1219 @@
@@ -1750,7 +1750,7 @@ index 0000000..1d5773b
 +                ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
 +                             -port->view_y0, 0);
 +  DrawAttached ();
-+  DrawMark (TRUE);
++  DrawMark ();
 +  hidgl_flush_triangles (&buffer);
 +  glPopMatrix ();
 +
