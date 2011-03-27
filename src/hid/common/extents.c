@@ -186,6 +186,7 @@ static HID extents_hid = {
   0 /* extents_parse_arguments */ ,
   0 /* extents_invalidate_lr */ ,
   0 /* extents_invalidate_all */ ,
+  0 /* extents_notify_crosshair_changed */ ,
   extents_set_layer,
   extents_make_gc,
   extents_destroy_gc,
