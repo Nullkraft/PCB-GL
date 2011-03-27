@@ -1,5 +1,5 @@
 Bottom: 497347136291a561f56118b124ad0429541dcdf5
-Top:    04cbb05f65709eca7cb7613e90eb1751cea33548
+Top:    466ed2ce48fce496644194268b2087a30dc54834
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:02 +0000
 
@@ -755,7 +755,7 @@ index 0000000..e69a6b7
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..358d8c8
+index 0000000..f1384d7
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -0,0 +1,1212 @@
@@ -1059,8 +1059,8 @@ index 0000000..358d8c8
 +  switch (use_it)
 +    {
 +    case HID_MASK_BEFORE:
-+      /* Ignore, this renderer doesn't use it */
-+      return;
++      /* The HID asks not to receive this mask type, so warn if we get it */
++      g_return_if_reached ();
 +
 +    case HID_MASK_CLEAR:
 +      /* Write '1' to the stencil buffer where the solder-mask should not be drawn. */
