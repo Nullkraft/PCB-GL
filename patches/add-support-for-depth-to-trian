@@ -1,5 +1,5 @@
 Bottom: 5d4282e90682cc1e32ba1a2c63af01ebc9279b60
-Top:    60fdc48f62159d774432e98290340ca148fd11e5
+Top:    0d299d4377e967f8503d747a129dfe55b9dedc71
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:08 +0000
 
@@ -27,17 +27,6 @@ index 3e08fec..e090e11 100644
  
  /* ---------------------------------------------------------------------- */
  
-diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index 9dd76e3..a42e0be 100644
---- a/src/hid/common/hidgl.h
-+++ b/src/hid/common/hidgl.h
-@@ -81,5 +81,6 @@ int hidgl_stencil_bits (void);
- int hidgl_assign_clear_stencil_bit (void);
- void hidgl_return_stencil_bit (int bit);
- void hidgl_reset_stencil_usage (void);
-+void hidgl_set_depth (float depth);
- 
- #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
 index eb63d93..df0446f 100644
 --- a/src/hid/gtk/gui-output-events.c
