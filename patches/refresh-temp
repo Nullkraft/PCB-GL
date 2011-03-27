@@ -1,0 +1,1418 @@
+Bottom: 98e44c728c4aa84e78e984692439dfbcf81abebd
+Top:    88895270858f2dd2352540922445fa06acef1927
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-27 15:14:35 +0100
+
+Refresh of bentley-ottann-test-implementa
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 30360cc..0ddac76 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -41,22 +41,22 @@ PCB_SRCS = \
+ 	box.h \
+ 	buffer.c \
+ 	buffer.h \
+-	borast/cairo-minimal.h \
+-	borast/cairoint-minimal.h \
+-	borast/cairo-bentley-ottmann.c \
+-	borast/cairo-combsort-private.h \
+-	borast/cairo-compiler-private.h \
+-	borast/cairo-fixed-private.h \
+-	borast/cairo-fixed-type-private.h \
+-	borast/cairo-freelist.c \
+-	borast/cairo-freelist-private.h \
+-	borast/cairo-malloc-private.h \
+-	borast/cairo-traps.c \
+-	borast/cairo-traps-private.h \
+-	borast/cairo-types-private.h \
+-	borast/cairo-wideint.c \
+-	borast/cairo-wideint-private.h \
+-	borast/cairo-wideint-type-private.h \
++	borast/borast-minimal.h \
++	borast/borastint-minimal.h \
++	borast/borast-bentley-ottmann.c \
++	borast/borast-combsort-private.h \
++	borast/borast-compiler-private.h \
++	borast/borast-fixed-private.h \
++	borast/borast-fixed-type-private.h \
++	borast/borast-freelist.c \
++	borast/borast-freelist-private.h \
++	borast/borast-malloc-private.h \
++	borast/borast-traps.c \
++	borast/borast-traps-private.h \
++	borast/borast-types-private.h \
++	borast/borast-wideint.c \
++	borast/borast-wideint-private.h \
++	borast/borast-wideint-type-private.h \
+ 	change.c \
+ 	change.h \
+ 	clip.c \
+diff --git a/src/borast/cairo-bentley-ottmann.c b/src/borast/borast-bentley-ottmann.c
+similarity index 70%
+rename from src/borast/cairo-bentley-ottmann.c
+rename to src/borast/borast-bentley-ottmann.c
+index fcc0e66..247a83e 100644
+--- a/src/borast/cairo-bentley-ottmann.c
++++ b/src/borast/borast-bentley-ottmann.c
+@@ -38,12 +38,12 @@
+  */
+ 
+ /* Provide definitions for standalone compilation */
+-#include "cairoint-minimal.h"
+-#include "cairo-malloc-private.h"
+-#include "cairo-traps-private.h"
+-#include "cairo-fixed-private.h"
+-#include "cairo-freelist-private.h"
+-#include "cairo-combsort-private.h"
++#include "borastint-minimal.h"
++#include "borast-malloc-private.h"
++#include "borast-traps-private.h"
++#include "borast-fixed-private.h"
++#include "borast-freelist-private.h"
++#include "borast-combsort-private.h"
+ 
+ #include <glib.h>
+ 
+@@ -51,28 +51,28 @@
+ #include <GL/gl.h>
+ #include "hid/common/hidgl.h"
+ 
+-#define _cairo_error(x) (x)
++#define _borast_error(x) (x)
+ 
+ #define DEBUG_PRINT_STATE 0
+ #define DEBUG_EVENTS 0
+ #define DEBUG_TRAPS 0
+ 
+-typedef cairo_point_t cairo_bo_point32_t;
++typedef borast_point_t cairo_bo_point32_t;
+ 
+-typedef struct _cairo_bo_edge cairo_bo_edge_t;
+-typedef struct _cairo_bo_trap cairo_bo_trap_t;
++typedef struct _borast_bo_edge cairo_bo_edge_t;
++typedef struct _borast_bo_trap cairo_bo_trap_t;
+ 
+ /* A deferred trapezoid of an edge */
+-struct _cairo_bo_trap {
+-    cairo_bo_edge_t *right;
++struct _borast_bo_trap {
++    borast_bo_edge_t *right;
+     int32_t top;
+ };
+ 
+-struct _cairo_bo_edge {
+-    cairo_edge_t edge;
+-    cairo_bo_edge_t *prev;
+-    cairo_bo_edge_t *next;
+-    cairo_bo_trap_t deferred_trap;
++struct _borast_bo_edge {
++    borast_edge_t edge;
++    borast_bo_edge_t *prev;
++    borast_bo_edge_t *next;
++    borast_bo_trap_t deferred_trap;
+ };
+ 
+ /* the parent is always given by index/2 */
+@@ -83,54 +83,54 @@ struct _cairo_bo_edge {
+ #define PQ_LEFT_CHILD_INDEX(i) ((i) << 1)
+ 
+ typedef enum {
+-    CAIRO_BO_EVENT_TYPE_STOP,
+-    CAIRO_BO_EVENT_TYPE_START
+-} cairo_bo_event_type_t;
+-
+-typedef struct _cairo_bo_event {
+-    cairo_bo_event_type_t type;
+-    cairo_point_t point;
+-} cairo_bo_event_t;
+-
+-typedef struct _cairo_bo_start_event {
+-    cairo_bo_event_type_t type;
+-    cairo_point_t point;
+-    cairo_bo_edge_t edge;
+-} cairo_bo_start_event_t;
+-
+-typedef struct _cairo_bo_queue_event {
+-    cairo_bo_event_type_t type;
+-    cairo_point_t point;
+-    cairo_bo_edge_t *e1;
+-    cairo_bo_edge_t *e2;
+-} cairo_bo_queue_event_t;
++    BORAST_BO_EVENT_TYPE_STOP,
++    BORAST_BO_EVENT_TYPE_START
++} borast_bo_event_type_t;
++
++typedef struct _borast_bo_event {
++    borast_bo_event_type_t type;
++    borast_point_t point;
++} borast_bo_event_t;
++
++typedef struct _borast_bo_start_event {
++    borast_bo_event_type_t type;
++    borast_point_t point;
++    borast_bo_edge_t edge;
++} borast_bo_start_event_t;
++
++typedef struct _borast_bo_queue_event {
++    borast_bo_event_type_t type;
++    borast_point_t point;
++    borast_bo_edge_t *e1;
++    borast_bo_edge_t *e2;
++} borast_bo_queue_event_t;
+ 
+ typedef struct _pqueue {
+     int size, max_size;
+ 
+-    cairo_bo_event_t **elements;
+-    cairo_bo_event_t *elements_embedded[1024];
++    borast_bo_event_t **elements;
++    borast_bo_event_t *elements_embedded[1024];
+ } pqueue_t;
+ 
+-typedef struct _cairo_bo_event_queue {
+-    cairo_freepool_t pool;
++typedef struct _borast_bo_event_queue {
++    borast_freepool_t pool;
+     pqueue_t pqueue;
+-    cairo_bo_event_t **start_events;
+-} cairo_bo_event_queue_t;
++    borast_bo_event_t **start_events;
++} borast_bo_event_queue_t;
+ 
+-typedef struct _cairo_bo_sweep_line {
+-    cairo_bo_edge_t *head;
+-    cairo_bo_edge_t *stopped;
++typedef struct _borast_bo_sweep_line {
++    borast_bo_edge_t *head;
++    borast_bo_edge_t *stopped;
+     int32_t current_y;
+-    cairo_bo_edge_t *current_edge;
+-} cairo_bo_sweep_line_t;
++    borast_bo_edge_t *current_edge;
++} borast_bo_sweep_line_t;
+ 
+ 
+-static cairo_fixed_t
+-_line_compute_intersection_x_for_y (const cairo_line_t *line,
+-                                    cairo_fixed_t y)
++static borast_fixed_t
++_line_compute_intersection_x_for_y (const borast_line_t *line,
++                                    borast_fixed_t y)
+ {
+-    cairo_fixed_t x, dy;
++    borast_fixed_t x, dy;
+ 
+     if (y == line->p1.y)
+         return line->p1.x;
+@@ -140,7 +140,7 @@ _line_compute_intersection_x_for_y (const cairo_line_t *line,
+     x = line->p1.x;
+     dy = line->p2.y - line->p1.y;
+     if (dy != 0) {
+-        x += _cairo_fixed_mul_div_floor (y - line->p1.y,
++        x += _borast_fixed_mul_div_floor (y - line->p1.y,
+                                          line->p2.x - line->p1.x,
+                                          dy);
+     }
+@@ -149,8 +149,8 @@ _line_compute_intersection_x_for_y (const cairo_line_t *line,
+ }
+ 
+ static inline int
+-_cairo_bo_point32_compare (cairo_bo_point32_t const *a,
+-                           cairo_bo_point32_t const *b)
++_borast_bo_point32_compare (cairo_bo_point32_t const *a,
++                           borast_bo_point32_t const *b)
+ {
+     int cmp;
+ 
+@@ -196,8 +196,8 @@ _cairo_bo_point32_compare (cairo_bo_point32_t const *a,
+  * have a common stop point.
+  */
+ static inline int
+-_slope_compare (const cairo_bo_edge_t *a,
+-                const cairo_bo_edge_t *b)
++_slope_compare (const borast_bo_edge_t *a,
++                const borast_bo_edge_t *b)
+ {
+     /* XXX: We're assuming here that dx and dy will still fit in 32
+      * bits. That's not true in general as there could be overflow. We
+@@ -225,10 +225,10 @@ _slope_compare (const cairo_bo_edge_t *a,
+     {
+         int32_t ady = a->edge.line.p2.y - a->edge.line.p1.y;
+         int32_t bdy = b->edge.line.p2.y - b->edge.line.p1.y;
+-        cairo_int64_t adx_bdy = _cairo_int32x32_64_mul (adx, bdy);
+-        cairo_int64_t bdx_ady = _cairo_int32x32_64_mul (bdx, ady);
++        borast_int64_t adx_bdy = _cairo_int32x32_64_mul (adx, bdy);
++        borast_int64_t bdx_ady = _cairo_int32x32_64_mul (bdx, ady);
+ 
+-        return _cairo_int64_cmp (adx_bdy, bdx_ady);
++        return _borast_int64_cmp (adx_bdy, bdx_ady);
+     }
+ }
+ 
+@@ -259,8 +259,8 @@ _slope_compare (const cairo_bo_edge_t *a,
+  * See the similar discussion for _slope_compare().
+  */
+ static int
+-edges_compare_x_for_y_general (const cairo_bo_edge_t *a,
+-                               const cairo_bo_edge_t *b,
++edges_compare_x_for_y_general (const borast_bo_edge_t *a,
++                               const borast_bo_edge_t *b,
+                                int32_t y)
+ {
+     /* XXX: We're assuming here that dx and dy will still fit in 32
+@@ -319,9 +319,9 @@ edges_compare_x_for_y_general (const cairo_bo_edge_t *a,
+     if (dx == 0)
+         have_dx_adx_bdx &= ~HAVE_DX;
+ 
+-#define L _cairo_int64x32_128_mul (_cairo_int32x32_64_mul (ady, bdy), dx)
+-#define A _cairo_int64x32_128_mul (_cairo_int32x32_64_mul (adx, bdy), y - a->edge.line.p1.y)
+-#define B _cairo_int64x32_128_mul (_cairo_int32x32_64_mul (bdx, ady), y - b->edge.line.p1.y)
++#define L _borast_int64x32_128_mul (_cairo_int32x32_64_mul (ady, bdy), dx)
++#define A _borast_int64x32_128_mul (_cairo_int32x32_64_mul (adx, bdy), y - a->edge.line.p1.y)
++#define B _borast_int64x32_128_mul (_cairo_int32x32_64_mul (bdx, ady), y - b->edge.line.p1.y)
+     switch (have_dx_adx_bdx) {
+     default:
+     case HAVE_NONE:
+@@ -340,43 +340,43 @@ edges_compare_x_for_y_general (const cairo_bo_edge_t *a,
+         if ((adx ^ bdx) < 0) {
+             return adx;
+         } else if (a->edge.line.p1.y == b->edge.line.p1.y) { /* common origin */
+-            cairo_int64_t adx_bdy, bdx_ady;
++            borast_int64_t adx_bdy, bdx_ady;
+ 
+             /* ∴ A_dx * B_dy ∘ B_dx * A_dy */
+ 
+-            adx_bdy = _cairo_int32x32_64_mul (adx, bdy);
+-            bdx_ady = _cairo_int32x32_64_mul (bdx, ady);
++            adx_bdy = _borast_int32x32_64_mul (adx, bdy);
++            bdx_ady = _borast_int32x32_64_mul (bdx, ady);
+ 
+-            return _cairo_int64_cmp (adx_bdy, bdx_ady);
++            return _borast_int64_cmp (adx_bdy, bdx_ady);
+         } else
+-            return _cairo_int128_cmp (A, B);
++            return _borast_int128_cmp (A, B);
+     case HAVE_DX_ADX:
+         /* A_dy * (A_x - B_x) ∘ - (Y - A_y) * A_dx */
+         if ((-adx ^ dx) < 0) {
+             return dx;
+         } else {
+-            cairo_int64_t ady_dx, dy_adx;
++            borast_int64_t ady_dx, dy_adx;
+ 
+-            ady_dx = _cairo_int32x32_64_mul (ady, dx);
+-            dy_adx = _cairo_int32x32_64_mul (a->edge.line.p1.y - y, adx);
++            ady_dx = _borast_int32x32_64_mul (ady, dx);
++            dy_adx = _borast_int32x32_64_mul (a->edge.line.p1.y - y, adx);
+ 
+-            return _cairo_int64_cmp (ady_dx, dy_adx);
++            return _borast_int64_cmp (ady_dx, dy_adx);
+         }
+     case HAVE_DX_BDX:
+         /* B_dy * (A_x - B_x) ∘ (Y - B_y) * B_dx */
+         if ((bdx ^ dx) < 0) {
+             return dx;
+         } else {
+-            cairo_int64_t bdy_dx, dy_bdx;
++            borast_int64_t bdy_dx, dy_bdx;
+ 
+-            bdy_dx = _cairo_int32x32_64_mul (bdy, dx);
+-            dy_bdx = _cairo_int32x32_64_mul (y - b->edge.line.p1.y, bdx);
++            bdy_dx = _borast_int32x32_64_mul (bdy, dx);
++            dy_bdx = _borast_int32x32_64_mul (y - b->edge.line.p1.y, bdx);
+ 
+-            return _cairo_int64_cmp (bdy_dx, dy_bdx);
++            return _borast_int64_cmp (bdy_dx, dy_bdx);
+         }
+     case HAVE_ALL:
+         /* XXX try comparing (a->edge.line.p2.x - b->edge.line.p2.x) et al */
+-        return _cairo_int128_cmp (L, _cairo_int128_sub (B, A));
++        return _borast_int128_cmp (L, _cairo_int128_sub (B, A));
+     }
+ #undef B
+ #undef A
+@@ -405,13 +405,13 @@ edges_compare_x_for_y_general (const cairo_bo_edge_t *a,
+  * edges_compare_x_for_y_general().
+  */
+ static int
+-edge_compare_for_y_against_x (const cairo_bo_edge_t *a,
++edge_compare_for_y_against_x (const borast_bo_edge_t *a,
+                               int32_t y,
+                               int32_t x)
+ {
+     int32_t adx, ady;
+     int32_t dx, dy;
+-    cairo_int64_t L, R;
++    borast_int64_t L, R;
+ 
+     if (x < a->edge.line.p1.x && x < a->edge.line.p2.x)
+         return 1;
+@@ -429,15 +429,15 @@ edge_compare_for_y_against_x (const cairo_bo_edge_t *a,
+     dy = y - a->edge.line.p1.y;
+     ady = a->edge.line.p2.y - a->edge.line.p1.y;
+ 
+-    L = _cairo_int32x32_64_mul (dy, adx);
+-    R = _cairo_int32x32_64_mul (dx, ady);
++    L = _borast_int32x32_64_mul (dy, adx);
++    R = _borast_int32x32_64_mul (dx, ady);
+ 
+-    return _cairo_int64_cmp (L, R);
++    return _borast_int64_cmp (L, R);
+ }
+ 
+ static int
+-edges_compare_x_for_y (const cairo_bo_edge_t *a,
+-                       const cairo_bo_edge_t *b,
++edges_compare_x_for_y (const borast_bo_edge_t *a,
++                       const borast_bo_edge_t *b,
+                        int32_t y)
+ {
+     /* If the sweep-line is currently on an end-point of a line,
+@@ -451,7 +451,8 @@ edges_compare_x_for_y (const cairo_bo_edge_t *a,
+        HAVE_BX      = 0x2,
+        HAVE_BOTH    = HAVE_AX | HAVE_BX
+     } have_ax_bx = HAVE_BOTH;
+-    int32_t ax, bx;
++    int32_t ax = 0; /* Initialised to silence compiler, we'd be ok without */
++    int32_t bx = 0; /* Initialised to silence compiler, we'd be ok without */
+ 
+     if (y == a->edge.line.p1.y)
+         ax = a->edge.line.p1.x;
+@@ -481,16 +482,16 @@ edges_compare_x_for_y (const cairo_bo_edge_t *a,
+ }
+ 
+ static inline int
+-_line_equal (const cairo_line_t *a, const cairo_line_t *b)
++_line_equal (const borast_line_t *a, const cairo_line_t *b)
+ {
+     return a->p1.x == b->p1.x && a->p1.y == b->p1.y &&
+            a->p2.x == b->p2.x && a->p2.y == b->p2.y;
+ }
+ 
+ static int
+-_cairo_bo_sweep_line_compare_edges (cairo_bo_sweep_line_t        *sweep_line,
+-                                    const cairo_bo_edge_t        *a,
+-                                    const cairo_bo_edge_t        *b)
++_borast_bo_sweep_line_compare_edges (cairo_bo_sweep_line_t        *sweep_line,
++                                    const borast_bo_edge_t        *a,
++                                    const borast_bo_edge_t        *b)
+ {
+     int cmp;
+ 
+@@ -514,31 +515,31 @@ _cairo_bo_sweep_line_compare_edges (cairo_bo_sweep_line_t        *sweep_line,
+     return b->edge.bottom - a->edge.bottom;
+ }
+ 
+-static inline cairo_int64_t
++static inline borast_int64_t
+ det32_64 (int32_t a, int32_t b,
+           int32_t c, int32_t d)
+ {
+     /* det = a * d - b * c */
+-    return _cairo_int64_sub (_cairo_int32x32_64_mul (a, d),
+-                             _cairo_int32x32_64_mul (b, c));
++    return _borast_int64_sub (_cairo_int32x32_64_mul (a, d),
++                             _borast_int32x32_64_mul (b, c));
+ }
+ 
+-static inline cairo_int128_t
+-det64x32_128 (cairo_int64_t a, int32_t       b,
+-              cairo_int64_t c, int32_t       d)
++static inline borast_int128_t
++det64x32_128 (borast_int64_t a, int32_t       b,
++              borast_int64_t c, int32_t       d)
+ {
+     /* det = a * d - b * c */
+-    return _cairo_int128_sub (_cairo_int64x32_128_mul (a, d),
+-                              _cairo_int64x32_128_mul (c, b));
++    return _borast_int128_sub (_cairo_int64x32_128_mul (a, d),
++                              _borast_int64x32_128_mul (c, b));
+ }
+ 
+ static inline int
+-cairo_bo_event_compare (const cairo_bo_event_t *a,
+-                        const cairo_bo_event_t *b)
++borast_bo_event_compare (const cairo_bo_event_t *a,
++                        const borast_bo_event_t *b)
+ {
+     int cmp;
+ 
+-    cmp = _cairo_bo_point32_compare (&a->point, &b->point);
++    cmp = _borast_bo_point32_compare (&a->point, &b->point);
+     if (cmp)
+         return cmp;
+ 
+@@ -565,40 +566,40 @@ _pqueue_fini (pqueue_t *pq)
+         free (pq->elements);
+ }
+ 
+-static cairo_status_t
++static borast_status_t
+ _pqueue_grow (pqueue_t *pq)
+ {
+-    cairo_bo_event_t **new_elements;
++    borast_bo_event_t **new_elements;
+     pq->max_size *= 2;
+ 
+     if (pq->elements == pq->elements_embedded) {
+-        new_elements = _cairo_malloc_ab (pq->max_size,
+-                                         sizeof (cairo_bo_event_t *));
++        new_elements = _borast_malloc_ab (pq->max_size,
++                                         sizeof (borast_bo_event_t *));
+         if (unlikely (new_elements == NULL))
+-            return _cairo_error (CAIRO_STATUS_NO_MEMORY);
++            return _borast_error (BORAST_STATUS_NO_MEMORY);
+ 
+         memcpy (new_elements, pq->elements_embedded,
+                 sizeof (pq->elements_embedded));
+     } else {
+-        new_elements = _cairo_realloc_ab (pq->elements,
++        new_elements = _borast_realloc_ab (pq->elements,
+                                           pq->max_size,
+-                                          sizeof (cairo_bo_event_t *));
++                                          sizeof (borast_bo_event_t *));
+         if (unlikely (new_elements == NULL))
+-            return _cairo_error (CAIRO_STATUS_NO_MEMORY);
++            return _borast_error (BORAST_STATUS_NO_MEMORY);
+     }
+ 
+     pq->elements = new_elements;
+-    return CAIRO_STATUS_SUCCESS;
++    return BORAST_STATUS_SUCCESS;
+ }
+ 
+-static inline cairo_status_t
+-_pqueue_push (pqueue_t *pq, cairo_bo_event_t *event)
++static inline borast_status_t
++_pqueue_push (pqueue_t *pq, borast_bo_event_t *event)
+ {
+-    cairo_bo_event_t **elements;
++    borast_bo_event_t **elements;
+     int i, parent;
+ 
+     if (unlikely (pq->size + 1 == pq->max_size)) {
+-        cairo_status_t status;
++        borast_status_t status;
+ 
+         status = _pqueue_grow (pq);
+         if (unlikely (status))
+@@ -609,7 +610,7 @@ _pqueue_push (pqueue_t *pq, cairo_bo_event_t *event)
+ 
+     for (i = ++pq->size;
+          i != PQ_FIRST_ENTRY &&
+-         cairo_bo_event_compare (event,
++         borast_bo_event_compare (event,
+                                  elements[parent = PQ_PARENT_INDEX (i)]) < 0;
+          i = parent)
+     {
+@@ -618,14 +619,14 @@ _pqueue_push (pqueue_t *pq, cairo_bo_event_t *event)
+ 
+     elements[i] = event;
+ 
+-    return CAIRO_STATUS_SUCCESS;
++    return BORAST_STATUS_SUCCESS;
+ }
+ 
+ static inline void
+ _pqueue_pop (pqueue_t *pq)
+ {
+-    cairo_bo_event_t **elements = pq->elements;
+-    cairo_bo_event_t *tail;
++    borast_bo_event_t **elements = pq->elements;
++    borast_bo_event_t *tail;
+     int child, i;
+ 
+     tail = elements[pq->size--];
+@@ -639,13 +640,13 @@ _pqueue_pop (pqueue_t *pq)
+          i = child)
+     {
+         if (child != pq->size &&
+-            cairo_bo_event_compare (elements[child+1],
++            borast_bo_event_compare (elements[child+1],
+                                     elements[child]) < 0)
+         {
+             child++;
+         }
+ 
+-        if (cairo_bo_event_compare (elements[child], tail) >= 0)
++        if (borast_bo_event_compare (elements[child], tail) >= 0)
+             break;
+ 
+         elements[i] = elements[child];
+@@ -653,43 +654,43 @@ _pqueue_pop (pqueue_t *pq)
+     elements[i] = tail;
+ }
+ 
+-static inline cairo_status_t
+-_cairo_bo_event_queue_insert (cairo_bo_event_queue_t        *queue,
+-                              cairo_bo_event_type_t         type,
+-                              cairo_bo_edge_t                *e1,
+-                              cairo_bo_edge_t                *e2,
+-                              const cairo_point_t         *point)
++static inline borast_status_t
++_borast_bo_event_queue_insert (cairo_bo_event_queue_t        *queue,
++                              borast_bo_event_type_t         type,
++                              borast_bo_edge_t                *e1,
++                              borast_bo_edge_t                *e2,
++                              const borast_point_t         *point)
+ {
+-    cairo_bo_queue_event_t *event;
++    borast_bo_queue_event_t *event;
+ 
+-    event = _cairo_freepool_alloc (&queue->pool);
++    event = _borast_freepool_alloc (&queue->pool);
+     if (unlikely (event == NULL))
+-        return _cairo_error (CAIRO_STATUS_NO_MEMORY);
++        return _borast_error (BORAST_STATUS_NO_MEMORY);
+ 
+     event->type = type;
+     event->e1 = e1;
+     event->e2 = e2;
+     event->point = *point;
+ 
+-    return _pqueue_push (&queue->pqueue, (cairo_bo_event_t *) event);
++    return _pqueue_push (&queue->pqueue, (borast_bo_event_t *) event);
+ }
+ 
+ static void
+-_cairo_bo_event_queue_delete (cairo_bo_event_queue_t *queue,
+-                              cairo_bo_event_t             *event)
++_borast_bo_event_queue_delete (cairo_bo_event_queue_t *queue,
++                              borast_bo_event_t             *event)
+ {
+-    _cairo_freepool_free (&queue->pool, event);
++    _borast_freepool_free (&queue->pool, event);
+ }
+ 
+-static cairo_bo_event_t *
+-_cairo_bo_event_dequeue (cairo_bo_event_queue_t *event_queue)
++static borast_bo_event_t *
++_borast_bo_event_dequeue (cairo_bo_event_queue_t *event_queue)
+ {
+-    cairo_bo_event_t *event, *cmp;
++    borast_bo_event_t *event, *cmp;
+ 
+     event = event_queue->pqueue.elements[PQ_FIRST_ENTRY];
+     cmp = *event_queue->start_events;
+     if (event == NULL ||
+-        (cmp != NULL && cairo_bo_event_compare (cmp, event) < 0))
++        (cmp != NULL && borast_bo_event_compare (cmp, event) < 0))
+     {
+         event = cmp;
+         event_queue->start_events++;
+@@ -702,50 +703,50 @@ _cairo_bo_event_dequeue (cairo_bo_event_queue_t *event_queue)
+     return event;
+ }
+ 
+-CAIRO_COMBSORT_DECLARE (_cairo_bo_event_queue_sort,
+-                        cairo_bo_event_t *,
+-                        cairo_bo_event_compare)
++BORAST_COMBSORT_DECLARE (_borast_bo_event_queue_sort,
++                        borast_bo_event_t *,
++                        borast_bo_event_compare)
+ 
+ static void
+-_cairo_bo_event_queue_init (cairo_bo_event_queue_t         *event_queue,
+-                            cairo_bo_event_t                **start_events,
++_borast_bo_event_queue_init (cairo_bo_event_queue_t         *event_queue,
++                            borast_bo_event_t                **start_events,
+                             int                                  num_events)
+ {
+-    _cairo_bo_event_queue_sort (start_events, num_events);
++    _borast_bo_event_queue_sort (start_events, num_events);
+     start_events[num_events] = NULL;
+ 
+     event_queue->start_events = start_events;
+ 
+-    _cairo_freepool_init (&event_queue->pool,
+-                          sizeof (cairo_bo_queue_event_t));
++    _borast_freepool_init (&event_queue->pool,
++                          sizeof (borast_bo_queue_event_t));
+     _pqueue_init (&event_queue->pqueue);
+     event_queue->pqueue.elements[PQ_FIRST_ENTRY] = NULL;
+ }
+ 
+-static cairo_status_t
+-_cairo_bo_event_queue_insert_stop (cairo_bo_event_queue_t        *event_queue,
+-                                   cairo_bo_edge_t                *edge)
++static borast_status_t
++_borast_bo_event_queue_insert_stop (cairo_bo_event_queue_t        *event_queue,
++                                   borast_bo_edge_t                *edge)
+ {
+-    cairo_bo_point32_t point;
++    borast_bo_point32_t point;
+ 
+     point.y = edge->edge.bottom;
+     point.x = _line_compute_intersection_x_for_y (&edge->edge.line,
+                                                   point.y);
+-    return _cairo_bo_event_queue_insert (event_queue,
+-                                         CAIRO_BO_EVENT_TYPE_STOP,
++    return _borast_bo_event_queue_insert (event_queue,
++                                         BORAST_BO_EVENT_TYPE_STOP,
+                                          edge, NULL,
+                                          &point);
+ }
+ 
+ static void
+-_cairo_bo_event_queue_fini (cairo_bo_event_queue_t *event_queue)
++_borast_bo_event_queue_fini (cairo_bo_event_queue_t *event_queue)
+ {
+     _pqueue_fini (&event_queue->pqueue);
+-    _cairo_freepool_fini (&event_queue->pool);
++    _borast_freepool_fini (&event_queue->pool);
+ }
+ 
+ static void
+-_cairo_bo_sweep_line_init (cairo_bo_sweep_line_t *sweep_line)
++_borast_bo_sweep_line_init (cairo_bo_sweep_line_t *sweep_line)
+ {
+     sweep_line->head = NULL;
+     sweep_line->stopped = NULL;
+@@ -753,22 +754,22 @@ _cairo_bo_sweep_line_init (cairo_bo_sweep_line_t *sweep_line)
+     sweep_line->current_edge = NULL;
+ }
+ 
+-static cairo_status_t
+-_cairo_bo_sweep_line_insert (cairo_bo_sweep_line_t        *sweep_line,
+-                             cairo_bo_edge_t                *edge)
++static borast_status_t
++_borast_bo_sweep_line_insert (cairo_bo_sweep_line_t        *sweep_line,
++                             borast_bo_edge_t                *edge)
+ {
+     if (sweep_line->current_edge != NULL) {
+-        cairo_bo_edge_t *prev, *next;
++        borast_bo_edge_t *prev, *next;
+         int cmp;
+ 
+-        cmp = _cairo_bo_sweep_line_compare_edges (sweep_line,
++        cmp = _borast_bo_sweep_line_compare_edges (sweep_line,
+                                                   sweep_line->current_edge,
+                                                   edge);
+         if (cmp < 0) {
+             prev = sweep_line->current_edge;
+             next = prev->next;
+             while (next != NULL &&
+-                   _cairo_bo_sweep_line_compare_edges (sweep_line,
++                   _borast_bo_sweep_line_compare_edges (sweep_line,
+                                                        next, edge) < 0)
+             {
+                 prev = next, next = prev->next;
+@@ -783,7 +784,7 @@ _cairo_bo_sweep_line_insert (cairo_bo_sweep_line_t        *sweep_line,
+             next = sweep_line->current_edge;
+             prev = next->prev;
+             while (prev != NULL &&
+-                   _cairo_bo_sweep_line_compare_edges (sweep_line,
++                   _borast_bo_sweep_line_compare_edges (sweep_line,
+                                                        prev, edge) > 0)
+             {
+                 next = prev, prev = next->prev;
+@@ -810,12 +811,12 @@ _cairo_bo_sweep_line_insert (cairo_bo_sweep_line_t        *sweep_line,
+ 
+     sweep_line->current_edge = edge;
+ 
+-    return CAIRO_STATUS_SUCCESS;
++    return BORAST_STATUS_SUCCESS;
+ }
+ 
+ static void
+-_cairo_bo_sweep_line_delete (cairo_bo_sweep_line_t        *sweep_line,
+-                             cairo_bo_edge_t        *edge)
++_borast_bo_sweep_line_delete (cairo_bo_sweep_line_t        *sweep_line,
++                             borast_bo_edge_t        *edge)
+ {
+     if (edge->prev != NULL)
+         edge->prev->next = edge->next;
+@@ -831,7 +832,7 @@ _cairo_bo_sweep_line_delete (cairo_bo_sweep_line_t        *sweep_line,
+ 
+ #if DEBUG_PRINT_STATE
+ static void
+-_cairo_bo_edge_print (cairo_bo_edge_t *edge)
++_borast_bo_edge_print (cairo_bo_edge_t *edge)
+ {
+     printf ("(%d, %d)-(%d, %d)",
+             edge->edge.line.p1.x, edge->edge.line.p1.y,
+@@ -839,33 +840,33 @@ _cairo_bo_edge_print (cairo_bo_edge_t *edge)
+ }
+ 
+ static void
+-_cairo_bo_event_print (cairo_bo_event_t *event)
++_borast_bo_event_print (cairo_bo_event_t *event)
+ {
+     switch (event->type) {
+-    case CAIRO_BO_EVENT_TYPE_START:
++    case BORAST_BO_EVENT_TYPE_START:
+         printf ("Start: ");
+         break;
+-    case CAIRO_BO_EVENT_TYPE_STOP:
++    case BORAST_BO_EVENT_TYPE_STOP:
+         printf ("Stop: ");
+         break;
+     }
+     printf ("(%d, %d)\t", event->point.x, event->point.y);
+-    _cairo_bo_edge_print (((cairo_bo_queue_event_t *)event)->e1);
++    _borast_bo_edge_print (((cairo_bo_queue_event_t *)event)->e1);
+     printf ("\n");
+ }
+ 
+ static void
+-_cairo_bo_event_queue_print (cairo_bo_event_queue_t *event_queue)
++_borast_bo_event_queue_print (cairo_bo_event_queue_t *event_queue)
+ {
+     /* XXX: fixme to print the start/stop array too. */
+     printf ("Event queue:\n");
+ }
+ 
+ static void
+-_cairo_bo_sweep_line_print (cairo_bo_sweep_line_t *sweep_line)
++_borast_bo_sweep_line_print (cairo_bo_sweep_line_t *sweep_line)
+ {
+-    cairo_bool_t first = TRUE;
+-    cairo_bo_edge_t *edge;
++    borast_bool_t first = TRUE;
++    borast_bo_edge_t *edge;
+ 
+     printf ("Sweep line from edge list: ");
+     first = TRUE;
+@@ -875,7 +876,7 @@ _cairo_bo_sweep_line_print (cairo_bo_sweep_line_t *sweep_line)
+     {
+         if (!first)
+             printf (", ");
+-        _cairo_bo_edge_print (edge);
++        _borast_bo_edge_print (edge);
+         first = FALSE;
+     }
+     printf ("\n");
+@@ -883,25 +884,25 @@ _cairo_bo_sweep_line_print (cairo_bo_sweep_line_t *sweep_line)
+ 
+ static void
+ print_state (const char                        *msg,
+-             cairo_bo_event_t                *event,
+-             cairo_bo_event_queue_t        *event_queue,
+-             cairo_bo_sweep_line_t        *sweep_line)
++             borast_bo_event_t                *event,
++             borast_bo_event_queue_t        *event_queue,
++             borast_bo_sweep_line_t        *sweep_line)
+ {
+     printf ("%s ", msg);
+-    _cairo_bo_event_print (event);
+-    _cairo_bo_event_queue_print (event_queue);
+-    _cairo_bo_sweep_line_print (sweep_line);
++    _borast_bo_event_print (event);
++    _borast_bo_event_queue_print (event_queue);
++    _borast_bo_sweep_line_print (sweep_line);
+     printf ("\n");
+ }
+ #endif
+ 
+ #if DEBUG_EVENTS
+-static void CAIRO_PRINTF_FORMAT (1, 2)
++static void BORAST_PRINTF_FORMAT (1, 2)
+ event_log (const char *fmt, ...)
+ {
+     FILE *file;
+ 
+-    if (getenv ("CAIRO_DEBUG_EVENTS") == NULL)
++    if (getenv ("BORAST_DEBUG_EVENTS") == NULL)
+         return;
+ 
+     file = fopen ("bo-events.txt", "a");
+@@ -917,8 +918,8 @@ event_log (const char *fmt, ...)
+ }
+ #endif
+ 
+-static inline cairo_bool_t
+-edges_colinear (const cairo_bo_edge_t *a, const cairo_bo_edge_t *b)
++static inline borast_bool_t
++edges_colinear (const borast_bo_edge_t *a, const cairo_bo_edge_t *b)
+ {
+     if (_line_equal (&a->edge.line, &b->edge.line))
+         return TRUE;
+@@ -942,17 +943,17 @@ edges_colinear (const cairo_bo_edge_t *a, const cairo_bo_edge_t *b)
+     }
+ }
+ 
+-/* Adds the trapezoid, if any, of the left edge to the #cairo_traps_t */
+-static cairo_status_t
+-_cairo_bo_edge_end_trap (cairo_bo_edge_t        *left,
++/* Adds the trapezoid, if any, of the left edge to the #borast_traps_t */
++static borast_status_t
++_borast_bo_edge_end_trap (cairo_bo_edge_t        *left,
+                          int32_t                 bot,
+-                         cairo_traps_t          *traps)
++                         borast_traps_t          *traps)
+ {
+-    cairo_bo_trap_t *trap = &left->deferred_trap;
++    borast_bo_trap_t *trap = &left->deferred_trap;
+ 
+     /* Only emit (trivial) non-degenerate trapezoids with positive height. */
+     if (likely (trap->top < bot)) {
+-        _cairo_traps_add_trap (traps,
++        _borast_traps_add_trap (traps,
+                                trap->top, bot,
+                                &left->edge.line, &trap->right->edge.line);
+ 
+@@ -976,7 +977,7 @@ _cairo_bo_edge_end_trap (cairo_bo_edge_t        *left,
+ 
+     trap->right = NULL;
+ 
+-//    return _cairo_traps_status (traps);
++//    return _borast_traps_status (traps);
+     return 0;
+ }
+ 
+@@ -986,15 +987,15 @@ _cairo_bo_edge_end_trap (cairo_bo_edge_t        *left,
+  * then either add it to the traps in `traps', if the trapezoid's
+  * right edge differs from `edge->next', or do nothing if the new
+  * trapezoid would be a continuation of the existing one. */
+-static inline cairo_status_t
+-_cairo_bo_edge_start_or_continue_trap (cairo_bo_edge_t        *left,
+-                                       cairo_bo_edge_t  *right,
++static inline borast_status_t
++_borast_bo_edge_start_or_continue_trap (cairo_bo_edge_t        *left,
++                                       borast_bo_edge_t  *right,
+                                        int               top,
+-                                       cairo_traps_t        *traps)
++                                       borast_traps_t        *traps)
+ {
+-    cairo_status_t status;
++    borast_status_t status;
+     if (left->deferred_trap.right == right) {
+-        return CAIRO_STATUS_SUCCESS;
++        return BORAST_STATUS_SUCCESS;
+     }
+ 
+     if (left->deferred_trap.right != NULL) {
+@@ -1002,10 +1003,10 @@ _cairo_bo_edge_start_or_continue_trap (cairo_bo_edge_t        *left,
+         {
+             /* continuation on right, so just swap edges */
+             left->deferred_trap.right = right;
+-            return CAIRO_STATUS_SUCCESS;
++            return BORAST_STATUS_SUCCESS;
+         }
+ 
+-        status = _cairo_bo_edge_end_trap (left, top, traps);
++        status = _borast_bo_edge_end_trap (left, top, traps);
+         if (unlikely (status))
+             return status;
+     }
+@@ -1022,23 +1023,23 @@ _cairo_bo_edge_start_or_continue_trap (cairo_bo_edge_t        *left,
+ #endif
+     }
+ 
+-    return CAIRO_STATUS_SUCCESS;
++    return BORAST_STATUS_SUCCESS;
+ }
+ 
+-static inline cairo_status_t
+-_active_edges_to_traps (cairo_bo_edge_t		*left,
++static inline borast_status_t
++_active_edges_to_traps (borast_bo_edge_t		*left,
+ 			int32_t			 top,
+-			cairo_fill_rule_t	 fill_rule,
+-			cairo_traps_t	        *traps)
++			borast_fill_rule_t	 fill_rule,
++			borast_traps_t	        *traps)
+ {
+-    cairo_bo_edge_t *right;
+-    cairo_status_t status;
++    borast_bo_edge_t *right;
++    borast_status_t status;
+ 
+ #if DEBUG_PRINT_STATE
+     printf ("Processing active edges for %d\n", top);
+ #endif
+ 
+-    if (fill_rule == CAIRO_FILL_RULE_WINDING) {
++    if (fill_rule == BORAST_FILL_RULE_WINDING) {
+ 	while (left != NULL) {
+ 	    int in_out;
+ 
+@@ -1064,15 +1065,15 @@ _active_edges_to_traps (cairo_bo_edge_t		*left,
+ 	    right = left->next;
+ 	    while (right != NULL) {
+ 		if (right->deferred_trap.right != NULL) {
+-		    status = _cairo_bo_edge_end_trap (right, top, traps);
++		    status = _borast_bo_edge_end_trap (right, top, traps);
+ 		    if (unlikely (status))
+ 			return status;
+ 		}
+ 
+ 		in_out += right->edge.dir;
+ 		if (in_out == 0) {
+-		    cairo_bo_edge_t *next;
+-		    cairo_bool_t skip = FALSE;
++		    borast_bo_edge_t *next;
++		    borast_bool_t skip = FALSE;
+ 
+ 		    /* skip co-linear edges */
+ 		    next = right->next;
+@@ -1086,7 +1087,7 @@ _active_edges_to_traps (cairo_bo_edge_t		*left,
+ 		right = right->next;
+ 	    }
+ 
+-	    status = _cairo_bo_edge_start_or_continue_trap (left, right,
++	    status = _borast_bo_edge_start_or_continue_trap (left, right,
+ 							    top, traps);
+ 	    if (unlikely (status))
+ 		return status;
+@@ -1102,14 +1103,14 @@ _active_edges_to_traps (cairo_bo_edge_t		*left,
+ 	    right = left->next;
+ 	    while (right != NULL) {
+ 		if (right->deferred_trap.right != NULL) {
+-		    status = _cairo_bo_edge_end_trap (right, top, traps);
++		    status = _borast_bo_edge_end_trap (right, top, traps);
+ 		    if (unlikely (status))
+ 			return status;
+ 		}
+ 
+ 		if ((in_out++ & 1) == 0) {
+-		    cairo_bo_edge_t *next;
+-		    cairo_bool_t skip = FALSE;
++		    borast_bo_edge_t *next;
++		    borast_bool_t skip = FALSE;
+ 
+ 		    /* skip co-linear edges */
+ 		    next = right->next;
+@@ -1123,7 +1124,7 @@ _active_edges_to_traps (cairo_bo_edge_t		*left,
+ 		right = right->next;
+ 	    }
+ 
+-	    status = _cairo_bo_edge_start_or_continue_trap (left, right,
++	    status = _borast_bo_edge_start_or_continue_trap (left, right,
+ 							    top, traps);
+ 	    if (unlikely (status))
+ 		return status;
+@@ -1134,33 +1135,33 @@ _active_edges_to_traps (cairo_bo_edge_t		*left,
+ 	}
+     }
+ 
+-    return CAIRO_STATUS_SUCCESS;
++    return BORAST_STATUS_SUCCESS;
+ }
+ 
+ /* Execute a single pass of the Bentley-Ottmann algorithm on edges,
+  * generating trapezoids according to the fill_rule and appending them
+  * to traps. */
+-static cairo_status_t
+-_cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
++static borast_status_t
++_borast_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+                                             int                  num_events,
+-                                            cairo_traps_t       *traps,
++                                            borast_traps_t       *traps,
+                                             int                 *num_intersections)
+ {
+-    cairo_status_t status = CAIRO_STATUS_SUCCESS; /* silence compiler */
++    borast_status_t status = BORAST_STATUS_SUCCESS; /* silence compiler */
+     int intersection_count = 0;
+-    cairo_bo_event_queue_t event_queue;
+-    cairo_bo_sweep_line_t sweep_line;
+-    cairo_bo_event_t *event;
+-    cairo_bo_edge_t *left, *right;
+-    cairo_bo_edge_t *e1;
++    borast_bo_event_queue_t event_queue;
++    borast_bo_sweep_line_t sweep_line;
++    borast_bo_event_t *event;
++    borast_bo_edge_t *left, *right;
++    borast_bo_edge_t *e1;
+ 
+ #if DEBUG_EVENTS
+     {
+         int i;
+ 
+         for (i = 0; i < num_events; i++) {
+-            cairo_bo_start_event_t *event =
+-                ((cairo_bo_start_event_t **) start_events)[i];
++            borast_bo_start_event_t *event =
++                ((borast_bo_start_event_t **) start_events)[i];
+             event_log ("edge: %lu (%d, %d) (%d, %d) (%d, %d) %d\n",
+ //                       (long) &events[i].edge,
+                        (long) 666,
+@@ -1175,14 +1176,14 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+     }
+ #endif
+ 
+-    _cairo_bo_event_queue_init (&event_queue, start_events, num_events);
+-    _cairo_bo_sweep_line_init (&sweep_line);
++    _borast_bo_event_queue_init (&event_queue, start_events, num_events);
++    _borast_bo_sweep_line_init (&sweep_line);
+ 
+-    while ((event = _cairo_bo_event_dequeue (&event_queue))) {
++    while ((event = _borast_bo_event_dequeue (&event_queue))) {
+         if (event->point.y != sweep_line.current_y) {
+             for (e1 = sweep_line.stopped; e1; e1 = e1->next) {
+                 if (e1->deferred_trap.right != NULL) {
+-                    status = _cairo_bo_edge_end_trap (e1,
++                    status = _borast_bo_edge_end_trap (e1,
+                                                       e1->edge.bottom,
+                                                       traps);
+                     if (unlikely (status))
+@@ -1193,8 +1194,8 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+ 
+             status = _active_edges_to_traps (sweep_line.head,
+                                              sweep_line.current_y,
+-//                                             CAIRO_FILL_RULE_WINDING,
+-                                             CAIRO_FILL_RULE_EVEN_ODD,
++//                                             BORAST_FILL_RULE_WINDING,
++                                             BORAST_FILL_RULE_EVEN_ODD,
+                                              traps);
+             if (unlikely (status))
+                 goto unwind;
+@@ -1207,19 +1208,19 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+                    event->type,
+                    (long) event->point.x,
+                    (long) event->point.y,
+-                   (long) ((cairo_bo_queue_event_t *)event)->e1,
+-                   (long) ((cairo_bo_queue_event_t *)event)->e2);
++                   (long) ((borast_bo_queue_event_t *)event)->e1,
++                   (long) ((borast_bo_queue_event_t *)event)->e2);
+ #endif
+ 
+         switch (event->type) {
+-        case CAIRO_BO_EVENT_TYPE_START:
+-            e1 = &((cairo_bo_start_event_t *) event)->edge;
++        case BORAST_BO_EVENT_TYPE_START:
++            e1 = &((borast_bo_start_event_t *) event)->edge;
+ 
+-            status = _cairo_bo_sweep_line_insert (&sweep_line, e1);
++            status = _borast_bo_sweep_line_insert (&sweep_line, e1);
+             if (unlikely (status))
+                 goto unwind;
+ 
+-            status = _cairo_bo_event_queue_insert_stop (&event_queue, e1);
++            status = _borast_bo_event_queue_insert_stop (&event_queue, e1);
+             if (unlikely (status))
+                 goto unwind;
+ 
+@@ -1245,14 +1246,14 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+ 
+             break;
+ 
+-        case CAIRO_BO_EVENT_TYPE_STOP:
+-            e1 = ((cairo_bo_queue_event_t *) event)->e1;
+-            _cairo_bo_event_queue_delete (&event_queue, event);
++        case BORAST_BO_EVENT_TYPE_STOP:
++            e1 = ((borast_bo_queue_event_t *) event)->e1;
++            _borast_bo_event_queue_delete (&event_queue, event);
+ 
+             left = e1->prev;
+             right = e1->next;
+ 
+-            _cairo_bo_sweep_line_delete (&sweep_line, e1);
++            _borast_bo_sweep_line_delete (&sweep_line, e1);
+ 
+             /* first, check to see if we have a continuation via a fresh edge */
+             if (e1->deferred_trap.right != NULL) {
+@@ -1271,13 +1272,13 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+     *num_intersections = intersection_count;
+     for (e1 = sweep_line.stopped; e1; e1 = e1->next) {
+         if (e1->deferred_trap.right != NULL) {
+-            status = _cairo_bo_edge_end_trap (e1, e1->edge.bottom, traps);
++            status = _borast_bo_edge_end_trap (e1, e1->edge.bottom, traps);
+             if (unlikely (status))
+                 break;
+         }
+     }
+  unwind:
+-    _cairo_bo_event_queue_fini (&event_queue);
++    _borast_bo_event_queue_fini (&event_queue);
+ 
+ #if DEBUG_EVENTS
+     event_log ("\n");
+@@ -1288,8 +1289,8 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
+ 
+ static void
+ contour_to_start_events (PLINE                   *contour,
+-                         cairo_bo_start_event_t  *events,
+-                         cairo_bo_event_t       **event_ptrs,
++                         borast_bo_start_event_t  *events,
++                         borast_bo_event_t       **event_ptrs,
+                          int                     *counter,
+                          int                      outer_contour)
+ {
+@@ -1300,7 +1301,7 @@ contour_to_start_events (PLINE                   *contour,
+     bv = &contour->head;
+     do {
+       int x1, y1, x2, y2;
+-      cairo_edge_t cairo_edge;
++      borast_edge_t cairo_edge;
+       /* Node is between bv->point[0,1] and bv->next->point[0,1] */
+ 
+       if (bv->point[1] == bv->next->point[1]) {
+@@ -1327,21 +1328,21 @@ contour_to_start_events (PLINE                   *contour,
+         y2 = bv->point[1];
+       }
+ 
+-      cairo_edge.line.p1.x = x1;
+-      cairo_edge.line.p1.y = y1;
+-      cairo_edge.line.p2.x = x2;
+-      cairo_edge.line.p2.y = y2;
+-      cairo_edge.top = y1;
+-      cairo_edge.bottom = y2;
+-      cairo_edge.dir = outer_contour ? 1 : -1;
++      borast_edge.line.p1.x = x1;
++      borast_edge.line.p1.y = y1;
++      borast_edge.line.p2.x = x2;
++      borast_edge.line.p2.y = y2;
++      borast_edge.top = y1;
++      borast_edge.bottom = y2;
++      borast_edge.dir = outer_contour ? 1 : -1;
+ 
+-      event_ptrs[i] = (cairo_bo_event_t *) &events[i];
++      event_ptrs[i] = (borast_bo_event_t *) &events[i];
+ 
+-      events[i].type = CAIRO_BO_EVENT_TYPE_START;
+-      events[i].point.y = cairo_edge.line.p1.y;
+-      events[i].point.x = cairo_edge.line.p1.x;
++      events[i].type = BORAST_BO_EVENT_TYPE_START;
++      events[i].point.y = borast_edge.line.p1.y;
++      events[i].point.x = borast_edge.line.p1.x;
+ 
+-      events[i].edge.edge = cairo_edge;
++      events[i].edge.edge = borast_edge;
+       events[i].edge.deferred_trap.right = NULL;
+       events[i].edge.prev = NULL;
+       events[i].edge.next = NULL;
+@@ -1355,8 +1356,8 @@ contour_to_start_events (PLINE                   *contour,
+ 
+ static void
+ poly_area_to_start_events (POLYAREA                *poly,
+-                           cairo_bo_start_event_t  *events,
+-                           cairo_bo_event_t       **event_ptrs,
++                           borast_bo_start_event_t  *events,
++                           borast_bo_event_t       **event_ptrs,
+                            int                     *counter)
+ {
+     int i = *counter;
+@@ -1380,15 +1381,15 @@ poly_area_to_start_events (POLYAREA                *poly,
+ }
+ 
+ 
+-cairo_status_t
+-bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps)
++borast_status_t
++bo_poly_to_traps (POLYAREA *poly, borast_traps_t *traps)
+ {
+   int intersections;
+-  cairo_status_t status;
+-  cairo_bo_start_event_t stack_events[CAIRO_STACK_ARRAY_LENGTH (cairo_bo_start_event_t)];
+-  cairo_bo_start_event_t *events;
+-  cairo_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
+-  cairo_bo_event_t **event_ptrs;
++  borast_status_t status;
++  borast_bo_start_event_t stack_events[BORAST_STACK_ARRAY_LENGTH (cairo_bo_start_event_t)];
++  borast_bo_start_event_t *events;
++  borast_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
++  borast_bo_event_t **event_ptrs;
+   int num_events = 0;
+   int i;
+   int n;
+@@ -1403,19 +1404,19 @@ bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps)
+   } while ((pa = pa->f) != poly);
+ 
+   if (unlikely (0 == num_events))
+-      return CAIRO_STATUS_SUCCESS;
++      return BORAST_STATUS_SUCCESS;
+ 
+   events = stack_events;
+   event_ptrs = stack_event_ptrs;
+   if (num_events > ARRAY_LENGTH (stack_events)) {
+-      events = _cairo_malloc_ab_plus_c (num_events,
+-                                        sizeof (cairo_bo_start_event_t) +
+-                                        sizeof (cairo_bo_event_t *),
+-                                        sizeof (cairo_bo_event_t *));
++      events = _borast_malloc_ab_plus_c (num_events,
++                                        sizeof (borast_bo_start_event_t) +
++                                        sizeof (borast_bo_event_t *),
++                                        sizeof (borast_bo_event_t *));
+       if (unlikely (events == NULL))
+-          return CAIRO_STATUS_NO_MEMORY;
++          return BORAST_STATUS_NO_MEMORY;
+ 
+-      event_ptrs = (cairo_bo_event_t **) (events + num_events);
++      event_ptrs = (borast_bo_event_t **) (events + num_events);
+   }
+ 
+   i = 0;
+@@ -1425,8 +1426,8 @@ bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps)
+   /* XXX: This would be the convenient place to throw in multiple
+    * passes of the Bentley-Ottmann algorithm. It would merely
+    * require storing the results of each pass into a temporary
+-   * cairo_traps_t. */
+-  status = _cairo_bentley_ottmann_tessellate_bo_edges (event_ptrs,
++   * borast_traps_t. */
++  status = _borast_bentley_ottmann_tessellate_bo_edges (event_ptrs,
+                                                        num_events,
+                                                        traps,
+                                                        &intersections);
+@@ -1474,19 +1475,19 @@ bo_poly_to_traps (POLYAREA *poly, cairo_traps_t *traps)
+   if (events != stack_events)
+       free (events);
+ 
+-  return CAIRO_STATUS_SUCCESS;
++  return BORAST_STATUS_SUCCESS;
+ }
+ 
+ 
+-cairo_status_t
+-bo_contour_to_traps (PLINE *contour, cairo_traps_t *traps)
++borast_status_t
++bo_contour_to_traps (PLINE *contour, borast_traps_t *traps)
+ {
+   int intersections;
+-  cairo_status_t status;
+-  cairo_bo_start_event_t stack_events[CAIRO_STACK_ARRAY_LENGTH (cairo_bo_start_event_t)];
+-  cairo_bo_start_event_t *events;
+-  cairo_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
+-  cairo_bo_event_t **event_ptrs;
++  borast_status_t status;
++  borast_bo_start_event_t stack_events[BORAST_STACK_ARRAY_LENGTH (cairo_bo_start_event_t)];
++  borast_bo_start_event_t *events;
++  borast_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
++  borast_bo_event_t **event_ptrs;
+   int num_events = 0;
+   int i;
+   int n;
+@@ -1494,19 +1495,19 @@ bo_contour_to_traps (PLINE *contour, cairo_traps_t *traps)
+   num_events = contour->Count;
+ 
+   if (unlikely (0 == num_events))
+-      return CAIRO_STATUS_SUCCESS;
++      return BORAST_STATUS_SUCCESS;
+ 
+   events = stack_events;
+   event_ptrs = stack_event_ptrs;
+   if (num_events > ARRAY_LENGTH (stack_events)) {
+-      events = _cairo_malloc_ab_plus_c (num_events,
+-                                        sizeof (cairo_bo_start_event_t) +
+-                                        sizeof (cairo_bo_event_t *),
+-                                        sizeof (cairo_bo_event_t *));
++      events = _borast_malloc_ab_plus_c (num_events,
++                                        sizeof (borast_bo_start_event_t) +
++                                        sizeof (borast_bo_event_t *),
++                                        sizeof (borast_bo_event_t *));
+       if (unlikely (events == NULL))
+-          return CAIRO_STATUS_NO_MEMORY;
++          return BORAST_STATUS_NO_MEMORY;
+ 
+-      event_ptrs = (cairo_bo_event_t **) (events + num_events);
++      event_ptrs = (borast_bo_event_t **) (events + num_events);
+   }
+ 
+   i = 0;
+@@ -1516,8 +1517,8 @@ bo_contour_to_traps (PLINE *contour, cairo_traps_t *traps)
+   /* XXX: This would be the convenient place to throw in multiple
+    * passes of the Bentley-Ottmann algorithm. It would merely
+    * require storing the results of each pass into a temporary
+-   * cairo_traps_t. */
+-  status = _cairo_bentley_ottmann_tessellate_bo_edges (event_ptrs,
++   * borast_traps_t. */
++  status = _borast_bentley_ottmann_tessellate_bo_edges (event_ptrs,
+                                                        num_events,
+                                                        traps,
+                                                        &intersections);
+@@ -1565,5 +1566,5 @@ bo_contour_to_traps (PLINE *contour, cairo_traps_t *traps)
+   if (events != stack_events)
+       free (events);
+ 
+-  return CAIRO_STATUS_SUCCESS;
++  return BORAST_STATUS_SUCCESS;
+ }
+diff --git a/src/borast/cairo-combsort-private.h b/src/borast/borast-combsort-private.h
+similarity index 90%
+rename from src/borast/cairo-combsort-private.h
+rename to src/borast/borast-combsort-private.h
+index ce31257..226c10b 100644
+--- a/src/borast/cairo-combsort-private.h
++++ b/src/borast/borast-combsort-private.h
+@@ -33,10 +33,10 @@
+  */
+ 
+ /* This fragment implements a comb sort (specifically combsort11) */
+-#ifndef _HAVE_CAIRO_COMBSORT_NEWGAP
+-#define _HAVE_CAIRO_COMBSORT_NEWGAP
++#ifndef _HAVE_BORAST_COMBSORT_NEWGAP
++#define _HAVE_BORAST_COMBSORT_NEWGAP
+ static inline unsigned int
+-_cairo_combsort_newgap (unsigned int gap)
++_borast_combsort_newgap (unsigned int gap)
+ {
+   gap = 10 * gap / 13;
+   if (gap == 9 || gap == 10)
+@@ -47,7 +47,7 @@ _cairo_combsort_newgap (unsigned int gap)
+ }
+ #endif
+ 
+-#define CAIRO_COMBSORT_DECLARE(NAME, TYPE, CMP) \
++#define BORAST_COMBSORT_DECLARE(NAME, TYPE, CMP) \
+ static void \
+ NAME (TYPE *base, unsigned int nmemb) \
+ { \
+@@ -55,7 +55,7 @@ NAME (TYPE *base, unsigned int nmemb) \
+   unsigned int i, j; \
+   int swapped; \
+   do { \
+-      gap = _cairo_combsort_newgap (gap); \
++      gap = _borast_combsort_newgap (gap); \
+       swapped = gap > 1; \
+       for (i = 0; i < nmemb-gap ; i++) { \
+ 	  j = i + gap; \
+diff --git a/src/borast/cairo-compiler-private.h b/src/borast/borast-compiler-private.h
+similarity index 100%
+rename from src/borast/cairo-compiler-private.h
+rename to src/borast/borast-compiler-private.h
+diff --git a/src/borast/cairo-fixed-private.h b/src/borast/borast-fixed-private.h
+similarity index 100%
+rename from src/borast/cairo-fixed-private.h
+rename to src/borast/borast-fixed-private.h
+diff --git a/src/borast/cairo-fixed-type-private.h b/src/borast/borast-fixed-type-private.h
+similarity index 100%
+rename from src/borast/cairo-fixed-type-private.h
+rename to src/borast/borast-fixed-type-private.h
+diff --git a/src/borast/cairo-freelist-private.h b/src/borast/borast-freelist-private.h
+similarity index 100%
+rename from src/borast/cairo-freelist-private.h
+rename to src/borast/borast-freelist-private.h
+diff --git a/src/borast/cairo-freelist.c b/src/borast/borast-freelist.c
+similarity index 100%
+rename from src/borast/cairo-freelist.c
+rename to src/borast/borast-freelist.c
+diff --git a/src/borast/cairo-malloc-private.h b/src/borast/borast-malloc-private.h
+similarity index 100%
+rename from src/borast/cairo-malloc-private.h
+rename to src/borast/borast-malloc-private.h
+diff --git a/src/borast/cairo-minimal.h b/src/borast/borast-minimal.h
+similarity index 100%
+rename from src/borast/cairo-minimal.h
+rename to src/borast/borast-minimal.h
+diff --git a/src/borast/cairo-traps-private.h b/src/borast/borast-traps-private.h
+similarity index 100%
+rename from src/borast/cairo-traps-private.h
+rename to src/borast/borast-traps-private.h
+diff --git a/src/borast/cairo-traps.c b/src/borast/borast-traps.c
+similarity index 100%
+rename from src/borast/cairo-traps.c
+rename to src/borast/borast-traps.c
+diff --git a/src/borast/cairo-types-private.h b/src/borast/borast-types-private.h
+similarity index 100%
+rename from src/borast/cairo-types-private.h
+rename to src/borast/borast-types-private.h
+diff --git a/src/borast/cairo-wideint-private.h b/src/borast/borast-wideint-private.h
+similarity index 100%
+rename from src/borast/cairo-wideint-private.h
+rename to src/borast/borast-wideint-private.h
+diff --git a/src/borast/cairo-wideint-type-private.h b/src/borast/borast-wideint-type-private.h
+similarity index 100%
+rename from src/borast/cairo-wideint-type-private.h
+rename to src/borast/borast-wideint-type-private.h
+diff --git a/src/borast/cairo-wideint.c b/src/borast/borast-wideint.c
+similarity index 100%
+rename from src/borast/cairo-wideint.c
+rename to src/borast/borast-wideint.c
+diff --git a/src/borast/cairoint-minimal.h b/src/borast/borastint-minimal.h
+similarity index 100%
+rename from src/borast/cairoint-minimal.h
+rename to src/borast/borastint-minimal.h
