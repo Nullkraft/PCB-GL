@@ -1,5 +1,5 @@
-Bottom: 38ffd924e12c7d60ce352f1f9560b91cdb1c3eaa
-Top:    08a68f7b8420049f4ba059832e3afd7666bc1f59
+Bottom: e257627a370af21d61a96c599a7b2aedd817e45d
+Top:    ec5fd595dbc7ad2aa6e105e65257fb2c886f7c50
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:14 +0000
 
@@ -13,10 +13,10 @@ file during the fab drawing output.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 6c7a2f5..d5c498a 100644
+index 40b11ec..bed42e1 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -885,8 +885,7 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -882,8 +882,7 @@ DrawLayerGroup (int group, const BoxType * screen)
    Cardinal *layers = PCB->LayerGroups.Entries[group];
  
    clip_box = screen;
@@ -26,7 +26,7 @@ index 6c7a2f5..d5c498a 100644
      {
        layernum = layers[i];
        Layer = PCB->Data->Layer + layers[i];
-@@ -903,10 +902,6 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -900,10 +899,6 @@ DrawLayerGroup (int group, const BoxType * screen)
  	      r_search (Layer->polygon_tree, screen, NULL, poly_callback,
  			&info);
  	      info.arg = false;
