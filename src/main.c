@@ -55,6 +55,7 @@
 #include "misc.h"
 #include "lrealpath.h"
 #include "free_atexit.h"
+#include "sweep.h"
 
 #include "hid/common/actions.h"
 
@@ -884,6 +885,7 @@ char *program_directory = 0;
 
 #include "dolists.h"
 
+#if 1
 int
 main (int argc, char *argv[])
 {
@@ -1097,11 +1099,16 @@ main (int argc, char *argv[])
           UNKNOWN (Settings.GnetlistProgram));
 #endif
 
-  gui->do_export (0);
+  // bos_test_intersections ();
+  my_cairo_test ();
+
+  // gui->do_export (0);
+
 #if HAVE_DBUS
   pcb_dbus_finish();
 #endif
 
   return (0);
 }
+#endif
 
