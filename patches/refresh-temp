@@ -1,0 +1,34 @@
+Bottom: 263951c33dda2a652f6ccd659480602befdeaaec
+Top:    e63489ffb6e934918e4679f973d60598239e0cf1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-27 20:51:46 +0100
+
+Refresh of crosshair-c-nasty-thing-fixme
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 85620d4..79e188d 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -693,8 +693,10 @@ CrosshairOn (bool BlockToo)
+   if (!Crosshair.On)
+     {
+       Crosshair.On = true;
++#if 0
+       DrawAttached (BlockToo);
+       DrawMark ();
++#endif
+     }
+ }
+ 
+@@ -707,8 +709,10 @@ CrosshairOff (bool BlockToo)
+   if (Crosshair.On)
+     {
+       Crosshair.On = false;
++#if 0
+       DrawAttached (BlockToo);
+       DrawMark ();
++#endif
+     }
+ }
