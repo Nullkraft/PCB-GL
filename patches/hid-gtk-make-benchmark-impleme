@@ -1,5 +1,5 @@
 Bottom: deef5fe760e48aa8fbc5d21ff67fa2aa70b490f5
-Top:    966687851f25171eaaf73f98251631974d3bba95
+Top:    65e6b6e57bb9fb9cb9a9efc7a84567a4165f144b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 23:36:30 +0000
 
@@ -13,16 +13,17 @@ model.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index c77faaf..0b84548 100644
+index c77faaf..28c10bc 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -1562,7 +1562,8 @@ Benchmark (int argc, char **argv, int x, int y)
+@@ -1562,8 +1562,8 @@ Benchmark (int argc, char **argv, int x, int y)
    time (&start);
    do
      {
 -      hid_expose_callback (&ghid_hid, &region, 0);
-+      gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
+-      gdk_display_sync (display);
++      ghid_invalidate_all ();
 +      gdk_window_process_updates (gport->drawing_area->window, FALSE);
-       gdk_display_sync (display);
        time (&end);
        i++;
+     }
