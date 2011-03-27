@@ -1,0 +1,36 @@
+Bottom: 5264db7d0cad23ca6f7c30aaa337f7c12d997aec
+Top:    2ba59e8b1c3f3b47b62f486eae93855c8d3403d2
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-28 00:35:50 +0100
+
+Refresh of give-the-hids-control-over-att
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index af0b060..ca51f4f 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -1100,7 +1100,7 @@ InitCrosshair (void)
+ void
+ DestroyCrosshair (void)
+ {
+-  CrosshairOff ();
++  //crosshairOff ();
+   FreePolygonMemory (&Crosshair.AttachedPolygon);
+   gui->destroy_gc (Crosshair.GC);
+ }
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index c81ffbd..1ead6a9 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -770,6 +770,10 @@ ghid_invalidate_all ()
+ 
+   hid_expose_callback (&ghid_hid, &region, 0);
+   ghid_draw_grid ();
++
++  Crosshair.On = false;
++  CrosshairOn ();
++
+   ghid_screen_update ();
+ }
