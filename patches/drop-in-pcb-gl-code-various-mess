@@ -1,5 +1,5 @@
 Bottom: fd5a0afe2c06139871e30c69e1ff17c9c43d8bb2
-Top:    f8e1ef2111205dd4cb98ee0850b12c317bda01b5
+Top:    875aba2cb58a162fb0aea6c2d15085430b8cd928
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:02 +0000
 
@@ -755,10 +755,10 @@ index 0000000..e69a6b7
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..797b043
+index 0000000..358d8c8
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -0,0 +1,1214 @@
+@@ -0,0 +1,1212 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -1059,23 +1059,21 @@ index 0000000..797b043
 +  switch (use_it)
 +    {
 +    case HID_MASK_BEFORE:
-+      /* Write '1' to the stencil buffer where the solder-mask is drawn. */
++      /* Ignore, this renderer doesn't use it */
++      return;
++
++    case HID_MASK_CLEAR:
++      /* Write '1' to the stencil buffer where the solder-mask should not be drawn. */
 +      glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
 +      glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
 +      glStencilFunc (GL_ALWAYS, 1, 1);            // Test always passes, value written 1
 +      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
 +      break;
 +
-+    case HID_MASK_CLEAR:
-+      /* Drawing operations clear the stencil buffer to '0' */
-+      glStencilFunc (GL_ALWAYS, 0, 1);            // Test always passes, value written 0
-+      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 0)
-+      break;
-+
 +    case HID_MASK_AFTER:
-+      /* Drawing operations as masked to areas where the stencil buffer is '1' */
++      /* Drawing operations as masked to areas where the stencil buffer is '0' */
 +      glColorMask (1, 1, 1, 1);                   // Enable drawing of r, g, b & a
-+      glStencilFunc (GL_EQUAL, 1, 1);             // Draw only where stencil buffer is 1
++      glStencilFunc (GL_EQUAL, 0, 1);             // Draw only where stencil buffer is 1
 +      glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    // Stencil buffer read only
 +      break;
 +
@@ -1973,6 +1971,19 @@ index 0000000..797b043
 +
 +  return pixmap;
 +}
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 4f16d8c..28c10bc 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -979,7 +979,7 @@ HID ghid_hid = {
+   1,				/* gui */
+   0,				/* printer */
+   0,				/* exporter */
+-  1,				/* poly before */
++  0,				/* poly before */
+   1,				/* poly after */
+   0,				/* poly dicer */
+ 
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
 index 97ebb1c..912e369 100644
 --- a/src/hid/gtk/gui.h
