@@ -1,5 +1,5 @@
 Bottom: 497347136291a561f56118b124ad0429541dcdf5
-Top:    4448ffa41ba65496f4d013232ccf74c6ff1cec5e
+Top:    02ad2e09f95b7ad807227f6b38e36cc5a5039fc8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 19:54:15 +0100
 
@@ -978,7 +978,7 @@ index 110914c..908b21e 100644
  }
  
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 60318a5..983ac6b 100644
+index 60318a5..792d9c2 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -566,7 +566,7 @@ XORDrawMoveOrCopyObject (void)
@@ -990,17 +990,16 @@ index 60318a5..983ac6b 100644
  {
    BDimension s;
    switch (Settings.Mode)
-@@ -671,8 +671,7 @@ DrawAttached (bool BlockToo)
-     }
+@@ -672,7 +672,7 @@ DrawAttached (bool BlockToo)
  
    /* an attached box does not depend on a special mode */
--  if (Crosshair.AttachedBox.State == STATE_SECOND ||
+   if (Crosshair.AttachedBox.State == STATE_SECOND ||
 -      (BlockToo && Crosshair.AttachedBox.State == STATE_THIRD))
-+  if (Crosshair.AttachedBox.State == STATE_SECOND)
++      Crosshair.AttachedBox.State == STATE_THIRD)
      {
        LocationType x1, y1, x2, y2;
  
-@@ -688,13 +687,13 @@ DrawAttached (bool BlockToo)
+@@ -688,13 +688,13 @@ DrawAttached (bool BlockToo)
   * switches crosshair on
   */
  void
@@ -1016,7 +1015,7 @@ index 60318a5..983ac6b 100644
        DrawMark (true);
  #endif
      }
-@@ -704,13 +703,13 @@ CrosshairOn (bool BlockToo)
+@@ -704,13 +704,13 @@ CrosshairOn (bool BlockToo)
   * switches crosshair off
   */
  void
@@ -1032,7 +1031,7 @@ index 60318a5..983ac6b 100644
        DrawMark (true);
  #endif
      }
-@@ -729,9 +728,9 @@ CrosshairOff (bool BlockToo)
+@@ -729,9 +729,9 @@ CrosshairOff (bool BlockToo)
   * saves crosshair state (on/off) and hides him
   */
  void
@@ -1044,7 +1043,7 @@ index 60318a5..983ac6b 100644
    if (CrosshairStackLocation >= MAX_CROSSHAIRSTACK_DEPTH)
      {
        fprintf(stderr, "Error: CrosshairStackLocation overflow\n");
-@@ -741,16 +740,16 @@ HideCrosshair (bool BlockToo)
+@@ -741,16 +741,16 @@ HideCrosshair (bool BlockToo)
    CrosshairStack[CrosshairStackLocation] = Crosshair.On;
    CrosshairStackLocation++;
  
@@ -1064,7 +1063,7 @@ index 60318a5..983ac6b 100644
    if (CrosshairStackLocation <= 0)
      {
        fprintf(stderr, "Error: CrosshairStackLocation underflow\n");
-@@ -760,13 +759,9 @@ RestoreCrosshair (bool BlockToo)
+@@ -760,13 +760,9 @@ RestoreCrosshair (bool BlockToo)
    CrosshairStackLocation--;
  
    if (CrosshairStack[CrosshairStackLocation])
@@ -1080,7 +1079,7 @@ index 60318a5..983ac6b 100644
  }
  
  static double
-@@ -1078,7 +1073,7 @@ MoveCrosshairAbsolute (LocationType X, LocationType Y)
+@@ -1078,7 +1074,7 @@ MoveCrosshairAbsolute (LocationType X, LocationType Y)
        x = z;
        z = Crosshair.Y;
        Crosshair.Y = y;
@@ -1089,7 +1088,7 @@ index 60318a5..983ac6b 100644
        /* now move forward again */
        Crosshair.X = x;
        Crosshair.Y = z;
-@@ -1161,7 +1156,7 @@ InitCrosshair (void)
+@@ -1161,7 +1157,7 @@ InitCrosshair (void)
  void
  DestroyCrosshair (void)
  {
