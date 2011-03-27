@@ -868,51 +868,59 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box)
       return;
     }
 
-  stencil_bit = hidgl_assign_clear_stencil_bit ();
-  if (!stencil_bit)
-    {
-      printf ("hidgl_fill_pcb_polygon: No free stencil bits, aborting polygon\n");
-      return;
-    }
+  if (poly->Clipped->contour_tree->size > 1) {
+    /* Polygon has holes */
 
-  /* Flush out any existing geoemtry to be rendered */
-  hidgl_flush_triangles (&buffer);
+    stencil_bit = hidgl_assign_clear_stencil_bit ();
+    if (!stencil_bit)
+      {
+        printf ("hidgl_fill_pcb_polygon: No free stencil bits, aborting polygon\n");
+        /* XXX: Could use the GLU tesselator or the full BO polygon tesselator */
+        return;
+      }
 
-  glPushAttrib (GL_STENCIL_BUFFER_BIT);                   // Save the write mask etc.. for final restore
-  glPushAttrib (GL_STENCIL_BUFFER_BIT |                   // Resave the stencil write-mask etc.., and
-                GL_COLOR_BUFFER_BIT);                     // the colour buffer write mask etc.. for part way restore
-  glStencilMask (stencil_bit);                            // Only write to our stencil bit
-  glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);    // Always pass stencil test, ref value is our bit
-  glColorMask (0, 0, 0, 0);                               // Disable writting in color buffer
+    /* Flush out any existing geoemtry to be rendered */
+    hidgl_flush_triangles (&buffer);
 
-  /* It will already be setup like this (so avoid prodding the state-machine):
-   * glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value
-   */
-  /* Drawing operations now set our reference bit in the stencil buffer */
+    glPushAttrib (GL_STENCIL_BUFFER_BIT |                   // Resave the stencil write-mask etc.., and
+                  GL_COLOR_BUFFER_BIT);                     // the colour buffer write mask etc.. for part way restore
+    glStencilMask (stencil_bit);                            // Only write to our stencil bit
+    glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);    // Always pass stencil test, ref value is our bit
+    glColorMask (0, 0, 0, 0);                               // Disable writting in color buffer
 
-  r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, NULL);
-  hidgl_flush_triangles (&buffer);
+    /* It will already be setup like this (so avoid prodding the state-machine):
+     * glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value
+     */
+    /* Drawing operations now set our reference bit in the stencil buffer */
 
-  /* Drawing operations as masked to areas where the stencil buffer is '0' */
+    r_search (poly->Clipped->contour_tree, clip_box, NULL, do_hole, NULL);
+    hidgl_flush_triangles (&buffer);
 
-  glPopAttrib ();                                             // Restore the colour and stencil buffer write-mask etc..
+    /* Drawing operations as masked to areas where the stencil buffer is '0' */
 
-  glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT); // This allows us to toggle the bit on the subcompositing bitplane
-                                             // If the stencil test has passed, we know that bit is 0, so we're
-                                             // effectively just setting it to 1.
-  glStencilFunc (GL_GEQUAL, 0, assigned_bits);
-//  glStencilFunc (GL_GREATER, assigned_bits, assigned_bits);   // Pass stencil test if all assigned bits clear,
-                                                              // reference is all assigned bits so we set
-                                                              // any bits permitted by the stencil writemask
+    glPopAttrib ();                                             // Restore the colour and stencil buffer write-mask etc..
+    glPushAttrib (GL_STENCIL_BUFFER_BIT);                       // Save the stencil op and function
 
-  /* Draw the polygon outer */
-  fill_contour (poly->Clipped->contours);
-  hidgl_flush_triangles (&buffer);
+    glStencilOp (GL_KEEP, GL_KEEP, GL_INVERT); // This allows us to toggle the bit on the subcompositing bitplane
+                                               // If the stencil test has passed, we know that bit is 0, so we're
+                                               // effectively just setting it to 1.
+    glStencilFunc (GL_GEQUAL, 0, assigned_bits);
+  //  glStencilFunc (GL_GREATER, assigned_bits, assigned_bits);   // Pass stencil test if all assigned bits clear,
+                                                                // reference is all assigned bits so we set
+                                                                // any bits permitted by the stencil writemask
+    /* Draw the polygon outer */
+    fill_contour (poly->Clipped->contours);
+    hidgl_flush_triangles (&buffer);
 
-  /* Unassign our stencil buffer bit */
-  hidgl_return_stencil_bit (stencil_bit);
+    /* Unassign our stencil buffer bit */
+    hidgl_return_stencil_bit (stencil_bit);
 
-  glPopAttrib ();                                             // Restore the stencil buffer write-mask etc..
+    glPopAttrib ();                                             // Restore the stencil buffer op and function
+
+  } else {
+    /* Polygon does not have holes */
+    fill_contour (poly->Clipped->contours);
+  }
 }
 
 void
@@ -990,6 +998,8 @@ hidgl_stencil_bits (void)
   return stencil_bits;
 }
 
+int debug_stencil_clears = 0;
+
 static void
 hidgl_clean_unassigned_stencil (void)
 {
@@ -999,6 +1009,7 @@ hidgl_clean_unassigned_stencil (void)
   glClearStencil (0);
   glClear (GL_STENCIL_BUFFER_BIT);
   glPopAttrib ();
+  debug_stencil_clears++;
 }
 
 int
