@@ -1,0 +1,28 @@
+Bottom: 8e055bc53e84ce17d6d054fecdcc66408e6190c2
+Top:    e5c1148798615aecfb574d12e02363d5a3f9e55f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-27 22:09:40 +0100
+
+Refresh of remove-blocktoo-argument-from--0
+
+---
+
+diff --git a/src/crosshair.h b/src/crosshair.h
+index b07af6f..4573e98 100644
+--- a/src/crosshair.h
++++ b/src/crosshair.h
+@@ -47,10 +47,10 @@
+ #define	STATE_THIRD		2
+ 
+ 
+-void CrosshairOn (bool);
+-void CrosshairOff (bool);
+-void HideCrosshair (bool);
+-void RestoreCrosshair (bool);
++void CrosshairOn (void);
++void CrosshairOff (void);
++void HideCrosshair (void);
++void RestoreCrosshair (void);
+ void MoveCrosshairRelative (LocationType, LocationType);
+ bool MoveCrosshairAbsolute (LocationType, LocationType);
+ void SetCrosshairRange (LocationType, LocationType, LocationType,
