@@ -1,0 +1,21 @@
+Bottom: e5c1148798615aecfb574d12e02363d5a3f9e55f
+Top:    3bfb0757feb61d6d6462acb0255a3f943413176c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-27 22:16:11 +0100
+
+Refresh of remove-blocktoo-argument-from--0
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 24f51ab..296f999 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -85,7 +85,6 @@ static void XORDrawMoveOrCopyObject (void);
+ static void XORDrawAttachedLine (LocationType, LocationType, LocationType,
+ 				 LocationType, BDimension);
+ static void XORDrawAttachedArc (BDimension);
+-static void DrawAttached (bool);
+ 
+ /* ---------------------------------------------------------------------------
+  * creates a tmp polygon with coordinates converted to screen system
