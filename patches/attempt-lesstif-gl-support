@@ -1,7 +1,7 @@
-Bottom: 5dbdbf98085b713fe899518447c4975b155630e8
-Top:    0597c11c67873fcbe40e18d14a04f73d9e21ae72
+Bottom: c0b126aaea435f8313bb0f8513c8a71b71ca6445
+Top:    c92ea4ef8f5888d13df9422ecb5be99b73358b89
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-26 23:13:16 +0000
+Date:   2011-03-27 00:16:14 +0000
 
 Attempt lesstif GL support
 
@@ -14,7 +14,7 @@ __ A LOT __ of drawing model changes in lesstif
 ---
 
 diff --git a/configure.ac b/configure.ac
-index ec96b93..1c69d03 100644
+index c0b4155..9809428 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -397,7 +397,8 @@ AC_ARG_ENABLE([gl],
@@ -39,7 +39,7 @@ index ec96b93..1c69d03 100644
  	;;
  	esac
  
-@@ -755,6 +757,25 @@ for e in $HIDLIST; do
+@@ -753,6 +755,25 @@ for e in $HIDLIST; do
  	    ;;
  	  * ) ;;
  	esac
