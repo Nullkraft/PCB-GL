@@ -6,7 +6,46 @@ Date:   2011-03-27 19:54:15 +0100
 Remove BlockToo argument from various crosshair hide / restore functions
 
 Goodness knows what this was supposed to do, but everything works fine
-without it.
+without it. The 23 places this argument was previously false are:
+
+    ActionMovePointer
+        -  HideCrosshair (false);
+        -  RestoreCrosshair (false);
+    EventMoveCrosshair
+        -   RestoreCrosshair (false);
+    ActionDisplay
+        -       RestoreCrosshair (false); /* was hidden by MoveCrosshairAbs */
+    ActionFreeRotateBuffer
+        -  HideCrosshair(false);
+        -  RestoreCrosshair(false);
+    MoveCrosshairAbsolute
+        -      HideCrosshair (false);
+    ghid_invalidate_all()
+        -    RestoreCrosshair (FALSE);
+    ScrollAction (GTK HID)
+        -  HideCrosshair (FALSE);
+        -  RestoreCrosshair (FALSE);
+    ghid_port_ranges_changed
+        -    HideCrosshair (FALSE);
+    ghid_note_event_location
+        -      RestoreCrosshair (false);
+    idle_proc (Lesstif HID)
+        -      CrosshairOn (0);
+    CenterDisplay
+        -          RestoreCrosshair(false);
+    ReportDialog
+        -  HideCrosshair (false);
+        -  RestoreCrosshair (false);
+    ReportFoundPnis
+        -  HideCrosshair (false);
+        -  RestoreCrosshair (false);
+    ReportNetLength
+        -  HideCrosshair (false);
+        -  RestoreCrosshair (false);
+    SetLocalRef
+        -      RestoreCrosshair (false);
+        -      HideCrosshair (false);
+        -      RestoreCrosshair (false);
 
 
 ---
