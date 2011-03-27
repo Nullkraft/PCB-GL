@@ -1,0 +1,36 @@
+Bottom: f46231530a1fd948e0a0887741c438107f50f468
+Top:    f0054651589f2f46b51661333e106e05dadfb3c2
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-27 17:49:48 +0100
+
+Refresh of hid-gtk-ask-for-polygons-after
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 8213bd0..76e7659 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -270,8 +270,8 @@ ghid_use_mask (int use_it)
+       break;
+ 
+     case HID_MASK_BEFORE:
+-      /* Ignore, this renderer doesn't use it */
+-      return;
++      /* The HID asks not to receive this mask type, so warn if we get it */
++      g_return_if_reached ();
+ 
+     case HID_MASK_CLEAR:
+       if (!gport->mask)
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 4f16d8c..28c10bc 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -979,7 +979,7 @@ HID ghid_hid = {
+   1,				/* gui */
+   0,				/* printer */
+   0,				/* exporter */
+-  1,				/* poly before */
++  0,				/* poly before */
+   1,				/* poly after */
+   0,				/* poly dicer */
