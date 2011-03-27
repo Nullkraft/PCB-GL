@@ -788,11 +788,9 @@ DrawMask (BoxType * screen)
   if (thin)
     gui->set_color (Output.pmGC, PCB->MaskColor);
   else
-    {
-      DrawMaskBoardArea (HID_MASK_BEFORE, screen);
-      gui->use_mask (HID_MASK_CLEAR);
-    }
+    DrawMaskBoardArea (HID_MASK_BEFORE, screen);
 
+  gui->use_mask (HID_MASK_CLEAR);
   r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, &info);
   r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, &info);
   r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, &info);
@@ -800,10 +798,9 @@ DrawMask (BoxType * screen)
   if (thin)
     gui->set_color (Output.pmGC, "erase");
   else
-    {
-      DrawMaskBoardArea (HID_MASK_AFTER, screen);
-      gui->use_mask (HID_MASK_OFF);
-    }
+    DrawMaskBoardArea (HID_MASK_AFTER, screen);
+
+  gui->use_mask (HID_MASK_OFF);
 }
 
 /* static */ void
