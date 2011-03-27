@@ -1,0 +1,15 @@
+Bottom: 3bfb0757feb61d6d6462acb0255a3f943413176c
+Top:    3bfb0757feb61d6d6462acb0255a3f943413176c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-27 22:35:29 +0100
+
+Give the HIDs control over "attached" object redrawing (crosshair etc..)
+
+This is required if the HID doesn't want to follow the current drawing
+model where it is assumed the core can call the HID's drawing APIs at
+any arbitrary point in time.
+
+
+---
+
+
