@@ -1,5 +1,5 @@
-Bottom: a61da5dd4fb8e9001ac399ab473a13ecd527d81b
-Top:    7c0338a30c7d6acb70e5a5ac21000e7aab704598
+Bottom: b3d68627727f8c5cf7cc1b033b9fa5c00d9354a4
+Top:    61ac419200218d5ab4d93e7b88de205fa26797e6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:02 +0000
 
@@ -1980,19 +1980,6 @@ index 0000000..797b043
 +
 +  return pixmap;
 +}
-diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 28c10bc..4f16d8c 100644
---- a/src/hid/gtk/gtkhid-main.c
-+++ b/src/hid/gtk/gtkhid-main.c
-@@ -979,7 +979,7 @@ HID ghid_hid = {
-   1,				/* gui */
-   0,				/* printer */
-   0,				/* exporter */
--  0,				/* poly before */
-+  1,				/* poly before */
-   1,				/* poly after */
-   0,				/* poly dicer */
- 
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
 index 97ebb1c..912e369 100644
 --- a/src/hid/gtk/gui.h
