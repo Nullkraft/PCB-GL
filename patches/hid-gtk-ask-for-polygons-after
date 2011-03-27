@@ -3,10 +3,10 @@ Top:    98f3cf3eb8418e00367fa8de9c2cc4605d6e45fd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 02:12:27 +0100
 
-hid/gtk: Ask for polygons after masking as well as before
+hid/gtk: Ask for polygons before masking as well as after
 
 The GL renderer will need both, so add both now. Teach the GDK renderer
-to the ignore gui->use_mask (HID_MASK_AFTER) calls it will now get.
+to the ignore gui->use_mask (HID_MASK_BEFORE) calls it will now get.
 
 
 ---
