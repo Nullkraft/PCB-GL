@@ -1,0 +1,41 @@
+Bottom: 0923142f2b43454cf8c4ac2f95996022eff442dc
+Top:    8bdd0a7c396b7191b2685e85239310890a20d23d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-27 17:37:05 +0100
+
+Refresh of hid-gtk-more-efficient-mask-dr-0
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 46367b5..e4bf2d3 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -788,9 +788,11 @@ DrawMask (BoxType * screen)
+   if (thin)
+     gui->set_color (Output.pmGC, PCB->MaskColor);
+   else
+-    DrawMaskBoardArea (HID_MASK_BEFORE, screen);
++    {
++      DrawMaskBoardArea (HID_MASK_BEFORE, screen);
++      gui->use_mask (HID_MASK_CLEAR);
++    }
+ 
+-  gui->use_mask (HID_MASK_CLEAR);
+   r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, &info);
+   r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, &info);
+   r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, &info);
+@@ -798,9 +800,10 @@ DrawMask (BoxType * screen)
+   if (thin)
+     gui->set_color (Output.pmGC, "erase");
+   else
+-    DrawMaskBoardArea (HID_MASK_AFTER, screen);
+-
+-  gui->use_mask (HID_MASK_OFF);
++    {
++      DrawMaskBoardArea (HID_MASK_AFTER, screen);
++      gui->use_mask (HID_MASK_OFF);
++    }
+ }
+ 
+ static void
