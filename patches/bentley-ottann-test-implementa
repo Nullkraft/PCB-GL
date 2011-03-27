@@ -1,5 +1,5 @@
 Bottom: a5e8c40900768e69807c0a84527c392b4a2d2a52
-Top:    27a88d4421a75c3d537b316cc2203d1e75b1a980
+Top:    318d585ee6c067c88511329a327192879a086cee
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:11 +0000
 
@@ -228,11 +228,11 @@ index 253b5af..2b66db3 100644
  	thermal.c \
  	thermal.h \
  	undo.c \
-diff --git a/src/cairo/cairo-bentley-ottmann.c b/src/cairo/cairo-bentley-ottmann.c
+diff --git a/src/borast/cairo-bentley-ottmann.c b/src/borast/cairo-bentley-ottmann.c
 new file mode 100644
 index 0000000..fcc0e66
 --- /dev/null
-+++ b/src/cairo/cairo-bentley-ottmann.c
++++ b/src/borast/cairo-bentley-ottmann.c
 @@ -0,0 +1,1569 @@
 +/*
 + * Copyright © 2004 Carl Worth
@@ -1803,11 +1803,11 @@ index 0000000..fcc0e66
 +
 +  return CAIRO_STATUS_SUCCESS;
 +}
-diff --git a/src/cairo/cairo-combsort-private.h b/src/cairo/cairo-combsort-private.h
+diff --git a/src/borast/cairo-combsort-private.h b/src/borast/cairo-combsort-private.h
 new file mode 100644
 index 0000000..ce31257
 --- /dev/null
-+++ b/src/cairo/cairo-combsort-private.h
++++ b/src/borast/cairo-combsort-private.h
 @@ -0,0 +1,71 @@
 +/*
 + * Copyright © 2008 Chris Wilson
@@ -1880,11 +1880,11 @@ index 0000000..ce31257
 +      } \
 +  } while (swapped); \
 +}
-diff --git a/src/cairo/cairo-compiler-private.h b/src/cairo/cairo-compiler-private.h
+diff --git a/src/borast/cairo-compiler-private.h b/src/borast/cairo-compiler-private.h
 new file mode 100644
 index 0000000..9fe8e9b
 --- /dev/null
-+++ b/src/cairo/cairo-compiler-private.h
++++ b/src/borast/cairo-compiler-private.h
 @@ -0,0 +1,203 @@
 +/* cairo - a vector graphics library with display and print output
 + *
@@ -2089,11 +2089,11 @@ index 0000000..9fe8e9b
 +#endif
 +
 +#endif
-diff --git a/src/cairo/cairo-fixed-private.h b/src/cairo/cairo-fixed-private.h
+diff --git a/src/borast/cairo-fixed-private.h b/src/borast/cairo-fixed-private.h
 new file mode 100644
 index 0000000..e3add4a
 --- /dev/null
-+++ b/src/cairo/cairo-fixed-private.h
++++ b/src/borast/cairo-fixed-private.h
 @@ -0,0 +1,290 @@
 +/* -*- Mode: c; tab-width: 8; c-basic-offset: 4; indent-tabs-mode: t; -*- */
 +/* Cairo - a vector graphics library with display and print output
@@ -2385,11 +2385,11 @@ index 0000000..e3add4a
 +#endif
 +
 +#endif /* CAIRO_FIXED_PRIVATE_H */
-diff --git a/src/cairo/cairo-fixed-type-private.h b/src/cairo/cairo-fixed-type-private.h
+diff --git a/src/borast/cairo-fixed-type-private.h b/src/borast/cairo-fixed-type-private.h
 new file mode 100644
 index 0000000..730ed3e
 --- /dev/null
-+++ b/src/cairo/cairo-fixed-type-private.h
++++ b/src/borast/cairo-fixed-type-private.h
 @@ -0,0 +1,75 @@
 +/* -*- Mode: c; tab-width: 8; c-basic-offset: 4; indent-tabs-mode: t; -*- */
 +/* Cairo - a vector graphics library with display and print output
@@ -2466,11 +2466,11 @@ index 0000000..730ed3e
 +} cairo_point_t;
 +
 +#endif /* CAIRO_FIXED_TYPE_PRIVATE_H */
-diff --git a/src/cairo/cairo-freelist-private.h b/src/cairo/cairo-freelist-private.h
+diff --git a/src/borast/cairo-freelist-private.h b/src/borast/cairo-freelist-private.h
 new file mode 100644
 index 0000000..5be22b1
 --- /dev/null
-+++ b/src/cairo/cairo-freelist-private.h
++++ b/src/borast/cairo-freelist-private.h
 @@ -0,0 +1,150 @@
 +/*
 + * Copyright © 2006 Joonas Pihlaja
@@ -2622,11 +2622,11 @@ index 0000000..5be22b1
 +}
 +
 +#endif /* CAIRO_FREELIST_H */
-diff --git a/src/cairo/cairo-freelist.c b/src/cairo/cairo-freelist.c
+diff --git a/src/borast/cairo-freelist.c b/src/borast/cairo-freelist.c
 new file mode 100644
 index 0000000..6ea5c17
 --- /dev/null
-+++ b/src/cairo/cairo-freelist.c
++++ b/src/borast/cairo-freelist.c
 @@ -0,0 +1,176 @@
 +/*
 + * Copyright © 2006 Joonas Pihlaja
@@ -2804,11 +2804,11 @@ index 0000000..6ea5c17
 +
 +    return _cairo_error (CAIRO_STATUS_NO_MEMORY);
 +}
-diff --git a/src/cairo/cairo-malloc-private.h b/src/cairo/cairo-malloc-private.h
+diff --git a/src/borast/cairo-malloc-private.h b/src/borast/cairo-malloc-private.h
 new file mode 100644
 index 0000000..d812058
 --- /dev/null
-+++ b/src/cairo/cairo-malloc-private.h
++++ b/src/borast/cairo-malloc-private.h
 @@ -0,0 +1,148 @@
 +/* -*- Mode: c; tab-width: 8; c-basic-offset: 4; indent-tabs-mode: t; -*- */
 +/* Cairo - a vector graphics library with display and print output
@@ -2958,11 +2958,11 @@ index 0000000..d812058
 +   _cairo_malloc((unsigned) (n) * (unsigned) (size) + (unsigned) (k)))
 +
 +#endif /* CAIRO_MALLOC_PRIVATE_H */
-diff --git a/src/cairo/cairo-minimal.h b/src/cairo/cairo-minimal.h
+diff --git a/src/borast/cairo-minimal.h b/src/borast/cairo-minimal.h
 new file mode 100644
 index 0000000..9028299
 --- /dev/null
-+++ b/src/cairo/cairo-minimal.h
++++ b/src/borast/cairo-minimal.h
 @@ -0,0 +1,208 @@
 +/* cairo - a vector graphics library with display and print output
 + *
@@ -3172,11 +3172,11 @@ index 0000000..9028299
 +CAIRO_END_DECLS
 +
 +#endif /* _CAIRO_MINIMAL_H_ */
-diff --git a/src/cairo/cairo-traps-private.h b/src/cairo/cairo-traps-private.h
+diff --git a/src/borast/cairo-traps-private.h b/src/borast/cairo-traps-private.h
 new file mode 100644
 index 0000000..ac26aee
 --- /dev/null
-+++ b/src/cairo/cairo-traps-private.h
++++ b/src/borast/cairo-traps-private.h
 @@ -0,0 +1,152 @@
 +/* cairo - a vector graphics library with display and print output
 + *
@@ -3330,11 +3330,11 @@ index 0000000..ac26aee
 +					    double sx, double sy);
 +
 +#endif
-diff --git a/src/cairo/cairo-traps.c b/src/cairo/cairo-traps.c
+diff --git a/src/borast/cairo-traps.c b/src/borast/cairo-traps.c
 new file mode 100644
 index 0000000..089f3c6
 --- /dev/null
-+++ b/src/cairo/cairo-traps.c
++++ b/src/borast/cairo-traps.c
 @@ -0,0 +1,438 @@
 +/* -*- Mode: c; tab-width: 8; c-basic-offset: 4; indent-tabs-mode: t; -*- */
 +/*
@@ -3774,11 +3774,11 @@ index 0000000..089f3c6
 +	}
 +    }
 +}
-diff --git a/src/cairo/cairo-types-private.h b/src/cairo/cairo-types-private.h
+diff --git a/src/borast/cairo-types-private.h b/src/borast/cairo-types-private.h
 new file mode 100644
 index 0000000..44c29b9
 --- /dev/null
-+++ b/src/cairo/cairo-types-private.h
++++ b/src/borast/cairo-types-private.h
 @@ -0,0 +1,206 @@
 +/* -*- Mode: c; tab-width: 8; c-basic-offset: 4; indent-tabs-mode: t; -*- */
 +/* cairo - a vector graphics library with display and print output
@@ -3986,11 +3986,11 @@ index 0000000..44c29b9
 +				  const cairo_point_t *point);
 +
 +#endif /* CAIRO_TYPES_PRIVATE_H */
-diff --git a/src/cairo/cairo-wideint-private.h b/src/cairo/cairo-wideint-private.h
+diff --git a/src/borast/cairo-wideint-private.h b/src/borast/cairo-wideint-private.h
 new file mode 100644
 index 0000000..303dab1
 --- /dev/null
-+++ b/src/cairo/cairo-wideint-private.h
++++ b/src/borast/cairo-wideint-private.h
 @@ -0,0 +1,329 @@
 +/* cairo - a vector graphics library with display and print output
 + *
@@ -4321,11 +4321,11 @@ index 0000000..303dab1
 +#undef I
 +
 +#endif /* CAIRO_WIDEINT_H */
-diff --git a/src/cairo/cairo-wideint-type-private.h b/src/cairo/cairo-wideint-type-private.h
+diff --git a/src/borast/cairo-wideint-type-private.h b/src/borast/cairo-wideint-type-private.h
 new file mode 100644
 index 0000000..e18f48e
 --- /dev/null
-+++ b/src/cairo/cairo-wideint-type-private.h
++++ b/src/borast/cairo-wideint-type-private.h
 @@ -0,0 +1,153 @@
 +/* cairo - a vector graphics library with display and print output
 + *
@@ -4480,11 +4480,11 @@ index 0000000..e18f48e
 +
 +
 +#endif /* CAIRO_WIDEINT_H */
-diff --git a/src/cairo/cairo-wideint.c b/src/cairo/cairo-wideint.c
+diff --git a/src/borast/cairo-wideint.c b/src/borast/cairo-wideint.c
 new file mode 100644
 index 0000000..823ebca
 --- /dev/null
-+++ b/src/cairo/cairo-wideint.c
++++ b/src/borast/cairo-wideint.c
 @@ -0,0 +1,819 @@
 +/* cairo - a vector graphics library with display and print output
 + *
@@ -5305,11 +5305,11 @@ index 0000000..823ebca
 +	qr.quo = uqr.quo;
 +    return qr;
 +}
-diff --git a/src/cairo/cairoint-minimal.h b/src/cairo/cairoint-minimal.h
+diff --git a/src/borast/cairoint-minimal.h b/src/borast/cairoint-minimal.h
 new file mode 100644
 index 0000000..4b6d20b
 --- /dev/null
-+++ b/src/cairo/cairoint-minimal.h
++++ b/src/borast/cairoint-minimal.h
 @@ -0,0 +1,146 @@
 +/* cairo - a vector graphics library with display and print output
 + *
