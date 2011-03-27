@@ -989,7 +989,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                 ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                              -port->view_y0, 0);
   DrawAttached ();
-  DrawMark (TRUE);
+  DrawMark ();
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
 
