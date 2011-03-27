@@ -1,5 +1,5 @@
-Bottom: 764bb404ee79a2864fbda50a2f1c8651d4b11063
-Top:    0a3558ada3e371bb156b495e36a310b97633231d
+Bottom: ba829d5a57a092bf755f1c54e83f7732a4edda0b
+Top:    47de0578e3fa587c16468ce9fd686dbe3d8e5074
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:03 +0000
 
@@ -15,7 +15,7 @@ Leaving this commit for the benefit users of broken mesa versions.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 76e7659..43d86d0 100644
+index 2ebb1a2..2675796 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -1011,6 +1011,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
@@ -31,7 +31,7 @@ index 76e7659..43d86d0 100644
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 429fbf8..c895f19 100644
+index 5541056..cd9236b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1002,6 +1002,24 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
@@ -60,7 +60,7 @@ index 429fbf8..c895f19 100644
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 2098c27..9f9d59e 100644
+index 074ef9b..f241133 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2368,6 +2368,9 @@ ghid_build_pcb_top_window (void)
