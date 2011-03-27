@@ -1,5 +1,5 @@
-Bottom: 7f53d52a5c1d08340eac88245a89e8774dcb28ac
-Top:    e306dee985584ec559b3b067a1ddfad988ecd4a6
+Bottom: 49292e1b8628388017182d3c7b23f35a855796fa
+Top:    1432953e512137987de2b80553b970632d5f4083
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:04 +0000
 
@@ -26,7 +26,7 @@ For now, we don't use polygons on the mask, so its not a a problem (?).
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 9b35674..70c3caa 100644
+index f8c0b72..2a6a749 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -36,6 +36,7 @@
@@ -37,7 +37,7 @@ index 9b35674..70c3caa 100644
  
  
  #ifdef HAVE_LIBDMALLOC
-@@ -477,6 +478,8 @@ myBegin (GLenum type)
+@@ -481,6 +482,8 @@ myBegin (GLenum type)
    triangle_comp_idx = 0;
  }
  
@@ -46,7 +46,7 @@ index 9b35674..70c3caa 100644
  static void
  myVertex (GLdouble *vertex_data)
  {
-@@ -569,6 +572,116 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
+@@ -573,6 +576,116 @@ hidgl_fill_polygon (int n_coords, int *x, int *y)
  }
  
  void
@@ -164,10 +164,10 @@ index 9b35674..70c3caa 100644
  {
    hidgl_ensure_triangle_space (&buffer, 2);
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index 73d9a34..bb1383c 100644
+index e69a6b7..99ffffc 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
-@@ -57,6 +57,7 @@ void hidgl_draw_arc (double width, int vx, int vy, int vrx, int vry, int start_a
+@@ -73,6 +73,7 @@ void hidgl_draw_arc (double width, int vx, int vy, int vrx, int vry, int start_a
  void hidgl_draw_rect (int x1, int y1, int x2, int y2);
  void hidgl_fill_circle (int vx, int vy, int vr, double scale);
  void hidgl_fill_polygon (int n_coords, int *x, int *y);
