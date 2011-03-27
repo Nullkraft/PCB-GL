@@ -1,7 +1,7 @@
-Bottom: 5dbdbf98085b713fe899518447c4975b155630e8
-Top:    cc6a2fcb54ea3f20fea8bfbf7e79e4f02035a02e
+Bottom: c0b126aaea435f8313bb0f8513c8a71b71ca6445
+Top:    03142544b636876e885a12b26aa15c5fd3491949
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-26 23:13:18 +0000
+Date:   2011-03-27 00:16:17 +0000
 
 Add support for a "poured" object.
 
@@ -2969,10 +2969,10 @@ index d2dd717..544f4bc 100644
  	  /* layer isn't empty */
  
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 844c2ce..74c8d0c 100644
+index be3dfd0..5c5028d 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
-@@ -500,7 +500,7 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -498,7 +498,7 @@ gerber_do_export (HID_Attr_Val * options)
    for (i = 0; i < max_copper_layer; i++)
      {
        LayerType *layer = PCB->Data->Layer + i;
@@ -3066,7 +3066,7 @@ index 8a561e9..739745b 100644
  	result = TRUE;
        break;
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 83c0b63..c491e97 100644
+index d0e8b3d..caa26e3 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -2000,8 +2000,9 @@ static ModeButton mode_buttons[] = {
