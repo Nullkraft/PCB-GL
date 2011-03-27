@@ -1,5 +1,5 @@
-Bottom: 3303edb3ba0c2ed4691b0b3455c6b8c32d779432
-Top:    091b97283e99bf72cde41888c3620138e16e4fd4
+Bottom: ec9bbe24a4ece15eff809faac4af300b1976af4e
+Top:    03015ebc183da5cad6173f595426af904cfe88eb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:04 +0000
 
@@ -11,10 +11,10 @@ Not sure what the remaining changes here are for!
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index a272714..d3a38e4 100644
+index c895f19..5c7b9f9 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -748,7 +748,7 @@ ghid_show_crosshair (gboolean show)
+@@ -755,7 +755,7 @@ ghid_show_crosshair (gboolean show)
  
    glBegin (GL_LINES);
  
@@ -23,7 +23,7 @@ index a272714..d3a38e4 100644
    if (x_prev >= 0)
      draw_crosshair (x_prev, y_prev);
  #endif
-@@ -761,7 +761,7 @@ ghid_show_crosshair (gboolean show)
+@@ -768,7 +768,7 @@ ghid_show_crosshair (gboolean show)
  
    glBegin (GL_QUADS);
  
