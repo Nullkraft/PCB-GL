@@ -1,7 +1,7 @@
-Bottom: 90db70df14e28ad763756000e266e4c9593b9783
-Top:    7033e2e07cc77b23578359e60c2d7a9cad98da06
+Bottom: 8b2394eab45312f4f421983062769f05b862b863
+Top:    8b2394eab45312f4f421983062769f05b862b863
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-27 00:06:36 +0000
+Date:   2011-03-28 00:50:38 +0100
 
 Revert "hid/gtk: Add hooks to tell the render when we start/stop drawing"
 
@@ -10,65 +10,4 @@ This reverts commit 332cb8ddc1cc032ac29c7d2b9a0051ccc228b6da.
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 62e2333..e8d3b73 100644
---- a/src/hid/gtk/gtkhid-gdk.c
-+++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -929,17 +929,6 @@ ghid_drawing_area_configure_hook (GHidPort *port)
-     }
- }
- 
--gboolean
--ghid_start_drawing (GHidPort *port)
--{
--  return TRUE;
--}
--
--void
--ghid_end_drawing (GHidPort *port)
--{
--}
--
- void
- ghid_screen_update (void)
- {
-diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 3b543cb..10dd85b 100644
---- a/src/hid/gtk/gui-output-events.c
-+++ b/src/hid/gtk/gui-output-events.c
-@@ -671,13 +671,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
-   static gint x_prev = -1, y_prev = -1;
-   gboolean moved;
- 
--
-   gdk_event_request_motions (ev);
- 
--  if (!ghid_start_drawing (out))
--    return FALSE;
--
--
-   if (out->panning)
-     {
-       dx = gport->zoom * (x_prev - ev->x);
-@@ -698,8 +693,6 @@ ghid_port_window_motion_cb (GtkWidget * widget,
-   ghid_show_crosshair (TRUE);
-   if (moved && have_crosshair_attachments ())
-     ghid_draw_area_update (gport, NULL);
--
--  ghid_end_drawing (out);
-   return FALSE;
- }
- 
-diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 29c98f8..838b5fa 100644
---- a/src/hid/gtk/gui.h
-+++ b/src/hid/gtk/gui.h
-@@ -497,8 +497,6 @@ void ghid_show_crosshair (gboolean show);
- void ghid_init_renderer (int *, char ***, GHidPort *);
- void ghid_init_drawing_widget (GtkWidget *widget, GHidPort *);
- void ghid_drawing_area_configure_hook (GHidPort *port);
--gboolean ghid_start_drawing (GHidPort *port);
--void ghid_end_drawing (GHidPort *port);
- void ghid_screen_update (void);
- gboolean ghid_drawing_area_expose_cb (GtkWidget *, GdkEventExpose *,
-                                       GHidPort *);
+
