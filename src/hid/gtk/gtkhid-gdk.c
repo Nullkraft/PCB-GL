@@ -770,9 +770,6 @@ ghid_invalidate_all ()
 
   hid_expose_callback (&ghid_hid, &region, 0);
   ghid_draw_grid ();
-  if (ghidgui->need_restore_crosshair)
-    RestoreCrosshair ();
-  ghidgui->need_restore_crosshair = FALSE;
   ghid_screen_update ();
 }
 
@@ -882,7 +879,7 @@ draw_crosshair (GdkGC *xor_gc, gint x, gint y)
 #define VCD 8
 
 void
-ghid_show_crosshair (gboolean show)
+ghid_show_crosshair (gboolean paint_new_location)
 {
   gint x, y;
   static gint x_prev = -1, y_prev = -1;
@@ -906,7 +903,7 @@ ghid_show_crosshair (gboolean show)
 
   gdk_gc_set_foreground (xor_gc, &cross_color);
 
-  if (x_prev >= 0)
+  if (x_prev >= 0 && !paint_new_location)
     {
       draw_crosshair (xor_gc, x_prev, y_prev);
       if (draw_markers_prev)
@@ -922,7 +919,7 @@ ghid_show_crosshair (gboolean show)
 	}
     }
 
-  if (x >= 0 && show)
+  if (x >= 0 && paint_new_location)
     {
       draw_crosshair (xor_gc, x, y);
       draw_markers = ghidgui->auto_pan_on && have_crosshair_attachments ();
@@ -999,7 +996,6 @@ ghid_screen_update (void)
 {
   render_priv *priv = gport->render_priv;
 
-  ghid_show_crosshair (FALSE);
   gdk_draw_drawable (gport->drawing_area->window, priv->bg_gc, gport->pixmap,
 		     0, 0, 0, 0, gport->width, gport->height);
   ghid_show_crosshair (TRUE);
@@ -1012,7 +1008,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 {
   render_priv *priv = port->render_priv;
 
-  ghid_show_crosshair (FALSE);
   gdk_draw_drawable (widget->window, priv->bg_gc, port->pixmap,
                     ev->area.x, ev->area.y, ev->area.x, ev->area.y,
                     ev->area.width, ev->area.height);

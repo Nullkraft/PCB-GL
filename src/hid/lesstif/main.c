@@ -1311,12 +1311,12 @@ mod_changed (XKeyEvent * e, int set)
       return;
     }
   in_move_event = 1;
-  HideCrosshair ();
+  notify_crosshair_change (false);
   if (panning)
     Pan (2, e->x, e->y);
   EventMoveCrosshair (Px (e->x), Py (e->y));
   AdjustAttachedObjects ();
-  RestoreCrosshair ();
+  notify_crosshair_change (true);
   in_move_event = 0;
 }
 
@@ -1353,6 +1353,7 @@ work_area_input (Widget w, XtPointer v, XEvent * e, Boolean * ctd)
         ignore_release = 0;
 
         HideCrosshair ();
+        notify_crosshair_change (false);
         pressed_button = e->xbutton.button;
         mods = ((e->xbutton.state & ShiftMask) ? M_Shift : 0)
           + ((e->xbutton.state & ControlMask) ? M_Ctrl : 0)
@@ -1362,7 +1363,7 @@ work_area_input (Widget w, XtPointer v, XEvent * e, Boolean * ctd)
           + ((e->xbutton.state & Mod1Mask) ? M_Alt : 0);
 #endif
         do_mouse_action(e->xbutton.button, mods);
-        RestoreCrosshair ();
+        notify_crosshair_change (true);
         break;
       }
 
@@ -1372,7 +1373,7 @@ work_area_input (Widget w, XtPointer v, XEvent * e, Boolean * ctd)
         if (e->xbutton.button != pressed_button)
           return;
         lesstif_button_event (w, e);
-        HideCrosshair ();
+        notify_crosshair_change (false);
         pressed_button = 0;
         mods = ((e->xbutton.state & ShiftMask) ? M_Shift : 0)
           + ((e->xbutton.state & ControlMask) ? M_Ctrl : 0)
@@ -1383,7 +1384,7 @@ work_area_input (Widget w, XtPointer v, XEvent * e, Boolean * ctd)
 #endif
           + M_Release;
         do_mouse_action (e->xbutton.button, mods);
-        RestoreCrosshair ();
+        notify_crosshair_change (true);
         break;
       }
 
