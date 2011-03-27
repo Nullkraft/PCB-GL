@@ -287,6 +287,7 @@ static HID gerber_hid = {
   gerber_parse_arguments,
   0 /* gerber_invalidate_lr */ ,
   0 /* gerber_invalidate_all */ ,
+  0 /* gerber_notify_crosshair_change */ ,
   gerber_set_layer,
   gerber_make_gc,
   gerber_destroy_gc,
