@@ -1,7 +1,7 @@
-Bottom: 02ba4c0e576167c68be0414ae00afc5f78447cb8
-Top:    3baa7f84d09b5d42c6ca6ea3a1d4accec3874629
+Bottom: e973d01af4e939274dce4f7306eba37f8fb0da4f
+Top:    4cfe656698875df2bddcd5fd436e06b58845e1ce
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-27 15:17:05 +0100
+Date:   2011-03-27 15:31:28 +0100
 
 Play with GLSL shader for rendering line caps and circles
 
@@ -60,7 +60,7 @@ index 0ddac76..d387f43 100644
  	hid/common/trackball.h
  
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index bdcf491..6a4791a 100644
+index 2620347..4eb8e0b 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
 @@ -47,6 +47,7 @@ RCSID ("$Id: $");
@@ -481,7 +481,7 @@ index bdcf491..6a4791a 100644
 -fill_contour (PLINE *contour, double scale)
 +fill_contour (PLINE *contour)
  {
-   cairo_traps_t traps;
+   borast_traps_t traps;
  
 -  /* If the contour is round, and hidgl_fill_circle would use
 -   * less slices than we have vertices to draw it, then call
@@ -498,9 +498,9 @@ index bdcf491..6a4791a 100644
 +    return;
    }
  
-   _cairo_traps_init (&traps);
+   _borast_traps_init (&traps);
 @@ -622,14 +712,9 @@ fill_contour (PLINE *contour, double scale)
-   _cairo_traps_fini (&traps);
+   _borast_traps_fini (&traps);
  }
  
 -struct do_hole_info {
