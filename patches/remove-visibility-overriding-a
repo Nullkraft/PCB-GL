@@ -1,0 +1,15 @@
+Bottom: 02ad2e09f95b7ad807227f6b38e36cc5a5039fc8
+Top:    02ad2e09f95b7ad807227f6b38e36cc5a5039fc8
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-27 20:33:59 +0100
+
+Remove visibility overriding argument from DrawMark()
+
+Because of the places it was used, we can gaurantee this doesn't
+change any behaviour - the mark visibility status is always correct,
+so doesn't need overriding.
+
+
+---
+
+
