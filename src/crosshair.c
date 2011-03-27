@@ -566,7 +566,7 @@ XORDrawMoveOrCopyObject (void)
  * draws additional stuff that follows the crosshair
  */
 void
-DrawAttached (bool BlockToo)
+DrawAttached (void)
 {
   BDimension s;
   switch (Settings.Mode)
@@ -671,8 +671,7 @@ DrawAttached (bool BlockToo)
     }
 
   /* an attached box does not depend on a special mode */
-  if (Crosshair.AttachedBox.State == STATE_SECOND ||
-      (BlockToo && Crosshair.AttachedBox.State == STATE_THIRD))
+  if (Crosshair.AttachedBox.State == STATE_SECOND)
     {
       LocationType x1, y1, x2, y2;
 
@@ -688,13 +687,13 @@ DrawAttached (bool BlockToo)
  * switches crosshair on
  */
 void
-CrosshairOn (bool BlockToo)
+CrosshairOn (void)
 {
   if (!Crosshair.On)
     {
       Crosshair.On = true;
 #if 0
-      DrawAttached (BlockToo);
+      DrawAttached ();
       DrawMark (true);
 #endif
     }
@@ -704,13 +703,13 @@ CrosshairOn (bool BlockToo)
  * switches crosshair off
  */
 void
-CrosshairOff (bool BlockToo)
+CrosshairOff (void)
 {
   if (Crosshair.On)
     {
       Crosshair.On = false;
 #if 0
-      DrawAttached (BlockToo);
+      DrawAttached ();
       DrawMark (true);
 #endif
     }
@@ -729,9 +728,9 @@ CrosshairOff (bool BlockToo)
  * saves crosshair state (on/off) and hides him
  */
 void
-HideCrosshair (bool BlockToo)
+HideCrosshair ()
 {
-  /* fprintf(stderr, "HideCrosshair %d stack %d\n", BlockToo ? 1 : 0, CrosshairStackLocation); */
+  /* fprintf(stderr, "HideCrosshair stack %d\n", CrosshairStackLocation); */
   if (CrosshairStackLocation >= MAX_CROSSHAIRSTACK_DEPTH)
     {
       fprintf(stderr, "Error: CrosshairStackLocation overflow\n");
@@ -741,16 +740,16 @@ HideCrosshair (bool BlockToo)
   CrosshairStack[CrosshairStackLocation] = Crosshair.On;
   CrosshairStackLocation++;
 
-  CrosshairOff (BlockToo);
+  CrosshairOff ();
 }
 
 /* ---------------------------------------------------------------------------
  * restores last crosshair state
  */
 void
-RestoreCrosshair (bool BlockToo)
+RestoreCrosshair (void)
 {
-  /* fprintf(stderr, "RestoreCrosshair %d stack %d\n", BlockToo ? 1 : 0, CrosshairStackLocation); */
+  /* fprintf(stderr, "RestoreCrosshair stack %d\n", CrosshairStackLocation); */
   if (CrosshairStackLocation <= 0)
     {
       fprintf(stderr, "Error: CrosshairStackLocation underflow\n");
@@ -760,13 +759,9 @@ RestoreCrosshair (bool BlockToo)
   CrosshairStackLocation--;
 
   if (CrosshairStack[CrosshairStackLocation])
-    {
-      CrosshairOn (BlockToo);
-    }
+    CrosshairOn ();
   else
-    {
-      CrosshairOff (BlockToo);
-    }
+    CrosshairOff ();
 }
 
 static double
@@ -1078,7 +1073,7 @@ MoveCrosshairAbsolute (LocationType X, LocationType Y)
       x = z;
       z = Crosshair.Y;
       Crosshair.Y = y;
-      HideCrosshair (false);
+      HideCrosshair ();
       /* now move forward again */
       Crosshair.X = x;
       Crosshair.Y = z;
@@ -1161,7 +1156,7 @@ InitCrosshair (void)
 void
 DestroyCrosshair (void)
 {
-  CrosshairOff (true);
+  CrosshairOff ();
   FreePolygonMemory (&Crosshair.AttachedPolygon);
   gui->destroy_gc (Crosshair.GC);
 }
