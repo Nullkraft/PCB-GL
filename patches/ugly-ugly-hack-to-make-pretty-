@@ -1,5 +1,5 @@
-Bottom: 1d4bb4c171576cb40d8d0792f825fa62d09a3e80
-Top:    22c91f6ffbf815ab9ba070d7c6065e4113b9c871
+Bottom: 50de32350c81842722a02a33282bd4a3d1a7493b
+Top:    784485b90ffca4806c203061cc5f012eececc7eb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:06 +0000
 
@@ -15,7 +15,7 @@ way to turn it off would also be useful.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 8e05ace..245b0c8 100644
+index f0b3881..b089da5 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -670,6 +670,12 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
