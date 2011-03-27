@@ -988,6 +988,7 @@ HID ghid_hid = {
   ghid_parse_arguments,
   ghid_invalidate_lr,
   ghid_invalidate_all,
+  ghid_notify_crosshair_change,
   ghid_set_layer,
   ghid_make_gc,
   ghid_destroy_gc,
@@ -1900,11 +1901,11 @@ ScrollAction (int argc, char **argv, int x, int y)
   else
     AFAIL (scroll);
 
-  HideCrosshair ();
+  notify_crosshair_change (false);
   ghid_port_ranges_pan (dx, dy, TRUE);
   MoveCrosshairRelative (dx, dy);
   AdjustAttachedObjects ();
-  RestoreCrosshair ();
+  notify_crosshair_change (true);
 
   return 0;
 }
