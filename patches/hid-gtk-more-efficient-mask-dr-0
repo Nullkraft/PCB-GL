@@ -1,5 +1,5 @@
 Bottom: ba0a57baa1e0925399aa52a00077908e23c895da
-Top:    0923142f2b43454cf8c4ac2f95996022eff442dc
+Top:    8bdd0a7c396b7191b2685e85239310890a20d23d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 17:29:15 +0100
 
@@ -8,38 +8,6 @@ hid/gtk: More efficient mask drawing
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index e4bf2d3..46367b5 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -788,11 +788,9 @@ DrawMask (BoxType * screen)
-   if (thin)
-     gui->set_color (Output.pmGC, PCB->MaskColor);
-   else
--    {
--      DrawMaskBoardArea (HID_MASK_BEFORE, screen);
--      gui->use_mask (HID_MASK_CLEAR);
--    }
-+    DrawMaskBoardArea (HID_MASK_BEFORE, screen);
- 
-+  gui->use_mask (HID_MASK_CLEAR);
-   r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, &info);
-   r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, &info);
-   r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, &info);
-@@ -800,10 +798,9 @@ DrawMask (BoxType * screen)
-   if (thin)
-     gui->set_color (Output.pmGC, "erase");
-   else
--    {
--      DrawMaskBoardArea (HID_MASK_AFTER, screen);
--      gui->use_mask (HID_MASK_OFF);
--    }
-+    DrawMaskBoardArea (HID_MASK_AFTER, screen);
-+
-+  gui->use_mask (HID_MASK_OFF);
- }
- 
- static void
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 index f0edbac..04672b2 100644
 --- a/src/hid/gtk/gtkhid-gl.c
