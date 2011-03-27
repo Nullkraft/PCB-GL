@@ -611,10 +611,16 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
 void
 ghid_invalidate_all ()
 {
-  if (ghidgui->need_restore_crosshair)
-    RestoreCrosshair ();
-  ghidgui->need_restore_crosshair = FALSE;
   ghid_draw_area_update (gport, NULL);
+}
+
+void
+ghid_notify_crosshair_change (bool changes_complete)
+{
+  /* FIXME: We could just invalidate the bounds of the crosshair attached objects? */
+  /* FIXME: Seems we're getting prodded before the GUI is up! */
+  if (gport->drawing_area)
+    ghid_invalidate_all ();
 }
 
 static void
