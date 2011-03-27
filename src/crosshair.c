@@ -1068,8 +1068,7 @@ DrawMark (void)
 
 /* ---------------------------------------------------------------------------
  * initializes crosshair stuff
- * clears the struct, allocates to graphical contexts and
- * initializes the stack
+ * clears the struct, allocates to graphical contexts
  */
 void
 InitCrosshair (void)
@@ -1081,9 +1080,6 @@ InitCrosshair (void)
   gui->set_line_cap (Crosshair.GC, Trace_Cap);
   gui->set_line_width (Crosshair.GC, 1);
 
-  /* fake a crosshair off entry on stack */
-  CrosshairStackLocation = 0;
-  CrosshairStack[CrosshairStackLocation++] = true;
   Crosshair.On = false;
 
   /* set initial shape */
