@@ -3,16 +3,10 @@ Top:    f46231530a1fd948e0a0887741c438107f50f468
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 02:12:27 +0100
 
-hid/gtk: DrawMask(), Always use the HID_MASK_CLEAR and HID_MASK_OFF steps
+hid/gtk: Ask for polygons before masking as well as after
 
-This may be necessary for the GUI to initialise and clean up its operations.
-
-WAS:
-
-    hid/gtk: Ask for polygons before masking as well as after
-
-    The GL renderer will need both, so add both now. Teach the GDK renderer
-    to the ignore gui->use_mask (HID_MASK_BEFORE) calls it will now get.
+The GL renderer will need both, so add both now. Teach the GDK renderer
+to the ignore gui->use_mask (HID_MASK_BEFORE) calls it will now get.
 
 
 ---
