@@ -1,0 +1,33 @@
+Bottom: 31f37dcb65e20a7d20c3fd50ab6ed5533a2ce380
+Top:    5264db7d0cad23ca6f7c30aaa337f7c12d997aec
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-28 00:17:04 +0100
+
+Refresh of give-the-hids-control-over-att
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 0640712..af0b060 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -1068,8 +1068,7 @@ DrawMark (void)
+ 
+ /* ---------------------------------------------------------------------------
+  * initializes crosshair stuff
+- * clears the struct, allocates to graphical contexts and
+- * initializes the stack
++ * clears the struct, allocates to graphical contexts
+  */
+ void
+ InitCrosshair (void)
+@@ -1081,9 +1080,6 @@ InitCrosshair (void)
+   gui->set_line_cap (Crosshair.GC, Trace_Cap);
+   gui->set_line_width (Crosshair.GC, 1);
+ 
+-  /* fake a crosshair off entry on stack */
+-  CrosshairStackLocation = 0;
+-  CrosshairStack[CrosshairStackLocation++] = true;
+   Crosshair.On = false;
+ 
+   /* set initial shape */
