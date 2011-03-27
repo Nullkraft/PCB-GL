@@ -1,5 +1,5 @@
-Bottom: 9e292c45bfb3446c3684e19e3d503834a794798a
-Top:    dba829069ed456212141d039dad4c6fde92935b5
+Bottom: f4675fab1577784b51578dbf39e6a3609ec54888
+Top:    51f07d92a2b5d0906dfa40d05a1c21a80cdf1b26
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 17:25:04 +0100
 
@@ -41,7 +41,7 @@ index 6c7a2f5..40b11ec 100644
  
  /* static */ void
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index ad2bc03..df0f6e7 100644
+index af08916..a16af92 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -394,31 +394,29 @@ ghid_use_mask (int use_it)
@@ -87,7 +87,7 @@ index ad2bc03..df0f6e7 100644
        glDisable (GL_STENCIL_TEST);                // Disable Stencil test
        break;
      }
-@@ -1378,10 +1376,6 @@ DrawMask (BoxType * screen)
+@@ -1360,10 +1358,6 @@ DrawMask (BoxType * screen)
        gui->set_color (Output.pmGC, "erase");
      }
  
