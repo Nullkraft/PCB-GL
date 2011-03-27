@@ -1,4 +1,4 @@
-Bottom: 8a6fe6462d9993e0a8b7f4ff023f9a1c24065317
+Bottom: e82152c2af970b7afd763d41e7852e9a8f95e6af
 Top:    8b2394eab45312f4f421983062769f05b862b863
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:03 +0000
@@ -10,18 +10,6 @@ FIXME: SHOULD NOT RE-WRITE THE GTK HID
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 52f299a..27d80f7 100644
---- a/src/hid/gtk/gtkhid-gdk.c
-+++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -784,6 +784,7 @@ ghid_notify_crosshair_change (bool changes_complete)
-     CrosshairOn ();
-   else
-     CrosshairOff ();
-+  ghid_draw_area_update (gport, NULL);
- }
- 
- static void
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
 index 55f8c74..d7e406b 100644
 --- a/src/hid/gtk/gui-output-events.c
