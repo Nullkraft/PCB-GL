@@ -1,0 +1,110 @@
+Bottom: 08a68f7b8420049f4ba059832e3afd7666bc1f59
+Top:    c3b8a9f7b4a4189fe883bb0c3b74924becad4c51
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-27 17:25:53 +0100
+
+Refresh of hid-gtk-more-efficient-mask-dr
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index d5c498a..bed42e1 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -788,11 +788,9 @@ DrawMask (BoxType * screen)
+   if (thin)
+     gui->set_color (Output.pmGC, PCB->MaskColor);
+   else
+-    {
+-      DrawMaskBoardArea (HID_MASK_BEFORE, screen);
+-      gui->use_mask (HID_MASK_CLEAR);
+-    }
++    DrawMaskBoardArea (HID_MASK_BEFORE, screen);
+ 
++  gui->use_mask (HID_MASK_CLEAR);
+   r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, &info);
+   r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, &info);
+   r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, &info);
+@@ -800,10 +798,9 @@ DrawMask (BoxType * screen)
+   if (thin)
+     gui->set_color (Output.pmGC, "erase");
+   else
+-    {
+-      DrawMaskBoardArea (HID_MASK_AFTER, screen);
+-      gui->use_mask (HID_MASK_OFF);
+-    }
++    DrawMaskBoardArea (HID_MASK_AFTER, screen);
++
++  gui->use_mask (HID_MASK_OFF);
+ }
+ 
+ /* static */ void
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 72d588f..a8cce90 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -396,31 +396,28 @@ ghid_use_mask (int use_it)
+   switch (use_it)
+     {
+     case HID_MASK_BEFORE:
+-      /* Write '1' to the stencil buffer where the solder-mask is drawn. */
+-      glColorMask (0, 0, 0, 0);                   // Disable writting in color buffer
+-      glEnable (GL_STENCIL_TEST);                 // Enable Stencil test
+-      stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
+-      glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  // Always pass stencil test, write stencil_bit
+-      glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
+-      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
+       break;
+ 
+     case HID_MASK_CLEAR:
+-      /* Drawing operations clear the stencil buffer to '0' */
+-      glStencilFunc (GL_ALWAYS, 0, stencil_bit);  // Always pass stencil test, write 0
+-      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 0)
++      /* Write '1' to the stencil buffer where the solder-mask should not be drawn. */
++      glColorMask (0, 0, 0, 0);                             // Disable writting in color buffer
++      glEnable (GL_STENCIL_TEST);                           // Enable Stencil test
++      stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
++      glStencilFunc (GL_ALWAYS, stencil_bit, stencil_bit);  // Always pass stencil test, write stencil_bit
++      glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
++      glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);           // Stencil pass => replace stencil value (with 1)
+       break;
+ 
+     case HID_MASK_AFTER:
+-      /* Drawing operations as masked to areas where the stencil buffer is '1' */
++      /* Drawing operations as masked to areas where the stencil buffer is '0' */
+       glColorMask (1, 1, 1, 1);                   // Enable drawing of r, g, b & a
+-      glStencilFunc (GL_LEQUAL, stencil_bit, stencil_bit);   // Draw only where our bit of the stencil buffer is set
++      glStencilFunc (GL_GEQUAL, 0, stencil_bit);  // Draw only where our bit of the stencil buffer is clear
+       glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);    // Stencil buffer read only
+       break;
+ 
+     case HID_MASK_OFF:
+       /* Disable stenciling */
+-      hidgl_return_stencil_bit (stencil_bit);               // Relinquish any bitplane we previously used
++      hidgl_return_stencil_bit (stencil_bit);     // Relinquish any bitplane we previously used
+       glDisable (GL_STENCIL_TEST);                // Disable Stencil test
+       break;
+     }
+@@ -1390,10 +1387,6 @@ DrawMask (BoxType * screen)
+       gui->set_color (Output.pmGC, "erase");
+     }
+ 
+-  gui->use_mask (HID_MASK_BEFORE);
+-  gui->set_color (out->fgGC, PCB->MaskColor);
+-  gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
+-
+   gui->use_mask (HID_MASK_CLEAR);
+   r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback_solid, &info);
+   r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback_solid, &info);
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 5692d41..4e1a952 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -979,7 +979,7 @@ HID ghid_hid = {
+   1,				/* gui */
+   0,				/* printer */
+   0,				/* exporter */
+-  1,				/* poly before */
++  0,				/* poly before */
+   1,				/* poly after */
+   0,				/* poly dicer */
