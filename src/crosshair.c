@@ -565,7 +565,7 @@ XORDrawMoveOrCopyObject (void)
 /* ---------------------------------------------------------------------------
  * draws additional stuff that follows the crosshair
  */
-static void
+void
 DrawAttached (void)
 {
   BDimension s;
@@ -682,6 +682,14 @@ DrawAttached (void)
       y2 = Crosshair.AttachedBox.Point2.Y;
       gui->draw_rect (Crosshair.GC, x1, y1, x2, y2);
     }
+}
+
+
+void
+notify_crosshair_changed (bool changes_complete)
+{
+  if (gui->notify_crosshair_change)
+    gui->notify_crosshair_change (changes_complete);
 }
 
 /* ---------------------------------------------------------------------------

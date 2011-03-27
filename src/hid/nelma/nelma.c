@@ -1059,6 +1059,7 @@ HID             nelma_hid = {
 	nelma_parse_arguments,
 	0 /* nelma_invalidate_lr */ ,
 	0 /* nelma_invalidate_all */ ,
+	0 /* nelma_notify_crosshair_change */ ,
 	nelma_set_layer,
 	nelma_make_gc,
 	nelma_destroy_gc,
