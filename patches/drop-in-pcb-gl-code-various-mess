@@ -1,5 +1,5 @@
 Bottom: fd5a0afe2c06139871e30c69e1ff17c9c43d8bb2
-Top:    2417a9ea52acb0742bb6a07b6b4941be8bb1a158
+Top:    f8e1ef2111205dd4cb98ee0850b12c317bda01b5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:02 +0000
 
@@ -78,10 +78,10 @@ index 1e4cf58..9429e18 100644
  if WIN32
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
 new file mode 100644
-index 0000000..9b35674
+index 0000000..f8c0b72
 --- /dev/null
 +++ b/src/hid/common/hidgl.c
-@@ -0,0 +1,582 @@
+@@ -0,0 +1,586 @@
 +/* $Id: */
 +
 +#if 1 /* DISABLE EVERYTHING! */
@@ -129,6 +129,7 @@ index 0000000..9b35674
 +RCSID ("$Id: $");
 +
 +triangle_buffer buffer;
++float global_depth = 0;
 +
 +#if 0
 +triangle_array *
@@ -142,7 +143,7 @@ index 0000000..9b35674
 +hidgl_init_triangle_array (triangle_buffer *buffer)
 +{
 +  glEnableClientState (GL_VERTEX_ARRAY);
-+  glVertexPointer (2, GL_FLOAT, 0, buffer->triangle_array);
++  glVertexPointer (3, GL_FLOAT, 0, buffer->triangle_array);
 +  buffer->triangle_count = 0;
 +  buffer->coord_comp_count = 0;
 +}
@@ -172,8 +173,11 @@ index 0000000..9b35674
 +    hidgl_flush_triangles (buffer);
 +}
 +
-+//static int cur_mask = -1;
-+
++void
++hidgl_set_depth (float depth)
++{
++  global_depth = depth;
++}
 +
 +/* ------------------------------------------------------------ */
 +#if 0
@@ -459,10 +463,10 @@ index 0000000..9b35674
 +hidgl_draw_rect (int x1, int y1, int x2, int y2)
 +{
 +  glBegin (GL_LINE_LOOP);
-+  glVertex2f (x1, y1);
-+  glVertex2f (x1, y2);
-+  glVertex2f (x2, y2);
-+  glVertex2f (x2, y1);
++  glVertex3f (x1, y1, global_depth);
++  glVertex3f (x1, y2, global_depth);
++  glVertex3f (x2, y2, global_depth);
++  glVertex3f (x2, y1, global_depth);
 +  glEnd ();
 +}
 +
@@ -666,10 +670,10 @@ index 0000000..9b35674
 +
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
 new file mode 100644
-index 0000000..73d9a34
+index 0000000..e69a6b7
 --- /dev/null
 +++ b/src/hid/common/hidgl.h
-@@ -0,0 +1,63 @@
+@@ -0,0 +1,79 @@
 +/*
 + *                            COPYRIGHT
 + *
@@ -697,16 +701,35 @@ index 0000000..73d9a34
 +
 +#define TRIANGLE_ARRAY_SIZE 5461
 +typedef struct {
-+  GLfloat triangle_array [2 * 3 * TRIANGLE_ARRAY_SIZE];
++  GLfloat triangle_array [3 * 3 * TRIANGLE_ARRAY_SIZE];
 +  unsigned int triangle_count;
 +  unsigned int coord_comp_count;
 +} triangle_buffer;
 +
 +extern triangle_buffer buffer;
++extern float global_depth;
 +
 +void hidgl_init_triangle_array (triangle_buffer *buffer);
 +void hidgl_flush_triangles (triangle_buffer *buffer);
 +void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
++
++static inline void
++hidgl_add_triangle_3D (triangle_buffer *buffer,
++                       GLfloat x1, GLfloat y1, GLfloat z1,
++                       GLfloat x2, GLfloat y2, GLfloat z2,
++                       GLfloat x3, GLfloat y3, GLfloat z3)
++{
++  buffer->triangle_array [buffer->coord_comp_count++] = x1;
++  buffer->triangle_array [buffer->coord_comp_count++] = y1;
++  buffer->triangle_array [buffer->coord_comp_count++] = z1;
++  buffer->triangle_array [buffer->coord_comp_count++] = x2;
++  buffer->triangle_array [buffer->coord_comp_count++] = y2;
++  buffer->triangle_array [buffer->coord_comp_count++] = z2;
++  buffer->triangle_array [buffer->coord_comp_count++] = x3;
++  buffer->triangle_array [buffer->coord_comp_count++] = y3;
++  buffer->triangle_array [buffer->coord_comp_count++] = z3;
++  buffer->triangle_count++;
++}
 +
 +static inline void
 +hidgl_add_triangle (triangle_buffer *buffer,
@@ -714,16 +737,13 @@ index 0000000..73d9a34
 +                    GLfloat x2, GLfloat y2,
 +                    GLfloat x3, GLfloat y3)
 +{
-+  buffer->triangle_array [buffer->coord_comp_count++] = x1;
-+  buffer->triangle_array [buffer->coord_comp_count++] = y1;
-+  buffer->triangle_array [buffer->coord_comp_count++] = x2;
-+  buffer->triangle_array [buffer->coord_comp_count++] = y2;
-+  buffer->triangle_array [buffer->coord_comp_count++] = x3;
-+  buffer->triangle_array [buffer->coord_comp_count++] = y3;
-+  buffer->triangle_count++;
++  hidgl_add_triangle_3D (buffer, x1, y1, global_depth,
++                                 x2, y2, global_depth,
++                                 x3, y3, global_depth);
 +}
 +
 +// void draw_grid ()
++void hidgl_set_depth (float depth);
 +void hidgl_draw_line (int cap, double width, int x1, int y1, int x2, int y2, double scale);
 +void hidgl_draw_arc (double width, int vx, int vy, int vrx, int vry, int start_angle, int delta_angle, double scale);
 +void hidgl_draw_rect (int x1, int y1, int x2, int y2);
