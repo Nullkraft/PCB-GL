@@ -420,6 +420,7 @@ HID hid_nogui = {
   nogui_parse_arguments,
   nogui_invalidate_lr,
   nogui_invalidate_all,
+  0 /* nogui_notify_crosshair_change */ ,
   nogui_set_layer,
   nogui_make_gc,
   nogui_destroy_gc,
@@ -477,6 +478,7 @@ apply_default_hid (HID * d, HID * s)
   AD (parse_arguments);
   AD (invalidate_lr);
   AD (invalidate_all);
+  AD (notify_crosshair_change);
   AD (set_layer);
   AD (make_gc);
   AD (destroy_gc);
