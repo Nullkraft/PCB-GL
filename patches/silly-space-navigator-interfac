@@ -1,5 +1,5 @@
 Bottom: f2346f61c878ac91f5e4a187ace3da46edc833be
-Top:    2cdd7ef2ca74dcc2312440e8c6f0d9c28a51633e
+Top:    0df2f55462b3dac1417f5c12b504ee0c698bde1c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:10 +0000
 
@@ -211,10 +211,10 @@ index dce9a30..4b7f3e6 100644
  */
 diff --git a/src/hid/gtk/snavi.c b/src/hid/gtk/snavi.c
 new file mode 100644
-index 0000000..bd50813
+index 0000000..abbf93f
 --- /dev/null
 +++ b/src/hid/gtk/snavi.c
-@@ -0,0 +1,197 @@
+@@ -0,0 +1,191 @@
 +/*
 + * spacenavi.c - a proof-of-concept hack to access the
 + * 3dconnexion space navigator
@@ -329,12 +329,6 @@ index 0000000..bd50813
 +          axes[event.code - ABS_X] = event.value;
 +        break;
 +
-+        /* I'm not sure, but previously the SpaceNavigator reported as relative events */
-+      case EV_REL:
-+        if (event.code <= REL_RZ)
-+          axes[event.code - REL_X] = event.value;
-+        break;
-+
 +      case EV_KEY:
 +        if (event.code >= BTN_0 && event.code <= BTN_1)
 +          buttons[event.code - BTN_0] = event.value;
@@ -345,7 +339,7 @@ index 0000000..bd50813
 +      case EV_SYN:
 +        /*
 +         * if multiple axes change simultaneously the linux
-+         * input system sends multiple EV_REL events.
++         * input system sends multiple events.
 +         * EV_SYN indicates that all changes have been reported.
 +         */
 +
