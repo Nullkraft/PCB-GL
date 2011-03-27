@@ -1,0 +1,24 @@
+Bottom: 966687851f25171eaaf73f98251631974d3bba95
+Top:    65e6b6e57bb9fb9cb9a9efc7a84567a4165f144b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-27 00:23:46 +0000
+
+Refresh of hid-gtk-make-benchmark-impleme
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 0b84548..28c10bc 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -1562,9 +1562,8 @@ Benchmark (int argc, char **argv, int x, int y)
+   time (&start);
+   do
+     {
+-      gdk_window_invalidate_rect (gport->drawing_area->window, NULL, 1);
++      ghid_invalidate_all ();
+       gdk_window_process_updates (gport->drawing_area->window, FALSE);
+-      gdk_display_sync (display);
+       time (&end);
+       i++;
+     }
