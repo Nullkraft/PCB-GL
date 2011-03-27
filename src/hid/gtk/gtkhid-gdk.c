@@ -770,6 +770,10 @@ ghid_invalidate_all ()
 
   hid_expose_callback (&ghid_hid, &region, 0);
   ghid_draw_grid ();
+
+  Crosshair.On = false;
+  CrosshairOn ();
+
   ghid_screen_update ();
 }
 
