@@ -728,7 +728,7 @@ draw_crosshair (gint x, gint y)
 #define VCD 8
 
 void
-ghid_show_crosshair (gboolean show)
+ghid_show_crosshair (gboolean paint_new_location)
 {
   gint x, y;
   static gint x_prev = -1, y_prev = -1;
@@ -762,11 +762,11 @@ ghid_show_crosshair (gboolean show)
   glBegin (GL_LINES);
 
 #if 1
-  if (x_prev >= 0)
+  if (x_prev >= 0 && !paint_new_location)
     draw_crosshair (x_prev, y_prev);
 #endif
 
-  if (x >= 0 && show)
+  if (x >= 0 && paint_new_location)
     draw_crosshair (x, y);
 
   glEnd ();
@@ -775,7 +775,7 @@ ghid_show_crosshair (gboolean show)
   glBegin (GL_QUADS);
 
 #if 1
-  if (x_prev >= 0 && draw_markers_prev)
+  if (x_prev >= 0 && draw_markers_prev & !paint_new_location)
     {
       glVertex2i (0,                  y_prev - VCD);
       glVertex2i (0,                  y_prev - VCD + VCW);
@@ -797,7 +797,7 @@ ghid_show_crosshair (gboolean show)
 #endif
 
   draw_markers = ghidgui->auto_pan_on && have_crosshair_attachments ();
-  if (x >= 0 && show && draw_markers)
+  if (x >= 0 && paint_new_location && draw_markers)
     {
       glVertex2i (0,                  y - VCD);
       glVertex2i (0,                  y - VCD + VCW);
@@ -819,7 +819,7 @@ ghid_show_crosshair (gboolean show)
 
   glEnd ();
 
-  if (x >= 0 && show)
+  if (x >= 0 && paint_new_location)
     {
       x_prev = x;
       y_prev = y;
@@ -920,8 +920,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   int eleft, eright, etop, ebottom;
 
   ghid_start_drawing (port);
-
-  ghid_show_crosshair (FALSE);
 
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
