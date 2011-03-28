@@ -1,5 +1,5 @@
-Bottom: c55e5f96612eb05980d6bd2a4a24e337a8985045
-Top:    5798bb83f7af89d8185f66bc6beb619872866d12
+Bottom: d5d8540c37c92270af821b5a591980861df1373d
+Top:    4fc54f3a8496208d49e09366e31a7be664dfcee1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:10 +0000
 
@@ -27,7 +27,7 @@ index dee60d9..253b5af 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 5ce52ee..52a8234 100644
+index bb4a869..8dbf7ca 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -45,6 +45,8 @@
@@ -56,7 +56,7 @@ index 5ce52ee..52a8234 100644
 +        snavi_set_led (ghidgui->snavi, FALSE);
      }
  
-   ghid_show_crosshair (FALSE);
+   //ghid_show_crosshair (FALSE);
 @@ -862,3 +868,31 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  
    return TRUE;

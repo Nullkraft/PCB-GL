@@ -1,5 +1,5 @@
-Bottom: 7e2c9fdbdf5d37e52ffd80833b62816a73ddda66
-Top:    27ef2a3233ea608b3b7f347bcc93db7755884301
+Bottom: 130869b8538c35f292aa6a7f39804b314ac01fb6
+Top:    4900b7f1c234aeea834da48be81ce9aa7d5eb7cf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:09 +0000
 
@@ -190,7 +190,7 @@ index c0e23a3..077c575 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 836e440..84b314d 100644
+index 93a7b58..b53c138 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -357,7 +357,7 @@ index 836e440..84b314d 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -996,6 +1034,725 @@ ghid_screen_update (void)
+@@ -955,6 +993,725 @@ ghid_screen_update (void)
  {
  }
  
@@ -1083,7 +1083,7 @@ index 836e440..84b314d 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1062,8 +1819,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1019,8 +1776,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1094,7 +1094,7 @@ index 836e440..84b314d 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1129,13 +1886,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1086,13 +1843,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -1108,7 +1108,7 @@ index 836e440..84b314d 100644
    /* TODO: Background image */
  
    hidgl_init_triangle_array (&buffer);
-@@ -1155,7 +1905,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1112,7 +1862,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_x0,
                  ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                               -port->view_y0, 0);
