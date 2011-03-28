@@ -1,5 +1,5 @@
 Bottom: 11a0f0a6119c81a5459b3aaf68e1fb2b9821ba1b
-Top:    f1580d9cca758a2c236b908387608769f225ecb3
+Top:    a2dc04c0382557b03c921d5b0e8b6f853c614274
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:13 +0000
 
@@ -46,6 +46,22 @@ index 622711f..1cb874d 100644
      }
    return 0;
  }
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 5e70165..fb496f0 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -1956,9 +1956,9 @@ PanAction (int argc, char **argv, int x, int y)
+     }
+   else if (x == on_x && y == on_y)
+     {
+-      ghid_show_crosshair (FALSE);
++      //ghid_show_crosshair (FALSE);
+       ghidgui->auto_pan_on = !ghidgui->auto_pan_on;
+-      ghid_show_crosshair (TRUE);
++      //ghid_show_crosshair (TRUE);
+     }
+ 
+   return 0;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
 index 52a8234..8dbf7ca 100644
 --- a/src/hid/gtk/gui-output-events.c
