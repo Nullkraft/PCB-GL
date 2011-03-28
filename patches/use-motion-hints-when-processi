@@ -3,9 +3,10 @@ Top:    da355c47a073be84a2b169d648ee9cf622a87bb8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:04 +0000
 
-WAS: Use motion hints when processing pointer motion over the drawing area
+Clean up GL renderer's ghid_show_crosshair()
 
-Not sure what the remaining changes here are for!
+We only ever draw the new location, so don't keep code around to un-xor
+the old crosshair.
 
 
 ---
