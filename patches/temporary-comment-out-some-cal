@@ -1,5 +1,5 @@
-Bottom: 11a0f0a6119c81a5459b3aaf68e1fb2b9821ba1b
-Top:    a2dc04c0382557b03c921d5b0e8b6f853c614274
+Bottom: c55f5f5803684d0accb3987c1fe185a8da341f7a
+Top:    3633af3bf18ea665c07ace5d795da5b07100235a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:13 +0000
 
@@ -47,7 +47,7 @@ index 622711f..1cb874d 100644
    return 0;
  }
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 5e70165..fb496f0 100644
+index 57a1b37..e8a4f57 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -1956,9 +1956,9 @@ PanAction (int argc, char **argv, int x, int y)
@@ -63,10 +63,10 @@ index 5e70165..fb496f0 100644
  
    return 0;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 52a8234..8dbf7ca 100644
+index 8293b0c..39e7c3a 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -357,7 +357,7 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
+@@ -343,7 +343,7 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
    state = (GdkModifierType) (kev->state);
    mk = ghid_modifier_keys_state (&state);
  
@@ -75,7 +75,7 @@ index 52a8234..8dbf7ca 100644
  
    handled = TRUE;		/* Start off assuming we handle it */
    switch (ksym)
-@@ -462,7 +462,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+@@ -448,7 +448,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
    ghid_note_event_location (ev);
    state = (GdkModifierType) (ev->state);
    mk = ghid_modifier_keys_state (&state);
@@ -84,7 +84,7 @@ index 52a8234..8dbf7ca 100644
    notify_crosshair_change (false);
  
    do_mouse_action(ev->button, mk);
-@@ -471,7 +471,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+@@ -457,7 +457,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
    notify_crosshair_change (true);
    ghid_window_set_name_label (PCB->Name);
    ghid_set_status_line_label ();
@@ -93,8 +93,8 @@ index 52a8234..8dbf7ca 100644
    if (!gport->panning)
      g_idle_add (ghid_idle_cb, NULL);
    return TRUE;
-@@ -828,7 +828,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
-         snavi_set_led (ghidgui->snavi, FALSE);
+@@ -811,7 +811,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+ 	}
      }
  
 -  ghid_show_crosshair (FALSE);
