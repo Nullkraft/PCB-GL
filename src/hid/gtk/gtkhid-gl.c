@@ -1953,20 +1953,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   hidgl_init_triangle_array (&buffer);
   ghid_invalidate_current_gc ();
-<<<<<<< current
-  glPushMatrix ();
-  glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
-            (ghid_flip_y ? -1. : 1.) / port->zoom, 1);
-  glTranslatef (ghid_flip_x ? port->view_x0 - PCB->MaxWidth  :
-                             -port->view_x0,
-                ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
-                             -port->view_y0, 0);
   DrawAttached ();
   DrawMark ();
-=======
-  DrawAttached (TRUE);
-  DrawMark (TRUE);
->>>>>>> patched
   hidgl_flush_triangles (&buffer);
 
   ghid_show_crosshair (TRUE);
