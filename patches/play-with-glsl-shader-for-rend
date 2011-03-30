@@ -1,5 +1,5 @@
-Bottom: 0584d5ae66e14fe1403022d20c852784c9848bb6
-Top:    59c60695f06dc704708db40e6834760e03413d16
+Bottom: e5653d2b6b78091eee714f50d34c07e1529fbc95
+Top:    0b90a7a110b5f367602a022be0d42f7ddb7ea720
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 17:59:58 +0100
 
@@ -958,7 +958,7 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 2df5ea5..52c425d 100644
+index 0869215..55a217c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -708,7 +708,7 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
@@ -1051,9 +1051,9 @@ index 2df5ea5..52c425d 100644
  
 -  hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
- <<<<<<< current
-   glPushMatrix ();
-@@ -1972,11 +1979,15 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   DrawAttached ();
+   DrawMark ();
+@@ -1960,11 +1967,15 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    ghid_show_crosshair (TRUE);
  
    hidgl_flush_triangles (&buffer);
@@ -1069,7 +1069,7 @@ index 2df5ea5..52c425d 100644
    return FALSE;
  }
  
-@@ -2069,7 +2080,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2057,7 +2068,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
