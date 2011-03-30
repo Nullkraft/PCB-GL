@@ -1,5 +1,5 @@
-Bottom: d0c855928c50cb4e5c927204c21b66ca7b3f0b59
-Top:    4e92c5606ed5cff4756ed5eb6c7c4d84aed6fb95
+Bottom: 9020d54f9cf0c21365a423450500409a1478f7e2
+Top:    bc251ba851df550e8d48ebf70f7bf54ac0b08df3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-01-27 22:20:24 +0000
 
@@ -1515,7 +1515,7 @@ index 0000000..f9746f1
 +               m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * scale;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 23d4a3f..09a2da1 100644
+index 9c34ca5..909c6a7 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -329,6 +329,48 @@ ghid_draw_grid (BoxTypePtr drawn_area)
@@ -1813,8 +1813,8 @@ index 23d4a3f..09a2da1 100644
    /* Just prod the drawing code so the current depth gets set to
       the right value for the layer we are editing */
    hidgl_set_depth (compute_depth (GetLayerGroupNumberByNumber (INDEXOFCURRENT)));
-@@ -2072,6 +2225,71 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
- >>>>>>> patched
+@@ -2060,6 +2213,71 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   DrawMark ();
    hidgl_flush_triangles (&buffer);
  
 +  glEnable (GL_LIGHTING);
@@ -1885,7 +1885,7 @@ index 23d4a3f..09a2da1 100644
    ghid_show_crosshair (TRUE);
  
    hidgl_flush_triangles (&buffer);
-@@ -2176,7 +2394,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2164,7 +2382,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -1894,7 +1894,7 @@ index 23d4a3f..09a2da1 100644
    hidgl_reset_stencil_usage ();
  
    /* call the drawing routine */
-@@ -2244,7 +2462,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2232,7 +2450,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB     |
                                          GDK_GL_MODE_STENCIL |
@@ -1903,7 +1903,7 @@ index 23d4a3f..09a2da1 100644
                                          GDK_GL_MODE_SINGLE);
  
    pixmap = gdk_pixmap_new (NULL, width, height, depth);
-@@ -2294,7 +2512,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2282,7 +2500,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
