@@ -1,5 +1,5 @@
-Bottom: 0b5790f2db6b2c8880ffc768d5c6a264d71cefd7
-Top:    d8a6ca62d8f16540dcf05f3425e6db3459281834
+Bottom: 54e3de33d0bd7bc3369f4e098297242dd61ad02c
+Top:    d0c855928c50cb4e5c927204c21b66ca7b3f0b59
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 02:35:25 +0100
 
@@ -178,10 +178,10 @@ index e2414d8..52e894d 100644
  
  void
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 375560c..38e6bbd 100644
+index 8cc638c..23d4a3f 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1280,11 +1280,28 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *dra
+@@ -1248,11 +1248,28 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *dra
  }
  
  static int
@@ -212,7 +212,7 @@ index 375560c..38e6bbd 100644
    return 1;
  }
  
-@@ -1484,7 +1501,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1452,7 +1469,8 @@ DrawLayerGroup (int group, const BoxType * screen)
        if (Layer->PolygonN) {
          info.Layer = Layer;
          info.drawn_area = screen;
