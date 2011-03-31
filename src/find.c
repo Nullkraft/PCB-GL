@@ -2684,7 +2684,7 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
       && Box->Y1 <= Polygon->Clipped->contours->ymax + Bloat
       && Box->Y2 >= Polygon->Clipped->contours->ymin - Bloat)
     {
-      if (!(lp = LinePoly (Line, Line->Thickness + Bloat)))
+      if (!(lp = LinePoly (Line, Line->Thickness + 2 * Bloat)))
         return FALSE;           /* error */
       return isects (lp, Polygon, true);
     }
@@ -2743,7 +2743,7 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
 
               line.Point1.X = v->point[0];
               line.Point1.Y = v->point[1];
-              line.Thickness = 2 * Bloat;
+              line.Thickness = 0; /* Bloat is added by IsLineInPolygon */
               line.Clearance = 0;
               line.Flags = NoFlags ();
               for (v = v->next; v != &c->head; v = v->next)
