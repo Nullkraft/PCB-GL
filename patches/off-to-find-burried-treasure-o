@@ -1,5 +1,5 @@
-Bottom: 743daf849533ca3404de8cee01758ddf86cff647
-Top:    694a03c93df7aab2bc924dcd6be52a4926aa5cfe
+Bottom: f84d254bbf490ce96d4d9d181875f4ce68fe4945
+Top:    7ec69a5216cbc3a53b82fa27784fbbbb54e18daa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 16:11:05 +0100
 
@@ -17,7 +17,7 @@ of a selection will re-create the polygon.
 ---
 
 diff --git a/src/buffer.c b/src/buffer.c
-index cd4bb94..a3ca1d5 100644
+index 38f824c..b10e99a 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
 @@ -391,7 +391,7 @@ MovePourToBuffer (LayerTypePtr Layer, PourTypePtr Pour)
@@ -116,10 +116,10 @@ index cfab1ca..72949d2 100644
    DrawVia (Via, 0);
    Draw ();
 diff --git a/src/draw.c b/src/draw.c
-index 54fe160..21e55e7 100644
+index 3ab46c4..cbc3dba 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2097,6 +2097,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -2093,6 +2093,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
    if (!Polygon->Clipped)
      return;
  
