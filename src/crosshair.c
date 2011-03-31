@@ -48,7 +48,7 @@
 #include "misc.h"
 #include "mymem.h"
 #include "search.h"
-#include "polygon.h"
+#include "pour.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
@@ -69,6 +69,7 @@ typedef struct
  * some local prototypes
  */
 static void XORPolygon (PolygonTypePtr, LocationType, LocationType);
+static void XORPour (PourTypePtr, LocationType, LocationType);
 static void XORDrawElement (ElementTypePtr, LocationType, LocationType);
 static void XORDrawBuffer (BufferTypePtr);
 static void XORDrawInsertPointObject (void);
@@ -83,6 +84,8 @@ static void XORDrawAttachedArc (BDimension);
 static void
 XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
 {
+#warning FIXME Later
+#if 0
   Cardinal i;
   for (i = 0; i < polygon->PointN; i++)
     {
@@ -92,6 +95,25 @@ XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
                       polygon->Points[i].Y + dy,
                       polygon->Points[next].X + dx,
                       polygon->Points[next].Y + dy);
+    }
+#endif
+}
+
+/* ---------------------------------------------------------------------------
+ * creates a tmp pour with coordinates converted to screen system
+ */
+static void
+XORPour (PourTypePtr pour, LocationType dx, LocationType dy)
+{
+  Cardinal i;
+  for (i = 0; i < pour->PointN; i++)
+    {
+      Cardinal next = next_contour_point (pour, i);
+      gui->draw_line (Crosshair.GC,
+                      pour->Points[i].X + dx,
+                      pour->Points[i].Y + dy,
+                      pour->Points[next].X + dx,
+                      pour->Points[next].Y + dy);
     }
 }
 
@@ -341,9 +363,11 @@ XORDrawBuffer (BufferTypePtr Buffer)
 	/* the tmp polygon has n+1 points because the first
 	 * and the last one are set to the same coordinates
 	 */
-	POLYGON_LOOP (layer);
+	POUR_LOOP (layer);
 	{
-	  XORPolygon (polygon, x, y);
+	  XORPour (pour, x, y);
+#warning FIXME Later
+//	  XORPolygon (polygon, x, y);
 	}
 	END_LOOP;
       }
@@ -443,6 +467,18 @@ XORDrawMoveOrCopyObject (void)
 	break;
       }
 
+    case POUR_TYPE:
+      {
+	PourTypePtr pour =
+	  (PourTypePtr) Crosshair.AttachedObject.Ptr2;
+
+	/* the tmp pour has n+1 points because the first
+	 * and the last one are set to the same coordinates
+	 */
+	XORPour (pour, dx, dy);
+	break;
+      }
+
     case LINEPOINT_TYPE:
       {
 	LineTypePtr line;
@@ -461,27 +497,27 @@ XORDrawMoveOrCopyObject (void)
 	break;
       }
 
-    case POLYGONPOINT_TYPE:
+    case POURPOINT_TYPE:
       {
-	PolygonTypePtr polygon;
+	PourTypePtr pour;
 	PointTypePtr point;
 	Cardinal point_idx, prev, next;
 
-	polygon = (PolygonTypePtr) Crosshair.AttachedObject.Ptr2;
+	pour = (PourTypePtr) Crosshair.AttachedObject.Ptr2;
 	point = (PointTypePtr) Crosshair.AttachedObject.Ptr3;
-	point_idx = polygon_point_idx (polygon, point);
+	point_idx = pour_point_idx (pour, point);
 
 	/* get previous and following point */
-	prev = prev_contour_point (polygon, point_idx);
-	next = next_contour_point (polygon, point_idx);
+	prev = prev_contour_point (pour, point_idx);
+	next = next_contour_point (pour, point_idx);
 
 	/* draw the two segments */
 	gui->draw_line (Crosshair.GC,
-			polygon->Points[prev].X, polygon->Points[prev].Y,
+			pour->Points[prev].X, pour->Points[prev].Y,
 			point->X + dx, point->Y + dy);
 	gui->draw_line (Crosshair.GC,
 			point->X + dx, point->Y + dy,
-			polygon->Points[next].X, polygon->Points[next].Y);
+			pour->Points[next].X, pour->Points[next].Y);
 	break;
       }
 
@@ -578,9 +614,9 @@ DrawAttached (void)
 	}
       break;
 
-      /* the attached line is used by both LINEMODE, POLYGON_MODE and POLYGONHOLE_MODE*/
-    case POLYGON_MODE:
-    case POLYGONHOLE_MODE:
+      /* the attached line is used by both LINEMODE, POUR_MODE and POURHOLE_MODE */
+    case POUR_MODE:
+    case POURHOLE_MODE:
       /* draw only if starting point is set */
       if (Crosshair.AttachedLine.State != STATE_FIRST)
 	gui->draw_line (Crosshair.GC,
@@ -589,10 +625,10 @@ DrawAttached (void)
 			Crosshair.AttachedLine.Point2.X,
 			Crosshair.AttachedLine.Point2.Y);
 
-      /* draw attached polygon only if in POLYGON_MODE or POLYGONHOLE_MODE */
-      if (Crosshair.AttachedPolygon.PointN > 1)
+      /* draw attached polygon only if in POUR_MODE or POURHOLE_MODE */
+      if (Crosshair.AttachedPour.PointN > 1)
 	{
-	  XORPolygon (&Crosshair.AttachedPolygon, 0, 0);
+	  XORPour (&Crosshair.AttachedPour, 0, 0);
 	}
       break;
 
@@ -930,7 +966,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
 
   if (TEST_FLAG (SNAPPINFLAG, PCB))
     ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
-                                POLYGONPOINT_TYPE, &ptr1, &ptr2, &ptr3);
+                                POURPOINT_TYPE, &ptr1, &ptr2, &ptr3);
   else
     ans = NO_TYPE;
 
@@ -1100,7 +1136,7 @@ InitCrosshair (void)
 void
 DestroyCrosshair (void)
 {
-  //crosshairOff ();
-  FreePolygonMemory (&Crosshair.AttachedPolygon);
+  //CrosshairOff ();
+  FreePourMemory (&Crosshair.AttachedPour);
   gui->destroy_gc (Crosshair.GC);
 }
