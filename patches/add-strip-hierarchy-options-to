@@ -1,7 +1,7 @@
-Bottom: 084e5c3c8591d1140352be931be4acf5f608b508
-Top:    8d29031b040dbb135c8f22dce982164e0c8e26a6
+Bottom: ac4565c338b99e5fb0be57cf8562e48ebadebb6c
+Top:    7b1b574669cc1ba2e9ae5de45f5139fc619e4caa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-27 16:11:15 +0100
+Date:   2011-03-31 01:53:50 +0100
 
 Add strip hierarchy options to display refdes without any "..../" prefix
 
@@ -16,10 +16,10 @@ Add strip hierarchy options to display refdes without any "..../" prefix
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 5c9fc48..55fe12a 100644
+index 8569920..1af401a 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -3480,9 +3480,16 @@ ActionRenumber (int argc, char **argv, int x, int y)
+@@ -3472,9 +3472,16 @@ ActionRenumber (int argc, char **argv, int x, int y)
        /* If there is no refdes, maybe just spit out a warning */
        if (NAMEONPCB_NAME (element_list[i]))
  	{
@@ -37,7 +37,7 @@ index 5c9fc48..55fe12a 100644
  	  while (tmps[j] && (tmps[j] < '0' || tmps[j] > '9')
  		 && tmps[j] != '?')
  	    j++;
-@@ -4854,6 +4861,79 @@ ActionToggleHideName (int argc, char **argv, int x, int y)
+@@ -4821,6 +4828,79 @@ ActionToggleHideName (int argc, char **argv, int x, int y)
  
  /* --------------------------------------------------------------------------- */
  
@@ -117,7 +117,7 @@ index 5c9fc48..55fe12a 100644
  static const char changejoin_syntax[] =
    "ChangeJoin(ToggleObject|SelectedLines|SelectedArcs|Selected)";
  
-@@ -8219,6 +8299,9 @@ HID_Action action_action_list[] = {
+@@ -8158,6 +8238,9 @@ HID_Action action_action_list[] = {
    {"ToggleHideName", 0, ActionToggleHideName,
     togglehidename_help, togglehidename_syntax}
    ,
@@ -149,10 +149,10 @@ index f47422b..d2bf5b5 100644
   * PCB flags
   */
 diff --git a/src/draw.c b/src/draw.c
-index 21e55e7..17f6229 100644
+index cbc3dba..d8b520a 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -2147,6 +2147,32 @@ DrawElement (ElementTypePtr Element, int unused)
+@@ -2143,6 +2143,32 @@ DrawElement (ElementTypePtr Element, int unused)
    DrawElementPinsAndPads (Element, unused);
  }
  
@@ -185,7 +185,7 @@ index 21e55e7..17f6229 100644
  /* ---------------------------------------------------------------------------
   * draws the name of an element
   */
-@@ -2165,7 +2191,7 @@ DrawElementName (ElementTypePtr Element, int unused)
+@@ -2161,7 +2187,7 @@ DrawElementName (ElementTypePtr Element, int unused)
      gui->set_color (Output.fgGC, PCB->ElementColor);
    else
      gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
@@ -194,7 +194,7 @@ index 21e55e7..17f6229 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -2358,7 +2384,7 @@ EraseElement (ElementTypePtr Element)
+@@ -2354,7 +2380,7 @@ EraseElement (ElementTypePtr Element)
    }
    END_LOOP;
    if (!TEST_FLAG (HIDENAMEFLAG, Element))
@@ -203,7 +203,7 @@ index 21e55e7..17f6229 100644
    EraseElementPinsAndPads (Element);
  }
  
-@@ -2392,7 +2418,7 @@ EraseElementName (ElementTypePtr Element)
+@@ -2388,7 +2414,7 @@ EraseElementName (ElementTypePtr Element)
  {
    if (TEST_FLAG (HIDENAMEFLAG, Element))
      return;
