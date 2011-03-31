@@ -1,5 +1,5 @@
 Bottom: c939eb64334420c6ba52f06da6070828a02d3b0d
-Top:    ebb671600e8ad3cf84bb00bbad0db1b1be1a345d
+Top:    ee0ed7ac0ae23595427295220e5cbc6e07876006
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:09 +0000
 
@@ -190,7 +190,7 @@ index c0e23a3..077c575 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index a4480a0..941d40a 100644
+index a4480a0..44c3123 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -357,7 +357,7 @@ index a4480a0..941d40a 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -955,6 +993,725 @@ ghid_screen_update (void)
+@@ -955,6 +993,727 @@ ghid_screen_update (void)
  {
  }
  
@@ -1072,8 +1072,10 @@ index a4480a0..941d40a 100644
 +    r_search (PCB->Data->element_tree, drawn_area, NULL, EMark_callback, NULL);
 +
 +  /* Draw rat lines on top */
-+  if (PCB->RatOn && gui->set_layer ("rats", SL (RATS, 0), 0))
++  if (PCB->RatOn && gui->set_layer ("rats", SL (RATS, 0), 0)) {
 +    DrawRats(drawn_area);
++    gui->set_layer (NULL, SL (FINISHED, 0), 0);
++  }
 +
 +  Gathering = true;
 +
@@ -1083,7 +1085,7 @@ index a4480a0..941d40a 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1019,8 +1776,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1019,8 +1778,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1094,7 +1096,7 @@ index a4480a0..941d40a 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1086,13 +1843,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1086,13 +1845,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -1108,7 +1110,7 @@ index a4480a0..941d40a 100644
    /* TODO: Background image */
  
    hidgl_init_triangle_array (&buffer);
-@@ -1112,7 +1862,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1112,7 +1864,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_x0,
                  ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                               -port->view_y0, 0);
