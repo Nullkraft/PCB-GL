@@ -1,7 +1,7 @@
-Bottom: e5653d2b6b78091eee714f50d34c07e1529fbc95
-Top:    0b90a7a110b5f367602a022be0d42f7ddb7ea720
+Bottom: 7b821c8556bdac86d7a9ed8c68aec109c240c137
+Top:    89e618e93c84d6f153d9a20ea545aa43bfe83177
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-27 17:59:58 +0100
+Date:   2011-03-31 01:43:33 +0100
 
 Play with GLSL shader for rendering line caps and circles
 
@@ -958,7 +958,7 @@ index 0000000..9812b4b
 +
 +#endif /* __HIDGL_SHADERS_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 0869215..55a217c 100644
+index e049591..cb3e7f4 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -708,7 +708,7 @@ ghid_fill_circle (hidGC gc, int cx, int cy, int radius)
@@ -1069,7 +1069,7 @@ index 0869215..55a217c 100644
    return FALSE;
  }
  
-@@ -2057,7 +2068,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -2058,7 +2069,6 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
