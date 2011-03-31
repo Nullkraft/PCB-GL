@@ -1,7 +1,7 @@
-Bottom: cdd28a19965a653a8f0d91b7281efa011971262b
-Top:    c54f39a7675748cd648c9aa9f20510b1684c5c73
+Bottom: 330e13aa190bd101b5bef9550409a067825ecece
+Top:    c170361a5940927f1ee9757c7b4b1e258a97d800
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-31 01:43:32 +0100
+Date:   2011-03-31 02:14:01 +0100
 
 Debug out of context rendering
 
@@ -155,7 +155,7 @@ index 9dd76e3..d679a9d 100644
  void hidgl_flush_triangles (triangle_buffer *buffer);
  void hidgl_ensure_triangle_space (triangle_buffer *buffer, int count);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 7068dda..e8744fa 100644
+index 8db04b8..dbe5c9b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1772,6 +1772,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
@@ -175,7 +175,7 @@ index 7068dda..e8744fa 100644
  
    return FALSE;
 @@ -2039,6 +2041,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
-   port->render_priv->in_context = true;
+   gport->render_priv->in_context = true;
  
    check_gl_drawing_ok_hack = true;
 +  hidgl_in_context (true);
@@ -189,7 +189,7 @@ index 7068dda..e8744fa 100644
 +  hidgl_in_context (false);
  
    /* end drawing to current GL-context */
-   port->render_priv->in_context = false;
+   gport->render_priv->in_context = false;
 @@ -2160,6 +2164,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    save_check_gl_drawing_ok_hack = check_gl_drawing_ok_hack;
@@ -205,4 +205,4 @@ index 7068dda..e8744fa 100644
 +  hidgl_in_context (false);
  
    /* end drawing to current GL-context */
-   port->render_priv->in_context = false;
+   gport->render_priv->in_context = false;

@@ -1,7 +1,7 @@
-Bottom: c54f39a7675748cd648c9aa9f20510b1684c5c73
-Top:    7b821c8556bdac86d7a9ed8c68aec109c240c137
+Bottom: c170361a5940927f1ee9757c7b4b1e258a97d800
+Top:    44bf1685580cb75633088f037ec22afe52d41060
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-31 01:43:32 +0100
+Date:   2011-03-31 02:14:01 +0100
 
 Move more rendering to world coordinates
 
@@ -9,7 +9,7 @@ Move more rendering to world coordinates
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e8744fa..e049591 100644
+index dbe5c9b..6d81627 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -81,7 +81,9 @@ typedef struct hid_gc_struct
