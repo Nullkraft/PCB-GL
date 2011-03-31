@@ -1,5 +1,5 @@
 Bottom: 6d2a0f11c9d03d297396fee046cff877479be3aa
-Top:    1e06dcca1ee5c90d14e44cbdb2af2f8f12ef9c06
+Top:    71cda93cd8c0cc58912d41b3502667f39af4acfc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:02 +0000
 
@@ -755,7 +755,7 @@ index 0000000..e69a6b7
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..8bd165f
+index 0000000..2b4c2d3
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -0,0 +1,1227 @@
@@ -1810,7 +1810,7 @@ index 0000000..8bd165f
 +  if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
 +    return FALSE;
 +  }
-+  port->render_priv->in_context = true;
++  gport->render_priv->in_context = true;
 +
 +  glEnable (GL_BLEND);
 +  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -1856,7 +1856,7 @@ index 0000000..8bd165f
 +    glFlush ();
 +
 +  /* end drawing to current GL-context */
-+  port->render_priv->in_context = false;
++  gport->render_priv->in_context = false;
 +  gdk_gl_drawable_gl_end (pGlDrawable);
 +
 +  gport->zoom = save_zoom;
@@ -1922,7 +1922,7 @@ index 0000000..8bd165f
 +  if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext)) {
 +    return NULL;
 +  }
-+  port->render_priv->in_context = true;
++  gport->render_priv->in_context = true;
 +
 +  glEnable (GL_BLEND);
 +  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -1967,7 +1967,7 @@ index 0000000..8bd165f
 +  glFlush ();
 +
 +  /* end drawing to current GL-context */
-+  port->render_priv->in_context = false;
++  gport->render_priv->in_context = false;
 +  gdk_gl_drawable_gl_end (gldrawable);
 +//  gdk_gl_context_destroy (glcontext);
 +
