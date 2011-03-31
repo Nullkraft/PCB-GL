@@ -1,7 +1,7 @@
-Bottom: d5f556cbde98eb65d22be8c096b3785d2f6a0da9
-Top:    a1fd08e1b9a8a2b17d54f01fb0b1c3db6b8b86f6
+Bottom: a1b12113db3496b030e137d1bad2fc43f03b38b3
+Top:    94ec0ce348f8e67ba54e9bd0fa2f59205c2fc409
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-31 02:14:04 +0100
+Date:   2011-03-31 13:20:34 +0100
 
 Play with perspective
 
@@ -76,7 +76,7 @@ index 48bdf5a..4904d85 100644
    else
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index a5670d8..b1f67e5 100644
+index dba10c9..8d7ef98 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -33,6 +33,8 @@
@@ -133,7 +133,7 @@ index a5670d8..b1f67e5 100644
        gui->set_color (Output.fgGC, "drill");
        ghid_global_alpha_mult (Output.fgGC, 0.75);
        if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_cyl_callback, &cyl_info);
-@@ -1784,6 +1790,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1786,6 +1792,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    int new_x, new_y;
    int min_depth;
    int max_depth;
@@ -146,7 +146,7 @@ index a5670d8..b1f67e5 100644
  
    buffer.total_triangles = 0;
    buffer.total_vertices = 0;
-@@ -1815,22 +1827,65 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1817,22 +1829,65 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -222,7 +222,7 @@ index a5670d8..b1f67e5 100644
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->bg_color.red / 65535.,
                  port->bg_color.green / 65535.,
-@@ -1838,7 +1893,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1840,7 +1895,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -231,7 +231,7 @@ index a5670d8..b1f67e5 100644
    hidgl_reset_stencil_usage ();
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
-@@ -1849,58 +1904,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1851,58 +1906,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_depth = -50 + compute_depth (0);                    /* FIXME: NEED TO USE PHYSICAL GROUPS */
    max_depth =  50 + compute_depth (max_copper_layer - 1); /* FIXME: NEED TO USE PHYSICAL GROUPS */
  
@@ -330,7 +330,7 @@ index a5670d8..b1f67e5 100644
    region.X1 = min_x;  region.X2 = max_x + 1;
    region.Y1 = min_y;  region.Y2 = max_y + 1;
  
-@@ -2237,10 +2307,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2239,10 +2309,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    return pixmap;
  }
  
@@ -344,7 +344,7 @@ index a5670d8..b1f67e5 100644
    det = m[0][0] * m[1][1] -
          m[0][1] * m[1][0];
    return det;
-@@ -2268,9 +2338,9 @@ determinant_4x4 (float m[4][4])
+@@ -2270,9 +2340,9 @@ determinant_4x4 (float m[4][4])
  #endif
  
  static void
@@ -356,7 +356,7 @@ index a5670d8..b1f67e5 100644
    out[0][0] =  m[1][1] * scale;
    out[0][1] = -m[0][1] * scale;
    out[1][0] = -m[1][0] * scale;
-@@ -2335,68 +2405,104 @@ invert_4x4 (float m[4][4], float out[4][4])
+@@ -2337,68 +2407,104 @@ invert_4x4 (float m[4][4], float out[4][4])
  #endif
  
  
