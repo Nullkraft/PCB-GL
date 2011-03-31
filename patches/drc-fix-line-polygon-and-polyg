@@ -1,0 +1,30 @@
+Bottom: a62ebf4f240ba1f0f9b8d8d71fbdc2e300335672
+Top:    a62ebf4f240ba1f0f9b8d8d71fbdc2e300335672
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-03-31 02:09:57 +0100
+
+drc: Fix line <-> polygon and polygon <-> polygon tests tests
+
+In src/find.c, the one polygon is tested against a series of bloated
+lines following the outline of the second polygon.
+
+In IsPolygonInPolygon() we have:
+
+  line.Thickness = 2 * Bloat;
+
+But the test which is called, IsLineInPolygon()
+
+Also adds bloat to the line:
+
+  lp = LinePoly (Line, Line->Thickness + Bloat)
+
+This bloat is actually half the size we should be adding for this
+test, as the LinePoly argument is a line thickness, not cap radius.
+
+Fix this all by doubling the bloat added in IsLineInPolygon(), and
+set line.Thickness = 0; in IsPolygonInPolygon().
+
+
+---
+
+
