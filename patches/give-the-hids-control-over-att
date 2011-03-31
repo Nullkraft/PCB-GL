@@ -1,5 +1,5 @@
 Bottom: f2726cd4ac1ba0a0057bc881bb4f54a5db0568ca
-Top:    01a9ec2965de01b9ac64904e14e86302135af99c
+Top:    8bc3ce72ca2e5b0dbe083fdb3e39f50ea05a3bf4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-27 22:35:29 +0100
 
@@ -1322,10 +1322,10 @@ index 8f04180..b8587d6 100644
    gerber_make_gc,
    gerber_destroy_gc,
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index e10dc6e..76400e4 100644
+index e10dc6e..ba1c4ad 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -770,12 +770,23 @@ ghid_invalidate_all ()
+@@ -770,12 +770,27 @@ ghid_invalidate_all ()
  
    hid_expose_callback (&ghid_hid, &region, 0);
    ghid_draw_grid ();
@@ -1342,6 +1342,10 @@ index e10dc6e..76400e4 100644
 +void
 +ghid_notify_crosshair_change (bool changes_complete)
 +{
++#warning FIXME
++  if (gport->drawing_area == NULL)
++    return;
++
 +  if (changes_complete)
 +    CrosshairOn ();
 +  else
@@ -1352,7 +1356,7 @@ index e10dc6e..76400e4 100644
  static void
  draw_right_cross (GdkGC *xor_gc, gint x, gint y)
  {
-@@ -873,7 +884,7 @@ draw_crosshair (GdkGC *xor_gc, gint x, gint y)
+@@ -873,7 +888,7 @@ draw_crosshair (GdkGC *xor_gc, gint x, gint y)
  #define VCD 8
  
  void
@@ -1361,7 +1365,7 @@ index e10dc6e..76400e4 100644
  {
    gint x, y;
    static gint x_prev = -1, y_prev = -1;
-@@ -897,7 +908,7 @@ ghid_show_crosshair (gboolean show)
+@@ -897,7 +912,7 @@ ghid_show_crosshair (gboolean show)
  
    gdk_gc_set_foreground (xor_gc, &cross_color);
  
@@ -1370,7 +1374,7 @@ index e10dc6e..76400e4 100644
      {
        draw_crosshair (xor_gc, x_prev, y_prev);
        if (draw_markers_prev)
-@@ -913,7 +924,7 @@ ghid_show_crosshair (gboolean show)
+@@ -913,7 +928,7 @@ ghid_show_crosshair (gboolean show)
  	}
      }
  
@@ -1379,7 +1383,7 @@ index e10dc6e..76400e4 100644
      {
        draw_crosshair (xor_gc, x, y);
        draw_markers = ghidgui->auto_pan_on && have_crosshair_attachments ();
-@@ -979,7 +990,6 @@ ghid_screen_update (void)
+@@ -979,7 +994,6 @@ ghid_screen_update (void)
  {
    render_priv *priv = gport->render_priv;
  
@@ -1387,7 +1391,7 @@ index e10dc6e..76400e4 100644
    gdk_draw_drawable (gport->drawing_area->window, priv->bg_gc, gport->pixmap,
  		     0, 0, 0, 0, gport->width, gport->height);
    ghid_show_crosshair (TRUE);
-@@ -992,7 +1002,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -992,7 +1006,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  {
    render_priv *priv = port->render_priv;
  
