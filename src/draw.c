@@ -521,7 +521,10 @@ DrawEverything (BoxTypePtr drawn_area)
 		  NULL);
       /* Draw rat lines on top */
       if (gui->set_layer ("rats", SL (RATS, 0), 0))
-	DrawRats(drawn_area);
+        {
+          DrawRats(drawn_area);
+          gui->set_layer (NULL, SL (FINISHED, 0), 0);
+        }
     }
 
   for (side = 0; side <= 1; side++)
