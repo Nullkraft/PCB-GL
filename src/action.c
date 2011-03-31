@@ -4833,7 +4833,6 @@ ActionToggleStripHierarchy (int argc, char **argv, int x, int y)
   char *function = ARG (0);
   if (function && PCB->ElementOn)
     {
-      HideCrosshair (true);
       switch (GetFunctionID (function))
 	{
 	case F_Object:
@@ -4883,7 +4882,6 @@ ActionToggleStripHierarchy (int argc, char **argv, int x, int y)
 	      }
 	  }
 	}
-      RestoreCrosshair (true);
     }
   return 0;
 }
