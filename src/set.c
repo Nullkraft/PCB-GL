@@ -248,12 +248,12 @@ SetMode (int Mode)
   addedLines = 0;
   Crosshair.AttachedObject.Type = NO_TYPE;
   Crosshair.AttachedObject.State = STATE_FIRST;
-  Crosshair.AttachedPolygon.PointN = 0;
+  Crosshair.AttachedPour.PointN = 0;
   if (PCB->RatDraw)
     {
       if (Mode == ARC_MODE || Mode == RECTANGLE_MODE ||
-	  Mode == VIA_MODE || Mode == POLYGON_MODE ||
-	  Mode == POLYGONHOLE_MODE ||
+	  Mode == VIA_MODE || Mode == POUR_MODE ||
+	  Mode == POURHOLE_MODE ||
 	  Mode == TEXT_MODE || Mode == INSERTPOINT_MODE ||
 	  Mode == THERMAL_MODE)
 	{
