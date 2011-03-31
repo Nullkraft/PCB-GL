@@ -772,10 +772,10 @@ LOCtoPVpoly_callback (const BoxType * b, void *cl)
       wide = MAX (wide, 0);
       if (TEST_FLAG (SQUAREFLAG, &i->pv))
         {
-          LocationType x1 = i->pv.X - (i->pv.Thickness + 1 + Bloat) / 2;
-          LocationType x2 = i->pv.X + (i->pv.Thickness + 1 + Bloat) / 2;
-          LocationType y1 = i->pv.Y - (i->pv.Thickness + 1 + Bloat) / 2;
-          LocationType y2 = i->pv.Y + (i->pv.Thickness + 1 + Bloat) / 2;
+          LocationType x1 = i->pv.X - (i->pv.Thickness + 1) / 2 - Bloat;
+          LocationType x2 = i->pv.X + (i->pv.Thickness + 1) / 2 + Bloat;
+          LocationType y1 = i->pv.Y - (i->pv.Thickness + 1) / 2 - Bloat;
+          LocationType y2 = i->pv.Y + (i->pv.Thickness + 1) / 2 + Bloat;
           if (IsRectangleInPolygon (x1, y1, x2, y2, polygon)
               && ADD_POLYGON_TO_LIST (i->layer, polygon))
             longjmp (i->env, 1);
@@ -1119,10 +1119,10 @@ pv_poly_callback (const BoxType * b, void *cl)
       if (TEST_FLAG (SQUAREFLAG, pv))
         {
           LocationType x1, x2, y1, y2;
-          x1 = pv->X - (pv->Thickness + 1 + Bloat) / 2;
-          x2 = pv->X + (pv->Thickness + 1 + Bloat) / 2;
-          y1 = pv->Y - (pv->Thickness + 1 + Bloat) / 2;
-          y2 = pv->Y + (pv->Thickness + 1 + Bloat) / 2;
+          x1 = pv->X - (pv->Thickness + 1) / 2 - Bloat;
+          x2 = pv->X + (pv->Thickness + 1) / 2 + Bloat;
+          y1 = pv->Y - (pv->Thickness + 1) / 2 - Bloat;
+          y2 = pv->Y + (pv->Thickness + 1) / 2 + Bloat;
           if (IsRectangleInPolygon (x1, y1, x2, y2, &i->polygon)
               && ADD_PV_TO_LIST (pv))
             longjmp (i->env, 1);
@@ -2670,7 +2670,7 @@ IsLineInPolygon (LineTypePtr Line, PolygonTypePtr Polygon)
     return false;
   if (TEST_FLAG(SQUAREFLAG,Line)&&(Line->Point1.X==Line->Point2.X||Line->Point1.Y==Line->Point2.Y))
      {
-       BDimension wid = (Line->Thickness + Bloat + 1) / 2;
+       BDimension wid = (Line->Thickness + 1) / 2 + Bloat;
        LocationType x1, x2, y1, y2;
 
        x1 = MIN (Line->Point1.X, Line->Point2.X) - wid;
