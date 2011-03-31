@@ -1,5 +1,5 @@
-Bottom: e215f1de2f41441b5b49bbd052a3dad45a8f0eec
-Top:    cdd28a19965a653a8f0d91b7281efa011971262b
+Bottom: 52fbb0b7e1728d2c733f3863fd2247355c8f53db
+Top:    330e13aa190bd101b5bef9550409a067825ecece
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:14 +0000
 
@@ -9,7 +9,7 @@ Hack to avoid GL calls when we're out of context
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 562b19d..7068dda 100644
+index d1312d8..8db04b8 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -44,6 +44,7 @@ static hidGC current_gc = NULL;
@@ -61,7 +61,7 @@ index 562b19d..7068dda 100644
    return FALSE;
 @@ -2026,6 +2038,8 @@ ghid_pinout_preview_expose (GtkWidget *widget,
    }
-   port->render_priv->in_context = true;
+   gport->render_priv->in_context = true;
  
 +  check_gl_drawing_ok_hack = true;
 +
@@ -75,7 +75,7 @@ index 562b19d..7068dda 100644
 +  check_gl_drawing_ok_hack = false;
 +
    /* end drawing to current GL-context */
-   port->render_priv->in_context = false;
+   gport->render_priv->in_context = false;
    gdk_gl_drawable_gl_end (pGlDrawable);
 @@ -2101,6 +2117,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    int save_width, save_height;
@@ -87,7 +87,7 @@ index 562b19d..7068dda 100644
    save_width = gport->width;
 @@ -2141,6 +2158,9 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    }
-   port->render_priv->in_context = true;
+   gport->render_priv->in_context = true;
  
 +  save_check_gl_drawing_ok_hack = check_gl_drawing_ok_hack;
 +  check_gl_drawing_ok_hack = true;
@@ -102,5 +102,5 @@ index 562b19d..7068dda 100644
 +  check_gl_drawing_ok_hack = save_check_gl_drawing_ok_hack;
 +
    /* end drawing to current GL-context */
-   port->render_priv->in_context = false;
+   gport->render_priv->in_context = false;
    gdk_gl_drawable_gl_end (gldrawable);
