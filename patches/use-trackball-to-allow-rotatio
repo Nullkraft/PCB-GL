@@ -1,5 +1,5 @@
-Bottom: e30025f35b9ba9f8a778a7934c7fba78aa361c8a
-Top:    c9a5f31d7c363a6f748a0b490bcfd7f5e41d7a26
+Bottom: ef189d8a83236b0e1afa18661963889b53764151
+Top:    bdfe548941056f4b049e75f392e02f8aeb8ae22e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:07 +0000
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9a49844..2115d58 100644
+index 85ed9e7..c2aca9c 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,7 +21,9 @@
@@ -153,7 +153,7 @@ index 9a49844..2115d58 100644
    glEnd ();
  
    /* TODO: Background image */
-@@ -1123,7 +1199,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1124,7 +1200,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -162,7 +162,7 @@ index 9a49844..2115d58 100644
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
-@@ -1234,7 +1310,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1237,7 +1313,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -171,7 +171,7 @@ index 9a49844..2115d58 100644
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
-@@ -1287,3 +1363,196 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1291,3 +1367,196 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    return pixmap;
  }

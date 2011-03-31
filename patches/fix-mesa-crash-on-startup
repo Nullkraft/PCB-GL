@@ -1,5 +1,5 @@
-Bottom: 2683f082f37e5de918e34d3a27e5cd801ae04918
-Top:    9a41c0de64071290a8377210d176f7521b9ad89b
+Bottom: 1e06dcca1ee5c90d14e44cbdb2af2f8f12ef9c06
+Top:    756c54d4b8627ab8213ff09f2e4104611221c49b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:03 +0000
 
@@ -15,10 +15,10 @@ Leaving this commit for the benefit users of broken mesa versions.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 76400e4..94bf6f5 100644
+index ba1c4ad..279b408 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -1009,6 +1009,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1013,6 +1013,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    return FALSE;
  }
  
@@ -31,7 +31,7 @@ index 76400e4..94bf6f5 100644
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 0caf5e4..46a7380 100644
+index 8bd165f..38111c1 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1006,6 +1006,24 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
