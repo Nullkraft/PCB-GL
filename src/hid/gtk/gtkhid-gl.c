@@ -1049,6 +1049,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
   if (!gdk_gl_drawable_gl_begin (pGlDrawable, pGlContext)) {
     return FALSE;
   }
+  port->render_priv->in_context = true;
 
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -1094,6 +1095,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
     glFlush ();
 
   /* end drawing to current GL-context */
+  port->render_priv->in_context = false;
   gdk_gl_drawable_gl_end (pGlDrawable);
 
   gport->zoom = save_zoom;
@@ -1159,6 +1161,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   if (!gdk_gl_drawable_gl_begin (gldrawable, glcontext)) {
     return NULL;
   }
+  port->render_priv->in_context = true;
 
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -1203,6 +1206,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
   glFlush ();
 
   /* end drawing to current GL-context */
+  port->render_priv->in_context = false;
   gdk_gl_drawable_gl_end (gldrawable);
 //  gdk_gl_context_destroy (glcontext);
 
