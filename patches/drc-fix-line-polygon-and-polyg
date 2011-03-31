@@ -25,6 +25,11 @@ Fix this all by doubling the bloat added in IsLineInPolygon(), and
 set line.Thickness = 0; in IsPolygonInPolygon().
 
 
+FIXME: This breaks other DRC checks, particularly those which compute
+shrink / insufficient overlap - quite not sure why, but they seem to
+rely on the half-bloat being added in various places.
+
+
 ---
 
 diff --git a/src/find.c b/src/find.c
