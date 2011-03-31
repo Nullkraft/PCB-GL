@@ -1,5 +1,5 @@
 Bottom: d188992335a59918a26af82d3ae68024e6cc6b61
-Top:    9c13cf26181cea92b6d12d99d8585e948ae26d5c
+Top:    39e49d2ae5e4bc058ecd2eed6bf6edec566cf5d5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-31 02:14:08 +0100
 
@@ -18,6 +18,24 @@ ARR!! how much work have I lost to this key binding!
 
 ---
 
+diff --git a/src/find.c b/src/find.c
+index 5d2e92c..e2517a1 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -2743,7 +2743,12 @@ IsPolygonInPolygon (PolygonTypePtr P1, PolygonTypePtr P2)
+ 
+               line.Point1.X = v->point[0];
+               line.Point1.Y = v->point[1];
+-              line.Thickness = 2 * Bloat;
++              line.Thickness = Bloat;
++              /* Another Bloat is added by IsLineInPolygon, making the correct
++               * 2x Bloat. Ideally we would change it there, but doing so
++               * breaks some other DRC checks which rely on the broken behaviour
++               * in IsLineInPolygon.
++               */
+               line.Clearance = 0;
+               line.Flags = NoFlags ();
+               for (v = v->next; v != &c->head; v = v->next)
 diff --git a/src/gpcb-menu.res b/src/gpcb-menu.res
 index 2276bfc..21cc357 100644
 --- a/src/gpcb-menu.res
