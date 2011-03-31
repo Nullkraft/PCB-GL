@@ -1,5 +1,5 @@
-Bottom: e199952c4619f159d16be9169903c03d13d16dd7
-Top:    07b45dce2be364365a827b50572e7642f96c075c
+Bottom: c939eb64334420c6ba52f06da6070828a02d3b0d
+Top:    ebb671600e8ad3cf84bb00bbad0db1b1be1a345d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-03-26 16:13:09 +0000
 
@@ -18,7 +18,7 @@ Notes from squashed patches:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index ffdb568..f7c1556 100644
+index 0decdaf..ed458e8 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -76,7 +76,7 @@ FloatPolyType, *FloatPolyTypePtr;
@@ -66,7 +66,7 @@ index ffdb568..f7c1556 100644
  static int pin_callback (const BoxType * b, void *cl);
  static int pad_callback (const BoxType * b, void *cl);
  
-@@ -586,7 +586,7 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -589,7 +589,7 @@ DrawEverything (BoxTypePtr drawn_area)
      }
  }
  
@@ -75,7 +75,7 @@ index ffdb568..f7c1556 100644
  DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
  	   bool invisible)
  {
-@@ -674,7 +674,7 @@ struct pin_info
+@@ -677,7 +677,7 @@ struct pin_info
    LayerTypePtr Layer;
  };
  
@@ -84,7 +84,7 @@ index ffdb568..f7c1556 100644
  clearPin_callback (const BoxType * b, void *cl)
  {
    PinTypePtr pin = (PinTypePtr) b;
-@@ -692,7 +692,7 @@ poly_callback (const BoxType * b, void *cl)
+@@ -695,7 +695,7 @@ poly_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -93,7 +93,7 @@ index ffdb568..f7c1556 100644
  clearPad_callback (const BoxType * b, void *cl)
  {
    PadTypePtr pad = (PadTypePtr) b;
-@@ -705,7 +705,7 @@ clearPad_callback (const BoxType * b, void *cl)
+@@ -708,7 +708,7 @@ clearPad_callback (const BoxType * b, void *cl)
   * Draws silk layer.
   */
  
@@ -102,7 +102,7 @@ index ffdb568..f7c1556 100644
  DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
  {
  #if 0
-@@ -802,7 +802,7 @@ DrawMask (BoxType * screen)
+@@ -805,7 +805,7 @@ DrawMask (BoxType * screen)
      }
  }
  
@@ -111,7 +111,7 @@ index ffdb568..f7c1556 100644
  DrawRats (BoxTypePtr drawn_area)
  {
    /*
-@@ -937,7 +937,7 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -940,7 +940,7 @@ DrawLayerGroup (int group, const BoxType * screen)
   *         \       /
   *          2 --- 1
    */
@@ -120,7 +120,7 @@ index ffdb568..f7c1556 100644
  DrawSpecialPolygon (hidGC DrawGC,
  		    LocationType X, LocationType Y, int Thickness,
  		    int thin_draw)
-@@ -1001,7 +1001,7 @@ DrawSpecialPolygon (hidGC DrawGC,
+@@ -1004,7 +1004,7 @@ DrawSpecialPolygon (hidGC DrawGC,
  /* ---------------------------------------------------------------------------
   * lowlevel drawing routine for pins and vias
   */
@@ -129,7 +129,7 @@ index ffdb568..f7c1556 100644
  DrawPinOrViaLowLevel (PinTypePtr Ptr, bool drawHole)
  {
    if (Gathering)
-@@ -1085,7 +1085,7 @@ DrawPinOrViaLowLevel (PinTypePtr Ptr, bool drawHole)
+@@ -1088,7 +1088,7 @@ DrawPinOrViaLowLevel (PinTypePtr Ptr, bool drawHole)
  /**************************************************************
   * draw pin/via hole
   */
@@ -138,7 +138,7 @@ index ffdb568..f7c1556 100644
  DrawHole (PinTypePtr Ptr)
  {
    if (TEST_FLAG (THINDRAWFLAG, PCB))
-@@ -1700,7 +1700,7 @@ DrawVia (PinTypePtr Via, int unused)
+@@ -1703,7 +1703,7 @@ DrawVia (PinTypePtr Via, int unused)
  /* ---------------------------------------------------------------------------
   * draw a via without dealing with polygon clearance 
   */
@@ -147,7 +147,7 @@ index ffdb568..f7c1556 100644
  DrawPlainVia (PinTypePtr Via, bool holeToo)
  {
    if (!Gathering)
-@@ -1745,7 +1745,7 @@ DrawPin (PinTypePtr Pin, int unused)
+@@ -1748,7 +1748,7 @@ DrawPin (PinTypePtr Pin, int unused)
  /* ---------------------------------------------------------------------------
   * draw a pin without clearing around polygons 
   */
@@ -156,7 +156,7 @@ index ffdb568..f7c1556 100644
  DrawPlainPin (PinTypePtr Pin, bool holeToo)
  {
    if (!Gathering)
-@@ -1935,7 +1935,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
+@@ -1938,7 +1938,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
  /* ---------------------------------------------------------------------------
   * draws text on a layer
   */
