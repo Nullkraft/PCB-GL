@@ -1704,8 +1704,10 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     r_search (PCB->Data->element_tree, drawn_area, NULL, EMark_callback, NULL);
 
   /* Draw rat lines on top */
-  if (PCB->RatOn && gui->set_layer ("rats", SL (RATS, 0), 0))
+  if (PCB->RatOn && gui->set_layer ("rats", SL (RATS, 0), 0)) {
     DrawRats(drawn_area);
+    gui->set_layer (NULL, SL (FINISHED, 0), 0);
+  }
 
   Gathering = true;
 
