@@ -780,6 +780,10 @@ ghid_invalidate_all ()
 void
 ghid_notify_crosshair_change (bool changes_complete)
 {
+#warning FIXME
+  if (gport->drawing_area == NULL)
+    return;
+
   if (changes_complete)
     CrosshairOn ();
   else
