@@ -1043,6 +1043,8 @@ HID gcode_hid = {
   gcode_parse_arguments,
   0 /* gcode_invalidate_lr */ ,
   0 /* gcode_invalidate_all */ ,
+  0 /* gcode_notify_crosshair_change */ ,
+  0 /* gcode_notify_mark_change */ ,
   gcode_set_layer,
   gcode_make_gc,
   gcode_destroy_gc,
