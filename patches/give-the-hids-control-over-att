@@ -1,7 +1,7 @@
-Bottom: f2726cd4ac1ba0a0057bc881bb4f54a5db0568ca
-Top:    8bc3ce72ca2e5b0dbe083fdb3e39f50ea05a3bf4
+Bottom: 533fc1c1f7041459dcd484e8428d0db4f688144f
+Top:    e7347a264f4017d1c1f335f53a9e44f2d1a69db7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-27 22:35:29 +0100
+Date:   2011-04-03 00:16:52 +0100
 
 Give the HIDs control over "attached" object redrawing (crosshair etc..)
 
@@ -1211,7 +1211,7 @@ index 4573e98..d413bbe 100644
  bool MoveCrosshairAbsolute (LocationType, LocationType);
  void SetCrosshairRange (LocationType, LocationType, LocationType,
 diff --git a/src/draw.c b/src/draw.c
-index 36bf1b9..f0ba980 100644
+index 6091ef3..815ac5e 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -186,14 +186,10 @@ UpdateAll (void)

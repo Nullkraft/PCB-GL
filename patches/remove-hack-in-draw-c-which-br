@@ -1,7 +1,7 @@
-Bottom: ee0ed7ac0ae23595427295220e5cbc6e07876006
-Top:    39fb111fff06454451b02f39bd3e1667c79e7adb
+Bottom: c462e93f8aa3290f15bc027342eae239deab37ca
+Top:    913295d94f8d94d97cfec1cf8af8bdbb8e1422dc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-26 16:13:14 +0000
+Date:   2011-04-03 00:17:00 +0100
 
 Remove hack in draw.c which broke PS (and probably other) output
 
@@ -13,7 +13,7 @@ file during the fab drawing output.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index ed458e8..d267ebc 100644
+index a7b3484..0dbd58d 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -884,8 +884,7 @@ DrawLayerGroup (int group, const BoxType * screen)
