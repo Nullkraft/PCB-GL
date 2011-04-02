@@ -1,7 +1,7 @@
-Bottom: c2e28632016fca35344176760a5d553e93b2a949
-Top:    8bc14801dc89c725dc1b9b63a5906e1d9c1e2a84
+Bottom: 483c1454823e026c4413a987d3d960234b9194e9
+Top:    75a1275aeee1513c8dc7b72f2399f35367e2eb11
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-03-31 13:20:43 +0100
+Date:   2011-04-03 00:17:22 +0100
 
 Add support for a "poured" object.
 
@@ -2193,7 +2193,7 @@ index ca51f4f..f7a7310 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index d267ebc..77c4ba8 100644
+index 0dbd58d..c66c4cf 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -49,6 +49,7 @@
@@ -2290,7 +2290,7 @@ index d267ebc..77c4ba8 100644
  	      info.arg = false;
  	    }
  
-@@ -1640,6 +1665,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
+@@ -1599,6 +1624,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2339,7 +2339,7 @@ index d267ebc..77c4ba8 100644
   * lowlevel routine to element arcs
   */
  static void
-@@ -1958,6 +2025,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+@@ -1917,6 +1984,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
    DrawPolygonLowLevel (Polygon);
  }
  
@@ -2377,7 +2377,7 @@ index d267ebc..77c4ba8 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -2229,6 +2327,16 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2188,6 +2286,16 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2394,7 +2394,7 @@ index d267ebc..77c4ba8 100644
   * erases an element
   */
  void
-@@ -2299,6 +2407,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -2258,6 +2366,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2404,7 +2404,7 @@ index d267ebc..77c4ba8 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -2346,6 +2457,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
+@@ -2305,6 +2416,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2, 0);
        break;
@@ -2943,7 +2943,7 @@ index e449a34..5d163eb 100644
    void *(*Rat) (RatTypePtr);
  } ObjectFunctionType, *ObjectFunctionTypePtr;
 diff --git a/src/gpcb-menu.res b/src/gpcb-menu.res
-index 593b737..b33f5b2 100644
+index dd1f27e..5526c57 100644
 --- a/src/gpcb-menu.res
 +++ b/src/gpcb-menu.res
 @@ -516,8 +516,8 @@ PopupMenus =
@@ -4360,7 +4360,7 @@ index d0f31aa..6a043cf 100644
  		|
  		;
 diff --git a/src/pcb-menu.res b/src/pcb-menu.res
-index 5e3682c..4732626 100644
+index e2fc4bb..5c6a296 100644
 --- a/src/pcb-menu.res
 +++ b/src/pcb-menu.res
 @@ -173,8 +173,8 @@ MainMenu =
