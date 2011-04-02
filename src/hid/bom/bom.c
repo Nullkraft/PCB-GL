@@ -546,6 +546,8 @@ HID bom_hid = {
   bom_parse_arguments,
   0,				/* bom_invalidate_lr */
   0,				/* bom_invalidate_all */
+  0,				/* bom_notify_crosshair_change */
+  0,				/* bom_notify_mark_change */
   0,				/* bom_set_layer */
   0,				/* bom_make_gc */
   0,				/* bom_destroy_gc */
