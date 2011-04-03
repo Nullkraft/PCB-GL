@@ -683,6 +683,15 @@ notify_crosshair_change (bool changes_complete)
     gui->notify_crosshair_change (changes_complete);
 }
 
+
+void
+notify_mark_change (bool changes_complete)
+{
+  if (gui->notify_mark_change)
+    gui->notify_mark_change (changes_complete);
+}
+
+
 /* ---------------------------------------------------------------------------
  * switches crosshair on
  */
