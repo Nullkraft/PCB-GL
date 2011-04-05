@@ -1,5 +1,5 @@
-Bottom: 40fe3eaf0c9e3ea25eb5528fd384ce7fc78b92d3
-Top:    72cdc2af69ebdaf1abaf38e6ea20f9062b8e26fc
+Bottom: 5b36e2e3f45c4fc802ccb61014f84729c0eedbbd
+Top:    3d1870b85b2e6ce2b93cc79e722cb7045b891243
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 00:45:34 +0100
 
@@ -9,7 +9,7 @@ Don't undraw the crosshair attached object when showing dialogue prompts
 ---
 
 diff --git a/src/action.c b/src/action.c
-index dfe6f4d..b83325b 100644
+index 8fe63d3..59e8139 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1871,7 +1871,6 @@ ActionDRCheck (int argc, char **argv, int x, int y)
@@ -28,7 +28,7 @@ index dfe6f4d..b83325b 100644
    return 0;
  }
  
-@@ -5924,7 +5922,6 @@ ActionNew (int argc, char **argv, int x, int y)
+@@ -5923,7 +5921,6 @@ ActionNew (int argc, char **argv, int x, int y)
  {
    char *name = ARG (0);
  
@@ -36,7 +36,7 @@ index dfe6f4d..b83325b 100644
    if (!PCB->Changed || gui->confirm_dialog (_("OK to clear layout data?"), 0))
      {
        if (name)
-@@ -5933,11 +5930,9 @@ ActionNew (int argc, char **argv, int x, int y)
+@@ -5932,11 +5929,9 @@ ActionNew (int argc, char **argv, int x, int y)
  	name = gui->prompt_for (_("Enter the layout name:"), "");
  
        if (!name)
@@ -50,7 +50,7 @@ index dfe6f4d..b83325b 100644
        /* do emergency saving
         * clear the old struct and allocate memory for the new one
         */
-@@ -5962,7 +5957,6 @@ ActionNew (int argc, char **argv, int x, int y)
+@@ -5961,7 +5956,6 @@ ActionNew (int argc, char **argv, int x, int y)
        RestoreCrosshair ();
        return 0;
      }

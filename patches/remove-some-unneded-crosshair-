@@ -1,5 +1,5 @@
-Bottom: 533fc1c1f7041459dcd484e8428d0db4f688144f
-Top:    40fe3eaf0c9e3ea25eb5528fd384ce7fc78b92d3
+Bottom: dba28203069a8cacb4faec1f563881a1b2410b4d
+Top:    5b36e2e3f45c4fc802ccb61014f84729c0eedbbd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 00:32:26 +0100
 
@@ -9,7 +9,7 @@ Remove some unneded crosshair invalidation
 ---
 
 diff --git a/src/action.c b/src/action.c
-index ea9a51f..dfe6f4d 100644
+index 22e78bd..8fe63d3 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1967,7 +1967,6 @@ ActionFlip (int argc, char **argv, int x, int y)
@@ -76,7 +76,7 @@ index ea9a51f..dfe6f4d 100644
        return 0;
      }
  
-@@ -3289,10 +3281,8 @@ static const char removeselected_help[] = "Removes any selected objects.";
+@@ -3288,10 +3280,8 @@ static const char removeselected_help[] = "Removes any selected objects.";
  static int
  ActionRemoveSelected (int argc, char **argv, int x, int y)
  {
@@ -87,7 +87,7 @@ index ea9a51f..dfe6f4d 100644
    return 0;
  }
  
-@@ -3687,7 +3677,6 @@ ActionRipUp (int argc, char **argv, int x, int y)
+@@ -3686,7 +3676,6 @@ ActionRipUp (int argc, char **argv, int x, int y)
  
    if (function)
      {
@@ -95,7 +95,7 @@ index ea9a51f..dfe6f4d 100644
        switch (GetFunctionID (function))
  	{
  	case F_All:
-@@ -3770,7 +3759,6 @@ ActionRipUp (int argc, char **argv, int x, int y)
+@@ -3769,7 +3758,6 @@ ActionRipUp (int argc, char **argv, int x, int y)
  	  }
  	  break;
  	}
@@ -103,7 +103,7 @@ index ea9a51f..dfe6f4d 100644
      }
    return 0;
  }
-@@ -3811,7 +3799,6 @@ ActionAddRats (int argc, char **argv, int x, int y)
+@@ -3810,7 +3798,6 @@ ActionAddRats (int argc, char **argv, int x, int y)
      {
        if (Settings.RatWarn)
  	ClearWarnings ();
@@ -111,7 +111,7 @@ index ea9a51f..dfe6f4d 100644
        switch (GetFunctionID (function))
  	{
  	case F_AllRats:
-@@ -3851,7 +3838,6 @@ ActionAddRats (int argc, char **argv, int x, int y)
+@@ -3850,7 +3837,6 @@ ActionAddRats (int argc, char **argv, int x, int y)
  	    }
  	  break;
  	}
@@ -119,7 +119,7 @@ index ea9a51f..dfe6f4d 100644
      }
    return 0;
  }
-@@ -3883,7 +3869,6 @@ ActionDelete (int argc, char **argv, int x, int y)
+@@ -3882,7 +3868,6 @@ ActionDelete (int argc, char **argv, int x, int y)
  	id = F_Object;
      }
  
@@ -127,7 +127,7 @@ index ea9a51f..dfe6f4d 100644
    switch (id)
      {
      case F_Object:
-@@ -3905,7 +3890,6 @@ ActionDelete (int argc, char **argv, int x, int y)
+@@ -3904,7 +3889,6 @@ ActionDelete (int argc, char **argv, int x, int y)
        break;
      }
  
@@ -135,7 +135,7 @@ index ea9a51f..dfe6f4d 100644
    return 0;
  }
  
-@@ -3928,7 +3912,6 @@ ActionDeleteRats (int argc, char **argv, int x, int y)
+@@ -3927,7 +3911,6 @@ ActionDeleteRats (int argc, char **argv, int x, int y)
      {
        if (Settings.RatWarn)
  	ClearWarnings ();
@@ -143,7 +143,7 @@ index ea9a51f..dfe6f4d 100644
        switch (GetFunctionID (function))
  	{
  	case F_AllRats:
-@@ -3941,7 +3924,6 @@ ActionDeleteRats (int argc, char **argv, int x, int y)
+@@ -3940,7 +3923,6 @@ ActionDeleteRats (int argc, char **argv, int x, int y)
  	    SetChangedFlag (true);
  	  break;
  	}
@@ -151,7 +151,7 @@ index ea9a51f..dfe6f4d 100644
      }
    return 0;
  }
-@@ -3966,10 +3948,8 @@ ActionAutoPlaceSelected (int argc, char **argv, int x, int y)
+@@ -3965,10 +3947,8 @@ ActionAutoPlaceSelected (int argc, char **argv, int x, int y)
    if (gui->confirm_dialog (_("Auto-placement can NOT be undone.\n"
  			     "Do you want to continue anyway?\n"), 0))
      {
@@ -162,7 +162,7 @@ index ea9a51f..dfe6f4d 100644
      }
    return 0;
  }
-@@ -4010,7 +3990,6 @@ ActionAutoRoute (int argc, char **argv, int x, int y)
+@@ -4009,7 +3989,6 @@ ActionAutoRoute (int argc, char **argv, int x, int y)
    hid_action("Busy");
    if (function)			/* one parameter */
      {
@@ -170,7 +170,7 @@ index ea9a51f..dfe6f4d 100644
        switch (GetFunctionID (function))
  	{
  	case F_AllRats:
-@@ -4023,7 +4002,6 @@ ActionAutoRoute (int argc, char **argv, int x, int y)
+@@ -4022,7 +4001,6 @@ ActionAutoRoute (int argc, char **argv, int x, int y)
  	    SetChangedFlag (true);
  	  break;
  	}
@@ -178,7 +178,7 @@ index ea9a51f..dfe6f4d 100644
      }
    return 0;
  }
-@@ -4113,7 +4091,6 @@ ActionChangeSize (int argc, char **argv, int x, int y)
+@@ -4112,7 +4090,6 @@ ActionChangeSize (int argc, char **argv, int x, int y)
    if (function && delta)
      {
        value = GetValue (delta, units, &absolute);
@@ -186,7 +186,7 @@ index ea9a51f..dfe6f4d 100644
        switch (GetFunctionID (function))
  	{
  	case F_Object:
-@@ -4177,7 +4154,6 @@ ActionChangeSize (int argc, char **argv, int x, int y)
+@@ -4176,7 +4153,6 @@ ActionChangeSize (int argc, char **argv, int x, int y)
  	    SetChangedFlag (true);
  	  break;
  	}
@@ -194,7 +194,7 @@ index ea9a51f..dfe6f4d 100644
      }
    return 0;
  }
-@@ -4207,7 +4183,6 @@ ActionChange2ndSize (int argc, char **argv, int x, int y)
+@@ -4206,7 +4182,6 @@ ActionChange2ndSize (int argc, char **argv, int x, int y)
    if (function && delta)
      {
        value = GetValue (delta, units, &absolute);
@@ -202,7 +202,7 @@ index ea9a51f..dfe6f4d 100644
        switch (GetFunctionID (function))
  	{
  	case F_Object:
-@@ -4240,7 +4215,6 @@ ActionChange2ndSize (int argc, char **argv, int x, int y)
+@@ -4239,7 +4214,6 @@ ActionChange2ndSize (int argc, char **argv, int x, int y)
  	    SetChangedFlag (true);
  	  break;
  	}
@@ -210,7 +210,7 @@ index ea9a51f..dfe6f4d 100644
      }
    return 0;
  }
-@@ -4276,7 +4250,6 @@ ActionChangeClearSize (int argc, char **argv, int x, int y)
+@@ -4275,7 +4249,6 @@ ActionChangeClearSize (int argc, char **argv, int x, int y)
    if (function && delta)
      {
        value = 2 * GetValue (delta, units, &absolute);
@@ -218,7 +218,7 @@ index ea9a51f..dfe6f4d 100644
        switch (GetFunctionID (function))
  	{
  	case F_Object:
-@@ -4319,7 +4292,6 @@ ActionChangeClearSize (int argc, char **argv, int x, int y)
+@@ -4318,7 +4291,6 @@ ActionChangeClearSize (int argc, char **argv, int x, int y)
  	    SetChangedFlag (true);
  	  break;
  	}
@@ -226,7 +226,7 @@ index ea9a51f..dfe6f4d 100644
      }
    return 0;
  }
-@@ -4363,7 +4335,6 @@ ActionMinMaskGap (int argc, char **argv, int x, int y)
+@@ -4362,7 +4334,6 @@ ActionMinMaskGap (int argc, char **argv, int x, int y)
      }
    value = 2 * GetValue (delta, units, &absolute);
  
@@ -234,7 +234,7 @@ index ea9a51f..dfe6f4d 100644
    SaveUndoSerialNumber ();
    ELEMENT_LOOP (PCB->Data);
    {
-@@ -4448,7 +4419,6 @@ ActionMinClearGap (int argc, char **argv, int x, int y)
+@@ -4447,7 +4418,6 @@ ActionMinClearGap (int argc, char **argv, int x, int y)
      }
    value = 2 * GetValue (delta, units, &absolute);
  
@@ -242,7 +242,7 @@ index ea9a51f..dfe6f4d 100644
    SaveUndoSerialNumber ();
    ELEMENT_LOOP (PCB->Data);
    {
-@@ -4642,7 +4612,6 @@ ActionChangeName (int argc, char **argv, int x, int y)
+@@ -4641,7 +4611,6 @@ ActionChangeName (int argc, char **argv, int x, int y)
  
    if (function)
      {
@@ -250,7 +250,7 @@ index ea9a51f..dfe6f4d 100644
        switch (GetFunctionID (function))
  	{
  	  /* change the name of an object */
-@@ -4704,7 +4673,6 @@ ActionChangeName (int argc, char **argv, int x, int y)
+@@ -4703,7 +4672,6 @@ ActionChangeName (int argc, char **argv, int x, int y)
  	    SetChangedFlag (true);
  	  break;
  	}
@@ -258,7 +258,7 @@ index ea9a51f..dfe6f4d 100644
      }
    return 0;
  }
-@@ -4733,7 +4701,6 @@ ActionMorphPolygon (int argc, char **argv, int x, int y)
+@@ -4732,7 +4700,6 @@ ActionMorphPolygon (int argc, char **argv, int x, int y)
    char *function = ARG (0);
    if (function)
      {
@@ -266,7 +266,7 @@ index ea9a51f..dfe6f4d 100644
        switch (GetFunctionID (function))
  	{
  	case F_Object:
-@@ -4788,7 +4755,6 @@ ActionToggleHideName (int argc, char **argv, int x, int y)
+@@ -4787,7 +4754,6 @@ ActionToggleHideName (int argc, char **argv, int x, int y)
    char *function = ARG (0);
    if (function && PCB->ElementOn)
      {
@@ -274,7 +274,7 @@ index ea9a51f..dfe6f4d 100644
        switch (GetFunctionID (function))
  	{
  	case F_Object:
-@@ -4836,7 +4802,6 @@ ActionToggleHideName (int argc, char **argv, int x, int y)
+@@ -4835,7 +4801,6 @@ ActionToggleHideName (int argc, char **argv, int x, int y)
  	      }
  	  }
  	}
@@ -282,7 +282,7 @@ index ea9a51f..dfe6f4d 100644
      }
    return 0;
  }
-@@ -4865,7 +4830,6 @@ ActionChangeJoin (int argc, char **argv, int x, int y)
+@@ -4864,7 +4829,6 @@ ActionChangeJoin (int argc, char **argv, int x, int y)
    char *function = ARG (0);
    if (function)
      {
@@ -290,7 +290,7 @@ index ea9a51f..dfe6f4d 100644
        switch (GetFunctionID (function))
  	{
  	case F_ToggleObject:
-@@ -4899,7 +4863,6 @@ ActionChangeJoin (int argc, char **argv, int x, int y)
+@@ -4898,7 +4862,6 @@ ActionChangeJoin (int argc, char **argv, int x, int y)
  	    SetChangedFlag (true);
  	  break;
  	}
@@ -298,7 +298,7 @@ index ea9a51f..dfe6f4d 100644
      }
    return 0;
  }
-@@ -4928,7 +4891,6 @@ ActionChangeSquare (int argc, char **argv, int x, int y)
+@@ -4927,7 +4890,6 @@ ActionChangeSquare (int argc, char **argv, int x, int y)
    char *function = ARG (0);
    if (function)
      {
@@ -306,7 +306,7 @@ index ea9a51f..dfe6f4d 100644
        switch (GetFunctionID (function))
  	{
  	case F_ToggleObject:
-@@ -4962,7 +4924,6 @@ ActionChangeSquare (int argc, char **argv, int x, int y)
+@@ -4961,7 +4923,6 @@ ActionChangeSquare (int argc, char **argv, int x, int y)
  	    SetChangedFlag (true);
  	  break;
  	}
@@ -314,7 +314,7 @@ index ea9a51f..dfe6f4d 100644
      }
    return 0;
  }
-@@ -4988,7 +4949,6 @@ ActionSetSquare (int argc, char **argv, int x, int y)
+@@ -4987,7 +4948,6 @@ ActionSetSquare (int argc, char **argv, int x, int y)
    char *function = ARG (0);
    if (function && *function)
      {
@@ -322,7 +322,7 @@ index ea9a51f..dfe6f4d 100644
        switch (GetFunctionID (function))
  	{
  	case F_ToggleObject:
-@@ -5022,7 +4982,6 @@ ActionSetSquare (int argc, char **argv, int x, int y)
+@@ -5021,7 +4981,6 @@ ActionSetSquare (int argc, char **argv, int x, int y)
  	    SetChangedFlag (true);
  	  break;
  	}
@@ -330,7 +330,7 @@ index ea9a51f..dfe6f4d 100644
      }
    return 0;
  }
-@@ -5049,7 +5008,6 @@ ActionClearSquare (int argc, char **argv, int x, int y)
+@@ -5048,7 +5007,6 @@ ActionClearSquare (int argc, char **argv, int x, int y)
    char *function = ARG (0);
    if (function && *function)
      {
@@ -338,7 +338,7 @@ index ea9a51f..dfe6f4d 100644
        switch (GetFunctionID (function))
  	{
  	case F_ToggleObject:
-@@ -5083,7 +5041,6 @@ ActionClearSquare (int argc, char **argv, int x, int y)
+@@ -5082,7 +5040,6 @@ ActionClearSquare (int argc, char **argv, int x, int y)
  	    SetChangedFlag (true);
  	  break;
  	}
@@ -346,7 +346,7 @@ index ea9a51f..dfe6f4d 100644
      }
    return 0;
  }
-@@ -5109,7 +5066,6 @@ ActionChangeOctagon (int argc, char **argv, int x, int y)
+@@ -5108,7 +5065,6 @@ ActionChangeOctagon (int argc, char **argv, int x, int y)
    char *function = ARG (0);
    if (function)
      {
@@ -354,7 +354,7 @@ index ea9a51f..dfe6f4d 100644
        switch (GetFunctionID (function))
  	{
  	case F_ToggleObject:
-@@ -5148,7 +5104,6 @@ ActionChangeOctagon (int argc, char **argv, int x, int y)
+@@ -5147,7 +5103,6 @@ ActionChangeOctagon (int argc, char **argv, int x, int y)
  	    SetChangedFlag (true);
  	  break;
  	}
@@ -362,7 +362,7 @@ index ea9a51f..dfe6f4d 100644
      }
    return 0;
  }
-@@ -5172,7 +5127,6 @@ ActionSetOctagon (int argc, char **argv, int x, int y)
+@@ -5171,7 +5126,6 @@ ActionSetOctagon (int argc, char **argv, int x, int y)
    char *function = ARG (0);
    if (function)
      {
@@ -370,7 +370,7 @@ index ea9a51f..dfe6f4d 100644
        switch (GetFunctionID (function))
  	{
  	case F_ToggleObject:
-@@ -5211,7 +5165,6 @@ ActionSetOctagon (int argc, char **argv, int x, int y)
+@@ -5210,7 +5164,6 @@ ActionSetOctagon (int argc, char **argv, int x, int y)
  	    SetChangedFlag (true);
  	  break;
  	}
@@ -378,7 +378,7 @@ index ea9a51f..dfe6f4d 100644
      }
    return 0;
  }
-@@ -5237,7 +5190,6 @@ ActionClearOctagon (int argc, char **argv, int x, int y)
+@@ -5236,7 +5189,6 @@ ActionClearOctagon (int argc, char **argv, int x, int y)
    char *function = ARG (0);
    if (function)
      {
@@ -386,7 +386,7 @@ index ea9a51f..dfe6f4d 100644
        switch (GetFunctionID (function))
  	{
  	case F_ToggleObject:
-@@ -5276,7 +5228,6 @@ ActionClearOctagon (int argc, char **argv, int x, int y)
+@@ -5275,7 +5227,6 @@ ActionClearOctagon (int argc, char **argv, int x, int y)
  	    SetChangedFlag (true);
  	  break;
  	}
@@ -394,7 +394,7 @@ index ea9a51f..dfe6f4d 100644
      }
    return 0;
  }
-@@ -5301,7 +5252,6 @@ ActionChangeHole (int argc, char **argv, int x, int y)
+@@ -5300,7 +5251,6 @@ ActionChangeHole (int argc, char **argv, int x, int y)
    char *function = ARG (0);
    if (function)
      {
@@ -402,7 +402,7 @@ index ea9a51f..dfe6f4d 100644
        switch (GetFunctionID (function))
  	{
  	case F_ToggleObject:
-@@ -5324,7 +5274,6 @@ ActionChangeHole (int argc, char **argv, int x, int y)
+@@ -5323,7 +5273,6 @@ ActionChangeHole (int argc, char **argv, int x, int y)
  	    SetChangedFlag (true);
  	  break;
  	}
@@ -410,7 +410,7 @@ index ea9a51f..dfe6f4d 100644
      }
    return 0;
  }
-@@ -5351,7 +5300,6 @@ ActionChangePaste (int argc, char **argv, int x, int y)
+@@ -5350,7 +5299,6 @@ ActionChangePaste (int argc, char **argv, int x, int y)
    char *function = ARG (0);
    if (function)
      {
@@ -418,7 +418,7 @@ index ea9a51f..dfe6f4d 100644
        switch (GetFunctionID (function))
  	{
  	case F_ToggleObject:
-@@ -5374,7 +5322,6 @@ ActionChangePaste (int argc, char **argv, int x, int y)
+@@ -5373,7 +5321,6 @@ ActionChangePaste (int argc, char **argv, int x, int y)
  	    SetChangedFlag (true);
  	  break;
  	}
@@ -426,7 +426,7 @@ index ea9a51f..dfe6f4d 100644
      }
    return 0;
  }
-@@ -6615,7 +6562,6 @@ ActionMoveToCurrentLayer (int argc, char **argv, int x, int y)
+@@ -6614,7 +6561,6 @@ ActionMoveToCurrentLayer (int argc, char **argv, int x, int y)
    char *function = ARG (0);
    if (function)
      {
@@ -434,7 +434,7 @@ index ea9a51f..dfe6f4d 100644
        switch (GetFunctionID (function))
  	{
  	case F_Object:
-@@ -6638,7 +6584,6 @@ ActionMoveToCurrentLayer (int argc, char **argv, int x, int y)
+@@ -6637,7 +6583,6 @@ ActionMoveToCurrentLayer (int argc, char **argv, int x, int y)
  	    SetChangedFlag (true);
  	  break;
  	}
@@ -442,7 +442,7 @@ index ea9a51f..dfe6f4d 100644
      }
    return 0;
  }
-@@ -6843,7 +6788,6 @@ ChangeFlag (char *what, char *flag_name, int value, char *cmd_name)
+@@ -6842,7 +6787,6 @@ ChangeFlag (char *what, char *flag_name, int value, char *cmd_name)
        return;
      }
  
@@ -450,7 +450,7 @@ index ea9a51f..dfe6f4d 100644
    switch (GetFunctionID (what))
      {
      case F_Object:
-@@ -6902,8 +6846,6 @@ ChangeFlag (char *what, char *flag_name, int value, char *cmd_name)
+@@ -6901,8 +6845,6 @@ ChangeFlag (char *what, char *flag_name, int value, char *cmd_name)
  	SetChangedFlag (true);
        break;
      }
