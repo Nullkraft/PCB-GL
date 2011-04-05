@@ -1967,7 +1967,6 @@ ActionFlip (int argc, char **argv, int x, int y)
 
   if (function)
     {
-      HideCrosshair ();
       switch (GetFunctionID (function))
 	{
 	case F_Object:
@@ -1988,7 +1987,6 @@ ActionFlip (int argc, char **argv, int x, int y)
 	  err = 1;
 	  break;
 	}
-      RestoreCrosshair ();
       if (!err)
 	return 0;
     }
@@ -2075,7 +2073,6 @@ ActionSetThermal (int argc, char **argv, int x, int y)
       bool absolute;
 
       kind = GetValue (style, NULL, &absolute);
-      HideCrosshair ();
       if (absolute)
 	switch (GetFunctionID (function))
 	  {
@@ -2105,7 +2102,6 @@ ActionSetThermal (int argc, char **argv, int x, int y)
 	  }
       else
 	err = 1;
-      RestoreCrosshair ();
       if (!err)
 	return 0;
     }
@@ -2218,7 +2214,6 @@ ActionSetValue (int argc, char **argv, int x, int y)
 
   if (function && val)
     {
-      HideCrosshair ();
       value = GetValue (val, units, &absolute);
       switch (GetFunctionID (function))
 	{
@@ -2277,7 +2272,6 @@ ActionSetValue (int argc, char **argv, int x, int y)
 	  err = 1;
 	  break;
 	}
-      RestoreCrosshair ();
       if (!err)
 	return 0;
     }
@@ -2350,7 +2344,6 @@ ActionConnection (int argc, char **argv, int x, int y)
   char *function = ARG (0);
   if (function)
     {
-      HideCrosshair ();
       switch (GetFunctionID (function))
 	{
 	case F_Find:
@@ -2384,7 +2377,6 @@ ActionConnection (int argc, char **argv, int x, int y)
 	    }
 	  break;
 	}
-      RestoreCrosshair ();
       return 0;
     }
 
@@ -3289,10 +3281,8 @@ static const char removeselected_help[] = "Removes any selected objects.";
 static int
 ActionRemoveSelected (int argc, char **argv, int x, int y)
 {
-  HideCrosshair ();
   if (RemoveSelected ())
     SetChangedFlag (true);
-  RestoreCrosshair ();
   return 0;
 }
 
@@ -3687,7 +3677,6 @@ ActionRipUp (int argc, char **argv, int x, int y)
 
   if (function)
     {
-      HideCrosshair ();
       switch (GetFunctionID (function))
 	{
 	case F_All:
@@ -3770,7 +3759,6 @@ ActionRipUp (int argc, char **argv, int x, int y)
 	  }
 	  break;
 	}
-      RestoreCrosshair ();
     }
   return 0;
 }
@@ -3811,7 +3799,6 @@ ActionAddRats (int argc, char **argv, int x, int y)
     {
       if (Settings.RatWarn)
 	ClearWarnings ();
-      HideCrosshair ();
       switch (GetFunctionID (function))
 	{
 	case F_AllRats:
@@ -3851,7 +3838,6 @@ ActionAddRats (int argc, char **argv, int x, int y)
 	    }
 	  break;
 	}
-      RestoreCrosshair ();
     }
   return 0;
 }
@@ -3883,7 +3869,6 @@ ActionDelete (int argc, char **argv, int x, int y)
 	id = F_Object;
     }
 
-  HideCrosshair ();
   switch (id)
     {
     case F_Object:
@@ -3905,7 +3890,6 @@ ActionDelete (int argc, char **argv, int x, int y)
       break;
     }
 
-  RestoreCrosshair ();
   return 0;
 }
 
@@ -3928,7 +3912,6 @@ ActionDeleteRats (int argc, char **argv, int x, int y)
     {
       if (Settings.RatWarn)
 	ClearWarnings ();
-      HideCrosshair ();
       switch (GetFunctionID (function))
 	{
 	case F_AllRats:
@@ -3941,7 +3924,6 @@ ActionDeleteRats (int argc, char **argv, int x, int y)
 	    SetChangedFlag (true);
 	  break;
 	}
-      RestoreCrosshair ();
     }
   return 0;
 }
@@ -3966,10 +3948,8 @@ ActionAutoPlaceSelected (int argc, char **argv, int x, int y)
   if (gui->confirm_dialog (_("Auto-placement can NOT be undone.\n"
 			     "Do you want to continue anyway?\n"), 0))
     {
-      HideCrosshair ();
       if (AutoPlaceSelected ())
 	SetChangedFlag (true);
-      RestoreCrosshair ();
     }
   return 0;
 }
@@ -4010,7 +3990,6 @@ ActionAutoRoute (int argc, char **argv, int x, int y)
   hid_action("Busy");
   if (function)			/* one parameter */
     {
-      HideCrosshair ();
       switch (GetFunctionID (function))
 	{
 	case F_AllRats:
@@ -4023,7 +4002,6 @@ ActionAutoRoute (int argc, char **argv, int x, int y)
 	    SetChangedFlag (true);
 	  break;
 	}
-      RestoreCrosshair ();
     }
   return 0;
 }
@@ -4113,7 +4091,6 @@ ActionChangeSize (int argc, char **argv, int x, int y)
   if (function && delta)
     {
       value = GetValue (delta, units, &absolute);
-      HideCrosshair ();
       switch (GetFunctionID (function))
 	{
 	case F_Object:
@@ -4177,7 +4154,6 @@ ActionChangeSize (int argc, char **argv, int x, int y)
 	    SetChangedFlag (true);
 	  break;
 	}
-      RestoreCrosshair ();
     }
   return 0;
 }
@@ -4207,7 +4183,6 @@ ActionChange2ndSize (int argc, char **argv, int x, int y)
   if (function && delta)
     {
       value = GetValue (delta, units, &absolute);
-      HideCrosshair ();
       switch (GetFunctionID (function))
 	{
 	case F_Object:
@@ -4240,7 +4215,6 @@ ActionChange2ndSize (int argc, char **argv, int x, int y)
 	    SetChangedFlag (true);
 	  break;
 	}
-      RestoreCrosshair ();
     }
   return 0;
 }
@@ -4276,7 +4250,6 @@ ActionChangeClearSize (int argc, char **argv, int x, int y)
   if (function && delta)
     {
       value = 2 * GetValue (delta, units, &absolute);
-      HideCrosshair ();
       switch (GetFunctionID (function))
 	{
 	case F_Object:
@@ -4319,7 +4292,6 @@ ActionChangeClearSize (int argc, char **argv, int x, int y)
 	    SetChangedFlag (true);
 	  break;
 	}
-      RestoreCrosshair ();
     }
   return 0;
 }
@@ -4363,7 +4335,6 @@ ActionMinMaskGap (int argc, char **argv, int x, int y)
     }
   value = 2 * GetValue (delta, units, &absolute);
 
-  HideCrosshair ();
   SaveUndoSerialNumber ();
   ELEMENT_LOOP (PCB->Data);
   {
@@ -4448,7 +4419,6 @@ ActionMinClearGap (int argc, char **argv, int x, int y)
     }
   value = 2 * GetValue (delta, units, &absolute);
 
-  HideCrosshair ();
   SaveUndoSerialNumber ();
   ELEMENT_LOOP (PCB->Data);
   {
@@ -4642,7 +4612,6 @@ ActionChangeName (int argc, char **argv, int x, int y)
 
   if (function)
     {
-      HideCrosshair ();
       switch (GetFunctionID (function))
 	{
 	  /* change the name of an object */
@@ -4704,7 +4673,6 @@ ActionChangeName (int argc, char **argv, int x, int y)
 	    SetChangedFlag (true);
 	  break;
 	}
-      RestoreCrosshair ();
     }
   return 0;
 }
@@ -4733,7 +4701,6 @@ ActionMorphPolygon (int argc, char **argv, int x, int y)
   char *function = ARG (0);
   if (function)
     {
-      HideCrosshair ();
       switch (GetFunctionID (function))
 	{
 	case F_Object:
@@ -4788,7 +4755,6 @@ ActionToggleHideName (int argc, char **argv, int x, int y)
   char *function = ARG (0);
   if (function && PCB->ElementOn)
     {
-      HideCrosshair ();
       switch (GetFunctionID (function))
 	{
 	case F_Object:
@@ -4836,7 +4802,6 @@ ActionToggleHideName (int argc, char **argv, int x, int y)
 	      }
 	  }
 	}
-      RestoreCrosshair ();
     }
   return 0;
 }
@@ -4865,7 +4830,6 @@ ActionChangeJoin (int argc, char **argv, int x, int y)
   char *function = ARG (0);
   if (function)
     {
-      HideCrosshair ();
       switch (GetFunctionID (function))
 	{
 	case F_ToggleObject:
@@ -4899,7 +4863,6 @@ ActionChangeJoin (int argc, char **argv, int x, int y)
 	    SetChangedFlag (true);
 	  break;
 	}
-      RestoreCrosshair ();
     }
   return 0;
 }
@@ -4928,7 +4891,6 @@ ActionChangeSquare (int argc, char **argv, int x, int y)
   char *function = ARG (0);
   if (function)
     {
-      HideCrosshair ();
       switch (GetFunctionID (function))
 	{
 	case F_ToggleObject:
@@ -4962,7 +4924,6 @@ ActionChangeSquare (int argc, char **argv, int x, int y)
 	    SetChangedFlag (true);
 	  break;
 	}
-      RestoreCrosshair ();
     }
   return 0;
 }
@@ -4988,7 +4949,6 @@ ActionSetSquare (int argc, char **argv, int x, int y)
   char *function = ARG (0);
   if (function && *function)
     {
-      /* HideCrosshair (); */
       switch (GetFunctionID (function))
 	{
 	case F_ToggleObject:
@@ -5022,7 +4982,6 @@ ActionSetSquare (int argc, char **argv, int x, int y)
 	    SetChangedFlag (true);
 	  break;
 	}
-      /* RestoreCrosshair (); */
     }
   return 0;
 }
@@ -5049,7 +5008,6 @@ ActionClearSquare (int argc, char **argv, int x, int y)
   char *function = ARG (0);
   if (function && *function)
     {
-      /* HideCrosshair (); */
       switch (GetFunctionID (function))
 	{
 	case F_ToggleObject:
@@ -5083,7 +5041,6 @@ ActionClearSquare (int argc, char **argv, int x, int y)
 	    SetChangedFlag (true);
 	  break;
 	}
-      /* RestoreCrosshair (); */
     }
   return 0;
 }
@@ -5109,7 +5066,6 @@ ActionChangeOctagon (int argc, char **argv, int x, int y)
   char *function = ARG (0);
   if (function)
     {
-      /* HideCrosshair (); */
       switch (GetFunctionID (function))
 	{
 	case F_ToggleObject:
@@ -5148,7 +5104,6 @@ ActionChangeOctagon (int argc, char **argv, int x, int y)
 	    SetChangedFlag (true);
 	  break;
 	}
-      /* RestoreCrosshair (); */
     }
   return 0;
 }
@@ -5172,7 +5127,6 @@ ActionSetOctagon (int argc, char **argv, int x, int y)
   char *function = ARG (0);
   if (function)
     {
-      /* HideCrosshair (); */
       switch (GetFunctionID (function))
 	{
 	case F_ToggleObject:
@@ -5211,7 +5165,6 @@ ActionSetOctagon (int argc, char **argv, int x, int y)
 	    SetChangedFlag (true);
 	  break;
 	}
-      /* RestoreCrosshair (); */
     }
   return 0;
 }
@@ -5237,7 +5190,6 @@ ActionClearOctagon (int argc, char **argv, int x, int y)
   char *function = ARG (0);
   if (function)
     {
-      /* HideCrosshair (); */
       switch (GetFunctionID (function))
 	{
 	case F_ToggleObject:
@@ -5276,7 +5228,6 @@ ActionClearOctagon (int argc, char **argv, int x, int y)
 	    SetChangedFlag (true);
 	  break;
 	}
-      /* RestoreCrosshair (); */
     }
   return 0;
 }
@@ -5301,7 +5252,6 @@ ActionChangeHole (int argc, char **argv, int x, int y)
   char *function = ARG (0);
   if (function)
     {
-      /* HideCrosshair (); */
       switch (GetFunctionID (function))
 	{
 	case F_ToggleObject:
@@ -5324,7 +5274,6 @@ ActionChangeHole (int argc, char **argv, int x, int y)
 	    SetChangedFlag (true);
 	  break;
 	}
-      /* RestoreCrosshair (); */
     }
   return 0;
 }
@@ -5351,7 +5300,6 @@ ActionChangePaste (int argc, char **argv, int x, int y)
   char *function = ARG (0);
   if (function)
     {
-      /* HideCrosshair (); */
       switch (GetFunctionID (function))
 	{
 	case F_ToggleObject:
@@ -5374,7 +5322,6 @@ ActionChangePaste (int argc, char **argv, int x, int y)
 	    SetChangedFlag (true);
 	  break;
 	}
-      /* RestoreCrosshair (); */
     }
   return 0;
 }
@@ -6615,7 +6562,6 @@ ActionMoveToCurrentLayer (int argc, char **argv, int x, int y)
   char *function = ARG (0);
   if (function)
     {
-      HideCrosshair ();
       switch (GetFunctionID (function))
 	{
 	case F_Object:
@@ -6638,7 +6584,6 @@ ActionMoveToCurrentLayer (int argc, char **argv, int x, int y)
 	    SetChangedFlag (true);
 	  break;
 	}
-      RestoreCrosshair ();
     }
   return 0;
 }
@@ -6843,7 +6788,6 @@ ChangeFlag (char *what, char *flag_name, int value, char *cmd_name)
       return;
     }
 
-  HideCrosshair ();
   switch (GetFunctionID (what))
     {
     case F_Object:
@@ -6902,8 +6846,6 @@ ChangeFlag (char *what, char *flag_name, int value, char *cmd_name)
 	SetChangedFlag (true);
       break;
     }
-  RestoreCrosshair ();
-
 }
 
 /* --------------------------------------------------------------------------- */
