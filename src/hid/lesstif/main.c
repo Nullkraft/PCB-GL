@@ -2882,17 +2882,33 @@ lesstif_invalidate_all (void)
 static void
 lesstif_notify_crosshair_change (bool changes_complete)
 {
+  static int invalidate_depth = 0;
+
   if (changes_complete)
-    CrosshairOn ();
+    {
+      invalidate_depth --;
+      if (invalidate_depth < 0)
+        {
+          fprintf (stderr, "ERROR: Unmatched notify crosshair calls\n");
+          invalidate_depth = 0;
+        }
+      if (invalidate_depth == 0)
+        CrosshairOn ();
+    }
   else
-    CrosshairOff ();
+    {
+      if (invalidate_depth == 0)
+        CrosshairOff ();
+      invalidate_depth ++;
+    }
 }
 
 static void
 lesstif_notify_mark_change (bool changes_complete)
 {
   if (!Marked.status)
-    return
+    return;
+
   DrawMark ();
 }
 
