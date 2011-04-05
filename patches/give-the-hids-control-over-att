@@ -9,16 +9,12 @@ This is required if the HID doesn't want to follow the current drawing
 model where it is assumed the core can call the HID's drawing APIs at
 any arbitrary point in time.
 
-The idea stemmed here:
+Expose some API from crosshair.c to perform the actual drawing on
+demand, and add a hook to the HID structure to notify the GUI when
+it would previously have called the drawing routines directly.
 
-  Place drawing of crosshair attached objects under the control of the HID
-
-  This allows GUIs which have defined setup and tear-down requirements
-  before drawing to manage when these objects are drawn.
-
-  Expose some API from crosshair.c to perform the actual drawing on
-  demand, and add a hook to the HID structure to notify the GUI when
-  it would previously have called the drawing routines directly.
+This allows GUIs which have defined setup and tear-down requirements
+around drawing to execute them before the objects are drawn.
 
 FIXME: This patch got rather out of hand, and has broken various things..
 
