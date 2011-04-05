@@ -1,5 +1,5 @@
 Bottom: 533fc1c1f7041459dcd484e8428d0db4f688144f
-Top:    204a742b60775fa02ec358ae1cfcde75cb97a8d3
+Top:    afcdb87adcc8c55a2e99b752edc918f4db4f7f47
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-03 00:16:52 +0100
 
@@ -1686,7 +1686,7 @@ index 69bd992..998e2a0 100644
  void ghid_init_renderer (int *, char ***, GHidPort *);
  void ghid_init_drawing_widget (GtkWidget *widget, GHidPort *);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 2f00577..9324385 100644
+index 2f00577..422e83b 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -1311,12 +1311,12 @@ mod_changed (XKeyEvent * e, int set)
@@ -1740,31 +1740,47 @@ index 2f00577..9324385 100644
          break;
        }
  
-@@ -2879,6 +2879,23 @@ lesstif_invalidate_all (void)
+@@ -2879,6 +2879,39 @@ lesstif_invalidate_all (void)
    lesstif_invalidate_lr (0, PCB->MaxWidth, 0, PCB->MaxHeight);
  }
  
 +static void
 +lesstif_notify_crosshair_change (bool changes_complete)
 +{
++  static int invalidate_depth = 0;
++
 +  if (changes_complete)
-+    CrosshairOn ();
++    {
++      invalidate_depth --;
++      if (invalidate_depth < 0)
++        {
++          fprintf (stderr, "ERROR: Unmatched notify crosshair calls\n");
++          invalidate_depth = 0;
++        }
++      if (invalidate_depth == 0)
++        CrosshairOn ();
++    }
 +  else
-+    CrosshairOff ();
++    {
++      if (invalidate_depth == 0)
++        CrosshairOff ();
++      invalidate_depth ++;
++    }
 +}
 +
 +static void
 +lesstif_notify_mark_change (bool changes_complete)
 +{
 +  if (!Marked.status)
-+    return
++    return;
++
 +  DrawMark ();
 +}
 +
  static int
  lesstif_set_layer (const char *name, int group, int empty)
  {
-@@ -3812,6 +3829,8 @@ HID lesstif_gui = {
+@@ -3812,6 +3845,8 @@ HID lesstif_gui = {
    lesstif_parse_arguments,
    lesstif_invalidate_lr,
    lesstif_invalidate_all,
