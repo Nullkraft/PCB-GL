@@ -1,5 +1,5 @@
 Bottom: 72cdc2af69ebdaf1abaf38e6ea20f9062b8e26fc
-Top:    72cdc2af69ebdaf1abaf38e6ea20f9062b8e26fc
+Top:    3d1870b85b2e6ce2b93cc79e722cb7045b891243
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 00:59:00 +0100
 
@@ -11,4 +11,15 @@ Left from commit 089fbaf59c78fe75475db737e7e2827cd745d570
 
 ---
 
-
+diff --git a/src/action.c b/src/action.c
+index b83325b..59e8139 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -2748,7 +2748,6 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+ 	  break;
+ 
+ 	case F_CycleCrosshair:
+-	  //Crosshair.shape++;
+ 	  Crosshair.shape = CrosshairShapeIncrement(Crosshair.shape);
+ 	  if (Crosshair_Shapes_Number == Crosshair.shape)
+ 	    Crosshair.shape = Basic_Crosshair_Shape;
