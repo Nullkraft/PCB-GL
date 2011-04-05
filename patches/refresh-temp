@@ -1,0 +1,49 @@
+Bottom: 204a742b60775fa02ec358ae1cfcde75cb97a8d3
+Top:    afcdb87adcc8c55a2e99b752edc918f4db4f7f47
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-06 00:32:10 +0100
+
+Refresh of give-the-hids-control-over-att
+
+---
+
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 9324385..422e83b 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -2882,17 +2882,33 @@ lesstif_invalidate_all (void)
+ static void
+ lesstif_notify_crosshair_change (bool changes_complete)
+ {
++  static int invalidate_depth = 0;
++
+   if (changes_complete)
+-    CrosshairOn ();
++    {
++      invalidate_depth --;
++      if (invalidate_depth < 0)
++        {
++          fprintf (stderr, "ERROR: Unmatched notify crosshair calls\n");
++          invalidate_depth = 0;
++        }
++      if (invalidate_depth == 0)
++        CrosshairOn ();
++    }
+   else
+-    CrosshairOff ();
++    {
++      if (invalidate_depth == 0)
++        CrosshairOff ();
++      invalidate_depth ++;
++    }
+ }
+ 
+ static void
+ lesstif_notify_mark_change (bool changes_complete)
+ {
+   if (!Marked.status)
+-    return
++    return;
++
+   DrawMark ();
+ }
