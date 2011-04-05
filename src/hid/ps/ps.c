@@ -1354,6 +1354,7 @@ HID ps_hid = {
   0 /* ps_invalidate_lr */ ,
   0 /* ps_invalidate_all */ ,
   0 /* ps_notify_crosshair_change */ ,
+  0 /* ps_notify_mark_change */ ,
   ps_set_layer,
   ps_make_gc,
   ps_destroy_gc,

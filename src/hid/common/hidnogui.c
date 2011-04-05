@@ -421,6 +421,7 @@ HID hid_nogui = {
   nogui_invalidate_lr,
   nogui_invalidate_all,
   0 /* nogui_notify_crosshair_change */ ,
+  0 /* nogui_notify_mark_change */ ,
   nogui_set_layer,
   nogui_make_gc,
   nogui_destroy_gc,

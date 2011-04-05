@@ -356,6 +356,7 @@ HID batch_gui = {
   batch_invalidate_lr,
   batch_invalidate_all,
   0 /* batch_notify_crosshair_change */,
+  0 /* batch_notify_mark_change */,
   batch_set_layer,
   batch_make_gc,
   batch_destroy_gc,

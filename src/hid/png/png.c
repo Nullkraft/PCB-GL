@@ -1528,6 +1528,7 @@ HID png_hid = {
   0 /* png_invalidate_lr */ ,
   0 /* png_invalidate_all */ ,
   0 /* png_notify_crosshair_change */ ,
+  0 /* png_notify_mark_change */ ,
   png_set_layer,
   png_make_gc,
   png_destroy_gc,

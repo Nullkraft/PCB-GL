@@ -1352,7 +1352,6 @@ work_area_input (Widget w, XtPointer v, XEvent * e, Boolean * ctd)
 	}
         ignore_release = 0;
 
-        HideCrosshair ();
         notify_crosshair_change (false);
         pressed_button = e->xbutton.button;
         mods = ((e->xbutton.state & ShiftMask) ? M_Shift : 0)
@@ -2880,13 +2879,21 @@ lesstif_invalidate_all (void)
   lesstif_invalidate_lr (0, PCB->MaxWidth, 0, PCB->MaxHeight);
 }
 
-void
-lesstif_notify crosshair_change (bool changes_complete)
+static void
+lesstif_notify_crosshair_change (bool changes_complete)
 {
   if (changes_complete)
     CrosshairOn ();
   else
     CrosshairOff ();
+}
+
+static void
+lesstif_notify_mark_change (bool changes_complete)
+{
+  if (!Marked.status)
+    return
+  DrawMark ();
 }
 
 static int
@@ -3823,6 +3830,7 @@ HID lesstif_gui = {
   lesstif_invalidate_lr,
   lesstif_invalidate_all,
   lesstif_notify_crosshair_change,
+  lesstif_notify_mark_change,
   lesstif_set_layer,
   lesstif_make_gc,
   lesstif_destroy_gc,

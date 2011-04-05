@@ -65,6 +65,7 @@ static HID eps_hid = {
   0 /* eps_invalidate_lr */ ,
   0 /* eps_invalidate_all */ ,
   0 /* eps_notify_crosshair_change */ ,
+  0 /* eps_notify_mark_change */ ,
   eps_set_layer,
   eps_make_gc,
   eps_destroy_gc,

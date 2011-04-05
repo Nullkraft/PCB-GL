@@ -122,6 +122,7 @@ HID lpr_hid = {
   0 /* lpr_invalidate_lr */ ,
   0 /* lpr_invalidate_all */ ,
   0 /* lpr_notify_crosshair_change */ ,
+  0 /* lpr_notify_mark_change */ ,
   0 /* lpr_set_layer */ ,
   0 /* lpr_make_gc */ ,
   0 /* lpr_destroy_gc */ ,
