@@ -1,5 +1,5 @@
 Bottom: 6fe12a9388185384d9e1b8e7615a887326e434bd
-Top:    21c4a9a343ca12d8b01ae5beff2ffa49fbbd8a76
+Top:    ff6b57b8ce3af09323bea7f9e8ed4c0a1450a339
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:11 +0100
 
@@ -882,10 +882,10 @@ index 8f04180..94d73e3 100644
    gerber_make_gc,
    gerber_destroy_gc,
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index ba58d5d..bf42d86 100644
+index ba58d5d..e72aa65 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -770,12 +770,35 @@ ghid_invalidate_all ()
+@@ -770,12 +770,67 @@ ghid_invalidate_all ()
  
    hid_expose_callback (&ghid_hid, &region, 0);
    ghid_draw_grid ();
@@ -902,22 +902,54 @@ index ba58d5d..bf42d86 100644
 +void
 +ghid_notify_crosshair_change (bool changes_complete)
 +{
++  static int invalidate_depth = 0;
++
 +  /* FIXME: We sometimes get called before the GUI is up */
 +  if (gport->drawing_area == NULL)
 +    return;
 +
 +  if (changes_complete)
++    invalidate_depth --;
++
++  if (invalidate_depth < 0)
++    {
++      fprintf (stderr, "ERROR: Unmatched notify_crosshair_change calls\n");
++      invalidate_depth = 0;
++    }
++
++  if (invalidate_depth == 0)
++    DrawAttached ();
++
++  if (!changes_complete)
++    invalidate_depth ++;
++  else if (gport->drawing_area != NULL)
 +    ghid_draw_area_update (gport, NULL);
 +}
 +
 +void
 +ghid_notify_mark_change (bool changes_complete)
 +{
++  static int invalidate_depth = 0;
++
 +  /* FIXME: We sometimes get called before the GUI is up */
 +  if (gport->drawing_area == NULL)
 +    return;
 +
 +  if (changes_complete)
++    invalidate_depth --;
++
++  if (invalidate_depth < 0)
++    {
++      fprintf (stderr, "ERROR: Unmatched notify_mark_change calls\n");
++      invalidate_depth = 0;
++    }
++
++  if (invalidate_depth == 0)
++    DrawMark ();
++
++  if (!changes_complete)
++    invalidate_depth ++;
++  else
 +    ghid_draw_area_update (gport, NULL);
 +}
 +
@@ -1122,7 +1154,7 @@ index 97ebb1c..651a746 100644
  void ghid_init_renderer (int *, char ***, GHidPort *);
  void ghid_init_drawing_widget (GtkWidget *widget, GHidPort *);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 2f00577..5f3da73 100644
+index 2f00577..2a27086 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -1311,12 +1311,12 @@ mod_changed (XKeyEvent * e, int set)
@@ -1201,43 +1233,43 @@ index 2f00577..5f3da73 100644
 +static void
 +lesstif_notify_crosshair_change (bool changes_complete)
 +{
-+  static int invalidate_count = 0;
++  static int invalidate_depth = 0;
 +
 +  if (changes_complete)
-+    invalidate_count --;
++    invalidate_depth --;
 +
-+  if (invalidate_count < 0)
++  if (invalidate_depth < 0)
 +    {
 +      fprintf (stderr, "ERROR: Unmatched notify_crosshair_change calls\n");
 +      invalidate_depth = 0;
 +    }
 +
-+  if (invalidate_count == 0)
++  if (invalidate_depth == 0)
 +    DrawAttached ();
 +
 +  if (!changes_complete)
-+    invalidate_count ++;
++    invalidate_depth ++;
 +}
 +
 +static void
 +lesstif_notify_mark_change (bool changes_complete)
 +{
-+  static int invalidate_count = 0;
++  static int invalidate_depth = 0;
 +
 +  if (changes_complete)
-+    invalidate_count --;
++    invalidate_depth --;
 +
-+  if (invalidate_count < 0)
++  if (invalidate_depth < 0)
 +    {
 +      fprintf (stderr, "ERROR: Unmatched notify_mark_change calls\n");
 +      invalidate_depth = 0;
 +    }
 +
-+  if (invalidate_count == 0)
++  if (invalidate_depth == 0)
 +    DrawMark ();
 +
 +  if (!changes_complete)
-+    invalidate_count ++;
++    invalidate_depth ++;
 +}
 +
  static int
