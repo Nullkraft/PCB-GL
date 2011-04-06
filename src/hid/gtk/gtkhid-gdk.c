@@ -771,8 +771,8 @@ ghid_invalidate_all ()
   hid_expose_callback (&ghid_hid, &region, 0);
   ghid_draw_grid ();
 
-  Crosshair.On = false;
-  CrosshairOn ();
+  DrawAttached ();
+  DrawMark ();
 
   ghid_screen_update ();
 }
@@ -780,29 +780,23 @@ ghid_invalidate_all ()
 void
 ghid_notify_crosshair_change (bool changes_complete)
 {
-  /* FIXME: This is because we sometimes get called before the GUI up */
+  /* FIXME: We sometimes get called before the GUI is up */
   if (gport->drawing_area == NULL)
     return;
 
   if (changes_complete)
-    CrosshairOn ();
-  else
-    CrosshairOff ();
-  ghid_draw_area_update (gport, NULL);
+    ghid_draw_area_update (gport, NULL);
 }
 
 void
 ghid_notify_mark_change (bool changes_complete)
 {
-  /* FIXME: This is because we sometimes get called before the GUI up */
+  /* FIXME: We sometimes get called before the GUI is up */
   if (gport->drawing_area == NULL)
     return;
 
-  if (!Marked.status)
-    return;
-
-  DrawMark (); /* NB: This is an XOR drawing operation */
-  ghid_draw_area_update (gport, NULL);
+  if (changes_complete)
+    ghid_draw_area_update (gport, NULL);
 }
 
 static void

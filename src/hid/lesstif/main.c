@@ -2434,7 +2434,6 @@ idle_proc (XtPointer dummy)
       int mx, my;
       BoxType region;
       lesstif_use_mask (0);
-      Crosshair.On = 0;
       pixmap = main_pixmap;
       mx = view_width;
       my = view_height;
@@ -2520,7 +2519,8 @@ idle_proc (XtPointer dummy)
       XCopyArea (display, main_pixmap, window, my_gc, 0, 0, view_width,
 		 view_height, 0, 0);
       pixmap = window;
-      CrosshairOn ();
+      DrawAttached ();
+      DrawMark ();
       need_redraw = 0;
     }
 
@@ -2882,34 +2882,43 @@ lesstif_invalidate_all (void)
 static void
 lesstif_notify_crosshair_change (bool changes_complete)
 {
-  static int invalidate_depth = 0;
+  static int invalidate_count = 0;
 
   if (changes_complete)
+    invalidate_count --;
+
+  if (invalidate_count < 0)
     {
-      invalidate_depth --;
-      if (invalidate_depth < 0)
-        {
-          fprintf (stderr, "ERROR: Unmatched notify crosshair calls\n");
-          invalidate_depth = 0;
-        }
-      if (invalidate_depth == 0)
-        CrosshairOn ();
+      fprintf (stderr, "ERROR: Unmatched notify_crosshair_change calls\n");
+      invalidate_depth = 0;
     }
-  else
-    {
-      if (invalidate_depth == 0)
-        CrosshairOff ();
-      invalidate_depth ++;
-    }
+
+  if (invalidate_count == 0)
+    DrawAttached ();
+
+  if (!changes_complete)
+    invalidate_count ++;
 }
 
 static void
 lesstif_notify_mark_change (bool changes_complete)
 {
-  if (!Marked.status)
-    return;
+  static int invalidate_count = 0;
 
-  DrawMark ();
+  if (changes_complete)
+    invalidate_count --;
+
+  if (invalidate_count < 0)
+    {
+      fprintf (stderr, "ERROR: Unmatched notify_mark_change calls\n");
+      invalidate_depth = 0;
+    }
+
+  if (invalidate_count == 0)
+    DrawMark ();
+
+  if (!changes_complete)
+    invalidate_count ++;
 }
 
 static int
