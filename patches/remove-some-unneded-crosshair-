@@ -3,7 +3,10 @@ Top:    6bf0db8bb9b6523193f842e332042c2f0d3a3c81
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 00:32:26 +0100
 
-Remove some unneded crosshair invalidation
+action.c: Remove some unneded crosshair hide/restore calls
+
+Removed calls from various actions which should not have any effect
+on the objects drawn attached to the crosshair.
 
 
 ---
