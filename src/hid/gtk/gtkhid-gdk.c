@@ -770,10 +770,33 @@ ghid_invalidate_all ()
 
   hid_expose_callback (&ghid_hid, &region, 0);
   ghid_draw_grid ();
-  if (ghidgui->need_restore_crosshair)
-    RestoreCrosshair ();
-  ghidgui->need_restore_crosshair = FALSE;
+
+  DrawAttached ();
+  DrawMark ();
+
   ghid_screen_update ();
+}
+
+void
+ghid_notify_crosshair_change (bool changes_complete)
+{
+  /* FIXME: We sometimes get called before the GUI is up */
+  if (gport->drawing_area == NULL)
+    return;
+
+  if (changes_complete)
+    ghid_draw_area_update (gport, NULL);
+}
+
+void
+ghid_notify_mark_change (bool changes_complete)
+{
+  /* FIXME: We sometimes get called before the GUI is up */
+  if (gport->drawing_area == NULL)
+    return;
+
+  if (changes_complete)
+    ghid_draw_area_update (gport, NULL);
 }
 
 static void
