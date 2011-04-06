@@ -1,5 +1,5 @@
-Bottom: 09240e55d41e85d503ca64d3da6d93c9cfad15a5
-Top:    8bca7608be50ac5dfc379261cd646b21612fdf74
+Bottom: cbb8fee7aa44e873407886f8adb9c6bd5f7ddd59
+Top:    0c8a718dd4fd7df8381456f520305694ea81b55b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-03 00:16:57 +0100
 
@@ -15,7 +15,7 @@ way to turn it off would also be useful.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 8a88f91..2eaa1a2 100644
+index 9b193bd..cd04792 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -670,6 +670,12 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
@@ -114,10 +114,10 @@ index b4b3fa5..7bf906a 100644
  {
    USE_GC (gc);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index ee80e65..fb496f0 100644
+index 538a60e..2f1c02a 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -1005,7 +1005,7 @@ HID ghid_hid = {
+@@ -1006,7 +1006,7 @@ HID ghid_hid = {
    ghid_fill_circle,
    ghid_fill_polygon,
    ghid_fill_pcb_polygon,
@@ -127,7 +127,7 @@ index ee80e65..fb496f0 100644
  
    ghid_calibrate,
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index c7839f6..ae10fac 100644
+index 081f2b3..fb3a920 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -493,6 +493,8 @@ void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);

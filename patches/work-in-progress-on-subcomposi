@@ -1,5 +1,5 @@
-Bottom: 7121332f386fb1eca6e487d1f9622e4ab84e9b8b
-Top:    d22119b276c3766764ec3b7c9feb02ceeb128a47
+Bottom: 638c8e68745c35d5a5f4e8d333d3be399131cfad
+Top:    6b9175c96ee84ebdb2eed0c5931f54d0b3713988
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-03 00:16:56 +0100
 
@@ -133,7 +133,7 @@ index 815ac5e..49cc20a 100644
  
  	  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
 diff --git a/src/hid.h b/src/hid.h
-index 1990f6e..1b1c08c 100644
+index 7779f84..c8d9e3d 100644
 --- a/src/hid.h
 +++ b/src/hid.h
 @@ -207,6 +207,7 @@ extern "C"
@@ -407,10 +407,10 @@ index 99ffffc..9dd76e3 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index b8587d6..37901d3 100644
+index 94d73e3..6f1c385 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
-@@ -570,6 +570,9 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -571,6 +571,9 @@ gerber_set_layer (const char *name, int group, int empty)
  	     && group <
  	     max_group) ? PCB->LayerGroups.Entries[group][0] : group;
  
@@ -612,7 +612,7 @@ index 6a6b74c..b4b3fa5 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index e20068e..4c4925d 100644
+index 6b131ad..47b4ccb 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -705,6 +705,10 @@ nelma_set_layer(const char *name, int group, int empty)
@@ -627,7 +627,7 @@ index e20068e..4c4925d 100644
  		name = PCB->Data->Layer[idx].Name;
  	}
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 017d517..7a6640e 100644
+index 8817431..386e81c 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -897,6 +897,10 @@ png_set_layer (const char *name, int group, int empty)
@@ -642,10 +642,10 @@ index 017d517..7a6640e 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index 03cceb6..5dcf033 100644
+index 97f9d41..266a4e6 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
-@@ -392,6 +392,10 @@ eps_set_layer (const char *name, int group, int empty)
+@@ -393,6 +393,10 @@ eps_set_layer (const char *name, int group, int empty)
    int idx = (group >= 0
  	     && group <
  	     max_group) ? PCB->LayerGroups.Entries[group][0] : group;
@@ -657,7 +657,7 @@ index 03cceb6..5dcf033 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 85c3674..12fd18c 100644
+index 822f5bd..6b8231f 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -651,6 +651,10 @@ ps_set_layer (const char *name, int group, int empty)
