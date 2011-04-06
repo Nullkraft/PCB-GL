@@ -1,0 +1,13 @@
+Bottom: 7da0e0eb0bd7b9fb5903b6c84cd326db44dfd1d1
+Top:    7da0e0eb0bd7b9fb5903b6c84cd326db44dfd1d1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-06 19:41:56 +0100
+
+Don't issue CrosshairOff() from the DestroyCrosshair() function.
+
+We shouldn't assume we can make call GUI calls at this point.
+
+
+---
+
+
