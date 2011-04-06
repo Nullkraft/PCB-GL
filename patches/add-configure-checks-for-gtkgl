@@ -1,7 +1,7 @@
-Bottom: afcdb87adcc8c55a2e99b752edc918f4db4f7f47
-Top:    79a03f6cb13cdfaeffbef150cd98b7028010bb0b
+Bottom: f588b7f9669da20e36f1e887150469d11abe653b
+Top:    087abbb5ac7551aca4e8708176f92a412ac0e2a7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-03 00:16:52 +0100
+Date:   2011-04-06 01:47:12 +0100
 
 Add configure checks for GL, glu and GtkGLEext, add to CFLAGS and LIBS
 
@@ -9,7 +9,7 @@ Add configure checks for GL, glu and GtkGLEext, add to CFLAGS and LIBS
 ---
 
 diff --git a/configure.ac b/configure.ac
-index 87814cd..bee58a6 100644
+index ab6986f..2637495 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -389,6 +389,46 @@ $DBUS_PKG_ERRORS])]
