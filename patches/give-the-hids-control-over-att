@@ -1,5 +1,5 @@
-Bottom: 4d3cb806f540ab24c1dc01018769b52d1c848d16
-Top:    afcdb87adcc8c55a2e99b752edc918f4db4f7f47
+Bottom: 09266272d056d370716884cc5db22a77a3c82a40
+Top:    652d4393791bae1121d154193c3552c3804d910e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-03 00:16:52 +0100
 
@@ -800,7 +800,7 @@ index 8f04180..94d73e3 100644
    gerber_make_gc,
    gerber_destroy_gc,
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index e10dc6e..95106eb 100644
+index 2ebb1a2..31888c8 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -770,12 +770,41 @@ ghid_invalidate_all ()
@@ -875,7 +875,7 @@ index e10dc6e..95106eb 100644
      {
        draw_crosshair (xor_gc, x, y);
        draw_markers = ghidgui->auto_pan_on && have_crosshair_attachments ();
-@@ -979,7 +1008,6 @@ ghid_screen_update (void)
+@@ -990,7 +1019,6 @@ ghid_screen_update (void)
  {
    render_priv *priv = gport->render_priv;
  
@@ -883,7 +883,7 @@ index e10dc6e..95106eb 100644
    gdk_draw_drawable (gport->drawing_area->window, priv->bg_gc, gport->pixmap,
  		     0, 0, 0, 0, gport->width, gport->height);
    ghid_show_crosshair (TRUE);
-@@ -992,7 +1020,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1003,7 +1031,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  {
    render_priv *priv = port->render_priv;
  
@@ -952,7 +952,7 @@ index 8bda96d..75ba763 100644
  
    ghid_set_status_line_label ();
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 50f8e5e..9272004 100644
+index c71af06..55f8c74 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -58,16 +58,12 @@ ghid_port_ranges_changed (void)
@@ -1041,7 +1041,7 @@ index 50f8e5e..9272004 100644
    return 0;
  }
  
-@@ -690,6 +684,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -695,6 +689,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    queue_tooltip_update (out);
  #endif
  
@@ -1067,7 +1067,7 @@ index 074ef9b..0a0e757 100644
        ghid_window_set_name_label (PCB->Name);
        ghid_set_status_line_label ();
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 69bd992..998e2a0 100644
+index 97ebb1c..651a746 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -132,7 +132,7 @@ typedef struct
