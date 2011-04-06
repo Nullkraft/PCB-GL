@@ -3,18 +3,26 @@ Top:    1d339fecf151b649360c944ed23fa48e9983cd9d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:11 +0100
 
-Give the HIDs control over "attached" object redrawing (crosshair etc..)
+Give the HIDs control over attached object (crosshair, mark) drawing
 
-This is required if the HID doesn't want to follow the current drawing
-model where it is assumed the core can call the HID's drawing APIs at
-any arbitrary point in time.
+This is required if a renderer doesn't want to follow the current
+drawing model where it is assumed the core can call the HID's
+drawing APIs at any arbitrary point in time.
 
 Expose some API from crosshair.c to perform the actual drawing on
-demand, and add a hook to the HID structure to notify the GUI when
-it would previously have called the drawing routines directly.
+demand, and add hooks to the HID structure to notify the GUI when it
+would previously have called the crosshair or mark drawing routines.
 
-This allows GUIs which have defined setup and tear-down requirements
+This allows renderers with defined setup and tear-down requirements
 around drawing to execute them before the objects are drawn.
+
+CrosshairOn() and CrosshairOff() now simply set the Crosshair.On flag
+and call the appropriate notification hooks.
+
+This commit replaces all HideCrosshair() and RestoreCrosshair() calls
+with the new hooks notify_{crosshair|mark}_changed(), with an argument
+specifying whether a change is about to happen (false argument), or has
+been completed (true argument).
 
 
 ---
