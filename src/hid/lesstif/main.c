@@ -2882,43 +2882,43 @@ lesstif_invalidate_all (void)
 static void
 lesstif_notify_crosshair_change (bool changes_complete)
 {
-  static int invalidate_count = 0;
+  static int invalidate_depth = 0;
 
   if (changes_complete)
-    invalidate_count --;
+    invalidate_depth --;
 
-  if (invalidate_count < 0)
+  if (invalidate_depth < 0)
     {
       fprintf (stderr, "ERROR: Unmatched notify_crosshair_change calls\n");
       invalidate_depth = 0;
     }
 
-  if (invalidate_count == 0)
+  if (invalidate_depth == 0)
     DrawAttached ();
 
   if (!changes_complete)
-    invalidate_count ++;
+    invalidate_depth ++;
 }
 
 static void
 lesstif_notify_mark_change (bool changes_complete)
 {
-  static int invalidate_count = 0;
+  static int invalidate_depth = 0;
 
   if (changes_complete)
-    invalidate_count --;
+    invalidate_depth --;
 
-  if (invalidate_count < 0)
+  if (invalidate_depth < 0)
     {
       fprintf (stderr, "ERROR: Unmatched notify_mark_change calls\n");
       invalidate_depth = 0;
     }
 
-  if (invalidate_count == 0)
+  if (invalidate_depth == 0)
     DrawMark ();
 
   if (!changes_complete)
-    invalidate_count ++;
+    invalidate_depth ++;
 }
 
 static int
