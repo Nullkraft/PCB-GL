@@ -1,5 +1,5 @@
 Bottom: 6fe12a9388185384d9e1b8e7615a887326e434bd
-Top:    9545934a45e4fb1c76a911297a383a953487ef9d
+Top:    563d3a14f5f5450f582cc4e221a86ea1f4145b9b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:11 +0100
 
@@ -1017,7 +1017,7 @@ index 8bda96d..75ba763 100644
  
    ghid_set_status_line_label ();
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index a294777..55f8c74 100644
+index a294777..9be7297 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -58,16 +58,12 @@ ghid_port_ranges_changed (void)
@@ -1053,9 +1053,9 @@ index a294777..55f8c74 100644
 -  HideCrosshair ();
 +  notify_crosshair_change (false);
    AdjustAttachedObjects ();
++  notify_crosshair_change (true);
    ghid_invalidate_all ();
 -  RestoreCrosshair ();
-+  notify_crosshair_change (true);
    ghid_screen_update ();
    g_idle_add (ghid_idle_cb, NULL);
    return FALSE;
