@@ -820,7 +820,6 @@ ghid_port_window_leave_cb (GtkWidget * widget,
 	}
     }
 
-  CrosshairOff ();
   ghid_show_crosshair (FALSE);
   out->has_entered = FALSE;
 
