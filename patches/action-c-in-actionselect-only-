@@ -1,5 +1,5 @@
-Bottom: c97bf385fa2065563e9df92f76eb5b1f03107232
-Top:    a04bd771913a3b160de109dbf179adef4bd933b6
+Bottom: a18252e25a911a2018d807481da735f2bceab51d
+Top:    e4f8cf28efc8c18ff7545fcc613de6d0fdb7adaf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:07:13 +0100
 
@@ -9,10 +9,10 @@ action.c: In ActionSelect(), only hide the crosshair where required
 ---
 
 diff --git a/src/action.c b/src/action.c
-index d333e14..9621494 100644
+index e3b316f..5d8d9f4 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -5386,7 +5386,6 @@ ActionSelect (int argc, char **argv, int x, int y)
+@@ -5439,7 +5439,6 @@ ActionSelect (int argc, char **argv, int x, int y)
    char *function = ARG (0);
    if (function)
      {
@@ -20,7 +20,7 @@ index d333e14..9621494 100644
        switch (GetFunctionID (function))
  	{
  #if defined(HAVE_REGCOMP) || defined(HAVE_RE_COMP)
-@@ -5451,6 +5450,7 @@ ActionSelect (int argc, char **argv, int x, int y)
+@@ -5504,6 +5503,7 @@ ActionSelect (int argc, char **argv, int x, int y)
  			  Crosshair.AttachedBox.Point2.X);
  	    box.Y2 = MAX (Crosshair.AttachedBox.Point1.Y,
  			  Crosshair.AttachedBox.Point2.Y);
@@ -28,7 +28,7 @@ index d333e14..9621494 100644
  	    NotifyBlock ();
  	    if (Crosshair.AttachedBox.State == STATE_THIRD &&
  		SelectBlock (&box, true))
-@@ -5458,6 +5458,7 @@ ActionSelect (int argc, char **argv, int x, int y)
+@@ -5511,6 +5511,7 @@ ActionSelect (int argc, char **argv, int x, int y)
  		SetChangedFlag (true);
  		Crosshair.AttachedBox.State = STATE_FIRST;
  	      }
@@ -36,7 +36,7 @@ index d333e14..9621494 100644
  	    break;
  	  }
  
-@@ -5505,11 +5506,9 @@ ActionSelect (int argc, char **argv, int x, int y)
+@@ -5558,11 +5559,9 @@ ActionSelect (int argc, char **argv, int x, int y)
  	  break;
  
  	default:

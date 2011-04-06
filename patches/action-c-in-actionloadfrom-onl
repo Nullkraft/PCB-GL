@@ -1,5 +1,5 @@
-Bottom: f2c5142c1cda6047f363136364930b3a619ed3e5
-Top:    09266272d056d370716884cc5db22a77a3c82a40
+Bottom: 024e8f23f30fce49d9f002733af596f3ef6a8cf5
+Top:    2e502adf7fcf5f816133c2c68f8fcd3216b86671
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:08:36 +0100
 
@@ -9,10 +9,10 @@ action.c: In ActionLoadFrom(), only hide the crosshair where required
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 49ff7ac..e5a463f 100644
+index 65a3c3a..1380d54 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -5866,18 +5866,20 @@ ActionLoadFrom (int argc, char **argv, int x, int y)
+@@ -5919,18 +5919,20 @@ ActionLoadFrom (int argc, char **argv, int x, int y)
    function = argv[0];
    name = argv[1];
  
@@ -35,7 +35,7 @@ index 49ff7ac..e5a463f 100644
      }
  
    else if (strcasecmp (function, "Layout") == 0)
-@@ -5904,7 +5906,6 @@ ActionLoadFrom (int argc, char **argv, int x, int y)
+@@ -5957,7 +5959,6 @@ ActionLoadFrom (int argc, char **argv, int x, int y)
        LoadPCB (fname);
      }
  

@@ -1,5 +1,5 @@
-Bottom: b80f79310d89bd63754c4cb7b0e67ea202bcea15
-Top:    294aff141869676f243cc84f93cf9e335662bc20
+Bottom: f1c21fc6d414125aec1ece5bfc10a53b31d6eb38
+Top:    95984c4cb43048d4fb5e650caffdc10ab8b3a0df
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:00:40 +0100
 
@@ -11,7 +11,7 @@ Reduces code duplication in the different sub-paths of this routine.
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 59e8139..2039b88 100644
+index 6b1987c..7ae8165 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -607,10 +607,10 @@ click_cb (hidval hv)
