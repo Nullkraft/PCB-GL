@@ -235,7 +235,7 @@ ghid_note_event_location (GdkEventButton * ev)
   if (moved)
     {
       AdjustAttachedObjects ();
-      RestoreCrosshair ();
+      notify_crosshair_change (true);
     }
   ghid_set_cursor_position_labels ();
   return moved;
@@ -305,11 +305,10 @@ ghid_port_key_release_cb (GtkWidget * drawing_area, GdkEventKey * kev,
   if (ghid_is_modifier_key_sym (ksym))
     ghid_note_event_location (NULL);
 
-  HideCrosshair ();
+  notify_crosshair_change (false);
   AdjustAttachedObjects ();
+  notify_crosshair_change (true);
   ghid_invalidate_all ();
-  RestoreCrosshair ();
-  ghid_screen_update ();
   g_idle_add (ghid_idle_cb, NULL);
   return FALSE;
 }
@@ -447,12 +446,12 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
   state = (GdkModifierType) (ev->state);
   mk = ghid_modifier_keys_state (&state);
   ghid_show_crosshair (FALSE);
-  HideCrosshair ();
+  notify_crosshair_change (false);
 
   do_mouse_action(ev->button, mk);
 
   ghid_invalidate_all ();
-  RestoreCrosshair ();
+  notify_crosshair_change (true);
   ghid_window_set_name_label (PCB->Name);
   ghid_set_status_line_label ();
   ghid_show_crosshair (TRUE);
@@ -473,14 +472,13 @@ ghid_port_button_release_cb (GtkWidget * drawing_area,
   state = (GdkModifierType) (ev->state);
   mk = ghid_modifier_keys_state (&state);
 
-  HideCrosshair ();
+  notify_crosshair_change (false);
 
   do_mouse_action(ev->button, mk + M_Release);
 
   AdjustAttachedObjects ();
   ghid_invalidate_all ();
-  RestoreCrosshair ();
-  ghid_screen_update ();
+  notify_crosshair_change (true);
 
   ghid_window_set_name_label (PCB->Name);
   ghid_set_status_line_label ();
