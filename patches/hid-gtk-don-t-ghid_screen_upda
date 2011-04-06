@@ -1,0 +1,13 @@
+Bottom: 6fe12a9388185384d9e1b8e7615a887326e434bd
+Top:    6fe12a9388185384d9e1b8e7615a887326e434bd
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-06 21:25:53 +0100
+
+hid/gtk: Don't ghid_screen_update() right after ghid_invalidate_all()
+
+ghid_invalidate_all() takes care of ensuring the update hits the screen.
+
+
+---
+
+
