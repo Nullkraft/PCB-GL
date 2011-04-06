@@ -309,8 +309,8 @@ ghid_port_key_release_cb (GtkWidget * drawing_area, GdkEventKey * kev,
 
   notify_crosshair_change (false);
   AdjustAttachedObjects ();
-  ghid_invalidate_all ();
   notify_crosshair_change (true);
+  ghid_invalidate_all ();
   ghid_screen_update ();
   g_idle_add (ghid_idle_cb, NULL);
   return FALSE;
