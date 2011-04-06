@@ -1,5 +1,5 @@
 Bottom: 74343b0d47e95e96d812434a2074a779487bae94
-Top:    1bdbe7cb0935905c2370f7a095564b4943734058
+Top:    21c4a9a343ca12d8b01ae5beff2ffa49fbbd8a76
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:11 +0100
 
@@ -504,7 +504,7 @@ index 43d5c2b..75ab94a 100644
  }
  
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 7df5299..76f7434 100644
+index 7df5299..fb46c66 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -66,15 +66,6 @@ typedef struct
@@ -523,7 +523,7 @@ index 7df5299..76f7434 100644
   * some local prototypes
   */
  static void XORPolygon (PolygonTypePtr, LocationType, LocationType);
-@@ -565,7 +556,7 @@ XORDrawMoveOrCopyObject (void)
+@@ -565,10 +556,14 @@ XORDrawMoveOrCopyObject (void)
  /* ---------------------------------------------------------------------------
   * draws additional stuff that follows the crosshair
   */
@@ -532,18 +532,65 @@ index 7df5299..76f7434 100644
  DrawAttached (void)
  {
    BDimension s;
-@@ -684,6 +675,23 @@ DrawAttached (void)
++
++  if (!Crosshair.On)
++    return;
++
+   switch (Settings.Mode)
+     {
+     case VIA_MODE:
+@@ -684,72 +679,82 @@ DrawAttached (void)
      }
  }
  
+-/* ---------------------------------------------------------------------------
+- * switches crosshair on
 +
-+void
++/* --------------------------------------------------------------------------
++ * draw the marker position
+  */
+ void
+-CrosshairOn (void)
++DrawMark (void)
+ {
+-  if (!Crosshair.On)
+-    {
+-      Crosshair.On = true;
+-      DrawAttached ();
+-      DrawMark ();
+-    }
++  /* Mark is not drawn when the crosshair is off, or when it is not set */
++  if (!Crosshair.On || !Marked.status)
++    return;
++
++  gui->draw_line (Crosshair.GC,
++                  Marked.X - MARK_SIZE,
++                  Marked.Y - MARK_SIZE,
++                  Marked.X + MARK_SIZE, Marked.Y + MARK_SIZE);
++  gui->draw_line (Crosshair.GC,
++                  Marked.X + MARK_SIZE,
++                  Marked.Y - MARK_SIZE,
++                  Marked.X - MARK_SIZE, Marked.Y + MARK_SIZE);
+ }
+ 
+-/* ---------------------------------------------------------------------------
+- * switches crosshair off
+- */
++
+ void
+-CrosshairOff (void)
 +notify_crosshair_change (bool changes_complete)
-+{
+ {
+-  if (Crosshair.On)
+-    {
+-      Crosshair.On = false;
+-      DrawAttached ();
+-      DrawMark ();
+-    }
 +  if (gui->notify_crosshair_change)
 +    gui->notify_crosshair_change (changes_complete);
-+}
-+
+ }
+ 
 +
 +void
 +notify_mark_change (bool changes_complete)
@@ -554,56 +601,71 @@ index 7df5299..76f7434 100644
 +
 +
  /* ---------------------------------------------------------------------------
-  * switches crosshair on
-  */
-@@ -712,46 +720,6 @@ CrosshairOff (void)
-     }
- }
- 
--/* ---------------------------------------------------------------------------
 - * saves crosshair state (on/off) and hides him
-- */
--void
++ * switches crosshair on
+  */
+ void
 -HideCrosshair ()
--{
++CrosshairOn (void)
+ {
 -  /* fprintf(stderr, "HideCrosshair stack %d\n", CrosshairStackLocation); */
 -  if (CrosshairStackLocation >= MAX_CROSSHAIRSTACK_DEPTH)
 -    {
 -      fprintf(stderr, "Error: CrosshairStackLocation overflow\n");
 -      return;
 -    }
--
++  if (Crosshair.On)
++    return;
++
++  notify_crosshair_change (false);
++  if (Marked.status)
++    notify_mark_change (false);
+ 
 -  CrosshairStack[CrosshairStackLocation] = Crosshair.On;
 -  CrosshairStackLocation++;
--
++  Crosshair.On = true;
+ 
 -  CrosshairOff ();
--}
--
--/* ---------------------------------------------------------------------------
++  notify_crosshair_change (true);
++  if (Marked.status)
++    notify_mark_change (true);
+ }
+ 
+ /* ---------------------------------------------------------------------------
 - * restores last crosshair state
-- */
--void
++ * switches crosshair off
+  */
+ void
 -RestoreCrosshair (void)
--{
++CrosshairOff (void)
+ {
 -  /* fprintf(stderr, "RestoreCrosshair stack %d\n", CrosshairStackLocation); */
 -  if (CrosshairStackLocation <= 0)
 -    {
 -      fprintf(stderr, "Error: CrosshairStackLocation underflow\n");
 -      return;
 -    }
--
++  if (!Crosshair.On)
++    return;
+ 
 -  CrosshairStackLocation--;
--
++  notify_crosshair_change (false);
++  if (Marked.status)
++    notify_mark_change (false);
+ 
 -  if (CrosshairStack[CrosshairStackLocation])
 -    CrosshairOn ();
 -  else
 -    CrosshairOff ();
--}
--
++  Crosshair.On = false;
++
++  notify_crosshair_change (true);
++  if (Marked.status)
++    notify_mark_change (true);
+ }
+ 
  static double
- square (double x)
- {
-@@ -1043,8 +1011,8 @@ MoveCrosshairRelative (LocationType DeltaX, LocationType DeltaY)
+@@ -1043,8 +1048,8 @@ MoveCrosshairRelative (LocationType DeltaX, LocationType DeltaY)
  }
  
  /* ---------------------------------------------------------------------------
@@ -614,7 +676,7 @@ index 7df5299..76f7434 100644
   */
  bool
  MoveCrosshairAbsolute (LocationType X, LocationType Y)
-@@ -1055,13 +1023,14 @@ MoveCrosshairAbsolute (LocationType X, LocationType Y)
+@@ -1055,13 +1060,14 @@ MoveCrosshairAbsolute (LocationType X, LocationType Y)
    FitCrosshairIntoGrid (X, Y);
    if (Crosshair.X != x || Crosshair.Y != y)
      {
@@ -631,8 +693,30 @@ index 7df5299..76f7434 100644
        /* now move forward again */
        Crosshair.X = x;
        Crosshair.Y = z;
-@@ -1108,8 +1077,7 @@ DrawMark (void)
+@@ -1086,30 +1092,9 @@ SetCrosshairRange (LocationType MinX, LocationType MinY, LocationType MaxX,
+   MoveCrosshairRelative (0, 0);
+ }
  
+-/* --------------------------------------------------------------------------
+- * draw the marker position
+- * if argument is true, draw only if it is visible, otherwise draw it regardless
+- */
+-void
+-DrawMark (void)
+-{
+-  if (Marked.status)
+-    {
+-      gui->draw_line (Crosshair.GC,
+-		      Marked.X - MARK_SIZE,
+-		      Marked.Y - MARK_SIZE,
+-		      Marked.X + MARK_SIZE, Marked.Y + MARK_SIZE);
+-      gui->draw_line (Crosshair.GC,
+-		      Marked.X + MARK_SIZE,
+-		      Marked.Y - MARK_SIZE,
+-		      Marked.X - MARK_SIZE, Marked.Y + MARK_SIZE);
+-    }
+-}
+-
  /* ---------------------------------------------------------------------------
   * initializes crosshair stuff
 - * clears the struct, allocates to graphical contexts and
@@ -641,7 +725,7 @@ index 7df5299..76f7434 100644
   */
  void
  InitCrosshair (void)
-@@ -1121,9 +1089,6 @@ InitCrosshair (void)
+@@ -1121,9 +1106,6 @@ InitCrosshair (void)
    gui->set_line_cap (Crosshair.GC, Trace_Cap);
    gui->set_line_width (Crosshair.GC, 1);
  
@@ -652,24 +736,32 @@ index 7df5299..76f7434 100644
  
    /* set initial shape */
 diff --git a/src/crosshair.h b/src/crosshair.h
-index 4573e98..1135f0e 100644
+index 4573e98..44b2c81 100644
 --- a/src/crosshair.h
 +++ b/src/crosshair.h
-@@ -46,11 +46,11 @@
+@@ -46,18 +46,18 @@
  #define	STATE_SECOND	1
  #define	STATE_THIRD		2
  
 -
-+void notify_crosshair_change (bool changes_complete);
-+void notify_mark_change (bool changes_complete);
-+void DrawAttached (void);
  void CrosshairOn (void);
  void CrosshairOff (void);
 -void HideCrosshair (void);
 -void RestoreCrosshair (void);
++void DrawAttached (void);
++void DrawMark (void);
++void notify_crosshair_change (bool changes_complete);
++void notify_mark_change (bool changes_complete);
  void MoveCrosshairRelative (LocationType, LocationType);
  bool MoveCrosshairAbsolute (LocationType, LocationType);
  void SetCrosshairRange (LocationType, LocationType, LocationType,
+ 			LocationType);
+ void InitCrosshair (void);
+ void DestroyCrosshair (void);
+-void DrawMark (void);
+ void FitCrosshairIntoGrid (LocationType, LocationType);
+ 
+ #endif
 diff --git a/src/draw.c b/src/draw.c
 index 6091ef3..815ac5e 100644
 --- a/src/draw.c
@@ -790,10 +882,10 @@ index 8f04180..94d73e3 100644
    gerber_make_gc,
    gerber_destroy_gc,
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 2ebb1a2..31888c8 100644
+index 2ebb1a2..bf42d86 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -770,12 +770,41 @@ ghid_invalidate_all ()
+@@ -770,12 +770,35 @@ ghid_invalidate_all ()
  
    hid_expose_callback (&ghid_hid, &region, 0);
    ghid_draw_grid ();
@@ -801,8 +893,8 @@ index 2ebb1a2..31888c8 100644
 -    RestoreCrosshair ();
 -  ghidgui->need_restore_crosshair = FALSE;
 +
-+  Crosshair.On = false;
-+  CrosshairOn ();
++  DrawAttached ();
++  DrawMark ();
 +
    ghid_screen_update ();
  }
@@ -810,35 +902,29 @@ index 2ebb1a2..31888c8 100644
 +void
 +ghid_notify_crosshair_change (bool changes_complete)
 +{
-+  /* FIXME: This is because we sometimes get called before the GUI up */
++  /* FIXME: We sometimes get called before the GUI is up */
 +  if (gport->drawing_area == NULL)
 +    return;
 +
 +  if (changes_complete)
-+    CrosshairOn ();
-+  else
-+    CrosshairOff ();
-+  ghid_draw_area_update (gport, NULL);
++    ghid_draw_area_update (gport, NULL);
 +}
 +
 +void
 +ghid_notify_mark_change (bool changes_complete)
 +{
-+  /* FIXME: This is because we sometimes get called before the GUI up */
++  /* FIXME: We sometimes get called before the GUI is up */
 +  if (gport->drawing_area == NULL)
 +    return;
 +
-+  if (!Marked.status)
-+    return;
-+
-+  DrawMark (); /* NB: This is an XOR drawing operation */
-+  ghid_draw_area_update (gport, NULL);
++  if (changes_complete)
++    ghid_draw_area_update (gport, NULL);
 +}
 +
  static void
  draw_right_cross (GdkGC *xor_gc, gint x, gint y)
  {
-@@ -873,7 +902,7 @@ draw_crosshair (GdkGC *xor_gc, gint x, gint y)
+@@ -873,7 +896,7 @@ draw_crosshair (GdkGC *xor_gc, gint x, gint y)
  #define VCD 8
  
  void
@@ -847,7 +933,7 @@ index 2ebb1a2..31888c8 100644
  {
    gint x, y;
    static gint x_prev = -1, y_prev = -1;
-@@ -897,7 +926,7 @@ ghid_show_crosshair (gboolean show)
+@@ -897,7 +920,7 @@ ghid_show_crosshair (gboolean show)
  
    gdk_gc_set_foreground (xor_gc, &cross_color);
  
@@ -856,7 +942,7 @@ index 2ebb1a2..31888c8 100644
      {
        draw_crosshair (xor_gc, x_prev, y_prev);
        if (draw_markers_prev)
-@@ -913,7 +942,7 @@ ghid_show_crosshair (gboolean show)
+@@ -913,7 +936,7 @@ ghid_show_crosshair (gboolean show)
  	}
      }
  
@@ -865,7 +951,7 @@ index 2ebb1a2..31888c8 100644
      {
        draw_crosshair (xor_gc, x, y);
        draw_markers = ghidgui->auto_pan_on && have_crosshair_attachments ();
-@@ -990,7 +1019,6 @@ ghid_screen_update (void)
+@@ -990,7 +1013,6 @@ ghid_screen_update (void)
  {
    render_priv *priv = gport->render_priv;
  
@@ -873,7 +959,7 @@ index 2ebb1a2..31888c8 100644
    gdk_draw_drawable (gport->drawing_area->window, priv->bg_gc, gport->pixmap,
  		     0, 0, 0, 0, gport->width, gport->height);
    ghid_show_crosshair (TRUE);
-@@ -1003,7 +1031,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1003,7 +1025,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  {
    render_priv *priv = port->render_priv;
  
@@ -942,7 +1028,7 @@ index 8bda96d..75ba763 100644
  
    ghid_set_status_line_label ();
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index c71af06..55f8c74 100644
+index c71af06..1580d3c 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -58,16 +58,12 @@ ghid_port_ranges_changed (void)
@@ -1039,6 +1125,14 @@ index c71af06..55f8c74 100644
    ghid_show_crosshair (TRUE);
    if (moved && have_crosshair_attachments ())
      ghid_draw_area_update (gport, NULL);
+@@ -825,6 +820,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+ 	}
+     }
+ 
++  CrosshairOff ();
+   ghid_show_crosshair (FALSE);
+   out->has_entered = FALSE;
+ 
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
 index 074ef9b..0a0e757 100644
 --- a/src/hid/gtk/gui-top-window.c
@@ -1079,7 +1173,7 @@ index 97ebb1c..651a746 100644
  void ghid_init_renderer (int *, char ***, GHidPort *);
  void ghid_init_drawing_widget (GtkWidget *widget, GHidPort *);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 2f00577..422e83b 100644
+index 2f00577..5f3da73 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -1311,12 +1311,12 @@ mod_changed (XKeyEvent * e, int set)
@@ -1133,47 +1227,74 @@ index 2f00577..422e83b 100644
          break;
        }
  
-@@ -2879,6 +2879,39 @@ lesstif_invalidate_all (void)
+@@ -2434,7 +2434,6 @@ idle_proc (XtPointer dummy)
+       int mx, my;
+       BoxType region;
+       lesstif_use_mask (0);
+-      Crosshair.On = 0;
+       pixmap = main_pixmap;
+       mx = view_width;
+       my = view_height;
+@@ -2520,7 +2519,8 @@ idle_proc (XtPointer dummy)
+       XCopyArea (display, main_pixmap, window, my_gc, 0, 0, view_width,
+ 		 view_height, 0, 0);
+       pixmap = window;
+-      CrosshairOn ();
++      DrawAttached ();
++      DrawMark ();
+       need_redraw = 0;
+     }
+ 
+@@ -2879,6 +2879,48 @@ lesstif_invalidate_all (void)
    lesstif_invalidate_lr (0, PCB->MaxWidth, 0, PCB->MaxHeight);
  }
  
 +static void
 +lesstif_notify_crosshair_change (bool changes_complete)
 +{
-+  static int invalidate_depth = 0;
++  static int invalidate_count = 0;
 +
 +  if (changes_complete)
++    invalidate_count --;
++
++  if (invalidate_count < 0)
 +    {
-+      invalidate_depth --;
-+      if (invalidate_depth < 0)
-+        {
-+          fprintf (stderr, "ERROR: Unmatched notify crosshair calls\n");
-+          invalidate_depth = 0;
-+        }
-+      if (invalidate_depth == 0)
-+        CrosshairOn ();
++      fprintf (stderr, "ERROR: Unmatched notify_crosshair_change calls\n");
++      invalidate_depth = 0;
 +    }
-+  else
-+    {
-+      if (invalidate_depth == 0)
-+        CrosshairOff ();
-+      invalidate_depth ++;
-+    }
++
++  if (invalidate_count == 0)
++    DrawAttached ();
++
++  if (!changes_complete)
++    invalidate_count ++;
 +}
 +
 +static void
 +lesstif_notify_mark_change (bool changes_complete)
 +{
-+  if (!Marked.status)
-+    return;
++  static int invalidate_count = 0;
 +
-+  DrawMark ();
++  if (changes_complete)
++    invalidate_count --;
++
++  if (invalidate_count < 0)
++    {
++      fprintf (stderr, "ERROR: Unmatched notify_mark_change calls\n");
++      invalidate_depth = 0;
++    }
++
++  if (invalidate_count == 0)
++    DrawMark ();
++
++  if (!changes_complete)
++    invalidate_count ++;
 +}
 +
  static int
  lesstif_set_layer (const char *name, int group, int empty)
  {
-@@ -3812,6 +3845,8 @@ HID lesstif_gui = {
+@@ -3812,6 +3854,8 @@ HID lesstif_gui = {
    lesstif_parse_arguments,
    lesstif_invalidate_lr,
    lesstif_invalidate_all,
@@ -1270,7 +1391,7 @@ index a7704f4..1603e7f 100644
    gui->set_crosshair (Crosshair.X, Crosshair.Y, HID_SC_WARP_POINTER);
    PCB->Grid = save_grid;
 diff --git a/src/set.c b/src/set.c
-index 17f7583..228b4c2 100644
+index 17f7583..8fef65a 100644
 --- a/src/set.c
 +++ b/src/set.c
 @@ -244,7 +244,7 @@ SetMode (int Mode)
@@ -1296,7 +1417,7 @@ index 17f7583..228b4c2 100644
    if (Showing)
      {
 -      HideCrosshair ();
-+      notify_crosshair_change (false);
++      notify_mark_change (false);
        if (count == 0)
  	old = Marked;
        Marked.X = X;
@@ -1304,15 +1425,15 @@ index 17f7583..228b4c2 100644
        Marked.status = true;
        count++;
 -      RestoreCrosshair ();
-+      notify_crosshair_change (true);
++      notify_mark_change (true);
      }
    else if (count > 0)
      {
 -      HideCrosshair ();
-+      notify_crosshair_change (false);
++      notify_mark_change (false);
        count = 0;
        Marked = old;
 -      RestoreCrosshair ();
-+      notify_crosshair_change (true);
++      notify_mark_change (true);
      }
  }
