@@ -480,6 +480,7 @@ apply_default_hid (HID * d, HID * s)
   AD (invalidate_lr);
   AD (invalidate_all);
   AD (notify_crosshair_change);
+  AD (notify_mark_change);
   AD (set_layer);
   AD (make_gc);
   AD (destroy_gc);
