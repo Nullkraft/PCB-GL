@@ -1,5 +1,5 @@
 Bottom: 6fe12a9388185384d9e1b8e7615a887326e434bd
-Top:    563d3a14f5f5450f582cc4e221a86ea1f4145b9b
+Top:    6420506b2fb07d30117f41b412667470585f361e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:11 +0100
 
@@ -1017,7 +1017,7 @@ index 8bda96d..75ba763 100644
  
    ghid_set_status_line_label ();
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index a294777..9be7297 100644
+index a294777..87a391b 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -58,16 +58,12 @@ ghid_port_ranges_changed (void)
@@ -1046,7 +1046,7 @@ index a294777..9be7297 100644
      }
    ghid_set_cursor_position_labels ();
    return moved;
-@@ -311,10 +307,10 @@ ghid_port_key_release_cb (GtkWidget * drawing_area, GdkEventKey * kev,
+@@ -311,11 +307,10 @@ ghid_port_key_release_cb (GtkWidget * drawing_area, GdkEventKey * kev,
    if (ghid_is_modifier_key_sym (ksym))
      ghid_note_event_location (NULL);
  
@@ -1056,10 +1056,11 @@ index a294777..9be7297 100644
 +  notify_crosshair_change (true);
    ghid_invalidate_all ();
 -  RestoreCrosshair ();
-   ghid_screen_update ();
+-  ghid_screen_update ();
    g_idle_add (ghid_idle_cb, NULL);
    return FALSE;
-@@ -453,12 +449,12 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+ }
+@@ -453,12 +448,12 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
    state = (GdkModifierType) (ev->state);
    mk = ghid_modifier_keys_state (&state);
    ghid_show_crosshair (FALSE);
@@ -1074,7 +1075,7 @@ index a294777..9be7297 100644
    ghid_window_set_name_label (PCB->Name);
    ghid_set_status_line_label ();
    ghid_show_crosshair (TRUE);
-@@ -479,13 +475,13 @@ ghid_port_button_release_cb (GtkWidget * drawing_area,
+@@ -479,14 +474,13 @@ ghid_port_button_release_cb (GtkWidget * drawing_area,
    state = (GdkModifierType) (ev->state);
    mk = ghid_modifier_keys_state (&state);
  
@@ -1086,11 +1087,12 @@ index a294777..9be7297 100644
    AdjustAttachedObjects ();
    ghid_invalidate_all ();
 -  RestoreCrosshair ();
+-  ghid_screen_update ();
 +  notify_crosshair_change (true);
-   ghid_screen_update ();
  
    ghid_window_set_name_label (PCB->Name);
-@@ -502,7 +498,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+   ghid_set_status_line_label ();
+@@ -502,7 +496,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  {
    static gboolean first_time_done;
  
@@ -1098,7 +1100,7 @@ index a294777..9be7297 100644
    gport->width = ev->width;
    gport->height = ev->height;
  
-@@ -536,7 +531,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -536,7 +529,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  
    ghid_port_ranges_scale (FALSE);
    ghid_invalidate_all ();
