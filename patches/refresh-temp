@@ -1,0 +1,21 @@
+Bottom: 5ee878ccfd3ac39198231230ee2e4078c402cf5e
+Top:    74343b0d47e95e96d812434a2074a779487bae94
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-06 19:43:33 +0100
+
+Refresh of don-t-issue-crosshairoff-from-
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index a7942b6..7df5299 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -1144,7 +1144,6 @@ InitCrosshair (void)
+ void
+ DestroyCrosshair (void)
+ {
+-  CrosshairOff ();
+   FreePolygonMemory (&Crosshair.AttachedPolygon);
+   gui->destroy_gc (Crosshair.GC);
+ }
