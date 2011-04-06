@@ -58,15 +58,11 @@ ghid_port_ranges_changed (void)
 {
   GtkAdjustment *h_adj, *v_adj;
 
-  if (!ghidgui->combine_adjustments)
-    HideCrosshair ();
   if (ghidgui->combine_adjustments)
     {
       ghidgui->combine_adjustments = FALSE;
       return;
     }
-
-  ghidgui->need_restore_crosshair = TRUE;
 
   h_adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->h_range));
   v_adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->v_range));
@@ -241,7 +237,7 @@ ghid_note_event_location (GdkEventButton * ev)
   if (moved)
     {
       AdjustAttachedObjects ();
-      RestoreCrosshair ();
+      notify_crosshair_change (true);
     }
   ghid_set_cursor_position_labels ();
   return moved;
@@ -311,10 +307,10 @@ ghid_port_key_release_cb (GtkWidget * drawing_area, GdkEventKey * kev,
   if (ghid_is_modifier_key_sym (ksym))
     ghid_note_event_location (NULL);
 
-  HideCrosshair ();
+  notify_crosshair_change (false);
   AdjustAttachedObjects ();
   ghid_invalidate_all ();
-  RestoreCrosshair ();
+  notify_crosshair_change (true);
   ghid_screen_update ();
   g_idle_add (ghid_idle_cb, NULL);
   return FALSE;
@@ -453,12 +449,12 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
   state = (GdkModifierType) (ev->state);
   mk = ghid_modifier_keys_state (&state);
   ghid_show_crosshair (FALSE);
-  HideCrosshair ();
+  notify_crosshair_change (false);
 
   do_mouse_action(ev->button, mk);
 
   ghid_invalidate_all ();
-  RestoreCrosshair ();
+  notify_crosshair_change (true);
   ghid_window_set_name_label (PCB->Name);
   ghid_set_status_line_label ();
   ghid_show_crosshair (TRUE);
@@ -479,13 +475,13 @@ ghid_port_button_release_cb (GtkWidget * drawing_area,
   state = (GdkModifierType) (ev->state);
   mk = ghid_modifier_keys_state (&state);
 
-  HideCrosshair ();
+  notify_crosshair_change (false);
 
   do_mouse_action(ev->button, mk + M_Release);
 
   AdjustAttachedObjects ();
   ghid_invalidate_all ();
-  RestoreCrosshair ();
+  notify_crosshair_change (true);
   ghid_screen_update ();
 
   ghid_window_set_name_label (PCB->Name);
@@ -502,7 +498,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
 {
   static gboolean first_time_done;
 
-  HideCrosshair ();
   gport->width = ev->width;
   gport->height = ev->height;
 
@@ -536,7 +531,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
 
   ghid_port_ranges_scale (FALSE);
   ghid_invalidate_all ();
-  RestoreCrosshair ();
   return 0;
 }
 
@@ -826,6 +820,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
 	}
     }
 
+  CrosshairOff ();
   ghid_show_crosshair (FALSE);
   out->has_entered = FALSE;
 
