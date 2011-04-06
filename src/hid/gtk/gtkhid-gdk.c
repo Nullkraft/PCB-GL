@@ -770,10 +770,65 @@ ghid_invalidate_all ()
 
   hid_expose_callback (&ghid_hid, &region, 0);
   ghid_draw_grid ();
-  if (ghidgui->need_restore_crosshair)
-    RestoreCrosshair ();
-  ghidgui->need_restore_crosshair = FALSE;
+
+  DrawAttached ();
+  DrawMark ();
+
   ghid_screen_update ();
+}
+
+void
+ghid_notify_crosshair_change (bool changes_complete)
+{
+  static int invalidate_depth = 0;
+
+  /* FIXME: We sometimes get called before the GUI is up */
+  if (gport->drawing_area == NULL)
+    return;
+
+  if (changes_complete)
+    invalidate_depth --;
+
+  if (invalidate_depth < 0)
+    {
+      fprintf (stderr, "ERROR: Unmatched notify_crosshair_change calls\n");
+      invalidate_depth = 0;
+    }
+
+  if (invalidate_depth == 0)
+    DrawAttached ();
+
+  if (!changes_complete)
+    invalidate_depth ++;
+  else if (gport->drawing_area != NULL)
+    ghid_draw_area_update (gport, NULL);
+}
+
+void
+ghid_notify_mark_change (bool changes_complete)
+{
+  static int invalidate_depth = 0;
+
+  /* FIXME: We sometimes get called before the GUI is up */
+  if (gport->drawing_area == NULL)
+    return;
+
+  if (changes_complete)
+    invalidate_depth --;
+
+  if (invalidate_depth < 0)
+    {
+      fprintf (stderr, "ERROR: Unmatched notify_mark_change calls\n");
+      invalidate_depth = 0;
+    }
+
+  if (invalidate_depth == 0)
+    DrawMark ();
+
+  if (!changes_complete)
+    invalidate_depth ++;
+  else
+    ghid_draw_area_update (gport, NULL);
 }
 
 static void
