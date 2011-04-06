@@ -1,5 +1,5 @@
 Bottom: 744a5acf023562d8ccf144f94d3eeb288e2a7584
-Top:    744a5acf023562d8ccf144f94d3eeb288e2a7584
+Top:    65b06b388fae5a13b47c67ef758394957a3c4c3f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:07:13 +0100
 
@@ -8,4 +8,43 @@ action.c: In ActionSelect(), only hide the crosshair where required
 
 ---
 
-
+diff --git a/src/action.c b/src/action.c
+index d333e14..9621494 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -5386,7 +5386,6 @@ ActionSelect (int argc, char **argv, int x, int y)
+   char *function = ARG (0);
+   if (function)
+     {
+-      HideCrosshair ();
+       switch (GetFunctionID (function))
+ 	{
+ #if defined(HAVE_REGCOMP) || defined(HAVE_RE_COMP)
+@@ -5451,6 +5450,7 @@ ActionSelect (int argc, char **argv, int x, int y)
+ 			  Crosshair.AttachedBox.Point2.X);
+ 	    box.Y2 = MAX (Crosshair.AttachedBox.Point1.Y,
+ 			  Crosshair.AttachedBox.Point2.Y);
++	    HideCrosshair ();
+ 	    NotifyBlock ();
+ 	    if (Crosshair.AttachedBox.State == STATE_THIRD &&
+ 		SelectBlock (&box, true))
+@@ -5458,6 +5458,7 @@ ActionSelect (int argc, char **argv, int x, int y)
+ 		SetChangedFlag (true);
+ 		Crosshair.AttachedBox.State = STATE_FIRST;
+ 	      }
++	    RestoreCrosshair ();
+ 	    break;
+ 	  }
+ 
+@@ -5505,11 +5506,9 @@ ActionSelect (int argc, char **argv, int x, int y)
+ 	  break;
+ 
+ 	default:
+-	  RestoreCrosshair ();
+ 	  AFAIL (select);
+ 	  break;
+ 	}
+-      RestoreCrosshair ();
+     }
+   return 0;
+ }
