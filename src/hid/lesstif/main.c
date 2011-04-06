@@ -1311,12 +1311,12 @@ mod_changed (XKeyEvent * e, int set)
       return;
     }
   in_move_event = 1;
-  HideCrosshair ();
+  notify_crosshair_change (false);
   if (panning)
     Pan (2, e->x, e->y);
   EventMoveCrosshair (Px (e->x), Py (e->y));
   AdjustAttachedObjects ();
-  RestoreCrosshair ();
+  notify_crosshair_change (true);
   in_move_event = 0;
 }
 
@@ -1352,7 +1352,7 @@ work_area_input (Widget w, XtPointer v, XEvent * e, Boolean * ctd)
 	}
         ignore_release = 0;
 
-        HideCrosshair ();
+        notify_crosshair_change (false);
         pressed_button = e->xbutton.button;
         mods = ((e->xbutton.state & ShiftMask) ? M_Shift : 0)
           + ((e->xbutton.state & ControlMask) ? M_Ctrl : 0)
@@ -1362,7 +1362,7 @@ work_area_input (Widget w, XtPointer v, XEvent * e, Boolean * ctd)
           + ((e->xbutton.state & Mod1Mask) ? M_Alt : 0);
 #endif
         do_mouse_action(e->xbutton.button, mods);
-        RestoreCrosshair ();
+        notify_crosshair_change (true);
         break;
       }
 
@@ -1372,7 +1372,7 @@ work_area_input (Widget w, XtPointer v, XEvent * e, Boolean * ctd)
         if (e->xbutton.button != pressed_button)
           return;
         lesstif_button_event (w, e);
-        HideCrosshair ();
+        notify_crosshair_change (false);
         pressed_button = 0;
         mods = ((e->xbutton.state & ShiftMask) ? M_Shift : 0)
           + ((e->xbutton.state & ControlMask) ? M_Ctrl : 0)
@@ -1383,7 +1383,7 @@ work_area_input (Widget w, XtPointer v, XEvent * e, Boolean * ctd)
 #endif
           + M_Release;
         do_mouse_action (e->xbutton.button, mods);
-        RestoreCrosshair ();
+        notify_crosshair_change (true);
         break;
       }
 
@@ -2434,7 +2434,6 @@ idle_proc (XtPointer dummy)
       int mx, my;
       BoxType region;
       lesstif_use_mask (0);
-      Crosshair.On = 0;
       pixmap = main_pixmap;
       mx = view_width;
       my = view_height;
@@ -2520,7 +2519,8 @@ idle_proc (XtPointer dummy)
       XCopyArea (display, main_pixmap, window, my_gc, 0, 0, view_width,
 		 view_height, 0, 0);
       pixmap = window;
-      CrosshairOn ();
+      DrawAttached ();
+      DrawMark ();
       need_redraw = 0;
     }
 
@@ -2877,6 +2877,48 @@ void
 lesstif_invalidate_all (void)
 {
   lesstif_invalidate_lr (0, PCB->MaxWidth, 0, PCB->MaxHeight);
+}
+
+static void
+lesstif_notify_crosshair_change (bool changes_complete)
+{
+  static int invalidate_depth = 0;
+
+  if (changes_complete)
+    invalidate_depth --;
+
+  if (invalidate_depth < 0)
+    {
+      fprintf (stderr, "ERROR: Unmatched notify_crosshair_change calls\n");
+      invalidate_depth = 0;
+    }
+
+  if (invalidate_depth == 0)
+    DrawAttached ();
+
+  if (!changes_complete)
+    invalidate_depth ++;
+}
+
+static void
+lesstif_notify_mark_change (bool changes_complete)
+{
+  static int invalidate_depth = 0;
+
+  if (changes_complete)
+    invalidate_depth --;
+
+  if (invalidate_depth < 0)
+    {
+      fprintf (stderr, "ERROR: Unmatched notify_mark_change calls\n");
+      invalidate_depth = 0;
+    }
+
+  if (invalidate_depth == 0)
+    DrawMark ();
+
+  if (!changes_complete)
+    invalidate_depth ++;
 }
 
 static int
@@ -3812,6 +3854,8 @@ HID lesstif_gui = {
   lesstif_parse_arguments,
   lesstif_invalidate_lr,
   lesstif_invalidate_all,
+  lesstif_notify_crosshair_change,
+  lesstif_notify_mark_change,
   lesstif_set_layer,
   lesstif_make_gc,
   lesstif_destroy_gc,
