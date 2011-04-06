@@ -280,6 +280,7 @@ have_crosshair_attachments (void)
 static gboolean
 ghid_idle_cb (gpointer data)
 {
+  return;
   if (Settings.Mode == NO_MODE)
     SetMode (ARROW_MODE);
   ghid_mode_cursor (Settings.Mode);
