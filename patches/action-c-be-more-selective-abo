@@ -3,7 +3,7 @@ Top:    294aff141869676f243cc84f93cf9e335662bc20
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:00:40 +0100
 
-action.c: Wrap entire function with crosshair invalidation in click_cb()
+action.c: Combine the crosshair / restore for all paths in click_cb()
 
 Reduces code duplication in the different sub-paths of this routine.
 
