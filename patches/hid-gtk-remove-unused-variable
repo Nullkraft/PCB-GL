@@ -1,4 +1,4 @@
-Bottom: 343a76e0f4e48edf581dc8de76f494ed447c8bd9
+Bottom: 70de8d908efb93d08b7cc0074d31f737d9c35bfa
 Top:    70de8d908efb93d08b7cc0074d31f737d9c35bfa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 22:06:32 +0100
@@ -8,33 +8,4 @@ hid/gtk: Remove unused variables from {h,v}_adjument_changed_cb()
 
 ---
 
-diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 074ef9b..f33678a 100644
---- a/src/hid/gtk/gui-top-window.c
-+++ b/src/hid/gtk/gui-top-window.c
-@@ -465,24 +465,18 @@ get_grid_value_index (gboolean allow_fail)
- static void
- h_adjustment_changed_cb (GtkAdjustment * adj, GhidGui * g)
- {
--  gdouble xval, yval;
--
-   if (g->adjustment_changed_holdoff)
-     return;
--  xval = gtk_adjustment_get_value (adj);
--  yval = gtk_adjustment_get_value (GTK_ADJUSTMENT (ghidgui->v_adjustment));
-+
-   ghid_port_ranges_changed ();
- }
- 
- static void
- v_adjustment_changed_cb (GtkAdjustment * adj, GhidGui * g)
- {
--  gdouble xval, yval;
--
-   if (g->adjustment_changed_holdoff)
-     return;
--  yval = gtk_adjustment_get_value (adj);
--  xval = gtk_adjustment_get_value (GTK_ADJUSTMENT (ghidgui->h_adjustment));
-+
-   ghid_port_ranges_changed ();
- }
+
