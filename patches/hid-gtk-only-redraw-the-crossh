@@ -1,0 +1,14 @@
+Bottom: 74343b0d47e95e96d812434a2074a779487bae94
+Top:    74343b0d47e95e96d812434a2074a779487bae94
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-06 20:44:01 +0100
+
+hid/gtk: Only redraw the crosshair when necessary
+
+If we're about to repaint the screen from our backing pixmap,
+there is no point un-XOR drawing our current crosshair first.
+
+
+---
+
+
