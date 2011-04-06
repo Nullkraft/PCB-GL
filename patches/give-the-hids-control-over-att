@@ -1,5 +1,5 @@
 Bottom: 5ee878ccfd3ac39198231230ee2e4078c402cf5e
-Top:    b7a965758dcba2c59c5790362908076e4e36c577
+Top:    7da0e0eb0bd7b9fb5903b6c84cd326db44dfd1d1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:11 +0100
 
@@ -751,7 +751,7 @@ index 0f51b47..743c81d 100644
    extents_make_gc,
    extents_destroy_gc,
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
-index fd86b6a..7c06bdf 100644
+index fd86b6a..cd1c0d2 100644
 --- a/src/hid/common/hidnogui.c
 +++ b/src/hid/common/hidnogui.c
 @@ -420,6 +420,8 @@ HID hid_nogui = {
@@ -763,11 +763,12 @@ index fd86b6a..7c06bdf 100644
    nogui_set_layer,
    nogui_make_gc,
    nogui_destroy_gc,
-@@ -477,6 +479,7 @@ apply_default_hid (HID * d, HID * s)
+@@ -477,6 +479,8 @@ apply_default_hid (HID * d, HID * s)
    AD (parse_arguments);
    AD (invalidate_lr);
    AD (invalidate_all);
 +  AD (notify_crosshair_change);
++  AD (notify_mark_change);
    AD (set_layer);
    AD (make_gc);
    AD (destroy_gc);
