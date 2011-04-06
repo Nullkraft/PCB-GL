@@ -709,6 +709,9 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
   ghid_invalidate_all ();
 }
 
+
+static int invalidate_depth = 0;
+
 void
 ghid_invalidate_all ()
 {
@@ -771,16 +774,21 @@ ghid_invalidate_all ()
   hid_expose_callback (&ghid_hid, &region, 0);
   ghid_draw_grid ();
 
-  DrawAttached ();
+  if (invalidate_depth != 0 && Crosshair.On)
+    printf ("Oh crap - shouldn't be drawing this, invalidate_depth is %i?\n",
+            invalidate_depth);
+  else
+    DrawAttached ();
   DrawMark ();
 
   ghid_screen_update ();
 }
 
+
 void
 ghid_notify_crosshair_change (bool changes_complete)
 {
-  static int invalidate_depth = 0;
+  //static int invalidate_depth = 0;
 
   /* FIXME: We sometimes get called before the GUI is up */
   if (gport->drawing_area == NULL)
