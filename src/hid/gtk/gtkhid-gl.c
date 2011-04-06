@@ -623,6 +623,15 @@ ghid_notify_crosshair_change (bool changes_complete)
     ghid_invalidate_all ();
 }
 
+void
+ghid_notify_mark_change (bool changes_complete)
+{
+  /* FIXME: We could just invalidate the bounds of the mark? */
+  /* FIXME: Seems we're getting prodded before the GUI is up! */
+  if (gport->drawing_area)
+    ghid_invalidate_all ();
+}
+
 static void
 draw_right_cross (gint x, gint y)
 {
