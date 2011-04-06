@@ -5866,18 +5866,20 @@ ActionLoadFrom (int argc, char **argv, int x, int y)
   function = argv[0];
   name = argv[1];
 
-  HideCrosshair ();
-
   if (strcasecmp (function, "ElementToBuffer") == 0)
     {
+      HideCrosshair ();
       if (LoadElementToBuffer (PASTEBUFFER, name, true))
 	SetMode (PASTEBUFFER_MODE);
+      RestoreCrosshair ();
     }
 
   else if (strcasecmp (function, "LayoutToBuffer") == 0)
     {
+      HideCrosshair ();
       if (LoadLayoutToBuffer (PASTEBUFFER, name))
 	SetMode (PASTEBUFFER_MODE);
+      RestoreCrosshair ();
     }
 
   else if (strcasecmp (function, "Layout") == 0)
@@ -5904,7 +5906,6 @@ ActionLoadFrom (int argc, char **argv, int x, int y)
       LoadPCB (fname);
     }
 
-  RestoreCrosshair ();
   return 0;
 }
 
