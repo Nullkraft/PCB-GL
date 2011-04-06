@@ -66,15 +66,6 @@ typedef struct
 } point;
 
 /* ---------------------------------------------------------------------------
- * some local identifiers
- */
-
-/* This is a stack for HideCrosshair() and RestoreCrosshair() calls. They
- * must always be matched. */
-static bool CrosshairStack[MAX_CROSSHAIRSTACK_DEPTH];
-static int CrosshairStackLocation = 0;
-
-/* ---------------------------------------------------------------------------
  * some local prototypes
  */
 static void XORPolygon (PolygonTypePtr, LocationType, LocationType);
@@ -565,10 +556,14 @@ XORDrawMoveOrCopyObject (void)
 /* ---------------------------------------------------------------------------
  * draws additional stuff that follows the crosshair
  */
-static void
+void
 DrawAttached (void)
 {
   BDimension s;
+
+  if (!Crosshair.On)
+    return;
+
   switch (Settings.Mode)
     {
     case VIA_MODE:
@@ -684,18 +679,62 @@ DrawAttached (void)
     }
 }
 
+
+/* --------------------------------------------------------------------------
+ * draw the marker position
+ */
+void
+DrawMark (void)
+{
+  /* Mark is not drawn when the crosshair is off, or when it is not set */
+  if (!Crosshair.On || !Marked.status)
+    return;
+
+  gui->draw_line (Crosshair.GC,
+                  Marked.X - MARK_SIZE,
+                  Marked.Y - MARK_SIZE,
+                  Marked.X + MARK_SIZE, Marked.Y + MARK_SIZE);
+  gui->draw_line (Crosshair.GC,
+                  Marked.X + MARK_SIZE,
+                  Marked.Y - MARK_SIZE,
+                  Marked.X - MARK_SIZE, Marked.Y + MARK_SIZE);
+}
+
+
+void
+notify_crosshair_change (bool changes_complete)
+{
+  if (gui->notify_crosshair_change)
+    gui->notify_crosshair_change (changes_complete);
+}
+
+
+void
+notify_mark_change (bool changes_complete)
+{
+  if (gui->notify_mark_change)
+    gui->notify_mark_change (changes_complete);
+}
+
+
 /* ---------------------------------------------------------------------------
  * switches crosshair on
  */
 void
 CrosshairOn (void)
 {
-  if (!Crosshair.On)
-    {
-      Crosshair.On = true;
-      DrawAttached ();
-      DrawMark ();
-    }
+  if (Crosshair.On)
+    return;
+
+  notify_crosshair_change (false);
+  if (Marked.status)
+    notify_mark_change (false);
+
+  Crosshair.On = true;
+
+  notify_crosshair_change (true);
+  if (Marked.status)
+    notify_mark_change (true);
 }
 
 /* ---------------------------------------------------------------------------
@@ -704,54 +743,40 @@ CrosshairOn (void)
 void
 CrosshairOff (void)
 {
-  if (Crosshair.On)
-    {
-      Crosshair.On = false;
-      DrawAttached ();
-      DrawMark ();
-    }
+  if (!Crosshair.On)
+    return;
+
+  notify_crosshair_change (false);
+  if (Marked.status)
+    notify_mark_change (false);
+
+  Crosshair.On = false;
+
+  notify_crosshair_change (true);
+  if (Marked.status)
+    notify_mark_change (true);
 }
 
 /* ---------------------------------------------------------------------------
- * saves crosshair state (on/off) and hides him
+ * Convenience for plugins using the old API
  */
 void
-HideCrosshair ()
+HideCrosshair (void)
 {
-  /* fprintf(stderr, "HideCrosshair stack %d\n", CrosshairStackLocation); */
-  if (CrosshairStackLocation >= MAX_CROSSHAIRSTACK_DEPTH)
-    {
-      fprintf(stderr, "Error: CrosshairStackLocation overflow\n");
-      return;
-    }
-
-  CrosshairStack[CrosshairStackLocation] = Crosshair.On;
-  CrosshairStackLocation++;
-
-  CrosshairOff ();
+  notify_crosshair_change (false);
+  notify_mark_change (false);
 }
 
-/* ---------------------------------------------------------------------------
- * restores last crosshair state
- */
 void
 RestoreCrosshair (void)
 {
-  /* fprintf(stderr, "RestoreCrosshair stack %d\n", CrosshairStackLocation); */
-  if (CrosshairStackLocation <= 0)
-    {
-      fprintf(stderr, "Error: CrosshairStackLocation underflow\n");
-      return;
-    }
-
-  CrosshairStackLocation--;
-
-  if (CrosshairStack[CrosshairStackLocation])
-    CrosshairOn ();
-  else
-    CrosshairOff ();
+  notify_crosshair_change (true);
+  notify_mark_change (true);
 }
 
+/* ---------------------------------------------------------------------------
+ * Returns the square of the given number
+ */
 static double
 square (double x)
 {
@@ -1043,8 +1068,8 @@ MoveCrosshairRelative (LocationType DeltaX, LocationType DeltaY)
 }
 
 /* ---------------------------------------------------------------------------
- * move crosshair absolute switched off if it moved
- * return true if it switched off
+ * move crosshair absolute
+ * return true if the crosshair was moved from its existing position
  */
 bool
 MoveCrosshairAbsolute (LocationType X, LocationType Y)
@@ -1055,13 +1080,14 @@ MoveCrosshairAbsolute (LocationType X, LocationType Y)
   FitCrosshairIntoGrid (X, Y);
   if (Crosshair.X != x || Crosshair.Y != y)
     {
-      /* back up to old position and erase crosshair */
+      /* back up to old position to notify the GUI
+       * (which might want to erase the old crosshair) */
       z = Crosshair.X;
       Crosshair.X = x;
       x = z;
       z = Crosshair.Y;
       Crosshair.Y = y;
-      HideCrosshair ();
+      notify_crosshair_change (false); /* Our caller notifies when it has done */
       /* now move forward again */
       Crosshair.X = x;
       Crosshair.Y = z;
@@ -1086,30 +1112,9 @@ SetCrosshairRange (LocationType MinX, LocationType MinY, LocationType MaxX,
   MoveCrosshairRelative (0, 0);
 }
 
-/* --------------------------------------------------------------------------
- * draw the marker position
- * if argument is true, draw only if it is visible, otherwise draw it regardless
- */
-void
-DrawMark (void)
-{
-  if (Marked.status)
-    {
-      gui->draw_line (Crosshair.GC,
-		      Marked.X - MARK_SIZE,
-		      Marked.Y - MARK_SIZE,
-		      Marked.X + MARK_SIZE, Marked.Y + MARK_SIZE);
-      gui->draw_line (Crosshair.GC,
-		      Marked.X + MARK_SIZE,
-		      Marked.Y - MARK_SIZE,
-		      Marked.X - MARK_SIZE, Marked.Y + MARK_SIZE);
-    }
-}
-
 /* ---------------------------------------------------------------------------
  * initializes crosshair stuff
- * clears the struct, allocates to graphical contexts and
- * initializes the stack
+ * clears the struct, allocates to graphical contexts
  */
 void
 InitCrosshair (void)
@@ -1121,9 +1126,6 @@ InitCrosshair (void)
   gui->set_line_cap (Crosshair.GC, Trace_Cap);
   gui->set_line_width (Crosshair.GC, 1);
 
-  /* fake a crosshair off entry on stack */
-  CrosshairStackLocation = 0;
-  CrosshairStack[CrosshairStackLocation++] = true;
   Crosshair.On = false;
 
   /* set initial shape */
