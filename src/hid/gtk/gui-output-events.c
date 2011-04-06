@@ -446,12 +446,10 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
   state = (GdkModifierType) (ev->state);
   mk = ghid_modifier_keys_state (&state);
   ghid_show_crosshair (FALSE);
-  notify_crosshair_change (false);
 
   do_mouse_action(ev->button, mk);
 
   ghid_invalidate_all ();
-  notify_crosshair_change (true);
   ghid_window_set_name_label (PCB->Name);
   ghid_set_status_line_label ();
   ghid_show_crosshair (TRUE);
@@ -472,13 +470,12 @@ ghid_port_button_release_cb (GtkWidget * drawing_area,
   state = (GdkModifierType) (ev->state);
   mk = ghid_modifier_keys_state (&state);
 
-  notify_crosshair_change (false);
-
   do_mouse_action(ev->button, mk + M_Release);
 
+  notify_crosshair_change (false);
   AdjustAttachedObjects ();
-  ghid_invalidate_all ();
   notify_crosshair_change (true);
+  ghid_invalidate_all ();
 
   ghid_window_set_name_label (PCB->Name);
   ghid_set_status_line_label ();
