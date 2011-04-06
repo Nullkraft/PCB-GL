@@ -1,5 +1,5 @@
 Bottom: 1d339fecf151b649360c944ed23fa48e9983cd9d
-Top:    1d339fecf151b649360c944ed23fa48e9983cd9d
+Top:    572fe55cebee6e63ec661bb6d9fecd9d35f06893
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-07 00:06:08 +0100
 
@@ -8,4 +8,15 @@ TEMP TEST
 
 ---
 
-
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 791a608..e09e122 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -280,6 +280,7 @@ have_crosshair_attachments (void)
+ static gboolean
+ ghid_idle_cb (gpointer data)
+ {
++  return;
+   if (Settings.Mode == NO_MODE)
+     SetMode (ARROW_MODE);
+   ghid_mode_cursor (Settings.Mode);
