@@ -1,5 +1,5 @@
-Bottom: 64814138abe1c6c5b88b401cb9dc20928436b28a
-Top:    718093413125a3b7875781883c7a300c086f1b77
+Bottom: e3bfa18a88aeda7e99070b7d556e2f977dd68e8a
+Top:    35655ee64cd88c9f05a7af7cfcea50fc9d5fc70c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-03 00:16:54 +0100
 
@@ -15,10 +15,10 @@ Leaving this commit for the benefit users of broken mesa versions.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index ba1c4ad..279b408 100644
+index 95106eb..2ba59b7 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -1013,6 +1013,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1027,6 +1027,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    return FALSE;
  }
  
@@ -74,10 +74,10 @@ index 0a0e757..1f54773 100644
  		    G_CALLBACK (ghid_drawing_area_expose_cb),
  		    port);
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index c9698eb..2061e40 100644
+index 5db1cb6..2e18f11 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -502,6 +502,7 @@ void ghid_drawing_area_configure_hook (GHidPort *port);
+@@ -503,6 +503,7 @@ void ghid_drawing_area_configure_hook (GHidPort *port);
  void ghid_screen_update (void);
  gboolean ghid_drawing_area_expose_cb (GtkWidget *, GdkEventExpose *,
                                        GHidPort *);
