@@ -311,7 +311,6 @@ ghid_port_key_release_cb (GtkWidget * drawing_area, GdkEventKey * kev,
   AdjustAttachedObjects ();
   notify_crosshair_change (true);
   ghid_invalidate_all ();
-  ghid_screen_update ();
   g_idle_add (ghid_idle_cb, NULL);
   return FALSE;
 }
@@ -482,7 +481,6 @@ ghid_port_button_release_cb (GtkWidget * drawing_area,
   AdjustAttachedObjects ();
   ghid_invalidate_all ();
   notify_crosshair_change (true);
-  ghid_screen_update ();
 
   ghid_window_set_name_label (PCB->Name);
   ghid_set_status_line_label ();
