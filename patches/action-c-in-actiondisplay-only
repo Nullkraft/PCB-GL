@@ -1,5 +1,5 @@
 Bottom: 32fafd93255b71e216c25d835e4a34295537cee6
-Top:    32fafd93255b71e216c25d835e4a34295537cee6
+Top:    744a5acf023562d8ccf144f94d3eeb288e2a7584
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:04:12 +0100
 
@@ -11,4 +11,85 @@ only do it for the sub-paths which require it.
 
 ---
 
-
+diff --git a/src/action.c b/src/action.c
+index 2039b88..d333e14 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -2675,7 +2675,6 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+ 
+   if (function && (!str_dir || !*str_dir))
+     {
+-      HideCrosshair ();
+       switch (id = GetFunctionID (function))
+ 	{
+ 
+@@ -2732,6 +2731,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+ 	  break;
+ 
+ 	case F_CycleClip:
++	  HideCrosshair ();
+ 	  if TEST_FLAG
+ 	    (ALLDIRECTIONFLAG, PCB)
+ 	    {
+@@ -2741,20 +2741,27 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+ 	  else
+ 	    PCB->Clipping = (PCB->Clipping + 1) % 3;
+ 	  AdjustAttachedObjects ();
++	  RestoreCrosshair ();
+ 	  break;
+ 
+ 	case F_CycleCrosshair:
++	  HideCrosshair ();
+ 	  Crosshair.shape = CrosshairShapeIncrement(Crosshair.shape);
+ 	  if (Crosshair_Shapes_Number == Crosshair.shape)
+ 	    Crosshair.shape = Basic_Crosshair_Shape;
++	  RestoreCrosshair ();
+ 	  break;
+ 
+ 	case F_ToggleRubberBandMode:
++	  HideCrosshair ();
+ 	  TOGGLE_FLAG (RUBBERBANDFLAG, PCB);
++	  RestoreCrosshair ();
+ 	  break;
+ 
+ 	case F_ToggleStartDirection:
++	  HideCrosshair ();
+ 	  TOGGLE_FLAG (SWAPSTARTDIRFLAG, PCB);
++	  RestoreCrosshair ();
+ 	  break;
+ 
+ 	case F_ToggleUniqueNames:
+@@ -2762,7 +2769,9 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+ 	  break;
+ 
+ 	case F_ToggleSnapPin:
++	  HideCrosshair ();
+ 	  TOGGLE_FLAG (SNAPPINFLAG, PCB);
++	  RestoreCrosshair ();
+ 	  break;
+ 
+ 	case F_ToggleLocalRef:
+@@ -2803,6 +2812,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+ 	  break;
+ 
+ 	case F_ToggleAutoDRC:
++	  HideCrosshair ();
+ 	  TOGGLE_FLAG (AUTODRCFLAG, PCB);
+ 	  if (TEST_FLAG (AUTODRCFLAG, PCB) && Settings.Mode == LINE_MODE)
+ 	    {
+@@ -2816,6 +2826,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+ 				  Crosshair.AttachedLine.Point1.Y, true, 1,
+ 				  FOUNDFLAG);
+ 	    }
++	  RestoreCrosshair ();
+ 	  break;
+ 
+ 	case F_ToggleCheckPlanes:
+@@ -2958,7 +2969,6 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+ 	default:
+ 	  err = 1;
+ 	}
+-      RestoreCrosshair ();
+     }
+   else if (function && str_dir)
+     {
