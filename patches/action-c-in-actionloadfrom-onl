@@ -1,5 +1,5 @@
 Bottom: ec9a508432c717f48ab24a7f448020a25ecde914
-Top:    ec9a508432c717f48ab24a7f448020a25ecde914
+Top:    4d3cb806f540ab24c1dc01018769b52d1c848d16
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:08:36 +0100
 
@@ -8,4 +8,37 @@ action.c: In ActionLoadFrom(), only hide the crosshair where required
 
 ---
 
-
+diff --git a/src/action.c b/src/action.c
+index 49ff7ac..e5a463f 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -5866,18 +5866,20 @@ ActionLoadFrom (int argc, char **argv, int x, int y)
+   function = argv[0];
+   name = argv[1];
+ 
+-  HideCrosshair ();
+-
+   if (strcasecmp (function, "ElementToBuffer") == 0)
+     {
++      HideCrosshair ();
+       if (LoadElementToBuffer (PASTEBUFFER, name, true))
+ 	SetMode (PASTEBUFFER_MODE);
++      RestoreCrosshair ();
+     }
+ 
+   else if (strcasecmp (function, "LayoutToBuffer") == 0)
+     {
++      HideCrosshair ();
+       if (LoadLayoutToBuffer (PASTEBUFFER, name))
+ 	SetMode (PASTEBUFFER_MODE);
++      RestoreCrosshair ();
+     }
+ 
+   else if (strcasecmp (function, "Layout") == 0)
+@@ -5904,7 +5906,6 @@ ActionLoadFrom (int argc, char **argv, int x, int y)
+       LoadPCB (fname);
+     }
+ 
+-  RestoreCrosshair ();
+   return 0;
+ }
