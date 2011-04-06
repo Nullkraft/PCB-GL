@@ -1,0 +1,14 @@
+Bottom: 32fafd93255b71e216c25d835e4a34295537cee6
+Top:    32fafd93255b71e216c25d835e4a34295537cee6
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-06 01:04:12 +0100
+
+action.c: In ActionDisplay(), Only invalidate crosshair where needed
+
+Rather than wrapping the whole function in a crosshair hide/restore,
+only do it for the sub-paths which require it.
+
+
+---
+
+
