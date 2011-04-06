@@ -652,9 +652,8 @@ ghid_menu_cb (GtkAction * action, gpointer data)
     {
       notify_crosshair_change (false);
       AdjustAttachedObjects ();
-      ghid_invalidate_all ();
       notify_crosshair_change (true);
-      ghid_screen_update ();
+      ghid_invalidate_all ();
       ghid_window_set_name_label (PCB->Name);
       ghid_set_status_line_label ();
 #ifdef FIXME
