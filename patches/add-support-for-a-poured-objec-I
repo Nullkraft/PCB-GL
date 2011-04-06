@@ -1,7 +1,7 @@
-Bottom: d41a527b82ce7a24b778efc798ca1f2e44cc3506
-Top:    f852e74b900cdc9893ca101286a7357aa073ee05
+Bottom: dfe6accd6dfdff507ae3907ad46a8c07e5b683c6
+Top:    f22030f2c0da971ca96b5a0ad24967723cb6b478
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-03 00:17:29 +0100
+Date:   2011-04-06 01:33:56 +0100
 
 Add support for a "poured" object.
 
@@ -60,7 +60,7 @@ index d387f43..6958ccd 100644
  	print.c \
  	print.h \
 diff --git a/src/action.c b/src/action.c
-index 1cb874d..241e9a2 100644
+index a0577e4..b36459f 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -57,6 +57,7 @@
@@ -346,7 +346,7 @@ index 1cb874d..241e9a2 100644
  	  else
  	    {
  	      SaveMode ();
-@@ -4700,6 +4700,9 @@ off are automatically deleted.
+@@ -4703,6 +4703,9 @@ off are automatically deleted.
  static int
  ActionMorphPolygon (int argc, char **argv, int x, int y)
  {
@@ -356,7 +356,7 @@ index 1cb874d..241e9a2 100644
    char *function = ARG (0);
    if (function)
      {
-@@ -4733,6 +4736,7 @@ ActionMorphPolygon (int argc, char **argv, int x, int y)
+@@ -4736,6 +4739,7 @@ ActionMorphPolygon (int argc, char **argv, int x, int y)
  	  break;
  	}
      }
@@ -364,7 +364,7 @@ index 1cb874d..241e9a2 100644
    return 0;
  }
  
-@@ -6207,7 +6211,7 @@ ActionUndo (int argc, char **argv, int x, int y)
+@@ -6210,7 +6214,7 @@ ActionUndo (int argc, char **argv, int x, int y)
    if (!function || !*function)
      {
        /* don't allow undo in the middle of an operation */
@@ -373,7 +373,7 @@ index 1cb874d..241e9a2 100644
  	  Crosshair.AttachedObject.State != STATE_FIRST)
  	return 1;
        if (Crosshair.AttachedBox.State != STATE_FIRST
-@@ -6216,11 +6220,11 @@ ActionUndo (int argc, char **argv, int x, int y)
+@@ -6219,11 +6223,11 @@ ActionUndo (int argc, char **argv, int x, int y)
        /* undo the last operation */
  
        notify_crosshair_change (false);
@@ -389,7 +389,7 @@ index 1cb874d..241e9a2 100644
  	  notify_crosshair_change (true);
  	  return 0;
  	}
-@@ -6380,9 +6384,9 @@ three "undone" lines.
+@@ -6383,9 +6387,9 @@ three "undone" lines.
  static int
  ActionRedo (int argc, char **argv, int x, int y)
  {
@@ -402,7 +402,7 @@ index 1cb874d..241e9a2 100644
        Crosshair.AttachedLine.State == STATE_SECOND)
      return 1;
    notify_crosshair_change (false);
-@@ -6432,19 +6436,19 @@ static int
+@@ -6435,19 +6439,19 @@ static int
  ActionPolygon (int argc, char **argv, int x, int y)
  {
    char *function = ARG (0);
@@ -1950,7 +1950,7 @@ index 521f60e..308698c 100644
  				 FontTypePtr, FlagType, char *, char *,
  				 char *, LocationType, LocationType, BYTE,
 diff --git a/src/crosshair.c b/src/crosshair.c
-index ca51f4f..f7a7310 100644
+index c7f7554..3af9360 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -48,7 +48,7 @@
@@ -2101,7 +2101,7 @@ index ca51f4f..f7a7310 100644
  	}
        break;
  
-@@ -930,7 +966,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+@@ -939,7 +975,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
  
    if (TEST_FLAG (SNAPPINFLAG, PCB))
      ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
@@ -2110,7 +2110,7 @@ index ca51f4f..f7a7310 100644
    else
      ans = NO_TYPE;
  
-@@ -1100,7 +1136,7 @@ InitCrosshair (void)
+@@ -1109,7 +1145,7 @@ InitCrosshair (void)
  void
  DestroyCrosshair (void)
  {
@@ -2886,7 +2886,7 @@ index dd1f27e..5526c57 100644
         {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
         {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index f3491bd..6dad38a 100644
+index a2cae9f..e614006 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
 @@ -282,7 +282,7 @@ gcode_choose_groups ()
@@ -2899,10 +2899,10 @@ index f3491bd..6dad38a 100644
  	  /* layer isn't empty */
  
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 37901d3..3984181 100644
+index 6f1c385..8268b29 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
-@@ -499,7 +499,7 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -500,7 +500,7 @@ gerber_do_export (HID_Attr_Val * options)
    for (i = 0; i < max_copper_layer; i++)
      {
        LayerType *layer = PCB->Data->Layer + i;
@@ -3012,7 +3012,7 @@ index 411d7a6..5657467 100644
    {NULL, NULL, NULL, "remove", REMOVE_MODE, del},
    {NULL, NULL, NULL, "rotate", ROTATE_MODE, rot},
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index 4c4925d..75ecdc0 100644
+index 47b4ccb..910a3ab 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -527,7 +527,7 @@ nelma_choose_groups()
@@ -3025,7 +3025,7 @@ index 4c4925d..75ecdc0 100644
  
  			/*
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 7a6640e..d8c4c1a 100644
+index 386e81c..d164fa9 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -342,7 +342,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
@@ -3038,10 +3038,10 @@ index 7a6640e..d8c4c1a 100644
      }
    print_group[GetLayerGroupNumberByNumber (solder_silk_layer)] = 1;
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index 5dcf033..e2b8072 100644
+index 266a4e6..787ac1a 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
-@@ -231,7 +231,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -232,7 +232,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
      {
        LayerType *layer = PCB->Data->Layer + i;
        if (layer->On)
@@ -3051,7 +3051,7 @@ index 5dcf033..e2b8072 100644
      }
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 12fd18c..b8b8f50 100644
+index 6b8231f..742564a 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -500,7 +500,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)

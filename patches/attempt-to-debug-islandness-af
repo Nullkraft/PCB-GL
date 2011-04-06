@@ -1,7 +1,7 @@
-Bottom: 3d2fe7414fbe8454e77a7cdabf4c3008f885a2c7
-Top:    415ca2b63f75a76541cbd8435d0df6bc1f5fb4ab
+Bottom: 68db709961606e4ffc754d6016fa397e8d2c9220
+Top:    d77c245f51bbb51c22ce4dd3665f00bc8c8f681f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-03 00:17:32 +0100
+Date:   2011-04-06 01:33:59 +0100
 
 Attempt to debug islandness after inserting hole bug
 
@@ -9,7 +9,7 @@ Attempt to debug islandness after inserting hole bug
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 241e9a2..8569920 100644
+index b36459f..0747887 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1504,12 +1504,19 @@ NotifyMode (void)
