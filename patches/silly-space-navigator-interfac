@@ -1,5 +1,5 @@
-Bottom: 14206ee72e1353f55175c9bd91db1513db137b5a
-Top:    ec1d8ba533b590082c6c45fc31765cac059e225e
+Bottom: 7b23f13e7030d8d36a72a2dd306a0edd61811378
+Top:    3a91d1f0e270ed5e2ea0ed121c35a39368b9da6d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:18 +0100
 
@@ -27,7 +27,7 @@ index dee60d9..253b5af 100644
  
  hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Makefile
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index bb4a869..8dbf7ca 100644
+index 9a15112..d67194b 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -45,6 +45,8 @@
@@ -39,7 +39,7 @@ index bb4a869..8dbf7ca 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -719,6 +721,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+@@ -710,6 +712,8 @@ ghid_port_window_enter_cb (GtkWidget * widget,
        /* Make sure drawing area has keyboard focus when we are in it.
         */
        gtk_widget_grab_focus (out->drawing_area);
@@ -48,7 +48,7 @@ index bb4a869..8dbf7ca 100644
      }
    ghidgui->in_popup = FALSE;
  
-@@ -820,6 +824,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -811,6 +815,8 @@ ghid_port_window_leave_cb (GtkWidget * widget,
  	    }
  	  g_idle_add (ghid_pan_idle_cb, NULL);
  	}
@@ -57,7 +57,7 @@ index bb4a869..8dbf7ca 100644
      }
  
    //ghid_show_crosshair (FALSE);
-@@ -862,3 +868,31 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
+@@ -853,3 +859,31 @@ ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  
    return TRUE;
  }
@@ -90,7 +90,7 @@ index bb4a869..8dbf7ca 100644
 +    hid_actionl ("SwapSides", (button == 0) ? "V" : "H", NULL);
 +}
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index b1e4a9d..411d7a6 100644
+index 6f8dcce..b3b5983 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -124,6 +124,7 @@ a zoom in/out.
@@ -101,7 +101,7 @@ index b1e4a9d..411d7a6 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -2286,6 +2287,7 @@ ghid_build_pcb_top_window (void)
+@@ -2279,6 +2280,7 @@ ghid_build_pcb_top_window (void)
    /* FIXME: IFDEF HACK */
  #ifdef ENABLE_GL
    trackball = ghid_trackball_new ();
@@ -109,7 +109,7 @@ index b1e4a9d..411d7a6 100644
    g_signal_connect (trackball, "rotation-changed",
                      G_CALLBACK (ghid_port_rotate), NULL);
    g_signal_connect (trackball, "view-2d-changed",
-@@ -2754,6 +2756,12 @@ ghid_do_export (HID_Attr_Val * options)
+@@ -2747,6 +2749,12 @@ ghid_do_export (HID_Attr_Val * options)
    if (stdin_listen)
      ghid_create_listener ();
  
@@ -178,7 +178,7 @@ index d6bd03c..3af647e 100644
  
  #endif /* __GHID_TRACKBALL_H__ */
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 22d9a1b..1f3680b 100644
+index 654241d..cbc3ad4 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -146,6 +146,8 @@ typedef struct
