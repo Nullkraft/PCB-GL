@@ -1,5 +1,5 @@
-Bottom: c15482c82519ffb2782587b615f40877c677194f
-Top:    794cc6d46277647fd051cc53c3d591de27889185
+Bottom: cf868aadc0799fdbfae013cbbcecbab2c2930b27
+Top:    77505b8e184506d1b1f3d1e18e877a1917c37cfd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:13 +0100
 
@@ -15,10 +15,10 @@ Leaving this commit for the benefit users of broken mesa versions.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 95106eb..2ba59b7 100644
+index 9c618b4..10ba13a 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -1027,6 +1027,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1061,6 +1061,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    return FALSE;
  }
  
@@ -60,10 +60,10 @@ index cf44922..35c673c 100644
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 0a0e757..1f54773 100644
+index e21ef18..9744df0 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -2368,6 +2368,9 @@ ghid_build_pcb_top_window (void)
+@@ -2361,6 +2361,9 @@ ghid_build_pcb_top_window (void)
       |  the user does a command entry.
     */
  
@@ -74,7 +74,7 @@ index 0a0e757..1f54773 100644
  		    G_CALLBACK (ghid_drawing_area_expose_cb),
  		    port);
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 5db1cb6..2e18f11 100644
+index 0ab1b7f..ce0194b 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -503,6 +503,7 @@ void ghid_drawing_area_configure_hook (GHidPort *port);
