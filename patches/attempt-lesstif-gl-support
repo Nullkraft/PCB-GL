@@ -1,7 +1,7 @@
-Bottom: c6cac859ce627ed3d6e26d9bc3f524a313a0042d
-Top:    2bbbb006be6bb1a4648d23feedc04ea39c78fbd6
+Bottom: 161c80449e0c8af5052755c35d6205e525388cf7
+Top:    53848dbe586725e0dc3698afb751f0493e029d8b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-06 01:47:33 +0100
+Date:   2011-04-07 18:07:48 +0100
 
 Attempt lesstif GL support
 
@@ -66,7 +66,7 @@ index ae29099..03e2e26 100644
  
        gtk )
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 422e83b..37e4680 100644
+index 2a27086..3cdb737 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -28,10 +28,14 @@
@@ -380,7 +380,7 @@ index 422e83b..37e4680 100644
  }
  
  void
-@@ -3114,6 +3315,7 @@ lesstif_set_color (hidGC gc, const char *name)
+@@ -3123,6 +3324,7 @@ lesstif_set_color (hidGC gc, const char *name)
      }
  }
  
@@ -388,7 +388,7 @@ index 422e83b..37e4680 100644
  static void
  set_gc (hidGC gc)
  {
-@@ -3177,252 +3379,469 @@ set_gc (hidGC gc)
+@@ -3186,252 +3388,469 @@ set_gc (hidGC gc)
  			  join);
      }
  }
@@ -961,10 +961,10 @@ index 422e83b..37e4680 100644
 -  if (x1 < -vw && x2 < -vw)
 -    return;
 -  if (y1 < -vw && y2 < -vw)
+-    return;
+-  if (x1 > view_width + vw && x2 > view_width + vw)
 +  if (current_gc == gc)
      return;
--  if (x1 > view_width + vw && x2 > view_width + vw)
--    return;
 -  if (y1 > view_height + vw && y2 > view_height + vw)
 -    return;
 -  if (x1 > x2) { int xt = x1; x1 = x2; x2 = xt; }
@@ -1051,7 +1051,7 @@ index 422e83b..37e4680 100644
  }
  
  static void
-@@ -3850,21 +4269,21 @@ HID lesstif_gui = {
+@@ -3859,21 +4278,21 @@ HID lesstif_gui = {
    lesstif_set_layer,
    lesstif_make_gc,
    lesstif_destroy_gc,
