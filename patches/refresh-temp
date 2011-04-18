@@ -1,0 +1,74 @@
+Bottom: fd072cb1679bd53df373077d0a16165a583b41e5
+Top:    84b0280232e6678a7520aca505160e5341bef60f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-18 18:25:11 +0100
+
+Refresh of play-with-glsl-shader-for-rend
+
+---
+
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index cec2f84..5595cd7 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -518,7 +518,6 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
+ void
+ hidgl_draw_rect (int x1, int y1, int x2, int y2)
+ {
+-  return;
+   CHECK_IS_IN_CONTEXT ();
+   glBegin (GL_LINE_LOOP);
+   glVertex3f (x1, y1, global_depth);
+diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
+index 663166d..88d0966 100644
+--- a/src/hid/common/hidgl.h
++++ b/src/hid/common/hidgl.h
+@@ -31,8 +31,6 @@ typedef struct {
+   unsigned int triangle_count;
+   unsigned int coord_comp_count;
+   unsigned int vertex_count;
+-  unsigned int total_triangles;
+-  unsigned int total_vertices;
+   GLuint vbo_id;
+   bool use_vbo;
+   bool use_map;
+@@ -61,7 +59,6 @@ hidgl_add_vertex_3D_tex (triangle_buffer *buffer,
+   buffer->triangle_array [buffer->coord_comp_count++] = s;
+   buffer->triangle_array [buffer->coord_comp_count++] = t;
+   buffer->vertex_count++;
+-  buffer->total_vertices++;
+ }
+ 
+ inline void
+@@ -86,8 +83,6 @@ hidgl_add_triangle_3D_tex (triangle_buffer *buffer,
+   hidgl_add_vertex_3D_tex (buffer, x3, y3, z3, s3, t3);
+   hidgl_add_vertex_3D_tex (buffer, x3, y3, z3, s3, t3);
+   /* NB: Repeated last virtex to separate from other tri-strip */
+-  buffer->triangle_count++;
+-  buffer->total_triangles++;
+ }
+ 
+ static inline void
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 2db6c5f..be83d28 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1796,9 +1796,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   int min_depth;
+   int max_depth;
+ 
+-  buffer.total_triangles = 0;
+-  buffer.total_vertices = 0;
+-
+   ghid_start_drawing (port);
+ 
+   hidgl_in_context (true);
+@@ -1984,9 +1981,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   hidgl_in_context (false);
+   ghid_end_drawing (port);
+ 
+-//  printf ("Triangle count was %i\n", buffer.total_triangles);
+-//  printf ("Vertex count was %i\n", buffer.total_vertices);
+-
+   return FALSE;
+ }
