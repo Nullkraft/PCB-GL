@@ -1,5 +1,5 @@
 Bottom: 07699ad852f829d7e628dd85fafd59325c7165c3
-Top:    bd94596808bc8239fa12c660fe278777d193e85e
+Top:    5b5e9db3d94df4c32490b5dc29c887400922bf3f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:11 +0100
 
@@ -890,10 +890,27 @@ index 868c2b1..e84dd0c 100644
    gerber_make_gc,
    gerber_destroy_gc,
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index ba58d5d..e72aa65 100644
+index ba58d5d..3d90c27 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -770,12 +770,67 @@ ghid_invalidate_all ()
+@@ -34,6 +34,8 @@ typedef struct render_priv {
+   GdkGC *mask_gc;
+   GdkGC *u_gc;
+   GdkGC *grid_gc;
++  int attached_invalidate_depth;
++  int mark_invalidate_depth;
+ } render_priv;
+ 
+ 
+@@ -709,6 +711,7 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
+   ghid_invalidate_all ();
+ }
+ 
++
+ void
+ ghid_invalidate_all ()
+ {
+@@ -770,12 +773,70 @@ ghid_invalidate_all ()
  
    hid_expose_callback (&ghid_hid, &region, 0);
    ghid_draw_grid ();
@@ -901,64 +918,67 @@ index ba58d5d..e72aa65 100644
 -    RestoreCrosshair ();
 -  ghidgui->need_restore_crosshair = FALSE;
 +
-+  DrawAttached ();
-+  DrawMark ();
++  if (priv->attachment_invalidate_depth == 0)
++    DrawAttached ();
++  if (priv->mark_invalidate_depth == 0)
++    DrawMark ();
 +
    ghid_screen_update ();
  }
  
++
 +void
 +ghid_notify_crosshair_change (bool changes_complete)
 +{
-+  static int invalidate_depth = 0;
++  render_priv *priv = gport->render_priv;
 +
-+  /* FIXME: We sometimes get called before the GUI is up */
-+  if (gport->drawing_area == NULL)
++  /* We sometimes get called before the GUI is up */
++  if (priv->drawing_area == NULL)
 +    return;
 +
 +  if (changes_complete)
-+    invalidate_depth --;
++    priv->attached_invalidate_depth --;
 +
-+  if (invalidate_depth < 0)
++  if (priv->attached_invalidate_depth < 0)
 +    {
 +      fprintf (stderr, "ERROR: Unmatched notify_crosshair_change calls\n");
-+      invalidate_depth = 0;
++      priv->attached_invalidate_depth = 0;
 +    }
 +
-+  if (invalidate_depth == 0)
++  if (priv->attached_invalidate_depth == 0)
 +    DrawAttached ();
 +
 +  if (!changes_complete)
-+    invalidate_depth ++;
-+  else if (gport->drawing_area != NULL)
-+    ghid_draw_area_update (gport, NULL);
++    priv->attached_invalidate_depth ++;
++  else if (priv->drawing_area != NULL)
++    ghid_draw_area_update (priv, NULL);
 +}
 +
 +void
 +ghid_notify_mark_change (bool changes_complete)
 +{
-+  static int invalidate_depth = 0;
++  render_priv *priv = gport->render_priv;
 +
-+  /* FIXME: We sometimes get called before the GUI is up */
-+  if (gport->drawing_area == NULL)
++  /* We sometimes get called before the GUI is up */
++  if (priv->drawing_area == NULL)
 +    return;
 +
 +  if (changes_complete)
-+    invalidate_depth --;
++    priv->mark_invalidate_depth --;
 +
-+  if (invalidate_depth < 0)
++  if (priv->mark_invalidate_depth < 0)
 +    {
 +      fprintf (stderr, "ERROR: Unmatched notify_mark_change calls\n");
-+      invalidate_depth = 0;
++      priv->mark_invalidate_depth = 0;
 +    }
 +
-+  if (invalidate_depth == 0)
++  if (priv->mark_invalidate_depth == 0)
 +    DrawMark ();
 +
 +  if (!changes_complete)
-+    invalidate_depth ++;
++    priv->mark_invalidate_depth ++;
 +  else
-+    ghid_draw_area_update (gport, NULL);
++    ghid_draw_area_update (priv, NULL);
 +}
 +
  static void
@@ -1025,20 +1045,10 @@ index 8bda96d..75ba763 100644
  
    ghid_set_status_line_label ();
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 331f214..791a608 100644
+index 331f214..03fa2da 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -58,9 +58,6 @@ ghid_port_ranges_changed (void)
- {
-   GtkAdjustment *h_adj, *v_adj;
- 
--  HideCrosshair ();
--  ghidgui->need_restore_crosshair = TRUE;
--
-   h_adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->h_range));
-   v_adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->v_range));
-   gport->view_x0 = h_adj->value;
-@@ -235,7 +232,7 @@ ghid_note_event_location (GdkEventButton * ev)
+@@ -235,7 +235,7 @@ ghid_note_event_location (GdkEventButton * ev)
    if (moved)
      {
        AdjustAttachedObjects ();
@@ -1047,7 +1057,7 @@ index 331f214..791a608 100644
      }
    ghid_set_cursor_position_labels ();
    return moved;
-@@ -305,11 +302,10 @@ ghid_port_key_release_cb (GtkWidget * drawing_area, GdkEventKey * kev,
+@@ -305,11 +305,10 @@ ghid_port_key_release_cb (GtkWidget * drawing_area, GdkEventKey * kev,
    if (ghid_is_modifier_key_sym (ksym))
      ghid_note_event_location (NULL);
  
@@ -1061,7 +1071,7 @@ index 331f214..791a608 100644
    g_idle_add (ghid_idle_cb, NULL);
    return FALSE;
  }
-@@ -447,12 +443,12 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+@@ -447,12 +446,12 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
    state = (GdkModifierType) (ev->state);
    mk = ghid_modifier_keys_state (&state);
    ghid_show_crosshair (FALSE);
@@ -1076,7 +1086,7 @@ index 331f214..791a608 100644
    ghid_window_set_name_label (PCB->Name);
    ghid_set_status_line_label ();
    ghid_show_crosshair (TRUE);
-@@ -473,14 +469,13 @@ ghid_port_button_release_cb (GtkWidget * drawing_area,
+@@ -473,14 +472,13 @@ ghid_port_button_release_cb (GtkWidget * drawing_area,
    state = (GdkModifierType) (ev->state);
    mk = ghid_modifier_keys_state (&state);
  
@@ -1093,22 +1103,6 @@ index 331f214..791a608 100644
  
    ghid_window_set_name_label (PCB->Name);
    ghid_set_status_line_label ();
-@@ -496,7 +491,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
- {
-   static gboolean first_time_done;
- 
--  HideCrosshair ();
-   gport->width = ev->width;
-   gport->height = ev->height;
- 
-@@ -530,7 +524,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
- 
-   ghid_port_ranges_scale (FALSE);
-   ghid_invalidate_all ();
--  RestoreCrosshair ();
-   return 0;
- }
- 
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
 index f33678a..b2f0643 100644
 --- a/src/hid/gtk/gui-top-window.c
