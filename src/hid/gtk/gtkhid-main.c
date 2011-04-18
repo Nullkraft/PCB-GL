@@ -2155,7 +2155,7 @@ hid_gtk_init ()
   ghid_hid.beep                 = ghid_beep;
   ghid_hid.progress             = ghid_progress;
   ghid_hid.drc_gui              = &ghid_drc_gui,
-  ghid_hid.attribute_dialog     = ghid_attributes;
+  ghid_hid.edit_attributes      = ghid_attributes;
 
   hid_register_hid (&ghid_hid);
 #include "gtk_lists.h"

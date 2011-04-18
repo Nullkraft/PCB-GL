@@ -62,6 +62,8 @@ typedef struct hid_gc_struct
   int erase;
 } hid_gc_struct;
 
+static HID eps_hid;
+
 static FILE *f = 0;
 static int linewidth = -1;
 static int lastgroup = -1;
@@ -634,10 +636,6 @@ static void
 eps_set_crosshair (int x, int y, int action)
 {
 }
-
-
-static HID eps_hid;
-
 
 void
 hid_eps_init ()

@@ -170,11 +170,15 @@ extents_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
 }
 
 static HID extents_hid;
-static bool initialised = false;
 
 void
 hid_extents_init (void)
 {
+  static bool initialised = false;
+
+  if (initialised)
+    return;
+
   memset (&extents_hid, 0, sizeof (HID));
 
   extents_hid.struct_size         = sizeof (HID);
@@ -199,21 +203,17 @@ hid_extents_init (void)
   extents_hid.fill_polygon        = extents_fill_polygon;
   extents_hid.fill_pcb_polygon    = common_fill_pcb_polygon;
   extents_hid.fill_rect           = extents_fill_rect;
+
+  initialised = true;
 }
 
 BoxType *
 hid_get_extents (void *item)
 {
-  /* As the extents "hid" isn't a real HID, we need to ensure it is
-   * initialised before use from every external entry point.
-   */
-  if (!initialised)
-    {
-      hid_extents_init ();
-      initialised = true;
-    }
-
   BoxType region;
+
+  /* As this isn't a real "HID", we need to ensure we are initialised. */
+  hid_extents_init ();
 
   box.X1 = MAXINT;
   box.Y1 = MAXINT;

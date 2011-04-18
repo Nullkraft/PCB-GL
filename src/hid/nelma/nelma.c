@@ -1050,7 +1050,7 @@ nelma_set_crosshair(int x, int y, int a)
 void
 hid_nelma_init()
 {
-  memset (nelma_hid, 0, sizeof (HID));
+  memset (&nelma_hid, 0, sizeof (HID));
 
   nelma_hid.struct_size         = sizeof (HID);
   nelma_hid.name                = "nelma";

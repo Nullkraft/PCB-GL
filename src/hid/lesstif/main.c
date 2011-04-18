@@ -58,8 +58,7 @@ typedef struct hid_gc_struct
   char erase;
 } hid_gc_struct;
 
-extern HID lesstif_gui;
-extern HID lesstif_extents;
+static HID lesstif_hid;
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
 
@@ -779,7 +778,7 @@ Benchmark (int argc, char **argv, int x, int y)
   do
     {
       XFillRectangle (display, pixmap, bg_gc, 0, 0, view_width, view_height);
-      hid_expose_callback (&lesstif_gui, &region, 0);
+      hid_expose_callback (&lesstif_hid, &region, 0);
       XSync (display, 0);
       time (&end);
       i++;
@@ -2513,7 +2512,7 @@ idle_proc (XtPointer dummy)
 	    }
 	}
       DrawBackgroundImage();
-      hid_expose_callback (&lesstif_gui, &region, 0);
+      hid_expose_callback (&lesstif_hid, &region, 0);
       draw_grid ();
       lesstif_use_mask (0);
       XSetFunction (display, my_gc, GXcopy);
@@ -2940,7 +2939,7 @@ lesstif_make_gc (void)
 {
   hidGC rv = (hid_gc_struct *) malloc (sizeof (hid_gc_struct));
   memset (rv, 0, sizeof (hid_gc_struct));
-  rv->me_pointer = &lesstif_gui;
+  rv->me_pointer = &lesstif_hid;
   return rv;
 }
 
@@ -3085,7 +3084,7 @@ static void
 set_gc (hidGC gc)
 {
   int cap, join, width;
-  if (gc->me_pointer != &lesstif_gui)
+  if (gc->me_pointer != &lesstif_hid)
     {
       fprintf (stderr, "Fatal: GC from another HID passed to lesstif HID\n");
       abort ();
@@ -3692,7 +3691,7 @@ pinout_callback (Widget da, PinoutData * pd,
   region.Y2 = PCB->MaxHeight;
 
   XFillRectangle (display, pixmap, bg_gc, 0, 0, pd->v_width, pd->v_height);
-  hid_expose_callback (&lesstif_gui, &region, pd->item);
+  hid_expose_callback (&lesstif_hid, &region, pd->item);
 
   pinout = 0;
   view_left_x = save_vx;
@@ -3798,8 +3797,6 @@ lesstif_progress (int so_far, int total, const char *message)
 
 #include "dolists.h"
 
-HID lesstif_gui;
-
 void
 hid_lesstif_init ()
 {
@@ -3838,7 +3835,7 @@ hid_lesstif_init ()
   lesstif_hid.calibrate             = lesstif_calibrate;
   lesstif_hid.shift_is_pressed      = lesstif_shift_is_pressed;
   lesstif_hid.control_is_pressed    = lesstif_control_is_pressed;
-  lesstif_hid_mod1_is_pressed       = lesstif_mod1_is_pressed;
+  lesstif_hid.mod1_is_pressed       = lesstif_mod1_is_pressed;
   lesstif_hid.get_coords            = lesstif_get_coords;
   lesstif_hid.set_crosshair         = lesstif_set_crosshair;
   lesstif_hid.add_timer             = lesstif_add_timer;
@@ -3859,9 +3856,8 @@ hid_lesstif_init ()
   lesstif_hid.show_item             = lesstif_show_item;
   lesstif_hid.beep                  = lesstif_beep;
   lesstif_hid.progress              = lesstif_progress;
-  lesstif_hid.drc_gui               = NULL;
-  lesstif_hid.attributes_dialog     = lesstif_attributes_dialog;
+  lesstif_hid.edit_attributes       = lesstif_attributes_dialog;
 
-  hid_register_hid (&lesstif_gui);
+  hid_register_hid (&lesstif_hid);
 #include "lesstif_lists.h"
 }

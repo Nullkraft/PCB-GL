@@ -55,6 +55,8 @@
 
 #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PNG function %s.\n", __FUNCTION__); abort()
 
+static HID png_hid;
+
 static void *color_cache = NULL;
 static void *brush_cache = NULL;
 
@@ -1513,8 +1515,6 @@ png_set_crosshair (int x, int y, int a)
 }
 
 #include "dolists.h"
-
-static HID png_hid;
 
 void
 hid_png_init ()

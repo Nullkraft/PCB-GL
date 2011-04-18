@@ -1342,7 +1342,7 @@ ps_set_crosshair (int x, int y, int action)
 
 #include "dolists.h"
 
-static HID ps_hid;
+HID ps_hid;
 
 void
 hid_ps_init ()
@@ -1357,7 +1357,7 @@ hid_ps_init ()
 
   ps_hid.get_export_options = ps_get_export_options;
   ps_hid.do_export          = ps_do_export;
-  ps_hid.parse_argument     = ps_parse_arguments;
+  ps_hid.parse_arguments    = ps_parse_arguments;
   ps_hid.set_layer          = ps_set_layer;
   ps_hid.make_gc            = ps_make_gc;
   ps_hid.destroy_gc         = ps_destroy_gc;
