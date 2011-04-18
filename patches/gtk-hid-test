@@ -1,5 +1,5 @@
-Bottom: bd94596808bc8239fa12c660fe278777d193e85e
-Top:    a2f94eb757d599b73edb2d5a9dc72456816a75fb
+Bottom: 5b5e9db3d94df4c32490b5dc29c887400922bf3f
+Top:    762d72427b7f4ea52aa7ee2952ab58b78dc26b8b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-07 00:31:02 +0100
 
@@ -8,121 +8,11 @@ GTK HID TEST
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index e72aa65..3d90c27 100644
---- a/src/hid/gtk/gtkhid-gdk.c
-+++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -34,6 +34,8 @@ typedef struct render_priv {
-   GdkGC *mask_gc;
-   GdkGC *u_gc;
-   GdkGC *grid_gc;
-+  int attached_invalidate_depth;
-+  int mark_invalidate_depth;
- } render_priv;
- 
- 
-@@ -709,6 +711,7 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
-   ghid_invalidate_all ();
- }
- 
-+
- void
- ghid_invalidate_all ()
- {
-@@ -771,64 +774,67 @@ ghid_invalidate_all ()
-   hid_expose_callback (&ghid_hid, &region, 0);
-   ghid_draw_grid ();
- 
--  DrawAttached ();
--  DrawMark ();
-+  if (priv->attachment_invalidate_depth == 0)
-+    DrawAttached ();
-+  if (priv->mark_invalidate_depth == 0)
-+    DrawMark ();
- 
-   ghid_screen_update ();
- }
- 
-+
- void
- ghid_notify_crosshair_change (bool changes_complete)
- {
--  static int invalidate_depth = 0;
-+  render_priv *priv = gport->render_priv;
- 
--  /* FIXME: We sometimes get called before the GUI is up */
--  if (gport->drawing_area == NULL)
-+  /* We sometimes get called before the GUI is up */
-+  if (priv->drawing_area == NULL)
-     return;
- 
-   if (changes_complete)
--    invalidate_depth --;
-+    priv->attached_invalidate_depth --;
- 
--  if (invalidate_depth < 0)
-+  if (priv->attached_invalidate_depth < 0)
-     {
-       fprintf (stderr, "ERROR: Unmatched notify_crosshair_change calls\n");
--      invalidate_depth = 0;
-+      priv->attached_invalidate_depth = 0;
-     }
- 
--  if (invalidate_depth == 0)
-+  if (priv->attached_invalidate_depth == 0)
-     DrawAttached ();
- 
-   if (!changes_complete)
--    invalidate_depth ++;
--  else if (gport->drawing_area != NULL)
--    ghid_draw_area_update (gport, NULL);
-+    priv->attached_invalidate_depth ++;
-+  else if (priv->drawing_area != NULL)
-+    ghid_draw_area_update (priv, NULL);
- }
- 
- void
- ghid_notify_mark_change (bool changes_complete)
- {
--  static int invalidate_depth = 0;
-+  render_priv *priv = gport->render_priv;
- 
--  /* FIXME: We sometimes get called before the GUI is up */
--  if (gport->drawing_area == NULL)
-+  /* We sometimes get called before the GUI is up */
-+  if (priv->drawing_area == NULL)
-     return;
- 
-   if (changes_complete)
--    invalidate_depth --;
-+    priv->mark_invalidate_depth --;
- 
--  if (invalidate_depth < 0)
-+  if (priv->mark_invalidate_depth < 0)
-     {
-       fprintf (stderr, "ERROR: Unmatched notify_mark_change calls\n");
--      invalidate_depth = 0;
-+      priv->mark_invalidate_depth = 0;
-     }
- 
--  if (invalidate_depth == 0)
-+  if (priv->mark_invalidate_depth == 0)
-     DrawMark ();
- 
-   if (!changes_complete)
--    invalidate_depth ++;
-+    priv->mark_invalidate_depth ++;
-   else
--    ghid_draw_area_update (gport, NULL);
-+    ghid_draw_area_update (priv, NULL);
- }
- 
- static void
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 791a608..ea77412 100644
+index 03fa2da..7629b6f 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -443,12 +443,10 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+@@ -446,12 +446,10 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
    state = (GdkModifierType) (ev->state);
    mk = ghid_modifier_keys_state (&state);
    ghid_show_crosshair (FALSE);
@@ -135,7 +25,7 @@ index 791a608..ea77412 100644
    ghid_window_set_name_label (PCB->Name);
    ghid_set_status_line_label ();
    ghid_show_crosshair (TRUE);
-@@ -469,13 +467,12 @@ ghid_port_button_release_cb (GtkWidget * drawing_area,
+@@ -472,13 +470,12 @@ ghid_port_button_release_cb (GtkWidget * drawing_area,
    state = (GdkModifierType) (ev->state);
    mk = ghid_modifier_keys_state (&state);
  
