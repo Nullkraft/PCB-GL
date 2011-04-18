@@ -5,7 +5,8 @@ Date:   2011-04-18 23:14:54 +0100
 
 Don't abuse CrosshairOn() API to force a redraw.
 
-Expose DrawAttached() to the HIDs so they don't have to cheat.
+Expose DrawAttached() to the HIDs so they can call it themselves,
+and don't have to cheat by forcing Crosshair.On to false.
 
 Make DrawAttached() and DrawMark() a NOP if the relevant item is not
 being shown. Ie. if !Crosshair.On, both functions draw nothing. If
@@ -13,6 +14,12 @@ being shown. Ie. if !Crosshair.On, both functions draw nothing. If
 
 A minor change is required in CrosshairOff() to XOR un-draw before
 switching the flag to off.
+
+Not known to fix any particular bug, but it is possible that the
+crosshair should not be drawn at a given point (due to changes
+taking place inside a HideCrosshair() / RestoreCrosshair() pair.
+
+Tested with Lesstif and GTK HIDs.
 
 
 ---
