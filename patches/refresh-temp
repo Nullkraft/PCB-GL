@@ -1,0 +1,40 @@
+Bottom: 27a25205cbd1ef3e74c3e4e86430b2ace3ced547
+Top:    3a91eb6b07ad73f70ba32134a26e5b9599c12a88
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-18 23:14:33 +0100
+
+Refresh of don-t-abuse-crosshairon-api-to
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 4679699..e50d4b3 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -1112,26 +1112,6 @@ SetCrosshairRange (LocationType MinX, LocationType MinY, LocationType MaxX,
+   MoveCrosshairRelative (0, 0);
+ }
+ 
+-/* --------------------------------------------------------------------------
+- * draw the marker position
+- * if argument is true, draw only if it is visible, otherwise draw it regardless
+- */
+-void
+-DrawMark (void)
+-{
+-  if (Marked.status)
+-    {
+-      gui->draw_line (Crosshair.GC,
+-		      Marked.X - MARK_SIZE,
+-		      Marked.Y - MARK_SIZE,
+-		      Marked.X + MARK_SIZE, Marked.Y + MARK_SIZE);
+-      gui->draw_line (Crosshair.GC,
+-		      Marked.X + MARK_SIZE,
+-		      Marked.Y - MARK_SIZE,
+-		      Marked.X - MARK_SIZE, Marked.Y + MARK_SIZE);
+-    }
+-}
+-
+ /* ---------------------------------------------------------------------------
+  * initializes crosshair stuff
+  * clears the struct, allocates to graphical contexts and
