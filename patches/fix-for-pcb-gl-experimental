@@ -1,7 +1,7 @@
-Bottom: d53f40a6b5c1f7df18f7425f036dcb17ffd7a741
-Top:    8c1c0359e8a50ebe1ec859c66df785625df46d2d
+Bottom: 3994dc063253992a0adb6faed9f4799d093f57d6
+Top:    226738e3827516b4e2b08a22afb95a0630ed3a7b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-06 01:47:45 +0100
+Date:   2011-04-19 00:30:55 +0100
 
 Fix for PCB+GL Experimental
 
@@ -9,10 +9,10 @@ Fix for PCB+GL Experimental
 ---
 
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 52e894d..295e656 100644
+index 5bfbffd..124c00e 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -854,9 +854,9 @@ do_hole (const BoxType *b, void *cl)
+@@ -853,9 +853,9 @@ do_hole (const BoxType *b, void *cl)
  }
  
  static bool
@@ -24,7 +24,7 @@ index 52e894d..295e656 100644
  }
  
  
-@@ -890,7 +890,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box /*, bool forc
+@@ -889,7 +889,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box /*, bool forc
    /* Polygon has holes.. does it have any user-drawn holes?
     * If so, it must be masked with a _new_ stencil bit.
     */
