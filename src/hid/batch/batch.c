@@ -345,66 +345,64 @@ batch_show_item (void *item)
 {
 }
 
-HID batch_gui = {
-  sizeof (HID),
-  "batch",
-  "Batch-mode GUI for non-interactive use.",
-  1, 0, 0, 0, 0, 0,
-  batch_get_export_options,
-  batch_do_export,
-  batch_parse_arguments,
-  batch_invalidate_lr,
-  batch_invalidate_all,
-  batch_set_layer,
-  batch_make_gc,
-  batch_destroy_gc,
-  batch_use_mask,
-  batch_set_color,
-  batch_set_line_cap,
-  batch_set_line_width,
-  batch_set_draw_xor,
-  batch_set_draw_faded,
-  batch_set_line_cap_angle,
-  batch_draw_line,
-  batch_draw_arc,
-  batch_draw_rect,
-  batch_fill_circle,
-  batch_fill_polygon,
-  batch_fill_pcb_polygon,
-  batch_thindraw_pcb_polygon,
-  batch_fill_rect,
-  batch_calibrate,
-  batch_shift_is_pressed,
-  batch_control_is_pressed,
-  batch_mod1_is_pressed,
-  batch_get_coords,
-  batch_set_crosshair,
-  batch_add_timer,
-  batch_stop_timer,
-  batch_watch_file,
-  batch_unwatch_file,
-  batch_add_block_hook,
-  batch_stop_block_hook,
-  0 /* batch_log */,
-  0 /* batch_logv */,
-  0 /* batch_confirm_dialog */,
-  0 /* batch_close_confirm_dialog */,
-  0 /* batch_report_dialog */,
-  0 /* batch_prompt_for */,
-  0 /* batch_fileselect */,
-  batch_attribute_dialog,
-  batch_show_item,
-  0 /* batch_beep */,
-  0 /* batch_progress */,
-  0 /* batch_drc_gui */,
-  0 /* batch_edit_attributes */
-};
-
 #include "dolists.h"
+
+HID batch_gui;
 
 void
 hid_batch_init ()
 {
+  memset (&batch_gui, 0, sizeof (HID));
+
+  batch_gui.struct_size           = sizeof (HID);
+  batch_gui.name                  = "batch";
+  batch_gui.description           = "Batch-mode GUI for non-interactive use.";
+
+  batch_gui.gui                   = 1;
+  batch_gui.printer               = 0;
+  batch_gui.exporter              = 0;
+  batch_gui.poly_before           = 0;
+  batch_gui.poly_after            = 0;
+  batch_gui.poly_dicer            = 0;
+
+  batch_gui.get_export_options    = batch_get_export_options;
+  batch_gui.do_export             = batch_do_export;
+  batch_gui.parse_arguments       = batch_parse_arguments;
+  batch_gui.invalidate_lr         = batch_invalidate_lr;
+  batch_gui.invalidate_all        = batch_invalidate_all;
+  batch_gui.set_layer             = batch_set_layer;
+  batch_gui.make_gc               = batch_make_gc;
+  batch_gui.destroy_gc            = batch_destroy_gc;
+  batch_gui.use_mask              = batch_use_mask;
+  batch_gui.set_color             = batch_set_color;
+  batch_gui.set_line_cap          = batch_set_line_cap;
+  batch_gui.set_line_width        = batch_set_line_width;
+  batch_gui.set_draw_xor          = batch_set_draw_xor;
+  batch_gui.set_draw_faded        = batch_set_draw_faded;
+  batch_gui.set_line_cap_angle    = batch_set_line_cap_angle;
+  batch_gui.draw_line             = batch_draw_line;
+  batch_gui.draw_arc              = batch_draw_arc;
+  batch_gui.draw_rect             = batch_draw_rect;
+  batch_gui.fill_circle           = batch_fill_circle;
+  batch_gui.fill_polygon          = batch_fill_polygon;
+  batch_gui.fill_pcb_polygon      = batch_fill_pcb_polygon;
+  batch_gui.thindraw_pcb_polygon  = batch_thindraw_pcb_polygon;
+  batch_gui.fill_rect             = batch_fill_rect;
+  batch_gui.calibrate             = batch_calibrate;
+  batch_gui.shift_is_pressed      = batch_shift_is_pressed;
+  batch_gui.control_is_pressed    = batch_control_is_pressed;
+  batch_gui.mod1_is_pressed       = batch_mod1_is_pressed;
+  batch_gui.get_coords            = batch_get_coords;
+  batch_gui.set_crosshair         = batch_set_crosshair;
+  batch_gui.add_timer             = batch_add_timer;
+  batch_gui.stop_timer            = batch_stop_timer;
+  batch_gui.watch_file            = batch_watch_file;
+  batch_gui.unwatch_file          = batch_unwatch_file;
+  batch_gui.add_block_hook        = batch_add_block_hook;
+  batch_gui.stop_block_hook       = batch_stop_block_hook;
+  batch_gui.attribute_dialog      = batch_attribute_dialog;
+  batch_gui.show_item             = batch_show_item;
+
   apply_default_hid (&batch_gui, 0);
   hid_register_hid (&batch_gui);
 #include "batch_lists.h"
