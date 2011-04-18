@@ -7,6 +7,11 @@ Don't abuse CrosshairOn() API to force a redraw.
 
 Expose DrawAttached() to the HIDs so they don't have to cheat.
 
+Make DrawAttached() and DrawMark() a NOP if the relevant item is not
+being shown. Ie. if !Crosshair.On, both functions draw nothing. If
+!Marked, DrawMark() draws nothing.
+
+
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
