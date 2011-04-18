@@ -7,7 +7,7 @@ draw.c: Fix damage area computation
 
 We should reset the left and top bounds to MAXINT, and the right and
 bottom bounds to -MAXINT. This way the correct bounds are computed
-when gahering.
+when gathering.
 
 The code previously every coordinate to 0, meaning that the box
 encompasing (0, 0)  up to the (max_x, max_y) would be invalidated,
