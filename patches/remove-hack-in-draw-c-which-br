@@ -1,5 +1,5 @@
-Bottom: dba6f9d969dff6bfbc59c9359fed61a67be2f3e4
-Top:    cacae23cc848c8de8d10540f8a33d7865b3517eb
+Bottom: 9a143f8cdfad58a964df4e891288c3ea0a5736a4
+Top:    9a143f8cdfad58a964df4e891288c3ea0a5736a4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:17 +0100
 
@@ -12,28 +12,4 @@ file during the fab drawing output.
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index a7b3484..0dbd58d 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -884,8 +884,7 @@ DrawLayerGroup (int group, const BoxType * screen)
-   Cardinal *layers = PCB->LayerGroups.Entries[group];
- 
-   clip_box = screen;
--  for (i = n_entries - 1; i >= 0;
--      i--, gui->set_layer (0, group, 0)) /* HACK: Subcomposite each layer in a layer group separately */
-+  for (i = n_entries - 1; i >= 0; i--)
-     {
-       layernum = layers[i];
-       Layer = PCB->Data->Layer + layers[i];
-@@ -902,10 +901,6 @@ DrawLayerGroup (int group, const BoxType * screen)
- 	      r_search (Layer->polygon_tree, screen, NULL, poly_callback,
- 			&info);
- 	      info.arg = false;
--
--	      /* HACK: Subcomposite polygons separately from other layer primitives */
--	      /* Reset the compositing */
--	      gui->set_layer (0, group, 0);
- 	    }
- 
- 	  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
+
