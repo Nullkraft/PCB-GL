@@ -1,5 +1,5 @@
-Bottom: 6219723dce09147154a296b745490663ddf8a868
-Top:    155b39b435f26f26e4bf38561f737acf959f2f09
+Bottom: 6bf9eea2a249ced7411b3c99830f5f68b0e8d72e
+Top:    9b0d17f620e106dba66e4d3e89b1cfb66da183c9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:14 +0100
 
@@ -14,10 +14,10 @@ Should fix this properly with notificatons to the GUI
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 716b850..ea5381d 100644
+index 25448de..a92690c 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
-@@ -1957,9 +1957,9 @@ PanAction (int argc, char **argv, int x, int y)
+@@ -1893,9 +1893,9 @@ PanAction (int argc, char **argv, int x, int y)
      }
    else if (x == on_x && y == on_y)
      {
@@ -30,10 +30,10 @@ index 716b850..ea5381d 100644
  
    return 0;
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 67781a3..571dbaf 100644
+index 37dd2af..40b14e7 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -338,7 +338,7 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
+@@ -337,7 +337,7 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
    state = (GdkModifierType) (kev->state);
    mk = ghid_modifier_keys_state (&state);
  
@@ -42,7 +42,7 @@ index 67781a3..571dbaf 100644
  
    handled = TRUE;		/* Start off assuming we handle it */
    switch (ksym)
-@@ -443,14 +443,14 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+@@ -442,14 +442,14 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
    ghid_note_event_location (ev);
    state = (GdkModifierType) (ev->state);
    mk = ghid_modifier_keys_state (&state);
@@ -59,7 +59,7 @@ index 67781a3..571dbaf 100644
    if (!gport->panning)
      g_idle_add (ghid_idle_cb, NULL);
    return TRUE;
-@@ -802,7 +802,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+@@ -800,7 +800,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
  	}
      }
  

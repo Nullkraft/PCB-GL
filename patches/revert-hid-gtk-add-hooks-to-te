@@ -1,5 +1,5 @@
-Bottom: bde9309ec15274e805604b00dcea440422688490
-Top:    28012b3f9ee2077574725e73ddd0740c88995c26
+Bottom: c2d0bbb9113b79df7d3276ff4fe32976ba23db9f
+Top:    d2d2100f5f109a24a25a1802c70b77caafe4caeb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:12 +0100
 
@@ -11,10 +11,10 @@ This reverts commit 332cb8ddc1cc032ac29c7d2b9a0051ccc228b6da.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 73c1463..9c618b4 100644
+index 3d90c27..90cbdc0 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -1037,17 +1037,6 @@ ghid_drawing_area_configure_hook (GHidPort *port)
+@@ -1035,17 +1035,6 @@ ghid_drawing_area_configure_hook (GHidPort *port)
      }
  }
  
@@ -33,10 +33,10 @@ index 73c1463..9c618b4 100644
  ghid_screen_update (void)
  {
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 878cbf3..83f09b7 100644
+index 70342d4..d3d5c16 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -656,13 +656,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -655,13 +655,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
  
@@ -50,7 +50,7 @@ index 878cbf3..83f09b7 100644
    if (out->panning)
      {
        dx = gport->zoom * (x_prev - ev->x);
-@@ -684,8 +679,6 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -683,8 +678,6 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    ghid_show_crosshair (TRUE);
    if (moved && have_crosshair_attachments ())
      ghid_draw_area_update (gport, NULL);
