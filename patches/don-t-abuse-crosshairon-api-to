@@ -1,5 +1,5 @@
 Bottom: 090a807e09a659a09d49a7c5105ec0c95eaddffd
-Top:    b8cb9e7cbc9da8db6edfd973d3e077fe767aa9dd
+Top:    b8687aaba11f225806e46e6ff6a5811118a2ffa9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-18 23:14:54 +0100
 
@@ -15,7 +15,7 @@ being shown. Ie. if !Crosshair.On, both functions draw nothing. If
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index eb19257..8e1d089 100644
+index eb19257..7d9fcb4 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -565,10 +565,14 @@ XORDrawMoveOrCopyObject (void)
@@ -63,6 +63,17 @@ index eb19257..8e1d089 100644
  /* ---------------------------------------------------------------------------
   * switches crosshair on
   */
+@@ -706,9 +732,9 @@ CrosshairOff (void)
+ {
+   if (Crosshair.On)
+     {
+-      Crosshair.On = false;
+       DrawAttached ();
+       DrawMark ();
++      Crosshair.On = false;
+     }
+ }
+ 
 @@ -1086,26 +1112,6 @@ SetCrosshairRange (LocationType MinX, LocationType MinY, LocationType MaxX,
    MoveCrosshairRelative (0, 0);
  }
