@@ -28,7 +28,6 @@ RCSID ("$Id$");
 
 static BoxType box;
 
-
 typedef struct hid_gc_struct
 {
   int width;
@@ -171,9 +170,10 @@ extents_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
 }
 
 static HID extents_hid;
+static bool initialised = false;
 
 void
-init_extents_hid (void)
+hid_extents_init (void)
 {
   memset (&extents_hid, 0, sizeof (HID));
 
@@ -204,6 +204,15 @@ init_extents_hid (void)
 BoxType *
 hid_get_extents (void *item)
 {
+  /* As the extents "hid" isn't a real HID, we need to ensure it is
+   * initialised before use from every external entry point.
+   */
+  if (!initialised)
+    {
+      hid_extents_init ();
+      initialised = true;
+    }
+
   BoxType region;
 
   box.X1 = MAXINT;
