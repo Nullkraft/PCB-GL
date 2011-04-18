@@ -1,0 +1,22 @@
+Bottom: 36aaca04ad75587e4810acafef5beae1dd0e1bf8
+Top:    090a807e09a659a09d49a7c5105ec0c95eaddffd
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-18 23:35:36 +0100
+
+Refresh of hid-gtk-don-t-call-crosshairon
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 7df5299..eb19257 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -1124,7 +1124,7 @@ InitCrosshair (void)
+   /* fake a crosshair off entry on stack */
+   CrosshairStackLocation = 0;
+   CrosshairStack[CrosshairStackLocation++] = true;
+-  Crosshair.On = false;
++  Crosshair.On = true;
+ 
+   /* set initial shape */
+   Crosshair.shape = Basic_Crosshair_Shape;
