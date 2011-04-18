@@ -1,5 +1,5 @@
 Bottom: 7b14bf4de6e1cc019909ac9ddea4bb25ec59fbea
-Top:    d07098dd71542b3a6c06fd4823e133dd03d69228
+Top:    14efe750c226d35f6d72868c7fe2f22a86225bf0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:11 +0100
 
@@ -512,7 +512,7 @@ index 43d5c2b..75ab94a 100644
  }
  
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 7df5299..fb46c66 100644
+index 7df5299..62bde1c 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -66,15 +66,6 @@ typedef struct
@@ -547,7 +547,7 @@ index 7df5299..fb46c66 100644
    switch (Settings.Mode)
      {
      case VIA_MODE:
-@@ -684,72 +679,82 @@ DrawAttached (void)
+@@ -684,74 +679,104 @@ DrawAttached (void)
      }
  }
  
@@ -579,42 +579,59 @@ index 7df5299..fb46c66 100644
 +                  Marked.X + MARK_SIZE,
 +                  Marked.Y - MARK_SIZE,
 +                  Marked.X - MARK_SIZE, Marked.Y + MARK_SIZE);
- }
- 
--/* ---------------------------------------------------------------------------
-- * switches crosshair off
-- */
++}
 +
- void
--CrosshairOff (void)
++
++void
 +notify_crosshair_change (bool changes_complete)
- {
--  if (Crosshair.On)
--    {
--      Crosshair.On = false;
--      DrawAttached ();
--      DrawMark ();
--    }
++{
 +  if (gui->notify_crosshair_change)
 +    gui->notify_crosshair_change (changes_complete);
- }
- 
++}
++
 +
 +void
 +notify_mark_change (bool changes_complete)
 +{
 +  if (gui->notify_mark_change)
 +    gui->notify_mark_change (changes_complete);
-+}
-+
+ }
+ 
 +
  /* ---------------------------------------------------------------------------
-- * saves crosshair state (on/off) and hides him
+- * switches crosshair off
 + * switches crosshair on
   */
  void
--HideCrosshair ()
+-CrosshairOff (void)
 +CrosshairOn (void)
+ {
+   if (Crosshair.On)
+-    {
+-      Crosshair.On = false;
+-      DrawAttached ();
+-      DrawMark ();
+-    }
++    return;
++
++  notify_crosshair_change (false);
++  if (Marked.status)
++    notify_mark_change (false);
++
++  Crosshair.On = true;
++
++  notify_crosshair_change (true);
++  if (Marked.status)
++    notify_mark_change (true);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+- * saves crosshair state (on/off) and hides him
++ * switches crosshair off
+  */
+ void
+-HideCrosshair ()
++CrosshairOff (void)
  {
 -  /* fprintf(stderr, "HideCrosshair stack %d\n", CrosshairStackLocation); */
 -  if (CrosshairStackLocation >= MAX_CROSSHAIRSTACK_DEPTH)
@@ -622,16 +639,16 @@ index 7df5299..fb46c66 100644
 -      fprintf(stderr, "Error: CrosshairStackLocation overflow\n");
 -      return;
 -    }
-+  if (Crosshair.On)
++  if (!Crosshair.On)
 +    return;
-+
-+  notify_crosshair_change (false);
-+  if (Marked.status)
-+    notify_mark_change (false);
  
 -  CrosshairStack[CrosshairStackLocation] = Crosshair.On;
 -  CrosshairStackLocation++;
-+  Crosshair.On = true;
++  notify_crosshair_change (false);
++  if (Marked.status)
++    notify_mark_change (false);
++
++  Crosshair.On = false;
  
 -  CrosshairOff ();
 +  notify_crosshair_change (true);
@@ -641,11 +658,11 @@ index 7df5299..fb46c66 100644
  
  /* ---------------------------------------------------------------------------
 - * restores last crosshair state
-+ * switches crosshair off
++ * Convenience for plugins using the old API
   */
  void
 -RestoreCrosshair (void)
-+CrosshairOff (void)
++HideCrosshair (void)
  {
 -  /* fprintf(stderr, "RestoreCrosshair stack %d\n", CrosshairStackLocation); */
 -  if (CrosshairStackLocation <= 0)
@@ -653,27 +670,30 @@ index 7df5299..fb46c66 100644
 -      fprintf(stderr, "Error: CrosshairStackLocation underflow\n");
 -      return;
 -    }
-+  if (!Crosshair.On)
-+    return;
- 
+-
 -  CrosshairStackLocation--;
 +  notify_crosshair_change (false);
-+  if (Marked.status)
-+    notify_mark_change (false);
++  notify_mark_change (false);
++}
  
 -  if (CrosshairStack[CrosshairStackLocation])
 -    CrosshairOn ();
 -  else
 -    CrosshairOff ();
-+  Crosshair.On = false;
-+
++void
++RestoreCrosshair (void)
++{
 +  notify_crosshair_change (true);
-+  if (Marked.status)
-+    notify_mark_change (true);
++  notify_mark_change (true);
  }
  
++/* ---------------------------------------------------------------------------
++ * Returns the square of the given number
++ */
  static double
-@@ -1043,8 +1048,8 @@ MoveCrosshairRelative (LocationType DeltaX, LocationType DeltaY)
+ square (double x)
+ {
+@@ -1043,8 +1068,8 @@ MoveCrosshairRelative (LocationType DeltaX, LocationType DeltaY)
  }
  
  /* ---------------------------------------------------------------------------
@@ -684,7 +704,7 @@ index 7df5299..fb46c66 100644
   */
  bool
  MoveCrosshairAbsolute (LocationType X, LocationType Y)
-@@ -1055,13 +1060,14 @@ MoveCrosshairAbsolute (LocationType X, LocationType Y)
+@@ -1055,13 +1080,14 @@ MoveCrosshairAbsolute (LocationType X, LocationType Y)
    FitCrosshairIntoGrid (X, Y);
    if (Crosshair.X != x || Crosshair.Y != y)
      {
@@ -701,7 +721,7 @@ index 7df5299..fb46c66 100644
        /* now move forward again */
        Crosshair.X = x;
        Crosshair.Y = z;
-@@ -1086,30 +1092,9 @@ SetCrosshairRange (LocationType MinX, LocationType MinY, LocationType MaxX,
+@@ -1086,30 +1112,9 @@ SetCrosshairRange (LocationType MinX, LocationType MinY, LocationType MaxX,
    MoveCrosshairRelative (0, 0);
  }
  
@@ -733,7 +753,7 @@ index 7df5299..fb46c66 100644
   */
  void
  InitCrosshair (void)
-@@ -1121,9 +1106,6 @@ InitCrosshair (void)
+@@ -1121,9 +1126,6 @@ InitCrosshair (void)
    gui->set_line_cap (Crosshair.GC, Trace_Cap);
    gui->set_line_width (Crosshair.GC, 1);
  
@@ -744,7 +764,7 @@ index 7df5299..fb46c66 100644
  
    /* set initial shape */
 diff --git a/src/crosshair.h b/src/crosshair.h
-index 4573e98..44b2c81 100644
+index 4573e98..94ae1f6 100644
 --- a/src/crosshair.h
 +++ b/src/crosshair.h
 @@ -46,18 +46,18 @@
@@ -752,14 +772,14 @@ index 4573e98..44b2c81 100644
  #define	STATE_THIRD		2
  
 -
++void notify_crosshair_change (bool changes_complete);
++void notify_mark_change (bool changes_complete);
  void CrosshairOn (void);
  void CrosshairOff (void);
 -void HideCrosshair (void);
 -void RestoreCrosshair (void);
 +void DrawAttached (void);
 +void DrawMark (void);
-+void notify_crosshair_change (bool changes_complete);
-+void notify_mark_change (bool changes_complete);
  void MoveCrosshairRelative (LocationType, LocationType);
  bool MoveCrosshairAbsolute (LocationType, LocationType);
  void SetCrosshairRange (LocationType, LocationType, LocationType,
