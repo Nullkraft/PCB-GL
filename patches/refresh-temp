@@ -1,0 +1,27 @@
+Bottom: 94b8d375e1020f4429add2976c1537a894854f30
+Top:    7b14bf4de6e1cc019909ac9ddea4bb25ec59fbea
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-18 22:03:39 +0100
+
+Refresh of initialise-the-hid-vtable-by-f
+
+---
+
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index b11fb8b..e6eaf52 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -357,13 +357,7 @@ hid_batch_init ()
+   batch_hid.struct_size           = sizeof (HID);
+   batch_hid.name                  = "batch";
+   batch_hid.description           = "Batch-mode GUI for non-interactive use.";
+-
+   batch_hid.gui                   = 1;
+-  batch_hid.printer               = 0;
+-  batch_hid.exporter              = 0;
+-  batch_hid.poly_before           = 0;
+-  batch_hid.poly_after            = 0;
+-  batch_hid.poly_dicer            = 0;
+ 
+   batch_hid.get_export_options    = batch_get_export_options;
+   batch_hid.do_export             = batch_do_export;
