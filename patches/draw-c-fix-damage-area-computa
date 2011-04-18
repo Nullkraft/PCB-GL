@@ -1,0 +1,19 @@
+Bottom: b8687aaba11f225806e46e6ff6a5811118a2ffa9
+Top:    b8687aaba11f225806e46e6ff6a5811118a2ffa9
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-19 00:15:05 +0100
+
+draw.c: Fix damage area computation
+
+We should reset the left and top bounds to MAXINT, and the right and
+bottom bounds to -MAXINT. This way the correct bounds are computed
+when gahering.
+
+The code previously every coordinate to 0, meaning that the box
+encompasing (0, 0)  up to the (max_x, max_y) would be invalidated,
+rather than (min_x, min_y) to (max_x, max_y).
+
+
+---
+
+
