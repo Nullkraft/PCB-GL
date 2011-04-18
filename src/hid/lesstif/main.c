@@ -2518,8 +2518,8 @@ idle_proc (XtPointer dummy)
       XCopyArea (display, main_pixmap, window, my_gc, 0, 0, view_width,
 		 view_height, 0, 0);
       pixmap = window;
-      Crosshair.On = 0;
-      CrosshairOn ();
+      DrawAttached ();
+      DrawMark ();
       need_redraw = 0;
     }
 
