@@ -1,5 +1,5 @@
-Bottom: 92481d04ac8c67b71a16a85845d6a3c6944d6922
-Top:    312083c0ccfce5f37ddbaa28628c573d03fe2c11
+Bottom: c4924ecf7c69ea15b31079483d5de41ad9b2acd5
+Top:    a4a50407b74017d14c125588dbc9188a043ef5e1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:15 +0100
 
@@ -14,10 +14,10 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 3586db7..cd3d437 100644
+index 9a2bcdf..c75fcdc 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -410,6 +410,7 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -416,6 +416,7 @@ DrawEverything (BoxTypePtr drawn_area)
  		    backN_callback, NULL);
  	  DrawLayer (&(PCB->Data->BACKSILKLAYER), drawn_area);
  	}
@@ -25,7 +25,7 @@ index 3586db7..cd3d437 100644
      }
  
    /* draw all layers in layerstack order */
-@@ -448,6 +449,7 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -454,6 +455,7 @@ DrawEverything (BoxTypePtr drawn_area)
  			    &plated);
  		}
  	    }
@@ -33,7 +33,7 @@ index 3586db7..cd3d437 100644
  	}
      }
    if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
-@@ -488,6 +490,7 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -494,6 +496,7 @@ DrawEverything (BoxTypePtr drawn_area)
        SWAP_IDENT = 0;
        DrawMask (drawn_area);
        SWAP_IDENT = save_swap;
@@ -41,7 +41,7 @@ index 3586db7..cd3d437 100644
      }
    if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
      {
-@@ -495,12 +498,21 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -501,12 +504,21 @@ DrawEverything (BoxTypePtr drawn_area)
        SWAP_IDENT = 1;
        DrawMask (drawn_area);
        SWAP_IDENT = save_swap;
@@ -65,7 +65,7 @@ index 3586db7..cd3d437 100644
    if (gui->gui)
      {
        /* Draw element Marks */
-@@ -509,7 +521,10 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -515,7 +527,10 @@ DrawEverything (BoxTypePtr drawn_area)
  		  NULL);
        /* Draw rat lines on top */
        if (gui->set_layer ("rats", SL (RATS, 0), 0))
@@ -77,7 +77,7 @@ index 3586db7..cd3d437 100644
      }
  
    for (side = 0; side <= 1; side++)
-@@ -548,19 +563,30 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -554,19 +569,30 @@ DrawEverything (BoxTypePtr drawn_area)
  		}
  	  }
  	  ENDALL_LOOP;
@@ -111,7 +111,7 @@ index 3586db7..cd3d437 100644
  }
  
  static void
-@@ -832,6 +858,10 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
+@@ -838,6 +864,10 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
    clip_box = screen;
    r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
  
@@ -122,7 +122,7 @@ index 3586db7..cd3d437 100644
    if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
      return;
  
-@@ -881,7 +911,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -887,7 +917,8 @@ DrawLayerGroup (int group, const BoxType * screen)
    Cardinal *layers = PCB->LayerGroups.Entries[group];
  
    clip_box = screen;
@@ -407,10 +407,10 @@ index 99ffffc..9dd76e3 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index e84dd0c..bfecf0f 100644
+index d18cd2a..794d26f 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
-@@ -571,6 +571,9 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -516,6 +516,9 @@ gerber_set_layer (const char *name, int group, int empty)
  	     && group <
  	     max_group) ? PCB->LayerGroups.Entries[group][0] : group;
  
@@ -612,10 +612,10 @@ index 1f8f7fa..293c287 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index 6b131ad..47b4ccb 100644
+index 217a546..f5cd21d 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
-@@ -705,6 +705,10 @@ nelma_set_layer(const char *name, int group, int empty)
+@@ -706,6 +706,10 @@ nelma_set_layer(const char *name, int group, int empty)
  	int             idx = (group >= 0 && group < max_group) ?
  	PCB->LayerGroups.Entries[group][0] : group;
  
@@ -627,10 +627,10 @@ index 6b131ad..47b4ccb 100644
  		name = PCB->Data->Layer[idx].Name;
  	}
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 2c3b1df..3c59757 100644
+index ca87a84..9e23a07 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
-@@ -897,6 +897,10 @@ png_set_layer (const char *name, int group, int empty)
+@@ -899,6 +899,10 @@ png_set_layer (const char *name, int group, int empty)
    int idx = (group >= 0
  	     && group <
  	     max_group) ? PCB->LayerGroups.Entries[group][0] : group;
@@ -642,10 +642,10 @@ index 2c3b1df..3c59757 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index 97f9d41..266a4e6 100644
+index 17c7697..867f4e7 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
-@@ -393,6 +393,10 @@ eps_set_layer (const char *name, int group, int empty)
+@@ -339,6 +339,10 @@ eps_set_layer (const char *name, int group, int empty)
    int idx = (group >= 0
  	     && group <
  	     max_group) ? PCB->LayerGroups.Entries[group][0] : group;
@@ -657,7 +657,7 @@ index 97f9d41..266a4e6 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index e1501c1..a6b6953 100644
+index 616f5d5..02cd152 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -651,6 +651,10 @@ ps_set_layer (const char *name, int group, int empty)
