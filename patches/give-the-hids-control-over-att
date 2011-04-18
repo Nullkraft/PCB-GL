@@ -1,5 +1,5 @@
 Bottom: 07699ad852f829d7e628dd85fafd59325c7165c3
-Top:    5b5e9db3d94df4c32490b5dc29c887400922bf3f
+Top:    a2f94eb757d599b73edb2d5a9dc72456816a75fb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:11 +0100
 
@@ -1045,10 +1045,20 @@ index 8bda96d..75ba763 100644
  
    ghid_set_status_line_label ();
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 331f214..03fa2da 100644
+index 331f214..ea77412 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -235,7 +235,7 @@ ghid_note_event_location (GdkEventButton * ev)
+@@ -58,9 +58,6 @@ ghid_port_ranges_changed (void)
+ {
+   GtkAdjustment *h_adj, *v_adj;
+ 
+-  HideCrosshair ();
+-  ghidgui->need_restore_crosshair = TRUE;
+-
+   h_adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->h_range));
+   v_adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->v_range));
+   gport->view_x0 = h_adj->value;
+@@ -235,7 +232,7 @@ ghid_note_event_location (GdkEventButton * ev)
    if (moved)
      {
        AdjustAttachedObjects ();
@@ -1057,7 +1067,7 @@ index 331f214..03fa2da 100644
      }
    ghid_set_cursor_position_labels ();
    return moved;
-@@ -305,11 +305,10 @@ ghid_port_key_release_cb (GtkWidget * drawing_area, GdkEventKey * kev,
+@@ -305,11 +302,10 @@ ghid_port_key_release_cb (GtkWidget * drawing_area, GdkEventKey * kev,
    if (ghid_is_modifier_key_sym (ksym))
      ghid_note_event_location (NULL);
  
@@ -1071,55 +1081,70 @@ index 331f214..03fa2da 100644
    g_idle_add (ghid_idle_cb, NULL);
    return FALSE;
  }
-@@ -447,12 +446,12 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+@@ -447,12 +443,10 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
    state = (GdkModifierType) (ev->state);
    mk = ghid_modifier_keys_state (&state);
    ghid_show_crosshair (FALSE);
 -  HideCrosshair ();
-+  notify_crosshair_change (false);
  
    do_mouse_action(ev->button, mk);
  
    ghid_invalidate_all ();
 -  RestoreCrosshair ();
-+  notify_crosshair_change (true);
    ghid_window_set_name_label (PCB->Name);
    ghid_set_status_line_label ();
    ghid_show_crosshair (TRUE);
-@@ -473,14 +472,13 @@ ghid_port_button_release_cb (GtkWidget * drawing_area,
+@@ -473,14 +467,12 @@ ghid_port_button_release_cb (GtkWidget * drawing_area,
    state = (GdkModifierType) (ev->state);
    mk = ghid_modifier_keys_state (&state);
  
 -  HideCrosshair ();
-+  notify_crosshair_change (false);
- 
+-
    do_mouse_action(ev->button, mk + M_Release);
  
++  notify_crosshair_change (false);
    AdjustAttachedObjects ();
++  notify_crosshair_change (true);
    ghid_invalidate_all ();
 -  RestoreCrosshair ();
 -  ghid_screen_update ();
-+  notify_crosshair_change (true);
  
    ghid_window_set_name_label (PCB->Name);
    ghid_set_status_line_label ();
+@@ -496,7 +488,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+ {
+   static gboolean first_time_done;
+ 
+-  HideCrosshair ();
+   gport->width = ev->width;
+   gport->height = ev->height;
+ 
+@@ -530,7 +521,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+ 
+   ghid_port_ranges_scale (FALSE);
+   ghid_invalidate_all ();
+-  RestoreCrosshair ();
+   return 0;
+ }
+ 
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index f33678a..b2f0643 100644
+index f33678a..e21ef18 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -650,10 +650,10 @@ ghid_menu_cb (GtkAction * action, gpointer data)
+@@ -650,11 +650,10 @@ ghid_menu_cb (GtkAction * action, gpointer data)
     */
    if (ghidgui->toggle_holdoff == FALSE) 
      {
 -      HideCrosshair ();
 +      notify_crosshair_change (false);
        AdjustAttachedObjects ();
++      notify_crosshair_change (true);
        ghid_invalidate_all ();
 -      RestoreCrosshair ();
-+      notify_crosshair_change (true);
-       ghid_screen_update ();
+-      ghid_screen_update ();
        ghid_window_set_name_label (PCB->Name);
        ghid_set_status_line_label ();
+ #ifdef FIXME
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
 index f419530..5a51358 100644
 --- a/src/hid/gtk/gui.h
