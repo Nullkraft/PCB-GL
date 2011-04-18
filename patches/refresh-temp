@@ -1,0 +1,264 @@
+Bottom: 5c417eb90a817c248f8eb45036fed31eb81f5d45
+Top:    e383550b1251e229ced47388029e4b7ea760f5ee
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-18 21:52:06 +0100
+
+Refresh of initialise-the-hid-vtable-by-f
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 1e4cf58..5abbfb2 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -406,8 +406,7 @@ libnelma_a_CPPFLAGS = -I./hid/nelma
+ LIBNELMA_SRCS = \
+ 	dolists.h \
+ 	hid/hidint.h \
+-	hid/nelma/nelma.c \
+-	hid/nelma/nelma.h 
++	hid/nelma/nelma.c
+ libnelma_a_SOURCES = ${LIBNELMA_SRCS} hid/nelma/nelma_lists.h
+ 
+ hid/nelma/nelma_lists.h : ${LIBNELMA_SRCS} Makefile
+diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
+index 49f681e..2b0386c 100644
+--- a/src/hid/common/extents.c
++++ b/src/hid/common/extents.c
+@@ -170,11 +170,15 @@ extents_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
+ }
+ 
+ static HID extents_hid;
+-static bool initialised = false;
+ 
+ void
+ hid_extents_init (void)
+ {
++  static bool initialised = false;
++
++  if (initialised)
++    return;
++
+   memset (&extents_hid, 0, sizeof (HID));
+ 
+   extents_hid.struct_size         = sizeof (HID);
+@@ -199,22 +203,18 @@ hid_extents_init (void)
+   extents_hid.fill_polygon        = extents_fill_polygon;
+   extents_hid.fill_pcb_polygon    = common_fill_pcb_polygon;
+   extents_hid.fill_rect           = extents_fill_rect;
++
++  initialised = true;
+ }
+ 
+ BoxType *
+ hid_get_extents (void *item)
+ {
+-  /* As the extents "hid" isn't a real HID, we need to ensure it is
+-   * initialised before use from every external entry point.
+-   */
+-  if (!initialised)
+-    {
+-      hid_extents_init ();
+-      initialised = true;
+-    }
+-
+   BoxType region;
+ 
++  /* As this isn't a real "HID", we need to ensure we are initialised. */
++  hid_extents_init ();
++
+   box.X1 = MAXINT;
+   box.Y1 = MAXINT;
+   box.X2 = -MAXINT;
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 95cb675..84cca05 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -2155,7 +2155,7 @@ hid_gtk_init ()
+   ghid_hid.beep                 = ghid_beep;
+   ghid_hid.progress             = ghid_progress;
+   ghid_hid.drc_gui              = &ghid_drc_gui,
+-  ghid_hid.attribute_dialog     = ghid_attributes;
++  ghid_hid.edit_attributes      = ghid_attributes;
+ 
+   hid_register_hid (&ghid_hid);
+ #include "gtk_lists.h"
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index c0993bd..c5f3e3e 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -58,8 +58,7 @@ typedef struct hid_gc_struct
+   char erase;
+ } hid_gc_struct;
+ 
+-extern HID lesstif_gui;
+-extern HID lesstif_extents;
++static HID lesstif_hid;
+ 
+ #define CRASH fprintf(stderr, "HID error: pcb called unimplemented GUI function %s\n", __FUNCTION__), abort()
+ 
+@@ -779,7 +778,7 @@ Benchmark (int argc, char **argv, int x, int y)
+   do
+     {
+       XFillRectangle (display, pixmap, bg_gc, 0, 0, view_width, view_height);
+-      hid_expose_callback (&lesstif_gui, &region, 0);
++      hid_expose_callback (&lesstif_hid, &region, 0);
+       XSync (display, 0);
+       time (&end);
+       i++;
+@@ -2513,7 +2512,7 @@ idle_proc (XtPointer dummy)
+ 	    }
+ 	}
+       DrawBackgroundImage();
+-      hid_expose_callback (&lesstif_gui, &region, 0);
++      hid_expose_callback (&lesstif_hid, &region, 0);
+       draw_grid ();
+       lesstif_use_mask (0);
+       XSetFunction (display, my_gc, GXcopy);
+@@ -2940,7 +2939,7 @@ lesstif_make_gc (void)
+ {
+   hidGC rv = (hid_gc_struct *) malloc (sizeof (hid_gc_struct));
+   memset (rv, 0, sizeof (hid_gc_struct));
+-  rv->me_pointer = &lesstif_gui;
++  rv->me_pointer = &lesstif_hid;
+   return rv;
+ }
+ 
+@@ -3085,7 +3084,7 @@ static void
+ set_gc (hidGC gc)
+ {
+   int cap, join, width;
+-  if (gc->me_pointer != &lesstif_gui)
++  if (gc->me_pointer != &lesstif_hid)
+     {
+       fprintf (stderr, "Fatal: GC from another HID passed to lesstif HID\n");
+       abort ();
+@@ -3692,7 +3691,7 @@ pinout_callback (Widget da, PinoutData * pd,
+   region.Y2 = PCB->MaxHeight;
+ 
+   XFillRectangle (display, pixmap, bg_gc, 0, 0, pd->v_width, pd->v_height);
+-  hid_expose_callback (&lesstif_gui, &region, pd->item);
++  hid_expose_callback (&lesstif_hid, &region, pd->item);
+ 
+   pinout = 0;
+   view_left_x = save_vx;
+@@ -3798,8 +3797,6 @@ lesstif_progress (int so_far, int total, const char *message)
+ 
+ #include "dolists.h"
+ 
+-HID lesstif_gui;
+-
+ void
+ hid_lesstif_init ()
+ {
+@@ -3838,7 +3835,7 @@ hid_lesstif_init ()
+   lesstif_hid.calibrate             = lesstif_calibrate;
+   lesstif_hid.shift_is_pressed      = lesstif_shift_is_pressed;
+   lesstif_hid.control_is_pressed    = lesstif_control_is_pressed;
+-  lesstif_hid_mod1_is_pressed       = lesstif_mod1_is_pressed;
++  lesstif_hid.mod1_is_pressed       = lesstif_mod1_is_pressed;
+   lesstif_hid.get_coords            = lesstif_get_coords;
+   lesstif_hid.set_crosshair         = lesstif_set_crosshair;
+   lesstif_hid.add_timer             = lesstif_add_timer;
+@@ -3859,9 +3856,8 @@ hid_lesstif_init ()
+   lesstif_hid.show_item             = lesstif_show_item;
+   lesstif_hid.beep                  = lesstif_beep;
+   lesstif_hid.progress              = lesstif_progress;
+-  lesstif_hid.drc_gui               = NULL;
+-  lesstif_hid.attributes_dialog     = lesstif_attributes_dialog;
++  lesstif_hid.edit_attributes       = lesstif_attributes_dialog;
+ 
+-  hid_register_hid (&lesstif_gui);
++  hid_register_hid (&lesstif_hid);
+ #include "lesstif_lists.h"
+ }
+diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
+index e1effd3..217a546 100644
+--- a/src/hid/nelma/nelma.c
++++ b/src/hid/nelma/nelma.c
+@@ -1050,7 +1050,7 @@ nelma_set_crosshair(int x, int y, int a)
+ void
+ hid_nelma_init()
+ {
+-  memset (nelma_hid, 0, sizeof (HID));
++  memset (&nelma_hid, 0, sizeof (HID));
+ 
+   nelma_hid.struct_size         = sizeof (HID);
+   nelma_hid.name                = "nelma";
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index debe6c1..ca87a84 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -55,6 +55,8 @@
+ 
+ #define CRASH fprintf(stderr, "HID error: pcb called unimplemented PNG function %s.\n", __FUNCTION__); abort()
+ 
++static HID png_hid;
++
+ static void *color_cache = NULL;
+ static void *brush_cache = NULL;
+ 
+@@ -1514,8 +1516,6 @@ png_set_crosshair (int x, int y, int a)
+ 
+ #include "dolists.h"
+ 
+-static HID png_hid;
+-
+ void
+ hid_png_init ()
+ {
+diff --git a/src/hid/png/png.h b/src/hid/png/png.h
+index cb891be..e528753 100644
+--- a/src/hid/png/png.h
++++ b/src/hid/png/png.h
+@@ -1,4 +1,3 @@
+ /* $Id$ */
+ 
+-extern HID png_hid;
+ extern void png_hid_export_to_file (FILE *, HID_Attr_Val *);
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index 57bc02c..17c7697 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -62,6 +62,8 @@ typedef struct hid_gc_struct
+   int erase;
+ } hid_gc_struct;
+ 
++static HID eps_hid;
++
+ static FILE *f = 0;
+ static int linewidth = -1;
+ static int lastgroup = -1;
+@@ -635,10 +637,6 @@ eps_set_crosshair (int x, int y, int action)
+ {
+ }
+ 
+-
+-static HID eps_hid;
+-
+-
+ void
+ hid_eps_init ()
+ {
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 87bcc9d..616f5d5 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -1342,7 +1342,7 @@ ps_set_crosshair (int x, int y, int action)
+ 
+ #include "dolists.h"
+ 
+-static HID ps_hid;
++HID ps_hid;
+ 
+ void
+ hid_ps_init ()
+@@ -1357,7 +1357,7 @@ hid_ps_init ()
+ 
+   ps_hid.get_export_options = ps_get_export_options;
+   ps_hid.do_export          = ps_do_export;
+-  ps_hid.parse_argument     = ps_parse_arguments;
++  ps_hid.parse_arguments    = ps_parse_arguments;
+   ps_hid.set_layer          = ps_set_layer;
+   ps_hid.make_gc            = ps_make_gc;
+   ps_hid.destroy_gc         = ps_destroy_gc;
