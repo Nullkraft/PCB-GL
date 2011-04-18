@@ -1,0 +1,1340 @@
+Bottom: 07699ad852f829d7e628dd85fafd59325c7165c3
+Top:    a5f9c12111369a5fe835c02aa3f6321f8f124984
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-18 21:11:04 +0100
+
+Refresh of temp
+
+---
+
+diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
+index ea75d99..b2338cb 100644
+--- a/src/hid/batch/batch.c
++++ b/src/hid/batch/batch.c
+@@ -345,66 +345,64 @@ batch_show_item (void *item)
+ {
+ }
+ 
+-HID batch_gui = {
+-  sizeof (HID),
+-  "batch",
+-  "Batch-mode GUI for non-interactive use.",
+-  1, 0, 0, 0, 0, 0,
+-  batch_get_export_options,
+-  batch_do_export,
+-  batch_parse_arguments,
+-  batch_invalidate_lr,
+-  batch_invalidate_all,
+-  batch_set_layer,
+-  batch_make_gc,
+-  batch_destroy_gc,
+-  batch_use_mask,
+-  batch_set_color,
+-  batch_set_line_cap,
+-  batch_set_line_width,
+-  batch_set_draw_xor,
+-  batch_set_draw_faded,
+-  batch_set_line_cap_angle,
+-  batch_draw_line,
+-  batch_draw_arc,
+-  batch_draw_rect,
+-  batch_fill_circle,
+-  batch_fill_polygon,
+-  batch_fill_pcb_polygon,
+-  batch_thindraw_pcb_polygon,
+-  batch_fill_rect,
+-  batch_calibrate,
+-  batch_shift_is_pressed,
+-  batch_control_is_pressed,
+-  batch_mod1_is_pressed,
+-  batch_get_coords,
+-  batch_set_crosshair,
+-  batch_add_timer,
+-  batch_stop_timer,
+-  batch_watch_file,
+-  batch_unwatch_file,
+-  batch_add_block_hook,
+-  batch_stop_block_hook,
+-  0 /* batch_log */,
+-  0 /* batch_logv */,
+-  0 /* batch_confirm_dialog */,
+-  0 /* batch_close_confirm_dialog */,
+-  0 /* batch_report_dialog */,
+-  0 /* batch_prompt_for */,
+-  0 /* batch_fileselect */,
+-  batch_attribute_dialog,
+-  batch_show_item,
+-  0 /* batch_beep */,
+-  0 /* batch_progress */,
+-  0 /* batch_drc_gui */,
+-  0 /* batch_edit_attributes */
+-};
+-
+ #include "dolists.h"
+ 
++HID batch_gui;
++
+ void
+ hid_batch_init ()
+ {
++  memset (&batch_gui, 0, sizeof (HID));
++
++  batch_gui.struct_size           = sizeof (HID);
++  batch_gui.name                  = "batch";
++  batch_gui.description           = "Batch-mode GUI for non-interactive use.";
++
++  batch_gui.gui                   = 1;
++  batch_gui.printer               = 0;
++  batch_gui.exporter              = 0;
++  batch_gui.poly_before           = 0;
++  batch_gui.poly_after            = 0;
++  batch_gui.poly_dicer            = 0;
++
++  batch_gui.get_export_options    = batch_get_export_options;
++  batch_gui.do_export             = batch_do_export;
++  batch_gui.parse_arguments       = batch_parse_arguments;
++  batch_gui.invalidate_lr         = batch_invalidate_lr;
++  batch_gui.invalidate_all        = batch_invalidate_all;
++  batch_gui.set_layer             = batch_set_layer;
++  batch_gui.make_gc               = batch_make_gc;
++  batch_gui.destroy_gc            = batch_destroy_gc;
++  batch_gui.use_mask              = batch_use_mask;
++  batch_gui.set_color             = batch_set_color;
++  batch_gui.set_line_cap          = batch_set_line_cap;
++  batch_gui.set_line_width        = batch_set_line_width;
++  batch_gui.set_draw_xor          = batch_set_draw_xor;
++  batch_gui.set_draw_faded        = batch_set_draw_faded;
++  batch_gui.set_line_cap_angle    = batch_set_line_cap_angle;
++  batch_gui.draw_line             = batch_draw_line;
++  batch_gui.draw_arc              = batch_draw_arc;
++  batch_gui.draw_rect             = batch_draw_rect;
++  batch_gui.fill_circle           = batch_fill_circle;
++  batch_gui.fill_polygon          = batch_fill_polygon;
++  batch_gui.fill_pcb_polygon      = batch_fill_pcb_polygon;
++  batch_gui.thindraw_pcb_polygon  = batch_thindraw_pcb_polygon;
++  batch_gui.fill_rect             = batch_fill_rect;
++  batch_gui.calibrate             = batch_calibrate;
++  batch_gui.shift_is_pressed      = batch_shift_is_pressed;
++  batch_gui.control_is_pressed    = batch_control_is_pressed;
++  batch_gui.mod1_is_pressed       = batch_mod1_is_pressed;
++  batch_gui.get_coords            = batch_get_coords;
++  batch_gui.set_crosshair         = batch_set_crosshair;
++  batch_gui.add_timer             = batch_add_timer;
++  batch_gui.stop_timer            = batch_stop_timer;
++  batch_gui.watch_file            = batch_watch_file;
++  batch_gui.unwatch_file          = batch_unwatch_file;
++  batch_gui.add_block_hook        = batch_add_block_hook;
++  batch_gui.stop_block_hook       = batch_stop_block_hook;
++  batch_gui.attribute_dialog      = batch_attribute_dialog;
++  batch_gui.show_item             = batch_show_item;
++
+   apply_default_hid (&batch_gui, 0);
+   hid_register_hid (&batch_gui);
+ #include "batch_lists.h"
+diff --git a/src/hid/bom/bom.c b/src/hid/bom/bom.c
+index 661b592..6e5bc22 100644
+--- a/src/hid/bom/bom.c
++++ b/src/hid/bom/bom.c
+@@ -536,64 +536,22 @@ bom_parse_arguments (int *argc, char ***argv)
+   hid_parse_command_line (argc, argv);
+ }
+ 
+-HID bom_hid = {
+-  sizeof (HID),
+-  "bom",
+-  "Exports a Bill of Materials",
+-  0, 0, 1, 0, 0, 0,
+-  bom_get_export_options,
+-  bom_do_export,
+-  bom_parse_arguments,
+-  0,				/* bom_invalidate_lr */
+-  0,				/* bom_invalidate_all */
+-  0,				/* bom_set_layer */
+-  0,				/* bom_make_gc */
+-  0,				/* bom_destroy_gc */
+-  0,				/* bom_use_mask */
+-  0,				/* bom_set_color */
+-  0,				/* bom_set_line_cap */
+-  0,				/* bom_set_line_width */
+-  0,				/* bom_set_draw_xor */
+-  0,				/* bom_set_draw_faded */
+-  0,				/* bom_set_line_cap_angle */
+-  0,				/* bom_draw_line */
+-  0,				/* bom_draw_arc */
+-  0,				/* bom_draw_rect */
+-  0,				/* bom_fill_circle */
+-  0,				/* bom_fill_polygon */
+-  0,				/* bom_fill_pcb_polygon */
+-  0,				/* bom_thindraw_pcb_polygon */
+-  0,				/* bom_fill_rect */
+-  0,				/* bom_calibrate */
+-  0,				/* bom_shift_is_pressed */
+-  0,				/* bom_control_is_pressed */
+-  0,				/* bom_mod1_is_pressed */
+-  0,				/* bom_get_coords */
+-  0,				/* bom_set_crosshair */
+-  0,				/* bom_add_timer */
+-  0,				/* bom_stop_timer */
+-  0,				/* bom_watch_file */
+-  0,				/* bom_unwatch_file */
+-  0,				/* bom_add_block_hook */
+-  0,				/* bom_stop_block_hook */
+-  0,				/* bom_log */
+-  0,				/* bom_logv */
+-  0,				/* bom_confirm_dialog */
+-  0,				/* bom_close_confirm_dialog */
+-  0,				/* bom_report_dialog */
+-  0,				/* bom_prompt_for */
+-  0,				/* bom_fileselect */
+-  0,				/* bom_attribute_dialog */
+-  0,				/* bom_show_item */
+-  0,				/* bom_beep */
+-  0,				/* bom_progress */
+-  0,				/* bom_drc_gui */
+-  0,				/* bom_edit_attributes */
+-};
++HID bom_hid;
+ 
+ void
+ hid_bom_init ()
+ {
++  memset (&bom_hid, 0, sizeof (HID));
++
++  bom_hid.struct_size         = sizeof (HID);
++  bom_hid.name                = "bom";
++  bom_hid.description         = "Exports a Bill of Materials";
++  bom_hid.exporter            = 1;
++
++  bom_hid.get_export_options  = bom_get_export_options;
++  bom_hid.do_export           = bom_do_export;
++  bom_hid.parse_arguments     = bom_parse_arguments;
++
+   apply_default_hid (&bom_hid, 0);
+   hid_register_hid (&bom_hid);
+ }
+diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
+index 0f51b47..16bd75a 100644
+--- a/src/hid/common/extents.c
++++ b/src/hid/common/extents.c
+@@ -170,64 +170,36 @@ extents_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
+   PEY (y2, 0);
+ }
+ 
+-static HID extents_hid = {
+-  sizeof (HID),
+-  "extents-extents",
+-  "used to calculate extents",
+-  0,				/* gui */
+-  0,				/* printer */
+-  0,				/* exporter */
+-  1,				/* poly before */
+-  0,				/* poly after */
+-  0,				/* poly dicer */
+-
+-  0 /* extents_get_export_options */ ,
+-  0 /* extents_do_export */ ,
+-  0 /* extents_parse_arguments */ ,
+-  0 /* extents_invalidate_lr */ ,
+-  0 /* extents_invalidate_all */ ,
+-  extents_set_layer,
+-  extents_make_gc,
+-  extents_destroy_gc,
+-  extents_use_mask,
+-  extents_set_color,
+-  extents_set_line_cap,
+-  extents_set_line_width,
+-  extents_set_draw_xor,
+-  extents_set_draw_faded,
+-  extents_set_line_cap_angle,
+-  extents_draw_line,
+-  extents_draw_arc,
+-  extents_draw_rect,
+-  extents_fill_circle,
+-  extents_fill_polygon,
+-  common_fill_pcb_polygon,
+-  0 /* extents_thindraw_pcb_polygon */,
+-  extents_fill_rect,
+-
+-  0 /* extents_calibrate */ ,
+-  0 /* extents_shift_is_pressed */ ,
+-  0 /* extents_control_is_pressed */ ,
+-  0 /* extents_mod1_is_pressed */ ,
+-  0 /* extents_get_coords */ ,
+-  0 /* extents_set_crosshair */ ,
+-  0 /* extents_add_timer */ ,
+-  0 /* extents_stop_timer */ ,
+-  0 /* extents_watch_file */ ,
+-  0 /* extents_unwatch_file */ ,
+-  0 /* extents_add_block_hook */ ,
+-  0 /* extents_stop_block_hook */ ,
+-
+-  0 /* extents_log */ ,
+-  0 /* extents_logv */ ,
+-  0 /* extents_confirm_dialog */ ,
+-  0 /* extents_close_confirm_dialog */ ,
+-  0 /* extents_report_dialog */ ,
+-  0 /* extents_prompt_for */ ,
+-  0 /* extents_attribute_dialog */ ,
+-  0 /* extents_show_item */ ,
+-  0				/* extents_beep */
+-};
++static HID extents_hid;
++
++void
++init_extents_hid (void)
++{
++  memset (&extents_hid, 0, sizeof (HID));
++
++  extents_hid.struct_size         = sizeof (HID);
++  extents_hid.name                = "extents-extents";
++  extents_hid.description         = "used to calculate extents";
++  extents_hid.poly_before         = 1;
++
++  extents_hid.set_layer           = extents_set_layer;
++  extents_hid.make_gc             = extents_make_gc;
++  extents_hid.destroy_gc          = extents_destroy_gc;
++  extents_hid.use_mask            = extents_use_mask;
++  extents_hid.set_color           = extents_set_color;
++  extents_hid.set_line_cap        = extents_set_line_cap;
++  extents_hid.set_line_width      = extents_set_line_width;
++  extents_hid.set_draw_xor        = extents_set_draw_xor;
++  extents_hid.set_draw_faded      = extents_set_draw_faded;
++  extents_hid.set_line_cap_angle  = extents_set_line_cap_angle;
++  extents_hid.draw_line           = extents_draw_line;
++  extents_hid.draw_arc            = extents_draw_arc;
++  extents_hid.draw_rect           = extents_draw_rect;
++  extents_hid.fill_circle         = extents_fill_circle;
++  extents_hid.fill_polygon        = extents_fill_polygon;
++  extents_hid.fill_pcb_polygon    = common_fill_pcb_polygon;
++  extents_hid.fill_rect           = extents_fill_rect;
++}
+ 
+ BoxType *
+ hid_get_extents (void *item)
+diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
+index d2dd717..9360cb7 100644
+--- a/src/hid/gcode/gcode.c
++++ b/src/hid/gcode/gcode.c
+@@ -1028,70 +1028,42 @@ gcode_set_crosshair (int x, int y, int a)
+ 
+ /* *** Miscellaneous ******************************************************* */
+ 
+-HID gcode_hid = {
+-  sizeof (HID),
+-  "gcode",
+-  "G-CODE export.",
+-  0,				/* gui */
+-  0,				/* printer */
+-  1,				/* exporter */
+-  1,				/* poly before */
+-  0,				/* poly after */
+-  0,				/* poly dicer */
+-  gcode_get_export_options,
+-  gcode_do_export,
+-  gcode_parse_arguments,
+-  0 /* gcode_invalidate_lr */ ,
+-  0 /* gcode_invalidate_all */ ,
+-  gcode_set_layer,
+-  gcode_make_gc,
+-  gcode_destroy_gc,
+-  gcode_use_mask,
+-  gcode_set_color,
+-  gcode_set_line_cap,
+-  gcode_set_line_width,
+-  gcode_set_draw_xor,
+-  gcode_set_draw_faded,
+-  gcode_set_line_cap_angle,
+-  gcode_draw_line,
+-  gcode_draw_arc,
+-  gcode_draw_rect,
+-  gcode_fill_circle,
+-  gcode_fill_polygon,
+-  common_fill_pcb_polygon,
+-  0 /* nelma_thindraw_pcb_polygon */ ,
+-  gcode_fill_rect,
+-  gcode_calibrate,
+-  0 /* gcode_shift_is_pressed */ ,
+-  0 /* gcode_control_is_pressed */ ,
+-  0 /* gcode_mod1_is_pressed */ ,
+-  0 /* gcode_get_coords */ ,
+-  gcode_set_crosshair,
+-  0 /* gcode_add_timer */ ,
+-  0 /* gcode_stop_timer */ ,
+-  0 /* gcode_watch_file */ ,
+-  0 /* gcode_unwatch_file */ ,
+-  0 /* gcode_add_block_hook */ ,
+-  0 /* gcode_stop_block_hook */ ,
+-  0 /* gcode_log */ ,
+-  0 /* gcode_logv */ ,
+-  0 /* gcode_confirm_dialog */ ,
+-  0 /* gcode_close_confirm_dialog */ ,
+-  0 /* gcode_report_dialog */ ,
+-  0 /* gcode_prompt_for */ ,
+-  0 /* gcode_fileselect */ ,
+-  0 /* gcode_attribute_dialog */ ,
+-  0 /* gcode_show_item */ ,
+-  0 /* gcode_beep */ ,
+-  0 /* gcode_progress */ ,
+-  0				/* gcode_drc_gui */
+-};
+-
+ #include "dolists.h"
+ 
++HID gcode_hid;
++
+ void
+ hid_gcode_init ()
+ {
++  gcode_hid.struct_size         = sizeof (HID);
++  gcode_hid.name                = "gcode";
++  gcode_hid.description         = "G-CODE export.";
++  gcode_hid.exporter            = 1;
++  gcode_hid.poly_before         = 1;
++
++  gcode_hid.get_export_options  = gcode_get_export_options;
++  gcode_hid.do_export           = gcode_do_export;
++  gcode_hid.parse_arguments     = gcode_parse_arguments;
++  gcode_hid.set_layer           = gcode_set_layer;
++  gcode_hid.make_gc             = gcode_make_gc;
++  gcode_hid.destroy_gc          = gcode_destroy_gc;
++  gcode_hid.use_mask            = gcode_use_mask;
++  gcode_hid.set_color           = gcode_set_color;
++  gcode_hid.set_line_cap        = gcode_set_line_cap;
++  gcode_hid.set_line_width      = gcode_set_line_width;
++  gcode_hid.set_draw_xor        = gcode_set_draw_xor;
++  gcode_hid.set_draw_faded      = gcode_set_draw_faded;
++  gcode_hid.set_line_cap_angle  = gcode_set_line_cap_angle;
++  gcode_hid.draw_line           = gcode_draw_line;
++  gcode_hid.draw_arc            = gcode_draw_arc;
++  gcode_hid.draw_rect           = gcode_draw_rect;
++  gcode_hid.fill_circle         = gcode_fill_circle;
++  gcode_hid.fill_polygon        = gcode_fill_polygon;
++  gcode_hid.fill_pcb_polygon    = common_fill_pcb_polygon;
++  gcode_hid.fill_rect           = gcode_fill_rect;
++  gcode_hid.calibrate           = gcode_calibrate;
++  gcode_hid.set_crosshair       = gcode_set_crosshair;
++
+   apply_default_hid (&gcode_hid, 0);
+   hid_register_hid (&gcode_hid);
+ 
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 868c2b1..4a6425a 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -277,60 +277,7 @@ SetAppLayer (int l)
+ 
+ /* --------------------------------------------------------------------------- */
+ 
+-static HID gerber_hid = {
+-  sizeof (HID),
+-  "gerber",
+-  "RS-274X (Gerber) export.",
+-  0, 0, 1, 0, 0, 1,
+-  gerber_get_export_options,
+-  gerber_do_export,
+-  gerber_parse_arguments,
+-  0 /* gerber_invalidate_lr */ ,
+-  0 /* gerber_invalidate_all */ ,
+-  gerber_set_layer,
+-  gerber_make_gc,
+-  gerber_destroy_gc,
+-  gerber_use_mask,
+-  gerber_set_color,
+-  gerber_set_line_cap,
+-  gerber_set_line_width,
+-  gerber_set_draw_xor,
+-  gerber_set_draw_faded,
+-  gerber_set_line_cap_angle,
+-  gerber_draw_line,
+-  gerber_draw_arc,
+-  gerber_draw_rect,
+-  gerber_fill_circle,
+-  gerber_fill_polygon,
+-  common_fill_pcb_polygon,
+-  0 /* gerber_thindraw_pcb_polygon */ ,
+-  gerber_fill_rect,
+-  gerber_calibrate,
+-  0 /* gerber_shift_is_pressed */ ,
+-  0 /* gerber_control_is_pressed */ ,
+-  0 /* gerber_mod1_is_pressed */ ,
+-  0 /* gerber_get_coords */ ,
+-  gerber_set_crosshair,
+-  0 /* gerber_add_timer */ ,
+-  0 /* gerber_stop_timer */ ,
+-  0 /* gerber_watch_file */ ,
+-  0 /* gerber_unwatch_file */ ,
+-  0 /* gerber_add_block_hook */ ,
+-  0 /* gerber_stop_block_hook */ ,
+-  0 /* gerber_log */ ,
+-  0 /* gerber_logv */ ,
+-  0 /* gerber_confirm_dialog */ ,
+-  0 /* gerber_close_confirm_dialog */ ,
+-  0 /* gerber_report_dialog */ ,
+-  0 /* gerber_prompt_for */ ,
+-  0 /* gerber_fileselect */ ,
+-  0 /* gerber_attribute_dialog */ ,
+-  0 /* gerber_show_item */ ,
+-  0 /* gerber_beep */ ,
+-  0 /* gerber_progress */ ,
+-  0 /* gerber_drc_gui */
+-};
+-
++static HID gerber_hid;
+ 
+ typedef struct hid_gc_struct
+ {
+@@ -1226,6 +1173,37 @@ gerber_set_crosshair (int x, int y, int action)
+ void
+ hid_gerber_init ()
+ {
++  memset (&gcode_hid, 0, sizeof (HID));
++
++  gcode_hid.struct_size         = sizeof (HID);
++  gcode_hid.name                = "gerber";
++  gcode_hid.description         = "RS-274X (Gerber) export.";
++  gcode_hid.exporter            = 1;
++  gcode_hid.poly_dicer          = 1;
++
++  gcode_hid.get_export_options  = gerber_get_export_options;
++  gcode_hid.do_export           = gerber_do_export;
++  gcode_hid.parse_arguments     = gerber_parse_arguments;
++  gcode_hid.set_layer           = gerber_set_layer;
++  gcode_hid.make_gc             = gerber_make_gc;
++  gcode_hid.destroy_gc          = gerber_destroy_gc;
++  gcode_hid.use_mask            = gerber_use_mask;
++  gcode_hid.set_color           = gerber_set_color;
++  gcode_hid.set_line_cap        = gerber_set_line_cap;
++  gcode_hid.set_line_width      = gerber_set_line_width;
++  gcode_hid.set_draw_xor        = gerber_set_draw_xor;
++  gcode_hid.set_draw_faded      = gerber_set_draw_faded;
++  gcode_hid.set_line_cap_angle  = gerber_set_line_cap_angle;
++  gcode_hid.draw_line           = gerber_draw_line;
++  gcode_hid.draw_arc            = gerber_draw_arc;
++  gcode_hid.draw_rect           = gerber_draw_rect;
++  gcode_hid.fill_circle         = gerber_fill_circle;
++  gcode_hid.fill_polygon        = gerber_fill_polygon;
++  gcode_hid.fill_pcb_polygon    = common_fill_pcb_polygon;
++  gcode_hid.fill_rect           = gerber_fill_rect;
++  gcode_hid.calibrate           = gerber_calibrate;
++  gcode_hid.set_crosshair       = gerber_set_crosshair;
++
+   apply_default_hid (&gerber_hid, 0);
+   hid_register_hid (&gerber_hid);
+ }
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 266cf06..a291f0f 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -972,68 +972,6 @@ HID_DRC_GUI ghid_drc_gui = {
+ 
+ extern HID_Attribute *ghid_get_export_options (int *);
+ 
+-HID ghid_hid = {
+-  sizeof (HID),
+-  "gtk",
+-  "Gtk - The Gimp Toolkit",
+-  1,				/* gui */
+-  0,				/* printer */
+-  0,				/* exporter */
+-  0,				/* poly before */
+-  1,				/* poly after */
+-  0,				/* poly dicer */
+-
+-  ghid_get_export_options,
+-  ghid_do_export,
+-  ghid_parse_arguments,
+-  ghid_invalidate_lr,
+-  ghid_invalidate_all,
+-  ghid_set_layer,
+-  ghid_make_gc,
+-  ghid_destroy_gc,
+-  ghid_use_mask,
+-  ghid_set_color,
+-  ghid_set_line_cap,
+-  ghid_set_line_width,
+-  ghid_set_draw_xor,
+-  ghid_set_draw_faded,
+-  ghid_set_line_cap_angle,
+-  ghid_draw_line,
+-  ghid_draw_arc,
+-  ghid_draw_rect,
+-  ghid_fill_circle,
+-  ghid_fill_polygon,
+-  common_fill_pcb_polygon,
+-  common_thindraw_pcb_polygon,
+-  ghid_fill_rect,
+-
+-  ghid_calibrate,
+-  ghid_shift_is_pressed,
+-  ghid_control_is_pressed,
+-  ghid_mod1_is_pressed,
+-  ghid_get_coords,
+-  ghid_set_crosshair,
+-  ghid_add_timer,
+-  ghid_stop_timer,
+-  ghid_watch_file,
+-  ghid_unwatch_file,
+-  ghid_add_block_hook,
+-  ghid_stop_block_hook,
+-
+-  ghid_log,
+-  ghid_logv,
+-  ghid_confirm_dialog,
+-  ghid_close_confirm_dialog,
+-  ghid_report_dialog,
+-  ghid_prompt_for,
+-  ghid_fileselect,
+-  ghid_attribute_dialog,
+-  ghid_show_item,
+-  ghid_beep,
+-  ghid_progress,
+-  &ghid_drc_gui,
+-  ghid_attributes
+-};
+ 
+ /* ------------------------------------------------------------ 
+  *
+@@ -2138,14 +2076,17 @@ REGISTER_FLAGS (ghid_main_flag_list)
+ #include <winreg.h>
+ #endif
+ 
++HID ghid_hid;
++
+ void
+ hid_gtk_init ()
+ {
+-  #ifdef WIN32
+-
++#ifdef WIN32
+   char * tmps;
+   char * share_dir;
++#endif
+ 
++#ifdef WIN32
+   tmps = g_win32_get_package_installation_directory (PACKAGE "-" VERSION, NULL);
+ #define REST_OF_PATH G_DIR_SEPARATOR_S "share" G_DIR_SEPARATOR_S PACKAGE
+   share_dir = (char *) malloc(strlen(tmps) + 
+@@ -2155,7 +2096,66 @@ hid_gtk_init ()
+   free (tmps);
+ #undef REST_OF_PATH
+   printf ("\"Share\" installation path is \"%s\"\n", share_dir);
+-#endif  
++#endif
++
++  memset (&ghid_hid, 0, sizeof (HID));
++
++  ghid_hid.struct_size          = sizeof (HID);
++  ghid_hid.name                 = "gtk";
++  ghid_hid.description          = "Gtk - The Gimp Toolkit";
++  ghid_hid.gui                  = 1;
++  ghid_hid.poly_after           = 1;
++
++  ghid_hid.get_export_options   = ghid_get_export_options;
++  ghid_hid.do_export            = ghid_do_export;
++  ghid_hid.parse_arguments      = ghid_parse_arguments;
++  ghid_hid.invalidate_lr        = ghid_invalidate_lr;
++  ghid_hid.invalidate_all       = ghid_invalidate_all;
++  ghid_hid.set_layer            = ghid_set_layer;
++  ghid_hid.make_gc              = ghid_make_gc;
++  ghid_hid.destroy_gc           = ghid_destroy_gc;
++  ghid_hid.use_mask             = ghid_use_mask;
++  ghid_hid.set_color            = ghid_set_color;
++  ghid_hid.set_line_cap         = ghid_set_line_cap;
++  ghid_hid.set_line_width       = ghid_set_line_width;
++  ghid_hid.set_draw_xor         = ghid_set_draw_xor;
++  ghid_hid.set_draw_faded       = ghid_set_draw_faded;
++  ghid_hid.set_line_cap_angle   = ghid_set_line_cap_angle;
++  ghid_hid.draw_line            = ghid_draw_line;
++  ghid_hid.draw_arc             = ghid_draw_arc;
++  ghid_hid.draw_rect            = ghid_draw_rect;
++  ghid_hid.fill_circle          = ghid_fill_circle;
++  ghid_hid.fill_polygon         = ghid_fill_polygon;
++  ghid_hid.fill_pcb_polygon     = common_fill_pcb_polygon;
++  ghid_hid.thindraw_pcb_polygon = common_thindraw_pcb_polygon;
++  ghid_hid.fill_rect            = ghid_fill_rect;
++
++  ghid_hid.calibrate            = ghid_calibrate;
++  ghid_hid.shift_is_pressed     = ghid_shift_is_pressed;
++  ghid_hid.control_is_pressed   = ghid_control_is_pressed;
++  ghid_hid.mod1_is_pressed      = ghid_mod1_is_pressed,
++  ghid_hid.get_coords           = ghid_get_coords;
++  ghid_hid.set_crosshair        = ghid_set_crosshair;
++  ghid_hid.add_timer            = ghid_add_timer;
++  ghid_hid.stop_timer           = ghid_stop_timer;
++  ghid_hid.watch_file           = ghid_watch_file;
++  ghid_hid.unwatch_file         = ghid_unwatch_file;
++  ghid_hid.add_block_hook       = ghid_add_block_hook;
++  ghid_hid.stop_block_hook      = ghid_stop_block_hook;
++
++  ghid_hid.log                  = ghid_log;
++  ghid_hid.logv                 = ghid_logv;
++  ghid_hid.confirm_dialog       = ghid_confirm_dialog;
++  ghid_hid.close_confirm_dialog = ghid_close_confirm_dialog;
++  ghid_hid.report_dialog        = ghid_report_dialog;
++  ghid_hid.prompt_for           = ghid_prompt_for;
++  ghid_hid.fileselect           = ghid_fileselect;
++  ghid_hid.attribute_dialog     = ghid_attribute_dialog;
++  ghid_hid.show_item            = ghid_show_item;
++  ghid_hid.beep                 = ghid_beep;
++  ghid_hid.progress             = ghid_progress;
++  ghid_hid.drc_gui              = &ghid_drc_gui,
++  ghid_hid.attributes           = ghid_attributes;
+ 
+   hid_register_hid (&ghid_hid);
+ #include "gtk_lists.h"
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 2f00577..c0993bd 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -3796,74 +3796,72 @@ lesstif_progress (int so_far, int total, const char *message)
+   return 0;
+ }
+ 
+-HID lesstif_gui = {
+-  sizeof (HID),
+-  "lesstif",
+-  "LessTif - a Motif clone for X/Unix",
+-  1,				/* gui */
+-  0,				/* printer */
+-  0,				/* exporter */
+-  1,				/* poly before */
+-  0,				/* poly after */
+-  0,				/* poly dicer */
+-
+-  lesstif_get_export_options,
+-  lesstif_do_export,
+-  lesstif_parse_arguments,
+-  lesstif_invalidate_lr,
+-  lesstif_invalidate_all,
+-  lesstif_set_layer,
+-  lesstif_make_gc,
+-  lesstif_destroy_gc,
+-  lesstif_use_mask,
+-  lesstif_set_color,
+-  lesstif_set_line_cap,
+-  lesstif_set_line_width,
+-  lesstif_set_draw_xor,
+-  lesstif_set_draw_faded,
+-  lesstif_set_line_cap_angle,
+-  lesstif_draw_line,
+-  lesstif_draw_arc,
+-  lesstif_draw_rect,
+-  lesstif_fill_circle,
+-  lesstif_fill_polygon,
+-  common_fill_pcb_polygon,
+-  common_thindraw_pcb_polygon,
+-  lesstif_fill_rect,
+-
+-  lesstif_calibrate,
+-  lesstif_shift_is_pressed,
+-  lesstif_control_is_pressed,
+-  lesstif_mod1_is_pressed,
+-  lesstif_get_coords,
+-  lesstif_set_crosshair,
+-  lesstif_add_timer,
+-  lesstif_stop_timer,
+-  lesstif_watch_file,
+-  lesstif_unwatch_file,
+-  lesstif_add_block_hook,
+-  lesstif_stop_block_hook,
+-
+-  lesstif_log,
+-  lesstif_logv,
+-  lesstif_confirm_dialog,
+-  lesstif_close_confirm_dialog,
+-  lesstif_report_dialog,
+-  lesstif_prompt_for,
+-  lesstif_fileselect,
+-  lesstif_attribute_dialog,
+-  lesstif_show_item,
+-  lesstif_beep,
+-  lesstif_progress,
+-  0, /* lesstif_drc_gui */
+-  lesstif_attributes_dialog
+-};
+-
+ #include "dolists.h"
+ 
++HID lesstif_gui;
++
+ void
+ hid_lesstif_init ()
+ {
++  memset (&lesstif_hid, 0, sizeof (HID));
++
++  lesstif_hid.struct_size           = sizeof (HID);
++  lesstif_hid.name                  = "lesstif";
++  lesstif_hid.description           = "LessTif - a Motif clone for X/Unix";
++  lesstif_hid.gui                   = 1;
++  lesstif_hid.poly_before           = 1;
++
++  lesstif_hid.get_export_options    = lesstif_get_export_options;
++  lesstif_hid.do_export             = lesstif_do_export;
++  lesstif_hid.parse_arguments       = lesstif_parse_arguments;
++  lesstif_hid.invalidate_lr         = lesstif_invalidate_lr;
++  lesstif_hid.invalidate_all        = lesstif_invalidate_all;
++  lesstif_hid.set_layer             = lesstif_set_layer;
++  lesstif_hid.make_gc               = lesstif_make_gc;
++  lesstif_hid.destroy_gc            = lesstif_destroy_gc;
++  lesstif_hid.use_mask              = lesstif_use_mask;
++  lesstif_hid.set_color             = lesstif_set_color;
++  lesstif_hid.set_line_cap          = lesstif_set_line_cap;
++  lesstif_hid.set_line_width        = lesstif_set_line_width;
++  lesstif_hid.set_draw_xor          = lesstif_set_draw_xor;
++  lesstif_hid.set_draw_faded        = lesstif_set_draw_faded;
++  lesstif_hid.set_line_cap_angle    = lesstif_set_line_cap_angle;
++  lesstif_hid.draw_line             = lesstif_draw_line;
++  lesstif_hid.draw_arc              = lesstif_draw_arc;
++  lesstif_hid.draw_rect             = lesstif_draw_rect;
++  lesstif_hid.fill_circle           = lesstif_fill_circle;
++  lesstif_hid.fill_polygon          = lesstif_fill_polygon;
++  lesstif_hid.fill_pcb_polygon      = common_fill_pcb_polygon;
++  lesstif_hid.thindraw_pcb_polygon  = common_thindraw_pcb_polygon;
++  lesstif_hid.fill_rect             = lesstif_fill_rect;
++
++  lesstif_hid.calibrate             = lesstif_calibrate;
++  lesstif_hid.shift_is_pressed      = lesstif_shift_is_pressed;
++  lesstif_hid.control_is_pressed    = lesstif_control_is_pressed;
++  lesstif_hid_mod1_is_pressed       = lesstif_mod1_is_pressed;
++  lesstif_hid.get_coords            = lesstif_get_coords;
++  lesstif_hid.set_crosshair         = lesstif_set_crosshair;
++  lesstif_hid.add_timer             = lesstif_add_timer;
++  lesstif_hid.stop_timer            = lesstif_stop_timer;
++  lesstif_hid.watch_file            = lesstif_watch_file;
++  lesstif_hid.unwatch_file          = lesstif_unwatch_file;
++  lesstif_hid.add_block_hook        = lesstif_add_block_hook;
++  lesstif_hid.stop_block_hook       = lesstif_stop_block_hook;
++
++  lesstif_hid.log                   = lesstif_log;
++  lesstif_hid.logv                  = lesstif_logv;
++  lesstif_hid.confirm_dialog        = lesstif_confirm_dialog;
++  lesstif_hid.close_confirm_dialog  = lesstif_close_confirm_dialog;
++  lesstif_hid.report_dialog         = lesstif_report_dialog;
++  lesstif_hid.prompt_for            = lesstif_prompt_for;
++  lesstif_hid.fileselect            = lesstif_fileselect;
++  lesstif_hid.attribute_dialog      = lesstif_attribute_dialog;
++  lesstif_hid.show_item             = lesstif_show_item;
++  lesstif_hid.beep                  = lesstif_beep;
++  lesstif_hid.progress              = lesstif_progress;
++  lesstif_hid.drc_gui               = NULL;
++  lesstif_hid.attributes_dialog     = lesstif_attributes_dialog;
++
+   hid_register_hid (&lesstif_gui);
+ #include "lesstif_lists.h"
+ }
+diff --git a/src/hid/lpr/lpr.c b/src/hid/lpr/lpr.c
+index a79af0a..5592f25 100644
+--- a/src/hid/lpr/lpr.c
++++ b/src/hid/lpr/lpr.c
+@@ -111,64 +111,24 @@ lpr_calibrate (double xval, double yval)
+   ps_calibrate_1 (xval, yval, 1);
+ }
+ 
+-HID lpr_hid = {
+-  sizeof (HID),
+-  "lpr",
+-  "Postscript print.",
+-  0, 1, 0, 1, 0, 0,
+-  lpr_get_export_options,
+-  lpr_do_export,
+-  lpr_parse_arguments,
+-  0 /* lpr_invalidate_lr */ ,
+-  0 /* lpr_invalidate_all */ ,
+-  0 /* lpr_set_layer */ ,
+-  0 /* lpr_make_gc */ ,
+-  0 /* lpr_destroy_gc */ ,
+-  0 /* lpr_use_mask */ ,
+-  0 /* lpr_set_color */ ,
+-  0 /* lpr_set_line_cap */ ,
+-  0 /* lpr_set_line_width */ ,
+-  0 /* lpr_set_draw_xor */ ,
+-  0 /* lpr_set_draw_faded */ ,
+-  0 /* lpr_set_line_cap_angle */ ,
+-  0 /* lpr_draw_line */ ,
+-  0 /* lpr_draw_arc */ ,
+-  0 /* lpr_draw_rect */ ,
+-  0 /* lpr_fill_circle */ ,
+-  0 /* lpr_fill_polygon */ ,
+-  0 /* lpr_fill_pcb_polygon */ ,
+-  0 /* lpr_thindraw_pcb_polygon */ ,
+-  0 /* lpr_fill_rect */ ,
+-  lpr_calibrate,
+-  0 /* lpr_shift_is_pressed */ ,
+-  0 /* lpr_control_is_pressed */ ,
+-  0 /* lpr_mod1_is_pressed */ ,
+-  0 /* lpr_get_coords */ ,
+-  0 /* lpr_set_crosshair */ ,
+-  0 /* lpr_add_timer */ ,
+-  0 /* lpr_stop_timer */ ,
+-  0 /* lpr_watch_file */ ,
+-  0 /* lpr_unwatch_file */ ,
+-  0 /* lpr_add_block_hook */ ,
+-  0 /* lpr_stop_block_hook */ ,
+-  0 /* lpr_log */ ,
+-  0 /* lpr_logv */ ,
+-  0 /* lpr_confirm_dialog */ ,
+-  0 /* lpr_close_confirm_dialog */ ,
+-  0 /* lpr_report_dialog */ ,
+-  0 /* lpr_prompt_for */ ,
+-  0 /* lpr_fileselect */ ,
+-  0 /* lpr_attribute_dialog */ ,
+-  0 /* lpr_show_item */ ,
+-  0 /* lpr_beep */ ,
+-  0 /* lpr_progress */ ,
+-  0 /* lpr_drc_gui */ ,
+-  0 /* lpr_edit_attributes */
+-};
++static HID lpr_hid;
+ 
+ void
+ hid_lpr_init ()
+ {
++  memset (lpr_hid, 0, sizeof (HID));
++
++  lpr_hid.struct_size         = sizeof (HID);
++  lpr_hid.name                = "lpr";
++  lpr_hid.description         = "Postscript print.";
++  lpr_hid.printer             = 1;
++  lpr_hid.poly_before         = 1;
++
++  lpr_hid.get_export_options  = lpr_get_export_options;
++  lpr_hid.do_export           = lpr_do_export;
++  lpr_hid.parse_arguments     = lpr_parse_arguments;
++  lpr_hid.calibrate           = lpr_calibrate;
++
+   apply_default_hid (&lpr_hid, &ps_hid);
+   apply_default_hid (&lpr_hid, 0);
+   hid_register_hid (&lpr_hid);
+diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
+index 0a1efef..4376459 100644
+--- a/src/hid/nelma/nelma.c
++++ b/src/hid/nelma/nelma.c
+@@ -1044,73 +1044,46 @@ nelma_set_crosshair(int x, int y, int a)
+ 
+ /* *** Miscellaneous ******************************************************* */
+ 
+-HID             nelma_hid = {
+-	sizeof(HID),
+-	"nelma",
+-	"Numerical analysis package export.",
+-	0,			/* gui */
+-	0,			/* printer */
+-	1,			/* exporter */
+-	1,			/* poly before */
+-	0,			/* poly after */
+-	0,			/* poly dicer */
+-	nelma_get_export_options,
+-	nelma_do_export,
+-	nelma_parse_arguments,
+-	0 /* nelma_invalidate_lr */ ,
+-	0 /* nelma_invalidate_all */ ,
+-	nelma_set_layer,
+-	nelma_make_gc,
+-	nelma_destroy_gc,
+-	nelma_use_mask,
+-	nelma_set_color,
+-	nelma_set_line_cap,
+-	nelma_set_line_width,
+-	nelma_set_draw_xor,
+-	nelma_set_draw_faded,
+-	nelma_set_line_cap_angle,
+-	nelma_draw_line,
+-	nelma_draw_arc,
+-	nelma_draw_rect,
+-	nelma_fill_circle,
+-	nelma_fill_polygon,
+-	common_fill_pcb_polygon,
+-	0 /* nelma_thindraw_pcb_polygon */ ,
+-	nelma_fill_rect,
+-	nelma_calibrate,
+-	0 /* nelma_shift_is_pressed */ ,
+-	0 /* nelma_control_is_pressed */ ,
+-	0 /* nelma_mod1_is_pressed */ ,
+-	0 /* nelma_get_coords */ ,
+-	nelma_set_crosshair,
+-	0 /* nelma_add_timer */ ,
+-	0 /* nelma_stop_timer */ ,
+-	0 /* nelma_watch_file */ ,
+-	0 /* nelma_unwatch_file */ ,
+-	0 /* nelma_add_block_hook */ ,
+-	0 /* nelma_stop_block_hook */ ,
+-	0 /* nelma_log */ ,
+-	0 /* nelma_logv */ ,
+-	0 /* nelma_confirm_dialog */ ,
+-	0 /* nelma_close_confirm_dialog */ ,
+-	0 /* nelma_report_dialog */ ,
+-	0 /* nelma_prompt_for */ ,
+-	0 /* nelma_fileselect */ ,
+-	0 /* nelma_attribute_dialog */ ,
+-	0 /* nelma_show_item */ ,
+-	0 /* nelma_beep */ ,
+-	0 /* nelma_progress */ ,
+-	0 /* nelma_drc_gui */ ,
+-	0 /* nelma_edit_attributes */
+-};
+-
+ #include "dolists.h"
+ 
++static HID nelma_hid;
++
+ void
+ hid_nelma_init()
+ {
+-	apply_default_hid(&nelma_hid, 0);
+-	hid_register_hid(&nelma_hid);
++  memset (nelma_hid, 0, sizeof (HID));
++
++  nelma_hid.struct_size         = sizeof (HID);
++  nelma_hid.name                = "nelma";
++  nelma_hid.description         = "Numerical analysis package export.";
++  nelma_hid.exporter            = 1;
++  nelma_hid.poly_before         = 1;
++
++  nelma_hid.get_export_options  = nelma_get_export_options;
++  nelma_hid.do_export           = nelma_do_export;
++  nelma_hid.parse_arguments     = nelma_parse_arguments;
++  nelma_hid.set_layer           = nelma_set_layer;
++  nelma_hid.make_gc             = nelma_make_gc;
++  nelma_hid.destroy_gc          = nelma_destroy_gc;
++  nelma_hid.use_mask            = nelma_use_mask;
++  nelma_hid.set_color           = nelma_set_color;
++  nelma_hid.set_line_cap        = nelma_set_line_cap;
++  nelma_hid.set_line_width      = nelma_set_line_width;
++  nelma_hid.set_draw_xor        = nelma_set_draw_xor;
++  nelma_hid.set_draw_faded      = nelma_set_draw_faded;
++  nelma_hid.set_line_cap_angle  = nelma_set_line_cap_angle;
++  nelma_hid.draw_line           = nelma_draw_line;
++  nelma_hid.draw_arc            = nelma_draw_arc;
++  nelma_hid.draw_rect           = nelma_draw_rect;
++  nelma_hid.fill_circle         = nelma_fill_circle;
++  nelma_hid.fill_polygon        = nelma_fill_polygon;
++  nelma_hid.fill_pcb_polygon    = common_fill_pcb_polygon;
++  nelma_hid.fill_rect           = nelma_fill_rect;
++  nelma_hid.calibrate           = nelma_calibrate;
++  nelma_hid.set_crosshair       = nelma_set_crosshair;
++
++  apply_default_hid (&nelma_hid, 0);
++  hid_register_hid (&nelma_hid);
+ 
+ #include "nelma_lists.h"
+ }
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 9ef24da..debe6c1 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -1512,71 +1512,43 @@ png_set_crosshair (int x, int y, int a)
+ {
+ }
+ 
+-HID png_hid = {
+-  sizeof (HID),
+-  "png",
+-  "GIF/JPEG/PNG export.",
+-  0,				/* gui */
+-  0,				/* printer */
+-  1,				/* exporter */
+-  1,				/* poly before */
+-  0,				/* poly after */
+-  1,				/* poly dicer */
+-  png_get_export_options,
+-  png_do_export,
+-  png_parse_arguments,
+-  0 /* png_invalidate_lr */ ,
+-  0 /* png_invalidate_all */ ,
+-  png_set_layer,
+-  png_make_gc,
+-  png_destroy_gc,
+-  png_use_mask,
+-  png_set_color,
+-  png_set_line_cap,
+-  png_set_line_width,
+-  png_set_draw_xor,
+-  png_set_draw_faded,
+-  png_set_line_cap_angle,
+-  png_draw_line,
+-  png_draw_arc,
+-  png_draw_rect,
+-  png_fill_circle,
+-  png_fill_polygon,
+-  common_fill_pcb_polygon,
+-  0 /* png_thindraw_pcb_polygon */ ,
+-  png_fill_rect,
+-  png_calibrate,
+-  0 /* png_shift_is_pressed */ ,
+-  0 /* png_control_is_pressed */ ,
+-  0 /* png_mod1_is_pressed */ ,
+-  0 /* png_get_coords */ ,
+-  png_set_crosshair,
+-  0 /* png_add_timer */ ,
+-  0 /* png_stop_timer */ ,
+-  0 /* png_watch_file */ ,
+-  0 /* png_unwatch_file */ ,
+-  0 /* png_add_block_hook */ ,
+-  0 /* png_stop_block_hook */ ,
+-  0 /* png_log */ ,
+-  0 /* png_logv */ ,
+-  0 /* png_confirm_dialog */ ,
+-  0 /* png_close_confirm_dialog */ ,
+-  0 /* png_report_dialog */ ,
+-  0 /* png_prompt_for */ ,
+-  0 /* png_fileselect */ ,
+-  0 /* png_attribute_dialog */ ,
+-  0 /* png_show_item */ ,
+-  0 /* png_beep */ ,
+-  0 /* png_progress */ ,
+-  0 /* png_drc_gui */ ,
+-  0 /* png_edit_attributes */
+-};
+-
+ #include "dolists.h"
+ 
++static HID png_hid;
++
+ void
+ hid_png_init ()
+ {
++  png_hid.struct_size = sizeof (HID);
++  png_hid.name        = "png";
++  png_hid.description = "GIF/JPEG/PNG export.";
++  png_hid.exporter    = 1;
++  png_hid.poly_before = 1;
++  png_hid.poly_dicer  = 1;
++
++  png_hid.get_export_options  = png_get_export_options;
++  png_hid.do_export           = png_do_export;
++  png_hid.parse_arguments     = png_parse_arguments;
++  png_hid.set_layer           = png_set_layer;
++  png_hid.make_gc             = png_make_gc;
++  png_hid.destroy_gc          = png_destroy_gc;
++  png_hid.use_mask            = png_use_mask;
++  png_hid.set_color           = png_set_color;
++  png_hid.set_line_cap        = png_set_line_cap;
++  png_hid.set_line_width      = png_set_line_width;
++  png_hid.set_draw_xor        = png_set_draw_xor;
++  png_hid.set_draw_faded      = png_set_draw_faded;
++  png_hid.set_line_cap_angle  = png_set_line_cap_angle;
++  png_hid.draw_line           = png_draw_line;
++  png_hid.draw_arc            = png_draw_arc;
++  png_hid.draw_rect           = png_draw_rect;
++  png_hid.fill_circle         = png_fill_circle;
++  png_hid.fill_polygon        = png_fill_polygon;
++  png_hid.fill_pcb_polygon    = common_fill_pcb_polygon;
++  png_hid.fill_rect           = png_fill_rect;
++  png_hid.calibrate           = png_calibrate;
++  png_hid.set_crosshair       = png_set_crosshair;
++
+   apply_default_hid (&png_hid, 0);
+   hid_register_hid (&png_hid);
+ 
+diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
+index 49a19c7..57bc02c 100644
+--- a/src/hid/ps/eps.c
++++ b/src/hid/ps/eps.c
+@@ -54,60 +54,6 @@ static void eps_calibrate (double xval, double yval);
+ static void eps_set_crosshair (int x, int y, int action);
+ /*----------------------------------------------------------------------------*/
+ 
+-static HID eps_hid = {
+-  sizeof (HID),
+-  "eps",
+-  "Encapsulated Postscript",
+-  0, 0, 1, 0, 1, 0,
+-  eps_get_export_options,
+-  eps_do_export,
+-  eps_parse_arguments,
+-  0 /* eps_invalidate_lr */ ,
+-  0 /* eps_invalidate_all */ ,
+-  eps_set_layer,
+-  eps_make_gc,
+-  eps_destroy_gc,
+-  eps_use_mask,
+-  eps_set_color,
+-  eps_set_line_cap,
+-  eps_set_line_width,
+-  eps_set_draw_xor,
+-  eps_set_draw_faded,
+-  eps_set_line_cap_angle,
+-  eps_draw_line,
+-  eps_draw_arc,
+-  eps_draw_rect,
+-  eps_fill_circle,
+-  eps_fill_polygon,
+-  common_fill_pcb_polygon,
+-  0 /* eps_thindraw_pcb_polygon */ ,
+-  eps_fill_rect,
+-  eps_calibrate,
+-  0 /* eps_shift_is_pressed */ ,
+-  0 /* eps_control_is_pressed */ ,
+-  0 /* eps_mod1_is_pressed */ ,
+-  0 /* eps_get_coords */ ,
+-  eps_set_crosshair,
+-  0 /* eps_add_timer */ ,
+-  0 /* eps_stop_timer */ ,
+-  0 /* eps_watch_file */ ,
+-  0 /* eps_unwatch_file */ ,
+-  0 /* eps_add_block_hook */ ,
+-  0 /* eps_stop_block_hook */ ,
+-  0 /* eps_log */ ,
+-  0 /* eps_logv */ ,
+-  0 /* eps_confirm_dialog */ ,
+-  0 /* eps_close_confirm_dialog */ ,
+-  0 /* eps_report_dialog */ ,
+-  0 /* eps_prompt_for */ ,
+-  0 /* eps_attribute_dialog */ ,
+-  0 /* eps_show_item */ ,
+-  0 /* eps_beep */ ,
+-  0 /* eps_progress */ ,
+-  0 /* eps_drc_gui */ ,
+-  0 /* eps_edit_attributes */
+-};
+-
+ typedef struct hid_gc_struct
+ {
+   EndCapStyle cap;
+@@ -690,9 +636,43 @@ eps_set_crosshair (int x, int y, int action)
+ }
+ 
+ 
++static HID eps_hid;
++
++
+ void
+ hid_eps_init ()
+ {
++  memset (&eps_hid, 0, sizeof (HID));
++
++  eps_hid.struct_size         = sizeof (HID);
++  eps_hid.name                = "eps";
++  eps_hid.description         = "Encapsulated Postscript";
++  eps_hid.exporter            = 1;
++  eps_hid.poly_after          = 1;
++
++  eps_hid.get_export_options  = eps_get_export_options;
++  eps_hid.do_export           = eps_do_export;
++  eps_hid.parse_arguments     = eps_parse_arguments;
++  eps_hid.set_layer           = eps_set_layer;
++  eps_hid.make_gc             = eps_make_gc;
++  eps_hid.destroy_gc          = eps_destroy_gc;
++  eps_hid.use_mask            = eps_use_mask;
++  eps_hid.set_color           = eps_set_color;
++  eps_hid.set_line_cap        = eps_set_line_cap;
++  eps_hid.set_line_width      = eps_set_line_width;
++  eps_hid.set_draw_xor        = eps_set_draw_xor;
++  eps_hid.set_draw_faded      = eps_set_draw_faded;
++  eps_hid.set_line_cap_angle  = eps_set_line_cap_angle;
++  eps_hid.draw_line           = eps_draw_line;
++  eps_hid.draw_arc            = eps_draw_arc;
++  eps_hid.draw_rect           = eps_draw_rect;
++  eps_hid.fill_circle         = eps_fill_circle;
++  eps_hid.fill_polygon        = eps_fill_polygon;
++  eps_hid.fill_pcb_polygon    = common_fill_pcb_polygon;
++  eps_hid.fill_rect           = eps_fill_rect;
++  eps_hid.calibrate           = eps_calibrate;
++  eps_hid.set_crosshair       = eps_set_crosshair;
++
+   apply_default_hid (&eps_hid, 0);
+   hid_register_hid (&eps_hid);
+ }
+diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
+index 86c3156..87bcc9d 100644
+--- a/src/hid/ps/ps.c
++++ b/src/hid/ps/ps.c
+@@ -1340,66 +1340,44 @@ ps_set_crosshair (int x, int y, int action)
+ {
+ }
+ 
+-HID ps_hid = {
+-  sizeof (HID),
+-  "ps",
+-  "Postscript export.",
+-  0, 0, 1, 1, 0, 0,
+-  ps_get_export_options,
+-  ps_do_export,
+-  ps_parse_arguments,
+-  0 /* ps_invalidate_lr */ ,
+-  0 /* ps_invalidate_all */ ,
+-  ps_set_layer,
+-  ps_make_gc,
+-  ps_destroy_gc,
+-  ps_use_mask,
+-  ps_set_color,
+-  ps_set_line_cap,
+-  ps_set_line_width,
+-  ps_set_draw_xor,
+-  ps_set_draw_faded,
+-  ps_set_line_cap_angle,
+-  ps_draw_line,
+-  ps_draw_arc,
+-  ps_draw_rect,
+-  ps_fill_circle,
+-  ps_fill_polygon,
+-  ps_fill_pcb_polygon,
+-  0 /* ps_thindraw_pcb_polygon */,
+-  ps_fill_rect,
+-  ps_calibrate,
+-  0 /* ps_shift_is_pressed */ ,
+-  0 /* ps_control_is_pressed */ ,
+-  0 /* ps_mod1_is_pressed */ ,
+-  0 /* ps_get_coords */ ,
+-  ps_set_crosshair,
+-  0 /* ps_add_timer */ ,
+-  0 /* ps_stop_timer */ ,
+-  0 /* ps_watch_file */ ,
+-  0 /* ps_unwatch_file */ ,
+-  0 /* ps_add_block_hook */ ,
+-  0 /* ps_stop_block_hook */ ,
+-  0 /* ps_log */ ,
+-  0 /* ps_logv */ ,
+-  0 /* ps_confirm_dialog */ ,
+-  0 /* ps_close_confirm_dialog */ ,
+-  0 /* ps_report_dialog */ ,
+-  0 /* ps_prompt_for */ ,
+-  0 /* ps_fileselect */ ,
+-  0 /* ps_attribute_dialog */ ,
+-  0 /* ps_show_item */ ,
+-  0 /* ps_beep */ ,
+-  0 /* ps_progress */ ,
+-  0 /* ps_drc_gui */ ,
+-  0 /* ps_edit_attributes */
+-};
+-
+ #include "dolists.h"
+ 
++static HID ps_hid;
++
+ void
+ hid_ps_init ()
+ {
++  memset (&ps_hid, 0, sizeof (HID));
++
++  ps_hid.struct_size        = sizeof (HID);
++  ps_hid.name               = "ps";
++  ps_hid.description        = "Postscript export.";
++  ps_hid.exporter           = 1;
++  ps_hid.poly_before        = 1;
++
++  ps_hid.get_export_options = ps_get_export_options;
++  ps_hid.do_export          = ps_do_export;
++  ps_hid.parse_argument     = ps_parse_arguments;
++  ps_hid.set_layer          = ps_set_layer;
++  ps_hid.make_gc            = ps_make_gc;
++  ps_hid.destroy_gc         = ps_destroy_gc;
++  ps_hid.use_mask           = ps_use_mask;
++  ps_hid.set_color          = ps_set_color;
++  ps_hid.set_line_cap       = ps_set_line_cap;
++  ps_hid.set_line_width     = ps_set_line_width;
++  ps_hid.set_draw_xor       = ps_set_draw_xor;
++  ps_hid.set_draw_faded     = ps_set_draw_faded;
++  ps_hid.set_line_cap_angle = ps_set_line_cap_angle;
++  ps_hid.draw_line          = ps_draw_line;
++  ps_hid.draw_arc           = ps_draw_arc;
++  ps_hid.draw_rect          = ps_draw_rect;
++  ps_hid.fill_circle        = ps_fill_circle;
++  ps_hid.fill_polygon       = ps_fill_polygon;
++  ps_hid.fill_pcb_polygon   = ps_fill_pcb_polygon;
++  ps_hid.fill_rect          = ps_fill_rect;
++  ps_hid.calibrate          = ps_calibrate;
++  ps_hid.set_crosshair      = ps_set_crosshair;
++
+   apply_default_hid (&ps_hid, 0);
+   hid_register_hid (&ps_hid);
