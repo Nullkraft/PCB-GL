@@ -1,12 +1,11 @@
-Bottom: ef09ec66b6b08cc55638b7a11eea6e59aaecb257
+Bottom: 7b14bf4de6e1cc019909ac9ddea4bb25ec59fbea
 Top:    3a91eb6b07ad73f70ba32134a26e5b9599c12a88
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-18 23:07:15 +0100
+Date:   2011-04-18 23:14:54 +0100
 
 Don't abuse CrosshairOn() API to force a redraw.
 
 Expose DrawAttached() to the HIDs so they don't have to cheat.
-
 
 ---
 
@@ -112,14 +111,21 @@ index 4573e98..ff16b1e 100644
  
  #endif
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 2a0cd9e..4595b80 100644
+index c5f3e3e..4595b80 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -2518,8 +2518,8 @@ idle_proc (XtPointer dummy)
+@@ -2433,7 +2433,6 @@ idle_proc (XtPointer dummy)
+       int mx, my;
+       BoxType region;
+       lesstif_use_mask (0);
+-      Crosshair.On = 0;
+       pixmap = main_pixmap;
+       mx = view_width;
+       my = view_height;
+@@ -2519,7 +2518,8 @@ idle_proc (XtPointer dummy)
        XCopyArea (display, main_pixmap, window, my_gc, 0, 0, view_width,
  		 view_height, 0, 0);
        pixmap = window;
--      Crosshair.On = 0;
 -      CrosshairOn ();
 +      DrawAttached ();
 +      DrawMark ();
