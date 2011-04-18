@@ -1,5 +1,5 @@
-Bottom: e6c08500303c66a128eaaa23d43586834ea1cda7
-Top:    9298726d6f9cb2cc3d5664c56feac316aa7a3eda
+Bottom: 76e0788f5591da6232971038fc3fe9b3c9e6e177
+Top:    80406a60c91f52e62440135a6d332934b21c7f75
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-23 15:32:47 +0000
 
@@ -9,10 +9,10 @@ Disable DRC checks on "outline" and "route" layers
 ---
 
 diff --git a/src/find.c b/src/find.c
-index c478f7f..efd3ebf 100644
+index 5d2e92c..591df39 100644
 --- a/src/find.c
 +++ b/src/find.c
-@@ -826,6 +826,9 @@ LookupLOConnectionsToPVList (bool AndRats)
+@@ -822,6 +822,9 @@ LookupLOConnectionsToPVList (bool AndRats)
        /* now all lines, arcs and polygons of the several layers */
        for (layer = 0; layer < max_copper_layer; layer++)
          {
@@ -22,7 +22,7 @@ index c478f7f..efd3ebf 100644
            info.layer = layer;
            /* add touching lines */
            if (setjmp (info.env) == 0)
-@@ -3994,6 +3997,9 @@ DRCAll (void)
+@@ -3977,6 +3980,9 @@ DRCAll (void)
      {
        COPPERLINE_LOOP (PCB->Data);
        {
@@ -32,7 +32,7 @@ index c478f7f..efd3ebf 100644
          /* check line clearances in polygons */
          PlowsPolygon (PCB->Data, LINE_TYPE, layer, line, drc_callback);
          if (IsBad)
-@@ -4039,6 +4045,8 @@ DRCAll (void)
+@@ -4022,6 +4028,8 @@ DRCAll (void)
      {
        COPPERARC_LOOP (PCB->Data);
        {
@@ -42,10 +42,10 @@ index c478f7f..efd3ebf 100644
          if (IsBad)
            break;
 diff --git a/src/misc.c b/src/misc.c
-index faeefa8..86866b2 100644
+index 705f8df..c43c185 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -2214,6 +2214,14 @@ ElementOrientation (ElementType *e)
+@@ -2302,6 +2302,14 @@ ElementOrientation (ElementType *e)
    return dy > 0 ? 3 : 1;
  }
  
@@ -61,10 +61,10 @@ index faeefa8..86866b2 100644
  ActionListRotations(int argc, char **argv, int x, int y)
  {
 diff --git a/src/misc.h b/src/misc.h
-index bb88a21..b11db0b 100644
+index b46cad4..4338c69 100644
 --- a/src/misc.h
 +++ b/src/misc.h
-@@ -123,6 +123,8 @@ char * GetInfoString (void);
+@@ -126,6 +126,8 @@ char * GetInfoString (void);
     comparing two similar footprints.  */
  int ElementOrientation (ElementType *e);
  
