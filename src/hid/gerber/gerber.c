@@ -1169,40 +1169,39 @@ gerber_set_crosshair (int x, int y, int action)
 {
 }
 
-
 void
 hid_gerber_init ()
 {
-  memset (&gcode_hid, 0, sizeof (HID));
+  memset (&gerber_hid, 0, sizeof (HID));
 
-  gcode_hid.struct_size         = sizeof (HID);
-  gcode_hid.name                = "gerber";
-  gcode_hid.description         = "RS-274X (Gerber) export.";
-  gcode_hid.exporter            = 1;
-  gcode_hid.poly_dicer          = 1;
+  gerber_hid.struct_size         = sizeof (HID);
+  gerber_hid.name                = "gerber";
+  gerber_hid.description         = "RS-274X (Gerber) export.";
+  gerber_hid.exporter            = 1;
+  gerber_hid.poly_dicer          = 1;
 
-  gcode_hid.get_export_options  = gerber_get_export_options;
-  gcode_hid.do_export           = gerber_do_export;
-  gcode_hid.parse_arguments     = gerber_parse_arguments;
-  gcode_hid.set_layer           = gerber_set_layer;
-  gcode_hid.make_gc             = gerber_make_gc;
-  gcode_hid.destroy_gc          = gerber_destroy_gc;
-  gcode_hid.use_mask            = gerber_use_mask;
-  gcode_hid.set_color           = gerber_set_color;
-  gcode_hid.set_line_cap        = gerber_set_line_cap;
-  gcode_hid.set_line_width      = gerber_set_line_width;
-  gcode_hid.set_draw_xor        = gerber_set_draw_xor;
-  gcode_hid.set_draw_faded      = gerber_set_draw_faded;
-  gcode_hid.set_line_cap_angle  = gerber_set_line_cap_angle;
-  gcode_hid.draw_line           = gerber_draw_line;
-  gcode_hid.draw_arc            = gerber_draw_arc;
-  gcode_hid.draw_rect           = gerber_draw_rect;
-  gcode_hid.fill_circle         = gerber_fill_circle;
-  gcode_hid.fill_polygon        = gerber_fill_polygon;
-  gcode_hid.fill_pcb_polygon    = common_fill_pcb_polygon;
-  gcode_hid.fill_rect           = gerber_fill_rect;
-  gcode_hid.calibrate           = gerber_calibrate;
-  gcode_hid.set_crosshair       = gerber_set_crosshair;
+  gerber_hid.get_export_options  = gerber_get_export_options;
+  gerber_hid.do_export           = gerber_do_export;
+  gerber_hid.parse_arguments     = gerber_parse_arguments;
+  gerber_hid.set_layer           = gerber_set_layer;
+  gerber_hid.make_gc             = gerber_make_gc;
+  gerber_hid.destroy_gc          = gerber_destroy_gc;
+  gerber_hid.use_mask            = gerber_use_mask;
+  gerber_hid.set_color           = gerber_set_color;
+  gerber_hid.set_line_cap        = gerber_set_line_cap;
+  gerber_hid.set_line_width      = gerber_set_line_width;
+  gerber_hid.set_draw_xor        = gerber_set_draw_xor;
+  gerber_hid.set_draw_faded      = gerber_set_draw_faded;
+  gerber_hid.set_line_cap_angle  = gerber_set_line_cap_angle;
+  gerber_hid.draw_line           = gerber_draw_line;
+  gerber_hid.draw_arc            = gerber_draw_arc;
+  gerber_hid.draw_rect           = gerber_draw_rect;
+  gerber_hid.fill_circle         = gerber_fill_circle;
+  gerber_hid.fill_polygon        = gerber_fill_polygon;
+  gerber_hid.fill_pcb_polygon    = common_fill_pcb_polygon;
+  gerber_hid.fill_rect           = gerber_fill_rect;
+  gerber_hid.calibrate           = gerber_calibrate;
+  gerber_hid.set_crosshair       = gerber_set_crosshair;
 
   apply_default_hid (&gerber_hid, 0);
   hid_register_hid (&gerber_hid);

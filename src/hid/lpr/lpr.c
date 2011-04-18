@@ -116,7 +116,7 @@ static HID lpr_hid;
 void
 hid_lpr_init ()
 {
-  memset (lpr_hid, 0, sizeof (HID));
+  memset (&lpr_hid, 0, sizeof (HID));
 
   lpr_hid.struct_size         = sizeof (HID);
   lpr_hid.name                = "lpr";

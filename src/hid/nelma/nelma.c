@@ -72,7 +72,6 @@
 #include "hid.h"
 #include "../hidint.h"
 #include "hid/common/draw_helpers.h"
-#include "nelma.h"
 
 #include <gd.h>
 
@@ -106,6 +105,8 @@ struct hid_gc_struct {
 	struct color_struct *color;
 	gdImagePtr      brush;
 };
+
+static HID nelma_hid;
 
 static struct color_struct *black = NULL, *white = NULL;
 static int      linewidth = -1;
@@ -1045,8 +1046,6 @@ nelma_set_crosshair(int x, int y, int a)
 /* *** Miscellaneous ******************************************************* */
 
 #include "dolists.h"
-
-static HID nelma_hid;
 
 void
 hid_nelma_init()
