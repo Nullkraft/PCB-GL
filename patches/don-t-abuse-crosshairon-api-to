@@ -1,5 +1,5 @@
-Bottom: 36aaca04ad75587e4810acafef5beae1dd0e1bf8
-Top:    0ed5b580c925563170f73424076906466940af42
+Bottom: 090a807e09a659a09d49a7c5105ec0c95eaddffd
+Top:    b8cb9e7cbc9da8db6edfd973d3e077fe767aa9dd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-18 23:14:54 +0100
 
@@ -10,7 +10,7 @@ Expose DrawAttached() to the HIDs so they don't have to cheat.
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 7df5299..e50d4b3 100644
+index eb19257..8e1d089 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -565,10 +565,14 @@ XORDrawMoveOrCopyObject (void)
