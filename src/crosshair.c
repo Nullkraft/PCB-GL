@@ -565,10 +565,14 @@ XORDrawMoveOrCopyObject (void)
 /* ---------------------------------------------------------------------------
  * draws additional stuff that follows the crosshair
  */
-static void
+void
 DrawAttached (void)
 {
   BDimension s;
+
+  if (!Crosshair.On)
+    return;
+
   switch (Settings.Mode)
     {
     case VIA_MODE:
@@ -683,6 +687,28 @@ DrawAttached (void)
       gui->draw_rect (Crosshair.GC, x1, y1, x2, y2);
     }
 }
+
+
+/* --------------------------------------------------------------------------
+ * draw the marker position
+ */
+void
+DrawMark (void)
+{
+  /* Mark is not drawn when the crosshair is off, or when it is not set */
+  if (!Crosshair.On || !Marked.status)
+    return;
+
+  gui->draw_line (Crosshair.GC,
+                  Marked.X - MARK_SIZE,
+                  Marked.Y - MARK_SIZE,
+                  Marked.X + MARK_SIZE, Marked.Y + MARK_SIZE);
+  gui->draw_line (Crosshair.GC,
+                  Marked.X + MARK_SIZE,
+                  Marked.Y - MARK_SIZE,
+                  Marked.X - MARK_SIZE, Marked.Y + MARK_SIZE);
+}
+
 
 /* ---------------------------------------------------------------------------
  * switches crosshair on
