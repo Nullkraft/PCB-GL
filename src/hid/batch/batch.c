@@ -357,13 +357,7 @@ hid_batch_init ()
   batch_hid.struct_size           = sizeof (HID);
   batch_hid.name                  = "batch";
   batch_hid.description           = "Batch-mode GUI for non-interactive use.";
-
   batch_hid.gui                   = 1;
-  batch_hid.printer               = 0;
-  batch_hid.exporter              = 0;
-  batch_hid.poly_before           = 0;
-  batch_hid.poly_after            = 0;
-  batch_hid.poly_dicer            = 0;
 
   batch_hid.get_export_options    = batch_get_export_options;
   batch_hid.do_export             = batch_do_export;
