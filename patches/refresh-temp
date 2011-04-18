@@ -1,0 +1,21 @@
+Bottom: 07699ad852f829d7e628dd85fafd59325c7165c3
+Top:    27a5ebef4d06dde23f58c421f073b8661312cb12
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-18 21:18:55 +0100
+
+Refresh of remove-unused-extents-hid-code
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 1e4cf58..13a8f2e 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -150,7 +150,6 @@ PCB_SRCS = \
+ 	hid/common/hidinit.c \
+ 	hid/common/hidinit.h \
+ 	hid/common/hidnogui.c \
+-	hid/common/extents.c \
+ 	hid/common/draw_helpers.c \
+ 	hid/common/draw_helpers.h \
+ 	hid/common/hid_resource.c \
