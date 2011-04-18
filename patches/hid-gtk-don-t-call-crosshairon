@@ -1,5 +1,5 @@
 Bottom: 7b14bf4de6e1cc019909ac9ddea4bb25ec59fbea
-Top:    7b14bf4de6e1cc019909ac9ddea4bb25ec59fbea
+Top:    36aaca04ad75587e4810acafef5beae1dd0e1bf8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-18 23:18:58 +0100
 
@@ -10,4 +10,14 @@ The GTK HID doesn't turn the crosshair off, so don't turn it back on.
 
 ---
 
-
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 331f214..268988d 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -728,7 +728,6 @@ ghid_port_window_enter_cb (GtkWidget * widget,
+     {
+       ghid_screen_update ();
+     }
+-  CrosshairOn ();
+   return FALSE;
+ }
