@@ -1,5 +1,5 @@
 Bottom: 07699ad852f829d7e628dd85fafd59325c7165c3
-Top:    a5f9c12111369a5fe835c02aa3f6321f8f124984
+Top:    3af74542971ae63ba8cb3ceccf9c3c28bd3efaec
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-18 19:53:42 +0100
 
@@ -216,10 +216,18 @@ index 661b592..6e5bc22 100644
    hid_register_hid (&bom_hid);
  }
 diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
-index 0f51b47..16bd75a 100644
+index 0f51b47..49f681e 100644
 --- a/src/hid/common/extents.c
 +++ b/src/hid/common/extents.c
-@@ -170,64 +170,36 @@ extents_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
+@@ -28,7 +28,6 @@ RCSID ("$Id$");
+ 
+ static BoxType box;
+ 
+-
+ typedef struct hid_gc_struct
+ {
+   int width;
+@@ -170,68 +169,50 @@ extents_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
    PEY (y2, 0);
  }
  
@@ -282,9 +290,10 @@ index 0f51b47..16bd75a 100644
 -  0				/* extents_beep */
 -};
 +static HID extents_hid;
++static bool initialised = false;
 +
 +void
-+init_extents_hid (void)
++hid_extents_init (void)
 +{
 +  memset (&extents_hid, 0, sizeof (HID));
 +
@@ -314,6 +323,19 @@ index 0f51b47..16bd75a 100644
  
  BoxType *
  hid_get_extents (void *item)
+ {
++  /* As the extents "hid" isn't a real HID, we need to ensure it is
++   * initialised before use from every external entry point.
++   */
++  if (!initialised)
++    {
++      hid_extents_init ();
++      initialised = true;
++    }
++
+   BoxType region;
+ 
+   box.X1 = MAXINT;
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
 index d2dd717..9360cb7 100644
 --- a/src/hid/gcode/gcode.c
