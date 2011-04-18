@@ -13,6 +13,10 @@ The code previously every coordinate to 0, meaning that the box
 encompasing (0, 0)  up to the (max_x, max_y) would be invalidated,
 rather than (min_x, min_y) to (max_x, max_y).
 
+No improvement is going to be seen, as both the GTK and Lesstif GUIs
+ignore the damaged bounds and repaint the whole screen each time - it
+is just for correctness.
+
 
 ---
 
