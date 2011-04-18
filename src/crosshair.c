@@ -757,6 +757,26 @@ CrosshairOff (void)
     notify_mark_change (true);
 }
 
+/* ---------------------------------------------------------------------------
+ * Convenience for plugins using the old API
+ */
+void
+HideCrosshair (void)
+{
+  notify_crosshair_change (false);
+  notify_mark_change (false);
+}
+
+void
+RestoreCrosshair (void)
+{
+  notify_crosshair_change (true);
+  notify_mark_change (true);
+}
+
+/* ---------------------------------------------------------------------------
+ * Returns the square of the given number
+ */
 static double
 square (double x)
 {
