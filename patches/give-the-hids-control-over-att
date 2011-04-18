@@ -1,5 +1,5 @@
-Bottom: b8687aaba11f225806e46e6ff6a5811118a2ffa9
-Top:    c5cbcecc106b41ed74b5a5ae9552afd902286684
+Bottom: 279fbcbda26f35a3eadf99f2b2339cdcc96a1180
+Top:    c2d0bbb9113b79df7d3276ff4fe32976ba23db9f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:11 +0100
 
@@ -761,10 +761,10 @@ index ff16b1e..efa6679 100644
  void CrosshairOff (void);
  void HideCrosshair (void);
 diff --git a/src/draw.c b/src/draw.c
-index bc00a7e..3586db7 100644
+index 707969a..9a2bcdf 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -186,14 +186,10 @@ UpdateAll (void)
+@@ -190,15 +190,11 @@ UpdateAll (void)
  void
  Draw (void)
  {
@@ -772,13 +772,14 @@ index bc00a7e..3586db7 100644
 -
    /* clear and create event if not drawing to a pixmap
     */
-   gui->invalidate_lr (Block.X1, Block.X2, Block.Y1, Block.Y2);
+   if (Block.X1 <= Block.X2 && Block.Y1 <= Block.Y2)
+     gui->invalidate_lr (Block.X1, Block.X2, Block.Y1, Block.Y2);
  
 -  RestoreCrosshair ();
 -
    /* shrink the update block */
-   Block.X1 = Block.Y1 = Block.X2 = Block.Y2 = 0;
- }
+   Block.X1 = Block.Y1 =  MAXINT;
+   Block.X2 = Block.Y2 = -MAXINT;
 diff --git a/src/hid.h b/src/hid.h
 index b13e75b..7779f84 100644
 --- a/src/hid.h
