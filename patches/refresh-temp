@@ -1,0 +1,50 @@
+Bottom: b8687aaba11f225806e46e6ff6a5811118a2ffa9
+Top:    279fbcbda26f35a3eadf99f2b2339cdcc96a1180
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-19 00:15:09 +0100
+
+Refresh of draw-c-fix-damage-area-computa
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index bc00a7e..707969a 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -54,6 +54,10 @@
+ #include <dmalloc.h>
+ #endif
+ 
++#ifndef MAXINT
++#define MAXINT (((unsigned int)(~0))>>1)
++#endif
++
+ RCSID ("$Id$");
+ 
+ #define	SMALL_SMALL_TEXT_SIZE	0
+@@ -75,7 +79,7 @@ FloatPolyType, *FloatPolyTypePtr;
+ /* ---------------------------------------------------------------------------
+  * some local identifiers
+  */
+-static BoxType Block;
++static BoxType Block = {MAXINT, MAXINT, -MAXINT, -MAXINT};
+ static bool Gathering = true;
+ 
+ static int doing_pinout = 0;
+@@ -190,12 +194,14 @@ Draw (void)
+ 
+   /* clear and create event if not drawing to a pixmap
+    */
+-  gui->invalidate_lr (Block.X1, Block.X2, Block.Y1, Block.Y2);
++  if (Block.X1 <= Block.X2 && Block.Y1 <= Block.Y2)
++    gui->invalidate_lr (Block.X1, Block.X2, Block.Y1, Block.Y2);
+ 
+   RestoreCrosshair ();
+ 
+   /* shrink the update block */
+-  Block.X1 = Block.Y1 = Block.X2 = Block.Y2 = 0;
++  Block.X1 = Block.Y1 =  MAXINT;
++  Block.X2 = Block.Y2 = -MAXINT;
+ }
+ 
+ /* ---------------------------------------------------------------------------
