@@ -3,9 +3,10 @@ Top:    e383550b1251e229ced47388029e4b7ea760f5ee
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-18 19:53:42 +0100
 
-Initialise the HID vtable by function, rather than explicitly.
+Initialise the HID vtable by function, rather than as a struct initialiser.
 
 This allows adding new items without having to update every HID.
+It also reduces bloat for those HIDs which have a lot of zero entries.
 
 
 ---
