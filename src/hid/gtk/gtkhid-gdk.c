@@ -34,6 +34,8 @@ typedef struct render_priv {
   GdkGC *mask_gc;
   GdkGC *u_gc;
   GdkGC *grid_gc;
+  int attached_invalidate_depth;
+  int mark_invalidate_depth;
 } render_priv;
 
 
@@ -710,8 +712,6 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
 }
 
 
-static int invalidate_depth = 0;
-
 void
 ghid_invalidate_all ()
 {
@@ -774,12 +774,10 @@ ghid_invalidate_all ()
   hid_expose_callback (&ghid_hid, &region, 0);
   ghid_draw_grid ();
 
-  if (invalidate_depth != 0 && Crosshair.On)
-    printf ("Oh crap - shouldn't be drawing this, invalidate_depth is %i?\n",
-            invalidate_depth);
-  else
+  if (priv->attachment_invalidate_depth == 0)
     DrawAttached ();
-  DrawMark ();
+  if (priv->mark_invalidate_depth == 0)
+    DrawMark ();
 
   ghid_screen_update ();
 }
@@ -788,55 +786,55 @@ ghid_invalidate_all ()
 void
 ghid_notify_crosshair_change (bool changes_complete)
 {
-  //static int invalidate_depth = 0;
+  render_priv *priv = gport->render_priv;
 
-  /* FIXME: We sometimes get called before the GUI is up */
-  if (gport->drawing_area == NULL)
+  /* We sometimes get called before the GUI is up */
+  if (priv->drawing_area == NULL)
     return;
 
   if (changes_complete)
-    invalidate_depth --;
+    priv->attached_invalidate_depth --;
 
-  if (invalidate_depth < 0)
+  if (priv->attached_invalidate_depth < 0)
     {
       fprintf (stderr, "ERROR: Unmatched notify_crosshair_change calls\n");
-      invalidate_depth = 0;
+      priv->attached_invalidate_depth = 0;
     }
 
-  if (invalidate_depth == 0)
+  if (priv->attached_invalidate_depth == 0)
     DrawAttached ();
 
   if (!changes_complete)
-    invalidate_depth ++;
-  else if (gport->drawing_area != NULL)
-    ghid_draw_area_update (gport, NULL);
+    priv->attached_invalidate_depth ++;
+  else if (priv->drawing_area != NULL)
+    ghid_draw_area_update (priv, NULL);
 }
 
 void
 ghid_notify_mark_change (bool changes_complete)
 {
-  static int invalidate_depth = 0;
+  render_priv *priv = gport->render_priv;
 
-  /* FIXME: We sometimes get called before the GUI is up */
-  if (gport->drawing_area == NULL)
+  /* We sometimes get called before the GUI is up */
+  if (priv->drawing_area == NULL)
     return;
 
   if (changes_complete)
-    invalidate_depth --;
+    priv->mark_invalidate_depth --;
 
-  if (invalidate_depth < 0)
+  if (priv->mark_invalidate_depth < 0)
     {
       fprintf (stderr, "ERROR: Unmatched notify_mark_change calls\n");
-      invalidate_depth = 0;
+      priv->mark_invalidate_depth = 0;
     }
 
-  if (invalidate_depth == 0)
+  if (priv->mark_invalidate_depth == 0)
     DrawMark ();
 
   if (!changes_complete)
-    invalidate_depth ++;
+    priv->mark_invalidate_depth ++;
   else
-    ghid_draw_area_update (gport, NULL);
+    ghid_draw_area_update (priv, NULL);
 }
 
 static void
