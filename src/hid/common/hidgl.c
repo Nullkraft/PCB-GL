@@ -518,7 +518,6 @@ hidgl_draw_arc (double width, int x, int y, int rx, int ry,
 void
 hidgl_draw_rect (int x1, int y1, int x2, int y2)
 {
-  return;
   CHECK_IS_IN_CONTEXT ();
   glBegin (GL_LINE_LOOP);
   glVertex3f (x1, y1, global_depth);

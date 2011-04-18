@@ -1796,9 +1796,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   int min_depth;
   int max_depth;
 
-  buffer.total_triangles = 0;
-  buffer.total_vertices = 0;
-
   ghid_start_drawing (port);
 
   hidgl_in_context (true);
@@ -1983,9 +1980,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   check_gl_drawing_ok_hack = false;
   hidgl_in_context (false);
   ghid_end_drawing (port);
-
-//  printf ("Triangle count was %i\n", buffer.total_triangles);
-//  printf ("Vertex count was %i\n", buffer.total_vertices);
 
   return FALSE;
 }

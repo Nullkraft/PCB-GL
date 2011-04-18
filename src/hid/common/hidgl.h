@@ -31,8 +31,6 @@ typedef struct {
   unsigned int triangle_count;
   unsigned int coord_comp_count;
   unsigned int vertex_count;
-  unsigned int total_triangles;
-  unsigned int total_vertices;
   GLuint vbo_id;
   bool use_vbo;
   bool use_map;
@@ -61,7 +59,6 @@ hidgl_add_vertex_3D_tex (triangle_buffer *buffer,
   buffer->triangle_array [buffer->coord_comp_count++] = s;
   buffer->triangle_array [buffer->coord_comp_count++] = t;
   buffer->vertex_count++;
-  buffer->total_vertices++;
 }
 
 inline void
@@ -86,8 +83,6 @@ hidgl_add_triangle_3D_tex (triangle_buffer *buffer,
   hidgl_add_vertex_3D_tex (buffer, x3, y3, z3, s3, t3);
   hidgl_add_vertex_3D_tex (buffer, x3, y3, z3, s3, t3);
   /* NB: Repeated last virtex to separate from other tri-strip */
-  buffer->triangle_count++;
-  buffer->total_triangles++;
 }
 
 static inline void
