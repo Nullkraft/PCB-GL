@@ -5,7 +5,11 @@ Date:   2011-04-18 23:18:58 +0100
 
 hid/gtk: Don't call CrosshairOn() when re-entering the viewport
 
-The GTK HID doesn't turn the crosshair off, so don't turn it back on.
+The GTK HID doesn't turn the crosshair off, so we don't turn it back on
+if we default to having it switched on in the first place. Make that
+default change, and remove the CrosshairOn() call.
+
+(Also tested not to break the Lesstif HID).
 
 
 ---
