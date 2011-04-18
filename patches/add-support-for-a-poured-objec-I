@@ -1,7 +1,7 @@
-Bottom: 707ce747f07b62e63b46ecfe2de5b506acb8e256
-Top:    0e6b47fec5d06246b9229b6e35a90ed084decbba
+Bottom: 03244f178d73f8e647dd56c20b8b1e54c696bb95
+Top:    1dddd8b9518319d833ebc6b1798f928b514a56a0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-18 17:39:01 +0100
+Date:   2011-04-19 00:30:46 +0100
 
 Add support for a "poured" object.
 
@@ -35,7 +35,7 @@ index cd6f4f9..4ab3813 100755
  						/* an element */
  #define	MAX_LIBRARY_LINE_LENGTH		255	/* maximum line length in the */
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 0ddac76..fabb0ff 100644
+index 3e48275..3ded325 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -126,6 +126,8 @@ PCB_SRCS = \
@@ -2022,7 +2022,7 @@ index 521f60e..8b44d7b 100644
  				 FontTypePtr, FlagType, char *, char *,
  				 char *, LocationType, LocationType, BYTE,
 diff --git a/src/crosshair.c b/src/crosshair.c
-index fb46c66..ed04dad 100644
+index fb7180e..e2d5b8e 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -48,7 +48,7 @@
@@ -2173,7 +2173,7 @@ index fb46c66..ed04dad 100644
  	}
        break;
  
-@@ -976,7 +1012,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+@@ -1048,7 +1084,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
  
    if (TEST_FLAG (SNAPPINFLAG, PCB))
      ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
@@ -2182,7 +2182,7 @@ index fb46c66..ed04dad 100644
    else
      ans = NO_TYPE;
  
-@@ -1126,6 +1162,6 @@ InitCrosshair (void)
+@@ -1198,6 +1234,6 @@ InitCrosshair (void)
  void
  DestroyCrosshair (void)
  {
@@ -2191,7 +2191,7 @@ index fb46c66..ed04dad 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index 27dbd2e..f2044e8 100644
+index 8925892..6c3461f 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -49,6 +49,7 @@
@@ -2202,7 +2202,7 @@ index 27dbd2e..f2044e8 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -99,6 +100,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
+@@ -103,6 +104,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
  static void DrawLineLowLevel (LineTypePtr);
  /* static */ void DrawRegularText (LayerTypePtr, TextTypePtr, int);
  static void DrawPolygonLowLevel (PolygonTypePtr);
@@ -2210,7 +2210,7 @@ index 27dbd2e..f2044e8 100644
  static void DrawArcLowLevel (ArcTypePtr);
  static void DrawElementPackageLowLevel (ElementTypePtr Element, int);
  static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
-@@ -675,6 +677,7 @@ struct pin_info
+@@ -681,6 +683,7 @@ struct pin_info
  {
    bool arg;
    LayerTypePtr Layer;
@@ -2218,7 +2218,7 @@ index 27dbd2e..f2044e8 100644
  };
  
  /* static */ int
-@@ -686,12 +689,32 @@ clearPin_callback (const BoxType * b, void *cl)
+@@ -692,12 +695,32 @@ clearPin_callback (const BoxType * b, void *cl)
      ClearOnlyPin (pin, true);
    return 1;
  }
@@ -2251,7 +2251,7 @@ index 27dbd2e..f2044e8 100644
    return 1;
  }
  
-@@ -783,6 +806,7 @@ DrawMask (BoxType * screen)
+@@ -789,6 +812,7 @@ DrawMask (BoxType * screen)
    int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
  
    info.arg = true;
@@ -2259,7 +2259,7 @@ index 27dbd2e..f2044e8 100644
  
    if (thin)
      gui->set_color (Output.pmGC, PCB->MaskColor);
-@@ -855,8 +879,9 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
+@@ -861,8 +885,9 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
    /* print the non-clearing polys */
    info.Layer = Layer;
    info.arg = clear_pins;
@@ -2270,7 +2270,7 @@ index 27dbd2e..f2044e8 100644
  
    if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
      return;
-@@ -1599,6 +1624,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
+@@ -1605,6 +1630,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2319,7 +2319,7 @@ index 27dbd2e..f2044e8 100644
   * lowlevel routine to element arcs
   */
  static void
-@@ -1917,6 +1984,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+@@ -1923,6 +1990,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
    DrawPolygonLowLevel (Polygon);
  }
  
@@ -2357,7 +2357,7 @@ index 27dbd2e..f2044e8 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -2188,6 +2286,16 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2194,6 +2292,16 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2374,7 +2374,7 @@ index 27dbd2e..f2044e8 100644
   * erases an element
   */
  void
-@@ -2258,6 +2366,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -2264,6 +2372,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2384,7 +2384,7 @@ index 27dbd2e..f2044e8 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -2305,6 +2416,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
+@@ -2311,6 +2422,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2, 0);
        break;
@@ -2938,7 +2938,7 @@ index 9b6e612..56fa714 100644
         {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
         {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index a2cae9f..e614006 100644
+index 9360cb7..4907614 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
 @@ -282,7 +282,7 @@ gcode_choose_groups ()
@@ -2951,10 +2951,10 @@ index a2cae9f..e614006 100644
  	  /* layer isn't empty */
  
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index bfecf0f..b8d3fc7 100644
+index 794d26f..4d9ddab 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
-@@ -500,7 +500,7 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -445,7 +445,7 @@ gerber_do_export (HID_Attr_Val * options)
    for (i = 0; i < max_copper_layer; i++)
      {
        LayerType *layer = PCB->Data->Layer + i;
@@ -3033,7 +3033,7 @@ index 75ba763..a9f6cd5 100644
        break;
  
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index d67194b..28e4af2 100644
+index 62ebf8f..ea9881b 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -269,8 +269,8 @@ have_crosshair_attachments (void)
@@ -3064,10 +3064,10 @@ index b3b5983..411b018 100644
    {NULL, NULL, NULL, "remove", REMOVE_MODE, del},
    {NULL, NULL, NULL, "rotate", ROTATE_MODE, rot},
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index 47b4ccb..910a3ab 100644
+index f5cd21d..d0b0245 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
-@@ -527,7 +527,7 @@ nelma_choose_groups()
+@@ -528,7 +528,7 @@ nelma_choose_groups()
  		layer = &PCB->Data->Layer[n];
  
  		if (layer->LineN || layer->TextN || layer->ArcN ||
@@ -3077,10 +3077,10 @@ index 47b4ccb..910a3ab 100644
  
  			/*
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 3c59757..96efeab 100644
+index 9e23a07..36a3c04 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
-@@ -342,7 +342,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -344,7 +344,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
    for (i = 0; i < max_copper_layer; i++)
      {
        LayerType *layer = PCB->Data->Layer + i;
@@ -3090,10 +3090,10 @@ index 3c59757..96efeab 100644
      }
    print_group[GetLayerGroupNumberByNumber (solder_silk_layer)] = 1;
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index 266a4e6..787ac1a 100644
+index 867f4e7..0452ab4 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
-@@ -232,7 +232,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -178,7 +178,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
      {
        LayerType *layer = PCB->Data->Layer + i;
        if (layer->On)
@@ -3103,7 +3103,7 @@ index 266a4e6..787ac1a 100644
      }
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index a6b6953..ce7b391 100644
+index 02cd152..bdc986c 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -500,7 +500,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
