@@ -1,5 +1,5 @@
 Bottom: 07699ad852f829d7e628dd85fafd59325c7165c3
-Top:    94b8d375e1020f4429add2976c1537a894854f30
+Top:    7b14bf4de6e1cc019909ac9ddea4bb25ec59fbea
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-18 19:53:42 +0100
 
@@ -26,10 +26,10 @@ index 1e4cf58..5abbfb2 100644
  
  hid/nelma/nelma_lists.h : ${LIBNELMA_SRCS} Makefile
 diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
-index ea75d99..b11fb8b 100644
+index ea75d99..e6eaf52 100644
 --- a/src/hid/batch/batch.c
 +++ b/src/hid/batch/batch.c
-@@ -345,67 +345,65 @@ batch_show_item (void *item)
+@@ -345,67 +345,59 @@ batch_show_item (void *item)
  {
  }
  
@@ -102,13 +102,7 @@ index ea75d99..b11fb8b 100644
 +  batch_hid.struct_size           = sizeof (HID);
 +  batch_hid.name                  = "batch";
 +  batch_hid.description           = "Batch-mode GUI for non-interactive use.";
-+
 +  batch_hid.gui                   = 1;
-+  batch_hid.printer               = 0;
-+  batch_hid.exporter              = 0;
-+  batch_hid.poly_before           = 0;
-+  batch_hid.poly_after            = 0;
-+  batch_hid.poly_dicer            = 0;
 +
 +  batch_hid.get_export_options    = batch_get_export_options;
 +  batch_hid.do_export             = batch_do_export;
