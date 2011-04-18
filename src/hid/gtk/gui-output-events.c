@@ -58,6 +58,9 @@ ghid_port_ranges_changed (void)
 {
   GtkAdjustment *h_adj, *v_adj;
 
+  HideCrosshair ();
+  ghidgui->need_restore_crosshair = TRUE;
+
   h_adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->h_range));
   v_adj = gtk_range_get_adjustment (GTK_RANGE (ghidgui->v_range));
   gport->view_x0 = h_adj->value;
@@ -491,6 +494,7 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
 {
   static gboolean first_time_done;
 
+  HideCrosshair ();
   gport->width = ev->width;
   gport->height = ev->height;
 
@@ -524,6 +528,7 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
 
   ghid_port_ranges_scale (FALSE);
   ghid_invalidate_all ();
+  RestoreCrosshair ();
   return 0;
 }
 
