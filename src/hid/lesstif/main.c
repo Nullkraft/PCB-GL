@@ -2887,10 +2887,7 @@ lesstif_notify_crosshair_change (bool changes_complete)
     invalidate_depth --;
 
   if (invalidate_depth < 0)
-    {
-      fprintf (stderr, "ERROR: Unmatched notify_crosshair_change calls\n");
-      invalidate_depth = 0;
-    }
+    invalidate_depth = 0;
 
   if (invalidate_depth == 0)
     DrawAttached ();
@@ -2908,10 +2905,7 @@ lesstif_notify_mark_change (bool changes_complete)
     invalidate_depth --;
 
   if (invalidate_depth < 0)
-    {
-      fprintf (stderr, "ERROR: Unmatched notify_mark_change calls\n");
-      invalidate_depth = 0;
-    }
+    invalidate_depth = 0;
 
   if (invalidate_depth == 0)
     DrawMark ();
