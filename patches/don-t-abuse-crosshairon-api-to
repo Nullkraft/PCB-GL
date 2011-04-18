@@ -11,8 +11,8 @@ Make DrawAttached() and DrawMark() a NOP if the relevant item is not
 being shown. Ie. if !Crosshair.On, both functions draw nothing. If
 !Marked.status, DrawMark() draws nothing.
 
-A minor change is required in CrosshairOff() to XOR un-draw the item
-before switching the flag to off.
+A minor change is required in CrosshairOff() to XOR un-draw before
+switching the flag to off.
 
 
 ---
