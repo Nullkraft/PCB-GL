@@ -1,7 +1,7 @@
-Bottom: 318ea238d008aee5a76ff7b3f521c05ebc4e2ac9
-Top:    83c2ff86feab1cad6d86ae4d207f185abafe3e39
+Bottom: f36714d0d826ae580550af5d8d7ba16fd0145e37
+Top:    a576465dcf83dcc872db62e03f233b37c691e4fe
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-07 18:07:46 +0100
+Date:   2011-04-18 17:38:56 +0100
 
 Remove "=" shortcut to the djopt() thingy which keeps eating my design
 
@@ -37,10 +37,10 @@ index 5d2e92c..e2517a1 100644
                line.Flags = NoFlags ();
                for (v = v->next; v != &c->head; v = v->next)
 diff --git a/src/gpcb-menu.res b/src/gpcb-menu.res
-index 35f4ec8..51fb8d1 100644
+index 3b0b0d4..e29d62d 100644
 --- a/src/gpcb-menu.res
 +++ b/src/gpcb-menu.res
-@@ -332,13 +332,11 @@ MainMenu =
+@@ -331,13 +331,11 @@ MainMenu =
     {"Rip up all auto-routed tracks" RipUp(All)}
     -
     {"Optimize routed tracks"
