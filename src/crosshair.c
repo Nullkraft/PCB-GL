@@ -1112,26 +1112,6 @@ SetCrosshairRange (LocationType MinX, LocationType MinY, LocationType MaxX,
   MoveCrosshairRelative (0, 0);
 }
 
-/* --------------------------------------------------------------------------
- * draw the marker position
- * if argument is true, draw only if it is visible, otherwise draw it regardless
- */
-void
-DrawMark (void)
-{
-  if (Marked.status)
-    {
-      gui->draw_line (Crosshair.GC,
-		      Marked.X - MARK_SIZE,
-		      Marked.Y - MARK_SIZE,
-		      Marked.X + MARK_SIZE, Marked.Y + MARK_SIZE);
-      gui->draw_line (Crosshair.GC,
-		      Marked.X + MARK_SIZE,
-		      Marked.Y - MARK_SIZE,
-		      Marked.X - MARK_SIZE, Marked.Y + MARK_SIZE);
-    }
-}
-
 /* ---------------------------------------------------------------------------
  * initializes crosshair stuff
  * clears the struct, allocates to graphical contexts and
