@@ -1,5 +1,5 @@
-Bottom: 3441fe64311eb2b8b0f4c9b083a5bfd2508139e2
-Top:    3faca011d06a334b16a3596ec6d1de8ffbcce75e
+Bottom: 9ee415309d410c8c7b601da61307ec200327bad0
+Top:    c0d1b45985fc42d51f9ce6f174f8ae8b7f9efda1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2010-11-19 05:07:13 +0000
 
@@ -9,7 +9,7 @@ Add VRML model rendering support
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 98bc6be..f919244 100644
+index 8d504e1..17089a4 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -192,7 +192,16 @@ LIBGTK_GL_SRCS= \
@@ -30,10 +30,10 @@ index 98bc6be..f919244 100644
  	hid/common/hidgl_shaders.h \
  	hid/common/trackball.c \
 diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
-index 6ad5917..8cc3488 100644
+index 2bd3631..e8909a6 100644
 --- a/src/hid/common/hidgl.c
 +++ b/src/hid/common/hidgl.c
-@@ -1038,6 +1038,7 @@ hidgl_init (void)
+@@ -1040,6 +1040,7 @@ hidgl_init (void)
    }
  
    load_built_in_shaders ();
@@ -42,7 +42,7 @@ index 6ad5917..8cc3488 100644
  done:
    done_once = true;
 diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
-index 3ad57e4..10005e8 100644
+index ec26a7a..f38b450 100644
 --- a/src/hid/common/hidgl.h
 +++ b/src/hid/common/hidgl.h
 @@ -23,6 +23,7 @@
@@ -53,8 +53,8 @@ index 3ad57e4..10005e8 100644
  #include "hidgl_shaders.h"
  
  #define TRIANGLE_ARRAY_SIZE 30000
-@@ -141,6 +142,10 @@ void hidgl_reset_stencil_usage (void);
- void hidgl_set_depth (float depth);
+@@ -136,6 +137,10 @@ void hidgl_return_stencil_bit (int bit);
+ void hidgl_reset_stencil_usage (void);
  
  /* hidgl_pacakge_acy_resistor.c */
 +void hidgl_init_acy_resistor ();
@@ -2564,10 +2564,10 @@ index 0000000..0a59fbe
 +  return 1;
 +}
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 9f42d37..0f4679e 100644
+index b9a6a84..624b837 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1490,7 +1490,7 @@ DrawMask (BoxType * screen)
+@@ -1465,7 +1465,7 @@ DrawMask (BoxType * screen)
    } else {
      glBindTexture (GL_TEXTURE_2D, texture);
    }
@@ -2576,7 +2576,7 @@ index 9f42d37..0f4679e 100644
  
    if (1) {
      GLfloat s_params[] = {0.0001, 0., 0., 0.};
-@@ -1735,6 +1735,11 @@ frontE_package_callback (const BoxType * b, void *cl)
+@@ -1710,6 +1710,11 @@ frontE_package_callback (const BoxType * b, void *cl)
          int layer_group = FRONT (element) ? 0 : max_copper_layer - 1; /* XXX: FIXME */
          hidgl_draw_acy_resistor (element, compute_depth (layer_group), BOARD_THICKNESS);
        }
@@ -2588,7 +2588,7 @@ index 9f42d37..0f4679e 100644
      }
    return 1;
  }
-@@ -2574,125 +2579,27 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2554,125 +2559,27 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    return pixmap;
  }
  
