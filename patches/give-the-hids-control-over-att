@@ -1,5 +1,5 @@
-Bottom: 70de8d908efb93d08b7cc0074d31f737d9c35bfa
-Top:    1d339fecf151b649360c944ed23fa48e9983cd9d
+Bottom: 07699ad852f829d7e628dd85fafd59325c7165c3
+Top:    bd94596808bc8239fa12c660fe278777d193e85e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:11 +0100
 
@@ -771,7 +771,7 @@ index 4573e98..44b2c81 100644
  
  #endif
 diff --git a/src/draw.c b/src/draw.c
-index 6091ef3..815ac5e 100644
+index bc00a7e..3586db7 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -186,14 +186,10 @@ UpdateAll (void)
@@ -877,7 +877,7 @@ index d2dd717..a2cae9f 100644
    gcode_make_gc,
    gcode_destroy_gc,
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 8f04180..94d73e3 100644
+index 868c2b1..e84dd0c 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -287,6 +287,8 @@ static HID gerber_hid = {
@@ -1306,7 +1306,7 @@ index 0a1efef..6b131ad 100644
  	nelma_make_gc,
  	nelma_destroy_gc,
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 022da9c..8817431 100644
+index 9ef24da..2c3b1df 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -1527,6 +1527,8 @@ HID png_hid = {
@@ -1332,10 +1332,10 @@ index 49a19c7..97f9d41 100644
    eps_make_gc,
    eps_destroy_gc,
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 7c286cc..822f5bd 100644
+index 86c3156..e1501c1 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
-@@ -1353,6 +1353,8 @@ HID ps_hid = {
+@@ -1350,6 +1350,8 @@ HID ps_hid = {
    ps_parse_arguments,
    0 /* ps_invalidate_lr */ ,
    0 /* ps_invalidate_all */ ,
@@ -1345,10 +1345,10 @@ index 7c286cc..822f5bd 100644
    ps_make_gc,
    ps_destroy_gc,
 diff --git a/src/misc.c b/src/misc.c
-index a7704f4..1603e7f 100644
+index 649208c..705f8df 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -654,15 +654,11 @@ CenterDisplay (LocationType X, LocationType Y, bool Delta)
+@@ -679,15 +679,11 @@ CenterDisplay (LocationType X, LocationType Y, bool Delta)
    double save_grid = PCB->Grid;
    PCB->Grid = 1;
    if (Delta)
