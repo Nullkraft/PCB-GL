@@ -1,5 +1,5 @@
 Bottom: 7b14bf4de6e1cc019909ac9ddea4bb25ec59fbea
-Top:    fb0a8af95754419a92795a18dd158c5456e3000f
+Top:    d53ddf7d9eba3864d0ba2baed126b459933e2a46
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:11 +0100
 
@@ -1280,7 +1280,7 @@ index f419530..5a51358 100644
  void ghid_init_renderer (int *, char ***, GHidPort *);
  void ghid_init_drawing_widget (GtkWidget *widget, GHidPort *);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index c5f3e3e..18113f1 100644
+index c5f3e3e..2555d7a 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -1310,12 +1310,12 @@ mod_changed (XKeyEvent * e, int set)
@@ -1352,7 +1352,7 @@ index c5f3e3e..18113f1 100644
        need_redraw = 0;
      }
  
-@@ -2878,6 +2878,48 @@ lesstif_invalidate_all (void)
+@@ -2878,6 +2878,42 @@ lesstif_invalidate_all (void)
    lesstif_invalidate_lr (0, PCB->MaxWidth, 0, PCB->MaxHeight);
  }
  
@@ -1365,10 +1365,7 @@ index c5f3e3e..18113f1 100644
 +    invalidate_depth --;
 +
 +  if (invalidate_depth < 0)
-+    {
-+      fprintf (stderr, "ERROR: Unmatched notify_crosshair_change calls\n");
-+      invalidate_depth = 0;
-+    }
++    invalidate_depth = 0;
 +
 +  if (invalidate_depth == 0)
 +    DrawAttached ();
@@ -1386,10 +1383,7 @@ index c5f3e3e..18113f1 100644
 +    invalidate_depth --;
 +
 +  if (invalidate_depth < 0)
-+    {
-+      fprintf (stderr, "ERROR: Unmatched notify_mark_change calls\n");
-+      invalidate_depth = 0;
-+    }
++    invalidate_depth = 0;
 +
 +  if (invalidate_depth == 0)
 +    DrawMark ();
@@ -1401,7 +1395,7 @@ index c5f3e3e..18113f1 100644
  static int
  lesstif_set_layer (const char *name, int group, int empty)
  {
-@@ -3802,61 +3844,63 @@ hid_lesstif_init ()
+@@ -3802,61 +3838,63 @@ hid_lesstif_init ()
  {
    memset (&lesstif_hid, 0, sizeof (HID));
  
