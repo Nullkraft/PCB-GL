@@ -1,0 +1,97 @@
+Bottom: ef09ec66b6b08cc55638b7a11eea6e59aaecb257
+Top:    27a25205cbd1ef3e74c3e4e86430b2ace3ced547
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-18 23:14:09 +0100
+
+Refresh of don-t-abuse-crosshairon-api-to
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 7df5299..4679699 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -565,10 +565,14 @@ XORDrawMoveOrCopyObject (void)
+ /* ---------------------------------------------------------------------------
+  * draws additional stuff that follows the crosshair
+  */
+-static void
++void
+ DrawAttached (void)
+ {
+   BDimension s;
++
++  if (!Crosshair.On)
++    return;
++
+   switch (Settings.Mode)
+     {
+     case VIA_MODE:
+@@ -684,6 +688,28 @@ DrawAttached (void)
+     }
+ }
+ 
++
++/* --------------------------------------------------------------------------
++ * draw the marker position
++ */
++void
++DrawMark (void)
++{
++  /* Mark is not drawn when the crosshair is off, or when it is not set */
++  if (!Crosshair.On || !Marked.status)
++    return;
++
++  gui->draw_line (Crosshair.GC,
++                  Marked.X - MARK_SIZE,
++                  Marked.Y - MARK_SIZE,
++                  Marked.X + MARK_SIZE, Marked.Y + MARK_SIZE);
++  gui->draw_line (Crosshair.GC,
++                  Marked.X + MARK_SIZE,
++                  Marked.Y - MARK_SIZE,
++                  Marked.X - MARK_SIZE, Marked.Y + MARK_SIZE);
++}
++
++
+ /* ---------------------------------------------------------------------------
+  * switches crosshair on
+  */
+diff --git a/src/crosshair.h b/src/crosshair.h
+index 4573e98..ff16b1e 100644
+--- a/src/crosshair.h
++++ b/src/crosshair.h
+@@ -46,18 +46,18 @@
+ #define	STATE_SECOND	1
+ #define	STATE_THIRD		2
+ 
+-
+ void CrosshairOn (void);
+ void CrosshairOff (void);
+ void HideCrosshair (void);
+ void RestoreCrosshair (void);
++void DrawAttached (void);
++void DrawMark (void);
+ void MoveCrosshairRelative (LocationType, LocationType);
+ bool MoveCrosshairAbsolute (LocationType, LocationType);
+ void SetCrosshairRange (LocationType, LocationType, LocationType,
+ 			LocationType);
+ void InitCrosshair (void);
+ void DestroyCrosshair (void);
+-void DrawMark (void);
+ void FitCrosshairIntoGrid (LocationType, LocationType);
+ 
+ #endif
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 2a0cd9e..4595b80 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -2518,8 +2518,8 @@ idle_proc (XtPointer dummy)
+       XCopyArea (display, main_pixmap, window, my_gc, 0, 0, view_width,
+ 		 view_height, 0, 0);
+       pixmap = window;
+-      Crosshair.On = 0;
+-      CrosshairOn ();
++      DrawAttached ();
++      DrawMark ();
+       need_redraw = 0;
+     }
