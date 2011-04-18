@@ -1,5 +1,5 @@
 Bottom: ef09ec66b6b08cc55638b7a11eea6e59aaecb257
-Top:    27a25205cbd1ef3e74c3e4e86430b2ace3ced547
+Top:    3a91eb6b07ad73f70ba32134a26e5b9599c12a88
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-18 23:07:15 +0100
 
@@ -11,7 +11,7 @@ Expose DrawAttached() to the HIDs so they don't have to cheat.
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 7df5299..4679699 100644
+index 7df5299..e50d4b3 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -565,10 +565,14 @@ XORDrawMoveOrCopyObject (void)
@@ -59,6 +59,33 @@ index 7df5299..4679699 100644
  /* ---------------------------------------------------------------------------
   * switches crosshair on
   */
+@@ -1086,26 +1112,6 @@ SetCrosshairRange (LocationType MinX, LocationType MinY, LocationType MaxX,
+   MoveCrosshairRelative (0, 0);
+ }
+ 
+-/* --------------------------------------------------------------------------
+- * draw the marker position
+- * if argument is true, draw only if it is visible, otherwise draw it regardless
+- */
+-void
+-DrawMark (void)
+-{
+-  if (Marked.status)
+-    {
+-      gui->draw_line (Crosshair.GC,
+-		      Marked.X - MARK_SIZE,
+-		      Marked.Y - MARK_SIZE,
+-		      Marked.X + MARK_SIZE, Marked.Y + MARK_SIZE);
+-      gui->draw_line (Crosshair.GC,
+-		      Marked.X + MARK_SIZE,
+-		      Marked.Y - MARK_SIZE,
+-		      Marked.X - MARK_SIZE, Marked.Y + MARK_SIZE);
+-    }
+-}
+-
+ /* ---------------------------------------------------------------------------
+  * initializes crosshair stuff
+  * clears the struct, allocates to graphical contexts and
 diff --git a/src/crosshair.h b/src/crosshair.h
 index 4573e98..ff16b1e 100644
 --- a/src/crosshair.h
