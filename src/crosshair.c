@@ -732,9 +732,9 @@ CrosshairOff (void)
 {
   if (Crosshair.On)
     {
-      Crosshair.On = false;
       DrawAttached ();
       DrawMark ();
+      Crosshair.On = false;
     }
 }
 
