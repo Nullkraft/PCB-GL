@@ -984,84 +984,18 @@ DrawSpecialPolygon (hidGC DrawGC,
  * lowlevel drawing routine for pins and vias
  */
 static void
-DrawPinOrViaLowLevel (PinTypePtr Ptr, bool drawHole)
+DrawPinOrViaLowLevel (PinTypePtr pin, bool drawHole)
 {
   if (Gathering)
     {
-      AddPart (Ptr);
+      AddPart (pin);
       return;
     }
 
-  if (TEST_FLAG (HOLEFLAG, Ptr))
-    {
-      if (drawHole)
-	{
-	  gui->fill_circle (Output.bgGC, Ptr->X, Ptr->Y, Ptr->Thickness / 2);
-	  gui->set_line_cap (Output.fgGC, Round_Cap);
-	  gui->set_line_width (Output.fgGC, 0);
-	  gui->draw_arc (Output.fgGC, Ptr->X, Ptr->Y,
-			 Ptr->Thickness / 2, Ptr->Thickness / 2, 0, 360);
-	}
-      return;
-    }
-  if (TEST_FLAG (SQUAREFLAG, Ptr))
-    {
-      int l, r, t, b;
-      l = Ptr->X - Ptr->Thickness / 2;
-      b = Ptr->Y - Ptr->Thickness / 2;
-      r = l + Ptr->Thickness;
-      t = b + Ptr->Thickness;
-      if (TEST_FLAG (THINDRAWFLAG, PCB))
-        {
-          gui->set_line_cap (Output.fgGC, Round_Cap);
-          gui->set_line_width (Output.fgGC, 0);
-          gui->draw_line (Output.fgGC, r, t, r, b);
-          gui->draw_line (Output.fgGC, l, t, l, b);
-          gui->draw_line (Output.fgGC, r, t, l, t);
-          gui->draw_line (Output.fgGC, r, b, l, b);
-        }
-      else
-        {
-          gui->fill_rect (Output.fgGC, l, b, r, t);
-        }
-    }
-  else if (TEST_FLAG (OCTAGONFLAG, Ptr))
-    {
-      DrawSpecialPolygon (Output.fgGC, Ptr->X, Ptr->Y, Ptr->Thickness,
-			  TEST_FLAG (THINDRAWFLAG, PCB));
-    }
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    gui->thindraw_pcb_pin (Output.fgGC, Output.fgGC, pin, drawHole);
   else
-    {				/* draw a round pin or via */
-      if (TEST_FLAG (THINDRAWFLAG, PCB))
-	{
-	  gui->set_line_cap (Output.fgGC, Round_Cap);
-	  gui->set_line_width (Output.fgGC, 0);
-	  gui->draw_arc (Output.fgGC, Ptr->X, Ptr->Y,
-			 Ptr->Thickness / 2, Ptr->Thickness / 2, 0, 360);
-	}
-      else
-	{
-	  gui->fill_circle (Output.fgGC, Ptr->X, Ptr->Y, Ptr->Thickness / 2);
-	}
-    }
-
-  /* and the drilling hole  (which is always round */
-  if (drawHole)
-    {
-      if (TEST_FLAG (THINDRAWFLAG, PCB))
-	{
-	  gui->set_line_cap (Output.fgGC, Round_Cap);
-	  gui->set_line_width (Output.fgGC, 0);
-	  gui->draw_arc (Output.fgGC,
-			 Ptr->X, Ptr->Y, Ptr->DrillingHole / 2,
-			 Ptr->DrillingHole / 2, 0, 360);
-	}
-      else
-	{
-	  gui->fill_circle (Output.bgGC, Ptr->X, Ptr->Y,
-			    Ptr->DrillingHole / 2);
-	}
-    }
+    gui->fill_pcb_pin (Output.fgGC, Output.bgGC, pin, drawable);
 }
 
 /**************************************************************
