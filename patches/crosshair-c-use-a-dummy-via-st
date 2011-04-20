@@ -1,5 +1,5 @@
 Bottom: 5c677d6a1dce3e30e5337c0962851e1f1523ce26
-Top:    f48e90adb114d1d92b8cb1ba5cc26e22d0eba9c1
+Top:    68f8c9e4bacadf9557668af3d789ced377646cde
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-21 00:09:57 +0100
 
@@ -9,9 +9,18 @@ crosshair.c: Use a dummy via structure to draw vias being created
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 4b20885..87e45fb 100644
+index 4b20885..f1e3ce7 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
+@@ -94,7 +94,7 @@ thindraw_moved_pv (PinType *pv, int x, int y)
+   moved_pv.X += x;
+   moved_pv.Y += y;
+ 
+-  gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_pv, false, false);
++  gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_pv, true, false);
+ }
+ 
+ /* ---------------------------------------------------------------------------
 @@ -556,28 +556,36 @@ XORDrawMoveOrCopyObject (void)
  void
  DrawAttached (void)
@@ -50,7 +59,7 @@ index 4b20885..87e45fb 100644
 +        via.Flags = NoFlags ();
 +        TOGGLE_FLAG (SQUAREFLAG, &via);
 +
-+        gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &via, true, false);
++        gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &via, false, false);
 +
 +        if (TEST_FLAG (SHOWDRCFLAG, PCB))
 +          {
