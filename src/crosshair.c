@@ -572,7 +572,6 @@ DrawAttached (void)
         via.DrillingHole = Settings.ViaDrillingHole;
         via.Mask = 0;
         via.Flags = NoFlags ();
-        TOGGLE_FLAG (SQUAREFLAG, &via);
 
         gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &via, false, false);
 
