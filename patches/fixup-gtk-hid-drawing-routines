@@ -1,79 +1,11 @@
-Bottom: f493f5f7a244a3faf6bd143d4fa4fc3ed4c718f6
-Top:    34cf5ae4af0c2e5a6f81840264b6b28392ab2831
+Bottom: d21ba3b81f30e9084a33a75c86b66dce69ec0001
+Top:    d21ba3b81f30e9084a33a75c86b66dce69ec0001
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-20 18:11:40 +0100
+Date:   2011-04-21 00:54:41 +0100
 
 Fixup gtk hid drawing routines for pour support
 
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 04a6077..651df00 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1227,6 +1227,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *dra
-   if (!Polygon->Clipped)
-     return;
- 
-+  /* Re-use HOLEFLAG to cut out islands */
-+  if (TEST_FLAG (HOLEFLAG, Polygon))
-+    return;
-+
-   if (TEST_FLAG (SELECTEDFLAG, Polygon))
-     color = Layer->SelectedColor;
-   else if (TEST_FLAG (FOUNDFLAG, Polygon))
-@@ -1282,6 +1286,38 @@ poly_callback_clearing (const BoxType * b, void *cl)
-   return 1;
- }
- 
-+static int
-+pour_callback_no_clear (const BoxType * b, void *cl)
-+{
-+  struct pin_info *i = (struct pin_info *) cl;
-+  PourType *pour = (PourType *)b;
-+
-+  DrawPour (i->Layer, pour, 0);
-+
-+  if (pour->PolygonN)
-+    {
-+      r_search (pour->polygon_tree, i->drawn_area, NULL, poly_callback_no_clear, i);
-+    }
-+
-+  return 1;
-+}
-+
-+static int
-+pour_callback_clearing (const BoxType * b, void *cl)
-+{
-+  struct pin_info *i = (struct pin_info *) cl;
-+  PourType *pour = (PourType *)b;
-+
-+  DrawPour (i->Layer, pour, 0);
-+
-+  if (pour->PolygonN)
-+    {
-+      r_search (pour->polygon_tree, i->drawn_area, NULL, poly_callback_clearing, i);
-+    }
-+
-+  return 1;
-+}
-+
- static void
- DrawPadLowLevelSolid (hidGC gc, PadTypePtr Pad, bool clear, bool mask)
- {
-@@ -1475,11 +1511,11 @@ DrawLayerGroup (int group, const BoxType * screen)
-       }
- 
-       /* draw all polygons on this layer */
--      if (Layer->PolygonN) {
-+      if (Layer->PourN) {
-         info.Layer = Layer;
-         info.drawn_area = screen;
--        r_search (Layer->polygon_tree, screen, NULL, poly_callback_no_clear, &info);
--        r_search (Layer->polygon_tree, screen, NULL, poly_callback_clearing, &info);
-+        r_search (Layer->pour_tree, screen, NULL, pour_callback_no_clear, &info);
-+        r_search (Layer->pour_tree, screen, NULL, pour_callback_clearing, &info);
- 
-         /* HACK: Subcomposite polygons separately from other layer primitives */
-         /* Reset the compositing */
+
