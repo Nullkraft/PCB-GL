@@ -7,10 +7,6 @@ hid/common: Provide a helper function for HIDs to use drawing helpers
 
 Gives the following changes to various HIDs:
 
-  batch:   no longer has NOP fill_pcb_polygon and thindraw_pcb_polygon
-             routines - should not be an issue, as the drawing calls the
-             common helper routines use are still NOPs for the batch HID.
-
   extents: now has thindraw_polygon implemented - should not be an issue
   gcode:   now has thindraw_polygon implemented - should not be an issue
   gerber:  now has thindraw_polygon implemented - should not be an issue
@@ -18,6 +14,9 @@ Gives the following changes to various HIDs:
   png:     now has thindraw_polygon implemented - should not be an issue
   eps:     now has thindraw_polygon implemented - should not be an issue
   ps:      now has thindraw_polygon implemented - should not be an issue
+  batch:   no longer has NOP fill_pcb_polygon and thindraw_pcb_polygon
+             routines - should not be an issue, as the drawing calls the
+             common helper routines use are still NOPs for the batch HID.
 
 
 ---
