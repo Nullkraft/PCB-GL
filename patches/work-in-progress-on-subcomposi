@@ -1,5 +1,5 @@
-Bottom: c4924ecf7c69ea15b31079483d5de41ad9b2acd5
-Top:    a4a50407b74017d14c125588dbc9188a043ef5e1
+Bottom: 1a2b5f57dad924385794de60cc472ea6f5efe527
+Top:    4ef699db42d6f2ee62322376a9d8fc04c4b8bdc8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:15 +0100
 
@@ -14,7 +14,7 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 9a2bcdf..c75fcdc 100644
+index d44a3aa..c149a92 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -416,6 +416,7 @@ DrawEverything (BoxTypePtr drawn_area)
@@ -133,7 +133,7 @@ index 9a2bcdf..c75fcdc 100644
        layernum = layers[i];
        Layer = PCB->Data->Layer + layers[i];
 diff --git a/src/hid.h b/src/hid.h
-index 7779f84..c8d9e3d 100644
+index d505d19..7be994a 100644
 --- a/src/hid.h
 +++ b/src/hid.h
 @@ -207,6 +207,7 @@ extern "C"
@@ -407,7 +407,7 @@ index 99ffffc..9dd76e3 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index d18cd2a..794d26f 100644
+index d5843ef..b65d678 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -516,6 +516,9 @@ gerber_set_layer (const char *name, int group, int empty)
@@ -612,7 +612,7 @@ index 1f8f7fa..293c287 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index 217a546..f5cd21d 100644
+index 6e911ff..7f69d75 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -706,6 +706,10 @@ nelma_set_layer(const char *name, int group, int empty)
@@ -627,7 +627,7 @@ index 217a546..f5cd21d 100644
  		name = PCB->Data->Layer[idx].Name;
  	}
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index ca87a84..9e23a07 100644
+index 3919a6e..f0fb55e 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -899,6 +899,10 @@ png_set_layer (const char *name, int group, int empty)
@@ -642,7 +642,7 @@ index ca87a84..9e23a07 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index 17c7697..867f4e7 100644
+index f94175f..c37dcbf 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
 @@ -339,6 +339,10 @@ eps_set_layer (const char *name, int group, int empty)
@@ -657,7 +657,7 @@ index 17c7697..867f4e7 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 616f5d5..02cd152 100644
+index a417753..e5b12cb 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -651,6 +651,10 @@ ps_set_layer (const char *name, int group, int empty)
