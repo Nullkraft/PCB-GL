@@ -3,7 +3,11 @@ Top:    48f138c25d9e32aa9c929d1933a58278fc39a9de
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-20 21:16:45 +0100
 
-Consolidate pin drawing routines
+Consolidate pin / via drawing routines, moving them under the HID API
+
+Adds two new HID APIs, fill_pcb_pv and thindraw_pcb_pv, splitting
+drawing code from DrawPadLowlevel() to common_fill_pcb_pv() and
+common_thindraw_pcb_pv() in hid/common/draw_helpers.c.
 
 
 ---
