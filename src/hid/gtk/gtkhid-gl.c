@@ -1756,12 +1756,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                      0, 0, 1, 0,
                      0, 0, 0, 1};
   bool horizon_problem = false;
+  extern int debug_stencil_clears;
 
   ghid_start_drawing (port);
 
   hidgl_in_context (true);
   hidgl_init ();
   check_gl_drawing_ok_hack = true;
+  debug_stencil_clears = 0;
 
   /* If we don't have any stencil bits available,
      we can't use the hidgl polygon drawing routine */
