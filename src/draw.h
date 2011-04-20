@@ -75,6 +75,7 @@ void LoadBackgroundImage (char *);
 void UpdateAll (void);
 
 /* TEMPORARY */
+void ClearPad (PadTypePtr, bool);
 void DrawPinOrViaLowLevel (PinTypePtr, bool);
 void DrawPlainPin (PinTypePtr, bool);
 void DrawPlainVia (PinTypePtr, bool);

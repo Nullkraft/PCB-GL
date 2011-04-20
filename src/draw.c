@@ -99,7 +99,7 @@ static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
 static void AddPart (void *);
 static void SetPVColor (PinTypePtr, int);
 /* static */ void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
-static void ClearPad (PadTypePtr, bool);
+/* static */ void ClearPad (PadTypePtr, bool);
 /* static */ void DrawHole (PinTypePtr);
 static void DrawMask (BoxType *);
 /* static */ void DrawRats (BoxType *);
@@ -673,7 +673,7 @@ struct pin_info
   LayerTypePtr Layer;
 };
 
-/* static */ int
+static int
 clearPin_callback (const BoxType * b, void *cl)
 {
   PinType *pin = (PinTypePtr) b;
@@ -696,7 +696,7 @@ poly_callback (const BoxType * b, void *cl)
   return 1;
 }
 
-/* static */ int
+static int
 clearPad_callback (const BoxType * b, void *cl)
 {
   PadTypePtr pad = (PadTypePtr) b;
@@ -1144,7 +1144,7 @@ DrawPadNameLowLevel (PadTypePtr Pad)
 /* ---------------------------------------------------------------------------
  * clearance for pads
  */
-static void
+/* static */ void
 ClearPad (PadTypePtr Pad, bool mask)
 {
   DrawPadLowLevel(Output.pmGC, Pad, true, mask);

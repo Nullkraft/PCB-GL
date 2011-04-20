@@ -1213,79 +1213,28 @@ poly_callback (const BoxType * b, void *cl)
   return 1;
 }
 
-static void
-DrawPadLowLevelSolid (hidGC gc, PadTypePtr Pad, bool clear, bool mask)
+int
+clearPin_callback (const BoxType * b, void *cl)
 {
-  int w = clear ? (mask ? Pad->Mask : Pad->Thickness + Pad->Clearance)
-		: Pad->Thickness;
-
-  if (Pad->Point1.X == Pad->Point2.X &&
-      Pad->Point1.Y == Pad->Point2.Y)
+  PinType *pin = (PinTypePtr) b;
+  struct pin_info *i = (struct pin_info *) cl;
+  if (i->arg)
     {
-      if (TEST_FLAG (SQUAREFLAG, Pad))
-        {
-          int l, r, t, b;
-          l = Pad->Point1.X - w / 2;
-          b = Pad->Point1.Y - w / 2;
-          r = l + w;
-          t = b + w;
-          gui->fill_rect (gc, l, b, r, t);
-        }
+      if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+        gui->thindraw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
       else
-        {
-          gui->fill_circle (gc, Pad->Point1.X, Pad->Point1.Y, w / 2);
-        }
+        gui->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
     }
-  else
-    {
-      gui->set_line_cap (gc,
-                         TEST_FLAG (SQUAREFLAG,
-                                    Pad) ? Square_Cap : Round_Cap);
-      gui->set_line_width (gc, w);
-
-      gui->draw_line (gc,
-                      Pad->Point1.X, Pad->Point1.Y,
-                      Pad->Point2.X, Pad->Point2.Y);
-    }
+  return 1;
 }
 
-static void
-ClearPadSolid (PadTypePtr Pad, bool mask)
+/* static */ int
+clearPad_callback (const BoxType * b, void *cl)
 {
-  DrawPadLowLevelSolid(Output.pmGC, Pad, true, mask);
-}
-
-static void
-ClearOnlyPinSolid (PinTypePtr Pin, bool mask)
-{
-  BDimension half =
-    (mask ? Pin->Mask / 2 : (Pin->Thickness + Pin->Clearance) / 2);
-
-  if (!mask && TEST_FLAG (HOLEFLAG, Pin))
-    return;
-  if (half == 0)
-    return;
-  if (!mask && Pin->Clearance <= 0)
-    return;
-
-  /* Clear the area around the pin */
-  if (TEST_FLAG (SQUAREFLAG, Pin))
-    {
-      int l, r, t, b;
-      l = Pin->X - half;
-      b = Pin->Y - half;
-      r = l + half * 2;
-      t = b + half * 2;
-      gui->fill_rect (Output.pmGC, l, b, r, t);
-    }
-  else if (TEST_FLAG (OCTAGONFLAG, Pin))
-    {
-      DrawSpecialPolygon (Output.pmGC, Pin->X, Pin->Y, half * 2, false);
-    }
-  else
-    {
-      gui->fill_circle (Output.pmGC, Pin->X, Pin->Y, half);
-    }
+  PadTypePtr pad = (PadTypePtr) b;
+  if (!XOR (TEST_FLAG (ONSOLDERFLAG, pad), SWAP_IDENT) && pad->Mask)
+    ClearPad (pad, true);
+  return 1;
 }
 
 static int
@@ -1294,7 +1243,7 @@ clearPin_callback_solid (const BoxType * b, void *cl)
   PinTypePtr pin = (PinTypePtr) b;
   struct pin_info *i = (struct pin_info *) cl;
   if (i->arg)
-    ClearOnlyPinSolid (pin, true);
+    gui->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
   return 1;
 }
 
@@ -1303,13 +1252,9 @@ clearPad_callback_solid (const BoxType * b, void *cl)
 {
   PadTypePtr pad = (PadTypePtr) b;
   if (!XOR (TEST_FLAG (ONSOLDERFLAG, pad), SWAP_IDENT) && pad->Mask)
-    ClearPadSolid (pad, true);
+    gui->fill_pcb_pad (Output.pmGC, pad, false, true);
   return 1;
 }
-
-int clearPin_callback (const BoxType * b, void *cl);
-int clearPad_callback (const BoxType * b, void *cl);
-
 
 static void
 DrawMask (BoxType * screen)
