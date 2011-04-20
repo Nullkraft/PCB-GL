@@ -303,65 +303,139 @@ common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
     }
 }
 
-void
-common_fill_pcb_pv (hidGC gc, PinType *pv, bool drawHole)
+/* ---------------------------------------------------------------------------
+ * draws one polygon
+ * x and y are already in display coordinates
+ * the points are numbered:
+ *
+ *          5 --- 6
+ *         /       \
+ *        4         7
+ *        |         |
+ *        3         0
+ *         \       /
+ *          2 --- 1
+ */
+
+typedef struct
 {
-  if (TEST_FLAG (HOLEFLAG, pv))
+  double X, Y;
+}
+FloatPolyType;
+
+static void
+draw_octagon_poly (hidGC gc, LocationType X, LocationType Y,
+                   int Thickness, int thin_draw)
+{
+  static FloatPolyType p[8] = {
+    { 0.5,               -TAN_22_5_DEGREE_2},
+    { TAN_22_5_DEGREE_2, -0.5              },
+    {-TAN_22_5_DEGREE_2, -0.5              },
+    {-0.5,               -TAN_22_5_DEGREE_2},
+    {-0.5,                TAN_22_5_DEGREE_2},
+    {-TAN_22_5_DEGREE_2,  0.5              },
+    { TAN_22_5_DEGREE_2,  0.5              },
+    { 0.5,                TAN_22_5_DEGREE_2}
+  };
+  static int special_size = 0;
+  static int scaled_x[8];
+  static int scaled_y[8];
+  int polygon_x[9];
+  int polygon_y[9];
+  int i;
+
+  if (Thickness != special_size)
     {
-      if (drawHole)
+      special_size = Thickness;
+      for (i = 0; i < 8; i++)
         {
-          gui->fill_circle (gc, pv->X, pv->Y, pv->Thickness / 2);
-          gui->set_line_cap (gc, Round_Cap);
-          gui->set_line_width (Output.fgGC, 0);
-          gui->draw_arc (gc, pv->X, pv->Y,
-                         pv->Thickness / 2, pv->Thickness / 2, 0, 360);
+          scaled_x[i] = p[i].X * special_size;
+          scaled_y[i] = p[i].Y * special_size;
         }
-      return;
     }
-
-  if (TEST_FLAG (SQUAREFLAG, pv))
+  /* add line offset */
+  for (i = 0; i < 8; i++)
     {
-      int l, r, t, b;
-      l = pv->X - pv->Thickness / 2;
-      b = pv->Y - pv->Thickness / 2;
-      r = l + pv->Thickness;
-      t = b + pv->Thickness;
-
-      gui->fill_rect (gc, l, b, r, t);
+      polygon_x[i] = X + scaled_x[i];
+      polygon_y[i] = Y + scaled_y[i];
     }
-  else if (TEST_FLAG (OCTAGONFLAG, pv))
-    DrawSpecialPolygon (Output.fgGC, pv->X, pv->Y, pv->Thickness, false);
-  else                                /* draw a round pin or via */
-    gui->fill_circle (gc, pv->X, pv->Y, pv->Thickness / 2);
 
-  /* and the drilling hole  (which is always round) */
-  if (drawHole)
-    gui->fill_circle (Output.bgGC, pv->X, pv->Y, pv->DrillingHole / 2);
+  if (thin_draw)
+    {
+      int i;
+      gui->set_line_cap (gc, Round_Cap);
+      gui->set_line_width (gc, 0);
+      polygon_x[8] = X + scaled_x[0];
+      polygon_y[8] = Y + scaled_y[0];
+      for (i = 0; i < 8; i++)
+        gui->draw_line (gc, polygon_x[i    ], polygon_y[i    ],
+                            polygon_x[i + 1], polygon_y[i + 1]);
+    }
+  else
+    gui->fill_polygon (gc, 8, polygon_x, polygon_y);
 }
 
 void
-common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole)
+common_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask)
 {
+  int w = mask ? pv->Mask : pv->Thickness;
+  int r = w / 2;
+
   if (TEST_FLAG (HOLEFLAG, pv))
     {
       if (drawHole)
         {
-          gui->fill_circle (bg_gc, pv->X, pv->Y, pv->Thickness / 2);
-          gui->set_line_cap (bg_gc, Round_Cap);
-          gui->set_line_width (bg_gc, 0);
-          gui->draw_arc (bg_gc, pv->X, pv->Y,
-                         pv->Thickness / 2, pv->Thickness / 2, 0, 360);
+          gui->fill_circle (fg_gc, pv->X, pv->Y, r);
+          gui->set_line_cap (fg_gc, Round_Cap);
+          gui->set_line_width (fg_gc, 0);
+          gui->draw_arc (fg_gc, pv->X, pv->Y, r, r, 0, 360);
         }
       return;
     }
 
   if (TEST_FLAG (SQUAREFLAG, pv))
     {
-      int l, r, t, b;
-      l = pv->X - pv->Thickness / 2;
-      b = pv->Y - pv->Thickness / 2;
-      r = l + pv->Thickness;
-      t = b + pv->Thickness;
+      int l = pv->X - r;
+      int b = pv->Y - r;
+      int r = l + w;
+      int t = b + w;
+
+      gui->fill_rect (fg_gc, l, b, r, t);
+    }
+  else if (TEST_FLAG (OCTAGONFLAG, pv))
+    draw_octagon_poly (fg_gc, pv->X, pv->Y, w, false);
+  else /* draw a round pin or via */
+    gui->fill_circle (fg_gc, pv->X, pv->Y, r);
+
+  /* and the drilling hole  (which is always round) */
+  if (drawHole)
+    gui->fill_circle (bg_gc, pv->X, pv->Y, pv->DrillingHole / 2);
+}
+
+void
+common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool mask)
+{
+  int w = mask ? pv->Mask : pv->Thickness;
+  int r = w / 2;
+
+  if (TEST_FLAG (HOLEFLAG, pv))
+    {
+      if (drawHole)
+        {
+          gui->fill_circle (bg_gc, pv->X, pv->Y, r);
+          gui->set_line_cap (bg_gc, Round_Cap);
+          gui->set_line_width (bg_gc, 0);
+          gui->draw_arc (bg_gc, pv->X, pv->Y, r, r, 0, 360);
+        }
+      return;
+    }
+
+  if (TEST_FLAG (SQUAREFLAG, pv))
+    {
+      int l = pv->X - r;
+      int b = pv->Y - r;
+      int r = l + w;
+      int t = b + w;
 
       gui->set_line_cap (fg_gc, Round_Cap);
       gui->set_line_width (fg_gc, 0);
@@ -373,14 +447,13 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole)
     }
   else if (TEST_FLAG (OCTAGONFLAG, pv))
     {
-      DrawSpecialPolygon (fg_gc, pv->X, pv->Y, pv->Thickness, true);
+      draw_octagon_poly (fg_gc, pv->X, pv->Y, w, true);
     }
-  else
-    {				/* draw a round pin or via */
+  else /* draw a round pin or via */
+    {
       gui->set_line_cap (fg_gc, Round_Cap);
       gui->set_line_width (fg_gc, 0);
-      gui->draw_arc (fg_gc, pv->X, pv->Y,
-                     pv->Thickness / 2, pv->Thickness / 2, 0, 360);
+      gui->draw_arc (fg_gc, pv->X, pv->Y, r, r, 0, 360);
     }
 
   /* and the drilling hole  (which is always round */
