@@ -528,7 +528,7 @@ nelma_choose_groups()
 		layer = &PCB->Data->Layer[n];
 
 		if (layer->LineN || layer->TextN || layer->ArcN ||
-		    layer->PolygonN) {
+		    layer->PourN) {
 			/* layer isn't empty */
 
 			/*
