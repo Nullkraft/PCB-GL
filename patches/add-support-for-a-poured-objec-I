@@ -1,7 +1,7 @@
-Bottom: dfc6d35efc14dda3040f8920f240b1b8a3990985
-Top:    abe269bbffe2f2b040cd1817cca76a50d409e8f2
+Bottom: fa4f9280bc60394b067834ddbc0fb451206ab402
+Top:    6a925f03afd97d52d71307fcc71edca8c496a5a1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-20 18:11:39 +0100
+Date:   2011-04-21 00:54:40 +0100
 
 Add support for a "poured" object.
 
@@ -1950,7 +1950,7 @@ index 521f60e..308698c 100644
  				 FontTypePtr, FlagType, char *, char *,
  				 char *, LocationType, LocationType, BYTE,
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 25b71fb..c9a4451 100644
+index b0ef6f8..528c103 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -48,7 +48,7 @@
@@ -1970,7 +1970,7 @@ index 25b71fb..c9a4451 100644
  static void XORDrawElement (ElementTypePtr, LocationType, LocationType);
  static void XORDrawBuffer (BufferTypePtr);
  static void XORDrawInsertPointObject (void);
-@@ -83,6 +84,8 @@ static void XORDrawAttachedArc (BDimension);
+@@ -94,6 +95,8 @@ thindraw_moved_pv (PinType *pv, int x, int y)
  static void
  XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
  {
@@ -1979,7 +1979,7 @@ index 25b71fb..c9a4451 100644
    Cardinal i;
    for (i = 0; i < polygon->PointN; i++)
      {
-@@ -93,6 +96,25 @@ XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
+@@ -104,6 +107,25 @@ XORPolygon (PolygonTypePtr polygon, LocationType dx, LocationType dy)
                        polygon->Points[next].X + dx,
                        polygon->Points[next].Y + dy);
      }
@@ -2005,7 +2005,7 @@ index 25b71fb..c9a4451 100644
  }
  
  /*-----------------------------------------------------------
-@@ -327,9 +349,11 @@ XORDrawBuffer (BufferTypePtr Buffer)
+@@ -335,9 +357,11 @@ XORDrawBuffer (BufferTypePtr Buffer)
  	/* the tmp polygon has n+1 points because the first
  	 * and the last one are set to the same coordinates
  	 */
@@ -2019,7 +2019,7 @@ index 25b71fb..c9a4451 100644
  	}
  	END_LOOP;
        }
-@@ -429,6 +453,18 @@ XORDrawMoveOrCopyObject (void)
+@@ -431,6 +455,18 @@ XORDrawMoveOrCopyObject (void)
  	break;
        }
  
@@ -2038,7 +2038,7 @@ index 25b71fb..c9a4451 100644
      case LINEPOINT_TYPE:
        {
  	LineTypePtr line;
-@@ -447,27 +483,27 @@ XORDrawMoveOrCopyObject (void)
+@@ -449,27 +485,27 @@ XORDrawMoveOrCopyObject (void)
  	break;
        }
  
@@ -2074,9 +2074,9 @@ index 25b71fb..c9a4451 100644
  	break;
        }
  
-@@ -568,9 +604,9 @@ DrawAttached (void)
- 	}
-       break;
+@@ -577,9 +613,9 @@ DrawAttached (void)
+         break;
+       }
  
 -      /* the attached line is used by both LINEMODE, POLYGON_MODE and POLYGONHOLE_MODE*/
 -    case POLYGON_MODE:
@@ -2087,7 +2087,7 @@ index 25b71fb..c9a4451 100644
        /* draw only if starting point is set */
        if (Crosshair.AttachedLine.State != STATE_FIRST)
  	gui->draw_line (Crosshair.GC,
-@@ -579,10 +615,10 @@ DrawAttached (void)
+@@ -588,10 +624,10 @@ DrawAttached (void)
  			Crosshair.AttachedLine.Point2.X,
  			Crosshair.AttachedLine.Point2.Y);
  
@@ -2101,7 +2101,7 @@ index 25b71fb..c9a4451 100644
  	}
        break;
  
-@@ -1034,7 +1070,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+@@ -1043,7 +1079,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
  
    if (TEST_FLAG (SNAPPINFLAG, PCB))
      ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
@@ -2110,7 +2110,7 @@ index 25b71fb..c9a4451 100644
    else
      ans = NO_TYPE;
  
-@@ -1184,6 +1220,6 @@ InitCrosshair (void)
+@@ -1193,6 +1229,6 @@ InitCrosshair (void)
  void
  DestroyCrosshair (void)
  {
@@ -2119,7 +2119,7 @@ index 25b71fb..c9a4451 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index 80caf12..00972e9 100644
+index b4fd276..b0a3599 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -49,6 +49,7 @@
@@ -2130,7 +2130,7 @@ index 80caf12..00972e9 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -103,6 +104,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
+@@ -93,6 +94,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
  static void DrawLineLowLevel (LineTypePtr);
  /* static */ void DrawRegularText (LayerTypePtr, TextTypePtr, int);
  static void DrawPolygonLowLevel (PolygonTypePtr);
@@ -2138,16 +2138,16 @@ index 80caf12..00972e9 100644
  static void DrawArcLowLevel (ArcTypePtr);
  static void DrawElementPackageLowLevel (ElementTypePtr Element, int);
  static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
-@@ -681,6 +683,7 @@ struct pin_info
+@@ -671,6 +673,7 @@ struct pin_info
  {
    bool arg;
    LayerTypePtr Layer;
 +  const BoxType * clip;
  };
  
- /* static */ int
-@@ -692,12 +695,32 @@ clearPin_callback (const BoxType * b, void *cl)
-     ClearOnlyPin (pin, true);
+ static int
+@@ -687,12 +690,32 @@ clearPin_callback (const BoxType * b, void *cl)
+     }
    return 1;
  }
 +
@@ -2179,7 +2179,7 @@ index 80caf12..00972e9 100644
    return 1;
  }
  
-@@ -789,6 +812,7 @@ DrawMask (BoxType * screen)
+@@ -784,6 +807,7 @@ DrawMask (BoxType * screen)
    int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
  
    info.arg = true;
@@ -2187,7 +2187,7 @@ index 80caf12..00972e9 100644
  
    if (thin)
      gui->set_color (Output.pmGC, PCB->MaskColor);
-@@ -861,8 +885,8 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
+@@ -856,8 +880,8 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
    /* print the non-clearing polys */
    info.Layer = Layer;
    info.arg = clear_pins;
@@ -2198,7 +2198,7 @@ index 80caf12..00972e9 100644
  
    if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
      return;
-@@ -1476,6 +1500,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
+@@ -1276,6 +1300,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2247,7 +2247,7 @@ index 80caf12..00972e9 100644
   * lowlevel routine to element arcs
   */
  static void
-@@ -1794,6 +1860,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+@@ -1594,6 +1660,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
    DrawPolygonLowLevel (Polygon);
  }
  
@@ -2285,7 +2285,7 @@ index 80caf12..00972e9 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -2065,6 +2162,16 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -1865,6 +1962,16 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2302,7 +2302,7 @@ index 80caf12..00972e9 100644
   * erases an element
   */
  void
-@@ -2135,6 +2242,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -1935,6 +2042,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2312,7 +2312,7 @@ index 80caf12..00972e9 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -2182,6 +2292,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
+@@ -1982,6 +2092,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2, 0);
        break;
@@ -2324,7 +2324,7 @@ index 80caf12..00972e9 100644
        if (PCB->ElementOn &&
  	  (FRONT ((ElementTypePtr) ptr2) || PCB->InvisibleObjectsOn))
 diff --git a/src/draw.h b/src/draw.h
-index 077c575..5b4d73a 100644
+index 9bf62b3..ff4fbfd 100644
 --- a/src/draw.h
 +++ b/src/draw.h
 @@ -50,6 +50,7 @@ void DrawArc (LayerTypePtr, ArcTypePtr, int);
@@ -2726,10 +2726,10 @@ index 499e59e..ef6b466 100644
    {"removemode", FlagMode, REMOVE_MODE},
    {"rotatemode", FlagMode, ROTATE_MODE},
 diff --git a/src/global.h b/src/global.h
-index 0eca83b..5045833 100644
+index 904d6fe..3f7166c 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -252,19 +252,49 @@ typedef struct
+@@ -253,19 +253,49 @@ typedef struct
    void *Element;
  } TextType, *TextTypePtr;
  
@@ -2787,7 +2787,7 @@ index 0eca83b..5045833 100644
  };
  
  typedef struct			/* holds information about arcs */
-@@ -278,26 +308,25 @@ typedef struct			/* holds information about arcs */
+@@ -279,26 +309,25 @@ typedef struct			/* holds information about arcs */
      Delta;
  } ArcType, *ArcTypePtr;
  
@@ -2823,7 +2823,7 @@ index 0eca83b..5045833 100644
    bool On;			/* visible flag */
    char *Color,			/* color */
     *SelectedColor;
-@@ -585,7 +614,8 @@ typedef struct			/* holds cursor information */
+@@ -586,7 +615,8 @@ typedef struct			/* holds cursor information */
    bool On;			/* flag for 'is visible' */
    AttachedLineType AttachedLine;	/* data of new lines... */
    AttachedBoxType AttachedBox;
@@ -2833,7 +2833,7 @@ index 0eca83b..5045833 100644
    AttachedObjectType AttachedObject;	/* data of attached objects */
    enum crosshair_shape shape; /* shape of crosshair */
  } CrosshairType, *CrosshairTypePtr;
-@@ -700,13 +730,15 @@ typedef struct
+@@ -701,13 +731,15 @@ typedef struct
    void *(*Line) (LayerTypePtr, LineTypePtr);
    void *(*Text) (LayerTypePtr, TextTypePtr);
    void *(*Polygon) (LayerTypePtr, PolygonTypePtr);
