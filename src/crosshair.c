@@ -249,7 +249,7 @@ XORDrawElement (ElementTypePtr Element, LocationType DX, LocationType DY)
     PinType moved_pin = *pin;
     moved_pin.X += DX; moved_pin.Y += DY;
 
-    gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_pin, false, false);
+    gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_pin, true, false);
   }
   END_LOOP;
 
@@ -361,7 +361,7 @@ XORDrawBuffer (BufferTypePtr Buffer)
     PinType moved_via = *via;
     moved_via.X += x; moved_via.Y += y;
 
-    gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_via, false, false);
+    gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_via, true, false);
   }
   END_LOOP;
 }
