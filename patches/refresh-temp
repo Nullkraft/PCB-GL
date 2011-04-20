@@ -1,0 +1,31 @@
+Bottom: c4c1c89f5fc3a5c730d934dce0f9ea9392ad6737
+Top:    9088362634695f63ab56e2896beff41d925891f3
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-21 00:50:39 +0100
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index ce9db4e..bd9cf63 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1213,7 +1213,7 @@ poly_callback (const BoxType * b, void *cl)
+   return 1;
+ }
+ 
+-int
++static int
+ clearPin_callback (const BoxType * b, void *cl)
+ {
+   PinType *pin = (PinTypePtr) b;
+@@ -1228,7 +1228,7 @@ clearPin_callback (const BoxType * b, void *cl)
+   return 1;
+ }
+ 
+-/* static */ int
++static int
+ clearPad_callback (const BoxType * b, void *cl)
+ {
+   PadTypePtr pad = (PadTypePtr) b;
