@@ -245,10 +245,11 @@ XORDrawElement (ElementTypePtr Element, LocationType DX, LocationType DY)
   /* pin coordinates and angles have to be converted to X11 notation */
   PIN_LOOP (Element);
   {
-    gui->draw_arc (Crosshair.GC,
-		   DX + pin->X,
-		   DY + pin->Y,
-		   pin->Thickness / 2, pin->Thickness / 2, 0, 360);
+    /* Make a copy of the pin structure, moved to the correct position */
+    PinType moved_pin = *pin;
+    moved_pin.X += DX; moved_pin.Y += DY;
+
+    gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_pin, false, false);
   }
   END_LOOP;
 
