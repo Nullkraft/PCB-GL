@@ -181,8 +181,8 @@ static void *
 RotateText (LayerTypePtr Layer, TextTypePtr Text)
 {
   EraseText (Layer, Text);
-  RestoreToPours (PCB->Data, TEXT_TYPE, Layer, Text);
   r_delete_entry (Layer->text_tree, (BoxTypePtr) Text);
+  RestoreToPours (PCB->Data, TEXT_TYPE, Layer, Text);
   RotateTextLowLevel (Text, CenterX, CenterY, Number);
   r_insert_entry (Layer->text_tree, (BoxTypePtr) Text, 0);
   ClearFromPours (PCB->Data, TEXT_TYPE, Layer, Text);
@@ -276,8 +276,8 @@ RotateLinePoint (LayerTypePtr Layer, LineTypePtr Line, PointTypePtr Point)
   EraseLine (Line);
   if (Layer)
     {
-      RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
       r_delete_entry (Layer->line_tree, (BoxTypePtr) Line);
+      RestoreToPours (PCB->Data, LINE_TYPE, Layer, Line);
     }
   else
     r_delete_entry (PCB->Data->rat_tree, (BoxTypePtr) Line);
@@ -390,8 +390,8 @@ RotateObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
       EraseLine (ptr->Line);
       if (ptr->Layer)
 	{
-	  RestoreToPours (PCB->Data, LINE_TYPE, ptr->Layer, ptr->Line);
 	  r_delete_entry (ptr->Layer->line_tree, (BoxType *) ptr->Line);
+	  RestoreToPours (PCB->Data, LINE_TYPE, ptr->Layer, ptr->Line);
 	}
       else
 	r_delete_entry (PCB->Data->rat_tree, (BoxType *) ptr->Line);
