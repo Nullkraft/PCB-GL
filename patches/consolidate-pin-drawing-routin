@@ -1,5 +1,5 @@
 Bottom: a8bebc02722556c48ac1bf19e88dafbe5d1d0284
-Top:    b27186addca21db11a0adf843c58867fef1d8b5f
+Top:    d21e300b575581e5d8e4530b1f27f00456f65b63
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-20 21:16:45 +0100
 
@@ -9,7 +9,7 @@ Consolidate pin drawing routines
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 64cf020..0ab6753 100644
+index 64cf020..f016094 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -245,10 +245,11 @@ XORDrawElement (ElementTypePtr Element, LocationType DX, LocationType DY)
@@ -24,7 +24,7 @@ index 64cf020..0ab6753 100644
 +    PinType moved_pin = *pin;
 +    moved_pin.X += DX; moved_pin.Y += DY;
 +
-+    gui->thindraw_pcb_pin (Crosshair.GC, &moved_pin, false, false);
++    gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_pin, false, false);
    }
    END_LOOP;
  
