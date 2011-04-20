@@ -1,5 +1,5 @@
-Bottom: 96c8961c0792e9aa59705a99a75f90cf50fe9074
-Top:    a3bdc797aaf3cbee5b2d42378272efe6bd75de29
+Bottom: e53615d03912e82ba2e5ea5cc48a492f8c3fff26
+Top:    e53615d03912e82ba2e5ea5cc48a492f8c3fff26
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:17 +0100
 
@@ -12,28 +12,4 @@ file during the fab drawing output.
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index 82eaad6..80caf12 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -864,10 +864,6 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
-   clip_box = screen;
-   r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
- 
--  /* HACK: Subcomposite polygons separately from other layer primitives */
--  /* Reset the compositing */
--  gui->set_layer (0, GetGroupOfLayer (Layer), 0);
--
-   if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
-     return;
- 
-@@ -917,8 +913,7 @@ DrawLayerGroup (int group, const BoxType * screen)
-   Cardinal *layers = PCB->LayerGroups.Entries[group];
- 
-   clip_box = screen;
--  for (i = n_entries - 1; i >= 0;
--      i--, gui->set_layer (0, group, 0)) /* HACK: Subcomposite each layer in a layer group separately */
-+  for (i = n_entries - 1; i >= 0; i--)
-     {
-       layernum = layers[i];
-       Layer = PCB->Data->Layer + layers[i];
+
