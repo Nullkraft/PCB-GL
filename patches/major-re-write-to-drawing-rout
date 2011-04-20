@@ -1,5 +1,5 @@
 Bottom: e9445087bbd2af2ee46d8e4c11c9f706fed2de02
-Top:    c4c1c89f5fc3a5c730d934dce0f9ea9392ad6737
+Top:    9088362634695f63ab56e2896beff41d925891f3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:17 +0100
 
@@ -173,7 +173,7 @@ index c0e23a3..9bf62b3 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5d53d27..ce9db4e 100644
+index 5d53d27..bd9cf63 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -555,7 +555,7 @@ index 5d53d27..ce9db4e 100644
 +  return 1;
 +}
 +
-+int
++static int
 +clearPin_callback (const BoxType * b, void *cl)
 +{
 +  PinType *pin = (PinTypePtr) b;
@@ -570,7 +570,7 @@ index 5d53d27..ce9db4e 100644
 +  return 1;
 +}
 +
-+/* static */ int
++static int
 +clearPad_callback (const BoxType * b, void *cl)
 +{
 +  PadTypePtr pad = (PadTypePtr) b;
