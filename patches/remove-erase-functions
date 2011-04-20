@@ -1,5 +1,5 @@
-Bottom: a8bebc02722556c48ac1bf19e88dafbe5d1d0284
-Top:    f5a615c01b04074d0712cdeb75b04ed076df2b2c
+Bottom: cbc44ef59750f921bd9632c98e8a6f3f26092205
+Top:    58408f9251eb1a6c059c0cd11e46b96d02106b2f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-20 21:41:18 +0100
 
@@ -9,10 +9,10 @@ Remove Erase* functions in favour of invalidating regions
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 8d6e0f6..eb9528a 100644
+index 76c9a89..0fc95a3 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -1916,187 +1916,6 @@ DrawElementPinsAndPads (ElementTypePtr Element, int unused)
+@@ -1716,187 +1716,6 @@ DrawElementPinsAndPads (ElementTypePtr Element, int unused)
    END_LOOP;
  }
  
@@ -200,7 +200,7 @@ index 8d6e0f6..eb9528a 100644
  void
  EraseObject (int type, void *lptr, void *ptr)
  {
-@@ -2133,8 +1952,6 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -1933,8 +1752,6 @@ EraseObject (int type, void *lptr, void *ptr)
      }
  }
  

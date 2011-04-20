@@ -1,5 +1,5 @@
-Bottom: a8bebc02722556c48ac1bf19e88dafbe5d1d0284
-Top:    9536234bc8ddd0e365303832c6ac28a008eaecab
+Bottom: 58408f9251eb1a6c059c0cd11e46b96d02106b2f
+Top:    d81d102058a0de65aac0d84baf5cf4e9818a9093
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:11 +0100
 
@@ -512,7 +512,7 @@ index 43d5c2b..75ab94a 100644
  }
  
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 64cf020..25b71fb 100644
+index 054610b..b0ef6f8 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -66,15 +66,6 @@ typedef struct
@@ -531,7 +531,7 @@ index 64cf020..25b71fb 100644
   * some local prototypes
   */
  static void XORPolygon (PolygonTypePtr, LocationType, LocationType);
-@@ -697,17 +688,68 @@ DrawMark (void)
+@@ -706,17 +697,68 @@ DrawMark (void)
  
  
  /* ---------------------------------------------------------------------------
@@ -606,7 +606,7 @@ index 64cf020..25b71fb 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -716,54 +758,63 @@ CrosshairOn (void)
+@@ -725,54 +767,63 @@ CrosshairOn (void)
  void
  CrosshairOff (void)
  {
@@ -699,7 +699,7 @@ index 64cf020..25b71fb 100644
  static double
  square (double x)
  {
-@@ -1055,8 +1106,8 @@ MoveCrosshairRelative (LocationType DeltaX, LocationType DeltaY)
+@@ -1064,8 +1115,8 @@ MoveCrosshairRelative (LocationType DeltaX, LocationType DeltaY)
  }
  
  /* ---------------------------------------------------------------------------
@@ -710,7 +710,7 @@ index 64cf020..25b71fb 100644
   */
  bool
  MoveCrosshairAbsolute (LocationType X, LocationType Y)
-@@ -1067,13 +1118,14 @@ MoveCrosshairAbsolute (LocationType X, LocationType Y)
+@@ -1076,13 +1127,14 @@ MoveCrosshairAbsolute (LocationType X, LocationType Y)
    FitCrosshairIntoGrid (X, Y);
    if (Crosshair.X != x || Crosshair.Y != y)
      {
@@ -727,7 +727,7 @@ index 64cf020..25b71fb 100644
        /* now move forward again */
        Crosshair.X = x;
        Crosshair.Y = z;
-@@ -1100,8 +1152,7 @@ SetCrosshairRange (LocationType MinX, LocationType MinY, LocationType MaxX,
+@@ -1109,8 +1161,7 @@ SetCrosshairRange (LocationType MinX, LocationType MinY, LocationType MaxX,
  
  /* ---------------------------------------------------------------------------
   * initializes crosshair stuff
@@ -737,7 +737,7 @@ index 64cf020..25b71fb 100644
   */
  void
  InitCrosshair (void)
-@@ -1113,9 +1164,6 @@ InitCrosshair (void)
+@@ -1122,9 +1173,6 @@ InitCrosshair (void)
    gui->set_line_cap (Crosshair.GC, Trace_Cap);
    gui->set_line_width (Crosshair.GC, 1);
  
@@ -761,10 +761,10 @@ index ff16b1e..efa6679 100644
  void CrosshairOff (void);
  void HideCrosshair (void);
 diff --git a/src/draw.c b/src/draw.c
-index 8d6e0f6..d44a3aa 100644
+index 0fc95a3..bd9fba1 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -190,15 +190,11 @@ UpdateAll (void)
+@@ -180,15 +180,11 @@ UpdateAll (void)
  void
  Draw (void)
  {
@@ -781,7 +781,7 @@ index 8d6e0f6..d44a3aa 100644
    Block.X1 = Block.Y1 =  MAXINT;
    Block.X2 = Block.Y2 = -MAXINT;
 diff --git a/src/hid.h b/src/hid.h
-index d6f494a..d505d19 100644
+index 0a81ddd..36aca75 100644
 --- a/src/hid.h
 +++ b/src/hid.h
 @@ -298,6 +298,8 @@ typedef enum
@@ -794,10 +794,10 @@ index d6f494a..d505d19 100644
      /* During redraw or print/export cycles, this is called once per
         layer (or layer group, for copper layers).  If it returns false
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
-index b6d26f8..710623a 100644
+index 1568cd5..84ceda3 100644
 --- a/src/hid/common/hidnogui.c
 +++ b/src/hid/common/hidnogui.c
-@@ -432,6 +432,8 @@ HID hid_nogui = {
+@@ -444,6 +444,8 @@ HID hid_nogui = {
    nogui_parse_arguments,
    nogui_invalidate_lr,
    nogui_invalidate_all,
@@ -806,7 +806,7 @@ index b6d26f8..710623a 100644
    nogui_set_layer,
    nogui_make_gc,
    nogui_destroy_gc,
-@@ -491,6 +493,8 @@ apply_default_hid (HID * d, HID * s)
+@@ -505,6 +507,8 @@ apply_default_hid (HID * d, HID * s)
    AD (parse_arguments);
    AD (invalidate_lr);
    AD (invalidate_all);
