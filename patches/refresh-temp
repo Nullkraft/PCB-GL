@@ -1,0 +1,21 @@
+Bottom: 4c4433d906639aed55de7876e8d857d10601b643
+Top:    48f138c25d9e32aa9c929d1933a58278fc39a9de
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-20 23:22:08 +0100
+
+Refresh of hid-common-draw-the-hole-outli
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index f016094..cd52f4a 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -249,7 +249,7 @@ XORDrawElement (ElementTypePtr Element, LocationType DX, LocationType DY)
+     PinType moved_pin = *pin;
+     moved_pin.X += DX; moved_pin.Y += DY;
+ 
+-    gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_pin, false, false);
++    gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_pin, true, false);
+   }
+   END_LOOP;
