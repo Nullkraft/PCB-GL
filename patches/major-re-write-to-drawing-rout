@@ -1,5 +1,5 @@
-Bottom: f8d442181be7e090261f9f12b82bbe3323434aa3
-Top:    49977d92043372877f57f3869a0c822339ed56fa
+Bottom: 4d5bb8e40a436de1d007d6e76e59859039faf83f
+Top:    96c8961c0792e9aa59705a99a75f90cf50fe9074
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:17 +0100
 
@@ -18,7 +18,7 @@ Notes from squashed patches:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index c75fcdc..6755e96 100644
+index c149a92..82eaad6 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -80,7 +80,7 @@ FloatPolyType, *FloatPolyTypePtr;
@@ -138,7 +138,7 @@ index c75fcdc..6755e96 100644
  DrawHole (PinTypePtr Ptr)
  {
    if (TEST_FLAG (THINDRAWFLAG, PCB))
-@@ -1668,7 +1668,7 @@ DrawVia (PinTypePtr Via, int unused)
+@@ -1539,7 +1539,7 @@ DrawVia (PinTypePtr Via, int unused)
  /* ---------------------------------------------------------------------------
   * draw a via without dealing with polygon clearance 
   */
@@ -147,7 +147,7 @@ index c75fcdc..6755e96 100644
  DrawPlainVia (PinTypePtr Via, bool holeToo)
  {
    if (!Gathering)
-@@ -1713,7 +1713,7 @@ DrawPin (PinTypePtr Pin, int unused)
+@@ -1584,7 +1584,7 @@ DrawPin (PinTypePtr Pin, int unused)
  /* ---------------------------------------------------------------------------
   * draw a pin without clearing around polygons 
   */
@@ -156,7 +156,7 @@ index c75fcdc..6755e96 100644
  DrawPlainPin (PinTypePtr Pin, bool holeToo)
  {
    if (!Gathering)
-@@ -1903,7 +1903,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
+@@ -1774,7 +1774,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
  /* ---------------------------------------------------------------------------
   * draws text on a layer
   */
