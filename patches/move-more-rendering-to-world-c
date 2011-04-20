@@ -1,7 +1,7 @@
-Bottom: f1ae1fd2dc2495fad8018000436c48b03c0abeb4
-Top:    c5aacc19afbc44b0e0d47def1e4f210a6e0f13f0
+Bottom: 66543400580cd7ed24f00ee924e23c7978e28407
+Top:    ac248f2cc28d0dfac9eec7368b8af973049cd614
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-20 18:09:06 +0100
+Date:   2011-04-21 00:47:18 +0100
 
 Move more rendering to world coordinates
 
@@ -9,7 +9,7 @@ Move more rendering to world coordinates
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 88a4649..2ec5feb 100644
+index 9219969..ab9686d 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -81,7 +81,9 @@ typedef struct hid_gc_struct
@@ -333,7 +333,7 @@ index 88a4649..2ec5feb 100644
        glEnd ();
      }
  
-@@ -1587,18 +1601,14 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1532,18 +1546,14 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    /* Test direction of rendering */
    /* Look at sign of eye coordinate system z-coord when projecting a
       world vector along +ve Z axis, (0, 0, 1). */
@@ -355,7 +355,7 @@ index 88a4649..2ec5feb 100644
    PCB->Data->SILKLAYER.Color = PCB->ElementColor;
    PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
  
-@@ -1774,7 +1784,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1719,7 +1729,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               GHidPort *port)
  {
    BoxType region;
@@ -363,7 +363,7 @@ index 88a4649..2ec5feb 100644
    int min_x, min_y;
    int max_x, max_y;
    int new_x, new_y;
-@@ -1815,6 +1824,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1760,6 +1769,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glTranslatef (widget->allocation.width / 2., widget->allocation.height / 2., 0);
    glMultMatrixf ((GLfloat *)view_matrix);
    glTranslatef (-widget->allocation.width / 2., -widget->allocation.height / 2., 0);
@@ -377,7 +377,7 @@ index 88a4649..2ec5feb 100644
    glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
  
    glEnable (GL_STENCIL_TEST);
-@@ -1822,7 +1838,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1767,7 +1783,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                  port->offlimits_color.green / 65535.,
                  port->offlimits_color.blue / 65535.,
                  1.);
@@ -385,7 +385,7 @@ index 88a4649..2ec5feb 100644
    glStencilMask (~0);
    glClearStencil (0);
    glClear (GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-@@ -1833,8 +1848,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1778,8 +1793,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -396,7 +396,7 @@ index 88a4649..2ec5feb 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1888,13 +1903,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1833,13 +1848,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_x = MIN (min_x, new_x);  max_x = MAX (max_x, new_x);
    min_y = MIN (min_y, new_y);  max_y = MAX (max_y, new_y);
  
@@ -412,7 +412,7 @@ index 88a4649..2ec5feb 100644
  
    glColor3f (port->bg_color.red / 65535.,
               port->bg_color.green / 65535.,
-@@ -1911,15 +1921,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1856,15 +1866,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    /* Drawing operations as masked to areas where the stencil buffer is '0' */
  //  glStencilFunc (GL_GREATER, 1, 1);             // Draw only where stencil buffer is 0
  
@@ -428,7 +428,7 @@ index 88a4649..2ec5feb 100644
    if (global_view_2d) {
      glBegin (GL_QUADS);
      glVertex3i (0,             0,              0);
-@@ -1951,31 +1952,21 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1896,31 +1897,21 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      glEnd ();
    }
  
