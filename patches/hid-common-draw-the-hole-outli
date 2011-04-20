@@ -1,5 +1,5 @@
-Bottom: 71cbde2dd6f2a685034d542258dd6cd8a40b470a
-Top:    fc6c66b06a4d291001181a5e3866d2b91c274c7f
+Bottom: b1ced29faabe475364f8a43e0fd6487ad9456552
+Top:    b1ced29faabe475364f8a43e0fd6487ad9456552
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-20 23:22:00 +0100
 
@@ -8,25 +8,4 @@ hid/common: Draw the hole outline for pins / vias being moved or placed
 
 ---
 
-diff --git a/src/crosshair.c b/src/crosshair.c
-index f2ad726..2c1e68c 100644
---- a/src/crosshair.c
-+++ b/src/crosshair.c
-@@ -249,7 +249,7 @@ XORDrawElement (ElementTypePtr Element, LocationType DX, LocationType DY)
-     PinType moved_pin = *pin;
-     moved_pin.X += DX; moved_pin.Y += DY;
- 
--    gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_pin, false, false);
-+    gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_pin, true, false);
-   }
-   END_LOOP;
- 
-@@ -361,7 +361,7 @@ XORDrawBuffer (BufferTypePtr Buffer)
-     PinType moved_via = *via;
-     moved_via.X += x; moved_via.Y += y;
- 
--    gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_via, false, false);
-+    gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_via, true, false);
-   }
-   END_LOOP;
- }
+
