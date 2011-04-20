@@ -384,6 +384,8 @@ typedef enum
                                   const BoxType *clip_box);
     void (*fill_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
     void (*thindraw_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
+    void (*fill_pcb_pin) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole);
+    void (*thindraw_pcb_pin) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole);
     void (*fill_rect) (hidGC gc_, int x1_, int y1_, int x2_, int y2_);
 
 
