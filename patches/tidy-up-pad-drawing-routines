@@ -1,5 +1,5 @@
 Bottom: 805d7b9361a26941a30210418402d5e94d9d914d
-Top:    f1b7e21968beea0d56af76b4f20cd640b851e0b5
+Top:    a8bebc02722556c48ac1bf19e88dafbe5d1d0284
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-20 16:29:09 +0100
 
@@ -24,7 +24,7 @@ also now drawn correctly in this mode.
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 7d9fcb4..a3d5da7 100644
+index 7d9fcb4..64cf020 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -255,29 +255,15 @@ XORDrawElement (ElementTypePtr Element, LocationType DX, LocationType DY)
@@ -34,7 +34,7 @@ index 7d9fcb4..a3d5da7 100644
 -    if ((TEST_FLAG (ONSOLDERFLAG, pad) != 0) ==
 -	Settings.ShowSolderSide || PCB->InvisibleObjectsOn)
 +    if (PCB->InvisibleObjectsOn ||
-+        (TEST_FLAG (ONSOLDERFLAG, &moved_pad) != 0) == Settings.ShowSolderSide)
++        (TEST_FLAG (ONSOLDERFLAG, pad) != 0) == Settings.ShowSolderSide)
        {
 -	if (pad->Point1.X == pad->Point2.X
 -	    || pad->Point1.Y == pad->Point2.Y)
