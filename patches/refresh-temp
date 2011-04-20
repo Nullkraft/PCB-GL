@@ -1,0 +1,20 @@
+Bottom: 13caecb5c463781c4ed70d9d11d4148bbde21fcb
+Top:    805d7b9361a26941a30210418402d5e94d9d914d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-20 17:47:26 +0100
+
+Refresh of hid-common-provide-a-helper-fu
+
+---
+
+diff --git a/src/hid/common/draw_helpers.h b/src/hid/common/draw_helpers.h
+index 5e26c85..6710b24 100644
+--- a/src/hid/common/draw_helpers.h
++++ b/src/hid/common/draw_helpers.h
+@@ -1,5 +1,5 @@
+ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
+                               const BoxType *clip_box);
+ void common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
+-void common_draw_helpers_init (HID *hid);
+                                   const BoxType *clip_box);
++void common_draw_helpers_init (HID *hid);
