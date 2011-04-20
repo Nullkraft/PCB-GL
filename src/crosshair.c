@@ -353,13 +353,15 @@ XORDrawBuffer (BufferTypePtr Buffer)
   }
   END_LOOP;
 
-  /* and the vias, move offset by thickness/2 */
+  /* and the vias */
   if (PCB->ViaOn)
     VIA_LOOP (Buffer->Data);
   {
-    gui->draw_arc (Crosshair.GC,
-		   x + via->X, y + via->Y,
-		   via->Thickness / 2, via->Thickness / 2, 0, 360);
+    /* Make a copy of the via structure, moved to the correct position */
+    PinType moved_via = *via;
+    moved_via.X += x; moved_via.Y += y;
+
+    gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_via, false, false);
   }
   END_LOOP;
 }
