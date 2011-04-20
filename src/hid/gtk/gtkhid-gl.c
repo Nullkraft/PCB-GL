@@ -1213,7 +1213,7 @@ poly_callback (const BoxType * b, void *cl)
   return 1;
 }
 
-int
+static int
 clearPin_callback (const BoxType * b, void *cl)
 {
   PinType *pin = (PinTypePtr) b;
@@ -1228,7 +1228,7 @@ clearPin_callback (const BoxType * b, void *cl)
   return 1;
 }
 
-/* static */ int
+static int
 clearPad_callback (const BoxType * b, void *cl)
 {
   PadTypePtr pad = (PadTypePtr) b;
