@@ -256,7 +256,7 @@ XORDrawElement (ElementTypePtr Element, LocationType DX, LocationType DY)
   PAD_LOOP (Element);
   {
     if (PCB->InvisibleObjectsOn ||
-        (TEST_FLAG (ONSOLDERFLAG, &moved_pad) != 0) == Settings.ShowSolderSide)
+        (TEST_FLAG (ONSOLDERFLAG, pad) != 0) == Settings.ShowSolderSide)
       {
         /* Make a copy of the pad structure, moved to the correct position */
         PadType moved_pad = *pad;
