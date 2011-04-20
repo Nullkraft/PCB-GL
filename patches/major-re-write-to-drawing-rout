@@ -1,5 +1,5 @@
 Bottom: e9445087bbd2af2ee46d8e4c11c9f706fed2de02
-Top:    e53615d03912e82ba2e5ea5cc48a492f8c3fff26
+Top:    c4c1c89f5fc3a5c730d934dce0f9ea9392ad6737
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:17 +0100
 
@@ -18,7 +18,7 @@ Notes from squashed patches:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 9f02cd6..dc54f89 100644
+index 9f02cd6..7874720 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -71,7 +71,7 @@ RCSID ("$Id$");
@@ -53,9 +53,10 @@ index 9f02cd6..dc54f89 100644
  static void AddPart (void *);
  static void SetPVColor (PinTypePtr, int);
 -static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
-+/* static */ void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
- static void ClearPad (PadTypePtr, bool);
+-static void ClearPad (PadTypePtr, bool);
 -static void DrawHole (PinTypePtr);
++/* static */ void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
++/* static */ void ClearPad (PadTypePtr, bool);
 +/* static */ void DrawHole (PinTypePtr);
  static void DrawMask (BoxType *);
 -static void DrawRats (BoxType *);
@@ -74,24 +75,6 @@ index 9f02cd6..dc54f89 100644
  DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
  	   bool invisible)
  {
-@@ -673,7 +673,7 @@ struct pin_info
-   LayerTypePtr Layer;
- };
- 
--static int
-+/* static */ int
- clearPin_callback (const BoxType * b, void *cl)
- {
-   PinType *pin = (PinTypePtr) b;
-@@ -696,7 +696,7 @@ poly_callback (const BoxType * b, void *cl)
-   return 1;
- }
- 
--static int
-+/* static */ int
- clearPad_callback (const BoxType * b, void *cl)
- {
-   PadTypePtr pad = (PadTypePtr) b;
 @@ -709,7 +709,7 @@ clearPad_callback (const BoxType * b, void *cl)
   * Draws silk layer.
   */
@@ -128,6 +111,15 @@ index 9f02cd6..dc54f89 100644
  DrawHole (PinTypePtr Ptr)
  {
    if (TEST_FLAG (THINDRAWFLAG, PCB))
+@@ -1144,7 +1144,7 @@ DrawPadNameLowLevel (PadTypePtr Pad)
+ /* ---------------------------------------------------------------------------
+  * clearance for pads
+  */
+-static void
++/* static */ void
+ ClearPad (PadTypePtr Pad, bool mask)
+ {
+   DrawPadLowLevel(Output.pmGC, Pad, true, mask);
 @@ -1339,7 +1339,7 @@ DrawVia (PinTypePtr Via, int unused)
  /* ---------------------------------------------------------------------------
   * draw a via without dealing with polygon clearance 
@@ -156,14 +148,15 @@ index 9f02cd6..dc54f89 100644
  {
    int min_silk_line;
 diff --git a/src/draw.h b/src/draw.h
-index c0e23a3..077c575 100644
+index c0e23a3..9bf62b3 100644
 --- a/src/draw.h
 +++ b/src/draw.h
-@@ -74,6 +74,19 @@ void EraseObject (int, void *, void *);
+@@ -74,6 +74,20 @@ void EraseObject (int, void *, void *);
  void LoadBackgroundImage (char *);
  void UpdateAll (void);
  
 +/* TEMPORARY */
++void ClearPad (PadTypePtr, bool);
 +void DrawPinOrViaLowLevel (PinTypePtr, bool);
 +void DrawPlainPin (PinTypePtr, bool);
 +void DrawPlainVia (PinTypePtr, bool);
@@ -180,7 +173,7 @@ index c0e23a3..077c575 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5d53d27..9a833d8 100644
+index 5d53d27..ce9db4e 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -347,7 +340,7 @@ index 5d53d27..9a833d8 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -964,6 +1002,727 @@ ghid_screen_update (void)
+@@ -964,6 +1002,672 @@ ghid_screen_update (void)
  {
  }
  
@@ -562,79 +555,28 @@ index 5d53d27..9a833d8 100644
 +  return 1;
 +}
 +
-+static void
-+DrawPadLowLevelSolid (hidGC gc, PadTypePtr Pad, bool clear, bool mask)
++int
++clearPin_callback (const BoxType * b, void *cl)
 +{
-+  int w = clear ? (mask ? Pad->Mask : Pad->Thickness + Pad->Clearance)
-+		: Pad->Thickness;
-+
-+  if (Pad->Point1.X == Pad->Point2.X &&
-+      Pad->Point1.Y == Pad->Point2.Y)
++  PinType *pin = (PinTypePtr) b;
++  struct pin_info *i = (struct pin_info *) cl;
++  if (i->arg)
 +    {
-+      if (TEST_FLAG (SQUAREFLAG, Pad))
-+        {
-+          int l, r, t, b;
-+          l = Pad->Point1.X - w / 2;
-+          b = Pad->Point1.Y - w / 2;
-+          r = l + w;
-+          t = b + w;
-+          gui->fill_rect (gc, l, b, r, t);
-+        }
++      if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
++        gui->thindraw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
 +      else
-+        {
-+          gui->fill_circle (gc, Pad->Point1.X, Pad->Point1.Y, w / 2);
-+        }
++        gui->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
 +    }
-+  else
-+    {
-+      gui->set_line_cap (gc,
-+                         TEST_FLAG (SQUAREFLAG,
-+                                    Pad) ? Square_Cap : Round_Cap);
-+      gui->set_line_width (gc, w);
-+
-+      gui->draw_line (gc,
-+                      Pad->Point1.X, Pad->Point1.Y,
-+                      Pad->Point2.X, Pad->Point2.Y);
-+    }
++  return 1;
 +}
 +
-+static void
-+ClearPadSolid (PadTypePtr Pad, bool mask)
++/* static */ int
++clearPad_callback (const BoxType * b, void *cl)
 +{
-+  DrawPadLowLevelSolid(Output.pmGC, Pad, true, mask);
-+}
-+
-+static void
-+ClearOnlyPinSolid (PinTypePtr Pin, bool mask)
-+{
-+  BDimension half =
-+    (mask ? Pin->Mask / 2 : (Pin->Thickness + Pin->Clearance) / 2);
-+
-+  if (!mask && TEST_FLAG (HOLEFLAG, Pin))
-+    return;
-+  if (half == 0)
-+    return;
-+  if (!mask && Pin->Clearance <= 0)
-+    return;
-+
-+  /* Clear the area around the pin */
-+  if (TEST_FLAG (SQUAREFLAG, Pin))
-+    {
-+      int l, r, t, b;
-+      l = Pin->X - half;
-+      b = Pin->Y - half;
-+      r = l + half * 2;
-+      t = b + half * 2;
-+      gui->fill_rect (Output.pmGC, l, b, r, t);
-+    }
-+  else if (TEST_FLAG (OCTAGONFLAG, Pin))
-+    {
-+      DrawSpecialPolygon (Output.pmGC, Pin->X, Pin->Y, half * 2, false);
-+    }
-+  else
-+    {
-+      gui->fill_circle (Output.pmGC, Pin->X, Pin->Y, half);
-+    }
++  PadTypePtr pad = (PadTypePtr) b;
++  if (!XOR (TEST_FLAG (ONSOLDERFLAG, pad), SWAP_IDENT) && pad->Mask)
++    ClearPad (pad, true);
++  return 1;
 +}
 +
 +static int
@@ -643,7 +585,7 @@ index 5d53d27..9a833d8 100644
 +  PinTypePtr pin = (PinTypePtr) b;
 +  struct pin_info *i = (struct pin_info *) cl;
 +  if (i->arg)
-+    ClearOnlyPinSolid (pin, true);
++    gui->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
 +  return 1;
 +}
 +
@@ -652,13 +594,9 @@ index 5d53d27..9a833d8 100644
 +{
 +  PadTypePtr pad = (PadTypePtr) b;
 +  if (!XOR (TEST_FLAG (ONSOLDERFLAG, pad), SWAP_IDENT) && pad->Mask)
-+    ClearPadSolid (pad, true);
++    gui->fill_pcb_pad (Output.pmGC, pad, false, true);
 +  return 1;
 +}
-+
-+int clearPin_callback (const BoxType * b, void *cl);
-+int clearPad_callback (const BoxType * b, void *cl);
-+
 +
 +static void
 +DrawMask (BoxType * screen)
@@ -1075,7 +1013,7 @@ index 5d53d27..9a833d8 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1028,8 +1787,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1028,8 +1732,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1086,7 +1024,7 @@ index 5d53d27..9a833d8 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1095,13 +1854,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1095,13 +1799,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -1100,7 +1038,7 @@ index 5d53d27..9a833d8 100644
    /* TODO: Background image */
  
    hidgl_init_triangle_array (&buffer);
-@@ -1121,7 +1873,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1121,7 +1818,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_x0,
                  ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                               -port->view_y0, 0);
