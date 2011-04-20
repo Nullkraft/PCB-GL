@@ -1,5 +1,5 @@
 Bottom: 532bf023404f4322819d46ecf1933cbb5822237a
-Top:    a68c181b0cb559844ee84c750277438bdbd7bf5c
+Top:    931edab48525dc659b78519fb0cc63fee9469fab
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-20 16:29:09 +0100
 
@@ -9,7 +9,7 @@ Tidy up pad drawing routines
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 7d9fcb4..540cc1b 100644
+index 7d9fcb4..a9ed879 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -255,30 +255,16 @@ XORDrawElement (ElementTypePtr Element, LocationType DX, LocationType DY)
@@ -49,7 +49,7 @@ index 7d9fcb4..540cc1b 100644
 +
 +    if (PCB->InvisibleObjectsOn ||
 +        (TEST_FLAG (ONSOLDERFLAG, &moved_pad) != 0) == Settings.ShowSolderSide)
-+      thindraw_pcb_pad (Crosshair.GC, &moved_pad, false, false);
++      gui->thindraw_pcb_pad (Crosshair.GC, &moved_pad, false, false);
    }
    END_LOOP;
    /* mark */
@@ -205,6 +205,48 @@ index 707969a..8d6e0f6 100644
  }
  
  /* ---------------------------------------------------------------------------
+diff --git a/src/global.h b/src/global.h
+index e449a34..0eca83b 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -54,6 +54,7 @@
+ /* Forward declarations for structures the HIDs need.  */
+ typedef struct BoxType BoxType, *BoxTypePtr;
+ typedef struct polygon_st PolygonType, *PolygonTypePtr;
++typedef struct pad_st PadType, *PadTypePtr;
+ typedef struct drc_violation_st DrcViolationType, *DrcViolationTypePtr;
+ typedef struct rtree rtree_t;
+ typedef struct AttributeListType AttributeListType, *AttributeListTypePtr;
+@@ -310,14 +311,14 @@ typedef struct			/* a rat-line */
+   Cardinal group1, group2;	/* the layer group each point is on */
+ } RatType, *RatTypePtr;
+ 
+-typedef struct			/* a SMD pad */
++struct pad_st			/* a SMD pad */
+ {
+   ANYLINEFIELDS;
+   BDimension Mask;
+   char *Name, *Number;		/* 'Line' */
+   void *Element;
+   void *Spare;
+-} PadType, *PadTypePtr;
++};
+ 
+ typedef struct
+ {
+diff --git a/src/hid.h b/src/hid.h
+index b13e75b..d6f494a 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -382,6 +382,8 @@ typedef enum
+                               const BoxType *clip_box);
+     void (*thindraw_pcb_polygon) (hidGC gc_, PolygonType *poly,
+                                   const BoxType *clip_box);
++    void (*fill_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
++    void (*thindraw_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
+     void (*fill_rect) (hidGC gc_, int x1_, int y1_, int x2_, int y2_);
+ 
+ 
 diff --git a/src/hid/batch/batch.c b/src/hid/batch/batch.c
 index e6eaf52..99c2220 100644
 --- a/src/hid/batch/batch.c
@@ -245,10 +287,10 @@ index e6eaf52..99c2220 100644
    batch_hid.calibrate             = batch_calibrate;
    batch_hid.shift_is_pressed      = batch_shift_is_pressed;
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index b9db654..b1b2123 100644
+index b9db654..9de587f 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
-@@ -198,3 +198,151 @@ common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
+@@ -198,3 +198,116 @@ common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
    thindraw_contour (gc, poly->Clipped->contours);
    PolygonHoles (poly, clip_box, thindraw_hole_cb, gc);
  }
@@ -256,15 +298,15 @@ index b9db654..b1b2123 100644
 +void
 +common_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
 +{
-+  int w = clear ? (mask ? Pad->Mask
-+                        : Pad->Thickness + Pad->Clearance)
-+                : Pad->Thickness;
++  int w = clear ? (mask ? pad->Mask
++                        : pad->Thickness + pad->Clearance)
++                : pad->Thickness;
 +  int x1, y1, x2, y2;
 +  int t = w / 2;
-+  x1 = Pad->Point1.X;
-+  y1 = Pad->Point1.Y;
-+  x2 = Pad->Point2.X;
-+  y2 = Pad->Point2.Y;
++  x1 = pad->Point1.X;
++  y1 = pad->Point1.Y;
++  x2 = pad->Point2.X;
++  y2 = pad->Point2.Y;
 +  if (x1 > x2 || y1 > y2)
 +    {
 +      int temp_x = x1;
@@ -274,7 +316,7 @@ index b9db654..b1b2123 100644
 +    }
 +  gui->set_line_cap (gc, Round_Cap);
 +  gui->set_line_width (gc, 0);
-+  if (TEST_FLAG (SQUAREFLAG, Pad))
++  if (TEST_FLAG (SQUAREFLAG, pad))
 +    {
 +      /* slanted square pad */
 +      float tx, ty, theta;
@@ -325,70 +367,35 @@ index b9db654..b1b2123 100644
 +void
 +common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
 +{
-+  int w = clear ? (mask ? Pad->Mask
-+                        : Pad->Thickness + Pad->Clearance)
-+                : Pad->Thickness;
++  int w = clear ? (mask ? pad->Mask
++                        : pad->Thickness + pad->Clearance)
++                : pad->Thickness;
 +
-+  if (Pad->Point1.X == Pad->Point2.X &&
-+      Pad->Point1.Y == Pad->Point2.Y)
++  if (pad->Point1.X == pad->Point2.X &&
++      pad->Point1.Y == pad->Point2.Y)
 +    {
-+      if (TEST_FLAG (SQUAREFLAG, Pad))
++      if (TEST_FLAG (SQUAREFLAG, pad))
 +        {
 +          int l, r, t, b;
-+          l = Pad->Point1.X - w / 2;
-+          b = Pad->Point1.Y - w / 2;
++          l = pad->Point1.X - w / 2;
++          b = pad->Point1.Y - w / 2;
 +          r = l + w;
 +          t = b + w;
 +          gui->fill_rect (gc, l, b, r, t);
 +        }
 +      else
 +        {
-+          gui->fill_circle (gc, Pad->Point1.X, Pad->Point1.Y, w / 2);
++          gui->fill_circle (gc, pad->Point1.X, pad->Point1.Y, w / 2);
 +        }
 +    }
 +  else
 +    {
-+      gui->set_line_cap (gc, TEST_FLAG (SQUAREFLAG, Pad) ?
++      gui->set_line_cap (gc, TEST_FLAG (SQUAREFLAG, pad) ?
 +                               Square_Cap : Round_Cap);
 +      gui->set_line_width (gc, w);
 +
-+      gui->draw_line (gc, Pad->Point1.X, Pad->Point1.Y,
-+                          Pad->Point2.X, Pad->Point2.Y);
-+    }
-+}
-+
-+void
-+common_fill_pcb_pad (hidGC gc, PadTypePtr Pad, bool clear, bool mask)
-+{
-+  int w = clear ? (mask ? Pad->Mask
-+                        : Pad->Thickness + Pad->Clearance)
-+                : Pad->Thickness;
-+
-+  if (Pad->Point1.X == Pad->Point2.X &&
-+      Pad->Point1.Y == Pad->Point2.Y)
-+    {
-+      if (TEST_FLAG (SQUAREFLAG, Pad))
-+        {
-+          int l, r, t, b;
-+          l = Pad->Point1.X - w / 2;
-+          b = Pad->Point1.Y - w / 2;
-+          r = l + w;
-+          t = b + w;
-+          gui->fill_rect (gc, l, b, r, t);
-+        }
-+      else
-+        {
-+          gui->fill_circle (gc, Pad->Point1.X, Pad->Point1.Y, w / 2);
-+        }
-+    }
-+  else
-+    {
-+      gui->set_line_cap (gc, TEST_FLAG (SQUAREFLAG, Pad) ?
-+                               Square_Cap : Round_Cap);
-+      gui->set_line_width (gc, w);
-+
-+      gui->draw_line (gc, Pad->Point1.X, Pad->Point1.Y,
-+                          Pad->Point2.X, Pad->Point2.Y);
++      gui->draw_line (gc, pad->Point1.X, pad->Point1.Y,
++                          pad->Point2.X, pad->Point2.Y);
 +    }
 +}
 +
@@ -412,14 +419,14 @@ index 3705317..4b1e827 100644
 +void common_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
 +void common_draw_helpers_init (HID *hid);
 diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
-index 2b0386c..c844aff 100644
+index 2b0386c..5ac46ea 100644
 --- a/src/hid/common/extents.c
 +++ b/src/hid/common/extents.c
 @@ -181,6 +181,8 @@ hid_extents_init (void)
  
    memset (&extents_hid, 0, sizeof (HID));
  
-+  common_draw_helpers_init (&extentes_hid);
++  common_draw_helpers_init (&extents_hid);
 +
    extents_hid.struct_size         = sizeof (HID);
    extents_hid.name                = "extents-extents";
@@ -433,7 +440,7 @@ index 2b0386c..c844aff 100644
  
    initialised = true;
 diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
-index fd86b6a..f7e9e5d 100644
+index fd86b6a..b6d26f8 100644
 --- a/src/hid/common/hidnogui.c
 +++ b/src/hid/common/hidnogui.c
 @@ -159,6 +159,18 @@ nogui_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
@@ -455,6 +462,24 @@ index fd86b6a..f7e9e5d 100644
  nogui_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
  {
    CRASH;
+@@ -437,6 +449,8 @@ HID hid_nogui = {
+   nogui_fill_polygon,
+   nogui_fill_pcb_polygon,
+   0 /* nogui_thindraw_pcb_polygon */ ,
++  nogui_fill_pcb_pad,
++  nogui_thindraw_pcb_pad,
+   nogui_fill_rect,
+   nogui_calibrate,
+   nogui_shift_is_pressed,
+@@ -492,6 +506,8 @@ apply_default_hid (HID * d, HID * s)
+   AD (fill_polygon);
+   AD (fill_pcb_polygon);
+   AD (thindraw_pcb_polygon);
++  AD (fill_pcb_pad);
++  AD (thindraw_pcb_pad);
+   AD (calibrate);
+   AD (shift_is_pressed);
+   AD (control_is_pressed);
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
 index 3e49ed3..6491afd 100644
 --- a/src/hid/gcode/gcode.c
