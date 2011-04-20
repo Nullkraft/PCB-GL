@@ -198,3 +198,151 @@ common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
   thindraw_contour (gc, poly->Clipped->contours);
   PolygonHoles (poly, clip_box, thindraw_hole_cb, gc);
 }
+
+void
+common_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
+{
+  int w = clear ? (mask ? Pad->Mask
+                        : Pad->Thickness + Pad->Clearance)
+                : Pad->Thickness;
+  int x1, y1, x2, y2;
+  int t = w / 2;
+  x1 = Pad->Point1.X;
+  y1 = Pad->Point1.Y;
+  x2 = Pad->Point2.X;
+  y2 = Pad->Point2.Y;
+  if (x1 > x2 || y1 > y2)
+    {
+      int temp_x = x1;
+      int temp_y = y1;
+      x1 = x2; x2 = temp_x;
+      y1 = y2; y2 = temp_y;
+    }
+  gui->set_line_cap (gc, Round_Cap);
+  gui->set_line_width (gc, 0);
+  if (TEST_FLAG (SQUAREFLAG, Pad))
+    {
+      /* slanted square pad */
+      float tx, ty, theta;
+
+      if (x1 == x2 || y1 == y2)
+        theta = 0;
+      else
+        theta = atan2 (y2 - y1, x2 - x1);
+
+      /* T is a vector half a thickness long, in the direction of
+         one of the corners.  */
+      tx = t * cos (theta + M_PI / 4) * sqrt (2.0);
+      ty = t * sin (theta + M_PI / 4) * sqrt (2.0);
+
+      gui->draw_line (gc, x1 - tx, y1 - ty, x2 + ty, y2 - tx);
+      gui->draw_line (gc, x2 + ty, y2 - tx, x2 + tx, y2 + ty);
+      gui->draw_line (gc, x2 + tx, y2 + ty, x1 - ty, y1 + tx);
+      gui->draw_line (gc, x1 - ty, y1 + tx, x1 - tx, y1 - ty);
+    }
+  else if (x1 == x2 && y1 == y2)
+    {
+      gui->draw_arc (gc, x1, y1, t, t, 0, 360);
+    }
+  else
+    {
+      /* Slanted round-end pads.  */
+      LocationType dx, dy, ox, oy;
+      float h;
+
+      dx = x2 - x1;
+      dy = y2 - y1;
+      h = t / sqrt (SQUARE (dx) + SQUARE (dy));
+      ox = dy * h + 0.5 * SGN (dy);
+      oy = -(dx * h + 0.5 * SGN (dx));
+
+      gui->draw_line (gc, x1 + ox, y1 + oy, x2 + ox, y2 + oy);
+
+      if (abs (ox) >= pixel_slop || abs (oy) >= pixel_slop)
+        {
+          LocationType angle = atan2 (dx, dy) * 57.295779;
+          gui->draw_line (gc, x1 - ox, y1 - oy, x2 - ox, y2 - oy);
+          gui->draw_arc (gc, x1, y1, t, t, angle - 180, 180);
+          gui->draw_arc (gc, x2, y2, t, t, angle, 180);
+        }
+    }
+}
+
+void
+common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
+{
+  int w = clear ? (mask ? Pad->Mask
+                        : Pad->Thickness + Pad->Clearance)
+                : Pad->Thickness;
+
+  if (Pad->Point1.X == Pad->Point2.X &&
+      Pad->Point1.Y == Pad->Point2.Y)
+    {
+      if (TEST_FLAG (SQUAREFLAG, Pad))
+        {
+          int l, r, t, b;
+          l = Pad->Point1.X - w / 2;
+          b = Pad->Point1.Y - w / 2;
+          r = l + w;
+          t = b + w;
+          gui->fill_rect (gc, l, b, r, t);
+        }
+      else
+        {
+          gui->fill_circle (gc, Pad->Point1.X, Pad->Point1.Y, w / 2);
+        }
+    }
+  else
+    {
+      gui->set_line_cap (gc, TEST_FLAG (SQUAREFLAG, Pad) ?
+                               Square_Cap : Round_Cap);
+      gui->set_line_width (gc, w);
+
+      gui->draw_line (gc, Pad->Point1.X, Pad->Point1.Y,
+                          Pad->Point2.X, Pad->Point2.Y);
+    }
+}
+
+void
+common_fill_pcb_pad (hidGC gc, PadTypePtr Pad, bool clear, bool mask)
+{
+  int w = clear ? (mask ? Pad->Mask
+                        : Pad->Thickness + Pad->Clearance)
+                : Pad->Thickness;
+
+  if (Pad->Point1.X == Pad->Point2.X &&
+      Pad->Point1.Y == Pad->Point2.Y)
+    {
+      if (TEST_FLAG (SQUAREFLAG, Pad))
+        {
+          int l, r, t, b;
+          l = Pad->Point1.X - w / 2;
+          b = Pad->Point1.Y - w / 2;
+          r = l + w;
+          t = b + w;
+          gui->fill_rect (gc, l, b, r, t);
+        }
+      else
+        {
+          gui->fill_circle (gc, Pad->Point1.X, Pad->Point1.Y, w / 2);
+        }
+    }
+  else
+    {
+      gui->set_line_cap (gc, TEST_FLAG (SQUAREFLAG, Pad) ?
+                               Square_Cap : Round_Cap);
+      gui->set_line_width (gc, w);
+
+      gui->draw_line (gc, Pad->Point1.X, Pad->Point1.Y,
+                          Pad->Point2.X, Pad->Point2.Y);
+    }
+}
+
+void
+common_draw_helpers_init (HID *hid)
+{
+  hid->fill_pcb_polygon     = common_fill_pcb_polygon;
+  hid->thindraw_pcb_polygon = common_thindraw_pcb_polygon;
+  hid->fill_pcb_pad         = common_fill_pcb_pad;
+  hid->thindraw_pcb_pad     = common_thindraw_pcb_pad;
+}
