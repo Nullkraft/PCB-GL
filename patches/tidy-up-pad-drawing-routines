@@ -3,9 +3,22 @@ Top:    f1b7e21968beea0d56af76b4f20cd640b851e0b5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-20 16:29:09 +0100
 
-Consolidate pad drawing routines, moving them under control of the HID
+Consolidate pad drawing routines, moving them under the HID API
 
-Adds two new HID APIs, fill_pcb_pad and thindraw_pcb_pad.
+Adds two new HID APIs, fill_pcb_pad and thindraw_pcb_pad, splitting
+drawing code from DrawPadLowlevel() to common_fill_pcb_pad() and
+common_thindraw_pcbpad() in hid/common/draw_helpers.c.
+
+I simplified the code somewhat as I moved it, reducing the number of
+special cases.
+
+gui->{thindraw|fill}_pcb_pad() is called from DrawPadLowlevel(), and
+is used to replace an incomplete thindraw implementation for pads in
+XORDrawElement().
+
+Outlines for angled pads are now drawn in their entirety when attached
+to the cursor, not just their center line, and rounded end pads are
+also now drawn correctly in this mode.
 
 
 ---
