@@ -1,5 +1,5 @@
 Bottom: 532bf023404f4322819d46ecf1933cbb5822237a
-Top:    ba3606552b2c48b5b22f9696f74a17d5e2a8c5c5
+Top:    a68c181b0cb559844ee84c750277438bdbd7bf5c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-20 16:29:09 +0100
 
@@ -245,7 +245,7 @@ index e6eaf52..99c2220 100644
    batch_hid.calibrate             = batch_calibrate;
    batch_hid.shift_is_pressed      = batch_shift_is_pressed;
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index b9db654..529af65 100644
+index b9db654..b1b2123 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
 @@ -198,3 +198,151 @@ common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
@@ -393,7 +393,7 @@ index b9db654..529af65 100644
 +}
 +
 +void
-+common_draw_helpers_init (HID hid)
++common_draw_helpers_init (HID *hid)
 +{
 +  hid->fill_pcb_polygon     = common_fill_pcb_polygon;
 +  hid->thindraw_pcb_polygon = common_thindraw_pcb_polygon;
@@ -401,7 +401,7 @@ index b9db654..529af65 100644
 +  hid->thindraw_pcb_pad     = common_thindraw_pcb_pad;
 +}
 diff --git a/src/hid/common/draw_helpers.h b/src/hid/common/draw_helpers.h
-index 3705317..c21224f 100644
+index 3705317..4b1e827 100644
 --- a/src/hid/common/draw_helpers.h
 +++ b/src/hid/common/draw_helpers.h
 @@ -2,3 +2,6 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
@@ -410,7 +410,7 @@ index 3705317..c21224f 100644
                                    const BoxType *clip_box);
 +void common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
 +void common_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
-+void common_draw_helpers_init (HID hid);
++void common_draw_helpers_init (HID *hid);
 diff --git a/src/hid/common/extents.c b/src/hid/common/extents.c
 index 2b0386c..c844aff 100644
 --- a/src/hid/common/extents.c
