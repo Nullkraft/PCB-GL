@@ -249,7 +249,7 @@ XORDrawElement (ElementTypePtr Element, LocationType DX, LocationType DY)
     PinType moved_pin = *pin;
     moved_pin.X += DX; moved_pin.Y += DY;
 
-    gui->thindraw_pcb_pin (Crosshair.GC, &moved_pin, false, false);
+    gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_pin, false, false);
   }
   END_LOOP;
 
