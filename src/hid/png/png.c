@@ -1519,6 +1519,9 @@ png_set_crosshair (int x, int y, int a)
 void
 hid_png_init ()
 {
+
+  common_draw_helpers_init (&png_hid);
+
   png_hid.struct_size = sizeof (HID);
   png_hid.name        = "png";
   png_hid.description = "GIF/JPEG/PNG export.";
@@ -1544,7 +1547,6 @@ hid_png_init ()
   png_hid.draw_rect           = png_draw_rect;
   png_hid.fill_circle         = png_fill_circle;
   png_hid.fill_polygon        = png_fill_polygon;
-  png_hid.fill_pcb_polygon    = common_fill_pcb_polygon;
   png_hid.fill_rect           = png_fill_rect;
   png_hid.calibrate           = png_calibrate;
   png_hid.set_crosshair       = png_set_crosshair;
