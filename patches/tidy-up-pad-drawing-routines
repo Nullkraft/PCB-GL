@@ -1,5 +1,5 @@
 Bottom: 532bf023404f4322819d46ecf1933cbb5822237a
-Top:    931edab48525dc659b78519fb0cc63fee9469fab
+Top:    f1b7e21968beea0d56af76b4f20cd640b851e0b5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-20 16:29:09 +0100
 
@@ -9,16 +9,18 @@ Tidy up pad drawing routines
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 7d9fcb4..a9ed879 100644
+index 7d9fcb4..a3d5da7 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -255,30 +255,16 @@ XORDrawElement (ElementTypePtr Element, LocationType DX, LocationType DY)
+@@ -255,29 +255,15 @@ XORDrawElement (ElementTypePtr Element, LocationType DX, LocationType DY)
    /* pads */
    PAD_LOOP (Element);
    {
 -    if ((TEST_FLAG (ONSOLDERFLAG, pad) != 0) ==
 -	Settings.ShowSolderSide || PCB->InvisibleObjectsOn)
--      {
++    if (PCB->InvisibleObjectsOn ||
++        (TEST_FLAG (ONSOLDERFLAG, &moved_pad) != 0) == Settings.ShowSolderSide)
+       {
 -	if (pad->Point1.X == pad->Point2.X
 -	    || pad->Point1.Y == pad->Point2.Y)
 -	  {
@@ -39,20 +41,15 @@ index 7d9fcb4..a9ed879 100644
 -			    DX + pad->Point1.X, DY + pad->Point1.Y,
 -			    DX + pad->Point2.X, DY + pad->Point2.Y);
 -	  }
--      }
-+    /* Make a copy of the pad structure, moved to the correct position */
-+    PadType moved_pad = *pad;
-+    moved_pad.Point1.X += DX;
-+    moved_pad.Point1.Y += DY;
-+    moved_pad.Point2.X += DX;
-+    moved_pad.Point2.Y += DY;
++        /* Make a copy of the pad structure, moved to the correct position */
++        PadType moved_pad = *pad;
++        moved_pad.Point1.X += DX; moved_pad.Point1.Y += DY;
++        moved_pad.Point2.X += DX; moved_pad.Point2.Y += DY;
 +
-+    if (PCB->InvisibleObjectsOn ||
-+        (TEST_FLAG (ONSOLDERFLAG, &moved_pad) != 0) == Settings.ShowSolderSide)
-+      gui->thindraw_pcb_pad (Crosshair.GC, &moved_pad, false, false);
++        gui->thindraw_pcb_pad (Crosshair.GC, &moved_pad, false, false);
+       }
    }
    END_LOOP;
-   /* mark */
 diff --git a/src/draw.c b/src/draw.c
 index 707969a..8d6e0f6 100644
 --- a/src/draw.c
