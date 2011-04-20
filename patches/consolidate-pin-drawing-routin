@@ -1,5 +1,5 @@
 Bottom: a8bebc02722556c48ac1bf19e88dafbe5d1d0284
-Top:    4c4433d906639aed55de7876e8d857d10601b643
+Top:    71cbde2dd6f2a685034d542258dd6cd8a40b470a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-20 21:16:45 +0100
 
@@ -16,7 +16,7 @@ cursor.
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 64cf020..f016094 100644
+index 64cf020..f2ad726 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -245,10 +245,11 @@ XORDrawElement (ElementTypePtr Element, LocationType DX, LocationType DY)
@@ -35,6 +35,26 @@ index 64cf020..f016094 100644
    }
    END_LOOP;
  
+@@ -352,13 +353,15 @@ XORDrawBuffer (BufferTypePtr Buffer)
+   }
+   END_LOOP;
+ 
+-  /* and the vias, move offset by thickness/2 */
++  /* and the vias */
+   if (PCB->ViaOn)
+     VIA_LOOP (Buffer->Data);
+   {
+-    gui->draw_arc (Crosshair.GC,
+-		   x + via->X, y + via->Y,
+-		   via->Thickness / 2, via->Thickness / 2, 0, 360);
++    /* Make a copy of the via structure, moved to the correct position */
++    PinType moved_via = *via;
++    moved_via.X += x; moved_via.Y += y;
++
++    gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_via, false, false);
+   }
+   END_LOOP;
+ }
 diff --git a/src/draw.c b/src/draw.c
 index 8d6e0f6..76c9a89 100644
 --- a/src/draw.c
