@@ -255,16 +255,16 @@ XORDrawElement (ElementTypePtr Element, LocationType DX, LocationType DY)
   /* pads */
   PAD_LOOP (Element);
   {
-    /* Make a copy of the pad structure, moved to the correct position */
-    PadType moved_pad = *pad;
-    moved_pad.Point1.X += DX;
-    moved_pad.Point1.Y += DY;
-    moved_pad.Point2.X += DX;
-    moved_pad.Point2.Y += DY;
-
     if (PCB->InvisibleObjectsOn ||
         (TEST_FLAG (ONSOLDERFLAG, &moved_pad) != 0) == Settings.ShowSolderSide)
-      gui->thindraw_pcb_pad (Crosshair.GC, &moved_pad, false, false);
+      {
+        /* Make a copy of the pad structure, moved to the correct position */
+        PadType moved_pad = *pad;
+        moved_pad.Point1.X += DX; moved_pad.Point1.Y += DY;
+        moved_pad.Point2.X += DX; moved_pad.Point2.Y += DY;
+
+        gui->thindraw_pcb_pad (Crosshair.GC, &moved_pad, false, false);
+      }
   }
   END_LOOP;
   /* mark */
