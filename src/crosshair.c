@@ -245,10 +245,11 @@ XORDrawElement (ElementTypePtr Element, LocationType DX, LocationType DY)
   /* pin coordinates and angles have to be converted to X11 notation */
   PIN_LOOP (Element);
   {
-    gui->draw_arc (Crosshair.GC,
-		   DX + pin->X,
-		   DY + pin->Y,
-		   pin->Thickness / 2, pin->Thickness / 2, 0, 360);
+    /* Make a copy of the pin structure, moved to the correct position */
+    PinType moved_pin = *pin;
+    moved_pin.X += DX; moved_pin.Y += DY;
+
+    gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_pin, false, false);
   }
   END_LOOP;
 
@@ -352,13 +353,15 @@ XORDrawBuffer (BufferTypePtr Buffer)
   }
   END_LOOP;
 
-  /* and the vias, move offset by thickness/2 */
+  /* and the vias */
   if (PCB->ViaOn)
     VIA_LOOP (Buffer->Data);
   {
-    gui->draw_arc (Crosshair.GC,
-		   x + via->X, y + via->Y,
-		   via->Thickness / 2, via->Thickness / 2, 0, 360);
+    /* Make a copy of the via structure, moved to the correct position */
+    PinType moved_via = *via;
+    moved_via.X += x; moved_via.Y += y;
+
+    gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_via, false, false);
   }
   END_LOOP;
 }
