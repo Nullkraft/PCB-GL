@@ -1,5 +1,5 @@
 Bottom: a8bebc02722556c48ac1bf19e88dafbe5d1d0284
-Top:    71cbde2dd6f2a685034d542258dd6cd8a40b470a
+Top:    b1ced29faabe475364f8a43e0fd6487ad9456552
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-20 21:16:45 +0100
 
@@ -16,10 +16,28 @@ cursor.
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 64cf020..f2ad726 100644
+index 64cf020..fc93513 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -245,10 +245,11 @@ XORDrawElement (ElementTypePtr Element, LocationType DX, LocationType DY)
+@@ -86,6 +86,17 @@ static void XORDrawAttachedLine (LocationType, LocationType, LocationType,
+ 				 LocationType, BDimension);
+ static void XORDrawAttachedArc (BDimension);
+ 
++static void
++thindraw_moved_pv (PinType *pv, int x, int y, bool drawHole, bool mask)
++{
++  /* Make a copy of the pin structure, moved to the correct position */
++  PinType moved_pv = *pv;
++  moved_pv.X += x;
++  moved_pv.Y += y;
++
++  gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_pv, drawHole, mask);
++}
++
+ /* ---------------------------------------------------------------------------
+  * creates a tmp polygon with coordinates converted to screen system
+  */
+@@ -245,10 +256,7 @@ XORDrawElement (ElementTypePtr Element, LocationType DX, LocationType DY)
    /* pin coordinates and angles have to be converted to X11 notation */
    PIN_LOOP (Element);
    {
@@ -27,15 +45,11 @@ index 64cf020..f2ad726 100644
 -		   DX + pin->X,
 -		   DY + pin->Y,
 -		   pin->Thickness / 2, pin->Thickness / 2, 0, 360);
-+    /* Make a copy of the pin structure, moved to the correct position */
-+    PinType moved_pin = *pin;
-+    moved_pin.X += DX; moved_pin.Y += DY;
-+
-+    gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_pin, false, false);
++    thindraw_moved_pv (pin, DX, DY, false, false);
    }
    END_LOOP;
  
-@@ -352,13 +353,15 @@ XORDrawBuffer (BufferTypePtr Buffer)
+@@ -352,13 +360,11 @@ XORDrawBuffer (BufferTypePtr Buffer)
    }
    END_LOOP;
  
@@ -47,14 +61,27 @@ index 64cf020..f2ad726 100644
 -    gui->draw_arc (Crosshair.GC,
 -		   x + via->X, y + via->Y,
 -		   via->Thickness / 2, via->Thickness / 2, 0, 360);
-+    /* Make a copy of the via structure, moved to the correct position */
-+    PinType moved_via = *via;
-+    moved_via.X += x; moved_via.Y += y;
-+
-+    gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_via, false, false);
++    thindraw_moved_pv (via, x, y, false, false);
    }
    END_LOOP;
  }
+@@ -396,13 +402,9 @@ XORDrawMoveOrCopyObject (void)
+     {
+     case VIA_TYPE:
+       {
+-	PinTypePtr via = (PinTypePtr) Crosshair.AttachedObject.Ptr1;
+-
+-	gui->draw_arc (Crosshair.GC,
+-		       via->X + dx,
+-		       via->Y + dy,
+-		       via->Thickness / 2, via->Thickness / 2, 0, 360);
+-	break;
++        PinTypePtr via = (PinTypePtr) Crosshair.AttachedObject.Ptr1;
++        thindraw_moved_pv (via, dx, dy, false, false);
++        break;
+       }
+ 
+     case LINE_TYPE:
 diff --git a/src/draw.c b/src/draw.c
 index 8d6e0f6..76c9a89 100644
 --- a/src/draw.c
