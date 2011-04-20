@@ -1,5 +1,5 @@
 Bottom: a8bebc02722556c48ac1bf19e88dafbe5d1d0284
-Top:    a8bebc02722556c48ac1bf19e88dafbe5d1d0284
+Top:    b27186addca21db11a0adf843c58867fef1d8b5f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-20 21:16:45 +0100
 
@@ -8,4 +8,248 @@ Consolidate pin drawing routines
 
 ---
 
-
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 64cf020..0ab6753 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -245,10 +245,11 @@ XORDrawElement (ElementTypePtr Element, LocationType DX, LocationType DY)
+   /* pin coordinates and angles have to be converted to X11 notation */
+   PIN_LOOP (Element);
+   {
+-    gui->draw_arc (Crosshair.GC,
+-		   DX + pin->X,
+-		   DY + pin->Y,
+-		   pin->Thickness / 2, pin->Thickness / 2, 0, 360);
++    /* Make a copy of the pin structure, moved to the correct position */
++    PinType moved_pin = *pin;
++    moved_pin.X += DX; moved_pin.Y += DY;
++
++    gui->thindraw_pcb_pin (Crosshair.GC, &moved_pin, false, false);
+   }
+   END_LOOP;
+ 
+diff --git a/src/draw.c b/src/draw.c
+index 8d6e0f6..d2f873e 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -984,84 +984,18 @@ DrawSpecialPolygon (hidGC DrawGC,
+  * lowlevel drawing routine for pins and vias
+  */
+ static void
+-DrawPinOrViaLowLevel (PinTypePtr Ptr, bool drawHole)
++DrawPinOrViaLowLevel (PinTypePtr pin, bool drawHole)
+ {
+   if (Gathering)
+     {
+-      AddPart (Ptr);
++      AddPart (pin);
+       return;
+     }
+ 
+-  if (TEST_FLAG (HOLEFLAG, Ptr))
+-    {
+-      if (drawHole)
+-	{
+-	  gui->fill_circle (Output.bgGC, Ptr->X, Ptr->Y, Ptr->Thickness / 2);
+-	  gui->set_line_cap (Output.fgGC, Round_Cap);
+-	  gui->set_line_width (Output.fgGC, 0);
+-	  gui->draw_arc (Output.fgGC, Ptr->X, Ptr->Y,
+-			 Ptr->Thickness / 2, Ptr->Thickness / 2, 0, 360);
+-	}
+-      return;
+-    }
+-  if (TEST_FLAG (SQUAREFLAG, Ptr))
+-    {
+-      int l, r, t, b;
+-      l = Ptr->X - Ptr->Thickness / 2;
+-      b = Ptr->Y - Ptr->Thickness / 2;
+-      r = l + Ptr->Thickness;
+-      t = b + Ptr->Thickness;
+-      if (TEST_FLAG (THINDRAWFLAG, PCB))
+-        {
+-          gui->set_line_cap (Output.fgGC, Round_Cap);
+-          gui->set_line_width (Output.fgGC, 0);
+-          gui->draw_line (Output.fgGC, r, t, r, b);
+-          gui->draw_line (Output.fgGC, l, t, l, b);
+-          gui->draw_line (Output.fgGC, r, t, l, t);
+-          gui->draw_line (Output.fgGC, r, b, l, b);
+-        }
+-      else
+-        {
+-          gui->fill_rect (Output.fgGC, l, b, r, t);
+-        }
+-    }
+-  else if (TEST_FLAG (OCTAGONFLAG, Ptr))
+-    {
+-      DrawSpecialPolygon (Output.fgGC, Ptr->X, Ptr->Y, Ptr->Thickness,
+-			  TEST_FLAG (THINDRAWFLAG, PCB));
+-    }
++  if (TEST_FLAG (THINDRAWFLAG, PCB))
++    gui->thindraw_pcb_pin (Output.fgGC, Output.fgGC, pin, drawHole);
+   else
+-    {				/* draw a round pin or via */
+-      if (TEST_FLAG (THINDRAWFLAG, PCB))
+-	{
+-	  gui->set_line_cap (Output.fgGC, Round_Cap);
+-	  gui->set_line_width (Output.fgGC, 0);
+-	  gui->draw_arc (Output.fgGC, Ptr->X, Ptr->Y,
+-			 Ptr->Thickness / 2, Ptr->Thickness / 2, 0, 360);
+-	}
+-      else
+-	{
+-	  gui->fill_circle (Output.fgGC, Ptr->X, Ptr->Y, Ptr->Thickness / 2);
+-	}
+-    }
+-
+-  /* and the drilling hole  (which is always round */
+-  if (drawHole)
+-    {
+-      if (TEST_FLAG (THINDRAWFLAG, PCB))
+-	{
+-	  gui->set_line_cap (Output.fgGC, Round_Cap);
+-	  gui->set_line_width (Output.fgGC, 0);
+-	  gui->draw_arc (Output.fgGC,
+-			 Ptr->X, Ptr->Y, Ptr->DrillingHole / 2,
+-			 Ptr->DrillingHole / 2, 0, 360);
+-	}
+-      else
+-	{
+-	  gui->fill_circle (Output.bgGC, Ptr->X, Ptr->Y,
+-			    Ptr->DrillingHole / 2);
+-	}
+-    }
++    gui->fill_pcb_pin (Output.fgGC, Output.bgGC, pin, drawable);
+ }
+ 
+ /**************************************************************
+diff --git a/src/hid.h b/src/hid.h
+index d6f494a..27dad52 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -384,6 +384,8 @@ typedef enum
+                                   const BoxType *clip_box);
+     void (*fill_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
+     void (*thindraw_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
++    void (*fill_pcb_pin) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole);
++    void (*thindraw_pcb_pin) (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole);
+     void (*fill_rect) (hidGC gc_, int x1_, int y1_, int x2_, int y2_);
+ 
+ 
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 9de587f..cef0e88 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -304,10 +304,102 @@ common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
+ }
+ 
+ void
++common_fill_pcb_pv (hidGC gc, PinType *pv, bool drawHole)
++{
++  if (TEST_FLAG (HOLEFLAG, pv))
++    {
++      if (drawHole)
++        {
++          gui->fill_circle (gc, pv->X, pv->Y, pv->Thickness / 2);
++          gui->set_line_cap (gc, Round_Cap);
++          gui->set_line_width (Output.fgGC, 0);
++          gui->draw_arc (gc, pv->X, pv->Y,
++                         pv->Thickness / 2, pv->Thickness / 2, 0, 360);
++        }
++      return;
++    }
++
++  if (TEST_FLAG (SQUAREFLAG, pv))
++    {
++      int l, r, t, b;
++      l = pv->X - pv->Thickness / 2;
++      b = pv->Y - pv->Thickness / 2;
++      r = l + pv->Thickness;
++      t = b + pv->Thickness;
++
++      gui->fill_rect (gc, l, b, r, t);
++    }
++  else if (TEST_FLAG (OCTAGONFLAG, pv))
++    DrawSpecialPolygon (Output.fgGC, pv->X, pv->Y, pv->Thickness, false);
++  else                                /* draw a round pin or via */
++    gui->fill_circle (gc, pv->X, pv->Y, pv->Thickness / 2);
++
++  /* and the drilling hole  (which is always round) */
++  if (drawHole)
++    gui->fill_circle (Output.bgGC, pv->X, pv->Y, pv->DrillingHole / 2);
++}
++
++void
++common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole)
++{
++  if (TEST_FLAG (HOLEFLAG, pv))
++    {
++      if (drawHole)
++        {
++          gui->fill_circle (bg_gc, pv->X, pv->Y, pv->Thickness / 2);
++          gui->set_line_cap (bg_gc, Round_Cap);
++          gui->set_line_width (bg_gc, 0);
++          gui->draw_arc (bg_gc, pv->X, pv->Y,
++                         pv->Thickness / 2, pv->Thickness / 2, 0, 360);
++        }
++      return;
++    }
++
++  if (TEST_FLAG (SQUAREFLAG, pv))
++    {
++      int l, r, t, b;
++      l = pv->X - pv->Thickness / 2;
++      b = pv->Y - pv->Thickness / 2;
++      r = l + pv->Thickness;
++      t = b + pv->Thickness;
++
++      gui->set_line_cap (fg_gc, Round_Cap);
++      gui->set_line_width (fg_gc, 0);
++      gui->draw_line (fg_gc, r, t, r, b);
++      gui->draw_line (fg_gc, l, t, l, b);
++      gui->draw_line (fg_gc, r, t, l, t);
++      gui->draw_line (fg_gc, r, b, l, b);
++
++    }
++  else if (TEST_FLAG (OCTAGONFLAG, pv))
++    {
++      DrawSpecialPolygon (fg_gc, pv->X, pv->Y, pv->Thickness, true);
++    }
++  else
++    {				/* draw a round pin or via */
++      gui->set_line_cap (fg_gc, Round_Cap);
++      gui->set_line_width (fg_gc, 0);
++      gui->draw_arc (fg_gc, pv->X, pv->Y,
++                     pv->Thickness / 2, pv->Thickness / 2, 0, 360);
++    }
++
++  /* and the drilling hole  (which is always round */
++  if (drawHole)
++    {
++      gui->set_line_cap (bg_gc, Round_Cap);
++      gui->set_line_width (bg_gc, 0);
++      gui->draw_arc (bg_gc, pv->X, pv->Y, pv->DrillingHole / 2,
++                     pv->DrillingHole / 2, 0, 360);
++    }
++}
++
++void
+ common_draw_helpers_init (HID *hid)
+ {
+   hid->fill_pcb_polygon     = common_fill_pcb_polygon;
+   hid->thindraw_pcb_polygon = common_thindraw_pcb_polygon;
+   hid->fill_pcb_pad         = common_fill_pcb_pad;
+   hid->thindraw_pcb_pad     = common_thindraw_pcb_pad;
++  hid->fill_pcb_pv          = common_fill_pcb_pv;
++  hid->thindraw_pcb_pv      = common_thindraw_pcb_pv;
+ }
+diff --git a/src/hid/common/draw_helpers.h b/src/hid/common/draw_helpers.h
+index 4b1e827..40d8b21 100644
+--- a/src/hid/common/draw_helpers.h
++++ b/src/hid/common/draw_helpers.h
+@@ -4,4 +4,6 @@ void common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
+                                   const BoxType *clip_box);
+ void common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
+ void common_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
++void common_fill_pcb_pv (hidGC gc, PinType *pv, bool drawHole);
++void common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole);
+ void common_draw_helpers_init (HID *hid);
