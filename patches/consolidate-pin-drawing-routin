@@ -9,6 +9,9 @@ Adds two new HID APIs, fill_pcb_pv and thindraw_pcb_pv, splitting
 drawing code from DrawPadLowlevel() to common_fill_pcb_pv() and
 common_thindraw_pcb_pv() in hid/common/draw_helpers.c.
 
+Octagonal vias and pins are now correctly drawn when attached to the
+cursor.
+
 
 ---
 
