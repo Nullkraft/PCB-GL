@@ -5,6 +5,14 @@ Date:   2011-04-20 17:41:50 +0100
 
 hid/common: Provide a helper function for HIDs to use drawing helpers
 
+Gives the following changes:
+
+  batch HID no longer has NOP fill_pcb_polygon and thindraw_pcb_polygon
+  routines (This should not be an issue, as the drawing calls the common
+  helper routines use are still NOPs for the batch HID)
+
+
+
 
 ---
 
