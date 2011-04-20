@@ -1,7 +1,7 @@
-Bottom: 03244f178d73f8e647dd56c20b8b1e54c696bb95
-Top:    1dddd8b9518319d833ebc6b1798f928b514a56a0
+Bottom: 1fd6749e10ecdb74fe3ae8bb7dda3bc6bb2b72d8
+Top:    f8cfa321e912f925070674c233fb95deafb33ad7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-19 00:30:46 +0100
+Date:   2011-04-20 18:11:33 +0100
 
 Add support for a "poured" object.
 
@@ -2022,7 +2022,7 @@ index 521f60e..8b44d7b 100644
  				 FontTypePtr, FlagType, char *, char *,
  				 char *, LocationType, LocationType, BYTE,
 diff --git a/src/crosshair.c b/src/crosshair.c
-index fb7180e..e2d5b8e 100644
+index 25b71fb..c9a4451 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -48,7 +48,7 @@
@@ -2077,7 +2077,7 @@ index fb7180e..e2d5b8e 100644
  }
  
  /*-----------------------------------------------------------
-@@ -341,9 +363,11 @@ XORDrawBuffer (BufferTypePtr Buffer)
+@@ -327,9 +349,11 @@ XORDrawBuffer (BufferTypePtr Buffer)
  	/* the tmp polygon has n+1 points because the first
  	 * and the last one are set to the same coordinates
  	 */
@@ -2091,7 +2091,7 @@ index fb7180e..e2d5b8e 100644
  	}
  	END_LOOP;
        }
-@@ -443,6 +467,18 @@ XORDrawMoveOrCopyObject (void)
+@@ -429,6 +453,18 @@ XORDrawMoveOrCopyObject (void)
  	break;
        }
  
@@ -2110,7 +2110,7 @@ index fb7180e..e2d5b8e 100644
      case LINEPOINT_TYPE:
        {
  	LineTypePtr line;
-@@ -461,27 +497,27 @@ XORDrawMoveOrCopyObject (void)
+@@ -447,27 +483,27 @@ XORDrawMoveOrCopyObject (void)
  	break;
        }
  
@@ -2146,7 +2146,7 @@ index fb7180e..e2d5b8e 100644
  	break;
        }
  
-@@ -582,9 +618,9 @@ DrawAttached (void)
+@@ -568,9 +604,9 @@ DrawAttached (void)
  	}
        break;
  
@@ -2159,7 +2159,7 @@ index fb7180e..e2d5b8e 100644
        /* draw only if starting point is set */
        if (Crosshair.AttachedLine.State != STATE_FIRST)
  	gui->draw_line (Crosshair.GC,
-@@ -593,10 +629,10 @@ DrawAttached (void)
+@@ -579,10 +615,10 @@ DrawAttached (void)
  			Crosshair.AttachedLine.Point2.X,
  			Crosshair.AttachedLine.Point2.Y);
  
@@ -2173,7 +2173,7 @@ index fb7180e..e2d5b8e 100644
  	}
        break;
  
-@@ -1048,7 +1084,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
+@@ -1034,7 +1070,7 @@ FitCrosshairIntoGrid (LocationType X, LocationType Y)
  
    if (TEST_FLAG (SNAPPINFLAG, PCB))
      ans = SearchScreenGridSlop (Crosshair.X, Crosshair.Y,
@@ -2182,7 +2182,7 @@ index fb7180e..e2d5b8e 100644
    else
      ans = NO_TYPE;
  
-@@ -1198,6 +1234,6 @@ InitCrosshair (void)
+@@ -1184,6 +1220,6 @@ InitCrosshair (void)
  void
  DestroyCrosshair (void)
  {
@@ -2191,7 +2191,7 @@ index fb7180e..e2d5b8e 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index 8925892..6c3461f 100644
+index 80caf12..d943818 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -49,6 +49,7 @@
@@ -2270,7 +2270,7 @@ index 8925892..6c3461f 100644
  
    if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
      return;
-@@ -1605,6 +1630,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
+@@ -1476,6 +1501,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2319,7 +2319,7 @@ index 8925892..6c3461f 100644
   * lowlevel routine to element arcs
   */
  static void
-@@ -1923,6 +1990,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+@@ -1794,6 +1861,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
    DrawPolygonLowLevel (Polygon);
  }
  
@@ -2357,7 +2357,7 @@ index 8925892..6c3461f 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -2194,6 +2292,16 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -2065,6 +2163,16 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2374,7 +2374,7 @@ index 8925892..6c3461f 100644
   * erases an element
   */
  void
-@@ -2264,6 +2372,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -2135,6 +2243,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2384,7 +2384,7 @@ index 8925892..6c3461f 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -2311,6 +2422,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
+@@ -2182,6 +2293,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2, 0);
        break;
@@ -2798,10 +2798,10 @@ index 499e59e..ef6b466 100644
    {"removemode", FlagMode, REMOVE_MODE},
    {"rotatemode", FlagMode, ROTATE_MODE},
 diff --git a/src/global.h b/src/global.h
-index e449a34..5d163eb 100644
+index 0eca83b..5045833 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -251,19 +251,49 @@ typedef struct
+@@ -252,19 +252,49 @@ typedef struct
    void *Element;
  } TextType, *TextTypePtr;
  
@@ -2859,7 +2859,7 @@ index e449a34..5d163eb 100644
  };
  
  typedef struct			/* holds information about arcs */
-@@ -277,26 +307,25 @@ typedef struct			/* holds information about arcs */
+@@ -278,26 +308,25 @@ typedef struct			/* holds information about arcs */
      Delta;
  } ArcType, *ArcTypePtr;
  
@@ -2895,7 +2895,7 @@ index e449a34..5d163eb 100644
    bool On;			/* visible flag */
    char *Color,			/* color */
     *SelectedColor;
-@@ -584,7 +613,8 @@ typedef struct			/* holds cursor information */
+@@ -585,7 +614,8 @@ typedef struct			/* holds cursor information */
    bool On;			/* flag for 'is visible' */
    AttachedLineType AttachedLine;	/* data of new lines... */
    AttachedBoxType AttachedBox;
@@ -2905,7 +2905,7 @@ index e449a34..5d163eb 100644
    AttachedObjectType AttachedObject;	/* data of attached objects */
    enum crosshair_shape shape; /* shape of crosshair */
  } CrosshairType, *CrosshairTypePtr;
-@@ -699,13 +729,15 @@ typedef struct
+@@ -700,13 +730,15 @@ typedef struct
    void *(*Line) (LayerTypePtr, LineTypePtr);
    void *(*Text) (LayerTypePtr, TextTypePtr);
    void *(*Polygon) (LayerTypePtr, PolygonTypePtr);
@@ -2938,7 +2938,7 @@ index 9b6e612..56fa714 100644
         {"Remove" checked=removemode,1 Mode(Remove) a={"F8" "<Key>F8"}}
         {"Rotate" checked=rotatemode,1 Mode(Rotate) a={"F9" "<Key>F9"}}
 diff --git a/src/hid/gcode/gcode.c b/src/hid/gcode/gcode.c
-index 9360cb7..4907614 100644
+index 6491afd..9bede33 100644
 --- a/src/hid/gcode/gcode.c
 +++ b/src/hid/gcode/gcode.c
 @@ -282,7 +282,7 @@ gcode_choose_groups ()
@@ -2951,7 +2951,7 @@ index 9360cb7..4907614 100644
  	  /* layer isn't empty */
  
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 794d26f..4d9ddab 100644
+index b65d678..4cc540f 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -445,7 +445,7 @@ gerber_do_export (HID_Attr_Val * options)
@@ -3064,7 +3064,7 @@ index b3b5983..411b018 100644
    {NULL, NULL, NULL, "remove", REMOVE_MODE, del},
    {NULL, NULL, NULL, "rotate", ROTATE_MODE, rot},
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index f5cd21d..d0b0245 100644
+index 7f69d75..00935b3 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -528,7 +528,7 @@ nelma_choose_groups()
@@ -3077,7 +3077,7 @@ index f5cd21d..d0b0245 100644
  
  			/*
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 9e23a07..36a3c04 100644
+index f0fb55e..e64c7b4 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -344,7 +344,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
@@ -3090,7 +3090,7 @@ index 9e23a07..36a3c04 100644
      }
    print_group[GetLayerGroupNumberByNumber (solder_silk_layer)] = 1;
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index 867f4e7..0452ab4 100644
+index c37dcbf..d307c67 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
 @@ -178,7 +178,7 @@ eps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
@@ -3103,7 +3103,7 @@ index 867f4e7..0452ab4 100644
      }
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 02cd152..bdc986c 100644
+index e5b12cb..dcc8fbe 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -500,7 +500,7 @@ ps_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
