@@ -1,0 +1,32 @@
+Bottom: ba3606552b2c48b5b22f9696f74a17d5e2a8c5c5
+Top:    a68c181b0cb559844ee84c750277438bdbd7bf5c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-20 17:29:41 +0100
+
+Refresh of tidy-up-pad-drawing-routines
+
+---
+
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 529af65..b1b2123 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -339,7 +339,7 @@ common_fill_pcb_pad (hidGC gc, PadTypePtr Pad, bool clear, bool mask)
+ }
+ 
+ void
+-common_draw_helpers_init (HID hid)
++common_draw_helpers_init (HID *hid)
+ {
+   hid->fill_pcb_polygon     = common_fill_pcb_polygon;
+   hid->thindraw_pcb_polygon = common_thindraw_pcb_polygon;
+diff --git a/src/hid/common/draw_helpers.h b/src/hid/common/draw_helpers.h
+index c21224f..4b1e827 100644
+--- a/src/hid/common/draw_helpers.h
++++ b/src/hid/common/draw_helpers.h
+@@ -4,4 +4,4 @@ void common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
+                                   const BoxType *clip_box);
+ void common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
+ void common_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
+-void common_draw_helpers_init (HID hid);
++void common_draw_helpers_init (HID *hid);
