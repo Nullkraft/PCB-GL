@@ -339,7 +339,7 @@ common_fill_pcb_pad (hidGC gc, PadTypePtr Pad, bool clear, bool mask)
 }
 
 void
-common_draw_helpers_init (HID hid)
+common_draw_helpers_init (HID *hid)
 {
   hid->fill_pcb_polygon     = common_fill_pcb_polygon;
   hid->thindraw_pcb_polygon = common_thindraw_pcb_polygon;
