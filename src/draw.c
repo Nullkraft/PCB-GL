@@ -861,7 +861,7 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
 
   /* HACK: Subcomposite polygons separately from other layer primitives */
   /* Reset the compositing */
-  gui->set_layer (0, GetGroupOfLayer (Layer), 0);
+  gui->set_layer (0, GetLayerGroupNumberByPointer (Layer), 0);
 
   if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
     return;
