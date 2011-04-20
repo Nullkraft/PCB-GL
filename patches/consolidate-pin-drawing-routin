@@ -1,5 +1,5 @@
 Bottom: a8bebc02722556c48ac1bf19e88dafbe5d1d0284
-Top:    48f138c25d9e32aa9c929d1933a58278fc39a9de
+Top:    4c4433d906639aed55de7876e8d857d10601b643
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-20 21:16:45 +0100
 
@@ -13,7 +13,7 @@ common_thindraw_pcb_pv() in hid/common/draw_helpers.c.
 ---
 
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 64cf020..cd52f4a 100644
+index 64cf020..f016094 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -245,10 +245,11 @@ XORDrawElement (ElementTypePtr Element, LocationType DX, LocationType DY)
@@ -28,7 +28,7 @@ index 64cf020..cd52f4a 100644
 +    PinType moved_pin = *pin;
 +    moved_pin.X += DX; moved_pin.Y += DY;
 +
-+    gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_pin, true, false);
++    gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_pin, false, false);
    }
    END_LOOP;
  
