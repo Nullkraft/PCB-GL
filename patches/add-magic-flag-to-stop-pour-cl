@@ -1,5 +1,5 @@
-Bottom: 9690e3dfcba42de50df814e729354b6e9ff07e85
-Top:    319fa2a4756a751759759cf79d3d634f47fb62e1
+Bottom: 24fec28c58fd10d703dcf46fa145482ec4fc60e8
+Top:    08d36fb4fb333376ab87dd9c205e27ffbbbf9872
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-20 18:11:35 +0100
 
@@ -36,10 +36,10 @@ index df2afc0..5aa4f95 100644
    ptr->ThermStyle = 4;
    ptr->IsleArea = 2.e8;
 diff --git a/src/global.h b/src/global.h
-index 5045833..17b10ad 100644
+index 3f7166c..dac0744 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -418,6 +418,7 @@ typedef struct			/* holds all objects */
+@@ -419,6 +419,7 @@ typedef struct			/* holds all objects */
     *rat_tree;
    struct PCBType *pcb;
    LayerType Layer[MAX_LAYER + 2];	/* add 2 silkscreen layers */

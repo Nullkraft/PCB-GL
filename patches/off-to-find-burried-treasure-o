@@ -1,5 +1,5 @@
-Bottom: 319fa2a4756a751759759cf79d3d634f47fb62e1
-Top:    bf01691c26508acb4735769747eae2ca9ed1ece3
+Bottom: 08d36fb4fb333376ab87dd9c205e27ffbbbf9872
+Top:    0b5e6cb43434b16344d6f963a5bb00e7087320af
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-20 18:11:35 +0100
 
@@ -116,10 +116,10 @@ index cfab1ca..72949d2 100644
    DrawVia (Via, 0);
    Draw ();
 diff --git a/src/draw.c b/src/draw.c
-index d943818..afa16f0 100644
+index 2fa21ef..4659944 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -1932,6 +1932,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -1732,6 +1732,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
    if (!Polygon->Clipped)
      return;
  
