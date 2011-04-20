@@ -202,15 +202,15 @@ common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
 void
 common_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
 {
-  int w = clear ? (mask ? Pad->Mask
-                        : Pad->Thickness + Pad->Clearance)
-                : Pad->Thickness;
+  int w = clear ? (mask ? pad->Mask
+                        : pad->Thickness + pad->Clearance)
+                : pad->Thickness;
   int x1, y1, x2, y2;
   int t = w / 2;
-  x1 = Pad->Point1.X;
-  y1 = Pad->Point1.Y;
-  x2 = Pad->Point2.X;
-  y2 = Pad->Point2.Y;
+  x1 = pad->Point1.X;
+  y1 = pad->Point1.Y;
+  x2 = pad->Point2.X;
+  y2 = pad->Point2.Y;
   if (x1 > x2 || y1 > y2)
     {
       int temp_x = x1;
@@ -220,7 +220,7 @@ common_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
     }
   gui->set_line_cap (gc, Round_Cap);
   gui->set_line_width (gc, 0);
-  if (TEST_FLAG (SQUAREFLAG, Pad))
+  if (TEST_FLAG (SQUAREFLAG, pad))
     {
       /* slanted square pad */
       float tx, ty, theta;
@@ -271,70 +271,35 @@ common_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
 void
 common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
 {
-  int w = clear ? (mask ? Pad->Mask
-                        : Pad->Thickness + Pad->Clearance)
-                : Pad->Thickness;
+  int w = clear ? (mask ? pad->Mask
+                        : pad->Thickness + pad->Clearance)
+                : pad->Thickness;
 
-  if (Pad->Point1.X == Pad->Point2.X &&
-      Pad->Point1.Y == Pad->Point2.Y)
+  if (pad->Point1.X == pad->Point2.X &&
+      pad->Point1.Y == pad->Point2.Y)
     {
-      if (TEST_FLAG (SQUAREFLAG, Pad))
+      if (TEST_FLAG (SQUAREFLAG, pad))
         {
           int l, r, t, b;
-          l = Pad->Point1.X - w / 2;
-          b = Pad->Point1.Y - w / 2;
+          l = pad->Point1.X - w / 2;
+          b = pad->Point1.Y - w / 2;
           r = l + w;
           t = b + w;
           gui->fill_rect (gc, l, b, r, t);
         }
       else
         {
-          gui->fill_circle (gc, Pad->Point1.X, Pad->Point1.Y, w / 2);
+          gui->fill_circle (gc, pad->Point1.X, pad->Point1.Y, w / 2);
         }
     }
   else
     {
-      gui->set_line_cap (gc, TEST_FLAG (SQUAREFLAG, Pad) ?
+      gui->set_line_cap (gc, TEST_FLAG (SQUAREFLAG, pad) ?
                                Square_Cap : Round_Cap);
       gui->set_line_width (gc, w);
 
-      gui->draw_line (gc, Pad->Point1.X, Pad->Point1.Y,
-                          Pad->Point2.X, Pad->Point2.Y);
-    }
-}
-
-void
-common_fill_pcb_pad (hidGC gc, PadTypePtr Pad, bool clear, bool mask)
-{
-  int w = clear ? (mask ? Pad->Mask
-                        : Pad->Thickness + Pad->Clearance)
-                : Pad->Thickness;
-
-  if (Pad->Point1.X == Pad->Point2.X &&
-      Pad->Point1.Y == Pad->Point2.Y)
-    {
-      if (TEST_FLAG (SQUAREFLAG, Pad))
-        {
-          int l, r, t, b;
-          l = Pad->Point1.X - w / 2;
-          b = Pad->Point1.Y - w / 2;
-          r = l + w;
-          t = b + w;
-          gui->fill_rect (gc, l, b, r, t);
-        }
-      else
-        {
-          gui->fill_circle (gc, Pad->Point1.X, Pad->Point1.Y, w / 2);
-        }
-    }
-  else
-    {
-      gui->set_line_cap (gc, TEST_FLAG (SQUAREFLAG, Pad) ?
-                               Square_Cap : Round_Cap);
-      gui->set_line_width (gc, w);
-
-      gui->draw_line (gc, Pad->Point1.X, Pad->Point1.Y,
-                          Pad->Point2.X, Pad->Point2.Y);
+      gui->draw_line (gc, pad->Point1.X, pad->Point1.Y,
+                          pad->Point2.X, pad->Point2.Y);
     }
 }
 

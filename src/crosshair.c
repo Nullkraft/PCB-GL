@@ -264,7 +264,7 @@ XORDrawElement (ElementTypePtr Element, LocationType DX, LocationType DY)
 
     if (PCB->InvisibleObjectsOn ||
         (TEST_FLAG (ONSOLDERFLAG, &moved_pad) != 0) == Settings.ShowSolderSide)
-      thindraw_pcb_pad (Crosshair.GC, &moved_pad, false, false);
+      gui->thindraw_pcb_pad (Crosshair.GC, &moved_pad, false, false);
   }
   END_LOOP;
   /* mark */
