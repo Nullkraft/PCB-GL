@@ -1,0 +1,416 @@
+Bottom: 805d7b9361a26941a30210418402d5e94d9d914d
+Top:    f1b7e21968beea0d56af76b4f20cd640b851e0b5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-20 17:55:15 +0100
+
+Refresh of tidy-up-pad-drawing-routines
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 7d9fcb4..a3d5da7 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -255,29 +255,15 @@ XORDrawElement (ElementTypePtr Element, LocationType DX, LocationType DY)
+   /* pads */
+   PAD_LOOP (Element);
+   {
+-    if ((TEST_FLAG (ONSOLDERFLAG, pad) != 0) ==
+-	Settings.ShowSolderSide || PCB->InvisibleObjectsOn)
++    if (PCB->InvisibleObjectsOn ||
++        (TEST_FLAG (ONSOLDERFLAG, &moved_pad) != 0) == Settings.ShowSolderSide)
+       {
+-	if (pad->Point1.X == pad->Point2.X
+-	    || pad->Point1.Y == pad->Point2.Y)
+-	  {
+-	    int minx, miny, maxx, maxy;
+-	    minx = DX + MIN (pad->Point1.X, pad->Point2.X) - pad->Thickness/2;
+-	    maxx = DX + MAX (pad->Point1.X, pad->Point2.X) + pad->Thickness/2;
+-	    miny = DY + MIN (pad->Point1.Y, pad->Point2.Y) - pad->Thickness/2;
+-	    maxy = DY + MAX (pad->Point1.Y, pad->Point2.Y) + pad->Thickness/2;
+-	    gui->draw_line (Crosshair.GC, minx, miny, maxx, miny);
+-	    gui->draw_line (Crosshair.GC, minx, miny, minx, maxy);
+-	    gui->draw_line (Crosshair.GC, maxx, miny, maxx, maxy);
+-	    gui->draw_line (Crosshair.GC, minx, maxy, maxx, maxy);
+-	  }
+-	else
+-	  {
+-	    /* FIXME: draw outlines, not centerlines.  */
+-	    gui->draw_line (Crosshair.GC,
+-			    DX + pad->Point1.X, DY + pad->Point1.Y,
+-			    DX + pad->Point2.X, DY + pad->Point2.Y);
+-	  }
++        /* Make a copy of the pad structure, moved to the correct position */
++        PadType moved_pad = *pad;
++        moved_pad.Point1.X += DX; moved_pad.Point1.Y += DY;
++        moved_pad.Point2.X += DX; moved_pad.Point2.Y += DY;
++
++        gui->thindraw_pcb_pad (Crosshair.GC, &moved_pad, false, false);
+       }
+   }
+   END_LOOP;
+diff --git a/src/draw.c b/src/draw.c
+index 707969a..8d6e0f6 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1227,9 +1227,6 @@ DrawPinOrViaNameLowLevel (PinTypePtr Ptr)
+ static void
+ DrawPadLowLevel (hidGC gc, PadTypePtr Pad, bool clear, bool mask)
+ {
+-  int w = clear ? (mask ? Pad->Mask : Pad->Thickness + Pad->Clearance)
+-		: Pad->Thickness;
+-
+   if (Gathering)
+     {
+       AddPart (Pad);
+@@ -1241,135 +1238,9 @@ DrawPadLowLevel (hidGC gc, PadTypePtr Pad, bool clear, bool mask)
+ 
+   if (TEST_FLAG (THINDRAWFLAG, PCB) ||
+       (clear && TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
+-    {
+-      int x1, y1, x2, y2, t, t2;
+-      t = w / 2;
+-      t2 = w - t;
+-      x1 = Pad->Point1.X;
+-      y1 = Pad->Point1.Y;
+-      x2 = Pad->Point2.X;
+-      y2 = Pad->Point2.Y;
+-      if (x1 > x2 || y1 > y2)
+-	{
+-	  /* this is a silly way to swap the variables */
+-	  x1 ^= x2;
+-	  x2 ^= x1;
+-	  x1 ^= x2;
+-	  y1 ^= y2;
+-	  y2 ^= y1;
+-	  y1 ^= y2;
+-	}
+-      gui->set_line_cap (gc, Round_Cap);
+-      gui->set_line_width (gc, 0);
+-      if (TEST_FLAG (SQUAREFLAG, Pad)
+-	  && (x1 == x2 || y1 == y2))
+-	{
+-	  x1 -= t;
+-	  y1 -= t;
+-	  x2 += t2;
+-	  y2 += t2;
+-	  gui->draw_line (gc, x1, y1, x1, y2);
+-	  gui->draw_line (gc, x1, y2, x2, y2);
+-	  gui->draw_line (gc, x2, y2, x2, y1);
+-	  gui->draw_line (gc, x2, y1, x1, y1);
+-	}
+-      else if (TEST_FLAG (SQUAREFLAG, Pad))
+-	{
+-	  /* slanted square pad */
+-	  float tx, ty, theta;
+-
+-	  theta = atan2 (y2-y1, x2-x1);
+-
+-	  /* T is a vector half a thickness long, in the direction of
+-	     one of the corners.  */
+-	  tx = t * cos (theta + M_PI/4) * sqrt(2.0);
+-	  ty = t * sin (theta + M_PI/4) * sqrt(2.0);
+-
+-	  gui->draw_line (gc, x1-tx, y1-ty, x2+ty, y2-tx);
+-	  gui->draw_line (gc, x2+ty, y2-tx, x2+tx, y2+ty);
+-	  gui->draw_line (gc, x2+tx, y2+ty, x1-ty, y1+tx);
+-	  gui->draw_line (gc, x1-ty, y1+tx, x1-tx, y1-ty);
+-	}
+-      else if (x1 == x2 && y1 == y2)
+-	{
+-	  gui->draw_arc (gc, x1, y1, w / 2, w / 2, 0, 360);
+-	}
+-      else if (x1 == x2)
+-	{
+-	  gui->draw_line (gc, x1 - t, y1, x2 - t, y2);
+-	  gui->draw_line (gc, x1 + t2, y1, x2 + t2, y2);
+-	  gui->draw_arc (gc, x1, y1, w / 2, w / 2, 0, -180);
+-	  gui->draw_arc (gc, x2, y2, w / 2, w / 2, 180, -180);
+-	}
+-      else if (y1 == y2)
+-	{
+-	  gui->draw_line (gc, x1, y1 - t, x2, y2 - t);
+-	  gui->draw_line (gc, x1, y1 + t2, x2, y2 + t2);
+-	  gui->draw_arc (gc, x1, y1, w / 2, w / 2, 90, -180);
+-	  gui->draw_arc (gc, x2, y2, w / 2, w / 2, 270, -180);
+-	}
+-      else
+-	{
+-	  /* Slanted round-end pads.  */
+-	  LocationType dx, dy, ox, oy;
+-	  float h;
+-
+-	  dx = x2 - x1;
+-	  dy = y2 - y1;
+-	  h = t / sqrt (SQUARE (dx) + SQUARE (dy));
+-	  ox = dy * h + 0.5 * SGN (dy);
+-	  oy = -(dx * h + 0.5 * SGN (dx));
+-
+-	  gui->draw_line (gc, x1 + ox, y1 + oy, x2 + ox, y2 + oy);
+-
+-	  if (abs (ox) >= pixel_slop || abs (oy) >= pixel_slop)
+-	    {
+-	      LocationType angle = atan2 ((float) dx, (float) dy) * 57.295779;
+-	      gui->draw_line (gc, x1 - ox, y1 - oy, x2 - ox, y2 - oy);
+-	      gui->draw_arc (gc,
+-			     x1, y1, t, t, angle - 180, 180);
+-	      gui->draw_arc (gc, x2, y2, t, t, angle, 180);
+-	    }
+-	}
+-    }
+-  else if (Pad->Point1.X == Pad->Point2.X
+-           && Pad->Point1.Y == Pad->Point2.Y)
+-    {
+-      if (TEST_FLAG (SQUAREFLAG, Pad))
+-        {
+-          int l, r, t, b;
+-          l = Pad->Point1.X - w / 2;
+-          b = Pad->Point1.Y - w / 2;
+-          r = l + w;
+-          t = b + w;
+-          gui->fill_rect (gc, l, b, r, t);
+-        }
+-      else
+-        {
+-          gui->fill_circle (gc, Pad->Point1.X, Pad->Point1.Y, w / 2);
+-        }
+-    }
++    gui->thindraw_pcb_pad (gc, Pad, clear, mask);
+   else
+-    {
+-      gui->set_line_cap (gc,
+-                         TEST_FLAG (SQUAREFLAG,
+-                                    Pad) ? Square_Cap : Round_Cap);
+-      gui->set_line_width (gc, w);
+-
+-      gui->draw_line (gc,
+-                      Pad->Point1.X, Pad->Point1.Y,
+-                      Pad->Point2.X, Pad->Point2.Y);
+-    }
+-#if 0
+-  { /* Draw bounding box for test */
+-    BoxType *box = &Pad->BoundingBox;
+-    gui->set_line_width (gc, 0);
+-    gui->draw_line (gc, box->X1, box->Y1, box->X1, box->Y2);
+-    gui->draw_line (gc, box->X1, box->Y2, box->X2, box->Y2);
+-    gui->draw_line (gc, box->X2, box->Y2, box->X2, box->Y1);
+-    gui->draw_line (gc, box->X2, box->Y1, box->X1, box->Y1);
+-  }
+-#endif
++    gui->fill_pcb_pad (gc, Pad, clear, mask);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+diff --git a/src/global.h b/src/global.h
+index e449a34..0eca83b 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -54,6 +54,7 @@
+ /* Forward declarations for structures the HIDs need.  */
+ typedef struct BoxType BoxType, *BoxTypePtr;
+ typedef struct polygon_st PolygonType, *PolygonTypePtr;
++typedef struct pad_st PadType, *PadTypePtr;
+ typedef struct drc_violation_st DrcViolationType, *DrcViolationTypePtr;
+ typedef struct rtree rtree_t;
+ typedef struct AttributeListType AttributeListType, *AttributeListTypePtr;
+@@ -310,14 +311,14 @@ typedef struct			/* a rat-line */
+   Cardinal group1, group2;	/* the layer group each point is on */
+ } RatType, *RatTypePtr;
+ 
+-typedef struct			/* a SMD pad */
++struct pad_st			/* a SMD pad */
+ {
+   ANYLINEFIELDS;
+   BDimension Mask;
+   char *Name, *Number;		/* 'Line' */
+   void *Element;
+   void *Spare;
+-} PadType, *PadTypePtr;
++};
+ 
+ typedef struct
+ {
+diff --git a/src/hid.h b/src/hid.h
+index b13e75b..d6f494a 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -382,6 +382,8 @@ typedef enum
+                               const BoxType *clip_box);
+     void (*thindraw_pcb_polygon) (hidGC gc_, PolygonType *poly,
+                                   const BoxType *clip_box);
++    void (*fill_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
++    void (*thindraw_pcb_pad) (hidGC gc_, PadType *pad, bool clip, bool mask);
+     void (*fill_rect) (hidGC gc_, int x1_, int y1_, int x2_, int y2_);
+ 
+ 
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index a9835d0..9de587f 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -200,8 +200,114 @@ common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
+ }
+ 
+ void
++common_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
++{
++  int w = clear ? (mask ? pad->Mask
++                        : pad->Thickness + pad->Clearance)
++                : pad->Thickness;
++  int x1, y1, x2, y2;
++  int t = w / 2;
++  x1 = pad->Point1.X;
++  y1 = pad->Point1.Y;
++  x2 = pad->Point2.X;
++  y2 = pad->Point2.Y;
++  if (x1 > x2 || y1 > y2)
++    {
++      int temp_x = x1;
++      int temp_y = y1;
++      x1 = x2; x2 = temp_x;
++      y1 = y2; y2 = temp_y;
++    }
++  gui->set_line_cap (gc, Round_Cap);
++  gui->set_line_width (gc, 0);
++  if (TEST_FLAG (SQUAREFLAG, pad))
++    {
++      /* slanted square pad */
++      float tx, ty, theta;
++
++      if (x1 == x2 || y1 == y2)
++        theta = 0;
++      else
++        theta = atan2 (y2 - y1, x2 - x1);
++
++      /* T is a vector half a thickness long, in the direction of
++         one of the corners.  */
++      tx = t * cos (theta + M_PI / 4) * sqrt (2.0);
++      ty = t * sin (theta + M_PI / 4) * sqrt (2.0);
++
++      gui->draw_line (gc, x1 - tx, y1 - ty, x2 + ty, y2 - tx);
++      gui->draw_line (gc, x2 + ty, y2 - tx, x2 + tx, y2 + ty);
++      gui->draw_line (gc, x2 + tx, y2 + ty, x1 - ty, y1 + tx);
++      gui->draw_line (gc, x1 - ty, y1 + tx, x1 - tx, y1 - ty);
++    }
++  else if (x1 == x2 && y1 == y2)
++    {
++      gui->draw_arc (gc, x1, y1, t, t, 0, 360);
++    }
++  else
++    {
++      /* Slanted round-end pads.  */
++      LocationType dx, dy, ox, oy;
++      float h;
++
++      dx = x2 - x1;
++      dy = y2 - y1;
++      h = t / sqrt (SQUARE (dx) + SQUARE (dy));
++      ox = dy * h + 0.5 * SGN (dy);
++      oy = -(dx * h + 0.5 * SGN (dx));
++
++      gui->draw_line (gc, x1 + ox, y1 + oy, x2 + ox, y2 + oy);
++
++      if (abs (ox) >= pixel_slop || abs (oy) >= pixel_slop)
++        {
++          LocationType angle = atan2 (dx, dy) * 57.295779;
++          gui->draw_line (gc, x1 - ox, y1 - oy, x2 - ox, y2 - oy);
++          gui->draw_arc (gc, x1, y1, t, t, angle - 180, 180);
++          gui->draw_arc (gc, x2, y2, t, t, angle, 180);
++        }
++    }
++}
++
++void
++common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
++{
++  int w = clear ? (mask ? pad->Mask
++                        : pad->Thickness + pad->Clearance)
++                : pad->Thickness;
++
++  if (pad->Point1.X == pad->Point2.X &&
++      pad->Point1.Y == pad->Point2.Y)
++    {
++      if (TEST_FLAG (SQUAREFLAG, pad))
++        {
++          int l, r, t, b;
++          l = pad->Point1.X - w / 2;
++          b = pad->Point1.Y - w / 2;
++          r = l + w;
++          t = b + w;
++          gui->fill_rect (gc, l, b, r, t);
++        }
++      else
++        {
++          gui->fill_circle (gc, pad->Point1.X, pad->Point1.Y, w / 2);
++        }
++    }
++  else
++    {
++      gui->set_line_cap (gc, TEST_FLAG (SQUAREFLAG, pad) ?
++                               Square_Cap : Round_Cap);
++      gui->set_line_width (gc, w);
++
++      gui->draw_line (gc, pad->Point1.X, pad->Point1.Y,
++                          pad->Point2.X, pad->Point2.Y);
++    }
++}
++
++void
+ common_draw_helpers_init (HID *hid)
+ {
+   hid->fill_pcb_polygon     = common_fill_pcb_polygon;
+   hid->thindraw_pcb_polygon = common_thindraw_pcb_polygon;
++  hid->fill_pcb_pad         = common_fill_pcb_pad;
++  hid->thindraw_pcb_pad     = common_thindraw_pcb_pad;
+ }
+diff --git a/src/hid/common/draw_helpers.h b/src/hid/common/draw_helpers.h
+index 6710b24..4b1e827 100644
+--- a/src/hid/common/draw_helpers.h
++++ b/src/hid/common/draw_helpers.h
+@@ -2,4 +2,6 @@ void common_fill_pcb_polygon (hidGC gc, PolygonType *poly,
+                               const BoxType *clip_box);
+ void common_thindraw_pcb_polygon (hidGC gc, PolygonType *poly,
+                                   const BoxType *clip_box);
++void common_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
++void common_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask);
+ void common_draw_helpers_init (HID *hid);
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index fd86b6a..b6d26f8 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -159,6 +159,18 @@ nogui_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+ }
+ 
+ static void
++nogui_fill_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
++{
++  CRASH;
++}
++
++static void
++nogui_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
++{
++  CRASH;
++}
++
++static void
+ nogui_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
+ {
+   CRASH;
+@@ -437,6 +449,8 @@ HID hid_nogui = {
+   nogui_fill_polygon,
+   nogui_fill_pcb_polygon,
+   0 /* nogui_thindraw_pcb_polygon */ ,
++  nogui_fill_pcb_pad,
++  nogui_thindraw_pcb_pad,
+   nogui_fill_rect,
+   nogui_calibrate,
+   nogui_shift_is_pressed,
+@@ -492,6 +506,8 @@ apply_default_hid (HID * d, HID * s)
+   AD (fill_polygon);
+   AD (fill_pcb_polygon);
+   AD (thindraw_pcb_polygon);
++  AD (fill_pcb_pad);
++  AD (thindraw_pcb_pad);
+   AD (calibrate);
+   AD (shift_is_pressed);
+   AD (control_is_pressed);
