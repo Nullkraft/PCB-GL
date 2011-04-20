@@ -1035,6 +1035,9 @@ HID gcode_hid;
 void
 hid_gcode_init ()
 {
+
+  common_draw_helpers_init (&gcode_hid);
+
   gcode_hid.struct_size         = sizeof (HID);
   gcode_hid.name                = "gcode";
   gcode_hid.description         = "G-CODE export.";
@@ -1059,7 +1062,6 @@ hid_gcode_init ()
   gcode_hid.draw_rect           = gcode_draw_rect;
   gcode_hid.fill_circle         = gcode_fill_circle;
   gcode_hid.fill_polygon        = gcode_fill_polygon;
-  gcode_hid.fill_pcb_polygon    = common_fill_pcb_polygon;
   gcode_hid.fill_rect           = gcode_fill_rect;
   gcode_hid.calibrate           = gcode_calibrate;
   gcode_hid.set_crosshair       = gcode_set_crosshair;
