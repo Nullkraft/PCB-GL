@@ -1,0 +1,29 @@
+Bottom: 86e3236146432b5b6e76ac7bc6479a7edbead6b5
+Top:    5c677d6a1dce3e30e5337c0962851e1f1523ce26
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-20 23:56:32 +0100
+
+Refresh of consolidate-pin-drawing-routin
+
+---
+
+diff --git a/src/hid/common/hidnogui.c b/src/hid/common/hidnogui.c
+index 4136704..1568cd5 100644
+--- a/src/hid/common/hidnogui.c
++++ b/src/hid/common/hidnogui.c
+@@ -171,13 +171,13 @@ nogui_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
+ }
+ 
+ static void
+-nogui_fill_pcb_pv (hidGC gc, PinType *pad, bool clear, bool mask)
++nogui_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pad, bool drawHole, bool mask)
+ {
+   CRASH;
+ }
+ 
+ static void
+-nogui_thindraw_pcb_pv (hidGC gc, PinType *pad, bool clear, bool mask)
++nogui_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pad, bool drawHole, bool mask)
+ {
+   CRASH;
+ }
