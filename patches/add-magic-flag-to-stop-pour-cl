@@ -1,7 +1,7 @@
-Bottom: 13f8c082bd7468c6930bb9b62b15b3283335de76
-Top:    03f020d2f82d728679d5c29d31b00ce275bcc123
+Bottom: 96dad745fa8be55a29ea6d484d6c09d924ddf9ec
+Top:    ae280b6df15185764fa1aa493ac7f2b0f17cbe34
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-19 00:30:53 +0100
+Date:   2011-04-20 18:11:41 +0100
 
 Add magic flag to stop pour clipping for off-screen buffers
 
@@ -36,10 +36,10 @@ index e244739..4cb1a08 100644
    ptr->ThermStyle = 4;
    ptr->IsleArea = 2.e8;
 diff --git a/src/global.h b/src/global.h
-index 5d163eb..b485a1d 100644
+index 5045833..17b10ad 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -417,6 +417,7 @@ typedef struct			/* holds all objects */
+@@ -418,6 +418,7 @@ typedef struct			/* holds all objects */
     *rat_tree;
    struct PCBType *pcb;
    LayerType Layer[MAX_LAYER + 2];	/* add 2 silkscreen layers */
