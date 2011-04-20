@@ -1,0 +1,20 @@
+Bottom: 2db3ecfe88c64a5860045bcd32214ce536ba35ab
+Top:    3880c22443b939938a89ad668884e96b9ba0fd23
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-21 00:13:10 +0100
+
+Refresh of crosshair-c-use-a-dummy-via-st
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 3d352b6..14b6491 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -572,7 +572,6 @@ DrawAttached (void)
+         via.DrillingHole = Settings.ViaDrillingHole;
+         via.Mask = 0;
+         via.Flags = NoFlags ();
+-        TOGGLE_FLAG (SQUAREFLAG, &via);
+ 
+         gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &via, false, false);
