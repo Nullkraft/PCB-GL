@@ -1,0 +1,30 @@
+Bottom: dbb820c4da08a9cb1e1d8228e68042e160b254c0
+Top:    86e3236146432b5b6e76ac7bc6479a7edbead6b5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-20 23:48:02 +0100
+
+Refresh of consolidate-pin-drawing-routin
+
+---
+
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index 7435577..b043d92 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -385,7 +385,7 @@ common_fill_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bool m
+     {
+       if (drawHole)
+         {
+-          gui->fill_circle (fg_gc, pv->X, pv->Y, r);
++          gui->fill_circle (bg_gc, pv->X, pv->Y, r);
+           gui->set_line_cap (fg_gc, Round_Cap);
+           gui->set_line_width (fg_gc, 0);
+           gui->draw_arc (fg_gc, pv->X, pv->Y, r, r, 0, 360);
+@@ -422,7 +422,6 @@ common_thindraw_pcb_pv (hidGC fg_gc, hidGC bg_gc, PinType *pv, bool drawHole, bo
+     {
+       if (drawHole)
+         {
+-          gui->fill_circle (bg_gc, pv->X, pv->Y, r);
+           gui->set_line_cap (bg_gc, Round_Cap);
+           gui->set_line_width (bg_gc, 0);
+           gui->draw_arc (bg_gc, pv->X, pv->Y, r, r, 0, 360);
