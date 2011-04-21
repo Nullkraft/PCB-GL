@@ -1,5 +1,5 @@
-Bottom: e9445087bbd2af2ee46d8e4c11c9f706fed2de02
-Top:    9088362634695f63ab56e2896beff41d925891f3
+Bottom: 7ff0402451eead8bb2853de60c0417f342e13ef6
+Top:    ad1071761e98a7441fffe822d563e27eae897cd5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-06 01:47:17 +0100
 
@@ -18,7 +18,7 @@ Notes from squashed patches:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 9f02cd6..7874720 100644
+index ea54b0f..4c2bbb0 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -71,7 +71,7 @@ RCSID ("$Id$");
@@ -111,7 +111,7 @@ index 9f02cd6..7874720 100644
  DrawHole (PinTypePtr Ptr)
  {
    if (TEST_FLAG (THINDRAWFLAG, PCB))
-@@ -1144,7 +1144,7 @@ DrawPadNameLowLevel (PadTypePtr Pad)
+@@ -1142,7 +1142,7 @@ DrawPadNameLowLevel (PadTypePtr Pad)
  /* ---------------------------------------------------------------------------
   * clearance for pads
   */
@@ -120,7 +120,7 @@ index 9f02cd6..7874720 100644
  ClearPad (PadTypePtr Pad, bool mask)
  {
    DrawPadLowLevel(Output.pmGC, Pad, true, mask);
-@@ -1339,7 +1339,7 @@ DrawVia (PinTypePtr Via, int unused)
+@@ -1337,7 +1337,7 @@ DrawVia (PinTypePtr Via, int unused)
  /* ---------------------------------------------------------------------------
   * draw a via without dealing with polygon clearance 
   */
@@ -129,7 +129,7 @@ index 9f02cd6..7874720 100644
  DrawPlainVia (PinTypePtr Via, bool holeToo)
  {
    if (!Gathering)
-@@ -1384,7 +1384,7 @@ DrawPin (PinTypePtr Pin, int unused)
+@@ -1382,7 +1382,7 @@ DrawPin (PinTypePtr Pin, int unused)
  /* ---------------------------------------------------------------------------
   * draw a pin without clearing around polygons 
   */
@@ -138,7 +138,7 @@ index 9f02cd6..7874720 100644
  DrawPlainPin (PinTypePtr Pin, bool holeToo)
  {
    if (!Gathering)
-@@ -1574,7 +1574,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
+@@ -1572,7 +1572,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
  /* ---------------------------------------------------------------------------
   * draws text on a layer
   */
