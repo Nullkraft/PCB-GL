@@ -1108,24 +1108,6 @@ pad_callback (const BoxType * b, void *cl)
 static int
 hole_callback (const BoxType * b, void *cl)
 {
-#if 0
-  PinTypePtr pin = (PinTypePtr) b;
-  int plated = cl ? *(int *) cl : -1;
-
-  switch (plated)
-    {
-    case -1:
-      break;
-    case 0:
-      if (!TEST_FLAG (HOLEFLAG, pin))
-	return 1;
-      break;
-    case 1:
-      if (TEST_FLAG (HOLEFLAG, pin))
-	return 1;
-      break;
-    }
-#endif
   DrawHole ((PinTypePtr) b);
   return 1;
 }
