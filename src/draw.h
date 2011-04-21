@@ -74,6 +74,9 @@ void EraseObject (int, void *, void *);
 void LoadBackgroundImage (char *);
 void UpdateAll (void);
 
+void DrawPPV (int group, const BoxType *);
+int DrawLayerGroup (int, const BoxType *);
+
 void DrawMask (int side, BoxType *);
 void DrawSilk (int side, const BoxType *);
 void DrawPaste (int side, BoxType *);
