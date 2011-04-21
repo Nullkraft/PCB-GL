@@ -97,7 +97,7 @@ static void DrawPolygonLowLevel (PolygonTypePtr);
 static void DrawPourLowLevel (PourTypePtr);
 static void DrawArcLowLevel (ArcTypePtr);
 static void DrawElementPackageLowLevel (ElementTypePtr Element, int);
-static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
+static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *);
 static void AddPart (void *);
 static void SetPVColor (PinTypePtr, int);
 /* static */ void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
@@ -675,9 +675,9 @@ clearPin_callback (const BoxType * b, void *cl)
 static int
 poly_callback (const BoxType * b, void *cl)
 {
-  LayerType *layer = cl;
+  struct poly_info *i = (struct poly_info *) cl;
 
-  DrawPlainPolygon (layer, (PolygonTypePtr) b);
+  DrawPlainPolygon (i->Layer, (PolygonTypePtr) b, i->clip);
   return 1;
 }
 
@@ -1699,7 +1699,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  * draws a polygon
  */
 static void
-DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType * clip)
 {
   static char *color;
 
