@@ -1,5 +1,5 @@
-Bottom: b851b348519b5fd17732c5d0e290e8c0d0bdc780
-Top:    7be8fcaa68e81f170bc8668a1b394cad888275de
+Bottom: dfa96f0104a9738d44768950ade2b78f7bb2f553
+Top:    77d20554699225fefd5acc8ea6626457606a7d41
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-21 16:19:17 +0100
 
@@ -14,10 +14,10 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index e02fef7..8bfe3a4 100644
+index edfcf4f..0b54f22 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -406,6 +406,7 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -398,6 +398,7 @@ DrawEverything (BoxTypePtr drawn_area)
  		    backN_callback, NULL);
  	  DrawLayer (&(PCB->Data->BACKSILKLAYER), drawn_area);
  	}
@@ -25,7 +25,7 @@ index e02fef7..8bfe3a4 100644
      }
  
    /* draw all layers in layerstack order */
-@@ -444,6 +445,7 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -436,6 +437,7 @@ DrawEverything (BoxTypePtr drawn_area)
  			    &plated);
  		}
  	    }
@@ -33,7 +33,7 @@ index e02fef7..8bfe3a4 100644
  	}
      }
    if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
-@@ -484,6 +486,7 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -476,6 +478,7 @@ DrawEverything (BoxTypePtr drawn_area)
        SWAP_IDENT = 0;
        DrawMask (drawn_area);
        SWAP_IDENT = save_swap;
@@ -41,7 +41,7 @@ index e02fef7..8bfe3a4 100644
      }
    if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
      {
-@@ -491,12 +494,21 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -483,12 +486,21 @@ DrawEverything (BoxTypePtr drawn_area)
        SWAP_IDENT = 1;
        DrawMask (drawn_area);
        SWAP_IDENT = save_swap;
@@ -65,7 +65,7 @@ index e02fef7..8bfe3a4 100644
    if (gui->gui)
      {
        /* Draw element Marks */
-@@ -505,7 +517,10 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -497,7 +509,10 @@ DrawEverything (BoxTypePtr drawn_area)
  		  NULL);
        /* Draw rat lines on top */
        if (gui->set_layer ("rats", SL (RATS, 0), 0))
@@ -77,7 +77,7 @@ index e02fef7..8bfe3a4 100644
      }
  
    for (side = 0; side <= 1; side++)
-@@ -544,19 +559,30 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -536,19 +551,30 @@ DrawEverything (BoxTypePtr drawn_area)
  		}
  	  }
  	  ENDALL_LOOP;
@@ -111,7 +111,7 @@ index e02fef7..8bfe3a4 100644
  }
  
  static void
-@@ -814,6 +840,10 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
+@@ -806,6 +832,10 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
    clip_box = screen;
    r_search (Layer->polygon_tree, screen, NULL, poly_callback, Layer);
  
@@ -122,7 +122,7 @@ index e02fef7..8bfe3a4 100644
    if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
      return;
  
-@@ -863,7 +893,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -855,7 +885,8 @@ DrawLayerGroup (int group, const BoxType * screen)
    Cardinal *layers = PCB->LayerGroups.Entries[group];
  
    clip_box = screen;
