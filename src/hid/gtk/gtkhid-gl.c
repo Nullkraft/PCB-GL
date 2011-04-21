@@ -1755,9 +1755,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glGetFloatv (GL_MODELVIEW_MATRIX, (GLfloat *)last_modelview_matrix);
 
   glEnable (GL_STENCIL_TEST);
-  glClearColor (port->offlimits_color.red / 65535.,
-                port->offlimits_color.green / 65535.,
-                port->offlimits_color.blue / 65535.,
+  glClearColor (port->bg_color.red / 65535.,
+                port->bg_color.green / 65535.,
+                port->bg_color.blue / 65535.,
                 1.);
   glStencilMask (~0);
   glClearStencil (0);
@@ -1842,6 +1842,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   /* Drawing operations as masked to areas where the stencil buffer is '0' */
 //  glStencilFunc (GL_GREATER, 1, 1);             // Draw only where stencil buffer is 0
 
+#if 0
   if (global_view_2d) {
     glBegin (GL_QUADS);
     glVertex3i (0,             0,              0);
@@ -1872,6 +1873,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
     }
     glEnd ();
   }
+#endif
 
   // hid_expose_callback (&ghid_hid, &region, 0);
   ghid_draw_everything (&region);
