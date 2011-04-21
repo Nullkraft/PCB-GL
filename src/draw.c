@@ -82,8 +82,6 @@ static const BoxType *clip_box = NULL;
  */
 static void Redraw (bool, BoxTypePtr);
 static void DrawEverything (BoxTypePtr);
-static void DrawPPV (int group, const BoxType *);
-static int DrawLayerGroup (int, const BoxType *);
 static void DrawPinOrViaLowLevel (PinTypePtr, bool);
 static void DrawPlainPin (PinTypePtr, bool);
 static void DrawPlainVia (PinTypePtr, bool);
@@ -518,7 +516,7 @@ pad_callback (const BoxType * b, void *cl)
  * Draws pins pads and vias - Always draws for non-gui HIDs,
  * otherwise drawing depends on PCB->PinOn and PCB->ViaOn
  */
-static void
+void
 DrawPPV (int group, const BoxType *drawn_area)
 {
   int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
@@ -780,7 +778,7 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
  * draws one layer group.  Returns non-zero if pins and pads should be
  * drawn with this group.
  */
-static int
+int
 DrawLayerGroup (int group, const BoxType *drawn_area)
 {
   int i, rv = 1;
