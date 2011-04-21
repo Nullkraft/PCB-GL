@@ -1,5 +1,5 @@
 Bottom: c187cf39eaaf0a3aa4002e46ff61a2d21a5b6c99
-Top:    4982fbfe20c2e07c3022c8960f9047e1e3448e59
+Top:    c6308e970b47e5356d8316dc98a2fd8b03c4eb87
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-21 16:25:40 +0100
 
@@ -178,7 +178,7 @@ index 155c125..5bfbffd 100644
  
  void
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index c811d7d..771c1cb 100644
+index c811d7d..6ba5c1a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1255,11 +1255,28 @@ struct poly_info
@@ -202,7 +202,7 @@ index c811d7d..771c1cb 100644
 +static int
 +poly_callback_clearing (const BoxType * b, void *cl)
 +{
-+  struct pin_info *i = (struct pin_info *) cl;
++  struct poly_info *i = (struct poly_info *) cl;
 +  PolygonType *polygon = (PolygonType *) b;
 +
 +  if (!TEST_FLAG (CLEARPOLYFLAG, polygon))
