@@ -500,7 +500,6 @@ common_export_region (HID *hid, BoxType *region)
   hid->set_color (Output.pmGC, "erase");
   hid->set_color (Output.bgGC, "drill");
 
-
   PCB->Data->SILKLAYER.Color = PCB->ElementColor;
   PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
 
