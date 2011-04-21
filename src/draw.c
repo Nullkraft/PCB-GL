@@ -690,7 +690,7 @@ struct pour_info
 static int
 pour_callback (const BoxType * b, void *cl)
 {
-  struct pour_info *i = (struct pin_info *) cl;
+  struct pour_info *i = (struct pour_info *) cl;
   PourType *pour = (PourType *)b;
 
   if (gui->gui)
