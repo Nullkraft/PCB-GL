@@ -853,9 +853,9 @@ do_hole (const BoxType *b, void *cl)
 }
 
 static bool
-polygon_contains_user_holes (PolygonType *polygon)
+pour_contains_user_holes (PourType *pour)
 {
-  return (polygon->HoleIndexN > 0);
+  return (pour->HoleIndexN > 0);
 }
 
 
@@ -889,7 +889,7 @@ hidgl_fill_pcb_polygon (PolygonType *poly, const BoxType *clip_box /*, bool forc
   /* Polygon has holes.. does it have any user-drawn holes?
    * If so, it must be masked with a _new_ stencil bit.
    */
-  use_new_stencil = force_new_stencil | polygon_contains_user_holes (poly);
+  use_new_stencil = force_new_stencil || true; // | polygon_contains_user_holes (poly);
 
   if (use_new_stencil)
     {
