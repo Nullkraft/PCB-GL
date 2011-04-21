@@ -1,5 +1,5 @@
 Bottom: 266d17396a6c44ce2322dbd6fb5081e8acaf09fc
-Top:    7713f6dceda2bc2dc9dbe6e0db2b40708523e6aa
+Top:    c306df7bf7a7ca3c143c0093a82565c6943a3620
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-21 02:41:14 +0100
 
@@ -9,21 +9,27 @@ Demo of exporter specific export routine
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index b043d92..32e2fca 100644
+index b043d92..5b24567 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
-@@ -475,3 +475,226 @@ common_draw_helpers_init (HID *hid)
+@@ -475,3 +475,225 @@ common_draw_helpers_init (HID *hid)
    hid->fill_pcb_pv          = common_fill_pcb_pv;
    hid->thindraw_pcb_pv      = common_thindraw_pcb_pv;
  }
 +
 +void
-+exporter_board (HID * hid, BoxType * region)
++common_export_region (HID *hid, BoxType *region)
 +{
 +  HID *old_gui = gui;
 +  hidGC savebg = Output.bgGC;
 +  hidGC savefg = Output.fgGC;
 +  hidGC savepm = Output.pmGC;
++
++  int i, ngroups, side;
++  int plated;
++  int component, solder;
++  int do_group[MAX_LAYER];     /* This is the list of layer groups we will draw. */
++  int drawn_groups[MAX_LAYER]; /* This is the reverse of the order in which we draw them. */
 +
 +  gui = hid;
 +  Output.fgGC = gui->make_gc ();
@@ -35,13 +41,6 @@ index b043d92..32e2fca 100644
 +  hid->set_color (Output.pmGC, "erase");
 +  hid->set_color (Output.bgGC, "drill");
 +
-+    int i, ngroups, side;
-+  int plated;
-+  int component, solder;
-+  /* This is the list of layer groups we will draw.  */
-+  int do_group[MAX_LAYER];
-+  /* This is the reverse of the order in which we draw them.  */
-+  int drawn_groups[MAX_LAYER];
 +
 +  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
 +  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
