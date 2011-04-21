@@ -1,5 +1,5 @@
 Bottom: 0eeaa63d5d99ceab1701714ff7007c2afa75c15f
-Top:    74a6f58f266d41a55245584586f64ee24b7bb104
+Top:    ae51c0a94c97aa971d586de0d27afa49ca5d4d41
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-21 16:19:20 +0100
 
@@ -173,7 +173,7 @@ index c0e23a3..9bf62b3 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5d53d27..e877766 100644
+index 5d53d27..20bff57 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -340,7 +340,7 @@ index 5d53d27..e877766 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -964,6 +1002,660 @@ ghid_screen_update (void)
+@@ -964,6 +1002,642 @@ ghid_screen_update (void)
  {
  }
  
@@ -450,24 +450,6 @@ index 5d53d27..e877766 100644
 +static int
 +hole_callback (const BoxType * b, void *cl)
 +{
-+#if 0
-+  PinTypePtr pin = (PinTypePtr) b;
-+  int plated = cl ? *(int *) cl : -1;
-+
-+  switch (plated)
-+    {
-+    case -1:
-+      break;
-+    case 0:
-+      if (!TEST_FLAG (HOLEFLAG, pin))
-+	return 1;
-+      break;
-+    case 1:
-+      if (TEST_FLAG (HOLEFLAG, pin))
-+	return 1;
-+      break;
-+    }
-+#endif
 +  DrawHole ((PinTypePtr) b);
 +  return 1;
 +}
@@ -1001,7 +983,7 @@ index 5d53d27..e877766 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1028,8 +1720,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1028,8 +1702,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1012,7 +994,7 @@ index 5d53d27..e877766 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1095,13 +1787,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1095,13 +1769,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -1026,7 +1008,7 @@ index 5d53d27..e877766 100644
    /* TODO: Background image */
  
    hidgl_init_triangle_array (&buffer);
-@@ -1121,7 +1806,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1121,7 +1788,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_x0,
                  ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                               -port->view_y0, 0);
