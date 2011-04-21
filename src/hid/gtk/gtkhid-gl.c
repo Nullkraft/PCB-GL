@@ -1270,7 +1270,7 @@ poly_callback_no_clear (const BoxType * b, void *cl)
 static int
 poly_callback_clearing (const BoxType * b, void *cl)
 {
-  struct pin_info *i = (struct pin_info *) cl;
+  struct poly_info *i = (struct poly_info *) cl;
   PolygonType *polygon = (PolygonType *) b;
 
   if (!TEST_FLAG (CLEARPOLYFLAG, polygon))
