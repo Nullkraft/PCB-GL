@@ -475,3 +475,193 @@ common_draw_helpers_init (HID *hid)
   hid->fill_pcb_pv          = common_fill_pcb_pv;
   hid->thindraw_pcb_pv      = common_thindraw_pcb_pv;
 }
+
+typedef struct
+{
+  int nplated;
+  int nunplated;
+} HoleCountStruct;
+
+static void
+count_holes (int *plated, int *unplated)
+{
+  HoleCountStruct hcs;
+  hcs.nplated = hcs.nunplated = 0;
+  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_counting_callback, &hcs);
+  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_counting_callback, &hcs);
+  if (plated != NULL)
+    *plated = hcs.nplated;
+  if (unplated != NULL)
+    *unplated = hcs.nunplated;
+}
+
+static int
+hole_counting_callback (const BoxType * b, void *cl)
+{
+  PinTypePtr pin = (PinTypePtr) b;
+  HoleCountStruct *hcs = (HoleCountStruct *) cl;
+  if (TEST_FLAG (HOLEFLAG, pin))
+    hcs->nunplated++;
+  else
+    hcs->nplated++;
+  return 1;
+}
+
+static int
+hole_callback (const BoxType * b, void *cl)
+{
+  PinTypePtr pin = (PinTypePtr) b;
+  int plated = cl ? *(int *) cl : -1;
+  switch (plated)
+    {
+    case -1:
+      break;
+    case 0:
+      if (!TEST_FLAG (HOLEFLAG, pin))
+        return 1;
+      break;
+    case 1:
+      if (TEST_FLAG (HOLEFLAG, pin))
+        return 1;
+      break;
+    }
+  DrawHole ((PinTypePtr) b);
+  return 1;
+}
+
+
+static bool
+IsPasteEmpty (int side)
+{
+  bool paste_empty = true;
+  ALLPAD_LOOP (PCB->Data);
+  {
+    if (TEST_FLAG (ONSOLDERFLAG, pad) == (side == SOLDER_LAYER) &&
+        !TEST_FLAG (NOPASTEFLAG, pad) && pad->Mask > 0)
+      {
+        paste_empty = false;
+        break;
+      }
+  }
+  ENDALL_LOOP;
+  return paste_empty;
+}
+
+static void
+DrawPaste (int side)
+{
+  gui->set_color (Output.fgGC, PCB->ElementColor);
+  ALLPAD_LOOP (PCB->Data);
+  {
+    if (TEST_FLAG (ONSOLDERFLAG, pad) == (side == SOLDER_LAYER) &&
+        !TEST_FLAG (NOPASTEFLAG, pad) && pad->Mask > 0)
+      {
+        if (pad->Mask < pad->Thickness)
+          DrawPadLowLevel (Output.fgGC, pad, true, true);
+        else
+          DrawPadLowLevel (Output.fgGC, pad, false, false);
+      }
+  }
+  ENDALL_LOOP;
+}
+
+void
+common_export_region (HID *hid, BoxType *region)
+{
+  int side;
+  int plated;
+  int nplated;
+  int nunplated;
+  int component_group;
+  int solder_group;
+
+  int save_swap = SWAP_IDENT;
+  HID *old_gui = gui;
+
+  gui = hid;
+
+  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
+  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
+
+  component_group = GetLayerGroupNumberByNumber (component_silk_layer);
+  solder_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
+
+  /* draw all copper layer groups in group order */
+  for (group = 0; group < max_copper_layer; group++)
+    {
+      if (gui->set_layer (0, group, 0))
+        {
+          if (DrawLayerGroup (group, drawn_area))
+            {
+              r_search (PCB->Data->via_tree, drawn_area, NULL, pin_callback, NULL);
+              r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
+
+              if (group == component || group == solder)
+                {
+                  SWAP_IDENT = (group == solder);
+                  r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, NULL);
+                  SWAP_IDENT = save_swap;
+                }
+            }
+        }
+    }
+
+  count_holes (&nplated, &nunplated);
+
+  if (nplated && gui->set_layer ("plated-drill", SL (PDRILL, 0), 0))
+    {
+      plated = 1;
+      r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
+      r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
+    }
+
+  if (nunplated && gui->set_layer ("unplated-drill", SL (UDRILL, 0), 0))
+    {
+      plated = 0;
+      r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
+      r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
+    }
+
+  if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
+    {
+      SWAP_IDENT = 0;
+      DrawMask (drawn_area);
+      SWAP_IDENT = save_swap;
+    }
+
+  if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
+    {
+      SWAP_IDENT = 1;
+      DrawMask (drawn_area);
+      SWAP_IDENT = save_swap;
+    }
+
+  if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
+    DrawSilk (0, component_silk_layer, drawn_area);
+
+  if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
+    DrawSilk (1, solder_silk_layer, drawn_area);
+
+  paste_empty = IsPasteEmpty (COMPONENT_LAYER);
+  if (gui->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
+    DrawPaste (COMPONENT_LAYER);
+
+  paste_empty = IsPastePresent (SOLDER_LAYER);
+  if (gui->set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
+    DrawPaste (SOLDER_LAYER);
+
+  doing_assy = true;
+
+  if (gui->set_layer ("topassembly", SL (ASSY, TOP), 0))
+    PrintAssembly (drawn_area, component, 0);
+
+  if (gui->set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
+    PrintAssembly (drawn_area, solder, 1);
+
+  doing_assy = false;
+
+  if (gui->set_layer ("fab", SL (FAB, 0), 0))
+    PrintFab ();
+
+  gui = old_gui;
+}
