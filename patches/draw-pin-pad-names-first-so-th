@@ -1,5 +1,5 @@
-Bottom: 2ee744f85e816292fd27b73e6da82dbe79f50a02
-Top:    f2d848fdd68545653f651e1113bb6ebb0e56c80a
+Bottom: e0a4f8de4c7265ffbb7ffd6aa5120e36376f5e4b
+Top:    c2edf18bc5ebe251b8af8f3c1a2a52af2ffac473
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-21 16:19:21 +0100
 
@@ -19,10 +19,10 @@ the pads.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index bd9cf63..dd00a09 100644
+index e877766..861272b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1081,6 +1081,16 @@ SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
+@@ -1073,6 +1073,16 @@ SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
  
  
  static int
@@ -39,7 +39,7 @@ index bd9cf63..dd00a09 100644
  pin_inlayer_callback (const BoxType * b, void *cl)
  {
    SetPVColor_inlayer ((PinTypePtr) b, cl, PIN_TYPE);
-@@ -1099,7 +1109,11 @@ via_inlayer_callback (const BoxType * b, void *cl)
+@@ -1091,7 +1101,11 @@ via_inlayer_callback (const BoxType * b, void *cl)
  static int
  pin_callback (const BoxType * b, void *cl)
  {
@@ -52,7 +52,7 @@ index bd9cf63..dd00a09 100644
    return 1;
  }
  
-@@ -1108,7 +1122,11 @@ pad_callback (const BoxType * b, void *cl)
+@@ -1100,7 +1114,11 @@ pad_callback (const BoxType * b, void *cl)
  {
    PadTypePtr pad = (PadTypePtr) b;
    if (FRONT (pad))
@@ -64,7 +64,7 @@ index bd9cf63..dd00a09 100644
    return 1;
  }
  
-@@ -1362,6 +1380,9 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1350,6 +1368,9 @@ DrawLayerGroup (int group, const BoxType * screen)
  
        /* Draw pins, vias and pads on this layer */
        if (!global_view_2d && rv) {
