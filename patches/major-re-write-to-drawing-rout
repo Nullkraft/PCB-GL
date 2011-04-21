@@ -1,5 +1,5 @@
 Bottom: e96ae7db9712720675f86f8baf6fabe3bf1a8cc6
-Top:    3e5d88814a08da355ad0f97933f3dde9575f6a9b
+Top:    884c02ce5fcde834e46a5dc1316889b609f0280a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-21 16:19:20 +0100
 
@@ -173,7 +173,7 @@ index c0e23a3..9bf62b3 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5d53d27..bd9cf63 100644
+index 5d53d27..e877766 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -340,18 +340,10 @@ index 5d53d27..bd9cf63 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -964,6 +1002,672 @@ ghid_screen_update (void)
+@@ -964,6 +1002,660 @@ ghid_screen_update (void)
  {
  }
  
-+
-+struct pin_info
-+{
-+  bool arg;
-+  LayerTypePtr Layer;
-+  const BoxType *drawn_area;
-+};
-+
 +static int
 +backE_callback (const BoxType * b, void *cl)
 +{
@@ -546,10 +538,16 @@ index 5d53d27..bd9cf63 100644
 +    }
 +}
 +
++struct poly_info
++{
++  LayerTypePtr Layer;
++  const BoxType *drawn_area;
++};
++
 +static int
 +poly_callback (const BoxType * b, void *cl)
 +{
-+  struct pin_info *i = (struct pin_info *) cl;
++  struct poly_info *i = (struct poly_info *) cl;
 +
 +  DrawPlainPolygon (i->Layer, (PolygonTypePtr) b, i->drawn_area);
 +  return 1;
@@ -559,14 +557,10 @@ index 5d53d27..bd9cf63 100644
 +clearPin_callback (const BoxType * b, void *cl)
 +{
 +  PinType *pin = (PinTypePtr) b;
-+  struct pin_info *i = (struct pin_info *) cl;
-+  if (i->arg)
-+    {
-+      if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
-+        gui->thindraw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
-+      else
-+        gui->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
-+    }
++  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
++    gui->thindraw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
++  else
++    gui->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
 +  return 1;
 +}
 +
@@ -583,9 +577,7 @@ index 5d53d27..bd9cf63 100644
 +clearPin_callback_solid (const BoxType * b, void *cl)
 +{
 +  PinTypePtr pin = (PinTypePtr) b;
-+  struct pin_info *i = (struct pin_info *) cl;
-+  if (i->arg)
-+    gui->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
++  gui->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
 +  return 1;
 +}
 +
@@ -601,28 +593,24 @@ index 5d53d27..bd9cf63 100644
 +static void
 +DrawMask (BoxType * screen)
 +{
-+  struct pin_info info;
 +  int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
 +
 +  OutputType *out = &Output;
-+
-+  info.arg = true;
-+  info.drawn_area = screen;
 +
 +  if (thin)
 +    {
 +      gui->set_line_width (Output.pmGC, 0);
 +      gui->set_color (Output.pmGC, PCB->MaskColor);
-+      r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, &info);
-+      r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, &info);
-+      r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, &info);
++      r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, NULL);
++      r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, NULL);
++      r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, NULL);
 +      gui->set_color (Output.pmGC, "erase");
 +    }
 +
 +  gui->use_mask (HID_MASK_CLEAR);
-+  r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback_solid, &info);
-+  r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback_solid, &info);
-+  r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback_solid, &info);
++  r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback_solid, NULL);
++  r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback_solid, NULL);
++  r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback_solid, NULL);
 +
 +  gui->use_mask (HID_MASK_AFTER);
 +  gui->set_color (out->fgGC, PCB->MaskColor);
@@ -638,7 +626,7 @@ index 5d53d27..bd9cf63 100644
 +{
 +  int i, rv = 1;
 +  int layernum;
-+  struct pin_info info;
++  struct poly_info info;
 +  LayerTypePtr Layer;
 +  int n_entries = PCB->LayerGroups.Number[group];
 +  Cardinal *layers = PCB->LayerGroups.Entries[group];
@@ -1013,7 +1001,7 @@ index 5d53d27..bd9cf63 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1028,8 +1732,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1028,8 +1720,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1024,7 +1012,7 @@ index 5d53d27..bd9cf63 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1095,13 +1799,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1095,13 +1787,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -1038,7 +1026,7 @@ index 5d53d27..bd9cf63 100644
    /* TODO: Background image */
  
    hidgl_init_triangle_array (&buffer);
-@@ -1121,7 +1818,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1121,7 +1806,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_x0,
                  ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                               -port->view_y0, 0);
