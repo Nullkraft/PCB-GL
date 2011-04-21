@@ -1,0 +1,22 @@
+Bottom: 0415a3edc37d85f0810156a9ee35acaeda23527a
+Top:    9b1a911e6c0c562c0d5edcd6cf6c9f77557b3668
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-21 16:51:49 +0100
+
+Refresh of add-support-for-a-poured-objec-I
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 2a1dd73..ceef97d 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -690,7 +690,7 @@ struct pour_info
+ static int
+ pour_callback (const BoxType * b, void *cl)
+ {
+-  struct pour_info *i = (struct pin_info *) cl;
++  struct pour_info *i = (struct pour_info *) cl;
+   PourType *pour = (PourType *)b;
+ 
+   if (gui->gui)
