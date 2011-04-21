@@ -1,5 +1,5 @@
-Bottom: a58c51f463868315dc3133410f3cea4fb43df0a4
-Top:    471662ac3a722d248824020fe63f169fa5f1adbe
+Bottom: 61bca88e7a5c545033a890286ee8e4ba1828c169
+Top:    b6d5ba596f0c3fc0ca1aaffa410bc217d28a0240
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2009-11-12 14:10:58 +0000
 
@@ -9,7 +9,7 @@ Undo polygon1.c indenting
 ---
 
 diff --git a/src/polygon1.c b/src/polygon1.c
-index f3db6c2..e5d3578 100644
+index f75c954..41550e4 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
 @@ -742,9 +742,9 @@ get_seg (const BoxType * b, void *cl)
@@ -129,7 +129,7 @@ index f3db6c2..e5d3578 100644
 -count_contours_i_am_inside (const BoxType * b, void *cl)
 +count_contours_i_am_inside (const BoxType *b, void *cl)
  {
-   PLINE *me = cl;
+   PLINE *me = (PLINE *) cl;
    PLINE *check = (PLINE *) b;
 @@ -1042,22 +1041,19 @@ cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
  	break;
@@ -277,7 +277,7 @@ index f3db6c2..e5d3578 100644
 -find_inside (const BoxType * b, void *cl)
 +find_inside (const BoxType *b, void *cl)
  {
-   struct find_inside_info *info = cl;
+   struct find_inside_info *info = (struct find_inside_info *) cl;
    PLINE *check = (PLINE *) b;
 @@ -1351,7 +1345,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
    curc = dest;
@@ -289,7 +289,7 @@ index f3db6c2..e5d3578 100644
    while ((curc = curc->f) != dest);
  
 @@ -1399,7 +1393,7 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
-       pa_info = heap_remove_smallest (heap);
+       pa_info = (struct polyarea_info *) heap_remove_smallest (heap);
        if (heap_is_empty (heap))
  	{			/* only one possibility it must be the right one */
 -	  assert (poly_ContourInContour (pa_info->pa->contours, curh));
@@ -576,7 +576,7 @@ index f3db6c2..e5d3578 100644
 -find_inside_m_pa (const BoxType * b, void *cl)
 +find_inside_m_pa (const BoxType *b, void *cl)
  {
-   struct find_inside_m_pa_info *info = cl;
+   struct find_inside_m_pa_info *info = (struct find_inside_m_pa_info *) cl;
    PLINE *check = (PLINE *) b;
 @@ -2005,18 +1984,17 @@ find_inside_m_pa (const BoxType * b, void *cl)
    /* Don't look at contours marked as being intersected */
@@ -1354,7 +1354,7 @@ index f3db6c2..e5d3578 100644
    code2 = poly_Boolean_free (ac, bc, aminusb, PBO_SUB);
  
    if (code1)
-@@ -2768,10 +2688,10 @@ poly_DelContour (PLINE ** c)
+@@ -2771,10 +2691,10 @@ poly_DelContour (PLINE ** c)
      {
        prev = cur->prev;
        if (cur->cvc_next != NULL)
@@ -1369,7 +1369,7 @@ index f3db6c2..e5d3578 100644
        free (cur);
      }
    if ((*c)->head.cvc_next != NULL)
-@@ -2969,7 +2889,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
+@@ -2973,7 +2893,7 @@ poly_Copy1 (POLYAREA * dst, const POLYAREA * src)
      {
        if (!poly_CopyContour (last, cur))
  	return FALSE;
@@ -1378,7 +1378,7 @@ index f3db6c2..e5d3578 100644
        last = &(*last)->next;
      }
    return TRUE;
-@@ -3313,7 +3233,7 @@ poly_Create (void)
+@@ -3317,7 +3237,7 @@ poly_Create (void)
  }
  
  void
@@ -1387,7 +1387,7 @@ index f3db6c2..e5d3578 100644
  {
    PLINE *pl;
  
-@@ -3372,7 +3292,7 @@ poly_ChkContour (PLINE * a)
+@@ -3376,7 +3296,7 @@ poly_ChkContour (PLINE * a)
    VNODE *a1, *a2, *a2_start, *hit1, *hit2;
    Vector i1, i2;
    int icnt;
@@ -1396,7 +1396,7 @@ index f3db6c2..e5d3578 100644
  
  #warning FIXME Later: Deliberately disabled this test - seems something strange is going on
    return FALSE;
-@@ -3389,13 +3309,12 @@ poly_ChkContour (PLINE * a)
+@@ -3393,13 +3313,12 @@ poly_ChkContour (PLINE * a)
  				    a2->point, a2->next->point, i1, i2)) > 0)
  	    {
  	      if (icnt > 1)
