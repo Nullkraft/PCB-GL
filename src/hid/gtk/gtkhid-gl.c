@@ -1269,7 +1269,7 @@ poly_callback_clearing (const BoxType * b, void *cl)
 static int
 pour_callback_no_clear (const BoxType * b, void *cl)
 {
-  struct pin_info *i = (struct pin_info *) cl;
+  struct poly_info *i = (struct poly_info *) cl;
   PourType *pour = (PourType *)b;
 
   DrawPour (i->Layer, pour, 0);
@@ -1285,7 +1285,7 @@ pour_callback_no_clear (const BoxType * b, void *cl)
   static int
 pour_callback_clearing (const BoxType * b, void *cl)
 {
-  struct pin_info *i = (struct pin_info *) cl;
+  struct poly_info *i = (struct poly_info *) cl;
   PourType *pour = (PourType *)b;
 
   DrawPour (i->Layer, pour, 0);
