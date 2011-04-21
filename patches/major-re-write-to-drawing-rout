@@ -1,7 +1,7 @@
-Bottom: 7ff0402451eead8bb2853de60c0417f342e13ef6
-Top:    ad1071761e98a7441fffe822d563e27eae897cd5
+Bottom: e96ae7db9712720675f86f8baf6fabe3bf1a8cc6
+Top:    3e5d88814a08da355ad0f97933f3dde9575f6a9b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-06 01:47:17 +0100
+Date:   2011-04-21 16:19:20 +0100
 
 Major re-write to drawing routines
 
@@ -18,7 +18,7 @@ Notes from squashed patches:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index ea54b0f..4c2bbb0 100644
+index 8bfe3a4..b798dd7 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -71,7 +71,7 @@ RCSID ("$Id$");
@@ -75,7 +75,7 @@ index ea54b0f..4c2bbb0 100644
  DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
  	   bool invisible)
  {
-@@ -709,7 +709,7 @@ clearPad_callback (const BoxType * b, void *cl)
+@@ -699,7 +699,7 @@ clearPad_callback (const BoxType * b, void *cl)
   * Draws silk layer.
   */
  
@@ -84,7 +84,7 @@ index ea54b0f..4c2bbb0 100644
  DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
  {
  #if 0
-@@ -806,7 +806,7 @@ DrawMask (BoxType * screen)
+@@ -791,7 +791,7 @@ DrawMask (BoxType * screen)
      }
  }
  
@@ -93,7 +93,7 @@ index ea54b0f..4c2bbb0 100644
  DrawRats (BoxTypePtr drawn_area)
  {
    /*
-@@ -931,7 +931,7 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -912,7 +912,7 @@ DrawLayerGroup (int group, const BoxType * screen)
  /* ---------------------------------------------------------------------------
   * lowlevel drawing routine for pins and vias
   */
@@ -102,7 +102,7 @@ index ea54b0f..4c2bbb0 100644
  DrawPinOrViaLowLevel (PinTypePtr pv, bool drawHole)
  {
    if (Gathering)
-@@ -949,7 +949,7 @@ DrawPinOrViaLowLevel (PinTypePtr pv, bool drawHole)
+@@ -930,7 +930,7 @@ DrawPinOrViaLowLevel (PinTypePtr pv, bool drawHole)
  /**************************************************************
   * draw pin/via hole
   */
@@ -111,7 +111,7 @@ index ea54b0f..4c2bbb0 100644
  DrawHole (PinTypePtr Ptr)
  {
    if (TEST_FLAG (THINDRAWFLAG, PCB))
-@@ -1142,7 +1142,7 @@ DrawPadNameLowLevel (PadTypePtr Pad)
+@@ -1123,7 +1123,7 @@ DrawPadNameLowLevel (PadTypePtr Pad)
  /* ---------------------------------------------------------------------------
   * clearance for pads
   */
@@ -120,7 +120,7 @@ index ea54b0f..4c2bbb0 100644
  ClearPad (PadTypePtr Pad, bool mask)
  {
    DrawPadLowLevel(Output.pmGC, Pad, true, mask);
-@@ -1337,7 +1337,7 @@ DrawVia (PinTypePtr Via, int unused)
+@@ -1318,7 +1318,7 @@ DrawVia (PinTypePtr Via, int unused)
  /* ---------------------------------------------------------------------------
   * draw a via without dealing with polygon clearance 
   */
@@ -129,7 +129,7 @@ index ea54b0f..4c2bbb0 100644
  DrawPlainVia (PinTypePtr Via, bool holeToo)
  {
    if (!Gathering)
-@@ -1382,7 +1382,7 @@ DrawPin (PinTypePtr Pin, int unused)
+@@ -1363,7 +1363,7 @@ DrawPin (PinTypePtr Pin, int unused)
  /* ---------------------------------------------------------------------------
   * draw a pin without clearing around polygons 
   */
@@ -138,7 +138,7 @@ index ea54b0f..4c2bbb0 100644
  DrawPlainPin (PinTypePtr Pin, bool holeToo)
  {
    if (!Gathering)
-@@ -1572,7 +1572,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
+@@ -1553,7 +1553,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
  /* ---------------------------------------------------------------------------
   * draws text on a layer
   */

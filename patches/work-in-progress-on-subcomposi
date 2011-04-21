@@ -1,7 +1,7 @@
-Bottom: 9501a3aaf9303b533346206b5a27e8275782b330
-Top:    513478ac79960c56d7cb0211ef9f8d2a0a4d2a1f
+Bottom: b851b348519b5fd17732c5d0e290e8c0d0bdc780
+Top:    7be8fcaa68e81f170bc8668a1b394cad888275de
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-06 01:47:15 +0100
+Date:   2011-04-21 16:19:17 +0100
 
 Work in progress on subcompositing / stencil buffers
 
@@ -14,7 +14,7 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 043be86..ea54b0f 100644
+index e02fef7..8bfe3a4 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -406,6 +406,7 @@ DrawEverything (BoxTypePtr drawn_area)
@@ -111,9 +111,9 @@ index 043be86..ea54b0f 100644
  }
  
  static void
-@@ -833,6 +859,10 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
+@@ -814,6 +840,10 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
    clip_box = screen;
-   r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
+   r_search (Layer->polygon_tree, screen, NULL, poly_callback, Layer);
  
 +  /* HACK: Subcomposite polygons separately from other layer primitives */
 +  /* Reset the compositing */
@@ -122,7 +122,7 @@ index 043be86..ea54b0f 100644
    if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
      return;
  
-@@ -882,7 +912,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -863,7 +893,8 @@ DrawLayerGroup (int group, const BoxType * screen)
    Cardinal *layers = PCB->LayerGroups.Entries[group];
  
    clip_box = screen;

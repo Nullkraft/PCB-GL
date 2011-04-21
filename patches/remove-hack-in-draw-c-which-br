@@ -1,7 +1,7 @@
-Bottom: ad1071761e98a7441fffe822d563e27eae897cd5
-Top:    cfc706a2ac092c4b69d91b2e9b5c374e5ea02ae6
+Bottom: 3e5d88814a08da355ad0f97933f3dde9575f6a9b
+Top:    2ee744f85e816292fd27b73e6da82dbe79f50a02
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-06 01:47:17 +0100
+Date:   2011-04-21 16:19:20 +0100
 
 Remove hack in draw.c which broke PS (and probably other) output
 
@@ -13,12 +13,12 @@ file during the fab drawing output.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 4c2bbb0..fddec41 100644
+index b798dd7..d61ec6e 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -859,10 +859,6 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
+@@ -840,10 +840,6 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
    clip_box = screen;
-   r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
+   r_search (Layer->polygon_tree, screen, NULL, poly_callback, Layer);
  
 -  /* HACK: Subcomposite polygons separately from other layer primitives */
 -  /* Reset the compositing */
@@ -27,7 +27,7 @@ index 4c2bbb0..fddec41 100644
    if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
      return;
  
-@@ -912,8 +908,7 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -893,8 +889,7 @@ DrawLayerGroup (int group, const BoxType * screen)
    Cardinal *layers = PCB->LayerGroups.Entries[group];
  
    clip_box = screen;
