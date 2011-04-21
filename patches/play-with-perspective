@@ -1,7 +1,7 @@
-Bottom: 344dee73de984abcb6b69f444379940569a5ec61
-Top:    bf6908402c8bdd633483032da4980f19c83307ca
+Bottom: 2095093d31c6666ce64a08264b67299775e9ebeb
+Top:    efcab7ddc2274d516e530ec94ebc9d289fe51be3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-21 16:25:38 +0100
+Date:   2011-04-21 16:37:12 +0100
 
 Play with perspective
 
@@ -76,7 +76,7 @@ index 36fda15..4e829e8 100644
    else
      {
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e2b4157..4ed20be 100644
+index 57697c7..7ced820 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -33,6 +33,8 @@
@@ -105,7 +105,7 @@ index e2b4157..4ed20be 100644
    middle_copper_group = min_copper_group + num_copper_groups / 2;
  
    if (group >= 0 && group < max_group) {
-@@ -1321,7 +1326,8 @@ DrawMask (BoxType * screen)
+@@ -1303,7 +1308,8 @@ DrawMask (BoxType * screen)
    polygon.Clipped = board_outline_poly ();
    polygon.NoHoles = NULL;
    polygon.NoHolesValid = 0;
@@ -115,7 +115,7 @@ index e2b4157..4ed20be 100644
    SET_FLAG (FULLPOLYFLAG, &polygon);
    common_fill_pcb_polygon (out->fgGC, &polygon, screen);
    poly_Free (&polygon.Clipped);
-@@ -1541,7 +1547,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1523,7 +1529,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
    /* Look at sign of eye coordinate system z-coord when projecting a
       world vector along +ve Z axis, (0, 0, 1). */
    /* XXX: This isn't strictly correct, as I've ignored the matrix
@@ -124,7 +124,7 @@ index e2b4157..4ed20be 100644
    /* NB: last_modelview_matrix is transposed in memory! */
    reverse_layers = (last_modelview_matrix[2][2] < 0);
  
-@@ -1635,7 +1641,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+@@ -1617,7 +1623,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
        cyl_info.from_layer = drawn_groups[i];
        cyl_info.to_layer = drawn_groups[i - 1];
        cyl_info.scale = gport->zoom;
@@ -133,7 +133,7 @@ index e2b4157..4ed20be 100644
        gui->set_color (Output.fgGC, "drill");
        ghid_global_alpha_mult (Output.fgGC, 0.75);
        if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_cyl_callback, &cyl_info);
-@@ -1728,6 +1734,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1710,6 +1716,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    int new_x, new_y;
    int min_depth;
    int max_depth;
@@ -146,7 +146,7 @@ index e2b4157..4ed20be 100644
  
    ghid_start_drawing (port);
  
-@@ -1756,22 +1768,65 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1738,22 +1750,65 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -222,7 +222,7 @@ index e2b4157..4ed20be 100644
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->bg_color.red / 65535.,
                  port->bg_color.green / 65535.,
-@@ -1779,7 +1834,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1761,7 +1816,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                  1.);
    glStencilMask (~0);
    glClearStencil (0);
@@ -231,7 +231,7 @@ index e2b4157..4ed20be 100644
    hidgl_reset_stencil_usage ();
  
    /* Disable the stencil test until we need it - otherwise it gets dirty */
-@@ -1790,58 +1845,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1772,58 +1827,73 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    min_depth = -50 + compute_depth (0);                    /* FIXME: NEED TO USE PHYSICAL GROUPS */
    max_depth =  50 + compute_depth (max_copper_layer - 1); /* FIXME: NEED TO USE PHYSICAL GROUPS */
  
@@ -330,7 +330,7 @@ index e2b4157..4ed20be 100644
    region.X1 = min_x;  region.X2 = max_x + 1;
    region.Y1 = min_y;  region.Y2 = max_y + 1;
  
-@@ -2175,10 +2245,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -2157,10 +2227,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
    return pixmap;
  }
  
@@ -344,7 +344,7 @@ index e2b4157..4ed20be 100644
    det = m[0][0] * m[1][1] -
          m[0][1] * m[1][0];
    return det;
-@@ -2206,9 +2276,9 @@ determinant_4x4 (float m[4][4])
+@@ -2188,9 +2258,9 @@ determinant_4x4 (float m[4][4])
  #endif
  
  static void
@@ -356,7 +356,7 @@ index e2b4157..4ed20be 100644
    out[0][0] =  m[1][1] * scale;
    out[0][1] = -m[0][1] * scale;
    out[1][0] = -m[1][0] * scale;
-@@ -2273,68 +2343,104 @@ invert_4x4 (float m[4][4], float out[4][4])
+@@ -2255,68 +2325,104 @@ invert_4x4 (float m[4][4], float out[4][4])
  #endif
  
  
