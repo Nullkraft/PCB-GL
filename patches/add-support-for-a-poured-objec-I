@@ -1,7 +1,7 @@
-Bottom: 62b8c99e9e55674fb8f2b385e5b8e10b853cdb91
-Top:    ddd460a78b8a5ded7a254546a6093be6a2a730b3
+Bottom: 61dac883adc1eeac0867ab640e20e753bcc1ba2b
+Top:    a56b23a79556e72758223a54878951c4e8668fad
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-21 00:51:02 +0100
+Date:   2011-04-21 02:59:29 +0100
 
 Add support for a "poured" object.
 
@@ -2191,7 +2191,7 @@ index b0ef6f8..528c103 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index b4fd276..2fa21ef 100644
+index fddec41..0092468 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -49,6 +49,7 @@
@@ -2270,7 +2270,7 @@ index b4fd276..2fa21ef 100644
  
    if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
      return;
-@@ -1276,6 +1301,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
+@@ -1274,6 +1299,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2319,7 +2319,7 @@ index b4fd276..2fa21ef 100644
   * lowlevel routine to element arcs
   */
  static void
-@@ -1594,6 +1661,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
+@@ -1592,6 +1659,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
    DrawPolygonLowLevel (Polygon);
  }
  
@@ -2357,7 +2357,7 @@ index b4fd276..2fa21ef 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -1865,6 +1963,16 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -1863,6 +1961,16 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2374,7 +2374,7 @@ index b4fd276..2fa21ef 100644
   * erases an element
   */
  void
-@@ -1935,6 +2043,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -1933,6 +2041,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2384,7 +2384,7 @@ index b4fd276..2fa21ef 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -1982,6 +2093,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
+@@ -1980,6 +2091,10 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2, 0);
        break;
@@ -3234,10 +3234,10 @@ index 350a0de..67d1b78 100644
  /* ---------------------------------------------------------------------------
   * prototypes
 diff --git a/src/macro.h b/src/macro.h
-index ddb1fb3..89330ba 100644
+index 7cba5ac..a552e3c 100644
 --- a/src/macro.h
 +++ b/src/macro.h
-@@ -391,19 +391,26 @@ extern int mem_any_set (unsigned char *, int);
+@@ -301,19 +301,26 @@ extern int mem_any_set (unsigned char *, int);
  	{						\
  		text = &(layer)->Text[n]
  
@@ -3271,7 +3271,7 @@ index ddb1fb3..89330ba 100644
  
  #define ENDALL_LOOP }} while (0);  }} while (0)
  
-@@ -429,12 +436,12 @@ extern int mem_any_set (unsigned char *, int);
+@@ -339,12 +346,12 @@ extern int mem_any_set (unsigned char *, int);
  	{ \
  		ARC_LOOP(layer)
  
@@ -3286,7 +3286,7 @@ index ddb1fb3..89330ba 100644
  
  #define	COPPERLINE_LOOP(top) do	{		\
  	Cardinal		l;			\
-@@ -450,12 +457,12 @@ extern int mem_any_set (unsigned char *, int);
+@@ -360,12 +367,12 @@ extern int mem_any_set (unsigned char *, int);
  	{ \
  		ARC_LOOP(layer)
  
@@ -3301,7 +3301,7 @@ index ddb1fb3..89330ba 100644
  
  #define	SILKLINE_LOOP(top) do	{		\
  	Cardinal		l;			\
-@@ -473,13 +480,13 @@ extern int mem_any_set (unsigned char *, int);
+@@ -383,13 +390,13 @@ extern int mem_any_set (unsigned char *, int);
  	{ \
  		ARC_LOOP(layer)
  
@@ -3317,7 +3317,7 @@ index ddb1fb3..89330ba 100644
  
  #define	ALLTEXT_LOOP(top)	do {		\
  	Cardinal		l;			\
-@@ -512,13 +519,13 @@ extern int mem_any_set (unsigned char *, int);
+@@ -422,13 +429,13 @@ extern int mem_any_set (unsigned char *, int);
                  TEXT_LOOP(layer);                                      \
                    if (TEXT_IS_VISIBLE((board), layer, text))
  
