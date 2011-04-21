@@ -477,12 +477,18 @@ common_draw_helpers_init (HID *hid)
 }
 
 void
-exporter_board (HID * hid, BoxType * region)
+common_export_region (HID *hid, BoxType *region)
 {
   HID *old_gui = gui;
   hidGC savebg = Output.bgGC;
   hidGC savefg = Output.fgGC;
   hidGC savepm = Output.pmGC;
+
+  int i, ngroups, side;
+  int plated;
+  int component, solder;
+  int do_group[MAX_LAYER];     /* This is the list of layer groups we will draw. */
+  int drawn_groups[MAX_LAYER]; /* This is the reverse of the order in which we draw them. */
 
   gui = hid;
   Output.fgGC = gui->make_gc ();
@@ -494,13 +500,6 @@ exporter_board (HID * hid, BoxType * region)
   hid->set_color (Output.pmGC, "erase");
   hid->set_color (Output.bgGC, "drill");
 
-    int i, ngroups, side;
-  int plated;
-  int component, solder;
-  /* This is the list of layer groups we will draw.  */
-  int do_group[MAX_LAYER];
-  /* This is the reverse of the order in which we draw them.  */
-  int drawn_groups[MAX_LAYER];
 
   PCB->Data->SILKLAYER.Color = PCB->ElementColor;
   PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
