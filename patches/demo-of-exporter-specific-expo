@@ -1,5 +1,5 @@
 Bottom: 266d17396a6c44ce2322dbd6fb5081e8acaf09fc
-Top:    c306df7bf7a7ca3c143c0093a82565c6943a3620
+Top:    cd33ccc503dec8295ae3bfc043527a8a7bbf1c5f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-21 02:41:14 +0100
 
@@ -9,10 +9,10 @@ Demo of exporter specific export routine
 ---
 
 diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
-index b043d92..5b24567 100644
+index b043d92..2e7e34f 100644
 --- a/src/hid/common/draw_helpers.c
 +++ b/src/hid/common/draw_helpers.c
-@@ -475,3 +475,225 @@ common_draw_helpers_init (HID *hid)
+@@ -475,3 +475,224 @@ common_draw_helpers_init (HID *hid)
    hid->fill_pcb_pv          = common_fill_pcb_pv;
    hid->thindraw_pcb_pv      = common_thindraw_pcb_pv;
  }
@@ -40,7 +40,6 @@ index b043d92..5b24567 100644
 +
 +  hid->set_color (Output.pmGC, "erase");
 +  hid->set_color (Output.bgGC, "drill");
-+
 +
 +  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
 +  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
