@@ -1,0 +1,82 @@
+Bottom: b6d5ba596f0c3fc0ca1aaffa410bc217d28a0240
+Top:    f4a03063add158c275337acc0332d20c5db1107d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-21 16:55:44 +0100
+
+Refresh of try-clipping-polygons-to-the-s
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index cc288f1..519afe5 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -97,7 +97,7 @@ static void DrawPolygonLowLevel (PolygonTypePtr);
+ static void DrawPourLowLevel (PourTypePtr);
+ static void DrawArcLowLevel (ArcTypePtr);
+ static void DrawElementPackageLowLevel (ElementTypePtr Element, int);
+-static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
++static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *);
+ static void AddPart (void *);
+ static void SetPVColor (PinTypePtr, int);
+ /* static */ void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
+@@ -675,9 +675,9 @@ clearPin_callback (const BoxType * b, void *cl)
+ static int
+ poly_callback (const BoxType * b, void *cl)
+ {
+-  LayerType *layer = cl;
++  struct poly_info *i = (struct poly_info *) cl;
+ 
+-  DrawPlainPolygon (layer, (PolygonTypePtr) b);
++  DrawPlainPolygon (i->Layer, (PolygonTypePtr) b, i->clip);
+   return 1;
+ }
+ 
+@@ -1699,7 +1699,7 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
+  * draws a polygon
+  */
+ static void
+-DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
++DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType * clip)
+ {
+   static char *color;
+ 
+diff --git a/src/polygon.c b/src/polygon.c
+index fc919aa..2596d20 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -726,7 +726,7 @@ PinPoly (PinType * pin, BDimension thick, BDimension clear)
+ }
+ 
+ POLYAREA *
+-BoxPolyBloated (BoxType *box, BDimension bloat)
++BoxPolyBloated (const BoxType *box, BDimension bloat)
+ {
+   return RectPoly (box->X1 - bloat, box->X2 + bloat,
+                    box->Y1 - bloat, box->Y2 + bloat);
+diff --git a/src/polygon.h b/src/polygon.h
+index b8a3202..2b35088 100644
+--- a/src/polygon.h
++++ b/src/polygon.h
+@@ -52,7 +52,7 @@ POLYAREA * LinePoly(LineType *l, BDimension thick);
+ POLYAREA * SquarePadPoly (PadType * pad, BDimension clear);
+ 
+ POLYAREA * PinPoly(PinType *l, BDimension thick, BDimension clear);
+-POLYAREA * BoxPolyBloated (BoxType *box, BDimension radius);
++POLYAREA * BoxPolyBloated (const BoxType *box, BDimension radius);
+ 
+ int InitClip(DataType *d, LayerType *l, PolygonType *p);
+ void RestoreToPolygon(DataType *, int, void *, void *);
+diff --git a/src/pour.c b/src/pour.c
+index 06f8a2c..26a7554 100644
+--- a/src/pour.c
++++ b/src/pour.c
+@@ -419,7 +419,7 @@ unite_poly (POLYAREA * np, POLYAREA ** pg)
+   return 1;
+ }
+ 
+-static int
++int
+ intersect_poly (POLYAREA * np, POLYAREA ** pg)
+ {
+   POLYAREA *merged;
