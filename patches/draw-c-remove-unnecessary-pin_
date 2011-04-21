@@ -1,0 +1,14 @@
+Bottom: 266d17396a6c44ce2322dbd6fb5081e8acaf09fc
+Top:    266d17396a6c44ce2322dbd6fb5081e8acaf09fc
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-21 16:16:13 +0100
+
+draw.c: Remove unnecessary pin_info struct.
+
+The argument specifying whether to clear pins was always true in any
+case where clearPin_callback was called (the only user of this info).
+
+
+---
+
+
