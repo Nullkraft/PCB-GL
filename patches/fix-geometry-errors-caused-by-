@@ -17,7 +17,7 @@ This fixes up problems from the following commit:
     required thickness; adjust outer "arc" radius like in frac_circle()
 
 The object bounding boxes for arcs, vias, lines and rounded pads which
-determine the maxiimum area affected by that object were no longer
+determine the maximum area affected by that object were no longer
 correct, leading to artaefacts when doing incremental polygon processing.
 
 It also lead to missing fragments in (the non-curved + and x type
