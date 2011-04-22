@@ -1,5 +1,5 @@
 Bottom: bb58379015829b17b0e576fb7ebf9cc3f888ac7d
-Top:    0e53957a865c3037f72d564c308acda4bd3ff7a6
+Top:    96a51b04cc8925e435ecbcf2471aa10d1b18bddd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-21 16:19:20 +0100
 
@@ -173,7 +173,7 @@ index c0e23a3..9bf62b3 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5d53d27..20bff57 100644
+index 5d53d27..deaff31 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -568,7 +568,7 @@ index 5d53d27..20bff57 100644
 +{
 +  PadTypePtr pad = (PadTypePtr) b;
 +  if (!XOR (TEST_FLAG (ONSOLDERFLAG, pad), SWAP_IDENT) && pad->Mask)
-+    gui->fill_pcb_pad (Output.pmGC, pad, false, true);
++    gui->fill_pcb_pad (Output.pmGC, pad, true, true);
 +  return 1;
 +}
 +
