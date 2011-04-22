@@ -1226,7 +1226,7 @@ clearPad_callback_solid (const BoxType * b, void *cl)
 {
   PadTypePtr pad = (PadTypePtr) b;
   if (!XOR (TEST_FLAG (ONSOLDERFLAG, pad), SWAP_IDENT) && pad->Mask)
-    gui->fill_pcb_pad (Output.pmGC, pad, false, true);
+    gui->fill_pcb_pad (Output.pmGC, pad, true, true);
   return 1;
 }
 
