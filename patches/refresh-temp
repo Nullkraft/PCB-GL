@@ -1,0 +1,21 @@
+Bottom: 9b1a911e6c0c562c0d5edcd6cf6c9f77557b3668
+Top:    a6efa7d3abecc897d118b05883a4b45559eb430b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-22 17:00:05 +0100
+
+Refresh of add-support-for-a-poured-objec-I
+
+---
+
+diff --git a/src/misc.c b/src/misc.c
+index 8f2351e..bc1a933 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -586,7 +586,7 @@ IsLayerEmpty (LayerTypePtr layer)
+ {
+   return (layer->LineN == 0
+ 	  && layer->TextN == 0
+-	  && layer->PolygonN == 0
++	  && layer->PourN == 0
+ 	  && layer->ArcN == 0);
+ }
