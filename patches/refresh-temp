@@ -1,0 +1,29 @@
+Bottom: 4e2083f3cd7c470697974ae0291210824cca8040
+Top:    7e5dfe12c230b37e44b4013a066fd7649dd34497
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-22 19:09:54 +0100
+
+Refresh of fix-last-commit-to-work-with-n
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 7adb9de..4181f2e 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -4847,7 +4847,6 @@ ActionToggleStripHierarchy (int argc, char **argv, int x, int y)
+   char *function = ARG (0);
+   if (function && PCB->ElementOn)
+     {
+-      HideCrosshair (true);
+       switch (GetFunctionID (function))
+ 	{
+ 	case F_Object:
+@@ -4897,7 +4896,6 @@ ActionToggleStripHierarchy (int argc, char **argv, int x, int y)
+ 	      }
+ 	  }
+ 	}
+-      RestoreCrosshair (true);
+     }
+   return 0;
+ }
