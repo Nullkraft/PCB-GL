@@ -1,5 +1,5 @@
-Bottom: 187a75796f68b2b09b3de87573aa911e15f11129
-Top:    d8f1211bdbc18879c7ba7eb6c3b76806c8c42e94
+Bottom: 6fa94326185ab995045ad9bf6bd57623ca010482
+Top:    db7bd3229ed1a824f98a69aae1609221973baaf5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-21 16:19:13 +0100
 
@@ -1417,10 +1417,10 @@ index c1b12d3..b4a49e3 100644
    hid_register_hid (&lesstif_hid);
  #include "lesstif_lists.h"
 diff --git a/src/misc.c b/src/misc.c
-index 649208c..705f8df 100644
+index 02a883f..82bc772 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -679,15 +679,11 @@ CenterDisplay (LocationType X, LocationType Y, bool Delta)
+@@ -689,15 +689,11 @@ CenterDisplay (LocationType X, LocationType Y, bool Delta)
    double save_grid = PCB->Grid;
    PCB->Grid = 1;
    if (Delta)

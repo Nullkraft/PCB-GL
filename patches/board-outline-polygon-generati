@@ -1,5 +1,5 @@
-Bottom: ece80d249e552a12e21d93ebc98296f1ae86d381
-Top:    69f7d6d94c04268585885a2bc6dc2fa2b99ba0e9
+Bottom: 101e15981a3686988b53a7d7071e272fc878a538
+Top:    7c7444bc6612e72dfb46eee1caede47b70b6e9c0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-21 16:19:23 +0100
 
@@ -52,7 +52,7 @@ index f9af511..2f44d41 100644
  
    gui->use_mask (HID_MASK_OFF);
 diff --git a/src/polygon.c b/src/polygon.c
-index 78cc3b2..92f9832 100644
+index 37e0528..109dbba 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
 @@ -79,6 +79,7 @@ dicer output is used for HIDs which cannot render things with holes
@@ -63,7 +63,7 @@ index 78cc3b2..92f9832 100644
  
  #include "global.h"
  #include "box.h"
-@@ -1963,3 +1964,172 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
+@@ -1959,3 +1960,172 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
  
    SetChangedFlag (true);
  }
@@ -237,10 +237,10 @@ index 78cc3b2..92f9832 100644
 +  return clipped;
 +}
 diff --git a/src/polygon.h b/src/polygon.h
-index e29f67f..5b3baf6 100644
+index 315e69b..1a108f3 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
-@@ -72,4 +72,5 @@ bool MorphPolygon (LayerTypePtr, PolygonTypePtr);
+@@ -89,4 +89,5 @@ bool MorphPolygon (LayerTypePtr, PolygonTypePtr);
  void NoHolesPolygonDicer (PolygonType *p, const BoxType *clip,
                            void (*emit) (PLINE *, void *), void *user_data);
  void PolyToPolygonsOnLayer (DataType *, LayerType *, POLYAREA *, FlagType);
