@@ -1,0 +1,32 @@
+Bottom: 187a75796f68b2b09b3de87573aa911e15f11129
+Top:    187a75796f68b2b09b3de87573aa911e15f11129
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-22 18:38:20 +0100
+
+Fix geometry errors caused by commit 2d8dc8a3a3a55158b4e6278dd9f40588e4111c2d
+
+This fixes up problems from the following commit:
+
+Author: Ineiev <ineiev@users.berlios.de>
+Date:   Sun Dec 12 00:28:48 2010 -0500
+
+    [PATCH] fix bug 2793480 (vias/arcs-to-polygon clearances)
+
+    frac_circle(): introduce radius_adjustment factor to make
+    the polygon outline the arc rather than connet points on the arc
+
+    ArcPolyNoIntersect(): compute number of segments so that
+    polygon diverges from the arc no more than 0.02 of
+    required thickness; adjust outer "arc" radius like in frac_circle()
+
+The object bounding boxes for arcs, vias, lines and rounded pads which
+determine the maxiimum area affected by that object were no longer
+correct, leading to artaefacts when doing incremental polygon processing.
+
+It also lead to missing fragments in (the non-curved + and x type
+thermals). These are also fixed up by this patch.
+
+
+---
+
+
