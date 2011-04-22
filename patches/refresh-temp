@@ -1,0 +1,21 @@
+Bottom: 0e53957a865c3037f72d564c308acda4bd3ff7a6
+Top:    96a51b04cc8925e435ecbcf2471aa10d1b18bddd
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-22 22:39:58 +0100
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 20bff57..deaff31 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1226,7 +1226,7 @@ clearPad_callback_solid (const BoxType * b, void *cl)
+ {
+   PadTypePtr pad = (PadTypePtr) b;
+   if (!XOR (TEST_FLAG (ONSOLDERFLAG, pad), SWAP_IDENT) && pad->Mask)
+-    gui->fill_pcb_pad (Output.pmGC, pad, false, true);
++    gui->fill_pcb_pad (Output.pmGC, pad, true, true);
+   return 1;
+ }
