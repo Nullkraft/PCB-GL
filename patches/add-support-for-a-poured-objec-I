@@ -1,5 +1,5 @@
 Bottom: 7cfe38bfa48f9c0d031985d3121b4338ea8eadf8
-Top:    9b1a911e6c0c562c0d5edcd6cf6c9f77557b3668
+Top:    a6efa7d3abecc897d118b05883a4b45559eb430b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-21 16:42:38 +0100
 
@@ -3289,7 +3289,7 @@ index 7ef7d41..1b76e88 100644
 +  ClearFromPours (Data, ELEMENT_TYPE, Element, Element);
  }
 diff --git a/src/misc.c b/src/misc.c
-index 705f8df..8f2351e 100644
+index 705f8df..bc1a933 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -66,6 +66,7 @@
@@ -3354,6 +3354,15 @@ index 705f8df..8f2351e 100644
 +      Data->Layer[i].PourN == 0;
 +
    return (hasNoObjects);
+ }
+ 
+@@ -570,7 +586,7 @@ IsLayerEmpty (LayerTypePtr layer)
+ {
+   return (layer->LineN == 0
+ 	  && layer->TextN == 0
+-	  && layer->PolygonN == 0
++	  && layer->PourN == 0
+ 	  && layer->ArcN == 0);
  }
  
 @@ -656,13 +672,17 @@ GetDataBoundingBox (DataTypePtr Data)
