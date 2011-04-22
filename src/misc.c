@@ -586,7 +586,7 @@ IsLayerEmpty (LayerTypePtr layer)
 {
   return (layer->LineN == 0
 	  && layer->TextN == 0
-	  && layer->PolygonN == 0
+	  && layer->PourN == 0
 	  && layer->ArcN == 0);
 }
 
