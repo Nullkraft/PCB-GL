@@ -250,7 +250,7 @@ name_callback (const BoxType * b, void *cl)
   if (TEST_FLAG (HIDENAMEFLAG, element))
     return 0;
 
-  if (TEST_FLAG (ONSOLDERFLAG, element) == (*side == SOLDER_LAYER))
+  if (ON_SIDE (element, side))
     DrawElementName (element, 0);
   return 0;
 }
