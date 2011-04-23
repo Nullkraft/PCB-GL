@@ -1,5 +1,5 @@
 Bottom: 957d9f6b42aa6f3a71089907db78bb1f00e954eb
-Top:    957d9f6b42aa6f3a71089907db78bb1f00e954eb
+Top:    0222a92c911b9a7e0cdcc9f5021665928a669803
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 16:56:13 +0100
 
@@ -8,4 +8,25 @@ draw.c: Change DrawTop() to DrawOuter() taking a side parameter
 
 ---
 
-
+diff --git a/src/draw.c b/src/draw.c
+index 88c90cb..f7a5c7c 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -83,7 +83,7 @@ static const BoxType *clip_box = NULL;
+  */
+ static void Redraw (bool, BoxTypePtr);
+ static void DrawEverything (BoxTypePtr);
+-static void DrawTop (const BoxType *);
++static void DrawOuterLayer (int side, const BoxType *);
+ static int DrawLayerGroup (int, const BoxType *);
+ static void DrawPinOrViaLowLevel (PinTypePtr, bool);
+ static void DrawPlainPin (PinTypePtr, bool);
+@@ -315,7 +315,7 @@ PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
+   gui->set_draw_faded (Output.fgGC, 1);
+   SWAP_IDENT = swap_ident;
+   DrawLayerGroup (side_group, drawn_area);
+-  DrawTop (drawn_area);
++  DrawOuterLayer (side, drawn_area);
+   gui->set_draw_faded (Output.fgGC, 0);
+ 
+   /* draw package */
