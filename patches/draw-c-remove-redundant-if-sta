@@ -1,0 +1,14 @@
+Bottom: ae20b6c33253556762ae92b1d0adedd8600f0a94
+Top:    ae20b6c33253556762ae92b1d0adedd8600f0a94
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-23 17:44:22 +0100
+
+draw.c: Remove redundant if statement
+
+The outer if() statement already ensures this code-path isn't followed for
+a gui hid.. don't repeat ourselves.
+
+
+---
+
+
