@@ -1,0 +1,27 @@
+Bottom: 8b5e37c71ea877ca03eba28e5a413a79545e0361
+Top:    6f2caf33faa9363edc8abac1da1243d7f5b37d13
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-23 17:11:41 +0100
+
+Refresh of draw-c-combine-front-and-back-
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 1ad48d5..db04af3 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -393,11 +393,9 @@ DrawEverything (BoxTypePtr drawn_area)
+ 	      /* draw element pads */
+ 	      if (group == component || group == solder)
+ 		{
+-		  SWAP_IDENT = (group == solder);
+-		  r_search (PCB->Data->pad_tree, drawn_area, NULL,
+-			    pad_callback, NULL);
++                  side = (group == solder) ? SOLDER_LAYER : COMPONENT_LAYER;
++		  r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+ 		}
+-	      SWAP_IDENT = save_swap;
+ 
+ 	      if (!gui->gui)
+ 		{
