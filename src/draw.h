@@ -74,6 +74,20 @@ void EraseObject (int, void *, void *);
 void LoadBackgroundImage (char *);
 void UpdateAll (void);
 
+/* TEMPORARY */
+void ClearPad (PadTypePtr, bool);
+void DrawPinOrViaLowLevel (PinTypePtr, bool);
+void DrawPlainPin (PinTypePtr, bool);
+void DrawPlainVia (PinTypePtr, bool);
+void DrawRegularText (LayerTypePtr, TextTypePtr);
+void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
+void DrawHole (PinTypePtr);
+void DrawRats (BoxType *);
+void DrawSilk (int side, const BoxType *);
+void DrawSpecialPolygon (hidGC DrawGC, LocationType X, LocationType Y, int Thickness, int thin_draw);
+
+/* TEMPORARY */
+
 /*GdkDrawable *draw_get_current_drawable(void);*/
 
 #endif
