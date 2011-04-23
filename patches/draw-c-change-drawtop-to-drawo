@@ -1,5 +1,5 @@
 Bottom: 3e90b33543a7ad7f7e207d2b8560406cce1239f4
-Top:    f80eb80e16768d162a49b644071e1047a9610190
+Top:    938192a2b549d59bac7606a084f4e9a17a6ab9b4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 16:56:13 +0100
 
@@ -11,7 +11,7 @@ draw.c: Change DrawTop() to DrawPPV() taking a side parameter
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 7380beb..2ea2467 100644
+index 7380beb..b0bd9f6 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -83,7 +83,7 @@ static const BoxType *clip_box = NULL;
@@ -41,7 +41,22 @@ index 7380beb..2ea2467 100644
    DrawSilk (swap_ident,
  	    swap_ident ? solder_silk_layer : component_silk_layer,
  	    drawn_area);
-@@ -402,9 +403,11 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -384,13 +385,12 @@ DrawEverything (BoxTypePtr drawn_area)
+ 	  if (DrawLayerGroup (group, drawn_area) && !gui->gui)
+ 	    {
+ 	      r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
+-	      r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
+-	      /* draw element pads */
+ 	      if (group == component || group == solder)
+ 		{
+                   side = (group == solder) ? SOLDER_LAYER : COMPONENT_LAYER;
+ 		  r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+ 		}
++	      r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
+ 
+ 	      /* draw holes */
+ 	      plated = -1;
+@@ -402,9 +402,11 @@ DrawEverything (BoxTypePtr drawn_area)
    if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
      return;
  
@@ -54,7 +69,7 @@ index 7380beb..2ea2467 100644
    else
      {
        HoleCountStruct hcs;
-@@ -566,13 +569,11 @@ pad_callback (const BoxType * b, void *cl)
+@@ -566,13 +568,11 @@ pad_callback (const BoxType * b, void *cl)
  }
  
  /* ---------------------------------------------------------------------------
@@ -63,7 +78,7 @@ index 7380beb..2ea2467 100644
   */
  static void
 -DrawTop (const BoxType * screen)
-+DrawOuterPPV (int side, const BoxType * screen)
++DrawPPV (int side, const BoxType * screen)
  {
 -  int side = SWAP_IDENT ? SOLDER_LAYER : COMPONENT_LAYER;
 -
