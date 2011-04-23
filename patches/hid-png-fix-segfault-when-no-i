@@ -1,0 +1,19 @@
+Bottom: c1e9e7812796aaaeb597dd1c0b6c1f44bf759458
+Top:    c1e9e7812796aaaeb597dd1c0b6c1f44bf759458
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-23 13:36:31 +0100
+
+hid/png: Fix segfault when no image formats are configured in.
+
+Based on a patch by Felix Ruoff <Felix@posaunenmission.de>
+
+Catch the case where the selected image format is actually the NULL
+terminator at the end of the format list. This happens when the
+list is empty. Don't strcmp against that terminator!
+
+Closes-bug: lp-699290 (sf-2669324)
+
+
+---
+
+
