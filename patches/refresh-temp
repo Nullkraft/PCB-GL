@@ -1,0 +1,1824 @@
+Bottom: bea6449b58d7f770abfa647dcd838d330217180d
+Top:    fb2205e8060ae8498af1c3a7f9a85792e3a59766
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-23 16:43:31 +0100
+
+Refresh of draw-c-remove-unused-parameter
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index cc1355e..9bad677 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -586,7 +586,7 @@ ClearWarnings ()
+     if (TEST_FLAG (WARNFLAG, pin))
+       {
+ 	CLEAR_FLAG (WARNFLAG, pin);
+-	DrawPin (pin, 0);
++	DrawPin (pin);
+       }
+   }
+   ENDALL_LOOP;
+@@ -595,7 +595,7 @@ ClearWarnings ()
+     if (TEST_FLAG (WARNFLAG, pad))
+       {
+ 	CLEAR_FLAG (WARNFLAG, pad);
+-	DrawPad (pad, 0);
++	DrawPad (pad);
+       }
+   }
+   ENDALL_LOOP;
+@@ -1034,7 +1034,7 @@ NotifyMode (void)
+ 	    if (gui->shift_is_pressed ())
+ 	      ChangeObjectThermal (VIA_TYPE, via, via, via, PCB->ThermStyle);
+ 	    IncrementUndoSerialNumber ();
+-	    DrawVia (via, 0);
++	    DrawVia (via);
+ 	    Draw ();
+ 	  }
+ 	break;
+@@ -1118,7 +1118,7 @@ NotifyMode (void)
+ 		  AddObjectToCreateUndoList (ARC_TYPE, CURRENT, arc, arc);
+ 		  IncrementUndoSerialNumber ();
+ 		  addedLines++;
+-		  DrawArc (CURRENT, arc, 0);
++		  DrawArc (CURRENT, arc);
+ 		  Draw ();
+ 		  Crosshair.AttachedBox.State = STATE_THIRD;
+ 		}
+@@ -1164,7 +1164,7 @@ NotifyMode (void)
+ 	      {
+ 		/* this is not un-doable since LOCK isn't */
+ 		CLEAR_FLAG (SELECTEDFLAG, thing);
+-		DrawObject (type, ptr1, ptr2, 0);
++		DrawObject (type, ptr1, ptr2);
+ 		Draw ();
+ 	      }
+ 	    hid_actionl ("Report", "Object", NULL);
+@@ -1222,7 +1222,7 @@ NotifyMode (void)
+ 	      addedLines++;
+ 	      AddObjectToCreateUndoList (RATLINE_TYPE, line, line, line);
+ 	      IncrementUndoSerialNumber ();
+-	      DrawRat (line, 0);
++	      DrawRat (line);
+ 	      Crosshair.AttachedLine.Point1.X =
+ 		Crosshair.AttachedLine.Point2.X;
+ 	      Crosshair.AttachedLine.Point1.Y =
+@@ -1275,7 +1275,7 @@ NotifyMode (void)
+ 
+ 	      addedLines++;
+ 	      AddObjectToCreateUndoList (LINE_TYPE, CURRENT, line, line);
+-	      DrawLine (CURRENT, line, 0);
++	      DrawLine (CURRENT, line);
+ 	      /* place a via if vias are visible, the layer is
+ 	         in a new group since the last line and there
+ 	         isn't a pin already here */
+@@ -1296,7 +1296,7 @@ NotifyMode (void)
+ 				    NoFlags ())) != NULL)
+ 		{
+ 		  AddObjectToCreateUndoList (VIA_TYPE, via, via, via);
+-		  DrawVia (via, 0);
++		  DrawVia (via);
+ 		}
+ 	      /* copy the coordinates */
+ 	      Crosshair.AttachedLine.Point1.X =
+@@ -1327,7 +1327,7 @@ NotifyMode (void)
+ 	      addedLines++;
+ 	      AddObjectToCreateUndoList (LINE_TYPE, CURRENT, line, line);
+ 	      IncrementUndoSerialNumber ();
+-	      DrawLine (CURRENT, line, 0);
++	      DrawLine (CURRENT, line);
+ 	      /* move to new start point */
+ 	      Crosshair.AttachedLine.Point1.X = Note.X;
+ 	      Crosshair.AttachedLine.Point1.Y = Note.Y;
+@@ -1374,7 +1374,7 @@ NotifyMode (void)
+ 	      AddObjectToCreateUndoList (POLYGON_TYPE, CURRENT,
+ 					 polygon, polygon);
+ 	      IncrementUndoSerialNumber ();
+-	      DrawPolygon (CURRENT, polygon, 0);
++	      DrawPolygon (CURRENT, polygon);
+ 	      Draw ();
+ 	    }
+ 
+@@ -1403,7 +1403,7 @@ NotifyMode (void)
+ 		  {
+ 		    AddObjectToCreateUndoList (TEXT_TYPE, CURRENT, text, text);
+ 		    IncrementUndoSerialNumber ();
+-		    DrawText (CURRENT, text, 0);
++		    DrawText (CURRENT, text);
+ 		    Draw ();
+ 		  }
+ 		}
+@@ -2909,7 +2909,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+ 		  if (TEST_FLAG (DISPLAYNAMEFLAG, pin))
+ 		    ErasePinName (pin);
+ 		  else
+-		    DrawPinName (pin, 0);
++		    DrawPinName (pin);
+ 		  AddObjectToFlagUndoList (PIN_TYPE, ptr1, pin, pin);
+ 		  TOGGLE_FLAG (DISPLAYNAMEFLAG, pin);
+ 		}
+@@ -2919,7 +2919,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+ 		  if (TEST_FLAG (DISPLAYNAMEFLAG, pad))
+ 		    ErasePadName (pad);
+ 		  else
+-		    DrawPadName (pad, 0);
++		    DrawPadName (pad);
+ 		  AddObjectToFlagUndoList (PAD_TYPE, ptr1, pad, pad);
+ 		  TOGGLE_FLAG (DISPLAYNAMEFLAG, pad);
+ 		}
+@@ -2933,7 +2933,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+ 		if (TEST_FLAG (DISPLAYNAMEFLAG, (PinTypePtr) ptr2))
+ 		  ErasePinName ((PinTypePtr) ptr2);
+ 		else
+-		  DrawPinName ((PinTypePtr) ptr2, 0);
++		  DrawPinName ((PinTypePtr) ptr2);
+ 		AddObjectToFlagUndoList (PIN_TYPE, ptr1, ptr2, ptr3);
+ 		TOGGLE_FLAG (DISPLAYNAMEFLAG, (PinTypePtr) ptr2);
+ 		SetChangedFlag (true);
+@@ -2945,7 +2945,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+ 		if (TEST_FLAG (DISPLAYNAMEFLAG, (PadTypePtr) ptr2))
+ 		  ErasePadName ((PadTypePtr) ptr2);
+ 		else
+-		  DrawPadName ((PadTypePtr) ptr2, 0);
++		  DrawPadName ((PadTypePtr) ptr2);
+ 		AddObjectToFlagUndoList (PAD_TYPE, ptr1, ptr2, ptr3);
+ 		TOGGLE_FLAG (DISPLAYNAMEFLAG, (PadTypePtr) ptr2);
+ 		SetChangedFlag (true);
+@@ -2956,7 +2956,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+ 		if (TEST_FLAG (DISPLAYNAMEFLAG, (PinTypePtr) ptr2))
+ 		  EraseViaName ((PinTypePtr) ptr2);
+ 		else
+-		  DrawViaName ((PinTypePtr) ptr2, 0);
++		  DrawViaName ((PinTypePtr) ptr2);
+ 		AddObjectToFlagUndoList (VIA_TYPE, ptr1, ptr2, ptr3);
+ 		TOGGLE_FLAG (DISPLAYNAMEFLAG, (PinTypePtr) ptr2);
+ 		SetChangedFlag (true);
+@@ -3833,7 +3833,7 @@ ActionAddRats (int argc, char **argv, int x, int y)
+ 	    {
+ 	      AddObjectToFlagUndoList (RATLINE_TYPE, shorty, shorty, shorty);
+ 	      SET_FLAG (SELECTEDFLAG, shorty);
+-	      DrawRat (shorty, 0);
++	      DrawRat (shorty);
+ 	      Draw ();
+ 	      CenterDisplay ((shorty->Point2.X + shorty->Point1.X) / 2,
+ 			     (shorty->Point2.Y + shorty->Point1.Y) / 2,
+@@ -6284,7 +6284,7 @@ ActionUndo (int argc, char **argv, int x, int y)
+ 		    {
+ 		      /* undo loses FOUNDFLAG */
+ 		      SET_FLAG(FOUNDFLAG, ptr2);
+-		      DrawLine (CURRENT, ptr2, 0);
++		      DrawLine (CURRENT, ptr2);
+ 		    }
+ 		  Crosshair.AttachedLine.Point1.X =
+ 		    Crosshair.AttachedLine.Point2.X = ptr2->Point2.X;
+diff --git a/src/change.c b/src/change.c
+index 32c84c8..277717a 100644
+--- a/src/change.c
++++ b/src/change.c
+@@ -362,7 +362,7 @@ ChangeViaThermal (PinTypePtr Via)
+     ASSIGN_THERM (INDEXOFCURRENT, Delta, Via);
+   AddObjectToClearPolyUndoList (VIA_TYPE, Via, Via, Via, true);
+   ClearFromPolygon (PCB->Data, VIA_TYPE, CURRENT, Via);
+-  DrawVia (Via, 0);
++  DrawVia (Via);
+   return Via;
+ }
+ 
+@@ -382,7 +382,7 @@ ChangePinThermal (ElementTypePtr element, PinTypePtr Pin)
+     ASSIGN_THERM (INDEXOFCURRENT, Delta, Pin);
+   AddObjectToClearPolyUndoList (PIN_TYPE, element, Pin, Pin, true);
+   ClearFromPolygon (PCB->Data, VIA_TYPE, CURRENT, Pin);
+-  DrawPin (Pin, 0);
++  DrawPin (Pin);
+   return Pin;
+ }
+ 
+@@ -415,7 +415,7 @@ ChangeViaSize (PinTypePtr Via)
+       SetPinBoundingBox (Via);
+       r_insert_entry (PCB->Data->via_tree, (BoxType *) Via, 0);
+       ClearFromPolygon (PCB->Data, VIA_TYPE, Via, Via);
+-      DrawVia (Via, 0);
++      DrawVia (Via);
+       return (Via);
+     }
+   return (NULL);
+@@ -448,7 +448,7 @@ ChangeVia2ndSize (PinTypePtr Via)
+ 	  Via->Thickness = value;
+ 	}
+       ClearFromPolygon (PCB->Data, VIA_TYPE, Via, Via);
+-      DrawVia (Via, 0);
++      DrawVia (Via);
+       return (Via);
+     }
+   return (NULL);
+@@ -482,7 +482,7 @@ ChangeViaClearSize (PinTypePtr Via)
+   SetPinBoundingBox (Via);
+   r_insert_entry (PCB->Data->via_tree, (BoxType *) Via, 0);
+   ClearFromPolygon (PCB->Data, VIA_TYPE, Via, Via);
+-  DrawVia (Via, 0);
++  DrawVia (Via);
+   Via->Element = NULL;
+   return (Via);
+ }
+@@ -514,7 +514,7 @@ ChangePinSize (ElementTypePtr Element, PinTypePtr Pin)
+       /* SetElementBB updates all associated rtrees */
+       SetElementBoundingBox (PCB->Data, Element, &PCB->Font);
+       ClearFromPolygon (PCB->Data, PIN_TYPE, Element, Pin);
+-      DrawPin (Pin, 0);
++      DrawPin (Pin);
+       return (Pin);
+     }
+   return (NULL);
+@@ -548,7 +548,7 @@ ChangePinClearSize (ElementTypePtr Element, PinTypePtr Pin)
+   /* SetElementBB updates all associated rtrees */
+   SetElementBoundingBox (PCB->Data, Element, &PCB->Font);
+   ClearFromPolygon (PCB->Data, PIN_TYPE, Element, Pin);
+-  DrawPin (Pin, 0);
++  DrawPin (Pin);
+   return (Pin);
+ }
+ 
+@@ -575,7 +575,7 @@ ChangePadSize (ElementTypePtr Element, PadTypePtr Pad)
+       /* SetElementBB updates all associated rtrees */
+       SetElementBoundingBox (PCB->Data, Element, &PCB->Font);
+       ClearFromPolygon (PCB->Data, PAD_TYPE, Element, Pad);
+-      DrawPad (Pad, 0);
++      DrawPad (Pad);
+       return (Pad);
+     }
+   return (NULL);
+@@ -609,7 +609,7 @@ ChangePadClearSize (ElementTypePtr Element, PadTypePtr Pad)
+   /* SetElementBB updates all associated rtrees */
+   SetElementBoundingBox (PCB->Data, Element, &PCB->Font);
+   ClearFromPolygon (PCB->Data, PAD_TYPE, Element, Pad);
+-  DrawPad (Pad, 0);
++  DrawPad (Pad);
+   return Pad;
+ }
+ 
+@@ -646,7 +646,7 @@ ChangeElement2ndSize (ElementTypePtr Element)
+ 	    pin->Thickness = value;
+ 	  }
+ 	ClearFromPolygon (PCB->Data, PIN_TYPE, Element, pin);
+-	DrawPin (pin, 0);
++	DrawPin (pin);
+       }
+   }
+   END_LOOP;
+@@ -683,7 +683,7 @@ ChangePin2ndSize (ElementTypePtr Element, PinTypePtr Pin)
+ 	  Pin->Thickness = value;
+ 	}
+       ClearFromPolygon (PCB->Data, PIN_TYPE, Element, Pin);
+-      DrawPin (Pin, 0);
++      DrawPin (Pin);
+       return (Pin);
+     }
+   return (NULL);
+@@ -711,7 +711,7 @@ ChangeLineSize (LayerTypePtr Layer, LineTypePtr Line)
+       SetLineBoundingBox (Line);
+       r_insert_entry (Layer->line_tree, (BoxTypePtr) Line, 0);
+       ClearFromPolygon (PCB->Data, LINE_TYPE, Layer, Line);
+-      DrawLine (Layer, Line, 0);
++      DrawLine (Layer, Line);
+       return (Line);
+     }
+   return (NULL);
+@@ -744,7 +744,7 @@ ChangeLineClearSize (LayerTypePtr Layer, LineTypePtr Line)
+       SetLineBoundingBox (Line);
+       r_insert_entry (Layer->line_tree, (BoxTypePtr) Line, 0);
+       ClearFromPolygon (PCB->Data, LINE_TYPE, Layer, Line);
+-      DrawLine (Layer, Line, 0);
++      DrawLine (Layer, Line);
+       return (Line);
+     }
+   return (NULL);
+@@ -792,7 +792,7 @@ ChangeArcSize (LayerTypePtr Layer, ArcTypePtr Arc)
+       SetArcBoundingBox (Arc);
+       r_insert_entry (Layer->arc_tree, (BoxTypePtr) Arc, 0);
+       ClearFromPolygon (PCB->Data, ARC_TYPE, Layer, Arc);
+-      DrawArc (Layer, Arc, 0);
++      DrawArc (Layer, Arc);
+       return (Arc);
+     }
+   return (NULL);
+@@ -825,7 +825,7 @@ ChangeArcClearSize (LayerTypePtr Layer, ArcTypePtr Arc)
+       SetArcBoundingBox (Arc);
+       r_insert_entry (Layer->arc_tree, (BoxTypePtr) Arc, 0);
+       ClearFromPolygon (PCB->Data, ARC_TYPE, Layer, Arc);
+-      DrawArc (Layer, Arc, 0);
++      DrawArc (Layer, Arc);
+       return (Arc);
+     }
+   return (NULL);
+@@ -853,7 +853,7 @@ ChangeTextSize (LayerTypePtr Layer, TextTypePtr Text)
+       SetTextBoundingBox (&PCB->Font, Text);
+       r_insert_entry (Layer->text_tree, (BoxTypePtr) Text, 0);
+       ClearFromPolygon (PCB->Data, TEXT_TYPE, Layer, Text);
+-      DrawText (Layer, Text, 0);
++      DrawText (Layer, Text);
+       return (Text);
+     }
+   return (NULL);
+@@ -949,7 +949,7 @@ ChangeViaName (PinTypePtr Via)
+     {
+       ErasePinName (Via);
+       Via->Name = NewName;
+-      DrawPinName (Via, 0);
++      DrawPinName (Via);
+     }
+   else
+     Via->Name = NewName;
+@@ -969,7 +969,7 @@ ChangePinName (ElementTypePtr Element, PinTypePtr Pin)
+     {
+       ErasePinName (Pin);
+       Pin->Name = NewName;
+-      DrawPinName (Pin, 0);
++      DrawPinName (Pin);
+     }
+   else
+     Pin->Name = NewName;
+@@ -989,7 +989,7 @@ ChangePadName (ElementTypePtr Element, PadTypePtr Pad)
+     {
+       ErasePadName (Pad);
+       Pad->Name = NewName;
+-      DrawPadName (Pad, 0);
++      DrawPadName (Pad);
+     }
+   else
+     Pad->Name = NewName;
+@@ -1078,7 +1078,7 @@ ChangeTextName (LayerTypePtr Layer, TextTypePtr Text)
+   /* calculate size of the bounding box */
+   SetTextBoundingBox (&PCB->Font, Text);
+   ClearFromPolygon (PCB->Data, TEXT_TYPE, Layer, Text);
+-  DrawText (Layer, Text, 0);
++  DrawText (Layer, Text);
+   return (old);
+ }
+ 
+@@ -1143,7 +1143,7 @@ ChangeLineJoin (LayerTypePtr Layer, LineTypePtr Line)
+   AddObjectToClearPolyUndoList (LINE_TYPE, Layer, Line, Line, true);
+   ClearFromPolygon (PCB->Data, LINE_TYPE, Layer, Line);
+   }
+-  DrawLine (Layer, Line, 0);
++  DrawLine (Layer, Line);
+   return (Line);
+ }
+ 
+@@ -1190,7 +1190,7 @@ ChangeArcJoin (LayerTypePtr Layer, ArcTypePtr Arc)
+     ClearFromPolygon (PCB->Data, ARC_TYPE, Layer, Arc);
+   AddObjectToClearPolyUndoList (ARC_TYPE, Layer, Arc, Arc, true);
+   }
+-  DrawArc (Layer, Arc, 0);
++  DrawArc (Layer, Arc);
+   return (Arc);
+ }
+ 
+@@ -1237,7 +1237,7 @@ ChangeTextJoin (LayerTypePtr Layer, TextTypePtr Text)
+   AddObjectToClearPolyUndoList (TEXT_TYPE, Layer, Text, Text, true);
+   ClearFromPolygon (PCB->Data, TEXT_TYPE, Layer, Text);
+   }
+-  DrawText (Layer, Text, 0);
++  DrawText (Layer, Text);
+   return (Text);
+ }
+ 
+@@ -1404,7 +1404,7 @@ ChangePadSquare (ElementTypePtr Element, PadTypePtr Pad)
+   TOGGLE_FLAG (SQUAREFLAG, Pad);
+   AddObjectToClearPolyUndoList (PAD_TYPE, Element, Pad, Pad, true);
+   ClearFromPolygon (PCB->Data, PAD_TYPE, Element, Pad);
+-  DrawPad (Pad, 0);
++  DrawPad (Pad);
+   return (Pad);
+ }
+ 
+@@ -1451,7 +1451,7 @@ ChangePinSquare (ElementTypePtr Element, PinTypePtr Pin)
+   TOGGLE_FLAG (SQUAREFLAG, Pin);
+   AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, true);
+   ClearFromPolygon (PCB->Data, PIN_TYPE, Element, Pin);
+-  DrawPin (Pin, 0);
++  DrawPin (Pin);
+   return (Pin);
+ }
+ 
+@@ -1494,7 +1494,7 @@ ChangeViaOctagon (PinTypePtr Via)
+   TOGGLE_FLAG (OCTAGONFLAG, Via);
+   AddObjectToClearPolyUndoList (VIA_TYPE, Via, Via, Via, true);
+   ClearFromPolygon (PCB->Data, VIA_TYPE, Via, Via);
+-  DrawVia (Via, 0);
++  DrawVia (Via);
+   return (Via);
+ }
+ 
+@@ -1537,7 +1537,7 @@ ChangePinOctagon (ElementTypePtr Element, PinTypePtr Pin)
+   TOGGLE_FLAG (OCTAGONFLAG, Pin);
+   AddObjectToClearPolyUndoList (PIN_TYPE, Element, Pin, Pin, true);
+   ClearFromPolygon (PCB->Data, PIN_TYPE, Element, Pin);
+-  DrawPin (Pin, 0);
++  DrawPin (Pin);
+   return (Pin);
+ }
+ 
+@@ -1588,7 +1588,7 @@ ChangeHole (PinTypePtr Via)
+       AddObjectTo2ndSizeUndoList (VIA_TYPE, Via, Via, Via);
+       Via->DrillingHole = Via->Thickness - MIN_PINORVIACOPPER;
+     }
+-  DrawVia (Via, 0);
++  DrawVia (Via);
+   Draw ();
+   return (true);
+ }
+@@ -1604,7 +1604,7 @@ ChangePaste (PadTypePtr Pad)
+   ErasePad (Pad);
+   AddObjectToFlagUndoList (PAD_TYPE, Pad, Pad, Pad);
+   TOGGLE_FLAG (NOPASTEFLAG, Pad);
+-  DrawPad (Pad, 0);
++  DrawPad (Pad);
+   Draw ();
+   return (true);
+ }
+@@ -1621,7 +1621,7 @@ ChangePolyClear (LayerTypePtr Layer, PolygonTypePtr Polygon)
+   AddObjectToFlagUndoList (POLYGON_TYPE, Layer, Polygon, Polygon);
+   TOGGLE_FLAG (CLEARPOLYFLAG, Polygon);
+   InitClip (PCB->Data, Layer, Polygon);
+-  DrawPolygon (Layer, Polygon, 0);
++  DrawPolygon (Layer, Polygon);
+   return (Polygon);
+ }
+ 
+@@ -2354,7 +2354,7 @@ ChangePadMaskSize (ElementTypePtr Element, PadTypePtr Pad)
+       r_delete_entry (PCB->Data->pad_tree, &Pad->BoundingBox);
+       Pad->Mask = value;
+       SetElementBoundingBox (PCB->Data, Element, &PCB->Font);
+-      DrawPad (Pad, 0);
++      DrawPad (Pad);
+       return (Pad);
+     }
+   return (NULL);
+@@ -2379,7 +2379,7 @@ ChangePinMaskSize (ElementTypePtr Element, PinTypePtr Pin)
+       r_delete_entry (PCB->Data->pin_tree, &Pin->BoundingBox);
+       Pin->Mask = value;
+       SetElementBoundingBox (PCB->Data, Element, &PCB->Font);
+-      DrawPin (Pin, 0);
++      DrawPin (Pin);
+       return (Pin);
+     }
+   return (NULL);
+@@ -2404,7 +2404,7 @@ ChangeViaMaskSize (PinTypePtr Via)
+       Via->Mask = value;
+       SetPinBoundingBox (Via);
+       r_insert_entry (PCB->Data->via_tree, &Via->BoundingBox, 0);
+-      DrawVia (Via, 0);
++      DrawVia (Via);
+       return (Via);
+     }
+   return (NULL);
+diff --git a/src/copy.c b/src/copy.c
+index 8bb7f6f..b93fcfb 100644
+--- a/src/copy.c
++++ b/src/copy.c
+@@ -198,7 +198,7 @@ CopyVia (PinTypePtr Via)
+ 		      MaskFlags (Via->Flags, FOUNDFLAG));
+   if (!via)
+     return (via);
+-  DrawVia (via, 0);
++  DrawVia (via);
+   AddObjectToCreateUndoList (VIA_TYPE, via, via, via);
+   return (via);
+ }
+@@ -221,7 +221,7 @@ CopyLine (LayerTypePtr Layer, LineTypePtr Line)
+     return (line);
+   if (Line->Number)
+     line->Number = strdup (Line->Number);
+-  DrawLine (Layer, line, 0);
++  DrawLine (Layer, line);
+   AddObjectToCreateUndoList (LINE_TYPE, Layer, line, line);
+   return (line);
+ }
+@@ -240,7 +240,7 @@ CopyArc (LayerTypePtr Layer, ArcTypePtr Arc)
+ 			     MaskFlags (Arc->Flags, FOUNDFLAG));
+   if (!arc)
+     return (arc);
+-  DrawArc (Layer, arc, 0);
++  DrawArc (Layer, arc);
+   AddObjectToCreateUndoList (ARC_TYPE, Layer, arc, arc);
+   return (arc);
+ }
+@@ -257,7 +257,7 @@ CopyText (LayerTypePtr Layer, TextTypePtr Text)
+ 			Text->Y + DeltaY, Text->Direction,
+ 			Text->Scale, Text->TextString,
+ 			MaskFlags (Text->Flags, FOUNDFLAG));
+-  DrawText (Layer, text, 0);
++  DrawText (Layer, text);
+   AddObjectToCreateUndoList (TEXT_TYPE, Layer, text, text);
+   return (text);
+ }
+@@ -277,7 +277,7 @@ CopyPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+     Layer->polygon_tree = r_create_tree (NULL, 0, 0);
+   r_insert_entry (Layer->polygon_tree, (BoxTypePtr) polygon, 0);
+   InitClip (PCB->Data, Layer, polygon);
+-  DrawPolygon (Layer, polygon, 0);
++  DrawPolygon (Layer, polygon);
+   AddObjectToCreateUndoList (POLYGON_TYPE, Layer, polygon, polygon);
+   return (polygon);
+ }
+diff --git a/src/draw.c b/src/draw.c
+index b9baa0f..665bf0c 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -91,7 +91,7 @@ static void DrawPinOrViaNameLowLevel (PinTypePtr);
+ static void DrawPadLowLevel (hidGC, PadTypePtr, bool, bool);
+ static void DrawPadNameLowLevel (PadTypePtr);
+ static void DrawLineLowLevel (LineTypePtr);
+-static void DrawRegularText (LayerTypePtr, TextTypePtr, int);
++static void DrawRegularText (LayerTypePtr, TextTypePtr);
+ static void DrawPolygonLowLevel (PolygonTypePtr);
+ static void DrawArcLowLevel (ArcTypePtr);
+ static void DrawElementPackageLowLevel (ElementTypePtr Element);
+@@ -257,7 +257,7 @@ backPad_callback (const BoxType * b, void *cl)
+   PadTypePtr pad = (PadTypePtr) b;
+ 
+   if (!FRONT (pad))
+-    DrawPad (pad, 0);
++    DrawPad (pad);
+   return 1;
+ }
+ 
+@@ -328,7 +328,7 @@ hole_counting_callback (const BoxType * b, void *cl)
+ static int
+ rat_callback (const BoxType * b, void *cl)
+ {
+-  DrawRat ((RatTypePtr) b, 0);
++  DrawRat ((RatTypePtr) b);
+   return 1;
+ }
+ 
+@@ -610,7 +610,7 @@ pad_callback (const BoxType * b, void *cl)
+ {
+   PadTypePtr pad = (PadTypePtr) b;
+   if (FRONT (pad))
+-    DrawPad (pad, 0);
++    DrawPad (pad);
+   return 1;
+ }
+ 
+@@ -781,21 +781,21 @@ DrawRats (BoxTypePtr drawn_area)
+ static int
+ line_callback (const BoxType * b, void *cl)
+ {
+-  DrawLine ((LayerTypePtr) cl, (LineTypePtr) b, 0);
++  DrawLine ((LayerTypePtr) cl, (LineTypePtr) b);
+   return 1;
+ }
+ 
+ static int
+ arc_callback (const BoxType * b, void *cl)
+ {
+-  DrawArc ((LayerTypePtr) cl, (ArcTypePtr) b, 0);
++  DrawArc ((LayerTypePtr) cl, (ArcTypePtr) b);
+   return 1;
+ }
+ 
+ static int
+ text_callback (const BoxType * b, void *cl)
+ {
+-  DrawRegularText ((LayerTypePtr) cl, (TextTypePtr) b, 0);
++  DrawRegularText ((LayerTypePtr) cl, (TextTypePtr) b);
+   return 1;
+ }
+ 
+@@ -1271,7 +1271,7 @@ DrawElementPackageLowLevel (ElementTypePtr Element)
+  * draw a via object
+  */
+ void
+-DrawVia (PinTypePtr Via, int unused)
++DrawVia (PinTypePtr Via)
+ {
+   if (!Gathering)
+     SetPVColor (Via, VIA_TYPE);
+@@ -1297,7 +1297,7 @@ DrawPlainVia (PinTypePtr Via, bool holeToo)
+  * draws the name of a via
+  */
+ void
+-DrawViaName (PinTypePtr Via, int unused)
++DrawViaName (PinTypePtr Via)
+ {
+   if (!Gathering)
+     {
+@@ -1313,7 +1313,7 @@ DrawViaName (PinTypePtr Via, int unused)
+  * draw a pin object
+  */
+ void
+-DrawPin (PinTypePtr Pin, int unused)
++DrawPin (PinTypePtr Pin)
+ {
+   {
+     if (!Gathering)
+@@ -1342,7 +1342,7 @@ DrawPlainPin (PinTypePtr Pin, bool holeToo)
+  * draws the name of a pin
+  */
+ void
+-DrawPinName (PinTypePtr Pin, int unused)
++DrawPinName (PinTypePtr Pin)
+ {
+   if (!Gathering)
+     {
+@@ -1358,7 +1358,7 @@ DrawPinName (PinTypePtr Pin, int unused)
+  * draw a pad object
+  */
+ void
+-DrawPad (PadTypePtr Pad, int unused)
++DrawPad (PadTypePtr Pad)
+ {
+   if (!Gathering)
+     {
+@@ -1387,7 +1387,7 @@ DrawPad (PadTypePtr Pad, int unused)
+  * draws the name of a pad
+  */
+ void
+-DrawPadName (PadTypePtr Pad, int unused)
++DrawPadName (PadTypePtr Pad)
+ {
+   if (!Gathering)
+     {
+@@ -1405,7 +1405,7 @@ DrawPadName (PadTypePtr Pad, int unused)
+  * draws a line on a layer
+  */
+ void
+-DrawLine (LayerTypePtr Layer, LineTypePtr Line, int unused)
++DrawLine (LayerTypePtr Layer, LineTypePtr Line)
+ {
+   if (!Gathering)
+     {
+@@ -1426,7 +1426,7 @@ DrawLine (LayerTypePtr Layer, LineTypePtr Line, int unused)
+  * draws a ratline
+  */
+ void
+-DrawRat (RatTypePtr Line, int unused)
++DrawRat (RatTypePtr Line)
+ {
+   if (!Gathering)
+     {
+@@ -1475,7 +1475,7 @@ DrawRat (RatTypePtr Line, int unused)
+  * draws an arc on a layer
+  */
+ void
+-DrawArc (LayerTypePtr Layer, ArcTypePtr Arc, int unused)
++DrawArc (LayerTypePtr Layer, ArcTypePtr Arc)
+ {
+   if (!Arc->Thickness)
+     return;
+@@ -1498,7 +1498,7 @@ DrawArc (LayerTypePtr Layer, ArcTypePtr Arc, int unused)
+  * draws a text on a layer
+  */
+ void
+-DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
++DrawText (LayerTypePtr Layer, TextTypePtr Text)
+ {
+   int min_silk_line;
+   if (!Layer->On)
+@@ -1519,7 +1519,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text, int unused)
+  * draws text on a layer
+  */
+ static void
+-DrawRegularText (LayerTypePtr Layer, TextTypePtr Text, int unused)
++DrawRegularText (LayerTypePtr Layer, TextTypePtr Text)
+ {
+   int min_silk_line;
+   if (TEST_FLAG (SELECTEDFLAG, Text))
+@@ -1538,7 +1538,7 @@ DrawRegularText (LayerTypePtr Layer, TextTypePtr Text, int unused)
+  * draws a polygon on a layer
+  */
+ void
+-DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, int unused)
++DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+ {
+   DrawPolygonLowLevel (Polygon);
+ }
+@@ -1677,12 +1677,12 @@ DrawElementPinsAndPads (ElementTypePtr Element)
+   PAD_LOOP (Element);
+   {
+     if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
+-      DrawPad (pad, unused);
++      DrawPad (pad);
+   }
+   END_LOOP;
+   PIN_LOOP (Element);
+   {
+-    DrawPin (pin, unused);
++    DrawPin (pin);
+   }
+   END_LOOP;
+ }
+@@ -1907,29 +1907,29 @@ EraseObject (int type, void *lptr, void *ptr)
+ 
+ 
+ void
+-DrawObject (int type, void *ptr1, void *ptr2, int unused)
++DrawObject (int type, void *ptr1, void *ptr2)
+ {
+   switch (type)
+     {
+     case VIA_TYPE:
+       if (PCB->ViaOn)
+-	DrawVia ((PinTypePtr) ptr2, 0);
++	DrawVia ((PinTypePtr) ptr2);
+       break;
+     case LINE_TYPE:
+       if (((LayerTypePtr) ptr1)->On)
+-	DrawLine ((LayerTypePtr) ptr1, (LineTypePtr) ptr2, 0);
++	DrawLine ((LayerTypePtr) ptr1, (LineTypePtr) ptr2);
+       break;
+     case ARC_TYPE:
+       if (((LayerTypePtr) ptr1)->On)
+-	DrawArc ((LayerTypePtr) ptr1, (ArcTypePtr) ptr2, 0);
++	DrawArc ((LayerTypePtr) ptr1, (ArcTypePtr) ptr2);
+       break;
+     case TEXT_TYPE:
+       if (((LayerTypePtr) ptr1)->On)
+-	DrawText ((LayerTypePtr) ptr1, (TextTypePtr) ptr2, 0);
++	DrawText ((LayerTypePtr) ptr1, (TextTypePtr) ptr2);
+       break;
+     case POLYGON_TYPE:
+       if (((LayerTypePtr) ptr1)->On)
+-	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2, 0);
++	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
+       break;
+     case ELEMENT_TYPE:
+       if (PCB->ElementOn &&
+@@ -1938,15 +1938,15 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
+       break;
+     case RATLINE_TYPE:
+       if (PCB->RatOn)
+-	DrawRat ((RatTypePtr) ptr2, 0);
++	DrawRat ((RatTypePtr) ptr2);
+       break;
+     case PIN_TYPE:
+       if (PCB->PinOn)
+-	DrawPin ((PinTypePtr) ptr2, 0);
++	DrawPin ((PinTypePtr) ptr2);
+       break;
+     case PAD_TYPE:
+       if (PCB->PinOn)
+-	DrawPad ((PadTypePtr) ptr2, 0);
++	DrawPad ((PadTypePtr) ptr2);
+       break;
+     case ELEMENTNAME_TYPE:
+       if (PCB->ElementOn &&
+diff --git a/src/draw.h b/src/draw.h
+index c0e23a3..fdd4c70 100644
+--- a/src/draw.h
++++ b/src/draw.h
+@@ -38,23 +38,23 @@
+ void Draw (void);
+ void RedrawOutput (BoxTypePtr area);
+ void ClearAndRedrawOutput (void);
+-void DrawVia (PinTypePtr, int);
+-void DrawRat (RatTypePtr, int);
+-void DrawViaName (PinTypePtr, int);
+-void DrawPin (PinTypePtr, int);
+-void DrawPinName (PinTypePtr, int);
+-void DrawPad (PadTypePtr, int);
+-void DrawPadName (PadTypePtr, int);
+-void DrawLine (LayerTypePtr, LineTypePtr, int);
+-void DrawArc (LayerTypePtr, ArcTypePtr, int);
+-void DrawText (LayerTypePtr, TextTypePtr, int);
++void DrawVia (PinTypePtr);
++void DrawRat (RatTypePtr);
++void DrawViaName (PinTypePtr);
++void DrawPin (PinTypePtr);
++void DrawPinName (PinTypePtr);
++void DrawPad (PadTypePtr);
++void DrawPadName (PadTypePtr);
++void DrawLine (LayerTypePtr, LineTypePtr);
++void DrawArc (LayerTypePtr, ArcTypePtr);
++void DrawText (LayerTypePtr, TextTypePtr);
+ void DrawTextLowLevel (TextTypePtr, int);
+-void DrawPolygon (LayerTypePtr, PolygonTypePtr, int);
+-void DrawElement (ElementTypePtr, int);
+-void DrawElementName (ElementTypePtr, int);
+-void DrawElementPackage (ElementTypePtr, int);
+-void DrawElementPinsAndPads (ElementTypePtr, int);
+-void DrawObject (int, void *, void *, int);
++void DrawPolygon (LayerTypePtr, PolygonTypePtr);
++void DrawElement (ElementTypePtr);
++void DrawElementName (ElementTypePtr);
++void DrawElementPackage (ElementTypePtr);
++void DrawElementPinsAndPads (ElementTypePtr);
++void DrawObject (int, void *, void *);
+ void DrawLayer (LayerTypePtr, const BoxType *);
+ void EraseVia (PinTypePtr);
+ void EraseRat (RatTypePtr);
+diff --git a/src/find.c b/src/find.c
+index 5d2e92c..7620d85 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -2983,7 +2983,7 @@ PrintAndSelectUnusedPinsAndPadsOfElement (ElementTypePtr Element, FILE * FP)
+                 CreateQuotedString (&oname, (char *)EMPTY (pin->Name));
+                 fprintf (FP, "\t%s\n", oname.Data);
+                 SET_FLAG (SELECTEDFLAG, pin);
+-                DrawPin (pin, 0);
++                DrawPin (pin);
+               }
+ 
+             /* reset found objects for the next pin */
+@@ -3027,7 +3027,7 @@ PrintAndSelectUnusedPinsAndPadsOfElement (ElementTypePtr Element, FILE * FP)
+             CreateQuotedString (&oname, (char *)EMPTY (pad->Name));
+             fprintf (FP, "\t%s\n", oname.Data);
+             SET_FLAG (SELECTEDFLAG, pad);
+-            DrawPad (pad, 0);
++            DrawPad (pad);
+           }
+ 
+         /* reset found objects for the next pin */
+@@ -3156,20 +3156,20 @@ DrawNewConnections (void)
+           /* draw all new lines */
+           position = LineList[layer].DrawLocation;
+           for (; position < LineList[layer].Number; position++)
+-            DrawLine (LAYER_PTR (layer), LINELIST_ENTRY (layer, position), 0);
++            DrawLine (LAYER_PTR (layer), LINELIST_ENTRY (layer, position));
+           LineList[layer].DrawLocation = LineList[layer].Number;
+ 
+           /* draw all new arcs */
+           position = ArcList[layer].DrawLocation;
+           for (; position < ArcList[layer].Number; position++)
+-            DrawArc (LAYER_PTR (layer), ARCLIST_ENTRY (layer, position), 0);
++            DrawArc (LAYER_PTR (layer), ARCLIST_ENTRY (layer, position));
+           ArcList[layer].DrawLocation = ArcList[layer].Number;
+ 
+           /* draw all new polygons */
+           position = PolygonList[layer].DrawLocation;
+           for (; position < PolygonList[layer].Number; position++)
+             DrawPolygon
+-              (LAYER_PTR (layer), POLYGONLIST_ENTRY (layer, position), 0);
++              (LAYER_PTR (layer), POLYGONLIST_ENTRY (layer, position));
+           PolygonList[layer].DrawLocation = PolygonList[layer].Number;
+         }
+     }
+@@ -3181,7 +3181,7 @@ DrawNewConnections (void)
+         position = PadList[i].DrawLocation;
+ 
+         for (; position < PadList[i].Number; position++)
+-          DrawPad (PADLIST_ENTRY (i, position), 0);
++          DrawPad (PADLIST_ENTRY (i, position));
+         PadList[i].DrawLocation = PadList[i].Number;
+       }
+ 
+@@ -3195,10 +3195,10 @@ DrawNewConnections (void)
+       if (TEST_FLAG (PINFLAG, pv))
+         {
+           if (PCB->PinOn)
+-            DrawPin (pv, 0);
++            DrawPin (pv);
+         }
+       else if (PCB->ViaOn)
+-        DrawVia (pv, 0);
++        DrawVia (pv);
+       PVList.DrawLocation++;
+     }
+   /* draw the new rat-lines */
+@@ -3206,7 +3206,7 @@ DrawNewConnections (void)
+     {
+       position = RatList.DrawLocation;
+       for (; position < RatList.Number; position++)
+-        DrawRat (RATLIST_ENTRY (position), 0);
++        DrawRat (RATLIST_ENTRY (position));
+       RatList.DrawLocation = RatList.Number;
+     }
+ }
+@@ -3453,7 +3453,7 @@ ResetFoundPinsViasAndPads (bool AndDraw)
+           AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
+         CLEAR_FLAG (TheFlag, via);
+         if (AndDraw)
+-          DrawVia (via, 0);
++          DrawVia (via);
+         change = true;
+       }
+   }
+@@ -3468,7 +3468,7 @@ ResetFoundPinsViasAndPads (bool AndDraw)
+             AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
+           CLEAR_FLAG (TheFlag, pin);
+           if (AndDraw)
+-            DrawPin (pin, 0);
++            DrawPin (pin);
+           change = true;
+         }
+     }
+@@ -3481,7 +3481,7 @@ ResetFoundPinsViasAndPads (bool AndDraw)
+             AddObjectToFlagUndoList (PAD_TYPE, element, pad, pad);
+           CLEAR_FLAG (TheFlag, pad);
+           if (AndDraw)
+-            DrawPad (pad, 0);
++            DrawPad (pad);
+           change = true;
+         }
+     }
+@@ -3509,7 +3509,7 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+           AddObjectToFlagUndoList (RATLINE_TYPE, line, line, line);
+         CLEAR_FLAG (TheFlag, line);
+         if (AndDraw)
+-          DrawRat (line, 0);
++          DrawRat (line);
+         change = true;
+       }
+   }
+@@ -3522,7 +3522,7 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+           AddObjectToFlagUndoList (LINE_TYPE, layer, line, line);
+         CLEAR_FLAG (TheFlag, line);
+         if (AndDraw)
+-          DrawLine (layer, line, 0);
++          DrawLine (layer, line);
+         change = true;
+       }
+   }
+@@ -3535,7 +3535,7 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+           AddObjectToFlagUndoList (ARC_TYPE, layer, arc, arc);
+         CLEAR_FLAG (TheFlag, arc);
+         if (AndDraw)
+-          DrawArc (layer, arc, 0);
++          DrawArc (layer, arc);
+         change = true;
+       }
+   }
+@@ -3548,7 +3548,7 @@ ResetFoundLinesAndPolygons (bool AndDraw)
+           AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
+         CLEAR_FLAG (TheFlag, polygon);
+         if (AndDraw)
+-          DrawPolygon (layer, polygon, 0);
++          DrawPolygon (layer, polygon);
+         change = true;
+       }
+   }
+@@ -3858,8 +3858,8 @@ drc_callback (DataTypePtr data, LayerTypePtr layer, PolygonTypePtr polygon,
+ doIsBad:
+   AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
+   SET_FLAG (FOUNDFLAG, polygon);
+-  DrawPolygon (layer, polygon, 0);
+-  DrawObject (type, ptr1, ptr2, 0);
++  DrawPolygon (layer, polygon);
++  DrawObject (type, ptr1, ptr2);
+   drcerr_count++;
+   LocateError (&x, &y);
+   BuildObjectList (&object_count, &object_id_list, &object_type_list);
+@@ -3985,7 +3985,7 @@ DRCAll (void)
+           {
+             AddObjectToFlagUndoList (LINE_TYPE, layer, line, line);
+             SET_FLAG (TheFlag, line);
+-            DrawLine (layer, line, 0);
++            DrawLine (layer, line);
+             drcerr_count++;
+             SetThing (LINE_TYPE, layer, line, line);
+             LocateError (&x, &y);
+@@ -4029,7 +4029,7 @@ DRCAll (void)
+           {
+             AddObjectToFlagUndoList (ARC_TYPE, layer, arc, arc);
+             SET_FLAG (TheFlag, arc);
+-            DrawArc (layer, arc, 0);
++            DrawArc (layer, arc);
+             drcerr_count++;
+             SetThing (ARC_TYPE, layer, arc, arc);
+             LocateError (&x, &y);
+@@ -4074,7 +4074,7 @@ DRCAll (void)
+           {
+             AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
+             SET_FLAG (TheFlag, pin);
+-            DrawPin (pin, 0);
++            DrawPin (pin);
+             drcerr_count++;
+             SetThing (PIN_TYPE, element, pin, pin);
+             LocateError (&x, &y);
+@@ -4108,7 +4108,7 @@ DRCAll (void)
+           {
+             AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
+             SET_FLAG (TheFlag, pin);
+-            DrawPin (pin, 0);
++            DrawPin (pin);
+             drcerr_count++;
+             SetThing (PIN_TYPE, element, pin, pin);
+             LocateError (&x, &y);
+@@ -4151,7 +4151,7 @@ DRCAll (void)
+           {
+             AddObjectToFlagUndoList (PAD_TYPE, element, pad, pad);
+             SET_FLAG (TheFlag, pad);
+-            DrawPad (pad, 0);
++            DrawPad (pad);
+             drcerr_count++;
+             SetThing (PAD_TYPE, element, pad, pad);
+             LocateError (&x, &y);
+@@ -4196,7 +4196,7 @@ DRCAll (void)
+           {
+             AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
+             SET_FLAG (TheFlag, via);
+-            DrawVia (via, 0);
++            DrawVia (via);
+             drcerr_count++;
+             SetThing (VIA_TYPE, via, via, via);
+             LocateError (&x, &y);
+@@ -4230,7 +4230,7 @@ DRCAll (void)
+           {
+             AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
+             SET_FLAG (TheFlag, via);
+-            DrawVia (via, 0);
++            DrawVia (via);
+             drcerr_count++;
+             SetThing (VIA_TYPE, via, via, via);
+             LocateError (&x, &y);
+@@ -4278,7 +4278,7 @@ DRCAll (void)
+         if (line->Thickness < PCB->minSlk)
+           {
+             SET_FLAG (TheFlag, line);
+-            DrawLine (layer, line, 0);
++            DrawLine (layer, line);
+             drcerr_count++;
+             SetThing (LINE_TYPE, layer, line, line);
+             LocateError (&x, &y);
+@@ -4332,7 +4332,7 @@ DRCAll (void)
+             int buflen;
+ 
+             SET_FLAG (TheFlag, element);
+-            DrawElement (element, 0);
++            DrawElement (element);
+             drcerr_count++;
+             SetThing (ELEMENT_TYPE, element, element, element);
+             LocateError (&x, &y);
+diff --git a/src/hid/gtk/gui-drc-window.c b/src/hid/gtk/gui-drc-window.c
+index a708193..70a097e 100644
+--- a/src/hid/gtk/gui-drc-window.c
++++ b/src/hid/gtk/gui-drc-window.c
+@@ -102,7 +102,7 @@ unset_found_flags (int AndDraw)
+       {
+ 	AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
+ 	CLEAR_FLAG (flag, via);
+-	DrawVia (via, 0);
++	DrawVia (via);
+ 	change = true;
+       }
+   }
+@@ -115,7 +115,7 @@ unset_found_flags (int AndDraw)
+ 	{
+ 	  AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
+ 	  CLEAR_FLAG (flag, pin);
+-	  DrawPin (pin, 0);
++	  DrawPin (pin);
+ 	  change = true;
+ 	}
+     }
+@@ -126,7 +126,7 @@ unset_found_flags (int AndDraw)
+ 	{
+ 	  AddObjectToFlagUndoList (PAD_TYPE, element, pad, pad);
+ 	  CLEAR_FLAG (flag, pad);
+-	  DrawPad (pad, 0);
++	  DrawPad (pad);
+ 	  change = true;
+ 	}
+     }
+@@ -139,7 +139,7 @@ unset_found_flags (int AndDraw)
+       {
+ 	AddObjectToFlagUndoList (RATLINE_TYPE, line, line, line);
+ 	CLEAR_FLAG (flag, line);
+-	DrawRat (line, 0);
++	DrawRat (line);
+ 	change = true;
+       }
+   }
+@@ -150,7 +150,7 @@ unset_found_flags (int AndDraw)
+       {
+ 	AddObjectToFlagUndoList (LINE_TYPE, layer, line, line);
+ 	CLEAR_FLAG (flag, line);
+-	DrawLine (layer, line, 0);
++	DrawLine (layer, line);
+ 	change = true;
+       }
+   }
+@@ -161,7 +161,7 @@ unset_found_flags (int AndDraw)
+       {
+ 	AddObjectToFlagUndoList (ARC_TYPE, layer, arc, arc);
+ 	CLEAR_FLAG (flag, arc);
+-	DrawArc (layer, arc, 0);
++	DrawArc (layer, arc);
+ 	change = true;
+       }
+   }
+@@ -172,7 +172,7 @@ unset_found_flags (int AndDraw)
+       {
+ 	AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
+ 	CLEAR_FLAG (flag, polygon);
+-	DrawPolygon (layer, polygon, 0);
++	DrawPolygon (layer, polygon);
+ 	change = true;
+       }
+   }
+@@ -238,7 +238,7 @@ selection_changed_cb (GtkTreeSelection *selection, gpointer user_data)
+ 	case POLYGON_TYPE:
+ 	  ChangeGroupVisibility (GetLayerNumber (PCB->Data, (LayerTypePtr) ptr1), true, true);
+ 	}
+-      DrawObject (object_type, ptr1, ptr2, 0);
++      DrawObject (object_type, ptr1, ptr2);
+     }
+   SetChangedFlag (true);
+   IncrementUndoSerialNumber ();
+diff --git a/src/insert.c b/src/insert.c
+index 7e9ebf2..efce2f0 100644
+--- a/src/insert.c
++++ b/src/insert.c
+@@ -106,14 +106,14 @@ InsertPointIntoRat (RatTypePtr Rat)
+     return newone;
+   AddObjectToCreateUndoList (LINE_TYPE, CURRENT, newone, newone);
+   EraseRat (Rat);
+-  DrawLine (CURRENT, newone, 0);
++  DrawLine (CURRENT, newone);
+   newone = CreateDrawnLineOnLayer (CURRENT, Rat->Point2.X, Rat->Point2.Y,
+ 				InsertX, InsertY, Settings.LineThickness,
+ 				2 * Settings.Keepaway, Rat->Flags);
+   if (newone)
+     {
+       AddObjectToCreateUndoList (LINE_TYPE, CURRENT, newone, newone);
+-      DrawLine (CURRENT, newone, 0);
++      DrawLine (CURRENT, newone);
+     }
+   MoveObjectToRemoveUndoList (RATLINE_TYPE, Rat, Rat, Rat);
+   Draw ();
+@@ -142,7 +142,7 @@ InsertPointIntoLine (LayerTypePtr Layer, LineTypePtr Line)
+   Line->Point2.Y = InsertY;
+   SetLineBoundingBox (Line);
+   r_insert_entry (Layer->line_tree, (BoxTypePtr) Line, 0);
+-  DrawLine (Layer, Line, 0);
++  DrawLine (Layer, Line);
+   /* we must create after playing with Line since creation may
+    * invalidate the line pointer
+    */
+@@ -152,7 +152,7 @@ InsertPointIntoLine (LayerTypePtr Layer, LineTypePtr Line)
+ 				      Line->Flags)))
+     {
+       AddObjectToCreateUndoList (LINE_TYPE, Layer, line, line);
+-      DrawLine (Layer, line, 0);
++      DrawLine (Layer, line);
+       /* creation call adds it to the rtree */
+     }
+   Draw ();
+@@ -205,7 +205,7 @@ InsertPointIntoPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+   InitClip (PCB->Data, Layer, Polygon);
+   if (Forcible || !RemoveExcessPolygonPoints (Layer, Polygon))
+     {
+-      DrawPolygon (Layer, Polygon, 0);
++      DrawPolygon (Layer, Polygon);
+       Draw ();
+     }
+   return (&Polygon->Points[InsertAt]);
+diff --git a/src/move.c b/src/move.c
+index 5546d69..c8d1938 100644
+--- a/src/move.c
++++ b/src/move.c
+@@ -257,7 +257,7 @@ MoveVia (PinTypePtr Via)
+   ClearFromPolygon (PCB->Data, VIA_TYPE, Via, Via);
+   if (PCB->ViaOn)
+     {
+-      DrawVia (Via, 0);
++      DrawVia (Via);
+       Draw ();
+     }
+   return (Via);
+@@ -278,7 +278,7 @@ MoveLine (LayerTypePtr Layer, LineTypePtr Line)
+   ClearFromPolygon (PCB->Data, LINE_TYPE, Layer, Line);
+   if (Layer->On)
+     {
+-      DrawLine (Layer, Line, 0);
++      DrawLine (Layer, Line);
+       Draw ();
+     }
+   return (Line);
+@@ -296,7 +296,7 @@ MoveArc (LayerTypePtr Layer, ArcTypePtr Arc)
+     {
+       EraseArc (Arc);
+       MOVE_ARC_LOWLEVEL (Arc, DeltaX, DeltaY);
+-      DrawArc (Layer, Arc, 0);
++      DrawArc (Layer, Arc);
+       Draw ();
+     }
+   else
+@@ -320,7 +320,7 @@ MoveText (LayerTypePtr Layer, TextTypePtr Text)
+     {
+       EraseText (Layer, Text);
+       MOVE_TEXT_LOWLEVEL (Text, DeltaX, DeltaY);
+-      DrawText (Layer, Text, 0);
++      DrawText (Layer, Text);
+       Draw ();
+     }
+   else
+@@ -361,7 +361,7 @@ MovePolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+   InitClip (PCB->Data, Layer, Polygon);
+   if (Layer->On)
+     {
+-      DrawPolygon (Layer, Polygon, 0);
++      DrawPolygon (Layer, Polygon);
+       Draw ();
+     }
+   return (Polygon);
+@@ -385,7 +385,7 @@ MoveLinePoint (LayerTypePtr Layer, LineTypePtr Line, PointTypePtr Point)
+       ClearFromPolygon (PCB->Data, LINE_TYPE, Layer, Line);
+       if (Layer->On)
+ 	{
+-	  DrawLine (Layer, Line, 0);
++	  DrawLine (Layer, Line);
+ 	  Draw ();
+ 	}
+       return (Line);
+@@ -400,7 +400,7 @@ MoveLinePoint (LayerTypePtr Layer, LineTypePtr Line, PointTypePtr Point)
+       r_insert_entry (PCB->Data->rat_tree, &Line->BoundingBox, 0);
+       if (PCB->RatOn)
+ 	{
+-	  DrawRat ((RatTypePtr) Line, 0);
++	  DrawRat ((RatTypePtr) Line);
+ 	  Draw ();
+ 	}
+       return (Line);
+@@ -426,7 +426,7 @@ MovePolygonPoint (LayerTypePtr Layer, PolygonTypePtr Polygon,
+   InitClip (PCB->Data, Layer, Polygon);
+   if (Layer->On)
+     {
+-      DrawPolygon (Layer, Polygon, 0);
++      DrawPolygon (Layer, Polygon);
+       Draw ();
+     }
+   return (Point);
+@@ -492,7 +492,7 @@ MoveArcToLayer (LayerTypePtr Layer, ArcTypePtr Arc)
+     }
+   if (Dest == Layer && Layer->On)
+     {
+-      DrawArc (Layer, Arc, 0);
++      DrawArc (Layer, Arc);
+       Draw ();
+     }
+   if (((long int) Dest == -1) || Dest == Layer)
+@@ -504,7 +504,7 @@ MoveArcToLayer (LayerTypePtr Layer, ArcTypePtr Arc)
+   newone = (ArcTypePtr)MoveArcToLayerLowLevel (Layer, Arc, Dest);
+   ClearFromPolygon (PCB->Data, ARC_TYPE, Dest, Arc);
+   if (Dest->On)
+-    DrawArc (Dest, newone, 0);
++    DrawArc (Dest, newone);
+   Draw ();
+   return (newone);
+ }
+@@ -535,7 +535,7 @@ MoveRatToLayer (RatTypePtr Rat)
+   if (PCB->RatOn)
+     EraseRat (Rat);
+   MoveObjectToRemoveUndoList (RATLINE_TYPE, Rat, Rat, Rat);
+-  DrawLine (Dest, newone, 0);
++  DrawLine (Dest, newone);
+   Draw ();
+   return (newone);
+ }
+@@ -563,7 +563,7 @@ moveline_callback (const BoxType * b, void *cl)
+ 		     NoFlags ())) != NULL)
+     {
+       AddObjectToCreateUndoList (VIA_TYPE, via, via, via);
+-      DrawVia (via, 0);
++      DrawVia (via);
+     }
+   longjmp (i->env, 1);
+ }
+@@ -583,7 +583,7 @@ MoveLineToLayer (LayerTypePtr Layer, LineTypePtr Line)
+     }
+   if (Dest == Layer && Layer->On)
+     {
+-      DrawLine (Layer, Line, 0);
++      DrawLine (Layer, Line);
+       Draw ();
+     }
+   if (((long int) Dest == -1) || Dest == Layer)
+@@ -597,7 +597,7 @@ MoveLineToLayer (LayerTypePtr Layer, LineTypePtr Line)
+   Line = NULL;
+   ClearFromPolygon (PCB->Data, LINE_TYPE, Dest, newone);
+   if (Dest->On)
+-    DrawLine (Dest, newone, 0);
++    DrawLine (Dest, newone);
+   Draw ();
+   if (!PCB->ViaOn || MoreToCome ||
+       GetLayerGroupNumberByPointer (Layer) ==
+@@ -688,7 +688,7 @@ MoveTextToLayer (LayerTypePtr Layer, TextTypePtr Text)
+ 	EraseText (Layer, Text);
+       newone = (TextTypePtr)MoveTextToLayerLowLevel (Layer, Text, Dest);
+       if (Dest->On)
+-	DrawText (Dest, newone, 0);
++	DrawText (Dest, newone);
+       if (Layer->On || Dest->On)
+ 	Draw ();
+       return (newone);
+@@ -775,7 +775,7 @@ MovePolygonToLayer (LayerTypePtr Layer, PolygonTypePtr Polygon)
+   InitClip (PCB->Data, Dest, newone);
+   if (Dest->On)
+     {
+-      DrawPolygon (Dest, newone, 0);
++      DrawPolygon (Dest, newone);
+       Draw ();
+     }
+   return (newone);
+diff --git a/src/polygon.c b/src/polygon.c
+index 78cc3b2..e6bf772 100644
+--- a/src/polygon.c
++++ b/src/polygon.c
+@@ -1412,7 +1412,7 @@ CopyAttachedPolygonToLayer (void)
+     CURRENT->polygon_tree = r_create_tree (NULL, 0, 0);
+   r_insert_entry (CURRENT->polygon_tree, (BoxType *) polygon, 0);
+   InitClip (PCB->Data, CURRENT, polygon);
+-  DrawPolygon (CURRENT, polygon, 0);
++  DrawPolygon (CURRENT, polygon);
+   SetChangedFlag (true);
+ 
+   /* reset state of attached line */
+@@ -1840,7 +1840,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+           p = p->f;             /* go to next pline */
+           newone->Clipped->b = newone->Clipped->f = newone->Clipped;     /* unlink from others */
+           r_insert_entry (layer->polygon_tree, (BoxType *) newone, 0);
+-          DrawPolygon (layer, newone, 0);
++          DrawPolygon (layer, newone);
+         }
+       else
+         {
+@@ -1955,7 +1955,7 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
+         Layer->polygon_tree = r_create_tree (NULL, 0, 0);
+       r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
+ 
+-      DrawPolygon (Layer, Polygon, 0);
++      DrawPolygon (Layer, Polygon);
+       /* add to undo list */
+       AddObjectToCreateUndoList (POLYGON_TYPE, Layer, Polygon, Polygon);
+     }
+diff --git a/src/rats.c b/src/rats.c
+index 24be309..c6cdb2d 100644
+--- a/src/rats.c
++++ b/src/rats.c
+@@ -699,7 +699,7 @@ DrawShortestRats (NetListTypePtr Netl, void (*funcp) (register ConnectionTypePtr
+ 		  if (distance == 0)
+ 		    SET_FLAG (VIAFLAG, line);
+ 		  AddObjectToCreateUndoList (RATLINE_TYPE, line, line, line);
+-		  DrawRat (line, 0);
++		  DrawRat (line);
+ 		  changed = true;
+ 		}
+ 	    }
+diff --git a/src/remove.c b/src/remove.c
+index 8defaf4..ab9aa5c 100644
+--- a/src/remove.c
++++ b/src/remove.c
+@@ -541,7 +541,7 @@ RemovePolygonContour (LayerTypePtr Layer,
+   /* redraw polygon if necessary */
+   if (Layer->On)
+     {
+-      DrawPolygon (Layer, Polygon, 0);
++      DrawPolygon (Layer, Polygon);
+       if (!Bulk)
+         Draw ();
+     }
+@@ -595,7 +595,7 @@ RemovePolygonPoint (LayerTypePtr Layer,
+   /* redraw polygon if necessary */
+   if (Layer->On)
+     {
+-      DrawPolygon (Layer, Polygon, 0);
++      DrawPolygon (Layer, Polygon);
+       if (!Bulk)
+ 	Draw ();
+     }
+diff --git a/src/rotate.c b/src/rotate.c
+index 6ebc0f7..017eb0c 100644
+--- a/src/rotate.c
++++ b/src/rotate.c
+@@ -184,7 +184,7 @@ RotateText (LayerTypePtr Layer, TextTypePtr Text)
+   RotateTextLowLevel (Text, CenterX, CenterY, Number);
+   r_insert_entry (Layer->text_tree, (BoxTypePtr) Text, 0);
+   ClearFromPolygon (PCB->Data, TEXT_TYPE, Layer, Text);
+-  DrawText (Layer, Text, 0);
++  DrawText (Layer, Text);
+   Draw ();
+   return (Text);
+ }
+@@ -285,12 +285,12 @@ RotateLinePoint (LayerTypePtr Layer, LineTypePtr Line, PointTypePtr Point)
+     {
+       r_insert_entry (Layer->line_tree, (BoxTypePtr) Line, 0);
+       ClearFromPolygon (PCB->Data, LINE_TYPE, Layer, Line);
+-      DrawLine (Layer, Line, 0);
++      DrawLine (Layer, Line);
+     }
+   else
+     {
+       r_insert_entry (PCB->Data->rat_tree, (BoxTypePtr) Line, 0);
+-      DrawRat ((RatTypePtr) Line, 0);
++      DrawRat ((RatTypePtr) Line);
+     }
+   Draw ();
+   return (Line);
+@@ -306,7 +306,7 @@ RotateArc (LayerTypePtr Layer, ArcTypePtr Arc)
+   r_delete_entry (Layer->arc_tree, (BoxTypePtr) Arc);
+   RotateArcLowLevel (Arc, CenterX, CenterY, Number);
+   r_insert_entry (Layer->arc_tree, (BoxTypePtr) Arc, 0);
+-  DrawArc (Layer, Arc, 0);
++  DrawArc (Layer, Arc);
+   Draw ();
+   return (Arc);
+ }
+@@ -399,12 +399,12 @@ RotateObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
+ 	{
+ 	  r_insert_entry (ptr->Layer->line_tree, (BoxType *) ptr->Line, 0);
+ 	  ClearFromPolygon (PCB->Data, LINE_TYPE, ptr->Layer, ptr->Line);
+-	  DrawLine (ptr->Layer, ptr->Line, 0);
++	  DrawLine (ptr->Layer, ptr->Line);
+ 	}
+       else
+ 	{
+ 	  r_insert_entry (PCB->Data->rat_tree, (BoxType *) ptr->Line, 0);
+-	  DrawRat ((RatTypePtr) ptr->Line, 0);
++	  DrawRat ((RatTypePtr) ptr->Line);
+ 	}
+       Crosshair.AttachedObject.RubberbandN--;
+       ptr++;
+diff --git a/src/select.c b/src/select.c
+index ce6b2ca..e42d4bb 100644
+--- a/src/select.c
++++ b/src/select.c
+@@ -91,7 +91,7 @@ SelectPin (LibraryEntryTypePtr entry, bool toggle)
+ 	      }
+ 	    else
+ 	      SET_FLAG (SELECTEDFLAG, pin);
+-	    DrawPin (pin, 0);
++	    DrawPin (pin);
+ 	    break;
+ 	  }
+ 	case PAD_TYPE:
+@@ -107,7 +107,7 @@ SelectPin (LibraryEntryTypePtr entry, bool toggle)
+ 	      }
+ 	    else
+ 	      SET_FLAG (SELECTEDFLAG, pad);
+-	    DrawPad (pad, 0);
++	    DrawPad (pad);
+ 	    break;
+ 	  }
+ 	}
+@@ -137,7 +137,7 @@ SelectObject (void)
+     case VIA_TYPE:
+       AddObjectToFlagUndoList (VIA_TYPE, ptr1, ptr1, ptr1);
+       TOGGLE_FLAG (SELECTEDFLAG, (PinTypePtr) ptr1);
+-      DrawVia ((PinTypePtr) ptr1, 0);
++      DrawVia ((PinTypePtr) ptr1);
+       break;
+ 
+     case LINE_TYPE:
+@@ -147,7 +147,7 @@ SelectObject (void)
+ 	layer = (LayerTypePtr) ptr1;
+ 	AddObjectToFlagUndoList (LINE_TYPE, ptr1, ptr2, ptr2);
+ 	TOGGLE_FLAG (SELECTEDFLAG, line);
+-	DrawLine (layer, line, 0);
++	DrawLine (layer, line);
+ 	break;
+       }
+ 
+@@ -157,7 +157,7 @@ SelectObject (void)
+ 
+ 	AddObjectToFlagUndoList (RATLINE_TYPE, ptr1, ptr1, ptr1);
+ 	TOGGLE_FLAG (SELECTEDFLAG, rat);
+-	DrawRat (rat, 0);
++	DrawRat (rat);
+ 	break;
+       }
+ 
+@@ -168,7 +168,7 @@ SelectObject (void)
+ 	layer = (LayerTypePtr) ptr1;
+ 	AddObjectToFlagUndoList (ARC_TYPE, ptr1, ptr2, ptr2);
+ 	TOGGLE_FLAG (SELECTEDFLAG, arc);
+-	DrawArc (layer, arc, 0);
++	DrawArc (layer, arc);
+ 	break;
+       }
+ 
+@@ -179,7 +179,7 @@ SelectObject (void)
+ 	layer = (LayerTypePtr) ptr1;
+ 	AddObjectToFlagUndoList (TEXT_TYPE, ptr1, ptr2, ptr2);
+ 	TOGGLE_FLAG (SELECTEDFLAG, text);
+-	DrawText (layer, text, 0);
++	DrawText (layer, text);
+ 	break;
+       }
+ 
+@@ -190,7 +190,7 @@ SelectObject (void)
+ 	layer = (LayerTypePtr) ptr1;
+ 	AddObjectToFlagUndoList (POLYGON_TYPE, ptr1, ptr2, ptr2);
+ 	TOGGLE_FLAG (SELECTEDFLAG, poly);
+-	DrawPolygon (layer, poly, 0);
++	DrawPolygon (layer, poly);
+ 	/* changing memory order no longer effects draw order */
+ 	break;
+       }
+@@ -198,13 +198,13 @@ SelectObject (void)
+     case PIN_TYPE:
+       AddObjectToFlagUndoList (PIN_TYPE, ptr1, ptr2, ptr2);
+       TOGGLE_FLAG (SELECTEDFLAG, (PinTypePtr) ptr2);
+-      DrawPin ((PinTypePtr) ptr2, 0);
++      DrawPin ((PinTypePtr) ptr2);
+       break;
+ 
+     case PAD_TYPE:
+       AddObjectToFlagUndoList (PAD_TYPE, ptr1, ptr2, ptr2);
+       TOGGLE_FLAG (SELECTEDFLAG, (PadTypePtr) ptr2);
+-      DrawPad ((PadTypePtr) ptr2, 0);
++      DrawPad ((PadTypePtr) ptr2);
+       break;
+ 
+     case ELEMENTNAME_TYPE:
+@@ -284,7 +284,7 @@ SelectBlock (BoxTypePtr Box, bool Flag)
+ 	AddObjectToFlagUndoList (RATLINE_TYPE, line, line, line);
+ 	ASSIGN_FLAG (SELECTEDFLAG, Flag, line);
+ 	if (PCB->RatOn)
+-	  DrawRat (line, 0);
++	  DrawRat (line);
+ 	changed = true;
+       }
+   }
+@@ -316,7 +316,7 @@ SelectBlock (BoxTypePtr Box, bool Flag)
+ 	  AddObjectToFlagUndoList (LINE_TYPE, layer, line, line);
+ 	  ASSIGN_FLAG (SELECTEDFLAG, Flag, line);
+ 	  if (layer->On)
+-	    DrawLine (layer, line, 0);
++	    DrawLine (layer, line);
+ 	  changed = true;
+ 	}
+     }
+@@ -330,7 +330,7 @@ SelectBlock (BoxTypePtr Box, bool Flag)
+ 	  AddObjectToFlagUndoList (ARC_TYPE, layer, arc, arc);
+ 	  ASSIGN_FLAG (SELECTEDFLAG, Flag, arc);
+ 	  if (layer->On)
+-	    DrawArc (layer, arc, 0);
++	    DrawArc (layer, arc);
+ 	  changed = true;
+ 	}
+     }
+@@ -346,7 +346,7 @@ SelectBlock (BoxTypePtr Box, bool Flag)
+ 	      AddObjectToFlagUndoList (TEXT_TYPE, layer, text, text);
+ 	      ASSIGN_FLAG (SELECTEDFLAG, Flag, text);
+ 	      if (TEXT_IS_VISIBLE(PCB, layer, text))
+-		DrawText (layer, text, 0);
++		DrawText (layer, text);
+ 	      changed = true;
+ 	    }
+ 	}
+@@ -361,7 +361,7 @@ SelectBlock (BoxTypePtr Box, bool Flag)
+ 	  AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
+ 	  ASSIGN_FLAG (SELECTEDFLAG, Flag, polygon);
+ 	  if (layer->On)
+-	    DrawPolygon (layer, polygon, 0);
++	    DrawPolygon (layer, polygon);
+ 	  changed = true;
+ 	}
+     }
+@@ -410,7 +410,7 @@ SelectBlock (BoxTypePtr Box, bool Flag)
+ 		      AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
+ 		      ASSIGN_FLAG (SELECTEDFLAG, Flag, pin);
+ 		      if (PCB->PinOn)
+-			DrawPin (pin, 0);
++			DrawPin (pin);
+ 		      changed = true;
+ 		    }
+ 		}
+@@ -422,7 +422,7 @@ SelectBlock (BoxTypePtr Box, bool Flag)
+ 		      AddObjectToFlagUndoList (PAD_TYPE, element, pad, pad);
+ 		      ASSIGN_FLAG (SELECTEDFLAG, Flag, pad);
+ 		      if (PCB->PinOn)
+-			DrawPad (pad, 0);
++			DrawPad (pad);
+ 		      changed = true;
+ 		    }
+ 		}
+@@ -443,7 +443,7 @@ SelectBlock (BoxTypePtr Box, bool Flag)
+ 		AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
+ 		ASSIGN_FLAG (SELECTEDFLAG, Flag, pin);
+ 		if (PCB->PinOn)
+-		  DrawPin (pin, 0);
++		  DrawPin (pin);
+ 		changed = true;
+ 	      }
+ 	  }
+@@ -459,7 +459,7 @@ SelectBlock (BoxTypePtr Box, bool Flag)
+ 		AddObjectToFlagUndoList (PAD_TYPE, element, pad, pad);
+ 		ASSIGN_FLAG (SELECTEDFLAG, Flag, pad);
+ 		if (PCB->PinOn)
+-		  DrawPad (pad, 0);
++		  DrawPad (pad);
+ 		changed = true;
+ 	      }
+ 	  }
+@@ -479,7 +479,7 @@ SelectBlock (BoxTypePtr Box, bool Flag)
+ 	AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
+ 	ASSIGN_FLAG (SELECTEDFLAG, Flag, via);
+ 	if (PCB->ViaOn)
+-	  DrawVia (via, 0);
++	  DrawVia (via);
+ 	changed = true;
+       }
+   }
+@@ -776,7 +776,7 @@ SelectConnection (bool Flag)
+       {
+ 	AddObjectToFlagUndoList (RATLINE_TYPE, line, line, line);
+ 	ASSIGN_FLAG (SELECTEDFLAG, Flag, line);
+-	DrawRat (line, 0);
++	DrawRat (line);
+ 	changed = true;
+       }
+   }
+@@ -788,7 +788,7 @@ SelectConnection (bool Flag)
+       {
+ 	AddObjectToFlagUndoList (LINE_TYPE, layer, line, line);
+ 	ASSIGN_FLAG (SELECTEDFLAG, Flag, line);
+-	DrawLine (layer, line, 0);
++	DrawLine (layer, line);
+ 	changed = true;
+       }
+   }
+@@ -799,7 +799,7 @@ SelectConnection (bool Flag)
+       {
+ 	AddObjectToFlagUndoList (ARC_TYPE, layer, arc, arc);
+ 	ASSIGN_FLAG (SELECTEDFLAG, Flag, arc);
+-	DrawArc (layer, arc, 0);
++	DrawArc (layer, arc);
+ 	changed = true;
+       }
+   }
+@@ -810,7 +810,7 @@ SelectConnection (bool Flag)
+       {
+ 	AddObjectToFlagUndoList (POLYGON_TYPE, layer, polygon, polygon);
+ 	ASSIGN_FLAG (SELECTEDFLAG, Flag, polygon);
+-	DrawPolygon (layer, polygon, 0);
++	DrawPolygon (layer, polygon);
+ 	changed = true;
+       }
+   }
+@@ -824,7 +824,7 @@ SelectConnection (bool Flag)
+ 	  {
+ 	    AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
+ 	    ASSIGN_FLAG (SELECTEDFLAG, Flag, pin);
+-	    DrawPin (pin, 0);
++	    DrawPin (pin);
+ 	    changed = true;
+ 	  }
+       }
+@@ -835,7 +835,7 @@ SelectConnection (bool Flag)
+ 	  {
+ 	    AddObjectToFlagUndoList (PAD_TYPE, element, pad, pad);
+ 	    ASSIGN_FLAG (SELECTEDFLAG, Flag, pad);
+-	    DrawPad (pad, 0);
++	    DrawPad (pad);
+ 	    changed = true;
+ 	  }
+       }
+@@ -849,7 +849,7 @@ SelectConnection (bool Flag)
+       {
+ 	AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
+ 	ASSIGN_FLAG (SELECTEDFLAG, Flag, via);
+-	DrawVia (via, 0);
++	DrawVia (via);
+ 	changed = true;
+       }
+   }
+@@ -927,7 +927,7 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+       {
+ 	AddObjectToFlagUndoList (TEXT_TYPE, layer, text, text);
+ 	ASSIGN_FLAG (SELECTEDFLAG, Flag, text);
+-	DrawText (layer, text, 0);
++	DrawText (layer, text);
+ 	changed = true;
+       }
+   }
+@@ -980,7 +980,7 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+       {
+ 	AddObjectToFlagUndoList (PIN_TYPE, element, pin, pin);
+ 	ASSIGN_FLAG (SELECTEDFLAG, Flag, pin);
+-	DrawPin (pin, 0);
++	DrawPin (pin);
+ 	changed = true;
+       }
+   }
+@@ -996,7 +996,7 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+ 	{
+ 	  AddObjectToFlagUndoList (PAD_TYPE, element, pad, pad);
+ 	  ASSIGN_FLAG (SELECTEDFLAG, Flag, pad);
+-	  DrawPad (pad, 0);
++	  DrawPad (pad);
+ 	  changed = true;
+ 	}
+   }
+@@ -1010,7 +1010,7 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
+       {
+ 	AddObjectToFlagUndoList (VIA_TYPE, via, via, via);
+ 	ASSIGN_FLAG (SELECTEDFLAG, Flag, via);
+-	DrawVia (via, 0);
++	DrawVia (via);
+ 	changed = true;
+       }
+   }
+diff --git a/src/toporouter.c b/src/toporouter.c
+index 28a3764..4d56243 100644
+--- a/src/toporouter.c
++++ b/src/toporouter.c
+@@ -8040,14 +8040,14 @@ escape (int argc, char **argv, int x, int y)
+         AddObjectToCreateUndoList (VIA_TYPE, via, via, via);
+ //        if (gui->shift_is_pressed ())
+ //          ChangeObjectThermal (VIA_TYPE, via, via, via, PCB->ThermStyle);
+-        DrawVia (via, 0);
++        DrawVia (via);
+         if((line = CreateDrawnLineOnLayer (CURRENT, pad->Point1.X + 1., pad->Point1.Y + 1., viax + 1., viay + 1.,
+                 Settings.LineThickness, 2 * Settings.Keepaway,
+                 NoFlags())))        
+         {
+ 
+           AddObjectToCreateUndoList (LINE_TYPE, CURRENT, line, line);
+-          DrawLine (CURRENT, line, 0);
++          DrawLine (CURRENT, line);
+ 
+         }
+       
+diff --git a/src/undo.c b/src/undo.c
+index 0c35fa8..21b86f4 100644
+--- a/src/undo.c
++++ b/src/undo.c
+@@ -276,10 +276,10 @@ DrawRecoveredObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
+       LayerTypePtr layer;
+ 
+       layer = LAYER_PTR (GetLayerNumber (RemoveList, (LayerTypePtr) Ptr1));
+-      DrawObject (Type, (void *) layer, Ptr2, 0);
++      DrawObject (Type, (void *) layer, Ptr2);
+     }
+   else
+-    DrawObject (Type, Ptr1, Ptr2, 0);
++    DrawObject (Type, Ptr1, Ptr2);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -379,7 +379,7 @@ UndoChange2ndSize (UndoListTypePtr Entry)
+ 	EraseObject (type, ptr1, ptr2);
+       ((PinTypePtr) ptr2)->DrillingHole = Entry->Data.Size;
+       Entry->Data.Size = swap;
+-      DrawObject (type, ptr1, ptr2, 0);
++      DrawObject (type, ptr1, ptr2);
+       return (true);
+     }
+   return (false);
+@@ -415,7 +415,7 @@ UndoChangeAngles (UndoListTypePtr Entry)
+       r_insert_entry (Layer->arc_tree, (BoxTypePtr) a, 0);
+       Entry->Data.Move.DX = old_sa;
+       Entry->Data.Move.DY = old_da;;
+-      DrawObject (type, ptr1, a, 0);
++      DrawObject (type, ptr1, a);
+       return (true);
+     }
+   return (false);
+@@ -446,7 +446,7 @@ UndoChangeClearSize (UndoListTypePtr Entry)
+       ClearFromPolygon (PCB->Data, type, ptr1, ptr2);
+       Entry->Data.Size = swap;
+       if (andDraw)
+-	DrawObject (type, ptr1, ptr2, 0);
++	DrawObject (type, ptr1, ptr2);
+       return (true);
+     }
+   return (false);
+@@ -480,7 +480,7 @@ UndoChangeMaskSize (UndoListTypePtr Entry)
+ 	((PinTypePtr) ptr2)->Mask = Entry->Data.Size;
+       Entry->Data.Size = swap;
+       if (andDraw)
+-	DrawObject (type, ptr1, ptr2, 0);
++	DrawObject (type, ptr1, ptr2);
+       return (true);
+     }
+   return (false);
+@@ -514,7 +514,7 @@ UndoChangeSize (UndoListTypePtr Entry)
+       Entry->Data.Size = swap;
+       ClearFromPolygon (PCB->Data, type, ptr1, ptr2);
+       if (andDraw)
+-	DrawObject (type, ptr1, ptr2, 0);
++	DrawObject (type, ptr1, ptr2);
+       return (true);
+     }
+   return (false);
+@@ -559,7 +559,7 @@ UndoFlag (UndoListTypePtr Entry)
+       Entry->Data.Flags = swap;
+ 
+       if (andDraw && must_redraw)
+-	DrawObject (type, ptr1, ptr2, 0);
++	DrawObject (type, ptr1, ptr2);
+       return (true);
+     }
+   Message ("hace Internal error: Can't find ID %d type %08x\n", Entry->ID,
+@@ -740,7 +740,7 @@ UndoRemovePoint (UndoListTypePtr Entry)
+ 	polygon->Points[Entry->Data.RemovedPoint.Index].ID =
+ 	  Entry->Data.RemovedPoint.ID;
+ 	if (andDraw && layer->On)
+-	  DrawPolygon (layer, polygon, 0);
++	  DrawPolygon (layer, polygon);
+ 	Entry->Type = UNDO_INSERT_POINT;
+ 	Entry->ID = Entry->Data.RemovedPoint.ID;
+ 	Entry->Kind = POLYGONPOINT_TYPE;
+@@ -802,7 +802,7 @@ UndoInsertPoint (UndoListTypePtr Entry)
+ 	Entry->Data.RemovedPoint.Index = point_idx;
+ 	DestroyObject (PCB->Data, POLYGONPOINT_TYPE, layer, polygon, pnt);
+ 	if (andDraw && layer->On)
+-	  DrawPolygon (layer, polygon, 0);
++	  DrawPolygon (layer, polygon);
+ 	return (true);
+       }
