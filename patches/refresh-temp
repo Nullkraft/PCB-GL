@@ -1,0 +1,23 @@
+Bottom: c39b93b2be7909282dd71feb1f853a09d942acc7
+Top:    43a4efbf762b53c3150894546e78c8fd621bb52f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-23 17:16:10 +0100
+
+Refresh of draw-c-change-drawtop-to-drawo
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index caf14c7..8e249b1 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -317,8 +317,8 @@ PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
+   DrawOuterLayer (side, drawn_area);
+   gui->set_draw_faded (Output.fgGC, 0);
+ 
+-  SWAP_IDENT = swap_ident;
+   /* draw package */
++  SWAP_IDENT = swap_ident;
+   DrawSilk (swap_ident,
+ 	    swap_ident ? solder_silk_layer : component_silk_layer,
+ 	    drawn_area);
