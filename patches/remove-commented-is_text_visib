@@ -1,5 +1,5 @@
 Bottom: 187a75796f68b2b09b3de87573aa911e15f11129
-Top:    187a75796f68b2b09b3de87573aa911e15f11129
+Top:    335652c037c611042518784cfbb9c4fadce8d782
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 15:20:52 +0100
 
@@ -8,4 +8,20 @@ Remove commented IS_TEXT_VISIBLE implementation
 
 ---
 
-
+diff --git a/src/macro.h b/src/macro.h
+index 7cba5ac..19f80b8 100644
+--- a/src/macro.h
++++ b/src/macro.h
+@@ -151,12 +151,7 @@ extern int mem_any_set (unsigned char *, int);
+ 
+ /* ---------------------------------------------------------------------------
+  *  Determines if text is actually visible
+-#define TEXT_IS_VISIBLE(b, l, t)					\
+-		(((l)->On && !TEST_FLAG(ONSILKFLAG, (t))) ||     	\
+-		(TEST_FLAG(ONSILKFLAG, (t)) && (b)->ElementOn   	\
+-		&& ((b)->InvisibleObjectsOn ||                  	\
+-		(TEST_FLAG(ONSOLDERFLAG, (t)) != 0) == SWAP_IDENT)))
+-*/
++ */
+ #define TEXT_IS_VISIBLE(b, l, t) \
+ 	((l)->On)
