@@ -1,5 +1,5 @@
 Bottom: 7df50c95267e60a440d29b68e289b0a2f797e2a5
-Top:    7df50c95267e60a440d29b68e289b0a2f797e2a5
+Top:    6a0c01db67f34753620c8f0bee326276b589583a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 15:35:54 +0100
 
@@ -8,4 +8,34 @@ draw.c: Change DrawSilk() to use a layer side parameter, not SWAP_IDENT
 
 ---
 
-
+diff --git a/src/draw.c b/src/draw.c
+index 61f5341..b7a27e0 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -308,9 +308,9 @@ rat_callback (const BoxType * b, void *cl)
+  */
+ 
+ static void
+-PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
++PrintAssembly (int side, const BoxType * drawn_area)
+ {
+-  int side = swap_ident ? SOLDER_LAYER : COMPONENT_LAYER;
++  int side_group = GetLayerGroupNumberByNumber (max_copper_layer + side);
+ 
+   gui->set_draw_faded (Output.fgGC, 1);
+   DrawLayerGroup (side_group, drawn_area);
+@@ -500,11 +500,11 @@ DrawEverything (BoxTypePtr drawn_area)
+     }
+ 
+   doing_assy = true;
+-  if (gui->set_layer ("topassembly", SL (ASSY, TOP), 0))
+-    PrintAssembly (drawn_area, component, 0);
++  if (gui->set_layer ("topassembly", SL (ASSY, TOP)))
++    PrintAssembly (COMPONENT_LAYER, drawn_area, component, 0);
+ 
+   if (gui->set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
+-    PrintAssembly (drawn_area, solder, 1);
++    PrintAssembly (SOLDER_LAYER, drawn_area, solder);
+   doing_assy = false;
+ 
+   if (gui->set_layer ("fab", SL (FAB, 0), 0))
