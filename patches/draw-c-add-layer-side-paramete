@@ -1,5 +1,5 @@
 Bottom: 8b5e37c71ea877ca03eba28e5a413a79545e0361
-Top:    6dcd678da914c34099c9712fa5571fdc22e62a22
+Top:    957d9f6b42aa6f3a71089907db78bb1f00e954eb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 15:34:53 +0100
 
@@ -11,7 +11,7 @@ Don't use the global variable SWAP_IDENT to choose which side to draw.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 1ad48d5..1c540f2 100644
+index 1ad48d5..88c90cb 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -102,7 +102,7 @@ static void SetPVColor (PinTypePtr, int);
@@ -53,19 +53,20 @@ index 1ad48d5..1c540f2 100644
    PadTypePtr pad = (PadTypePtr) b;
 -  if (!XOR (TEST_FLAG (ONSOLDERFLAG, pad), SWAP_IDENT) && pad->Mask)
 +  int *side = cl;
-+  if (TEST_FLAG (ONSOLDERFLAG, pad) == (side == SOLDER_LAYER) && pad->Mask)
++  if (ON_SIDE (pad, side) && pad->Mask)
      ClearPad (pad, true);
    return 1;
  }
-@@ -651,7 +644,6 @@ DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
+@@ -651,8 +644,6 @@ DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
       pins and pads.  We decided it was a bad idea to do this
       unconditionally, but the code remains.  */
  #endif
 -  int save_swap = SWAP_IDENT;
-   SWAP_IDENT = new_swap;
+-  SWAP_IDENT = new_swap;
  
  #if 0
-@@ -669,7 +661,7 @@ DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
+   if (gui->poly_before)
+@@ -669,7 +660,7 @@ DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
    gui->use_mask (HID_MASK_CLEAR);
    r_search (PCB->Data->pin_tree, drawn_area, NULL, clearPin_callback, NULL);
    r_search (PCB->Data->via_tree, drawn_area, NULL, clearPin_callback, NULL);
@@ -74,7 +75,7 @@ index 1ad48d5..1c540f2 100644
  
    if (gui->poly_after)
      {
-@@ -681,7 +673,6 @@ DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
+@@ -681,7 +672,6 @@ DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
      }
    gui->use_mask (HID_MASK_OFF);
  #endif
@@ -82,7 +83,7 @@ index 1ad48d5..1c540f2 100644
  }
  
  
-@@ -706,7 +697,7 @@ DrawMaskBoardArea (int mask_type, BoxType *screen)
+@@ -706,7 +696,7 @@ DrawMaskBoardArea (int mask_type, BoxType *screen)
   * draws solder mask layer - this will cover nearly everything
   */
  static void
@@ -91,7 +92,7 @@ index 1ad48d5..1c540f2 100644
  {
    int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
  
-@@ -720,7 +711,7 @@ DrawMask (BoxType * screen)
+@@ -720,7 +710,7 @@ DrawMask (BoxType * screen)
  
    r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, NULL);
    r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, NULL);
