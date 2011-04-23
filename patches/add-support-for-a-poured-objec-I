@@ -1,7 +1,7 @@
-Bottom: 4f2289d3fbdbd21642b7bfb49c906a42e1b531a2
-Top:    809a031a5011cdb4b926b5c68264ad9528646cfa
+Bottom: dbf2e5654300bcbf7e5d47b87e799d8d05402701
+Top:    65cf835a015ea14f7fb0bf76305f71271975c529
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-23 13:38:54 +0100
+Date:   2011-04-23 14:41:43 +0100
 
 Add support for a "poured" object.
 
@@ -22,10 +22,10 @@ or if it will take over the meaning of the existing "polygon" entry.
 ---
 
 diff --git a/globalconst.h b/globalconst.h
-index cd6f4f9..4ab3813 100755
+index ff8e696..58b6752 100755
 --- a/globalconst.h
 +++ b/globalconst.h
-@@ -118,6 +118,8 @@
+@@ -115,6 +115,8 @@
  						/* line points */
  #define	MAX_POLYGON_POINT_DISTANCE	0	/* maximum distance when searching */
  						/* polygon points */
@@ -3068,7 +3068,7 @@ index 7f69d75..00935b3 100644
  
  			/*
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index 755bd0c..ef71d79 100644
+index 1556b46..2d1cda1 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
 @@ -357,7 +357,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
