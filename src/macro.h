@@ -34,11 +34,7 @@
 
 /* ---------------------------------------------------------------------------
  * macros to transform coord systems
- * draw.c uses a different definition of TO_SCREEN
  */
-#ifndef	SWAP_IDENT
-#define	SWAP_IDENT			Settings.ShowSolderSide
-#endif
 
 #define	SWAP_SIGN_X(x)		(x)
 #define	SWAP_SIGN_Y(y)		(-(y))
