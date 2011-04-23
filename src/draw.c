@@ -84,7 +84,7 @@ static const BoxType *clip_box = NULL;
 static void Redraw (bool, BoxTypePtr);
 static void DrawEverything (BoxTypePtr);
 static void DrawOuterLayer (int side, const BoxType *);
-static int DrawLayerGroup (int, const BoxType *);
+static void DrawLayerGroup (int, const BoxType *);
 static void DrawPinOrViaLowLevel (PinTypePtr, bool);
 static void DrawPlainPin (PinTypePtr, bool);
 static void DrawPlainVia (PinTypePtr, bool);
@@ -311,11 +311,9 @@ static void
 PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
 {
   int save_swap = SWAP_IDENT;
-  int side = swap_ident ? SOLDER_LAYER : COMPONENT_LAYER;
 
   gui->set_draw_faded (Output.fgGC, 1);
   DrawLayerGroup (side_group, drawn_area);
-  DrawOuterLayer (side, drawn_area);
   gui->set_draw_faded (Output.fgGC, 0);
 
   /* draw package */
@@ -380,24 +378,7 @@ DrawEverything (BoxTypePtr drawn_area)
       int group = drawn_groups[i];
 
       if (gui->set_layer (0, group, 0))
-	{
-	  if (DrawLayerGroup (group, drawn_area) && !gui->gui)
-	    {
-	      r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
-	      r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
-	      /* draw element pads */
-	      if (group == component || group == solder)
-		{
-                  side = (group == solder) ? SOLDER_LAYER : COMPONENT_LAYER;
-		  r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
-		}
-
-	      /* draw holes */
-	      plated = -1;
-	      r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
-	      r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
-	    }
-	}
+        DrawLayerGroup (group, drawn_area);
     }
   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
     return;
@@ -797,16 +778,20 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
  * draws one layer group.  Returns non-zero if pins and pads should be
  * drawn with this group.
  */
-static int
-DrawLayerGroup (int group, const BoxType * screen)
+static void
+DrawLayerGroup (int group, const BoxType * drawn_area)
 {
   int i, rv = 1;
   int layernum;
+  int plated;
+  int side;
   LayerTypePtr Layer;
   int n_entries = PCB->LayerGroups.Number[group];
   Cardinal *layers = PCB->LayerGroups.Entries[group];
+  int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
+  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
 
-  clip_box = screen;
+  clip_box = drawn_area;
   for (i = n_entries - 1; i >= 0; i--)
     {
       layernum = layers[i];
@@ -815,11 +800,28 @@ DrawLayerGroup (int group, const BoxType * screen)
 	  strcmp (Layer->Name, "route") == 0)
 	rv = 0;
       if (layernum < max_copper_layer && Layer->On)
-	DrawLayerCommon (Layer, screen, true);
+	DrawLayerCommon (Layer, drawn_area, true);
     }
   if (n_entries > 1)
     rv = 1;
-  return rv;
+
+  if (rv == 0 || (gui->gui && !doing_assy))
+    return;
+
+  r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
+  r_search (PCB->Data->via_tree, drawn_area, NULL, pin_callback, NULL);
+
+  /* draw element pads */
+  if (group == component_group || group == solder_group)
+    {
+      side = (group == solder_group) ? SOLDER_LAYER : COMPONENT_LAYER;
+      r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+    }
+
+  /* draw holes */
+  plated = -1;
+  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
+  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
 }
 
 /* ---------------------------------------------------------------------------
