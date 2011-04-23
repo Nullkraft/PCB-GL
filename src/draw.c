@@ -382,8 +382,6 @@ DrawEverything (BoxTypePtr drawn_area)
 	{
 	  if (DrawLayerGroup (group, drawn_area) && !gui->gui)
 	    {
-	      int save_swap = SWAP_IDENT;
-
 	      if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
 		continue;
 	      r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback,
