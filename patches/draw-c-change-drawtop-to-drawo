@@ -1,5 +1,5 @@
-Bottom: cbcc5594a39e9b709b2d5eade559c917213b9aaa
-Top:    43964c0c9b606ddb47559abee010f5531d9535e6
+Bottom: b8889d4215ee1a9a5f62733eb8bbc283812c7e32
+Top:    536961c2110ba43d6ca74b7aeb498475c10bdcbd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 16:56:13 +0100
 
@@ -9,7 +9,7 @@ draw.c: Change DrawTop() to DrawOuter() taking a side parameter
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 8178e81..9aea994 100644
+index 9f7cf8b..9cc0375 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -83,7 +83,7 @@ static const BoxType *clip_box = NULL;
@@ -39,7 +39,7 @@ index 8178e81..9aea994 100644
    DrawSilk (swap_ident,
  	    swap_ident ? solder_silk_layer : component_silk_layer,
  	    drawn_area);
-@@ -410,9 +411,11 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -401,9 +402,11 @@ DrawEverything (BoxTypePtr drawn_area)
    if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
      return;
  
@@ -52,7 +52,7 @@ index 8178e81..9aea994 100644
    else
      {
        HoleCountStruct hcs;
-@@ -577,10 +580,8 @@ pad_callback (const BoxType * b, void *cl)
+@@ -568,10 +571,8 @@ pad_callback (const BoxType * b, void *cl)
   * draws pins pads and vias
   */
  static void
