@@ -1,7 +1,7 @@
-Bottom: 187a75796f68b2b09b3de87573aa911e15f11129
-Top:    e2ed6a6d005ac9abc47299f9e063a92881757be7
+Bottom: b718048a2a874a862a5202f788bc8ac900df1888
+Top:    5cd4b3e6b55d5befc73bbcea1abaea61a86d255a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-23 16:16:12 +0100
+Date:   2011-04-23 16:44:03 +0100
 
 draw.c: Remove unused parameter from various calls:
 
@@ -1575,10 +1575,10 @@ index 3ded0d0..c8d1938 100644
      }
    return (newone);
 diff --git a/src/polygon.c b/src/polygon.c
-index 78cc3b2..e6bf772 100644
+index 37e0528..2ff3433 100644
 --- a/src/polygon.c
 +++ b/src/polygon.c
-@@ -1412,7 +1412,7 @@ CopyAttachedPolygonToLayer (void)
+@@ -1408,7 +1408,7 @@ CopyAttachedPolygonToLayer (void)
      CURRENT->polygon_tree = r_create_tree (NULL, 0, 0);
    r_insert_entry (CURRENT->polygon_tree, (BoxType *) polygon, 0);
    InitClip (PCB->Data, CURRENT, polygon);
@@ -1587,7 +1587,7 @@ index 78cc3b2..e6bf772 100644
    SetChangedFlag (true);
  
    /* reset state of attached line */
-@@ -1840,7 +1840,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
+@@ -1836,7 +1836,7 @@ MorphPolygon (LayerTypePtr layer, PolygonTypePtr poly)
            p = p->f;             /* go to next pline */
            newone->Clipped->b = newone->Clipped->f = newone->Clipped;     /* unlink from others */
            r_insert_entry (layer->polygon_tree, (BoxType *) newone, 0);
@@ -1596,7 +1596,7 @@ index 78cc3b2..e6bf772 100644
          }
        else
          {
-@@ -1955,7 +1955,7 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
+@@ -1951,7 +1951,7 @@ PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
          Layer->polygon_tree = r_create_tree (NULL, 0, 0);
        r_insert_entry (Layer->polygon_tree, (BoxType *) Polygon, 0);
  
