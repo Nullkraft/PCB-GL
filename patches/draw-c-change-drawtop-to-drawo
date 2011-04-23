@@ -3,10 +3,9 @@ Top:    f80eb80e16768d162a49b644071e1047a9610190
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 16:56:13 +0100
 
-draw.c: Change DrawTop() to DrawOuterPPV() taking a side parameter
+draw.c: Change DrawTop() to DrawPPV() taking a side parameter
 
-(PPV stands for Pins, Pads and Vias), Outer is because the function
-is only used on outer layers which feature pads.
+(PPV stands for Pins, Pads and Vias)
 
 
 ---
