@@ -1,0 +1,22 @@
+Bottom: 6f2caf33faa9363edc8abac1da1243d7f5b37d13
+Top:    862e07987ae380e86bcdfe889c999cf0b9f33fdc
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-23 17:12:22 +0100
+
+Refresh of draw-c-combine-front-and-back-
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index db04af3..ed798cc 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -382,8 +382,6 @@ DrawEverything (BoxTypePtr drawn_area)
+ 	{
+ 	  if (DrawLayerGroup (group, drawn_area) && !gui->gui)
+ 	    {
+-	      int save_swap = SWAP_IDENT;
+-
+ 	      if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
+ 		continue;
+ 	      r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback,
