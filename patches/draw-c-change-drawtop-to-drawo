@@ -1,5 +1,5 @@
 Bottom: cbcc5594a39e9b709b2d5eade559c917213b9aaa
-Top:    43a4efbf762b53c3150894546e78c8fd621bb52f
+Top:    43964c0c9b606ddb47559abee010f5531d9535e6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 16:56:13 +0100
 
@@ -9,7 +9,7 @@ draw.c: Change DrawTop() to DrawOuter() taking a side parameter
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 8178e81..8e249b1 100644
+index 8178e81..9aea994 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -83,7 +83,7 @@ static const BoxType *clip_box = NULL;
@@ -21,8 +21,11 @@ index 8178e81..8e249b1 100644
  static int DrawLayerGroup (int, const BoxType *);
  static void DrawPinOrViaLowLevel (PinTypePtr, bool);
  static void DrawPlainPin (PinTypePtr, bool);
-@@ -313,12 +313,12 @@ PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
+@@ -311,14 +311,15 @@ static void
+ PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
+ {
    int save_swap = SWAP_IDENT;
++  int side = swap_ident ? SOLDER_LAYER : COMPONENT_LAYER;
  
    gui->set_draw_faded (Output.fgGC, 1);
 -  SWAP_IDENT = swap_ident;
@@ -36,7 +39,7 @@ index 8178e81..8e249b1 100644
    DrawSilk (swap_ident,
  	    swap_ident ? solder_silk_layer : component_silk_layer,
  	    drawn_area);
-@@ -410,9 +410,11 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -410,9 +411,11 @@ DrawEverything (BoxTypePtr drawn_area)
    if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
      return;
  
@@ -49,12 +52,12 @@ index 8178e81..8e249b1 100644
    else
      {
        HoleCountStruct hcs;
-@@ -577,10 +579,8 @@ pad_callback (const BoxType * b, void *cl)
+@@ -577,10 +580,8 @@ pad_callback (const BoxType * b, void *cl)
   * draws pins pads and vias
   */
  static void
 -DrawTop (const BoxType * screen)
-+DrawOuterLayer (side, const BoxType * screen)
++DrawOuterLayer (int side, const BoxType * screen)
  {
 -  int side = SWAP_IDENT ? SOLDER_LAYER : COMPONENT_LAYER;
 -
