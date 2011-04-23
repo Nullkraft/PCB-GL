@@ -101,7 +101,7 @@ static void SetPVColor (PinTypePtr, int);
 static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
 static void ClearPad (PadTypePtr, bool);
 static void DrawHole (PinTypePtr);
-static void DrawMask (BoxType *);
+static void DrawMask (int side, BoxType *);
 static void DrawRats (BoxType *);
 static void DrawSilk (int, int, const BoxType *);
 static int pin_callback (const BoxType * b, void *cl);
@@ -469,15 +469,11 @@ DrawEverything (BoxTypePtr drawn_area)
     }
   /* Draw the solder mask if turned on */
   if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
-    {
-      SWAP_IDENT = 0;
-      DrawMask (drawn_area);
-    }
+    DrawMask (COMPONENT_LAYER, drawn_area);
+
   if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
-    {
-      SWAP_IDENT = 1;
-      DrawMask (drawn_area);
-    }
+    DrawMask (SOLDER_LAYER, drawn_area);
+
   /* Draw top silkscreen */
   if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
     DrawSilk (0, component_silk_layer, drawn_area);
@@ -650,7 +646,8 @@ static int
 clearPad_callback (const BoxType * b, void *cl)
 {
   PadTypePtr pad = (PadTypePtr) b;
-  if (!XOR (TEST_FLAG (ONSOLDERFLAG, pad), SWAP_IDENT) && pad->Mask)
+  int *side = cl;
+  if (TEST_FLAG (ONSOLDERFLAG, pad) == (side == SOLDER_LAYER) && pad->Mask)
     ClearPad (pad, true);
   return 1;
 }
@@ -686,7 +683,7 @@ DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
   gui->use_mask (HID_MASK_CLEAR);
   r_search (PCB->Data->pin_tree, drawn_area, NULL, clearPin_callback, NULL);
   r_search (PCB->Data->via_tree, drawn_area, NULL, clearPin_callback, NULL);
-  r_search (PCB->Data->pad_tree, drawn_area, NULL, clearPad_callback, NULL);
+  r_search (PCB->Data->pad_tree, drawn_area, NULL, clearPad_callback, &side);
 
   if (gui->poly_after)
     {
@@ -724,7 +721,7 @@ DrawMaskBoardArea (int mask_type, BoxType *screen)
  * draws solder mask layer - this will cover nearly everything
  */
 static void
-DrawMask (BoxType * screen)
+DrawMask (int side, BoxType * screen)
 {
   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
 
@@ -738,7 +735,7 @@ DrawMask (BoxType * screen)
 
   r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, NULL);
   r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, NULL);
-  r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, NULL);
+  r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, &side);
 
   if (thin)
     gui->set_color (Output.pmGC, "erase");
