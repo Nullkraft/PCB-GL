@@ -1,0 +1,30 @@
+Bottom: 6dcd678da914c34099c9712fa5571fdc22e62a22
+Top:    957d9f6b42aa6f3a71089907db78bb1f00e954eb
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-23 16:49:15 +0100
+
+Refresh of draw-c-add-layer-side-paramete
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 1c540f2..88c90cb 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -626,7 +626,7 @@ clearPad_callback (const BoxType * b, void *cl)
+ {
+   PadTypePtr pad = (PadTypePtr) b;
+   int *side = cl;
+-  if (TEST_FLAG (ONSOLDERFLAG, pad) == (side == SOLDER_LAYER) && pad->Mask)
++  if (ON_SIDE (pad, side) && pad->Mask)
+     ClearPad (pad, true);
+   return 1;
+ }
+@@ -644,7 +644,6 @@ DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
+      pins and pads.  We decided it was a bad idea to do this
+      unconditionally, but the code remains.  */
+ #endif
+-  SWAP_IDENT = new_swap;
+ 
+ #if 0
+   if (gui->poly_before)
