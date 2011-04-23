@@ -626,7 +626,7 @@ clearPad_callback (const BoxType * b, void *cl)
 {
   PadTypePtr pad = (PadTypePtr) b;
   int *side = cl;
-  if (TEST_FLAG (ONSOLDERFLAG, pad) == (side == SOLDER_LAYER) && pad->Mask)
+  if (ON_SIDE (pad, side) && pad->Mask)
     ClearPad (pad, true);
   return 1;
 }
@@ -644,7 +644,6 @@ DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
      pins and pads.  We decided it was a bad idea to do this
      unconditionally, but the code remains.  */
 #endif
-  SWAP_IDENT = new_swap;
 
 #if 0
   if (gui->poly_before)
