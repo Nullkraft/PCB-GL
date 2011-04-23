@@ -305,13 +305,13 @@ CopyElement (ElementTypePtr Element)
   AddObjectToCreateUndoList (ELEMENT_TYPE, element, element, element);
   if (PCB->ElementOn && (FRONT (element) || PCB->InvisibleObjectsOn))
     {
-      DrawElementName (element, 0);
-      DrawElementPackage (element, 0);
+      DrawElementName (element);
+      DrawElementPackage (element);
       didDraw = true;
     }
   if (PCB->PinOn)
     {
-      DrawElementPinsAndPads (element, 0);
+      DrawElementPinsAndPads (element);
       didDraw = true;
     }
 #ifdef DEBUG

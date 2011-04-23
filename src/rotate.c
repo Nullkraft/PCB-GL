@@ -319,7 +319,7 @@ RotateElement (ElementTypePtr Element)
 {
   EraseElement (Element);
   RotateElementLowLevel (PCB->Data, Element, CenterX, CenterY, Number);
-  DrawElement (Element, 0);
+  DrawElement (Element);
   Draw ();
   return (Element);
 }
@@ -338,7 +338,7 @@ RotateElementName (ElementTypePtr Element)
     r_insert_entry (PCB->Data->name_tree[n], (BoxType *) text, 0);
   }
   END_LOOP;
-  DrawElementName (Element, 0);
+  DrawElementName (Element);
   Draw ();
   return (Element);
 }

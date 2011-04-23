@@ -192,7 +192,7 @@ MoveElementName (ElementTypePtr Element)
 	  r_insert_entry (PCB->Data->name_tree[n], (BoxType *) text, 0);
       }
       END_LOOP;
-      DrawElementName (Element, 0);
+      DrawElementName (Element);
       Draw ();
     }
   else
@@ -222,8 +222,8 @@ MoveElement (ElementTypePtr Element)
     {
       EraseElement (Element);
       MoveElementLowLevel (PCB->Data, Element, DeltaX, DeltaY);
-      DrawElementName (Element, 0);
-      DrawElementPackage (Element, 0);
+      DrawElementName (Element);
+      DrawElementPackage (Element);
       didDraw = true;
     }
   else
@@ -234,7 +234,7 @@ MoveElement (ElementTypePtr Element)
     }
   if (PCB->PinOn)
     {
-      DrawElementPinsAndPads (Element, 0);
+      DrawElementPinsAndPads (Element);
       didDraw = true;
     }
   if (didDraw)
