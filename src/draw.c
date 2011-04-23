@@ -1927,8 +1927,6 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
 
   Gathering = false;
 
-  /*printf("\033[32mhid_expose_callback, s=%p %d\033[0m\n", &(SWAP_IDENT), SWAP_IDENT); */
-
   hid->set_color (Output.pmGC, "erase");
   hid->set_color (Output.bgGC, "drill");
 
