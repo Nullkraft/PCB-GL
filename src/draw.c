@@ -311,6 +311,7 @@ static void
 PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
 {
   int save_swap = SWAP_IDENT;
+  int side = swap_ident ? SOLDER_LAYER : COMPONENT_LAYER;
 
   gui->set_draw_faded (Output.fgGC, 1);
   DrawLayerGroup (side_group, drawn_area);
@@ -579,7 +580,7 @@ pad_callback (const BoxType * b, void *cl)
  * draws pins pads and vias
  */
 static void
-DrawOuterLayer (side, const BoxType * screen)
+DrawOuterLayer (int side, const BoxType * screen)
 {
   if (PCB->PinOn || doing_assy)
     {
