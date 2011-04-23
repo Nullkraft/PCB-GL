@@ -101,7 +101,7 @@ static void SetPVColor (PinTypePtr, int);
 static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
 static void ClearPad (PadTypePtr, bool);
 static void DrawHole (PinTypePtr);
-static void DrawMask (BoxType *);
+static void DrawMask (int side, BoxType *);
 static void DrawRats (BoxType *);
 static void DrawSilk (int, int, const BoxType *);
 static int pin_callback (const BoxType * b, void *cl);
@@ -339,8 +339,6 @@ rat_callback (const BoxType * b, void *cl)
 static void
 PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
 {
-  int save_swap = SWAP_IDENT;
-
   gui->set_draw_faded (Output.fgGC, 1);
   SWAP_IDENT = swap_ident;
   DrawLayerGroup (side_group, drawn_area);
@@ -351,7 +349,6 @@ PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
   DrawSilk (swap_ident,
 	    swap_ident ? solder_silk_layer : component_silk_layer,
 	    drawn_area);
-  SWAP_IDENT = save_swap;
 }
 
 /* ---------------------------------------------------------------------------
@@ -413,8 +410,6 @@ DrawEverything (BoxTypePtr drawn_area)
 	{
 	  if (DrawLayerGroup (group, drawn_area) && !gui->gui)
 	    {
-	      int save_swap = SWAP_IDENT;
-
 	      if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
 		continue;
 	      r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback,
@@ -428,7 +423,6 @@ DrawEverything (BoxTypePtr drawn_area)
 		  r_search (PCB->Data->pad_tree, drawn_area, NULL,
 			    pad_callback, NULL);
 		}
-	      SWAP_IDENT = save_swap;
 
 	      if (!gui->gui)
 		{
@@ -475,19 +469,11 @@ DrawEverything (BoxTypePtr drawn_area)
     }
   /* Draw the solder mask if turned on */
   if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
-    {
-      int save_swap = SWAP_IDENT;
-      SWAP_IDENT = 0;
-      DrawMask (drawn_area);
-      SWAP_IDENT = save_swap;
-    }
+    DrawMask (COMPONENT_LAYER, drawn_area);
+
   if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
-    {
-      int save_swap = SWAP_IDENT;
-      SWAP_IDENT = 1;
-      DrawMask (drawn_area);
-      SWAP_IDENT = save_swap;
-    }
+    DrawMask (SOLDER_LAYER, drawn_area);
+
   /* Draw top silkscreen */
   if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
     DrawSilk (0, component_silk_layer, drawn_area);
@@ -660,7 +646,8 @@ static int
 clearPad_callback (const BoxType * b, void *cl)
 {
   PadTypePtr pad = (PadTypePtr) b;
-  if (!XOR (TEST_FLAG (ONSOLDERFLAG, pad), SWAP_IDENT) && pad->Mask)
+  int *side = cl;
+  if (TEST_FLAG (ONSOLDERFLAG, pad) == (side == SOLDER_LAYER) && pad->Mask)
     ClearPad (pad, true);
   return 1;
 }
@@ -677,7 +664,6 @@ DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
      pins and pads.  We decided it was a bad idea to do this
      unconditionally, but the code remains.  */
 #endif
-  int save_swap = SWAP_IDENT;
   SWAP_IDENT = new_swap;
 
 #if 0
@@ -697,7 +683,7 @@ DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
   gui->use_mask (HID_MASK_CLEAR);
   r_search (PCB->Data->pin_tree, drawn_area, NULL, clearPin_callback, NULL);
   r_search (PCB->Data->via_tree, drawn_area, NULL, clearPin_callback, NULL);
-  r_search (PCB->Data->pad_tree, drawn_area, NULL, clearPad_callback, NULL);
+  r_search (PCB->Data->pad_tree, drawn_area, NULL, clearPad_callback, &side);
 
   if (gui->poly_after)
     {
@@ -711,7 +697,6 @@ DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
     }
   gui->use_mask (HID_MASK_OFF);
 #endif
-  SWAP_IDENT = save_swap;
 }
 
 
@@ -736,7 +721,7 @@ DrawMaskBoardArea (int mask_type, BoxType *screen)
  * draws solder mask layer - this will cover nearly everything
  */
 static void
-DrawMask (BoxType * screen)
+DrawMask (int side, BoxType * screen)
 {
   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
 
@@ -750,7 +735,7 @@ DrawMask (BoxType * screen)
 
   r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, NULL);
   r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, NULL);
-  r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, NULL);
+  r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, &side);
 
   if (thin)
     gui->set_color (Output.pmGC, "erase");
@@ -1974,8 +1959,6 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
   Output.pmGC = gui->make_gc ();
 
   Gathering = false;
-
-  /*printf("\033[32mhid_expose_callback, s=%p %d\033[0m\n", &(SWAP_IDENT), SWAP_IDENT); */
 
   hid->set_color (Output.pmGC, "erase");
   hid->set_color (Output.bgGC, "drill");
