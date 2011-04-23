@@ -1,0 +1,228 @@
+Bottom: 091e1fa08b7f9b427c5ff30f90b4953697abfa6f
+Top:    9a3d04d9879c8034265a1675ce7b4e61874003ab
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-23 15:17:23 +0100
+
+Refresh of demo-of-exporter-specific-expo
+
+---
+
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index d5843ef..fcd84a9 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -346,26 +346,6 @@ gerber_get_export_options (int *n)
+   return gerber_options;
+ }
+ 
+-static int
+-group_for_layer (int l)
+-{
+-  if (l < max_copper_layer + 2 && l >= 0)
+-    return GetLayerGroupNumberByNumber (l);
+-  /* else something unique */
+-  return max_group + 3 + l;
+-}
+-
+-static int
+-layer_sort (const void *va, const void *vb)
+-{
+-  int a = *(int *) va;
+-  int b = *(int *) vb;
+-  int d = group_for_layer (b) - group_for_layer (a);
+-  if (d)
+-    return d;
+-  return b - a;
+-}
+-
+ static void
+ maybe_close_f ()
+ {
+@@ -383,17 +363,124 @@ maybe_close_f ()
+ static BoxType region;
+ 
+ static void
++gerber_expose (HID * hid, BoxType * region, void *item)
++{
++  int i, ngroups, side;
++  int plated;
++  int component, solder;
++  int do_group[MAX_LAYER];     /* This is the list of layer groups we will draw. */
++  int drawn_groups[MAX_LAYER]; /* This is the reverse of the order in which we draw them. */
++
++  HID *old_gui = gui;
++  hidGC savebg = Output.bgGC;
++  hidGC savefg = Output.fgGC;
++  hidGC savepm = Output.pmGC;
++
++  gui = hid;
++  Output.fgGC = gui->make_gc ();
++  Output.bgGC = gui->make_gc ();
++  Output.pmGC = gui->make_gc ();
++
++  hid->set_color (Output.pmGC, "erase");
++  hid->set_color (Output.bgGC, "drill");
++
++  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
++  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
++
++  memset (print_group, 0, sizeof (print_group));
++  for (i = 0; i < max_copper_layer; i++)
++    {
++      LayerType *layer = PCB->Data->Layer + i;
++      print_group[GetLayerGroupNumberByNumber (i)] = all_layers || !IsLayerEmpty (layer);
++    }
++
++  print_group[GetLayerGroupNumberByNumber (solder_silk_layer)] = 1;
++  print_group[GetLayerGroupNumberByNumber (component_silk_layer)] = 1;
++
++  /* draw all copper layer groups in group order */
++  for (group = 0; group < max_copper_layer; group++)
++    {
++      if (!print_group[group])
++        continue;
++
++      if (gui->set_layer (0, group, 0))
++        {
++          if (DrawLayerGroup (group, drawn_area))
++            {
++              r_search (PCB->Data->via_tree, drawn_area, NULL, pin_callback, NULL);
++              r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
++
++              if (group == component_group || group == solder_group)
++                {
++                  SWAP_IDENT = (group == solder_group);
++                  r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, NULL);
++                  SWAP_IDENT = save_swap;
++                }
++            }
++        }
++    }
++
++  count_holes (drawn_area, &nplated, &nunplated);
++
++  if (nplated && gui->set_layer ("plated-drill", SL (PDRILL, 0), 0))
++    {
++      plated = 1;
++      r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
++      r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
++    }
++
++  if (nunplated && gui->set_layer ("unplated-drill", SL (UDRILL, 0), 0))
++    {
++      plated = 0;
++      r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
++      r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
++    }
++
++  if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
++    {
++      SWAP_IDENT = 0;
++      DrawMask (drawn_area);
++      SWAP_IDENT = save_swap;
++    }
++
++  if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
++    {
++      SWAP_IDENT = 1;
++      DrawMask (drawn_area);
++      SWAP_IDENT = save_swap;
++    }
++
++  if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
++    DrawSilk (0, component_silk_layer, drawn_area);
++
++  if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
++    DrawSilk (1, solder_silk_layer, drawn_area);
++
++  paste_empty = IsPasteEmpty (COMPONENT_LAYER);
++  if (gui->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
++    DrawPaste (COMPONENT_LAYER);
++
++  paste_empty = IsPasteEmpty (SOLDER_LAYER);
++  if (gui->set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
++    DrawPaste (SOLDER_LAYER);
++
++  if (gui->set_layer ("fab", SL (FAB, 0), 0))
++    PrintFab ();
++
++  gui->destroy_gc (Output.fgGC);
++  gui->destroy_gc (Output.bgGC);
++  gui->destroy_gc (Output.pmGC);
++  gui = old_gui;
++  Output.fgGC = savefg;
++  Output.bgGC = savebg;
++  Output.pmGC = savepm;
++}
++
++static void
+ gerber_do_export (HID_Attr_Val * options)
+ {
+   char *fnbase;
+   int i;
+-  static int saved_layer_stack[MAX_LAYER];
+-  int save_ons[MAX_LAYER + 2];
+-  FlagType save_thindraw;
+-
+-  save_thindraw = PCB->Flags;
+-  CLEAR_FLAG(THINDRAWFLAG, PCB);
+-  CLEAR_FLAG(THINDRAWPOLYFLAG, PCB);
+ 
+   if (!options)
+     {
+@@ -438,24 +525,20 @@ gerber_do_export (HID_Attr_Val * options)
+   else
+     {
+       memset (print_group, 0, sizeof (print_group));
+-      memset (print_layer, 0, sizeof (print_layer));
+-    }
++      for (i = 0; i < max_copper_layer; i++)
++        {
++          LayerType *layer = PCB->Data->Layer + i;
++          print_group[GetLayerGroupNumberByNumber (i)] = !IsLayerEmpty (layer);
++        }
++      print_group[GetLayerGroupNumberByNumber (solder_silk_layer)] = 1;
++      print_group[GetLayerGroupNumberByNumber (component_silk_layer)] = 1;
+ 
+-  hid_save_and_show_layer_ons (save_ons);
+-  for (i = 0; i < max_copper_layer; i++)
+-    {
+-      LayerType *layer = PCB->Data->Layer + i;
+-      if (layer->LineN || layer->TextN || layer->ArcN || layer->PolygonN)
+-	print_group[GetLayerGroupNumberByNumber (i)] = 1;
++      memset (print_layer, 0, sizeof (print_layer));
++      for (i = 0; i < max_copper_layer; i++)
++        if (print_group[GetLayerGroupNumberByNumber (i)])
++          print_layer[i] = 1;
+     }
+-  print_group[GetLayerGroupNumberByNumber (solder_silk_layer)] = 1;
+-  print_group[GetLayerGroupNumberByNumber (component_silk_layer)] = 1;
+-  for (i = 0; i < max_copper_layer; i++)
+-    if (print_group[GetLayerGroupNumberByNumber (i)])
+-      print_layer[i] = 1;
+ 
+-  memcpy (saved_layer_stack, LayerStack, sizeof (LayerStack));
+-  qsort (LayerStack, max_copper_layer, sizeof (LayerStack[0]), layer_sort);
+   linewidth = -1;
+   lastcap = -1;
+   lastgroup = -1;
+@@ -473,17 +556,13 @@ gerber_do_export (HID_Attr_Val * options)
+   lastgroup = -1;
+   c_layerapps = 0;
+   finding_apertures = 1;
+-  hid_expose_callback (&gerber_hid, &region, 0);
++  gerber_expose (&gerber_hid, &region, 0);
+ 
+   c_layerapps = 0;
+   finding_apertures = 0;
+-  hid_expose_callback (&gerber_hid, &region, 0);
+-
+-  memcpy (LayerStack, saved_layer_stack, sizeof (LayerStack));
++  gerber_expose (&gerber_hid, &region, 0);
+ 
+   maybe_close_f ();
+-  hid_restore_layer_ons (save_ons);
+-  PCB->Flags = save_thindraw;
+ }
+ 
+ static void
