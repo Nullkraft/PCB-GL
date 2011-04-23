@@ -317,7 +317,6 @@ PrintAssembly (int side, const BoxType * drawn_area)
   DrawOuterLayer (side, drawn_area);
   gui->set_draw_faded (Output.fgGC, 0);
 
-  SWAP_IDENT = swap_ident;
   /* draw package */
   DrawSilk (side, drawn_area);
 }
