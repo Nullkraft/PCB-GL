@@ -1151,7 +1151,7 @@ NotifyMode (void)
 	    /* always re-draw it since I'm too lazy
 	     * to tell if a selected flag changed
 	     */
-	    DrawElement (element, 0);
+	    DrawElement (element);
 	    Draw ();
 	    hid_actionl ("Report", "Object", NULL);
 	  }
@@ -1594,7 +1594,7 @@ NotifyMode (void)
 		    r_insert_entry (PCB->Data->name_tree[i],
 				    (BoxType *) & (e->Name[i]), 0);
 		    if (i == save_n)
-		      DrawElementName (e, 0);
+		      DrawElementName (e);
 		  }
 	      }
 	  }
@@ -2718,7 +2718,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
 	    }
 	  ELEMENT_LOOP (PCB->Data);
 	  {
-	    DrawElementName (element, 0);
+	    DrawElementName (element);
 	  }
 	  END_LOOP;
 	  Draw ();
@@ -4772,7 +4772,7 @@ ActionToggleHideName (int argc, char **argv, int x, int y)
 		AddObjectToFlagUndoList (type, ptr1, ptr2, ptr3);
 		EraseElementName ((ElementTypePtr) ptr2);
 		TOGGLE_FLAG (HIDENAMEFLAG, (ElementTypePtr) ptr2);
-		DrawElementName ((ElementTypePtr) ptr2, 0);
+		DrawElementName ((ElementTypePtr) ptr2);
 		Draw ();
 		IncrementUndoSerialNumber ();
 	      }
@@ -4793,7 +4793,7 @@ ActionToggleHideName (int argc, char **argv, int x, int y)
 					   element, element);
 		  EraseElementName (element);
 		  TOGGLE_FLAG (HIDENAMEFLAG, element);
-		  DrawElementName (element, 0);
+		  DrawElementName (element);
 		  changed = true;
 		}
 	    }

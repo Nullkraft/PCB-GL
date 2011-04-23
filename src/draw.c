@@ -94,7 +94,7 @@ static void DrawLineLowLevel (LineTypePtr);
 static void DrawRegularText (LayerTypePtr, TextTypePtr, int);
 static void DrawPolygonLowLevel (PolygonTypePtr);
 static void DrawArcLowLevel (ArcTypePtr);
-static void DrawElementPackageLowLevel (ElementTypePtr Element, int);
+static void DrawElementPackageLowLevel (ElementTypePtr Element);
 static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
 static void AddPart (void *);
 static void SetPVColor (PinTypePtr, int);
@@ -235,7 +235,7 @@ backE_callback (const BoxType * b, void *cl)
 
   if (!FRONT (element))
     {
-      DrawElementPackage (element, 0);
+      DrawElementPackage (element);
     }
   return 1;
 }
@@ -247,7 +247,7 @@ backN_callback (const BoxType * b, void *cl)
   ElementTypePtr element = (ElementTypePtr) text->Element;
 
   if (!FRONT (element) && !TEST_FLAG (HIDENAMEFLAG, element))
-    DrawElementName (element, 0);
+    DrawElementName (element);
   return 0;
 }
 
@@ -268,7 +268,7 @@ frontE_callback (const BoxType * b, void *cl)
 
   if (FRONT (element))
     {
-      DrawElementPackage (element, 0);
+      DrawElementPackage (element);
     }
   return 1;
 }
@@ -289,7 +289,7 @@ frontN_callback (const BoxType * b, void *cl)
   ElementTypePtr element = (ElementTypePtr) text->Element;
 
   if (FRONT (element) && !TEST_FLAG (HIDENAMEFLAG, element))
-    DrawElementName (element, 0);
+    DrawElementName (element);
   return 0;
 }
 
@@ -1252,7 +1252,7 @@ DrawArcLowLevel (ArcTypePtr Arc)
  * draws the package of an element
  */
 static void
-DrawElementPackageLowLevel (ElementTypePtr Element, int unused)
+DrawElementPackageLowLevel (ElementTypePtr Element)
 {
   /* draw lines, arcs, text and pins */
   ELEMENTLINE_LOOP (Element);
@@ -1622,18 +1622,18 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  * draws an element
  */
 void
-DrawElement (ElementTypePtr Element, int unused)
+DrawElement (ElementTypePtr Element)
 {
-  DrawElementPackage (Element, unused);
-  DrawElementName (Element, unused);
-  DrawElementPinsAndPads (Element, unused);
+  DrawElementPackage (Element);
+  DrawElementName (Element);
+  DrawElementPinsAndPads (Element);
 }
 
 /* ---------------------------------------------------------------------------
  * draws the name of an element
  */
 void
-DrawElementName (ElementTypePtr Element, int unused)
+DrawElementName (ElementTypePtr Element)
 {
   if (gui->gui && TEST_FLAG (HIDENAMESFLAG, PCB))
     return;
@@ -1654,7 +1654,7 @@ DrawElementName (ElementTypePtr Element, int unused)
  * draws the package of an element
  */
 void
-DrawElementPackage (ElementTypePtr Element, int unused)
+DrawElementPackage (ElementTypePtr Element)
 {
   /* set color and draw lines, arcs, text and pins */
   if (doing_pinout || doing_assy)
@@ -1665,14 +1665,14 @@ DrawElementPackage (ElementTypePtr Element, int unused)
     gui->set_color (Output.fgGC, PCB->ElementColor);
   else
     gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
-  DrawElementPackageLowLevel (Element, unused);
+  DrawElementPackageLowLevel (Element);
 }
 
 /* ---------------------------------------------------------------------------
  * draw pins of an element
  */
 void
-DrawElementPinsAndPads (ElementTypePtr Element, int unused)
+DrawElementPinsAndPads (ElementTypePtr Element)
 {
   PAD_LOOP (Element);
   {
@@ -1934,7 +1934,7 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
     case ELEMENT_TYPE:
       if (PCB->ElementOn &&
 	  (FRONT ((ElementTypePtr) ptr2) || PCB->InvisibleObjectsOn))
-	DrawElement ((ElementTypePtr) ptr2, 0);
+	DrawElement ((ElementTypePtr) ptr2);
       break;
     case RATLINE_TYPE:
       if (PCB->RatOn)
@@ -1951,7 +1951,7 @@ DrawObject (int type, void *ptr1, void *ptr2, int unused)
     case ELEMENTNAME_TYPE:
       if (PCB->ElementOn &&
 	  (FRONT ((ElementTypePtr) ptr2) || PCB->InvisibleObjectsOn))
-	DrawElementName ((ElementTypePtr) ptr1, 0);
+	DrawElementName ((ElementTypePtr) ptr1);
       break;
     }
 }
@@ -1983,7 +1983,7 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
   if (item)
     {
       doing_pinout = true;
-      DrawElement ((ElementTypePtr)item, 0);
+      DrawElement ((ElementTypePtr)item);
       doing_pinout = false;
     }
   else
