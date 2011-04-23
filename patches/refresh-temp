@@ -1,0 +1,23 @@
+Bottom: 0f7d78add9db9966b39552541f6921d89db02a22
+Top:    859acf5ad6344db9797a99ed8e21569082ca5a6c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-23 14:35:17 +0100
+
+Refresh of remove-some-unused-constants
+
+---
+
+diff --git a/globalconst.h b/globalconst.h
+index cd6f4f9..ff8e696 100755
+--- a/globalconst.h
++++ b/globalconst.h
+@@ -86,9 +86,6 @@
+ #define	MAX_DRC_RING		10000
+ #define	MIN_GRID		1	/* min grid in 1/100 mils */
+ #define	MAX_GRID		100000 /* max grid in 1/100 mils */ 
+-#define	CHUNK			100	/* step size for size sliders */
+-#define	MIN_ZOOM		-12	/* min zoom */
+-#define	MAX_ZOOM		12	/* max zoom */
+ #define	MAX_FONTPOSITION	255	/* upper limit of characters in my font */
+ 
+ #define	MAX_COORD		LARGE_VALUE	/* coordinate limits */
