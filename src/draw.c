@@ -83,7 +83,7 @@ static const BoxType *clip_box = NULL;
  */
 static void Redraw (bool, BoxTypePtr);
 static void DrawEverything (BoxTypePtr);
-static void DrawTop (const BoxType *);
+static void DrawOuterLayer (int side, const BoxType *);
 static int DrawLayerGroup (int, const BoxType *);
 static void DrawPinOrViaLowLevel (PinTypePtr, bool);
 static void DrawPlainPin (PinTypePtr, bool);
@@ -315,7 +315,7 @@ PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
   gui->set_draw_faded (Output.fgGC, 1);
   SWAP_IDENT = swap_ident;
   DrawLayerGroup (side_group, drawn_area);
-  DrawTop (drawn_area);
+  DrawOuterLayer (side, drawn_area);
   gui->set_draw_faded (Output.fgGC, 0);
 
   /* draw package */
