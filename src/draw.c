@@ -83,7 +83,7 @@ static const BoxType *clip_box = NULL;
  */
 static void Redraw (bool, BoxTypePtr);
 static void DrawEverything (BoxTypePtr);
-static void DrawOuterLayer (int side, const BoxType *);
+static void DrawOuterPPV (int side, const BoxType *);
 static int DrawLayerGroup (int, const BoxType *);
 static void DrawPinOrViaLowLevel (PinTypePtr, bool);
 static void DrawPlainPin (PinTypePtr, bool);
@@ -316,7 +316,7 @@ PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
 
   gui->set_draw_faded (Output.fgGC, 1);
   DrawLayerGroup (side_group, drawn_area);
-  DrawOuterLayer (side, drawn_area);
+  DrawOuterPPV (side, drawn_area);
   gui->set_draw_faded (Output.fgGC, 0);
 
   /* draw package */
@@ -407,7 +407,7 @@ DrawEverything (BoxTypePtr drawn_area)
 
   /* Draw pins, pads, vias below silk */
   if (gui->gui)
-    DrawOuterLayer (side, drawn_area);
+    DrawOuterPPV (side, drawn_area);
   else
     {
       HoleCountStruct hcs;
@@ -572,7 +572,7 @@ pad_callback (const BoxType * b, void *cl)
  * draws pins pads and vias
  */
 static void
-DrawOuterLayer (int side, const BoxType * screen)
+DrawOuterPPV (int side, const BoxType * screen)
 {
   if (PCB->PinOn || doing_assy)
     {
