@@ -218,7 +218,7 @@ SelectObject (void)
 	  TOGGLE_FLAG (SELECTEDFLAG, text);
 	}
 	END_LOOP;
-	DrawElementName (element, 0);
+	DrawElementName (element);
 	break;
       }
 
@@ -252,11 +252,11 @@ SelectObject (void)
 	     PCB->InvisibleObjectsOn))
 	  if (PCB->ElementOn)
 	    {
-	      DrawElementName (element, 0);
-	      DrawElementPackage (element, 0);
+	      DrawElementName (element);
+	      DrawElementPackage (element);
 	    }
 	if (PCB->PinOn)
-	  DrawElementPinsAndPads (element, 0);
+	  DrawElementPinsAndPads (element);
 	break;
       }
     }
@@ -394,7 +394,7 @@ SelectBlock (BoxTypePtr Box, bool Flag)
 	      }
 	      END_LOOP;
 	      if (PCB->ElementOn)
-		DrawElementName (element, 0);
+		DrawElementName (element);
 	      changed = true;
 	    }
 	  if ((PCB->PinOn || !Flag) && ELEMENT_IN_BOX (element, Box))
@@ -428,7 +428,7 @@ SelectBlock (BoxTypePtr Box, bool Flag)
 		}
 		END_LOOP;
 		if (PCB->PinOn)
-		  DrawElement (element, 0);
+		  DrawElement (element);
 		changed = true;
 		gotElement = true;
 	      }
@@ -964,8 +964,8 @@ SelectObjectByName (int Type, char *Pattern, bool Flag)
 	      ASSIGN_FLAG (SELECTEDFLAG, Flag, text);
 	    }
 	    END_LOOP;
-	    DrawElementName (element, 0);
-	    DrawElement (element, 0);
+	    DrawElementName (element);
+	    DrawElement (element);
 	    changed = true;
 	  }
       }

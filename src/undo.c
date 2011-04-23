@@ -591,7 +591,7 @@ UndoMirror (UndoListTypePtr Entry)
 	EraseElement (element);
       MirrorElementCoordinates (PCB->Data, element, Entry->Data.Move.DY);
       if (andDraw)
-	DrawElement (element, 0);
+	DrawElement (element);
       return (true);
     }
   Message ("hace Internal error: UndoMirror on object type %d\n", type);

@@ -899,7 +899,7 @@ ChangeElementSize (ElementTypePtr Element)
   END_LOOP;
   if (PCB->ElementOn)
     {
-      DrawElement (Element, 0);
+      DrawElement (Element);
     }
   if (changed)
     return (Element);
@@ -931,7 +931,7 @@ ChangeElementNameSize (ElementTypePtr Element)
 	r_insert_entry (PCB->Data->name_tree[n], (BoxType *) text, 0);
       }
       END_LOOP;
-      DrawElementName (Element, 0);
+      DrawElementName (Element);
       return (Element);
     }
   return (NULL);
@@ -1035,7 +1035,7 @@ ChangeElementText (PCBType *pcb, DataType *data, ElementTypePtr Element, int whi
 		  & Element->Name[which].BoundingBox, 0);
 
   if (pcb && which == NAME_INDEX (pcb))
-    DrawElementName (Element, 0);
+    DrawElementName (Element);
 
   return old;
 }
@@ -1106,7 +1106,7 @@ ChangeElementSide (ElementTypePtr Element, LocationType yoff)
   EraseElement (Element);
   AddObjectToMirrorUndoList (ELEMENT_TYPE, Element, Element, Element, yoff);
   MirrorElementCoordinates (PCB->Data, Element, yoff);
-  DrawElement (Element, 0);
+  DrawElement (Element);
   return (true);
 }
 
