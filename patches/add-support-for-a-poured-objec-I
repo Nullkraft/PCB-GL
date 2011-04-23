@@ -1,7 +1,7 @@
-Bottom: 170122c39a57e12fbe883e3a02fdc897b97fe817
-Top:    d54b3cb050141e0e6114ddada1d8bdabc61e8e9d
+Bottom: d16a157fddd4f64a2836818aacd41a0ee6bdb170
+Top:    7c220fd801e90911cc6627de3a0222606085342d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-22 22:40:34 +0100
+Date:   2011-04-23 13:38:59 +0100
 
 Add support for a "poured" object.
 
@@ -2996,10 +2996,10 @@ index 7f69d75..00935b3 100644
  
  			/*
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index f0fb55e..e64c7b4 100644
+index 755bd0c..ef71d79 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
-@@ -344,7 +344,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
+@@ -357,7 +357,7 @@ png_hid_export_to_file (FILE * the_file, HID_Attr_Val * options)
    for (i = 0; i < max_copper_layer; i++)
      {
        LayerType *layer = PCB->Data->Layer + i;
