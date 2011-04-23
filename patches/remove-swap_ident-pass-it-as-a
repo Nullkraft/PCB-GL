@@ -1,5 +1,5 @@
 Bottom: 6a0c01db67f34753620c8f0bee326276b589583a
-Top:    6a0c01db67f34753620c8f0bee326276b589583a
+Top:    31f76d98584ef33b24f86ee8fc548f9b64426058
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 15:17:52 +0100
 
@@ -10,4 +10,32 @@ Magic state is bad ;)
 
 ---
 
-
+diff --git a/src/draw.c b/src/draw.c
+index b7a27e0..54d7bbd 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1927,8 +1927,6 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
+ 
+   Gathering = false;
+ 
+-  /*printf("\033[32mhid_expose_callback, s=%p %d\033[0m\n", &(SWAP_IDENT), SWAP_IDENT); */
+-
+   hid->set_color (Output.pmGC, "erase");
+   hid->set_color (Output.bgGC, "drill");
+ 
+diff --git a/src/macro.h b/src/macro.h
+index 19f80b8..95236af 100644
+--- a/src/macro.h
++++ b/src/macro.h
+@@ -34,11 +34,7 @@
+ 
+ /* ---------------------------------------------------------------------------
+  * macros to transform coord systems
+- * draw.c uses a different definition of TO_SCREEN
+  */
+-#ifndef	SWAP_IDENT
+-#define	SWAP_IDENT			Settings.ShowSolderSide
+-#endif
+ 
+ #define	SWAP_SIGN_X(x)		(x)
+ #define	SWAP_SIGN_Y(y)		(-(y))
