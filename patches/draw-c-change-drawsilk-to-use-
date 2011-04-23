@@ -1,5 +1,5 @@
 Bottom: c39b93b2be7909282dd71feb1f853a09d942acc7
-Top:    03b5123c91900b8bf427bf84f6d14bf0c0a03d63
+Top:    32be58d9992a8590a6bd8576d2ebd0ee41d9834b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 15:35:54 +0100
 
@@ -9,7 +9,7 @@ draw.c: Change DrawSilk() to use a layer side parameter, not SWAP_IDENT
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index caf14c7..3093cbf 100644
+index caf14c7..39244ad 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -104,7 +104,7 @@ static void ClearPad (PadTypePtr, bool);
@@ -21,7 +21,7 @@ index caf14c7..3093cbf 100644
  static int pin_callback (const BoxType * b, void *cl);
  static int pad_callback (const BoxType * b, void *cl);
  
-@@ -308,9 +308,9 @@ rat_callback (const BoxType * b, void *cl)
+@@ -308,21 +308,17 @@ rat_callback (const BoxType * b, void *cl)
   */
  
  static void
@@ -33,9 +33,10 @@ index caf14c7..3093cbf 100644
  
    gui->set_draw_faded (Output.fgGC, 1);
    DrawLayerGroup (side_group, drawn_area);
-@@ -319,10 +319,7 @@ PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
+   DrawOuterLayer (side, drawn_area);
+   gui->set_draw_faded (Output.fgGC, 0);
  
-   SWAP_IDENT = swap_ident;
+-  SWAP_IDENT = swap_ident;
    /* draw package */
 -  DrawSilk (swap_ident,
 -	    swap_ident ? solder_silk_layer : component_silk_layer,
@@ -45,7 +46,7 @@ index caf14c7..3093cbf 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -447,11 +444,12 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -447,11 +443,12 @@ DrawEverything (BoxTypePtr drawn_area)
    if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
      DrawMask (SOLDER_LAYER, drawn_area);
  
@@ -61,7 +62,7 @@ index caf14c7..3093cbf 100644
    if (gui->gui)
      {
        /* Draw element Marks */
-@@ -503,11 +501,11 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -503,11 +500,11 @@ DrawEverything (BoxTypePtr drawn_area)
      }
  
    doing_assy = true;
@@ -76,7 +77,7 @@ index caf14c7..3093cbf 100644
    doing_assy = false;
  
    if (gui->set_layer ("fab", SL (FAB, 0), 0))
-@@ -632,9 +630,8 @@ clearPad_callback (const BoxType * b, void *cl)
+@@ -632,9 +629,8 @@ clearPad_callback (const BoxType * b, void *cl)
   */
  
  static void
@@ -87,7 +88,7 @@ index caf14c7..3093cbf 100644
  #if 0
    /* This code is used when you want to mask silk to avoid exposed
       pins and pads.  We decided it was a bad idea to do this
-@@ -646,7 +643,7 @@ DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
+@@ -646,7 +642,7 @@ DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
      {
        gui->use_mask (HID_MASK_BEFORE);
  #endif
