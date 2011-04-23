@@ -7,6 +7,13 @@ Revert "Fix potential segfault"
 
 This reverts commit 2d2040e92d5ebb069af42567855055b096532e71.
 
+This patch causes segfaults in the GTK and Lesstif hids, so reverting,
+as it removes the required NULL termination from an attribute
+enumeration. Any code which can't deal with an empty enumeration list
+should be fixed instead.
+
+Re-opens: lp-699290 (sf-2669324)
+
 
 ---
 
