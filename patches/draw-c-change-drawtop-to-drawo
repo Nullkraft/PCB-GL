@@ -1,5 +1,5 @@
-Bottom: 957d9f6b42aa6f3a71089907db78bb1f00e954eb
-Top:    9b85afcf26d3db7711c4d9254af03f2727a7e4b8
+Bottom: cbcc5594a39e9b709b2d5eade559c917213b9aaa
+Top:    0719a06d8569c0ab1a1448c1ea3de4b053c739fd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 16:56:13 +0100
 
@@ -9,7 +9,7 @@ draw.c: Change DrawTop() to DrawOuter() taking a side parameter
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 88c90cb..f67aa29 100644
+index 8178e81..54d87b3 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -83,7 +83,7 @@ static const BoxType *clip_box = NULL;
@@ -30,7 +30,7 @@ index 88c90cb..f67aa29 100644
    gui->set_draw_faded (Output.fgGC, 0);
  
    /* draw package */
-@@ -414,9 +414,11 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -410,9 +410,11 @@ DrawEverything (BoxTypePtr drawn_area)
    if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
      return;
  
@@ -43,7 +43,7 @@ index 88c90cb..f67aa29 100644
    else
      {
        HoleCountStruct hcs;
-@@ -581,10 +583,8 @@ pad_callback (const BoxType * b, void *cl)
+@@ -577,10 +579,8 @@ pad_callback (const BoxType * b, void *cl)
   * draws pins pads and vias
   */
  static void
