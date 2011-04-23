@@ -10,6 +10,8 @@
 #include "clip.h"
 #include "../hidint.h"
 #include "gui.h"
+#include "draw.h"
+#include "rtree.h"
 #include "gui-pinout-preview.h"
 
 /* The Linux OpenGL ABI 1.0 spec requires that we define
@@ -29,13 +31,18 @@
 #include <dmalloc.h>
 #endif
 
-
 RCSID ("$Id$");
 
 
 extern HID ghid_hid;
 
+static void ghid_global_alpha_mult (hidGC, double);
+
 static hidGC current_gc = NULL;
+static char *current_color = NULL;
+static double global_alpha_mult = 1.0;
+static int alpha_changed = 0;
+
 
 /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
 */
@@ -72,6 +79,58 @@ typedef struct hid_gc_struct
 hid_gc_struct;
 
 
+static int
+compute_depth (int group)
+{
+  static int last_depth_computed = 0;
+
+  int solder_group;
+  int component_group;
+  int min_phys_group;
+  int max_phys_group;
+  int max_depth;
+  int depth = last_depth_computed;
+  int newgroup;
+  int idx = (group >= 0
+             && group <
+             max_group) ? PCB->LayerGroups.Entries[group][0] : group;
+
+  solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
+  component_group = GetLayerGroupNumberByNumber (component_silk_layer);
+
+  min_phys_group = MIN (solder_group, component_group);
+  max_phys_group = MAX (solder_group, component_group);
+
+  max_depth = (1 + max_phys_group - min_phys_group) * 10;
+
+  if (group >= 0 && group < max_group) {
+    newgroup = group;
+
+    depth = (max_depth - (newgroup - min_phys_group) * 10) * 200 / gport->zoom;
+  } else if (SL_TYPE (idx) == SL_MASK) {
+    if (SL_SIDE (idx) == SL_TOP_SIDE) {
+      depth = (max_depth + 3) * 200 / gport->zoom;
+    } else {
+      depth = (10 - 3) * 200 / gport->zoom;
+    }
+  } else if (SL_TYPE (idx) == SL_SILK) {
+    if (SL_SIDE (idx) == SL_TOP_SIDE) {
+      depth = (max_depth + 5) * 200 / gport->zoom;
+    } else {
+      depth = (10 - 5) * 200 / gport->zoom;
+    }
+  } else if (SL_TYPE (idx) == SL_INVISIBLE) {
+    if (Settings.ShowSolderSide) {
+      depth = (max_depth + 5) * 200 / gport->zoom;
+    } else {
+      depth = (10 - 5) * 200 / gport->zoom;
+    }
+  }
+
+  last_depth_computed = depth;
+  return depth;
+}
+
 int
 ghid_set_layer (const char *name, int group, int empty)
 {
@@ -91,48 +150,30 @@ ghid_set_layer (const char *name, int group, int empty)
       idx = PCB->LayerGroups.Entries[group][idx];
     }
 
-#define SUBCOMPOSITE_LAYERS
-#ifdef SUBCOMPOSITE_LAYERS
   /* Flush out any existing geoemtry to be rendered */
   hidgl_flush_triangles (&buffer);
 
-  if (group >= 0 && group < max_group) {
-    hidgl_set_depth ((max_group - group) * 10);
-  } else {
-    if (SL_TYPE (idx) == SL_SILK) {
-      if (SL_SIDE (idx) == SL_TOP_SIDE && !Settings.ShowSolderSide) {
-        hidgl_set_depth (max_group * 10 + 3);
-      } else {
-        hidgl_set_depth (10 - 3);
-      }
-    }
-  }
+  hidgl_set_depth (compute_depth (group));
 
-  glEnable (GL_STENCIL_TEST);                // Enable Stencil test
-  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE); // Stencil pass => replace stencil value (with 1)
-  /* Reset stencil buffer so we can paint anywhere */
-  hidgl_return_stencil_bit (stencil_bit);               // Relinquish any bitplane we previously used
-  if (SL_TYPE (idx) != SL_FINISHED)
-    {
-      stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
-      glStencilFunc (GL_GREATER, stencil_bit, stencil_bit); // Pass stencil test if our assigned bit is clear
-      glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
-    }
-  else
-    {
-#endif
-      stencil_bit = 0;
-      glStencilMask (0);
-      glStencilFunc (GL_ALWAYS, 0, 0);  // Always pass stencil test
-#ifdef SUBCOMPOSITE_LAYERS
-    }
-#endif
+  glEnable (GL_STENCIL_TEST);                   // Enable Stencil test
+  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);   // Stencil pass => replace stencil value (with 1)
+  hidgl_return_stencil_bit (stencil_bit);       // Relinquish any bitplane we previously used
+  if (SL_TYPE (idx) != SL_FINISHED) {
+    stencil_bit = hidgl_assign_clear_stencil_bit();       // Get a new (clean) bitplane to stencil with
+    glStencilMask (stencil_bit);                          // Only write to our subcompositing stencil bitplane
+    glStencilFunc (GL_GREATER, stencil_bit, stencil_bit); // Pass stencil test if our assigned bit is clear
+  } else {
+    stencil_bit = 0;
+    glStencilMask (0);
+    glStencilFunc (GL_ALWAYS, 0, 0);  // Always pass stencil test
+  }
 
   if (idx >= 0 && idx < max_copper_layer + 2)
     {
       priv->trans_lines = true;
       return PCB->Data->Layer[idx].On;
     }
+
   if (idx < 0)
     {
       switch (SL_TYPE (idx))
@@ -140,14 +181,10 @@ ghid_set_layer (const char *name, int group, int empty)
 	case SL_INVISIBLE:
 	  return PCB->InvisibleObjectsOn;
 	case SL_MASK:
-	  if (SL_MYSIDE (idx))
-	    return TEST_FLAG (SHOWMASKFLAG, PCB);
-	  return 0;
+	  return TEST_FLAG (SHOWMASKFLAG, PCB);
 	case SL_SILK:
 	  priv->trans_lines = true;
-	  if (SL_MYSIDE (idx))
-	    return PCB->ElementOn;
-	  return 0;
+	  return PCB->ElementOn;
 	case SL_ASSY:
 	  return 0;
 	case SL_PDRILL:
@@ -428,10 +465,6 @@ typedef struct
   double blue;
 } ColorCache;
 
-static char *current_color = NULL;
-static double global_alpha_mult = 1.0;
-static int alpha_changed = 0;
-
 void
 ghid_set_color (hidGC gc, const char *name)
 {
@@ -547,7 +580,7 @@ ghid_set_color (hidGC gc, const char *name)
   glColor4d (r, g, b, a);
 }
 
-void
+static void
 ghid_global_alpha_mult (hidGC gc, double alpha_mult)
 {
   if (alpha_mult != global_alpha_mult) {
@@ -964,6 +997,610 @@ ghid_screen_update (void)
 {
 }
 
+static int
+element_callback (const BoxType * b, void *cl)
+{
+  ElementTypePtr element = (ElementTypePtr) b;
+  int *side = cl;
+
+  if (ON_SIDE (element, *side))
+    DrawElementPackage (element);
+  return 1;
+}
+
+static int
+name_callback (const BoxType * b, void *cl)
+{
+  TextTypePtr text = (TextTypePtr) b;
+  ElementTypePtr element = (ElementTypePtr) text->Element;
+  int *side = cl;
+
+  if (TEST_FLAG (HIDENAMEFLAG, element))
+    return 0;
+
+  if (ON_SIDE (element, *side))
+    DrawElementName (element);
+  return 0;
+}
+
+static int
+EMark_callback (const BoxType * b, void *cl)
+{
+  ElementTypePtr element = (ElementTypePtr) b;
+
+  DrawEMark (element, element->MarkX, element->MarkY, !FRONT (element));
+  return 1;
+}
+
+static void
+SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
+{
+  char *color;
+
+  if (TEST_FLAG (WARNFLAG, Pin))
+    color = PCB->WarnColor;
+  else if (TEST_FLAG (SELECTEDFLAG, Pin))
+    color = (Type == VIA_TYPE) ? PCB->ViaSelectedColor : PCB->PinSelectedColor;
+  else if (TEST_FLAG (FOUNDFLAG, Pin))
+    color = PCB->ConnectedColor;
+  else
+    {
+      int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
+      int solder_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
+      int this_group      = GetLayerGroupNumberByPointer (Layer);
+
+      if (this_group == component_group || this_group == solder_group)
+        color = (SWAP_IDENT == (this_group == solder_group))
+                  ? PCB->ViaColor : PCB->InvisibleObjectsColor;
+      else
+        color = Layer->Color;
+    }
+
+  gui->set_color (Output.fgGC, color);
+}
+
+
+static int
+pin_inlayer_callback (const BoxType * b, void *cl)
+{
+  SetPVColor_inlayer ((PinTypePtr) b, cl, PIN_TYPE);
+  DrawPinOrViaLowLevel ((PinTypePtr) b, false);
+  return 1;
+}
+
+static int
+via_inlayer_callback (const BoxType * b, void *cl)
+{
+  SetPVColor_inlayer ((PinTypePtr) b, cl, VIA_TYPE);
+  DrawPinOrViaLowLevel ((PinTypePtr) b, false);
+  return 1;
+}
+
+static int
+via_callback (const BoxType * b, void *cl)
+{
+  PinTypePtr via = (PinTypePtr) b;
+  DrawPlainVia (via, false);
+  return 1;
+}
+
+static int
+pin_callback (const BoxType * b, void *cl)
+{
+  DrawPlainPin ((PinTypePtr) b, false);
+  return 1;
+}
+
+static int
+pad_callback (const BoxType * b, void *cl)
+{
+  PadTypePtr pad = (PadTypePtr) b;
+  int *side = cl;
+
+  if (ON_SIDE (pad, *side))
+    DrawPad (pad);
+  return 1;
+}
+
+
+static int
+hole_callback (const BoxType * b, void *cl)
+{
+  DrawHole ((PinTypePtr) b);
+  return 1;
+}
+
+static int
+line_callback (const BoxType * b, void *cl)
+{
+  DrawLine ((LayerTypePtr) cl, (LineTypePtr) b);
+  return 1;
+}
+
+static int
+arc_callback (const BoxType * b, void *cl)
+{
+  DrawArc ((LayerTypePtr) cl, (ArcTypePtr) b);
+  return 1;
+}
+
+static int
+text_callback (const BoxType * b, void *cl)
+{
+  DrawRegularText ((LayerTypePtr) cl, (TextTypePtr) b);
+  return 1;
+}
+
+static void
+DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *drawn_area)
+{
+  static char *color;
+
+  if (!Polygon->Clipped)
+    return;
+
+  if (TEST_FLAG (SELECTEDFLAG, Polygon))
+    color = Layer->SelectedColor;
+  else if (TEST_FLAG (FOUNDFLAG, Polygon))
+    color = PCB->ConnectedColor;
+  else
+    color = Layer->Color;
+  gui->set_color (Output.fgGC, color);
+
+  if (gui->thindraw_pcb_polygon != NULL &&
+      (TEST_FLAG (THINDRAWFLAG, PCB) ||
+       TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
+    gui->thindraw_pcb_polygon (Output.fgGC, Polygon, drawn_area);
+  else
+    gui->fill_pcb_polygon (Output.fgGC, Polygon, drawn_area);
+
+  /* If checking planes, thin-draw any pieces which have been clipped away */
+  if (gui->thindraw_pcb_polygon != NULL &&
+      TEST_FLAG (CHECKPLANESFLAG, PCB) &&
+      !TEST_FLAG (FULLPOLYFLAG, Polygon))
+    {
+      PolygonType poly = *Polygon;
+
+      for (poly.Clipped = Polygon->Clipped->f;
+           poly.Clipped != Polygon->Clipped;
+           poly.Clipped = poly.Clipped->f)
+        gui->thindraw_pcb_polygon (Output.fgGC, &poly, drawn_area);
+    }
+}
+
+struct poly_info
+{
+  LayerTypePtr Layer;
+  const BoxType *drawn_area;
+};
+
+static int
+poly_callback (const BoxType * b, void *cl)
+{
+  struct poly_info *i = (struct poly_info *) cl;
+
+  DrawPlainPolygon (i->Layer, (PolygonTypePtr) b, i->drawn_area);
+  return 1;
+}
+
+static int
+clearPin_callback (const BoxType * b, void *cl)
+{
+  PinType *pin = (PinTypePtr) b;
+  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+    gui->thindraw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
+  else
+    gui->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
+  return 1;
+}
+
+static int
+clearPad_callback (const BoxType * b, void *cl)
+{
+  PadTypePtr pad = (PadTypePtr) b;
+  int *side = cl;
+  if (ON_SIDE (pad, *side) && pad->Mask)
+    ClearPad (pad, true);
+  return 1;
+}
+
+static int
+clearPin_callback_solid (const BoxType * b, void *cl)
+{
+  PinTypePtr pin = (PinTypePtr) b;
+  gui->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
+  return 1;
+}
+
+static int
+clearPad_callback_solid (const BoxType * b, void *cl)
+{
+  PadTypePtr pad = (PadTypePtr) b;
+  int *side = cl;
+  if (ON_SIDE (pad, *side) && pad->Mask)
+    gui->fill_pcb_pad (Output.pmGC, pad, true, true);
+  return 1;
+}
+
+static void
+DrawMask (int side, BoxType * screen)
+{
+  int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
+
+  OutputType *out = &Output;
+
+  if (thin)
+    {
+      gui->set_line_width (Output.pmGC, 0);
+      gui->set_color (Output.pmGC, PCB->MaskColor);
+      r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, NULL);
+      r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, NULL);
+      r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, &side);
+      gui->set_color (Output.pmGC, "erase");
+    }
+
+  gui->use_mask (HID_MASK_CLEAR);
+  r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback_solid, NULL);
+  r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback_solid, NULL);
+  r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback_solid, &side);
+
+  gui->use_mask (HID_MASK_AFTER);
+  gui->set_color (out->fgGC, PCB->MaskColor);
+  ghid_global_alpha_mult (out->fgGC, thin ? 0.35 : 1.0);
+  gui->fill_rect (out->fgGC, 0, 0, PCB->MaxWidth, PCB->MaxHeight);
+  ghid_global_alpha_mult (out->fgGC, 1.0);
+
+  gui->use_mask (HID_MASK_OFF);
+}
+
+static int
+DrawLayerGroup (int group, const BoxType * screen)
+{
+  int i, rv = 1;
+  int layernum;
+  int side;
+  struct poly_info info;
+  LayerTypePtr Layer;
+  int n_entries = PCB->LayerGroups.Number[group];
+  Cardinal *layers = PCB->LayerGroups.Entries[group];
+  int first_run = 1;
+  int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
+  int solder_group    = GetLayerGroupNumberByNumber (solder_silk_layer);
+
+  if (!gui->set_layer (0, group, 0)) {
+    gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    return 0;
+  }
+
+  /* HACK: Subcomposite each layer in a layer group separately */
+  for (i = n_entries - 1; i >= 0; i--) {
+    layernum = layers[i];
+    Layer = PCB->Data->Layer + layers[i];
+
+    if (strcmp (Layer->Name, "outline") == 0 ||
+        strcmp (Layer->Name, "route") == 0)
+      rv = 0;
+
+    if (layernum < max_copper_layer /*&& Layer->On*/) {
+
+      if (!first_run)
+        gui->set_layer (0, group, 0);
+
+      first_run = 0;
+
+      if (rv) {
+        /* Mask out drilled holes on this layer */
+        hidgl_flush_triangles (&buffer);
+        glPushAttrib (GL_COLOR_BUFFER_BIT);
+        glColorMask (0, 0, 0, 0);
+        gui->set_color (Output.bgGC, PCB->MaskColor);
+        if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
+        if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
+        hidgl_flush_triangles (&buffer);
+        glPopAttrib ();
+      }
+
+      /* draw all polygons on this layer */
+      if (Layer->PolygonN) {
+        info.Layer = Layer;
+        info.drawn_area = screen;
+        r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
+
+        /* HACK: Subcomposite polygons separately from other layer primitives */
+        /* Reset the compositing */
+        gui->set_layer (NULL, SL (FINISHED, 0), 0);
+        gui->set_layer (0, group, 0);
+
+        if (rv) {
+          hidgl_flush_triangles (&buffer);
+          glPushAttrib (GL_COLOR_BUFFER_BIT);
+          glColorMask (0, 0, 0, 0);
+          /* Mask out drilled holes on this layer */
+          if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
+          if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
+          hidgl_flush_triangles (&buffer);
+          glPopAttrib ();
+        }
+      }
+
+      /* Draw pins, vias and pads on this layer */
+      if (!global_view_2d && rv) {
+        if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
+        if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
+        if (PCB->PinOn && group == component_group)
+          {
+            side = COMPONENT_LAYER;
+            r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, &side);
+          }
+        if (PCB->PinOn && group == solder_group)
+          {
+            side = SOLDER_LAYER;
+            r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, &side);
+          }
+      }
+
+      if (TEST_FLAG (CHECKPLANESFLAG, PCB))
+        continue;
+
+      r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
+      r_search (Layer->arc_tree, screen, NULL, arc_callback, Layer);
+      r_search (Layer->text_tree, screen, NULL, text_callback, Layer);
+    }
+  }
+
+  gui->set_layer (NULL, SL (FINISHED, 0), 0);
+
+  return (n_entries > 1);
+}
+
+static void
+DrawDrillChannel (int vx, int vy, int vr, int from_layer, int to_layer, double scale)
+{
+#define PIXELS_PER_CIRCLINE 5.
+#define MIN_FACES_PER_CYL 6
+#define MAX_FACES_PER_CYL 360
+  float radius = vr;
+  float x1, y1;
+  float x2, y2;
+  float z1, z2;
+  int i;
+  int slices;
+
+  slices = M_PI * 2 * vr / scale / PIXELS_PER_CIRCLINE;
+
+  if (slices < MIN_FACES_PER_CYL)
+    slices = MIN_FACES_PER_CYL;
+
+  if (slices > MAX_FACES_PER_CYL)
+    slices = MAX_FACES_PER_CYL;
+
+  z1 = compute_depth (from_layer);
+  z2 = compute_depth (to_layer);
+
+  x1 = vx + vr;
+  y1 = vy;
+
+  hidgl_ensure_triangle_space (&buffer, 2 * slices);
+  for (i = 0; i < slices; i++)
+    {
+      x2 = radius * cosf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vx;
+      y2 = radius * sinf (((float)(i + 1)) * 2. * M_PI / (float)slices) + vy;
+      hidgl_add_triangle_3D (&buffer, x1, y1, z1,  x2, y2, z1,  x1, y1, z2);
+      hidgl_add_triangle_3D (&buffer, x2, y2, z1,  x1, y1, z2,  x2, y2, z2);
+      x1 = x2;
+      y1 = y2;
+    }
+}
+
+struct cyl_info {
+  int from_layer;
+  int to_layer;
+  double scale;
+};
+
+static int
+draw_hole_cyl (PinType *Pin, struct cyl_info *info, int Type)
+{
+  char *color;
+
+  if (TEST_FLAG (WARNFLAG, Pin))
+    color = PCB->WarnColor;
+  else if (TEST_FLAG (SELECTEDFLAG, Pin))
+    color = (Type == VIA_TYPE) ? PCB->ViaSelectedColor : PCB->PinSelectedColor;
+  else if (TEST_FLAG (FOUNDFLAG, Pin))
+    color = PCB->ConnectedColor;
+  else
+    color = "drill";
+
+  gui->set_color (Output.fgGC, color);
+  DrawDrillChannel (Pin->X, Pin->Y, Pin->DrillingHole / 2, info->from_layer, info->to_layer, info->scale);
+  return 0;
+}
+
+static int
+pin_hole_cyl_callback (const BoxType * b, void *cl)
+{
+  return draw_hole_cyl ((PinType *)b, (struct cyl_info *)cl, PIN_TYPE);
+}
+
+static int
+via_hole_cyl_callback (const BoxType * b, void *cl)
+{
+  return draw_hole_cyl ((PinType *)b, (struct cyl_info *)cl, VIA_TYPE);
+}
+
+void
+ghid_draw_everything (BoxTypePtr drawn_area)
+{
+  int i, ngroups;
+  int side;
+  /* This is the list of layer groups we will draw.  */
+  int do_group[MAX_LAYER];
+  /* This is the reverse of the order in which we draw them.  */
+  int drawn_groups[MAX_LAYER];
+  struct cyl_info cyl_info;
+  int reverse_layers;
+  int save_show_solder;
+  int solder_group;
+  int component_group;
+  int min_phys_group;
+  int max_phys_group;
+
+  extern bool Gathering;
+
+  current_color = NULL;
+  Gathering = false;
+
+  /* Test direction of rendering */
+  /* Look at sign of eye coordinate system z-coord when projecting a
+     world vector along +ve Z axis, (0, 0, 1). */
+  /* FIXME: This isn't strictly correct, as I've ignored the matrix
+            elements for homogeneous coordinates. */
+  /* NB: last_modelview_matrix is transposed in memory! */
+  reverse_layers = (last_modelview_matrix[2][2] < 0);
+
+  save_show_solder = Settings.ShowSolderSide;
+
+  if (reverse_layers)
+    Settings.ShowSolderSide = !Settings.ShowSolderSide;
+
+  if (!global_view_2d && save_show_solder)
+    reverse_layers = !reverse_layers;
+  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
+  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
+
+  solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
+  component_group = GetLayerGroupNumberByNumber (component_silk_layer);
+
+  min_phys_group = MIN (solder_group, component_group);
+  max_phys_group = MAX (solder_group, component_group);
+
+  memset (do_group, 0, sizeof (do_group));
+  if (global_view_2d) {
+    // Draw in layer stack order when in 2D view
+    for (ngroups = 0, i = 0; i < max_copper_layer; i++) {
+      int group = GetLayerGroupNumberByNumber (LayerStack[i]);
+
+      if (!do_group[group]) {
+        do_group[group] = 1;
+        drawn_groups[ngroups++] = group;
+      }
+    }
+  } else {
+    // Draw in group order when in 3D view
+    for (ngroups = 0, i = 0; i < max_group; i++) {
+      int group = reverse_layers ? max_group - 1 - i : i;
+
+      if (!do_group[group]) {
+        do_group[group] = 1;
+        drawn_groups[ngroups++] = group;
+      }
+    }
+  }
+
+  /*
+   * first draw all 'invisible' stuff
+   */
+  side = SWAP_IDENT ? COMPONENT_LAYER : SOLDER_LAYER;
+
+  if (!TEST_FLAG (CHECKPLANESFLAG, PCB) &&
+      gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
+    if (PCB->ElementOn) {
+      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
+      DrawLayer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area);
+    }
+    if (global_view_2d) {
+      r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+    } else {
+      /* Draw the reverse-side solder mask if turned on */
+      if (gui->set_layer (SWAP_IDENT ? "componentmask" : "soldermask",
+                          SWAP_IDENT ? SL (MASK, TOP) : SL (MASK, BOTTOM), 0)) {
+        DrawMask (side, drawn_area);
+        gui->set_layer (NULL, SL (FINISHED, 0), 0);
+      }
+      gui->set_layer ("invisible", SL (INVISIBLE, 0), 0);
+    }
+    if (PCB->ElementOn)
+      r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
+    gui->set_layer (NULL, SL (FINISHED, 0), 0);
+  }
+
+  /* draw all layers in layerstack order */
+  for (i = ngroups - 1; i >= 0; i--) {
+    DrawLayerGroup (drawn_groups [i], drawn_area);
+
+#if 1
+    if (!global_view_2d && i > 0 &&
+        drawn_groups[i] >= min_phys_group &&
+        drawn_groups[i] <= max_phys_group &&
+        drawn_groups[i - 1] >= min_phys_group &&
+        drawn_groups[i - 1] <= max_phys_group) {
+      cyl_info.from_layer = drawn_groups[i];
+      cyl_info.to_layer = drawn_groups[i - 1];
+      cyl_info.scale = gport->zoom;
+      gui->set_color (Output.fgGC, "drill");
+      ghid_global_alpha_mult (Output.fgGC, 0.75);
+      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_cyl_callback, &cyl_info);
+      if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_hole_cyl_callback, &cyl_info);
+      ghid_global_alpha_mult (Output.fgGC, 1.0);
+    }
+#endif
+  }
+
+  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
+    return;
+
+  side = SWAP_IDENT ? SOLDER_LAYER : COMPONENT_LAYER;
+
+  /* Draw pins, pads, vias below silk */
+  if (global_view_2d &&
+      gui->set_layer (SWAP_IDENT ? "bottomsilk" : "topsilk",
+                      SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0)) {
+
+    /* Mask out drilled holes */
+    hidgl_flush_triangles (&buffer);
+    glPushAttrib (GL_COLOR_BUFFER_BIT);
+    glColorMask (0, 0, 0, 0);
+    if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
+    if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
+    hidgl_flush_triangles (&buffer);
+    glPopAttrib ();
+
+    if (PCB->PinOn) r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+    if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
+    if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
+
+    gui->set_layer (NULL, SL (FINISHED, 0), 0);
+  }
+
+  /* Draw the solder mask if turned on */
+  if (gui->set_layer (SWAP_IDENT ? "soldermask" : "componentmask",
+                      SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0)) {
+    DrawMask (side, drawn_area);
+    gui->set_layer (NULL, SL (FINISHED, 0), 0);
+  }
+
+  if (gui->set_layer (SWAP_IDENT ? "bottomsilk" : "topsilk",
+                      SWAP_IDENT ? SL (SILK, BOTTOM) : SL (SILK, TOP), 0)) {
+      DrawSilk (side, drawn_area);
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+  }
+
+  /* Draw element Marks */
+  if (PCB->PinOn)
+    r_search (PCB->Data->element_tree, drawn_area, NULL, EMark_callback, NULL);
+
+  /* Draw rat lines on top */
+  if (PCB->RatOn && gui->set_layer ("rats", SL (RATS, 0), 0)) {
+    DrawRats(drawn_area);
+    gui->set_layer (NULL, SL (FINISHED, 0), 0);
+  }
+
+  Gathering = true;
+
+  Settings.ShowSolderSide = save_show_solder;
+}
+
 #define Z_NEAR 3.0
 gboolean
 ghid_drawing_area_expose_cb (GtkWidget *widget,
@@ -1028,8 +1665,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glStencilFunc (GL_ALWAYS, 0, 0);
 
   /* Test the 8 corners of a cube spanning the event */
-  min_depth = -50; /* FIXME */
-  max_depth =  0;  /* FIXME */
+  min_depth = -50 + compute_depth (0);                /* FIXME */
+  max_depth =  50 + compute_depth (max_copper_layer); /* FIXME */
 
   ghid_unproject_to_z_plane (ev->area.x,
                              ev->area.y,
@@ -1095,13 +1732,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
              port->bg_color.green / 65535.,
              port->bg_color.blue / 65535.);
 
-  glBegin (GL_QUADS);
-  glVertex3i (eleft,  etop,    -50);
-  glVertex3i (eright, etop,    -50);
-  glVertex3i (eright, ebottom, -50);
-  glVertex3i (eleft,  ebottom, -50);
-  glEnd ();
-
   /* TODO: Background image */
 
   hidgl_init_triangle_array (&buffer);
@@ -1121,7 +1751,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                              -port->view_x0,
                 ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                              -port->view_y0, 0);
-  hid_expose_callback (&ghid_hid, &region, 0);
+
+  if (global_view_2d) {
+    glBegin (GL_QUADS);
+    glVertex3i (0,             0,              0);
+    glVertex3i (PCB->MaxWidth, 0,              0);
+    glVertex3i (PCB->MaxWidth, PCB->MaxHeight, 0);
+    glVertex3i (0,             PCB->MaxHeight, 0);
+    glEnd ();
+  } else {
+    int solder_group;
+    int component_group;
+    int min_phys_group;
+    int max_phys_group;
+    int i;
+
+    solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
+    component_group = GetLayerGroupNumberByNumber (component_silk_layer);
+
+    min_phys_group = MIN (solder_group, component_group);
+    max_phys_group = MAX (solder_group, component_group);
+
+    glBegin (GL_QUADS);
+    for (i = min_phys_group; i <= max_phys_group; i++) {
+      int depth = compute_depth (i);
+      glVertex3i (0,             0,              depth);
+      glVertex3i (PCB->MaxWidth, 0,              depth);
+      glVertex3i (PCB->MaxWidth, PCB->MaxHeight, depth);
+      glVertex3i (0,             PCB->MaxHeight, depth);
+    }
+    glEnd ();
+  }
+
+  // hid_expose_callback (&ghid_hid, &region, 0);
+  ghid_draw_everything (&region);
   hidgl_flush_triangles (&buffer);
   glPopMatrix ();
 
