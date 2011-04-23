@@ -1,0 +1,30 @@
+Bottom: 43a4efbf762b53c3150894546e78c8fd621bb52f
+Top:    43964c0c9b606ddb47559abee010f5531d9535e6
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-23 17:22:30 +0100
+
+Refresh of draw-c-change-drawtop-to-drawo
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 8e249b1..9aea994 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -311,6 +311,7 @@ static void
+ PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
+ {
+   int save_swap = SWAP_IDENT;
++  int side = swap_ident ? SOLDER_LAYER : COMPONENT_LAYER;
+ 
+   gui->set_draw_faded (Output.fgGC, 1);
+   DrawLayerGroup (side_group, drawn_area);
+@@ -579,7 +580,7 @@ pad_callback (const BoxType * b, void *cl)
+  * draws pins pads and vias
+  */
+ static void
+-DrawOuterLayer (side, const BoxType * screen)
++DrawOuterLayer (int side, const BoxType * screen)
+ {
+   if (PCB->PinOn || doing_assy)
+     {
