@@ -339,8 +339,6 @@ rat_callback (const BoxType * b, void *cl)
 static void
 PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
 {
-  int save_swap = SWAP_IDENT;
-
   gui->set_draw_faded (Output.fgGC, 1);
   SWAP_IDENT = swap_ident;
   DrawLayerGroup (side_group, drawn_area);
@@ -351,7 +349,6 @@ PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
   DrawSilk (swap_ident,
 	    swap_ident ? solder_silk_layer : component_silk_layer,
 	    drawn_area);
-  SWAP_IDENT = save_swap;
 }
 
 /* ---------------------------------------------------------------------------
@@ -413,8 +410,6 @@ DrawEverything (BoxTypePtr drawn_area)
 	{
 	  if (DrawLayerGroup (group, drawn_area) && !gui->gui)
 	    {
-	      int save_swap = SWAP_IDENT;
-
 	      if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
 		continue;
 	      r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback,
@@ -428,7 +423,6 @@ DrawEverything (BoxTypePtr drawn_area)
 		  r_search (PCB->Data->pad_tree, drawn_area, NULL,
 			    pad_callback, NULL);
 		}
-	      SWAP_IDENT = save_swap;
 
 	      if (!gui->gui)
 		{
@@ -1965,8 +1959,6 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
   Output.pmGC = gui->make_gc ();
 
   Gathering = false;
-
-  /*printf("\033[32mhid_expose_callback, s=%p %d\033[0m\n", &(SWAP_IDENT), SWAP_IDENT); */
 
   hid->set_color (Output.pmGC, "erase");
   hid->set_color (Output.bgGC, "drill");
