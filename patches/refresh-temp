@@ -1,0 +1,21 @@
+Bottom: 03b5123c91900b8bf427bf84f6d14bf0c0a03d63
+Top:    32be58d9992a8590a6bd8576d2ebd0ee41d9834b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-23 17:15:41 +0100
+
+Refresh of draw-c-change-drawsilk-to-use-
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 3093cbf..39244ad 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -317,7 +317,6 @@ PrintAssembly (int side, const BoxType * drawn_area)
+   DrawOuterLayer (side, drawn_area);
+   gui->set_draw_faded (Output.fgGC, 0);
+ 
+-  SWAP_IDENT = swap_ident;
+   /* draw package */
+   DrawSilk (side, drawn_area);
+ }
