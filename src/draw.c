@@ -385,13 +385,12 @@ DrawEverything (BoxTypePtr drawn_area)
 	  if (DrawLayerGroup (group, drawn_area) && !gui->gui)
 	    {
 	      r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
-	      r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
-	      /* draw element pads */
 	      if (group == component || group == solder)
 		{
                   side = (group == solder) ? SOLDER_LAYER : COMPONENT_LAYER;
 		  r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
 		}
+	      r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
 
 	      /* draw holes */
 	      plated = -1;
@@ -572,7 +571,7 @@ pad_callback (const BoxType * b, void *cl)
  * draws outer layer pins pads and vias
  */
 static void
-DrawOuterPPV (int side, const BoxType * screen)
+DrawPPV (int side, const BoxType * screen)
 {
   if (PCB->PinOn || doing_assy)
     {
