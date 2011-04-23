@@ -1,0 +1,15 @@
+Bottom: cbcc5594a39e9b709b2d5eade559c917213b9aaa
+Top:    cbcc5594a39e9b709b2d5eade559c917213b9aaa
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-23 17:42:52 +0100
+
+draw.c: Use the via callback when drawing vias.
+
+Since this code-path is only hit for exporters, (and the only difference
+between the pin and via callback is the drawing colour) it is not likely
+this matters, but lets be correct.
+
+
+---
+
+
