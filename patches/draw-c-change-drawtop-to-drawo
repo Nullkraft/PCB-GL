@@ -1,5 +1,5 @@
 Bottom: 3e90b33543a7ad7f7e207d2b8560406cce1239f4
-Top:    3aa19ead6b541516b00b2b506b372e16d1ba201f
+Top:    973111bcba6d834e198e1d8e14afad203a8d2790
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 16:56:13 +0100
 
@@ -9,7 +9,7 @@ draw.c: Change DrawTop() to DrawOuterPPV() taking a side parameter
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 7380beb..589b3d9 100644
+index 7380beb..5526a31 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -83,7 +83,7 @@ static const BoxType *clip_box = NULL;
@@ -17,7 +17,7 @@ index 7380beb..589b3d9 100644
  static void Redraw (bool, BoxTypePtr);
  static void DrawEverything (BoxTypePtr);
 -static void DrawTop (const BoxType *);
-+static void DrawOuterLayer (int side, const BoxType *);
++static void DrawOuterPPV (int side, const BoxType *);
  static int DrawLayerGroup (int, const BoxType *);
  static void DrawPinOrViaLowLevel (PinTypePtr, bool);
  static void DrawPlainPin (PinTypePtr, bool);
@@ -31,7 +31,7 @@ index 7380beb..589b3d9 100644
 -  SWAP_IDENT = swap_ident;
    DrawLayerGroup (side_group, drawn_area);
 -  DrawTop (drawn_area);
-+  DrawOuterLayer (side, drawn_area);
++  DrawOuterPPV (side, drawn_area);
    gui->set_draw_faded (Output.fgGC, 0);
  
    /* draw package */
@@ -48,7 +48,7 @@ index 7380beb..589b3d9 100644
    /* Draw pins, pads, vias below silk */
    if (gui->gui)
 -    DrawTop (drawn_area);
-+    DrawOuterLayer (side, drawn_area);
++    DrawOuterPPV (side, drawn_area);
    else
      {
        HoleCountStruct hcs;
@@ -57,7 +57,7 @@ index 7380beb..589b3d9 100644
   */
  static void
 -DrawTop (const BoxType * screen)
-+DrawOuterLayer (int side, const BoxType * screen)
++DrawOuterPPV (int side, const BoxType * screen)
  {
 -  int side = SWAP_IDENT ? SOLDER_LAYER : COMPONENT_LAYER;
 -
