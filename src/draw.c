@@ -315,7 +315,6 @@ PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
 
   gui->set_draw_faded (Output.fgGC, 1);
   DrawLayerGroup (side_group, drawn_area);
-  DrawOuterLayer (side, drawn_area);
   gui->set_draw_faded (Output.fgGC, 0);
 
   /* draw package */
@@ -380,33 +379,7 @@ DrawEverything (BoxTypePtr drawn_area)
       int group = drawn_groups[i];
 
       if (gui->set_layer (0, group, 0))
-	{
-	  if (DrawLayerGroup (group, drawn_area) && !gui->gui)
-	    {
-	      if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
-		continue;
-	      r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback,
-			NULL);
-	      r_search (PCB->Data->via_tree, drawn_area, NULL, pin_callback,
-			NULL);
-	      /* draw element pads */
-	      if (group == component || group == solder)
-		{
-                  side = (group == solder) ? SOLDER_LAYER : COMPONENT_LAYER;
-		  r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
-		}
-
-	      if (!gui->gui)
-		{
-		  /* draw holes */
-		  plated = -1;
-		  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback,
-			    &plated);
-		  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback,
-			    &plated);
-		}
-	    }
-	}
+        DrawLayerGroup (group, drawn_area);
     }
   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
     return;
@@ -811,9 +784,12 @@ DrawLayerGroup (int group, const BoxType * screen)
 {
   int i, rv = 1;
   int layernum;
+  int side;
   LayerTypePtr Layer;
   int n_entries = PCB->LayerGroups.Number[group];
   Cardinal *layers = PCB->LayerGroups.Entries[group];
+  int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
+  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
 
   clip_box = screen;
   for (i = n_entries - 1; i >= 0; i--)
@@ -828,6 +804,25 @@ DrawLayerGroup (int group, const BoxType * screen)
     }
   if (n_entries > 1)
     rv = 1;
+
+  if (rv == 0 || (gui->gui && !doing_assy))
+    return rv;
+
+  r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
+  r_search (PCB->Data->via_tree, drawn_area, NULL, pin_callback, NULL);
+
+  /* draw element pads */
+  if (group == component || group == solder)
+    {
+      side = (group == solder) ? SOLDER_LAYER : COMPONENT_LAYER;
+      r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+    }
+
+  /* draw holes */
+  plated = -1;
+  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
+  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
+
   return rv;
 }
 
