@@ -1,0 +1,28 @@
+Bottom: b8889d4215ee1a9a5f62733eb8bbc283812c7e32
+Top:    11f1321733f806ffd3773ada619427352280b4e7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-23 17:57:38 +0100
+
+Refresh of draw-c-fix-order-of-farside-ob
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 9f7cf8b..64129b5 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -364,13 +364,13 @@ DrawEverything (BoxTypePtr drawn_area)
+       && gui->set_layer ("invisible", SL (INVISIBLE, 0), 0))
+     {
+       side = SWAP_IDENT ? COMPONENT_LAYER : SOLDER_LAYER;
+-      r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+       if (PCB->ElementOn)
+ 	{
+ 	  r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
+ 	  r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
+ 	  DrawLayer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area);
+ 	}
++      r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+     }
+ 
+   /* draw all layers in layerstack order */
