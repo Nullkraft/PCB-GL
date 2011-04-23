@@ -1,5 +1,5 @@
 Bottom: cbcc5594a39e9b709b2d5eade559c917213b9aaa
-Top:    0719a06d8569c0ab1a1448c1ea3de4b053c739fd
+Top:    c39b93b2be7909282dd71feb1f853a09d942acc7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 16:56:13 +0100
 
@@ -9,7 +9,7 @@ draw.c: Change DrawTop() to DrawOuter() taking a side parameter
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 8178e81..54d87b3 100644
+index 8178e81..caf14c7 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -83,7 +83,7 @@ static const BoxType *clip_box = NULL;
@@ -21,15 +21,20 @@ index 8178e81..54d87b3 100644
  static int DrawLayerGroup (int, const BoxType *);
  static void DrawPinOrViaLowLevel (PinTypePtr, bool);
  static void DrawPlainPin (PinTypePtr, bool);
-@@ -315,7 +315,7 @@ PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
+@@ -313,11 +313,11 @@ PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
+   int save_swap = SWAP_IDENT;
+ 
    gui->set_draw_faded (Output.fgGC, 1);
-   SWAP_IDENT = swap_ident;
+-  SWAP_IDENT = swap_ident;
    DrawLayerGroup (side_group, drawn_area);
 -  DrawTop (drawn_area);
 +  DrawOuterLayer (side, drawn_area);
    gui->set_draw_faded (Output.fgGC, 0);
  
++  SWAP_IDENT = swap_ident;
    /* draw package */
+   DrawSilk (swap_ident,
+ 	    swap_ident ? solder_silk_layer : component_silk_layer,
 @@ -410,9 +410,11 @@ DrawEverything (BoxTypePtr drawn_area)
    if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
      return;
