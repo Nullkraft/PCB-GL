@@ -569,7 +569,7 @@ pad_callback (const BoxType * b, void *cl)
 }
 
 /* ---------------------------------------------------------------------------
- * draws pins pads and vias
+ * draws outer layer pins pads and vias
  */
 static void
 DrawOuterPPV (int side, const BoxType * screen)
