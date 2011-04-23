@@ -393,11 +393,9 @@ DrawEverything (BoxTypePtr drawn_area)
 	      /* draw element pads */
 	      if (group == component || group == solder)
 		{
-		  SWAP_IDENT = (group == solder);
-		  r_search (PCB->Data->pad_tree, drawn_area, NULL,
-			    pad_callback, NULL);
+                  side = (group == solder) ? SOLDER_LAYER : COMPONENT_LAYER;
+		  r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
 		}
-	      SWAP_IDENT = save_swap;
 
 	      if (!gui->gui)
 		{
