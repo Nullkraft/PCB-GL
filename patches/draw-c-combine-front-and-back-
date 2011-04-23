@@ -1,5 +1,5 @@
 Bottom: 335652c037c611042518784cfbb9c4fadce8d782
-Top:    a295c2070e66415932630202e8ccef10479ac374
+Top:    f6a471a09c445f5421f56f368077ffb445c3cf0e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 15:49:07 +0100
 
@@ -11,7 +11,7 @@ Pass an integer "side" parameter to determine which is desired
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index d6dce62..6f76cca 100644
+index d6dce62..20b8f46 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -66,6 +66,7 @@ RCSID ("$Id$");
@@ -53,7 +53,7 @@ index d6dce62..6f76cca 100644
 +  if (TEST_FLAG (HIDENAMEFLAG, element))
 +    return 0;
 +
-+  if (TEST_FLAG (ONSOLDERFLAG, element) == (*side == SOLDER_LAYER))
++  if (ON_SIDE (element, side))
      DrawElementName (element, 0);
    return 0;
  }
