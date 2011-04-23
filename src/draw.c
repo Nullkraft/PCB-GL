@@ -313,11 +313,11 @@ PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
   int save_swap = SWAP_IDENT;
 
   gui->set_draw_faded (Output.fgGC, 1);
-  SWAP_IDENT = swap_ident;
   DrawLayerGroup (side_group, drawn_area);
   DrawOuterLayer (side, drawn_area);
   gui->set_draw_faded (Output.fgGC, 0);
 
+  SWAP_IDENT = swap_ident;
   /* draw package */
   DrawSilk (swap_ident,
 	    swap_ident ? solder_silk_layer : component_silk_layer,
