@@ -1,0 +1,25 @@
+Bottom: 6fa94326185ab995045ad9bf6bd57623ca010482
+Top:    c1e9e7812796aaaeb597dd1c0b6c1f44bf759458
+Author: Ineiev <ineiev@users.berlios.de>
+Date:   2011-04-23 12:56:57 +0100
+
+Revert "Fix potential segfault"
+
+This reverts commit 2d2040e92d5ebb069af42567855055b096532e71.
+
+
+---
+
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 3919a6e..274741d 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -148,7 +148,7 @@ static const char *filetypes[] = {
+   FMT_jpg,
+ #endif
+ 
+-  ""
++  NULL
+ };
+ 
+ HID_Attribute png_attribute_list[] = {
