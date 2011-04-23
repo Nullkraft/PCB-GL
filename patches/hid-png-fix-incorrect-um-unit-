@@ -1,5 +1,5 @@
 Bottom: 859acf5ad6344db9797a99ed8e21569082ca5a6c
-Top:    859acf5ad6344db9797a99ed8e21569082ca5a6c
+Top:    b718048a2a874a862a5202f788bc8ac900df1888
 Author: Andrew Poelstra <asp11@sfu.ca>
 Date:   2011-04-23 14:35:29 +0100
 
@@ -10,4 +10,16 @@ hid/png: Fix incorrect um unit conversion in bloat parser.
 
 ---
 
-
+diff --git a/src/hid/png/png.c b/src/hid/png/png.c
+index 6c0f76b..ab64e5a 100644
+--- a/src/hid/png/png.c
++++ b/src/hid/png/png.c
+@@ -322,7 +322,7 @@ parse_bloat (char *str)
+   else if (strcasecmp (suf, "mm") == 0)
+     bloat = val * MM_TO_COOR;
+   else if (strcasecmp (suf, "um") == 0)
+-    bloat = val * MM_TO_COOR * 1000.0;
++    bloat = val * MM_TO_COOR / 1000.0;
+   else if (strcasecmp (suf, "pix") == 0
+ 	   || strcasecmp (suf, "px") == 0)
+     bloat = val * scale;
