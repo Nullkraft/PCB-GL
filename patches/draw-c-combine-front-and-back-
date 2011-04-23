@@ -1,5 +1,5 @@
 Bottom: 9166d250fc5822ccd1feb5ba2e943ea1dccd56cf
-Top:    6f2caf33faa9363edc8abac1da1243d7f5b37d13
+Top:    862e07987ae380e86bcdfe889c999cf0b9f33fdc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 15:49:07 +0100
 
@@ -11,7 +11,7 @@ Pass an integer "side" parameter to determine which is desired
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 665bf0c..db04af3 100644
+index 665bf0c..ed798cc 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -66,6 +66,7 @@ RCSID ("$Id$");
@@ -123,7 +123,16 @@ index 665bf0c..db04af3 100644
  	}
      }
  
-@@ -424,11 +393,9 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -413,8 +382,6 @@ DrawEverything (BoxTypePtr drawn_area)
+ 	{
+ 	  if (DrawLayerGroup (group, drawn_area) && !gui->gui)
+ 	    {
+-	      int save_swap = SWAP_IDENT;
+-
+ 	      if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
+ 		continue;
+ 	      r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback,
+@@ -424,11 +391,9 @@ DrawEverything (BoxTypePtr drawn_area)
  	      /* draw element pads */
  	      if (group == component || group == solder)
  		{
@@ -137,7 +146,7 @@ index 665bf0c..db04af3 100644
  
  	      if (!gui->gui)
  		{
-@@ -609,7 +576,9 @@ static int
+@@ -609,7 +574,9 @@ static int
  pad_callback (const BoxType * b, void *cl)
  {
    PadTypePtr pad = (PadTypePtr) b;
@@ -148,7 +157,7 @@ index 665bf0c..db04af3 100644
      DrawPad (pad);
    return 1;
  }
-@@ -620,12 +589,14 @@ pad_callback (const BoxType * b, void *cl)
+@@ -620,12 +587,14 @@ pad_callback (const BoxType * b, void *cl)
  static void
  DrawTop (const BoxType * screen)
  {
@@ -164,7 +173,7 @@ index 665bf0c..db04af3 100644
      }
    /* draw vias */
    if (PCB->ViaOn || doing_assy)
-@@ -672,6 +643,7 @@ clearPad_callback (const BoxType * b, void *cl)
+@@ -672,6 +641,7 @@ clearPad_callback (const BoxType * b, void *cl)
  static void
  DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
  {
@@ -172,7 +181,7 @@ index 665bf0c..db04af3 100644
  #if 0
    /* This code is used when you want to mask silk to avoid exposed
       pins and pads.  We decided it was a bad idea to do this
-@@ -687,10 +659,8 @@ DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
+@@ -687,10 +657,8 @@ DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
  #endif
        DrawLayer (LAYER_PTR (layer), drawn_area);
        /* draw package */
@@ -185,7 +194,7 @@ index 665bf0c..db04af3 100644
  #if 0
      }
  
-@@ -704,10 +674,8 @@ DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
+@@ -704,10 +672,8 @@ DrawSilk (int new_swap, int layer, const BoxType * drawn_area)
        gui->use_mask (HID_MASK_AFTER);
        DrawLayer (LAYER_PTR (max_copper_layer + layer), drawn_area);
        /* draw package */
