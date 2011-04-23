@@ -1,0 +1,48 @@
+Bottom: ae20b6c33253556762ae92b1d0adedd8600f0a94
+Top:    b8889d4215ee1a9a5f62733eb8bbc283812c7e32
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-23 17:46:56 +0100
+
+Refresh of draw-c-remove-redundant-if-sta
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index f204fdc..9f7cf8b 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -382,12 +382,8 @@ DrawEverything (BoxTypePtr drawn_area)
+ 	{
+ 	  if (DrawLayerGroup (group, drawn_area) && !gui->gui)
+ 	    {
+-	      if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
+-		continue;
+-	      r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback,
+-			NULL);
+-	      r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback,
+-			NULL);
++	      r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
++	      r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
+ 	      /* draw element pads */
+ 	      if (group == component || group == solder)
+ 		{
+@@ -395,15 +391,10 @@ DrawEverything (BoxTypePtr drawn_area)
+ 		  r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+ 		}
+ 
+-	      if (!gui->gui)
+-		{
+-		  /* draw holes */
+-		  plated = -1;
+-		  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback,
+-			    &plated);
+-		  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback,
+-			    &plated);
+-		}
++	      /* draw holes */
++	      plated = -1;
++	      r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
++	      r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
+ 	    }
+ 	}
+     }
