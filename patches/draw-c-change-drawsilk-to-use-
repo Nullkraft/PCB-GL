@@ -3,7 +3,11 @@ Top:    6a0c01db67f34753620c8f0bee326276b589583a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 15:35:54 +0100
 
-draw.c: Change DrawSilk() to use a layer side parameter, not SWAP_IDENT
+draw.c: Change PrintAssembly() to use a layer side parameter
+
+Drops the "swap_ident" parameter in favour of a more explicit "side"
+parameter. Also drops the side_group parameter, as we can easily
+determine that from the requested side to draw.
 
 
 ---
