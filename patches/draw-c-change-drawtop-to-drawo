@@ -3,9 +3,10 @@ Top:    e5cad329c8c5675b412e1196fe6477e3ff90a48f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 16:56:13 +0100
 
-draw.c: Change DrawTop() to DrawPPV() taking a side parameter
+draw.c: Change DrawTop() to DrawPPV(), and teach it to work for any layer
 
-(PPV stands for Pins, Pads and Vias)
+(PPV stands for Pins, Pads and Vias). Extend its functionality to work
+for pins and vias on any layer.
 
 
 ---
