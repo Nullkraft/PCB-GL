@@ -72,7 +72,7 @@ RCSID ("$Id$");
  * some local identifiers
  */
 static BoxType Block = {MAXINT, MAXINT, -MAXINT, -MAXINT};
-static bool Gathering = true;
+/* static */ bool Gathering = true;
 
 static int doing_pinout = 0;
 static bool doing_assy = false;
@@ -85,26 +85,26 @@ static void Redraw (bool, BoxTypePtr);
 static void DrawEverything (BoxTypePtr);
 static void DrawPPV (int group, const BoxType *);
 static int DrawLayerGroup (int, const BoxType *);
-static void DrawPinOrViaLowLevel (PinTypePtr, bool);
-static void DrawPlainPin (PinTypePtr, bool);
-static void DrawPlainVia (PinTypePtr, bool);
+/* static */ void DrawPinOrViaLowLevel (PinTypePtr, bool);
+/* static */ void DrawPlainPin (PinTypePtr, bool);
+/* static */ void DrawPlainVia (PinTypePtr, bool);
 static void DrawPinOrViaNameLowLevel (PinTypePtr);
 static void DrawPadLowLevel (hidGC, PadTypePtr, bool, bool);
 static void DrawPadNameLowLevel (PadTypePtr);
 static void DrawLineLowLevel (LineTypePtr);
-static void DrawRegularText (LayerTypePtr, TextTypePtr);
+/* static */ void DrawRegularText (LayerTypePtr, TextTypePtr);
 static void DrawPolygonLowLevel (PolygonTypePtr);
 static void DrawArcLowLevel (ArcTypePtr);
 static void DrawElementPackageLowLevel (ElementTypePtr Element);
 static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
 static void AddPart (void *);
 static void SetPVColor (PinTypePtr, int);
-static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
-static void ClearPad (PadTypePtr, bool);
-static void DrawHole (PinTypePtr);
+/* static */ void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
+/* static */ void ClearPad (PadTypePtr, bool);
+/* static */ void DrawHole (PinTypePtr);
 static void DrawMask (int side, BoxType *);
-static void DrawRats (BoxType *);
-static void DrawSilk (int side, const BoxType *);
+/* static */ void DrawRats (BoxType *);
+/* static */ void DrawSilk (int side, const BoxType *);
 static int via_callback (const BoxType * b, void *cl);
 static int pin_callback (const BoxType * b, void *cl);
 static int pad_callback (const BoxType * b, void *cl);
@@ -513,7 +513,7 @@ DrawEverything (BoxTypePtr drawn_area)
     }
 }
 
-static void
+/* static */ void
 DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
 	   bool invisible)
 {
@@ -647,7 +647,7 @@ clearPad_callback (const BoxType * b, void *cl)
  * Draws silk layer.
  */
 
-static void
+/* static */ void
 DrawSilk (int side, const BoxType * drawn_area)
 {
 #if 0
@@ -732,7 +732,7 @@ DrawMask (int side, BoxType * screen)
     }
 }
 
-static void
+/* static */ void
 DrawRats (BoxTypePtr drawn_area)
 {
   /*
@@ -853,7 +853,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
 /* ---------------------------------------------------------------------------
  * lowlevel drawing routine for pins and vias
  */
-static void
+/* static */ void
 DrawPinOrViaLowLevel (PinTypePtr pv, bool drawHole)
 {
   if (Gathering)
@@ -871,7 +871,7 @@ DrawPinOrViaLowLevel (PinTypePtr pv, bool drawHole)
 /**************************************************************
  * draw pin/via hole
  */
-static void
+/* static */ void
 DrawHole (PinTypePtr Ptr)
 {
   if (TEST_FLAG (THINDRAWFLAG, PCB))
@@ -1064,7 +1064,7 @@ DrawPadNameLowLevel (PadTypePtr Pad)
 /* ---------------------------------------------------------------------------
  * clearance for pads
  */
-static void
+/* static */ void
 ClearPad (PadTypePtr Pad, bool mask)
 {
   DrawPadLowLevel(Output.pmGC, Pad, true, mask);
@@ -1259,7 +1259,7 @@ DrawVia (PinTypePtr Via)
 /* ---------------------------------------------------------------------------
  * draw a via without dealing with polygon clearance 
  */
-static void
+/* static */ void
 DrawPlainVia (PinTypePtr Via, bool holeToo)
 {
   if (!Gathering)
@@ -1304,7 +1304,7 @@ DrawPin (PinTypePtr Pin)
 /* ---------------------------------------------------------------------------
  * draw a pin without clearing around polygons 
  */
-static void
+/* static */ void
 DrawPlainPin (PinTypePtr Pin, bool holeToo)
 {
   if (!Gathering)
@@ -1494,7 +1494,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text)
 /* ---------------------------------------------------------------------------
  * draws text on a layer
  */
-static void
+/* static */ void
 DrawRegularText (LayerTypePtr Layer, TextTypePtr Text)
 {
   int min_silk_line;
