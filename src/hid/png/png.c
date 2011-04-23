@@ -136,7 +136,6 @@ static int doing_outline, have_outline;
 #define FMT_png "PNG"
 
 static const char *filetypes[] = {
-  /*
 #ifdef HAVE_GDIMAGEPNG
   FMT_png,
 #endif
@@ -148,7 +147,6 @@ static const char *filetypes[] = {
 #ifdef HAVE_GDIMAGEJPEG
   FMT_jpg,
 #endif
-*/
 
   NULL
 };
