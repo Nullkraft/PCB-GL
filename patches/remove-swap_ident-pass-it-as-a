@@ -1,5 +1,5 @@
 Bottom: 187a75796f68b2b09b3de87573aa911e15f11129
-Top:    187a75796f68b2b09b3de87573aa911e15f11129
+Top:    b5b029610cc5eb555b3a77cd3ad565b77c677f8a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 15:17:52 +0100
 
@@ -10,4 +10,19 @@ Magic state is bad ;)
 
 ---
 
-
+diff --git a/src/macro.h b/src/macro.h
+index 7cba5ac..49f6b94 100644
+--- a/src/macro.h
++++ b/src/macro.h
+@@ -34,11 +34,7 @@
+ 
+ /* ---------------------------------------------------------------------------
+  * macros to transform coord systems
+- * draw.c uses a different definition of TO_SCREEN
+  */
+-#ifndef	SWAP_IDENT
+-#define	SWAP_IDENT			Settings.ShowSolderSide
+-#endif
+ 
+ #define	SWAP_SIGN_X(x)		(x)
+ #define	SWAP_SIGN_Y(y)		(-(y))
