@@ -414,9 +414,11 @@ DrawEverything (BoxTypePtr drawn_area)
   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
     return;
 
+  side = SWAP_IDENT ? SOLDER_LAYER : COMPONENT_LAYER;
+
   /* Draw pins, pads, vias below silk */
   if (gui->gui)
-    DrawTop (drawn_area);
+    DrawOuterLayer (side, drawn_area);
   else
     {
       HoleCountStruct hcs;
@@ -581,10 +583,8 @@ pad_callback (const BoxType * b, void *cl)
  * draws pins pads and vias
  */
 static void
-DrawTop (const BoxType * screen)
+DrawOuterLayer (side, const BoxType * screen)
 {
-  int side = SWAP_IDENT ? SOLDER_LAYER : COMPONENT_LAYER;
-
   if (PCB->PinOn || doing_assy)
     {
       /* draw element pins */
