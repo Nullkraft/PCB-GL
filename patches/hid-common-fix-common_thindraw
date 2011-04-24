@@ -8,6 +8,8 @@ hid/common: Fix common_thindraw_pcb_pad()'s handling of square pads
 I made a mistake in a logic test when simplifying this routine in
 commit 4efcedeeac06cd4d5e559a7fe0a0ee8685f2137a
 
+This caused slanted rendering of horizontal or vertical pads.
+
 
 ---
 
