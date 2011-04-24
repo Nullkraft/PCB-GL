@@ -1,7 +1,7 @@
-Bottom: b718048a2a874a862a5202f788bc8ac900df1888
-Top:    396f3b3e42aea6186827672fec1bdd5c8b1161dd
+Bottom: 337a65380d79b7e5a8451c72ce62b16d81f7702b
+Top:    018f7ab0fbe4efa03ef92f9ca6c41086ddd45c13
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-23 14:41:13 +0100
+Date:   2011-04-24 03:16:15 +0100
 
 Give the HIDs control over attached object (crosshair, mark) drawing
 
@@ -28,7 +28,7 @@ been completed (true argument).
 ---
 
 diff --git a/src/action.c b/src/action.c
-index e5a463f..a0577e4 100644
+index 9bad677..3cc4325 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -607,7 +607,7 @@ click_cb (hidval hv)
@@ -761,10 +761,10 @@ index ff16b1e..efa6679 100644
  void CrosshairOff (void);
  void HideCrosshair (void);
 diff --git a/src/draw.c b/src/draw.c
-index d6dce62..edfcf4f 100644
+index 47db1fd..8a250da 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -180,15 +180,11 @@ UpdateAll (void)
+@@ -182,15 +182,11 @@ UpdateAll (void)
  void
  Draw (void)
  {
