@@ -1,7 +1,7 @@
-Bottom: d63ca92df21d31679f6db2d1b085fc6a23ebb96a
-Top:    e17b048686984fa7549f97f84f7f24042df51264
+Bottom: 24fdf03356e3f963a01b5230eefadcabb6deb956
+Top:    79f980111fa2dd27d937a06fd15a2a43db08bcc9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-23 14:41:36 +0100
+Date:   2011-04-24 03:48:21 +0100
 
 Add strip hierarchy options to display refdes without any "..../" prefix
 
@@ -17,7 +17,7 @@ Add strip hierarchy options to display refdes without any "..../" prefix
 ---
 
 diff --git a/src/action.c b/src/action.c
-index a0577e4..6f3e93b 100644
+index 3cc4325..2ba2d10 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -3465,9 +3465,16 @@ ActionRenumber (int argc, char **argv, int x, int y)
@@ -148,11 +148,11 @@ index 3b6cd30..3f9878d 100644
   * PCB flags
   */
 diff --git a/src/draw.c b/src/draw.c
-index 900ffab..b580420 100644
+index 65abc87..520c640 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -1651,6 +1651,32 @@ DrawElement (ElementTypePtr Element, int unused)
-   DrawElementPinsAndPads (Element, unused);
+@@ -1600,6 +1600,32 @@ DrawElement (ElementTypePtr Element)
+   DrawElementPinsAndPads (Element);
  }
  
 +static void
@@ -184,7 +184,7 @@ index 900ffab..b580420 100644
  /* ---------------------------------------------------------------------------
   * draws the name of an element
   */
-@@ -1669,7 +1695,7 @@ DrawElementName (ElementTypePtr Element, int unused)
+@@ -1618,7 +1644,7 @@ DrawElementName (ElementTypePtr Element)
      gui->set_color (Output.fgGC, PCB->ElementColor);
    else
      gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
@@ -193,7 +193,7 @@ index 900ffab..b580420 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1852,7 +1878,7 @@ EraseElement (ElementTypePtr Element)
+@@ -1801,7 +1827,7 @@ EraseElement (ElementTypePtr Element)
    }
    END_LOOP;
    if (!TEST_FLAG (HIDENAMEFLAG, Element))
@@ -202,7 +202,7 @@ index 900ffab..b580420 100644
    EraseElementPinsAndPads (Element);
  }
  
-@@ -1886,7 +1912,7 @@ EraseElementName (ElementTypePtr Element)
+@@ -1835,7 +1861,7 @@ EraseElementName (ElementTypePtr Element)
  {
    if (TEST_FLAG (HIDENAMEFLAG, Element))
      return;
