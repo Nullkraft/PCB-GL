@@ -1,0 +1,22 @@
+Bottom: ab7f409988baf3c589217033652f176b1174d710
+Top:    16a7df68fb81992e4e599afe8e3ba8aeed9c88bd
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-24 18:52:21 +0100
+
+Refresh of draw-c-use-the-on_side-macro-r
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index cb1b790..c82f25a 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -512,7 +512,7 @@ pad_callback (const BoxType * b, void *cl)
+   PadTypePtr pad = (PadTypePtr) b;
+   int *side = cl;
+ 
+-  if (TEST_FLAG (ONSOLDERFLAG, pad) == (*side == SOLDER_LAYER))
++  if (ON_SIDE (pad, *side))
+     DrawPad (pad);
+   return 1;
+ }
