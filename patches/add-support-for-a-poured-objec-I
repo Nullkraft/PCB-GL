@@ -1,7 +1,7 @@
-Bottom: ab647fd6ab0628518a59b80ff265a09b00b95fc6
-Top:    6aef10f195500f832f46be2c44d8dfd11b16e00a
+Bottom: 3090e008e264f0e89aa7dde084783d742f7858af
+Top:    cc5cdcd910dab463299bf59dcc427284b2b69f62
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-24 13:10:38 +0100
+Date:   2011-04-24 19:32:50 +0100
 
 Add support for a "poured" object.
 
@@ -2191,7 +2191,7 @@ index b0ef6f8..528c103 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index 65abc87..7e3fc95 100644
+index 21d9372..5f92b1e 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -49,6 +49,7 @@
@@ -2202,7 +2202,7 @@ index 65abc87..7e3fc95 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -94,6 +95,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
+@@ -93,6 +94,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
  static void DrawLineLowLevel (LineTypePtr);
  /* static */ void DrawRegularText (LayerTypePtr, TextTypePtr);
  static void DrawPolygonLowLevel (PolygonTypePtr);
@@ -2210,7 +2210,7 @@ index 65abc87..7e3fc95 100644
  static void DrawArcLowLevel (ArcTypePtr);
  static void DrawElementPackageLowLevel (ElementTypePtr Element);
  static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
-@@ -624,6 +626,7 @@ clearPin_callback (const BoxType * b, void *cl)
+@@ -599,6 +601,7 @@ clearPin_callback (const BoxType * b, void *cl)
      gui->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
    return 1;
  }
@@ -2218,7 +2218,7 @@ index 65abc87..7e3fc95 100644
  static int
  poly_callback (const BoxType * b, void *cl)
  {
-@@ -633,6 +636,29 @@ poly_callback (const BoxType * b, void *cl)
+@@ -608,6 +611,29 @@ poly_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -2248,7 +2248,7 @@ index 65abc87..7e3fc95 100644
  static int
  clearPad_callback (const BoxType * b, void *cl)
  {
-@@ -778,8 +804,11 @@ void
+@@ -773,8 +799,11 @@ void
  DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
  {
    /* print the non-clearing polys */
@@ -2261,7 +2261,7 @@ index 65abc87..7e3fc95 100644
  
    if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
      return;
-@@ -1196,6 +1225,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
+@@ -1191,6 +1220,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2310,7 +2310,7 @@ index 65abc87..7e3fc95 100644
   * lowlevel routine to element arcs
   */
  static void
-@@ -1514,6 +1585,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -1509,6 +1580,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
    DrawPolygonLowLevel (Polygon);
  }
  
@@ -2348,7 +2348,7 @@ index 65abc87..7e3fc95 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -1785,6 +1887,16 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -1780,6 +1882,16 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2365,7 +2365,7 @@ index 65abc87..7e3fc95 100644
   * erases an element
   */
  void
-@@ -1855,6 +1967,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -1850,6 +1962,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2375,7 +2375,7 @@ index 65abc87..7e3fc95 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -1902,6 +2017,10 @@ DrawObject (int type, void *ptr1, void *ptr2)
+@@ -1897,6 +2012,10 @@ DrawObject (int type, void *ptr1, void *ptr2)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
        break;
@@ -3225,10 +3225,10 @@ index 350a0de..67d1b78 100644
  /* ---------------------------------------------------------------------------
   * prototypes
 diff --git a/src/macro.h b/src/macro.h
-index 19f80b8..2c7783e 100644
+index 6dcd0d1..aede310 100644
 --- a/src/macro.h
 +++ b/src/macro.h
-@@ -296,19 +296,26 @@ extern int mem_any_set (unsigned char *, int);
+@@ -303,19 +303,26 @@ extern int mem_any_set (unsigned char *, int);
  	{						\
  		text = &(layer)->Text[n]
  
@@ -3262,7 +3262,7 @@ index 19f80b8..2c7783e 100644
  
  #define ENDALL_LOOP }} while (0);  }} while (0)
  
-@@ -334,12 +341,12 @@ extern int mem_any_set (unsigned char *, int);
+@@ -341,12 +348,12 @@ extern int mem_any_set (unsigned char *, int);
  	{ \
  		ARC_LOOP(layer)
  
@@ -3277,7 +3277,7 @@ index 19f80b8..2c7783e 100644
  
  #define	COPPERLINE_LOOP(top) do	{		\
  	Cardinal		l;			\
-@@ -355,12 +362,12 @@ extern int mem_any_set (unsigned char *, int);
+@@ -362,12 +369,12 @@ extern int mem_any_set (unsigned char *, int);
  	{ \
  		ARC_LOOP(layer)
  
@@ -3292,7 +3292,7 @@ index 19f80b8..2c7783e 100644
  
  #define	SILKLINE_LOOP(top) do	{		\
  	Cardinal		l;			\
-@@ -378,13 +385,13 @@ extern int mem_any_set (unsigned char *, int);
+@@ -385,13 +392,13 @@ extern int mem_any_set (unsigned char *, int);
  	{ \
  		ARC_LOOP(layer)
  
@@ -3308,7 +3308,7 @@ index 19f80b8..2c7783e 100644
  
  #define	ALLTEXT_LOOP(top)	do {		\
  	Cardinal		l;			\
-@@ -417,13 +424,13 @@ extern int mem_any_set (unsigned char *, int);
+@@ -424,13 +431,13 @@ extern int mem_any_set (unsigned char *, int);
                  TEXT_LOOP(layer);                                      \
                    if (TEXT_IS_VISIBLE((board), layer, text))
  
@@ -3361,7 +3361,7 @@ index 7ef7d41..1b76e88 100644
 +  ClearFromPours (Data, ELEMENT_TYPE, Element, Element);
  }
 diff --git a/src/misc.c b/src/misc.c
-index 82bc772..6491fef 100644
+index 5bea138..e3603f4 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -66,6 +66,7 @@
@@ -3428,7 +3428,7 @@ index 82bc772..6491fef 100644
    return (hasNoObjects);
  }
  
-@@ -666,13 +682,17 @@ GetDataBoundingBox (DataTypePtr Data)
+@@ -682,13 +698,17 @@ GetDataBoundingBox (DataTypePtr Data)
      box.Y2 = MAX (box.Y2, text->BoundingBox.Y2);
    }
    ENDALL_LOOP;
@@ -3453,7 +3453,7 @@ index 82bc772..6491fef 100644
    ENDALL_LOOP;
    return (IsDataEmpty (Data) ? NULL : &box);
  }
-@@ -1317,6 +1337,7 @@ GetObjectBoundingBox (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
+@@ -1333,6 +1353,7 @@ GetObjectBoundingBox (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
      case ARC_TYPE:
      case TEXT_TYPE:
      case POLYGON_TYPE:
@@ -3461,7 +3461,7 @@ index 82bc772..6491fef 100644
      case PAD_TYPE:
      case PIN_TYPE:
      case ELEMENTNAME_TYPE:
-@@ -1324,7 +1345,7 @@ GetObjectBoundingBox (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
+@@ -1340,7 +1361,7 @@ GetObjectBoundingBox (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
      case VIA_TYPE:
      case ELEMENT_TYPE:
        return (BoxType *)Ptr1;
@@ -3470,7 +3470,7 @@ index 82bc772..6491fef 100644
      case LINEPOINT_TYPE:
        return (BoxType *)Ptr3;
      default:
-@@ -1587,14 +1608,14 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
+@@ -1603,14 +1624,14 @@ ChangeArcAngles (LayerTypePtr Layer, ArcTypePtr a,
        new_da = 360;
        new_sa = 0;
      }
@@ -3487,7 +3487,7 @@ index 82bc772..6491fef 100644
  }
  
  static char *
-@@ -1679,13 +1700,8 @@ GetGridLockCoordinates (int type, void *ptr1,
+@@ -1695,13 +1716,8 @@ GetGridLockCoordinates (int type, void *ptr1,
        *x = ((ElementTypePtr) ptr2)->MarkX;
        *y = ((ElementTypePtr) ptr2)->MarkY;
        break;
@@ -3503,7 +3503,7 @@ index 82bc772..6491fef 100644
        *y = ((PointTypePtr) ptr3)->Y;
        break;
 diff --git a/src/misc.h b/src/misc.h
-index b46cad4..fe287f2 100644
+index cd7eb3d..10dd255 100644
 --- a/src/misc.h
 +++ b/src/misc.h
 @@ -42,6 +42,7 @@ void SetPointBoundingBox (PointTypePtr);
