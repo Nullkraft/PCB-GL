@@ -781,10 +781,6 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
   clip_box = screen;
   r_search (Layer->polygon_tree, screen, NULL, poly_callback, Layer);
 
-  /* HACK: Subcomposite polygons separately from other layer primitives */
-  /* Reset the compositing */
-  gui->set_layer (0, GetLayerGroupNumberByPointer (Layer), 0);
-
   if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
     return;
 
@@ -834,8 +830,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
   Cardinal *layers = PCB->LayerGroups.Entries[group];
 
   clip_box = drawn_area;
-  for (i = n_entries - 1; i >= 0;
-      i--, gui->set_layer (0, group, 0)) /* HACK: Subcomposite each layer in a layer group separately */
+  for (i = n_entries - 1; i >= 0; i--)
     {
       layernum = layers[i];
       Layer = PCB->Data->Layer + layers[i];
