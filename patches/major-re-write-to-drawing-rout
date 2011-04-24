@@ -1,5 +1,5 @@
 Bottom: f85267722a355854d9e24dde64feced9cec11122
-Top:    5e5b1430255c5f0c2e9ba9f382b17635e90e7b09
+Top:    78c57949de9d1bce341ecc7e900aa151e200f7e8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 14:41:22 +0100
 
@@ -148,7 +148,7 @@ index f89264b..9a8b51d 100644
  {
    int min_silk_line;
 diff --git a/src/draw.h b/src/draw.h
-index fdd4c70..1710f14 100644
+index fdd4c70..94570a8 100644
 --- a/src/draw.h
 +++ b/src/draw.h
 @@ -74,6 +74,20 @@ void EraseObject (int, void *, void *);
@@ -160,11 +160,11 @@ index fdd4c70..1710f14 100644
 +void DrawPinOrViaLowLevel (PinTypePtr, bool);
 +void DrawPlainPin (PinTypePtr, bool);
 +void DrawPlainVia (PinTypePtr, bool);
-+void DrawRegularText (LayerTypePtr, TextTypePtr, int);
++void DrawRegularText (LayerTypePtr, TextTypePtr);
 +void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
 +void DrawHole (PinTypePtr);
 +void DrawRats (BoxType *);
-+void DrawSilk (int, int, const BoxType *);
++void DrawSilk (int side, const BoxType *);
 +void DrawSpecialPolygon (hidGC DrawGC, LocationType X, LocationType Y, int Thickness, int thin_draw);
 +
 +/* TEMPORARY */
@@ -173,7 +173,7 @@ index fdd4c70..1710f14 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5d53d27..deaff31 100644
+index 5d53d27..c668d31 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -185,7 +185,15 @@ index 5d53d27..deaff31 100644
  #include "gui-pinout-preview.h"
  
  /* The Linux OpenGL ABI 1.0 spec requires that we define
-@@ -35,7 +37,13 @@ RCSID ("$Id$");
+@@ -29,13 +31,21 @@
+ #include <dmalloc.h>
+ #endif
+ 
++#define ON_SIDE(element, side) (TEST_FLAG (ONSOLDERFLAG, element) == (*side == SOLDER_LAYER))
++
+ 
+ RCSID ("$Id$");
+ 
  
  extern HID ghid_hid;
  
@@ -199,7 +207,7 @@ index 5d53d27..deaff31 100644
  
  /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
  */
-@@ -72,6 +80,58 @@ typedef struct hid_gc_struct
+@@ -72,6 +82,58 @@ typedef struct hid_gc_struct
  hid_gc_struct;
  
  
@@ -258,7 +266,7 @@ index 5d53d27..deaff31 100644
  int
  ghid_set_layer (const char *name, int group, int empty)
  {
-@@ -91,48 +151,30 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -91,48 +153,30 @@ ghid_set_layer (const char *name, int group, int empty)
        idx = PCB->LayerGroups.Entries[group][idx];
      }
  
@@ -320,7 +328,7 @@ index 5d53d27..deaff31 100644
    if (idx < 0)
      {
        switch (SL_TYPE (idx))
-@@ -428,10 +470,6 @@ typedef struct
+@@ -428,10 +472,6 @@ typedef struct
    double blue;
  } ColorCache;
  
@@ -331,7 +339,7 @@ index 5d53d27..deaff31 100644
  void
  ghid_set_color (hidGC gc, const char *name)
  {
-@@ -547,7 +585,7 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -547,7 +587,7 @@ ghid_set_color (hidGC gc, const char *name)
    glColor4d (r, g, b, a);
  }
  
@@ -340,7 +348,7 @@ index 5d53d27..deaff31 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -964,6 +1002,642 @@ ghid_screen_update (void)
+@@ -964,6 +1004,632 @@ ghid_screen_update (void)
  {
  }
  
@@ -351,7 +359,7 @@ index 5d53d27..deaff31 100644
 +
 +  if (!FRONT (element))
 +    {
-+      DrawElementPackage (element, 0);
++      DrawElementPackage (element);
 +    }
 +  return 1;
 +}
@@ -363,7 +371,7 @@ index 5d53d27..deaff31 100644
 +  ElementTypePtr element = (ElementTypePtr) text->Element;
 +
 +  if (!FRONT (element) && !TEST_FLAG (HIDENAMEFLAG, element))
-+    DrawElementName (element, 0);
++    DrawElementName (element);
 +  return 0;
 +}
 +
@@ -373,7 +381,7 @@ index 5d53d27..deaff31 100644
 +  PadTypePtr pad = (PadTypePtr) b;
 +
 +  if (!FRONT (pad))
-+    DrawPad (pad, 0);
++    DrawPad (pad);
 +  return 1;
 +}
 +
@@ -442,7 +450,7 @@ index 5d53d27..deaff31 100644
 +{
 +  PadTypePtr pad = (PadTypePtr) b;
 +  if (FRONT (pad))
-+    DrawPad (pad, 0);
++    DrawPad (pad);
 +  return 1;
 +}
 +
@@ -465,21 +473,21 @@ index 5d53d27..deaff31 100644
 +static int
 +line_callback (const BoxType * b, void *cl)
 +{
-+  DrawLine ((LayerTypePtr) cl, (LineTypePtr) b, 0);
++  DrawLine ((LayerTypePtr) cl, (LineTypePtr) b);
 +  return 1;
 +}
 +
 +static int
 +arc_callback (const BoxType * b, void *cl)
 +{
-+  DrawArc ((LayerTypePtr) cl, (ArcTypePtr) b, 0);
++  DrawArc ((LayerTypePtr) cl, (ArcTypePtr) b);
 +  return 1;
 +}
 +
 +static int
 +text_callback (const BoxType * b, void *cl)
 +{
-+  DrawRegularText ((LayerTypePtr) cl, (TextTypePtr) b, 0);
++  DrawRegularText ((LayerTypePtr) cl, (TextTypePtr) b);
 +  return 1;
 +}
 +
@@ -550,7 +558,8 @@ index 5d53d27..deaff31 100644
 +clearPad_callback (const BoxType * b, void *cl)
 +{
 +  PadTypePtr pad = (PadTypePtr) b;
-+  if (!XOR (TEST_FLAG (ONSOLDERFLAG, pad), SWAP_IDENT) && pad->Mask)
++  int *side = cl;
++  if (ON_SIDE (pad, side) && pad->Mask)
 +    ClearPad (pad, true);
 +  return 1;
 +}
@@ -567,13 +576,14 @@ index 5d53d27..deaff31 100644
 +clearPad_callback_solid (const BoxType * b, void *cl)
 +{
 +  PadTypePtr pad = (PadTypePtr) b;
-+  if (!XOR (TEST_FLAG (ONSOLDERFLAG, pad), SWAP_IDENT) && pad->Mask)
++  int *side = cl;
++  if (ON_SIDE (pad, side) && pad->Mask)
 +    gui->fill_pcb_pad (Output.pmGC, pad, true, true);
 +  return 1;
 +}
 +
 +static void
-+DrawMask (BoxType * screen)
++DrawMask (int side, BoxType * screen)
 +{
 +  int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
 +
@@ -585,14 +595,14 @@ index 5d53d27..deaff31 100644
 +      gui->set_color (Output.pmGC, PCB->MaskColor);
 +      r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, NULL);
 +      r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, NULL);
-+      r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, NULL);
++      r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, &side);
 +      gui->set_color (Output.pmGC, "erase");
 +    }
 +
 +  gui->use_mask (HID_MASK_CLEAR);
 +  r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback_solid, NULL);
 +  r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback_solid, NULL);
-+  r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback_solid, NULL);
++  r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback_solid, &side);
 +
 +  gui->use_mask (HID_MASK_AFTER);
 +  gui->set_color (out->fgGC, PCB->MaskColor);
@@ -857,23 +867,17 @@ index 5d53d27..deaff31 100644
 +    if (!global_view_2d) {
 +      /* Draw the solder mask if turned on */
 +      if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0)) {
-+        int save_swap = SWAP_IDENT;
 +        gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +        gui->set_layer ("componentmask", SL (MASK, TOP), 0);
 +        //^__ HACK, THE GUI DOESNT WANT US TO DRAW THIS!
-+        SWAP_IDENT = 0;
-+        DrawMask (drawn_area);
-+        SWAP_IDENT = save_swap;
++        DrawMask (SOLDER_LAYER, drawn_area);
 +        gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +      }
 +      if (gui->set_layer ("componentmask", SL (MASK, TOP), 0)) {
-+        int save_swap = SWAP_IDENT;
 +        gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +        gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0);
 +        //^__ HACK, THE GUI DOESNT WANT US TO DRAW THIS!
-+        SWAP_IDENT = 1;
-+        DrawMask (drawn_area);
-+        SWAP_IDENT = save_swap;
++        DrawMask (COMPONENT_LAYER, drawn_area);
 +        gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +      }
 +      gui->set_layer ("invisible", SL (INVISIBLE, 0), 0);
@@ -939,29 +943,23 @@ index 5d53d27..deaff31 100644
 +
 +  /* Draw the solder mask if turned on */
 +  if (gui->set_layer ("componentmask", SL (MASK, TOP), 0)) {
-+    int save_swap = SWAP_IDENT;
-+    SWAP_IDENT = 0;
-+    DrawMask (drawn_area);
-+    SWAP_IDENT = save_swap;
++    DrawMask (COMPONENT_LAYER, drawn_area);
 +    gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +  }
 +  if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0)) {
-+    int save_swap = SWAP_IDENT;
-+    SWAP_IDENT = 1;
-+    DrawMask (drawn_area);
-+    SWAP_IDENT = save_swap;
++    DrawMask (SOLDER_LAYER, drawn_area);
 +    gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +  }
-+  /* Draw top silkscreen */
++
 +  if (!Settings.ShowSolderSide &&
 +      gui->set_layer ("topsilk", SL (SILK, TOP), 0)) {
-+    DrawSilk (0, component_silk_layer, drawn_area);
++    DrawSilk (COMPONENT_LAYER, drawn_area);
 +    gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +  }
 +
 +  if (Settings.ShowSolderSide &&
 +      gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0)) {
-+    DrawSilk (1, solder_silk_layer, drawn_area);
++    DrawSilk (SOLDER_LAYER, drawn_area);
 +    gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +  }
 +
@@ -983,7 +981,7 @@ index 5d53d27..deaff31 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1028,8 +1702,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1028,8 +1694,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -994,7 +992,7 @@ index 5d53d27..deaff31 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1095,13 +1769,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1095,13 +1761,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -1008,7 +1006,7 @@ index 5d53d27..deaff31 100644
    /* TODO: Background image */
  
    hidgl_init_triangle_array (&buffer);
-@@ -1121,7 +1788,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1121,7 +1780,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_x0,
                  ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                               -port->view_y0, 0);
