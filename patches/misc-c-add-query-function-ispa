@@ -1,5 +1,5 @@
 Bottom: 961db4b57229694823ccfcc79edd8cff5bdca892
-Top:    4f107a7259394aab872708271a086ea950cc262e
+Top:    bb6a4a91788f313bb6ced2847544624141348af8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-24 17:47:41 +0100
 
@@ -9,14 +9,14 @@ misc.c: Add query function IsPasteEmpty() to query a paste layer is empty
 ---
 
 diff --git a/src/misc.c b/src/misc.c
-index 02a883f..d7aad5d 100644
+index 02a883f..d63aef1 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -600,6 +600,22 @@ IsLayerGroupEmpty (int num)
    return true;
  }
  
-+static bool
++bool
 +IsPasteEmpty (int side)
 +{
 +  bool paste_empty = true;
