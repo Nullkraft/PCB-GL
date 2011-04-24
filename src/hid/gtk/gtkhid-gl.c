@@ -31,6 +31,8 @@
 #include <dmalloc.h>
 #endif
 
+#define ON_SIDE(element, side) (TEST_FLAG (ONSOLDERFLAG, element) == (*side == SOLDER_LAYER))
+
 
 RCSID ("$Id$");
 
@@ -1009,7 +1011,7 @@ backE_callback (const BoxType * b, void *cl)
 
   if (!FRONT (element))
     {
-      DrawElementPackage (element, 0);
+      DrawElementPackage (element);
     }
   return 1;
 }
@@ -1021,7 +1023,7 @@ backN_callback (const BoxType * b, void *cl)
   ElementTypePtr element = (ElementTypePtr) text->Element;
 
   if (!FRONT (element) && !TEST_FLAG (HIDENAMEFLAG, element))
-    DrawElementName (element, 0);
+    DrawElementName (element);
   return 0;
 }
 
@@ -1031,7 +1033,7 @@ backPad_callback (const BoxType * b, void *cl)
   PadTypePtr pad = (PadTypePtr) b;
 
   if (!FRONT (pad))
-    DrawPad (pad, 0);
+    DrawPad (pad);
   return 1;
 }
 
@@ -1100,7 +1102,7 @@ pad_callback (const BoxType * b, void *cl)
 {
   PadTypePtr pad = (PadTypePtr) b;
   if (FRONT (pad))
-    DrawPad (pad, 0);
+    DrawPad (pad);
   return 1;
 }
 
@@ -1123,21 +1125,21 @@ via_callback (const BoxType * b, void *cl)
 static int
 line_callback (const BoxType * b, void *cl)
 {
-  DrawLine ((LayerTypePtr) cl, (LineTypePtr) b, 0);
+  DrawLine ((LayerTypePtr) cl, (LineTypePtr) b);
   return 1;
 }
 
 static int
 arc_callback (const BoxType * b, void *cl)
 {
-  DrawArc ((LayerTypePtr) cl, (ArcTypePtr) b, 0);
+  DrawArc ((LayerTypePtr) cl, (ArcTypePtr) b);
   return 1;
 }
 
 static int
 text_callback (const BoxType * b, void *cl)
 {
-  DrawRegularText ((LayerTypePtr) cl, (TextTypePtr) b, 0);
+  DrawRegularText ((LayerTypePtr) cl, (TextTypePtr) b);
   return 1;
 }
 
@@ -1208,7 +1210,8 @@ static int
 clearPad_callback (const BoxType * b, void *cl)
 {
   PadTypePtr pad = (PadTypePtr) b;
-  if (!XOR (TEST_FLAG (ONSOLDERFLAG, pad), SWAP_IDENT) && pad->Mask)
+  int *side = cl;
+  if (ON_SIDE (pad, side) && pad->Mask)
     ClearPad (pad, true);
   return 1;
 }
@@ -1225,13 +1228,14 @@ static int
 clearPad_callback_solid (const BoxType * b, void *cl)
 {
   PadTypePtr pad = (PadTypePtr) b;
-  if (!XOR (TEST_FLAG (ONSOLDERFLAG, pad), SWAP_IDENT) && pad->Mask)
+  int *side = cl;
+  if (ON_SIDE (pad, side) && pad->Mask)
     gui->fill_pcb_pad (Output.pmGC, pad, true, true);
   return 1;
 }
 
 static void
-DrawMask (BoxType * screen)
+DrawMask (int side, BoxType * screen)
 {
   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
 
@@ -1243,14 +1247,14 @@ DrawMask (BoxType * screen)
       gui->set_color (Output.pmGC, PCB->MaskColor);
       r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback, NULL);
       r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback, NULL);
-      r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, NULL);
+      r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback, &side);
       gui->set_color (Output.pmGC, "erase");
     }
 
   gui->use_mask (HID_MASK_CLEAR);
   r_search (PCB->Data->pin_tree, screen, NULL, clearPin_callback_solid, NULL);
   r_search (PCB->Data->via_tree, screen, NULL, clearPin_callback_solid, NULL);
-  r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback_solid, NULL);
+  r_search (PCB->Data->pad_tree, screen, NULL, clearPad_callback_solid, &side);
 
   gui->use_mask (HID_MASK_AFTER);
   gui->set_color (out->fgGC, PCB->MaskColor);
@@ -1515,23 +1519,17 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     if (!global_view_2d) {
       /* Draw the solder mask if turned on */
       if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0)) {
-        int save_swap = SWAP_IDENT;
         gui->set_layer (NULL, SL (FINISHED, 0), 0);
         gui->set_layer ("componentmask", SL (MASK, TOP), 0);
         //^__ HACK, THE GUI DOESNT WANT US TO DRAW THIS!
-        SWAP_IDENT = 0;
-        DrawMask (drawn_area);
-        SWAP_IDENT = save_swap;
+        DrawMask (SOLDER_LAYER, drawn_area);
         gui->set_layer (NULL, SL (FINISHED, 0), 0);
       }
       if (gui->set_layer ("componentmask", SL (MASK, TOP), 0)) {
-        int save_swap = SWAP_IDENT;
         gui->set_layer (NULL, SL (FINISHED, 0), 0);
         gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0);
         //^__ HACK, THE GUI DOESNT WANT US TO DRAW THIS!
-        SWAP_IDENT = 1;
-        DrawMask (drawn_area);
-        SWAP_IDENT = save_swap;
+        DrawMask (COMPONENT_LAYER, drawn_area);
         gui->set_layer (NULL, SL (FINISHED, 0), 0);
       }
       gui->set_layer ("invisible", SL (INVISIBLE, 0), 0);
@@ -1597,29 +1595,23 @@ ghid_draw_everything (BoxTypePtr drawn_area)
 
   /* Draw the solder mask if turned on */
   if (gui->set_layer ("componentmask", SL (MASK, TOP), 0)) {
-    int save_swap = SWAP_IDENT;
-    SWAP_IDENT = 0;
-    DrawMask (drawn_area);
-    SWAP_IDENT = save_swap;
+    DrawMask (COMPONENT_LAYER, drawn_area);
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
   }
   if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0)) {
-    int save_swap = SWAP_IDENT;
-    SWAP_IDENT = 1;
-    DrawMask (drawn_area);
-    SWAP_IDENT = save_swap;
+    DrawMask (SOLDER_LAYER, drawn_area);
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
   }
-  /* Draw top silkscreen */
+
   if (!Settings.ShowSolderSide &&
       gui->set_layer ("topsilk", SL (SILK, TOP), 0)) {
-    DrawSilk (0, component_silk_layer, drawn_area);
+    DrawSilk (COMPONENT_LAYER, drawn_area);
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
   }
 
   if (Settings.ShowSolderSide &&
       gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0)) {
-    DrawSilk (1, solder_silk_layer, drawn_area);
+    DrawSilk (SOLDER_LAYER, drawn_area);
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
   }
 
