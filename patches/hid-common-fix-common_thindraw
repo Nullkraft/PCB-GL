@@ -1,5 +1,5 @@
 Bottom: 337a65380d79b7e5a8451c72ce62b16d81f7702b
-Top:    337a65380d79b7e5a8451c72ce62b16d81f7702b
+Top:    1104a8cd0b7bd04f66407815f8e6dcef043966b3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-24 13:05:06 +0100
 
@@ -11,4 +11,16 @@ commit 4efcedeeac06cd4d5e559a7fe0a0ee8685f2137a
 
 ---
 
-
+diff --git a/src/hid/common/draw_helpers.c b/src/hid/common/draw_helpers.c
+index b043d92..7d529ba 100644
+--- a/src/hid/common/draw_helpers.c
++++ b/src/hid/common/draw_helpers.c
+@@ -225,7 +225,7 @@ common_thindraw_pcb_pad (hidGC gc, PadType *pad, bool clear, bool mask)
+       /* slanted square pad */
+       float tx, ty, theta;
+ 
+-      if (x1 == x2 || y1 == y2)
++      if (x1 == x2 && y1 == y2)
+         theta = 0;
+       else
+         theta = atan2 (y2 - y1, x2 - x1);
