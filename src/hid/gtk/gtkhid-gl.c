@@ -1273,7 +1273,7 @@ pour_callback_no_clear (const BoxType * b, void *cl)
   struct poly_info *i = (struct poly_info *) cl;
   PourType *pour = (PourType *)b;
 
-  DrawPour (i->Layer, pour, 0);
+  DrawPour (i->Layer, pour);
 
   if (pour->PolygonN)
     {
@@ -1289,7 +1289,7 @@ pour_callback_clearing (const BoxType * b, void *cl)
   struct poly_info *i = (struct poly_info *) cl;
   PourType *pour = (PourType *)b;
 
-  DrawPour (i->Layer, pour, 0);
+  DrawPour (i->Layer, pour);
 
   if (pour->PolygonN)
     {
