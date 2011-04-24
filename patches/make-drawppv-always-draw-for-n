@@ -1,5 +1,5 @@
 Bottom: 62249ced3530565fc992ed0ddcdf34fb7e04668f
-Top:    62249ced3530565fc992ed0ddcdf34fb7e04668f
+Top:    f89f8f0707839f037599a8412818d492556d4350
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-24 01:10:02 +0100
 
@@ -8,4 +8,81 @@ draw.c: Draw pins, pads and vias (for non-gui HIDs) from DrawLayerGroup()
 
 ---
 
-
+diff --git a/src/draw.c b/src/draw.c
+index db38c81..716f2a3 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -84,7 +84,7 @@ static const BoxType *clip_box = NULL;
+ static void Redraw (bool, BoxTypePtr);
+ static void DrawEverything (BoxTypePtr);
+ static void DrawPPV (int group, const BoxType *);
+-static int DrawLayerGroup (int, const BoxType *);
++static void DrawLayerGroup (int, const BoxType *);
+ static void DrawPinOrViaLowLevel (PinTypePtr, bool);
+ static void DrawPlainPin (PinTypePtr, bool);
+ static void DrawPlainVia (PinTypePtr, bool);
+@@ -315,7 +315,6 @@ PrintAssembly (int side, const BoxType * drawn_area)
+ 
+   gui->set_draw_faded (Output.fgGC, 1);
+   DrawLayerGroup (side_group, drawn_area);
+-  DrawPPV (side_group, drawn_area);
+   gui->set_draw_faded (Output.fgGC, 0);
+ 
+   /* draw package */
+@@ -376,8 +375,7 @@ DrawEverything (BoxTypePtr drawn_area)
+       int group = drawn_groups[i];
+ 
+       if (gui->set_layer (0, group, 0))
+-        if (DrawLayerGroup (group, drawn_area) && !gui->gui)
+-          DrawPPV (group, drawn_area);
++        DrawLayerGroup (group, drawn_area);
+     }
+ 
+   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
+@@ -793,16 +791,27 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
+  * draws one layer group.  Returns non-zero if pins and pads should be
+  * drawn with this group.
+  */
++<<<<<<< current
+ static int
+ DrawLayerGroup (int group, const BoxType *draw_area)
++=======
++static void
++DrawLayerGroup (int group, const BoxType * drawn_area)
++>>>>>>> patched
+ {
+   int i, rv = 1;
+   int layernum;
++  int plated;
++  int side;
+   LayerTypePtr Layer;
+   int n_entries = PCB->LayerGroups.Number[group];
+   Cardinal *layers = PCB->LayerGroups.Entries[group];
+ 
++<<<<<<< current
+   clip_box = draw_area;
++=======
++  clip_box = drawn_area;
++>>>>>>> patched
+   for (i = n_entries - 1; i >= 0; i--)
+     {
+       layernum = layers[i];
+@@ -811,11 +820,17 @@ DrawLayerGroup (int group, const BoxType *draw_area)
+           strcmp (Layer->Name, "route") == 0)
+         rv = 0;
+       if (layernum < max_copper_layer && Layer->On)
++<<<<<<< current
+         DrawLayerCommon (Layer, draw_area, true);
++=======
++	DrawLayerCommon (Layer, drawn_area, true);
++>>>>>>> patched
+     }
+   if (n_entries > 1)
+     rv = 1;
+-  return rv;
++
++  if (rv == 1 && !gui->gui)
++    DrawPPV (group, drawn_area);
+ }
+ 
+ /* ---------------------------------------------------------------------------
