@@ -1,5 +1,5 @@
 Bottom: 9570e150db6aa8235fd7ec65ea55cf4755c45a6c
-Top:    108180a33f5f95d206a9b70e86b5390faa8ad1df
+Top:    633ed7bb6ad3ac90293fdf4cec7528f8a82b6d9a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 14:41:22 +0100
 
@@ -18,7 +18,7 @@ Notes from squashed patches:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 02f0427..d0f7372 100644
+index 02f0427..f2c5793 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -71,7 +71,7 @@ RCSID ("$Id$");
@@ -76,6 +76,15 @@ index 02f0427..d0f7372 100644
  DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
  	   bool invisible)
  {
+@@ -544,7 +544,7 @@ pad_callback (const BoxType * b, void *cl)
+   PadTypePtr pad = (PadTypePtr) b;
+   int *side = cl;
+ 
+-  if (TEST_FLAG (ONSOLDERFLAG, pad) == (*side == SOLDER_LAYER))
++  if (ON_SIDE (pad, *side))
+     DrawPad (pad);
+   return 1;
+ }
 @@ -622,7 +622,7 @@ clearPad_callback (const BoxType * b, void *cl)
   * Draws silk layer.
   */
@@ -174,7 +183,7 @@ index fdd4c70..94570a8 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5d53d27..c668d31 100644
+index 5d53d27..6b52e57 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -186,13 +195,11 @@ index 5d53d27..c668d31 100644
  #include "gui-pinout-preview.h"
  
  /* The Linux OpenGL ABI 1.0 spec requires that we define
-@@ -29,13 +31,21 @@
+@@ -29,13 +31,18 @@
  #include <dmalloc.h>
  #endif
  
-+#define ON_SIDE(element, side) (TEST_FLAG (ONSOLDERFLAG, element) == (*side == SOLDER_LAYER))
-+
- 
+-
  RCSID ("$Id$");
  
  
@@ -208,7 +215,7 @@ index 5d53d27..c668d31 100644
  
  /* Sets gport->u_gc to the "right" GC to use (wrt mask or window)
  */
-@@ -72,6 +82,58 @@ typedef struct hid_gc_struct
+@@ -72,6 +79,58 @@ typedef struct hid_gc_struct
  hid_gc_struct;
  
  
@@ -267,7 +274,7 @@ index 5d53d27..c668d31 100644
  int
  ghid_set_layer (const char *name, int group, int empty)
  {
-@@ -91,48 +153,30 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -91,48 +150,30 @@ ghid_set_layer (const char *name, int group, int empty)
        idx = PCB->LayerGroups.Entries[group][idx];
      }
  
@@ -329,7 +336,24 @@ index 5d53d27..c668d31 100644
    if (idx < 0)
      {
        switch (SL_TYPE (idx))
-@@ -428,10 +472,6 @@ typedef struct
+@@ -140,14 +181,10 @@ ghid_set_layer (const char *name, int group, int empty)
+ 	case SL_INVISIBLE:
+ 	  return PCB->InvisibleObjectsOn;
+ 	case SL_MASK:
+-	  if (SL_MYSIDE (idx))
+-	    return TEST_FLAG (SHOWMASKFLAG, PCB);
+-	  return 0;
++	  return TEST_FLAG (SHOWMASKFLAG, PCB);
+ 	case SL_SILK:
+ 	  priv->trans_lines = true;
+-	  if (SL_MYSIDE (idx))
+-	    return PCB->ElementOn;
+-	  return 0;
++	  return PCB->ElementOn;
+ 	case SL_ASSY:
+ 	  return 0;
+ 	case SL_PDRILL:
+@@ -428,10 +465,6 @@ typedef struct
    double blue;
  } ColorCache;
  
@@ -340,7 +364,7 @@ index 5d53d27..c668d31 100644
  void
  ghid_set_color (hidGC gc, const char *name)
  {
-@@ -547,7 +587,7 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -547,7 +580,7 @@ ghid_set_color (hidGC gc, const char *name)
    glColor4d (r, g, b, a);
  }
  
@@ -349,41 +373,34 @@ index 5d53d27..c668d31 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -964,6 +1004,632 @@ ghid_screen_update (void)
+@@ -964,6 +997,610 @@ ghid_screen_update (void)
  {
  }
  
 +static int
-+backE_callback (const BoxType * b, void *cl)
++element_callback (const BoxType * b, void *cl)
 +{
 +  ElementTypePtr element = (ElementTypePtr) b;
++  int *side = cl;
 +
-+  if (!FRONT (element))
-+    {
-+      DrawElementPackage (element);
-+    }
++  if (ON_SIDE (element, *side))
++    DrawElementPackage (element);
 +  return 1;
 +}
 +
 +static int
-+backN_callback (const BoxType * b, void *cl)
++name_callback (const BoxType * b, void *cl)
 +{
 +  TextTypePtr text = (TextTypePtr) b;
 +  ElementTypePtr element = (ElementTypePtr) text->Element;
++  int *side = cl;
 +
-+  if (!FRONT (element) && !TEST_FLAG (HIDENAMEFLAG, element))
++  if (TEST_FLAG (HIDENAMEFLAG, element))
++    return 0;
++
++  if (ON_SIDE (element, *side))
 +    DrawElementName (element);
 +  return 0;
-+}
-+
-+static int
-+backPad_callback (const BoxType * b, void *cl)
-+{
-+  PadTypePtr pad = (PadTypePtr) b;
-+
-+  if (!FRONT (pad))
-+    DrawPad (pad);
-+  return 1;
 +}
 +
 +static int
@@ -440,6 +457,14 @@ index 5d53d27..c668d31 100644
 +}
 +
 +static int
++via_callback (const BoxType * b, void *cl)
++{
++  PinTypePtr via = (PinTypePtr) b;
++  DrawPlainVia (via, false);
++  return 1;
++}
++
++static int
 +pin_callback (const BoxType * b, void *cl)
 +{
 +  DrawPlainPin ((PinTypePtr) b, false);
@@ -450,7 +475,9 @@ index 5d53d27..c668d31 100644
 +pad_callback (const BoxType * b, void *cl)
 +{
 +  PadTypePtr pad = (PadTypePtr) b;
-+  if (FRONT (pad))
++  int *side = cl;
++
++  if (ON_SIDE (pad, *side))
 +    DrawPad (pad);
 +  return 1;
 +}
@@ -460,14 +487,6 @@ index 5d53d27..c668d31 100644
 +hole_callback (const BoxType * b, void *cl)
 +{
 +  DrawHole ((PinTypePtr) b);
-+  return 1;
-+}
-+
-+static int
-+via_callback (const BoxType * b, void *cl)
-+{
-+  PinTypePtr via = (PinTypePtr) b;
-+  DrawPlainVia (via, false);
 +  return 1;
 +}
 +
@@ -560,7 +579,7 @@ index 5d53d27..c668d31 100644
 +{
 +  PadTypePtr pad = (PadTypePtr) b;
 +  int *side = cl;
-+  if (ON_SIDE (pad, side) && pad->Mask)
++  if (ON_SIDE (pad, *side) && pad->Mask)
 +    ClearPad (pad, true);
 +  return 1;
 +}
@@ -578,7 +597,7 @@ index 5d53d27..c668d31 100644
 +{
 +  PadTypePtr pad = (PadTypePtr) b;
 +  int *side = cl;
-+  if (ON_SIDE (pad, side) && pad->Mask)
++  if (ON_SIDE (pad, *side) && pad->Mask)
 +    gui->fill_pcb_pad (Output.pmGC, pad, true, true);
 +  return 1;
 +}
@@ -619,6 +638,7 @@ index 5d53d27..c668d31 100644
 +{
 +  int i, rv = 1;
 +  int layernum;
++  int side;
 +  struct poly_info info;
 +  LayerTypePtr Layer;
 +  int n_entries = PCB->LayerGroups.Number[group];
@@ -687,14 +707,16 @@ index 5d53d27..c668d31 100644
 +      if (!global_view_2d && rv) {
 +        if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
 +        if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
-+        if ((group == component_group && !SWAP_IDENT) ||
-+            (group == solder_group    &&  SWAP_IDENT))
-+          if (PCB->PinOn)
-+            r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, Layer);
-+        if ((group == solder_group    && !SWAP_IDENT) ||
-+            (group == component_group &&  SWAP_IDENT))
-+          if (PCB->PinOn)
-+            r_search (PCB->Data->pad_tree, screen, NULL, backPad_callback, Layer);
++        if (PCB->PinOn && group == component_group)
++          {
++            side = COMPONENT_LAYER;
++            r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, &side);
++          }
++        if (PCB->PinOn && group == solder_group)
++          {
++            side = SOLDER_LAYER;
++            r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, &side);
++          }
 +      }
 +
 +      if (TEST_FLAG (CHECKPLANESFLAG, PCB))
@@ -791,6 +813,7 @@ index 5d53d27..c668d31 100644
 +ghid_draw_everything (BoxTypePtr drawn_area)
 +{
 +  int i, ngroups;
++  int side;
 +  /* This is the list of layer groups we will draw.  */
 +  int do_group[MAX_LAYER];
 +  /* This is the reverse of the order in which we draw them.  */
@@ -858,36 +881,27 @@ index 5d53d27..c668d31 100644
 +  /*
 +   * first draw all 'invisible' stuff
 +   */
++  side = SWAP_IDENT ? COMPONENT_LAYER : SOLDER_LAYER;
++
 +  if (!TEST_FLAG (CHECKPLANESFLAG, PCB) &&
 +      gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
 +    if (PCB->ElementOn) {
-+      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, backN_callback, NULL);
-+      DrawLayer (&(PCB->Data->BACKSILKLAYER), drawn_area);
++      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
++      DrawLayer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area);
 +    }
-+#if 1
-+    if (!global_view_2d) {
-+      /* Draw the solder mask if turned on */
-+      if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0)) {
-+        gui->set_layer (NULL, SL (FINISHED, 0), 0);
-+        gui->set_layer ("componentmask", SL (MASK, TOP), 0);
-+        //^__ HACK, THE GUI DOESNT WANT US TO DRAW THIS!
-+        DrawMask (SOLDER_LAYER, drawn_area);
-+        gui->set_layer (NULL, SL (FINISHED, 0), 0);
-+      }
-+      if (gui->set_layer ("componentmask", SL (MASK, TOP), 0)) {
-+        gui->set_layer (NULL, SL (FINISHED, 0), 0);
-+        gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0);
-+        //^__ HACK, THE GUI DOESNT WANT US TO DRAW THIS!
-+        DrawMask (COMPONENT_LAYER, drawn_area);
++    if (global_view_2d) {
++      r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
++    } else {
++      /* Draw the reverse-side solder mask if turned on */
++      if (gui->set_layer (SWAP_IDENT ? "componentmask" : "soldermask",
++                          SWAP_IDENT ? SL (MASK, TOP) : SL (MASK, BOTTOM), 0)) {
++        DrawMask (side, drawn_area);
 +        gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +      }
 +      gui->set_layer ("invisible", SL (INVISIBLE, 0), 0);
 +    }
-+#endif
-+    if (global_view_2d)
-+      r_search (PCB->Data->pad_tree, drawn_area, NULL, backPad_callback, NULL);
 +    if (PCB->ElementOn)
-+      r_search (PCB->Data->element_tree, drawn_area, NULL, backE_callback, NULL);
++      r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
 +    gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +  }
 +
@@ -904,7 +918,6 @@ index 5d53d27..c668d31 100644
 +      cyl_info.from_layer = drawn_groups[i];
 +      cyl_info.to_layer = drawn_groups[i - 1];
 +      cyl_info.scale = gport->zoom;
-+//      gui->set_color (Output.fgGC, PCB->MaskColor);
 +      gui->set_color (Output.fgGC, "drill");
 +      ghid_global_alpha_mult (Output.fgGC, 0.75);
 +      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_cyl_callback, &cyl_info);
@@ -917,51 +930,40 @@ index 5d53d27..c668d31 100644
 +  if (TEST_FLAG (CHECKPLANESFLAG, PCB))
 +    return;
 +
++  side = SWAP_IDENT ? SOLDER_LAYER : COMPONENT_LAYER;
++
 +  /* Draw pins, pads, vias below silk */
-+  if (!Settings.ShowSolderSide)
-+    gui->set_layer ("topsilk", SL (SILK, TOP), 0);
-+  else
-+    gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0);
-+//  gui->set_layer (NULL, SL (FINISHED, 0), 0);
++  if (global_view_2d &&
++      gui->set_layer (SWAP_IDENT ? "bottomsilk" : "topsilk",
++                      SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0)) {
 +
-+  if (global_view_2d)
-+    {
-+      /* Mask out drilled holes */
-+      hidgl_flush_triangles (&buffer);
-+      glPushAttrib (GL_COLOR_BUFFER_BIT);
-+      glColorMask (0, 0, 0, 0);
-+      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
-+      if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
-+      hidgl_flush_triangles (&buffer);
-+      glPopAttrib ();
++    /* Mask out drilled holes */
++    hidgl_flush_triangles (&buffer);
++    glPushAttrib (GL_COLOR_BUFFER_BIT);
++    glColorMask (0, 0, 0, 0);
++    if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
++    if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
++    hidgl_flush_triangles (&buffer);
++    glPopAttrib ();
 +
-+      if (PCB->PinOn) r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, NULL);
-+      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
-+      if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
-+    }
++    if (PCB->PinOn) r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
++    if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
++    if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
 +
-+  gui->set_layer (NULL, SL (FINISHED, 0), 0);
++    gui->set_layer (NULL, SL (FINISHED, 0), 0);
++  }
 +
 +  /* Draw the solder mask if turned on */
-+  if (gui->set_layer ("componentmask", SL (MASK, TOP), 0)) {
-+    DrawMask (COMPONENT_LAYER, drawn_area);
-+    gui->set_layer (NULL, SL (FINISHED, 0), 0);
-+  }
-+  if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0)) {
-+    DrawMask (SOLDER_LAYER, drawn_area);
++  if (gui->set_layer (SWAP_IDENT ? "soldermask" : "componentmask",
++                      SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0)) {
++    DrawMask (side, drawn_area);
 +    gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +  }
 +
-+  if (!Settings.ShowSolderSide &&
-+      gui->set_layer ("topsilk", SL (SILK, TOP), 0)) {
-+    DrawSilk (COMPONENT_LAYER, drawn_area);
-+    gui->set_layer (NULL, SL (FINISHED, 0), 0);
-+  }
-+
-+  if (Settings.ShowSolderSide &&
-+      gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0)) {
-+    DrawSilk (SOLDER_LAYER, drawn_area);
-+    gui->set_layer (NULL, SL (FINISHED, 0), 0);
++  if (gui->set_layer (SWAP_IDENT ? "bottomsilk" : "topsilk",
++                      SWAP_IDENT ? SL (SILK, BOTTOM) : SL (SILK, TOP), 0)) {
++      DrawSilk (side, drawn_area);
++      gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +  }
 +
 +  /* Draw element Marks */
@@ -982,7 +984,7 @@ index 5d53d27..c668d31 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1028,8 +1694,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1028,8 +1665,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -993,7 +995,7 @@ index 5d53d27..c668d31 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1095,13 +1761,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1095,13 +1732,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -1007,7 +1009,7 @@ index 5d53d27..c668d31 100644
    /* TODO: Background image */
  
    hidgl_init_triangle_array (&buffer);
-@@ -1121,7 +1780,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1121,7 +1751,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_x0,
                  ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                               -port->view_y0, 0);
