@@ -1,5 +1,5 @@
 Bottom: b4d346116833b513939344c8300c90bcf152b38e
-Top:    ad8dff35d50db2013dbb6cb5a132c844382e3732
+Top:    3ec3e63ea069f3130c9bff5c9cad4da8d06401df
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-24 12:41:19 +0100
 
@@ -16,7 +16,7 @@ Add strip hierarchy options to display refdes without any "..../" prefix
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 7bdda3e..bada093 100644
+index 7bdda3e..cf62b49 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -3472,9 +3472,16 @@ ActionRenumber (int argc, char **argv, int x, int y)
@@ -37,7 +37,7 @@ index 7bdda3e..bada093 100644
  	  while (tmps[j] && (tmps[j] < '0' || tmps[j] > '9')
  		 && tmps[j] != '?')
  	    j++;
-@@ -4824,6 +4831,79 @@ ActionToggleHideName (int argc, char **argv, int x, int y)
+@@ -4824,6 +4831,77 @@ ActionToggleHideName (int argc, char **argv, int x, int y)
  
  /* --------------------------------------------------------------------------- */
  
@@ -57,7 +57,6 @@ index 7bdda3e..bada093 100644
 +  char *function = ARG (0);
 +  if (function && PCB->ElementOn)
 +    {
-+      HideCrosshair (true);
 +      switch (GetFunctionID (function))
 +	{
 +	case F_Object:
@@ -73,7 +72,7 @@ index 7bdda3e..bada093 100644
 +		EraseElementName ((ElementTypePtr) ptr2);
 +		TOGGLE_FLAG (HIDENAMEFLAG, (ElementTypePtr) ptr2);
 +/* TODO: 		   SetTextBoundingBox (&PCB->Font, new); */
-+		DrawElementName ((ElementTypePtr) ptr2, 0);
++		DrawElementName ((ElementTypePtr) ptr2);
 +		Draw ();
 +		IncrementUndoSerialNumber ();
 +	      }
@@ -95,7 +94,7 @@ index 7bdda3e..bada093 100644
 +		  EraseElementName (element);
 +		  TOGGLE_FLAG (STRIPHIERFLAG, element);
 +/* TODO: 		   SetTextBoundingBox (&PCB->Font, new); */
-+		  DrawElementName (element, 0);
++		  DrawElementName (element);
 +		  changed = true;
 +		}
 +	    }
@@ -107,7 +106,6 @@ index 7bdda3e..bada093 100644
 +	      }
 +	  }
 +	}
-+      RestoreCrosshair (true);
 +    }
 +  return 0;
 +}
@@ -117,7 +115,7 @@ index 7bdda3e..bada093 100644
  static const char changejoin_syntax[] =
    "ChangeJoin(ToggleObject|SelectedLines|SelectedArcs|Selected)";
  
-@@ -8161,6 +8241,9 @@ HID_Action action_action_list[] = {
+@@ -8161,6 +8239,9 @@ HID_Action action_action_list[] = {
    {"ToggleHideName", 0, ActionToggleHideName,
     togglehidename_help, togglehidename_syntax}
    ,
