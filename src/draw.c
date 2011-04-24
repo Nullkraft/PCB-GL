@@ -794,7 +794,7 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
  * drawn with this group.
  */
 static int
-DrawLayerGroup (int group, const BoxType *draw_area)
+DrawLayerGroup (int group, const BoxType *drawn_area)
 {
   int i, rv = 1;
   int layernum;
@@ -802,7 +802,7 @@ DrawLayerGroup (int group, const BoxType *draw_area)
   int n_entries = PCB->LayerGroups.Number[group];
   Cardinal *layers = PCB->LayerGroups.Entries[group];
 
-  clip_box = draw_area;
+  clip_box = drawn_area;
   for (i = n_entries - 1; i >= 0; i--)
     {
       layernum = layers[i];
@@ -811,7 +811,7 @@ DrawLayerGroup (int group, const BoxType *draw_area)
           strcmp (Layer->Name, "route") == 0)
         rv = 0;
       if (layernum < max_copper_layer && Layer->On)
-        DrawLayerCommon (Layer, draw_area, true);
+        DrawLayerCommon (Layer, drawn_area, true);
     }
   if (n_entries > 1)
     rv = 1;
