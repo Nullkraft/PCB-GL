@@ -1,5 +1,5 @@
 Bottom: 1ca4836dbc6d685024c5d2a5f8289dfecf850d3f
-Top:    8ab9374ed9c72f1156704013441fc276bfc2404f
+Top:    ea161c78b16e178a00f6817cce3e6c14fc5b5237
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 14:41:49 +0100
 
@@ -9,7 +9,7 @@ Fixup gtk hid drawing routines for pour support
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f0bcbf5..56e0a8d 100644
+index f0bcbf5..9159eed 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -1202,6 +1202,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *dra
@@ -32,7 +32,7 @@ index f0bcbf5..56e0a8d 100644
 +  struct poly_info *i = (struct poly_info *) cl;
 +  PourType *pour = (PourType *)b;
 +
-+  DrawPour (i->Layer, pour, 0);
++  DrawPour (i->Layer, pour);
 +
 +  if (pour->PolygonN)
 +    {
@@ -48,7 +48,7 @@ index f0bcbf5..56e0a8d 100644
 +  struct poly_info *i = (struct poly_info *) cl;
 +  PourType *pour = (PourType *)b;
 +
-+  DrawPour (i->Layer, pour, 0);
++  DrawPour (i->Layer, pour);
 +
 +  if (pour->PolygonN)
 +    {
