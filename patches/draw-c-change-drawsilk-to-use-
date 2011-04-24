@@ -1,5 +1,5 @@
-Bottom: 7df50c95267e60a440d29b68e289b0a2f797e2a5
-Top:    6a0c01db67f34753620c8f0bee326276b589583a
+Bottom: 41c297e7de7dace977fccd83cfacac3df700b9f6
+Top:    db7f7901d64ab28c2a0280de3bb0453ca753f97f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 15:35:54 +0100
 
@@ -13,10 +13,10 @@ determine that from the requested side to draw.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 61f5341..b7a27e0 100644
+index a69caba..af57288 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -308,9 +308,9 @@ rat_callback (const BoxType * b, void *cl)
+@@ -309,9 +309,9 @@ rat_callback (const BoxType * b, void *cl)
   */
  
  static void
@@ -28,7 +28,7 @@ index 61f5341..b7a27e0 100644
  
    gui->set_draw_faded (Output.fgGC, 1);
    DrawLayerGroup (side_group, drawn_area);
-@@ -500,11 +500,11 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -473,11 +473,11 @@ DrawEverything (BoxTypePtr drawn_area)
      }
  
    doing_assy = true;
