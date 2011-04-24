@@ -1,0 +1,38 @@
+Bottom: 9afa20ad00b1a3c82032f5f4eb999bccbbf1c1c3
+Top:    8d2384342bc59266a2e892c90b4eb160fd8a2f99
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-24 02:46:55 +0100
+
+Refresh of draw-c-change-drawsilk-to-use-
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 652fe86..5a9bb1b 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -309,9 +309,9 @@ rat_callback (const BoxType * b, void *cl)
+  */
+ 
+ static void
+-PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
++PrintAssembly (int side, const BoxType * drawn_area)
+ {
+-  int side = swap_ident ? SOLDER_LAYER : COMPONENT_LAYER;
++  int side_group = GetLayerGroupNumberByNumber (max_copper_layer + side);
+ 
+   gui->set_draw_faded (Output.fgGC, 1);
+   DrawLayerGroup (side_group, drawn_area);
+@@ -491,10 +491,10 @@ DrawEverything (BoxTypePtr drawn_area)
+ 
+   doing_assy = true;
+   if (gui->set_layer ("topassembly", SL (ASSY, TOP), 0))
+-    PrintAssembly (drawn_area, component, 0);
++    PrintAssembly (COMPONENT_LAYER, drawn_area);
+ 
+   if (gui->set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
+-    PrintAssembly (drawn_area, solder, 1);
++    PrintAssembly (SOLDER_LAYER, drawn_area);
+   doing_assy = false;
+ 
+   if (gui->set_layer ("fab", SL (FAB, 0), 0))
