@@ -3,11 +3,7 @@ Top:    aba0112e584ed6c1ee6b0499d276d2754adbbd78
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-24 01:10:02 +0100
 
-Make DrawPPV() always draw for non gui HIDs, rather than doing_assy
-
-The gui HIDs don't accept the assembly drawaing, so testing for !gui->gui
-will catch this case, and we can drop the doing_assy override for
-PCB->PinOn and PCB->ViaOn
+draw.c: Draw pins, pads and vias (for non-gui HIDs) from DrawLayerGroup()
 
 
 ---
