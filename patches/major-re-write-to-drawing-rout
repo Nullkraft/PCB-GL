@@ -1,4 +1,4 @@
-Bottom: 9570e150db6aa8235fd7ec65ea55cf4755c45a6c
+Bottom: dc144c613d835a8712c4a7eb5ceb9c3eb2c127ac
 Top:    633ed7bb6ad3ac90293fdf4cec7528f8a82b6d9a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 14:41:22 +0100
@@ -18,7 +18,7 @@ Notes from squashed patches:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 02f0427..f2c5793 100644
+index a166fe5..f2c5793 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -71,7 +71,7 @@ RCSID ("$Id$");
@@ -76,15 +76,6 @@ index 02f0427..f2c5793 100644
  DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
  	   bool invisible)
  {
-@@ -544,7 +544,7 @@ pad_callback (const BoxType * b, void *cl)
-   PadTypePtr pad = (PadTypePtr) b;
-   int *side = cl;
- 
--  if (TEST_FLAG (ONSOLDERFLAG, pad) == (*side == SOLDER_LAYER))
-+  if (ON_SIDE (pad, *side))
-     DrawPad (pad);
-   return 1;
- }
 @@ -622,7 +622,7 @@ clearPad_callback (const BoxType * b, void *cl)
   * Draws silk layer.
   */
