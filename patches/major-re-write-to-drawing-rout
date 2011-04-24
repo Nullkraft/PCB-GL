@@ -1,5 +1,5 @@
 Bottom: dc144c613d835a8712c4a7eb5ceb9c3eb2c127ac
-Top:    633ed7bb6ad3ac90293fdf4cec7528f8a82b6d9a
+Top:    624244a770d982c112a7c80139c210334b201e07
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 14:41:22 +0100
 
@@ -174,7 +174,7 @@ index fdd4c70..94570a8 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 5d53d27..6b52e57 100644
+index 5d53d27..ff8a42b 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -924,9 +924,9 @@ index 5d53d27..6b52e57 100644
 +  side = SWAP_IDENT ? SOLDER_LAYER : COMPONENT_LAYER;
 +
 +  /* Draw pins, pads, vias below silk */
-+  if (global_view_2d &&
-+      gui->set_layer (SWAP_IDENT ? "bottomsilk" : "topsilk",
-+                      SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0)) {
++  if (global_view_2d) {
++    gui->set_layer (SWAP_IDENT ? "bottomsilk" : "topsilk",
++                    SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0);
 +
 +    /* Mask out drilled holes */
 +    hidgl_flush_triangles (&buffer);
