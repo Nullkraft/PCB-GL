@@ -1,0 +1,66 @@
+Bottom: 337a65380d79b7e5a8451c72ce62b16d81f7702b
+Top:    961db4b57229694823ccfcc79edd8cff5bdca892
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-24 17:45:58 +0100
+
+Refresh of make-the-on_side-macro-global-
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 47db1fd..f12020d 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -66,7 +66,6 @@ RCSID ("$Id$");
+ #define	LARGE_TEXT_SIZE			3
+ #define	N_TEXT_SIZES			4
+ 
+-#define ON_SIDE(element, side) (TEST_FLAG (ONSOLDERFLAG, element) == (*side == SOLDER_LAYER))
+ 
+ /* ---------------------------------------------------------------------------
+  * some local identifiers
+@@ -236,7 +235,7 @@ element_callback (const BoxType * b, void *cl)
+   ElementTypePtr element = (ElementTypePtr) b;
+   int *side = cl;
+ 
+-  if (ON_SIDE (element, side))
++  if (ON_SIDE (element, *side))
+     DrawElementPackage (element);
+   return 1;
+ }
+@@ -251,7 +250,7 @@ name_callback (const BoxType * b, void *cl)
+   if (TEST_FLAG (HIDENAMEFLAG, element))
+     return 0;
+ 
+-  if (ON_SIDE (element, side))
++  if (ON_SIDE (element, *side))
+     DrawElementName (element);
+   return 0;
+ }
+@@ -611,7 +610,7 @@ clearPad_callback (const BoxType * b, void *cl)
+ {
+   PadTypePtr pad = (PadTypePtr) b;
+   int *side = cl;
+-  if (ON_SIDE (pad, side) && pad->Mask)
++  if (ON_SIDE (pad, *side) && pad->Mask)
+     ClearPad (pad, true);
+   return 1;
+ }
+diff --git a/src/macro.h b/src/macro.h
+index 19f80b8..6dcd0d1 100644
+--- a/src/macro.h
++++ b/src/macro.h
+@@ -162,6 +162,13 @@ extern int mem_any_set (unsigned char *, int);
+ 	((TEST_FLAG(ONSOLDERFLAG, (o)) != 0) == SWAP_IDENT)
+ 
+ /* ---------------------------------------------------------------------------
++ *  Determines if an object is on the given side. side is either SOLDER_LAYER
++ *  or COMPONENT_LAYER.
++ */
++#define ON_SIDE(element, side) \
++        (TEST_FLAG (ONSOLDERFLAG, element) == (side == SOLDER_LAYER))
++
++/* ---------------------------------------------------------------------------
+  * some loop shortcuts
+  * all object loops run backwards to prevent from errors when deleting objects
+  *
