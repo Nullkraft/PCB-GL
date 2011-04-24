@@ -1,5 +1,5 @@
-Bottom: 41c297e7de7dace977fccd83cfacac3df700b9f6
-Top:    db7f7901d64ab28c2a0280de3bb0453ca753f97f
+Bottom: 250d790e7a782b4f26bbd2935aef417ad843968f
+Top:    250d790e7a782b4f26bbd2935aef417ad843968f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 15:35:54 +0100
 
@@ -12,34 +12,4 @@ determine that from the requested side to draw.
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index a69caba..af57288 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -309,9 +309,9 @@ rat_callback (const BoxType * b, void *cl)
-  */
- 
- static void
--PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
-+PrintAssembly (int side, const BoxType * drawn_area)
- {
--  int side = swap_ident ? SOLDER_LAYER : COMPONENT_LAYER;
-+  int side_group = GetLayerGroupNumberByNumber (max_copper_layer + side);
- 
-   gui->set_draw_faded (Output.fgGC, 1);
-   DrawLayerGroup (side_group, drawn_area);
-@@ -473,11 +473,11 @@ DrawEverything (BoxTypePtr drawn_area)
-     }
- 
-   doing_assy = true;
--  if (gui->set_layer ("topassembly", SL (ASSY, TOP), 0))
--    PrintAssembly (drawn_area, component, 0);
-+  if (gui->set_layer ("topassembly", SL (ASSY, TOP)))
-+    PrintAssembly (COMPONENT_LAYER, drawn_area, component, 0);
- 
-   if (gui->set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
--    PrintAssembly (drawn_area, solder, 1);
-+    PrintAssembly (SOLDER_LAYER, drawn_area, solder);
-   doing_assy = false;
- 
-   if (gui->set_layer ("fab", SL (FAB, 0), 0))
+
