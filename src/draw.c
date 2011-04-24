@@ -821,7 +821,7 @@ DrawLayerGroup (int group, const BoxType * drawn_area)
   if (n_entries > 1)
     rv = 1;
 
-  if (rv == 1 && (!gui->gui || doing_assy))
+  if (rv == 1 && !gui->gui)
     DrawPPV (group, drawn_area);
 }
 
