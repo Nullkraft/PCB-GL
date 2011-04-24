@@ -1,7 +1,7 @@
-Bottom: 0f6671a509c41d1e677bbbd204bc779ebd5daad3
-Top:    d62e373c1e0a30d87f5d4bbf96b0b44c6ffd468b
+Bottom: 8c58ec83dc7b6bf7f80a00ba5fb8d2866ccf00e0
+Top:    79f5d11cd743cbae923339342dde8be3116a7196
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-24 13:10:44 +0100
+Date:   2011-04-24 19:32:57 +0100
 
 Fixup gtk hid drawing routines for pour support
 
@@ -9,10 +9,10 @@ Fixup gtk hid drawing routines for pour support
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index f0bcbf5..9159eed 100644
+index 6f33f7f..e7a34d3 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1202,6 +1202,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *dra
+@@ -1192,6 +1192,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon, const BoxType *dra
    if (!Polygon->Clipped)
      return;
  
@@ -23,7 +23,7 @@ index f0bcbf5..9159eed 100644
    if (TEST_FLAG (SELECTEDFLAG, Polygon))
      color = Layer->SelectedColor;
    else if (TEST_FLAG (FOUNDFLAG, Polygon))
-@@ -1264,6 +1268,38 @@ poly_callback_clearing (const BoxType * b, void *cl)
+@@ -1254,6 +1258,38 @@ poly_callback_clearing (const BoxType * b, void *cl)
  }
  
  static int
@@ -62,7 +62,7 @@ index f0bcbf5..9159eed 100644
  clearPin_callback (const BoxType * b, void *cl)
  {
    PinType *pin = (PinTypePtr) b;
-@@ -1393,11 +1429,11 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1384,11 +1420,11 @@ DrawLayerGroup (int group, const BoxType * screen)
        }
  
        /* draw all polygons on this layer */
