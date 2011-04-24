@@ -1080,7 +1080,7 @@ pin_name_callback (const BoxType * b, void *cl)
   PinTypePtr pin = (PinTypePtr) b;
 
   if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
-    DrawPinName (pin, 0);
+    DrawPinName (pin);
   return 1;
 }
 
@@ -1106,7 +1106,7 @@ pin_callback (const BoxType * b, void *cl)
   PinTypePtr pin = (PinTypePtr) b;
 
   if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
-    DrawPinName (pin, 0);
+    DrawPinName (pin);
   DrawPlainPin (pin, false);
   return 1;
 }
