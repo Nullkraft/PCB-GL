@@ -49,6 +49,7 @@
 #include "search.h"
 #include "select.h"
 #include "print.h"
+#include "pour.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
@@ -93,6 +94,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
 static void DrawLineLowLevel (LineTypePtr);
 /* static */ void DrawRegularText (LayerTypePtr, TextTypePtr);
 static void DrawPolygonLowLevel (PolygonTypePtr);
+static void DrawPourLowLevel (PourTypePtr);
 static void DrawArcLowLevel (ArcTypePtr);
 static void DrawElementPackageLowLevel (ElementTypePtr Element);
 static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
@@ -599,12 +601,36 @@ clearPin_callback (const BoxType * b, void *cl)
     gui->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
   return 1;
 }
+
 static int
 poly_callback (const BoxType * b, void *cl)
 {
   LayerType *layer = cl;
 
   DrawPlainPolygon (layer, (PolygonTypePtr) b);
+  return 1;
+}
+
+struct pour_info
+{
+  LayerTypePtr Layer;
+  const BoxType * clip;
+};
+
+static int
+pour_callback (const BoxType * b, void *cl)
+{
+  struct pour_info *i = (struct pour_info *) cl;
+  PourType *pour = (PourType *)b;
+
+  if (gui->gui)
+    DrawPour (i->Layer, pour, 0);
+
+  if (pour->PolygonN)
+    {
+      r_search (pour->polygon_tree, i->clip, NULL, poly_callback, i->Layer);
+    }
+
   return 1;
 }
 
@@ -773,8 +799,11 @@ void
 DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
 {
   /* print the non-clearing polys */
+  struct pour_info info;
+  info.Layer = Layer;
+  info.clip = screen;
   clip_box = screen;
-  r_search (Layer->polygon_tree, screen, NULL, poly_callback, Layer);
+  r_search (Layer->pour_tree, screen, NULL, pour_callback, &info);
 
   if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
     return;
@@ -1191,6 +1220,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
 }
 
 /* ---------------------------------------------------------------------------
+ * lowlevel drawing routine for pours
+ */
+static void
+DrawPourLowLevel (PourTypePtr Pour)
+{
+  int *x, *y, n, i;
+
+  if (Gathering)
+    {
+      AddPart (Pour);
+      return;
+    }
+
+  n = Pour->PointN;
+  x = (int *) malloc (n * sizeof (int));
+  y = (int *) malloc (n * sizeof (int));
+  for (i = 0; i < n; i++)
+    {
+      x[i] = Pour->Points[i].X;
+      y[i] = Pour->Points[i].Y;
+    }
+
+//  if (TEST_FLAG (THINDRAWFLAG, PCB) ||
+//      TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
+//      TEST_FLAG (CLEARLINEFLAG, Pour))
+  if (1)
+    {
+      gui->set_line_width (Output.fgGC, 2);
+//      gui->set_line_width (Output.fgGC, 1);
+      for (i = 0; i < n; i++)
+        {
+          Cardinal next = next_contour_point (Pour, i);
+          gui->draw_line (Output.fgGC, x[i], y[i], x[next], y[next]);
+        }
+    }
+  else
+    gui->fill_polygon (Output.fgGC, n, x, y);
+  free (x);
+  free (y);
+}
+
+/* ---------------------------------------------------------------------------
  * lowlevel routine to element arcs
  */
 static void
@@ -1509,6 +1580,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
   DrawPolygonLowLevel (Polygon);
 }
 
+/* ---------------------------------------------------------------------------
+ * draws a pour on a layer
+ */
+void
+DrawPour (LayerTypePtr Layer, PourTypePtr Pour)
+{
+  int layernum;
+
+  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Pour))
+    {
+      if (TEST_FLAG (SELECTEDFLAG, Pour))
+	gui->set_color (Output.fgGC, Layer->SelectedColor);
+      else
+	gui->set_color (Output.fgGC, PCB->ConnectedColor);
+    }
+  else
+    gui->set_color (Output.fgGC, Layer->Color);
+  layernum = GetLayerNumber (PCB->Data, Layer);
+  DrawPourLowLevel (Pour);
+#warning FIXME Later
+#if 0
+  if (TEST_FLAG (CLEARPOLYFLAG, Pour))
+    {
+      r_search (PCB->Data->pin_tree, &Pour->BoundingBox, NULL,
+		cp_callback, (void *) PIN_TYPE);
+      r_search (PCB->Data->via_tree, &Pour->BoundingBox, NULL,
+		cp_callback, (void *) VIA_TYPE);
+    }
+#endif
+}
+
 int
 thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
 {
@@ -1780,6 +1882,16 @@ ErasePolygon (PolygonTypePtr Polygon)
 }
 
 /* ---------------------------------------------------------------------------
+ * erases a pour on a layer
+ */
+void
+ErasePour (PourTypePtr Pour)
+{
+  gui->set_color (Output.fgGC, Settings.BackgroundColor);
+  DrawPourLowLevel (Pour);
+}
+
+/* ---------------------------------------------------------------------------
  * erases an element
  */
 void
@@ -1850,6 +1962,9 @@ EraseObject (int type, void *lptr, void *ptr)
     case POLYGON_TYPE:
       ErasePolygon ((PolygonTypePtr) ptr);
       break;
+    case POUR_TYPE:
+      ErasePour ((PourTypePtr) ptr);
+      break;
     case ELEMENT_TYPE:
       EraseElement ((ElementTypePtr) ptr);
       break;
@@ -1896,6 +2011,10 @@ DrawObject (int type, void *ptr1, void *ptr2)
     case POLYGON_TYPE:
       if (((LayerTypePtr) ptr1)->On)
 	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
+      break;
+    case POUR_TYPE:
+      if (((LayerTypePtr) ptr1)->On)
+	DrawPour ((LayerTypePtr) ptr1, (PourTypePtr) ptr2, 0);
       break;
     case ELEMENT_TYPE:
       if (PCB->ElementOn &&
