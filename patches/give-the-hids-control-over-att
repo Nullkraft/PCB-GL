@@ -1,7 +1,7 @@
-Bottom: 1104a8cd0b7bd04f66407815f8e6dcef043966b3
-Top:    03904cbf29a8b4200d0266724543f78b24758e60
+Bottom: ab7f409988baf3c589217033652f176b1174d710
+Top:    ac856c77360adce2633b19afca31aaa1b2b844da
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-24 03:16:15 +0100
+Date:   2011-04-24 17:59:59 +0100
 
 Give the HIDs control over attached object (crosshair, mark) drawing
 
@@ -761,7 +761,7 @@ index ff16b1e..efa6679 100644
  void CrosshairOff (void);
  void HideCrosshair (void);
 diff --git a/src/draw.c b/src/draw.c
-index 47db1fd..8a250da 100644
+index cb1b790..b4da716 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -182,15 +182,11 @@ UpdateAll (void)
@@ -1417,10 +1417,10 @@ index c1b12d3..b4a49e3 100644
    hid_register_hid (&lesstif_hid);
  #include "lesstif_lists.h"
 diff --git a/src/misc.c b/src/misc.c
-index 02a883f..82bc772 100644
+index d63aef1..5bea138 100644
 --- a/src/misc.c
 +++ b/src/misc.c
-@@ -689,15 +689,11 @@ CenterDisplay (LocationType X, LocationType Y, bool Delta)
+@@ -705,15 +705,11 @@ CenterDisplay (LocationType X, LocationType Y, bool Delta)
    double save_grid = PCB->Grid;
    PCB->Grid = 1;
    if (Delta)
