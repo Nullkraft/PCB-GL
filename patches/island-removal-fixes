@@ -1,5 +1,5 @@
-Bottom: 125da8a8e76118fb310cd0bbb156db380c78b29f
-Top:    19a8f4d6dd6aba20db625f192fdf42e35a6ce700
+Bottom: be5731fcff563ed3f476730b8a2f9bad0e3a892b
+Top:    0b4e910c2f8955070692edbbec25c13636a9c3b0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 14:41:51 +0100
 
@@ -45,7 +45,7 @@ index 8f32103..7b057c5 100644
    arc = GetArcMemory (lay);
    *arc = *Arc;
 diff --git a/src/change.c b/src/change.c
-index c6d5d8b..21fed77 100644
+index 8ab0b7f..0bd3e89 100644
 --- a/src/change.c
 +++ b/src/change.c
 @@ -491,10 +491,10 @@ ChangeViaClearSize (PinTypePtr Via)
@@ -120,7 +120,7 @@ index b411f44..4ed7f63 100644
    a->StartAngle = new_sa;
    a->Delta = new_da;
 diff --git a/src/move.c b/src/move.c
-index a7cd61c..b1aaccd 100644
+index 757964f..0b54570 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -282,8 +282,8 @@ MoveLine (LayerTypePtr Layer, LineTypePtr Line)
@@ -174,7 +174,7 @@ index a7cd61c..b1aaccd 100644
    *newone = *Text;
    *Text = Source->Text[--Source->TextN];
 diff --git a/src/pour.c b/src/pour.c
-index 943e511..3f1a989 100644
+index 7f79e23..9e31cdd 100644
 --- a/src/pour.c
 +++ b/src/pour.c
 @@ -823,7 +823,8 @@ subtract_plow (DataTypePtr Data, LayerTypePtr layer, PourTypePtr pour,
@@ -226,7 +226,7 @@ index 943e511..3f1a989 100644
        if (GetLayerNumber (Data, ptr1) >= max_copper_layer)
          return 0;
 diff --git a/src/rotate.c b/src/rotate.c
-index 229e705..406e025 100644
+index eda827c..0bada91 100644
 --- a/src/rotate.c
 +++ b/src/rotate.c
 @@ -181,8 +181,8 @@ static void *
