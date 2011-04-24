@@ -438,11 +438,11 @@ DrawEverything (BoxTypePtr drawn_area)
 
   paste_empty = IsPasteEmpty (COMPONENT_LAYER);
   if (gui->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
-    DrawPaste (COMPONENT_LAYER);
+    DrawPaste (COMPONENT_LAYER, drawn_area);
 
   paste_empty = IsPasteEmpty (SOLDER_LAYER);
   if (gui->set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
-    DrawPaste (SOLDER_LAYER);
+    DrawPaste (SOLDER_LAYER, drawn_area);
 
   doing_assy = true;
   if (gui->set_layer ("topassembly", SL (ASSY, TOP), 0))
