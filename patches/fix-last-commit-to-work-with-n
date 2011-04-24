@@ -1,7 +1,7 @@
-Bottom: 49ccd52cec5c6bca412f099b8e982ef73efc28e9
-Top:    d29b829f9339dc93a5bdc8117f0a5e8d963291bf
+Bottom: ad8dff35d50db2013dbb6cb5a132c844382e3732
+Top:    2f9fc81abdbed3deb42ac28c4ecaae3aa3151156
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-23 14:41:55 +0100
+Date:   2011-04-24 12:41:19 +0100
 
 Fix last commit to work with new crosshair notification API
 
@@ -9,7 +9,7 @@ Fix last commit to work with new crosshair notification API
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 7adb9de..4181f2e 100644
+index bada093..be26cc1 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -4847,7 +4847,6 @@ ActionToggleStripHierarchy (int argc, char **argv, int x, int y)
