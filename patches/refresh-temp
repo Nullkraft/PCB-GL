@@ -1,0 +1,31 @@
+Bottom: f1ae276755118edb36be54e15e64c76332ec3bdb
+Top:    5a21bed4f0e49c6b87bab59a64f093920d21c516
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-24 03:47:08 +0100
+
+Refresh of draw-pin-pad-names-first-so-th
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 1e208d2..f82d415 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1080,7 +1080,7 @@ pin_name_callback (const BoxType * b, void *cl)
+   PinTypePtr pin = (PinTypePtr) b;
+ 
+   if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
+-    DrawPinName (pin, 0);
++    DrawPinName (pin);
+   return 1;
+ }
+ 
+@@ -1106,7 +1106,7 @@ pin_callback (const BoxType * b, void *cl)
+   PinTypePtr pin = (PinTypePtr) b;
+ 
+   if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
+-    DrawPinName (pin, 0);
++    DrawPinName (pin);
+   DrawPlainPin (pin, false);
+   return 1;
+ }
