@@ -1,4 +1,4 @@
-Bottom: cb13e87a22ec7057438542d7607ee64dc5e68834
+Bottom: 032824e52fe1ca4c5fb1138c496adbb3d544c9c2
 Top:    aba0112e584ed6c1ee6b0499d276d2754adbbd78
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-24 01:10:02 +0100
@@ -13,7 +13,7 @@ PCB->PinOn and PCB->ViaOn
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 2a097d9..46c569b 100644
+index de85b06..46c569b 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -84,7 +84,7 @@ static const BoxType *clip_box = NULL;
@@ -65,35 +65,7 @@ index 2a097d9..46c569b 100644
    if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
      return;
  
-@@ -567,7 +549,8 @@ pad_callback (const BoxType * b, void *cl)
- }
- 
- /* ---------------------------------------------------------------------------
-- * draws pins pads and vias
-+ * Draws pins pads and vias - Always draws for non-gui HIDs,
-+ * otherwise drawing depends on PCB->PinOn and PCB->ViaOn
-  */
- static void
- DrawPPV (int group, const BoxType * screen)
-@@ -575,7 +558,7 @@ DrawPPV (int group, const BoxType * screen)
-   int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
-   int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
- 
--  if (PCB->PinOn || doing_assy)
-+  if (PCB->PinOn || !gui->gui)
-     {
-       /* draw element pins */
-       r_search (PCB->Data->pin_tree, screen, NULL, pin_callback, NULL);
-@@ -595,7 +578,7 @@ DrawPPV (int group, const BoxType * screen)
-     }
- 
-   /* draw vias */
--  if (PCB->ViaOn || doing_assy)
-+  if (PCB->ViaOn || !gui->gui)
-     {
-       r_search (PCB->Data->via_tree, screen, NULL, via_callback, NULL);
-       r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
-@@ -811,16 +794,20 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
+@@ -812,16 +794,20 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
   * draws one layer group.  Returns non-zero if pins and pads should be
   * drawn with this group.
   */
@@ -117,7 +89,7 @@ index 2a097d9..46c569b 100644
    for (i = n_entries - 1; i >= 0; i--)
      {
        layernum = layers[i];
-@@ -829,11 +816,13 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -830,11 +816,13 @@ DrawLayerGroup (int group, const BoxType * screen)
  	  strcmp (Layer->Name, "route") == 0)
  	rv = 0;
        if (layernum < max_copper_layer && Layer->On)
