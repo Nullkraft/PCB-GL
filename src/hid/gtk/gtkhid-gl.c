@@ -31,9 +31,6 @@
 #include <dmalloc.h>
 #endif
 
-#define ON_SIDE(element, side) (TEST_FLAG (ONSOLDERFLAG, element) == (*side == SOLDER_LAYER))
-
-
 RCSID ("$Id$");
 
 
@@ -184,14 +181,10 @@ ghid_set_layer (const char *name, int group, int empty)
 	case SL_INVISIBLE:
 	  return PCB->InvisibleObjectsOn;
 	case SL_MASK:
-	  if (SL_MYSIDE (idx))
-	    return TEST_FLAG (SHOWMASKFLAG, PCB);
-	  return 0;
+	  return TEST_FLAG (SHOWMASKFLAG, PCB);
 	case SL_SILK:
 	  priv->trans_lines = true;
-	  if (SL_MYSIDE (idx))
-	    return PCB->ElementOn;
-	  return 0;
+	  return PCB->ElementOn;
 	case SL_ASSY:
 	  return 0;
 	case SL_PDRILL:
@@ -1005,36 +998,29 @@ ghid_screen_update (void)
 }
 
 static int
-backE_callback (const BoxType * b, void *cl)
+element_callback (const BoxType * b, void *cl)
 {
   ElementTypePtr element = (ElementTypePtr) b;
+  int *side = cl;
 
-  if (!FRONT (element))
-    {
-      DrawElementPackage (element);
-    }
+  if (ON_SIDE (element, *side))
+    DrawElementPackage (element);
   return 1;
 }
 
 static int
-backN_callback (const BoxType * b, void *cl)
+name_callback (const BoxType * b, void *cl)
 {
   TextTypePtr text = (TextTypePtr) b;
   ElementTypePtr element = (ElementTypePtr) text->Element;
+  int *side = cl;
 
-  if (!FRONT (element) && !TEST_FLAG (HIDENAMEFLAG, element))
+  if (TEST_FLAG (HIDENAMEFLAG, element))
+    return 0;
+
+  if (ON_SIDE (element, *side))
     DrawElementName (element);
   return 0;
-}
-
-static int
-backPad_callback (const BoxType * b, void *cl)
-{
-  PadTypePtr pad = (PadTypePtr) b;
-
-  if (!FRONT (pad))
-    DrawPad (pad);
-  return 1;
 }
 
 static int
@@ -1091,6 +1077,14 @@ via_inlayer_callback (const BoxType * b, void *cl)
 }
 
 static int
+via_callback (const BoxType * b, void *cl)
+{
+  PinTypePtr via = (PinTypePtr) b;
+  DrawPlainVia (via, false);
+  return 1;
+}
+
+static int
 pin_callback (const BoxType * b, void *cl)
 {
   DrawPlainPin ((PinTypePtr) b, false);
@@ -1101,7 +1095,9 @@ static int
 pad_callback (const BoxType * b, void *cl)
 {
   PadTypePtr pad = (PadTypePtr) b;
-  if (FRONT (pad))
+  int *side = cl;
+
+  if (ON_SIDE (pad, *side))
     DrawPad (pad);
   return 1;
 }
@@ -1111,14 +1107,6 @@ static int
 hole_callback (const BoxType * b, void *cl)
 {
   DrawHole ((PinTypePtr) b);
-  return 1;
-}
-
-static int
-via_callback (const BoxType * b, void *cl)
-{
-  PinTypePtr via = (PinTypePtr) b;
-  DrawPlainVia (via, false);
   return 1;
 }
 
@@ -1211,7 +1199,7 @@ clearPad_callback (const BoxType * b, void *cl)
 {
   PadTypePtr pad = (PadTypePtr) b;
   int *side = cl;
-  if (ON_SIDE (pad, side) && pad->Mask)
+  if (ON_SIDE (pad, *side) && pad->Mask)
     ClearPad (pad, true);
   return 1;
 }
@@ -1229,7 +1217,7 @@ clearPad_callback_solid (const BoxType * b, void *cl)
 {
   PadTypePtr pad = (PadTypePtr) b;
   int *side = cl;
-  if (ON_SIDE (pad, side) && pad->Mask)
+  if (ON_SIDE (pad, *side) && pad->Mask)
     gui->fill_pcb_pad (Output.pmGC, pad, true, true);
   return 1;
 }
@@ -1270,6 +1258,7 @@ DrawLayerGroup (int group, const BoxType * screen)
 {
   int i, rv = 1;
   int layernum;
+  int side;
   struct poly_info info;
   LayerTypePtr Layer;
   int n_entries = PCB->LayerGroups.Number[group];
@@ -1338,14 +1327,16 @@ DrawLayerGroup (int group, const BoxType * screen)
       if (!global_view_2d && rv) {
         if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
         if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
-        if ((group == component_group && !SWAP_IDENT) ||
-            (group == solder_group    &&  SWAP_IDENT))
-          if (PCB->PinOn)
-            r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, Layer);
-        if ((group == solder_group    && !SWAP_IDENT) ||
-            (group == component_group &&  SWAP_IDENT))
-          if (PCB->PinOn)
-            r_search (PCB->Data->pad_tree, screen, NULL, backPad_callback, Layer);
+        if (PCB->PinOn && group == component_group)
+          {
+            side = COMPONENT_LAYER;
+            r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, &side);
+          }
+        if (PCB->PinOn && group == solder_group)
+          {
+            side = SOLDER_LAYER;
+            r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, &side);
+          }
       }
 
       if (TEST_FLAG (CHECKPLANESFLAG, PCB))
@@ -1442,6 +1433,7 @@ void
 ghid_draw_everything (BoxTypePtr drawn_area)
 {
   int i, ngroups;
+  int side;
   /* This is the list of layer groups we will draw.  */
   int do_group[MAX_LAYER];
   /* This is the reverse of the order in which we draw them.  */
@@ -1509,36 +1501,27 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   /*
    * first draw all 'invisible' stuff
    */
+  side = SWAP_IDENT ? COMPONENT_LAYER : SOLDER_LAYER;
+
   if (!TEST_FLAG (CHECKPLANESFLAG, PCB) &&
       gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
     if (PCB->ElementOn) {
-      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, backN_callback, NULL);
-      DrawLayer (&(PCB->Data->BACKSILKLAYER), drawn_area);
+      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
+      DrawLayer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area);
     }
-#if 1
-    if (!global_view_2d) {
-      /* Draw the solder mask if turned on */
-      if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0)) {
-        gui->set_layer (NULL, SL (FINISHED, 0), 0);
-        gui->set_layer ("componentmask", SL (MASK, TOP), 0);
-        //^__ HACK, THE GUI DOESNT WANT US TO DRAW THIS!
-        DrawMask (SOLDER_LAYER, drawn_area);
-        gui->set_layer (NULL, SL (FINISHED, 0), 0);
-      }
-      if (gui->set_layer ("componentmask", SL (MASK, TOP), 0)) {
-        gui->set_layer (NULL, SL (FINISHED, 0), 0);
-        gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0);
-        //^__ HACK, THE GUI DOESNT WANT US TO DRAW THIS!
-        DrawMask (COMPONENT_LAYER, drawn_area);
+    if (global_view_2d) {
+      r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+    } else {
+      /* Draw the reverse-side solder mask if turned on */
+      if (gui->set_layer (SWAP_IDENT ? "componentmask" : "soldermask",
+                          SWAP_IDENT ? SL (MASK, TOP) : SL (MASK, BOTTOM), 0)) {
+        DrawMask (side, drawn_area);
         gui->set_layer (NULL, SL (FINISHED, 0), 0);
       }
       gui->set_layer ("invisible", SL (INVISIBLE, 0), 0);
     }
-#endif
-    if (global_view_2d)
-      r_search (PCB->Data->pad_tree, drawn_area, NULL, backPad_callback, NULL);
     if (PCB->ElementOn)
-      r_search (PCB->Data->element_tree, drawn_area, NULL, backE_callback, NULL);
+      r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
   }
 
@@ -1555,7 +1538,6 @@ ghid_draw_everything (BoxTypePtr drawn_area)
       cyl_info.from_layer = drawn_groups[i];
       cyl_info.to_layer = drawn_groups[i - 1];
       cyl_info.scale = gport->zoom;
-//      gui->set_color (Output.fgGC, PCB->MaskColor);
       gui->set_color (Output.fgGC, "drill");
       ghid_global_alpha_mult (Output.fgGC, 0.75);
       if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_cyl_callback, &cyl_info);
@@ -1568,51 +1550,40 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   if (TEST_FLAG (CHECKPLANESFLAG, PCB))
     return;
 
+  side = SWAP_IDENT ? SOLDER_LAYER : COMPONENT_LAYER;
+
   /* Draw pins, pads, vias below silk */
-  if (!Settings.ShowSolderSide)
-    gui->set_layer ("topsilk", SL (SILK, TOP), 0);
-  else
-    gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0);
-//  gui->set_layer (NULL, SL (FINISHED, 0), 0);
+  if (global_view_2d &&
+      gui->set_layer (SWAP_IDENT ? "bottomsilk" : "topsilk",
+                      SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0)) {
 
-  if (global_view_2d)
-    {
-      /* Mask out drilled holes */
-      hidgl_flush_triangles (&buffer);
-      glPushAttrib (GL_COLOR_BUFFER_BIT);
-      glColorMask (0, 0, 0, 0);
-      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
-      if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
-      hidgl_flush_triangles (&buffer);
-      glPopAttrib ();
+    /* Mask out drilled holes */
+    hidgl_flush_triangles (&buffer);
+    glPushAttrib (GL_COLOR_BUFFER_BIT);
+    glColorMask (0, 0, 0, 0);
+    if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
+    if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
+    hidgl_flush_triangles (&buffer);
+    glPopAttrib ();
 
-      if (PCB->PinOn) r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, NULL);
-      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
-      if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
-    }
+    if (PCB->PinOn) r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+    if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
+    if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
 
-  gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    gui->set_layer (NULL, SL (FINISHED, 0), 0);
+  }
 
   /* Draw the solder mask if turned on */
-  if (gui->set_layer ("componentmask", SL (MASK, TOP), 0)) {
-    DrawMask (COMPONENT_LAYER, drawn_area);
-    gui->set_layer (NULL, SL (FINISHED, 0), 0);
-  }
-  if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0)) {
-    DrawMask (SOLDER_LAYER, drawn_area);
+  if (gui->set_layer (SWAP_IDENT ? "soldermask" : "componentmask",
+                      SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0)) {
+    DrawMask (side, drawn_area);
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
   }
 
-  if (!Settings.ShowSolderSide &&
-      gui->set_layer ("topsilk", SL (SILK, TOP), 0)) {
-    DrawSilk (COMPONENT_LAYER, drawn_area);
-    gui->set_layer (NULL, SL (FINISHED, 0), 0);
-  }
-
-  if (Settings.ShowSolderSide &&
-      gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0)) {
-    DrawSilk (SOLDER_LAYER, drawn_area);
-    gui->set_layer (NULL, SL (FINISHED, 0), 0);
+  if (gui->set_layer (SWAP_IDENT ? "bottomsilk" : "topsilk",
+                      SWAP_IDENT ? SL (SILK, BOTTOM) : SL (SILK, TOP), 0)) {
+      DrawSilk (side, drawn_area);
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
   }
 
   /* Draw element Marks */
