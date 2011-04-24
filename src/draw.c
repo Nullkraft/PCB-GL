@@ -312,7 +312,6 @@ static void
 PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
 {
   int save_swap = SWAP_IDENT;
-  int side = swap_ident ? SOLDER_LAYER : COMPONENT_LAYER;
 
   gui->set_draw_faded (Output.fgGC, 1);
   DrawLayerGroup (side_group, drawn_area);
@@ -570,15 +569,16 @@ pad_callback (const BoxType * b, void *cl)
  * draws pins pads and vias
  */
 static void
-DrawPPV (int group, const BoxType * screen)
+DrawPPV (int group, const BoxType *drawn_area)
 {
   int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
   int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
+  int side;
 
   if (PCB->PinOn || doing_assy)
     {
       /* draw element pins */
-      r_search (PCB->Data->pin_tree, screen, NULL, pin_callback, NULL);
+      r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
 
       /* draw element pads */
       if (group == component_group)
@@ -597,11 +597,11 @@ DrawPPV (int group, const BoxType * screen)
   /* draw vias */
   if (PCB->ViaOn || doing_assy)
     {
-      r_search (PCB->Data->via_tree, screen, NULL, via_callback, NULL);
-      r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
+      r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
+      r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
     }
   if (PCB->PinOn || doing_assy)
-    r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
+    r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
 }
 
 static int
