@@ -1,5 +1,5 @@
 Bottom: 3e90b33543a7ad7f7e207d2b8560406cce1239f4
-Top:    9c11e46e9e89a7fe90f96947c1b5f89428dcacf6
+Top:    4d91d69621a4849cbb1008e0222430122af2d989
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 16:56:13 +0100
 
@@ -12,7 +12,7 @@ for pins and vias on any layer.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 7380beb..acf2242 100644
+index 7380beb..7345912 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -83,7 +83,7 @@ static const BoxType *clip_box = NULL;
@@ -76,7 +76,7 @@ index 7380beb..acf2242 100644
 +
 +      if (group == solder_group)
 +        {
-+          side = COMPONENT_LAYER;
++          side = SOLDER_LAYER;
 +          r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
 +        }
      }
