@@ -1,5 +1,5 @@
 Bottom: 3e90b33543a7ad7f7e207d2b8560406cce1239f4
-Top:    3e90b33543a7ad7f7e207d2b8560406cce1239f4
+Top:    1f86aa61b23af81861d89ee3bb10e79558fe9608
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-24 02:17:21 +0100
 
@@ -10,4 +10,39 @@ For consistency with other code in draw.c
 
 ---
 
-
+diff --git a/src/draw.c b/src/draw.c
+index 7380beb..994bea1 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -569,25 +569,25 @@ pad_callback (const BoxType * b, void *cl)
+  * draws pins pads and vias
+  */
+ static void
+-DrawTop (const BoxType * screen)
++DrawTop (const BoxType *drawn_area)
+ {
+   int side = SWAP_IDENT ? SOLDER_LAYER : COMPONENT_LAYER;
+ 
+   if (PCB->PinOn || doing_assy)
+     {
+       /* draw element pins */
+-      r_search (PCB->Data->pin_tree, screen, NULL, pin_callback, NULL);
++      r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
+       /* draw element pads */
+-      r_search (PCB->Data->pad_tree, screen, NULL, pad_callback, &side);
++      r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+     }
+   /* draw vias */
+   if (PCB->ViaOn || doing_assy)
+     {
+-      r_search (PCB->Data->via_tree, screen, NULL, via_callback, NULL);
+-      r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
++      r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
++      r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
+     }
+   if (PCB->PinOn || doing_assy)
+-    r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
++    r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
+ }
+ 
+ static int
