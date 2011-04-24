@@ -1,5 +1,5 @@
 Bottom: 032824e52fe1ca4c5fb1138c496adbb3d544c9c2
-Top:    aba0112e584ed6c1ee6b0499d276d2754adbbd78
+Top:    6ab02cdb71e7aac477d3421858b1444e18e4e14b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-24 01:10:02 +0100
 
@@ -9,7 +9,7 @@ draw.c: Draw pins, pads and vias (for non-gui HIDs) from DrawLayerGroup()
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index de85b06..46c569b 100644
+index de85b06..31941c8 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -84,7 +84,7 @@ static const BoxType *clip_box = NULL;
@@ -96,7 +96,7 @@ index de85b06..46c569b 100644
      rv = 1;
 -  return rv;
 +
-+  if (rv == 1 && (!gui->gui || doing_assy))
++  if (rv == 1 && !gui->gui)
 +    DrawPPV (group, drawn_area);
  }
  
