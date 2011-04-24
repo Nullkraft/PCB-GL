@@ -1,5 +1,5 @@
-Bottom: 250d790e7a782b4f26bbd2935aef417ad843968f
-Top:    11fe0c349d18d0d9cf24012f3977aa888025a11e
+Bottom: c9a319d0561da4be5a6f636310eed1e9d4446b7d
+Top:    caf6dddee36c08b86c15770eb291a5c0b3084a7e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-24 01:10:02 +0100
 
@@ -9,7 +9,7 @@ draw.c: Draw pins, pads and vias (for non-gui HIDs) from DrawLayerGroup()
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 1cbc98b..be5c138 100644
+index 381ef1d..09b2fd0 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -84,7 +84,7 @@ static const BoxType *clip_box = NULL;
@@ -21,7 +21,7 @@ index 1cbc98b..be5c138 100644
  static void DrawPinOrViaLowLevel (PinTypePtr, bool);
  static void DrawPlainPin (PinTypePtr, bool);
  static void DrawPlainVia (PinTypePtr, bool);
-@@ -315,7 +315,6 @@ PrintAssembly (const BoxType * drawn_area, int side_group, int swap_ident)
+@@ -315,7 +315,6 @@ PrintAssembly (int side, const BoxType * drawn_area)
  
    gui->set_draw_faded (Output.fgGC, 1);
    DrawLayerGroup (side_group, drawn_area);
