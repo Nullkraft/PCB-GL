@@ -1,0 +1,22 @@
+Bottom: 6ab02cdb71e7aac477d3421858b1444e18e4e14b
+Top:    cf39c825f3196b621175d883975a4ddf740633a6
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-24 01:32:18 +0100
+
+Refresh of make-drawppv-always-draw-for-n
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 31941c8..b04a362 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -804,8 +804,6 @@ DrawLayerGroup (int group, const BoxType * drawn_area)
+   LayerTypePtr Layer;
+   int n_entries = PCB->LayerGroups.Number[group];
+   Cardinal *layers = PCB->LayerGroups.Entries[group];
+-  int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
+-  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
+ 
+   clip_box = drawn_area;
+   for (i = n_entries - 1; i >= 0; i--)
