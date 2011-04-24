@@ -600,7 +600,7 @@ IsLayerGroupEmpty (int num)
   return true;
 }
 
-static bool
+bool
 IsPasteEmpty (int side)
 {
   bool paste_empty = true;
