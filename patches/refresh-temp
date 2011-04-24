@@ -1,0 +1,21 @@
+Bottom: aba0112e584ed6c1ee6b0499d276d2754adbbd78
+Top:    6ab02cdb71e7aac477d3421858b1444e18e4e14b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-24 01:26:03 +0100
+
+Refresh of make-drawppv-always-draw-for-n
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 46c569b..31941c8 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -821,7 +821,7 @@ DrawLayerGroup (int group, const BoxType * drawn_area)
+   if (n_entries > 1)
+     rv = 1;
+ 
+-  if (rv == 1 && (!gui->gui || doing_assy))
++  if (rv == 1 && !gui->gui)
+     DrawPPV (group, drawn_area);
+ }
