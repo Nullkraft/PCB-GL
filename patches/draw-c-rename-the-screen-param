@@ -1,0 +1,46 @@
+Bottom: 03c812b7086977876a0ae6ac103406e3cabb91b8
+Top:    62249ced3530565fc992ed0ddcdf34fb7e04668f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-24 03:01:15 +0100
+
+draw.c: Rename the "screen" parameter of DrawLayerGroup to "drawn_area"
+
+(For consistency with other code in draw.c)
+
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index b5be3dc..db38c81 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -794,7 +794,7 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
+  * drawn with this group.
+  */
+ static int
+-DrawLayerGroup (int group, const BoxType * screen)
++DrawLayerGroup (int group, const BoxType *draw_area)
+ {
+   int i, rv = 1;
+   int layernum;
+@@ -802,16 +802,16 @@ DrawLayerGroup (int group, const BoxType * screen)
+   int n_entries = PCB->LayerGroups.Number[group];
+   Cardinal *layers = PCB->LayerGroups.Entries[group];
+ 
+-  clip_box = screen;
++  clip_box = draw_area;
+   for (i = n_entries - 1; i >= 0; i--)
+     {
+       layernum = layers[i];
+       Layer = PCB->Data->Layer + layers[i];
+       if (strcmp (Layer->Name, "outline") == 0 ||
+-	  strcmp (Layer->Name, "route") == 0)
+-	rv = 0;
++          strcmp (Layer->Name, "route") == 0)
++        rv = 0;
+       if (layernum < max_copper_layer && Layer->On)
+-	DrawLayerCommon (Layer, screen, true);
++        DrawLayerCommon (Layer, draw_area, true);
+     }
+   if (n_entries > 1)
+     rv = 1;
