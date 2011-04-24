@@ -1,0 +1,48 @@
+Bottom: 961db4b57229694823ccfcc79edd8cff5bdca892
+Top:    4f107a7259394aab872708271a086ea950cc262e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-24 17:48:25 +0100
+
+Refresh of misc-c-add-query-function-ispa
+
+---
+
+diff --git a/src/misc.c b/src/misc.c
+index 02a883f..d7aad5d 100644
+--- a/src/misc.c
++++ b/src/misc.c
+@@ -600,6 +600,22 @@ IsLayerGroupEmpty (int num)
+   return true;
+ }
+ 
++static bool
++IsPasteEmpty (int side)
++{
++  bool paste_empty = true;
++  ALLPAD_LOOP (PCB->Data);
++  {
++    if (ON_SIDE (pad, side) && !TEST_FLAG (NOPASTEFLAG, pad) && pad->Mask > 0)
++      {
++        paste_empty = false;
++        break;
++      }
++  }
++  ENDALL_LOOP;
++  return paste_empty;
++}
++
+ /* ---------------------------------------------------------------------------
+  * gets minimum and maximum coordinates
+  * returns NULL if layout is empty
+diff --git a/src/misc.h b/src/misc.h
+index b46cad4..0fa6278 100644
+--- a/src/misc.h
++++ b/src/misc.h
+@@ -47,6 +47,7 @@ bool IsDataEmpty (DataTypePtr);
+ bool IsLayerEmpty (LayerTypePtr);
+ bool IsLayerNumEmpty (int);
+ bool IsLayerGroupEmpty (int);
++bool IsPasteLayerEmpty (int);
+ BoxTypePtr GetDataBoundingBox (DataTypePtr);
+ void CenterDisplay (LocationType, LocationType, bool);
+ void SetFontInfo (FontTypePtr);
