@@ -1,5 +1,5 @@
-Bottom: cb13e87a22ec7057438542d7607ee64dc5e68834
-Top:    032824e52fe1ca4c5fb1138c496adbb3d544c9c2
+Bottom: 4d91d69621a4849cbb1008e0222430122af2d989
+Top:    250d790e7a782b4f26bbd2935aef417ad843968f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-24 01:14:29 +0100
 
@@ -13,10 +13,10 @@ PCB->PinOn and PCB->ViaOn
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 2a097d9..de85b06 100644
+index 7345912..1cbc98b 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -567,7 +567,8 @@ pad_callback (const BoxType * b, void *cl)
+@@ -566,7 +566,8 @@ pad_callback (const BoxType * b, void *cl)
  }
  
  /* ---------------------------------------------------------------------------
@@ -25,22 +25,22 @@ index 2a097d9..de85b06 100644
 + * otherwise drawing depends on PCB->PinOn and PCB->ViaOn
   */
  static void
- DrawPPV (int group, const BoxType * screen)
-@@ -575,7 +576,7 @@ DrawPPV (int group, const BoxType * screen)
-   int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
+ DrawPPV (int group, const BoxType *drawn_area)
+@@ -575,7 +576,7 @@ DrawPPV (int group, const BoxType *drawn_area)
    int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
+   int side;
  
 -  if (PCB->PinOn || doing_assy)
 +  if (PCB->PinOn || !gui->gui)
      {
        /* draw element pins */
-       r_search (PCB->Data->pin_tree, screen, NULL, pin_callback, NULL);
-@@ -595,7 +596,7 @@ DrawPPV (int group, const BoxType * screen)
+       r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
+@@ -595,7 +596,7 @@ DrawPPV (int group, const BoxType *drawn_area)
      }
  
    /* draw vias */
 -  if (PCB->ViaOn || doing_assy)
 +  if (PCB->ViaOn || !gui->gui)
      {
-       r_search (PCB->Data->via_tree, screen, NULL, via_callback, NULL);
-       r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
+       r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
+       r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
