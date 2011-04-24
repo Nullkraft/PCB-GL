@@ -4851,7 +4851,7 @@ ActionToggleStripHierarchy (int argc, char **argv, int x, int y)
 		EraseElementName ((ElementTypePtr) ptr2);
 		TOGGLE_FLAG (HIDENAMEFLAG, (ElementTypePtr) ptr2);
 /* TODO: 		   SetTextBoundingBox (&PCB->Font, new); */
-		DrawElementName ((ElementTypePtr) ptr2, 0);
+		DrawElementName ((ElementTypePtr) ptr2);
 		Draw ();
 		IncrementUndoSerialNumber ();
 	      }
@@ -4873,7 +4873,7 @@ ActionToggleStripHierarchy (int argc, char **argv, int x, int y)
 		  EraseElementName (element);
 		  TOGGLE_FLAG (STRIPHIERFLAG, element);
 /* TODO: 		   SetTextBoundingBox (&PCB->Font, new); */
-		  DrawElementName (element, 0);
+		  DrawElementName (element);
 		  changed = true;
 		}
 	    }
