@@ -1,5 +1,5 @@
-Bottom: c9a319d0561da4be5a6f636310eed1e9d4446b7d
-Top:    caf6dddee36c08b86c15770eb291a5c0b3084a7e
+Bottom: 8d2384342bc59266a2e892c90b4eb160fd8a2f99
+Top:    52376d7eec0a82b9e79b38062d2eb28ee2e33d9b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-24 01:10:02 +0100
 
@@ -9,7 +9,7 @@ draw.c: Draw pins, pads and vias (for non-gui HIDs) from DrawLayerGroup()
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 381ef1d..09b2fd0 100644
+index 5a9bb1b..bcecb46 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -84,7 +84,7 @@ static const BoxType *clip_box = NULL;
@@ -29,7 +29,7 @@ index 381ef1d..09b2fd0 100644
    gui->set_draw_faded (Output.fgGC, 0);
  
    /* draw package */
-@@ -380,25 +379,9 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -376,25 +375,9 @@ DrawEverything (BoxTypePtr drawn_area)
        int group = drawn_groups[i];
  
        if (gui->set_layer (0, group, 0))
@@ -57,7 +57,7 @@ index 381ef1d..09b2fd0 100644
    if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
      return;
  
-@@ -812,16 +795,18 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
+@@ -808,16 +791,18 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
   * draws one layer group.  Returns non-zero if pins and pads should be
   * drawn with this group.
   */
@@ -79,7 +79,7 @@ index 381ef1d..09b2fd0 100644
    for (i = n_entries - 1; i >= 0; i--)
      {
        layernum = layers[i];
-@@ -830,11 +815,13 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -826,11 +811,13 @@ DrawLayerGroup (int group, const BoxType * screen)
  	  strcmp (Layer->Name, "route") == 0)
  	rv = 0;
        if (layernum < max_copper_layer && Layer->On)
