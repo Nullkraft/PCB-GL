@@ -1,5 +1,5 @@
 Bottom: bb6a4a91788f313bb6ced2847544624141348af8
-Top:    365250d39cc3643a5d857d86e92c608e0bb79a4f
+Top:    f3510eef0f1a1b5ff8e2f68a41768940574d998b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-24 17:44:49 +0100
 
@@ -9,7 +9,7 @@ draw.c: Add a DrawPaste() helper function for paste layers
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index f12020d..240e14a 100644
+index f12020d..cb1b790 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -102,6 +102,7 @@ static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
@@ -48,7 +48,7 @@ index f12020d..240e14a 100644
 -      ENDALL_LOOP;
 +  paste_empty = IsPasteEmpty (COMPONENT_LAYER);
 +  if (gui->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
-+    DrawPaste (COMPONENT_LAYER);
++    DrawPaste (COMPONENT_LAYER, drawn_area);
  
 -      if (side == SOLDER_LAYER)
 -	doit = gui->set_layer ("bottompaste", SL (PASTE, BOTTOM), NoData);
@@ -75,7 +75,7 @@ index f12020d..240e14a 100644
 -    }
 +  paste_empty = IsPasteEmpty (SOLDER_LAYER);
 +  if (gui->set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
-+    DrawPaste (SOLDER_LAYER);
++    DrawPaste (SOLDER_LAYER, drawn_area);
  
    doing_assy = true;
    if (gui->set_layer ("topassembly", SL (ASSY, TOP), 0))
