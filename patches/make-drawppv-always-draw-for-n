@@ -1,5 +1,5 @@
 Bottom: 032824e52fe1ca4c5fb1138c496adbb3d544c9c2
-Top:    6ab02cdb71e7aac477d3421858b1444e18e4e14b
+Top:    cf39c825f3196b621175d883975a4ddf740633a6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-24 01:10:02 +0100
 
@@ -9,7 +9,7 @@ draw.c: Draw pins, pads and vias (for non-gui HIDs) from DrawLayerGroup()
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index de85b06..31941c8 100644
+index de85b06..b04a362 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -84,7 +84,7 @@ static const BoxType *clip_box = NULL;
@@ -61,7 +61,7 @@ index de85b06..31941c8 100644
    if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
      return;
  
-@@ -812,16 +794,20 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
+@@ -812,16 +794,18 @@ DrawLayer (LayerTypePtr Layer, const BoxType * screen)
   * draws one layer group.  Returns non-zero if pins and pads should be
   * drawn with this group.
   */
@@ -77,15 +77,13 @@ index de85b06..31941c8 100644
    LayerTypePtr Layer;
    int n_entries = PCB->LayerGroups.Number[group];
    Cardinal *layers = PCB->LayerGroups.Entries[group];
-+  int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
-+  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
  
 -  clip_box = screen;
 +  clip_box = drawn_area;
    for (i = n_entries - 1; i >= 0; i--)
      {
        layernum = layers[i];
-@@ -830,11 +816,13 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -830,11 +814,13 @@ DrawLayerGroup (int group, const BoxType * screen)
  	  strcmp (Layer->Name, "route") == 0)
  	rv = 0;
        if (layernum < max_copper_layer && Layer->On)
