@@ -804,8 +804,6 @@ DrawLayerGroup (int group, const BoxType * drawn_area)
   LayerTypePtr Layer;
   int n_entries = PCB->LayerGroups.Number[group];
   Cardinal *layers = PCB->LayerGroups.Entries[group];
-  int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
-  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
 
   clip_box = drawn_area;
   for (i = n_entries - 1; i >= 0; i--)
