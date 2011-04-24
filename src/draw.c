@@ -102,6 +102,7 @@ static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
 static void ClearPad (PadTypePtr, bool);
 static void DrawHole (PinTypePtr);
 static void DrawMask (int side, BoxType *);
+static void DrawPaste (int side, BoxType *);
 static void DrawRats (BoxType *);
 static void DrawSilk (int side, const BoxType *);
 static int via_callback (const BoxType * b, void *cl);
@@ -702,6 +703,26 @@ DrawMask (int side, BoxType * screen)
       DrawMaskBoardArea (HID_MASK_AFTER, screen);
       gui->use_mask (HID_MASK_OFF);
     }
+}
+
+/* ---------------------------------------------------------------------------
+ * draws solder paste layer for a given side of the board
+ */
+static void
+DrawPaste (int side, BoxType *drawn_area)
+{
+  gui->set_color (Output.fgGC, PCB->ElementColor);
+  ALLPAD_LOOP (PCB->Data);
+  {
+    if (ON_SIDE (pad, side) && !TEST_FLAG (NOPASTEFLAG, pad) && pad->Mask > 0)
+      {
+        if (pad->Mask < pad->Thickness)
+          DrawPadLowLevel (Output.fgGC, pad, true, true);
+        else
+          DrawPadLowLevel (Output.fgGC, pad, false, false);
+      }
+  }
+  ENDALL_LOOP;
 }
 
 static void
