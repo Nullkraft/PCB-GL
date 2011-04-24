@@ -1,5 +1,5 @@
 Bottom: 6db52fe0363f2342427f2fa518628f74b60a4da8
-Top:    6db52fe0363f2342427f2fa518628f74b60a4da8
+Top:    768e9a45192066dd2bbef79451db64639f2923fc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-23 14:41:23 +0100
 
@@ -18,4 +18,60 @@ the pads.
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 6b52e57..52fccd3 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1061,6 +1061,16 @@ SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
+ 
+ 
+ static int
++pin_name_callback (const BoxType * b, void *cl)
++{
++  PinTypePtr pin = (PinTypePtr) b;
++
++  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
++    DrawPinName (pin);
++  return 1;
++}
++
++static int
+ pin_inlayer_callback (const BoxType * b, void *cl)
+ {
+   SetPVColor_inlayer ((PinTypePtr) b, cl, PIN_TYPE);
+@@ -1087,7 +1097,11 @@ via_callback (const BoxType * b, void *cl)
+ static int
+ pin_callback (const BoxType * b, void *cl)
+ {
+-  DrawPlainPin ((PinTypePtr) b, false);
++  PinTypePtr pin = (PinTypePtr) b;
++
++  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
++    DrawPinName (pin);
++  DrawPlainPin (pin, false);
+   return 1;
+ }
+ 
+@@ -1097,8 +1111,11 @@ pad_callback (const BoxType * b, void *cl)
+   PadTypePtr pad = (PadTypePtr) b;
+   int *side = cl;
+ 
+-  if (ON_SIDE (pad, *side))
++  if (ON_SIDE (pad, *side)) {
++    if (TEST_FLAG (DISPLAYNAMEFLAG, pad))
++      DrawPadName (pad);
+     DrawPad (pad);
++  }
+   return 1;
+ }
+ 
+@@ -1325,6 +1342,9 @@ DrawLayerGroup (int group, const BoxType * screen)
+ 
+       /* Draw pins, vias and pads on this layer */
+       if (!global_view_2d && rv) {
++        if (PCB->PinOn &&
++            (group == solder_group || group == component_group))
++          r_search (PCB->Data->pin_tree, screen, NULL, pin_name_callback, Layer);
+         if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
+         if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
+         if (PCB->PinOn && group == component_group)
