@@ -1553,9 +1553,9 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   side = SWAP_IDENT ? SOLDER_LAYER : COMPONENT_LAYER;
 
   /* Draw pins, pads, vias below silk */
-  if (global_view_2d &&
-      gui->set_layer (SWAP_IDENT ? "bottomsilk" : "topsilk",
-                      SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0)) {
+  if (global_view_2d) {
+    gui->set_layer (SWAP_IDENT ? "bottomsilk" : "topsilk",
+                    SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0);
 
     /* Mask out drilled holes */
     hidgl_flush_triangles (&buffer);
