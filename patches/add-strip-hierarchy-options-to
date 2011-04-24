@@ -1,5 +1,5 @@
 Bottom: 24fdf03356e3f963a01b5230eefadcabb6deb956
-Top:    79f980111fa2dd27d937a06fd15a2a43db08bcc9
+Top:    34484c3f86de0a8b6457f2195b8b38927e2d4963
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-24 03:48:21 +0100
 
@@ -17,7 +17,7 @@ Add strip hierarchy options to display refdes without any "..../" prefix
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 3cc4325..2ba2d10 100644
+index 3cc4325..5ad05db 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -3465,9 +3465,16 @@ ActionRenumber (int argc, char **argv, int x, int y)
@@ -73,7 +73,7 @@ index 3cc4325..2ba2d10 100644
 +		EraseElementName ((ElementTypePtr) ptr2);
 +		TOGGLE_FLAG (HIDENAMEFLAG, (ElementTypePtr) ptr2);
 +/* TODO: 		   SetTextBoundingBox (&PCB->Font, new); */
-+		DrawElementName ((ElementTypePtr) ptr2, 0);
++		DrawElementName ((ElementTypePtr) ptr2);
 +		Draw ();
 +		IncrementUndoSerialNumber ();
 +	      }
@@ -95,7 +95,7 @@ index 3cc4325..2ba2d10 100644
 +		  EraseElementName (element);
 +		  TOGGLE_FLAG (STRIPHIERFLAG, element);
 +/* TODO: 		   SetTextBoundingBox (&PCB->Font, new); */
-+		  DrawElementName (element, 0);
++		  DrawElementName (element);
 +		  changed = true;
 +		}
 +	    }
