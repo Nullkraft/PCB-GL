@@ -589,7 +589,7 @@ DrawPPV (int group, const BoxType *drawn_area)
 
       if (group == solder_group)
         {
-          side = COMPONENT_LAYER;
+          side = SOLDER_LAYER;
           r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
         }
     }
