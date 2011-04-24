@@ -1,0 +1,27 @@
+Bottom: 365250d39cc3643a5d857d86e92c608e0bb79a4f
+Top:    f3510eef0f1a1b5ff8e2f68a41768940574d998b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-24 17:55:55 +0100
+
+Refresh of temp
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 240e14a..cb1b790 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -438,11 +438,11 @@ DrawEverything (BoxTypePtr drawn_area)
+ 
+   paste_empty = IsPasteEmpty (COMPONENT_LAYER);
+   if (gui->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
+-    DrawPaste (COMPONENT_LAYER);
++    DrawPaste (COMPONENT_LAYER, drawn_area);
+ 
+   paste_empty = IsPasteEmpty (SOLDER_LAYER);
+   if (gui->set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
+-    DrawPaste (SOLDER_LAYER);
++    DrawPaste (SOLDER_LAYER, drawn_area);
+ 
+   doing_assy = true;
+   if (gui->set_layer ("topassembly", SL (ASSY, TOP), 0))
