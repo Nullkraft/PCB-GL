@@ -1,5 +1,5 @@
 Bottom: d356ad690f6ce6bdad48187578fbf9e4eb92fb29
-Top:    d356ad690f6ce6bdad48187578fbf9e4eb92fb29
+Top:    8010ff2901c38d10212e4281db08ce1c676ed0eb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 15:41:31 +0100
 
@@ -11,4 +11,67 @@ F_Redraw cases which have exactly the same effect.
 
 ---
 
-
+diff --git a/src/action.c b/src/action.c
+index 9bad677..78df9fe 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -2678,22 +2678,11 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+       switch (id = GetFunctionID (function))
+ 	{
+ 
+-	  /* redraw layout with clearing the background */
++	  /* redraw layout */
+ 	case F_ClearAndRedraw:
+-	  gui->invalidate_all();
+-	  break;
+-
+-	  /* redraw layout without clearing the background */
+ 	case F_Redraw:
+-	  {
+-	    BoxType area;
+-	    area.X1 = 0;
+-	    area.Y1 = 0;
+-	    area.X2 = Output.Width;
+-	    area.Y2 = Output.Height;
+-	    RedrawOutput (&area);
+-	    break;
+-	  }
++	  Redraw ();
++	  break;
+ 
+ 	  /* change the displayed name of elements */
+ 	case F_Value:
+diff --git a/src/draw.c b/src/draw.c
+index 39605ca..2afcf98 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -80,7 +80,6 @@ static const BoxType *clip_box = NULL;
+ /* ---------------------------------------------------------------------------
+  * some local prototypes
+  */
+-static void Redraw (void);
+ static void DrawEverything (BoxTypePtr);
+ static void DrawPPV (int group, const BoxType *);
+ static int DrawLayerGroup (int, const BoxType *);
+@@ -220,7 +219,7 @@ ClearAndRedrawOutput (void)
+ /* ---------------------------------------------------------------------- 
+  * redraws all the data by the event handlers
+  */
+-static void
++void
+ Redraw (void)
+ {
+   gui->invalidate_all ();
+diff --git a/src/draw.h b/src/draw.h
+index fdd4c70..c60b6d9 100644
+--- a/src/draw.h
++++ b/src/draw.h
+@@ -36,7 +36,7 @@
+ /*bool	SwitchDrawingWindow(double, GdkDrawable *, gboolean, gboolean);*/
+ 
+ void Draw (void);
+-void RedrawOutput (BoxTypePtr area);
++void Redraw (void);
+ void ClearAndRedrawOutput (void);
+ void DrawVia (PinTypePtr);
+ void DrawRat (RatTypePtr);
