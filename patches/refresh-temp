@@ -1,0 +1,103 @@
+Bottom: 4c1e800808297c82b906eb5c87df9168edb5ee44
+Top:    c07ca48c2a909098c2fb35bbefa06a1e2e2a09bf
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-25 18:00:23 +0100
+
+Refresh of draw-c-fold-drawhole-into-its-
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 09e183e..a804880 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -97,7 +97,6 @@ static void AddPart (void *);
+ static void SetPVColor (PinTypePtr, int);
+ static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
+ static void ClearPad (PadTypePtr, bool);
+-static void DrawHole (PinTypePtr);
+ static void DrawMask (int side, BoxType *);
+ static void DrawPaste (int side, BoxType *);
+ static void DrawRats (BoxType *);
+@@ -238,7 +237,35 @@ hole_callback (const BoxType * b, void *cl)
+       (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
+     return 1;
+ 
+-  DrawHole ((PinTypePtr) b);
++  if (TEST_FLAG (THINDRAWFLAG, PCB))
++    {
++      if (!TEST_FLAG (HOLEFLAG, Ptr))
++        {
++          gui->set_line_cap (Output.fgGC, Round_Cap);
++          gui->set_line_width (Output.fgGC, 0);
++          gui->draw_arc (Output.fgGC,
++                         Ptr->X, Ptr->Y, Ptr->DrillingHole / 2,
++                         Ptr->DrillingHole / 2, 0, 360);
++        }
++    }
++  else
++    gui->fill_circle (Output.bgGC, Ptr->X, Ptr->Y, Ptr->DrillingHole / 2);
++
++  if (TEST_FLAG (HOLEFLAG, Ptr))
++    {
++      if (TEST_FLAG (WARNFLAG, Ptr))
++        gui->set_color (Output.fgGC, PCB->WarnColor);
++      else if (TEST_FLAG (SELECTEDFLAG, Ptr))
++        gui->set_color (Output.fgGC, PCB->ViaSelectedColor);
++      else
++        gui->set_color (Output.fgGC, Settings.BlackColor);
++
++      gui->set_line_cap (Output.fgGC, Round_Cap);
++      gui->set_line_width (Output.fgGC, 0);
++      gui->draw_arc (Output.fgGC,
++                     Ptr->X, Ptr->Y, Ptr->DrillingHole / 2,
++                     Ptr->DrillingHole / 2, 0, 360);
++    }
+   return 1;
+ }
+ 
+@@ -796,44 +823,6 @@ DrawPinOrViaLowLevel (PinTypePtr pv, bool drawHole)
+     gui->fill_pcb_pv (Output.fgGC, Output.bgGC, pv, drawHole, false);
+ }
+ 
+-/**************************************************************
+- * draw pin/via hole
+- */
+-static void
+-DrawHole (PinTypePtr Ptr)
+-{
+-  if (TEST_FLAG (THINDRAWFLAG, PCB))
+-    {
+-      if (!TEST_FLAG (HOLEFLAG, Ptr))
+-	{
+-	  gui->set_line_cap (Output.fgGC, Round_Cap);
+-	  gui->set_line_width (Output.fgGC, 0);
+-	  gui->draw_arc (Output.fgGC,
+-			 Ptr->X, Ptr->Y, Ptr->DrillingHole / 2,
+-			 Ptr->DrillingHole / 2, 0, 360);
+-	}
+-    }
+-  else
+-    {
+-      gui->fill_circle (Output.bgGC, Ptr->X, Ptr->Y, Ptr->DrillingHole / 2);
+-    }
+-  if (TEST_FLAG (HOLEFLAG, Ptr))
+-    {
+-      if (TEST_FLAG (WARNFLAG, Ptr))
+-	gui->set_color (Output.fgGC, PCB->WarnColor);
+-      else if (TEST_FLAG (SELECTEDFLAG, Ptr))
+-	gui->set_color (Output.fgGC, PCB->ViaSelectedColor);
+-      else
+-	gui->set_color (Output.fgGC, Settings.BlackColor);
+-
+-      gui->set_line_cap (Output.fgGC, Round_Cap);
+-      gui->set_line_width (Output.fgGC, 0);
+-      gui->draw_arc (Output.fgGC,
+-		     Ptr->X, Ptr->Y, Ptr->DrillingHole / 2,
+-		     Ptr->DrillingHole / 2, 0, 360);
+-    }
+-}
+-
+ /* ---------------------------------------------------------------------------
+  * lowlevel drawing routine for pin and via names
+  */
