@@ -1,7 +1,7 @@
-Bottom: a203c8667e2723c3b6e3ed84a1c3a0009bd8fa23
-Top:    157a7905eb34ce09bab05f0ed809b1e71ca23e3d
+Bottom: 55241d6bdcc5d34b50180fac3c8272c6c6e3e562
+Top:    70422eca47d7d59aeb7d028a50004c03723569cf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-25 14:07:48 +0100
+Date:   2011-04-25 15:58:44 +0100
 
 Add support for a "poured" object.
 
@@ -48,7 +48,7 @@ index 3e48275..3ded325 100644
  	print.c \
  	print.h \
 diff --git a/src/action.c b/src/action.c
-index 3cc4325..c8f99f7 100644
+index 7744cd1..68ec339 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -57,6 +57,7 @@
@@ -278,7 +278,7 @@ index 3cc4325..c8f99f7 100644
  				   &polyIndex,
  				   InsertedPoint.X, InsertedPoint.Y, false, false);
  	  else
-@@ -3140,23 +3140,23 @@ ActionMode (int argc, char **argv, int x, int y)
+@@ -3129,23 +3129,23 @@ ActionMode (int argc, char **argv, int x, int y)
  		  }
  		break;
  	  
@@ -306,7 +306,7 @@ index 3cc4325..c8f99f7 100644
  		  }
  		break;
  
-@@ -3185,11 +3185,11 @@ ActionMode (int argc, char **argv, int x, int y)
+@@ -3174,11 +3174,11 @@ ActionMode (int argc, char **argv, int x, int y)
  	case F_PasteBuffer:
  	  SetMode (PASTEBUFFER_MODE);
  	  break;
@@ -322,7 +322,7 @@ index 3cc4325..c8f99f7 100644
  	  break;
  #ifndef HAVE_LIBSTROKE
  	case F_Release:
-@@ -3233,9 +3233,9 @@ ActionMode (int argc, char **argv, int x, int y)
+@@ -3222,9 +3222,9 @@ ActionMode (int argc, char **argv, int x, int y)
  	  else if (Settings.Mode == RECTANGLE_MODE
  		   && Crosshair.AttachedBox.State != STATE_FIRST)
  	    SetMode (RECTANGLE_MODE);
@@ -334,7 +334,7 @@ index 3cc4325..c8f99f7 100644
  	  else
  	    {
  	      SaveMode ();
-@@ -4703,6 +4703,9 @@ off are automatically deleted.
+@@ -4692,6 +4692,9 @@ off are automatically deleted.
  static int
  ActionMorphPolygon (int argc, char **argv, int x, int y)
  {
@@ -344,7 +344,7 @@ index 3cc4325..c8f99f7 100644
    char *function = ARG (0);
    if (function)
      {
-@@ -4736,6 +4739,7 @@ ActionMorphPolygon (int argc, char **argv, int x, int y)
+@@ -4725,6 +4728,7 @@ ActionMorphPolygon (int argc, char **argv, int x, int y)
  	  break;
  	}
      }
@@ -352,7 +352,7 @@ index 3cc4325..c8f99f7 100644
    return 0;
  }
  
-@@ -6210,7 +6214,7 @@ ActionUndo (int argc, char **argv, int x, int y)
+@@ -6199,7 +6203,7 @@ ActionUndo (int argc, char **argv, int x, int y)
    if (!function || !*function)
      {
        /* don't allow undo in the middle of an operation */
@@ -361,7 +361,7 @@ index 3cc4325..c8f99f7 100644
  	  Crosshair.AttachedObject.State != STATE_FIRST)
  	return 1;
        if (Crosshair.AttachedBox.State != STATE_FIRST
-@@ -6219,11 +6223,11 @@ ActionUndo (int argc, char **argv, int x, int y)
+@@ -6208,11 +6212,11 @@ ActionUndo (int argc, char **argv, int x, int y)
        /* undo the last operation */
  
        notify_crosshair_change (false);
@@ -377,7 +377,7 @@ index 3cc4325..c8f99f7 100644
  	  notify_crosshair_change (true);
  	  return 0;
  	}
-@@ -6383,9 +6387,9 @@ three "undone" lines.
+@@ -6372,9 +6376,9 @@ three "undone" lines.
  static int
  ActionRedo (int argc, char **argv, int x, int y)
  {
@@ -390,7 +390,7 @@ index 3cc4325..c8f99f7 100644
        Crosshair.AttachedLine.State == STATE_SECOND)
      return 1;
    notify_crosshair_change (false);
-@@ -6435,19 +6439,19 @@ static int
+@@ -6424,19 +6428,19 @@ static int
  ActionPolygon (int argc, char **argv, int x, int y)
  {
    char *function = ARG (0);
@@ -428,7 +428,7 @@ index ee116e8..7529e8a 100644
  void ActionMovePointer (char *, char *);
  void ActionAdjustStyle (char *);
 diff --git a/src/autoroute.c b/src/autoroute.c
-index 3d1bc84..4f39d9e 100644
+index 6a09855..0c5e233 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -74,6 +74,7 @@
@@ -2191,7 +2191,7 @@ index b0ef6f8..528c103 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index 21d9372..5f92b1e 100644
+index d75a6f5..9bbc3c9 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -49,6 +49,7 @@
@@ -2202,7 +2202,7 @@ index 21d9372..5f92b1e 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -93,6 +94,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
+@@ -92,6 +93,7 @@ static void DrawPadNameLowLevel (PadTypePtr);
  static void DrawLineLowLevel (LineTypePtr);
  /* static */ void DrawRegularText (LayerTypePtr, TextTypePtr);
  static void DrawPolygonLowLevel (PolygonTypePtr);
@@ -2210,7 +2210,7 @@ index 21d9372..5f92b1e 100644
  static void DrawArcLowLevel (ArcTypePtr);
  static void DrawElementPackageLowLevel (ElementTypePtr Element);
  static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
-@@ -599,6 +601,7 @@ clearPin_callback (const BoxType * b, void *cl)
+@@ -564,6 +566,7 @@ clearPin_callback (const BoxType * b, void *cl)
      gui->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
    return 1;
  }
@@ -2218,7 +2218,7 @@ index 21d9372..5f92b1e 100644
  static int
  poly_callback (const BoxType * b, void *cl)
  {
-@@ -608,6 +611,29 @@ poly_callback (const BoxType * b, void *cl)
+@@ -573,6 +576,29 @@ poly_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -2248,7 +2248,7 @@ index 21d9372..5f92b1e 100644
  static int
  clearPad_callback (const BoxType * b, void *cl)
  {
-@@ -773,8 +799,11 @@ void
+@@ -738,8 +764,11 @@ void
  DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
  {
    /* print the non-clearing polys */
@@ -2261,7 +2261,7 @@ index 21d9372..5f92b1e 100644
  
    if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
      return;
-@@ -1191,6 +1220,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
+@@ -1156,6 +1185,48 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2310,7 +2310,7 @@ index 21d9372..5f92b1e 100644
   * lowlevel routine to element arcs
   */
  static void
-@@ -1509,6 +1580,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -1474,6 +1545,37 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
    DrawPolygonLowLevel (Polygon);
  }
  
@@ -2348,7 +2348,7 @@ index 21d9372..5f92b1e 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -1780,6 +1882,16 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -1745,6 +1847,16 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2365,7 +2365,7 @@ index 21d9372..5f92b1e 100644
   * erases an element
   */
  void
-@@ -1850,6 +1962,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -1815,6 +1927,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2375,7 +2375,7 @@ index 21d9372..5f92b1e 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -1897,6 +2012,10 @@ DrawObject (int type, void *ptr1, void *ptr2)
+@@ -1862,6 +1977,10 @@ DrawObject (int type, void *ptr1, void *ptr2)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
        break;
@@ -2387,10 +2387,10 @@ index 21d9372..5f92b1e 100644
        if (PCB->ElementOn &&
  	  (FRONT ((ElementTypePtr) ptr2) || PCB->InvisibleObjectsOn))
 diff --git a/src/draw.h b/src/draw.h
-index 94570a8..195b493 100644
+index 7b091f5..4761d74 100644
 --- a/src/draw.h
 +++ b/src/draw.h
-@@ -50,6 +50,7 @@ void DrawArc (LayerTypePtr, ArcTypePtr);
+@@ -49,6 +49,7 @@ void DrawArc (LayerTypePtr, ArcTypePtr);
  void DrawText (LayerTypePtr, TextTypePtr);
  void DrawTextLowLevel (TextTypePtr, int);
  void DrawPolygon (LayerTypePtr, PolygonTypePtr);
@@ -2398,7 +2398,7 @@ index 94570a8..195b493 100644
  void DrawElement (ElementTypePtr);
  void DrawElementName (ElementTypePtr);
  void DrawElementPackage (ElementTypePtr);
-@@ -67,6 +68,7 @@ void EraseLine (LineTypePtr);
+@@ -66,6 +67,7 @@ void EraseLine (LineTypePtr);
  void EraseArc (ArcTypePtr);
  void EraseText (LayerTypePtr, TextTypePtr);
  void ErasePolygon (PolygonTypePtr);
@@ -2454,7 +2454,7 @@ index 6363bf4..580c065 100644
  		  if (hole > 0)
  		    fputs ("\n\t\t)", FP);
 diff --git a/src/find.c b/src/find.c
-index 7620d85..399f6ff 100644
+index 47bd68c..83257a0 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -632,6 +632,7 @@ void
@@ -8220,7 +8220,7 @@ index e24ab82..36de895 100644
  
  void SelectPin (LibraryEntryTypePtr entry, bool toggle);
 diff --git a/src/set.c b/src/set.c
-index 8fef65a..46cd924 100644
+index c77129e..7faa89e 100644
 --- a/src/set.c
 +++ b/src/set.c
 @@ -248,12 +248,12 @@ SetMode (int Mode)
