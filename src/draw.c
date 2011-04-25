@@ -1560,6 +1560,32 @@ DrawElement (ElementTypePtr Element)
   DrawElementPinsAndPads (Element);
 }
 
+static void
+DrawStrippedText (ElementTypePtr Element, int min_width)
+{
+  TextType text;
+  TextType *text_ptr;
+  char *end_string;
+
+  if (TEST_FLAG (NAMEONPCBFLAG, PCB) &&
+      TEST_FLAG (STRIPHIERFLAG, Element))
+    {
+      text_ptr = &text;
+      memcpy (text_ptr, &ELEMENT_TEXT (PCB, Element), sizeof (TextType));
+
+      /* Strip hierarchy */
+      end_string = strrchr (text.TextString, '/');
+      if (end_string != NULL)
+        text.TextString = end_string + 1;
+    }
+  else
+    {
+      text_ptr = &ELEMENT_TEXT (PCB, Element);
+    }
+
+  DrawTextLowLevel (text_ptr, min_width);
+}
+
 /* ---------------------------------------------------------------------------
  * draws the name of an element
  */
@@ -1578,7 +1604,7 @@ DrawElementName (ElementTypePtr Element)
     gui->set_color (Output.fgGC, PCB->ElementColor);
   else
     gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
-  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
+  DrawStrippedText (Element, PCB->minSlk);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1761,7 +1787,7 @@ EraseElement (ElementTypePtr Element)
   }
   END_LOOP;
   if (!TEST_FLAG (HIDENAMEFLAG, Element))
-    DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
+    DrawStrippedText (Element, PCB->minSlk);
   EraseElementPinsAndPads (Element);
 }
 
@@ -1795,7 +1821,7 @@ EraseElementName (ElementTypePtr Element)
 {
   if (TEST_FLAG (HIDENAMEFLAG, Element))
     return;
-  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
+  DrawStrippedText (Element, PCB->minSlk);
 }
 
 
