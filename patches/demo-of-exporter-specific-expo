@@ -1,5 +1,5 @@
 Bottom: cf1f2352523b86bab1562a94164181f0a9e7b5a0
-Top:    c8f4da85137abaf16c3258190a38f7fd4656e647
+Top:    f0df1861b2edbb4a1d591b4b5c78b5a4f463bd5d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-21 02:41:14 +0100
 
@@ -296,7 +296,7 @@ index 7d529ba..3c67bde 100644
 +    PrintFab ();
 +}
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index d5843ef..1eb1e2a 100644
+index d5843ef..676a6fe 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -25,7 +25,9 @@
@@ -336,7 +336,7 @@ index d5843ef..1eb1e2a 100644
  static void
  maybe_close_f ()
  {
-@@ -382,18 +364,143 @@ maybe_close_f ()
+@@ -382,18 +364,148 @@ maybe_close_f ()
  
  static BoxType region;
  
@@ -396,6 +396,7 @@ index d5843ef..1eb1e2a 100644
 +  int i;
 +  int group;
 +  int nplated, nunplated;
++  extern bool Gathering;
 +
 +  HID *old_gui = gui;
 +  hidGC savebg = Output.bgGC;
@@ -412,6 +413,8 @@ index d5843ef..1eb1e2a 100644
 +
 +  PCB->Data->SILKLAYER.Color = PCB->ElementColor;
 +  PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
++
++  Gathering = false;
 +
 +  memset (print_group, 0, sizeof (print_group));
 +  for (i = 0; i < max_copper_layer; i++)
@@ -470,6 +473,8 @@ index d5843ef..1eb1e2a 100644
 +  Output.fgGC = savefg;
 +  Output.bgGC = savebg;
 +  Output.pmGC = savepm;
++
++  Gathering = true;
 +}
 +
  static void
@@ -487,7 +492,7 @@ index d5843ef..1eb1e2a 100644
  
    if (!options)
      {
-@@ -438,24 +545,20 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -438,24 +550,20 @@ gerber_do_export (HID_Attr_Val * options)
    else
      {
        memset (print_group, 0, sizeof (print_group));
@@ -523,7 +528,7 @@ index d5843ef..1eb1e2a 100644
    linewidth = -1;
    lastcap = -1;
    lastgroup = -1;
-@@ -473,17 +576,13 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -473,17 +581,13 @@ gerber_do_export (HID_Attr_Val * options)
    lastgroup = -1;
    c_layerapps = 0;
    finding_apertures = 1;
@@ -543,7 +548,7 @@ index d5843ef..1eb1e2a 100644
  }
  
  static void
-@@ -519,14 +618,6 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -519,14 +623,6 @@ gerber_set_layer (const char *name, int group, int empty)
    if (name == 0)
      name = PCB->Data->Layer[idx].Name;
  
