@@ -1486,40 +1486,16 @@ DrawElementName (ElementTypePtr Element)
 void
 DrawElementPackage (ElementTypePtr Element)
 {
-  if (Gathering)
-    {
-      ELEMENTLINE_LOOP (Element);
-      {
-        AddPart (line);
-      }
-      END_LOOP;
-      ARC_LOOP (Element);
-      {
-        AddPart (arc);
-      }
-      END_LOOP;
-      return;
-    }
+  assert (Gathering);
 
-  /* set color and draw lines, arcs, text and pins */
-  if (doing_pinout || doing_assy)
-    gui->set_color (Output.fgGC, PCB->ElementColor);
-  else if (TEST_FLAG (SELECTEDFLAG, Element))
-    gui->set_color (Output.fgGC, PCB->ElementSelectedColor);
-  else if (FRONT (Element))
-    gui->set_color (Output.fgGC, PCB->ElementColor);
-  else
-    gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
-
-  /* draw lines, arcs, text and pins */
   ELEMENTLINE_LOOP (Element);
   {
-    _draw_line (line);
+    AddPart (line);
   }
   END_LOOP;
   ARC_LOOP (Element);
   {
-    _draw_arc (arc);
+    AddPart (arc);
   }
   END_LOOP;
 }
