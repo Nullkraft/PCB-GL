@@ -1693,9 +1693,12 @@ EraseElementPinsAndPads (ElementTypePtr Element)
 void
 EraseElementName (ElementTypePtr Element)
 {
+  assert (Gathering);
+
   if (TEST_FLAG (HIDENAMEFLAG, Element))
     return;
-  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
+
+  AddPart (&ELEMENT_TEXT (PCB, Element));
 }
 
 
