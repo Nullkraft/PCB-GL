@@ -1,5 +1,5 @@
-Bottom: 0ede322aa7cec8365db7b951fa66162ec1fafcdb
-Top:    66cb3f35b7e4ca2e0294337a1e2345d056269d41
+Bottom: 69fc9430bd65433269275f6f2143c9e9e548b4f3
+Top:    c05cbbc35f8090fd5b40006bedcfbdda85cf7e06
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 19:44:55 +0100
 
@@ -9,10 +9,10 @@ draw.c: Split "Gathering" from real drawing routines (Element names)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 7ad80f3..5af9fd1 100644
+index 75a6c8e..09c2715 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -189,6 +189,34 @@ Redraw (void)
+@@ -195,6 +195,34 @@ Redraw (void)
  }
  
  static int
@@ -47,7 +47,7 @@ index 7ad80f3..5af9fd1 100644
  name_callback (const BoxType * b, void *cl)
  {
    TextTypePtr text = (TextTypePtr) b;
-@@ -199,7 +227,7 @@ name_callback (const BoxType * b, void *cl)
+@@ -205,7 +233,7 @@ name_callback (const BoxType * b, void *cl)
      return 0;
  
    if (ON_SIDE (element, *side))
@@ -56,7 +56,7 @@ index 7ad80f3..5af9fd1 100644
    return 0;
  }
  
-@@ -380,17 +408,6 @@ draw_element_package (ElementType *element)
+@@ -311,17 +339,6 @@ draw_element_package (ElementType *element)
    END_LOOP;
  }
  
@@ -74,7 +74,7 @@ index 7ad80f3..5af9fd1 100644
  /* ---------------------------------------------------------------------------
   * prints assembly drawing.
   */
-@@ -1451,19 +1468,11 @@ DrawElement (ElementTypePtr Element)
+@@ -1512,19 +1529,11 @@ DrawElement (ElementTypePtr Element)
  void
  DrawElementName (ElementTypePtr Element)
  {
@@ -97,7 +97,7 @@ index 7ad80f3..5af9fd1 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1713,9 +1722,11 @@ EraseElementPinsAndPads (ElementTypePtr Element)
+@@ -1741,9 +1750,11 @@ EraseElementPinsAndPads (ElementTypePtr Element)
  void
  EraseElementName (ElementTypePtr Element)
  {
@@ -110,7 +110,7 @@ index 7ad80f3..5af9fd1 100644
  }
  
  
-@@ -1811,7 +1822,7 @@ static void
+@@ -1839,7 +1850,7 @@ static void
  draw_element (ElementTypePtr element)
  {
    draw_element_package (element);
