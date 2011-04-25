@@ -1581,7 +1581,7 @@ DrawLayerGroup (int group, const BoxType * screen)
         strcmp (Layer->Name, "route") == 0)
       rv = 0;
 
-    if (layernum < max_copper_layer /*&& Layer->On*/) {
+    if (layernum < max_copper_layer && Layer->On) {
 
       if (!first_run)
         gui->set_layer (0, group, 0);
