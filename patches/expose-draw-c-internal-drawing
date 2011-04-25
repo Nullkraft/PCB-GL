@@ -1,5 +1,5 @@
-Bottom: 40a4c6e627833ef07fcb957a495e297a004f643a
-Top:    141960c7513175028b37d95ac0c3d4d0cd263860
+Bottom: e7c40fae7af9d877ef59d09137cb2ec2de0c41fe
+Top:    e7c40fae7af9d877ef59d09137cb2ec2de0c41fe
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 11:49:27 +0100
 
@@ -8,60 +8,4 @@ Expose draw.c internal drawing APIs
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index 8b73644..b748ea5 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -100,10 +100,7 @@ static void SetPVColor (PinTypePtr, int);
- static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
- static void ClearPad (PadTypePtr, bool);
- static void DrawHole (PinTypePtr);
--static void DrawMask (int side, BoxType *);
--static void DrawPaste (int side, BoxType *);
- static void DrawRats (BoxType *);
--static void DrawSilk (int side, const BoxType *);
- static int via_callback (const BoxType * b, void *cl);
- static int pin_callback (const BoxType * b, void *cl);
- static int pad_callback (const BoxType * b, void *cl);
-@@ -555,7 +552,7 @@ clearPad_callback (const BoxType * b, void *cl)
-  * Draws silk layer.
-  */
- 
--static void
-+void
- DrawSilk (int side, const BoxType * drawn_area)
- {
- #if 0
-@@ -614,7 +611,7 @@ DrawMaskBoardArea (int mask_type, BoxType *screen)
- /* ---------------------------------------------------------------------------
-  * draws solder mask layer - this will cover nearly everything
-  */
--static void
-+void
- DrawMask (int side, BoxType * screen)
- {
-   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
-@@ -643,7 +640,7 @@ DrawMask (int side, BoxType * screen)
- /* ---------------------------------------------------------------------------
-  * draws solder paste layer for a given side of the board
-  */
--static void
-+void
- DrawPaste (int side, BoxType *drawn_area)
- {
-   gui->set_color (Output.fgGC, PCB->ElementColor);
-diff --git a/src/draw.h b/src/draw.h
-index adfee36..46f67d4 100644
---- a/src/draw.h
-+++ b/src/draw.h
-@@ -72,6 +72,10 @@ void EraseElementName (ElementTypePtr);
- void EraseObject (int, void *, void *);
- void LoadBackgroundImage (char *);
- 
-+void DrawMask (int side, BoxType *);
-+void DrawSilk (int side, const BoxType *);
-+void DrawPaste (int side, BoxType *);
-+
- /*GdkDrawable *draw_get_current_drawable(void);*/
- 
- #endif
+
