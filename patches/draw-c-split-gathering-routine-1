@@ -1,5 +1,5 @@
-Bottom: 8572969115e9e378da28c435121edbf5d6a5c46d
-Top:    0ba31f16b8aaea125c640c4d85b29eeeb774f394
+Bottom: c8cfe7a3b68a967c010806235d28161e4b65bf98
+Top:    e7c40fae7af9d877ef59d09137cb2ec2de0c41fe
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 18:14:53 +0100
 
@@ -11,7 +11,7 @@ Moves code from DrawRegularText() into its only caller text_callback()
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index f01184c..354a6cf 100644
+index 63c1760..bf6b11f 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -86,7 +86,6 @@ static const BoxType *clip_box = NULL;
