@@ -195,6 +195,34 @@ Redraw (void)
 }
 
 static int
+element_callback (const BoxType * b, void *cl)
+{
+  ElementTypePtr element = (ElementTypePtr) b;
+  int *side = cl;
+
+  if (ON_SIDE (element, *side))
+    DrawElementPackage (element);
+  return 1;
+}
+
+static void
+draw_element_name (ElementType *element)
+{
+  if ((TEST_FLAG (HIDENAMESFLAG, PCB) && gui->gui) ||
+      TEST_FLAG (HIDENAMEFLAG, element))
+    return;
+  if (doing_pinout || doing_assy)
+    gui->set_color (Output.fgGC, PCB->ElementColor);
+  else if (TEST_FLAG (SELECTEDFLAG, &ELEMENT_TEXT (PCB, element)))
+    gui->set_color (Output.fgGC, PCB->ElementSelectedColor);
+  else if (FRONT (element))
+    gui->set_color (Output.fgGC, PCB->ElementColor);
+  else
+    gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
+  DrawTextLowLevel (&ELEMENT_TEXT (PCB, element), PCB->minSlk);
+}
+
+static int
 name_callback (const BoxType * b, void *cl)
 {
   TextTypePtr text = (TextTypePtr) b;
@@ -205,7 +233,7 @@ name_callback (const BoxType * b, void *cl)
     return 0;
 
   if (ON_SIDE (element, *side))
-    DrawElementName (element);
+    draw_element_name (element);
   return 0;
 }
 
@@ -309,17 +337,6 @@ draw_element_package (ElementType *element)
     DrawArcLowLevel (arc);
   }
   END_LOOP;
-}
-
-static int
-element_callback (const BoxType * b, void *cl)
-{
-  ElementTypePtr element = (ElementTypePtr) b;
-  int *side = cl;
-
-  if (ON_SIDE (element, *side))
-    draw_element_package (element);
-  return 1;
 }
 
 /* ---------------------------------------------------------------------------
@@ -1512,19 +1529,11 @@ DrawElement (ElementTypePtr Element)
 void
 DrawElementName (ElementTypePtr Element)
 {
-  if (gui->gui && TEST_FLAG (HIDENAMESFLAG, PCB))
-    return;
+  assert (Gathering);
+
   if (TEST_FLAG (HIDENAMEFLAG, Element))
     return;
-  if (doing_pinout || doing_assy)
-    gui->set_color (Output.fgGC, PCB->ElementColor);
-  else if (TEST_FLAG (SELECTEDFLAG, &ELEMENT_TEXT (PCB, Element)))
-    gui->set_color (Output.fgGC, PCB->ElementSelectedColor);
-  else if (FRONT (Element))
-    gui->set_color (Output.fgGC, PCB->ElementColor);
-  else
-    gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
-  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
+  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), 0);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1741,9 +1750,11 @@ EraseElementPinsAndPads (ElementTypePtr Element)
 void
 EraseElementName (ElementTypePtr Element)
 {
+  assert (Gathering);
+
   if (TEST_FLAG (HIDENAMEFLAG, Element))
     return;
-  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
+  AddPart (&ELEMENT_TEXT (PCB, Element));
 }
 
 
@@ -1839,7 +1850,7 @@ static void
 draw_element (ElementTypePtr element)
 {
   draw_element_package (element);
-  DrawElementName (element);
+  draw_element_name (element);
   DrawElementPinsAndPads (element);
 }
 
