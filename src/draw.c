@@ -34,6 +34,7 @@
 #include "config.h"
 #endif
 
+#undef NDEBUG
 #include <assert.h>
 
 #include "global.h"
@@ -454,7 +455,7 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
 }
 
 static void
-draw_pv_name (PinTypepv pv)
+draw_pv_name (PinType *pv)
 {
   BoxType box;
   bool vert;
@@ -463,21 +464,21 @@ draw_pv_name (PinTypepv pv)
   assert (!Gathering);
 
   if (!pv->Name || !pv->Name[0])
-    Text.TextString = EMPTY (pv->Number);
+    text.TextString = EMPTY (pv->Number);
   else
-    Text.TextString = EMPTY (TEST_FLAG (SHOWNUMBERFLAG, PCB) ? pv->Number : pv->Name);
+    text.TextString = EMPTY (TEST_FLAG (SHOWNUMBERFLAG, PCB) ? pv->Number : pv->Name);
 
   vert = TEST_FLAG (EDGE2FLAG, pv);
 
   if (vert)
     {
-      box.X1 = pv->X - pv->Thickness / 2 + Settings.PinoutTextOffsetY;
+      box.X1 = pv->X - pv->Thickness    / 2 + Settings.PinoutTextOffsetY;
       box.Y1 = pv->Y - pv->DrillingHole / 2 - Settings.PinoutTextOffsetX;
     }
   else
     {
       box.X1 = pv->X + pv->DrillingHole / 2 + Settings.PinoutTextOffsetX;
-      box.Y1 = pv->Y - pv->Thickness / 2 + Settings.PinoutTextOffsetY;
+      box.Y1 = pv->Y - pv->Thickness    / 2 + Settings.PinoutTextOffsetY;
     }
 
   gui->set_color (Output.fgGC, PCB->PinNameColor);
@@ -505,6 +506,11 @@ draw_pv (PinTypePtr pv)
 
   if (!TEST_FLAG (HOLEFLAG, pv) && TEST_FLAG (DISPLAYNAMEFLAG, pv))
     draw_pv_name (pv);
+}
+
+static void
+draw_pin (PinTypePtr pin)
+{
 }
 
 static int
@@ -1551,7 +1557,10 @@ DrawElementPinsAndPads (ElementTypePtr Element)
   END_LOOP;
   PIN_LOOP (Element);
   {
-    DrawPin (pin);
+    if (Gathering)
+      DrawPin (pin);
+    else
+      draw_pin (pin);
   }
   END_LOOP;
 }
