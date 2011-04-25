@@ -202,9 +202,8 @@ element_callback (const BoxType * b, void *cl)
 static void
 draw_element_name (ElementType *element)
 {
-  if (gui->gui && TEST_FLAG (HIDENAMESFLAG, PCB))
-    return;
-  if (TEST_FLAG (HIDENAMEFLAG, element))
+  if ((TEST_FLAG (HIDENAMESFLAG, PCB) && gui->gui) ||
+      TEST_FLAG (HIDENAMEFLAG, element))
     return;
   if (doing_pinout || doing_assy)
     gui->set_color (Output.fgGC, PCB->ElementColor);
@@ -407,17 +406,6 @@ draw_element_package (ElementType *element)
     _draw_arc (arc);
   }
   END_LOOP;
-}
-
-static int
-element_callback (const BoxType * b, void *cl)
-{
-  ElementTypePtr element = (ElementTypePtr) b;
-  int *side = cl;
-
-  if (ON_SIDE (element, *side))
-    draw_element_package (element);
-  return 1;
 }
 
 /* ---------------------------------------------------------------------------
@@ -1484,7 +1472,7 @@ DrawElementName (ElementTypePtr Element)
 
   if (TEST_FLAG (HIDENAMEFLAG, Element))
     return;
-  AddPart (&ELEMENT_TEXT (PCB, Element));
+  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), 0);
 }
 
 /* ---------------------------------------------------------------------------
