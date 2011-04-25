@@ -1,5 +1,5 @@
 Bottom: 40a4c6e627833ef07fcb957a495e297a004f643a
-Top:    c3cc8efcc94e30b972eb4fd52947d536155476c1
+Top:    4c1e800808297c82b906eb5c87df9168edb5ee44
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 16:06:23 +0100
 
@@ -14,7 +14,7 @@ within a block where Gathering is definately set.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 8b73644..5b1779c 100644
+index 8b73644..09e183e 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -84,8 +84,6 @@ static void DrawEverything (BoxTypePtr);
@@ -26,15 +26,15 @@ index 8b73644..5b1779c 100644
  static void DrawPinOrViaNameLowLevel (PinTypePtr);
  static void DrawPadLowLevel (hidGC, PadTypePtr, bool, bool);
  static void DrawPadNameLowLevel (PadTypePtr);
-@@ -460,14 +458,20 @@ static int
+@@ -460,14 +458,21 @@ static int
  via_callback (const BoxType * b, void *cl)
  {
    PinTypePtr via = (PinTypePtr) b;
 -  DrawPlainVia (via, false);
-+  SetPVColor (Via, VIA_TYPE);
-+  DrawPinOrViaLowLevel (Via, false);
-+  if (!TEST_FLAG (HOLEFLAG, Via) && TEST_FLAG (DISPLAYNAMEFLAG, Via))
-+    DrawPinOrViaNameLowLevel (Via);
++  SetPVColor (via, VIA_TYPE);
++  DrawPinOrViaLowLevel (via, false);
++  if (!TEST_FLAG (HOLEFLAG, via) && TEST_FLAG (DISPLAYNAMEFLAG, via))
++    DrawPinOrViaNameLowLevel (via);
    return 1;
  }
  
@@ -42,14 +42,15 @@ index 8b73644..5b1779c 100644
  pin_callback (const BoxType * b, void *cl)
  {
 -  DrawPlainPin ((PinTypePtr) b, false);
-+  SetPVColor (Pin, PIN_TYPE);
-+  DrawPinOrViaLowLevel (Pin, false);
-+  if (!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
-+    DrawPinOrViaNameLowLevel (Pin);
++  PinTypePtr pin = (PinTypePtr) b;
++  SetPVColor (pin, PIN_TYPE);
++  DrawPinOrViaLowLevel (pin, false);
++  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
++    DrawPinOrViaNameLowLevel (pin);
    return 1;
  }
  
-@@ -1180,19 +1184,6 @@ DrawVia (PinTypePtr Via)
+@@ -1180,19 +1185,6 @@ DrawVia (PinTypePtr Via)
  }
  
  /* ---------------------------------------------------------------------------
@@ -69,7 +70,7 @@ index 8b73644..5b1779c 100644
   * draws the name of a via
   */
  void
-@@ -1225,19 +1216,6 @@ DrawPin (PinTypePtr Pin)
+@@ -1225,19 +1217,6 @@ DrawPin (PinTypePtr Pin)
  }
  
  /* ---------------------------------------------------------------------------
