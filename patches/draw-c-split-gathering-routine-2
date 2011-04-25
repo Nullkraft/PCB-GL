@@ -1,5 +1,5 @@
-Bottom: 07327134390c5c12723e2b6804441fab5673dba1
-Top:    d0d8efffa0d38dc23a66e525d5000c0a408b4a85
+Bottom: b89ef72d19fbdc513f2b40e916dba08a8bc02fb3
+Top:    91145259fd6d4ad408c2f6ce4ee17908fd3dd9d4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 18:25:38 +0100
 
@@ -9,10 +9,10 @@ draw.c: Split "Gathering" routines from real drawing routines (Element names)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 8e380f9..2f8305c 100644
+index 4340526..136a5b3 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -195,6 +195,24 @@ element_callback (const BoxType * b, void *cl)
+@@ -196,6 +196,24 @@ element_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -37,7 +37,7 @@ index 8e380f9..2f8305c 100644
  static int
  name_callback (const BoxType * b, void *cl)
  {
-@@ -206,7 +224,7 @@ name_callback (const BoxType * b, void *cl)
+@@ -207,7 +225,7 @@ name_callback (const BoxType * b, void *cl)
      return 0;
  
    if (ON_SIDE (element, *side))
@@ -46,7 +46,7 @@ index 8e380f9..2f8305c 100644
    return 0;
  }
  
-@@ -1389,7 +1407,10 @@ void
+@@ -1411,7 +1429,10 @@ void
  DrawElement (ElementTypePtr Element)
  {
    DrawElementPackage (Element);
@@ -58,7 +58,7 @@ index 8e380f9..2f8305c 100644
    DrawElementPinsAndPads (Element);
  }
  
-@@ -1399,19 +1420,11 @@ DrawElement (ElementTypePtr Element)
+@@ -1421,19 +1442,11 @@ DrawElement (ElementTypePtr Element)
  void
  DrawElementName (ElementTypePtr Element)
  {
@@ -81,7 +81,7 @@ index 8e380f9..2f8305c 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1670,7 +1683,6 @@ EraseElementName (ElementTypePtr Element)
+@@ -1697,7 +1710,6 @@ EraseElementName (ElementTypePtr Element)
  
    if (TEST_FLAG (HIDENAMEFLAG, Element))
      return;
