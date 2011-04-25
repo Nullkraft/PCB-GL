@@ -1,5 +1,5 @@
-Bottom: 8010ff2901c38d10212e4281db08ce1c676ed0eb
-Top:    f3b5f40578d9338775a3982f044e8bacec171edc
+Bottom: b7be02c28b0a823e4febc6d0fe6280aca0572320
+Top:    fb27d66af8d53d1e4651483b07d689795230c293
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 11:49:27 +0100
 
@@ -9,7 +9,7 @@ Expose draw.c internal drawing APIs
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 2afcf98..d553ba6 100644
+index 10da1dd..c2e5c8c 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -100,10 +100,7 @@ static void SetPVColor (PinTypePtr, int);
@@ -23,7 +23,7 @@ index 2afcf98..d553ba6 100644
  static int via_callback (const BoxType * b, void *cl);
  static int pin_callback (const BoxType * b, void *cl);
  static int pad_callback (const BoxType * b, void *cl);
-@@ -585,7 +582,7 @@ clearPad_callback (const BoxType * b, void *cl)
+@@ -576,7 +573,7 @@ clearPad_callback (const BoxType * b, void *cl)
   * Draws silk layer.
   */
  
@@ -32,7 +32,7 @@ index 2afcf98..d553ba6 100644
  DrawSilk (int side, const BoxType * drawn_area)
  {
  #if 0
-@@ -644,7 +641,7 @@ DrawMaskBoardArea (int mask_type, BoxType *screen)
+@@ -635,7 +632,7 @@ DrawMaskBoardArea (int mask_type, BoxType *screen)
  /* ---------------------------------------------------------------------------
   * draws solder mask layer - this will cover nearly everything
   */
@@ -41,7 +41,7 @@ index 2afcf98..d553ba6 100644
  DrawMask (int side, BoxType * screen)
  {
    int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
-@@ -673,7 +670,7 @@ DrawMask (int side, BoxType * screen)
+@@ -664,7 +661,7 @@ DrawMask (int side, BoxType * screen)
  /* ---------------------------------------------------------------------------
   * draws solder paste layer for a given side of the board
   */
