@@ -1,0 +1,22 @@
+Bottom: 88e448b44788f727edff038848d6a8a700cf4797
+Top:    c3cc8efcc94e30b972eb4fd52947d536155476c1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-25 16:10:16 +0100
+
+Refresh of move-drawplainpin-and-drawplai
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 1fdd9c4..5b1779c 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -469,7 +469,7 @@ static int
+ pin_callback (const BoxType * b, void *cl)
+ {
+   SetPVColor (Pin, PIN_TYPE);
+-  DrawPinOrViaLowLevel (Pin, holeToo);
++  DrawPinOrViaLowLevel (Pin, false);
+   if (!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
+     DrawPinOrViaNameLowLevel (Pin);
+   return 1;
