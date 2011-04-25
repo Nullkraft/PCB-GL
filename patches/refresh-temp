@@ -1,0 +1,21 @@
+Bottom: 259986182784ba11339361aab4f857492f51a29d
+Top:    b7be02c28b0a823e4febc6d0fe6280aca0572320
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-25 15:51:17 +0100
+
+Refresh of draw-c-remove-updateall-api-in
+
+---
+
+diff --git a/src/draw.h b/src/draw.h
+index 7f4d3d0..c60b6d9 100644
+--- a/src/draw.h
++++ b/src/draw.h
+@@ -37,6 +37,7 @@
+ 
+ void Draw (void);
+ void Redraw (void);
++void ClearAndRedrawOutput (void);
+ void DrawVia (PinTypePtr);
+ void DrawRat (RatTypePtr);
+ void DrawViaName (PinTypePtr);
