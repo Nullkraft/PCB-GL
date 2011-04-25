@@ -817,7 +817,7 @@ DrawRats (BoxTypePtr drawn_area)
 }
 
 static void
-_draw_line (lineTypePtr line)
+_draw_line (LineType *line)
 {
   gui->set_line_cap (Output.fgGC, Trace_Cap);
   if (TEST_FLAG (THINDRAWFLAG, PCB))
@@ -826,8 +826,8 @@ _draw_line (lineTypePtr line)
     gui->set_line_width (Output.fgGC, line->Thickness);
 
   gui->draw_line (Output.fgGC,
-		  line->Point1.X, Line->Point1.Y,
-		  line->Point2.X, Line->Point2.Y);
+		  line->Point1.X, line->Point1.Y,
+		  line->Point2.X, line->Point2.Y);
 }
 
 static void
@@ -1494,12 +1494,12 @@ DrawElementPackage (ElementTypePtr Element)
     {
       ELEMENTLINE_LOOP (Element);
       {
-        DrawLine (line);
+        AddPart (line);
       }
       END_LOOP;
       ARC_LOOP (Element);
       {
-        DrawArc (arc);
+        AddPart (arc);
       }
       END_LOOP;
       return;
@@ -1514,7 +1514,6 @@ DrawElementPackage (ElementTypePtr Element)
     gui->set_color (Output.fgGC, PCB->ElementColor);
   else
     gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
-  DrawElementPackageLowLevel (Element);
 
   /* draw lines, arcs, text and pins */
   ELEMENTLINE_LOOP (Element);
