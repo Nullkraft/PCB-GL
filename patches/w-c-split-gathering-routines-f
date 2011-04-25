@@ -1,5 +1,5 @@
-Bottom: 8bff68d602c9ce02135f3874c46f52d52d63028c
-Top:    0fe28d05aaadf63b88bc35c3ed409a656c5beb46
+Bottom: 4809378d4ed53c4df7e94c8cc328da41c4544547
+Top:    6f69309199c3fd37bc52eb39f837767edcb48829
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 17:51:16 +0100
 
@@ -9,7 +9,7 @@ w.c: Split "Gathering" routines from real drawing routines (Arcs)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 5c18d3e..a4acfdf 100644
+index 4348d66..81983c2 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -88,7 +88,6 @@ static void DrawPPV (int group, const BoxType *);
@@ -20,7 +20,7 @@ index 5c18d3e..a4acfdf 100644
  static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
  static void AddPart (void *);
  static void SetPVColor (PinTypePtr, int);
-@@ -852,10 +851,42 @@ line_callback (const BoxType * b, void *cl)
+@@ -879,10 +878,42 @@ line_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -64,7 +64,7 @@ index 5c18d3e..a4acfdf 100644
    return 1;
  }
  
-@@ -1149,30 +1180,6 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
+@@ -1138,30 +1169,6 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -95,7 +95,7 @@ index 5c18d3e..a4acfdf 100644
   * draw a via object
   */
  void
-@@ -1311,21 +1318,9 @@ DrawRat (RatTypePtr Line)
+@@ -1300,21 +1307,9 @@ DrawRat (RatTypePtr Line)
  void
  DrawArc (LayerTypePtr Layer, ArcTypePtr Arc)
  {
@@ -120,7 +120,7 @@ index 5c18d3e..a4acfdf 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1523,7 +1518,7 @@ DrawElementPackage (ElementTypePtr Element)
+@@ -1512,7 +1507,7 @@ DrawElementPackage (ElementTypePtr Element)
    END_LOOP;
    ARC_LOOP (Element);
    {
@@ -129,7 +129,7 @@ index 5c18d3e..a4acfdf 100644
    }
    END_LOOP;
  }
-@@ -1661,9 +1656,11 @@ EraseLine (LineTypePtr Line)
+@@ -1650,9 +1645,11 @@ EraseLine (LineTypePtr Line)
  void
  EraseArc (ArcTypePtr Arc)
  {
@@ -142,7 +142,7 @@ index 5c18d3e..a4acfdf 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1703,7 +1700,7 @@ EraseElement (ElementTypePtr Element)
+@@ -1692,7 +1689,7 @@ EraseElement (ElementTypePtr Element)
    END_LOOP;
    ARC_LOOP (Element);
    {
