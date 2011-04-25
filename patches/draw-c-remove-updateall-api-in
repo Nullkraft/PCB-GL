@@ -1,5 +1,5 @@
 Bottom: f3b5f40578d9338775a3982f044e8bacec171edc
-Top:    f3b5f40578d9338775a3982f044e8bacec171edc
+Top:    5add24bec399ae0ee5b45205372d753c5483b85e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 15:47:44 +0100
 
@@ -8,4 +8,15 @@ draw.c: Remove UpdateAll() API, in favour of Redraw(), which is identical
 
 ---
 
-
+diff --git a/src/draw.h b/src/draw.h
+index ff93f46..bf6289b 100644
+--- a/src/draw.h
++++ b/src/draw.h
+@@ -37,7 +37,6 @@
+ 
+ void Draw (void);
+ void Redraw (void);
+-void ClearAndRedrawOutput (void);
+ void DrawVia (PinTypePtr);
+ void DrawRat (RatTypePtr);
+ void DrawViaName (PinTypePtr);
