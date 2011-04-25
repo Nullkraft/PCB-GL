@@ -1150,8 +1150,6 @@ DrawArcLowLevel (ArcTypePtr Arc)
 static void
 DrawElementPackageLowLevel (ElementTypePtr Element)
 {
-  assert (Gathering);
-
   /* draw lines, arcs, text and pins */
   ELEMENTLINE_LOOP (Element);
   {
@@ -1496,6 +1494,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 void
 DrawElement (ElementTypePtr Element)
 {
+  assert (Gathering);
+
   DrawElementPackage (Element);
   DrawElementName (Element);
   DrawElementPinsAndPads (Element);
