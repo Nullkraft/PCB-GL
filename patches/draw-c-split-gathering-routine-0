@@ -1,5 +1,5 @@
 Bottom: 3dd2f13c64af60dd31e6a26b267360c861471b5a
-Top:    3dd2f13c64af60dd31e6a26b267360c861471b5a
+Top:    09e62abf0832cadeae8591718e7cafd1cfc7ff67
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 17:37:04 +0100
 
@@ -8,4 +8,227 @@ draw.c: Split "Gathering" routines from real drawing routines (Lines, Arcs)
 
 ---
 
-
+diff --git a/src/draw.c b/src/draw.c
+index 13c348b..71172e0 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -86,11 +86,9 @@ static const BoxType *clip_box = NULL;
+ static void DrawEverything (BoxTypePtr);
+ static void DrawPPV (int group, const BoxType *);
+ static int DrawLayerGroup (int, const BoxType *);
+-static void DrawLineLowLevel (LineTypePtr);
+ static void DrawRegularText (LayerTypePtr, TextTypePtr);
+ static void DrawPolygonLowLevel (PolygonTypePtr);
+ static void DrawArcLowLevel (ArcTypePtr);
+-static void DrawElementPackageLowLevel (ElementTypePtr Element);
+ static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
+ static void AddPart (void *);
+ static void SetPVColor (PinTypePtr, int);
+@@ -818,10 +816,39 @@ DrawRats (BoxTypePtr drawn_area)
+     gui->use_mask (HID_MASK_OFF);
+ }
+ 
++static void
++_draw_line (lineTypePtr line)
++{
++  gui->set_line_cap (Output.fgGC, Trace_Cap);
++  if (TEST_FLAG (THINDRAWFLAG, PCB))
++    gui->set_line_width (Output.fgGC, 0);
++  else
++    gui->set_line_width (Output.fgGC, line->Thickness);
++
++  gui->draw_line (Output.fgGC,
++		  line->Point1.X, Line->Point1.Y,
++		  line->Point2.X, Line->Point2.Y);
++}
++
++static void
++draw_line (LayerType *layer, LineType *line)
++{
++  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, line))
++    {
++      if (TEST_FLAG (SELECTEDFLAG, line))
++        gui->set_color (Output.fgGC, layer->SelectedColor);
++      else
++        gui->set_color (Output.fgGC, PCB->ConnectedColor);
++    }
++  else
++    gui->set_color (Output.fgGC, layer->Color);
++  _draw_line (line);
++}
++
+ static int
+ line_callback (const BoxType * b, void *cl)
+ {
+-  DrawLine ((LayerTypePtr) cl, (LineTypePtr) b);
++  draw_line ((LayerType *) cl, (LineType *) b);
+   return 1;
+ }
+ 
+@@ -1015,29 +1042,6 @@ GatherPadName (PadTypePtr Pad)
+ }
+ 
+ /* ---------------------------------------------------------------------------
+- * lowlevel drawing routine for lines
+- */
+-static void
+-DrawLineLowLevel (LineTypePtr Line)
+-{
+-  if (Gathering)
+-    {
+-      AddPart (Line);
+-      return;
+-    }
+-
+-  gui->set_line_cap (Output.fgGC, Trace_Cap);
+-  if (TEST_FLAG (THINDRAWFLAG, PCB))
+-    gui->set_line_width (Output.fgGC, 0);
+-  else
+-    gui->set_line_width (Output.fgGC, Line->Thickness);
+-
+-  gui->draw_line (Output.fgGC,
+-		  Line->Point1.X, Line->Point1.Y,
+-		  Line->Point2.X, Line->Point2.Y);
+-}
+-
+-/* ---------------------------------------------------------------------------
+  * lowlevel drawing routine for text objects
+  */
+ void
+@@ -1091,7 +1095,7 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
+ 	      newline.Point1.Y += Text->Y;
+ 	      newline.Point2.X += Text->X;
+ 	      newline.Point2.Y += Text->Y;
+-	      DrawLineLowLevel (&newline);
++	      _draw_line (&newline);
+ 	    }
+ 
+ 	  /* move on to next cursor position */
+@@ -1169,25 +1173,6 @@ DrawArcLowLevel (ArcTypePtr Arc)
+ }
+ 
+ /* ---------------------------------------------------------------------------
+- * draws the package of an element
+- */
+-static void
+-DrawElementPackageLowLevel (ElementTypePtr Element)
+-{
+-  /* draw lines, arcs, text and pins */
+-  ELEMENTLINE_LOOP (Element);
+-  {
+-    DrawLineLowLevel (line);
+-  }
+-  END_LOOP;
+-  ARC_LOOP (Element);
+-  {
+-    DrawArcLowLevel (arc);
+-  }
+-  END_LOOP;
+-}
+-
+-/* ---------------------------------------------------------------------------
+  * draw a via object
+  */
+ void
+@@ -1266,19 +1251,9 @@ DrawPadName (PadTypePtr Pad)
+ void
+ DrawLine (LayerTypePtr Layer, LineTypePtr Line)
+ {
+-  if (!Gathering)
+-    {
+-      if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Line))
+-	{
+-	  if (TEST_FLAG (SELECTEDFLAG, Line))
+-	    gui->set_color (Output.fgGC, Layer->SelectedColor);
+-	  else
+-	    gui->set_color (Output.fgGC, PCB->ConnectedColor);
+-	}
+-      else
+-	gui->set_color (Output.fgGC, Layer->Color);
+-    }
+-  DrawLineLowLevel (Line);
++  assert (Gathering);
++
++  AddPart (Line);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -1327,7 +1302,7 @@ DrawRat (RatTypePtr Line)
+ 	}
+     }
+   else
+-    DrawLineLowLevel ((LineTypePtr) Line);
++    _draw_line ((LineTypePtr) Line);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -1515,6 +1490,21 @@ DrawElementName (ElementTypePtr Element)
+ void
+ DrawElementPackage (ElementTypePtr Element)
+ {
++  if (Gathering)
++    {
++      ELEMENTLINE_LOOP (Element);
++      {
++        DrawLine (line);
++      }
++      END_LOOP;
++      ARC_LOOP (Element);
++      {
++        DrawArc (arc);
++      }
++      END_LOOP;
++      return;
++    }
++
+   /* set color and draw lines, arcs, text and pins */
+   if (doing_pinout || doing_assy)
+     gui->set_color (Output.fgGC, PCB->ElementColor);
+@@ -1525,6 +1515,18 @@ DrawElementPackage (ElementTypePtr Element)
+   else
+     gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
+   DrawElementPackageLowLevel (Element);
++
++  /* draw lines, arcs, text and pins */
++  ELEMENTLINE_LOOP (Element);
++  {
++    _draw_line (line);
++  }
++  END_LOOP;
++  ARC_LOOP (Element);
++  {
++    DrawArcLowLevel (arc);
++  }
++  END_LOOP;
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -1580,7 +1582,7 @@ EraseRat (RatTypePtr Rat)
+ 		     w * 2, w * 2, 0, 360);
+     }
+   else
+-    DrawLineLowLevel ((LineTypePtr) Rat);
++    _draw_line ((LineTypePtr) Rat);
+ }
+ 
+ 
+@@ -1649,7 +1651,9 @@ ErasePinName (PinTypePtr Pin)
+ void
+ EraseLine (LineTypePtr Line)
+ {
+-  DrawLineLowLevel (Line);
++  assert (Gathering);
++
++  AddPart (Line);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -1695,7 +1699,7 @@ EraseElement (ElementTypePtr Element)
+ {
+   ELEMENTLINE_LOOP (Element);
+   {
+-    DrawLineLowLevel (line);
++    EraseLine (line);
+   }
+   END_LOOP;
+   ARC_LOOP (Element);
