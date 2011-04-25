@@ -1,5 +1,5 @@
 Bottom: 7e061e92870558c3d6dbb2decabc06eb07698e2f
-Top:    202de801fbe2fc471d09dbdb86de49f99109d79b
+Top:    19391e481669803485e22ef4a751ae00b1385160
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 18:06:39 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" from real drawing routines (Element Package)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 03073d4..8190dfd 100644
+index 03073d4..61735c5 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -186,35 +186,6 @@ Redraw (void)
@@ -153,4 +153,13 @@ index 03073d4..8190dfd 100644
 +    AddPart (arc);
    }
    END_LOOP;
+ }
+@@ -1816,7 +1818,7 @@ DrawObject (int type, void *ptr1, void *ptr2)
+ static void
+ draw_element (ElementTypePtr element)
+ {
+-  DrawElementPackage (element);
++  draw_element_package (element);
+   draw_element_name (Element);
+   DrawElementPinsAndPads (element);
  }
