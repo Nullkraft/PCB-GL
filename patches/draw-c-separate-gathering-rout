@@ -1,5 +1,5 @@
-Bottom: 40a4c6e627833ef07fcb957a495e297a004f643a
-Top:    8cbe8d4c9df94dab0c3ac0e520373087fc462395
+Bottom: 4c1e800808297c82b906eb5c87df9168edb5ee44
+Top:    8f66ef44921f1a858d3f7e3a3d8e3f92eaa61734
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 16:00:33 +0100
 
@@ -9,10 +9,10 @@ draw.c: Separate "Gathering" routines from real drawing routines
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 8b73644..68cb4a7 100644
+index 09e183e..fde0bfd 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -1172,11 +1172,19 @@ DrawElementPackageLowLevel (ElementTypePtr Element)
+@@ -1177,11 +1177,19 @@ DrawElementPackageLowLevel (ElementTypePtr Element)
  void
  DrawVia (PinTypePtr Via)
  {
