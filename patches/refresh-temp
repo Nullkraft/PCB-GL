@@ -1,0 +1,103 @@
+Bottom: 4c1e800808297c82b906eb5c87df9168edb5ee44
+Top:    cf7d7cbb9f69ae3049bf5adbe7d509741569e657
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-25 16:16:03 +0100
+
+Refresh of draw-c-never-call-drawpinorvia
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 09e183e..13fdd5c 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -784,12 +784,6 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+ static void
+ DrawPinOrViaLowLevel (PinTypePtr pv, bool drawHole)
+ {
+-  if (Gathering)
+-    {
+-      AddPart (pv);
+-      return;
+-    }
+-
+   if (TEST_FLAG (THINDRAWFLAG, PCB))
+     gui->thindraw_pcb_pv (Output.fgGC, Output.fgGC, pv, drawHole, false);
+   else
+@@ -1177,9 +1171,17 @@ DrawElementPackageLowLevel (ElementTypePtr Element)
+ void
+ DrawVia (PinTypePtr Via)
+ {
+-  if (!Gathering)
+-    SetPVColor (Via, VIA_TYPE);
+-  DrawPinOrViaLowLevel (Via, true);
++  if (Gathering)
++    {
++      AddPart (pv);
++      return;
++    }
++  else
++    {
++      SetPVColor (Via, VIA_TYPE);
++      DrawPinOrViaLowLevel (Via, true);
++    }
++
+   if (!TEST_FLAG (HOLEFLAG, Via) && TEST_FLAG (DISPLAYNAMEFLAG, Via))
+     DrawPinOrViaNameLowLevel (Via);
+ }
+@@ -1206,11 +1208,17 @@ DrawViaName (PinTypePtr Via)
+ void
+ DrawPin (PinTypePtr Pin)
+ {
+-  {
+-    if (!Gathering)
++  if (Gathering)
++    {
++      AddPart (Pin);
++      return;
++    }
++  else
++    {
+       SetPVColor (Pin, PIN_TYPE);
+-    DrawPinOrViaLowLevel (Pin, true);
+-  }
++      DrawPinOrViaLowLevel (Pin, true);
++    }
++
+   if ((!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
+       || doing_pinout)
+     DrawPinOrViaNameLowLevel (Pin);
+@@ -1571,7 +1579,9 @@ DrawElementPinsAndPads (ElementTypePtr Element)
+ void
+ EraseVia (PinTypePtr Via)
+ {
+-  DrawPinOrViaLowLevel (Via, false);
++  assert (Gathering);
++  AddPart (Via);
++
+   if (TEST_FLAG (DISPLAYNAMEFLAG, Via))
+     DrawPinOrViaNameLowLevel (Via);
+ }
+@@ -1633,7 +1643,9 @@ ErasePadName (PadTypePtr Pad)
+ void
+ ErasePin (PinTypePtr Pin)
+ {
+-  DrawPinOrViaLowLevel (Pin, false);
++  assert (Gathering);
++  AddPart (Pin);
++
+   if (TEST_FLAG (DISPLAYNAMEFLAG, Pin))
+     DrawPinOrViaNameLowLevel (Pin);
+ }
+@@ -1718,9 +1730,10 @@ EraseElement (ElementTypePtr Element)
+ void
+ EraseElementPinsAndPads (ElementTypePtr Element)
+ {
++  assert (Gathering);
+   PIN_LOOP (Element);
+   {
+-    DrawPinOrViaLowLevel (pin, false);
++    AddPart (pin);
+     if (TEST_FLAG (DISPLAYNAMEFLAG, pin))
+       DrawPinOrViaNameLowLevel (pin);
+   }
