@@ -1,7 +1,7 @@
-Bottom: 2389a24d7014f410817b066f356709516057681c
-Top:    c69925ff093f609b66a6ce551c1d39a5526ece55
+Bottom: e3f4e2e9bce46bb03c5faf6968ea19fcdda01935
+Top:    85f1b6ccfc7d31cf5aacb1827047af536e4a59f1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-25 14:07:55 +0100
+Date:   2011-04-25 15:58:51 +0100
 
 Off to find burried treasure on polygon island
 
@@ -77,10 +77,10 @@ index 0136e37..8ab0b7f 100644
    DrawVia (Via);
    Draw ();
 diff --git a/src/draw.c b/src/draw.c
-index fc4c0c3..a2528cc 100644
+index f735121..9667a31 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -1650,6 +1650,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -1615,6 +1615,10 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
    if (!Polygon->Clipped)
      return;
  
@@ -92,7 +92,7 @@ index fc4c0c3..a2528cc 100644
      {
        AddPart (Polygon);
 diff --git a/src/find.c b/src/find.c
-index 354e4ab..b03b6d1 100644
+index 8a56df9..ea817ca 100644
 --- a/src/find.c
 +++ b/src/find.c
 @@ -2645,6 +2645,7 @@ LookupLOConnectionsToPolygon (PolygonTypePtr Polygon, Cardinal LayerGroup)
