@@ -1,5 +1,5 @@
 Bottom: 4c1e800808297c82b906eb5c87df9168edb5ee44
-Top:    893863455c1c7c95b764e00fed46ba34cc852a8c
+Top:    6d8f7db0320d136475a5ddfaca9e9c5585a12d10
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 16:00:33 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" routines from real drawing routines (Pins + Vias)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 09e183e..7c84a76 100644
+index 09e183e..d99b94d 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -34,6 +34,9 @@
@@ -31,7 +31,7 @@ index 09e183e..7c84a76 100644
  static void DrawPadLowLevel (hidGC, PadTypePtr, bool, bool);
  static void DrawPadNameLowLevel (PadTypePtr);
  static void DrawLineLowLevel (LineTypePtr);
-@@ -451,7 +452,74 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
+@@ -451,28 +452,87 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
        gui->draw_line (Output.fgGC, X, Y, X + 2 * mark_size, Y);
        gui->draw_line (Output.fgGC, X, Y, X, Y - 4* mark_size);
      }
@@ -102,34 +102,35 @@ index 09e183e..7c84a76 100644
 +static void
 +draw_via (PinTypePtr via)
 +{
-+  SetPVColor (Pin, VIA_TYPE);
++  SetPVColor (via, VIA_TYPE);
 +  draw_pv (via);
  }
  
  static int
-@@ -459,9 +527,7 @@ via_callback (const BoxType * b, void *cl)
+ via_callback (const BoxType * b, void *cl)
  {
-   PinTypePtr via = (PinTypePtr) b;
-   SetPVColor (via, VIA_TYPE);
+-  PinTypePtr via = (PinTypePtr) b;
+-  SetPVColor (via, VIA_TYPE);
 -  DrawPinOrViaLowLevel (via, false);
 -  if (!TEST_FLAG (HOLEFLAG, via) && TEST_FLAG (DISPLAYNAMEFLAG, via))
 -    DrawPinOrViaNameLowLevel (via);
-+  draw_pv (via);
++  draw_pin ((PinType *)b);
    return 1;
  }
  
-@@ -470,9 +536,7 @@ pin_callback (const BoxType * b, void *cl)
+ static int
+ pin_callback (const BoxType * b, void *cl)
  {
-   PinTypePtr pin = (PinTypePtr) b;
-   SetPVColor (pin, PIN_TYPE);
+-  PinTypePtr pin = (PinTypePtr) b;
+-  SetPVColor (pin, PIN_TYPE);
 -  DrawPinOrViaLowLevel (pin, false);
 -  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
 -    DrawPinOrViaNameLowLevel (pin);
-+  draw_pv (pin);
++  draw_via ((PinType *)b);
    return 1;
  }
  
-@@ -778,24 +842,6 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -778,24 +838,6 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
    return rv;
  }
  
@@ -154,7 +155,7 @@ index 09e183e..7c84a76 100644
  /**************************************************************
   * draw pin/via hole
   */
-@@ -838,19 +884,10 @@ DrawHole (PinTypePtr Ptr)
+@@ -838,19 +880,10 @@ DrawHole (PinTypePtr Ptr)
   * lowlevel drawing routine for pin and via names
   */
  static void
@@ -176,7 +177,7 @@ index 09e183e..7c84a76 100644
  
    if (vert)
      {
-@@ -862,37 +899,18 @@ DrawPinOrViaNameLowLevel (PinTypePtr Ptr)
+@@ -862,37 +895,18 @@ DrawPinOrViaNameLowLevel (PinTypePtr Ptr)
        box.X1 = Ptr->X + Ptr->DrillingHole / 2 + Settings.PinoutTextOffsetX;
        box.Y1 = Ptr->Y - Ptr->Thickness / 2 + Settings.PinoutTextOffsetY;
      }
@@ -224,7 +225,7 @@ index 09e183e..7c84a76 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1177,11 +1195,11 @@ DrawElementPackageLowLevel (ElementTypePtr Element)
+@@ -1177,11 +1191,11 @@ DrawElementPackageLowLevel (ElementTypePtr Element)
  void
  DrawVia (PinTypePtr Via)
  {
@@ -240,7 +241,7 @@ index 09e183e..7c84a76 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1190,14 +1208,9 @@ DrawVia (PinTypePtr Via)
+@@ -1190,14 +1204,9 @@ DrawVia (PinTypePtr Via)
  void
  DrawViaName (PinTypePtr Via)
  {
@@ -258,7 +259,7 @@ index 09e183e..7c84a76 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1206,14 +1219,12 @@ DrawViaName (PinTypePtr Via)
+@@ -1206,14 +1215,12 @@ DrawViaName (PinTypePtr Via)
  void
  DrawPin (PinTypePtr Pin)
  {
@@ -277,7 +278,7 @@ index 09e183e..7c84a76 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1222,14 +1233,9 @@ DrawPin (PinTypePtr Pin)
+@@ -1222,14 +1229,9 @@ DrawPin (PinTypePtr Pin)
  void
  DrawPinName (PinTypePtr Pin)
  {
@@ -295,7 +296,7 @@ index 09e183e..7c84a76 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1560,7 +1566,10 @@ DrawElementPinsAndPads (ElementTypePtr Element)
+@@ -1560,7 +1562,10 @@ DrawElementPinsAndPads (ElementTypePtr Element)
    END_LOOP;
    PIN_LOOP (Element);
    {
@@ -307,7 +308,7 @@ index 09e183e..7c84a76 100644
    }
    END_LOOP;
  }
-@@ -1571,9 +1580,11 @@ DrawElementPinsAndPads (ElementTypePtr Element)
+@@ -1571,9 +1576,11 @@ DrawElementPinsAndPads (ElementTypePtr Element)
  void
  EraseVia (PinTypePtr Via)
  {
@@ -321,7 +322,7 @@ index 09e183e..7c84a76 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1604,7 +1615,9 @@ EraseRat (RatTypePtr Rat)
+@@ -1604,7 +1611,9 @@ EraseRat (RatTypePtr Rat)
  void
  EraseViaName (PinTypePtr Via)
  {
@@ -332,7 +333,7 @@ index 09e183e..7c84a76 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1633,9 +1646,11 @@ ErasePadName (PadTypePtr Pad)
+@@ -1633,9 +1642,11 @@ ErasePadName (PadTypePtr Pad)
  void
  ErasePin (PinTypePtr Pin)
  {
@@ -346,7 +347,7 @@ index 09e183e..7c84a76 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1644,7 +1659,9 @@ ErasePin (PinTypePtr Pin)
+@@ -1644,7 +1655,9 @@ ErasePin (PinTypePtr Pin)
  void
  ErasePinName (PinTypePtr Pin)
  {
@@ -357,7 +358,7 @@ index 09e183e..7c84a76 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1718,11 +1735,11 @@ EraseElement (ElementTypePtr Element)
+@@ -1718,11 +1731,11 @@ EraseElement (ElementTypePtr Element)
  void
  EraseElementPinsAndPads (ElementTypePtr Element)
  {
