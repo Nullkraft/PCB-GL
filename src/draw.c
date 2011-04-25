@@ -511,6 +511,15 @@ draw_pv (PinTypePtr pv)
 static void
 draw_pin (PinTypePtr pin)
 {
+  SetPVColor (pin, PIN_TYPE);
+  draw_pv (pin);
+}
+
+static void
+draw_via (PinTypePtr via)
+{
+  SetPVColor (Pin, VIA_TYPE);
+  draw_pv (via);
 }
 
 static int
