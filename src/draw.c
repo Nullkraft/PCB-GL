@@ -458,20 +458,21 @@ static int
 via_callback (const BoxType * b, void *cl)
 {
   PinTypePtr via = (PinTypePtr) b;
-  SetPVColor (Via, VIA_TYPE);
-  DrawPinOrViaLowLevel (Via, false);
-  if (!TEST_FLAG (HOLEFLAG, Via) && TEST_FLAG (DISPLAYNAMEFLAG, Via))
-    DrawPinOrViaNameLowLevel (Via);
+  SetPVColor (via, VIA_TYPE);
+  DrawPinOrViaLowLevel (via, false);
+  if (!TEST_FLAG (HOLEFLAG, via) && TEST_FLAG (DISPLAYNAMEFLAG, via))
+    DrawPinOrViaNameLowLevel (via);
   return 1;
 }
 
 static int
 pin_callback (const BoxType * b, void *cl)
 {
-  SetPVColor (Pin, PIN_TYPE);
-  DrawPinOrViaLowLevel (Pin, false);
-  if (!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
-    DrawPinOrViaNameLowLevel (Pin);
+  PinTypePtr pin = (PinTypePtr) b;
+  SetPVColor (pin, PIN_TYPE);
+  DrawPinOrViaLowLevel (pin, false);
+  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
+    DrawPinOrViaNameLowLevel (pin);
   return 1;
 }
 
