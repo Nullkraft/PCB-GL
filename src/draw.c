@@ -893,6 +893,10 @@ poly_callback (const BoxType * b, void *cl)
   if (!polygon->Clipped)
     return 0;
 
+  /* Re-use HOLEFLAG to cut out islands */
+  if (TEST_FLAG (HOLEFLAG, Polygon))
+    return 0;
+
   if (TEST_FLAG (SELECTEDFLAG, polygon))
     color = layer->SelectedColor;
   else if (TEST_FLAG (FOUNDFLAG, polygon))
