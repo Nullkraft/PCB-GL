@@ -1525,7 +1525,10 @@ DrawElementPinsAndPads (ElementTypePtr Element)
   PAD_LOOP (Element);
   {
     if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
-      DrawPad (pad);
+      if (Gathering)
+        DrawPad (pad);
+      else
+        draw_pad (pad);
   }
   END_LOOP;
   PIN_LOOP (Element);
