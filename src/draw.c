@@ -86,7 +86,6 @@ static const BoxType *clip_box = NULL;
 static void DrawEverything (BoxTypePtr);
 static void DrawPPV (int group, const BoxType *);
 static int DrawLayerGroup (int, const BoxType *);
-static void DrawRegularText (LayerTypePtr, TextTypePtr);
 static void AddPart (void *);
 static void SetPVColor (PinTypePtr, int);
 static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
@@ -940,7 +939,20 @@ arc_callback (const BoxType * b, void *cl)
 static int
 text_callback (const BoxType * b, void *cl)
 {
-  DrawRegularText ((LayerTypePtr) cl, (TextTypePtr) b);
+  LayerType *layer = cl;
+  TextType *text = (TextType *)b;
+  int min_silk_line;
+
+  if (TEST_FLAG (SELECTEDFLAG, text))
+    gui->set_color (Output.fgGC, layer->SelectedColor);
+  else
+    gui->set_color (Output.fgGC, layer->Color);
+  if (layer == &PCB->Data->SILKLAYER ||
+      layer == &PCB->Data->BACKSILKLAYER)
+    min_silk_line = PCB->minSlk;
+  else
+    min_silk_line = PCB->minWid;
+  DrawTextLowLevel (text, min_silk_line);
   return 1;
 }
 
@@ -1146,12 +1158,6 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
   unsigned char *string = (unsigned char *) Text->TextString;
   Cardinal n;
   FontTypePtr font = &PCB->Font;
-
-  if (Gathering)
-    {
-      AddPart (Text);
-      return;
-    }
 
   while (string && *string)
     {
@@ -1375,39 +1381,11 @@ DrawArc (LayerTypePtr Layer, ArcTypePtr Arc)
 void
 DrawText (LayerTypePtr Layer, TextTypePtr Text)
 {
-  int min_silk_line;
-  if (!Layer->On)
-    return;
-  if (TEST_FLAG (SELECTEDFLAG, Text))
-    gui->set_color (Output.fgGC, Layer->SelectedColor);
-  else
-    gui->set_color (Output.fgGC, Layer->Color);
-  if (Layer == & PCB->Data->SILKLAYER
-      || Layer == & PCB->Data->BACKSILKLAYER)
-    min_silk_line = PCB->minSlk;
-  else
-    min_silk_line = PCB->minWid;
-  DrawTextLowLevel (Text, min_silk_line);
+  assert (Gathering);
+
+  AddPart (Text);
 }
 
-/* ---------------------------------------------------------------------------
- * draws text on a layer
- */
-static void
-DrawRegularText (LayerTypePtr Layer, TextTypePtr Text)
-{
-  int min_silk_line;
-  if (TEST_FLAG (SELECTEDFLAG, Text))
-    gui->set_color (Output.fgGC, Layer->SelectedColor);
-  else
-    gui->set_color (Output.fgGC, Layer->Color);
-  if (Layer == & PCB->Data->SILKLAYER
-      || Layer == & PCB->Data->BACKSILKLAYER)
-    min_silk_line = PCB->minSlk;
-  else
-    min_silk_line = PCB->minWid;
-  DrawTextLowLevel (Text, min_silk_line);
-}
 
 /* ---------------------------------------------------------------------------
  * draws a polygon on a layer
@@ -1646,13 +1624,9 @@ EraseArc (ArcTypePtr Arc)
 void
 EraseText (LayerTypePtr Layer, TextTypePtr Text)
 {
-  int min_silk_line;
-  if (Layer == & PCB->Data->SILKLAYER
-      || Layer == & PCB->Data->BACKSILKLAYER)
-    min_silk_line = PCB->minSlk;
-  else
-    min_silk_line = PCB->minWid;
-  DrawTextLowLevel (Text, min_silk_line);
+  assert (Gathering);
+
+  AddPart (Text);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1682,8 +1656,7 @@ EraseElement (ElementTypePtr Element)
     EraseArc (arc);
   }
   END_LOOP;
-  if (!TEST_FLAG (HIDENAMEFLAG, Element))
-    DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
+  EraseElementName (Element);
   EraseElementPinsAndPads (Element);
 }
 
