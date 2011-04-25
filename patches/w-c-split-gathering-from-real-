@@ -1,5 +1,5 @@
 Bottom: 022d0e4473e17ba75c2ba9fbf0d6234ac853c416
-Top:    022d0e4473e17ba75c2ba9fbf0d6234ac853c416
+Top:    a652c0b1d9a5f4f04e7a5162cd440b6262474728
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 00:10:40 +0100
 
@@ -8,4 +8,48 @@ draw.c: Split "Gathering" from real drawing routines (Element Pins and Pads)
 
 ---
 
-
+diff --git a/src/draw.c b/src/draw.c
+index d71982f..b9d6672 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1562,6 +1562,8 @@ DrawElementPackage (ElementTypePtr Element)
+ void
+ DrawElementPinsAndPads (ElementTypePtr Element)
+ {
++  assert (Gathering);
++
+   PAD_LOOP (Element);
+   {
+     if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
+@@ -1575,6 +1577,22 @@ DrawElementPinsAndPads (ElementTypePtr Element)
+   END_LOOP;
+ }
+ 
++static void
++draw_element_pins_and_pads (ElementType *element)
++{
++  PAD_LOOP (element);
++  {
++    if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
++      DrawPad (pad);
++  }
++  END_LOOP;
++  PIN_LOOP (element);
++  {
++    DrawPin (pin, true);
++  }
++  END_LOOP;
++}
++
+ /* ---------------------------------------------------------------------------
+  * erase a via
+  */
+@@ -1851,7 +1869,7 @@ draw_element (ElementTypePtr element)
+ {
+   draw_element_package (element);
+   draw_element_name (element);
+-  DrawElementPinsAndPads (element);
++  draw_element_pins_and_pads (element);
+ }
+ 
+ /* ---------------------------------------------------------------------------
