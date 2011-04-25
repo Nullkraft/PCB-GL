@@ -1,5 +1,5 @@
 Bottom: 4fcd5b1b6e9f876c739e9aba4cb2b2ad9c38e1e6
-Top:    9e98fc86d59414946590790810e290822966624a
+Top:    a3988a5bc55f6781f9f3e69c59b0896af194a3aa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 00:19:09 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" from real drawing routines (Element)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 7e8690f..5c34b25 100644
+index 7e8690f..2aeefc1 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -54,6 +54,9 @@
@@ -22,15 +22,15 @@ index 7e8690f..5c34b25 100644
  #ifndef MAXINT
  #define MAXINT (((unsigned int)(~0))>>1)
  #endif
-@@ -1147,6 +1150,8 @@ DrawArcLowLevel (ArcTypePtr Arc)
- static void
- DrawElementPackageLowLevel (ElementTypePtr Element)
+@@ -1491,6 +1494,8 @@ DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+ void
+ DrawElement (ElementTypePtr Element)
  {
 +  assert (Gathering);
 +
-   /* draw lines, arcs, text and pins */
-   ELEMENTLINE_LOOP (Element);
-   {
+   DrawElementPackage (Element);
+   DrawElementName (Element);
+   DrawElementPinsAndPads (Element);
 @@ -1823,6 +1828,14 @@ DrawObject (int type, void *ptr1, void *ptr2)
      }
  }
