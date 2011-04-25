@@ -1518,7 +1518,7 @@ DrawElementPackage (ElementTypePtr Element)
   END_LOOP;
   ARC_LOOP (Element);
   {
-    _drar_arc (arc);
+    _draw_arc (arc);
   }
   END_LOOP;
 }
