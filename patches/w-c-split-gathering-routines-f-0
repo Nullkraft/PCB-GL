@@ -1,5 +1,5 @@
 Bottom: 594eefe67fc7781d81ea5ce8bf1fe7d5f0027013
-Top:    1f785303da8568154fe26394154f78b371c60990
+Top:    5dcb6450cc8c676d74e87ba8c35f589fa1b828f6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 18:06:39 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" from real drawing routines (Element Package)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index eb79bed..3b7fdab 100644
+index eb79bed..ea5e9ce 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -91,7 +91,6 @@ static void DrawLineLowLevel (LineTypePtr);
@@ -58,12 +58,12 @@ index eb79bed..3b7fdab 100644
 +  /* draw lines, arcs, text and pins */
 +  ELEMENTLINE_LOOP (Element);
 +  {
-+    _draw_line (line);
++    DrawLineLowLevel (line);
 +  }
 +  END_LOOP;
 +  ARC_LOOP (Element);
 +  {
-+    _draw_arc (arc);
++    DrawArcLowLevel (arc);
 +  }
 +  END_LOOP;
 +}
