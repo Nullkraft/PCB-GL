@@ -1,7 +1,7 @@
-Bottom: 1375bdd5c014b5dc304e3b0e251aa630aab7f70b
-Top:    1cc5e8d43e4d5c04ce60da63838ac39a7b6bf3cd
+Bottom: 6ca8bdd18ab19a01e66ace2e53ab7c4255095e66
+Top:    53f0479bd6a72fe45e488d5ca98f13a6745d4eeb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-25 14:07:35 +0100
+Date:   2011-04-25 15:58:30 +0100
 
 Comment out live-drawing from the autorouter
 
@@ -11,7 +11,7 @@ The GL renderer hasn't been ported to cope with this yet
 ---
 
 diff --git a/src/autoroute.c b/src/autoroute.c
-index cecf9c0..3d1bc84 100644
+index 40b3cda..6a09855 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -139,7 +139,7 @@ directionIncrement(direction_t dir)

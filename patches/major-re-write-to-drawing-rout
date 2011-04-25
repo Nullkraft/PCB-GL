@@ -1,7 +1,7 @@
-Bottom: aa0fc6f7c2c717c675b419402e5b9a69610d707d
-Top:    bebfbd3c9481827453c20a7e209697145424825e
+Bottom: d5785b8537c2e70f9a0eab14af843b56d3178849
+Top:    723a62cd98428de61a1ce298a14d9a501e52ecb1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-25 14:07:31 +0100
+Date:   2011-04-25 15:58:26 +0100
 
 Major re-write to drawing routines
 
@@ -18,7 +18,7 @@ Notes from squashed patches:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index a166fe5..f2c5793 100644
+index a0c6771..ac5f290 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -71,7 +71,7 @@ RCSID ("$Id$");
@@ -30,7 +30,7 @@ index a166fe5..f2c5793 100644
  
  static int doing_pinout = 0;
  static bool doing_assy = false;
-@@ -84,27 +84,27 @@ static void Redraw (bool, BoxTypePtr);
+@@ -83,27 +83,27 @@ static const BoxType *clip_box = NULL;
  static void DrawEverything (BoxTypePtr);
  static void DrawPPV (int group, const BoxType *);
  static int DrawLayerGroup (int, const BoxType *);
@@ -67,7 +67,7 @@ index a166fe5..f2c5793 100644
  static int via_callback (const BoxType * b, void *cl);
  static int pin_callback (const BoxType * b, void *cl);
  static int pad_callback (const BoxType * b, void *cl);
-@@ -488,7 +488,7 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -453,7 +453,7 @@ DrawEverything (BoxTypePtr drawn_area)
      }
  }
  
@@ -76,7 +76,7 @@ index a166fe5..f2c5793 100644
  DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
  	   bool invisible)
  {
-@@ -622,7 +622,7 @@ clearPad_callback (const BoxType * b, void *cl)
+@@ -587,7 +587,7 @@ clearPad_callback (const BoxType * b, void *cl)
   * Draws silk layer.
   */
  
@@ -85,7 +85,7 @@ index a166fe5..f2c5793 100644
  DrawSilk (int side, const BoxType * drawn_area)
  {
  #if 0
-@@ -727,7 +727,7 @@ DrawPaste (int side, BoxType *drawn_area)
+@@ -692,7 +692,7 @@ DrawPaste (int side, BoxType *drawn_area)
    ENDALL_LOOP;
  }
  
@@ -94,7 +94,7 @@ index a166fe5..f2c5793 100644
  DrawRats (BoxTypePtr drawn_area)
  {
    /*
-@@ -848,7 +848,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -813,7 +813,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
  /* ---------------------------------------------------------------------------
   * lowlevel drawing routine for pins and vias
   */
@@ -103,7 +103,7 @@ index a166fe5..f2c5793 100644
  DrawPinOrViaLowLevel (PinTypePtr pv, bool drawHole)
  {
    if (Gathering)
-@@ -866,7 +866,7 @@ DrawPinOrViaLowLevel (PinTypePtr pv, bool drawHole)
+@@ -831,7 +831,7 @@ DrawPinOrViaLowLevel (PinTypePtr pv, bool drawHole)
  /**************************************************************
   * draw pin/via hole
   */
@@ -112,7 +112,7 @@ index a166fe5..f2c5793 100644
  DrawHole (PinTypePtr Ptr)
  {
    if (TEST_FLAG (THINDRAWFLAG, PCB))
-@@ -1059,7 +1059,7 @@ DrawPadNameLowLevel (PadTypePtr Pad)
+@@ -1024,7 +1024,7 @@ DrawPadNameLowLevel (PadTypePtr Pad)
  /* ---------------------------------------------------------------------------
   * clearance for pads
   */
@@ -121,7 +121,7 @@ index a166fe5..f2c5793 100644
  ClearPad (PadTypePtr Pad, bool mask)
  {
    DrawPadLowLevel(Output.pmGC, Pad, true, mask);
-@@ -1254,7 +1254,7 @@ DrawVia (PinTypePtr Via)
+@@ -1219,7 +1219,7 @@ DrawVia (PinTypePtr Via)
  /* ---------------------------------------------------------------------------
   * draw a via without dealing with polygon clearance 
   */
@@ -130,7 +130,7 @@ index a166fe5..f2c5793 100644
  DrawPlainVia (PinTypePtr Via, bool holeToo)
  {
    if (!Gathering)
-@@ -1299,7 +1299,7 @@ DrawPin (PinTypePtr Pin)
+@@ -1264,7 +1264,7 @@ DrawPin (PinTypePtr Pin)
  /* ---------------------------------------------------------------------------
   * draw a pin without clearing around polygons 
   */
@@ -139,7 +139,7 @@ index a166fe5..f2c5793 100644
  DrawPlainPin (PinTypePtr Pin, bool holeToo)
  {
    if (!Gathering)
-@@ -1489,7 +1489,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1454,7 +1454,7 @@ DrawText (LayerTypePtr Layer, TextTypePtr Text)
  /* ---------------------------------------------------------------------------
   * draws text on a layer
   */
@@ -149,12 +149,12 @@ index a166fe5..f2c5793 100644
  {
    int min_silk_line;
 diff --git a/src/draw.h b/src/draw.h
-index fdd4c70..94570a8 100644
+index adfee36..7b091f5 100644
 --- a/src/draw.h
 +++ b/src/draw.h
-@@ -74,6 +74,20 @@ void EraseObject (int, void *, void *);
+@@ -72,6 +72,20 @@ void EraseElementName (ElementTypePtr);
+ void EraseObject (int, void *, void *);
  void LoadBackgroundImage (char *);
- void UpdateAll (void);
  
 +/* TEMPORARY */
 +void ClearPad (PadTypePtr, bool);

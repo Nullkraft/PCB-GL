@@ -1,7 +1,7 @@
-Bottom: 27f95411bd9b97810ea6432e988e53aa0a78fa32
-Top:    b2f530b8a202a5c8793debe55accaab26daf9829
+Bottom: 40a4c6e627833ef07fcb957a495e297a004f643a
+Top:    7036b7bf558fbfc43e08d156d4e8af55779f5935
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-25 14:07:26 +0100
+Date:   2011-04-25 15:58:20 +0100
 
 Give the HIDs control over attached object (crosshair, mark) drawing
 
@@ -28,7 +28,7 @@ been completed (true argument).
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 9bad677..3cc4325 100644
+index 5dc544e..7744cd1 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -607,7 +607,7 @@ click_cb (hidval hv)
@@ -93,7 +93,7 @@ index 9bad677..3cc4325 100644
  	}
      }
    else
-@@ -2731,7 +2730,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+@@ -2720,7 +2719,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
  	  break;
  
  	case F_CycleClip:
@@ -102,7 +102,7 @@ index 9bad677..3cc4325 100644
  	  if TEST_FLAG
  	    (ALLDIRECTIONFLAG, PCB)
  	    {
-@@ -2741,27 +2740,27 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+@@ -2730,27 +2729,27 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
  	  else
  	    PCB->Clipping = (PCB->Clipping + 1) % 3;
  	  AdjustAttachedObjects ();
@@ -137,7 +137,7 @@ index 9bad677..3cc4325 100644
  	  break;
  
  	case F_ToggleUniqueNames:
-@@ -2769,9 +2768,9 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+@@ -2758,9 +2757,9 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
  	  break;
  
  	case F_ToggleSnapPin:
@@ -149,7 +149,7 @@ index 9bad677..3cc4325 100644
  	  break;
  
  	case F_ToggleLocalRef:
-@@ -2812,7 +2811,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+@@ -2801,7 +2800,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
  	  break;
  
  	case F_ToggleAutoDRC:
@@ -158,7 +158,7 @@ index 9bad677..3cc4325 100644
  	  TOGGLE_FLAG (AUTODRCFLAG, PCB);
  	  if (TEST_FLAG (AUTODRCFLAG, PCB) && Settings.Mode == LINE_MODE)
  	    {
-@@ -2826,7 +2825,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+@@ -2815,7 +2814,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
  				  Crosshair.AttachedLine.Point1.Y, true, 1,
  				  FOUNDFLAG);
  	    }
@@ -167,7 +167,7 @@ index 9bad677..3cc4325 100644
  	  break;
  
  	case F_ToggleCheckPlanes:
-@@ -2864,7 +2863,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+@@ -2853,7 +2852,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
  	    oldGrid = PCB->Grid;
  	    PCB->Grid = 1.0;
  	    if (MoveCrosshairAbsolute (Crosshair.X, Crosshair.Y))
@@ -176,7 +176,7 @@ index 9bad677..3cc4325 100644
  	    SetGrid (oldGrid, true);
  	  }
  	  break;
-@@ -3068,7 +3067,7 @@ ActionMode (int argc, char **argv, int x, int y)
+@@ -3057,7 +3056,7 @@ ActionMode (int argc, char **argv, int x, int y)
      {
        Note.X = Crosshair.X;
        Note.Y = Crosshair.Y;
@@ -185,7 +185,7 @@ index 9bad677..3cc4325 100644
        switch (GetFunctionID (function))
  	{
  	case F_Arc:
-@@ -3264,7 +3263,7 @@ ActionMode (int argc, char **argv, int x, int y)
+@@ -3253,7 +3252,7 @@ ActionMode (int argc, char **argv, int x, int y)
  	  SaveMode ();
  	  break;
  	}
@@ -194,7 +194,7 @@ index 9bad677..3cc4325 100644
        return 0;
      }
  
-@@ -4039,24 +4038,27 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
+@@ -4028,24 +4027,27 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
      {
        if (Marked.status)
  	{
@@ -226,7 +226,7 @@ index 9bad677..3cc4325 100644
      }
    return 0;
  }
-@@ -5450,7 +5452,7 @@ ActionSelect (int argc, char **argv, int x, int y)
+@@ -5439,7 +5441,7 @@ ActionSelect (int argc, char **argv, int x, int y)
  			  Crosshair.AttachedBox.Point2.X);
  	    box.Y2 = MAX (Crosshair.AttachedBox.Point1.Y,
  			  Crosshair.AttachedBox.Point2.Y);
@@ -235,7 +235,7 @@ index 9bad677..3cc4325 100644
  	    NotifyBlock ();
  	    if (Crosshair.AttachedBox.State == STATE_THIRD &&
  		SelectBlock (&box, true))
-@@ -5458,7 +5460,7 @@ ActionSelect (int argc, char **argv, int x, int y)
+@@ -5447,7 +5449,7 @@ ActionSelect (int argc, char **argv, int x, int y)
  		SetChangedFlag (true);
  		Crosshair.AttachedBox.State = STATE_FIRST;
  	      }
@@ -244,7 +244,7 @@ index 9bad677..3cc4325 100644
  	    break;
  	  }
  
-@@ -5629,7 +5631,7 @@ ActionUnselect (int argc, char **argv, int x, int y)
+@@ -5618,7 +5620,7 @@ ActionUnselect (int argc, char **argv, int x, int y)
  			  Crosshair.AttachedBox.Point2.X);
  	    box.Y2 = MAX (Crosshair.AttachedBox.Point1.Y,
  			  Crosshair.AttachedBox.Point2.Y);
@@ -253,7 +253,7 @@ index 9bad677..3cc4325 100644
  	    NotifyBlock ();
  	    if (Crosshair.AttachedBox.State == STATE_THIRD &&
  		SelectBlock (&box, false))
-@@ -5637,7 +5639,7 @@ ActionUnselect (int argc, char **argv, int x, int y)
+@@ -5626,7 +5628,7 @@ ActionUnselect (int argc, char **argv, int x, int y)
  		SetChangedFlag (true);
  		Crosshair.AttachedBox.State = STATE_FIRST;
  	      }
@@ -262,7 +262,7 @@ index 9bad677..3cc4325 100644
  	    break;
  	  }
  
-@@ -5868,18 +5870,18 @@ ActionLoadFrom (int argc, char **argv, int x, int y)
+@@ -5857,18 +5859,18 @@ ActionLoadFrom (int argc, char **argv, int x, int y)
  
    if (strcasecmp (function, "ElementToBuffer") == 0)
      {
@@ -285,7 +285,7 @@ index 9bad677..3cc4325 100644
      }
  
    else if (strcasecmp (function, "Layout") == 0)
-@@ -5936,7 +5938,7 @@ ActionNew (int argc, char **argv, int x, int y)
+@@ -5925,7 +5927,7 @@ ActionNew (int argc, char **argv, int x, int y)
        if (!name)
          return 1;
  
@@ -294,8 +294,8 @@ index 9bad677..3cc4325 100644
        /* do emergency saving
         * clear the old struct and allocate memory for the new one
         */
-@@ -5958,7 +5960,7 @@ ActionNew (int argc, char **argv, int x, int y)
-       ClearAndRedrawOutput ();
+@@ -5947,7 +5949,7 @@ ActionNew (int argc, char **argv, int x, int y)
+       Redraw ();
  
        hid_action ("PCBChanged");
 -      RestoreCrosshair ();
@@ -303,7 +303,7 @@ index 9bad677..3cc4325 100644
        return 0;
      }
    return 1;
-@@ -6045,7 +6047,7 @@ ActionPasteBuffer (int argc, char **argv, int x, int y)
+@@ -6034,7 +6036,7 @@ ActionPasteBuffer (int argc, char **argv, int x, int y)
    static char *default_file = NULL;
    int free_name = 0;
  
@@ -312,7 +312,7 @@ index 9bad677..3cc4325 100644
    if (function)
      {
        switch (GetFunctionID (function))
-@@ -6152,7 +6154,7 @@ ActionPasteBuffer (int argc, char **argv, int x, int y)
+@@ -6141,7 +6143,7 @@ ActionPasteBuffer (int argc, char **argv, int x, int y)
  	      }
  	    else
  	      {
@@ -321,7 +321,7 @@ index 9bad677..3cc4325 100644
  		AFAIL (pastebuffer);
  	      }
  
-@@ -6175,7 +6177,7 @@ ActionPasteBuffer (int argc, char **argv, int x, int y)
+@@ -6164,7 +6166,7 @@ ActionPasteBuffer (int argc, char **argv, int x, int y)
  	}
      }
  
@@ -330,7 +330,7 @@ index 9bad677..3cc4325 100644
    return 0;
  }
  
-@@ -6216,13 +6218,13 @@ ActionUndo (int argc, char **argv, int x, int y)
+@@ -6205,13 +6207,13 @@ ActionUndo (int argc, char **argv, int x, int y)
  	return 1;
        /* undo the last operation */
  
@@ -346,7 +346,7 @@ index 9bad677..3cc4325 100644
  	  return 0;
  	}
        /* move anchor point if undoing during line creation */
-@@ -6234,7 +6236,7 @@ ActionUndo (int argc, char **argv, int x, int y)
+@@ -6223,7 +6225,7 @@ ActionUndo (int argc, char **argv, int x, int y)
  		Undo (true);	/* undo the connection find */
  	      Crosshair.AttachedLine.State = STATE_FIRST;
  	      SetLocalRef (0, 0, false);
@@ -355,7 +355,7 @@ index 9bad677..3cc4325 100644
  	      return 0;
  	    }
  	  if (Crosshair.AttachedLine.State == STATE_THIRD)
-@@ -6262,7 +6264,7 @@ ActionUndo (int argc, char **argv, int x, int y)
+@@ -6251,7 +6253,7 @@ ActionUndo (int argc, char **argv, int x, int y)
  		    Crosshair.AttachedLine.Point1.X;
  		  Crosshair.AttachedLine.Point2.Y =
  		    Crosshair.AttachedLine.Point1.Y;
@@ -364,7 +364,7 @@ index 9bad677..3cc4325 100644
  		  return 0;
  		}
  	      /* move to new anchor */
-@@ -6309,7 +6311,7 @@ ActionUndo (int argc, char **argv, int x, int y)
+@@ -6298,7 +6300,7 @@ ActionUndo (int argc, char **argv, int x, int y)
  		  ptr2 = (LineTypePtr) ptrtmp;
  		  lastLayer = (LayerTypePtr) ptr1;
  		}
@@ -373,7 +373,7 @@ index 9bad677..3cc4325 100644
  	      return 0;
  	    }
  	}
-@@ -6318,7 +6320,7 @@ ActionUndo (int argc, char **argv, int x, int y)
+@@ -6307,7 +6309,7 @@ ActionUndo (int argc, char **argv, int x, int y)
  	  if (Crosshair.AttachedBox.State == STATE_SECOND)
  	    {
  	      Crosshair.AttachedBox.State = STATE_FIRST;
@@ -382,7 +382,7 @@ index 9bad677..3cc4325 100644
  	      return 0;
  	    }
  	  if (Crosshair.AttachedBox.State == STATE_THIRD)
-@@ -6353,7 +6355,7 @@ ActionUndo (int argc, char **argv, int x, int y)
+@@ -6342,7 +6344,7 @@ ActionUndo (int argc, char **argv, int x, int y)
  	  break;
  	}
      }
@@ -391,7 +391,7 @@ index 9bad677..3cc4325 100644
    return 0;
  }
  
-@@ -6386,7 +6388,7 @@ ActionRedo (int argc, char **argv, int x, int y)
+@@ -6375,7 +6377,7 @@ ActionRedo (int argc, char **argv, int x, int y)
         Crosshair.AttachedPolygon.PointN) ||
        Crosshair.AttachedLine.State == STATE_SECOND)
      return 1;
@@ -400,7 +400,7 @@ index 9bad677..3cc4325 100644
    if (Redo (true))
      {
        SetChangedFlag (true);
-@@ -6401,7 +6403,7 @@ ActionRedo (int argc, char **argv, int x, int y)
+@@ -6390,7 +6392,7 @@ ActionRedo (int argc, char **argv, int x, int y)
  	  addedLines++;
  	}
      }
@@ -409,7 +409,7 @@ index 9bad677..3cc4325 100644
    return 0;
  }
  
-@@ -6435,7 +6437,7 @@ ActionPolygon (int argc, char **argv, int x, int y)
+@@ -6424,7 +6426,7 @@ ActionPolygon (int argc, char **argv, int x, int y)
    char *function = ARG (0);
    if (function && Settings.Mode == POLYGON_MODE)
      {
@@ -418,7 +418,7 @@ index 9bad677..3cc4325 100644
        switch (GetFunctionID (function))
  	{
  	  /* close open polygon if possible */
-@@ -6448,7 +6450,7 @@ ActionPolygon (int argc, char **argv, int x, int y)
+@@ -6437,7 +6439,7 @@ ActionPolygon (int argc, char **argv, int x, int y)
  	  GoToPreviousPoint ();
  	  break;
  	}
@@ -427,7 +427,7 @@ index 9bad677..3cc4325 100644
      }
    return 0;
  }
-@@ -6612,24 +6614,24 @@ ActionSetSame (int argc, char **argv, int x, int y)
+@@ -6601,24 +6603,24 @@ ActionSetSame (int argc, char **argv, int x, int y)
    switch (type)
      {
      case LINE_TYPE:
@@ -456,7 +456,7 @@ index 9bad677..3cc4325 100644
        hid_action ("RouteStylesChanged");
        break;
  
-@@ -6638,13 +6640,13 @@ ActionSetSame (int argc, char **argv, int x, int y)
+@@ -6627,13 +6629,13 @@ ActionSetSame (int argc, char **argv, int x, int y)
        break;
  
      case VIA_TYPE:
@@ -761,10 +761,10 @@ index ff16b1e..efa6679 100644
  void CrosshairOff (void);
  void HideCrosshair (void);
 diff --git a/src/draw.c b/src/draw.c
-index c82f25a..f037333 100644
+index 8b73644..87b34b2 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -182,15 +182,11 @@ UpdateAll (void)
+@@ -172,15 +172,11 @@ AddPart (void *b)
  void
  Draw (void)
  {
@@ -1439,7 +1439,7 @@ index d63aef1..5bea138 100644
    gui->set_crosshair (Crosshair.X, Crosshair.Y, HID_SC_WARP_POINTER);
    PCB->Grid = save_grid;
 diff --git a/src/set.c b/src/set.c
-index 17f7583..8fef65a 100644
+index 90db719..c77129e 100644
 --- a/src/set.c
 +++ b/src/set.c
 @@ -244,7 +244,7 @@ SetMode (int Mode)

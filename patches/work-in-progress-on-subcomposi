@@ -1,7 +1,7 @@
-Bottom: 5137ac20b8fa643fab621ab3268ce382117e9601
-Top:    d24d5c4815daf32cf6926e8a9240f81c0ffc6f1a
+Bottom: 1f366ef3677e92f37a03454b8b7ef925e6b7f08e
+Top:    eba7fa5b9e5105f26fe8d21d899c4b1683de6243
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-25 14:07:29 +0100
+Date:   2011-04-25 15:58:24 +0100
 
 Work in progress on subcompositing / stencil buffers
 
@@ -14,10 +14,10 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index f037333..a166fe5 100644
+index 87b34b2..a0c6771 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -365,6 +365,7 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -330,6 +330,7 @@ DrawEverything (BoxTypePtr drawn_area)
  	  DrawLayer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area);
  	}
        r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
@@ -25,7 +25,7 @@ index f037333..a166fe5 100644
      }
  
    /* draw all layers in layerstack order */
-@@ -373,8 +374,11 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -338,8 +339,11 @@ DrawEverything (BoxTypePtr drawn_area)
        int group = drawn_groups[i];
  
        if (gui->set_layer (0, group, 0))
@@ -39,7 +39,7 @@ index f037333..a166fe5 100644
      }
  
    if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
-@@ -410,16 +414,28 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -375,16 +379,28 @@ DrawEverything (BoxTypePtr drawn_area)
      }
    /* Draw the solder mask if turned on */
    if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
@@ -72,7 +72,7 @@ index f037333..a166fe5 100644
  
    if (gui->gui)
      {
-@@ -429,27 +445,47 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -394,27 +410,47 @@ DrawEverything (BoxTypePtr drawn_area)
  		  NULL);
        /* Draw rat lines on top */
        if (gui->set_layer ("rats", SL (RATS, 0), 0))
@@ -126,7 +126,7 @@ index f037333..a166fe5 100644
  }
  
  static void
-@@ -740,6 +776,10 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
+@@ -705,6 +741,10 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
    clip_box = screen;
    r_search (Layer->polygon_tree, screen, NULL, poly_callback, Layer);
  
@@ -137,7 +137,7 @@ index f037333..a166fe5 100644
    if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
      return;
  
-@@ -789,7 +829,8 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -754,7 +794,8 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
    Cardinal *layers = PCB->LayerGroups.Entries[group];
  
    clip_box = drawn_area;
