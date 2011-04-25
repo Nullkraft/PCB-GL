@@ -1,5 +1,5 @@
 Bottom: 402d669384a96503ef34e1530d4041608329703a
-Top:    79bb4d08fa1e133e1b90284a3d19f37335828294
+Top:    741af23f9796b38cc155de0f786b816241117879
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 17:37:04 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" routines from real drawing routines (Lines)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 712186d..a866c65 100644
+index 712186d..7b98a72 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -89,7 +89,6 @@ static const BoxType *clip_box = NULL;
@@ -20,11 +20,10 @@ index 712186d..a866c65 100644
  static void DrawRegularText (LayerTypePtr, TextTypePtr);
  static void DrawPolygonLowLevel (PolygonTypePtr);
  static void DrawArcLowLevel (ArcTypePtr);
-@@ -873,10 +872,39 @@ DrawRats (BoxTypePtr drawn_area)
-     gui->use_mask (HID_MASK_OFF);
+@@ -284,6 +283,42 @@ rat_callback (const BoxType * b, void *cl)
  }
  
-+static void
+ static void
 +_draw_line (LineType *line)
 +{
 +  gui->set_line_cap (Output.fgGC, Trace_Cap);
@@ -53,14 +52,40 @@ index 712186d..a866c65 100644
 +  _draw_line (line);
 +}
 +
- static int
- line_callback (const BoxType * b, void *cl)
- {
--  DrawLine ((LayerTypePtr) cl, (LineTypePtr) b);
++static int
++line_callback (const BoxType * b, void *cl)
++{
 +  draw_line ((LayerType *) cl, (LineType *) b);
-   return 1;
++  return 1;
++}
++
++static void
+ draw_element_package (ElementType *element)
+ {
+   /* set color and draw lines, arcs, text and pins */
+@@ -299,7 +334,7 @@ draw_element_package (ElementType *element)
+   /* draw lines, arcs, text and pins */
+   ELEMENTLINE_LOOP (element);
+   {
+-    DrawLineLowLevel (line);
++    _draw_line (line);
+   }
+   END_LOOP;
+   ARC_LOOP (element);
+@@ -874,13 +909,6 @@ DrawRats (BoxTypePtr drawn_area)
  }
  
+ static int
+-line_callback (const BoxType * b, void *cl)
+-{
+-  DrawLine ((LayerTypePtr) cl, (LineTypePtr) b);
+-  return 1;
+-}
+-
+-static int
+ arc_callback (const BoxType * b, void *cl)
+ {
+   DrawArc ((LayerTypePtr) cl, (ArcTypePtr) b);
 @@ -1031,29 +1059,6 @@ GatherPadName (PadTypePtr Pad)
  }
  
