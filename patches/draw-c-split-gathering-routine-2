@@ -1,5 +1,5 @@
 Bottom: 70ec768bb432e2c8f09f5f338afbe7f79e73f25d
-Top:    ce6ed6f8984b691eeae2dd1740b5e403fe88489c
+Top:    7e061e92870558c3d6dbb2decabc06eb07698e2f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 19:44:55 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" from real drawing routines (Element names)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 80b7fda..168884a 100644
+index 80b7fda..03073d4 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -196,6 +196,24 @@ element_callback (const BoxType * b, void *cl)
@@ -46,19 +46,7 @@ index 80b7fda..168884a 100644
    return 0;
  }
  
-@@ -1411,7 +1429,10 @@ void
- DrawElement (ElementTypePtr Element)
- {
-   DrawElementPackage (Element);
--  DrawElementName (Element);
-+  if (Gathering)
-+    DrawElementName (Element);
-+  else
-+    draw_element_name (Element);
-   DrawElementPinsAndPads (Element);
- }
- 
-@@ -1421,19 +1442,11 @@ DrawElement (ElementTypePtr Element)
+@@ -1421,19 +1439,11 @@ DrawElement (ElementTypePtr Element)
  void
  DrawElementName (ElementTypePtr Element)
  {
@@ -81,7 +69,7 @@ index 80b7fda..168884a 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1707,9 +1720,11 @@ EraseElementPinsAndPads (ElementTypePtr Element)
+@@ -1707,9 +1717,11 @@ EraseElementPinsAndPads (ElementTypePtr Element)
  void
  EraseElementName (ElementTypePtr Element)
  {
@@ -91,4 +79,14 @@ index 80b7fda..168884a 100644
      return;
 -  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
 +  AddPart (&ELEMENT_TEXT (PCB, Element));
+ }
+ 
+ 
+@@ -1805,7 +1817,7 @@ static void
+ draw_element (ElementTypePtr element)
+ {
+   DrawElementPackage (element);
+-  DrawElementName (element);
++  draw_element_name (Element);
+   DrawElementPinsAndPads (element);
  }
