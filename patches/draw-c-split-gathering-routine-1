@@ -1,5 +1,5 @@
-Bottom: c8cfe7a3b68a967c010806235d28161e4b65bf98
-Top:    e7c40fae7af9d877ef59d09137cb2ec2de0c41fe
+Bottom: f3479f46b13a7dd09c78443505e93b9db9d7ddaa
+Top:    e213f320346f6ae9b00566f7782ef93645375f5e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 18:14:53 +0100
 
@@ -11,10 +11,10 @@ Moves code from DrawRegularText() into its only caller text_callback()
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 63c1760..bf6b11f 100644
+index b623214..f3ec118 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -86,7 +86,6 @@ static const BoxType *clip_box = NULL;
+@@ -89,7 +89,6 @@ static const BoxType *clip_box = NULL;
  static void DrawEverything (BoxTypePtr);
  static void DrawPPV (int group, const BoxType *);
  static int DrawLayerGroup (int, const BoxType *);
@@ -22,7 +22,7 @@ index 63c1760..bf6b11f 100644
  static void AddPart (void *);
  static void SetPVColor (PinTypePtr, int);
  static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
-@@ -940,7 +939,20 @@ arc_callback (const BoxType * b, void *cl)
+@@ -997,7 +996,20 @@ DrawRats (BoxTypePtr drawn_area)
  static int
  text_callback (const BoxType * b, void *cl)
  {
@@ -44,7 +44,7 @@ index 63c1760..bf6b11f 100644
    return 1;
  }
  
-@@ -1147,12 +1159,6 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
+@@ -1148,12 +1160,6 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
    Cardinal n;
    FontTypePtr font = &PCB->Font;
  
@@ -57,7 +57,7 @@ index 63c1760..bf6b11f 100644
    while (string && *string)
      {
        /* draw lines if symbol is valid and data is present */
-@@ -1375,40 +1381,12 @@ DrawArc (LayerTypePtr Layer, ArcTypePtr Arc)
+@@ -1376,40 +1382,12 @@ DrawArc (LayerTypePtr Layer, ArcTypePtr Arc)
  void
  DrawText (LayerTypePtr Layer, TextTypePtr Text)
  {
@@ -101,7 +101,7 @@ index 63c1760..bf6b11f 100644
  /* ---------------------------------------------------------------------------
   * draws a polygon on a layer
   */
-@@ -1662,13 +1640,9 @@ EraseArc (ArcTypePtr Arc)
+@@ -1656,13 +1634,9 @@ EraseArc (ArcTypePtr Arc)
  void
  EraseText (LayerTypePtr Layer, TextTypePtr Text)
  {
@@ -118,7 +118,7 @@ index 63c1760..bf6b11f 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1698,8 +1672,7 @@ EraseElement (ElementTypePtr Element)
+@@ -1692,8 +1666,7 @@ EraseElement (ElementTypePtr Element)
      EraseArc (arc);
    }
    END_LOOP;
