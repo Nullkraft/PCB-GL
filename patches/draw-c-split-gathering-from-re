@@ -1,5 +1,5 @@
 Bottom: 4fcd5b1b6e9f876c739e9aba4cb2b2ad9c38e1e6
-Top:    4fcd5b1b6e9f876c739e9aba4cb2b2ad9c38e1e6
+Top:    594eefe67fc7781d81ea5ce8bf1fe7d5f0027013
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 00:19:09 +0100
 
@@ -8,4 +8,31 @@ draw.c: Split "Gathering" from real drawing routines (Element)
 
 ---
 
-
+diff --git a/src/draw.c b/src/draw.c
+index 7e8690f..eb79bed 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1823,6 +1823,14 @@ DrawObject (int type, void *ptr1, void *ptr2)
+     }
+ }
+ 
++static void
++draw_element (ElementTypePtr element)
++{
++  DrawElementPackage (element);
++  DrawElementName (element);
++  DrawElementPinsAndPads (element);
++}
++
+ /* ---------------------------------------------------------------------------
+  * HID drawing callback.
+  */
+@@ -1850,7 +1858,7 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
+   if (item)
+     {
+       doing_pinout = true;
+-      DrawElement ((ElementTypePtr)item);
++      draw_element ((ElementType *)item);
+       doing_pinout = false;
+     }
+   else
