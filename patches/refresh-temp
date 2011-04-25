@@ -1,0 +1,59 @@
+Bottom: a652c0b1d9a5f4f04e7a5162cd440b6262474728
+Top:    726b71a4a9cefdea458fd06806a97893ee48c18d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 00:59:45 +0100
+
+Refresh of w-c-split-gathering-from-real-
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index b9d6672..7aeaa69 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -226,6 +226,22 @@ name_callback (const BoxType * b, void *cl)
+   return 0;
+ }
+ 
++static void
++draw_element_pins_and_pads (ElementType *element)
++{
++  PAD_LOOP (element);
++  {
++    if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
++      DrawPad (pad);
++  }
++  END_LOOP;
++  PIN_LOOP (element);
++  {
++    DrawPin (pin, true);
++  }
++  END_LOOP;
++}
++
+ static int
+ EMark_callback (const BoxType * b, void *cl)
+ {
+@@ -1577,22 +1593,6 @@ DrawElementPinsAndPads (ElementTypePtr Element)
+   END_LOOP;
+ }
+ 
+-static void
+-draw_element_pins_and_pads (ElementType *element)
+-{
+-  PAD_LOOP (element);
+-  {
+-    if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
+-      DrawPad (pad);
+-  }
+-  END_LOOP;
+-  PIN_LOOP (element);
+-  {
+-    DrawPin (pin, true);
+-  }
+-  END_LOOP;
+-}
+-
+ /* ---------------------------------------------------------------------------
+  * erase a via
+  */
