@@ -1,5 +1,5 @@
-Bottom: 1eb9c73b38589247a57036a7c531e1738883bb1a
-Top:    0ed268f5ff2b58de5425936bfbcdc1f6976479e2
+Bottom: 8572969115e9e378da28c435121edbf5d6a5c46d
+Top:    0ba31f16b8aaea125c640c4d85b29eeeb774f394
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 18:14:53 +0100
 
@@ -11,7 +11,7 @@ Moves code from DrawRegularText() into its only caller text_callback()
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 1c03dc1..e990759 100644
+index f01184c..354a6cf 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -86,7 +86,6 @@ static const BoxType *clip_box = NULL;
@@ -101,7 +101,7 @@ index 1c03dc1..e990759 100644
  /* ---------------------------------------------------------------------------
   * draws a polygon on a layer
   */
-@@ -1646,13 +1624,9 @@ EraseArc (ArcTypePtr Arc)
+@@ -1662,13 +1640,9 @@ EraseArc (ArcTypePtr Arc)
  void
  EraseText (LayerTypePtr Layer, TextTypePtr Text)
  {
@@ -118,7 +118,7 @@ index 1c03dc1..e990759 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1682,8 +1656,7 @@ EraseElement (ElementTypePtr Element)
+@@ -1698,8 +1672,7 @@ EraseElement (ElementTypePtr Element)
      EraseArc (arc);
    }
    END_LOOP;
