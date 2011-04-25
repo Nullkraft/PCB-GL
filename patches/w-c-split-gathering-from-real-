@@ -1,5 +1,5 @@
-Bottom: d770d83660fe2d98ba195233f80c43f94b2c1fc9
-Top:    c8cfe7a3b68a967c010806235d28161e4b65bf98
+Bottom: 66cb3f35b7e4ca2e0294337a1e2345d056269d41
+Top:    66cb3f35b7e4ca2e0294337a1e2345d056269d41
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 00:10:40 +0100
 
@@ -8,87 +8,4 @@ draw.c: Split "Gathering" from real drawing routines (Element Pins and Pads)
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index 17dfeae..63c1760 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -1458,13 +1458,14 @@ DrawElement (ElementTypePtr Element)
-     {
-       DrawElementPackage (Element);
-       DrawElementName (Element);
-+      DrawElementPinsAndPads (Element);
-     }
-   else
-     {
-       draw_element_name (Element);
-       draw_element_package (Element);
-+      draw_element_pins_and_pads (Element);
-     }
--  DrawElementPinsAndPads (Element);
- }
- 
- /* ---------------------------------------------------------------------------
-@@ -1506,34 +1507,35 @@ DrawElementPackage (ElementTypePtr Element)
- void
- DrawElementPinsAndPads (ElementTypePtr Element)
- {
--  if (Gathering)
--    {
--      PAD_LOOP (Element);
--      {
--        if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
--          DrawPad (pad);
--      }
--      END_LOOP;
--      PIN_LOOP (Element);
--      {
--        DrawPin (pin);
--      }
--      END_LOOP;
--    }
--  else
--    {
--      PAD_LOOP (Element);
--      {
--        if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
--          draw_pad (pad);
--      }
--      END_LOOP;
--      PIN_LOOP (Element);
--      {
--        draw_pin (pin, true);
--      }
--      END_LOOP;
--    }
-+  assert (Gathering);
-+
-+  PAD_LOOP (Element);
-+  {
-+    if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
-+      DrawPad (pad);
-+  }
-+  END_LOOP;
-+  PIN_LOOP (Element);
-+  {
-+    DrawPin (pin);
-+  }
-+  END_LOOP;
-+}
-+
-+static void
-+draw_element_pins_and_pads (ElementTypePtr element)
-+{
-+  PAD_LOOP (Element);
-+  {
-+    if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
-+      draw_pad (pad);
-+  }
-+  END_LOOP;
-+  PIN_LOOP (Element);
-+  {
-+    draw_pin (pin, true);
-+  }
-+  END_LOOP;
- }
- 
- /* ---------------------------------------------------------------------------
+
