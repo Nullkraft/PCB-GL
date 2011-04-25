@@ -1,5 +1,5 @@
-Bottom: 4809378d4ed53c4df7e94c8cc328da41c4544547
-Top:    6f69309199c3fd37bc52eb39f837767edcb48829
+Bottom: ebe28d5d35c0317a8ed17067a9e8b4b2798415f3
+Top:    96b6aa38c45c29ca8340d020a6cef557ce9dc195
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 17:51:16 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" routines from real drawing routines (Arcs)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 4348d66..81983c2 100644
+index b057cc2..1d580a1 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -88,7 +88,6 @@ static void DrawPPV (int group, const BoxType *);
@@ -129,7 +129,7 @@ index 4348d66..81983c2 100644
    }
    END_LOOP;
  }
-@@ -1650,9 +1645,11 @@ EraseLine (LineTypePtr Line)
+@@ -1664,9 +1659,11 @@ EraseLine (LineTypePtr Line)
  void
  EraseArc (ArcTypePtr Arc)
  {
@@ -142,7 +142,7 @@ index 4348d66..81983c2 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1692,7 +1689,7 @@ EraseElement (ElementTypePtr Element)
+@@ -1706,7 +1703,7 @@ EraseElement (ElementTypePtr Element)
    END_LOOP;
    ARC_LOOP (Element);
    {
