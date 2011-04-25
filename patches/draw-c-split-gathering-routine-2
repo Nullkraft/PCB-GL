@@ -1,5 +1,5 @@
 Bottom: 69fc9430bd65433269275f6f2143c9e9e548b4f3
-Top:    495a37fcc71782c5dabd1e259f355842eec013b0
+Top:    022d0e4473e17ba75c2ba9fbf0d6234ac853c416
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 19:44:55 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" from real drawing routines (Element names)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 75a6c8e..0bc9441 100644
+index 75a6c8e..d71982f 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -194,6 +194,23 @@ Redraw (void)
@@ -43,15 +43,6 @@ index 75a6c8e..0bc9441 100644
 -    DrawElementName (element);
 +    draw_element_name (element);
    return 0;
- }
- 
-@@ -318,7 +335,7 @@ element_callback (const BoxType * b, void *cl)
-   int *side = cl;
- 
-   if (ON_SIDE (element, *side))
--    draw_element_package (element);
-+    DrawElementPackage (element);
-   return 1;
  }
  
 @@ -1512,18 +1529,10 @@ DrawElement (ElementTypePtr Element)
