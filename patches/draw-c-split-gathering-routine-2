@@ -1,5 +1,5 @@
 Bottom: 0ede322aa7cec8365db7b951fa66162ec1fafcdb
-Top:    06c42c7955064a64ddd9127de1440c8ec968fd76
+Top:    66cb3f35b7e4ca2e0294337a1e2345d056269d41
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 19:44:55 +0100
 
@@ -9,10 +9,10 @@ draw.c: Split "Gathering" from real drawing routines (Element names)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 7ad80f3..8cf2bf4 100644
+index 7ad80f3..5af9fd1 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -189,6 +189,35 @@ Redraw (void)
+@@ -189,6 +189,34 @@ Redraw (void)
  }
  
  static int
@@ -29,9 +29,8 @@ index 7ad80f3..8cf2bf4 100644
 +static void
 +draw_element_name (ElementType *element)
 +{
-+  if (gui->gui && TEST_FLAG (HIDENAMESFLAG, PCB))
-+    return;
-+  if (TEST_FLAG (HIDENAMEFLAG, element))
++  if ((TEST_FLAG (HIDENAMESFLAG, PCB) && gui->gui) ||
++      TEST_FLAG (HIDENAMEFLAG, element))
 +    return;
 +  if (doing_pinout || doing_assy)
 +    gui->set_color (Output.fgGC, PCB->ElementColor);
@@ -48,7 +47,7 @@ index 7ad80f3..8cf2bf4 100644
  name_callback (const BoxType * b, void *cl)
  {
    TextTypePtr text = (TextTypePtr) b;
-@@ -199,7 +228,7 @@ name_callback (const BoxType * b, void *cl)
+@@ -199,7 +227,7 @@ name_callback (const BoxType * b, void *cl)
      return 0;
  
    if (ON_SIDE (element, *side))
@@ -57,7 +56,25 @@ index 7ad80f3..8cf2bf4 100644
    return 0;
  }
  
-@@ -1451,19 +1480,11 @@ DrawElement (ElementTypePtr Element)
+@@ -380,17 +408,6 @@ draw_element_package (ElementType *element)
+   END_LOOP;
+ }
+ 
+-static int
+-element_callback (const BoxType * b, void *cl)
+-{
+-  ElementTypePtr element = (ElementTypePtr) b;
+-  int *side = cl;
+-
+-  if (ON_SIDE (element, *side))
+-    draw_element_package (element);
+-  return 1;
+-}
+-
+ /* ---------------------------------------------------------------------------
+  * prints assembly drawing.
+  */
+@@ -1451,19 +1468,11 @@ DrawElement (ElementTypePtr Element)
  void
  DrawElementName (ElementTypePtr Element)
  {
@@ -76,11 +93,11 @@ index 7ad80f3..8cf2bf4 100644
 -  else
 -    gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
 -  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
-+  AddPart (&ELEMENT_TEXT (PCB, Element));
++  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), 0);
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1713,9 +1734,11 @@ EraseElementPinsAndPads (ElementTypePtr Element)
+@@ -1713,9 +1722,11 @@ EraseElementPinsAndPads (ElementTypePtr Element)
  void
  EraseElementName (ElementTypePtr Element)
  {
@@ -93,7 +110,7 @@ index 7ad80f3..8cf2bf4 100644
  }
  
  
-@@ -1811,7 +1834,7 @@ static void
+@@ -1811,7 +1822,7 @@ static void
  draw_element (ElementTypePtr element)
  {
    draw_element_package (element);
