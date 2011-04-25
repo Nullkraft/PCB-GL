@@ -497,42 +497,42 @@ draw_pv_name (PinType *pv)
 }
 
 static void
-draw_pv (PinTypePtr pv)
+draw_pv (PinTypePtr pv, bool draw_hole)
 {
   if (TEST_FLAG (THINDRAWFLAG, PCB))
-    gui->thindraw_pcb_pv (Output.fgGC, Output.fgGC, pv, false, false);
+    gui->thindraw_pcb_pv (Output.fgGC, Output.fgGC, pv, draw_hole, false);
   else
-    gui->fill_pcb_pv (Output.fgGC, Output.bgGC, pv, false, false);
+    gui->fill_pcb_pv (Output.fgGC, Output.bgGC, pv, draw_hole, false);
 
   if (!TEST_FLAG (HOLEFLAG, pv) && TEST_FLAG (DISPLAYNAMEFLAG, pv))
     draw_pv_name (pv);
 }
 
 static void
-draw_pin (PinTypePtr pin)
+draw_pin (PinTypePtr pin, bool draw_hole)
 {
   SetPVColor (pin, PIN_TYPE);
-  draw_pv (pin);
+  draw_pv (pin, draw_hole);
 }
 
 static void
-draw_via (PinTypePtr via)
+draw_via (PinTypePtr via, bool draw_hole)
 {
   SetPVColor (via, VIA_TYPE);
-  draw_pv (via);
+  draw_pv (via, draw_hole);
 }
 
 static int
 via_callback (const BoxType * b, void *cl)
 {
-  draw_pin ((PinType *)b);
+  draw_pin ((PinType *)b, false);
   return 1;
 }
 
 static int
 pin_callback (const BoxType * b, void *cl)
 {
-  draw_via ((PinType *)b);
+  draw_via ((PinType *)b, false);
   return 1;
 }
 
@@ -1565,7 +1565,7 @@ DrawElementPinsAndPads (ElementTypePtr Element)
     if (Gathering)
       DrawPin (pin);
     else
-      draw_pin (pin);
+      draw_pin (pin, true);
   }
   END_LOOP;
 }
