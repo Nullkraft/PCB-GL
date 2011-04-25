@@ -1,5 +1,5 @@
 Bottom: 8bff68d602c9ce02135f3874c46f52d52d63028c
-Top:    ab5cd8fb89fadbe6a9676051ca4e8e19faf38739
+Top:    20b98a674cc90fb74869e152c8a4056f4566b144
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 17:51:16 +0100
 
@@ -9,7 +9,7 @@ w.c: Split "Gathering" routines from real drawing routines (Arcs)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 5c18d3e..e163c9a 100644
+index 5c18d3e..08ea7e4 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -88,7 +88,6 @@ static void DrawPPV (int group, const BoxType *);
@@ -125,7 +125,7 @@ index 5c18d3e..e163c9a 100644
    ARC_LOOP (Element);
    {
 -    DrawArcLowLevel (arc);
-+    _drar_arc (arc);
++    _draw_arc (arc);
    }
    END_LOOP;
  }
