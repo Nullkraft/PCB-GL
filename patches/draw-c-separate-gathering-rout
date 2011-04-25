@@ -1,5 +1,5 @@
 Bottom: 4c1e800808297c82b906eb5c87df9168edb5ee44
-Top:    d3d8066bcc82b7cc58544ea342130684a3566d36
+Top:    24d1cbbeb2514fd00a61766dc75aa337868250bf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 16:00:33 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" routines from real drawing routines (Pins + Vias)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 09e183e..5c08504 100644
+index 09e183e..21cec3b 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -34,6 +34,9 @@
@@ -39,7 +39,7 @@ index 09e183e..5c08504 100644
 +}
 +
 +static void
-+draw_pv_name (PinType *pv)
++_draw_pv_name (PinType *pv)
 +{
 +  BoxType box;
 +  bool vert;
@@ -81,7 +81,7 @@ index 09e183e..5c08504 100644
 +}
 +
 +static void
-+draw_pv (PinTypePtr pv, bool draw_hole)
++_draw_pv (PinTypePtr pv, bool draw_hole)
 +{
 +  if (TEST_FLAG (THINDRAWFLAG, PCB))
 +    gui->thindraw_pcb_pv (Output.fgGC, Output.fgGC, pv, draw_hole, false);
@@ -89,21 +89,21 @@ index 09e183e..5c08504 100644
 +    gui->fill_pcb_pv (Output.fgGC, Output.bgGC, pv, draw_hole, false);
 +
 +  if (!TEST_FLAG (HOLEFLAG, pv) && TEST_FLAG (DISPLAYNAMEFLAG, pv))
-+    draw_pv_name (pv);
++    _draw_pv_name (pv);
 +}
 +
 +static void
 +draw_pin (PinTypePtr pin, bool draw_hole)
 +{
 +  SetPVColor (pin, PIN_TYPE);
-+  draw_pv (pin, draw_hole);
++  _draw_pv (pin, draw_hole);
 +}
 +
 +static void
 +draw_via (PinTypePtr via, bool draw_hole)
 +{
 +  SetPVColor (via, VIA_TYPE);
-+  draw_pv (via, draw_hole);
++  _draw_pv (via, draw_hole);
  }
  
  static int
