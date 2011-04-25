@@ -1,5 +1,5 @@
 Bottom: 4c1e800808297c82b906eb5c87df9168edb5ee44
-Top:    c07ca48c2a909098c2fb35bbefa06a1e2e2a09bf
+Top:    4fcd5b1b6e9f876c739e9aba4cb2b2ad9c38e1e6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 17:57:26 +0100
 
@@ -9,7 +9,7 @@ draw.c: Fold DrawHole into its only caller, hole_callback
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 09e183e..a804880 100644
+index 09e183e..7e8690f 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -97,7 +97,6 @@ static void AddPart (void *);
@@ -20,30 +20,40 @@ index 09e183e..a804880 100644
  static void DrawMask (int side, BoxType *);
  static void DrawPaste (int side, BoxType *);
  static void DrawRats (BoxType *);
-@@ -238,7 +237,35 @@ hole_callback (const BoxType * b, void *cl)
-       (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
+@@ -231,14 +230,42 @@ EMark_callback (const BoxType * b, void *cl)
+ static int
+ hole_callback (const BoxType * b, void *cl)
+ {
+-  PinTypePtr pin = (PinTypePtr) b;
++  PinTypePtr pv = (PinTypePtr) b;
+   int plated = cl ? *(int *) cl : -1;
+ 
+-  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pin)) ||
+-      (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
++  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pv)) ||
++      (plated == 1 &&  TEST_FLAG (HOLEFLAG, pv)))
      return 1;
  
 -  DrawHole ((PinTypePtr) b);
 +  if (TEST_FLAG (THINDRAWFLAG, PCB))
 +    {
-+      if (!TEST_FLAG (HOLEFLAG, Ptr))
++      if (!TEST_FLAG (HOLEFLAG, pv))
 +        {
 +          gui->set_line_cap (Output.fgGC, Round_Cap);
 +          gui->set_line_width (Output.fgGC, 0);
 +          gui->draw_arc (Output.fgGC,
-+                         Ptr->X, Ptr->Y, Ptr->DrillingHole / 2,
-+                         Ptr->DrillingHole / 2, 0, 360);
++                         pv->X, pv->Y, pv->DrillingHole / 2,
++                         pv->DrillingHole / 2, 0, 360);
 +        }
 +    }
 +  else
-+    gui->fill_circle (Output.bgGC, Ptr->X, Ptr->Y, Ptr->DrillingHole / 2);
++    gui->fill_circle (Output.bgGC, pv->X, pv->Y, pv->DrillingHole / 2);
 +
-+  if (TEST_FLAG (HOLEFLAG, Ptr))
++  if (TEST_FLAG (HOLEFLAG, pv))
 +    {
-+      if (TEST_FLAG (WARNFLAG, Ptr))
++      if (TEST_FLAG (WARNFLAG, pv))
 +        gui->set_color (Output.fgGC, PCB->WarnColor);
-+      else if (TEST_FLAG (SELECTEDFLAG, Ptr))
++      else if (TEST_FLAG (SELECTEDFLAG, pv))
 +        gui->set_color (Output.fgGC, PCB->ViaSelectedColor);
 +      else
 +        gui->set_color (Output.fgGC, Settings.BlackColor);
@@ -51,8 +61,8 @@ index 09e183e..a804880 100644
 +      gui->set_line_cap (Output.fgGC, Round_Cap);
 +      gui->set_line_width (Output.fgGC, 0);
 +      gui->draw_arc (Output.fgGC,
-+                     Ptr->X, Ptr->Y, Ptr->DrillingHole / 2,
-+                     Ptr->DrillingHole / 2, 0, 360);
++                     pv->X, pv->Y, pv->DrillingHole / 2,
++                     pv->DrillingHole / 2, 0, 360);
 +    }
    return 1;
  }
