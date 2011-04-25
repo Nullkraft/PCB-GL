@@ -95,7 +95,6 @@ static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
 static void DrawMask (int side, BoxType *);
 static void DrawPaste (int side, BoxType *);
 static void DrawRats (BoxType *);
-static void DrawSilk (int side, const BoxType *);
 static int via_callback (const BoxType * b, void *cl);
 static int pin_callback (const BoxType * b, void *cl);
 static int pad_callback (const BoxType * b, void *cl);
@@ -871,7 +870,7 @@ clearPad_callback (const BoxType * b, void *cl)
  * Draws silk layer.
  */
 
-static void
+void
 DrawSilk (int side, const BoxType * drawn_area)
 {
 #if 0
@@ -930,7 +929,7 @@ DrawMaskBoardArea (int mask_type, BoxType *screen)
 /* ---------------------------------------------------------------------------
  * draws solder mask layer - this will cover nearly everything
  */
-static void
+void
 DrawMask (int side, BoxType * screen)
 {
   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
@@ -959,7 +958,7 @@ DrawMask (int side, BoxType * screen)
 /* ---------------------------------------------------------------------------
  * draws solder paste layer for a given side of the board
  */
-static void
+void
 DrawPaste (int side, BoxType *drawn_area)
 {
   gui->set_color (Output.fgGC, PCB->ElementColor);
