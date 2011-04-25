@@ -1,5 +1,5 @@
-Bottom: 5d0f0deae6960b86ba3e8d74bae7fdb02fd995f6
-Top:    4809378d4ed53c4df7e94c8cc328da41c4544547
+Bottom: 5445f3d8e7e02b1d02e5f1c8eff723d31b77c9e4
+Top:    ebe28d5d35c0317a8ed17067a9e8b4b2798415f3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 17:37:04 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" routines from real drawing routines (Lines)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 5449a73..4348d66 100644
+index a638bd7..b057cc2 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -86,11 +86,9 @@ static const BoxType *clip_box = NULL;
@@ -204,7 +204,7 @@ index 5449a73..4348d66 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1569,7 +1570,7 @@ EraseRat (RatTypePtr Rat)
+@@ -1583,7 +1584,7 @@ EraseRat (RatTypePtr Rat)
  		     w * 2, w * 2, 0, 360);
      }
    else
@@ -213,7 +213,7 @@ index 5449a73..4348d66 100644
  }
  
  
-@@ -1638,7 +1639,9 @@ ErasePinName (PinTypePtr Pin)
+@@ -1652,7 +1653,9 @@ ErasePinName (PinTypePtr Pin)
  void
  EraseLine (LineTypePtr Line)
  {
@@ -224,7 +224,7 @@ index 5449a73..4348d66 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1684,7 +1687,7 @@ EraseElement (ElementTypePtr Element)
+@@ -1698,7 +1701,7 @@ EraseElement (ElementTypePtr Element)
  {
    ELEMENTLINE_LOOP (Element);
    {
