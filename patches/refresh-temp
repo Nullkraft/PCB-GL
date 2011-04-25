@@ -1,0 +1,22 @@
+Bottom: 6c408210c0298e653561feaf37a2d13c87d5c671
+Top:    3dd2f13c64af60dd31e6a26b267360c861471b5a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-25 17:35:38 +0100
+
+Refresh of draw-c-split-gathering-routine
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 2cfaefa..13c348b 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -534,7 +534,7 @@ pin_callback (const BoxType * b, void *cl)
+ }
+ 
+ static void
+-draw_pad_name (PadType *pad)
++_draw_pad_name (PadType *pad)
+ {
+   BoxType box;
+   bool vert;
