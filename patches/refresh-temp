@@ -1,0 +1,93 @@
+Bottom: 3483ee1ae5dcdbbc2059fe70582fa6853fc1ef38
+Top:    8572969115e9e378da28c435121edbf5d6a5c46d
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 00:18:20 +0100
+
+Refresh of w-c-split-gathering-from-real-
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 02a5008..f01184c 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1458,13 +1458,14 @@ DrawElement (ElementTypePtr Element)
+     {
+       DrawElementPackage (Element);
+       DrawElementName (Element);
++      DrawElementPinsAndPads (Element);
+     }
+   else
+     {
+       draw_element_name (Element);
+       draw_element_package (Element);
++      draw_element_pins_and_pads (Element);
+     }
+-  DrawElementPinsAndPads (Element);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -1506,34 +1507,35 @@ DrawElementPackage (ElementTypePtr Element)
+ void
+ DrawElementPinsAndPads (ElementTypePtr Element)
+ {
+-  if (Gathering)
+-    {
+-      PAD_LOOP (Element);
+-      {
+-        if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
+-          DrawPad (pad);
+-      }
+-      END_LOOP;
+-      PIN_LOOP (Element);
+-      {
+-        DrawPin (pin);
+-      }
+-      END_LOOP;
+-    }
+-  else
+-    {
+-      PAD_LOOP (Element);
+-      {
+-        if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
+-          draw_pad (pad);
+-      }
+-      END_LOOP;
+-      PIN_LOOP (Element);
+-      {
+-        draw_pin (pin, true);
+-      }
+-      END_LOOP;
+-    }
++  assert (Gathering);
++
++  PAD_LOOP (Element);
++  {
++    if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
++      DrawPad (pad);
++  }
++  END_LOOP;
++  PIN_LOOP (Element);
++  {
++    DrawPin (pin);
++  }
++  END_LOOP;
++}
++
++static void
++draw_element_pins_and_pads (ElementTypePtr element)
++{
++  PAD_LOOP (Element);
++  {
++    if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
++      draw_pad (pad);
++  }
++  END_LOOP;
++  PIN_LOOP (Element);
++  {
++    draw_pin (pin, true);
++  }
++  END_LOOP;
+ }
+ 
+ /* ---------------------------------------------------------------------------
