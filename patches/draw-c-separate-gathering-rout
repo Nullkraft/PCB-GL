@@ -1,5 +1,5 @@
 Bottom: 4fcd5b1b6e9f876c739e9aba4cb2b2ad9c38e1e6
-Top:    5596d3b3436e57212545b900ada9e564dd7431d8
+Top:    44209225715a67c012137e952435b2cbb27d972b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 16:00:33 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" routines from real drawing routines (Pins + Vias)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 7e8690f..de86c86 100644
+index 7e8690f..5d5f0ce 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -34,6 +34,9 @@
@@ -292,19 +292,53 @@ index 7e8690f..de86c86 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1549,7 +1551,10 @@ DrawElementPinsAndPads (ElementTypePtr Element)
-   END_LOOP;
-   PIN_LOOP (Element);
-   {
+@@ -1541,17 +1543,34 @@ DrawElementPackage (ElementTypePtr Element)
+ void
+ DrawElementPinsAndPads (ElementTypePtr Element)
+ {
+-  PAD_LOOP (Element);
+-  {
+-    if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
+-      DrawPad (pad);
+-  }
+-  END_LOOP;
+-  PIN_LOOP (Element);
+-  {
 -    DrawPin (pin);
-+    if (Gathering)
-+      DrawPin (pin);
-+    else
-+      draw_pin (pin, true);
-   }
-   END_LOOP;
+-  }
+-  END_LOOP;
++  if (Gathering)
++    {
++      PAD_LOOP (Element);
++      {
++        if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
++          DrawPad (pad);
++      }
++      END_LOOP;
++      PIN_LOOP (Element);
++      {
++        DrawPin (pin);
++      }
++      END_LOOP;
++    }
++  else
++    {
++      PAD_LOOP (Element);
++      {
++        if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
++          DrawPad (pad);
++      }
++      END_LOOP;
++      PIN_LOOP (Element);
++      {
++        draw_pin (pin, true);
++      }
++      END_LOOP;
++    }
  }
-@@ -1560,9 +1565,11 @@ DrawElementPinsAndPads (ElementTypePtr Element)
+ 
+ /* ---------------------------------------------------------------------------
+@@ -1560,9 +1579,11 @@ DrawElementPinsAndPads (ElementTypePtr Element)
  void
  EraseVia (PinTypePtr Via)
  {
@@ -318,7 +352,7 @@ index 7e8690f..de86c86 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1593,7 +1600,9 @@ EraseRat (RatTypePtr Rat)
+@@ -1593,7 +1614,9 @@ EraseRat (RatTypePtr Rat)
  void
  EraseViaName (PinTypePtr Via)
  {
@@ -329,7 +363,7 @@ index 7e8690f..de86c86 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1622,9 +1631,11 @@ ErasePadName (PadTypePtr Pad)
+@@ -1622,9 +1645,11 @@ ErasePadName (PadTypePtr Pad)
  void
  ErasePin (PinTypePtr Pin)
  {
@@ -343,7 +377,7 @@ index 7e8690f..de86c86 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1633,7 +1644,9 @@ ErasePin (PinTypePtr Pin)
+@@ -1633,7 +1658,9 @@ ErasePin (PinTypePtr Pin)
  void
  ErasePinName (PinTypePtr Pin)
  {
@@ -354,7 +388,7 @@ index 7e8690f..de86c86 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1707,11 +1720,11 @@ EraseElement (ElementTypePtr Element)
+@@ -1707,11 +1734,11 @@ EraseElement (ElementTypePtr Element)
  void
  EraseElementPinsAndPads (ElementTypePtr Element)
  {
