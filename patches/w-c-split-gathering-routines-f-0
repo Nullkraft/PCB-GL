@@ -1,5 +1,5 @@
 Bottom: a3988a5bc55f6781f9f3e69c59b0896af194a3aa
-Top:    7df9fee6aacf0eb2862a8bbf49e9b709c94fb9f7
+Top:    3dd7be5c77a838d1e52e783b5fc9390bbe9f74b3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 18:06:39 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" from real drawing routines (Element Package)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 2aeefc1..332af87 100644
+index 2aeefc1..d540287 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -94,7 +94,6 @@ static void DrawLineLowLevel (LineTypePtr);
@@ -43,25 +43,25 @@ index 2aeefc1..332af87 100644
  }
  
 +static void
-+draw_element_package (ELement)
++draw_element_package (element)
 +{
 +  /* set color and draw lines, arcs, text and pins */
 +  if (doing_pinout || doing_assy)
 +    gui->set_color (Output.fgGC, PCB->ElementColor);
-+  else if (TEST_FLAG (SELECTEDFLAG, Element))
++  else if (TEST_FLAG (SELECTEDFLAG, element))
 +    gui->set_color (Output.fgGC, PCB->ElementSelectedColor);
-+  else if (FRONT (Element))
++  else if (FRONT (element))
 +    gui->set_color (Output.fgGC, PCB->ElementColor);
 +  else
 +    gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
 +
 +  /* draw lines, arcs, text and pins */
-+  ELEMENTLINE_LOOP (Element);
++  ELEMENTLINE_LOOP (element);
 +  {
 +    DrawLineLowLevel (line);
 +  }
 +  END_LOOP;
-+  ARC_LOOP (Element);
++  ARC_LOOP (element);
 +  {
 +    DrawArcLowLevel (arc);
 +  }
