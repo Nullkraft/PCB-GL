@@ -1,5 +1,5 @@
 Bottom: 4fcd5b1b6e9f876c739e9aba4cb2b2ad9c38e1e6
-Top:    594eefe67fc7781d81ea5ce8bf1fe7d5f0027013
+Top:    9e98fc86d59414946590790810e290822966624a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 00:19:09 +0100
 
@@ -9,10 +9,29 @@ draw.c: Split "Gathering" from real drawing routines (Element)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 7e8690f..eb79bed 100644
+index 7e8690f..5c34b25 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -1823,6 +1823,14 @@ DrawObject (int type, void *ptr1, void *ptr2)
+@@ -54,6 +54,9 @@
+ #include <dmalloc.h>
+ #endif
+ 
++#undef NDEBUG
++#include <assert.h>
++
+ #ifndef MAXINT
+ #define MAXINT (((unsigned int)(~0))>>1)
+ #endif
+@@ -1147,6 +1150,8 @@ DrawArcLowLevel (ArcTypePtr Arc)
+ static void
+ DrawElementPackageLowLevel (ElementTypePtr Element)
+ {
++  assert (Gathering);
++
+   /* draw lines, arcs, text and pins */
+   ELEMENTLINE_LOOP (Element);
+   {
+@@ -1823,6 +1828,14 @@ DrawObject (int type, void *ptr1, void *ptr2)
      }
  }
  
@@ -27,7 +46,7 @@ index 7e8690f..eb79bed 100644
  /* ---------------------------------------------------------------------------
   * HID drawing callback.
   */
-@@ -1850,7 +1858,7 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
+@@ -1850,7 +1863,7 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
    if (item)
      {
        doing_pinout = true;
