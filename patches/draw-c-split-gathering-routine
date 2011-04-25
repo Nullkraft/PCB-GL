@@ -1,5 +1,5 @@
-Bottom: 09918e18e4f1518c7b2741f9a17a5db4926ccfee
-Top:    402d669384a96503ef34e1530d4041608329703a
+Bottom: e66778bbd08ff464fc18f757a6ed33d2828225be
+Top:    9240bba40bf24354b014e17e0ae2dc6d1fc0b8a3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 17:06:30 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" routines from real drawing routines (Pads)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 5e40b1b..712186d 100644
+index 274a3d6..57780fd 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -89,8 +89,6 @@ static const BoxType *clip_box = NULL;
@@ -29,7 +29,7 @@ index 5e40b1b..712186d 100644
  static void DrawMask (int side, BoxType *);
  static void DrawPaste (int side, BoxType *);
  static void DrawRats (BoxType *);
-@@ -591,6 +588,85 @@ pin_callback (const BoxType * b, void *cl)
+@@ -608,6 +605,85 @@ pin_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -115,7 +115,7 @@ index 5e40b1b..712186d 100644
  static int
  pad_callback (const BoxType * b, void *cl)
  {
-@@ -598,7 +674,7 @@ pad_callback (const BoxType * b, void *cl)
+@@ -615,7 +691,7 @@ pad_callback (const BoxType * b, void *cl)
    int *side = cl;
  
    if (ON_SIDE (pad, *side))
@@ -124,7 +124,7 @@ index 5e40b1b..712186d 100644
    return 1;
  }
  
-@@ -667,7 +743,7 @@ clearPad_callback (const BoxType * b, void *cl)
+@@ -684,7 +760,7 @@ clearPad_callback (const BoxType * b, void *cl)
    PadTypePtr pad = (PadTypePtr) b;
    int *side = cl;
    if (ON_SIDE (pad, *side) && pad->Mask)
@@ -133,7 +133,7 @@ index 5e40b1b..712186d 100644
    return 1;
  }
  
-@@ -772,9 +848,9 @@ DrawPaste (int side, BoxType *drawn_area)
+@@ -789,9 +865,9 @@ DrawPaste (int side, BoxType *drawn_area)
      if (ON_SIDE (pad, side) && !TEST_FLAG (NOPASTEFLAG, pad) && pad->Mask > 0)
        {
          if (pad->Mask < pad->Thickness)
@@ -145,7 +145,7 @@ index 5e40b1b..712186d 100644
        }
    }
    ENDALL_LOOP;
-@@ -892,9 +968,6 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -909,9 +985,6 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
    return rv;
  }
  
@@ -155,7 +155,7 @@ index 5e40b1b..712186d 100644
  static void
  GatherPVName (PinTypePtr Ptr)
  {
-@@ -925,107 +998,36 @@ GatherPVName (PinTypePtr Ptr)
+@@ -942,107 +1015,36 @@ GatherPVName (PinTypePtr Ptr)
    AddPart (&box);
  }
  
@@ -273,7 +273,7 @@ index 5e40b1b..712186d 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1237,27 +1239,11 @@ DrawPinName (PinTypePtr Pin)
+@@ -1254,27 +1256,11 @@ DrawPinName (PinTypePtr Pin)
  void
  DrawPad (PadTypePtr Pad)
  {
@@ -305,7 +305,7 @@ index 5e40b1b..712186d 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1266,16 +1252,9 @@ DrawPad (PadTypePtr Pad)
+@@ -1283,16 +1269,9 @@ DrawPad (PadTypePtr Pad)
  void
  DrawPadName (PadTypePtr Pad)
  {
@@ -325,7 +325,7 @@ index 5e40b1b..712186d 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1560,7 +1539,7 @@ DrawElementPinsAndPads (ElementTypePtr Element)
+@@ -1569,7 +1548,7 @@ DrawElementPinsAndPads (ElementTypePtr Element)
        PAD_LOOP (Element);
        {
          if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
@@ -334,7 +334,7 @@ index 5e40b1b..712186d 100644
        }
        END_LOOP;
        PIN_LOOP (Element);
-@@ -1637,9 +1616,11 @@ EraseViaName (PinTypePtr Via)
+@@ -1646,9 +1625,11 @@ EraseViaName (PinTypePtr Via)
  void
  ErasePad (PadTypePtr Pad)
  {
@@ -348,7 +348,7 @@ index 5e40b1b..712186d 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1648,7 +1629,9 @@ ErasePad (PadTypePtr Pad)
+@@ -1657,7 +1638,9 @@ ErasePad (PadTypePtr Pad)
  void
  ErasePadName (PadTypePtr Pad)
  {
@@ -359,7 +359,7 @@ index 5e40b1b..712186d 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1755,9 +1738,7 @@ EraseElementPinsAndPads (ElementTypePtr Element)
+@@ -1764,9 +1747,7 @@ EraseElementPinsAndPads (ElementTypePtr Element)
    END_LOOP;
    PAD_LOOP (Element);
    {
