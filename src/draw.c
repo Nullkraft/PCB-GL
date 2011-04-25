@@ -335,7 +335,7 @@ element_callback (const BoxType * b, void *cl)
   int *side = cl;
 
   if (ON_SIDE (element, *side))
-    DrawElementPackage (element);
+    draw_element_package (element);
   return 1;
 }
 
