@@ -1,5 +1,5 @@
-Bottom: 91145259fd6d4ad408c2f6ce4ee17908fd3dd9d4
-Top:    d0d8efffa0d38dc23a66e525d5000c0a408b4a85
+Bottom: 1eb9c73b38589247a57036a7c531e1738883bb1a
+Top:    0ed268f5ff2b58de5425936bfbcdc1f6976479e2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 18:14:53 +0100
 
@@ -11,7 +11,7 @@ Moves code from DrawRegularText() into its only caller text_callback()
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 136a5b3..2f8305c 100644
+index 1c03dc1..e990759 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -86,7 +86,6 @@ static const BoxType *clip_box = NULL;
@@ -22,7 +22,7 @@ index 136a5b3..2f8305c 100644
  static void AddPart (void *);
  static void SetPVColor (PinTypePtr, int);
  static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
-@@ -969,7 +968,20 @@ arc_callback (const BoxType * b, void *cl)
+@@ -940,7 +939,20 @@ arc_callback (const BoxType * b, void *cl)
  static int
  text_callback (const BoxType * b, void *cl)
  {
@@ -44,7 +44,7 @@ index 136a5b3..2f8305c 100644
    return 1;
  }
  
-@@ -1121,12 +1133,6 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
+@@ -1147,12 +1159,6 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
    Cardinal n;
    FontTypePtr font = &PCB->Font;
  
@@ -57,7 +57,7 @@ index 136a5b3..2f8305c 100644
    while (string && *string)
      {
        /* draw lines if symbol is valid and data is present */
-@@ -1349,40 +1355,12 @@ DrawArc (LayerTypePtr Layer, ArcTypePtr Arc)
+@@ -1375,40 +1381,12 @@ DrawArc (LayerTypePtr Layer, ArcTypePtr Arc)
  void
  DrawText (LayerTypePtr Layer, TextTypePtr Text)
  {
@@ -101,7 +101,7 @@ index 136a5b3..2f8305c 100644
  /* ---------------------------------------------------------------------------
   * draws a polygon on a layer
   */
-@@ -1639,13 +1617,9 @@ EraseArc (ArcTypePtr Arc)
+@@ -1646,13 +1624,9 @@ EraseArc (ArcTypePtr Arc)
  void
  EraseText (LayerTypePtr Layer, TextTypePtr Text)
  {
@@ -118,7 +118,7 @@ index 136a5b3..2f8305c 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1675,8 +1649,7 @@ EraseElement (ElementTypePtr Element)
+@@ -1682,8 +1656,7 @@ EraseElement (ElementTypePtr Element)
      EraseArc (arc);
    }
    END_LOOP;
