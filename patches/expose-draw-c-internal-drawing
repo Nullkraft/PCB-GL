@@ -1,5 +1,5 @@
-Bottom: 27f95411bd9b97810ea6432e988e53aa0a78fa32
-Top:    c779222a11d543e9e4c89261a781f70dc8ac18c3
+Bottom: 8010ff2901c38d10212e4281db08ce1c676ed0eb
+Top:    f3b5f40578d9338775a3982f044e8bacec171edc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 11:49:27 +0100
 
@@ -9,10 +9,10 @@ Expose draw.c internal drawing APIs
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index c82f25a..dc012cb 100644
+index 2afcf98..d553ba6 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -101,10 +101,7 @@ static void SetPVColor (PinTypePtr, int);
+@@ -100,10 +100,7 @@ static void SetPVColor (PinTypePtr, int);
  static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
  static void ClearPad (PadTypePtr, bool);
  static void DrawHole (PinTypePtr);
@@ -23,7 +23,7 @@ index c82f25a..dc012cb 100644
  static int via_callback (const BoxType * b, void *cl);
  static int pin_callback (const BoxType * b, void *cl);
  static int pad_callback (const BoxType * b, void *cl);
-@@ -590,7 +587,7 @@ clearPad_callback (const BoxType * b, void *cl)
+@@ -585,7 +582,7 @@ clearPad_callback (const BoxType * b, void *cl)
   * Draws silk layer.
   */
  
@@ -32,7 +32,7 @@ index c82f25a..dc012cb 100644
  DrawSilk (int side, const BoxType * drawn_area)
  {
  #if 0
-@@ -649,7 +646,7 @@ DrawMaskBoardArea (int mask_type, BoxType *screen)
+@@ -644,7 +641,7 @@ DrawMaskBoardArea (int mask_type, BoxType *screen)
  /* ---------------------------------------------------------------------------
   * draws solder mask layer - this will cover nearly everything
   */
@@ -41,7 +41,7 @@ index c82f25a..dc012cb 100644
  DrawMask (int side, BoxType * screen)
  {
    int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
-@@ -678,7 +675,7 @@ DrawMask (int side, BoxType * screen)
+@@ -673,7 +670,7 @@ DrawMask (int side, BoxType * screen)
  /* ---------------------------------------------------------------------------
   * draws solder paste layer for a given side of the board
   */
@@ -51,7 +51,7 @@ index c82f25a..dc012cb 100644
  {
    gui->set_color (Output.fgGC, PCB->ElementColor);
 diff --git a/src/draw.h b/src/draw.h
-index fdd4c70..f21baae 100644
+index c60b6d9..ff93f46 100644
 --- a/src/draw.h
 +++ b/src/draw.h
 @@ -74,6 +74,10 @@ void EraseObject (int, void *, void *);
