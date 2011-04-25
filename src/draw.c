@@ -195,6 +195,24 @@ element_callback (const BoxType * b, void *cl)
   return 1;
 }
 
+static void
+draw_element_name (ElementType *element)
+{
+  if (gui->gui && TEST_FLAG (HIDENAMESFLAG, PCB))
+    return;
+  if (TEST_FLAG (HIDENAMEFLAG, element))
+    return;
+  if (doing_pinout || doing_assy)
+    gui->set_color (Output.fgGC, PCB->ElementColor);
+  else if (TEST_FLAG (SELECTEDFLAG, &ELEMENT_TEXT (PCB, element)))
+    gui->set_color (Output.fgGC, PCB->ElementSelectedColor);
+  else if (FRONT (element))
+    gui->set_color (Output.fgGC, PCB->ElementColor);
+  else
+    gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
+  DrawTextLowLevel (&ELEMENT_TEXT (PCB, element), PCB->minSlk);
+}
+
 static int
 name_callback (const BoxType * b, void *cl)
 {
@@ -206,7 +224,7 @@ name_callback (const BoxType * b, void *cl)
     return 0;
 
   if (ON_SIDE (element, *side))
-    DrawElementName (element);
+    draw_element_name (element);
   return 0;
 }
 
@@ -1389,7 +1407,10 @@ void
 DrawElement (ElementTypePtr Element)
 {
   DrawElementPackage (Element);
-  DrawElementName (Element);
+  if (Gathering)
+    DrawElementName (Element);
+  else
+    draw_element_name (Element);
   DrawElementPinsAndPads (Element);
 }
 
@@ -1399,19 +1420,11 @@ DrawElement (ElementTypePtr Element)
 void
 DrawElementName (ElementTypePtr Element)
 {
-  if (gui->gui && TEST_FLAG (HIDENAMESFLAG, PCB))
-    return;
+  assert (Gathering);
+
   if (TEST_FLAG (HIDENAMEFLAG, Element))
     return;
-  if (doing_pinout || doing_assy)
-    gui->set_color (Output.fgGC, PCB->ElementColor);
-  else if (TEST_FLAG (SELECTEDFLAG, &ELEMENT_TEXT (PCB, Element)))
-    gui->set_color (Output.fgGC, PCB->ElementSelectedColor);
-  else if (FRONT (Element))
-    gui->set_color (Output.fgGC, PCB->ElementColor);
-  else
-    gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
-  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
+  AddPart (&ELEMENT_TEXT (PCB, Element));
 }
 
 /* ---------------------------------------------------------------------------
@@ -1670,7 +1683,6 @@ EraseElementName (ElementTypePtr Element)
 
   if (TEST_FLAG (HIDENAMEFLAG, Element))
     return;
-
   AddPart (&ELEMENT_TEXT (PCB, Element));
 }
 
