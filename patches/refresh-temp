@@ -1,0 +1,139 @@
+Bottom: 549c3154a3ff1bd74e777e38cbc3ad9f913225bc
+Top:    07327134390c5c12723e2b6804441fab5673dba1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-25 18:23:55 +0100
+
+Refresh of draw-c-split-gathering-routine-1
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 560e094..8e380f9 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -86,7 +86,6 @@ static const BoxType *clip_box = NULL;
+ static void DrawEverything (BoxTypePtr);
+ static void DrawPPV (int group, const BoxType *);
+ static int DrawLayerGroup (int, const BoxType *);
+-static void DrawRegularText (LayerTypePtr, TextTypePtr);
+ static void AddPart (void *);
+ static void SetPVColor (PinTypePtr, int);
+ static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
+@@ -951,7 +950,20 @@ arc_callback (const BoxType * b, void *cl)
+ static int
+ text_callback (const BoxType * b, void *cl)
+ {
+-  DrawRegularText ((LayerTypePtr) cl, (TextTypePtr) b);
++  LayerType *layer = cl;
++  TextType *text = (TextType *)b;
++  int min_silk_line;
++
++  if (TEST_FLAG (SELECTEDFLAG, text))
++    gui->set_color (Output.fgGC, layer->SelectedColor);
++  else
++    gui->set_color (Output.fgGC, layer->Color);
++  if (layer == &PCB->Data->SILKLAYER ||
++      layer == &PCB->Data->BACKSILKLAYER)
++    min_silk_line = PCB->minSlk;
++  else
++    min_silk_line = PCB->minWid;
++  DrawTextLowLevel (text, min_silk_line);
+   return 1;
+ }
+ 
+@@ -1103,12 +1115,6 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
+   Cardinal n;
+   FontTypePtr font = &PCB->Font;
+ 
+-  if (Gathering)
+-    {
+-      AddPart (Text);
+-      return;
+-    }
+-
+   while (string && *string)
+     {
+       /* draw lines if symbol is valid and data is present */
+@@ -1331,40 +1337,12 @@ DrawArc (LayerTypePtr Layer, ArcTypePtr Arc)
+ void
+ DrawText (LayerTypePtr Layer, TextTypePtr Text)
+ {
+-  int min_silk_line;
+-  if (!Layer->On)
+-    return;
+-  if (TEST_FLAG (SELECTEDFLAG, Text))
+-    gui->set_color (Output.fgGC, Layer->SelectedColor);
+-  else
+-    gui->set_color (Output.fgGC, Layer->Color);
+-  if (Layer == & PCB->Data->SILKLAYER
+-      || Layer == & PCB->Data->BACKSILKLAYER)
+-    min_silk_line = PCB->minSlk;
+-  else
+-    min_silk_line = PCB->minWid;
+-  DrawTextLowLevel (Text, min_silk_line);
+-}
++  assert (Gathering);
+ 
+-/* ---------------------------------------------------------------------------
+- * draws text on a layer
+- */
+-static void
+-DrawRegularText (LayerTypePtr Layer, TextTypePtr Text)
+-{
+-  int min_silk_line;
+-  if (TEST_FLAG (SELECTEDFLAG, Text))
+-    gui->set_color (Output.fgGC, Layer->SelectedColor);
+-  else
+-    gui->set_color (Output.fgGC, Layer->Color);
+-  if (Layer == & PCB->Data->SILKLAYER
+-      || Layer == & PCB->Data->BACKSILKLAYER)
+-    min_silk_line = PCB->minSlk;
+-  else
+-    min_silk_line = PCB->minWid;
+-  DrawTextLowLevel (Text, min_silk_line);
++  AddPart (Text);
+ }
+ 
++
+ /* ---------------------------------------------------------------------------
+  * draws a polygon on a layer
+  */
+@@ -1626,13 +1604,9 @@ EraseArc (ArcTypePtr Arc)
+ void
+ EraseText (LayerTypePtr Layer, TextTypePtr Text)
+ {
+-  int min_silk_line;
+-  if (Layer == & PCB->Data->SILKLAYER
+-      || Layer == & PCB->Data->BACKSILKLAYER)
+-    min_silk_line = PCB->minSlk;
+-  else
+-    min_silk_line = PCB->minWid;
+-  DrawTextLowLevel (Text, min_silk_line);
++  assert (Gathering);
++
++  AddPart (Text);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -1662,8 +1636,7 @@ EraseElement (ElementTypePtr Element)
+     EraseArc (arc);
+   }
+   END_LOOP;
+-  if (!TEST_FLAG (HIDENAMEFLAG, Element))
+-    DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
++  EraseElementName (Element);
+   EraseElementPinsAndPads (Element);
+ }
+ 
+@@ -1693,9 +1666,12 @@ EraseElementPinsAndPads (ElementTypePtr Element)
+ void
+ EraseElementName (ElementTypePtr Element)
+ {
++  assert (Gathering);
++
+   if (TEST_FLAG (HIDENAMEFLAG, Element))
+     return;
+-  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
++
++  AddPart (&ELEMENT_TEXT (PCB, Element));
+ }
