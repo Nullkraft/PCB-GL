@@ -1,0 +1,42 @@
+Bottom: c3cc8efcc94e30b972eb4fd52947d536155476c1
+Top:    4c1e800808297c82b906eb5c87df9168edb5ee44
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-25 16:11:11 +0100
+
+Refresh of move-drawplainpin-and-drawplai
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 5b1779c..09e183e 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -458,20 +458,21 @@ static int
+ via_callback (const BoxType * b, void *cl)
+ {
+   PinTypePtr via = (PinTypePtr) b;
+-  SetPVColor (Via, VIA_TYPE);
+-  DrawPinOrViaLowLevel (Via, false);
+-  if (!TEST_FLAG (HOLEFLAG, Via) && TEST_FLAG (DISPLAYNAMEFLAG, Via))
+-    DrawPinOrViaNameLowLevel (Via);
++  SetPVColor (via, VIA_TYPE);
++  DrawPinOrViaLowLevel (via, false);
++  if (!TEST_FLAG (HOLEFLAG, via) && TEST_FLAG (DISPLAYNAMEFLAG, via))
++    DrawPinOrViaNameLowLevel (via);
+   return 1;
+ }
+ 
+ static int
+ pin_callback (const BoxType * b, void *cl)
+ {
+-  SetPVColor (Pin, PIN_TYPE);
+-  DrawPinOrViaLowLevel (Pin, false);
+-  if (!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
+-    DrawPinOrViaNameLowLevel (Pin);
++  PinTypePtr pin = (PinTypePtr) b;
++  SetPVColor (pin, PIN_TYPE);
++  DrawPinOrViaLowLevel (pin, false);
++  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
++    DrawPinOrViaNameLowLevel (pin);
+   return 1;
+ }
