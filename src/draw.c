@@ -1818,7 +1818,7 @@ DrawObject (int type, void *ptr1, void *ptr2)
 static void
 draw_element (ElementTypePtr element)
 {
-  DrawElementPackage (element);
+  draw_element_package (element);
   draw_element_name (Element);
   DrawElementPinsAndPads (element);
 }
