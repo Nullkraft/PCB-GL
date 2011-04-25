@@ -286,7 +286,7 @@ rat_callback (const BoxType * b, void *cl)
 }
 
 static void
-draw_element_package (element)
+draw_element_package (ElementType *element)
 {
   /* set color and draw lines, arcs, text and pins */
   if (doing_pinout || doing_assy)
