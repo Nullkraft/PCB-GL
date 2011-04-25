@@ -34,6 +34,8 @@
 #include "config.h"
 #endif
 
+#include <assert.h>
+
 #include "global.h"
 
 /*#include "clip.h"*/
@@ -1171,16 +1173,9 @@ DrawElementPackageLowLevel (ElementTypePtr Element)
 void
 DrawVia (PinTypePtr Via)
 {
-  if (Gathering)
-    {
-      AddPart (pv);
-      return;
-    }
-  else
-    {
-      SetPVColor (Via, VIA_TYPE);
-      DrawPinOrViaLowLevel (Via, true);
-    }
+  assert (Gathering);
+
+  AddPart (Via);
 
   if (!TEST_FLAG (HOLEFLAG, Via) && TEST_FLAG (DISPLAYNAMEFLAG, Via))
     DrawPinOrViaNameLowLevel (Via);
@@ -1208,16 +1203,9 @@ DrawViaName (PinTypePtr Via)
 void
 DrawPin (PinTypePtr Pin)
 {
-  if (Gathering)
-    {
-      AddPart (Pin);
-      return;
-    }
-  else
-    {
-      SetPVColor (Pin, PIN_TYPE);
-      DrawPinOrViaLowLevel (Pin, true);
-    }
+  assert (Gathering);
+
+  AddPart (Pin);
 
   if ((!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
       || doing_pinout)
