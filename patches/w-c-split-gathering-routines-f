@@ -1,5 +1,5 @@
 Bottom: 741af23f9796b38cc155de0f786b816241117879
-Top:    741af23f9796b38cc155de0f786b816241117879
+Top:    a7b65e78580f66f04d1bbe56ccf4254f2034744d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 17:51:16 +0100
 
@@ -8,4 +8,191 @@ draw.c: Split "Gathering" routines from real drawing routines (Arcs)
 
 ---
 
-
+diff --git a/src/draw.c b/src/draw.c
+index 7b98a72..719f3b4 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -91,7 +91,6 @@ static void DrawPPV (int group, const BoxType *);
+ static int DrawLayerGroup (int, const BoxType *);
+ static void DrawRegularText (LayerTypePtr, TextTypePtr);
+ static void DrawPolygonLowLevel (PolygonTypePtr);
+-static void DrawArcLowLevel (ArcTypePtr);
+ static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
+ static void AddPart (void *);
+ static void SetPVColor (PinTypePtr, int);
+@@ -339,7 +338,7 @@ draw_element_package (ElementType *element)
+   END_LOOP;
+   ARC_LOOP (element);
+   {
+-    DrawArcLowLevel (arc);
++    _draw_arc (arc);
+   }
+   END_LOOP;
+ }
+@@ -908,10 +907,78 @@ DrawRats (BoxTypePtr drawn_area)
+     gui->use_mask (HID_MASK_OFF);
+ }
+ 
++static void
++_draw_line (LineType *line)
++{
++  gui->set_line_cap (Output.fgGC, Trace_Cap);
++  if (TEST_FLAG (THINDRAWFLAG, PCB))
++    gui->set_line_width (Output.fgGC, 0);
++  else
++    gui->set_line_width (Output.fgGC, line->Thickness);
++
++  gui->draw_line (Output.fgGC,
++		  line->Point1.X, line->Point1.Y,
++		  line->Point2.X, line->Point2.Y);
++}
++
++static void
++draw_line (LayerType *layer, LineType *line)
++{
++  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, line))
++    {
++      if (TEST_FLAG (SELECTEDFLAG, line))
++        gui->set_color (Output.fgGC, layer->SelectedColor);
++      else
++        gui->set_color (Output.fgGC, PCB->ConnectedColor);
++    }
++  else
++    gui->set_color (Output.fgGC, layer->Color);
++  _draw_line (line);
++}
++
++static int
++line_callback (const BoxType * b, void *cl)
++{
++  draw_line ((LayerType *) cl, (LineType *) b);
++  return 1;
++}
++
++static void
++_draw_arc (ArcType *arc)
++{
++  if (!arc->Thickness)
++    return;
++
++  if (TEST_FLAG (THINDRAWFLAG, PCB))
++    gui->set_line_width (Output.fgGC, 0);
++  else
++    gui->set_line_width (Output.fgGC, arc->Thickness);
++  gui->set_line_cap (Output.fgGC, Trace_Cap);
++
++  gui->draw_arc (Output.fgGC, arc->X, arc->Y, arc->Width,
++                 arc->Height, arc->StartAngle, arc->Delta);
++}
++
++static void
++draw_arc (LayerType *layer, ArcType *arc)
++{
++  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, arc))
++    {
++      if (TEST_FLAG (SELECTEDFLAG, arc))
++        gui->set_color (Output.fgGC, layer->SelectedColor);
++      else
++        gui->set_color (Output.fgGC, PCB->ConnectedColor);
++    }
++  else
++    gui->set_color (Output.fgGC, layer->Color);
++
++  _draw_arc (arc);
++}
++
+ static int
+ arc_callback (const BoxType * b, void *cl)
+ {
+-  DrawArc ((LayerTypePtr) cl, (ArcTypePtr) b);
++  draw_arc ((LayerTypePtr) cl, (ArcTypePtr) b);
+   return 1;
+ }
+ 
+@@ -1166,30 +1233,6 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
+ }
+ 
+ /* ---------------------------------------------------------------------------
+- * lowlevel routine to element arcs
+- */
+-static void
+-DrawArcLowLevel (ArcTypePtr Arc)
+-{
+-  if (!Arc->Thickness)
+-    return;
+-  if (Gathering)
+-    {
+-      AddPart (Arc);
+-      return;
+-    }
+-
+-  if (TEST_FLAG (THINDRAWFLAG, PCB))
+-    gui->set_line_width (Output.fgGC, 0);
+-  else
+-    gui->set_line_width (Output.fgGC, Arc->Thickness);
+-  gui->set_line_cap (Output.fgGC, Trace_Cap);
+-
+-  gui->draw_arc (Output.fgGC, Arc->X, Arc->Y, Arc->Width,
+-		 Arc->Height, Arc->StartAngle, Arc->Delta);
+-}
+-
+-/* ---------------------------------------------------------------------------
+  * draw a via object
+  */
+ void
+@@ -1328,21 +1371,9 @@ DrawRat (RatTypePtr Line)
+ void
+ DrawArc (LayerTypePtr Layer, ArcTypePtr Arc)
+ {
+-  if (!Arc->Thickness)
+-    return;
+-  if (!Gathering)
+-    {
+-      if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Arc))
+-	{
+-	  if (TEST_FLAG (SELECTEDFLAG, Arc))
+-	    gui->set_color (Output.fgGC, Layer->SelectedColor);
+-	  else
+-	    gui->set_color (Output.fgGC, PCB->ConnectedColor);
+-	}
+-      else
+-	gui->set_color (Output.fgGC, Layer->Color);
+-    }
+-  DrawArcLowLevel (Arc);
++  assert (Gathering);
++
++  AddPart (Arc);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -1518,7 +1549,7 @@ DrawElementPackage (ElementTypePtr Element)
+   END_LOOP;
+   ARC_LOOP (Element);
+   {
+-    DrawArcLowLevel (arc);
++    DrawArc (NULL, arc);
+   }
+   END_LOOP;
+ }
+@@ -1670,9 +1701,11 @@ EraseLine (LineTypePtr Line)
+ void
+ EraseArc (ArcTypePtr Arc)
+ {
++  assert (Gathering);
++
+   if (!Arc->Thickness)
+     return;
+-  DrawArcLowLevel (Arc);
++  AddPart (Arc);
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -1712,7 +1745,7 @@ EraseElement (ElementTypePtr Element)
+   END_LOOP;
+   ARC_LOOP (Element);
+   {
+-    DrawArcLowLevel (arc);
++    EraseArc (arc);
+   }
+   END_LOOP;
+   if (!TEST_FLAG (HIDENAMEFLAG, Element))
