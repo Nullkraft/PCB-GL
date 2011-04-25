@@ -1,0 +1,62 @@
+Bottom: 5596d3b3436e57212545b900ada9e564dd7431d8
+Top:    44209225715a67c012137e952435b2cbb27d972b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 00:17:06 +0100
+
+Refresh of draw-c-separate-gathering-rout
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index de86c86..5d5f0ce 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1543,20 +1543,34 @@ DrawElementPackage (ElementTypePtr Element)
+ void
+ DrawElementPinsAndPads (ElementTypePtr Element)
+ {
+-  PAD_LOOP (Element);
+-  {
+-    if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
+-      DrawPad (pad);
+-  }
+-  END_LOOP;
+-  PIN_LOOP (Element);
+-  {
+-    if (Gathering)
+-      DrawPin (pin);
+-    else
+-      draw_pin (pin, true);
+-  }
+-  END_LOOP;
++  if (Gathering)
++    {
++      PAD_LOOP (Element);
++      {
++        if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
++          DrawPad (pad);
++      }
++      END_LOOP;
++      PIN_LOOP (Element);
++      {
++        DrawPin (pin);
++      }
++      END_LOOP;
++    }
++  else
++    {
++      PAD_LOOP (Element);
++      {
++        if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
++          DrawPad (pad);
++      }
++      END_LOOP;
++      PIN_LOOP (Element);
++      {
++        draw_pin (pin, true);
++      }
++      END_LOOP;
++    }
+ }
+ 
+ /* ---------------------------------------------------------------------------
