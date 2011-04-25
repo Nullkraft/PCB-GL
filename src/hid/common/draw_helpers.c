@@ -5,6 +5,7 @@
 #include "misc.h"
 #include "print.h" /* FIXME */
 #include "data.h" /* FIXME */
+#include "draw.h" /* FIXME */
 
 static void
 fill_contour (hidGC gc, PLINE *pl)
@@ -490,6 +491,7 @@ struct pin_info
 /* ---------------------------------------------------------------------------
  * draws one non-copper layer
  */
+#if 0
 void
 DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
 {
@@ -498,7 +500,7 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
   /* print the non-clearing polys */
   info.Layer = Layer;
   info.arg = clear_pins;
-  clip_box = screen;
+
   r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
 
   if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
@@ -525,14 +527,14 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
                       0, 0,
                       PCB->MaxWidth, PCB->MaxHeight);
     }
-
-  clip_box = NULL;
 }
+#endif
 
 /* ---------------------------------------------------------------------------
  * draws one layer group.  Returns non-zero if pins and pads should be
  * drawn with this group.
  */
+#if 0
 static int
 DrawLayerGroup (int group, const BoxType * screen)
 {
@@ -542,7 +544,6 @@ DrawLayerGroup (int group, const BoxType * screen)
   int n_entries = PCB->LayerGroups.Number[group];
   Cardinal *layers = PCB->LayerGroups.Entries[group];
 
-  clip_box = screen;
   for (i = n_entries - 1; i >= 0; i--)
     {
       layernum = layers[i];
@@ -557,6 +558,7 @@ DrawLayerGroup (int group, const BoxType * screen)
     rv = 1;
   return rv;
 }
+#endif
 
 typedef struct
 {
@@ -611,45 +613,10 @@ pin_callback (const BoxType * b, void *cl)
 static int
 pad_callback (const BoxType * b, void *cl)
 {
-  PadTypePtr pad = (PadTypePtr) b;
+  //PadTypePtr pad = (PadTypePtr) b;
   //if (FRONT (pad))
     //DrawPad (pad, 0);
   return 1;
-}
-
-static bool
-IsPasteEmpty (int side)
-{
-  bool paste_empty = true;
-  ALLPAD_LOOP (PCB->Data);
-  {
-    if (TEST_FLAG (ONSOLDERFLAG, pad) == (side == SOLDER_LAYER) &&
-        !TEST_FLAG (NOPASTEFLAG, pad) && pad->Mask > 0)
-      {
-        paste_empty = false;
-        break;
-      }
-  }
-  ENDALL_LOOP;
-  return paste_empty;
-}
-
-static void
-DrawPaste (int side)
-{
-  gui->set_color (Output.fgGC, PCB->ElementColor);
-  ALLPAD_LOOP (PCB->Data);
-  {
-    if (TEST_FLAG (ONSOLDERFLAG, pad) == (side == SOLDER_LAYER) &&
-        !TEST_FLAG (NOPASTEFLAG, pad) && pad->Mask > 0)
-      {
-        //if (pad->Mask < pad->Thickness)
-          //DrawPadLowLevel (Output.fgGC, pad, true, true);
-        //else
-          //DrawPadLowLevel (Output.fgGC, pad, false, false);
-      }
-  }
-  ENDALL_LOOP;
 }
 
 void
@@ -675,70 +642,62 @@ common_export_region (HID *hid, BoxType *region)
     {
       if (gui->set_layer (0, group, 0))
         {
-          if (DrawLayerGroup (group, drawn_area))
+          if (DrawLayerGroup (group, region))
             {
-              r_search (PCB->Data->via_tree, drawn_area, NULL, pin_callback, NULL);
-              r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
+              r_search (PCB->Data->via_tree, region, NULL, pin_callback, NULL);
+              r_search (PCB->Data->pin_tree, region, NULL, pin_callback, NULL);
 
               if (group == component_group || group == solder_group)
                 {
                   SWAP_IDENT = (group == solder_group);
-                  r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, NULL);
+                  r_search (PCB->Data->pad_tree, region, NULL, pad_callback, NULL);
                   SWAP_IDENT = save_swap;
                 }
             }
         }
     }
 
-  count_holes (drawn_area, &nplated, &nunplated);
+  count_holes (region, &nplated, &nunplated);
 
   if (nplated && gui->set_layer ("plated-drill", SL (PDRILL, 0), 0))
     {
       plated = 1;
-      r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
-      r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
+      r_search (PCB->Data->pin_tree, region, NULL, hole_callback, &plated);
+      r_search (PCB->Data->via_tree, region, NULL, hole_callback, &plated);
     }
 
   if (nunplated && gui->set_layer ("unplated-drill", SL (UDRILL, 0), 0))
     {
       plated = 0;
-      r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
-      r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
+      r_search (PCB->Data->pin_tree, region, NULL, hole_callback, &plated);
+      r_search (PCB->Data->via_tree, region, NULL, hole_callback, &plated);
     }
 
   if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
-    {
-      SWAP_IDENT = 0;
-      DrawMask (drawn_area);
-      SWAP_IDENT = save_swap;
-    }
+    DrawMask (COMPONENT_LAYER, region);
 
   if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
-    {
-      SWAP_IDENT = 1;
-      DrawMask (drawn_area);
-      SWAP_IDENT = save_swap;
-    }
+    DrawMask (SOLDER_LAYER, region);
 
   if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
-    DrawSilk (0, component_silk_layer, drawn_area);
+    DrawSilk (COMPONENT_LAYER, region);
 
   if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
-    DrawSilk (1, solder_silk_layer, drawn_area);
+    DrawSilk (SOLDER_LAYER, region);
 
   paste_empty = IsPasteEmpty (COMPONENT_LAYER);
   if (gui->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
-    DrawPaste (COMPONENT_LAYER);
+    DrawPaste (COMPONENT_LAYER, region);
 
   paste_empty = IsPasteEmpty (SOLDER_LAYER);
   if (gui->set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
-    DrawPaste (SOLDER_LAYER);
+    DrawPaste (SOLDER_LAYER, region);
 
   //if (gui->set_layer ("topassembly", SL (ASSY, TOP), 0))
-    //PrintAssembly (drawn_area, component_group, 0);
+    //PrintAssembly (region, component_group, 0);
 
-  if (gui->set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
-    PrintAssembly (drawn_area, solder_group, 1);
+  //if (gui->set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
+    //PrintAssembly (region, solder_group, 1);
 
   if (gui->set_layer ("fab", SL (FAB, 0), 0))
     PrintFab ();

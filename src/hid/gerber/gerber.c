@@ -25,7 +25,9 @@
 #include "data.h"
 #include "misc.h"
 #include "error.h"
+#include "rtree.h"
 #include "draw.h"
+#include "print.h"
 
 #include "hid.h"
 #include "../hidint.h"
@@ -362,12 +364,62 @@ maybe_close_f ()
 
 static BoxType region;
 
-static void
-gerber_expose (HID * hid, BoxType * region, void *item)
+typedef struct
 {
-  int i, ngroups, side;
-  int plated;
-  int component, solder;
+  int nplated;
+  int nunplated;
+} HoleCountStruct;
+
+static int
+hole_counting_callback (const BoxType * b, void *cl)
+{
+  PinTypePtr pin = (PinTypePtr) b;
+  HoleCountStruct *hcs = cl;
+  if (TEST_FLAG (HOLEFLAG, pin))
+    hcs->nunplated++;
+  else
+    hcs->nplated++;
+  return 1;
+}
+
+static void
+count_holes (BoxType *region, int *plated, int *unplated)
+{
+  HoleCountStruct hcs;
+  hcs.nplated = hcs.nunplated = 0;
+  r_search (PCB->Data->pin_tree, region, NULL, hole_counting_callback, &hcs);
+  r_search (PCB->Data->via_tree, region, NULL, hole_counting_callback, &hcs);
+  if (plated != NULL) *plated = hcs.nplated;
+  if (unplated != NULL) *unplated = hcs.nunplated;
+}
+
+static int
+hole_callback (const BoxType * b, void *cl)
+{
+  PinTypePtr pin = (PinTypePtr) b;
+  bool plated = *(bool *)cl;
+
+  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pin)) ||
+      (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
+    return 1;
+
+  gui->fill_circle (Output.bgGC, pin->X, pin->Y, pin->DrillingHole / 2);
+  return 1;
+}
+
+static void
+DrawHoles (bool plated, BoxType *drawn_area)
+{
+  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
+  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
+}
+
+static void
+gerber_expose (HID * hid, BoxType *drawn_area, void *item)
+{
+  int i;
+  int group;
+  int nplated, nunplated;
 
   HID *old_gui = gui;
   hidGC savebg = Output.bgGC;
@@ -409,18 +461,10 @@ gerber_expose (HID * hid, BoxType * region, void *item)
   count_holes (drawn_area, &nplated, &nunplated);
 
   if (nplated && gui->set_layer ("plated-drill", SL (PDRILL, 0), 0))
-    {
-      plated = 1;
-      r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
-      r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
-    }
+    DrawHoles (true, drawn_area);
 
   if (nunplated && gui->set_layer ("unplated-drill", SL (UDRILL, 0), 0))
-    {
-      plated = 0;
-      r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
-      r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
-    }
+    DrawHoles (false, drawn_area);
 
   if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
     DrawMask (COMPONENT_LAYER, drawn_area);
@@ -434,12 +478,10 @@ gerber_expose (HID * hid, BoxType * region, void *item)
   if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
     DrawSilk (SOLDER_LAYER, drawn_area);
 
-  paste_empty = IsPasteEmpty (COMPONENT_LAYER);
-  if (gui->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
+  if (gui->set_layer ("toppaste", SL (PASTE, TOP), 0))
     DrawPaste (COMPONENT_LAYER, drawn_area);
 
-  paste_empty = IsPasteEmpty (SOLDER_LAYER);
-  if (gui->set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
+  if (gui->set_layer ("bottompaste", SL (PASTE, BOTTOM), 0))
     DrawPaste (SOLDER_LAYER, drawn_area);
 
   if (gui->set_layer ("fab", SL (FAB, 0), 0))
@@ -575,14 +617,6 @@ gerber_set_layer (const char *name, int group, int empty)
 
   if (name == 0)
     name = PCB->Data->Layer[idx].Name;
-
-  if (idx >= 0 && idx < max_copper_layer && !print_layer[idx])
-    return 0;
-
-  if (strcmp (name, "invisible") == 0)
-    return 0;
-  if (SL_TYPE (idx) == SL_ASSY)
-    return 0;
 
   flash_drills = 0;
   if (strcmp (name, "outline") == 0 ||
