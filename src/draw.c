@@ -1172,11 +1172,19 @@ DrawElementPackageLowLevel (ElementTypePtr Element)
 void
 DrawVia (PinTypePtr Via)
 {
-  if (!Gathering)
-    SetPVColor (Via, VIA_TYPE);
-  DrawPinOrViaLowLevel (Via, true);
+  assert (Gathering);
+
+  GatherPV (Via);
+  GatherPVName (Via);
+}
+
+static void
+draw_pcb_via (PinTypePtr Via)
+{
+  SetPVColor (Via, VIA_TYPE);
+  draw_pcb_pv (Via, true);
   if (!TEST_FLAG (HOLEFLAG, Via) && TEST_FLAG (DISPLAYNAMEFLAG, Via))
-    DrawPinOrViaNameLowLevel (Via);
+    draw_pcb_pv_name (Via);
 }
 
 /* ---------------------------------------------------------------------------
