@@ -1,5 +1,5 @@
 Bottom: 69fc9430bd65433269275f6f2143c9e9e548b4f3
-Top:    cf5d3a146245482c3c0d60d661861483422ac9c6
+Top:    495a37fcc71782c5dabd1e259f355842eec013b0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 19:44:55 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" from real drawing routines (Element names)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 75a6c8e..41561f8 100644
+index 75a6c8e..0bc9441 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -194,6 +194,23 @@ Redraw (void)
@@ -54,7 +54,7 @@ index 75a6c8e..41561f8 100644
    return 1;
  }
  
-@@ -1512,19 +1529,11 @@ DrawElement (ElementTypePtr Element)
+@@ -1512,18 +1529,10 @@ DrawElement (ElementTypePtr Element)
  void
  DrawElementName (ElementTypePtr Element)
  {
@@ -72,11 +72,9 @@ index 75a6c8e..41561f8 100644
 -    gui->set_color (Output.fgGC, PCB->ElementColor);
 -  else
 -    gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
--  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
-+  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), 0);
+   DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
  }
  
- /* ---------------------------------------------------------------------------
 @@ -1741,6 +1750,8 @@ EraseElementPinsAndPads (ElementTypePtr Element)
  void
  EraseElementName (ElementTypePtr Element)
