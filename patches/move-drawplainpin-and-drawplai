@@ -1,5 +1,5 @@
 Bottom: 40a4c6e627833ef07fcb957a495e297a004f643a
-Top:    88e448b44788f727edff038848d6a8a700cf4797
+Top:    c3cc8efcc94e30b972eb4fd52947d536155476c1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 16:06:23 +0100
 
@@ -14,7 +14,7 @@ within a block where Gathering is definately set.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 8b73644..1fdd9c4 100644
+index 8b73644..5b1779c 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -84,8 +84,6 @@ static void DrawEverything (BoxTypePtr);
@@ -43,7 +43,7 @@ index 8b73644..1fdd9c4 100644
  {
 -  DrawPlainPin ((PinTypePtr) b, false);
 +  SetPVColor (Pin, PIN_TYPE);
-+  DrawPinOrViaLowLevel (Pin, holeToo);
++  DrawPinOrViaLowLevel (Pin, false);
 +  if (!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
 +    DrawPinOrViaNameLowLevel (Pin);
    return 1;
