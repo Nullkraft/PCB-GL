@@ -1,5 +1,5 @@
 Bottom: 6f69309199c3fd37bc52eb39f837767edcb48829
-Top:    4c35280631dd974679f421faa3606b0d73bddbe2
+Top:    549c3154a3ff1bd74e777e38cbc3ad9f913225bc
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 18:08:22 +0100
 
@@ -11,7 +11,7 @@ Moves code from DrawPlainPolygon() into its only caller poly_callback()
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 81983c2..c5b908c 100644
+index 81983c2..560e094 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -87,8 +87,6 @@ static void DrawEverything (BoxTypePtr);
@@ -32,18 +32,18 @@ index 81983c2..c5b908c 100644
  poly_callback (const BoxType * b, void *cl)
  {
    LayerType *layer = cl;
-+  PolygonType *polygon = (PolygonType *b);
++  PolygonType *polygon = (PolygonType *)b;
 +  static char *color;
 +
 +  if (!polygon->Clipped)
 +    return 0;
 +
-+  if (TEST_FLAG (SELECTEDFLAG, Polygon))
-+    color = Layer->SelectedColor;
-+  else if (TEST_FLAG (FOUNDFLAG, Polygon))
++  if (TEST_FLAG (SELECTEDFLAG, polygon))
++    color = layer->SelectedColor;
++  else if (TEST_FLAG (FOUNDFLAG, polygon))
 +    color = PCB->ConnectedColor;
 +  else
-+    color = Layer->Color;
++    color = layer->Color;
 +  gui->set_color (Output.fgGC, color);
 +
 +  if (gui->thindraw_pcb_polygon != NULL &&
@@ -56,7 +56,7 @@ index 81983c2..c5b908c 100644
 +  /* If checking planes, thin-draw any pieces which have been clipped away */
 +  if (gui->thindraw_pcb_polygon != NULL &&
 +      TEST_FLAG (CHECKPLANESFLAG, PCB) &&
-+      !TEST_FLAG (FULLPOLYFLAG, Polygon))
++      !TEST_FLAG (FULLPOLYFLAG, polygon))
 +    {
 +      PolygonType poly = *polygon;
 +
@@ -70,10 +70,15 @@ index 81983c2..c5b908c 100644
    return 1;
  }
  
-@@ -1156,16 +1187,9 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
- static void
- DrawPolygonLowLevel (PolygonTypePtr Polygon)
- {
+@@ -1151,24 +1182,6 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
+ }
+ 
+ /* ---------------------------------------------------------------------------
+- * lowlevel drawing routine for polygons
+- */
+-static void
+-DrawPolygonLowLevel (PolygonTypePtr Polygon)
+-{
 -  if (!Polygon->Clipped)
 -    return;
 -
@@ -82,28 +87,26 @@ index 81983c2..c5b908c 100644
 -      AddPart (Polygon);
 -      return;
 -    }
-+  assert (Gathering);
- 
+-
 -  printf ("DrawPolygonLowLevel: Called without Gathering set!\n");
-+  AddPart (Polygon);
- }
- 
- /* ---------------------------------------------------------------------------
-@@ -1358,7 +1382,12 @@ DrawRegularText (LayerTypePtr Layer, TextTypePtr Text)
+-}
+-
+-/* ---------------------------------------------------------------------------
+  * draw a via object
+  */
+ void
+@@ -1358,7 +1371,9 @@ DrawRegularText (LayerTypePtr Layer, TextTypePtr Text)
  void
  DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  {
 -  DrawPolygonLowLevel (Polygon);
 +  assert (Gathering);
 +
-+  if (!Polygon->Clipped)
-+    return;
-+
 +  AddPart (Polygon);
  }
  
  int
-@@ -1389,53 +1418,6 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
+@@ -1389,53 +1404,6 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
    return 0;
  }
  
@@ -157,7 +160,7 @@ index 81983c2..c5b908c 100644
  /* ---------------------------------------------------------------------------
   * draws an element
   */
-@@ -1673,7 +1655,9 @@ EraseText (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1673,7 +1641,9 @@ EraseText (LayerTypePtr Layer, TextTypePtr Text)
  void
  ErasePolygon (PolygonTypePtr Polygon)
  {
