@@ -77,7 +77,7 @@ RCSID ("$Id$");
  * some local identifiers
  */
 static BoxType Block = {MAXINT, MAXINT, -MAXINT, -MAXINT};
-static bool Gathering = true;
+bool Gathering = true;
 
 static int doing_pinout = 0;
 static bool doing_assy = false;
