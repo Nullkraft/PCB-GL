@@ -534,7 +534,7 @@ pin_callback (const BoxType * b, void *cl)
 }
 
 static void
-_draw_pad_name (PadType *pad)
+draw_pad_name (PadType *pad)
 {
   BoxType box;
   bool vert;
