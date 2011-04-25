@@ -1,0 +1,22 @@
+Bottom: cf5d3a146245482c3c0d60d661861483422ac9c6
+Top:    495a37fcc71782c5dabd1e259f355842eec013b0
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 00:53:04 +0100
+
+Refresh of draw-c-split-gathering-routine-2
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 41561f8..0bc9441 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1533,7 +1533,7 @@ DrawElementName (ElementTypePtr Element)
+ 
+   if (TEST_FLAG (HIDENAMEFLAG, Element))
+     return;
+-  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), 0);
++  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
+ }
+ 
+ /* ---------------------------------------------------------------------------
