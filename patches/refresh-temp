@@ -1,0 +1,22 @@
+Bottom: 202de801fbe2fc471d09dbdb86de49f99109d79b
+Top:    19391e481669803485e22ef4a751ae00b1385160
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 00:24:30 +0100
+
+Refresh of w-c-split-gathering-routines-f-0
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 8190dfd..61735c5 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1818,7 +1818,7 @@ DrawObject (int type, void *ptr1, void *ptr2)
+ static void
+ draw_element (ElementTypePtr element)
+ {
+-  DrawElementPackage (element);
++  draw_element_package (element);
+   draw_element_name (Element);
+   DrawElementPinsAndPads (element);
+ }
