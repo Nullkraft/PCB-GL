@@ -283,6 +283,42 @@ rat_callback (const BoxType * b, void *cl)
 }
 
 static void
+_draw_line (LineType *line)
+{
+  gui->set_line_cap (Output.fgGC, Trace_Cap);
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    gui->set_line_width (Output.fgGC, 0);
+  else
+    gui->set_line_width (Output.fgGC, line->Thickness);
+
+  gui->draw_line (Output.fgGC,
+		  line->Point1.X, line->Point1.Y,
+		  line->Point2.X, line->Point2.Y);
+}
+
+static void
+draw_line (LayerType *layer, LineType *line)
+{
+  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, line))
+    {
+      if (TEST_FLAG (SELECTEDFLAG, line))
+        gui->set_color (Output.fgGC, layer->SelectedColor);
+      else
+        gui->set_color (Output.fgGC, PCB->ConnectedColor);
+    }
+  else
+    gui->set_color (Output.fgGC, layer->Color);
+  _draw_line (line);
+}
+
+static int
+line_callback (const BoxType * b, void *cl)
+{
+  draw_line ((LayerType *) cl, (LineType *) b);
+  return 1;
+}
+
+static void
 draw_element_package (ElementType *element)
 {
   /* set color and draw lines, arcs, text and pins */
@@ -298,7 +334,7 @@ draw_element_package (ElementType *element)
   /* draw lines, arcs, text and pins */
   ELEMENTLINE_LOOP (element);
   {
-    DrawLineLowLevel (line);
+    _draw_line (line);
   }
   END_LOOP;
   ARC_LOOP (element);
@@ -870,42 +906,6 @@ DrawRats (BoxTypePtr drawn_area)
   r_search (PCB->Data->rat_tree, drawn_area, NULL, rat_callback, NULL);
   if (can_mask)
     gui->use_mask (HID_MASK_OFF);
-}
-
-static void
-_draw_line (LineType *line)
-{
-  gui->set_line_cap (Output.fgGC, Trace_Cap);
-  if (TEST_FLAG (THINDRAWFLAG, PCB))
-    gui->set_line_width (Output.fgGC, 0);
-  else
-    gui->set_line_width (Output.fgGC, line->Thickness);
-
-  gui->draw_line (Output.fgGC,
-		  line->Point1.X, line->Point1.Y,
-		  line->Point2.X, line->Point2.Y);
-}
-
-static void
-draw_line (LayerType *layer, LineType *line)
-{
-  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, line))
-    {
-      if (TEST_FLAG (SELECTEDFLAG, line))
-        gui->set_color (Output.fgGC, layer->SelectedColor);
-      else
-        gui->set_color (Output.fgGC, PCB->ConnectedColor);
-    }
-  else
-    gui->set_color (Output.fgGC, layer->Color);
-  _draw_line (line);
-}
-
-static int
-line_callback (const BoxType * b, void *cl)
-{
-  draw_line ((LayerType *) cl, (LineType *) b);
-  return 1;
 }
 
 static int
