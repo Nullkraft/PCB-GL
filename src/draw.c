@@ -873,12 +873,12 @@ draw_arc (LayerType *layer, ArcType *arc)
   if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, arc))
     {
       if (TEST_FLAG (SELECTEDFLAG, arc))
-        gui->set_color (Output.fgGC, Layer->SelectedColor);
+        gui->set_color (Output.fgGC, layer->SelectedColor);
       else
         gui->set_color (Output.fgGC, PCB->ConnectedColor);
     }
   else
-    gui->set_color (Output.fgGC, Layer->Color);
+    gui->set_color (Output.fgGC, layer->Color);
 
   _draw_arc (arc);
 }
