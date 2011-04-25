@@ -1,5 +1,5 @@
-Bottom: 594eefe67fc7781d81ea5ce8bf1fe7d5f0027013
-Top:    79dc5b246cab1ff2063aace83e713381c302beb5
+Bottom: 69fc9430bd65433269275f6f2143c9e9e548b4f3
+Top:    09918e18e4f1518c7b2741f9a17a5db4926ccfee
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 16:00:33 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" routines from real drawing routines (Pins + Vias)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index eb79bed..22cc855 100644
+index 75a6c8e..5e40b1b 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -34,6 +34,9 @@
@@ -22,7 +22,7 @@ index eb79bed..22cc855 100644
  #include "global.h"
  
  /*#include "clip.h"*/
-@@ -83,8 +86,6 @@ static const BoxType *clip_box = NULL;
+@@ -86,8 +89,6 @@ static const BoxType *clip_box = NULL;
  static void DrawEverything (BoxTypePtr);
  static void DrawPPV (int group, const BoxType *);
  static int DrawLayerGroup (int, const BoxType *);
@@ -31,7 +31,7 @@ index eb79bed..22cc855 100644
  static void DrawPadLowLevel (hidGC, PadTypePtr, bool, bool);
  static void DrawPadNameLowLevel (PadTypePtr);
  static void DrawLineLowLevel (LineTypePtr);
-@@ -478,28 +479,87 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
+@@ -506,28 +507,87 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
        gui->draw_line (Output.fgGC, X, Y, X + 2 * mark_size, Y);
        gui->draw_line (Output.fgGC, X, Y, X, Y - 4* mark_size);
      }
@@ -130,7 +130,7 @@ index eb79bed..22cc855 100644
    return 1;
  }
  
-@@ -806,40 +866,13 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -833,40 +893,13 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
  }
  
  /* ---------------------------------------------------------------------------
@@ -173,7 +173,7 @@ index eb79bed..22cc855 100644
  
    if (vert)
      {
-@@ -851,37 +884,18 @@ DrawPinOrViaNameLowLevel (PinTypePtr Ptr)
+@@ -878,37 +911,18 @@ DrawPinOrViaNameLowLevel (PinTypePtr Ptr)
        box.X1 = Ptr->X + Ptr->DrillingHole / 2 + Settings.PinoutTextOffsetX;
        box.Y1 = Ptr->Y - Ptr->Thickness / 2 + Settings.PinoutTextOffsetY;
      }
@@ -221,7 +221,7 @@ index eb79bed..22cc855 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1166,11 +1180,11 @@ DrawElementPackageLowLevel (ElementTypePtr Element)
+@@ -1174,11 +1188,11 @@ DrawArcLowLevel (ArcTypePtr Arc)
  void
  DrawVia (PinTypePtr Via)
  {
@@ -237,7 +237,7 @@ index eb79bed..22cc855 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1179,14 +1193,9 @@ DrawVia (PinTypePtr Via)
+@@ -1187,14 +1201,9 @@ DrawVia (PinTypePtr Via)
  void
  DrawViaName (PinTypePtr Via)
  {
@@ -255,7 +255,7 @@ index eb79bed..22cc855 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1195,14 +1204,12 @@ DrawViaName (PinTypePtr Via)
+@@ -1203,14 +1212,12 @@ DrawViaName (PinTypePtr Via)
  void
  DrawPin (PinTypePtr Pin)
  {
@@ -274,7 +274,7 @@ index eb79bed..22cc855 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1211,14 +1218,9 @@ DrawPin (PinTypePtr Pin)
+@@ -1219,14 +1226,9 @@ DrawPin (PinTypePtr Pin)
  void
  DrawPinName (PinTypePtr Pin)
  {
@@ -292,7 +292,7 @@ index eb79bed..22cc855 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1541,17 +1543,34 @@ DrawElementPackage (ElementTypePtr Element)
+@@ -1553,17 +1555,34 @@ DrawElementPackage (ElementTypePtr Element)
  void
  DrawElementPinsAndPads (ElementTypePtr Element)
  {
@@ -338,7 +338,7 @@ index eb79bed..22cc855 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1560,9 +1579,11 @@ DrawElementPinsAndPads (ElementTypePtr Element)
+@@ -1572,9 +1591,11 @@ DrawElementPinsAndPads (ElementTypePtr Element)
  void
  EraseVia (PinTypePtr Via)
  {
@@ -352,7 +352,7 @@ index eb79bed..22cc855 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1593,7 +1614,9 @@ EraseRat (RatTypePtr Rat)
+@@ -1605,7 +1626,9 @@ EraseRat (RatTypePtr Rat)
  void
  EraseViaName (PinTypePtr Via)
  {
@@ -363,7 +363,7 @@ index eb79bed..22cc855 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1622,9 +1645,11 @@ ErasePadName (PadTypePtr Pad)
+@@ -1634,9 +1657,11 @@ ErasePadName (PadTypePtr Pad)
  void
  ErasePin (PinTypePtr Pin)
  {
@@ -377,7 +377,7 @@ index eb79bed..22cc855 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1633,7 +1658,9 @@ ErasePin (PinTypePtr Pin)
+@@ -1645,7 +1670,9 @@ ErasePin (PinTypePtr Pin)
  void
  ErasePinName (PinTypePtr Pin)
  {
@@ -388,7 +388,7 @@ index eb79bed..22cc855 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1707,11 +1734,11 @@ EraseElement (ElementTypePtr Element)
+@@ -1719,11 +1746,11 @@ EraseElement (ElementTypePtr Element)
  void
  EraseElementPinsAndPads (ElementTypePtr Element)
  {
