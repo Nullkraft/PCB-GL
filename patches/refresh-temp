@@ -1,0 +1,161 @@
+Bottom: 7733f5da8e20ed38265871f63f2836df06985a1d
+Top:    40a4c6e627833ef07fcb957a495e297a004f643a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-25 15:55:16 +0100
+
+Refresh of draw-c-remove-api-clearandredr
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index ed4ca24..5dc544e 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -2496,7 +2496,7 @@ ActionDisperseElements (int argc, char **argv, int x, int y)
+   /* done with our action so increment the undo # */
+   IncrementUndoSerialNumber ();
+ 
+-  ClearAndRedrawOutput ();
++  Redraw ();
+   SetChangedFlag (true);
+ 
+   return 0;
+@@ -2769,12 +2769,12 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+ 
+ 	case F_ToggleThindraw:
+ 	  TOGGLE_FLAG (THINDRAWFLAG, PCB);
+-	  ClearAndRedrawOutput ();
++	  Redraw ();
+ 	  break;
+ 
+ 	case F_ToggleThindrawPoly:
+ 	  TOGGLE_FLAG (THINDRAWPOLYFLAG, PCB);
+-	  ClearAndRedrawOutput ();
++	  Redraw ();
+ 	  break;
+ 
+ 	case F_ToggleLockNames:
+@@ -2789,7 +2789,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+ 
+ 	case F_ToggleHideNames:
+ 	  TOGGLE_FLAG (HIDENAMESFLAG, PCB);
+-	  ClearAndRedrawOutput ();
++	  Redraw ();
+ 	  break;
+ 
+ 	case F_ToggleShowDRC:
+@@ -2820,7 +2820,7 @@ ActionDisplay (int argc, char **argv, int childX, int childY)
+ 
+ 	case F_ToggleCheckPlanes:
+ 	  TOGGLE_FLAG (CHECKPLANESFLAG, PCB);
+-	  ClearAndRedrawOutput ();
++	  Redraw ();
+ 	  break;
+ 
+ 	case F_ToggleOrthoMove:
+@@ -5944,7 +5944,7 @@ ActionNew (int argc, char **argv, int x, int y)
+       CreateDefaultFont ();
+       SetCrosshairRange (0, 0, PCB->MaxWidth, PCB->MaxHeight);
+       CenterDisplay (PCB->MaxWidth / 2, PCB->MaxHeight / 2, false);
+-      ClearAndRedrawOutput ();
++      Redraw ();
+ 
+       hid_action ("PCBChanged");
+       RestoreCrosshair ();
+@@ -6643,7 +6643,7 @@ ActionSetSame (int argc, char **argv, int x, int y)
+   if (layer != CURRENT)
+     {
+       ChangeGroupVisibility (GetLayerNumber (PCB->Data, layer), true, true);
+-      ClearAndRedrawOutput ();
++      Redraw ();
+     }
+   return 0;
+ }
+diff --git a/src/autoplace.c b/src/autoplace.c
+index e1461c6..b9db528 100644
+--- a/src/autoplace.c
++++ b/src/autoplace.c
+@@ -856,7 +856,7 @@ done:
+     {
+       DeleteRats (false);
+       AddAllRats (false, NULL);
+-      ClearAndRedrawOutput ();
++      Redraw ();
+     }
+   FreePointerListMemory (&Selected);
+   return (changed);
+diff --git a/src/autoroute.c b/src/autoroute.c
+index cecf9c0..40b3cda 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -5314,7 +5314,7 @@ donerouting:
+ 
+       IncrementUndoSerialNumber ();
+ 
+-      ClearAndRedrawOutput ();
++      Redraw ();
+     }
+   RestoreFindFlag ();
+ #if defined (ROUTE_DEBUG)
+diff --git a/src/draw.c b/src/draw.c
+index 7619d25..8b73644 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -186,18 +186,6 @@ Draw (void)
+   Block.X2 = Block.Y2 = -MAXINT;
+ }
+ 
+-/* ---------------------------------------------------------------------------
+- * redraws the output area after clearing it
+- */
+-void
+-ClearAndRedrawOutput (void)
+-{
+-  Redraw ();
+-}
+-
+-
+-
+-
+ /* ---------------------------------------------------------------------- 
+  * redraws all the data by the event handlers
+  */
+diff --git a/src/find.c b/src/find.c
+index 7620d85..47bd68c 100644
+--- a/src/find.c
++++ b/src/find.c
+@@ -3258,7 +3258,7 @@ LookupConnectionsToAllElements (FILE * FP)
+     gui->beep ();
+   ResetConnections (false);
+   FreeConnectionLookupMemory ();
+-  ClearAndRedrawOutput ();
++  Redraw ();
+ }
+ 
+ /*---------------------------------------------------------------------------
+diff --git a/src/toporouter.c b/src/toporouter.c
+index 4d56243..3590472 100644
+--- a/src/toporouter.c
++++ b/src/toporouter.c
+@@ -7965,7 +7965,7 @@ toporouter (int argc, char **argv, int x, int y)
+   AddAllRats (false, NULL);
+   RestoreUndoSerialNumber ();
+   IncrementUndoSerialNumber ();
+-  ClearAndRedrawOutput ();
++  Redraw ();
+ 
+   return 0;
+ }
+diff --git a/src/vendor.c b/src/vendor.c
+index 5b7f5eb..754f7d1 100644
+--- a/src/vendor.c
++++ b/src/vendor.c
+@@ -610,7 +610,7 @@ apply_vendor_map (void)
+       if (changed)
+ 	{
+ 	  SetChangedFlag (true);
+-	  ClearAndRedrawOutput ();
++	  Redraw ();
+ 	  IncrementUndoSerialNumber ();
+ 	}
+     }
