@@ -1,0 +1,29 @@
+Bottom: ddc8d9ba862804450c0651ceca2d2cc5432c5260
+Top:    893863455c1c7c95b764e00fed46ba34cc852a8c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-25 16:53:45 +0100
+
+Refresh of draw-c-separate-gathering-rout
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 8c703fa..7c84a76 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -511,6 +511,15 @@ draw_pv (PinTypePtr pv)
+ static void
+ draw_pin (PinTypePtr pin)
+ {
++  SetPVColor (pin, PIN_TYPE);
++  draw_pv (pin);
++}
++
++static void
++draw_via (PinTypePtr via)
++{
++  SetPVColor (Pin, VIA_TYPE);
++  draw_pv (via);
+ }
+ 
+ static int
