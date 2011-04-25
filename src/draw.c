@@ -1817,7 +1817,7 @@ static void
 draw_element (ElementTypePtr element)
 {
   DrawElementPackage (element);
-  draw_element_name (Element);
+  draw_element_name (element);
   DrawElementPinsAndPads (element);
 }
 
