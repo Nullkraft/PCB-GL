@@ -34,6 +34,8 @@
 #include "config.h"
 #endif
 
+#include <assert.h>
+
 #include "global.h"
 
 /*#include "clip.h"*/
@@ -83,7 +85,6 @@ static const BoxType *clip_box = NULL;
 static void DrawEverything (BoxTypePtr);
 static void DrawPPV (int group, const BoxType *);
 static int DrawLayerGroup (int, const BoxType *);
-static void DrawPinOrViaLowLevel (PinTypePtr, bool);
 static void DrawPinOrViaNameLowLevel (PinTypePtr);
 static void DrawPadLowLevel (hidGC, PadTypePtr, bool, bool);
 static void DrawPadNameLowLevel (PadTypePtr);
@@ -454,12 +455,21 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
   
 }
 
+static void
+draw_pv (PinTypePtr pv)
+{
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    gui->thindraw_pcb_pv (Output.fgGC, Output.fgGC, pv, false, false);
+  else
+    gui->fill_pcb_pv (Output.fgGC, Output.bgGC, pv, false, false);
+}
+
 static int
 via_callback (const BoxType * b, void *cl)
 {
   PinTypePtr via = (PinTypePtr) b;
   SetPVColor (via, VIA_TYPE);
-  DrawPinOrViaLowLevel (via, false);
+  draw_pv (via);
   if (!TEST_FLAG (HOLEFLAG, via) && TEST_FLAG (DISPLAYNAMEFLAG, via))
     DrawPinOrViaNameLowLevel (via);
   return 1;
@@ -470,7 +480,7 @@ pin_callback (const BoxType * b, void *cl)
 {
   PinTypePtr pin = (PinTypePtr) b;
   SetPVColor (pin, PIN_TYPE);
-  DrawPinOrViaLowLevel (pin, false);
+  draw_pv (pin);
   if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
     DrawPinOrViaNameLowLevel (pin);
   return 1;
@@ -778,24 +788,6 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
   return rv;
 }
 
-/* ---------------------------------------------------------------------------
- * lowlevel drawing routine for pins and vias
- */
-static void
-DrawPinOrViaLowLevel (PinTypePtr pv, bool drawHole)
-{
-  if (Gathering)
-    {
-      AddPart (pv);
-      return;
-    }
-
-  if (TEST_FLAG (THINDRAWFLAG, PCB))
-    gui->thindraw_pcb_pv (Output.fgGC, Output.fgGC, pv, drawHole, false);
-  else
-    gui->fill_pcb_pv (Output.fgGC, Output.bgGC, pv, drawHole, false);
-}
-
 /**************************************************************
  * draw pin/via hole
  */
@@ -838,12 +830,47 @@ DrawHole (PinTypePtr Ptr)
  * lowlevel drawing routine for pin and via names
  */
 static void
+GatherPVName (PinTypePtr Ptr)
+{
+  BoxType box;
+  bool vert = TEST_FLAG (EDGE2FLAG, Ptr);
+
+  if (vert)
+    {
+      box.X1 = Ptr->X - Ptr->Thickness / 2 + Settings.PinoutTextOffsetY;
+      box.Y1 = Ptr->Y - Ptr->DrillingHole / 2 - Settings.PinoutTextOffsetX;
+    }
+  else
+    {
+      box.X1 = Ptr->X + Ptr->DrillingHole / 2 + Settings.PinoutTextOffsetX;
+      box.Y1 = Ptr->Y - Ptr->Thickness / 2 + Settings.PinoutTextOffsetY;
+    }
+
+  if (vert)
+    {
+      box.X2 = box.X1;
+      box.Y2 = box.Y1;
+    }
+  else
+    {
+      box.X2 = box.X1;
+      box.Y2 = box.Y1;
+    }
+  AddPart (&box);
+}
+
+/* ---------------------------------------------------------------------------
+ * lowlevel drawing routine for pin and via names
+ */
+static void
 DrawPinOrViaNameLowLevel (PinTypePtr Ptr)
 {
   char *name;
   BoxType box;
   bool vert;
   TextType text;
+
+  assert (!Gathering);
 
   if (!Ptr->Name || !Ptr->Name[0])
     name = (char *)EMPTY (Ptr->Number);
@@ -861,22 +888,6 @@ DrawPinOrViaNameLowLevel (PinTypePtr Ptr)
     {
       box.X1 = Ptr->X + Ptr->DrillingHole / 2 + Settings.PinoutTextOffsetX;
       box.Y1 = Ptr->Y - Ptr->Thickness / 2 + Settings.PinoutTextOffsetY;
-    }
-  if (Gathering)
-    {
-      if (vert)
-	{
-	  box.X2 = box.X1;
-	  box.Y2 = box.Y1;
-	}
-      else
-	{
-	  box.X2 = box.X1;
-	  box.Y2 = box.Y1;
-	}
-/*printf("AddPart: x1=%d y1=%d x2=%d y2=%d\n", box.X1, box.Y1, box.X2, box.Y2);*/
-      AddPart (&box);
-      return;
     }
 
   gui->set_color (Output.fgGC, PCB->PinNameColor);
@@ -1177,11 +1188,11 @@ DrawElementPackageLowLevel (ElementTypePtr Element)
 void
 DrawVia (PinTypePtr Via)
 {
-  if (!Gathering)
-    SetPVColor (Via, VIA_TYPE);
-  DrawPinOrViaLowLevel (Via, true);
+  assert (Gathering);
+
+  AddPart (Via);
   if (!TEST_FLAG (HOLEFLAG, Via) && TEST_FLAG (DISPLAYNAMEFLAG, Via))
-    DrawPinOrViaNameLowLevel (Via);
+    DrawViaName (Via);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1190,14 +1201,9 @@ DrawVia (PinTypePtr Via)
 void
 DrawViaName (PinTypePtr Via)
 {
-  if (!Gathering)
-    {
-      if (TEST_FLAG (SELECTEDFLAG, Via))
-	gui->set_color (Output.fgGC, PCB->ViaSelectedColor);
-      else
-	gui->set_color (Output.fgGC, PCB->ViaColor);
-    }
-  DrawPinOrViaNameLowLevel (Via);
+  assert (Gathering);
+
+  GatherPVName (Via);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1206,14 +1212,12 @@ DrawViaName (PinTypePtr Via)
 void
 DrawPin (PinTypePtr Pin)
 {
-  {
-    if (!Gathering)
-      SetPVColor (Pin, PIN_TYPE);
-    DrawPinOrViaLowLevel (Pin, true);
-  }
+  assert (Gathering);
+
+  AddPart (Pin);
   if ((!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
       || doing_pinout)
-    DrawPinOrViaNameLowLevel (Pin);
+    DrawPinName (Pin);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1222,14 +1226,9 @@ DrawPin (PinTypePtr Pin)
 void
 DrawPinName (PinTypePtr Pin)
 {
-  if (!Gathering)
-    {
-      if (TEST_FLAG (SELECTEDFLAG, Pin))
-	gui->set_color (Output.fgGC, PCB->PinSelectedColor);
-      else
-	gui->set_color (Output.fgGC, PCB->PinColor);
-    }
-  DrawPinOrViaNameLowLevel (Pin);
+  assert (Gathering);
+
+  GatherPVName (Pin);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1571,9 +1570,11 @@ DrawElementPinsAndPads (ElementTypePtr Element)
 void
 EraseVia (PinTypePtr Via)
 {
-  DrawPinOrViaLowLevel (Via, false);
+  assert (Gathering);
+
+  AddPart (Via);
   if (TEST_FLAG (DISPLAYNAMEFLAG, Via))
-    DrawPinOrViaNameLowLevel (Via);
+    EraseViaName (Via);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1604,7 +1605,9 @@ EraseRat (RatTypePtr Rat)
 void
 EraseViaName (PinTypePtr Via)
 {
-  DrawPinOrViaNameLowLevel (Via);
+  assert (Gathering);
+
+  GatherPVName (Via);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1633,9 +1636,11 @@ ErasePadName (PadTypePtr Pad)
 void
 ErasePin (PinTypePtr Pin)
 {
-  DrawPinOrViaLowLevel (Pin, false);
+  assert (Gathering);
+
+  AddPart (Pin);
   if (TEST_FLAG (DISPLAYNAMEFLAG, Pin))
-    DrawPinOrViaNameLowLevel (Pin);
+    ErasePinName (Pin);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1644,7 +1649,9 @@ ErasePin (PinTypePtr Pin)
 void
 ErasePinName (PinTypePtr Pin)
 {
-  DrawPinOrViaNameLowLevel (Pin);
+  assert (Gathering);
+
+  GatherPVName (Pin);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1718,11 +1725,11 @@ EraseElement (ElementTypePtr Element)
 void
 EraseElementPinsAndPads (ElementTypePtr Element)
 {
+  assert (Gathering);
+
   PIN_LOOP (Element);
   {
-    DrawPinOrViaLowLevel (pin, false);
-    if (TEST_FLAG (DISPLAYNAMEFLAG, pin))
-      DrawPinOrViaNameLowLevel (pin);
+    ErasePin (pin);
   }
   END_LOOP;
   PAD_LOOP (Element);
