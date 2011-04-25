@@ -196,15 +196,6 @@ Draw (void)
 }
 
 /* ---------------------------------------------------------------------------
- * redraws the output area without clearing it
- */
-void
-RedrawOutput (BoxTypePtr area)
-{
-  Redraw ();
-}
-
-/* ---------------------------------------------------------------------------
  * redraws the output area after clearing it
  */
 void
