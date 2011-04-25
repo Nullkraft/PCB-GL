@@ -420,6 +420,7 @@ gerber_expose (HID * hid, BoxType *drawn_area, void *item)
   int i;
   int group;
   int nplated, nunplated;
+  extern bool Gathering;
 
   HID *old_gui = gui;
   hidGC savebg = Output.bgGC;
@@ -436,6 +437,8 @@ gerber_expose (HID * hid, BoxType *drawn_area, void *item)
 
   PCB->Data->SILKLAYER.Color = PCB->ElementColor;
   PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
+
+  Gathering = false;
 
   memset (print_group, 0, sizeof (print_group));
   for (i = 0; i < max_copper_layer; i++)
@@ -494,6 +497,8 @@ gerber_expose (HID * hid, BoxType *drawn_area, void *item)
   Output.fgGC = savefg;
   Output.bgGC = savebg;
   Output.pmGC = savepm;
+
+  Gathering = true;
 }
 
 static void
