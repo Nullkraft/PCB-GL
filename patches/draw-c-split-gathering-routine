@@ -1,5 +1,5 @@
 Bottom: 24d1cbbeb2514fd00a61766dc75aa337868250bf
-Top:    3dd2f13c64af60dd31e6a26b267360c861471b5a
+Top:    6c408210c0298e653561feaf37a2d13c87d5c671
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 17:06:30 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" routines from real drawing routines (Pads)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 21cec3b..13c348b 100644
+index 21cec3b..2cfaefa 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -86,8 +86,6 @@ static const BoxType *clip_box = NULL;
@@ -34,7 +34,7 @@ index 21cec3b..13c348b 100644
  }
  
 +static void
-+_draw_pad_name (PadType *pad)
++draw_pad_name (PadType *pad)
 +{
 +  BoxType box;
 +  bool vert;
