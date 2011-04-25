@@ -34,6 +34,8 @@
 #include "config.h"
 #endif
 
+#include <assert.h>
+
 #include "global.h"
 
 /*#include "clip.h"*/
@@ -784,12 +786,6 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
 static void
 DrawPinOrViaLowLevel (PinTypePtr pv, bool drawHole)
 {
-  if (Gathering)
-    {
-      AddPart (pv);
-      return;
-    }
-
   if (TEST_FLAG (THINDRAWFLAG, PCB))
     gui->thindraw_pcb_pv (Output.fgGC, Output.fgGC, pv, drawHole, false);
   else
@@ -1177,9 +1173,10 @@ DrawElementPackageLowLevel (ElementTypePtr Element)
 void
 DrawVia (PinTypePtr Via)
 {
-  if (!Gathering)
-    SetPVColor (Via, VIA_TYPE);
-  DrawPinOrViaLowLevel (Via, true);
+  assert (Gathering);
+
+  AddPart (Via);
+
   if (!TEST_FLAG (HOLEFLAG, Via) && TEST_FLAG (DISPLAYNAMEFLAG, Via))
     DrawPinOrViaNameLowLevel (Via);
 }
@@ -1206,11 +1203,10 @@ DrawViaName (PinTypePtr Via)
 void
 DrawPin (PinTypePtr Pin)
 {
-  {
-    if (!Gathering)
-      SetPVColor (Pin, PIN_TYPE);
-    DrawPinOrViaLowLevel (Pin, true);
-  }
+  assert (Gathering);
+
+  AddPart (Pin);
+
   if ((!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
       || doing_pinout)
     DrawPinOrViaNameLowLevel (Pin);
@@ -1571,7 +1567,9 @@ DrawElementPinsAndPads (ElementTypePtr Element)
 void
 EraseVia (PinTypePtr Via)
 {
-  DrawPinOrViaLowLevel (Via, false);
+  assert (Gathering);
+  AddPart (Via);
+
   if (TEST_FLAG (DISPLAYNAMEFLAG, Via))
     DrawPinOrViaNameLowLevel (Via);
 }
@@ -1633,7 +1631,9 @@ ErasePadName (PadTypePtr Pad)
 void
 ErasePin (PinTypePtr Pin)
 {
-  DrawPinOrViaLowLevel (Pin, false);
+  assert (Gathering);
+  AddPart (Pin);
+
   if (TEST_FLAG (DISPLAYNAMEFLAG, Pin))
     DrawPinOrViaNameLowLevel (Pin);
 }
@@ -1718,9 +1718,10 @@ EraseElement (ElementTypePtr Element)
 void
 EraseElementPinsAndPads (ElementTypePtr Element)
 {
+  assert (Gathering);
   PIN_LOOP (Element);
   {
-    DrawPinOrViaLowLevel (pin, false);
+    AddPart (pin);
     if (TEST_FLAG (DISPLAYNAMEFLAG, pin))
       DrawPinOrViaNameLowLevel (pin);
   }
