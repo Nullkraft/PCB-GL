@@ -194,17 +194,6 @@ Redraw (void)
   gui->invalidate_all ();
 }
 
-static int
-element_callback (const BoxType * b, void *cl)
-{
-  ElementTypePtr element = (ElementTypePtr) b;
-  int *side = cl;
-
-  if (ON_SIDE (element, *side))
-    DrawElementPackage (element);
-  return 1;
-}
-
 static void
 draw_element_name (ElementType *element)
 {
@@ -337,6 +326,17 @@ draw_element_package (ElementType *element)
     DrawArcLowLevel (arc);
   }
   END_LOOP;
+}
+
+static int
+element_callback (const BoxType * b, void *cl)
+{
+  ElementTypePtr element = (ElementTypePtr) b;
+  int *side = cl;
+
+  if (ON_SIDE (element, *side))
+    DrawElementPackage (element);
+  return 1;
 }
 
 /* ---------------------------------------------------------------------------
@@ -1754,7 +1754,7 @@ EraseElementName (ElementTypePtr Element)
 
   if (TEST_FLAG (HIDENAMEFLAG, Element))
     return;
-  AddPart (&ELEMENT_TEXT (PCB, Element));
+  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
 }
 
 
