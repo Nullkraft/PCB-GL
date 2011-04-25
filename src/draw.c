@@ -734,12 +734,12 @@ draw_element_package (ELement)
   /* draw lines, arcs, text and pins */
   ELEMENTLINE_LOOP (Element);
   {
-    _draw_line (line);
+    DrawLineLowLevel (line);
   }
   END_LOOP;
   ARC_LOOP (Element);
   {
-    _draw_arc (arc);
+    DrawArcLowLevel (arc);
   }
   END_LOOP;
 }
