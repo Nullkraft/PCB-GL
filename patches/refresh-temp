@@ -1,0 +1,56 @@
+Bottom: 08f4118605247193e64e55683ec02c90b99212d0
+Top:    8bff68d602c9ce02135f3874c46f52d52d63028c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-25 17:51:03 +0100
+
+Refresh of draw-c-split-gathering-routine-0
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index e63c35a..5c18d3e 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -817,7 +817,7 @@ DrawRats (BoxTypePtr drawn_area)
+ }
+ 
+ static void
+-_draw_line (lineTypePtr line)
++_draw_line (LineType *line)
+ {
+   gui->set_line_cap (Output.fgGC, Trace_Cap);
+   if (TEST_FLAG (THINDRAWFLAG, PCB))
+@@ -826,8 +826,8 @@ _draw_line (lineTypePtr line)
+     gui->set_line_width (Output.fgGC, line->Thickness);
+ 
+   gui->draw_line (Output.fgGC,
+-		  line->Point1.X, Line->Point1.Y,
+-		  line->Point2.X, Line->Point2.Y);
++		  line->Point1.X, line->Point1.Y,
++		  line->Point2.X, line->Point2.Y);
+ }
+ 
+ static void
+@@ -1494,12 +1494,12 @@ DrawElementPackage (ElementTypePtr Element)
+     {
+       ELEMENTLINE_LOOP (Element);
+       {
+-        DrawLine (line);
++        AddPart (line);
+       }
+       END_LOOP;
+       ARC_LOOP (Element);
+       {
+-        DrawArc (arc);
++        AddPart (arc);
+       }
+       END_LOOP;
+       return;
+@@ -1514,7 +1514,6 @@ DrawElementPackage (ElementTypePtr Element)
+     gui->set_color (Output.fgGC, PCB->ElementColor);
+   else
+     gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
+-  DrawElementPackageLowLevel (Element);
+ 
+   /* draw lines, arcs, text and pins */
+   ELEMENTLINE_LOOP (Element);
