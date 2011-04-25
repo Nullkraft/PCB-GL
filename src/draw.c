@@ -518,25 +518,21 @@ draw_pin (PinTypePtr pin)
 static void
 draw_via (PinTypePtr via)
 {
-  SetPVColor (Pin, VIA_TYPE);
+  SetPVColor (via, VIA_TYPE);
   draw_pv (via);
 }
 
 static int
 via_callback (const BoxType * b, void *cl)
 {
-  PinTypePtr via = (PinTypePtr) b;
-  SetPVColor (via, VIA_TYPE);
-  draw_pv (via);
+  draw_pin ((PinType *)b);
   return 1;
 }
 
 static int
 pin_callback (const BoxType * b, void *cl)
 {
-  PinTypePtr pin = (PinTypePtr) b;
-  SetPVColor (pin, PIN_TYPE);
-  draw_pv (pin);
+  draw_via ((PinType *)b);
   return 1;
 }
 
