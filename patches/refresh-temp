@@ -1,0 +1,21 @@
+Bottom: 495a37fcc71782c5dabd1e259f355842eec013b0
+Top:    022d0e4473e17ba75c2ba9fbf0d6234ac853c416
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 00:55:35 +0100
+
+Refresh of draw-c-split-gathering-routine-2
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 0bc9441..d71982f 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -335,7 +335,7 @@ element_callback (const BoxType * b, void *cl)
+   int *side = cl;
+ 
+   if (ON_SIDE (element, *side))
+-    DrawElementPackage (element);
++    draw_element_package (element);
+   return 1;
+ }
