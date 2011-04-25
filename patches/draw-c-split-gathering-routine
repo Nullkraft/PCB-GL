@@ -1,5 +1,5 @@
 Bottom: 5596d3b3436e57212545b900ada9e564dd7431d8
-Top:    5d0f0deae6960b86ba3e8d74bae7fdb02fd995f6
+Top:    0a9c637fd7176853cb898de9f4b782a21a02d500
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 17:06:30 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" routines from real drawing routines (Pads)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index de86c86..5449a73 100644
+index de86c86..3d85e07 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -86,8 +86,6 @@ static const BoxType *clip_box = NULL;
@@ -325,7 +325,19 @@ index de86c86..5449a73 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1611,9 +1590,11 @@ EraseViaName (PinTypePtr Via)
+@@ -1546,7 +1525,10 @@ DrawElementPinsAndPads (ElementTypePtr Element)
+   PAD_LOOP (Element);
+   {
+     if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
+-      DrawPad (pad);
++      if (Gathering)
++        DrawPad (pad);
++      else
++        draw_pad (pad);
+   }
+   END_LOOP;
+   PIN_LOOP (Element);
+@@ -1611,9 +1593,11 @@ EraseViaName (PinTypePtr Via)
  void
  ErasePad (PadTypePtr Pad)
  {
@@ -339,7 +351,7 @@ index de86c86..5449a73 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1622,7 +1603,9 @@ ErasePad (PadTypePtr Pad)
+@@ -1622,7 +1606,9 @@ ErasePad (PadTypePtr Pad)
  void
  ErasePadName (PadTypePtr Pad)
  {
@@ -350,7 +362,7 @@ index de86c86..5449a73 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1729,9 +1712,7 @@ EraseElementPinsAndPads (ElementTypePtr Element)
+@@ -1729,9 +1715,7 @@ EraseElementPinsAndPads (ElementTypePtr Element)
    END_LOOP;
    PAD_LOOP (Element);
    {
