@@ -5,6 +5,9 @@ Date:   2011-04-25 15:41:31 +0100
 
 draw.c: Expose local Redraw() function, and remove wrapper RedrawOutput()
 
+Within the one caller ActionDisplay, combine the F_ClearAndRedraw and
+F_Redraw cases which have exactly the same effect.
+
 
 ---
 
