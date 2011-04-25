@@ -1,5 +1,5 @@
-Bottom: 96b6aa38c45c29ca8340d020a6cef557ce9dc195
-Top:    27596078148470dca4025fb76fd8e863fc1371aa
+Bottom: 53e11a9406e5c741244cfa58e0edf4850cecabf3
+Top:    70ec768bb432e2c8f09f5f338afbe7f79e73f25d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 18:08:22 +0100
 
@@ -11,7 +11,7 @@ Moves code from DrawPlainPolygon() into its only caller poly_callback()
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 1d580a1..b3dda5d 100644
+index 5098cc7..80b7fda 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -87,8 +87,6 @@ static void DrawEverything (BoxTypePtr);
