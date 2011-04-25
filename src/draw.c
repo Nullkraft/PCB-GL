@@ -86,11 +86,9 @@ static const BoxType *clip_box = NULL;
 static void DrawEverything (BoxTypePtr);
 static void DrawPPV (int group, const BoxType *);
 static int DrawLayerGroup (int, const BoxType *);
-static void DrawLineLowLevel (LineTypePtr);
 static void DrawRegularText (LayerTypePtr, TextTypePtr);
 static void DrawPolygonLowLevel (PolygonTypePtr);
 static void DrawArcLowLevel (ArcTypePtr);
-static void DrawElementPackageLowLevel (ElementTypePtr Element);
 static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
 static void AddPart (void *);
 static void SetPVColor (PinTypePtr, int);
@@ -845,10 +843,39 @@ DrawRats (BoxTypePtr drawn_area)
     gui->use_mask (HID_MASK_OFF);
 }
 
+static void
+_draw_line (LineType *line)
+{
+  gui->set_line_cap (Output.fgGC, Trace_Cap);
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    gui->set_line_width (Output.fgGC, 0);
+  else
+    gui->set_line_width (Output.fgGC, line->Thickness);
+
+  gui->draw_line (Output.fgGC,
+		  line->Point1.X, line->Point1.Y,
+		  line->Point2.X, line->Point2.Y);
+}
+
+static void
+draw_line (LayerType *layer, LineType *line)
+{
+  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, line))
+    {
+      if (TEST_FLAG (SELECTEDFLAG, line))
+        gui->set_color (Output.fgGC, layer->SelectedColor);
+      else
+        gui->set_color (Output.fgGC, PCB->ConnectedColor);
+    }
+  else
+    gui->set_color (Output.fgGC, layer->Color);
+  _draw_line (line);
+}
+
 static int
 line_callback (const BoxType * b, void *cl)
 {
-  DrawLine ((LayerTypePtr) cl, (LineTypePtr) b);
+  draw_line ((LayerType *) cl, (LineType *) b);
   return 1;
 }
 
@@ -1004,29 +1031,6 @@ GatherPadName (PadTypePtr Pad)
 }
 
 /* ---------------------------------------------------------------------------
- * lowlevel drawing routine for lines
- */
-static void
-DrawLineLowLevel (LineTypePtr Line)
-{
-  if (Gathering)
-    {
-      AddPart (Line);
-      return;
-    }
-
-  gui->set_line_cap (Output.fgGC, Trace_Cap);
-  if (TEST_FLAG (THINDRAWFLAG, PCB))
-    gui->set_line_width (Output.fgGC, 0);
-  else
-    gui->set_line_width (Output.fgGC, Line->Thickness);
-
-  gui->draw_line (Output.fgGC,
-		  Line->Point1.X, Line->Point1.Y,
-		  Line->Point2.X, Line->Point2.Y);
-}
-
-/* ---------------------------------------------------------------------------
  * lowlevel drawing routine for text objects
  */
 void
@@ -1080,7 +1084,7 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
 	      newline.Point1.Y += Text->Y;
 	      newline.Point2.X += Text->X;
 	      newline.Point2.Y += Text->Y;
-	      DrawLineLowLevel (&newline);
+	      _draw_line (&newline);
 	    }
 
 	  /* move on to next cursor position */
@@ -1155,25 +1159,6 @@ DrawArcLowLevel (ArcTypePtr Arc)
 
   gui->draw_arc (Output.fgGC, Arc->X, Arc->Y, Arc->Width,
 		 Arc->Height, Arc->StartAngle, Arc->Delta);
-}
-
-/* ---------------------------------------------------------------------------
- * draws the package of an element
- */
-static void
-DrawElementPackageLowLevel (ElementTypePtr Element)
-{
-  /* draw lines, arcs, text and pins */
-  ELEMENTLINE_LOOP (Element);
-  {
-    DrawLineLowLevel (line);
-  }
-  END_LOOP;
-  ARC_LOOP (Element);
-  {
-    DrawArcLowLevel (arc);
-  }
-  END_LOOP;
 }
 
 /* ---------------------------------------------------------------------------
@@ -1255,19 +1240,9 @@ DrawPadName (PadTypePtr Pad)
 void
 DrawLine (LayerTypePtr Layer, LineTypePtr Line)
 {
-  if (!Gathering)
-    {
-      if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, Line))
-	{
-	  if (TEST_FLAG (SELECTEDFLAG, Line))
-	    gui->set_color (Output.fgGC, Layer->SelectedColor);
-	  else
-	    gui->set_color (Output.fgGC, PCB->ConnectedColor);
-	}
-      else
-	gui->set_color (Output.fgGC, Layer->Color);
-    }
-  DrawLineLowLevel (Line);
+  assert (Gathering);
+
+  AddPart (Line);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1316,7 +1291,7 @@ DrawRat (RatTypePtr Line)
 	}
     }
   else
-    DrawLineLowLevel ((LineTypePtr) Line);
+    _draw_line ((LineTypePtr) Line);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1504,6 +1479,21 @@ DrawElementName (ElementTypePtr Element)
 void
 DrawElementPackage (ElementTypePtr Element)
 {
+  if (Gathering)
+    {
+      ELEMENTLINE_LOOP (Element);
+      {
+        AddPart (line);
+      }
+      END_LOOP;
+      ARC_LOOP (Element);
+      {
+        AddPart (arc);
+      }
+      END_LOOP;
+      return;
+    }
+
   /* set color and draw lines, arcs, text and pins */
   if (doing_pinout || doing_assy)
     gui->set_color (Output.fgGC, PCB->ElementColor);
@@ -1513,7 +1503,18 @@ DrawElementPackage (ElementTypePtr Element)
     gui->set_color (Output.fgGC, PCB->ElementColor);
   else
     gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
-  DrawElementPackageLowLevel (Element);
+
+  /* draw lines, arcs, text and pins */
+  ELEMENTLINE_LOOP (Element);
+  {
+    _draw_line (line);
+  }
+  END_LOOP;
+  ARC_LOOP (Element);
+  {
+    DrawArcLowLevel (arc);
+  }
+  END_LOOP;
 }
 
 /* ---------------------------------------------------------------------------
@@ -1583,7 +1584,7 @@ EraseRat (RatTypePtr Rat)
 		     w * 2, w * 2, 0, 360);
     }
   else
-    DrawLineLowLevel ((LineTypePtr) Rat);
+    _draw_line ((LineTypePtr) Rat);
 }
 
 
@@ -1652,7 +1653,9 @@ ErasePinName (PinTypePtr Pin)
 void
 EraseLine (LineTypePtr Line)
 {
-  DrawLineLowLevel (Line);
+  assert (Gathering);
+
+  AddPart (Line);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1698,7 +1701,7 @@ EraseElement (ElementTypePtr Element)
 {
   ELEMENTLINE_LOOP (Element);
   {
-    DrawLineLowLevel (line);
+    EraseLine (line);
   }
   END_LOOP;
   ARC_LOOP (Element);
