@@ -54,6 +54,9 @@
 #include <dmalloc.h>
 #endif
 
+#undef NDEBUG
+#include <assert.h>
+
 #ifndef MAXINT
 #define MAXINT (((unsigned int)(~0))>>1)
 #endif
@@ -1147,6 +1150,8 @@ DrawArcLowLevel (ArcTypePtr Arc)
 static void
 DrawElementPackageLowLevel (ElementTypePtr Element)
 {
+  assert (Gathering);
+
   /* draw lines, arcs, text and pins */
   ELEMENTLINE_LOOP (Element);
   {
