@@ -230,32 +230,32 @@ EMark_callback (const BoxType * b, void *cl)
 static int
 hole_callback (const BoxType * b, void *cl)
 {
-  PinTypePtr pin = (PinTypePtr) b;
+  PinTypePtr pv = (PinTypePtr) b;
   int plated = cl ? *(int *) cl : -1;
 
-  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pin)) ||
-      (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
+  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pv)) ||
+      (plated == 1 &&  TEST_FLAG (HOLEFLAG, pv)))
     return 1;
 
   if (TEST_FLAG (THINDRAWFLAG, PCB))
     {
-      if (!TEST_FLAG (HOLEFLAG, Ptr))
+      if (!TEST_FLAG (HOLEFLAG, pv))
         {
           gui->set_line_cap (Output.fgGC, Round_Cap);
           gui->set_line_width (Output.fgGC, 0);
           gui->draw_arc (Output.fgGC,
-                         Ptr->X, Ptr->Y, Ptr->DrillingHole / 2,
-                         Ptr->DrillingHole / 2, 0, 360);
+                         pv->X, pv->Y, pv->DrillingHole / 2,
+                         pv->DrillingHole / 2, 0, 360);
         }
     }
   else
-    gui->fill_circle (Output.bgGC, Ptr->X, Ptr->Y, Ptr->DrillingHole / 2);
+    gui->fill_circle (Output.bgGC, pv->X, pv->Y, pv->DrillingHole / 2);
 
-  if (TEST_FLAG (HOLEFLAG, Ptr))
+  if (TEST_FLAG (HOLEFLAG, pv))
     {
-      if (TEST_FLAG (WARNFLAG, Ptr))
+      if (TEST_FLAG (WARNFLAG, pv))
         gui->set_color (Output.fgGC, PCB->WarnColor);
-      else if (TEST_FLAG (SELECTEDFLAG, Ptr))
+      else if (TEST_FLAG (SELECTEDFLAG, pv))
         gui->set_color (Output.fgGC, PCB->ViaSelectedColor);
       else
         gui->set_color (Output.fgGC, Settings.BlackColor);
@@ -263,8 +263,8 @@ hole_callback (const BoxType * b, void *cl)
       gui->set_line_cap (Output.fgGC, Round_Cap);
       gui->set_line_width (Output.fgGC, 0);
       gui->draw_arc (Output.fgGC,
-                     Ptr->X, Ptr->Y, Ptr->DrillingHole / 2,
-                     Ptr->DrillingHole / 2, 0, 360);
+                     pv->X, pv->Y, pv->DrillingHole / 2,
+                     pv->DrillingHole / 2, 0, 360);
     }
   return 1;
 }
