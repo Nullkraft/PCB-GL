@@ -1,5 +1,5 @@
-Bottom: 53e11a9406e5c741244cfa58e0edf4850cecabf3
-Top:    70ec768bb432e2c8f09f5f338afbe7f79e73f25d
+Bottom: a786a687fcb85974275535b5e2f974046f3c4f20
+Top:    0ede322aa7cec8365db7b951fa66162ec1fafcdb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 18:08:22 +0100
 
@@ -11,10 +11,10 @@ Moves code from DrawPlainPolygon() into its only caller poly_callback()
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 5098cc7..80b7fda 100644
+index 3d6c365..7ad80f3 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -87,8 +87,6 @@ static void DrawEverything (BoxTypePtr);
+@@ -90,8 +90,6 @@ static void DrawEverything (BoxTypePtr);
  static void DrawPPV (int group, const BoxType *);
  static int DrawLayerGroup (int, const BoxType *);
  static void DrawRegularText (LayerTypePtr, TextTypePtr);
@@ -23,7 +23,7 @@ index 5098cc7..80b7fda 100644
  static void AddPart (void *);
  static void SetPVColor (PinTypePtr, int);
  static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
-@@ -697,12 +695,45 @@ clearPin_callback (const BoxType * b, void *cl)
+@@ -801,12 +799,45 @@ clearPin_callback (const BoxType * b, void *cl)
      gui->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
    return 1;
  }
@@ -70,7 +70,7 @@ index 5098cc7..80b7fda 100644
    return 1;
  }
  
-@@ -1151,24 +1182,6 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
+@@ -1179,24 +1210,6 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
  }
  
  /* ---------------------------------------------------------------------------
@@ -95,7 +95,7 @@ index 5098cc7..80b7fda 100644
   * draw a via object
   */
  void
-@@ -1358,7 +1371,9 @@ DrawRegularText (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1386,7 +1399,9 @@ DrawRegularText (LayerTypePtr Layer, TextTypePtr Text)
  void
  DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  {
@@ -106,7 +106,7 @@ index 5098cc7..80b7fda 100644
  }
  
  int
-@@ -1389,53 +1404,6 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
+@@ -1417,53 +1432,6 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
    return 0;
  }
  
@@ -160,7 +160,7 @@ index 5098cc7..80b7fda 100644
  /* ---------------------------------------------------------------------------
   * draws an element
   */
-@@ -1687,7 +1655,9 @@ EraseText (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1693,7 +1661,9 @@ EraseText (LayerTypePtr Layer, TextTypePtr Text)
  void
  ErasePolygon (PolygonTypePtr Polygon)
  {
