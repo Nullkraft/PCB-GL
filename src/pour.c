@@ -1389,6 +1389,8 @@ PlowPours (DataType * Data, int type, void *ptr1, void *ptr2,
 void
 RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
 {
+  if (!Data->ClipPours)
+    return;
   if (type == POUR_TYPE)
     {
 #warning FIXME Later: Why do we need to do this?
@@ -1401,6 +1403,8 @@ RestoreToPours (DataType * Data, int type, void *ptr1, void *ptr2)
 void
 ClearFromPours (DataType * Data, int type, void *ptr1, void *ptr2)
 {
+  if (!Data->ClipPours)
+    return;
   if (type == POUR_TYPE)
     {
 #warning FIXME Later: Why do we need to do this?
