@@ -1429,10 +1429,7 @@ void
 DrawElement (ElementTypePtr Element)
 {
   DrawElementPackage (Element);
-  if (Gathering)
-    DrawElementName (Element);
-  else
-    draw_element_name (Element);
+  DrawElementName (Element);
   DrawElementPinsAndPads (Element);
 }
 
@@ -1820,7 +1817,7 @@ static void
 draw_element (ElementTypePtr element)
 {
   DrawElementPackage (element);
-  DrawElementName (element);
+  draw_element_name (Element);
   DrawElementPinsAndPads (element);
 }
 
