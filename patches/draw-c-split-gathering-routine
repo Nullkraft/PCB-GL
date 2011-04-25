@@ -1,5 +1,5 @@
 Bottom: d3d8066bcc82b7cc58544ea342130684a3566d36
-Top:    67c5218373fbee9b733d3ce4ee79afc6e06d50c5
+Top:    9666cc9cf72b2edd2aab7c5d45ba2d2a3c39c87b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 17:06:30 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" routines from real drawing routines (Pads)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 5c08504..05b2272 100644
+index 5c08504..3e052ad 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -86,8 +86,6 @@ static const BoxType *clip_box = NULL;
@@ -129,7 +129,7 @@ index 5c08504..05b2272 100644
    int *side = cl;
    if (ON_SIDE (pad, *side) && pad->Mask)
 -    ClearPad (pad, true);
-+    _draw_pad (Output.pmGC, Pad, true, mask);
++    _draw_pad (Output.pmGC, pad, true, true);
    return 1;
  }
  
