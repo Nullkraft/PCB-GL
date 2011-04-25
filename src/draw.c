@@ -700,18 +700,18 @@ static int
 poly_callback (const BoxType * b, void *cl)
 {
   LayerType *layer = cl;
-  PolygonType *polygon = (PolygonType *b);
+  PolygonType *polygon = (PolygonType *)b;
   static char *color;
 
   if (!polygon->Clipped)
     return 0;
 
-  if (TEST_FLAG (SELECTEDFLAG, Polygon))
-    color = Layer->SelectedColor;
-  else if (TEST_FLAG (FOUNDFLAG, Polygon))
+  if (TEST_FLAG (SELECTEDFLAG, polygon))
+    color = layer->SelectedColor;
+  else if (TEST_FLAG (FOUNDFLAG, polygon))
     color = PCB->ConnectedColor;
   else
-    color = Layer->Color;
+    color = layer->Color;
   gui->set_color (Output.fgGC, color);
 
   if (gui->thindraw_pcb_polygon != NULL &&
@@ -724,7 +724,7 @@ poly_callback (const BoxType * b, void *cl)
   /* If checking planes, thin-draw any pieces which have been clipped away */
   if (gui->thindraw_pcb_polygon != NULL &&
       TEST_FLAG (CHECKPLANESFLAG, PCB) &&
-      !TEST_FLAG (FULLPOLYFLAG, Polygon))
+      !TEST_FLAG (FULLPOLYFLAG, polygon))
     {
       PolygonType poly = *polygon;
 
@@ -1182,17 +1182,6 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
 }
 
 /* ---------------------------------------------------------------------------
- * lowlevel drawing routine for polygons
- */
-static void
-DrawPolygonLowLevel (PolygonTypePtr Polygon)
-{
-  assert (Gathering);
-
-  AddPart (Polygon);
-}
-
-/* ---------------------------------------------------------------------------
  * draw a via object
  */
 void
@@ -1383,9 +1372,6 @@ void
 DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 {
   assert (Gathering);
-
-  if (!Polygon->Clipped)
-    return;
 
   AddPart (Polygon);
 }
