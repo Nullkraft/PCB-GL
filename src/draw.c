@@ -1501,34 +1501,35 @@ DrawElementPackage (ElementTypePtr Element)
 void
 DrawElementPinsAndPads (ElementTypePtr Element)
 {
-  if (Gathering)
-    {
-      PAD_LOOP (Element);
-      {
-        if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
-          draw_pad (pad);
-      }
-      END_LOOP;
-      PIN_LOOP (Element);
-      {
-        DrawPin (pin);
-      }
-      END_LOOP;
-    }
-  else
-    {
-      PAD_LOOP (Element);
-      {
-        if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
-          DrawPad (pad);
-      }
-      END_LOOP;
-      PIN_LOOP (Element);
-      {
-        draw_pin (pin, true);
-      }
-      END_LOOP;
-    }
+  assert (Gathering);
+
+  PAD_LOOP (Element);
+  {
+    if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
+      DrawPad (pad);
+  }
+  END_LOOP;
+  PIN_LOOP (Element);
+  {
+    DrawPin (pin);
+  }
+  END_LOOP;
+}
+
+static void
+draw_element_pins_and_pads (ElementType *element)
+{
+  PAD_LOOP (element);
+  {
+    if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
+      draw_pad (pad);
+  }
+  END_LOOP;
+  PIN_LOOP (element);
+  {
+    draw_pin (pin, true);
+  }
+  END_LOOP;
 }
 
 /* ---------------------------------------------------------------------------
@@ -1823,7 +1824,7 @@ draw_element (ElementTypePtr element)
 {
   draw_element_package (element);
   draw_element_name (element);
-  DrawElementPinsAndPads (element);
+  draw_element_pins_and_pads (element);
 }
 
 /* ---------------------------------------------------------------------------
