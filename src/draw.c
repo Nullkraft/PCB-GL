@@ -1533,7 +1533,7 @@ DrawElementName (ElementTypePtr Element)
 
   if (TEST_FLAG (HIDENAMEFLAG, Element))
     return;
-  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), 0);
+  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
 }
 
 /* ---------------------------------------------------------------------------
