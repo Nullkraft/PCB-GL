@@ -1,5 +1,5 @@
-Bottom: 6f69309199c3fd37bc52eb39f837767edcb48829
-Top:    549c3154a3ff1bd74e777e38cbc3ad9f913225bc
+Bottom: 96b6aa38c45c29ca8340d020a6cef557ce9dc195
+Top:    27596078148470dca4025fb76fd8e863fc1371aa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 18:08:22 +0100
 
@@ -11,7 +11,7 @@ Moves code from DrawPlainPolygon() into its only caller poly_callback()
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 81983c2..560e094 100644
+index 1d580a1..b3dda5d 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -87,8 +87,6 @@ static void DrawEverything (BoxTypePtr);
@@ -160,7 +160,7 @@ index 81983c2..560e094 100644
  /* ---------------------------------------------------------------------------
   * draws an element
   */
-@@ -1673,7 +1641,9 @@ EraseText (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1687,7 +1655,9 @@ EraseText (LayerTypePtr Layer, TextTypePtr Text)
  void
  ErasePolygon (PolygonTypePtr Polygon)
  {
