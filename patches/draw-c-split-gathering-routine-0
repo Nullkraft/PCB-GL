@@ -1,5 +1,5 @@
-Bottom: 402d669384a96503ef34e1530d4041608329703a
-Top:    741af23f9796b38cc155de0f786b816241117879
+Bottom: 9240bba40bf24354b014e17e0ae2dc6d1fc0b8a3
+Top:    f01f4f2c911af178c6b886931d1675e7b6a0a4de
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 17:37:04 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" routines from real drawing routines (Lines)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 712186d..7b98a72 100644
+index 57780fd..9150647 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -89,7 +89,6 @@ static const BoxType *clip_box = NULL;
@@ -20,7 +20,7 @@ index 712186d..7b98a72 100644
  static void DrawRegularText (LayerTypePtr, TextTypePtr);
  static void DrawPolygonLowLevel (PolygonTypePtr);
  static void DrawArcLowLevel (ArcTypePtr);
-@@ -284,6 +283,42 @@ rat_callback (const BoxType * b, void *cl)
+@@ -301,6 +300,42 @@ rat_callback (const BoxType * b, void *cl)
  }
  
  static void
@@ -63,7 +63,7 @@ index 712186d..7b98a72 100644
  draw_element_package (ElementType *element)
  {
    /* set color and draw lines, arcs, text and pins */
-@@ -299,7 +334,7 @@ draw_element_package (ElementType *element)
+@@ -316,7 +351,7 @@ draw_element_package (ElementType *element)
    /* draw lines, arcs, text and pins */
    ELEMENTLINE_LOOP (element);
    {
@@ -72,7 +72,7 @@ index 712186d..7b98a72 100644
    }
    END_LOOP;
    ARC_LOOP (element);
-@@ -874,13 +909,6 @@ DrawRats (BoxTypePtr drawn_area)
+@@ -891,13 +926,6 @@ DrawRats (BoxTypePtr drawn_area)
  }
  
  static int
@@ -86,7 +86,7 @@ index 712186d..7b98a72 100644
  arc_callback (const BoxType * b, void *cl)
  {
    DrawArc ((LayerTypePtr) cl, (ArcTypePtr) b);
-@@ -1031,29 +1059,6 @@ GatherPadName (PadTypePtr Pad)
+@@ -1048,29 +1076,6 @@ GatherPadName (PadTypePtr Pad)
  }
  
  /* ---------------------------------------------------------------------------
@@ -116,7 +116,7 @@ index 712186d..7b98a72 100644
   * lowlevel drawing routine for text objects
   */
  void
-@@ -1107,7 +1112,7 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
+@@ -1124,7 +1129,7 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
  	      newline.Point1.Y += Text->Y;
  	      newline.Point2.X += Text->X;
  	      newline.Point2.Y += Text->Y;
@@ -125,7 +125,7 @@ index 712186d..7b98a72 100644
  	    }
  
  	  /* move on to next cursor position */
-@@ -1263,19 +1268,9 @@ DrawPadName (PadTypePtr Pad)
+@@ -1280,19 +1285,9 @@ DrawPadName (PadTypePtr Pad)
  void
  DrawLine (LayerTypePtr Layer, LineTypePtr Line)
  {
@@ -148,7 +148,7 @@ index 712186d..7b98a72 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1324,7 +1319,7 @@ DrawRat (RatTypePtr Line)
+@@ -1341,7 +1336,7 @@ DrawRat (RatTypePtr Line)
  	}
      }
    else
@@ -157,7 +157,7 @@ index 712186d..7b98a72 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1518,7 +1513,7 @@ DrawElementPackage (ElementTypePtr Element)
+@@ -1527,7 +1522,7 @@ DrawElementPackage (ElementTypePtr Element)
  
    ELEMENTLINE_LOOP (Element);
    {
@@ -166,7 +166,7 @@ index 712186d..7b98a72 100644
    }
    END_LOOP;
    ARC_LOOP (Element);
-@@ -1595,7 +1590,7 @@ EraseRat (RatTypePtr Rat)
+@@ -1604,7 +1599,7 @@ EraseRat (RatTypePtr Rat)
  		     w * 2, w * 2, 0, 360);
      }
    else
@@ -175,7 +175,7 @@ index 712186d..7b98a72 100644
  }
  
  
-@@ -1664,7 +1659,9 @@ ErasePinName (PinTypePtr Pin)
+@@ -1673,7 +1668,9 @@ ErasePinName (PinTypePtr Pin)
  void
  EraseLine (LineTypePtr Line)
  {
@@ -186,7 +186,7 @@ index 712186d..7b98a72 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1710,7 +1707,7 @@ EraseElement (ElementTypePtr Element)
+@@ -1719,7 +1716,7 @@ EraseElement (ElementTypePtr Element)
  {
    ELEMENTLINE_LOOP (Element);
    {
