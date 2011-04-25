@@ -688,7 +688,7 @@ clearPad_callback (const BoxType * b, void *cl)
   PadTypePtr pad = (PadTypePtr) b;
   int *side = cl;
   if (ON_SIDE (pad, *side) && pad->Mask)
-    _draw_pad (Output.pmGC, Pad, true, mask);
+    _draw_pad (Output.pmGC, pad, true, true);
   return 1;
 }
 
