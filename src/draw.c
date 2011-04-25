@@ -282,6 +282,43 @@ rat_callback (const BoxType * b, void *cl)
   return 1;
 }
 
+static void
+draw_element_package (ELement)
+{
+  /* set color and draw lines, arcs, text and pins */
+  if (doing_pinout || doing_assy)
+    gui->set_color (Output.fgGC, PCB->ElementColor);
+  else if (TEST_FLAG (SELECTEDFLAG, Element))
+    gui->set_color (Output.fgGC, PCB->ElementSelectedColor);
+  else if (FRONT (Element))
+    gui->set_color (Output.fgGC, PCB->ElementColor);
+  else
+    gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
+
+  /* draw lines, arcs, text and pins */
+  ELEMENTLINE_LOOP (Element);
+  {
+    DrawLineLowLevel (line);
+  }
+  END_LOOP;
+  ARC_LOOP (Element);
+  {
+    DrawArcLowLevel (arc);
+  }
+  END_LOOP;
+}
+
+static int
+element_callback (const BoxType * b, void *cl)
+{
+  ElementTypePtr element = (ElementTypePtr) b;
+  int *side = cl;
+
+  if (ON_SIDE (element, *side))
+    draw_element_package (element);
+  return 1;
+}
+
 /* ---------------------------------------------------------------------------
  * prints assembly drawing.
  */
@@ -715,43 +752,6 @@ static int
 text_callback (const BoxType * b, void *cl)
 {
   DrawRegularText ((LayerTypePtr) cl, (TextTypePtr) b);
-  return 1;
-}
-
-static void
-draw_element_package (ELement)
-{
-  /* set color and draw lines, arcs, text and pins */
-  if (doing_pinout || doing_assy)
-    gui->set_color (Output.fgGC, PCB->ElementColor);
-  else if (TEST_FLAG (SELECTEDFLAG, Element))
-    gui->set_color (Output.fgGC, PCB->ElementSelectedColor);
-  else if (FRONT (Element))
-    gui->set_color (Output.fgGC, PCB->ElementColor);
-  else
-    gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
-
-  /* draw lines, arcs, text and pins */
-  ELEMENTLINE_LOOP (Element);
-  {
-    DrawLineLowLevel (line);
-  }
-  END_LOOP;
-  ARC_LOOP (Element);
-  {
-    DrawArcLowLevel (arc);
-  }
-  END_LOOP;
-}
-
-static int
-element_callback (const BoxType * b, void *cl)
-{
-  ElementTypePtr element = (ElementTypePtr) b;
-  int *side = cl;
-
-  if (ON_SIDE (element, *side))
-    draw_element_package (element);
   return 1;
 }
 
