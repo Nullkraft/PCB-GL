@@ -1,15 +1,14 @@
-Bottom: b89ef72d19fbdc513f2b40e916dba08a8bc02fb3
+Bottom: 549c3154a3ff1bd74e777e38cbc3ad9f913225bc
 Top:    91145259fd6d4ad408c2f6ce4ee17908fd3dd9d4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-25 18:25:38 +0100
+Date:   2011-04-25 19:44:55 +0100
 
 draw.c: Split "Gathering" routines from real drawing routines (Element names)
-
 
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 4340526..136a5b3 100644
+index 560e094..136a5b3 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -196,6 +196,24 @@ element_callback (const BoxType * b, void *cl)
@@ -81,10 +80,14 @@ index 4340526..136a5b3 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1697,7 +1710,6 @@ EraseElementName (ElementTypePtr Element)
- 
+@@ -1693,9 +1706,11 @@ EraseElementPinsAndPads (ElementTypePtr Element)
+ void
+ EraseElementName (ElementTypePtr Element)
+ {
++  assert (Gathering);
++
    if (TEST_FLAG (HIDENAMEFLAG, Element))
      return;
--
-   AddPart (&ELEMENT_TEXT (PCB, Element));
+-  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
++  AddPart (&ELEMENT_TEXT (PCB, Element));
  }
