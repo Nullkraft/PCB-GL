@@ -1,0 +1,63 @@
+Bottom: e7c40fae7af9d877ef59d09137cb2ec2de0c41fe
+Top:    604f694e3e60d60a4bb35916dd3592f5991701c9
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 00:22:02 +0100
+
+Refresh of expose-draw-c-internal-drawing
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index bf6b11f..7778243 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -92,7 +92,6 @@ static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
+ static void DrawMask (int side, BoxType *);
+ static void DrawPaste (int side, BoxType *);
+ static void DrawRats (BoxType *);
+-static void DrawSilk (int side, const BoxType *);
+ static int via_callback (const BoxType * b, void *cl);
+ static int pin_callback (const BoxType * b, void *cl);
+ static int pad_callback (const BoxType * b, void *cl);
+@@ -739,7 +738,7 @@ clearPad_callback (const BoxType * b, void *cl)
+  * Draws silk layer.
+  */
+ 
+-static void
++void
+ DrawSilk (int side, const BoxType * drawn_area)
+ {
+ #if 0
+@@ -798,7 +797,7 @@ DrawMaskBoardArea (int mask_type, BoxType *screen)
+ /* ---------------------------------------------------------------------------
+  * draws solder mask layer - this will cover nearly everything
+  */
+-static void
++void
+ DrawMask (int side, BoxType * screen)
+ {
+   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
+@@ -827,7 +826,7 @@ DrawMask (int side, BoxType * screen)
+ /* ---------------------------------------------------------------------------
+  * draws solder paste layer for a given side of the board
+  */
+-static void
++void
+ DrawPaste (int side, BoxType *drawn_area)
+ {
+   gui->set_color (Output.fgGC, PCB->ElementColor);
+diff --git a/src/draw.h b/src/draw.h
+index adfee36..46f67d4 100644
+--- a/src/draw.h
++++ b/src/draw.h
+@@ -72,6 +72,10 @@ void EraseElementName (ElementTypePtr);
+ void EraseObject (int, void *, void *);
+ void LoadBackgroundImage (char *);
+ 
++void DrawMask (int side, BoxType *);
++void DrawSilk (int side, const BoxType *);
++void DrawPaste (int side, BoxType *);
++
+ /*GdkDrawable *draw_get_current_drawable(void);*/
+ 
+ #endif
