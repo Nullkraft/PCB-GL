@@ -1,5 +1,5 @@
-Bottom: 79dc5b246cab1ff2063aace83e713381c302beb5
-Top:    65ff44a75684c6bface301b074b894e138f6bf82
+Bottom: 09918e18e4f1518c7b2741f9a17a5db4926ccfee
+Top:    402d669384a96503ef34e1530d4041608329703a
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 17:06:30 +0100
 
@@ -9,10 +9,10 @@ draw.c: Split "Gathering" routines from real drawing routines (Pads)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 22cc855..0d62a6d 100644
+index 5e40b1b..712186d 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -86,8 +86,6 @@ static const BoxType *clip_box = NULL;
+@@ -89,8 +89,6 @@ static const BoxType *clip_box = NULL;
  static void DrawEverything (BoxTypePtr);
  static void DrawPPV (int group, const BoxType *);
  static int DrawLayerGroup (int, const BoxType *);
@@ -21,7 +21,7 @@ index 22cc855..0d62a6d 100644
  static void DrawLineLowLevel (LineTypePtr);
  static void DrawRegularText (LayerTypePtr, TextTypePtr);
  static void DrawPolygonLowLevel (PolygonTypePtr);
-@@ -97,7 +95,6 @@ static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
+@@ -99,7 +97,6 @@ static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
  static void AddPart (void *);
  static void SetPVColor (PinTypePtr, int);
  static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
@@ -29,7 +29,7 @@ index 22cc855..0d62a6d 100644
  static void DrawMask (int side, BoxType *);
  static void DrawPaste (int side, BoxType *);
  static void DrawRats (BoxType *);
-@@ -563,6 +560,85 @@ pin_callback (const BoxType * b, void *cl)
+@@ -591,6 +588,85 @@ pin_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -115,7 +115,7 @@ index 22cc855..0d62a6d 100644
  static int
  pad_callback (const BoxType * b, void *cl)
  {
-@@ -570,7 +646,7 @@ pad_callback (const BoxType * b, void *cl)
+@@ -598,7 +674,7 @@ pad_callback (const BoxType * b, void *cl)
    int *side = cl;
  
    if (ON_SIDE (pad, *side))
@@ -124,7 +124,7 @@ index 22cc855..0d62a6d 100644
    return 1;
  }
  
-@@ -639,7 +715,7 @@ clearPad_callback (const BoxType * b, void *cl)
+@@ -667,7 +743,7 @@ clearPad_callback (const BoxType * b, void *cl)
    PadTypePtr pad = (PadTypePtr) b;
    int *side = cl;
    if (ON_SIDE (pad, *side) && pad->Mask)
@@ -133,7 +133,7 @@ index 22cc855..0d62a6d 100644
    return 1;
  }
  
-@@ -744,9 +820,9 @@ DrawPaste (int side, BoxType *drawn_area)
+@@ -772,9 +848,9 @@ DrawPaste (int side, BoxType *drawn_area)
      if (ON_SIDE (pad, side) && !TEST_FLAG (NOPASTEFLAG, pad) && pad->Mask > 0)
        {
          if (pad->Mask < pad->Thickness)
@@ -145,7 +145,7 @@ index 22cc855..0d62a6d 100644
        }
    }
    ENDALL_LOOP;
-@@ -865,9 +941,6 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -892,9 +968,6 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
    return rv;
  }
  
@@ -155,7 +155,7 @@ index 22cc855..0d62a6d 100644
  static void
  GatherPVName (PinTypePtr Ptr)
  {
-@@ -898,107 +971,36 @@ GatherPVName (PinTypePtr Ptr)
+@@ -925,107 +998,36 @@ GatherPVName (PinTypePtr Ptr)
    AddPart (&box);
  }
  
@@ -273,7 +273,7 @@ index 22cc855..0d62a6d 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1229,27 +1231,11 @@ DrawPinName (PinTypePtr Pin)
+@@ -1237,27 +1239,11 @@ DrawPinName (PinTypePtr Pin)
  void
  DrawPad (PadTypePtr Pad)
  {
@@ -305,7 +305,7 @@ index 22cc855..0d62a6d 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1258,16 +1244,9 @@ DrawPad (PadTypePtr Pad)
+@@ -1266,16 +1252,9 @@ DrawPad (PadTypePtr Pad)
  void
  DrawPadName (PadTypePtr Pad)
  {
@@ -325,7 +325,7 @@ index 22cc855..0d62a6d 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1562,7 +1541,7 @@ DrawElementPinsAndPads (ElementTypePtr Element)
+@@ -1560,7 +1539,7 @@ DrawElementPinsAndPads (ElementTypePtr Element)
        PAD_LOOP (Element);
        {
          if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
@@ -334,7 +334,7 @@ index 22cc855..0d62a6d 100644
        }
        END_LOOP;
        PIN_LOOP (Element);
-@@ -1625,9 +1604,11 @@ EraseViaName (PinTypePtr Via)
+@@ -1637,9 +1616,11 @@ EraseViaName (PinTypePtr Via)
  void
  ErasePad (PadTypePtr Pad)
  {
@@ -348,7 +348,7 @@ index 22cc855..0d62a6d 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1636,7 +1617,9 @@ ErasePad (PadTypePtr Pad)
+@@ -1648,7 +1629,9 @@ ErasePad (PadTypePtr Pad)
  void
  ErasePadName (PadTypePtr Pad)
  {
@@ -359,7 +359,7 @@ index 22cc855..0d62a6d 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1743,9 +1726,7 @@ EraseElementPinsAndPads (ElementTypePtr Element)
+@@ -1755,9 +1738,7 @@ EraseElementPinsAndPads (ElementTypePtr Element)
    END_LOOP;
    PAD_LOOP (Element);
    {
