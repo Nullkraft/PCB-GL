@@ -1,5 +1,5 @@
 Bottom: d356ad690f6ce6bdad48187578fbf9e4eb92fb29
-Top:    8010ff2901c38d10212e4281db08ce1c676ed0eb
+Top:    b7be02c28b0a823e4febc6d0fe6280aca0572320
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 15:41:31 +0100
 
@@ -42,7 +42,7 @@ index 9bad677..78df9fe 100644
  	  /* change the displayed name of elements */
  	case F_Value:
 diff --git a/src/draw.c b/src/draw.c
-index 39605ca..2afcf98 100644
+index 39605ca..10da1dd 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -80,7 +80,6 @@ static const BoxType *clip_box = NULL;
@@ -53,7 +53,23 @@ index 39605ca..2afcf98 100644
  static void DrawEverything (BoxTypePtr);
  static void DrawPPV (int group, const BoxType *);
  static int DrawLayerGroup (int, const BoxType *);
-@@ -220,7 +219,7 @@ ClearAndRedrawOutput (void)
+@@ -197,15 +196,6 @@ Draw (void)
+ }
+ 
+ /* ---------------------------------------------------------------------------
+- * redraws the output area without clearing it
+- */
+-void
+-RedrawOutput (BoxTypePtr area)
+-{
+-  Redraw ();
+-}
+-
+-/* ---------------------------------------------------------------------------
+  * redraws the output area after clearing it
+  */
+ void
+@@ -220,7 +210,7 @@ ClearAndRedrawOutput (void)
  /* ---------------------------------------------------------------------- 
   * redraws all the data by the event handlers
   */
