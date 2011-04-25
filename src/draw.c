@@ -469,7 +469,7 @@ static int
 pin_callback (const BoxType * b, void *cl)
 {
   SetPVColor (Pin, PIN_TYPE);
-  DrawPinOrViaLowLevel (Pin, holeToo);
+  DrawPinOrViaLowLevel (Pin, false);
   if (!TEST_FLAG (HOLEFLAG, Pin) && TEST_FLAG (DISPLAYNAMEFLAG, Pin))
     DrawPinOrViaNameLowLevel (Pin);
   return 1;
