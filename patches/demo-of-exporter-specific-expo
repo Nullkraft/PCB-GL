@@ -1,5 +1,5 @@
 Bottom: ab7f409988baf3c589217033652f176b1174d710
-Top:    bb13605da6fe7a20f8a2c08816667b571fb93534
+Top:    c52013490e80a08462fdbecfaaa8eff42f7d7c7e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-21 02:41:14 +0100
 
@@ -292,7 +292,7 @@ index 7d529ba..1e1dee0 100644
 +    PrintFab ();
 +}
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index d5843ef..fcd84a9 100644
+index d5843ef..91deeb6 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -346,26 +346,6 @@ gerber_get_export_options (int *n)
@@ -322,7 +322,7 @@ index d5843ef..fcd84a9 100644
  static void
  maybe_close_f ()
  {
-@@ -383,17 +363,124 @@ maybe_close_f ()
+@@ -383,17 +363,102 @@ maybe_close_f ()
  static BoxType region;
  
  static void
@@ -331,8 +331,6 @@ index d5843ef..fcd84a9 100644
 +  int i, ngroups, side;
 +  int plated;
 +  int component, solder;
-+  int do_group[MAX_LAYER];     /* This is the list of layer groups we will draw. */
-+  int drawn_groups[MAX_LAYER]; /* This is the reverse of the order in which we draw them. */
 +
 +  HID *old_gui = gui;
 +  hidGC savebg = Output.bgGC;
@@ -367,20 +365,8 @@ index d5843ef..fcd84a9 100644
 +        continue;
 +
 +      if (gui->set_layer (0, group, 0))
-+        {
-+          if (DrawLayerGroup (group, drawn_area))
-+            {
-+              r_search (PCB->Data->via_tree, drawn_area, NULL, pin_callback, NULL);
-+              r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
-+
-+              if (group == component_group || group == solder_group)
-+                {
-+                  SWAP_IDENT = (group == solder_group);
-+                  r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, NULL);
-+                  SWAP_IDENT = save_swap;
-+                }
-+            }
-+        }
++        if (DrawLayerGroup (group, drawn_area))
++          DrawPPV (group, drawn_area);
 +    }
 +
 +  count_holes (drawn_area, &nplated, &nunplated);
@@ -400,32 +386,24 @@ index d5843ef..fcd84a9 100644
 +    }
 +
 +  if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
-+    {
-+      SWAP_IDENT = 0;
-+      DrawMask (drawn_area);
-+      SWAP_IDENT = save_swap;
-+    }
++    DrawMask (COMPONENT_LAYER, drawn_area);
 +
 +  if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
-+    {
-+      SWAP_IDENT = 1;
-+      DrawMask (drawn_area);
-+      SWAP_IDENT = save_swap;
-+    }
++    DrawMask (SOLDER_LAYER, drawn_area);
 +
 +  if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
-+    DrawSilk (0, component_silk_layer, drawn_area);
++    DrawSilk (COMPONENT_LAYER, drawn_area);
 +
 +  if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
-+    DrawSilk (1, solder_silk_layer, drawn_area);
++    DrawSilk (SOLDER_LAYER, drawn_area);
 +
 +  paste_empty = IsPasteEmpty (COMPONENT_LAYER);
 +  if (gui->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
-+    DrawPaste (COMPONENT_LAYER);
++    DrawPaste (COMPONENT_LAYER, drawn_area);
 +
 +  paste_empty = IsPasteEmpty (SOLDER_LAYER);
 +  if (gui->set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
-+    DrawPaste (SOLDER_LAYER);
++    DrawPaste (SOLDER_LAYER, drawn_area);
 +
 +  if (gui->set_layer ("fab", SL (FAB, 0), 0))
 +    PrintFab ();
@@ -454,7 +432,7 @@ index d5843ef..fcd84a9 100644
  
    if (!options)
      {
-@@ -438,24 +525,20 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -438,24 +503,20 @@ gerber_do_export (HID_Attr_Val * options)
    else
      {
        memset (print_group, 0, sizeof (print_group));
@@ -490,7 +468,7 @@ index d5843ef..fcd84a9 100644
    linewidth = -1;
    lastcap = -1;
    lastgroup = -1;
-@@ -473,17 +556,13 @@ gerber_do_export (HID_Attr_Val * options)
+@@ -473,17 +534,13 @@ gerber_do_export (HID_Attr_Val * options)
    lastgroup = -1;
    c_layerapps = 0;
    finding_apertures = 1;
