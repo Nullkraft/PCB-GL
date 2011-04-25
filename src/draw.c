@@ -455,7 +455,7 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
 }
 
 static void
-draw_pv_name (PinType *pv)
+_draw_pv_name (PinType *pv)
 {
   BoxType box;
   bool vert;
@@ -497,7 +497,7 @@ draw_pv_name (PinType *pv)
 }
 
 static void
-draw_pv (PinTypePtr pv, bool draw_hole)
+_draw_pv (PinTypePtr pv, bool draw_hole)
 {
   if (TEST_FLAG (THINDRAWFLAG, PCB))
     gui->thindraw_pcb_pv (Output.fgGC, Output.fgGC, pv, draw_hole, false);
@@ -505,21 +505,21 @@ draw_pv (PinTypePtr pv, bool draw_hole)
     gui->fill_pcb_pv (Output.fgGC, Output.bgGC, pv, draw_hole, false);
 
   if (!TEST_FLAG (HOLEFLAG, pv) && TEST_FLAG (DISPLAYNAMEFLAG, pv))
-    draw_pv_name (pv);
+    _draw_pv_name (pv);
 }
 
 static void
 draw_pin (PinTypePtr pin, bool draw_hole)
 {
   SetPVColor (pin, PIN_TYPE);
-  draw_pv (pin, draw_hole);
+  _draw_pv (pin, draw_hole);
 }
 
 static void
 draw_via (PinTypePtr via, bool draw_hole)
 {
   SetPVColor (via, VIA_TYPE);
-  draw_pv (via, draw_hole);
+  _draw_pv (via, draw_hole);
 }
 
 static int
