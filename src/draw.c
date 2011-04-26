@@ -83,8 +83,6 @@ static const BoxType *clip_box = NULL;
  * some local prototypes
  */
 static void DrawEverything (BoxTypePtr);
-static void DrawPPV (int group, const BoxType *);
-static int DrawLayerGroup (int, const BoxType *);
 static void AddPart (void *);
 static void SetPVColor (PinTypePtr, int);
 static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
