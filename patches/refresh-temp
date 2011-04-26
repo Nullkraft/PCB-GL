@@ -1,0 +1,39 @@
+Bottom: 55d96083299209962f94cc22bc131297440fcbcb
+Top:    f8cadc25daf6b7458cc6574cd7f3027eee6d9b93
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 01:36:11 +0100
+
+Refresh of demo-of-exporter-specific-expo
+
+---
+
+diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
+index 676a6fe..1eb1e2a 100644
+--- a/src/hid/gerber/gerber.c
++++ b/src/hid/gerber/gerber.c
+@@ -420,7 +420,6 @@ gerber_expose (HID * hid, BoxType *drawn_area, void *item)
+   int i;
+   int group;
+   int nplated, nunplated;
+-  extern bool Gathering;
+ 
+   HID *old_gui = gui;
+   hidGC savebg = Output.bgGC;
+@@ -438,8 +437,6 @@ gerber_expose (HID * hid, BoxType *drawn_area, void *item)
+   PCB->Data->SILKLAYER.Color = PCB->ElementColor;
+   PCB->Data->BACKSILKLAYER.Color = PCB->InvisibleObjectsColor;
+ 
+-  Gathering = false;
+-
+   memset (print_group, 0, sizeof (print_group));
+   for (i = 0; i < max_copper_layer; i++)
+     {
+@@ -497,8 +494,6 @@ gerber_expose (HID * hid, BoxType *drawn_area, void *item)
+   Output.fgGC = savefg;
+   Output.bgGC = savebg;
+   Output.pmGC = savepm;
+-
+-  Gathering = true;
+ }
+ 
+ static void
