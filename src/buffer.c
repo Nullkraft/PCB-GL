@@ -521,6 +521,9 @@ void
 AddSelectedToBuffer (BufferTypePtr Buffer, LocationType X, LocationType Y,
 		     bool LeaveSelected)
 {
+  /* switch crosshair off because adding objects to the pastebuffer
+   * may change the 'valid' area for the cursor
+   */
   if (!LeaveSelected)
     ExtraFlag = SELECTEDFLAG;
   notify_crosshair_change (false);
