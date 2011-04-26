@@ -1,5 +1,5 @@
 Bottom: b5c069a9f727bf87c3b0c1046689d376b65a80df
-Top:    c847ee5ca690f767af3134310fd52b97fa7e8f52
+Top:    8aea2e4954ed15925e74f7aac08f8297102ddb5e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 14:01:44 +0100
 
@@ -22,7 +22,7 @@ index 5abbfb2..34cd5b3 100644
  	drill.h \
  	edif.y \
 diff --git a/src/draw.c b/src/draw.c
-index 8e8821d..2704362 100644
+index 8e8821d..cc04a43 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -41,6 +41,7 @@
@@ -168,7 +168,7 @@ index 8e8821d..2704362 100644
  {
 -  draw_pin ((PinType *)b, false);
 +  set_pv_color ((PinType *)b, PIN_TYPE);
-+  dapi->draw_pin ((PinType *)b, cl);
++  dapi->draw_pin ((PinType *)b, NULL, NULL);
    return 1;
  }
  
@@ -180,7 +180,7 @@ index 8e8821d..2704362 100644
 -  SetPVColor (via, VIA_TYPE);
 -  _draw_pv (via, draw_hole);
 +  set_pv_inlayer_color ((PinType *)b, cl, PIN_TYPE);
-+  dapi->draw_pin ((PinType *)b, NULL);
++  dapi->draw_pin ((PinType *)b, NULL, NULL);
 +  return 1;
  }
  
@@ -189,7 +189,7 @@ index 8e8821d..2704362 100644
  {
 -  draw_via ((PinType *)b, false);
 +  set_pv_color ((PinType *)b, VIA_TYPE);
-+  dapi->draw_via ((PinType *)b, cl);
++  dapi->draw_via ((PinType *)b, NULL, NULL);
    return 1;
  }
  
@@ -235,7 +235,7 @@ index 8e8821d..2704362 100644
 -
 -  DrawTextLowLevel (&text, 0);
 +  set_pv_inlayer_color ((PinType *)b, cl, VIA_TYPE);
-+  dapi->draw_via ((PinType *)b, NULL);
++  dapi->draw_via ((PinType *)b, NULL, NULL);
 +  return 1;
  }
  
@@ -286,7 +286,7 @@ index 8e8821d..2704362 100644
  
 -  if (doing_pinout || TEST_FLAG (DISPLAYNAMEFLAG, pad))
 -    draw_pad_name (pad);
-+      dapi->draw_pad (pad, NULL);
++      dapi->draw_pad (pad, NULL, NULL);
 +    }
 +  return 1;
  }
@@ -312,7 +312,7 @@ index 8e8821d..2704362 100644
 +      else if (TEST_FLAG (FOUNDFLAG, pad))    gui->set_color (Output.fgGC, PCB->ConnectedColor);
 +      else                                    gui->set_color (Output.fgGC, layer->Color);
 +
-+      dapi->draw_pad (pad, NULL);
++      dapi->draw_pad (pad, NULL, NULL);
 +    }
    return 1;
  }
@@ -329,7 +329,7 @@ index 8e8821d..2704362 100644
 +        else if (FRONT (pad))                   gui->set_color (Output.fgGC, PCB->PinColor);
 +        else                                    gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
 +
-+        dapi->draw_pad (pad, NULL);
++        dapi->draw_pad (pad, NULL, NULL);
 +      }
    }
    END_LOOP;
@@ -337,13 +337,13 @@ index 8e8821d..2704362 100644
    {
 -    draw_pin (pin, true);
 +    set_pv_color (pin, PIN_TYPE);
-+    dapi->draw_pin (pin, NULL);
++    dapi->draw_pin (pin, NULL, NULL);
 +
 +    if (TEST_FLAG (WARNFLAG, pin))          gui->set_color (Output.fgGC, PCB->WarnColor);
 +    else if (TEST_FLAG (SELECTEDFLAG, pin)) gui->set_color (Output.fgGC, PCB->PinSelectedColor);
 +    else                                    gui->set_color (Output.fgGC, Settings.BlackColor);
 +
-+    dapi->draw_hole (pin, NULL);
++    dapi->draw_hole (pin, NULL, NULL);
    }
    END_LOOP;
  }
@@ -383,7 +383,7 @@ index 8e8821d..2704362 100644
 -                     pv->X, pv->Y, pv->DrillingHole / 2,
 -                     pv->DrillingHole / 2, 0, 360);
 -    }
-+  dapi->draw_hole (pv, NULL);
++  dapi->draw_hole (pv, NULL, NULL);
    return 1;
  }
  
@@ -431,7 +431,7 @@ index 8e8821d..2704362 100644
 +  else if (TEST_FLAG (FOUNDFLAG, line)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
 +  else                                  gui->set_color (Output.fgGC, layer->Color);
 +
-+  dapi->draw_line (line, cl);
++  dapi->draw_line (line, NULL, NULL);
    return 1;
  }
  
@@ -468,7 +468,7 @@ index 8e8821d..2704362 100644
 -    }
 -  else
 -    _draw_line ((LineType *) rat);
-+  dapi->draw_rat (rat, cl);
++  dapi->draw_rat (rat, NULL, NULL);
    return 1;
  }
  
@@ -515,7 +515,7 @@ index 8e8821d..2704362 100644
 +  else if (TEST_FLAG (FOUNDFLAG, arc)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
 +  else                                 gui->set_color (Output.fgGC, layer->Color);
 +
-+  dapi->draw_arc (arc, cl);
++  dapi->draw_arc (arc, NULL, NULL);
    return 1;
  }
  
@@ -525,14 +525,14 @@ index 8e8821d..2704362 100644
    {
 -    _draw_line (line);
 +    //_draw_line (line);
-+    dapi->draw_line (line, NULL);
++    dapi->draw_line (line, NULL, NULL);
    }
    END_LOOP;
    ARC_LOOP (element);
    {
 -    _draw_arc (arc);
 +    //_draw_arc (arc);
-+    dapi->draw_arc (arc, NULL);
++    dapi->draw_arc (arc, NULL, NULL);
    }
    END_LOOP;
  }
@@ -548,14 +548,14 @@ index 8e8821d..2704362 100644
 -    gui->thindraw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
 -  else
 -    gui->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
-+  dapi->draw_pin_mask ((PinType *) b, cl);
++  dapi->draw_pin_mask ((PinType *) b, NULL, NULL);
 +  return 1;
 +}
 +
 +static int
 +via_mask_callback (const BoxType * b, void *cl)
 +{
-+  dapi->draw_via_mask ((PinType *) b, cl);
++  dapi->draw_via_mask ((PinType *) b, NULL, NULL);
    return 1;
  }
  
@@ -599,7 +599,7 @@ index 8e8821d..2704362 100644
 +  else if (TEST_FLAG (FOUNDFLAG, polygon)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
 +  else                                     gui->set_color (Output.fgGC, i->layer->Color);
  
-+  dapi->draw_poly (polygon, cl);
++  dapi->draw_poly (polygon, i->drawn_area, NULL);
    return 1;
  }
  
@@ -612,7 +612,7 @@ index 8e8821d..2704362 100644
 -  if (ON_SIDE (pad, *side) && pad->Mask)
 -    _draw_pad (Output.pmGC, pad, true, true);
 +  if (ON_SIDE (pad, *side))
-+    dapi->draw_pad_mask (pad, NULL);
++    dapi->draw_pad_mask (pad, NULL, NULL);
    return 1;
  }
  
@@ -654,7 +654,7 @@ index 8e8821d..2704362 100644
 -          _draw_pad (Output.fgGC, pad, false, false);
 -      }
 +    if (ON_SIDE (pad, side))
-+      dapi->draw_pad_paste (pad, NULL);
++      dapi->draw_pad_paste (pad, NULL, NULL);
    }
    ENDALL_LOOP;
  }
@@ -760,10 +760,10 @@ index 8e8821d..2704362 100644
   */
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
 new file mode 100644
-index 0000000..0bdd30f
+index 0000000..aa25867
 --- /dev/null
 +++ b/src/draw_funcs.c
-@@ -0,0 +1,201 @@
+@@ -0,0 +1,198 @@
 +
 +#include "global.h"
 +#include "data.h"
@@ -779,13 +779,13 @@ index 0000000..0bdd30f
 +}
 +
 +static void
-+draw_pin (PinType *pin, void *userdata)
++draw_pin (PinType *pin, BoxType *drawn_area, void *userdata)
 +{
 +  _draw_pv (pin, false);
 +}
 +
 +static void
-+draw_pin_mask (PinType *pin, void *userdata)
++draw_pin_mask (PinType *pin, BoxType *drawn_area, void *userdata)
 +{
 +  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
 +    gui->thindraw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
@@ -794,13 +794,13 @@ index 0000000..0bdd30f
 +}
 +
 +static void
-+draw_via (PinType *via, void *userdata)
++draw_via (PinType *via, BoxType *drawn_area, void *userdata)
 +{
 +  _draw_pv (via, false);
 +}
 +
 +static void
-+draw_via_mask (PinType *via, void *userdata)
++draw_via_mask (PinType *via, BoxType *drawn_area, void *userdata)
 +{
 +  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
 +    gui->thindraw_pcb_pv (Output.pmGC, Output.pmGC, via, false, true);
@@ -809,7 +809,7 @@ index 0000000..0bdd30f
 +}
 +
 +static void
-+draw_hole (PinType *pv, void *userdata)
++draw_hole (PinType *pv, BoxType *drawn_area, void *userdata)
 +{
 +  gui->set_line_cap (Output.fgGC, Round_Cap);
 +  gui->set_line_width (Output.fgGC, 0);
@@ -836,13 +836,13 @@ index 0000000..0bdd30f
 +}
 +
 +static void
-+draw_pad (PadType *pad, void *userdata)
++draw_pad (PadType *pad, BoxType *drawn_area, void *userdata)
 +{
 +  _draw_pad (Output.fgGC, pad, false, false);
 +}
 +
 +static void
-+draw_pad_mask (PadType *pad, void *userdata)
++draw_pad_mask (PadType *pad, BoxType *drawn_area, void *userdata)
 +{
 +  if (pad->Mask <= 0)
 +    return;
@@ -851,7 +851,7 @@ index 0000000..0bdd30f
 +}
 +
 +static void
-+draw_pad_paste (PadType *pad, void *userdata)
++draw_pad_paste (PadType *pad, BoxType *drawn_area, void *userdata)
 +{
 +  if (TEST_FLAG (NOPASTEFLAG, pad) || pad->Mask <= 0)
 +    return;
@@ -877,13 +877,13 @@ index 0000000..0bdd30f
 +}
 +
 +static void
-+draw_line (LineType *line, void *userdata)
++draw_line (LineType *line, BoxType *drawn_area, void *userdata)
 +{
 +  _draw_line (line);
 +}
 +
 +static void
-+draw_rat (RatType *rat, void *userdata)
++draw_rat (RatType *rat, BoxType *drawn_area, void *userdata)
 +{
 +  if (Settings.RatThickness < 20)
 +    rat->Thickness = pixel_slop * Settings.RatThickness;
@@ -904,7 +904,7 @@ index 0000000..0bdd30f
 +}
 +
 +static void
-+draw_arc (ArcType *arc, void *userdata)
++draw_arc (ArcType *arc, BoxType *drawn_area, void *userdata)
 +{
 +  if (!arc->Thickness)
 +    return;
@@ -920,11 +920,8 @@ index 0000000..0bdd30f
 +}
 +
 +static void
-+draw_poly (PolygonType *polygon, void *userdata)
++draw_poly (PolygonType *polygon, BoxType *drawn_area, void *userdata)
 +{
-+  /* HACK */
-+  BoxType *drawn_area = NULL;
-+
 +  if (!polygon->Clipped)
 +    return;
 +
@@ -967,23 +964,23 @@ index 0000000..0bdd30f
 +struct draw_funcs *dapi = &d_f;
 diff --git a/src/draw_funcs.h b/src/draw_funcs.h
 new file mode 100644
-index 0000000..d677045
+index 0000000..1f97d82
 --- /dev/null
 +++ b/src/draw_funcs.h
 @@ -0,0 +1,16 @@
 +struct draw_funcs {
-+  void (*draw_pin)       (PinType *,     void *);
-+  void (*draw_pin_mask)  (PinType *,     void *);
-+  void (*draw_via)       (PinType *,     void *);
-+  void (*draw_via_mask)  (PinType *,     void *);
-+  void (*draw_hole)      (PinType *,     void *);
-+  void (*draw_pad)       (PadType *,     void *);
-+  void (*draw_pad_mask)  (PadType *,     void *);
-+  void (*draw_pad_paste) (PadType *,     void *);
-+  void (*draw_line)      (LineType *,    void *);
-+  void (*draw_rat)       (RatType *,     void *);
-+  void (*draw_arc)       (ArcType *,     void *);
-+  void (*draw_poly)      (PolygonType *, void *);
++  void (*draw_pin)       (PinType *,     const BoxType *, void *);
++  void (*draw_pin_mask)  (PinType *,     const BoxType *, void *);
++  void (*draw_via)       (PinType *,     const BoxType *, void *);
++  void (*draw_via_mask)  (PinType *,     const BoxType *, void *);
++  void (*draw_hole)      (PinType *,     const BoxType *, void *);
++  void (*draw_pad)       (PadType *,     const BoxType *, void *);
++  void (*draw_pad_mask)  (PadType *,     const BoxType *, void *);
++  void (*draw_pad_paste) (PadType *,     const BoxType *, void *);
++  void (*draw_line)      (LineType *,    const BoxType *, void *);
++  void (*draw_rat)       (RatType *,     const BoxType *, void *);
++  void (*draw_arc)       (ArcType *,     const BoxType *, void *);
++  void (*draw_poly)      (PolygonType *, const BoxType *, void *);
 +};
 +
 +extern struct draw_funcs *dapi;
