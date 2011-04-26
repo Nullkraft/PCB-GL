@@ -1,0 +1,33 @@
+Bottom: c36ce8e2bad54aa2dec9f15b2e03af292038b928
+Top:    2976c151508ce4865d87cc8244632d61bcb7c2a0
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 16:29:47 +0100
+
+Refresh of continue-with-crazy-idea
+
+---
+
+diff --git a/src/draw_funcs.c b/src/draw_funcs.c
+index 0bdd30f..8392f43 100644
+--- a/src/draw_funcs.c
++++ b/src/draw_funcs.c
+@@ -196,6 +196,7 @@ struct draw_funcs d_f = {
+   .draw_rat       = draw_rat,
+   .draw_arc       = draw_arc,
+   .draw_poly      = draw_poly,
++  .draw_layer     = draw_layer,
+ };
+ 
+ struct draw_funcs *dapi = &d_f;
+diff --git a/src/draw_funcs.h b/src/draw_funcs.h
+index d677045..3fc6774 100644
+--- a/src/draw_funcs.h
++++ b/src/draw_funcs.h
+@@ -11,6 +11,7 @@ struct draw_funcs {
+   void (*draw_rat)       (RatType *,     void *);
+   void (*draw_arc)       (ArcType *,     void *);
+   void (*draw_poly)      (PolygonType *, void *);
++  void (*draw_layer)     (LayerType *,   void *);
+ };
+ 
+ extern struct draw_funcs *dapi;
