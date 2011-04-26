@@ -1,5 +1,5 @@
 Bottom: bcf7736d89a2d89750a2f4766ba2fe66a48e9171
-Top:    31bc4e539c2e2d95b81b9c9723cca51b2d9c6587
+Top:    d82222c2c78634352bb339ba72f39de5b2846159
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 17:06:30 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" routines from real drawing routines (Pads)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index f40f06d..25e446d 100644
+index f40f06d..9051686 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -89,8 +89,6 @@ static const BoxType *clip_box = NULL;
@@ -130,6 +130,15 @@ index f40f06d..25e446d 100644
  
  static void
  draw_element_name (ElementType *element)
+@@ -314,7 +399,7 @@ draw_element_pins_and_pads (ElementType *element)
+   PAD_LOOP (element);
+   {
+     if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
+-      DrawPad (pad);
++      draw_pad (pad);
+   }
+   END_LOOP;
+   PIN_LOOP (element);
 @@ -623,17 +708,6 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
      }
  }
@@ -187,7 +196,7 @@ index f40f06d..25e446d 100644
 - * lowlevel drawing routine for pads
 - */
 -
- static void
+-static void
 -DrawPadLowLevel (hidGC gc, PadTypePtr Pad, bool clear, bool mask)
 -{
 -  if (Gathering)
@@ -210,7 +219,7 @@ index f40f06d..25e446d 100644
 - * lowlevel drawing routine for pad names
 - */
 -
--static void
+ static void
 -DrawPadNameLowLevel (PadTypePtr Pad)
 +GatherPadName (PadTypePtr Pad)
  {
@@ -349,52 +358,7 @@ index f40f06d..25e446d 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1579,6 +1556,7 @@ DrawElementPackage (ElementTypePtr Element)
- void
- DrawElementPinsAndPads (ElementTypePtr Element)
- {
-+<<<<<<< current
-   assert (Gathering);
- 
-   PAD_LOOP (Element);
-@@ -1592,6 +1570,36 @@ DrawElementPinsAndPads (ElementTypePtr Element)
-     DrawPin (pin);
-   }
-   END_LOOP;
-+=======
-+  if (Gathering)
-+    {
-+      PAD_LOOP (Element);
-+      {
-+        if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
-+          draw_pad (pad);
-+      }
-+      END_LOOP;
-+      PIN_LOOP (Element);
-+      {
-+        DrawPin (pin);
-+      }
-+      END_LOOP;
-+    }
-+  else
-+    {
-+      PAD_LOOP (Element);
-+      {
-+        if (doing_pinout || doing_assy || FRONT (pad) || PCB->InvisibleObjectsOn)
-+          DrawPad (pad);
-+      }
-+      END_LOOP;
-+      PIN_LOOP (Element);
-+      {
-+        draw_pin (pin, true);
-+      }
-+      END_LOOP;
-+    }
-+>>>>>>> patched
- }
- 
- /* ---------------------------------------------------------------------------
-@@ -1646,9 +1654,11 @@ EraseViaName (PinTypePtr Via)
+@@ -1646,9 +1623,11 @@ EraseViaName (PinTypePtr Via)
  void
  ErasePad (PadTypePtr Pad)
  {
@@ -408,7 +372,7 @@ index f40f06d..25e446d 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1657,7 +1667,9 @@ ErasePad (PadTypePtr Pad)
+@@ -1657,7 +1636,9 @@ ErasePad (PadTypePtr Pad)
  void
  ErasePadName (PadTypePtr Pad)
  {
@@ -419,7 +383,7 @@ index f40f06d..25e446d 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1764,9 +1776,7 @@ EraseElementPinsAndPads (ElementTypePtr Element)
+@@ -1764,9 +1745,7 @@ EraseElementPinsAndPads (ElementTypePtr Element)
    END_LOOP;
    PAD_LOOP (Element);
    {
