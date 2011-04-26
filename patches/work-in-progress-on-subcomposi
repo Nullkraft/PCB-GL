@@ -1,5 +1,5 @@
-Bottom: abf454136e1ef159e4284269f8678778924fdf17
-Top:    3b9fe6d3dd4468bbe0b0c60fa46a2465c862cfae
+Bottom: 629f74aefa3b4817bb9d854f8ae2da5031abe282
+Top:    6ce05438c50b712f11d73eb4a2607e6f3fb9edd0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 01:38:34 +0100
 
@@ -436,7 +436,7 @@ index d5843ef..b65d678 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 1f8f7fa..293c287 100644
+index 1885e46..dae3366 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,6 +21,7 @@
@@ -447,7 +447,7 @@ index 1f8f7fa..293c287 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -64,6 +65,7 @@ int
+@@ -63,6 +64,7 @@ int
  ghid_set_layer (const char *name, int group, int empty)
  {
    render_priv *priv = gport->render_priv;
@@ -455,7 +455,7 @@ index 1f8f7fa..293c287 100644
    int idx = group;
    if (idx >= 0 && idx < max_group)
      {
-@@ -78,6 +80,31 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -77,6 +79,31 @@ ghid_set_layer (const char *name, int group, int empty)
        idx = PCB->LayerGroups.Entries[group][idx];
      }
  
@@ -487,7 +487,7 @@ index 1f8f7fa..293c287 100644
    if (idx >= 0 && idx < max_copper_layer + 2)
      {
        priv->trans_lines = true;
-@@ -94,7 +121,7 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -93,7 +120,7 @@ ghid_set_layer (const char *name, int group, int empty)
  	    return TEST_FLAG (SHOWMASKFLAG, PCB);
  	  return 0;
  	case SL_SILK:
@@ -496,7 +496,7 @@ index 1f8f7fa..293c287 100644
  	  if (SL_MYSIDE (idx))
  	    return PCB->ElementOn;
  	  return 0;
-@@ -282,13 +309,7 @@ ghid_draw_bg_image (void)
+@@ -281,13 +308,7 @@ ghid_draw_bg_image (void)
  void
  ghid_use_mask (int use_it)
  {
@@ -511,7 +511,7 @@ index 1f8f7fa..293c287 100644
  
    /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
    if (use_it == HID_LIVE_DRAWING ||
-@@ -300,6 +321,7 @@ ghid_use_mask (int use_it)
+@@ -299,6 +320,7 @@ ghid_use_mask (int use_it)
    if (use_it == cur_mask)
      return;
  
@@ -519,7 +519,7 @@ index 1f8f7fa..293c287 100644
    hidgl_flush_triangles (&buffer);
  
    switch (use_it)
-@@ -310,21 +332,24 @@ ghid_use_mask (int use_it)
+@@ -309,21 +331,24 @@ ghid_use_mask (int use_it)
  
      case HID_MASK_CLEAR:
        /* Write '1' to the stencil buffer where the solder-mask should not be drawn. */
@@ -549,7 +549,7 @@ index 1f8f7fa..293c287 100644
        glDisable (GL_STENCIL_TEST);                // Disable Stencil test
        break;
      }
-@@ -898,6 +923,17 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -897,6 +922,17 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_start_drawing (port);
  
@@ -567,7 +567,7 @@ index 1f8f7fa..293c287 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
-@@ -915,12 +951,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -914,12 +950,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -588,7 +588,7 @@ index 1f8f7fa..293c287 100644
  
    region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
    region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-@@ -946,6 +990,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -945,6 +989,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
@@ -601,7 +601,7 @@ index 1f8f7fa..293c287 100644
    glPushMatrix ();
    glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
              (ghid_flip_y ? -1. : 1.) / port->zoom,
-@@ -1067,9 +1117,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1066,9 +1116,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  gport->bg_color.green / 65535.,
                  gport->bg_color.blue / 65535.,
                  1.);
@@ -615,7 +615,7 @@ index 1f8f7fa..293c287 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
-@@ -1177,8 +1230,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1176,8 +1229,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                  gport->bg_color.green / 65535.,
                  gport->bg_color.blue / 65535.,
                  1.);
