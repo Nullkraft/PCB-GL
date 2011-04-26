@@ -3839,8 +3839,8 @@ hid_lesstif_init ()
   memset (&lesstif_hid, 0, sizeof (HID));
 
   common_draw_helpers_init (&lesstif_hid);
-  lesstif_hid.struct_size             = sizeof (HID);
 
+  lesstif_hid.struct_size             = sizeof (HID);
   lesstif_hid.name                    = "lesstif";
   lesstif_hid.description             = "LessTif - a Motif clone for X/Unix";
   lesstif_hid.gui                     = 1;
