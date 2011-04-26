@@ -1,0 +1,22 @@
+Bottom: 4e37729b1189c3a2b33de6524b9db37c6d1cb9a9
+Top:    bcf7736d89a2d89750a2f4766ba2fe66a48e9171
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 01:07:10 +0100
+
+Refresh of draw-c-separate-gathering-rout
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 4a51e78..f40f06d 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -104,8 +104,6 @@ static void DrawMask (int side, BoxType *);
+ static void DrawPaste (int side, BoxType *);
+ static void DrawRats (BoxType *);
+ static void DrawSilk (int side, const BoxType *);
+-static int via_callback (const BoxType * b, void *cl);
+-static int pin_callback (const BoxType * b, void *cl);
+ static int pad_callback (const BoxType * b, void *cl);
+ 
+ /*--------------------------------------------------------------------------------------
