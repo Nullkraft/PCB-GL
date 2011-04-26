@@ -3,10 +3,12 @@ Top:    dba5b611712d663d0300dc16b0dfe39cc123bfd3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 14:06:59 +0100
 
-draw.c: DrawRat() and EraseRat() should just gather the affected area
+draw.c: EraseRat() should just gather the affected area
 
 These were missed (or incorrectly converted) in the previous patch series
 which split gathering routines from drawing routines.
+
+Tidy up DrawRat() to be consistent with the new code in EraseRat()
 
 
 ---
