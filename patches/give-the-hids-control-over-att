@@ -1,5 +1,5 @@
 Bottom: e49dc90c679abe2678467d8cac24a85e48705846
-Top:    0d7700db4a6ab29cd99bde5199a52e24e97b791b
+Top:    27b6d5f9673e577e84d3910dabb0cfca9ab14b17
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 19:19:04 +0100
 
@@ -1051,7 +1051,7 @@ index 8bda96d..75ba763 100644
  
    ghid_set_status_line_label ();
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index b62ecf0..45be4b8 100644
+index b62ecf0..a0e8eb3 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -232,7 +232,7 @@ ghid_note_event_location (GdkEventButton * ev)
@@ -1063,16 +1063,6 @@ index b62ecf0..45be4b8 100644
      }
    ghid_set_cursor_position_labels ();
    return moved;
-@@ -466,7 +466,9 @@ ghid_port_button_release_cb (GtkWidget * drawing_area,
- 
-   do_mouse_action(ev->button, mk + M_Release);
- 
-+  notify_crosshair_change (false);
-   AdjustAttachedObjects ();
-+  notify_crosshair_change (true);
-   ghid_invalidate_all ();
- 
-   ghid_window_set_name_label (PCB->Name);
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
 index 180e58c..5616489 100644
 --- a/src/hid/gtk/gui.h
