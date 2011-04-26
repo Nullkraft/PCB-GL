@@ -1,5 +1,5 @@
-Bottom: 614b47b2354f260eedb0968df325244fa95a7f93
-Top:    7880b2e2a374a2589ee5c3274e17bbd86510ef07
+Bottom: 815f4c4c2513dd2d524f35350366b83f6d9a99fe
+Top:    815f4c4c2513dd2d524f35350366b83f6d9a99fe
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 19:19:07 +0100
 
@@ -13,58 +13,4 @@ Should fix this properly with notificatons to the GUI
 
 ---
 
-diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 8397978..ad56655 100644
---- a/src/hid/gtk/gtkhid-main.c
-+++ b/src/hid/gtk/gtkhid-main.c
-@@ -1893,9 +1893,9 @@ PanAction (int argc, char **argv, int x, int y)
-     }
-   else if (x == on_x && y == on_y)
-     {
--      ghid_show_crosshair (FALSE);
-+      //ghid_show_crosshair (FALSE);
-       ghidgui->auto_pan_on = !ghidgui->auto_pan_on;
--      ghid_show_crosshair (TRUE);
-+      //ghid_show_crosshair (TRUE);
-     }
- 
-   return 0;
-diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 37dd2af..40b14e7 100644
---- a/src/hid/gtk/gui-output-events.c
-+++ b/src/hid/gtk/gui-output-events.c
-@@ -337,7 +337,7 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
-   state = (GdkModifierType) (kev->state);
-   mk = ghid_modifier_keys_state (&state);
- 
--  ghid_show_crosshair (FALSE);
-+  //ghid_show_crosshair (FALSE);
- 
-   handled = TRUE;		/* Start off assuming we handle it */
-   switch (ksym)
-@@ -442,14 +442,14 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
-   ghid_note_event_location (ev);
-   state = (GdkModifierType) (ev->state);
-   mk = ghid_modifier_keys_state (&state);
--  ghid_show_crosshair (FALSE);
-+  //ghid_show_crosshair (FALSE);
- 
-   do_mouse_action(ev->button, mk);
- 
-   ghid_invalidate_all ();
-   ghid_window_set_name_label (PCB->Name);
-   ghid_set_status_line_label ();
--  ghid_show_crosshair (TRUE);
-+  //ghid_show_crosshair (TRUE);
-   if (!gport->panning)
-     g_idle_add (ghid_idle_cb, NULL);
-   return TRUE;
-@@ -800,7 +800,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
- 	}
-     }
- 
--  ghid_show_crosshair (FALSE);
-+  //ghid_show_crosshair (FALSE);
-   out->has_entered = FALSE;
- 
-   ghid_screen_update ();
+
