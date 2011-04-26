@@ -81,7 +81,7 @@ draw_pad_mask (PadType *pad, void *userdata)
   if (pad->Mask <= 0)
     return;
 
-  _draw_pad (Output.fgGC, pad, true, true);
+  _draw_pad (Output.pmGC, pad, true, true);
 }
 
 static void
