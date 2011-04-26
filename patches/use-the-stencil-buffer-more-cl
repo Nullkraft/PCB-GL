@@ -1,7 +1,7 @@
-Bottom: a4a8ee069a49c14adba9240397cb22e75724e05c
-Top:    ce98895a8a8d9dbe4d8b907faa2188dcf28ed93c
+Bottom: 85cbab4aa836494adb1549fcc8af0616d22a0c32
+Top:    75b3b7daf65253d4c50be133b627b062fb6f6f56
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-26 17:11:38 +0100
+Date:   2011-04-26 19:19:24 +0100
 
 Use the stencil buffer more cleverly
 
@@ -125,10 +125,10 @@ index 4e829e8..155c125 100644
  
  int
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 14239a3..eaba457 100644
+index 68a0523..3208305 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1970,12 +1970,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1971,12 +1971,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                       0, 0, 1, 0,
                       0, 0, 0, 1};
    bool horizon_problem = false;

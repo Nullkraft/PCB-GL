@@ -1,7 +1,7 @@
-Bottom: 30bcfe06e05e3d5b93a7e3d46ec44573baa7b910
-Top:    a4a8ee069a49c14adba9240397cb22e75724e05c
+Bottom: eec3b15441bbb1337d0f27c5d46a16d691a713e3
+Top:    85cbab4aa836494adb1549fcc8af0616d22a0c32
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-26 17:11:38 +0100
+Date:   2011-04-26 19:19:23 +0100
 
 Only assign stencil planes for visible layers
 
@@ -11,10 +11,10 @@ NB: Split out of the FBO patch
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 532d6f2..14239a3 100644
+index 1a2a32e..68a0523 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -156,6 +156,7 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -157,6 +157,7 @@ ghid_set_layer (const char *name, int group, int empty)
  {
    render_priv *priv = gport->render_priv;
    static int stencil_bit = 0;
@@ -22,7 +22,7 @@ index 532d6f2..14239a3 100644
    int idx = group;
    if (idx >= 0 && idx < max_group)
      {
-@@ -175,48 +176,53 @@ ghid_set_layer (const char *name, int group, int empty)
+@@ -176,48 +177,53 @@ ghid_set_layer (const char *name, int group, int empty)
  
    hidgl_set_depth (compute_depth (group));
  
