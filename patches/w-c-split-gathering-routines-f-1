@@ -1,5 +1,5 @@
-Bottom: 91e1d66d91bb4d96bfbae1fd343aae5dc5ab92ec
-Top:    5455d4b4b567881fff5a4165c743b3b0dc2ca4b2
+Bottom: d9c1dffc563fa98fa0eb2cc38f63aaca59a14363
+Top:    41cfabece67c7ccb12c4ada69768bb51537a9053
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 18:08:22 +0100
 
@@ -11,7 +11,7 @@ Moves code from DrawPlainPolygon() into its only caller poly_callback()
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index fa4e809..308f155 100644
+index 2183dc9..beb607c 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -90,8 +90,6 @@ static void DrawEverything (BoxTypePtr);
@@ -23,7 +23,7 @@ index fa4e809..308f155 100644
  static void AddPart (void *);
  static void SetPVColor (PinTypePtr, int);
  static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
-@@ -831,12 +829,45 @@ clearPin_callback (const BoxType * b, void *cl)
+@@ -858,12 +856,45 @@ clearPin_callback (const BoxType * b, void *cl)
      gui->fill_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
    return 1;
  }
@@ -70,7 +70,7 @@ index fa4e809..308f155 100644
    return 1;
  }
  
-@@ -1209,24 +1240,6 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
+@@ -1236,24 +1267,6 @@ DrawTextLowLevel (TextTypePtr Text, int min_line_width)
  }
  
  /* ---------------------------------------------------------------------------
@@ -95,7 +95,7 @@ index fa4e809..308f155 100644
   * draw a via object
   */
  void
-@@ -1416,7 +1429,9 @@ DrawRegularText (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1421,7 +1434,9 @@ DrawRegularText (LayerTypePtr Layer, TextTypePtr Text)
  void
  DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  {
@@ -106,7 +106,7 @@ index fa4e809..308f155 100644
  }
  
  int
-@@ -1447,53 +1462,6 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
+@@ -1452,53 +1467,6 @@ thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
    return 0;
  }
  
@@ -160,7 +160,7 @@ index fa4e809..308f155 100644
  /* ---------------------------------------------------------------------------
   * draws an element
   */
-@@ -1700,7 +1668,9 @@ EraseText (LayerTypePtr Layer, TextTypePtr Text)
+@@ -1705,7 +1673,9 @@ EraseText (LayerTypePtr Layer, TextTypePtr Text)
  void
  ErasePolygon (PolygonTypePtr Polygon)
  {
