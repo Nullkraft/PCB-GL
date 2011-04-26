@@ -1,7 +1,7 @@
-Bottom: 048dd5bd1228e58cf2aeb3b86ace6c29326f41fc
-Top:    23d95e07d842c90cf7015e1c5067b15fd074a9c8
+Bottom: 920cfc7ca9a45e588af46ff47a5b0c6c584ecf35
+Top:    d253f7c8557efa40e4bf9894226484fb4b0512c5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-26 17:07:27 +0100
+Date:   2011-04-26 19:19:09 +0100
 
 Work in progress on subcompositing / stencil buffers
 
@@ -14,11 +14,11 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 47e7c82..4c1a5d0 100644
+index d13b151..16c0606 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -429,6 +429,7 @@ DrawEverything (BoxTypePtr drawn_area)
- 	  dapi->draw_layer (&(PCB->Data->Layer[max_copper_layer + side]), NULL); // drawn_area);
+ 	  dapi->draw_layer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area, NULL);
  	}
        r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
 +      gui->set_layer (NULL, SL (FINISHED, 0), 0);
@@ -137,10 +137,10 @@ index 47e7c82..4c1a5d0 100644
        layernum = layers[i];
        Layer = PCB->Data->Layer + layers[i];
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
-index 2dfe44b..c1124d3 100644
+index 363a85e..ad207ba 100644
 --- a/src/draw_funcs.c
 +++ b/src/draw_funcs.c
-@@ -334,6 +334,10 @@ draw_layer (LayerType *layer, void *userdata)
+@@ -328,6 +328,10 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
    /* print the non-clearing polys */
    r_search (layer->polygon_tree, drawn_area, NULL, poly_callback, &info);
  
@@ -426,7 +426,7 @@ index 99ffffc..9dd76e3 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index fbfa430..522aa83 100644
+index 4429121..46552f3 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -517,6 +517,9 @@ gerber_set_layer (const char *name, int group, int empty)
@@ -676,7 +676,7 @@ index f94175f..c37dcbf 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index c69c548..3582e91 100644
+index 8024abc..3aa49c9 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -652,6 +652,10 @@ ps_set_layer (const char *name, int group, int empty)

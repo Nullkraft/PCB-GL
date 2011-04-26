@@ -1,7 +1,7 @@
-Bottom: d3d1e4b37db293e56e2d8eaff0877e0e0811481e
-Top:    7ac97ae731683fb5e2dc2f237e0e6439bf98d538
+Bottom: a4a11307e1db621b88ebfc8a387f4bdbb3e669fa
+Top:    1487c2a5f8377b9da653940eb5026a3162314bb9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-26 15:47:08 +0100
+Date:   2011-04-26 19:19:12 +0100
 
 Remove hack in draw.c which broke PS (and probably other) output
 
@@ -13,7 +13,7 @@ file during the fab drawing output.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 831a993..0c3b45c 100644
+index 04c2500..2bd4167 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -770,8 +770,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
@@ -27,10 +27,10 @@ index 831a993..0c3b45c 100644
        layernum = layers[i];
        Layer = PCB->Data->Layer + layers[i];
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
-index c1124d3..2dfe44b 100644
+index ad207ba..363a85e 100644
 --- a/src/draw_funcs.c
 +++ b/src/draw_funcs.c
-@@ -334,10 +334,6 @@ draw_layer (LayerType *layer, void *userdata)
+@@ -328,10 +328,6 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
    /* print the non-clearing polys */
    r_search (layer->polygon_tree, drawn_area, NULL, poly_callback, &info);
  
