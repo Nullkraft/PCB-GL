@@ -1,0 +1,20 @@
+Bottom: c30b6f9f980336724cf3393380c41fbf2dd05a9f
+Top:    0fedd153ee943054bb445adffe642f769c5dfea9
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 01:42:02 +0100
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/draw.h b/src/draw.h
+index 7b091f5..1169266 100644
+--- a/src/draw.h
++++ b/src/draw.h
+@@ -82,7 +82,6 @@ void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
+ void DrawHole (PinTypePtr);
+ void DrawRats (BoxType *);
+ void DrawSilk (int side, const BoxType *);
+-void DrawSpecialPolygon (hidGC DrawGC, LocationType X, LocationType Y, int Thickness, int thin_draw);
+ 
+ /* TEMPORARY */
