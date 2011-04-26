@@ -1,5 +1,5 @@
 Bottom: ca2388b9fec3713cd1c0ee00adb0ce3ac2baf5a0
-Top:    bad69501e8c20cc2be3c8ca7531e27ddf4ba97ec
+Top:    15d67ce6f0eb55092e92cde7c7c4a66a8e15f88d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 19:19:04 +0100
 
@@ -816,7 +816,7 @@ index 1568cd5..84ceda3 100644
    AD (make_gc);
    AD (destroy_gc);
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index ba58d5d..3d90c27 100644
+index ba58d5d..0992dc0 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -34,6 +34,8 @@ typedef struct render_priv {
@@ -844,7 +844,7 @@ index ba58d5d..3d90c27 100644
 -    RestoreCrosshair ();
 -  ghidgui->need_restore_crosshair = FALSE;
 +
-+  if (priv->attachment_invalidate_depth == 0)
++  if (priv->attached_invalidate_depth == 0)
 +    DrawAttached ();
 +  if (priv->mark_invalidate_depth == 0)
 +    DrawMark ();
@@ -859,7 +859,7 @@ index ba58d5d..3d90c27 100644
 +  render_priv *priv = gport->render_priv;
 +
 +  /* We sometimes get called before the GUI is up */
-+  if (priv->drawing_area == NULL)
++  if (gport->drawing_area == NULL)
 +    return;
 +
 +  if (changes_complete)
@@ -876,8 +876,8 @@ index ba58d5d..3d90c27 100644
 +
 +  if (!changes_complete)
 +    priv->attached_invalidate_depth ++;
-+  else if (priv->drawing_area != NULL)
-+    ghid_draw_area_update (priv, NULL);
++  else if (gport->drawing_area != NULL)
++    ghid_draw_area_update (gport, NULL);
 +}
 +
 +void
@@ -886,7 +886,7 @@ index ba58d5d..3d90c27 100644
 +  render_priv *priv = gport->render_priv;
 +
 +  /* We sometimes get called before the GUI is up */
-+  if (priv->drawing_area == NULL)
++  if (gport->drawing_area == NULL)
 +    return;
 +
 +  if (changes_complete)
@@ -904,7 +904,7 @@ index ba58d5d..3d90c27 100644
 +  if (!changes_complete)
 +    priv->mark_invalidate_depth ++;
 +  else
-+    ghid_draw_area_update (priv, NULL);
++    ghid_draw_area_update (gport, NULL);
 +}
 +
  static void
