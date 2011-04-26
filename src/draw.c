@@ -896,16 +896,15 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
   r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
   r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
   r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
-
-  clip_box = NULL;
 }
 
 void
 DrawLayer (LayerTypePtr Layer, const BoxType * screen)
 {
+  struct poly_info info = {screen, Layer};
+
   /* print the non-clearing polys */
-  clip_box = screen;
-  r_search (Layer->polygon_tree, screen, NULL, poly_callback, Layer);
+  r_search (Layer->polygon_tree, screen, NULL, poly_callback, &info);
 
   /* draw all visible lines this layer */
   r_search (Layer->line_tree, screen, NULL, line_callback, Layer);
