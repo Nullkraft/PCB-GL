@@ -1,5 +1,5 @@
 Bottom: e49dc90c679abe2678467d8cac24a85e48705846
-Top:    27b6d5f9673e577e84d3910dabb0cfca9ab14b17
+Top:    adef8b7b8dea8be10778d778c9838c153dc26580
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 19:19:04 +0100
 
@@ -883,7 +883,7 @@ index c9947c2..0992dc0 100644
  draw_right_cross (GdkGC *xor_gc, gint x, gint y)
  {
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 5af6ed6..8397978 100644
+index 5af6ed6..a51d167 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -1838,11 +1838,11 @@ ScrollAction (int argc, char **argv, int x, int y)
@@ -891,8 +891,8 @@ index 5af6ed6..8397978 100644
      AFAIL (scroll);
  
 -  HideCrosshair ();
-   ghid_port_ranges_pan (dx, dy, TRUE);
 +  notify_crosshair_change (false);
+   ghid_port_ranges_pan (dx, dy, TRUE);
    MoveCrosshairRelative (dx, dy);
    AdjustAttachedObjects ();
 -  RestoreCrosshair ();
