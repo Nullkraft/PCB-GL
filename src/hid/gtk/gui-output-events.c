@@ -655,12 +655,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
   static gint x_prev = -1, y_prev = -1;
   gboolean moved;
 
-
   gdk_event_request_motions (ev);
-
-  if (!ghid_start_drawing (out))
-    return FALSE;
-
 
   if (out->panning)
     {
@@ -683,8 +678,6 @@ ghid_port_window_motion_cb (GtkWidget * widget,
   ghid_show_crosshair (TRUE);
   if (moved && have_crosshair_attachments ())
     ghid_draw_area_update (gport, NULL);
-
-  ghid_end_drawing (out);
   return FALSE;
 }
 
