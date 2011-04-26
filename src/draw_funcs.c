@@ -4,19 +4,6 @@
 #include "draw_funcs.h"
 
 static void
-set_pv_color (PinType *pv, int type)
-{
-  char *color;
-
-  if (TEST_FLAG (WARNFLAG, pv))          color = PCB->WarnColor;
-  else if (TEST_FLAG (SELECTEDFLAG, pv)) color = (type == VIA_TYPE) ? PCB->ViaSelectedColor : PCB->PinSelectedColor;
-  else if (TEST_FLAG (FOUNDFLAG, pv))    color = PCB->ConnectedColor;
-  else                                   color = (type == VIA_TYPE) ? PCB->ViaColor : PCB->PinColor;
-
-  gui->set_color (Output.fgGC, color);
-}
-
-static void
 _draw_pv (PinType *pv, bool draw_hole)
 {
   if (TEST_FLAG (THINDRAWFLAG, PCB))
@@ -28,7 +15,6 @@ _draw_pv (PinType *pv, bool draw_hole)
 static void
 draw_pin (PinType *pin, void *userdata)
 {
-  set_pv_color (pin, PIN_TYPE);
   _draw_pv (pin, false);
 }
 
@@ -44,7 +30,6 @@ draw_pin_mask (PinType *pin, void *userdata)
 static void
 draw_via (PinType *via, void *userdata)
 {
-  set_pv_color (via, VIA_TYPE);
   _draw_pv (via, false);
 }
 
@@ -55,6 +40,20 @@ draw_via_mask (PinType *via, void *userdata)
     gui->thindraw_pcb_pv (Output.pmGC, Output.pmGC, via, false, true);
   else
     gui->fill_pcb_pv (Output.pmGC, Output.pmGC, via, false, true);
+}
+
+static void
+draw_hole (PinType *pv, void *userdata)
+{
+  gui->set_line_cap (Output.fgGC, Round_Cap);
+  gui->set_line_width (Output.fgGC, 0);
+
+  if (!TEST_FLAG (THINDRAWFLAG, PCB))
+    gui->fill_circle (Output.bgGC, pv->X, pv->Y, pv->DrillingHole / 2);
+
+  if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (HOLEFLAG, pv))
+    gui->draw_arc (Output.fgGC, pv->X, pv->Y,
+                   pv->DrillingHole / 2, pv->DrillingHole / 2, 0, 360);
 }
 
 static void
@@ -73,12 +72,6 @@ _draw_pad (hidGC gc, PadType *pad, bool clear, bool mask)
 static void
 draw_pad (PadType *pad, void *userdata)
 {
-  if (TEST_FLAG (WARNFLAG, pad))          gui->set_color (Output.fgGC, PCB->WarnColor);
-  else if (TEST_FLAG (SELECTEDFLAG, pad)) gui->set_color (Output.fgGC, PCB->PinSelectedColor);
-  else if (TEST_FLAG (FOUNDFLAG, pad))    gui->set_color (Output.fgGC, PCB->ConnectedColor);
-  else if (FRONT (pad))                   gui->set_color (Output.fgGC, PCB->PinColor);
-  else                                    gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
-
   _draw_pad (Output.fgGC, pad, false, false);
 }
 
@@ -120,20 +113,12 @@ _draw_line (LineType *line)
 static void
 draw_line (LineType *line, void *userdata)
 {
-  //if (TEST_FLAG (SELECTEDFLAG, line))   gui->set_color (Output.fgGC, layer->SelectedColor);
-  //else if (TEST_FLAG (FOUNDFLAG, line)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
-  //else                                  gui->set_color (Output.fgGC, layer->Color);
-
   _draw_line (line);
 }
 
 static void
 draw_rat (RatType *rat, void *userdata)
 {
-  //if (TEST_FLAG (SELECTEDFLAG, rat))   gui->set_color (Output.fgGC, PCB->RatSelectedColor);
-  //else if (TEST_FLAG (FOUNDFLAG, rat)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
-  //else                                 gui->set_color (Output.fgGC, PCB->RatColor);
-
   if (Settings.RatThickness < 20)
     rat->Thickness = pixel_slop * Settings.RatThickness;
   /* rats.c set VIAFLAG if this rat goes to a containing poly: draw a donut */
@@ -153,7 +138,7 @@ draw_rat (RatType *rat, void *userdata)
 }
 
 static void
-_draw_arc (ArcType *arc)
+draw_arc (ArcType *arc, void *userdata)
 {
   if (!arc->Thickness)
     return;
@@ -169,31 +154,13 @@ _draw_arc (ArcType *arc)
 }
 
 static void
-draw_arc (ArcType *arc, void *userdata)
-{
-  //if (TEST_FLAG (SELECTEDFLAG, arc))   gui->set_color (Output.fgGC, layer->SelectedColor);
-  //else if (TEST_FLAG (FOUNDFLAG, arc)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
-  //else                                 gui->set_color (Output.fgGC, layer->Color);
-
-  _draw_arc (arc);
-}
-
-static void
 draw_poly (PolygonType *polygon, void *userdata)
 {
-  static char *color;
-
   /* HACK */
   BoxType *drawn_area = NULL;
 
   if (!polygon->Clipped)
     return;
-
-  //if (TEST_FLAG (SELECTEDFLAG, polygon))   color = layer->SelectedColor;
-  //else if (TEST_FLAG (FOUNDFLAG, polygon)) color = PCB->ConnectedColor;
-  //else                                     color = layer->Color;
-
-  gui->set_color (Output.fgGC, color);
 
   if (gui->thindraw_pcb_polygon != NULL &&
       (TEST_FLAG (THINDRAWFLAG, PCB) ||
@@ -221,6 +188,7 @@ struct draw_funcs d_f = {
   .draw_pin_mask  = draw_pin_mask,
   .draw_via       = draw_via,
   .draw_via_mask  = draw_via_mask,
+  .draw_hole      = draw_hole,
   .draw_pad       = draw_pad,
   .draw_pad_mask  = draw_pad_mask,
   .draw_pad_paste = draw_pad_paste,
