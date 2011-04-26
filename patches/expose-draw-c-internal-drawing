@@ -1,5 +1,5 @@
-Bottom: 4037f5571923b8ed63a960ca476fddde6c4d3597
-Top:    68814a8db5ff004127cf7dccf939109a11d3d211
+Bottom: ca2388b9fec3713cd1c0ee00adb0ce3ac2baf5a0
+Top:    c60cf82a11eccdf8eaa2b841748730090969f771
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 11:49:27 +0100
 
@@ -9,21 +9,21 @@ Expose draw.c internal drawing APIs
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index d3bc398..5f2fa6d 100644
+index 53757f4..dd10fe0 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -88,10 +88,7 @@ static int DrawLayerGroup (int, const BoxType *);
+@@ -87,10 +87,7 @@ static void DrawPPV (int group, const BoxType *);
+ static int DrawLayerGroup (int, const BoxType *);
  static void AddPart (void *);
- static void SetPVColor (PinTypePtr, int);
  static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
 -static void DrawMask (int side, BoxType *);
 -static void DrawPaste (int side, BoxType *);
  static void DrawRats (BoxType *);
 -static void DrawSilk (int side, const BoxType *);
  
- /*--------------------------------------------------------------------------------------
-  * setup color for pin or via
-@@ -905,7 +902,7 @@ clearPad_callback (const BoxType * b, void *cl)
+ 
+ /*---------------------------------------------------------------------------
+@@ -608,7 +605,7 @@ pad_mask_callback (const BoxType * b, void *cl)
   * Draws silk layer.
   */
  
@@ -32,7 +32,7 @@ index d3bc398..5f2fa6d 100644
  DrawSilk (int side, const BoxType * drawn_area)
  {
  #if 0
-@@ -964,7 +961,7 @@ DrawMaskBoardArea (int mask_type, BoxType *screen)
+@@ -667,7 +664,7 @@ DrawMaskBoardArea (int mask_type, BoxType *screen)
  /* ---------------------------------------------------------------------------
   * draws solder mask layer - this will cover nearly everything
   */
@@ -41,7 +41,7 @@ index d3bc398..5f2fa6d 100644
  DrawMask (int side, BoxType * screen)
  {
    int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
-@@ -993,7 +990,7 @@ DrawMask (int side, BoxType * screen)
+@@ -696,7 +693,7 @@ DrawMask (int side, BoxType * screen)
  /* ---------------------------------------------------------------------------
   * draws solder paste layer for a given side of the board
   */
@@ -51,10 +51,10 @@ index d3bc398..5f2fa6d 100644
  {
    gui->set_color (Output.fgGC, PCB->ElementColor);
 diff --git a/src/draw.h b/src/draw.h
-index adfee36..46f67d4 100644
+index cf324a5..5224adc 100644
 --- a/src/draw.h
 +++ b/src/draw.h
-@@ -72,6 +72,10 @@ void EraseElementName (ElementTypePtr);
+@@ -71,6 +71,10 @@ void EraseElementName (ElementTypePtr);
  void EraseObject (int, void *, void *);
  void LoadBackgroundImage (char *);
  
