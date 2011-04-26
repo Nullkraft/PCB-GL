@@ -1,0 +1,34 @@
+Bottom: f0fb7ad4437d14bc21f179e02a84cf0c7d84ea90
+Top:    a3242d2253783dacab7575324b7aac1eafdf2c41
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 14:06:06 +0100
+
+Refresh of crasy-test
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 7d07990..6e4d106 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -893,6 +893,20 @@ GatherPadName (PadTypePtr Pad)
+   return;
+ }
+ 
++static void
++_draw_line (LineType *line)
++{
++  gui->set_line_cap (Output.fgGC, Trace_Cap);
++  if (TEST_FLAG (THINDRAWFLAG, PCB))
++    gui->set_line_width (Output.fgGC, 0);
++  else
++    gui->set_line_width (Output.fgGC, line->Thickness);
++
++  gui->draw_line (Output.fgGC,
++                  line->Point1.X, line->Point1.Y,
++                  line->Point2.X, line->Point2.Y);
++}
++
+ /* ---------------------------------------------------------------------------
+  * lowlevel drawing routine for text objects
+  */
