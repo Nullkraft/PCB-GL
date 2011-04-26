@@ -1,7 +1,7 @@
-Bottom: 8325d2cf30759c7e728fd88de37b47cb58f6a293
-Top:    ca2388b9fec3713cd1c0ee00adb0ce3ac2baf5a0
+Bottom: 2d8b5652486fd248f5ec44e7280f165eafd4f9b7
+Top:    fbd726d0ce4bdca5340f173ab88964cb04bf017d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-26 16:25:32 +0100
+Date:   2011-04-26 23:57:12 +0100
 
 Continue with crazy idea
 
@@ -9,10 +9,10 @@ Continue with crazy idea
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index cc04a43..53757f4 100644
+index 99092b0..70a85c4 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -149,16 +149,6 @@ set_pv_color (PinType *pv, int type)
+@@ -141,16 +141,6 @@ set_pv_color (PinType *pv, int type)
                                                                                           : PCB->PinColor);
  }
  
@@ -29,7 +29,7 @@ index cc04a43..53757f4 100644
  static int
  pin_callback (const BoxType * b, void *cl)
  {
-@@ -168,14 +158,6 @@ pin_callback (const BoxType * b, void *cl)
+@@ -160,14 +150,6 @@ pin_callback (const BoxType * b, void *cl)
  }
  
  static int
@@ -44,7 +44,7 @@ index cc04a43..53757f4 100644
  via_callback (const BoxType * b, void *cl)
  {
    set_pv_color ((PinType *)b, VIA_TYPE);
-@@ -184,14 +166,6 @@ via_callback (const BoxType * b, void *cl)
+@@ -176,14 +158,6 @@ via_callback (const BoxType * b, void *cl)
  }
  
  static int
@@ -59,7 +59,7 @@ index cc04a43..53757f4 100644
  pad_callback (const BoxType * b, void *cl)
  {
    PadTypePtr pad = (PadTypePtr) b;
-@@ -210,28 +184,6 @@ pad_callback (const BoxType * b, void *cl)
+@@ -202,28 +176,6 @@ pad_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -88,7 +88,7 @@ index cc04a43..53757f4 100644
  static void
  draw_element_name (ElementType *element)
  {
-@@ -365,20 +317,6 @@ CountHoles (int *plated, int *unplated, BoxType *drawn_area)
+@@ -357,20 +309,6 @@ CountHoles (int *plated, int *unplated, BoxType *drawn_area)
  }
  
  static int
@@ -109,7 +109,7 @@ index cc04a43..53757f4 100644
  rat_callback (const BoxType * b, void *cl)
  {
    RatType *rat = (RatType *)b;
-@@ -391,20 +329,6 @@ rat_callback (const BoxType * b, void *cl)
+@@ -383,20 +321,6 @@ rat_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -130,7 +130,7 @@ index cc04a43..53757f4 100644
  static void
  draw_element_package (ElementType *element)
  {
-@@ -506,7 +430,7 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -498,7 +422,7 @@ DrawEverything (BoxTypePtr drawn_area)
  	{
  	  r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
  	  r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
@@ -139,7 +139,7 @@ index cc04a43..53757f4 100644
  	}
        r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
      }
-@@ -670,25 +594,6 @@ via_mask_callback (const BoxType * b, void *cl)
+@@ -662,25 +586,6 @@ via_mask_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -165,7 +165,7 @@ index cc04a43..53757f4 100644
  static int
  pad_mask_callback (const BoxType * b, void *cl)
  {
-@@ -717,7 +622,7 @@ DrawSilk (int side, const BoxType * drawn_area)
+@@ -709,7 +614,7 @@ DrawSilk (int side, const BoxType * drawn_area)
      {
        gui->use_mask (HID_MASK_BEFORE);
  #endif
@@ -174,7 +174,7 @@ index cc04a43..53757f4 100644
        /* draw package */
        r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
        r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
-@@ -732,7 +637,7 @@ DrawSilk (int side, const BoxType * drawn_area)
+@@ -724,7 +629,7 @@ DrawSilk (int side, const BoxType * drawn_area)
    if (gui->poly_after)
      {
        gui->use_mask (HID_MASK_AFTER);
@@ -183,7 +183,7 @@ index cc04a43..53757f4 100644
        /* draw package */
        r_search (PCB->Data->element_tree, drawn_area, NULL, element_callback, &side);
        r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
-@@ -820,116 +725,6 @@ DrawRats (BoxTypePtr drawn_area)
+@@ -812,116 +717,6 @@ DrawRats (BoxTypePtr drawn_area)
      gui->use_mask (HID_MASK_OFF);
  }
  
@@ -300,7 +300,7 @@ index cc04a43..53757f4 100644
  /* ---------------------------------------------------------------------------
   * draws one layer group.  Returns non-zero if pins and pads should be
   * drawn with this group.
-@@ -951,7 +746,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -943,7 +738,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
            strcmp (Layer->Name, "route") == 0)
          rv = 0;
        if (layernum < max_copper_layer && Layer->On)
