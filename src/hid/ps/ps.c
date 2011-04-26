@@ -864,7 +864,7 @@ ps_set_layer (const char *name, int group, int empty)
       && strcmp (name, "outline")
       && strcmp (name, "route"))
     {
-      dapi->draw_layer (outline_layer, NULL); // &region);
+      dapi->draw_layer (outline_layer, &region, NULL);
     }
 
   return 1;

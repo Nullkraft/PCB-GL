@@ -720,7 +720,7 @@ gerber_set_layer (const char *name, int group, int empty)
     {
       if (outline_layer
 	  && outline_layer != PCB->Data->Layer+idx)
-	dapi->draw_layer (outline_layer, NULL); // &region);
+	dapi->draw_layer (outline_layer, &region, NULL);
       else if (!outline_layer)
 	{
 	  hidGC gc = gui->make_gc ();
