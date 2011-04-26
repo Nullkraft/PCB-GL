@@ -1,5 +1,5 @@
-Bottom: 982a64911b29447cb31dd4a8e14531abf240708d
-Top:    0a6339a2b8e0b438a67fc3ed4932453dd86fd406
+Bottom: b585733f55d7e0b4855788756a13842dda2a3c26
+Top:    23b5f14615cccfe3265deb777354f5d156a25f97
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 15:51:49 +0100
 
@@ -18,10 +18,10 @@ Notes from squashed patches:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 8a38f46..6b4a732 100644
+index 4c1a5d0..831a993 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -87,11 +87,11 @@ static void DrawEverything (BoxTypePtr);
+@@ -86,11 +86,11 @@ static void DrawEverything (BoxTypePtr);
  static void DrawPPV (int group, const BoxType *);
  static int DrawLayerGroup (int, const BoxType *);
  static void AddPart (void *);
@@ -36,7 +36,7 @@ index 8a38f46..6b4a732 100644
  
  
  /*---------------------------------------------------------------------------
-@@ -615,7 +615,7 @@ DrawEverything (BoxTypePtr drawn_area)
+@@ -538,7 +538,7 @@ DrawEverything (BoxTypePtr drawn_area)
      }
  }
  
@@ -45,7 +45,7 @@ index 8a38f46..6b4a732 100644
  DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
  	   bool invisible)
  {
-@@ -731,7 +731,7 @@ pad_mask_callback (const BoxType * b, void *cl)
+@@ -640,7 +640,7 @@ pad_mask_callback (const BoxType * b, void *cl)
   * Draws silk layer.
   */
  
@@ -54,7 +54,7 @@ index 8a38f46..6b4a732 100644
  DrawSilk (int side, const BoxType * drawn_area)
  {
  #if 0
-@@ -831,7 +831,7 @@ DrawPaste (int side, BoxType *drawn_area)
+@@ -740,7 +740,7 @@ DrawPaste (int side, BoxType *drawn_area)
    ENDALL_LOOP;
  }
  
@@ -64,10 +64,10 @@ index 8a38f46..6b4a732 100644
  {
    /*
 diff --git a/src/draw.h b/src/draw.h
-index adfee36..1169266 100644
+index cf324a5..44b80d2 100644
 --- a/src/draw.h
 +++ b/src/draw.h
-@@ -72,6 +72,19 @@ void EraseElementName (ElementTypePtr);
+@@ -71,6 +71,19 @@ void EraseElementName (ElementTypePtr);
  void EraseObject (int, void *, void *);
  void LoadBackgroundImage (char *);
  
