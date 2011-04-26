@@ -1,0 +1,30 @@
+Bottom: 23b5f14615cccfe3265deb777354f5d156a25f97
+Top:    d3d1e4b37db293e56e2d8eaff0877e0e0811481e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 19:00:51 +0100
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 8fca041..430f7df 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -11,6 +11,7 @@
+ #include "../hidint.h"
+ #include "gui.h"
+ #include "draw.h"
++#include "draw_funcs.h"
+ #include "rtree.h"
+ #include "gui-pinout-preview.h"
+ 
+@@ -1787,7 +1788,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+       gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
+     if (PCB->ElementOn) {
+       r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
+-      DrawLayer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area);
++      dapi->draw_layer (&(PCB->Data->Layer[max_copper_layer + side]), NULL); //drawn_area);
+     }
+     if (global_view_2d) {
+       r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
