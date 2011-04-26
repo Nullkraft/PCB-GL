@@ -1,0 +1,55 @@
+Bottom: 0d792631996eae6df3908d4fd510d479dae7462f
+Top:    ce57a86975a974b8b40cf58514c6017d68b520e8
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 21:14:43 +0100
+
+Refresh of rename-hidecrosshair-and-resto
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index b304093..100c711 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -762,12 +762,6 @@ CrosshairOn (void)
+       DrawAttached ();
+       DrawMark ();
+     }
+-xxxxxxx
+-xxxxxxxxxxxxxxxxxxxxxx
+-
+-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+-xxxxxxxxxxxxxxxxxxxx
+-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -782,12 +776,6 @@ CrosshairOff (void)
+       DrawMark ();
+       Crosshair.On = false;
+     }
+-
+-xxxxxxxxxxxxxxxxxxxxxxx
+-
+-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+-xxxxxxxxxxxxxxxxxxxx
+-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ }
+ 
+ /* ---------------------------------------------------------------------------
+@@ -812,7 +800,6 @@ HideCrosshair (void)
+     }
+ 
+   notify_crosshair_change (false);
+-  notify_mark_change (false);
+ }
+ 
+ void
+@@ -827,7 +814,6 @@ RestoreCrosshair (void)
+     }
+ 
+   notify_crosshair_change (true);
+-  notify_mark_change (true);
+ }
+ 
+ /* ---------------------------------------------------------------------------
