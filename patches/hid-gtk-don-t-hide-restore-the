@@ -3,7 +3,10 @@ Top:    ca2388b9fec3713cd1c0ee00adb0ce3ac2baf5a0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 19:58:30 +0100
 
-hid/gtk: Don't hide / restore the crosshair for button presses
+hid/gtk: Don't hide / restore the crosshair unnecessarily
+
+ghid_note_event_location() takes care of that when the crosshair
+moves.
 
 
 ---
