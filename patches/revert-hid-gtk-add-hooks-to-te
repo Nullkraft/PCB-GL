@@ -1,5 +1,5 @@
-Bottom: 4d7bb901aaba2927475ffbd0182f9554aea1f559
-Top:    0feb34349b5542ec7e643ea556cb7ee2b83e6d81
+Bottom: b286b63fc4b5581b8b8dd9cf018edcdb41001cd7
+Top:    ab6039748c12f9ef32756d15f86e1cbb62d44c72
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 19:19:05 +0100
 
@@ -11,10 +11,10 @@ This reverts commit 332cb8ddc1cc032ac29c7d2b9a0051ccc228b6da.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 0992dc0..642ab2b 100644
+index bd6e035..b583325 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -1035,17 +1035,6 @@ ghid_drawing_area_configure_hook (GHidPort *port)
+@@ -1060,17 +1060,6 @@ ghid_drawing_area_configure_hook (GHidPort *port)
      }
  }
  
@@ -33,10 +33,10 @@ index 0992dc0..642ab2b 100644
  ghid_screen_update (void)
  {
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 70342d4..d3d5c16 100644
+index a0e8eb3..ca2056a 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
-@@ -655,13 +655,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -650,13 +650,8 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    static gint x_prev = -1, y_prev = -1;
    gboolean moved;
  
@@ -50,7 +50,7 @@ index 70342d4..d3d5c16 100644
    if (out->panning)
      {
        dx = gport->zoom * (x_prev - ev->x);
-@@ -683,8 +678,6 @@ ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -678,8 +673,6 @@ ghid_port_window_motion_cb (GtkWidget * widget,
    ghid_show_crosshair (TRUE);
    if (moved && have_crosshair_attachments ())
      ghid_draw_area_update (gport, NULL);
@@ -60,10 +60,10 @@ index 70342d4..d3d5c16 100644
  }
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 5a51358..d4fc8fa 100644
+index 5616489..3e4d230 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -500,8 +500,6 @@ void ghid_show_crosshair (gboolean show);
+@@ -499,8 +499,6 @@ void ghid_show_crosshair (gboolean show);
  void ghid_init_renderer (int *, char ***, GHidPort *);
  void ghid_init_drawing_widget (GtkWidget *widget, GHidPort *);
  void ghid_drawing_area_configure_hook (GHidPort *port);
