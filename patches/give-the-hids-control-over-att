@@ -1,5 +1,5 @@
 Bottom: 4414dbc906d8ee5c1ef8b25deb7c5ddf8ad7bd29
-Top:    c8b231903bca4b8e54aee99d692d359afc88693d
+Top:    e9b8a9b892a2a7f1163da61c6fee19baef6bfcda
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 19:19:04 +0100
 
@@ -494,7 +494,7 @@ index 180e58c..5616489 100644
  void ghid_init_renderer (int *, char ***, GHidPort *);
  void ghid_init_drawing_widget (GtkWidget *widget, GHidPort *);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 75c295e..b4a49e3 100644
+index 75c295e..5435f41 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
 @@ -2878,6 +2878,42 @@ lesstif_invalidate_all (void)
@@ -540,11 +540,10 @@ index 75c295e..b4a49e3 100644
  static int
  lesstif_set_layer (const char *name, int group, int empty)
  {
-@@ -3803,60 +3839,62 @@ hid_lesstif_init ()
-   memset (&lesstif_hid, 0, sizeof (HID));
+@@ -3804,59 +3840,61 @@ hid_lesstif_init ()
  
    common_draw_helpers_init (&lesstif_hid);
--
+ 
 -  lesstif_hid.struct_size           = sizeof (HID);
 -  lesstif_hid.name                  = "lesstif";
 -  lesstif_hid.description           = "LessTif - a Motif clone for X/Unix";
@@ -599,7 +598,6 @@ index 75c295e..b4a49e3 100644
 -  lesstif_hid.progress              = lesstif_progress;
 -  lesstif_hid.edit_attributes       = lesstif_attributes_dialog;
 +  lesstif_hid.struct_size             = sizeof (HID);
-+
 +  lesstif_hid.name                    = "lesstif";
 +  lesstif_hid.description             = "LessTif - a Motif clone for X/Unix";
 +  lesstif_hid.gui                     = 1;
