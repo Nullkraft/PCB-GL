@@ -723,30 +723,36 @@ DrawMark (void)
 void
 notify_crosshair_change (bool changes_complete)
 {
-  if (gui->notify_crosshair_change)
-    gui->notify_crosshair_change (changes_complete);
-}
+  if (changes_complete)
+    {
+      /* fprintf(stderr, "RestoreCrosshair stack %d\n", CrosshairStackLocation); */
+      if (CrosshairStackLocation <= 0)
+        {
+          fprintf(stderr, "Error: CrosshairStackLocation underflow\n");
+          return;
+        }
 
+      CrosshairStackLocation--;
 
-/* ---------------------------------------------------------------------------
- * notify the GUI that data relating to the mark is being changed.
- *
- * The argument passed is false to notify "changes are about to happen",
- * and true to notify "changes have finished".
- *
- * Each call with a 'false' parameter must be matched with a following one
- * with a 'true' parameter. Unmatched 'true' calls are currently not permitted,
- * but might be allowed in the future.
- *
- * GUIs should not complain if they receive extra calls with 'true' as parameter.
- * They should initiate a redraw of the mark - which may (if necessary) mean
- * repainting the whole screen if the GUI hasn't tracked the mark's location.
- */
-void
-notify_mark_change (bool changes_complete)
-{
-  if (gui->notify_mark_change)
-    gui->notify_mark_change (changes_complete);
+      if (CrosshairStack[CrosshairStackLocation])
+        CrosshairOn ();
+      else
+        CrosshairOff ();
+    }
+  else
+    {
+      /* fprintf(stderr, "HideCrosshair stack %d\n", CrosshairStackLocation); */
+      if (CrosshairStackLocation >= MAX_CROSSHAIRSTACK_DEPTH)
+        {
+          fprintf(stderr, "Error: CrosshairStackLocation overflow\n");
+          return;
+        }
+
+      CrosshairStack[CrosshairStackLocation] = Crosshair.On;
+      CrosshairStackLocation++;
+
+      CrosshairOff ();
+    }
 }
 
 
