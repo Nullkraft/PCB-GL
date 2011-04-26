@@ -466,9 +466,7 @@ ghid_port_button_release_cb (GtkWidget * drawing_area,
 
   do_mouse_action(ev->button, mk + M_Release);
 
-  notify_crosshair_change (false);
   AdjustAttachedObjects ();
-  notify_crosshair_change (true);
   ghid_invalidate_all ();
 
   ghid_window_set_name_label (PCB->Name);
