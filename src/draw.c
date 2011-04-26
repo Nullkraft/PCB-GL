@@ -1368,7 +1368,7 @@ DrawRat (RatTypePtr Line)
       AddPart(&b);
     }
   else
-    DrawLine (NULL, (LineType *) Line);
+    AddPart (Line);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1507,15 +1507,16 @@ EraseRat (RatTypePtr Rat)
     {
       int w = Rat->Thickness;
 
-      if (TEST_FLAG (THINDRAWFLAG, PCB))
-	gui->set_line_width (Output.fgGC, 0);
-      else
-	gui->set_line_width (Output.fgGC, w);
-      gui->draw_arc (Output.fgGC, Rat->Point1.X, Rat->Point1.Y,
-		     w * 2, w * 2, 0, 360);
+      BoxType b;
+
+      b.X1 = Rat->Point1.X - w * 2 - w / 2;
+      b.X2 = Rat->Point1.X + w * 2 + w / 2;
+      b.Y1 = Rat->Point1.Y - w * 2 - w / 2;
+      b.Y2 = Rat->Point1.Y + w * 2 + w / 2;
+      AddPart(&b);
     }
   else
-    _draw_line ((LineTypePtr) Rat);
+    AddPart (Rat);
 }
 
 
