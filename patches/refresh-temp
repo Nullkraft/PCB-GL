@@ -1,0 +1,143 @@
+Bottom: 394c94ff6a9702dce78c84a7eb64b3516496266f
+Top:    cec445f02679bb16f6c1917f8fe55ec62df079ec
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 19:43:42 +0100
+
+Refresh of comment-out-live-drawing-from-
+
+---
+
+diff --git a/src/autoroute.c b/src/autoroute.c
+index 94457be..6f282ef 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -132,7 +132,7 @@ directionIncrement(direction_t dir)
+ return dir;
+ }
+ 
+-static hidGC ar_gc = 0;
++//static hidGC ar_gc = 0;
+ 
+ #define EXPENSIVE 3e28
+ /* round up "half" thicknesses */
+@@ -1448,9 +1448,11 @@ bloat_routebox (routebox_t * rb)
+ void
+ fillbox (const BoxType * b)
+ {
++#if 0
+   LayerTypePtr SLayer = LAYER_PTR (0);
+   gui->set_color (Output.fgGC, SLayer->Color);
+   gui->fill_rect (Output.fgGC, b->X1, b->Y1, b->X2, b->Y2);
++#endif
+ }
+ 
+ /* makes a line on the solder layer silk surrounding the box */
+@@ -1522,9 +1524,11 @@ EraseRouteBox (routebox_t * rb)
+       X2 = rb->box.X2 - thick / 2;
+     }
+ 
++#if 0
+   gui->set_line_width (ar_gc, thick);
+   gui->set_color (ar_gc, Settings.BackgroundColor);
+   gui->draw_line (ar_gc, X1, Y1, X2, Y2);
++#endif
+ }
+ 
+ /* return a "parent" of this edge which immediately precedes it in the route.*/
+@@ -3203,11 +3207,13 @@ RD_DrawVia (routedata_t * rd, LocationType X, LocationType Y,
+       r_insert_entry (rd->layergrouptree[rb->group], &rb->box, 1);
+       rb->flags.homeless = 0;	/* not homeless anymore */
+ 
++#if 0
+       if (TEST_FLAG (LIVEROUTEFLAG, PCB))
+ 	{
+ 	  gui->set_color (ar_gc, PCB->ViaColor);
+ 	  gui->fill_circle (ar_gc, X, Y, radius);
+ 	}
++#endif
+     }
+ }
+ static void
+@@ -3295,6 +3301,7 @@ RD_DrawLine (routedata_t * rd,
+   /* and add it to the r-tree! */
+   r_insert_entry (rd->layergrouptree[rb->group], &rb->box, 1);
+ 
++#if 0
+   if (TEST_FLAG (LIVEROUTEFLAG, PCB))
+     {
+       LayerTypePtr layp = LAYER_PTR (PCB->LayerGroups.Entries[rb->group][0]);
+@@ -3303,6 +3310,7 @@ RD_DrawLine (routedata_t * rd,
+       gui->set_color (ar_gc, layp->Color);
+       gui->draw_line (ar_gc, qX1, qY1, qX2, qY2);
+     }
++#endif
+ 
+   /* and to the via space structures */
+   if (AutoRouteParameters.use_vias)
+@@ -3614,8 +3622,10 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
+   while (!path->flags.source);
+   /* flush the line queue */
+   RD_DrawLine (rd, -1, 0, 0, 0, 0, 0, NULL, false, false);
++#if 0
+   if (TEST_FLAG (LIVEROUTEFLAG, PCB))
+     gui->use_mask (HID_FLUSH_DRAW_Q);
++#endif
+ }
+ 
+ /* create a fake "edge" used to defer via site searching. */
+@@ -3862,8 +3872,8 @@ __show_tree (const BoxType * b, void *cl)
+ static void
+ show_tree (rtree_t * tree, int even_odd)
+ {
+-  r_search (tree, NULL, NULL, __show_tree, (void *) even_odd);
+-  gui->use_mask (HID_FLUSH_DRAW_Q);
++//  r_search (tree, NULL, NULL, __show_tree, (void *) even_odd);
++//  gui->use_mask (HID_FLUSH_DRAW_Q);
+ }
+ 
+ #endif
+@@ -4633,8 +4643,8 @@ RouteAll (routedata_t * rd)
+ 		    }
+ 		}
+ 	      END_LOOP;
+-	      if (TEST_FLAG (LIVEROUTEFLAG, PCB))
+-		gui->use_mask (HID_FLUSH_DRAW_Q);
++//	      if (TEST_FLAG (LIVEROUTEFLAG, PCB))
++//		gui->use_mask (HID_FLUSH_DRAW_Q);
+ 	      /* reset to original connectivity */
+ 	      if (rip)
+ 		{
+@@ -4992,16 +5002,20 @@ AutoRoute (bool selected)
+ 
+   total_wire_length = 0;
+   total_via_count = 0;
++#if 0
+   if (TEST_FLAG (LIVEROUTEFLAG, PCB))
+     {
+       gui->use_mask (HID_LIVE_DRAWING);
+     }
++#endif
+ 
++#if 0
+   if (ar_gc == 0)
+     {
+       ar_gc = gui->make_gc ();
+       gui->set_line_cap (ar_gc, Round_Cap);
+     }
++#endif
+ 
+   for (i = 0; i < NUM_STYLES; i++)
+     {
+@@ -5161,10 +5175,12 @@ donerouting:
+   Message ("Total added wire length = %f inches, %d vias added\n",
+ 	   total_wire_length / 1.e5, total_via_count);
+   DestroyRouteData (&rd);
++#if 0
+   if (TEST_FLAG (LIVEROUTEFLAG, PCB))
+     {
+       gui->use_mask (HID_LIVE_DRAWING_OFF);
+     }
++#endif
+   if (changed)
+     {
+       SaveUndoSerialNumber ();
