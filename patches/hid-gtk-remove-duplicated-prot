@@ -1,5 +1,5 @@
 Bottom: c123432bab33d032db1bc4d3a8ce9a11ee467eca
-Top:    4812bfb54ce1998ac5921a010407332909d0492d
+Top:    eff3adc820bdf274af265c3c1412bb6d547d2c0e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 20:25:43 +0100
 
@@ -8,24 +8,6 @@ hid/gtk: Remove duplicated prototype
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index 20a269d..70a85c4 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -113,13 +113,9 @@ AddPart (void *b)
- void
- Draw (void)
- {
--  HideCrosshair ();
--
-   if (Block.X1 <= Block.X2 && Block.Y1 <= Block.Y2)
-     gui->invalidate_lr (Block.X1, Block.X2, Block.Y1, Block.Y2);
- 
--  RestoreCrosshair ();
--
-   /* shrink the update block */
-   Block.X1 = Block.Y1 =  MAXINT;
-   Block.X2 = Block.Y2 = -MAXINT;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
 index f419530..d7f0d39 100644
 --- a/src/hid/gtk/gui.h
