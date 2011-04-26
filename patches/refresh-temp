@@ -1,0 +1,23 @@
+Bottom: 0d7700db4a6ab29cd99bde5199a52e24e97b791b
+Top:    27b6d5f9673e577e84d3910dabb0cfca9ab14b17
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 20:58:09 +0100
+
+Refresh of give-the-hids-control-over-att
+
+---
+
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 45be4b8..a0e8eb3 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -466,9 +466,7 @@ ghid_port_button_release_cb (GtkWidget * drawing_area,
+ 
+   do_mouse_action(ev->button, mk + M_Release);
+ 
+-  notify_crosshair_change (false);
+   AdjustAttachedObjects ();
+-  notify_crosshair_change (true);
+   ghid_invalidate_all ();
+ 
+   ghid_window_set_name_label (PCB->Name);
