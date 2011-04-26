@@ -1,7 +1,7 @@
-Bottom: ab44120cc80b1e233cdc071f9b1dc7f0ead8648f
-Top:    9fb6998701ea825671f9779fcc13d98ffc09db68
+Bottom: 056e95cdac8fd72b923c1056c62260da294f0bbd
+Top:    e224e41149a77a32a27669f3c72edc642a7f64ef
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-26 03:05:55 +0100
+Date:   2011-04-26 15:53:07 +0100
 
 Play with GLSL shader for rendering line caps and circles
 
@@ -47,10 +47,10 @@ Notes:
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 3e48275..61eacba 100644
+index a522c96..4943755 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -192,6 +192,8 @@ LIBGTK_GL_SRCS= \
+@@ -194,6 +194,8 @@ LIBGTK_GL_SRCS= \
  GL_SRCS= \
  	hid/common/hidgl.c \
  	hid/common/hidgl.h \
