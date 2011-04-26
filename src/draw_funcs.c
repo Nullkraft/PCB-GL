@@ -13,13 +13,13 @@ _draw_pv (PinType *pv, bool draw_hole)
 }
 
 static void
-draw_pin (PinType *pin, BoxType *drawn_area, void *userdata)
+draw_pin (PinType *pin, const BoxType *drawn_area, void *userdata)
 {
   _draw_pv (pin, false);
 }
 
 static void
-draw_pin_mask (PinType *pin, BoxType *drawn_area, void *userdata)
+draw_pin_mask (PinType *pin, const BoxType *drawn_area, void *userdata)
 {
   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
     gui->thindraw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
@@ -28,13 +28,13 @@ draw_pin_mask (PinType *pin, BoxType *drawn_area, void *userdata)
 }
 
 static void
-draw_via (PinType *via, BoxType *drawn_area, void *userdata)
+draw_via (PinType *via, const BoxType *drawn_area, void *userdata)
 {
   _draw_pv (via, false);
 }
 
 static void
-draw_via_mask (PinType *via, BoxType *drawn_area, void *userdata)
+draw_via_mask (PinType *via, const BoxType *drawn_area, void *userdata)
 {
   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
     gui->thindraw_pcb_pv (Output.pmGC, Output.pmGC, via, false, true);
@@ -43,7 +43,7 @@ draw_via_mask (PinType *via, BoxType *drawn_area, void *userdata)
 }
 
 static void
-draw_hole (PinType *pv, BoxType *drawn_area, void *userdata)
+draw_hole (PinType *pv, const BoxType *drawn_area, void *userdata)
 {
   gui->set_line_cap (Output.fgGC, Round_Cap);
   gui->set_line_width (Output.fgGC, 0);
@@ -70,13 +70,13 @@ _draw_pad (hidGC gc, PadType *pad, bool clear, bool mask)
 }
 
 static void
-draw_pad (PadType *pad, BoxType *drawn_area, void *userdata)
+draw_pad (PadType *pad, const BoxType *drawn_area, void *userdata)
 {
   _draw_pad (Output.fgGC, pad, false, false);
 }
 
 static void
-draw_pad_mask (PadType *pad, BoxType *drawn_area, void *userdata)
+draw_pad_mask (PadType *pad, const BoxType *drawn_area, void *userdata)
 {
   if (pad->Mask <= 0)
     return;
@@ -85,7 +85,7 @@ draw_pad_mask (PadType *pad, BoxType *drawn_area, void *userdata)
 }
 
 static void
-draw_pad_paste (PadType *pad, BoxType *drawn_area, void *userdata)
+draw_pad_paste (PadType *pad, const BoxType *drawn_area, void *userdata)
 {
   if (TEST_FLAG (NOPASTEFLAG, pad) || pad->Mask <= 0)
     return;
@@ -111,13 +111,13 @@ _draw_line (LineType *line)
 }
 
 static void
-draw_line (LineType *line, BoxType *drawn_area, void *userdata)
+draw_line (LineType *line, const BoxType *drawn_area, void *userdata)
 {
   _draw_line (line);
 }
 
 static void
-draw_rat (RatType *rat, BoxType *drawn_area, void *userdata)
+draw_rat (RatType *rat, const BoxType *drawn_area, void *userdata)
 {
   if (Settings.RatThickness < 20)
     rat->Thickness = pixel_slop * Settings.RatThickness;
@@ -138,7 +138,7 @@ draw_rat (RatType *rat, BoxType *drawn_area, void *userdata)
 }
 
 static void
-draw_arc (ArcType *arc, BoxType *drawn_area, void *userdata)
+draw_arc (ArcType *arc, const BoxType *drawn_area, void *userdata)
 {
   if (!arc->Thickness)
     return;
@@ -154,7 +154,7 @@ draw_arc (ArcType *arc, BoxType *drawn_area, void *userdata)
 }
 
 static void
-draw_poly (PolygonType *polygon, BoxType *drawn_area, void *userdata)
+draw_poly (PolygonType *polygon, const BoxType *drawn_area, void *userdata)
 {
   if (!polygon->Clipped)
     return;
