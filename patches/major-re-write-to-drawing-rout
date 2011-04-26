@@ -1,5 +1,5 @@
 Bottom: 3aaa14c0f5c08b660ecc93f3d0834b4b3275ab84
-Top:    cbc57f45077a1b7c93f945b7eb4a31b381bf360d
+Top:    baf3f524060a12357e217dbe0819e40fc524ae6b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 01:38:36 +0100
 
@@ -88,7 +88,7 @@ index adfee36..1169266 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index cc68c5c..d039a49 100644
+index cc68c5c..8fca041 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,8 @@
@@ -272,7 +272,7 @@ index cc68c5c..d039a49 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -963,6 +997,888 @@ ghid_screen_update (void)
+@@ -963,6 +997,890 @@ ghid_screen_update (void)
  {
  }
  
@@ -455,7 +455,7 @@ index cc68c5c..d039a49 100644
 +static int
 +via_callback (const BoxType * b, void *cl)
 +{
-+  draw_via ((PinType *)b, false);
++  draw_via ((PinType *)b, TEST_FLAG (THINDRAWFLAG, PCB));
 +  return 1;
 +}
 +
@@ -463,7 +463,7 @@ index cc68c5c..d039a49 100644
 +via_inlayer_callback (const BoxType * b, void *cl)
 +{
 +  SetPVColor_inlayer ((PinTypePtr) b, cl, VIA_TYPE);
-+  _draw_pv ((PinType *) b, false);
++  _draw_pv ((PinType *) b, TEST_FLAG (THINDRAWFLAG, PCB));
 +  return 1;
 +}
 +
@@ -850,7 +850,7 @@ index cc68c5c..d039a49 100644
 +
 +      first_run = 0;
 +
-+      if (rv) {
++      if (rv && !TEST_FLAG (THINDRAWFLAG, PCB)) {
 +        /* Mask out drilled holes on this layer */
 +        hidgl_flush_triangles (&buffer);
 +        glPushAttrib (GL_COLOR_BUFFER_BIT);
@@ -873,7 +873,7 @@ index cc68c5c..d039a49 100644
 +        gui->set_layer (NULL, SL (FINISHED, 0), 0);
 +        gui->set_layer (0, group, 0);
 +
-+        if (rv) {
++        if (rv && !TEST_FLAG (THINDRAWFLAG, PCB)) {
 +          hidgl_flush_triangles (&buffer);
 +          glPushAttrib (GL_COLOR_BUFFER_BIT);
 +          glColorMask (0, 0, 0, 0);
@@ -1116,14 +1116,16 @@ index cc68c5c..d039a49 100644
 +    gui->set_layer (SWAP_IDENT ? "bottomsilk" : "topsilk",
 +                    SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0);
 +
-+    /* Mask out drilled holes */
-+    hidgl_flush_triangles (&buffer);
-+    glPushAttrib (GL_COLOR_BUFFER_BIT);
-+    glColorMask (0, 0, 0, 0);
-+    if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
-+    if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
-+    hidgl_flush_triangles (&buffer);
-+    glPopAttrib ();
++    if (!TEST_FLAG (THINDRAWFLAG, PCB)) {
++      /* Mask out drilled holes */
++      hidgl_flush_triangles (&buffer);
++      glPushAttrib (GL_COLOR_BUFFER_BIT);
++      glColorMask (0, 0, 0, 0);
++      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
++      if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
++      hidgl_flush_triangles (&buffer);
++      glPopAttrib ();
++    }
 +
 +    if (PCB->PinOn) r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
 +    if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
@@ -1161,7 +1163,7 @@ index cc68c5c..d039a49 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1027,8 +1943,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1027,8 +1945,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1172,7 +1174,7 @@ index cc68c5c..d039a49 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1094,13 +2010,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1094,13 +2012,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -1186,7 +1188,7 @@ index cc68c5c..d039a49 100644
    /* TODO: Background image */
  
    hidgl_init_triangle_array (&buffer);
-@@ -1120,7 +2029,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1120,7 +2031,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_x0,
                  ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                               -port->view_y0, 0);
