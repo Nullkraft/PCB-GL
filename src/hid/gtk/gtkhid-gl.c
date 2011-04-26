@@ -1176,7 +1176,7 @@ draw_via (PinTypePtr via, bool draw_hole)
 static int
 via_callback (const BoxType * b, void *cl)
 {
-  draw_via ((PinType *)b, false);
+  draw_via ((PinType *)b, TEST_FLAG (THINDRAWFLAG, PCB));
   return 1;
 }
 
@@ -1184,7 +1184,7 @@ static int
 via_inlayer_callback (const BoxType * b, void *cl)
 {
   SetPVColor_inlayer ((PinTypePtr) b, cl, VIA_TYPE);
-  _draw_pv ((PinType *) b, false);
+  _draw_pv ((PinType *) b, TEST_FLAG (THINDRAWFLAG, PCB));
   return 1;
 }
 
@@ -1571,7 +1571,7 @@ DrawLayerGroup (int group, const BoxType * screen)
 
       first_run = 0;
 
-      if (rv) {
+      if (rv && !TEST_FLAG (THINDRAWFLAG, PCB)) {
         /* Mask out drilled holes on this layer */
         hidgl_flush_triangles (&buffer);
         glPushAttrib (GL_COLOR_BUFFER_BIT);
@@ -1594,7 +1594,7 @@ DrawLayerGroup (int group, const BoxType * screen)
         gui->set_layer (NULL, SL (FINISHED, 0), 0);
         gui->set_layer (0, group, 0);
 
-        if (rv) {
+        if (rv && !TEST_FLAG (THINDRAWFLAG, PCB)) {
           hidgl_flush_triangles (&buffer);
           glPushAttrib (GL_COLOR_BUFFER_BIT);
           glColorMask (0, 0, 0, 0);
@@ -1837,14 +1837,16 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     gui->set_layer (SWAP_IDENT ? "bottomsilk" : "topsilk",
                     SWAP_IDENT ? SL (MASK, BOTTOM) : SL (MASK, TOP), 0);
 
-    /* Mask out drilled holes */
-    hidgl_flush_triangles (&buffer);
-    glPushAttrib (GL_COLOR_BUFFER_BIT);
-    glColorMask (0, 0, 0, 0);
-    if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
-    if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
-    hidgl_flush_triangles (&buffer);
-    glPopAttrib ();
+    if (!TEST_FLAG (THINDRAWFLAG, PCB)) {
+      /* Mask out drilled holes */
+      hidgl_flush_triangles (&buffer);
+      glPushAttrib (GL_COLOR_BUFFER_BIT);
+      glColorMask (0, 0, 0, 0);
+      if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
+      if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
+      hidgl_flush_triangles (&buffer);
+      glPopAttrib ();
+    }
 
     if (PCB->PinOn) r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
     if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_callback, NULL);
