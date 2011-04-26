@@ -11,6 +11,7 @@ struct draw_funcs {
   void (*draw_rat)       (RatType *,     void *);
   void (*draw_arc)       (ArcType *,     void *);
   void (*draw_poly)      (PolygonType *, void *);
+  void (*draw_pour)      (PourType *,    void *);
   void (*draw_layer)     (LayerType *,   void *);
 };
 
