@@ -454,7 +454,7 @@ SearchPolygonByLocation (int locked, LayerTypePtr * Layer,
   return (true);
 }
 
-#warning FIXME Later: For now, can only select a pour if you're hitting its child polygons
+#warning FIXME Later: For now, can only select a pour if youre hitting its child polygons
 #if 0
 static int
 pour_callback (const BoxType * box, void *cl)
@@ -488,7 +488,7 @@ SearchPourByLocation (int locked, LayerTypePtr * Layer,
   info.ptr3 = (void **) Dummy;
   info.locked = (locked & LOCKED_TYPE) ? 0 : LOCKFLAG;
 
-#warning FIXME Later: For now, can only select a pour if you're hitting its child polygons
+#warning FIXME Later: For now, can only select a pour if youre hitting its child polygons
   if (setjmp (info.env) == 0)
     {
       r_search (SearchLayer->pour_tree, &SearchBox, NULL, pour_polygon_callback, &info);
