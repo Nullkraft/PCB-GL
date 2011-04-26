@@ -5,6 +5,11 @@ Date:   2011-04-26 20:13:31 +0100
 
 draw.c: Let the GUIs manage the crosshair across a redraw
 
+Removes several {Hide/Restore}Crosshair() calls from the GTK HID.
+
+These are not requried any more, as they are followed by invalidate_all()
+calls which take care of the crosshair as well.
+
 
 ---
 
