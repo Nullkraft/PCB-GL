@@ -1,5 +1,5 @@
 Bottom: 022d0e4473e17ba75c2ba9fbf0d6234ac853c416
-Top:    726b71a4a9cefdea458fd06806a97893ee48c18d
+Top:    c9bffef4aed312a07adc1f19bc92101694dcc7f8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 00:10:40 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" from real drawing routines (Element Pins and Pads)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index d71982f..7aeaa69 100644
+index d71982f..b9a812e 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -226,6 +226,22 @@ name_callback (const BoxType * b, void *cl)
@@ -27,7 +27,7 @@ index d71982f..7aeaa69 100644
 +  END_LOOP;
 +  PIN_LOOP (element);
 +  {
-+    DrawPin (pin, true);
++    DrawPin (pin);
 +  }
 +  END_LOOP;
 +}
