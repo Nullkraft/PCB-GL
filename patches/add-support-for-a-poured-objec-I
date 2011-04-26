@@ -1,5 +1,5 @@
 Bottom: cd29c14c7fdfb13f2b636d6c3a4a356f398d10f5
-Top:    5d5c0a05d9e55f3c0d935ba9279d96b29ade67db
+Top:    c8803d1a87f4572e8f76167bdb0f28e1be016b9e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 02:11:48 +0100
 
@@ -2191,7 +2191,7 @@ index b0ef6f8..528c103 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index ac5248b..1e76156 100644
+index ac5248b..9ce08b1 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -49,6 +49,7 @@
@@ -2202,7 +2202,7 @@ index ac5248b..1e76156 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -923,6 +924,63 @@ poly_callback (const BoxType * b, void *cl)
+@@ -923,6 +924,73 @@ poly_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -2252,6 +2252,16 @@ index ac5248b..1e76156 100644
 +  struct pour_info *i = (struct pour_info *) cl;
 +  PourType *pour = (PourType *)b;
 +
++  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, pour))
++    {
++      if (TEST_FLAG (SELECTEDFLAG, pour))
++        gui->set_color (Output.fgGC, i->Layer->SelectedColor);
++      else
++        gui->set_color (Output.fgGC, PCB->ConnectedColor);
++    }
++  else
++    gui->set_color (Output.fgGC, i->Layer->Color);
++
 +  if (gui->gui)
 +    _draw_pour (pour);
 +
@@ -2266,7 +2276,7 @@ index ac5248b..1e76156 100644
  static int
  clearPad_callback (const BoxType * b, void *cl)
  {
-@@ -1086,8 +1144,11 @@ void
+@@ -1086,8 +1154,11 @@ void
  DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
  {
    /* print the non-clearing polys */
@@ -2279,7 +2289,7 @@ index ac5248b..1e76156 100644
  
    if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
      return;
-@@ -1421,6 +1482,15 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -1421,6 +1492,15 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
    AddPart (Polygon);
  }
  
@@ -2295,7 +2305,7 @@ index ac5248b..1e76156 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -1629,6 +1699,15 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -1629,6 +1709,15 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2311,7 +2321,7 @@ index ac5248b..1e76156 100644
   * erases an element
   */
  void
-@@ -1694,6 +1773,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -1694,6 +1783,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2321,7 +2331,7 @@ index ac5248b..1e76156 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -1741,6 +1823,10 @@ DrawObject (int type, void *ptr1, void *ptr2)
+@@ -1741,6 +1833,10 @@ DrawObject (int type, void *ptr1, void *ptr2)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
        break;
