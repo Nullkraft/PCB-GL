@@ -1,0 +1,15 @@
+Bottom: 12b0ace3981d06c1a29d65dfc8877bb062282b4f
+Top:    12b0ace3981d06c1a29d65dfc8877bb062282b4f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 01:30:55 +0100
+
+draw.c: Remove Gathering variable
+
+This variable is no longer needed since the "Gathering" Draw* functions
+are separate from the draw_... implementations which are triggered
+by the GUI calling for a repaint of the gathered area.
+
+
+---
+
+
