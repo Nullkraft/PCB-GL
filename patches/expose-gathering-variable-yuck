@@ -1,5 +1,5 @@
-Bottom: e303f20481c9085e70236c012bbfa6886fd92bf1
-Top:    305475eb6d109a65d9bb3167e69047f163fcdcc8
+Bottom: 68814a8db5ff004127cf7dccf939109a11d3d211
+Top:    68814a8db5ff004127cf7dccf939109a11d3d211
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 13:22:56 +0100
 
@@ -8,16 +8,4 @@ Expose Gathering variable - yuck
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index 1a7171e..1145cfb 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -77,7 +77,7 @@ RCSID ("$Id$");
-  * some local identifiers
-  */
- static BoxType Block = {MAXINT, MAXINT, -MAXINT, -MAXINT};
--static bool Gathering = true;
-+bool Gathering = true;
- 
- static int doing_pinout = 0;
- static bool doing_assy = false;
+
