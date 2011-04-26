@@ -447,12 +447,10 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
   state = (GdkModifierType) (ev->state);
   mk = ghid_modifier_keys_state (&state);
   ghid_show_crosshair (FALSE);
-  HideCrosshair ();
 
   do_mouse_action(ev->button, mk);
 
   ghid_invalidate_all ();
-  RestoreCrosshair ();
   ghid_window_set_name_label (PCB->Name);
   ghid_set_status_line_label ();
   ghid_show_crosshair (TRUE);
