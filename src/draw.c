@@ -163,7 +163,7 @@ static int
 pin_callback (const BoxType * b, void *cl)
 {
   set_pv_color ((PinType *)b, PIN_TYPE);
-  dapi->draw_pin ((PinType *)b, cl);
+  dapi->draw_pin ((PinType *)b, NULL, NULL);
   return 1;
 }
 
@@ -171,7 +171,7 @@ static int
 pin_inlayer_callback (const BoxType * b, void *cl)
 {
   set_pv_inlayer_color ((PinType *)b, cl, PIN_TYPE);
-  dapi->draw_pin ((PinType *)b, NULL);
+  dapi->draw_pin ((PinType *)b, NULL, NULL);
   return 1;
 }
 
@@ -179,7 +179,7 @@ static int
 via_callback (const BoxType * b, void *cl)
 {
   set_pv_color ((PinType *)b, VIA_TYPE);
-  dapi->draw_via ((PinType *)b, cl);
+  dapi->draw_via ((PinType *)b, NULL, NULL);
   return 1;
 }
 
@@ -187,7 +187,7 @@ static int
 via_inlayer_callback (const BoxType * b, void *cl)
 {
   set_pv_inlayer_color ((PinType *)b, cl, VIA_TYPE);
-  dapi->draw_via ((PinType *)b, NULL);
+  dapi->draw_via ((PinType *)b, NULL, NULL);
   return 1;
 }
 
@@ -205,7 +205,7 @@ pad_callback (const BoxType * b, void *cl)
       else if (FRONT (pad))                   gui->set_color (Output.fgGC, PCB->PinColor);
       else                                    gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
 
-      dapi->draw_pad (pad, NULL);
+      dapi->draw_pad (pad, NULL, NULL);
     }
   return 1;
 }
@@ -227,7 +227,7 @@ pad_inlayer_callback (const BoxType * b, void *cl)
       else if (TEST_FLAG (FOUNDFLAG, pad))    gui->set_color (Output.fgGC, PCB->ConnectedColor);
       else                                    gui->set_color (Output.fgGC, layer->Color);
 
-      dapi->draw_pad (pad, NULL);
+      dapi->draw_pad (pad, NULL, NULL);
     }
   return 1;
 }
@@ -277,20 +277,20 @@ draw_element_pins_and_pads (ElementType *element)
         else if (FRONT (pad))                   gui->set_color (Output.fgGC, PCB->PinColor);
         else                                    gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
 
-        dapi->draw_pad (pad, NULL);
+        dapi->draw_pad (pad, NULL, NULL);
       }
   }
   END_LOOP;
   PIN_LOOP (element);
   {
     set_pv_color (pin, PIN_TYPE);
-    dapi->draw_pin (pin, NULL);
+    dapi->draw_pin (pin, NULL, NULL);
 
     if (TEST_FLAG (WARNFLAG, pin))          gui->set_color (Output.fgGC, PCB->WarnColor);
     else if (TEST_FLAG (SELECTEDFLAG, pin)) gui->set_color (Output.fgGC, PCB->PinSelectedColor);
     else                                    gui->set_color (Output.fgGC, Settings.BlackColor);
 
-    dapi->draw_hole (pin, NULL);
+    dapi->draw_hole (pin, NULL, NULL);
   }
   END_LOOP;
 }
@@ -318,7 +318,7 @@ hole_callback (const BoxType * b, void *cl)
   else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->set_color (Output.fgGC, PCB->PinSelectedColor);
   else                                   gui->set_color (Output.fgGC, Settings.BlackColor);
 
-  dapi->draw_hole (pv, NULL);
+  dapi->draw_hole (pv, NULL, NULL);
   return 1;
 }
 
@@ -374,7 +374,7 @@ line_callback (const BoxType * b, void *cl)
   else if (TEST_FLAG (FOUNDFLAG, line)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
   else                                  gui->set_color (Output.fgGC, layer->Color);
 
-  dapi->draw_line (line, cl);
+  dapi->draw_line (line, NULL, NULL);
   return 1;
 }
 
@@ -387,7 +387,7 @@ rat_callback (const BoxType * b, void *cl)
   else if (TEST_FLAG (FOUNDFLAG, rat)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
   else                                 gui->set_color (Output.fgGC, PCB->RatColor);
 
-  dapi->draw_rat (rat, cl);
+  dapi->draw_rat (rat, NULL, NULL);
   return 1;
 }
 
@@ -401,7 +401,7 @@ arc_callback (const BoxType * b, void *cl)
   else if (TEST_FLAG (FOUNDFLAG, arc)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
   else                                 gui->set_color (Output.fgGC, layer->Color);
 
-  dapi->draw_arc (arc, cl);
+  dapi->draw_arc (arc, NULL, NULL);
   return 1;
 }
 
@@ -422,13 +422,13 @@ draw_element_package (ElementType *element)
   ELEMENTLINE_LOOP (element);
   {
     //_draw_line (line);
-    dapi->draw_line (line, NULL);
+    dapi->draw_line (line, NULL, NULL);
   }
   END_LOOP;
   ARC_LOOP (element);
   {
     //_draw_arc (arc);
-    dapi->draw_arc (arc, NULL);
+    dapi->draw_arc (arc, NULL, NULL);
   }
   END_LOOP;
 }
@@ -659,14 +659,14 @@ DrawPPV (int group, const BoxType *drawn_area)
 static int
 pin_mask_callback (const BoxType * b, void *cl)
 {
-  dapi->draw_pin_mask ((PinType *) b, cl);
+  dapi->draw_pin_mask ((PinType *) b, NULL, NULL);
   return 1;
 }
 
 static int
 via_mask_callback (const BoxType * b, void *cl)
 {
-  dapi->draw_via_mask ((PinType *) b, cl);
+  dapi->draw_via_mask ((PinType *) b, NULL, NULL);
   return 1;
 }
 
@@ -685,7 +685,7 @@ poly_callback (const BoxType * b, void *cl)
   else if (TEST_FLAG (FOUNDFLAG, polygon)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
   else                                     gui->set_color (Output.fgGC, i->layer->Color);
 
-  dapi->draw_poly (polygon, cl);
+  dapi->draw_poly (polygon, i->drawn_area, NULL);
   return 1;
 }
 
@@ -695,7 +695,7 @@ pad_mask_callback (const BoxType * b, void *cl)
   PadTypePtr pad = (PadTypePtr) b;
   int *side = cl;
   if (ON_SIDE (pad, *side))
-    dapi->draw_pad_mask (pad, NULL);
+    dapi->draw_pad_mask (pad, NULL, NULL);
   return 1;
 }
 
@@ -798,7 +798,7 @@ DrawPaste (int side, BoxType *drawn_area)
   ALLPAD_LOOP (PCB->Data);
   {
     if (ON_SIDE (pad, side))
-      dapi->draw_pad_paste (pad, NULL);
+      dapi->draw_pad_paste (pad, NULL, NULL);
   }
   ENDALL_LOOP;
 }
