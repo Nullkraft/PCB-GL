@@ -1,0 +1,14 @@
+Bottom: ca2388b9fec3713cd1c0ee00adb0ce3ac2baf5a0
+Top:    ca2388b9fec3713cd1c0ee00adb0ce3ac2baf5a0
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 19:33:19 +0100
+
+Remove live drawing from auto-router
+
+This doesn't play nice with rendering models where the GUI needs to be
+in charge of the repaint cycle - and the feature is not in general use.
+
+
+---
+
+
