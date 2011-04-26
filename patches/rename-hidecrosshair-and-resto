@@ -1,5 +1,5 @@
 Bottom: 731444a98f6ce16245b94298956a861253e6d508
-Top:    74a8d034bc75944533d759e99d4e586b8f9ab994
+Top:    f85472204a6a85e02077990998033f19acba93fd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 21:10:01 +0100
 
@@ -464,10 +464,10 @@ index 43d5c2b..4f746e9 100644
  }
  
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 054610b..06226d2 100644
+index 054610b..9834577 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -706,6 +706,77 @@ DrawMark (void)
+@@ -706,6 +706,57 @@ DrawMark (void)
  
  
  /* ---------------------------------------------------------------------------
@@ -520,32 +520,12 @@ index 054610b..06226d2 100644
 +    }
 +}
 +
-+/* ---------------------------------------------------------------------------
-+ * notify the GUI that data relating to the mark is being changed.
-+ *
-+ * The argument passed is false to notify "changes are about to happen",
-+ * and true to notify "changes have finished".
-+ *
-+ * Each call with a 'false' parameter must be matched with a following one
-+ * with a 'true' parameter. Unmatched 'true' calls are currently not permitted,
-+ * but might be allowed in the future.
-+ *
-+ * GUIs should not complain if they receive extra calls with 'true' as parameter.
-+ * They should initiate a redraw of the mark - which may (if necessary) mean
-+ * repainting the whole screen if the GUI hasn't tracked the mark's location.
-+ */
-+void
-+notify_mark_change (bool changes_complete)
-+{
-+  /* For now, just piggy back on the crosshair changes redrawing the mark */
-+  notify_crosshair_change (changes_complete);
-+}
 +
 +/* ---------------------------------------------------------------------------
   * switches crosshair on
   */
  void
-@@ -734,45 +805,48 @@ CrosshairOff (void)
+@@ -734,45 +785,46 @@ CrosshairOff (void)
  }
  
  /* ---------------------------------------------------------------------------
@@ -580,7 +560,6 @@ index 054610b..06226d2 100644
 -
 -  CrosshairOff ();
 +  notify_crosshair_change (false);
-+  notify_mark_change (false);
  }
  
 -/* ---------------------------------------------------------------------------
@@ -608,7 +587,6 @@ index 054610b..06226d2 100644
 -  else
 -    CrosshairOff ();
 +  notify_crosshair_change (true);
-+  notify_mark_change (true);
  }
  
 +/* ---------------------------------------------------------------------------
@@ -617,7 +595,7 @@ index 054610b..06226d2 100644
  static double
  square (double x)
  {
-@@ -1064,8 +1138,8 @@ MoveCrosshairRelative (LocationType DeltaX, LocationType DeltaY)
+@@ -1064,8 +1116,8 @@ MoveCrosshairRelative (LocationType DeltaX, LocationType DeltaY)
  }
  
  /* ---------------------------------------------------------------------------
@@ -628,7 +606,7 @@ index 054610b..06226d2 100644
   */
  bool
  MoveCrosshairAbsolute (LocationType X, LocationType Y)
-@@ -1076,13 +1150,14 @@ MoveCrosshairAbsolute (LocationType X, LocationType Y)
+@@ -1076,13 +1128,14 @@ MoveCrosshairAbsolute (LocationType X, LocationType Y)
    FitCrosshairIntoGrid (X, Y);
    if (Crosshair.X != x || Crosshair.Y != y)
      {
