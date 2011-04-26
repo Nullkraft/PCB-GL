@@ -1,7 +1,7 @@
-Bottom: 9d1a0b85cfa6720db96b2dd6de0893afd2365f4f
-Top:    f2bc55c4442ca4f570ffd5f56a9cf45c377d1acf
+Bottom: d7ecdccb55fa3628b98ca7b2140587f9bf1c8b14
+Top:    73acb9c995c527ff7159bc3cc22d18aee3c12536
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-26 15:47:32 +0100
+Date:   2011-04-26 15:51:45 +0100
 
 hid/gtk: Drop in GL renderer - WOOT!
 
@@ -25,10 +25,10 @@ Credits:
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 5abbfb2..8129207 100644
+index 34cd5b3..ccd5270 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -157,13 +157,23 @@ PCB_SRCS = \
+@@ -159,13 +159,23 @@ PCB_SRCS = \
  	hid/common/hid_resource.h \
  	hid/hidint.h 
  
@@ -53,7 +53,7 @@ index 5abbfb2..8129207 100644
  BUILT_SOURCES = \
  	core_lists.h \
  	gpcb-menu.h \
-@@ -250,7 +260,6 @@ LIBGTK_SRCS = \
+@@ -252,7 +262,6 @@ LIBGTK_SRCS = \
  	dolists.h \
  	hid/hidint.h \
  	hid/gtk/gtkhid-main.c \
@@ -61,7 +61,7 @@ index 5abbfb2..8129207 100644
  	hid/gtk/gtkhid.h \
  	hid/gtk/gui.h \
  	hid/gtk/gui-command-window.c \
-@@ -294,6 +303,14 @@ BUILT_SOURCES+=	dbus-introspect.h
+@@ -296,6 +305,14 @@ BUILT_SOURCES+=	dbus-introspect.h
  
  endif
  
