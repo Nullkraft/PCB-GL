@@ -894,7 +894,7 @@ poly_callback (const BoxType * b, void *cl)
     return 0;
 
   /* Re-use HOLEFLAG to cut out islands */
-  if (TEST_FLAG (HOLEFLAG, Polygon))
+  if (TEST_FLAG (HOLEFLAG, polygon))
     return 0;
 
   if (TEST_FLAG (SELECTEDFLAG, polygon))
