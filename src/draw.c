@@ -710,6 +710,10 @@ poly_callback (const BoxType * b, void *cl)
   LayerType *layer = cl;
   PolygonType *polygon = (PolygonType *)b;
 
+  /* Re-use HOLEFLAG to cut out islands */
+  if (TEST_FLAG (HOLEFLAG, polygon))
+    return 0;
+
   if (TEST_FLAG (SELECTEDFLAG, polygon))   gui->set_color (Output.fgGC, layer->SelectedColor);
   else if (TEST_FLAG (FOUNDFLAG, polygon)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
   else                                     gui->set_color (Output.fgGC, layer->Color);
