@@ -674,9 +674,7 @@ ghid_port_window_motion_cb (GtkWidget * widget,
   queue_tooltip_update (out);
 #endif
 
-  ghid_show_crosshair (FALSE);
-  ghid_show_crosshair (TRUE);
-  if (moved && have_crosshair_attachments ())
+  if (moved)
     ghid_draw_area_update (gport, NULL);
   return FALSE;
 }
