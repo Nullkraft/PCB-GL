@@ -1,5 +1,5 @@
 Bottom: 4b809c27fb373e64c10ab97ee898b4de5f38b637
-Top:    c30b6f9f980336724cf3393380c41fbf2dd05a9f
+Top:    0fedd153ee943054bb445adffe642f769c5dfea9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 01:38:36 +0100
 
@@ -64,10 +64,10 @@ index 32fb016..fa3d176 100644
  {
    /*
 diff --git a/src/draw.h b/src/draw.h
-index adfee36..7b091f5 100644
+index adfee36..1169266 100644
 --- a/src/draw.h
 +++ b/src/draw.h
-@@ -72,6 +72,20 @@ void EraseElementName (ElementTypePtr);
+@@ -72,6 +72,19 @@ void EraseElementName (ElementTypePtr);
  void EraseObject (int, void *, void *);
  void LoadBackgroundImage (char *);
  
@@ -81,7 +81,6 @@ index adfee36..7b091f5 100644
 +void DrawHole (PinTypePtr);
 +void DrawRats (BoxType *);
 +void DrawSilk (int side, const BoxType *);
-+void DrawSpecialPolygon (hidGC DrawGC, LocationType X, LocationType Y, int Thickness, int thin_draw);
 +
 +/* TEMPORARY */
 +
