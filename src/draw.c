@@ -104,8 +104,6 @@ static void DrawMask (int side, BoxType *);
 static void DrawPaste (int side, BoxType *);
 static void DrawRats (BoxType *);
 static void DrawSilk (int side, const BoxType *);
-static int via_callback (const BoxType * b, void *cl);
-static int pin_callback (const BoxType * b, void *cl);
 static int pad_callback (const BoxType * b, void *cl);
 
 /*--------------------------------------------------------------------------------------
