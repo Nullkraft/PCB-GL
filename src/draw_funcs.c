@@ -196,6 +196,7 @@ struct draw_funcs d_f = {
   .draw_rat       = draw_rat,
   .draw_arc       = draw_arc,
   .draw_poly      = draw_poly,
+  .draw_layer     = draw_layer,
 };
 
 struct draw_funcs *dapi = &d_f;
