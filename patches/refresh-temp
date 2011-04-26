@@ -1,0 +1,23 @@
+Bottom: eecd1d7fb04c01265d04e51b4531ce526a9e6a54
+Top:    0d7700db4a6ab29cd99bde5199a52e24e97b791b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 20:56:57 +0100
+
+Refresh of give-the-hids-control-over-att
+
+---
+
+diff --git a/src/buffer.c b/src/buffer.c
+index 75ab94a..4f746e9 100644
+--- a/src/buffer.c
++++ b/src/buffer.c
+@@ -521,6 +521,9 @@ void
+ AddSelectedToBuffer (BufferTypePtr Buffer, LocationType X, LocationType Y,
+ 		     bool LeaveSelected)
+ {
++  /* switch crosshair off because adding objects to the pastebuffer
++   * may change the 'valid' area for the cursor
++   */
+   if (!LeaveSelected)
+     ExtraFlag = SELECTEDFLAG;
+   notify_crosshair_change (false);
