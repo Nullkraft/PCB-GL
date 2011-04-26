@@ -1,5 +1,5 @@
-Bottom: 723a62cd98428de61a1ce298a14d9a501e52ecb1
-Top:    a206fe6c612f3cef73b1e177211051e02a7b0b04
+Bottom: 0fedd153ee943054bb445adffe642f769c5dfea9
+Top:    b182d1f25ac6c44c738df2f90438ccc27baba9dd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 15:58:27 +0100
 
@@ -13,10 +13,10 @@ file during the fab drawing output.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index ac5f290..d75a6f5 100644
+index fa3d176..ac5248b 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -741,10 +741,6 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
+@@ -1089,10 +1089,6 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
    clip_box = screen;
    r_search (Layer->polygon_tree, screen, NULL, poly_callback, Layer);
  
@@ -27,7 +27,7 @@ index ac5f290..d75a6f5 100644
    if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
      return;
  
-@@ -794,8 +790,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -1142,8 +1138,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
    Cardinal *layers = PCB->LayerGroups.Entries[group];
  
    clip_box = drawn_area;
