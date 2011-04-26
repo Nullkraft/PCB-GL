@@ -1,5 +1,5 @@
 Bottom: 5455d4b4b567881fff5a4165c743b3b0dc2ca4b2
-Top:    b1ee191a58407cb8b6b031339d0cf9825c22fc30
+Top:    2c47feaacadc2816ecb0d75ffe61c5d9c6a2b7e8
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 18:14:53 +0100
 
@@ -11,7 +11,7 @@ Moves code from DrawRegularText() into its only caller text_callback()
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 308f155..84d257d 100644
+index 308f155..43015c5 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -89,7 +89,6 @@ static const BoxType *clip_box = NULL;
@@ -101,6 +101,15 @@ index 308f155..84d257d 100644
  /* ---------------------------------------------------------------------------
   * draws a polygon on a layer
   */
+@@ -1485,7 +1463,7 @@ DrawElementName (ElementTypePtr Element)
+ 
+   if (TEST_FLAG (HIDENAMEFLAG, Element))
+     return;
+-  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
++  DrawText (NULL, &ELEMENT_TEXT (PCB, Element));
+ }
+ 
+ /* ---------------------------------------------------------------------------
 @@ -1653,13 +1631,9 @@ EraseArc (ArcTypePtr Arc)
  void
  EraseText (LayerTypePtr Layer, TextTypePtr Text)
@@ -126,4 +135,12 @@ index 308f155..84d257d 100644
 -    DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
 +  EraseElementName (Element);
    EraseElementPinsAndPads (Element);
+ }
+ 
+@@ -1724,7 +1697,7 @@ EraseElementName (ElementTypePtr Element)
+ 
+   if (TEST_FLAG (HIDENAMEFLAG, Element))
+     return;
+-  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
++  DrawText (NULL, &ELEMENT_TEXT (PCB, Element));
  }
