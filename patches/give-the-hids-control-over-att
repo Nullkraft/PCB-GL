@@ -1,4 +1,4 @@
-Bottom: 8b7c068f5e3f4959180c457cc431944c0d369b03
+Bottom: 54167cb5ff59fcb0ac40b79699b2bdf50249a074
 Top:    9a16ef2e6e22c778733bed56bbe925afb414ca2e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 19:19:04 +0100
@@ -27,42 +27,6 @@ been completed (true argument).
 
 ---
 
-diff --git a/src/action.c b/src/action.c
-index eddbbbd..7744cd1 100644
---- a/src/action.c
-+++ b/src/action.c
-@@ -4027,24 +4027,27 @@ ActionMarkCrosshair (int argc, char **argv, int x, int y)
-     {
-       if (Marked.status)
- 	{
--	  DrawMark ();
-+	  notify_mark_change (false);
- 	  Marked.status = false;
-+	  notify_mark_change (true);
- 	}
-       else
- 	{
-+	  notify_mark_change (false);
-+	  Marked.status = false;
- 	  Marked.status = true;
- 	  Marked.X = Crosshair.X;
- 	  Marked.Y = Crosshair.Y;
--	  DrawMark ();
-+	  notify_mark_change (true);
- 	}
-     }
-   else if (GetFunctionID (function) == F_Center)
-     {
--      DrawMark ();
-+      notify_mark_change (false);
-       Marked.status = true;
-       Marked.X = Crosshair.X;
-       Marked.Y = Crosshair.Y;
--      DrawMark ();
-+      notify_mark_change (true);
-     }
-   return 0;
- }
 diff --git a/src/crosshair.c b/src/crosshair.c
 index 06226d2..9498879 100644
 --- a/src/crosshair.c
