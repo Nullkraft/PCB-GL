@@ -1,5 +1,5 @@
 Bottom: 00342fc69029f920251d3423e31a1cd4f839e792
-Top:    f0fb7ad4437d14bc21f179e02a84cf0c7d84ea90
+Top:    a3242d2253783dacab7575324b7aac1eafdf2c41
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 14:01:44 +0100
 
@@ -22,7 +22,7 @@ index 5abbfb2..34cd5b3 100644
  	drill.h \
  	edif.y \
 diff --git a/src/draw.c b/src/draw.c
-index 4a8de5f..7d07990 100644
+index 4a8de5f..6e4d106 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -41,6 +41,7 @@
@@ -536,7 +536,28 @@ index 4a8de5f..7d07990 100644
    }
    ENDALL_LOOP;
  }
-@@ -1503,19 +1203,7 @@ EraseVia (PinTypePtr Via)
+@@ -1193,6 +893,20 @@ GatherPadName (PadTypePtr Pad)
+   return;
+ }
+ 
++static void
++_draw_line (LineType *line)
++{
++  gui->set_line_cap (Output.fgGC, Trace_Cap);
++  if (TEST_FLAG (THINDRAWFLAG, PCB))
++    gui->set_line_width (Output.fgGC, 0);
++  else
++    gui->set_line_width (Output.fgGC, line->Thickness);
++
++  gui->draw_line (Output.fgGC,
++                  line->Point1.X, line->Point1.Y,
++                  line->Point2.X, line->Point2.Y);
++}
++
+ /* ---------------------------------------------------------------------------
+  * lowlevel drawing routine for text objects
+  */
+@@ -1503,19 +1217,7 @@ EraseVia (PinTypePtr Via)
  void
  EraseRat (RatTypePtr Rat)
  {
