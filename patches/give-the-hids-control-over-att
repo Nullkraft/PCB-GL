@@ -1,5 +1,5 @@
 Bottom: 54167cb5ff59fcb0ac40b79699b2bdf50249a074
-Top:    b3869b4e984fbeaf324c1e847279ad5f57b81342
+Top:    64bd0142df24bdadfd9d744231e159468715f8ae
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 19:19:04 +0100
 
@@ -458,10 +458,10 @@ index 180e58c..5616489 100644
  void ghid_init_renderer (int *, char ***, GHidPort *);
  void ghid_init_drawing_widget (GtkWidget *widget, GHidPort *);
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 75c295e..5435f41 100644
+index 75c295e..703da61 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -2878,6 +2878,42 @@ lesstif_invalidate_all (void)
+@@ -2878,6 +2878,60 @@ lesstif_invalidate_all (void)
    lesstif_invalidate_lr (0, PCB->MaxWidth, 0, PCB->MaxHeight);
  }
  
@@ -474,7 +474,16 @@ index 75c295e..5435f41 100644
 +    invalidate_depth --;
 +
 +  if (invalidate_depth < 0)
-+    invalidate_depth = 0;
++    {
++      invalidate_depth = 0;
++      /* A mismatch of changes_complete == false and == true notifications
++       * is not expected to occur, but we will try to handle it gracefully.
++       * As we know the crosshair will have been shown already, we must
++       * repaint the entire view to be sure not to leave an artaefact.
++       */
++      need_idle_proc ();
++      return;
++    }
 +
 +  if (invalidate_depth == 0)
 +    DrawAttached ();
@@ -492,7 +501,16 @@ index 75c295e..5435f41 100644
 +    invalidate_depth --;
 +
 +  if (invalidate_depth < 0)
-+    invalidate_depth = 0;
++    {
++      invalidate_depth = 0;
++      /* A mismatch of changes_complete == false and == true notifications
++       * is not expected to occur, but we will try to handle it gracefully.
++       * As we know the mark will have been shown already, we must
++       * repaint the entire view to be sure not to leave an artaefact.
++       */
++      need_idle_proc ();
++      return;
++    }
 +
 +  if (invalidate_depth == 0)
 +    DrawMark ();
@@ -504,7 +522,7 @@ index 75c295e..5435f41 100644
  static int
  lesstif_set_layer (const char *name, int group, int empty)
  {
-@@ -3804,59 +3840,61 @@ hid_lesstif_init ()
+@@ -3804,59 +3858,61 @@ hid_lesstif_init ()
  
    common_draw_helpers_init (&lesstif_hid);
  
