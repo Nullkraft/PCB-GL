@@ -1,5 +1,5 @@
 Bottom: 8b7c068f5e3f4959180c457cc431944c0d369b03
-Top:    38ac1565dc97d20def569209cef532da189fef0e
+Top:    9a16ef2e6e22c778733bed56bbe925afb414ca2e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 19:19:04 +0100
 
@@ -64,7 +64,7 @@ index eddbbbd..7744cd1 100644
    return 0;
  }
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 06226d2..864f0de 100644
+index 06226d2..9498879 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -66,15 +66,6 @@ typedef struct
@@ -83,7 +83,7 @@ index 06226d2..864f0de 100644
   * some local prototypes
   */
  static void XORPolygon (PolygonTypePtr, LocationType, LocationType);
-@@ -723,36 +714,30 @@ DrawMark (void)
+@@ -723,38 +714,11 @@ DrawMark (void)
  void
  notify_crosshair_change (bool changes_complete)
  {
@@ -111,38 +111,32 @@ index 06226d2..864f0de 100644
 -          fprintf(stderr, "Error: CrosshairStackLocation overflow\n");
 -          return;
 -        }
-+  if (gui->notify_crosshair_change)
-+    gui->notify_crosshair_change (changes_complete);
-+}
- 
+-
 -      CrosshairStack[CrosshairStackLocation] = Crosshair.On;
 -      CrosshairStackLocation++;
- 
+-
 -      CrosshairOff ();
 -    }
-+/* ---------------------------------------------------------------------------
-+ * notify the GUI that data relating to the mark is being changed.
-+ *
-+ * The argument passed is false to notify "changes are about to happen",
-+ * and true to notify "changes have finished".
-+ *
-+ * Each call with a 'false' parameter must be matched with a following one
-+ * with a 'true' parameter. Unmatched 'true' calls are currently not permitted,
-+ * but might be allowed in the future.
-+ *
-+ * GUIs should not complain if they receive extra calls with 'true' as parameter.
-+ * They should initiate a redraw of the mark - which may (if necessary) mean
-+ * repainting the whole screen if the GUI hasn't tracked the mark's location.
-+ */
-+void
-+notify_mark_change (bool changes_complete)
-+{
++  if (gui->notify_crosshair_change)
++    gui->notify_crosshair_change (changes_complete);
+ }
+ 
++
+ /* ---------------------------------------------------------------------------
+  * notify the GUI that data relating to the mark is being changed.
+  *
+@@ -772,8 +736,8 @@ notify_crosshair_change (bool changes_complete)
+ void
+ notify_mark_change (bool changes_complete)
+ {
+-  /* For now, just piggy back on the crosshair changes redrawing the mark */
+-  notify_crosshair_change (changes_complete);
 +  if (gui->notify_mark_change)
 +    gui->notify_mark_change (changes_complete);
  }
  
  /* ---------------------------------------------------------------------------
-@@ -782,12 +767,18 @@ notify_mark_change (bool changes_complete)
+@@ -782,12 +746,18 @@ notify_mark_change (bool changes_complete)
  void
  CrosshairOn (void)
  {
@@ -167,7 +161,7 @@ index 06226d2..864f0de 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -796,12 +787,18 @@ CrosshairOn (void)
+@@ -796,12 +766,18 @@ CrosshairOn (void)
  void
  CrosshairOff (void)
  {
@@ -192,7 +186,7 @@ index 06226d2..864f0de 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1184,8 +1181,7 @@ SetCrosshairRange (LocationType MinX, LocationType MinY, LocationType MaxX,
+@@ -1184,8 +1160,7 @@ SetCrosshairRange (LocationType MinX, LocationType MinY, LocationType MaxX,
  
  /* ---------------------------------------------------------------------------
   * initializes crosshair stuff
@@ -202,7 +196,7 @@ index 06226d2..864f0de 100644
   */
  void
  InitCrosshair (void)
-@@ -1197,9 +1193,6 @@ InitCrosshair (void)
+@@ -1197,9 +1172,6 @@ InitCrosshair (void)
    gui->set_line_cap (Crosshair.GC, Trace_Cap);
    gui->set_line_width (Crosshair.GC, 1);
  
