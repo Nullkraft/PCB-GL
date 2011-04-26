@@ -1,5 +1,5 @@
 Bottom: 820aa875947470ca769d078495d6d0d539ba6bb1
-Top:    820aa875947470ca769d078495d6d0d539ba6bb1
+Top:    9e3c6959a422844a94754205c7f5b58153bca45e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 15:58:27 +0100
 
@@ -18,4 +18,53 @@ the pads.
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index d039a49..155ccdb 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -1154,7 +1154,21 @@ draw_pin (PinTypePtr pin, bool draw_hole)
+ static int
+ pin_callback (const BoxType * b, void *cl)
+ {
+-  draw_pin ((PinType *)b, false);
++  PinTypePtr pin = (PinTypePtr) b;
++
++  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
++    _draw_pv_name (pin);
++  draw_pin (pin, false);
++  return 1;
++}
++
++static int
++pin_name_callback (const BoxType * b, void *cl)
++{
++  PinTypePtr pin = (PinTypePtr) b;
++
++  if (!TEST_FLAG (HOLEFLAG, pin) && TEST_FLAG (DISPLAYNAMEFLAG, pin))
++    _draw_pv_name (pin);
+   return 1;
+ }
+ 
+@@ -1271,8 +1285,11 @@ pad_callback (const BoxType * b, void *cl)
+   PadTypePtr pad = (PadTypePtr) b;
+   int *side = cl;
+ 
+-  if (ON_SIDE (pad, *side))
++  if (ON_SIDE (pad, *side)) {
++    if (TEST_FLAG (DISPLAYNAMEFLAG, pad))
++      draw_pad_name (pad);
+     draw_pad (pad);
++  }
+   return 1;
+ }
+ 
+@@ -1608,6 +1625,9 @@ DrawLayerGroup (int group, const BoxType * screen)
+ 
+       /* Draw pins, vias and pads on this layer */
+       if (!global_view_2d && rv) {
++        if (PCB->PinOn &&
++            (group == solder_group || group == component_group))
++          r_search (PCB->Data->pin_tree, screen, NULL, pin_name_callback, Layer);
+         if (PCB->PinOn) r_search (PCB->Data->pin_tree, screen, NULL, pin_inlayer_callback, Layer);
+         if (PCB->ViaOn) r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
+         if (PCB->PinOn && group == component_group)
