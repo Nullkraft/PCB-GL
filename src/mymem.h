@@ -56,7 +56,8 @@
 #define	STEP_SELECTORENTRY	128
 #define	STEP_REMOVELIST		500
 #define	STEP_UNDOLIST		500
-#define	STEP_POLYGON		10
+#define	STEP_POUR		10
+#define	STEP_POLYGON		100
 #define	STEP_POLYGONPOINT	10
 #define	STEP_POLYGONHOLEINDEX	10
 #define	STEP_LIBRARYMENU	10
@@ -83,9 +84,11 @@ LineTypePtr GetLineMemory (LayerTypePtr);
 ArcTypePtr GetArcMemory (LayerTypePtr);
 RatTypePtr GetRatMemory (DataTypePtr);
 TextTypePtr GetTextMemory (LayerTypePtr);
-PolygonTypePtr GetPolygonMemory (LayerTypePtr);
+PolygonTypePtr GetPolygonMemoryInPour (PourTypePtr);
+PourTypePtr GetPourMemory (LayerTypePtr);
 PointTypePtr GetPointMemoryInPolygon (PolygonTypePtr);
-Cardinal *GetHoleIndexMemoryInPolygon (PolygonTypePtr);
+PointTypePtr GetPointMemoryInPour (PourTypePtr);
+Cardinal *GetHoleIndexMemoryInPour (PourTypePtr);
 ElementTypePtr GetElementMemory (DataTypePtr);
 BoxTypePtr GetBoxMemory (BoxListTypePtr);
 ConnectionTypePtr GetConnectionMemory (NetTypePtr);
@@ -98,6 +101,7 @@ PinTypeHandle GetDrillPinMemory (DrillTypePtr);
 DrillTypePtr GetDrillInfoDrillMemory (DrillInfoTypePtr);
 void **GetPointerMemory (PointerListTypePtr);
 void FreePolygonMemory (PolygonTypePtr);
+void FreePourMemory (PourTypePtr);
 void FreeElementMemory (ElementTypePtr);
 void FreePCBMemory (PCBTypePtr);
 void FreeBoxListMemory (BoxListTypePtr);
