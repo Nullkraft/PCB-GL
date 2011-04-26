@@ -450,7 +450,7 @@ hole_callback (const BoxType * b, void *cl)
 }
 
 static void
-DrawHoles (bool draw_plated, bool draw_unplated)
+DrawHoles (bool draw_plated, bool draw_unplated, BoxType *drawn_area)
 {
   int plated = -1;
 
@@ -480,7 +480,7 @@ hole_counting_callback (const BoxType * b, void *cl)
 }
 
 static void
-CountHoles (int *plated, int *unplated)
+CountHoles (int *plated, int *unplated, BoxType *drawn_area)
 {
   HoleCountStruct hcs = {0, 0};
 
@@ -722,13 +722,13 @@ DrawEverything (BoxTypePtr drawn_area)
     DrawPPV (SWAP_IDENT ? solder : component, drawn_area);
   else
     {
-      CountHoles (&plated, &unplated);
+      CountHoles (&plated, &unplated, drawn_area);
 
       if (plated && gui->set_layer ("plated-drill", SL (PDRILL, 0), 0))
-        DrawHoles (true, false);
+        DrawHoles (true, false, drawn_area);
 
       if (unplated && gui->set_layer ("unplated-drill", SL (PDRILL, 0), 0))
-        DrawHoles (false, true);
+        DrawHoles (false, true, drawn_area);
     }
 
   /* Draw the solder mask if turned on */
