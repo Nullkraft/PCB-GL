@@ -1,5 +1,5 @@
-Bottom: ebb3c80484692a37f6cfc493494f73380d517821
-Top:    0e2ee347336895a22b7006bdd73851f0b063141f
+Bottom: 3ad955c35941f4eb6a767c11018f4e488ed37f9a
+Top:    035d05e2cf5cf08fbbd98415482e0f9e87c168ce
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 19:19:06 +0100
 
@@ -25,10 +25,10 @@ Credits:
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 34cd5b3..ccd5270 100644
+index 5abbfb2..8129207 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -159,13 +159,23 @@ PCB_SRCS = \
+@@ -157,13 +157,23 @@ PCB_SRCS = \
  	hid/common/hid_resource.h \
  	hid/hidint.h 
  
@@ -53,7 +53,7 @@ index 34cd5b3..ccd5270 100644
  BUILT_SOURCES = \
  	core_lists.h \
  	gpcb-menu.h \
-@@ -252,7 +262,6 @@ LIBGTK_SRCS = \
+@@ -250,7 +260,6 @@ LIBGTK_SRCS = \
  	dolists.h \
  	hid/hidint.h \
  	hid/gtk/gtkhid-main.c \
@@ -61,7 +61,7 @@ index 34cd5b3..ccd5270 100644
  	hid/gtk/gtkhid.h \
  	hid/gtk/gui.h \
  	hid/gtk/gui-command-window.c \
-@@ -296,6 +305,14 @@ BUILT_SOURCES+=	dbus-introspect.h
+@@ -294,6 +303,14 @@ BUILT_SOURCES+=	dbus-introspect.h
  
  endif
  
@@ -1995,10 +1995,10 @@ index 0000000..1431d93
 +  return pixmap;
 +}
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index d4fc8fa..0ab1b7f 100644
+index 3e4d230..c44e56d 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -474,7 +474,7 @@ void ghid_logv (const char *fmt, va_list args);
+@@ -473,7 +473,7 @@ void ghid_logv (const char *fmt, va_list args);
  /* gui-pinout-window.c */
  void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
  
