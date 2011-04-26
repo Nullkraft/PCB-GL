@@ -237,7 +237,7 @@ draw_element_pins_and_pads (ElementType *element)
   END_LOOP;
   PIN_LOOP (element);
   {
-    DrawPin (pin, true);
+    DrawPin (pin);
   }
   END_LOOP;
 }
