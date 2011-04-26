@@ -3,10 +3,10 @@ Top:    dfaa6f16be8175823cd40f22c478488db22b0690
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 19:58:30 +0100
 
-hid/gtk: Don't hide / restore the crosshair unnecessarily
+hid/gtk: Remove unnecessary crosshair hide / restore
 
-ghid_note_event_location() takes care of that when the crosshair
-moves.
+Functions which affect the crosshair should hide/restore across the
+changes themselves.
 
 
 ---
