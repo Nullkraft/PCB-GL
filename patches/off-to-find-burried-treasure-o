@@ -1,5 +1,5 @@
-Bottom: 27de55e67617d6f78c57daba92b2cc13c66bb0a1
-Top:    db15fd12570c148016a5eb9a93737632be2746f0
+Bottom: 9e56443ea5d52426e133c4f084a8e7952c302680
+Top:    802cc0f48650e6245656eeb24a2dbdf16342c42e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 15:53:19 +0100
 
@@ -116,10 +116,10 @@ index 0db0d1e..25e28f8 100644
    DrawVia (Via);
    Draw ();
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
-index 17f53a0..9bcfef8 100644
+index a2597d8..a57f231 100644
 --- a/src/draw_funcs.c
 +++ b/src/draw_funcs.c
-@@ -197,6 +197,10 @@ poly_callback (const BoxType * b, void *cl)
+@@ -194,6 +194,10 @@ poly_callback (const BoxType * b, void *cl)
    struct poly_info *i = cl;
    PolygonType *polygon = (PolygonType *)b;
  
