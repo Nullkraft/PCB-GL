@@ -1,0 +1,56 @@
+Bottom: 815f4c4c2513dd2d524f35350366b83f6d9a99fe
+Top:    44221b0f9dfb3e950472f691a640664b6af5fe37
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 23:56:15 +0100
+
+Refresh of temporary-comment-out-some-cal
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index a51d167..ad61982 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -1893,9 +1893,9 @@ PanAction (int argc, char **argv, int x, int y)
+     }
+   else if (x == on_x && y == on_y)
+     {
+-      ghid_show_crosshair (FALSE);
++      //ghid_show_crosshair (FALSE);
+       ghidgui->auto_pan_on = !ghidgui->auto_pan_on;
+-      ghid_show_crosshair (TRUE);
++      //ghid_show_crosshair (TRUE);
+     }
+ 
+   return 0;
+diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
+index 44bb077e..7f51be8 100644
+--- a/src/hid/gtk/gui-output-events.c
++++ b/src/hid/gtk/gui-output-events.c
+@@ -335,7 +335,7 @@ ghid_port_key_press_cb (GtkWidget * drawing_area,
+   state = (GdkModifierType) (kev->state);
+   mk = ghid_modifier_keys_state (&state);
+ 
+-  ghid_show_crosshair (FALSE);
++  //ghid_show_crosshair (FALSE);
+ 
+   handled = TRUE;		/* Start off assuming we handle it */
+   switch (ksym)
+@@ -440,7 +440,7 @@ ghid_port_button_press_cb (GtkWidget * drawing_area,
+   ghid_note_event_location (ev);
+   state = (GdkModifierType) (ev->state);
+   mk = ghid_modifier_keys_state (&state);
+-  ghid_show_crosshair (FALSE);
++  //ghid_show_crosshair (FALSE);
+ 
+   do_mouse_action(ev->button, mk);
+ 
+@@ -795,7 +795,7 @@ ghid_port_window_leave_cb (GtkWidget * widget,
+ 	}
+     }
+ 
+-  ghid_show_crosshair (FALSE);
++  //ghid_show_crosshair (FALSE);
+   out->has_entered = FALSE;
+ 
+   ghid_screen_update ();
