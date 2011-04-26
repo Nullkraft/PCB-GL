@@ -762,12 +762,6 @@ CrosshairOn (void)
       DrawAttached ();
       DrawMark ();
     }
-xxxxxxx
-xxxxxxxxxxxxxxxxxxxxxx
-
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-xxxxxxxxxxxxxxxxxxxx
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 }
 
 /* ---------------------------------------------------------------------------
@@ -782,12 +776,6 @@ CrosshairOff (void)
       DrawMark ();
       Crosshair.On = false;
     }
-
-xxxxxxxxxxxxxxxxxxxxxxx
-
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-xxxxxxxxxxxxxxxxxxxx
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 }
 
 /* ---------------------------------------------------------------------------
@@ -812,7 +800,6 @@ HideCrosshair (void)
     }
 
   notify_crosshair_change (false);
-  notify_mark_change (false);
 }
 
 void
@@ -827,7 +814,6 @@ RestoreCrosshair (void)
     }
 
   notify_crosshair_change (true);
-  notify_mark_change (true);
 }
 
 /* ---------------------------------------------------------------------------
