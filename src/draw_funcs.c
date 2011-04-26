@@ -186,6 +186,94 @@ draw_poly (PolygonType *polygon, void *userdata)
     }
 }
 
+struct poly_info {
+  const BoxType *drawn_area;
+  LayerType *layer;
+};
+
+static int
+poly_callback (const BoxType * b, void *cl)
+{
+  struct poly_info *i = cl;
+  PolygonType *polygon = (PolygonType *)b;
+
+  if (TEST_FLAG (SELECTEDFLAG, polygon))   gui->set_color (Output.fgGC, i->layer->SelectedColor);
+  else if (TEST_FLAG (FOUNDFLAG, polygon)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
+  else                                     gui->set_color (Output.fgGC, i->layer->Color);
+
+  dapi->draw_poly (polygon, cl);
+  return 1;
+}
+
+static void
+_draw_pour (PourType *pour)
+{
+  int *x, *y, n, i;
+
+  n = pour->PointN;
+  x = (int *) malloc (n * sizeof (int));
+  y = (int *) malloc (n * sizeof (int));
+  for (i = 0; i < n; i++)
+    {
+      x[i] = pour->Points[i].X;
+      y[i] = pour->Points[i].Y;
+    }
+
+//  if (TEST_FLAG (THINDRAWFLAG, PCB) ||
+//      TEST_FLAG (THINDRAWPOLYFLAG, PCB) ||
+//      TEST_FLAG (CLEARLINEFLAG, pour))
+  if (1)
+    {
+      gui->set_line_width (Output.fgGC, 2);
+//      gui->set_line_width (Output.fgGC, 1);
+      for (i = 0; i < n; i++)
+        {
+          Cardinal next = next_contour_point (pour, i);
+          gui->draw_line (Output.fgGC, x[i], y[i], x[next], y[next]);
+        }
+    }
+  else
+    gui->fill_polygon (Output.fgGC, n, x, y);
+  free (x);
+  free (y);
+}
+
+static void
+draw_pour (PourType *pour, void *userdata)
+{
+  /* HACK */
+  BoxType *drawn_area = NULL;
+  struct poly_info info;
+
+  if (gui->gui)
+    _draw_pour (pour);
+
+  if (pour->PolygonN)
+    {
+      r_search (pour->polygon_tree, drawn_area, NULL, poly_callback, &info);
+    }
+}
+
+struct pour_info
+{
+  const BoxType *drawn_area;
+  LayerTypePtr Layer;
+};
+
+static int
+pour_callback (const BoxType *b, void *cl)
+{
+  struct pour_info *i = (struct pour_info *) cl;
+  PourType *pour = (PourType *)b;
+
+  if (TEST_FLAG (SELECTEDFLAG, pour))   gui->set_color (Output.fgGC, i->Layer->SelectedColor);
+  else if (TEST_FLAG (FOUNDFLAG, pour)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
+  else                                  gui->set_color (Output.fgGC, i->Layer->Color);
+
+  dapi->draw_pour (pour, NULL);
+  return 1;
+}
+
 static int
 line_callback (const BoxType * b, void *cl)
 {
@@ -211,25 +299,6 @@ arc_callback (const BoxType * b, void *cl)
   else                                 gui->set_color (Output.fgGC, layer->Color);
 
   dapi->draw_arc (arc, cl);
-  return 1;
-}
-
-struct poly_info {
-  const BoxType *drawn_area;
-  LayerType *layer;
-};
-
-static int
-poly_callback (const BoxType * b, void *cl)
-{
-  struct poly_info *i = cl;
-  PolygonType *polygon = (PolygonType *)b;
-
-  if (TEST_FLAG (SELECTEDFLAG, polygon))   gui->set_color (Output.fgGC, i->layer->SelectedColor);
-  else if (TEST_FLAG (FOUNDFLAG, polygon)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
-  else                                     gui->set_color (Output.fgGC, i->layer->Color);
-
-  dapi->draw_poly (polygon, cl);
   return 1;
 }
 
@@ -329,10 +398,10 @@ draw_layer (LayerType *layer, void *userdata)
   int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
   int layer_num = GetLayerNumber (PCB->Data, layer);
   int group = GetLayerGroupNumberByPointer (layer);
-  struct poly_info info = {drawn_area, layer};
+  struct pour_info info = {drawn_area, layer};
 
   /* print the non-clearing polys */
-  r_search (layer->polygon_tree, drawn_area, NULL, poly_callback, &info);
+  r_search (layer->pour_tree, drawn_area, NULL, pour_callback, &info);
 
   if (TEST_FLAG (CHECKPLANESFLAG, PCB))
     return;
@@ -402,6 +471,7 @@ struct draw_funcs d_f = {
   .draw_rat       = draw_rat,
   .draw_arc       = draw_arc,
   .draw_poly      = draw_poly,
+  .draw_pour      = draw_pour,
   .draw_layer     = draw_layer,
 };
 

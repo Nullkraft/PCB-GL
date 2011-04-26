@@ -50,6 +50,7 @@
 #include "search.h"
 #include "select.h"
 #include "print.h"
+#include "pour.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
@@ -1067,6 +1068,15 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
   AddPart (Polygon);
 }
 
+/* ---------------------------------------------------------------------------
+ * draws a pour on a layer
+ */
+void
+DrawPour (LayerTypePtr Layer, PourTypePtr Pour)
+{
+  AddPart (Pour);
+}
+
 int
 thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
 {
@@ -1276,6 +1286,15 @@ ErasePolygon (PolygonTypePtr Polygon)
 }
 
 /* ---------------------------------------------------------------------------
+ * erases a pour on a layer
+ */
+void
+ErasePour (PourTypePtr Pour)
+{
+  AddPart (Pour);
+}
+
+/* ---------------------------------------------------------------------------
  * erases an element
  */
 void
@@ -1341,6 +1360,9 @@ EraseObject (int type, void *lptr, void *ptr)
     case POLYGON_TYPE:
       ErasePolygon ((PolygonTypePtr) ptr);
       break;
+    case POUR_TYPE:
+      ErasePour ((PourTypePtr) ptr);
+      break;
     case ELEMENT_TYPE:
       EraseElement ((ElementTypePtr) ptr);
       break;
@@ -1387,6 +1409,10 @@ DrawObject (int type, void *ptr1, void *ptr2)
     case POLYGON_TYPE:
       if (((LayerTypePtr) ptr1)->On)
 	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
+      break;
+    case POUR_TYPE:
+      if (((LayerTypePtr) ptr1)->On)
+	DrawPour ((LayerTypePtr) ptr1, (PourTypePtr) ptr2);
       break;
     case ELEMENT_TYPE:
       if (PCB->ElementOn &&
