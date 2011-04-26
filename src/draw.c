@@ -1463,7 +1463,7 @@ DrawElementName (ElementTypePtr Element)
 
   if (TEST_FLAG (HIDENAMEFLAG, Element))
     return;
-  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
+  DrawText (NULL, &ELEMENT_TEXT (PCB, Element));
 }
 
 /* ---------------------------------------------------------------------------
@@ -1697,7 +1697,7 @@ EraseElementName (ElementTypePtr Element)
 
   if (TEST_FLAG (HIDENAMEFLAG, Element))
     return;
-  DrawTextLowLevel (&ELEMENT_TEXT (PCB, Element), PCB->minSlk);
+  DrawText (NULL, &ELEMENT_TEXT (PCB, Element));
 }
 
 
