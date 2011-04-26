@@ -87,11 +87,11 @@ static void DrawPPV (int group, const BoxType *);
 static int DrawLayerGroup (int, const BoxType *);
 static void AddPart (void *);
 static void SetPVColor (PinTypePtr, int);
-static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
+/* static */ void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
 static void DrawMask (int side, BoxType *);
 static void DrawPaste (int side, BoxType *);
-static void DrawRats (BoxType *);
-static void DrawSilk (int side, const BoxType *);
+/* static */ void DrawRats (BoxType *);
+/* static */ void DrawSilk (int side, const BoxType *);
 
 /*--------------------------------------------------------------------------------------
  * setup color for pin or via
@@ -797,7 +797,7 @@ DrawEverything (BoxTypePtr drawn_area)
     }
 }
 
-static void
+/* static */ void
 DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
 	   bool invisible)
 {
@@ -937,7 +937,7 @@ clearPad_callback (const BoxType * b, void *cl)
  * Draws silk layer.
  */
 
-static void
+/* static */ void
 DrawSilk (int side, const BoxType * drawn_area)
 {
 #if 0
@@ -1042,7 +1042,7 @@ DrawPaste (int side, BoxType *drawn_area)
   ENDALL_LOOP;
 }
 
-static void
+/* static */ void
 DrawRats (BoxTypePtr drawn_area)
 {
   /*
