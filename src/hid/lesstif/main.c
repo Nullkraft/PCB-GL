@@ -2887,7 +2887,16 @@ lesstif_notify_crosshair_change (bool changes_complete)
     invalidate_depth --;
 
   if (invalidate_depth < 0)
-    invalidate_depth = 0;
+    {
+      invalidate_depth = 0;
+      /* A mismatch of changes_complete == false and == true notifications
+       * is not expected to occur, but we will try to handle it gracefully.
+       * As we know the crosshair will have been shown already, we must
+       * repaint the entire view to be sure not to leave an artaefact.
+       */
+      need_idle_proc ();
+      return;
+    }
 
   if (invalidate_depth == 0)
     DrawAttached ();
@@ -2905,7 +2914,16 @@ lesstif_notify_mark_change (bool changes_complete)
     invalidate_depth --;
 
   if (invalidate_depth < 0)
-    invalidate_depth = 0;
+    {
+      invalidate_depth = 0;
+      /* A mismatch of changes_complete == false and == true notifications
+       * is not expected to occur, but we will try to handle it gracefully.
+       * As we know the mark will have been shown already, we must
+       * repaint the entire view to be sure not to leave an artaefact.
+       */
+      need_idle_proc ();
+      return;
+    }
 
   if (invalidate_depth == 0)
     DrawMark ();
