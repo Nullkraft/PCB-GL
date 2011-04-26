@@ -1,5 +1,5 @@
 Bottom: e49dc90c679abe2678467d8cac24a85e48705846
-Top:    eecd1d7fb04c01265d04e51b4531ce526a9e6a54
+Top:    0d7700db4a6ab29cd99bde5199a52e24e97b791b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 19:19:04 +0100
 
@@ -473,16 +473,11 @@ index 5dc544e..7744cd1 100644
        break;
  
 diff --git a/src/buffer.c b/src/buffer.c
-index 43d5c2b..75ab94a 100644
+index 43d5c2b..4f746e9 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
-@@ -521,12 +521,9 @@ void
- AddSelectedToBuffer (BufferTypePtr Buffer, LocationType X, LocationType Y,
- 		     bool LeaveSelected)
- {
--  /* switch crosshair off because adding objects to the pastebuffer
--   * may change the 'valid' area for the cursor
--   */
+@@ -526,7 +526,7 @@ AddSelectedToBuffer (BufferTypePtr Buffer, LocationType X, LocationType Y,
+    */
    if (!LeaveSelected)
      ExtraFlag = SELECTEDFLAG;
 -  HideCrosshair ();
@@ -490,7 +485,7 @@ index 43d5c2b..75ab94a 100644
    Source = PCB->Data;
    Dest = Buffer->Data;
    SelectedOperation (&AddBufferFunctions, false, ALL_TYPES);
-@@ -542,7 +539,7 @@ AddSelectedToBuffer (BufferTypePtr Buffer, LocationType X, LocationType Y,
+@@ -542,7 +542,7 @@ AddSelectedToBuffer (BufferTypePtr Buffer, LocationType X, LocationType Y,
        Buffer->X = Crosshair.X;
        Buffer->Y = Crosshair.Y;
      }
@@ -499,7 +494,7 @@ index 43d5c2b..75ab94a 100644
    ExtraFlag = 0;
  }
  
-@@ -1457,9 +1454,9 @@ ActionFreeRotateBuffer(int argc, char **argv, int x, int y)
+@@ -1457,9 +1457,9 @@ ActionFreeRotateBuffer(int argc, char **argv, int x, int y)
    else
      angle_s = argv[0];
  
