@@ -1,5 +1,5 @@
 Bottom: 8aea2e4954ed15925e74f7aac08f8297102ddb5e
-Top:    7dfe2208687b00e993e0ec8e469fe8c6ed50a287
+Top:    ca2388b9fec3713cd1c0ee00adb0ce3ac2baf5a0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 16:25:32 +0100
 
@@ -322,7 +322,7 @@ index adfee36..cf324a5 100644
  void EraseRat (RatTypePtr);
  void EraseViaName (PinTypePtr);
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
-index aa25867..1867e409 100644
+index aa25867..363a85e 100644
 --- a/src/draw_funcs.c
 +++ b/src/draw_funcs.c
 @@ -1,7 +1,10 @@
@@ -336,7 +336,107 @@ index aa25867..1867e409 100644
  
  static void
  _draw_pv (PinType *pv, bool draw_hole)
-@@ -180,6 +183,209 @@ draw_poly (PolygonType *polygon, BoxType *drawn_area, void *userdata)
+@@ -13,13 +16,13 @@ _draw_pv (PinType *pv, bool draw_hole)
+ }
+ 
+ static void
+-draw_pin (PinType *pin, BoxType *drawn_area, void *userdata)
++draw_pin (PinType *pin, const BoxType *drawn_area, void *userdata)
+ {
+   _draw_pv (pin, false);
+ }
+ 
+ static void
+-draw_pin_mask (PinType *pin, BoxType *drawn_area, void *userdata)
++draw_pin_mask (PinType *pin, const BoxType *drawn_area, void *userdata)
+ {
+   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+     gui->thindraw_pcb_pv (Output.pmGC, Output.pmGC, pin, false, true);
+@@ -28,13 +31,13 @@ draw_pin_mask (PinType *pin, BoxType *drawn_area, void *userdata)
+ }
+ 
+ static void
+-draw_via (PinType *via, BoxType *drawn_area, void *userdata)
++draw_via (PinType *via, const BoxType *drawn_area, void *userdata)
+ {
+   _draw_pv (via, false);
+ }
+ 
+ static void
+-draw_via_mask (PinType *via, BoxType *drawn_area, void *userdata)
++draw_via_mask (PinType *via, const BoxType *drawn_area, void *userdata)
+ {
+   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (THINDRAWPOLYFLAG, PCB))
+     gui->thindraw_pcb_pv (Output.pmGC, Output.pmGC, via, false, true);
+@@ -43,7 +46,7 @@ draw_via_mask (PinType *via, BoxType *drawn_area, void *userdata)
+ }
+ 
+ static void
+-draw_hole (PinType *pv, BoxType *drawn_area, void *userdata)
++draw_hole (PinType *pv, const BoxType *drawn_area, void *userdata)
+ {
+   gui->set_line_cap (Output.fgGC, Round_Cap);
+   gui->set_line_width (Output.fgGC, 0);
+@@ -70,13 +73,13 @@ _draw_pad (hidGC gc, PadType *pad, bool clear, bool mask)
+ }
+ 
+ static void
+-draw_pad (PadType *pad, BoxType *drawn_area, void *userdata)
++draw_pad (PadType *pad, const BoxType *drawn_area, void *userdata)
+ {
+   _draw_pad (Output.fgGC, pad, false, false);
+ }
+ 
+ static void
+-draw_pad_mask (PadType *pad, BoxType *drawn_area, void *userdata)
++draw_pad_mask (PadType *pad, const BoxType *drawn_area, void *userdata)
+ {
+   if (pad->Mask <= 0)
+     return;
+@@ -85,7 +88,7 @@ draw_pad_mask (PadType *pad, BoxType *drawn_area, void *userdata)
+ }
+ 
+ static void
+-draw_pad_paste (PadType *pad, BoxType *drawn_area, void *userdata)
++draw_pad_paste (PadType *pad, const BoxType *drawn_area, void *userdata)
+ {
+   if (TEST_FLAG (NOPASTEFLAG, pad) || pad->Mask <= 0)
+     return;
+@@ -111,13 +114,13 @@ _draw_line (LineType *line)
+ }
+ 
+ static void
+-draw_line (LineType *line, BoxType *drawn_area, void *userdata)
++draw_line (LineType *line, const BoxType *drawn_area, void *userdata)
+ {
+   _draw_line (line);
+ }
+ 
+ static void
+-draw_rat (RatType *rat, BoxType *drawn_area, void *userdata)
++draw_rat (RatType *rat, const BoxType *drawn_area, void *userdata)
+ {
+   if (Settings.RatThickness < 20)
+     rat->Thickness = pixel_slop * Settings.RatThickness;
+@@ -138,7 +141,7 @@ draw_rat (RatType *rat, BoxType *drawn_area, void *userdata)
+ }
+ 
+ static void
+-draw_arc (ArcType *arc, BoxType *drawn_area, void *userdata)
++draw_arc (ArcType *arc, const BoxType *drawn_area, void *userdata)
+ {
+   if (!arc->Thickness)
+     return;
+@@ -154,7 +157,7 @@ draw_arc (ArcType *arc, BoxType *drawn_area, void *userdata)
+ }
+ 
+ static void
+-draw_poly (PolygonType *polygon, BoxType *drawn_area, void *userdata)
++draw_poly (PolygonType *polygon, const BoxType *drawn_area, void *userdata)
+ {
+   if (!polygon->Clipped)
+     return;
+@@ -180,6 +183,206 @@ draw_poly (PolygonType *polygon, BoxType *drawn_area, void *userdata)
      }
  }
  
@@ -350,7 +450,7 @@ index aa25867..1867e409 100644
 +  else if (TEST_FLAG (FOUNDFLAG, line)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
 +  else                                  gui->set_color (Output.fgGC, layer->Color);
 +
-+  dapi->draw_line (line, cl);
++  dapi->draw_line (line, NULL, NULL);
 +  return 1;
 +}
 +
@@ -364,12 +464,12 @@ index aa25867..1867e409 100644
 +  else if (TEST_FLAG (FOUNDFLAG, arc)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
 +  else                                 gui->set_color (Output.fgGC, layer->Color);
 +
-+  dapi->draw_arc (arc, cl);
++  dapi->draw_arc (arc, NULL, NULL);
 +  return 1;
 +}
 +
 +struct poly_info {
-+  const BoxType *drawn_area;
++  const const BoxType *drawn_area;
 +  LayerType *layer;
 +};
 +
@@ -383,7 +483,7 @@ index aa25867..1867e409 100644
 +  else if (TEST_FLAG (FOUNDFLAG, polygon)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
 +  else                                     gui->set_color (Output.fgGC, i->layer->Color);
 +
-+  dapi->draw_poly (polygon, cl);
++  dapi->draw_poly (polygon, i->drawn_area, NULL);
 +  return 1;
 +}
 +
@@ -421,7 +521,7 @@ index aa25867..1867e409 100644
 +pin_inlayer_callback (const BoxType * b, void *cl)
 +{
 +  set_pv_inlayer_color ((PinType *)b, cl, PIN_TYPE);
-+  dapi->draw_pin ((PinType *)b, NULL);
++  dapi->draw_pin ((PinType *)b, NULL, NULL);
 +  return 1;
 +}
 +
@@ -429,7 +529,7 @@ index aa25867..1867e409 100644
 +via_inlayer_callback (const BoxType * b, void *cl)
 +{
 +  set_pv_inlayer_color ((PinType *)b, cl, VIA_TYPE);
-+  dapi->draw_via ((PinType *)b, NULL);
++  dapi->draw_via ((PinType *)b, NULL, NULL);
 +  return 1;
 +}
 +
@@ -450,7 +550,7 @@ index aa25867..1867e409 100644
 +      else if (TEST_FLAG (FOUNDFLAG, pad))    gui->set_color (Output.fgGC, PCB->ConnectedColor);
 +      else                                    gui->set_color (Output.fgGC, layer->Color);
 +
-+      dapi->draw_pad (pad, NULL);
++      dapi->draw_pad (pad, NULL, NULL);
 +    }
 +  return 1;
 +}
@@ -469,16 +569,13 @@ index aa25867..1867e409 100644
 +  else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->set_color (Output.fgGC, PCB->PinSelectedColor);
 +  else                                   gui->set_color (Output.fgGC, Settings.BlackColor);
 +
-+  dapi->draw_hole (pv, NULL);
++  dapi->draw_hole (pv, NULL, NULL);
 +  return 1;
 +}
 +
 +static void
-+draw_layer (LayerType *layer, void *userdata)
++draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
 +{
-+  /* HACK */
-+  BoxType *drawn_area = NULL;
-+
 +  int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
 +  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
 +  int layer_num = GetLayerNumber (PCB->Data, layer);
@@ -546,7 +643,7 @@ index aa25867..1867e409 100644
  struct draw_funcs d_f = {
    .draw_pin       = draw_pin,
    .draw_pin_mask  = draw_pin_mask,
-@@ -193,6 +399,7 @@ struct draw_funcs d_f = {
+@@ -193,6 +396,7 @@ struct draw_funcs d_f = {
    .draw_rat       = draw_rat,
    .draw_arc       = draw_arc,
    .draw_poly      = draw_poly,
@@ -567,7 +664,7 @@ index 1f97d82..25c33a1 100644
  
  extern struct draw_funcs *dapi;
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index d5843ef..fbfa430 100644
+index d5843ef..4429121 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -26,6 +26,7 @@
@@ -583,12 +680,12 @@ index d5843ef..fbfa430 100644
        if (outline_layer
  	  && outline_layer != PCB->Data->Layer+idx)
 -	DrawLayer (outline_layer, &region);
-+	dapi->draw_layer (outline_layer, NULL); // &region);
++	dapi->draw_layer (outline_layer, &region, NULL);
        else if (!outline_layer)
  	{
  	  hidGC gc = gui->make_gc ();
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index a417753..c69c548 100644
+index a417753..8024abc 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -16,6 +16,7 @@
@@ -604,7 +701,7 @@ index a417753..c69c548 100644
        && strcmp (name, "route"))
      {
 -      DrawLayer (outline_layer, &region);
-+      dapi->draw_layer (outline_layer, NULL); // &region);
++      dapi->draw_layer (outline_layer, &region, NULL);
      }
  
    return 1;
