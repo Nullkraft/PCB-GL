@@ -1,7 +1,7 @@
-Bottom: 95c052cc23a6c3ce97e6f1b02d4ce5ac7a027972
-Top:    136c414d5a614740af7bf2a4ea7e653b16faef75
+Bottom: f2913f00203128f976c2f1abb0c85c7e4c0fd7a5
+Top:    38ec4a164c8f64c0faa4831d701d71354c8fcb64
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-26 03:06:14 +0100
+Date:   2011-04-26 15:54:10 +0100
 
 Add support for a "poured" object.
 
@@ -47,10 +47,10 @@ index f83167f..55f3f34 100644
  src/report.c
  src/res_parse.c
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 61eacba..f49f9a4 100644
+index 4943755..3fa01a6 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -126,6 +126,8 @@ PCB_SRCS = \
+@@ -128,6 +128,8 @@ PCB_SRCS = \
  	polygon.h \
  	polygon1.c \
  	polyarea.h \
@@ -2119,10 +2119,10 @@ index b0ef6f8..528c103 100644
    gui->destroy_gc (Crosshair.GC);
  }
 diff --git a/src/draw.c b/src/draw.c
-index ac5248b..29e43cb 100644
+index 4bc0d8b..cede4c2 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -49,6 +49,7 @@
+@@ -50,6 +50,7 @@
  #include "search.h"
  #include "select.h"
  #include "print.h"
@@ -2130,7 +2130,7 @@ index ac5248b..29e43cb 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -923,6 +924,75 @@ poly_callback (const BoxType * b, void *cl)
+@@ -717,6 +718,75 @@ poly_callback (const BoxType * b, void *cl)
    return 1;
  }
  
@@ -2204,11 +2204,11 @@ index ac5248b..29e43cb 100644
 +}
 +
  static int
- clearPad_callback (const BoxType * b, void *cl)
+ pad_mask_callback (const BoxType * b, void *cl)
  {
-@@ -1086,8 +1156,10 @@ void
- DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
- {
+@@ -879,8 +949,10 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
+   int group = GetLayerGroupNumberByPointer (Layer);
+ 
    /* print the non-clearing polys */
 -  clip_box = screen;
 -  r_search (Layer->polygon_tree, screen, NULL, poly_callback, Layer);
@@ -2219,7 +2219,7 @@ index ac5248b..29e43cb 100644
  
    if (clear_pins && TEST_FLAG (CHECKPLANESFLAG, PCB))
      return;
-@@ -1421,6 +1493,15 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -1270,6 +1342,15 @@ DrawPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
    AddPart (Polygon);
  }
  
@@ -2235,7 +2235,7 @@ index ac5248b..29e43cb 100644
  int
  thin_callback (PLINE * pl, LayerTypePtr lay, PolygonTypePtr poly)
  {
-@@ -1629,6 +1710,15 @@ ErasePolygon (PolygonTypePtr Polygon)
+@@ -1479,6 +1560,15 @@ ErasePolygon (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -2251,7 +2251,7 @@ index ac5248b..29e43cb 100644
   * erases an element
   */
  void
-@@ -1694,6 +1784,9 @@ EraseObject (int type, void *lptr, void *ptr)
+@@ -1544,6 +1634,9 @@ EraseObject (int type, void *lptr, void *ptr)
      case POLYGON_TYPE:
        ErasePolygon ((PolygonTypePtr) ptr);
        break;
@@ -2261,7 +2261,7 @@ index ac5248b..29e43cb 100644
      case ELEMENT_TYPE:
        EraseElement ((ElementTypePtr) ptr);
        break;
-@@ -1741,6 +1834,10 @@ DrawObject (int type, void *ptr1, void *ptr2)
+@@ -1591,6 +1684,10 @@ DrawObject (int type, void *ptr1, void *ptr2)
        if (((LayerTypePtr) ptr1)->On)
  	DrawPolygon ((LayerTypePtr) ptr1, (PolygonTypePtr) ptr2);
        break;
