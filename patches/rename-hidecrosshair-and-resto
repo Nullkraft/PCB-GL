@@ -1,5 +1,5 @@
 Bottom: 731444a98f6ce16245b94298956a861253e6d508
-Top:    a141061168183ec7a6c90a143c43dba9eae4dff9
+Top:    f85472204a6a85e02077990998033f19acba93fd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 21:10:01 +0100
 
@@ -624,15 +624,14 @@ index 054610b..9834577 100644
        Crosshair.X = x;
        Crosshair.Y = z;
 diff --git a/src/crosshair.h b/src/crosshair.h
-index ff16b1e..efa6679 100644
+index ff16b1e..671ae3d 100644
 --- a/src/crosshair.h
 +++ b/src/crosshair.h
-@@ -46,6 +46,8 @@
+@@ -46,6 +46,7 @@
  #define	STATE_SECOND	1
  #define	STATE_THIRD		2
  
 +void notify_crosshair_change (bool changes_complete);
-+void notify_mark_change (bool changes_complete);
  void CrosshairOn (void);
  void CrosshairOff (void);
  void HideCrosshair (void);
@@ -778,7 +777,7 @@ index d63aef1..5bea138 100644
    gui->set_crosshair (Crosshair.X, Crosshair.Y, HID_SC_WARP_POINTER);
    PCB->Grid = save_grid;
 diff --git a/src/set.c b/src/set.c
-index 90db719..c77129e 100644
+index 90db719..16986e8 100644
 --- a/src/set.c
 +++ b/src/set.c
 @@ -244,7 +244,7 @@ SetMode (int Mode)
@@ -804,7 +803,7 @@ index 90db719..c77129e 100644
    if (Showing)
      {
 -      HideCrosshair ();
-+      notify_mark_change (false);
++      notify_crosshair_change (false);
        if (count == 0)
  	old = Marked;
        Marked.X = X;
@@ -812,15 +811,15 @@ index 90db719..c77129e 100644
        Marked.status = true;
        count++;
 -      RestoreCrosshair ();
-+      notify_mark_change (true);
++      notify_crosshair_change (true);
      }
    else if (count > 0)
      {
 -      HideCrosshair ();
-+      notify_mark_change (false);
++      notify_crosshair_change (false);
        count = 0;
        Marked = old;
 -      RestoreCrosshair ();
-+      notify_mark_change (true);
++      notify_crosshair_change (true);
      }
  }
