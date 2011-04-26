@@ -1,0 +1,21 @@
+Bottom: a141061168183ec7a6c90a143c43dba9eae4dff9
+Top:    1080ae0fa20ca13aecf91d3bf4e9962ea51468b0
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 22:47:31 +0100
+
+Refresh of separate-out-mark-change-notif
+
+---
+
+diff --git a/src/crosshair.h b/src/crosshair.h
+index efa6679..671ae3d 100644
+--- a/src/crosshair.h
++++ b/src/crosshair.h
+@@ -47,7 +47,6 @@
+ #define	STATE_THIRD		2
+ 
+ void notify_crosshair_change (bool changes_complete);
+-void notify_mark_change (bool changes_complete);
+ void CrosshairOn (void);
+ void CrosshairOff (void);
+ void HideCrosshair (void);
