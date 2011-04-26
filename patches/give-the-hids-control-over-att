@@ -1,7 +1,7 @@
-Bottom: 40a4c6e627833ef07fcb957a495e297a004f643a
-Top:    7036b7bf558fbfc43e08d156d4e8af55779f5935
+Bottom: 4037f5571923b8ed63a960ca476fddde6c4d3597
+Top:    17909baa349434aedb2377e2dea5c40e2b0ce6bf
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-25 15:58:20 +0100
+Date:   2011-04-26 01:38:30 +0100
 
 Give the HIDs control over attached object (crosshair, mark) drawing
 
@@ -761,10 +761,10 @@ index ff16b1e..efa6679 100644
  void CrosshairOff (void);
  void HideCrosshair (void);
 diff --git a/src/draw.c b/src/draw.c
-index 8b73644..87b34b2 100644
+index d3bc398..d984616 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -172,15 +172,11 @@ AddPart (void *b)
+@@ -157,15 +157,11 @@ AddPart (void *b)
  void
  Draw (void)
  {
