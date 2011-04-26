@@ -1,0 +1,95 @@
+Bottom: 9a16ef2e6e22c778733bed56bbe925afb414ca2e
+Top:    b3869b4e984fbeaf324c1e847279ad5f57b81342
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 23:26:07 +0100
+
+Refresh of give-the-hids-control-over-att
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index b2bca34..bd6e035 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -774,8 +774,14 @@ ghid_invalidate_all ()
+   hid_expose_callback (&ghid_hid, &region, 0);
+   ghid_draw_grid ();
+ 
+-  DrawAttached ();
+-  DrawMark ();
++  /* In some cases we are called with the crosshair still off */
++  if (priv->attached_invalidate_depth == 0)
++    DrawAttached ();
++
++  /* In some cases we are called with the mark still off */
++  if (priv->mark_invalidate_depth == 0)
++    DrawMark ();
++
+   ghid_screen_update ();
+ }
+ 
+@@ -794,17 +800,28 @@ ghid_notify_crosshair_change (bool changes_complete)
+ 
+   if (priv->attached_invalidate_depth < 0)
+     {
+-      fprintf (stderr, "ERROR: Unmatched notify_crosshair_change calls\n");
+       priv->attached_invalidate_depth = 0;
++      /* A mismatch of changes_complete == false and == true notifications
++       * is not expected to occur, but we will try to handle it gracefully.
++       * As we know the crosshair will have been shown already, we must
++       * repaint the entire view to be sure not to leave an artaefact.
++       */
++      ghid_invalidate_all ();
++      return;
+     }
+ 
+   if (priv->attached_invalidate_depth == 0)
+     DrawAttached ();
+ 
+   if (!changes_complete)
+-    priv->attached_invalidate_depth ++;
++    {
++      priv->attached_invalidate_depth ++;
++    }
+   else if (gport->drawing_area != NULL)
+-    ghid_draw_area_update (gport, NULL);
++    {
++      /* Queue a GTK expose when changes are complete */
++      ghid_draw_area_update (gport, NULL);
++    }
+ }
+ 
+ void
+@@ -821,17 +838,28 @@ ghid_notify_mark_change (bool changes_complete)
+ 
+   if (priv->mark_invalidate_depth < 0)
+     {
+-      fprintf (stderr, "ERROR: Unmatched notify_mark_change calls\n");
+       priv->mark_invalidate_depth = 0;
++      /* A mismatch of changes_complete == false and == true notifications
++       * is not expected to occur, but we will try to handle it gracefully.
++       * As we know the mark will have been shown already, we must
++       * repaint the entire view to be sure not to leave an artaefact.
++       */
++      ghid_invalidate_all ();
++      return;
+     }
+ 
+   if (priv->mark_invalidate_depth == 0)
+     DrawMark ();
+ 
+   if (!changes_complete)
+-    priv->mark_invalidate_depth ++;
+-  else
+-    ghid_draw_area_update (gport, NULL);
++    {
++      priv->mark_invalidate_depth ++;
++    }
++  else if (gport->drawing_area != NULL)
++    {
++      /* Queue a GTK expose when changes are complete */
++      ghid_draw_area_update (gport, NULL);
++    }
+ }
+ 
+ static void
