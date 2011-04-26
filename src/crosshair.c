@@ -66,15 +66,6 @@ typedef struct
 } point;
 
 /* ---------------------------------------------------------------------------
- * some local identifiers
- */
-
-/* This is a stack for HideCrosshair() and RestoreCrosshair() calls. They
- * must always be matched. */
-static bool CrosshairStack[MAX_CROSSHAIRSTACK_DEPTH];
-static int CrosshairStackLocation = 0;
-
-/* ---------------------------------------------------------------------------
  * some local prototypes
  */
 static void XORPolygon (PolygonTypePtr, LocationType, LocationType);
@@ -723,36 +714,30 @@ DrawMark (void)
 void
 notify_crosshair_change (bool changes_complete)
 {
-  if (changes_complete)
-    {
-      /* fprintf(stderr, "RestoreCrosshair stack %d\n", CrosshairStackLocation); */
-      if (CrosshairStackLocation <= 0)
-        {
-          fprintf(stderr, "Error: CrosshairStackLocation underflow\n");
-          return;
-        }
+  if (gui->notify_crosshair_change)
+    gui->notify_crosshair_change (changes_complete);
+}
 
-      CrosshairStackLocation--;
 
-      if (CrosshairStack[CrosshairStackLocation])
-        CrosshairOn ();
-      else
-        CrosshairOff ();
-    }
-  else
-    {
-      /* fprintf(stderr, "HideCrosshair stack %d\n", CrosshairStackLocation); */
-      if (CrosshairStackLocation >= MAX_CROSSHAIRSTACK_DEPTH)
-        {
-          fprintf(stderr, "Error: CrosshairStackLocation overflow\n");
-          return;
-        }
-
-      CrosshairStack[CrosshairStackLocation] = Crosshair.On;
-      CrosshairStackLocation++;
-
-      CrosshairOff ();
-    }
+/* ---------------------------------------------------------------------------
+ * notify the GUI that data relating to the mark is being changed.
+ *
+ * The argument passed is false to notify "changes are about to happen",
+ * and true to notify "changes have finished".
+ *
+ * Each call with a 'false' parameter must be matched with a following one
+ * with a 'true' parameter. Unmatched 'true' calls are currently not permitted,
+ * but might be allowed in the future.
+ *
+ * GUIs should not complain if they receive extra calls with 'true' as parameter.
+ * They should initiate a redraw of the mark - which may (if necessary) mean
+ * repainting the whole screen if the GUI hasn't tracked the mark's location.
+ */
+void
+notify_mark_change (bool changes_complete)
+{
+  if (gui->notify_mark_change)
+    gui->notify_mark_change (changes_complete);
 }
 
 /* ---------------------------------------------------------------------------
@@ -782,12 +767,18 @@ notify_mark_change (bool changes_complete)
 void
 CrosshairOn (void)
 {
-  if (!Crosshair.On)
-    {
-      Crosshair.On = true;
-      DrawAttached ();
-      DrawMark ();
-    }
+  if (Crosshair.On)
+    return;
+
+  notify_crosshair_change (false);
+  if (Marked.status)
+    notify_mark_change (false);
+
+  Crosshair.On = true;
+
+  notify_crosshair_change (true);
+  if (Marked.status)
+    notify_mark_change (true);
 }
 
 /* ---------------------------------------------------------------------------
@@ -796,12 +787,18 @@ CrosshairOn (void)
 void
 CrosshairOff (void)
 {
-  if (Crosshair.On)
-    {
-      DrawAttached ();
-      DrawMark ();
-      Crosshair.On = false;
-    }
+  if (!Crosshair.On)
+    return;
+
+  notify_crosshair_change (false);
+  if (Marked.status)
+    notify_mark_change (false);
+
+  Crosshair.On = false;
+
+  notify_crosshair_change (true);
+  if (Marked.status)
+    notify_mark_change (true);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1184,8 +1181,7 @@ SetCrosshairRange (LocationType MinX, LocationType MinY, LocationType MaxX,
 
 /* ---------------------------------------------------------------------------
  * initializes crosshair stuff
- * clears the struct, allocates to graphical contexts and
- * initializes the stack
+ * clears the struct, allocates to graphical contexts
  */
 void
 InitCrosshair (void)
@@ -1197,9 +1193,6 @@ InitCrosshair (void)
   gui->set_line_cap (Crosshair.GC, Trace_Cap);
   gui->set_line_width (Crosshair.GC, 1);
 
-  /* fake a crosshair off entry on stack */
-  CrosshairStackLocation = 0;
-  CrosshairStack[CrosshairStackLocation++] = true;
   Crosshair.On = true;
 
   /* set initial shape */
