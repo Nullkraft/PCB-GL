@@ -1,5 +1,5 @@
-Bottom: 67f929fd016fc3af210aae878bf4e7fecf58a1db
-Top:    9024ced28b8ec8f12212e9772c0294923dfc34c3
+Bottom: 25ccda21ca40717c1a4ecf9df313e13d67680a8e
+Top:    ac526a6a1ad49ae7db88a28923f39a0c5b6715a6
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 19:19:11 +0100
 
@@ -369,7 +369,7 @@ index 4080668..7b0c76a 100644
 +  ghid_invalidate_all ();
 +}
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 40b14e7..9bb8432 100644
+index 7f51be8..b185b25 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -224,6 +224,14 @@ ghid_note_event_location (GdkEventButton * ev)
@@ -387,7 +387,7 @@ index 40b14e7..9bb8432 100644
    gport->view_x = event_x * gport->zoom + gport->view_x0;
    gport->view_y = event_y * gport->zoom + gport->view_y0;
  
-@@ -524,7 +532,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -519,7 +527,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
    return 0;
  }
  
@@ -396,7 +396,7 @@ index 40b14e7..9bb8432 100644
  # define ENABLE_TOOLTIPS 1
  #else
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 9744df0..6f8dcce 100644
+index 3f469f7..fd76583 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -123,6 +123,7 @@ a zoom in/out.
@@ -407,7 +407,7 @@ index 9744df0..6f8dcce 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -2163,6 +2164,10 @@ ghid_build_pcb_top_window (void)
+@@ -2161,6 +2162,10 @@ ghid_build_pcb_top_window (void)
    GtkWidget *vbox_main, *vbox_left, *hbox_middle, *hbox = NULL;
    GtkWidget *viewport, *ebox, *vbox, *frame;
    GtkWidget *label;
@@ -418,7 +418,7 @@ index 9744df0..6f8dcce 100644
    GHidPort *port = &ghid_port;
    gchar *s;
    GtkWidget *scrolled;
-@@ -2271,6 +2276,16 @@ ghid_build_pcb_top_window (void)
+@@ -2269,6 +2274,16 @@ ghid_build_pcb_top_window (void)
        GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
    make_layer_buttons(vbox, port);
  
@@ -436,10 +436,10 @@ index 9744df0..6f8dcce 100644
    gtk_box_pack_start(GTK_BOX(vbox_left), vbox, FALSE, FALSE, 0);
    ghidgui->mode_buttons0_frame_vbox = vbox;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 8e4620f..654241d 100644
+index e6669df..8377f78 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -305,7 +305,6 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -304,7 +304,6 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
  gint ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  				       GdkEventScroll * ev, GHidPort * out);
  
@@ -447,7 +447,7 @@ index 8e4620f..654241d 100644
  gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
-@@ -511,6 +510,9 @@ void ghid_port_drawing_realize_cb (GtkWidget *, gpointer);
+@@ -510,6 +509,9 @@ void ghid_port_drawing_realize_cb (GtkWidget *, gpointer);
  gboolean ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev);
  GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
                                 int width, int height, int depth);
