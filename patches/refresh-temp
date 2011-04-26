@@ -1,0 +1,55 @@
+Bottom: 12b0ace3981d06c1a29d65dfc8877bb062282b4f
+Top:    d9da4d4dcd9730b4dac15902d00218f841b21e07
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 01:26:22 +0100
+
+Refresh of expose-draw-c-internal-drawing
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index e3c79e3..81bf5ec 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -911,7 +911,7 @@ clearPad_callback (const BoxType * b, void *cl)
+  * Draws silk layer.
+  */
+ 
+-static void
++void
+ DrawSilk (int side, const BoxType * drawn_area)
+ {
+ #if 0
+@@ -970,7 +970,7 @@ DrawMaskBoardArea (int mask_type, BoxType *screen)
+ /* ---------------------------------------------------------------------------
+  * draws solder mask layer - this will cover nearly everything
+  */
+-static void
++void
+ DrawMask (int side, BoxType * screen)
+ {
+   int thin = TEST_FLAG(THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB);
+@@ -999,7 +999,7 @@ DrawMask (int side, BoxType * screen)
+ /* ---------------------------------------------------------------------------
+  * draws solder paste layer for a given side of the board
+  */
+-static void
++void
+ DrawPaste (int side, BoxType *drawn_area)
+ {
+   gui->set_color (Output.fgGC, PCB->ElementColor);
+diff --git a/src/draw.h b/src/draw.h
+index adfee36..46f67d4 100644
+--- a/src/draw.h
++++ b/src/draw.h
+@@ -72,6 +72,10 @@ void EraseElementName (ElementTypePtr);
+ void EraseObject (int, void *, void *);
+ void LoadBackgroundImage (char *);
+ 
++void DrawMask (int side, BoxType *);
++void DrawSilk (int side, const BoxType *);
++void DrawPaste (int side, BoxType *);
++
+ /*GdkDrawable *draw_get_current_drawable(void);*/
+ 
+ #endif
