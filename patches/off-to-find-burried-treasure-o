@@ -1,5 +1,5 @@
 Bottom: c1aead732df3b392a0af0414a654f411e049cd12
-Top:    e1fc61872332f367af325d75e1381c85c7b6e42c
+Top:    5afc89e1a868b28d319b8b0c89f8a27bcd122568
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 15:58:46 +0100
 
@@ -116,7 +116,7 @@ index 0db0d1e..25e28f8 100644
    DrawVia (Via);
    Draw ();
 diff --git a/src/draw.c b/src/draw.c
-index 9ce08b1..7881ef9 100644
+index 9ce08b1..afa0058 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -893,6 +893,10 @@ poly_callback (const BoxType * b, void *cl)
@@ -124,7 +124,7 @@ index 9ce08b1..7881ef9 100644
      return 0;
  
 +  /* Re-use HOLEFLAG to cut out islands */
-+  if (TEST_FLAG (HOLEFLAG, Polygon))
++  if (TEST_FLAG (HOLEFLAG, polygon))
 +    return 0;
 +
    if (TEST_FLAG (SELECTEDFLAG, polygon))
