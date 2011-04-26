@@ -1,0 +1,193 @@
+Bottom: 1fa1f0a0ab2182f6e9969f0ba21e4ab879346b97
+Top:    b286b63fc4b5581b8b8dd9cf018edcdb41001cd7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 23:45:36 +0100
+
+Refresh of move-crosshair-on-off-function
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 9498879..2abe960 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -547,9 +547,6 @@ XORDrawMoveOrCopyObject (void)
+ void
+ DrawAttached (void)
+ {
+-  if (!Crosshair.On)
+-    return;
+-
+   switch (Settings.Mode)
+     {
+     case VIA_MODE:
+@@ -681,8 +678,8 @@ DrawAttached (void)
+ void
+ DrawMark (void)
+ {
+-  /* Mark is not drawn when the crosshair is off, or when it is not set */
+-  if (!Crosshair.On || !Marked.status)
++  /* Mark is not drawn when it is not set */
++  if (!Marked.status)
+     return;
+ 
+   gui->draw_line (Crosshair.GC,
+@@ -740,45 +737,6 @@ notify_mark_change (bool changes_complete)
+     gui->notify_mark_change (changes_complete);
+ }
+ 
+-/* ---------------------------------------------------------------------------
+- * switches crosshair on
+- */
+-void
+-CrosshairOn (void)
+-{
+-  if (Crosshair.On)
+-    return;
+-
+-  notify_crosshair_change (false);
+-  if (Marked.status)
+-    notify_mark_change (false);
+-
+-  Crosshair.On = true;
+-
+-  notify_crosshair_change (true);
+-  if (Marked.status)
+-    notify_mark_change (true);
+-}
+-
+-/* ---------------------------------------------------------------------------
+- * switches crosshair off
+- */
+-void
+-CrosshairOff (void)
+-{
+-  if (!Crosshair.On)
+-    return;
+-
+-  notify_crosshair_change (false);
+-  if (Marked.status)
+-    notify_mark_change (false);
+-
+-  Crosshair.On = false;
+-
+-  notify_crosshair_change (true);
+-  if (Marked.status)
+-    notify_mark_change (true);
+-}
+ 
+ /* ---------------------------------------------------------------------------
+  * Convenience for plugins using the old {Hide,Restore}Crosshair API.
+@@ -1172,8 +1130,6 @@ InitCrosshair (void)
+   gui->set_line_cap (Crosshair.GC, Trace_Cap);
+   gui->set_line_width (Crosshair.GC, 1);
+ 
+-  Crosshair.On = true;
+-
+   /* set initial shape */
+   Crosshair.shape = Basic_Crosshair_Shape;
+ 
+diff --git a/src/crosshair.h b/src/crosshair.h
+index efa6679..6e9656e 100644
+--- a/src/crosshair.h
++++ b/src/crosshair.h
+@@ -48,8 +48,6 @@
+ 
+ void notify_crosshair_change (bool changes_complete);
+ void notify_mark_change (bool changes_complete);
+-void CrosshairOn (void);
+-void CrosshairOff (void);
+ void HideCrosshair (void);
+ void RestoreCrosshair (void);
+ void DrawAttached (void);
+diff --git a/src/global.h b/src/global.h
+index 904d6fe..f6620c9 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -583,7 +583,6 @@ typedef struct			/* holds cursor information */
+   LocationType X,		/* position in PCB coordinates */
+     Y, MinX,			/* lowest and highest coordinates */
+     MinY, MaxX, MaxY;
+-  bool On;			/* flag for 'is visible' */
+   AttachedLineType AttachedLine;	/* data of new lines... */
+   AttachedBoxType AttachedBox;
+   PolygonType AttachedPolygon;
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 703da61..928a1ae 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -139,6 +139,24 @@ static int view_left_x = 0, view_top_y = 0;
+ static double view_zoom = 1000, prev_view_zoom = 1000;
+ static int flip_x = 0, flip_y = 0;
+ static int autofade = 0;
++static bool crosshair_on = true;
++
++static void
++ShowCrosshair (bool show)
++{
++  if (crosshair_on == show)
++    return;
++
++  notify_crosshair_change (false);
++  if (Marked.status)
++    notify_mark_change (false);
++
++  crosshair_on = show;
++
++  notify_crosshair_change (true);
++  if (Marked.status)
++    notify_mark_change (true);
++}
+ 
+ static int
+ flag_flipx (int x)
+@@ -1413,7 +1431,7 @@ work_area_input (Widget w, XtPointer v, XEvent * e, Boolean * ctd)
+ 
+     case LeaveNotify:
+       crosshair_in_window = 0;
+-      CrosshairOff ();
++      ShowCrosshair (false);
+       need_idle_proc ();
+       break;
+ 
+@@ -1421,7 +1439,7 @@ work_area_input (Widget w, XtPointer v, XEvent * e, Boolean * ctd)
+       crosshair_in_window = 1;
+       in_move_event = 1;
+       EventMoveCrosshair (Px (e->xcrossing.x), Py (e->xcrossing.y));
+-      CrosshairOn ();
++      ShowCrosshair (true);
+       in_move_event = 0;
+       need_idle_proc ();
+       break;
+@@ -2518,8 +2536,11 @@ idle_proc (XtPointer dummy)
+       XCopyArea (display, main_pixmap, window, my_gc, 0, 0, view_width,
+ 		 view_height, 0, 0);
+       pixmap = window;
+-      DrawAttached ();
+-      DrawMark ();
++      if (crosshair_on)
++        {
++          DrawAttached ();
++          DrawMark ();
++        }
+       need_redraw = 0;
+     }
+ 
+@@ -2898,7 +2919,7 @@ lesstif_notify_crosshair_change (bool changes_complete)
+       return;
+     }
+ 
+-  if (invalidate_depth == 0)
++  if (invalidate_depth == 0 && crosshair_on)
+     DrawAttached ();
+ 
+   if (!changes_complete)
+@@ -2925,7 +2946,7 @@ lesstif_notify_mark_change (bool changes_complete)
+       return;
+     }
+ 
+-  if (invalidate_depth == 0)
++  if (invalidate_depth == 0 && crosshair_on)
+     DrawMark ();
+ 
+   if (!changes_complete)
