@@ -1,4 +1,4 @@
-Bottom: 4414dbc906d8ee5c1ef8b25deb7c5ddf8ad7bd29
+Bottom: a141061168183ec7a6c90a143c43dba9eae4dff9
 Top:    e9b8a9b892a2a7f1163da61c6fee19baef6bfcda
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 19:19:04 +0100
@@ -228,19 +228,6 @@ index 9834577..b0ef6f8 100644
    Crosshair.On = true;
  
    /* set initial shape */
-diff --git a/src/crosshair.h b/src/crosshair.h
-index ff16b1e..efa6679 100644
---- a/src/crosshair.h
-+++ b/src/crosshair.h
-@@ -46,6 +46,8 @@
- #define	STATE_SECOND	1
- #define	STATE_THIRD		2
- 
-+void notify_crosshair_change (bool changes_complete);
-+void notify_mark_change (bool changes_complete);
- void CrosshairOn (void);
- void CrosshairOff (void);
- void HideCrosshair (void);
 diff --git a/src/hid.h b/src/hid.h
 index 0a81ddd..36aca75 100644
 --- a/src/hid.h
