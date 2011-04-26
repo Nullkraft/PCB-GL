@@ -740,10 +740,12 @@ void
 ghid_show_crosshair (gboolean paint_new_location)
 {
   gint x, y;
-  static gint x_prev = -1, y_prev = -1;
-  static gboolean draw_markers, draw_markers_prev = FALSE;
+  gboolean draw_markers;
   static int done_once = 0;
   static GdkColor cross_color;
+
+  if (!paint_new_location)
+    return;
 
   if (gport->x_crosshair < 0 || ghidgui->creating) {// || !gport->has_entered) {
     printf ("Returning\n");
@@ -768,46 +770,17 @@ ghid_show_crosshair (gboolean paint_new_location)
              cross_color.green / 65535.,
              cross_color.blue / 65535.);
 
-  glBegin (GL_LINES);
-
-#if 1
-  if (x_prev >= 0 && !paint_new_location)
-    draw_crosshair (x_prev, y_prev);
-#endif
-
   if (x >= 0 && paint_new_location)
-    draw_crosshair (x, y);
-
-  glEnd ();
-
-
-  glBegin (GL_QUADS);
-
-#if 1
-  if (x_prev >= 0 && draw_markers_prev & !paint_new_location)
     {
-      glVertex2i (0,                  y_prev - VCD);
-      glVertex2i (0,                  y_prev - VCD + VCW);
-      glVertex2i (VCD,                y_prev - VCD + VCW);
-      glVertex2i (VCD,                y_prev - VCD);
-      glVertex2i (gport->width,       y_prev - VCD);
-      glVertex2i (gport->width,       y_prev - VCD + VCW);
-      glVertex2i (gport->width - VCD, y_prev - VCD + VCW);
-      glVertex2i (gport->width - VCD, y_prev - VCD);
-      glVertex2i (x_prev - VCD,       0);
-      glVertex2i (x_prev - VCD,       VCD);
-      glVertex2i (x_prev - VCD + VCW, VCD);
-      glVertex2i (x_prev - VCD + VCW, 0);
-      glVertex2i (x_prev - VCD,       gport->height - VCD);
-      glVertex2i (x_prev - VCD,       gport->height);
-      glVertex2i (x_prev - VCD + VCW, gport->height);
-      glVertex2i (x_prev - VCD + VCW, gport->height - VCD);
+      glBegin (GL_LINES);
+      draw_crosshair (x, y);
+      glEnd ();
     }
-#endif
 
   draw_markers = ghidgui->auto_pan_on && have_crosshair_attachments ();
   if (x >= 0 && paint_new_location && draw_markers)
     {
+      glBegin (GL_QUADS);
       glVertex2i (0,                  y - VCD);
       glVertex2i (0,                  y - VCD + VCW);
       glVertex2i (VCD,                y - VCD + VCW);
@@ -824,20 +797,7 @@ ghid_show_crosshair (gboolean paint_new_location)
       glVertex2i (x - VCD,            gport->height);
       glVertex2i (x - VCD + VCW,      gport->height);
       glVertex2i (x - VCD + VCW,      gport->height - VCD);
-    }
-
-  glEnd ();
-
-  if (x >= 0 && paint_new_location)
-    {
-      x_prev = x;
-      y_prev = y;
-      draw_markers_prev = draw_markers;
-    }
-  else
-    {
-      x_prev = y_prev = -1;
-      draw_markers_prev = FALSE;
+      glEnd ();
     }
 
   glDisable (GL_COLOR_LOGIC_OP);
