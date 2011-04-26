@@ -1033,6 +1033,43 @@ EMark_callback (const BoxType * b, void *cl)
 }
 
 static void
+SetPVColor (PinTypePtr Pin, int Type)
+{
+  char *color;
+
+  if (Type == VIA_TYPE)
+    {
+      if (TEST_FLAG (WARNFLAG | SELECTEDFLAG | FOUNDFLAG, Pin))
+	{
+	  if (TEST_FLAG (WARNFLAG, Pin))
+	    color = PCB->WarnColor;
+	  else if (TEST_FLAG (SELECTEDFLAG, Pin))
+	    color = PCB->ViaSelectedColor;
+	  else
+	    color = PCB->ConnectedColor;
+	}
+      else
+	color = PCB->ViaColor;
+    }
+  else
+    {
+      if (TEST_FLAG (WARNFLAG | SELECTEDFLAG | FOUNDFLAG, Pin))
+	{
+	  if (TEST_FLAG (WARNFLAG, Pin))
+	    color = PCB->WarnColor;
+	  else if (TEST_FLAG (SELECTEDFLAG, Pin))
+	    color = PCB->PinSelectedColor;
+	  else
+	    color = PCB->ConnectedColor;
+	}
+      else
+	color = PCB->PinColor;
+    }
+
+  gui->set_color (Output.fgGC, color);
+}
+
+static void
 SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
 {
   char *color;
@@ -1059,12 +1096,87 @@ SetPVColor_inlayer (PinTypePtr Pin, LayerTypePtr Layer, int Type)
   gui->set_color (Output.fgGC, color);
 }
 
+static void
+_draw_pv_name (PinType *pv)
+{
+  BoxType box;
+  bool vert;
+  TextType text;
+
+  if (!pv->Name || !pv->Name[0])
+    text.TextString = EMPTY (pv->Number);
+  else
+    text.TextString = EMPTY (TEST_FLAG (SHOWNUMBERFLAG, PCB) ? pv->Number : pv->Name);
+
+  vert = TEST_FLAG (EDGE2FLAG, pv);
+
+  if (vert)
+    {
+      box.X1 = pv->X - pv->Thickness    / 2 + Settings.PinoutTextOffsetY;
+      box.Y1 = pv->Y - pv->DrillingHole / 2 - Settings.PinoutTextOffsetX;
+    }
+  else
+    {
+      box.X1 = pv->X + pv->DrillingHole / 2 + Settings.PinoutTextOffsetX;
+      box.Y1 = pv->Y - pv->Thickness    / 2 + Settings.PinoutTextOffsetY;
+    }
+
+  gui->set_color (Output.fgGC, PCB->PinNameColor);
+
+  text.Flags = NoFlags ();
+  text.Scale = pv->Thickness / 80;
+  text.X = box.X1;
+  text.Y = box.Y1;
+  text.Direction = vert ? 1 : 0;
+
+  DrawTextLowLevel (&text, 0);
+}
+
+static void
+_draw_pv (PinTypePtr pv, bool draw_hole)
+{
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    gui->thindraw_pcb_pv (Output.fgGC, Output.fgGC, pv, draw_hole, false);
+  else
+    gui->fill_pcb_pv (Output.fgGC, Output.bgGC, pv, draw_hole, false);
+
+  if (!TEST_FLAG (HOLEFLAG, pv) && TEST_FLAG (DISPLAYNAMEFLAG, pv))
+    _draw_pv_name (pv);
+}
+
+static void
+draw_pin (PinTypePtr pin, bool draw_hole)
+{
+  SetPVColor (pin, PIN_TYPE);
+  _draw_pv (pin, draw_hole);
+}
+
+static int
+pin_callback (const BoxType * b, void *cl)
+{
+  draw_pin ((PinType *)b, false);
+  return 1;
+}
 
 static int
 pin_inlayer_callback (const BoxType * b, void *cl)
 {
   SetPVColor_inlayer ((PinTypePtr) b, cl, PIN_TYPE);
-  DrawPinOrViaLowLevel ((PinTypePtr) b, false);
+  _draw_pv ((PinType *) b, false);
+  return 1;
+}
+
+static void
+draw_via (PinTypePtr via, bool draw_hole)
+{
+  SetPVColor (via, VIA_TYPE);
+  _draw_pv (via, draw_hole);
+}
+
+static int
+via_callback (const BoxType * b, void *cl)
+{
+  draw_via ((PinType *)b, false);
   return 1;
 }
 
@@ -1072,23 +1184,85 @@ static int
 via_inlayer_callback (const BoxType * b, void *cl)
 {
   SetPVColor_inlayer ((PinTypePtr) b, cl, VIA_TYPE);
-  DrawPinOrViaLowLevel ((PinTypePtr) b, false);
+  _draw_pv ((PinType *) b, false);
   return 1;
 }
 
-static int
-via_callback (const BoxType * b, void *cl)
+static void
+draw_pad_name (PadType *pad)
 {
-  PinTypePtr via = (PinTypePtr) b;
-  DrawPlainVia (via, false);
-  return 1;
+  BoxType box;
+  bool vert;
+  TextType text;
+
+  if (!pad->Name || !pad->Name[0])
+    text.TextString = EMPTY (pad->Number);
+  else
+    text.TextString = EMPTY (TEST_FLAG (SHOWNUMBERFLAG, PCB) ? pad->Number : pad->Name);
+
+  /* should text be vertical ? */
+  vert = (pad->Point1.X == pad->Point2.X);
+
+  if (vert)
+    {
+      box.X1 = pad->Point1.X                      - pad->Thickness / 2;
+      box.Y1 = MAX (pad->Point1.Y, pad->Point2.Y) + pad->Thickness / 2;
+      box.X1 += Settings.PinoutTextOffsetY;
+      box.Y1 -= Settings.PinoutTextOffsetX;
+    }
+  else
+    {
+      box.X1 = MIN (pad->Point1.X, pad->Point2.X) - pad->Thickness / 2;
+      box.Y1 = pad->Point1.Y                      - pad->Thickness / 2;
+      box.X1 += Settings.PinoutTextOffsetX;
+      box.Y1 += Settings.PinoutTextOffsetY;
+    }
+
+  gui->set_color (Output.fgGC, PCB->PinNameColor);
+
+  text.Flags = NoFlags ();
+  text.Scale = pad->Thickness / 50;
+  text.X = box.X1;
+  text.Y = box.Y1;
+  text.Direction = vert ? 1 : 0;
+
+  DrawTextLowLevel (&text, 0);
 }
 
-static int
-pin_callback (const BoxType * b, void *cl)
+static void
+_draw_pad (hidGC gc, PadType *pad, bool clear, bool mask)
 {
-  DrawPlainPin ((PinTypePtr) b, false);
-  return 1;
+  if (clear && !mask && pad->Clearance <= 0)
+    return;
+
+  if (TEST_FLAG (THINDRAWFLAG, PCB) ||
+      (clear && TEST_FLAG (THINDRAWPOLYFLAG, PCB)))
+    gui->thindraw_pcb_pad (gc, pad, clear, mask);
+  else
+    gui->fill_pcb_pad (gc, pad, clear, mask);
+}
+
+static void
+draw_pad (PadType *pad)
+{
+  if (TEST_FLAG (WARNFLAG | SELECTEDFLAG | FOUNDFLAG, pad))
+   {
+     if (TEST_FLAG (WARNFLAG, pad))
+       gui->set_color (Output.fgGC, PCB->WarnColor);
+     else if (TEST_FLAG (SELECTEDFLAG, pad))
+       gui->set_color (Output.fgGC, PCB->PinSelectedColor);
+     else
+       gui->set_color (Output.fgGC, PCB->ConnectedColor);
+   }
+  else if (FRONT (pad))
+   gui->set_color (Output.fgGC, PCB->PinColor);
+  else
+   gui->set_color (Output.fgGC, PCB->InvisibleObjectsColor);
+
+  _draw_pad (Output.fgGC, pad, false, false);
+
+  if (TEST_FLAG (DISPLAYNAMEFLAG, pad))
+    draw_pad_name (pad);
 }
 
 static int
@@ -1098,7 +1272,7 @@ pad_callback (const BoxType * b, void *cl)
   int *side = cl;
 
   if (ON_SIDE (pad, *side))
-    DrawPad (pad);
+    draw_pad (pad);
   return 1;
 }
 
@@ -1106,28 +1280,137 @@ pad_callback (const BoxType * b, void *cl)
 static int
 hole_callback (const BoxType * b, void *cl)
 {
-  DrawHole ((PinTypePtr) b);
+  PinTypePtr pv = (PinTypePtr) b;
+  int plated = cl ? *(int *) cl : -1;
+
+  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pv)) ||
+      (plated == 1 &&  TEST_FLAG (HOLEFLAG, pv)))
+    return 1;
+
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    {
+      if (!TEST_FLAG (HOLEFLAG, pv))
+        {
+          gui->set_line_cap (Output.fgGC, Round_Cap);
+          gui->set_line_width (Output.fgGC, 0);
+          gui->draw_arc (Output.fgGC,
+                         pv->X, pv->Y, pv->DrillingHole / 2,
+                         pv->DrillingHole / 2, 0, 360);
+        }
+    }
+  else
+    gui->fill_circle (Output.bgGC, pv->X, pv->Y, pv->DrillingHole / 2);
+
+  if (TEST_FLAG (HOLEFLAG, pv))
+    {
+      if (TEST_FLAG (WARNFLAG, pv))
+        gui->set_color (Output.fgGC, PCB->WarnColor);
+      else if (TEST_FLAG (SELECTEDFLAG, pv))
+        gui->set_color (Output.fgGC, PCB->ViaSelectedColor);
+      else
+        gui->set_color (Output.fgGC, Settings.BlackColor);
+
+      gui->set_line_cap (Output.fgGC, Round_Cap);
+      gui->set_line_width (Output.fgGC, 0);
+      gui->draw_arc (Output.fgGC,
+                     pv->X, pv->Y, pv->DrillingHole / 2,
+                     pv->DrillingHole / 2, 0, 360);
+    }
   return 1;
+}
+
+static void
+_draw_line (LineType *line)
+{
+  gui->set_line_cap (Output.fgGC, Trace_Cap);
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    gui->set_line_width (Output.fgGC, 0);
+  else
+    gui->set_line_width (Output.fgGC, line->Thickness);
+
+  gui->draw_line (Output.fgGC,
+		  line->Point1.X, line->Point1.Y,
+		  line->Point2.X, line->Point2.Y);
+}
+
+static void
+draw_line (LayerType *layer, LineType *line)
+{
+  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, line))
+    {
+      if (TEST_FLAG (SELECTEDFLAG, line))
+        gui->set_color (Output.fgGC, layer->SelectedColor);
+      else
+        gui->set_color (Output.fgGC, PCB->ConnectedColor);
+    }
+  else
+    gui->set_color (Output.fgGC, layer->Color);
+  _draw_line (line);
 }
 
 static int
 line_callback (const BoxType * b, void *cl)
 {
-  DrawLine ((LayerTypePtr) cl, (LineTypePtr) b);
+  draw_line ((LayerType *) cl, (LineType *) b);
   return 1;
+}
+
+static void
+_draw_arc (ArcType *arc)
+{
+  if (!arc->Thickness)
+    return;
+
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    gui->set_line_width (Output.fgGC, 0);
+  else
+    gui->set_line_width (Output.fgGC, arc->Thickness);
+  gui->set_line_cap (Output.fgGC, Trace_Cap);
+
+  gui->draw_arc (Output.fgGC, arc->X, arc->Y, arc->Width,
+                 arc->Height, arc->StartAngle, arc->Delta);
+}
+
+static void
+draw_arc (LayerType *layer, ArcType *arc)
+{
+  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, arc))
+    {
+      if (TEST_FLAG (SELECTEDFLAG, arc))
+        gui->set_color (Output.fgGC, layer->SelectedColor);
+      else
+        gui->set_color (Output.fgGC, PCB->ConnectedColor);
+    }
+  else
+    gui->set_color (Output.fgGC, layer->Color);
+
+  _draw_arc (arc);
 }
 
 static int
 arc_callback (const BoxType * b, void *cl)
 {
-  DrawArc ((LayerTypePtr) cl, (ArcTypePtr) b);
+  draw_arc ((LayerTypePtr) cl, (ArcTypePtr) b);
   return 1;
 }
 
 static int
 text_callback (const BoxType * b, void *cl)
 {
-  DrawRegularText ((LayerTypePtr) cl, (TextTypePtr) b);
+  LayerType *layer = cl;
+  TextType *text = (TextType *)b;
+  int min_silk_line;
+
+  if (TEST_FLAG (SELECTEDFLAG, text))
+    gui->set_color (Output.fgGC, layer->SelectedColor);
+  else
+    gui->set_color (Output.fgGC, layer->Color);
+  if (layer == &PCB->Data->SILKLAYER ||
+      layer == &PCB->Data->BACKSILKLAYER)
+    min_silk_line = PCB->minSlk;
+  else
+    min_silk_line = PCB->minWid;
+  DrawTextLowLevel (text, min_silk_line);
   return 1;
 }
 
@@ -1200,7 +1483,7 @@ clearPad_callback (const BoxType * b, void *cl)
   PadTypePtr pad = (PadTypePtr) b;
   int *side = cl;
   if (ON_SIDE (pad, *side) && pad->Mask)
-    ClearPad (pad, true);
+    _draw_pad (Output.pmGC, pad, true, true);
   return 1;
 }
 
@@ -1446,10 +1729,7 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   int min_phys_group;
   int max_phys_group;
 
-  extern bool Gathering;
-
   current_color = NULL;
-  Gathering = false;
 
   /* Test direction of rendering */
   /* Look at sign of eye coordinate system z-coord when projecting a
@@ -1595,8 +1875,6 @@ ghid_draw_everything (BoxTypePtr drawn_area)
     DrawRats(drawn_area);
     gui->set_layer (NULL, SL (FINISHED, 0), 0);
   }
-
-  Gathering = true;
 
   Settings.ShowSolderSide = save_show_solder;
 }
