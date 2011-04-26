@@ -6,9 +6,12 @@ Date:   2011-04-26 21:10:01 +0100
 Rename HideCrosshair() and RestoreCrosshair()
 
 Whist this is a tedious rename which will probably have implications
-for some plugins, it is important to clarify what is going on with
-the crosshair across forthcoming patches which put it under the control
+for some plugins, it helps to clarify what is going on with the
+crosshair across forthcoming patches which put it under the control
 of the GUIs.
+
+The old APIs are retained for backwards compatibility with plugins,
+and will print a one-shot warning for each which is called.
 
 
 ---
