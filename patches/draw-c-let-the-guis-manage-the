@@ -1,5 +1,5 @@
-Bottom: eff3adc820bdf274af265c3c1412bb6d547d2c0e
-Top:    9feb8164d64e43e2925478ebf1677ec3c12930d9
+Bottom: 6e20a9080a2ebb7fcb7f6706a21be9806b28aa9b
+Top:    4bc9717ae3945b6d9303a0dedbc923bf66c4021d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 20:13:31 +0100
 
@@ -9,10 +9,10 @@ draw.c: Let the GUIs manage the crosshair across a redraw
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 20a269d..70a85c4 100644
+index fcd605b..6eb0d81 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -113,13 +113,9 @@ AddPart (void *b)
+@@ -154,13 +154,9 @@ AddPart (void *b)
  void
  Draw (void)
  {
