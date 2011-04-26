@@ -1,5 +1,5 @@
-Bottom: a141061168183ec7a6c90a143c43dba9eae4dff9
-Top:    e9b8a9b892a2a7f1163da61c6fee19baef6bfcda
+Bottom: 8b7c068f5e3f4959180c457cc431944c0d369b03
+Top:    38ac1565dc97d20def569209cef532da189fef0e
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 19:19:04 +0100
 
@@ -64,7 +64,7 @@ index eddbbbd..7744cd1 100644
    return 0;
  }
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 9834577..b0ef6f8 100644
+index 06226d2..864f0de 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
 @@ -66,15 +66,6 @@ typedef struct
@@ -141,8 +141,8 @@ index 9834577..b0ef6f8 100644
 +    gui->notify_mark_change (changes_complete);
  }
  
- 
-@@ -762,12 +747,18 @@ notify_crosshair_change (bool changes_complete)
+ /* ---------------------------------------------------------------------------
+@@ -782,12 +767,18 @@ notify_mark_change (bool changes_complete)
  void
  CrosshairOn (void)
  {
@@ -167,7 +167,7 @@ index 9834577..b0ef6f8 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -776,12 +767,18 @@ CrosshairOn (void)
+@@ -796,12 +787,18 @@ CrosshairOn (void)
  void
  CrosshairOff (void)
  {
@@ -192,23 +192,7 @@ index 9834577..b0ef6f8 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -806,6 +803,7 @@ HideCrosshair (void)
-     }
- 
-   notify_crosshair_change (false);
-+  notify_mark_change (false);
- }
- 
- void
-@@ -820,6 +818,7 @@ RestoreCrosshair (void)
-     }
- 
-   notify_crosshair_change (true);
-+  notify_mark_change (true);
- }
- 
- /* ---------------------------------------------------------------------------
-@@ -1162,8 +1161,7 @@ SetCrosshairRange (LocationType MinX, LocationType MinY, LocationType MaxX,
+@@ -1184,8 +1181,7 @@ SetCrosshairRange (LocationType MinX, LocationType MinY, LocationType MaxX,
  
  /* ---------------------------------------------------------------------------
   * initializes crosshair stuff
@@ -218,7 +202,7 @@ index 9834577..b0ef6f8 100644
   */
  void
  InitCrosshair (void)
-@@ -1175,9 +1173,6 @@ InitCrosshair (void)
+@@ -1197,9 +1193,6 @@ InitCrosshair (void)
    gui->set_line_cap (Crosshair.GC, Trace_Cap);
    gui->set_line_width (Crosshair.GC, 1);
  
