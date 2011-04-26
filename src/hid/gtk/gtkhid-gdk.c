@@ -774,7 +774,7 @@ ghid_invalidate_all ()
   hid_expose_callback (&ghid_hid, &region, 0);
   ghid_draw_grid ();
 
-  if (priv->attachment_invalidate_depth == 0)
+  if (priv->attached_invalidate_depth == 0)
     DrawAttached ();
   if (priv->mark_invalidate_depth == 0)
     DrawMark ();
@@ -789,7 +789,7 @@ ghid_notify_crosshair_change (bool changes_complete)
   render_priv *priv = gport->render_priv;
 
   /* We sometimes get called before the GUI is up */
-  if (priv->drawing_area == NULL)
+  if (gport->drawing_area == NULL)
     return;
 
   if (changes_complete)
@@ -806,8 +806,8 @@ ghid_notify_crosshair_change (bool changes_complete)
 
   if (!changes_complete)
     priv->attached_invalidate_depth ++;
-  else if (priv->drawing_area != NULL)
-    ghid_draw_area_update (priv, NULL);
+  else if (gport->drawing_area != NULL)
+    ghid_draw_area_update (gport, NULL);
 }
 
 void
@@ -816,7 +816,7 @@ ghid_notify_mark_change (bool changes_complete)
   render_priv *priv = gport->render_priv;
 
   /* We sometimes get called before the GUI is up */
-  if (priv->drawing_area == NULL)
+  if (gport->drawing_area == NULL)
     return;
 
   if (changes_complete)
@@ -834,7 +834,7 @@ ghid_notify_mark_change (bool changes_complete)
   if (!changes_complete)
     priv->mark_invalidate_depth ++;
   else
-    ghid_draw_area_update (priv, NULL);
+    ghid_draw_area_update (gport, NULL);
 }
 
 static void
