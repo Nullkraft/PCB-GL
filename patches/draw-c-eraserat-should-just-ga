@@ -1,5 +1,5 @@
 Bottom: 00342fc69029f920251d3423e31a1cd4f839e792
-Top:    dba5b611712d663d0300dc16b0dfe39cc123bfd3
+Top:    89313b1ba80ad314dd3a6ef70ef1b927bfda984d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 14:06:59 +0100
 
@@ -14,15 +14,42 @@ Tidy up DrawRat() to be consistent with the new code in EraseRat()
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 4a8de5f..00ef4f7 100644
+index 4a8de5f..2273d76 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -1368,7 +1368,7 @@ DrawRat (RatTypePtr Line)
-       AddPart(&b);
+@@ -1350,25 +1350,25 @@ DrawLine (LayerTypePtr Layer, LineTypePtr Line)
+  * draws a ratline
+  */
+ void
+-DrawRat (RatTypePtr Line)
++DrawRat (RatTypePtr Rat)
+ {
+   if (Settings.RatThickness < 20)
+-    Line->Thickness = pixel_slop * Settings.RatThickness;
++    Rat->Thickness = pixel_slop * Settings.RatThickness;
+   /* rats.c set VIAFLAG if this rat goes to a containing poly: draw a donut */
+-  if (TEST_FLAG(VIAFLAG, Line))
++  if (TEST_FLAG(VIAFLAG, Rat))
+     {
+-      int w = Line->Thickness;
++      int w = Rat->Thickness;
+ 
+       BoxType b;
+ 
+-      b.X1 = Line->Point1.X - w * 2 - w / 2;
+-      b.X2 = Line->Point1.X + w * 2 + w / 2;
+-      b.Y1 = Line->Point1.Y - w * 2 - w / 2;
+-      b.Y2 = Line->Point1.Y + w * 2 + w / 2;
+-      AddPart(&b);
++      b.X1 = Rat->Point1.X - w * 2 - w / 2;
++      b.X2 = Rat->Point1.X + w * 2 + w / 2;
++      b.Y1 = Rat->Point1.Y - w * 2 - w / 2;
++      b.Y2 = Rat->Point1.Y + w * 2 + w / 2;
++      AddPart (&b);
      }
    else
 -    DrawLine (NULL, (LineType *) Line);
-+    AddPart (Line);
++    DrawLine (NULL, (LineType *)Rat);
  }
  
  /* ---------------------------------------------------------------------------
@@ -42,9 +69,9 @@ index 4a8de5f..00ef4f7 100644
 +      b.X2 = Rat->Point1.X + w * 2 + w / 2;
 +      b.Y1 = Rat->Point1.Y - w * 2 - w / 2;
 +      b.Y2 = Rat->Point1.Y + w * 2 + w / 2;
-+      AddPart(&b);
++      AddPart (&b);
      }
    else
 -    _draw_line ((LineTypePtr) Rat);
-+    AddPart (Rat);
++    EraseLine ((LineType *)Rat);
  }
