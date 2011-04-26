@@ -1,5 +1,5 @@
 Bottom: f85472204a6a85e02077990998033f19acba93fd
-Top:    f85472204a6a85e02077990998033f19acba93fd
+Top:    a141061168183ec7a6c90a143c43dba9eae4dff9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 22:46:27 +0100
 
@@ -8,4 +8,44 @@ Separate out mark change notification from crosshair change notification
 
 ---
 
-
+diff --git a/src/crosshair.h b/src/crosshair.h
+index 671ae3d..efa6679 100644
+--- a/src/crosshair.h
++++ b/src/crosshair.h
+@@ -47,6 +47,7 @@
+ #define	STATE_THIRD		2
+ 
+ void notify_crosshair_change (bool changes_complete);
++void notify_mark_change (bool changes_complete);
+ void CrosshairOn (void);
+ void CrosshairOff (void);
+ void HideCrosshair (void);
+diff --git a/src/set.c b/src/set.c
+index 16986e8..c77129e 100644
+--- a/src/set.c
++++ b/src/set.c
+@@ -342,20 +342,20 @@ SetLocalRef (LocationType X, LocationType Y, bool Showing)
+ 
+   if (Showing)
+     {
+-      notify_crosshair_change (false);
++      notify_mark_change (false);
+       if (count == 0)
+ 	old = Marked;
+       Marked.X = X;
+       Marked.Y = Y;
+       Marked.status = true;
+       count++;
+-      notify_crosshair_change (true);
++      notify_mark_change (true);
+     }
+   else if (count > 0)
+     {
+-      notify_crosshair_change (false);
++      notify_mark_change (false);
+       count = 0;
+       Marked = old;
+-      notify_crosshair_change (true);
++      notify_mark_change (true);
+     }
+ }
