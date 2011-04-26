@@ -1,5 +1,5 @@
-Bottom: 082fa615b5ca842077f1b241b5c2d35387c545ec
-Top:    91e1d66d91bb4d96bfbae1fd343aae5dc5ab92ec
+Bottom: 1e6b91905c88d6e403ffbfb8dea1b044da1b549c
+Top:    d9c1dffc563fa98fa0eb2cc38f63aaca59a14363
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-25 17:51:16 +0100
 
@@ -9,7 +9,7 @@ draw.c: Split "Gathering" routines from real drawing routines (Arcs)
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 6a3b6f1..fa4e809 100644
+index 279108c..2183dc9 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -91,7 +91,6 @@ static void DrawPPV (int group, const BoxType *);
@@ -20,7 +20,7 @@ index 6a3b6f1..fa4e809 100644
  static void DrawPlainPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon);
  static void AddPart (void *);
  static void SetPVColor (PinTypePtr, int);
-@@ -521,6 +520,45 @@ line_callback (const BoxType * b, void *cl)
+@@ -548,6 +547,45 @@ rat_callback (const BoxType * b, void *cl)
  }
  
  static void
@@ -66,7 +66,7 @@ index 6a3b6f1..fa4e809 100644
  draw_element_package (ElementType *element)
  {
    /* set color and draw lines, arcs, text and pins */
-@@ -541,7 +579,7 @@ draw_element_package (ElementType *element)
+@@ -568,7 +606,7 @@ draw_element_package (ElementType *element)
    END_LOOP;
    ARC_LOOP (element);
    {
@@ -75,7 +75,7 @@ index 6a3b6f1..fa4e809 100644
    }
    END_LOOP;
  }
-@@ -939,13 +977,6 @@ DrawRats (BoxTypePtr drawn_area)
+@@ -966,13 +1004,6 @@ DrawRats (BoxTypePtr drawn_area)
  }
  
  static int
@@ -89,7 +89,7 @@ index 6a3b6f1..fa4e809 100644
  text_callback (const BoxType * b, void *cl)
  {
    DrawRegularText ((LayerTypePtr) cl, (TextTypePtr) b);
-@@ -1196,30 +1227,6 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
+@@ -1223,30 +1254,6 @@ DrawPolygonLowLevel (PolygonTypePtr Polygon)
  }
  
  /* ---------------------------------------------------------------------------
@@ -120,7 +120,7 @@ index 6a3b6f1..fa4e809 100644
   * draw a via object
   */
  void
-@@ -1358,21 +1365,9 @@ DrawRat (RatTypePtr Line)
+@@ -1363,21 +1370,9 @@ DrawRat (RatTypePtr Line)
  void
  DrawArc (LayerTypePtr Layer, ArcTypePtr Arc)
  {
@@ -145,7 +145,7 @@ index 6a3b6f1..fa4e809 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1540,7 +1535,7 @@ DrawElementPackage (ElementTypePtr Element)
+@@ -1545,7 +1540,7 @@ DrawElementPackage (ElementTypePtr Element)
    END_LOOP;
    ARC_LOOP (Element);
    {
@@ -154,7 +154,7 @@ index 6a3b6f1..fa4e809 100644
    }
    END_LOOP;
  }
-@@ -1677,9 +1672,11 @@ EraseLine (LineTypePtr Line)
+@@ -1682,9 +1677,11 @@ EraseLine (LineTypePtr Line)
  void
  EraseArc (ArcTypePtr Arc)
  {
@@ -167,7 +167,7 @@ index 6a3b6f1..fa4e809 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -1719,7 +1716,7 @@ EraseElement (ElementTypePtr Element)
+@@ -1724,7 +1721,7 @@ EraseElement (ElementTypePtr Element)
    END_LOOP;
    ARC_LOOP (Element);
    {
