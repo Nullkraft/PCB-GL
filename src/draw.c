@@ -970,6 +970,16 @@ pour_callback (const BoxType * b, void *cl)
   struct pour_info *i = (struct pour_info *) cl;
   PourType *pour = (PourType *)b;
 
+  if (TEST_FLAG (SELECTEDFLAG | FOUNDFLAG, pour))
+    {
+      if (TEST_FLAG (SELECTEDFLAG, pour))
+        gui->set_color (Output.fgGC, i->Layer->SelectedColor);
+      else
+        gui->set_color (Output.fgGC, PCB->ConnectedColor);
+    }
+  else
+    gui->set_color (Output.fgGC, i->Layer->Color);
+
   if (gui->gui)
     _draw_pour (pour);
 
