@@ -1,0 +1,41 @@
+Bottom: 38ac1565dc97d20def569209cef532da189fef0e
+Top:    9a16ef2e6e22c778733bed56bbe925afb414ca2e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-26 22:56:10 +0100
+
+Refresh of give-the-hids-control-over-att
+
+---
+
+diff --git a/src/crosshair.c b/src/crosshair.c
+index 864f0de..9498879 100644
+--- a/src/crosshair.c
++++ b/src/crosshair.c
+@@ -741,27 +741,6 @@ notify_mark_change (bool changes_complete)
+ }
+ 
+ /* ---------------------------------------------------------------------------
+- * notify the GUI that data relating to the mark is being changed.
+- *
+- * The argument passed is false to notify "changes are about to happen",
+- * and true to notify "changes have finished".
+- *
+- * Each call with a 'false' parameter must be matched with a following one
+- * with a 'true' parameter. Unmatched 'true' calls are currently not permitted,
+- * but might be allowed in the future.
+- *
+- * GUIs should not complain if they receive extra calls with 'true' as parameter.
+- * They should initiate a redraw of the mark - which may (if necessary) mean
+- * repainting the whole screen if the GUI hasn't tracked the mark's location.
+- */
+-void
+-notify_mark_change (bool changes_complete)
+-{
+-  /* For now, just piggy back on the crosshair changes redrawing the mark */
+-  notify_crosshair_change (changes_complete);
+-}
+-
+-/* ---------------------------------------------------------------------------
+  * switches crosshair on
+  */
+ void
