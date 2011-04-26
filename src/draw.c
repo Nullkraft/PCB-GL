@@ -893,6 +893,20 @@ GatherPadName (PadTypePtr Pad)
   return;
 }
 
+static void
+_draw_line (LineType *line)
+{
+  gui->set_line_cap (Output.fgGC, Trace_Cap);
+  if (TEST_FLAG (THINDRAWFLAG, PCB))
+    gui->set_line_width (Output.fgGC, 0);
+  else
+    gui->set_line_width (Output.fgGC, line->Thickness);
+
+  gui->draw_line (Output.fgGC,
+                  line->Point1.X, line->Point1.Y,
+                  line->Point2.X, line->Point2.Y);
+}
+
 /* ---------------------------------------------------------------------------
  * lowlevel drawing routine for text objects
  */
