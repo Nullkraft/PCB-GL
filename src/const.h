@@ -78,7 +78,8 @@
 #define	VIA_MODE		1	/* draw vias */
 #define	LINE_MODE		2	/* draw lines */
 #define	RECTANGLE_MODE		3	/* create rectangles */
-#define	POLYGON_MODE		4	/* draw filled polygons */
+//#define	POLYGON_MODE		4	/* draw filled polygons */
+#define	POUR_MODE		4	/* draw poured areas */
 #define	PASTEBUFFER_MODE	5	/* paste objects from buffer */
 #define	TEXT_MODE		6	/* create text objects */
 #define	ROTATE_MODE		102	/* rotate objects */
@@ -92,7 +93,7 @@
 #define ARROW_MODE		110	/* selection with arrow mode */
 #define PAN_MODE                0	/* same as no mode */
 #define LOCK_MODE               111	/* lock/unlock objects */
-#define	POLYGONHOLE_MODE	112	/* cut holes in filled polygons */
+#define	POURHOLE_MODE		112	/* cut holes in poured areas */
 
 /* ---------------------------------------------------------------------------
  * object flags
@@ -303,7 +304,8 @@ When set, element names are not drawn.
 #define	PIN_TYPE		0x00100	/* objects that are part */
 #define	PAD_TYPE		0x00200	/* 'pin' of SMD element */
 #define	ELEMENTNAME_TYPE	0x00400	/* of others */
-#define	POLYGONPOINT_TYPE	0x00800
+//#define	POLYGONPOINT_TYPE	0x00800
+#define POURPOINT_TYPE 		0x00800
 #define	LINEPOINT_TYPE		0x01000
 #define ELEMENTLINE_TYPE        0x02000
 #define ARC_TYPE                0x04000
@@ -311,10 +313,12 @@ When set, element names are not drawn.
 
 #define LOCKED_TYPE 		0x10000	/* used to tell search to include locked items. */
 #define NET_TYPE		0x20000 /* used to select whole net. */
+#define POUR_TYPE 		0x40000
 
 #define PIN_TYPES     (VIA_TYPE | PIN_TYPE)
-#define LOCK_TYPES    (VIA_TYPE | LINE_TYPE | ARC_TYPE | POLYGON_TYPE | ELEMENT_TYPE \
-                      | TEXT_TYPE | ELEMENTNAME_TYPE | LOCKED_TYPE)
+#define LOCK_TYPES    (VIA_TYPE | LINE_TYPE | ARC_TYPE | POUR_TYPE | \
+                       ELEMENT_TYPE | TEXT_TYPE | ELEMENTNAME_TYPE | \
+                       LOCKED_TYPE)
 
 #define	ALL_TYPES		(~0)	/* all bits set */
 
