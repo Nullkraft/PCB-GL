@@ -1,5 +1,5 @@
-Bottom: 25ccda21ca40717c1a4ecf9df313e13d67680a8e
-Top:    ac526a6a1ad49ae7db88a28923f39a0c5b6715a6
+Bottom: fecc2cca3b6d2d99704d026617f0d311def27766
+Top:    1836041cbde99a17292b5dbb7d84004a69c7622c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 19:19:11 +0100
 
@@ -9,7 +9,7 @@ Use trackball to allow rotation of 3D view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 4080668..7b0c76a 100644
+index 2223e61..da27135 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,7 +21,9 @@
@@ -38,7 +38,7 @@ index 4080668..7b0c76a 100644
  
  typedef struct render_priv {
    GdkGLConfig *glconfig;
-@@ -944,6 +955,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -946,6 +957,11 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  {
    BoxType region;
    int eleft, eright, etop, ebottom;
@@ -50,7 +50,7 @@ index 4080668..7b0c76a 100644
  
    ghid_start_drawing (port);
  
-@@ -970,10 +986,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -972,10 +988,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -67,7 +67,7 @@ index 4080668..7b0c76a 100644
  
    glEnable (GL_STENCIL_TEST);
    glClearColor (port->offlimits_color.red / 65535.,
-@@ -990,10 +1010,66 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -992,10 +1012,66 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_STENCIL_TEST);
    glStencilFunc (GL_ALWAYS, 0, 0);
  
@@ -138,7 +138,7 @@ index 4080668..7b0c76a 100644
  
    eleft = Vx (0);  eright  = Vx (PCB->MaxWidth);
    etop  = Vy (0);  ebottom = Vy (PCB->MaxHeight);
-@@ -1003,10 +1079,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1005,10 +1081,10 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.blue / 65535.);
  
    glBegin (GL_QUADS);
@@ -153,7 +153,7 @@ index 4080668..7b0c76a 100644
    glEnd ();
  
    /* TODO: Background image */
-@@ -1132,7 +1208,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1134,7 +1210,7 @@ ghid_pinout_preview_expose (GtkWidget *widget,
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -162,7 +162,7 @@ index 4080668..7b0c76a 100644
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
-@@ -1245,7 +1321,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1247,7 +1323,7 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    glMatrixMode (GL_PROJECTION);
    glLoadIdentity ();
@@ -171,7 +171,7 @@ index 4080668..7b0c76a 100644
    glMatrixMode (GL_MODELVIEW);
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
-@@ -1299,3 +1375,196 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1301,3 +1377,196 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    return pixmap;
  }
