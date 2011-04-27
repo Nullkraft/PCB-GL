@@ -1,5 +1,5 @@
 Bottom: 6c749b5934475761e592ec0712987af8f5621d12
-Top:    4d7b61bc27aa0965dc6ed9e23d046a92972ff434
+Top:    a74eaa2323f8bd6db3a7cc00b06f0a54f8d55864
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 19:19:12 +0100
 
@@ -88,7 +88,7 @@ index cf324a5..44b80d2 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 6c70155..b410862 100644
+index 6c70155..cacf7c6 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,9 @@
@@ -1067,7 +1067,7 @@ index 6c70155..b410862 100644
 +      gui->set_layer ("invisible", SL (INVISIBLE, 0), 0)) {
 +    if (PCB->ElementOn) {
 +      r_search (PCB->Data->name_tree[NAME_INDEX (PCB)], drawn_area, NULL, name_callback, &side);
-+      dapi->draw_layer (&(PCB->Data->Layer[max_copper_layer + side]), NULL); //drawn_area);
++      dapi->draw_layer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area, NULL);
 +    }
 +    if (global_view_2d) {
 +      r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
