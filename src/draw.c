@@ -425,6 +425,7 @@ DrawEverything (BoxTypePtr drawn_area)
 	  dapi->draw_layer (&(PCB->Data->Layer[max_copper_layer + side]), drawn_area, NULL);
 	}
       r_search (PCB->Data->pad_tree, drawn_area, NULL, pad_callback, &side);
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
     }
 
   /* draw all layers in layerstack order */
@@ -433,8 +434,11 @@ DrawEverything (BoxTypePtr drawn_area)
       int group = drawn_groups[i];
 
       if (gui->set_layer (0, group, 0))
-        if (DrawLayerGroup (group, drawn_area) && !gui->gui)
-          DrawPPV (group, drawn_area);
+        {
+          if (DrawLayerGroup (group, drawn_area) && !gui->gui)
+            DrawPPV (group, drawn_area);
+          gui->set_layer (NULL, SL (FINISHED, 0), 0);
+        }
     }
 
   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
@@ -456,16 +460,28 @@ DrawEverything (BoxTypePtr drawn_area)
 
   /* Draw the solder mask if turned on */
   if (gui->set_layer ("componentmask", SL (MASK, TOP), 0))
-    DrawMask (COMPONENT_LAYER, drawn_area);
+    {
+      DrawMask (COMPONENT_LAYER, drawn_area);
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    }
 
   if (gui->set_layer ("soldermask", SL (MASK, BOTTOM), 0))
-    DrawMask (SOLDER_LAYER, drawn_area);
+    {
+      DrawMask (SOLDER_LAYER, drawn_area);
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    }
 
   if (gui->set_layer ("topsilk", SL (SILK, TOP), 0))
-    DrawSilk (COMPONENT_LAYER, drawn_area);
+    {
+      DrawSilk (COMPONENT_LAYER, drawn_area);
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    }
 
   if (gui->set_layer ("bottomsilk", SL (SILK, BOTTOM), 0))
-    DrawSilk (SOLDER_LAYER, drawn_area);
+    {
+      DrawSilk (SOLDER_LAYER, drawn_area);
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    }
 
   if (gui->gui)
     {
@@ -475,27 +491,47 @@ DrawEverything (BoxTypePtr drawn_area)
 		  NULL);
       /* Draw rat lines on top */
       if (gui->set_layer ("rats", SL (RATS, 0), 0))
-	DrawRats(drawn_area);
+        {
+          DrawRats(drawn_area);
+          gui->set_layer (NULL, SL (FINISHED, 0), 0);
+        }
     }
 
   paste_empty = IsPasteEmpty (COMPONENT_LAYER);
   if (gui->set_layer ("toppaste", SL (PASTE, TOP), paste_empty))
-    DrawPaste (COMPONENT_LAYER, drawn_area);
+    {
+      DrawPaste (COMPONENT_LAYER, drawn_area);
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    }
 
   paste_empty = IsPasteEmpty (SOLDER_LAYER);
   if (gui->set_layer ("bottompaste", SL (PASTE, BOTTOM), paste_empty))
-    DrawPaste (SOLDER_LAYER, drawn_area);
+    {
+      DrawPaste (SOLDER_LAYER, drawn_area);
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    }
 
   doing_assy = true;
+
   if (gui->set_layer ("topassembly", SL (ASSY, TOP), 0))
-    PrintAssembly (COMPONENT_LAYER, drawn_area);
+    {
+      PrintAssembly (COMPONENT_LAYER, drawn_area);
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    }
 
   if (gui->set_layer ("bottomassembly", SL (ASSY, BOTTOM), 0))
-    PrintAssembly (SOLDER_LAYER, drawn_area);
+    {
+      PrintAssembly (SOLDER_LAYER, drawn_area);
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    }
+
   doing_assy = false;
 
   if (gui->set_layer ("fab", SL (FAB, 0), 0))
-    PrintFab ();
+    {
+      PrintFab ();
+      gui->set_layer (NULL, SL (FINISHED, 0), 0);
+    }
 }
 
 static void
@@ -730,7 +766,8 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
   int n_entries = PCB->LayerGroups.Number[group];
   Cardinal *layers = PCB->LayerGroups.Entries[group];
 
-  for (i = n_entries - 1; i >= 0; i--)
+  for (i = n_entries - 1; i >= 0;
+      i--, gui->set_layer (0, group, 0)) /* HACK: Subcomposite each layer in a layer group separately */
     {
       layernum = layers[i];
       Layer = PCB->Data->Layer + layers[i];

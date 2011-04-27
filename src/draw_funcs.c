@@ -330,6 +330,10 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
   /* print the non-clearing polys */
   r_search (layer->polygon_tree, drawn_area, NULL, poly_callback, &info);
 
+  /* HACK: Subcomposite polygons separately from other layer primitives */
+  /* Reset the compositing */
+  gui->set_layer (0, group, 0);
+
   if (TEST_FLAG (CHECKPLANESFLAG, PCB))
     return;
 
