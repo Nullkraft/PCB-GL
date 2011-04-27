@@ -1,5 +1,5 @@
 Bottom: 580245a35edb754cbfb69604d8350dae86c193e1
-Top:    580245a35edb754cbfb69604d8350dae86c193e1
+Top:    3e9bc7394f0335f315dac9558535d270709c8982
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-27 21:40:40 +0100
 
@@ -8,4 +8,48 @@ hid/gtk: Make ghid_show_crosshair() local to the GDK implementation
 
 ---
 
-
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index b583325..cfbef00 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -958,8 +958,8 @@ draw_crosshair (GdkGC *xor_gc, gint x, gint y)
+ #define VCW 16
+ #define VCD 8
+ 
+-void
+-ghid_show_crosshair (gboolean paint_new_location)
++static void
++show_crosshair (gboolean paint_new_location)
+ {
+   gint x, y;
+   static gint x_prev = -1, y_prev = -1;
+@@ -1067,7 +1067,7 @@ ghid_screen_update (void)
+ 
+   gdk_draw_drawable (gport->drawing_area->window, priv->bg_gc, gport->pixmap,
+ 		     0, 0, 0, 0, gport->width, gport->height);
+-  ghid_show_crosshair (TRUE);
++  show_crosshair (TRUE);
+ }
+ 
+ gboolean
+@@ -1080,7 +1080,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   gdk_draw_drawable (widget->window, priv->bg_gc, port->pixmap,
+                     ev->area.x, ev->area.y, ev->area.x, ev->area.y,
+                     ev->area.width, ev->area.height);
+-  ghid_show_crosshair (TRUE);
++  show_crosshair (TRUE);
+   return FALSE;
+ }
+ 
+diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
+index 8b86396..8a52b5a 100644
+--- a/src/hid/gtk/gui.h
++++ b/src/hid/gtk/gui.h
+@@ -492,7 +492,6 @@ void ghid_invalidate_lr (int left, int right, int top, int bottom);
+ void ghid_invalidate_all ();
+ void ghid_notify_crosshair_change (bool changes_complete);
+ void ghid_notify_mark_change (bool changes_complete);
+-void ghid_show_crosshair (gboolean show);
+ void ghid_init_renderer (int *, char ***, GHidPort *);
+ void ghid_init_drawing_widget (GtkWidget *widget, GHidPort *);
+ void ghid_drawing_area_configure_hook (GHidPort *port);
