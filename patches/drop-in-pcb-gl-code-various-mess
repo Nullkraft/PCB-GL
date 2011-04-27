@@ -1,5 +1,5 @@
 Bottom: 32d12be9dc6b00b50c72080405f6df2d3b6cc069
-Top:    eb5ef38fd05bea94d865310ae5a3ed1eecadc717
+Top:    57af8232920d29df08d79813009ffc5785ed8c33
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-27 01:30:32 +0100
 
@@ -755,10 +755,10 @@ index 0000000..e69a6b7
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..1431d93
+index 0000000..827901d
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -0,0 +1,1235 @@
+@@ -0,0 +1,1237 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -1149,6 +1149,8 @@ index 0000000..1431d93
 +  double alpha_mult = 1.0;
 +  double r, g, b, a;
 +  a = 1.0;
++
++  current_gc = gc;
 +
 +  if (old_name != NULL)
 +    {
