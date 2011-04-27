@@ -1,5 +1,5 @@
-Bottom: c27db8c6ed372cadb89c078967a7c73045fcbfce
-Top:    566aa3895814077b2bff9373ad1be5818fa742a9
+Bottom: 6fd06cf241520742a91544dbd649e9a6361f634a
+Top:    aa357ab808da46c9960eddcfbfbc1a71601c9a63
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 23:57:29 +0100
 
@@ -14,7 +14,7 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 70a85c4..f499079 100644
+index b6555a2..ff079a5 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -425,6 +425,7 @@ DrawEverything (BoxTypePtr drawn_area)
@@ -137,10 +137,10 @@ index 70a85c4..f499079 100644
        layernum = layers[i];
        Layer = PCB->Data->Layer + layers[i];
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
-index 363a85e..ad207ba 100644
+index 679d973..b761f47 100644
 --- a/src/draw_funcs.c
 +++ b/src/draw_funcs.c
-@@ -328,6 +328,10 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
+@@ -330,6 +330,10 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
    /* print the non-clearing polys */
    r_search (layer->polygon_tree, drawn_area, NULL, poly_callback, &info);
  
@@ -440,7 +440,7 @@ index 4429121..46552f3 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 1885e46..dae3366 100644
+index 94f97c2..c91dd99 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -21,6 +21,7 @@
@@ -553,7 +553,7 @@ index 1885e46..dae3366 100644
        glDisable (GL_STENCIL_TEST);                // Disable Stencil test
        break;
      }
-@@ -897,6 +922,17 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -899,6 +924,17 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  
    ghid_start_drawing (port);
  
@@ -571,7 +571,7 @@ index 1885e46..dae3366 100644
    glEnable (GL_BLEND);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
  
-@@ -914,12 +950,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -916,12 +952,20 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glLoadIdentity ();
    glTranslatef (0.0f, 0.0f, -Z_NEAR);
  
@@ -592,7 +592,7 @@ index 1885e46..dae3366 100644
  
    region.X1 = MIN (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
    region.X2 = MAX (Px (ev->area.x), Px (ev->area.x + ev->area.width + 1));
-@@ -945,6 +989,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -947,6 +991,12 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
  
@@ -605,7 +605,7 @@ index 1885e46..dae3366 100644
    glPushMatrix ();
    glScalef ((ghid_flip_x ? -1. : 1.) / port->zoom,
              (ghid_flip_y ? -1. : 1.) / port->zoom,
-@@ -1066,9 +1116,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
+@@ -1068,9 +1118,12 @@ ghid_pinout_preview_expose (GtkWidget *widget,
                  gport->bg_color.green / 65535.,
                  gport->bg_color.blue / 65535.,
                  1.);
@@ -619,7 +619,7 @@ index 1885e46..dae3366 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
    ghid_invalidate_current_gc ();
-@@ -1176,8 +1229,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1178,8 +1231,10 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
                  gport->bg_color.green / 65535.,
                  gport->bg_color.blue / 65535.,
                  1.);
