@@ -1,0 +1,25 @@
+Bottom: 3b57471ca3b53f7888a8d3bba897e2494b5c04d5
+Top:    580245a35edb754cbfb69604d8350dae86c193e1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-27 21:40:15 +0100
+
+Refresh of hid-gtk-invalidate-the-crossha
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
+index 0df478d..6cb6e56 100644
+--- a/src/hid/gtk/gtkhid-main.c
++++ b/src/hid/gtk/gtkhid-main.c
+@@ -1893,9 +1893,9 @@ PanAction (int argc, char **argv, int x, int y)
+     }
+   else if (x == on_x && y == on_y)
+     {
+-      ghid_show_crosshair (FALSE);
++      notify_crosshair_change (false);
+       ghidgui->auto_pan_on = !ghidgui->auto_pan_on;
+-      ghid_show_crosshair (TRUE);
++      notify_crosshair_change (true);
+     }
+ 
+   return 0;
