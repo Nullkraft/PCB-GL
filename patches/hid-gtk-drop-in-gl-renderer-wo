@@ -1,7 +1,7 @@
 Bottom: ede7dc4fe05862e1c4e898c1c50f4eb0e5488201
-Top:    5a6103ce37e9608de2814af94cb50f730affcb38
+Top:    713e237eca63b4ce1e81e5636631443e2bfdde5c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-27 20:35:04 +0100
+Date:   2011-04-27 22:51:21 +0100
 
 hid/gtk: Drop in GL renderer - WOOT!
 
@@ -20,7 +20,6 @@ Credits:
 
   Thanks to Krzysztof Kościuszkiewicz for testing and debugging
   some issues with the GL_SCISSOR_TEST being used.
-
 
 ---
 
@@ -755,10 +754,10 @@ index 0000000..e69a6b7
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..827901d
+index 0000000..42f5e45
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -0,0 +1,1237 @@
+@@ -0,0 +1,1197 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -1502,10 +1501,12 @@ index 0000000..827901d
 +ghid_show_crosshair (gboolean paint_new_location)
 +{
 +  gint x, y;
-+  static gint x_prev = -1, y_prev = -1;
-+  static gboolean draw_markers, draw_markers_prev = FALSE;
++  gboolean draw_markers;
 +  static int done_once = 0;
 +  static GdkColor cross_color;
++
++  if (!paint_new_location)
++    return;
 +
 +  if (gport->x_crosshair < 0 || ghidgui->creating) {// || !gport->has_entered) {
 +    printf ("Returning\n");
@@ -1530,46 +1531,17 @@ index 0000000..827901d
 +             cross_color.green / 65535.,
 +             cross_color.blue / 65535.);
 +
-+  glBegin (GL_LINES);
-+
-+#if 1
-+  if (x_prev >= 0 && !paint_new_location)
-+    draw_crosshair (x_prev, y_prev);
-+#endif
-+
 +  if (x >= 0 && paint_new_location)
-+    draw_crosshair (x, y);
-+
-+  glEnd ();
-+
-+
-+  glBegin (GL_QUADS);
-+
-+#if 1
-+  if (x_prev >= 0 && draw_markers_prev & !paint_new_location)
 +    {
-+      glVertex2i (0,                  y_prev - VCD);
-+      glVertex2i (0,                  y_prev - VCD + VCW);
-+      glVertex2i (VCD,                y_prev - VCD + VCW);
-+      glVertex2i (VCD,                y_prev - VCD);
-+      glVertex2i (gport->width,       y_prev - VCD);
-+      glVertex2i (gport->width,       y_prev - VCD + VCW);
-+      glVertex2i (gport->width - VCD, y_prev - VCD + VCW);
-+      glVertex2i (gport->width - VCD, y_prev - VCD);
-+      glVertex2i (x_prev - VCD,       0);
-+      glVertex2i (x_prev - VCD,       VCD);
-+      glVertex2i (x_prev - VCD + VCW, VCD);
-+      glVertex2i (x_prev - VCD + VCW, 0);
-+      glVertex2i (x_prev - VCD,       gport->height - VCD);
-+      glVertex2i (x_prev - VCD,       gport->height);
-+      glVertex2i (x_prev - VCD + VCW, gport->height);
-+      glVertex2i (x_prev - VCD + VCW, gport->height - VCD);
++      glBegin (GL_LINES);
++      draw_crosshair (x, y);
++      glEnd ();
 +    }
-+#endif
 +
 +  draw_markers = ghidgui->auto_pan_on && have_crosshair_attachments ();
 +  if (x >= 0 && paint_new_location && draw_markers)
 +    {
++      glBegin (GL_QUADS);
 +      glVertex2i (0,                  y - VCD);
 +      glVertex2i (0,                  y - VCD + VCW);
 +      glVertex2i (VCD,                y - VCD + VCW);
@@ -1586,20 +1558,7 @@ index 0000000..827901d
 +      glVertex2i (x - VCD,            gport->height);
 +      glVertex2i (x - VCD + VCW,      gport->height);
 +      glVertex2i (x - VCD + VCW,      gport->height - VCD);
-+    }
-+
-+  glEnd ();
-+
-+  if (x >= 0 && paint_new_location)
-+    {
-+      x_prev = x;
-+      y_prev = y;
-+      draw_markers_prev = draw_markers;
-+    }
-+  else
-+    {
-+      x_prev = y_prev = -1;
-+      draw_markers_prev = FALSE;
++      glEnd ();
 +    }
 +
 +  glDisable (GL_COLOR_LOGIC_OP);
