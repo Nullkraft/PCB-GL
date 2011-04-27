@@ -1,5 +1,5 @@
 Bottom: b9adbe5040aa137ab095e164302cd1f5c5d3c034
-Top:    0fcfcdca675ee77db6887f913739f84c8377ad76
+Top:    438e4fc39c1bf607187bca6fd6f57145ed52945f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-27 20:35:06 +0100
 
@@ -9,7 +9,7 @@ DRAW_FUNCS: Attempt at different render order for PCB+GL
 ---
 
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
-index eb0cc57..56e0ecf 100644
+index eb0cc57..45c3c82 100644
 --- a/src/draw_funcs.c
 +++ b/src/draw_funcs.c
 @@ -433,6 +433,12 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
@@ -18,8 +18,8 @@ index eb0cc57..56e0ecf 100644
  
 +  if (layer_num < max_copper_layer)
 +    {
-+      r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
-+      r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
++      r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_callback, NULL);
++      r_search (PCB->Data->via_tree, drawn_area, NULL, via_hole_callback, NULL);
 +    }
 +
    /* print the non-clearing polys */
