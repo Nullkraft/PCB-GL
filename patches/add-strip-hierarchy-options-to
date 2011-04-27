@@ -1,7 +1,7 @@
-Bottom: f46703ef4b7e1c9d6238a6d44a4e546fb8060827
-Top:    740affe5882454c35ee5af7ee7c592779c889567
+Bottom: e93220c33f9dffd7e04149935dc9dfcd0c462e34
+Top:    621f88916fbe065e60d350dbbebc542bb515e8ad
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-27 02:32:01 +0100
+Date:   2011-04-27 20:24:10 +0100
 
 Add strip hierarchy options to display refdes without any "..../" prefix
 
@@ -17,7 +17,7 @@ Add strip hierarchy options to display refdes without any "..../" prefix
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 7744cd1..2466dff 100644
+index 53dde28..aabf988 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -3454,9 +3454,16 @@ ActionRenumber (int argc, char **argv, int x, int y)
@@ -127,10 +127,10 @@ index 7744cd1..2466dff 100644
     undo_help, undo_syntax}
    ,
 diff --git a/src/const.h b/src/const.h
-index 3b6cd30..3f9878d 100644
+index 724b3be..7255259 100644
 --- a/src/const.h
 +++ b/src/const.h
-@@ -170,6 +170,8 @@ Marker used internally to avoid revisiting an object.
+@@ -174,6 +174,8 @@ Marker used internally to avoid revisiting an object.
  @item 0x10000 nopaste
  For pads, set to prevent a solderpaste stencil opening for the
  pad.  Primarily used for pads used as fiducials.
@@ -139,7 +139,7 @@ index 3b6cd30..3f9878d 100644
  @end table
  %end-doc */
  
-@@ -206,6 +208,7 @@ pad.  Primarily used for pads used as fiducials.
+@@ -210,6 +212,7 @@ pad.  Primarily used for pads used as fiducials.
  #define EDGE2FLAG               0x4000	/* Padr.Point2 is closer to outside edge */
  					/* also pinout text for pins is vertical */
  #define VISITFLAG		0x8000  /* marker to avoid re-visiting an object */
