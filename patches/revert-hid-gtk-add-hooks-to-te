@@ -7,6 +7,9 @@ Revert "hid/gtk: Add hooks to tell the render when we start/stop drawing"
 
 This reverts commit 332cb8ddc1cc032ac29c7d2b9a0051ccc228b6da.
 
+Since crosshair updates are now handled by notifications to the GUI,
+this isn't required for the forthcoming PCB+GL support.
+
 
 ---
 
