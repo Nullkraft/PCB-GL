@@ -381,8 +381,8 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
 
   /* draw vias */
   r_search (PCB->Data->via_tree, drawn_area, NULL, via_inlayer_callback, layer);
-  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
-  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
+//  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
+//  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
 }
 
 struct draw_funcs d_f = {
