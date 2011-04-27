@@ -435,8 +435,8 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
 
   if (layer_num < max_copper_layer)
     {
-      r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
-      r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
+      r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_callback, NULL);
+      r_search (PCB->Data->via_tree, drawn_area, NULL, via_hole_callback, NULL);
     }
 
   /* print the non-clearing polys */
