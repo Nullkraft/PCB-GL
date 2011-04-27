@@ -185,9 +185,10 @@ draw_poly (PolygonType *polygon, const BoxType *drawn_area, void *userdata)
 struct draw_funcs d_f = {
   .draw_pin       = draw_pin,
   .draw_pin_mask  = draw_pin_mask,
+  .draw_pin_hole  = draw_hole,
   .draw_via       = draw_via,
   .draw_via_mask  = draw_via_mask,
-  .draw_hole      = draw_hole,
+  .draw_via_hole  = draw_hole,
   .draw_pad       = draw_pad,
   .draw_pad_mask  = draw_pad_mask,
   .draw_pad_paste = draw_pad_paste,

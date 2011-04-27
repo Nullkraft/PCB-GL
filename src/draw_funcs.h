@@ -1,9 +1,10 @@
 struct draw_funcs {
   void (*draw_pin)       (PinType *,     const BoxType *, void *);
   void (*draw_pin_mask)  (PinType *,     const BoxType *, void *);
+  void (*draw_pin_hole)  (PinType *,     const BoxType *, void *);
   void (*draw_via)       (PinType *,     const BoxType *, void *);
   void (*draw_via_mask)  (PinType *,     const BoxType *, void *);
-  void (*draw_hole)      (PinType *,     const BoxType *, void *);
+  void (*draw_via_hole)  (PinType *,     const BoxType *, void *);
   void (*draw_pad)       (PadType *,     const BoxType *, void *);
   void (*draw_pad_mask)  (PadType *,     const BoxType *, void *);
   void (*draw_pad_paste) (PadType *,     const BoxType *, void *);

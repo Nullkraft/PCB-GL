@@ -282,7 +282,7 @@ draw_element_pins_and_pads (ElementType *element)
     else if (TEST_FLAG (SELECTEDFLAG, pin)) gui->set_color (Output.fgGC, PCB->PinSelectedColor);
     else                                    gui->set_color (Output.fgGC, Settings.BlackColor);
 
-    dapi->draw_hole (pin, NULL, NULL);
+    dapi->draw_pin_hole (pin, NULL, NULL);
   }
   END_LOOP;
 }
@@ -297,22 +297,41 @@ EMark_callback (const BoxType * b, void *cl)
 }
 
 static int
-hole_callback (const BoxType * b, void *cl)
+pin_hole_callback (const BoxType * b, void *cl)
 {
-  PinTypePtr pv = (PinTypePtr) b;
+  PinType *pin = (PinType*)b;
   int plated = cl ? *(int *) cl : -1;
 
-  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pv)) ||
-      (plated == 1 &&  TEST_FLAG (HOLEFLAG, pv)))
+  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pin)) ||
+      (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
     return 1;
 
-  if (TEST_FLAG (WARNFLAG, pv))          gui->set_color (Output.fgGC, PCB->WarnColor);
-  else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->set_color (Output.fgGC, PCB->PinSelectedColor);
-  else                                   gui->set_color (Output.fgGC, Settings.BlackColor);
+  if (TEST_FLAG (WARNFLAG, pin))          gui->set_color (Output.fgGC, PCB->WarnColor);
+  else if (TEST_FLAG (SELECTEDFLAG, pin)) gui->set_color (Output.fgGC, PCB->PinSelectedColor);
+  else                                    gui->set_color (Output.fgGC, Settings.BlackColor);
 
-  dapi->draw_hole (pv, NULL, NULL);
+  dapi->draw_pin_hole (pin, NULL, NULL);
   return 1;
 }
+
+static int
+via_hole_callback (const BoxType * b, void *cl)
+{
+  PinType *via = (PinType*)b;
+  int plated = cl ? *(int *) cl : -1;
+
+  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, via)) ||
+      (plated == 1 &&  TEST_FLAG (HOLEFLAG, via)))
+    return 1;
+
+  if (TEST_FLAG (WARNFLAG, via))          gui->set_color (Output.fgGC, PCB->WarnColor);
+  else if (TEST_FLAG (SELECTEDFLAG, via)) gui->set_color (Output.fgGC, PCB->ViaSelectedColor);
+  else                                    gui->set_color (Output.fgGC, Settings.BlackColor);
+
+  dapi->draw_via_hole (via, NULL, NULL);
+  return 1;
+}
+
 
 static void
 DrawHoles (bool draw_plated, bool draw_unplated, BoxType *drawn_area)
@@ -322,8 +341,8 @@ DrawHoles (bool draw_plated, bool draw_unplated, BoxType *drawn_area)
   if ( draw_plated && !draw_unplated) plated = 1;
   if (!draw_plated &&  draw_unplated) plated = 0;
 
-  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
-  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
+  r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_callback, &plated);
+  r_search (PCB->Data->via_tree, drawn_area, NULL, via_hole_callback, &plated);
 }
 
 typedef struct
@@ -642,10 +661,10 @@ DrawPPV (int group, const BoxType *drawn_area)
   if (PCB->ViaOn || !gui->gui)
     {
       r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
-      r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
+      r_search (PCB->Data->via_tree, drawn_area, NULL, via_hole_callback, NULL);
     }
   if (PCB->PinOn || doing_assy)
-    r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
+    r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_callback, NULL);
 }
 
 static int
@@ -886,8 +905,8 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
 
   /* draw vias */
   r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
-  r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
-  r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
+  r_search (PCB->Data->pin_tree, screen, NULL, pin_hole_callback, NULL);
+  r_search (PCB->Data->via_tree, screen, NULL, via_hole_callback, NULL);
 }
 
 void
