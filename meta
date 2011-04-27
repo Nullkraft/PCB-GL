@@ -1,32 +1,32 @@
 Version: 1
-Previous: 19374666826f387ec0aaade29ce7be720063e065
-Head: b39090bf0a62a0363bd8c5821cbd186fde9b2d7c
+Previous: 85c599c797b2be45ee73993e267b96804425b303
+Head: d408aa86fb456eb8cfa91da98bbcef6058170cf9
 Applied:
   crasy-test: 65d8a9f2bb03750ff77a3009cf74b42204670d3e
   continue-with-crazy-idea: b39090bf0a62a0363bd8c5821cbd186fde9b2d7c
+  remove-live-drawing-from-auto-: 49a92aac554bd7ffc2f81f05e475bf6746464de4
+  add-configure-checks-for-gtkgl: 1ef2707e5b50e252ff7037a5cd1d6e90045aa621
+  make-enable-gl-default: 99b19b36de4cb0a6b3982d43488ef2f39e2a2402
+  drop-in-pcb-gl-code-various-mess: 9a9a115d2e760ad45b6ab8eb6cd1a9fbd28d30be
+  fix-mesa-crash-on-startup: a52d6e42a76c6eba6fa554b3aa0e8d568ba7a45f
+  clean-up-gl-renderers-ghid_sho: c213316fda434efb7389f105351ce8736c277bb1
+  add-raw-polygons-support-for-t: bffd27c4c5183c1d629fc3fdbae81a581c231663
+  work-in-progress-on-subcomposi: 10b4cfee986b197d941265873d041c3bcf1548c2
+  draw_funcs-attempt-at-differen: 0b5fbd49279d031e32215b0897fefcdb1a0bd53f
+  use-tags-on-circular-contours-: ca9ab10a1142aecffe00147183d9202ead8f5c84
+  ugly-ugly-hack-to-make-pretty-: 1afcdebd6be2d87f390e675ad673b64616c325de
+  add-virtual-trackball-code: e756b14c1b9590d01c31591701b80ecc9c92bcf6
+  use-trackball-to-allow-rotatio: e64b7f4042a16037d1b79fe54e080a799047eadf
+  shiny-3d-eye-candy: 2be13bccb972ae7be96dca99e411b32cf1880636
+  major-re-write-to-drawing-rout: f12f4e780336b1c160fce91715ba247dc49c8dca
+  remove-hack-in-draw-c-which-br: 30e7cf65539aba7a0569dbbe5947be8c9637b1ee
+  draw-pin-pad-names-first-so-th: baa223672281261017617f8f6b7822ec326a2363
+  fix-layer-on-off-rendering: 0ca863af76bc84c06e462bca2f043a892ca2d08c
+  silly-space-navigator-interfac: b98e2e18721411a48c082086a60058be7f86b12f
+  bentley-ottann-test-implementa: 9417eb89a953401142418faa025e8f9b81f967dd
+  add-routines-to-render-just-a-: 6537e775c27c5089eb5a99078fbbd617a4e0b3c7
+  board-outline-polygon-generati: 7496121cf70f5f8b99ff0c2f33be31b0fbe57569
+  comment-out-live-drawing-from-: 6cddc9518d8ee954f9a48ae063b5c067d74d6fb2
+  hack-to-avoid-gl-calls-when-we: d408aa86fb456eb8cfa91da98bbcef6058170cf9
 Unapplied:
-  remove-live-drawing-from-auto-: 576ae72efcb18baf3718c711ecb780d2ed937051
-  add-configure-checks-for-gtkgl: 5edacbc732819106d76ab1296c4737ec9a3c23f9
-  make-enable-gl-default: 964dc243b4111271dad745f6c7a416096d494a3d
-  drop-in-pcb-gl-code-various-mess: 7e147baeb0ffbbaf0674a4d988af3fe276e8a7ee
-  fix-mesa-crash-on-startup: 85c597233eeaa3f706e6cb7e0eb7924dd8da2316
-  clean-up-gl-renderers-ghid_sho: 8fc38d6bd4dd88adc0e25e6abf3ca8de43365a76
-  add-raw-polygons-support-for-t: c7c8ccf358ff135deb8e8b7534626b4209b2122a
-  work-in-progress-on-subcomposi: 3d69bcf41257f608c0d98ec92549e8718ccce3f5
-  draw_funcs-attempt-at-differen: cff6ec41ff4d76af04834d19d15bd9a1d9bbeaef
-  use-tags-on-circular-contours-: 3c2e001688810f43b9def1211bb102649fa61ea5
-  ugly-ugly-hack-to-make-pretty-: c4f90c861daf10de79fc2f1283caebf5edf8b002
-  add-virtual-trackball-code: cffd9d02a4028e1a910139157d4922edec791df6
-  use-trackball-to-allow-rotatio: e8903da42aa62e187253f8fa914b675b7680cb2d
-  shiny-3d-eye-candy: 8491527b24cc980d7c0e837b1da2a5ea3ea59452
-  major-re-write-to-drawing-rout: c71403ca07468ceaab9b53b5cee2dceb5ff3dd86
-  remove-hack-in-draw-c-which-br: 0165705d9e6b8c3ea7c337d086f68cfed1046ccc
-  draw-pin-pad-names-first-so-th: a948fed1b7f747ab28327242a961680fb8a435db
-  fix-layer-on-off-rendering: c7bdd85574d1e60ac5a69082ad429fe7686fe4e9
-  silly-space-navigator-interfac: 22794088d8940ee032e83eca5b372f0687efe6ff
-  bentley-ottann-test-implementa: a26e043b1dd31ce119d1eb16df3adf22091cff77
-  add-routines-to-render-just-a-: 5b6dcd5d9f0587b058a793fbea2da28d176a30d2
-  board-outline-polygon-generati: 1cca969db96702ebe44dc573c00bc557b14118af
-  comment-out-live-drawing-from-: 4cd8c0797308251a1a0de96038a5ecadaccf523d
-  hack-to-avoid-gl-calls-when-we: a58b884b90fb9317898716ddb010654cea5d7a63
 Hidden:
