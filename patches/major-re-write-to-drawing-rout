@@ -1,5 +1,5 @@
-Bottom: fbec7849edeb2d742d61097c1e9313a35e8219d0
-Top:    028728e632ce788fda6976726afef7dfd18e89ea
+Bottom: 6c749b5934475761e592ec0712987af8f5621d12
+Top:    4d7b61bc27aa0965dc6ed9e23d046a92972ff434
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 19:19:12 +0100
 
@@ -18,7 +18,7 @@ Notes from squashed patches:
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index f499079..4a0c0da 100644
+index ff079a5..cf2e76b 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -86,11 +86,11 @@ static void DrawEverything (BoxTypePtr);
@@ -88,7 +88,7 @@ index cf324a5..44b80d2 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index cc68c5c..430f7df 100644
+index 6c70155..b410862 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,9 @@
@@ -264,7 +264,7 @@ index cc68c5c..430f7df 100644
  void
  ghid_set_color (hidGC gc, const char *name)
  {
-@@ -546,7 +581,7 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -548,7 +583,7 @@ ghid_set_color (hidGC gc, const char *name)
    glColor4d (r, g, b, a);
  }
  
@@ -273,7 +273,7 @@ index cc68c5c..430f7df 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -963,6 +998,890 @@ ghid_screen_update (void)
+@@ -965,6 +1000,890 @@ ghid_screen_update (void)
  {
  }
  
@@ -1164,7 +1164,7 @@ index cc68c5c..430f7df 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1027,8 +1946,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1029,8 +1948,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1175,7 +1175,7 @@ index cc68c5c..430f7df 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1094,13 +2013,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1096,13 +2015,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -1189,7 +1189,7 @@ index cc68c5c..430f7df 100644
    /* TODO: Background image */
  
    hidgl_init_triangle_array (&buffer);
-@@ -1120,7 +2032,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1122,7 +2034,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_x0,
                  ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                               -port->view_y0, 0);
