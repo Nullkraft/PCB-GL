@@ -1,5 +1,5 @@
-Bottom: 3010f75a01dc801a434efb51c2b7bb75bcff1b3c
-Top:    134b4690b1aedbc6c7fb79f85990dee58b449c32
+Bottom: cd55cd5f0467e5263621bdf9fbe907d3e47bd536
+Top:    bb3f5f13198beea04308cccacab164a0f65b0cd2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-27 01:17:21 +0100
 
@@ -9,7 +9,7 @@ Continue with crazy idea
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 71cf55e..24e8fb3 100644
+index c71e849..b6555a2 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -141,16 +141,6 @@ set_pv_color (PinType *pv, int type)
@@ -322,7 +322,7 @@ index adfee36..cf324a5 100644
  void EraseRat (RatTypePtr);
  void EraseViaName (PinTypePtr);
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
-index 49beeba..363a85e 100644
+index 8a2d557..679d973 100644
 --- a/src/draw_funcs.c
 +++ b/src/draw_funcs.c
 @@ -1,7 +1,10 @@
@@ -336,7 +336,7 @@ index 49beeba..363a85e 100644
  
  static void
  _draw_pv (PinType *pv, bool draw_hole)
-@@ -180,6 +183,206 @@ draw_poly (PolygonType *polygon, const BoxType *drawn_area, void *userdata)
+@@ -182,6 +185,206 @@ draw_poly (PolygonType *polygon, const BoxType *drawn_area, void *userdata)
      }
  }
  
@@ -543,7 +543,7 @@ index 49beeba..363a85e 100644
  struct draw_funcs d_f = {
    .draw_pin       = draw_pin,
    .draw_pin_mask  = draw_pin_mask,
-@@ -193,6 +396,7 @@ struct draw_funcs d_f = {
+@@ -195,6 +398,7 @@ struct draw_funcs d_f = {
    .draw_rat       = draw_rat,
    .draw_arc       = draw_arc,
    .draw_poly      = draw_poly,
