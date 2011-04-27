@@ -366,7 +366,6 @@ PrintAssembly (int side, const BoxType * drawn_area)
 
   gui->set_draw_faded (Output.fgGC, 1);
   DrawLayerGroup (side_group, drawn_area);
-  DrawPPV (side_group, drawn_area);
   gui->set_draw_faded (Output.fgGC, 0);
 
   /* draw package */
@@ -428,8 +427,7 @@ DrawEverything (BoxTypePtr drawn_area)
       int group = drawn_groups[i];
 
       if (gui->set_layer (0, group, 0))
-        if (DrawLayerGroup (group, drawn_area) && !gui->gui)
-          DrawPPV (group, drawn_area);
+        DrawLayerGroup (group, drawn_area);
     }
 
   if (TEST_FLAG (CHECKPLANESFLAG, PCB) && gui->gui)
@@ -737,7 +735,9 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
     }
   if (n_entries > 1)
     rv = 1;
-  return rv;
+
+  if (rv == 1 && !gui->gui)
+    DrawPPV (group, drawn_area);
 }
 
 static void
