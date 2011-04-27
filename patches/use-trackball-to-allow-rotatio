@@ -1,5 +1,5 @@
-Bottom: 6e6391400d3454eb54a1ffb2203eb84b8e3d749b
-Top:    bd06bbf999645ba2b5f187e8d3175ab1f145db92
+Bottom: 3cb45d2e8418eec1240220eec7912c3b59e8f7fb
+Top:    b55a50d4fd0dd35c42c06c1d9fc7ac45cd59f082
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-27 20:35:06 +0100
 
@@ -369,7 +369,7 @@ index 2223e61..da27135 100644
 +  ghid_invalidate_all ();
 +}
 diff --git a/src/hid/gtk/gui-output-events.c b/src/hid/gtk/gui-output-events.c
-index 7f51be8..b185b25 100644
+index d969dd2..ce24a6a 100644
 --- a/src/hid/gtk/gui-output-events.c
 +++ b/src/hid/gtk/gui-output-events.c
 @@ -224,6 +224,14 @@ ghid_note_event_location (GdkEventButton * ev)
@@ -387,7 +387,7 @@ index 7f51be8..b185b25 100644
    gport->view_x = event_x * gport->zoom + gport->view_x0;
    gport->view_y = event_y * gport->zoom + gport->view_y0;
  
-@@ -519,7 +527,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
+@@ -516,7 +524,6 @@ ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
    return 0;
  }
  
