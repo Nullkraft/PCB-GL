@@ -1,0 +1,14 @@
+Bottom: c9b38227970e1f0d18677e1a4ef29a3df18314cb
+Top:    c9b38227970e1f0d18677e1a4ef29a3df18314cb
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-27 20:52:07 +0100
+
+hid/gtk: Avoid extra crosshair and attached object redraws
+
+The crosshair movement is handled by a notify_crosshair_change() call
+in ghid_note_event_location(). 
+
+
+---
+
+
