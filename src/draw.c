@@ -158,10 +158,12 @@ via_callback (const BoxType * b, void *cl)
 }
 
 static int
-pad_callback (const BoxType * b, void *cl)
+pad_inlayer_callback (const BoxType * b, void *cl)
 {
   PadTypePtr pad = (PadTypePtr) b;
-  int *side = cl;
+  LayerType *layer = cl;
+  int solder_group = GetLayerGroupNumberByNumber (solder_silk_layer);
+  int group = GetLayerGroupNumberByPointer (layer);
 
   if (ON_SIDE (pad, *side))
     {
@@ -582,7 +584,6 @@ pin_mask_callback (const BoxType * b, void *cl)
 static int
 via_mask_callback (const BoxType * b, void *cl)
 {
-  dapi->draw_via_mask ((PinType *) b, NULL, NULL);
   return 1;
 }
 
