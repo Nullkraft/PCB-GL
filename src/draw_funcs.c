@@ -45,15 +45,17 @@ draw_via_mask (PinType *via, const BoxType *drawn_area, void *userdata)
 static void
 draw_hole (PinType *pv, const BoxType *drawn_area, void *userdata)
 {
-  gui->set_line_cap (Output.fgGC, Round_Cap);
-  gui->set_line_width (Output.fgGC, 0);
-
   if (!TEST_FLAG (THINDRAWFLAG, PCB))
     gui->fill_circle (Output.bgGC, pv->X, pv->Y, pv->DrillingHole / 2);
 
   if (TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG (HOLEFLAG, pv))
-    gui->draw_arc (Output.fgGC, pv->X, pv->Y,
-                   pv->DrillingHole / 2, pv->DrillingHole / 2, 0, 360);
+    {
+      gui->set_line_cap (Output.fgGC, Round_Cap);
+      gui->set_line_width (Output.fgGC, 0);
+
+      gui->draw_arc (Output.fgGC, pv->X, pv->Y,
+                     pv->DrillingHole / 2, pv->DrillingHole / 2, 0, 360);
+    }
 }
 
 static void
