@@ -1,5 +1,5 @@
 Bottom: 5a1eec8210dd8b2e4d01822be3b55da4a1811022
-Top:    a66f81bd9a1563cc76d3e6f32009919c5cadebd2
+Top:    b68ab0a90eff28888e88d86737dd8f4b1e16b486
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-27 21:46:46 +0100
 
@@ -22,7 +22,7 @@ index 5abbfb2..34cd5b3 100644
  	drill.h \
  	edif.y \
 diff --git a/src/draw.c b/src/draw.c
-index c041195..c71e849 100644
+index c041195..1e03557 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -41,6 +41,7 @@
@@ -343,12 +343,25 @@ index c041195..c71e849 100644
 +    else if (TEST_FLAG (SELECTEDFLAG, pin)) gui->set_color (Output.fgGC, PCB->PinSelectedColor);
 +    else                                    gui->set_color (Output.fgGC, Settings.BlackColor);
 +
-+    dapi->draw_hole (pin, NULL, NULL);
++    dapi->draw_pin_hole (pin, NULL, NULL);
    }
    END_LOOP;
  }
-@@ -408,35 +306,11 @@ hole_callback (const BoxType * b, void *cl)
-       (plated == 1 &&  TEST_FLAG (HOLEFLAG, pv)))
+@@ -399,47 +297,42 @@ EMark_callback (const BoxType * b, void *cl)
+ }
+ 
+ static int
+-hole_callback (const BoxType * b, void *cl)
++pin_hole_callback (const BoxType * b, void *cl)
+ {
+-  PinTypePtr pv = (PinTypePtr) b;
++  PinType *pin = (PinType*)b;
+   int plated = cl ? *(int *) cl : -1;
+ 
+-  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pv)) ||
+-      (plated == 1 &&  TEST_FLAG (HOLEFLAG, pv)))
++  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, pin)) ||
++      (plated == 1 &&  TEST_FLAG (HOLEFLAG, pin)))
      return 1;
  
 -  if (TEST_FLAG (THINDRAWFLAG, PCB))
@@ -364,9 +377,9 @@ index c041195..c71e849 100644
 -    }
 -  else
 -    gui->fill_circle (Output.bgGC, pv->X, pv->Y, pv->DrillingHole / 2);
-+  if (TEST_FLAG (WARNFLAG, pv))          gui->set_color (Output.fgGC, PCB->WarnColor);
-+  else if (TEST_FLAG (SELECTEDFLAG, pv)) gui->set_color (Output.fgGC, PCB->PinSelectedColor);
-+  else                                   gui->set_color (Output.fgGC, Settings.BlackColor);
++  if (TEST_FLAG (WARNFLAG, pin))          gui->set_color (Output.fgGC, PCB->WarnColor);
++  else if (TEST_FLAG (SELECTEDFLAG, pin)) gui->set_color (Output.fgGC, PCB->PinSelectedColor);
++  else                                    gui->set_color (Output.fgGC, Settings.BlackColor);
  
 -  if (TEST_FLAG (HOLEFLAG, pv))
 -    {
@@ -376,18 +389,50 @@ index c041195..c71e849 100644
 -        gui->set_color (Output.fgGC, PCB->ViaSelectedColor);
 -      else
 -        gui->set_color (Output.fgGC, Settings.BlackColor);
--
++  dapi->draw_pin_hole (pin, NULL, NULL);
++  return 1;
++}
+ 
 -      gui->set_line_cap (Output.fgGC, Round_Cap);
 -      gui->set_line_width (Output.fgGC, 0);
 -      gui->draw_arc (Output.fgGC,
 -                     pv->X, pv->Y, pv->DrillingHole / 2,
 -                     pv->DrillingHole / 2, 0, 360);
 -    }
-+  dapi->draw_hole (pv, NULL, NULL);
++static int
++via_hole_callback (const BoxType * b, void *cl)
++{
++  PinType *via = (PinType*)b;
++  int plated = cl ? *(int *) cl : -1;
++
++  if ((plated == 0 && !TEST_FLAG (HOLEFLAG, via)) ||
++      (plated == 1 &&  TEST_FLAG (HOLEFLAG, via)))
++    return 1;
++
++  if (TEST_FLAG (WARNFLAG, via))          gui->set_color (Output.fgGC, PCB->WarnColor);
++  else if (TEST_FLAG (SELECTEDFLAG, via)) gui->set_color (Output.fgGC, PCB->ViaSelectedColor);
++  else                                    gui->set_color (Output.fgGC, Settings.BlackColor);
++
++  dapi->draw_via_hole (via, NULL, NULL);
    return 1;
  }
  
-@@ -482,39 +356,17 @@ CountHoles (int *plated, int *unplated, BoxType *drawn_area)
++
+ static void
+ DrawHoles (bool draw_plated, bool draw_unplated, BoxType *drawn_area)
+ {
+@@ -448,8 +341,8 @@ DrawHoles (bool draw_plated, bool draw_unplated, BoxType *drawn_area)
+   if ( draw_plated && !draw_unplated) plated = 1;
+   if (!draw_plated &&  draw_unplated) plated = 0;
+ 
+-  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, &plated);
+-  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, &plated);
++  r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_callback, &plated);
++  r_search (PCB->Data->via_tree, drawn_area, NULL, via_hole_callback, &plated);
+ }
+ 
+ typedef struct
+@@ -482,39 +375,17 @@ CountHoles (int *plated, int *unplated, BoxType *drawn_area)
    if (unplated != NULL) *unplated = hcs.nunplated;
  }
  
@@ -435,7 +480,7 @@ index c041195..c71e849 100644
    return 1;
  }
  
-@@ -523,71 +375,25 @@ rat_callback (const BoxType * b, void *cl)
+@@ -523,71 +394,25 @@ rat_callback (const BoxType * b, void *cl)
  {
    RatType *rat = (RatType *)b;
  
@@ -448,17 +493,17 @@ index c041195..c71e849 100644
 -    }
 -  else
 -    gui->set_color (Output.fgGC, PCB->RatColor);
--
++  if (TEST_FLAG (SELECTEDFLAG, rat))   gui->set_color (Output.fgGC, PCB->RatSelectedColor);
++  else if (TEST_FLAG (FOUNDFLAG, rat)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
++  else                                 gui->set_color (Output.fgGC, PCB->RatColor);
+ 
 -  if (Settings.RatThickness < 20)
 -    rat->Thickness = pixel_slop * Settings.RatThickness;
 -  /* rats.c set VIAFLAG if this rat goes to a containing poly: draw a donut */
 -  if (TEST_FLAG(VIAFLAG, rat))
 -    {
 -      int w = rat->Thickness;
-+  if (TEST_FLAG (SELECTEDFLAG, rat))   gui->set_color (Output.fgGC, PCB->RatSelectedColor);
-+  else if (TEST_FLAG (FOUNDFLAG, rat)) gui->set_color (Output.fgGC, PCB->ConnectedColor);
-+  else                                 gui->set_color (Output.fgGC, PCB->RatColor);
- 
+-
 -      if (TEST_FLAG (THINDRAWFLAG, PCB))
 -        gui->set_line_width (Output.fgGC, 0);
 -      else
@@ -519,7 +564,7 @@ index c041195..c71e849 100644
    return 1;
  }
  
-@@ -607,12 +413,14 @@ draw_element_package (ElementType *element)
+@@ -607,12 +432,14 @@ draw_element_package (ElementType *element)
    /* draw lines, arcs, text and pins */
    ELEMENTLINE_LOOP (element);
    {
@@ -536,7 +581,16 @@ index c041195..c71e849 100644
    }
    END_LOOP;
  }
-@@ -841,13 +649,16 @@ DrawPPV (int group, const BoxType *drawn_area)
+@@ -834,20 +661,23 @@ DrawPPV (int group, const BoxType *drawn_area)
+   if (PCB->ViaOn || !gui->gui)
+     {
+       r_search (PCB->Data->via_tree, drawn_area, NULL, via_callback, NULL);
+-      r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
++      r_search (PCB->Data->via_tree, drawn_area, NULL, via_hole_callback, NULL);
+     }
+   if (PCB->PinOn || doing_assy)
+-    r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
++    r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_callback, NULL);
  }
  
  static int
@@ -559,7 +613,7 @@ index c041195..c71e849 100644
    return 1;
  }
  
-@@ -861,49 +672,22 @@ poly_callback (const BoxType * b, void *cl)
+@@ -861,49 +691,22 @@ poly_callback (const BoxType * b, void *cl)
  {
    struct poly_info *i = cl;
    PolygonType *polygon = (PolygonType *)b;
@@ -616,7 +670,7 @@ index c041195..c71e849 100644
    return 1;
  }
  
-@@ -933,9 +717,9 @@ DrawSilk (int side, const BoxType * drawn_area)
+@@ -933,9 +736,9 @@ DrawSilk (int side, const BoxType * drawn_area)
      }
  
    gui->use_mask (HID_MASK_CLEAR);
@@ -629,7 +683,7 @@ index c041195..c71e849 100644
  
    if (gui->poly_after)
      {
-@@ -983,9 +767,9 @@ DrawMask (int side, BoxType * screen)
+@@ -983,9 +786,9 @@ DrawMask (int side, BoxType * screen)
        gui->use_mask (HID_MASK_CLEAR);
      }
  
@@ -642,7 +696,7 @@ index c041195..c71e849 100644
  
    if (thin)
      gui->set_color (Output.pmGC, "erase");
-@@ -1005,13 +789,8 @@ DrawPaste (int side, BoxType *drawn_area)
+@@ -1005,13 +808,8 @@ DrawPaste (int side, BoxType *drawn_area)
    gui->set_color (Output.fgGC, PCB->ElementColor);
    ALLPAD_LOOP (PCB->Data);
    {
@@ -658,7 +712,7 @@ index c041195..c71e849 100644
    }
    ENDALL_LOOP;
  }
-@@ -1059,6 +838,9 @@ text_callback (const BoxType * b, void *cl)
+@@ -1059,6 +857,9 @@ text_callback (const BoxType * b, void *cl)
  void
  DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
  {
@@ -668,7 +722,7 @@ index c041195..c71e849 100644
    struct poly_info info = {screen, Layer};
  
    /* print the non-clearing polys */
-@@ -1079,6 +861,55 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
+@@ -1079,6 +880,55 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
    /* We should check for gui->gui here, but it's kinda cool seeing the
       auto-outline magically disappear when you first add something to
       the "outline" layer.  */
@@ -697,8 +751,8 @@ index c041195..c71e849 100644
 +
 +  /* draw vias */
 +  r_search (PCB->Data->via_tree, screen, NULL, via_inlayer_callback, Layer);
-+  r_search (PCB->Data->pin_tree, screen, NULL, hole_callback, NULL);
-+  r_search (PCB->Data->via_tree, screen, NULL, hole_callback, NULL);
++  r_search (PCB->Data->pin_tree, screen, NULL, pin_hole_callback, NULL);
++  r_search (PCB->Data->via_tree, screen, NULL, via_hole_callback, NULL);
 +}
 +
 +void
@@ -724,7 +778,7 @@ index c041195..c71e849 100644
    if (IsLayerEmpty (Layer)
        && (strcmp (Layer->Name, "outline") == 0
  	  || strcmp (Layer->Name, "route") == 0))
-@@ -1091,12 +922,6 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
+@@ -1091,12 +941,6 @@ DrawLayerCommon (LayerTypePtr Layer, const BoxType * screen, bool clear_pins)
      }
  }
  
@@ -737,7 +791,7 @@ index c041195..c71e849 100644
  /* ---------------------------------------------------------------------------
   * draws one layer group.  Returns non-zero if pins and pads should be
   * drawn with this group.
-@@ -1187,6 +1012,20 @@ GatherPadName (PadTypePtr Pad)
+@@ -1187,6 +1031,20 @@ GatherPadName (PadTypePtr Pad)
    return;
  }
  
@@ -760,10 +814,10 @@ index c041195..c71e849 100644
   */
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
 new file mode 100644
-index 0000000..8a2d557
+index 0000000..00f8dfc
 --- /dev/null
 +++ b/src/draw_funcs.c
-@@ -0,0 +1,200 @@
+@@ -0,0 +1,201 @@
 +
 +#include "global.h"
 +#include "data.h"
@@ -951,9 +1005,10 @@ index 0000000..8a2d557
 +struct draw_funcs d_f = {
 +  .draw_pin       = draw_pin,
 +  .draw_pin_mask  = draw_pin_mask,
++  .draw_pin_hole  = draw_hole,
 +  .draw_via       = draw_via,
 +  .draw_via_mask  = draw_via_mask,
-+  .draw_hole      = draw_hole,
++  .draw_via_hole  = draw_hole,
 +  .draw_pad       = draw_pad,
 +  .draw_pad_mask  = draw_pad_mask,
 +  .draw_pad_paste = draw_pad_paste,
@@ -966,16 +1021,17 @@ index 0000000..8a2d557
 +struct draw_funcs *dapi = &d_f;
 diff --git a/src/draw_funcs.h b/src/draw_funcs.h
 new file mode 100644
-index 0000000..1f97d82
+index 0000000..b97d89a
 --- /dev/null
 +++ b/src/draw_funcs.h
-@@ -0,0 +1,16 @@
+@@ -0,0 +1,17 @@
 +struct draw_funcs {
 +  void (*draw_pin)       (PinType *,     const BoxType *, void *);
 +  void (*draw_pin_mask)  (PinType *,     const BoxType *, void *);
++  void (*draw_pin_hole)  (PinType *,     const BoxType *, void *);
 +  void (*draw_via)       (PinType *,     const BoxType *, void *);
 +  void (*draw_via_mask)  (PinType *,     const BoxType *, void *);
-+  void (*draw_hole)      (PinType *,     const BoxType *, void *);
++  void (*draw_via_hole)  (PinType *,     const BoxType *, void *);
 +  void (*draw_pad)       (PadType *,     const BoxType *, void *);
 +  void (*draw_pad_mask)  (PadType *,     const BoxType *, void *);
 +  void (*draw_pad_paste) (PadType *,     const BoxType *, void *);
