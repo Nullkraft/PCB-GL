@@ -389,6 +389,8 @@ ghid_set_color (hidGC gc, const char *name)
   double r, g, b, a;
   a = 1.0;
 
+  current_gc = gc;
+
   if (old_name != NULL)
     {
       if (strcmp (name, old_name) == 0)
