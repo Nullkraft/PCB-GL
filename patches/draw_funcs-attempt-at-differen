@@ -1,5 +1,5 @@
-Bottom: b19c585e276178d2168af262cc28de1124284c46
-Top:    bd1e6c67c6ad90d433edad293fa3dc15486408a8
+Bottom: b9adbe5040aa137ab095e164302cd1f5c5d3c034
+Top:    b9adbe5040aa137ab095e164302cd1f5c5d3c034
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-27 20:35:06 +0100
 
@@ -8,42 +8,4 @@ DRAW_FUNCS: Attempt at different render order for PCB+GL
 
 ---
 
-diff --git a/src/draw_funcs.c b/src/draw_funcs.c
-index b761f47..3d387a5 100644
---- a/src/draw_funcs.c
-+++ b/src/draw_funcs.c
-@@ -327,6 +327,12 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
-   int group = GetLayerGroupNumberByPointer (layer);
-   struct poly_info info = {drawn_area, layer};
- 
-+  if (layer_num < max_copper_layer)
-+    {
-+      r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
-+      r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
-+    }
-+
-   /* print the non-clearing polys */
-   r_search (layer->polygon_tree, drawn_area, NULL, poly_callback, &info);
- 
-@@ -337,6 +343,12 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
-   if (TEST_FLAG (CHECKPLANESFLAG, PCB))
-     return;
- 
-+  if (layer_num < max_copper_layer)
-+    {
-+      r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
-+      r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
-+    }
-+
-   /* draw all visible lines this layer */
-   r_search (layer->line_tree, drawn_area, NULL, line_callback, layer);
- 
-@@ -385,8 +397,6 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
- 
-   /* draw vias */
-   r_search (PCB->Data->via_tree, drawn_area, NULL, via_inlayer_callback, layer);
--  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
--  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
- }
- 
- struct draw_funcs d_f = {
+
