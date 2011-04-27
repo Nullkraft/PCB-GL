@@ -3171,6 +3171,7 @@ RD_DrawVia (routedata_t * rd, LocationType X, LocationType Y,
       r_insert_entry (rd->layergrouptree[rb->group], &rb->box, 1);
       rb->flags.homeless = 0;	/* not homeless anymore */
 
+#if 0
       if (TEST_FLAG (LIVEROUTEFLAG, PCB))
 	{
           PinType *via = CreateNewVia (PCB->Data, X, Y, radius * 2,
@@ -3179,6 +3180,7 @@ RD_DrawVia (routedata_t * rd, LocationType X, LocationType Y,
           rb->livedraw_obj.via = via;
           DrawVia (via);
 	}
+#endif
     }
 }
 static void
@@ -3266,6 +3268,7 @@ RD_DrawLine (routedata_t * rd,
   /* and add it to the r-tree! */
   r_insert_entry (rd->layergrouptree[rb->group], &rb->box, 1);
 
+#if 0
   if (TEST_FLAG (LIVEROUTEFLAG, PCB))
     {
       LayerType *layer = LAYER_PTR (PCB->LayerGroups.Entries[rb->group][0]);
@@ -3274,6 +3277,7 @@ RD_DrawLine (routedata_t * rd,
       rb->livedraw_obj.line = line;
       DrawLine (layer, line);
     }
+#endif
 
   /* and to the via space structures */
   if (AutoRouteParameters.use_vias)
