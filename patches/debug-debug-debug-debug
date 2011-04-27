@@ -1,7 +1,7 @@
-Bottom: e384a139af51ff4413b8f9d350e0f184c961fed1
-Top:    22b020f051838e7e16afe34eea476e75a3ba81c5
+Bottom: 161e7ab6c95a9867db3916c572b4e86070321915
+Top:    9cab163eb8a44d6a393428f51d649cf3eafc14c7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-27 01:18:07 +0100
+Date:   2011-04-27 01:25:28 +0100
 
 DEBUG DEBUG DEBUG DEBUG
 
@@ -9,10 +9,10 @@ DEBUG DEBUG DEBUG DEBUG
 ---
 
 diff --git a/src/draw_funcs.c b/src/draw_funcs.c
-index 363a85e..935fb74 100644
+index 679d973..f0d9297 100644
 --- a/src/draw_funcs.c
 +++ b/src/draw_funcs.c
-@@ -379,8 +379,8 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
+@@ -381,8 +381,8 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
  
    /* draw vias */
    r_search (PCB->Data->via_tree, drawn_area, NULL, via_inlayer_callback, layer);
