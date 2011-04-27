@@ -1,5 +1,5 @@
-Bottom: 753db560cb30998728738464240cabe68ccb30eb
-Top:    e5d787b440e9c28b2158c38038bfbe0e2524765e
+Bottom: 0f04b5003f19bfe5c54170e513030ae6c0f26a7b
+Top:    e67e621c6dd7171812e60bc49e59b44c4809805b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-26 23:57:28 +0100
 
@@ -12,10 +12,10 @@ the old crosshair.
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index e9445dc..06230f1 100644
+index 4751a3f..d38e9ae 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -739,11 +739,13 @@ void
+@@ -741,11 +741,13 @@ void
  ghid_show_crosshair (gboolean paint_new_location)
  {
    gint x, y;
@@ -31,7 +31,7 @@ index e9445dc..06230f1 100644
    if (gport->x_crosshair < 0 || ghidgui->creating) {// || !gport->has_entered) {
      printf ("Returning\n");
      return;
-@@ -767,46 +769,17 @@ ghid_show_crosshair (gboolean paint_new_location)
+@@ -769,46 +771,17 @@ ghid_show_crosshair (gboolean paint_new_location)
               cross_color.green / 65535.,
               cross_color.blue / 65535.);
  
@@ -82,7 +82,7 @@ index e9445dc..06230f1 100644
        glVertex2i (0,                  y - VCD);
        glVertex2i (0,                  y - VCD + VCW);
        glVertex2i (VCD,                y - VCD + VCW);
-@@ -823,20 +796,7 @@ ghid_show_crosshair (gboolean paint_new_location)
+@@ -825,20 +798,7 @@ ghid_show_crosshair (gboolean paint_new_location)
        glVertex2i (x - VCD,            gport->height);
        glVertex2i (x - VCD + VCW,      gport->height);
        glVertex2i (x - VCD + VCW,      gport->height - VCD);
