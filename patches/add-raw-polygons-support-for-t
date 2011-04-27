@@ -1,5 +1,5 @@
-Bottom: c045def4620f31e44d85961a89f9ee86be9e3666
-Top:    3f235afb1a0348c9e8bffef044c19ef513f77258
+Bottom: 601208657860b50764fa6ad106c554118eaa5a13
+Top:    b53c14e194c0c4b01d810b3030f6399ff208a437
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-27 20:35:05 +0100
 
@@ -176,7 +176,7 @@ index e69a6b7..99ffffc 100644
  
  
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index e1c52e3..2e093ac 100644
+index 0a70860..680acaf 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -10,6 +10,7 @@
@@ -220,7 +220,7 @@ index d38e9ae..94f97c2 100644
  {
    USE_GC (gc);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index 919cec7..4b79e7a 100644
+index 6cb6e56..a773d98 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -2130,6 +2130,7 @@ hid_gtk_init ()
@@ -232,7 +232,7 @@ index 919cec7..4b79e7a 100644
  
    ghid_hid.calibrate                = ghid_calibrate;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 141f973..aa85e4f 100644
+index 69e98c6..8548394 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -487,6 +487,8 @@ void ghid_draw_arc (hidGC gc, int cx, int cy, int xradius, int yradius,
