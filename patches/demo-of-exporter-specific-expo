@@ -1,5 +1,5 @@
-Bottom: c60cf82a11eccdf8eaa2b841748730090969f771
-Top:    36b39511954efeca2ad0ea227c75ee42e43858ee
+Bottom: df983203f4609ddd1882064be97b840ca740007a
+Top:    2d3183d539ebd434920c7f4423528263ae624aae
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-21 02:41:14 +0100
 
@@ -9,7 +9,7 @@ Demo of exporter specific export routine
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index dd10fe0..c571b46 100644
+index af4bcca..d419620 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -83,8 +83,6 @@ static bool doing_assy = false;
@@ -21,7 +21,7 @@ index dd10fe0..c571b46 100644
  static void AddPart (void *);
  static void DrawEMark (ElementTypePtr, LocationType, LocationType, bool);
  static void DrawRats (BoxType *);
-@@ -541,7 +539,7 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
+@@ -533,7 +531,7 @@ DrawEMark (ElementTypePtr e, LocationType X, LocationType Y,
   * Draws pins pads and vias - Always draws for non-gui HIDs,
   * otherwise drawing depends on PCB->PinOn and PCB->ViaOn
   */
@@ -30,7 +30,7 @@ index dd10fe0..c571b46 100644
  DrawPPV (int group, const BoxType *drawn_area)
  {
    int component_group = GetLayerGroupNumberByNumber (component_silk_layer);
-@@ -726,7 +724,7 @@ DrawRats (BoxTypePtr drawn_area)
+@@ -718,7 +716,7 @@ DrawRats (BoxTypePtr drawn_area)
   * draws one layer group.  Returns non-zero if pins and pads should be
   * drawn with this group.
   */
