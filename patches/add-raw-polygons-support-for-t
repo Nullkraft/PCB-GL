@@ -1,7 +1,7 @@
-Bottom: e67e621c6dd7171812e60bc49e59b44c4809805b
-Top:    6fd06cf241520742a91544dbd649e9a6361f634a
+Bottom: 99046dcf909a5b37c7dddbb87256f2ef0f3e5f79
+Top:    089c30ffd02916372ed4f2453118035479180a10
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-26 23:57:28 +0100
+Date:   2011-04-27 20:23:37 +0100
 
 Add raw polygons support for the GTK HID, bypassing the no-holes dicer
 
@@ -220,7 +220,7 @@ index d38e9ae..94f97c2 100644
  {
    USE_GC (gc);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index ad61982..6deccb7 100644
+index 919cec7..4b79e7a 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -2130,6 +2130,7 @@ hid_gtk_init ()
@@ -232,10 +232,10 @@ index ad61982..6deccb7 100644
  
    ghid_hid.calibrate                = ghid_calibrate;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 9483f90..aec52b4 100644
+index 141f973..aa85e4f 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -490,6 +490,8 @@ void ghid_draw_arc (hidGC gc, int cx, int cy, int xradius, int yradius,
+@@ -487,6 +487,8 @@ void ghid_draw_arc (hidGC gc, int cx, int cy, int xradius, int yradius,
  void ghid_draw_rect (hidGC gc, int x1, int y1, int x2, int y2);
  void ghid_fill_circle (hidGC gc, int cx, int cy, int radius);
  void ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y);

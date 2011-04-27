@@ -1,7 +1,7 @@
-Bottom: 552da58b52881003b24dc71b5cd48a02652b1f52
-Top:    0f04b5003f19bfe5c54170e513030ae6c0f26a7b
+Bottom: 345fcc55d689fa53c2ce4a4838b6aefe69595ef4
+Top:    1116bbb75569160fa35bb4aaf6da25928e5725bb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-26 23:57:27 +0100
+Date:   2011-04-27 20:23:36 +0100
 
 TEMPORARY: Comment out some calls which can trigger an out-of-context redraw
 
@@ -14,7 +14,7 @@ Should fix this properly with notificatons to the GUI
 ---
 
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index a51d167..ad61982 100644
+index 0df478d..919cec7 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -1893,9 +1893,9 @@ PanAction (int argc, char **argv, int x, int y)

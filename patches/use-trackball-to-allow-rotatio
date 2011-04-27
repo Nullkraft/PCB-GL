@@ -1,7 +1,7 @@
-Bottom: a5cd5250db0f0aa852dadd9641f3c0d7c1d11e0b
-Top:    5f0982efb936e0526bff50898d2219eeee9aec79
+Bottom: 6e6391400d3454eb54a1ffb2203eb84b8e3d749b
+Top:    bd06bbf999645ba2b5f187e8d3175ab1f145db92
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-26 19:19:11 +0100
+Date:   2011-04-27 20:23:40 +0100
 
 Use trackball to allow rotation of 3D view
 
@@ -396,7 +396,7 @@ index 7f51be8..b185b25 100644
  # define ENABLE_TOOLTIPS 1
  #else
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 3f469f7..fd76583 100644
+index 31be13a..ae075d5 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
 @@ -123,6 +123,7 @@ a zoom in/out.
@@ -407,7 +407,7 @@ index 3f469f7..fd76583 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -2161,6 +2162,10 @@ ghid_build_pcb_top_window (void)
+@@ -2159,6 +2160,10 @@ ghid_build_pcb_top_window (void)
    GtkWidget *vbox_main, *vbox_left, *hbox_middle, *hbox = NULL;
    GtkWidget *viewport, *ebox, *vbox, *frame;
    GtkWidget *label;
@@ -418,7 +418,7 @@ index 3f469f7..fd76583 100644
    GHidPort *port = &ghid_port;
    gchar *s;
    GtkWidget *scrolled;
-@@ -2269,6 +2274,16 @@ ghid_build_pcb_top_window (void)
+@@ -2267,6 +2272,16 @@ ghid_build_pcb_top_window (void)
        GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
    make_layer_buttons(vbox, port);
  
@@ -436,10 +436,10 @@ index 3f469f7..fd76583 100644
    gtk_box_pack_start(GTK_BOX(vbox_left), vbox, FALSE, FALSE, 0);
    ghidgui->mode_buttons0_frame_vbox = vbox;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index e6669df..8377f78 100644
+index afc4e7f..9289e3e 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -304,7 +304,6 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
+@@ -301,7 +301,6 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
  gint ghid_port_window_mouse_scroll_cb (GtkWidget * widget,
  				       GdkEventScroll * ev, GHidPort * out);
  
@@ -447,7 +447,7 @@ index e6669df..8377f78 100644
  gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
-@@ -510,6 +509,9 @@ void ghid_port_drawing_realize_cb (GtkWidget *, gpointer);
+@@ -507,6 +506,9 @@ void ghid_port_drawing_realize_cb (GtkWidget *, gpointer);
  gboolean ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev);
  GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
                                 int width, int height, int depth);

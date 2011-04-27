@@ -1,7 +1,7 @@
-Bottom: 6fd06cf241520742a91544dbd649e9a6361f634a
-Top:    aa357ab808da46c9960eddcfbfbc1a71601c9a63
+Bottom: 089c30ffd02916372ed4f2453118035479180a10
+Top:    554f02eb6569bbb0bc13c98d81b117b02179487c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-26 23:57:29 +0100
+Date:   2011-04-27 20:23:38 +0100
 
 Work in progress on subcompositing / stencil buffers
 
@@ -426,7 +426,7 @@ index 99ffffc..9dd76e3 100644
  
  #endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 4429121..46552f3 100644
+index a56c8b9..d6e94d7 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -517,6 +517,9 @@ gerber_set_layer (const char *name, int group, int empty)
@@ -631,7 +631,7 @@ index 94f97c2..c91dd99 100644
    /* call the drawing routine */
    hidgl_init_triangle_array (&buffer);
 diff --git a/src/hid/nelma/nelma.c b/src/hid/nelma/nelma.c
-index 6e911ff..7f69d75 100644
+index 7d136d6..71a4a62 100644
 --- a/src/hid/nelma/nelma.c
 +++ b/src/hid/nelma/nelma.c
 @@ -706,6 +706,10 @@ nelma_set_layer(const char *name, int group, int empty)
@@ -646,10 +646,10 @@ index 6e911ff..7f69d75 100644
  		name = PCB->Data->Layer[idx].Name;
  	}
 diff --git a/src/hid/png/png.c b/src/hid/png/png.c
-index ab64e5a..1556b46 100644
+index cb38659..94dc8a1 100644
 --- a/src/hid/png/png.c
 +++ b/src/hid/png/png.c
-@@ -909,6 +909,10 @@ png_set_layer (const char *name, int group, int empty)
+@@ -906,6 +906,10 @@ png_set_layer (const char *name, int group, int empty)
    int idx = (group >= 0
  	     && group <
  	     max_group) ? PCB->LayerGroups.Entries[group][0] : group;
@@ -661,7 +661,7 @@ index ab64e5a..1556b46 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/ps/eps.c b/src/hid/ps/eps.c
-index f94175f..c37dcbf 100644
+index afcfb73..9a5e056 100644
 --- a/src/hid/ps/eps.c
 +++ b/src/hid/ps/eps.c
 @@ -339,6 +339,10 @@ eps_set_layer (const char *name, int group, int empty)
@@ -676,7 +676,7 @@ index f94175f..c37dcbf 100644
      name = PCB->Data->Layer[idx].Name;
  
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 8024abc..3aa49c9 100644
+index 91ba337..cc4dc99 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -652,6 +652,10 @@ ps_set_layer (const char *name, int group, int empty)

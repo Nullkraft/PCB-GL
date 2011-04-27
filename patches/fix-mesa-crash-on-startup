@@ -1,7 +1,7 @@
-Bottom: a21a2e3d70a90448feafa0e6a9be4e07e8ba9ca1
-Top:    fcec425652871f3e4dd057bd75f86a8f4238618c
+Bottom: 3e9ba0778c937ff0f33d5e3a4238bccb94f5b3f2
+Top:    15a172b46666a2d5508f8c78b832e7e86751beb3
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-27 02:00:23 +0100
+Date:   2011-04-27 20:23:35 +0100
 
 Fix mesa crash on startup (for some mesa versions)
 
@@ -60,10 +60,10 @@ index 827901d..4751a3f 100644
  ghid_pinout_preview_expose (GtkWidget *widget,
                              GdkEventExpose *ev)
 diff --git a/src/hid/gtk/gui-top-window.c b/src/hid/gtk/gui-top-window.c
-index 1a81c58..3f469f7 100644
+index ca82b96..31be13a 100644
 --- a/src/hid/gtk/gui-top-window.c
 +++ b/src/hid/gtk/gui-top-window.c
-@@ -2359,6 +2359,9 @@ ghid_build_pcb_top_window (void)
+@@ -2357,6 +2357,9 @@ ghid_build_pcb_top_window (void)
       |  the user does a command entry.
     */
  
@@ -74,10 +74,10 @@ index 1a81c58..3f469f7 100644
  		    G_CALLBACK (ghid_drawing_area_expose_cb),
  		    port);
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index c44e56d..9483f90 100644
+index 5d1d6be..141f973 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -502,6 +502,7 @@ void ghid_drawing_area_configure_hook (GHidPort *port);
+@@ -499,6 +499,7 @@ void ghid_drawing_area_configure_hook (GHidPort *port);
  void ghid_screen_update (void);
  gboolean ghid_drawing_area_expose_cb (GtkWidget *, GdkEventExpose *,
                                        GHidPort *);

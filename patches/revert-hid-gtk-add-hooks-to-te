@@ -1,7 +1,7 @@
-Bottom: cc0ad52585302d85be5a233e353d89b1792cee55
-Top:    9f0bbb5356a79c50cb7d862da2cbd447e001847f
+Bottom: 03a047401ac49b02f98a3e31131b8e6b4685199c
+Top:    c9b38227970e1f0d18677e1a4ef29a3df18314cb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-27 02:00:21 +0100
+Date:   2011-04-27 20:23:33 +0100
 
 Revert "hid/gtk: Add hooks to tell the render when we start/stop drawing"
 
@@ -60,10 +60,10 @@ index a0e8eb3..ca2056a 100644
  }
  
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 5616489..3e4d230 100644
+index cfb9708..8b86396 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -499,8 +499,6 @@ void ghid_show_crosshair (gboolean show);
+@@ -496,8 +496,6 @@ void ghid_show_crosshair (gboolean show);
  void ghid_init_renderer (int *, char ***, GHidPort *);
  void ghid_init_drawing_widget (GtkWidget *widget, GHidPort *);
  void ghid_drawing_area_configure_hook (GHidPort *port);

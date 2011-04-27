@@ -1,7 +1,7 @@
-Bottom: 38c67d5dee777d6dc9c8317bdf0dd837ab3db69b
-Top:    a21a2e3d70a90448feafa0e6a9be4e07e8ba9ca1
+Bottom: 2cb01ea94aeb856cd01ea2f41a11cf0d921971e5
+Top:    3e9ba0778c937ff0f33d5e3a4238bccb94f5b3f2
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-27 02:00:22 +0100
+Date:   2011-04-27 20:23:34 +0100
 
 hid/gtk: Drop in GL renderer - WOOT!
 
@@ -1997,10 +1997,10 @@ index 0000000..827901d
 +  return pixmap;
 +}
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 3e4d230..c44e56d 100644
+index 8b86396..5d1d6be 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
-@@ -473,7 +473,7 @@ void ghid_logv (const char *fmt, va_list args);
+@@ -470,7 +470,7 @@ void ghid_logv (const char *fmt, va_list args);
  /* gui-pinout-window.c */
  void ghid_pinout_window_show (GHidPort * out, ElementTypePtr Element);
  
