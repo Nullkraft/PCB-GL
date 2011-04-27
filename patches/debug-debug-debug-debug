@@ -1,5 +1,5 @@
 Bottom: da19de8de43867a0a33d9c64040cd1edfd6a5086
-Top:    da19de8de43867a0a33d9c64040cd1edfd6a5086
+Top:    e403bb011066ea8e15bbb8781bd4e5a46624ff86
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-27 01:15:26 +0100
 
@@ -8,4 +8,18 @@ DEBUG DEBUG DEBUG DEBUG
 
 ---
 
-
+diff --git a/src/draw_funcs.c b/src/draw_funcs.c
+index 363a85e..935fb74 100644
+--- a/src/draw_funcs.c
++++ b/src/draw_funcs.c
+@@ -379,8 +379,8 @@ draw_layer (LayerType *layer, const BoxType *drawn_area, void *userdata)
+ 
+   /* draw vias */
+   r_search (PCB->Data->via_tree, drawn_area, NULL, via_inlayer_callback, layer);
+-  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
+-  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
++//  r_search (PCB->Data->pin_tree, drawn_area, NULL, hole_callback, NULL);
++//  r_search (PCB->Data->via_tree, drawn_area, NULL, hole_callback, NULL);
+ }
+ 
+ struct draw_funcs d_f = {
