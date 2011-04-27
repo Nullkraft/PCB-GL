@@ -185,6 +185,7 @@ draw_poly (PolygonType *polygon, const BoxType *drawn_area, void *userdata)
     }
 }
 
+<<<<<<< current
 static int
 line_callback (const BoxType * b, void *cl)
 {
@@ -398,7 +399,10 @@ struct draw_funcs d_f = {
   .draw_rat       = draw_rat,
   .draw_arc       = draw_arc,
   .draw_poly      = draw_poly,
+<<<<<<< current
   .draw_layer     = draw_layer,
+=======
+>>>>>>> patched
 };
 
 struct draw_funcs *dapi = &d_f;

@@ -11,7 +11,10 @@ struct draw_funcs {
   void (*draw_rat)       (RatType *,     const BoxType *, void *);
   void (*draw_arc)       (ArcType *,     const BoxType *, void *);
   void (*draw_poly)      (PolygonType *, const BoxType *, void *);
+<<<<<<< current
   void (*draw_layer)     (LayerType *,   const BoxType *, void *);
+=======
+>>>>>>> patched
 };
 
 extern struct draw_funcs *dapi;
