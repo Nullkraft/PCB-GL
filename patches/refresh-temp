@@ -1,0 +1,23 @@
+Bottom: 7a7dad1fccad33083ed3f2f916f73d55f376fbfa
+Top:    4e3aa2069062508074ecb2616f75097baa354b55
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-28 02:16:20 +0100
+
+Refresh of macro-h-remove-unused-obsolete
+
+---
+
+diff --git a/src/macro.h b/src/macro.h
+index 6dcd0d1..625d639 100644
+--- a/src/macro.h
++++ b/src/macro.h
+@@ -53,9 +53,6 @@
+ #ifndef	TO_PCB
+ #define	TO_PCB(x)		((LocationType)((x)/Zoom_Multiplier))
+ #endif
+-#define	TO_PCB_X(x)		TO_PCB(x) + Xorig
+-#define	TO_PCB_Y(y)		(SWAP_IDENT ? \
+-				PCB->MaxHeight - TO_PCB(y) - Yorig : TO_PCB(y) + Yorig)
+ 
+ /* ---------------------------------------------------------------------------
+  * misc macros, some might already be defined by <limits.h>
