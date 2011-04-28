@@ -1,0 +1,14 @@
+Bottom: 7bcab7ed6c7de815036a99d397129e39ce2ca095
+Top:    7bcab7ed6c7de815036a99d397129e39ce2ca095
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-28 01:33:36 +0100
+
+main.c: Don't create Output.pmGC and Output.bgGC at init time
+
+These are not used by any non draw.c code, and draw.c always stashes
+the one created by main.c and creates its own.
+
+
+---
+
+
