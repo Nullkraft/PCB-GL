@@ -3177,7 +3177,8 @@ RD_DrawVia (routedata_t * rd, LocationType X, LocationType Y,
                                        2 * rb->style->Keepaway, 0,
                                        rb->style->Hole, NULL, MakeFlags (0));
           rb->livedraw_obj.via = via;
-          DrawVia (via);
+          if (via != NULL)
+            DrawVia (via);
 	}
     }
 }
@@ -3272,7 +3273,8 @@ RD_DrawLine (routedata_t * rd,
       LineType *line = CreateNewLineOnLayer (layer, qX1, qY1, qX2, qY2,
                                              2 * qhthick, 0, MakeFlags (0));
       rb->livedraw_obj.line = line;
-      DrawLine (layer, line);
+      if (line != NULL)
+        DrawLine (layer, line);
     }
 
   /* and to the via space structures */
