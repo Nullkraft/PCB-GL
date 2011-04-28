@@ -1,0 +1,22 @@
+Bottom: d8ab70687fd6862e9c051800de3b8d2833e26147
+Top:    3f598a35fdae07d67768a46a76a6c291b949b51f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-28 22:21:07 +0100
+
+Refresh of fix-livedraw-to-work-with-norm
+
+---
+
+diff --git a/src/autoroute.c b/src/autoroute.c
+index b4b7eb8..93a0e3d 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -4623,7 +4623,7 @@ RouteAll (routedata_t * rd)
+                           if (p->type == VIA && p->livedraw_obj.via)
+                             {
+                               EraseVia (p->livedraw_obj.via);
+-                              DestroyObject (PCB->Data, VIA_TYPE, NULL, p->livedraw_obj.line, NULL);
++                              DestroyObject (PCB->Data, VIA_TYPE, p->livedraw_obj.via, NULL, NULL);
+                             }
+                         }
+ 		      del =
