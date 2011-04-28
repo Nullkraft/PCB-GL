@@ -1,0 +1,22 @@
+Bottom: c9760d97d0270cbf1ab19928bb0cdd801641fa84
+Top:    da474c3dc6c9bc05ae83d84f65e925e96d03931c
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-28 02:55:01 +0100
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index b579707..15b3667 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -962,7 +962,7 @@ ghid_drawing_area_configure_hook (GHidPort *port)
+ {
+ }
+ 
+-hidGC savepm = NULL;
++static hidGC savefg = NULL;
+ 
+ gboolean
+ ghid_start_drawing (GHidPort *port)
