@@ -1,5 +1,5 @@
 Bottom: 5403205742b99af612a90929e5038dd790aa34b5
-Top:    5403205742b99af612a90929e5038dd790aa34b5
+Top:    7a7dad1fccad33083ed3f2f916f73d55f376fbfa
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-28 02:13:30 +0100
 
@@ -11,4 +11,20 @@ action.c: Partially fix up some stroke handling bugs
 
 ---
 
-
+diff --git a/src/action.c b/src/action.c
+index 53dde28..967a95f 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -2141,9 +2141,9 @@ EventMoveCrosshair (int ev_x, int ev_y)
+ #ifdef HAVE_LIBSTROKE
+   if (mid_stroke)
+     {
+-      StrokeBox.X2 = TO_PCB_X (ev_x);
+-      StrokeBox.Y2 = TO_PCB_Y (ev_y);
+-      stroke_record (Event->x, ev_y);
++      StrokeBox.X2 = ev_x;
++      StrokeBox.Y2 = ev_y;
++      stroke_record (ev_x, ev_y);
+       return;
+     }
+ #endif /* HAVE_LIBSTROKE */
