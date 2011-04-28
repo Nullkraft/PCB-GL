@@ -66,6 +66,7 @@ typedef struct render_priv {
   GdkGLConfig *glconfig;
   bool trans_lines;
   bool in_context;
+  GTimer *time_since_expose;
 } render_priv;
 
 
@@ -735,10 +736,17 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
   ghid_invalidate_all ();
 }
 
+#define MAX_ELAPSED (50. / 1000.) /* 50ms */
 void
 ghid_invalidate_all ()
 {
+  render_priv *priv = gport->render_priv;
+  double elapsed = g_timer_elapsed (priv->time_since_expose, NULL);
+
   ghid_draw_area_update (gport, NULL);
+
+  if (elapsed > MAX_ELAPSED)
+    gdk_window_process_all_updates ();
 }
 
 void
@@ -941,6 +949,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
   render_priv *priv;
 
   port->render_priv = priv = g_new0 (render_priv, 1);
+
+  priv->time_since_expose = g_timer_new ();
 
   gtk_gl_init(argc, argv);
 
@@ -1939,12 +1949,15 @@ ghid_draw_everything (BoxTypePtr drawn_area)
   Settings.ShowSolderSide = save_show_solder;
 }
 
+
+
 #define Z_NEAR 3.0
 gboolean
 ghid_drawing_area_expose_cb (GtkWidget *widget,
                              GdkEventExpose *ev,
                              GHidPort *port)
 {
+  render_priv *priv = port->render_priv;
   BoxType region;
   int eleft, eright, etop, ebottom;
   int min_x, min_y;
@@ -2154,6 +2167,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 
   check_gl_drawing_ok_hack = false;
   ghid_end_drawing (port);
+
+  g_timer_start (priv->time_since_expose);
 
   return FALSE;
 }
