@@ -1,5 +1,5 @@
 Bottom: 10f81ad31d6039aae05591b020126cdaa24b9fd0
-Top:    88c63c2b6f5c08d4855ec0ca1dab4b4493883255
+Top:    d8ab70687fd6862e9c051800de3b8d2833e26147
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-28 21:39:17 +0100
 
@@ -9,7 +9,7 @@ Fix livedraw to work with normal rendering APIs
 ---
 
 diff --git a/src/autoroute.c b/src/autoroute.c
-index 2fca161..f9a2679 100644
+index 2fca161..b4b7eb8 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -132,8 +132,6 @@ directionIncrement(direction_t dir)
@@ -65,7 +65,7 @@ index 2fca161..f9a2679 100644
  /* return a "parent" of this edge which immediately precedes it in the route.*/
  static routebox_t *
  route_parent (routebox_t * rb)
-@@ -3197,8 +3173,11 @@ RD_DrawVia (routedata_t * rd, LocationType X, LocationType Y,
+@@ -3197,8 +3173,12 @@ RD_DrawVia (routedata_t * rd, LocationType X, LocationType Y,
  
        if (TEST_FLAG (LIVEROUTEFLAG, PCB))
  	{
@@ -75,11 +75,12 @@ index 2fca161..f9a2679 100644
 +                                       2 * rb->style->Keepaway, 0,
 +                                       rb->style->Hole, NULL, MakeFlags (0));
 +          rb->livedraw_obj.via = via;
-+          DrawVia (via);
++          if (via != NULL)
++            DrawVia (via);
  	}
      }
  }
-@@ -3289,11 +3268,11 @@ RD_DrawLine (routedata_t * rd,
+@@ -3289,11 +3269,12 @@ RD_DrawLine (routedata_t * rd,
  
    if (TEST_FLAG (LIVEROUTEFLAG, PCB))
      {
@@ -92,11 +93,12 @@ index 2fca161..f9a2679 100644
 +      LineType *line = CreateNewLineOnLayer (layer, qX1, qY1, qX2, qY2,
 +                                             2 * qhthick, 0, MakeFlags (0));
 +      rb->livedraw_obj.line = line;
-+      DrawLine (layer, line);
++      if (line != NULL)
++        DrawLine (layer, line);
      }
  
    /* and to the via space structures */
-@@ -3606,8 +3585,9 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
+@@ -3606,8 +3587,9 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
    while (!path->flags.source);
    /* flush the line queue */
    RD_DrawLine (rd, -1, 0, 0, 0, 0, 0, NULL, false, false);
@@ -107,7 +109,7 @@ index 2fca161..f9a2679 100644
  }
  
  /* create a fake "edge" used to defer via site searching. */
-@@ -4629,9 +4609,21 @@ RouteAll (routedata_t * rd)
+@@ -4629,9 +4611,21 @@ RouteAll (routedata_t * rd)
  		    }
  		  if (rip)
  		    {
@@ -132,7 +134,7 @@ index 2fca161..f9a2679 100644
  		      del =
  			r_delete_entry (rd->layergrouptree[p->group],
  					&p->box);
-@@ -4643,8 +4635,8 @@ RouteAll (routedata_t * rd)
+@@ -4643,8 +4637,8 @@ RouteAll (routedata_t * rd)
  		    }
  		}
  	      END_LOOP;
@@ -143,7 +145,7 @@ index 2fca161..f9a2679 100644
  	      /* reset to original connectivity */
  	      if (rip)
  		{
-@@ -5002,16 +4994,6 @@ AutoRoute (bool selected)
+@@ -5002,16 +4996,6 @@ AutoRoute (bool selected)
  
    total_wire_length = 0;
    total_via_count = 0;
@@ -160,7 +162,7 @@ index 2fca161..f9a2679 100644
  
    for (i = 0; i < NUM_STYLES; i++)
      {
-@@ -5171,10 +5153,6 @@ donerouting:
+@@ -5171,10 +5155,6 @@ donerouting:
    Message ("Total added wire length = %f inches, %d vias added\n",
  	   total_wire_length / 1.e5, total_via_count);
    DestroyRouteData (&rd);
