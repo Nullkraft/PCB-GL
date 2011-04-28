@@ -1,5 +1,5 @@
 Bottom: d5893c2d51fd7cd5cafa341925f4bfd906977d53
-Top:    d5893c2d51fd7cd5cafa341925f4bfd906977d53
+Top:    40bc907d60e9843e9359cc754dca9a64a268aab5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-28 18:33:07 +0100
 
@@ -8,4 +8,46 @@ autoroute.c: Remove a couple of completely unused debug routines
 
 ---
 
-
+diff --git a/src/autoroute.c b/src/autoroute.c
+index 3810abd..c17a8fe 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -1456,14 +1456,6 @@ bloat_routebox (routebox_t * rb)
+ 
+ #ifdef ROUTE_DEBUG		/* only for debugging expansion areas */
+ 
+-void
+-fillbox (const BoxType * b)
+-{
+-  LayerTypePtr SLayer = LAYER_PTR (0);
+-  gui->set_color (ar_gc, SLayer->Color);
+-  gui->fill_rect (ar_gc, b->X1, b->Y1, b->X2, b->Y2);
+-}
+-
+ /* makes a line on the solder layer silk surrounding the box */
+ void
+ showbox (BoxType b, Dimension thickness, int group)
+@@ -3977,23 +3969,6 @@ show_sources (routebox_t * rb)
+   END_LOOP;
+ }
+ 
+-int
+-__show_tree (const BoxType * b, void *cl)
+-{
+-  int eo = (int) cl;
+-  routebox_t *rb = (routebox_t *) b;
+-  if (eo < 0 || eo == rb->flags.is_odd)
+-    fillbox (b);
+-  return 1;
+-}
+-
+-static void
+-show_tree (rtree_t * tree, int even_odd)
+-{
+-  r_search (tree, NULL, NULL, __show_tree, (void *) even_odd);
+-  gui->use_mask (HID_FLUSH_DRAW_Q);
+-}
+-
+ #endif
+ 
+ static int
