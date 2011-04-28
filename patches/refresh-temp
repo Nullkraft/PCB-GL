@@ -1,0 +1,81 @@
+Bottom: fd9a74e7c8ac4e668106af7280aaa948ff7c97ae
+Top:    71afeeddd59af2c3229b9f6bffba874719f23615
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-28 22:40:44 +0100
+
+Refresh of remove-livedraw-parameters-for
+
+---
+
+diff --git a/src/hid.h b/src/hid.h
+index 2b9ca40..5ecbe50 100644
+--- a/src/hid.h
++++ b/src/hid.h
+@@ -340,12 +340,6 @@ typedef enum
+ #define HID_MASK_CLEAR 2
+     /* Polygons being drawn after clears.  */
+ #define HID_MASK_AFTER 3
+-    /* Set to do live drawing on the screen   */
+-#define HID_LIVE_DRAWING 4
+-    /* stop live drawing on the screen   */
+-#define HID_LIVE_DRAWING_OFF 5
+-    /* flush any queued drawing   */
+-#define HID_FLUSH_DRAW_Q 6
+ 
+     /* Set a color.  Names can be like "red" or "#rrggbb" or special
+        names like "erase".  *Always* use the "erase" color for removing
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 27d62c6..ce8c06b 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -243,23 +243,6 @@ ghid_use_mask (int use_it)
+   GdkColor color;
+   render_priv *priv = gport->render_priv;
+ 
+-  if (use_it == HID_FLUSH_DRAW_Q)
+-    {
+-      gdk_flush ();
+-      return;
+-    }
+-  else if (use_it == HID_LIVE_DRAWING)
+-    {
+-      old = gport->drawable;
+-      gport->drawable = gport->drawing_area->window;
+-      return;
+-    }
+-  else if (use_it == HID_LIVE_DRAWING_OFF)
+-    {
+-      gport->drawable = old;
+-      return;
+-    }
+-
+   if (!gport->pixmap)
+     return;
+   if (use_it == cur_mask)
+diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
+index 6a42706..5acda1f 100644
+--- a/src/hid/lesstif/main.c
++++ b/src/hid/lesstif/main.c
+@@ -3029,22 +3029,6 @@ lesstif_use_mask (int use_it)
+ {
+   static Window old;
+ 
+-  if (use_it == HID_FLUSH_DRAW_Q)
+-    {
+-      XFlush (display);
+-      return;
+-    }
+-  else if (use_it == HID_LIVE_DRAWING)
+-    {
+-      old = pixmap;
+-      pixmap = window;
+-      return;
+-    }
+-  else if (use_it == HID_LIVE_DRAWING_OFF)
+-    {
+-      pixmap = old;
+-      return;
+-    }
+   if ((TEST_FLAG (THINDRAWFLAG, PCB) || TEST_FLAG(THINDRAWPOLYFLAG, PCB)) &&
+       !use_xrender)
+     use_it = 0;
