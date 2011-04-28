@@ -1,0 +1,54 @@
+Bottom: a356b2fd346c63fbb30f17f7f873e067530a6de8
+Top:    88c63c2b6f5c08d4855ec0ca1dab4b4493883255
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-28 21:44:31 +0100
+
+Refresh of fix-livedraw-to-work-with-norm
+
+---
+
+diff --git a/src/autoroute.c b/src/autoroute.c
+index c6aa82c..f9a2679 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -3290,9 +3290,6 @@ RD_DrawLine (routedata_t * rd,
+   qis_45 = is_45;
+   qis_bad = is_bad;
+   qsn = subnet;
+-
+-  if (TEST_FLAG (LIVEROUTEFLAG, PCB))
+-    Draw ();
+ }
+ 
+ static bool
+@@ -3409,7 +3406,6 @@ add_clearance (CheapPointType * nextpoint, const BoxType * b)
+ }
+ #endif
+ 
+-
+ /* This back-traces the expansion boxes along the best path
+  * it draws the lines that will make the actual path.
+  * during refinement passes, it should try to maximize the area
+@@ -3589,6 +3585,9 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
+   while (!path->flags.source);
+   /* flush the line queue */
+   RD_DrawLine (rd, -1, 0, 0, 0, 0, 0, NULL, false, false);
++
++  if (TEST_FLAG (LIVEROUTEFLAG, PCB))
++    Draw ();
+ }
+ 
+ /* create a fake "edge" used to defer via site searching. */
+@@ -4636,10 +4635,11 @@ RouteAll (routedata_t * rd)
+ 		    }
+ 		}
+ 	      END_LOOP;
++              if (TEST_FLAG (LIVEROUTEFLAG, PCB))
++                Draw ();
+ 	      /* reset to original connectivity */
+ 	      if (rip)
+ 		{
+-                  Draw ();
+ 		  ras.ripped++;
+ 		  ResetSubnet (net);
+ 		}
