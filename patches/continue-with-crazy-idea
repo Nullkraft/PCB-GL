@@ -1,7 +1,7 @@
-Bottom: a66f81bd9a1563cc76d3e6f32009919c5cadebd2
-Top:    3e9bc7394f0335f315dac9558535d270709c8982
+Bottom: ea6f2085fe74b51ff6bd1c9a2338784067ec3bab
+Top:    aaf5691588aa18bdd61f5210dcd8703b29159732
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-27 21:46:46 +0100
+Date:   2011-04-28 02:37:14 +0100
 
 Continue with crazy idea
 
@@ -9,7 +9,7 @@ Continue with crazy idea
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index c71e849..b6555a2 100644
+index 6756481..ea312c0 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -141,16 +141,6 @@ set_pv_color (PinType *pv, int type)
@@ -564,7 +564,7 @@ index 1f97d82..25c33a1 100644
  
  extern struct draw_funcs *dapi;
 diff --git a/src/hid/gerber/gerber.c b/src/hid/gerber/gerber.c
-index 9642579..a56c8b9 100644
+index b6d7585..8b60d1d 100644
 --- a/src/hid/gerber/gerber.c
 +++ b/src/hid/gerber/gerber.c
 @@ -26,6 +26,7 @@
@@ -575,7 +575,7 @@ index 9642579..a56c8b9 100644
  
  #include "hid.h"
  #include "../hidint.h"
-@@ -719,7 +720,7 @@ gerber_set_layer (const char *name, int group, int empty)
+@@ -717,7 +718,7 @@ gerber_set_layer (const char *name, int group, int empty)
      {
        if (outline_layer
  	  && outline_layer != PCB->Data->Layer+idx)
@@ -585,7 +585,7 @@ index 9642579..a56c8b9 100644
  	{
  	  hidGC gc = gui->make_gc ();
 diff --git a/src/hid/ps/ps.c b/src/hid/ps/ps.c
-index 79459d6..91ba337 100644
+index 92f03fd..49f59e3 100644
 --- a/src/hid/ps/ps.c
 +++ b/src/hid/ps/ps.c
 @@ -16,6 +16,7 @@
