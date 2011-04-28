@@ -962,7 +962,7 @@ ghid_drawing_area_configure_hook (GHidPort *port)
 {
 }
 
-hidGC savepm = NULL;
+static hidGC savefg = NULL;
 
 gboolean
 ghid_start_drawing (GHidPort *port)
