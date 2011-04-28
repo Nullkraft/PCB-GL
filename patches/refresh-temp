@@ -1,0 +1,35 @@
+Bottom: 4e3aa2069062508074ecb2616f75097baa354b55
+Top:    e19ce1fa87a2ba6d978a61e516d805c8f1fc2b83
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-28 02:17:16 +0100
+
+Refresh of remove-unused-variables-xorig-
+
+---
+
+diff --git a/src/data.c b/src/data.c
+index 7a8f575..3cf6231 100644
+--- a/src/data.c
++++ b/src/data.c
+@@ -57,8 +57,6 @@ BufferType Buffers[MAX_BUFFER];	/* my buffers */
+ LibraryType Library;		/* the library */
+ bool Bumped;			/* if the undo serial number has changed */
+ 
+-LocationType Xorig, Yorig;	/* origin offset for drawing in pixmap */
+-
+ int addedLines;
+ 
+ double Zoom_Multiplier = 0.01;
+diff --git a/src/data.h b/src/data.h
+index 6e70fd3..22eea0c 100644
+--- a/src/data.h
++++ b/src/data.h
+@@ -59,8 +59,6 @@ extern LibraryType Library;
+ 
+ /*extern	DeviceInfoType	PrintingDevice[];*/
+ 
+-extern LocationType Xorig, Yorig;
+-
+ extern double Zoom_Multiplier;
+ 
+ extern char *Progname;
