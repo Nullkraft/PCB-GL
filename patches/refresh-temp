@@ -1,0 +1,29 @@
+Bottom: c1ee335188c3129a8fc34d7671e06a5d4cdb8750
+Top:    b64c0238bbe7cdf7d20530e723559793dddef764
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-28 02:55:45 +0100
+
+Refresh of main-c-don-t-create-output-pmg
+
+---
+
+diff --git a/src/draw.c b/src/draw.c
+index 2b8731e..2cda1b2 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1727,7 +1727,7 @@ void
+ hid_expose_callback (HID * hid, BoxType * region, void *item)
+ {
+   HID *old_gui = gui;
+-  hidGC savepm = Output.pmGC;
++  hidGC savefg = Output.fgGC;
+ 
+   gui = hid;
+   Output.fgGC = gui->make_gc ();
+@@ -1750,5 +1750,5 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
+   gui->destroy_gc (Output.bgGC);
+   gui->destroy_gc (Output.pmGC);
+   gui = old_gui;
+-  Output.pmGC = savepm;
++  Output.fgGC = savefg;
+ }
