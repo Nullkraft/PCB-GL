@@ -5,6 +5,12 @@ Date:   2011-04-28 14:50:03 +0100
 
 Fixup usage of the never initialised, obsolete, Output.{Width,Height}
 
+For the stroke handling case (relating to zooming) it isn't clear what is
+correct, but for now, substitute PCB->MaxWidth and PCB->MaxHeight.
+
+This may still leave stroke based zooming broken, but it was CERTAINLY
+broken before.
+
 
 ---
 
