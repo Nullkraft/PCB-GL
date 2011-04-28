@@ -1445,14 +1445,6 @@ bloat_routebox (routebox_t * rb)
 
 #ifdef ROUTE_DEBUG		/* only for debugging expansion areas */
 
-void
-fillbox (const BoxType * b)
-{
-  LayerTypePtr SLayer = LAYER_PTR (0);
-  gui->set_color (ar_gc, SLayer->Color);
-  gui->fill_rect (ar_gc, b->X1, b->Y1, b->X2, b->Y2);
-}
-
 /* makes a line on the solder layer silk surrounding the box */
 void
 showbox (BoxType b, Dimension thickness, int group)
@@ -3849,21 +3841,39 @@ trace_parents (routebox_t * rb)
     printf ("NULL!\n");
 }
 
-int
-__show_tree (const BoxType * b, void *cl)
+static void
+show_one (routebox_t * rb)
 {
-  int eo = (int) cl;
-  routebox_t *rb = (routebox_t *) b;
-  if (eo < 0 || eo == rb->flags.is_odd)
-    fillbox (b);
-  return 1;
+  int save = showboxen;
+  showboxen = -1;
+  showroutebox (rb);
+  showboxen = save;
 }
 
 static void
-show_tree (rtree_t * tree, int even_odd)
+show_path (routebox_t * rb)
 {
-  r_search (tree, NULL, NULL, __show_tree, (void *) even_odd);
-  gui->use_mask (HID_FLUSH_DRAW_Q);
+  while (rb && rb->type == EXPANSION_AREA)
+    {
+      show_one (rb);
+      rb = rb->parent.expansion_area;
+    }
+  show_one (rb);
+}
+
+static void
+show_sources (routebox_t * rb)
+{
+  routebox_t *p;
+  if (!rb->flags.source && !rb->flags.target)
+    {
+      printf ("start with a source or target please\n");
+      return;
+    }
+  LIST_LOOP (rb, same_net, p);
+  if (p->flags.source)
+    show_one (p);
+  END_LOOP;
 }
 
 #endif
