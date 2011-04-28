@@ -1,5 +1,5 @@
-Bottom: 168b1f25c700317a9751c7e543e0b75af8488abd
-Top:    b64c0238bbe7cdf7d20530e723559793dddef764
+Bottom: 29742b5c3f24e009616a9a1017340502b4b2e7e4
+Top:    29742b5c3f24e009616a9a1017340502b4b2e7e4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-28 01:33:36 +0100
 
@@ -11,37 +11,4 @@ the one created by main.c and creates its own.
 
 ---
 
-diff --git a/src/draw.c b/src/draw.c
-index a31bdbd..2cda1b2 100644
---- a/src/draw.c
-+++ b/src/draw.c
-@@ -1727,9 +1727,7 @@ void
- hid_expose_callback (HID * hid, BoxType * region, void *item)
- {
-   HID *old_gui = gui;
--  hidGC savebg = Output.bgGC;
-   hidGC savefg = Output.fgGC;
--  hidGC savepm = Output.pmGC;
- 
-   gui = hid;
-   Output.fgGC = gui->make_gc ();
-@@ -1753,6 +1751,4 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
-   gui->destroy_gc (Output.pmGC);
-   gui = old_gui;
-   Output.fgGC = savefg;
--  Output.bgGC = savebg;
--  Output.pmGC = savepm;
- }
-diff --git a/src/main.c b/src/main.c
-index ad5ee94..e216f6d 100644
---- a/src/main.c
-+++ b/src/main.c
-@@ -977,9 +977,7 @@ main (int argc, char *argv[])
-   if (show_copyright)
-     copyright ();
- 
--  Output.bgGC = gui->make_gc ();
-   Output.fgGC = gui->make_gc ();
--  Output.pmGC = gui->make_gc ();
- 
-   settings_post_process ();
+
