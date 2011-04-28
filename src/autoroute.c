@@ -132,8 +132,6 @@ directionIncrement(direction_t dir)
 return dir;
 }
 
-static hidGC ar_gc = 0;
-
 #define EXPENSIVE 3e28
 /* round up "half" thicknesses */
 #define HALF_THICK(x) (((x)+1)/2)
@@ -300,6 +298,10 @@ typedef struct routebox
   direction_t came_from;
   /* circular lists with connectivity information. */
   routebox_list same_net, same_subnet, original_subnet, different_net;
+  union {
+    PinType *via;
+    LineType *line;
+  } livedraw_obj;
 }
 routebox_t;
 
@@ -1492,32 +1494,6 @@ showbox (BoxType b, Dimension thickness, int group)
 #endif
 }
 #endif
-
-static void
-EraseRouteBox (routebox_t * rb)
-{
-  LocationType X1, Y1, X2, Y2;
-  BDimension thick;
-
-  if (rb->box.X2 - rb->box.X1 < rb->box.Y2 - rb->box.Y1)
-    {
-      thick = rb->box.X2 - rb->box.X1;
-      X1 = X2 = (rb->box.X2 + rb->box.X1) / 2;
-      Y1 = rb->box.Y1 + thick / 2;
-      Y2 = rb->box.Y2 - thick / 2;
-    }
-  else
-    {
-      thick = rb->box.Y2 - rb->box.Y1;
-      Y1 = Y2 = (rb->box.Y2 + rb->box.Y1) / 2;
-      X1 = rb->box.X1 + thick / 2;
-      X2 = rb->box.X2 - thick / 2;
-    }
-
-  gui->set_line_width (ar_gc, thick);
-  gui->set_color (ar_gc, Settings.BackgroundColor);
-  gui->draw_line (ar_gc, X1, Y1, X2, Y2);
-}
 
 /* return a "parent" of this edge which immediately precedes it in the route.*/
 static routebox_t *
@@ -3197,8 +3173,11 @@ RD_DrawVia (routedata_t * rd, LocationType X, LocationType Y,
 
       if (TEST_FLAG (LIVEROUTEFLAG, PCB))
 	{
-	  gui->set_color (ar_gc, PCB->ViaColor);
-	  gui->fill_circle (ar_gc, X, Y, radius);
+          PinType *via = CreateNewVia (PCB->Data, X, Y, radius * 2,
+                                       2 * rb->style->Keepaway, 0,
+                                       rb->style->Hole, NULL, MakeFlags (0));
+          rb->livedraw_obj.via = via;
+          DrawVia (via);
 	}
     }
 }
@@ -3289,11 +3268,11 @@ RD_DrawLine (routedata_t * rd,
 
   if (TEST_FLAG (LIVEROUTEFLAG, PCB))
     {
-      LayerTypePtr layp = LAYER_PTR (PCB->LayerGroups.Entries[rb->group][0]);
-
-      gui->set_line_width (ar_gc, 2 * qhthick);
-      gui->set_color (ar_gc, layp->Color);
-      gui->draw_line (ar_gc, qX1, qY1, qX2, qY2);
+      LayerType *layer = LAYER_PTR (PCB->LayerGroups.Entries[rb->group][0]);
+      LineType *line = CreateNewLineOnLayer (layer, qX1, qY1, qX2, qY2,
+                                             2 * qhthick, 0, MakeFlags (0));
+      rb->livedraw_obj.line = line;
+      DrawLine (layer, line);
     }
 
   /* and to the via space structures */
@@ -3606,8 +3585,9 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
   while (!path->flags.source);
   /* flush the line queue */
   RD_DrawLine (rd, -1, 0, 0, 0, 0, 0, NULL, false, false);
+
   if (TEST_FLAG (LIVEROUTEFLAG, PCB))
-    gui->use_mask (HID_FLUSH_DRAW_Q);
+    Draw ();
 }
 
 /* create a fake "edge" used to defer via site searching. */
@@ -4629,9 +4609,21 @@ RouteAll (routedata_t * rd)
 		    }
 		  if (rip)
 		    {
-		      if (TEST_FLAG (LIVEROUTEFLAG, PCB)
-			  && (p->type == LINE || p->type == VIA))
-			EraseRouteBox (p);
+                      if (TEST_FLAG (LIVEROUTEFLAG, PCB))
+                        {
+                          if (p->type == LINE && p->livedraw_obj.line)
+                            {
+                              LayerType *layer =
+                                LAYER_PTR (PCB->LayerGroups.Entries[p->group][0]);
+                              EraseLine (p->livedraw_obj.line);
+                              DestroyObject (PCB->Data, LINE_TYPE, layer, p->livedraw_obj.line, NULL);
+                            }
+                          if (p->type == VIA && p->livedraw_obj.via)
+                            {
+                              EraseVia (p->livedraw_obj.via);
+                              DestroyObject (PCB->Data, VIA_TYPE, NULL, p->livedraw_obj.line, NULL);
+                            }
+                        }
 		      del =
 			r_delete_entry (rd->layergrouptree[p->group],
 					&p->box);
@@ -4643,8 +4635,8 @@ RouteAll (routedata_t * rd)
 		    }
 		}
 	      END_LOOP;
-	      if (TEST_FLAG (LIVEROUTEFLAG, PCB))
-		gui->use_mask (HID_FLUSH_DRAW_Q);
+              if (TEST_FLAG (LIVEROUTEFLAG, PCB))
+                Draw ();
 	      /* reset to original connectivity */
 	      if (rip)
 		{
@@ -5002,16 +4994,6 @@ AutoRoute (bool selected)
 
   total_wire_length = 0;
   total_via_count = 0;
-  if (TEST_FLAG (LIVEROUTEFLAG, PCB))
-    {
-      gui->use_mask (HID_LIVE_DRAWING);
-    }
-
-  if (ar_gc == 0)
-    {
-      ar_gc = gui->make_gc ();
-      gui->set_line_cap (ar_gc, Round_Cap);
-    }
 
   for (i = 0; i < NUM_STYLES; i++)
     {
@@ -5171,10 +5153,6 @@ donerouting:
   Message ("Total added wire length = %f inches, %d vias added\n",
 	   total_wire_length / 1.e5, total_via_count);
   DestroyRouteData (&rd);
-  if (TEST_FLAG (LIVEROUTEFLAG, PCB))
-    {
-      gui->use_mask (HID_LIVE_DRAWING_OFF);
-    }
   if (changed)
     {
       SaveUndoSerialNumber ();
