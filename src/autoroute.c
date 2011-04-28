@@ -3173,12 +3173,12 @@ RD_DrawVia (routedata_t * rd, LocationType X, LocationType Y,
 
       if (TEST_FLAG (LIVEROUTEFLAG, PCB))
 	{
-          PinType *via = CreateNewVia (PCB->Data, X, Y, radius * 2,
-                                       2 * rb->style->Keepaway, 0,
-                                       rb->style->Hole, NULL, MakeFlags (0));
-          rb->livedraw_obj.via = via;
-          if (via != NULL)
-            DrawVia (via);
+	   PinType *via = CreateNewVia (PCB->Data, X, Y, radius * 2,
+					2 * rb->style->Keepaway, 0,
+					rb->style->Hole, NULL, MakeFlags (0));
+	   rb->livedraw_obj.via = via;
+	   if (via != NULL)
+	     DrawVia (via);
 	}
     }
 }
@@ -3271,10 +3271,10 @@ RD_DrawLine (routedata_t * rd,
     {
       LayerType *layer = LAYER_PTR (PCB->LayerGroups.Entries[rb->group][0]);
       LineType *line = CreateNewLineOnLayer (layer, qX1, qY1, qX2, qY2,
-                                             2 * qhthick, 0, MakeFlags (0));
+					     2 * qhthick, 0, MakeFlags (0));
       rb->livedraw_obj.line = line;
       if (line != NULL)
-        DrawLine (layer, line);
+	DrawLine (layer, line);
     }
 
   /* and to the via space structures */
@@ -4635,8 +4635,8 @@ RouteAll (routedata_t * rd)
 		    }
 		  if (rip)
 		    {
-                      if (TEST_FLAG (LIVEROUTEFLAG, PCB))
-                        ripout_livedraw_obj (p);
+		      if (TEST_FLAG (LIVEROUTEFLAG, PCB))
+			ripout_livedraw_obj (p);
 		      del =
 			r_delete_entry (rd->layergrouptree[p->group],
 					&p->box);
@@ -4648,8 +4648,8 @@ RouteAll (routedata_t * rd)
 		    }
 		}
 	      END_LOOP;
-              if (TEST_FLAG (LIVEROUTEFLAG, PCB))
-                Draw ();
+	      if (TEST_FLAG (LIVEROUTEFLAG, PCB))
+		Draw ();
 	      /* reset to original connectivity */
 	      if (rip)
 		{
@@ -5164,15 +5164,11 @@ donerouting:
   if (changed && TEST_FLAG (LIVEROUTEFLAG, PCB))
     {
       int i;
-      BoxType big;
-      big.X1 = 0;
-      big.X2 = MAX_COORD;
-      big.Y1 = 0;
-      big.Y2 = MAX_COORD;
+      BoxType big = {0, 0, MAX_COORD, MAX_COORD};
       for (i = 0; i < max_group; i++)
-        {
-          r_search (rd->layergrouptree[i], &big, NULL, ripout_livedraw_obj_cb, NULL);
-        }
+	{
+	  r_search (rd->layergrouptree[i], &big, NULL, ripout_livedraw_obj_cb, NULL);
+	}
     }
   if (changed)
     changed = IronDownAllUnfixedPaths (rd);
