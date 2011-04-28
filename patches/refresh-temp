@@ -1,0 +1,22 @@
+Bottom: cafbff9b377b9ad92c2d6fc854c1bf23d9036290
+Top:    91947b30d1e139a14f8730ebad2e6e9f66ba5002
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-28 01:52:21 +0100
+
+Refresh of data-c-remove-unused-global-th
+
+---
+
+diff --git a/src/data.c b/src/data.c
+index 4ebc126..7a8f575 100644
+--- a/src/data.c
++++ b/src/data.c
+@@ -61,8 +61,6 @@ LocationType Xorig, Yorig;	/* origin offset for drawing in pixmap */
+ 
+ int addedLines;
+ 
+-LocationType vxl, vxh, vyl, vyh;	/* visible pcb coordinates */
+-
+ double Zoom_Multiplier = 0.01;
+ 
+ /*  { 1.5625, 2.2097, 3.125, 4.4194, 6.25, 8.8388,
