@@ -1,0 +1,24 @@
+Bottom: 7a684ccd77496ef7f24b4f63f388bdccb4d863a1
+Top:    3fea05a882b6c8d0676726b173ac9964bda6189f
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-28 02:19:13 +0100
+
+Refresh of macro-h-remove-unused-obsolete
+
+---
+
+diff --git a/src/macro.h b/src/macro.h
+index 625d639..1fb6584 100644
+--- a/src/macro.h
++++ b/src/macro.h
+@@ -50,10 +50,6 @@
+ #define	TO_SCREEN_SIGN_X(x)	(SWAP_IDENT ? SWAP_SIGN_X(x) : (x))
+ #define	TO_SCREEN_SIGN_Y(y)	(SWAP_IDENT ? SWAP_SIGN_Y(y) : (y))
+ 
+-#ifndef	TO_PCB
+-#define	TO_PCB(x)		((LocationType)((x)/Zoom_Multiplier))
+-#endif
+-
+ /* ---------------------------------------------------------------------------
+  * misc macros, some might already be defined by <limits.h>
+  */
