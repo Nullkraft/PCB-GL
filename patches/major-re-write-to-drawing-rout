@@ -1,5 +1,5 @@
 Bottom: 88e0821b62def76fe1487a7eeaf23a88cc95266a
-Top:    c9760d97d0270cbf1ab19928bb0cdd801641fa84
+Top:    da474c3dc6c9bc05ae83d84f65e925e96d03931c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-27 20:35:07 +0100
 
@@ -88,7 +88,7 @@ index cf324a5..44b80d2 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 6c70155..b579707 100644
+index 6c70155..15b3667 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,9 @@
@@ -277,7 +277,7 @@ index 6c70155..b579707 100644
  {
  }
  
-+hidGC savepm = NULL;
++static hidGC savefg = NULL;
 +
  gboolean
  ghid_start_drawing (GHidPort *port)
