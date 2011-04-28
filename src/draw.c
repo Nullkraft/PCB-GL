@@ -1727,7 +1727,7 @@ void
 hid_expose_callback (HID * hid, BoxType * region, void *item)
 {
   HID *old_gui = gui;
-  hidGC savepm = Output.pmGC;
+  hidGC savefg = Output.fgGC;
 
   gui = hid;
   Output.fgGC = gui->make_gc ();
@@ -1750,5 +1750,5 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
   gui->destroy_gc (Output.bgGC);
   gui->destroy_gc (Output.pmGC);
   gui = old_gui;
-  Output.pmGC = savepm;
+  Output.fgGC = savefg;
 }
