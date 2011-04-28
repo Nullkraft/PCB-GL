@@ -3,7 +3,15 @@ Top:    7a684ccd77496ef7f24b4f63f388bdccb4d863a1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-28 02:19:36 +0100
 
-action.c: Replace use of obsolete conversion macro TO_PCB with ...
+action.c: Replace use of obsolete conversion macro TO_PCB with a constant.
+
+This changes the location tolerance in NotifyLine()'s call to
+LookupConnection() from what previously evaluated to 100 internal units,
+to a constant of one internal unit.
+
+This is consistent with other similar calls to LookupConnection(),
+where it appears that a wide search area is not desired, so the smallest
+possible value is passed.
 
 
 ---
