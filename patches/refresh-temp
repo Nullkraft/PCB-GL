@@ -1,0 +1,21 @@
+Bottom: 29742b5c3f24e009616a9a1017340502b4b2e7e4
+Top:    2c8fa80b524369812f2003418bddec36c6c7cf5e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-28 14:47:29 +0100
+
+Refresh of remove-unused-old-obj-line-box
+
+---
+
+diff --git a/src/global.h b/src/global.h
+index bd605ad..c82def6 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -176,8 +176,6 @@ typedef struct			/* holds information about output window */
+ 
+   int Width,			/* sizes of output window (porthole) */
+     Height;
+-  int oldObjState,		/* Helpers for GetLocation */
+-    oldLineState, oldBoxState;
+ }
+ OutputType, *OutputTypePtr;
