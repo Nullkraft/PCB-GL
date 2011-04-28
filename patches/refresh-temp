@@ -1,0 +1,22 @@
+Bottom: e19ce1fa87a2ba6d978a61e516d805c8f1fc2b83
+Top:    7a684ccd77496ef7f24b4f63f388bdccb4d863a1
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-28 02:17:30 +0100
+
+Refresh of remove-unused-variables-xorig-
+
+---
+
+diff --git a/src/file.c b/src/file.c
+index 8a52614..4c40162 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -376,9 +376,6 @@ LoadPCB (char *Filename)
+       Crosshair.Y =
+ 	MAX (0, MIN (PCB->CursorY, (LocationType) PCB->MaxHeight));
+ 
+-      Xorig = Crosshair.X - TO_PCB (Output.Width / 2);
+-      Yorig = Crosshair.Y - TO_PCB (Output.Height / 2);
+-
+       /* update cursor confinement and output area (scrollbars) */
+       ChangePCBSize (PCB->MaxWidth, PCB->MaxHeight);
