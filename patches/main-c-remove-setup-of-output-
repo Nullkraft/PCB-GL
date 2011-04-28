@@ -1,5 +1,5 @@
 Bottom: 118fbe68f290b36c98c21330910c15e459fb8e98
-Top:    118fbe68f290b36c98c21330910c15e459fb8e98
+Top:    29742b5c3f24e009616a9a1017340502b4b2e7e4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-28 14:39:12 +0100
 
@@ -11,4 +11,38 @@ drop the stashing in draw.c
 
 ---
 
-
+diff --git a/src/draw.c b/src/draw.c
+index a31bdbd..9ebcba6 100644
+--- a/src/draw.c
++++ b/src/draw.c
+@@ -1727,9 +1727,6 @@ void
+ hid_expose_callback (HID * hid, BoxType * region, void *item)
+ {
+   HID *old_gui = gui;
+-  hidGC savebg = Output.bgGC;
+-  hidGC savefg = Output.fgGC;
+-  hidGC savepm = Output.pmGC;
+ 
+   gui = hid;
+   Output.fgGC = gui->make_gc ();
+@@ -1752,7 +1749,4 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
+   gui->destroy_gc (Output.bgGC);
+   gui->destroy_gc (Output.pmGC);
+   gui = old_gui;
+-  Output.fgGC = savefg;
+-  Output.bgGC = savebg;
+-  Output.pmGC = savepm;
+ }
+diff --git a/src/main.c b/src/main.c
+index ad5ee94..b147a5c 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -977,10 +977,6 @@ main (int argc, char *argv[])
+   if (show_copyright)
+     copyright ();
+ 
+-  Output.bgGC = gui->make_gc ();
+-  Output.fgGC = gui->make_gc ();
+-  Output.pmGC = gui->make_gc ();
+-
+   settings_post_process ();
