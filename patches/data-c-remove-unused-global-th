@@ -1,5 +1,5 @@
 Bottom: 9725400d86c6761c53ef18de9a6d1fda288c43b1
-Top:    cafbff9b377b9ad92c2d6fc854c1bf23d9036290
+Top:    91947b30d1e139a14f8730ebad2e6e9f66ba5002
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-28 01:47:49 +0100
 
@@ -9,13 +9,15 @@ data.c: Remove unused globals theScreen, clipBox, vxl, vxh, vyl, vyh
 ---
 
 diff --git a/src/data.c b/src/data.c
-index 73e53f2..4ebc126 100644
+index 73e53f2..7a8f575 100644
 --- a/src/data.c
 +++ b/src/data.c
-@@ -63,9 +63,6 @@ int addedLines;
+@@ -61,11 +61,6 @@ LocationType Xorig, Yorig;	/* origin offset for drawing in pixmap */
  
- LocationType vxl, vxh, vyl, vyh;	/* visible pcb coordinates */
+ int addedLines;
  
+-LocationType vxl, vxh, vyl, vyh;	/* visible pcb coordinates */
+-
 -BoxType theScreen;		/* box of screen in pcb coordinates */
 -BoxType clipBox;		/* box for clipping of drawing */
 -
