@@ -1,5 +1,5 @@
 Bottom: 10f81ad31d6039aae05591b020126cdaa24b9fd0
-Top:    d8ab70687fd6862e9c051800de3b8d2833e26147
+Top:    3f598a35fdae07d67768a46a76a6c291b949b51f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-28 21:39:17 +0100
 
@@ -9,7 +9,7 @@ Fix livedraw to work with normal rendering APIs
 ---
 
 diff --git a/src/autoroute.c b/src/autoroute.c
-index 2fca161..b4b7eb8 100644
+index 2fca161..93a0e3d 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -132,8 +132,6 @@ directionIncrement(direction_t dir)
@@ -128,7 +128,7 @@ index 2fca161..b4b7eb8 100644
 +                          if (p->type == VIA && p->livedraw_obj.via)
 +                            {
 +                              EraseVia (p->livedraw_obj.via);
-+                              DestroyObject (PCB->Data, VIA_TYPE, NULL, p->livedraw_obj.line, NULL);
++                              DestroyObject (PCB->Data, VIA_TYPE, p->livedraw_obj.via, NULL, NULL);
 +                            }
 +                        }
  		      del =
