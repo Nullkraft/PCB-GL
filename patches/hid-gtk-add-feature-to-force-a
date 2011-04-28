@@ -1,5 +1,5 @@
 Bottom: d6f1f44e461f0aaa16762661e39e96e617a7b357
-Top:    d6f1f44e461f0aaa16762661e39e96e617a7b357
+Top:    1ad672569677c04312e8766f3a7b62bae0af9d0b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-28 22:03:19 +0100
 
@@ -15,4 +15,102 @@ mainloop is not hit until the auto-routing operation is fully complete.
 
 ---
 
-
+diff --git a/src/autoroute.c b/src/autoroute.c
+index 46d7b57..f9a2679 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -3171,7 +3171,6 @@ RD_DrawVia (routedata_t * rd, LocationType X, LocationType Y,
+       r_insert_entry (rd->layergrouptree[rb->group], &rb->box, 1);
+       rb->flags.homeless = 0;	/* not homeless anymore */
+ 
+-#if 0
+       if (TEST_FLAG (LIVEROUTEFLAG, PCB))
+ 	{
+           PinType *via = CreateNewVia (PCB->Data, X, Y, radius * 2,
+@@ -3180,7 +3179,6 @@ RD_DrawVia (routedata_t * rd, LocationType X, LocationType Y,
+           rb->livedraw_obj.via = via;
+           DrawVia (via);
+ 	}
+-#endif
+     }
+ }
+ static void
+@@ -3268,7 +3266,6 @@ RD_DrawLine (routedata_t * rd,
+   /* and add it to the r-tree! */
+   r_insert_entry (rd->layergrouptree[rb->group], &rb->box, 1);
+ 
+-#if 0
+   if (TEST_FLAG (LIVEROUTEFLAG, PCB))
+     {
+       LayerType *layer = LAYER_PTR (PCB->LayerGroups.Entries[rb->group][0]);
+@@ -3277,7 +3274,6 @@ RD_DrawLine (routedata_t * rd,
+       rb->livedraw_obj.line = line;
+       DrawLine (layer, line);
+     }
+-#endif
+ 
+   /* and to the via space structures */
+   if (AutoRouteParameters.use_vias)
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index 6037357..b61bba0 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -66,6 +66,7 @@ typedef struct render_priv {
+   GdkGLConfig *glconfig;
+   bool trans_lines;
+   bool in_context;
++  GTimer *time_since_expose;
+ } render_priv;
+ 
+ 
+@@ -735,10 +736,17 @@ ghid_invalidate_lr (int left, int right, int top, int bottom)
+   ghid_invalidate_all ();
+ }
+ 
++#define MAX_ELAPSED (50. / 1000.) /* 50ms */
+ void
+ ghid_invalidate_all ()
+ {
++  render_priv *priv = gport->render_priv;
++  double elapsed = g_timer_elapsed (priv->time_since_expose, NULL);
++
+   ghid_draw_area_update (gport, NULL);
++
++  if (elapsed > MAX_ELAPSED)
++    gdk_window_process_all_updates ();
+ }
+ 
+ void
+@@ -942,6 +950,8 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
+ 
+   port->render_priv = priv = g_new0 (render_priv, 1);
+ 
++  priv->time_since_expose = g_timer_new ();
++
+   gtk_gl_init(argc, argv);
+ 
+   /* setup GL-context */
+@@ -1939,12 +1949,15 @@ ghid_draw_everything (BoxTypePtr drawn_area)
+   Settings.ShowSolderSide = save_show_solder;
+ }
+ 
++
++
+ #define Z_NEAR 3.0
+ gboolean
+ ghid_drawing_area_expose_cb (GtkWidget *widget,
+                              GdkEventExpose *ev,
+                              GHidPort *port)
+ {
++  render_priv *priv = port->render_priv;
+   BoxType region;
+   int eleft, eright, etop, ebottom;
+   int min_x, min_y;
+@@ -2155,6 +2168,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   check_gl_drawing_ok_hack = false;
+   ghid_end_drawing (port);
+ 
++  g_timer_start (priv->time_since_expose);
++
+   return FALSE;
+ }
