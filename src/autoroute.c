@@ -3290,9 +3290,6 @@ RD_DrawLine (routedata_t * rd,
   qis_45 = is_45;
   qis_bad = is_bad;
   qsn = subnet;
-
-  if (TEST_FLAG (LIVEROUTEFLAG, PCB))
-    Draw ();
 }
 
 static bool
@@ -3408,7 +3405,6 @@ add_clearance (CheapPointType * nextpoint, const BoxType * b)
     }
 }
 #endif
-
 
 /* This back-traces the expansion boxes along the best path
  * it draws the lines that will make the actual path.
@@ -3589,6 +3585,9 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
   while (!path->flags.source);
   /* flush the line queue */
   RD_DrawLine (rd, -1, 0, 0, 0, 0, 0, NULL, false, false);
+
+  if (TEST_FLAG (LIVEROUTEFLAG, PCB))
+    Draw ();
 }
 
 /* create a fake "edge" used to defer via site searching. */
@@ -4636,10 +4635,11 @@ RouteAll (routedata_t * rd)
 		    }
 		}
 	      END_LOOP;
+              if (TEST_FLAG (LIVEROUTEFLAG, PCB))
+                Draw ();
 	      /* reset to original connectivity */
 	      if (rip)
 		{
-                  Draw ();
 		  ras.ripped++;
 		  ResetSubnet (net);
 		}
