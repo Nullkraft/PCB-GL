@@ -962,6 +962,8 @@ ghid_drawing_area_configure_hook (GHidPort *port)
 {
 }
 
+hidGC savepm = NULL;
+
 gboolean
 ghid_start_drawing (GHidPort *port)
 {
@@ -974,6 +976,12 @@ ghid_start_drawing (GHidPort *port)
     return FALSE;
 
   port->render_priv->in_context = true;
+
+  savefg = Output.fgGC;
+
+  Output.fgGC = gui->make_gc ();
+  Output.bgGC = gui->make_gc ();
+  Output.pmGC = gui->make_gc ();
 
   return TRUE;
 }
@@ -993,6 +1001,14 @@ ghid_end_drawing (GHidPort *port)
 
   /* end drawing to current GL-context */
   gdk_gl_drawable_gl_end (pGlDrawable);
+
+  gui->destroy_gc (Output.fgGC);
+  gui->destroy_gc (Output.bgGC);
+  gui->destroy_gc (Output.pmGC);
+
+  Output.fgGC = savefg;
+  Output.bgGC = NULL;
+  Output.pmGC = NULL;
 }
 
 void
