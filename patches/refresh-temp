@@ -1,0 +1,34 @@
+Bottom: 2f4cd40057e443e80cf5eae99eab5efd48410c04
+Top:    c0d49bec33ad005a47b823c6ec4af13149d18ed7
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-28 01:24:42 +0100
+
+Refresh of remove-unused-output-gridgc-va
+
+---
+
+diff --git a/src/global.h b/src/global.h
+index f6620c9..bd605ad 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -172,8 +172,7 @@ typedef struct			/* holds information about output window */
+ {
+   hidGC bgGC,			/* background and foreground; */
+     fgGC,			/* changed from some routines */
+-    pmGC,			/* depth 1 pixmap GC to store clip */
+-    GridGC;			/* for the grid */
++    pmGC;			/* depth 1 pixmap GC to store clip */
+ 
+   int Width,			/* sizes of output window (porthole) */
+     Height;
+diff --git a/src/main.c b/src/main.c
+index ab9a614..ad5ee94 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -980,7 +980,6 @@ main (int argc, char *argv[])
+   Output.bgGC = gui->make_gc ();
+   Output.fgGC = gui->make_gc ();
+   Output.pmGC = gui->make_gc ();
+-  Output.GridGC = gui->make_gc ();
+ 
+   settings_post_process ();
