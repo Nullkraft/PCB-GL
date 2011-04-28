@@ -1,5 +1,5 @@
 Bottom: 10f81ad31d6039aae05591b020126cdaa24b9fd0
-Top:    3f598a35fdae07d67768a46a76a6c291b949b51f
+Top:    fd9a74e7c8ac4e668106af7280aaa948ff7c97ae
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-28 21:39:17 +0100
 
@@ -9,7 +9,7 @@ Fix livedraw to work with normal rendering APIs
 ---
 
 diff --git a/src/autoroute.c b/src/autoroute.c
-index 2fca161..93a0e3d 100644
+index 2fca161..01bdfa0 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -132,8 +132,6 @@ directionIncrement(direction_t dir)
@@ -109,7 +109,38 @@ index 2fca161..93a0e3d 100644
  }
  
  /* create a fake "edge" used to defer via site searching. */
-@@ -4629,9 +4611,21 @@ RouteAll (routedata_t * rd)
+@@ -4511,6 +4493,30 @@ no_expansion_boxes (routedata_t * rd)
+ }
+ #endif
+ 
++static void
++ripout_livedraw_obj (routebox_t *rb)
++{
++  if (rb->type == LINE && rb->livedraw_obj.line)
++    {
++      LayerType *layer = LAYER_PTR (PCB->LayerGroups.Entries[rb->group][0]);
++      EraseLine (rb->livedraw_obj.line);
++      DestroyObject (PCB->Data, LINE_TYPE, layer, rb->livedraw_obj.line, NULL);
++    }
++  if (rb->type == VIA && rb->livedraw_obj.via)
++    {
++      EraseVia (rb->livedraw_obj.via);
++      DestroyObject (PCB->Data, VIA_TYPE, rb->livedraw_obj.via, NULL, NULL);
++    }
++}
++
++static int
++ripout_livedraw_obj_cb (const BoxType * b, void *cl)
++{
++  routebox_t *box = (routebox_t *) b;
++  ripout_livedraw_obj (box);
++  return 0;
++}
++
+ struct routeall_status
+ {
+   /* --- for completion rate statistics ---- */
+@@ -4629,9 +4635,8 @@ RouteAll (routedata_t * rd)
  		    }
  		  if (rip)
  		    {
@@ -117,24 +148,11 @@ index 2fca161..93a0e3d 100644
 -			  && (p->type == LINE || p->type == VIA))
 -			EraseRouteBox (p);
 +                      if (TEST_FLAG (LIVEROUTEFLAG, PCB))
-+                        {
-+                          if (p->type == LINE && p->livedraw_obj.line)
-+                            {
-+                              LayerType *layer =
-+                                LAYER_PTR (PCB->LayerGroups.Entries[p->group][0]);
-+                              EraseLine (p->livedraw_obj.line);
-+                              DestroyObject (PCB->Data, LINE_TYPE, layer, p->livedraw_obj.line, NULL);
-+                            }
-+                          if (p->type == VIA && p->livedraw_obj.via)
-+                            {
-+                              EraseVia (p->livedraw_obj.via);
-+                              DestroyObject (PCB->Data, VIA_TYPE, p->livedraw_obj.via, NULL, NULL);
-+                            }
-+                        }
++                        ripout_livedraw_obj (p);
  		      del =
  			r_delete_entry (rd->layergrouptree[p->group],
  					&p->box);
-@@ -4643,8 +4637,8 @@ RouteAll (routedata_t * rd)
+@@ -4643,8 +4648,8 @@ RouteAll (routedata_t * rd)
  		    }
  		}
  	      END_LOOP;
@@ -145,7 +163,7 @@ index 2fca161..93a0e3d 100644
  	      /* reset to original connectivity */
  	      if (rip)
  		{
-@@ -5002,16 +4996,6 @@ AutoRoute (bool selected)
+@@ -5002,16 +5007,6 @@ AutoRoute (bool selected)
  
    total_wire_length = 0;
    total_via_count = 0;
@@ -162,7 +180,25 @@ index 2fca161..93a0e3d 100644
  
    for (i = 0; i < NUM_STYLES; i++)
      {
-@@ -5171,10 +5155,6 @@ donerouting:
+@@ -5166,15 +5161,24 @@ AutoRoute (bool selected)
+   /* auto-route all nets */
+   changed = (RouteAll (rd).total_nets_routed > 0) || changed;
+ donerouting:
++  if (changed && TEST_FLAG (LIVEROUTEFLAG, PCB))
++    {
++      int i;
++      BoxType big;
++      big.X1 = 0;
++      big.X2 = MAX_COORD;
++      big.Y1 = 0;
++      big.Y2 = MAX_COORD;
++      for (i = 0; i < max_group; i++)
++        {
++          r_search (rd->layergrouptree[i], &big, NULL, ripout_livedraw_obj_cb, NULL);
++        }
++    }
+   if (changed)
+     changed = IronDownAllUnfixedPaths (rd);
    Message ("Total added wire length = %f inches, %d vias added\n",
  	   total_wire_length / 1.e5, total_via_count);
    DestroyRouteData (&rd);
