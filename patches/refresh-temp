@@ -1,0 +1,33 @@
+Bottom: 88c63c2b6f5c08d4855ec0ca1dab4b4493883255
+Top:    d8ab70687fd6862e9c051800de3b8d2833e26147
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-28 22:17:53 +0100
+
+Refresh of fix-livedraw-to-work-with-norm
+
+---
+
+diff --git a/src/autoroute.c b/src/autoroute.c
+index f9a2679..b4b7eb8 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -3177,7 +3177,8 @@ RD_DrawVia (routedata_t * rd, LocationType X, LocationType Y,
+                                        2 * rb->style->Keepaway, 0,
+                                        rb->style->Hole, NULL, MakeFlags (0));
+           rb->livedraw_obj.via = via;
+-          DrawVia (via);
++          if (via != NULL)
++            DrawVia (via);
+ 	}
+     }
+ }
+@@ -3272,7 +3273,8 @@ RD_DrawLine (routedata_t * rd,
+       LineType *line = CreateNewLineOnLayer (layer, qX1, qY1, qX2, qY2,
+                                              2 * qhthick, 0, MakeFlags (0));
+       rb->livedraw_obj.line = line;
+-      DrawLine (layer, line);
++      if (line != NULL)
++        DrawLine (layer, line);
+     }
+ 
+   /* and to the via space structures */
