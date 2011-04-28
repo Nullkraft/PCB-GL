@@ -1,0 +1,33 @@
+Bottom: 9725400d86c6761c53ef18de9a6d1fda288c43b1
+Top:    d74da065e18a76e2f13bdc3ac76e7f3a6fd4ecfb
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-28 01:48:20 +0100
+
+Refresh of data-c-remove-unused-global-th
+
+---
+
+diff --git a/src/data.c b/src/data.c
+index 73e53f2..412b305 100644
+--- a/src/data.c
++++ b/src/data.c
+@@ -63,7 +63,6 @@ int addedLines;
+ 
+ LocationType vxl, vxh, vyl, vyh;	/* visible pcb coordinates */
+ 
+-BoxType theScreen;		/* box of screen in pcb coordinates */
+ BoxType clipBox;		/* box for clipping of drawing */
+ 
+ double Zoom_Multiplier = 0.01;
+diff --git a/src/data.h b/src/data.h
+index 8dc674a..fe98735 100644
+--- a/src/data.h
++++ b/src/data.h
+@@ -61,7 +61,7 @@ extern LibraryType Library;
+ 
+ extern LocationType Xorig, Yorig;
+ 
+-extern BoxType theScreen, clipBox;
++extern BoxType clipBox;
+ 
+ extern double Zoom_Multiplier;
