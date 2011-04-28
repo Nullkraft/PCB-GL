@@ -1,0 +1,24 @@
+Bottom: 91947b30d1e139a14f8730ebad2e6e9f66ba5002
+Top:    5403205742b99af612a90929e5038dd790aa34b5
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-28 02:07:48 +0100
+
+Refresh of file-c-write-out-correct-cross
+
+---
+
+diff --git a/src/file.c b/src/file.c
+index 6363bf4..8a52614 100644
+--- a/src/file.c
++++ b/src/file.c
+@@ -534,8 +534,8 @@ WritePCBDataHeader (FILE * FP)
+   fprintf (FP, "Grid[%s %i %i %i]\n",
+ 	   c_dtostr (PCB->Grid), (int) PCB->GridOffsetX,
+ 	   (int) PCB->GridOffsetY, (int) Settings.DrawGrid);
+-  fprintf (FP, "Cursor[%i %i %s]\n", (int) TO_PCB_X (Output.Width / 2),
+-	   (int) TO_PCB_Y (Output.Height / 2), c_dtostr (PCB->Zoom));
++  fprintf (FP, "Cursor[%i %i %s]\n",
++           Crosshair.X, Crosshair.Y, c_dtostr (PCB->Zoom));
+   fprintf (FP, "PolyArea[%s]\n", c_dtostr (PCB->IsleArea));
+   fprintf (FP, "Thermal[%s]\n", c_dtostr (PCB->ThermScale));
+   fprintf (FP, "DRC[%i %i %i %i %i %i]\n", PCB->Bloat, PCB->Shrink,
