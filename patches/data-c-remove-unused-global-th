@@ -1,5 +1,5 @@
 Bottom: 9725400d86c6761c53ef18de9a6d1fda288c43b1
-Top:    d74da065e18a76e2f13bdc3ac76e7f3a6fd4ecfb
+Top:    cafbff9b377b9ad92c2d6fc854c1bf23d9036290
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-28 01:47:49 +0100
 
@@ -9,26 +9,29 @@ data.c: Remove unused globals "theScreen" and "clipBox"
 ---
 
 diff --git a/src/data.c b/src/data.c
-index 73e53f2..412b305 100644
+index 73e53f2..4ebc126 100644
 --- a/src/data.c
 +++ b/src/data.c
-@@ -63,7 +63,6 @@ int addedLines;
+@@ -63,9 +63,6 @@ int addedLines;
  
  LocationType vxl, vxh, vyl, vyh;	/* visible pcb coordinates */
  
 -BoxType theScreen;		/* box of screen in pcb coordinates */
- BoxType clipBox;		/* box for clipping of drawing */
- 
+-BoxType clipBox;		/* box for clipping of drawing */
+-
  double Zoom_Multiplier = 0.01;
+ 
+ /*  { 1.5625, 2.2097, 3.125, 4.4194, 6.25, 8.8388,
 diff --git a/src/data.h b/src/data.h
-index 8dc674a..fe98735 100644
+index 8dc674a..6e70fd3 100644
 --- a/src/data.h
 +++ b/src/data.h
-@@ -61,7 +61,7 @@ extern LibraryType Library;
+@@ -61,8 +61,6 @@ extern LibraryType Library;
  
  extern LocationType Xorig, Yorig;
  
 -extern BoxType theScreen, clipBox;
-+extern BoxType clipBox;
- 
+-
  extern double Zoom_Multiplier;
+ 
+ extern char *Progname;
