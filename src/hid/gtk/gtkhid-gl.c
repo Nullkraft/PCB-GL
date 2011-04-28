@@ -962,8 +962,6 @@ ghid_drawing_area_configure_hook (GHidPort *port)
 {
 }
 
-static hidGC savefg = NULL;
-
 gboolean
 ghid_start_drawing (GHidPort *port)
 {
@@ -976,8 +974,6 @@ ghid_start_drawing (GHidPort *port)
     return FALSE;
 
   port->render_priv->in_context = true;
-
-  savefg = Output.fgGC;
 
   Output.fgGC = gui->make_gc ();
   Output.bgGC = gui->make_gc ();
@@ -1006,7 +1002,7 @@ ghid_end_drawing (GHidPort *port)
   gui->destroy_gc (Output.bgGC);
   gui->destroy_gc (Output.pmGC);
 
-  Output.fgGC = savefg;
+  Output.fgGC = NULL;
   Output.bgGC = NULL;
   Output.pmGC = NULL;
 }
