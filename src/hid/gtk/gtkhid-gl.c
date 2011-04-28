@@ -289,13 +289,6 @@ ghid_use_mask (int use_it)
    *       once during rendering (for the solder-mask layer).
    */
 
-  /* THE FOLLOWING IS COMPLETE ABUSE OF THIS MASK RENDERING API... NOT IMPLEMENTED */
-  if (use_it == HID_LIVE_DRAWING ||
-      use_it == HID_LIVE_DRAWING_OFF ||
-      use_it == HID_FLUSH_DRAW_Q) {
-    return;
-  }
-
   if (use_it == cur_mask)
     return;
 
