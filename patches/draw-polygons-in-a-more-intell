@@ -1,7 +1,7 @@
-Bottom: f7c28ae1eba0d476f3c81bf0673b9bb79db67e02
-Top:    bc659e4873808c668e477a730f1f888e90b68188
+Bottom: 66dee4044281de4f276a2253d331dc5f90a3f5f9
+Top:    5c2f36058fb74aa6a9406f314280cd30e695ca4f
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-28 02:37:21 +0100
+Date:   2011-04-28 03:23:09 +0100
 
 Draw polygons in a more intelligent order
 
@@ -178,10 +178,10 @@ index 155c125..5bfbffd 100644
  
  void
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index a661627..1b4558e 100644
+index 8f3a16c..626b935 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -1514,11 +1514,28 @@ struct poly_info
+@@ -1530,11 +1530,28 @@ struct poly_info
  };
  
  static int
@@ -212,7 +212,7 @@ index a661627..1b4558e 100644
    return 1;
  }
  
-@@ -1656,7 +1673,8 @@ DrawLayerGroup (int group, const BoxType * screen)
+@@ -1672,7 +1689,8 @@ DrawLayerGroup (int group, const BoxType * screen)
        if (Layer->PolygonN) {
          info.Layer = Layer;
          info.drawn_area = screen;
