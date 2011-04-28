@@ -1,5 +1,5 @@
 Bottom: 168b1f25c700317a9751c7e543e0b75af8488abd
-Top:    c1ee335188c3129a8fc34d7671e06a5d4cdb8750
+Top:    b64c0238bbe7cdf7d20530e723559793dddef764
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-28 01:33:36 +0100
 
@@ -12,25 +12,25 @@ the one created by main.c and creates its own.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index a31bdbd..2b8731e 100644
+index a31bdbd..2cda1b2 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -1727,8 +1727,6 @@ void
+@@ -1727,9 +1727,7 @@ void
  hid_expose_callback (HID * hid, BoxType * region, void *item)
  {
    HID *old_gui = gui;
 -  hidGC savebg = Output.bgGC;
--  hidGC savefg = Output.fgGC;
-   hidGC savepm = Output.pmGC;
+   hidGC savefg = Output.fgGC;
+-  hidGC savepm = Output.pmGC;
  
    gui = hid;
-@@ -1752,7 +1750,5 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
-   gui->destroy_gc (Output.bgGC);
+   Output.fgGC = gui->make_gc ();
+@@ -1753,6 +1751,4 @@ hid_expose_callback (HID * hid, BoxType * region, void *item)
    gui->destroy_gc (Output.pmGC);
    gui = old_gui;
--  Output.fgGC = savefg;
+   Output.fgGC = savefg;
 -  Output.bgGC = savebg;
-   Output.pmGC = savepm;
+-  Output.pmGC = savepm;
  }
 diff --git a/src/main.c b/src/main.c
 index ad5ee94..e216f6d 100644
