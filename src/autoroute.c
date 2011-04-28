@@ -4623,7 +4623,7 @@ RouteAll (routedata_t * rd)
                           if (p->type == VIA && p->livedraw_obj.via)
                             {
                               EraseVia (p->livedraw_obj.via);
-                              DestroyObject (PCB->Data, VIA_TYPE, NULL, p->livedraw_obj.line, NULL);
+                              DestroyObject (PCB->Data, VIA_TYPE, p->livedraw_obj.via, NULL, NULL);
                             }
                         }
 		      del =
