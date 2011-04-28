@@ -1,5 +1,5 @@
-Bottom: 5fb20d7763228e3351135b538d091b2a9cdb30a5
-Top:    810dfe48aa12c20a4f013ad422a4bc9a4ddcb66f
+Bottom: 0cb4249ab1d6d09413a481dfefb7eff946ee0db8
+Top:    c18e6327fcf519a529049606c2d8139a8e549e83
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-27 20:35:07 +0100
 
@@ -88,7 +88,7 @@ index cf324a5..44b80d2 100644
  
  #endif
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 17d9621..6c3c806 100644
+index 0118b43..1e6fa20 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -10,6 +10,9 @@
@@ -253,7 +253,7 @@ index 17d9621..6c3c806 100644
  	case SL_ASSY:
  	  return 0;
  	case SL_PDRILL:
-@@ -428,10 +467,6 @@ typedef struct
+@@ -421,10 +460,6 @@ typedef struct
    double blue;
  } ColorCache;
  
@@ -264,7 +264,7 @@ index 17d9621..6c3c806 100644
  void
  ghid_set_color (hidGC gc, const char *name)
  {
-@@ -549,7 +584,7 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -542,7 +577,7 @@ ghid_set_color (hidGC gc, const char *name)
    glColor4d (r, g, b, a);
  }
  
@@ -273,7 +273,7 @@ index 17d9621..6c3c806 100644
  ghid_global_alpha_mult (hidGC gc, double alpha_mult)
  {
    if (alpha_mult != global_alpha_mult) {
-@@ -950,6 +985,10 @@ ghid_start_drawing (GHidPort *port)
+@@ -943,6 +978,10 @@ ghid_start_drawing (GHidPort *port)
  
    port->render_priv->in_context = true;
  
@@ -284,7 +284,7 @@ index 17d9621..6c3c806 100644
    return TRUE;
  }
  
-@@ -968,6 +1007,14 @@ ghid_end_drawing (GHidPort *port)
+@@ -961,6 +1000,14 @@ ghid_end_drawing (GHidPort *port)
  
    /* end drawing to current GL-context */
    gdk_gl_drawable_gl_end (pGlDrawable);
@@ -299,7 +299,7 @@ index 17d9621..6c3c806 100644
  }
  
  void
-@@ -975,6 +1022,890 @@ ghid_screen_update (void)
+@@ -968,6 +1015,890 @@ ghid_screen_update (void)
  {
  }
  
@@ -1190,7 +1190,7 @@ index 17d9621..6c3c806 100644
  #define Z_NEAR 3.0
  gboolean
  ghid_drawing_area_expose_cb (GtkWidget *widget,
-@@ -1040,8 +1971,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1033,8 +1964,8 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glStencilFunc (GL_ALWAYS, 0, 0);
  
    /* Test the 8 corners of a cube spanning the event */
@@ -1201,7 +1201,7 @@ index 17d9621..6c3c806 100644
  
    ghid_unproject_to_z_plane (ev->area.x,
                               ev->area.y,
-@@ -1107,13 +2038,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1100,13 +2031,6 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
               port->bg_color.green / 65535.,
               port->bg_color.blue / 65535.);
  
@@ -1215,7 +1215,7 @@ index 17d9621..6c3c806 100644
    /* TODO: Background image */
  
    hidgl_init_triangle_array (&buffer);
-@@ -1133,7 +2057,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -1126,7 +2050,40 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
                               -port->view_x0,
                  ghid_flip_y ? port->view_y0 - PCB->MaxHeight :
                               -port->view_y0, 0);

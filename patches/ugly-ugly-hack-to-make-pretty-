@@ -1,5 +1,5 @@
-Bottom: 146b7290e2790d01f75841685da17de9767c7dda
-Top:    067641775fbcc2a529610180dd6a8eed1b27d93b
+Bottom: 81f5af3ff779364f39298846608b5ae645181bc3
+Top:    658048c5bc13d497a86554b4865d70d348a4d7e1
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-27 20:35:06 +0100
 
@@ -32,10 +32,10 @@ index ba15477..8af7ae1 100644
  {
    gint w, h, lw, xx, yy;
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index 42b9fe6..5d67443 100644
+index 0461210..6cc6e2a 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -403,12 +403,15 @@ typedef struct
+@@ -396,12 +396,15 @@ typedef struct
    double blue;
  } ColorCache;
  
@@ -52,7 +52,7 @@ index 42b9fe6..5d67443 100644
    hidval cval;
    ColorCache *cc;
    double alpha_mult = 1.0;
-@@ -417,14 +420,16 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -410,14 +413,16 @@ ghid_set_color (hidGC gc, const char *name)
  
    current_gc = gc;
  
@@ -73,7 +73,7 @@ index 42b9fe6..5d67443 100644
  
    if (name == NULL)
      {
-@@ -498,6 +503,7 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -491,6 +496,7 @@ ghid_set_color (hidGC gc, const char *name)
      }
    if (1) {
      double maxi, mult;
@@ -81,7 +81,7 @@ index 42b9fe6..5d67443 100644
      if (priv->trans_lines)
        a = a * alpha_mult;
      maxi = r;
-@@ -519,6 +525,16 @@ ghid_set_color (hidGC gc, const char *name)
+@@ -512,6 +518,16 @@ ghid_set_color (hidGC gc, const char *name)
  }
  
  void
@@ -98,7 +98,7 @@ index 42b9fe6..5d67443 100644
  ghid_set_line_cap (hidGC gc, EndCapStyle style)
  {
    gc->cap = style;
-@@ -630,6 +646,15 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
+@@ -623,6 +639,15 @@ ghid_fill_pcb_polygon (hidGC gc, PolygonType *poly, const BoxType *clip_box)
  }
  
  void
