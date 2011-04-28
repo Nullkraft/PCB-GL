@@ -3,9 +3,11 @@ Top:    0b3735a814b842937343c06a5cca28cbf1b8a12d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-28 01:26:53 +0100
 
-rtree.c: Remove old mixed X11 and GDK debug code
+rtree.c: Remove old X11 based debug drawing code
 
-The core doesn't do drawing any more.. so this code can't work
+The core doesn't do drawing any more.. and can't assume that the
+GUI's graphics contexts are actually X11 or GDK graphics context,
+so this code can't work any more - remove it.
 
 
 ---
