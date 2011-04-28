@@ -3,7 +3,10 @@ Top:    5403205742b99af612a90929e5038dd790aa34b5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-28 02:13:30 +0100
 
-Stroke event coordinates are already in PCB units, drop bogus conversion
+action.c: Partially fix up some stroke handling bugs
+
+1. Stroke event coordinates are already in PCB units, drop bogus conversions
+2. Fix incorrect variable name
 
 
 ---
