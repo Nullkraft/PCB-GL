@@ -1,0 +1,50 @@
+Bottom: 72c0972a96f42b084bb281a29ca81a1d26a6a1f9
+Top:    c9760d97d0270cbf1ab19928bb0cdd801641fa84
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-28 02:54:38 +0100
+
+Refresh of major-re-write-to-drawing-rout
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index cacf7c6..b579707 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -962,6 +962,8 @@ ghid_drawing_area_configure_hook (GHidPort *port)
+ {
+ }
+ 
++hidGC savepm = NULL;
++
+ gboolean
+ ghid_start_drawing (GHidPort *port)
+ {
+@@ -975,6 +977,12 @@ ghid_start_drawing (GHidPort *port)
+ 
+   port->render_priv->in_context = true;
+ 
++  savefg = Output.fgGC;
++
++  Output.fgGC = gui->make_gc ();
++  Output.bgGC = gui->make_gc ();
++  Output.pmGC = gui->make_gc ();
++
+   return TRUE;
+ }
+ 
+@@ -993,6 +1001,14 @@ ghid_end_drawing (GHidPort *port)
+ 
+   /* end drawing to current GL-context */
+   gdk_gl_drawable_gl_end (pGlDrawable);
++
++  gui->destroy_gc (Output.fgGC);
++  gui->destroy_gc (Output.bgGC);
++  gui->destroy_gc (Output.pmGC);
++
++  Output.fgGC = savefg;
++  Output.bgGC = NULL;
++  Output.pmGC = NULL;
+ }
+ 
+ void
