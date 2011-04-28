@@ -3,11 +3,10 @@ Top:    118fbe68f290b36c98c21330910c15e459fb8e98
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-28 14:39:12 +0100
 
-main.c: Remove setup of Output.fgGC, it is never used
+main.c: Remove setup of global graphics contexts which are never used
 
-draw.c stashes this one and creates another for its own use.
-
-Drop the unused one, and drop the stashing in draw.c
+draw.c stashes these ones creates its own. Drop the unused ones, and
+drop the stashing in draw.c
 
 
 ---
