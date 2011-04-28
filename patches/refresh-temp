@@ -1,0 +1,22 @@
+Bottom: 07b417a182c3180fdbe391fe407ffdcb4c5c273c
+Top:    d5893c2d51fd7cd5cafa341925f4bfd906977d53
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-28 15:08:15 +0100
+
+Refresh of global-h-remove-unused-outputt
+
+---
+
+diff --git a/src/global.h b/src/global.h
+index c82def6..a036ee5 100644
+--- a/src/global.h
++++ b/src/global.h
+@@ -173,9 +173,6 @@ typedef struct			/* holds information about output window */
+   hidGC bgGC,			/* background and foreground; */
+     fgGC,			/* changed from some routines */
+     pmGC;			/* depth 1 pixmap GC to store clip */
+-
+-  int Width,			/* sizes of output window (porthole) */
+-    Height;
+ }
+ OutputType, *OutputTypePtr;
