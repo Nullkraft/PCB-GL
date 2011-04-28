@@ -63,7 +63,6 @@ int addedLines;
 
 LocationType vxl, vxh, vyl, vyh;	/* visible pcb coordinates */
 
-BoxType theScreen;		/* box of screen in pcb coordinates */
 BoxType clipBox;		/* box for clipping of drawing */
 
 double Zoom_Multiplier = 0.01;
