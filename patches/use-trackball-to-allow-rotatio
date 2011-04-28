@@ -1,5 +1,5 @@
-Bottom: 3e86d4e0e2641401d39ef53f4245785cf99a8cef
-Top:    05e436536447deb519cc0c6746db20f5e78bb2b2
+Bottom: 452b90a11b3aade99643eb077bef656d99210408
+Top:    a5df0a65237b4c35712bf65a9559e659e8f8d2c5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-27 20:35:06 +0100
 
@@ -436,7 +436,7 @@ index 31be13a..ae075d5 100644
    gtk_box_pack_start(GTK_BOX(vbox_left), vbox, FALSE, FALSE, 0);
    ghidgui->mode_buttons0_frame_vbox = vbox;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index fec9264..08e7a88 100644
+index fdac866..c38c147 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -301,7 +301,6 @@ gint ghid_port_window_motion_cb (GtkWidget * widget,
@@ -447,7 +447,7 @@ index fec9264..08e7a88 100644
  gint ghid_port_drawing_area_configure_event_cb (GtkWidget * widget,
  						GdkEventConfigure * ev,
  						GHidPort * out);
-@@ -506,6 +505,9 @@ void ghid_port_drawing_realize_cb (GtkWidget *, gpointer);
+@@ -504,6 +503,9 @@ void ghid_port_drawing_realize_cb (GtkWidget *, gpointer);
  gboolean ghid_pinout_preview_expose (GtkWidget * widget, GdkEventExpose * ev);
  GdkPixmap *ghid_render_pixmap (int cx, int cy, double zoom,
                                 int width, int height, int depth);
