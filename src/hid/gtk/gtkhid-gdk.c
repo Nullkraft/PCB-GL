@@ -1239,6 +1239,7 @@ void
 ghid_flush_debug_draw (void)
 {
   ghid_screen_update ();
+  gdk_flush ();
 }
 
 void
