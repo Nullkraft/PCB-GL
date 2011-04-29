@@ -139,7 +139,9 @@ directionIncrement(direction_t dir)
 return dir;
 }
 
+#ifdef ROUTE_DEBUG
 static hidGC ar_gc = 0;
+#endif
 
 #define EXPENSIVE 3e28
 /* round up "half" thicknesses */
