@@ -1,0 +1,23 @@
+Bottom: 0ac8bee2791a94233d5d9139dca400cf78e243ff
+Top:    455695c7af13afd23dfb4502d19b4d6c9cd29f7a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-29 18:19:30 +0100
+
+Refresh of fix-livedraw-to-work-with-norm
+
+---
+
+diff --git a/src/autoroute.c b/src/autoroute.c
+index 8633005..c47c465 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -139,7 +139,9 @@ directionIncrement(direction_t dir)
+ return dir;
+ }
+ 
++#ifdef ROUTE_DEBUG
+ static hidGC ar_gc = 0;
++#endif
+ 
+ #define EXPENSIVE 3e28
+ /* round up "half" thicknesses */
