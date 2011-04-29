@@ -1232,7 +1232,7 @@ ghid_request_debug_draw (void)
 {
   /* No special setup requirements, drawing goes into
    * the backing pixmap. */
-  return gport;
+  return &ghid_hid;
 }
 
 void
@@ -1241,8 +1241,10 @@ ghid_flush_debug_draw (void)
   ghid_screen_update ();
 }
 
+void
 ghid_finish_debug_draw (void)
 {
   ghid_flush_debug_draw ();
-  /* No special tear down requirements */
+  /* No special tear down requirements
+   */
 }
