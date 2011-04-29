@@ -1,5 +1,5 @@
 Bottom: 682fd858497b379d36f503b41d6d16454d86b9f9
-Top:    7c6f7e0ec0715f49b1faf8a71ffdd20cdd304fd3
+Top:    bde09837966af6260dab85c7c523be38863f3de0
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-29 18:20:23 +0100
 
@@ -9,7 +9,7 @@ hid/gtk: Invalidate the damaged region, not the whole view
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 27d62c6..aca24b6 100644
+index 27d62c6..a47803e 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -34,6 +34,8 @@ typedef struct render_priv {
@@ -74,7 +74,7 @@ index 27d62c6..aca24b6 100644
        gc->mask_seq = mask_seq;
      }
    priv->u_gc = WHICH_GC (gc);
-@@ -693,15 +712,7 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
+@@ -693,15 +712,8 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
  		      x1, y1, x2 - x1 + 1, y2 - y1 + 1);
  }
  
@@ -87,11 +87,12 @@ index 27d62c6..aca24b6 100644
 -
 -void
 -ghid_invalidate_all ()
-+void redraw_region (GdkRectangle *rect)
++static void
++redraw_region (GdkRectangle *rect)
  {
    int eleft, eright, etop, ebottom;
    BoxType region;
-@@ -710,10 +721,33 @@ ghid_invalidate_all ()
+@@ -710,10 +722,33 @@ ghid_invalidate_all ()
    if (!gport->pixmap)
      return;
  
@@ -129,7 +130,7 @@ index 27d62c6..aca24b6 100644
  
    eleft = Vx (0);
    eright = Vx (PCB->MaxWidth);
-@@ -734,28 +768,28 @@ ghid_invalidate_all ()
+@@ -734,28 +769,28 @@ ghid_invalidate_all ()
  
    if (eleft > 0)
      gdk_draw_rectangle (gport->drawable, priv->offlimits_gc,
@@ -164,7 +165,7 @@ index 27d62c6..aca24b6 100644
  
    ghid_draw_bg_image();
  
-@@ -770,11 +804,44 @@ ghid_invalidate_all ()
+@@ -770,11 +805,44 @@ ghid_invalidate_all ()
    if (priv->mark_invalidate_depth == 0)
      DrawMark ();
  
@@ -209,7 +210,7 @@ index 27d62c6..aca24b6 100644
  ghid_notify_crosshair_change (bool changes_complete)
  {
    render_priv *priv = gport->render_priv;
-@@ -949,6 +1016,7 @@ draw_crosshair (GdkGC *xor_gc, gint x, gint y)
+@@ -949,6 +1017,7 @@ draw_crosshair (GdkGC *xor_gc, gint x, gint y)
  static void
  show_crosshair (gboolean paint_new_location)
  {
@@ -217,7 +218,7 @@ index 27d62c6..aca24b6 100644
    gint x, y;
    static gint x_prev = -1, y_prev = -1;
    static gboolean draw_markers, draw_markers_prev = FALSE;
-@@ -963,6 +1031,8 @@ show_crosshair (gboolean paint_new_location)
+@@ -963,6 +1032,8 @@ show_crosshair (gboolean paint_new_location)
        xor_gc = gdk_gc_new (ghid_port.drawing_area->window);
        gdk_gc_copy (xor_gc, ghid_port.drawing_area->style->white_gc);
        gdk_gc_set_function (xor_gc, GDK_XOR);
@@ -226,7 +227,7 @@ index 27d62c6..aca24b6 100644
        /* FIXME: when CrossColor changed from config */
        ghid_map_color_string (Settings.CrossColor, &cross_color);
      }
-@@ -1035,9 +1105,11 @@ ghid_drawing_area_configure_hook (GHidPort *port)
+@@ -1035,9 +1106,11 @@ ghid_drawing_area_configure_hook (GHidPort *port)
      {
        priv->bg_gc = gdk_gc_new (port->drawable);
        gdk_gc_set_foreground (priv->bg_gc, &port->bg_color);
