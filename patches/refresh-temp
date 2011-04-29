@@ -1,0 +1,23 @@
+Bottom: 7c6f7e0ec0715f49b1faf8a71ffdd20cdd304fd3
+Top:    bde09837966af6260dab85c7c523be38863f3de0
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-29 19:35:14 +0100
+
+Refresh of hid-gtk-invalidate-the-damaged
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index aca24b6..a47803e 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -712,7 +712,8 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
+ 		      x1, y1, x2 - x1 + 1, y2 - y1 + 1);
+ }
+ 
+-void redraw_region (GdkRectangle *rect)
++static void
++redraw_region (GdkRectangle *rect)
+ {
+   int eleft, eright, etop, ebottom;
+   BoxType region;
