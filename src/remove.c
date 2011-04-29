@@ -130,6 +130,7 @@ static void *
 DestroyVia (PinTypePtr Via)
 {
   r_delete_entry (DestroyTarget->via_tree, (BoxTypePtr) Via);
+#if 0
   free (Via->Name);
   if (Via != &DestroyTarget->Via[--DestroyTarget->ViaN])
     {
@@ -139,6 +140,7 @@ DestroyVia (PinTypePtr Via)
 		    (BoxType *) Via);
     }
   memset (&DestroyTarget->Via[DestroyTarget->ViaN], 0, sizeof (PinType));
+#endif
   return (NULL);
 }
 
@@ -149,6 +151,7 @@ static void *
 DestroyLine (LayerTypePtr Layer, LineTypePtr Line)
 {
   r_delete_entry (Layer->line_tree, (BoxTypePtr) Line);
+#if 0
   free (Line->Number);
   if (Line != &Layer->Line[--Layer->LineN])
     {
@@ -158,6 +161,7 @@ DestroyLine (LayerTypePtr Layer, LineTypePtr Line)
 		    (BoxType *) Line);
     }
   memset (&Layer->Line[Layer->LineN], 0, sizeof (LineType));
+#endif
   return (NULL);
 }
 
