@@ -50,6 +50,7 @@
 #include <ctype.h>
 #include <sys/types.h>
 #include <stdbool.h>
+#include <glib.h>
 
 /* Forward declarations for structures the HIDs need.  */
 typedef struct BoxType BoxType, *BoxTypePtr;
@@ -206,8 +207,8 @@ typedef struct
 
 struct AttributeListType
 {
-  int Number, Max;
-  AttributeType *List;
+  int Number;
+  GList *List;
 };
 
 /* ---------------------------------------------------------------------------
@@ -250,15 +251,13 @@ typedef struct
 struct polygon_st			/* holds information about a polygon */
 {
   ANYOBJECTFIELDS;
-  Cardinal PointN,		/* number of points in polygon */
-    PointMax;			/* max number from malloc() */
+  Cardinal PointN;		/* number of points in polygon */
   POLYAREA *Clipped;		/* the clipped region of this polygon */
   PLINE *NoHoles;		/* the polygon broken into hole-less regions */
   int NoHolesValid;		/* Is the NoHoles polygon up to date? */
-  PointTypePtr Points;		/* data */
-  Cardinal *HoleIndex;		/* Index of hole data within the Points array */
+  GList *Points;		/* data */
+  GList *HoleIndex;		/* Index of hole data within the Points array */
   Cardinal HoleIndexN;		/* number of holes in polygon */
-  Cardinal HoleIndexMax;	/* max number from malloc() */
 
 };
 
@@ -285,13 +284,11 @@ typedef struct			/* holds information about one layer */
   Cardinal LineN,		/* number of lines */
     TextN,			/* labels */
     PolygonN,			/* polygons */
-    ArcN,			/* and arcs */
-    LineMax,			/* max number from malloc() */
-    TextMax, PolygonMax, ArcMax;
-  LineTypePtr Line;		/* pointer to additional structures */
-  TextTypePtr Text;
-  PolygonTypePtr Polygon;
-  ArcTypePtr Arc;
+    ArcN;			/* and arcs */
+  GList *Line;			/* pointer to additional structures */
+  GList *Text;
+  GList *Polygon;
+  GList *Arc;
   rtree_t *line_tree, *text_tree, *polygon_tree, *arc_tree;
   bool On;			/* visible flag */
   char *Color,			/* color */
@@ -336,12 +333,14 @@ typedef struct
   /* see macro.h */
   LocationType MarkX,		/* position mark */
     MarkY;
-  Cardinal PinN,		/* number of pins, lines and arcs */
-    PinMax, PadN, PadMax, LineN, LineMax, ArcN, ArcMax;
-  PinTypePtr Pin;		/* pin description */
-  PadTypePtr Pad;		/* pad description of SMD components */
-  LineTypePtr Line;
-  ArcTypePtr Arc;
+  Cardinal PinN;		/* number of pins */
+  Cardinal PadN;		/* number of pads */
+  Cardinal LineN;		/* number of lines */
+  Cardinal ArcN;		/* number of arcs */
+  GList *Pin;			/* pin description */
+  GList *Pad;			/* pad description of SMD components */
+  GList *Line;
+  GList *Arc;
   BoxType VBox;
   AttributeListType Attributes;
 } ElementType, *ElementTypePtr, **ElementTypeHandle;
@@ -351,10 +350,9 @@ typedef struct
  */
 typedef struct			/* a single symbol */
 {
-  LineTypePtr Line;
+  GList *Line;
   bool Valid;
-  Cardinal LineN,		/* number of lines */
-    LineMax;
+  Cardinal LineN;		/* number of lines */
   BDimension Width,		/* size of cell */
     Height, Delta;		/* distance to next symbol in 0.00001'' */
 } SymbolType, *SymbolTypePtr;
@@ -371,15 +369,12 @@ typedef struct			/* complete set of symbols */
 typedef struct			/* holds all objects */
 {
   Cardinal ViaN,		/* number of vias */
-    ViaMax,			/* max number from malloc() */
     ElementN,			/* and elements */
-    ElementMax,			/* max number from malloc() */
-    RatN,			/* and rat-lines */
-    RatMax;
+    RatN;			/* and rat-lines */
   int LayerN;			/* number of layers in this board */
-  PinTypePtr Via;		/* pointer to object data */
-  ElementTypePtr Element;
-  RatTypePtr Rat;
+  GList *Via;			/* pointer to object data */
+  GList *Element;
+  GList *Rat;
   rtree_t *via_tree, *element_tree, *pin_tree, *pad_tree, *name_tree[3],	/* for element names */
    *rat_tree;
   struct PCBType *pcb;
@@ -390,21 +385,18 @@ typedef struct			/* holds drill information */
 {
   BDimension DrillSize;		/* this drill's diameter */
   Cardinal ElementN,		/* the number of elements using this drill size */
-    ElementMax,			/* max number of elements from malloc() */
     PinCount,			/* number of pins drilled this size */
     ViaCount,			/* number of vias drilled this size */
     UnplatedCount,		/* number of these holes that are unplated */
-    PinN,			/* number of drill coordinates in the list */
-    PinMax;			/* max number of coordinates from malloc() */
-  PinTypePtr *Pin;		/* coordinates to drill */
-  ElementTypePtr *Element;	/* a pointer to an array of element pointers */
+    PinN;			/* number of drill coordinates in the list */
+  GList *Pin;		/* coordinates to drill */
+  GList *Element;		/* a pointer to an array of element pointers */
 } DrillType, *DrillTypePtr;
 
 typedef struct			/* holds a range of Drill Infos */
 {
-  Cardinal DrillN,		/* number of drill sizes */
-    DrillMax;			/* max number from malloc() */
-  DrillTypePtr Drill;		/* plated holes */
+  Cardinal DrillN;		/* number of drill sizes */
+  GList *Drill;			/* plated holes */
 } DrillInfoType, *DrillInfoTypePtr;
 
 typedef struct
@@ -442,9 +434,8 @@ typedef struct
   char *Name,			/* name of the menu entry */
    *directory,			/* Directory name library elements are from */
    *Style;			/* routing style */
-  Cardinal EntryN,		/* number of objects */
-    EntryMax;			/* number of reserved memory locations */
-  LibraryEntryTypePtr Entry;	/* the entries */
+  Cardinal EntryN;		/* number of objects */
+  GList *Entry;			/* the entries */
   char flag;			/* used by the netlist window to enable/disable nets */
   char internal;		/* if set, this is an internal-only entry, not
 				   part of the global netlist. */
@@ -453,8 +444,7 @@ typedef struct
 typedef struct
 {
   Cardinal MenuN;               /* number of objects */
-  Cardinal MenuMax;             /* number of reserved memory locations */
-  LibraryMenuTypePtr Menu;      /* the entries */
+  GList *Menu;                  /* the entries */
 } LibraryType, *LibraryTypePtr;
 
 
@@ -557,9 +547,8 @@ typedef struct			/* currently attached object */
   void *Ptr1,			/* three pointers to data, see */
    *Ptr2,			/* search.c */
    *Ptr3;
-  Cardinal RubberbandN,		/* number of lines in array */
-    RubberbandMax;
-  RubberbandTypePtr Rubberband;
+  Cardinal RubberbandN;		/* number of lines in array */
+  GList *Rubberband;
 } AttachedObjectType, *AttachedObjectTypePtr;
 
 enum crosshair_shape
@@ -720,38 +709,33 @@ typedef struct			/* holds a connection */
 
 typedef struct			/* holds a net of connections */
 {
-  Cardinal ConnectionN,		/* the number of connections contained */
-    ConnectionMax;		/* max connections from malloc */
-  ConnectionTypePtr Connection;
+  Cardinal ConnectionN;		/* the number of connections contained */
+  GList *Connection;
   RouteStyleTypePtr Style;
 } NetType, *NetTypePtr;
 
 typedef struct			/* holds a list of nets */
 {
-  Cardinal NetN,		/* the number of subnets contained */
-    NetMax;			/* max subnets from malloc */
-  NetTypePtr Net;
+  Cardinal NetN;		/* the number of subnets contained */
+  GList *Net;
 } NetListType, *NetListTypePtr;
 
 typedef struct			/* holds a list of net lists */
 {
-  Cardinal NetListN,		/* the number of net lists contained */
-    NetListMax;			/* max net lists from malloc */
-  NetListTypePtr NetList;
+  Cardinal NetListN;		/* the number of net lists contained */
+  GList *NetList;
 } NetListListType, *NetListListTypePtr;
 
 typedef struct			/* holds a generic list of pointers */
 {
-  Cardinal PtrN,		/* the number of pointers contained */
-    PtrMax;			/* max subnets from malloc */
-  void **Ptr;
+  Cardinal PtrN;		/* the number of pointers contained */
+  GList *Ptr;
 } PointerListType, *PointerListTypePtr;
 
 typedef struct
 {
-  Cardinal BoxN,		/* the number of boxes contained */
-    BoxMax;			/* max boxes from malloc */
-  BoxTypePtr Box;
+  Cardinal BoxN;		/* the number of boxes contained */
+  GList *Box;
 
 } BoxListType, *BoxListTypePtr;
 

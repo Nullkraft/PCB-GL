@@ -170,6 +170,7 @@ static hidGC ar_gc = 0;
 
 #define LIST_LOOP(init, which, x) do {\
      routebox_t *__next_one__ = (init);\
+   GList *__copy; /* DUMMY */\
    x = NULL;\
    if (!__next_one__)\
      assert(__next_one__);\
@@ -1006,7 +1007,6 @@ CreateRouteData ()
     {
       layergroupboxes[i].Ptr = NULL;
       layergroupboxes[i].PtrN = 0;
-      layergroupboxes[i].PtrMax = 0;
       GROUP_LOOP (PCB->Data, i);
       {
 	if (layer->LineN || layer->ArcN)

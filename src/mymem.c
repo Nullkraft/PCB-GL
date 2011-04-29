@@ -36,8 +36,6 @@
 
 #include "global.h"
 
-#include <memory.h>
-
 #include "data.h"
 #include "error.h"
 #include "mymem.h"
@@ -59,388 +57,316 @@ static void DSRealloc (DynamicStringTypePtr, size_t);
 /* ---------------------------------------------------------------------------
  * get next slot for a rubberband connection, allocates memory if necessary
  */
-RubberbandTypePtr
+RubberbandType *
 GetRubberbandMemory (void)
 {
-  RubberbandTypePtr ptr = Crosshair.AttachedObject.Rubberband;
+  AttachedObjectType *attached = &Crosshair.AttachedObject;
+  RubberbandType *new_obj;
 
-  /* realloc new memory if necessary and clear it */
-  if (Crosshair.AttachedObject.RubberbandN >=
-      Crosshair.AttachedObject.RubberbandMax)
-    {
-      Crosshair.AttachedObject.RubberbandMax += STEP_RUBBERBAND;
-      ptr = (RubberbandTypePtr)realloc (ptr, Crosshair.AttachedObject.RubberbandMax *
-                          sizeof (RubberbandType));
-      Crosshair.AttachedObject.Rubberband = ptr;
-      memset (ptr + Crosshair.AttachedObject.RubberbandN, 0,
-	      STEP_RUBBERBAND * sizeof (RubberbandType));
-    }
-  return (ptr + Crosshair.AttachedObject.RubberbandN++);
+  new_obj = g_slice_new0 (RubberbandType);
+  attached->Rubberband = g_list_append (attached->Rubberband, new_obj);
+  attached->RubberbandN ++;
+
+  return new_obj;
 }
 
 void **
-GetPointerMemory (PointerListTypePtr list)
+GetPointerMemory (PointerListType *list)
 {
-  void **ptr = list->Ptr;
+  void **new_obj;
 
-  /* realloc new memory if necessary and clear it */
-  if (list->PtrN >= list->PtrMax)
-    {
-      list->PtrMax = STEP_POINT + (2 * list->PtrMax);
-      ptr = (void **)realloc (ptr, list->PtrMax * sizeof (void *));
-      list->Ptr = ptr;
-      memset (ptr + list->PtrN, 0,
-	      (list->PtrMax - list->PtrN) * sizeof (void *));
-    }
-  return (ptr + list->PtrN++);
+  new_obj = g_slice_new0 (void *);
+  list->Ptr = g_list_append (list->Ptr, new_obj);
+  list->PtrN ++;
+
+  return new_obj;
+}
+
+static void
+FreePointer (gpointer data)
+{
+  g_slice_free (void *, data);
 }
 
 void
-FreePointerListMemory (PointerListTypePtr list)
+FreePointerListMemory (PointerListType *list)
 {
-  free (list->Ptr);
+  g_list_free_full (list->Ptr, (GDestroyNotify)FreePointer);
   memset (list, 0, sizeof (PointerListType));
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for a box, allocates memory if necessary
  */
-BoxTypePtr
-GetBoxMemory (BoxListTypePtr Boxes)
+BoxType *
+GetBoxMemory (BoxListType *boxlist)
 {
-  BoxTypePtr box = Boxes->Box;
+  BoxType *new_obj;
 
-  /* realloc new memory if necessary and clear it */
-  if (Boxes->BoxN >= Boxes->BoxMax)
-    {
-      Boxes->BoxMax = STEP_POINT + (2 * Boxes->BoxMax);
-      box = (BoxTypePtr)realloc (box, Boxes->BoxMax * sizeof (BoxType));
-      Boxes->Box = box;
-      memset (box + Boxes->BoxN, 0,
-	      (Boxes->BoxMax - Boxes->BoxN) * sizeof (BoxType));
-    }
-  return (box + Boxes->BoxN++);
+  new_obj = g_slice_new0 (BoxType);
+  boxlist->Box = g_list_append (boxlist->Box, new_obj);
+  boxlist->BoxN ++;
+
+  return new_obj;
 }
 
+static void
+FreeBox (BoxType *data)
+{
+  g_slice_free (BoxType, data);
+}
 
 /* ---------------------------------------------------------------------------
  * get next slot for a connection, allocates memory if necessary
  */
-ConnectionTypePtr
-GetConnectionMemory (NetTypePtr Net)
+ConnectionType *
+GetConnectionMemory (NetType *net)
 {
-  ConnectionTypePtr con = Net->Connection;
+  ConnectionType *new_obj;
 
-  /* realloc new memory if necessary and clear it */
-  if (Net->ConnectionN >= Net->ConnectionMax)
-    {
-      Net->ConnectionMax += STEP_POINT;
-      con = (ConnectionTypePtr)realloc (con, Net->ConnectionMax * sizeof (ConnectionType));
-      Net->Connection = con;
-      memset (con + Net->ConnectionN, 0,
-	      STEP_POINT * sizeof (ConnectionType));
-    }
-  return (con + Net->ConnectionN++);
+  new_obj = g_slice_new (ConnectionType);
+  net->Connection = g_list_append (net->Connection, new_obj);
+  net->ConnectionN ++;
+
+  return new_obj;
+}
+
+static void
+FreeConnection (ConnectionType *data)
+{
+  g_slice_free (ConnectionType, data);
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for a subnet, allocates memory if necessary
  */
-NetTypePtr
-GetNetMemory (NetListTypePtr Netlist)
+NetType *
+GetNetMemory (NetListType *netlist)
 {
-  NetTypePtr net = Netlist->Net;
+  NetType *new_obj;
 
-  /* realloc new memory if necessary and clear it */
-  if (Netlist->NetN >= Netlist->NetMax)
-    {
-      Netlist->NetMax += STEP_POINT;
-      net = (NetTypePtr)realloc (net, Netlist->NetMax * sizeof (NetType));
-      Netlist->Net = net;
-      memset (net + Netlist->NetN, 0, STEP_POINT * sizeof (NetType));
-    }
-  return (net + Netlist->NetN++);
+  new_obj = g_slice_new (NetType);
+  netlist->Net = g_list_append (netlist->Net, new_obj);
+  netlist->NetN ++;
+
+  return new_obj;
+}
+
+static void
+FreeNet (NetType *data)
+{
+  g_slice_free (NetType, data);
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for a net list, allocates memory if necessary
  */
-NetListTypePtr
-GetNetListMemory (NetListListTypePtr Netlistlist)
+NetListType *
+GetNetListMemory (NetListListType *netlistlist)
 {
-  NetListTypePtr netlist = Netlistlist->NetList;
+  NetListType* new_obj;
 
-  /* realloc new memory if necessary and clear it */
-  if (Netlistlist->NetListN >= Netlistlist->NetListMax)
-    {
-      Netlistlist->NetListMax += STEP_POINT;
-      netlist = (NetListTypePtr)realloc (netlist,
-                         Netlistlist->NetListMax * sizeof (NetListType));
-      Netlistlist->NetList = netlist;
-      memset (netlist + Netlistlist->NetListN, 0,
-	      STEP_POINT * sizeof (NetListType));
-    }
-  return (netlist + Netlistlist->NetListN++);
+  new_obj = g_slice_new (NetListType);
+  netlistlist->NetList = g_list_append (netlistlist->NetList, new_obj);
+  netlistlist->NetListN ++;
+
+  return new_obj;
+}
+
+static void
+FreeNetList (NetListType *data)
+{
+  g_slice_free (NetListType, data);
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for a pin, allocates memory if necessary
  */
-PinTypePtr
-GetPinMemory (ElementTypePtr Element)
+PinType *
+GetPinMemory (ElementType *element)
 {
-  PinTypePtr pin = Element->Pin;
-  bool onBoard = false;
+  PinType *new_obj;
 
-  /* realloc new memory if necessary and clear it */
-  if (Element->PinN >= Element->PinMax)
-    {
-      if (PCB->Data->pin_tree)
-	{
-	  PIN_LOOP (Element);
-	  {
-	    if (r_delete_entry (PCB->Data->pin_tree, (BoxType *) pin))
-	      onBoard = true;
-	  }
-	  END_LOOP;
-	}
-      Element->PinMax += STEP_PIN;
-      pin = (PinTypePtr)realloc (pin, Element->PinMax * sizeof (PinType));
-      Element->Pin = pin;
-      memset (pin + Element->PinN, 0, STEP_PIN * sizeof (PinType));
-      if (onBoard)
-	{
-	  PIN_LOOP (Element);
-	  {
-	    r_insert_entry (PCB->Data->pin_tree, (BoxType *) pin, 0);
-	  }
-	  END_LOOP;
-	}
-    }
-  return (pin + Element->PinN++);
+  new_obj = g_slice_new (PinType);
+  element->Pin = g_list_append (element->Pin, new_obj);
+  element->PinN ++;
+
+  return new_obj;
+}
+
+static void
+FreePin (PinType *data)
+{
+  g_slice_free (PinType, data);
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for a pad, allocates memory if necessary
  */
-PadTypePtr
-GetPadMemory (ElementTypePtr Element)
+PadType *
+GetPadMemory (ElementType *element)
 {
-  PadTypePtr pad = Element->Pad;
-  bool onBoard = false;
+  PadType *new_obj;
 
-  /* realloc new memory if necessary and clear it */
-  if (Element->PadN >= Element->PadMax)
-    {
-      if (PCB->Data->pad_tree)
-	{
-	  PAD_LOOP (Element);
-	  {
-	    if (r_delete_entry (PCB->Data->pad_tree, (BoxType *) pad))
-	      onBoard = true;
-	  }
-	  END_LOOP;
-	}
-      Element->PadMax += STEP_PAD;
-      pad = (PadTypePtr)realloc (pad, Element->PadMax * sizeof (PadType));
-      Element->Pad = pad;
-      memset (pad + Element->PadN, 0, STEP_PAD * sizeof (PadType));
-      if (onBoard)
-	{
-	  PAD_LOOP (Element);
-	  {
-	    r_insert_entry (PCB->Data->pad_tree, (BoxType *) pad, 0);
-	  }
-	  END_LOOP;
-	}
-    }
-  return (pad + Element->PadN++);
+  new_obj = g_slice_new (PadType);
+  element->Pad = g_list_append (element->Pad, new_obj);
+  element->PadN ++;
+
+  return new_obj;
+}
+
+static void
+FreePad (PadType *data)
+{
+  g_slice_free (PadType, data);
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for a via, allocates memory if necessary
  */
-PinTypePtr
-GetViaMemory (DataTypePtr Data)
+PinType *
+GetViaMemory (DataType *data)
 {
-  PinTypePtr via = Data->Via;
+  PinType *new_obj;
 
-  /* realloc new memory if necessary and clear it */
-  if (Data->ViaN >= Data->ViaMax)
-    {
-      Data->ViaMax += STEP_VIA;
-      if (Data->via_tree)
-	r_destroy_tree (&Data->via_tree);
-      via = (PinTypePtr)realloc (via, Data->ViaMax * sizeof (PinType));
-      Data->Via = via;
-      memset (via + Data->ViaN, 0, STEP_VIA * sizeof (PinType));
-      Data->via_tree = r_create_tree (NULL, 0, 0);
-      VIA_LOOP (Data);
-      {
-	r_insert_entry (Data->via_tree, (BoxType *) via, 0);
-      }
-      END_LOOP;
-    }
-  return (via + Data->ViaN++);
+  new_obj = g_slice_new (PinType);
+  data->Via = g_list_append (data->Via, new_obj);
+  data->ViaN ++;
+
+  return new_obj;
+}
+
+static void
+FreeVia (PinType *data)
+{
+  g_slice_free (PinType, data);
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for a Rat, allocates memory if necessary
  */
-RatTypePtr
-GetRatMemory (DataTypePtr Data)
+RatType *
+GetRatMemory (DataType *data)
 {
-  RatTypePtr rat = Data->Rat;
+  RatType *new_obj;
 
-  /* realloc new memory if necessary and clear it */
-  if (Data->RatN >= Data->RatMax)
-    {
-      Data->RatMax += STEP_RAT;
-      /* all of the pointers move, so rebuild the whole tree */
-      if (Data->rat_tree)
-        r_destroy_tree (&Data->rat_tree);
-      rat = (RatTypePtr)realloc (rat, Data->RatMax * sizeof (RatType));
-      Data->Rat = rat;
-      memset (rat + Data->RatN, 0, STEP_RAT * sizeof (RatType));
-      Data->rat_tree = r_create_tree (NULL, 0, 0);
-      RAT_LOOP (Data);
-      {
-        r_insert_entry (Data->rat_tree, (BoxTypePtr) line, 0);
-      }
-      END_LOOP;
-    }
-  return (rat + Data->RatN++);
+  new_obj = g_slice_new (RatType);
+  data->Rat = g_list_append (data->Rat, new_obj);
+  data->RatN ++;
+
+  return new_obj;
+}
+
+static void
+FreeRat (RatType *data)
+{
+  g_slice_free (RatType, data);
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for a line, allocates memory if necessary
  */
-LineTypePtr
-GetLineMemory (LayerTypePtr Layer)
+LineType *
+GetLineMemory (LayerType *layer)
 {
-  LineTypePtr line = Layer->Line;
+  LineType *new_obj;
 
-  /* realloc new memory if necessary and clear it */
-  if (Layer->LineN >= Layer->LineMax)
-    {
-      Layer->LineMax += STEP_LINE;
-      /* all of the pointers move, so rebuild the whole tree */
-      if (Layer->line_tree)
-	r_destroy_tree (&Layer->line_tree);
-      line = (LineTypePtr)realloc (line, Layer->LineMax * sizeof (LineType));
-      Layer->Line = line;
-      memset (line + Layer->LineN, 0, STEP_LINE * sizeof (LineType));
-      Layer->line_tree = r_create_tree (NULL, 0, 0);
-      LINE_LOOP (Layer);
-      {
-	r_insert_entry (Layer->line_tree, (BoxTypePtr) line, 0);
-      }
-      END_LOOP;
-    }
-  return (line + Layer->LineN++);
+  new_obj = g_slice_new (LineType);
+  layer->Line = g_list_append (layer->Line, new_obj);
+  layer->LineN ++;
+
+  return new_obj;
+}
+
+static void
+FreeLine (LineType *data)
+{
+  g_slice_free (LineType, data);
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for an arc, allocates memory if necessary
  */
 ArcTypePtr
-GetArcMemory (LayerTypePtr Layer)
+GetArcMemory (LayerType *layer)
 {
-  ArcTypePtr arc = Layer->Arc;
+  ArcType *new_obj;
 
-  /* realloc new memory if necessary and clear it */
-  if (Layer->ArcN >= Layer->ArcMax)
-    {
-      Layer->ArcMax += STEP_ARC;
-      if (Layer->arc_tree)
-	r_destroy_tree (&Layer->arc_tree);
-      arc = (ArcTypePtr)realloc (arc, Layer->ArcMax * sizeof (ArcType));
-      Layer->Arc = arc;
-      memset (arc + Layer->ArcN, 0, STEP_ARC * sizeof (ArcType));
-      Layer->arc_tree = r_create_tree (NULL, 0, 0);
-      ARC_LOOP (Layer);
-      {
-	r_insert_entry (Layer->arc_tree, (BoxTypePtr) arc, 0);
-      }
-      END_LOOP;
-    }
-  return (arc + Layer->ArcN++);
+  new_obj = g_slice_new (ArcType);
+  layer->Arc = g_list_append (layer->Arc, new_obj);
+  layer->ArcN ++;
+
+  return new_obj;
+}
+
+static void
+FreeArc (ArcType *data)
+{
+  g_slice_free (ArcType, data);
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for a text object, allocates memory if necessary
  */
 TextTypePtr
-GetTextMemory (LayerTypePtr Layer)
+GetTextMemory (LayerType *layer)
 {
-  TextTypePtr text = Layer->Text;
+  TextType *new_obj;
 
-  /* realloc new memory if necessary and clear it */
-  if (Layer->TextN >= Layer->TextMax)
-    {
-      Layer->TextMax += STEP_TEXT;
-      if (Layer->text_tree)
-	r_destroy_tree (&Layer->text_tree);
-      text = (TextTypePtr)realloc (text, Layer->TextMax * sizeof (TextType));
-      Layer->Text = text;
-      memset (text + Layer->TextN, 0, STEP_TEXT * sizeof (TextType));
-      Layer->text_tree = r_create_tree (NULL, 0, 0);
-      TEXT_LOOP (Layer);
-      {
-	r_insert_entry (Layer->text_tree, (BoxTypePtr) text, 0);
-      }
-      END_LOOP;
-    }
-  return (text + Layer->TextN++);
+  new_obj = g_slice_new (TextType);
+  layer->Text = g_list_append (layer->Text, new_obj);
+  layer->TextN ++;
+
+  return new_obj;
+}
+
+static void
+FreeText (TextType *data)
+{
+  g_slice_free (TextType, data);
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for a polygon object, allocates memory if necessary
  */
-PolygonTypePtr
-GetPolygonMemory (LayerTypePtr Layer)
+PolygonType *
+GetPolygonMemory (LayerType *layer)
 {
-  PolygonTypePtr polygon = Layer->Polygon;
+  PolygonType *new_obj;
 
-  /* realloc new memory if necessary and clear it */
-  if (Layer->PolygonN >= Layer->PolygonMax)
-    {
-      Layer->PolygonMax += STEP_POLYGON;
-      if (Layer->polygon_tree)
-	r_destroy_tree (&Layer->polygon_tree);
-      polygon = (PolygonTypePtr)realloc (polygon, Layer->PolygonMax * sizeof (PolygonType));
-      Layer->Polygon = polygon;
-      memset (polygon + Layer->PolygonN, 0,
-	      STEP_POLYGON * sizeof (PolygonType));
-      Layer->polygon_tree = r_create_tree (NULL, 0, 0);
-      POLYGON_LOOP (Layer);
-      {
-	r_insert_entry (Layer->polygon_tree, (BoxType *) polygon, 0);
-      }
-      END_LOOP;
-    }
-  return (polygon + Layer->PolygonN++);
+  new_obj = g_slice_new (PolygonType);
+  layer->Polygon = g_list_append (layer->Polygon, new_obj);
+  layer->PolygonN ++;
+
+  return new_obj;
+}
+
+static void
+FreePolygon (PolygonType *data)
+{
+  g_slice_free (PolygonType, data);
 }
 
 /* ---------------------------------------------------------------------------
  * gets the next slot for a point in a polygon struct, allocates memory
  * if necessary
  */
-PointTypePtr
-GetPointMemoryInPolygon (PolygonTypePtr Polygon)
+PointType *
+GetPointMemoryInPolygon (PolygonType *polygon)
 {
-  PointTypePtr points = Polygon->Points;
+  PointType *new_obj;
 
-  /* realloc new memory if necessary and clear it */
-  if (Polygon->PointN >= Polygon->PointMax)
-    {
-      Polygon->PointMax += STEP_POLYGONPOINT;
-      points = (PointTypePtr)realloc (points, Polygon->PointMax * sizeof (PointType));
-      Polygon->Points = points;
-      memset (points + Polygon->PointN, 0,
-	      STEP_POLYGONPOINT * sizeof (PointType));
-    }
-  return (points + Polygon->PointN++);
+  new_obj = g_slice_new (PointType);
+  polygon->Points = g_list_append (polygon->Points, new_obj);
+  polygon->PointN ++;
+
+  return new_obj;
+}
+
+static void
+FreePoint (PointType *data)
+{
+  g_slice_free (PointType, data);
 }
 
 /* ---------------------------------------------------------------------------
@@ -448,441 +374,422 @@ GetPointMemoryInPolygon (PolygonTypePtr Polygon)
  * if necessary
  */
 Cardinal *
-GetHoleIndexMemoryInPolygon (PolygonTypePtr Polygon)
+GetHoleIndexMemoryInPolygon (PolygonType *polygon)
 {
-  Cardinal *holeindex = Polygon->HoleIndex;
+  Cardinal *new_obj;
 
-  /* realloc new memory if necessary and clear it */
-  if (Polygon->HoleIndexN >= Polygon->HoleIndexMax)
-    {
-      Polygon->HoleIndexMax += STEP_POLYGONHOLEINDEX;
-      holeindex = (Cardinal *)realloc (holeindex, Polygon->HoleIndexMax * sizeof (int));
-      Polygon->HoleIndex = holeindex;
-      memset (holeindex + Polygon->HoleIndexN, 0,
-	      STEP_POLYGONHOLEINDEX * sizeof (int));
-    }
-  return (holeindex + Polygon->HoleIndexN++);
+  new_obj = g_slice_new (Cardinal);
+  polygon->HoleIndex = g_list_append (polygon->HoleIndex, new_obj);
+  polygon->HoleIndexN ++;
+
+  return new_obj;
+}
+
+static void
+FreeHoleIndex (Cardinal *data)
+{
+  g_slice_free (Cardinal, data);
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for an element, allocates memory if necessary
  */
-ElementTypePtr
-GetElementMemory (DataTypePtr Data)
+ElementType *
+GetElementMemory (DataType *data)
 {
-  ElementTypePtr element = Data->Element;
-  int i;
+  ElementType *new_obj;
 
-  /* realloc new memory if necessary and clear it */
-  if (Data->ElementN >= Data->ElementMax)
-    {
-      Data->ElementMax += STEP_ELEMENT;
-      if (Data->element_tree)
-	r_destroy_tree (&Data->element_tree);
-      element = (ElementTypePtr)realloc (element, Data->ElementMax * sizeof (ElementType));
-      Data->Element = element;
-      memset (element + Data->ElementN, 0,
-	      STEP_ELEMENT * sizeof (ElementType));
-      Data->element_tree = r_create_tree (NULL, 0, 0);
-      for (i = 0; i < MAX_ELEMENTNAMES; i++)
-	{
-	  if (Data->name_tree[i])
-	    r_destroy_tree (&Data->name_tree[i]);
-	  Data->name_tree[i] = r_create_tree (NULL, 0, 0);
-	}
+  new_obj = g_slice_new (ElementType);
+  data->Element = g_list_append (data->Element, new_obj);
+  data->ElementN ++;
 
-      ELEMENT_LOOP (Data);
-      {
-	r_insert_entry (Data->element_tree, (BoxType *) element, 0);
-	PIN_LOOP (element);
-	{
-	  pin->Element = element;
-	}
-	END_LOOP;
-	PAD_LOOP (element);
-	{
-	  pad->Element = element;
-	}
-	END_LOOP;
-	ELEMENTTEXT_LOOP (element);
-	{
-	  text->Element = element;
-	  r_insert_entry (Data->name_tree[n], (BoxType *) text, 0);
-	}
-	END_LOOP;
-      }
-      END_LOOP;
-    }
-  return (element + Data->ElementN++);
+  return new_obj;
 }
 
-/* ---------------------------------------------------------------------------
- * get next slot for a library menu, allocates memory if necessary
- */
-LibraryMenuTypePtr
-GetLibraryMenuMemory (LibraryTypePtr lib)
+static void
+FreeElement (ElementType *data)
 {
-  LibraryMenuTypePtr menu = lib->Menu;
-
-  /* realloc new memory if necessary and clear it */
-  if (lib->MenuN >= lib->MenuMax)
-    {
-      lib->MenuMax += STEP_LIBRARYMENU;
-      menu = (LibraryMenuTypePtr)realloc (menu, lib->MenuMax * sizeof (LibraryMenuType));
-      lib->Menu = menu;
-      memset (menu + lib->MenuN, 0,
-	      STEP_LIBRARYMENU * sizeof (LibraryMenuType));
-    }
-  return (menu + lib->MenuN++);
+  g_slice_free (ElementType, data);
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for a library entry, allocates memory if necessary
  */
-LibraryEntryTypePtr
-GetLibraryEntryMemory (LibraryMenuTypePtr Menu)
+LibraryEntryType *
+GetLibraryEntryMemory (LibraryMenuType *menu)
 {
-  LibraryEntryTypePtr entry = Menu->Entry;
+  LibraryEntryType *new_obj;
 
-  /* realloc new memory if necessary and clear it */
-  if (Menu->EntryN >= Menu->EntryMax)
-    {
-      Menu->EntryMax += STEP_LIBRARYENTRY;
-      entry = (LibraryEntryTypePtr)realloc (entry, Menu->EntryMax * sizeof (LibraryEntryType));
-      Menu->Entry = entry;
-      memset (entry + Menu->EntryN, 0,
-	      STEP_LIBRARYENTRY * sizeof (LibraryEntryType));
-    }
-  return (entry + Menu->EntryN++);
+  new_obj = g_slice_new (LibraryEntryType);
+  menu->Entry = g_list_append (menu->Entry, new_obj);
+  menu->EntryN ++;
+
+  return new_obj;
+}
+
+static void
+FreeLibraryEntry (LibraryEntryType *entry)
+{
+  free (entry->AllocatedMemory);
+  free (entry->ListEntry);
+
+  g_slice_free (LibraryEntryType, entry);
+}
+
+/* ---------------------------------------------------------------------------
+ * get next slot for a library menu, allocates memory if necessary
+ */
+LibraryMenuType *
+GetLibraryMenuMemory (LibraryType *lib)
+{
+  LibraryMenuType *new_obj;
+
+  new_obj = g_slice_new (LibraryMenuType);
+  lib->Menu = g_list_append (lib->Menu, new_obj);
+  lib->MenuN ++;
+
+  return new_obj;
+}
+
+static void
+FreeLibraryMenu (LibraryMenuType *menu)
+{
+  g_list_free_full (menu->Entry, (GDestroyNotify)FreeLibraryEntry);
+  free (menu->Name);
+  g_slice_free (LibraryMenuType, menu);
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for a DrillElement, allocates memory if necessary
  */
-ElementTypeHandle
-GetDrillElementMemory (DrillTypePtr Drill)
+ElementType **
+GetDrillElementMemory (DrillType *drill)
 {
-  ElementTypePtr *element;
+  ElementType **new_obj;
 
-  element = Drill->Element;
+  new_obj = g_slice_new (ElementType *);
+  drill->Element = g_list_append (drill->Element, new_obj);
+  drill->ElementN ++;
 
-  /* realloc new memory if necessary and clear it */
-  if (Drill->ElementN >= Drill->ElementMax)
-    {
-      Drill->ElementMax += STEP_ELEMENT;
-      element = (ElementTypePtr *)realloc (element,
-                         Drill->ElementMax * sizeof (ElementTypeHandle));
-      Drill->Element = element;
-      memset (element + Drill->ElementN, 0,
-	      STEP_ELEMENT * sizeof (ElementTypeHandle));
-    }
-  return (element + Drill->ElementN++);
+  return new_obj;
+}
+
+static void
+FreeDrillElement (ElementType **data)
+{
+  g_slice_free (ElementType *, data);
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for a DrillPoint, allocates memory if necessary
  */
-PinTypeHandle
-GetDrillPinMemory (DrillTypePtr Drill)
+PinType **
+GetDrillPinMemory (DrillType *drill)
 {
-  PinTypePtr *pin;
+  PinType **new_obj;
 
-  pin = Drill->Pin;
+  new_obj = g_slice_new (PinType *);
+  drill->Pin = g_list_append (drill->Pin, new_obj);
+  drill->PinN ++;
 
-  /* realloc new memory if necessary and clear it */
-  if (Drill->PinN >= Drill->PinMax)
-    {
-      Drill->PinMax += STEP_POINT;
-      pin = (PinTypePtr *)realloc (pin, Drill->PinMax * sizeof (PinTypeHandle));
-      Drill->Pin = pin;
-      memset (pin + Drill->PinN, 0, STEP_POINT * sizeof (PinTypeHandle));
-    }
-  return (pin + Drill->PinN++);
+  return new_obj;
+}
+
+static void
+FreeDrillPin (PinType **data)
+{
+  g_slice_free (PinType *, data);
 }
 
 /* ---------------------------------------------------------------------------
  * get next slot for a Drill, allocates memory if necessary
  */
-DrillTypePtr
-GetDrillInfoDrillMemory (DrillInfoTypePtr DrillInfo)
+DrillType *
+GetDrillInfoDrillMemory (DrillInfoType *drillinfo)
 {
-  DrillTypePtr drill = DrillInfo->Drill;
+  DrillType *new_obj;
 
-  /* realloc new memory if necessary and clear it */
-  if (DrillInfo->DrillN >= DrillInfo->DrillMax)
-    {
-      DrillInfo->DrillMax += STEP_DRILL;
-      drill = (DrillTypePtr)realloc (drill, DrillInfo->DrillMax * sizeof (DrillType));
-      DrillInfo->Drill = drill;
-      memset (drill + DrillInfo->DrillN, 0, STEP_DRILL * sizeof (DrillType));
-    }
-  return (drill + DrillInfo->DrillN++);
+  new_obj = g_slice_new (DrillType);
+  drillinfo->Drill = g_list_append (drillinfo->Drill, new_obj);
+  drillinfo->DrillN ++;
+
+  return new_obj;
+}
+
+static void
+FreeDrill (DrillType *drill)
+{
+  g_list_free_full (drill->Element, (GDestroyNotify)FreeDrillElement);
+  g_list_free_full (drill->Pin, (GDestroyNotify)FreeDrillPin);
+  g_slice_free (DrillType, drill);
+}
+
+void
+FreeDrillInfo (DrillInfoType *drill_info)
+{
+  g_list_free_full (drill_info->Drill, (GDestroyNotify)FreeDrill);
+  g_slice_free (DrillInfoType, drill_info);
+}
+
+AttributeType *
+GetAttributeMemory (AttributeListType *attr_list)
+{
+  AttributeType *new_obj;
+
+  new_obj = g_slice_new0 (AttributeType);
+  attr_list->List = g_list_append (attr_list->List, new_obj);
+  attr_list->Number ++;
+
+  return new_obj;
+}
+
+void
+FreeAttribute (AttributeType *attr)
+{
+  free (attr->name);
+  free (attr->value);
+  g_slice_free (AttributeType, attr);
 }
 
 /* ---------------------------------------------------------------------------
  * frees memory used by a polygon
  */
 void
-FreePolygonMemory (PolygonTypePtr Polygon)
+FreePolygonMemory (PolygonType *polygon)
 {
-  if (Polygon)
-    {
-      free (Polygon->Points);
-      free (Polygon->HoleIndex);
-      if (Polygon->Clipped)
-	poly_Free (&Polygon->Clipped);
-      poly_FreeContours (&Polygon->NoHoles);
-      memset (Polygon, 0, sizeof (PolygonType));
-    }
+  if (polygon == NULL)
+    return;
+
+  g_list_free_full (polygon->Points, (GDestroyNotify)FreePoint);
+  g_list_free_full (polygon->HoleIndex, (GDestroyNotify)FreeHoleIndex);
+
+  if (polygon->Clipped)
+    poly_Free (&polygon->Clipped);
+  poly_FreeContours (&polygon->NoHoles);
+
+  memset (polygon, 0, sizeof (PolygonType));
 }
 
 /* ---------------------------------------------------------------------------
  * frees memory used by a box list
  */
 void
-FreeBoxListMemory (BoxListTypePtr Boxlist)
+FreeBoxListMemory (BoxListType *boxlist)
 {
-  if (Boxlist)
-    {
-      free (Boxlist->Box);
-      memset (Boxlist, 0, sizeof (BoxListType));
-    }
+  if (boxlist == NULL)
+    return;
+
+  g_list_free_full (boxlist->Box, (GDestroyNotify)FreeBox);
+  memset (boxlist, 0, sizeof (BoxListType));
 }
 
 /* ---------------------------------------------------------------------------
  * frees memory used by a net 
  */
 void
-FreeNetListMemory (NetListTypePtr Netlist)
+FreeNetListMemory (NetListType *netlist)
 {
-  if (Netlist)
-    {
-      NET_LOOP (Netlist);
-      {
-	FreeNetMemory (net);
-      }
-      END_LOOP;
-      free (Netlist->Net);
-      memset (Netlist, 0, sizeof (NetListType));
-    }
+  if (netlist == NULL)
+    return;
+
+  NET_LOOP (netlist);
+  {
+    FreeNetMemory (net);
+  }
+  END_LOOP;
+
+  g_list_free_full (netlist->Net, (GDestroyNotify)FreeNet);
+  memset (netlist, 0, sizeof (NetListType));
 }
 
 /* ---------------------------------------------------------------------------
  * frees memory used by a net list
  */
 void
-FreeNetListListMemory (NetListListTypePtr Netlistlist)
+FreeNetListListMemory (NetListListType *netlistlist)
 {
-  if (Netlistlist)
-    {
-      NETLIST_LOOP (Netlistlist);
-      {
-	FreeNetListMemory (netlist);
-      }
-      END_LOOP;
-      free (Netlistlist->NetList);
-      memset (Netlistlist, 0, sizeof (NetListListType));
-    }
+  if (netlistlist == NULL)
+    return;
+
+  NETLIST_LOOP (netlistlist);
+  {
+    FreeNetListMemory (netlist);
+  }
+  END_LOOP;
+
+  g_list_free_full (netlistlist->NetList, (GDestroyNotify)FreeNetList);
+  memset (netlistlist, 0, sizeof (NetListListType));
 }
 
 /* ---------------------------------------------------------------------------
  * frees memory used by a subnet 
  */
 void
-FreeNetMemory (NetTypePtr Net)
+FreeNetMemory (NetType *net)
 {
-  if (Net)
-    {
-      free (Net->Connection);
-      memset (Net, 0, sizeof (NetType));
-    }
+  if (net == NULL)
+    return;
+
+  g_list_free_full (net->Connection, (GDestroyNotify)FreeConnection);
+  memset (net, 0, sizeof (NetType));
 }
+
 /* ---------------------------------------------------------------------------
  * frees memory used by an attribute list
- */
-static void
-FreeAttributeListMemory (AttributeListTypePtr list)
+*/
+void
+FreeAttributeListMemory (AttributeListType *list)
 {
-  int i;
-
-  for (i = 0; i < list->Number; i++)
-    {
-      free (list->List[i].name);
-      free (list->List[i].value);
-    }
-  free (list->List);
-  list->List = NULL;
-  list->Max = 0;
+  g_list_free_full (list->List, (GDestroyNotify)FreeAttribute);
+  memset (list, 0, sizeof (AttributeListType));
 }
 
 /* ---------------------------------------------------------------------------
  * frees memory used by an element
  */
 void
-FreeElementMemory (ElementTypePtr Element)
+FreeElementMemory (ElementType *element)
 {
-  if (Element)
-    {
-      ELEMENTNAME_LOOP (Element);
-      {
-	free (textstring);
-      }
-      END_LOOP;
-      PIN_LOOP (Element);
-      {
-	free (pin->Name);
-	free (pin->Number);
-      }
-      END_LOOP;
-      PAD_LOOP (Element);
-      {
-	free (pad->Name);
-	free (pad->Number);
-      }
-      END_LOOP;
-      free (Element->Pin);
-      free (Element->Pad);
-      free (Element->Line);
-      free (Element->Arc);
-      FreeAttributeListMemory (&Element->Attributes);
-      memset (Element, 0, sizeof (ElementType));
-    }
+  if (element == NULL)
+    return;
+
+  ELEMENTNAME_LOOP (element);
+  {
+    free (textstring);
+  }
+  END_LOOP;
+  PIN_LOOP (element);
+  {
+    free (pin->Name);
+    free (pin->Number);
+  }
+  END_LOOP;
+  PAD_LOOP (element);
+  {
+    free (pad->Name);
+    free (pad->Number);
+  }
+  END_LOOP;
+
+  g_list_free_full (element->Pin,  (GDestroyNotify)FreePin);
+  g_list_free_full (element->Pad,  (GDestroyNotify)FreePad);
+  g_list_free_full (element->Line, (GDestroyNotify)FreeLine);
+  g_list_free_full (element->Arc,  (GDestroyNotify)FreeArc);
+
+  FreeAttributeListMemory (&element->Attributes);
+  memset (element, 0, sizeof (ElementType));
 }
 
 /* ---------------------------------------------------------------------------
  * free memory used by PCB
  */
 void
-FreePCBMemory (PCBTypePtr PCBPtr)
+FreePCBMemory (PCBType *pcb)
 {
   int i;
 
-  if (PCBPtr)
-    {
-      free (PCBPtr->Name);
-      free (PCBPtr->Filename);
-      free (PCBPtr->PrintFilename);
-      if (PCBPtr->Data)
-	FreeDataMemory (PCBPtr->Data);
-      free (PCBPtr->Data);
-      /* release font symbols */
-      for (i = 0; i <= MAX_FONTPOSITION; i++)
-	free (PCBPtr->Font.Symbol[i].Line);
-      FreeLibraryMemory (&PCBPtr->NetlistLib);
-      FreeAttributeListMemory (&PCBPtr->Attributes);
-      /* clear struct */
-      memset (PCBPtr, 0, sizeof (PCBType));
-    }
-  else
-    {
-      fprintf (stderr, "Warning:  Tried to FreePCBMemory(null)\n");
-    }
+  if (pcb == NULL)
+    return;
+
+  free (pcb->Name);
+  free (pcb->Filename);
+  free (pcb->PrintFilename);
+  FreeDataMemory (pcb->Data);
+  free (pcb->Data);
+  /* release font symbols */
+  for (i = 0; i <= MAX_FONTPOSITION; i++)
+    free (pcb->Font.Symbol[i].Line);
+  FreeLibraryMemory (&pcb->NetlistLib);
+  FreeAttributeListMemory (&pcb->Attributes);
+  /* clear struct */
+  memset (pcb, 0, sizeof (PCBType));
 }
 
 /* ---------------------------------------------------------------------------
  * free memory used by data struct
  */
 void
-FreeDataMemory (DataTypePtr Data)
+FreeDataMemory (DataType *data)
 {
   LayerTypePtr layer;
   int i;
 
-  if (Data)
+  if (data == NULL)
+    return;
+
+  VIA_LOOP (data);
+  {
+    free (via->Name);
+  }
+  END_LOOP;
+  g_list_free_full (data->Via, (GDestroyNotify)FreeVia);
+  ELEMENT_LOOP (data);
+  {
+    FreeElementMemory (element);
+  }
+  END_LOOP;
+  g_list_free_full (data->Element, (GDestroyNotify)FreeElement);
+  g_list_free_full (data->Rat, (GDestroyNotify)FreeRat);
+
+  for (layer = data->Layer, i = 0; i < MAX_LAYER + 2; layer++, i++)
     {
-      VIA_LOOP (Data);
+      FreeAttributeListMemory (&layer->Attributes);
+      TEXT_LOOP (layer);
       {
-	free (via->Name);
+        free (text->TextString);
       }
       END_LOOP;
-      free (Data->Via);
-      ELEMENT_LOOP (Data);
+      if (layer->Name)
+        free (layer->Name);
+      LINE_LOOP (layer);
       {
-	FreeElementMemory (element);
+        if (line->Number)
+          free (line->Number);
       }
       END_LOOP;
-      free (Data->Element);
-      free (Data->Rat);
-
-      for (layer = Data->Layer, i = 0; i < MAX_LAYER + 2; layer++, i++)
-	{
-	  FreeAttributeListMemory (&layer->Attributes);
-	  TEXT_LOOP (layer);
-	  {
-	    free (text->TextString);
-	  }
-	  END_LOOP;
-	  if (layer->Name)
-	    free (layer->Name);
-	  LINE_LOOP (layer);
-	  {
-	    if (line->Number)
-	      free (line->Number);
-	  }
-	  END_LOOP;
-	  free (layer->Line);
-	  free (layer->Arc);
-	  free (layer->Text);
-	  POLYGON_LOOP (layer);
-	  {
-	    FreePolygonMemory (polygon);
-	  }
-	  END_LOOP;
-	  free (layer->Polygon);
-	  if (layer->line_tree)
-	    r_destroy_tree (&layer->line_tree);
-	  if (layer->arc_tree)
-	    r_destroy_tree (&layer->arc_tree);
-	  if (layer->text_tree)
-	    r_destroy_tree (&layer->text_tree);
-	  if (layer->polygon_tree)
-	    r_destroy_tree (&layer->polygon_tree);
-	}
-
-      if (Data->element_tree)
-	r_destroy_tree (&Data->element_tree);
-      for (i = 0; i < MAX_ELEMENTNAMES; i++)
-	if (Data->name_tree[i])
-	  r_destroy_tree (&Data->name_tree[i]);
-      if (Data->via_tree)
-	r_destroy_tree (&Data->via_tree);
-      if (Data->pin_tree)
-	r_destroy_tree (&Data->pin_tree);
-      if (Data->pad_tree)
-	r_destroy_tree (&Data->pad_tree);
-      if (Data->rat_tree)
-	r_destroy_tree (&Data->rat_tree);
-      /* clear struct */
-      memset (Data, 0, sizeof (DataType));
+      g_list_free_full (layer->Line, (GDestroyNotify)FreeLine);
+      g_list_free_full (layer->Arc, (GDestroyNotify)FreeArc);
+      g_list_free_full (layer->Text, (GDestroyNotify)FreeText);
+      POLYGON_LOOP (layer);
+      {
+        FreePolygonMemory (polygon);
+      }
+      END_LOOP;
+      g_list_free_full (layer->Polygon, (GDestroyNotify)FreePolygon);
+      if (layer->line_tree)
+        r_destroy_tree (&layer->line_tree);
+      if (layer->arc_tree)
+        r_destroy_tree (&layer->arc_tree);
+      if (layer->text_tree)
+        r_destroy_tree (&layer->text_tree);
+      if (layer->polygon_tree)
+        r_destroy_tree (&layer->polygon_tree);
     }
-  else
-    {
-      fprintf (stderr, "Warning:  Tried to FreeDataMemory(null)\n");
-    }
+
+  if (data->element_tree)
+    r_destroy_tree (&data->element_tree);
+  for (i = 0; i < MAX_ELEMENTNAMES; i++)
+    if (data->name_tree[i])
+      r_destroy_tree (&data->name_tree[i]);
+  if (data->via_tree)
+    r_destroy_tree (&data->via_tree);
+  if (data->pin_tree)
+    r_destroy_tree (&data->pin_tree);
+  if (data->pad_tree)
+    r_destroy_tree (&data->pad_tree);
+  if (data->rat_tree)
+    r_destroy_tree (&data->rat_tree);
+  /* clear struct */
+  memset (data, 0, sizeof (DataType));
 }
 
 /* ---------------------------------------------------------------------------
  * releases the memory that's allocated by the library
  */
 void
-FreeLibraryMemory (LibraryTypePtr lib)
+FreeLibraryMemory (LibraryType *lib)
 {
-  MENU_LOOP (lib);
-  {
-    ENTRY_LOOP (menu);
-    {
-      free (entry->AllocatedMemory);
-      free (entry->ListEntry);
-    }
-    END_LOOP;
-    free (menu->Entry);
-    free (menu->Name);
-  }
-  END_LOOP;
-  free (lib->Menu);
-
-  /* clear struct */
-  memset (lib, 0, sizeof (LibraryType));
+  g_list_free_full (lib->Menu, (GDestroyNotify)FreeLibraryMenu);
 }
 
 /* ---------------------------------------------------------------------------

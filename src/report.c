@@ -335,8 +335,7 @@ ReportDialog (int argc, char **argv, int x, int y)
 
 	sprintf (&report[0], "POLYGON ID# %ld;  Flags:%s\n"
 		 "Its bounding box is (%.*f,%.*f) (%.*f,%.*f) %s.\n"
-		 "It has %d points and could store %d more\n"
-		 "  without using more memory.\n"
+		 "It has %d points.\n"
 		 "It has %d holes and resides on layer %d.\n"
 		 "%s", Polygon->ID,
 		 flags_to_string (Polygon->Flags, POLYGON_TYPE),
@@ -344,7 +343,7 @@ ReportDialog (int argc, char **argv, int x, int y)
 		 prec, units(Polygon->BoundingBox.Y1),
 		 prec, units(Polygon->BoundingBox.X2),
 		 prec, UNIT(Polygon->BoundingBox.Y2),
-		 Polygon->PointN, Polygon->PointMax - Polygon->PointN,
+		 Polygon->PointN,
 		 Polygon->HoleIndexN,
 		 GetLayerNumber (PCB->Data, (LayerTypePtr) ptr1),
 		 TEST_FLAG (LOCKFLAG, Polygon) ? "It is LOCKED.\n" : "");
