@@ -230,9 +230,10 @@ typedef enum
     int (*throw_drc_dialog) (void);
   } HID_DRC_GUI;
 
+  typedef struct hid_st HID;
 
 /* This is the main HID structure.  */
-  typedef struct
+  struct hid_st
   {
     /* The size of this structure.  We use this as a compatibility
        check; a HID built with a different hid.h than we're expecting
@@ -543,7 +544,11 @@ typedef enum
 
     void (*edit_attributes) (char *owner, AttributeListType *attrlist_);
 
-  } HID;
+    HID *(*request_debug_draw) (void);
+    void (*flush_debug_draw)   (void);
+    void (*finish_debug_draw)  (void);
+
+  };
 
 /* Call this as soon as possible from main().  No other HID calls are
    valid until this is called.  */
