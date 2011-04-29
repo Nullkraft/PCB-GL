@@ -1,0 +1,40 @@
+Bottom: 682fd858497b379d36f503b41d6d16454d86b9f9
+Top:    682fd858497b379d36f503b41d6d16454d86b9f9
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-29 16:46:36 +0100
+
+Add HID apis to handle live debug drawing from the core
+
+It is envisaved that this API should ONLY be used for debugging, not
+presenting a user-interface. In general, the GUIs may have their own
+special requirements for drawing the board, and this API is not meant
+to allow the core to augment or present user-visible drawing. This is
+reflected in the API naming.
+
+Request permission for debug drawing
+
+HID *ddraw = gui->request_debug_draw (void);
+
+Returns a HID pointer which should be used rather than the global
+gui-> for making drawing calls. If the return value is NULL, then
+permission has been denied, and the debug drawing must continue.
+
+
+Flush pending drawing to the screen
+
+void ddraw->flush_debug_draw (void);
+
+May be implemented as a NOOP if the GUI has chosen to send the debug
+drawing directly to the screen.
+
+
+When finished, the user must inform the GUI to clean up resources:
+
+ddraw->finish_debug_draw (void);
+
+Any remaining rendering will be flushed to the screen.
+
+
+---
+
+
