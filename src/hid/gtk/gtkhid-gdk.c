@@ -712,7 +712,8 @@ ghid_fill_rect (hidGC gc, int x1, int y1, int x2, int y2)
 		      x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 }
 
-void redraw_region (GdkRectangle *rect)
+static void
+redraw_region (GdkRectangle *rect)
 {
   int eleft, eright, etop, ebottom;
   BoxType region;
