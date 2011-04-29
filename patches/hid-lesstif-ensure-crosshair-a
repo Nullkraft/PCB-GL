@@ -8,6 +8,10 @@ hid/lesstif: Ensure crosshair and mark updates go to the screen
 The "pixmap" global might be pointing at one of the backing pixmaps
 when we are called.
 
+Does not fix any known bug, just in preparation for another patch
+relating to debug drawing which may leave pixmap pointing to the
+backing store.
+
 
 ---
 
