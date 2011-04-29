@@ -17,7 +17,7 @@ HID *ddraw = gui->request_debug_draw (void);
 
 Returns a HID pointer which should be used rather than the global
 gui-> for making drawing calls. If the return value is NULL, then
-permission has been denied, and the debug drawing must continue.
+permission has been denied, and the debug drawing must not continue.
 
 
 Flush pending drawing to the screen
