@@ -81,6 +81,7 @@ FontEdit (int argc, char **argv, int Ux, int Uy)
   SymbolType *symbol;
   LayerTypePtr lfont, lorig, lwidth, lgrid;
   int s, l;
+  GList *ll;
 
   if (hid_actionl ("New", "Font", 0))
     return 1;
@@ -118,25 +119,26 @@ FontEdit (int argc, char **argv, int Ux, int Uy)
       miny = 500;
       maxy = font->MaxHeight;
 
-      for (l = 0; l < symbol->LineN; l++)
+      for (ll = symbol->Line; ll != NULL; ll = g_list_next (ll))
 	{
+	  LineType *line = ll->data;
+
 	  CreateDrawnLineOnLayer (lfont,
-				  symbol->Line[l].Point1.X + ox,
-				  symbol->Line[l].Point1.Y + oy,
-				  symbol->Line[l].Point2.X + ox,
-				  symbol->Line[l].Point2.Y + oy,
-				  symbol->Line[l].Thickness,
-				  symbol->Line[l].Thickness, NoFlags ());
-	  CreateDrawnLineOnLayer (lorig, symbol->Line[l].Point1.X + ox,
-				  symbol->Line[l].Point1.Y + oy,
-				  symbol->Line[l].Point2.X + ox,
-				  symbol->Line[l].Point2.Y + oy,
-				  symbol->Line[l].Thickness,
-				  symbol->Line[l].Thickness, NoFlags ());
-	  if (maxx < symbol->Line[l].Point1.X)
-	    maxx = symbol->Line[l].Point1.X;
-	  if (maxx < symbol->Line[l].Point2.X)
-	    maxx = symbol->Line[l].Point2.X;
+				  line->Point1.X + ox,
+				  line->Point1.Y + oy,
+				  line->Point2.X + ox,
+				  line->Point2.Y + oy,
+				  line->Thickness,
+				  line->Thickness, NoFlags ());
+	  CreateDrawnLineOnLayer (lorig,
+				  line->Point1.X + ox,
+				  line->Point1.Y + oy,
+				  line->Point2.X + ox,
+				  line->Point2.Y + oy,
+				  line->Thickness,
+				  line->Thickness, NoFlags ());
+	  maxx = MAX (maxx, line->Point1.X);
+	  maxx = MAX (maxx, line->Point2.X);
 	}
       w = maxx + symbol->Delta + ox;
       CreateDrawnLineOnLayer (lwidth,
@@ -173,6 +175,7 @@ FontSave (int argc, char **argv, int Ux, int Uy)
   FontTypePtr font;
   SymbolTypePtr symbol;
   int i;
+  GList *ii;
   LayerTypePtr lfont, lwidth;
 
   font = &PCB->Font;
@@ -186,9 +189,9 @@ FontSave (int argc, char **argv, int Ux, int Uy)
       font->Symbol[i].Width = 0;
     }
 
-  for (i = 0; i < lfont->LineN; i++)
+  for (ii = lfont->Line; ii != NULL; ii = g_list_next (ii))
     {
-      LineTypePtr l = &lfont->Line[i];
+      LineType *l = ii->data;
       int x1 = l->Point1.X;
       int y1 = l->Point1.Y;
       int x2 = l->Point2.X;
@@ -214,9 +217,9 @@ FontSave (int argc, char **argv, int Ux, int Uy)
       CreateNewLineInSymbol (symbol, x1, y1, x2, y2, l->Thickness);
     }
 
-  for (i = 0; i < lwidth->LineN; i++)
+  for (ii = lwidth->Line; ii != NULL; ii = g_list_next (ii))
     {
-      LineTypePtr l = &lwidth->Line[i];
+      LineType *l = ii->data;
       int x1 = l->Point1.X;
       int y1 = l->Point1.Y;
       int ox, oy, s;
