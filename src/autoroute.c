@@ -139,6 +139,8 @@ directionIncrement(direction_t dir)
 return dir;
 }
 
+static hidGC ar_gc = 0;
+
 #define EXPENSIVE 3e28
 /* round up "half" thicknesses */
 #define HALF_THICK(x) (((x)+1)/2)
