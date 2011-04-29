@@ -1476,7 +1476,6 @@ showbox (BoxType b, Dimension thickness, int group)
       ddraw->draw_line (ar_gc, b.X1, b.Y2, b.X2, b.Y2);
       ddraw->draw_line (ar_gc, b.X1, b.Y1, b.X1, b.Y2);
       ddraw->draw_line (ar_gc, b.X2, b.Y1, b.X2, b.Y2);
-      ddraw->flush_debug_draw ();
     }
 
 #if 1
@@ -3688,6 +3687,8 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
   RD_DrawLine (rd, -1, 0, 0, 0, 0, 0, NULL, false, false);
   if (TEST_FLAG (LIVEROUTEFLAG, PCB))
     gui->use_mask (HID_FLUSH_DRAW_Q);
+  if (ddraw != NULL)
+    ddraw->flush_debug_draw ();
 }
 
 /* create a fake "edge" used to defer via site searching. */
