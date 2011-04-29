@@ -1,0 +1,21 @@
+Bottom: 25b52f73569fb9c2735ce73f29d1ec5b55b3d92b
+Top:    a301e3f6ba72466a88c9bbce6c81a291d4a2b15b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-29 18:17:16 +0100
+
+Refresh of hook-up-debug-drawing-apis-for
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 34991c4..1923941 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -1239,6 +1239,7 @@ void
+ ghid_flush_debug_draw (void)
+ {
+   ghid_screen_update ();
++  gdk_flush ();
+ }
+ 
+ void
