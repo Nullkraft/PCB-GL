@@ -1,34 +1,34 @@
 Version: 1
-Previous: 12f815c504b73c9732951ebc5e8d06eb4e947c0a
-Head: c5d1634862a57d2a1d61f6f00edcb034d75a4eac
+Previous: fb6a1637cfa0fc79a67e00e41fc75dcee40645c3
+Head: 8cbfe40de63b2293c62d77517e94e4312b384d3c
 Applied:
+  remove-live-drawing-from-auto-: 43d7a316caa467b6fdba1aedc6321552317232ad
+  fix-livedraw-to-work-with-norm: e5ef68dec4d4766203f8b0d791710b67bb842fab
+  remove-livedraw-parameters-for: 601695e25fec54258e603d5db10fdbb60fdeafe0
+  crasy-test: f38457c49ca1cb529d66ac2c22912f1ded36f44b
+  continue-with-crazy-idea: 67bd81207c06fd820a273e1de1693a92a67240a3
+  crazy-some-more: 047a8c1bdcf7ad604a068a287f2f8b549e2d8822
+  add-configure-checks-for-gtkgl: 5b0b9cdf130a9a4a799e1dc1e581d3d2ce790dcc
+  make-enable-gl-default: c7cb314cee86ec9d6ccf0ec66c13d76f0224c382
+  hid-gtk-drop-in-gl-renderer-wo: 7fc0edbbbaceac72a83c3363301edcaa5d333646
+  fix-mesa-crash-on-startup: c28561c59337290b476c9341efff1abde50790be
+  hid-gtk-add-feature-to-force-a: f048751ebf285b300158fa35d79650c9c7bcc16a
+  add-raw-polygons-support-for-t: f83c585024e3ec81d6da24361a1b643e3457fc4a
+  work-in-progress-on-subcomposi: f0de75f2b2abae0b608d54faebe35bfba8506b90
+  draw_funcs-attempt-at-differen: de201559791ceb0c5f8aea8fe51477aa0e3dc3f7
+  use-tags-on-circular-contours-: 7a456a2c289d2a3141a3ad7c3134ec2c31d5813d
+  ugly-ugly-hack-to-make-pretty-: 391e90cd84028e797a72a0cdd9214ab247d0d69a
+  add-virtual-trackball-code: 8b6d20c9a800c1adda0a0feb7756e702d59ce9dd
+  use-trackball-to-allow-rotatio: a1d649e28627e3d9e29a716a505e98ed0903799a
+  shiny-3d-eye-candy: 6ed9916e3c8025f6005a8483339450b7b1d68b72
+  major-re-write-to-drawing-rout: 6a5ab67c9cb9faf606936caabf891f1668db26c1
+  remove-hack-in-draw-c-which-br: 371e637684ca3fe78864bb9e7944feca1a6cb69d
+  draw-pin-pad-names-first-so-th: 02bc8c268cf7d8a416044ae63a7a2548d4e6511d
+  fix-layer-on-off-rendering: ecc5b4c88b2d9b696a79db349e3d9f93a99bcecb
+  silly-space-navigator-interfac: eba6cc45f6f46a2035167a0ef76de8f39b651a27
+  bentley-ottann-test-implementa: 1984533fc7567e130f31e742b1015ef5c44f7499
+  add-routines-to-render-just-a-: d82aa4ca9b39b12921c3f0e94cd5014b5360084c
+  board-outline-polygon-generati: 1a0135f13d4a2989c3ad44b98fdb2c1562865a83
+  hack-to-avoid-gl-calls-when-we: 8cbfe40de63b2293c62d77517e94e4312b384d3c
 Unapplied:
-  remove-live-drawing-from-auto-: 93afcd549c9ad8ba537b1fabab2a86270db37f53
-  fix-livedraw-to-work-with-norm: eecb2b3e1bfe96e2e9cc3c05588095963480bf23
-  remove-livedraw-parameters-for: 918cda9da89327a1731f17dc56b56c06d0cf242d
-  crasy-test: 61f9877243c45b8228f055f22a7716f655a50447
-  continue-with-crazy-idea: a44149532b6880e484733a2b36a9a7e429349736
-  crazy-some-more: f39362169ec67f222b8986848d48af947bfa2270
-  add-configure-checks-for-gtkgl: 01983cebbdf99ecd274c20157a32ac0763346127
-  make-enable-gl-default: 36193244293a692e0e38f8701b6a26657947ff6e
-  hid-gtk-drop-in-gl-renderer-wo: c0cf3d0ff120ded0c098a9533fe45c749858cc56
-  fix-mesa-crash-on-startup: 4fc68220a471d2e5da5f0fba7699b098d5583cca
-  hid-gtk-add-feature-to-force-a: d0f979efb6b162d85b30132ad150cf0a04f29b42
-  add-raw-polygons-support-for-t: b098787938dec934662912235f079fa497d3e599
-  work-in-progress-on-subcomposi: 0c626b5bdc4c470acdfacdfd1dfb2b663dd9d5a4
-  draw_funcs-attempt-at-differen: 732d9571edbfe6765711af20c48ff793f8d9559d
-  use-tags-on-circular-contours-: 8f249a24a2a38647aa3772d48d84f12ec88f3a6d
-  ugly-ugly-hack-to-make-pretty-: 53fe8d2e90e622514c7e5dfac20a71293d1a62fa
-  add-virtual-trackball-code: f367bc8240f11b37467a26a5c7a86c162ee23c6f
-  use-trackball-to-allow-rotatio: 4214840c9fbb4ec880b569a75c5f5c60b4144ba0
-  shiny-3d-eye-candy: 343a6af0dced2ad4e5aca4004046b35ca1a1a0ab
-  major-re-write-to-drawing-rout: 52a302e8c84c84a1185fcde5df1c8e2cec299294
-  remove-hack-in-draw-c-which-br: 4233491afeb63eb39bac86011e4bd40093032ad6
-  draw-pin-pad-names-first-so-th: 3588d5fa5f42915c30c7eeff690a04e254923c21
-  fix-layer-on-off-rendering: 4b83a69154f861edbdea71d7bc3c677b7145f247
-  silly-space-navigator-interfac: 89243a5ba8a735e0c06cd56198cd493e771b79a9
-  bentley-ottann-test-implementa: 2113eeba37068b36109617e88c54f150cf2fda41
-  add-routines-to-render-just-a-: aa8f184cdc64855031a6788956257a9dffaa1ed8
-  board-outline-polygon-generati: 99fce8d10efedd615ff431d6f85d9e00d7521244
-  hack-to-avoid-gl-calls-when-we: 453e5ccfde338e8aaa9d084729459844e5e26d8b
 Hidden:
