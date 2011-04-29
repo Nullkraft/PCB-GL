@@ -1,0 +1,34 @@
+Bottom: e25907e4f594936c2503179c812213576c963fab
+Top:    9f328921b9122a81aa7731c11490bb3626a6baac
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-29 17:10:17 +0100
+
+Refresh of hook-up-debug-drawing-apis-for
+
+---
+
+diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
+index 3d81dc7..34991c4 100644
+--- a/src/hid/gtk/gtkhid-gdk.c
++++ b/src/hid/gtk/gtkhid-gdk.c
+@@ -1232,7 +1232,7 @@ ghid_request_debug_draw (void)
+ {
+   /* No special setup requirements, drawing goes into
+    * the backing pixmap. */
+-  return gport;
++  return &ghid_hid;
+ }
+ 
+ void
+@@ -1241,8 +1241,10 @@ ghid_flush_debug_draw (void)
+   ghid_screen_update ();
+ }
+ 
++void
+ ghid_finish_debug_draw (void)
+ {
+   ghid_flush_debug_draw ();
+-  /* No special tear down requirements */
++  /* No special tear down requirements
++   */
+ }
