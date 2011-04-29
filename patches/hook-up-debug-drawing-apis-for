@@ -1,5 +1,5 @@
 Bottom: 78e101229f45af0c26d7a3929802ce37ce51e9f8
-Top:    2bd50c180d0a8c3d6f476336bb92049576b654cc
+Top:    e25907e4f594936c2503179c812213576c963fab
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-29 16:54:31 +0100
 
@@ -9,10 +9,10 @@ Hook up debug drawing APIs for GTK GUIs
 ---
 
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 27d62c6..b5e28b6 100644
+index 27d62c6..3d81dc7 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -1226,3 +1226,17 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
+@@ -1226,3 +1226,23 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
  
    return pixmap;
  }
@@ -20,15 +20,21 @@ index 27d62c6..b5e28b6 100644
 +HID *
 +ghid_request_debug_draw (void)
 +{
++  /* No special setup requirements, drawing goes into
++   * the backing pixmap. */
++  return gport;
 +}
 +
 +void
 +ghid_flush_debug_draw (void)
 +{
++  ghid_screen_update ();
 +}
 +
 +ghid_finish_debug_draw (void)
 +{
++  ghid_flush_debug_draw ();
++  /* No special tear down requirements */
 +}
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
 index f5e2717..ac961db 100644
