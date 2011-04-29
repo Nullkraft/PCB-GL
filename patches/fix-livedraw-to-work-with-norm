@@ -1,5 +1,5 @@
 Bottom: 682fd858497b379d36f503b41d6d16454d86b9f9
-Top:    1c3cc76fc7e675749a42ae93feebe2ba590ecee0
+Top:    0ac8bee2791a94233d5d9139dca400cf78e243ff
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-28 21:39:17 +0100
 
@@ -9,19 +9,10 @@ Fix livedraw to work with normal rendering APIs
 ---
 
 diff --git a/src/autoroute.c b/src/autoroute.c
-index c17a8fe..591fef0 100644
+index c17a8fe..8633005 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
-@@ -139,8 +139,6 @@ directionIncrement(direction_t dir)
- return dir;
- }
- 
--static hidGC ar_gc = 0;
--
- #define EXPENSIVE 3e28
- /* round up "half" thicknesses */
- #define HALF_THICK(x) (((x)+1)/2)
-@@ -307,6 +305,10 @@ typedef struct routebox
+@@ -307,6 +307,10 @@ typedef struct routebox
    direction_t came_from;
    /* circular lists with connectivity information. */
    routebox_list same_net, same_subnet, original_subnet, different_net;
@@ -32,7 +23,7 @@ index c17a8fe..591fef0 100644
  }
  routebox_t;
  
-@@ -1554,32 +1556,6 @@ showroutebox (routebox_t * rb)
+@@ -1554,32 +1558,6 @@ showroutebox (routebox_t * rb)
  }
  #endif
  
@@ -65,7 +56,7 @@ index c17a8fe..591fef0 100644
  /* return a "parent" of this edge which immediately precedes it in the route.*/
  static routebox_t *
  route_parent (routebox_t * rb)
-@@ -3267,8 +3243,12 @@ RD_DrawVia (routedata_t * rd, LocationType X, LocationType Y,
+@@ -3267,8 +3245,12 @@ RD_DrawVia (routedata_t * rd, LocationType X, LocationType Y,
  
        if (TEST_FLAG (LIVEROUTEFLAG, PCB))
  	{
@@ -80,7 +71,7 @@ index c17a8fe..591fef0 100644
  	}
      }
  }
-@@ -3359,11 +3339,12 @@ RD_DrawLine (routedata_t * rd,
+@@ -3359,11 +3341,12 @@ RD_DrawLine (routedata_t * rd,
  
    if (TEST_FLAG (LIVEROUTEFLAG, PCB))
      {
@@ -98,7 +89,7 @@ index c17a8fe..591fef0 100644
      }
  
    /* and to the via space structures */
-@@ -3682,8 +3663,9 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
+@@ -3682,8 +3665,9 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
    while (!path->flags.source);
    /* flush the line queue */
    RD_DrawLine (rd, -1, 0, 0, 0, 0, 0, NULL, false, false);
@@ -109,7 +100,7 @@ index c17a8fe..591fef0 100644
  }
  
  /* create a fake "edge" used to defer via site searching. */
-@@ -4613,6 +4595,30 @@ no_expansion_boxes (routedata_t * rd)
+@@ -4613,6 +4597,30 @@ no_expansion_boxes (routedata_t * rd)
  }
  #endif
  
@@ -140,7 +131,7 @@ index c17a8fe..591fef0 100644
  struct routeall_status
  {
    /* --- for completion rate statistics ---- */
-@@ -4731,9 +4737,8 @@ RouteAll (routedata_t * rd)
+@@ -4731,9 +4739,8 @@ RouteAll (routedata_t * rd)
  		    }
  		  if (rip)
  		    {
@@ -152,7 +143,7 @@ index c17a8fe..591fef0 100644
  		      del =
  			r_delete_entry (rd->layergrouptree[p->group],
  					&p->box);
-@@ -4746,7 +4751,7 @@ RouteAll (routedata_t * rd)
+@@ -4746,7 +4753,7 @@ RouteAll (routedata_t * rd)
  		}
  	      END_LOOP;
  	      if (TEST_FLAG (LIVEROUTEFLAG, PCB))
@@ -161,7 +152,7 @@ index c17a8fe..591fef0 100644
  	      /* reset to original connectivity */
  	      if (rip)
  		{
-@@ -5104,16 +5109,6 @@ AutoRoute (bool selected)
+@@ -5104,16 +5111,6 @@ AutoRoute (bool selected)
  
    total_wire_length = 0;
    total_via_count = 0;
@@ -178,7 +169,7 @@ index c17a8fe..591fef0 100644
  
    for (i = 0; i < NUM_STYLES; i++)
      {
-@@ -5268,15 +5263,20 @@ AutoRoute (bool selected)
+@@ -5268,15 +5265,20 @@ AutoRoute (bool selected)
    /* auto-route all nets */
    changed = (RouteAll (rd).total_nets_routed > 0) || changed;
  donerouting:
