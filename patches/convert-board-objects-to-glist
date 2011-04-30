@@ -1,5 +1,5 @@
 Bottom: 028ec64ac8a1af4bb2e94fb65df25bf64d320263
-Top:    6f6c75869d0f4a80476a3e55ce309190a1874684
+Top:    e32dcdf102e37f38bfc2271b62b1486093da3ccd
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 05:09:21 +0100
 
@@ -1191,7 +1191,7 @@ index 1fb6584..e990d4a 100644
 +
  #endif
 diff --git a/src/move.c b/src/move.c
-index ecc5928..148faf3 100644
+index ecc5928..6ce043a 100644
 --- a/src/move.c
 +++ b/src/move.c
 @@ -436,44 +436,36 @@ MovePolygonPoint (LayerTypePtr Layer, PolygonTypePtr Polygon,
@@ -1295,7 +1295,7 @@ index ecc5928..148faf3 100644
 -  r_insert_entry (Destination->text_tree, (BoxType *)newone, 0);
 -  ClearFromPolygon (PCB->Data, TEXT_TYPE, Destination, newone);
 -  return (newone);
-+  r_insert_entry (Destination->text_tree, (BoxType *) text, 0);
++  r_insert_entry (Destination->text_tree, (BoxType *)text, 0);
 +  ClearFromPolygon (PCB->Data, TEXT_TYPE, Destination, text);
 +
 +  return text;
@@ -1357,7 +1357,7 @@ index ecc5928..148faf3 100644
 -		(BoxType *) & Source->Polygon[Source->PolygonN],
 -		(BoxType *) Polygon);
 -  memset (&Source->Polygon[Source->PolygonN], 0, sizeof (PolygonType));
-+  r_delete_entry (Source->polygon_tree, (BoxType *) polygon);
++  r_delete_entry (Source->polygon_tree, (BoxType *)polygon);
 +
 +  Source->Polygon = g_list_remove (Source->Polygon, polygon);
 +  Destination->Polygon = g_list_append (Destination->Polygon, polygon);
@@ -1366,7 +1366,7 @@ index ecc5928..148faf3 100644
      Destination->polygon_tree = r_create_tree (NULL, 0, 0);
 -  r_insert_entry (Destination->polygon_tree, (BoxType *)newone, 0);
 -  return (newone);
-+  r_insert_entry (Destination->polygon_tree, (BoxType *) polygon, 0);
++  r_insert_entry (Destination->polygon_tree, (BoxType *)polygon, 0);
 +
 +  return polygon;
  }
