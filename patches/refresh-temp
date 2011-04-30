@@ -1,0 +1,553 @@
+Bottom: e9356b7d1c2b1773a806b20f1c23f325edc21020
+Top:    04917593681e752445afe86d5b00c11f3532606e
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-30 18:54:09 +0100
+
+Refresh of lots-of-puller-fixes
+
+---
+
+diff --git a/src/puller.c b/src/puller.c
+index 07870a6..ef399d5 100644
+--- a/src/puller.c
++++ b/src/puller.c
+@@ -608,7 +608,7 @@ status ()
+ /* Extra data we need to temporarily attach to all lines and arcs.  */
+ typedef struct End {
+   /* These point to "multi_next" if there are more than one.  */
+-  struct Extra *next;
++  struct Extra *extra;
+   void *pin;
+   unsigned char in_pin:1;
+   unsigned char at_pin:1;
+@@ -657,19 +657,19 @@ unlink_end (Extra *x, Extra **e)
+ {
+   if (*e)
+     {
+-      if ((*e)->start.next == x)
++      if ((*e)->start.extra == x)
+ 	{
+ #if TRACE1
+-	  printf("%d: unlink_end, was %p\n", __LINE__, (*e)->start.next);
++	  printf("%d: unlink_end, was %p\n", __LINE__, (*e)->start.extra);
+ #endif
+-	  (*e)->start.next = &multi_next;
++	  (*e)->start.extra = &multi_next;
+ 	}
+-      if ((*e)->end.next == x)
++      if ((*e)->end.extra == x)
+ 	{
+ #if TRACE1
+-	  printf("%d: unlink_end, was %p\n", __LINE__, (*e)->start.next);
++	  printf("%d: unlink_end, was %p\n", __LINE__, (*e)->start.extra);
+ #endif
+-	  (*e)->end.next = &multi_next;
++	  (*e)->end.extra = &multi_next;
+ 	}
+     }
+ #if TRACE1
+@@ -682,11 +682,13 @@ unlink_end (Extra *x, Extra **e)
+ static void
+ clear_found ()
+ {
++#if 0
+   int i;
+   for (i=0; i<nlines; i++)
+     lines[i].found = 0;
+   for (i=0; i<narcs; i++)
+     arcs[i].found = 0;
++#endif
+ }
+ #endif
+ 
+@@ -733,8 +735,8 @@ find_pair_line_callback (const BoxType * b, void *cl)
+   printf(" - %p line %d,%d or %d,%d\n", e, line->Point1.X, line->Point1.Y,
+ 	 line->Point2.X, line->Point2.Y);
+ #endif
+-  if ((NEAR (line->Point1.X, fpcs->x) && NEAR (line->Point1.Y, fpcs->y))
+-      || (NEAR (line->Point2.X, fpcs->x) && NEAR (line->Point2.Y, fpcs->y)))
++  if ((NEAR (line->Point1.X, fpcs->x) && NEAR (line->Point1.Y, fpcs->y)) ||
++      (NEAR (line->Point2.X, fpcs->x) && NEAR (line->Point2.Y, fpcs->y)))
+     {
+       if (* fpcs->extra_ptr)
+ 	{
+@@ -766,8 +768,8 @@ find_pair_arc_callback (const BoxType * b, void *cl)
+ #if TRACE1
+   printf(" - %p arc %d,%d or %d,%d\n", e, e->start.x, e->start.y, e->end.x, e->end.y);
+ #endif
+-  if ((NEAR (e->start.x, fpcs->x) && NEAR (e->start.y, fpcs->y))
+-      || (NEAR (e->end.x, fpcs->x) && NEAR (e->end.y, fpcs->y)))
++  if ((NEAR (e->start.x, fpcs->x) && NEAR (e->start.y, fpcs->y)) ||
++      (NEAR (e->end.x,   fpcs->x) && NEAR (e->end.y,   fpcs->y)))
+     {
+       if (* fpcs->extra_ptr)
+ 	{
+@@ -860,8 +862,8 @@ find_pair_pinline_callback (const BoxType * b, void *cl)
+ 	     line->Point2.X, line->Point2.Y,
+ 	     pin->X, pin->Y, pin->Thickness/2);
+ #endif
+-      unlink_end (e, &e->start.next);
+-      unlink_end (e, &e->end.next);
++      unlink_end (e, &e->start.extra);
++      unlink_end (e, &e->end.extra);
+     }
+   return 0;
+ }
+@@ -998,8 +1000,8 @@ find_pair_padline_callback (const BoxType * b, void *cl)
+ 	     pad->Point2.X, pad->Point2.Y,
+ 	     pad->Thickness/2);
+ #endif
+-      unlink_end (e, &e->start.next);
+-      unlink_end (e, &e->end.next);
++      unlink_end (e, &e->start.extra);
++      unlink_end (e, &e->end.extra);
+     }
+ 
+   return 0;
+@@ -1032,11 +1034,11 @@ find_pair_padarc_callback (const BoxType * b, void *cl)
+ static void
+ null_multi_next_ends (AnyObjectType *ptr, Extra *extra, void *userdata)
+ {
+-  if (extra->start.next == &multi_next)
+-    extra->start.next = NULL;
++  if (extra->start.extra == &multi_next)
++    extra->start.extra = NULL;
+ 
+-  if (extra->end.next == &multi_next)
+-    extra->end.next = NULL;
++  if (extra->end.extra == &multi_next)
++    extra->end.extra = NULL;
+ }
+ 
+ static Extra *
+@@ -1068,11 +1070,15 @@ find_pairs ()
+   } END_LOOP;
+ 
+   LINE_LOOP (CURRENT); {
+-    Extra *e = new_line_extra (line);
++    new_line_extra (line);
++  } END_LOOP;
++
++  LINE_LOOP (CURRENT); {
++    Extra *e = LINE2EXTRA (line);
+     if (line->Point1.X >= 0)
+       {
+-	find_pairs_1 (line, & e->start.next, line->Point1.X, line->Point1.Y);
+-	find_pairs_1 (line, & e->end.next, line->Point2.X, line->Point2.Y);
++	find_pairs_1 (line, & e->start.extra, line->Point1.X, line->Point1.Y);
++	find_pairs_1 (line, & e->end.extra, line->Point2.X, line->Point2.Y);
+       }
+   } END_LOOP;
+ 
+@@ -1080,8 +1086,8 @@ find_pairs ()
+     Extra *e = ARC2EXTRA (arc);
+     if (!e->deleted)
+       {
+-	find_pairs_1 (arc, & e->start.next, e->start.x, e->start.y);
+-	find_pairs_1 (arc, & e->end.next, e->end.x, e->end.y);
++	find_pairs_1 (arc, & e->start.extra, e->start.x, e->start.y);
++	find_pairs_1 (arc, & e->end.extra, e->end.x, e->end.y);
+       }
+   } END_LOOP;
+ 
+@@ -1121,12 +1127,12 @@ find_pairs ()
+ }
+ 
+ #define PROP_NEXT(e,n,f) 		\
+-      if (f->next->start.next == e) {	\
+-	e = f->next;			\
++      if (f->extra->start.extra == e) {	\
++	e = f->extra;			\
+ 	n = & e->start;			\
+ 	f = & e->end;			\
+       } else {				\
+-	e = f->next;			\
++	e = f->extra;			\
+ 	n = & e->end;			\
+ 	f = & e->start; }
+ 
+@@ -1136,7 +1142,7 @@ propogate_ends_at (Extra *e, End *near, End *far)
+   while (far->in_pin && far->pin == near->pin)
+     {
+       far->in_pin = 0;
+-      if (!far->next)
++      if (far->extra == NULL)
+ 	return;
+       PROP_NEXT (e, near, far);
+       near->in_pin = 0;
+@@ -1148,7 +1154,7 @@ propogate_end_pin (Extra *e, End *near, End *far)
+ {
+   void *pinpad = near->pin;
+   int ispad = near->is_pad;
+-  while (far->next)
++  while (far->extra)
+     {
+       PROP_NEXT (e, near, far);
+       if (near->pin == pinpad)
+@@ -1161,10 +1167,10 @@ propogate_end_pin (Extra *e, End *near, End *far)
+ static void
+ propogate_end_step1_cb (AnyObjectType *ptr, Extra *extra, void *userdata)
+ {
+-  if (extra->start.next != NULL &&
+-      extra->start.next == extra->end.next)
++  if (extra->start.extra != NULL &&
++      extra->start.extra == extra->end.extra)
+     {
+-      extra->end.next = NULL;
++      extra->end.extra = NULL;
+       mark_line_for_deletion ((LineType *)ptr);
+     }
+ 
+@@ -1181,25 +1187,25 @@ propogate_end_step2_cb (AnyObjectType *ptr, Extra *extra, void *userdata)
+   if (extra->start.in_pin)
+     {
+ #if TRACE1
+-      printf("MULTI at %d: was %p\n", __LINE__, extra->start.next);
++      printf("MULTI at %d: was %p\n", __LINE__, extra->start.extra);
+ #endif
+-      extra->start.next = NULL;
++      extra->start.extra = NULL;
+     }
+   if (extra->end.in_pin)
+     {
+ #if TRACE1
+-      printf("MULTI at %d: was %p\n", __LINE__, extra->end.next);
++      printf("MULTI at %d: was %p\n", __LINE__, extra->end.extra);
+ #endif
+-      extra->end.next = NULL;
++      extra->end.extra = NULL;
+     }
+ }
+ 
+ static void
+ propogate_end_step3_cb (AnyObjectType *ptr, Extra *extra, void *userdata)
+ {
+-  if (extra->start.next)
++  if (extra->start.extra)
+     propogate_end_pin (extra, &extra->end, &extra->start);
+-  if (extra->end.next)
++  if (extra->end.extra)
+     propogate_end_pin (extra, &extra->start, &extra->end);
+ }
+ 
+@@ -1223,19 +1229,19 @@ static void
+ print_extra (Extra *e, Extra *prev)
+ {
+   int which = 0;
+-  if (e->start.next == last_pextra)
++  if (e->start.extra == last_pextra)
+     which = 1;
+-  else if (e->end.next == last_pextra)
++  else if (e->end.extra == last_pextra)
+     which = 2;
+   switch (which) {
+   case 0:
+-    printf("%10p %10p %10p :", e, e->start.next, e->end.next);
++    printf("%10p %10p %10p :", e, e->start.extra, e->end.extra);
+     break;
+   case 1:
+-    printf("%10p \033[33m%10p\033[0m %10p :", e, e->start.next, e->end.next);
++    printf("%10p \033[33m%10p\033[0m %10p :", e, e->start.extra, e->end.extra);
+     break;
+   case 2:
+-    printf("%10p %10p \033[33m%10p\033[0m :", e, e->start.next, e->end.next);
++    printf("%10p %10p \033[33m%10p\033[0m :", e, e->start.extra, e->end.extra);
+     break;
+   }
+   last_pextra = e;
+@@ -1256,7 +1262,7 @@ print_extra (Extra *e, Extra *prev)
+   if (EXTRA_IS_LINE (e))
+     {
+       LineTypePtr line = EXTRA2LINE (e);
+-      printf(" %4d L %d,%d-%d,%d", (int)(line-CURRENT->Line), line->Point1.X, line->Point1.Y, line->Point2.X, line->Point2.Y);
++      printf(" %p L %d,%d-%d,%d", line, line->Point1.X, line->Point1.Y, line->Point2.X, line->Point2.Y);
+       printf("  %s %p %s %p\n",
+ 	     e->start.is_pad ? "pad" : "pin", e->start.pin,
+ 	     e->end.is_pad ? "pad" : "pin", e->end.pin);
+@@ -1264,7 +1270,7 @@ print_extra (Extra *e, Extra *prev)
+   else if (EXTRA_IS_ARC (e))
+     {
+       ArcTypePtr arc = EXTRA2ARC (e);
+-      printf(" %4d A %d,%d-%d,%d", (int) (arc-CURRENT->Arc), e->start.x, e->start.y, e->end.x, e->end.y);
++      printf(" %p A %d,%d-%d,%d", arc, e->start.x, e->start.y, e->end.x, e->end.y);
+       printf(" at %d,%d ang %ld,%ld\n", arc->X, arc->Y, arc->StartAngle, arc->Delta);
+     }
+   else if (e == &multi_next)
+@@ -1282,8 +1288,8 @@ static void
+ trace_path (Extra *e)
+ {
+   Extra *prev = 0;
+-  if ((e->start.next && e->end.next)
+-      || (!e->start.next && !e->end.next))
++  if (( e->start.extra &&  e->end.extra) ||
++      (!e->start.extra && !e->end.extra))
+     return;
+   if (e->found)
+     return;
+@@ -1293,15 +1299,15 @@ trace_path (Extra *e)
+     {
+       e->found = 1;
+       print_extra (e, prev);
+-      if (e->start.next == prev)
++      if (e->start.extra == prev)
+ 	{
+ 	  prev = e;
+-	  e = e->end.next;
++	  e = e->end.extra;
+ 	}
+       else
+ 	{
+ 	  prev = e;
+-	  e = e->start.next;
++	  e = e->start.extra;
+ 	}
+     }
+ }
+@@ -1688,11 +1694,11 @@ gp_line_cb (const BoxType *b, void *cb)
+   if (l->Point1.X < 0)
+     abort1();
+ #endif
+-  if (! e->start.next
+-      || ! EXTRA_IS_ARC (e->start.next))
++  if (! e->start.extra
++      || ! EXTRA_IS_ARC (e->start.extra))
+     gp_point (l->Point1.X, l->Point1.Y, l->Thickness/2, &e->start);
+-  if (! e->end.next
+-      || ! EXTRA_IS_ARC (e->end.next))
++  if (! e->end.extra
++      || ! EXTRA_IS_ARC (e->end.extra))
+     gp_point (l->Point2.X, l->Point2.Y, l->Thickness/2, &e->end);
+   return 0;
+ }
+@@ -1716,7 +1722,7 @@ gp_arc_cb (const BoxType *b, void *cb)
+       && a->Y != end_arc->Y)
+      return 0;
+ 
+-  if (e->start.next || e->end.next)
++  if (e->start.extra || e->end.extra)
+     return 0;
+     
+   gp_point (e->start.x, e->start.y, a->Thickness/2, 0);
+@@ -1882,57 +1888,57 @@ unlink_extras (Extra *e)
+   fprintf(stderr, "unlink %p\n", e);
+   print_extra(e,0);
+ #endif
+-  if (e->start.next)
++  if (e->start.extra)
+     {
+ #if TRACE1
+-      print_extra(e->start.next, 0);
++      print_extra(e->start.extra, 0);
+ #endif
+-      if (e->start.next->start.next == e)
++      if (e->start.extra->start.extra == e)
+ 	{
+ #if TRACE1
+-	  fprintf(stderr, " - %p->start points to me\n", e->start.next);
++	  fprintf(stderr, " - %p->start points to me\n", e->start.extra);
+ #endif
+-	  e->start.next->start.next = e->end.next;
++	  e->start.extra->start.extra = e->end.extra;
+ 	}
+-      else if (e->start.next->end.next == e)
++      else if (e->start.extra->end.extra == e)
+ 	{
+ #if TRACE1
+-	  fprintf(stderr, " - %p->end points to me\n", e->start.next);
++	  fprintf(stderr, " - %p->end points to me\n", e->start.extra);
+ #endif
+-	  e->start.next->end.next = e->end.next;
++	  e->start.extra->end.extra = e->end.extra;
+ 	}
+       else
+ 	{
+-	  fprintf(stderr, " - %p doesn't point to me!\n", e->start.next);
++	  fprintf(stderr, " - %p doesn't point to me!\n", e->start.extra);
+ 	  abort();
+ 	}
+     }
+-  if (e->end.next)
++  if (e->end.extra)
+     {
+ #if TRACE1
+-      print_extra(e->end.next, 0);
++      print_extra(e->end.extra, 0);
+ #endif
+-      if (e->end.next->start.next == e)
++      if (e->end.extra->start.extra == e)
+ 	{
+ #if TRACE1
+-	  fprintf(stderr, " - %p->end points to me\n", e->end.next);
++	  fprintf(stderr, " - %p->end points to me\n", e->end.extra);
+ #endif
+-	  e->end.next->start.next = e->start.next;
++	  e->end.extra->start.extra = e->start.extra;
+ 	}
+-      else if (e->end.next->end.next == e)
++      else if (e->end.extra->end.extra == e)
+ 	{
+ #if TRACE1
+-	  fprintf(stderr, " - %p->end points to me\n", e->end.next);
++	  fprintf(stderr, " - %p->end points to me\n", e->end.extra);
+ #endif
+-	  e->end.next->end.next = e->start.next;
++	  e->end.extra->end.extra = e->start.extra;
+ 	}
+       else
+ 	{
+-	  fprintf(stderr, " - %p doesn't point to me!\n", e->end.next);
++	  fprintf(stderr, " - %p doesn't point to me!\n", e->end.extra);
+ 	  abort();
+ 	}
+     }
+-  e->start.next = e->end.next = 0;
++  e->start.extra = e->end.extra = 0;
+ }
+ 
+ static void
+@@ -2004,7 +2010,7 @@ maybe_pull_1 (LineTypePtr line)
+ 
+   start_line = line;
+   start_extra = LINE2EXTRA (start_line);
+-  end_extra = start_extra->end.next;
++  end_extra = start_extra->end.extra;
+   end_line = EXTRA2LINE (end_extra);
+   if (end_extra->deleted)
+     {
+@@ -2012,15 +2018,15 @@ maybe_pull_1 (LineTypePtr line)
+       return;
+     }
+ 
+-  if (end_extra->end.next == start_extra)
++  if (end_extra->end.extra == start_extra)
+     reverse_line (end_line);
+ 
+-  if (start_extra->start.next
+-      && EXTRA_IS_ARC (start_extra->start.next))
++  if (start_extra->start.extra
++      && EXTRA_IS_ARC (start_extra->start.extra))
+     {
+-      sarc_extra = start_extra->start.next;
++      sarc_extra = start_extra->start.extra;
+       start_arc = EXTRA2ARC (sarc_extra);
+-      if (sarc_extra->start.next == start_extra)
++      if (sarc_extra->start.extra == start_extra)
+ 	reverse_arc (start_arc);
+     }
+   else
+@@ -2029,12 +2035,12 @@ maybe_pull_1 (LineTypePtr line)
+       sarc_extra = 0;
+     }
+ 
+-  if (end_extra->end.next
+-      && EXTRA_IS_ARC (end_extra->end.next))
++  if (end_extra->end.extra
++      && EXTRA_IS_ARC (end_extra->end.extra))
+     {
+-      earc_extra = end_extra->end.next;
++      earc_extra = end_extra->end.extra;
+       end_arc = EXTRA2ARC (earc_extra);
+-      if (earc_extra->start.next == end_extra)
++      if (earc_extra->start.extra == end_extra)
+ 	reverse_arc (end_arc);
+     }
+   else
+@@ -2433,12 +2439,12 @@ maybe_pull_1 (LineTypePtr line)
+   new_lextra->start.pending = 1;
+   new_lextra->end.pending = 1;
+ 
+-  start_extra->end.next = new_aextra;
+-  new_aextra->start.next = start_extra;
+-  new_aextra->end.next = new_lextra;
+-  new_lextra->start.next = new_aextra;
+-  new_lextra->end.next = end_extra;
+-  end_extra->start.next = new_lextra;
++  start_extra->end.extra = new_aextra;
++  new_aextra->start.extra = start_extra;
++  new_aextra->end.extra = new_lextra;
++  new_lextra->start.extra = new_aextra;
++  new_lextra->end.extra = end_extra;
++  end_extra->start.extra = new_lextra;
+ 
+   /* Step 5: Recurse.  */
+ 
+@@ -2467,14 +2473,14 @@ maybe_pull (LineTypePtr line, Extra *e)
+   printf("maybe_pull: ");
+   print_extra (e, 0);
+ #endif
+-  if (e->end.next && EXTRA_IS_LINE (e->end.next))
++  if (e->end.extra && EXTRA_IS_LINE (e->end.extra))
+     {
+       maybe_pull_1 (line);
+     }
+   else
+     {
+       e->end.pending = 0;
+-      if (e->start.next && EXTRA_IS_LINE (e->start.next))
++      if (e->start.extra && EXTRA_IS_LINE (e->start.extra))
+ 	{
+ 	  reverse_line (line);
+ 	  maybe_pull_1 (line);
+@@ -2487,15 +2493,15 @@ maybe_pull (LineTypePtr line, Extra *e)
+ static void
+ validate_pair (Extra *e, End *end)
+ {
+-  if (!end->next)
++  if (!end->extra)
+     return;
+-  if (end->next->start.next == e)
++  if (end->extra->start.extra == e)
+     return;
+-  if (end->next->end.next == e)
++  if (end->extra->end.extra == e)
+     return;
+   fprintf(stderr, "no backlink!\n");
+   print_extra (e, 0);
+-  print_extra (end->next, 0);
++  print_extra (end->extra, 0);
+   abort();
+ }
+ 
+@@ -2557,7 +2563,6 @@ trace_print_lines_arcs (void)
+ static int
+ GlobalPuller(int argc, char **argv, int x, int y)
+ {
+-  int i;
+   int select_flags = 0;
+ 
+   setbuf(stdout, 0);
+@@ -2619,7 +2624,7 @@ GlobalPuller(int argc, char **argv, int x, int y)
+ 	    if (line->Point1.X < 0)
+ 	      abort1();
+ #endif
+-	    if (e->start.next || e->end.next)
++	    if (e->start.extra || e->end.extra)
+ 	      maybe_pull (line, e);
+ #if TRACE0
+ 	    if (did_something != old_did_something)
+@@ -2647,21 +2652,19 @@ GlobalPuller(int argc, char **argv, int x, int y)
+   printf("\nlines\n");
+ #endif
+ 
+-  /* We do this backwards so we don't have to edit the extras.  */
+-  for (i=CURRENT->LineN-1; i>=0; i--)
++  LINE_LOOP (CURRENT);
+     {
+-      LineTypePtr line = & CURRENT->Line[i];
+       if (LINE2EXTRA (line)->deleted)
+ 	RemoveLine (CURRENT, line);
+     }
++  END_LOOP;
+ 
+-  /* We do this backwards so we don't have to edit the extras.  */
+-  for (i=CURRENT->ArcN-1; i>=0; i--)
++  ARC_LOOP (CURRENT);
+     {
+-      ArcTypePtr arc = & CURRENT->Arc[i];
+       if (ARC2EXTRA (arc)->deleted)
+ 	RemoveArc (CURRENT, arc);
+     }
++  END_LOOP;
+ 
+   g_hash_table_unref (lines);
+   g_hash_table_unref (arcs);
