@@ -1,5 +1,5 @@
 Bottom: 2813eecf215e97fe24684fff495f11e7751f34f8
-Top:    2813eecf215e97fe24684fff495f11e7751f34f8
+Top:    10846269560a4dcd1b6536ba10b728a9ed1f1f47
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 13:42:51 +0100
 
@@ -8,4 +8,67 @@ parse.y: Convert an open-coded loop to use ALLPOLYGON_LOOP
 
 ---
 
-
+diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
+index 2a205fa..46806da 100644
+--- a/src/hid/gtk/gui-pinout-preview.c
++++ b/src/hid/gtk/gui-pinout-preview.c
+@@ -75,8 +75,6 @@ pinout_zoom_fit (GhidPinoutPreview * pinout, gint zoom)
+ static void
+ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
+ {
+-  gint tx, ty, x_min = 0, y_min = 0;
+-
+   if (element == NULL)
+     {
+       FreeElementMemory (&pinout->element);
+@@ -94,24 +92,12 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
+   CopyElementLowLevel (NULL, &pinout->element, element, FALSE, 0, 0);
+   PIN_LOOP (&pinout->element);
+   {
+-    tx = abs (pinout->element.Pin[0].X - pin->X);
+-    ty = abs (pinout->element.Pin[0].Y - pin->Y);
+-    if (x_min == 0 || (tx != 0 && tx < x_min))
+-      x_min = tx;
+-    if (y_min == 0 || (ty != 0 && ty < y_min))
+-      y_min = ty;
+     SET_FLAG (DISPLAYNAMEFLAG, pin);
+   }
+   END_LOOP;
+ 
+   PAD_LOOP (&pinout->element);
+   {
+-    tx = abs (pinout->element.Pad[0].Point1.X - pad->Point1.X);
+-    ty = abs (pinout->element.Pad[0].Point1.Y - pad->Point1.Y);
+-    if (x_min == 0 || (tx != 0 && tx < x_min))
+-      x_min = tx;
+-    if (y_min == 0 || (ty != 0 && ty < y_min))
+-      y_min = ty;
+     SET_FLAG (DISPLAYNAMEFLAG, pad);
+   }
+   END_LOOP;
+diff --git a/src/parse_y.y b/src/parse_y.y
+index d0f31aa..ad8cb44 100644
+--- a/src/parse_y.y
++++ b/src/parse_y.y
+@@ -171,7 +171,6 @@ parsepcb
+ 		  pcbdata
+ 		  pcbnetlist
+ 			{
+-			  int i, j;
+ 			  PCBTypePtr pcb_save = PCB;
+ 
+ 			  if (layer_group_string == NULL)
+@@ -186,9 +185,11 @@ parsepcb
+ 			 * we didn't know the layer grouping before.
+ 			 */
+ 			PCB = yyPCB;
+-			for (i = 0; i < yyData->LayerN+2; i++)
+-			  for (j = 0; j < yyData->Layer[i].PolygonN; j++)
+-			      InitClip (yyData, &yyData->Layer[i], &yyData->Layer[i].Polygon[j]);
++			ALLPOLYGON_LOOP (yyData);
++			{
++			  InitClip (yyData, layer, polygon);
++			}
++			ENDALL_LOOP;
+ 			PCB = pcb_save;
+ 			}
