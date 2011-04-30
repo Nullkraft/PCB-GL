@@ -1,5 +1,5 @@
 Bottom: 7118433546673cb18bc9b41f162093cd828e837a
-Top:    6c3a87aac1f65c54a1adb373286fc344586936f6
+Top:    e9356b7d1c2b1773a806b20f1c23f325edc21020
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 15:20:39 +0100
 
@@ -2203,21 +2203,6 @@ index 4e36640..6b572d8 100644
  
  #define STRDUP(x) (((x) != NULL) ? strdup (x) : NULL)
  
-diff --git a/src/puller.c b/src/puller.c
-index 07870a6..fa55baf 100644
---- a/src/puller.c
-+++ b/src/puller.c
-@@ -76,8 +76,8 @@ RCSID ("$Id$");
- 
- #define abort1() fprintf(stderr, "abort at line %d\n", __LINE__), abort()
- 
--#define TRACE0 0
--#define TRACE1 0
-+#define TRACE0 1
-+#define TRACE1 1
- 
- /* sine of one degree */
- #define SIN1D	0.0174524064372835
 diff --git a/src/rats.c b/src/rats.c
 index a6e526c..d2aa8bb 100644
 --- a/src/rats.c
