@@ -1,5 +1,5 @@
-Bottom: 6192fb89ac4552edb744342558b6deab165643f2
-Top:    e851e0dafb771066e4b5a94f2acfb49b5a164c22
+Bottom: c086242c49a512e79ebd1f8fb926c6b324637209
+Top:    cb73946a4f54c8490cec87501e201282b8f8f07d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-28 22:39:30 +0100
 
@@ -12,10 +12,10 @@ interface to JUST deal with _masking_ from now on ;)
 ---
 
 diff --git a/src/hid.h b/src/hid.h
-index 2b9ca40..5ecbe50 100644
+index 820760e..9104190 100644
 --- a/src/hid.h
 +++ b/src/hid.h
-@@ -340,12 +340,6 @@ typedef enum
+@@ -341,12 +341,6 @@ typedef enum
  #define HID_MASK_CLEAR 2
      /* Polygons being drawn after clears.  */
  #define HID_MASK_AFTER 3
@@ -29,10 +29,10 @@ index 2b9ca40..5ecbe50 100644
      /* Set a color.  Names can be like "red" or "#rrggbb" or special
         names like "erase".  *Always* use the "erase" color for removing
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 27d62c6..ce8c06b 100644
+index 45f1e96..a28b19a 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
-@@ -243,23 +243,6 @@ ghid_use_mask (int use_it)
+@@ -259,23 +259,6 @@ ghid_use_mask (int use_it)
    GdkColor color;
    render_priv *priv = gport->render_priv;
  
@@ -57,10 +57,10 @@ index 27d62c6..ce8c06b 100644
      return;
    if (use_it == cur_mask)
 diff --git a/src/hid/lesstif/main.c b/src/hid/lesstif/main.c
-index 6a42706..5acda1f 100644
+index 3922fc4..776a345 100644
 --- a/src/hid/lesstif/main.c
 +++ b/src/hid/lesstif/main.c
-@@ -3029,22 +3029,6 @@ lesstif_use_mask (int use_it)
+@@ -3041,22 +3041,6 @@ lesstif_use_mask (int use_it)
  {
    static Window old;
  
