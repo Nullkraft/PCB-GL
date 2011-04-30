@@ -2561,7 +2561,6 @@ trace_print_lines_arcs (void)
 static int
 GlobalPuller(int argc, char **argv, int x, int y)
 {
-  int i;
   int select_flags = 0;
 
   setbuf(stdout, 0);
