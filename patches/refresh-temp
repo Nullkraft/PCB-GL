@@ -1,0 +1,22 @@
+Bottom: 10d5f29223ff52a5cdf6eae6f4460b915906d34e
+Top:    2ba9d40a8afe8791813040b09c70b0873890b83b
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-30 15:48:32 +0100
+
+Refresh of debug-patch
+
+---
+
+diff --git a/src/autoroute.c b/src/autoroute.c
+index a916c2a..416bc55 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -5120,7 +5120,7 @@ AutoRoute (bool selected)
+   ddraw = gui->request_debug_draw ();
+   if (ddraw != NULL)
+     {
+-      ar_gc = gui->make_gc ();
++      ar_gc = ddraw->make_gc ();
+       ddraw->set_line_cap (ar_gc, Round_Cap);
+     }
+ #endif
