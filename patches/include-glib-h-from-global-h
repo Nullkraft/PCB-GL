@@ -8,6 +8,9 @@ Include glib.h from global.h
 To avoid compiler warnings, remove the now duplicated (or unecessary)
 #define ABS definitions from various files.
 
+There has been a build-time dependance on GLib since the toporouter was
+added. Lets start to make use of it where it is useful.
+
 
 ---
 
