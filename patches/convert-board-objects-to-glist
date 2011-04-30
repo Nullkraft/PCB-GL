@@ -1,5 +1,5 @@
 Bottom: a60faf03a2c26e8c5d2b4497ff1b80a72c2ae18d
-Top:    6ce3e597743bdff96aba3bbc836e6187d9dad8ad
+Top:    c493b748708af850adf0df0fc1b46e6cd98e78df
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 05:09:21 +0100
 
@@ -463,6 +463,94 @@ index 6409139..e4eeb0b 100644
  }
  
  /* ---------------------------------------------------------------------------
+diff --git a/src/djopt.c b/src/djopt.c
+index b5f44b4..641e4b1 100644
+--- a/src/djopt.c
++++ b/src/djopt.c
+@@ -760,28 +760,14 @@ static void
+ remove_line (line_s * l)
+ {
+   int i, j;
+-  line_s *l2;
+-  LineType *from = 0, *to = 0;
+   LayerType *layer = &(PCB->Data->Layer[l->layer]);
+ 
+   check (0, 0);
+ 
+   if (l->line)
+-    {
+-      /* compensate for having line pointers rearranged */
+-      from = &(layer->Line[layer->LineN - 1]);
+-      to = l->line;
+-      RemoveLine (layer, l->line);
+-    }
++    RemoveLine (layer, l->line);
+ 
+   DELETE (l);
+-  for (l2 = lines; l2; l2 = l2->next)
+-    {
+-      if (DELETED (l2))
+-	continue;
+-      if (l2->line == from)
+-	l2->line = to;
+-    }
+ 
+   for (i = 0, j = 0; i < l->s->n_lines; i++)
+     if (l->s->lines[i] != l)
+@@ -798,52 +784,20 @@ remove_line (line_s * l)
+ static void
+ move_line_to_layer (line_s * l, int layer)
+ {
+-  line_s *l2;
+   LayerType *ls, *ld;
+-  LineType *from = 0, *to = 0;
+-  LineType *oldbase = 0, *newbase = 0, *oldend;
+-  LineType *newline;
+ 
+   ls = LAYER_PTR (l->layer);
+-  from = &(ls->Line[ls->LineN - 1]);
+-  to = l->line;
+-
+   ld = LAYER_PTR (layer);
+-  oldbase = ld->Line;
+-  oldend = oldbase + ld->LineN;
+-
+-  newline = (LineType *) MoveObjectToLayer (LINE_TYPE, ls, l->line, 0, ld, 0);
+-  newbase = ld->Line;
+ 
+-  for (l2 = lines; l2; l2 = l2->next)
+-    {
+-      if (DELETED (l2))
+-	continue;
+-      if (l2->line == from)
+-	l2->line = to;
+-      if (l2->line >= oldbase && l2->line < oldend)
+-	l2->line += newbase - oldbase;
+-    }
+-
+-  l->line = newline;
++  MoveObjectToLayer (LINE_TYPE, ls, l->line, 0, ld, 0);
+   l->layer = layer;
+ }
+ 
+ static void
+ remove_via_at (corner_s * c)
+ {
+-  corner_s *cc;
+-  PinType *from = PCB->Data->Via + PCB->Data->ViaN - 1;
+-  PinType *to = c->via;
+   RemoveObject (VIA_TYPE, c->via, 0, 0);
+   c->via = 0;
+-  for (cc = corners; cc; cc = cc->next)
+-    {
+-      if (DELETED (cc))
+-	continue;
+-      if (cc->via == from)
+-	cc->via = to;
+-    }
+ }
+ 
+ static void
 diff --git a/src/draw.c b/src/draw.c
 index 5409249..e1ae2dc 100644
 --- a/src/draw.c
