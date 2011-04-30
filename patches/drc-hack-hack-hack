@@ -1,72 +1,11 @@
-Bottom: 8ca28906d37b1f27815240b897a57f3d1772dede
-Top:    5b694eee311c694746b0040f8943fe4fd9178412
+Bottom: be8d97a6ad9cc3875b765bd06edc482990b3ec31
+Top:    be8d97a6ad9cc3875b765bd06edc482990b3ec31
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-30 16:11:31 +0100
+Date:   2011-04-30 19:21:17 +0100
 
 drc: HACK HACK HACK
 
 
 ---
 
-diff --git a/src/Makefile.am b/src/Makefile.am
-index 4943755..353160a 100644
---- a/src/Makefile.am
-+++ b/src/Makefile.am
-@@ -285,6 +285,7 @@ libgtk_a_CPPFLAGS = -I./hid/gtk
- LIBGTK_SRCS = \
- 	dolists.h \
- 	hid/hidint.h \
-+	hid/gtk/bga-wizard.c \
- 	hid/gtk/gtkhid-main.c \
- 	hid/gtk/gtkhid.h \
- 	hid/gtk/gui.h \
-diff --git a/src/puller.c b/src/puller.c
-index 21e5b61..b76a2b1 100644
---- a/src/puller.c
-+++ b/src/puller.c
-@@ -623,6 +623,11 @@ typedef struct Extra {
-   End end;
-   unsigned char found:1;
-   unsigned char deleted:1;
-+  int type;
-+  union {
-+    LineType *line;
-+    ArcType *arc;
-+  } parent;
- } Extra;
- 
- static Extra multi_next;
-@@ -640,12 +645,12 @@ static void trace_paths ();
- #endif
- static void mark_line_for_deletion (LineTypePtr);
- 
--#define LINE2EXTRA(l) (lines[(l)-CURRENT->Line])
--#define ARC2EXTRA(a) (arcs[(a)-CURRENT->Arc])
--#define EXTRA2LINE(e) (CURRENT->Line[(e)-lines])
--#define EXTRA2ARC(e) (CURRENT->Arc[(e)-arcs])
--#define EXTRA_IS_LINE(e) ((unsigned)(e-lines) < nlines)
--#define EXTRA_IS_ARC(e) ((unsigned)(e-arcs) < narcs)
-+#define LINE2EXTRA(l)    g_hash_table_lookup (lines, l)
-+#define ARC2EXTRA(a)     g_hash_table_lookup (arcs, a)
-+#define EXTRA2LINE(e)    (e->parent.line)
-+#define EXTRA2ARC(e)     (e->parent.arc)
-+#define EXTRA_IS_LINE(e) (e->type == LINE_TYPE)
-+#define EXTRA_IS_ARC(e)  (e->type == ARC_TYPE)
- 
- static void
- unlink_end (Extra *x, Extra **e)
-@@ -712,7 +717,6 @@ typedef struct {
- static int
- find_pair_line_callback (const BoxType * b, void *cl)
- {
--#if 0
-   LineTypePtr line = (LineTypePtr) b;
- #if TRACE1
-   Extra *e = & LINE2EXTRA (line);
-@@ -747,7 +751,6 @@ find_pair_line_callback (const BoxType * b, void *cl)
- #endif
- 	}
-     }
--#endif
-   return 0;
- }
+
