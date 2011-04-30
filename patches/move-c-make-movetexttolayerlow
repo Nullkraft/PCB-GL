@@ -3,7 +3,9 @@ Top:    ac73ff0db6ce5b9611b2e32509949f660411c62c
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 14:00:03 +0100
 
-move.c: Make MoveTextToLayerLowLevel() local to move.c
+Make Move*ToLayerLowLevel() local to move.c
+
+No point in exporting these functions.
 
 
 ---
