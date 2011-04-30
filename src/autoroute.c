@@ -94,13 +94,6 @@ RCSID ("$Id$");
 
 /*
 #define ROUTE_DEBUG
-//#define DEBUG_SHOW_ROUTE_BOXES
-#define DEBUG_SHOW_EXPANSION_BOXES
-//#define DEBUG_SHOW_EDGES
-//#define DEBUG_SHOW_VIA_BOXES
-#define DEBUG_SHOW_TARGETS
-#define DEBUG_SHOW_SOURCES
-//#define DEBUG_SHOW_ZIGZAG
 */
 
 static direction_t
@@ -423,7 +416,6 @@ static void ResetSubnet (routebox_t * net);
 #ifdef ROUTE_DEBUG
 static int showboxen = -2;
 static int aabort = 0;
-static void showroutebox (routebox_t * rb);
 #endif
 
 /* ---------------------------------------------------------------------------
@@ -753,9 +745,6 @@ AddLine (PointerListType layergroupboxes[], int layergroup, LineTypePtr line,
       (*rbpp)->flags.bl_to_ur =
 	(MIN (line->Point1.X, line->Point2.X) == line->Point1.X) !=
 	(MIN (line->Point1.Y, line->Point2.Y) == line->Point1.Y);
-#if defined(ROUTE_DEBUG) && defined(DEBUG_SHOW_ZIGZAG)
-      showroutebox (*rbpp);
-#endif
     }
   /* set aux. properties */
   (*rbpp)->type = LINE;
@@ -1470,17 +1459,6 @@ showbox (BoxType b, Dimension thickness, int group)
   if (showboxen != -1 && showboxen != group)
     return;
 
-
-  gui->set_line_width (ar_gc, thickness);
-  gui->set_line_cap (ar_gc, Trace_Cap);
-  gui->set_color (ar_gc, SLayer->Color);
-
-  gui->draw_line (ar_gc, b.X1, b.Y1, b.X2, b.Y1);
-  gui->draw_line (ar_gc, b.X1, b.Y2, b.X2, b.Y2);
-  gui->draw_line (ar_gc, b.X1, b.Y1, b.X1, b.Y2);
-  gui->draw_line (ar_gc, b.X2, b.Y1, b.X2, b.Y2);
-  gui->use_mask (HID_FLUSH_DRAW_Q);
-
 #if 1
   if (b.Y1 == b.Y2 || b.X1 == b.X2)
     thickness = 5;
@@ -1518,44 +1496,6 @@ showbox (BoxType b, Dimension thickness, int group)
 }
 #endif
 
-#if defined(ROUTE_DEBUG)
-static void
-showedge (edge_t * e)
-{
-  BoxType *b = (BoxType *) e->rb;
-
-  gui->set_line_cap (ar_gc, Trace_Cap);
-  gui->set_line_width (ar_gc, 1);
-  gui->set_color (ar_gc, Settings.MaskColor);
-
-  switch (e->expand_dir)
-    {
-    case NORTH:
-      gui->draw_line (ar_gc, b->X1, b->Y1, b->X2, b->Y1);
-      break;
-    case SOUTH:
-      gui->draw_line (ar_gc, b->X1, b->Y2, b->X2, b->Y2);
-      break;
-    case WEST:
-      gui->draw_line (ar_gc, b->X1, b->Y1, b->X1, b->Y2);
-      break;
-    case EAST:
-      gui->draw_line (ar_gc, b->X2, b->Y1, b->X2, b->Y2);
-      break;
-    default:
-      break;
-    }
-}
-#endif
-
-#if defined(ROUTE_DEBUG)
-static void
-showroutebox (routebox_t * rb)
-{
-  showbox (rb->sbox, rb->flags.source ? 20 : (rb->flags.target ? 10 : 1),
-	   rb->flags.is_via ? component_silk_layer : rb->group);
-}
-#endif
 
 /* return a "parent" of this edge which immediately precedes it in the route.*/
 static routebox_t *
@@ -1804,9 +1744,6 @@ CreateViaEdge (const BoxType * area, Cardinal group,
   rb = CreateExpansionArea (area, group, parent, true, previous_edge);
   rb->flags.is_via = 1;
   rb->came_from = ALL;
-#if defined(ROUTE_DEBUG) && defined(DEBUG_SHOW_VIA_BOXES)
-  showroutebox (rb);
-#endif /* ROUTE_DEBUG && DEBUG_SHOW_VIA_BOXES */
   /* for planes, choose a point near the target */
   if (previous_edge->flags.in_plane)
     {
@@ -2061,9 +1998,6 @@ CreateExpansionArea (const BoxType * area, Cardinal group,
  * are *ONLY* used for path searching. No need to call  InitLists ()
  */
   rb->came_from = src_edge->expand_dir;
-#if defined(ROUTE_DEBUG) && defined(DEBUG_SHOW_EXPANSION_BOXES)
-  showroutebox (rb);
-#endif /* ROUTE_DEBUG && DEBUG_SHOW_EXPANSION_BOXES */
   return rb;
 }
 
@@ -2455,9 +2389,6 @@ CreateBridge (const BoxType * area, routebox_t * parent, direction_t dir)
   rb->flags.nobloat = 1;
   rb->style = parent->style;
   rb->conflicts_with = parent->conflicts_with;
-#if defined(ROUTE_DEBUG) && defined(DEBUG_SHOW_EDGES)
-  showroutebox (rb);
-#endif
   return rb;
 }
 
@@ -3558,11 +3489,8 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
 				       lastpoint, nextpoint, halfwidth,
 				       path->group, subnet, is_bad, last_x);
     }
-#if defined(ROUTE_DEBUG) && defined(DEBUG_SHOW_ROUTE_BOXES)
-  showroutebox (path);
-#if defined(ROUTE_VERBOSE)
+#if defined(ROUTE_DEBUG) && defined(ROUTE_VERBOSE)
   printf ("TRACEPOINT start (%d, %d)\n", nextpoint.X, nextpoint.Y);
-#endif
 #endif
 
   do
@@ -3617,9 +3545,6 @@ TracePath (routedata_t * rd, routebox_t * path, const routebox_t * target,
 
       assert (lastpath->flags.is_via || path->group == lastpath->group);
 
-#if defined(ROUTE_DEBUG) && defined(DEBUG_SHOW_ROUTE_BOXES)
-      showroutebox (path);
-#endif /* ROUTE_DEBUG && DEBUG_SHOW_ROUTE_BOXES */
       /* if this is connected to a plane, draw the thermal */
       if (path->flags.is_thermal || path->type == PLANE)
 	RD_DrawThermal (rd, lastpoint.X, lastpoint.Y, path->group,
@@ -3875,23 +3800,6 @@ list_conflicts (routebox_t * rb)
     printf ("%p, ", vector_element (rb->conflicts_with, i));
 }
 
-static void
-show_area_vec (int lay)
-{
-  int n, save;
-
-  if (!area_vec)
-    return;
-  save = showboxen;
-  showboxen = lay;
-  for (n = 0; n < vector_size (area_vec); n++)
-    {
-      routebox_t *rb = (routebox_t *) vector_element (area_vec, n);
-      showroutebox (rb);
-    }
-  showboxen = save;
-}
-
 static bool
 net_id (routebox_t * rb, long int id)
 {
@@ -4084,9 +3992,6 @@ RouteOne (routedata_t * rd, routebox_t * from, routebox_t * to, int max_edges)
   if (p->flags.target)
     {
       target_list[i++] = &p->box;
-#if defined(ROUTE_DEBUG) && defined(DEBUG_SHOW_TARGETS)
-      showroutebox (p);
-#endif
     }
   END_LOOP;
   targets = r_create_tree ((const BoxType **)target_list, i, 0);
@@ -4107,9 +4012,6 @@ RouteOne (routedata_t * rd, routebox_t * from, routebox_t * to, int max_edges)
 	edge_t *e;
 	BoxType b = shrink_routebox (p);
 
-#if defined(ROUTE_DEBUG) && defined(DEBUG_SHOW_SOURCES)
-	showroutebox (p);
-#endif
 	/* may expand in all directions from source; center edge cost point. */
 	/* note that planes shouldn't really expand, but we need an edge */
 
@@ -4181,9 +4083,6 @@ RouteOne (routedata_t * rd, routebox_t * from, routebox_t * to, int max_edges)
 	}
       /* we should never add edges on inactive layer groups to the heap. */
       assert (is_layer_group_active[e->rb->group]);
-#if defined(ROUTE_DEBUG) && defined(DEBUG_SHOW_EXPANSION_BOXES)
-      //showedge (e);
-#endif
       if (e->rb->flags.is_thermal)
 	{
 	  best_path_candidate (&s, e, e->mincost_target);
