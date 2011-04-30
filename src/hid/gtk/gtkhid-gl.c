@@ -1205,6 +1205,5 @@ ghid_flush_debug_draw (void)
 void
 ghid_finish_debug_draw (void)
 {
-  /* No special tear down requirements
-   */
+  ghid_end_drawing (gport);
 }
