@@ -652,7 +652,7 @@ MoveTextToLayerLowLevel (LayerType *Source, TextType *text,
   SetTextBoundingBox (&PCB->Font, text);
   if (!Destination->text_tree)
     Destination->text_tree = r_create_tree (NULL, 0, 0);
-  r_insert_entry (Destination->text_tree, (BoxType *) text, 0);
+  r_insert_entry (Destination->text_tree, (BoxType *)text, 0);
   ClearFromPolygon (PCB->Data, TEXT_TYPE, Destination, text);
 
   return text;
@@ -690,14 +690,14 @@ static void *
 MovePolygonToLayerLowLevel (LayerType *Source, PolygonType *polygon,
 			    LayerType *Destination)
 {
-  r_delete_entry (Source->polygon_tree, (BoxType *) polygon);
+  r_delete_entry (Source->polygon_tree, (BoxType *)polygon);
 
   Source->Polygon = g_list_remove (Source->Polygon, polygon);
   Destination->Polygon = g_list_append (Destination->Polygon, polygon);
 
   if (!Destination->polygon_tree)
     Destination->polygon_tree = r_create_tree (NULL, 0, 0);
-  r_insert_entry (Destination->polygon_tree, (BoxType *) polygon, 0);
+  r_insert_entry (Destination->polygon_tree, (BoxType *)polygon, 0);
 
   return polygon;
 }
