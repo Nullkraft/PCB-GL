@@ -5,6 +5,14 @@ Date:   2011-04-30 15:20:40 +0100
 
 autoroute.c: Utilise new HID interface for debug drawing
 
+This gives the HID an opportunity to refuse the autorouter's drawing.
+Both the GTK/GDK and Lesstif GUIs accept this drawing, so either should
+be suitable for use whilst debugging workings of the auto-router.
+
+The PCB+GL renderer (not yet landed) needs quite a lot of setup calls to
+be made before it can allow the core do draw, hence the need for this
+notification / permissioning.
+
 
 ---
 
