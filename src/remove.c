@@ -135,6 +135,8 @@ DestroyVia (PinTypePtr Via)
   DestroyTarget->Via = g_list_remove (DestroyTarget->Via, Via);
   DestroyTarget->ViaN --;
 
+  g_slice_free (PinType, Via);
+
   return NULL;
 }
 
@@ -150,6 +152,8 @@ DestroyLine (LayerTypePtr Layer, LineTypePtr Line)
   Layer->Line = g_list_remove (Layer->Line, Line);
   Layer->LineN --;
 
+  g_slice_free (LineType, Line);
+
   return NULL;
 }
 
@@ -163,6 +167,8 @@ DestroyArc (LayerTypePtr Layer, ArcTypePtr Arc)
 
   Layer->Arc = g_list_remove (Layer->Arc, Arc);
   Layer->ArcN --;
+
+  g_slice_free (ArcType, Arc);
 
   return NULL;
 }
@@ -178,6 +184,8 @@ DestroyPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
 
   Layer->Polygon = g_list_remove (Layer->Polygon, Polygon);
   Layer->PolygonN --;
+
+  g_slice_free (PolygonType, Polygon);
 
   return NULL;
 }
@@ -234,6 +242,8 @@ DestroyText (LayerTypePtr Layer, TextTypePtr Text)
   Layer->Text = g_list_remove (Layer->Text, Text);
   Layer->TextN --;
 
+  g_slice_free (TextType, Text);
+
   return NULL;
 }
 
@@ -272,6 +282,8 @@ DestroyElement (ElementTypePtr Element)
   DestroyTarget->Element = g_list_remove (DestroyTarget->Element, Element);
   DestroyTarget->ElementN --;
 
+  g_slice_free (ElementType, Element);
+
   return NULL;
 }
 
@@ -286,6 +298,8 @@ DestroyRat (RatTypePtr Rat)
 
   DestroyTarget->Rat = g_list_remove (DestroyTarget->Rat, Rat);
   DestroyTarget->RatN --;
+
+  g_slice_free (RatType, Rat);
 
   return NULL;
 }

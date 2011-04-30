@@ -190,7 +190,7 @@ GetPinMemory (ElementType *element)
 {
   PinType *new_obj;
 
-  new_obj = g_slice_new (PinType);
+  new_obj = g_slice_new0 (PinType);
   element->Pin = g_list_append (element->Pin, new_obj);
   element->PinN ++;
 
@@ -211,7 +211,7 @@ GetPadMemory (ElementType *element)
 {
   PadType *new_obj;
 
-  new_obj = g_slice_new (PadType);
+  new_obj = g_slice_new0 (PadType);
   element->Pad = g_list_append (element->Pad, new_obj);
   element->PadN ++;
 
@@ -232,7 +232,7 @@ GetViaMemory (DataType *data)
 {
   PinType *new_obj;
 
-  new_obj = g_slice_new (PinType);
+  new_obj = g_slice_new0 (PinType);
   data->Via = g_list_append (data->Via, new_obj);
   data->ViaN ++;
 
@@ -253,7 +253,7 @@ GetRatMemory (DataType *data)
 {
   RatType *new_obj;
 
-  new_obj = g_slice_new (RatType);
+  new_obj = g_slice_new0 (RatType);
   data->Rat = g_list_append (data->Rat, new_obj);
   data->RatN ++;
 
@@ -274,7 +274,7 @@ GetLineMemory (LayerType *layer)
 {
   LineType *new_obj;
 
-  new_obj = g_slice_new (LineType);
+  new_obj = g_slice_new0 (LineType);
   layer->Line = g_list_append (layer->Line, new_obj);
   layer->LineN ++;
 
@@ -295,7 +295,7 @@ GetArcMemory (LayerType *layer)
 {
   ArcType *new_obj;
 
-  new_obj = g_slice_new (ArcType);
+  new_obj = g_slice_new0 (ArcType);
   layer->Arc = g_list_append (layer->Arc, new_obj);
   layer->ArcN ++;
 
@@ -316,7 +316,7 @@ GetTextMemory (LayerType *layer)
 {
   TextType *new_obj;
 
-  new_obj = g_slice_new (TextType);
+  new_obj = g_slice_new0 (TextType);
   layer->Text = g_list_append (layer->Text, new_obj);
   layer->TextN ++;
 
@@ -337,7 +337,7 @@ GetPolygonMemory (LayerType *layer)
 {
   PolygonType *new_obj;
 
-  new_obj = g_slice_new (PolygonType);
+  new_obj = g_slice_new0 (PolygonType);
   layer->Polygon = g_list_append (layer->Polygon, new_obj);
   layer->PolygonN ++;
 
@@ -400,7 +400,7 @@ GetElementMemory (DataType *data)
 {
   ElementType *new_obj;
 
-  new_obj = g_slice_new (ElementType);
+  new_obj = g_slice_new0 (ElementType);
   data->Element = g_list_append (data->Element, new_obj);
   data->ElementN ++;
 
