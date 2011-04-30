@@ -1,5 +1,5 @@
 Bottom: b2b82a1d80f198377cab4d75dd9340515248b929
-Top:    ccf615407c9587b865103df8055022a1225eb283
+Top:    4199d0efa10446877d7479a31fd0275ee8fc5ae4
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-29 20:50:57 +0100
 
@@ -9,7 +9,7 @@ Livedraw debug
 ---
 
 diff --git a/src/autoroute.c b/src/autoroute.c
-index d752231..78e62c4 100644
+index d752231..6c544e5 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -3986,6 +3986,7 @@ struct routeone_status
@@ -29,7 +29,7 @@ index d752231..78e62c4 100644
        r_delete_entry (rd->layergrouptree[rb->group], &rb->box);
      }
    vector_destroy (&area_vec);
-@@ -4604,11 +4607,13 @@ ripout_livedraw_obj (routebox_t *rb)
+@@ -4604,20 +4607,29 @@ ripout_livedraw_obj (routebox_t *rb)
        LayerType *layer = LAYER_PTR (PCB->LayerGroups.Entries[rb->group][0]);
        EraseLine (rb->livedraw_obj.line);
        DestroyObject (PCB->Data, LINE_TYPE, layer, rb->livedraw_obj.line, NULL);
@@ -43,13 +43,14 @@ index d752231..78e62c4 100644
      }
  }
  
-@@ -4620,6 +4625,21 @@ ripout_livedraw_obj_cb (const BoxType * b, void *cl)
-   return 0;
- }
- 
+-static int
+-ripout_livedraw_obj_cb (const BoxType * b, void *cl)
 +static void
 +ripout_all_livedrawn (routedata_t *rd)
-+{
+ {
+-  routebox_t *box = (routebox_t *) b;
+-  ripout_livedraw_obj (box);
+-  return 0;
 +  routebox_t *net, *p;
 +  LIST_LOOP (rd->first_net, different_net, net);
 +  {
@@ -60,12 +61,10 @@ index d752231..78e62c4 100644
 +    END_LOOP;
 +  }
 +  END_LOOP;
-+}
-+
+ }
+ 
  struct routeall_status
- {
-   /* --- for completion rate statistics ---- */
-@@ -4738,8 +4758,8 @@ RouteAll (routedata_t * rd)
+@@ -4738,8 +4750,8 @@ RouteAll (routedata_t * rd)
  		    }
  		  if (rip)
  		    {
@@ -76,7 +75,7 @@ index d752231..78e62c4 100644
  		      del =
  			r_delete_entry (rd->layergrouptree[p->group],
  					&p->box);
-@@ -5265,14 +5285,7 @@ AutoRoute (bool selected)
+@@ -5265,14 +5277,7 @@ AutoRoute (bool selected)
    changed = (RouteAll (rd).total_nets_routed > 0) || changed;
  donerouting:
    if (changed && TEST_FLAG (LIVEROUTEFLAG, PCB))
