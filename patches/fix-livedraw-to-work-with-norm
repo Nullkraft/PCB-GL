@@ -5,6 +5,10 @@ Date:   2011-04-30 15:20:39 +0100
 
 Fix livedraw to work with normal rendering APIs
 
+NB: This relies on the immutability of board object pointers, so must
+not be applied to older PCB code-bases which would often re-locate
+storage of board objects to keep them in a contiguous array.
+
 
 ---
 
