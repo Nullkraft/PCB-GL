@@ -1,7 +1,7 @@
-Bottom: f9aa67e383c39f439e5f9dd6add978468c659f87
-Top:    b94876c7fa2f8f098946e617cf25efbf8539b2ba
+Bottom: 6ea9a39939c26b41cca4c7351a7fe8794fdc29de
+Top:    4f3011ccf09a1b88483655c1cb674f4f5556d0c9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-30 15:06:49 +0100
+Date:   2011-04-30 19:49:03 +0100
 
 Convert object memory allocations to use g_slice()
 
@@ -290,10 +290,10 @@ index 65eef92..31a17fb 100644
    double C0, T0;
    bool changed = false;
 diff --git a/src/autoroute.c b/src/autoroute.c
-index 27dba28..920d8e8 100644
+index d419031..415bd21 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
-@@ -1003,7 +1003,6 @@ CreateRouteData ()
+@@ -1010,7 +1010,6 @@ CreateRouteData ()
      {
        layergroupboxes[i].Ptr = NULL;
        layergroupboxes[i].PtrN = 0;
