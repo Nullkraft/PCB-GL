@@ -1,5 +1,5 @@
 Bottom: bde09837966af6260dab85c7c523be38863f3de0
-Top:    e2c617cbbdcf784d7082decfbcc779a4b07cc54d
+Top:    a50b74597b7bfea28991ea290ad3081959b3f860
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 05:09:21 +0100
 
@@ -375,7 +375,7 @@ index 907c7e6..b0f5f7d 100644
    Buffer->Data->ElementN = 0;
    ClearBuffer (Buffer);
 diff --git a/src/create.c b/src/create.c
-index 6409139..d3c737e 100644
+index 6409139..e4eeb0b 100644
 --- a/src/create.c
 +++ b/src/create.c
 @@ -713,16 +713,11 @@ CreateNewArcInElement (ElementTypePtr Element,
@@ -448,37 +448,6 @@ index 6409139..d3c737e 100644
    line->Thickness = Thickness;
    line->Flags = NoFlags ();
    line->ID = ID++;
--  return (line);
-+  return line;
- }
- 
- /* ---------------------------------------------------------------------------
-@@ -926,25 +915,19 @@ CreateNewLineInSymbol (SymbolTypePtr Symbol,
- 		       LocationType X1, LocationType Y1,
- 		       LocationType X2, LocationType Y2, BDimension Thickness)
- {
--  LineTypePtr line = Symbol->Line;
-+  LineType* line;
- 
--  /* realloc new memory if necessary and clear it */
--  if (Symbol->LineN >= Symbol->LineMax)
--    {
--      Symbol->LineMax += STEP_SYMBOLLINE;
--      line = (LineTypePtr)realloc (line, Symbol->LineMax * sizeof (LineType));
--      Symbol->Line = line;
--      memset (line + Symbol->LineN, 0, STEP_SYMBOLLINE * sizeof (LineType));
--    }
-+  line = g_slice_new0 (LineType);
-+  Symbol->Line = g_list_append (Symbol->Line, line);
-+  Symbol->LineN ++;
- 
-   /* copy values */
--  line = line + Symbol->LineN++;
-   line->Point1.X = X1;
-   line->Point1.Y = Y1;
-   line->Point2.X = X2;
-   line->Point2.Y = Y2;
-   line->Thickness = Thickness;
 -  return (line);
 +  return line;
  }
