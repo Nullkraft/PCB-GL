@@ -53,7 +53,7 @@
 #define _cairo_error(x) (x)
 
 #define DEBUG_PRINT_STATE 0
-#define DEBUG_EVENTS 1
+#define DEBUG_EVENTS 0
 #define DEBUG_TRAPS 0
 
 typedef cairo_point_t cairo_bo_point32_t;
@@ -86,10 +86,18 @@ struct _cairo_bo_edge {
 /* left and right children are index * 2 and (index * 2) +1 respectively */
 #define PQ_LEFT_CHILD_INDEX(i) ((i) << 1)
 
+#if 0
 typedef enum {
     CAIRO_BO_EVENT_TYPE_STOP,
     CAIRO_BO_EVENT_TYPE_INTERSECTION,
     CAIRO_BO_EVENT_TYPE_START
+} cairo_bo_event_type_t;
+#endif
+
+typedef enum {
+    CAIRO_BO_EVENT_TYPE_START,
+    CAIRO_BO_EVENT_TYPE_INTERSECTION,
+    CAIRO_BO_EVENT_TYPE_STOP
 } cairo_bo_event_type_t;
 
 typedef struct _cairo_bo_event {
@@ -204,6 +212,12 @@ _line_compute_intersection_x_for_y (const cairo_line_t *line,
                                     cairo_fixed_t y)
 {
     cairo_fixed_t x, dy;
+
+#if 0
+    if (y == line->p1.y &&
+        y == line->p2.y)
+      printf ("Horizontal line, so what x coord do we report?\n");
+#endif
 
     if (y == line->p1.y)
         return line->p1.x;
@@ -526,16 +540,22 @@ edges_compare_x_for_y (const cairo_bo_edge_t *a,
     } have_ax_bx = HAVE_BOTH;
     int32_t ax, bx;
 
+//    if (y == a->edge.line.p2.y)
+//        ax = a->edge.line.p2.x;
+//    else if (y == a->edge.line.p1.y)
     if (y == a->edge.line.p1.y)
         ax = a->edge.line.p1.x;
-    else if (y == a->edge.line.p2.y)
+    else if (y == a->edge.line.p2.y) /* WE MISS THE STOP EVENT FOR A HORIZONTAL LINE? */
         ax = a->edge.line.p2.x;
     else
         have_ax_bx &= ~HAVE_AX;
 
+//    if (y == b->edge.line.p2.y) /* WE MISS THE STOP EVENT FOR A HORIZONTAL LINE? */
+//        bx = b->edge.line.p2.x;
+//    else if (y == b->edge.line.p1.y)
     if (y == b->edge.line.p1.y)
         bx = b->edge.line.p1.x;
-    else if (y == b->edge.line.p2.y)
+    else if (y == b->edge.line.p2.y) /* WE MISS THE STOP EVENT FOR A HORIZONTAL LINE? */
         bx = b->edge.line.p2.x;
     else
         have_ax_bx &= ~HAVE_BX;
@@ -561,9 +581,9 @@ _line_equal (const cairo_line_t *a, const cairo_line_t *b)
 }
 
 static int
-_cairo_bo_sweep_line_compare_edges (cairo_bo_sweep_line_t        *sweep_line,
-                                    const cairo_bo_edge_t        *a,
-                                    const cairo_bo_edge_t        *b)
+_cairo_bo_sweep_line_compare_edges (cairo_bo_sweep_line_t *sweep_line,
+                                    const cairo_bo_edge_t *a,
+                                    const cairo_bo_edge_t *b)
 {
     int cmp;
 
@@ -578,13 +598,19 @@ _cairo_bo_sweep_line_compare_edges (cairo_bo_sweep_line_t        *sweep_line,
          * called only when starting a new edge, (not when stopping an
          * edge), so we don't have to worry about conditionally inverting
          * the sense of _slope_compare. */
-        cmp = _slope_compare (a, b);
-        if (cmp)
-            return cmp;
+        //cmp = _slope_compare (a, b);
+        //if (cmp)
+        //    return cmp;
+        return 1;
     }
 
     /* We've got two collinear edges now. */
-    return b->edge.bottom - a->edge.bottom;
+    if (b->edge.bottom - a->edge.bottom)
+      return b->edge.bottom - a->edge.bottom;
+
+    /* Horizontal case */
+//    printf ("Horizontal case\n");
+    return b->edge.line.p2.x - b->edge.line.p2.x;
 }
 
 static inline cairo_int64_t
@@ -659,10 +685,12 @@ intersect_lines (cairo_bo_edge_t                *a,
                   b->edge.line.p1.x - a->edge.line.p1.x,
                   b->edge.line.p1.y - a->edge.line.p1.y);
     if (_cairo_int64_negative (den_det)) {
-        if (_cairo_int64_ge (den_det, R))
+//        if (_cairo_int64_ge (den_det, R))
+        if (_cairo_int64_gt (den_det, R))
             return FALSE;
     } else {
-        if (_cairo_int64_le (den_det, R))
+//        if (_cairo_int64_le (den_det, R))
+        if (_cairo_int64_lt (den_det, R))
             return FALSE;
     }
 
@@ -670,10 +698,12 @@ intersect_lines (cairo_bo_edge_t                *a,
                   a->edge.line.p1.y - b->edge.line.p1.y,
                   a->edge.line.p1.x - b->edge.line.p1.x);
     if (_cairo_int64_negative (den_det)) {
-        if (_cairo_int64_ge (den_det, R))
+//        if (_cairo_int64_ge (den_det, R))
+        if (_cairo_int64_gt (den_det, R))
             return FALSE;
     } else {
-        if (_cairo_int64_le (den_det, R))
+//        if (_cairo_int64_le (den_det, R))
+        if (_cairo_int64_lt (den_det, R))
             return FALSE;
     }
 
@@ -733,6 +763,7 @@ intersect_lines (cairo_bo_edge_t                *a,
     return TRUE;
 }
 
+#if 0
 static int
 _cairo_bo_intersect_ordinate_32_compare (cairo_bo_intersect_ordinate_t        a,
                                          int32_t                        b)
@@ -817,6 +848,7 @@ _cairo_bo_edge_contains_intersect_point (cairo_bo_edge_t                *edge,
         return _cairo_bo_intersect_ordinate_32_compare (point->x, bot_x) < 0;
     }
 }
+#endif
 
 /* Compute the intersection of two edges. The result is provided as a
  * coordinate pair of 128-bit integers.
@@ -841,14 +873,19 @@ _cairo_bo_edge_intersect (cairo_bo_edge_t        *a,
 {
     cairo_bo_intersect_point_t quorem;
 
+    /* FIXME: Can we cheat... we know our polygons don't self-intersect
+     * FIXME: Perhaps we need to let it do the test if one piece is _new_, due to snap-rounding? */
+
     if (! intersect_lines (a, b, &quorem))
         return FALSE;
 
+#if 0
     if (! _cairo_bo_edge_contains_intersect_point (a, &quorem))
         return FALSE;
 
     if (! _cairo_bo_edge_contains_intersect_point (b, &quorem))
         return FALSE;
+#endif
 
     /* Now that we've correctly compared the intersection point and
      * determined that it lies within the edge, then we know that we
@@ -1077,9 +1114,9 @@ _cairo_bo_event_queue_fini (cairo_bo_event_queue_t *event_queue)
 }
 
 static inline cairo_status_t
-_cairo_bo_event_queue_insert_if_intersect_below_current_y (cairo_bo_event_queue_t        *event_queue,
+_cairo_bo_event_queue_insert_if_intersect_below_current_y (cairo_bo_event_queue_t *event_queue,
                                                            cairo_bo_edge_t        *left,
-                                                           cairo_bo_edge_t *right)
+                                                           cairo_bo_edge_t        *right)
 {
     cairo_bo_point32_t intersection;
 
@@ -1091,8 +1128,30 @@ _cairo_bo_event_queue_insert_if_intersect_below_current_y (cairo_bo_event_queue_
      * slope comparison also puts left less than right, then we know
      * that the intersection of these two segments has already
      * occurred before the current sweep line position. */
-    if (_slope_compare (left, right) <= 0)
+
+    /* CAN THIS THROW AWAY AN INTERSECT ON THE EXACT POINT THE LINE STARTS? */
+    if (_slope_compare (left, right) <= 0) {
+#if 0
+      printf ("Dropping lines (%i,%i)-(%i,%i), (%i,%i)-(%i,%i)\n",
+              left->edge.line.p1.x, left->edge.line.p1.y,
+              left->edge.line.p2.x, left->edge.line.p2.y,
+              right->edge.line.p1.x, right->edge.line.p1.y,
+              right->edge.line.p2.x, right->edge.line.p2.y);
+#endif
+#if 0
+      printf ("\tLine[%i %i %i %i 1500 2000 \"clearline\"] #%s\n",
+              left->edge.line.p1.x, left->edge.line.p1.y,
+              left->edge.line.p2.x, left->edge.line.p2.y,
+              (left->edge.line.p1.x == left->edge.line.p2.x) ? "V" :
+              ((left->edge.line.p1.y == left->edge.line.p2.y) ? "H" : ""));
+      printf ("\tLine[%i %i %i %i 1500 2000 \"clearline\"] #%s\n",
+              right->edge.line.p1.x, right->edge.line.p1.y,
+              right->edge.line.p2.x, right->edge.line.p2.y,
+              (right->edge.line.p1.x == right->edge.line.p2.x) ? "V" :
+              ((right->edge.line.p1.y == right->edge.line.p2.y) ? "H" : ""));
+#endif
         return CAIRO_STATUS_SUCCESS;
+    }
 
     if (! _cairo_bo_edge_intersect (left, right, &intersection))
         return CAIRO_STATUS_SUCCESS;
@@ -1302,6 +1361,7 @@ event_log (const char *fmt, ...)
 }
 #endif
 
+#if 0
 static inline cairo_bool_t
 edges_colinear (const cairo_bo_edge_t *a, const cairo_bo_edge_t *b)
 {
@@ -1326,6 +1386,7 @@ edges_colinear (const cairo_bo_edge_t *a, const cairo_bo_edge_t *b)
                                              b->edge.line.p1.x) == 0;
     }
 }
+#endif
 
 
 static cairo_status_t
@@ -1353,10 +1414,11 @@ _add_result_edge (cairo_array_t *array,
     printf ("Emitting result edge (%i,%i)-(%i,%i)\n",
             edge->line.p1.x, edge->line.p1.y,
             edge->line.p2.x, edge->line.p2.y);
-#else
-//    printf ("\tLine[%i %i %i %i 1500 2000 \"clearline\"]\n",
-//            edge->line.p1.x, edge->line.p1.y,
-//            edge->line.p2.x, edge->line.p2.y);
+#endif
+#if 0
+    printf ("\tLine[%i %i %i %i 1500 2000 \"clearline\"]\n",
+            edge->line.p1.x, edge->line.p1.y,
+            edge->line.p2.x, edge->line.p2.y);
 #endif
 
 //    return _cairo_array_append (array, edge);
@@ -1488,10 +1550,41 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
 
             /* skip this intersection if its edges are not adjacent */
             if (e2 != e1->next) {
-                printf ("Breaking because edges not adjacent - will we return?\n");
+//                printf ("Breaking because edges not adjacent - will we return?\n");
+#if 0
+                printf ("event: (%i,%i), e1: (%i,%i)-(%i,%i), e2: (%i,%i)-(%i,%i)\n",
+                        event->point.x, event->point.y,
+                        e1->edge.line.p1.x, e1->edge.line.p1.y,
+                        e1->edge.line.p2.x, e1->edge.line.p2.y,
+                        e2->edge.line.p1.x, e2->edge.line.p1.y,
+                        e2->edge.line.p2.x, e2->edge.line.p2.y);
+
+                if (e1->next)
+                  printf ("e1->next: (%i,%i)-(%i,%i)\n", e1->next->edge.line.p1.x,
+                                                         e1->next->edge.line.p1.y,
+                                                         e1->next->edge.line.p2.x,
+                                                         e1->next->edge.line.p2.y);
+                else
+                  printf ("e1->next = NULL\n");
+
+                if (e1 == e2->next)
+                  printf ("Oops, we were backwards adjacent\n");
+#endif
+
+                // Do the intersection anyway?
+                // do_intersect (e1, e2, event->point);
+
                 break;
             }
 
+#if 0
+            printf ("EVENT: (%i,%i), e1: (%i,%i)-(%i,%i), e2: (%i,%i)-(%i,%i)\n",
+                    event->point.x, event->point.y,
+                    e1->edge.line.p1.x, e1->edge.line.p1.y,
+                    e1->edge.line.p2.x, e1->edge.line.p2.y,
+                    e2->edge.line.p1.x, e2->edge.line.p1.y,
+                    e2->edge.line.p2.x, e2->edge.line.p2.y);
+#endif
             intersection_count++;
 
             do_intersect (e1, e2, event->point);
@@ -1555,6 +1648,7 @@ _cairo_bentley_ottmann_tessellate_bo_edges (cairo_bo_event_t   **start_events,
     return status;
 }
 
+#if 0
 cairo_status_t
 _cairo_bentley_ottmann_tessellate_polygon (cairo_traps_t         *traps,
                                            const cairo_polygon_t *polygon)
@@ -1620,6 +1714,7 @@ _cairo_bentley_ottmann_tessellate_polygon (cairo_traps_t         *traps,
 
     return status;
 }
+#endif
 
 #if 0
 cairo_status_t
@@ -2099,14 +2194,14 @@ my_cairo_test (void)
   i++;
 #endif
 
-  /* Line from (10,10)-(20,20) */
-  points[i].a.x = 10; points[i].a.y = 10;
+  /* Line from (10,20)-(20,20) */
+  points[i].a.x = 10; points[i].a.y = 20;
   points[i].b.x = 20; points[i].b.y = 20;
   points[i].num = i;
   data = g_list_prepend (data, &points[i]);
   i++;
 
-  /* Line from (15,20)-(15,10) */
+  /* Line from (15,10)-(15,20) */
   points[i].a.x = 15; points[i].a.y = 10;
   points[i].b.x = 15; points[i].b.y = 20;
   points[i].num = i;
@@ -2184,7 +2279,7 @@ adjust_tree (PLINE *p, VNODE *v)
   q->box.Y2 = max (q->v->point[1], q->v->next->point[1]) + 1;
   r_insert_entry (p->tree, (const BoxType *) q, 1);
   r_delete_entry (p->tree, (const BoxType *) s);
-  free (s);
+  /* r_delete_entry deletes the seg */
   return 0;
 }
 
@@ -2194,37 +2289,7 @@ node_add
  (C) 1993 Klamer Schutte
  (C) 1997 Alexey Nikitin, Michael Leonov
  (C) 2006 harry eaton
-
- returns a bit field in new_point that indicates where the
- point was.
- 1 means a new node was created and inserted
- 4 means the intersection was not on the dest point
 */
-static VNODE *
-node_add (VNODE * dest, cairo_point_t po, int *new_point)
-{
-  VNODE *p;
-  Vector v;
-
-  if (vect_equal (po, dest->point))
-    return dest;
-  if (vect_equal (po, dest->next->point))
-    {
-      (*new_point) += 4;
-      return dest->next;
-    }
-  v[0] = po.x;  v[1] = po.y;
-  p = poly_CreateNode (v);
-  if (p == NULL)
-    return NULL;
-  (*new_point) += 5;
-  p->prev = dest;
-  p->next = dest->next;
-  p->cvc_prev = p->cvc_next = NULL;
-  p->Flags.status = UNKNWN;
-  return (dest->next = dest->next->prev = p);
-}				/* node_add */
-
 static VNODE *
 node_add_single (VNODE * dest, cairo_point_t po)
 {
@@ -2254,39 +2319,19 @@ node_add_point
 
  return 1 if new node in b, 2 if new node in a and 3 if new node in both
 */
-
-static int
-node_add_point (VNODE * a, VNODE * b, cairo_point_t p)
-{
-  int res = 0;
-
-  VNODE *node_a, *node_b;
-
-  node_a = node_add (a, p, &res);
-  res += res;
-  node_b = node_add (b, p, &res);
-
-  if (node_a == NULL || node_b == NULL)
-    return ISECT_NO_MEMORY;
-  node_b->cvc_prev = node_b->cvc_next = (CVCList *) - 1;
-  node_a->cvc_prev = node_a->cvc_next = (CVCList *) - 1;
-  return res;
-}				/* node_add_point */
-
 static VNODE *
 node_add_single_point (VNODE *inp_node, cairo_point_t p)
 {
+  VNODE *next_node = inp_node->next;
   VNODE *out_node;
-
-  /* JUST A HUNCH: */
-//  inp_node->cvc_prev = inp_node->cvc_next = (CVCList *) - 1;
 
   out_node = node_add_single (inp_node, p);
   out_node->cvc_prev = out_node->cvc_next = (CVCList *) - 1;
 
   if (out_node == inp_node ||
-      out_node == inp_node->next) {
+      out_node == next_node) {
     /* No node was added - apparently it already existed */
+//    printf ("X ");
     return NULL;
   }
 
@@ -2314,50 +2359,47 @@ do_intersect (cairo_bo_edge_t *e1, cairo_bo_edge_t *e2, cairo_point_t point)
   // BUT: We know our _single_ intersection is passed as (point.x,point.y) - so why bother?
   // Just need to check that intersection isn't with one of our existing vertex end-points?
 
+  if (e1->p == e2->p) {
+//    printf ("do_intersect: SAME CONTOUR\n");
+    return;
+  }
+
+//  printf ("do_intersect: ");
+
   e1->p->Flags.status = ISECTED;
   e2->p->Flags.status = ISECTED;
-
-//  if (cnt == 0) {
-//    printf ("Alleged no intersection error\n");
-//  }
-//  if (cnt == 2) {
-//    printf ("ALLEGED TWO INTERSECTIONS ERROR");
-//  }
 
   new_node = node_add_single_point (e1->v, point);
   /* adjust the bounding box and tree if necessary */
   if (new_node != NULL) {
+//    printf ("1 ");
     e1->p->Count ++; /* ??? */
     cntrbox_adjust (e1->p, point);
     if (adjust_tree (e1->p, e1->v)) return; /* error */
     /* Need to decide whether the new piece, or the old piece is
        going to continue seeing "action" in the sweepline algorithm */
-#if 0
     if (new_node->point[1] > e1->v->point[1]) {
       e1->v = new_node;
     } else if (new_node->point[1] == e1->v->point[1]) {
       if (new_node->point[0] > e1->v->point[0])
         e1->v = new_node;
     }
-#endif
-//    e1->v = new_node;
   }
   /* if we added a node in the tree we need to change the tree */
   new_node = node_add_single_point (e2->v, point);
   if (new_node != NULL) {
+//    printf ("2");
     e2->p->Count ++; /* ??? */
     cntrbox_adjust (e2->p, point);
     if (adjust_tree (e2->p, e2->v)) return /*1*/;
-#if 0
     if (new_node->point[1] > e2->v->point[1]) {
       e2->v = new_node;
     } else if (new_node->point[1] == e2->v->point[1]) {
       if (new_node->point[0] > e2->v->point[0])
         e2->v = new_node;
     }
-#endif
-//    e2->v = new_node;
   }
+//  printf ("\n");
   return;
 }
 
@@ -2370,68 +2412,73 @@ poly_area_to_start_events (POLYAREA                *poly,
 {
     int i = *counter;
     PLINE *contour;
+    POLYAREA *pa;
 
-    /* Loop over contours */
-    for (contour = poly->contours; contour != NULL; contour = contour->next) {
-      /* Loop over nodes, adding edges */
-      VNODE *bv;
-      bv = &contour->head;
-      do {
-        int x1, y1, x2, y2;
-        cairo_edge_t cairo_edge;
-        /* Node is between bv->point[0,1] and bv->next->point[0,1] */
+    pa = poly;
+    do {
+      /* Loop over contours */
+      for (contour = pa->contours; contour != NULL; contour = contour->next) {
+        /* Loop over nodes, adding edges */
+        VNODE *bv;
+        bv = &contour->head;
+        do {
+          int x1, y1, x2, y2;
+          cairo_edge_t cairo_edge;
+          /* Node is between bv->point[0,1] and bv->next->point[0,1] */
 
-        /* HACK TEST: */
-        bv->cvc_prev = bv->cvc_next = NULL;
+          /* HACK TEST: */
+//        bv->cvc_prev = bv->cvc_next = NULL;
 //        bv->cvc_prev = bv->cvc_next = (CVCList *) - 1;
 
-        if (bv->point[1] == bv->next->point[1]) {
-            if (bv->point[0] < bv->next->point[0]) {
-              x1 = bv->point[0];
-              y1 = bv->point[1];
-              x2 = bv->next->point[0];
-              y2 = bv->next->point[1];
-            } else {
-              x1 = bv->next->point[0];
-              y1 = bv->next->point[1];
-              x2 = bv->point[0];
-              y2 = bv->point[1];
-            }
-        } else if (bv->point[1] < bv->next->point[1]) {
-          x1 = bv->point[0];
-          y1 = bv->point[1];
-          x2 = bv->next->point[0];
-          y2 = bv->next->point[1];
-        } else {
-          x1 = bv->next->point[0];
-          y1 = bv->next->point[1];
-          x2 = bv->point[0];
-          y2 = bv->point[1];
-        }
+          if (bv->point[1] == bv->next->point[1]) {
+              if (bv->point[0] < bv->next->point[0]) {
+                x1 = bv->point[0];
+                y1 = bv->point[1];
+                x2 = bv->next->point[0];
+                y2 = bv->next->point[1];
+              } else {
+                x1 = bv->next->point[0];
+                y1 = bv->next->point[1];
+                x2 = bv->point[0];
+                y2 = bv->point[1];
+              }
+          } else if (bv->point[1] < bv->next->point[1]) {
+            x1 = bv->point[0];
+            y1 = bv->point[1];
+            x2 = bv->next->point[0];
+            y2 = bv->next->point[1];
+          } else {
+            x1 = bv->next->point[0];
+            y1 = bv->next->point[1];
+            x2 = bv->point[0];
+            y2 = bv->point[1];
+          }
 
-        cairo_edge.line.p1.x = x1;
-        cairo_edge.line.p1.y = cairo_edge.top = y1;
-        cairo_edge.line.p2.x = x2;
-        cairo_edge.line.p2.y = cairo_edge.bottom = y2;
-        cairo_edge.dir = 0;
+          cairo_edge.line.p1.x = x1;
+          cairo_edge.line.p1.y = cairo_edge.top = y1;
+          cairo_edge.line.p2.x = x2;
+          cairo_edge.line.p2.y = cairo_edge.bottom = y2;
+          cairo_edge.dir = 0;
 
-        event_ptrs[i] = (cairo_bo_event_t *) &events[i];
+          event_ptrs[i] = (cairo_bo_event_t *) &events[i];
 
-        events[i].type = CAIRO_BO_EVENT_TYPE_START;
-        events[i].point.y = cairo_edge.top;
-        events[i].point.x =
-            _line_compute_intersection_x_for_y (&cairo_edge.line,
-                                                events[i].point.y);
+          events[i].type = CAIRO_BO_EVENT_TYPE_START;
+          events[i].point.y = cairo_edge.top;
+          events[i].point.x =
+              _line_compute_intersection_x_for_y (&cairo_edge.line,
+                                                  events[i].point.y);
 
-        events[i].edge.edge = cairo_edge;
-        events[i].edge.prev = NULL;
-        events[i].edge.next = NULL;
-        events[i].edge.p = contour;
-        events[i].edge.v = bv;
-        i++;
+          events[i].edge.edge = cairo_edge;
+          events[i].edge.prev = NULL;
+          events[i].edge.next = NULL;
+          events[i].edge.p = contour;
+          events[i].edge.v = bv;
+          i++;
 
-      } while ((bv = bv->next) != &contour->head);
-    }
+        } while ((bv = bv->next) != &contour->head);
+      }
+
+    } while ((pa = pa->f) != poly);
 
     *counter = i;
 }
@@ -2447,40 +2494,23 @@ bo_intersect (jmp_buf *jb, POLYAREA *b, POLYAREA *a)
     cairo_bo_start_event_t *events;
     cairo_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
     cairo_bo_event_t **event_ptrs;
-    int num_events;
-    int i, j, k;
-    VNODE *doh;
+    int num_events = 0;
+    int i;
+    POLYAREA *pa;
     cairo_traps_t *traps = NULL;
 
     PLINE *contour;
 
-    num_events = 0;
-
-    j = 0; k = 0;
-    for (contour = a->contours; contour != NULL; contour = contour->next) {
-        int tmp = 0;
-        j += contour->Count;
-        doh = &contour->head;
-        do {tmp++;} while ((doh = doh->next) != &contour->head);
-        k+= tmp;
-        contour->Count = tmp;
-    }
-    num_events += k;
-    if (k != j)
-      printf ("OH CRAPPY DOODLE, j=%i, k=%i\n", j, k);
-
-    j = 0; k = 0;
-    for (contour = b->contours; contour != NULL; contour = contour->next) {
-        int tmp = 0;
-        j += contour->Count;
-        doh = &contour->head;
-        do {tmp++;} while ((doh = doh->next) != &contour->head);
-        k+= tmp;
-        contour->Count = tmp;
-    }
-    if (k != j)
-      printf ("OH CRAPPY DOODLE, j=%i, k=%i\n", j, k);
-    num_events += MAX(j,k);
+    pa = a;
+    do {
+      for (contour = pa->contours; contour != NULL; contour = contour->next)
+        num_events += contour->Count;
+    } while ((pa = pa->f) != a);
+    pa = b;
+    do {
+      for (contour = pa->contours; contour != NULL; contour = contour->next)
+        num_events += contour->Count;
+    } while ((pa = pa->f) != b);
 
     if (unlikely (0 == num_events))
         return CAIRO_STATUS_SUCCESS;
@@ -2511,7 +2541,7 @@ bo_intersect (jmp_buf *jb, POLYAREA *b, POLYAREA *a)
                                                          num_events,
                                                          traps,
                                                          &intersections);
-    printf ("Number of intersections was %i\n", intersections);
+//    printf ("Number of intersections was %i\n", intersections);
 #if DEBUG_TRAPS
     dump_traps (traps, "bo-polygon-out.txt");
 #endif
