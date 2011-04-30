@@ -1,5 +1,5 @@
 Bottom: bde09837966af6260dab85c7c523be38863f3de0
-Top:    e55b74938ea9933bf0d09e4d2e5fe1768bc863e3
+Top:    e2c617cbbdcf784d7082decfbcc779a4b07cc54d
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 05:09:21 +0100
 
@@ -25,14 +25,14 @@ index ed087c1..2f0bbd7 100644
  
        mx = e->MarkX;
 diff --git a/src/autoroute.c b/src/autoroute.c
-index c17a8fe..84e0942 100644
+index c17a8fe..f98019c 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -170,6 +170,7 @@ static hidGC ar_gc = 0;
  
  #define LIST_LOOP(init, which, x) do {\
       routebox_t *__next_one__ = (init);\
-+   GList *__copy; /* DUMMY */\
++   GList *__copy = NULL; /* DUMMY */\
     x = NULL;\
     if (!__next_one__)\
       assert(__next_one__);\
@@ -660,7 +660,7 @@ index b740890..eb4cac2 100644
            info.layer = layer;
            /* check all lines */
 diff --git a/src/global.h b/src/global.h
-index a036ee5..025f0a0 100644
+index a036ee5..c162e70 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -50,6 +50,7 @@
@@ -731,24 +731,6 @@ index a036ee5..025f0a0 100644
    rtree_t *via_tree, *element_tree, *pin_tree, *pad_tree, *name_tree[3],	/* for element names */
     *rat_tree;
    struct PCBType *pcb;
-@@ -390,14 +388,12 @@ typedef struct			/* holds drill information */
- {
-   BDimension DrillSize;		/* this drill's diameter */
-   Cardinal ElementN,		/* the number of elements using this drill size */
--    ElementMax,			/* max number of elements from malloc() */
-     PinCount,			/* number of pins drilled this size */
-     ViaCount,			/* number of vias drilled this size */
-     UnplatedCount,		/* number of these holes that are unplated */
--    PinN,			/* number of drill coordinates in the list */
--    PinMax;			/* max number of coordinates from malloc() */
--  PinTypePtr *Pin;		/* coordinates to drill */
--  ElementTypePtr *Element;	/* a pointer to an array of element pointers */
-+    PinN;			/* number of drill coordinates in the list */
-+  GList *Pin;		/* coordinates to drill */
-+  GList *Element;		/* a pointer to an array of element pointers */
- } DrillType, *DrillTypePtr;
- 
- typedef struct			/* holds a range of Drill Infos */
 diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
 index 2a205fa..d5a512f 100644
 --- a/src/hid/gtk/gui-pinout-preview.c
