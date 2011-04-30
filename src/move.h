@@ -101,7 +101,6 @@ void *MoveObjectToLayer (int, void *, void *, void *, LayerTypePtr, bool);
 void *MoveObjectAndRubberband (int, void *, void *, void *,
 			       LocationType, LocationType);
 void *MoveLineToLayerLowLevel (LayerTypePtr, LineTypePtr, LayerTypePtr);
-void *MoveTextToLayerLowLevel (LayerTypePtr, TextTypePtr, LayerTypePtr);
 void *MovePolygonToLayerLowLevel (LayerTypePtr, PolygonTypePtr, LayerTypePtr);
 bool MoveSelectedObjectsToLayer (LayerTypePtr);
 
