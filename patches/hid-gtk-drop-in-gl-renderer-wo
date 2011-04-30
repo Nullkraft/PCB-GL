@@ -1,5 +1,5 @@
 Bottom: e72f14570324fd9e4760722fa6269def0ffb32ae
-Top:    b63b7f4eb2bfe29ca259f0a42e6246f08eeadf04
+Top:    f6f6919965d0a5e2557a09b588c1d4be8bb72073
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 15:20:43 +0100
 
@@ -755,10 +755,10 @@ index 0000000..e69a6b7
 +#endif /* __HIDGL_INCLUDED__  */
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
 new file mode 100644
-index 0000000..71759ca
+index 0000000..0be44de
 --- /dev/null
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -0,0 +1,1190 @@
+@@ -0,0 +1,1210 @@
 +/* $Id$ */
 +
 +#ifdef HAVE_CONFIG_H
@@ -1948,6 +1948,26 @@ index 0000000..71759ca
 +  gport->view_height = save_view_height;
 +
 +  return pixmap;
++}
++
++HID *
++ghid_request_debug_draw (void)
++{
++  ghid_start_drawing (gport);
++  return &ghid_hid;
++}
++
++void
++ghid_flush_debug_draw (void)
++{
++//  gdk_window_process_all_updates ();
++}
++
++void
++ghid_finish_debug_draw (void)
++{
++  /* No special tear down requirements
++   */
 +}
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
 index d52d088..7a18906 100644
