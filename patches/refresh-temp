@@ -1,0 +1,21 @@
+Bottom: be8d97a6ad9cc3875b765bd06edc482990b3ec31
+Top:    7e4cedf75882a00e422cfa6993f7d1a3a0368ca3
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-30 19:26:14 +0100
+
+Refresh of drc-hack-hack-hack
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 4943755..353160a 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -285,6 +285,7 @@ libgtk_a_CPPFLAGS = -I./hid/gtk
+ LIBGTK_SRCS = \
+ 	dolists.h \
+ 	hid/hidint.h \
++	hid/gtk/bga-wizard.c \
+ 	hid/gtk/gtkhid-main.c \
+ 	hid/gtk/gtkhid.h \
+ 	hid/gtk/gui.h \
