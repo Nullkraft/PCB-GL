@@ -1,0 +1,32 @@
+Bottom: f35b8bbef7bd24a92f33b30f153c03bfbb8c03a8
+Top:    ffeaa475406872d1ff74177bdce43fd9fb6ad93a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-30 13:53:44 +0100
+
+Refresh of convert-board-objects-to-glist
+
+---
+
+diff --git a/src/hid/gtk/gui-pinout-preview.c b/src/hid/gtk/gui-pinout-preview.c
+index 5c18aa9..35ef8eb 100644
+--- a/src/hid/gtk/gui-pinout-preview.c
++++ b/src/hid/gtk/gui-pinout-preview.c
+@@ -91,18 +91,12 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
+    */
+   CopyElementLowLevel (NULL, &pinout->element, element, FALSE, 0, 0);
+ 
+-  pin0 = pinout->element.Pin->data;
+-  pin1 = g_list_next (pinout->element.Pin)->data;
+-
+   PIN_LOOP (&pinout->element);
+   {
+     SET_FLAG (DISPLAYNAMEFLAG, pin);
+   }
+   END_LOOP;
+ 
+-  pad0 = pinout->element.Pad->data;
+-  pad1 = g_list_next (pinout->element.Pad)->data;
+-
+   PAD_LOOP (&pinout->element);
+   {
+     SET_FLAG (DISPLAYNAMEFLAG, pad);
