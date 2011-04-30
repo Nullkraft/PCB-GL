@@ -1,5 +1,5 @@
 Bottom: 4cb90c0f4d2bc846557dd664d14cf0a5c9dc0c4a
-Top:    10d5f29223ff52a5cdf6eae6f4460b915906d34e
+Top:    2ba9d40a8afe8791813040b09c70b0873890b83b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 15:20:40 +0100
 
@@ -9,7 +9,7 @@ autoroute.c: Utilise new HID interface for debug drawing
 ---
 
 diff --git a/src/autoroute.c b/src/autoroute.c
-index f34451f..a916c2a 100644
+index f34451f..416bc55 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
 @@ -138,6 +138,7 @@ return dir;
@@ -99,7 +99,7 @@ index f34451f..a916c2a 100644
 +  ddraw = gui->request_debug_draw ();
 +  if (ddraw != NULL)
 +    {
-+      ar_gc = gui->make_gc ();
++      ar_gc = ddraw->make_gc ();
 +      ddraw->set_line_cap (ar_gc, Round_Cap);
 +    }
 +#endif
