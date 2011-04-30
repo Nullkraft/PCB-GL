@@ -915,19 +915,25 @@ CreateNewLineInSymbol (SymbolTypePtr Symbol,
 		       LocationType X1, LocationType Y1,
 		       LocationType X2, LocationType Y2, BDimension Thickness)
 {
-  LineType* line;
+  LineTypePtr line = Symbol->Line;
 
-  line = g_slice_new0 (LineType);
-  Symbol->Line = g_list_append (Symbol->Line, line);
-  Symbol->LineN ++;
+  /* realloc new memory if necessary and clear it */
+  if (Symbol->LineN >= Symbol->LineMax)
+    {
+      Symbol->LineMax += STEP_SYMBOLLINE;
+      line = (LineTypePtr)realloc (line, Symbol->LineMax * sizeof (LineType));
+      Symbol->Line = line;
+      memset (line + Symbol->LineN, 0, STEP_SYMBOLLINE * sizeof (LineType));
+    }
 
   /* copy values */
+  line = line + Symbol->LineN++;
   line->Point1.X = X1;
   line->Point1.Y = Y1;
   line->Point2.X = X2;
   line->Point2.Y = Y2;
   line->Thickness = Thickness;
-  return line;
+  return (line);
 }
 
 /* ---------------------------------------------------------------------------
