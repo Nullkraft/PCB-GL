@@ -8,6 +8,9 @@ Convert board objects to GLists of g_slice allocated memory
 This enables pointers for these objects to be immutable during their
 lifetime, which is a _huge_ benefit for some operations.
 
+Having otherwise was becoming VERY tiresome, and was a perenial source
+of bugs tripping up novice and experts of the codebase alike.
+
 
 ---
 
