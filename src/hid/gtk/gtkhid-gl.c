@@ -1199,7 +1199,7 @@ ghid_request_debug_draw (void)
 void
 ghid_flush_debug_draw (void)
 {
-//  gdk_window_process_all_updates ();
+  gdk_window_process_all_updates ();
 }
 
 void
