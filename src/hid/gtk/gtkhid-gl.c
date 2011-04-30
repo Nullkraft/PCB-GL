@@ -1188,3 +1188,23 @@ ghid_render_pixmap (int cx, int cy, double zoom, int width, int height, int dept
 
   return pixmap;
 }
+
+HID *
+ghid_request_debug_draw (void)
+{
+  ghid_start_drawing (gport);
+  return &ghid_hid;
+}
+
+void
+ghid_flush_debug_draw (void)
+{
+//  gdk_window_process_all_updates ();
+}
+
+void
+ghid_finish_debug_draw (void)
+{
+  /* No special tear down requirements
+   */
+}
