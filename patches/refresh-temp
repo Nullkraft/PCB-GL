@@ -1,0 +1,24 @@
+Bottom: 6c3a87aac1f65c54a1adb373286fc344586936f6
+Top:    e9356b7d1c2b1773a806b20f1c23f325edc21020
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-30 18:08:54 +0100
+
+Refresh of convert-board-objects-to-glist
+
+---
+
+diff --git a/src/puller.c b/src/puller.c
+index fa55baf..07870a6 100644
+--- a/src/puller.c
++++ b/src/puller.c
+@@ -76,8 +76,8 @@ RCSID ("$Id$");
+ 
+ #define abort1() fprintf(stderr, "abort at line %d\n", __LINE__), abort()
+ 
+-#define TRACE0 1
+-#define TRACE1 1
++#define TRACE0 0
++#define TRACE1 0
+ 
+ /* sine of one degree */
+ #define SIN1D	0.0174524064372835
