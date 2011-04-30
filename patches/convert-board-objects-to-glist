@@ -1,5 +1,5 @@
 Bottom: 5c4e977abb5413e17e3a198ef9ea401fef7c3d22
-Top:    63838a9b1030885f67f5d7f590098baad599433b
+Top:    ea0f3bce60467d2dda331b7503567735c48224b7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 05:09:21 +0100
 
@@ -1449,7 +1449,7 @@ index c4a844b..489224b 100644
  bool MoveSelectedObjectsToLayer (LayerTypePtr);
  
 diff --git a/src/mymem.c b/src/mymem.c
-index 24f20a2..9279aaa 100644
+index 24f20a2..77a2ce2 100644
 --- a/src/mymem.c
 +++ b/src/mymem.c
 @@ -182,244 +182,172 @@ GetNetListMemory (NetListListTypePtr Netlistlist)
@@ -1495,7 +1495,7 @@ index 24f20a2..9279aaa 100644
 -	}
 -    }
 -  return (pin + Element->PinN++);
-+  new_obj = g_slice_new (PinType);
++  new_obj = g_slice_new0 (PinType);
 +  element->Pin = g_list_append (element->Pin, new_obj);
 +  element->PinN ++;
 +
@@ -1546,7 +1546,7 @@ index 24f20a2..9279aaa 100644
 -	}
 -    }
 -  return (pad + Element->PadN++);
-+  new_obj = g_slice_new (PadType);
++  new_obj = g_slice_new0 (PadType);
 +  element->Pad = g_list_append (element->Pad, new_obj);
 +  element->PadN ++;
 +
@@ -1587,7 +1587,7 @@ index 24f20a2..9279aaa 100644
 -      END_LOOP;
 -    }
 -  return (via + Data->ViaN++);
-+  new_obj = g_slice_new (PinType);
++  new_obj = g_slice_new0 (PinType);
 +  data->Via = g_list_append (data->Via, new_obj);
 +  data->ViaN ++;
 +
@@ -1629,7 +1629,7 @@ index 24f20a2..9279aaa 100644
 -      END_LOOP;
 -    }
 -  return (rat + Data->RatN++);
-+  new_obj = g_slice_new (RatType);
++  new_obj = g_slice_new0 (RatType);
 +  data->Rat = g_list_append (data->Rat, new_obj);
 +  data->RatN ++;
 +
@@ -1671,7 +1671,7 @@ index 24f20a2..9279aaa 100644
 -      END_LOOP;
 -    }
 -  return (line + Layer->LineN++);
-+  new_obj = g_slice_new (LineType);
++  new_obj = g_slice_new0 (LineType);
 +  layer->Line = g_list_append (layer->Line, new_obj);
 +  layer->LineN ++;
 +
@@ -1711,7 +1711,7 @@ index 24f20a2..9279aaa 100644
 -      END_LOOP;
 -    }
 -  return (arc + Layer->ArcN++);
-+  new_obj = g_slice_new (ArcType);
++  new_obj = g_slice_new0 (ArcType);
 +  layer->Arc = g_list_append (layer->Arc, new_obj);
 +  layer->ArcN ++;
 +
@@ -1751,7 +1751,7 @@ index 24f20a2..9279aaa 100644
 -      END_LOOP;
 -    }
 -  return (text + Layer->TextN++);
-+  new_obj = g_slice_new (TextType);
++  new_obj = g_slice_new0 (TextType);
 +  layer->Text = g_list_append (layer->Text, new_obj);
 +  layer->TextN ++;
 +
@@ -1793,7 +1793,7 @@ index 24f20a2..9279aaa 100644
 -      END_LOOP;
 -    }
 -  return (polygon + Layer->PolygonN++);
-+  new_obj = g_slice_new (PolygonType);
++  new_obj = g_slice_new0 (PolygonType);
 +  layer->Polygon = g_list_append (layer->Polygon, new_obj);
 +  layer->PolygonN ++;
 +
@@ -1861,7 +1861,7 @@ index 24f20a2..9279aaa 100644
 -      END_LOOP;
 -    }
 -  return (element + Data->ElementN++);
-+  new_obj = g_slice_new (ElementType);
++  new_obj = g_slice_new0 (ElementType);
 +  data->Element = g_list_append (data->Element, new_obj);
 +  data->ElementN ++;
 +
@@ -2661,10 +2661,10 @@ index c6cdb2d..d2aa8bb 100644
  
  /*--------------------------------------------------------------------------
 diff --git a/src/remove.c b/src/remove.c
-index ab9aa5c..9ae39c4 100644
+index ab9aa5c..1dcb63e 100644
 --- a/src/remove.c
 +++ b/src/remove.c
-@@ -131,15 +131,11 @@ DestroyVia (PinTypePtr Via)
+@@ -131,15 +131,13 @@ DestroyVia (PinTypePtr Via)
  {
    r_delete_entry (DestroyTarget->via_tree, (BoxTypePtr) Via);
    free (Via->Name);
@@ -2681,11 +2681,13 @@ index ab9aa5c..9ae39c4 100644
 +  DestroyTarget->Via = g_list_remove (DestroyTarget->Via, Via);
 +  DestroyTarget->ViaN --;
 +
++  g_slice_free (PinType, Via);
++
 +  return NULL;
  }
  
  /* ---------------------------------------------------------------------------
-@@ -150,15 +146,11 @@ DestroyLine (LayerTypePtr Layer, LineTypePtr Line)
+@@ -150,15 +148,13 @@ DestroyLine (LayerTypePtr Layer, LineTypePtr Line)
  {
    r_delete_entry (Layer->line_tree, (BoxTypePtr) Line);
    free (Line->Number);
@@ -2702,11 +2704,13 @@ index ab9aa5c..9ae39c4 100644
 +  Layer->Line = g_list_remove (Layer->Line, Line);
 +  Layer->LineN --;
 +
++  g_slice_free (LineType, Line);
++
 +  return NULL;
  }
  
  /* ---------------------------------------------------------------------------
-@@ -168,14 +160,11 @@ static void *
+@@ -168,14 +164,13 @@ static void *
  DestroyArc (LayerTypePtr Layer, ArcTypePtr Arc)
  {
    r_delete_entry (Layer->arc_tree, (BoxTypePtr) Arc);
@@ -2722,11 +2726,13 @@ index ab9aa5c..9ae39c4 100644
 +  Layer->Arc = g_list_remove (Layer->Arc, Arc);
 +  Layer->ArcN --;
 +
++  g_slice_free (ArcType, Arc);
++
 +  return NULL;
  }
  
  /* ---------------------------------------------------------------------------
-@@ -186,15 +175,11 @@ DestroyPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -186,15 +181,13 @@ DestroyPolygon (LayerTypePtr Layer, PolygonTypePtr Polygon)
  {
    r_delete_entry (Layer->polygon_tree, (BoxTypePtr) Polygon);
    FreePolygonMemory (Polygon);
@@ -2743,11 +2749,13 @@ index ab9aa5c..9ae39c4 100644
 +  Layer->Polygon = g_list_remove (Layer->Polygon, Polygon);
 +  Layer->PolygonN --;
 +
++  g_slice_free (PolygonType, Polygon);
++
 +  return NULL;
  }
  
  /* ---------------------------------------------------------------------------
-@@ -245,14 +230,11 @@ DestroyText (LayerTypePtr Layer, TextTypePtr Text)
+@@ -245,14 +238,13 @@ DestroyText (LayerTypePtr Layer, TextTypePtr Text)
  {
    free (Text->TextString);
    r_delete_entry (Layer->text_tree, (BoxTypePtr) Text);
@@ -2763,11 +2771,13 @@ index ab9aa5c..9ae39c4 100644
 +  Layer->Text = g_list_remove (Layer->Text, Text);
 +  Layer->TextN --;
 +
++  g_slice_free (TextType, Text);
++
 +  return NULL;
  }
  
  /* ---------------------------------------------------------------------------
-@@ -286,37 +268,11 @@ DestroyElement (ElementTypePtr Element)
+@@ -286,37 +278,13 @@ DestroyElement (ElementTypePtr Element)
    }
    END_LOOP;
    FreeElementMemory (Element);
@@ -2806,11 +2816,13 @@ index ab9aa5c..9ae39c4 100644
 +  DestroyTarget->Element = g_list_remove (DestroyTarget->Element, Element);
 +  DestroyTarget->ElementN --;
 +
++  g_slice_free (ElementType, Element);
++
 +  return NULL;
  }
  
  /* ---------------------------------------------------------------------------
-@@ -327,15 +283,11 @@ DestroyRat (RatTypePtr Rat)
+@@ -327,15 +295,13 @@ DestroyRat (RatTypePtr Rat)
  {
    if (DestroyTarget->rat_tree)
      r_delete_entry (DestroyTarget->rat_tree, &Rat->BoundingBox);
@@ -2826,6 +2838,8 @@ index ab9aa5c..9ae39c4 100644
 +
 +  DestroyTarget->Rat = g_list_remove (DestroyTarget->Rat, Rat);
 +  DestroyTarget->RatN --;
++
++  g_slice_free (RatType, Rat);
 +
 +  return NULL;
  }
