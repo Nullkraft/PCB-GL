@@ -1,0 +1,28 @@
+Bottom: ccf615407c9587b865103df8055022a1225eb283
+Top:    4199d0efa10446877d7479a31fd0275ee8fc5ae4
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-30 06:50:39 +0100
+
+Refresh of livedraw-debug
+
+---
+
+diff --git a/src/autoroute.c b/src/autoroute.c
+index 78e62c4..6c544e5 100644
+--- a/src/autoroute.c
++++ b/src/autoroute.c
+@@ -4617,14 +4617,6 @@ ripout_livedraw_obj (routebox_t *rb)
+     }
+ }
+ 
+-static int
+-ripout_livedraw_obj_cb (const BoxType * b, void *cl)
+-{
+-  routebox_t *box = (routebox_t *) b;
+-  ripout_livedraw_obj (box);
+-  return 0;
+-}
+-
+ static void
+ ripout_all_livedrawn (routedata_t *rd)
+ {
