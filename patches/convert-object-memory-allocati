@@ -1,5 +1,5 @@
-Bottom: b4394255d33d01ddf36812ba35ef57f790d90f0c
-Top:    8b08da9bb551b50fdc34e28b0261bbb0a355d6b7
+Bottom: 425a524650f1a11ddeec3c1e033e983fa9617717
+Top:    a622ecbfd685a6243706e776325d28ca4e1b9cea
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-29 20:55:13 +0100
 
@@ -290,10 +290,10 @@ index 65eef92..31a17fb 100644
    double C0, T0;
    bool changed = false;
 diff --git a/src/autoroute.c b/src/autoroute.c
-index f98019c..29f4ea1 100644
+index 27dba28..920d8e8 100644
 --- a/src/autoroute.c
 +++ b/src/autoroute.c
-@@ -1007,7 +1007,6 @@ CreateRouteData ()
+@@ -1003,7 +1003,6 @@ CreateRouteData ()
      {
        layergroupboxes[i].Ptr = NULL;
        layergroupboxes[i].PtrN = 0;
@@ -495,10 +495,10 @@ index e4eeb0b..1bf5627 100644
 +  return attr;
  }
 diff --git a/src/crosshair.c b/src/crosshair.c
-index 2abe960..6b81ae5 100644
+index c2551ec..ae8cebd 100644
 --- a/src/crosshair.c
 +++ b/src/crosshair.c
-@@ -384,8 +384,7 @@ XORDrawInsertPointObject (void)
+@@ -380,8 +380,7 @@ XORDrawInsertPointObject (void)
  static void
  XORDrawMoveOrCopyObject (void)
  {
@@ -508,7 +508,7 @@ index 2abe960..6b81ae5 100644
    LocationType dx = Crosshair.X - Crosshair.AttachedObject.X,
      dy = Crosshair.Y - Crosshair.AttachedObject.Y;
  
-@@ -503,11 +502,10 @@ XORDrawMoveOrCopyObject (void)
+@@ -499,11 +498,10 @@ XORDrawMoveOrCopyObject (void)
      }
  
    /* draw the attached rubberband lines too */
@@ -523,7 +523,7 @@ index 2abe960..6b81ae5 100644
  
        if (TEST_FLAG (VIAFLAG, ptr->Line))
  	{
-@@ -535,9 +533,6 @@ XORDrawMoveOrCopyObject (void)
+@@ -531,9 +529,6 @@ XORDrawMoveOrCopyObject (void)
  			     ptr->Line->Point1.Y + dy,
  			     ptr->Line->Point2.X + dx,
  			     ptr->Line->Point2.Y + dy, ptr->Line->Thickness);
@@ -1336,7 +1336,7 @@ index e990d4a..b4307f7 100644
  
  #endif
 diff --git a/src/misc.c b/src/misc.c
-index bb7b84c..cbbb172 100644
+index 0e25089..efca2e1 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -441,7 +441,7 @@ SetTextBoundingBox (FontTypePtr FontPtr, TextTypePtr Text)
@@ -1411,7 +1411,7 @@ index bb7b84c..cbbb172 100644
        }
  
    /* setup the box for the default symbol */
-@@ -1983,10 +1990,13 @@ pcb_author (void)
+@@ -1980,10 +1987,13 @@ pcb_author (void)
  char *
  AttributeGetFromList (AttributeListType *list, char *name)
  {
