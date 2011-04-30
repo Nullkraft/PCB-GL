@@ -1,5 +1,5 @@
-Bottom: b86f76dca990b54a7e9ecc12b93c2b5576461aa7
-Top:    9d62d37c5f1f2c9ea1e3e2c622c9c796764a88e4
+Bottom: d9c4ed930621057851153b527ca6d63875762c8c
+Top:    2f8625b20cb548ebcc75212003896ff7e2847503
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-27 20:35:07 +0100
 
@@ -13,10 +13,10 @@ file during the fab drawing output.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index fdbceb0..b89078e 100644
+index 6d849b6..a7a1a74 100644
 --- a/src/draw.c
 +++ b/src/draw.c
-@@ -679,8 +679,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -686,8 +686,7 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
    int n_entries = PCB->LayerGroups.Number[group];
    Cardinal *layers = PCB->LayerGroups.Entries[group];
  
