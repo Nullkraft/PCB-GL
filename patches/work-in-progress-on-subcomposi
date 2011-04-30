@@ -1,5 +1,5 @@
-Bottom: 94e0be18b6950675753079b4dfcd2fc60a2561e8
-Top:    5c31f5f63313b817a8ca48917fc41f693f09f42e
+Bottom: a873a70d3eb0b1b670d9527adc959c8873f3cce7
+Top:    a17df04b716d3200ba28078823003b0fa666eba9
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-27 20:35:05 +0100
 
@@ -14,7 +14,7 @@ resorting to a costly clear and re-using the same bit-planes over.
 ---
 
 diff --git a/src/draw.c b/src/draw.c
-index 942fb3e..705686c 100644
+index 7bbbc08..833779f 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -378,6 +378,7 @@ DrawEverything (BoxTypePtr drawn_area)
@@ -126,7 +126,7 @@ index 942fb3e..705686c 100644
  }
  
  static void
-@@ -643,7 +679,8 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
+@@ -650,7 +686,8 @@ DrawLayerGroup (int group, const BoxType *drawn_area)
    int n_entries = PCB->LayerGroups.Number[group];
    Cardinal *layers = PCB->LayerGroups.Entries[group];
  
@@ -152,7 +152,7 @@ index 28ab8d4..eb0cc57 100644
      return;
  
 diff --git a/src/hid.h b/src/hid.h
-index 5ecbe50..c8f785c 100644
+index 9104190..a90ccc2 100644
 --- a/src/hid.h
 +++ b/src/hid.h
 @@ -207,6 +207,7 @@ extern "C"

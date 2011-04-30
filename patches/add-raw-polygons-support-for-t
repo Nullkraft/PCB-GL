@@ -1,5 +1,5 @@
-Bottom: 088a8085b9e4ad144b891893fa4a89491a903b0b
-Top:    94e0be18b6950675753079b4dfcd2fc60a2561e8
+Bottom: a15c570251839f317bd170633e51f20e08ecbad7
+Top:    a873a70d3eb0b1b670d9527adc959c8873f3cce7
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-27 20:35:05 +0100
 
@@ -176,7 +176,7 @@ index e69a6b7..99ffffc 100644
  
  
 diff --git a/src/hid/gtk/gtkhid-gdk.c b/src/hid/gtk/gtkhid-gdk.c
-index 86fb4f5..ba15477 100644
+index e84ed2c..c1bc78d 100644
 --- a/src/hid/gtk/gtkhid-gdk.c
 +++ b/src/hid/gtk/gtkhid-gdk.c
 @@ -10,6 +10,7 @@
@@ -187,7 +187,7 @@ index 86fb4f5..ba15477 100644
  
  #ifdef HAVE_LIBDMALLOC
  #include <dmalloc.h>
-@@ -636,6 +637,12 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
+@@ -655,6 +656,12 @@ ghid_fill_polygon (hidGC gc, int n_coords, int *x, int *y)
  }
  
  void
@@ -220,7 +220,7 @@ index 2ac761a..dc64dd8 100644
  {
    USE_GC (gc);
 diff --git a/src/hid/gtk/gtkhid-main.c b/src/hid/gtk/gtkhid-main.c
-index f5e2717..8021318 100644
+index ac961db..9a66723 100644
 --- a/src/hid/gtk/gtkhid-main.c
 +++ b/src/hid/gtk/gtkhid-main.c
 @@ -2128,6 +2128,7 @@ hid_gtk_init ()
@@ -232,7 +232,7 @@ index f5e2717..8021318 100644
  
    ghid_hid.calibrate                = ghid_calibrate;
 diff --git a/src/hid/gtk/gui.h b/src/hid/gtk/gui.h
-index 8d4fee3..1ee7d4a 100644
+index 31ee636..00856da 100644
 --- a/src/hid/gtk/gui.h
 +++ b/src/hid/gtk/gui.h
 @@ -485,6 +485,8 @@ void ghid_draw_arc (hidGC gc, int cx, int cy, int xradius, int yradius,
