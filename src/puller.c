@@ -1045,6 +1045,7 @@ new_line_extra (LineType *line)
   Extra *extra = g_slice_new0 (Extra);
   g_hash_table_insert (lines, line, extra);
   extra->parent.line = line;
+  extra->type = LINE_TYPE;
   return extra;
 }
 
@@ -1054,6 +1055,7 @@ new_arc_extra (ArcType *arc)
   Extra *extra = g_slice_new0 (Extra);
   g_hash_table_insert (arcs, arc, extra);
   extra->parent.arc = arc;
+  extra->type = ARC_TYPE;
   return extra;
 }
 
