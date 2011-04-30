@@ -1,0 +1,28 @@
+Bottom: 4e08c13b08a976b4f69198abe6b84e7345719717
+Top:    7118433546673cb18bc9b41f162093cd828e837a
+Author: Peter Clifton <pcjc2@cam.ac.uk>
+Date:   2011-04-30 18:03:33 +0100
+
+Refresh of puller-c-re-write-to-use-hash-
+
+---
+
+diff --git a/src/puller.c b/src/puller.c
+index a2c0b35..07870a6 100644
+--- a/src/puller.c
++++ b/src/puller.c
+@@ -1045,6 +1045,7 @@ new_line_extra (LineType *line)
+   Extra *extra = g_slice_new0 (Extra);
+   g_hash_table_insert (lines, line, extra);
+   extra->parent.line = line;
++  extra->type = LINE_TYPE;
+   return extra;
+ }
+ 
+@@ -1054,6 +1055,7 @@ new_arc_extra (ArcType *arc)
+   Extra *extra = g_slice_new0 (Extra);
+   g_hash_table_insert (arcs, arc, extra);
+   extra->parent.arc = arc;
++  extra->type = ARC_TYPE;
+   return extra;
+ }
