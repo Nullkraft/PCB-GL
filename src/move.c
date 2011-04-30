@@ -458,8 +458,8 @@ MoveLineToLayerLowLevel (LayerType *Source, LineType *Line,
  * moves an arc between layers; lowlevel routines
  */
 static void *
-MoveArcToLayerLowLevel (LayerTypePtr Source, ArcTypePtr Arc,
-			LayerTypePtr Destination)
+MoveArcToLayerLowLevel (LayerType *Source, ArcType *Arc,
+			LayerType *Destination)
 {
   ArcTypePtr newone = GetArcMemory (Destination);
 
@@ -481,7 +481,7 @@ MoveArcToLayerLowLevel (LayerTypePtr Source, ArcTypePtr Arc,
  * moves an arc between layers
  */
 static void *
-MoveArcToLayer (LayerTypePtr Layer, ArcTypePtr Arc)
+MoveArcToLayer (LayerType *Layer, ArcType *Arc)
 {
   ArcTypePtr newone;
 
@@ -513,7 +513,7 @@ MoveArcToLayer (LayerTypePtr Layer, ArcTypePtr Arc)
  * moves a line between layers
  */
 static void *
-MoveRatToLayer (RatTypePtr Rat)
+MoveRatToLayer (RatType *Rat)
 {
   LineTypePtr newone;
   //LocationType X1 = Rat->Point1.X, Y1 = Rat->Point1.Y;
