@@ -1140,52 +1140,62 @@ propogate_end_pin (Extra *e, End *near, End *far)
 }
 
 static void
+propogate_end_step1_cb (AnyObjectType *ptr, Extra *extra, void *userdata)
+{
+  if (extra->start.next != NULL &&
+      extra->start.next == extra->end.next)
+    {
+      extra->end.next = NULL;
+      mark_line_for_deletion ((LineType *)ptr);
+    }
+
+  if (extra->start.at_pin)
+    propogate_ends_at (extra, &extra->start, &extra->end);
+
+  if (extra->end.at_pin)
+    propogate_ends_at (extra, &extra->end, &extra->start);
+}
+
+static void
+propogate_end_step2_cb (AnyObjectType *ptr, Extra *extra, void *userdata)
+{
+  if (extra->start.in_pin)
+    {
+#if TRACE1
+      printf("MULTI at %d: was %p\n", __LINE__, extra->start.next);
+#endif
+      extra->start.next = NULL;
+    }
+  if (extra->end.in_pin)
+    {
+#if TRACE1
+      printf("MULTI at %d: was %p\n", __LINE__, extra->end.next);
+#endif
+      extra->end.next = NULL;
+    }
+}
+
+static void
+propogate_end_step3_cb (AnyObjectType *ptr, Extra *extra, void *userdata)
+{
+  if (extra->start.next)
+    propogate_end_pin (extra, &extra->end, &extra->start);
+  if (extra->end.next)
+    propogate_end_pin (extra, &extra->start, &extra->end);
+}
+
+static void
 propogate_ends ()
 {
-  int i;
-
   /* First, shut of "in pin" when we have an "at pin".  We also clean
      up zero-length lines.  */
-  for (i=0; i<nlines; i++)
-    {
-      if (lines[i].start.next && lines[i].start.next == lines[i].end.next)
-	{
-	  lines[i].end.next = 0;
-	  mark_line_for_deletion (CURRENT->Line + i);
-	}
-      if (lines[i].start.at_pin)
-	propogate_ends_at (&lines[i], &lines[i].start, &lines[i].end);
-      if (lines[i].end.at_pin)
-	propogate_ends_at (&lines[i], &lines[i].end, &lines[i].start);
-    }
+  g_hash_table_foreach (lines, (GHFunc)propogate_end_step1_cb, NULL);
 
   /* Now end all paths at pins/pads.  */
-  for (i=0; i<nlines; i++)
-    {
-      if (lines[i].start.in_pin)
-	{
-#if TRACE1
-	  printf("MULTI at %d: %d was %p\n", __LINE__, i, lines[i].start.next);
-#endif
-	  lines[i].start.next = 0;
-	}
-      if (lines[i].end.in_pin)
-	{
-#if TRACE1
-	  printf("MULTI at %d: %d was %p\n", __LINE__, i, lines[i].end.next);
-#endif
-	  lines[i].end.next = 0;
-	}
-    }
+  g_hash_table_foreach (lines, (GHFunc)propogate_end_step2_cb, NULL);
 
   /* Now, propogate the pin/pad/vias along paths.  */
-  for (i=0; i<nlines; i++)
-    {
-      if (lines[i].start.next)
-	propogate_end_pin (&lines[i], &lines[i].end, &lines[i].start);
-      if (lines[i].end.next)
-	propogate_end_pin (&lines[i], &lines[i].start, &lines[i].end);
-    }
+  g_hash_table_foreach (lines, (GHFunc)propogate_end_step3_cb, NULL);
 }
 
 static Extra *last_pextra = 0;
