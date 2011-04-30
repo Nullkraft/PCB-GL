@@ -236,77 +236,56 @@ AddElementToBuffer (ElementTypePtr Element)
  * moves a via to paste buffer without allocating memory for the name
  */
 static void *
-MoveViaToBuffer (PinTypePtr Via)
+MoveViaToBuffer (PinType *via)
 {
-  PinTypePtr via;
+  RestoreToPolygon (Source, VIA_TYPE, via, via);
 
-  RestoreToPolygon (Source, VIA_TYPE, Via, Via);
-  r_delete_entry (Source->via_tree, (BoxType *) Via);
-  via = GetViaMemory (Dest);
-  *via = *Via;
+  r_delete_entry (Source->via_tree, (BoxType *) via);
+  Source->Via = g_list_remove (Source->Via, via);
+  Dest->Via = g_list_append (Dest->Via, via);
+
   CLEAR_FLAG (WARNFLAG | FOUNDFLAG, via);
-  if (Via != &Source->Via[--Source->ViaN])
-  {
-  *Via = Source->Via[Source->ViaN];
-  r_substitute (Source->via_tree, (BoxType *) & Source->Via[Source->ViaN],
-		(BoxType *) Via);
-  }
-  memset (&Source->Via[Source->ViaN], 0, sizeof (PinType));
+
   if (!Dest->via_tree)
     Dest->via_tree = r_create_tree (NULL, 0, 0);
   r_insert_entry (Dest->via_tree, (BoxType *) via, 0);
   ClearFromPolygon (Dest, VIA_TYPE, via, via);
-  return (via);
+  return via;
 }
 
 /* ---------------------------------------------------------------------------
  * moves a rat-line to paste buffer
  */
 static void *
-MoveRatToBuffer (RatTypePtr Rat)
+MoveRatToBuffer (RatType *rat)
 {
-  RatTypePtr rat;
-
-  r_delete_entry (Source->rat_tree, &Rat->BoundingBox);
-  rat = GetRatMemory (Dest);
-  *rat = *Rat;
+  r_delete_entry (Source->rat_tree, (BoxType *)rat);
+  Source->Rat = g_list_remove (Source->Rat, rat);
+  Dest->Rat = g_list_append (Dest->Rat, rat);
   CLEAR_FLAG (FOUNDFLAG, rat);
-  if (Rat != &Source->Rat[--Source->RatN])
-  {
-  *Rat = Source->Rat[Source->RatN];
-  r_substitute (Source->rat_tree, &Source->Rat[Source->RatN].BoundingBox,
-		&Rat->BoundingBox);
-  }
-  memset (&Source->Rat[Source->RatN], 0, sizeof (RatType));
+
   if (!Dest->rat_tree)
     Dest->rat_tree = r_create_tree (NULL, 0, 0);
-  r_insert_entry (Dest->rat_tree, &rat->BoundingBox, 0);
-  return (rat);
+  r_insert_entry (Dest->rat_tree, (BoxType *)rat, 0);
+  return rat;
 }
 
 /* ---------------------------------------------------------------------------
  * moves a line to buffer  
  */
 static void *
-MoveLineToBuffer (LayerTypePtr Layer, LineTypePtr Line)
+MoveLineToBuffer (LayerType *layer, LineTypePtr line)
 {
-  LayerTypePtr lay;
-  LineTypePtr line;
+  LayerTypePtr lay = &Dest->Layer[GetLayerNumber (Source, layer)];
 
-  RestoreToPolygon (Source, LINE_TYPE, Layer, Line);
-  r_delete_entry (Layer->line_tree, (BoxTypePtr) Line);
-  lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
-  line = GetLineMemory (lay);
-  *line = *Line;
+  RestoreToPolygon (Source, LINE_TYPE, layer, line);
+  r_delete_entry (layer->line_tree, (BoxType*)line);
+
+  layer->Line = g_list_remove (layer->Line, line);
+  lay->Line = g_list_append (lay->Line, line);
+
   CLEAR_FLAG (FOUNDFLAG, line);
-  /* line pointers being shuffled */
-  if (Line != &Layer->Line[--Layer->LineN])
-  {
-  *Line = Layer->Line[Layer->LineN];
-  r_substitute (Layer->line_tree, (BoxTypePtr) & Layer->Line[Layer->LineN],
-		(BoxTypePtr) Line);
-  }
-  memset (&Layer->Line[Layer->LineN], 0, sizeof (LineType));
+
   if (!lay->line_tree)
     lay->line_tree = r_create_tree (NULL, 0, 0);
   r_insert_entry (lay->line_tree, (BoxTypePtr) line, 0);
@@ -318,25 +297,18 @@ MoveLineToBuffer (LayerTypePtr Layer, LineTypePtr Line)
  * moves an arc to buffer  
  */
 static void *
-MoveArcToBuffer (LayerTypePtr Layer, ArcTypePtr Arc)
+MoveArcToBuffer (LayerType *layer, ArcType *arc)
 {
-  LayerTypePtr lay;
-  ArcTypePtr arc;
+  LayerType *lay = &Dest->Layer[GetLayerNumber (Source, layer)];
 
-  RestoreToPolygon (Source, ARC_TYPE, Layer, Arc);
-  r_delete_entry (Layer->arc_tree, (BoxTypePtr) Arc);
-  lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
-  arc = GetArcMemory (lay);
-  *arc = *Arc;
+  RestoreToPolygon (Source, ARC_TYPE, layer, arc);
+  r_delete_entry (layer->arc_tree, (BoxTypePtr) arc);
+
+  layer->Arc = g_list_remove (layer->Arc, arc);
+  lay->Arc = g_list_append (lay->Arc, arc);
+
   CLEAR_FLAG (FOUNDFLAG, arc);
-  /* arc pointers being shuffled */
-  if (Arc != &Layer->Arc[--Layer->ArcN])
-  {
-  *Arc = Layer->Arc[Layer->ArcN];
-  r_substitute (Layer->arc_tree, (BoxTypePtr) & Layer->Arc[Layer->ArcN],
-		(BoxTypePtr) Arc);
-  }
-  memset (&Layer->Arc[Layer->ArcN], 0, sizeof (ArcType));
+
   if (!lay->arc_tree)
     lay->arc_tree = r_create_tree (NULL, 0, 0);
   r_insert_entry (lay->arc_tree, (BoxTypePtr) arc, 0);
@@ -348,23 +320,16 @@ MoveArcToBuffer (LayerTypePtr Layer, ArcTypePtr Arc)
  * moves a text to buffer without allocating memory for the name
  */
 static void *
-MoveTextToBuffer (LayerTypePtr Layer, TextTypePtr Text)
+MoveTextToBuffer (LayerType *layer, TextType *text)
 {
-  TextTypePtr text;
-  LayerTypePtr lay;
+  LayerType *lay = &Dest->Layer[GetLayerNumber (Source, layer)];
 
-  r_delete_entry (Layer->text_tree, (BoxTypePtr) Text);
-  RestoreToPolygon (Source, TEXT_TYPE, Layer, Text);
-  lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
-  text = GetTextMemory (lay);
-  *text = *Text;
-  if (Text != &Layer->Text[--Layer->TextN])
-  {
-  *Text = Layer->Text[Layer->TextN];
-  r_substitute (Layer->text_tree, (BoxTypePtr) & Layer->Text[Layer->TextN],
-		(BoxTypePtr) Text);
-  }
-  memset (&Layer->Text[Layer->TextN], 0, sizeof (TextType));
+  r_delete_entry (layer->text_tree, (BoxTypePtr) text);
+  RestoreToPolygon (Source, TEXT_TYPE, layer, text);
+
+  layer->Text = g_list_remove (layer->Text, text);
+  lay->Text = g_list_append (lay->Text, text);
+
   if (!lay->text_tree)
     lay->text_tree = r_create_tree (NULL, 0, 0);
   r_insert_entry (lay->text_tree, (BoxTypePtr) text, 0);
@@ -376,27 +341,20 @@ MoveTextToBuffer (LayerTypePtr Layer, TextTypePtr Text)
  * moves a polygon to buffer. Doesn't allocate memory for the points
  */
 static void *
-MovePolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
+MovePolygonToBuffer (LayerType *layer, PolygonType *polygon)
 {
-  LayerTypePtr lay;
-  PolygonTypePtr polygon;
+  LayerType *lay = &Dest->Layer[GetLayerNumber (Source, layer)];
 
-  r_delete_entry (Layer->polygon_tree, (BoxTypePtr) Polygon);
-  lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
-  polygon = GetPolygonMemory (lay);
-  *polygon = *Polygon;
+  r_delete_entry (layer->polygon_tree, (BoxType *)polygon);
+
+  layer->Polygon = g_list_remove (layer->Polygon, polygon);
+  lay->Polygon = g_list_append (lay->Polygon, polygon);
+
   CLEAR_FLAG (FOUNDFLAG, polygon);
-  if (Polygon != &Layer->Polygon[--Layer->PolygonN])
-  {
-  *Polygon = Layer->Polygon[Layer->PolygonN];
-  r_substitute (Layer->polygon_tree,
-		(BoxTypePtr) & Layer->Polygon[Layer->PolygonN],
-		(BoxTypePtr) Polygon);
-  }
-  memset (&Layer->Polygon[Layer->PolygonN], 0, sizeof (PolygonType));
+
   if (!lay->polygon_tree)
     lay->polygon_tree = r_create_tree (NULL, 0, 0);
-  r_insert_entry (lay->polygon_tree, (BoxTypePtr) polygon, 0);
+  r_insert_entry (lay->polygon_tree, (BoxType *)polygon, 0);
   return (polygon);
 }
 
@@ -404,36 +362,27 @@ MovePolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
  * moves a element to buffer without allocating memory for pins/names
  */
 static void *
-MoveElementToBuffer (ElementTypePtr Element)
+MoveElementToBuffer (ElementType *element)
 {
-  ElementTypePtr element;
-  int i;
-
   /*
-   * Two steps at once:  Delete the element from the source (remove it
-   * from trees, restore to polygons) and simultaneously adjust its
-   * component pointers to the new storage in Dest
+   * Delete the element from the source (remove it from trees,
+   * restore to polygons)
    */
-  r_delete_element (Source, Element);
-  element = GetElementMemory (Dest);
-  *element = *Element;
+  r_delete_element (Source, element);
+
+  Source->Element = g_list_remove (Source->Element, element);
+  Dest->Element = g_list_append (Dest->Element, element);
+
   PIN_LOOP (element);
   {
-    RestoreToPolygon(Source, PIN_TYPE, Element, pin);
+    RestoreToPolygon(Source, PIN_TYPE, element, pin);
     CLEAR_FLAG (WARNFLAG | FOUNDFLAG, pin);
-    pin->Element = element;
   }
   END_LOOP;
   PAD_LOOP (element);
   {
-    RestoreToPolygon(Source, PAD_TYPE, Element, pad);
+    RestoreToPolygon(Source, PAD_TYPE, element, pad);
     CLEAR_FLAG (WARNFLAG | FOUNDFLAG, pad);
-    pad->Element = element;
-  }
-  END_LOOP;
-  ELEMENTTEXT_LOOP (element);
-  {
-    text->Element = element;
   }
   END_LOOP;
   SetElementBoundingBox (Dest, element, &PCB->Font);
@@ -451,41 +400,7 @@ MoveElementToBuffer (ElementTypePtr Element)
   }
   END_LOOP;
 
-  /*
-   * Now compact the Source's Element array by moving the last element
-   * to the hole created by the removal above.  Then make a pass adjusting
-   * *its* component pointers.  Confusingly, this element (which is of no
-   * particular relation to this removal) becomes `Element' while the
-   * original Element is now in `element'.
-   */
-  if (Element != &Source->Element[--Source->ElementN])
-    {
-  *Element = Source->Element[Source->ElementN];
-  r_substitute (Source->element_tree,
-		(BoxType *) & Source->Element[Source->ElementN],
-		(BoxType *) Element);
-  for (i = 0; i < MAX_ELEMENTNAMES; i++)
-    r_substitute (Source->name_tree[i],
-		  (BoxType *) & Source->Element[Source->ElementN].Name[i],
-		  (BoxType *) & Element->Name[i]);
-  ELEMENTTEXT_LOOP (Element);
-  {
-    text->Element = Element;
-  }
-  END_LOOP;
-  PIN_LOOP (Element);
-  {
-    pin->Element = Element;
-  }
-  END_LOOP;
-  PAD_LOOP (Element);
-  {
-    pad->Element = Element;
-  }
-  END_LOOP;
-  }
-  memset (&Source->Element[Source->ElementN], 0, sizeof (ElementType));
-  return (element);
+  return element;
 }
 
 /* ---------------------------------------------------------------------------
@@ -567,7 +482,7 @@ LoadElementToBuffer (BufferTypePtr Buffer, char *Name, bool FromFile)
 	  SetBufferBoundingBox (Buffer);
 	  if (Buffer->Data->ElementN)
 	    {
-	      element = &(Buffer->Data->Element[0]);
+	      element = Buffer->Data->Element->data;
 	      Buffer->X = element->MarkX;
 	      Buffer->Y = element->MarkY;
 	    }
@@ -584,7 +499,7 @@ LoadElementToBuffer (BufferTypePtr Buffer, char *Name, bool FromFile)
       if (!ParseLibraryEntry (Buffer->Data, Name)
 	  && Buffer->Data->ElementN != 0)
 	{
-	  element = &(Buffer->Data->Element[0]);
+	  element = Buffer->Data->Element->data;
 
 	  /* always add elements using top-side coordinates */
 	  if (Settings.ShowSolderSide)
@@ -900,7 +815,7 @@ LoadFootprint (int argc, char **argv, int x, int y)
       return 1;
     }
 
-  e = & PASTEBUFFER->Data->Element[0];
+  e = PASTEBUFFER->Data->Element->data;
 
   if (e->Name[0].TextString)
     free (e->Name[0].TextString);
@@ -942,7 +857,7 @@ SmashBufferElement (BufferTypePtr Buffer)
    * around for us to smash bits off it.  It then becomes our responsibility,
    * however, to free the single element when we're finished with it.
    */
-  element = &Buffer->Data->Element[0];
+  element = Buffer->Data->Element->data;
   Buffer->Data->Element = NULL;
   Buffer->Data->ElementN = 0;
   ClearBuffer (Buffer);
