@@ -1,5 +1,5 @@
 Bottom: 5c4e977abb5413e17e3a198ef9ea401fef7c3d22
-Top:    ea0f3bce60467d2dda331b7503567735c48224b7
+Top:    1e047411c0e150a13f10660310f4449a01f93255
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 05:09:21 +0100
 
@@ -849,7 +849,7 @@ index eae2545..69d61ea 100644
        int y1 = l->Point1.Y;
        int ox, oy, s;
 diff --git a/src/global.h b/src/global.h
-index cb2b92d..c162e70 100644
+index cb2b92d..9ad5331 100644
 --- a/src/global.h
 +++ b/src/global.h
 @@ -286,13 +286,11 @@ typedef struct			/* holds information about one layer */
@@ -864,7 +864,7 @@ index cb2b92d..c162e70 100644
 -  PolygonTypePtr Polygon;
 -  ArcTypePtr Arc;
 +    ArcN;			/* and arcs */
-+  GList *Line;			/* pointer to additional structures */
++  GList *Line;
 +  GList *Text;
 +  GList *Polygon;
 +  GList *Arc;
@@ -885,8 +885,8 @@ index cb2b92d..c162e70 100644
 +  Cardinal PadN;		/* number of pads */
 +  Cardinal LineN;		/* number of lines */
 +  Cardinal ArcN;		/* number of arcs */
-+  GList *Pin;			/* pin description */
-+  GList *Pad;			/* pad description of SMD components */
++  GList *Pin;
++  GList *Pad;
 +  GList *Line;
 +  GList *Arc;
    BoxType VBox;
@@ -906,7 +906,7 @@ index cb2b92d..c162e70 100644
 -  PinTypePtr Via;		/* pointer to object data */
 -  ElementTypePtr Element;
 -  RatTypePtr Rat;
-+  GList *Via;			/* pointer to object data */
++  GList *Via;
 +  GList *Element;
 +  GList *Rat;
    rtree_t *via_tree, *element_tree, *pin_tree, *pad_tree, *name_tree[3],	/* for element names */
