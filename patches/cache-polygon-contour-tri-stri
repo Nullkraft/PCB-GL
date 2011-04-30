@@ -1,7 +1,7 @@
-Bottom: 76307dac11552060af440305ec2b84419748537f
-Top:    88dba51683785a35d491ac01119f494f1d3cbf54
+Bottom: 48db7ba61571e494ac49cf67640356e710264fc3
+Top:    90ac349595bcf9bacfe1865a37e62d012a96885b
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-28 22:58:37 +0100
+Date:   2011-04-30 15:20:54 +0100
 
 Cache polygon contour tri-strip tesselations (HACK: IN THE CORE!)
 
@@ -271,10 +271,10 @@ index ce427ad..62a1125 100644
  
  PLINE *poly_NewContour(Vector v);
 diff --git a/src/polygon1.c b/src/polygon1.c
-index 0a3a2b5..45b8494 100644
+index 1dba74c..1e2bdb7 100644
 --- a/src/polygon1.c
 +++ b/src/polygon1.c
-@@ -2553,6 +2553,9 @@ poly_ClrContour (PLINE * c)
+@@ -2550,6 +2550,9 @@ poly_ClrContour (PLINE * c)
        poly_ExclVertex (cur);
        free (cur);
      }
@@ -284,7 +284,7 @@ index 0a3a2b5..45b8494 100644
    poly_IniContour (c);
  }
  
-@@ -2584,6 +2587,7 @@ poly_DelContour (PLINE ** c)
+@@ -2581,6 +2584,7 @@ poly_DelContour (PLINE ** c)
        rtree_t *r = (*c)->tree;
        r_destroy_tree (&r);
      }
