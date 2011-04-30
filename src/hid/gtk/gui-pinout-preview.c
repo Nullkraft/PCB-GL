@@ -90,11 +90,18 @@ pinout_set_data (GhidPinoutPreview * pinout, ElementType * element)
    * set all package lines/arcs to zero width
    */
   CopyElementLowLevel (NULL, &pinout->element, element, FALSE, 0, 0);
+
+  pin0 = pinout->element.Pin->data;
+  pin1 = g_list_next (pinout->element.Pin)->data;
+
   PIN_LOOP (&pinout->element);
   {
     SET_FLAG (DISPLAYNAMEFLAG, pin);
   }
   END_LOOP;
+
+  pad0 = pinout->element.Pad->data;
+  pad1 = g_list_next (pinout->element.Pad)->data;
 
   PAD_LOOP (&pinout->element);
   {
