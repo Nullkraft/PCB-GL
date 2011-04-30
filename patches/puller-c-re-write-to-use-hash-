@@ -1,5 +1,5 @@
 Bottom: 7918641981ba21627467828a2bb3942aa2ec2f70
-Top:    7118433546673cb18bc9b41f162093cd828e837a
+Top:    e4d3d3b07b98bce82fd3562414a50cd099bb7beb
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 16:50:43 +0100
 
@@ -9,7 +9,7 @@ puller.c: Re-write to use hash tables to store stashed extra info
 ---
 
 diff --git a/src/puller.c b/src/puller.c
-index 8e56f0b..07870a6 100644
+index 8e56f0b..30011ae 100644
 --- a/src/puller.c
 +++ b/src/puller.c
 @@ -5,6 +5,7 @@
@@ -122,7 +122,7 @@ index 8e56f0b..07870a6 100644
    int hits;
  
    if (TEST_FLAG (ONSOLDERFLAG, pad))
-@@ -1023,18 +1028,47 @@ find_pair_padarc_callback (const BoxType * b, void *cl)
+@@ -1023,18 +1028,51 @@ find_pair_padarc_callback (const BoxType * b, void *cl)
    hits += check_point_in_pad (pad, e->end.x, e->end.y, &(e->end));
    return 0;
  }
@@ -170,11 +170,15 @@ index 8e56f0b..07870a6 100644
  
    LINE_LOOP (CURRENT); {
 -    Extra *e = & LINE2EXTRA (line);
-+    Extra *e = new_line_extra (line);
++    new_line_extra (line);
++  } END_LOOP;
++
++  LINE_LOOP (CURRENT); {
++    Extra *e = LINE2EXTRA (line);
      if (line->Point1.X >= 0)
        {
  	find_pairs_1 (line, & e->start.next, line->Point1.X, line->Point1.Y);
-@@ -1043,7 +1077,7 @@ find_pairs ()
+@@ -1043,7 +1081,7 @@ find_pairs ()
    } END_LOOP;
  
    ARC_LOOP (CURRENT); {
@@ -183,7 +187,7 @@ index 8e56f0b..07870a6 100644
      if (!e->deleted)
        {
  	find_pairs_1 (arc, & e->start.next, e->start.x, e->start.y);
-@@ -1082,20 +1116,8 @@ find_pairs ()
+@@ -1082,20 +1120,8 @@ find_pairs ()
      
    } ENDALL_LOOP;
  
@@ -206,7 +210,7 @@ index 8e56f0b..07870a6 100644
  }
  
  #define PROP_NEXT(e,n,f) 		\
-@@ -1137,52 +1159,62 @@ propogate_end_pin (Extra *e, End *near, End *far)
+@@ -1137,52 +1163,62 @@ propogate_end_pin (Extra *e, End *near, End *far)
  }
  
  static void
@@ -303,7 +307,7 @@ index 8e56f0b..07870a6 100644
  }
  
  static Extra *last_pextra = 0;
-@@ -1223,7 +1255,7 @@ print_extra (Extra *e, Extra *prev)
+@@ -1223,7 +1259,7 @@ print_extra (Extra *e, Extra *prev)
  	 
    if (EXTRA_IS_LINE (e))
      {
@@ -312,7 +316,7 @@ index 8e56f0b..07870a6 100644
        printf(" %4d L %d,%d-%d,%d", (int)(line-CURRENT->Line), line->Point1.X, line->Point1.Y, line->Point2.X, line->Point2.Y);
        printf("  %s %p %s %p\n",
  	     e->start.is_pad ? "pad" : "pin", e->start.pin,
-@@ -1231,7 +1263,7 @@ print_extra (Extra *e, Extra *prev)
+@@ -1231,7 +1267,7 @@ print_extra (Extra *e, Extra *prev)
      }
    else if (EXTRA_IS_ARC (e))
      {
@@ -321,7 +325,7 @@ index 8e56f0b..07870a6 100644
        printf(" %4d A %d,%d-%d,%d", (int) (arc-CURRENT->Arc), e->start.x, e->start.y, e->end.x, e->end.y);
        printf(" at %d,%d ang %ld,%ld\n", arc->X, arc->Y, arc->StartAngle, arc->Delta);
      }
-@@ -1281,11 +1313,11 @@ trace_paths ()
+@@ -1281,11 +1317,11 @@ trace_paths ()
  
    clear_found ();
    LINE_LOOP (CURRENT); {
@@ -335,7 +339,7 @@ index 8e56f0b..07870a6 100644
      trace_path (e);
    } END_LOOP;
  }
-@@ -1294,7 +1326,7 @@ trace_paths ()
+@@ -1294,7 +1330,7 @@ trace_paths ()
  static void
  reverse_line (LineTypePtr line)
  {
@@ -344,7 +348,7 @@ index 8e56f0b..07870a6 100644
    int x, y;
    End etmp;
  
-@@ -1322,7 +1354,7 @@ reverse_line (LineTypePtr line)
+@@ -1322,7 +1358,7 @@ reverse_line (LineTypePtr line)
  static void
  reverse_arc (ArcTypePtr arc)
  {
@@ -353,7 +357,7 @@ index 8e56f0b..07870a6 100644
    End etmp;
  
  #if 1
-@@ -1647,7 +1679,7 @@ static int
+@@ -1647,7 +1683,7 @@ static int
  gp_line_cb (const BoxType *b, void *cb)
  {
    const LineTypePtr l = (LineTypePtr) b;
@@ -362,7 +366,7 @@ index 8e56f0b..07870a6 100644
    if (l == start_line || l == end_line)
      return 0;
    if (e->deleted)
-@@ -1669,7 +1701,7 @@ static int
+@@ -1669,7 +1705,7 @@ static int
  gp_arc_cb (const BoxType *b, void *cb)
  {
    const ArcTypePtr a = (ArcTypePtr) b;
@@ -371,7 +375,7 @@ index 8e56f0b..07870a6 100644
    if (a == start_arc || a == end_arc)
      return 0;
    if (e->deleted)
-@@ -1792,102 +1824,28 @@ gp_pad_cb (const BoxType *b, void *cb)
+@@ -1792,102 +1828,28 @@ gp_pad_cb (const BoxType *b, void *cb)
    return 0;
  }
  
@@ -478,7 +482,7 @@ index 8e56f0b..07870a6 100644
    ArcTypePtr arc;
  
    if (r % 100 == 1)
-@@ -1909,27 +1867,10 @@ create_arc (LineTypePtr sample, int x, int y, int r, int sa, int da)
+@@ -1909,27 +1871,10 @@ create_arc (LineTypePtr sample, int x, int y, int r, int sa, int da)
    if (!arc)
      longjmp (abort_buf, 1);
  
@@ -507,7 +511,7 @@ index 8e56f0b..07870a6 100644
    fix_arc_extra (arc, e);
    return arc;
  }
-@@ -1997,7 +1938,7 @@ unlink_extras (Extra *e)
+@@ -1997,7 +1942,7 @@ unlink_extras (Extra *e)
  static void
  mark_line_for_deletion (LineTypePtr l)
  {
@@ -516,7 +520,7 @@ index 8e56f0b..07870a6 100644
    if (e->deleted)
      {
        fprintf(stderr, "double delete?\n");
-@@ -2027,7 +1968,7 @@ mark_line_for_deletion (LineTypePtr l)
+@@ -2027,7 +1972,7 @@ mark_line_for_deletion (LineTypePtr l)
  static void
  mark_arc_for_deletion (ArcTypePtr a)
  {
@@ -525,7 +529,7 @@ index 8e56f0b..07870a6 100644
    e->deleted = 1;
    unlink_extras (e);
  #if TRACE1
-@@ -2062,9 +2003,9 @@ maybe_pull_1 (LineTypePtr line)
+@@ -2062,9 +2007,9 @@ maybe_pull_1 (LineTypePtr line)
    double abs_angle;
  
    start_line = line;
@@ -537,7 +541,7 @@ index 8e56f0b..07870a6 100644
    if (end_extra->deleted)
      {
        start_extra->end.pending = 0;
-@@ -2078,7 +2019,7 @@ maybe_pull_1 (LineTypePtr line)
+@@ -2078,7 +2023,7 @@ maybe_pull_1 (LineTypePtr line)
        && EXTRA_IS_ARC (start_extra->start.next))
      {
        sarc_extra = start_extra->start.next;
@@ -546,7 +550,7 @@ index 8e56f0b..07870a6 100644
        if (sarc_extra->start.next == start_extra)
  	reverse_arc (start_arc);
      }
-@@ -2092,7 +2033,7 @@ maybe_pull_1 (LineTypePtr line)
+@@ -2092,7 +2037,7 @@ maybe_pull_1 (LineTypePtr line)
        && EXTRA_IS_ARC (end_extra->end.next))
      {
        earc_extra = end_extra->end.next;
@@ -555,7 +559,7 @@ index 8e56f0b..07870a6 100644
        if (earc_extra->start.next == end_extra)
  	reverse_arc (end_arc);
      }
-@@ -2473,19 +2414,19 @@ maybe_pull_1 (LineTypePtr line)
+@@ -2473,19 +2418,19 @@ maybe_pull_1 (LineTypePtr line)
  
    new_arc = create_arc (start_line, fx, fy, fr,
  			90-(int)(r2d(start_angle+fa)+0.5) + 90 + 90*se_sign, -se_sign);
@@ -581,7 +585,7 @@ index 8e56f0b..07870a6 100644
  
    new_lextra->start.pin = start_extra->start.pin;
    new_lextra->end.pin = start_extra->end.pin;
-@@ -2559,24 +2500,60 @@ validate_pair (Extra *e, End *end)
+@@ -2559,24 +2504,60 @@ validate_pair (Extra *e, End *end)
  }
  
  static void
@@ -651,7 +655,7 @@ index 8e56f0b..07870a6 100644
  static int
  GlobalPuller(int argc, char **argv, int x, int y)
  {
-@@ -2602,54 +2579,23 @@ GlobalPuller(int argc, char **argv, int x, int y)
+@@ -2602,54 +2583,23 @@ GlobalPuller(int argc, char **argv, int x, int y)
    current_is_component = (GetLayerGroupNumberByPointer(CURRENT)
  			  == GetLayerGroupNumberByNumber (component_silk_layer));
  
@@ -711,7 +715,7 @@ index 8e56f0b..07870a6 100644
    trace_paths ();
  #endif
  
-@@ -2666,7 +2612,7 @@ GlobalPuller(int argc, char **argv, int x, int y)
+@@ -2666,7 +2616,7 @@ GlobalPuller(int argc, char **argv, int x, int y)
  	  status();
  	  did_something = 0;
  	  LINE_LOOP (CURRENT); {
@@ -720,7 +724,7 @@ index 8e56f0b..07870a6 100644
  	    if (e->deleted)
  	      continue;
  #ifdef CHECK_LINE_PT_NEG
-@@ -2694,25 +2640,18 @@ GlobalPuller(int argc, char **argv, int x, int y)
+@@ -2694,25 +2644,18 @@ GlobalPuller(int argc, char **argv, int x, int y)
  
  #if TRACE0
    printf("\nlines\n");
@@ -750,7 +754,7 @@ index 8e56f0b..07870a6 100644
  	RemoveLine (CURRENT, line);
      }
  
-@@ -2720,14 +2659,12 @@ GlobalPuller(int argc, char **argv, int x, int y)
+@@ -2720,14 +2663,12 @@ GlobalPuller(int argc, char **argv, int x, int y)
    for (i=CURRENT->ArcN-1; i>=0; i--)
      {
        ArcTypePtr arc = & CURRENT->Arc[i];
