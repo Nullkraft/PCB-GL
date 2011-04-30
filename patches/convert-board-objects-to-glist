@@ -1,5 +1,5 @@
 Bottom: 5c4e977abb5413e17e3a198ef9ea401fef7c3d22
-Top:    b81a4a23d50cd98f3009ca6dc4d6c7a0a3d9ae3e
+Top:    85ddf4cd109844c374fd7dc0c9008bbd13395ba5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 05:09:21 +0100
 
@@ -37,10 +37,10 @@ index b58600f..27dba28 100644
     if (!__next_one__)\
       assert(__next_one__);\
 diff --git a/src/buffer.c b/src/buffer.c
-index 907c7e6..b0f5f7d 100644
+index 907c7e6..08dd71c 100644
 --- a/src/buffer.c
 +++ b/src/buffer.c
-@@ -236,77 +236,56 @@ AddElementToBuffer (ElementTypePtr Element)
+@@ -236,77 +236,64 @@ AddElementToBuffer (ElementTypePtr Element)
   * moves a via to paste buffer without allocating memory for the name
   */
  static void *
@@ -52,7 +52,9 @@ index 907c7e6..b0f5f7d 100644
 +
 +  r_delete_entry (Source->via_tree, (BoxType *) via);
 +  Source->Via = g_list_remove (Source->Via, via);
++  Source->ViaN --;
 +  Dest->Via = g_list_append (Dest->Via, via);
++  Dest->ViaN ++;
  
 -  RestoreToPolygon (Source, VIA_TYPE, Via, Via);
 -  r_delete_entry (Source->via_tree, (BoxType *) Via);
@@ -83,13 +85,16 @@ index 907c7e6..b0f5f7d 100644
 +MoveRatToBuffer (RatType *rat)
  {
 -  RatTypePtr rat;
--
++  r_delete_entry (Source->rat_tree, (BoxType *)rat);
++
++  Source->Rat = g_list_remove (Source->Rat, rat);
++  Source->RatN --;
++  Dest->Rat = g_list_append (Dest->Rat, rat);
++  Dest->RatN ++;
+ 
 -  r_delete_entry (Source->rat_tree, &Rat->BoundingBox);
 -  rat = GetRatMemory (Dest);
 -  *rat = *Rat;
-+  r_delete_entry (Source->rat_tree, (BoxType *)rat);
-+  Source->Rat = g_list_remove (Source->Rat, rat);
-+  Dest->Rat = g_list_append (Dest->Rat, rat);
    CLEAR_FLAG (FOUNDFLAG, rat);
 -  if (Rat != &Source->Rat[--Source->RatN])
 -  {
@@ -122,7 +127,9 @@ index 907c7e6..b0f5f7d 100644
 +  r_delete_entry (layer->line_tree, (BoxType*)line);
 +
 +  layer->Line = g_list_remove (layer->Line, line);
++  layer->LineN --;
 +  lay->Line = g_list_append (lay->Line, line);
++  lay->LineN ++;
  
 -  RestoreToPolygon (Source, LINE_TYPE, Layer, Line);
 -  r_delete_entry (Layer->line_tree, (BoxTypePtr) Line);
@@ -142,7 +149,7 @@ index 907c7e6..b0f5f7d 100644
    if (!lay->line_tree)
      lay->line_tree = r_create_tree (NULL, 0, 0);
    r_insert_entry (lay->line_tree, (BoxTypePtr) line, 0);
-@@ -318,25 +297,18 @@ MoveLineToBuffer (LayerTypePtr Layer, LineTypePtr Line)
+@@ -318,25 +305,20 @@ MoveLineToBuffer (LayerTypePtr Layer, LineTypePtr Line)
   * moves an arc to buffer  
   */
  static void *
@@ -163,7 +170,9 @@ index 907c7e6..b0f5f7d 100644
 +  r_delete_entry (layer->arc_tree, (BoxTypePtr) arc);
 +
 +  layer->Arc = g_list_remove (layer->Arc, arc);
++  layer->ArcN --;
 +  lay->Arc = g_list_append (lay->Arc, arc);
++  lay->ArcN ++;
 +
    CLEAR_FLAG (FOUNDFLAG, arc);
 -  /* arc pointers being shuffled */
@@ -178,7 +187,7 @@ index 907c7e6..b0f5f7d 100644
    if (!lay->arc_tree)
      lay->arc_tree = r_create_tree (NULL, 0, 0);
    r_insert_entry (lay->arc_tree, (BoxTypePtr) arc, 0);
-@@ -348,23 +320,16 @@ MoveArcToBuffer (LayerTypePtr Layer, ArcTypePtr Arc)
+@@ -348,23 +330,18 @@ MoveArcToBuffer (LayerTypePtr Layer, ArcTypePtr Arc)
   * moves a text to buffer without allocating memory for the name
   */
  static void *
@@ -206,12 +215,14 @@ index 907c7e6..b0f5f7d 100644
 +  RestoreToPolygon (Source, TEXT_TYPE, layer, text);
 +
 +  layer->Text = g_list_remove (layer->Text, text);
++  layer->TextN --;
 +  lay->Text = g_list_append (lay->Text, text);
++  lay->TextN ++;
 +
    if (!lay->text_tree)
      lay->text_tree = r_create_tree (NULL, 0, 0);
    r_insert_entry (lay->text_tree, (BoxTypePtr) text, 0);
-@@ -376,27 +341,20 @@ MoveTextToBuffer (LayerTypePtr Layer, TextTypePtr Text)
+@@ -376,27 +353,22 @@ MoveTextToBuffer (LayerTypePtr Layer, TextTypePtr Text)
   * moves a polygon to buffer. Doesn't allocate memory for the points
   */
  static void *
@@ -225,7 +236,9 @@ index 907c7e6..b0f5f7d 100644
 +  r_delete_entry (layer->polygon_tree, (BoxType *)polygon);
 +
 +  layer->Polygon = g_list_remove (layer->Polygon, polygon);
++  layer->PolygonN --;
 +  lay->Polygon = g_list_append (lay->Polygon, polygon);
++  lay->PolygonN ++;
  
 -  r_delete_entry (Layer->polygon_tree, (BoxTypePtr) Polygon);
 -  lay = &Dest->Layer[GetLayerNumber (Source, Layer)];
@@ -248,7 +261,7 @@ index 907c7e6..b0f5f7d 100644
    return (polygon);
  }
  
-@@ -404,36 +362,27 @@ MovePolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
+@@ -404,36 +376,29 @@ MovePolygonToBuffer (LayerTypePtr Layer, PolygonTypePtr Polygon)
   * moves a element to buffer without allocating memory for pins/names
   */
  static void *
@@ -271,7 +284,9 @@ index 907c7e6..b0f5f7d 100644
 +  r_delete_element (Source, element);
 +
 +  Source->Element = g_list_remove (Source->Element, element);
++  Source->ElementN --;
 +  Dest->Element = g_list_append (Dest->Element, element);
++  Dest->ElementN ++;
 +
    PIN_LOOP (element);
    {
@@ -295,7 +310,7 @@ index 907c7e6..b0f5f7d 100644
    }
    END_LOOP;
    SetElementBoundingBox (Dest, element, &PCB->Font);
-@@ -451,41 +400,7 @@ MoveElementToBuffer (ElementTypePtr Element)
+@@ -451,41 +416,7 @@ MoveElementToBuffer (ElementTypePtr Element)
    }
    END_LOOP;
  
@@ -338,7 +353,7 @@ index 907c7e6..b0f5f7d 100644
  }
  
  /* ---------------------------------------------------------------------------
-@@ -567,7 +482,7 @@ LoadElementToBuffer (BufferTypePtr Buffer, char *Name, bool FromFile)
+@@ -567,7 +498,7 @@ LoadElementToBuffer (BufferTypePtr Buffer, char *Name, bool FromFile)
  	  SetBufferBoundingBox (Buffer);
  	  if (Buffer->Data->ElementN)
  	    {
@@ -347,7 +362,7 @@ index 907c7e6..b0f5f7d 100644
  	      Buffer->X = element->MarkX;
  	      Buffer->Y = element->MarkY;
  	    }
-@@ -584,7 +499,7 @@ LoadElementToBuffer (BufferTypePtr Buffer, char *Name, bool FromFile)
+@@ -584,7 +515,7 @@ LoadElementToBuffer (BufferTypePtr Buffer, char *Name, bool FromFile)
        if (!ParseLibraryEntry (Buffer->Data, Name)
  	  && Buffer->Data->ElementN != 0)
  	{
@@ -356,7 +371,7 @@ index 907c7e6..b0f5f7d 100644
  
  	  /* always add elements using top-side coordinates */
  	  if (Settings.ShowSolderSide)
-@@ -900,7 +815,7 @@ LoadFootprint (int argc, char **argv, int x, int y)
+@@ -900,7 +831,7 @@ LoadFootprint (int argc, char **argv, int x, int y)
        return 1;
      }
  
@@ -365,7 +380,7 @@ index 907c7e6..b0f5f7d 100644
  
    if (e->Name[0].TextString)
      free (e->Name[0].TextString);
-@@ -942,7 +857,7 @@ SmashBufferElement (BufferTypePtr Buffer)
+@@ -942,7 +873,7 @@ SmashBufferElement (BufferTypePtr Buffer)
     * around for us to smash bits off it.  It then becomes our responsibility,
     * however, to free the single element when we're finished with it.
     */
