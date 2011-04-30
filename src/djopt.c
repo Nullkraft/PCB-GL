@@ -2997,20 +2997,19 @@ ActionDJopt (int argc, char **argv, int x, int y)
   for (layn = 0; layn < max_copper_layer; layn++)
     {
       LayerType *layer = LAYER_PTR (layn);
-      int ln;
-      for (ln = 0; ln < layer->LineN; ln++)
+
+      LINE_LOOP (layer);
 	{
-	  LineType *l = &(layer->Line[ln]);
 	  line_s *ls;
 
 	  /* don't mess with thermals */
-	  if (TEST_FLAG (USETHERMALFLAG, l))
+	  if (TEST_FLAG (USETHERMALFLAG, line))
 	    continue;
 
-	  if (l->Point1.X == l->Point2.X && l->Point1.Y == l->Point2.Y)
+	  if (line->Point1.X == line->Point2.X &&
+              line->Point1.Y == line->Point2.Y)
 	    {
-	      RemoveLine (layer, l);
-	      ln--;
+	      RemoveLine (layer, line);
 	      continue;
 	    }
 
@@ -3018,15 +3017,15 @@ ActionDJopt (int argc, char **argv, int x, int y)
 	  ls->next = lines;
 	  lines = ls;
 	  ls->is_pad = 0;
-	  ls->s = find_corner (l->Point1.X, l->Point1.Y, layn);
-	  ls->e = find_corner (l->Point2.X, l->Point2.Y, layn);
-	  ls->line = l;
+	  ls->s = find_corner (line->Point1.X, line->Point1.Y, layn);
+	  ls->e = find_corner (line->Point2.X, line->Point2.Y, layn);
+	  ls->line = line;
 	  add_line_to_corner (ls, ls->s);
 	  add_line_to_corner (ls, ls->e);
 	  ls->layer = layn;
 	}
+      END_LOOP;
     }
-
 
   check (0, 0);
   pinsnap ();
