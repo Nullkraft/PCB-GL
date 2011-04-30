@@ -76,8 +76,8 @@ RCSID ("$Id$");
 
 #define abort1() fprintf(stderr, "abort at line %d\n", __LINE__), abort()
 
-#define TRACE0 1
-#define TRACE1 1
+#define TRACE0 0
+#define TRACE1 0
 
 /* sine of one degree */
 #define SIN1D	0.0174524064372835
