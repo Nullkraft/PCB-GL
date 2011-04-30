@@ -1,7 +1,7 @@
-Bottom: ab8683705e0127bbdf4054e9ff1ffef3b141f7c6
-Top:    a032d510f42301324e0287e31a1ddc3ff2b9b1c4
+Bottom: 535ed7fad200e485ddb74d0ed7fedd7249058909
+Top:    d8d6a1e130c001809c1fca23c708dbd93c382ba5
 Author: Peter Clifton <pcjc2@cam.ac.uk>
-Date:   2011-04-29 15:53:42 +0100
+Date:   2011-04-30 15:21:52 +0100
 
 Add strip hierarchy options to display refdes without any "..../" prefix
 
@@ -17,7 +17,7 @@ Add strip hierarchy options to display refdes without any "..../" prefix
 ---
 
 diff --git a/src/action.c b/src/action.c
-index ed087c1..da2f2f0 100644
+index ae6b87e..8ea83b9 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -3458,9 +3458,16 @@ ActionRenumber (int argc, char **argv, int x, int y)
@@ -148,7 +148,7 @@ index 724b3be..7255259 100644
   * PCB flags
   */
 diff --git a/src/draw.c b/src/draw.c
-index b89078e..e633827 100644
+index a7a1a74..8e5b553 100644
 --- a/src/draw.c
 +++ b/src/draw.c
 @@ -160,6 +160,32 @@ pad_callback (const BoxType * b, void *cl)
