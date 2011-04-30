@@ -3,7 +3,16 @@ Top:    0a7c2ae572d8baec3afd9142b09d2f974e146873
 Author: Peter Clifton <pcjc2@cam.ac.uk>
 Date:   2011-04-30 16:50:43 +0100
 
-puller.c: Re-write to use hash tables to store stashed extra info
+puller.c: Re-write parts to use hash tables to store stashed extra info
+
+This vastly simplifies some of the pointer arithmetic which was previously
+used to account for underlying location changes when objects moved.
+
+Having tested this, it produces different results than before application.
+This may be due to it zapping some underlying bug which has been removed
+in the patch, or perhaps more likely, that its slightly different iteration
+order over the lines and arcs (due to g_hash_table_foreach) will result
+in different pathologies being hit.
 
 
 ---
